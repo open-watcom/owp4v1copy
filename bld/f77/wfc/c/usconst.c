@@ -37,10 +37,10 @@
 #include "global.h"
 #include "fmemmgr.h"
 #include "types.h"
+#include "utility.h"
 
 #include <string.h>
 
-extern  void            FreeITNodes(itnode *);
 extern  void            BadEqual(void);
 extern  void            AddConst(itnode *);
 extern  void            AddI(ftn_type *,ftn_type *);

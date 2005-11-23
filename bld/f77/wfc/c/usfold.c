@@ -34,13 +34,12 @@
 #include "errcod.h"
 #include "global.h"
 #include "rtenv.h"
+#include "ferror.h"
 
 extern  void            (* const __FAR GenOprTable[])();
 
 extern  void            AddConst(itnode *);
 extern  int             LexStrCmp(char PGM *,int,char PGM *,int);
-extern  void            Warning(int,...);
-extern  void            Error(int,...);
 extern  bool            AddIOFlo(intstar4 *,intstar4 *);
 extern  bool            SubIOFlo(intstar4 *,intstar4 *);
 extern  bool            MulIOFlo(intstar4 *,intstar4 *);

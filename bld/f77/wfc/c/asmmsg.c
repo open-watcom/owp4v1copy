@@ -37,8 +37,8 @@
 #include "ftnstd.h"
 #include "cioconst.h"
 #include "errcod.h"
+#include "ferror.h"
 
-extern  void            Error(uint,...);
 extern  void            MsgBuffer(uint,char *,...);
 
 

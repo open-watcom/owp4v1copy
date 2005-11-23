@@ -41,19 +41,16 @@
 #include "progsw.h"
 #include "cpopt.h"
 #include "errcod.h"
+#include "comio.h"
+#include "inout.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 extern  void            CompProg(void);
-extern  void            PrtLstNL(char *);
-extern  void            LFSkip(void);
-extern  void            LFNewPage(void);
-extern  void            FmtInteger(char *,int,int);
 extern  int             Spawn(void (*)());
 extern  void            MsgBuffer(uint,char *,...);
-extern  void            TOutNL(char *);
 extern  uint            MakeName(char *,char *,char *);
 
 extern  unsigned_32     CompTime;

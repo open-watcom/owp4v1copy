@@ -39,8 +39,7 @@
 #include "fcodes.h"
 #include "emitobj.h"
 #include "types.h"
-
-extern  void            AdvanceITPtr(void);
+#include "utility.h"
 
 
 void    GMakeCplx() {

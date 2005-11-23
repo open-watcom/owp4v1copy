@@ -24,15 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  FORTRAN memory manager initialization
 *
 ****************************************************************************/
 
 
-//
-// FMEMINIT     : FORTRAN memory manager initialization
-//
+#include "fmeminit.h"
 
 void    SysMemInit( void )
 //========================

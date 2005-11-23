@@ -41,16 +41,15 @@
 #include "ctrlflgs.h"
 #include "global.h"
 #include "recog.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 #include <ctype.h>
 
-extern  void            Error(int,...);
-extern  void            TypeErr(int,TYPE);
 extern  sym_id          CkAssignOk(void);
 extern  void            CkSize4(void);
 extern  void            ScanExpr(void);
-extern  void            AdvanceITPtr(void);
-extern  void            IfExpr(void);
 extern  label_id        NextLabel(void);
 extern  void            CkTypeDeclared(void);
 extern  sym_id          LkUpAssign(void);
@@ -69,7 +68,6 @@ extern  void            GStmtBr(sym_id);
 extern  void            FreeLabel(label_id);
 extern  void            GStmtAddr(sym_id);
 extern  void            GEndBrTab(void);
-extern  void            IntegerExpr(void);
 extern  void            BIOutSymbol(sym_id);
 
 

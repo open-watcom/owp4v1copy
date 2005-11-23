@@ -34,7 +34,7 @@
 //       ( routines rely on them being sequential )
 //
 
-enum PARAM_CODES {
+typedef enum {
   PC_CONST,             //  Non-modifiable argument. Passed by value.
   PC_VARIABLE,          //  Simple variable name.
   PC_ARRAY_ELT,         //  Array element.
@@ -45,6 +45,4 @@ enum PARAM_CODES {
   PC_STATEMENT,         //  Alternate return specifier.
   PC_RESULT,            //  Expected result type of subprogram.
   PC_PROC_FAR16 = 0x80
-};
-
-typedef enum PARAM_CODES PCODE;
+} PCODE;

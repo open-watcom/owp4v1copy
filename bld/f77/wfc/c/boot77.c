@@ -36,25 +36,16 @@
 #include "errcod.h"
 #include "fmemmgr.h"
 #include "bglobal.h"
-
+#include "inout.h"
 #include "boot77.h"
+#include "cle.h"
 
 extern  void            SDInitIO(void);
-extern  void            InitComIO(void);
-extern  void            InitMemIO(void);
-extern  void            FiniComIO(void);
 extern  void            FiniProcCmd(void);
-extern  void            TOutNL(char *);
-extern  void            TOut(char *);
-extern  void            CLE(void);
 extern  void            InitOptions(void);
 extern  void            CmdOption(char *);
 extern  bool            ParseCmdLine(char **,char **,char **, char *);
 extern  char            *Batch(char *,uint);
-extern  void            GetBanner(char *);
-extern  void            GetCopyright(char *);
-extern  void            GetTrademark(char *);
-extern  void            GetMoreInfo(char *);
 extern  void            InitMacroProcessor(void);
 extern  void            FiniMacroProcessor(void);
 extern  void            SetDefaultOpts(void);

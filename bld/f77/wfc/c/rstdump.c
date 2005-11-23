@@ -38,15 +38,10 @@
 #include "segsw.h"
 #include "cpopt.h"
 #include "iflookup.h"
+#include "ferror.h"
+#include "insert.h"
 
 
-extern  void            Error(int,...);
-extern  void            NameErr(int,sym_id);
-extern  void            NamNamErr(int,sym_id,sym_id);
-extern  void            NameWarn(int,sym_id);
-extern  void            NameExt(int,sym_id);
-extern  void            Warning(int,...);
-extern  void            Extension(int,...);
 extern  sym_id          STFreeName(sym_id);
 extern  bool            IsIFUsed(IFF);
 extern  sym_id          AddSP2GList(sym_id);

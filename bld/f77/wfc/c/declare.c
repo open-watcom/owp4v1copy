@@ -46,18 +46,12 @@
 #include "stmtsw.h"
 #include "recog.h"
 #include "types.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 #include <string.h>
 
-extern  void            Error(int,...);
-extern  void            NameErr(int,sym_id);
-extern  void            Extension(int,...);
-extern  void            StmtExtension(int);
-extern  void            IllName(sym_id);
-extern  void            NameExt(int,sym_id);
-extern  void            AdvanceITPtr(void);
-extern  void            DimExpr(void);
-extern  bool            CIntExpr(void);
 extern  void            Function(int,uint,bool);
 extern  act_dim_list    *STSubsList(act_dim_list *);
 extern  sym_id          LkSym(void);
@@ -71,10 +65,8 @@ extern  void            DataInit(itnode *);
 extern  void            RemKeyword(itnode *,int);
 extern  void            CkDefStmtNo(void);
 extern  void            DefProg(void);
-extern  void            NameTypeErr(int,sym_id);
 extern  void            FreeWarpLabel(warp_label);
 extern  sym_id          STField(char *,uint);
-extern  void            FieldErr(uint,sym_id);
 
 extern  char            *StmtKeywords[];
 

@@ -44,7 +44,7 @@ extern  char            *StmtKeywords[];
 extern  char            *IOKeywords[];
 
 
-stmtproc    RecStmtKW( void ) {
+STMT    RecStmtKW( void ) {
 //=============================
 
     return( KwLookUp( StmtKeywords, PR_KW_MAX, CITNode->opnd,

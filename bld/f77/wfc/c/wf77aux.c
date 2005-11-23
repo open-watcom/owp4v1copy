@@ -39,6 +39,9 @@
 #include "fio.h"
 #include "sdfile.h"
 #include "fmemmgr.h"
+#include "ferror.h"
+#include "inout.h"
+
 #if _INTEL_CPU
   #include "asminlin.h"
 #elif ( _CPU == _AXP || _CPU == _PPC )
@@ -54,11 +57,9 @@
 
 extern  int             KwLookUp(char **,int,char *,int,int);
 extern  int             MkHexConst(char *,char *,int);
-extern  void            Error(int,...);
 extern  void            Suicide(void);
 extern  char            *SkipBlanks(char *);
 extern  int             Spawn(void (*)());
-extern  void            ReadSrc(void);
 extern  aux_info        *AuxLookupName(char *,int);
 extern  sym_id          SymFind(char *,uint);
 extern  void            FreeChain(void **);
@@ -445,7 +446,7 @@ static  void    AddArrayInfo( char *arr_name, uint arr_len ) {
 }
 #endif
 
-void    AddDependencyInfo( source *fi ) {
+void    AddDependencyInfo( source_t *fi ) {
 //=======================================
 
 // Add dependency information for an included file.

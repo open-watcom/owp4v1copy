@@ -39,10 +39,9 @@
 #include "errcod.h"
 #include "ecflags.h"
 #include "brseinfo.h"
+#include "ferror.h"
+#include "insert.h"
 
-extern  void            NameErr(int,sym_id);
-extern  void            NamNamErr(int,sym_id,sym_id);
-extern  void            Extension(int,...);
 extern  void            SetComBlkSize(sym_id,intstar4);
 extern  void            BIStartComBlock( sym_id ste_ptr );
 extern  void            BIOutComSymbol( sym_id ste_ptr );

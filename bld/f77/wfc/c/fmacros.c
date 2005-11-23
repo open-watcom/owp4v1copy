@@ -35,6 +35,7 @@
 #include "errcod.h"
 #include "cpopt.h"
 #include "fmemmgr.h"
+#include "ferror.h"
 
 #include <string.h>
 
@@ -44,8 +45,6 @@ typedef struct macro_entry {
     byte                status;
     char                name[1];
 } macro_entry;
-
-extern  void            InfoError(uint,...);
 
 static  macro_entry     *MacroList;
 static  unsigned char   NestingLevel;

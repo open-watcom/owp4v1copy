@@ -35,16 +35,14 @@
 #include "namecod.h"
 #include "errcod.h"
 #include "recog.h"
+#include "insert.h"
+#include "utility.h"
 
-extern  void            StmtExtension(uint);
-extern  void            AdvanceITPtr(void);
 extern  sym_id          VarDecl(uint);
 extern  sym_id          FieldDecl(void);
 extern  void            ArrayDecl(sym_id);
 extern  void            DataInit(itnode *);
 extern  sym_id          STStruct(char *,uint);
-extern  void            StmtPtrErr(int,char *);
-extern  void            StructErr(uint,sym_id);
 extern  void            Function(uint,uint,bool);
 extern  bool            IsFunctionDefn(void);
 extern  void            MustBeTypeDecl(void);

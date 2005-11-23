@@ -39,13 +39,12 @@
 #include "errcod.h"
 #include "namecod.h"
 #include "recog.h"
+#include "insert.h"
+#include "utility.h"
 
-extern  void            StmtExtension(uint);
-extern  void            NameErr(uint,sym_id);
 extern  sym_id          LkSym(void);
 extern  sym_id          LkNameList(void);
 extern  grp_entry       *STGroupEntry(void);
-extern  void            AdvanceITPtr(void);
 
 
 void    CpNameList() {

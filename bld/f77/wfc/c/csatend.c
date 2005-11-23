@@ -41,6 +41,7 @@
 #include "opn.h"
 #include "global.h"
 #include "recog.h"
+#include "utility.h"
 
 extern  void            CSExtn(void);
 extern  void            AddCSNode(byte);
@@ -52,7 +53,6 @@ extern  void            Recurse(void);
 extern  void            GBranch(label_id);
 extern  void            GLabel(label_id);
 extern  label_id        NextLabel(void);
-extern  void            AdvanceITPtr(void);
 extern  void            GCheckEOF(label_id);
 extern  void            FreeLabel(label_id);
 

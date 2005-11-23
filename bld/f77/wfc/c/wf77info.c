@@ -45,6 +45,9 @@
 #include "types.h"
 #include "errcod.h"
 #include "csetinfo.h"
+#include "ferror.h"
+#include "inout.h"
+#include "fctypes.h"
 
 #include "langenvd.h"
 #if _CPU == 386 || _CPU == 8086
@@ -102,16 +105,12 @@ extern  void            DBLocFini(dbg_loc);
 
 extern  int             MakeName(char *,char *,char *);
 extern  char            *SDExtn(char *,char *);
-extern  cg_type         F772CGType(sym_id);
 extern  char            *SDFName(char *);
 extern  char            *STGetName(sym_id,char *);
 extern  char            *STExtractName(sym_id,char *);
 extern  void            Suicide(void);
 extern  intstar4        GetComBlkSize(sym_id);
 extern  aux_info        *AuxLookup(sym_id);
-extern  void            Error(uint,...);
-extern  void            Warning(uint,...);
-extern  cg_type         MkCGType(uint);
 extern  void            SendBlip(void);
 extern  void            SendStd(char *);
 extern  char            *STFieldName(sym_id,char *);
@@ -120,7 +119,6 @@ extern  bool            ForceStatic(unsigned_16);
 extern  sym_id          FindArgShadow(sym_id);
 extern  sym_id          STEqSetShadow(sym_id);
 extern  char *          StackBuffer(int *);
-extern  void            PrintErr(char *);
 #ifdef _EMS
 extern  void            InitEMS(void);
 extern  void            FiniEMS(void);

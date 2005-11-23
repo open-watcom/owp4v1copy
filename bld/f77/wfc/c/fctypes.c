@@ -39,6 +39,7 @@
 #include "types.h"
 #include "wf77defs.h"
 #include "symbol.h"
+#include "fctypes.h"
 
 #define NUM_TYPES       12
 #define L1              T_UINT_1

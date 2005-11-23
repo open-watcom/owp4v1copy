@@ -40,15 +40,11 @@
 #include "opr.h"
 #include "global.h"
 #include "recog.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
-extern  void            AdvanceITPtr(void);
-extern  void            ChkType(TYPE);
-extern  void            Error(int,...);
-extern  void            Extension(int,...);
-extern  void            ClassErr(int,sym_id);
-extern  void            OpndErr(int);
 extern  bool            OptimalChSize(uint);
-extern  bool            ClassIs(unsigned_16);
 
 
 static  bool    CheckColon() {

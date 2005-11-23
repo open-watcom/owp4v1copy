@@ -40,11 +40,9 @@
 
 #define pick(id,text,size,ptype) id,
 
-enum SYM_TYPES {
+typedef enum {
 #include "symdefn.h"
-};
-
-typedef enum SYM_TYPES TYPE;
+} TYPE;
 
 #define TY_FIRST    TY_LOGICAL_1
 

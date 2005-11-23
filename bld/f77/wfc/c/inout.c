@@ -39,6 +39,9 @@
 #include "cioconst.h"
 #include "csetinfo.h"
 #include "fmemmgr.h"
+#include "ferror.h"
+#include "comio.h"
+#include "inout.h"
 
 #include "banner.h"
 #ifdef _BANEXTRA
@@ -52,9 +55,6 @@
 
 extern  void            BISetSrcFile();
 extern  void            Suicide(void);
-extern  void            InfoError(int,...);
-extern  void            Warning(int,...);
-extern  void            ComRead(void);
 extern  void            PrtOptions(void);
 extern  lib_handle      IncSearch(char *);
 extern  int             LibRead(lib_handle);
@@ -297,7 +297,7 @@ void    ReadSrc() {
 static  bool    AlreadyOpen( char *name ) {
 //=========================================
 
-    source      *src;
+    source_t    *src;
 
     src = CurrFile;
     for(;;) {
@@ -361,7 +361,7 @@ void    Include( char *inc_name ) {
     // because we could not open include file
     RetCode = _SUCCESSFUL;
     {
-        extern  void    AddDependencyInfo(source *);
+        extern  void    AddDependencyInfo(source_t *);
 
         AddDependencyInfo( CurrFile );
     }
@@ -386,9 +386,9 @@ bool    SetLst( bool new ) {
 void    SrcInclude( char *name ) {
 //================================
 
-    source      *src;
+    source_t    *src;
 
-    src = FMemAlloc( sizeof( source ) );
+    src = FMemAlloc( sizeof( source_t ) );
     src->name = FMemAlloc( strlen( name ) + 1 );
     strcpy( src->name, name );
     src->rec = 0;
@@ -413,7 +413,7 @@ void    SrcInclude( char *name ) {
 void    Conclude() {
 //==================
 
-    source      *old;
+    source_t    *old;
 
     old = CurrFile;
     CurrFile = CurrFile->link;

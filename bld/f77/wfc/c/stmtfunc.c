@@ -36,17 +36,16 @@
 #include "stmtsw.h"
 #include "fmemmgr.h"
 #include "recog.h"
+#include "ferror.h"
+#include "utility.h"
 
 extern  void            BIEndSF( sym_id ste_ptr );
 extern  void            GStartSF(void);
 extern  void            GEndSF(void);
-extern  void            AdvanceITPtr(void);
-extern  void            FreeITNodes(itnode *);
 extern  sym_id          LkSym(void);
 extern  sym_id          STShadow(sym_id);
 extern  void            STUnShadow(sym_id);
 extern  void            CkTypeDeclared(void);
-extern  void            Error(int,...);
 
 
 void    SFPrologue() {

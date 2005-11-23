@@ -45,17 +45,14 @@
 #endif
 #define pick(tok_id,dsopn_id,opn_proc) dsopn_id,
 
-enum DS_CODES {
-
+typedef enum {
 #include "tokdsopn.h"
-
-};
+} DSOPN;
 
 // UpScan codes:
 // =============
 
-enum US_CODES {
-
+typedef enum {
     USOPN_NONE,        // no operand
     USOPN_NNL,         // - name, no argument list
     USOPN_NWL,         // - name, with argument list
@@ -73,15 +70,12 @@ enum US_CODES {
 
     USOPN_ASY  = 0x40, // symbol table entry is alternate
     USOPN_SS1  = 0x80, // chr(i:i)
-};
+} USOPN;
 
 #define WHAT_SHIFT      0       // bits to shift to make OPN_WHAT origin 0
 #define USOPN_WHAT      0x07    // what type of operand is it?
 
 #define WHERE_SHIFT     4       // bits to shift to make OPN_WHERE origin 0
 #define USOPN_WHERE     0x30    // where is the operand?
-
-typedef enum DS_CODES DSOPN;
-typedef enum US_CODES USOPN;
 
 #endif

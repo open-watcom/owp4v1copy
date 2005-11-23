@@ -44,19 +44,11 @@
 #include "global.h"
 #include "recog.h"
 #include "types.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
-extern  bool            ClassIs(unsigned_16);
 extern  int             RecIOKW(void);
-extern  void            Error(int,...);
-extern  void            NameErr(int,sym_id);
-extern  void            StmtErr(int);
-extern  void            Extension(int,...);
-extern  void            BoolExpr(void);
-extern  void            CharSubExpr(void);
-extern  void            IntSubExpr(void);
-extern  void            BoolSubExpr(void);
-extern  void            ProcIOExpr(void);
-extern  void            AdvanceITPtr(void);
 extern  bool            Permission(int);
 extern  void            CheckList(void);
 extern  void            KWRememb(int);

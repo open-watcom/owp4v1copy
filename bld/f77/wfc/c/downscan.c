@@ -41,20 +41,16 @@
 #include "cpopt.h"
 #include "recog.h"
 #include "types.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 
-extern  void            Error(int,...);
-extern  void            Warning(int,...);
-extern  void            Extension(int,...);
-extern  void            OpndErr(int);
 extern  void            MoveDown(void);
 extern  void            DSName(void);
-extern  void            FreeITNodes(itnode *);
-extern  void            FreeOneNode(itnode *);
-extern  void            AdvanceITPtr(void);
 extern  sym_id          LkUpStmtNo(void);
 extern  int             FmtS2I(char *,int,bool,intstar4 *,bool,int *);
 extern  int             FmtS2F(char *,int,int,bool,int,int,reallong *,bool,int *,bool);

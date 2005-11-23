@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-enum OPERATIONS {
+typedef enum {
    OPTR_EQV,            //  .eqv. operation
    OPTR_NEQV,           //  .neqv. operation
    OPTR_OR,             //  .or. operation
@@ -46,6 +46,4 @@ enum OPERATIONS {
    OPTR_DIV,            //  / operation
    OPTR_EXP,            //  exponentiation
    OPTR_CAT             //  concatenation
-};
-
-typedef enum OPERATIONS OPTR;
+} OPTR;

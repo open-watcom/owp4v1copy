@@ -46,14 +46,11 @@
 //=========================================================================
 
 #include "emitobj.h"
+#include "fctypes.h"
 
 extern  void            XPush(cg_name);
 extern  cg_name         XPopValue(cg_type);
 extern  cg_name         XPop(void);
-extern  cg_type         GetType(unsigned_16);
-extern  cg_type         GetType1(unsigned_16);
-extern  cg_type         GetType2(unsigned_16);
-extern  cg_type         ResCGType(cg_type,cg_type);
 
 
 static  cg_name BitPosition( unsigned_16 typ_info ) {

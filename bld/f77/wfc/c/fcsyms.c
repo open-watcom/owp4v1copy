@@ -43,6 +43,7 @@
 #include "nmlinfo.h"
 #include "fmemmgr.h"
 #include "types.h"
+#include "fctypes.h"
 
 #include <string.h>
 
@@ -100,7 +101,6 @@ extern  segment_id      GetComSeg(sym_id,unsigned_32);
 extern  seg_offset      GetComOffset(unsigned_32);
 extern  segment_id      GetGlobalSeg(unsigned_32);
 extern  seg_offset      GetGlobalOffset(unsigned_32);
-extern  cg_type         F772CGType(sym_id);
 extern  label_handle    GetLabel(label_id);
 extern  label_handle    GetStmtLabel(sym_id);
 extern  void            FiniLabels(uint);

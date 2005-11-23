@@ -40,6 +40,7 @@
 #include "cg.h"
 #include "fcodes.h"
 #include "emitobj.h"
+#include "fctypes.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -55,10 +56,6 @@ extern  void            CGTrash(cg_name);
 extern  void            XPush(cg_name);
 extern  cg_name         XPop(void);
 extern  cg_name         XPopValue(cg_type);
-extern  cg_type         ResCGType(cg_type,cg_type);
-extern  cg_type         GetType(int);
-extern  cg_type         GetType1(int);
-extern  cg_type         GetType2(int);
 extern  call_handle     InitCall(int);
 extern  cg_name         SCBPointer(cg_name);
 extern  cg_name         IntegerConstant(ftn_type *,uint);

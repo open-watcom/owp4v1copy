@@ -41,11 +41,10 @@
 #include "errcod.h"
 #include "namecod.h"
 #include "recog.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
-extern  void            Error(int,...);
-extern  void            IllName(sym_id);
-extern  void            NameErr(int,sym_id);
-extern  void            AdvanceITPtr(void);
 extern  sym_id          LkBCommon(void);
 extern  sym_id          LkCommon(void);
 extern  sym_id          LkSym(void);

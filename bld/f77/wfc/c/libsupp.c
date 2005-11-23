@@ -38,6 +38,7 @@
 #include "sdfile.h"
 #include "global.h"
 #include "omodes.h"
+#include "inout.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -52,7 +53,6 @@ extern  bool            SDEof(file_handle);
 extern  char            *SDSrcExtn(char *);
 extern  int             MakeName(char *,char *,char *);
 extern  int             CopyMaxStr(char *,char *,int);
-extern  void            SrcInclude(char *);
 
 extern  char            ForExtn[];
 

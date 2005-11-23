@@ -37,9 +37,10 @@
 #include "stmtsw.h"
 #include "fmemmgr.h"
 #include "recog.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
-extern  void            Error(int,...);
-extern  void            Extension(int,...);
 extern  void            CkTypeDeclared(void);
 extern  void            AddCSNode(byte);
 extern  void            DelCSNode(void);
@@ -49,8 +50,6 @@ extern  void            CSNoMore(void);
 extern  void            CSExtn(void);
 extern  void            Match(void);
 extern  void            CSCond(label_id);
-extern  void            EatDoParm(void);
-extern  void            AdvanceITPtr(void);
 extern  void            GLabel(label_id);
 extern  void            GBranch(label_id);
 extern  label_id        NextLabel(void);
@@ -60,7 +59,6 @@ extern  void            STUnShadow(sym_id);
 extern  void            Recurse(void);
 extern  void            GDoInit(TYPE);
 extern  void            GDoEnd(void);
-extern  void            NameErr(int,sym_id);
 extern  void            FreeLabel(label_id);
 extern  void            RemKeyword(itnode *,int);
 extern  void            BIOutSymbol(sym_id);

@@ -42,9 +42,9 @@
 #include "cpopt.h"
 #include "recog.h"
 #include "emitobj.h"
+#include "utility.h"
 
 extern  void            GSPProlog(void);
-extern  void            IfExpr(void);
 extern  sym_id          StaticAlloc(uint,TYPE);
 extern  label_id        NextLabel(void);
 extern  bool            TypeCmplx(int typ);

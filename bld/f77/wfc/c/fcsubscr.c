@@ -41,6 +41,7 @@
 #include "cg.h"
 #include "cpopt.h"
 #include "emitobj.h"
+#include "fctypes.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -68,7 +69,6 @@ extern  cg_name         CharItemLen(sym_id);
 extern  cg_name         SCBPtrAddr(cg_name);
 extern  cg_name         SCBLenAddr(cg_name);
 extern  cg_name         StructRef(cg_name,int);
-extern  cg_type         GetType(unsigned_16);
 extern  call_handle     InitCall(int);
 extern  sym_id          FindAdvShadow(sym_id);
 

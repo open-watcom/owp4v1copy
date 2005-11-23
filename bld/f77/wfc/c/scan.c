@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Scanner
 *
 ****************************************************************************/
 
-
-//
-// SCAN :       Scanner
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -41,16 +36,11 @@
 #include "global.h"
 #include "csetinfo.h"
 #include "cpopt.h"
+#include "ferror.h"
+#include "comio.h"
 
 #include <string.h>
 #include <stdlib.h>
-
-extern  void            Error(int,...);
-extern  void            Warning(int,...);
-extern  void            Extension(int,...);
-extern  void            ComRead(void);
-extern  void            ComPrint(void);
-extern  void            LinePrint(void);
 
 extern  character_set   CharSetInfo;
 
@@ -90,9 +80,9 @@ char    *LogTab[] = {
 static  char            ExpREA;
 static  char            ExpDBL;
 static  char            ExpEXT;
-static  token_class     TokenREA;
-static  token_class     TokenDBL;
-static  token_class     TokenEXT;
+static  TOKCLASS        TokenREA;
+static  TOKCLASS        TokenDBL;
+static  TOKCLASS        TokenEXT;
 
 
 void    InitScan() {
@@ -145,7 +135,7 @@ void    Scan() {
     byte        tab;
     int         len;
     int         hlen;
-    token_class class;
+    TOKCLASS    class;
     char_class  ch_class;
     char_class  wasextch;
 

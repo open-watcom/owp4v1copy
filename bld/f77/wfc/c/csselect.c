@@ -36,20 +36,17 @@
 #include "fmemmgr.h"
 #include "recog.h"
 #include "types.h"
+#include "ferror.h"
+#include "utility.h"
 
 #include <limits.h>
 
-extern  void            Error(int,...);
-extern  void            Warning(int,...);
 extern  void            AddCSNode(byte);
 extern  void            DelCSNode(void);
 extern  void            CSNoMore(void);
 extern  void            Match(void);
 extern  void            CSExtn(void);
 extern  void            ColonLabel(void);
-extern  void            AdvanceITPtr(void);
-extern  bool            ConstExpr(TYPE);
-extern  bool            SelectExpr(void);
 extern  label_id        NextLabel(void);
 extern  void            GLabel(label_id);
 extern  void            FiniSelect(void);

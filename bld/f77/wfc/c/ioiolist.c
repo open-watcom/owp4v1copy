@@ -37,15 +37,14 @@
 #include "global.h"
 #include "stmtsw.h"
 #include "recog.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
-extern  void            Error(int,...);
 extern  void            ChkAssumed(void);
 extern  void            TermDo(void);
 extern  void            ImpDo(void);
 extern  void            DelCSNode(void);
-extern  void            ProcIOExpr(void);
-extern  void            FreeITNodes(itnode *);
-extern  void            AdvanceITPtr(void);
 extern  void            GStartIO(void);
 extern  void            GIOItem(void);
 extern  void            GIOArray(void);
@@ -54,7 +53,6 @@ extern  void            GStopIO(void);
 extern  sym_id          CkAssignOk(void);
 extern  void            GIOStruct(sym_id);
 extern  bool            Already(uint);
-extern  void            StructErr(uint,sym_id);
 extern  bool            NotFormatted(void);
 
 

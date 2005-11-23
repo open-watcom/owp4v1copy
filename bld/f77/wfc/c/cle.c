@@ -38,29 +38,22 @@
 #include "global.h"
 #include "progsw.h"
 #include "cpopt.h"
+#include "comio.h"
+#include "inout.h"
+#include "cle.h"
+#include "utility.h"
 
 #include <time.h>
 
-extern  void            ComRead(void);
-extern  void            OpenSrc(void);
-extern  void            OpenLst(void);
-extern  bool            SetLst(bool);
-extern  void            PrtBanner(void);
-extern  void            LFEndSrc(void);
-extern  void            CloseLst(void);
-extern  void            CloseErr(void);
 extern  void            DoCompile(void);
 extern  void            StatProg(void);
 extern  void            VSTInit(void);
 extern  void            STPurge(void);
-extern  void            ITPurge(void);
 extern  void            CSPurge(void);
-extern  void            IOPurge(void);
 extern  void            EnPurge(void);
 extern  void            EqPurge(void);
 extern  void            TDPurge(void);
 extern  void            OpenSymTab(void);
-extern  void            Conclude(void);
 extern  void            InitMacros(void);
 extern  void            FiniMacros(void);
 extern  void            FiniMacroProcessor(void);

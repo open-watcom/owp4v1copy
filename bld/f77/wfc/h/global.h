@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <gblincs.h>
+#include "gblincs.h"
 
 #define gbl_defn extern
-#include <gbldat.h>
+#include "gbldat.h"

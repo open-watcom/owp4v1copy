@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  routines that call the expression handler
 *
 ****************************************************************************/
 
-
-//
-// AENTRY    : routines that call the expression handler
-//
 
 #include "ftnstd.h"
 #include "opr.h"
@@ -42,19 +37,15 @@
 #include "namecod.h"
 #include "global.h"
 #include "recog.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 extern  void            DownScan(void);
 extern  void            UpScan(void);
 extern  sym_id          LkSym(void);
 extern  void            ScanExpr(void);
 extern  void            AdvError(int);
-extern  void            Error(int,...);
-extern  void            Extension(int,...);
-extern  void            IllName(sym_id);
-extern  void            AdvanceITPtr(void);
-extern  bool            ClassIs(unsigned_16);
-extern  bool            Subscripted(void);
-extern  bool            BitOn(unsigned_16);
 extern  void            SFPrologue(void);
 
 #define SF_MASK (SY_SUB_PARM|SY_IN_EC|SY_DATA_INIT|SY_SAVED)

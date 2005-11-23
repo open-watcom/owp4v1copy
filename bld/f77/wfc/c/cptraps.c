@@ -32,12 +32,11 @@
 #include "ftnstd.h"
 #include "errcod.h"
 #include "xfflags.h"
+#include "ferror.h"
 
 #include <stddef.h>
 #include <signal.h>
 #include <float.h>
-
-extern  void            Warning(int,...);
 
 
 static void _FPEHandler( int fpe_type ) {

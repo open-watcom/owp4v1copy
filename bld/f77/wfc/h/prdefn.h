@@ -40,9 +40,7 @@
 #define pick(id,text,proc,flags) id,
 
 typedef enum {
-
 #include "stmtdefn.h"
-
-} stmtproc;
+} STMT;
 
 #define PR_KW_MAX       (PR_WRITE - 1)

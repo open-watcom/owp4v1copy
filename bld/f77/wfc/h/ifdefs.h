@@ -38,7 +38,7 @@
 
 #define pick(id,text,next,res,arg,flags) id,
 
-enum INTRINSIC_FUNCTIONS {
+typedef enum {
 
 #include "ifdefn.h"
 
@@ -46,8 +46,6 @@ enum INTRINSIC_FUNCTIONS {
 
     IF_NO_MORE = 0xfe,
     MAGIC      = 0xff
-};
-
-typedef enum INTRINSIC_FUNCTIONS IFF;
+} IFF;
 
 #endif

@@ -55,7 +55,7 @@ void    GSetSrcLine() {
 
 // Generate line # information (for executable statements).
 
-    source      *src;
+    source_t    *src;
 
     EmitOp( RT_SET_LINE );
     if( CurrFile->link != NULL ) {

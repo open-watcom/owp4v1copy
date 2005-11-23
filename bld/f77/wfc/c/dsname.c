@@ -42,21 +42,15 @@
 #include "namecod.h"
 #include "recog.h"
 #include "types.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 #include <string.h>
 
 extern  void            BIOutSymbol( sym_id ste_ptr );
 extern  void            ScanExpr(void);
-extern  void            Error(int,...);
 extern  void            AdvError(int);
-extern  void            Extension(int,...);
-extern  void            IllName(sym_id);
-extern  void            ClassErr(int,sym_id);
-extern  void            KnownClassErr(int,uint);
-extern  void            NameErr(int,sym_id);
-extern  void            AdvanceITPtr(void);
-extern  bool            Subscripted(void);
-extern  bool            ClassIs(unsigned_16);
 extern  sym_id          LkSym(void);
 extern  sym_id          LkField(sym_id);
 extern  sym_id          FindShadow(sym_id);

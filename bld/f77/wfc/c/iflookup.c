@@ -34,17 +34,16 @@
 #include "errcod.h"
 #include "global.h"
 #include "types.h"
+#include "ferror.h"
+#include "insert.h"
 
 #include <string.h>
 
 extern  int             KwLookUp(char **,int,char *,int,bool);
-extern  void            TypeErr(int,TYPE);
 extern  void            MarkIFUsed(IFF);
 extern  sym_id          STSearch(char *,int,sym_id);
 extern  sym_id          STNameSearch(char *,int);
 extern  sym_id          STAdd(char *,int);
-extern  void            Error(int,...);
-extern  void            Extension(int,...);
 
 typedef struct iff_data {
     IFF     next;

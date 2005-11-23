@@ -60,4 +60,4 @@ typedef struct source {
     ftnoption           options;
     char                *name;
     unsigned_8          flags;
-} source;
+} source_t;

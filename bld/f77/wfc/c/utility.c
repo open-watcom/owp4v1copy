@@ -38,14 +38,13 @@
 #include "global.h"
 #include "fmemmgr.h"
 #include "recog.h"
+#include "ferror.h"
+#include "insert.h"
+#include "frl.h"
+#include "utility.h"
 
 #include <string.h>
 
-extern  void            FrlFree(void *,void *);
-extern  void            FrlFini(void **);
-extern  void            Error(int,...);
-extern  void            Extension(int,...);
-extern  void            TypeErr(int,TYPE);
 extern  void            GetConst(void);
 extern  void            GetIntConst(void);
 extern  void            EatExpr(void);

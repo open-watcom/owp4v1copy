@@ -46,3 +46,6 @@
 #include "symbol.h"
 #include "prdefn.h"
 #include "progsw.h"
+#include "stmtsw.h"
+#include "segsw.h"
+#include "extnsw.h"

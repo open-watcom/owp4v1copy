@@ -39,6 +39,7 @@
 #include "cpopt.h"
 #include "fltcnv.h"
 #include "emitobj.h"
+#include "fctypes.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -54,7 +55,6 @@ extern  cg_type         CGType(cg_name);
 
 //=========================================================================
 
-extern  cg_type         F772CGType(sym_id);
 extern  pointer         ConstBack(sym_id);
 extern  void            CnvS2S(float *,char *);
 extern  void            CnvD2S(double *,char *);
@@ -70,10 +70,6 @@ extern  void            PushCmplxConst(sym_id);
 extern  void            PushComplex(sym_id);
 extern  void            Cmplx2Scalar();
 extern  cg_type         CmplxBaseType(cg_type);
-extern  bool            TypePointer(cg_type);
-extern  cg_type         GetType(unsigned_16);
-extern  cg_type         GetType1(unsigned_16);
-extern  cg_type         GetType2(unsigned_16);
 extern  cg_name         VarAltSCB(sym_id);
 extern  cg_name         SubAltSCB(sym_id);
 extern  bool            SCBRequired(sym_id);

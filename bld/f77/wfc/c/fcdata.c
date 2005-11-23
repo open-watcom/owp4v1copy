@@ -36,6 +36,8 @@
 #include "types.h"
 #include "cg.h"
 #include "emitobj.h"
+#include "ferror.h"
+#include "insert.h"
 
 // The following are to support a temporary fix so that constants dumped by
 // DATA statements provide the same precision for constants dumped by the code
@@ -58,8 +60,6 @@ extern  void            BEFreeBack(back_handle);
 
 //=========================================================================
 
-extern  void            Error(int,...);
-extern  void            TypeNameTypeErr(int,TYPE,sym_id,TYPE);
 extern  void            DtInit(segment_id,seg_offset);
 extern  void            DtBytes(byte *,int);
 extern  void            DtIBytes(byte,int);
@@ -67,7 +67,6 @@ extern  segment_id      GetDataSegId(sym_id);
 extern  seg_offset      GetDataOffset(sym_id);
 extern  void            DXPush(intstar4);
 extern  intstar4        DXPop(void);
-extern  void            NameStmtErr(int,sym_id,int);
 extern  bool            DoSubscript(act_dim_list *,intstar4 *,intstar4 *);
 extern  bool            DoSubstring(intstar4,intstar4,int);
 extern  void            FCodeSequence(void);

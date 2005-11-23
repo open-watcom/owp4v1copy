@@ -46,25 +46,18 @@
 #include "ctrlflgs.h"
 #include "global.h"
 #include "recog.h"
+#include "ferror.h"
+#include "insert.h"
+#include "frl.h"
+#include "inout.h"
+#include "utility.h"
 
 #include <string.h>
 #include <ctype.h>
 
-extern  void            ChkPntLst(void);
-extern  pointer         FrlAlloc(void **,int);
 extern  sym_id          LkSym(void);
 extern  void            MakeITList(void);
-extern  void            FreeITNodes(itnode *);
-extern  bool            BitOn(unsigned_16);
-extern  void            AdvanceITPtr(void);
-extern  void            FreeOneNode(itnode *);
-extern  stmtproc        RecStmtKW(void);
-extern  void            Error(int,...);
-extern  void            Warning(int,...);
-extern  void            Extension(int,...);
-extern  void            OpndErr(int);
-extern  void            StmtErr(int);
-extern  void            StmtPtrErr(int,void *);
+extern  STMT            RecStmtKW(void);
 extern  void            TermDo(void);
 extern  void            TermDoWhile(void);
 extern  void            DefStmtNo(unsigned_32);
@@ -221,7 +214,7 @@ void    Recurse() {
 // another IF or AT END cannot follow the first one.
 
     unsigned_16 ctrlflgs;
-    stmtproc    proc;
+    STMT        proc;
 
     CITNode->opr = OPR_TRM;
     ctrlflgs = CtrlFlgs;

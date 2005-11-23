@@ -42,6 +42,7 @@
 #include "cpopt.h"
 #include "inline.h"
 #include "emitobj.h"
+#include "fctypes.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -65,9 +66,6 @@ extern  void            XPush(cg_name);
 extern  cg_name         SymAddr(sym_id);
 extern  call_handle     InitCall(int);
 extern  call_handle     InitInlineCall(int);
-extern  int             GetType(unsigned_16);
-extern  int             GetType1(unsigned_16);
-extern  int             GetType2(unsigned_16);
 extern  cg_name         StructRef(cg_name,int);
 extern  cg_name         StkElement(int);
 extern  void            CloneCGName(cg_name,cg_name *,cg_name *);

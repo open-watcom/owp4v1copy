@@ -37,19 +37,22 @@
 
 typedef enum {
 #include "tokdsopn.h"
-} token_class;
+} TOKCLASS;
+
+typedef enum {
+    TK_EOL     = 1,
+    TK_LAST    = 2,
+    TK_LENSPEC = 4,
+    TK_INCLUDE = 8
+} TOKTYPE;
 
 typedef struct token {
     char        *start;
     char        *stop;
     int         line;
-    token_class class;
-    unsigned_8  flags;
+    TOKCLASS    class;
+    TOKTYPE     flags;
     byte        log;
     byte        col;
-} token;
+} token_t;
 
-#define TK_EOL          0x01
-#define TK_LAST         0x02
-#define TK_LENSPEC      0x04
-#define TK_INCLUDE      0x08

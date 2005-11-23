@@ -42,6 +42,7 @@
 #include "cpopt.h"
 #include "global.h"
 #include "emitobj.h"
+#include "fctypes.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -69,21 +70,15 @@ extern  unsigned long   BETypeLength(cg_type);
 extern  void            XPush(cg_name);
 extern  cg_name         XPopValue(cg_type);
 extern  cg_name         XPop(void);
-extern  cg_type         ResCGType(cg_type,cg_type);
 extern  call_handle     InitCall(int);
 extern  cg_name         SymAddr(sym_id);
 extern  void            CnvS2S(float *,char *);
 extern  void            CnvD2S(double *,char *);
 extern  void            CnvX2S(extended *,char *);
 extern  cg_name         StructRef(cg_name,int);
-extern  bool            TypePointer(cg_type);
-extern  cg_type         GetType(unsigned_16);
-extern  cg_type         GetType1(unsigned_16);
-extern  cg_type         GetType2(unsigned_16);
 extern  tmp_handle      AllocTmp(cg_type);
 extern  cg_name         TmpPtr(tmp_handle,cg_type);
 extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
-extern  cg_type         PromoteToBaseType(cg_type);
 
 
 void    FCCmplxFlip() {

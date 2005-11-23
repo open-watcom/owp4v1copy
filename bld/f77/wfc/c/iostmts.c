@@ -42,6 +42,8 @@
 #include "units.h"
 #include "global.h"
 #include "recog.h"
+#include "ferror.h"
+#include "utility.h"
 
 extern  sym_id          LkSym(void);
 extern  void            InitIO(void);
@@ -51,8 +53,6 @@ extern  void            Unit(void);
 extern  void            FormatIdd(void);
 extern  void            IOList(void);
 extern  bool            Permission(int);
-extern  void            AdvanceITPtr(void);
-extern  void            Error(int,...);
 extern  void            GStartIO(void);
 extern  void            GNullEofStmt(void);
 

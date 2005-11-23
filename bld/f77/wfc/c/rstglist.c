@@ -40,15 +40,11 @@
 #include "fmemmgr.h"
 #include "fhash.h"
 #include "iflookup.h"
+#include "ferror.h"
+#include "insert.h"
 
 #include <string.h>
 
-extern  void            ClassNameErr(int,sym_id);
-extern  void            ClassErr(int,sym_id);
-extern  void            PrevDef(sym_id);
-extern  void            NameErr(int,sym_id);
-extern  void            NameWarn(int,sym_id);
-extern  void            Warning(int,...);
 extern  char            *STGetName(sym_id,char *);
 extern  int             AllocName(int);
 extern  intstar4        GetComBlkSize(sym_id);

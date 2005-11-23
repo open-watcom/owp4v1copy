@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  insert information into error messages
 *
 ****************************************************************************/
 
-
-//
-// INSERT    : insert information into error messages
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -40,17 +35,15 @@
 #include "stmtsw.h"
 #include "global.h"
 #include "types.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 #include <stdarg.h>
 
-extern  void            Error(int,...);
-extern  void            Warning(int,...);
-extern  void            Extension(int,...);
 extern  char            *STGetName(sym_id,char *);
 extern  char            *STStructName(sym_id,char *);
 extern  char            *STFieldName(sym_id,char *);
-extern  char            *MkNodeStr(itnode *);
-extern  void            FrNodeStr(char *);
 extern  void            MsgBuffer(uint,char *,...);
 
 extern  char            *StmtKeywords[];
@@ -138,7 +131,7 @@ static  char    *GetClass( uint idx, char *buff ) {
 static  char    *StmtName( char *buff ) {
 //=======================================
 
-    int         stmt;
+    STMT    stmt;
 
     stmt = StmtProc;
     if( StmtSw & SS_DATA_INIT ) {
@@ -208,8 +201,8 @@ void    NameErr( int errcod, sym_id sym ) {
 }
 
 
-void    NameStmtErr( int errcod, sym_id sym, int stmt ) {
-//=======================================================
+void    NameStmtErr( int errcod, sym_id sym, STMT stmt ) {
+//============================================================
 
     char        buff[MAX_SYMLEN+1];
 

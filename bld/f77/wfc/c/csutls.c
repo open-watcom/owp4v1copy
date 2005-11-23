@@ -35,22 +35,19 @@
 #include "opr.h"
 #include "fmemmgr.h"
 #include "recog.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 #include <string.h>
 
-extern  void            Error(int,...);
-extern  void            StmtExtension(uint);
-extern  void            StmtErr(int);
-extern  void            StmtPtrErr(int,void *);
-extern  void            AdvanceITPtr(void);
-extern  void            FreeITNodes(itnode *);
 extern  void            GBoolExpr(void);
 extern  void            GBrFalse(label_id);
 extern  void            FreeLabel(label_id);
 
 extern  char            *StmtKeywords[];
 
-static  const stmtproc __FAR    CSWords[] = {
+static  const STMT __FAR    CSWords[] = {
         0,
         PR_IF,
         PR_ELSEIF,

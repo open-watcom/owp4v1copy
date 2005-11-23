@@ -37,11 +37,10 @@
 #include "ftnstd.h"
 #include "optflags.h"
 #include "cpopt.h"
+#include "inout.h"
 
 #include <string.h>
 
-extern  void                    TOutNL(char *);
-extern  void                    TOut(char *);
 extern  void                    MsgBuffer(uint,char *,...);
 
 extern  opt_entry       CompOptns[];

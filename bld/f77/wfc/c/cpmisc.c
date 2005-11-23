@@ -36,10 +36,10 @@
 #include "global.h"
 #include "opn.h"
 #include "recog.h"
+#include "ferror.h"
+#include "inout.h"
+#include "utility.h"
 
-extern  void            Error(int,...);
-extern  void            Extension(int,...);
-extern  void            AdvanceITPtr(void);
 extern  void            GBreak(unsigned_16);
 extern  void            GReturn(void);
 extern  void            CSNoMore(void);
@@ -47,7 +47,6 @@ extern  void            AddConst(itnode *);
 extern  void            GetConst(void);
 extern  void            FScan(int,char *,cs_label);
 extern  sym_id          FmtPointer(void);
-extern  void            LFSkip(void);
 extern  void            BadStmt(void);
 
 extern  char            *StmtKeywords[];

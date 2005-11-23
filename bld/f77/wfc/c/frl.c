@@ -31,10 +31,11 @@
 
 #include "ftnstd.h"
 #include "fmemmgr.h"
+#include "frl.h"
 
 
-void    *FrlAlloc( void ***head, int size ) {
-//===========================================
+void    *FrlAlloc( void ***head, unsigned size ) {
+//================================================
 
 // Bag an item from the free list pointer head if possible.
 

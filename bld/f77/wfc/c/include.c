@@ -39,14 +39,11 @@
 #include "opn.h"
 #include "errcod.h"
 #include "recog.h"
-
-extern  void            Include(char *);
-extern  void            ComRead(void);
-extern  void            Error(int,...);
-extern  void            StmtExtension(uint);
-extern  void            AdvanceITPtr(void);
-extern  char            *MkNodeStr(itnode *);
-extern  void            FrNodeStr(char *);
+#include "ferror.h"
+#include "insert.h"
+#include "comio.h"
+#include "inout.h"
+#include "utility.h"
 
 
 void    CpInclude() {

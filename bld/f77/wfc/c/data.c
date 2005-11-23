@@ -40,6 +40,9 @@
 #include "segsw.h"
 #include "recog.h"
 #include "types.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 #include <ctype.h>
 #include <string.h>
@@ -52,24 +55,15 @@ extern  void            GEndDSet(void);
 extern  void            GDataEpilog(label_id);
 extern  void            GEndVarSet(void);
 extern  void            GStopIO(void);
-extern  void            AdvanceITPtr(void);
-extern  void            ProcDataExpr(void);
-extern  void            FreeOneNode(itnode *);
 extern  void            ListItem(void);
 extern  bool            StartImpDo(void);
 extern  void            FinishImpDo(void);
 extern  void            GetConst(void);
 extern  void            AddConst(itnode *);
-extern  void            ClassNameErr(int,sym_id);
-extern  void            Extension(int,...);
-extern  void            Error(int,...);
 extern  sym_id          LkSym(void);
 extern  sym_id          SymFind(char *,int);
 extern  void            TermDo(void);
 extern  int             HSToB(char *,uint,char *);
-extern  void            IllName(sym_id);
-extern  void            ProcDataIExpr(void);
-extern  void            ProcDataRepExpr(void);
 extern  bool            CalcStructSize(sym_id);
 
 
@@ -156,7 +150,7 @@ static  void    DoData() {
 
 // Process one vlist/dlist/ pair.
 
-    stmtproc    save_stmtproc;
+    STMT    save_stmtproc;
 
     StmtSw |= SS_DATA_INIT;
     save_stmtproc = StmtProc;

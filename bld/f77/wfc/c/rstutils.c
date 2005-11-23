@@ -30,17 +30,17 @@
 
 
 #include "ftnstd.h"
-#include "global.h"
 #include "segsw.h"
+#include "global.h"
 #include "cpopt.h"
 #include "errcod.h"
 #include "fmemmgr.h"
+#include "insert.h"
 
 #include <string.h>
 
 extern  void            FreeChain(void **);
 extern  void            *FreeLink(void *);
-extern  void            NameErr(int,sym_id);
 
 
 char    *STExtractName( sym_id sym, char *buff ) {

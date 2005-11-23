@@ -38,6 +38,7 @@
 #include "fcodes.h"
 #include "types.h"
 #include "emitobj.h"
+#include "fctypes.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -84,7 +85,6 @@ extern  tmp_handle      MkTmp(cg_name,cg_type);
 extern  cg_name         TmpPtr(tmp_handle,cg_type);
 extern  cg_name         TmpVal(tmp_handle,cg_type);
 extern  void            ReverseList(void **);
-extern  cg_type         PromoteToBaseType(cg_type);
 
 static  void            StructIOArrayStruct( sym_id arr );
 static  void            StructIOItem( sym_id fd );

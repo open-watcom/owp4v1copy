@@ -37,6 +37,7 @@
 #include "ftnstd.h"
 #include "fcodes.h"
 #include "emitobj.h"
+#include "ferror.h"
 
 
 void    EmitOp( unsigned_16 value ) {
@@ -48,7 +49,6 @@ void    EmitOp( unsigned_16 value ) {
     #include "errcod.h"
 
     extern      void    Suicide(void);
-    extern      void    Error(uint,...);
 
     static      uint    num_fcodes = { 0 };
 

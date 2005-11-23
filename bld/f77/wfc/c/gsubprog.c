@@ -46,9 +46,9 @@
 #include "recog.h"
 #include "emitobj.h"
 #include "types.h"
+#include "utility.h"
 
 extern  label_id        NextLabel(void);
-extern  void            AdvanceITPtr(void);
 extern  void            GLabel(label_id);
 extern  void            GStmtAddr(sym_id);
 extern  void            GBranch(label_id);

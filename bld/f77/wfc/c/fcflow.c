@@ -41,6 +41,10 @@
 #include "cpopt.h"
 #include "fmemmgr.h"
 #include "emitobj.h"
+#include "inout.h"
+#include "errcod.h"
+#include "ferror.h"
+#include "fctypes.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -75,15 +79,12 @@ extern  cg_name         XPop(void);
 extern  void            XPush(cg_name);
 extern  cg_name         SymAddr(sym_id);
 extern  cg_name         ImagPtr(cg_name,cg_type);
-extern  cg_type         F772CGType(sym_id);
 extern  cg_name         Concat(uint,cg_name);
 extern  bool            TypeCmplx(int);
-extern  void            CompErr(char *);
 extern  void            DoSelect(int);
 extern  unsigned_32     GetStmtNum(sym_id);
 extern  void            XPopCmplx(cg_cmplx *,cg_type);
 extern  cg_type         CmplxBaseType(cg_type);
-extern  cg_type         GetType(unsigned_16);
 extern  bool            IntType(PTYPE);
 extern  void            FCodeSequence(void);
 extern  void            SplitCmplx(cg_name,cg_type);
@@ -124,7 +125,7 @@ void    FiniLabels( int label_type ) {
                     BEFiniBack( curr->handle );
                     BEFreeBack( curr->handle );
                 } else {
-                    CompErr( "unfreed label" );
+                    InfoError( CP_ERROR, "unfreed label" );
                     BEFiniLabel( curr->handle );
                 }
             }
@@ -629,7 +630,7 @@ void    RefStmtLabel( sym_id sn ) {
 // Statement number has been referenced.
 
     if( sn->st.ref_count == 0 ) {
-        CompErr( "unaccounted referenced to label" );
+        InfoError( CP_ERROR, "unaccounted referenced to label" );
     } else {
         sn->st.ref_count--;
         if( sn->st.ref_count == 0 ) {

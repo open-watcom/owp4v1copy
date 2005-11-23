@@ -42,6 +42,9 @@
 #include "recog.h"
 #include "emitobj.h"
 #include "types.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 extern  void            DetSubList(void);
 extern  void            DetCallList(void);
@@ -50,12 +53,6 @@ extern  void            MarkIFUsed(IFF);
 extern  void            GMakeCplx(void);
 extern  void            GMakeDCplx(void);
 extern  void            GMakeXCplx(void);
-extern  void            FreeITNodes(itnode *);
-extern  void            FreeOneNode(itnode *);
-extern  bool            Subscripted(void);
-extern  void            AdvanceITPtr(void);
-extern  bool            BitOn(unsigned_16);
-extern  bool            ClassIs(unsigned_16);
 extern  void            GArg(void);
 extern  void            GILCnvTo(TYPE,uint);
 extern  void            CnvTo(itnode*,TYPE,uint);
@@ -64,13 +61,6 @@ extern  void            BackTrack(void);
 extern  void            MoveDown(void);
 extern  void            KillOpnOpr(void);
 extern  void            AdvError(int);
-extern  void            Error(int,...);
-extern  void            Extension(int,...);
-extern  void            ClassErr(int,sym_id);
-extern  void            TypeTypeErr(int,TYPE,TYPE);
-extern  void            TypeErr(int,TYPE);
-extern  void            OpndErr(int);
-extern  void            PrmCodeErr(int,uint);
 extern  void            EndExpr(void);
 extern  sym_id          STConst(void *,TYPE,uint);
 extern  sym_id          STLit(byte *,int);
@@ -124,7 +114,6 @@ extern  void            GLoc(void);
 extern  void            GAllocated(void);
 extern  sym_id          FindStruct(char *,int);
 extern  void            SetDefinedStatus(void);
-extern  bool            TypeIs(TYPE);
 
 extern  void            (* const __FAR GenOprTable[])();
 extern  void            (* const __FAR ConstTable[])();

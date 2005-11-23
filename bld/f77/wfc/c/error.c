@@ -43,17 +43,12 @@
 #include "global.h"
 #include "bglobal.h"
 #include "cioconst.h"
+#include "ferror.h"
+#include "inout.h"
 
 #include <stdarg.h>
 #include <string.h>
 
-extern  void            OpenErr(void);
-extern  void            PrintErr(char *);
-extern  void            JustErr(char *);
-extern  void            PrtLstNL(char *);
-extern  void            PrtErrNL(void);
-extern  bool            SetLst(bool);
-extern  bool            WasStmtListed(void);
 extern  bool            RecEOS(void);
 extern  void            BldErrCode(unsigned int,char *);
 extern  int             CarrotType(unsigned int);
@@ -65,25 +60,10 @@ extern  char            *STGetName(sym_id,char *);
 extern  void            (* __BldErrMsg)(unsigned int,char *,va_list);
 
 
-void    Extension( int code, ... ) {
-//==================================
-
-// Extension Message Handler
-
-    va_list     args;
-
-    if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
-    if( ( Options & OPT_EXT ) != 0 ) {
-        va_start( args, code );
-        ErrHandler( "*EXT*", code, args );
-        va_end( args );
-    }
-    ExtIssued();
-}
 
 
-void    ExtIssued() {
-//===================
+static  void    ExtIssued( void ) {
+//=========================
 
 // An extension message has just been issued.
 
@@ -91,25 +71,8 @@ void    ExtIssued() {
 }
 
 
-void    Warning( int code, ... ) {
-//================================
-
-// Warning message handler
-
-    va_list     args;
-
-    if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
-    if( ( Options & OPT_WARN ) != 0 ) {
-        va_start( args, code );
-        ErrHandler( "*WRN*", code, args );
-        va_end( args );
-    }
-    WrnIssued();
-}
-
-
-void    WrnIssued() {
-//===================
+static  void    WrnIssued( void ) {
+//=========================
 
 // A warning message has just been issued.
 
@@ -117,22 +80,8 @@ void    WrnIssued() {
 }
 
 
-void    Error( int code, ... ) {
-//==============================
-
-// Error message handler
-
-    va_list     args;
-
-    va_start( args, code );
-    ErrHandler( "*ERR*", code, args );
-    va_end( args );
-    ErrIssued();
-}
-
-
-void        ErrIssued() {
-//=======================
+static  void    ErrIssued( void ) {
+//=========================
 
 // An error message has just been issued.
 
@@ -145,23 +94,8 @@ void        ErrIssued() {
 }
 
 
-void    InfoError( int code, ... ) {
-//==================================
-
-// Informational error - should not affect compilation.
-
-    va_list     args;
-
-    NumErrors++;
-    ProgSw |= PS_ERROR;
-    va_start( args, code );
-    ErrHandler( "*ERR*", code, args );
-    va_end( args );
-}
-
-
-void        ChkErrFile() {
-//========================
+void    ChkErrFile( void ) {
+//==========================
 
 // Make sure error file is opened.
 
@@ -270,4 +204,67 @@ static  void    ErrHandler( char *err_type, int error, va_list args ) {
     PrintErr( buffer );
     PrtErrNL();
     SetLst( save_list );
+}
+
+
+void    Error( int code, ... ) {
+//==============================
+
+// Error message handler
+
+    va_list     args;
+
+    va_start( args, code );
+    ErrHandler( "*ERR*", code, args );
+    va_end( args );
+    ErrIssued();
+}
+
+
+void    Warning( int code, ... ) {
+//================================
+
+// Warning message handler
+
+    va_list     args;
+
+    if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
+    if( ( Options & OPT_WARN ) != 0 ) {
+        va_start( args, code );
+        ErrHandler( "*WRN*", code, args );
+        va_end( args );
+    }
+    WrnIssued();
+}
+
+
+void    Extension( int code, ... ) {
+//==================================
+
+// Extension Message Handler
+
+    va_list     args;
+
+    if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
+    if( ( Options & OPT_EXT ) != 0 ) {
+        va_start( args, code );
+        ErrHandler( "*EXT*", code, args );
+        va_end( args );
+    }
+    ExtIssued();
+}
+
+
+void    InfoError( int code, ... ) {
+//==================================
+
+// Informational error - should not affect compilation.
+
+    va_list     args;
+
+    NumErrors++;
+    ProgSw |= PS_ERROR;
+    va_start( args, code );
+    ErrHandler( "*ERR*", code, args );
+    va_end( args );
 }

@@ -39,8 +39,8 @@
 #include "fcodes.h"
 #include "opn.h"
 #include "emitobj.h"
+#include "utility.h"
 
-extern  void            AdvanceITPtr(void);
 extern  int             AsgnCat(void);
 extern  void            CatArgs(int);
 extern  sym_id          StaticAlloc(uint,TYPE);

@@ -38,14 +38,12 @@
 #include "fmemmgr.h"
 #include "recog.h"
 #include "types.h"
+#include "ferror.h"
+#include "insert.h"
+#include "utility.h"
 
 #include <string.h>
 
-extern  void            Error(int,...);
-extern  void            NameErr(int,sym_id);
-extern  void            IllName(sym_id);
-extern  void            AdvanceITPtr(void);
-extern  bool            CIntExpr(void);
 extern  sym_id          LkSym(void);
 extern  com_eq          *STComEq(void);
 

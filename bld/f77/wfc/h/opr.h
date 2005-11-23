@@ -37,9 +37,9 @@
 #endif
 #define pick(id,opr_index,proc_index) id,
 
-enum OPERATORS {
+typedef enum {
 #include "oprdefn.h"
-};
+} OPR;
 
 //  operator group ranges
 
@@ -49,7 +49,5 @@ enum OPERATORS {
 #define LAST_RELOP      OPR_GT
 #define FIRST_ARITHOP   OPR_PLS
 #define LAST_ARITHOP    OPR_CAT
-
-typedef enum OPERATORS OPR;
 
 #endif

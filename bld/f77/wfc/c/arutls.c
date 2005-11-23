@@ -40,10 +40,8 @@
 #include "opn.h"
 #include "astype.h"
 #include "recog.h"
-
-extern  void            AdvanceITPtr(void);
-extern  void            FreeOneNode(itnode *);
-extern  void            Error(int,...);
+#include "ferror.h"
+#include "utility.h"
 
 
 void    ScanExpr() {

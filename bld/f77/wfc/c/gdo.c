@@ -45,9 +45,8 @@
 #include "recog.h"
 #include "emitobj.h"
 #include "types.h"
+#include "utility.h"
 
-extern  void            EatDoParm(void);
-extern  void            AdvanceITPtr(void);
 extern  sym_id          StaticAlloc(uint,TYPE);
 
 

@@ -42,6 +42,7 @@
 #include "prmcodes.h"
 #include "fmemmgr.h"
 #include "emitobj.h"
+#include "fctypes.h"
 
 //=================== Back End Code Generation Routines ====================
 
@@ -80,7 +81,6 @@ extern  cg_name         CGTempName(temp_handle,cg_type);
 
 //=========================================================================
 
-extern  cg_type         F772CGType(sym_id);
 extern  void            GenLocalSyms(void);
 extern  void            GenLocalDbgInfo(void);
 extern  void            FreeLocalBacks(bool);
@@ -105,9 +105,6 @@ extern  void            RefStmtLabel(sym_id);
 extern  void            DoneLabel(label_id);
 extern  cg_name         CmplxAddr(cg_name,cg_name);
 extern  aux_info        *AuxLookup(sym_id);
-extern  cg_type         GetType(unsigned_16);
-extern  bool            TypePointer(cg_type);
-extern  bool            DataPointer(cg_type);
 extern  cg_name         SCBPointer(cg_name);
 extern  cg_name         SCBPtrAddr(cg_name);
 extern  cg_name         SCBLength(cg_name);
@@ -121,7 +118,6 @@ extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
 extern  sym_id          FindArgShadow(sym_id);
 extern  bool            ForceStatic(unsigned_16);
 extern  bool            SCBRequired(sym_id);
-extern  cg_type         PromoteToBaseType(cg_type);
 
 extern  aux_info        FortranInfo;
 extern  back_handle     TraceEntry;

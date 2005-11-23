@@ -38,22 +38,15 @@
 #include "cpopt.h"
 #include "fmemmgr.h"
 #include "recog.h"
+#include "insert.h"
+#include "utility.h"
 
 #include <string.h>
 
-extern  void            AdvanceITPtr(void);
-extern  bool            ClassIs(unsigned_16);
-extern  bool            CLogicExpr(void);
-extern  bool            CCharExpr(void);
-extern  void            CArithExpr(void);
-extern  void            ConstExpr(TYPE);
 extern  sym_id          LkSym(void);
 extern  sym_id          STLit(byte *,uint);
 extern  sym_id          STConst(void *,TYPE,uint);
 extern  void            CnvTo(itnode *,TYPE,uint);
-extern  void            IllName(sym_id);
-extern  void            IllType(sym_id);
-extern  void            NameErr(int,sym_id);
 extern  void            CkSymDeclared(sym_id);
 
 

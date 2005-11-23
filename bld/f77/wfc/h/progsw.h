@@ -33,7 +33,7 @@
 #ifndef _PROGSW_H_INCLUDED
 #define _PROGSW_H_INCLUDED
 
-enum PROGRAM_SWITCHES {
+typedef enum {
     PS_FIRST_COMPILE      = 0x0001,
     PS_END_OF_SUBPROG     = 0x0002,
     PS_SOURCE_EOF         = 0x0004,
@@ -50,8 +50,6 @@ enum PROGRAM_SWITCHES {
     PS_LIB_OBJECT         = 0x2000,  // loading object
     PS_STMT_TOO_BIG       = 0x4000,  // out of memory building i.t list
     PS_SYMTAB_PROCESS     = 0x8000
-};
-
-typedef enum PROGRAM_SWITCHES PSWT;
+} PSWT;
 
 #endif

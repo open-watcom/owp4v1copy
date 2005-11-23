@@ -41,16 +41,14 @@
 #include "stmtsw.h"
 #include "progsw.h"
 #include "global.h"
+#include "ferror.h"
+#include "frl.h"
+#include "comio.h"
 
 #include <string.h>
 
-extern  void            *FrlAlloc(void **,int);
-extern  void            Error(int,...);
 extern  void            InitScan(void);
 extern  void            Scan(void);
-extern  void            ComRead(void);
-extern  void            ComPrint(void);
-extern  void            Extension(int,...);
 
 extern  char            *StmtKeywords[];
 extern  char            *LogTab[];

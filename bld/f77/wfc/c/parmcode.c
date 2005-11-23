@@ -38,8 +38,7 @@
 #include "opn.h"
 #include "global.h"
 #include "prmcodes.h"
-
-extern  bool            Subscripted(void);
+#include "utility.h"
 
 
 int     ParmCode( itnode *arg ) {
