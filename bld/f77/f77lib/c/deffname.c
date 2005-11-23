@@ -37,8 +37,4 @@
 
 #include "ftnstd.h"
 
-#if _CPU == 370
-  char  DefFName[] = { "FT01F001" };
-#else
   char  DefFName[] = { "FOR000" };
-#endif

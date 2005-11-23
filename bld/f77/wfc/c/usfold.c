@@ -44,9 +44,6 @@ extern  void            Error(int,...);
 extern  bool            AddIOFlo(intstar4 *,intstar4 *);
 extern  bool            SubIOFlo(intstar4 *,intstar4 *);
 extern  bool            MulIOFlo(intstar4 *,intstar4 *);
-#if _CPU == _VAX
-extern  void            SetFUBit(void);
-#endif
 extern  void            ExpOp(TYPE,TYPE,OPTR);
 
 
@@ -106,9 +103,6 @@ void    DivI( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    AddR( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->single = opnd1->single + opnd2->single;
 }
 
@@ -116,9 +110,6 @@ void    AddR( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    SubR( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->single = opnd1->single - opnd2->single;
 }
 
@@ -126,9 +117,6 @@ void    SubR( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    MulR( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->single = opnd1->single * opnd2->single;
 }
 
@@ -136,9 +124,6 @@ void    MulR( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    DivR( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->single = opnd1->single / opnd2->single;
 }
 
@@ -149,9 +134,6 @@ void    DivR( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    AddD( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->dble = opnd1->dble + opnd2->dble;
 }
 
@@ -159,9 +141,6 @@ void    AddD( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    SubD( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->dble = opnd1->dble - opnd2->dble;
 }
 
@@ -169,9 +148,6 @@ void    SubD( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    MulD( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->dble = opnd1->dble * opnd2->dble;
 }
 
@@ -179,9 +155,6 @@ void    MulD( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    DivD( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->dble = opnd1->dble / opnd2->dble;
 }
 
@@ -192,9 +165,6 @@ void    DivD( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    AddE( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->extended = opnd1->extended + opnd2->extended;
 }
 
@@ -202,9 +172,6 @@ void    AddE( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    SubE( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->extended = opnd1->extended - opnd2->extended;
 }
 
@@ -212,9 +179,6 @@ void    SubE( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    MulE( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->extended = opnd1->extended * opnd2->extended;
 }
 
@@ -222,9 +186,6 @@ void    MulE( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    DivE( ftn_type *opnd1, ftn_type *opnd2 ) {
 //================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->extended = opnd1->extended / opnd2->extended;
 }
 
@@ -237,9 +198,6 @@ void    AddC( complex *x, complex *y ) {
 
     complex     result;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     result.realpart = x->realpart + y->realpart;
     result.imagpart = x->imagpart + y->imagpart;
     *x = result;
@@ -251,9 +209,6 @@ void    SubC( complex *x, complex *y ) {
 
     complex     result;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     result.realpart = x->realpart - y->realpart;
     result.imagpart = x->imagpart - y->imagpart;
     *x = result;
@@ -267,9 +222,6 @@ void    MulC( ftn_type *_x, ftn_type *_y ) {
     complex     *x = &_x->complex;
     complex     *y = &_y->complex;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     result.realpart = x->realpart * y->realpart - x->imagpart * y->imagpart;
     result.imagpart = x->realpart * y->imagpart + x->imagpart * y->realpart;
     *x = result;
@@ -282,9 +234,6 @@ void    DivC( complex *x, complex *y ) {
     single      bottom;
     complex     result;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     bottom = y->realpart * y->realpart + y->imagpart * y->imagpart;
     result.realpart = x->realpart * y->realpart + x->imagpart * y->imagpart;
     result.imagpart = x->imagpart * y->realpart - x->realpart * y->imagpart;
@@ -302,9 +251,6 @@ void    AddQ( dcomplex *x, dcomplex *y ) {
 
     dcomplex    result;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     result.realpart = x->realpart + y->realpart;
     result.imagpart = x->imagpart + y->imagpart;
     *x = result;
@@ -316,9 +262,6 @@ void    SubQ( dcomplex *x, dcomplex *y ) {
 
     dcomplex    result;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     result.realpart = x->realpart - y->realpart;
     result.imagpart = x->imagpart - y->imagpart;
     *x = result;
@@ -332,9 +275,6 @@ void    MulQ( ftn_type *_x, ftn_type *_y ) {
     dcomplex    *x = &_x->dcomplex;
     dcomplex    *y = &_y->dcomplex;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     result.realpart = x->realpart * y->realpart - x->imagpart * y->imagpart;
     result.imagpart = x->realpart * y->imagpart + x->imagpart * y->realpart;
     *x = result;
@@ -347,9 +287,6 @@ void    DivQ( dcomplex *x, dcomplex *y ) {
     single      bottom;
     dcomplex    result;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     bottom = y->realpart * y->realpart + y->imagpart * y->imagpart;
     result.realpart = x->realpart * y->realpart + x->imagpart * y->imagpart;
     result.imagpart = x->imagpart * y->realpart - x->realpart * y->imagpart;
@@ -367,9 +304,6 @@ void    AddX( xcomplex *x, xcomplex *y ) {
 
     xcomplex    result;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     result.realpart = x->realpart + y->realpart;
     result.imagpart = x->imagpart + y->imagpart;
     *x = result;
@@ -381,9 +315,6 @@ void    SubX( xcomplex *x, xcomplex *y ) {
 
     xcomplex    result;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     result.realpart = x->realpart - y->realpart;
     result.imagpart = x->imagpart - y->imagpart;
     *x = result;
@@ -397,9 +328,6 @@ void    MulX( ftn_type *_x, ftn_type *_y ) {
     xcomplex    *x = &_x->xcomplex;
     xcomplex    *y = &_y->xcomplex;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     result.realpart = x->realpart * y->realpart - x->imagpart * y->imagpart;
     result.imagpart = x->realpart * y->imagpart + x->imagpart * y->realpart;
     *x = result;
@@ -412,9 +340,6 @@ void    DivX( xcomplex *x, xcomplex *y ) {
     single      bottom;
     xcomplex    result;
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     bottom = y->realpart * y->realpart + y->imagpart * y->imagpart;
     result.realpart = x->realpart * y->realpart + x->imagpart * y->imagpart;
     result.imagpart = x->imagpart * y->realpart - x->realpart * y->imagpart;
@@ -436,9 +361,6 @@ void    XINeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XRNeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 //=================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->single = -opnd2->single;
 }
 
@@ -446,9 +368,6 @@ void    XRNeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XDNeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 //=================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->dble = -opnd2->dble;
 }
 
@@ -456,9 +375,6 @@ void    XDNeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XENeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 //=================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->extended = -opnd2->extended;
 }
 
@@ -466,9 +382,6 @@ void    XENeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XCNeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 //=================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->complex.realpart = -opnd2->complex.realpart;
     opnd1->complex.imagpart = -opnd2->complex.imagpart;
 }
@@ -477,9 +390,6 @@ void    XCNeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XQNeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 //=================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->dcomplex.realpart = -opnd2->dcomplex.realpart;
     opnd1->dcomplex.imagpart = -opnd2->dcomplex.imagpart;
 }
@@ -488,9 +398,6 @@ void    XQNeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XXNeg( ftn_type *opnd1, ftn_type *opnd2 ) {
 //=================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->xcomplex.realpart = -opnd2->xcomplex.realpart;
     opnd1->xcomplex.imagpart = -opnd2->xcomplex.imagpart;
 }
@@ -513,9 +420,6 @@ void    XRPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XDPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 //==================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->dble = opnd2->dble;
 }
 
@@ -523,9 +427,6 @@ void    XDPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XEPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 //==================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->extended = opnd2->extended;
 }
 
@@ -533,9 +434,6 @@ void    XEPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XCPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 //==================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->complex.realpart = opnd2->complex.realpart;
     opnd1->complex.imagpart = opnd2->complex.imagpart;
 }
@@ -544,9 +442,6 @@ void    XCPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XQPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 //==================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->dcomplex.realpart = opnd2->dcomplex.realpart;
     opnd1->dcomplex.imagpart = opnd2->dcomplex.imagpart;
 }
@@ -555,9 +450,6 @@ void    XQPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 void    XXPlus( ftn_type *opnd1, ftn_type *opnd2 ) {
 //==================================================
 
-#if _CPU == _VAX
-    SetFUBit();
-#endif
     opnd1->xcomplex.realpart = opnd2->xcomplex.realpart;
     opnd1->xcomplex.imagpart = opnd2->xcomplex.imagpart;
 }

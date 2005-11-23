@@ -56,10 +56,6 @@ pick( OPR_AND,  OPRI_AND,      OPTR_AND     ) //  .AND.
 pick( OPR_NOT,  OPRI_NOT,      OPTR_NOT     ) //  .NOT.
 // field selection operator
 pick( OPR_FLD,  OPRI_FLD,      OPTR_FILLER  ) //  %
-//  special operators
-#if _CPU == _VAX
-pick( OPR_AMP,  0,             0            ) //  pass by address
-#endif
 //  arithmetic operators
 pick( OPR_PLS,  OPRI_PLS_MIN,  OPTR_ADD     ) //  +
 pick( OPR_MIN,  OPRI_PLS_MIN,  OPTR_SUB     ) //  -

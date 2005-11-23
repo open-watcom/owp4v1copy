@@ -249,33 +249,6 @@ static  itnode  *CollectNumber( itnode *itptr, int *sign ) {
 }
 
 
-#if _CPU == _VAX
-
-static  void    PassBy( OPR opr) {
-//================================
-
-    itnode      *itptr;
-
-    if( CITNode->link->opn.ds != DSOPN_PHI ) {
-        itptr = CITNode;
-        CITNode = CITNode->link;
-        itptr->link = NULL;
-        FreeITNodes( itptr );
-        CITNode->opr = itptr->opr;     // must come before DSTable[]()
-        DSTable[ CITNode->opn ]();
-    }
-    if( opr == OPR_DIV ) {
-        CITNode->pass_by |= PASS_BY_VALUE;
-    } else if( opr == OPR_AMP ) {
-        CITNode->pass_by |= PASS_BY_REF;
-    } else {
-        CITNode->pass_by |= PASS_BY_DESCR;
-    }
-}
-
-#endif
-
-
 static  void    Phi() {
 //=====================
 
@@ -317,12 +290,6 @@ static  void    Phi() {
                         AltReturn();
                     }
                 }
-#if _CPU == _VAX
-            } else if( ( opr2 == OPR_DIV ) ||     // pass arugment by value
-                       ( opr2 == OPR_AMP ) ||     // pass argument by address
-                       ( opr2 == OPR_FLD ) ) {    // pass arugment by descriptor
-                PassBy( opr2 );
-#endif
             }
         }
     }

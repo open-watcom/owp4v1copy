@@ -275,11 +275,7 @@ typedef struct ftnfile {
 #define SHARE_DENYRD    4       // deny read access
 #define SHARE_DENYNO    5       // allow read and write access
 
-#if _CPU == 370
-  #define PREC_MAX_UNIT 99      // largest allowed unit number
-#else
-  #define PREC_MAX_UNIT 999     // largest allowed unit number
-#endif
+#define PREC_MAX_UNIT 999     // largest allowed unit number
 
 // constants for various specifiers
 
