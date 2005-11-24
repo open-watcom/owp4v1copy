@@ -1,23 +1,27 @@
-proj_name = f77lib
+proj_name = flib
 
-f77lib_host_cpu_086 = i86
-f77lib_host_cpu_087 = i86
-f77lib_host_cpu_286 = i86
-f77lib_host_cpu_287 = i86
-f77lib_host_cpu_386 = 386
-f77lib_host_cpu_387 = 386
-f77lib_host_cpu_axp = axp
-f77lib_host_cpu_ppc = ppc
-host_cpu = $(f77lib_host_cpu_$(processor))
+!ifndef flib_autodepends
+flib_autodepends = .AUTODEPEND
+!endif
 
-f77lib_host_os_msdos   = dos
-f77lib_host_os_winnt   = nt
-f77lib_host_os_windows = win
-f77lib_host_os_os2     = os2
-f77lib_host_os_qnx     = qnx
-f77lib_host_os_netware = nov
-f77lib_host_os_linux   = linux
-host_os = $(f77lib_host_os_$(system))
+flib_host_cpu_086 = i86
+flib_host_cpu_087 = i86
+flib_host_cpu_286 = i86
+flib_host_cpu_287 = i86
+flib_host_cpu_386 = 386
+flib_host_cpu_387 = 386
+flib_host_cpu_axp = axp
+flib_host_cpu_ppc = ppc
+host_cpu = $(flib_host_cpu_$(processor))
+
+flib_host_os_msdos   = dos
+flib_host_os_winnt   = nt
+flib_host_os_windows = win
+flib_host_os_os2     = os2
+flib_host_os_qnx     = qnx
+flib_host_os_netware = nov
+flib_host_os_linux   = linux
+host_os = $(flib_host_os_$(system))
 
 !include cproj.mif
 !include deftarg.mif

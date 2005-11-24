@@ -1,7 +1,7 @@
-proj_name = f77
+proj_name = wfc
 
-!ifndef f77_autodepends
-f77_autodepends = .AUTODEPEND
+!ifndef wfc_autodepends
+wfc_autodepends = .AUTODEPEND
 !endif
 
 !include cproj.mif
@@ -13,7 +13,7 @@ f77_autodepends = .AUTODEPEND
 !include wres.mif
 
 !ifeq release 0
-f77_trmem = 1
+wfc_trmem = 1
 !endif
 
 inc_dirs=-I"../h" -I"../../h" $(cg_inc_dirs) -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h"
@@ -39,15 +39,13 @@ extra_c_flags_386 = -zp1
 .c: ../c;../../c;$(wasm_dir)/c;$(trmem_dir);
 
 !ifeq host_cpu axp
-asm_opts  = -oc -zq -we
+extra_a_flags = -oc
 .asm: ../../asmaxp
-.asm.obj:
-    $(as) $[* $(asm_opts)
 !endif
 
 !include ../files.mif
 
-!ifeq f77_trmem 1
+!ifeq wfc_trmem 1
 extra_c_flags_fmemmgr = -DTRMEM -I$(trmem_dir)
 fobjs += trmem.obj trmemcvr.obj
 !endif
@@ -59,11 +57,11 @@ exename_ppc = wfcppc
 target_exe  = $(exename_$(target_cpu))
 
 !ifdef mkstubs
-f77_cg_libs = $(cg_stub_libs);
+wfc_cg_libs = $(cg_stub_libs);
 !else ifeq release 1
-f77_cg_libs = $(cg_libs)
+wfc_cg_libs = $(cg_libs)
 !else
-f77_cg_libs = $(cg_debug_libs)
+wfc_cg_libs = $(cg_debug_libs)
 !endif
 
 extra_c_flags_trmem = -DTRMEM -of+
@@ -80,7 +78,7 @@ $(target_exe).exe : $(pre_deps_wasm) $(fobjs) errmsg.res $(cg_deps) $(flibs)
     %create $^&.lnk
     @for %i in ($(fobjs)) do @%append $^&.lnk file %i
     @for %i in ($(flibs)) do @%append $^&.lnk lib %i
-    @%append $^&.lnk $(f77_cg_libs)
+    @%append $^&.lnk $(wfc_cg_libs)
 !ifeq host_os osi
     @%append $^&.lnk name $^&.rex
     $(linker) $(lflags) @$^&.lnk
