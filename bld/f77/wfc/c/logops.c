@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  logical operator code generation routines
 *
 ****************************************************************************/
 
-
-//
-// LOGOPS    : logical operator code generation routines
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -49,7 +44,7 @@ void    LogOp( TYPE typ1, TYPE typ2, OPTR op ) {
 
     bool        flip;
 
-    op = op;
+    op -= OPTR_FIRST_LOGOP;
     flip = FALSE;
     if( ( ( CITNode->opn.us & USOPN_WHERE ) == USOPN_SAFE ) &&
         ( ( CITNode->link->opn.us & USOPN_WHERE ) != USOPN_SAFE ) ) {

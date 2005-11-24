@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate F-Code for binary operations
 *
 ****************************************************************************/
 
-
-//
-// BINOPS :     Generate F-Code for binary operations
-//
 
 #include "ftnstd.h"
 #include "optr.h"
@@ -80,19 +75,6 @@ void    ExpOp( TYPE typ1, TYPE typ2, OPTR opr ) {
 }
 
 
-void    BinOp( TYPE typ1, TYPE typ2, OPTR opr ) {
-//===============================================
-
-// Generate code to perform a binary operation.
-
-    if( typ1 != TY_NO_TYPE ) {                // binary operator
-        Binary( typ1, typ2, opr );
-    } else {                                  // unary operator.
-        Unary( typ2, opr );
-    }
-}
-
-
 static void Unary( TYPE typ, OPTR opr ) {
 //=======================================
 
@@ -135,7 +117,8 @@ static void Binary( TYPE typ1, TYPE typ2, OPTR opr ) {
         ( ( CITNode->link->opn.us & USOPN_WHERE ) != USOPN_SAFE ) ) {
         flip = TRUE;
     }
-    op_code = BINOPS + ( opr - OPTR_ADD );
+    opr -= OPTR_FIRST_ARITHOP;
+    op_code = BINOPS + opr;
     PushOpn( CITNode->link );
     PushOpn( CITNode );
     if( TypeCmplx( typ1 ) && TypeCmplx( typ2 ) ) {
@@ -175,5 +158,18 @@ static void Binary( TYPE typ1, TYPE typ2, OPTR opr ) {
         GenTypes( CITNode->link, CITNode );
     } else {
         GenTypes( CITNode, CITNode->link );
+    }
+}
+
+
+void    BinOp( TYPE typ1, TYPE typ2, OPTR opr ) {
+//===============================================
+
+// Generate code to perform a binary operation.
+
+    if( typ1 != TY_NO_TYPE ) {                // binary operator
+        Binary( typ1, typ2, opr );
+    } else {                                  // unary operator.
+        Unary( typ2, opr );
     }
 }

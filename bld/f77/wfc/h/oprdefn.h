@@ -37,10 +37,12 @@ pick( OPR_FBR,  OPRI_FBR,      OPTR_NULL    ) //  function/array bracket
 pick( OPR_LBR,  OPRI_LBR,      OPTR_NULL    ) //  (
 pick( OPR_COM,  OPRI_COM,      OPTR_NULL    ) //  ,
 pick( OPR_COL,  OPRI_COL,      OPTR_NULL    ) //  :
+//  assign operator
 pick( OPR_EQU,  OPRI_EQU,      OPTR_ASGN    ) //  =
+//
 pick( OPR_RBR,  OPRI_RBR,      OPTR_CH_ASGN ) //  )
 pick( OPR_DPT,  OPRI_FLD,      OPTR_CH_REL  ) //  .
-pick( OPR_AST,  0,             OPTR_REL     ) //  * for alternate return specifier
+pick( OPR_AST,  OPRI_PHI,      OPTR_REL     ) //  * for alternate return specifier
 // relational operators
 pick( OPR_EQ,   OPRI_REL,      OPTR_REL     ) //  .EQ.
 pick( OPR_NE,   OPRI_REL,      OPTR_REL     ) //  .NE.
@@ -56,10 +58,12 @@ pick( OPR_AND,  OPRI_AND,      OPTR_AND     ) //  .AND.
 pick( OPR_NOT,  OPRI_NOT,      OPTR_NOT     ) //  .NOT.
 // field selection operator
 pick( OPR_FLD,  OPRI_FLD,      OPTR_FILLER  ) //  %
-//  arithmetic operators
+// arithmetic operators
 pick( OPR_PLS,  OPRI_PLS_MIN,  OPTR_ADD     ) //  +
 pick( OPR_MIN,  OPRI_PLS_MIN,  OPTR_SUB     ) //  -
 pick( OPR_MUL,  OPRI_MUL_DIV,  OPTR_MUL     ) //  *
 pick( OPR_DIV,  OPRI_MUL_DIV,  OPTR_DIV     ) //  /
+// exponentiation
 pick( OPR_EXP,  OPRI_EXP,      OPTR_EXP     ) //  **
+// concatenation
 pick( OPR_CAT,  OPRI_CAT,      OPTR_CAT     ) //  //   character operator

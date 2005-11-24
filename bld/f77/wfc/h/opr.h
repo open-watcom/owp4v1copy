@@ -43,11 +43,11 @@ typedef enum {
 
 //  operator group ranges
 
-#define FIRST_LOGOP     OPR_EQV
-#define LAST_LOGOP      OPR_NOT
-#define FIRST_RELOP     OPR_EQ
-#define LAST_RELOP      OPR_GT
-#define FIRST_ARITHOP   OPR_PLS
-#define LAST_ARITHOP    OPR_CAT
+#define OPR_FIRST_LOGOP     OPR_EQV
+#define OPR_LAST_LOGOP      OPR_NOT
+#define OPR_FIRST_RELOP     OPR_EQ
+#define OPR_LAST_RELOP      OPR_GT
+#define OPR_FIRST_ARITHOP   OPR_PLS
+#define OPR_LAST_ARITHOP    OPR_CAT
 
 #endif

@@ -196,8 +196,8 @@ static  const bool __FAR        CmpValue[] = {
            };
 
 
-static  void    Convert() {
-//=========================
+static  void    Convert( void ) {
+//===============================
 
     CnvTo( CITNode, ResultType, TypeSize( ResultType ) );
     CnvTo( CITNode->link , ResultType, TypeSize( ResultType ) );
@@ -208,7 +208,7 @@ static  void    LogOp( TYPE typ1, TYPE typ2, OPTR op ) {
 //======================================================
 
     typ1 = typ1;
-    op -= OPTR_EQV;
+    op -= OPTR_FIRST_LOGOP;
     if( _IsTypeInteger( typ2 ) ) {
         Convert();
         XBitWiseTab[ op ]( &CITNode->value, &CITNode->link->value );
@@ -228,7 +228,7 @@ static  void    RelOp( TYPE typ1, TYPE typ2, OPTR op ) {
     }
     XCmpTab[ ResultType - TY_INTEGER_1 ]( &CITNode->value,
                                         &CITNode->link->value,
-          &CmpValue[ ( CITNode->link->opr - FIRST_RELOP ) * 3 ] );
+          &CmpValue[ ( CITNode->link->opr - OPR_FIRST_RELOP ) * 3 ] );
     ResultType = TY_LOGICAL;
 }
 
@@ -239,7 +239,7 @@ static  void    BinOp( TYPE typ1, TYPE typ2, OPTR op ) {
     byte        index;
 
     typ2 = typ2;
-    op -= OPTR_ADD;
+    op -= OPTR_FIRST_ARITHOP;
     index = ResultType - TY_INTEGER_1;
     if( typ1 != TY_NO_TYPE ) {
         Convert();

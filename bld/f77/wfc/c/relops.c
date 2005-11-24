@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  relational operators
 *
 ****************************************************************************/
 
-
-//
-// RELOPS       : relational operators
-//
 
 #include "ftnstd.h"
 #include "opr.h"
@@ -52,16 +47,17 @@ static  int     CharLength( itnode *op ) {
 
     USOPN       opn;
 
-    if( op->typ != TY_CHAR ) return( 0 );
+    if( op->typ != TY_CHAR )
+        return( 0 );
     opn = op->opn.us;
-    if( opn & USOPN_SS1 ) return( op->value.st.ss_size );
-    if( ( opn & USOPN_WHERE ) == USOPN_SAFE ) return( 0 );
-    if( ( opn & USOPN_WHAT ) == USOPN_NNL ) {
+    if( opn & USOPN_SS1 )
+        return( op->value.st.ss_size );
+    if( ( opn & USOPN_WHERE ) == USOPN_SAFE )
+        return( 0 );
+    if( ( opn & USOPN_WHAT ) == USOPN_NNL )
         return( op->sym_ptr->ns.xt.size );
-    }
-    if( ( opn & USOPN_WHAT ) == USOPN_CON ) {
+    if( ( opn & USOPN_WHAT ) == USOPN_CON )
         return( op->sym_ptr->lt.length );
-    }
     return( 0 );
 }
 
@@ -112,7 +108,7 @@ void    RelOp( TYPE typ1, TYPE typ2, OPTR optr ) {
     }
     PushOpn( CITNode->link );
     PushOpn( CITNode );
-    op_code -= FIRST_RELOP;
+    op_code -= OPR_FIRST_RELOP;
     if( TypeCmplx( typ1 ) && TypeCmplx( typ2 ) ) {
         op_code += CC_CMP_EQ;
     } else if( TypeCmplx( typ1 ) ) {

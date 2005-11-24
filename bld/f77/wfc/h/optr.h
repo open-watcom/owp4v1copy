@@ -37,3 +37,8 @@
 typedef enum {
 #include "optrdefn.h"
 } OPTR;
+
+#define OPTR_FIRST          OPTR_EQV
+#define OPTR_FIRST_LOGOP    OPTR_EQV
+#define OPTR_FIRST_ARITHOP  OPTR_ADD
+

@@ -745,7 +745,7 @@ static  void    Generate( void ) {
         } else {
             mask = LegalOprsB[ ( typ2 - TY_FIRST ) * LEGALOPR_TAB_COLS + typ1 - TY_FIRST ];
         }
-        if( ( ( mask >> op ) & 1 ) == 0 ) {
+        if( ( ( mask >> ( op - OPTR_FIRST ) ) & 1 ) == 0 ) {
             // illegal combination
             MoveDown();
             if( typ1 == TY_NO_TYPE ) {
@@ -757,7 +757,7 @@ static  void    Generate( void ) {
             }
             BackTrack();
         } else if( DoGenerate( typ1, typ2, &res_size ) ) {
-            if( ( opr >= FIRST_RELOP ) && ( opr <= LAST_RELOP ) &&
+            if( ( opr >= OPR_FIRST_RELOP ) && ( opr <= OPR_LAST_RELOP ) &&
                 ( (ResultType == TY_COMPLEX) || (ResultType == TY_DCOMPLEX) ||
                 (ResultType == TY_XCOMPLEX) ) &&
                 ( opr != OPR_EQ ) && ( opr != OPR_NE ) ) {
