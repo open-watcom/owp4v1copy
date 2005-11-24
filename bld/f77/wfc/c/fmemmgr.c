@@ -33,7 +33,6 @@
 #include "errcod.h"
 #include "stmtsw.h"
 #include "global.h"
-#include "bglobal.h"
 #include "fmemmgr.h"
 #include "ferror.h"
 #include "frl.h"

@@ -29,21 +29,11 @@
 ****************************************************************************/
 
 
+#ifdef pick
+#undef pick
+#endif
+#define pick(id,const,gener) id,
+
 typedef enum {
-   OPTR_EQV,            //  .eqv. operation
-   OPTR_NEQV,           //  .neqv. operation
-   OPTR_OR,             //  .or. operation
-   OPTR_AND,            //  .and. operation
-   OPTR_NOT,            //  .not. operation
-   OPTR_FILLER,         //  filler
-   OPTR_ASGN,           //  ,
-   OPTR_CH_ASGN,        //  character assignment
-   OPTR_CH_REL,         //  character compare
-   OPTR_REL,            //  relational operation (,
-   OPTR_ADD,            //  + operation
-   OPTR_SUB,            //  - operation
-   OPTR_MUL,            //  * operation
-   OPTR_DIV,            //  / operation
-   OPTR_EXP,            //  exponentiation
-   OPTR_CAT             //  concatenation
+#include "optrdefn.h"
 } OPTR;

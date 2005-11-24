@@ -208,6 +208,7 @@ static  void    LogOp( TYPE typ1, TYPE typ2, OPTR op ) {
 //======================================================
 
     typ1 = typ1;
+    op -= OPTR_EQV;
     if( _IsTypeInteger( typ2 ) ) {
         Convert();
         XBitWiseTab[ op ]( &CITNode->value, &CITNode->link->value );
@@ -301,22 +302,11 @@ void    ConstCat( int size ) {
     FMemFree( string );
 }
 
+#ifdef pick
+#undef pick
+#endif
+#define pick(id,const,gener) const,
 
 void    (* const __FAR ConstTable[])() = {
-         &LogOp,            // 0    .EQV.
-         &LogOp,            // 1    .NEQV.
-         &LogOp,            // 2    .OR.
-         &LogOp,            // 3    .AND.
-         &LogOp,            // 4    .NOT.
-          0,                // 5    filler
-         &BadEqual,         // 6      =
-          0,                // 7    filler
-          0,                // 8    filler
-         &RelOp,            // 9    relop
-         &BinOp,            // A      +
-         &BinOp,            // B      -
-         &BinOp,            // C      *
-         &BinOp,            // D      /
-         &ExpOp,            // E      **
-          0                 // F      // handled by FiniCat in UPSCAN who
-};                          //        will call ConstCat().
+#include "optrdefn.h"
+};

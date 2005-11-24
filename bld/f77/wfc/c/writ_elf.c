@@ -39,7 +39,7 @@
 #include "ftnstd.h"
 #include "errcod.h"
 #include "fio.h"
-#include "bglobal.h"
+#include "cioconst.h"
 #include "global.h"
 #include "brow2elf.h"
 #include "ferror.h"

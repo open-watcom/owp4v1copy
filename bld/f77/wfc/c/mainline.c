@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WATFOR-77 main line
+* Description:  FORTRAN compiler main line
 *
 ****************************************************************************/
 
@@ -62,7 +62,7 @@ static  char            CmdBuff[2*128];
 int     main( int argc, char *argv[] ) {
 //======================================
 
-// WATFOR-77 main line.
+// FORTRAN compiler main line.
 
     int         ret_code;
     char        *opts[MAX_OPTIONS+1];

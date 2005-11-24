@@ -43,7 +43,7 @@
 #include "ftnstd.h"
 #include "errcod.h"
 #include "fio.h"
-#include "bglobal.h"
+#include "cioconst.h"
 #include "omodes.h"
 #include "browscli.h"
 #include "brow2elf.h"

@@ -34,4 +34,4 @@ extern void    Extension( int code, ... );
 extern void    Warning( int code, ... );
 extern void    Error( int code, ... );
 extern void    InfoError( int code, ... );
-extern void    ChkErrFile( void );
+

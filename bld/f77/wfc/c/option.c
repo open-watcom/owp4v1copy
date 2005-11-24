@@ -35,7 +35,6 @@
 #include "cpopt.h"
 #include "optflags.h"
 #include "global.h"
-#include "bglobal.h"
 #include "intcnv.h"
 #include "csetinfo.h"
 #include "fmemmgr.h"

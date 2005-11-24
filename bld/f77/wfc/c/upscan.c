@@ -157,8 +157,11 @@ enum {
     OPRI_FLD          //  %,.
 };
 
+#undef pick
+#define pick(id,proc) id,
+
 typedef enum {
-    BB,BC,BE,BR,BS,CA,EE,GC,GO,PA,RP,FC,MO,BT,CB,CR,CO,CP,EV,HC,LC,PC,PE,KO
+#include "rtntable.h"
 } move;
 
 static  const move    __FAR OprSeqMat[] = {
@@ -1340,33 +1343,12 @@ static  void    InlineCnvt( void ) {
 }
 
 
-static  const void (* const __FAR RtnTable[])() = {
-         &BadBracket,           // for odd parenthesis sequences
-         &BadColonOpn,          // colon operator expects integer operands
-         &BadEqual,             // illegal quantity on left side of =
-         &BadRelOpn,            // relational operator has logical operand
-         &BadSequence,          // bad sequence of operators
-         &Call,                 // detach ss list, substr list, call subprog
-         &EndExpr,              // opr sequence is start,terminate
-         &GrabColon,            // substring indexing expression using :
-         &Generate,             // go and generate some code
-         &PrepArg,              // prepare item in function or subscript list
-         &RemoveParen,          // remove parenthesis
-         &FiniCat,              // finish concatenation
-         &Missing,              // missing operator
-         &BackTrack,            // scan backwards
-         &CatBack,              // maybe scan backwards on = // sequence
-         &CatAxeParens,         // remove parenthesis set on ( // sequence
-         &CatOpn,               // concatenation operand
-         &CatParen,             // check if ) is for a substring operand
-         &ProcOpn,              // process operand and then scan backwards
-         &HighColon,            // check for DSOPN_PHI on : ) sequence
-         &LowColon,             // handle [ : and called from GrabColon
-         &ParenCat,             // check if ) is for a substring operand
-         &ParenExpr,            // done evaluating parenthesized expression
-         &ChkCatOpn             // check if concatenation operand
-};
+#undef pick
+#define pick(id,proc) proc,
 
+static  const void (* const __FAR RtnTable[])() = {
+#include "rtntable.h"
+};
 
 void    UpScan( void ) {
 //======================

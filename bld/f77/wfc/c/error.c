@@ -41,7 +41,6 @@
 #include "segsw.h"
 #include "stmtsw.h"
 #include "global.h"
-#include "bglobal.h"
 #include "cioconst.h"
 #include "ferror.h"
 #include "inout.h"
@@ -91,17 +90,6 @@ static  void    ErrIssued( void ) {
     }
     NumErrors++;
     ProgSw |= PS_ERROR;
-}
-
-
-void    ChkErrFile( void ) {
-//==========================
-
-// Make sure error file is opened.
-
-    if( ErrFile == NULL ) {
-        OpenErr();
-    }
 }
 
 

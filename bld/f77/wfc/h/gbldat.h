@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  FORTRAN compiler global data
 *
 ****************************************************************************/
 
@@ -114,3 +113,8 @@ gbl_defn unsigned_32    CPUOpts;        // code generator options (CPU target)
 gbl_defn unsigned_32    OZOpts;         // code generator options (optimizations)
 gbl_defn char           SymBuff[MAX_SYMLEN+1]; // buffer for symbol names
 gbl_defn bool           StmtNoFound;    // statement number found?
+
+gbl_defn int            UnFreeMem;      //  & of unfreed bits of memory
+gbl_defn uint           NumErrors;      //  number of errors during compilation
+                                        //  and execution
+gbl_defn uint           LinesPerPage;   //  number of lines per page in listing

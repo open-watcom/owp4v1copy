@@ -36,7 +36,7 @@
 
 #include "ftnstd.h"
 #include "global.h"
-#include "bglobal.h"
+#include "cioconst.h"
 #include "fcgbls.h"
 #include "progsw.h"
 #include "cpopt.h"

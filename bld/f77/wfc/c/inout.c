@@ -33,7 +33,6 @@
 #include "progsw.h"
 #include "cpopt.h"
 #include "errcod.h"
-#include "bglobal.h"
 #include "global.h"
 #include "omodes.h"
 #include "cioconst.h"
@@ -42,6 +41,7 @@
 #include "ferror.h"
 #include "comio.h"
 #include "inout.h"
+#include "sdfile.h"
 
 #include "banner.h"
 #ifdef _BANEXTRA
@@ -113,6 +113,21 @@ extern  character_set   CharSetInfo;
     #error Unknown System
 #endif
 
+
+static char           *ListBuff;      // listing file buffer
+static file_handle    ListFile;       // file pointer for the listing file
+static int            ListCursor;     // offset into "ListBuff"
+
+static byte           ListCount;      // # of lines printed to listing file
+static byte           ListFlag;       // flag for listing file
+
+static char           *ErrBuff;       // error file buffer
+static file_handle    ErrFile;        // file pointer for the error file
+static int            ErrCursor;      // offset into "ErrBuff"
+
+static char           *TermBuff;      // terminal file buffer
+static file_handle    TermFile;       // file pointer for terminal
+static int            TermCursor;     // offset into "TermBuff"
 
 //========================================================================
 //
@@ -556,6 +571,16 @@ static  void    ChkErrErr() {
     }
 }
 
+void    ChkErrFile( void ) {
+//==========================
+
+// Make sure error file is opened.
+
+    if( ErrFile == NULL ) {
+        OpenErr();
+    }
+}
+
 
 static  void    ErrOut( char *string ) {
 //======================================
@@ -939,3 +964,4 @@ static  void    SendBuff( char *str, char *buff, int buff_size, int *cursor,
         *cursor = 0;
     }
 }
+

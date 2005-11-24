@@ -46,21 +46,12 @@ extern  void            BinOp(TYPE,TYPE,OPTR);
 extern  void            ExpOp(TYPE,TYPE,OPTR);
 extern  void            FieldOp(TYPE,TYPE,OPTR);
 
+#ifdef pick
+#undef pick
+#endif
+#define pick(id,const,gener) gener,
+
 void    (* const __FAR GenOprTable[])() = {
-        &LogOp,            // 0    .EQV.
-        &LogOp,            // 1    .NEQV.
-        &LogOp,            // 2    .OR.
-        &LogOp,            // 3    .AND.
-        &LogOp,            // 4    .NOT.
-        &FieldOp,          // 5      %
-        &AsgnOp,           // 6      =
-         0,                // 7    filler
-        &FieldOp,          // 8      .
-        &RelOp,            // 9    relop
-        &BinOp,            // A      +
-        &BinOp,            // B      -
-        &BinOp,            // C      *
-        &BinOp,            // D      /
-        &ExpOp,            // E      **
-        0                  // F      // AsgnOp handles a = b // c
+#include "optrdefn.h"
 };
+

@@ -24,17 +24,30 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  operator index for expression generate
+*                  or constant expression folding routines
 *
 ****************************************************************************/
 
 
-// Define data used both at compile-time and run-time:
-// ====================================================
+//       id         const      gener
+pick( OPTR_EQV,     &LogOp,    &LogOp   )  //  .eqv. operation
+pick( OPTR_NEQV,    &LogOp,    &LogOp   )  //  .neqv. operation
+pick( OPTR_OR,      &LogOp,    &LogOp   )  //  .or. operation
+pick( OPTR_AND,     &LogOp,    &LogOp   )  //  .and. operation
+pick( OPTR_NOT,     &LogOp,    &LogOp   )  //  .not. operation
+pick( OPTR_FILLER,  NULL,      &FieldOp )  //  filler
+pick( OPTR_ASGN,    &BadEqual, &AsgnOp  )  //  ,
+pick( OPTR_CH_ASGN, NULL,      NULL     )  //  character assignment
+pick( OPTR_CH_REL,  NULL,      &FieldOp )  //  character compare
+pick( OPTR_REL,     &RelOp,    &RelOp   )  //  relational operation (,
+pick( OPTR_ADD,     &BinOp,    &BinOp   )  //  + operation
+pick( OPTR_SUB,     &BinOp,    &BinOp   )  //  - operation
+pick( OPTR_MUL,     &BinOp,    &BinOp   )  //  * operation
+pick( OPTR_DIV,     &BinOp,    &BinOp   )  //  / operation
+pick( OPTR_EXP,     &ExpOp,    &ExpOp   )  //  exponentiation
+pick( OPTR_CAT,     NULL,      NULL     )  //  concatenation
+pick( OPTR_NULL,    NULL,      NULL     )  //  no operation
 
-#include <sdfile.h>
-
-#define gbl_defn extern
-#include <gblboth.h>
-#include <ciodat.h>
+// Note:  concatenation // (gener) handled by FiniCat in UPSCAN who will call ConstCat().
+//        concatenation // (const) AsgnOp handles a = b // c

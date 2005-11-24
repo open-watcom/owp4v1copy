@@ -35,7 +35,7 @@
 #include "progsw.h"
 #include "errcod.h"
 #include "fmemmgr.h"
-#include "bglobal.h"
+#include "cioconst.h"
 #include "inout.h"
 #include "boot77.h"
 #include "cle.h"

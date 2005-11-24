@@ -655,13 +655,12 @@ void    XChCmp( ftn_type *opnd1, ftn_type *opnd2, const logstar1 __FAR *res ) {
 void    GenExp( TYPE typ ) {
 //==========================
 
-//    OPTR    op;
+    OPTR    op;
 
     AddConst( CITNode );
     AddConst( CITNode->link );
-//    op = OPTR_EXP;
-//    GenOprTable[ op ]( typ, typ, op );
-    ExpOp( typ, typ, OPTR_EXP );
+    op = OPTR_EXP;
+    GenOprTable[ op ]( typ, typ, op );
 }
 
 
