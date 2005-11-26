@@ -40,6 +40,7 @@ tests = &
         alg02.$(exe)    &
         clib01.$(exe)   &
         cmplx01.$(exe)  &
+	deque01.$(exe)  &
         fun01.$(exe)    &
         iter01.$(exe)   &
         lim01.$(exe)    &
@@ -76,6 +77,8 @@ test : .symbolic test.lnk $(tests)
     $(run) clib01 >> test.out
     @echo ----------cmplx01---------->> test.out
     $(run) cmplx01 >> test.out
+    @echo ----------deque01---------->> test.out
+    $(run) deque01 >> test.out
     @echo ----------fun01---------->> test.out
     $(run) fun01 >> test.out
     @echo ----------iter01---------->> test.out
