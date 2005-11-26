@@ -348,6 +348,60 @@ namespace std {
     }
   }
 
+  // remove_copy( FwdIterator, FwdIterator, OutputIterator, Type const & )
+  // *********************************************************************
+  template< class ForwardIterator, class OutputIterator, class Type >
+  OutputIterator remove_copy( ForwardIterator first, ForwardIterator last,
+                               OutputIterator out, Type const & value)
+  {
+    while( first != last){
+      if( *first == value ){
+        ++first;
+      }else{
+        *out = *first;
+        ++first;
+        ++out;
+      }
+    }
+    return( out );
+  }
+
+  // remove_copy_if( FwdIterator, FwdIterator, OutputIterator, Predictate )
+  // **********************************************************************
+  template< class ForwardIterator, class OutputIterator, class Predictate >
+  ForwardIterator remove_copy_if( ForwardIterator first, ForwardIterator last,
+                                  OutputIterator out, Predictate pred )
+  {
+    while( first != last){
+      if( pred( *first ) != false ){
+        ++first;
+      }else{
+        *out = *first;
+        ++first;
+        ++out;
+      }
+    }
+    return( out );
+  }
+
+  // remove( ForwardIterator, ForwardIterator, Type const & )
+  // ********************************************************
+  template< class ForwardIterator, class Type >
+  ForwardIterator remove( ForwardIterator first, ForwardIterator last,
+                          Type const & value)
+  {
+    return( remove_copy( first, last, first, value ) );
+  }
+
+  // remove_if( ForwardIterator, ForwardIterator, Predictate )
+  // *********************************************************
+  template< class ForwardIterator, class Predictate >
+  ForwardIterator remove_if( ForwardIterator first, ForwardIterator last,
+                             Predictate pred )
+  {
+    return( remove_copy_if( first, last, first, pred ) );
+  }
+
   // reverse( Bidirectional, Bidirectional )
   // ***************************************
   template< class Bidirectional >

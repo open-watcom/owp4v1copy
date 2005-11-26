@@ -34,6 +34,7 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include "sanity.cpp"
 
 // Used in some of the tests.
 void advance_char( char &ch )
@@ -369,6 +370,54 @@ bool generate_test( )
   return( rc );
 }
 
+bool remove_test( )
+{
+  int* o;
+  int ref[] = { 1,2,3,4,3,2,1 };
+  int a1[] = { 1,2,3,4,3,2,1 };
+  //---- remove ----
+  //don't remove anything
+  o = std::remove( a1, a1 + 7, 0 );
+  if( std::memcmp( a1, ref, sizeof( ref ) ) || (o != a1 + 7) ) FAIL
+  //remove 2s
+  o = std::remove( a1, a1 + 7, 2 );
+  int ref2[] = { 1,3,4,3,1 };
+  if( std::memcmp( a1, ref2, sizeof( ref2 ) ) || (o != a1 + 5) ) FAIL
+  //remove 1s
+  o = std::remove( a1, a1 + 5, 1 );
+  int ref3[] = { 3,4,3 };
+  if( std::memcmp( a1, ref3, sizeof( ref3 ) ) || (o != a1 + 3) ) FAIL
+  //remove 4
+  o = std::remove( a1, a1 + 3, 4 );
+  int ref4[] = { 3,3 };
+  if( std::memcmp( a1, ref4, sizeof( ref4 ) ) || (o != a1 + 2) ) FAIL
+  //remove 3
+  o = std::remove( a1, a1 + 2, 3 );
+  if( o != a1 ) FAIL
+  
+  //---- remove_copy_if ----
+  int out[9];
+  int a2[] = { 1,2,3,4,5,4,3,2,1 };
+  int ref5[] = { 2,4,4,2 };
+  o = std::remove_copy_if( a2, a2 + 9, out, is_odd ); //removes if !false
+  if( std::memcmp( out, ref5, sizeof( ref5 ) ) || (o != out + 4 ) ) FAIL
+  
+  //---- remove_if ----
+  //just a quick test because it is really the same as remove_copy_if
+  o = std::remove_if( a2, a2 + 9, is_odd ); //removes if !false
+  if( std::memcmp( out, ref5, sizeof( ref5 ) ) || (o != a2 + 4 ) ) FAIL
+  
+  //---- remove_copy ----
+  //just a quick test because it is really the same as remove
+  int a3[] = { 9, 1, 9, 2, 9, 3, 9, 4, 9, 5, 9, 6, 9, 7, 9 };
+  int ref6[] = { 1, 2, 3, 4, 5, 6, 7 };
+  o = std::remove_copy( a3, a3+15, out, 9 );
+  if( std::memcmp( out, ref6, sizeof( ref6 ) ) || (o != out + 7 ) ) FAIL
+  
+  return( true );
+}
+
+
 
 bool reverse_test( )
 {
@@ -427,6 +476,7 @@ int main( )
     if( !replace_test( )    ) rc = 1;
     if( !fill_test( )       ) rc = 1;
     if( !generate_test( )   ) rc = 1;
+    if( !remove_test( )     ) rc = 1;
     if( !reverse_test( )    ) rc = 1;
   }
   catch( ... ) {
