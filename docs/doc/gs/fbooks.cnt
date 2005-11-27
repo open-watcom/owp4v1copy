@@ -15,6 +15,7 @@
 :include wbrw.cnt
 :include wprof.cnt
 :include editor.cnt
+:include vi.cnt
 :include resedt.cnt
 :include resacc.cnt
 :include resdlg.cnt

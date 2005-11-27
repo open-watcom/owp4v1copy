@@ -9,9 +9,11 @@
 :Index Watcom C++ Class Library Reference Help=cpplib.hlp
 :Index Watcom C++ Diagnostic Messages Help=wpperrs.hlp
 :Index Watcom Editor Help=editor.hlp
+:Index Watcom Vi Editor Help=vi.hlp
 
 1 About Watcom C/C++ On-line Documentation=About_Watcom_CDCPP_OnMline_Documentation
 :include editor.cnt
+:include vi.cnt
 :include clib.cnt
 :include cpplib.cnt
 :include clr.cnt

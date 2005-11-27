@@ -14,6 +14,7 @@
 :Index Watcom Debugger Guide Help=wd.hlp
 :Index Watcom Dialog Editor Help=resdlg.hlp
 :Index Watcom Editor Help=editor.hlp
+:Index Watcom Vi Editor Help=vi.hlp
 :Index Watcom Heap Walker Help=heapwalk.hlp
 :Index Watcom IDE Help=ide.hlp
 :Index Watcom Image Editor Help=resimg.hlp
@@ -45,6 +46,7 @@
 :include wbrw.cnt
 :include wprof.cnt
 :include editor.cnt
+:include vi.cnt
 :include resedt.cnt
 :include resacc.cnt
 :include resdlg.cnt

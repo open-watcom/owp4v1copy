@@ -44,7 +44,7 @@
 !inject resstr                 nt                win
 !inject spy                    nt                win
 !inject tools       dos  html  nt  os2  pdf  ps  win
-#!inject vi                                   ps     
+!inject vi          dos  html  nt  os2  pdf  ps  win
 !inject wasaxp
 !inject wbrw                   nt  os2           win
 !inject wccerrs     dos  html  nt  os2           win
@@ -579,7 +579,9 @@ book_src=wddoc
 book_title=$(company) VI Editor
 book_objs=$(objs_vi)
 book_incs=$(incs_vi)
+book_bmroot=$(bmroot_vi)
 book_src=vi
+book_multi_chapter=1
 
 !else
 
