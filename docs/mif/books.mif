@@ -578,6 +578,7 @@ book_src=wddoc
 # vi
 book_title=$(company) VI Editor
 book_objs=$(objs_vi)
+book_objs_ps=$(objs_vi_ps)
 book_incs=$(incs_vi)
 book_bmroot=$(bmroot_vi)
 book_src=vi

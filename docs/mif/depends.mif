@@ -2194,13 +2194,15 @@ $(docsrc_dir)$(SL)lr$(SL)gr$(SL)grtitle.gml
 #bmroot_owstldev = $(docsrc_dir)$(SL)owstl
 incs_owstldev = $(docsrc_dir)$(SL)owstl
 objs_owstldev = &
-$(docsrc_dir)$(SL)owstl$(SL)owstl.gml &
-$(docsrc_dir)$(SL)owstl$(SL)owgml.gml &
+$(docsrc_dir)$(SL)owstl$(SL)algorith.gml &
+$(docsrc_dir)$(SL)owstl$(SL)copy.gml &
 $(docsrc_dir)$(SL)owstl$(SL)intro.gml &
-$(docsrc_dir)$(SL)owstl$(SL)rbtree.gml &
 $(docsrc_dir)$(SL)owstl$(SL)list.gml &
-$(docsrc_dir)$(SL)owstl$(SL)string.gml &
-$(docsrc_dir)$(SL)owstl$(SL)copy.gml
+$(docsrc_dir)$(SL)owstl$(SL)owgml.gml &
+$(docsrc_dir)$(SL)owstl$(SL)owstl.gml &
+$(docsrc_dir)$(SL)owstl$(SL)rbtree.gml &
+$(docsrc_dir)$(SL)owstl$(SL)stack.gml &
+$(docsrc_dir)$(SL)owstl$(SL)string.gml
 
 # pg sub-directory
 bmroot_pg = $(docsrc_dir)$(SL)pg
@@ -2624,7 +2626,7 @@ objs_vi = &
     $(bmroot_vi)$(SL)vi029.bmp &
     $(bmroot_vi)$(SL)vi030.bmp &
     $(bmroot_vi)$(SL)vi031.bmp
-book_objs_ps=&
+objs_vi_ps=&
     vi001.ps &
     vi003.ps &
     vi004.ps &

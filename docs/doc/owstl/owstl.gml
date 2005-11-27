@@ -33,5 +33,11 @@
 :H0.String
 :INCLUDE file='string'.
 
+:H0.Algorithms
+:INCLUDE file='algorith'
+
+:H0.Stack
+:INCLUDE file='stack'
+
 :eBODY
 :eGDOC.
