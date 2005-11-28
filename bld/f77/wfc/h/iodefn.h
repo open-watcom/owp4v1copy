@@ -30,40 +30,32 @@
 ****************************************************************************/
 
 
-enum {
-  IO_ACCESS     = 1,    // ACCESS
-  IO_ACTION,            // ACTION
-  IO_BLANK,             // BLANK
-  IO_BLOCKSIZE,         // BLOCKSIZE
-  IO_CARRIAGECONTROL,   // CARRIAGECONTROL
-  IO_DIRECT,            // DIRECT
-  IO_END,               // END
-  IO_ERR,               // ERR
-  IO_EXIST,             // EXIST
-  IO_FILE,              // FILE
-  IO_FMT,               // FMT
-  IO_FORM,              // FORM
-  IO_FMTTED,            // FORMATTED
-  IO_IOSTAT,            // IOSTAT
-  IO_NAME,              // NAME
-  IO_NAMED,             // NAMED
-  IO_NXTREC,            // NEXTREC
-  IO_NUMBER,            // NUMBER
-  IO_OPENED,            // OPENED
-  IO_REC,               // REC
-  IO_RECL,              // RECL
-  IO_RECORDTYPE,        // RECORDTYPE
-  IO_SEQ,               // SEQUENTIAL
-  IO_SHARE,             // SHARE
-  IO_STATUS,            // STATUS
-  IO_UNFMTD,            // UNFORMATTED
-  IO_UNIT,              // UNIT
-
-  IO_KW_MAX     = IO_UNIT,
-
-//  end of io keywords
-
-  IO_LIST_DIR,          // fmt=*
-  IO_INTERNAL,          // internal file
-  IO_NAMELIST           // NAMELIST-directed
-};
+//      id                 keyword
+pick( IO_NULL,            ""                )
+pick( IO_ACCESS,          "ACCESS"          )
+pick( IO_ACTION,          "ACTION"          )
+pick( IO_BLANK,           "BLANK"           )
+pick( IO_BLOCKSIZE,       "BLOCKSIZE"       )
+pick( IO_CARRIAGECONTROL, "CARRIAGECONTROL" )
+pick( IO_DIRECT,          "DIRECT"          )
+pick( IO_END,             "END"             )
+pick( IO_ERR,             "ERR"             )
+pick( IO_EXIST,           "EXIST"           )
+pick( IO_FILE,            "FILE"            )
+pick( IO_FMT,             "FMT"             )
+pick( IO_FORM,            "FORM"            )
+pick( IO_FMTTED,          "FORMATTED"       )
+pick( IO_IOSTAT,          "IOSTAT"          )
+pick( IO_NAME,            "NAME"            )
+pick( IO_NAMED,           "NAMED"           )
+pick( IO_NXTREC,          "NEXTREC"         )
+pick( IO_NUMBER,          "NUMBER"          )
+pick( IO_OPENED,          "OPENED"          )
+pick( IO_REC,             "REC"             )
+pick( IO_RECL,            "RECL"            )
+pick( IO_RECORDTYPE,      "RECORDTYPE"      )
+pick( IO_SEQ,             "SEQUENTIAL"      )
+pick( IO_SHARE,           "SHARE"           )
+pick( IO_STATUS,          "STATUS"          )
+pick( IO_UNFMTD,          "UNFORMATTED"     )
+pick( IO_UNIT,            "UNIT"            )

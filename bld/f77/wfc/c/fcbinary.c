@@ -37,7 +37,6 @@
 #include "ftnstd.h"
 #include "cgdefs.h"
 #include "wf77cg.h"
-#include "fcodes.h"
 #include "global.h"
 #include "cpopt.h"
 #include "types.h"
@@ -64,6 +63,26 @@ extern  cg_name         XPopValue(cg_type);
 extern  void            XPopCmplx(cg_cmplx *,cg_type);
 extern  cg_name         XPop(void);
 extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
+
+
+static  void    XBinary( int op_code ) {
+//======================================
+
+// Binary operator F-Code processor.
+
+    cg_name     op1;
+    cg_name     op2;
+    unsigned_16 typ_info;
+    cg_type     typ1;
+    cg_type     typ2;
+
+    typ_info = GetU16();
+    typ1 = GetType1( typ_info );
+    typ2 = GetType2( typ_info );
+    op1 = XPopValue( typ1 );
+    op2 = XPopValue( typ2 );
+    XPush( CGBinary( op_code, op1, op2, ResCGType( typ1, typ2 ) ) );
+}
 
 
 void            FCFlip() {
@@ -123,26 +142,6 @@ void    FCModulus() {
 // Binary mod F-Code processor.
 
     XBinary( O_MOD );
-}
-
-
-static  void    XBinary( int op_code ) {
-//======================================
-
-// Binary operator F-Code processor.
-
-    cg_name     op1;
-    cg_name     op2;
-    unsigned_16 typ_info;
-    cg_type     typ1;
-    cg_type     typ2;
-
-    typ_info = GetU16();
-    typ1 = GetType1( typ_info );
-    typ2 = GetType2( typ_info );
-    op1 = XPopValue( typ1 );
-    op2 = XPopValue( typ2 );
-    XPush( CGBinary( op_code, op1, op2, ResCGType( typ1, typ2 ) ) );
 }
 
 

@@ -62,18 +62,18 @@ void    PushOpn( itnode *itptr ) {
         flags = itptr->flags;
         what = itptr->opn.us & USOPN_WHAT;
         if( where != 0 ) {
-            EmitOp( PUSH );
+            EmitOp( FC_PUSH );
             SymRef( itptr );
         } else if( itptr->opn.us & USOPN_FLD ) {
             PushConst( itptr->value.intstar4 );
         } else if( ( flags & SY_CLASS ) == SY_SUBPROGRAM ) {
             // 1. it's a statement function
             // 2. it's a subprogram passed as an argument
-            EmitOp( PUSH );
+            EmitOp( FC_PUSH );
             SymRef( itptr );
         } else if( what == USOPN_CON ) {
             if( typ == TY_CHAR ) {
-                EmitOp( PUSH_LIT );
+                EmitOp( FC_PUSH_LIT );
                 if( itptr->sym_ptr->lt.flags & LT_SCB_TMP_REFERENCE ) {
                     itptr->sym_ptr->lt.flags |= LT_SCB_REQUIRED;
                 } else {
@@ -82,11 +82,11 @@ void    PushOpn( itnode *itptr ) {
                     itptr->sym_ptr->lt.flags |= LT_SCB_TMP_REFERENCE;
                 }
             } else {
-                EmitOp( PUSH_CONST );
+                EmitOp( FC_PUSH_CONST );
             }
             SymRef( itptr );
         } else {
-            EmitOp( PUSH );
+            EmitOp( FC_PUSH );
             SymRef( itptr );
         }
         SetOpn( itptr, USOPN_SAFE );
@@ -98,7 +98,7 @@ void    PushOpn( itnode *itptr ) {
 void    PushSym( sym_id sym ) {
 //=============================
 
-    EmitOp( PUSH );
+    EmitOp( FC_PUSH );
     OutPtr( sym );
 }
 
@@ -117,7 +117,7 @@ void    PushConst( intstar4 val ) {
 
 // Push an integer constant.
 
-    EmitOp( PUSH_CONST );
+    EmitOp( FC_PUSH_CONST );
     OutPtr( STConst( &val, TY_INTEGER, TypeSize( TY_INTEGER ) ) );
 }
 
@@ -125,6 +125,6 @@ void    PushConst( intstar4 val ) {
 void    GParenExpr() {
 //====================
 
-    EmitOp( DONE_PAREN_EXPR );
+    EmitOp( FC_DONE_PAREN_EXPR );
     GenType( CITNode );
 }

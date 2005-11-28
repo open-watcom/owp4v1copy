@@ -36,7 +36,7 @@
 
 #include "ftnstd.h"
 #include "wf77defs.h"
-#include "fcodes.h"
+#include "rtconst.h"
 #include "cg.h"
 #include "tmpdefs.h"
 #include "global.h"
@@ -55,14 +55,14 @@ extern  void            CGTrash(cg_name);
 //=========================================================================
 
 extern  cg_name         XPop(void);
-extern  call_handle     InitCall(int);
+extern  call_handle     InitCall(RTCODE);
 extern  void            *GetPtr(void);
 extern  void            *ConstBack(sym_id);
 extern  void            FreeTmps(void);
 
 
-void    FCDone() {
-//================
+void    FCDone( void ) {
+//======================
 
 // Process end of an expression.
 
@@ -70,8 +70,8 @@ void    FCDone() {
 }
 
 
-void    FCCmplxDone() {
-//=====================
+void    FCCmplxDone( void ) {
+//===========================
 
 // Process end of a complex expression.
 
@@ -79,8 +79,8 @@ void    FCCmplxDone() {
 }
 
 
-void    FCStmtDone() {
-//====================
+void    FCStmtDone( void ) {
+//==========================
 
 // Finished compiling a statement.
 
@@ -88,8 +88,8 @@ void    FCStmtDone() {
 }
 
 
-void    FCTrash() {
-//=================
+void    FCTrash( void ) {
+//=======================
 
 // Trash a cg_name.
 
@@ -97,8 +97,8 @@ void    FCTrash() {
 }
 
 
-static  void    Break( int routine ) {
-//====================================
+static  void    Break( RTCODE routine ) {
+//=======================================
 
 // Process PAUSE/STOP statement.
 
@@ -118,8 +118,8 @@ static  void    Break( int routine ) {
 }
 
 
-void    FCStop() {
-//================
+void    FCStop( void ) {
+//======================
 
 // Process STOP statement.
 
@@ -127,8 +127,8 @@ void    FCStop() {
 }
 
 
-void    FCPause() {
-//=================
+void    FCPause( void ) {
+//=======================
 
 // Process PAUSE statement.
 
@@ -136,8 +136,8 @@ void    FCPause() {
 }
 
 
-void    FCNull() {
-//================
+void    FCNull( void ) {
+//======================
 
 // Do nothing.
 

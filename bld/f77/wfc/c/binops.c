@@ -38,7 +38,7 @@
 #include "emitobj.h"
 #include "types.h"
 
-extern  bool            TypeCmplx(int);
+extern  bool            TypeCmplx(TYPE);
 
 
 static bool UnaryMul( TYPE typ1, TYPE typ2 ) {
@@ -65,7 +65,7 @@ void    ExpOp( TYPE typ1, TYPE typ2, OPTR opr ) {
 
     if( UnaryMul( typ1, typ2 ) ) {
         PushOpn( CITNode );
-        EmitOp( UNARY_MUL );
+        EmitOp( FC_UNARY_MUL );
         GenType( CITNode );
         OutU16( ITIntValue( CITNode->link ) );
         SetOpn( CITNode, USOPN_SAFE );
@@ -83,15 +83,15 @@ static void Unary( TYPE typ, OPTR opr ) {
     PushOpn( CITNode->link );
     if( opr == OPTR_SUB ) {             // unary minus
         if( TypeCmplx( typ ) ) {
-            EmitOp( CUMINUS );
+            EmitOp( FC_CUMINUS );
         } else {
-            EmitOp( UMINUS );
+            EmitOp( FC_UMINUS );
         }
         GenType( CITNode->link );
     } else if( ( _IsTypeInteger( CITNode->link->typ ) ) &&
                ( CITNode->link->size < sizeof( intstar4 ) ) ) {
         // convert INTEGER*1 or INTEGER*2 to INTEGER*4
-        EmitOp( CONVERT );
+        EmitOp( FC_CONVERT );
         DumpTypes( CITNode->link->typ, CITNode->link->size,
                              TY_INTEGER, sizeof( intstar4 ) );
     }
@@ -104,9 +104,9 @@ static void Binary( TYPE typ1, TYPE typ2, OPTR opr ) {
 
 // Generate code for binary operations.
 
-    bool        flip;
-    bool        associative;
-    unsigned_16 op_code;
+    bool    flip;
+    bool    associative;
+    FCODE   op_code;
 
     associative = FALSE;
     if( ( opr == OPTR_ADD ) || ( opr == OPTR_MUL ) ) {
@@ -117,40 +117,40 @@ static void Binary( TYPE typ1, TYPE typ2, OPTR opr ) {
         ( ( CITNode->link->opn.us & USOPN_WHERE ) != USOPN_SAFE ) ) {
         flip = TRUE;
     }
-    opr -= OPTR_FIRST_ARITHOP;
-    op_code = BINOPS + opr;
+    op_code = opr - OPTR_FIRST_ARITHOP;
     PushOpn( CITNode->link );
     PushOpn( CITNode );
     if( TypeCmplx( typ1 ) && TypeCmplx( typ2 ) ) {
-        op_code += CMPLX_OPS;
+        op_code += FC_CC_BINOPS;
         if( flip && !associative ) {
-            EmitOp( CMPLX_FLIP );
+            EmitOp( FC_CMPLX_FLIP );
         }
     } else if( TypeCmplx( typ1 ) ) {
         if( flip ) {
             if( associative ) {
-                op_code += XC_MIXED;
+                op_code += FC_XC_BINOPS;
             } else {
-                EmitOp( XC_FLIP );
-                op_code += CX_MIXED;
+                EmitOp( FC_XC_FLIP );
+                op_code += FC_CX_BINOPS;
             }
         } else {
-            op_code += CX_MIXED;
+            op_code += FC_CX_BINOPS;
         }
     } else if( TypeCmplx( typ2 ) ) {
         if( flip ) {
             if( associative ) {
-                op_code += CX_MIXED;
+                op_code += FC_CX_BINOPS;
             } else {
-                EmitOp( CX_FLIP );
-                op_code += XC_MIXED;
+                EmitOp( FC_CX_FLIP );
+                op_code += FC_XC_BINOPS;
             }
         } else {
-            op_code += XC_MIXED;
+            op_code += FC_XC_BINOPS;
         }
     } else {
+        op_code += FC_BINOPS;
         if( flip && !associative ) {
-            EmitOp( FLIP );
+            EmitOp( FC_FLIP );
         }
     }
     EmitOp( op_code );

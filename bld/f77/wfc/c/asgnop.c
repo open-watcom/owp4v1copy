@@ -52,7 +52,7 @@ void    AsgnOp( TYPE typ1, TYPE typ2, OPTR opr ) {
     if( ResultType == TY_CHAR ) {
         AsgnChar();
     } else {
-        EmitOp( POP );
+        EmitOp( FC_POP );
         SymRef( CITNode );
         GenTypes( CITNode, CITNode->link );
         if( CITNode->sym_ptr->ns.typ == TY_STRUCTURE ) {

@@ -38,7 +38,7 @@
 #include "errcod.h"
 #include "opr.h"
 #include "opn.h"
-#include "iodefn.h"
+#include "iodefs.h"
 #include "units.h"
 #include "global.h"
 #include "recog.h"
@@ -52,7 +52,7 @@ extern  void            KeywordList(void);
 extern  void            Unit(void);
 extern  void            FormatIdd(void);
 extern  void            IOList(void);
-extern  bool            Permission(int);
+extern  bool            Permission(IOKW);
 extern  void            GStartIO(void);
 extern  void            GNullEofStmt(void);
 

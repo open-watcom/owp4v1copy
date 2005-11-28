@@ -35,7 +35,7 @@
 //
 
 #include "ftnstd.h"
-#include "fcodes.h"
+#include "rtconst.h"
 #include "wf77defs.h"
 #include "wf77cg.h"
 #include "tmpdefs.h"
@@ -70,7 +70,7 @@ extern  unsigned long   BETypeLength(cg_type);
 extern  void            XPush(cg_name);
 extern  cg_name         XPopValue(cg_type);
 extern  cg_name         XPop(void);
-extern  call_handle     InitCall(int);
+extern  call_handle     InitCall(RTCODE);
 extern  cg_name         SymAddr(sym_id);
 extern  void            CnvS2S(float *,char *);
 extern  void            CnvD2S(double *,char *);
@@ -79,6 +79,199 @@ extern  cg_name         StructRef(cg_name,int);
 extern  tmp_handle      AllocTmp(cg_type);
 extern  cg_name         TmpPtr(tmp_handle,cg_type);
 extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
+
+
+cg_name ImagPtr( cg_name dest, cg_type typ ) {
+//============================================
+
+// Get pointer to imaginary part of complex number.
+
+    dest = StructRef( dest, BETypeLength( typ ) );
+    if( OZOpts & OZOPT_O_VOLATILE ) {
+        dest = CGVolatile( dest );
+    }
+    return( dest );
+}
+
+
+cg_type         CmplxBaseType( cg_type typ ) {
+//============================================
+
+    if( typ == T_COMPLEX ) return( T_SINGLE );
+    if( typ == T_DCOMPLEX ) return( T_DOUBLE );
+    return( T_LONGDOUBLE );
+}
+
+
+void    SplitCmplx( cg_name cmplx_addr, cg_type typ ) {
+//=====================================================
+
+// Split real and imaginary parts of complex number.
+
+    cg_name     cmplx_1;
+    cg_name     cmplx_2;
+
+    typ = CmplxBaseType( typ );
+    CloneCGName( cmplx_addr, &cmplx_1, &cmplx_2 );
+    XPush( CGUnary( O_POINTS, ImagPtr( cmplx_1, typ ), typ ) );
+    XPush( CGUnary( O_POINTS, cmplx_2, typ ) );
+}
+
+
+void    DoCmplxOp( RTCODE rtn_id, cg_name a, cg_name b, cg_name c, cg_name d ) {
+//===========================================================================
+
+// Do a complex operation.
+
+    call_handle handle;
+    cg_type     typ;
+    cg_type     r_typ;
+
+    typ = ResCGType( CGType( a ), CGType( c ) );
+    if( typ == T_DOUBLE ) {
+        rtn_id += RT_C_DOUBLE;
+        r_typ = T_DCOMPLEX;
+    } else if( typ == T_LONGDOUBLE ) {
+        rtn_id += RT_C_EXTENDED;
+        r_typ = T_XCOMPLEX;
+    } else {
+        r_typ = T_COMPLEX;
+    }
+    handle = InitCall( rtn_id );
+    CGAddParm( handle, a, typ );
+    CGAddParm( handle, b, typ );
+    CGAddParm( handle, c, typ );
+    CGAddParm( handle, d, typ );
+    SplitCmplx( CGCall( handle ), r_typ );
+}
+
+
+void            XPopCmplx( cg_cmplx *z, cg_type typ ) {
+//=====================================================
+
+// Get complex value.
+
+    cg_name     opn;
+
+    opn = XPop();
+    if( TypePointer( CGType( opn ) ) ) {
+        SplitCmplx( opn, typ );
+        z->realpart = XPop();
+    } else {
+        z->realpart = opn;
+    }
+    z->imagpart = XPop();
+}
+
+
+void    XCmplxOp( RTCODE rtn_id ) {
+//=================================
+
+// F-Code processor for binary complex number operations involving
+// runtime routines.
+// ( a, b ) OP ( c, d ).
+
+    unsigned_16 typ_info;
+    cg_cmplx    x;
+    cg_cmplx    y;
+
+    typ_info = GetU16();
+    XPopCmplx( &x, GetType1( typ_info ) );
+    XPopCmplx( &y, GetType2( typ_info ) );
+    DoCmplxOp( rtn_id, x.realpart, x.imagpart, y.realpart, y.imagpart );
+}
+
+
+static  void    XCmplx( int op ) {
+//================================
+
+// Binary operator F-Code processor for complex addition and subtraction.
+
+    unsigned_16 typ_info;
+    int         typ1;
+    int         typ2;
+    cg_cmplx    x;
+    cg_cmplx    y;
+
+    typ_info = GetU16();
+    typ1 = GetType1( typ_info );
+    typ2 = GetType2( typ_info );
+    XPopCmplx( &x, typ1 );
+    XPopCmplx( &y, typ2 );
+    typ1 = CmplxBaseType( typ1 );
+    typ2 = CmplxBaseType( typ2 );
+    XPush( CGBinary( op, x.imagpart, y.imagpart, ResCGType( typ1, typ2 ) ) );
+    XPush( CGBinary( op, x.realpart, y.realpart, ResCGType( typ1, typ2 ) ) );
+}
+
+
+void    XMixed( int op, bool cmplx_scalar ) {
+//===========================================
+
+// Binary F-Code processor for cmplx-scalar addition & subtraction.
+// cx   - true if complex OP scalar, false if scalar OP complex.
+
+    cg_cmplx    z;
+    cg_name     x;
+    unsigned_16 typ_info;
+    cg_type     z_typ;
+    cg_type     x_typ;
+
+    typ_info = GetU16();
+    if( cmplx_scalar ) {
+        z_typ = GetType1( typ_info );
+        x_typ = GetType2( typ_info );
+        XPopCmplx( &z, z_typ );
+        x = XPopValue( x_typ );
+    } else {
+        x_typ = GetType1( typ_info );
+        z_typ = GetType2( typ_info );
+        x = XPopValue( x_typ );
+        XPopCmplx( &z, z_typ );
+    }
+    z_typ = CmplxBaseType( z_typ );
+    if( cmplx_scalar ) {
+        XPush( z.imagpart );
+        XPush( CGBinary( op, z.realpart, x, ResCGType( z_typ, x_typ ) ) );
+    } else {
+        if( op == O_MINUS ) {
+            XPush( CGUnary( O_UMINUS, z.imagpart, z_typ ) );
+        } else {
+            XPush( z.imagpart );
+        }
+        XPush( CGBinary( op, x, z.realpart, ResCGType( x_typ, z_typ ) ) );
+    }
+}
+
+
+void    XMulDivMix( int op, bool cmplx_scalar, unsigned_16 typ_info ) {
+//=====================================================================
+
+// Binary F-Code processor for mixed multiplication and division.
+
+    cg_cmplx    z;
+    cg_name     s;
+    cg_type     s_typ;
+    cg_type     z_typ;
+    cg_name     s_1;
+    cg_name     s_2;
+
+    if( cmplx_scalar ) {
+        z_typ = GetType1( typ_info );
+        s_typ = GetType2( typ_info );
+        XPopCmplx( &z, z_typ );
+        s = XPopValue( s_typ );
+    } else {
+        s_typ = GetType1( typ_info );
+        z_typ = GetType2( typ_info );
+        s = XPopValue( s_typ );
+        XPopCmplx( &z, z_typ );
+    }
+    z_typ = ResCGType( s_typ, CmplxBaseType( z_typ ) );
+    CloneCGName( s, &s_1, &s_2 );
+    XPush( CGBinary( op, z.imagpart, s_1, z_typ ) );
+    XPush( CGBinary( op, z.realpart, s_2, z_typ ) );
+}
 
 
 void    FCCmplxFlip() {
@@ -154,15 +347,6 @@ void    FCXCFlip() {
 }
 
 
-cg_type         CmplxBaseType( cg_type typ ) {
-//============================================
-
-    if( typ == T_COMPLEX ) return( T_SINGLE );
-    if( typ == T_DCOMPLEX ) return( T_DOUBLE );
-    return( T_LONGDOUBLE );
-}
-
-
 void    FCUMinusCmplx() {
 //=======================
 
@@ -194,29 +378,6 @@ void    FCSubCmplx() {
 // Subtract one complex number from another.
 
     XCmplx( O_MINUS );
-}
-
-
-static  void    XCmplx( int op ) {
-//================================
-
-// Binary operator F-Code processor for complex addition and subtraction.
-
-    unsigned_16 typ_info;
-    int         typ1;
-    int         typ2;
-    cg_cmplx    x;
-    cg_cmplx    y;
-
-    typ_info = GetU16();
-    typ1 = GetType1( typ_info );
-    typ2 = GetType2( typ_info );
-    XPopCmplx( &x, typ1 );
-    XPopCmplx( &y, typ2 );
-    typ1 = CmplxBaseType( typ1 );
-    typ2 = CmplxBaseType( typ2 );
-    XPush( CGBinary( op, x.imagpart, y.imagpart, ResCGType( typ1, typ2 ) ) );
-    XPush( CGBinary( op, x.realpart, y.realpart, ResCGType( typ1, typ2 ) ) );
 }
 
 
@@ -256,45 +417,6 @@ void    FCSubMixXC() {
 }
 
 
-void    XMixed( int op, bool cmplx_scalar ) {
-//===========================================
-
-// Binary F-Code processor for cmplx-scalar addition & subtraction.
-// cx   - true if complex OP scalar, false if scalar OP complex.
-
-    cg_cmplx    z;
-    cg_name     x;
-    unsigned_16 typ_info;
-    cg_type     z_typ;
-    cg_type     x_typ;
-
-    typ_info = GetU16();
-    if( cmplx_scalar ) {
-        z_typ = GetType1( typ_info );
-        x_typ = GetType2( typ_info );
-        XPopCmplx( &z, z_typ );
-        x = XPopValue( x_typ );
-    } else {
-        x_typ = GetType1( typ_info );
-        z_typ = GetType2( typ_info );
-        x = XPopValue( x_typ );
-        XPopCmplx( &z, z_typ );
-    }
-    z_typ = CmplxBaseType( z_typ );
-    if( cmplx_scalar ) {
-        XPush( z.imagpart );
-        XPush( CGBinary( op, z.realpart, x, ResCGType( z_typ, x_typ ) ) );
-    } else {
-        if( op == O_MINUS ) {
-            XPush( CGUnary( O_UMINUS, z.imagpart, z_typ ) );
-        } else {
-            XPush( z.imagpart );
-        }
-        XPush( CGBinary( op, x, z.realpart, ResCGType( x_typ, z_typ ) ) );
-    }
-}
-
-
 void    FCMulMixCX() {
 //====================
 
@@ -328,36 +450,6 @@ void    FCDivMixXC() {
 // Divide a scalar by a complex.
 
     XCmplxMixOp( RT_C8DIV, FALSE );
-}
-
-
-void    XMulDivMix( int op, bool cmplx_scalar, unsigned_16 typ_info ) {
-//=====================================================================
-
-// Binary F-Code processor for mixed multiplication and division.
-
-    cg_cmplx    z;
-    cg_name     s;
-    cg_type     s_typ;
-    cg_type     z_typ;
-    cg_name     s_1;
-    cg_name     s_2;
-
-    if( cmplx_scalar ) {
-        z_typ = GetType1( typ_info );
-        s_typ = GetType2( typ_info );
-        XPopCmplx( &z, z_typ );
-        s = XPopValue( s_typ );
-    } else {
-        s_typ = GetType1( typ_info );
-        z_typ = GetType2( typ_info );
-        s = XPopValue( s_typ );
-        XPopCmplx( &z, z_typ );
-    }
-    z_typ = ResCGType( s_typ, CmplxBaseType( z_typ ) );
-    CloneCGName( s, &s_1, &s_2 );
-    XPush( CGBinary( op, z.imagpart, s_1, z_typ ) );
-    XPush( CGBinary( op, z.realpart, s_2, z_typ ) );
 }
 
 
@@ -457,24 +549,6 @@ void    FCExpMixXC() {
 }
 
 
-void    XCmplxOp( int rtn_id ) {
-//==============================
-
-// F-Code processor for binary complex number operations involving
-// runtime routines.
-// ( a, b ) OP ( c, d ).
-
-    unsigned_16 typ_info;
-    cg_cmplx    x;
-    cg_cmplx    y;
-
-    typ_info = GetU16();
-    XPopCmplx( &x, GetType1( typ_info ) );
-    XPopCmplx( &y, GetType2( typ_info ) );
-    DoCmplxOp( rtn_id, x.realpart, x.imagpart, y.realpart, y.imagpart );
-}
-
-
 static cg_type PromoteIntType( cg_type typ ) {
 //============================================
 
@@ -485,8 +559,35 @@ static cg_type PromoteIntType( cg_type typ ) {
 }
 
 
-void    XCmplxMixOp( int rtn_id, bool cmplx_scalar ) {
-//====================================================
+void    DoCmplxScalarOp( RTCODE rtn_id, cg_name a, cg_name b, cg_name s ) {
+//=========================================================================
+
+// Do a complex operation.
+
+    call_handle handle;
+    cg_type     typ;
+    cg_type     r_typ;
+
+    typ = CGType( a );
+    if( typ == T_DOUBLE ) {
+        rtn_id += RT_C_DOUBLE;
+        r_typ = T_DCOMPLEX;
+    } else if( typ == T_LONGDOUBLE ) {
+        rtn_id += RT_C_EXTENDED;
+        r_typ = T_XCOMPLEX;
+    } else {
+        r_typ = T_COMPLEX;
+    }
+    handle = InitCall( rtn_id );
+    CGAddParm( handle, a, typ );
+    CGAddParm( handle, b, typ );
+    CGAddParm( handle, s, PromoteIntType( CGType( s ) ) );
+    SplitCmplx( CGCall( handle ), r_typ );
+}
+
+
+void    XCmplxMixOp( RTCODE rtn_id, bool cmplx_scalar ) {
+//=======================================================
 
 // F-Code processor for binary complex number operations involving
 // runtime routines.
@@ -527,76 +628,22 @@ void    XCmplxMixOp( int rtn_id, bool cmplx_scalar ) {
 }
 
 
-void    DoCmplxScalarOp( int rtn_id, cg_name a, cg_name b, cg_name s ) {
-//======================================================================
+static  void    CCCmp( cg_op op, cg_name a, cg_name b, cg_name c, cg_name d ) {
+//=============================================================================
 
-// Do a complex operation.
+// Complex/Complex compare.
 
-    call_handle handle;
-    cg_type     typ;
-    cg_type     r_typ;
+    cg_type     res_type;
+    cg_op       flow_op;
 
-    typ = CGType( a );
-    if( typ == T_DOUBLE ) {
-        rtn_id += C_DOUBLE;
-        r_typ = T_DCOMPLEX;
-    } else if( typ == T_LONGDOUBLE ) {
-        rtn_id += C_EXTENDED;
-        r_typ = T_XCOMPLEX;
+    res_type = ResCGType( CGType( a ), CGType( c ) );
+    if( op == O_EQ ) {
+       flow_op = O_FLOW_AND;
     } else {
-        r_typ = T_COMPLEX;
+       flow_op = O_FLOW_OR;
     }
-    handle = InitCall( rtn_id );
-    CGAddParm( handle, a, typ );
-    CGAddParm( handle, b, typ );
-    CGAddParm( handle, s, PromoteIntType( CGType( s ) ) );
-    SplitCmplx( CGCall( handle ), r_typ );
-}
-
-
-void    DoCmplxOp( int rtn_id, cg_name a, cg_name b, cg_name c, cg_name d ) {
-//===========================================================================
-
-// Do a complex operation.
-
-    call_handle handle;
-    cg_type     typ;
-    cg_type     r_typ;
-
-    typ = ResCGType( CGType( a ), CGType( c ) );
-    if( typ == T_DOUBLE ) {
-        rtn_id += C_DOUBLE;
-        r_typ = T_DCOMPLEX;
-    } else if( typ == T_LONGDOUBLE ) {
-        rtn_id += C_EXTENDED;
-        r_typ = T_XCOMPLEX;
-    } else {
-        r_typ = T_COMPLEX;
-    }
-    handle = InitCall( rtn_id );
-    CGAddParm( handle, a, typ );
-    CGAddParm( handle, b, typ );
-    CGAddParm( handle, c, typ );
-    CGAddParm( handle, d, typ );
-    SplitCmplx( CGCall( handle ), r_typ );
-}
-
-
-void    FCCCCmpEQ() {
-//===================
-
-// Complex/Complex compare for equality.
-
-    CCCompare( O_EQ );
-}
-
-
-void    FCCCCmpNE() {
-//===================
-
-// Complex/Complex compare for non-equality.
-
-    CCCompare( O_NE );
+    XPush( CGFlow( flow_op, CGCompare( op, a, c, res_type ),
+                            CGCompare( op, b, d, res_type ) ) );
 }
 
 
@@ -613,24 +660,6 @@ void    CCCompare( int op ) {
     XPopCmplx( &x, GetType1( typ_info ) );
     XPopCmplx( &y, GetType2( typ_info ) );
     CCCmp( op, x.realpart, x.imagpart, y.realpart, y.imagpart );
-}
-
-
-void    FCXCCmpEQ() {
-//===================
-
-// Scalar/Complex compare for equality.
-
-    XCCompare( O_EQ );
-}
-
-
-void    FCXCCmpNE() {
-//===================
-
-// Scalar/Complex compare for non-equality.
-
-    XCCompare( O_NE );
 }
 
 
@@ -652,24 +681,6 @@ void    XCCompare( int op ) {
 }
 
 
-void    FCCXCmpEQ() {
-//===================
-
-// Complex/Scalar compare for equality.
-
-    CXCompare( O_EQ );
-}
-
-
-void    FCCXCmpNE() {
-//===================
-
-// Complex/Scalar compare for non-equality.
-
-    CXCompare( O_NE );
-}
-
-
 static  void    CXCompare( int op ) {
 //===================================
 
@@ -688,22 +699,57 @@ static  void    CXCompare( int op ) {
 }
 
 
-static  void    CCCmp( cg_op op, cg_name a, cg_name b, cg_name c, cg_name d ) {
-//=============================================================================
+void    FCCCCmpEQ() {
+//===================
 
-// Complex/Complex compare.
+// Complex/Complex compare for equality.
 
-    cg_type     res_type;
-    cg_op       flow_op;
+    CCCompare( O_EQ );
+}
 
-    res_type = ResCGType( CGType( a ), CGType( c ) );
-    if( op == O_EQ ) {
-       flow_op = O_FLOW_AND;
-    } else {
-       flow_op = O_FLOW_OR;
-    }
-    XPush( CGFlow( flow_op, CGCompare( op, a, c, res_type ),
-                            CGCompare( op, b, d, res_type ) ) );
+
+void    FCCCCmpNE() {
+//===================
+
+// Complex/Complex compare for non-equality.
+
+    CCCompare( O_NE );
+}
+
+
+void    FCXCCmpEQ() {
+//===================
+
+// Scalar/Complex compare for equality.
+
+    XCCompare( O_EQ );
+}
+
+
+void    FCXCCmpNE() {
+//===================
+
+// Scalar/Complex compare for non-equality.
+
+    XCCompare( O_NE );
+}
+
+
+void    FCCXCmpEQ() {
+//===================
+
+// Complex/Scalar compare for equality.
+
+    CXCompare( O_EQ );
+}
+
+
+void    FCCXCmpNE() {
+//===================
+
+// Complex/Scalar compare for non-equality.
+
+    CXCompare( O_NE );
 }
 
 
@@ -739,19 +785,6 @@ void            PushCmplxConst( sym_id sym ) {
         CnvX2S( &sym->cn.value.xcomplex.realpart, fmt_buff );
         XPush( CGFloat( fmt_buff, T_LONGDOUBLE ) );
     }
-}
-
-
-cg_name ImagPtr( cg_name dest, cg_type typ ) {
-//============================================
-
-// Get pointer to imaginary part of complex number.
-
-    dest = StructRef( dest, BETypeLength( typ ) );
-    if( OZOpts & OZOPT_O_VOLATILE ) {
-        dest = CGVolatile( dest );
-    }
-    return( dest );
 }
 
 
@@ -827,39 +860,6 @@ void            CmplxAssign( sym_id sym, cg_type dst_typ, cg_type src_typ ) {
                 CGUnary( O_POINTS, CGTempName( ti, typ ), typ ), typ ) );
     XPush( CGAssign( dest_1, CGUnary( O_POINTS, CGTempName( tr, typ ), typ ),
                         typ ) );
-}
-
-
-void            XPopCmplx( cg_cmplx *z, cg_type typ ) {
-//=====================================================
-
-// Get complex value.
-
-    cg_name     opn;
-
-    opn = XPop();
-    if( TypePointer( CGType( opn ) ) ) {
-        SplitCmplx( opn, typ );
-        z->realpart = XPop();
-    } else {
-        z->realpart = opn;
-    }
-    z->imagpart = XPop();
-}
-
-
-void    SplitCmplx( cg_name cmplx_addr, cg_type typ ) {
-//=====================================================
-
-// Split real and imaginary parts of complex number.
-
-    cg_name     cmplx_1;
-    cg_name     cmplx_2;
-
-    typ = CmplxBaseType( typ );
-    CloneCGName( cmplx_addr, &cmplx_1, &cmplx_2 );
-    XPush( CGUnary( O_POINTS, ImagPtr( cmplx_1, typ ), typ ) );
-    XPush( CGUnary( O_POINTS, cmplx_2, typ ) );
 }
 
 

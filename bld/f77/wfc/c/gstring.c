@@ -89,7 +89,7 @@ void    GStopCat( int num_args, sym_id result ) {
     // we don't know the length concatenated at compile time if WORD
     // was indexed as WORD(I:J).
     PushOpn( CITNode );
-    EmitOp( RT_CAT );
+    EmitOp( FC_CAT );
     OutU16( num_args | 0x8000 ); // indicate concatenating into a static temp
 }
 
@@ -161,7 +161,7 @@ void    AsgnChar() {
     if( ( num_args == 1 ) && ( i > 0 ) && ( j > 0 ) ) {
         if( OptimalChSize( i ) && OptimalChSize( j ) && ( i == j ) ) {
             PushOpn( save_cit );
-            EmitOp( CHAR_1_MOVE );
+            EmitOp( FC_CHAR_1_MOVE );
             DumpType( MapTypes( TY_INTEGER, i ), i );
             GenChar1Op( CITNode );
             if( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_CON ) {
@@ -175,14 +175,14 @@ void    AsgnChar() {
             }
             CITNode = save_cit;
             PushOpn( CITNode );
-            EmitOp( CHAR_N_MOVE );
+            EmitOp( FC_CHAR_N_MOVE );
             OutInt( i );
             OutInt( j );
 #else
             CatArgs( num_args );
             CITNode = save_cit;
             PushOpn( CITNode );
-            EmitOp( RT_CAT );
+            EmitOp( FC_CAT );
             OutU16( num_args );
 #endif
         }
@@ -190,7 +190,7 @@ void    AsgnChar() {
         CatArgs( num_args );
         CITNode = save_cit;
         PushOpn( CITNode );
-        EmitOp( RT_CAT );
+        EmitOp( FC_CAT );
         OutU16( num_args );
     }
 }

@@ -39,7 +39,6 @@
 #include "cg.h"
 #include "tmpdefs.h"
 #include "symbol.h"
-#include "fcodes.h"
 #include "emitobj.h"
 #include "fctypes.h"
 

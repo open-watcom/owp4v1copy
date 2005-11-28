@@ -53,18 +53,18 @@ void    LogOp( TYPE typ1, TYPE typ2, OPTR op ) {
     PushOpn( CITNode->link );
     if( typ1 == TY_NO_TYPE ) {  // unary
         if( _IsTypeInteger( typ2 ) ) {
-            EmitOp( BIT_NOT );
+            EmitOp( FC_BIT_NOT );
         } else {
-            EmitOp( NOT );
+            EmitOp( FC_NOT );
         }
         GenType( CITNode->link );
         SetOpn( CITNode, USOPN_SAFE );
     } else {
         PushOpn( CITNode );
         if( _IsTypeInteger( typ2 ) ) {
-            EmitOp( BITOPS + op );
+            EmitOp( FC_BITOPS + op );
         } else {
-            EmitOp( LOGOPS + op );
+            EmitOp( FC_LOGOPS + op );
         }
         if( flip ) {
             GenTypes( CITNode->link, CITNode );

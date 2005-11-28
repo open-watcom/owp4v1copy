@@ -97,7 +97,7 @@ void    InitObj( void ) {
     ObjCode = FMemAlloc( PAGE_SIZE );
     ObjEnd = ObjCode + PAGE_SIZE;
     ObjPtr = ObjCode;
-    *(unsigned_16 *)ObjPtr = END_OF_SEQUENCE; // in case no source code in file
+    *(unsigned_16 *)ObjPtr = FC_END_OF_SEQUENCE; // in case no source code in file
     PageFile = NULL;
     if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) {
         fn = PageFileBuff;
@@ -572,8 +572,8 @@ void    FCSeek( void ) {
 }
 
 
-unsigned_16     GetFCode( void ) {
-//================================
+FCODE   GetFCode( void ) {
+//========================
 
 // Get an F-Code from object memory.
 

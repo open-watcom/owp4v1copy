@@ -47,7 +47,7 @@
 extern  void            GSPProlog(void);
 extern  sym_id          StaticAlloc(uint,TYPE);
 extern  label_id        NextLabel(void);
-extern  bool            TypeCmplx(int typ);
+extern  bool            TypeCmplx(TYPE typ);
 extern  TYPE            MapTypes(TYPE,uint);
 
 
@@ -56,7 +56,7 @@ void    GLabel( int label ) {
 
 // Generate a label.
 
-    EmitOp( DEFINE_LABEL );
+    EmitOp( FC_DEFINE_LABEL );
     OutU16( label );
 }
 
@@ -66,7 +66,7 @@ void    GStmtLabel( sym_id stmt ) {
 
 // Generate a statement label.
 
-    EmitOp( STMT_DEFINE_LABEL );
+    EmitOp( FC_STMT_DEFINE_LABEL );
     GStmtAddr( stmt );
 }
 
@@ -76,7 +76,7 @@ void    GStmtBr( sym_id stmt ) {
 
 // Generate a branch to a statement label.
 
-    EmitOp( STMT_JMP_ALWAYS );
+    EmitOp( FC_STMT_JMP_ALWAYS );
     GStmtAddr( stmt );
 }
 
@@ -86,7 +86,7 @@ void    GBranch( int label ) {
 
 // Generate a branch (non-conditional).
 
-    EmitOp( JMP_ALWAYS );
+    EmitOp( FC_JMP_ALWAYS );
     OutU16( label );
 }
 
@@ -96,7 +96,7 @@ void    GBrFalse( int label ) {
 
 // Generate a branch on FALSE.
 
-    EmitOp( JMP_FALSE );
+    EmitOp( FC_JMP_FALSE );
     GenType( CITNode );
     OutU16( label );
 }
@@ -108,7 +108,7 @@ void    G3WayBranch( sym_id lt, sym_id eq, sym_id gt ) {
 // Generate a 3-way branch.
 
     IfExpr();
-    EmitOp( IF_ARITH );
+    EmitOp( FC_IF_ARITH );
     GenType( CITNode );
     GStmtAddr( lt );
     GStmtAddr( eq );
@@ -132,7 +132,7 @@ void    InitSelect() {
                 sel_expr = StaticAlloc( 1, TY_CHAR );
                 CSHead->cs_info.cases->sel_expr = sel_expr;
                 PushSym( sel_expr );
-                EmitOp( CHAR_1_MOVE );
+                EmitOp( FC_CHAR_1_MOVE );
                 DumpType( TY_INTEGER_1, 1 );
                 OutPtr( NULL );
             } else {
@@ -140,12 +140,12 @@ void    InitSelect() {
                                         MapTypes( TY_INTEGER, CITNode->size));
                 CSHead->cs_info.cases->sel_expr = sel_expr;
                 PushOpn( CITNode );
-                EmitOp( POP );  // pop select expression into temporary
+                EmitOp( FC_POP );  // pop select expression into temporary
                 OutPtr( sel_expr );
                 DumpTypes( MapTypes( TY_INTEGER, CITNode->size ), CITNode->size,
                            CITNode->typ, CITNode->size );
             }
-            EmitOp( EXPR_DONE );
+            EmitOp( FC_EXPR_DONE );
         }
         GBranch( CSHead->branch );          // branch to "select table"
     }
@@ -163,9 +163,9 @@ void    FiniSelect() {
 
     GLabel( CSHead->branch );                   // label start of select table
     if( CSHead->typ == CS_COMPUTED_GOTO ) {
-        EmitOp( COMPUTED_GOTO );
+        EmitOp( FC_COMPUTED_GOTO );
     } else {
-        EmitOp( SELECT );
+        EmitOp( FC_SELECT );
     }
     curr_obj = ObjTell();
     OutU16( 0 );                                // emit count
@@ -200,15 +200,15 @@ void    GAsgnGoTo( bool list ) {
         if( WildLabel == NULL ) {
             WildLabel = StaticAlloc( sizeof( inttarg ), TY_INTEGER_TARG );
         }
-        EmitOp( PUSH );
+        EmitOp( FC_PUSH );
         OutPtr( CITNode->sym_ptr );
-        EmitOp( POP );
+        EmitOp( FC_POP );
         OutPtr( WildLabel );
         DumpTypes( TY_INTEGER_TARG, sizeof( inttarg ), CITNode->typ, CITNode->size );
-        EmitOp( EXPR_DONE );
+        EmitOp( FC_EXPR_DONE );
         GBranch( StNumbers.branches );      // goto select table
     } else {
-        EmitOp( ASSIGNED_GOTO_LIST );
+        EmitOp( FC_ASSIGNED_GOTO_LIST );
         OutPtr( CITNode->sym_ptr );
     }
 }
@@ -239,13 +239,13 @@ void    GAssign( sym_id label ) {
 
 // Generate an ASSIGN <label> to I.
 
-    EmitOp( ASSIGN );
+    EmitOp( FC_ASSIGN );
     OutPtr( label );
     OutPtr( CITNode->sym_ptr );
 }
 
 
-void    GBreak( unsigned_16 routine ) {
+void    GBreak( FCODE routine ) {
 //=====================================
 
 // Generate a STOP or a PAUSE.
@@ -265,7 +265,7 @@ void    GStartSF() {
 
 // Start a statement function.
 
-    EmitOp( START_SF );
+    EmitOp( FC_START_SF );
     if( OZOpts & OZOPT_O_INLINE ) {
         SFSymId->ns.si.sf.sequence = ObjTell();
         OutObjPtr( 0 );
@@ -285,17 +285,17 @@ void    GEndSF() {
     obj_ptr     curr_obj;
 
     if( OZOpts & OZOPT_O_INLINE ) {
-        EmitOp( END_OF_SEQUENCE );
+        EmitOp( FC_END_OF_SEQUENCE );
         curr_obj = ObjSeek( SFSymId->ns.si.sf.sequence );
         OutObjPtr( curr_obj );
         ObjSeek( curr_obj );
     } else {
         if( TypeCmplx( SFSymId->ns.typ ) ) {
-            EmitOp( CMPLX_EXPR_DONE );
+            EmitOp( FC_CMPLX_EXPR_DONE );
         } else {
-            EmitOp( EXPR_DONE );
+            EmitOp( FC_EXPR_DONE );
         }
-        EmitOp( END_SF );
+        EmitOp( FC_END_SF );
         OutPtr( SFSymId );
     }
 }
@@ -306,7 +306,7 @@ void    GStartBlock() {
 
 // Start a REMOTE BLOCK.
 
-    EmitOp( START_RB );
+    EmitOp( FC_START_RB );
     OutPtr( CITNode->sym_ptr );
 }
 
@@ -316,7 +316,7 @@ void    GExecute() {
 
 // Execute a REMOTE BLOCK.
 
-    EmitOp( EXECUTE );
+    EmitOp( FC_EXECUTE );
     OutPtr( CITNode->sym_ptr );
 }
 
@@ -326,7 +326,7 @@ void    GEndBlock() {
 
 // Terminate a REMOTE-block.
 
-    EmitOp( END_RB );
+    EmitOp( FC_END_RB );
 }
 
 
@@ -335,7 +335,7 @@ void    GPgmLabel() {
 
 // Generate a program label.
 
-    EmitOp( RT_PROLOGUE );
+    EmitOp( FC_PROLOGUE );
     OutPtr( SubProgId );
 }
 
@@ -345,7 +345,7 @@ void    GSegLabel() {
 
 // Generate a subprogram label.
 
-    EmitOp( RT_PROLOGUE );
+    EmitOp( FC_PROLOGUE );
     OutPtr( SubProgId );
 }
 
@@ -355,7 +355,7 @@ void    GBlockLabel() {
 
 // Generate a block data subprogram label.
 
-    EmitOp( RT_PROLOGUE );
+    EmitOp( FC_PROLOGUE );
     OutPtr( SubProgId );
 }
 
@@ -365,6 +365,6 @@ void    FreeLabel( int label ) {
 
 // Generate F-Code indicating we are done with label.
 
-    EmitOp( FREE_LABEL );
+    EmitOp( FC_FREE_LABEL );
     OutU16( label );
 }

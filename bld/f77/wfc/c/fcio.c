@@ -35,7 +35,7 @@
 #include "wf77defs.h"
 #include "wf77cg.h"
 #include "tmpdefs.h"
-#include "fcodes.h"
+#include "rtconst.h"
 #include "types.h"
 #include "emitobj.h"
 #include "fctypes.h"
@@ -61,7 +61,7 @@ extern  void            BEFiniLabel(label_handle);
 
 //=========================================================================
 
-extern  call_handle     InitCall(int);
+extern  call_handle     InitCall(RTCODE);
 extern  cg_name         XPop(void);
 extern  cg_name         XPopValue(cg_type);
 extern  void            XPopCmplx(cg_cmplx *,cg_type);
@@ -98,6 +98,96 @@ static  label_handle    IOSLabel;
 static  bool            NmlSpecified;
 
 
+static  void    ChrArrayIO( RTCODE rtn, cg_name arr, cg_name num_elts,
+                            cg_name elt_size ) {
+//====================================================================
+
+    call_handle call;
+
+    call = InitCall( rtn );
+    CGAddParm( call, elt_size, T_INTEGER );
+    CGAddParm( call, num_elts, T_INT_4 );
+    CGAddParm( call, arr, T_POINTER );
+    CGDone( CGCall( call ) );
+}
+
+
+static  void    NumArrayIO( RTCODE rtn, cg_name arr, cg_name num_elts,
+                            uint typ ) {
+//====================================================================
+
+    call_handle call;
+
+    call = InitCall( rtn );
+    CGAddParm( call, CGInteger( typ, T_INTEGER ), T_INTEGER );
+    CGAddParm( call, num_elts, T_INT_4 );
+    CGAddParm( call, arr, T_POINTER );
+    CGDone( CGCall( call ) );
+}
+
+
+static  void    IOCall( RTCODE rtn ) {
+//====================================
+
+// Call i/o run-time routine with one argument.
+
+    call_handle handle;
+
+    handle = InitCall( rtn );
+    CGAddParm( handle, XPop(), T_POINTER );
+    CGDone( CGCall( handle ) );
+}
+
+
+static  void    IOCallValue( RTCODE rtn ) {
+//=========================================
+
+// Call i/o run-time routine with one argument.
+
+    call_handle handle;
+
+    handle = InitCall( rtn );
+    CGAddParm( handle, GetTypedValue(), T_INT_4 );
+    CGDone( CGCall( handle ) );
+}
+
+
+static  void    ChkIOErr( cg_name io_stat ) {
+//===========================================
+
+// Check for i/o errors.
+
+    label_handle        eq_label;
+
+    io_stat = CGUnary( O_POINTS, io_stat, T_INTEGER );
+    if( ( EndEqLabel != 0 ) && ( ErrEqLabel != 0 ) ) {
+        eq_label = BENewLabel();
+        CG3WayControl( io_stat, GetLabel( EndEqLabel ), eq_label,
+                       GetLabel( ErrEqLabel ) );
+        CGControl( O_LABEL, NULL, eq_label );
+        BEFiniLabel( eq_label );
+    } else if( EndEqLabel != 0 ) {
+        CGControl( O_IF_TRUE,
+                   CGCompare( O_LT, io_stat, CGInteger( 0, T_INTEGER ),
+                              T_INTEGER ),
+                   GetLabel( EndEqLabel ) );
+    } else if( ErrEqLabel != 0 ) {
+        CGControl( O_IF_TRUE,
+                   CGCompare( O_NE, io_stat, CGInteger( 0, T_INTEGER ),
+                              T_INTEGER ),
+                   GetLabel( ErrEqLabel ) );
+    } else if( IOStatSpecified ) {
+        IOSLabel = BENewLabel();
+        CGControl( O_IF_TRUE,
+                   CGCompare( O_NE, io_stat, CGInteger( 0, T_INTEGER ),
+                              T_INTEGER ),
+                   IOSLabel );
+    } else {
+        CGDone( io_stat );
+    }
+}
+
+
 static  void    StructIO( struct field *fd ) {
 //============================================
 
@@ -131,6 +221,44 @@ static  void    StructIO( struct field *fd ) {
 }
 
 
+static  void    IOStatement( RTCODE stmt ) {
+//==========================================
+
+    // don't need label generated for IOSTAT unless it's a READ or WRITE
+    // statement that is not NAMELIST-directed
+    if( ( (stmt != RT_EX_READ) && (stmt != RT_EX_WRITE) ) || NmlSpecified ) {
+        IOStatSpecified = FALSE;
+    }
+    ChkIOErr( CGCall( InitCall( stmt ) ) );
+}
+
+
+static  void    Output( RTCODE rtn, cg_type arg_type ) {
+//======================================================
+
+// Call runtime routine to output elemental types value.
+
+    call_handle handle;
+
+    handle = InitCall( rtn );
+    CGAddParm( handle, XPopValue( arg_type ), PromoteToBaseType( arg_type ) );
+    CGDone( CGCall( handle ) );
+}
+
+
+static  void    Input( RTCODE rtn ) {
+//===================================
+
+// Common input routine.
+
+    call_handle handle;
+
+    handle = InitCall( rtn );
+    CGAddParm( handle, XPop(), T_POINTER );
+    CGDone( CGCall( handle ) );
+}
+
+
 void    FCSetIOCB() {
 //===================
 
@@ -152,18 +280,6 @@ void    FCSetUnit() {
 // Call runtime routine to set unit number in IOCB.
 
     IOCallValue( RT_SET_UNIT );
-}
-
-
-static  void    IOStatement( uint stmt ) {
-//========================================
-
-    // don't need label generated for IOSTAT unless it's a READ or WRITE
-    // statement that is not NAMELIST-directed
-    if( ( (stmt != RT_EX_READ) && (stmt != RT_EX_WRITE) ) || NmlSpecified ) {
-        IOStatSpecified = FALSE;
-    }
-    ChkIOErr( CGCall( InitCall( stmt ) ) );
 }
 
 
@@ -311,7 +427,7 @@ void    FCOutXTND() {
 }
 
 
-static  void    OutCplx( int rtn, cg_type typ ) {
+static  void    OutCplx( RTCODE rtn, cg_type typ ) {
 //===============================================
 
 // Call runtime routine to input COMPLEX value.
@@ -368,19 +484,8 @@ void    FCOutCHAR() {
 }
 
 
-static  void    OutString() {
-//===========================
-
-// Call runtime routine to output CHARACTER*n value.
-// Note: 2 arguments are passed (data pointer and length) as opposed to a
-//       pointer to the SCB.
-
-    IOString( RT_OUT_STR );
-}
-
-
-static  void    IOString( uint rtn ) {
-//====================================
+static  void    IOString( RTCODE rtn ) {
+//======================================
 
     call_handle handle;
 
@@ -391,16 +496,14 @@ static  void    IOString( uint rtn ) {
 }
 
 
-static  void    Output( int rtn, cg_type arg_type ) {
-//===================================================
+static  void    OutString() {
+//===========================
 
-// Call runtime routine to output elemental types value.
+// Call runtime routine to output CHARACTER*n value.
+// Note: 2 arguments are passed (data pointer and length) as opposed to a
+//       pointer to the SCB.
 
-    call_handle handle;
-
-    handle = InitCall( rtn );
-    CGAddParm( handle, XPopValue( arg_type ), PromoteToBaseType( arg_type ) );
-    CGDone( CGCall( handle ) );
+    IOString( RT_OUT_STR );
 }
 
 
@@ -523,19 +626,6 @@ static  void    InpString() {
 }
 
 
-static  void    Input( int rtn ) {
-//================================
-
-// Common input routine.
-
-    call_handle handle;
-
-    handle = InitCall( rtn );
-    CGAddParm( handle, XPop(), T_POINTER );
-    CGDone( CGCall( handle ) );
-}
-
-
 void    FCEndIO() {
 //=================
 
@@ -635,7 +725,7 @@ static  void    StructIOItem( sym_id fd ) {
 
 // Perform i/o of structure field.
 
-    uint        rtn;
+    RTCODE      rtn;
 
     if( fd->fd.dim_ext == NULL ) {
         XPush( TmpVal( TmpStructPtr, T_POINTER ) );
@@ -673,6 +763,21 @@ static  void    StructIOItem( sym_id fd ) {
                                      T_POINTER ),
                            T_POINTER ) );
     }
+}
+
+
+static  void    StructArrayIO() {
+//===============================
+
+// Perform structure array i/o.
+
+    sym_id              arr;
+    tmp_handle          num_elts;
+
+    arr = GetPtr();
+    num_elts = MkTmp( ArrayNumElts( arr ), T_INT_4 );
+    TmpStructPtr = MkTmp( SymAddr( arr ), T_POINTER );
+    DoStructArrayIO( num_elts, arr->ns.xt.record->fl.fields );
 }
 
 
@@ -785,26 +890,8 @@ void    FCFmtAssign() {
 }
 
 
-void    FCPrtArray() {
-//====================
-
-// Output an array.
-
-    ArrayIO( RT_PRT_ARRAY, RT_PRT_CHAR_ARRAY );
-}
-
-
-void    FCInpArray() {
-//====================
-
-// Input an array.
-
-    ArrayIO( RT_INP_ARRAY, RT_INP_CHAR_ARRAY );
-}
-
-
-void    ArrayIO( int num_array, int chr_array ) {
-//===============================================
+void    ArrayIO( RTCODE num_array, RTCODE chr_array ) {
+//=====================================================
 
 // Output an array.
 
@@ -839,46 +926,21 @@ void    ArrayIO( int num_array, int chr_array ) {
 }
 
 
-static  void    ChrArrayIO( uint rtn, cg_name arr, cg_name num_elts,
-                            cg_name elt_size ) {
-//==================================================================
+void    FCPrtArray() {
+//====================
 
-    call_handle call;
+// Output an array.
 
-    call = InitCall( rtn );
-    CGAddParm( call, elt_size, T_INTEGER );
-    CGAddParm( call, num_elts, T_INT_4 );
-    CGAddParm( call, arr, T_POINTER );
-    CGDone( CGCall( call ) );
+    ArrayIO( RT_PRT_ARRAY, RT_PRT_CHAR_ARRAY );
 }
 
 
-static  void    NumArrayIO( uint rtn, cg_name arr, cg_name num_elts,
-                            uint typ ) {
-//==================================================================
+void    FCInpArray() {
+//====================
 
-    call_handle call;
+// Input an array.
 
-    call = InitCall( rtn );
-    CGAddParm( call, CGInteger( typ, T_INTEGER ), T_INTEGER );
-    CGAddParm( call, num_elts, T_INT_4 );
-    CGAddParm( call, arr, T_POINTER );
-    CGDone( CGCall( call ) );
-}
-
-
-static  void    StructArrayIO() {
-//===============================
-
-// Perform structure array i/o.
-
-    sym_id              arr;
-    tmp_handle          num_elts;
-
-    arr = GetPtr();
-    num_elts = MkTmp( ArrayNumElts( arr ), T_INT_4 );
-    TmpStructPtr = MkTmp( SymAddr( arr ), T_POINTER );
-    DoStructArrayIO( num_elts, arr->ns.xt.record->fl.fields );
+    ArrayIO( RT_INP_ARRAY, RT_INP_CHAR_ARRAY );
 }
 
 
@@ -1230,66 +1292,4 @@ void    FCSetNoFmt() {
 // Set "not formatted i/o".
 
     CGDone( CGCall( InitCall( RT_SET_NOFMT ) ) );
-}
-
-
-static  void    IOCall( int rtn ) {
-//=================================
-
-// Call i/o run-time routine with one argument.
-
-    call_handle handle;
-
-    handle = InitCall( rtn );
-    CGAddParm( handle, XPop(), T_POINTER );
-    CGDone( CGCall( handle ) );
-}
-
-
-static  void    IOCallValue( int rtn ) {
-//======================================
-
-// Call i/o run-time routine with one argument.
-
-    call_handle handle;
-
-    handle = InitCall( rtn );
-    CGAddParm( handle, GetTypedValue(), T_INT_4 );
-    CGDone( CGCall( handle ) );
-}
-
-
-static  void    ChkIOErr( cg_name io_stat ) {
-//===========================================
-
-// Check for i/o errors.
-
-    label_handle        eq_label;
-
-    io_stat = CGUnary( O_POINTS, io_stat, T_INTEGER );
-    if( ( EndEqLabel != 0 ) && ( ErrEqLabel != 0 ) ) {
-        eq_label = BENewLabel();
-        CG3WayControl( io_stat, GetLabel( EndEqLabel ), eq_label,
-                       GetLabel( ErrEqLabel ) );
-        CGControl( O_LABEL, NULL, eq_label );
-        BEFiniLabel( eq_label );
-    } else if( EndEqLabel != 0 ) {
-        CGControl( O_IF_TRUE,
-                   CGCompare( O_LT, io_stat, CGInteger( 0, T_INTEGER ),
-                              T_INTEGER ),
-                   GetLabel( EndEqLabel ) );
-    } else if( ErrEqLabel != 0 ) {
-        CGControl( O_IF_TRUE,
-                   CGCompare( O_NE, io_stat, CGInteger( 0, T_INTEGER ),
-                              T_INTEGER ),
-                   GetLabel( ErrEqLabel ) );
-    } else if( IOStatSpecified ) {
-        IOSLabel = BENewLabel();
-        CGControl( O_IF_TRUE,
-                   CGCompare( O_NE, io_stat, CGInteger( 0, T_INTEGER ),
-                              T_INTEGER ),
-                   IOSLabel );
-    } else {
-        CGDone( io_stat );
-    }
 }

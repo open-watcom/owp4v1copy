@@ -36,33 +36,11 @@
 
 #include "ftnstd.h"
 
+#ifdef pick
+#undef pick
+#endif
+#define pick(id,text) text,
+
 char    *IOKeywords[] = {
-        "",
-        "ACCESS",
-        "ACTION",
-        "BLANK",
-        "BLOCKSIZE",
-        "CARRIAGECONTROL",
-        "DIRECT",
-        "END",
-        "ERR",
-        "EXIST",
-        "FILE",
-        "FMT",
-        "FORM",
-        "FORMATTED",
-        "IOSTAT",
-        "NAME",
-        "NAMED",
-        "NEXTREC",
-        "NUMBER",
-        "OPENED",
-        "REC",
-        "RECL",
-        "RECORDTYPE",
-        "SEQUENTIAL",
-        "SHARE",
-        "STATUS",
-        "UNFORMATTED",
-        "UNIT"
+#include "iodefn.h"
 };

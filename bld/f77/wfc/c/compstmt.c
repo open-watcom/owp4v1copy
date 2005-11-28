@@ -126,8 +126,19 @@ static  void    ChkStatementSequence() {
 }
 
 
-void    CompStatement() {
-//=======================
+static  void    ProcStmt( void ) {
+//================================
+
+    if( AError )
+        return;
+    if( CpError && (StmtProc == PR_NULL) )
+        return;
+    ProcTable[ StmtProc ]();
+}
+
+
+void    CompStatement( void ) {
+//=============================
 
     bool        scan_error;
 
@@ -408,15 +419,6 @@ static  void    CheckOrder() {
             }
         }
     }
-}
-
-
-static  void    ProcStmt() {
-//==========================
-
-    if( AError ) return;
-    if( CpError && (StmtProc == PR_NULL) ) return;
-    ProcTable[ StmtProc ]();
 }
 
 

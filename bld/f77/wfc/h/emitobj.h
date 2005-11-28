@@ -32,9 +32,10 @@
 
 #include "symtypes.h"
 #include "itdefn.h"
+#include "fcodes.h"
 
 // emit.c
-extern  void            EmitOp(unsigned_16);
+extern  void            EmitOp(FCODE);
 // gtypes.c
 extern  void            GenType(itnode *);
 extern  void            GenTypes(itnode *,itnode *);
@@ -71,4 +72,4 @@ extern  byte            GetByte(void);
 extern  obj_ptr         FCodeSeek(obj_ptr new_obj);
 extern  obj_ptr         FCodeTell(int offset);
 extern  void            FCSeek(void);
-extern  unsigned_16     GetFCode(void);
+extern  FCODE           GetFCode(void);

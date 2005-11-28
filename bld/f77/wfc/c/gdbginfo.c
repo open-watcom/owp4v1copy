@@ -57,7 +57,7 @@ void    GSetSrcLine() {
 
     source_t    *src;
 
-    EmitOp( RT_SET_LINE );
+    EmitOp( FC_SET_LINE );
     if( CurrFile->link != NULL ) {
         // for executable statments in an include file, the line number will
         // be the line number of the INCLUDE statement in the original file

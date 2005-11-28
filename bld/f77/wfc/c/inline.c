@@ -42,7 +42,6 @@
 #include "wf77defs.h"
 #include "fcgbls.h"
 #include "cgflags.h"
-#include "rtentry.h"
 #include "cpopt.h"
 #include "inline.h"
 #include "types.h"

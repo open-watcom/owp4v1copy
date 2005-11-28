@@ -38,7 +38,7 @@
 #include "cpopt.h"
 #include "fcgbls.h"
 #include "iflookup.h"
-#include "fcodes.h"
+#include "rtconst.h"
 #include "prmcodes.h"
 #include "fmemmgr.h"
 #include "emitobj.h"
@@ -111,7 +111,7 @@ extern  cg_name         SCBLength(cg_name);
 extern  cg_name         SCBLenAddr(cg_name);
 extern  cg_name         ArrayEltSize(sym_id);
 extern  cg_name         FieldArrayEltSize(sym_id);
-extern  call_handle     InitCall(int);
+extern  call_handle     InitCall(RTCODE);
 extern  bool            IntType(PTYPE);
 extern  void            FiniTmps(void);
 extern  void            CloneCGName(cg_name,cg_name *,cg_name *);

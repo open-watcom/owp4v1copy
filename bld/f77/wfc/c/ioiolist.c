@@ -33,7 +33,7 @@
 #include "errcod.h"
 #include "opr.h"
 #include "opn.h"
-#include "iodefn.h"
+#include "iodefs.h"
 #include "global.h"
 #include "stmtsw.h"
 #include "recog.h"

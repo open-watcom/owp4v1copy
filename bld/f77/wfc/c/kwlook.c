@@ -35,7 +35,7 @@
 //
 
 #include "ftnstd.h"
-#include "iodefn.h"
+#include "iodefs.h"
 #include "global.h"
 
 extern  int             KwLookUp(void **,int,char *,int,bool);
@@ -51,7 +51,7 @@ STMT    RecStmtKW( void ) {
                       CITNode->opnd_size, FALSE ) );
 }
 
-int     RecIOKW( void ) {
+IOKW    RecIOKW( void ) {
 //=======================
 
     return( KwLookUp( IOKeywords, IO_KW_MAX - 1, CITNode->opnd,

@@ -200,7 +200,7 @@ static  void    DoLoop( TYPE do_type ) {
                 doptr->increment = StaticAlloc( do_size, do_type );
             }
         }
-        EmitOp( DO_BEGIN );
+        EmitOp( FC_DO_BEGIN );
         OutPtr( doptr->do_parm );
         OutPtr( doptr->increment );
         if( doptr->increment == NULL ) { // INTEGER do-loop with constant incr
@@ -248,7 +248,7 @@ static  void    DataDo( TYPE do_type ) {
             PushConst( 1 );             // indicate unit incrementation
         }
     }
-    EmitOp( DATA_DO_LOOP );
+    EmitOp( FC_DATA_DO_LOOP );
     OutPtr( do_var );
 }
 
@@ -285,7 +285,7 @@ static  void    DoLoopEnd() {
     do_entry    *doptr;
 
     doptr = CSHead->cs_info.do_parms;
-    EmitOp( DO_END );
+    EmitOp( FC_DO_END );
     OutPtr( doptr->do_parm );
     OutPtr( doptr->increment );
     if( doptr->increment == NULL ) {
@@ -302,5 +302,5 @@ static  void    DataDoEnd() {
 
 // Process end of implied-DO for DATA statement.
 
-    EmitOp( END_OF_SEQUENCE );
+    EmitOp( FC_END_OF_SEQUENCE );
 }

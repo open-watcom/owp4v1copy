@@ -37,7 +37,7 @@
 #include "optr.h"
 #include "emitobj.h"
 
-extern  bool            TypeCmplx(int);
+extern  bool            TypeCmplx(TYPE);
 extern  bool            OptimalChSize(uint);
 extern  TYPE            MapTypes(TYPE,uint);
 
@@ -85,7 +85,8 @@ void    RelOp( TYPE typ1, TYPE typ2, OPTR optr ) {
     bool        char_1_cmp;
     uint        i;
     uint        j;
-    unsigned_16 op_code;
+    OPR         opr_code;
+    FCODE       op_code;
 
     optr = optr;
     // must check for "flip" before we call "CharLength" since they may
@@ -98,8 +99,8 @@ void    RelOp( TYPE typ1, TYPE typ2, OPTR optr ) {
     // must do "CITNode->link" first to get operands in the right order
     i = CharLength( CITNode->link );
     j = CharLength( CITNode );
-    op_code = CITNode->link->opr;
-    if( ( op_code == OPR_EQ ) || ( op_code == OPR_NE ) ) {
+    opr_code = CITNode->link->opr;
+    if( ( opr_code == OPR_EQ ) || ( opr_code == OPR_NE ) ) {
         char_1_cmp = OptimalChSize( i ) && OptimalChSize( j ) && ( i == j );
         associative = TRUE;
     } else {
@@ -108,33 +109,33 @@ void    RelOp( TYPE typ1, TYPE typ2, OPTR optr ) {
     }
     PushOpn( CITNode->link );
     PushOpn( CITNode );
-    op_code -= OPR_FIRST_RELOP;
+    op_code = opr_code - OPR_FIRST_RELOP;
     if( TypeCmplx( typ1 ) && TypeCmplx( typ2 ) ) {
-        op_code += CC_CMP_EQ;
+        op_code += FC_CC_RELOPS;
     } else if( TypeCmplx( typ1 ) ) {
         if( flip ) {
-            op_code += XC_CMP_EQ;
+            op_code += FC_XC_RELOPS;
         } else {
-            op_code += CX_CMP_EQ;
+            op_code += FC_CX_RELOPS;
         }
     } else if( TypeCmplx( typ2 ) ) {
         if( flip ) {
-            op_code += CX_CMP_EQ;
+            op_code += FC_CX_RELOPS;
         } else {
-            op_code += XC_CMP_EQ;
+            op_code += FC_XC_RELOPS;
         }
     } else {
         if( flip && !associative ) {
-            EmitOp( FLIP );
+            EmitOp( FC_FLIP );
         }
         if( typ1 == TY_CHAR ) {
             if( char_1_cmp ) {
-                op_code += CHAR_1_RELOPS;
+                op_code += FC_CHAR_1_RELOPS;
             } else {
-                op_code += CHAR_RELOPS;
+                op_code += FC_CHAR_RELOPS;
             }
         } else {
-            op_code += RELOPS;
+            op_code += FC_RELOPS;
         }
     }
     EmitOp( op_code );

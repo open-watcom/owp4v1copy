@@ -51,7 +51,7 @@ void    StartFmt( cs_label fmt_label ) {
 
     obj_ptr     new_fmt;
 
-    EmitOp( FCODE_SEEK );
+    EmitOp( FC_FCODE_SEEK );
     new_fmt = ObjTell();
     OutU16( 0 );
     OutObjPtr( FormatList );

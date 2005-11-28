@@ -36,7 +36,7 @@
 
 #include "ftnstd.h"
 #include "global.h"
-#include "fcodes.h"
+#include "rtconst.h"
 #include "wf77cg.h"
 #include "wf77defs.h"
 #include "emitobj.h"
@@ -51,7 +51,7 @@ extern  void            CGAddParm(call_handle,cg_name,cg_type);
 
 //=========================================================================
 
-extern  call_handle     InitCall(int);
+extern  call_handle     InitCall(RTCODE);
 
 
 void    FCDbgLine() {

@@ -59,17 +59,8 @@ extern  cg_name         SymAddr(sym_id);
 extern  cg_name         SCBPointer(cg_name);
 
 
-void    FCSelect() {
-//==================
-
-// Perform SELECT statement.
-
-    DoSelect( SELECT );
-}
-
-
-void    DoSelect( int kind ) {
-//============================
+void    DoSelect( FCODE kind ) {
+//==============================
 
 // Select processing for SELECT and computed GOTO.
 
@@ -90,7 +81,7 @@ void    DoSelect( int kind ) {
     CGSelOther( s, GetLabel( GetU16() ) );
     curr_obj = FCodeTell( 0 );
     while( cases != 0 ) {
-        if( kind == COMPUTED_GOTO ) {
+        if( kind == FC_COMPUTED_GOTO ) {
             sn = GetPtr();
             label = GetStmtLabel( sn );
         } else {
@@ -118,7 +109,7 @@ void    DoSelect( int kind ) {
         sel_expr = SymValue( sel_sym );
     }
     CGSelect( s, sel_expr );
-    if( kind == COMPUTED_GOTO ) {
+    if( kind == FC_COMPUTED_GOTO ) {
         FCodeSeek( curr_obj );
         while( stmts != 0 ) {
             RefStmtLabel( GetPtr() );
@@ -128,4 +119,13 @@ void    DoSelect( int kind ) {
         }
         GetPtr(); // skip select variable
     }
+}
+
+
+void    FCSelect( void ) {
+//========================
+
+// Perform SELECT statement.
+
+    DoSelect( FC_SELECT );
 }

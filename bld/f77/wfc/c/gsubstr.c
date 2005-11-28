@@ -95,7 +95,7 @@ void    GFiniSS( itnode *sym_node, itnode *ss_node ) {
 
     if( sym_node->opn.us & USOPN_FLD ) {
         PushOpn( sym_node );
-        EmitOp( FIELD_SUBSTRING );
+        EmitOp( FC_FIELD_SUBSTRING );
         OutPtr( sym_node->sym_ptr );
         if( sym_node->opn.us & USOPN_SS1 ) { // length known at compile-time
             OutInt( sym_node->value.st.ss_size );
@@ -103,7 +103,7 @@ void    GFiniSS( itnode *sym_node, itnode *ss_node ) {
             OutInt( 0 ); // we don't know the length
         }
     } else {
-        EmitOp( RT_SUBSTRING );
+        EmitOp( FC_SUBSTRING );
         if( sym_node->opn.us & USOPN_SS1 ) { // length known at compile-time
             OutPtr( NULL );
         } else {

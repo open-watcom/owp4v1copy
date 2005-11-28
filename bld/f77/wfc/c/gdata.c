@@ -49,7 +49,7 @@ label_id        GDataProlog() {
 
 // Start off data statement code.
 
-    EmitOp( START_DATA_STMT );
+    EmitOp( FC_START_DATA_STMT );
     DtConstList = ObjTell();
     OutU16( 0 );
     return( NULL );
@@ -128,5 +128,5 @@ void    GEndVarSet() {
 // Terminate set of variables (i.e. Data i,j,k/1,2,3/,m/3/ - i,j,k is a set
 // and m is a set).
 
-    EmitOp( END_VAR_SET );
+    EmitOp( FC_END_VAR_SET );
 }

@@ -41,10 +41,10 @@
 #include "wf77aux.h"
 #include "fcgbls.h"
 #include "cgflags.h"
-#include "rtentry.h"
 #include "cpopt.h"
 #include "types.h"
 #include "fctypes.h"
+#include "rtconst.h"
 
 #include <string.h>
 
@@ -67,116 +67,26 @@ extern  aux_info        RtStopInfo;
 extern  aux_info        CoRtnInfo;
 extern  unsigned_8      CGFlags;
 
-rt_rtn  __FAR RtnTab[] = {
-        "Pause",        NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "Stop",         NULL,   &RtStopInfo,    TY_NO_TYPE,
-        NULL,           NULL,   NULL,           0,      // "SetIOCB"
-        "SetFmt",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetUnit",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetIntl",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetErr",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetEnd",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetRec",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetIOS",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetAcc",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetBlnk",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetFile",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetForm",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetLen",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetStat",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetDir",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetCCtrl",     NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetFmtd",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetName",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetSeq",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetUnFmtd",    NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetExst",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetNmd",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetNRec",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetNumb",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetOpen",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetRecl",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetNoFmt",     NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetRecType",   NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetAction",    NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetNml",       NULL,   &RtVarInfo,     TY_NO_TYPE,
-        "SetBlkSize",   NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "InqBlkSize",   NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetShare",     NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "IORead",       NULL,   &CoRtnInfo,     TY_INTEGER_TARG,
-        "IOWrite",      NULL,   &CoRtnInfo,     TY_INTEGER_TARG,
-        "IOOpen",       NULL,   &CoRtnInfo,     TY_INTEGER_TARG,
-        "IOClose",      NULL,   &CoRtnInfo,     TY_INTEGER_TARG,
-        "IOBack",       NULL,   &CoRtnInfo,     TY_INTEGER_TARG,
-        "IOEndf",       NULL,   &CoRtnInfo,     TY_INTEGER_TARG,
-        "IORew",        NULL,   &CoRtnInfo,     TY_INTEGER_TARG,
-        "IOInq",        NULL,   &CoRtnInfo,     TY_INTEGER_TARG,
-        "OutLOG1",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutLOG4",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutINT1",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutINT2",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutINT4",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutREAL",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutDBLE",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutXTND",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutCPLX",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutDBCX",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutXTCX",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutCHAR",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "OutSTR",       NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpLOG1",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpLOG4",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpINT1",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpINT2",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpINT4",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpREAL",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpDBLE",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpXTND",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpCPLX",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpDBCX",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpXTCX",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpCHAR",      NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "InpSTR",       NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "EndIO",        NULL,   &CoRtnInfo,     TY_NO_TYPE,
-        "Alloc",        NULL,   &RtVarInfo,     TY_NO_TYPE,
-        "DeAlloc",      NULL,   &RtVarInfo,     TY_NO_TYPE,
-        "FmtScan",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "FmtAScan",     NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "Cat",          NULL,   &RtVarInfo,     TY_NO_TYPE,
-        "Substring",    NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "Subscript",    NULL,   &RtVarInfo,     TY_INTEGER,
-        NULL,           NULL,   NULL,           0,      // "Prologue"
-        NULL,           NULL,   NULL,           0,      // "Epilogue"
-        NULL,           NULL,   NULL,           0,      // "FmtAssign"
-        "SetLine",      NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "SetModule",    NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "C8Mul",        NULL,   &IFInfo,        TY_COMPLEX,
-        "C8Div",        NULL,   &IFInfo,        TY_COMPLEX,
-        "C8Pow",        NULL,   &IFInfo,        TY_COMPLEX,
-        "C8PowI",       NULL,   &IFInfo,        TY_COMPLEX,
-        "C16Mul",       NULL,   &IFInfo,        TY_DCOMPLEX,
-        "C16Div",       NULL,   &IFInfo,        TY_DCOMPLEX,
-        "C16Pow",       NULL,   &IFInfo,        TY_DCOMPLEX,
-        "C16PowI",      NULL,   &IFInfo,        TY_DCOMPLEX,
-        "C32Mul",       NULL,   &IFInfo,        TY_XCOMPLEX,
-        "C32Div",       NULL,   &IFInfo,        TY_XCOMPLEX,
-        "C32Pow",       NULL,   &IFInfo,        TY_XCOMPLEX,
-        "C32PowI",      NULL,   &IFInfo,        TY_XCOMPLEX,
-        "LexCmp",       NULL,   &RtRtnInfo,     TY_INTEGER_TARG,
-        "PrtArr",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "PrtChArr",     NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "InpArr",       NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "InpChArr",     NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "Move",         NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "TCat",         NULL,   &RtVarInfo,     TY_NO_TYPE,
-        "ADVFillHi",    NULL,   &RtRtnInfo,     TY_NO_TYPE,
-        "ADVFillHiLo1", NULL,   &RtRtnInfo,     TY_NO_TYPE
+typedef struct rt_rtn {
+    char        __FAR *name;
+    sym_id      sym_ptr;
+    aux_info    *aux;
+    byte        typ;
+} rt_rtn;
+
+#ifdef pick
+#undef pick
+#endif
+#define pick(id,name,sym,aux,typ) {name,sym,aux,typ},
+
+static rt_rtn  __FAR RtnTab[] = {
+#include "rtdefn.h"
 };
 
 #define MAX_RT_INDEX    ((sizeof( RtnTab ) / sizeof( RtnTab[0] ))-1)
 
 
-call_handle     InitCall( int rtn_id ) {
+call_handle     InitCall( RTCODE rtn_id ) {
 //======================================
 
 // Initialize a call to a runtime routine.
@@ -252,4 +162,19 @@ void    FreeRtRtns() {
         }
         rt_index++;
     }
+}
+
+
+aux_info    *RTAuxInfo( sym_id rtn ) {
+//====================================
+
+// Return aux information for run-time routine.
+
+    rt_rtn      __FAR *rt_entry;
+
+    rt_entry = RtnTab;
+    while( rt_entry->sym_ptr != rtn ) {
+        rt_entry++;
+    }
+    return( rt_entry->aux );
 }

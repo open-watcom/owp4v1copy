@@ -52,7 +52,7 @@ void    GFieldSCB( inttarg size ) {
 // Setup an SCB for a character field.
 
     PushConst( size );
-    EmitOp( FLIP );
+    EmitOp( FC_FLIP );
 }
 
 
@@ -66,11 +66,11 @@ void    FieldOp( TYPE typ1, TYPE typ2, OPTR op ) {
     PushOpn( CITNode );
     if( CITNode->opn.us & USOPN_FLD ) {
         // sub-field reference
-        EmitOp( ADD );
+        EmitOp( FC_ADD );
         DumpTypes( TY_INTEGER, TypeSize( TY_INTEGER ),
                    TY_INTEGER, TypeSize( TY_INTEGER ) );
     } else {
-        EmitOp( FIELD_OP );
+        EmitOp( FC_FIELD_OP );
         OutPtr( CITNode->sym_ptr );
         if( ( StmtSw & SS_DATA_INIT ) == 0 ) {
             if( typ2 == TY_CHAR ) {
@@ -79,7 +79,7 @@ void    FieldOp( TYPE typ1, TYPE typ2, OPTR op ) {
                         ( ( CITNode->link->opn.us & USOPN_WHAT ) != USOPN_ASS ) ) {
                         GFieldSCB( CITNode->link->size );
                     }
-                    EmitOp( MAKE_SCB );
+                    EmitOp( FC_MAKE_SCB );
                     OutPtr( GTempString( 0 ) );
                 }
             }

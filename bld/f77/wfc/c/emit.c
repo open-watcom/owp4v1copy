@@ -24,39 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  emit F-Codes
 *
 ****************************************************************************/
 
 
-//
-// EMIT         : emit F-Codes
-//
-
 #include "ftnstd.h"
-#include "fcodes.h"
 #include "emitobj.h"
-#include "ferror.h"
 
 
-void    EmitOp( unsigned_16 value ) {
+void    EmitOp( FCODE value ) {
 //===================================
 
 // Emit the specified F-Code.
 
-#if defined( __FCODE_LIMIT__ )
-    #include "errcod.h"
-
-    extern      void    Suicide(void);
-
-    static      uint    num_fcodes = { 0 };
-
-    ++num_fcodes;
-    if( num_fcodes > __FCODE_LIMIT__ ) {
-        Error( MO_DYNAMIC_OUT );
-        Suicide();
-    }
-#endif
     OutU16( value  );
 }

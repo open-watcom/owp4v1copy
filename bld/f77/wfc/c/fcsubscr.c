@@ -36,7 +36,7 @@
 
 #include "ftnstd.h"
 #include "global.h"
-#include "fcodes.h"
+#include "rtconst.h"
 #include "wf77defs.h"
 #include "cg.h"
 #include "cpopt.h"
@@ -69,7 +69,7 @@ extern  cg_name         CharItemLen(sym_id);
 extern  cg_name         SCBPtrAddr(cg_name);
 extern  cg_name         SCBLenAddr(cg_name);
 extern  cg_name         StructRef(cg_name,int);
-extern  call_handle     InitCall(int);
+extern  call_handle     InitCall(RTCODE);
 extern  sym_id          FindAdvShadow(sym_id);
 
 

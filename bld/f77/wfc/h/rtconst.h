@@ -30,6 +30,14 @@
 ****************************************************************************/
 
 
-#define RT_FIRST_FORTRAN        0
+#ifdef pick
+#undef pick
+#endif
+#define pick(id,name,sym,aux,typ) id,
 
-#include <ftnrt.h>
+typedef enum {
+#include "rtdefn.h"
+} RTCODE;
+
+#define RT_C_DOUBLE        (RT_C16MUL - RT_C8MUL)
+#define RT_C_EXTENDED      (RT_C32MUL - RT_C8MUL)

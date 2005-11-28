@@ -71,11 +71,11 @@ void    GEndSubScr( itnode *arr ) {
 
     if( arr->opn.us & USOPN_FLD ) {
         PushOpn( arr );
-        EmitOp( FIELD_SUBSCRIPT );
+        EmitOp( FC_FIELD_SUBSCRIPT );
         OutPtr( arr->sym_ptr );
         dims = _DimCount( arr->sym_ptr->fd.dim_ext->dim_flags );
     } else {
-        EmitOp( RT_SUBSCRIPT );
+        EmitOp( FC_SUBSCRIPT );
         OutPtr( arr->sym_ptr );
         dims = _DimCount( arr->sym_ptr->ns.si.va.dim_ext->dim_flags );
     }

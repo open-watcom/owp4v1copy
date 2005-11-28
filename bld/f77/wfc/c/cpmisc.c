@@ -39,8 +39,9 @@
 #include "ferror.h"
 #include "inout.h"
 #include "utility.h"
+#include "fcodes.h"
 
-extern  void            GBreak(unsigned_16);
+extern  void            GBreak(FCODE);
 extern  void            GReturn(void);
 extern  void            CSNoMore(void);
 extern  void            AddConst(itnode *);
@@ -52,8 +53,8 @@ extern  void            BadStmt(void);
 extern  char            *StmtKeywords[];
 
 
-static  void    BreakOpn( unsigned_16 routine ) {
-//===============================================
+static  void    BreakOpn( FCODE routine ) {
+//=========================================
 
     CITNode->opn.ds = DSOPN_LIT;
     GetConst();
@@ -66,7 +67,7 @@ static  void    BreakOpn( unsigned_16 routine ) {
 }
 
 
-static  void    NumOrLit( unsigned_16 routine ) {
+static  void    NumOrLit( FCODE routine ) {
 //===============================================
 
     if( RecNOpn() ) {

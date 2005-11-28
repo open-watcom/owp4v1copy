@@ -409,11 +409,12 @@ void    FCodeSequence() {
 
 // Interpret an F-Code sequence.
 
-    int f_code;
+    FCODE   f_code;
 
     for(;;) {
         f_code = GetFCode();
-        if( f_code == END_OF_SEQUENCE ) break;
+        if( f_code == FC_END_OF_SEQUENCE )
+            break;
         FCTablePtr[ f_code ]();
     }
 }

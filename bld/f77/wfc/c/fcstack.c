@@ -61,7 +61,7 @@ extern  void            CnvD2S(double *,char *);
 extern  void            CnvX2S(extended *,char *);
 extern  cg_name         StructRef(cg_name,int);
 extern  segment_id      GetGlobalSeg(unsigned_32);
-extern  bool            TypeCmplx(int);
+extern  bool            TypeCmplx(TYPE);
 extern  intstar4        GetComBlkSize(sym_id);
 extern  seg_offset      GetComOffset(unsigned_32);
 extern  cg_name         SCBPointer(cg_name);

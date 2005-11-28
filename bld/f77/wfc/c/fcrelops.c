@@ -38,7 +38,7 @@
 #include "symbol.h"
 #include "wf77defs.h"
 #include "cg.h"
-#include "fcodes.h"
+#include "rtconst.h"
 #include "emitobj.h"
 #include "fctypes.h"
 
@@ -56,7 +56,7 @@ extern  void            CGTrash(cg_name);
 extern  void            XPush(cg_name);
 extern  cg_name         XPop(void);
 extern  cg_name         XPopValue(cg_type);
-extern  call_handle     InitCall(int);
+extern  call_handle     InitCall(RTCODE);
 extern  cg_name         SCBPointer(cg_name);
 extern  cg_name         IntegerConstant(ftn_type *,uint);
 

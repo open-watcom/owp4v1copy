@@ -37,7 +37,6 @@
 #include "ftnstd.h"
 #include "global.h"
 #include "astype.h"
-#include "fcodes.h"
 #include "emitobj.h"
 
 

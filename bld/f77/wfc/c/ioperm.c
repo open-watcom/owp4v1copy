@@ -36,7 +36,7 @@
 
 #include "ftnstd.h"
 #include "errcod.h"
-#include "iodefn.h"
+#include "iodefs.h"
 #include "global.h"
 #include "ferror.h"
 #include "insert.h"
@@ -87,15 +87,15 @@ static  const byte __FAR        PermTable[] = {
 };
 
 
-bool    Already( int kw ) {
-//=========================
+bool    Already( IOKW kw ) {
+//==========================
 
     return( ( ( IOData >> ( kw - 1 ) ) & 1 ) != 0 );
 }
 
 
-static  byte    ExtnTest( int kw ) {
-//==================================
+static  byte    ExtnTest( IOKW kw ) {
+//===================================
 
     return( PermTable[ TABLE_ENTRY * ( kw - 1 ) + 8 ] );
 }
@@ -108,8 +108,19 @@ byte    PermTest( int kw ) {
 }
 
 
-bool    Permission( int kw ) {
-//============================
+void    KWRememb( IOKW kw ) {
+//===========================
+
+    unsigned_32 i;
+
+    i = 1;
+    i = i << ( kw - 1 );
+    IOData |= i;
+}
+
+
+bool    Permission( IOKW kw ) {
+//=============================
 
     bool        perm;
 
@@ -133,19 +144,8 @@ bool    Permission( int kw ) {
 }
 
 
-void    KWRememb( int kw ) {
-//==========================
-
-    unsigned_32 i;
-
-    i = 1;
-    i = i << ( kw - 1 );
-    IOData |= i;
-}
-
-
-void    CheckList() {
-//===================
+void    CheckList( void ) {
+//=========================
 
     bool        have_unit;
 

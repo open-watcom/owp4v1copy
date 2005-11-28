@@ -90,7 +90,7 @@ void    GBegCall( itnode *itptr ) {
         }
     }
 #endif
-    EmitOp( CALL );
+    EmitOp( FC_CALL );
     OutPtr( itptr->sym_ptr );
     curr_obj = ObjTell();
     OutU16( 0 );
@@ -125,7 +125,7 @@ void    GEndCall( itnode *itptr, int num_stmts ) {
     itnode      *arg;
 
     if( num_stmts > 0 ) {
-        EmitOp( ALT_RET );
+        EmitOp( FC_ALT_RET );
         OutU16( num_stmts );
         arg = itptr->list;
         for(;;) {
@@ -137,7 +137,7 @@ void    GEndCall( itnode *itptr, int num_stmts ) {
             if( num_stmts == 0 ) break;
         }
     } else if( (itptr->sym_ptr->ns.flags & SY_SUBPROG_TYPE) == SY_SUBROUTINE ) {
-        EmitOp( EXPR_DONE );
+        EmitOp( FC_EXPR_DONE );
     }
     SetOpn( itptr, USOPN_SAFE );
 }
@@ -152,20 +152,20 @@ void    GArg() {
         if( (CITNode->opn.us & USOPN_FLD) &&
             ((CITNode->opn.us & USOPN_WHAT) == USOPN_ARR) &&
             (CITNode->typ == TY_CHAR) ) {
-            EmitOp( PASS_FIELD_CHAR_ARRAY );
+            EmitOp( FC_PASS_FIELD_CHAR_ARRAY );
             OutPtr( CITNode->value.st.field_id );
             OutPtr( GTempString( 0 ) );
         }
         return;
     }
     if( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_SSR ) {
-        EmitOp( PUSH_SCB_LEN );
+        EmitOp( FC_PUSH_SCB_LEN );
     } else if( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_CON ) {
         PushOpn( CITNode );
     } else if( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_ARR ) {
         PushOpn( CITNode );
         if( CITNode->typ == TY_CHAR ) {
-            EmitOp( PASS_CHAR_ARRAY );
+            EmitOp( FC_PASS_CHAR_ARRAY );
             SymRef( CITNode );
             OutPtr( GTempString( 0 ) );
         }
@@ -300,7 +300,7 @@ static  void    SetArgAddrs() {
 
     parameter   *d_arg;
 
-    EmitOp( DARG_INIT );
+    EmitOp( FC_DARG_INIT );
     OutPtr( ArgList->id );
     d_arg = ArgList->parms;
     while( d_arg != NULL ) {
@@ -325,7 +325,7 @@ void    GEpilog() {
         GLabel( EpilogLabel );
         FreeLabel( EpilogLabel );
     }
-    EmitOp( RT_EPILOGUE );
+    EmitOp( FC_EPILOGUE );
     OutPtr( SubProgId );
 }
 
@@ -344,7 +344,7 @@ void    GEndBlockData() {
 
 // Terminate a block data subprogram.
 
-    EmitOp( RT_EPILOGUE );
+    EmitOp( FC_EPILOGUE );
     OutPtr( SubProgId );
 }
 
@@ -367,7 +367,7 @@ void    GRetIdx() {
 // Generate an alternate return.
 
     PushOpn( CITNode );
-    EmitOp( ASSIGN_ALT_RET );
+    EmitOp( FC_ASSIGN_ALT_RET );
     GenType( CITNode );
 }
 
@@ -378,7 +378,7 @@ void    GNullRetIdx() {
 // No alternate return.
 
     PushConst( 0 );
-    EmitOp( ASSIGN_ALT_RET );
+    EmitOp( FC_ASSIGN_ALT_RET );
     DumpType( TY_INTEGER, TypeSize( TY_INTEGER ) );
 }
 
@@ -409,7 +409,7 @@ static  void    FinishCALL( itnode *sp ) {
 
     if( ( sp->sym_ptr->ns.flags & SY_SUBPROG_TYPE ) == SY_FUNCTION ) {
         // a FUNCTION invoked in a CALL statement
-        EmitOp( EXPR_DONE );
+        EmitOp( FC_EXPR_DONE );
     }
 }
 

@@ -46,7 +46,7 @@ static  void    GCnvTo( TYPE typ, uint size ) {
 
 // Convert operand.
 
-    EmitOp( CONVERT );
+    EmitOp( FC_CONVERT );
     DumpTypes( CITNode->typ, CITNode->size, typ, size );
     CITNode->typ = typ;
     CITNode->size = size;
@@ -65,5 +65,5 @@ void    GILCnvTo( TYPE typ, uint size ) {
 void    GIChar() {
 //================
 
-    EmitOp( ICHAR );
+    EmitOp( FC_ICHAR );
 }

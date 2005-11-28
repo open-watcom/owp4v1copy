@@ -48,7 +48,7 @@ extern  void            FreeNameList(sym_id);
 extern  void            FreeLocalLists(void);
 extern  void            FiniFormatList(void);
 extern  void            InitFormatList(void);
-extern  bool            TypeCmplx(int);
+extern  bool            TypeCmplx(TYPE);
 extern  label_id        NextLabel(void);
 extern  void            CGPurge(void);
 extern  void            FiniAuxInfo(void);
@@ -120,7 +120,7 @@ void            TDSubFini() {
 
     SubAuxFini();
     if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) {
-        EmitOp( END_OF_SEQUENCE );
+        EmitOp( FC_END_OF_SEQUENCE );
         CGGenSub();
     }
     FiniObj();
@@ -144,15 +144,15 @@ void            TDStmtFini() {
 
     if( StmtProc == PR_ASNMNT ) {
         if( TypeCmplx( ResultType ) ) {
-            EmitOp( CMPLX_EXPR_DONE );
+            EmitOp( FC_CMPLX_EXPR_DONE );
         } else {
-            EmitOp( EXPR_DONE );
+            EmitOp( FC_EXPR_DONE );
         }
     }
     if( StmtSw & SS_SF_REFERENCED ) {
-        EmitOp( SF_REFERENCED );
+        EmitOp( FC_SF_REFERENCED );
     }
-    EmitOp( STMT_DONE );
+    EmitOp( FC_STMT_DONE );
 }
 
 

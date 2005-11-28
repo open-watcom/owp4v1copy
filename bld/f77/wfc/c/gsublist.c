@@ -49,7 +49,7 @@ void            GWarp( sym_id sym ) {
 
 // Generate warp to code to fill in ADV.
 
-    EmitOp( WARP );
+    EmitOp( FC_WARP );
     OutPtr( sym );
 }
 
@@ -59,7 +59,7 @@ warp_label              GBegSList() {
 
 // Generate code to start ADV initialization.
 
-    EmitOp( FCODE_SEEK );
+    EmitOp( FC_FCODE_SEEK );
     WarpLabel = ObjTell();
     OutU16( 0 );
     return( ObjTell() );
@@ -72,7 +72,7 @@ void            GSLoBound( int dim_no, sym_id sym ) {
 // Generate code to fill in ADV subscript element (lo bound).
 
     PushOpn( CITNode );
-    EmitOp( ADV_FILL_LO );
+    EmitOp( FC_ADV_FILL_LO );
     OutPtr( sym );
     OutU16( dim_no );
     GenType( CITNode );
@@ -99,7 +99,7 @@ void            GForceHiBound( int dim_no, sym_id sym ) {
 
     AddConst( CITNode );
     PushOpn( CITNode );
-    EmitOp( ADV_FILL_HI );
+    EmitOp( FC_ADV_FILL_HI );
     OutPtr( sym );
     OutU16( dim_no );
     GenType( CITNode );
@@ -112,7 +112,7 @@ void            GSHiBound( int dim_no, sym_id sym ) {
 // Generate code to fill in ADV subscript element (hi bound).
 
     PushOpn( CITNode );
-    EmitOp( ADV_FILL_HI );
+    EmitOp( FC_ADV_FILL_HI );
     OutPtr( sym );
     OutU16( dim_no );
     GenType( CITNode );
@@ -127,7 +127,7 @@ void            GSHiBoundLo1( int dim_no, sym_id sym ) {
 
     // push high bound value
     PushOpn( CITNode );
-    EmitOp( ADV_FILL_HI_LO_1 );
+    EmitOp( FC_ADV_FILL_HI_LO_1 );
     // general information
     OutPtr( sym );
     OutU16( dim_no );
@@ -143,7 +143,7 @@ void            GEndSList( sym_id sym ) {
     unsigned_16 warp_size;
 
     sym = sym;
-    EmitOp( WARP_RETURN );
+    EmitOp( FC_WARP_RETURN );
     warp_size = ObjOffset( WarpLabel ) - sizeof( unsigned_16 );
     WarpLabel = ObjSeek( WarpLabel );
     OutU16( warp_size );

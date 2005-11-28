@@ -35,7 +35,7 @@
 //
 
 #include "ftnstd.h"
-#include "iodefn.h"
+#include "iodefs.h"
 #include "iortncon.h"
 #include "global.h"
 

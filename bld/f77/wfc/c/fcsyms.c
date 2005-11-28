@@ -125,7 +125,7 @@ extern  cg_name         SubAltSCB(sym_id);
 extern  sym_id          FindEqSetShadow(sym_id);
 extern  sym_id          FindAdvShadow(sym_id);
 extern  cg_type         CmplxBaseType(cg_type);
-extern  bool            TypeCmplx(int);
+extern  bool            TypeCmplx(TYPE);
 extern  cg_name         StructRef(cg_name,int);
 
 extern  segment_id      CurrCodeSegId;
