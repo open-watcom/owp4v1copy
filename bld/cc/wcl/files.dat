@@ -6,6 +6,7 @@ dir="binw"	usr="wclaxp.exe"	cond="wnthost"		where="ac"
 dir="binnt"	usr="wcl.exe"		cond="wnthost tools16"	where="c jc"	desc=" Compile and link utility for 16-bit C and C++ compiler"
 dir="binnt"	usr="wcl386.exe"	cond="wnthost"		where="c jc ac"	desc=" Compile and link utility for 32-bit C and C++ compiler"
 dir="binnt"	usr="wclaxp.exe"	cond="wnthost"		where="ac"
+dir="binnt"	usr="owcc.exe"		cond="wnthost"		where="c jc"	desc=" POSIX style Compile and link utility for C and C++ compiler"
 
 dir="axpnt"	usr="wclaxp.exe"	cond="alphahost"	where="ac"
 dir="axpnt"	usr="wcl386.exe"	cond="alphahost"	where="ac"
