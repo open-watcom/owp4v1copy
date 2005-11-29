@@ -554,17 +554,11 @@ static unsigned AXPOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
     }
     if( flags & DFF_ASM ) {
         op = &ins->op[op_num];
-        if( op->base >= DR_AXP_f0 && op->base <= DR_AXP_sp ) {
+        if( op->base >= DR_AXP_f0 && op->base <= DR_AXP_zero ) {
             op->base += DR_AXP_af0 - DR_AXP_f0;
-            if( op->base == DR_AXP_ar31 && ( flags & DFF_SYMBOLIC_REG ) ) {
-                op->base = DR_AXP_azero;
-            }
         }
-        if( op->index >= DR_AXP_f0 && op->base <= DR_AXP_sp ) {
+        if( op->index >= DR_AXP_f0 && op->base <= DR_AXP_zero ) {
             op->index += DR_AXP_af0 - DR_AXP_f0;
-            if( op->index == DR_AXP_ar31 && ( flags & DFF_SYMBOLIC_REG ) ) {
-                op->index = DR_AXP_azero;
-            }
         }
     }
     return( 0 );
