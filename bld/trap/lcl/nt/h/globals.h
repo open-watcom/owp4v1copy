@@ -60,6 +60,10 @@ TRPGLOBAL DWORD                 LastDebugEventTid;
 TRPGLOBAL BOOL                  BreakOnKernelMessage;
 TRPGLOBAL BOOL                  PendingProgramInterrupt;
 TRPGLOBAL char                  *MsgPrefix TRPGLOBINIT( NULL );
+/* %GUT */
+TRPGLOBAL HANDLE                SavedStdInHdl;
+TRPGLOBAL HANDLE                SavedStdOutHdl;
+/* %GUTEND */
 
 #ifdef WOW
 TRPGLOBAL wow_info              WOWAppInfo;
