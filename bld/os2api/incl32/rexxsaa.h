@@ -106,6 +106,28 @@ extern "C" {
 #define RXVALIDSTRING(r)    ((r).strptr && (r).strlength)
 #define RXZEROLENSTRING(r)  ((r).strptr && !(r).strlength)
 
+#define RXEXIT_HANDLED       0
+#define RXEXIT_NOT_HANDLED   1
+#define RXEXIT_RAISE_ERROR (-1)
+
+#define RXEXIT_ISREG         1
+#define RXEXIT_ERROR         1
+#define RXEXIT_FAILURE       2
+#define RXEXIT_BADENTRY   1001
+#define RXEXIT_NOEMEM     1002
+#define RXEXIT_BADTYPE    1003
+#define RXEXIT_NOTINIT    1004
+
+#define RXEXIT_OK            0
+#define RXEXIT_DUP          10
+#define RXEXIT_MAXREG       20
+#define RXEXIT_NOTREG       30
+#define RXEXIT_NOCANDROP    40
+#define RXEXIT_LOADERR      50
+#define RXEXIT_NOPROC      127
+
+typedef PUCHAR PEXIT;
+
 typedef struct {
     ULONG strlength;
     PCH   strptr;
@@ -125,6 +147,22 @@ typedef struct _RXSYSEXIT {
     PSZ  sysexit_name;
     LONG sysexit_code;
 } RXSYSEXIT, *PRXSYSEXIT;
+
+typedef struct _RXSIOSAY_PARM {
+    RXSTRING    rxsio_string;
+} RXSIOSAY_PARM;
+
+typedef struct _RXSIOTRC_PARM {
+    RXSTRING    rxsio_string;
+} RXSIOTRC_PARM;
+
+typedef struct _RXSIOTRD_PARM {
+    RXSTRING    rxsiotrd_retc;
+} RXSIOTRD_PARM;
+
+typedef struct _RXSIODTR_PARM {
+    RXSTRING    rxsiodtr_retc;
+} RXSIODTR_PARM;
 
 typedef ULONG APIENTRY RexxSubcomHandler(PRXSTRING,PUSHORT,PRXSTRING);
 typedef ULONG APIENTRY RexxFunctionHandler(PUCHAR,ULONG,PRXSTRING,PSZ,PRXSTRING);
