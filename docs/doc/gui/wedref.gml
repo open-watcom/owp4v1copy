@@ -718,6 +718,9 @@ modified and has not been saved to disk since the last make (build).
 .*
 .np
 .ix 'VI emulation'
+Beneath the &editor.'s mild-mannered exterior lurks the
+full power of the &company VI editor, complete with scripting,
+commands and bookmarks.
 Turning on VI emulation causes the &editor to emulate the behaviour of
 the &company VI editor.
 .*
@@ -868,7 +871,8 @@ only.
 The &editor allows you to highlight different parts of the syntax for the
 language you are using. This allows you to easily find the parts of code
 you are looking for because they are different &colour.s and/or fonts.
-The &editor highlights lexical elements for C, C++, or Fortran code.
+The &editor highlights lexical elements for C, C++, Fortran, Java
+and JavaScript, and HTML code (among others).
 .np
 The Language section also allows you to turn on C Indent Assist.
 The &editor then uses common C formatting conventions such as smart
@@ -921,6 +925,9 @@ tags.
 Turn this option on, if you want to be prompted when you tag a function
 that has multiple entries in the tags file.
 .endpoint
+.np
+Tag files are created by the CTAGS utility, which is described in the 
+&company VI editor documentation.
 .*
 .section File Specific Options : Miscellaneous
 .*
@@ -1007,7 +1014,8 @@ The Save Configuration menu item will save your current configuration
 regardless of the status of the "Save configuration on exit" setting.
 The configuration information is saved to a
 .fi weditor.ini
-file in the Windows system directory.
+file either in the user's home directory (on multi-user systems) or
+in the Windows system directory.
 .*
 .endlevel
 .*
