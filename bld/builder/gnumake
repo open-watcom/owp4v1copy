@@ -19,7 +19,7 @@ all: $(OBJDIR) $(UTILS) $(OBJDIR)/builder
 	cp $(UTILS) $(OUT_DIR)
 	mv -f $(OUT_DIR)/diff $(OUT_DIR)/wdiff
 
-$(OBJDIR)/builder: $(foreach i,sys.o sysposix.o builder.o utils.o runit.o,$(OBJDIR)/$i) pmake.o
+$(OBJDIR)/builder: $(foreach i,sys.o sysposix.o builder.o utils.o runit.o pmake.o,$(OBJDIR)/$i)
 
 cdsay: $(OBJDIR)/cdsay.o
 
