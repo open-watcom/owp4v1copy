@@ -441,6 +441,8 @@ DATA_TYPE DataTypeOf( TYPEPTR typ )
         return( TYPE_INT );
     case TYPE_UFIELD:
         return( TYPE_UINT );
+    default:
+        break;
     }
     return( data_type );
 }
@@ -847,6 +849,7 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         case T_LE:      opr = CC_LE;    break;
         case T_GT:      opr = CC_GT;    break;
         case T_GE:      opr = CC_GE;    break;
+        default:                        break;
         }
         tree->op.cc = opr;
         tree->op.compare_type = cmp_type;
@@ -1054,6 +1057,29 @@ static TREEPTR ArrayMinusConst( TREEPTR op1, TREEPTR op2 )
             }
         }
     }
+    return( 0 );
+}
+
+
+local int LValue( TREEPTR op1 )
+{
+    TYPEPTR     typ;
+
+    if( op1->op.opr == OPR_ERROR )  return( 1 );
+    if( IsLValue( op1 ) ) {
+        typ = TypeOf( op1 );
+        if( typ->decl_type != TYPE_ARRAY ) {
+            if( TypeSize(typ) == 0 ) {
+                CErr1( ERR_INCOMPLETE_EXPR_TYPE );
+            }
+            if( op1->op.flags & OPFLAG_LVALUE_CAST ) {
+                op1->op.flags &= ~(OPFLAG_LVALUE_CAST|OPFLAG_RVALUE);
+                CWarn1( WARN_LVALUE_CAST, ERR_LVALUE_CAST );
+            }
+            return( 1 );
+        }
+    }
+    CErr1( ERR_MUST_BE_LVALUE );
     return( 0 );
 }
 
@@ -1292,29 +1318,6 @@ TREEPTR BinOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         tree->op.result_type = typ;
     }
     return( tree );
-}
-
-
-local int LValue( TREEPTR op1 )
-{
-    TYPEPTR     typ;
-
-    if( op1->op.opr == OPR_ERROR )  return( 1 );
-    if( IsLValue( op1 ) ) {
-        typ = TypeOf( op1 );
-        if( typ->decl_type != TYPE_ARRAY ) {
-            if( TypeSize(typ) == 0 ) {
-                CErr1( ERR_INCOMPLETE_EXPR_TYPE );
-            }
-            if( op1->op.flags & OPFLAG_LVALUE_CAST ) {
-                op1->op.flags &= ~(OPFLAG_LVALUE_CAST|OPFLAG_RVALUE);
-                CWarn1( WARN_LVALUE_CAST, ERR_LVALUE_CAST );
-            }
-            return( 1 );
-        }
-    }
-    CErr1( ERR_MUST_BE_LVALUE );
-    return( 0 );
 }
 
 

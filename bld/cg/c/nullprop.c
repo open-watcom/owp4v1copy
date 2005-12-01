@@ -230,7 +230,7 @@ typedef struct goofy_struct_so_we_can_use_saferecurse {
     bool        forward;
 } parm_struct;
 
-extern  void            *DominatingDeref( parm_struct * );
+static  void            *DominatingDeref( parm_struct * );
 
 static  int             BlockSearch( block *blk, instruction *ins, name *op, bool forward ) {
 /********************************************************************************************

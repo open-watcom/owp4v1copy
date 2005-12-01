@@ -75,7 +75,6 @@ extern void     ResetComdef( void );
 extern void     ResetDistrib( void );
 extern void     ResetLoadNov( void );
 extern void     ResetLoadPE( void );
-extern void     ResetMisc( void );
 extern void     ResetObj2Supp( void );
 extern void     ResetObjIO( void );
 extern void     ResetObjOMF( void );
@@ -98,6 +97,7 @@ static void     PreAddrCalcFormatSpec( void );
 static void     PostAddrCalcFormatSpec( void );
 static void     DoDefaultSystem( void );
 static void     FindLibPaths( void );
+static void     ResetMisc( void );
 
 extern int              __nheapblk;
 extern commandflag      CmdFlags;

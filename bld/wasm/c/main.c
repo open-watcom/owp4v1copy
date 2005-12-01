@@ -800,6 +800,231 @@ static void get_fname( char *token, int type )
     }
 }
 
+static char *CollectEnvOrFileName( char *str )
+/*******************************************/
+{
+    char        *env;
+    char        ch;
+
+    while( *str == ' ' || *str == '\t' ) ++str;
+    env = ParamBuf;
+    for( ;; ) {
+        ch = *str;
+        if( ch == '\0' ) break;
+        ++str;
+        if( ch == ' ' ) break;
+        if( ch == '\t' ) break;
+        #if !defined(__UNIX__)
+            if( ch == '-' ) break;
+            if( ch == SwitchChar ) break;
+        #endif
+        *env++ = ch;
+    }
+    *env = '\0';
+    return( str );
+}
+
+static char *ReadIndirectFile()
+/*******************************************/
+{
+    char        *env;
+    char        *str;
+    int         handle;
+    int         len;
+    char        ch;
+
+    env = NULL;
+    handle = open( ParamBuf, O_RDONLY | O_BINARY );
+    if( handle != -1 ) {
+        len = filelength( handle );
+        env = AsmAlloc( len + 1 );
+        read( handle, env, len );
+        env[len] = '\0';
+        close( handle );
+        // zip through characters changing \r, \n etc into ' '
+        str = env;
+        while( *str ) {
+            ch = *str;
+            if( ch == '\r' || ch == '\n' ) {
+                *str = ' ';
+            }
+            #if !defined(__UNIX__)
+                if( ch == 0x1A ) {      // if end of file
+                    *str = '\0';        // - mark end of str
+                    break;
+                }
+            #endif
+            ++str;
+        }
+    }
+    return( env );
+}
+
+static char *ProcessOption( char *p, char *option_start )
+/*******************************************/
+{
+    int         i;
+    int         j;
+    char        *opt;
+    char        c;
+
+    for( i = 0; ; i++ ) {
+        opt = cmdl_options[i].option;
+        if( opt == NULL ) break;
+        c = tolower( *p );
+        if( c == *opt ) {
+            OptValue = cmdl_options[i].value;
+            j = 1;
+            for(;;) {
+                ++opt;
+                if( *opt == '\0' || *opt == '*' ) {
+                    if( *opt == '\0' ) {
+                        if( p - option_start == 1 ) {
+                            // make sure end of option
+                            if( !OptionDelimiter( p[j] ) ) break;
+                        }
+                    }
+                    OptScanPtr = p + j;
+                    cmdl_options[i].function();
+                    return( OptScanPtr );
+                }
+                if( *opt == '#' ) {             // collect a number
+                    if( p[j] >= '0' && p[j] <= '9' ) {
+                        OptValue = 0;
+                        for(;;) {
+                            c = p[j];
+                            if( c < '0' || c > '9' ) break;
+                            OptValue = OptValue * 10 + c - '0';
+                            ++j;
+                        }
+                    }
+                } else if( *opt == '$' ) {      // collect an identifer
+                    OptParm = &p[j];
+                    for(;;) {
+                        c = p[j];
+                        if( c == '\0' ) break;
+                        if( c == '-' ) break;
+                        if( c == ' ' ) break;
+                        if( c == SwitchChar ) break;
+                        ++j;
+                    }
+                } else if( *opt == '@' ) {      // collect a filename
+                    OptParm = &p[j];
+                    c = p[j];
+                    if( c == '"' ){ // "filename"
+                        for(;;){
+                            c = p[++j];
+                            if( c == '"' ){
+                                ++j;
+                                break;
+                            }
+                            if( c == '\0' )break;
+                            if( c == '\\' ){
+                                ++j;
+                            }
+                        }
+                    }else{
+                        for(;;) {
+                            c = p[j];
+                            if( c == '\0' ) break;
+                            if( c == ' ' ) break;
+                            if( c == '\t' ) break;
+                            #if !defined(__UNIX__)
+                                if( c == SwitchChar ) break;
+                            #endif
+                            ++j;
+                        }
+                    }
+                } else if( *opt == '=' ) {      // collect an optional '='
+                    if( p[j] == '=' || p[j] == '#' ) ++j;
+                } else {
+                    c = tolower( p[j] );
+                    if( *opt != c ) {
+                        if( *opt < 'A' || *opt > 'Z' ) break;
+                        if( *opt != p[j] ) break;
+                    }
+                    ++j;
+                }
+            }
+        }
+    }
+    MsgPrintf1( MSG_UNKNOWN_OPTION, option_start );
+    exit( 1 );
+    return( NULL );
+}
+
+static int ProcOptions( char *str, int *level )
+/*******************************************************/
+{
+    char *save[MAX_NESTING];
+    char *buffers[MAX_NESTING];
+        
+    if( str != NULL ) {
+        for(;;) {
+            while( *str == ' ' || *str == '\t' ) ++str;
+            if( *str == '@' && *level < MAX_NESTING ) {
+                save[(*level)++] = CollectEnvOrFileName( str + 1 );
+                buffers[*level] = NULL;
+                str = getenv( ParamBuf );
+                if( str == NULL ) {
+                    str = ReadIndirectFile();
+                    buffers[*level] = str;
+                }
+                if( str != NULL )  continue;
+                str = save[--(*level)];
+            }
+            if( *str == '\0' ) {
+                if( *level == 0 ) break;
+                if( buffers[*level] != NULL ) {
+                    AsmFree( buffers[*level] );
+                    buffers[*level] = NULL;
+                }
+                str = save[--(*level)];
+                continue;
+            }
+            if( *str == '-'  ||  *str == SwitchChar ) {
+                str = ProcessOption(str+1, str);
+            } else {  /* collect  file name */
+                char *beg, *p;
+                int len;
+
+                beg = str;
+                if( *str == '"' ){
+                    for(;;){
+                        ++str;
+                        if( *str == '"' ){
+                            ++str;
+                            break;
+                        }
+                        if( *str == '\0' ) break;
+                        if( *str == '\\' ){
+                            ++str;
+                        }
+                    }
+                }else{
+                    for(;;) {
+                        if( *str == '\0' ) break;
+                        if( *str == ' '  ) break;
+                        if( *str == '\t'  ) break;
+                        #if !defined(__UNIX__)
+                            if( *str == SwitchChar ) break;
+                        #endif
+                        ++str;
+                    }
+                }
+                len = str-beg;
+                p = (char *) AsmAlloc( len + 1 );
+                memcpy( p, beg, len );
+                p[ len ] = '\0';
+                StripQuotes( p );
+                get_fname( p, ASM );
+                AsmFree(p);
+            }
+        }
+    }
+    return 0;
+}
+
 static void do_envvar_cmdline( char *envvar )
 /******************************************************/
 {
@@ -1031,231 +1256,6 @@ static void set_some_kinda_name( char token, char *name )
     *tmp = AsmAlloc( len );
     strcpy( *tmp, name );
     return;
-}
-
-static char *CollectEnvOrFileName( char *str )
-/*******************************************/
-{
-    char        *env;
-    char        ch;
-
-    while( *str == ' ' || *str == '\t' ) ++str;
-    env = ParamBuf;
-    for( ;; ) {
-        ch = *str;
-        if( ch == '\0' ) break;
-        ++str;
-        if( ch == ' ' ) break;
-        if( ch == '\t' ) break;
-        #if !defined(__UNIX__)
-            if( ch == '-' ) break;
-            if( ch == SwitchChar ) break;
-        #endif
-        *env++ = ch;
-    }
-    *env = '\0';
-    return( str );
-}
-
-static char *ReadIndirectFile()
-/*******************************************/
-{
-    char        *env;
-    char        *str;
-    int         handle;
-    int         len;
-    char        ch;
-
-    env = NULL;
-    handle = open( ParamBuf, O_RDONLY | O_BINARY );
-    if( handle != -1 ) {
-        len = filelength( handle );
-        env = AsmAlloc( len + 1 );
-        read( handle, env, len );
-        env[len] = '\0';
-        close( handle );
-        // zip through characters changing \r, \n etc into ' '
-        str = env;
-        while( *str ) {
-            ch = *str;
-            if( ch == '\r' || ch == '\n' ) {
-                *str = ' ';
-            }
-            #if !defined(__UNIX__)
-                if( ch == 0x1A ) {      // if end of file
-                    *str = '\0';        // - mark end of str
-                    break;
-                }
-            #endif
-            ++str;
-        }
-    }
-    return( env );
-}
-
-static char *ProcessOption( char *p, char *option_start )
-/*******************************************/
-{
-    int         i;
-    int         j;
-    char        *opt;
-    char        c;
-
-    for( i = 0; ; i++ ) {
-        opt = cmdl_options[i].option;
-        if( opt == NULL ) break;
-        c = tolower( *p );
-        if( c == *opt ) {
-            OptValue = cmdl_options[i].value;
-            j = 1;
-            for(;;) {
-                ++opt;
-                if( *opt == '\0' || *opt == '*' ) {
-                    if( *opt == '\0' ) {
-                        if( p - option_start == 1 ) {
-                            // make sure end of option
-                            if( !OptionDelimiter( p[j] ) ) break;
-                        }
-                    }
-                    OptScanPtr = p + j;
-                    cmdl_options[i].function();
-                    return( OptScanPtr );
-                }
-                if( *opt == '#' ) {             // collect a number
-                    if( p[j] >= '0' && p[j] <= '9' ) {
-                        OptValue = 0;
-                        for(;;) {
-                            c = p[j];
-                            if( c < '0' || c > '9' ) break;
-                            OptValue = OptValue * 10 + c - '0';
-                            ++j;
-                        }
-                    }
-                } else if( *opt == '$' ) {      // collect an identifer
-                    OptParm = &p[j];
-                    for(;;) {
-                        c = p[j];
-                        if( c == '\0' ) break;
-                        if( c == '-' ) break;
-                        if( c == ' ' ) break;
-                        if( c == SwitchChar ) break;
-                        ++j;
-                    }
-                } else if( *opt == '@' ) {      // collect a filename
-                    OptParm = &p[j];
-                    c = p[j];
-                    if( c == '"' ){ // "filename"
-                        for(;;){
-                            c = p[++j];
-                            if( c == '"' ){
-                                ++j;
-                                break;
-                            }
-                            if( c == '\0' )break;
-                            if( c == '\\' ){
-                                ++j;
-                            }
-                        }
-                    }else{
-                        for(;;) {
-                            c = p[j];
-                            if( c == '\0' ) break;
-                            if( c == ' ' ) break;
-                            if( c == '\t' ) break;
-                            #if !defined(__UNIX__)
-                                if( c == SwitchChar ) break;
-                            #endif
-                            ++j;
-                        }
-                    }
-                } else if( *opt == '=' ) {      // collect an optional '='
-                    if( p[j] == '=' || p[j] == '#' ) ++j;
-                } else {
-                    c = tolower( p[j] );
-                    if( *opt != c ) {
-                        if( *opt < 'A' || *opt > 'Z' ) break;
-                        if( *opt != p[j] ) break;
-                    }
-                    ++j;
-                }
-            }
-        }
-    }
-    MsgPrintf1( MSG_UNKNOWN_OPTION, option_start );
-    exit( 1 );
-    return( NULL );
-}
-
-static int ProcOptions( char *str, int *level )
-/*******************************************************/
-{
-    char *save[MAX_NESTING];
-    char *buffers[MAX_NESTING];
-        
-    if( str != NULL ) {
-        for(;;) {
-            while( *str == ' ' || *str == '\t' ) ++str;
-            if( *str == '@' && *level < MAX_NESTING ) {
-                save[(*level)++] = CollectEnvOrFileName( str + 1 );
-                buffers[*level] = NULL;
-                str = getenv( ParamBuf );
-                if( str == NULL ) {
-                    str = ReadIndirectFile();
-                    buffers[*level] = str;
-                }
-                if( str != NULL )  continue;
-                str = save[--(*level)];
-            }
-            if( *str == '\0' ) {
-                if( *level == 0 ) break;
-                if( buffers[*level] != NULL ) {
-                    AsmFree( buffers[*level] );
-                    buffers[*level] = NULL;
-                }
-                str = save[--(*level)];
-                continue;
-            }
-            if( *str == '-'  ||  *str == SwitchChar ) {
-                str = ProcessOption(str+1, str);
-            } else {  /* collect  file name */
-                char *beg, *p;
-                int len;
-
-                beg = str;
-                if( *str == '"' ){
-                    for(;;){
-                        ++str;
-                        if( *str == '"' ){
-                            ++str;
-                            break;
-                        }
-                        if( *str == '\0' ) break;
-                        if( *str == '\\' ){
-                            ++str;
-                        }
-                    }
-                }else{
-                    for(;;) {
-                        if( *str == '\0' ) break;
-                        if( *str == ' '  ) break;
-                        if( *str == '\t'  ) break;
-                        #if !defined(__UNIX__)
-                            if( *str == SwitchChar ) break;
-                        #endif
-                        ++str;
-                    }
-                }
-                len = str-beg;
-                p = (char *) AsmAlloc( len + 1 );
-                memcpy( p, beg, len );
-                p[ len ] = '\0';
-                StripQuotes( p );
-                get_fname( p, ASM );
-                AsmFree(p);
-            }
-        }
-    }
-    return 0;
 }
 
 static void parse_cmdline( char **cmdline )

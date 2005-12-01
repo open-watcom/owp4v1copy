@@ -1641,6 +1641,23 @@ local TREEPTR ExprOpnd()
 }
 
 
+local int IsMacroDefined( void )
+{
+    MEPTR       mentry;
+
+    if( CurToken != T_ID ) {
+        ExpectIdentifier();
+    } else {
+        mentry = MacroLookup( Buffer );
+        if( mentry != NULL ) {
+            mentry->macro_flags |= MACRO_REFERENCED;    /* 04-apr-94 */
+            return( 1 );
+        }
+    }
+    return( 0 );
+}
+
+
 local TREEPTR ExprId()
 {
     TREEPTR     tree;
@@ -1692,21 +1709,6 @@ local TREEPTR ExprId()
 }
 
 
-local int IsMacroDefined()
-{
-    MEPTR       mentry;
-
-    if( CurToken != T_ID ) {
-        ExpectIdentifier();
-    } else {
-        mentry = MacroLookup( Buffer );
-        if( mentry != NULL ) {
-            mentry->macro_flags |= MACRO_REFERENCED;    /* 04-apr-94 */
-            return( 1 );
-        }
-    }
-    return( 0 );
-}
 #if 0
 local int LValueArray( TREEPTR tree )
 {

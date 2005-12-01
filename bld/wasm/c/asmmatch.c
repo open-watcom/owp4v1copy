@@ -404,6 +404,32 @@ static int output_data( unsigned long determinant, int index )
     return( NOT_ERROR );
 }
 
+static int match_phase_2( int *i )
+/*
+- a routine used by match_phase_1() to determine whether both operands match
+  with that in the assembly instructions table;
+- call by match_phase_1() only;
+*/
+{
+    if( Code->info.opnd_type[OPND2] != OP_NONE ) {
+        // 2 opnds instruction
+        return( match_phase_3( i, AsmOpTable[*i].opnd_type[OPND1] ) );
+    } else {
+        // 1 opnd instruction
+        // make sure the second opnd also match, i.e. has to be OP_NONE
+        if( AsmOpTable[*i].opnd_type[OPND2] == OP_NONE ) {
+            if( output( *i ) == ERROR ) {
+                return( ERROR );
+            }
+            // output idata or disp ( if first opnd is OP_M / OP_I )
+            return( output_data( Code->info.opnd_type[OPND1], OPND1 ) );
+        } else {
+            // still cannot find match
+            return( EMPTY );
+        }
+    }
+}
+
 int match_phase_1( void )
 /*
 - this routine will look up the assembler opcode table and try to match
@@ -600,32 +626,6 @@ int match_phase_1( void )
     }
     AsmError( INVALID_INSTRUCTION_OPERANDS );
     return( ERROR );
-}
-
-static int match_phase_2( int *i )
-/*
-- a routine used by match_phase_1() to determine whether both operands match
-  with that in the assembly instructions table;
-- call by match_phase_1() only;
-*/
-{
-    if( Code->info.opnd_type[OPND2] != OP_NONE ) {
-        // 2 opnds instruction
-        return( match_phase_3( i, AsmOpTable[*i].opnd_type[OPND1] ) );
-    } else {
-        // 1 opnd instruction
-        // make sure the second opnd also match, i.e. has to be OP_NONE
-        if( AsmOpTable[*i].opnd_type[OPND2] == OP_NONE ) {
-            if( output( *i ) == ERROR ) {
-                return( ERROR );
-            }
-            // output idata or disp ( if first opnd is OP_M / OP_I )
-            return( output_data( Code->info.opnd_type[OPND1], OPND1 ) );
-        } else {
-            // still cannot find match
-            return( EMPTY );
-        }
-    }
 }
 
 static int check_3rd_operand( int i )

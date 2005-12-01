@@ -137,7 +137,6 @@ enum if_state {
     DONE                    /* done TRUE section of current if, just nuke
                                everything until we see an endif */
 };
-extern enum if_state CurState;
 
 enum fpe {
     DO_FP_EMULATION,

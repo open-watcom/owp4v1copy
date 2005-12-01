@@ -238,7 +238,7 @@ static void * GetTransferGlueCode( int lnk_state )
     }
 }
 
-static offset FindIATSymAbsOff( symbol * sym )
+extern offset FindIATSymAbsOff( symbol * sym )
 /********************************************/
 {
     dll_sym_info *      dll;

@@ -725,6 +725,8 @@ static cg_name PushConstant( OPNODE *node )
         }
         name = CGFloat( flt_string, dtype );
         break;
+    default:
+        break;
     }
     return( name );
 }
@@ -1408,31 +1410,6 @@ void DoCompile()
 }
 
 
-local void EmitSyms( void )
-{
-    SYM_HANDLE          sym_handle;
-    auto SYM_ENTRY      sym;
-
-    for( sym_handle = GlobalSym; sym_handle; ) {
-        SymGet( &sym, sym_handle );
-        EmitSym( &sym, sym_handle );
-        if( ( GenSwitches & DBG_LOCALS ) &&
-            ( sym.sym_type->decl_type != TYPE_FUNCTION ) &&
-            ( (sym.flags & SYM_TEMP) == 0 )  && /* 06-oct-93 */
-            ( sym.stg_class != SC_TYPEDEF )) {
-#if _CPU == 370
-                if( sym.stg_class != SC_EXTERN || sym.flags & SYM_REFERENCED){
-                    DBModSym( sym_handle, TY_DEFAULT );
-                }
-#else
-                DBModSym( sym_handle, TY_DEFAULT );
-#endif
-        }
-        sym_handle = sym.handle;
-    }
-}
-
-
 local void EmitSym( SYMPTR sym, SYM_HANDLE sym_handle )
 {
     TYPEPTR             typ;
@@ -1479,6 +1456,32 @@ local void EmitSym( SYMPTR sym, SYM_HANDLE sym_handle )
         }
     }
 }
+
+
+local void EmitSyms( void )
+{
+    SYM_HANDLE          sym_handle;
+    auto SYM_ENTRY      sym;
+
+    for( sym_handle = GlobalSym; sym_handle; ) {
+        SymGet( &sym, sym_handle );
+        EmitSym( &sym, sym_handle );
+        if( ( GenSwitches & DBG_LOCALS ) &&
+            ( sym.sym_type->decl_type != TYPE_FUNCTION ) &&
+            ( (sym.flags & SYM_TEMP) == 0 )  && /* 06-oct-93 */
+            ( sym.stg_class != SC_TYPEDEF )) {
+#if _CPU == 370
+                if( sym.stg_class != SC_EXTERN || sym.flags & SYM_REFERENCED){
+                    DBModSym( sym_handle, TY_DEFAULT );
+                }
+#else
+                DBModSym( sym_handle, TY_DEFAULT );
+#endif
+        }
+        sym_handle = sym.handle;
+    }
+}
+
 
 local int DoFuncDefn( SYM_HANDLE funcsym_handle )
 {
@@ -1634,6 +1637,8 @@ local void CDoAutoDecl( SYM_HANDLE sym_handle )
             case TYPE_DCOMPLEX:
             case TYPE_LDCOMPLEX:
                 emit_extra_info = 1;
+                break;
+            default:
                 break;
             }
             dtype = CGenType( typ );
@@ -1979,6 +1984,8 @@ static void GenerateTryBlock( TREEPTR tree )
             ValueStack[ try_index ] = (TREEPTR)stmt->op.try_sym_handle;
             Class[ try_index ] = stmt->op.parent_scope;
             Token[ try_index ] = stmt->op.opr;
+            break;
+        default:
             break;
         }
         tree = tree->left;

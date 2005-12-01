@@ -615,7 +615,6 @@ extern  void    EmitInit(void);
 extern  void    EmitAbort(void);
 extern  void    EmitStrPtr(STR_HANDLE,int);
 extern  int     EmitBytes(STR_HANDLE);
-extern  void    EmitSym(SYMPTR,SYM_HANDLE);
 extern  int     CGenType(TYPEPTR);
 extern  void    GenInLineFunc( SYM_HANDLE sym_handle );
 extern  bool    IsInLineFunc( SYM_HANDLE sym_handle );

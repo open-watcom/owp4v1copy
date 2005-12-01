@@ -134,6 +134,86 @@ static void array_mul_add(char *buf, unsigned base, unsigned num, unsigned size)
     }
 }
 
+static int get_string( struct asm_tok *buf, char **input, char **output )
+/***********************************************************************/
+{
+    char    symbol_o;
+    char    symbol_c;
+    int     count;
+    int     level;
+
+    buf->string_ptr = *output;
+
+    symbol_o = **input;
+
+    buf->token = T_STRING;
+    switch( symbol_o ) {
+    case '"':
+    case '\'':
+        symbol_c = 0;
+        break;  // end of string marker is the same
+    case '<':
+        symbol_c = '>';
+        break;
+    case '{':
+        symbol_c = '}';
+        break;
+    default:
+        /* this is an undelimited string,
+         * so just copy it until we hit something that looks like the end
+         */
+
+        for( count = 0; **input != '\0' && !isspace( **input ) && **input != ','; count++ ) {
+            *(*output)++ = *(*input)++; /* keep the 2nd one */
+        }
+        *(*output)++ = '\0';
+        buf->value = count;
+        return( NOT_ERROR );
+    }
+    (*input)++;
+
+    count = 0;
+    level = 0;
+    while( count < MAX_TOK_LEN ) {
+        if( **input == symbol_o ) {
+            if( symbol_c ) {
+                level++;
+                *(*output)++ = *(*input)++;
+                count++;
+            } else if( *( *input + 1 ) == symbol_o ) {
+                /* if we see "" in a " delimited string,
+                 * treat it as a literal " */
+                (*input)++; /* skip the 1st one */
+                *(*output)++ = *(*input)++; /* keep the 2nd one */
+                count++;
+            } else {
+                *(*output)++ = '\0';
+                (*input)++; /* skip the closing delimiter */
+                buf->value = count;
+                break;
+            }
+        } else if( symbol_c && **input == symbol_c ) {
+            if( level ) {
+                level--;
+                *(*output)++ = *(*input)++;
+                count++;
+            } else {
+                *(*output)++ = '\0';
+                (*input)++; /* skip the closing delimiter */
+                buf->value = count;
+                break;
+            }
+        } else if( **input == '\0' || **input == '\n' ) {
+            AsmError( SYNTAX_ERROR );
+            return( ERROR );
+        } else {
+            *(*output)++ = *(*input)++;
+            count++;
+        }
+    }
+    return( NOT_ERROR );
+}
+
 static int get_number( struct asm_tok *buf, char **input, char **output )
 /***********************************************************************/
 {
@@ -413,86 +493,6 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
             }
         } else {
             buf->token = T_INSTR;
-        }
-    }
-    return( NOT_ERROR );
-}
-
-static int get_string( struct asm_tok *buf, char **input, char **output )
-/***********************************************************************/
-{
-    char    symbol_o;
-    char    symbol_c;
-    int     count;
-    int     level;
-
-    buf->string_ptr = *output;
-
-    symbol_o = **input;
-
-    buf->token = T_STRING;
-    switch( symbol_o ) {
-    case '"':
-    case '\'':
-        symbol_c = 0;
-        break;  // end of string marker is the same
-    case '<':
-        symbol_c = '>';
-        break;
-    case '{':
-        symbol_c = '}';
-        break;
-    default:
-        /* this is an undelimited string,
-         * so just copy it until we hit something that looks like the end
-         */
-
-        for( count = 0; **input != '\0' && !isspace( **input ) && **input != ','; count++ ) {
-            *(*output)++ = *(*input)++; /* keep the 2nd one */
-        }
-        *(*output)++ = '\0';
-        buf->value = count;
-        return( NOT_ERROR );
-    }
-    (*input)++;
-
-    count = 0;
-    level = 0;
-    while( count < MAX_TOK_LEN ) {
-        if( **input == symbol_o ) {
-            if( symbol_c ) {
-                level++;
-                *(*output)++ = *(*input)++;
-                count++;
-            } else if( *( *input + 1 ) == symbol_o ) {
-                /* if we see "" in a " delimited string,
-                 * treat it as a literal " */
-                (*input)++; /* skip the 1st one */
-                *(*output)++ = *(*input)++; /* keep the 2nd one */
-                count++;
-            } else {
-                *(*output)++ = '\0';
-                (*input)++; /* skip the closing delimiter */
-                buf->value = count;
-                break;
-            }
-        } else if( symbol_c && **input == symbol_c ) {
-            if( level ) {
-                level--;
-                *(*output)++ = *(*input)++;
-                count++;
-            } else {
-                *(*output)++ = '\0';
-                (*input)++; /* skip the closing delimiter */
-                buf->value = count;
-                break;
-            }
-        } else if( **input == '\0' || **input == '\n' ) {
-            AsmError( SYNTAX_ERROR );
-            return( ERROR );
-        } else {
-            *(*output)++ = *(*input)++;
-            count++;
         }
     }
     return( NOT_ERROR );

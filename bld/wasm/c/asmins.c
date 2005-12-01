@@ -70,6 +70,8 @@ extern int              dup_array( struct asm_sym *, char, char );
 extern int              data_init( int, int );
 
 static void             SizeString( unsigned op_size );
+static int              check_size( void );
+static int              segm_override_jumps( expr_list *opndx );
 
 #ifdef _WASM_
 
@@ -77,7 +79,7 @@ extern void             InputQueueLine( char * );
 extern int              directive( int , long );
 extern int              SymIs32( struct asm_sym *sym );
 
-void                    check_assume( struct asm_sym *, enum prefix_reg );
+static void             check_assume( struct asm_sym *, enum prefix_reg );
 
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
@@ -143,6 +145,8 @@ void find_frame( struct asm_sym *sym )
             Frame = FRAME_SEG;
             Frame_Datum = GetSegIdx( sym->segment );
             break;
+        default:
+            break;
         }
     }
 }
@@ -184,14 +188,14 @@ static void seg_override( int seg_reg, asm_sym *sym )
     enum assume_reg     assume_seg;
 
     switch( seg_reg ) {
-        case T_SS:
-        case T_BP:
-        case T_EBP:
-        case T_ESP:
-            default_seg = PREFIX_SS;
-            break;
-        default:
-            default_seg = PREFIX_DS;
+    case T_SS:
+    case T_BP:
+    case T_EBP:
+    case T_ESP:
+        default_seg = PREFIX_SS;
+        break;
+    default:
+        default_seg = PREFIX_DS;
     }
     if( sym != NULL ) {
         if( Code->prefix.seg == EMPTY ) {
@@ -219,6 +223,8 @@ static void seg_override( int seg_reg, asm_sym *sym )
                 break;
             case PREFIX_GS:
                 assume_seg = ASSUME_GS;
+                break;
+            default:
                 break;
             }
             if( GetPrefixAssume( sym, assume_seg ) == ASSUME_NOTHING ) {
@@ -263,15 +269,17 @@ static void check_assume( struct asm_sym *sym, enum prefix_reg default_reg )
         return;
 
     switch( default_reg ) {
-        case PREFIX_SS:
-            def_reg = ASSUME_SS;
-            break;
-        case PREFIX_DS:
-            def_reg = ASSUME_DS;
-            break;
-        case EMPTY:
-            def_reg = ASSUME_NOTHING;
-            break;
+    case PREFIX_SS:
+        def_reg = ASSUME_SS;
+        break;
+    case PREFIX_DS:
+        def_reg = ASSUME_DS;
+        break;
+    case EMPTY:
+        def_reg = ASSUME_NOTHING;
+        break;
+    default:
+        break;
     }
 
     reg = GetAssume( sym, def_reg );
@@ -286,24 +294,26 @@ static void check_assume( struct asm_sym *sym, enum prefix_reg default_reg )
         }
     } else if( default_reg != EMPTY ) {
         switch( reg ) {
-            case ASSUME_ES:
-                Code->prefix.seg = PREFIX_ES;
-                break;
-            case ASSUME_CS:
-                Code->prefix.seg = PREFIX_CS;
-                break;
-            case ASSUME_DS:
-                Code->prefix.seg = PREFIX_DS;
-                break;
-            case ASSUME_GS:
-                Code->prefix.seg = PREFIX_GS;
-                break;
-            case ASSUME_FS:
-                Code->prefix.seg = PREFIX_FS;
-                break;
-            case ASSUME_SS:
-                Code->prefix.seg = PREFIX_SS;
-                break;
+        case ASSUME_ES:
+            Code->prefix.seg = PREFIX_ES;
+            break;
+        case ASSUME_CS:
+            Code->prefix.seg = PREFIX_CS;
+            break;
+        case ASSUME_DS:
+            Code->prefix.seg = PREFIX_DS;
+            break;
+        case ASSUME_GS:
+            Code->prefix.seg = PREFIX_GS;
+            break;
+        case ASSUME_FS:
+            Code->prefix.seg = PREFIX_FS;
+            break;
+        case ASSUME_SS:
+            Code->prefix.seg = PREFIX_SS;
+            break;
+        default:
+            break;
         }
     }
 }
@@ -393,6 +403,7 @@ int OperandSize( unsigned long opnd )
         case MT_QWORD:   return( 8 );
         case MT_TBYTE:   return( 10 );
         case MT_OWORD:   return( 16 );
+        default:         break;
         }
     } else if( opnd & ( OP_M8_R8 | OP_M_B | OP_I8 | OP_I_1 | OP_I_3 | OP_I8_U ) ) {
         return( 1 );
@@ -763,6 +774,8 @@ static int idata_float( long value )
         // set w-bit
         Code->info.opcode |= W_BIT;
         break;
+    default:
+        break;
     }
     SET_OPSIZ_32( Code );
     Code->info.opnd_type[Opnd_Count] = OP_I32;
@@ -786,6 +799,8 @@ static unsigned char get_sr_rm_byte( enum prefix_reg seg_prefix )
         return( 4 );
     case PREFIX_GS:
         return( 5 );
+    default:
+        break;
     }
     #ifdef _WASM_
         /**/myassert( 0 );
@@ -1136,6 +1151,8 @@ static int idata_nofixup( expr_list *opndx )
         }
 #endif
         break;
+    default:
+        break;
     }
     Code->info.opnd_type[Opnd_Count] = op_type;
     return( NOT_ERROR );
@@ -1229,6 +1246,8 @@ static int idata_fixup( expr_list *opndx )
     case MT_DWORD:
         Code->info.opnd_type[Opnd_Count] = OP_I32;
         SET_OPSIZ_32( Code );
+        break;
+    default:
         break;
     }
     if( opndx->instr == T_SEG ) {
@@ -1905,6 +1924,8 @@ int AsmParse( void )
                 break;
             case EXPR_UNDEF:
                 return( ERROR );
+            default:
+                break;
             }
             i--;
             break;
@@ -2060,6 +2081,8 @@ int AsmParse( void )
                 break;
             case EXPR_UNDEF:
                 return( ERROR );
+            default:
+                break;
             }
             i--;
             break;

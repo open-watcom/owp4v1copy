@@ -1185,11 +1185,12 @@ local TYPEPTR ArrayDecl( TYPEPTR typ )
 }
 
 
+local TYPEPTR  *FuncProtoType();
+
 static TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod )
 {
     PARMPTR     parm_list;
     TYPEPTR     *parms;
-    local TYPEPTR  *FuncProtoType();
 
     parms = NULL;
     if( CurToken != T_RIGHT_PAREN ) {
