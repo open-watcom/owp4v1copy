@@ -2776,7 +2776,7 @@ int LocalDef( int i )
             return( ERROR );
 
         if( sym->state != SYM_UNDEFINED ) {
-            AsmError( SYMBOL_ALREADY_DEFINED );
+            AsmErr( SYMBOL_PREVIOUSLY_DEFINED, sym->name );
             return( ERROR );
         } else {
             sym->state = SYM_INTERNAL;
@@ -3004,7 +3004,7 @@ parms:
             return( MT_ERROR );
 
         if( sym->state != SYM_UNDEFINED ) {
-            AsmError( SYMBOL_ALREADY_DEFINED );
+            AsmErr( SYMBOL_PREVIOUSLY_DEFINED, sym->name );
             return( MT_ERROR );
         } else {
             sym->state = SYM_INTERNAL;
@@ -3077,7 +3077,7 @@ int ProcDef( int i )
 
         if( sym != NULL ) {
             if( sym->state != SYM_UNDEFINED ) {
-                AsmError( PROC_ALREADY_DEFINED );
+                AsmErr( SYMBOL_PREVIOUSLY_DEFINED, sym->name );
                 return( ERROR );
             }
         }
@@ -3131,7 +3131,7 @@ int ProcEnd( int i )
 /******************/
 {
     if( CurrProc == NULL ) {
-        AsmError( NO_PROC_IS_CURRENTLY_DEFINED );
+        AsmError( BLOCK_NESTING_ERROR );
         return( ERROR );
     } else if( i < 0 ) {
         AsmError( PROC_MUST_HAVE_A_NAME );
