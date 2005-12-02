@@ -372,30 +372,14 @@ static  void  Usage( void )
 static char *ScanFName( char *end, int len )
 /******************************************/
 {
-#if 0
-    // I can't find any use for this anymore, perhaps I am wrong?
-    // If there isn't any problems, this should be removed away.
-    int quoted;
-
-    if( *Word == '=' ) {
-        quoted = ( *(Word + 1) == '"' );
-    } else {
-        quoted = ( *Word == '"' );
-    }
-    quoted ^= ( *(end - 1) == '"' );
-    for( ;; ) { /* 15-jan-89: Allow '-' in filenames */
+    for( ;; ) { /* 15-jan-89: Allow switch char in filenames */
         if( *end == '\0' ) break;
-        if( !quoted ) {
-            if( *end == ' '  ) break;
-            if( *end == '\t'  ) break;                  /* 16-mar-91 */
-        } else if( *end == '"'  ) {
-            quoted = 0;
-        }
+        if( *end == ' '  ) break;
+        if( *end == '\t'  ) break;                  /* 16-mar-91 */
         Word[ len ] = *end;
         ++len;
         ++end;
     }
-#endif
     Word[ len ] = NULLCHAR;
     return( end );
 }
