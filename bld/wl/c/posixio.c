@@ -43,7 +43,7 @@
 #include "linkstd.h"
 #include "msg.h"
 #include "alloc.h"
-#if _OS != _LINUX
+#if !defined( __LINUX__ )
 #include <sys/proc_msg.h>
 #endif
 #include "wlnkmsg.h"
@@ -148,7 +148,7 @@ extern f_handle ExeOpen( char *name )
     return( NIL_HANDLE );
 }
 
-#if _OS == _QNX
+#if defined( __QNX__ )
 /*
     QNX only allows 32K-1 bytes to be read/written at any one time, so bust
     up any I/O larger than that.

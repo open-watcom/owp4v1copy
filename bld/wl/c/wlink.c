@@ -102,28 +102,7 @@ static void     ResetMisc( void );
 extern int              __nheapblk;
 extern commandflag      CmdFlags;
 
-#if _LINKER == _WATFOR77
-
-extern void InitLinker( void )
-/****************************/
-{
-    InitSubSystems();
-}
-
-extern void FiniLinker( void )
-/****************************/
-{
-    FiniSubSystems();
-}
-
-extern int RunLinker( char *cmd )
-/*******************************/
-{
-    LinkMainLine( cmd );
-    return( (LinkState & LINK_ERROR) ? 1 : 0 );
-}
-
-#elif _LINKER == _WLINK                 // it's the standalone linker
+#if !defined( _DLLHOST )           // it's the standalone linker
 
 #ifndef __WATCOMC__
 char **_argv;
@@ -169,7 +148,7 @@ extern void LinkMainLine( char *cmds )
         cmds = GetNextLink();
         if( cmds == NULL ) break;
     }
-#if _LINKER == _DLLHOST
+#if defined( _DLLHOST )
     _heapshrink();
 #endif
 }

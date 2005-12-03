@@ -93,7 +93,7 @@ extern void LnkFilesInit( void )
 {
     OpenFiles = 0;
     CaughtBreak = FALSE;
-#if _LINKER != _DLLHOST
+#if !defined( _DLLHOST )
     setmode( STDIN_HANDLE, O_BINARY );
     setmode( STDOUT_HANDLE, O_BINARY );
 #endif

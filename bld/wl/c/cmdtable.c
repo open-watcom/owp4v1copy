@@ -170,9 +170,7 @@ extern  parse_entry     MainOptions[] = {
     "RESource",     &ProcOpResource,    MK_ALL, 0,
     "STATics",      &ProcStatics,       MK_ALL, 0,
     "START",        &ProcStart,         MK_ALL, 0,
-#if _LINKER != _WATFOR77
     "ARTificial",   &ProcArtificial,    MK_ALL, 0,
-#endif
     "SHOwdead",     &ProcShowDead,      MK_ALL, 0,
     "VFRemoval",    &ProcVFRemoval,     MK_ALL, 0,
     "REDefsok",     &ProcRedefsOK,      MK_ALL, 0,

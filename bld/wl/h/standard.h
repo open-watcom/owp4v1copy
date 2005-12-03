@@ -64,6 +64,24 @@
 
 #define MAKE_EVEN( x ) ROUND_UP( x, 2 )
 
+#if defined( __UNIX__ )
+    #define PATH_SEP '/'
+    #define IS_PATH_SEP( a ) ((a)=='/')
+    #define CASE_PATH_SEP case'/'
+    #define PATH_LIST_SEP ':'
+
+    #define CASE_SENSITIVE
+
+#else
+    #define PATH_SEP '\\'
+    #define IS_PATH_SEP( a ) ((a)=='\\' || (a)=='/' || (a)==':')
+    #define CASE_PATH_SEP   case '\\': case '/': case ':'
+    #define PATH_LIST_SEP ';'
+
+//    #define CASE_SENSITIVE
+
+#endif
+
 #ifdef CASE_SENSITIVE
     #define FNAMECMPSTR      strcmp      /* for case  sensitive file systems */
 #else
@@ -82,4 +100,22 @@ typedef unsigned        f_handle;
 #define UNALIGN _WCUNALIGNED
 #else
 #define UNALIGN
+#endif
+
+#if defined( __QNX__ )
+    #define _EXE       0
+    #define _QNXLOAD   1
+    #define _OS2       2
+    #define _PHARLAP   3
+    #define _NOVELL    4
+//    #define _DOS16M    5
+//    #define _ELF       6
+#else
+    #define _EXE       0
+    #define _QNXLOAD   1
+    #define _OS2       2
+    #define _PHARLAP   3
+    #define _NOVELL    4
+//    #define _DOS16M    5
+    #define _ELF       6
 #endif

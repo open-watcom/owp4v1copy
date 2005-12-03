@@ -33,7 +33,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include "linkstd.h"
-#if _OS != _LINUX || defined(__WATCOMC__)
+#if !defined( __LINUX__ ) || defined(__WATCOMC__)
 #include <process.h>
 #endif
 #include "ring.h"
@@ -161,10 +161,10 @@ extern void FiniLoadFile( void )
     DoCVPack();
 }
 
-#if _OS == _LINUX && !defined(__WATCOMC__)
+#if defined( __LINUX__ ) && !defined(__WATCOMC__)
 static void DoCVPack( void ) {}
 #else
-#if _OS == _LINUX
+#if defined( __LINUX__ )
 #define CVPACK_EXE "cvpack"
 #else
 #define CVPACK_EXE "cvpack.exe"
@@ -666,7 +666,7 @@ extern void BuildImpLib( void )
     _LnkFree( ImpLib.dllname );
 }
 
-#if _LINKER ==  _DLLHOST
+#if defined( _DLLHOST )
 extern bool ExecWlibDLL( char * );
 
 static void ExecWlib( void )
@@ -707,7 +707,7 @@ static void ExecWlib( void )
     }
     _LnkFree( cmdline );
 }
-#elif _OS == _LINUX
+#elif defined( __LINUX__ )
 static void ExecWlib( void ) {}
 #else
 static void ExecWlib( void )
@@ -778,7 +778,7 @@ extern void AddImpLibEntry( char *intname, char *extname, unsigned ordinal )
         utoa( ordinal, currpos, 10 );
         currpos += strlen( currpos );
     }
-#if _OS != _QNX && _OS != _LINUX
+#if !defined( __UNIX__ )
     *currpos++ = '\r';
 #endif
     *currpos = '\n';

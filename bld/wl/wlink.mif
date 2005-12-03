@@ -116,7 +116,7 @@ exerespe.obj &
 sharedio.obj &
 rcstr.obj
 
-stub_objs = dlldrvr.obj stubidedrv.obj idemsgfm.obj idemsgpr.obj
+stub_objs = dlldrvr.obj stidedrv.obj idemsgfm.obj idemsgpr.obj
 
 libs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)
 
@@ -162,6 +162,10 @@ extra_c_flags = -zp4
 extra_c_flags += -DUSE_VIRTMEM
 !endif
 
+!ifdef sys_dll
+extra_c_flags += -D_DLLHOST
+!endif
+
 extra_c_flags_ntio       = -I"$(wres_dir)/h"
 extra_c_flags_posixio    = -I"$(wres_dir)/h"
 extra_c_flags_linkio     = -I"$(wres_dir)/h"
@@ -170,6 +174,7 @@ extra_c_flags_dbgdwarf   = -I"$(dwarf_dir)/dw/h"
 extra_c_flags_loadpe     = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -DINSIDE_WLINK
 extra_c_flags_loados2    = -I"$(wres_dir)/h"
 extra_c_flags_demangle   = -I"$(lib_misc_dir)/h"
+extra_c_flags_dllentry   = -bd
 extra_c_flags_idedrv     = -DCHAIN_CALLBACK
 extra_c_flags_msg        = -I"$(lib_misc_dir)/h"
 extra_c_flags_rcstr      = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
@@ -177,12 +182,7 @@ extra_c_flags_exerespe   = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h
 extra_c_flags_sharedio   = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
 extra_c_flags_trmem      = $(trmem_cflags)
 extra_c_flags_mem        = $(trmem_cover_cflags)
-extra_c_flags_stubidedrv = -I"$(watcom_dir)/c"
-
-!ifdef sys_dll
-# invoke -bd switch for one module in dll
-extra_c_flags_wlink = -bd
-!endif
+extra_c_flags_stidedrv   = -DSTATIC_LINKAGE -I"$(watcom_dir)/c"
 
 #####################
 # linker flags stuff

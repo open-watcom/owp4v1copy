@@ -55,7 +55,6 @@
 
 static void WalkList( node *list, void (*fn)( void * ) );
 
-#if _LINKER != _WATFOR77
 static int ResWrite( int dummy, const void *buff, size_t size )
 /*************************************************************/
 /* redirect wres write to writeload */
@@ -97,9 +96,8 @@ static long ResPos( int handle )
 }
 
 WResSetRtns( ResOpen, ResClose, ResRead, ResWrite, ResSeek, ResPos, ChkLAlloc, LFree );
-#endif
 
-#if _LINKER != _DLLHOST
+#if !defined( _DLLHOST )
 extern void WriteStdOut( char *str )
 /**********************************/
 {
@@ -523,9 +521,6 @@ extern void VMemQSort( virt_mem base, unsigned n, unsigned width,
     }
 }
 
-#if _LINKER == _WATFOR77
-extern  void    Suicide( void );
-#else
 static void *SpawnStack;
 
 extern int Spawn( void (*fn)() )
@@ -552,7 +547,6 @@ extern void Suicide( void )
         longjmp( SpawnStack, 1 );
     }
 }
-#endif
 
 extern f_handle SearchPath( char *name )
 /**************************************/
@@ -565,7 +559,7 @@ extern f_handle SearchPath( char *name )
     if( file != NIL_HANDLE ) {
         return( file );
     }
-#if _OS == _QNX
+#if defined( __QNX__ )
     path = "/usr/watcom";
 #else
     path = GetEnvString( "PATH" );

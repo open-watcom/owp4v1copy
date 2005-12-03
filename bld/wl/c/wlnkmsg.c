@@ -53,11 +53,9 @@
 #include "wressetr.h"
 #include "wreslang.h"
 
-#if _LINKER != _WATFOR77
 static  HANDLE_INFO     hInstance = { 0 };
 static  unsigned        MsgShift;
 static  int             Res_Flag;
-#endif
 
 extern char *   _LpDllName;
 int WLinkItself;   // file handle
@@ -68,13 +66,9 @@ static void Msg_Add_Arg( MSG_ARG *arginfo, char typech, va_list *args );
 
 extern int InitMsg( void )
 {
-#if _LINKER == _WATFOR77
-    BannerPrinted = FALSE;
-    return( EXIT_SUCCESS );
-#else
     char        buff[_MAX_PATH];
     int         initerror;
-#if _LINKER == _DLLHOST
+#if defined( _DLLHOST )
     char *      fname;
 
     fname = _LpDllName;
@@ -110,10 +104,8 @@ extern int InitMsg( void )
         Res_Flag = EXIT_SUCCESS;
     }
     return Res_Flag;
-#endif
 }
 
-#if _LINKER != _WATFOR77
 extern int Msg_Get( int resourceid, char *buffer )
 {
     if( Res_Flag != EXIT_SUCCESS || LoadString( &hInstance, resourceid + MsgShift,
@@ -123,20 +115,6 @@ extern int Msg_Get( int resourceid, char *buffer )
     }
     return( 1 );
 }
-#else
-// value of F77_MSG_BASE must correspond to value of MSG_BASE in "errmsg.rc"
-#define F77_MSG_BASE    20000
-extern  int     LoadMsg(int,char *,int);
-
-extern int Msg_Get( int resourceid, char *buffer )
-{
-    if( !LoadMsg( F77_MSG_BASE + resourceid, buffer, RESOURCE_MAX_SIZE ) ) {
-        buffer[0] = '\0';
-        return( 0 );
-    }
-    return( 1 );
-}
-#endif
 
 extern void Msg_Do_Put_Args( char rc_buff[], MSG_ARG_LIST *arg_info,
                         char *types, ... )
@@ -224,7 +202,6 @@ extern int FiniMsg()
 {
     int     retcode = EXIT_SUCCESS;
 
-#if _LINKER != _WATFOR77
     if( Res_Flag == EXIT_SUCCESS ) {
         if ( CloseResFile( &hInstance ) != -1 ) {
             Res_Flag = EXIT_FAILURE;
@@ -232,6 +209,5 @@ extern int FiniMsg()
             retcode = EXIT_FAILURE;
         }
     }
-#endif
     return retcode;
 }

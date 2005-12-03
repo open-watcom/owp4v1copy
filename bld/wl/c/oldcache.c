@@ -113,7 +113,7 @@ extern void CacheClose( file_list *list, unsigned pass )
     file->flags &= ~INSTAT_IN_USE;
     switch( pass ) {
     case 1: /* first pass */
-#if _OS != _QNX
+#if !defined( __QNX__ )
         nukecache = !(file->flags & INSTAT_LIBRARY);
         DumpFileCache( file, nukecache );       // don't cache .obj's
 #endif
@@ -121,7 +121,7 @@ extern void CacheClose( file_list *list, unsigned pass )
     case 2: /* second pass */
          nukecache = !(file->flags & INSTAT_LIBRARY);
     case 3: /* freeing structure */
-#if _OS != _QNX
+#if !defined( __QNX__ )
         DumpFileCache( file, nukecache );
 #endif
         QClose( file->handle, file->name );

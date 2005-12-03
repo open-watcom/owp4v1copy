@@ -24,33 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Indirected wrapper for idedrv.c.
 *
 ****************************************************************************/
 
 
-#define _LINKER         _WLINK
-#define _SRCMACH        _IBMPC
-#define _OS             _OS2V2
-
-/* Define all load file formats that the linker will produce */
-
-#define _EXE       0
-#define _QNXLOAD   1
-#define _OS2       2
-#define _PHARLAP   3
-#define _NOVELL    4
-//#define _DOS16M    5
-#define _ELF        6
-
-/* Define if file system is case sensitive */
-
-//#define CASE_SENSITIVE
-
-// define the path separator character(s).
-
-#define PATH_SEP '\\'
-#define IS_PATH_SEP( a ) ((a)=='\\' || (a)=='/' || (a)==':')
-#define CASE_PATH_SEP   case '\\': case '/': case ':'
-#define PATH_LIST_SEP ';'
+#include "idedrv.c"
