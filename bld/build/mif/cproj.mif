@@ -301,6 +301,12 @@ lflags_linux_ppc = sys linuxppc
 lflags_linux_mps = sys linuxmips
 !endif
 
+lflags_dll_nt_axp    = sys ntaxp dll
+lflags_dll_nt_386    = sys nt dll
+lflags_dll_os2_386   = sys os2v2 dll
+lflags_dll_os2_i86   = sys os2 dll
+lflags_dll_win_i86   = sys windows dll
+
 !ifdef sys_windowed
 # this is really stupid
 lflags_nt_386   = sys nt_win
@@ -321,6 +327,7 @@ cflags_all     += -bd
 !endif
 
 lflags          = $(mode_lflags) $(lflags_$(host_os)_$(host_cpu)) $(extra_l_flags_$(host_os)) $(extra_l_flags)
+lflags_dll      = $(mode_lflags) $(lflags_dll_$(host_os)_$(host_cpu)) $(extra_l_flags_dll_$(host_os)) $(extra_l_flags_dll)
 
 rc_flags_nt     = -bt=nt
 rc_flags_win    = -bt=windows
