@@ -370,7 +370,9 @@ extern void SetStkSize( void )
         StackSize = 0x200;
     }
     if( StackSegPtr != NULL ) {
-        if( LinkFlags & STK_SIZE_FLAG ) {
+        if( FmtData.dll ) {
+            StackSegPtr->size = StackSize;
+        } else if( LinkFlags & STK_SIZE_FLAG ) {
             if( !(FmtData.type & MK_NOVELL) ) {
                 StackSegPtr->size = StackSize;
             }
