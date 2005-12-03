@@ -33,6 +33,14 @@
 .*
 .****************************************************************************/
 .chap Advanced Usage
+.np
+This chapter discusses a number of the less commonly used features of the &edname.
+:period.
+The knowledge of the information in the chapter
+:HDREF page=no refid='basic'.
+and 
+:HDREF page=no refid='inter'.
+is assumed.
 .*
 .section 'The Substitute Command'
 .*
@@ -77,6 +85,7 @@ that you want it to be done.
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" created in the Exercises section of
 :HDREF refid='maiaf'
 in the previous chapter
@@ -88,18 +97,22 @@ command window):
 :1,$s/This/This This/
 .millust end
 All lines will have the word "This" replaced with "This This".
+
 :LI.Enter the &cmdline command:
 .millust begin
 :1,$s/This/Change/
 .millust end
 Notice that only the first occurrence of the word "This" was replaced.
+
 :LI.Type the letter 'u' in &cmdmode to undo the change you just made.
 Then enter the &cmdline command:
 .millust begin
 :1,$s/This/Change/g
 .millust end
 Now all of the occurrences of "This" were replaced.
+
 :INCLUDE file='exerquit'.
+
 :eOL.
 .* ******************************************************************
 .section 'The Global Command'
@@ -140,6 +153,7 @@ will be executed on every line that does not have the string
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" created in the Exercises section of
 :HDREF refid='maiaf'
 in the previous chapter
@@ -159,13 +173,16 @@ command executed on it.
 :g/1/delete
 .millust end
 All lines with the character '1' in them will be deleted.
+
 :LI.Press the 'u' key to undo the previous global command, then enter the
 &cmdline command:
 .millust begin
 :g!/1/delete
 .millust end
 All lines without the character '1' in them will be deleted.
+
 :INCLUDE file='exerquit'.
+
 :eOL.
 .* ******************************************************************
 .section 'Searching Files For Text'
@@ -205,9 +222,9 @@ is specified, then the search is made case sensitive.  If
 is specified, then the search is made case insensitive.  If neither of
 these options is specified, then case sensitivity is determined by the
 current
-.keyref caseignore
+.keyref caseignore 1
 setting (for more information about
-.keyref caseignore
+.keyref caseignore 1
 :cont.,see the section
 :HDREF refid='boolset'
 in the chapter
@@ -316,6 +333,7 @@ then you may enter:
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" created in the Exercises section of
 :HDREF refid='maiaf'
 in the previous chapter
@@ -332,11 +350,13 @@ a line will be deleted.
 Try pressing
 .param F5
 a few times to verify this.
+
 :LI.Enter the &cmdline command
 .millust begin
 :unmap F5
 .millust end
 and try pressing F5 again.  It will no longer delete lines.
+
 :LI.Enter the &cmdline command
 .millust begin
 :map F6 :date\n
@@ -348,6 +368,7 @@ The time and date will be displayed in the message window.
 You will notice that the command window flashes as you push
 .param F6
 :period.
+
 :LI.
 .millust begin
 :map F6 \x:date\n
@@ -357,6 +378,7 @@ Press
 :period.
 The time and date will be displayed in the message window.
 You will notice that the command window no longer flashes.
+
 :LI. Bring up the command window ( press ':') and press cursor up.  You will
 notice that the date commands are in your history.  Now, enter the &cmdline
 command:
@@ -367,6 +389,7 @@ Press
 .param F6
 a few times.  Bring up the command window again and cursor up.  You
 will see that the date commands did not get added to the history.
+
 :LI.Enter the &cmdline command:
 .millust begin
 :map! F6 \edwi
@@ -379,6 +402,7 @@ key), delete the current word, and then re-enter insert mode.
 Try entering &tinsmode and pressing
 .param F6
 :period.
+
 :LI.Exit &tinsmode and press
 .param F6
 :period.
@@ -386,6 +410,8 @@ You will notice that the date is still displayed, since the &tinsmode
 and &cmdmode mappings for
 .param F6
 are different.
+
 :INCLUDE file='exerquit'.
+
 :eOL.
 

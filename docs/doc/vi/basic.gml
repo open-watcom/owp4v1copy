@@ -33,8 +33,11 @@
 .*
 .****************************************************************************/
 .chap *refid=basic 'Basic Usage'
+.np
+Using any editor as powerful as &edvi. takes some practice. This chapter
+will lead you through the basics or using &edvi.
 .* ******************************************************************
-.section 'Invoking the &edname.'
+.section 'Starting the &edname.'
 .* ******************************************************************
 .np
 &edvi is invoked by typing the command
@@ -402,6 +405,7 @@ Mode: command
 .*
 .exercises
 :OL.
+
 :LI.Edit a new file (called "test", for example) as follows:
 .millust begin
 vi test
@@ -462,16 +466,19 @@ test, that you are on line 1 of a 2 line file, and that line 1 is
 .np
 Now try to experiment with the different ways of entering insert mode.
 :OL.
+
 :LI.Try pressing the 'A'(capital 'a') key.  This will move your cursor to
 the end of the line, and will put you into insert mode.  Try adding some
 text to this line, and press the
 .param ESC
 key when you are done.
+
 :LI.Try pressing the 'I' key.  This will move your cursor to the start
 of the line, and will put you into insert mode.  Try adding some
 text to this line, and press the
 .param ESC
 key when you are done.
+
 :LI.Try pressing the 'R' key.  This will start you in overstrike mode.
 Note that the you have a very large cursor and that the mode indicator says:
 .millust begin
@@ -481,6 +488,7 @@ Try typing some characters.  As you type, what was there already is
 replaced by what you type. Press the
 .param ESC
 key when you are done.
+
 :LI.Try pressing the 'i' key.  This is the same as pressing the
 .param INS
 key. Now type some text, then press the
@@ -509,6 +517,7 @@ Mode: insert
 Remember to press the
 .param ESC
 key when you are done.
+
 :LI.Try pressing the 'a' key.  This will move the cursor over one
 character, and put you in insert mode.  Try cursoring around inside
 your text using the arrow keys.  Use the
@@ -519,22 +528,26 @@ key to move to the start of a line.
 Press the
 .param ESC
 key when you are done.
+
 :eOL.
+
 :INCLUDE file='basicdis'.
+
 :eOL.
 .*
 .endlevel
 .* ******************************************************************
-.section *refid=scap 'Cutting and Pasting'
-.* ******************************************************************
-.beglevel
-.* ******************************************************************
-.section 'Lines'
+.section *refid=scap 'Cutting and Pasting Text'
 .* ******************************************************************
 .np
 So far, you have learned how to edit a file, input some text, and
 save or cancel your changes.  Now you will learn some simple ways of
 deleting text and moving it elsewhere.
+.*
+.beglevel
+.* ******************************************************************
+.section 'Lines'
+.* ******************************************************************
 .np
 The section
 :HDREF refid='intext'.
@@ -698,8 +711,10 @@ This is another test line.
 The following examples are meant to be tried in sequence.  Each example
 builds on the previous one.
 :OL.
+
 :LI.Copy the first line by pressing the 'Y' (capital 'y') while the cursor
 is on the first line.
+
 :LI.Now press the 'p' key to paste the line after the current line.  You
 should see the lines:
 .millust begin
@@ -707,8 +722,10 @@ This is a test line.
 This is a test line.
 This is another test line.
 .millust end
+
 :LI.Now, go to the second line and yank 2 lines, by pressing the number
 '2' followed by the letters 'yy'.
+
 :LI.Cursor up to the top line, and press the capital p ('P') key to paste
 the lines above the current line.  You will see:
 .millust begin
@@ -718,6 +735,7 @@ This is a test line.
 This is a test line.
 This is another test line.
 .millust end
+
 :LI.Now, move to the top line in the file and delete the first 3 lines
 by press the number '3' followed by the letters 'dd'.  You will now
 have the following lines:
@@ -725,12 +743,14 @@ have the following lines:
 This is a test line.
 This is another test line.
 .millust end
+
 :LI.Delete the first line by pressing
 .param CTRL_DEL
 or by typing 'dd'.  You will be left with a single line:
 .millust begin
 This is another test line.
 .millust end
+
 :LI.Paste the line you deleted back in.  If you press the letter 'p'
 or
 .param SHIFT_INS
@@ -740,6 +760,7 @@ the line you deleted will appear after the first line:
 This is another test line.
 This is a test line.
 .millust end
+
 :LI.Paste the line above the current line by pressing capital p ('P')
 or
 .param CTRL_INS
@@ -749,11 +770,13 @@ This is a test line.
 This is another test line.
 This is a test line.
 .millust end
+
 :LI.Delete all 3 lines of text.  Make sure your cursor is on the
 first line in the file, and type
 .mono 3dd
 :period.
 This will delete all three lines, and you will have an empty edit buffer.
+
 :LI.Paste the lines back in by typing 'p'.  The three lines will be pasted
 in:
 .millust begin
@@ -761,6 +784,7 @@ This is a test line.
 This is another test line.
 This is a test line.
 .millust end
+
 :LI.Go to the first line in the file, and to the first column
 (try pressing
 .param CTRL_PAGEUP
@@ -769,16 +793,19 @@ This is a test line.
 his is a test line.
 .millust end
 Your cursor should be on the letter 'h' in column 1.
+
 :LI.Type the letter 'p'.  The 'T' that you deleted will appear after the
 'h' in column 1:
 .millust begin
 hTis is a test line.
 .millust end
+
 :LI.Type capital p ('P').  The 'T' that you deleted will appear before the
 'i' and after the 'T' you just pasted in.
 .millust begin
 hTTis is a test line.
 .millust end
+
 :LI.Cursor to the first column and type
 .mono 6x
 :period.
@@ -786,12 +813,14 @@ This will delete the first word and the space:
 .millust begin
 is a test line.
 .millust end
+
 :LI.Move the cursor over to the 't' in 'test'.  Press capital x ('X'), and
 you will see:
 .millust begin
 is atest line.
 .millust end
 The cursor will remain on the 't'.
+
 :LI.Type
 .mono 3X
 :period.
@@ -800,6 +829,7 @@ You will now see
 itest line.
 .millust end
 and the cursor will still be on the 't'.
+
 :eOL.
 :INCLUDE file='basicdis'.
 .*
@@ -836,12 +866,17 @@ activate as the mouse cursor sweeps across the word.
 Once a menu is activated, a selection list appears.  An item in the
 selection list may be chosen by doing one of the following:
 :OL.
+
 :LI.Cursoring up or down to the item and pressing the
 .param ENTER
 key.
+
 :LI.Typing the hot key for the menu item.
+
 :LI.Clicking on an item with the mouse.
+
 :LI.Dragging the mouse and releasing the mouse button on an item.
+
 :eOL.
 .np
 Once a menu is activated, it may be cancelled by pressing the

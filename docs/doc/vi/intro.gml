@@ -89,13 +89,19 @@ are configurable.
 :LI.Windows NT GUI
 :LI.Linux (multiple CPU architectures)
 :eUL.
-.*
+.* ******************************************************************
 .section 'Terms and Notation'
+.* ******************************************************************
+.if &e'&dohelp ne 0 .do begin
+.np
+This section describes the terms and notations used in this
+document.
+.do end
 .*
 .beglevel
-.*
+.* ******************************************************************
 .section 'The Mouse'
-.*
+.* ******************************************************************
 .np
 If you have a mouse, you may use it with &edvi..
 When you move your mouse, you will see a large block move around
@@ -115,30 +121,35 @@ the mouse.
 :DD.Holding down a mouse button and then moving the mouse.
 
 :eDL.
-.*
+.* ******************************************************************
 .section 'The Screen'
-.*
+.* ******************************************************************
 .np
 When you start up &edvi, you will see something like the following:
 .figure *depth='2.47' *scale='59' *file='vi001' &edvi after start-up
 The &edvi screen has several windows.
 :UL.
+
 :LI.The top line of the screen is the
 .keyword menu bar
 which contains all of the menu choices, the current mode, and the current
 time.
+
 :LI.The large window below the menu bar is the
 .keyword edit window.
 Since
 &edvi is a multiple file editor, you may have more than one edit window.
 Other edit windows are usually covered by the current edit window, unless
 you change the size and position of the edit windows.
+
 :LI.The lower left corner of the screen contains the
 .keyword status window.
 This window typically shows the current row and column.
+
 :LI.The majority of the bottom of the screen contains the
 .keyword message window.
 This window displays all errors and informational messages.
+
 :eUL.
 .np
 In the edit window will be a flashing line.  This flashing line is the
@@ -149,23 +160,30 @@ On the border of the edit window are a number of special symbols.  These
 special symbols are referred to as
 .keyword gadgets
 :UL.
+
 :LI.In the top left corner of the edit window is the gadget ('ð') that opens
 up the menu for the window.
+
 :LI.In the lower right corner of the edit window is the resize gadget ('').
 When you click on this gadget with your mouse and then drag the mouse, you
 can resize the edit window.
+
 :LI.On the right hand side of the edit window is the scroll bar.  The
 scroll bar has several components:
+
 :LI.The scroll up ('') gadget.  When you click on this with your mouse,
 the edit window scrolls up one line.
+
 :LI.The scroll down ('') gadget.  When you click on this with your mouse,
 the edit window scrolls down one line.
+
 :LI. The scroll thumb ('Û').  The scroll thumb indicates the relative position
 of the current line in the file.  When you click on the scroll thumb with
 your mouse and drag it, you can move to a new position in the file.  If
 you click with your mouse on the scroll bar above the scroll thumb, you
 move one page up in the file.  If you click on the scroll bar below the
 scroll thumb, you move one page down in the file.
+
 :eUL.
 .*
 .endlevel

@@ -50,17 +50,20 @@ are referred to as &cmdline commands.  You can activate the command window
 in two ways:
 .*
 :OL.
+
 :LI.Select the
 .keyword Enter command
 item under the
 .keyword Control
 menu.
+
 :LI.Press the colon (':') key when in &cmdmode
 :period.
 Remember to press the
 .param ESC
 key to ensure that you are in &cmdmode
 before pressing ':'.
+
 :eOL.
 .*
 Once you have done one of the previous things, the following window will
@@ -152,6 +155,7 @@ you will go directly to that line.
 .*
 .exercises
 :OL.
+
 :LI.Start up &edvi, and try selecting the
 .keyword Control
 menu, and then selecting the
@@ -160,11 +164,13 @@ item.  Notice how the window pops up.  Try typing and cursoring around.
 When you are done, press the
 .param ESC
 key to cancel the command.
+
 :LI.Make sure that you are in &cmdmode, then press the colon (':') key.
 Once again, the command window pops up.
 Try typing and cursoring around. When you are done, press the
 .param ESC
 key to cancel the command.
+
 :LI.Add 10 lines to your file.  Then press the colon (':') key and
 enter the number 5.  You will go to line 5.  Try entering different
 numbers and see what happens.   If you enter a line number that
@@ -172,9 +178,11 @@ does not exist, you will see the message:
 .millust begin
 No such line
 .millust end
+
 :LI.Now that you have a number of commands entered, try cursoring up
 and down in the command window.  You will see all the commands that
 you have typed.
+
 :eOL.
 .*
 .endlevel
@@ -214,6 +222,7 @@ then control is simply transferred to the window with that file.
 .*
 .exercises
 :OL.
+
 :LI.Start up &edvi without any files specified. Then try entering the
 &cmdline command
 .keyref edit
@@ -224,25 +233,30 @@ Try changing to other directories or drives
 with this list.  When you are done, press the
 .param ESC
 key to cancel the selection list.
+
 :LI.Try entering the following &cmdline
 .millust begin
 :e afile
 .millust end
 This will cause &edvi to start editing a new file called "afile".
+
 :LI.Try entering the command
 .millust begin
 :e bfile cfile
 .millust end
 This will cause &edvi to edit two new files, one named "bfile"
 and one named "cfile".
+
 :LI.Enter the command
 .millust begin
 :e afile
 .millust end
 This returns you to the first file ("afile") that you were already editing.
+
 :LI.Press
 .param CTRL_C
 :cont., and &edvi will quit all the files that you have started editing.
+
 :eOL.
 .* ******************************************************************
 .section 'Moving Between Files'
@@ -292,6 +306,7 @@ quit one of the files, or save one of the files then quit it.
 .*
 .exercises
 :OL.
+
 :LI.Start up &edvi in the following way:
 .millust begin
 vi a b c
@@ -305,6 +320,7 @@ Select the file
 .param b
 :period.
 That file will become the current file being edited.
+
 :LI.Type the &cmdline
 .millust begin
 :files
@@ -313,16 +329,19 @@ You will see the same result as you saw in the previous example.
 Press the
 .param ESC
 key to cancel this display.
+
 :LI.Press the
 .param F1
 key several times.  You will rotate through the three files that you
 are editing.
+
 :LI.Press the
 .param F2
 key several times.  You will rotate through the three files that you
 are editing, but in the opposite order than when you were pressing the
 .param F1
 key.
+
 :LI.Use the &cmdline commands
 .keyref next
 and
@@ -333,6 +352,7 @@ pressing
 and
 .param F2
 :period.
+
 :eOL.
 .* ******************************************************************
 .section *refid=maiaf 'Moving Around in a File'
@@ -463,6 +483,7 @@ bottom of the edit window.
 .*
 .exercises
 :OL.
+
 :LI.Edit a new file, "atest".  Once you have edited this file, add the line:
 .millust begin
 This is a test line.
@@ -470,6 +491,7 @@ This is a test line.
 Once you have done this, copy this line by pressing 'Y'. Press 'p' to paste
 in the copy.  Press 'p' 28 more times, so that you create a file with
 30 lines in it (all just like the first line).
+
 :LI.So that we can more easily see the results, type the following &cmdline:
 .millust begin
 :%s/^/\# /
@@ -479,12 +501,15 @@ lines with the line number.  We will learn about the substitution command
 in the next chapter.  When you are done, you should see a screen similar to
 the following:
 .figure *depth='2.47' *scale='59' *file='vi018' "ATEST" File Contents
+
 :LI.Press the 'G' key.  You will move to the last line of the file.
+
 :LI.Type the following:
 .millust begin
 15G
 .millust end
 This will move you to line 15.
+
 :LI.Try using
 .param CTRL_F
 and
@@ -495,38 +520,53 @@ Notice that they behave just like
 and
 .param PAGEDOWN
 :period.
+
 :LI.Try using 'w' and 'b' to move forward and backwards through words
 in the file.
+
 :LI.Try using 'j' and 'k' to cursor up and down in the file.
+
 :LI.Try using 'l' and 'h' to cursor left and right in the file.
+
 :LI.Press the 'H' key.  The cursor will move to the top line 
 in the edit window.
+
 :LI.Press the 'L' key.  The cursor will move to the bottom line 
 in the edit window.
+
 :LI.Try typing some numbers before pressing the 'H' and 'L' keys.  For
 example, typing
 .millust begin
 3H
 .millust end
 will move your cursor to the 3rd line from the top of the edit window.
+
 :LI.Press the 'M' key.  The cursor will move to the middle of edit window.
+
 :LI.Press the '$' key.  The cursor will move to the end of the current line.
+
 :LI.Press the '0' (zero) key.  The cursor will move to the start of the current line.
+
 :LI.Press
 .param CTRL_D
 :period.
 You will move down half a page
+
 :LI.Type the number '2' and then press CTRL_D.  Notice that you
 only move down 2 lines.
+
 :LI.Press
 .param CTRL_D
 :period.
 You will move down 2 lines.
+
 :LI.Press
 .param CTRL_U
 :period.
 You will move up 2 lines.
+
 :LI.Press 'ZZ' to save the file.  This file will be used in later exercises.
+
 :eOL.
 .* ******************************************************************
 .section 'Saving and Exiting a File Revisited'
@@ -540,22 +580,28 @@ typing 'ZZ' and using the menus.
 There are a number of different &cmdline commands that can be used for
 saving and/or quitting your files.
 :OL.
+
 :LI.
 .keyref quit
 ("!") or
 .param q
 ("!")
+
 :LI.
 .keyref quitall
+
 :LI.
 .keyref write
 ("!") or
 .param w
 ("!")
+
 :LI.
 .keyref wq
+
 :LI.
 .keyref xit
+
 :eOL.
 The
 .keyref quit
@@ -626,6 +672,7 @@ same as typing 'ZZ' in &cmdmode
 .*
 .exercises
 :OL.
+
 :LI.Edit a file as follows:
 .millust begin
 vi abc
@@ -636,6 +683,7 @@ Line 1.
 Line 2.
 Line 3.
 .millust end
+
 :LI.Enter the &cmdline command
 .keyref quit
 (remember to press the colon (':') key to bring up the command window).
@@ -653,6 +701,7 @@ The message window will indicate the following:
 As you can see, the file has been modified, so you are not
 allowed to quit.
 .np
+
 :LI.Enter the &cmdline command
 .keyref write
 :period.
@@ -669,11 +718,13 @@ and you will see:
 .millust end
 Notice that the file no longer is marked as modified once it is
 written.
+
 :LI.Try the
 &cmdline command
 .keyref quit
 again.  This time, you will be able to quit the file, since
 the file has been written, and is no longer marked as modified.
+
 :LI.Re-edit the file "abc".  Enter command:
 .millust begin
 :1,2 w def
@@ -681,6 +732,7 @@ the file has been written, and is no longer marked as modified.
 This will write out a new file called "def".
 Now quit &edvi.
 :period.
+
 :LI.Edit the file "def".  Notice that it contains the lines
 .millust begin
 Line 1.
@@ -700,6 +752,7 @@ you specify the exclamation point, as follows:
 .millust begin
 :write! abc
 .millust end
+
 :LI.Re-edit the file "abc".  Delete the last line.  Press
 .param CTRL_G
 :cont.,
@@ -709,9 +762,11 @@ and you will see that the file is modified.  Now, enter the
 :q!
 .millust end
 You will exit the file, even though it has been modified.
+
 :LI.Re-edit the file "abc", and delete the last line.  Enter the
 &cmdline command
-.keyref xit.
+.keyref xit
+:period.
 This will save the file and exit it,
 and because you are not editing any other files, you will exit &edvi
 :period.
@@ -720,6 +775,7 @@ You could also use the command
 to do the same thing.  Both of these commands do the same thing as
 pressing 'ZZ' while in &cmdmode
 :period.
+
 :LI.Start up &edvi as follows:
 .millust begin
 vi abc def
@@ -728,6 +784,7 @@ This will edit two files, "abc" and "def". Enter the &cmdline command
 .keyref quitall
 and you will exit &edvi
 :period.
+
 :LI.Repeat the previous example, but add a line to one of the two files.
 Now enter the &cmdline command
 .keyref quitall
@@ -737,6 +794,7 @@ In this case, you will be prompted with
 Files are modified, really exit?
 .millust end
 Reply with a 'y', and you will exit &edvi, even though files are modified.
+
 :eOL.
 .* ******************************************************************
 .section 'Using the Mouse'
@@ -841,6 +899,7 @@ entire path.
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" created in the Exercises section of
 :HDREF refid='maiaf'
 :period.
@@ -864,6 +923,7 @@ again.
 .np
 If you click your left mouse button somewhere outside the selected region,
 both the menu and the selected region will be cancelled.
+
 :LI.Make sure the selected region is cancelled (press
 .param ESC
 until it is gone).
@@ -920,14 +980,17 @@ clicking the left mouse button somewhere on the file name.  The
 menu from the previous example will appear, selecting the entire file name
 as shown below:
 .figure *depth='2.47' *scale='59' *file='vi021' Double Click Selection
+
 :LI.Try using
 .param CTRL_R
 to start a selection and then move around in your file.  Use the
 .param ESC
 key to cancel your selection.
+
 :LI.Try using the shifted cursor keys to select lines.  Use the
 .param ESC
 key to cancel your selection.
+
 :eOL.
 .* ******************************************************************
 .section 'Joining Text'
@@ -985,7 +1048,7 @@ line.  For example, the command:
 will cause the lines 1 through 5 of the file to be joined into a single
 line.
 .* ******************************************************************
-.section 'Marks'
+.section 'Using Marks'
 .* ******************************************************************
 .np
 :INCLUDE file='markinfo'.
@@ -1037,7 +1100,7 @@ mark (the cursor moves to the first column on the line).
 For example, after setting the mark 'a', you can return to it by typing:
 .millust begin
 'a   - return to the line with the mark 'a'.
-`a   - return to the exact position  with the mark 'a'.
+`a   - return to the exact position with the mark 'a'.
 .millust end
 .np
 Marks are useful when you need to go searching a file for something,
@@ -1054,6 +1117,7 @@ in the chapter
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" created in the Exercises section of
 :HDREF refid='maiaf'
 :period.
@@ -1062,33 +1126,39 @@ Cursor to the letter 'i' in the word 'is' on the first line, and type
 ma
 .millust end
 This will set the mark 'a' at that position.
+
 :LI.Page down twice.  Now, type
 .millust begin
 `a
 .millust end
 You will be moved to the 'i' in the word 'is' on the first line.
+
 :LI.Page down twice.  Now, type
 .millust begin
 'a
 .millust end
 You will be moved to the first column of the first line.
+
 :LI.Go to the bottom of the file.  Now, enter the &cmdline command
 .keyref mark
 as follows (remember to press colon (':') to bring up the command window)
 .millust begin
 :mark z
 .millust end
+
 :LI.Go to the top of the file (using CTRL_PAGEUP), and enter the
 &cmdline
 .millust begin
 :'z
 .millust end
 This will return you to the last line of the file
+
 :LI.Now, type the following &cmdline
 .millust begin
 :'a
 .millust end
 This will take you back to line 1, where you set the mark 'a'.
+
 :eOL.
 .* ******************************************************************
 .section *refid=stext 'Searching for Text'
@@ -1141,23 +1211,32 @@ describes the searching in more detail.
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" created in the Exercises section of
 :HDREF refid='maiaf'
 :period.
 Press the forward slash ('/') key, and enter the string "this".
 The word "This" on the first line will be highlighted, and your cursor
 will be on the 'T'. (notice that the search is case insensitive).
+
 :LI.Now press, the 'n' key.  You will move to the word "This" on the
 second line.
+
 :LI.Press 'n' two more times.  You will now be on the word "This" on
 the fourth line.
+
 :LI.Press 'N'.  You will move to the word "This" on the third line.
+
 :LI.Press the question mark ('?') key, and enter the string "1".  You
 will move to the '1' on the first line.
+
 :LI.Press 'n'.  The search will wrap around to the end of the file,
 and search backwards until the '1' on line 21 is encountered.
+
 :LI.Press 'n'.  You will move to the '1' on line 19.
+
 :LI.Press 'N'.  You will move back to the '1' on line 21.
+
 :eOL.
 .* ******************************************************************
 .section *refid=dcapt 'Deleting, Copying, and Pasting Text'
@@ -1225,7 +1304,7 @@ these buffers is constant over the life of your editing session.  They
 retain their contents until you update them.
 .np
 For more information on copy buffers, see the section
-:HDREF refid='cpybuff'¨
+:HDREF refid='cpybuff'
 in the chapter
 :HDREF page=no refid='modes'
 :period.
@@ -1312,13 +1391,18 @@ in the chapter
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" created in the Exercises section of
 :HDREF refid='maiaf'
 :period.
 Press 'dd'.  This will delete the first line of the file.
+
 :LI.Press 'dw'. This will delete the first word of the line.
+
 :LI.Press 'd$'.  This will delete to the end of the line.
+
 :LI.Press 'dj'.  This will delete the current line and the next line.
+
 :LI.Press '2dw'.  This will delete the first two words of the current line:
 .millust begin
 04 This is a test line.
@@ -1327,12 +1411,14 @@ leaving you with
 .millust begin
 is a test line.
 .millust end
+
 :LI.Press '2w'. This will move you to the letter 't' in "test".  Press
 capital p ('P').
 The 2 words you deleted will be inserted before the 't':
 .millust begin
 is a 04 This test line.
 .millust end
+
 :LI.Type the following &cmdmode keys:
 .millust begin
 "add
@@ -1341,14 +1427,17 @@ You will see the message:
 .millust begin
 1 lines deleted into buffer a
 .millust end
+
 :LI.Press 'p'.  Note that you inserted the two words you deleted before
 into the current line.
+
 :LI.Type:
 .millust begin
 "ap
 .millust end
 This will insert the contents of buffer 'a' (line line you deleted) after
 the current line.
+
 :LI.Type the following:
 .millust begin
 2"byy
@@ -1357,20 +1446,23 @@ This will copy the next two lines into buffer "b".  You will see the message
 .millust begin
 2 lines yanked into buffer b
 .millust end
+
 :LI.Type:
 .millust begin
 "bP
 .millust end
 This will insert the two lines you yanked before the current line.
+
 :LI.Type
 .millust begin
 3"zyw
 .millust end
 This will yank three words into &copybuffer 'z'.
 :INCLUDE file='exerquit'.
+
 :eOL.
 .* ******************************************************************
-.section 'Changing Text'
+.section 'Altering Text'
 .* ******************************************************************
 .np
 You could change text by deleting the text and then entering insert mode.
@@ -1417,6 +1509,7 @@ of the chapter
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" created in the Exercises section of
 :HDREF refid='maiaf'
 :period.
@@ -1424,6 +1517,7 @@ Type 'cw'.  This first word "01" will be highlighted.  Press
 .param ESC
 :period.
 The word will return to normal, and nothing will happen.
+
 :LI.Type 'cw' again.  This time, type the following:
 .millust begin
 This is new text.
@@ -1440,11 +1534,13 @@ will now be:
 .millust begin
 This is new text. This is a test line.
 .millust end
+
 :LI.Type '2cc'.  The first two lines will be deleted, and you will enter
 text insertion mode.  Type the following:
 .millust begin
 This is more new text.
 .millust end
+
 :LI.Return to &cmdmode by pressing the
 .param ESC
 key. Cursor to the letter 'i' in the word "is" and type 'c$'.  This
@@ -1454,8 +1550,9 @@ text:
 .millust begin
 This is more new text.
 .millust end
-.*
+
 :INCLUDE file='exerquit'.
+
 :eOL.
 .* ******************************************************************
 .section 'Undo and Redo'
@@ -1472,7 +1569,7 @@ A change can be undone by pressing the letter 'u' while in
 You can undo further changes by pressing 'u' repeatedly.
 .np
 If you undo a change you wanted to keep, you can
-.keyref redo
+.keyword redo
 it by pressing capital 'u' ('U'). Each time
 you press 'U', an undo is re-done.  Once you undo changes, you cannot
 redo them after you modify the file.
@@ -1497,18 +1594,22 @@ for more information.
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" created in the Exercises section of
 :HDREF refid='maiaf'
 :period.
 Delete the first line, delete the second line, then delete the third
 line (one at a time).  Then, press 'u' in command mode.  The third
 line will come back.
+
 :LI.Press 'u' again.  The second line will come back.
+
 :LI.Enter the &cmdline command:
 .millust begin
 :undo
 .millust end
 The first line will come back.
+
 :LI.Enter the &cmdline command
 .millust begin
 :undo
@@ -1519,15 +1620,19 @@ undo all the changes to your file.  You will see the message
 No more undos
 .millust end
 appear.
+
 :LI.Press the capital u ('U') key in &cmdmode.
 :period.
 The first line will now disappear, as you are undoing your undo.
+
 :LI.Press 'U' again.  The second line will disappear.
+
 :LI.Enter the &cmdline command (remember to press ':'):
 .millust begin
 undo!
 .millust end
 The third line will disappear.
+
 :LI.Enter the &cmdline command:
 .millust begin
 undo!
@@ -1536,6 +1641,7 @@ You will see the message:
 .millust begin
 No more undos
 .millust end
+
 :eOL.
 .* ******************************************************************
 .section 'Repeating Edit Operations'
@@ -1578,13 +1684,14 @@ being typed by you again.
 The memorized sequence will be lost the next time you
 change the text other than with '.'.  To memorize a sequence that will
 always be remembered, you can use
-.kw alternate memorize mode
+.keyword alternate memorize mode
 :period.
 This mode is used the same way as memorize mode,
 only you use an equals sign ('=') instead of a dot ('.').
 .*
 .exercises
 :OL.
+
 :LI.Edit the file "atest" from the Exercises section of
 :HDREF refid='maiaf'
 :period.
@@ -1593,6 +1700,7 @@ Delete the first two lines by typing the &cmdmode command:
 2dd
 .millust end
 Now press the dot ('.') key.  Two more lines will be deleted.
+
 :LI.Move to the first column of the first line.  Type the &cmdmode command:
 .millust begin
 m.
@@ -1604,8 +1712,11 @@ dwjdwj.
 This deletes the word on the first line, goes down to the next line,
 deletes another word on the next line, and goes down one more line.
 The final dot ('.') terminates memorize mode.
+
 :LI.Now, press dot ('.').  This will delete the first word of the next
 two lines.
+
 :INCLUDE file='exerquit'.
+
 :eOL.
 

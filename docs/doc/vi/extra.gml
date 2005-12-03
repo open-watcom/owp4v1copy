@@ -635,11 +635,14 @@ command
 
 .* Used in non-hlp portions
 .dm exercises begin
+.np
 .if &e'&dohelp eq 0 .do begin
-.   .np
 .* Helvetica 16pt
-.   :SF font=9.Exercises:eSF.
-.   .np
-.   .do end
+:SF font=9.Exercises:eSF.
+.do end
+.el .do begin
+:SF font=2.Exercises:eSF.
+.do end
+.np
 .dm exercises end
 

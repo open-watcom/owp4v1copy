@@ -71,13 +71,13 @@
 .   :INCLUDE file='&book..tbl'
 .   :INCLUDE file='&book..kw'
 .   .do end
-.if &e'&dohelp eq 0 .do begin
+:cmt. .if &e'&dohelp eq 0 .do begin
 .   .sepsect The &edname User's Guide
 .   :INCLUDE file='intro'.
 .   :INCLUDE file='basic'.
 .   :INCLUDE file='inter'.
 .   :INCLUDE file='advan'.
-.   .do end
+:cmt. .   .do end
 .sepsect The &edname Reference
 :INCLUDE file='env'.
 :INCLUDE file='modes'.
