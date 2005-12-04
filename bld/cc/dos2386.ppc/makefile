@@ -3,7 +3,7 @@
 host_os    = os2
 host_cpu   = 386
 target_cpu = ppc
-release_cc = 0
+cc_release = 0
 debug_cg   = 1
 debug      = 1
 

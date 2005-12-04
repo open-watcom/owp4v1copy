@@ -7,7 +7,7 @@ system     = winnt
 linkage    = dynamic
 subdir     = mf_rd
 
-release_clib = 0
+clib_release = 0
 
 !include $(clib_dir)/master.mif
 !include ../libs.mif

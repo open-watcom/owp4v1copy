@@ -50,8 +50,8 @@ rc              = *wrc
 rcaui           = *wrc
 
 
-!ifdef release_$(proj_name)
-release = $(release_$(proj_name))
+!ifdef $(proj_name)_release
+release = $($(proj_name)_release)
 !else ifeq debug_build 1
 release = 0
 !else

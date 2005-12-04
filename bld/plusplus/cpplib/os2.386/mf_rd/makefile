@@ -6,7 +6,7 @@ convention = register
 linkage    = static
 subdir     = mf_rd
 
-release_cpplib = 0
+cpplib_release = 0
 
 define_library_include = $(plusplus_cpplib_dir)/plib.mif
 !include $(plusplus_dir)/mrglib.mif

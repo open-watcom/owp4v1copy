@@ -1,6 +1,6 @@
 proj_name = fault
 
-release_fault = 0 # always build debug versions of these
+fault_release = 0 # always build debug versions of these
 
 !include cproj.mif
 !include defrule.mif

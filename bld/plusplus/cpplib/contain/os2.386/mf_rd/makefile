@@ -7,7 +7,7 @@ system     = os2
 model      = mf
 convention = register
 linkage    = static
-release_cpplib  = 0
+cpplib_release  = 0
 fs_registration = yes
 define_library_include = $(plusplus_contain_dir)/contain.mif
 !include $(plusplus_dir)/mklib.mif

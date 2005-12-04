@@ -5,7 +5,7 @@ system=nw_clibl
 linkage=static
 convention=stack
 
-release_clib = 0
+clib_release = 0
 
 !include ../../../objects.mif
 !include $(clib_dir)/master.mif
