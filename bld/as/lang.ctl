@@ -26,6 +26,7 @@ cdsay .
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <PROJDIR>/alpha/nt386/wasaxp.exe     <RELROOT>/rel2/binnt/wasaxp.exe
     <CPCMD> <PROJDIR>/ppc/nt386/wasppc.exe       <RELROOT>/rel2/binnt/wasppc.exe
+    <CPCMD> <PROJDIR>/mips/nt386/wasmps.exe      <RELROOT>/rel2/binnt/wasmps.exe
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <PROJDIR>/alpha/ntaxp/wasaxp.exe     <RELROOT>/rel2/axpnt/wasaxp.exe
