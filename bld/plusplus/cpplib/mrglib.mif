@@ -1,11 +1,11 @@
 proj_name = cpplib
 
-!include $(plusplus_dir)/libtarg.mif
+!include $(cpplib_dir)/libtarg.mif
 
 !include cproj.mif
 !include deftarg.mif
 
-!include $(plusplus_dir)/ppdirs.mif
+!include $(cpplib_dir)/ppdirs.mif
 !include $(define_library_include)
 
 !ifndef source_libs
@@ -66,7 +66,7 @@ $(target_lib) : $(source_libs) $(__MAKEFILES__)
     @for %i in ($(source_libs)) do @%append $^&.lbc +%i
     $(librarian) $(lib_flags) $(exp_lib_flags) $^@ @$^&.lbc
 !ifeq linkage dynamic
-    $(vi) -s $(plusplus_cpplib_dir)/export.vi $(export_name)
+    $(vi) -s $(cpplib_dir)/export.vi $(export_name)
 !endif
 
 !ifdef target_lib_x
@@ -78,7 +78,7 @@ $(target_lib_x) : $(source_libs_x) $(__MAKEFILES__)
     @for %i in ($(source_libs_x)) do @%append $^&.lbc +%i
     $(librarian) $(lib_flags) $(exp_libx_flags) $^@ @$^&.lbc
 !ifeq linkage dynamic
-    $(vi) -s $(plusplus_cpplib_dir)/export.vi $(exportx_name)
+    $(vi) -s $(cpplib_dir)/export.vi $(exportx_name)
 !endif
 !endif
 

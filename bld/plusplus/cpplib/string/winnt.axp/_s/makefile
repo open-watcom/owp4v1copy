@@ -10,4 +10,4 @@ linkage      = static
 uncompressed = 1
 define_library_include = $(plusplus_string_dir)/string.mif
 define_deps_include = $(plusplus_string_dir)/deps.mif
-!include $(plusplus_dir)/mklib.mif
+!include $(cpplib_dir)/mklib.mif

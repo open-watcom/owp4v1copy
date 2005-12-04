@@ -7,7 +7,7 @@ proj_name = cpplib
 
 suppress_zc = 1
 
-!include $(plusplus_dir)/libtarg.mif
+!include $(cpplib_dir)/libtarg.mif
 
 !ifdef mem_model_$(model)
 memory_model_i86 = $(mem_model_$(model))
@@ -39,7 +39,7 @@ fpu_flags_linux_386  =$(fp_option)
 !include cproj.mif
 !include deftarg.mif
 
-!include $(plusplus_dir)/dirmacs.mif
+!include $(cpplib_dir)/dirmacs.mif
 !include $(define_library_include)
 
 !ifndef target_objs
@@ -82,7 +82,7 @@ libs : .symbolic $(target_lib) $(files)
 !endif
     @%null
 
-$(target_lib) : $(target_objs)
+$(target_lib) : $(target_objs) $(__MAKEFILES__)
 !ifdef uncompressed
     %create $^&.lbc
     @for %i in ($(target_objs)) do @%append $^&.lbc +%i
@@ -97,7 +97,7 @@ $(target_lib) : $(target_objs)
 !endif
 
 !ifdef target_lib_x
-$(target_lib_x) : $(target_xbjs)
+$(target_lib_x) : $(target_xbjs) $(__MAKEFILES__)
 !ifdef uncompressed
     %create $^&.lbc
     @for %i in ($(target_xbjs)) do @%append $^&.lbc +%i
@@ -198,15 +198,10 @@ reference : .symbolic $(target_lib)
 .EXTENSIONS: .exe .lnk .obj .xbj .c .cpp .asm
 
 !ifdef __UNIX__
-comp_cpp_i86 = $(plusplus_dir)/bin/rppi8612
-comp_cpp_386 = $(plusplus_dir)/bin/rpp38612
-comp_cpp_axp = $(plusplus_dir)/bin/rppaxp12
+comp_cpp = $(plusplus_dir)/bin/rpp$(host_cpu)12
 !else
-comp_cpp_i86 = $(plusplus_dir)\bin\rppi8612.exe
-comp_cpp_386 = $(plusplus_dir)\bin\rpp38612.exe
-comp_cpp_axp = $(plusplus_dir)\bin\rppaxp12.exe
+comp_cpp = $(plusplus_dir)\bin\rpp$(host_cpu)12.exe
 !endif
-comp_cpp = $(comp_cpp_$(host_cpu))
 
 .cpp : $(cpp_dirs)
 

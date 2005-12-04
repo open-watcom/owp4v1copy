@@ -9,5 +9,5 @@ profile    = 1
 subdir     = mf_rmtp.dll
 release_lib_page_size = -p=32
 debug_lib_page_size = -p=128
-define_library_include = $(plusplus_cpplib_dir)/plib.mif
-!include $(plusplus_dir)/mrglib.mif
+define_library_include = $(cpplib_dir)/plib.mif
+!include $(cpplib_dir)/mrglib.mif

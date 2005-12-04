@@ -9,4 +9,4 @@ convention = register
 linkage    = static
 fs_registration = yes
 define_library_include = $(plusplus_runtime_dir)/plib.mif
-!include $(plusplus_dir)/mklib.mif
+!include $(cpplib_dir)/mklib.mif

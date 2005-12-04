@@ -61,6 +61,6 @@ extra_cpp_flags_powcbdp = -fh=pch02.pch
 extra_cpp_flags_powccbip = -fh=pch02.pch
 extra_cpp_flags_powdbcp = -fh=pch02.pch
 
-!include $(plusplus_dir)/mklibtgt.mif
+!include $(cpplib_dir)/mklibtgt.mif
 
 !undef target_lib_x

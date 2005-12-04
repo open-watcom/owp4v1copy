@@ -1,15 +1,12 @@
-!ifndef plusplus_cpplib_dir
-plusplus_cpplib_dir = $(plusplus_dir)/cpplib
-!endif
 !ifndef plusplus_runtime_dir
-plusplus_runtime_dir = $(plusplus_dir)/cpplib/runtime
+plusplus_runtime_dir = $(cpplib_dir)/runtime
 !endif
 !ifndef plusplus_iostream_dir
-plusplus_iostream_dir = $(plusplus_dir)/cpplib/iostream
+plusplus_iostream_dir = $(cpplib_dir)/iostream
 !endif
 !ifndef plusplus_string_dir
-plusplus_string_dir = $(plusplus_dir)/cpplib/string
+plusplus_string_dir = $(cpplib_dir)/string
 !endif
 !ifndef plusplus_contain_dir
-plusplus_contain_dir = $(plusplus_dir)/cpplib/contain
+plusplus_contain_dir = $(cpplib_dir)/contain
 !endif

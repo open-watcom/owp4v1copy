@@ -8,4 +8,4 @@ model      = mf
 convention = stack
 linkage    = static
 define_library_include = $(plusplus_runtime_dir)/plib.mif
-!include $(plusplus_dir)/mklib.mif
+!include $(cpplib_dir)/mklib.mif
