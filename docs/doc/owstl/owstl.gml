@@ -24,6 +24,9 @@
 :H0.Introduction 
 :INCLUDE file='Intro'.
 
+:H0.Deque
+:INCLUDE file='deque'.
+
 :H0.List
 :INCLUDE file='list'.
 
@@ -38,6 +41,9 @@
 
 :H0.Stack
 :INCLUDE file='stack'
+
+:H0.Vector
+:INCLUDE file='vector'
 
 :eBODY
 :eGDOC.
