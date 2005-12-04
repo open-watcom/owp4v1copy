@@ -78,7 +78,7 @@ namespace std {
     double_value = f;
     __EFG__FDLD( (double _WCNEAR *)&double_value, (long_double _WCNEAR *)&ld );
 #else
-    ld.value = *f;
+    ld.value = f;
 #endif
     __lock_it( __i_lock );
     precision = this->precision();
