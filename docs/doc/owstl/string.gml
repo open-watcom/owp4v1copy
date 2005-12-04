@@ -41,9 +41,9 @@ that are needed by the standard exception classes are split off into
 These parts do not themselves need the standard exceptions and so the
 circular reference is broken.
 
-:H1. Status
+:H2. Status
 :P.
-:AUTHOR date='19 Oct 2005'.Peter C. Chapin
+:AUTHOR date='4 Dec 2005'.Peter C. Chapin
 :P.
 Reviewer: Not reviewed
 :P.
