@@ -18,11 +18,14 @@
 :eLAYOUT.
 
 .* These all map to mono font at the mo, could be different if wished
-.* should they have start/end tag pairs to move closer to other current sytems?
+.* should they have start/end tag pairs to move closer to other current
+.* sytems? Currently 'CODE' is intended to be for generic code snippets.
+.* The more specialized macros should be used where appropriate.
 
 .gt CLASS add @mono
-.gt PATH add @mono
+.gt CODE add @mono
 .gt FUNC add @mono
+.gt PATH add @mono
 .gt TOOL add @mono
 
 .dm @mono begin
