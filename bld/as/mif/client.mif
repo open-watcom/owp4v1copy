@@ -26,22 +26,38 @@ asminline_mps_lib_mps  = $(as_dir)/mips/inline/osimps/asinline.lib
 
 #
 !ifeq target_cpu axp
+asminline_c = $(as_dir)/c
+asminline_h = $(as_dir)/alpha/h;$(as_dir)/h;$(owl_dir)/h
+asminline_inc_dirs = -I"$(as_dir)/alpha/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
+asminline_deps =
+asminline_objs =
 !ifdef asminline_axp_lib_$(host_os)_$(host_cpu)
 asminline_lib = $(asminline_axp_lib_$(host_os)_$(host_cpu))
 !else
 asminline_lib = $(asminline_axp_lib_$(host_cpu))
 !endif
 !else ifeq target_cpu ppc
+asminline_c = $(as_dir)/c
+asminline_h = $(as_dir)/ppc/h;$(as_dir)/h;$(owl_dir)/h
+asminline_inc_dirs = -I"$(as_dir)/ppc/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
+asminline_deps =
+asminline_objs =
 !ifdef asminline_ppc_lib_$(host_os)_$(host_cpu)
 asminline_lib = $(asminline_ppc_lib_$(host_os)_$(host_cpu))
 !else
 asminline_lib = $(asminline_ppc_lib_$(host_cpu))
 !endif
 !else ifeq target_cpu mps
+asminline_c = $(as_dir)/c
+asminline_h = $(as_dir)/mps/h;$(as_dir)/h;$(owl_dir)/h
+asminline_inc_dirs = -I"$(as_dir)/mps/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
+asminline_deps =
+asminline_objs =
 !ifdef asminline_mps_lib_$(host_os)_$(host_cpu)
 asminline_lib = $(asminline_mps_lib_$(host_os)_$(host_cpu))
 !else
 asminline_lib = $(asminline_mps_lib_$(host_cpu))
 !endif
 !endif
+
 !endif
