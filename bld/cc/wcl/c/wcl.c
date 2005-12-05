@@ -511,14 +511,21 @@ static int Parse( char *Cmd )
                     case 'd':           /* name of linker directive file */
                         Link_Name = "__WCL__.LNK";
                         if( Word[1] == '='  ||  Word[1] == '#' ) {
-                            MakeName( Word, ".lnk" );    /* add extension */
-                            Link_Name = strdup( Word + 2 );
+                            /* remove quotes from target linker control filename */
+                            UnquoteFName( unquoted, sizeof( unquoted ), Word + 2 );
+
+                            MakeName( unquoted, ".lnk" );    /* add extension */
+
+                            free( Link_Name );
+                            Link_Name = strdup( unquoted );
                         }
                         wcc_option = 0;
                         break;
                     case 'e':           /* name of exe file */
                         if( Word[1] == '='  ||  Word[1] == '#' ) {
-                            strcpy( Exe_Name, Word + 2 );
+                            /* remove quotes from target executable filename */
+                            UnquoteFName( unquoted, sizeof( unquoted ), Word + 2 );
+                            strcpy( Exe_Name, unquoted );
                         }
                         wcc_option = 0;
                         break;
@@ -527,7 +534,11 @@ static int Parse( char *Cmd )
                     case 'm':           /* name of map file */
                         Flags.map_wanted = TRUE;
                         if( Word[1] == '='  ||  Word[1] == '#' ) {
-                            Map_Name = strdup( Word + 2 );
+                            /* remove quotes from target map filename */
+                            UnquoteFName( unquoted, sizeof( unquoted ), Word + 2 );
+
+                            free( Map_Name );
+                            Map_Name = strdup( unquoted );
                         }
                         wcc_option = 0;
                         break;
@@ -536,7 +547,12 @@ static int Parse( char *Cmd )
                             in linker command file */
                         p = &Word[1];
                         if( Word[1] == '='  ||  Word[1] == '#' ) ++p;
-                        Obj_Name = strdup( p );         /* 08-mar-90 */
+
+                        /* remove quotes from object name */
+                        UnquoteFName( unquoted, sizeof( unquoted ), p );
+
+                        free( Obj_Name );
+                        Obj_Name = strdup( unquoted );
                         break;
 #if defined( WCLI86 ) || defined( WCL386 )
                     case 'p':           /* floating-point option */
@@ -594,6 +610,11 @@ static int Parse( char *Cmd )
                         }
 
                         end = ScanFName( end, len );
+
+                        /* remove quotes from additional linker options file */
+                        UnquoteFName( unquoted, sizeof( unquoted ), Word );
+                        strcpy( Word, unquoted );
+
                         MakeName( Word, ".lnk" );
                         errno = 0;
                         if( ( atfp = fopen( Word, "r" ) ) == NULL ) {
