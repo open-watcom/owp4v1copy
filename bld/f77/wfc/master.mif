@@ -12,23 +12,13 @@ wfc_autodepends = .AUTODEPEND
 !include $(dwarf_dir)/dw/client.mif
 !include wres.mif
 
+!include ../files.mif
+
 !ifeq release 0
 wfc_trmem = 1
 !endif
 
-inc_dirs=-I"../h" -I"../../h" $(cg_inc_dirs) -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h"
-
-!ifeq target_cpu 386
-inc_dirs+= -I"$(wasm_dir)/h"
-pre_deps_wasm = inlnops.gh msg.gh
-!else ifeq target_cpu i86
-inc_dirs+= -I"$(wasm_dir)/h"
-pre_deps_wasm = inlnops.gh msg.gh
-!else ifeq target_cpu axp
-inc_dirs+= -I"$(as_dir)/h"
-!else ifeq target_cpu ppc
-inc_dirs+= -I"$(as_dir)/h"
-!endif
+inc_dirs=-I"../h" -I"../../h" $(cg_inc_dirs) -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h" $(asminline_inc_dirs)
 
 # define _USE_RESOURCES_ so that WASM error messages come from resources
 extra_c_flags = -D_USE_RESOURCES_
@@ -36,14 +26,12 @@ extra_c_flags_i86 = -zp1
 extra_c_flags_386 = -zp1
 
 .h: ../h;../../h
-.c: ../c;../../c;$(wasm_dir)/c;$(trmem_dir);
+.c: ../c;../../c;$(asminline_c);$(trmem_dir);
 
 !ifeq host_cpu axp
 extra_a_flags = -oc
 .asm: ../../asmaxp
 !endif
-
-!include ../files.mif
 
 !ifeq wfc_trmem 1
 extra_c_flags_fmemmgr = -DTRMEM -I$(trmem_dir)
@@ -74,7 +62,7 @@ extra_l_flags_nt = op stack=1024k commit stack=32k
 
 flibs = $(wres_lib) $(dwarf_dw_lib) $(asminline_lib)
 
-$(target_exe).exe : $(pre_deps_wasm) $(fobjs) errmsg.res $(cg_deps) $(flibs)
+$(target_exe).exe : $(asminline_deps) $(fobjs) errmsg.res $(cg_deps) $(flibs)
     %create $^&.lnk
     @for %i in ($(fobjs)) do @%append $^&.lnk file %i
     @for %i in ($(flibs)) do @%append $^&.lnk lib %i
@@ -93,7 +81,7 @@ $(target_exe).exe : $(pre_deps_wasm) $(fobjs) errmsg.res $(cg_deps) $(flibs)
 option.obj : option.c optinfo.h
 
 errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/errcodi.h ../h/errcod3.h
-    $(rc_aui) -I"../../h" -I"$(wasm_dir)/h" -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h" $[@ -fo=$^@
+    $(rc_aui) -I"../../h" $(asminline_inc_dirs) -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h" $[@ -fo=$^@
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
     $(bld_cl) $[@ $(wcl_util_opts)

@@ -5,6 +5,7 @@
 # host_os  = nt | os2 | qnx | dos | linux
 
 !include $(as_dir)/mif/client.mif
+!include $(wasm_dir)/mif/client.mif
 !include $(owl_dir)/client.mif
 !include $(cfloat_dir)/client.mif
 

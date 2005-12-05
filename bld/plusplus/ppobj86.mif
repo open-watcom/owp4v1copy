@@ -1,21 +1,11 @@
 # Common objects for x86 (_PC) architecture
 
-# Assembler files
-
-!include $(wasm_dir)/mif/inline.mif
-pre_obj_deps_wasm = inlnops.gh
-common_objs += $(inline_objs)
-common_objs += asmalloc.obj
-common_objs += asmmsg.obj
-
 # System-dependent files
 
 common_objs += cmdlnx86.obj
 common_objs += cpragx86.obj
 !ifeq target_cpu i86
 common_objs  += pragi86.obj
-pre_obj_deps += codei86.gh
 !else
 common_objs  += prag386.obj
-pre_obj_deps += code386.gh
 !endif

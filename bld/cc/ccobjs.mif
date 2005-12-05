@@ -48,7 +48,7 @@ common_objs = &
         browsio.obj  &
         intlload.obj  &
         autodept.obj  &
-        $(inline_objs) &
+        $(asminline_objs) &
         cexpr2.obj &
         cfold2.obj &
         cmath2.obj &

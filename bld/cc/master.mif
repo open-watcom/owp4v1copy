@@ -14,6 +14,9 @@ additional_cleanup = *.int *.u
 !include $(cg_dir)/mif/hostos.mif
 !include $(dwarf_dir)/dw/client.mif
 
+# Our stuff
+!include $(cc_dir)/ccobjs.mif
+
 !ifndef patch_level
 patch_level=0
 !endif
@@ -43,27 +46,6 @@ extra_c_flags_intlload = -D__header="fesupp.h"
 !endif
 extra_c_flags_cmsg = -D__msg_file_prefix=$(intname)
 
-# inline assembly stuff
-!ifeq target_cpu axp
-inline_asm_dir = $(as_dir)
-inline_asm_h = $(as_dir)/alpha/h;$(as_dir)/h;$(owl_dir)/h
-inline_asm_inc_dirs = -I"$(as_dir)/alpha/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
-!else ifeq target_cpu ppc
-inline_asm_dir = $(as_dir)
-inline_asm_h = $(as_dir)/ppc/h;$(as_dir)/h;$(owl_dir)/h
-inline_asm_inc_dirs = -I"$(as_dir)/ppc/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
-!else ifeq target_cpu mps
-inline_asm_dir = $(as_dir)
-inline_asm_h = $(as_dir)/mps/h;$(as_dir)/h;$(owl_dir)/h
-inline_asm_inc_dirs = -I"$(as_dir)/mps/h" -I"$(as_dir)/h" -I"$(owl_dir)/h"
-!else # target_cpu x86
-!include $(wasm_dir)/mif/inline.mif
-inline_asm_dir = $(wasm_dir)
-inline_asm_h = $(wasm_dir)/h
-inline_asm_inc_dirs = -I"$(wasm_dir)/h"
-pre_deps_wasm = inlnops.gh
-!endif
-
 #dll test driver
 #wcc386t.exe
 cdrv_objs = cdrvdll.obj
@@ -73,7 +55,7 @@ pre_deps_qnx = wcc.u
 pre_deps_osi = $(os2ldr)
 
 # other goofy stuff
-pre_obj_deps = $(pre_deps_wasm) $(pre_deps_$(host_os)) code$(target_cpu).gh &
+pre_obj_deps = $(asminline_deps) $(pre_deps_$(host_os)) code$(target_cpu).gh &
         usage.gh msgtxt.gh msgdefs.gh msgattr.gh weights.gh keywords.gh
 
 pre_obj_deps += $(intname)01.int
@@ -102,22 +84,7 @@ wlink_opt_os2_386_dll   = sys os2v2 dll
 wlink_opt_nt_386_dll    = sys nt_dll
 wlink_opt_nt_axp_dll    = sys ntaxp_dll
 
-# 1 if we use asminline_lib to do inline assembly
-use_asminline_lib_ppc      = 1
-use_asminline_lib_axp      = 1
-use_asminline_lib_mps      = 1
-
-!ifdef bootstrap
-!ifeq use_asminline_lib_$(target_cpu) 1
 xlibs = $(dwarf_dw_lib) $(asminline_lib)
-!else
-xlibs = $(dwarf_dw_lib)
-!endif
-!else ifeq use_asminline_lib_$(target_cpu) 1
-xlibs = $(dwarf_dw_lib) $(asminline_lib)
-!else
-xlibs = $(dwarf_dw_lib)
-!endif
 
 xname = wcc$(target_cpu)c.$(final_exe_$(host_os))
 dxname = wcc$(target_cpu)d.$(final_exe_$(host_os))
@@ -143,11 +110,11 @@ libs = -lwatcom -lwres
 
 !endif
 
-inc_dirs  = -I. -I"../h" $(cg_inc_dirs) $(inline_asm_inc_dirs)
+inc_dirs  = -I. -I"../h" $(cg_inc_dirs) $(asminline_inc_dirs)
 inc_dirs += -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h"
 
-.c: ../c;$(inline_asm_dir)/c;$(watcom_dir)/c;$(fe_misc_dir)/c
-.h: ../h;$(inline_asm_h);$(watcom_dir)/h
+.c: ../c;$(asminline_c);$(watcom_dir)/c;$(fe_misc_dir)/c
+.h: ../h;$(asminline_h);$(watcom_dir)/h
 
 extra_c_flags += $(defines)
 
@@ -173,9 +140,6 @@ def_targ        = $(def_targ_$(host_os))
 
 target: $(def_targ) .SYMBOLIC
         @%null
-
-# Our stuff
-!include $(cc_dir)/ccobjs.mif
 
 !ifdef bootstrap
 xname = wcc$(target_cpu)

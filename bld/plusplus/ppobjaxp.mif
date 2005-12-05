@@ -1,8 +1,5 @@
 # Common objects for AXP (_ALPHA) architecture
 
-common_objs += asmalloc.obj
-common_objs += asmmsg.obj
-
 common_objs += cmdlnaxp.obj
 common_objs += cpragaxp.obj
 common_objs += pragaxp.obj

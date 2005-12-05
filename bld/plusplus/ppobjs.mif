@@ -236,6 +236,12 @@ common_objs += dbgzap.obj
 common_objs += fnovprt.obj
 !endif
 
+# inline Assembler files
+
+common_objs += $(asminline_objs)
+common_objs += asmalloc.obj
+common_objs += asmmsg.obj
+
 # target processor-dependent objects
 
 !ifeq target_cpu i86

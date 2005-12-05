@@ -28,6 +28,8 @@ additional_cleanup = *.u *.int y.out ytab.c
 !include $(cg_dir)/mif/hostos.mif
 !include $(dwarf_dir)/dw/client.mif
 
+!include ../ppobjs.mif
+
 xlibs = $(dwarf_dw_lib) $(asminline_lib)
 
 !include ../verify.mif
@@ -37,7 +39,7 @@ pre_obj_deps = errmsgs1.gh ic_mask.gh weights.gh keywords.gh yylex.gh cmdlnpr1.g
 # international data files
 pre_obj_deps += wpp$(target_cpu)01.int $(pre_obj_deps_wasm)
 
-!include ../ppobjs.mif
+pre_obj_deps += $(asminline_deps) code$(target_cpu).gh
 
 inc_dirs = -I.
 !ifeq plusplus_trmem 1
@@ -45,7 +47,7 @@ inc_dirs += -I$(trmem_dir)
 !endif
 inc_dirs += -I"../h"
 inc_dirs += $(cg_inc_dirs)
-inc_dirs += -I"$(wasm_dir)/h"
+inc_dirs += $(asminline_inc_dirs)
 inc_dirs += -I"$(as_dir)/h"
 inc_dirs += -I"$(dwarf_dir)/dw/h"
 inc_dirs += -I"$(cc_dir)/h"
@@ -716,14 +718,28 @@ inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
     $[@ $(wasm_dir)/inlnops.tok $^@
 
 #
-# list of target architectures that have built-in code bursts
-has_prag_i86 = yes
-has_prag_386 = yes
+# target architectures built-in code bursts
+#
+!ifeq target_cpu axp
 
-!ifdef has_prag_$(target_cpu)
+codeaxp.gh :
+        echo // Dummy file > $@
+
+!else ifeq target_cpu ppc
+
+codeppc.gh :
+        echo // Dummy file > $@
+
+!else ifeq target_cpu mps
+
+codemps.gh :
+        echo // Dummy file > $@
+
+!else  # Intel i86 or 386
 
 code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
-    $]@ $[@ $^@
+        $]@ $[@ $^@
+!endif
 
 target_as_axp=wasmaxp -zq -w4
 target_as_i86=bwasm -zq -w4
@@ -736,8 +752,6 @@ xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
 
 ./mkcode.exe: $(cc_dir)/a/mkcode.c
     $(bld_cl) $[@ $(wcl_util_opts)
-
-!endif
 
 #
 # create reference compiler
