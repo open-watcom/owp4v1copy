@@ -39,7 +39,6 @@ fpu_flags_linux_386  =$(fp_option)
 !include cproj.mif
 !include deftarg.mif
 
-!include $(cpplib_dir)/dirmacs.mif
 !include $(define_library_include)
 
 !ifndef target_objs
@@ -189,7 +188,7 @@ c_inc_dirs_nt     =-I"$(hdr_dir)/dos" $(inc_dirs_sys_nt)
 c_inc_dirs_qnx    =-I"$(hdr_dir)/qnx"
 c_inc_dirs_linux  =-I"$(hdr_dir)/linux"
 
-inc_dirs = -I"$(lib_misc_dir)/h" -I"../../h" -I"$(plusplus_dir)/h" -I"$(plusplus_runtime_dir)/h" $(c_inc_dirs_$(host_os)) -I"$(watcom_dir)/h" -I"$(comp_cfg_dir)/h"
+inc_dirs = -I"$(lib_misc_dir)/h" -I"../../h" -I"$(plusplus_dir)/h" -I"$(cpplib_dir)/runtime/h" $(c_inc_dirs_$(host_os)) -I"$(watcom_dir)/h" -I"$(comp_cfg_dir)/h"
 
 reference : .symbolic $(target_lib)
     cp $(target_lib) $(plusplus_dir)/bin
@@ -198,9 +197,9 @@ reference : .symbolic $(target_lib)
 .EXTENSIONS: .exe .lnk .obj .xbj .c .cpp .asm
 
 !ifdef __UNIX__
-comp_cpp = $(plusplus_dir)/bin/rpp$(host_cpu)12
+comp_cpp = $(plusplus_dir)/bin/rpp$(host_cpu)
 !else
-comp_cpp = $(plusplus_dir)\bin\rpp$(host_cpu)12.exe
+comp_cpp = $(plusplus_dir)\bin\rpp$(host_cpu).exe
 !endif
 
 .cpp : $(cpp_dirs)

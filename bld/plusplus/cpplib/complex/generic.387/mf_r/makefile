@@ -7,6 +7,6 @@ system     = generic
 model      = mf
 convention = register
 linkage    = static
-define_library_include = $(plusplus_complex_dir)/complex.mif
-define_deps_include = $(plusplus_complex_dir)/deps.mif
+define_library_include = $(cpplib_dir)/complex/complex.mif
+define_deps_include = $(cpplib_dir)/complex/deps.mif
 !include $(cpplib_dir)/mklib.mif

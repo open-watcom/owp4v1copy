@@ -7,5 +7,5 @@ system     = generic
 model      = mf
 convention = stack
 linkage    = static
-define_library_include = $(plusplus_contain_dir)/contain.mif
+define_library_include = $(cpplib_dir)/contain/contain.mif
 !include $(cpplib_dir)/mklib.mif

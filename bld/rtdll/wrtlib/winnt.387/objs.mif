@@ -5,8 +5,8 @@ __pifx__       =nt3$(dllname_$(convention))mt
 dll_libs = $+ &
     $(new_clib)$(__cifx__)clib3$(dllname_$(convention)).lib &
     $(new_mlib)$(__mifx__)dll/math387$(dllname_$(convention)).lib &
-    $(plusplus_cpplib_dir)/$(__pifx__).dll/plbxmt3$(dllname_$(convention)).lib &
-    $(plusplus_cpplib_dir)/$(__pifx__)/plbxmt3$(dllname_$(convention)).lib &
+    $(cpplib_dir)/$(__pifx__).dll/plbxmt3$(dllname_$(convention)).lib &
+    $(cpplib_dir)/$(__pifx__)/plbxmt3$(dllname_$(convention)).lib &
     $-
 
 dll_def = $+ &
@@ -19,16 +19,16 @@ dll_def = $+ &
     $(new_mlib)$(__mifx__)dll/export.def &
     $(new_mlib)/export.387 &
     $(new_mlib)/$(convention).387 &
-    $(plusplus_cpplib_dir)/runtime/nt386.def &
-    $(plusplus_cpplib_dir)/$(__pifx__).dll/exportx.def &
+    $(cpplib_dir)/runtime/nt386.def &
+    $(cpplib_dir)/$(__pifx__).dll/exportx.def &
     $-
 
 dll_objs = $+ &
     $(new_clib)/startup$(__cifx__)clibdwnt.obj &
     $-
 
-targdir = $(plusplus_cpplib_dir)/runtime/$(__pifx__).dll/
-!include $(plusplus_cpplib_dir)/runtime/static.mif
+targdir = $(cpplib_dir)/runtime/$(__pifx__).dll/
+!include $(cpplib_dir)/runtime/static.mif
 targdir =
 
 static_objs += $+ &

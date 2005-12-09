@@ -9,5 +9,5 @@ convention = stack
 linkage    = static
 mthreaded  = 1
 fs_registration = yes
-define_library_include = $(plusplus_runtime_dir)/plib.mif
+define_library_include = $(cpplib_dir)/runtime/plib.mif
 !include $(cpplib_dir)/mklib.mif

@@ -11,6 +11,6 @@ mthreaded  = 1
 fs_registration = yes
 profile    = 1
 lib_page_size = -p=32
-define_library_include = $(plusplus_iostream_dir)/iostream.mif
-define_deps_include = $(plusplus_iostream_dir)/deps.mif
+define_library_include = $(cpplib_dir)/iostream/iostream.mif
+define_deps_include = $(cpplib_dir)/iostream/deps.mif
 !include $(cpplib_dir)/mklib.mif

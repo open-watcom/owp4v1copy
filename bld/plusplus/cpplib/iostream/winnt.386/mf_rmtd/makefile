@@ -12,5 +12,5 @@ fs_registration = yes
 
 cpplib_release = 0
 
-define_library_include = $(plusplus_iostream_dir)/iostream.mif
+define_library_include = $(cpplib_dir)/iostream/iostream.mif
 !include $(cpplib_dir)/mklib.mif

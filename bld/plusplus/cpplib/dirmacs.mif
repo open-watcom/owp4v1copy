@@ -1,5 +1,0 @@
-plusplus_runtime_dir  = $(cpplib_dir)/runtime
-plusplus_string_dir   = $(cpplib_dir)/string
-plusplus_complex_dir  = $(cpplib_dir)/complex
-plusplus_iostream_dir = $(cpplib_dir)/iostream
-plusplus_contain_dir  = $(cpplib_dir)/contain

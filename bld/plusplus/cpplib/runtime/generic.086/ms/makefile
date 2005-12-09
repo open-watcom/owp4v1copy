@@ -6,5 +6,5 @@ processor  = 086
 system     = generic
 model      = ms
 linkage    = static
-define_library_include = $(plusplus_runtime_dir)/plib.mif
+define_library_include = $(cpplib_dir)/runtime/plib.mif
 !include $(cpplib_dir)/mklib.mif

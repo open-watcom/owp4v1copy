@@ -7,6 +7,6 @@ system       = winnt
 model        =
 convention   =
 linkage      = static
-define_library_include = $(plusplus_iostream_dir)/iostream.mif
-define_deps_include = $(plusplus_iostream_dir)/deps.mif
+define_library_include = $(cpplib_dir)/iostream/iostream.mif
+define_deps_include = $(cpplib_dir)/iostream/deps.mif
 !include $(cpplib_dir)/mklib.mif

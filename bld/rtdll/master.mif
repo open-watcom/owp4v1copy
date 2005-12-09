@@ -22,10 +22,6 @@ clib_host_os_windows =win
 clib_host_os_winnt   =nt
 host_OS=$(clib_host_os_$(system))
 
-!ifeq component cpplib
-nlang_tools = 1
-!endif
-
 !include cproj.mif
 
 !include $(clib_dir)/flags.mif

@@ -62,7 +62,7 @@ patch_level=0
 !endif
 
 exe_bld_name = wcpp$(target_cpu)
-exe_ref_name = rpp$(target_cpu)12
+exe_ref_name = rpp$(target_cpu)
 dll_bld_name = wppd$(target_cpu)
 !ifndef exe_dbg_name
 exe_dbg_name = $(exe_bld_name)d

@@ -8,6 +8,6 @@ model      = mf
 convention = stack
 linkage    = static
 fs_registration = yes
-define_library_include = $(plusplus_string_dir)/string.mif
-define_deps_include = $(plusplus_string_dir)/deps.mif
+define_library_include = $(cpplib_dir)/string/string.mif
+define_deps_include = $(cpplib_dir)/string/deps.mif
 !include $(cpplib_dir)/mklib.mif
