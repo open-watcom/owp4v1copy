@@ -1,4 +1,4 @@
-#pmake/50: nobuild debug flat register 32bit inline winnt iX86 rtdll os_nt cpu_386
+#pmake/50: build debug flat register 32bit inline winnt iX86 rtdll os_nt cpu_386
 
 component  = mathlib
 processor  = 387
