@@ -3,7 +3,7 @@
 component  = clib
 processor  = 386
 model      = mf
-subdir     = mf_r
+subdir     = mf_rd
 system     = winnt
 convention = register
 

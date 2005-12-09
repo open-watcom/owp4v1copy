@@ -3,7 +3,7 @@ __ifx__ =library/$(system).$(processor)/$(subdir)
 
 dll_libs = $+ &
     $(pfx__)/$(__ifx__).dll/math3$(dllname_$(convention)).lib &
-    ../../../clib/$(system).386/$(subdir)$(dllname_debug)/clb$(dllname_$(convention))dll$(dllname_profile)$(dllname_debug).lib &
+    ../../../clib/$(system).386/$(subdir)/clb$(dllname_$(convention))dll$(dllname_profile)$(dllname_debug).lib &
     $-
 
 dll_def = $+ &

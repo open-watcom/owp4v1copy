@@ -3,7 +3,7 @@
 component  = mathlib
 processor  = 387
 model      = mf
-subdir     = mf_r
+subdir     = mf_rd
 system     = os2
 convention = register
 

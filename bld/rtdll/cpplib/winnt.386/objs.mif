@@ -1,5 +1,5 @@
 pfx__          =$(cpplib_dir)
-__ifx__        =$(system).386/$(model)_$(dllname_$(convention))mt$(subdir_profile)$(subdir_debug)
+__ifx__        =$(system).386/$(model)_$(dllname_$(convention))mt$(dllname_profile)$(dllname_debug)
 
 dll_libs = $+ &
     $(pfx__)/$(__ifx__).dll/plbxmt3$(dllname_$(convention)).lib &
