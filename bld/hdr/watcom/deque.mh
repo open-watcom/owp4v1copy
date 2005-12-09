@@ -1,10 +1,13 @@
 ///////////////////////////////////////////////////////////////////////////
-// FILE: deque (...)
+// FILE: deque (Definition of std::deque)
 //
 :keep CPP_HDR
 :include crwat.sp
 //
-// Description: This header is part of the C++ standard library.
+// Description: This header is part of the C++ standard library. It defines
+//              a double ended queue template that provides random access
+//              to its elements yet amortized O(1) time push/pop operations
+//              on *both* ends.
 ///////////////////////////////////////////////////////////////////////////
 #ifndef _DEQUE_INCLUDED
 #define _DEQUE_INCLUDED
@@ -15,7 +18,947 @@
 #error The header deque requires C++
 #endif
 
+#ifndef _ITERATOR_INCLUDED
+  #include <iterator>
+#endif
+
+#ifndef _LIMITS_INCLUDED
+  #include <limits>
+#endif
+
+#ifndef _MEMORY_INCLUDED
+  #include <memory>
+#endif
+
+#ifndef _STDEXCEPT_INCLUDED
+  #include <stdexcept>
+#endif
+
 namespace std {
+
+  template<class Type, class Allocator = allocator< Type > >
+  class deque {
+  public:
+    typedef typename Allocator::reference       reference;
+    typedef typename Allocator::const_reference const_reference;
+    typedef typename Allocator::size_type       size_type;
+    typedef typename Allocator::difference_type difference_type;
+    typedef Type                                value_type;
+    typedef Allocator                           allocator_type;
+    typedef typename Allocator::pointer         pointer;
+    typedef typename Allocator::const_pointer   const_pointer;
+
+    // Class iterator
+    // --------------
+    class iterator :
+      public std::iterator< random_access_iterator_tag, Type > {
+    public:
+      iterator( deque *p, deque::size_type i ) :
+        dp( p ), index( i ) { }
+
+      iterator( ) { }
+
+      value_type &operator*( )
+        { return( dp->buffer[index] ); }
+
+      value_type *operator->( )
+        { return( &dp->buffer[index] ); }
+
+      iterator &operator++( );
+      iterator  operator++( int );
+      iterator &operator--( );
+      iterator  operator--( int );
+
+:: Due to a bug in the compiler (#492) these functions can't be defined
+:: outside of the class and must be inline. As a result they must also
+:: be friends (even when not otherwise necessary).
+      friend bool operator==(iterator lhs, iterator rhs)
+        { return( lhs.dp == rhs.dp && lhs.index == rhs.index ); }
+      friend bool operator< (iterator lhs, iterator rhs)
+      {
+        deque::size_type xform1, xform2;
+        if( lhs.index >= lhs.dp->head_index )
+          xform1 = lhs.index - lhs.dp->head_index;
+        else
+          xform1 = (lhs.dp->deq_length - lhs.dp->head_index) + lhs.index;
+
+        if( rhs.index >= rhs.dp->head_index )
+          xform2 = rhs.index - rhs.dp->head_index;
+        else
+          xform2 = (rhs.dp->deq_length - rhs.dp->head_index) + rhs.index;
+
+        return( xform1 < xform2 );
+      }
+      friend bool operator!=(iterator lhs, iterator rhs)
+        { return( !( lhs == rhs ) ); }
+      friend bool operator>=(iterator lhs, iterator rhs)
+        { return( !( lhs < rhs ) ); }
+      friend bool operator> (iterator lhs, iterator rhs)
+        { return( rhs < lhs ); }
+      friend bool operator<=(iterator lhs, iterator rhs)
+        { return( !( lhs > rhs ) ); }
+
+      iterator &operator+=( difference_type n );
+      iterator &operator-=( difference_type n );
+      friend iterator operator+( iterator it, difference_type n )
+        { it += n; return( it ); }
+      friend iterator operator+( difference_type n, iterator it )
+        { it += n; return( it ); }
+      friend iterator operator-( iterator it, difference_type n )
+        { it -= n; return( it ); }
+
+    private:
+      deque *dp;
+      deque::size_type index;
+    };
+
+    // Class const_iterator
+    // --------------------
+    class const_iterator :
+      public std::iterator< random_access_iterator_tag, const Type > {
+    public:
+      const_iterator( const deque *p, deque::size_type i ) :
+        dp( p ), index( i ) { }
+
+      const_iterator( ) { }
+
+      value_type &operator*( )
+        { return( dp->buffer[index] ); }
+
+      value_type *operator->( )
+        { return( &dp->buffer[index] ); }
+
+      const_iterator &operator++( );
+      const_iterator  operator++( int );
+      const_iterator &operator--( );
+      const_iterator  operator--( int );
+
+:: Due to a bug in the compiler (#492) these functions can't be defined
+:: outside of the class and must be inline. As a result they must also
+:: be friends (even when not otherwise necessary).
+      friend bool operator==(const_iterator lhs, const_iterator rhs)
+        { return( lhs.dp == rhs.dp && lhs.index == rhs.index ); }
+      friend bool operator< (const_iterator lhs, const_iterator rhs)
+      {
+        deque::size_type xform1, xform2;
+        if( lhs.index >= lhs.dp->head_index )
+          xform1 = lhs.index - lhs.dp->head_index;
+        else
+          xform1 = (lhs.dp->deq_length - lhs.dp->head_index) + lhs.index;
+
+        if( rhs.index >= rhs.dp->head_index )
+          xform2 = rhs.index - rhs.dp->head_index;
+        else
+          xform2 = (rhs.dp->deq_length - rhs.dp->head_index) + rhs.index;
+
+        return( xform1 < xform2 );
+      }
+      friend bool operator!=(const_iterator lhs, const_iterator rhs)
+        { return( !( lhs == rhs ) ); }
+      friend bool operator>=(const_iterator lhs, const_iterator rhs)
+        { return( !( lhs < rhs ) ); }
+      friend bool operator> (const_iterator lhs, const_iterator rhs)
+        { return( rhs < lhs ); }
+      friend bool operator<=(const_iterator lhs, const_iterator rhs)
+        { return( !( lhs > rhs ) ); }
+
+      const_iterator &operator+=( difference_type n );
+      const_iterator &operator-=( difference_type n );
+      friend const_iterator operator+( const_iterator it, difference_type n )
+        { it += n; return( it ); }
+      friend const_iterator operator+( difference_type n, const_iterator it )
+        { it += n; return( it ); }
+      friend const_iterator operator-( const_iterator it, difference_type n )
+        { it -= n; return( it ); }
+
+    private:
+      const deque *dp;
+      deque::size_type index;
+    };
+
+    friend class iterator;
+    friend class const_iterator;
+
+    typedef reverse_iterator< iterator >        reverse_iterator;
+    typedef reverse_iterator< const_iterator >  const_reverse_iterator;
+
+    explicit deque( const Allocator & = Allocator( ) );
+    explicit deque( size_type n, const Type &value = Type( ), const Allocator & = Allocator( ) );
+    deque( const deque &other );
+   ~deque( );
+    deque &operator=( const deque &other );
+    void assign( size_type n, const Type &value );
+    allocator_type get_allocator( ) const;
+
+    iterator               begin( );
+    const_iterator         begin( ) const;
+    iterator               end( );
+    const_iterator         end( ) const;
+    reverse_iterator       rbegin( );
+    const_reverse_iterator rbegin( ) const;
+    reverse_iterator       rend( );
+    const_reverse_iterator rend( ) const;
+
+    size_type size( ) const;
+    size_type max_size( ) const;
+    void      resize( size_type n, Type c = Type( ) );
+    size_type capacity( ) const;      // Not required by the standard.
+    bool      empty( ) const;
+    void      reserve( size_type n ); // Not required by the standard.
+
+    reference       operator[]( size_type n );
+    const_reference operator[]( size_type n ) const;
+    reference       at( size_type n );
+    const_reference at( size_type n ) const;
+    reference       front( );
+    const_reference front( ) const;
+    reference       back( );
+    const_reference back( ) const;
+
+    void     push_front( const Type &item );
+    void     push_back( const Type &item );
+    void     pop_front( );
+    void     pop_back( );
+    iterator insert( iterator position, const Type &x );
+    void     insert( iterator position, size_type n, const Type &x );
+    iterator erase( iterator position );
+    iterator erase( iterator first, iterator last );
+    void     swap( deque &x );
+    void     clear( );
+
+    bool     _Sane( ) const;  // Check invariants.
+
+  private:
+    // 1. buffer has size buf_length.
+    // 2. buffer never shrinks (except in ...).
+    // 3. buf_length > deq_length.
+    // 4. buf_length is a power of two.
+    // 5. buffer allocated with mem or a copy of mem.
+    // 6. tail_index [-] head_index == deq_length (after considering wrap)
+    // 7. buffer reallocated when deq_length == buf_length - 1
+    //      Note: tail_index == head_index implies buffer is empty, not full.
+    //
+    Allocator mem;         // Object used to get and release memory.
+    pointer   buffer;      // Pointer to start of buffer space.
+    size_type buf_length;  // Total number of buffer slots.
+    size_type deq_length;  // Number of buffer slots in use by objects.
+    size_type head_index;  // Buffer position of the first object.
+    size_type tail_index;  // Buffer position just past the last object.
+
+    // This method encapsulates the memory allocation policy.
+    pointer alloc( size_type required, size_type &found );
+  };
+
+  // ===================================
+  // Member functions of deque::iterator
+  // ===================================
+
+  // operator++( )
+  // *************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::iterator &
+    deque< Type, Allocator >::iterator::operator++( )
+  {
+    ++index;
+    if( index >= dp->buf_length ) index = 0;
+    return( *this );
+  }
+
+  // operator++( int )
+  // *****************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::iterator
+    deque< Type, Allocator >::iterator::operator++( int )
+  {
+    iterator ret_value( *this );
+    ++index;
+    if( index >= dp->buf_length ) index = 0;
+    return( ret_value );
+  }
+
+  // operator--( )
+  // *************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::iterator &
+    deque< Type, Allocator >::iterator::operator--( )
+  {
+    if( index == 0 ) {
+      index = dp->buf_length - 1;
+    }
+    else {
+      --index;
+    }
+    return( *this );
+  }
+  
+  // operator--( int )
+  // *****************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::iterator
+    deque< Type, Allocator >::iterator::operator--( int )
+  {
+    iterator ret_value( *this );
+    if( index == 0 ) {
+      index = dp->buf_length - 1;
+    }
+    else {
+      --index;
+    }
+    return( ret_value );
+  }
+
+  // operator+=( difference_type )
+  // *****************************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::iterator &
+    deque< Type, Allocator >::iterator::operator+=( difference_type n )
+  {
+    if( n >= 0 ) index = ( index + n ) % dp->buf_length;
+    else {
+      n = -n;
+      if( index >= n ) index -= n;
+      else index = dp->buf_length - ( n - index );
+    }
+    return( *this );
+  }
+
+  // operator-=( difference_type )
+  // *****************************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::iterator &
+    deque< Type, Allocator >::iterator::operator-=( difference_type n )
+  {
+    return( ( *this ) += -n );
+  }
+
+  // =========================================
+  // Member functions of deque::const_iterator
+  // =========================================
+
+  // operator++( )
+  // *************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::const_iterator &
+    deque< Type, Allocator >::const_iterator::operator++( )
+  {
+    ++index;
+    if( index >= dp->buf_length ) index = 0;
+    return( *this );
+  }
+
+  // operator++( int )
+  // *****************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::const_iterator
+    deque< Type, Allocator >::const_iterator::operator++( int )
+  {
+    const_iterator ret_value( *this );
+    ++index;
+    if( index >= dp->buf_length ) index = 0;
+    return( ret_value );
+  }
+
+  // operator--( )
+  // *************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::const_iterator &
+    deque< Type, Allocator >::const_iterator::operator--( )
+  {
+    if( index == 0 ) {
+      index = dp->buf_length - 1;
+    }
+    else {
+      --index;
+    }
+    return( *this );
+  }
+  
+  // operator--( int )
+  // *****************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::const_iterator
+    deque< Type, Allocator >::const_iterator::operator--( int )
+  {
+    const_iterator ret_value( *this );
+    if( index == 0 ) {
+      index = dp->buf_length - 1;
+    }
+    else {
+      --index;
+    }
+    return( ret_value );
+  }
+
+  // operator+=( difference_type )
+  // *****************************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::const_iterator &
+    deque< Type, Allocator >::const_iterator::operator+=( difference_type n )
+  {
+    if( n >= 0 ) index = ( index + n ) % dp->buf_length;
+    else {
+      n = -n;
+      if( index >= n ) index -= n;
+      else index = dp->buf_length - ( n - index );
+    }
+    return( *this );
+  }
+
+  // operator-=( difference_type )
+  // *****************************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::const_iterator &
+    deque< Type, Allocator >::const_iterator::operator-=( difference_type n )
+  {
+    return( ( *this ) += -n );
+  }
+
+  // =========================
+  // Member functions of deque
+  // =========================
+
+  template< class Type, class Allocator >
+  deque< Type, Allocator >::pointer
+    deque< Type, Allocator >::alloc(
+      size_type required,
+      size_type &found )
+  {
+    pointer   result;
+    size_type length = 16;
+
+    // Find a power of two that produces a sufficient size.
+    while( length < required ) length <<= 1;
+    result = mem.allocate( length );
+
+    // Update outputs only if allocation successful.
+    found = length;
+    return( result );
+  }
+
+  // deque( const Allocator & )
+  // **************************
+  template< class Type, class Allocator >
+  deque< Type, Allocator >::deque( const Allocator &a ) : mem( a )
+  {
+    buffer = alloc( 1, buf_length );
+    deq_length = 0;
+    head_index = 0;
+    tail_index = 0;
+  }
+
+  // deque( size_type, const Type &, const Allocator & )
+  //****************************************************
+  template< class Type, class Allocator >
+  deque< Type, Allocator >::deque(
+    size_type n,
+    const Type &value,
+    const Allocator &a ) : mem( a )
+  {
+    buffer = alloc( n + 1, buf_length );
+    try {
+      uninitialized_fill_n( buffer, n, value );
+    }
+    catch( ... ) {
+      mem.deallocate( buffer, buf_length );
+      throw;
+    }
+    deq_length = n;
+    head_index = 0;
+    tail_index = n;
+  }
+
+  // deque( const deque & )
+  // ************************
+  template< class Type, class Allocator >
+  deque< Type, Allocator >::deque( const deque &other )
+    : mem( other.mem )
+  {
+    buffer = alloc( other.deq_length + 1, buf_length );
+    bool      part1_done = false;
+    size_type part1_size =  ( ( other.tail_index >= other.head_index ) ?
+      other.tail_index : other.buf_length ) - other.head_index;
+    try {
+      pointer bookmark = uninitialized_copy(
+        other.buffer + other.head_index,
+        other.buffer + other.head_index + part1_size,
+        buffer
+      );
+      part1_done = true;
+      if( other.tail_index < other.head_index ) {
+        uninitialized_copy(
+          other.buffer, other.buffer + other.tail_index, bookmark );
+      }
+    }
+    catch( ... ) {
+      if( part1_done ) {
+        for( size_type i = 0; i < part1_size; ++i ) {
+          mem.destroy( &buffer[i] );
+        }
+      }
+      mem.deallocate( buffer, buf_length );
+      throw;
+    }
+    deq_length = other.deq_length;
+    head_index = 0;
+    tail_index = other.deq_length;
+  }
+
+  // ~deque( )
+  // **********
+  template< class Type, class Allocator >
+  deque< Type, Allocator >::~deque( )
+  {
+    // Delete objects actually in use and deallocate the buffer.
+    pointer p = &buffer[head_index];
+    for( size_type i = 0; i < deq_length; ++i ) {
+      mem.destroy( p );
+      ++p;
+      if( p == buffer + buf_length ) p = buffer;
+    }
+    mem.deallocate( buffer, buf_length );
+  }
+
+  // begin( )
+  // ********
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::iterator
+    deque< Type, Allocator >::begin( )
+  {
+    return( iterator( this, head_index ) );
+  }
+
+  // begin( ) const
+  // **************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::const_iterator
+    deque< Type, Allocator >::begin( ) const
+  {
+    return( const_iterator( this, head_index ) );
+  }
+
+  // end( )
+  // ******
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::iterator
+    deque< Type, Allocator >::end( )
+  {
+    return( iterator( this, tail_index ) );
+  }
+
+  // end( ) const
+  // ************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::const_iterator
+    deque< Type, Allocator >::end( ) const
+  {
+    return( const_iterator( this, tail_index ) );
+  }
+
+  // rbegin( )
+  // *********
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::reverse_iterator
+    deque< Type, Allocator >::rbegin( )
+  {
+    return( reverse_iterator( iterator( this, tail_index ) ) );
+  }
+
+  // rbegin( ) const
+  // ***************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::const_reverse_iterator
+    deque< Type, Allocator >::rbegin( ) const
+  {
+    return( const_reverse_iterator( const_iterator( this, tail_index ) ) );
+  }
+
+  // rend( )
+  // *******
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::reverse_iterator
+    deque< Type, Allocator >::rend( )
+  {
+    return( reverse_iterator( iterator( this, head_index ) ) );
+  }
+
+  // rend( ) const
+  // *************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::const_reverse_iterator
+    deque< Type, Allocator >::rend( ) const
+  {
+    return( const_reverse_iterator( const_iterator( this, tail_index ) ) );
+  }
+
+  // size( ) const
+  // *************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::size_type
+    deque< Type, Allocator >::size( ) const
+  {
+    return( deq_length );
+  }
+
+  // max_size( ) const
+  // *****************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator>::size_type
+    deque< Type, Allocator >::max_size( ) const
+  {
+    return( std::numeric_limits< size_type >::max( ) / sizeof( Type ) );
+  }
+
+  // capacity( ) const
+  // *****************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::size_type
+    deque< Type, Allocator >::capacity( ) const
+  {
+    return( buf_length );
+  }
+
+  // empty( ) const
+  // **************
+  template< class Type, class Allocator >
+  inline
+  bool deque< Type, Allocator >::empty( ) const
+  {
+    return( deq_length == 0 );
+  }
+
+  // reserve( size_type )
+  // ********************
+  template< class Type, class Allocator >
+  void deque< Type, Allocator >::reserve( size_type new_capacity )
+  {
+    if( new_capacity <= buf_length ) return;
+    if( new_capacity > max_size( ) )
+      throw length_error( "deque::reserve" );
+
+    size_type temp_length;
+    pointer   temp_buffer = alloc( new_capacity, temp_length );
+    bool      part1_done  = false;
+    size_type part1_size  =
+      ( ( tail_index >= head_index ) ? tail_index : buf_length ) - head_index;
+    try {
+      pointer bookmark = uninitialized_copy(
+        buffer + head_index,
+        buffer + head_index + part1_size,
+        temp_buffer
+      );
+      part1_done = true;
+      if( tail_index < head_index ) {
+        uninitialized_copy( buffer, buffer + tail_index, bookmark );
+      }
+    }
+    catch( ... ) {
+      if( part1_done ) {
+        for( size_type i = 0; i < part1_size; ++i ) {
+          mem.destroy( &temp_buffer[i] );
+        }
+      }
+      mem.deallocate( temp_buffer, temp_length );
+      throw;
+    }
+
+    // New allocation was successful.
+    for( size_type i = 0; i < deq_length; ++i ) {
+      mem.destroy( &buffer[head_index] );
+      ++head_index;
+      if( head_index == buf_length ) head_index = 0;
+    }
+    mem.deallocate( buffer, buf_length );
+
+    buffer     = temp_buffer;
+    buf_length = temp_length;
+    head_index = 0;
+    tail_index = deq_length;
+  }
+
+  // operator[]( size_type )
+  // ***********************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::reference
+    deque< Type, Allocator >::operator[]( size_type n )
+  {
+    size_type first_length = buf_length - head_index;
+
+    if( n < first_length )
+      return( buffer[head_index + n] );
+    else
+      return( buffer[n - first_length] );
+  }
+
+  // operator[]( size_type ) const
+  // *****************************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::const_reference
+    deque< Type, Allocator >::operator[]( size_type n ) const
+  {
+    size_type first_length = buf_length - head_index;
+
+    if( n < first_length )
+      return( buffer[head_index + n] );
+    else
+      return( buffer[n - first_length] );
+  }
+
+  // at( size_type )
+  // ***************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::reference
+    deque< Type, Allocator >::at( size_type n )
+  {
+    if( n >= deq_length )
+      throw out_of_range( "deque::at" );
+    return( ( *this )[n] );
+  }
+
+  // at( size_type ) const
+  // *********************
+  template< class Type, class Allocator >
+  typename deque< Type, Allocator >::const_reference
+    deque< Type, Allocator >::at( size_type n ) const
+  {
+    if( n >= deq_length )
+      throw out_of_range( "deque::at" );
+    return( ( *this )[n] );
+  }
+
+  // front( )
+  // ********
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::reference
+    deque< Type, Allocator >::front( )
+  {
+    return( buffer[head_index] );
+  }
+
+  // front( ) const
+  // **************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::const_reference
+    deque< Type, Allocator >::front( ) const
+  {
+    return( buffer[head_index] );
+  }
+
+  // back( )
+  // *******
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::reference
+    deque< Type, Allocator >::back( )
+  {
+    if( tail_index == 0 )
+      return( buffer[buf_length - 1] );
+    else
+      return( buffer[tail_index - 1] );
+  }
+
+  // back( ) const
+  // *************
+  template< class Type, class Allocator >
+  inline
+  typename deque< Type, Allocator >::const_reference
+    deque< Type, Allocator >::back( ) const
+  {
+    if( tail_index == 0 )
+      return( buffer[buf_length - 1] );
+    else
+      return( buffer[tail_index - 1] );
+  }
+
+  // push_front( )
+  // *************
+  template< class Type, class Allocator >
+  void deque< Type, Allocator >::push_front( const Type &item )
+  {
+    if( deq_length + 2 > buf_length ) {
+      reserve( buf_length + 1 );
+    }
+    size_type temp_index =   // For exception safety.
+      (head_index == 0) ? buf_length - 1 : head_index - 1;
+    new ( static_cast<void *>( buffer + temp_index ) ) Type( item );
+    head_index = temp_index;
+    ++deq_length;
+  }
+
+  // push_back( )
+  template< class Type, class Allocator >
+  void deque< Type, Allocator >::push_back( const Type &item )
+  {
+    if( deq_length + 2 > buf_length ) {
+      reserve( buf_length + 1 );
+    }
+    new ( static_cast<void *>( buffer + tail_index ) ) Type( item );
+    tail_index =
+      ( tail_index == buf_length - 1 ) ? tail_index = 0 : tail_index + 1;
+    ++deq_length;
+  }
+
+  // pop_front( )
+  // ************
+  template< class Type, class Allocator >
+  inline
+  void deque< Type, Allocator >::pop_front( )
+  {
+    mem.destroy( &buffer[head_index] );
+    ++head_index;
+    if( head_index == buf_length ) head_index = 0;
+    --deq_length;
+  }
+
+  // pop_back( )
+  // ***********
+  template< class Type, class Allocator >
+  void deque< Type, Allocator >::pop_back( )
+  {
+    if( tail_index == 0 ) {
+      mem.destroy( &buffer[buf_length - 1] );
+      tail_index = buf_length - 1;
+    }
+    else {
+      mem.destroy( &buffer[tail_index - 1] );
+      --tail_index;
+    }
+    --deq_length;
+  }
+
+  // _Sane( ) const
+  // **************
+  template< class Type, class Allocator >
+  bool deque< Type, Allocator >::_Sane( ) const
+  {
+    if( buf_length == 0 ) return( false );
+    if( buf_length <= deq_length ) return( false );
+
+    // Is buf_length a power of 2?
+    size_type temp = buf_length;
+    while( temp != 1 ) {
+      if( temp & 0x1 ) return( false );
+      temp >>= 1; 
+    }
+
+    // Check the head and tail indicies.
+    if( head_index >= buf_length || tail_index >= buf_length ) return( false );
+    if( head_index == tail_index &&
+        !( deq_length == 0 || deq_length == buf_length ) ) return( false );
+    if( tail_index > head_index &&
+        deq_length != ( tail_index - head_index ) ) return( false );
+    if( tail_index < head_index &&
+        deq_length != ( tail_index + ( buf_length - head_index ) ) ) return( false );
+    return( true );
+  }
+
+  // ==============================
+  // Ordinary functions using deque
+  // ==============================
+
+  // NOTE: The implementation of operator== and operator< is probably
+  // the same for all three sequence containers. Should this be a helper
+  // template parameterized by container type? (Probably)
+
+  // operator==( const deque &, const deque & )
+  // ******************************************
+  template< class Type, class Allocator >
+  bool operator==( const deque< Type, Allocator > &x,
+                   const deque< Type, Allocator > &y )
+  {
+    if( x.size( ) != y.size( ) ) return( false );
+
+    deque< Type, Allocator>::size_type index = 0;
+    while( index < x.size( ) ) {
+      if( x[index] != y[index] ) return( false );
+      ++index;
+    }
+    return( true );
+  }
+
+  // operator<( const deque &, const deque & )
+  // *****************************************
+  template< class Type, class Allocator >
+  bool operator< ( const deque< Type, Allocator > &x,
+                   const deque< Type, Allocator > &y )
+  {
+    deque< Type, Allocator>::size_type index = 0;
+    while( index != x.size( ) && index != y.size( ) ) {
+      if( x[index] < y[index] ) return( true );
+      if( y[index] < x[index] ) return( false );
+      ++index;
+    }
+    return( index == x.size( ) && index != y.size( ) );
+  }
+
+  // operator!=( const deque &, const deque & )
+  // ******************************************
+  template< class Type, class Allocator >
+  inline
+  bool operator!=( const deque< Type, Allocator > &x,
+                   const deque< Type, Allocator > &y )
+  {
+    return( !( x == y ) );
+  }
+
+  // operator>( const deque &, const deque & )
+  // *****************************************
+  template< class Type, class Allocator >
+  inline
+  bool operator> ( const deque< Type, Allocator > &x,
+                   const deque< Type, Allocator > &y )
+  {
+    return( y < x );
+  }
+
+  // operator>=( const deque &, const deque & )
+  // ******************************************
+  template< class Type, class Allocator >
+  inline
+  bool operator>=( const deque< Type, Allocator > &x,
+                   const deque< Type, Allocator > &y )
+  {
+    return( !( x < y ) );
+  }
+
+  // operator<=( const deque &, const deque & )
+  // ******************************************
+  template< class Type, class Allocator >
+  inline
+  bool operator<=( const deque< Type, Allocator > &x,
+                   const deque< Type, Allocator > &y )
+  {
+    return( !( x > y ) );
+  }
+
+:: Deque swap ambiguous if general swap (in algorithm) visible.
+:: Need partial ordering of function templates for this to work.
+  #ifdef __NEVER
+  // swap( deque &, deque & )
+  // **************************
+  template< class Type, class Allocator >
+  inline
+  void swap( deque< Type, Allocator > &x, deque< Type, Allocator > &y )
+  {
+    x.swap( y );
+  }
+  #endif
 
 } // End of namespace std.
 
