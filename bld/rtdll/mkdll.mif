@@ -1,9 +1,6 @@
-.extensions:
-.extensions: .lib .imp .lbc .dll .obj .c .cpp .asm
-
-.IGNORE
-
 !ifdef profile
+option_symfile =
+!else ifeq release 0
 option_symfile =
 !else
 option_symfile = option symfile
@@ -13,7 +10,7 @@ option_symfile = option symfile
 patch_level=0
 !endif
 
-$(libname).lib : $(dllname).imp $(static_objs)
+$(libdllname).lib : $(dllname).imp $(static_objs)
     $(librarian) $(lib_flags) $(lib_flags_new) -p=16 -irn $^@ @$(dllname).imp $(static_objs)
 
 $(dllname).imp : $(dllname).lbc $(rtdll_dir)/trimlbc.vi $(rtdll_dir)/add_br.vi

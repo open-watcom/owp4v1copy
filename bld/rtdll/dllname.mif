@@ -7,7 +7,7 @@ dllname_profile    =p
 !else
 dllname_profile    =
 !endif
-!ifdef debug
+!ifeq release 0
 dllname_debug      =d
 !else
 dllname_debug      =
@@ -24,5 +24,5 @@ dllname_cpplib_axp =plb
 dllname_wrtlib_386 =wrt
 dllname_wrtlib_387 =wr7
 dllname_wrtlib_axp =wrt
-dllname =$(dllname_$(component)_$(processor))$(dllname_$(convention))$(dllname_profile)$(dllname_version)$(dllname_debug)
+dllname =$(dllname_$(component)_$(processor))$(dllname_$(convention))$(dllname_version)$(dllname_profile)$(dllname_debug)
 libdllname =$(dllname_$(component)_$(processor))$(dllname_$(convention))dll$(dllname_profile)$(dllname_debug)
