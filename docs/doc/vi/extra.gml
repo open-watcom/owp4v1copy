@@ -209,6 +209,7 @@
 .   .el .do begin
 .       :ZDL termhi = 0.
 .       :ZDT.Example(s):
+.       :ZDD.
 .   .   .do end
 .   .do end
 .el .if '&*1.' eq 'end' .do begin
@@ -231,8 +232,9 @@
 .   .in +0.2i
 .   .do end
 .el .do begin
-.   :ZDD.:SF font=4.&*.:eSF.
-.   .br
+.   .np
+.   :SF font=4.&*.:eSF.
+.   .np
 .   .do end
 .dm begxmpl end
 
