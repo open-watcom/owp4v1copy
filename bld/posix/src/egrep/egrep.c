@@ -362,7 +362,6 @@ static void readPatternFile( const char *filename )
             errorExit( "invalid pattern \"%s\" in \"%s\"", IObuffer, filename );
         *cr = '\0';
         insertPattern( IObuffer );
-        PatCount++;
     }
     (void) fclose( fp );
     if( patstart == PatCount )
