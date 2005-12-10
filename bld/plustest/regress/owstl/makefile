@@ -35,85 +35,72 @@ stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
-tests = &
-        alg01.$(exe)    &
-        alg02.$(exe)    &
-        clib01.$(exe)   &
-        cmplx01.$(exe)  &
-	deque01.$(exe)  &
-        fun01.$(exe)    &
-        iter01.$(exe)   &
-        lim01.$(exe)    &
-        list01.$(exe)   &
-        locale01.$(exe) &
-        map01.$(exe)    &
-        map02.$(exe)    &
-        mem01.$(exe)    &
-        numer01.$(exe)  &
-        stack01.$(exe)  &
-        set01.$(exe)    &
-        set02.$(exe)    &
-        string01.$(exe) &
-        string02.$(exe) &
-        util01.$(exe)   &
-        vector01.$(exe) &
+# to update add test names here:
+template = &
+        alg01$(ext)     &
+        alg02$(ext)     &
+        clib01$(ext)    &
+        cmplx01$(ext)   &
+        deque01$(ext)   &
+        fun01$(ext)     &
+        iter01$(ext)    &
+        lim01$(ext)     &
+        list01$(ext)    &
+        locale01$(ext)  &
+        map01$(ext)     &
+        map02$(ext)     &
+        mem01$(ext)     &
+        numer01$(ext)   &
+        stack01$(ext)   &
+        set01$(ext)     &
+        set02$(ext)     &
+        string01$(ext)  &
+        string02$(ext)  &
+        util01$(ext)    &
+        vector01$(ext)
+
+# the list of .exe targets
+ext = .$(exe)
+tests = $+ $(template) $-
+# a list of names so lazy old me can type "wmake alg01" to 
+# create and run algo01.exe without running the full suite
+ext =
+names = $+ $(template) $-
+# this is used as special target to run multiple commands for each test
+ext = ._do_test_
+do_tests = $+ $(template) $-
 
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000
 
+# this is my laziness bit...
+$(names) : .symbolic
+    @%make $^&.$(exe)
+    $(run) $^*
+    @echo PASS
+
+$(tests) :: test.lnk
+
 .obj.$(exe):
     $(linker) @test.lnk NAME $^* FILE $^*
 
-test : .symbolic test.lnk $(tests)
+# the main target environment.mif calls to run the test suite
+test : .symbolic $(tests)
     %create test.out
-# Note that there must be no space before the redirection symbol - otherwise
-# echo will emit the space character and subsequent diff will fail. This
-# way is more transparent than keeping trailing blanks in the check file.
-    @echo ----------alg01---------->> test.out
-    $(run) alg01 >> test.out
-    @echo ----------alg02---------->> test.out
-    $(run) alg02 >> test.out
-    @echo ----------clib01---------->> test.out
-    $(run) clib01 >> test.out
-    @echo ----------cmplx01---------->> test.out
-    $(run) cmplx01 >> test.out
-    @echo ----------deque01---------->> test.out
-    $(run) deque01 >> test.out
-    @echo ----------fun01---------->> test.out
-    $(run) fun01 >> test.out
-    @echo ----------iter01---------->> test.out
-    $(run) iter01 >> test.out
-    @echo ----------lim01---------->> test.out
-    $(run) lim01 >> test.out
-    @echo ----------list01---------->> test.out
-    $(run) list01 >> test.out
-    @echo ----------locale01---------->> test.out
-    $(run) locale01 >> test.out
-    @echo ----------map01---------->> test.out
-    $(run) map01 >> test.out
-    @echo ----------map02---------->> test.out
-    $(run) map02 >> test.out
-    @echo ----------mem01---------->> test.out
-    $(run) mem01 >> test.out
-    @echo ----------numer01---------->> test.out
-    $(run) numer01 >> test.out
-    @echo ----------stack01---------->> test.out
-    $(run) stack01 >> test.out
-    @echo ----------set01---------->> test.out
-    $(run) set01 >> test.out
-    @echo ----------set02---------->> test.out
-    $(run) set02 >> test.out
-    @echo ----------string01---------->> test.out
-    $(run) string01 >> test.out
-    @echo ----------string02---------->> test.out
-    $(run) string02 >> test.out
-    @echo ----------util01---------->> test.out
-    $(run) util01 >> test.out
-    @echo ----------vector01---------->> test.out
-    $(run) vector01 >> test.out
+    # if I could figure out how to make a "for" loop execute multiple 
+    # commands this would be a lot more clear...
+    @%make $(do_tests)
     diff test.out test.chk
     %make global
     %append $(log_file) PASS $(%__CWD__)
+
+# the special target that runs the required commands for each test
+$(do_tests) : .symbolic
+# Note that there must be no space before the redirection symbol - otherwise
+# echo will emit the space character and subsequent diff will fail. This
+# way is more transparent than keeping trailing blanks in the check file.
+    @echo ----------$^*---------->> test.out
+    $(run) $^* >> test.out
 
 test.lnk : makefile
     %create $^@

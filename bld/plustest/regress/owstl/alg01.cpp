@@ -48,6 +48,12 @@ bool is_odd( int num )
   return( static_cast<bool>( num % 2 ) );
 }
 
+// Used in some of the tests.
+bool is_divisible( int x, int y )
+{
+  return( !(x % y) );
+}
+
 bool for_each_test( )
 {
   bool rc = true;
@@ -99,6 +105,83 @@ bool find_test( )
   return( rc );
 }
 
+bool find_end_test( )
+{
+  int a[] = { 1,1,1,1,1,1 };
+  int b[] = { 1,1,1 };
+  int c[] = { 2,4,6,8,10,12 };
+  int d[] = { 6,8 };
+  int e[] = { 2,4,6,8,10,12 };
+  int f[] = { 3,6,6,8,6,5,8,6,8,7 };    //10 elements
+  int g[] = { 10 };
+  //find last of multiple matches
+  if( std::find_end( a, a+6, b, b+3 ) != a+3 ) FAIL
+  //can't find because it subsequence is longer than sequence
+  if( std::find_end( b, b+3, a, a+6 ) != b+3 ) FAIL
+  //can't find because no match
+  if( std::find_end( a, a+6, d, d+2 ) != a+6 ) FAIL
+  //no match, same size sequences
+  if( std::find_end( a, a+6, c, c+6 ) != a+6 ) FAIL
+  //exact matching sequence
+  if( std::find_end( c, c+6, e, e+6 ) != c ) FAIL
+  //find in middle
+  if( std::find_end( c, c+6, d, d+2 ) != c+2 ) FAIL
+  //multi matches
+  if( std::find_end( f, f+10, d, d+2 ) != f+7 ) FAIL
+  //substring is only 1 long
+  if( std::find_end( c, c+6, g, g+1 ) != c+4 ) FAIL
+
+  //quick test with predictate, there should realy be more
+  //but it is just a copy of the above, as so long as any updates
+  //are applied to both functions it will be ok.
+  int h[] = { 2,3 };
+  if( std::find_end( c, c+6, h, h+2, is_divisible ) != c+4 ) FAIL
+
+  return( true );
+}
+
+bool find_first_of_test( )
+{
+  using namespace std;
+  string s("the cat sat\non the mat");
+  char* s2 = "cmo";
+  char* n1 = "xyz";
+  string::iterator i, j, k;
+  i = find_first_of( s.begin(), s.end(), s2, s2+3 );
+  k = s.begin() + 4;
+  if( *i != s[4] || i != k ) FAIL
+  //don't find anything
+  i = find_first_of( s.begin(), s.end(), n1, n1+3 );
+  if( i != s.end() ) FAIL
+  
+  string s3("sat\non");
+  string s4;
+  string ws(" \n");
+  //skip past 2 spaces
+  i = find_first_of( s.begin(), s.end(), ws.begin(), ws.end() );
+  ++i;
+  i = find_first_of( i, s.end(), ws.begin(), ws.end() );
+  ++i;
+  //skip another 2 spaces
+  j = find_first_of( i, s.end(), ws.begin(), ws.end() );
+  ++j;
+  j = find_first_of( j, s.end(), ws.begin(), ws.end() );
+  while( i != j ) s4 += *i++;
+  if( s3 != s4 ) FAIL
+  
+  // test binary predictate version:
+  int x[] = { 3, 12, 17, 19 };
+  int y[] = { 5, 4, 7, 11 };
+  int* i2;
+  //find a x that is evenly divisible by a y
+  i2 = find_first_of( x, x+4, y, y+4, is_divisible );
+  if( i2 != x+1 ) FAIL
+  //don't find one
+  i2 = find_first_of( x, x+4, y+2, y+4, is_divisible );
+  if( i2 != x+4 ) FAIL
+  
+  return( true );
+}
 
 #ifdef _NEVER
 bool count_test( )
@@ -465,8 +548,10 @@ int main( )
 {
   int rc = 0;
   try {
-    if( !for_each_test( )   ) rc = 1;
-    if( !find_test( )       ) rc = 1;
+    if( !for_each_test( )       ) rc = 1;
+    if( !find_test( )           ) rc = 1;
+    if( !find_end_test( )       ) rc = 1;
+    if( !find_first_of_test( )  ) rc = 1;
     // The count test fails because of a compiler bug.
     // if( !count_test( )      ) rc = 1;
     if( !equal_test( )      ) rc = 1;

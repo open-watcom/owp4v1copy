@@ -11,14 +11,10 @@ the standard.
 :P.
 Reviewer: Not reviewed
 :P.
-The functional library was mainly written by Peter.
+The algorithms library was mainly written by Peter.
 :P.
 Missing members:
 :UL.
-:LI.find_end(FwdIterator1, FwdIterator1, FwdIterator2 , FwdIterator2 )
-:LI.find_end(FwdIt1, FwdIt1, FwdIt2 , FwdIt2, BinaryPredicate )
-:LI.find_first_of(FwdIterator1, FwdIterator1, FwdIterator2 , FwdIterator2 )
-:LI.find_first_of(FwdIt1, FwdIt1, FwdIt2 , FwdIt2, BinaryPredicate )
 :LI.adjacent_find( ForwardIterator, ForwardIterator )
 :LI.adjacent_find( ForwardIterator, ForwardIterator, BinaryPredicate )
 :LI.mismatch( InputIt1, InputIt1, InputIt2, BinaryPredicate )
@@ -81,6 +77,10 @@ Completed members:
 :LI.for_each( InputIterator, InputIterator, Function )
 :LI.find( InputIterator, InputIterator, const Type & )
 :LI.find_if( InputIterator, InputIterator, Predicate )
+:LI.find_end(FwdIterator1, FwdIterator1, FwdIterator2 , FwdIterator2 )
+:LI.find_end(FwdIt1, FwdIt1, FwdIt2 , FwdIt2, BinaryPredicate )
+:LI.find_first_of(FwdIterator1, FwdIterator1, FwdIterator2 , FwdIterator2 )
+:LI.find_first_of(FwdIt1, FwdIt1, FwdIt2 , FwdIt2, BinaryPredicate )
 :LI.equal( InputIterator1, InputIterator1, InputIterator2 )
 :LI.equal( InputIterator1, InputIterator1, InputIterator2, BinaryPredicate )
 :LI.copy( InputIterator, InputIterator, OutputIterator )
@@ -139,12 +139,14 @@ It may well be the container is just a bit of stack and the iterator a pointer.
 These functions instead copy elements from the right (an incremented iterator)
 over the top of the element that is :Q.removed:eQ. and then return an iterator
 identifying the new end of the sequence.
-The implementation makes use of the remove_copy and remove_copy_if
+The initial implementation just called the remove_copy and reomve_copy_if
 functions described below.
-It just passes the start of the sequence as the place to start writing the
-result, so the result is copied over the top of the existing elements.
-[hmm is this performing unnecessary copy on top of self in some cases?- 
-could do with looking at this again at some stage]
+This would perform unnecessary copies on top of the same object if there any
+values at the begining of the container that aren't to be removed.
+This could cause a bit of performance hit if the object is large and there are
+lots of objects that don't need to be removed, therefore these functions
+were re-written to be independent of the the _copy versions and perform a
+check for this condition.
 
 :H2.remove_copy remove_copy_if
 :P.
@@ -153,6 +155,25 @@ predictate is false, starting at the location given by OutputIterator.
 It is a simple while loop over the input iterator first to last, either
 just skipping the element or copying it to the output.
 
+:H2.find_first_of
+:P.
+There are two versions of this, one that uses operator== and one that uses
+a binary predicate.
+There is a simple nested loop to compare each element with each element
+indexed by the 2nd iterator range.
 
+:H2.find_end
+:P.
+There are two versions of this, one that uses operator== and one that uses
+a binary predicate.
+The main loop executes two other loops.
+The first loop finds an input1 element that matches the first input2 element.
+When a match is found the second loop then checks to see if it is complete 
+match for the subsequence.
+If it is, the position the subsequence started is noted and the main loop is
+iterated as there may be another match later on.
+Note this can't search for the substring backwards as the iterators are
+ForwardIterators.
 
-:H2.Need to add quick descriptions of other templates
+:H2.add quick descriptions of other algorithms here...
+:P.
