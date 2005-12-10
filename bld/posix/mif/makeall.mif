@@ -27,18 +27,18 @@ all : lib $(commands) .symbolic
 lib : .symbolic $(__MAKEFILES__)
 curr_dir_all=$+ $(%cwd) $-
         @cd $(posixlibdir)
-        !@wmake -h
+        !@wmake -h release=$(release)
 !ifeq targos dos
         @cd $(altposixlibdir)
-        !@wmake -h
+        !@wmake -h release=$(release)
 !else ifeq targos dosos2
         @cd $(altposixlibdir)
-        !@wmake -h
+        !@wmake -h release=$(release)
 !endif
         @cd $(curr_dir_all)
 
 $(commands) : .symbolic $(__MAKEFILES__)
-        !@wmake -h targos=$(targos) make_all=1 -f $(posix_dir)/src/$^@/makefile
+        !@wmake -h targos=$(targos) make_all=1 release=$(release) -f $(posix_dir)/src/$^@/makefile
 !ifdef install
         @wstrip $^@.exe $(install)/$^@.exe
         @wtouch -f $^@.exe $(install)/$^@.exe
@@ -51,7 +51,7 @@ clean : .symbolic
 !else ifeq targos dosos2
         !@wmake -h -f $(altposixlibdir)/makefile clean clean_dir=$(altposixlibdir)
 !endif
-        rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err
+        rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err *.sym
         @if exist rm.exe erase rm.exe
 
 clean_build : .symbolic

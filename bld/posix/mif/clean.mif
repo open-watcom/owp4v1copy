@@ -5,3 +5,4 @@ clean_dir = .
         @rm -f $(clean_dir)/*.ex? $(clean_dir)/*.?bj $(clean_dir)/*.map
         @rm -f $(clean_dir)/*.lst $(clean_dir)/*.smp $(clean_dir)/*.lnk
         @rm -f $(clean_dir)/*.lbc $(clean_dir)/*.lib $(clean_dir)/*.err
+        @rm -f $(clean_dir)/*.sym

@@ -31,6 +31,9 @@ $(name).lnk : $(objs) $(__MAKEFILES__)
         @%create $(name).lnk
         @%append $(name).lnk name $(name).exe
         @%append $(name).lnk debug all option quiet,map
+!ifeq release 0	
+        @%append $(name).lnk option symfile
+!endif
         @%append $(name).lnk lib $(posixlibdir)/posix.lib
 !ifeq targos dosos2
         @%append $(name).lnk system os2 pmc
