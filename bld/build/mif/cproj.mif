@@ -416,6 +416,24 @@ inc_path        = $(inc_dirs) $(inc_dirs_$(host_os)) $(inc_dirs_sys) -I$(watcom_
 
 !endif
 
+rtdll_clib_os2_386     = $(rtdll_dir)/clib/os2.386/mf_r
+rtdll_clib_nt_386      = $(rtdll_dir)/clib/winnt.386/mf_r
+
+rtdll_mathlib_os2_386  = $(rtdll_dir)/mathlib/os2.386/mf_r
+rtdll_mathlib_nt_386   = $(rtdll_dir)/mathlib/winnt.386/mf_r
+
+rtdll_mathlib7_os2_386 = $(rtdll_dir)/mathlib/os2.387/mf_r
+rtdll_mathlib7_nt_386  = $(rtdll_dir)/mathlib/winnt.387/mf_r
+
+rtdll_cpplib_os2_386   = $(rtdll_dir)/cpplib/os2.386/mf_r
+rtdll_cpplib_nt_386    = $(rtdll_dir)/cpplib/winnt.386/mf_r
+
+rtdll_libpath = &
+    $(rtdll_clib_$(host_os)_$(host_cpu)) &
+    $(rtdll_mathlib_$(host_os)_$(host_cpu)) &
+    $(rtdll_mathlib7_$(host_os)_$(host_cpu)) &
+    $(rtdll_cpplib_$(host_os)_$(host_cpu))
+
 cc              = $(cc_$(host_cpu))
 cl              = $(cl_$(host_cpu))
 cpp             = $(cpp_$(host_cpu))
