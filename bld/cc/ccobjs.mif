@@ -1,67 +1,98 @@
+#
+# driver for dll
+#
+drv_objs = &
+    idedrv.obj &
+    idemsgfm.obj &
+    wccdlldr.obj
+
+#
+# stand-alone executable
+#
+exe_objs = &
+    cintmain.obj
+
+#
+# DLL stuff
+#
+dll_objs = &
+    idedll.obj &
+    idemsgpr.obj
+
+#
+# common files
+#
 common_objs = &
-        ascii.obj &
-        asmstmt.obj &
-        casian.obj &
-        ccheck.obj &
-        ccmain.obj &
-        cdebug.obj &
-        cdecl1.obj &
-        cdecl2.obj &
-        cdinit.obj &
-        cdump.obj &
-        cems.obj &
-        cenum.obj &
-        cerror.obj &
-        cfeinfo.obj &
-        cinfo.obj &
-        cmac1.obj &
-        cmac2.obj &
-        cmemmgr.obj &
-        cmodel.obj &
-        cmsg.obj &
-        cname.obj &
-        coptions.obj &
-        caux.obj &
-        cpragma.obj &
-        cpurge.obj &
-        cscan.obj &
-        csizeof.obj &
-        cstring.obj &
-        csym.obj &
-        ctimepc.obj &
-        ctoken.obj &
-        ctype.obj &
-        cusage.obj &
-        cutil.obj &
-        femore.obj &
-        ftoa.obj &
-        strsave.obj &
-        swchar.obj &
-        watcom.obj &
-        cgetch.obj &
-        cmacadd.obj &
-        asmalloc.obj &
-        asmmsg.obj &
-        jis2unic.obj &
-        pchdr.obj  &
-        dwarf.obj  &
-        browsio.obj  &
-        intlload.obj  &
-        autodept.obj  &
-        $(asminline_objs) &
-        cexpr2.obj &
-        cfold2.obj &
-        cmath2.obj &
-        cstmt2.obj &
-        cgen2.obj &
-        cgendata.obj &
-        exprtree.obj &
-        treewalk.obj
+    ascii.obj &
+    asmstmt.obj &
+    casian.obj &
+    ccheck.obj &
+    ccmain.obj &
+    cdata.obj &
+    cdebug.obj &
+    cdecl1.obj &
+    cdecl2.obj &
+    cdinit.obj &
+    cdump.obj &
+    cems.obj &
+    cenum.obj &
+    cerror.obj &
+    cfeinfo.obj &
+    cinfo.obj &
+    cmac1.obj &
+    cmac2.obj &
+    cmemmgr.obj &
+    cmodel.obj &
+    cmsg.obj &
+    cname.obj &
+    coptions.obj &
+    caux.obj &
+    cpragma.obj &
+    cpurge.obj &
+    cscan.obj &
+    csizeof.obj &
+    cstats.obj &
+    cstring.obj &
+    csym.obj &
+    ctimepc.obj &
+    ctoken.obj &
+    ctype.obj &
+    cusage.obj &
+    cutil.obj &
+    femore.obj &
+    ftoa.obj &
+    strsave.obj &
+    swchar.obj &
+    watcom.obj &
+    cgetch.obj &
+    cmacadd.obj &
+    asmalloc.obj &
+    asmmsg.obj &
+    jis2unic.obj &
+    pchdr.obj  &
+    dwarf.obj  &
+    browsio.obj  &
+    intlload.obj  &
+    autodept.obj  &
+    cexpr2.obj &
+    cfold2.obj &
+    cmath2.obj &
+    cstmt2.obj &
+    cgen2.obj &
+    cgendata.obj &
+    exprtree.obj &
+    treewalk.obj
 
 !ifeq release 0
 common_objs += cfedump.obj
 !endif
 
+# in-line assembler files
+common_objs += $(asminline_objs)
+
+#
+# target specific files
+#
 cc_objs_i86   = cpragx86.obj pragi86.obj
 cc_objs_386   = cpragx86.obj prag386.obj
 cc_objs_axp   = cpragaxp.obj pragaxp.obj
@@ -69,21 +100,4 @@ cc_objs_ppc   = cpragppc.obj pragppc.obj
 cc_objs_mps   = cpragmps.obj pragmips.obj
 cc_objs_sparc = cpragspc.obj pragspc.obj stubspc.obj
 
-cc_objs = &
-        cdata.obj &
-        cintmain.obj &
-        $(common_objs) &
-        $(cc_objs_$(target_cpu)) &
-        cstats.obj
-dll_objs = &
-        cdata.obj &
-        idedll.obj &
-        idemsgpr.obj &
-        $(common_objs) &
-        $(cc_objs_$(target_cpu)) &
-        cstats.obj
-dlldrv_obj = &
-        idedrv.obj &
-        idemsgfm.obj &
-        idemsgpr.obj &
-        wccdlldr.obj
+common_objs += $(cc_objs_$(target_cpu))

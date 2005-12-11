@@ -1,9 +1,12 @@
 proj_name = cc
+
 cc_autodepends = .autodepend
 
 .extensions: .gh
 
 additional_cleanup = *.int *.u
+
+cc_nosymfile = 1
 
 !include cproj.mif
 !include deftarg.mif
@@ -14,82 +17,14 @@ additional_cleanup = *.int *.u
 !include $(cg_dir)/mif/hostos.mif
 !include $(dwarf_dir)/dw/client.mif
 
-# Our stuff
-!include $(cc_dir)/ccobjs.mif
+!include trmem.mif
 
-!ifndef patch_level
-patch_level=0
-!endif
+!include ../ccobjs.mif
 
-extra_c_flags_386= -3r
+# final executable names
+exe_name = wcc$(target_cpu)c
+dll_name = wccd$(target_cpu)c
 
-!ifeq cg_dll 1
-extra_c_flags = -D_CGDLL
-!endif
-
-defines = -Dlocal=static
-# international data files
-intname = wcc$(target_cpu)
-
-!ifndef bootstrap
-!ifeq release 1
-opts_cscan_386  = -5r
-extra_c_flags_cscan = $(opts_cscan_$(host_cpu))
-!endif
-!endif
-extra_c_flags_cgen386 = -DBY_C_FRONT_END
-extra_c_flags_idedll  = -bd
-!ifdef __LINUX__
-extra_c_flags_intlload = -D__header=\"fesupp.h\"
-!else
-extra_c_flags_intlload = -D__header="fesupp.h"
-!endif
-extra_c_flags_cmsg = -D__msg_file_prefix=$(intname)
-
-#dll test driver
-#wcc386t.exe
-cdrv_objs = cdrvdll.obj
-
-#host dependant goop
-pre_deps_qnx = wcc.u
-pre_deps_osi = $(os2ldr)
-
-# other goofy stuff
-pre_obj_deps = $(asminline_deps) $(pre_deps_$(host_os)) code$(target_cpu).gh &
-        usage.gh msgtxt.gh msgdefs.gh msgattr.gh weights.gh keywords.gh
-
-pre_obj_deps += $(intname)01.int
-
-#
-# NOTE: "op off=?" must be 8K bigger than the stack size in wlink_sys_qnx_f
-#
-extra_l_flags_qnx= option stack=16k,offset=24k, res=wcc.u, priv=3
-extra_l_flags_nt = option stack=1024k commit stack=32k
-extra_l_flags_dos = option stack=32k
-
-extra_l_flags = option map
-
-# final executable extensions for the various hosts
-final_exe_dos   = exe
-final_exe_os2   = exe
-final_exe_osi   = exe
-final_exe_nt    = exe
-final_exe_qnx   = qnx
-final_exe_linux = elf
-
-# WLINK .DLL options for the various hosts
-wlink_dll_os2           = option manyautodata, modname=$(realdllname)
-wlink_dll_nt            = option offset=0x69400000, modname=$(realdllname)
-wlink_opt_os2_386_dll   = sys os2v2 dll
-wlink_opt_nt_386_dll    = sys nt_dll
-wlink_opt_nt_axp_dll    = sys ntaxp_dll
-
-xlibs = $(dwarf_dw_lib) $(asminline_lib)
-
-xname = wcc$(target_cpu)c.$(final_exe_$(host_os))
-dxname = wcc$(target_cpu)d.$(final_exe_$(host_os))
-dllexet = wcc$(target_cpu)t
-dllexe = wcc$(target_cpu)e
 # Base DLL name needs to be 8 chars or less on OS/2, argh! Additionally,
 # internal module name may be required to match file name on some platforms.
 !ifeq target_cpu i86
@@ -97,11 +32,107 @@ realdllname = wccd
 !else
 realdllname = wccd$(target_cpu)
 !endif
-dllname = wccd$(target_cpu)e
-cxname = wcc$(target_cpu)s.$(final_exe_$(host_os))
+
+# international data file name
+intname = wcc$(target_cpu)
+
+#host dependant goop
+pre_deps_qnx = wcc.u
+
+# other goofy stuff
+pre_obj_deps = usage.gh
+pre_obj_deps += msgtxt.gh
+pre_obj_deps += msgdefs.gh
+pre_obj_deps += msgattr.gh
+pre_obj_deps += weights.gh
+pre_obj_deps += keywords.gh
+pre_obj_deps += $(intname)01.int
+pre_obj_deps += $(asminline_deps)
+pre_obj_deps += $(pre_deps_$(host_os))
+pre_obj_deps += code$(target_cpu).gh
+
+#
+# C compiler options
+#
+defines = -Dlocal=static
+
+extra_c_flags = $(defines)
+!ifeq cg_dll 1
+extra_c_flags += -D_CGDLL
+!endif
+
+extra_c_flags_386 = -3r
+
+!ifndef bootstrap
+!ifeq release 1
+extra_c_flags_cscan_386 = -5r
+extra_c_flags_cscan    = $(extra_c_flags_cscan_$(host_cpu))
+!endif
+!endif
+extra_c_flags_idedll   = -bd
+!ifdef __LINUX__
+extra_c_flags_intlload = -D__header=\"fesupp.h\"
+!else
+extra_c_flags_intlload = -D__header="fesupp.h"
+!endif
+extra_c_flags_cmsg     = -D__msg_file_prefix=$(intname)
+
+#
+# WLINK .EXE options
+#
+extra_l_flags     = option map, symfile
+
+# NOTE: "op off=?" must be 8K bigger than the stack size in wlink_sys_qnx_f
+extra_l_flags_qnx = option stack=16k,offset=24k, res=wcc.u, priv=3
+extra_l_flags_nt  = option stack=1024k commit stack=32k
+extra_l_flags_dos = option stack=32k
+
+#
+# WLINK .DLL options
+#
+# the only guaranteed way to find the .sym for a .DLL is for it to be attached
+# to the .DLL binary
+!ifeq release 0
+extra_l_flags_dll     = option map, modname=$(realdllname)
+!else
+extra_l_flags_dll     = option map, modname=$(realdllname), symfile
+!endif
+
+extra_l_flags_dll_nt  = initinstance terminstance option offset=0x69400000
+extra_l_flags_dll_os2 = initinstance terminstance option manyautodata
+
+#
+# external libraries
+#
+xlibs = $(dwarf_dw_lib) $(asminline_lib)
+
+#
+# External dependencies
+#
+external_dependencies = $(xlibs)
+!ifeq release 0
+external_dependencies += $(cg_debug_deps)
+!else
+external_dependencies += $(cg_deps)
+!endif
+!ifeq host_os osi
+external_dependencies += $(os2ldr)
+!endif
+
+#
+# Common dependencies
+#
+
+depends_exe = $(pre_obj_deps) $(comp_objs_exe) $(external_dependencies)
+depends_dll = $(pre_obj_deps) $(comp_objs_dll) $(external_dependencies)
+depends_drv = $(pre_obj_deps) $(drv_objs)
 
 # systems where version resources must be added to .DLL
 build_rc_nt_386 = 1
+
+!ifdef build_rc_$(host_os)_$(host_cpu)
+rc_objs = cc.rc
+!endif
 
 !ifdef bootstrap
 
@@ -116,135 +147,77 @@ inc_dirs += -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h"
 .c: ../c;$(asminline_c);$(watcom_dir)/c;$(fe_misc_dir)/c
 .h: ../h;$(asminline_h);$(watcom_dir)/h
 
-extra_c_flags += $(defines)
+comp_objs_exe = $(common_objs) $(exe_objs)
+comp_objs_dll = $(common_objs) $(dll_objs)
 
-!ifdef bootstrap
-def_targ = wcc$(target_cpu)
-!endif
-!ifndef def_targ
-!ifdef debug
-def_targ        = $(dxname)
-!else ifeq release 1
-def_targ_os2    = $(dllexe).exe
-def_targ_nt     = $(dllexe).exe
-def_targ        = $(xname)
+!ifdef cc_dll
+
+$(exe_name).exe : $(drv_objs) $(dll_name).lib drv.lnk
+        $(linker) name $@ @drv.lnk
+
 !else
-def_targ_os2    = $(dllexe).exe
-def_targ_nt     = $(dllexe).exe
-def_targ        = $(dxname)
-!endif
-!ifdef def_targ_$(host_os)
-def_targ        = $(def_targ_$(host_os))
-!endif
-!endif
 
-target: $(def_targ) .SYMBOLIC
-        @%null
-
+$(exe_name).exe: $(depends_exe) exe.lnk
 !ifdef bootstrap
-xname = wcc$(target_cpu)
-!endif
-
-$(xname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_deps) $(cc_dir)/ccobjs.mif
-!ifdef bootstrap
-        $(cc) $(ldflags) -o $@ $(cc_objs) $(xlibs) $(libs) $(cg_deps)
-!else
-        @%make linkfile
-        @%append $^&.lnk $(cg_libs)
-!ifeq   host_os osi
-        @%append $^&.lnk name $^&.rex
-        $(linker) $(lflags) @$^&.lnk
+        $(cc) $(ldflags) -o $@ $(comp_objs_exe) $(xlibs) $(libs) $(cg_deps)
+!else ifeq host_os osi
+        $(linker) name $^&.rex @exe.lnk
         $(w32bind) $^&.rex $@ $(os2ldr)
         @rm -f $^&.rex
 !else	
-        @%append $^&.lnk name $@
-        $(linker) $(lflags) @$^&.lnk
-!endif
-!ifeq   host_os qnx
-!ifeq release 1
-        serialize $(xname) wcc
-!endif
+        $(linker) name $@ @exe.lnk
+!ifeq host_os qnx
+        serialize $@ wcc
 !endif
 !endif
 
-$(dxname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
-        @%make linkfile
-        @%append $^&.lnk $(cg_debug_libs)
-        @%append $^&.lnk name $@
-        $(linker) $(lflags) @$^&.lnk
+!endif
 
-$(cxname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_stub_deps) $(cc_dir)/ccobjs.mif
-        @%make linkfile
-        @%append $^&.lnk $(cg_stub_libs)
-!ifeq host_os osi
-        @%append $^&.lnk name $^&.rex
-        $(linker) $(lflags) @$^&.lnk
-        $(w32bind) $^&.rex $@ $(os2ldr)
-        @rm -f $^&.rex
+$(dll_name).dll : $(depends_dll) $(rc_objs) dll.lnk
+        $(linker) name $@ @dll.lnk
+!ifdef build_rc_$(host_os)_$(host_cpu)
+        $(rc) $(rc_flags) $(inc_dirs_sys) cc.rc $@
+!endif
+
+
+$(dll_name).lib : $(dll_name).dll
+        $(librarian) -n -b -c $@ +$[@
+
+drv.lnk : $(__MAKEFILES__)
+        @%write $@ $(lflags)
+        @for %i in ($(drv_objs)) do @%append $@ file %i
+        @%append $@ lib $(dll_name).lib
+
+exe.lnk : $(__MAKEFILES__)
+        @%write $@ $(lflags)
+!ifdef cc_rtdll
+        @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
+!endif
+        @for %i in ($(comp_objs_exe)) do @%append $@ file %i
+        @for %i in ($(xlibs)) do @%append $@ lib %i
+!ifeq release 0
+        @%append $@ $(cg_debug_libs)
 !else	
-        @%append $^&.lnk name $@
-        $(linker) $(lflags) @$^&.lnk
-!endif
-!ifeq   host_os qnx
-!ifeq release 1
-        serialize $(cxname) wcc
-!endif
+        @%append $@ $(cg_libs)
 !endif
 
-!ifdef build_rc_$(host_os)_$(host_cpu)
-rc_objs = cc.rc
+dll.lnk : $(__MAKEFILES__)
+        @%write $@ $(lflags_dll)
+!ifdef cc_rtdll
+        @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
+!endif
+        @for %i in ($(comp_objs_dll)) do @%append $@ file %i
+        @for %i in ($(xlibs)) do @%append $@ lib %i
+!ifeq release 0
+        @%append $@ $(cg_debug_libs)
+!else	
+        @%append $@ $(cg_libs)
 !endif
 
-#
-# Note this is just hammered in cause I don't know what
-# I'm doing
-#
-$(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(xlibs) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
-        @%create $^&.lnk
-        @%append $^&.lnk option map, symfile
-        @%append $^&.lnk $(wlink_opt_$(host_os)_$(host_cpu)_dll) initinstance terminstance
-        @%append $^&.lnk $(wlink_dll_$(host_os))
-        @%append $^&.lnk $(wlink_opt_common)
-        @for %i in ($(dll_objs)) do @%append $^&.lnk file %i
-        @for %i in ($(xlibs)) do @%append $^&.lnk lib %i
-        @%append $^&.lnk name $@
-!ifeq release 1
-        @%append $^&.lnk $(cg_libs)
-!else
-        @%append $^&.lnk $(cg_debug_libs)
-!endif
-        $(linker) $(mode_lflags) @$^&.lnk
-!ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) $(rc_flags) $(inc_dirs_sys) cc.rc $^@
-!endif
-
-$(dllname).lib : $(dllname).dll
-        $(librarian) -n -c $(dllname).lib +$(dllname).dll
-
-$(dllexet).exe : $(cdrv_objs) $(dllname).lib
-        @%create $^&.lnk
-        @%append $^&.lnk name $@
-        @for %i in ( $(cdrv_objs) ) do @%append $^&.lnk file %i
-        @%append $^&.lnk lib $(dllname).lib
-        $(linker) $(lflags) @$^&.lnk
-
-$(dllexe).exe : $(dlldrv_obj) $(dllname).lib
-        @%create $^&.lnk
-        @%append $^&.lnk name $@
-        @for %i in ( $(dlldrv_obj) ) do @%append $^&.lnk file %i
-        @%append $^&.lnk lib $(dllname).lib
-        $(linker) $(lflags) @$^&.lnk
 #
 # done
 #
 
-linkfile: .procedure
-        @%create $^&.lnk
-        @%append $^&.lnk $(wlink_opt_$(host_os))
-        @%append $^&.lnk $(wlink_opt_common)
-        @for %i in ($(cc_objs)) do @%append $^&.lnk file %i
-        @for %i in ($(xlibs)) do @%append $^&.lnk lib %i
-	
 !ifeq target_cpu axp
 
 codeaxp.gh :
@@ -263,7 +236,7 @@ codemps.gh :
 !else  # Intel i86 or 386
 
 code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
-        $]@ $[@ $^@
+        $]@ $[@ $@
 !endif
 
 target_as_axp   = wasaxp -zq -w4
@@ -274,7 +247,7 @@ target_as_mps   = wasmps -zq -w4
 
 xcode$(target_cpu).tmp: ../a/code$(target_cpu).asm
         $(target_as_$(target_cpu)) -I"$(watcom_h)" -fo=.obj $[@
-        $(linker) format dos com op nodefault file code$(target_cpu).obj name $^@ disable 1023,1080
+        $(linker) format dos com op nodefault file code$(target_cpu).obj name $@ disable 1023,1080
 
 ./mkcode.exe: ../a/mkcode.c
         $(bld_cl) $[@ $(wcl_util_opts)
@@ -307,14 +280,18 @@ $(intname)01.int : ./intlbin.exe errors01.int usage01.int
 ./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
 
+!ifndef patch_level
+patch_level=0
+!endif
+
 cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
-        $[@ ../rc/r_$(host_os)$(host_cpu).rc cc.rc $$ $(dllname).dll $(patch_level)
+        $[@ $]@ $@ $$ $(dll_name).dll $(patch_level)
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
         $(bld_cl) $[@ $(wcl_util_opts) $(cl_libs)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
-        $[@ $(wasm_dir)/inlnops.tok $^@
+        $[@ $(wasm_dir)/inlnops.tok $@
 
 key_objs = ../h/c.key ../h/pc.key ../h/seh.key
 
@@ -323,5 +300,3 @@ key_objs = ../h/c.key ../h/pc.key ../h/seh.key
 
 weights.gh keywords.gh : ./findhash.exe $(key_objs)
         $[@ -q $(key_objs)
-
-wccexed: $(dxname) .symbolic .explicit
