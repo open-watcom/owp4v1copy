@@ -77,7 +77,7 @@ $(OBJDIR)/ytab.gh: $(OBJDIR)/ytab.h
 	cp $< $@
 
 $(OBJDIR)/usage.h: usage.sp gnumake
-	sed 's/\(.*\)/"\1",/' <$< | sed 's;/;-;' >$@
+	tr -d "\015" <$< | sed 's/\(.*\)/"\1",/' | sed 's;/;-;' >$@
 
 #
 # Note: "findhash" is compiled from //lang/fe_misc/c/findhash.c
