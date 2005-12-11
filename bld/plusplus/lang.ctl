@@ -90,11 +90,11 @@ cdsay .
 #
   [ IFDEF (os_qnx) <2*> ]
 #  i86 target
-    <CPCMD> <PROJDIR>/qnx386.i86/wcppi86.qnx   <RELROOT>/rel2/qnx/binq/wpp.
+    <CPCMD> <PROJDIR>/qnx386.i86/wcppi86.exe   <RELROOT>/rel2/qnx/binq/wpp.
     <CPCMD> <PROJDIR>/qnx386.i86/wcppi86.sym   <RELROOT>/rel2/qnx/sym/wpp.sym
     <CPCMD> <PROJDIR>/qnx386.i86/wppi8601.int  <RELROOT>/rel2/qnx/sym/wppi8601.int
 #  386 target
-    <CPCMD> <PROJDIR>/qnx386.386/wcpp386.qnx   <RELROOT>/rel2/qnx/binq/wpp386.
+    <CPCMD> <PROJDIR>/qnx386.386/wcpp386.exe   <RELROOT>/rel2/qnx/binq/wpp386.
     <CPCMD> <PROJDIR>/qnx386.386/wcpp386.sym   <RELROOT>/rel2/qnx/sym/wpp386.sym
     <CPCMD> <PROJDIR>/qnx386.386/wpp38601.int  <RELROOT>/rel2/qnx/sym/wpp38601.int
 
@@ -103,11 +103,11 @@ cdsay .
 #
   [ IFDEF (os_linux "") <2*> ]
 #  i86 target
-    <CPCMD> <PROJDIR>/linux386.i86/wcppi86.elf   <RELROOT>/rel2/binl/wpp
+    <CPCMD> <PROJDIR>/linux386.i86/wcppi86.exe   <RELROOT>/rel2/binl/wpp
     <CPCMD> <PROJDIR>/linux386.i86/wcppi86.sym   <RELROOT>/rel2/binl/wpp.sym
     <CPCMD> <PROJDIR>/linux386.i86/wppi8601.int  <RELROOT>/rel2/binl/wppi8601.int
 #  386 target
-    <CPCMD> <PROJDIR>/linux386.386/wcpp386.elf   <RELROOT>/rel2/binl/wpp386
+    <CPCMD> <PROJDIR>/linux386.386/wcpp386.exe   <RELROOT>/rel2/binl/wpp386
     <CPCMD> <PROJDIR>/linux386.386/wcpp386.sym   <RELROOT>/rel2/binl/wpp386.sym
     <CPCMD> <PROJDIR>/linux386.386/wpp38601.int  <RELROOT>/rel2/binl/wpp38601.int
 

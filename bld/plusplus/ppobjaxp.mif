@@ -1,5 +1,0 @@
-# Common objects for AXP (_ALPHA) architecture
-
-common_objs += cmdlnaxp.obj
-common_objs += cpragaxp.obj
-common_objs += pragaxp.obj

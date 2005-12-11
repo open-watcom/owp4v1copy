@@ -10,5 +10,4 @@ linkage    = static
 mthreaded  = 1
 fs_registration = yes
 define_library_include = $(cpplib_dir)/iostream/iostream.mif
-define_deps_include = $(cpplib_dir)/iostream/deps.mif
 !include $(cpplib_dir)/mklib.mif

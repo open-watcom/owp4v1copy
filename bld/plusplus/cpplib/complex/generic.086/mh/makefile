@@ -7,5 +7,4 @@ system     = generic
 model      = mh
 linkage    = static
 define_library_include = $(cpplib_dir)/complex/complex.mif
-define_deps_include = $(cpplib_dir)/complex/deps.mif
 !include $(cpplib_dir)/mklib.mif

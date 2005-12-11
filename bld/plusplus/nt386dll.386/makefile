@@ -4,6 +4,7 @@ host_os    = nt
 host_cpu   = 386
 target_cpu = 386
 
+plusplus_dll   = 1
 plusplus_rtdll = 1
 cg_rtdll       = 1
 

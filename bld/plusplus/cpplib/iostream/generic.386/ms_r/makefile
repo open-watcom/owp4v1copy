@@ -8,5 +8,4 @@ model      = mf
 convention = register
 linkage    = static
 define_library_include = $(cpplib_dir)/iostream/iostream.mif
-define_deps_include = $(cpplib_dir)/iostream/deps.mif
 !include $(cpplib_dir)/mklib.mif

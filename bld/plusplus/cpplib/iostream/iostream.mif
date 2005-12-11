@@ -1,6 +1,5 @@
 # C++ files in CPP directory
 
-# files that must not be compressed
 targdir=
 !include $(cpplib_dir)/iostream/static.mif
 !ifneq linkage dynamic

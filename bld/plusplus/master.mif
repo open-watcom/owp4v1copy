@@ -5,9 +5,11 @@ plusplus_autodepends = .autodepend
 # Important! The C++ compiler modifies string literals
 suppress_zc = 1
 
+plusplus_nosymfile = 1
+
 # Extra files to delete on clean
 !ifdef refcomp
-additional_cleanup = *.u *.int y.out ytab.c ../bin/$(exe_ref_name).$(exe)
+additional_cleanup = *.u *.int y.out ytab.c ../bin/$(ref_name).exe
 !else
 additional_cleanup = *.u *.int y.out ytab.c
 !endif
@@ -16,64 +18,57 @@ additional_cleanup = *.u *.int y.out ytab.c
 !include defrule.mif
 !include deftarg.mif
 
-.mif: $(mif_path)
-
-!ifndef plusplus_trmem
-!  ifeq release 0
-!      define plusplus_trmem 1
-!  endif
-!endif
-
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
 !include $(dwarf_dir)/dw/client.mif
 
+!include trmem.mif
+
 !include ../ppobjs.mif
 
-xlibs = $(dwarf_dw_lib) $(asminline_lib)
+pre_obj_deps = &
+    errmsgs1.gh &
+    ic_mask.gh &
+    weights.gh &
+    keywords.gh &
+    yylex.gh &
+    cmdlnpr1.gh &
+    $(asminline_deps) &
+    code$(target_cpu).gh
 
-!include ../verify.mif
-
-#pre_obj_deps must be defined before ppobjs.mif is included
-pre_obj_deps = errmsgs1.gh ic_mask.gh weights.gh keywords.gh yylex.gh cmdlnpr1.gh
 # international data files
-pre_obj_deps += wpp$(target_cpu)01.int $(pre_obj_deps_wasm)
+pre_obj_deps += wpp$(target_cpu)01.int
 
-pre_obj_deps += $(asminline_deps) code$(target_cpu).gh
+# QNX executables
+!ifeq host_os qnx
+pre_obj_deps += usage.u
+!endif
 
 inc_dirs = -I.
-!ifeq plusplus_trmem 1
-inc_dirs += -I$(trmem_dir)
-!endif
+#!ifeq plusplus_trmem 1
+#inc_dirs += -I$(trmem_dir)
+#!endif
 inc_dirs += -I"../h"
 inc_dirs += $(cg_inc_dirs)
 inc_dirs += $(asminline_inc_dirs)
-inc_dirs += -I"$(as_dir)/h"
 inc_dirs += -I"$(dwarf_dir)/dw/h"
 inc_dirs += -I"$(cc_dir)/h"
-!ifdef comp_cfg_dir
 inc_dirs += -I"$(comp_cfg_dir)/h"
-!endif
 inc_dirs += -I"$(fe_misc_dir)/h"
 inc_dirs += -I"$(brinfo_dir)/h"
 
-!ifndef patch_level
-patch_level=0
+# final executable names
+ref_name = rpp$(target_cpu)
+!ifeq release 0
+exe_name = wcpp$(target_cpu)d
+dll_name = wppd$(target_cpu)d
+!else
+exe_name = wcpp$(target_cpu)
+dll_name = wppd$(target_cpu)
 !endif
 
-exe_bld_name = wcpp$(target_cpu)
-exe_ref_name = rpp$(target_cpu)
-dll_bld_name = wppd$(target_cpu)
-!ifndef exe_dbg_name
-exe_dbg_name = $(exe_bld_name)d
-!endif
-!ifndef dll_dbg_name
-dll_dbg_name = $(dll_bld_name)d
-!endif
-
-comp_objs = $($(host_os)$(target_cpu)_objs)
-comp_objs_exe = $(comp_objs) $(exe_objs)
-comp_objs_dll = $(comp_objs) $(dll_objs)
+comp_objs_exe = $(common_objs) $(exe_objs)
+comp_objs_dll = $(common_objs) $(dll_objs)
 
 !ifdef __LINUX__
 fesupp_hdr   = \"fesupp.h\"
@@ -87,268 +82,73 @@ carvecpp_hdr = "carvecpp.h"
 extra_c_flags_axp = -si
 !endif
 
-extra_c_flags_osi = -D__OS2__ -DIDE_PGM
-extra_c_flags_dos = -DIDE_PGM
-extra_c_flags_qnx = -DIDE_PGM
+extra_c_flags_osi   = -DIDE_PGM -D__OS2__
+extra_c_flags_dos   = -DIDE_PGM
+extra_c_flags_qnx   = -DIDE_PGM
 extra_c_flags_linux = -DIDE_PGM
+!ifndef plusplus_dll
+extra_c_flags_os2   = -DIDE_PGM
+extra_c_flags_nt    = -DIDE_PGM
+!endif
 
-# The following is absolutely awful. Why can't we use the default PCH
-# and only override it in a few rare cases?
-extra_c_flags_analcall = -fh=pch01.pch
-extra_c_flags_analcast = -fh=pch01.pch
-extra_c_flags_analclss = -fh=pch01.pch
-extra_c_flags_analconv = -fh=pch01.pch
-extra_c_flags_analctor = -fh=pch01.pch
-extra_c_flags_anallval = -fh=pch01.pch
-extra_c_flags_analnew  = -fh=pch01.pch
-extra_c_flags_analnode = -fh=pch01.pch
-extra_c_flags_analpcnv = -fh=pch01.pch
-extra_c_flags_analretn = -fh=pch01.pch
-extra_c_flags_analtyid = -fh=pch01.pch
-extra_c_flags_analtype = -fh=pch01.pch
-extra_c_flags_analudc  = -fh=pch01.pch
-extra_c_flags_analyse  = -fh=pch01.pch
-extra_c_flags_arglist  = -fh=pch01.pch
-extra_c_flags_ascii    = -fh=pch01.pch
-extra_c_flags_asmalloc = -fh=pch01.pch
-extra_c_flags_asmdata  = -fh=pch02.pch
-extra_c_flags_asmeval  = -fh=pch02.pch
-extra_c_flags_asmexpnd = -fh=pch02.pch
-extra_c_flags_asmfixup = -fh=pch02.pch
-extra_c_flags_asmjump  = -fh=pch02.pch
-extra_c_flags_asmlabel = -fh=pch02.pch
-extra_c_flags_asmline  = -fh=pch02.pch
-extra_c_flags_asmmatch = -fh=pch02.pch
-extra_c_flags_asmscan  = -fh=pch02.pch
-extra_c_flags_asmsym   = -fh=pch02.pch
-extra_c_flags_asmmsg   = -fh=pch01.pch
-extra_c_flags_asmstmt  = -fh=pch01.pch
-extra_c_flags_asmsym   = -fh=pch02.pch
-extra_c_flags_autodep  = -fh=pch01.pch
-extra_c_flags_browsio  = -fh=pch01.pch
-extra_c_flags_calldiag = -fh=pch01.pch
-extra_c_flags_callgrph = -fh=pch01.pch
-extra_c_flags_callopt  = -fh=pch01.pch
 extra_c_flags_carve    = -Dheader=$(fesupp_hdr) -Dheader2=$(carvecpp_hdr)
-extra_c_flags_casian   = -fh=pch01.pch
-extra_c_flags_caux     = -fh=pch01.pch
-extra_c_flags_cdopt    = -fh=pch01.pch
-extra_c_flags_cgbackhn = -fh=pch01.pch
-extra_c_flags_cgbkarel = -fh=pch01.pch
-extra_c_flags_cgbkbpos = -fh=pch01.pch
-extra_c_flags_cgbkcbak = -fh=pch01.pch
-extra_c_flags_cgbkcdpm = -fh=pch01.pch
-extra_c_flags_cgbkcgrf = -fh=pch01.pch
-extra_c_flags_cgbkclab = -fh=pch01.pch
-extra_c_flags_cgbkcmds = -fh=pch01.pch
-extra_c_flags_cgbkcond = -fh=pch01.pch
-extra_c_flags_cgbkcstb = -fh=pch01.pch
-extra_c_flags_cgbkcstk = -fh=pch01.pch
-extra_c_flags_cgbkdecl = -fh=pch01.pch
-extra_c_flags_cgbkexpr = -fh=pch01.pch
-extra_c_flags_cgbkfctl = -fh=pch01.pch
-extra_c_flags_cgbkftab = -fh=pch01.pch
-extra_c_flags_cgbkibrp = -fh=pch01.pch
-extra_c_flags_cgbklabs = -fh=pch01.pch
-extra_c_flags_cgbkmain = -fh=pch01.pch
-extra_c_flags_cgbkobin = -fh=pch01.pch
-extra_c_flags_cgbkretn = -fh=pch01.pch
-extra_c_flags_cgbkrreg = -fh=pch01.pch
-extra_c_flags_cgbkrtti = -fh=pch01.pch
-extra_c_flags_cgbkrvar = -fh=pch01.pch
-extra_c_flags_cgbkscop = -fh=pch01.pch
-extra_c_flags_cgbkstab = -fh=pch01.pch
-extra_c_flags_cgbkstrn = -fh=pch01.pch
-extra_c_flags_cgbksvar = -fh=pch01.pch
-extra_c_flags_cgbkswit = -fh=pch01.pch
-extra_c_flags_cgbkthrw = -fh=pch01.pch
-extra_c_flags_cgbktsig = -fh=pch01.pch
-extra_c_flags_cgbkutil = -fh=pch01.pch
-extra_c_flags_cgfront  = -fh=pch01.pch
-extra_c_flags_cginfo   = -fh=pch01.pch
-extra_c_flags_cginimps = -fh=pch01.pch
-extra_c_flags_cginlibs = -fh=pch01.pch
-extra_c_flags_cginmisc = -fh=pch01.pch
-extra_c_flags_cgio     = -fh=pch01.pch
-extra_c_flags_cgiobuff = -fh=pch01.pch
-extra_c_flags_cgsegid  = -fh=pch01.pch
-extra_c_flags_cgtype   = -fh=pch01.pch
-extra_c_flags_class    = -fh=pch01.pch
-extra_c_flags_cmac1    = -fh=pch01.pch
-extra_c_flags_cmac2    = -fh=pch01.pch
-extra_c_flags_cmacadd  = -fh=pch01.pch
-extra_c_flags_cmacsupp = -fh=pch01.pch
-extra_c_flags_cmdln    = -fh=pch01.pch
 !ifneq host_os linux
 # Using -os generates ENTER/LEAVE and Linux is too brain damaged
 # to handle ENTER instructions properly. Since GCC doesn't generate
 # ENTER, this is supposed to be a "feature".
 extra_c_flags_cmdlnany = -os
 !endif
-extra_c_flags_cmdlnbat = -fh=pch01.pch
-extra_c_flags_cmdlnctx = -fh=pch01.pch
-extra_c_flags_cmdlnx86 = -fh=pch01.pch
-extra_c_flags_conpool  = -fh=pch01.pch
-extra_c_flags_context  = -fh=pch01.pch
-extra_c_flags_convctl  = -fh=pch01.pch
-extra_c_flags_convdiag = -fh=pch01.pch
-extra_c_flags_cppexit  = -fh=pch01.pch
-extra_c_flags_cpragma  = -fh=pch01.pch
-extra_c_flags_cpragx86 = -fh=pch01.pch
 extra_c_flags_cscan_386 = -4r
 extra_c_flags_cscan    = $(extra_c_flags_cscan_$(host_cpu))
-extra_c_flags_ctimepc  = -fh=pch01.pch
-extra_c_flags_cusage   = -fh=pch01.pch
-extra_c_flags_datadtor = -fh=pch01.pch
-extra_c_flags_datainit = -fh=pch01.pch
-!ifdef plusplus_dll_ptree
-extra_c_flags_dbgptree = -DDLL_PTREE
-!endif
-extra_c_flags_dbgsupp  = -fh=pch01.pch
 !ifeq release 0
 extra_c_flags_dbgzap   = -Dheader=$(fesupp_hdr)
 !endif
-extra_c_flags_decl     = -fh=pch01.pch
-extra_c_flags_defarg   = -fh=pch01.pch
-extra_c_flags_dgfront  = -fh=pch01.pch
-extra_c_flags_dirgraph = -fh=pch01.pch
-extra_c_flags_dmpobjmd = -fh=pch01.pch
-extra_c_flags_dupnode  = -fh=pch01.pch
-extra_c_flags_dwarf    = -fh=pch01.pch
-extra_c_flags_dwio     = -fh=pch01.pch
-extra_c_flags_dwiobuff = -fh=pch01.pch
-extra_c_flags_dyncast  = -fh=pch01.pch
-extra_c_flags_enum     = -fh=pch01.pch
-extra_c_flags_except   = -fh=pch01.pch
-extra_c_flags_extrf86  = -fh=pch01.pch
-extra_c_flags_floatsup = -fh=pch01.pch
-extra_c_flags_fmtmsg   = -fh=pch01.pch
-extra_c_flags_fmtsym   = -fh=pch01.pch
-extra_c_flags_fmttype  = -fh=pch01.pch
-extra_c_flags_fname    = -fh=pch01.pch
-extra_c_flags_fnbody   = -fh=pch01.pch
-extra_c_flags_fnname   = -fh=pch01.pch
-extra_c_flags_fnovload = -fh=pch01.pch
-extra_c_flags_fnovrank = -fh=pch01.pch
-extra_c_flags_fold     = -fh=pch01.pch
-extra_c_flags_gstack   = -fh=pch01.pch
-extra_c_flags_hashtab  = -fh=pch01.pch
-extra_c_flags_hfile    = -fh=pch01.pch
-extra_c_flags_i64supp  = -fh=pch01.pch
-extra_c_flags_icemit   = -fh=pch01.pch
-extra_c_flags_idedll   = -fh=pch01.pch
 extra_c_flags_idedlld  = -bd
 extra_c_flags_idedrv   = -DSTATIC_LINKAGE
 extra_c_flags_initfini = -Dheader=$(fesupp_hdr) -DSPLIT_REQD
-extra_c_flags_initref  = -fh=pch01.pch
-extra_c_flags_insthash = -fh=pch02.pch
 extra_c_flags_intlload = -D__header=$(fesupp_hdr)
-extra_c_flags_iosupp   = -fh=pch01.pch
-extra_c_flags_keyword  = -fh=pch01.pch
-extra_c_flags_label    = -fh=pch01.pch
-extra_c_flags_linkage  = -fh=pch01.pch
-extra_c_flags_mainproc = -fh=pch01.pch
-extra_c_flags_membptr  = -fh=pch01.pch
 !ifeq plusplus_trmem 1
 extra_c_flags_memmgr_axp = -DTRACKER
 extra_c_flags_memmgr_ppc = -DTRACKER
 extra_c_flags_memmgr_386 = -of+ -DTRACKER
 extra_c_flags_memmgr   = $(extra_c_flags_memmgr_$(host_cpu))
 !endif
-extra_c_flags_message  = -fh=pch01.pch
-extra_c_flags_module   = -fh=pch01.pch
-extra_c_flags_name     = -fh=pch01.pch
-extra_c_flags_namspace = -fh=pch01.pch
-extra_c_flags_objmodel = -fh=pch01.pch
-extra_c_flags_opovload = -fh=pch01.pch
 !ifeq release 1
 extra_c_flags_pcheader_386 = -oi
-extra_c_flags_pcheader = $(extra_c_flags_pcheader_$(host_cpu)) -fh=pch01.pch
-!else
-extra_c_flags_pcheader = -fh=pch01.pch
+extra_c_flags_pcheader = $(extra_c_flags_pcheader_$(host_cpu))
 !endif
-extra_c_flags_plusplus = -fh=pch01.pch
-extra_c_flags_ppexpn   = -fh=pch01.pch
-extra_c_flags_prag386  = -fh=pch01.pch
-extra_c_flags_preproc  = -fh=pch01.pch
 extra_c_flags_pstk     = -Dheader=$(fesupp_hdr)
-extra_c_flags_ptree    = -fh=pch01.pch
-extra_c_flags_ptreedec = -fh=pch01.pch
-extra_c_flags_reposit  = -fh=pch01.pch
-extra_c_flags_rewrite  = -fh=pch01.pch
-extra_c_flags_ring     = -fh=pch01.pch
 extra_c_flags_ringfns  = -Dheader=$(fesupp_hdr)
-extra_c_flags_ringname = -fh=pch01.pch
-extra_c_flags_rtfun    = -fh=pch01.pch
-extra_c_flags_rtngen   = -fh=pch01.pch
-extra_c_flags_rtti     = -fh=pch01.pch
-extra_c_flags_scope    = -fh=pch01.pch
-extra_c_flags_segment  = -fh=pch01.pch
-extra_c_flags_specfuns = -fh=pch01.pch
 extra_c_flags_srcfile_386 = -4r
 extra_c_flags_srcfile  = $(extra_c_flags_srcfile_$(host_cpu))
-extra_c_flags_stack    = -fh=pch01.pch
-extra_c_flags_stats    = -fh=pch01.pch
-extra_c_flags_stringl  = -fh=pch01.pch
-extra_c_flags_swchar   = -fh=pch01.pch
-extra_c_flags_symbol   = -fh=pch01.pch
-extra_c_flags_symdbg   = -fh=pch01.pch
-extra_c_flags_symlocn  = -fh=pch01.pch
-extra_c_flags_sysdep   = -fh=pch01.pch
-extra_c_flags_template = -fh=pch01.pch
-extra_c_flags_tempor   = -fh=pch01.pch
-extra_c_flags_thunk    = -fh=pch01.pch
-extra_c_flags_tokenbuf = -fh=pch01.pch
-extra_c_flags_tokens   = -fh=pch01.pch
-extra_c_flags_type     = -fh=pch01.pch
-extra_c_flags_typecomp = -fh=pch01.pch
-extra_c_flags_typerank = -fh=pch01.pch
-extra_c_flags_typesig  = -fh=pch01.pch
-extra_c_flags_utility  = -fh=pch01.pch
 extra_c_flags_vbuf     = -Dheader=$(fesupp_hdr)
-extra_c_flags_vfun     = -fh=pch01.pch
 extra_c_flags_vstk     = -Dheader=$(fesupp_hdr)
-extra_c_flags_watcom   = -fh=pch01.pch
-!ifeq release 1
-extra_c_flags_wppdlldd = -DDLL_NAME=$(dll_bld_name)
-!else
-extra_c_flags_wppdlldd = -DDLL_NAME=$(dll_dbg_name)
-!endif
-extra_c_flags_wppdlldr = -fh=pch01.pch
-extra_c_flags_ytab     = -fh=pch01.pch
+extra_c_flags_wppdlldd = -DDLL_NAME=$(dll_name)
 
-# WLINK options for the various hosts
+#
+# wlink .EXE options
+#
+extra_l_flags     = OPTION map, symfile
+
 extra_l_flags_osi = OPTION stack=64k
-extra_l_flags_dos = OPTION dosseg, stack=64k, offset=64k #RUNTIME unpriv
-extra_l_flags_os2 = OPTION dosseg, stack=128k, offset=64k
-extra_l_flags_qnx = OPTION dosseg, stack=64k, offset=72k, priv=3, resource=usage.u
-extra_l_flags_nt  = OPTION dosseg, stack=0x10000k, offset=64k COMMIT stack=32k
+extra_l_flags_dos = OPTION stack=64k
+extra_l_flags_os2 = OPTION stack=128k
+extra_l_flags_qnx = OPTION stack=64k, offset=72k, priv=3, resource=usage.u
+extra_l_flags_nt  = OPTION stack=0x10000k COMMIT stack=32k
 
-# WLINK .DLL options for the various hosts
-wlink_dll_os2_386 = OPTION manyautodata
-
-extra_l_flags = OPTION map
-wlink_opt_common_exe = OPTION symfile
-wlink_opt_common_drv = OPTION symfile
-!ifeq release 0
+#
+# wlink .DLL options
+#
 # the only guaranteed way to find the .sym for a .DLL is for it to be attached
 # to the .DLL binary
-wlink_opt_common_dll =
+!ifeq release 0
+extra_l_flags_dll     = OPTION map
 !else
-wlink_opt_common_dll = OPTION symfile
-!endif
-!ifeq host_os nt
-wlink_opt_common_dll += OPTION offset=0x69000000
+extra_l_flags_dll     = OPTION map, symfile
 !endif
 
-# final executable extensions for the various hosts
-final_exe_dos = exe
-final_exe_os2 = exe
-final_exe_osi = exe
-final_exe_qnx = qnx
-final_exe_nt  = exe
-final_exe_linux = elf
-exe = $(final_exe_$(host_os))
+extra_l_flags_dll_nt  = initinstance terminstance OPTION offset=0x69000000
+extra_l_flags_dll_os2 = initinstance terminstance OPTION manyautodata
 
 # optencod options and targets for various hosts
 optencod_opt_qnx = -u usage.u
@@ -358,162 +158,35 @@ optencod_targ_linux = linux
 optencod_targ_dbg = dbg
 !endif
 
-external_dependencies = $(cg_deps) $(xlibs)
-
 # source search path
 
-.c: ../c;$(wasm_dir)/c;$(watcom_dir)/c;$(fe_misc_dir)/c;$(brinfo_dir)/c
+.c: ../c;$(asminline_c);$(watcom_dir)/c;$(fe_misc_dir)/c;$(brinfo_dir)/c
 
+#
+# External libraries
+#
+xlibs = $(dwarf_dw_lib) $(asminline_lib)
 
+#
+# External dependencies
+#
+external_dependencies = $(xlibs)
 !ifeq release 1
-
-first : .symbolic build
-    @%null
-
+external_dependencies += $(cg_deps)
 !else
-
-first : .symbolic $(exe_dbg_name).$(exe)
-    @%null
-
+external_dependencies += $(cg_debug_deps)
+!endif
+!ifeq host_os osi
+external_dependencies += $(os2ldr)
 !endif
 
 #
 # Common dependencies
 #
+
 depends_exe = $(pre_obj_deps) $(comp_objs_exe) $(external_dependencies)
 depends_dll = $(pre_obj_deps) $(comp_objs_dll) $(external_dependencies)
-depends_drv = $(pre_obj_deps) $(dlldrv_objs)
-
-
-!ifeq host_os dos
-#
-# DOS executables
-#
-
-$(exe_ref_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^* @pexebld
-
-$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk
-    $(linker) $(lflags) NAME $^* @pexedbg
-
-$(exe_bld_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^* @pexebld
-#    $(pharlap)bind386 $(pharlap)run386b $^*
-#    $(pharlap)cfig386 $^* -win30grow -win30limit +524228 -MAXVCPI 0
-#!ifeq release 1
-#    del $^*.exp
-#!endif
-
-build : .symbolic $(exe_bld_name).exe
-    @%null
-
-
-!else ifeq host_os os2
-#
-# OS/2 2.0 executables
-#
-
-$(exe_ref_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^* @pexebld
-
-!ifeq release 1
-plusplus_dll = 1
-!else
-
-$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk
-    $(linker) $(lflags) name $@ @pexedbg
-
-!endif
-
-
-!else ifeq host_os osi
-#
-# OS independent executables
-#
-
-$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk $(os2ldr)
-    $(linker) $(lflags) name $@ @pexedbg
-
-$(exe_bld_name).exe : $(depends_exe) pexebld.lnk $(os2ldr)
-    $(linker) $(lflags) name $^&.rex @pexebld
-    $(w32bind) $^&.rex $@ $(os2ldr)
-    @rm -f $^&.rex
-
-build : .symbolic $(exe_bld_name).exe
-    @%null
-
-!else ifeq host_os nt
-#
-# Windows/NT executables
-#
-
-$(exe_ref_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) name $@ @pexebld
-
-!ifeq host_cpu 386
-
-plusplus_dll = 1
-
-!else
-
-$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk
-    $(linker) $(lflags) name $@ @pexedbg
-
-$(exe_bld_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) name $@ @pexebld
-
-build : .symbolic $(exe_bld_name).exe
-    @%null
-
-!endif
-
-
-!else ifeq host_os qnx
-#
-# QNX executables
-#
-
-pre_obj_deps += usage.u
-
-$(exe_dbg_name).qnx : $(depends_exe) pexedbg.lnk
-    $(linker) $(lflags) name $@ @pexedbg
-
-$(exe_bld_name).qnx : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) name $@ @pexebld
-!ifeq release 1
-    serialize $@ wpp
-!endif
-
-build : .symbolic $(exe_bld_name).qnx
-    @%null
-
-!else ifeq host_os linux
-#
-# Linux executables
-#
-
-$(exe_ref_name).elf : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) name $@ @pexebld
-
-$(exe_dbg_name).elf : $(depends_exe) pexedbg.lnk
-    $(linker) $(lflags) name $@ @pexedbg
-
-$(exe_bld_name).elf : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) name $@ @pexebld
-
-build : .symbolic $(exe_bld_name).elf
-    @%null
-
-!else
-!error no rules for $(host_os) setting
-!endif
-
-
-!ifdef plusplus_dll
-#
-# Common for all systems with DLLs
-#
-lflags_dll = $(mode_lflags) $(lflags_$(host_os)_$(host_cpu)) dll initinstance terminstance $(extra_l_flags_$(host_os)) $(extra_l_flags)
+depends_drv = $(pre_obj_deps) $(drv_objs)
 
 # systems where version resources must be added to .DLL
 build_rc_nt_386 = nt
@@ -522,126 +195,112 @@ build_rc_nt_386 = nt
 rc_objs = plusplus.rc
 !endif
 
-build : .symbolic $(exe_bld_name).exe #$(dll_bld_name).dll
+
+#
+# create standard compiler
+#
+target : .symbolic $(exe_name).exe
     @%null
 
-$(exe_bld_name).exe : $(depends_drv) pdrvbld.lnk $(dll_bld_name).lib
-    $(linker) $(lflags) name $@ @pdrvbld
+#
+# create reference compiler
+#
+reference : .symbolic $(ref_name).exe
+!ifdef __UNIX__
+    cp $(ref_name).exe ../bin/$(ref_name)
+!else
+    cp $(ref_name).exe ../bin/$(ref_name).exe
+!endif
+    cp $(ref_name).sym ../bin/$(ref_name).sym
+    rm -f $(ref_name).*
 
-$(dll_bld_name).lib : $(dll_bld_name).dll
-    $(librarian) -b -n $@ +$[@
+#
+# output executables build rules
+#
+$(ref_name).exe : $(depends_exe) exe.lnk
+    $(linker) name $@ @exe.lnk
 
-$(dll_bld_name).dll : $(rc_objs) $(depends_dll) pdllbld.lnk
-    $(linker) $(lflags_dll) name $@ @pdllbld
+!ifdef plusplus_dll
+
+$(exe_name).exe : $(depends_drv) $(dll_name).lib drv.lnk
+    $(linker) name $@ @drv.lnk
+
+!else
+
+$(exe_name).exe : $(depends_exe) exe.lnk
+!ifeq host_os osi
+    $(linker) name $^&.rex @exe.lnk
+    $(w32bind) $^&.rex $@ $(os2ldr)
+    @rm -f $^&.rex
+!else
+    $(linker) name $@ @exe.lnk
+!ifeq host_os qnx
+!ifeq release 1
+    serialize $@ wpp
+!endif
+!endif
+!endif
+
+!endif
+
+$(dll_name).dll : $(rc_objs) $(depends_dll) dll.lnk
+    $(linker) name $@ @dll.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)
     $(rc) $(rc_flags) $(inc_dirs_sys) plusplus.rc $@
 !endif
 
-$(exe_dbg_name).exe : $(depends_drv) pdrvdbg.lnk $(dll_dbg_name).lib
-    $(linker) $(lflags) name $@ @pdrvdbg
-
-$(dll_dbg_name).lib : $(dll_dbg_name).dll
-    $(librarian) -b-q-n $@ +$[@
-
-$(dll_dbg_name).dll : $(depends_dll) pdlldbg.lnk
-    $(linker) $(lflags_dll) name $@ @pdlldbg
-
-./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
-    $(bld_cl) -D_VERSION=$(bld_ver) $[@ $(wcl_util_opts)
-
-plusplus.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
-    $[@ $]@ $^@ $$ $(dll_bld_name).dll $(patch_level)
-
-!endif
-
+$(dll_name).lib : $(dll_name).dll
+    $(librarian) -b -n -c $@ +$[@
 
 # conventions:
 #
-# p<xxx>[<yyy>].lnk
+# <xxx>.lnk
 #
 # xxx - exe = standalone compiler executable
 #       drv = stub executable DLL driver
 #       dll = compiler DLL
 #
-# yyy - bld = production version
-#       dbg = debugging version
-#
 
 #
 # compiler standalone executable
 #
-pexe.lnk : $(__MAKEFILES__)
-    %create $^@
-    @%append $^@ $(wlink_opt_common_exe)
-    @for %i in ($(comp_objs_exe)) do @%append $^@ file %i
-    @%append $^@ library { $(xlibs) }
-
-#
-# -- production version
-#
-pexebld.lnk : pexe.lnk
-    %create $^@
-    @%append $^@ @pexe.lnk
-    @%append $^@ $(cg_libs)
-
-#
-# -- debugging version
-#
-pexedbg.lnk : pexe.lnk
-    %create $^@
-    @%append $^@ @pexe.lnk
-    @%append $^@ $(cg_debug_libs)
+exe.lnk : $(__MAKEFILES__)
+    @%write $@ $(lflags)
+!ifdef plusplus_rtdll
+    @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
+!endif
+    @for %i in ($(comp_objs_exe)) do @%append $@ file %i
+    @for %i in ($(xlibs)) do @%append $@ library %i
+!ifeq release 0
+    @%append $@ $(cg_debug_libs)
+!else
+    @%append $@ $(cg_libs)
+!endif
 
 #
 # compiler .DLL driver
 #
-pdrv.lnk : $(__MAKEFILES__)
-    %create $^@
-    @%append $^@ $(wlink_opt_common_drv)
-    @for %i in ($(dlldrv_objs)) do @%append $^@ file %i
-
-#
-# -- production version
-#
-pdrvbld.lnk : pdrv.lnk
-    %create $^@
-    @%append $^@ @pdrv.lnk
-    @%append $^@ lib $(dll_bld_name).lib
-
-#
-# -- debugging version
-#
-pdrvdbg.lnk : pdrv.lnk
-    %create $^@
-    @%append $^@ @pdrv.lnk
-    @%append $^@ lib $(dll_dbg_name).lib
+drv.lnk : $(__MAKEFILES__)
+    @%write $@ $(lflags)
+    @for %i in ($(drv_objs)) do @%append $@ file %i
+    @%append $@ lib $(dll_name).lib
 
 #
 # .DLL version of compiler
 #
-pdll.lnk : $(__MAKEFILES__)
-    %create $^@
-    @%append $^@ $(wlink_dll_$(host_os)_$(host_cpu))
-    @%append $^@ $(wlink_opt_common_dll)
-    @for %i in ($(comp_objs_dll)) do @%append $^@ file %i
-    @%append $^@ library { $(xlibs) }
-    @%append $^@ reference __DLLstart_
-
-#
-# -- production version
-#
-pdllbld.lnk : pdll.lnk
-    %create $^@
-    @%append $^@ @pdll.lnk
-    @%append $^@ $(cg_libs)
-
-#
-# -- debugging version
-#
-pdlldbg.lnk : pdll.lnk
-    %create $^@
-    @%append $^@ @pdll.lnk
-    @%append $^@ $(cg_debug_libs)
+dll.lnk : $(__MAKEFILES__)
+    @%write $@ $(lflags_dll)
+!ifdef plusplus_rtdll
+    @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
+!endif
+    @for %i in ($(comp_objs_dll)) do @%append $@ file %i
+    @for %i in ($(xlibs)) do @%append $@ library %i
+    @%append $@ reference __DLLstart_
+!ifeq release 0
+    @%append $@ $(cg_debug_libs)
+!else
+    @%append $@ $(cg_libs)
+!endif
 
 #
 # miscellaneous build rules
@@ -672,13 +331,13 @@ keywords.gh weights.gh : ./findhash.exe ../hash/plusplus.key ../hash/pc.key
     $(bld_cl) $[@ $(wcl_util_opts)
 
 yylex.gh : ./umktable.exe
-    $[@ $^@
+    $[@ $@
 
 ./mktrans.exe: ../c/mktrans.c
     $(bld_cl) $[@ $(wcl_util_opts)
 
 xlat.gh : ./mktrans.exe ../h/ctokens.h keywords.gh ytab.gh
-    $[@ $]@ $^@
+    $[@ $]@ $@
 
 ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
 !ifneq release 0
@@ -715,11 +374,18 @@ ic_mask.gh : ./icmask.exe ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../
     $(bld_cl) $[@ $(wcl_util_opts)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
-    $[@ $(wasm_dir)/inlnops.tok $^@
+    $[@ $(wasm_dir)/inlnops.tok $@
 
-#
-# target architectures built-in code bursts
-#
+./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
+    $(bld_cl) -D_VERSION=$(bld_ver) $[@ $(wcl_util_opts)
+
+!ifndef patch_level
+patch_level=0
+!endif
+
+plusplus.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
+    $[@ $]@ $@ $$ $(dll_name).dll $(patch_level)
+
 !ifeq target_cpu axp
 
 codeaxp.gh :
@@ -738,46 +404,17 @@ codemps.gh :
 !else  # Intel i86 or 386
 
 code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
-        $]@ $[@ $^@
+        $]@ $[@ $@
 !endif
 
-target_as_axp=wasmaxp -zq -w4
-target_as_i86=bwasm -zq -w4
-target_as_386=bwasm -zq -3 -w4
-target_as_ppc=wasmppc -zq -w4
+target_as_axp = wasmaxp -zq -w4
+target_as_i86 = bwasm -zq -w4
+target_as_386 = bwasm -zq -3 -w4
+target_as_ppc = wasmppc -zq -w4
 
 xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
     $(target_as_$(target_cpu)) -fo=.obj -I$(watcom_h) $[@
-    $(linker) format dos com op nodefault file code$(target_cpu).obj name $^@ disable 1023,1080
+    $(linker) format dos com op nodefault file code$(target_cpu).obj name $@ disable 1023,1080
 
 ./mkcode.exe: $(cc_dir)/a/mkcode.c
     $(bld_cl) $[@ $(wcl_util_opts)
-
-#
-# create reference compiler
-#
-reference : .symbolic $(exe_ref_name).$(exe)
-!ifdef __LINUX__
-    cp $(exe_ref_name).$(exe) ../bin/$(exe_ref_name)
-!else
-    cp $(exe_ref_name).$(exe) ../bin/$(exe_ref_name).$(exe)
-!endif
-    cp $(exe_ref_name).sym ../bin/$(exe_ref_name).sym
-    rm -f $(exe_ref_name).*
-
-#
-# list of projects required to build the plusplus project
-#
-project : .symbolic
-    pexist build
-    pexist watcom
-    pexist fe_misc
-    pexist brinfo
-    pexist cc
-    pexist dwarf
-    pexist owl          # target_cpu == axp
-    pexist cg
-    pexist as           # target_cpu == axp
-    pexist wasm         # target_cpu == i86 or 386
-    pexist trmem        # plusplus_trmem def'd
-

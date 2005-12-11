@@ -1,9 +1,9 @@
 # driver for dll
 
-dlldrv_objs =
-dlldrv_objs += idedrv.obj
-dlldrv_objs += idemsgfm.obj
-dlldrv_objs += wppdlldd.obj
+drv_objs =
+drv_objs += idedrv.obj
+drv_objs += idemsgfm.obj
+drv_objs += wppdlldd.obj
 
 # stand-alone executable
 
@@ -220,11 +220,6 @@ common_objs += autodept.obj
 # fe_misc files
 common_objs += intlload.obj
 
-# measurement
-!ifdef proepitm
-common_objs += proepitm.obj
-!endif
-
 # debugging objects
 !ifeq release 0
 common_objs += dbg.obj
@@ -236,59 +231,17 @@ common_objs += dbgzap.obj
 common_objs += fnovprt.obj
 !endif
 
-# inline Assembler files
-
+# in-line assembler files
 common_objs += $(asminline_objs)
 common_objs += asmalloc.obj
 common_objs += asmmsg.obj
 
 # target processor-dependent objects
 
-!ifeq target_cpu i86
-!include ../ppobj86.mif
-!else ifeq target_cpu 386
-!include ../ppobj86.mif
-!else ifeq target_cpu axp
-!include ../ppobjaxp.mif
-!else
-!error Unknown $(target_cpu) target processor!
-!endif
+cpp_objs_i86 = cmdlnx86.obj cpragx86.obj pragi86.obj
+cpp_objs_386 = cmdlnx86.obj cpragx86.obj prag386.obj
+cpp_objs_axp = cmdlnaxp.obj cpragaxp.obj pragaxp.obj
+#cpp_objs_ppc = cmdlnppc.obj cpragppc.obj pragppc.obj
+#cpp_objs_mps = cmdlnmps.obj cpragmps.obj pragmps.obj
 
-#
-# object file macros are of the form <compiler_os><target>_objs
-#
-# where:
-#       <compiler_os>   is one of dos, os2, nt, osi, qnx, linux or cms
-#       <target>        is one of i86, 386, axp, ppc or 370
-#
-dosi86_objs = $(common_objs)
-dos386_objs = $(common_objs)
-dos370_objs = $(common_objs)
-dosaxp_objs = $(common_objs)
-
-os2i86_objs = $(common_objs)
-os2386_objs = $(common_objs)
-os2370_objs = $(common_objs)
-os2axp_objs = $(common_objs)
-
-nti86_objs = $(common_objs)
-nt386_objs = $(common_objs)
-nt370_objs = $(common_objs)
-ntaxp_objs = $(common_objs)
-
-qnxi86_objs = $(common_objs)
-qnx386_objs = $(common_objs)
-qnx370_objs = $(common_objs)
-qnxaxp_objs = $(common_objs)
-
-cmsi86_objs = $(common_objs)
-cms386_objs = $(common_objs)
-cms370_objs = $(common_objs)
-cmsaxp_objs = $(common_objs)
-
-osii86_objs = $(common_objs)
-osi386_objs = $(common_objs)
-osiaxp_objs = $(common_objs)
-
-linux386_objs = $(common_objs)
-linuxi86_objs = $(common_objs)
+common_objs += $(cpp_objs_$(target_cpu))

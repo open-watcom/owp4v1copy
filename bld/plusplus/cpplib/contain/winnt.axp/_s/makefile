@@ -7,6 +7,6 @@ system       = winnt
 model        =
 convention   =
 linkage      = static
-uncompressed = 1
+
 define_library_include = $(cpplib_dir)/contain/contain.mif
 !include $(cpplib_dir)/mklib.mif

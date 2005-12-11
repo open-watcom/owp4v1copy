@@ -1,8 +1,3 @@
-# MN: Whatever the "compression" was supposed to do, it doesn't work with
-# 11.0c wlib. Disabled until it is better understood, especially since
-# it doesn't seem to provide any clear benefits.
-uncompressed=1
-
 proj_name = cpplib
 
 suppress_zc = 1
@@ -82,33 +77,15 @@ libs : .symbolic $(target_lib) $(files)
     @%null
 
 $(target_lib) : $(target_objs) $(__MAKEFILES__)
-!ifdef uncompressed
     %create $^&.lbc
     @for %i in ($(target_objs)) do @%append $^&.lbc +%i
     $(librarian) -n $(lib_flags) $^@ @$^&.lbc
-!else
-    @set obj_list=$(target_objs)
-    cat @obj_list >__wrk__.obj
-    @set obj_list=
-    $(librarian) $(lib_flags) $^@ -+__wrk__.obj
-    @rm -f __wrk__.obj
-    @*trunc -q $(target_objs)
-!endif
 
 !ifdef target_lib_x
 $(target_lib_x) : $(target_xbjs) $(__MAKEFILES__)
-!ifdef uncompressed
     %create $^&.lbc
     @for %i in ($(target_xbjs)) do @%append $^&.lbc +%i
     $(librarian) -n $(lib_flags) $^@ @$^&.lbc
-!else
-    @set obj_list=$(target_xbjs)
-    cat @obj_list >__wrk__.obj
-    @set obj_list=
-    $(librarian) $(lib_flags) $^@ -+__wrk__.obj
-    @rm -f __wrk__.obj
-    @*trunc -q $(target_xbjs)
-!endif
 !endif
 
 define_c=-D__OBSCURE_STREAM_INTERNALS
@@ -214,12 +191,3 @@ comp_cpp = $(plusplus_dir)\bin\rpp$(host_cpu).exe
 
 .asm.obj : .autodepend
     $(as) $(aflags) $[@
-
-!ifeq release 0
-!ifdef define_deps_include
-obj_deps_ext=obj
-!include $(define_deps_include)
-obj_deps_ext=xbj
-!include $(define_deps_include)
-!endif
-!endif
