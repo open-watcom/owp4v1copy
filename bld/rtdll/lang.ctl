@@ -33,6 +33,15 @@ cdsay .
     <CPCMD> mathlib/os2.386/mf_s/mt*.dll        <RELROOT>/rel2/binp/dll/
     <CPCMD> mathlib/os2.386/mf_s/mt*.sym        <RELROOT>/rel2/binp/dll/
 
+    <CPCMD> mathlib/os2.387/mf_r/mt*.lib        <RELROOT>/rel2/lib386/os2/
+    <CPCMD> mathlib/os2.387/mf_r/mt*.dll        <RELROOT>/rel2/binp/dll/
+    <CPCMD> mathlib/os2.387/mf_r/mt*.sym        <RELROOT>/rel2/binp/dll/
+    <CPCMD> mathlib/os2.387/mf_rd/mt*.lib       <RELROOT>/rel2/lib386/os2/
+    <CPCMD> mathlib/os2.387/mf_rd/mt*.dll       <RELROOT>/rel2/binp/dll/
+    <CPCMD> mathlib/os2.387/mf_s/mt*.lib        <RELROOT>/rel2/lib386/os2/
+    <CPCMD> mathlib/os2.387/mf_s/mt*.dll        <RELROOT>/rel2/binp/dll/
+    <CPCMD> mathlib/os2.387/mf_s/mt*.sym        <RELROOT>/rel2/binp/dll/
+
     <CPCMD> cpplib/os2.386/mf_r/plb*.lib        <RELROOT>/rel2/lib386/os2/
     <CPCMD> cpplib/os2.386/mf_r/plbrdll.lib     <RELROOT>/rel2/lib386/os2/plbrdllx.lib
     <CPCMD> cpplib/os2.386/mf_r/plb*.dll        <RELROOT>/rel2/binp/dll/
@@ -74,6 +83,17 @@ cdsay .
     <CPCMD> mathlib/winnt.386/mf_s/mt*.lib      <RELROOT>/rel2/lib386/nt/
     <CPCMD> mathlib/winnt.386/mf_s/mt*.dll      <RELROOT>/rel2/binnt/
     <CPCMD> mathlib/winnt.386/mf_s/mt*.sym      <RELROOT>/rel2/binnt/
+
+    <CPCMD> mathlib/winnt.387/mf_r/mt*.lib      <RELROOT>/rel2/lib386/nt/
+    <CPCMD> mathlib/winnt.387/mf_r/mt*.dll      <RELROOT>/rel2/binnt/
+    <CPCMD> mathlib/winnt.387/mf_r/mt*.sym      <RELROOT>/rel2/binnt/
+    <CPCMD> mathlib/winnt.387/mf_rd/mt*.lib     <RELROOT>/rel2/lib386/nt/
+    <CPCMD> mathlib/winnt.387/mf_rd/mt*.dll     <RELROOT>/rel2/binnt/
+    <CPCMD> mathlib/winnt.387/mf_rp/mt*.lib     <RELROOT>/rel2/lib386/nt/
+    <CPCMD> mathlib/winnt.387/mf_rp/mt*.dll     <RELROOT>/rel2/binnt/
+    <CPCMD> mathlib/winnt.387/mf_s/mt*.lib      <RELROOT>/rel2/lib386/nt/
+    <CPCMD> mathlib/winnt.387/mf_s/mt*.dll      <RELROOT>/rel2/binnt/
+    <CPCMD> mathlib/winnt.387/mf_s/mt*.sym      <RELROOT>/rel2/binnt/
 
     <CPCMD> cpplib/winnt.386/mf_r/plb*.lib      <RELROOT>/rel2/lib386/nt/
     <CPCMD> cpplib/winnt.386/mf_r/plbrdll.lib   <RELROOT>/rel2/lib386/nt/plbrdllx.lib
