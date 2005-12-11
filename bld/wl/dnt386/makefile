@@ -1,7 +1,7 @@
-#pmake: os_nt cpu_386
-host_OS = nt
-host_CPU = 386
-wlink_trmem = 1
+#pmake: debug os_nt cpu_386
+host_os = nt
+host_cpu = 386
+
 wlink_release = 0
-#wlink_extralnk = op symf #op inc
+
 !include ../wlink.mif

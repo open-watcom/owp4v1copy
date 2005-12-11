@@ -3,7 +3,6 @@
 host_os  = nt
 host_cpu = 386
 
-sys_dll          = 1
-add_version_info = 1
+wlink_dll = 1
 
 !include ../wlink.mif

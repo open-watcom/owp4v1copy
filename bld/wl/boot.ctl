@@ -16,7 +16,6 @@ set PROJDIR=<CWD>
     echo Building the wlib bootstrap
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
-    cp -f ../linux386/whoami.h .
     wmake -h -f ../bootmake
-    <CPCMD> wlink <DEVDIR>/build/bin/wlink
+    <CPCMD> wl.exe <DEVDIR>/build/bin/wlink
     cdsay <PROJDIR>

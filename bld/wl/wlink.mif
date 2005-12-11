@@ -9,14 +9,10 @@ proj_name = wlink
 wlink_autodepends = .AUTODEPEND
 !endif
 
-#wlink_trmem = 1
-
-# systems where version resources must be added to .DLL
-build_rc_nt_386 = nt
-
 # get rid of the -zc
 suppress_zc = 1
-suppress_bd = 1
+
+wlink_nosymfile = 1
 
 !include cproj.mif
 !include defrule.mif
@@ -28,142 +24,35 @@ suppress_bd = 1
 
 !include trmem.mif
 
-.ERASE
+!include ../wlobjs.mif
+
+comp_objs_exe = $(common_objs) $(exe_objs)
+comp_objs_dll = $(common_objs) $(dll_objs)
 
 inc_dirs = -I. -I"../h"
 
 .c: ../c;$(watcom_dir)/c;$(wrc_dir)/c;$(lib_misc_dir)/c;$(trmem_dir)
 
-!ifndef patch_level
-patch_level=0
-!endif
-
-!ifdef build_rc_$(host_os)_$(host_cpu)
-rc_objs = version.rc
-!endif
-
-# first, set up the list of object files
-
-c_objs = &
-autogrp.obj &
-carve.obj &
-wcomdef.obj &
-cmdall.obj &
-cmddos.obj &
-cmdelf.obj &
-cmdline.obj &
-cmdnov.obj &
-cmdos2.obj &
-cmdphar.obj &
-cmdtable.obj &
-cmdutils.obj &
-cmdqnx.obj &
-dbgall.obj &
-dbgcv.obj &
-dbgdwarf.obj &
-dbginfo.obj &
-debug.obj &
-distrib.obj &
-global.obj &
-hash.obj &
-impexp.obj &
-libr.obj &
-libsupp.obj &
-linkutil.obj &
-loaddos.obj &
-loadelf.obj &
-loadelf2.obj &
-loadfile.obj &
-loadflat.obj &
-loadnov.obj &
-loados2.obj &
-loadpe.obj &
-loadphar.obj &
-loadqnx.obj &
-loadraw.obj &
-mapio.obj &
-mixcache.obj &
-msg.obj &
-objio.obj &
-obj2supp.obj &
-objcalc.obj &
-objfree.obj &
-objnode.obj &
-objomf.obj &
-objorl.obj &
-objpass1.obj &
-objpass2.obj &
-objstrip.obj &
-omfreloc.obj &
-overlays.obj &
-ovlsupp.obj &
-permdata.obj &
-procfile.obj &
-reloc.obj &
-ring.obj &
-ring2.obj &
-salloc.obj &
-spillio.obj &
-strtab.obj &
-symmem.obj &
-symtab.obj &
-symtrace.obj &
-toc.obj &
-wlink.obj &
-wlnkmsg.obj &
-demangle.obj &
-exerespe.obj &
-sharedio.obj &
-rcstr.obj
-
-stub_objs = dlldrvr.obj stidedrv.obj idemsgfm.obj idemsgpr.obj
-
-libs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)
-
-!ifeq host_os dos
-extra_objs = linkio.obj
-!else
-!ifeq host_os qnx
-extra_objs = posixio.obj
-!else
-!ifeq host_os linux
-extra_objs = posixio.obj
-!else
-extra_objs = ntio.obj
-!endif
-!endif
-!endif
-
-!ifeq use_virtmem 1
-extra_objs += virtmem.obj
-!else
-extra_objs += virtpage.obj
-!endif
-
-!ifeq sys_dll 1
-extra_objs += dllentry.obj idemsgpr.obj idedrv.obj
-!endif
-
-extra_objs += mem.obj $(trmem_objs)
-
 ################
 # c flags stuff
-
-# now get all of the c flags set properly
 
 force_include = -fi
 !ifeq bootstrap 1
 force_include = -include
 !endif
 
+!ifeq bootstrap 1
+extra_c_flags = -I"$(lib_misc_dir)/h"
+!else
 extra_c_flags = -zp4
-
+!ifdef wlink_dll
+extra_c_flags += -D_DLLHOST
+!else ifdef wlink_rtdll
+extra_c_flags += -D_DLLHOST
+!endif
 !ifeq use_virtmem 1
 extra_c_flags += -DUSE_VIRTMEM
 !endif
-
-!ifdef sys_dll
-extra_c_flags += -D_DLLHOST
 !endif
 
 extra_c_flags_ntio       = -I"$(wres_dir)/h"
@@ -171,118 +60,127 @@ extra_c_flags_posixio    = -I"$(wres_dir)/h"
 extra_c_flags_linkio     = -I"$(wres_dir)/h"
 extra_c_flags_objorl     = -I"$(orl_dir)/h"
 extra_c_flags_dbgdwarf   = -I"$(dwarf_dir)/dw/h"
-extra_c_flags_loadpe     = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -DINSIDE_WLINK
+!ifdef wlink_trmem
+extra_c_flags_debug      = -DTRMEM
+!endif
+extra_c_flags_loadpe     = -DINSIDE_WLINK -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h"
 extra_c_flags_loados2    = -I"$(wres_dir)/h"
 extra_c_flags_demangle   = -I"$(lib_misc_dir)/h"
 extra_c_flags_dllentry   = -bd
 extra_c_flags_idedrv     = -DCHAIN_CALLBACK
 extra_c_flags_msg        = -I"$(lib_misc_dir)/h"
-extra_c_flags_rcstr      = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
-extra_c_flags_exerespe   = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
-extra_c_flags_sharedio   = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
+extra_c_flags_rcstr      = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h"
+extra_c_flags_exerespe   = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
+extra_c_flags_sharedio   = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h"
+extra_c_flags_stidedrv   = -DSTATIC_LINKAGE -I"$(watcom_dir)/c"
 extra_c_flags_trmem      = $(trmem_cflags)
 extra_c_flags_mem        = $(trmem_cover_cflags)
-extra_c_flags_stidedrv   = -DSTATIC_LINKAGE -I"$(watcom_dir)/c"
 
 #####################
-# linker flags stuff
+# linker .EXE options
 
-# now get all of the linker flags set properly
+extra_l_flags     = op map, noredefs, symfile
 
-extra_l_flags =  op map=wl,verbose,static,noredefs
-
-!ifdef wlink_extralnk
-extra_l_flags += $(wlink_extralnk)
-!endif
-
-#!ifdef nec
-#lflags_dos_386 = sys dos4g
-#!else
-#lflags_dos_386 = sys causeway
-#!endif
 extra_l_flags_qnx = op res=wlink.u, st=24k, off=32k
 
-!ifeq sys_dll 1
-extra_l_flags_nt = op modname='wlink.dll' reference __DLLstart_
-extra_l_flags_nt += op offset=0x69c00000
-extra_l_flags_os2 = op modname='wlink'
-lflags_os2_386 = sys os2v2 dll initinstance terminstance
-lflags_nt_386 = sys nt_dll initinstance terminstance
-lflags_nt_axp = sys ntaxp_dll initinstance terminstance
-exe_lflags_nt_axp       = sys ntaxp
-exe_lflags_nt_386       = sys nt
-exe_lflags_os2_386      = sys os2v2
+#####################
+# linker .DLL options
+
+!ifeq release 0
+extra_l_flags_dll = OPTION map, noredefs
+!else
+extra_l_flags_dll = OPTION map, noredefs, symfile
+!endif
+extra_l_flags_dll_nt = initinstance terminstance op modname='wlink.dll'
+extra_l_flags_dll_nt += reference __DLLstart_ op offset=0x69c00000
+extra_l_flags_dll_os2 = initinstance terminstance op modname='wlink'
+
+!ifeq bootstrap 1
+xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib) $(clib_dir)/$(%OBJDIR)/libwatcom.a
+!else
+xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)
 !endif
 
-################
-# rc flags stuff
+###########
+# rc stuff
 
 extra_rc_flags_qnx = -D_UNIX
 extra_rc_flags_linux = -D_UNIX
 extra_rc_flags = $(extra_rc_flags_$(host_os))
 
-# and finally, the miscellaneous macro definitions
+# systems where version resources must be added to .DLL
+build_rc_nt_386 = nt
 
-!ifeq sys_dll 1
-exe = wl.dll
-!else
-exe = wl.exe
-!endif
-
-!ifeq bootstrap 1
-exe = $(proj_name)
-extra_c_flags = -I../$(host_os)$(host_cpu) -I$(lib_misc_dir)/h
-libs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib) &
-$(clib_dir)/$(%OBJDIR)/libwatcom.a
-!endif
-
-!ifeq sys_dll 1
-
-slnk = stub.lnk
-
-wlstub.exe : $(stub_objs) $(exe)
-    @rm -f wlink.lib
-    $(librarian) -n wlink.lib $(exe)
-    @%create $(slnk)
-    @%append $(slnk) $(mode_lflags) $(exe_lflags_$(host_os)_$(host_cpu))
-    @%append $(slnk) file { $(stub_objs) }
-    @%append $(slnk) name $^@
-    @%append $(slnk) lib wlink.lib op map=wlstub,noredefs
-    $(linker) @$(slnk)
-
-!endif
-
-lnk = tmp.lnk
-
-$(exe) : wlink.res $(c_objs) $(extra_objs) $(libs) $(rc_objs)
-!ifeq bootstrap 1
-    $(cc) -o $^@ $(c_objs) $(extra_objs) $(libs)
-!else
-    @%create $(lnk)
-    @%append $(lnk) $(lflags)
-    @%append $(lnk) name $^@
-    @%append $(lnk) file { $(c_objs) $(extra_objs) }
-    @%append $(lnk) lib { $(libs) }
-    $(linker) @$(lnk)
-!ifeq sys_dll 1
 !ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) $(inc_path) version.rc $^@
+rc_objs = version.rc
 !endif
-!endif
-!endif
-    wstrip -q -a -r $@ . wlink.res
 
 #################
 # explicit rules
 
+!ifdef wlink_dll
+
+wl.exe : $(drv_objs) wlink.lib drv.lnk
+    $(linker) name $@ @drv.lnk
+
+!else
+
+wl.exe : wlink.res $(comp_objs_exe) $(xlibs) exe.lnk
+!ifeq bootstrap 1
+    $(cc) -o $@ $(comp_objs_exe) $(xlibs)
+!else
+    $(linker) name $@ @exe.lnk
+!endif
+    wstrip -q -a -r $@ . wlink.res
+
+!endif
+
+wl.dll : wlink.res $(comp_objs_dll) $(xlibs) $(rc_objs) dll.lnk
+    $(linker) name $@ @dll.lnk
+!ifdef build_rc_$(host_os)_$(host_cpu)
+    $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) $(inc_path) version.rc $@
+!endif
+    wstrip -q -a -r $@ . wlink.res
+
+wlink.lib : wl.dll
+    $(librarian) -n $@ +$<
+
+drv.lnk: $(__MAKEFILES__)
+    @%write $@ $(lflags)
+    @for %i in ($(drv_objs)) do @%append $@ file %i
+    @%append $@ lib wlink.lib
+
+exe.lnk: $(__MAKEFILES__)
+    @%write $@ $(lflags)
+!ifdef wlink_rtdll
+    @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
+!endif
+    @for %i in ($(comp_objs_exe)) do @%append $@ file %i
+    @for %i in ($(xlibs)) do @%append $@ lib %i
+
+dll.lnk: $(__MAKEFILES__)
+    @%write $@ $(lflags_dll)
+!ifdef wlink_rtdll
+    @for %i in ($(rtdll_libpath)) do @%append $@ libpath %i
+!endif
+    @for %i in ($(comp_objs_dll)) do @%append $@ file %i
+    @for %i in ($(xlibs)) do @%append $@ lib %i
+
+#################
+# auxiliary rules
+
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level=0
+!endif
 
 version.rc : ./genverrc.exe ../h/wlver.rc $(fe_misc_dir)/c/genverrc.c
         $[@ ../h/wlver.rc version.rc $$ wlink.dll $(patch_level)
 
 wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
-        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$^@
+        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
 
 rcmsg.gh : $(wrc_dir)/h/rc.msg
 !ifdef __LINUX__

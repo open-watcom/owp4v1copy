@@ -1,6 +1,7 @@
-#pmake: os_nt cpu_axp
-host_OS = nt
-host_CPU = axp
-wlink_trmem = 1
-wlink_extralnk = op symf
+#pmake: debug os_nt cpu_axp
+host_os = nt
+host_cpu = axp
+
+wlink_release = 0
+
 !include ../wlink.mif

@@ -24,7 +24,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
-    <CPCMD> wlink <OWBINDIR>/wlink
+    <CPCMD> wl.exe <OWBINDIR>/wlink
 
 [ BLOCK . . ]
 #============
