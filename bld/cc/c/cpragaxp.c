@@ -363,9 +363,6 @@ hw_reg_set PragRegName( char *str )
                 ;
             index = *(p++);
         }
-        // decode regular register name
-        if( *str == 'r' )
-            ++str;
         // decode regular register index
         if( isdigit( *str ) ) {
             index = atoi( str );
@@ -382,8 +379,6 @@ hw_reg_set PragRegName( char *str )
                 }
             }
         }
-        if( *(str - 1) == 'r' )
-            --str;
         --str;
     }
     CErr2p( ERR_BAD_REGISTER_NAME, str );
