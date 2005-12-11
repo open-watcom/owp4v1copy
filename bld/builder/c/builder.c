@@ -322,6 +322,9 @@ static char *SubstOne( const char **inp, char *out )
             ++in;
             p = SubstOne( &in, p );
             break;
+        case '\0':
+            Fatal( "Missing '>'\n" );
+            break;
         default:
             *p++ = *in++;
             break;
