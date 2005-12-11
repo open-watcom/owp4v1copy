@@ -56,10 +56,6 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     } else if( osver.dwPlatformId == VER_PLATFORM_WIN32_NT ) {
         IsWinNT = TRUE;
     }
-    /* %GUT */
-    SavedStdInHdl = GetStdHandle(STD_INPUT_HANDLE);
-    SavedStdOutHdl = GetStdHandle(STD_OUTPUT_HANDLE);
-    /* %GUTEND */
     if( IsWinNT ) {
         dll = LoadLibrary( "VDMDBG.DLL" );
         if( dll != NULL ) {
