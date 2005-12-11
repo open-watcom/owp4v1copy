@@ -56,7 +56,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
-    <CPCMD> wlib <OWBINDIR>/bwlib
+    <CPCMD> wlib.exe <OWBINDIR>/bwlib
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #======================================
