@@ -40,7 +40,7 @@ objs = &
     zip_replace.obj &
     zip_source_buffer.obj &
     zip_source_file.obj &
-#    zip_source_filep.obj &
+    zip_source_filep.obj &
     zip_source_free.obj &
     zip_source_function.obj &
     zip_source_zip.obj &
