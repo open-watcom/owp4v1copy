@@ -1312,6 +1312,8 @@ void MakeLaundryList( void )
         printf( "Cannot create file 'instarch.lst'\n" );
         fp = stdout;
     }
+    // always add setup.inf to file list
+    fprintf( fp, "setup.inf\n" );
     CreateFileList( fp );
     if( fp != stdout ) {
         fclose( fp );

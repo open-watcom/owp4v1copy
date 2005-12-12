@@ -62,7 +62,5 @@
 #-------------------------------------
 #[ INCLUDE <DEVDIR>/wic/files.dat ]
 #[ INCLUDE <DEVDIR>/cpp/files.dat ]
-#[ INCLUDE <DEVDIR>/hlp/files.dat ]
-#[ INCLUDE <DEVDIR>/dig/files.dat ]
 #[ INCLUDE <DEVDIR>/fmedit/files.dat ]
 #[ INCLUDE <DEVDIR>/wpack/files.dat ]

@@ -23,9 +23,9 @@ host_cpu = 386
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = -I"$(libzip_dir)/lib" -I"$(zlib_dir)"
+inc_dirs = -I"$(libzip_dir)/lib" -I"$(zlib_dir)" 
 
-commands = mkexezip.exe splitfil.exe packsize.exe genmkfil.exe
+commands = mkexezip.exe uzip.exe splitfil.exe packsize.exe genmkfil.exe
 
 all : $(commands) .SYMBOLIC
 
@@ -40,3 +40,6 @@ splitfil.exe : splitfil.obj
 
 genmkfil.exe : genmkfil.obj
     $(cl) $(clflags) $< $(cl_libs)
+
+uzip.exe : microzip.obj
+    $(cl) $(clflags) $< $(cl_libs) ../ziplib/osi$(host_cpu)/ziplib.lib ../zlib/osi$(host_cpu)/zlib.lib 
