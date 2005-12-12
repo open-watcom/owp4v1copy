@@ -102,7 +102,12 @@ read_file(void *state, void *data, size_t len, enum zip_source_cmd cmd)
 
     switch (cmd) {
     case ZIP_SOURCE_OPEN:
-	if (fseeko(z->f, z->off, SEEK_SET) < 0) {
+#ifdef __WATCOMC__
+        // fseeko() not implemented yet
+        if (fseek(z->f, z->off, SEEK_SET) < 0) {
+#else
+        if (fseeko(z->f, z->off, SEEK_SET) < 0) {
+#endif
 	    z->e[0] = ZIP_ER_SEEK;
 	    z->e[1] = errno;
 	    return -1;
