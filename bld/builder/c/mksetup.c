@@ -1293,7 +1293,7 @@ void CreateFileList( FILE *fp )
     for( curr = FileList; curr != NULL; curr = curr->next ) {
         path = GetPath( curr->path );
         for( list = curr->sizes; list != NULL; list = list->next ) {
-            if( path != NULL )
+            if( path != NULL && strcmp( path, "." ) )
                 fprintf( fp, "%s/", path );
             fprintf( fp, "%s\n", list->name );
         }
