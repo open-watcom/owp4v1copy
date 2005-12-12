@@ -1,8 +1,0 @@
-# Manifest file for C runtime libraries (C/C++/Fortran, all 16-bit targets)
-
-lib286\math87l.lib
-lib286\math87m.lib
-lib286\mathl.lib
-lib286\mathm.lib
-lib286\noemu87.lib
-

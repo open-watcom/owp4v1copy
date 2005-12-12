@@ -1,9 +1,0 @@
-# Manifest file for common runtime libraries (C/C++, all 16-bit targets)
-
-lib286\math87c.lib
-lib286\math87h.lib
-lib286\math87s.lib
-lib286\mathc.lib
-lib286\mathh.lib
-lib286\maths.lib
-

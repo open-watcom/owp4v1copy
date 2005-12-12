@@ -1,8 +1,0 @@
-# Manifest file for C runtime libraries (C/C++/Fortran, Netware target)
-
-lib386\netware\binmode.obj
-lib386\netware\clib3s.lib
-lib386\netware\clib3sl.lib
-lib386\netware\libc3s.lib
-lib386\netware\libc3sl.lib
-lib386\netware\emu387.lib

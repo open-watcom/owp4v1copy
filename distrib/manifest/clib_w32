@@ -1,9 +1,0 @@
-# Manifest file for C runtime libraries (C/C++, Windows 32-bit target)
-
-lib386\nt\clbrdll.lib
-lib386\nt\clbsdll.lib
-lib386\nt\mt7rdll.lib
-lib386\nt\mt7sdll.lib
-lib386\nt\mthrdll.lib
-lib386\nt\mthsdll.lib
-

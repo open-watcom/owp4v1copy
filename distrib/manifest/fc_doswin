@@ -1,7 +1,0 @@
-# Manifest file for Fortran compiler binaries (DOS & Win16 hosts)
-
-binw\wfc.exe
-binw\wfc386.exe
-binw\wfl.exe
-binw\wfl386.exe
-

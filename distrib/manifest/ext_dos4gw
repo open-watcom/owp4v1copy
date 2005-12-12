@@ -1,9 +1,0 @@
-# Manifest file for DOS/4GW redistributeable binaries
-
-binw\dos4gw.doc
-binw\dos4gw.exe
-binw\pminfo.exe
-binw\rminfo.exe
-binw\rsi.trp
-binw\rsihelp.exp
-

@@ -1,8 +1,0 @@
-# Manifest file for C runtime libraries (OS/2 32-bit target)
-
-lib386\os2\binmode.obj
-lib386\os2\clib3r.lib
-lib386\os2\clib3s.lib
-lib386\os2\commode.obj
-lib386\os2\emu387.lib
-

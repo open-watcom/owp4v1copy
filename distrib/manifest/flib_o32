@@ -1,7 +1,0 @@
-# Manifest file for Fortran runtime library (32-bit OS/2 target)
-
-lib386\os2\flib7.lib
-lib386\os2\flib7s.lib
-lib386\os2\flib.lib
-lib386\os2\flibs.lib
-

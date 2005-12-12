@@ -1,7 +1,0 @@
-# Manifest file for C runtime libraries (C/C++/Fortran, Windows 32-bit target)
-
-lib386\nt\binmode.obj
-lib386\nt\clib3r.lib
-lib386\nt\clib3s.lib
-lib386\nt\commode.obj
-lib386\nt\emu387.lib
