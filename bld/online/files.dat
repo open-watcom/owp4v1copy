@@ -201,3 +201,5 @@ usr="f77lr.inf"         where="f77 jf77"
 usr="rescomp.inf"       where="c jc f77 jf77"           desc="Help file for resource compiler"
 usr="clr.inf"           where="c jc"                    desc="C language reference"
 usr="cw.inf"            where="c f77"                   desc="CauseWay documentation"
+usr="vi.inf"            where="c f77"
+
