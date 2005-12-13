@@ -299,8 +299,8 @@ sdbsetup.res : setup.rc $(dep_res1) ../res/sqlserv.bmp
 setup.res : setup.rc $(dep_res1) ../res/generic.bmp
     $(rc) $(rc_flags) $(res_inc_dirs) $[@ -fo=$^@
 
-dosstub.exe : ../stub/dosstub.c
-    wcl -zq -l=dos -os -d0 -bt=dos ..\stub\dosstub
+dosstub.exe : dosstub.c
+    wcl -zq -l=dos -os -d0 -bt=dos $[@
 
 csetup.exe: virgin.exe csetup.res
     cp $[@ $^@ > $(nulldevice)
