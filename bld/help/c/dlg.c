@@ -46,27 +46,27 @@ extern bool GetListBoxItem( void *, unsigned, char *, unsigned );
 
 typedef struct {
     char                str[1];         /* dynamic array */
-}ListBoxEntry;
+} ListBoxEntry;
 
-static a_hot_spot searchButtons[] = {
-        {"OK",          EV_ENTER,       1,      -1,     11,     HOT_DEFAULT},
-        {"Cancel",       EV_ESCAPE,     3,      -1,     11,     0}
+static a_hot_spot       searchButtons[] = {
+    {"OK",      EV_ENTER,       1,      -1,     11,     HOT_DEFAULT},
+    {"Cancel",  EV_ESCAPE,      3,      -1,     11,     0}
 };
 
-static unsigned long listData;
+static unsigned long    listData;
 
 static a_list listBox = {
-        0, &listData, GetListBoxItem, NULL
+    0, &listData, GetListBoxItem, NULL
 };
 
 static an_edit_control      editCtl;
 
 static VFIELD helpSearchDialog[] = {
-        {{1,    4,      1,      40},    FLD_EDIT,       &editCtl },
-        {{3,    4,      8,      40},    FLD_LISTBOX,    &listBox},
-        {{1,    -1,     1,      11},    FLD_HOT,        &searchButtons[0] },
-        {{3,    -1,     1,      11},    FLD_HOT,        &searchButtons[1] },
-        {{12,   0,  0,  0},  FLD_VOID,   NULL }
+    {{1,    4,      1,      40},    FLD_EDIT,       &editCtl},
+    {{3,    4,      8,      40},    FLD_LISTBOX,    &listBox},
+    {{1,    -1,     1,      11},    FLD_HOT,        &searchButtons[0]},
+    {{3,    -1,     1,      11},    FLD_HOT,        &searchButtons[1]},
+    {{12,   0,      0,      0},     FLD_VOID,       NULL}
 };
 
 static VFIELD   *editVField = &helpSearchDialog[0];
@@ -75,8 +75,8 @@ static a_dialog         *curHelpDialog;
 static HelpHdl          searchHdl;
 
 static bool GetLBItemLiteral( void *info, unsigned line, char *buf,
-                              unsigned buflen ) {
-
+                              unsigned buflen )
+{
     char                *name;
     unsigned long       *itemcnt;
     unsigned            height;
@@ -102,8 +102,8 @@ static bool GetLBItemLiteral( void *info, unsigned line, char *buf,
     return( TRUE );
 }
 
-bool GetListBoxItem( void *info, unsigned line, char *buf, unsigned buflen ) {
-
+bool GetListBoxItem( void *info, unsigned line, char *buf, unsigned buflen )
+{
     char                *name;
     unsigned long       *itemcnt;
     unsigned            height;
@@ -146,8 +146,8 @@ bool GetListBoxItem( void *info, unsigned line, char *buf, unsigned buflen ) {
     return( TRUE );
 }
 
-static void fillListBox( char *name ) {
-
+static void fillListBox( char *name )
+{
     unsigned            index;
 
     index = HelpFindFirst( searchHdl, name, NULL );
@@ -159,8 +159,8 @@ static void fillListBox( char *name ) {
 
 #define MAX_EDIT_LINE_LEN       100
 
-static void copyLBLinetoEditCtl( unsigned index ) {
-
+static void copyLBLinetoEditCtl( unsigned index )
+{
     char        *lb_item;
     unsigned    len;
 
@@ -174,9 +174,9 @@ static void copyLBLinetoEditCtl( unsigned index ) {
     uiprintfield( curHelpDialog, editVField );
 }
 
-void HelpDialogCallBack( a_dialog *info ) {
-
-    char                buf[256];
+void HelpDialogCallBack( a_dialog *info )
+{
+    char                buf[_MAX_PATH];
     unsigned            len;
 
     if( info != curHelpDialog ) return;
@@ -196,7 +196,8 @@ void HelpDialogCallBack( a_dialog *info ) {
     }
 }
 
-void SearchDlgFini( void ) {
+void SearchDlgFini( void )
+{
     if( editCtl.buffer != NULL ) {
         uifree( editCtl.buffer );
     }

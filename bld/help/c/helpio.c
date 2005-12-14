@@ -36,7 +36,7 @@
 #include <sys/stat.h>
 #include "helpio.h"
 
-#if defined(UNIX)
+#ifndef __WATCOMC__
     #include "clibext.h"
 #endif
 
@@ -54,28 +54,33 @@
 
 static int seekTypeConvTable[] = { SEEK_SET, SEEK_CUR, SEEK_END };
 
-HELPIO long int HelpFileLen( HelpFp fp ) {
+HELPIO long int HelpFileLen( HelpFp fp )
+{
     return( filelength( (int)fp ) );
 }
 
-HELPIO int HelpRead( HelpFp fp, void *buf, int len ) {
+HELPIO int HelpRead( HelpFp fp, void *buf, int len )
+{
     return( read( (int)fp, buf, len ) );
 }
 
-HELPIO int HelpWrite( HelpFp fp, char *buf, int len ) {
+HELPIO int HelpWrite( HelpFp fp, char *buf, int len )
+{
     return( write( (int)fp, buf, len ) );
 }
 
-HELPIO long int HelpSeek( HelpFp fp, long int offset, HelpSeekType where ) {
-
-    return( lseek( (int)fp, offset, seekTypeConvTable[ where ] ) );
+HELPIO long int HelpSeek( HelpFp fp, long int offset, HelpSeekType where )
+{
+    return( lseek( (int)fp, offset, seekTypeConvTable[where] ) );
 }
 
-HELPIO long int HelpTell( HelpFp fp ) {
+HELPIO long int HelpTell( HelpFp fp )
+{
     return( tell( (int)fp ) );
 }
 
-HELPIO HelpFp HelpOpen( char *path, unsigned long mode ) {
+HELPIO HelpFp HelpOpen( char *path, unsigned long mode )
+{
     int         access;
 
     access = 0;
@@ -106,17 +111,19 @@ HELPIO HelpFp HelpOpen( char *path, unsigned long mode ) {
         access |= O_CREAT;
     }
     if( access & O_CREAT ) {
-        return( (HelpFp)( open( path, access, S_IRWXU | S_IRWXG | S_IRWXO  ) ) );
+        return( (HelpFp)open( path, access, S_IRWXU | S_IRWXG | S_IRWXO ) );
     } else {
-        return( (HelpFp)( open( path, access ) ) );
+        return( (HelpFp)open( path, access ) );
     }
 }
 
-HELPIO int HelpClose( HelpFp fp ) {
+HELPIO int HelpClose( HelpFp fp )
+{
     return( close( (int)fp ) );
 }
 
-HELPIO int HelpAccess( char *path, int mode ) {
+HELPIO int HelpAccess( char *path, int mode )
+{
     int         mode2;
 
     mode2 = 0;
@@ -128,12 +135,14 @@ HELPIO int HelpAccess( char *path, int mode ) {
     return( access( path, mode2 ) );
 }
 
-HELPIO char *HelpGetCWD( char *buf, int size ) {
+HELPIO char *HelpGetCWD( char *buf, int size )
+{
     return( getcwd( buf, size ) );
 }
 
 #ifndef __NETWARE_386__     // no environment vars in NetWare
-HELPIO void HelpSearchEnv( char *name, char *env_var, char *buf ) {
+HELPIO void HelpSearchEnv( char *name, char *env_var, char *buf )
+{
     _searchenv( name, env_var, buf );
 }
 #endif

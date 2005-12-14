@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Hyperlink scanning.
 *
 ****************************************************************************/
 
@@ -70,7 +69,7 @@ static unsigned scanHyperLink( char *line, TokenType *type,
     bool                chktopic;
     bool                chkhfname;
 
-    block = &( info->block1 );
+    block = &(info->block1);
     block->next = NULL;
     cur = line;
     cnt = 0;
@@ -106,8 +105,7 @@ static unsigned scanHyperLink( char *line, TokenType *type,
         case '<':
             if( cur[0] == cur[1] ) {
                 cur[0] = HELP_ESCAPE;
-                continue;               // let the HELP_ESCAPE case handle
-                                        // this
+                continue;               // let the HELP_ESCAPE case handle this
             }
             /* fall through */
         case GOOFY_HYPERLINK:
@@ -135,7 +133,7 @@ static unsigned scanHyperLink( char *line, TokenType *type,
                 hfname = cur;
                 chkhfname = TRUE;
             }
-            while( ( *cur != endchar ) && ( *cur != HYPER_TOPIC ) ) {
+            while( (*cur != endchar) && (*cur != HYPER_TOPIC) ) {
                 if( *cur == HELP_ESCAPE ) cur++;
                 cur++;
             }
@@ -157,9 +155,8 @@ static unsigned scanHyperLink( char *line, TokenType *type,
     }
 }
 
-
-void freeHyperlinkInfo( TextInfoBlock *cur ) {
-
+void freeHyperlinkInfo( TextInfoBlock *cur )
+{
     TextInfoBlock       *tmp;
 
     while( cur != NULL ) {

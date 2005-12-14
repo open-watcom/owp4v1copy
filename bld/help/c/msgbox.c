@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Message box routine for help viewer.
 *
 ****************************************************************************/
 
@@ -34,17 +33,18 @@
 #include "uidialog.h"
 
 static a_hot_spot okButton[] = {
-        {"OK",          EV_ENTER,       3,      20,     11,     HOT_DEFAULT},
+    {"OK",          EV_ENTER,       3,      20,     11,     HOT_DEFAULT},
 };
 
 static char     *message;
 VFIELD helpMsgBox[] = {
-             {{1,       4,      1,      49},    FLD_TEXT,       &message },
-             {{3,       20,     1,      11},    FLD_HOT,        &okButton[0] },
-             {{5,   0,  0,      0},     FLD_VOID,       NULL }
+    {{1,       4,      1,      49},    FLD_TEXT,       &message},
+    {{3,       20,     1,      11},    FLD_HOT,        &okButton[0]},
+    {{5,       0,      0,      0},     FLD_VOID,       NULL}
 };
 
-void ShowMsgBox( char *caption, char *msg ) {
+void ShowMsgBox( char *caption, char *msg )
+{
     a_dialog            *msgbox;
     bool                done;
     EVENT               event;

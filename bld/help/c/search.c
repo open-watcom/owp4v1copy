@@ -36,7 +36,7 @@
 #include "helpmem.h"
 #include "helpio.h"
 #include "search.h"
-#if defined(UNIX)
+#ifndef __WATCOMC__
     #include "clibext.h"
 #endif
 
@@ -48,8 +48,8 @@ HelpPageHeader          *pageHeader;
 char                    *stringBlock;
 void                    *pageIndex;
 
-static void loadPage( HelpHdl hdl, unsigned long pagenum ) {
-
+static void loadPage( HelpHdl hdl, unsigned long pagenum )
+{
     unsigned long       offset;
     unsigned            tmp;
 
@@ -60,7 +60,7 @@ static void loadPage( HelpHdl hdl, unsigned long pagenum ) {
         tmp = sizeof( HelpHeader );
     }
     offset = tmp + hdl->header.str_size + pagenum * PAGE_SIZE
-             + hdl->header.datapagecnt * sizeof( uint_16 );
+           + hdl->header.datapagecnt * sizeof( uint_16 );
     HelpSeek( hdl->fp, offset, HELP_SEEK_SET );
     HelpRead( hdl->fp, curPage, PAGE_SIZE );
     curFile = hdl->fp;
@@ -68,12 +68,12 @@ static void loadPage( HelpHdl hdl, unsigned long pagenum ) {
     pageIndex = curPage + sizeof( HelpPageHeader );
     if( pageHeader->type == PAGE_DATA ) {
         stringBlock = curPage + sizeof( HelpPageHeader )
-                      + pageHeader->num_entries * sizeof( PageIndexEntry );
+                    + pageHeader->num_entries * sizeof( PageIndexEntry );
     }
 }
 
-static void loadNextPage( HelpHdl hdl, char *name ) {
-
+static void loadNextPage( HelpHdl hdl, const char *name )
+{
     unsigned            i;
     HelpIndexEntry      *entry;
 
@@ -95,8 +95,8 @@ static void loadNextPage( HelpHdl hdl, char *name ) {
  *                      page comes before name return the first entry on the
  *                      page.
  */
-static char *doFindEntry( char *name, unsigned *entry_num ) {
-
+static char *doFindEntry( const char *name, unsigned *entry_num )
+{
     unsigned            i;
     unsigned            len;
     PageIndexEntry      *entry;
@@ -116,15 +116,17 @@ static char *doFindEntry( char *name, unsigned *entry_num ) {
             break;
         }
     }
-    if( i == pageHeader->num_entries ) i--;
+    if( i == pageHeader->num_entries ) {
+        i--;
+    }
     if( entry_num != NULL ) {
-            *entry_num = i;
+        *entry_num = i;
     }
     return( stringBlock + entry[i].name_offset );
 }
 
-static char *findEntry( HelpHdl hdl, char *name, unsigned *entry_num ) {
-
+static char *findEntry( HelpHdl hdl, const char *name, unsigned *entry_num )
+{
     char        *ret;
     unsigned    pagecnt;
     unsigned    basepage;
@@ -146,8 +148,9 @@ static char *findEntry( HelpHdl hdl, char *name, unsigned *entry_num ) {
     return( ret );
 }
 
-#if(0)
-char *HelpFindPrev( HelpSrchInfo *info ) {
+#if 0
+char *HelpFindPrev( HelpSrchInfo *info )
+{
     PageIndexEntry      *entry;
     char                *ret;
 
@@ -166,13 +169,14 @@ char *HelpFindPrev( HelpSrchInfo *info ) {
     return( ret );
 }
 
-unsigned long HelpGetOffset( HelpSrchInfo cursor ) {
+unsigned long HelpGetOffset( HelpSrchInfo cursor )
+{
     return( cursor.offset );
 }
 
 
-char *HelpFindNext( HelpSrchInfo *info ) {
-
+char *HelpFindNext( HelpSrchInfo *info )
+{
     char                *ret;
     PageIndexEntry      *entry;
     unsigned            pagecnt;
@@ -194,8 +198,8 @@ char *HelpFindNext( HelpSrchInfo *info ) {
 }
 #endif
 
-unsigned HelpFindFirst( HelpHdl hdl, char *name, HelpSrchInfo *info ) {
-
+unsigned HelpFindFirst( HelpHdl hdl, char *name, HelpSrchInfo *info )
+{
     unsigned            ret;
     PageIndexEntry      *entry;
 
@@ -215,8 +219,8 @@ unsigned HelpFindFirst( HelpHdl hdl, char *name, HelpSrchInfo *info ) {
     return( ret );
 }
 
-char *HelpGetIndexedTopic( HelpHdl hdl, unsigned index ) {
-
+char *HelpGetIndexedTopic( HelpHdl hdl, unsigned index )
+{
     unsigned            i;
     PageIndexEntry      *entry;
 
@@ -231,8 +235,8 @@ char *HelpGetIndexedTopic( HelpHdl hdl, unsigned index ) {
     return( stringBlock + entry->name_offset );
 }
 
-unsigned long HelpFindTopicOffset( HelpHdl hdl, char *topic ) {
-
+unsigned long HelpFindTopicOffset( HelpHdl hdl, char *topic )
+{
     unsigned            entry_num;
     PageIndexEntry      *entry;
     char                *foundtopic;
@@ -251,8 +255,8 @@ unsigned long HelpFindTopicOffset( HelpHdl hdl, char *topic ) {
     }
 }
 
-HelpHdl InitHelpSearch( HelpFp fp ) {
-
+HelpHdl InitHelpSearch( HelpFp fp )
+{
     HelpHdl     hdl;
     unsigned    len;
     char        *topic;
@@ -282,7 +286,7 @@ HelpHdl InitHelpSearch( HelpFp fp ) {
             hdl->def_topic = topic;
             hdl->desc_str = NULL;
             hdl->header.str_size = 0;   // no str_size in old header format
-            len = ( hdl->header.datapagecnt ) * ( sizeof( uint_16 ) );
+            len = hdl->header.datapagecnt * sizeof( uint_16 );
             hdl->itemindex = HelpMemAlloc( len );
             HelpRead( fp, hdl->itemindex, len );
         }
@@ -292,10 +296,10 @@ HelpHdl InitHelpSearch( HelpFp fp ) {
         ptr = buffer;
         str_len = (uint_16 *)ptr;
         str_cnt = *str_len;
-        str_len ++;
+        str_len++;
         if( *str_len != 0 ) {
             topic = HelpMemAlloc( *str_len );
-            ptr += ( str_cnt + 1 ) * ( sizeof( uint_16 ) );
+            ptr += (str_cnt + 1) * sizeof( uint_16 );
             strcpy( topic, ptr);        // assume topic is first string
         } else {
             topic = HelpMemAlloc( strlen( DEFAULTTOPIC ) + 1 );
@@ -304,7 +308,7 @@ HelpHdl InitHelpSearch( HelpFp fp ) {
         ptr = buffer;
         ptr += ( str_cnt + 1 ) * ( sizeof( uint_16 ) );
         ptr += ( *str_len ) * ( sizeof( char ) );
-        str_len ++;
+        str_len++;
         if( *str_len != 0 ) {
             description = HelpMemAlloc( *str_len );
             strcpy( description, ptr );
@@ -346,7 +350,8 @@ char *GetDescrip( HelpHdl hdl )
     return( description );
 }
 
-void FiniHelpSearch( HelpHdl hdl ) {
+void FiniHelpSearch( HelpHdl hdl )
+{
     if( hdl != NULL ) {
         if( hdl->itemindex != NULL ) {
             HelpMemFree( hdl->itemindex );
@@ -364,11 +369,11 @@ void FiniHelpSearch( HelpHdl hdl ) {
 #ifdef TEST_SEARCH
 #include "trmemcvr.h"
 
-void main( int argc, char *argv[] ) {
-
+void main( int argc, char *argv[] )
+{
     HelpFp              fp;
     HelpHdl             hdl;
-    char                name[256];
+    char                name[_MAX_PATH];
     char                *cur;
     HelpSrchInfo        cursor;
     unsigned            i;
@@ -395,7 +400,9 @@ void main( int argc, char *argv[] ) {
             HelpMemFree( cur );
             cur = HelpFindNext( &cursor );
         }
-        if( cur != NULL ) HelpMemFree( cur );
+        if( cur != NULL ) {
+            HelpMemFree( cur );
+        }
     }
     FiniHelpSearch( hdl );
     HelpClose( fp );

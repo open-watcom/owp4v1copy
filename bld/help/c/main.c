@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHELP character mode help browser mainline.
+* Description:  Character mode help browser mainline.
 *
 ****************************************************************************/
 
@@ -33,9 +33,9 @@
 #include <stdlib.h>
 #include <string.h>
 #ifdef __UNIX__
-#include <dirent.h>
+    #include <dirent.h>
 #else
-#include <direct.h>
+    #include <direct.h>
 #endif
 #include <uidef.h>
 #include "stdui.h"
@@ -59,7 +59,8 @@ static HelpSrchPathItem searchList[] = {
 
 static int      memFHdl;
 
-static void memInit( void ) {
+static void memInit( void )
+{
 #ifdef TRMEM
     memFHdl= open( "MEMERR", O_WRONLY | O_TRUNC | O_CREAT | O_TEXT,
                     S_IRWXO | S_IRWXG | S_IRWXU );
@@ -70,7 +71,8 @@ static void memInit( void ) {
 #endif
 }
 
-static void memFini( void ) {
+static void memFini( void )
+{
 #ifdef TRMEM
 //    TRMemPrtList();
     TRMemClose();
@@ -84,8 +86,8 @@ static void memFini( void ) {
 }
 
 
-static void showHelp( char *name ) {
-
+static void showHelp( char *name )
+{
     char        fname[_MAX_FNAME];
 
     _splitpath( name, NULL, NULL, fname, NULL );
@@ -102,8 +104,8 @@ static void showHelp( char *name ) {
     PrintHelpFiles( searchList );
 }
 
-static HelpSrchPathItem *checkFileName( char *name, char *buf ) {
-
+static HelpSrchPathItem *checkFileName( char *name, char *buf )
+{
     char        drive[_MAX_DRIVE];
     char        dir[_MAX_DIR];
     char        fname[_MAX_FNAME];
@@ -123,15 +125,15 @@ static HelpSrchPathItem *checkFileName( char *name, char *buf ) {
     return( searchList );
 }
 
-static void freeSrchList( void ) {
-
-    if( strcmp(searchList[0].info, FIRST_SRCH_PATH) ) {
+static void freeSrchList( void )
+{
+    if( strcmp( searchList[0].info, FIRST_SRCH_PATH ) ) {
         HelpMemFree( searchList[0].info );
     }
 }
 
-void main( int argc, char *argv[] ) {
-
+void main( int argc, char *argv[] )
+{
     char                *helpfiles[] = { NULL, NULL };
     char                *topic;
     char                filename[ _MAX_PATH ];
@@ -164,12 +166,12 @@ void main( int argc, char *argv[] ) {
         printf( "ui failed\n" );
         return;
     } else {
-    #if defined __OS2__
+#if defined __OS2__
         initmouse( 2 );  /* the 0=mouseless,1=mouse,2=initialized mouse */
-    #elif !defined __UNIX__
+#elif !defined __UNIX__
         uiinitgmouse( 2 );  /* the 0=mouseless,1=mouse,2=initialized mouse */
         FlipCharacterMap();
-    #endif
+#endif
         if( helpinit( helpfiles, srchlist ) ) {
             rc = showhelp( topic, NULL, HELPLANG_ENGLISH );
             if( rc == HELP_NO_SUBJECT ) {
@@ -193,7 +195,9 @@ void main( int argc, char *argv[] ) {
         }
         helpfini();
         freeSrchList();
-        if( !err ) uirestorebackground();
+        if( !err ) {
+            uirestorebackground();
+        }
         uifini();
     }
     memFini();

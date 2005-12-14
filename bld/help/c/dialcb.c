@@ -34,8 +34,9 @@
 #include "uidialog.h"
 #include "search.h"
 
-EVENT uidialogcallback( a_dialog *info, EVENT ev ) {
 
+EVENT uidialogcallback( a_dialog *info, EVENT ev )
+{
     HelpDialogCallBack( info );
     return( ev );
 }

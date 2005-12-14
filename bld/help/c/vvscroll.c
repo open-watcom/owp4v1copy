@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Vertical scroll routine.
 *
 ****************************************************************************/
 
@@ -33,21 +32,18 @@
 #include "stdui.h"
 
 
-void vvscroll( win, use, scroll )
-    VSCREEN             *win;
-    SAREA               use;
-    int                 scroll;
+void vvscroll( VSCREEN *win, SAREA use, int scroll )
 {
     SAREA               area;
     ORD                 newrow;
 
     area.width = use.width;
     area.col = use.col;
-    if( scroll > 0  &&  scroll < use.height ){
+    if( scroll > 0  &&  scroll < use.height ) {
         area.height = use.height - scroll;
         area.row = use.row + scroll;
         newrow = use.row;
-    } else if( scroll < 0  &&  -scroll < use.height ){
+    } else if( scroll < 0  &&  -scroll < use.height ) {
         area.height = use.height + scroll;
         area.row = use.row;
         newrow = use.row - scroll;
@@ -56,17 +52,16 @@ void vvscroll( win, use, scroll )
         area.row = 0;
         newrow = use.row + use.height;
     }
-    if( area.height > 0 ){
+    if( area.height > 0 ) {
         uivmoveblock( win, area, -scroll, 0 );
     }
-    if( newrow == use.row ){
+    if( newrow == use.row ) {
         area.row = newrow + area.height;
     } else {
         area.row = use.row;
     }
     area.height = use.height - area.height;
-    if( area.height > 0 ){
+    if( area.height > 0 ) {
         uivfill( win, area, UIData->attrs[ATTR_NORMAL], ' ' );
     }
 }
-

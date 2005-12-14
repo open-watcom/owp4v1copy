@@ -32,9 +32,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef __UNIX__
-#include <dirent.h>
+    #include <dirent.h>
 #else
-#include <direct.h>
+    #include <direct.h>
 #endif
 #include <string.h>
 #include "uidef.h"
@@ -78,17 +78,18 @@ static FileDesc         FileDescs[] = {
     "WPROF",    ""
 };
 
-#if(0)
+#if 0
 static int fn_comp( char *p1, FileDesc *p2 )
 {
     return( strcmp( p1, p2->helpfname ) );
 }
 #endif
 
-static void freeFileList( FileList *list ) {
+static void freeFileList( FileList *list )
+{
     unsigned            i;
 
-    for( i=0; i < list->used; i++ ) {
+    for( i = 0; i < list->used; i++ ) {
         HelpMemFree( list->items[i]->fpath );
         HelpMemFree( list->items[i]->fname );
         HelpMemFree( list->items[i] );
@@ -96,7 +97,8 @@ static void freeFileList( FileList *list ) {
     HelpMemFree( list );
 }
 
-static void printDescrip( FileInfo *info, unsigned cnt ) {
+static void printDescrip( FileInfo *info, unsigned cnt )
+{
     char        *buf;
     HelpFp      fp;
     char        tmp[ _MAX_PATH ];
@@ -133,14 +135,14 @@ static void printDescrip( FileInfo *info, unsigned cnt ) {
     }
 }
 
-static void printFileList( FileList *list ) {
-
+static void printFileList( FileList *list )
+{
     unsigned            i;
 
     if( list->used > 0 ) {
         printf( "%-8s     ", list->items[0]->fname );
         printDescrip( list->items[0], FILE_CNT );
-        for( i=1; i < list->used; i++ ) {
+        for( i = 1; i < list->used; i++ ) {
             /* eliminate duplicates */
             if( strcmp( list->items[i-1]->fname, list->items[i]->fname ) ) {
                 printf( "%-8s     ", list->items[i]->fname );
@@ -150,18 +152,20 @@ static void printFileList( FileList *list ) {
     }
 }
 
-static int compareStr( const void *arg1, const void *arg2 ) {
+static int compareStr( const void *arg1, const void *arg2 )
+{
     FileInfo **str1 = (FileInfo**) arg1;
     FileInfo **str2 = (FileInfo**) arg2;
     return( strcmp( ( *str1 )->fname, ( *str2 )->fname ) );
 }
 
-static void sortFileList( FileList *list ) {
+static void sortFileList( FileList *list )
+{
     qsort( list->items, list->used, sizeof( FileInfo * ), compareStr );
 }
 
-static void scanDirectory( char *buf, FileList *list ) {
-
+static void scanDirectory( char *buf, FileList *list )
+{
     DIR                 *dirhdl;
     struct dirent       *dirent;
     char                fname[_MAX_FNAME];
@@ -196,8 +200,8 @@ static void scanDirectory( char *buf, FileList *list ) {
     closedir( dirhdl );
 }
 
-static void doFillFileList( char *cur, FileList *list ) {
-
+static void doFillFileList( char *cur, FileList *list )
+{
     char                done;
     char                *path;
     unsigned            len;
@@ -235,20 +239,20 @@ static void doFillFileList( char *cur, FileList *list ) {
     }
 }
 
-static void fillFileList( HelpSrchPathItem *srch, FileList *list ) {
-
+static void fillFileList( HelpSrchPathItem *srch, FileList *list )
+{
     unsigned    i;
     char        *cur;
     unsigned    done;
 
     done = 0;
-    for( i=0 ;; i++ ) {
+    for( i = 0 ;; i++ ) {
         switch( srch[i].type ) {
-        #ifndef __NETWARE_386__
+#ifndef __NETWARE_386__
         case SRCHTYPE_ENV:
             cur = getenv( srch[i].info );
             break;
-        #endif
+#endif
         case SRCHTYPE_PATH:
             cur = srch[i].info;
             break;
@@ -257,11 +261,14 @@ static void fillFileList( HelpSrchPathItem *srch, FileList *list ) {
             break;
         }
         if( done ) break;
-        if( cur != NULL ) doFillFileList( cur, list );
+        if( cur != NULL ) {
+            doFillFileList( cur, list );
+        }
     }
 }
 
-static FileList *initFileList( void ) {
+static FileList *initFileList( void )
+{
     FileList    *ret;
 
     ret = HelpMemAlloc( sizeof( FileList )
@@ -271,8 +278,8 @@ static FileList *initFileList( void ) {
     return( ret );
 }
 
-void PrintHelpFiles( HelpSrchPathItem *srch ) {
-
+void PrintHelpFiles( HelpSrchPathItem *srch )
+{
     FileList    *list;
 
     list = initFileList();

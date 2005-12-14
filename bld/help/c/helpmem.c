@@ -39,14 +39,17 @@
     #define realloc     TRMemRealloc
 #endif
 
-extern HELPMEM void *HelpMemAlloc( unsigned int size ) {
+extern HELPMEM void *HelpMemAlloc( unsigned int size )
+{
     return( malloc( size ) );
 }
 
-extern HELPMEM void *HelpMemRealloc( void *ptr, unsigned int size ) {
+extern HELPMEM void *HelpMemRealloc( void *ptr, unsigned int size )
+{
     return( realloc( ptr, size ) );
 }
 
-extern HELPMEM void HelpMemFree( void *ptr ) {
+extern HELPMEM void HelpMemFree( void *ptr )
+{
     free( ptr );
 }
