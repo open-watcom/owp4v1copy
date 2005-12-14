@@ -1054,7 +1054,7 @@ static void seek_line( int line )
             save_line( i, HelpTell( helpFileHdl ) );
             if( i == line ) break;
             if( !getline() || strnicmp( helpInBuf, "::::", 4 ) == 0 ) {
-                maxLine = i-1;
+                maxLine = i;
                 break;
             }
         }
@@ -1167,7 +1167,7 @@ static int scrollHelp( SAREA *use, int lastline, bool changecurr  ) {
     for( ;; ++start ){
         save_line( start, HelpTell( helpFileHdl ) );
         if( !getline()  ||  strncmp( helpInBuf, "::::", 4 ) == 0  ){
-            maxLine = start - 1;
+            maxLine = start;
             break;
         }
         useline = start - currLine;
@@ -1181,8 +1181,8 @@ static int scrollHelp( SAREA *use, int lastline, bool changecurr  ) {
         putline( helpOutBuf, useline + use->row );
     }
     end = currLine + use->height;
-    if( maxLine != 0 && end > maxLine+1 ){
-        end = maxLine+1;
+    if( maxLine != 0 && end > maxLine ){
+        end = maxLine;
     }
     display_fields();
     hotSpots[1].startcol = ( helpScreen.area.width - hotSpots[1].length )
@@ -1263,7 +1263,7 @@ static int dispHelp( char *str, VTAB *tab )
         case EV_CURSOR_DOWN:
         case EV_BOTTOM:
             ++currLine;
-            if( maxLine != 0  &&  currLine+use.height-1 > maxLine ){
+            if( maxLine != 0  &&  currLine+use.height > maxLine ){
                 --currLine;
             }
             break;
@@ -1278,7 +1278,7 @@ static int dispHelp( char *str, VTAB *tab )
             break;
         case EV_PAGE_DOWN:
             currLine += use.height;
-            if( maxLine != 0  &&  currLine > maxLine ){
+            if( maxLine != 0  &&  currLine >= maxLine ){
                 currLine -= use.height;
             }
             break;
