@@ -77,7 +77,7 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     if( rc != 0 )
         return( rc );
     DosClose( pipe_output );
-    rc = spawnl( P_NOWAITO, cmdnam, cmdnam, sp, NULL );
+    rc = spawnl( P_NOWAIT, cmdnam, cmdnam, sp, NULL );
     DosClose( std_output );
     DosClose( std_error );
     *readpipe = _hdopen( ( int ) pipe_input, O_RDONLY );
