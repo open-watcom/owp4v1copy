@@ -128,7 +128,9 @@ char *get_file( bool lstf )
 
     fname = Wmalloc( BUFFERSIZE );
     for( i = 0; *Cmd != '\0'; Cmd++ ) {
+#ifndef __UNIX__
         if( *Cmd == '/') break;
+#endif
         if( lstf ) {
             if( *Cmd == ' ') break;
         }
@@ -147,13 +149,21 @@ void Parse_option( void )
     Segspec = 0;
     Hexoff = 0;
     skip_blank();
+#ifdef __UNIX__
+    while( *Cmd == '-' ) {
+#else
     while( *Cmd == '/' || *Cmd == '-' ) {
+#endif
         Cmd++;
         options( *Cmd++ );
         skip_blank();
     }
     Name = get_file( FALSE );
+#ifdef __UNIX__
+    while( *Cmd++ == '-' ) {
+#else
     while( *Cmd++ == '/' || *Cmd++ == '-' ) {
+#endif
         options( *Cmd++ );
         skip_blank();
     }
