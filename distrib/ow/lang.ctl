@@ -21,7 +21,7 @@ echo Installer Build: <1> <2> <3> <4> <5>
   [ IFDEF (cinst "") <2*> ]
      echo Creating C/C++ setup.inf
      langdat c
-     mksetup -i../include c filelist <RELROOT>/rel2 
+     mksetup -i../include c filelist <RELROOT>/rel2
      echo Creating C/C++ installer archive
      # Have to switch to rel2 to ensure paths inside archive are correct
      cd <RELROOT>/rel2
