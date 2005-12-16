@@ -40,43 +40,18 @@
 #include "rtdata.h"
 #include "lseek.h"
 
+
 extern  void    __freefp( FILE *fp );
 extern  int     __flush( FILE *fp );
 extern  int     __close( int );
-#if !defined(__UNIX__)
+#ifndef __UNIX__
 void    (*__RmTmpFileFn)( FILE *fp );
 #endif
 
-_WCRTLINK int fclose( FILE *fp )
-{
-    __stream_link *     link;
-
-    _AccessIOB();
-    link = _RWD_ostream;
-    for( ;; ) {
-        if( link == NULL ) {
-            _ReleaseIOB();
-            return( -1 );     /* file not open */
-        }
-        if( link->stream == fp ) break;
-        link = link->next;
-    }
-    _ReleaseIOB();
-    return( __shutdown_stream( fp, 1 ) );
-}
-
-int __shutdown_stream( FILE *fp, int close_handle )
-{
-    int         ret;
-
-    ret = __doclose( fp, close_handle );
-    __freefp( fp );
-    return( ret );
-}
 
 int __doclose( FILE *fp, int close_handle )
 {
-    int                 ret;
+    int         ret;
 
     if( fp->_flag == 0 ) {
         return( -1 );                       /* file already closed */
@@ -97,12 +72,12 @@ int __doclose( FILE *fp, int close_handle )
     }
 
     if( close_handle ) {
-        #if defined(__UNIX__) || defined(__NETWARE__)
-            // we don't get to implement the close function on these systems
-            ret |= close( fileno( fp ) );
-        #else
-            ret |= __close( fileno( fp ) );
-        #endif
+#if defined( __UNIX__ ) || defined( __NETWARE__ )
+        // we don't get to implement the close function on these systems
+        ret |= close( fileno( fp ) );
+#else
+        ret |= __close( fileno( fp ) );
+#endif
     }
     if( fp->_flag & _BIGBUF ) {     /* if we allocated the buffer */
         lib_free( _FP_BASE(fp) );
@@ -118,3 +93,29 @@ int __doclose( FILE *fp, int close_handle )
     return( ret );
 }
 
+int __shutdown_stream( FILE *fp, int close_handle )
+{
+    int         ret;
+
+    ret = __doclose( fp, close_handle );
+    __freefp( fp );
+    return( ret );
+}
+
+_WCRTLINK int fclose( FILE *fp )
+{
+    __stream_link       *link;
+
+    _AccessIOB();
+    link = _RWD_ostream;
+    for( ;; ) {
+        if( link == NULL ) {
+            _ReleaseIOB();
+            return( -1 );     /* file not open */
+        }
+        if( link->stream == fp ) break;
+        link = link->next;
+    }
+    _ReleaseIOB();
+    return( __shutdown_stream( fp, 1 ) );
+}

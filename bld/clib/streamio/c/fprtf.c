@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  printf -- CLIB formatted output
+* Description:  Implementation of printf() - formatted output.
 *
 ****************************************************************************/
 
@@ -47,7 +47,7 @@ extern  int     __flush( FILE * );
 static slib_callback_t file_putc; // setup calling convention
 static void __SLIB_CALLBACK file_putc( SPECS __SLIB *specs, int op_char )
 {
-    __F_NAME(fputc,fputwc)( op_char, (FILE *) specs->_o._dest );
+    __F_NAME(fputc,fputwc)( op_char, (FILE *)specs->_o._dest );
     specs->_o._output_count++;
 }
 
@@ -85,8 +85,8 @@ _WCRTLINK int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_
   #endif
 #endif
 
-    oflag = fp->_flag & (_SFERR|_EOF);                  /* 06-sep-91 */
-    fp->_flag &= ~(_SFERR|_EOF);
+    oflag = fp->_flag & (_SFERR | _EOF);                  /* 06-sep-91 */
+    fp->_flag &= ~(_SFERR | _EOF);
 
     if( _FP_BASE(fp) == NULL ) {
         __ioalloc( fp );        /* allocate buffer */

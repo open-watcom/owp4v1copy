@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of puts() - put string to stdout.
 *
 ****************************************************************************/
 
@@ -35,24 +34,15 @@
 #include <stdio.h>
 
 
-_WCRTLINK int __F_NAME(puts,putws)( const CHAR_TYPE * s )
+_WCRTLINK int __F_NAME(puts,putws)( const CHAR_TYPE *s )
 {
-#ifdef __WIDECHAR__
-    wint_t              rc;
+    INTCHAR_TYPE        rc;
     wint_t              result;
-#else
-    int                 rc;
-    int                 result;
-#endif
 
     rc = __F_NAME(fputs,fputws)( s, stdout );
     if( rc != __F_NAME(EOF,WEOF) ) {
         /* don't use macro version of putc: multi-threading issues */
-        #ifdef __WIDECHAR__
-            result = (fputwc)( L'\n', stdout );
-        #else
-            result = (fputc)( '\n', stdout );
-        #endif
+        result = __F_NAME(fputc,fputwc)( __F_NAME('\n',L'\n'), stdout );
         if( result == __F_NAME('\n',L'\n') ) {
             rc++;
         } else {

@@ -31,34 +31,28 @@
 
 #include "variety.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include "liballoc.h"
 #include "fileacc.h"
 #include "rtdata.h"
 #include "seterrno.h"
 
-#define KEEP_FLAGS (_READ|_WRITE|_DYNAMIC)
+
+#define KEEP_FLAGS (_READ | _WRITE | _DYNAMIC)
 
 FILE *__allocfp( int handle )
 {
-    FILE *              end;
-    FILE *              fp;
-    __stream_link *     link;
+    FILE                *end;
+    FILE                *fp;
+    __stream_link       *link;
     unsigned            flags;
 
     handle = handle;
     _AccessIOB();
     /* Try and take one off the recently closed list */
     link = _RWD_cstream;
-    if( link != NULL )
-    {
+    if( link != NULL ) {
         _RWD_cstream = link->next;
         fp = link->stream;
         flags = (fp->_flag & KEEP_FLAGS) | (_READ | _WRITE);
@@ -66,10 +60,8 @@ FILE *__allocfp( int handle )
     }
     /* See if there is a static FILE structure available. */
     end = &_RWD_iob[_NFILES];
-    for( fp = _RWD_iob; fp < end; ++fp )
-    {
-        if( (fp->_flag & (_READ | _WRITE)) == 0 )
-        {
+    for( fp = _RWD_iob; fp < end; ++fp ) {
+        if( (fp->_flag & (_READ | _WRITE)) == 0 ) {
             link = lib_malloc( sizeof( __stream_link ) );
             if( link == NULL )
                 goto no_mem;

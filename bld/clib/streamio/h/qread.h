@@ -24,13 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of fprintf().
+* Description:  Prototype for __qread() internal helper.
 *
 ****************************************************************************/
 
 
-// this file should remain an indirected file
-// it is done this way to support the reuse of the source file
-#define __WIDECHAR__
-#undef __INLINE_FUNCTIONS__
-#include "fprintf.c"
+#ifdef __NETWARE__
+    #define __qread( h, b, l ) read( h, b, l )
+#else
+    extern int  __qread( int handle, char *buffer, unsigned len );
+#endif

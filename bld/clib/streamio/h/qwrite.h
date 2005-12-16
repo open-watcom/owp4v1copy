@@ -24,13 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Prototype for __qwrite() internal helper.
 *
 ****************************************************************************/
 
 
-#if defined(__NETWARE__)
+#ifdef __NETWARE__
     #define __qwrite( h, b, l ) write( h, (void *)b, l )
 #else
     extern unsigned __qwrite( int, const void *, unsigned );

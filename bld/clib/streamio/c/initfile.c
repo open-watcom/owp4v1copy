@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Stream I/O initializer.
 *
 ****************************************************************************/
 
@@ -39,46 +38,41 @@
 #include "exitwmsg.h"
 
 
-void __InitFiles()
+void __InitFiles( void )
 {
-    __stream_link _WCI86NEAR *    ptr;
-    __stream_link *             link;
-    FILE *                      fp;
+    __stream_link _WCI86NEAR    *ptr;
+    __stream_link               *link;
+    FILE                        *fp;
 
     fp = _RWD_iob;
-    #if defined(__NETWARE__)
-        stdout->_flag &= ~( _IONBF | _IOLBF | _IOFBF );
-        stdout->_flag |= _IONBF;
-    #endif
-    stderr->_flag &= ~( _IONBF | _IOLBF | _IOFBF );
+#ifdef __NETWARE__
+    stdout->_flag &= ~(_IONBF | _IOLBF | _IOFBF);
+    stdout->_flag |= _IONBF;
+#endif
+    stderr->_flag &= ~(_IONBF | _IOLBF | _IOFBF);
     stderr->_flag |= _IONBF;
-    for( fp = _RWD_iob; fp->_flag != 0; ++fp ) 
-    {
-        #ifdef __NETWARE__
-            ptr = lib_malloc( sizeof( __stream_link ) );
-        #else
-            ptr = lib_nmalloc( sizeof( __stream_link ) );
-        #endif
-        if( ptr == NULL ) 
-        {
+    for( fp = _RWD_iob; fp->_flag != 0; ++fp ) {
+#ifdef __NETWARE__
+        ptr = lib_malloc( sizeof( __stream_link ) );
+#else
+        ptr = lib_nmalloc( sizeof( __stream_link ) );
+#endif
+        if( ptr == NULL ) {
             link = lib_malloc( sizeof( __stream_link ) );
-            if( link == NULL ) 
-            {
+            if( link == NULL ) {
                 __fatal_runtime_error(
                     "Not enough memory to allocate file structures\r\n", 1 );
             }
-        } 
-        else 
-        {
+        } else {
             link = ptr;
         }
         link->stream = fp;
         link->next = _RWD_ostream;
         _RWD_ostream = link;
-            fp->_link = link;
-            fp->_link->_base = NULL;
-            fp->_link->_tmpfchar = 0;
-            fp->_link->_orientation = _NOT_ORIENTED;
+        fp->_link = link;
+        fp->_link->_base = NULL;
+        fp->_link->_tmpfchar = 0;
+        fp->_link->_orientation = _NOT_ORIENTED;
     }
     _RWD_cstream = NULL;
 }

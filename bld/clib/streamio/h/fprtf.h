@@ -24,13 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of fprintf().
+* Description:  Prototype for __fwrite() internal routine.
 *
 ****************************************************************************/
 
 
-// this file should remain an indirected file
-// it is done this way to support the reuse of the source file
-#define __WIDECHAR__
-#undef __INLINE_FUNCTIONS__
-#include "fprintf.c"
+extern int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_list arg );

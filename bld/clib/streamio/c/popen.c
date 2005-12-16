@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of _popen() for OS/2 and Win32.
 *
 ****************************************************************************/
 
@@ -35,18 +34,16 @@
 #ifdef __WIDECHAR__
     #include <wctype.h>
 #else
-    #include <ctype.h>    
+    #include <ctype.h>
 #endif
 #include <fcntl.h>
 #include <io.h>
-#include <malloc.h>
 #include <process.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined(__NT__)
+#if defined( __NT__ )
     #include <windows.h>
-#elif defined(__OS2__)
+#elif defined( __OS2__ )
     #include <wos2.h>
 #endif
 #include "liballoc.h"
@@ -82,101 +79,97 @@ _WCRTLINK FILE *__F_NAME(_popen,_wpopen)( const CHAR_TYPE *command, const CHAR_T
 
     /*** Parse the mode string ***/
     switch( mode[0] ) {         /* read or write */
-      case 'r':
+    case 'r':
         readOrWrite = 'r';
         break;
-      case 'w':
+    case 'w':
         readOrWrite = 'w';
         break;
-      default:
+    default:
         return( NULL );
     }
     switch( mode[1] ) {         /* text or binary */
-      case 't':
+    case 't':
         textOrBinary = 't';
         break;
-      case 'b':
+    case 'b':
         textOrBinary = 'b';
         break;
-      default:
-        textOrBinary = _RWD_fmode==_O_BINARY ? 'b' : 't';
+    default:
+        textOrBinary = _RWD_fmode == _O_BINARY ? 'b' : 't';
     }
 
     /*** Create the pipe at the OS level ***/
-    if( _pipe( handles, 0, textOrBinary=='t'?_O_TEXT:_O_BINARY ) == -1 ) {
+    if( _pipe( handles, 0, textOrBinary == 't' ? _O_TEXT : _O_BINARY ) == -1 ) {
         return( NULL );
     }
 
     /*** Make read handle non-inheritable if reading ***/
     if( readOrWrite == 'r' ) {
-        #if defined(__NT__)
-            rc = DuplicateHandle( GetCurrentProcess(),
-                                  (HANDLE)_os_handle(handles[0]),
-                                  GetCurrentProcess(), &osHandle, 0,
-                                  FALSE, DUPLICATE_SAME_ACCESS );
-            if( rc == FALSE )  return( 0 );
-            close( handles[0] );        /* don't need this any more */
-            handleMode = _O_RDONLY  |  (textOrBinary=='t' ? _O_TEXT : _O_BINARY);
-            handles[0] = _hdopen( (int)osHandle, handleMode );
-            if( handles[0] == -1 ) {
-                CloseHandle( osHandle );
-                close( handles[1] );
-                return( 0 );
-            }
-        #elif defined(__OS2__)
-            #ifdef __386__
-                rc = DosQueryFHState( (HFILE)_os_handle(handles[0]), &handleState );
-            #else
-                rc = DosQFHandState( (HFILE)_os_handle(handles[0]), &handleState );
-            #endif
-            if( rc != NO_ERROR )  return( 0 );
-            handleState |= OPEN_FLAGS_NOINHERIT;
-            handleState &= 0x00007F88;  /* some bits must be zero */
-            #ifdef __386__
-                rc = DosSetFHState( (HFILE)_os_handle(handles[0]), handleState );
-            #else
-                rc = DosSetFHandState( (HFILE)_os_handle(handles[0]), handleState );
-            #endif
-            if( rc != NO_ERROR )  return( 0 );
-        #endif
+#if defined( __NT__ )
+        rc = DuplicateHandle( GetCurrentProcess(),
+                              (HANDLE)_os_handle(handles[0]),
+                              GetCurrentProcess(), &osHandle, 0,
+                              FALSE, DUPLICATE_SAME_ACCESS );
+        if( rc == FALSE ) {
+            return( 0 );
+        }
+        close( handles[0] );        /* don't need this any more */
+        handleMode = _O_RDONLY  |  (textOrBinary == 't' ? _O_TEXT : _O_BINARY);
+        handles[0] = _hdopen( (int)osHandle, handleMode );
+        if( handles[0] == -1 ) {
+            CloseHandle( osHandle );
+            close( handles[1] );
+            return( 0 );
+        }
+#elif defined( __OS2__ )
+        rc = DosQFHandState( (HFILE)_os_handle(handles[0]), &handleState );
+        if( rc != NO_ERROR ) {
+            return( 0 );
+        }
+        handleState |= OPEN_FLAGS_NOINHERIT;
+        handleState &= 0x00007F88;  /* some bits must be zero */
+        rc = DosSetFHandState( (HFILE)_os_handle(handles[0]), handleState );
+        if( rc != NO_ERROR ) {
+            return( 0 );
+        }
+#endif
     }
 
     /*** Make write handle non-inheritable if writing ***/
     else {
-        #if defined(__NT__)
-            rc = DuplicateHandle( GetCurrentProcess(),
-                                  (HANDLE)_os_handle(handles[1]),
-                                  GetCurrentProcess(), &osHandle, 0,
-                                  FALSE, DUPLICATE_SAME_ACCESS );
-            if( rc == FALSE )  return( 0 );
-            close( handles[1] );        /* don't need this any more */
-            handleMode = _O_WRONLY  |  (textOrBinary=='t' ? _O_TEXT : _O_BINARY);
-            handles[1] = _hdopen( (int)osHandle, handleMode );
-            if( handles[1] == -1 ) {
-                CloseHandle( osHandle );
-                close( handles[0] );
-                return( 0 );
-            }
-        #elif defined(__OS2__)
-            #ifdef __386__
-                rc = DosQueryFHState( (HFILE)_os_handle(handles[1]), &handleState );
-            #else
-                rc = DosQFHandState( (HFILE)_os_handle(handles[1]), &handleState );
-            #endif
-            if( rc != NO_ERROR )  return( 0 );
-            handleState |= OPEN_FLAGS_NOINHERIT;
-            handleState &= 0x00007F88;  /* some bits must be zero */
-            #ifdef __386__
-                rc = DosSetFHState( (HFILE)_os_handle(handles[1]), handleState );
-            #else
-                rc = DosSetFHandState( (HFILE)_os_handle(handles[1]), handleState );
-            #endif
-            if( rc != NO_ERROR )  return( 0 );
-        #endif
+#if defined (__NT__ )
+        rc = DuplicateHandle( GetCurrentProcess(),
+                              (HANDLE)_os_handle(handles[1]),
+                              GetCurrentProcess(), &osHandle, 0,
+                              FALSE, DUPLICATE_SAME_ACCESS );
+        if( rc == FALSE ) {
+            return( 0 );
+        }
+        close( handles[1] );        /* don't need this any more */
+        handleMode = _O_WRONLY | (textOrBinary == 't' ? _O_TEXT : _O_BINARY);
+        handles[1] = _hdopen( (int)osHandle, handleMode );
+        if( handles[1] == -1 ) {
+            CloseHandle( osHandle );
+            close( handles[0] );
+            return( 0 );
+        }
+#elif defined( __OS2__ )
+        rc = DosQFHandState( (HFILE)_os_handle(handles[1]), &handleState );
+        if( rc != NO_ERROR ) {
+            return( 0 );
+        }
+        handleState |= OPEN_FLAGS_NOINHERIT;
+        handleState &= 0x00007F88;  /* some bits must be zero */
+        rc = DosSetFHandState( (HFILE)_os_handle(handles[1]), handleState );
+        if( rc != NO_ERROR ) {
+            return( 0 );
+        }
+#endif
     }
 
     /*** Create the pipe's FILE* ***/
-    fp = __F_NAME(fdopen,_wfdopen)( handles[readOrWrite=='r'?0:1], mode );
+    fp = __F_NAME(fdopen,_wfdopen)( handles[readOrWrite == 'r' ? 0 : 1], mode );
     if( fp == NULL ) {
         close( handles[0] );
         close( handles[1] );
@@ -196,22 +189,21 @@ _WCRTLINK FILE *__F_NAME(_popen,_wpopen)( const CHAR_TYPE *command, const CHAR_T
 }
 
 
-
 /* Returns non-zero on success */
 
 static int connect_pipe( FILE *fp, const CHAR_TYPE *command, int *handles,
                          int readOrWrite, int textOrBinary )
 /************************************************************************/
 {
-#if defined(__NT__)
+#if defined( __NT__ )
     BOOL                rc;
     HANDLE              osHandle;
     HANDLE              oldHandle;
-#elif defined(__OS2__) && defined(__386__)
+#elif defined( __WARP__ )
     APIRET              rc;
     HFILE               osHandle;
     HFILE               oldHandle;
-#elif defined(__OS2__) && !defined(__386__)
+#elif defined( __OS2__ )
     USHORT              rc;
     HFILE               osHandle;
     HFILE               oldHandle;
@@ -219,75 +211,84 @@ static int connect_pipe( FILE *fp, const CHAR_TYPE *command, int *handles,
 
     if( readOrWrite == 'w' ) {
         /*** Change the standard input handle for process inheritance ***/
-        #if defined(__NT__)
-            osHandle = GetStdHandle( STD_INPUT_HANDLE );        /* get old */
-            if( osHandle == INVALID_HANDLE_VALUE )  return( 0 );
-            oldHandle = osHandle;
-            rc = SetStdHandle( STD_INPUT_HANDLE,                /* set new */
-                               (HANDLE)_os_handle(handles[0]) );
-            if( rc == FALSE ) {
-                SetStdHandle( STD_INPUT_HANDLE, oldHandle );
-                return( 0 );
-            }
-        #elif defined(__OS2__)
-            oldHandle = 0xFFFFFFFF;             /* duplicate standard input */
-            rc = DosDupHandle( STDIN_HANDLE, &oldHandle );
-            if( rc != NO_ERROR )  return( 0 );
-            osHandle = STDIN_HANDLE;            /* use new standard input */
-            rc = DosDupHandle( (HFILE)_os_handle(handles[0]), &osHandle );
-            if( rc != NO_ERROR ) {
-                DosClose( oldHandle );
-                return( 0 );
-            }
-        #endif
+#if defined( __NT__ )
+        osHandle = GetStdHandle( STD_INPUT_HANDLE );        /* get old */
+        if( osHandle == INVALID_HANDLE_VALUE ) {
+            return( 0 );
+        }
+        oldHandle = osHandle;
+        rc = SetStdHandle( STD_INPUT_HANDLE,                /* set new */
+                           (HANDLE)_os_handle(handles[0]) );
+        if( rc == FALSE ) {
+            SetStdHandle( STD_INPUT_HANDLE, oldHandle );
+            return( 0 );
+        }
+#elif defined( __OS2__ )
+        oldHandle = 0xFFFFFFFF;             /* duplicate standard input */
+        rc = DosDupHandle( STDIN_HANDLE, &oldHandle );
+        if( rc != NO_ERROR )  return( 0 );
+        osHandle = STDIN_HANDLE;            /* use new standard input */
+        rc = DosDupHandle( (HFILE)_os_handle(handles[0]), &osHandle );
+        if( rc != NO_ERROR ) {
+            DosClose( oldHandle );
+            return( 0 );
+        }
+#endif
 
         /*** Spawn the process and go home ***/
-        if( spawn_it( fp, command ) == 0 )  return( 0 );
-        #if defined(__NT__)
-            SetStdHandle( STD_INPUT_HANDLE, oldHandle );
-        #elif defined(__OS2__)
-            osHandle = STDIN_HANDLE;
-            rc = DosDupHandle( oldHandle, &osHandle );
-        #endif
+        if( spawn_it( fp, command ) == 0 ) {
+            return( 0 );
+        }
+#if defined( __NT__ )
+        SetStdHandle( STD_INPUT_HANDLE, oldHandle );
+#elif defined( __OS2__ )
+        osHandle = STDIN_HANDLE;
+        rc = DosDupHandle( oldHandle, &osHandle );
+#endif
         close( handles[0] );        /* parent process should close this */
     } else {
         /*** Change the standard output handle for process inheritance ***/
-        #if defined(__NT__)
-            osHandle = GetStdHandle( STD_OUTPUT_HANDLE );       /* get old */
-            if( osHandle == INVALID_HANDLE_VALUE )  return( 0 );
-            oldHandle = osHandle;
-            rc = SetStdHandle( STD_OUTPUT_HANDLE,               /* set new */
-                               (HANDLE)_os_handle(handles[1]) );
-            if( rc == FALSE ) {
-                SetStdHandle( STD_OUTPUT_HANDLE, oldHandle );
-                return( 0 );
-            }
-        #elif defined(__OS2__)
-            oldHandle = 0xFFFFFFFF;             /* duplicate standard input */
-            rc = DosDupHandle( STDOUT_HANDLE, &oldHandle );
-            if( rc != NO_ERROR )  return( 0 );
-            osHandle = STDOUT_HANDLE;           /* use new standard input */
-            rc = DosDupHandle( (HFILE)_os_handle(handles[1]), &osHandle );
-            if( rc != NO_ERROR ) {
-                DosClose( oldHandle );
-                return( 0 );
-            }
-        #endif
+#if defined( __NT__ )
+        osHandle = GetStdHandle( STD_OUTPUT_HANDLE );       /* get old */
+        if( osHandle == INVALID_HANDLE_VALUE ) {
+            return( 0 );
+        }
+        oldHandle = osHandle;
+        rc = SetStdHandle( STD_OUTPUT_HANDLE,               /* set new */
+                           (HANDLE)_os_handle(handles[1]) );
+        if( rc == FALSE ) {
+            SetStdHandle( STD_OUTPUT_HANDLE, oldHandle );
+            return( 0 );
+        }
+#elif defined( __OS2__ )
+        oldHandle = 0xFFFFFFFF;             /* duplicate standard input */
+        rc = DosDupHandle( STDOUT_HANDLE, &oldHandle );
+        if( rc != NO_ERROR ) {
+            return( 0 );
+        }
+        osHandle = STDOUT_HANDLE;           /* use new standard input */
+        rc = DosDupHandle( (HFILE)_os_handle(handles[1]), &osHandle );
+        if( rc != NO_ERROR ) {
+            DosClose( oldHandle );
+            return( 0 );
+        }
+#endif
 
         /*** Spawn the process and go home ***/
-        if( spawn_it( fp, command ) == 0 )  return( 0 );
-        #if defined(__NT__)
-            SetStdHandle( STD_OUTPUT_HANDLE, oldHandle );
-        #elif defined(__OS2__)
-            osHandle = STDOUT_HANDLE;
-            rc = DosDupHandle( oldHandle, &osHandle );
-        #endif
+        if( spawn_it( fp, command ) == 0 ) {
+            return( 0 );
+        }
+#if defined( __NT__ )
+        SetStdHandle( STD_OUTPUT_HANDLE, oldHandle );
+#elif defined( __OS2__ )
+        osHandle = STDOUT_HANDLE;
+        rc = DosDupHandle( oldHandle, &osHandle );
+#endif
         close( handles[1] );        /* parent process should close this */
     }
 
     return( 1 );
 }
-
 
 
 /* Returns non-zero on success */
@@ -297,39 +298,48 @@ static int spawn_it( FILE *fp, const CHAR_TYPE *command )
 {
     int                 pid;
     int                 numWords;
-    CHAR_TYPE **        words;  /* note: [0] and [1] used for "cmd.exe /c" */
+    CHAR_TYPE           **words;    /* note: [0] and [1] used for "cmd.exe /c" */
 
     /*** Create an argv array from the command string ***/
     numWords = parse_words( command, NULL );
-    if( numWords == -1 )  return( 0 );
-    words = alloca( (numWords+2+1) * sizeof(CHAR_TYPE*) );
-    if( words == NULL )  return( 0 );
+    if( numWords == -1 ) {
+        return( 0 );
+    }
+    words = alloca( (numWords + 2 + 1) * sizeof( CHAR_TYPE * ) );
+    if( words == NULL ) {
+        return( 0 );
+    }
     numWords = parse_words( command, &words[2] );
-    if( numWords == -1 )  return( 0 );
+    if( numWords == -1 ) {
+        return( 0 );
+    }
 
     /*** Use CMD.EXE under NT and OS/2, and COMMAND.COM under Win95 ***/
-    #if defined(__OS2__)
-        words[0] = __F_NAME("cmd.exe",L"cmd.exe");
-    #else
-        if( WIN32_IS_WIN95 ) {
-            words[0] = __F_NAME("command.com",L"command.com");  /* 95 */
-        } else {
-            words[0] = __F_NAME("cmd.exe",L"cmd.exe");          /* NT */
-        }
-    #endif
+#if defined( __OS2__ )
+    words[0] = __F_NAME("cmd.exe",L"cmd.exe");
+#else
+    if( WIN32_IS_WIN95 ) {
+        words[0] = __F_NAME("command.com",L"command.com");  /* 95 */
+    } else {
+        words[0] = __F_NAME("cmd.exe",L"cmd.exe");          /* NT */
+    }
+#endif
     words[1] = __F_NAME("/c",L"/c");
 
     /*** Spawn the process ***/
     pid = __F_NAME(spawnvp,_wspawnvp)( P_NOWAIT, words[0],
         (const CHAR_TYPE **)&words[0] );
-    if( pid == -1 )  return( 0 );
+    if( pid == -1 ) {
+        return( 0 );
+    }
     _FP_PIPEDATA(fp).pid = pid;
 
     /*** Free any memory used by parse_words ('words' freed on return) ***/
-    for( numWords--; numWords>=2; numWords-- )  lib_free( words[numWords] );
+    for( numWords--; numWords>=2; numWords-- ) {
+        lib_free( words[numWords] );
+    }
     return( 1 );
 }
-
 
 
 /*
@@ -346,14 +356,16 @@ static int parse_words( const CHAR_TYPE *command, CHAR_TYPE **words )
 /*******************************************************************/
 {
     int                 numWords = 0;
-    const CHAR_TYPE *   p = command;
-    const CHAR_TYPE *   pLookAhead;
+    const CHAR_TYPE     *p = command;
+    const CHAR_TYPE     *pLookAhead;
     int                 error = 0;
     size_t              len;
 
     while( *p != '\0' ) {
         /*** Skip any leading whitespace ***/
-        while( __F_NAME(isspace,iswspace)(*p) )  p++;
+        while( __F_NAME(isspace,iswspace)(*p) ) {
+            p++;
+        }
 
         /*** Handle the word ***/
         if( *p == '\0' )  break;
@@ -363,7 +375,7 @@ static int parse_words( const CHAR_TYPE *command, CHAR_TYPE **words )
         }
         if( words != NULL ) {
             len = pLookAhead - p;       /* # of chars, excluding the null */
-            words[numWords] = lib_malloc( (len+1) * sizeof(CHAR_TYPE) );
+            words[numWords] = lib_malloc( (len + 1) * sizeof( CHAR_TYPE ) );
             if( words[numWords] == NULL ) {     /* break on error */
                 error = 1;
                 break;
@@ -378,10 +390,14 @@ static int parse_words( const CHAR_TYPE *command, CHAR_TYPE **words )
 
     /*** If an error occurred, free any memory we've allocated ***/
     if( error ) {
-        for( numWords--; numWords>=0; numWords-- )  lib_free( words[numWords] );
+        for( numWords--; numWords>=0; numWords-- ) {
+            lib_free( words[numWords] );
+        }
         return( -1 );
     } else {
-        if( words != NULL )  words[numWords] = NULL;    /* last string */
+        if( words != NULL ) {
+            words[numWords] = NULL;    /* last string */
+        }
     }
 
     return( numWords );

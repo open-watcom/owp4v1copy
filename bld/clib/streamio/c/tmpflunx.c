@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  UNIX implementation of tmpfile().
 *
 ****************************************************************************/
 
@@ -47,35 +46,35 @@ char    *__tmpdir( char * );
 #define _TMPFNAME       "__C_TMPx__"
 #define _TMPFCHAR       7
 
-_WCRTLINK FILE *tmpfile(void)           /* create a temporary file */
-    {
-        char    tmpfnext;
-        int     fd;
-        FILE    *fp;
-        char    name[L_tmpnam];
-        char    *ptr;
+_WCRTLINK FILE *tmpfile( void )         /* create a temporary file */
+{
+    char    tmpfnext;
+    int     fd;
+    FILE    *fp;
+    char    name[L_tmpnam];
+    char    *ptr;
 
-        ptr = __tmpdir( name );
-        strcpy( ptr, _TMPFNAME );
-        for( tmpfnext = 'a'; ; tmpfnext++ ) {
-            ptr[_TMPFCHAR] = tmpfnext;
-            fd = open( name, O_RDWR|O_CREAT|O_EXCL|O_TEMP, 0666 );
-            if( fd != -1 ) break;
-            if( errno != EEXIST ) return( NULL );
-            if( tmpfnext == 'z' ) tmpfnext = 'A' - 1;
-            if( tmpfnext == 'Z' ) return( NULL );
-        }
-        fp = fdopen( fd, "wb+" );
-        if( fp != NULL ) {
-            /* fp->_flag |= _TMPFIL;
-               -- Don't turn the TMPFIL bit on... we're going to
-                  remove the filename from the file system right away.
-                  This is allowed under POSIX. The file will be deleted
-                  as soon as it's closed */
-            _FP_TMPFCHAR(fp) = tmpfnext;
-        } else {
-            close( fd );
-        }
-        remove( name );
-        return( fp );
+    ptr = __tmpdir( name );
+    strcpy( ptr, _TMPFNAME );
+    for( tmpfnext = 'a'; ; tmpfnext++ ) {
+        ptr[_TMPFCHAR] = tmpfnext;
+        fd = open( name, O_RDWR | O_CREAT | O_EXCL | O_TEMP, 0666 );
+        if( fd != -1 ) break;
+        if( errno != EEXIST ) return( NULL );
+        if( tmpfnext == 'z' ) tmpfnext = 'A' - 1;
+        if( tmpfnext == 'Z' ) return( NULL );
     }
+    fp = fdopen( fd, "wb+" );
+    if( fp != NULL ) {
+        /* fp->_flag |= _TMPFIL;
+           -- Don't turn the TMPFIL bit on... we're going to
+              remove the filename from the file system right away.
+              This is allowed under POSIX. The file will be deleted
+              as soon as it's closed */
+        _FP_TMPFCHAR(fp) = tmpfnext;
+    } else {
+        close( fd );
+    }
+    remove( name );
+    return( fp );
+}

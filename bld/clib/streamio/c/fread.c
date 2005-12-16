@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Platform independent fread() implementation.
+* Description:  Implementation of fread() - read data from stream.
 *
 ****************************************************************************/
 
@@ -37,15 +37,10 @@
 #include <errno.h>
 #include "rtdata.h"
 #include "seterrno.h"
+#include "qread.h"
 
 
-#if defined(__NETWARE__)
- #define __qread( h, b, l ) read( h, b, l )
- #define DOS_EOF_CHAR   0x1a
-#else
- #define DOS_EOF_CHAR   0x1a
- extern int  __qread( int handle, char *buffer, unsigned len );
-#endif
+#define DOS_EOF_CHAR    0x1a
 
 extern int  __fill_buffer( FILE * );    /* located in fgetc */
 extern void __ioalloc( FILE *fp );
@@ -58,7 +53,7 @@ _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
 
     _ValidFile( fp, 0 );
     _AccessFile( fp );
-    if(( fp->_flag & _READ ) == 0 ) {
+    if( (fp->_flag & _READ) == 0 ) {
         __set_errno( EBADF );
         fp->_flag |= _SFERR;
         _ReleaseFile( fp );
@@ -67,9 +62,9 @@ _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
 
 #if 0
     /*** If the buffer is _DIRTY, resync it before reading ***/
-    if( fp->_flag & (_WRITE|_UNGET) ) {
+    if( fp->_flag & (_WRITE | _UNGET) ) {
         if( fp->_flag & _DIRTY ) {
-            fseek( fp, 0L, SEEK_CUR );
+            fseek( fp, 0, SEEK_CUR );
         }
     }
 #endif
@@ -83,15 +78,17 @@ _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
         __ioalloc( fp );                        /* allocate buffer */
     }
     len_read = 0;
-#if !defined(__UNIX__)
+#if !defined( __UNIX__ )
     if( fp->_flag & _BINARY )
 #endif
     {
         size_t bytes_left = n, bytes;
-        for(;;) {
+        for( ;; ) {
             if( fp->_cnt != 0 ) {
                 bytes = fp->_cnt;
-                if( bytes > bytes_left )  bytes = bytes_left;
+                if( bytes > bytes_left ) {
+                    bytes = bytes_left;
+                }
                 memcpy( buf, fp->_ptr, bytes );
                 fp->_ptr += bytes;
                 buf += bytes;
@@ -104,16 +101,15 @@ _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
             /* if user's buffer is larger than our buffer, OR
                _IONBF is set, then read directly into user's buffer. */
 
-            if ((bytes_left >= fp->_bufsize)  /* 28-apr-90 */
-                                                || (fp->_flag & _IONBF))         /* 30-oct-91 */
-                        {
+            if( (bytes_left >= fp->_bufsize) || (fp->_flag & _IONBF) ) {
                 bytes = bytes_left;
-                                fp->_ptr = _FP_BASE(fp);
-                                fp->_cnt = 0;
-                if( ! (fp->_flag & _IONBF) )
-                                {
+                fp->_ptr = _FP_BASE(fp);
+                fp->_cnt = 0;
+                if( !(fp->_flag & _IONBF) ) {
                     /* if more than a sector, set to multiple of sector size*/
-                    if( bytes > 512 )  bytes &= -512;
+                    if( bytes > 512 ) {
+                        bytes &= -512;
+                    }
                 }
                 n = __qread( fileno(fp), buf, bytes );
                 if( n == -1 ) {
@@ -132,7 +128,7 @@ _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )
         } /* end for */
 #if !defined(__UNIX__)
     } else {
-        for(;;) {
+        for( ;; ) {
             int c;
 
             // ensure non-empty buffer

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  fflush helper implementation
+* Description:  Implementation of fflush() helper routine.
 *
 ****************************************************************************/
 
@@ -40,13 +40,12 @@
 #include "qwrite.h"
 #include "lseek.h"
 
-#if defined(__NETWARE__) && defined (_THIN_LIB)
-/*
-//  Take flush from LibC
-*/
+#if defined( __NETWARE__ ) && defined( _THIN_LIB )
+
+/* Take flush from LibC */
 _WCRTLINK int __flush( FILE *fp )
 {
-    return(fflush(fp));
+    return( fflush( fp ) );
 }
 
 #else
@@ -67,18 +66,18 @@ _WCRTLINK int __flush( FILE *fp )
             ptr = _FP_BASE(fp);
             amount = fp->_cnt;
             while( amount != 0 && ret == 0 ) {
-                len = __qwrite( fileno( fp ), ptr, amount );/* 02-aug-90 */
+                len = __qwrite( fileno( fp ), ptr, amount );    /* 02-aug-90 */
                 if( len == -1 ) {
                     fp->_flag |= _SFERR;
                     ret = EOF;
                 }
-                #if !defined(__UNIX__)
-                    else if( len == 0 ) {
-                        __set_errno( ENOSPC );               /* 12-nov-88 */
-                        fp->_flag |= _SFERR;
-                        ret = EOF;
-                    }
-                #endif
+#ifndef __UNIX__
+                else if( len == 0 ) {
+                    __set_errno( ENOSPC );                      /* 12-nov-88 */
+                    fp->_flag |= _SFERR;
+                    ret = EOF;
+                }
+#endif
                 ptr += len;
                 amount -= len;
             }
@@ -99,11 +98,13 @@ _WCRTLINK int __flush( FILE *fp )
     }
     fp->_ptr = _FP_BASE(fp);   /* reset ptr to start of buffer */
     fp->_cnt = 0;
-    #if !defined(__NETWARE__) && !defined(__OSI__)
-        if( ret == 0  &&  ( _FP_EXTFLAGS(fp) & _COMMIT ) ) {
-            if( fsync( fileno( fp ) ) == -1 )  ret = EOF;
+#if !defined( __NETWARE__ ) && !defined( __OSI__ )
+    if( ret == 0  &&  (_FP_EXTFLAGS(fp) & _COMMIT) ) {
+        if( fsync( fileno( fp ) ) == -1 ) {
+            ret = EOF;
         }
-    #endif
+    }
+#endif
     _ReleaseFile( fp );
     return( ret );
 }

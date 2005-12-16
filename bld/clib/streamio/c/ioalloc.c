@@ -35,11 +35,10 @@
 #include <unistd.h>
 #include "rtdata.h"
 
-extern  void    __chktty(FILE *);
 
+extern  void    __chktty( FILE * );
 
-void __ioalloc( fp )
-    register FILE *fp;
+void __ioalloc( FILE *fp )
 {
     __chktty( fp );                                 /* JBS 28-aug-90 */
     if( fp->_bufsize == 0 ) {
@@ -58,9 +57,9 @@ void __ioalloc( fp )
     }
     _FP_BASE(fp) = lib_malloc( fp->_bufsize );
     if( _FP_BASE(fp) == NULL ) {
-        fp->_flag &= ~ ( _IONBF | _IOLBF | _IOFBF );
+        fp->_flag &= ~(_IONBF | _IOLBF | _IOFBF);
         fp->_flag |= _IONBF;        /* can't get big buffer */
-        _FP_BASE(fp) = (char*) &(fp->_ungotten);
+        _FP_BASE(fp) = (char *)&(fp->_ungotten);
         fp->_bufsize = 1;
     } else {
         fp->_flag |= _BIGBUF;       /* got big buffer */

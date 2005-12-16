@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Commit mode state variable and accessor.
 *
 ****************************************************************************/
 
@@ -38,7 +37,7 @@ int             _commode = 0;
 
 
 /*
- * Before changing any of this, check startup\c\commode.c!
+ * Before changing any of this, check startup/c/commode.c!
  */
 
 #pragma aux __set_commode "*_";
