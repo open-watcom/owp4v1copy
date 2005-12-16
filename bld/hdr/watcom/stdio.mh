@@ -144,7 +144,7 @@ using std::wscanf;
 :include valist.sp
 
 :segment QNX | LINUX
-#define BUFSIZ          1024        /*  Default buffer size                 */
+#define BUFSIZ          4096        /*  Default buffer size                 */
 #define _NFILES         16          /*  minimum guaranteed open files       */
 #define FILENAME_MAX    255
 :elsesegment
