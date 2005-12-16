@@ -2,7 +2,7 @@
 // FILE: _rbtree (std::_OW::RedBlackTree definition)
 //
 :keep CPP_HDR
-:include crwat.sp
+:include crwatcnt.sp
 //
 // Description: This header is an OpenWatcom red black tree container 
 //              implementation.

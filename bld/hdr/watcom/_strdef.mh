@@ -2,7 +2,7 @@
 // FILE: _strdef.h (Definition of std::string)
 //
 :keep CPP_HDR
-:include crwat.sp
+:include crwatcnt.sp
 //
 // Description: This is a helper header. It contains the definition of
 //              std::string and enough other information so that the

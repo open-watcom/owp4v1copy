@@ -2,7 +2,7 @@
 // FILE: set (...)
 //
 :keep CPP_HDR
-:include crwat.sp
+:include crwatcnt.sp
 //
 // Description: This header is part of the C++ standard library.
 ///////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,7 @@
 // FILE: utility (Utility templates)
 //
 :keep CPP_HDR
-:include crwat.sp
+:include crwatcnt.sp
 //
 // Description: This header is part of the C++ standard library. It
 //              defines a few useful helper templates that don't fit

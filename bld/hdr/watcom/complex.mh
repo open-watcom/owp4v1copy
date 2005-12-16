@@ -429,7 +429,7 @@ inline double norm( Complex const &__cv ) {
 // FILE: complex (Complex numbers)
 //
 :keep CPP_HDR
-:include crwat.sp
+:include crwatcnt.sp
 //
 // Description: This header is part of the C++ standard library. It
 //              provides support for complex numbers with varying levels

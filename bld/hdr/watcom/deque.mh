@@ -2,7 +2,7 @@
 // FILE: deque (Definition of std::deque)
 //
 :keep CPP_HDR
-:include crwat.sp
+:include crwatcnt.sp
 //
 // Description: This header is part of the C++ standard library. It defines
 //              a double ended queue template that provides random access

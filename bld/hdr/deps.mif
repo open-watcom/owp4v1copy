@@ -7,8 +7,8 @@ ctype_deps = ../watcom/ctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../
 errno_deps = ../watcom/errno.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../errno.sp
 float_deps = ../watcom/float.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp
 iso646_deps = ../watcom/iso646.mh ../readonly.sp ../crwat.sp
-limits_deps = ../watcom/limits.mh ../readonly.sp ../crwatqnx.sp ../crwat.sp ../mbmax.sp ../ext.sp ../unixext.sp
-locale_deps = ../watcom/locale.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../null.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
+limits_deps = ../watcom/limits.mh ../readonly.sp ../crwatqnx.sp ../crwatcnt.sp ../mbmax.sp ../ext.sp ../unixext.sp
+locale_deps = ../watcom/locale.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../crwatcnt.sp ../null.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
 math_deps = ../watcom/math.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
 setjmp_deps = ../watcom/setjmp.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
 signal_deps = ../watcom/signal.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
@@ -66,26 +66,26 @@ strstrea     : $(strstrea_deps)
 
 # These dependency lists are for other C++ library headers.
 
-algorith_deps = ../watcom/algorith.mh ../readonly.sp ../crwat.sp
-bitset_deps = ../watcom/bitset.mh ../readonly.sp ../crwat.sp
-complex_deps = ../watcom/complex.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
-deque_deps = ../watcom/deque.mh ../readonly.sp ../crwat.sp
+algorith_deps = ../watcom/algorith.mh ../readonly.sp ../crwatcnt.sp
+bitset_deps = ../watcom/bitset.mh ../readonly.sp ../crwatcnt.sp
+complex_deps = ../watcom/complex.mh ../readonly.sp ../crwatcnt.sp ../poppack.sp ../pshpackl.sp
+deque_deps = ../watcom/deque.mh ../readonly.sp ../crwatcnt.sp
 exception_deps = ../watcom/exceptio.mh ../readonly.sp ../cpppfv.sp ../crwat.sp ../watexc.sp
-function_deps = ../watcom/function.mh ../readonly.sp ../crwat.sp
-iterator_deps = ../watcom/iterator.mh ../readonly.sp ../crwat.sp
-list_deps = ../watcom/list.mh ../readonly.sp ../crwat.sp
-map_deps = ../watcom/map.mh ../readonly.sp ../crwat.sp
-memory_deps = ../watcom/memory.mh ../readonly.sp ../crwat.sp ../throws.sp
+function_deps = ../watcom/function.mh ../readonly.sp ../crwatcnt.sp
+iterator_deps = ../watcom/iterator.mh ../readonly.sp ../crwatcnt.sp
+list_deps = ../watcom/list.mh ../readonly.sp ../crwatcnt.sp
+map_deps = ../watcom/map.mh ../readonly.sp ../crwatcnt.sp
+memory_deps = ../watcom/memory.mh ../readonly.sp ../crwatcnt.sp ../throws.sp
 new_deps = ../watcom/new.mh ../readonly.sp ../cpppfv.sp ../crwat.sp
-numeric_deps = ../watcom/numeric.mh ../readonly.sp ../crwat.sp
-queue_deps = ../watcom/queue.mh ../readonly.sp ../crwat.sp
-set_deps = ../watcom/set.mh ../readonly.sp ../crwat.sp
-stack_deps = ../watcom/stack.mh ../readonly.sp ../crwat.sp
+numeric_deps = ../watcom/numeric.mh ../readonly.sp ../crwatcnt.sp
+queue_deps = ../watcom/queue.mh ../readonly.sp ../crwatcnt.sp
+set_deps = ../watcom/set.mh ../readonly.sp ../crwatcnt.sp
+stack_deps = ../watcom/stack.mh ../readonly.sp ../crwatcnt.sp
 stdexcept_deps = ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp ../throws.sp
 typeinfo_deps = ../watcom/typeinfo.mh ../readonly.sp ../crwat.sp
-utility_deps = ../watcom/utility.mh ../readonly.sp ../crwat.sp
-valarray_deps = ../watcom/valarray.mh ../readonly.sp ../crwat.sp
-vector_deps = ../watcom/vector.mh ../readonly.sp ../crwat.sp
+utility_deps = ../watcom/utility.mh ../readonly.sp ../crwatcnt.sp
+valarray_deps = ../watcom/valarray.mh ../readonly.sp ../crwatcnt.sp
+vector_deps = ../watcom/vector.mh ../readonly.sp ../crwatcnt.sp
 
 algorith     : $(algorith_deps)
 bitset       : $(bitset_deps)
@@ -114,8 +114,8 @@ vector       : $(vector_deps)
 # The follow describe the dependences for the various *.h files.
 
 _comdef.h       : ../watcom/_comdef.mh ../readonly.sp ../crwat.sp
-_rbtree.h       : ../watcom/_rbtree.mh ../readonly.sp ../crwat.sp
-_strdef.h       : ../watcom/_strdef.mh ../readonly.sp ../crwat.sp
+_rbtree.h       : ../watcom/_rbtree.mh ../readonly.sp ../crwatcnt.sp
+_strdef.h       : ../watcom/_strdef.mh ../readonly.sp ../crwatcnt.sp
 assert.h        : $(assert_deps)
 bios.h          : ../watcom/bios.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
 bios98.h        : ../watcom/bios98.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp

@@ -396,7 +396,7 @@ namespace std {
 // FILE: string (Definition of character traits and std::string)
 //
 :keep CPP_HDR
-:include crwat.sp
+:include crwatcnt.sp
 //
 // Description: This header is part of the C++ standard library. It
 //              defines the character traits template and the std::
