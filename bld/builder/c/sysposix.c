@@ -72,7 +72,8 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
         return( -1 );
     if( pid == 0 ) {
         execvp( cmdnam, argv );
-        exit( 127 );
+        /* If above call to execvp() failed, do *not* call library termination routines! */
+        _exit( 127 );
     }
     free( cmdnam );
     free( argv );
