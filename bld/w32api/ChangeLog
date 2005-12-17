@@ -1,3 +1,231 @@
+2005-12-12  Christopher Faylor  <cgf@timesys.com>
+
+	* include/winuser.h (WINSTA_ALL_ACCESS): Define.
+
+2005-12-09  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/kernel32.def (CreateFiberEx): Correct suffix.
+
+2005-12-09  Huw Davies <hdavies@users.sourceforge.net>
+	    Danny Smith <dannysmith@users.sourceforge.net>
+
+	* lib/msxml-uuid.c: New file to generate UUIDs for 
+	MSXML interfaces.
+	* lib/Makefile.in (UUID_OBJS): Add msxml-uuid.o.
+
+2005-12-07  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h (GetDevicePowerState): Add prototype.
+	* lib/kernel32.def (GetDevicePowerState): Correct suffix.
+
+2005-12-07  Brian Gunlogson  <gmb300@users.sourceforge.net>
+
+	* include/winuser.h (GetClassLongPtr{AW}): Guard prototypes with _WIN64.
+	Define as macro if !_WIN64.
+	(SetClassLongPtr{AW}): Likewise.
+	(GCLP_*): Add GetClassLongPtr defines.
+	* lib/user32.def (GetClassLongPtr{AW}): Remove stubs.
+	(SetClassLongPtr{AW}): Likewise.
+
+2005-11-18  Brian Gunlogson  <gmb300@users.sourceforge.net>
+
+	* include/winuser.h (GetClassLongPtr{AW}): Add prototypes.
+	(SetClassLongPtr{AW}): Likewise.
+	(GCLP_*): Add GetClassLongPtr defines.
+	* lib/user32.def (GetClassLongPtr{AW}): Add stubs.
+	(SetClassLongPtr{AW}): Likewise.
+
+2005-11-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commdlg.h (OPENFILENAMEW): Add members for
+	_WIN32_WINNT >= 0x0500.
+	Thanks to Ricardo Dalcorsso Fodra.
+	(OPENFILENAMEA): Modify whitespace. Ansify comment.
+
+2005-11-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wingdi.h (GetICMProfileA): Correct prototype.
+	(GetICMProfileW): Likewise.
+	Thanks to: Paul J Lucas
+
+2005-11-04  Michael Jung  <mjung@iss.tu-darmstadt.de> 
+
+	* lib/shell32.c (CLSID_ShellFSFolder): Add GUID.
+
+2005-11-03  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/crypt32.def (CertOIDToAlgId, CertAlgIDToOID, CryptProtectData,
+	CryptUnprotectData, CryptDecodeObjectEx, CryptEncodeObjectEx,
+	CryptRegisterOIDFunction, CryptUnregisterOIDFunction): Add stubs.
+	Thanks to: F Richter  <res2002 at users dot sourceforge dot net>
+
+2005-10-29  Chris Sutcliffe  <ir0nh34d@users.sf.net>
+
+	* include/objbase.h: Fix typo.
+	* include/w32api.h: Increment version to 3.5.
+	* Makefile.in: Ditto.
+
+2005-10-27  Chris Sutcliffe  <ir0nh34d@users.sf.net>
+
+	* include/w32api.h: Increment version to 3.4.
+	* Makefile.in: Ditto.
+
+2005-10-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h (GetProcessId): Remove duplicate declaration.
+	Use _WIN32_WINNT >= 0x0501 guard. 
+
+2005-10-11  Christopher Faylor  <cgf@timesys.com>
+
+	* include/winbase.h (GetProcessId): Declare.
+
+2005-09-23  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/ddk/newdev.def: Added.
+	Thanks to: Stephan Meyer <ste_meyer at users dot sourceforge dot net>
+
+2005-09-23  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/commdlg.h (OPENFILENAME): Added WINNT >= 0x0500
+	component.
+	Thanks to: Gennady Feldman <gena01 at users dot sourceforge dot net>
+
+2005-09-23  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/shell32.def (SHILCreateFromPath): Add stub.
+	Thanks to: Michael Jung <mjung at iss dot tu-darmstadt dot de>
+
+2005-09-21  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/winbase.h (RegisterWaitForSingleObject,
+	RegisterWaitForSingleObjectEx): Define.
+	* lib/kernel32.def (RegisterWaitForSingleObjectEx@20): Define.
+	(RegisterWaitForSingleObject@16): Changed to
+	RegisterWaitForSingleObject@24.
+	Thanks to: Brandon Sneed <nivenh at users dot sourceforge dot net>
+
+2005-09-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winsock2.h (SO_EXCLUSIVEADDRUSE): Define.
+	Thanks to: Gisle Vanem  <giva at bgnett dot no>
+
+2005-09-08  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/reason.h  [_WIN32_WINNT >= 0x0501]
+	(SHTDN_REASON_*): New file.
+	* include/objbase.h: Avoid double header guard.
+
+2005-08-17  Michael Jung  <mjung@iss.tu-darmstadt.de> 
+
+	* lib/shell32.c (CLSID_RecycleBin, CLSID_ControlPanel,
+	CLSID_MyComputer,CLSID_Internet, CLSID_NetworkPlaces,
+	CLSID_MyDocuments, CLSID_FolderShortcut): Add GUIDs. 
+
+005-08-17  Martin Fuchs <martin-fuchs@gmx.net>
+
+	* include/shlobj.h (IContextMenu3): Define.
+	* include/shlguid.h (IID_IContextMenu3): Declare.
+	* lib/shell32.c (IID_IContextMenu3): Define.
+
+2005-08-17  Martin Fuchs <martin-fuchs@gmx.net>
+
+	* include/shlobj.h (SHFormatDrive): Declaration of function
+	and associated constants.
+
+2005-08-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ddk/hidsdi.h:  New file.
+	* lib/ddk/hid.def: Uncomment symbols and add stdcall suffix for
+	functions declared in hidsdi.h.
+	Thanks to:  Alex J Lennon  <ajlennon at organixconsulting dot com>
+
+2005-08-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/imm32.def (ImmDisableIME): Add stub.
+	Thanks to: "kidmin"  <kidmin at users dot sourceforge dot net>
+
+2005-08-10  Chris Sutcliffe  <ir0nh34d@users.sf.net>
+
+	* include/w32api.h: Increment version to 3.3.
+	* Makefile.in: Ditto.
+
+2005-07-28  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/winnt.h (SUBLANG_PORTUGUESE, SUBLANG_PORTUGUESE_BRAZILIAN):
+	Correct their values.
+	Thanks to: Daniel K. O. <danielosmari at users dont sf dot net>
+
+2005-07-25  Chris Sutcliffe <ir0nh34d@users.sourceforge.net>
+
+	* include/winuser.h (HSHELL_RUDEAPPACTIVATED): Define.
+
+2005-07-20  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wingdi.h (TT_PRIM_CSPLINE): Define.
+	Thanks to: Bob Jamison <ishmal at users dot sourceforge dot net>
+
+2005-07-20  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/richedit.h (SETTEXTEX): Define structure and
+	associated constants.
+	(GT_SELECTION): Define GETTEXTEX flag constant. 
+
+2005-07-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wingdi.h (SYSPAL_NOSTATIC256): Define.
+
+2005-07-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wingdi.h (WINGDIAPI): Define to DECLSPEC_DLLIMPORT
+	if __W32API_USE_DLLIMPORT__.   Use throughout to qualify
+	prototypes.
+
+2005-07-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commctrl.h (RBBS_USECHEVRON): Define.
+	(RBBS_*): Use hex notation, group together.
+
+2005-07-18  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/kernel32.def (GetUserGeoID): Correct suffix.
+	Thanks to: "bernd23" <bernd23 at users dot sourceforge dot net>
+
+2005-07-18  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commctrl.h (TreeView_SetItemState): Initilise
+	_tvi.hItem.
+	Thanks to:  Joseph Remes <jremes at users dot sourceforge dot net>
+
+2005-07-18  Mattia Barbon  <mbarbon@users.sourceforge.net>
+
+	* include/commctrl.h (NMLVFINDITEM): Add structure.
+
+2005-07-18  Michael Gerdau  <mgdde@users.sourceforge.net>
+
+	* include/wininet.h (WININET_API_FLAG_*): Add defines.
+
+2005-07-18  Daniel Atallah  <datallah@users.sourceforge.net>
+
+	* include/winnt.h (VER_SET_CONDITION): Define.
+
+2005-07-18  Michael Gerdau  <mgdde@users.sourceforge.net>
+
+	* include/wincon.h (AttachConsole): Correct _WIN32_WINNT guard.
+	(ATTACH_PARENT_PROCESS): Define.
+	(CONSOLE_WINDOWED_MODE): Correct definition to match MSDN
+	documentation.
+
+2005-07-17  Benoit Blanchon  <bblanchon@users.sourceforge.net>
+
+	* include/winbase.h (QueueUserWorkItem): Add prototype.
+
+2005-07-13  Benoit Blanchon  <bblanchon@users.sourceforge.net>
+
+	* include/wingdi.h (SHADEBLENDCAPS, SB_NONE, SB_CONST_ALPHA,
+	SB_PIXEL_ALPHA, SB_PREMULT_ALPHA, SB_GRAD_RECT, SB_GRAD_TRI,
+	COLORMGMTCAPS, CM_NONE, CM_DEVICE_ICM, CM_GAMMA_RAMP,
+	CM_CMYK_COLOR): Define.
+
 2005-06-19  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* include/winldap.h (ldap_simple_bindW, ldap_simple_bind_sW,
@@ -43,7 +271,7 @@
 
 2005-03-16  Christopher Faylor  <cgf@timesys.com>
 
-	* winclude/winnt.h (SYSTEM_LUID): Fix definitition invalidated by below
+	* include/winnt.h (SYSTEM_LUID): Fix definitition invalidated by below
 	change.
 
 2005-03-16  Danny Smith  <dannysmith@users.sourceforge.net>
@@ -117,7 +345,7 @@
 
 2005-01-02  Earnie Boyd  <earnie@users.sf.net>
 
-	* include/w32api.h: Increment version.
+	* include/w32api.h: Increment version to 3.2.
 	* Makefile.in: Ditto.
 	* include/afxres.h: Remove the \r from the line ending.
 	* include/errorrep.h: Ditto.
@@ -231,7 +459,7 @@
 
 	* include/winuser.h (LLKHF_EXTENDED, LLKHF_INJECTED, LLKHF_UP):
 	Add defines.
-	(LLKHF_ALTDOWN): Define based on KF_ALTDOWN,
+	(LLKHF_ALTDOWN): Define based on KF_ALTDOWN.
              
 2004-11-19  Benoit Blanchon  <bblanchon@users.sourceforge.net>
 

@@ -136,6 +136,7 @@ ddk_libs = &
         hidparse.lib &
         mcd.lib &
         ndis.lib &
+        newdev.lib &
         ntoskrnl.lib &
         scsiport.lib &
         tdi.lib &
@@ -213,7 +214,10 @@ vfw32.lbc: $(vfw32_libs)
         @%create $@
         @for %i in ($(vfw32_libs)) do @%append $@ @ %i
 
-uuid.lib: uuid.obj mshtml-u.obj
+uuid.lib: uuid.obj mshtml-u.obj msxml-uuid.obj
 
 mshtml-u.obj: mshtml-u.c .autodepend
+        $(cc) $(cflags) $(inc_path) $<
+
+msxml-uuid.obj: msxml-uuid.c .autodepend
         $(cc) $(cflags) $(inc_path) $<

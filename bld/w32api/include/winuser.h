@@ -378,6 +378,7 @@ extern "C" {
 #define WS_EX_TOPMOST	8
 #define WS_EX_TRANSPARENT	32
 #define WS_EX_WINDOWEDGE	256
+#define WINSTA_ALL_ACCESS	895
 #define WINSTA_ACCESSCLIPBOARD	4
 #define WINSTA_ACCESSGLOBALATOMS	32
 #define WINSTA_CREATEDESKTOP	8
@@ -612,6 +613,13 @@ extern "C" {
 #define GCL_MENUNAME (-8)
 #define GCL_STYLE (-26)
 #define GCL_WNDPROC (-24)
+#define GCLP_MENUNAME (-8)
+#define GCLP_HBRBACKGROUND (-10)
+#define GCLP_HCURSOR (-12)
+#define GCLP_HICON (-14)
+#define GCLP_HMODULE (-16)
+#define GCLP_WNDPROC (-24)
+#define GCLP_HICONSM (-34)
 #if 0
     /* This is supposed to be defined by the program using it not defined
        in the w32api headers.  I've left it here for documentation purposes.
@@ -1129,6 +1137,7 @@ extern "C" {
 #define HSHELL_WINDOWACTIVATED 4
 #define HSHELL_WINDOWCREATED 1
 #define HSHELL_WINDOWDESTROYED 2
+#define HSHELL_RUDEAPPACTIVATED 32772
 #define HSHELL_FLASH 32774
 #if (WINVER >= 0x0500)
 #define SPI_SETFOREGROUNDLOCKTIMEOUT 0x2001
@@ -3452,6 +3461,13 @@ WINUSERAPI BOOL WINAPI GetClassInfoW(HINSTANCE,LPCWSTR,LPWNDCLASSW);
 WINUSERAPI BOOL WINAPI GetClassInfoExW(HINSTANCE,LPCWSTR,LPWNDCLASSEXW);
 WINUSERAPI DWORD WINAPI GetClassLongA(HWND,int);
 WINUSERAPI DWORD WINAPI GetClassLongW(HWND,int);
+#ifdef _WIN64
+WINUSERAPI ULONG_PTR WINAPI GetClassLongPtrA(HWND,int);
+WINUSERAPI ULONG_PTR WINAPI GetClassLongPtrW(HWND,int);
+#else
+#define GetClassLongPtrA GetClassLongA
+#define GetClassLongPtrW GetClassLongW
+#endif
 WINUSERAPI int WINAPI GetClassNameA(HWND,LPSTR,int);
 WINUSERAPI int WINAPI GetClassNameW(HWND,LPWSTR,int);
 WINUSERAPI WORD WINAPI GetClassWord(HWND,int);
@@ -3775,6 +3791,13 @@ WINUSERAPI BOOL WINAPI SetCaretBlinkTime(UINT);
 WINUSERAPI BOOL WINAPI SetCaretPos(int,int);
 WINUSERAPI DWORD WINAPI SetClassLongA(HWND,int,LONG);
 WINUSERAPI DWORD WINAPI SetClassLongW(HWND,int,LONG);
+#ifdef _WIN64
+WINUSERAPI ULONG_PTR WINAPI SetClassLongPtrA(HWND,int,LONG_PTR);
+WINUSERAPI ULONG_PTR WINAPI SetClassLongPtrW(HWND,int,LONG_PTR);
+#else
+#define SetClassLongPtrA SetClassLongA
+#define SetClassLongPtrW SetClassLongW
+#endif
 WINUSERAPI WORD WINAPI SetClassWord(HWND,int,WORD);
 WINUSERAPI HANDLE WINAPI SetClipboardData(UINT,HANDLE);
 WINUSERAPI HWND WINAPI SetClipboardViewer(HWND);
@@ -3993,6 +4016,7 @@ typedef MONITORINFOEXW MONITORINFOEX, *LPMONITORINFOEX;
 #define GetClassInfo GetClassInfoW
 #define GetClassInfoEx GetClassInfoExW
 #define GetClassLong GetClassLongW
+#define GetClassLongPtr GetClassLongPtrW
 #define GetClassName GetClassNameW
 #define GetClipboardFormatName GetClipboardFormatNameW
 #define GetDlgItemText GetDlgItemTextW
@@ -4057,6 +4081,7 @@ typedef MONITORINFOEXW MONITORINFOEX, *LPMONITORINFOEX;
 #define SendMessageTimeout SendMessageTimeoutW
 #define SendNotifyMessage SendNotifyMessageW
 #define SetClassLong SetClassLongW
+#define SetClassLongPtr SetClassLongPtrW
 #define SetDlgItemText SetDlgItemTextW
 #define SetMenuItemInfo SetMenuItemInfoW
 #define SetProp SetPropW
@@ -4162,6 +4187,7 @@ typedef MONITORINFOEXA MONITORINFOEX, *LPMONITORINFOEX;
 #define GetClassInfo GetClassInfoA
 #define GetClassInfoEx GetClassInfoExA
 #define GetClassLong GetClassLongA
+#define GetClassLongPtr GetClassLongPtrA
 #define GetClassName GetClassNameA
 #define GetClipboardFormatName GetClipboardFormatNameA
 #define GetDlgItemText GetDlgItemTextA
@@ -4226,6 +4252,7 @@ typedef MONITORINFOEXA MONITORINFOEX, *LPMONITORINFOEX;
 #define SendMessageTimeout SendMessageTimeoutA
 #define SendNotifyMessage SendNotifyMessageA
 #define SetClassLong SetClassLongA
+#define SetClassLongPtr SetClassLongPtrA
 #define SetDlgItemText SetDlgItemTextA
 #define SetMenuItemInfo SetMenuItemInfoA
 #define SetProp SetPropA

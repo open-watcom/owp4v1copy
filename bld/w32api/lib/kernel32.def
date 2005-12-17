@@ -67,7 +67,7 @@ CreateDirectoryW@8
 CreateEventA@16
 CreateEventW@16
 CreateFiber@12
-CreateFiberEx@12
+CreateFiberEx@20
 CreateFileA@28
 CreateFileMappingA@24
 CreateFileMappingW@24
@@ -289,7 +289,7 @@ GetDateFormatA@24
 GetDateFormatW@24
 GetDefaultCommConfigA@12
 GetDefaultCommConfigW@12
-GetDevicePowerState@4
+GetDevicePowerState@8
 GetDiskFreeSpaceA@20
 GetDiskFreeSpaceW@20
 GetDiskFreeSpaceExA@16
@@ -428,7 +428,7 @@ GetTimeZoneInformation@4
 GetUserDefaultLCID@0
 GetUserDefaultLangID@0
 GetUserDefaultUILanguage@0
-GetUserGeoID@12
+GetUserGeoID@4
 GetVDMCurrentDirectories@8
 GetVersion@0
 GetVersionExA@4
@@ -621,7 +621,8 @@ ReadProcessMemory@20
 ReadProcessMemoryVlm@20
 RegisterConsoleVDM@44
 RegisterWaitForInputIdle@4
-RegisterWaitForSingleObject@16
+RegisterWaitForSingleObject@24
+RegisterWaitForSingleObjectEx@20
 RegisterWowBaseHandlers@4
 RegisterWowExec@4
 ReleaseActCtx@4
