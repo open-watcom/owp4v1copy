@@ -36,14 +36,14 @@
 #include "asmdefs.h"
 #include "asmalloc.h"
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
   #include "directiv.h"
   #include "myassert.h"
 #endif
 
 struct asmfixup         *InsFixups[3];
 
-#ifndef _WASM_
+#if !defined( _STANDALONE_ )
 
 struct asmfixup         *FixupHead;
 
@@ -93,7 +93,7 @@ struct asmfixup *AddFixup( struct asm_sym *sym, enum fixup_types fixup_type, enu
     fixup = AsmAlloc( sizeof( struct asmfixup ) );
     if( fixup != NULL ) {
         fixup->external = 0;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         fixup->sym = sym;
         fixup->offset = sym->offset;
         fixup->def_seg = (CurrSeg != NULL) ? CurrSeg->seg : NULL;
@@ -114,7 +114,7 @@ struct asmfixup *AddFixup( struct asm_sym *sym, enum fixup_types fixup_type, enu
     return( fixup );
 }
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 #define SkipFixup() \
     fixup->next = sym->fixup; \
@@ -148,7 +148,7 @@ static int DoPatch( struct asm_sym *sym, struct asmfixup *fixup )
     long                disp;
     long                max_disp;
     unsigned            size;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     dir_node            *seg;
 
     // all relative fixups should occure only at first pass and they signal forward references
@@ -195,7 +195,7 @@ static int DoPatch( struct asm_sym *sym, struct asmfixup *fixup )
         disp = fixup->offset + AsmCodeAddress - fixup->fixup_loc - size;
         max_disp = (1UL << ((size * 8)-1)) - 1;
         if( disp > max_disp || disp < (-max_disp-1) ) {
-#ifndef _WASM_
+#if !defined( _STANDALONE_ )
             AsmError( JUMP_OUT_OF_RANGE );
             FixupHead = NULL;
             return( ERROR );
@@ -255,7 +255,7 @@ int BackPatch( struct asm_sym *sym )
     struct asmfixup     *fixup;
     struct asmfixup     *next;
     
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     fixup = sym->fixup;
     sym->fixup = NULL;
 #else
@@ -287,7 +287,7 @@ void mark_fixupp( unsigned long determinant, int index )
     fixup = InsFixups[index];
     if( fixup != NULL ) {
         fixup->fixup_loc = AsmCodeAddress;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         // fixup->offset = Code->data[index];
         // Code->data[index] = 0; // fixme
         if( fixup->fixup_type != FIX_SEG ) {
@@ -329,7 +329,7 @@ void mark_fixupp( unsigned long determinant, int index )
     }
 }
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 struct fixup *CreateFixupRec( int index )
 /***************************************/

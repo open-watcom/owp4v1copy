@@ -36,7 +36,7 @@
 #include "asmfixup.h"
 #include "asmlabel.h"
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 #include "directiv.h"
 
@@ -75,7 +75,7 @@ int MakeLabel( char *symbol_name, memtype mem_type )
 /**********************************************/
 {
     struct asm_sym      *sym;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     int                     addr;
     char                    buffer[20];
 
@@ -157,7 +157,7 @@ int MakeLabel( char *symbol_name, memtype mem_type )
     return( NOT_ERROR );
 }
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 int LabelDirective( int i )
 /*************************/
 {

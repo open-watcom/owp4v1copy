@@ -50,7 +50,7 @@ typedef enum {
 
         MT_PTR,
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         MT_SBYTE,
         MT_SWORD,
         MT_SDWORD,
@@ -68,7 +68,7 @@ typedef struct asm_sym {
         struct asm_sym  *next;
         char            *name;
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         struct asm_sym  *segment;
         uint_32         offset;
         uint_32         first_size;   /* size of 1st initializer in bytes */
@@ -89,7 +89,7 @@ typedef struct asm_sym {
 extern struct asm_sym *AsmLookup( char *name );
 extern struct asm_sym *AsmGetSymbol( char *name );
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 extern void AsmTakeOut( char *name );
 extern int AsmChangeName( char *old, char *new );

@@ -31,10 +31,10 @@
 
 #ifdef DEFINE_ASMOPS
 
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
+#if defined( _STANDALONE_ )
 #include "fullops.gh"
+#else
+#include "inlnops.gh"
 #endif
 #undef DEFINE_ASMOPS
 
@@ -43,10 +43,10 @@
 #ifndef _ASMOPS2_H_
 #define _ASMOPS2_H_
 
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
+#if defined( _STANDALONE_ )
 #include "fullops.gh"
+#else
+#include "inlnops.gh"
 #endif
 
 #endif

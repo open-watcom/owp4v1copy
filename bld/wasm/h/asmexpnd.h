@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 extern int ExpandAllConsts( int start_pos, bool early_only );
 extern int ExpandProcString( int index );

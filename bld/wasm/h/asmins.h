@@ -57,7 +57,7 @@ enum prefix_reg {
     PREFIX_GS = 0x65
 };
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     struct asm_ins {
         unsigned short      token;                  /* T_ADD, etc */
         unsigned            allowed_prefix  : 4;    /* allowed prefix */
@@ -103,7 +103,7 @@ struct asm_code {
     memtype         mem_type;       // byte / word / etc. NOT near/far
     long            data[3];
     struct {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         unsigned short      token;
         enum asm_cpu        cpu;
 #if __WATCOMC__ > 1230

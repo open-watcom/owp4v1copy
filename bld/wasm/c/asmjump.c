@@ -37,7 +37,7 @@
 #include "asmfixup.h"
 #include "asmeval.h"
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
   #include "directiv.h"
 #endif
 
@@ -45,7 +45,7 @@
 int ptr_operator( memtype mem_type, uint_8 fix_mem_type );
 int jmp( expr_list *opndx );
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 extern void             InputQueueLine( char * );
 extern void             GetInsString( enum asm_token, char *, int );
@@ -202,7 +202,7 @@ int jmp( expr_list *opndx )
     enum fixup_options  fixup_option;
     enum sym_state      state;
     struct asm_sym      *sym;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     dir_node            *seg;
 #endif
 
@@ -218,14 +218,14 @@ int jmp( expr_list *opndx )
         return( NOT_ERROR );
     }
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     if( sym->mem_type == MT_ERROR ) {
         AsmError( LABEL_NOT_DEFINED );
         return( ERROR );
     }
 #endif
     state = sym->state;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     seg = GetSeg( sym );
     if( seg == NULL || CurrSeg == NULL || CurrSeg->seg != seg ) {
         /* jumps to another segment are just like to another file */
@@ -240,7 +240,7 @@ int jmp( expr_list *opndx )
     fixup_type = FIX_RELOFF8;
     switch( state ) {
     case SYM_INTERNAL:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     case SYM_PROC:
 #endif
         if(  ( Code->mem_type == MT_EMPTY || Code->mem_type == MT_SHORT
@@ -249,7 +249,7 @@ int jmp( expr_list *opndx )
             && sym->mem_type != MT_DWORD
             && sym->mem_type != MT_FWORD 
             && !IS_JMPCALLF( Code->info.token ) ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             if( ( Code->info.token == T_CALL )
                 && ( Code->mem_type == MT_EMPTY )
                 && ( sym->mem_type == MT_FAR ) ) {
@@ -337,7 +337,7 @@ int jmp( expr_list *opndx )
             case T_LOOPNEW:
             case T_LOOPNZW:
             case T_LOOPZW:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     #define GOOD_PHASE  !PhaseError &&
 #else
     #define GOOD_PHASE
@@ -358,7 +358,7 @@ int jmp( expr_list *opndx )
                     break;
                 default:
                     if( Code->info.opnd_type[Opnd_Count] != OP_I8 ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
                         if( Code->mem_type == MT_EMPTY ) {
                             jumpExtend( 0 );
                             return( SCRAP_INSTRUCTION );
@@ -391,7 +391,7 @@ int jmp( expr_list *opndx )
             case MT_NEAR:
                 Code->mem_type = sym->mem_type;
                 break;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             case MT_PROC:
                 Code->mem_type = IS_PROC_FAR() ? MT_FAR : MT_NEAR;
                 if( IS_JMPCALLN( Code->info.token )
@@ -424,7 +424,7 @@ int jmp( expr_list *opndx )
                 /* fall through */
             case MT_FAR:
             case MT_EMPTY:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
                 SET_OPSIZ( Code, SymIs32( sym ));
                 find_frame( sym );
 #endif
@@ -448,7 +448,7 @@ int jmp( expr_list *opndx )
                 break;
             case MT_BYTE:
             case MT_WORD:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             case MT_SBYTE:
             case MT_SWORD:
 #endif
@@ -456,7 +456,7 @@ int jmp( expr_list *opndx )
                 return( ERROR );
             case MT_DWORD:
             case MT_FWORD:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             case MT_SDWORD:
 #endif
                 return( INDIRECT_JUMP );
@@ -472,7 +472,7 @@ int jmp( expr_list *opndx )
                 AsmError( CANNOT_USE_SHORT_WITH_CALL );
                 return( ERROR );
             } else if( Code->mem_type == MT_EMPTY ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
                 fixup_option = OPTJ_CALL;
 #else
                 fixup_option = OPTJ_NONE;
@@ -502,7 +502,7 @@ int jmp( expr_list *opndx )
                 // inline assembler jmp default distance is near
                 // stand-alone assembler jmp default distance is short
                 fixup_option = OPTJ_NONE;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
                 /* guess short if JMP, we will expand later if needed */
                 fixup_type = FIX_RELOFF8;
                 Code->info.opnd_type[Opnd_Count] = OP_I8;
@@ -528,12 +528,12 @@ int jmp( expr_list *opndx )
                 break;
             case MT_DWORD:
             case MT_WORD:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             case MT_SDWORD:
             case MT_SWORD:
 #endif
                 return( INDIRECT_JUMP );
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             case MT_SBYTE:
 #endif
             case MT_BYTE:
@@ -584,7 +584,7 @@ int jmp( expr_list *opndx )
                     // forward reference
                     // inline assembler default distance is near
                     // stand-alone assembler default distance is short
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
                     fixup_option = OPTJ_JXX;
                     fixup_type = FIX_RELOFF8;
                     Code->info.opnd_type[Opnd_Count] = OP_I8;
@@ -601,7 +601,7 @@ int jmp( expr_list *opndx )
                     }
                     break;
                 case MT_FAR:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
                     jumpExtend( 1 );
                     return( SCRAP_INSTRUCTION );
 #endif
@@ -614,7 +614,7 @@ int jmp( expr_list *opndx )
                 // Jxx SHORT
                 switch( Code->mem_type ) {
                 case MT_EMPTY:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
                     fixup_option = OPTJ_EXTEND;
                     fixup_type = FIX_RELOFF8;
                     Code->info.opnd_type[Opnd_Count] = OP_I8;
@@ -718,7 +718,7 @@ int ptr_operator( memtype mem_type, uint_8 fix_mem_type )
         }
     } else {
         if( ( mem_type != MT_EMPTY ) && ( Code->mem_type_fixed == FALSE ) ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             if( mem_type != MT_STRUCT ) {
 #endif
                 Code->mem_type = mem_type;
@@ -729,7 +729,7 @@ int ptr_operator( memtype mem_type, uint_8 fix_mem_type )
                     }
                 }
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             }
 #endif
         }

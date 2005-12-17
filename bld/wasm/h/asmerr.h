@@ -55,7 +55,7 @@ extern void             AsmNote( int msgnum, ... );
 
 extern char             *curr_src_line;
 
-#ifndef _WASM_
+#if !defined( _STANDALONE_ )
 #define AsmIntErr( x )
 #elif DEBUG_OUT
 #define AsmIntErr( x ) printf( "%s\n", curr_src_line );printf( "Internal error = %d\n", x )
@@ -63,7 +63,7 @@ extern char             *curr_src_line;
 #define AsmIntErr( x ) printf( "Internal error = %d\n", x )
 #endif
 
-#if defined( _WASM_ )
+#if defined( _STANDALONE_ )
 
     #define MSG_SHARE_RC_BASE   1
     #define MSG_WOMP_RC_BASE    200

@@ -65,7 +65,7 @@ typedef struct expr_list {
 
 extern int          EvalExpr( int, int, int, bool );
 extern int          EvalOperand( int *, int, expr_list *, bool );
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 extern int          EvalConstant( int, int, int, bool );
 #endif
 

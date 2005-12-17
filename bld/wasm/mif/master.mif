@@ -23,7 +23,7 @@ libs = -L$(clib_dir)/$(%OBJDIR) -lwatcom -L$(wres_dir)/$(%OBJDIR) -lwres
 
 #cflags stuff
 #########
-extra_c_flags =-D_WASM_
+extra_c_flags =-D_STANDALONE_
 !ifeq release 0
 extra_c_flags += -DDEBUG_OUT
 !endif
@@ -122,7 +122,7 @@ wsplice_keys = -kIS_RC -k$(host_OS)
 !endif
 
 $(name).res : $(proj_path)/h/$(proj_name).rc usage.rc usagej.rc msg.gh wasmmsg.gh wmpmsg.gh
-        $(rc_aui) -D_WASM_ $[@ -fo=$^@
+        $(rc_aui) -D_STANDALONE_ $[@ -fo=$^@
 
 usage.rc : $(proj_path)/h/usage.sp
         @%write usage.tmp -kENGLISH $(wsplice_keys) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< $^@

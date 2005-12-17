@@ -39,7 +39,7 @@ enum sym_state {
         SYM_EXTERNAL,
         SYM_STACK,
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         SYM_SEG,            // segment
         SYM_GRP,            // group
         SYM_PROC,           // procedure
@@ -91,7 +91,7 @@ enum fixup_options {
         OPTJ_CALL                /* forward reference CALL (NEAR or converted FAR to NEAR) */
 };
 
-#ifndef _WASM_
+#if !defined( _STANDALONE_ )
 /*
    The following function is supplied by the user of the mini-assembler.
    It returns either:
@@ -121,7 +121,7 @@ struct asmfixup {
         char                    external;
 //        unsigned                line;
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         int_8                   frame;          // frame of the fixup
         uint_16                 frame_datum;    // frame_datum of the fixup
         struct dir_node         *def_seg;       // segment fixup is in
@@ -132,7 +132,7 @@ struct asmfixup {
 
 };
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 #define     AsmCodeAddress      ( GetCurrAddr() )
 #else
 extern uint_32                  AsmCodeAddress;
@@ -145,8 +145,7 @@ extern void                     AsmLine( char * );
 extern void                     AsmInit( int, int, int, int );
 extern void                     AsmSymFini( void );
 
-#ifndef _WASM_
-
+#if !defined( _STANDALONE_ )
 extern unsigned long            GetAsmCPUInfo( void );
 extern unsigned long            SetAsmCPUInfo( unsigned long );
 

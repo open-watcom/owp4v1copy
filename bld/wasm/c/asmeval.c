@@ -35,7 +35,7 @@
 #include "asmeval.h"
 #include "asmdefs.h"
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 #include "myassert.h"
 #else
 //  FIXME!!
@@ -125,7 +125,7 @@ static int get_precedence( int i )
     switch( AsmBuffer[i]->token ) {
     case T_UNARY_OPERATOR:
         switch( AsmBuffer[i]->value ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_LENGTH:
         case T_SIZE:
         case T_LENGTHOF:
@@ -143,7 +143,7 @@ static int get_precedence( int i )
         case T_SHL:
         case T_SHR:
             return( 8 );
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_EQ:
         case T_NE:
         case T_LT:
@@ -174,7 +174,7 @@ static int get_precedence( int i )
         case T_OWORD:
         case T_NEAR:
         case T_FAR:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_SBYTE:
         case T_SWORD:
         case T_SDWORD:
@@ -296,7 +296,7 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
         }
         break;
     case T_ID:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         if( Parse_Pass == PASS_1 ) {
             new->sym = AsmLookup( AsmBuffer[i]->string_ptr );
             if( new->sym == NULL ) {
@@ -417,7 +417,7 @@ static bool is_unary( int i, char sign )
         case T_SHORT:
         case T_NEAR:
         case T_FAR:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_SBYTE:
         case T_SWORD:
         case T_SDWORD:
@@ -503,7 +503,7 @@ static void MakeConst( expr_list *token )
         return;
     token->label = EMPTY;
     if( token->mbr != NULL ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         if( token->mbr->state == SYM_STRUCT_FIELD ) {
         } else if( token->mbr->state == SYM_STRUCT ) {
             token->value += token->mbr->total_size;
@@ -531,7 +531,7 @@ static void MakeConst( expr_list *token )
 static void fix_struct_value( expr_list *token )
 /**********************************************/
 {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     if( token->mbr != NULL ) {
         if( token->mbr->state == SYM_STRUCT ) {
             token->value += token->mbr->total_size;
@@ -825,7 +825,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 sym = token_1->sym;
                 if( sym == NULL )
                     return( ERROR );
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
                 if( Parse_Pass > PASS_1 && sym->state == SYM_UNDEFINED ) {
                     if( error_msg )
                         AsmError( LABEL_NOT_DEFINED );
@@ -840,7 +840,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 if( sym == NULL )
                     return( ERROR );
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
                 if( Parse_Pass > PASS_1 && sym->state == SYM_UNDEFINED ) {
                     if( error_msg )
                         AsmError( LABEL_NOT_DEFINED );
@@ -977,7 +977,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             if( sym == NULL )
                 return( ERROR );
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             if( AsmBuffer[token_1->label]->token == T_RES_ID ) {
                 /* Kludge for "FLAT" */
                 AsmBuffer[token_1->label]->token = T_ID;
@@ -1020,7 +1020,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         case T_OWORD:
         case T_NEAR:
         case T_FAR:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_SBYTE:
         case T_SWORD:
         case T_SDWORD:
@@ -1066,7 +1066,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             case T_FAR:
                 token_1->mem_type = MT_FAR;
                 break;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             case T_SBYTE:
                 token_1->mem_type = MT_SBYTE;
                 break;
@@ -1095,7 +1095,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             case T_OWORD:
             case T_NEAR:
             case T_FAR:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             case T_SBYTE:
             case T_SWORD:
             case T_SDWORD:
@@ -1140,7 +1140,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             }
         }
         switch( AsmBuffer[index]->value ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_EQ:
             token_1->value = ( token_1->value == token_2->value ? -1:0 );
             break;
@@ -1197,7 +1197,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             return( ERROR );
         }
         switch( AsmBuffer[index]->value ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_LENGTH:
         case T_SIZE:
         case T_LENGTHOF:
@@ -1496,7 +1496,7 @@ static bool is_expr1( int i )
     switch( AsmBuffer[i]->token ) {
     case T_INSTR:
         switch( AsmBuffer[i]->value ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_EQ:
         case T_NE:
         case T_LT:
@@ -1536,7 +1536,7 @@ static bool is_expr1( int i )
         if( i+1 < TokCnt )
             return( TRUE );
         break;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     case T_RES_ID:
         switch( AsmBuffer[i]->value ) {
         case T_FLAT:
@@ -1562,7 +1562,7 @@ static bool is_expr1( int i )
     case T_CL_SQ_BRACKET:
         return(  TRUE );
     case T_COLON:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         if( i == 1 || ( AsmBuffer[i+1]->token == T_DIRECTIVE &&
                         AsmBuffer[i+1]->value == T_EQU2 ) ) {
             /* It is the colon following the label or it is a := */
@@ -1596,7 +1596,7 @@ static bool is_expr2( int i )
     switch( AsmBuffer[i]->token ) {
     case T_INSTR:
         switch( AsmBuffer[i]->value ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_EQ:
         case T_NE:
         case T_LT:
@@ -1634,7 +1634,7 @@ static bool is_expr2( int i )
         return( TRUE );
     case T_RES_ID:
         switch( AsmBuffer[i]->value ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_FLAT:
             DefFlatGroup();
             return( TRUE );
@@ -1676,7 +1676,7 @@ static bool is_expr2( int i )
     case T_CL_SQ_BRACKET:
         return(  TRUE );
     case T_COLON:
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         if( ( AsmBuffer[i+1]->token == T_DIRECTIVE )
             && ( AsmBuffer[i+1]->value == T_EQU2 ) )
             /* It is a := */
@@ -1889,7 +1889,7 @@ static int fix( expr_list *res, int start, int end )
             case MT_FAR:
                 AsmBuffer[start++]->value = T_FAR;
                 break;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             case MT_SBYTE:
                 AsmBuffer[start++]->value = T_SBYTE;
                 break;
@@ -2111,7 +2111,7 @@ static int is_expr_const( int i )
     switch( AsmBuffer[i]->token ) {
     case T_INS:
         switch( AsmBuffer[i]->value ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         case T_EQ:
         case T_NE:
         case T_LT:
@@ -2172,7 +2172,7 @@ static int is_expr_const( int i )
 }
 #endif
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 extern int EvalConstant( int count, int start_tok, int end_tok, bool flag_msg )
 /*****************************************************************************/

@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 #include "asmglob.h"
 #include <stdarg.h>

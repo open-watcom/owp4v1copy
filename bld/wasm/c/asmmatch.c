@@ -37,7 +37,7 @@
 #include "asmalloc.h"
 #include "asmfixup.h"
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 #include "directiv.h"
 #include "queues.h"
@@ -76,7 +76,7 @@ static int output( int i )
     struct asm_code             *rCode = Code;
     unsigned_8                  tmp;
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     /*
      * Output debug info - line numbers
      */
@@ -170,7 +170,7 @@ static int output( int i )
      */
     if( ins->token == T_FWAIT ) {
         if(( rCode->info.cpu&P_CPU_MASK ) < P_386 ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
             if(( Options.floating_point == DO_FP_EMULATION ) && ( !rCode->use32 )) {
                 AsmCodeByte( OP_NOP );
             }
@@ -180,7 +180,7 @@ static int output( int i )
         }
     } else if( ins->allowed_prefix == FWAIT ) {
         AsmCodeByte( OP_WAIT );
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     } else if(( Options.floating_point == DO_FP_EMULATION )
         && ( !rCode->use32 )
         && ( ins->allowed_prefix != NO_FWAIT )
@@ -195,7 +195,7 @@ static int output( int i )
         }
     }
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     /*
      * Output FP fixup if required
      */
@@ -353,7 +353,7 @@ static int output_data( unsigned long determinant, int index )
         return( NOT_ERROR );
     }
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     store_fixup( index );
 #endif
 
@@ -747,12 +747,12 @@ static int match_phase_3( int *i, unsigned long determinant )
             break;
         case OP_I:
             if( cur_opnd & asm_op2 ) {
-#if defined(_WASM_)
+#if defined(_STANDALONE_)
                 long operand = Code->data[OPND2];
 #endif
                 if( last_opnd & OP_R8 ) {
                     // 8-bit register, so output 8-bit data
-#if defined(_WASM_)
+#if defined(_STANDALONE_)
                     if( Parse_Pass == PASS_1 && !InRange( operand, 1 ) ) {
                         AsmWarn( 1, IMMEDIATE_CONSTANT_TOO_LARGE );
                     }
@@ -764,7 +764,7 @@ static int match_phase_3( int *i, unsigned long determinant )
                     }
                 } else if( last_opnd & OP_R16 ) {
                     // 16-bit register, so output 16-bit data
-#if defined(_WASM_)
+#if defined(_STANDALONE_)
                     if( Parse_Pass == PASS_1 && !InRange( operand, 2 ) ) {
                         AsmWarn( 1, IMMEDIATE_CONSTANT_TOO_LARGE );
                     }
@@ -911,7 +911,7 @@ static int match_phase_3( int *i, unsigned long determinant )
     return( EMPTY );
 }
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 static void AddLinnumDataRef( void )
 /*******************************/

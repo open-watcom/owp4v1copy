@@ -93,7 +93,7 @@
 #define addr_32( s )     ( s->use32 ? ( s->prefix.adrsiz == FALSE ) : ( s->prefix.adrsiz == TRUE ))
 #define oper_32( s )     ( s->use32 ? ( s->prefix.opsiz == FALSE ) : ( s->prefix.opsiz == TRUE ))
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 #define MEM_TYPE( op, typ ) ( (op) == MT_##typ || (op) == MT_S##typ )
 
@@ -117,7 +117,7 @@ extern int              Token_Count;    // number of tokens on line
 struct asm_sym;
 extern void             AsmByte( unsigned char );
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 extern void             AsmCodeByte( unsigned char );
 extern void             AsmDataByte( unsigned char );

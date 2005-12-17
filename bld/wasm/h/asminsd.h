@@ -37,7 +37,7 @@
 #define ins(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
                 {tok,prefix,byte1_info,rm_info,op3,op_dir,cpu,{op1,op2},opcode,rm_byte},
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     #define insa(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
                 ins(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
 #else

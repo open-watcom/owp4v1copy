@@ -35,7 +35,7 @@
 #include "asmexpnd.h"
 #include "asmdefs.h"
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 #include "asmalloc.h"
 #include "asmsym.h"

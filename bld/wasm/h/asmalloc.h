@@ -31,12 +31,10 @@
 #ifndef _ASMALLOC_H_
 #define _ASMALLOC_H_
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
   #include <malloc.h>
   #include "memutil.h"  // WOMP memory routines declaration
-#endif
 
-#ifdef _WASM_
   #define AsmTmpAlloc( amount )   alloca( amount )
 #endif
 

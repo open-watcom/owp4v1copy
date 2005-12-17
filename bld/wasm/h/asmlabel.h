@@ -31,7 +31,7 @@
 #ifndef _ASMLABEL_H_
 #define _ASMLABEL_H_
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 extern bool             IsLabelStruct( char * );
 extern void             PrepAnonLabels( void );

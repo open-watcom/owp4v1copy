@@ -93,7 +93,7 @@ enum naming_conventions {
                              */
 };
 
-#if defined( _WASM_ )
+#if defined( _STANDALONE_ )
 
 #define DELIM                   " ,\t\0"
 #define T_UNDEFINED             -1

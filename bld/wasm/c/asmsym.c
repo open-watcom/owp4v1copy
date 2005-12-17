@@ -39,7 +39,7 @@
 #define stricmp strcasecmp
 #endif
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 #include "directiv.h"
 #include "queues.h"
@@ -77,7 +77,7 @@ static char *InitAsmSym( struct asm_sym *sym, char *name )
         strcpy( sym->name, name );
         sym->next = NULL;
         sym->fixup = NULL;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         sym->segment = NULL;
         sym->offset = 0;
         sym->public = FALSE;
@@ -107,7 +107,7 @@ static struct asm_sym *AllocASym( char *name )
 {
     struct asm_sym      *sym;
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     sym = AsmAlloc( sizeof( dir_node ) );
 #else
     sym = AsmAlloc( sizeof( struct asm_sym ) );
@@ -117,7 +117,7 @@ static struct asm_sym *AllocASym( char *name )
             AsmFree( sym );
             return( NULL );
         }
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         ((dir_node *)sym)->next = NULL;
         ((dir_node *)sym)->prev = NULL;
         ((dir_node *)sym)->line = 0;
@@ -133,7 +133,7 @@ static struct asm_sym **AsmFind( char *name )
 {
     struct asm_sym      **sym;
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     sym = &sym_table[ hashpjw( name ) ];
 #else
     sym = &AsmSymHead;
@@ -160,7 +160,7 @@ struct asm_sym *AsmLookup( char *name )
     sym_ptr = AsmFind( name );
     sym = *sym_ptr;
     if( sym != NULL ) {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         /* current address operator */
         if( IS_SYM_COUNTER( name ) )
             GetSymInfo( sym );
@@ -173,7 +173,7 @@ struct asm_sym *AsmLookup( char *name )
         sym->next = *sym_ptr;
         *sym_ptr = sym;
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
         if( IS_SYM_COUNTER( name ) ) {
             GetSymInfo( sym );
             sym->state = SYM_INTERNAL;
@@ -192,7 +192,7 @@ struct asm_sym *AsmLookup( char *name )
 static void FreeASym( struct asm_sym *sym )
 /*****************************************/
 {
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     struct asmfixup     *fixup;
 
     for( ;; ) {
@@ -207,7 +207,7 @@ static void FreeASym( struct asm_sym *sym )
     AsmFree( sym );
 }
 
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
 
 int AsmChangeName( char *old, char *new )
 /***************************************/
@@ -293,7 +293,7 @@ struct asm_sym *AsmGetSymbol( char *name )
     struct asm_sym  **sym_ptr;
 
     sym_ptr = AsmFind( name );
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     if( ( *sym_ptr != NULL ) && IS_SYM_COUNTER( name ) )
         GetSymInfo( *sym_ptr );
 #endif
@@ -305,7 +305,7 @@ void AsmSymFini()
 /***************/
 {
     struct asm_sym      *sym;
-#ifdef _WASM_
+#if defined( _STANDALONE_ )
     dir_node            *dir;
     unsigned            i;
 
@@ -350,7 +350,7 @@ void AsmSymFini()
 #endif
 }
 
-#if defined( _WASM_ ) && defined( DEBUG_OUT )
+#if defined( _STANDALONE_ ) && defined( DEBUG_OUT )
 
 static void DumpSymbol( struct asm_sym *sym )
 /*******************************************/
