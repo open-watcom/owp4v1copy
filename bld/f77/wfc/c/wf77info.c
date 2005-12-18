@@ -155,19 +155,13 @@ static  segment_id      CurrSegId;
 static  segment_id      CurrImpSegId;
 static  cg_type         UserType;
 
+#ifdef pick
+#undef pick
+#endif
+#define pick(id,type,dbgtype,cgtype) dbgtype,
+
 static  dbg_type        DBGTypes[] = {
-        0,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE,
-        DBG_NIL_TYPE
+#include "ptypdefn.h"
 };
 
 extern  sym_id                  STShadow(sym_id);

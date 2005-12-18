@@ -86,8 +86,7 @@ static  void            StructInit( sym_id fd );
 #ifdef pick
 #undef pick
 #endif
-
-#define pick(id,typ) typ,
+#define pick(id,type,dbgtype,cgtype) type,
 
 static  TYPE    MapType[] = {
 #include "ptypdefn.h"

@@ -46,8 +46,7 @@
 #ifdef pick
 #undef pick
 #endif
-
-#define pick(id,typ) id,
+#define pick(id,type,dbgtype,cgtype) id,
 
 enum PARAM_TYPES {
 #include "ptypdefn.h"
