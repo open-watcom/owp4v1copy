@@ -53,8 +53,6 @@ static  hw_reg_set      STOSBParms[] = {
 };
 #endif
 
-static unsigned long    asm_CPU;
-
 void PragmaInit( void )
 /*********************/
 {
@@ -917,14 +915,14 @@ void AsmSysInit( unsigned char *buf )
 {
     AsmCodeBuffer = buf;
     AsmCodeAddress = 0;
-    asm_CPU = GetAsmCPUInfo();
+    AsmSaveCPUInfo();
 }
 
 void AsmSysFini( void )
 /*********************/
 {
     AsmSymFini();
-    SetAsmCPUInfo( asm_CPU );
+    AsmRestoreCPUInfo();
 }
 
 void AsmSysMakeInlineAsmFunc( int code_ovrflw )

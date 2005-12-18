@@ -2622,18 +2622,16 @@ void AsmInit( int cpu, int fpu, int use32, int extn )
 
 #if !defined( _STANDALONE_ )
 
-unsigned long GetAsmCPUInfo( void )
+static enum asm_cpu CPUinfo;
+
+void AsmSaveCPUInfo( void )
 {
-    return( Code->info.cpu );
+    CPUinfo = Code->info.cpu;
 }
 
-unsigned long SetAsmCPUInfo( unsigned long new )
+void AsmRestoreCPUInfo( void )
 {
-    unsigned long old;
-
-    old = Code->info.cpu;
-    Code->info.cpu = new;
-    return( old );
+    Code->info.cpu = CPUinfo;
 }
 
 #endif

@@ -146,8 +146,8 @@ extern void                     AsmInit( int, int, int, int );
 extern void                     AsmSymFini( void );
 
 #if !defined( _STANDALONE_ )
-extern unsigned long            GetAsmCPUInfo( void );
-extern unsigned long            SetAsmCPUInfo( unsigned long );
+extern void                     AsmSaveCPUInfo( void );
+extern void                     AsmRestoreCPUInfo( void );
 
 #endif
 

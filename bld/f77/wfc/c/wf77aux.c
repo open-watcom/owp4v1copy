@@ -1378,9 +1378,6 @@ static  void    GetByteSeq( void ) {
     int             len;
     char            *ptr;
     char            buff[MAXIMUM_BYTESEQ+32]; // extra for assembler
-#if ( _CPU == 8086 || _CPU == 386 )
-    unsigned long   asm_CPU;
-#endif
 #if _CPU == 8086
     bool            float_specified;
 
@@ -1388,7 +1385,7 @@ static  void    GetByteSeq( void ) {
 #endif
     seq_len = 0;
 #if ( _CPU == 8086 || _CPU == 386 )
-    asm_CPU = GetAsmCPUInfo();
+    AsmSaveCPUInfo();
 #endif
     for(;;) {
         if( *TokStart == '"' ) {
@@ -1434,7 +1431,7 @@ static  void    GetByteSeq( void ) {
     InsertFixups( buff, seq_len );
     AsmSymFini();
 #if ( _CPU == 8086 || _CPU == 386 )
-    SetAsmCPUInfo( asm_CPU );
+    AsmRestoreCPUInfo();
 #endif
 }
 

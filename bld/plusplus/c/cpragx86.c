@@ -56,8 +56,6 @@ static  hw_reg_set      asmRegsSaved = { HW_D( HW_FULL ) };
 
 #define WCPP_ASM     // enable assembler
 
-static unsigned long    asm_CPU;
-
 static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
     INITFINI* defn )            // - definition
 {
@@ -958,13 +956,13 @@ void AsmSysInit( void )
 /*********************/
 {
     AsmCodeAddress = 0;
-    asm_CPU = GetAsmCPUInfo();
+    AsmSaveCPUInfo();
 }
 
 void AsmSysFini( void )
 /*********************/
 {
-    SetAsmCPUInfo( asm_CPU );
+    AsmRestoreCPUInfo();
 }
 
 static char *copyCodeLen( char *d, void *v, unsigned len )
