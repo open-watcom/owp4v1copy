@@ -374,12 +374,8 @@ static int Reg386( int reg_token )
     return( 0 );
 }
 
-#if __WATCOMC__ > 1230
-int OperandSize( enum operand_type opnd )
-#else
-int OperandSize( unsigned long opnd )
-#endif
-/***************************************/
+int OperandSize( OPNDTYPE opnd )
+/******************************/
 {
     if( ( opnd == OP_NONE ) || ( opnd & OP_SPECIAL ) ) {
         return( 0 );
@@ -934,12 +930,8 @@ static int segm_override_memory( expr_list *opndx )
 static int idata_nofixup( expr_list *opndx )
 /******************************************/
 {
-#if __WATCOMC__ > 1230
-    enum operand_type   op_type;
-#else
-    unsigned long   op_type;
-#endif
-    long                value;
+    OPNDTYPE    op_type;
+    long        value;
 
     if( IS_ANY_BRANCH( Code->info.token ) ) {  // jumps/call processing
         return( process_jumps( opndx ) );
@@ -1782,13 +1774,8 @@ int AsmParse( void )
 */
 {
     int                 i;
-#if __WATCOMC__ > 1230
-    enum operand_type   cur_opnd = OP_NONE;
-    enum operand_type   last_opnd = OP_NONE;
-#else
-    unsigned long   cur_opnd = OP_NONE;
-    unsigned long   last_opnd = OP_NONE;
-#endif
+    OPNDTYPE            cur_opnd = OP_NONE;
+    OPNDTYPE            last_opnd = OP_NONE;
     struct asm_code     *rCode = Code;
     expr_list           opndx;
     int                 temp;
@@ -2164,18 +2151,13 @@ static int check_size( void )
 - optimize MOV instruction;
 */
 {
-#if __WATCOMC__ > 1230
-    enum operand_type   op1 = Code->info.opnd_type[OPND1];
-    enum operand_type   op2 = Code->info.opnd_type[OPND2];
-#else
-    unsigned long   op1 = Code->info.opnd_type[OPND1];
-    unsigned long   op2 = Code->info.opnd_type[OPND2];
-#endif
-    int                 state = NOT_ERROR;
-    int                 temp;
-    int                 op1_size;
-    int                 op2_size;
-    int                 op_size = 0;
+    OPNDTYPE    op1 = Code->info.opnd_type[OPND1];
+    OPNDTYPE    op2 = Code->info.opnd_type[OPND2];
+    int         state = NOT_ERROR;
+    int         temp;
+    int         op1_size;
+    int         op2_size;
+    int         op_size = 0;
 
     switch( Code->info.token ) {
 #if 0

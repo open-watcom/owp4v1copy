@@ -32,6 +32,8 @@
 #ifndef ASMOPNDS_H
 #define ASMOPNDS_H
 
+#if defined( __WATCOMC__ )
+
 enum operand_type {
     OP_NONE     = 0,
     OP_R8       = 0x00000001,
@@ -102,6 +104,84 @@ enum operand_type {
     OP_SPECIAL  = 0x80000000      /* this includes the following cases, most
                                        of which are used in asmscan */
 };
+
+typedef enum operand_type OPNDTYPE;
+
+#else
+
+#define OP_NONE     0
+#define OP_R8       0x00000001
+#define OP_R16      0x00000002
+#define OP_R32      0x00000004
+#define OP_MMX      0x00000008
+#define OP_XMM      0x00000010
+#define OP_A        0x00000020  // AL AX EAX registers
+#define OP_C        0x00000040  // CL register
+#define OP_D        0x00000080  // DX register
+
+#define OP_AL       ( OP_A | OP_R8 )
+#define OP_AX       ( OP_A | OP_R16 )
+#define OP_EAX      ( OP_A | OP_R32 )
+#define OP_CL       ( OP_C | OP_R8 )
+#define OP_DX       ( OP_D | OP_R16 )
+#define OP_R1632    ( OP_R16 | OP_R32 )
+#define OP_R        ( OP_R8 | OP_R16 | OP_R32 )
+#define OP_RMX      ( OP_MMX | OP_XMM )
+
+#define OP_I8       0x00000100
+#define OP_I_1      0x00000200
+#define OP_I_3      0x00000400
+#define OP_I8_U     0x00000800
+#define OP_I16      0x00001000
+#define OP_I32      0x00002000
+#define OP_J32      0x00004000
+#define OP_J48      0x00008000
+#define OP_I        ( OP_I8 | OP_I_1 | OP_I_3 | OP_I8_U | OP_I16 | OP_I32 )
+#define OP_GE_8     ( OP_I8 | OP_I8_U | OP_I16 | OP_I32 )
+#define OP_GE_16    ( OP_I16 | OP_I32 )
+#define OP_GE_U8    ( OP_I8_U | OP_I16 | OP_I32 )
+
+#define OP_M_B      0x00010000
+#define OP_M_W      0x00020000
+#define OP_M_DW     0x00040000
+#define OP_M_FW     0x00080000
+#define OP_M_QW     0x00100000
+#define OP_M_TB     0x00200000
+#define OP_M_OW     0x00400000
+#define OP_M_DFT    0x00800000
+
+#define OP_M8       ( OP_M_B | OP_M_DFT )
+#define OP_M16      ( OP_M_W | OP_M_DFT )
+#define OP_M32      ( OP_M_DW | OP_M_DFT )
+#define OP_M64      ( OP_M_QW | OP_M_DFT )
+#define OP_M128     ( OP_M_OW | OP_M_DFT )
+
+#define OP_M        ( OP_M_B | OP_M_W | OP_M_DW | OP_M_DFT )
+#define OP_M_ANY    ( OP_M_B | OP_M_W | OP_M_DW | OP_M_FW | OP_M_QW | OP_M_TB | OP_M_OW | OP_M_DFT )
+#define OP_M8_R8    ( OP_M_B | OP_M_DFT | OP_R8 )
+#define OP_M16_R16  ( OP_M_W | OP_M_DFT | OP_R16 )
+#define OP_M32_R32  ( OP_M_DW | OP_M_DFT | OP_R32 )
+
+#define OP_CR       0x01000000
+#define OP_DR       0x02000000
+#define OP_TR       0x04000000
+#define OP_SPEC_REG ( OP_CR | OP_DR | OP_TR )
+
+#define OP_SR2      0x08000000
+#define OP_SR3      0x10000000
+#define OP_SR       ( OP_SR2 | OP_SR3 )
+
+#define OP_ST       0x20000000
+#define OP_ST_REG   0x40000000
+#define OP_STI      ( OP_ST | OP_ST_REG )
+
+#define OP_SPECIAL  0x80000000      /* this includes the following cases, most
+                                       of which are used in asmscan */
+
+typedef unsigned_32 OPNDTYPE;
+
+#endif
+
 
 enum operand3_type {
     OP3_NONE = 0x00,

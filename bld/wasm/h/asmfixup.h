@@ -36,11 +36,7 @@ extern struct asmfixup  *FixupHead;
 extern struct asmfixup  *AddFixup( struct asm_sym *sym, enum fixup_types fixup_type, enum fixup_options fixup_option );
 extern void             add_frame( void );
 extern int              BackPatch( struct asm_sym *sym );
-#if __WATCOMC__ > 1230
-extern void             mark_fixupp( enum operand_type determinant, int index );
-#else
-extern void             mark_fixupp( unsigned long determinant, int index );
-#endif
+extern void             mark_fixupp( OPNDTYPE determinant, int index );
 extern struct fixup     *CreateFixupRec( int index );
 extern int              store_fixup( int index );
 extern int              MakeFpFixup( struct asm_sym *sym );
