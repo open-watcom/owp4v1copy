@@ -232,7 +232,7 @@ static void GetFromEnv( char *what, char *path )
  */
 FILE *GetFromEnvAndOpen( char *inpath )
 {
-    char tmppath[256];
+    char tmppath[_MAX_PATH];
 
     GetFromEnv( inpath, tmppath );
     if( tmppath[0] != 0 ) {
