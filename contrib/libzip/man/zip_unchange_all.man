@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_unchange_all.mdoc,v 1.10 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_unchange_all.mdoc,v 1.10 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_unchange_all.man,v 1.9 2005/06/17 12:59:06 wiz Exp $
 .\"
 .\" zip_unchange_all.mdoc \-- undo changes to all files in zip archive
 .\" Copyright (C) 2003, 2005 Dieter Baron and Thomas Klausner
@@ -55,7 +55,7 @@ is set to indicate the error.
 libzip(3),
 zip_unchange(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

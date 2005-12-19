@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_rename.mdoc,v 1.8 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_rename.mdoc,v 1.8 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_rename.man,v 1.7 2005/06/17 12:59:06 wiz Exp $
 .\"
 .\" zip_rename.mdoc \-- rename file in zip archive
 .\" Copyright (C) 2003, 2005 Dieter Baron and Thomas Klausner
@@ -73,7 +73,7 @@ is not a valid file index in
 libzip(3),
 zip_unchange(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

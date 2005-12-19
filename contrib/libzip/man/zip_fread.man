@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_fread.mdoc,v 1.9 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_fread.mdoc,v 1.9 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_fread.man,v 1.7 2005/06/17 12:59:05 wiz Exp $
 .\"
 .\" zip_fread.mdoc \-- read from file
 .\" Copyright (C) 2003, 2005 Dieter Baron and Thomas Klausner
@@ -59,7 +59,7 @@ libzip(3),
 zip_fclose(3),
 zip_fopen(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

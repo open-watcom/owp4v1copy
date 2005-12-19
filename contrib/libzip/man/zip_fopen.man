@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_fopen.mdoc,v 1.14 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_fopen.mdoc,v 1.14 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_fopen.man,v 1.12 2005/06/17 12:59:05 wiz Exp $
 .\"
 .\" zip_fopen.mdoc \-- open file in zip archive for reading
 .\" Copyright (C) 2003, 2004, 2005 Dieter Baron and Thomas Klausner
@@ -58,16 +58,16 @@ argument specifies how the name lookup should be done, according to
 the values are described in
 zip_name_locate(3).
 Also, the following values may be
-.I orNo 'ed
+.I or'ed
 to it.
 .RS
 .TP 19
-Dv ZIP_FL_COMPRESSED
+\fBZIP_FL_COMPRESSED\fR
 Read the compressed data.
 Otherwise the data is uncompressed by
 .Fn zip_fread.
 .TP 19
-Dv ZIP_FL_UNCHANGED
+\fBZIP_FL_UNCHANGED\fR
 Read the original data from the zip archive, ignoring any changes made
 to the file.
 .RE
@@ -81,7 +81,7 @@ Upon successful completion, a
 .Ft struct zip_file
 pointer is returned.
 Otherwise,
-.Dv NULL
+\fBNULL\fR
 is returned and the error code in
 \fBarchive\fR
 is set to indicate the error.
@@ -127,7 +127,7 @@ zip_fclose(3),
 zip_fread(3),
 zip_name_locate(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

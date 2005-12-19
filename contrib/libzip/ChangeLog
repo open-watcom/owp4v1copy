@@ -1,3 +1,29 @@
+2005-07-14  Thomas Klausner  <wiz@danbala.tuwien.ac.at>
+
+	* configure.ac: bump version to 0.6.1
+
+	* lib/zip_fread.c (zip_fread): remove unsigned.
+
+2005-07-14  Dieter Baron  <dillo@danbala.tuwien.ac.at>
+
+	* lib/zip.h: make usable from C++. Patch from Heiko Hund.
+
+2005-07-05  Thomas Klausner  <wiz@danbala.tuwien.ac.at>
+
+	* libzip.pc.in (zipcmp): Fix path to zipcmp.
+
+2005-06-18  Thomas Klausner  <wiz@danbala.tuwien.ac.at>
+
+	* lib/zip_close.c, lib/zip_dirent.c, lib/zip_fread.c,
+	lib/zipint.h, src/zipcmp.c: fix some warnings with -Wsign-compare.
+
+	* configure.ac, man/Makefile.am: smarter man page installation
+	handling, avoiding symlinks.
+
+2005-06-17  Dieter Baron  <dillo@danbala.tuwien.ac.at>
+
+	* libzip.pc: return full path to zipcmp.
+
 2005-06-09  Dieter Baron  <dillo@danbala.tuwien.ac.at>
 
 	* configure.ac: bump version to 0.6

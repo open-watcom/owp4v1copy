@@ -3,7 +3,7 @@
    from ./zip.h; make changes there.
 
 	NiH: make_zip_err_str.sh,v 1.8 2004/11/17 21:55:09 wiz Exp 
-	NiH: zip.h,v 1.49 2005/06/09 19:57:09 dillo Exp
+	NiH: zip.h,v 1.50 2005/07/14 14:08:11 dillo Exp
  */
 
 #include "zip.h"

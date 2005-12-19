@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_source_function.mdoc,v 1.13 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_source_function.mdoc,v 1.13 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_source_function.man,v 1.4 2005/06/17 12:59:06 wiz Exp $
 .\"
 .\" zip_source_function.mdoc \-- create data source from function
 .\" Copyright (C) 2004, 2005 Dieter Baron and Thomas Klausner
@@ -62,18 +62,18 @@ The next two arguments are a buffer
 of size
 \fBlen\fR
 when data is expected to be returned, or else
-.Dv NULL
+\fBNULL\fR
 and 0.
 The last argument,
 \fBcmd,\fR
 specifies which action the function should perform:
 .RS
 .TP 21
-Dv ZIP_SOURCE_OPEN
+\fBZIP_SOURCE_OPEN\fR
 Prepare for reading.
 Return 0 on success, \-1 on error.
 .TP 21
-Dv ZIP_SOURCE_READ
+\fBZIP_SOURCE_READ\fR
 Read data into the buffer
 \fBdata\fR
 of size
@@ -82,16 +82,16 @@ Return the number of bytes placed into
 \fBdata\fR
 on success, \-1 on error.
 .TP 21
-Dv ZIP_SOURCE_CLOSE
+\fBZIP_SOURCE_CLOSE\fR
 Reading is done.
 .TP 21
-Dv ZIP_SOURCE_STAT
+\fBZIP_SOURCE_STAT\fR
 Get meta information for the input data.
 \fBdata\fR
 points to a struct zip_stat, which should be filled in.
 Return 0 on success, \-1 on error.
 .TP 21
-Dv ZIP_SOURCE_ERROR
+\fBZIP_SOURCE_ERROR\fR
 Get error information.
 \fBdata\fR
 points to an array of two ints, which should be filled with the libzip
@@ -102,34 +102,34 @@ zip_errors(3)
 for details on the error codes.
 Return 0.
 .TP 21
-Dv ZIP_SOURCE_FREE
+\fBZIP_SOURCE_FREE\fR
 Clean up and free all resources.
 Return 0.
 .RE
 .PP
 The library will always issue
-.Dv ZIP_SOURCE_OPEN
+\fBZIP_SOURCE_OPEN\fR
 before issuing
-.Dv ZIP_SOURCE_READ.
+\fBZIP_SOURCE_READ.\fR
 When it no longer wishes to read from this source, it will issue
-.Dv ZIP_SOURCE_CLOSE.
+\fBZIP_SOURCE_CLOSE.\fR
 If the library wishes to read the data again, it will issue
-.Dv ZIP_SOURCE_OPEN
+\fBZIP_SOURCE_OPEN\fR
 a second time.
 If the function is unable to provide the data again, it should
 return \-1.
 .PP
-.Dv ZIP_SOURCE_STAT
+\fBZIP_SOURCE_STAT\fR
 can be issued at any time.
-.Dv ZIP_SOURCE_ERROR
+\fBZIP_SOURCE_ERROR\fR
 will only be issued in response to the function
 returning \-1.
-.Dv ZIP_SOURCE_FREE
+\fBZIP_SOURCE_FREE\fR
 will be the last command issued.
 .SH "RETURN VALUES"
 Upon successful completion, the created source is returned.
 Otherwise,
-.Dv NULL
+\fBNULL\fR
 is returned and the error code in
 \fBarchive\fR
 is set to indicate the error.
@@ -151,7 +151,7 @@ zip_source_filep(3),
 zip_source_free(3),
 zip_source_zip(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

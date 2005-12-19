@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_close.mdoc,v 1.14 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_close.mdoc,v 1.14 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_close.man,v 1.10 2005/06/17 12:59:05 wiz Exp $
 .\"
 .\" zip_close.mdoc \-- close zip archive
 .\" Copyright (C) 2003, 2005 Dieter Baron and Thomas Klausner
@@ -76,7 +76,7 @@ Bq Er ZIP_ER_INVAL
 The
 \fBpath\fR
 argument is
-.Dv NULL.
+\fBNULL.\fR
 .TP 4
 Bq Er ZIP_ER_MEMORY
 Required memory could not be allocated.
@@ -111,7 +111,7 @@ zip_error_get(3),
 zip_open(3),
 zip_strerror(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

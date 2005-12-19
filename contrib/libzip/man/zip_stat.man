@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_stat.mdoc,v 1.10 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_stat.mdoc,v 1.10 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_stat.man,v 1.9 2005/06/17 12:59:06 wiz Exp $
 .\"
 .\" zip_stat.mdoc \-- get information about file
 .\" Copyright (C) 2003, 2004, 2005 Dieter Baron and Thomas Klausner
@@ -58,9 +58,9 @@ argument specifies how the name lookup should be done.
 Its values are described in
 zip_name_locate(3).
 Also,
-.Dv ZIP_FL_UNCHANGED
+\fBZIP_FL_UNCHANGED\fR
 may be
-.I orNo 'ed
+.I or'ed
 to it to request information about the original file in the archive,
 ignoring any changes made.
 .PP
@@ -103,7 +103,7 @@ if
 \fBindex\fR
 is invalid.
 If
-.Dv ZIP_FL_UNCHANGED
+\fBZIP_FL_UNCHANGED\fR
 is not set and no information can be obtained from the source
 callback, the error information is set to
 .Er ZIP_ER_CHANGED.
@@ -111,7 +111,7 @@ callback, the error information is set to
 libzip(3),
 zip_name_locate(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

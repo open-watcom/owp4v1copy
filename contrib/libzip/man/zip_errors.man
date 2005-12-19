@@ -122,7 +122,7 @@ Bq Er ZIP_ER_DELETED
 Entry has been deleted.
 .RE
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

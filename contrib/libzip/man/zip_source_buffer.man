@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_source_buffer.mdoc,v 1.5 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_source_buffer.mdoc,v 1.5 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_source_buffer.man,v 1.4 2005/06/17 12:59:06 wiz Exp $
 .\"
 .\" zip_source_buffer.mdoc \-- create zip data source from buffer
 .\" Copyright (C) 2004, 2005 Dieter Baron and Thomas Klausner
@@ -56,7 +56,7 @@ is non-zero, the buffer will be freed when the it is no longer needed.
 .SH "RETURN VALUES"
 Upon successful completion, the created source is returned.
 Otherwise,
-.Dv NULL
+\fBNULL\fR
 is returned and the error code in
 \fBarchive\fR
 is set to indicate the error.
@@ -72,7 +72,7 @@ is negative, or
 is greater than zero and
 \fBdata\fR
 is
-.Dv NULL.
+\fBNULL.\fR
 .TP 4
 Bq Er ZIP_ER_MEMORY
 Required memory could not be allocated.
@@ -87,7 +87,7 @@ zip_source_free(3),
 zip_source_function(3),
 zip_source_zip(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

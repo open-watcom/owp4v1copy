@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_delete.mdoc,v 1.11 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_delete.mdoc,v 1.11 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_delete.man,v 1.10 2005/06/17 12:59:05 wiz Exp $
 .\"
 .\" zip_delete.mdoc \-- delete files from zip archive
 .\" Copyright (C) 2003, 2005 Dieter Baron and Thomas Klausner
@@ -67,7 +67,7 @@ is not a valid file index in
 libzip(3),
 zip_unchange(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

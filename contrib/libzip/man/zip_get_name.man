@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_get_name.mdoc,v 1.10 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_get_name.mdoc,v 1.10 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_get_name.man,v 1.10 2005/06/17 12:59:05 wiz Exp $
 .\"
 .\" zip_get_name.mdoc \-- get name of file by index
 .\" Copyright (C) 2003, 2004, 2005 Dieter Baron and Thomas Klausner
@@ -52,7 +52,7 @@ in
 If
 \fBflags\fR
 is set to
-.Dv ZIP_FL_UNCHANGED,
+\fBZIP_FL_UNCHANGED,\fR
 the original unchanged filename is returned.
 The returned string must not be modified or freed, and becomes invalid when
 \fBarchive\fR
@@ -60,7 +60,7 @@ is closed.
 .SH "RETURN VALUES"
 Upon successful completion, a pointer to the name is returned.
 Otherwise,
-.Dv NULL
+\fBNULL\fR
 and the error code in
 \fBarchive\fR
 is set to indicate the error.
@@ -83,13 +83,13 @@ is not a valid file index in
 or
 \fBindex\fR
 points to an added file and
-.Dv ZIP_FL_UNCHANGED
+\fBZIP_FL_UNCHANGED\fR
 is set.
 .SH "SEE ALSO"
 libzip(3),
 zip_name_locate(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

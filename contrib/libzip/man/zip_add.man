@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_add.mdoc,v 1.9 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_add.mdoc,v 1.9 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_add.man,v 1.4 2005/06/17 12:59:05 wiz Exp $
 .\"
 .\" zip_add.mdoc \-- add files to zip archive
 .\" Copyright (C) 2004, 2005 Dieter Baron and Thomas Klausner
@@ -104,7 +104,7 @@ Bq Er ZIP_ER_INVAL
 or
 \fBname\fR
 are
-.Dv NULL,
+\fBNULL,\fR
 or
 \fBindex\fR
 is invalid.
@@ -119,7 +119,7 @@ zip_source_filep(3),
 zip_source_function(3),
 zip_source_zip(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

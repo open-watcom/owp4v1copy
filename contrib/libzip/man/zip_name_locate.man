@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_name_locate.mdoc,v 1.8 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_name_locate.mdoc,v 1.8 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_name_locate.man,v 1.9 2005/06/17 12:59:06 wiz Exp $
 .\"
 .\" zip_name_locate.mdoc \-- get index of file by name
 .\" Copyright (C) 2003, 2005 Dieter Baron and Thomas Klausner
@@ -55,14 +55,14 @@ does not contain a file with that name, \-1 is returned.
 The
 .Fa flags
 are specified by
-.I orNo 'ing
+.I or'ing
 the following values, or 0 for none of them.
 .RS
 .TP 15
-Dv ZIP_FL_NOCASE
+\fBZIP_FL_NOCASE\fR
 Ignore case distinctions.
 .TP 15
-Dv ZIP_FL_NODIR
+\fBZIP_FL_NODIR\fR
 Ignore directory part of file name in archive.
 .RE
 .\".SH "RETURN VALUES"
@@ -70,7 +70,7 @@ Ignore directory part of file name in archive.
 libzip(3),
 zip_get_name(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

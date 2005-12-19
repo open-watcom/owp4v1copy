@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zipcmp.mdoc,v 1.11 2005/06/09 21:13:13 wiz Exp 
-.\" $NiH: zipcmp.mdoc,v 1.11 2005/06/09 21:13:13 wiz Exp $
+.\" $NiH: zipcmp.man,v 1.9 2005/06/17 12:59:06 wiz Exp $
 .\"
 .\" zipcmp.mdoc \-- compare zip archives
 .\" Copyright (C) 2003, 2005 Dieter Baron and Thomas Klausner
@@ -80,6 +80,7 @@ and \*[Gt]1 if an error occurred.
 zipmerge(1),
 libzip(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
+and
 Thomas Klausner <tk@giga.or.at>

@@ -1,6 +1,6 @@
 .\" Converted with mdoc2man 0.2
 .\" from NiH: zip_error_to_str.mdoc,v 1.8 2005/06/09 21:14:54 wiz Exp 
-.\" $NiH: zip_error_to_str.mdoc,v 1.8 2005/06/09 21:14:54 wiz Exp $
+.\" $NiH: zip_error_to_str.man,v 1.4 2005/06/17 12:59:05 wiz Exp $
 .\"
 .\" zip_error_to_str.mdoc \-- get string representation of zip error code
 .\" Copyright (C) 2003, 2004, 2005 Dieter Baron and Thomas Klausner
@@ -83,7 +83,7 @@ zip_file_strerror(3),
 zip_open(3),
 zip_strerror(3)
 .SH "AUTHORS"
--nosplit
+
 Dieter Baron <dillo@giga.or.at>
 and
 Thomas Klausner <tk@giga.or.at>

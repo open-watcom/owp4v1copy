@@ -1,5 +1,5 @@
 /*
-  $NiH: zipcmp.c,v 1.17 2005/06/09 19:57:10 dillo Exp $
+  $NiH: zipcmp.c,v 1.18 2005/06/18 00:54:08 wiz Exp $
 
   zipcmp.c -- compare zip files
   Copyright (C) 2003, 2004, 2005 Dieter Baron and Thomas Klausner
@@ -295,7 +295,8 @@ test_file(struct zip *za, int idx, off_t size, unsigned int crc)
 {
     struct zip_file *zf;
     char buf[8192];
-    int n, nsize, ncrc;
+    int n, nsize;
+    unsigned int ncrc;
     
     if ((zf=zip_fopen_index(za, idx, 0)) == NULL) {
 	fprintf(stderr, "%s: cannot open file %d in archive: %s\n",
