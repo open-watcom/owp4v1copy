@@ -393,11 +393,11 @@ static SRCFILE srcFileAlloc(    // ALLOCATE A SRCFILE
             new_src->pch_kludge = TRUE;
         }
         old_act = activeSrc();
-        if( CurrChar == '\n' ){
-            //if we have scanned a \n already then getCharCheck
-            //will have incremented the current line too soon
+        if( CurrChar == '\n' ) {
+            // if we have scanned a \n already then getCharCheck
+            // will have incremented the current line too soon
             new_src->parent_locn = old_act->line - 1;
-        }else{
+        } else {
             new_src->parent_locn = old_act->line;
         }
         old_act->currc = CurrChar;
