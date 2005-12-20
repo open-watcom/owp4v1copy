@@ -14,6 +14,8 @@
 
 :include sizet.sp
 
+:include cpluspro.sp
+
 /* Legacy functions */
 
 _WCRTLINK extern int    bcmp( const void *__s1, const void *__s2, _w_size_t __n );
@@ -25,5 +27,7 @@ _WCRTLINK extern void   bzero( void *__s, _w_size_t __n );
 _WCRTLINK extern int    ffs( int __i );
 _WCRTLINK extern int    strcasecmp( const char *__s1, const char *__s2 );
 _WCRTLINK extern int    strncasecmp( const char *__s1, const char *__s2, _w_size_t __n );
+
+:include cplusepi.sp
 
 #endif

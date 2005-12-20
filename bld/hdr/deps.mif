@@ -182,6 +182,7 @@ stdlib.h        : $(stdlib_deps)
 streambu.h      : $(streambu_deps)
 string.h        : $(string_deps)
 string.hpp      : ../watcom/string.mhp ../readonly.sp ../crwat.sp
+strings.h       : ../watcom/strings.mh ../readonly.sp ../crwat.sp ../sizet.sp ../cpluspro.sp ../cplusepi.sp
 strstrea.h      : $(strstrea_deps)
 sys/locking.h   : ../watcom/locking.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
 !ifeq system QNX
