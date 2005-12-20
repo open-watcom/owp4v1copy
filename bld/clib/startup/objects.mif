@@ -181,6 +181,7 @@
 !inject dcinit.obj                       nt nta ntp                     o32
 !inject dinitarg.obj                     nt nta ntp                     o32
 !inject diniwarg.obj                     nt nta ntp                     o32
+!inject dllstart.obj     d32
 !inject dllnmwnt.obj                     nt nta ntp
 !inject dmndo32.obj                                                     o32
 !inject dmndwnt.obj                      nt nta ntp

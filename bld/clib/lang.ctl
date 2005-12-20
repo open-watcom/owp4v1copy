@@ -34,10 +34,12 @@ cdsay .
     <CPCMD> startup/library/msdos.386/ms_r/binmode.obj      <RELROOT>/rel2/lib386/dos/binmode.obj
     <CPCMD> startup/library/msdos.386/ms_r/commode.obj      <RELROOT>/rel2/lib386/dos/commode.obj
     <CPCMD> startup/library/msdos.386/ms_r/cstrtx32.obj     <RELROOT>/rel2/lib386/dos/cstrtx3r.obj
+    <CPCMD> startup/library/msdos.386/ms_r/dllstart.obj     <RELROOT>/rel2/lib386/dos/dllstrtr.obj
     <CPCMD> startup/library/msdos.386/ms_s/cstrtx32.obj     <RELROOT>/rel2/lib386/dos/cstrtx3s.obj
     <CPCMD> startup/library/msdos.386/ms_s/adsstart.obj     <RELROOT>/rel2/lib386/dos/adsstart.obj
     <CPCMD> startup/library/msdos.386/ms_s/adiestrt.obj     <RELROOT>/rel2/lib386/dos/adiestrt.obj
     <CPCMD> startup/library/msdos.386/ms_s/adifstrt.obj     <RELROOT>/rel2/lib386/dos/adifstrt.obj
+    <CPCMD> startup/library/msdos.386/ms_s/dllstart.obj     <RELROOT>/rel2/lib386/dos/dllstrts.obj
 
   [ IFDEF (os_dos os_os2 "") <2*> ]
     <CPCMD> library/msdos.286/mc/clibc.lib                  <RELROOT>/rel2/lib286/os2/dospmc.lib

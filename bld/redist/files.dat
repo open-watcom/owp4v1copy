@@ -7,8 +7,6 @@ usr="cwdstub.exe"
 usr="cwstub.exe"
 usr="cwdllr.lib"             dir="lib386/dos"
 usr="cwdlls.lib"             dir="lib386/dos"
-usr="dllstrts.obj"  type="s" dir="lib386/dos"
-usr="dllstrtr.obj"  type="s" dir="lib386/dos"
 usr="cwdllfnc.h"    type="s" dir="h"
 
 # DOS/4GW
