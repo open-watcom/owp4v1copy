@@ -21,13 +21,28 @@ $(libname).lib : $(objs) $(libs) $(__MAKEFILES__)
 !endif
 
 .cpp.obj : .autodepend
+!ifeq verbose 1
     *$(cpp) $[@ -I"$(include_c_path)" $(build_target) $(cpp_flags) $(c_dbg_flags)
+!else
+    @echo mlib_c++ $@
+    @*$(cpp) $[@ -I"$(include_c_path)" $(build_target) $(cpp_flags) $(c_dbg_flags)
+!endif
 
 .c.obj : .autodepend
+!ifeq verbose 1
     *$(cc) $[@ -I"$(include_c_path)" $(build_target) $(c_flags) $(c_dbg_flags) $($^&_flags)
+!else
+    @echo mlib_cc $@
+    @*$(cc) $[@ -I"$(include_c_path)" $(build_target) $(c_flags) $(c_dbg_flags) $($^&_flags)
+!endif
 
 .asm.obj : .autodepend
+!ifeq verbose 1
     *$(as) $[@ $(include_a_path) $(build_target) $(a_flags) $(a_dbg_flags) $($^&_flags)
+!else
+    @echo mlib_as $@
+    @*$(as) $[@ $(include_a_path) $(build_target) $(a_flags) $(a_dbg_flags) $($^&_flags)
+!endif
 
 .c   : ../../../c
 .cpp : ../../../cpp

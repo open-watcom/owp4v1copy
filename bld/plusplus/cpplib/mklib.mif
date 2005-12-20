@@ -184,10 +184,25 @@ comp_cpp = $(plusplus_dir)\bin\rpp$(host_cpu).exe
 .asm : $(asm_dirs)
 
 .cpp.obj : .autodepend
+!ifeq verbose 1
     *$(comp_cpp) -zq $(comp_flags) $(br_flags_$(sw_br_$[&)) $(inc_dirs) -fo=.obj -nm=$[& $(pch_flags) $(extra_cpp_flags_$[&) $[@
+!else
+    @echo ref++ $@
+    @*$(comp_cpp) -zq $(comp_flags) $(br_flags_$(sw_br_$[&)) $(inc_dirs) -fo=.obj -nm=$[& $(pch_flags) $(extra_cpp_flags_$[&) $[@
+!endif
 
 .cpp.xbj : .autodepend
+!ifeq verbose 1
     *$(comp_cpp) -zq -xs $(comp_flags) $(br_flags_$(sw_br_$[&)) $(inc_dirs) -fo=.xbj -nm=$[& $(pch_flags_x) $(extra_cpp_flags_x_$[&) $[@
+!else
+    @echo xref++ $@
+    @*$(comp_cpp) -zq -xs $(comp_flags) $(br_flags_$(sw_br_$[&)) $(inc_dirs) -fo=.xbj -nm=$[& $(pch_flags_x) $(extra_cpp_flags_x_$[&) $[@
+!endif
 
 .asm.obj : .autodepend
+!ifeq verbose 1
     $(as) $(aflags) $[@
+!else
+    @echo as $@
+    @$(as) $(aflags) $[@
+!endif
