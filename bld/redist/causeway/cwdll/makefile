@@ -1,22 +1,20 @@
-#pmake: build cpu_386
+#pmake: build cpu_386 os_dos
+
+host_os = dos
+host_cpu = 386
+
+proj_name = cwdll
+
+cwdll_autodepends = .autodepend
 
 !include cproj.mif
+!include defrule.mif
 
-all: cwdllr.lib cwdlls.lib
+extra_a_flags = -ms
 
-dllfuncr.obj: dllfunc.asm
-    wasm dllfunc.asm $(mode_aflags) -bt=dos -mf -3r -w4 -zq -fo=dllfuncr.obj
-
-cwdllr.lib: dllfuncr.obj cwapi.obj
-    wlib -b -c -n -q -p=512 cwdllr.lib +dllfuncr.obj +cwapi.obj
-
-dllfuncs.obj: dllfunc.asm
-    wasm dllfunc.asm $(mode_aflags) -bt=dos -mf -3s -w4 -zq -fo=dllfuncs.obj
-
-cwdlls.lib: dllfuncs.obj cwapi.obj
-    wlib -b -c -n -q -p=512 cwdlls.lib +dllfuncs.obj +cwapi.obj
+cwdll.lib: dllfunc.obj cwapi.obj
+    $(librarian) -b -c -n -p=512 $@ +dllfunc.obj +cwapi.obj
 
 clean: .SYMBOLIC
-    rm *.lib
-    rm dllfuncr.obj
-    rm dllfuncs.obj
+    rm -f *.lib
+    rm -f dllfunc.obj
