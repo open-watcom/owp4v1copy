@@ -239,7 +239,7 @@ static  instruction     *PushDelayed( instruction *ins, an addr, call_state *sta
     BGDone( addr );
 #if _TARGET & _TARG_80386
     if( state->attr & ROUTINE_STACK_RESERVE ) {
-        ReserveStack( state, ins, 8 );
+        ReserveStack( state, ins, addr->tipe->length );
     }
 #else
     state = state;
@@ -365,7 +365,7 @@ static  int     FPPushDelay( pn parm, call_state *state ) {
             AddIns( new_ins );
 #if _TARGET & _TARG_80386
             if( state->attr & ROUTINE_STACK_RESERVE ) {
-                ReserveStack( state, new_ins, 8 );
+                ReserveStack( state, new_ins, addr->tipe->length );
             }
 #endif
             BGDone( addr ); /* so ins DOES get freed*/
