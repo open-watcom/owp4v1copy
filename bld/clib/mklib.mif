@@ -13,14 +13,6 @@ all : $(objfiles) $(libname).lib .symbolic
 $(libname).lib : $(objs)
     $(librarian) $(lib_flags) $(lib_flags_new) $^@ $(objs)
 
-.cpp.obj : .autodepend
-!ifeq verbose 1
-    $(cpp) $[@ $(include_c_path) $(build_target) $($[&_opts) $(cpp_flags) $($[&_postopts)
-!else
-    @echo clib_c++ $@
-    @$(cpp) $[@ $(include_c_path) $(build_target) $($[&_opts) $(cpp_flags) $($[&_postopts)
-!endif
-
 .c.obj : .autodepend
 !ifeq verbose 1
     $(cc) $[@ $(include_c_path) $(build_target) $($[&_opts) $(c_flags) $($[&_postopts) $(c_dbg_flags)
@@ -44,14 +36,11 @@ $(libname).lib : $(objs)
 
 !ifndef source_root
 .c   : ../../../c
-.cpp : ../../../cpp
 .asm : ../../../a
 !else
 .c   : $(source_root)/c
-.cpp : $(source_root)/cpp
 .asm : $(source_root)/a
 !endif
 
 !include $(clib_dir)/clean.mif
 !include $(clib_dir)/project.mif
-

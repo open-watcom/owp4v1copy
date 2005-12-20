@@ -20,14 +20,6 @@ $(libname).lib : $(objs) $(libs) $(__MAKEFILES__)
     if exist e86sqrt.obj $(librarian) $(lib_flags) $^@ -+e86sqrt.obj
 !endif
 
-.cpp.obj : .autodepend
-!ifeq verbose 1
-    *$(cpp) $[@ -I"$(include_c_path)" $(build_target) $(cpp_flags) $(c_dbg_flags)
-!else
-    @echo mlib_c++ $@
-    @*$(cpp) $[@ -I"$(include_c_path)" $(build_target) $(cpp_flags) $(c_dbg_flags)
-!endif
-
 .c.obj : .autodepend
 !ifeq verbose 1
     *$(cc) $[@ -I"$(include_c_path)" $(build_target) $(c_flags) $(c_dbg_flags) $($^&_flags)
@@ -45,7 +37,6 @@ $(libname).lib : $(objs) $(libs) $(__MAKEFILES__)
 !endif
 
 .c   : ../../../c
-.cpp : ../../../cpp
 .asm : ../../../a;$(emu286)/asm;$(emu386)/asm
 
 !include $(mathlib_dir)/clean.mif
