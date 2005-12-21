@@ -30,14 +30,11 @@
 
 #include <string.h>
 #include <ctype.h>
-#ifdef __UNIX__
 #include <stdlib.h>
-#include <unistd.h>
+#ifdef __UNIX__
+    #include <unistd.h>
 #else
-#include <direct.h>
-#endif
-#if defined( __WATCOMC__ ) || !defined( __UNIX__ )
-#include <env.h>
+    #include <direct.h>
 #endif
 #include "watcom.h"
 #include "builder.h"
@@ -142,10 +139,10 @@ static char **getvalue( char **argv, char *buff )
     return( argv );
 }
 
-static void Usage()
+static void Usage( void )
 {
-    printf( "Usage: BUILDER [-c <ctl_file>]* [-l <log_file>] [-b <backup>] [-v] [-u] [-q] [--] <parm>*\n" );
-    printf( "    See BUILDER.DOC for more information\n" );
+    printf( "Usage: builder [-c <ctl_file>]* [-l <log_file>] [-b <backup>] [-v] [-u] [-q] [--] <parm>*\n" );
+    printf( "    See builder.doc for more information\n" );
     exit( 0 );
 }
 

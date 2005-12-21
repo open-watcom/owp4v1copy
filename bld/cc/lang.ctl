@@ -84,11 +84,6 @@ cdsay .
     <CPCMD> nt386.ppc/wccdppcc.dll    <RELROOT>/rel2/binnt/wccdppc.dll
     <CPCMD> nt386.ppc/wccdppcc.sym    <RELROOT>/rel2/binnt/wccdppc.sym
     <CPCMD> nt386.ppc/wccppc01.int    <RELROOT>/rel2/binnt/wccppc01.int
-    <CPCMD> nt386.mps/wccmpsc.exe     <RELROOT>/rel2/binnt/wccmps.exe
-    <CPCMD> nt386.mps/wccmpsc.sym     <RELROOT>/rel2/binnt/wccmps.sym
-    <CPCMD> nt386.mps/wccdmpsc.dll    <RELROOT>/rel2/binnt/wccdmps.dll
-    <CPCMD> nt386.mps/wccdmpsc.sym    <RELROOT>/rel2/binnt/wccdmps.sym
-    <CPCMD> nt386.mps/wccmps01.int    <RELROOT>/rel2/binnt/wccmps01.int
 
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> linux386.386/wcc386c.exe  <RELROOT>/rel2/binl/wcc386
@@ -124,13 +119,14 @@ cdsay .
 #    <CPCMD> ntppc.ppc/wccdppcc.dll    <RELROOT>/rel2/ppcnt/wccdppc.dll
 #    <CPCMD> ntppc.ppc/wccdppcc.sym    <RELROOT>/rel2/ppcnt/wccdppc.sym
 #    <CPCMD> ntppc.ppc/wccppc01.int    <RELROOT>/rel2/ppcnt/wccppc01.int
-
-  [ IFDEF (cpu_mps) <2*> ]          # MIPS target from 386 hosts
-#    <CPCMD> nt386.mps/wccmpsc.exe     <RELROOT>/rel2/binnt/wccmps.exe
-#    <CPCMD> nt386.mps/wccmpsc.sym     <RELROOT>/rel2/binnt/wccmps.sym
-#    <CPCMD> nt386.mps/wccdmpsc.dll    <RELROOT>/rel2/binnt/wccdmps.dll
-#    <CPCMD> nt386.mps/wccdmpsc.sym    <RELROOT>/rel2/binnt/wccdmps.sym
-#    <CPCMD> nt386.mps/wccmps01.int    <RELROOT>/rel2/binnt/wccmps01.int
+  [ ENDIF ]
+  
+  # MIPS target from 386 hosts
+    <CCCMD> nt386.mps/wccmpsc.exe     <RELROOT>/rel2/binnt/wccmps.exe
+    <CCCMD> nt386.mps/wccmpsc.sym     <RELROOT>/rel2/binnt/wccmps.sym
+    <CCCMD> nt386.mps/wccdmpsc.dll    <RELROOT>/rel2/binnt/wccdmps.dll
+    <CCCMD> nt386.mps/wccdmpsc.sym    <RELROOT>/rel2/binnt/wccdmps.sym
+    <CCCMD> nt386.mps/wccmps01.int    <RELROOT>/rel2/binnt/wccmps01.int
     <CPCMD> os2386.mps/wccmpsc.exe    <RELROOT>/rel2/binp/wccmps.exe
     <CPCMD> os2386.mps/wccmpsc.sym    <RELROOT>/rel2/binp/wccmps.sym
     <CPCMD> os2386.mps/wccdmpsc.dll   <RELROOT>/rel2/binp/dll/wccdmps.dll

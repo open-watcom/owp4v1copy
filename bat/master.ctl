@@ -7,6 +7,7 @@
 set LOGFNAME=build
 set LOGEXT=log
 set CPCMD=acopy
+set CCCMD=accopy
 
 [ BLOCK .<1> . ]
 #===============
@@ -66,6 +67,7 @@ set CPCMD=acopy
 #===================
     # with 'cprel2', we want to force the copy to occur
     set CPCMD=copy
+    set CCCMD=ccopy
 
 [ BLOCK <1> boot ]
 #==================

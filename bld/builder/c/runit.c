@@ -28,22 +28,20 @@
 *
 ****************************************************************************/
 
+
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #ifdef __UNIX__
-#include <utime.h>
-#include <unistd.h>
-#include <dirent.h>
+    #include <utime.h>
+    #include <unistd.h>
+    #include <dirent.h>
 #else
-#include <sys/utime.h>
-#include <direct.h>
-#include <dos.h>
-#endif
-#if defined( __WATCOMC__ ) || !defined( __UNIX__ )
-#include <env.h>
+    #include <sys/utime.h>
+    #include <direct.h>
+    #include <dos.h>
 #endif
 #include "watcom.h"
 #include "builder.h"
@@ -209,9 +207,9 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
             }
 #else
             /* Linux has (strangely) no 'archive' attribute, compare modification times */
-            dstrc = stat(head->dst, &statdst);
-            srcrc = stat(head->src, &statsrc);
-            if ((dstrc != -1) && (srcrc != -1) && (statdst.st_mtime == statsrc.st_mtime)) {
+            dstrc = stat( head->dst, &statdst );
+            srcrc = stat( head->src, &statsrc );
+            if( (dstrc != -1) && (srcrc != -1) && (statdst.st_mtime == statsrc.st_mtime) ) {
                 free( head );
                 head = NULL;
             }
@@ -271,16 +269,16 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
             fp = fopen( curr->dst, "rb" );
             if( fp != NULL )
                 fclose( fp );
-            if( !( dent->d_attr & _A_ARCH ) && fp != NULL ) {
+            if( !(dent->d_attr & _A_ARCH) && fp != NULL ) {
                 /* file hasn't changed */
                 free( curr );
                 continue;
             }
 #else
             /* Linux has (strangely) no 'archive' attribute, compare modification times */
-            dstrc = stat(curr->dst, &statdst);
-            srcrc = stat(curr->src, &statsrc);
-            if ((dstrc != -1) && (srcrc != -1) && (statdst.st_mtime == statsrc.st_mtime)) {
+            dstrc = stat( curr->dst, &statdst );
+            srcrc = stat( curr->src, &statsrc );
+            if( (dstrc != -1) && (srcrc != -1) && (statdst.st_mtime == statsrc.st_mtime) ) {
                 free( curr );
                 continue;
             }
@@ -345,24 +343,29 @@ static int mkdir_nested( char *path )
     return( 0 );
 }
 
-static unsigned ProcOneCopy( char *src, char *dst )
+static unsigned ProcOneCopy( char *src, char *dst, bool cond_copy )
 {
-    FILE        *sp;
-    FILE        *dp;
-    unsigned    len;
-    unsigned    out;
-    struct stat    srcbuf;
-    struct utimbuf dstbuf;
-    static char buff[32 * 1024];
+    FILE            *sp;
+    FILE            *dp;
+    unsigned        len;
+    unsigned        out;
+    struct stat     srcbuf;
+    struct utimbuf  dstbuf;
+    static char     buff[32 * 1024];
 
     sp = fopen( src, "rb" );
     if( sp == NULL ) {
-        Log( FALSE, "Can not open '%s' for reading: %s\n", src, strerror( errno ) );
-        return( 1 );
+        if( cond_copy ) {
+            return( 0 );    // Quietly ignore missing source
+        } else {
+            Log( FALSE, "Can not open '%s' for reading: %s\n", src, strerror( errno ) );
+            return( 1 );
+        }
     }
     dp = fopen( dst, "wb" );
     if( dp == NULL ) {
         char *end1, *end2, *end;
+
         strcpy( buff, dst );
         end1 = strrchr( buff, '/' );
         end2 = strrchr( buff, '\\' );
@@ -419,7 +422,7 @@ static unsigned ProcOneCopy( char *src, char *dst )
     stat( src, &srcbuf );
     dstbuf.actime = srcbuf.st_atime;
     dstbuf.modtime = srcbuf.st_mtime;
-    utime(dst, &dstbuf);
+    utime( dst, &dstbuf );
 #ifdef __UNIX__
     /* copy permissions: mostly necessary for the "x" bit */
     // some files is copied from the source tree with the read-only permission
@@ -429,7 +432,7 @@ static unsigned ProcOneCopy( char *src, char *dst )
     return( 0 );
 }
 
-static unsigned ProcCopy( char *cmd, bool test_abit )
+static unsigned ProcCopy( char *cmd, bool test_abit, bool cond_copy )
 {
     char        *src;
     char        *dst;
@@ -456,7 +459,7 @@ static unsigned ProcCopy( char *cmd, bool test_abit )
     for( ;; ) {
         if( list == NULL )
             break;
-        res = ProcOneCopy( list->src, list->dst );
+        res = ProcOneCopy( list->src, list->dst, cond_copy );
         if( res != 0 ) {
             while( list != NULL ) {
                 next = list->next;
@@ -552,9 +555,13 @@ unsigned RunIt( char *cmd )
     } else if( BUILTIN( "ECHO" ) ) {
         Log( Quiet, "%s\n", SkipBlanks( cmd + sizeof( "ECHO" ) ) );
     } else if( BUILTIN( "COPY" ) ) {
-        res = ProcCopy( SkipBlanks( cmd + sizeof( "COPY" ) ), FALSE );
+        res = ProcCopy( SkipBlanks( cmd + sizeof( "COPY" ) ), FALSE, FALSE );
     } else if( BUILTIN( "ACOPY" ) ) {
-        res = ProcCopy( SkipBlanks( cmd + sizeof( "ACOPY" ) ), TRUE );
+        res = ProcCopy( SkipBlanks( cmd + sizeof( "ACOPY" ) ), TRUE, FALSE );
+    } else if( BUILTIN( "CCOPY" ) ) {
+        res = ProcCopy( SkipBlanks( cmd + sizeof( "CCOPY" ) ), FALSE, TRUE );
+    } else if( BUILTIN( "ACCOPY" ) ) {
+        res = ProcCopy( SkipBlanks( cmd + sizeof( "ACCOPY" ) ), TRUE, TRUE );
     } else if( BUILTIN( "MKDIR" ) ) {
         res = ProcMkdir( SkipBlanks( cmd + sizeof( "MKDIR" ) ) );
     } else if( BUILTIN( "PMAKE" ) ) {

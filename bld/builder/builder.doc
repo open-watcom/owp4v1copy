@@ -137,8 +137,14 @@ wild card characters in it. The destination file may only be a full pathname,
 or it may end in a '\' or '/' character, in which case the source file
 name is used in the destination. The destination file will have the same
 'access' and 'modified' times as the source file.
-BUILDER will attempt to create the destination path if it does not exist and the source file exists.
+BUILDER will attempt to create the destination path if it does not exist and
+the source file exists.
 
+        CCOPY src_file dst_file
+
+Conditional copy; same as the COPY command, but does not fail if src_file 
+does not exist. Useful when src_file may or may not exist, and it is not
+considered an error when it doesn't.
 
         ACOPY src_file dst_file
 
@@ -148,6 +154,11 @@ the control file, all src_file's copied by an ACOPY have their archive bits
 turned off. On Linux, where there is no archive bit, the 'modified' times
 of the two files are compared instead: if unequal, the file is copied.
 
+        ACCOPY src_file dst_file
+
+Conditional ACOPY; same as the ACOPY command, but does not fail if src_file
+does not exist.
+
         ECHO text
 
 Write the text to the screen and any log file(s). The text may contains macros
@@ -155,7 +166,8 @@ which are expanded first.
 
         MKDIR new_dir
 
-Create a new directory called "new_dir". BUILDER will not attempt to create the directory if it already exists.
+Create a new directory called "new_dir". BUILDER will not attempt to create
+the directory if it already exists.
 
 PMAKE is not currently built into BUILDER whatever the following says!
 #if 0
