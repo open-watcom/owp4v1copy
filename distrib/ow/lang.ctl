@@ -12,11 +12,13 @@ echo Installer Build: <1> <2> <3> <4> <5>
 
 [ BLOCK . . ]
 
-# First build installer executables 
+# First build installer executables
 [ INCLUDE <DEVDIR>/setupgui/lang.ctl ]
 
 [ BLOCK <1> build rel2 ]
-# Build installer self-extracting archives 
+  # Build installer self-extracting archives
+  rm -f setup.inf
+  rm -f instarch.lst
 
   [ IFDEF (cinst "") <2*> ]
      echo Creating C/C++ setup.inf
@@ -31,10 +33,10 @@ echo Installer Build: <1> <2> <3> <4> <5>
      cd <INSTDIR>
 
   [ IFDEF (os_nt "") <2*> ]
-     mkexezip <INSTDIR>/nt386/csetup/setup32.exe <RELROOT>/rel2/csetup.zip
+     mkexezip <RELROOT>/rel2/open-watcom-c-win32-<BLD_VER_STR>.exe <RELROOT>/rel2/csetup.zip <DEVDIR>/setupgui/nt386/csetup.exe
 
   [ IFDEF (os_os2 "") <2*> ]
-     mkexezip <INSTDIR>/os2386.gui/csetup/install.exe <RELROOT>/rel2/csetup.zip
+     mkexezip <RELROOT>/rel2/open-watcom-c-os2-<BLD_VER_STR>.exe   <RELROOT>/rel2/csetup.zip <DEVDIR>/setupgui/os2386.gui/csetup.exe
 
   [ IFDEF (finst "") <2*> ]
      echo Creating Fortran setup.inf
@@ -49,25 +51,16 @@ echo Installer Build: <1> <2> <3> <4> <5>
      cd <INSTDIR>
 
   [ IFDEF (os_nt "") <2*> ]
-     mkexezip <INSTDIR>/nt386/f77setup/setup32.exe <RELROOT>/rel2/fsetup.zip
+     mkexezip <RELROOT>/rel2/open-watcom-f77-win32-<BLD_VER_STR>.exe <RELROOT>/rel2/fsetup.zip <DEVDIR>/setupgui/nt386/f77setup.exe
 
   [ IFDEF (os_os2 "") <2*> ]
-     mkexezip <INSTDIR>/os2386.gui/f77setup/install.exe <RELROOT>/rel2/fsetup.zip
-
-[ BLOCK <1> rel2 ]
-# Copy installers to final location
-
-  [ IFDEF (os_nt "") <2*> ]
-     <CPCMD> <INSTDIR>/nt386/csetup/setup32.exe            <RELROOT>/rel2/open-watcom-c-win32-<BLD_VER_STR>.exe
-     <CPCMD> <INSTDIR>/nt386/f77setup/setup32.exe          <RELROOT>/rel2/open-watcom-f77-win32-<BLD_VER_STR>.exe
-
-  [ IFDEF (os_os2 "") <2*> ]
-     <CPCMD> <INSTDIR>/os2386.gui/csetup/install.exe       <RELROOT>/rel2/open-watcom-c-os2-<BLD_VER_STR>.exe
-     <CPCMD> <INSTDIR>/os2386.gui/f77setup/install.exe     <RELROOT>/rel2/open-watcom-f77-os2-<BLD_VER_STR>.exe
+     mkexezip <RELROOT>/rel2/open-watcom-f77-os2-<BLD_VER_STR>.exe   <RELROOT>/rel2/fsetup.zip <DEVDIR>/setupgui/os2386.gui/f77setup.exe
 
 [ BLOCK . . ]
-# Do cdsay to see end time
-cdsay <INSTDIR>
+  # Get setup.inf out of the way
+  rm -f <RELROOT>/rel2/setup.inf   
+  # Do cdsay to see end time
+  cdsay <INSTDIR>
 
 [ BLOCK <1> clean ]
 # Clean up

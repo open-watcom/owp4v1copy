@@ -36,7 +36,7 @@
 
 #include "zipint.h"
 
-#define BUFFER_SIZE 16384
+#define BUFFER_SIZE 65536
 
 #pragma pack(1)
 
@@ -73,7 +73,7 @@ typedef struct {
 
 #pragma pack()
 
-static char usage[] = "%s <target exe> <source zip>\n";
+static const char   usage[] = "%s <target exe> <source zip> <source exe>\n";
 
 static int find( char *buffer, uint32_t buffer_len, char *match, uint32_t match_len )
 {
@@ -150,11 +150,13 @@ static int fix_cd( FILE *f, void *buffer, uint32_t buffer_len, uint32_t offset )
 int main( int argc, char *argv[] )
 {
     FILE        *ftarget;
-    FILE        *fsource;
+    FILE        *fsrc_zip;
+    FILE        *fsrc_exe;
     char        *buffer = NULL;
     char        *prg;
     char        *target;
-    char        *source;
+    char        *source_zip;
+    char        *source_exe;
     uint32_t    offset;
     uint32_t    length;
     size_t      n;
@@ -162,54 +164,78 @@ int main( int argc, char *argv[] )
 
     prg = argv[0];
 
-    if( argc < 3 ) {
+    if( argc < 4 ) {
         fprintf( stderr, usage, prg );
         exit( 2 );
     }
 
-    target = argv[1];
-    source = argv[2];
+    target     = argv[1];
+    source_zip = argv[2];
+    source_exe = argv[3];
 
-    ftarget = fopen( target, "r+b" );
+    ftarget = fopen( target, "w+b" );
     if( ftarget == NULL ) {
         fprintf( stderr, "can't open '%s' for writing\n", target );
         return( 1 );
     }
 
-    fsource = fopen( source, "rb" );
-    if( fsource == NULL ) {
-        fprintf( stderr, "can't open '%s' for reading\n", source );
+    fsrc_zip = fopen( source_zip, "rb" );
+    if( fsrc_zip == NULL ) {
+        fprintf( stderr, "can't open '%s' for reading\n", source_zip );
         fclose( ftarget );
         return( 1 );
     }
 
-    // seek at end of target and save it's original size
-    fseek( ftarget, 0, SEEK_END );
-    offset = ftell( ftarget );
+    fsrc_exe = fopen( source_exe, "rb" );
+    if( fsrc_exe == NULL ) {
+        fprintf( stderr, "can't open '%s' for reading\n", source_exe );
+        fclose( ftarget );
+        fclose( fsrc_zip );
+        return( 1 );
+    }
 
     buffer = malloc( BUFFER_SIZE );
     if( buffer == NULL ) {
         fprintf( stderr, "not enough memory for buffer\n" );
         fclose( ftarget );
-        fclose( fsource );
+        fclose( fsrc_zip );
+        fclose( fsrc_exe );
         return( 1 );
     }
 
-    // --- copy zip ---
-    while( (n = fread( buffer, 1, BUFFER_SIZE, fsource )) != 0 ) {
+    // --- copy source executable ---
+    while( (n = fread( buffer, 1, BUFFER_SIZE, fsrc_exe )) != 0 ) {
         if( fwrite( buffer, 1, n, ftarget ) != n ) {
             fprintf( stderr, "can't write to '%s'\n", target );
             fclose( ftarget );
-            fclose( fsource );
+            fclose( fsrc_zip );
+            fclose( fsrc_exe );
+            free( buffer );
+            return( 1 );
+        }
+    }
+
+    // source executable is now copied
+    fclose( fsrc_exe );
+
+    // save length of executable for later usage
+    offset = ftell( ftarget );
+
+    // --- copy zip ---
+    while( (n = fread( buffer, 1, BUFFER_SIZE, fsrc_zip )) != 0 ) {
+        if( fwrite( buffer, 1, n, ftarget ) != n ) {
+            fprintf( stderr, "can't write to '%s'\n", target );
+            fclose( ftarget );
+            fclose( fsrc_zip );
             free( buffer );
             return( 1 );
         }
     }
 
     // source zip is now copied
-    fclose( fsource );
+    fclose( fsrc_zip );
 
-    // save length of target for later usage
+    // save length of target executable for later usage
     length = ftell( ftarget );
 
     // --- fixup offsets ---
