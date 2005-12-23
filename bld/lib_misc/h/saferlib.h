@@ -51,10 +51,21 @@ extern  constraint_handler_t    __runtime_constraint_handler;
 
 extern  void    __rtct_fail( const char *fn, const char *reason, void *reserved );
 
+// Runtime-constraint validation macros. Call the handler and return zero if check
+// failed, return non-zero value if check succeeded.
+
 #define __check_constraint_nullptr( arg )   \
     ((arg == NULL) ? __rtct_fail( __func__, #arg " == NULL", NULL ), 0 : 1)
 
 #define __check_constraint_maxsize( arg )   \
     ((arg > RSIZE_MAX) ? __rtct_fail( __func__, #arg " > RSIZE_MAX", NULL ), 0 : 1)
+
+
+// For 16-bit targets, the RSIZE_MAX check is effectively no-op. Object sizes up
+// to SIZE_MAX are legal and not uncommon.
+#if RSIZE_MAX == SIZE_MAX
+    #undef __check_constraint_maxsize
+    #define __check_constraint_maxsize( arg )   1
+#endif
 
 #endif // _SAFERLIB_H_INCLUDED
