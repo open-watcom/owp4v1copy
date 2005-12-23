@@ -42,6 +42,11 @@ _WCRTLINK extern errno_t getenv_s( size_t * restrict len, char * restrict value,
     size_t      env_str_len = 0;
     errno_t     rc = -1;
 
+    /* Pre-set length *before* calling runtime-constraint handler! */
+    if( len != NULL ) {
+        *len = 0;
+    }
+
     /* Verify runtime-constraints */
     if( __check_constraint_nullptr( name ) &&
         __check_constraint_maxsize( maxsize ) &&
@@ -59,13 +64,13 @@ _WCRTLINK extern errno_t getenv_s( size_t * restrict len, char * restrict value,
             if( env_str_len < maxsize ) {
                 /* Target large enough; safe to copy */
                 strcpy( value, env_str );
+                if( len != NULL ) {
+                    *len = env_str_len;
+                }
                 rc = 0;
             }
         }
     }
-
-    if( len != NULL )
-        *len = env_str_len;
 
     return( rc );
 }
