@@ -61,12 +61,12 @@ _WCRTLINK extern errno_t getenv_s( size_t * restrict len, char * restrict value,
         if( env_str != NULL ) {
             /* Env var found, find out its size */
             env_str_len = strlen( env_str );
+            if( len != NULL ) {
+                *len = env_str_len;
+            }
             if( env_str_len < maxsize ) {
                 /* Target large enough; safe to copy */
                 strcpy( value, env_str );
-                if( len != NULL ) {
-                    *len = env_str_len;
-                }
                 rc = 0;
             }
         }
