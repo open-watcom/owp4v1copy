@@ -14,6 +14,12 @@
 
 :include errno.sp
 
+:include saferpro.sp
+
+:include errnot.sp
+
+:include saferepi.sp
+
 :segment QNX
 
 /* --- Symbolic names of the error return conditions --- */

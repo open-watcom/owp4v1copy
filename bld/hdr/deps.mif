@@ -2,24 +2,27 @@
 # These dependency lists are used for both standard name.h and cname
 # headers. This is only relevant for headers in the C++ standard library.
 
-assert_deps = ../watcom/assert.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp
-ctype_deps = ../watcom/ctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../wchar_t.sp ../wctypet.sp
-errno_deps = ../watcom/errno.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../errno.sp
-float_deps = ../watcom/float.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp
+saferc = ../saferpro.sp ../saferepi.sp
+cplus  = ../cpluspro.sp ../cplusepi.sp
+
+assert_deps = ../watcom/assert.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp
+ctype_deps  = ../watcom/ctype.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../wchar_t.sp ../wctypet.sp
+errno_deps  = ../watcom/errno.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../errno.sp ../errnot.sp $(saferc)
+float_deps  = ../watcom/float.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp
 iso646_deps = ../watcom/iso646.mh ../readonly.sp ../crwat.sp
 limits_deps = ../watcom/limits.mh ../readonly.sp ../crwatqnx.sp ../crwatcnt.sp ../mbmax.sp ../ext.sp ../unixext.sp
-locale_deps = ../watcom/locale.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../crwatcnt.sp ../null.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
-math_deps = ../watcom/math.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
-setjmp_deps = ../watcom/setjmp.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
-signal_deps = ../watcom/signal.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
-stdarg_deps = ../watcom/stdarg.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../valist.sp
-stddef_deps = ../watcom/stddef.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../ptrdiff.sp ../sizet.sp ../wchar_t.sp
-stdio_deps = ../watcom/stdio.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../valist.sp ../wchar_t.sp ../wctypet.sp
-stdlib_deps = ../watcom/stdlib.mh ../readonly.sp ../alloca.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../errno.sp ../ext.sp ../maxpath.sp ../mbmax.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../wchar_t.sp
-string_deps = ../watcom/string.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../nlserror.sp ../namwat.sp
-time_deps = ../watcom/time.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../timet.sp ../wchar_t.sp ../clockt.sp
-wchar_deps = ../watcom/wchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
-wctype_deps = ../watcom/wctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../wchar_t.sp ../wctypet.sp
+locale_deps = ../watcom/locale.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../crwatcnt.sp ../null.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
+math_deps   = ../watcom/math.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
+setjmp_deps = ../watcom/setjmp.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
+signal_deps = ../watcom/signal.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
+stdarg_deps = ../watcom/stdarg.mh ../readonly.sp $(cplus) ../crwat.sp ../valist.sp
+stddef_deps = ../watcom/stddef.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../ptrdiff.sp ../sizet.sp ../wchar_t.sp ../rsizet.sp $(saferc)
+stdio_deps  = ../watcom/stdio.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../valist.sp ../wchar_t.sp ../wctypet.sp
+stdlib_deps = ../watcom/stdlib.mh ../readonly.sp ../alloca.sp $(cplus) ../crwatqnx.sp ../errno.sp ../ext.sp ../maxpath.sp ../mbmax.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../wchar_t.sp ../errnot.sp ../rsizet.sp $(saferc)
+string_deps = ../watcom/string.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../nlserror.sp ../namwat.sp
+time_deps   = ../watcom/time.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../timet.sp ../wchar_t.sp ../clockt.sp
+wchar_deps  = ../watcom/wchar.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
+wctype_deps = ../watcom/wctype.mh ../readonly.sp $(cplus) ../crwat.sp ../wchar_t.sp ../wctypet.sp
 
 cassert      : $(assert_deps)
 cctype       : $(ctype_deps)
@@ -117,57 +120,57 @@ _comdef.h       : ../watcom/_comdef.mh ../readonly.sp ../crwat.sp
 _rbtree.h       : ../watcom/_rbtree.mh ../readonly.sp ../crwatcnt.sp
 _strdef.h       : ../watcom/_strdef.mh ../readonly.sp ../crwatcnt.sp
 assert.h        : $(assert_deps)
-bios.h          : ../watcom/bios.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
-bios98.h        : ../watcom/bios98.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
+bios.h          : ../watcom/bios.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
+bios98.h        : ../watcom/bios98.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
 common.cnv      : ../watcom/common.mh ../crwat.sp
 complex.h       : $(complex_deps)
-conio.h         : ../watcom/conio.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../valist.sp
-crtdbg.h        : ../watcom/crtdbg.mh ../readonly.sp ../crwat.sp ../cplusepi.sp ../cpluspro.sp
+conio.h         : ../watcom/conio.mh ../readonly.sp $(cplus) ../crwat.sp ../valist.sp
+crtdbg.h        : ../watcom/crtdbg.mh ../readonly.sp $(cplus) ../crwat.sp
 cstdlib.h       : ../watcom/cstdlib.mh ../readonly.sp ../crwat.sp
 ctype.h         : $(ctype_deps)
-direct.h        : ../watcom/direct.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../dskfreet.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
-dos.h           : ../watcom/dos.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../dskfreet.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
+direct.h        : ../watcom/direct.mh ../readonly.sp $(cplus) ../crwat.sp ../dskfreet.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
+dos.h           : ../watcom/dos.mh ../readonly.sp $(cplus) ../crwat.sp ../dskfreet.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
 dosfunc.h       : ../watcom/dosfunc.mh ../readonly.sp ../crwat.sp
 eh.h            : ../watcom/eh.mh ../readonly.sp ../crwat.sp
-env.h           : ../watcom/env.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../posix.sp ../wchar_t.sp
+env.h           : ../watcom/env.mh ../readonly.sp $(cplus) ../crwat.sp ../posix.sp ../wchar_t.sp
 errno.h         : $(errno_deps)
 except.h        : ../watcom/except.mh ../readonly.sp ../cpppfv.sp ../crwat.sp ../watexc.sp
 exceptio.h      : $(exception_deps)
-fcntl.h         : ../watcom/fcntl.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
+fcntl.h         : ../watcom/fcntl.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
 fenv.h          : ../watcom/fenv.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
 float.h         : $(float_deps)
 fstream.h       : $(fstream_deps)
 generic.h       : ../watcom/generic.mh ../readonly.sp ../crwat.sp
-graph.h         : ../watcom/graph.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
+graph.h         : ../watcom/graph.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
 graph98.h       : ../watcom/graph98.mh ../watcom/graph.mh
-i86.h           : ../watcom/i86.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
+i86.h           : ../watcom/i86.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
 inttypes.h      : ../watcom/inttypes.mh ../readonly.sp ../crwat.sp
-io.h            : ../watcom/io.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../maxpath.sp ../wchar_t.sp
+io.h            : ../watcom/io.mh ../readonly.sp $(cplus) ../crwat.sp ../maxpath.sp ../wchar_t.sp
 iomanip.h       : $(iomanip_deps)
 ios.h           : $(ios_deps)
 iosfwd.h        : $(iosfwd_deps)
 iostream.h      : $(iostream_deps)
 iso646.h        : $(iso646_deps)
 istream.h       : $(istream_deps)
-jctype.h        : ../watcom/jctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
-jstring.h       : ../watcom/jstring.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../null.sp ../sizet.sp
-jtime.h         : ../watcom/jtime.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
+jctype.h        : ../watcom/jctype.mh ../readonly.sp $(cplus) ../crwat.sp
+jstring.h       : ../watcom/jstring.mh ../readonly.sp $(cplus) ../crwat.sp ../null.sp ../sizet.sp
+jtime.h         : ../watcom/jtime.mh ../readonly.sp $(cplus) ../crwat.sp
 limits.h        : $(limits_deps)
 locale.h        : $(locale_deps)
-malloc.h        : ../watcom/malloc.mh ../readonly.sp ../alloca.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp
+malloc.h        : ../watcom/malloc.mh ../readonly.sp $(cplus) ../alloca.sp ../crwat.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp
 math.h          : $(math_deps)
-mbctype.h       : ../watcom/mbctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp
-mbstring.h      : ../watcom/mbstring.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../nlserror.sp
+mbctype.h       : ../watcom/mbctype.mh ../readonly.sp $(cplus) ../crwat.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp
+mbstring.h      : ../watcom/mbstring.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../nlserror.sp
 mem.h           : ../watcom/mem.mh ../readonly.sp ../crwat.sp ../ptrdiff.sp
 memory.h        : $(memory_deps)
-mmintrin.h      : ../watcom/mmintrin.mh ../readonly.sp ../crwat.sp ../cplusepi.sp ../cpluspro.sp
+mmintrin.h      : ../watcom/mmintrin.mh ../readonly.sp ../crwat.sp $(cplus)
 new.h           : $(new_deps)
 ostream.h       : $(ostream_deps)
-pgchart.h       : ../watcom/pgchart.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
-process.h       : ../watcom/process.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../wchar_t.sp
-search.h        : ../watcom/search.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
+pgchart.h       : ../watcom/pgchart.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
+process.h       : ../watcom/process.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../wchar_t.sp
+search.h        : ../watcom/search.mh ../readonly.sp $(cplus) ../crwat.sp
 setjmp.h        : $(setjmp_deps)
-setjmpex.h      : ../watcom/setjmpex.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp
+setjmpex.h      : ../watcom/setjmpex.mh ../readonly.sp $(cplus) ../crwatqnx.sp
 share.h         : ../watcom/share.mh ../readonly.sp ../crwat.sp
 signal.h        : $(signal_deps)
 sstream.h       : $(sstream_deps)
@@ -175,16 +178,16 @@ stdarg.h        : $(stdarg_deps)
 stdbool.h       : ../watcom/stdbool.mh ../readonly.sp ../crwat.sp
 stddef.h        : $(stddef_deps)
 stdexcep.h      : $(stdexcept_deps)
-stdint.h        : ../watcom/stdint.mh ../readonly.sp ../crwat.sp
+stdint.h        : ../watcom/stdint.mh ../readonly.sp ../crwat.sp $(saferc)
 stdio.h         : $(stdio_deps)
 stdiobuf.h      : ../watcom/stdiobuf.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
 stdlib.h        : $(stdlib_deps)
 streambu.h      : $(streambu_deps)
 string.h        : $(string_deps)
 string.hpp      : ../watcom/string.mhp ../readonly.sp ../crwat.sp
-strings.h       : ../watcom/strings.mh ../readonly.sp ../crwat.sp ../sizet.sp ../cpluspro.sp ../cplusepi.sp
+strings.h       : ../watcom/strings.mh ../readonly.sp $(cplus) ../crwat.sp ../sizet.sp
 strstrea.h      : $(strstrea_deps)
-sys/locking.h   : ../watcom/locking.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
+sys/locking.h   : ../watcom/locking.mh ../readonly.sp $(cplus) ../crwat.sp
 !ifeq system QNX
 dirent.h        : ../quantum/dirent.mh ../poppack.sp ../pshpackl.sp
 cdrom.h         : ../quantum/cdrom.mh ../poppack.sp ../pshpackl.sp
@@ -239,24 +242,24 @@ termios.h       : ../quantum/termios.mh ../poppack.sp ../pshpackl.sp
 unix.h          : ../quantum/unix.mh ../poppack.sp ../pshpackl.sp
 ustat.h         : ../quantum/ustat.mh ../poppack.sp ../pshpackl.sp
 !else
-sys/stat.h      : ../watcom/stat.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
+sys/stat.h      : ../watcom/stat.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp
 !endif
 !ifeq system LINUX
 dirent.h        : ../watcom/linux/dirent.mh ../poppack.sp ../pshpackl.sp ../lnxkpack.sp
-termios.h       : ../watcom/linux/termios.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp
-sys/ioctl.h     : ../watcom/linux/ioctl.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp ../incdir.sp
-sys/ptrace.h    : ../watcom/linux/ptrace.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp
-sys/utsname.h   : ../watcom/linux/utsname.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp
-sys/wait.h      : ../watcom/linux/wait.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../lnxkpack.sp
+termios.h       : ../watcom/linux/termios.mh ../readonly.sp $(cplus) ../crwat.sp ../lnxkpack.sp
+sys/ioctl.h     : ../watcom/linux/ioctl.mh ../readonly.sp $(cplus) ../crwat.sp ../lnxkpack.sp ../incdir.sp
+sys/ptrace.h    : ../watcom/linux/ptrace.mh ../readonly.sp $(cplus) ../crwat.sp ../lnxkpack.sp
+sys/utsname.h   : ../watcom/linux/utsname.mh ../readonly.sp $(cplus) ../crwat.sp ../lnxkpack.sp
+sys/wait.h      : ../watcom/linux/wait.mh ../readonly.sp $(cplus) ../crwat.sp ../lnxkpack.sp
 !endif
-sys/timeb.h     : ../watcom/timeb.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp ../timet.sp
-sys/types.h     : ../watcom/types.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crqnx.sp ../crwat.sp ../sizet.sp ../timet.sp
-tchar.h         : ../watcom/tchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../wchar_t.sp ../wctypet.sp
+sys/timeb.h     : ../watcom/timeb.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp ../timet.sp
+sys/types.h     : ../watcom/types.mh ../readonly.sp $(cplus) ../crqnx.sp ../crwat.sp ../sizet.sp ../timet.sp
+tchar.h         : ../watcom/tchar.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../wchar_t.sp ../wctypet.sp
 time.h          : $(time_deps)
 typeinfo.h      : $(typeinfo_deps)
-unistd.h        : ../watcom/unistd.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../ext.sp ../null.sp ../posix.sp ../sizet.sp ../ssizet.sp
-utime.h         : ../watcom/utime.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp ../timet.sp
-varargs.h       : ../watcom/varargs.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
+unistd.h        : ../watcom/unistd.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../ext.sp ../null.sp ../posix.sp ../sizet.sp ../ssizet.sp
+utime.h         : ../watcom/utime.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../poppack.sp ../pshpackl.sp ../timet.sp
+varargs.h       : ../watcom/varargs.mh ../readonly.sp $(cplus) ../crwat.sp
 wcdefs.h        : ../watcom/wcdefs.mh ../readonly.sp ../crwat.sp ../sizet.sp
 wcexcept.h      : ../watcom/wcexcept.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
 wchar.h         : $(wchar_deps)
@@ -277,9 +280,9 @@ wcstack.h       : ../watcom/wcstack.mh ../readonly.sp ../crwat.sp
 wctype.h        : $(wctype_deps)
 wcvbase.h       : ../watcom/wcvbase.mh ../readonly.sp ../crwat.sp
 wcvector.h      : ../watcom/wcvector.mh ../readonly.sp ../crwat.sp
-wdefwin.h       : ../watcom/wdefwin.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
+wdefwin.h       : ../watcom/wdefwin.mh ../readonly.sp $(cplus) ../crwat.sp
 win/win386.h    : ../watcom/win386.mh ../readonly.sp ../crwat.sp
 win/windows.h   : ../watcom/windows.mh ../readonly.sp ../crwat.sp
-win/_win386.h   : ../watcom/_win386.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp
-win/win16.h     : ../watcom/win16.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp
-wsample.h       : ../watcom/wsample.mh ../readonly.sp ../crwat.sp ../cpluspro.sp ../cplusepi.sp
+win/_win386.h   : ../watcom/_win386.mh ../readonly.sp $(cplus) ../crwat.sp
+win/win16.h     : ../watcom/win16.mh ../readonly.sp $(cplus)
+wsample.h       : ../watcom/wsample.mh ../readonly.sp $(cplus) ../crwat.sp
