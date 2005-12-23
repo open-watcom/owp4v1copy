@@ -109,12 +109,6 @@ cdsay .
     <CPCMD> startup/library/nw_clib.386/ms_s/binmode.obj    <RELROOT>/rel2/lib386/netware/binmode.obj
     <CPCMD> startup/library/nw_clib.386/ms_sd/binmode.obj   <RELROOT>/rel2/lib386/netware/binmoded.obj
 
-  [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> library/winnt.axp/_s/clib.lib                   <RELROOT>/rel2/libaxp/nt/clib.lib
-
-    <CPCMD> startup/library/winnt.axp/_s/binmode.obj        <RELROOT>/rel2/libaxp/nt/binmode.obj
-    <CPCMD> startup/library/winnt.axp/_s/commode.obj        <RELROOT>/rel2/libaxp/nt/commode.obj
-
   [ IFDEF (os_qnx) <2*> ]
     <CPCMD> library/qnx.286/mc/clibc.lib                    <RELROOT>/rel2/lib286/qnx/clibc.lib
     <CPCMD> library/qnx.286/mh/clibh.lib                    <RELROOT>/rel2/lib286/qnx/clibh.lib
@@ -127,6 +121,17 @@ cdsay .
     <CPCMD> library/qnx.386/ms_r/clib3r.lib                 <RELROOT>/rel2/lib386/qnx/clib3r.lib
     <CPCMD> library/qnx.386/ms_s/clib3s.lib                 <RELROOT>/rel2/lib386/qnx/clib3s.lib
     <CPCMD> startup/library/qnx.386/ms_r/commode.obj        <RELROOT>/rel2/lib386/qnx/commode.obj
+  [ ENDIF]
+
+# Libraries not built by default
+
+    <CCCMD> library/winnt.axp/_s/clib.lib                   <RELROOT>/rel2/libaxp/nt/clib.lib
+    <CCCMD> startup/library/winnt.axp/_s/binmode.obj        <RELROOT>/rel2/libaxp/nt/binmode.obj
+    <CCCMD> startup/library/winnt.axp/_s/commode.obj        <RELROOT>/rel2/libaxp/nt/commode.obj
+
+    <CCCMD> library/osi.386/ms_r/clib3r.lib                 <RELROOT>/rel2/lib386/osi/clib3r.lib
+ 
+    <CCCMD> library/linux.mps/_s/clib.lib                   <RELROOT>/rel2/libmps/linux/clib.lib
 
 [ BLOCK <1> clibqa ]
 #===================
