@@ -57,7 +57,8 @@ OVL_EXTERN bool ProgEvent( gui_window * gui, gui_event gui_ev, void * param )
     dlg = GUIGetExtra( gui );
     switch( gui_ev ) {
     case GUI_INIT_DIALOG:
-        GUILimitEditText( gui, CTL_NEWP_PROG, UTIL_LEN + 1 );
+        GUILimitEditText( gui, CTL_NEWP_PROG, UTIL_LEN - 1 );
+        GUILimitEditText( gui, CTL_NEWP_ARGS, UTIL_LEN - 1 );
         GUISetText( gui, CTL_NEWP_PROG, dlg->prog );
         GUISetText( gui, CTL_NEWP_ARGS, dlg->args );
         GUISetFocus( gui, CTL_NEWP_PROG );
