@@ -50,7 +50,7 @@ _WCRTLINK extern errno_t getenv_s( size_t * restrict len, char * restrict value,
     /* Verify runtime-constraints */
     if( __check_constraint_nullptr( name ) &&
         __check_constraint_maxsize( maxsize ) &&
-        __check_constraint_nullptr( value ) ) {
+        ((maxsize == 0) || __check_constraint_nullptr( value )) ) {
 
         /* Make sure destination string is always terminated */
         if( maxsize > 0 ) {
