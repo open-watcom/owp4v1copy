@@ -2299,11 +2299,11 @@ A default filename extension must be preceded by a period (".").
 .if &e'&$SWpil eq 1 .do begin
 :OPT refid='SWpil' name='pil'.
 .ix 'options' 'pil'
-If you are using preprocessed source file than it can contain #line 
-directives which specify position in original source code file.
-If you want to use reference to compiled source file rather then to original
-file then you can use this option and compiler "forget" all references
-to original source code. It can be useful for debugging.
+By default, #line directives embedded in source files are processed and
+will be used as a basis for file name and line number information in error
+messages, __FILE__ and __LINE__ symbols, etc. The "pil" option causes the
+preprocessor to ignore #line directives and refer to actual file names and
+line numbers.
 .do end
 .*
 .if &e'&$SWp eq 1 .do begin
