@@ -48,13 +48,11 @@
 Pentium instructions
 :optref refid='SW5'.
 .*
-.if &version ge 110 .do begin
 .note 6
 :CMT. .ix 'options' '6'
 &286only.
 Pentium Pro instructions
 :optref refid='SW6'.
-.do end
 .*
 .note 3r&optdag.
 :CMT. .ix 'options' '3r'
@@ -99,7 +97,6 @@ generate 386 instructions based on Intel Pentium instruction timings
 and use stack-based argument passing conventions
 :optref refid='SW5RS'.
 .*
-.if &version ge 110 .do begin
 .note 6r&optdag.
 :CMT. .ix 'options' '6r'
 &386only.
@@ -113,46 +110,31 @@ timings and use register-based argument passing conventions
 generate 386 instructions based on Intel Pentium Pro instruction
 timings and use stack-based argument passing conventions
 :optref refid='SW6RS'.
-.do end
 .*
-.if &version lt 107 .do begin
-.note 7&optdag.
-:CMT. .ix 'options' '7'
-generate in-line 80x87 instructions
-(equivalent to "fpi87" option below)
-:optref refid='SW7'.
-.do end
-.*
-.if &version ge 112 .do begin
 .note ad[=<file_name>]
 generate makefile style auto depend file
 :optref refid='SWad'.
-.do end
-.if &version ge 112 .do begin
+.*
 .note adbs
 force slashes generated in makefile style auto depend to backward
 :optref refid='SWadbs'.
-.do end
-.if &version ge 112 .do begin
+.*
 .note add[=<file_name>]
 specify source dependancy name generated in make-style autodep file
 :optref refid='SWadd'.
-.do end
-.if &version ge 112 .do begin
+.*
 .note adhp[=<file_name>]
 specify path to use for headers which result with no path, and are filename only.
 :optref refid='SWadhp'.
-.do end
-.if &version ge 112 .do begin
+.*
 .note adfs
 force slashes generated in makefile style auto depend to forward
 :optref refid='SWadfs'.
-.do end
-.if &version ge 112 .do begin
+.*
 .note adt[=<target_name>]
 specify target name generated in makefile style auto depend
 :optref refid='SWadt'.
-.do end
+.*
 .if '&alpha' eq 'AXP' .do begin
 .note as
 :CMT. .ix 'options' 'as'
@@ -161,38 +143,32 @@ assume short integers are aligned
 :optref refid='SWas'.
 .do end
 .*
-.if &version ge 110 .do begin
 .note bc
 :CMT. .ix 'options' 'bc'
 (C++ only)
 build target is a console application
 :optref refid='SWbc'.
-.do end
 .*
 .note bd
 :CMT. .ix 'options' 'bd'
 build target is a Dynamic Link Library (DLL)
 :optref refid='SWbd'.
 .*
-.if &version ge 110 .do begin
 .note bg
 :CMT. .ix 'options' 'bg'
 (C++ only)
 build target is a GUI application
 :optref refid='SWbg'.
-.do end
 .*
 .note bm
 :CMT. .ix 'options' 'bm'
 build target is a multi-thread environment
 :optref refid='SWbm'.
 .*
-.if &version ge 107 .do begin
 .note br
 :CMT. .ix 'options' 'br'
 build target uses DLL version of C/C++ run-time libraries
 :optref refid='SWbr'.
-.do end
 .*
 .note bt[=<os>]
 :CMT. .ix 'options' 'bt'
@@ -204,13 +180,11 @@ build target for operating system <os>
 build target uses default windowing support
 :optref refid='SWbw'.
 .*
-.if &version ge 107 .do begin
 .note d0
 :CMT. .ix 'options' 'd0'
 (C++ only)
 no debugging information
 :optref refid='SWd0'.
-.do end
 .*
 .note d1
 :CMT. .ix 'options' 'd1'
@@ -229,50 +203,40 @@ symbols and local structs and arrays
 full symbolic debugging information
 :optref refid='SWd2'.
 .*
-.if &version ge 107 .do begin
 .note d2i
 :CMT. .ix 'options' 'd2i'
 (C++ only)
 d2 and debug inlines; emit inlines as external out-of-line functions
 :optref refid='SWd2i'.
-.do end
 .*
-.if &version ge 110 .do begin
 .note d2s
 :CMT. .ix 'options' 'd2s'
 (C++ only)
 d2 and debug inlines; emit inlines as static out-of-line functions
 :optref refid='SWd2s'.
-.do end
 .*
-.if &version ge 107 .do begin
 .note d2t
 :CMT. .ix 'options' 'd2t'
 (C++ only)
 full symbolic debugging information, without type names
 :optref refid='SWd2t'.
-.do end
 .*
 .note d3
 :CMT. .ix 'options' 'd3'
 full symbolic debugging with unreferenced type names
 :optref refid='SWd3'.
 ,*
-.if &version ge 110 .do begin
 .note d3i
 :CMT. .ix 'options' 'd3i'
 (C++ only)
 d3 plus debug inlines; emit inlines as external out-of-line functions
 :optref refid='SWd3i'.
-.do end
 .*
-.if &version ge 110 .do begin
 .note d3s
 :CMT. .ix 'options' 'd3s'
 (C++ only)
 d3 plus debug inlines; emit inlines as static out-of-line functions
 :optref refid='SWd3s'.
-.do end
 .*
 .note d<name>[=text]
 :CMT. .ix 'options' 'd'
@@ -340,24 +304,20 @@ set default calling convention to __watcall (default)
 call epilogue hook routine
 :optref refid='SWee'.
 .*
-.if &version ge 107 .do begin
 .note ef
 :CMT. .ix 'options' 'ef'
 use full path names in error messages
 :optref refid='SWef'.
-.do end
 .*
 .note ei
 :CMT. .ix 'options' 'ei'
 force enum base type to use at least an int
 :optref refid='SWei'.
 .*
-.if &version ge 107 .do begin
 .note em
 :CMT. .ix 'options' 'em'
 force enum base type to use minimum
 :optref refid='SWem'.
-.do end
 .*
 .note en
 :CMT. .ix 'options' 'en'
@@ -371,20 +331,16 @@ emit routine name before prologue
 call prologue hook routine with number of stack bytes available
 :optref refid='SWep'.
 .*
-.if &version ge 107 .do begin
 .note eq
 :CMT. .ix 'options' 'eq'
 do not display error messages (they are still written to a file)
 :optref refid='SWeq'.
-.do end
 .*
-.if &version ge 110 .do begin
 .note er
 :CMT. .ix 'options' 'er'
 (C++ only)
 do not recover from undefined symbol errors
 :optref refid='SWer'.
-.do end
 .*
 .note et
 :CMT. .ix 'options' 'et'
@@ -404,49 +360,39 @@ generate less verbose messages
 generate Phar Lap Easy OMF-386 object file
 :optref refid='SWez'.
 .*
-.if &version ge 107 .do begin
 .note fc=<file_name>
 :CMT. .ix 'options' 'fc'
 (C++ only)
 specify file of command lines to be batch processed
 :optref refid='SWfc'.
-.do end
 .*
 .note fh[q][=<file_name>]
 :CMT. .ix 'options' 'fh, fhq'
 use precompiled headers
 :optref refid='SWfh'.
 .*
-.if &version ge 107 .do begin
 .note fhd
 :CMT. .ix 'options' 'fhd'
 store debug info for pre-compiled header once (DWARF only)
 :optref refid='SWfhd'.
-.do end
 .*
-.if &version ge 110 .do begin
 .note fhr
 :CMT. .ix 'options' 'fhr'
 (C++ only)
 force compiler to read pre-compiled header
 :optref refid='SWfhr'.
-.do end
 .*
-.if &version ge 107 .do begin
 .note fhw
 :CMT. .ix 'options' 'fhw'
 (C++ only)
 force compiler to write pre-compiled header
 :optref refid='SWfhw'.
-.do end
 .*
-.if &version ge 110 .do begin
 .note fhwe
 :CMT. .ix 'options' 'fhwe'
 (C++ only)
 don't include pre-compiled header warnings when "we" is used
 :optref refid='SWfhwe'.
-.do end
 .*
 .note fi=<file_name>
 :CMT. .ix 'options' 'fi'
@@ -501,14 +447,12 @@ generate in-line 387 instructions
 generate in-line 80x87 instructions optimized for Pentium processor
 :optref refid='SWfp5'.
 .*
-.if &version ge 110 .do begin
 .note fp6&optdag.
 :CMT. .ix 'options' 'fp6'
 &x86only.
 generate in-line 80x87 instructions optimized for Pentium Pro
 processor
 :optref refid='SWfp6'.
-.do end
 .*
 .note fpd&optdag.
 :CMT. .ix 'options' 'fpd'
@@ -584,13 +528,11 @@ add directory to list of include directories
 change char default from unsigned to signed
 :optref refid='SWj'.
 .*
-.if &version ge 107 .do begin
 .note k
 :CMT. .ix 'options' 'k'
 (C++ only)
 continue processing files (ignore errors)
 :optref refid='SWk'.
-.do end
 .*
 .note m{f,s,m,c,l,h}
 :CMT. .ix 'options' 'mf, ms, mm, mc, ml, mh'
@@ -636,21 +578,11 @@ set module name different from filename
 set name of the "text" segment
 :optref refid='SWnt'.
 .*
-.if &version ge 110 .do begin
 .note o{a,b,c,d,e,f,f+,h,i,i+,k,l,l+,m,n,o,p,r,s,t,u,x,z}
-.do end
-.el .if &version ge 107 .do begin
-.note o{a,b,c,d,e,f,f+,i,l,l+,m,n,o,p,r,s,t,u,x,z}
-.do end
-.el .do begin
-.note o{a,c,d,e,f,f+,i,l,l+,m,n,o,p,r,s,t,u,x,z}
-.do end
 :CMT. .ix 'options' 'oa'
 .sr $SWoa=1
-.if &version ge 107 .do begin
 :CMT. .ix 'options' 'ob'
 .sr $SWob=1
-.do end
 :CMT. .ix 'options' 'oc'
 .sr $SWoc=1
 :CMT. .ix 'options' 'od'
@@ -661,20 +593,14 @@ set name of the "text" segment
 .sr $SWof=1
 :CMT. .ix 'options' 'of+'
 .sr $SWofpls=1
-.if &version ge 110 .do begin
 :CMT. .ix 'options' 'oh'
 .sr $SWoh=1
-.do end
 :CMT. .ix 'options' 'oi'
 .sr $SWoi=1
-.if &version ge 110 .do begin
 :CMT. .ix 'options' 'oi+'
 .sr $SWoipls=1
-.do end
-.if &version ge 110 .do begin
 :CMT. .ix 'options' 'ok'
 .sr $SWok=1
-.do end
 :CMT. .ix 'options' 'ol'
 .sr $SWol=1
 :CMT. .ix 'options' 'ol+'
@@ -755,6 +681,11 @@ preprocess file only, sending output to standard output;
 w=<num> wrap output lines at <num> columns (zero means no wrap)
 :optref refid='SWp'.
 .*
+.note q
+:CMT. .ix 'options' 'q'
+operate quietly
+:optref refid='SWq'.
+.*
 .note r&optdag.
 :CMT. .ix 'options' 'r'
 &x86only.
@@ -808,32 +739,26 @@ preprocessor #undef name
 output function declarations to .def file (with typedef names)
 :optref refid='SWv'.
 .*
-.if &version ge 110 .do begin
 .note vc...
 :CMT. .ix 'options' 'vc'
 (C++ only)
 VC++ compatibility options
 :optref refid='SWvc'.
-.do end
 .*
 .note w<number>
 :CMT. .ix 'options' 'w'
 set warning level number (default is w1)
 :optref refid='SWw'.
 .*
-.if &version ge 107 .do begin
 .note wcd=<num>
 :CMT. .ix 'options' 'wcd'
 warning control: disable warning message <num>
 :optref refid='SWwcd'.
-.do end
 .*
-.if &version ge 110 .do begin
 .note wce=<num>
 :CMT. .ix 'options' 'wce'
 warning control: enable warning message <num>
 :optref refid='SWwce'.
-.do end
 .*
 .note we
 :CMT. .ix 'options' 'we'
@@ -867,12 +792,10 @@ set warning level to maximum setting
 (C++ only) disable exception handling (table-driven destructors)
 :optref refid='SWxds'.
 .*
-.if &version ge 110 .do begin
 .note xr
 :CMT. .ix 'options' 'xr'
 (C++ only) enable RTTI
 :optref refid='SWxr'.
-.do end
 .*
 .note xs
 :CMT. .ix 'options' 'xs'
@@ -1004,12 +927,10 @@ remove automatically inserted symbols (such as runtime library references)
 place each function in separate segment (near functions not allowed)
 :optref refid='SWzm'.
 .*
-.if &version ge 107 .do begin
 .note zmf
 :CMT. .ix 'options' 'zmf'
 place each function in separate segment (near functions allowed)
 :optref refid='SWzmf'.
-.do end
 .*
 :CMT..note zo
 :CMT.:CMT. .ix 'options' 'zo'
@@ -1029,12 +950,10 @@ always align structs on qword boundaries
 :optref refid='SWzps'.
 .do end
 .*
-.if &version ge 110 .do begin
 .note zpw
 :CMT. .ix 'options' 'zpw'
 output warning when padding is added in a struct/class
 :optref refid='SWzpw'.
-.do end
 .*
 .note zq
 :CMT. .ix 'options' 'zq'
@@ -1067,13 +986,11 @@ set data threshold (default is zt32767)
 do not assume that SS contains segment of DGROUP
 :optref refid='SWzu'.
 .*
-.if &version ge 107 .do begin
 .note zv
 :CMT. .ix 'options' 'zv'
 (C++ only)
 enable virtual function removal optimization
 :optref refid='SWzv'.
-.do end
 .*
 .note zw&optdag.
 :CMT. .ix 'options' 'zw'

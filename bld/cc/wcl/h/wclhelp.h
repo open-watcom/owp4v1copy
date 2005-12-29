@@ -144,6 +144,7 @@
 "-nd=<name>  set data segment name",
 "-nm=<module_name> set module name",
 "-nt=<name>  set text segment name",
+"-q  operate quietly",
 "-r  save/restore segregs across calls",
 #endif
 "-ri promote function args/rets to int",

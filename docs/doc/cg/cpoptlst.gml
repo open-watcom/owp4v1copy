@@ -30,12 +30,10 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 110 .do begin
 :CMT. .note 6
 :hotlink refid='SW6'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note 3r
 :hotlink refid='SW3RS'.
@@ -64,7 +62,6 @@
 :CMT. :hotlink refid='SW5RS'.
 :CMT. .br
 .*
-.if &version ge 110 .do begin
 :CMT. .note 6r
 :hotlink refid='SW6RS'.
 ~b~b~b~b~b~b
@@ -73,56 +70,36 @@
 :CMT. .note 6s
 :CMT. :hotlink refid='SW6RS'.
 :CMT. .br
-.do end
 .*
-.if &version lt 107 .do begin
-:CMT. .note 7
-:hotlink refid='SW7'.
-~b~b~b~b~b~b
-.br
-.do end
-.*
-.if &version ge 112 .do begin
 :CMT. .note ad
 :hotlink refid='SWad'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 112 .do begin
 :CMT. .note add
 :hotlink refid='SWadd'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 112 .do begin
 :CMT. .note adhp
 :hotlink refid='SWadhp'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 112 .do begin
 :CMT. .note adt
 :hotlink refid='SWadt'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 112 .do begin
 :CMT. .note adbs
 :hotlink refid='SWadbs'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 112 .do begin
 :CMT. .note adfs
 :hotlink refid='SWadfs'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 .if '&alpha' eq 'AXP' .do begin
 :CMT. .note as
@@ -131,36 +108,30 @@
 .br
 .do end
 .*
-.if &version ge 110 .do begin
 :CMT. .note bc
 :hotlink refid='SWbc'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note bd
 :hotlink refid='SWbd'.
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 110 .do begin
 :CMT. .note bg
 :hotlink refid='SWbg'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note bm
 :hotlink refid='SWbm'.
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note br
 :hotlink refid='SWbr'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note bt[=<os>]
 :hotlink refid='SWbt'.
@@ -172,12 +143,10 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note d0
 :hotlink refid='SWd0'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note d1
 :hotlink refid='SWd1'.
@@ -194,45 +163,35 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note d2i
 :hotlink refid='SWd2i'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 110 .do begin
 :CMT. .note d2s
 :hotlink refid='SWd2s'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 107 .do begin
 :CMT. .note d2t
 :hotlink refid='SWd2t'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note d3
 :hotlink refid='SWd3'.
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 110 .do begin
 :CMT. .note d3i
 :hotlink refid='SWd3i'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 110 .do begin
 :CMT. .note d3s
 :hotlink refid='SWd3s'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note d<name>[=text]
 :hotlink refid='SWd'.
@@ -349,45 +308,35 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note fc=<file_name>
 :hotlink refid='SWfc'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note fh[q][=<file_name>]
 :hotlink refid='SWfh'.
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note fhd
 :hotlink refid='SWfhd'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 110 .do begin
 :CMT. .note fhr
 :hotlink refid='SWfhr'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 107 .do begin
 :CMT. .note fhw
 :hotlink refid='SWfhw'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 110 .do begin
 :CMT. .note fhwe
 :hotlink refid='SWfhwe'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note fi=<file_name>
 :hotlink refid='SWfi'.
@@ -432,12 +381,10 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 110 .do begin
 :CMT. .note fp6
 :hotlink refid='SWfp6'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note fpd
 :hotlink refid='SWfpd'.
@@ -507,12 +454,10 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note k
 :hotlink refid='SWk'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note mf
 :hotlink refid='SWmf'.
@@ -574,12 +519,10 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note ob
 :hotlink refid='SWob'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note oc
 :hotlink refid='SWoc'.
@@ -606,31 +549,25 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 110 .do begin
 :CMT. .note oh
 :hotlink refid='SWoh'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note oi
 :hotlink refid='SWoi'.
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 110 .do begin
 :CMT. .note oi+
 :hotlink refid='SWoipls'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 110 .do begin
 :CMT. .note ok
 :hotlink refid='SWok'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note ol
 :hotlink refid='SWol'.
@@ -717,6 +654,11 @@
 :CMT. :hotlink refid='SWp'.
 :CMT. .br
 .*
+:CMT. .note q
+:hotlink refid='SWq'.
+~b~b~b~b~b~b
+.br
+.*
 :CMT. .note r
 :hotlink refid='SWr'.
 ~b~b~b~b~b~b
@@ -764,31 +706,25 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 110 .do begin
 :CMT. .note vc...
 :hotlink refid='SWvc'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note w<number>
 :hotlink refid='SWw'.
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note wcd=<num>
 :hotlink refid='SWwcd'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
-.if &version ge 110 .do begin
 :CMT. .note wce=<num>
 :hotlink refid='SWwce'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note we
 :hotlink refid='SWwe'.
@@ -959,12 +895,10 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note zmf
 :hotlink refid='SWzmf'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT.:CMT. .note zo
 :CMT.:hotlink refid='SWzo'.
@@ -999,12 +933,10 @@
 .br
 .do end
 .*
-.if &version ge 110 .do begin
 :CMT. .note zpw
 :hotlink refid='SWzpw'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note zq
 :hotlink refid='SWzq'.
@@ -1036,12 +968,10 @@
 ~b~b~b~b~b~b
 .br
 .*
-.if &version ge 107 .do begin
 :CMT. .note zv
 :hotlink refid='SWzv'.
 ~b~b~b~b~b~b
 .br
-.do end
 .*
 :CMT. .note zw
 :hotlink refid='SWzw'.

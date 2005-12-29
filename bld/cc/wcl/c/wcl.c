@@ -703,6 +703,9 @@ static int Parse( char *Cmd )
                 case 'p':
                     Flags.no_link = TRUE;
                     break;      /* this is a preprocessor option */
+                case 'q':
+                    Flags.be_quiet = TRUE;
+                    break;
                 case 'z':                   /* 12-jan-89 */
                     switch( tolower( Cmd[1] ) ) {
                     case 's':

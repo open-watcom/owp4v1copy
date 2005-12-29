@@ -360,6 +360,11 @@ do not recover from undefined symbol errors
 alternate error message formatting
 :optref refid='SWew'.
 .do end
+.if &e'&$SWq eq 1 .do begin
+.note q
+operate quietly
+:optref refid='SWq'.
+.do end
 .if &e'&$SWt eq 1 .do begin
 .note t=<num>
 set tab stop multiplier
@@ -2437,6 +2442,12 @@ void bar( S *p ) {
 (C++ only)
 This option causes the C++ compiler to generate equivalent but less
 verbose diagnostic messages.
+.do end
+.*
+.if &e'&$SWq eq 1 .do begin
+:OPT refid='SWq' name='q'.
+.ix 'options' 'q'
+This option is equivalent to the "zq" option :optref refid='SWzq'..
 .do end
 .*
 .if &e'&$SWt eq 1 .do begin

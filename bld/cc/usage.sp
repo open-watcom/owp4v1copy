@@ -5,7 +5,7 @@
 Usage: wccaxp [options] file [options]
 :elsesegment Tppc
 Usage: wccppc [options] file [options]
-:elsesegment Tmis
+:elsesegment Tmps
 Usage: wccmps [options] file [options]
 :elsesegment T386
 Usage: wcc386 [options] file [options]
@@ -190,6 +190,7 @@ Options:
   c           -> preserve comments
   l           -> insert #line directives
   w=<num>     -> wrap output lines at <num> columns. Zero means no wrap.
+-q            operate quietly
 :segment T386 | Ti86
 -r            save/restore segment registers across calls
 -ri           return chars and shorts as ints
@@ -262,7 +263,7 @@ Options:
 :segment Taxp
 -zps          always align structs on qword boundaries
 :endsegment
--zq           operate quietly
+-zq           operate quietly (equivalent to -q)
 :segment T386 | Ti86
 -zro          omit floating point rounding calls (non ANSI)
 :endsegment

@@ -858,7 +858,7 @@ static int debugOptionAfterOptOption( OPT_STORAGE *data )
 static void analyseAnyTargetOptions( OPT_STORAGE *data )
 {
     // quickly do the quiet option so the banner can be printed
-    if( data->zq ) {
+    if( data->q || data->zq ) {
         CompFlags.quiet_mode = 1;
     }
     switch( data->char_set ) {

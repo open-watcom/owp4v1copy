@@ -915,6 +915,11 @@
 :usage. set preprocessor delimiter to something other than '#'
 :jusage. プリプロセッサの区切り記号を'#'以外の何かに設定します
 
+:option. q
+:target. any
+:usage. operate quietly (display only error messages)
+:jusage. 無メッセージモードで動作します(エラーメッセージのみ表示されます)
+
 :option. r
 :target. i86 386
 :usage. save/restore segment registers across calls

@@ -1506,6 +1506,7 @@ static struct option const CFE_Options[] = {
     { "o*",     0,              SetOptimization },
     { "i=@",    0,              SetInclude },
     { "zq",     0,              Set_ZQ },
+    { "q",      0,              Set_ZQ },
 #if _CPU == 8086
     { "0",      SW_CPU0,        SetCPU },
     { "1",      SW_CPU1,        SetCPU },
