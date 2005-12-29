@@ -1,4 +1,4 @@
-68
+69
 auto
 double
 int
@@ -10,6 +10,7 @@ switch
 case
 enum
 register
+restrict
 typedef
 char
 extern
@@ -67,4 +68,3 @@ __builtin_isfloat
 __ow_imaginary_unit
 __unaligned
 __watcall
-
