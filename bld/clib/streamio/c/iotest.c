@@ -692,6 +692,8 @@ int main( int argc, char *argv[] )
     int         cur_ftype;              /* current file type */
     char        cur_mode[MAX_MODE + 1]; /* actual file mode paramater */
     TestFile    *cur_test;
+    int         old_stdout_fd;
+    FILE        *old_stdout;
 
 #ifdef __SW_BW
     con = fopen( "tmp.log", "a" );
@@ -727,6 +729,15 @@ int main( int argc, char *argv[] )
     } /* cur_omode */
 
     Test_Temp_IO( );   /* tmpfile based tests */
+
+    /* Create a clone of stdout for later use; must be done after
+     * Test_Temp_IO() which calls fcloseall(). This needs to be done
+     * for output redirection to work.
+     */
+    old_stdout_fd = fileno( stdout );
+    EXPECT( (old_stdout_fd = dup( old_stdout_fd )) != -1 );
+    EXPECT( (old_stdout = fdopen( old_stdout_fd, "wt" )) != NULL );
+
     Test_StdWrites( stderr );
     Test_StdWrites( stdout );
     Test_File_Errors( );   /* eg.  perror, ferror, etc.. */
@@ -736,7 +747,8 @@ int main( int argc, char *argv[] )
     Test_setvbuf( );
     Test_ungetc( );
 
-    fprintf( con, "Tests completed (%s).\n", strlwr( argv[0] ) );
+    fprintf( old_stdout, "Tests completed (%s).\n", strlwr( argv[0] ) );
+    fclose( old_stdout );
     fclose( con );
     //Status_Print( );
 #ifdef __SW_BW
