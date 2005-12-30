@@ -120,7 +120,7 @@
 #endif
 
 // _NUL combines NULL and _NULLOFF
-#if defined(__AXP__)
+#if defined( __AXP__ ) || defined( __UNIX__ )
     #define _NUL        NULL
 #else
     #define _NUL        ( ( type == TYPE_BASED ) ? (long)_NULLOFF: (long)NULL )

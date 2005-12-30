@@ -35,14 +35,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
-#include <io.h>
+#include <unistd.h>
 #include <errno.h>
 
 #ifdef __SW_BW
     #include <wdefwin.h>
 #endif
 
-#if defined(__NT__) && !defined(__SW_BW)
+#ifdef __UNIX__
+    #define CONSOLE_OUT "/dev/tty"
+    #define CONSOLE_IN  "/dev/tty"
+#elif defined(__NT__) && !defined(__SW_BW)
     #define CONSOLE_OUT "CONOUT$"
     #define CONSOLE_IN  "CONIN$"
 #else
@@ -427,9 +430,11 @@ int Test_Temp_IO( )
         VERIFY( fputc( 'x', cur_file[i] ) != EOF );
     }
 
+#ifndef __UNIX__    // _TMPFIL flag isn't used on UNIX
     for( i = 0; i < NUM_FILES; i++ ) {
         EXPECT( ( cur_file[i]->_flag & _TMPFIL ) != 0 );
     }
+#endif
 
     fcloseall();
     num_closed = fcloseall();
@@ -515,7 +520,7 @@ int Test_StdWrites( FILE *fp )
     EXPECT( tmpnam( filename ) != NULL );
     EXPECT( (my_fp = freopen( filename, "a+t", fp ) ) != NULL );
 
-    /* A seperate function is used to assure the deletion of the test file. */
+    /* A separate function is used to assure the deletion of the test file. */
 
     Test_StdWrite( fp, &my_fp, filename );
 
@@ -760,4 +765,3 @@ int main( int argc, char *argv[] )
 
     return( 0 );
 }
-

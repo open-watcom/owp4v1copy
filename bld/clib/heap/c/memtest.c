@@ -34,7 +34,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <dos.h>
 
 #ifdef __SW_BW
  #include <wdefwin.h>
