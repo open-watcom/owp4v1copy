@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Heap management functions test.
 *
 ****************************************************************************/
 
@@ -73,6 +72,14 @@
 // calling malloc( NUM_EL * sizeof( double ) ).
 
 #define BASED_HEAP_SIZE 512
+
+// Casting _NULLOFF to long produces 0xFFFFFFFF, while casting the return of
+// failing based heap routines to long produces 0xFFFF. At this point it is
+// unclear whether that is a compiler bug, whether the _NULLOFF macro is wrong,
+// or whether the test makes bad assumptions. For the moment, get around it
+// by casting to unsigned in a few specific cases. This hack should be removed
+// when it is determined what's actually wrong and the original problem fixed.
+#define HACK_CAST   (unsigned)
 
 // This is a macro performing everything needed before returning the call
 #if defined(__386__) || defined(__AXP__)
@@ -123,7 +130,7 @@
 #if defined( __AXP__ ) || defined( __UNIX__ )
     #define _NUL        NULL
 #else
-    #define _NUL        ( ( type == TYPE_BASED ) ? (long)_NULLOFF: (long)NULL )
+    #define _NUL        (type == TYPE_BASED ? (long)_NULLOFF: (long)NULL)
 #endif
 
 // Macro to free based pointers and the corresponding segment
@@ -140,9 +147,9 @@
 }
 
 typedef struct _test_result {
-    char funcname[80];
-    int status;
-    char msg[256];
+    char    funcname[80];
+    int     status;
+    char    msg[256];
 } test_result;
 
 #if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
@@ -182,6 +189,82 @@ static const char *errmsg[] = {
     "FREE NEAR HEAP HAS SHRUNK AFTER ALLOCATING MEMORY FROM A FAR HEAP" // 18
 };
 
+void ShowDot( int ctr )
+{
+    if( ( ctr % DOT_INTERVAL ) == 0 ) putch( '.' );
+}
+
+void AskHeapWlk( int timing, int type, int lineno )
+{
+    char ans;
+
+    if( type == TYPE_HUGE ) return;     // No huge _heapwalk()
+    cprintf( "[-h] Dump the heap %s freeing? ",
+             (timing == FREED_BEFORE ) ? "before" : "after" );
+    ans = getche();
+    cprintf( "\n\r" );
+    if( ans == 'y' || ans == 'Y' ) {
+        struct _heapinfo h_info;
+        int heap_status;
+
+        h_info._pentry = NULL;
+        printf( "-----------------------------------------\n" );
+        printf( "Heap walk result (%s freeing memory):\n",
+                (timing == FREED_BEFORE ) ? "before" : "after" );
+        for( ;; ) {
+            switch( type ) {
+                case TYPE_DEFAULT:
+                    heap_status = _heapwalk( &h_info );
+                    break;
+                case TYPE_NEAR:
+                    heap_status = _nheapwalk( &h_info );
+                    break;
+#if !defined(__386__) && !defined(__AXP__)
+                case TYPE_FAR:
+                    heap_status = _fheapwalk( &h_info );
+                    break;
+                case TYPE_BASED:
+                    heap_status = _bheapwalk( seg, &h_info );
+                    break;
+#endif
+                default:
+                    heap_status = INTERNAL_ERR;
+                    break;
+            }
+            if( heap_status != _HEAPOK ) break;
+            printf( "  %s block at %Fp of size %4.4X\n",
+                    ( h_info._useflag == _USEDENTRY ? "USED" : "FREE" ),
+                    h_info._pentry, h_info._size );
+        }
+        switch( heap_status ) {
+            case _HEAPEND:
+                printf( "OK - end of heap\n" );
+                break;
+            case _HEAPEMPTY:
+                printf( "OK - heap is empty\n" );
+                break;
+            case _HEAPBADBEGIN:
+                printf( "ERROR - heap is damaged\n" );
+                printf( "Reference: line #%d in source.\n", lineno );
+                break;
+            case _HEAPBADPTR:
+                printf( "ERROR - bad pointer to heap\n" );
+                printf( "Reference: line #%d in source.\n", lineno );
+                break;
+            case _HEAPBADNODE:
+                printf( "ERROR - bad node in heap\n" );
+                printf( "Reference: line #%d in source.\n", lineno );
+                break;
+            case INTERNAL_ERR:
+                printf( "INTERNAL ERROR - unrecognized heap type\n" );
+                break;
+            default:
+                break;
+        }
+        printf( "-----------------------------------------\n" );
+    }
+}
+
 void Test_alloca_stackavail__memavl__memmax( test_result *result )
 {
     size_t      ctr, buffsize, memsize;
@@ -215,15 +298,15 @@ void Test_alloca_stackavail__memavl__memmax( test_result *result )
     }
     memsize = _memavl();
     strcpy( result->funcname,"stackavail() and/or alloca()" );
-    #ifndef __AXP__
-        buffsize = stackavail() + 1;
-        buffer = alloca( buffsize ); // Allocate more than available stack size
-        if( buffer != NULL ) {
-            result->status = TEST_FAIL;
-            strcpy( result->msg, errmsg[0] );
-            return;
-        }
-    #endif
+
+    buffsize = stackavail() + 1;
+    buffer = alloca( buffsize ); // Allocate more than available stack size
+    if( buffer != NULL ) {
+        result->status = TEST_FAIL;
+        strcpy( result->msg, errmsg[0] );
+        return;
+    }
+
     buffsize = stackavail() >> 1;
     buffer = alloca( buffsize ); // Allocate half of available stack size
     if( buffer == NULL ) {
@@ -271,7 +354,7 @@ void Test_calloc__msize( test_result *result, int type )
             ptr_int    = (long) _ncalloc( NUM_EL, sizeof( int ) );
             ptr_double = (long) _ncalloc( NUM_EL, sizeof( double ) );
             break;
-        #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
         case TYPE_FAR:
             if( more_debug ) {
                 printf( "Testing: _fcalloc(), _fmsize()...\n" );
@@ -297,7 +380,7 @@ void Test_calloc__msize( test_result *result, int type )
             chkmemavl = _memavl();
             ptr_double = (long) _bcalloc( seg, NUM_EL, sizeof( double ) );
             break;
-        #endif
+#endif
         default:
             break;
     }
@@ -316,41 +399,41 @@ void Test_calloc__msize( test_result *result, int type )
         if( more_debug ) nomem_lineno = __LINE__;
         _CRET();
     }
-    #if !defined(__386__) && !defined(__AXP__) && (defined(__SMALL__) || defined(__MEDIUM__))
-        if( type != TYPE_FAR && ptr_double != _NUL ) {
+#if !defined(__386__) && !defined(__AXP__) && (defined(__SMALL__) || defined(__MEDIUM__))
+    if( type != TYPE_FAR && HACK_CAST ptr_double != HACK_CAST _NUL ) {
+        result->status = TEST_FAIL;
+        strcpy( result->msg, errmsg[14] );
+        _CRET();
+    } else if( type == TYPE_FAR && ptr_double == _NUL ) {
+        result->status = TEST_FAIL;
+        strcpy( result->msg, errmsg[16] );
+        _CRET();
+    }
+#else       // 32-bit or large data model
+    if( type == TYPE_BASED || type == TYPE_NEAR ) {
+    #if !defined(__386__) && !defined(__AXP__)
+        if( HACK_CAST ptr_double != HACK_CAST _NUL ) {
             result->status = TEST_FAIL;
             strcpy( result->msg, errmsg[14] );
             _CRET();
-        } else if( type == TYPE_FAR && ptr_double == _NUL ) {
-            result->status = TEST_FAIL;
-            strcpy( result->msg, errmsg[16] );
-            _CRET();
-        }
-    #else       // 32-bit or large data model
-        if( type == TYPE_BASED || type == TYPE_NEAR ) {
-            #if !defined(__386__) && !defined(__AXP__)
-                if( ptr_double != _NUL ) {
-                    result->status = TEST_FAIL;
-                    strcpy( result->msg, errmsg[14] );
-                    _CRET();
-                }
-            #endif
-        } else if( ptr_double == _NUL ) {
-            result->status = TEST_FAIL;
-            #if !defined(__386__) && !defined(__AXP__) // Different error messages
-                strcpy( result->msg, errmsg[16] );
-            #else
-                strcpy( result->msg, errmsg[17] );
-            #endif
-            _CRET();
-        #if !defined(__386__) && !defined(__AXP__)
-        } else if( _memavl() < chkmemavl ) {
-            result->status = TEST_FAIL;
-            strcpy( result->msg, errmsg[18] );
-            _CRET();
-        #endif
         }
     #endif
+    } else if( ptr_double == _NUL ) {
+        result->status = TEST_FAIL;
+    #if !defined(__386__) && !defined(__AXP__) // Different error messages
+        strcpy( result->msg, errmsg[16] );
+    #else
+        strcpy( result->msg, errmsg[17] );
+    #endif
+        _CRET();
+    #if !defined(__386__) && !defined(__AXP__)
+    } else if( _memavl() < chkmemavl ) {
+        result->status = TEST_FAIL;
+        strcpy( result->msg, errmsg[18] );
+        _CRET();
+    #endif
+    }
+#endif
 
     result->status = TEST_PASS;
     tracethisloop = AskTrace( result->funcname, __LINE__ );
@@ -368,7 +451,7 @@ void Test_calloc__msize( test_result *result, int type )
                     result->status = TEST_FAIL;
                 }
                 break;
-            #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
             case TYPE_FAR:
                 if( ((char __far *)ptr_char)[ctr] != 0 ||
                     ((int __far *)ptr_int)[ctr] != 0 ) {
@@ -381,7 +464,7 @@ void Test_calloc__msize( test_result *result, int type )
                     result->status = TEST_FAIL;
                 }
                 break;
-            #endif
+#endif
             default:
                 break;
         }
@@ -405,7 +488,7 @@ void Test_calloc__msize( test_result *result, int type )
             strcpy( result->funcname,"_nmsize()" );
             retsize = _nmsize( (char __near *)ptr_char );
             break;
-        #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
         case TYPE_FAR:
             strcpy( result->funcname,"_fmsize()" );
             retsize = _fmsize( (char __far *)ptr_char );
@@ -414,7 +497,7 @@ void Test_calloc__msize( test_result *result, int type )
             strcpy( result->funcname,"_bmsize()" );
             retsize = _bmsize( seg, (char __based( seg ) *)ptr_char );
             break;
-        #endif
+#endif
         default:
             break;
     }
@@ -455,7 +538,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
             ptr_int    = (long) _nmalloc( NUM_EL * sizeof( int ) );
             ptr_double = (long) _nmalloc( NUM_EL * sizeof( double ) );
             break;
-        #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
         case TYPE_FAR:
             if( more_debug ) {
                 printf( "Testing: _fmalloc(), _frealloc(), _fexpand()...\n" );
@@ -481,11 +564,11 @@ void Test_malloc_realloc__expand( test_result *result, int type )
             chkmemavl = _memavl();
             ptr_double = (long) _bmalloc( seg, NUM_EL * sizeof( double ) );
             break;
-        #endif
+#endif
         default:
             break;
     }
-    if( ptr_char == _NUL && ( ptr_int != _NUL || ptr_double !=_NUL ) ) {
+    if( ptr_char == _NUL && (ptr_int != _NUL || ptr_double !=_NUL) ) {
         result->status = TEST_FAIL;
         strcpy( result->msg, errmsg[2] );
         _CRET();
@@ -500,41 +583,41 @@ void Test_malloc_realloc__expand( test_result *result, int type )
         if( more_debug ) nomem_lineno = __LINE__;
         _CRET();
     }
-    #if !defined(__386__) && !defined(__AXP__) && (defined(__SMALL__) || defined(__MEDIUM__))
-        if( type != TYPE_FAR && ptr_double != _NUL ) {
+#if !defined(__386__) && !defined(__AXP__) && (defined(__SMALL__) || defined(__MEDIUM__))
+    if( type != TYPE_FAR && HACK_CAST ptr_double != HACK_CAST _NUL ) {
+        result->status = TEST_FAIL;
+        strcpy( result->msg, errmsg[14] );
+        _CRET();
+    } else if( type == TYPE_FAR && ptr_double == _NUL ) {
+        result->status = TEST_FAIL;
+        strcpy( result->msg, errmsg[16] );
+        _CRET();
+    }
+#else       // 32-bit or large data model
+    if( type == TYPE_BASED || type == TYPE_NEAR ) {
+    #if !defined(__386__) && !defined(__AXP__)
+        if( HACK_CAST ptr_double != HACK_CAST _NUL ) {
             result->status = TEST_FAIL;
             strcpy( result->msg, errmsg[14] );
             _CRET();
-        } else if( type == TYPE_FAR && ptr_double == _NUL ) {
-            result->status = TEST_FAIL;
-            strcpy( result->msg, errmsg[16] );
-            _CRET();
-        }
-    #else       // 32-bit or large data model
-        if( type == TYPE_BASED || type == TYPE_NEAR ) {
-            #if !defined(__386__) && !defined(__AXP__)
-                if( ptr_double != _NUL ) {
-                    result->status = TEST_FAIL;
-                    strcpy( result->msg, errmsg[14] );
-                    _CRET();
-                }
-            #endif
-        } else if( ptr_double == _NUL ) {
-            result->status = TEST_FAIL;
-            #if !defined(__386__) && !defined(__AXP__) // Different error messages
-                strcpy( result->msg, errmsg[16] );
-            #else
-                strcpy( result->msg, errmsg[17] );
-            #endif
-            _CRET();
-        #if !defined(__386__) && !defined(__AXP__)
-        } else if( _memavl() < chkmemavl ) {
-            result->status = TEST_FAIL;
-            strcpy( result->msg, errmsg[18] );
-            _CRET();
-        #endif
         }
     #endif
+    } else if( ptr_double == _NUL ) {
+        result->status = TEST_FAIL;
+    #if !defined(__386__) && !defined(__AXP__) // Different error messages
+        strcpy( result->msg, errmsg[16] );
+    #else
+        strcpy( result->msg, errmsg[17] );
+    #endif
+        _CRET();
+    #if !defined(__386__) && !defined(__AXP__)
+    } else if( _memavl() < chkmemavl ) {
+        result->status = TEST_FAIL;
+        strcpy( result->msg, errmsg[18] );
+        _CRET();
+    #endif
+    }
+#endif
 
     result->status = TEST_PASS;
     tracethisloop = AskTrace( result->funcname, __LINE__ );
@@ -548,7 +631,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
                 ((char __near *)ptr_char)[ctr] = 6;
                 ((int __near *)ptr_int)[ctr]   = 6;
                 break;
-            #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
             case TYPE_FAR:
                 ((char __far *)ptr_char)[ctr] = 6;
                 ((int __far *)ptr_int)[ctr]   = 6;
@@ -557,7 +640,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
                 ((char __based( seg ) *)ptr_char)[ctr] = 6;
                 ((int __based( seg ) *)ptr_int)[ctr]   = 6;
                 break;
-            #endif
+#endif
             default:
                 break;
         }
@@ -576,7 +659,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
             strcpy( result->funcname, "_nrealloc()" );
             tmp_ptr = (long) _nrealloc((int __near*) ptr_int, size );
             break;
-        #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
         case TYPE_FAR:
             strcpy( result->funcname, "_frealloc()" );
             tmp_ptr = (long) _frealloc( (int __far *) ptr_int, size );
@@ -585,7 +668,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
             strcpy( result->funcname, "_brealloc()" );
             tmp_ptr = (long) _brealloc( seg,(int __based(seg)*)ptr_int,size);
             break;
-        #endif
+#endif
         default:
             break;
     }
@@ -613,7 +696,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
             strcpy( result->funcname, "_nexpand()" );
             tmp_ptr = (long)_nexpand( (int __near *)ptr_int, size );
             break;
-        #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
         case TYPE_FAR:
             strcpy( result->funcname, "_fexpand()" );
             tmp_ptr = (long)_fexpand( (int __far *)ptr_int, size );
@@ -622,7 +705,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
             strcpy( result->funcname, "_bexpand()" );
             tmp_ptr = (long)_bexpand( seg, (int __based(seg)*)ptr_int, size );
             break;
-        #endif
+#endif
         default:
             break;
     }
@@ -649,7 +732,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
                 ((char __near *)ptr_char)[ctr] = 6;
                 ((int __near *)ptr_int)[ctr]   = 6;
                 break;
-            #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
             case TYPE_FAR:
                 ((char __far *)ptr_char)[ctr] = 6;
                 ((int __far *)ptr_int)[ctr]   = 6;
@@ -658,7 +741,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
                 ((char __based( seg ) *)ptr_char)[ctr] = 6;
                 ((int __based( seg ) *)ptr_int)[ctr]   = 6;
                 break;
-            #endif
+#endif
             default:
                 break;
         }
@@ -679,14 +762,14 @@ int CheckContent( long ptr, size_t n, int type )
             case TYPE_NEAR:
                 flag = ( ((int __near *)ptr)[ctr] == 6 );
                 break;
-            #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
             case TYPE_FAR:
                 flag = ( ((int __far *)ptr)[ctr] == 6 );
                 break;
             case TYPE_BASED:
                 flag = ( ((int __based( seg ) *)ptr)[ctr] == 6 );
                 break;
-            #endif
+#endif
             default:
                 break;
         }
@@ -720,11 +803,11 @@ void Test__freect( test_result *result )
         Note: this should be the last test that involves the near heap
               since the memory allocated is not freed.
     */
-    #if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
-        // To avoid the warning in TranslateResult()
-        //      - near heap should almost be used up.
-        memrecord = memavail = _memavl();
-    #endif
+#if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
+    // To avoid the warning in TranslateResult()
+    //      - near heap should almost be used up.
+    memrecord = memavail = _memavl();
+#endif
 }
 
 #if !defined(__386__) && !defined(__AXP__)
@@ -808,7 +891,7 @@ void TranslateResult( test_result *result )
         printf( "INTERNAL: UNEXPECTED TEST RESULT.\n" );
         exit(-1);
     }
-    #if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
+#if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
     if( memrecord != memavail ) {
         printf( "FUNCTION(S): %s.\n", result->funcname );
         printf( "WARNING: SIZE OF FREE NEAR HEAP HAS BEEN CHANGED.\n" );
@@ -820,7 +903,7 @@ void TranslateResult( test_result *result )
         }
     }
     memrecord = _memavl();
-    #endif
+#endif
     if( dopause ) {
         cprintf( "[-p] End of this test. Press any key to continue." );
         getche();
@@ -845,80 +928,21 @@ int AskTrace( char *name, int lineno )
     return( FALSE );
 }
 
-void ShowDot( int ctr )
+void Usage( char *filename )
 {
-    if( ( ctr % DOT_INTERVAL ) == 0 ) putch( '.' );
-}
+    char *tmp;
 
-void AskHeapWlk( int timing, int type, int lineno )
-{
-    char ans;
-
-    if( type == TYPE_HUGE ) return;     // No huge _heapwalk()
-    cprintf( "[-h] Dump the heap %s freeing? ",
-             (timing == FREED_BEFORE ) ? "before" : "after" );
-    ans = getche();
-    cprintf( "\n\r" );
-    if( ans == 'y' || ans == 'Y' ) {
-        struct _heapinfo h_info;
-        int heap_status;
-
-        h_info._pentry = NULL;
-        printf( "-----------------------------------------\n" );
-        printf( "Heap walk result (%s freeing memory):\n",
-                (timing == FREED_BEFORE ) ? "before" : "after" );
-        for( ;; ) {
-            switch( type ) {
-                case TYPE_DEFAULT:
-                    heap_status = _heapwalk( &h_info );
-                    break;
-                case TYPE_NEAR:
-                    heap_status = _nheapwalk( &h_info );
-                    break;
-                #if !defined(__386__) && !defined(__AXP__)
-                case TYPE_FAR:
-                    heap_status = _fheapwalk( &h_info );
-                    break;
-                case TYPE_BASED:
-                    heap_status = _bheapwalk( seg, &h_info );
-                    break;
-                #endif
-                default:
-                    heap_status = INTERNAL_ERR;
-                    break;
-            }
-            if( heap_status != _HEAPOK ) break;
-            printf( "  %s block at %Fp of size %4.4X\n",
-                    ( h_info._useflag == _USEDENTRY ? "USED" : "FREE" ),
-                    h_info._pentry, h_info._size );
-        }
-        switch( heap_status ) {
-            case _HEAPEND:
-                printf( "OK - end of heap\n" );
-                break;
-            case _HEAPEMPTY:
-                printf( "OK - heap is empty\n" );
-                break;
-            case _HEAPBADBEGIN:
-                printf( "ERROR - heap is damaged\n" );
-                printf( "Reference: line #%d in source.\n", lineno );
-                break;
-            case _HEAPBADPTR:
-                printf( "ERROR - bad pointer to heap\n" );
-                printf( "Reference: line #%d in source.\n", lineno );
-                break;
-            case _HEAPBADNODE:
-                printf( "ERROR - bad node in heap\n" );
-                printf( "Reference: line #%d in source.\n", lineno );
-                break;
-            case INTERNAL_ERR:
-                printf( "INTERNAL ERROR - unrecognized heap type\n" );
-                break;
-            default:
-                break;
-        }
-        printf( "-----------------------------------------\n" );
-    }
+    tmp = strrchr( filename, '\\' );
+    if( tmp != NULL ) filename = tmp + 1;
+    cprintf( "%-16s",filename );
+    cprintf( "Test program for the memory allocation routines.\r\n" );
+    cprintf( "Usage:  %s [-d][-p][-h][-t][-c]\r\n", filename );
+    cprintf( "Where:  -d      activates extra debugging information.\r\n" );
+    cprintf( "        -p      does [-d] and pauses between tests.\r\n" );
+    cprintf( "        -h      [-d] & uses _heapwalk() to check the heap.\r\n" );
+    cprintf( "        -t      enables loop tracing for some tests.\r\n" );
+    cprintf( "        -c      does a comprehensive test (-h -t).\r\n" );
+    cprintf( "        -?      displays this message." );
 }
 
 void ParseArgs( int argc, char *argv[] )
@@ -983,34 +1007,17 @@ void ParseArgs( int argc, char *argv[] )
     }
 }
 
-void Usage( char *filename )
-{
-    char *tmp;
-
-    tmp = strrchr( filename, '\\' );
-    if( tmp != NULL ) filename = tmp + 1;
-    cprintf( "%-16s",filename );
-    cprintf( "Test program for the memory allocation routines.\r\n" );
-    cprintf( "Usage:  %s [-d][-p][-h][-t][-c]\r\n", filename );
-    cprintf( "Where:  -d      activates extra debugging information.\r\n" );
-    cprintf( "        -p      does [-d] and pauses between tests.\r\n" );
-    cprintf( "        -h      [-d] & uses _heapwalk() to check the heap.\r\n" );
-    cprintf( "        -t      enables loop tracing for some tests.\r\n" );
-    cprintf( "        -c      does a comprehensive test (-h -t).\r\n" );
-    cprintf( "        -?      displays this message." );
-}
-
 void DisplayConstants( void )
 {
     printf( "=================================================\n" );
     printf( "     Important constants used in the test        \n" );
     printf( "-------------------------------------------------\n" );
     printf( "  Number of elements (NUM_EL)          = %-7d \n", NUM_EL );
-    #if !defined(__386__) && !defined(__AXP__)
+#if !defined(__386__) && !defined(__AXP__)
     printf( "  Number of huge elemnts (HUGE_NUM_EL) = %-7d \n", HUGE_NUM_EL );
     printf( "  BASED_HEAP_SIZE                      = " );
     printf( "%-7d \n", BASED_HEAP_SIZE );
-    #endif
+#endif
     printf( "=================================================\n" );
 }
 
@@ -1018,22 +1025,22 @@ void main( int argc, char *argv[] )
 {
     test_result result;
 
-    #ifdef __SW_BW
-        FILE *my_stdout;
-        my_stdout = freopen( "tmp.log", "a", stdout );
-        if( my_stdout == NULL ) {
-            fprintf( stderr, "Unable to redirect stdout\n" );
-            exit(-1);
-        }
-    #endif
+#ifdef __SW_BW
+    FILE *my_stdout;
+    my_stdout = freopen( "tmp.log", "a", stdout );
+    if( my_stdout == NULL ) {
+        fprintf( stderr, "Unable to redirect stdout\n" );
+        exit(-1);
+    }
+#endif
     ParseArgs( argc, argv );
 
     if( more_debug ) DisplayConstants();
 
-    #if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
-        _nheapgrow();
-        memrecord = memavail = _memavl();
-    #endif
+#if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
+    _nheapgrow();
+    memrecord = memavail = _memavl();
+#endif
 
     Test_alloca_stackavail__memavl__memmax( &result );
     TranslateResult( &result );
@@ -1052,32 +1059,30 @@ void main( int argc, char *argv[] )
 
     Test__freect( &result );
     TranslateResult( &result );
-    #if !defined(__386__) && !defined(__AXP__)
-        Test_calloc__msize( &result, TYPE_FAR );
-        TranslateResult( &result );
+#if !defined(__386__) && !defined(__AXP__)
+    Test_calloc__msize( &result, TYPE_FAR );
+    TranslateResult( &result );
 
-        Test_malloc_realloc__expand( &result, TYPE_FAR );
-        TranslateResult( &result );
+    Test_malloc_realloc__expand( &result, TYPE_FAR );
+    TranslateResult( &result );
 
-        seg = _bheapseg( BASED_HEAP_SIZE );
+    seg = _bheapseg( BASED_HEAP_SIZE );
 
-        Test_calloc__msize( &result, TYPE_BASED );
-        TranslateResult( &result );
+    Test_calloc__msize( &result, TYPE_BASED );
+    TranslateResult( &result );
 
-        Test_malloc_realloc__expand( &result, TYPE_BASED );
-        TranslateResult( &result );
+    Test_malloc_realloc__expand( &result, TYPE_BASED );
+    TranslateResult( &result );
 
-        if( seg != _NULLSEG ) _bfreeseg( seg );
+    if( seg != _NULLSEG ) _bfreeseg( seg );
 
-        Test_halloc( &result );
-        TranslateResult( &result );
-    #endif
+    Test_halloc( &result );
+    TranslateResult( &result );
+#endif
     printf( "Tests completed (%s).\n", strlwr( argv[0] ) );
-    #ifdef __SW_BW
-    {
-        fprintf( stderr, "Tests completed (%s).\n", strlwr( argv[0] ) );
-        fclose( my_stdout );
-        _dwShutDown();
-    }
-    #endif
+#ifdef __SW_BW
+    fprintf( stderr, "Tests completed (%s).\n", strlwr( argv[0] ) );
+    fclose( my_stdout );
+    _dwShutDown();
+#endif
 }
