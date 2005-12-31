@@ -147,8 +147,8 @@ runtests : .symbolic
     @cdsay | tee.exe os2.log
     @echo Running tests under OS/2 and Win-OS/2... | tee.exe -a os2.log
     -@..\os2.cmd | tee.exe -a os2.log
-    -@..\winos2.cmd | tee.exe -a os2.log
-    -@command /e:2048 /c ..\dos.bat | tee.exe -a os2.log
+#    -@..\winos2.cmd | tee.exe -a os2.log
+#    -@command /e:2048 /c ..\dos.bat | tee.exe -a os2.log
     @cat os2.log >> ..\_os2_.log
 !else ifdef __MSDOS__
     @%make underdos
