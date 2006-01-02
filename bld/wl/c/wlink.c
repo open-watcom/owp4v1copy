@@ -345,7 +345,7 @@ static void ResetMisc( void )
 /***************************/
 /* Linker support initialization. */
 {
-    LinkFlags = REDEFS_OK | CASE_FLAG;
+    LinkFlags = REDEFS_OK | CASE_FLAG | FAR_CALLS_FLAG;
     LinkState = MAKE_RELOCS;
     AbsGroups = NULL;
     DataGroup = NULL;
