@@ -51,11 +51,21 @@
 #include "mapio.h"
 #include "virtmem.h"
 
+static struct {
+    char *name;
+    char idx;
+} FloatNames[] = {
+    { "FIWRQQ", FFIX_WR_SYMBOL },
+    { "FIDRQQ", FFIX_DR_SYMBOL },
+    { "FIERQQ", FFIX_ES_OVERRIDE },
+    { "FICRQQ", FFIX_CS_OVERRIDE },
+    { "FISRQQ", FFIX_SS_OVERRIDE },
+    { "FIARQQ", FFIX_DS_OVERRIDE },
+    { "FJCRQQ", FFIX_IGNORE },
+    { "FJSRQQ", FFIX_IGNORE },
+    { "FJARQQ", FFIX_IGNORE }
+};
 
-static char *   FloatNames[] = { "FIWRQQ", "FIDRQQ", "FIERQQ", "FICRQQ",
-    "FISRQQ", "FIARQQ" };
-
-static char *   IgnoreNames[] = { "FJCRQQ", "FJSRQQ", "FJARQQ" };
 
 static unsigned long NumMapSyms;
 
@@ -1274,16 +1284,9 @@ static void FindFloatSyms( void )
     ClearFloatBits();
     for( index = 0; index < ( sizeof( FloatNames ) / sizeof( FloatNames[0] ) );
             index++ ) {
-        sym = FindISymbol( FloatNames[ index ] );
+        sym = FindISymbol( FloatNames[ index ].name );
         if( sym != NULL ) {
-            SET_FFIX_VALUE( sym, index + 1 );
-        }
-    }
-    for( index = 0; index < ( sizeof( IgnoreNames ) / sizeof( IgnoreNames[0] ) );
-            index++ ) {
-        sym = FindISymbol( IgnoreNames[ index ] );
-        if( sym != NULL ) {
-            SET_FFIX_VALUE( sym, FFIX_IGNORE );
+            SET_FFIX_VALUE( sym, FloatNames[ index ].idx );
         }
     }
 }
