@@ -36,7 +36,7 @@
 
 extern void             NAME( OVLLDR )( void );
 extern void near        NAME( OVLMUNGE )( void * );
-extern void             (far * far NAME( DBG_HOOK ) )();
+extern void             (far * far NAME( DBG_HOOK ) )( int, char, void far * );
 extern void near        NAME( CHPOVLLDR )( void );
 #define LOADOVERLAY     NAME( LoadOverlay )
 

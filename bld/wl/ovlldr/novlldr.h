@@ -66,7 +66,7 @@ extern  int             far __OVLROVER__;
 extern  void            far * far __OVLCAUSE__;
 extern  unsigned        far __OVLAREALIST__;
 extern  unsigned_16     far __OVLSTARTPARA__;
-extern  void            (far * far __NDBG_HOOK__)();
+extern  void            (far * far __NDBG_HOOK__)( int, char, void far * );
 
 /*
     Different uses of fields in an ovltab_entry:
