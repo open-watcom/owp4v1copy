@@ -33,7 +33,6 @@ include traps.inc
 
                 NAME    DBGTRAP
 
-.8087
 
         extrn   EnterDebugger:near   ; enter the debugger
         extrn   SetIntVecs_:near     ; set int vectors while in user's program
@@ -405,32 +404,6 @@ brk_point:                      ; next instruction is a break point
         pop     BX              ; restore BX
         mov     byte ptr CS:TrapType,TRAP_BREAK_POINT ; we have a brk point trap
         jmp     DebugTask       ; enter the debugger
-
-        public  Read87State_
-Read87State_ proc near
-        push    ds
-        push    bx
-        mov     ds,dx
-        mov     bx,ax
-        fnsave  [bx]
-        pop     bx
-        pop     ds
-        fwait
-        ret
-Read87State_ endp
-
-        public  Write87State_
-Write87State_ proc near
-        push    ds
-        push    bx
-        mov     ds,dx
-        mov     bx,ax
-        fnrstor [bx]
-        pop     bx
-        pop     ds
-        fwait
-        ret
-Write87State_ endp
 
 _text           ENDS
 

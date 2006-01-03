@@ -48,6 +48,7 @@
 #include "winchk.h"
 #include "madregs.h"
 #include "x86cpu.h"
+#include "misc7086.h"
 
 typedef enum {
     EXE_UNKNOWN,
@@ -121,7 +122,7 @@ typedef enum {
 
 extern void             InitRedirect(void);
 extern addr_seg         DbgPSP(void);
-extern long             DOSLoadProg(char *, pblock *);
+extern long             DOSLoadProg(char far *, pblock far *);
 extern addr_seg         DOSTaskPSP(void);
 extern void             EndUser(void);
 extern unsigned_8       RunProg(trap_cpu_regs *, trap_cpu_regs *);
@@ -137,20 +138,14 @@ extern void             TrapTypeInit(void);
 extern void             ClrIntVecs(void);
 extern void             SetIntVecs(void);
 extern void             DoRemInt(trap_cpu_regs *, unsigned);
-extern char             NPXType(void);
 extern char             Have87Emu(void);
 extern void             Null87Emu( void );
-extern void             OvlTrap( int );
-extern void             Read87State( void far * );
 extern void             Read87EmuState( void far * );
-extern void             Write87State( void far * );
 extern void             Write87EmuState( void far * );
 extern tiny_ret_t       FindFilePath( char *, char *, char * );
 extern unsigned         Redirect( bool );
 extern unsigned         ExceptionText( unsigned, char * );
 extern unsigned         StringToFullPath( char * );
-extern void             FPUContract( void * );
-extern void             FPUExpand( void * );
 extern int              far NoOvlsHdlr( int, void * );
 extern bool             CheckOvl( addr32_ptr );
 extern int              NullOvlHdlr(void);
@@ -173,12 +168,12 @@ static addr48_ptr       BadBreak;
 static bool             GotABadBreak;
 static int              ExceptNum;
 
+static unsigned_8       RealNPXType;
+static unsigned_8       CPUType;
 
 trap_cpu_regs   TaskRegs;
 char            DOS_major;
 char            DOS_minor;
-char            RealNPXType;
-char            CPUType;
 bool            BoundAppLoading;
 bool            IsBreak[4];
 
@@ -239,15 +234,13 @@ unsigned ReqGet_sys_config()
     ret->sys.osmajor = DOS_major;
     ret->sys.osminor = DOS_minor;
     ret->sys.cpu = CPUType;
-    ret->sys.cpu |= ( Flags.IsMMX ) ? X86_MMX : 0;
-    ret->sys.cpu |= ( Flags.IsXMM ) ? X86_XMM : 0;
     if( Have87Emu() ) {
         ret->sys.fpu = X86_EMU;
-    } else if( RealNPXType != 0 ) {
+    } else if( RealNPXType != X86_NO ) {
         if( CPUType < X86_486 ) {
             ret->sys.fpu = RealNPXType;
         } else {
-            ret->sys.fpu = CPUType;
+            ret->sys.fpu = CPUType & X86_CPU_MASK;
         }
     } else {
         ret->sys.fpu = X86_NO;
@@ -262,7 +255,7 @@ unsigned ReqMap_addr()
 {
     word            seg;
     int             count;
-    word            *segment;
+    word            far *segment;
     map_addr_req    *acc;
     map_addr_ret    *ret;
 
@@ -318,7 +311,7 @@ unsigned ReqMachine_data()
 
 unsigned ReqChecksum_mem()
 {
-    unsigned_8          *ptr;
+    unsigned_8          far *ptr;
     unsigned long       sum = 0;
     unsigned            len;
     checksum_mem_req    *acc;
@@ -464,17 +457,16 @@ unsigned ReqRead_cpu()
 //OBSOLETE - use ReqRead_regs
 unsigned ReqRead_fpu()
 {
-    void far *regs;
+    void    far *regs;
 
     regs = GetOutPtr(0);
     if( Have87Emu() ) {
         Read87EmuState( regs );
-    } else if( RealNPXType != 0 ) {
-        Read87State( regs );
+    } else if( RealNPXType != X86_NO ) {
+        Read8087( regs );
     } else {
         return( 0 );
     }
-    FPUExpand( regs );
     return( sizeof( trap_fpu_regs ) );
 }
 
@@ -491,14 +483,13 @@ unsigned ReqWrite_cpu()
 //OBSOLETE - use ReqWrite_regs
 unsigned ReqWrite_fpu()
 {
-    void far *regs;
+    void    far *regs;
 
     regs = GetInPtr(sizeof(write_fpu_req));
-    FPUContract( regs );
     if( Have87Emu() ) {
         Write87EmuState( regs );
-    } else if( RealNPXType != 0 ) {
-        Write87State( regs );
+    } else if( RealNPXType != X86_NO ) {
+        Write8087( regs );
     }
     return( 0 );
 }
@@ -511,12 +502,11 @@ unsigned ReqRead_regs( void )
     mr->x86.cpu = *(struct x86_cpu *)&TaskRegs;
     if( Have87Emu() ) {
         Read87EmuState( &mr->x86.fpu );
-    } else if( RealNPXType != 0 ) {
-        Read87State( &mr->x86.fpu );
+    } else if( RealNPXType != X86_NO ) {
+        Read8087( &mr->x86.fpu );
     } else {
         memset( &mr->x86.fpu, 0, sizeof( mr->x86.fpu ) );
     }
-    FPUExpand( &mr->x86.fpu );
     return( sizeof( mr->x86 ) );
 }
 
@@ -526,11 +516,10 @@ unsigned ReqWrite_regs( void )
 
     mr = GetInPtr(sizeof(write_regs_req));
     *(struct x86_cpu *)&TaskRegs = mr->x86.cpu;
-    FPUContract( &mr->x86.fpu );
     if( Have87Emu() ) {
         Write87EmuState( &mr->x86.fpu );
-    } else if( RealNPXType != 0 ) {
-        Write87State( &mr->x86.fpu );
+    } else if( RealNPXType != X86_NO ) {
+        Write8087( &mr->x86.fpu );
     }
     return( 0 );
 }
@@ -601,17 +590,17 @@ static char DosExtList[] = { ".com\0.exe\0" };
 
 unsigned ReqProg_load()
 {
-    addr_seg    psp;
-    pblock      parmblock;
-    long        rc;
-    char        *parm;
-    char        *src;
-    char        *dst;
-    char        exe_name[128];
-    char        ch;
-    EXE_TYPE    exe;
-    prog_load_ret       *ret;
-    char        *end;
+    addr_seg        psp;
+    pblock          parmblock;
+    long            rc;
+    char            far *parm;
+    char            far *src;
+    char            far *dst;
+    char            exe_name[128];
+    char            ch;
+    EXE_TYPE        exe;
+    prog_load_ret   *ret;
+    char            *end;
 
     ExceptNum = -1;
     ret = GetOutPtr( 0 );
@@ -784,9 +773,9 @@ unsigned ReqClear_watch()
 
 unsigned ReqSet_break()
 {
-    char        *loc;
-    set_break_req       *acc;
-    set_break_ret       *ret;
+    char            far *loc;
+    set_break_req   *acc;
+    set_break_ret   *ret;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -905,36 +894,37 @@ static bool SetDebugRegs()
 
 static unsigned MapReturn( int trap )
 {
+    out( "cond=" );
     switch( trap ) {
     case TRAP_TRACE_POINT:
-        out( "cond=trace point" );
+        out( "trace point" );
         return( COND_TRACE );
     case TRAP_BREAK_POINT:
-        out( "cond=break point" );
+        out( "break point" );
         return( COND_BREAK );
     case TRAP_WATCH_POINT:
-        out( "cond=watch point" );
+        out( "watch point" );
         return( COND_WATCH );
     case TRAP_USER:
-        out( "cond=user" );
+        out( "user" );
         return( COND_USER );
     case TRAP_TERMINATE:
-        out( "cond=terminate" );
+        out( "terminate" );
         return( COND_TERMINATE );
     case TRAP_MACH_EXCEPTION:
-        out( "cond=exception" );
+        out( "exception" );
         ExceptNum = 0;
         return( COND_EXCEPTION );
     case TRAP_OVL_CHANGE_LOAD:
-        out( "cond=overlay load" );
+        out( "overlay load" );
         return( COND_SECTIONS );
     case TRAP_OVL_CHANGE_RET:
-        out( "cond=overlay ret" );
+        out( "overlay ret" );
         return( COND_SECTIONS );
     default:
         break;
     }
-    out( "cond=none" );
+    out( "none" );
     return( 0 );
 }
 
@@ -1082,7 +1072,6 @@ out( "    done checking environment\r\n" );
 
     Flags.IsMMX = ( ( CPUType & X86_MMX ) != 0 );
     Flags.IsXMM = ( ( CPUType & X86_XMM ) != 0 );
-    CPUType &= X86_CPU_MASK;
 
     /* NPXType initializes '87, so check for it before a program
        starts using the thing */

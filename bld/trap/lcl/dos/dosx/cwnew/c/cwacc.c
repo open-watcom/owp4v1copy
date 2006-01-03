@@ -41,8 +41,7 @@
 
 #include "dpmi.h"
 #include "x86cpu.h"
-
-extern  char        NPXType( void );
+#include "misc7386.h"
 
 #ifdef DEBUG_TRAP
 extern void dos_printf( const char *format, ... );
@@ -227,14 +226,11 @@ unsigned ReqMachine_data( void )
 #if 0
 //#define DEBUG_TRAP
 
+#include "misc7386.h"
+
 TSF32   Proc;
 char    Break;
 
-extern  char            NPXType();
-extern  void            Read8087(void *);
-extern  void            Write8087(void *);
-extern  void            Read387(void *);
-extern  void            Write387(void *);
 extern  unsigned        ExceptionText( unsigned, char * );
 extern  void            InitRedirect(void);
 
@@ -245,7 +241,7 @@ struct {
     unsigned_32         start;
 }                       *ObjInfo;
 
-static int              RealNPXType;
+static unsigned_8       RealNPXType;
 #define BUFF_SIZE       256
 char                    UtilBuff[BUFF_SIZE];
 #define NIL_DOS_HANDLE  ((short)0xFFFF)
@@ -338,7 +334,7 @@ unsigned ReqChecksum_mem( void )
 unsigned ReqRead_mem( void )
 {
     read_mem_req        *acc;
-    void far            *buff;
+    void                far *buff;
     unsigned short      len;
 
     _DBG1( "ReadMem\n" );
@@ -443,35 +439,33 @@ static void WriteCPU( struct x86_cpu *r )
 
 static void ReadFPU( struct x86_fpu *r )
 {
-    if( RealNPXType != 0 || HAVE_EMU ) {
-        if( HAVE_EMU ) {
-            if( CheckWin386Debug() == WGOD_VERSION ) {
-                EMUSaveRestore( Proc.cs, r, 1 );
-            } else {
-                Read387( r );
-            }
-        } else if( _d16info.cpumod >= 3 ) {
+    if( HAVE_EMU ) {
+        if( CheckWin386Debug() == WGOD_VERSION ) {
+            EMUSaveRestore( Proc.cs, r, 1 );
+        } else {
+            Read387( r );
+        }
+    } else if( RealNPXType != X86_NO ) {
+        if( _d16info.cpumod >= 3 ) {
             Read387( r );
         } else {
             Read8087( r );
-            FPUExpand( (void *)r );
         }
     }
 }
 
 static void WriteFPU( struct x86_fpu *r )
 {
-    if( RealNPXType != 0 || HAVE_EMU ) {
-        if( HAVE_EMU ) {
-            if( CheckWin386Debug() == WGOD_VERSION ) {
-                EMUSaveRestore( Proc.cs, r, 0 );
-            } else {
-                Write387( r );
-            }
-        } else if( _d16info.cpumod >= 3 ) {
+    if( HAVE_EMU ) {
+        if( CheckWin386Debug() == WGOD_VERSION ) {
+            EMUSaveRestore( Proc.cs, r, 0 );
+        } else {
+            Write387( r );
+        }
+    } else if( RealNPXType != X86_NO ) {
+        if( _d16info.cpumod >= 3 ) {
             Write387( r );
         } else {
-            FPUContract( (void *)r );
             Write8087( r );
         }
     }

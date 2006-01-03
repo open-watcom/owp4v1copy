@@ -49,6 +49,7 @@
 #include "doshdl.h"
 #include "madregs.h"
 #include "x86cpu.h"
+#include "misc7386.h"
 
 trap_cpu_regs   Regs;
 int             IntNum;
@@ -57,9 +58,6 @@ char            Break;
 extern void DumpDbgRegs(void);
 
 
-extern  char            NPXType();
-extern  void            Read387(void *);
-extern  void            Write387(void *);
 extern  void            GrabVects(void);
 extern  void            ReleVects(void);
 extern  dword           GetDS(void);
@@ -79,7 +77,7 @@ bool                    FakeBreak;
 bool                    AtEnd;
 bool                    DoneAutoCAD;
 
-static int              RealNPXType;
+static unsigned_8       RealNPXType;
 static int              SaveStdIn;
 static int              SaveStdOut;
 #define BUFF_SIZE       256

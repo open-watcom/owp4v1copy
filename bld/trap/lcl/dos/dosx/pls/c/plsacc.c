@@ -47,22 +47,18 @@
 #include "madregs.h"
 
 #include "x86cpu.h"
+#include "misc7386.h"
 
-extern bool     GrabVects(void);
-extern void     ReleVects(void);
+extern bool     GrabVects( void );
+extern void     ReleVects( void );
 
-extern char     NPXType();
-
-extern void     GrabPrtScrn(void);
-extern void     RelePrtScrn(void);
-
-extern void     Read387( void * );
-extern void     Write387( void * );
+extern void     GrabPrtScrn( void );
+extern void     RelePrtScrn( void );
 
 extern bool     SetPSP( USHORT );
 
-extern short    GetDS();
-extern short    GetCS();
+extern short    GetDS( void );
+extern short    GetCS( void );
 
 extern void     SetMSW(unsigned);
 
@@ -129,7 +125,7 @@ short                   InitialCS;
 static int              SaveStdIn;
 static int              SaveStdOut;
 static unsigned         SaveMSW;
-static int              RealNPXType;
+static unsigned_8       RealNPXType;
 #define BUFF_SIZE       256
 char                    UtilBuff[BUFF_SIZE];
 static MSB              Mach;
@@ -711,7 +707,7 @@ unsigned ReqProg_load()
 }
 
 #pragma aux finit = ".387" "finit" "wait"
-extern void finit(void);
+extern void finit( void );
 
 unsigned ReqProg_kill()
 {
@@ -722,7 +718,7 @@ unsigned ReqProg_kill()
     SaveStdIn = NIL_DOS_HANDLE;
     SaveStdOut = NIL_DOS_HANDLE;
     AtEnd = TRUE;
-    if( RealNPXType != 0 ) {
+    if( RealNPXType != X86_NO ) {
         /* mask ALL floating point exception bits */
         finit();
         Mach.msb_87ctrl = 0x37f;

@@ -10,6 +10,8 @@ name = cwhelp
 which = SERVER
 
 extra_c_flags = -DCAUSEWAY -DDOSXHELP -ms
+
+extra_a_flags = -dCAUSEWAY -ms
 extra_a_flags_cwhelp = -fpi87
 
 inc_dirs = -I"../h"
@@ -23,7 +25,7 @@ objs =  cwhelp.obj &
         cwchelp.obj &
         cwacc.obj &
         mxutil.obj &
-        npxtype.obj &
+        misc7386.obj &
         x86cpu.obj
 
 $(target) : $(objs) $(__MAKEFILES__)

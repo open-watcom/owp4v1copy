@@ -38,7 +38,7 @@
 #include "trpimp.h"
 #include "exeelf.h"
 //#include "linuxcomm.h"
-#include "squish87.h"
+//#include "misc7386.h"
 #include "mad.h"
 #include "madregs.h"
 

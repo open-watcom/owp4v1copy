@@ -59,6 +59,7 @@
 #include "nw3to4.h"
 
 #include "x86cpu.h"
+#include "misc7386.h"
 
 #define NO_DREG     ((byte)-1)
 #define NUM_DREG    4
@@ -129,9 +130,9 @@ typedef struct nlm_entry {
         bool                            is_load;
 } nlm_entry;
 
+static unsigned_8                       RealNPXType;
 
 nlmstate                                NLMState;
-byte                                    RealNPXType;
 #define BUFF_SIZE                       256
 char                                    CmdLine[BUFF_SIZE];
 char                                    NLMName[14];
@@ -181,9 +182,6 @@ extern void                             DoALongJumpTo();
 dword                           ReturnESP;
 extern void                     Return(void);
 extern int                      AdjustStack( dword old_esp, dword adjust );
-extern byte                     NPXType();
-extern void                     Read387(trap_fpu_regs*);
-extern void                     Write387(trap_fpu_regs*);
 extern word                     GetDS();
 extern word                     GetCS();
 
@@ -466,7 +464,7 @@ bool CheckIfBreakOKInOS( LONG eip )
 #endif
 
 
-int NPX()
+unsigned_8 NPX( void )
 {
     if( HAVE_EMU == 0 ) 
         return( RealNPXType );

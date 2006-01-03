@@ -24,11 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  prototypes for read/write FPU routines
 *
 ****************************************************************************/
 
+#ifndef _MISC7386_H_INCLUDED
+#define _MISC7386_H_INCLUDED
 
-void FPUExpand( void * );
-void FPUContract( void * );
+extern void Read387( void * );
+extern void Write387( void * );
+
+#ifdef __WATCOMC__
+
+#pragma aux GetMSW = \
+        ".286p"       \
+        "smsw ax"    \
+        value [ax];
+extern unsigned short GetMSW( void );
+
+#define MSW_EM       0x04
+
+#define HAVE_EMU (GetMSW() & MSW_EM)
+
+#else
+
+#define HAVE_EMU     0
+
+#endif
+
+extern unsigned_8 NPXType( void );
+
+#endif

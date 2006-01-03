@@ -53,6 +53,9 @@ _TEXT           segment byte public 'CODE'
                 extrn   TraceRtn                :word
                 extrn   TrapType                :byte
 
+                extrn   "C", FPUExpand          :near
+                extrn   "C", FPUContract        :near
+
                 ; these macros assume ES is pointing at the interrupt vector
                 ; segment and that AX and BX are available for use
 
@@ -775,11 +778,13 @@ check_byte label byte
         db      0cdH, 039H, 037H ;fsave   ds:[bx]
         pop     bx
         pop     ds
+        call    FPUExpand
         ret
 Read87EmuState_ endp
 
         public  Write87EmuState_
 Write87EmuState_ proc near
+        call    FPUContract
         push    ds
         push    bx
         mov     ds,dx

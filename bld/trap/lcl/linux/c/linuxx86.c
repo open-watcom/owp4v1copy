@@ -36,13 +36,13 @@
 #include <sys/ptrace.h>
 #include "trpimp.h"
 #include "trperr.h"
-#include "squish87.h"
 #include "mad.h"
 #include "madregs.h"
 #include "dbg386.h"
 #include "exeelf.h"
 #include "linuxcomm.h"
 #include "x86cpu.h"
+#include "misc7386.h"
 
 static watch_point      wpList[ MAX_WP ];
 static int              wpCount = 0;

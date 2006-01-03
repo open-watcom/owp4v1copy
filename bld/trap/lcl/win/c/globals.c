@@ -45,7 +45,7 @@ volatile debugger_state DebuggerState=ACTIVE;
 const char __based(__segname("_CONST")) ExtensionList[] = { ".com\0.exe\0" };
 break_point             StopNewTask;
 DWORD                   SystemDebugState;
-WORD                    NPXType;
+unsigned_8              FPUType;
 volatile restart_opts   AppMessage;
 DWORD                   TerminateCSIP;
 HWND                    DebuggerWindow;

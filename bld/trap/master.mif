@@ -92,6 +92,12 @@ extra_c_flags_dos += -zu
 !endif
 !endif
 
+# aflags stuff
+###############
+
+extra_a_flags_misc7086 = -fpi87
+extra_a_flags_misc7386 = -fpi87
+
 # lflags stuff
 ###############
 libs_x86_os2            = clibc

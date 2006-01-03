@@ -44,10 +44,8 @@ void   SetTaskDirectories( void );
 bool   DebugExecute( uDB_t *buff, ULONG cmd, bool );
 int    IsUnknownGDTSeg( USHORT seg );
 
-extern  void    LoadHelperDLL();
-extern  void    EndLoadHelperDLL();
-extern  char    NPXType();
-extern  char    CPUType();
+extern  void    LoadHelperDLL( void );
+extern  void    EndLoadHelperDLL( void );
 
 extern  void    BreakPoint( ULONG );
 #pragma aux     BreakPoint = 0xCC parm [eax] aborts;

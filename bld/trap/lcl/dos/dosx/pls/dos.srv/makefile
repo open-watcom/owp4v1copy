@@ -20,11 +20,18 @@ extra_c_flags_dilglue = -3s $(pharlap_c_flags)
 extra_c_flags_dosxlink = $(pharlap_c_flags)
 extra_c_flags_plsacc = $(pharlap_c_flags)
 
-extra_a_flags_plsintr = -fpi87
+extra_a_flags = -dPHARLAP -ms
 
 inc_dirs = -I"../h"
 
-extra_objs = $(dosx_serv_objs) plsacc.obj plsintr.obj x86cpu.obj dilglue.obj
+extra_objs = &
+    $(dosx_serv_objs) &
+    plsacc.obj &
+    plsintr.obj &
+    x86cpu.obj &
+    dilglue.obj &
+    misc7386.obj
+
 extra_srcs = $(plsdir)
 
 !ifndef extra_linker

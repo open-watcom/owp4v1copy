@@ -24,60 +24,40 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  prototypes for read/write FPU routines
 *
 ****************************************************************************/
 
+#ifndef _MISC7086_H_INCLUDED
+#define _MISC7086_H_INCLUDED
 
-#include "trpimp.h"
+extern void FPUExpand( void far * );
+extern void FPUContract( void far * );
 
-static void ShuffleUp( char *data, int fromidx, int toidx, int len, int pad )
-{
-    char *from;
-    char *to;
-    char *padptr;
+extern void Read8087( void far * );
+extern void Write8087( void far * );
 
-    to = data + toidx;
-    from = data + fromidx;
-    from += len;
-    to += len;
-    padptr = to;
-    while( --len >= 0 ) *--to = *--from;
-    while( --pad >= 0 ) *padptr++ = 0;
-}
+extern void Read387( void far * );
+extern void Write387( void far * );
 
-static void ShuffleDown( char *data, int fromidx, int toidx, int len )
-{
-    char *from;
-    char *to;
+#ifdef __WATCOMC__
 
-    to = data + toidx;
-    from = data + fromidx;
-    while( --len >= 0 ) *to++ = *from++;
-}
+#pragma aux GetMSW = \
+        ".286p"       \
+        "smsw ax"    \
+        value [ax];
+extern unsigned short GetMSW( void );
 
-void FPUExpand( void *data )
-{
-    ShuffleUp( data, 14, 28, 80, 0 );
-    ShuffleUp( data, 12, 24,  2, 2 );
-    ShuffleUp( data, 10, 20,  2, 2 );
-    ShuffleUp( data,  8, 16,  2, 2 );
-    ShuffleUp( data,  6, 12,  2, 2 );
-    ShuffleUp( data,  4,  8,  2, 2 );
-    ShuffleUp( data,  2,  4,  2, 2 );
-    ((unsigned_8 *)data)[2] = 0;
-    ((unsigned_8 *)data)[3] = 0;
-}
+#define MSW_EM       0x04
 
+#define HAVE_EMU (GetMSW() & MSW_EM)
 
-void FPUContract( void *data )
-{
-    ShuffleDown( data,  4,  2,  2 );
-    ShuffleDown( data,  8,  4,  2 );
-    ShuffleDown( data, 12,  6,  2 );
-    ShuffleDown( data, 16,  8,  2 );
-    ShuffleDown( data, 20, 10,  2 );
-    ShuffleDown( data, 24, 12,  2 );
-    ShuffleDown( data, 28, 14, 80 );
-}
+#else
+
+#define HAVE_EMU     0
+
+#endif
+
+extern unsigned_8 NPXType( void );
+
+#endif

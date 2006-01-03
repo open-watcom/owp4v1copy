@@ -5,6 +5,7 @@ nlm_objs = &
     nlmacc.obj &
     nlmintr.obj &
     x86cpu.obj &
+    misc7386.obj &
     supp.obj &
     core.obj
 
@@ -16,7 +17,7 @@ extra_c_flags = -D__NW$(nlm_ver)0__ -DDEBUG_ME
 extra_c_flags +=  -D__NETWARE_LIBC__
 !endif
 
-extra_a_flags_nlmintr = -fpi87
+extra_a_flags = -ms -3s
 
 extra_linker5 = module libc
 extra_linker4 = module clib

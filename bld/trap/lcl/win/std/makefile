@@ -39,8 +39,8 @@ extra_objs = &
         dosfile.obj &
         dosrfx.obj &
         dossplit.obj &
-        squish87.obj &
         x86cpu.obj &
+        misc7086.obj &
         supp.obj &
         core.obj
 
@@ -61,8 +61,6 @@ extra_srcs += ;$(trap_dir)/lcl/dos/c;$(sdk_dir)/misc
 inc_dirs += -I"$(trap_dir)/lcl/dos/h" -I"$(sdk_dir)/misc"
 
 extra_c_flags_i86 = -3
-
-extra_a_flags_misc = -fpi87
 
 !include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/master.mif

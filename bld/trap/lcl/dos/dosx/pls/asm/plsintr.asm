@@ -31,7 +31,7 @@
 
 
 .386p
-.387
+
                 name            phartrap
 
 extrn           dbg_rdides      : near
@@ -130,7 +130,7 @@ _data ends
 
 dgroup group _data
 
-assume  ds:flat,cs:flat
+assume  ds:DGROUP
 
 _text segment byte public 'code'
 
@@ -523,52 +523,6 @@ GetCS_          proc    near
                 ret
 GetCS_          endp
 
-
-public          Read387_
-Read387_        proc    near
-                fsave   [eax]
-                frstor  [eax]
-                fwait
-                nop
-                int     3
-Read387_        endp
-
-public          Write387_
-Write387_       proc    near
-                frstor  [eax]
-                fwait
-                nop
-                int     3
-Write387_       endp
-
-        public  NPXType_
-NPXType_ proc    near
-        sub     eax,eax                 ; set initial control word to 0
-        push    eax                     ; push it on stack
-;
-        fninit                          ; initialize math coprocessor
-        fnstcw  [esp]                   ; store control word in memory
-        mov     al,0                    ; assume no coprocessor present
-        mov     ah,1[esp]               ; upper byte is 03h if
-        cmp     ah,03h                  ;   coprocessor is present
-        jne     exit                    ; exit if no coprocessor present
-        finit                           ; use default infinity mode
-        fld1                            ; generate infinity by
-        fldz                            ;   dividing 1 by 0
-        fdiv                            ; ...
-        fld     st                      ; form negative infinity
-        fchs                            ; ...
-        fcompp                          ; compare +/- infinity
-        fstsw   [esp]                   ; equal for 87/287
-        fwait                           ; wait fstsw to complete
-        mov     ax,[esp]                ; get NDP control word
-        mov     al,2                    ; assume 80287
-        sahf                            ; store condition bits in flags
-        jz      exit                    ; it's 287 if infinities equal
-        mov     al,3                    ; indicate 80387
-exit:   add     esp,4                   ; clear the stack
-        ret                             ; return
-NPXType_ endp
 
 public          SetMSW_
 SetMSW_         proc near

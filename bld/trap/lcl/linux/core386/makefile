@@ -15,7 +15,6 @@ extra_objs = &
         linuxcore.obj &
         linuxcomm.obj &
         linuxfile.obj &
-        squish87.obj &
         supp.obj &
         core.obj
 	

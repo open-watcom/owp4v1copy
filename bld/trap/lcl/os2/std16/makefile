@@ -11,15 +11,12 @@ cpu     = x86
 name    = std16
 which = TRAP
 
-extra_a_flags = -fpi87
-
 extra_objs = &
         accmisc.obj &
         os2v1acc.obj &
         os2rfx.obj &
         loadstd.obj &
-        npxtype.obj &
-        squish87.obj &
+        misc7086.obj &
         x86cpu.obj &
         supp.obj &
         core.obj

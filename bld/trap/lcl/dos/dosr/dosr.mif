@@ -5,15 +5,13 @@ which = TRAP
 
 std_objs = &
         $(dos_objs) &
-        squish87.obj &
         dosovl.obj &
         dosacc.obj &
         dbgtrap.obj &
-        npxtype.obj &
-        x86cpu.obj
+        x86cpu.obj &
+        misc7086.obj
 
-extra_a_flags_npxtype = -fpi87
-extra_a_flags_dbgtrap = -fpi87
+extra_a_flags = -DREAL_MODE
 
 extra_objs  = $(std_objs) realtrap.obj
 extra_dobjs = $(std_objs) dumtrap.obj

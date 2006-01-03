@@ -15,10 +15,10 @@ extra_objs = &
         qnxpmd.obj &
         qnxcomm.obj &
         qnxfile.obj &
-        squish87.obj &
+        misc7386.obj &
         supp.obj &
         core.obj
 
-inc_dirs = $(trap_dir)/lcl/h
+inc_dirs = -I"$(trap_dir)/lcl/h"
 
 !include $(trap_dir)/master.mif

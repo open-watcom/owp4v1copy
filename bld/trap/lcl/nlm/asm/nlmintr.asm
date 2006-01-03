@@ -47,7 +47,6 @@ COMMENT ~
 ~
 
 .386p
-.387
 
                 name            nlmintr
 
@@ -90,20 +89,6 @@ DoALongJumpTo   proc    near
                 iretd
 DoALongJumpTo   endp
 
-public          Read387
-Read387         proc    near
-                mov     eax,4[esp]
-                fsave   [eax]
-                ret
-Read387         endp
-
-public          Write387
-Write387        proc    near
-                mov     eax,4[esp]
-                frstor  [eax]
-                ret
-Write387        endp
-
 public          GetDS
 GetDS           proc    near
                 mov     ax,ds
@@ -115,43 +100,6 @@ GetCS           proc    near
                 mov     ax,cs
                 ret
 GetCS           endp
-
-        public  NPXType
-NPXType proc     near
-                push    ebx                     ; save ebx
-                sub     ebx,ebx                 ; set initial control word to 0
-                push    ebx                     ; push it on stack
-                mov     eax,cr0                 ; get control word
-                push    eax                     ; save it
-                and     eax,NOT 4               ; turn off EM bit
-                mov     cr0,eax                 ; ...
-;
-                fninit                          ; initialize math coprocessor
-                fnstcw  4[esp]                  ; store control word in memory
-                mov     al,0                    ; assume no coprocessor present
-                mov     ah,5[esp]               ; upper byte is 03h if
-                cmp     ah,03h                  ;   coprocessor is present
-                jne     exit                    ; exit if no coprocessor present
-                finit                           ; use default infinity mode
-                fld1                            ; generate infinity by
-                fldz                            ;   dividing 1 by 0
-                fdiv                            ; ...
-                fld     st                      ; form negative infinity
-                fchs                            ; ...
-                fcompp                          ; compare +/- infinity
-                fstsw   4[esp]                  ; equal for 87/287
-                fwait                           ; wait fstsw to complete
-                mov     ax,4[esp]               ; get NDP control word
-                mov     al,2                    ; assume 80287
-                sahf                            ; store condition bits in flags
-                jz      exit                    ; it's 287 if infinities equal
-                mov     al,3                    ; indicate 80387
-exit:           pop     ebx                     ; restore control word
-                mov     cr0,ebx                 ; ...
-                pop     ebx                     ; clear the stack
-                pop     ebx                     ; restore ebx
-                ret                             ; return
-NPXType         endp
 
 _text           ends
 
