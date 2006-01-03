@@ -709,7 +709,7 @@ bool IsZero(  TREEPTR tree )
 }
 
 
-static TREEPTR BaseConv( TYPEPTR typ1, TREEPTR op2 )
+TREEPTR BaseConv( TYPEPTR typ1, TREEPTR op2 )
 {
     TYPEPTR         typ2;
     type_modifiers  typ1_flags, typ2_flags;

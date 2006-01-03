@@ -68,6 +68,7 @@ static BLOCKPTR     LoopStack;
 static SWITCHPTR    SwitchStack;
 
 void ChkStmtExpr( void );
+TREEPTR BaseConv( TYPEPTR typ1, TREEPTR op2 );
 static void EndOfStmt( void );
 static void LeftBrace( void );
 static void BreakStmt( void );
@@ -333,10 +334,14 @@ static void ReturnStmt( SYM_HANDLE func_result, struct return_info *info )
 
     NextToken();
     if( CurToken != T_SEMI_COLON ) {
+        TYPEPTR     func_type;
+
+        func_type = CurFunc->sym_type->object;
         tree = RValue( Expr() );
         ChkRetType( tree );
+        tree = BaseConv( func_type, tree );
         tree = ExprNode( 0, OPR_RETURN, tree );
-        tree->expr_type = CurFunc->sym_type->object;
+        tree->expr_type = func_type;
         tree->op.sym_handle = func_result;
         AddStmt( tree );
         with = RETURN_WITH_EXPR;
