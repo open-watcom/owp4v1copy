@@ -82,9 +82,7 @@ _DATA   ends
 _TEXT   segment para '_OVLCODE' PUBLIC
 
 ifdef OVL_MULTITHREAD
-        assume  CS:_TEXT,SS:DGROUP
-else
-        assume  CS:_TEXT
+        assume  SS:DGROUP
 endif
 
         extrn   __NOVLTINIT__:near
@@ -168,12 +166,12 @@ around:
           _quif e               ; if not, it's a 286
           inc   AX              ; it's a 386!
         _endguess
-        mov     CS:__OVLFLAGS__,AX; store result.
+        mov     __OVLFLAGS__,AX ; store result.
         mov     ax,3000h        ; get dos version number
         int     21h             ; ...
         cmp     al,3            ; check if version 3 or greater
         _if     ae              ; ...
-          or    CS:__OVLFLAGS__,2; set OVL_DOS3 flag
+          or    __OVLFLAGS__,2  ; set OVL_DOS3 flag
         _endif
                                 ; initialize overlay loader
         call    __NOVLTINIT__   ; initialize overlays
@@ -189,16 +187,21 @@ around:
         mov     DX,word ptr __OVLTAB__.ov_prolog.ovp_ovl_size
         call    __OVLINITAREA__ ; . . .
 
+assume  DS:DGROUP
+
         mov     AX,seg DGROUP   ; get dgroup
         mov     DS,AX           ; now set up setjmp/longjmp vbls
-        mov     word ptr DS:__get_ovl_stack,offset __FINDOVLADDR__
-        mov     word ptr DS:__restore_ovl_stack,offset longjmp_wrap
-        mov     word ptr DS:__close_ovl_file,offset __CloseOvl__
-        mov     word ptr DS:__pcode_ret_trap,offset pcode_ret_trap
-        mov     word ptr DS:__get_ovl_stack+2,CS
-        mov     word ptr DS:__restore_ovl_stack+2,CS
-        mov     word ptr DS:__close_ovl_file+2,CS
-        mov     word ptr DS:__pcode_ret_trap+2,CS
+        mov     word ptr __get_ovl_stack,offset __FINDOVLADDR__
+        mov     word ptr __restore_ovl_stack,offset longjmp_wrap
+        mov     word ptr __close_ovl_file,offset __CloseOvl__
+        mov     word ptr __pcode_ret_trap,offset pcode_ret_trap
+        mov     word ptr __get_ovl_stack+2,CS
+        mov     word ptr __restore_ovl_stack+2,CS
+        mov     word ptr __close_ovl_file+2,CS
+        mov     word ptr __pcode_ret_trap+2,CS
+
+assume  DS:nothing
+
         mov     DS,__OVLPSP__   ; restore DS
         _guess  death
           mov   AX,word ptr __NDBG_HOOK__+2; get segment of hook
@@ -291,8 +294,11 @@ ifdef OVL_MULTITHREAD
         mov     BP,_Context_list; get list before switching DS
 endif
         mov     AX,CS           ; set ds == cs for speed (& size)
-        mov     BX,ENTRIES_M_1 + ove_start_para
+        mov     BX,offset __OVLTAB__.ov_entries.ove_start_para - size OVLTAB_ENTRY
         mov     DS,AX           ; (pipelined) set ds == cs
+
+assume  DS:_TEXT
+
         mov     DX,0ffffh       ; DX is head of linked list
 ifdef OVL_MULTITHREAD
       _loop
@@ -300,9 +306,9 @@ ifdef OVL_MULTITHREAD
         mov     BP,tl_saved_bp[bp] ; get bp
         test    BP,BP           ; is it valid?
         jne     sc_beg          ; yes
-        mov     BP,DS:BPChain   ; active task - use start of bp chain
+        mov     BP,BPChain      ; active task - use start of bp chain
 else
-        mov     BP,DS:BPChain   ; start of bp chain
+        mov     BP,BPChain      ; start of bp chain
 endif
         jmp     short sc_beg
         EVEN
@@ -335,6 +341,9 @@ ifdef OVL_MULTITHREAD
 endif
         mov     AX,DX           ; get return value
         pop     DS
+
+assume  DS:nothing
+
         pop     ES
         pop     BP
         pop     SI
@@ -482,7 +491,7 @@ ifdef OVL_MULTITHREAD
           mov   BP,tl_saved_bp[BP]
           test  BP,BP
           _if   e
-            mov BP,CS:BPChain   ; get BP of active task
+            mov BP,BPChain      ; get BP of active task
           _endif
           cmp   CX,BP           ; if stack_trap >= BP
           _if   ae
@@ -549,9 +558,9 @@ ifdef OVL_MULTITHREAD
           mov   BP,tl_saved_bp[BP]
           test  BP,BP
           jne   fix_start       ; used saved bp if not current task
-          mov   BP,CS:BPChain   ; otherwise use BPChain
+          mov   BP,BPChain      ; otherwise use BPChain
 else
-        mov     BP,CS:BPChain   ; get the BP on entry
+        mov     BP,BPChain      ; get the BP on entry
 endif
         jmp     short fix_start
         _loop
@@ -609,7 +618,7 @@ __NCheckRetAddr__ proc near
           mov   AX,DI           ; save overlay number in ax
           shl   DI,CL           ; . . . multiply
           pop   CX              ; restore CX
-          test  byte ptr CS:ENTRIES_M_1 + ove_flags_anc + 1[DI],10H
+          test  byte ptr [DI + __OVLTAB__.ov_entries.ove_flags_anc + 1 - size OVLTAB_ENTRY],10H
                                 ; check if FLAG_RET_TRAP set
           _quif e               ; . . .
           inc   DX              ; this is a return trap

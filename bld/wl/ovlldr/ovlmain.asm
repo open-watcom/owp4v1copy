@@ -45,7 +45,6 @@ _DATA   segment byte 'DATA' PUBLIC
 _DATA   ends
 
 _TEXT   segment dword '_OVLCODE' PUBLIC
-        assume  CS:_TEXT
 
 XNAME   public, OVLLDR
 XNAME   public, OVLINIT
@@ -90,12 +89,12 @@ around:
         mov     SS,AX                       ; ...
         mov     SP,offset __TopStack__      ; ...
         sti                                 ; ...
-        mov     CS:__OVLFLAGS__,0           ; initialize __OVLFLAGS__
+        mov     __OVLFLAGS__,0              ; initialize __OVLFLAGS__
         mov     ax,3000h                    ; get dos version number
         int     21h                         ; ...
         cmp     al,3                        ; check if version 3 or greater
         jb      not_dos3                    ; ...
-        or      CS:__OVLFLAGS__,2           ; set OVL_DOS3 flag
+        or      __OVLFLAGS__,2              ; set OVL_DOS3 flag
 not_dos3:
 
 XNAME   call,   OVLTINIT                    ; initialize overlays
@@ -107,16 +106,22 @@ XNAME   call,   OVLPARINIT                  ; initialize bank stack
         mov     SS,word ptr SaveSS          ; ...
         mov     SP,word ptr SaveSP          ; ...
         sti                                 ; ...
+
+assume DS:DGROUP
+
         push    DS                          ; save DS
         mov     ax,seg DGROUP               ; get seg of DGROUP
         mov     ds,ax                       ; ...
-        mov     word ptr DS:__close_ovl_file,offset __CloseOvl__
-        mov     word ptr DS:__close_ovl_file+2,CS
+        mov     word ptr __close_ovl_file,offset __CloseOvl__
+        mov     word ptr __close_ovl_file+2,CS
         pop     DS                          ; restore DS
+
+assume DS:nothing
+
         push    DX                          ; push actual start segment
         push    BX                          ; push actual start offset
 
-XNAME   <jmp dword ptr CS:>, DBG_HOOK       ; hook into debugger if it's there
+XNAME   <jmp dword ptr>, DBG_HOOK           ; hook into debugger if it's there
 
 XENDP   OVLINIT
 
@@ -124,16 +129,16 @@ XENDP   OVLINIT
 align 4
 
 XPROC   OVLLDR, near
-        mov     word ptr CS:__SaveRegs__+0,AX   ; save registers
-        mov     word ptr CS:__SaveRegs__+2,BP   ; ...
+        mov     word ptr __SaveRegs__+0,AX  ; save registers
+        mov     word ptr __SaveRegs__+2,BP  ; ...
         mov     BP,SP                           ; peek at the stack
         mov     AX,2[BP]                        ; get cause of overlay load
-        mov     CS:__OVLCAUSE__,AX              ; stash it
+        mov     __OVLCAUSE__,AX             ; stash it
 ifdef OVL_SMALL                                 ; ...
-        mov     CS:__OVLCAUSE__+2,CS            ; ...
+        mov     __OVLCAUSE__+2,CS           ; ...
 else
         mov     AX,4[BP]                        ; ...
-        mov     CS:__OVLCAUSE__+2,AX            ; stash it
+        mov     __OVLCAUSE__+2,AX           ; stash it
 endif
         mov     byte ptr __OVLISRET__,0         ; indicate not a return
         pop     BP                              ; remove return address offset
@@ -146,8 +151,8 @@ XNAME   call,   OVLLOAD                         ; load overlay
         popf                                    ; restore flags
         add     BP,2                            ; skip overlay # when returning.
         push    BP                              ; restore return offset
-        mov     BP,word ptr CS:__SaveRegs__+2   ; restore registers
-        mov     AX,word ptr CS:__SaveRegs__+0   ; ...
+        mov     BP,word ptr __SaveRegs__+2  ; restore registers
+        mov     AX,word ptr __SaveRegs__+0  ; ...
         ret                                     ; return
 XENDP   OVLLDR
 

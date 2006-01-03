@@ -32,7 +32,6 @@
         name    ovldata
 
 _TEXT   segment word '_OVLCODE' PUBLIC
-        assume  CS:_TEXT
 
         public  __OVLCAUSE__
         public  __OVLPSP__

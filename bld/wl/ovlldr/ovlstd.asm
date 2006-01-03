@@ -32,7 +32,6 @@
         name ovlstd
 
 _TEXT   segment word '_OVLCODE' PUBLIC
-        assume  CS:_TEXT
 
         public  __BankBeg__
         public  __OVLISRET__

@@ -42,7 +42,6 @@
 THRESHOLD equ 2         ; only allocate blocks larger than this
 
 _TEXT   segment byte '_OVLCODE' PUBLIC
-        assume cs:_TEXT
 
 ;
 ; void far _ovl_grablow( unsigned must_leave )
