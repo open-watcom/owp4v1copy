@@ -8,6 +8,10 @@
 
 #define OS2_INCLUDED
 
+#ifdef _M_I86
+#error This os2.h is for 32-bit development only!
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -17,7 +21,7 @@ extern "C" {
 #include <pm.h>
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif
