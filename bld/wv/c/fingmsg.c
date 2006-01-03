@@ -32,9 +32,15 @@
 #include "dbgdefn.h"
 #include "dbgwind.h"
 #include "dbgmem.h"
+#include <string.h>
+
 #define _BETASTR_ " Beta "
 #include "banner.h"
-#include <string.h>
+
+#ifdef _BANEXTRA
+    #undef  _BANEXTRA
+    #define _BANEXTRA _BANEXSHORT
+#endif
 
 char *AboutMessage[] = {
     "", // constructed

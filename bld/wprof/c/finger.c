@@ -31,6 +31,11 @@
 
 #include "banner.h"
 
+#ifdef _BANEXTRA
+    #undef  _BANEXTRA
+    #define _BANEXTRA _BANEXSHORT
+#endif
+
 char *AboutMessage[] = {
     "",
     banner1w( "Execution Profiler", _WPROF_VERSION_ ),
