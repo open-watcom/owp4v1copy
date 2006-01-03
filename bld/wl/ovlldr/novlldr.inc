@@ -50,7 +50,7 @@ RET_TRAP STRUC
     rt_entry            dd      ?
     rt_pad              db      ?
     rt_old_code_handle  dw      ?
-    rt_traps            db      size TRAP_ENTRY dup(?)
+    rt_traps            TRAP_ENTRY <?>
 RET_TRAP ENDS
 
 TASK_LIST STRUC
@@ -82,7 +82,7 @@ FREE_BLOCK STRUC
 FREE_BLOCK ENDS
 
 AREA_LIST STRUC
-    al_fblk             db      size FREE_BLOCK dup(?)
+    al_fblk             FREE_BLOCK <?>
     al_next             dw      ?
     al_size             dw      ?
     al_free_paras       dw      ?
