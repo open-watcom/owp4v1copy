@@ -1020,7 +1020,8 @@ local void EmitNodes( TREEPTR tree )
             left = CGAssign( name, op1, T_LONG_POINTER );
             name = CGTempName( temp_name, T_LONG_POINTER );
             PushCGName( left );
-            PushCGName( PushRValue( node, name ) );
+            name = CGUnary( O_POINTS, name, T_LONG_POINTER );
+            PushCGName( CGUnary( O_POINTS, name, T_LONG_POINTER ) );
           } break;
         case OPR_CONVERT:
             if( node->result_type->decl_type != TYPE_VOID ) {

@@ -1778,7 +1778,7 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
 //      return( ErrorNode( tree ) );
 //  }
     index_expr = RValue( index_expr );
-    if( DataTypeOf( TypeOf(index_expr) ) > TYPE_ULONG64 ) {
+    if( DataTypeOf( TypeOf( index_expr ) ) > TYPE_ULONG64 ) {
         CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
         FreeExprTree( tree );
         return( ErrorNode( index_expr ) );
@@ -1790,10 +1790,19 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
     if( typ->decl_type == TYPE_ARRAY ) {
         tree_flags = tree->op.flags;  // get modifiers of array obj
     } else if( typ->decl_type == TYPE_POINTER ) {
-       // We will indirect so get modifiers of indirected obj
-        tree_flags = OpFlags( typ->u.p.decl_flags );
+        type_modifiers  flags;
+
+        flags = typ->u.p.decl_flags;
+        if( flags & FLAG_BASED ) {
+            tree = BasedPtrNode( typ, tree );
+            flags &= ~(FLAG_NEAR | FLAG_BASED);
+            flags |= FLAG_FAR;
+        }
+
+        // We will indirect so get modifiers of indirected obj
+        tree_flags = OpFlags( flags );
     } else {
-        CErr2p(ERR_FATAL_ERROR, "Bad array index tree" );
+        CErr2p( ERR_FATAL_ERROR, "Bad array index tree" );
     }
     typ = typ->object;
     while( typ->decl_type == TYPE_TYPEDEF ) {
@@ -1848,7 +1857,7 @@ local TREEPTR IndexOp( TREEPTR tree, TREEPTR index_expr )
     if( typ->decl_type == TYPE_ARRAY ) {
         tree = ArrayIndex( tree, index_expr );
     } else if( typ->decl_type == TYPE_POINTER ) {
-        tree = GenIndex( RValue(tree), index_expr );
+        tree = GenIndex( RValue( tree ), index_expr );
     } else {                    /* try index[array] */
         typ = index_expr->expr_type;
         while( typ->decl_type == TYPE_TYPEDEF ) {
@@ -1857,7 +1866,7 @@ local TREEPTR IndexOp( TREEPTR tree, TREEPTR index_expr )
         if( typ->decl_type == TYPE_ARRAY ) {
             tree = ArrayIndex( index_expr, tree );
         } else if( typ->decl_type == TYPE_POINTER ) {
-            tree = GenIndex( RValue(index_expr), tree );
+            tree = GenIndex( RValue( index_expr ), tree );
         } else {
             CErr1( ERR_EXPR_MUST_BE_ARRAY );
             FreeExprTree( index_expr );

@@ -12,7 +12,6 @@
 # pch09.$(exe) &    # - Expression trees aren't stored in PCH, any
 # pch10.$(exe) &    #   functions defined in headers will screw
 # pch11.$(exe) &    #   things up (pch05/06 and others)
-# init12.$(exe) &   # based pointer problem
 # opt11.$(exe) &    # volatile + post increment problem
 
 !ifdef %ctest_bad_br
@@ -82,6 +81,7 @@ positive_tests = &
     asm06.$(exe) &
     asm07.$(exe) &
     asm08.$(exe) &
+    based01.$(exe) &
     based02.$(exe) &
     bf01.$(exe) &
     bf02.$(exe) &
@@ -118,6 +118,7 @@ positive_tests = &
     init09.$(exe) &
     init10.$(exe) &
     init11.$(exe) &
+    init12.$(exe) &
     init13.$(exe) &
     init14.$(exe) &
     init15.$(exe) &
