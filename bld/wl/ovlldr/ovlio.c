@@ -41,7 +41,7 @@ extern tiny_ret_t near __OvlOpen__( char far *fname )
     if( __OVLFLAGS__ & OVL_DOS3 ) {
         openmode |= TIO_INHERITANCE;
     }
-    return( TinyOpen( fname, __OVLSHARE__ | openmode ) );
+    return( TinyFarOpen( fname, __OVLSHARE__ | openmode ) );
 }
 
 extern tiny_ret_t near __OvlSeek__( tiny_handle_t hdl, unsigned long pos )
@@ -52,10 +52,10 @@ extern tiny_ret_t near __OvlSeek__( tiny_handle_t hdl, unsigned long pos )
     return( TinyLSeek( hdl, pos, TIO_SEEK_START, (void __near *)&posx ) );
 }
 
-extern tiny_ret_t near __OvlRead__(tiny_handle_t hdl, void *buff, unsigned len)
-/*****************************************************************************/
+extern tiny_ret_t near __OvlRead__(tiny_handle_t hdl, void far *buff, unsigned len)
+/*********************************************************************************/
 {
-    return( TinyRead( hdl, buff, len ) );
+    return( TinyFarRead( hdl, buff, len ) );
 }
 
 extern void near __OvlClose__( tiny_handle_t hdl )

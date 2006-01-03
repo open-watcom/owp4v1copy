@@ -102,8 +102,7 @@ int near __OvlRelocLoad__( ovltab_entry far *ovl, tiny_handle_t fp )
         if( TINY_ERROR( status ) ) __OvlExit__( OVL_IO_ERR );
         num_relocs -= buffered_relocs;
         while( buffered_relocs != 0 ) {
-            fixup = (unsigned far *) MK_FP( ovl->code_handle + relocs->seg,
-                                                               relocs->off );
+            fixup = MK_FP( ovl->code_handle + relocs->seg, relocs->off );
             if( (unsigned)(*fixup - ovl->start_para) < ovl->num_paras ) {
                 self_ref = 1;
                 *fixup += (ovl->code_handle - ovl->start_para);
@@ -147,7 +146,7 @@ static char far * getpathenv( void )
 {
     char far *  ptr;
 
-    ptr = MK_FP( *(unsigned int *)MK_FP( __OVLPSP__, 0x2c ), 0 );
+    ptr = MK_FP( *(unsigned int far *)MK_FP( __OVLPSP__, 0x2c ), 0 );
     for( ;; ) {
         if(    ptr[0] == 'P'
             && ptr[1] == 'A'
@@ -203,7 +202,7 @@ extern tiny_ret_t near __OpenOvl__( unsigned int offset )
             }
         }
         if( __OVLFLAGS__ & OVL_DOS3 ) {
-            cmd = MK_FP( *( unsigned int * )MK_FP(__OVLPSP__, 0x002c), 0x0000 );
+            cmd = MK_FP( *( unsigned int far * )MK_FP(__OVLPSP__, 0x002c), 0x0000 );
             for(;;) {       // go through environment to find path of .EXE file.
                 for(;;) {
                     chr = *cmd;
