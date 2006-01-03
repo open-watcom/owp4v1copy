@@ -1,6 +1,6 @@
 #include "fail.h"
 
-#if defined( M_I86 ) || defined( M_I386 )
+#if defined( M_I86 ) || defined( M_I386 ) && !defined( __NT__ ) && !defined( __UNIX__ )
 // #pragma on (dump_init)
 char __based(__segname("foo_TEXT")) bar[] = "abc";
 
