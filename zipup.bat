@@ -13,7 +13,7 @@ del /q %PREFIX%-src.zip >& NUL
 rem ##########################################################################
 rem ZIP all Open Watcom source files
 del /szx %ARCHIVES%\ow_devel_src\
-p4 -uanonymous -Panonymous -cOPENWATCOM_DEVEL_SRC sync %P4OPT% @%LABEL%
+p4 -cOPENWATCOM_DEVEL_SRC sync %P4OPT% @%LABEL%
 cd %ARCHIVES%\ow_devel_src
 zip -r ..\%PREFIX%-src.zip *
 
