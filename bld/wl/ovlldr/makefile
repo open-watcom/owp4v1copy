@@ -3,6 +3,7 @@ host_os = dos
 host_cpu = i86
 
 proj_name = ovlldr
+ovlldr_autodepends = .autodepend
 
 sobjs = sovlret.obj sovlmain.obj sovldbg.obj ovlstd.obj ovlshare.obj
 lobjs = lovlret.obj lovlmain.obj lovldbg.obj ovlstd.obj ovlshare.obj
@@ -19,7 +20,7 @@ debugobjs = dovlboth.obj dovldata.obj
 
 lib_opts = -b -p16
 
-extra_c_flags = $(inc_path) -Fo=$^@ -r -d1 -zu -zl -zld -nc=_OVLCODE -nt=_TEXT -nm=$^&
+extra_c_flags = $(inc_path) -Fo=$^@ -r -d1 -zu -zl -nc=_OVLCODE -nt=_TEXT -nm=$^&
 
 extra_c_flags_sovlldr  = -mc -DOVL_SMALL
 extra_c_flags_dsovlldr = -mc -DOVL_SMALL -DOVL_DEBUG
@@ -37,7 +38,7 @@ extra_c_flags_movldbg  = -DOVL_WHOOSH -DOVL_MULTITHREAD
 
 extra_c_flags_dovlboth = -DOVL_DEBUG
 
-extra_a_flags = -Fo=$^@ -zld -i$(watcom_h)
+extra_a_flags = -Fo=$^@ -i$(watcom_h)
 
 extra_a_flags_ovldata  =
 extra_a_flags_dovldata = -DOVL_DEBUG
@@ -82,85 +83,40 @@ dovlmt.lib : dmovlldr.obj $(mtobjs) $(commobjs) $(debugobjs)
 .h : $(watcom_h)
 .inc : $(watcom_h)
 
-ovlio.obj : ovlio.c
+dsovlldr.obj : ovlldr.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-ovlshare.obj : ovlshare.c
+sovlldr.obj : ovlldr.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-naddarea.obj : naddarea.c
+dlovlldr.obj : ovlldr.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-ovlstd.obj : ovlstd.asm
-    $(as) $(aflags) $(extra_a_flags_$^&) $[@
-
-dsovlldr.obj : ovlldr.c
+lovlldr.obj : ovlldr.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-sovlldr.obj : ovlldr.c
+dnovlldr.obj : novlldr.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-dlovlldr.obj : ovlldr.c
+dmovlldr.obj : movlldr.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-lovlldr.obj : ovlldr.c
+dovlboth.obj : ovlboth.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-novlldr.obj : novlldr.c novlldr.h ovlstd.h ovltab.h
+sovldbg.obj : ovldbg.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-dnovlldr.obj : novlldr.c novlldr.h ovlstd.h ovltab.h
+lovldbg.obj : ovldbg.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-movlldr.obj : movlldr.c novlldr.h ovlstd.h ovltab.h
+novldbg.obj : ovldbg.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-dmovlldr.obj : movlldr.c novlldr.h ovlstd.h ovltab.h
+movldbg.obj : ovldbg.c $($(proj_name)_autodepends)
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-ovlboth.obj : ovlboth.c ovlstd.h ovltab.h
-    $(cc) $(cflags) $(extra_c_flags_$^&) $[@
-
-dovlboth.obj : ovlboth.c ovlstd.h ovltab.h
-    $(cc) $(cflags) $(extra_c_flags_$^&) $[@
-
-sovldbg.obj : ovldbg.c ovlstd.h ovltab.h
-    $(cc) $(cflags) $(extra_c_flags_$^&) $[@
-
-lovldbg.obj : ovldbg.c ovlstd.h ovltab.h
-    $(cc) $(cflags) $(extra_c_flags_$^&) $[@
-
-novldbg.obj : ovldbg.c novlldr.h ovlstd.h ovltab.h
-    $(cc) $(cflags) $(extra_c_flags_$^&) $[@
-
-movldbg.obj : ovldbg.c novlldr.h ovlstd.h ovltab.h
-    $(cc) $(cflags) $(extra_c_flags_$^&) $[@
-
-ovldata.obj : ovldata.asm
-    $(as) $(aflags) $(extra_a_flags_$^&) $[@
-
-dovldata.obj : ovldata.asm
-    $(as) $(aflags) $(extra_a_flags_$^&) $[@
-
-lovlmain.obj : lovlmain.asm ovlmain.asm
-    $(as) $(aflags) $(extra_a_flags_$^&) $[@
-
-sovlmain.obj : sovlmain.asm ovlmain.asm
-    $(as) $(aflags) $(extra_a_flags_$^&) $[@
-
-novlmain.obj : novlmain.asm novlldr.inc ovltab.inc
-    $(as) $(aflags) $(extra_a_flags_$^&) $[@
-
-movlmain.obj : movlmain.asm novlldr.inc ovltab.inc
-    $(as) $(aflags) $(extra_a_flags_$^&) $[@
-
-lovlret.obj : lovlret.asm ovlret.asm
-    $(as) $(aflags) $(extra_a_flags_$^&) $[@
-
-sovlret.obj : sovlret.asm ovlret.asm
-    $(as) $(aflags) $(extra_a_flags_$^&) $[@
-
-ngrablow.obj : ngrablow.asm novlldr.inc ovltab.inc
+dovldata.obj : ovldata.asm $($(proj_name)_autodepends)
     $(as) $(aflags) $(extra_a_flags_$^&) $[@
 
 
