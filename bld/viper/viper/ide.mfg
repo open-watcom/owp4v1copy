@@ -566,9 +566,11 @@ Tool WCG "Code Generator"
         RSwitch 0, ??2??, "Pentium Register based calling", -5r, OFF
         RSwitch 0, ??2??, "Pentium Stack based calling", -5s, OFF
         RSwitch 0, ds2??, "Pentium Pro Register based calling", -6r, OFF
+        RSwitch 0, dy2??, "Pentium Pro Register based calling", -6r, OFF
         RSwitch 0, l?2??, "Pentium Pro Register based calling", -6r, OFF
         RSwitch 0, ??2??, "Pentium Pro Register based calling", -6r, ON
         RSwitch 0, ds2??, "Pentium Pro Stack based calling", -6s, ON
+        RSwitch 0, dy2??, "Pentium Pro Stack based calling", -6s, ON
         RSwitch 0, l?2??, "Pentium Pro Stack based calling", -6s, ON
         RSwitch 0, ??2??, "Pentium Pro Stack based calling", -6s, OFF
     CSwitch 0, w????, "", -bt=windows, ON
@@ -929,13 +931,14 @@ Tool WASM "Assembler"
     VSwitch 0, ?????, "Name Text Segment:", -nt,, ONE, REQ, ""
     VSwitch 0, ?????, "Name of Module:", -nm,, ONE, REQ, ""
     CSwitch 0, ?????, "Mangle C names like MASM", -zcm
-    CSwitch 0, ?????, "Allow C-style octal consants", -o, OFF
+    CSwitch 0, ?????, "Allow C-style octal constants", -o, OFF
     RGroup "Floating-point Level"
         RSwitch 1, ?????, "Compiler default", , ON
         RSwitch 1, ?????, "In-line 8087 instructions", -fp0, OFF
         RSwitch 1, ?????, "In-line 80287 instructions", -fp2, OFF
         RSwitch 1, ?????, "In-line 80387 instructions", -fp3, OFF
         RSwitch 1, ?????, "In-line Pentium instructions", -fp5, OFF
+        RSwitch 1, ?????, "In-line Pentium Pro instructions", -fp6, OFF
     RGroup "Floating-point Model"
         RSwitch 1, ?????, "Compiler default", , ON
         RSwitch 1, ?????, "In-line with emulator", -fpi, OFF
