@@ -23,7 +23,7 @@ extra_objs = &
 
 !ifeq host_cpu 386
 cpu     = x86
-extra_objs += linuxx86.obj x86cpu.obj squish87.obj
+extra_objs += linuxx86.obj x86cpu.obj #misc7386.obj
 !else ifeq host_cpu ppc
 cpu     = ppc
 extra_objs += linuxppc.obj

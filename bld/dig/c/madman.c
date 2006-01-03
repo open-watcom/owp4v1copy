@@ -1275,6 +1275,7 @@ static mad_status AddrTypeToString( unsigned radix, mad_type_info const *mti,
 #define LOG10B2( v )    (((v) * 30103L ) / 100000L )
 #define MAX_DIGITS      21
 
+#ifdef __WATCOMC__
 static char *fixup( char *p, int n )
 {
     char    *start = p;
@@ -1312,6 +1313,7 @@ static char *__xcvt( long_double *value,
     fixup( buf, ndigits );
     return( buf );
 }
+#endif
 
 static char *DoStrReal( long_double *value, char *p, mad_type_info const *mti )
 {
@@ -1325,7 +1327,11 @@ static char *DoStrReal( long_double *value, char *p, mad_type_info const *mti )
     exp_digs = LOG10B2( mti->f.exp.data.b.bits * (mti->f.exp.base / 2) );
     mant_digs = LOG10B2( mti->b.bits + mti->f.exp.hidden
                         - ( mti->f.exp.data.b.bits + 1 ) );
+#ifdef __WATCOMC__
     mant = __xcvt( value, mant_digs, &exp, &sign, buff );
+#else
+    mant = ecvt( value->value, mant_digs, &exp, &sign );
+#endif
     if( !isdigit( *mant ) ) {
         /* special magical thingy (nan, inf, ...) */
         strcpy( p, mant );
