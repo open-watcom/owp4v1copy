@@ -155,7 +155,7 @@ extern unsigned CPUId();
         "pop    eax"            \
         value [AX] modify [BX CX DX]
 
-unsigned X86CPUType()
+unsigned_8 X86CPUType( void )
 {
     #if !defined(__386__)
         if( Is8086() ) return( X86_86 );
@@ -177,7 +177,7 @@ main()
 #else
 
 // Just say it's a 386 and be done with it
-unsigned X86CPUType( void )
+unsigned_8 X86CPUType( void )
 {
     return( X86_386 );
 }
