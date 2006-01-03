@@ -32,32 +32,29 @@
 #include "novlldr.h"
 
 /*
- * Here's a nice fast 386 inline memcpy that is used if a 386 or better is
+ * Here's a nice fast inline memcpy that is used if a 386 or better is
  * detected. This is passed the length to copy in paragraphs.
 */
 
-extern  void Do386Copy( void far *dst, void far *src, unsigned len_in_paras );
+extern  void DoFastCopyPara( unsigned dst, unsigned src, unsigned len_in_paras );
 
-#pragma aux Do386Copy = \
-        0xc1 0xe1 0x02      /* shl cx,2     */  \
-        0x66 0xf2 0xa5      /* repne movsd  */  \
-        parm [es di] [ds si] [cx]               \
+#pragma aux DoFastCopyPara = \
+        ".386" \
+        "xor si,si" \
+        "xor di,di" \
+        "test byte ptr __OVLFLAGS__, 1 " \
+        "jz   cpu86" \
+        "shl cx,2" \
+        "rep movsd" \
+        "jmp short end" \
+"cpu86:  shl cx,1" \
+        "shl cx,1" \
+        "shl cx,1" \
+        "rep movsw" \
+"end:   " \
+        parm [es] [ds] [cx]               \
         modify exact [si di cx];
 
-/*
- * a fast inline memcpy when we don't have a 386. This also assumes that the
- * length that is passed is in paragraphs
-*/
-
-void Do286Copy( void *d, void *s, size_t len_in_paras );
-
-#pragma aux Do286Copy = \
-        0xd1 0xe1       /* shl cx,1     */ \
-        0xd1 0xe1       /* shl cx,1     */ \
-        0xd1 0xe1       /* shl cx,1     */ \
-        0xf2 0xa5       /* repne movsw  */ \
-        parm [es di] [ds si] [cx]          \
-        modify exact [si di cx];
 
 /**************************************************************************/
 
@@ -220,7 +217,7 @@ static void near DeMungeVectors( unsigned tab_off, unsigned sec_num,
     vect = &__OVLSTARTVEC__;
     loader = FP_OFF(__NOVLLDR__) - FP_OFF(&vect->u.v.ldr_addr) - 2;
     while( vect < &__OVLENDVEC__ ) {
-        if( vect->u.i.cs_over == OVV_CS_OVERRIDE && vect->u.i.tab_addr == tab_off ){
+        if(( vect->u.i.cs_over == OVV_CS_OVERRIDE ) && ( vect->u.i.tab_addr == tab_off )) {
             vect->u.v.call_op = CALL_INSTRUCTION;
             vect->u.v.ldr_addr = loader;
             vect->u.v.sec_num = sec_num;
@@ -398,11 +395,7 @@ static void near MoveSection( unsigned destseg, ovltab_entry_ptr ovl )
     *(desc_ptr)MK_FP( destseg - 1, 0xE ) = *(desc_ptr)MK_FP( startseg-1, 0xE );
     __OVLFIXCALLCHAIN__( startseg, destseg );
     /* copy the code */
-    if( __OVLFLAGS__ & OVL_386FLAG ) {
-        Do386Copy( MK_FP( destseg, 0 ), MK_FP( startseg, 0 ), ovl->num_paras );
-    } else {
-        Do286Copy( MK_FP( destseg, 0 ), MK_FP( startseg, 0 ), ovl->num_paras );
-    }
+    DoFastCopyPara( destseg, startseg, ovl->num_paras );
     /* possibly relocate */
     if( ovl->flags_anc & FLAG_SELF_REF ) {
         redoRelocs( ovl, startseg );
