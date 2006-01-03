@@ -15,11 +15,11 @@ $# just in case anyone is curious ...
 !    error You're building in test mode fool!
 !endif
 
-# don't output reams of junk
-!ifdef %QUIET
-verbose = 0
-!else
+# don't output reams of junk by default
+!ifdef %VERBOSE
 verbose = 1
+!else
+verbose = 0
 !endif
 
 # don't ask, just nuke the files
