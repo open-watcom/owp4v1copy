@@ -69,6 +69,12 @@
         comm    __close_ovl_file:dword
         comm    __pcode_ret_trap:dword
 
+OVL_DBG_INFO STRUC
+    location    dw 0
+    section     dw 0
+    bitsize     dw 0
+OVL_DBG_INFO ENDS
+
 DGROUP  group   _DATA
 
 _DATA   segment byte 'DATA' PUBLIC
@@ -132,7 +138,8 @@ SaveWord        dw      0       ; used by __NOVLLDR__ and __OVLRETTRAP__
 __OVLAREALIST__ dw      0       ; head of the list of areas
 __OVLROVER__    dw      0       ; used for 2nd chance cyclic algorithm
 __OVLSTARTPARA__ dw     0       ; start_para for non-PRELOAD sections
-__OVLDBGINFO__  db      6 dup(0)
+
+__OVLDBGINFO__  OVL_DBG_INFO <?>
 
 around:
         mov     __OVLPSP__,ES   ; save segment address of PSP
@@ -229,7 +236,7 @@ assume  DS:nothing
               int 21H           ; . . .
               _quif c,death     ; die if there was a problem
             _endif
-            mov word ptr __OVLDBGINFO__,AX; save debugger area
+            mov word ptr __OVLDBGINFO__.location,AX; save debugger area
           _endif
           jmp   dword ptr __NDBG_HOOK__; hook into debugger if it's there
                                 ; otherwise, start program
