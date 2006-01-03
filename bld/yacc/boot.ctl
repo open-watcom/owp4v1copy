@@ -15,6 +15,6 @@ set PROJDIR=<CWD>
 #=================
     echo Building the yacc bootstrap
     <MAKE> -f gnumake
-    <CPCMD> bootstrp/yacc <DEVDIR>/build/bin/wyacc
-    <CPCMD> bootstrp/yacc <DEVDIR>/build/binl/wyacc
+    <CPCMD> bootstrp/yacc <DEVDIR>/build/bin/byacc
+    <CPCMD> bootstrp/yacc <DEVDIR>/build/binl/byacc
     cdsay <PROJDIR>
