@@ -100,14 +100,14 @@ XPROC   OVLSETRTN, near
         push    AX                          ; save AX
         mov     BX,__BankStack__            ; get location of bank stack
         add     __BankStack__,ENTRY_SIZE    ; push new entry
-        mov     CS:0[BX],AX                 ; save overlay number
-        mov     AX,6[BP]                    ; get return offset
-        mov     CS:2[BX],AX                 ; save return offset
-        mov     word ptr 6[BP],offset OvlReturn; patch in offset of OvlReturn
+        mov     CS:[BX],AX                  ; save overlay number
+        mov     AX,[BP+6]                   ; get return offset
+        mov     CS:[BX+2],AX                ; save return offset
+        mov     word ptr [BP+6],offset OvlReturn; patch in offset of OvlReturn
 ifndef OVL_SMALL
-        mov     AX,8[BP]                    ; get return segment
-        mov     CS:4[BX],AX                 ; save return segment
-        mov     8[BP],CS                    ; patch in segment of OvlReturn
+        mov     AX,[BP+8]                   ; get return segment
+        mov     CS:[BX+4],AX                ; save return segment
+        mov     [BP+8],CS                   ; patch in segment of OvlReturn
 endif
         pop     AX                          ; restore AX
         pop     BX                          ; restore BX
@@ -146,19 +146,19 @@ endif
 ifdef OVL_SMALL
         mov     __OVLCAUSE__+2,CS           ; stash return segment
 else
-        mov     AX,CS:4[BX]                 ; stash return segment
+        mov     AX,CS:[BX+4]                ; stash return segment
         mov     __OVLCAUSE__+2,AX           ; ...
 endif
-        mov     AX,CS:2[BX]                 ; stash return offset
+        mov     AX,CS:[BX+2]                ; stash return offset
         mov     __OVLCAUSE__,AX             ; ...
         mov     byte ptr __OVLISRET__,1     ; indicate it's a return
         pop     AX                          ; restore AX
         call    PopEntry                    ; reload overlay if required
         popf                                ; restore flags
 ifndef OVL_SMALL
-        push    CS:4[BX]                    ; push return segment
+        push    CS:[BX+4]                   ; push return segment
 endif
-        push    CS:2[BX]                    ; push return offset
+        push    CS:[BX+2]                   ; push return offset
         mov     BX,__SaveRegs__+0           ; restore registers
         ret
 OvlReturn endp
@@ -215,12 +215,12 @@ XPROC   CheckRetAddr, near
         cmp     word ptr [bx], offset OvlReturn ; is it the overlay return
         jne     not_ret             ; ... code offset?
         mov     dx,cs               ; is it the overlay return segment?
-        cmp     dx,2[bx]            ; ...
+        cmp     dx,[bx+2]           ; ...
         jne     not_ret             ; ...
         ; The address given is the overlay manager return code
         ; the section id has the number of levels down the overlay stack
         ; that the real address is to be found
-        mov     ax,4[bx]            ; get levels down
+        mov     ax,[bx+4]           ; get levels down
         inc     ax                  ; add one
 ifdef OVL_SMALL
         shl     ax,1                ; multiply by four
@@ -238,12 +238,12 @@ endif
         je      bottom              ; if not then
         mov     ax,cs:[si-ENTRY_SIZE] ; - get true (previous)section number
 bottom:                             ; endif
-        mov     4[bx],ax            ; save section number
-        mov     ax,cs:2[si]         ; get true offset
-        mov     0[bx],ax            ; and save it
+        mov     [bx+4],ax           ; save section number
+        mov     ax,cs:[si+2]        ; get true offset
+        mov     [bx],ax             ; and save it
 ifndef OVL_SMALL
-        mov     ax,cs:4[si]         ; get true segment
-        mov     2[bx],ax            ; and save it
+        mov     ax,cs:[si+4]        ; get true segment
+        mov     [bx+2],ax           ; and save it
 endif
         mov     ax,1                ; return TRUE
 not_ret:pop     si                  ; restore registers

@@ -40,10 +40,10 @@
 /*
     NOVLLDR specific routines
 */
-extern  int near __OVLFIXCALLCHAIN__( unsigned old, unsigned new );
-extern  void near __OVLBUILDRETTRAP__( unsigned old_handle, unsigned rt_seg );
+extern  int      near __OVLFIXCALLCHAIN__( unsigned old, unsigned new );
+extern  void     near __OVLBUILDRETTRAP__( unsigned old_handle, unsigned rt_seg );
 extern  unsigned near __OVLSCANCALLCHAIN__( void );
-extern  void near __OVLRETTRAP__( void );
+extern  void     near __OVLRETTRAP__( void );
 
 #ifdef OVL_MULTITHREAD
 
@@ -51,13 +51,13 @@ extern  unsigned near __OVLUNDORETTRAP__( unsigned rt_seg,
                                                 unsigned new_handle );
 #else
 
-extern  void near __OVLUNDORETTRAP__( unsigned stack_trap, unsigned ret_offset,
+extern  void     near __OVLUNDORETTRAP__( unsigned stack_trap, unsigned ret_offset,
                                 unsigned ret_list, unsigned new_handle );
 #endif
 
-extern  void near __NOVLLDR__( void );
+extern  void     near __NOVLLDR__( void );
 extern  unsigned near __WhichArea__( unsigned seg );
-extern  void near __OVLINITAREA__( unsigned seg, unsigned size );
+extern  void     near __OVLINITAREA__( unsigned seg, unsigned size );
 
 /*
     NOVLLDR data
@@ -238,7 +238,7 @@ typedef struct {
     unsigned_16 saved_bp;       // is 0 for active task (us BPChain instead)
     unsigned_16 saved_sp;
     unsigned_16 next;
-}       task_list;
+} task_list;
 
 extern task_list *      Context_list;
 

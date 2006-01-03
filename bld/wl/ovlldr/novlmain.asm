@@ -107,8 +107,6 @@ endif
         extrn   __OVLFLAGS__:word
         extrn   __CloseOvl__:far
 
-ENTRIES_M_1     equ (offset __OVLTAB__.ov_entries - size OVLTAB_ENTRY)
-
         public  __NDBG_HOOK__
         public  __OVLAREALIST__
         public  __OVLROVER__
@@ -145,8 +143,8 @@ around:
         mov     __OVLPSP__,ES   ; save segment address of PSP
         mov     BPChain,SS      ; save actual SS:SP
         mov     SaveWord,SP     ; . . .
-        mov     AX,word ptr __OVLTAB__.ov_prolog.ovp_delta
-        add     AX,word ptr __OVLTAB__.ov_entries.ove_start_para
+        mov     AX,__OVLTAB__.ov_prolog.ovp_delta
+        add     AX,__OVLTAB__.ov_entries.ove_start_para
         cli                     ; set SS:SP to temporary stack
         mov     SS,AX           ; . . .
         mov     SP,1024         ; linker guarantees at least 1024
@@ -191,7 +189,7 @@ around:
                 ; We can't setup the initial area before the temporary stack
                 ; has been moved out of the overlay area.
         mov     AX,__OVLAREALIST__
-        mov     DX,word ptr __OVLTAB__.ov_prolog.ovp_ovl_size
+        mov     DX,__OVLTAB__.ov_prolog.ovp_ovl_size
         call    __OVLINITAREA__ ; . . .
 
 assume  DS:DGROUP
@@ -222,7 +220,7 @@ assume  DS:nothing
             int 21H             ; . . .
             _if c               ; check if we got it
               mov ES,__OVLPSP__ ; get PSP segment again
-              mov BX,ES:2       ; get end of allocation
+              mov BX,ES:[2]     ; get end of allocation
               mov AX,ES         ; get psp value (start of alloc.)
               sub BX,AX         ; subtract start..
               dec BX            ; fix "off by 1"
@@ -236,9 +234,9 @@ assume  DS:nothing
               int 21H           ; . . .
               _quif c,death     ; die if there was a problem
             _endif
-            mov word ptr __OVLDBGINFO__.location,AX; save debugger area
+            mov __OVLDBGINFO__.location,AX; save debugger area
           _endif
-          jmp   dword ptr __NDBG_HOOK__; hook into debugger if it's there
+          jmp   __NDBG_HOOK__   ; hook into debugger if it's there
                                 ; otherwise, start program
         _endguess
         mov     AX,3            ; out of memory message
@@ -263,10 +261,10 @@ __WhichArea__ proc near
         _loop
           mov   DS,DX           ; get segment of area
           sub   AX,DX           ; check if ax in bounds
-          cmp   AX,word ptr DS:al_size; . . .
+          cmp   AX,DS:[al_size] ; . . .
           _quif c               ; carry set if in bounds
           add   AX,DX           ; restore ax
-          mov   DX,word ptr DS:al_next;get next segment
+          mov   DX,DS:[al_next] ;get next segment
           test  DX,DX           ; check if end of list (carry set to 0)
         _until  e
         mov     AX,DX           ; DON'T MODIFY CARRY FROM HERE . . .
@@ -310,7 +308,7 @@ assume  DS:_TEXT
 ifdef OVL_MULTITHREAD
       _loop
         push    BP              ; save context
-        mov     BP,tl_saved_bp[bp] ; get bp
+        mov     BP,[bp+tl_saved_bp]; get bp
         test    BP,BP           ; is it valid?
         jne     sc_beg          ; yes
         mov     BP,BPChain      ; active task - use start of bp chain
@@ -322,7 +320,7 @@ endif
         _loop
           shl   BP,1            ; restore bp and test if non-zero
           _quif z               ; if zero then done
-sc_beg:   mov   SI,4[BP]        ; get possible segment
+sc_beg:   mov   SI,[BP+4]       ; get possible segment
           mov   BP,[BP]         ; get bp link
           shr   BP,1            ; test if near call
           _loopif nc            ; continue if it's a near call
@@ -332,7 +330,7 @@ sc_beg:   mov   SI,4[BP]        ; get possible segment
           dec   SI              ; get overlay number from descriptor
           mov   ES,SI           ; . . .
           mov   CL,4            ;               (pipelined) for shifting
-          mov   SI,word ptr ES:0eH;. . .
+          mov   SI,ES:[0eH]     ;. . .
           shl   SI,CL           ; multiply by size OVLTAB_ENTRY
           mov   CX,[BX+SI]      ; get start_para for this overlay
           test  CX,CX           ; if non-zero then already in call-chain
@@ -342,7 +340,7 @@ sc_beg:   mov   SI,4[BP]        ; get possible segment
         _endloop                ; continue looping
 ifdef OVL_MULTITHREAD
         pop     BP              ; get context
-        mov     BP,tl_next[BP]
+        mov     BP,[BP+tl_next]
         test    BP,BP           ; at end of list?
       _until e                  ; loop if not
 endif
@@ -383,14 +381,14 @@ endif
         mov     DS,DX           ; set ds to rt_seg
 ifdef OVL_MULTITHREAD
         mov     BX,rt_traps     ; initialize to point to first trap
-        mov     byte ptr DS:rt_call_far,CALL_FAR
-        mov     word ptr DS:rt_entry,offset __OVLRETTRAP__
-        mov     word ptr DS:rt_entry+2,seg __OVLRETTRAP__
-        mov     word ptr DS:rt_old_code_handle,AX
+        mov     byte ptr DS:[rt_call_far],CALL_FAR
+        mov     word ptr DS:[rt_entry],offset __OVLRETTRAP__
+        mov     word ptr DS:[rt_entry+2],seg __OVLRETTRAP__
+        mov     word ptr DS:[rt_old_code_handle],AX
       _loop                     ; extra loop for each context
-        mov     DS:te_context[BX],BP    ; assume this thread needs trap
+        mov     [BX+te_context],BP; assume this thread needs trap
         push    BP              ; save context
-        mov     BP,tl_saved_bp[BP] ; get saved bp
+        mov     BP,[BP+tl_saved_bp]; get saved bp
         test    BP,BP           ; is it the active task?
         jne     bd_1a           ; yes, get started
         mov     BP,BPChain      ; get BP of active task
@@ -402,7 +400,7 @@ endif
           shl   CX,1            ; restore bp
           mov   BP,CX
 bd_1a:    mov   CX,[BP]         ; get next bp
-          mov   DX,4[BP]        ; get (possible) segment
+          mov   DX,[BP+4]       ; get (possible) segment
           shr   CX,1            ; check if near or far ret
 ifdef OVL_MULTITHREAD
           je    skip_context    ; NULL => not on this thread...
@@ -411,21 +409,21 @@ endif
           cmp   DX,AX           ; is it our handle?
         _until e                ; loop until our handle
                                 ; fill in the return trap & modify stack
-        mov     DX,2[BP]        ; get original ret addr
+        mov     DX,[BP+2]       ; get original ret addr
 ifdef OVL_MULTITHREAD
-        mov     word ptr DS:te_stack_trap[BX],BP
-        mov     word ptr DS:te_ret_offset[BX],DX
+        mov     [BX+te_stack_trap],BP
+        mov     [BX+te_ret_offset],DX
 else
-        mov     byte ptr DS:rt_call_far,CALL_FAR
-        mov     word ptr DS:rt_entry,offset __OVLRETTRAP__
-        mov     word ptr DS:rt_entry+2,seg __OVLRETTRAP__
-        mov     word ptr DS:rt_stack_trap,BP
-        mov     word ptr DS:rt_old_code_handle,AX
-        mov     word ptr DS:rt_ret_offset,DX
+        mov     byte ptr DS:[rt_call_far],CALL_FAR
+        mov     word ptr DS:[rt_entry],offset __OVLRETTRAP__
+        mov     word ptr DS:[rt_entry+2],seg __OVLRETTRAP__
+        mov     word ptr DS:[rt_stack_trap],BP
+        mov     word ptr DS:[rt_old_code_handle],AX
+        mov     word ptr DS:[rt_ret_offset],DX
 endif
         xor     DX,DX           ; zero head of list
-        mov     4[BP],DS        ;set far ret to the ret trap
-        mov     2[BP],DX        ;. . .
+        mov     [BP+4],DS       ;set far ret to the ret trap
+        mov     [BP+2],DX       ;. . .
         _loop                   ; loop to link any other returns on stack
           shl   CX,1            ; restore bp
           _quif e               ; finished loop if bp 0
@@ -433,24 +431,24 @@ endif
           mov   CX,[BP]         ; check if far or near ret
           shr   CX,1            ; . . .
           _loopif nc            ; continue loop if near ret
-          cmp   4[BP],AX        ; check if it's our code_handle
+          cmp   [BP+4],AX       ; check if it's our code_handle
           _loopif ne            ; continue loop if not one of ours
           dec   byte ptr [BP]   ; unset the far bit
-          mov   4[BP],DX        ; add it to the list
+          mov   [BP+4],DX       ; add it to the list
           mov   DX,BP           ; . . .
         _endloop                ; continue loop
 ifdef OVL_MULTITHREAD
-        mov     word ptr DS:te_ret_list[BX],DX
+        mov     [BX+te_ret_list],DX
         add     BX,size TRAP_ENTRY
 skip_context:
         pop     BP
-        mov     BP,tl_next[BP]  ; get next context
+        mov     BP,[BP+tl_next] ; get next context
         test    BP,BP
       _until    e               ; loop until end of list
-        mov     word ptr DS:te_stack_trap[BX],0 ; mark end of list
+        mov     word ptr [BX+te_stack_trap],0 ; mark end of list
         pop     BX
 else
-        mov     word ptr DS:rt_ret_list,DX
+        mov     DS:[rt_ret_list],DX
 endif
         pop     CX
         pop     DS
@@ -491,11 +489,11 @@ ifdef OVL_MULTITHREAD
         mov     BX,rt_traps     ; start at first trap
         xor     SI,SI           ; used = FALSE
         _loop                   ; loop for each context
-          mov   CX,te_stack_trap[BX]
+          mov   CX,[BX+te_stack_trap]
           test  CX,CX
           _quif e               ; done when stack_trap == 0
-          mov   BP,te_context[BX]
-          mov   BP,tl_saved_bp[BP]
+          mov   BP,[BX+te_context]
+          mov   BP,[BP+tl_saved_bp]
           test  BP,BP
           _if   e
             mov BP,BPChain      ; get BP of active task
@@ -503,19 +501,19 @@ ifdef OVL_MULTITHREAD
           cmp   CX,BP           ; if stack_trap >= BP
           _if   ae
             mov BP,CX
-            mov 4[BP],DX        ;   set proper return segment
-            mov AX,te_ret_offset[BX];   and offset
-            mov 2[BP],AX
+            mov [BP+4],DX       ;   set proper return segment
+            mov AX,[BX+te_ret_offset];   and offset
+            mov [BP+2],AX
             inc SI              ;   used = TRUE
           _endif
-          mov   AX,te_ret_list[BX]
+          mov   AX,[BX+te_ret_list]
           _loop
             cmp AX,CX           ; are we done yet? i.e. BP == 0 or BP is
             _quif b             ; . . . below chain
             mov BP,AX
             inc byte ptr [BP]   ; set the far bit
-            mov AX,4[BP]        ; get the link
-            mov 4[BP],DX        ; store new_handle as segment of return
+            mov AX,[BP+4]       ; get the link
+            mov [BP+4],DX       ; store new_handle as segment of return
             inc SI              ; used = TRUE
           _endloop
           add   BX,size TRAP_ENTRY
@@ -529,8 +527,8 @@ else
         cmp     AX,BPChain      ; check if we can remove trap from stack
         _if     ae              ; we can if the stack is below us
           mov   BP,AX           ; get offset of stack_trap
-          mov   4[BP],CX        ; new return seg
-          mov   2[BP],DX        ; restore return offset
+          mov   [BP+4],CX       ; new return seg
+          mov   [BP+2],DX       ; restore return offset
         _endif
         mov     AX,BPChain
         _loop
@@ -539,7 +537,7 @@ else
           mov   BP,BX           ; get the next link
           inc   byte ptr [BP]   ; set the far bit
           mov   BX,CX           ; get the new_handle
-          xchg  BX,4[BP]        ; store handle and get next link
+          xchg  BX,[BP+4]       ; store handle and get next link
         _endloop
 endif
         pop     BP
@@ -562,7 +560,7 @@ ifdef OVL_MULTITHREAD
         mov     BP,_Context_list
         _loop
           push  BP
-          mov   BP,tl_saved_bp[BP]
+          mov   BP,[BP+tl_saved_bp]
           test  BP,BP
           jne   fix_start       ; used saved bp if not current task
           mov   BP,BPChain      ; otherwise use BPChain
@@ -578,13 +576,13 @@ fix_start:
           mov   CX,[BP]         ; get next BP
           shr   CX,1            ; test if odd
           _loopif nc            ; nc if BP was even (near rtn)
-          cmp   AX,4[BP]        ; compare segment
+          cmp   AX,[BP+4]       ; compare segment
           _loopif ne            ; continue loop if not right seg
-          mov   4[BP],DX        ; set new value
+          mov   [BP+4],DX       ; set new value
         _endloop
 ifdef OVL_MULTITHREAD
           pop   BP              ; restore context
-          mov   BP,tl_next[BP]  ; get next context
+          mov   BP,[BP+tl_next] ; get next context
           test  BP,BP
         _until e                ; until NULL
 endif
@@ -613,39 +611,39 @@ __NCheckRetAddr__ proc near
           xor   DX,DX           ; set up return code
           cmp   [BX],DX         ; all ret traps have offset 0
           _quif ne
-          mov   AX,2[BX]        ; get seg of (possible) ret trap
+          mov   AX,[BX+2]       ; get seg of (possible) ret trap
           call  __WhichArea__   ; check if in an overlay area
           _quif nc              ; . . .
-          mov   AX,2[BX]        ; get seg of ret trap
+          mov   AX,[BX+2]       ; get seg of ret trap
           dec   AX              ; . . .
           mov   ES,AX           ; . . .
-          mov   DI,word ptr ES:0eH; get overlay number
+          mov   DI,ES:[0eH]     ; get overlay number
           push  CX              ; save CX
           mov   CL,4            ; multiply by size OVLTAB_ENTRY
           mov   AX,DI           ; save overlay number in ax
           shl   DI,CL           ; . . . multiply
           pop   CX              ; restore CX
-          test  byte ptr [DI + __OVLTAB__.ov_entries.ove_flags_anc + 1 - size OVLTAB_ENTRY],10H
+          test  byte ptr [DI+__OVLTAB__.ov_entries.ove_flags_anc+1- size OVLTAB_ENTRY],10H
                                 ; check if FLAG_RET_TRAP set
           _quif e               ; . . .
           inc   DX              ; this is a return trap
-          mov   4[BX],AX        ; set the overlay number
+          mov   [BX+4],AX       ; set the overlay number
 ifdef OVL_MULTITHREAD
           mov   AX,10H + rt_traps; find the active context
           _loop                 ; (assume return trap is in active stack)
             mov DI,AX           ; save pointer
-            mov DI,ES:te_context[DI]
-            cmp word ptr SS:tl_saved_bp[DI],0
+            mov DI,ES:[DI+te_context]
+            cmp word ptr SS:[DI+tl_saved_bp],0
             _quif e
             add AX,size TRAP_ENTRY
           _endloop              ; done when found active context
           mov   DI,AX
-          mov   AX,ES:te_ret_offset[DI]
+          mov   AX,ES:[DI+te_ret_offset]
 else
-          mov   AX,word ptr ES:10H + rt_ret_offset
+          mov   AX,ES:[10H + rt_ret_offset]
 endif
-          mov   DI,word ptr ES:10H + rt_old_code_handle
-          mov   2[BX],DI        ; give seg to debugger
+          mov   DI,ES:[10H + rt_old_code_handle]
+          mov   [BX+2],DI       ; give seg to debugger
           mov   [BX],AX         ; give offset to debugger
         _endguess
         mov     AX,DX           ; get return code
@@ -693,22 +691,22 @@ ifdef OVL_MULTITHREAD
         _loop
           mov   BX,AX
           add   AX,size TRAP_ENTRY      ; (note that loop must end)
-          mov   CX,te_ret_offset[BX]    ; get return offset
-          mov   BX,te_context[BX]       ; get context
-          cmp   word ptr SS:tl_saved_bp[BX],0
+          mov   CX,[BX+te_ret_offset]   ; get return offset
+          mov   BX,[BX+te_context]      ; get context
+          cmp   word ptr SS:[BX+tl_saved_bp],0
         _until  e                       ; until active task found
         mov     BX,CX                   ; save return offset
 else
-        mov     BX,word ptr DS:010H + rt_ret_offset; save return offset
+        mov     BX,DS:[010H + rt_ret_offset]; save return offset
 endif
-        mov     AX,word ptr DS:0EH      ; get the overlay number
+        mov     AX,DS:[0EH]             ; get the overlay number
         mov     CX,AX                   ; save overlay number
         call    __LoadNewOverlay__      ; load overlay
         mov     __OVLCAUSE__,BX         ; save offset of return
         mov     __OVLCAUSE__+2,AX       ; save segment of return
         xchg    CX,AX                   ; ovl num in AX, seg in CX
         mov     DL,1                    ; overlay load cause by return
-        call    dword ptr __NDBG_HOOK__ ; tell debugger
+        call    __NDBG_HOOK__           ; tell debugger
         pop     DS                      ; restore registers
         pop     BX                      ; . . .
         pop     CX                      ; . . .
@@ -748,9 +746,9 @@ __NOVLLDR__ proc near
         push    SaveWord                ; save original AX on stack
         mov     SaveWord,AX             ; save vector in SaveWord
         push    DX                      ; save original DX
-        mov     DX,2[BP]                ; get original return offset
+        mov     DX,[BP+2]               ; get original return offset
         mov     __OVLCAUSE__,DX         ; stash it for the debugger
-        mov     DX,4[BP]                ; get original return segment
+        mov     DX,[BP+4]               ; get original return segment
         mov     __OVLCAUSE__+2,DX       ; stash it for the debugger
         mov     DX,CS                   ; move CS to where the fn. can get it
         call    __WOVLLDR__             ; load overlay

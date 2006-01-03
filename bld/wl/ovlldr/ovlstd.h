@@ -101,16 +101,16 @@ enum {
     Common overlay routines
 */
 #pragma aux __OvlExit__ aborts;
-extern  void near __OvlExit__( unsigned int );
-extern  tiny_ret_t near __OvlSeek__( tiny_handle_t, unsigned long );
-extern  tiny_ret_t near __OvlRead__( tiny_handle_t, void far *, unsigned );
-extern  void near __OvlCodeLoad__( ovltab_entry far *, tiny_handle_t );
-extern  int near __OvlRelocLoad__( ovltab_entry far *, tiny_handle_t );
-extern  void near __OvlNum__( unsigned int );
-extern  void near __OvlMsg__( unsigned int );
-extern  tiny_ret_t near __OpenOvl__( unsigned int );
-extern tiny_ret_t near __OvlOpen__( char far *fname );
-extern void near __OvlClose__( tiny_handle_t hdl );
+extern  void        near __OvlExit__( unsigned int );
+extern  tiny_ret_t  near __OvlSeek__( tiny_handle_t, unsigned long );
+extern  tiny_ret_t  near __OvlRead__( tiny_handle_t, void far *, unsigned );
+extern  void        near __OvlCodeLoad__( ovltab_entry far *, tiny_handle_t );
+extern  int         near __OvlRelocLoad__( ovltab_entry far *, tiny_handle_t );
+extern  void        near __OvlNum__( unsigned int );
+extern  void        near __OvlMsg__( unsigned int );
+extern  tiny_ret_t  near __OpenOvl__( unsigned int );
+extern  tiny_ret_t  near __OvlOpen__( char far *fname );
+extern  void        near __OvlClose__( tiny_handle_t hdl );
 
 /*
     Common overlay data
