@@ -170,6 +170,8 @@ typedef struct _SPBCDATA {
 #define BFA_MINORTABTEXT        0x00000100
 #define BFA_BIDIINFO            0x00000200
 
+#define BOOKERR_INVALID_PARAMETERS  (-1)
+
 typedef struct _BOOKPAGEINFO {
     ULONG        cb;
     ULONG        fl;
