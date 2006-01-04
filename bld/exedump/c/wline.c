@@ -63,16 +63,16 @@ typedef struct {
 } state_info;
 
 
-void Dump_lines( const char * input, uint length )
-/************************************************/
+void Dump_lines( const uint_8 *input, uint length )
+/*************************************************/
 {
-    const uint_8 *              p;
-    const uint_8 *              stmt_start;
+    const uint_8                *p;
+    const uint_8                *stmt_start;
     uint                        opcode_base;
-    uint *                      opcode_lengths;
+    uint                        *opcode_lengths;
     uint                        u;
     uint                        file_index;
-    const uint_8 *              name;
+    const uint_8                *name;
     uint_32                     mod_time;
     uint_32                     file_length;
     uint_32                     directory;
@@ -86,7 +86,7 @@ void Dump_lines( const char * input, uint length )
     state_info                  state;
     uint                        min_instr;
     uint_32                     unit_length;
-    const uint_8 *              unit_base;
+    const uint_8                *unit_base;
 
     p = input;
     while( p - input < length ) {

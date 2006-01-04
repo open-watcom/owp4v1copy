@@ -35,7 +35,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <limits.h>
-#include <conio.h>
+#ifdef __WATCOMC__
+    #include <conio.h>
+#endif
 
 #include "wdglb.h"
 #include "wdfunc.h"
@@ -192,7 +194,11 @@ void Wdputslc( char * buf )
             Line_count++;
             if( Line_count == NUMLINE || Ch == 13 ) {
                 Line_count = 0;
+#ifdef __WATCOMC__
                 Ch = getch();
+#else
+                Ch = getchar();
+#endif
             }
             if ( Ch == 113 || Ch == 27 ) {
                 close( Handle );

@@ -36,7 +36,11 @@
 #include <sys/stat.h>
 #include <setjmp.h>
 #include <unistd.h>
-#include <process.h>
+#ifdef __WATCOMC__
+    #include <process.h>
+#else
+    #include "clibext.h"
+#endif
 
 #include "wdglb.h"
 #include "wdfunc.h"
@@ -124,10 +128,18 @@ static int open_files( void )
  * The Increasingly More Misnamed Segmented .EXE File Header Dump Utility
  * for WLINK and WD (nee WVIDEO)
  */
-int main( void )
-/**************/
+
+#ifndef __WATCOMC__
+char **_argv;
+#endif
+int main( int argc, char * const *argv )
+/**************************************/
 {
-    int                 found_file;
+    int     found_file;
+
+#ifndef __WATCOMC__
+    _argv = (char**)argv;
+#endif
 
     Line_count = 0;
     WSize = 0;

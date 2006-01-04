@@ -687,17 +687,17 @@ decode_form:
 }
 
 
-static void dump_info( const char *input, uint length )
-/*****************************************************/
+static void dump_info( const uint_8 *input, uint length )
+/*******************************************************/
 {
-    const uint_8 *p;
-    uint_32     abbrev_code;
-    uint_32     abbrev_offset;
-    uint_8 *    abbrev;
-    uint_32     tag;
-    uint_32     unit_length;
-    const uint_8 *unit_base;
-    info_state  state;
+    const uint_8    *p;
+    uint_32         abbrev_code;
+    uint_32         abbrev_offset;
+    uint_8          *abbrev;
+    uint_32         tag;
+    uint_32         unit_length;
+    const uint_8    *unit_base;
+    info_state      state;
 
     p = input;
     state.addr_size = 0;
@@ -936,8 +936,8 @@ static void dump_info_headers( const char *input, uint length )
 }
 #endif
 
-extern void dump_abbrevs( const char *input, uint length )
-/********************************************************/
+extern void dump_abbrevs( const uint_8 *input, uint length )
+/**********************************************************/
 {
     const uint_8    *p;
     uint_32         tmp;
@@ -1082,8 +1082,8 @@ static void PutRefRegisters( ref_info *registers )
     Wdputs( " ]" );
 }
 
-static void dump_ref( const char * input, uint length )
-/*****************************************************/
+static void dump_ref( const uint_8 *input, uint length )
+/******************************************************/
 {
     const uint_8    *p;
     uint_8          op_code;
