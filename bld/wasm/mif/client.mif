@@ -23,10 +23,14 @@ asminline_objs = &
     asmjump.obj &
     asmexpnd.obj &
     asmeval.obj
+
 !ifeq proj_name wfc
+asminline_deps = inlnops.gh msg.gh
+!else ifeq proj_name F03
 asminline_deps = inlnops.gh msg.gh
 !else
 asminline_deps = inlnops.gh
 !endif
+
 asminline_lib =
 !endif
