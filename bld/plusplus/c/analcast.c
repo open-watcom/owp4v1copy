@@ -1317,7 +1317,7 @@ static PTREE doReintPtrToArith  // DO REINTERPRET: PTR -> ARITH
     if( NULL == IntegralType( ctl->tgt.unmod ) ) {
         expr = diagnoseCast( ctl, ERR_CAST_ILLEGAL );
     } else if( NULL != SegmentShortType( ctl->tgt.unmod ) ) {
-        if( ! NodeDerefPtr( &ctl->expr ) ) {
+        if( ! NodeDerefPtr( &ctl->expr->u.subtree[1] ) ) {
             expr = diagnoseCast( ctl, ERR_CAST_ILLEGAL );
         } else {
             #if _CPU == 8086
@@ -1335,7 +1335,6 @@ static PTREE doReintPtrToArith  // DO REINTERPRET: PTR -> ARITH
                 expr->type = argument;
                 expr = NodeConvert( TypeSegmentShort(), expr );
                 expr->locn = locn;
-                markUserCast( ctl );
             #else
                 expr = doCgConversion( ctl );
             #endif
