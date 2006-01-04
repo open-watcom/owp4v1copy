@@ -236,6 +236,12 @@ maino16_postopts =-os
 maino32_postopts =-os
 seterrno_postopts=-os
 
+binmode_postopts=-zld
+commode_postopts=-zld
+cstrtiny_postopts=-zld
+dos16m_postopts=-zld
+libentry_postopts=-zld
+
 086_fpi87_postopts=-fpi87
 286_fpi87_postopts=-fpi87
 386_fpi87_postopts=-fpi87
