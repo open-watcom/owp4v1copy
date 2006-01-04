@@ -7583,7 +7583,10 @@ boolean TypeBasesEqual( type_flag flags, void *base1, void *base2 )
     return( TRUE );
 }
 
-static boolean compareClassTypes( TYPE b_type, TYPE u_type, type_bind_info *data )
+// called from typesBind and typesBind_ptree
+// push_ptrees switch lets it know which on is calling and how to modify data
+static boolean compareClassTypes( TYPE b_type, TYPE u_type,
+    type_bind_info *data, boolean push_ptrees )
 {
     unsigned pass;
     CLASSINFO *b_info;
@@ -7640,8 +7643,15 @@ static boolean compareClassTypes( TYPE b_type, TYPE u_type, type_bind_info *data
                 }
             } else {
                 if( b_curr->id == SC_TYPEDEF ) {
-                    PstkPush( &(data->without_generic), b_curr->sym_type );
-                    PstkPush( &(data->with_generic), u_curr->sym_type );
+                    if( push_ptrees ) {
+                        PstkPush( &(data->without_generic),
+                            PTreeType( b_curr->sym_type ) );
+                        PstkPush( &(data->with_generic), 
+                            PTreeType( u_curr->sym_type ) );
+                    } else {
+                        PstkPush( &(data->without_generic), b_curr->sym_type );
+                        PstkPush( &(data->with_generic), u_curr->sym_type );
+                    }
                 }
             }
         }
@@ -7932,11 +7942,11 @@ static unsigned typesBind( type_bind_info *data )
         }
         switch( b_unmod_type->id ) {
         case TYP_CLASS:
-            if( compareClassTypes( b_unmod_type, u_unmod_type, data ) ) {
+            if( compareClassTypes( b_unmod_type, u_unmod_type, data, FALSE ) ) {
                 if( flags.arg_1st_level && u_unmod_type->flag & TF1_UNBOUND ) {
                     b_unmod_type = ScopeFindBoundBase( b_unmod_type, u_unmod_type );
                     if( b_unmod_type != NULL ) {
-                        if( compareClassTypes( b_unmod_type, u_unmod_type, data ) ) {
+                        if( compareClassTypes( b_unmod_type, u_unmod_type, data, FALSE ) ) {
                             return( TB_NULL );
                         }
                         // OK, we bound to a base class of the bound type
@@ -8267,11 +8277,11 @@ static unsigned typesBind_ptree( type_bind_info *data )
         }
         switch( b_unmod_type->id ) {
         case TYP_CLASS:
-            if( compareClassTypes( b_unmod_type, u_unmod_type, data ) ) {
+            if( compareClassTypes( b_unmod_type, u_unmod_type, data, TRUE ) ) {
                 if( flags.arg_1st_level && u_unmod_type->flag & TF1_UNBOUND ) {
                     b_unmod_type = ScopeFindBoundBase( b_unmod_type, u_unmod_type );
                     if( b_unmod_type != NULL ) {
-                        if( compareClassTypes( b_unmod_type, u_unmod_type, data ) ) {
+                        if( compareClassTypes( b_unmod_type, u_unmod_type, data, TRUE ) ) {
                             return( TB_NULL );
                         }
                         // OK, we bound to a base class of the bound type
