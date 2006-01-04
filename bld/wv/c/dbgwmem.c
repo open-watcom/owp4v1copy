@@ -98,8 +98,8 @@ static gui_menu_struct MemMenu[] = {
 
 static unsigned         MemByteType;
 
-extern  MEMHEADER       MemHeader;
-extern  MEMHEADER       BinHeader;
+static  MEMHEADER       MemHeader;
+static  MEMHEADER       BinHeader;
 
 static MEMHEADER *HeadTab[] =
 {

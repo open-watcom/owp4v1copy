@@ -85,10 +85,10 @@ typedef enum {
 
 
 /* forward definitions */
-extern const x86_reg_info       * const EFLRegList[];
-extern const x86_reg_info       * const SWRegList[];
-extern const x86_reg_info       * const CWRegList[];
-extern const x86_reg_info       * const MXCSRRegList[];
+static const x86_reg_info       * const EFLRegList[];
+static const x86_reg_info       * const SWRegList[];
+static const x86_reg_info       * const CWRegList[];
+static const x86_reg_info       * const MXCSRRegList[];
 
 /* register definitions */
 CPU( eax, DWORD, eax, 0, 32, NULL, L3 );

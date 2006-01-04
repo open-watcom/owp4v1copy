@@ -1127,6 +1127,19 @@ bool BrkCheckWatchLimit( address loc, mad_type_handle th )
 }
 
 
+static int FindNextBPIndex( void )
+{
+    brk         *bp;
+    int         max;
+
+    max = 0;
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        if( bp->index > max ) max = bp->index;
+    }
+    return( max+1 );
+}
+
+
 static brk *AddPoint( address loc, mad_type_handle th, bool unmapped )
 {
     brk                 *bp;
@@ -1229,19 +1242,6 @@ void BrkAddrRefresh()
     for( bp = BrkList; bp != NULL; bp = bp->next ) {
         SetPointAddr( bp, bp->loc.addr );
     }
-}
-
-
-static int FindNextBPIndex()
-{
-    brk         *bp;
-    int         max;
-
-    max = 0;
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        if( bp->index > max ) max = bp->index;
-    }
-    return( max+1 );
 }
 
 

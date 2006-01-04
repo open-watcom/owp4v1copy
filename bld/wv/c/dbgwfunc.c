@@ -117,6 +117,11 @@ static void FuncGetSourceName( a_window *wnd, int row )
     NameListName( NameList( func ), row, TxtBuff, SN_QUALIFIED );
 }
 
+static int FuncNumRows( a_window *wnd )
+{
+    return( NameListNumRows( NameList( WndFunc( wnd ) ) ) );
+}
+
 static void CalcIndent( a_window *wnd )
 {
     gui_ord     len,max;
@@ -183,12 +188,6 @@ static void     FuncMenuItem( a_window *wnd, unsigned id, int row, int piece )
     }
 }
 
-
-static WNDNUMROWS FuncNumRows;
-static int FuncNumRows( a_window *wnd )
-{
-    return( NameListNumRows( NameList( WndFunc( wnd ) ) ) );
-}
 
 static WNDGETLINE FuncGetLine;
 static  bool    FuncGetLine( a_window *wnd, int row, int piece,

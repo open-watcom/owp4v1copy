@@ -79,6 +79,31 @@ static void doneWithCurrentLine( void )
 
 } /* doneWithCurrentLine */
 
+#define WHITE_SPACE( x ) ( (x) == ' ' || (x) == '\t' )
+
+/*
+ * trimWorkLine - remove trailing whitespace from work line
+ */
+static int trimWorkLine( void )
+{
+    int i,len;
+
+    len = 0;
+    if( EditFlags.CMode ) {
+        i = WorkLine->len - 1;
+        while( i>=0 && WHITE_SPACE( WorkLine->data[i] ) ) {
+            i--;
+        }
+        if( i == -1 ) {
+            len = RealLineLen( WorkLine->data );
+        }
+        WorkLine->len = i+1;
+        WorkLine->data[i+1] = 0;
+    }
+    return( len );
+
+} /* trimWorkLine */
+
 /*
  * DoneCurrentInsert - finished current insertion of text
  */
@@ -192,31 +217,6 @@ static void checkWrapMargin( void )
     }
 
 } /* checkWrapMargin */
-
-#define WHITE_SPACE( x ) ( (x) == ' ' || (x) == '\t' )
-
-/*
- * trimWorkLine - remove trailing whitespace from work line
- */
-static int trimWorkLine( void )
-{
-    int i,len;
-
-    len = 0;
-    if( EditFlags.CMode ) {
-        i = WorkLine->len - 1;
-        while( i>=0 && WHITE_SPACE( WorkLine->data[i] ) ) {
-            i--;
-        }
-        if( i == -1 ) {
-            len = RealLineLen( WorkLine->data );
-        }
-        WorkLine->len = i+1;
-        WorkLine->data[i+1] = 0;
-    }
-    return( len );
-
-} /* trimWorkLine */
 
 /*
  * insertChar - insert a char into the working line

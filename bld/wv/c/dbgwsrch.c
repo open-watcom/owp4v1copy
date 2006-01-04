@@ -104,8 +104,6 @@ struct srch_window {
 
 #define WndSrch( wnd ) ( (srch_window*)WndExtra( wnd ) )
 
-a_window *DoWndSrchOpen( char *expr, SRCH_WALKER *walk, void *cookie );
-
 static WNDNUMROWS SrchNumRows;
 static int SrchNumRows( a_window *wnd )
 {

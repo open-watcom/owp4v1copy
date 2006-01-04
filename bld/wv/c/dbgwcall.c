@@ -82,6 +82,12 @@ enum {
     PIECE_SOURCE,
 };
 
+static WNDNUMROWS CallNumRows;
+static int CallNumRows( a_window *wnd )
+{
+    return( WndCall( wnd )->tb.curr->total_depth );
+}
+
 static  WNDMENU CallMenuItem;
 static void     CallMenuItem( a_window *wnd, unsigned id, int row, int piece )
 {
@@ -117,12 +123,6 @@ static void     CallMenuItem( a_window *wnd, unsigned id, int row, int piece )
         GoToAddr( FindNextIns( chain->lc.execution ) );
         break;
     }
-}
-
-static WNDNUMROWS CallNumRows;
-static int CallNumRows( a_window *wnd )
-{
-    return( WndCall( wnd )->tb.curr->total_depth );
 }
 
 static WNDGETLINE CallGetLine;

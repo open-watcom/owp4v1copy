@@ -658,7 +658,7 @@ static walk_result CheckOneField( sym_walk_info swi, sym_handle *sh, void *_d )
     return( WR_CONTINUE );
 }
 
-SYM_WALKER DoPushFirstField;
+OVL_EXTERN SYM_WALKER DoPushFirstField;
 OVL_EXTERN walk_result DoPushFirstField( sym_walk_info swi, sym_handle *sh, void *pdone )
 {
     if( swi == SWI_SYMBOL ) {
@@ -683,7 +683,7 @@ typedef struct {
     char        *name;
 } dot_named_field_info;
 
-SYM_WALKER DoDotNamedField;
+OVL_EXTERN SYM_WALKER DoDotNamedField;
 OVL_EXTERN walk_result DoDotNamedField( sym_walk_info swi, sym_handle *sh, void *_info )
 {
     dot_named_field_info *info = _info;
@@ -1051,7 +1051,7 @@ static void ArrayParms( var_node *v, array_info *ainfo )
     }
 }
 
-var_node *VarFirstNodeInScope( var_info *i, scope_state *s );
+static var_node *VarFirstNodeInScope( var_info *i, scope_state *s );
 static var_node *DoVarNextNode( var_info *i, var_node *v )
 {
     if( v->next != NULL ) return( v->next );

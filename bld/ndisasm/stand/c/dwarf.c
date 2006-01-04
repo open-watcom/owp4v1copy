@@ -49,6 +49,8 @@ extern hash_table               HandleToRefListTable;
 
 extern orl_sec_handle           debugHnd;
 
+static int ConvertLines( const uint_8 * input, uint length, uint limit );
+
 static void fixupLines( char *relocContents, orl_sec_handle sec )
 {
     hash_data *                 data_ptr;

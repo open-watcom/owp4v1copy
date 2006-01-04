@@ -48,13 +48,11 @@ extern char             *TxtBuff;
 
 typedef void WRITERTN( handle, char * );
 
-WRITERTN WriteFile;
 static void WriteFile( handle file, char *buff )
 {
     WriteText( file, buff, strlen( buff ) );
 }
 
-WRITERTN WriteLog;
 static void WriteLog( handle dummy, char *buff )
 {
     dummy = dummy;

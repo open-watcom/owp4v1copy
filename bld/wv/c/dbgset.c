@@ -159,48 +159,48 @@ static char SetNameTab[] = {
     "SUpportroutine\0"
 };
 
-extern void     AutoConf();
-extern void     AsmConf();
-extern void     VarConf();
-extern void     FuncConf();
-extern void     GlobConf();
-extern void     ModConf();
-extern void     RegConf();
-extern void     FPUConf();
-extern void     MMXConf();
-extern void     XMMConf();
+static void     AutoConf();
+static void     AsmConf();
+static void     VarConf();
+static void     FuncConf();
+static void     GlobConf();
+static void     ModConf();
+static void     RegConf();
+static void     FPUConf();
+static void     MMXConf();
+static void     XMMConf();
 extern void     DClickConf();
 extern void     TabConf();
 extern void     TypeConf();
 extern void     InputConf();
 extern void     MacroConf();
-extern void     BellConf();
+static void     BellConf();
 extern void     SearchConf();
-extern void     LangConf();
-extern void     RecursionConf();
-extern void     SupportConf();
+static void     LangConf();
+static void     RecursionConf();
+static void     SupportConf();
 
-extern void     BadSet();
-extern void     AutoSet();
-extern void     AsmSet();
-extern void     VarSet();
-extern void     FuncSet();
-extern void     GlobSet();
-extern void     ModSet();
-extern void     RegSet();
-extern void     FPUSet();
-extern void     MMXSet();
-extern void     XMMSet();
+static void     BadSet();
+static void     AutoSet();
+static void     AsmSet();
+static void     VarSet();
+static void     FuncSet();
+static void     GlobSet();
+static void     ModSet();
+static void     RegSet();
+static void     FPUSet();
+static void     MMXSet();
+static void     XMMSet();
 extern void     DClickSet();
-extern void     BellSet();
+static void     BellSet();
 extern void     TabSet();
 extern void     TypeSet();
-extern void     LangSet();
+static void     LangSet();
 extern void     InputSet();
 extern void     MacroSet();
 extern void     SearchSet();
-extern void     RecursionSet();
-extern void     SupportSet();
+static void     RecursionSet();
+static void     SupportSet();
 
 static void (* const SetJmpTab[])() = {
     &BadSet,

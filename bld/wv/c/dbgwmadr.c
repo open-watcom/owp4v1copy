@@ -245,7 +245,7 @@ static int GetRegIdx( reg_window *reg, int row, int piece )
 }
 
 
-DLGPICKTEXT RegValueName;
+static DLGPICKTEXT RegValueName;
 static char *RegValueName( void *_possible, int i )
 {
     mad_modify_list    *possible = _possible;

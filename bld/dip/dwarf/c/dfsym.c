@@ -1211,6 +1211,23 @@ static int WalkOneBlock( blk_wlk      *df,
     return( df->com.cont );
 }
 
+static int WalkModSymList( blk_wlk *df, BLKLF fn, im_idx imx )
+{
+    imp_image_handle *ii;
+    dr_handle        cu_tag;
+    int              cont;
+
+    df->com.imx = imx;
+    ii = df->com.ii;
+    cu_tag = ii->mod_map[imx].cu_tag;
+    if( df->com.what == DR_SRCH_ctypes &&
+        ii->mod_map[imx].lang == DR_LANG_CPLUSPLUS ){
+        df->com.what = DR_SRCH_cpptypes;
+    }
+    cont = WalkOneBlock( df, fn, cu_tag );
+    return( cont );
+}
+
 static int WalkScopedSymList( blk_wlk *df, BLKLF fn, address *addr ){
 //*******************************************************************
 // Walk inner to outer func scopes then containing class if present
@@ -1312,23 +1329,6 @@ static int WalkBlockSymList( blk_wlk  *df, BLKLF fn, scope_block *scope )
     }else{
         cont = TRUE;
     }
-    return( cont );
-}
-
-static int WalkModSymList( blk_wlk *df, BLKLF fn, im_idx imx )
-{
-    imp_image_handle *ii;
-    dr_handle        cu_tag;
-    int              cont;
-
-    df->com.imx = imx;
-    ii = df->com.ii;
-    cu_tag = ii->mod_map[imx].cu_tag;
-    if( df->com.what == DR_SRCH_ctypes &&
-        ii->mod_map[imx].lang == DR_LANG_CPLUSPLUS ){
-        df->com.what = DR_SRCH_cpptypes;
-    }
-    cont = WalkOneBlock( df, fn, cu_tag );
     return( cont );
 }
 

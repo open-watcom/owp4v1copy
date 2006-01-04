@@ -145,11 +145,7 @@ typedef struct {
 
 #define VAR_NO_ROW -1
 
-extern long             ExprStackTimeStamp;
-extern int              CurrRow;
-extern var_node *VarFound;
 extern bool             VarError;
-extern var_info *TargVar;
 
 enum {
     VAR_PIECE_GADGET,

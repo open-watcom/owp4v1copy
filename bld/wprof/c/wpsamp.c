@@ -1030,6 +1030,40 @@ STATIC bint sampleSetLine( a_window * wnd, int row, int piece,
 
 
 
+STATIC void findRtnFromRow( sio_data * curr_sio, int row )
+/********************************************************/
+{
+    file_info *         curr_file;
+    rtn_info *          curr_rtn;
+    cue_handle *        ch;
+    sym_handle *        sh;
+    int                 index;
+    mod_handle          mh;
+    address             addr;
+
+    index = 0;
+    ch = __alloca( DIPHandleSize( HK_CUE ) );
+    curr_file = curr_sio->curr_file;
+    mh = curr_sio->curr_mod->mh;
+    if( LineCue( mh, curr_sio->curr_file->fid, row, 0, ch ) == SR_NONE ) {
+        if( LineCue( mh, curr_sio->curr_file->fid, 0, 0, ch ) == SR_NONE ) return;
+    }
+    sh = __alloca( DIPHandleSize( HK_SYM ) );
+    addr = CueAddr( ch );
+    if( AddrSym( mh, addr, sh ) == SR_NONE ) return;
+    while( index < curr_file->rtn_count ) {
+        curr_rtn = curr_file->routine[index];
+        if( curr_rtn->sh != NULL
+         && SymCmp( curr_rtn->sh, sh ) == 0 ) {
+            curr_sio->curr_rtn = curr_rtn;
+            break;
+        }
+        index++;
+    }
+}
+
+
+
 STATIC void sampFixDirtyCurr( a_window * wnd )
 /********************************************/
 {
@@ -1092,40 +1126,6 @@ STATIC void sampFixDirtyCurr( a_window * wnd )
             }
         }
         WndRowDirty( wnd, -2+WndTop(wnd) );
-    }
-}
-
-
-
-STATIC void findRtnFromRow( sio_data * curr_sio, int row )
-/********************************************************/
-{
-    file_info *         curr_file;
-    rtn_info *          curr_rtn;
-    cue_handle *        ch;
-    sym_handle *        sh;
-    int                 index;
-    mod_handle          mh;
-    address             addr;
-
-    index = 0;
-    ch = __alloca( DIPHandleSize( HK_CUE ) );
-    curr_file = curr_sio->curr_file;
-    mh = curr_sio->curr_mod->mh;
-    if( LineCue( mh, curr_sio->curr_file->fid, row, 0, ch ) == SR_NONE ) {
-        if( LineCue( mh, curr_sio->curr_file->fid, 0, 0, ch ) == SR_NONE ) return;
-    }
-    sh = __alloca( DIPHandleSize( HK_SYM ) );
-    addr = CueAddr( ch );
-    if( AddrSym( mh, addr, sh ) == SR_NONE ) return;
-    while( index < curr_file->rtn_count ) {
-        curr_rtn = curr_file->routine[index];
-        if( curr_rtn->sh != NULL
-         && SymCmp( curr_rtn->sh, sh ) == 0 ) {
-            curr_sio->curr_rtn = curr_rtn;
-            break;
-        }
-        index++;
     }
 }
 

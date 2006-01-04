@@ -89,7 +89,6 @@ extern void             ScrnSpawnEnd( void );
 
 extern void             WndDumpFile(a_window*);
 extern void             WndDumpLog(a_window*);
-extern void             WndBadCmd(a_window*);
 extern void             ProcWndSearch(a_window*);
 extern void             ProcWndFindNext(a_window*);
 extern void             ProcWndFindPrev(a_window*);
@@ -98,6 +97,7 @@ extern void             ProcWndTabLeft(a_window*);
 extern void             ProcWndTabRight(a_window*);
 extern void             ProcPUINYI(a_window*);
 extern void             XDumpMenus();
+static void             WndBadCmd(a_window*);
 
 #include "menudef.h"
 char *WndGadgetHint[] =

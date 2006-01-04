@@ -136,7 +136,6 @@ extern void             FClearOpenSourceCache();
 
 extern tokens           CurrToken;
 extern char             *TxtBuff;
-extern char             *TaskCmd;
 extern system_config    SysConfig;
 extern brk              UserTmpBrk;
 extern brk              *BrkList;

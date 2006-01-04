@@ -108,7 +108,7 @@ static gui_menu_struct MacMenu[] = {
 };
 
 
-DLGPICKTEXT WndGetName;
+static DLGPICKTEXT WndGetName;
 static char *WndGetName( void *from, int i )
 {
     return( *((char ***)from)[i] );

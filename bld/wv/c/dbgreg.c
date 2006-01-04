@@ -708,7 +708,7 @@ typedef struct {
     bool                success;
 } move_info;
 
-CALL_CHAIN_RTN CheckOneLevel;
+static CALL_CHAIN_RTN CheckOneLevel;
 
 void SetStackPos( location_context *lc, int pos )
 {

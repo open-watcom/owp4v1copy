@@ -58,7 +58,6 @@ extern void             ReStart( void );
 extern bool             SetProgStartHook( bool );
 extern void             GoToReturn( void );
 extern void             DlgNewProg();
-extern void             GoToPromptedAddr();
 extern bool             DlgBreak(address);
 extern void             BreakSave(bool);
 extern void             ReplaySave(bool);
@@ -77,7 +76,6 @@ extern void             LastMachState();
 extern void             LastStackPos();
 extern void             MoveStackPos( int by );
 extern void             PosMachState( int rel_pos );
-extern void             ExamMemAt();
 extern void             Flip(unsigned);
 extern void             WndAsmInspect(address);
 extern void             WndSrcInspect(address);
@@ -527,7 +525,7 @@ static void     DoMatch()
 }
 
 
-static  void    ExamMemAt()
+static  void    ExamMemAt( void )
 {
     address     addr;
 
@@ -538,7 +536,7 @@ static  void    ExamMemAt()
 }
 
 
-static void GoToPromptedAddr()
+static void GoToPromptedAddr( void )
 {
     address     addr;
 
