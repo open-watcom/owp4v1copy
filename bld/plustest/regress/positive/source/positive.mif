@@ -9,8 +9,6 @@
 # ns20.$(ext) &     # -d2 dwarf infinite loop
 # ns24.$(ext) &     # need full class using-decl support
 # quest04.$(ext) &  # reference binding with ?: operands
-# opt19.$(ext) &    # codegen 8086 -1 optimization bug test5= arch=i86
-# opt28.$(ext) &    # loop optimization bug
 # opt38.$(ext) &    # codegen -2-ml-ox-d1 (load 'ds' too early)
 # opt43.$(ext) &    # wcl -d2 bug with post increment
 
@@ -602,6 +600,7 @@ positive_tests = &
     opt16.$(ext) &
     opt17.$(ext) &
     opt18.$(ext) &
+    opt19.$(ext) &
     opt20.$(ext) &
     opt21.$(ext) &
     opt22.$(ext) &
@@ -610,6 +609,7 @@ positive_tests = &
     opt25.$(ext) &
     opt26.$(ext) &
     opt27.$(ext) &
+    opt28.$(ext) &
     opt29.$(ext) &
     opt30.$(ext) &
     opt31.$(ext) &
