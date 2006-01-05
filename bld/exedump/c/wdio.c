@@ -45,6 +45,24 @@
 /*
  * read from the image
  */
+static void chkread( unsigned_32 amount )
+/***************************************/
+{
+    if( Num_read < amount ) {
+        Wdputs( "Error! Couldn't read from executable: " );
+        if (errno == 0) {
+            Wdputs( "reached EOF" );
+        } else {
+            Wdputs( strerror( errno ) );
+        }
+        Wdputslc( ".\n" );
+        longjmp( Se_env, 1 );
+    }
+}
+
+/*
+ * read from the image
+ */
 void Wread( void *buf, unsigned_32 amount )
 /*****************************************/
 {
@@ -71,24 +89,6 @@ void Wread( void *buf, unsigned_32 amount )
     } else {
         memcpy( buffer, &Read_buff[Num_read-Sizeleft], amount );
         Sizeleft -= amount;
-    }
-}
-
-/*
- * read from the image
- */
-static void chkread( unsigned_32 amount )
-/***************************************/
-{
-    if( Num_read < amount ) {
-        Wdputs( "Error! Couldn't read from executable: " );
-        if (errno == 0) {
-            Wdputs( "reached EOF" );
-        } else {
-            Wdputs( strerror( errno ) );
-        }
-        Wdputslc( ".\n" );
-        longjmp( Se_env, 1 );
     }
 }
 

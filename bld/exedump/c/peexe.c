@@ -278,6 +278,24 @@ extern void DumpCoffHdrFlags( unsigned_16 flags )
     DumpFlags( flags, 0, PEHeadFlags, "" );
 }
 
+
+static void DumpPEObjFlags( unsigned_32 flags )
+/*********************************************/
+{
+    unsigned    alignval;
+    char        buf[8];
+
+    alignval = (flags & PE_OBJ_ALIGN_MASK) >> PE_OBJ_ALIGN_SHIFT;
+    if( alignval != 0 ) {
+        memcpy( buf, "ALIGN", 5 );
+        utoa( 1 << (alignval - 1), buf + 5, 10 );
+    } else {
+        buf[0] = '\0';
+    }
+    DumpFlags( flags, PE_OBJ_ALIGN_MASK, PEObjFlags, buf );
+}
+
+
 /*
  * Dump the Object Table.
  */
@@ -380,20 +398,4 @@ bool Dmp_pe_tab( void )
         Wdputslc( "no export table\n" );
     }
     return( 1 );
-}
-
-static void DumpPEObjFlags( unsigned_32 flags )
-/*********************************************/
-{
-    unsigned    alignval;
-    char        buf[8];
-
-    alignval = (flags & PE_OBJ_ALIGN_MASK) >> PE_OBJ_ALIGN_SHIFT;
-    if( alignval != 0 ) {
-        memcpy( buf, "ALIGN", 5 );
-        utoa( 1 << (alignval - 1), buf + 5, 10 );
-    } else {
-        buf[0] = '\0';
-    }
-    DumpFlags( flags, PE_OBJ_ALIGN_MASK, PEObjFlags, buf );
 }

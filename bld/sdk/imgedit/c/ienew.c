@@ -262,6 +262,34 @@ BOOL CALLBACK SelCursorProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 #endif
 
 /*
+ * initializeImage - initializes the bitmaps according to the image type
+ */
+static void initializeImage( img_node *node, char *filename )
+{
+    node->imgtype = imgType;
+    node->width = imgWidth;
+    node->height = imgHeight;
+    node->bitcount = bitCount;
+    node->hotspot.x = 0;
+    node->hotspot.y = 0;
+    node->num_of_images = 1;
+    node->nexticon = NULL;
+    node->issaved = TRUE;
+    node->next = NULL;
+    if( filename != NULL ) {
+        strcpy( node->fname, filename );
+    } else {
+        sprintf( node->fname, "%s (%d)", IEImageUntitled, imageCount );
+    }
+
+    if (imgType == BITMAP_IMG) {
+        MakeBitmap( node, TRUE );
+    } else {
+        MakeIcon(node, TRUE);           // also makes cursors
+    }
+} /* initializeImage */
+
+/*
  * NewImage - Creates a new image and returns the image type (bitmap, icon
  *            or cursor).
  */
@@ -372,32 +400,3 @@ int NewImage( int img_type, char *filename )
 
     return(imgType);
 } /* NewImage */
-
-/*
- * initializeImage - initializes the bitmaps according to the image type
- */
-static void initializeImage( img_node *node, char *filename )
-{
-    node->imgtype = imgType;
-    node->width = imgWidth;
-    node->height = imgHeight;
-    node->bitcount = bitCount;
-    node->hotspot.x = 0;
-    node->hotspot.y = 0;
-    node->num_of_images = 1;
-    node->nexticon = NULL;
-    node->issaved = TRUE;
-    node->next = NULL;
-    if( filename != NULL ) {
-        strcpy( node->fname, filename );
-    } else {
-        sprintf( node->fname, "%s (%d)", IEImageUntitled, imageCount );
-    }
-
-    if (imgType == BITMAP_IMG) {
-        MakeBitmap( node, TRUE );
-    } else {
-        MakeIcon(node, TRUE);           // also makes cursors
-    }
-} /* initializeImage */
-

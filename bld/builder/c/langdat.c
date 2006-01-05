@@ -49,7 +49,7 @@
 bool            Quiet;
 FILE            *LogFile;
 static ctl_file *CtlList;
-static include  *IncludeStk;
+       include  *IncludeStk;
 static char     Line[MAX_LINE];
 static char     ProcLine[MAX_LINE];
 static unsigned VerbLevel;

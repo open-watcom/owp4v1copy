@@ -48,9 +48,9 @@
 #include "pcheader.h"
 
 
-extern  int     GetAliasInfo();
-
+static int      GetAliasInfo();
 static byte_seq *AuxCodeDup( byte_seq *code );
+static int      GetByteSeq( void );
 
 static  hw_reg_set      asmRegsSaved = { HW_D( HW_FULL ) };
 
@@ -1100,8 +1100,7 @@ void AsmSysPCHReadCode( AUX_INFO *info )
     }
 }
 
-static int GetByteSeq(
-    void )
+static int GetByteSeq( void )
 {
     int i;
     char *name;

@@ -66,44 +66,6 @@ char *qnx_data_msg[] = {
 };
 
 /*
- * Dump the QNX header, if any.
- */
-bool Dmp_qnx_head( void )
-/***********************/
-{
-    lmf_record      qnx_rec;
-    unsigned_16     size;
-    unsigned_32     offset;
-
-    Wlseek( 0 );
-    Wread( &qnx_rec, sizeof( lmf_record ) );
-    if( qnx_rec.rec_type == LMF_HEADER_REC ) {
-        Wread( &Qnx_head, sizeof( lmf_header ) );
-        if( Qnx_head.version != QNX_VERSION ) {
-            return( 0 );
-        }
-        Banner( "QNX EXE Header" );
-        Dump_header( (char *)&Qnx_head.version, qnx_def_msg );
-        dmp_flag( Qnx_head.cflags );
-        size = ( qnx_rec.data_nbytes - sizeof( lmf_header ) ) / 4;
-        dmp_seg( size );
-        offset = qnx_rec.data_nbytes + sizeof( lmf_record );
-        for( ;; ) {
-            Wlseek( offset );
-            Wread( &qnx_rec, sizeof( lmf_record ) );
-            if( qnx_rec.rec_type == LMF_IMAGE_END_REC ) {
-                break;
-            }
-            offset += sizeof( lmf_record );
-            get_rec_type( qnx_rec.rec_type, qnx_rec.data_nbytes, offset );
-            offset += qnx_rec.data_nbytes;
-        }
-        return( 1 );
-    }
-    return( 0 );
-}
-
-/*
  * Dump the flags.
  */
 static void dmp_flag( unsigned_16 flag )
@@ -159,44 +121,6 @@ static void dmp_seg( unsigned_16 size )
 }
 
 /*
- * get type of next record.
- */
-static void get_rec_type( unsigned_8 rtype, unsigned_16 size, unsigned_32 offset )
-/********************************************************************************/
-{
-    switch( rtype ) {
-    case LMF_COMMENT_REC:
-        Wdputslc( "\n" );
-        Banner( "Comments" );
-        Dmp_seg_data( offset, size );
-        break;
-    case LMF_LOAD_REC:
-        dmp_data( size, offset );
-        break;
-    case LMF_FIXUP_REC:
-        dmp_fixup( size, FALSE );
-        break;
-    case LMF_8087_FIXUP_REC:
-        dmp_fixup( size, TRUE );
-        break;
-    case LMF_RESOURCE_REC:
-        dmp_resrc( size, offset );
-        break;
-    case LMF_RW_END_REC:
-        dmp_rw_end();
-        break;
-    case LMF_LINEAR_FIXUP_REC:
-        dmp_lin_fix( size );
-        break;
-    default:
-        Wdputs( "unknown record type: " );
-        Putdec( rtype );
-        Wdputslc( "\n" );
-        break;
-    }
-}
-
-/*
  * Dump rw end.
  */
 static void dmp_rw_end( void )
@@ -242,42 +166,6 @@ static void dmp_resrc( unsigned_16 size, unsigned_32 offset )
     offset += sizeof( lmf_resource );
     if( Options_dmp & RESRC_DMP ) {
         Dmp_seg_data( offset, size );
-    }
-}
-
-static void dmp_banner( void )
-/****************************/
-{
-    char        buff[80];
-    char        sec;
-
-    strcpy( buff, "Data Table " );
-    strcat( buff, itoa( Data_count, &sec, 10 ) );
-    Banner( buff );
-}
-
-/*
- * Dump data.
- */
-static void dmp_data( unsigned_16 size, unsigned_32 offset )
-/**********************************************************/
-{
-    lmf_data        data;
-
-    Wdputslc( "\n" );
-    Data_count++;
-    dmp_banner();
-    Wread( &data, sizeof( lmf_data ) );
-    Dump_header( (char *)&data.segment, qnx_data_msg );
-    size -= sizeof( lmf_data );
-    Wdputs( "size                   =     " );
-    Puthex( size, 4 );
-    Wdputslc( "H\n" );
-    offset += sizeof( lmf_data );
-    if( Options_dmp & (DOS_SEG_DMP | OS2_SEG_DMP) ) {
-        if( Segspec == 0 || Segspec == Data_count ) {
-            Dmp_seg_data( offset, size );
-        }
     }
 }
 
@@ -327,6 +215,42 @@ static void dmp_fixup( unsigned_16 size, bool float_pt )
     Wdputslc( "\n" );
 }
 
+static void dmp_banner( void )
+/****************************/
+{
+    char        buff[80];
+    char        sec;
+
+    strcpy( buff, "Data Table " );
+    strcat( buff, itoa( Data_count, &sec, 10 ) );
+    Banner( buff );
+}
+
+/*
+ * Dump data.
+ */
+static void dmp_data( unsigned_16 size, unsigned_32 offset )
+/**********************************************************/
+{
+    lmf_data        data;
+
+    Wdputslc( "\n" );
+    Data_count++;
+    dmp_banner();
+    Wread( &data, sizeof( lmf_data ) );
+    Dump_header( (char *)&data.segment, qnx_data_msg );
+    size -= sizeof( lmf_data );
+    Wdputs( "size                   =     " );
+    Puthex( size, 4 );
+    Wdputslc( "H\n" );
+    offset += sizeof( lmf_data );
+    if( Options_dmp & (DOS_SEG_DMP | OS2_SEG_DMP) ) {
+        if( Segspec == 0 || Segspec == Data_count ) {
+            Dmp_seg_data( offset, size );
+        }
+    }
+}
+
 /*
  * Dump linear fixups.
  */
@@ -360,4 +284,80 @@ static void dmp_lin_fix( unsigned_16 size )
         }
     }
     Wdputslc( "\n" );
+}
+
+/*
+ * get type of next record.
+ */
+static void get_rec_type( unsigned_8 rtype, unsigned_16 size, unsigned_32 offset )
+/********************************************************************************/
+{
+    switch( rtype ) {
+    case LMF_COMMENT_REC:
+        Wdputslc( "\n" );
+        Banner( "Comments" );
+        Dmp_seg_data( offset, size );
+        break;
+    case LMF_LOAD_REC:
+        dmp_data( size, offset );
+        break;
+    case LMF_FIXUP_REC:
+        dmp_fixup( size, FALSE );
+        break;
+    case LMF_8087_FIXUP_REC:
+        dmp_fixup( size, TRUE );
+        break;
+    case LMF_RESOURCE_REC:
+        dmp_resrc( size, offset );
+        break;
+    case LMF_RW_END_REC:
+        dmp_rw_end();
+        break;
+    case LMF_LINEAR_FIXUP_REC:
+        dmp_lin_fix( size );
+        break;
+    default:
+        Wdputs( "unknown record type: " );
+        Putdec( rtype );
+        Wdputslc( "\n" );
+        break;
+    }
+}
+
+/*
+ * Dump the QNX header, if any.
+ */
+bool Dmp_qnx_head( void )
+/***********************/
+{
+    lmf_record      qnx_rec;
+    unsigned_16     size;
+    unsigned_32     offset;
+
+    Wlseek( 0 );
+    Wread( &qnx_rec, sizeof( lmf_record ) );
+    if( qnx_rec.rec_type == LMF_HEADER_REC ) {
+        Wread( &Qnx_head, sizeof( lmf_header ) );
+        if( Qnx_head.version != QNX_VERSION ) {
+            return( 0 );
+        }
+        Banner( "QNX EXE Header" );
+        Dump_header( (char *)&Qnx_head.version, qnx_def_msg );
+        dmp_flag( Qnx_head.cflags );
+        size = ( qnx_rec.data_nbytes - sizeof( lmf_header ) ) / 4;
+        dmp_seg( size );
+        offset = qnx_rec.data_nbytes + sizeof( lmf_record );
+        for( ;; ) {
+            Wlseek( offset );
+            Wread( &qnx_rec, sizeof( lmf_record ) );
+            if( qnx_rec.rec_type == LMF_IMAGE_END_REC ) {
+                break;
+            }
+            offset += sizeof( lmf_record );
+            get_rec_type( qnx_rec.rec_type, qnx_rec.data_nbytes, offset );
+            offset += qnx_rec.data_nbytes;
+        }
+        return( 1 );
+    }
+    return( 0 );
 }

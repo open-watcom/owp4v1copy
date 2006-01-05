@@ -49,69 +49,6 @@ char * reloc_addr_type[] = {
 
 
 /*
- * Dump the Segments
- */
-void Dmp_relocs( void )
-/*********************/
-{
-    struct segment_record   *seg;
-    unsigned_16             segnum;
-    unsigned_16             num_segs;
-    unsigned_32             reloc_off;
-
-    if( !(Options_dmp & FIX_DMP) ) {
-        return;
-    }
-    Wdputslc( "\n" );
-    Banner( "The Relocations" );
-    seg = Int_seg_tab;
-    num_segs = Os2_head.segments + 1;
-    for( segnum = 1; segnum != num_segs; segnum++ ) {
-        reloc_off = (unsigned_32)seg->address <<
-                       Os2_head.align;
-        reloc_off += seg->size;
-        if( seg->info & SEG_RELOC ) {
-            Wdputs( "segment # " );
-            Putdec( segnum );
-            dmp_reloc_info( reloc_off );
-        }
-    seg++;
-    }
-}
-
-/*
- * Dump the Segments
- */
-void Dmp_segments( void )
-/***********************/
-{
-    struct segment_record   *seg;
-    unsigned_16             segnum;
-    unsigned_16             num_segs;
-
-    Wdputslc( "\n" );
-    Banner( "The Segments" );
-    if( Segspec != 0 ) {
-        if( Segspec > Os2_head.segments ) {
-            Wdputslc( "segment specified was too large\n" );
-            return;
-        }
-        Wdputs( "segment # " );
-        Putdec( Segspec );
-        seg = &Int_seg_tab[ Segspec - 1 ];
-        dmp_segment( seg );
-        return;
-    }
-    seg = Int_seg_tab;
-    num_segs = Os2_head.segments + 1;
-    for( segnum = 1; segnum != num_segs; segnum++ ) {
-        Wdputs( "segment # " );
-        Putdec( segnum );
-        dmp_segment( seg++ );
-    }
-}
-
-/*
  * Dump a segment
  */
 static void dmp_segment( struct segment_record * seg )
@@ -149,51 +86,7 @@ static void dmp_segment( struct segment_record * seg )
 }
 
 /*
- * Dump a Segment's relocation info
- */
-static void dmp_reloc_info( unsigned_32 reloc_off )
-/*************************************************/
-{
-    unsigned_16                     num_relocs;
-    struct relocation_item          *reloc_tab;
-    struct relocation_item          *reloc;
-    unsigned_16                     size_reloc_tab;
-
-    Wlseek( reloc_off );
-    Wread( &num_relocs, sizeof( unsigned_16 ) );
-    size_reloc_tab = num_relocs * sizeof( struct relocation_item );
-    Wdputslc( "\nNumber of relocations: " );
-    Putdec( num_relocs );
-    Wdputs( "     Total size of relocations: " );
-    Putdec( size_reloc_tab );
-    reloc_tab = Wmalloc( size_reloc_tab );
-    Wread( reloc_tab, size_reloc_tab );
-    Wdputslc( "\n  typ off  target" );
-    Wdputslc( "\n  === ==== ====" );
-    for( reloc = reloc_tab; num_relocs-- != 0; ++reloc ) {
-        Wdputslc( "\n  " );
-        if( (reloc->addr_type > REL_SEGMENT_OFFSET + 2)
-            || reloc->addr_type == 0  ) {
-            Wdputc( '?' );
-            Puthex( reloc->addr_type, 2 );
-        } else {
-            Wdputs( reloc_addr_type[ reloc->addr_type -1 ] );
-        }
-        Wdputc( ' ' );
-        Puthex( reloc->reloc_offset, 4 );
-        Wdputc( ' ' );
-        if( reloc->reloc_type & REL_ADDITIVE ) {
-            Wdputs( "ADDITIVE " );
-            reloc->reloc_type &= ~REL_ADDITIVE;
-        }
-        dmp_reloc_item( reloc );
-    }
-    Wdputslc( "\n" );
-    free( reloc_tab );
-}
-
-/*
- * Dump an relocation item
+ * Dump a relocation item
  */
 static void dmp_reloc_item( struct relocation_item *reloc )
 /*********************************************************/
@@ -255,6 +148,113 @@ static void dmp_reloc_item( struct relocation_item *reloc )
         Puthex( reloc->xtrnl.data, 8 );
         Wdputc( 'H' );
         break;
+    }
+}
+
+/*
+ * Dump a Segment's relocation info
+ */
+static void dmp_reloc_info( unsigned_32 reloc_off )
+/*************************************************/
+{
+    unsigned_16                     num_relocs;
+    struct relocation_item          *reloc_tab;
+    struct relocation_item          *reloc;
+    unsigned_16                     size_reloc_tab;
+
+    Wlseek( reloc_off );
+    Wread( &num_relocs, sizeof( unsigned_16 ) );
+    size_reloc_tab = num_relocs * sizeof( struct relocation_item );
+    Wdputslc( "\nNumber of relocations: " );
+    Putdec( num_relocs );
+    Wdputs( "     Total size of relocations: " );
+    Putdec( size_reloc_tab );
+    reloc_tab = Wmalloc( size_reloc_tab );
+    Wread( reloc_tab, size_reloc_tab );
+    Wdputslc( "\n  typ off  target" );
+    Wdputslc( "\n  === ==== ====" );
+    for( reloc = reloc_tab; num_relocs-- != 0; ++reloc ) {
+        Wdputslc( "\n  " );
+        if( (reloc->addr_type > REL_SEGMENT_OFFSET + 2)
+            || reloc->addr_type == 0  ) {
+            Wdputc( '?' );
+            Puthex( reloc->addr_type, 2 );
+        } else {
+            Wdputs( reloc_addr_type[ reloc->addr_type -1 ] );
+        }
+        Wdputc( ' ' );
+        Puthex( reloc->reloc_offset, 4 );
+        Wdputc( ' ' );
+        if( reloc->reloc_type & REL_ADDITIVE ) {
+            Wdputs( "ADDITIVE " );
+            reloc->reloc_type &= ~REL_ADDITIVE;
+        }
+        dmp_reloc_item( reloc );
+    }
+    Wdputslc( "\n" );
+    free( reloc_tab );
+}
+
+/*
+ * Dump the Segments
+ */
+void Dmp_relocs( void )
+/*********************/
+{
+    struct segment_record   *seg;
+    unsigned_16             segnum;
+    unsigned_16             num_segs;
+    unsigned_32             reloc_off;
+
+    if( !(Options_dmp & FIX_DMP) ) {
+        return;
+    }
+    Wdputslc( "\n" );
+    Banner( "The Relocations" );
+    seg = Int_seg_tab;
+    num_segs = Os2_head.segments + 1;
+    for( segnum = 1; segnum != num_segs; segnum++ ) {
+        reloc_off = (unsigned_32)seg->address <<
+                       Os2_head.align;
+        reloc_off += seg->size;
+        if( seg->info & SEG_RELOC ) {
+            Wdputs( "segment # " );
+            Putdec( segnum );
+            dmp_reloc_info( reloc_off );
+        }
+    seg++;
+    }
+}
+
+/*
+ * Dump the Segments
+ */
+void Dmp_segments( void )
+/***********************/
+{
+    struct segment_record   *seg;
+    unsigned_16             segnum;
+    unsigned_16             num_segs;
+
+    Wdputslc( "\n" );
+    Banner( "The Segments" );
+    if( Segspec != 0 ) {
+        if( Segspec > Os2_head.segments ) {
+            Wdputslc( "segment specified was too large\n" );
+            return;
+        }
+        Wdputs( "segment # " );
+        Putdec( Segspec );
+        seg = &Int_seg_tab[ Segspec - 1 ];
+        dmp_segment( seg );
+        return;
+    }
+    seg = Int_seg_tab;
+    num_segs = Os2_head.segments + 1;
+    for( segnum = 1; segnum != num_segs; segnum++ ) {
+        Wdputs( "segment # " );
+        Putdec( segnum );
+        dmp_segment( seg++ );
     }
 }
 

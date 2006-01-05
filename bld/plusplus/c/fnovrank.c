@@ -180,6 +180,38 @@ static void completeFNOV_TYPE( FNOV_TYPE* ft )
 #endif
 }
 
+static boolean trivialRankPtrToPtr( FNOV_CONV *conv )
+/***************************************************/
+// return TRUE if a qualification conversion is needed
+// but not possible, otherwise return FALSE
+{
+    CONVCTL     info;
+    TYPE        src;
+    TYPE        tgt;
+
+    // check for stdop conversion that should ignore cv-qualifiers
+    if( ( conv->wtgt.final->id == TYP_VOID )
+      &&( conv->wtgt.final->flag & TF1_STDOP )
+      &&( ( conv->rank->control & FNC_STDOP_CV_VOID ) == 0 ) ) {
+        return FALSE;
+    } else {
+        // need to look down all levels here
+        src = conv->wsrc.original;
+        tgt = conv->wtgt.original;
+        ConvCtlInitTypes( &info, src, tgt );
+        ConvCtlTypeDecay( &info, &info.src );
+        ConvCtlTypeDecay( &info, &info.tgt );
+        if( !ConvCtlAnalysePoints( &info ) ) {
+            conv->rank->rank = OV_RANK_NO_MATCH;
+            return TRUE;
+        } else if( info.used_cv_convert ) {
+            conv->rank->rank = OV_RANK_TRIVIAL;
+            conv->rank->u.no_ud.trivial = 1;
+        }
+        return FALSE;
+    }
+}
+
 TYPE *CompareWP13332(
 /*******************/
     TYPE *first_type
@@ -304,38 +336,6 @@ static boolean sameRankPtrToPtr( FNOV_CONV *conv )
     return FALSE;
 }
 
-
-static boolean trivialRankPtrToPtr( FNOV_CONV *conv )
-/***************************************************/
-// return TRUE if a qualification conversion is needed
-// but not possible, otherwise return FALSE
-{
-    CONVCTL     info;
-    TYPE        src;
-    TYPE        tgt;
-
-    // check for stdop conversion that should ignore cv-qualifiers
-    if( ( conv->wtgt.final->id == TYP_VOID )
-      &&( conv->wtgt.final->flag & TF1_STDOP )
-      &&( ( conv->rank->control & FNC_STDOP_CV_VOID ) == 0 ) ) {
-        return FALSE;
-    } else {
-        // need to look down all levels here
-        src = conv->wsrc.original;
-        tgt = conv->wtgt.original;
-        ConvCtlInitTypes( &info, src, tgt );
-        ConvCtlTypeDecay( &info, &info.src );
-        ConvCtlTypeDecay( &info, &info.tgt );
-        if( !ConvCtlAnalysePoints( &info ) ) {
-            conv->rank->rank = OV_RANK_NO_MATCH;
-            return TRUE;
-        } else if( info.used_cv_convert ) {
-            conv->rank->rank = OV_RANK_TRIVIAL;
-            conv->rank->u.no_ud.trivial = 1;
-        }
-        return FALSE;
-    }
-}
 
 static boolean trivialRank( FNOV_CONV *conv )
 /*******************************************/

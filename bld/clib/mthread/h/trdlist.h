@@ -50,7 +50,6 @@
   #include "ntex.h"
   extern DWORD          __TlsIndex;
   #define TID                   DWORD
-  extern void           __NTThreadFini(void);
 #elif defined( __QNX__ )
   #include <sys/types.h>
   #include <unistd.h>

@@ -86,6 +86,21 @@ static void MakeWndCfgName( char *buf, char *name, char *ext ) {
 }
 
 /*
+ * PutProfileBool - write a boolean value to the configuration file
+ */
+static void PutProfileBool( char *id, BOOL val ) {
+
+    char        buf[15];
+
+    if( val ) {
+        itoa( TRUE, buf, 10 );
+    } else {
+        itoa( FALSE, buf, 10 );
+    }
+    WritePrivateProfileString( SECT_NAME, id, buf, iniPath );
+} /* PutProfileBool */
+
+/*
  * WriteWindowInfo - save position/size information about a window
  */
 static void WriteWindowInfo( WndConfigInfo *info, char *name_ext ) {
@@ -140,21 +155,6 @@ static void ReadWindowInfo( WndConfigInfo *info, char *name_ext ) {
     info->ysize = GetPrivateProfileInt( SECT_NAME, name,
                                     info->ysize, iniPath );
 }
-
-/*
- * PutProfileBool - write a boolean value to the configuration file
- */
-static void PutProfileBool( char *id, BOOL val ) {
-
-    char        buf[15];
-
-    if( val ) {
-        itoa( TRUE, buf, 10 );
-    } else {
-        itoa( FALSE, buf, 10 );
-    }
-    WritePrivateProfileString( SECT_NAME, id, buf, iniPath );
-} /* PutProfileBool */
 
 /*
  * ReadConfig - read the configuration information

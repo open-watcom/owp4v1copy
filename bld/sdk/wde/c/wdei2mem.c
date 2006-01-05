@@ -70,33 +70,6 @@ static char                *WdeMem2String            ( uint_8 **data, Bool );
 /* static variables                                                         */
 /****************************************************************************/
 
-static int WdeNameOrOrdToMem( ResNameOrOrdinal *name, uint_8 use_unicode,
-                              uint_8 *mem )
-{
-    int         num;
-    uint_16     *data16;
-
-    if( !name ) {
-        num = WdeStringToMem( "", use_unicode, mem );
-    } else {
-        if( name->ord.fFlag == 0xff ) {
-            if( use_unicode ) {
-                data16 = (uint_16 *)mem;
-                data16[0] = 0xffff;
-                data16[1] = name->ord.wOrdinalID;
-                num = sizeof( uint_16)*2;
-            } else {
-                memcpy( mem, &(name->ord.fFlag), sizeof(uint_8)+sizeof( uint_16) );
-                num = sizeof(uint_8) + sizeof( uint_16) ;
-            }
-        } else {
-            num = WdeStringToMem( name->name, use_unicode, mem );
-        }
-    }
-
-    return( num );
-}
-
 static int WdeStringToMem( char *string, uint_8 use_unicode, uint_8 *mem )
 {
     int         len;
@@ -125,6 +98,33 @@ static int WdeStringToMem( char *string, uint_8 use_unicode, uint_8 *mem )
     }
 
     return( len );
+}
+
+static int WdeNameOrOrdToMem( ResNameOrOrdinal *name, uint_8 use_unicode,
+                              uint_8 *mem )
+{
+    int         num;
+    uint_16     *data16;
+
+    if( !name ) {
+        num = WdeStringToMem( "", use_unicode, mem );
+    } else {
+        if( name->ord.fFlag == 0xff ) {
+            if( use_unicode ) {
+                data16 = (uint_16 *)mem;
+                data16[0] = 0xffff;
+                data16[1] = name->ord.wOrdinalID;
+                num = sizeof( uint_16)*2;
+            } else {
+                memcpy( mem, &(name->ord.fFlag), sizeof(uint_8)+sizeof( uint_16) );
+                num = sizeof(uint_8) + sizeof( uint_16) ;
+            }
+        } else {
+            num = WdeStringToMem( name->name, use_unicode, mem );
+        }
+    }
+
+    return( num );
 }
 
 static int WdeDialogBoxHeaderToMem( WdeDialogBoxHeader *head, uint_8 *mem )

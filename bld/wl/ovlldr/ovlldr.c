@@ -40,6 +40,65 @@ extern void             (far * far NAME( DBG_HOOK ) )( int, char, void far * );
 extern void near        NAME( CHPOVLLDR )( void );
 #define LOADOVERLAY     NAME( LoadOverlay )
 
+static void MungeVectors( int ovl_num )
+//=====================================
+// Copy the jmp instruction on top of the call instruction in the vector table
+// so future references to this symbol will bypass the overlay manager.
+{
+    vector *    vect;
+
+    vect = &__OVLSTARTVEC__;
+    while( vect < &__OVLENDVEC__ ) {
+#ifdef OVL_SMALL
+        if( vect->sec_num == ovl_num ) {
+            if( __OVLDOPAR__ ) {
+                vect->call_op = CALL_INSTRUCTION;
+                vect->ldr_addr = (unsigned) NAME( CHPOVLLDR )
+                                             - (unsigned)(&vect->ldr_addr) - 2;
+            } else {
+                vect->call_op = vect->jmp_op;
+                vect->ldr_addr = vect->target
+                       + (offsetof(vector,target) - offsetof(vector,ldr_addr));
+#else
+        if( vect->u.v.sec_num == ovl_num ) {
+            if( __OVLDOPAR__ ) {
+                vect->u.v.call_op = CALL_INSTRUCTION;
+                vect->u.v.ldr_addr = FP_OFF( NAME( CHPOVLLDR ) )
+                                             - FP_OFF(&vect->u.v.ldr_addr) - 2;
+            } else {
+                vect->u.m.big_nop = OVV_MOV_AX_AX;
+                vect->u.m.test_op = OVV_TEST_OPCODE;
+#endif
+            }
+        }
+        vect++;
+    }
+}
+
+static void DeMungeVectors( int ovl_num )
+/***************************************/
+// overlay not in memory any more, so demunge vectors.
+{
+    vector *    vect;
+
+    vect = &__OVLSTARTVEC__;
+    while( vect < &__OVLENDVEC__ ) {
+#ifdef OVL_SMALL
+        if( vect->sec_num == ovl_num ) {
+            vect->call_op = CALL_INSTRUCTION;
+            vect->ldr_addr = (unsigned)NAME( OVLLDR )
+                                       - (unsigned)(&vect->ldr_addr) - 2;
+#else
+        if( vect->u.v.sec_num == ovl_num ) {
+            vect->u.v.call_op = CALL_INSTRUCTION;
+            vect->u.v.ldr_addr = FP_OFF( NAME( OVLLDR ) )
+                                 - FP_OFF(&vect->u.v.ldr_addr) - 2;
+#endif
+        }
+        vect++;
+    }
+}
+
 static void ClearInMemFlags( ovltab_entry *loaded_ovl )
 //=====================================================
 // Turn off the IN_MEM flag in the overlay table for those sections
@@ -124,65 +183,6 @@ int near LOADOVERLAY( unsigned int ovl_num )
         ovl_num = ovl->flags_anc & OVE_FLAG_ANC_MASK;
     }
     return( loaded_something );
-}
-
-static void MungeVectors( int ovl_num )
-//=====================================
-// Copy the jmp instruction on top of the call instruction in the vector table
-// so future references to this symbol will bypass the overlay manager.
-{
-    vector *    vect;
-
-    vect = &__OVLSTARTVEC__;
-    while( vect < &__OVLENDVEC__ ) {
-#ifdef OVL_SMALL
-        if( vect->sec_num == ovl_num ) {
-            if( __OVLDOPAR__ ) {
-                vect->call_op = CALL_INSTRUCTION;
-                vect->ldr_addr = (unsigned) NAME( CHPOVLLDR )
-                                             - (unsigned)(&vect->ldr_addr) - 2;
-            } else {
-                vect->call_op = vect->jmp_op;
-                vect->ldr_addr = vect->target
-                       + (offsetof(vector,target) - offsetof(vector,ldr_addr));
-#else
-        if( vect->u.v.sec_num == ovl_num ) {
-            if( __OVLDOPAR__ ) {
-                vect->u.v.call_op = CALL_INSTRUCTION;
-                vect->u.v.ldr_addr = FP_OFF( NAME( CHPOVLLDR ) )
-                                             - FP_OFF(&vect->u.v.ldr_addr) - 2;
-            } else {
-                vect->u.m.big_nop = OVV_MOV_AX_AX;
-                vect->u.m.test_op = OVV_TEST_OPCODE;
-#endif
-            }
-        }
-        vect++;
-    }
-}
-
-static void DeMungeVectors( int ovl_num )
-/***************************************/
-// overlay not in memory any more, so demunge vectors.
-{
-    vector *    vect;
-
-    vect = &__OVLSTARTVEC__;
-    while( vect < &__OVLENDVEC__ ) {
-#ifdef OVL_SMALL
-        if( vect->sec_num == ovl_num ) {
-            vect->call_op = CALL_INSTRUCTION;
-            vect->ldr_addr = (unsigned)NAME( OVLLDR )
-                                       - (unsigned)(&vect->ldr_addr) - 2;
-#else
-        if( vect->u.v.sec_num == ovl_num ) {
-            vect->u.v.call_op = CALL_INSTRUCTION;
-            vect->u.v.ldr_addr = FP_OFF( NAME( OVLLDR ) )
-                                 - FP_OFF(&vect->u.v.ldr_addr) - 2;
-#endif
-        }
-        vect++;
-    }
 }
 
 void near NAME( OVLLOAD )( int ovl_num )

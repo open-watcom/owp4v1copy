@@ -41,7 +41,11 @@ extern void ModRMRegOp(int );
 extern void ModRMOp(int ,char );
 extern void FormatLine(fixup *,char *,char,char );
 extern void FormatIns(char *,instruction *,form_option );
+#ifndef O2A
+static void ZapUpper(char *);
+#else
 extern void ZapUpper(char *);
+#endif
 extern ins_name GetFppCode(void);
 extern void GetFppOp(void);
 extern char * GetWtkInsName( uint_16 );

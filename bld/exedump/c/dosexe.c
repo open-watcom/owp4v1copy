@@ -54,26 +54,6 @@ char *dos_exe_msg[] = {
 };
 
 /*
- * Dump the Dos Executable Header, if any.
- */
-bool Dmp_dos_head( void )
-/***********************/
-{
-    Wread( &Dos_head, sizeof( Dos_head ) );
-    if( Dos_head.signature != DOS_SIGNATURE ) {
-        return( 0 );
-    }
-    dmp_dos_head_info();
-    if( Dos_head.reloc_offset != OS2_EXE_HEADER_FOLLOWS ) {
-        Wdputslc( "No New Executable header.\n" );
-        return( 1 );
-    }
-    Wlseek( OS2_NE_OFFSET );
-    Wread( &New_exe_off, sizeof( New_exe_off ) );
-    return( 2 );
-}
-
-/*
  * dump the dos header information
  */
 static void dmp_dos_head_info( void )
@@ -118,4 +98,24 @@ static void dmp_dos_head_info( void )
         Dmp_seg_data( load_start, load_end );
         Wdputslc( "\n" );
     }
+}
+
+/*
+ * Dump the Dos Executable Header, if any.
+ */
+bool Dmp_dos_head( void )
+/***********************/
+{
+    Wread( &Dos_head, sizeof( Dos_head ) );
+    if( Dos_head.signature != DOS_SIGNATURE ) {
+        return( 0 );
+    }
+    dmp_dos_head_info();
+    if( Dos_head.reloc_offset != OS2_EXE_HEADER_FOLLOWS ) {
+        Wdputslc( "No New Executable header.\n" );
+        return( 1 );
+    }
+    Wlseek( OS2_NE_OFFSET );
+    Wread( &New_exe_off, sizeof( New_exe_off ) );
+    return( 2 );
 }

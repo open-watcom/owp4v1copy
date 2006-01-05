@@ -147,6 +147,87 @@ static short            SelectMode( short );
 #endif
 
 
+static void SetTextInfo()
+/*=======================
+
+   This routine initializes the graphics text defaults. */
+
+{
+    short               height;
+    short               width;
+
+    /* Make the graphics text look the same on all devices. Take the
+       width to height visual ratio to be 5:8 and assume that the
+       width to height ratio of the physical dimensions of the screen
+       is 4 : 3. The size is about 1.5 the size of BIOS text.   */
+
+    height = ( _CurrState->vc.numypixels * 3 ) /
+                                ( _CurrState->vc.numtextrows * 2 );
+    width = ( (long) height * _CurrState->vc.numxpixels * 15 ) /    // 3 * 5
+                ( (long) _CurrState->vc.numypixels * 32 );          // 4 * 8
+    _setcharsize( height, width );
+    _settextorient( 1, 0 );
+    _settextpath( _PATH_RIGHT );
+    _setcharspacing( 0 );
+    _settextalign( _NORMAL, _NORMAL );
+}
+
+
+static void _InitVariables( void )
+/*================================
+
+   This routine initializes all of the global variables used by the
+   graphics functions. */
+
+{
+    _CurrPos.xcoord = 0;                        /* initial position */
+    _CurrPos.ycoord = 0;
+    _LogOrg.xcoord = _CurrPos.xcoord;
+    _LogOrg.ycoord = _CurrPos.ycoord;
+    _CurrPos_w.wx = 0.0;
+    _CurrPos_w.wy = 0.0;
+
+    _Window.invert = TRUE;          /* window coordinates defaults  */
+    _Window.xleft = 0.0;
+    _Window.ybottom = 0.0;
+    _Window.xright = 1.0;
+    _Window.ytop = 1.0;
+
+    _CurrState->clip_def.xmin = 0;               /* graphics window */
+    _CurrState->clip_def.xmax = _CurrState->vc.numxpixels - 1;
+    _CurrState->clip_def.ymin = 0;
+    _CurrState->clip_def.ymax = _CurrState->vc.numypixels - 1;
+    _setclip( _GCLIPON );
+
+    _TextPos.row = 0;                   /* BIOS text cursor position    */
+    _TextPos.col = 0;
+    _Tx_Row_Min = 0;                            /* text window */
+    _Tx_Row_Max = _CurrState->vc.numtextrows - 1;
+    _Tx_Col_Min = 0;
+    _Tx_Col_Max = _CurrState->vc.numtextcols - 1;
+    if( _GrMode ) {
+        SetTextInfo();
+    }
+
+    memcpy( _FillMask, _DefMask, MASK_LEN );    /* solid fill */
+    _HaveMask = 0;                              /* no fill mask set */
+    _PaRf_x = 0;                                /* fill pattern    */
+    _PaRf_y = 0;                                /* reference point */
+
+    _CharAttr = _DEFAULT_ATTR;
+    _CurrColor = ( _CurrState->vc.numcolors - 1 ) & 15;
+    _CurrBkColor = 0;
+    _CurrActivePage = _CurrVisualPage = 0;
+    _CurrState->screen_seg = _CurrState->screen_seg_base;/* pg 0 scrn segment */
+    _CurrState->screen_off = _CurrState->screen_off_base;/* pg 0 scrn offset */
+    _LineStyle = 0xFFFF;                        /* solid line */
+    _StyleWrap = 0;                             /* line style continuation  */
+    _PlotAct = 0;                               /* replace mode */
+    _Transparent = 1;                           /* transparent mode */
+    _Wrap = 1;                                  /* wrapping on */
+}
+
+
 short _WCI86FAR _CGRAPH _setvideomode( short req_mode )
 /*================================================
 
@@ -530,87 +611,6 @@ static short SelectMode( short req_mode )
 }
 
 #endif
-
-
-static void SetTextInfo()
-/*=======================
-
-   This routine initializes the graphics text defaults. */
-
-{
-    short               height;
-    short               width;
-
-    /* Make the graphics text look the same on all devices. Take the
-       width to height visual ratio to be 5:8 and assume that the
-       width to height ratio of the physical dimensions of the screen
-       is 4 : 3. The size is about 1.5 the size of BIOS text.   */
-
-    height = ( _CurrState->vc.numypixels * 3 ) /
-                                ( _CurrState->vc.numtextrows * 2 );
-    width = ( (long) height * _CurrState->vc.numxpixels * 15 ) /    // 3 * 5
-                ( (long) _CurrState->vc.numypixels * 32 );          // 4 * 8
-    _setcharsize( height, width );
-    _settextorient( 1, 0 );
-    _settextpath( _PATH_RIGHT );
-    _setcharspacing( 0 );
-    _settextalign( _NORMAL, _NORMAL );
-}
-
-
-static void _InitVariables( void )
-/*================================
-
-   This routine initializes all of the global variables used by the
-   graphics functions. */
-
-{
-    _CurrPos.xcoord = 0;                        /* initial position */
-    _CurrPos.ycoord = 0;
-    _LogOrg.xcoord = _CurrPos.xcoord;
-    _LogOrg.ycoord = _CurrPos.ycoord;
-    _CurrPos_w.wx = 0.0;
-    _CurrPos_w.wy = 0.0;
-
-    _Window.invert = TRUE;          /* window coordinates defaults  */
-    _Window.xleft = 0.0;
-    _Window.ybottom = 0.0;
-    _Window.xright = 1.0;
-    _Window.ytop = 1.0;
-
-    _CurrState->clip_def.xmin = 0;               /* graphics window */
-    _CurrState->clip_def.xmax = _CurrState->vc.numxpixels - 1;
-    _CurrState->clip_def.ymin = 0;
-    _CurrState->clip_def.ymax = _CurrState->vc.numypixels - 1;
-    _setclip( _GCLIPON );
-
-    _TextPos.row = 0;                   /* BIOS text cursor position    */
-    _TextPos.col = 0;
-    _Tx_Row_Min = 0;                            /* text window */
-    _Tx_Row_Max = _CurrState->vc.numtextrows - 1;
-    _Tx_Col_Min = 0;
-    _Tx_Col_Max = _CurrState->vc.numtextcols - 1;
-    if( _GrMode ) {
-        SetTextInfo();
-    }
-
-    memcpy( _FillMask, _DefMask, MASK_LEN );    /* solid fill */
-    _HaveMask = 0;                              /* no fill mask set */
-    _PaRf_x = 0;                                /* fill pattern    */
-    _PaRf_y = 0;                                /* reference point */
-
-    _CharAttr = _DEFAULT_ATTR;
-    _CurrColor = ( _CurrState->vc.numcolors - 1 ) & 15;
-    _CurrBkColor = 0;
-    _CurrActivePage = _CurrVisualPage = 0;
-    _CurrState->screen_seg = _CurrState->screen_seg_base;/* pg 0 scrn segment */
-    _CurrState->screen_off = _CurrState->screen_off_base;/* pg 0 scrn offset */
-    _LineStyle = 0xFFFF;                        /* solid line */
-    _StyleWrap = 0;                             /* line style continuation  */
-    _PlotAct = 0;                               /* replace mode */
-    _Transparent = 1;                           /* transparent mode */
-    _Wrap = 1;                                  /* wrapping on */
-}
 
 
 #if defined( _DEFAULT_WINDOWS )

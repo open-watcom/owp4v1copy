@@ -62,6 +62,9 @@ static void             SlowPlot();
 static void             ArcPlot();
 static void             EllFill();
 static void             ArcFill();
+static void             InitLineMasks( short x1, short y1, short x2, short y2 );
+static void             HollowArc( short x1, short y1, short x2, short y2, short a, short b );
+static void             FilledArc( short x1, short y1, short x2, short y2, short a, short b );
 #endif
 
 

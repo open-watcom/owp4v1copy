@@ -503,7 +503,7 @@ static MACRO_ARG *collectParms( MEPTR fmentry )
         if( parm_cnt_reqd > 0 ) {
             macro_parms = CMemAlloc( parm_cnt_reqd * sizeof( MACRO_ARG ) );
             if( fmentry->macro_flags & MACRO_HAS_VAR_ARGS )
-                macro_parms[parm_cnt_reqd-1].arg = NULL;        
+                macro_parms[parm_cnt_reqd-1].arg = NULL;
         }
         curr_cnt = 0;
         tok = T_NULL;
@@ -538,7 +538,7 @@ static MACRO_ARG *collectParms( MEPTR fmentry )
                 if( bracket == 0 ) break;
                 --bracket;
             } else if( tok == T_COMMA && bracket == 0 &&
-                  ( !( ( fmentry->macro_flags & MACRO_HAS_VAR_ARGS ) && 
+                  ( !( ( fmentry->macro_flags & MACRO_HAS_VAR_ARGS ) &&
                       curr_cnt == fmentry->parm_count - 2 ) ) ) {
                 TokenBufRemoveWhiteSpace( htokenbuf );
                 if( macro_parms != NULL ) {     // if expecting parms
@@ -663,7 +663,7 @@ static MACRO_TOKEN *buildAToken( unsigned token, char *p )
 static MACRO_TOKEN **buildTokenOnEnd( MACRO_TOKEN **ptail, unsigned token, char *str )
 {
     MACRO_TOKEN *mtok;
-    
+
     mtok = buildAToken( token, str );
     mtok->next = *ptail;
     *ptail = mtok;
@@ -693,6 +693,19 @@ static MACRO_TOKEN *appendToken( MACRO_TOKEN *head, int token, char *data )
         tail->next = new_tok;
     }
     return( head );
+}
+
+static int macroBeingExpanded( MEPTR fmentry )
+{
+    NESTED_MACRO *nested;
+
+    nested = nestedMacros;
+    while( nested ) {
+        if( nested->fmentry == fmentry )  return( 1 );
+        if( ! nested->rescanning )  break;
+        nested = nested->next;
+    }
+    return( 0 );
 }
 
 static int isExpandable( MEPTR curr_mac, MACRO_TOKEN *mtok, int macro_parm )
@@ -741,19 +754,6 @@ static int isExpandable( MEPTR curr_mac, MACRO_TOKEN *mtok, int macro_parm )
         } else if( CompFlags.cpp_output ) {
             return( 2 );
         }
-    }
-    return( 0 );
-}
-
-static int macroBeingExpanded( MEPTR fmentry )
-{
-    NESTED_MACRO *nested;
-
-    nested = nestedMacros;
-    while( nested ) {
-        if( nested->fmentry == fmentry )  return( 1 );
-        if( ! nested->rescanning )  break;
-        nested = nested->next;
     }
     return( 0 );
 }
@@ -971,7 +971,7 @@ static MACRO_TOKEN *glueTokens( MACRO_TOKEN *head )
                             next->next = NULL; // break link;
                         }
                         else // ##EMPTY
-                        { 
+                        {
                             // keep the thing after the ##
                             rem = next->next;
                             next->next = NULL;
@@ -1367,7 +1367,7 @@ void DoMacroExpansion(          // EXPAND A MACRO
     }
 }
 
-void DefineAlternativeTokens(	// DEFINE ALTERNATIVE TOKENS
+void DefineAlternativeTokens(   // DEFINE ALTERNATIVE TOKENS
     void )
 {
     SPECIAL_MACRO_NAME *mac;

@@ -120,6 +120,7 @@ struct  flags   Flags;
 /*
  *  Static function prototypes
  */
+static int     Parse( char *Cmd );
 
 extern void    Fputnl( char *, FILE * );
 extern void    *MemAlloc( int );

@@ -57,6 +57,221 @@
 #endif
 
 
+/*
+ * Returns the number of whitespace-delimited words in 'command'.  If 'words'
+ * is non-NULL, then each word will have memory allocated to hold it and will
+ * be copied into the appropriate space in the array (e.g. the second word
+ * will be copied into words[1]).  The array must be large enough, so just
+ * call parse_words with 'words'==NULL before to get the proper size, then
+ * do an alloca((n+1)*sizeof(CHAR_TYPE*)).  The caller is responsible for freeing
+ * any memory allocated for the words.  Returns -1 on error.
+ */
+
+static int parse_words( const CHAR_TYPE *command, CHAR_TYPE **words )
+/*******************************************************************/
+{
+    int                 numWords = 0;
+    const CHAR_TYPE     *p = command;
+    const CHAR_TYPE     *pLookAhead;
+    int                 error = 0;
+    size_t              len;
+
+    while( *p != '\0' ) {
+        /*** Skip any leading whitespace ***/
+        while( __F_NAME(isspace,iswspace)(*p) ) {
+            p++;
+        }
+
+        /*** Handle the word ***/
+        if( *p == '\0' )  break;
+        pLookAhead = p;
+        while( *pLookAhead != '\0'  &&  !__F_NAME(isspace,iswspace)(*pLookAhead) ) {
+            pLookAhead++;
+        }
+        if( words != NULL ) {
+            len = pLookAhead - p;       /* # of chars, excluding the null */
+            words[numWords] = lib_malloc( (len + 1) * sizeof( CHAR_TYPE ) );
+            if( words[numWords] == NULL ) {     /* break on error */
+                error = 1;
+                break;
+            }
+            __F_NAME(strncpy,wcsncpy)( words[numWords], p, len );
+            words[numWords][len] = '\0';
+        }
+
+        p = pLookAhead;
+        numWords++;
+    }
+
+    /*** If an error occurred, free any memory we've allocated ***/
+    if( error ) {
+        for( numWords--; numWords>=0; numWords-- ) {
+            lib_free( words[numWords] );
+        }
+        return( -1 );
+    } else {
+        if( words != NULL ) {
+            words[numWords] = NULL;    /* last string */
+        }
+    }
+
+    return( numWords );
+}
+
+
+/* Returns non-zero on success */
+
+static int spawn_it( FILE *fp, const CHAR_TYPE *command )
+/*******************************************************/
+{
+    int                 pid;
+    int                 numWords;
+    CHAR_TYPE           **words;    /* note: [0] and [1] used for "cmd.exe /c" */
+
+    /*** Create an argv array from the command string ***/
+    numWords = parse_words( command, NULL );
+    if( numWords == -1 ) {
+        return( 0 );
+    }
+    words = alloca( (numWords + 2 + 1) * sizeof( CHAR_TYPE * ) );
+    if( words == NULL ) {
+        return( 0 );
+    }
+    numWords = parse_words( command, &words[2] );
+    if( numWords == -1 ) {
+        return( 0 );
+    }
+
+    /*** Use CMD.EXE under NT and OS/2, and COMMAND.COM under Win95 ***/
+#if defined( __OS2__ )
+    words[0] = __F_NAME("cmd.exe",L"cmd.exe");
+#else
+    if( WIN32_IS_WIN95 ) {
+        words[0] = __F_NAME("command.com",L"command.com");  /* 95 */
+    } else {
+        words[0] = __F_NAME("cmd.exe",L"cmd.exe");          /* NT */
+    }
+#endif
+    words[1] = __F_NAME("/c",L"/c");
+
+    /*** Spawn the process ***/
+    pid = __F_NAME(spawnvp,_wspawnvp)( P_NOWAIT, words[0],
+        (const CHAR_TYPE **)&words[0] );
+    if( pid == -1 ) {
+        return( 0 );
+    }
+    _FP_PIPEDATA(fp).pid = pid;
+
+    /*** Free any memory used by parse_words ('words' freed on return) ***/
+    for( numWords--; numWords>=2; numWords-- ) {
+        lib_free( words[numWords] );
+    }
+    return( 1 );
+}
+
+
+/* Returns non-zero on success */
+
+static int connect_pipe( FILE *fp, const CHAR_TYPE *command, int *handles,
+                         int readOrWrite, int textOrBinary )
+/************************************************************************/
+{
+#if defined( __NT__ )
+    BOOL                rc;
+    HANDLE              osHandle;
+    HANDLE              oldHandle;
+#elif defined( __WARP__ )
+    APIRET              rc;
+    HFILE               osHandle;
+    HFILE               oldHandle;
+#elif defined( __OS2__ )
+    USHORT              rc;
+    HFILE               osHandle;
+    HFILE               oldHandle;
+#endif
+
+    if( readOrWrite == 'w' ) {
+        /*** Change the standard input handle for process inheritance ***/
+#if defined( __NT__ )
+        osHandle = GetStdHandle( STD_INPUT_HANDLE );        /* get old */
+        if( osHandle == INVALID_HANDLE_VALUE ) {
+            return( 0 );
+        }
+        oldHandle = osHandle;
+        rc = SetStdHandle( STD_INPUT_HANDLE,                /* set new */
+                           (HANDLE)_os_handle(handles[0]) );
+        if( rc == FALSE ) {
+            SetStdHandle( STD_INPUT_HANDLE, oldHandle );
+            return( 0 );
+        }
+#elif defined( __OS2__ )
+        oldHandle = 0xFFFFFFFF;             /* duplicate standard input */
+        rc = DosDupHandle( STDIN_HANDLE, &oldHandle );
+        if( rc != NO_ERROR )  return( 0 );
+        osHandle = STDIN_HANDLE;            /* use new standard input */
+        rc = DosDupHandle( (HFILE)_os_handle(handles[0]), &osHandle );
+        if( rc != NO_ERROR ) {
+            DosClose( oldHandle );
+            return( 0 );
+        }
+#endif
+
+        /*** Spawn the process and go home ***/
+        if( spawn_it( fp, command ) == 0 ) {
+            return( 0 );
+        }
+#if defined( __NT__ )
+        SetStdHandle( STD_INPUT_HANDLE, oldHandle );
+#elif defined( __OS2__ )
+        osHandle = STDIN_HANDLE;
+        rc = DosDupHandle( oldHandle, &osHandle );
+#endif
+        close( handles[0] );        /* parent process should close this */
+    } else {
+        /*** Change the standard output handle for process inheritance ***/
+#if defined( __NT__ )
+        osHandle = GetStdHandle( STD_OUTPUT_HANDLE );       /* get old */
+        if( osHandle == INVALID_HANDLE_VALUE ) {
+            return( 0 );
+        }
+        oldHandle = osHandle;
+        rc = SetStdHandle( STD_OUTPUT_HANDLE,               /* set new */
+                           (HANDLE)_os_handle(handles[1]) );
+        if( rc == FALSE ) {
+            SetStdHandle( STD_OUTPUT_HANDLE, oldHandle );
+            return( 0 );
+        }
+#elif defined( __OS2__ )
+        oldHandle = 0xFFFFFFFF;             /* duplicate standard input */
+        rc = DosDupHandle( STDOUT_HANDLE, &oldHandle );
+        if( rc != NO_ERROR ) {
+            return( 0 );
+        }
+        osHandle = STDOUT_HANDLE;           /* use new standard input */
+        rc = DosDupHandle( (HFILE)_os_handle(handles[1]), &osHandle );
+        if( rc != NO_ERROR ) {
+            DosClose( oldHandle );
+            return( 0 );
+        }
+#endif
+
+        /*** Spawn the process and go home ***/
+        if( spawn_it( fp, command ) == 0 ) {
+            return( 0 );
+        }
+#if defined( __NT__ )
+        SetStdHandle( STD_OUTPUT_HANDLE, oldHandle );
+#elif defined( __OS2__ )
+        osHandle = STDOUT_HANDLE;
+        rc = DosDupHandle( oldHandle, &osHandle );
+#endif
+        close( handles[1] );        /* parent process should close this */
+    }
+
+    return( 1 );
+}
+
+
 _WCRTLINK FILE *__F_NAME(_popen,_wpopen)( const CHAR_TYPE *command, const CHAR_TYPE *mode )
 /*****************************************************************************************/
 {
@@ -186,219 +401,4 @@ _WCRTLINK FILE *__F_NAME(_popen,_wpopen)( const CHAR_TYPE *command, const CHAR_T
         close( handles[1] );
         return( NULL );
     }
-}
-
-
-/* Returns non-zero on success */
-
-static int connect_pipe( FILE *fp, const CHAR_TYPE *command, int *handles,
-                         int readOrWrite, int textOrBinary )
-/************************************************************************/
-{
-#if defined( __NT__ )
-    BOOL                rc;
-    HANDLE              osHandle;
-    HANDLE              oldHandle;
-#elif defined( __WARP__ )
-    APIRET              rc;
-    HFILE               osHandle;
-    HFILE               oldHandle;
-#elif defined( __OS2__ )
-    USHORT              rc;
-    HFILE               osHandle;
-    HFILE               oldHandle;
-#endif
-
-    if( readOrWrite == 'w' ) {
-        /*** Change the standard input handle for process inheritance ***/
-#if defined( __NT__ )
-        osHandle = GetStdHandle( STD_INPUT_HANDLE );        /* get old */
-        if( osHandle == INVALID_HANDLE_VALUE ) {
-            return( 0 );
-        }
-        oldHandle = osHandle;
-        rc = SetStdHandle( STD_INPUT_HANDLE,                /* set new */
-                           (HANDLE)_os_handle(handles[0]) );
-        if( rc == FALSE ) {
-            SetStdHandle( STD_INPUT_HANDLE, oldHandle );
-            return( 0 );
-        }
-#elif defined( __OS2__ )
-        oldHandle = 0xFFFFFFFF;             /* duplicate standard input */
-        rc = DosDupHandle( STDIN_HANDLE, &oldHandle );
-        if( rc != NO_ERROR )  return( 0 );
-        osHandle = STDIN_HANDLE;            /* use new standard input */
-        rc = DosDupHandle( (HFILE)_os_handle(handles[0]), &osHandle );
-        if( rc != NO_ERROR ) {
-            DosClose( oldHandle );
-            return( 0 );
-        }
-#endif
-
-        /*** Spawn the process and go home ***/
-        if( spawn_it( fp, command ) == 0 ) {
-            return( 0 );
-        }
-#if defined( __NT__ )
-        SetStdHandle( STD_INPUT_HANDLE, oldHandle );
-#elif defined( __OS2__ )
-        osHandle = STDIN_HANDLE;
-        rc = DosDupHandle( oldHandle, &osHandle );
-#endif
-        close( handles[0] );        /* parent process should close this */
-    } else {
-        /*** Change the standard output handle for process inheritance ***/
-#if defined( __NT__ )
-        osHandle = GetStdHandle( STD_OUTPUT_HANDLE );       /* get old */
-        if( osHandle == INVALID_HANDLE_VALUE ) {
-            return( 0 );
-        }
-        oldHandle = osHandle;
-        rc = SetStdHandle( STD_OUTPUT_HANDLE,               /* set new */
-                           (HANDLE)_os_handle(handles[1]) );
-        if( rc == FALSE ) {
-            SetStdHandle( STD_OUTPUT_HANDLE, oldHandle );
-            return( 0 );
-        }
-#elif defined( __OS2__ )
-        oldHandle = 0xFFFFFFFF;             /* duplicate standard input */
-        rc = DosDupHandle( STDOUT_HANDLE, &oldHandle );
-        if( rc != NO_ERROR ) {
-            return( 0 );
-        }
-        osHandle = STDOUT_HANDLE;           /* use new standard input */
-        rc = DosDupHandle( (HFILE)_os_handle(handles[1]), &osHandle );
-        if( rc != NO_ERROR ) {
-            DosClose( oldHandle );
-            return( 0 );
-        }
-#endif
-
-        /*** Spawn the process and go home ***/
-        if( spawn_it( fp, command ) == 0 ) {
-            return( 0 );
-        }
-#if defined( __NT__ )
-        SetStdHandle( STD_OUTPUT_HANDLE, oldHandle );
-#elif defined( __OS2__ )
-        osHandle = STDOUT_HANDLE;
-        rc = DosDupHandle( oldHandle, &osHandle );
-#endif
-        close( handles[1] );        /* parent process should close this */
-    }
-
-    return( 1 );
-}
-
-
-/* Returns non-zero on success */
-
-static int spawn_it( FILE *fp, const CHAR_TYPE *command )
-/*******************************************************/
-{
-    int                 pid;
-    int                 numWords;
-    CHAR_TYPE           **words;    /* note: [0] and [1] used for "cmd.exe /c" */
-
-    /*** Create an argv array from the command string ***/
-    numWords = parse_words( command, NULL );
-    if( numWords == -1 ) {
-        return( 0 );
-    }
-    words = alloca( (numWords + 2 + 1) * sizeof( CHAR_TYPE * ) );
-    if( words == NULL ) {
-        return( 0 );
-    }
-    numWords = parse_words( command, &words[2] );
-    if( numWords == -1 ) {
-        return( 0 );
-    }
-
-    /*** Use CMD.EXE under NT and OS/2, and COMMAND.COM under Win95 ***/
-#if defined( __OS2__ )
-    words[0] = __F_NAME("cmd.exe",L"cmd.exe");
-#else
-    if( WIN32_IS_WIN95 ) {
-        words[0] = __F_NAME("command.com",L"command.com");  /* 95 */
-    } else {
-        words[0] = __F_NAME("cmd.exe",L"cmd.exe");          /* NT */
-    }
-#endif
-    words[1] = __F_NAME("/c",L"/c");
-
-    /*** Spawn the process ***/
-    pid = __F_NAME(spawnvp,_wspawnvp)( P_NOWAIT, words[0],
-        (const CHAR_TYPE **)&words[0] );
-    if( pid == -1 ) {
-        return( 0 );
-    }
-    _FP_PIPEDATA(fp).pid = pid;
-
-    /*** Free any memory used by parse_words ('words' freed on return) ***/
-    for( numWords--; numWords>=2; numWords-- ) {
-        lib_free( words[numWords] );
-    }
-    return( 1 );
-}
-
-
-/*
- * Returns the number of whitespace-delimited words in 'command'.  If 'words'
- * is non-NULL, then each word will have memory allocated to hold it and will
- * be copied into the appropriate space in the array (e.g. the second word
- * will be copied into words[1]).  The array must be large enough, so just
- * call parse_words with 'words'==NULL before to get the proper size, then
- * do an alloca((n+1)*sizeof(CHAR_TYPE*)).  The caller is responsible for freeing
- * any memory allocated for the words.  Returns -1 on error.
- */
-
-static int parse_words( const CHAR_TYPE *command, CHAR_TYPE **words )
-/*******************************************************************/
-{
-    int                 numWords = 0;
-    const CHAR_TYPE     *p = command;
-    const CHAR_TYPE     *pLookAhead;
-    int                 error = 0;
-    size_t              len;
-
-    while( *p != '\0' ) {
-        /*** Skip any leading whitespace ***/
-        while( __F_NAME(isspace,iswspace)(*p) ) {
-            p++;
-        }
-
-        /*** Handle the word ***/
-        if( *p == '\0' )  break;
-        pLookAhead = p;
-        while( *pLookAhead != '\0'  &&  !__F_NAME(isspace,iswspace)(*pLookAhead) ) {
-            pLookAhead++;
-        }
-        if( words != NULL ) {
-            len = pLookAhead - p;       /* # of chars, excluding the null */
-            words[numWords] = lib_malloc( (len + 1) * sizeof( CHAR_TYPE ) );
-            if( words[numWords] == NULL ) {     /* break on error */
-                error = 1;
-                break;
-            }
-            __F_NAME(strncpy,wcsncpy)( words[numWords], p, len );
-            words[numWords][len] = '\0';
-        }
-
-        p = pLookAhead;
-        numWords++;
-    }
-
-    /*** If an error occurred, free any memory we've allocated ***/
-    if( error ) {
-        for( numWords--; numWords>=0; numWords-- ) {
-            lib_free( words[numWords] );
-        }
-        return( -1 );
-    } else {
-        if( words != NULL ) {
-            words[numWords] = NULL;    /* last string */
-        }
-    }
-
-    return( numWords );
 }

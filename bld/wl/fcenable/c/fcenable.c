@@ -102,6 +102,60 @@ static char *       HelpMsg =
 
 // forward declarations
 static void     ProcessFiles( char ** );
+static void     ProcFile( char * fname );
+
+
+// the spawn & suicide support.
+
+static void *SpawnStack;
+
+static int Spawn1( void (*fn)(), void *data1 )
+/********************************************/
+{
+    void *  save_env;
+    jmp_buf env;
+    int     status;
+
+    save_env = SpawnStack;
+    SpawnStack = env;
+    status = setjmp( env );
+    if( status == 0 ) {
+        (*fn)( data1 );
+    }
+    SpawnStack = save_env;  /* unwind */
+    return( status );
+}
+
+
+static void Suicide( void )
+/*************************/
+{
+    if( SpawnStack != NULL ) {
+        longjmp( SpawnStack, 1 );
+    }
+}
+
+
+static int QOpen( char *filename, int access, int permission )
+/************************************************************/
+{
+    int result;
+
+    result = open( filename, access, permission );
+    if( result == ERROR ) {
+        IOError( "problem opening file" );
+    }
+    return( result );
+}
+
+
+static void QRemove( char *filename )
+/***********************************/
+{
+    if( remove( filename ) != 0 ) {
+        IOError( "problem removing file" );
+    }
+}
 
 
 extern int main(int argc, char **argv )
@@ -132,23 +186,56 @@ extern int main(int argc, char **argv )
     return( retval );
 }
 
-static void ProcessFiles( char **argv )
-/*************************************/
+static void ProcList( bool (*fn)(char *,int), char ***argv )
+/**********************************************************/
+// this processes a list of comma-separated strings, being as forgiving about
+// spaces as possible.
 {
     char *  item;
+    char *  comma;
+    bool    checksep;   // TRUE iff we should check for a separator.
 
-    while( *argv != NULL ) {
-        item = *argv;
-        if( *item == '-' || *item == '/' ) {
-            ProcessOption( &argv );
-        } else {
-            put( "Processing file '" );
-            put( item );
-            put( "'\n" );
-            ProcFile( item );
-            argv++;
+    (**argv)++;        // skip the option character.
+    checksep = FALSE;
+    while( **argv != NULL ) {
+        item = **argv;
+        if( checksep ) {                // separator needed to continue list
+            if( *item != ',' ) break;
+            item++;
         }
+        comma = strchr( item, ',' );
+        while( comma != NULL ) {            // while commas inside string
+            if( !fn( item, comma - item ) ) {
+                Warning( "ignoring unexpected comma" );
+            }
+            item = comma + 1;
+            comma = strchr( item, ',' );
+        }
+        if( *item != '\0' ) {
+            checksep = fn( item, strlen( item ) );
+        } else {        // we had a comma at end of string, so no sep needed
+            checksep = FALSE;
+        }
+        (*argv)++;
     }
+    if( ExcludeState != EX_NONE ) {
+        Warning( "incomplete exclude option specified" );
+        MemFree( ExEntry );
+        ExcludeState = EX_NONE;
+    }
+}
+
+static void MakeListItem( name_list **list, char *item, int len )
+/***************************************************************/
+{
+    name_list * entry;
+
+    entry = MemAlloc( sizeof( name_list ) + len );
+    entry->next = NULL;
+    entry->lnameidx = 0;
+    memcpy( entry->name, item, len );
+    *(entry->name + len) = '\0';
+    LinkList( list, entry );
 }
 
 static bool ProcClass( char *item, int len )
@@ -173,19 +260,6 @@ static bool ProcSeg( char *item, int len )
     }
     MakeListItem( &SegList, item, len );
     return( TRUE );     // TRUE == check for a list separator
-}
-
-static void MakeListItem( name_list **list, char *item, int len )
-/***************************************************************/
-{
-    name_list * entry;
-
-    entry = MemAlloc( sizeof( name_list ) + len );
-    entry->next = NULL;
-    entry->lnameidx = 0;
-    memcpy( entry->name, item, len );
-    *(entry->name + len) = '\0';
-    LinkList( list, entry );
 }
 
 static bool ProcExclude( char *item, int len )
@@ -269,42 +343,22 @@ static void ProcessOption( char ***argv )
     }
 }
 
-static void ProcList( bool (*fn)(char *,int), char ***argv )
-/**********************************************************/
-// this processes a list of comma-separated strings, being as forgiving about
-// spaces as possible.
+static void ProcessFiles( char **argv )
+/*************************************/
 {
     char *  item;
-    char *  comma;
-    bool    checksep;   // TRUE iff we should check for a separator.
 
-    (**argv)++;        // skip the option character.
-    checksep = FALSE;
-    while( **argv != NULL ) {
-        item = **argv;
-        if( checksep ) {                // separator needed to continue list
-            if( *item != ',' ) break;
-            item++;
+    while( *argv != NULL ) {
+        item = *argv;
+        if( *item == '-' || *item == '/' ) {
+            ProcessOption( &argv );
+        } else {
+            put( "Processing file '" );
+            put( item );
+            put( "'\n" );
+            ProcFile( item );
+            argv++;
         }
-        comma = strchr( item, ',' );
-        while( comma != NULL ) {            // while commas inside string
-            if( !fn( item, comma - item ) ) {
-                Warning( "ignoring unexpected comma" );
-            }
-            item = comma + 1;
-            comma = strchr( item, ',' );
-        }
-        if( *item != '\0' ) {
-            checksep = fn( item, strlen( item ) );
-        } else {        // we had a comma at end of string, so no sep needed
-            checksep = FALSE;
-        }
-        (*argv)++;
-    }
-    if( ExcludeState != EX_NONE ) {
-        Warning( "incomplete exclude option specified" );
-        MemFree( ExEntry );
-        ExcludeState = EX_NONE;
     }
 }
 
@@ -318,6 +372,38 @@ static void CloseFiles( void )
     if( OutFile != NOFILE ) {
         close( OutFile );
         OutFile = NOFILE;
+    }
+}
+
+static void ReplaceExt( char * name, char * new_ext, BYTE force )
+/***************************************************************/
+{
+    char        buff[ _MAX_PATH2 ];
+    char *      p;
+    char *      d;
+    char *      n;
+    char *      e;
+
+    _splitpath2( name, buff, &d, &p, &n, &e );
+    if( force || e[0] == '\0' ) {
+        strcpy( e, new_ext );
+        _makepath( name, d, p, n, e );
+    }
+}
+
+static void DoReplace( void )
+/***************************/
+// this supports concatenated object decks and libraries (PageLen != 0)
+{
+    FlushBuffer();
+    if( PageLen != 0 ) {         // NYI - spawning WLIB every time is
+        close( OutFile );       // rather slow. Replace this somehow??
+        OutFile = NOFILE;
+        if( spawnlp( P_WAIT, "WLIB.EXE", "WLIB.EXE", TEMP_LIB_NAME, "/b",
+                                      "+" TEMP_OBJ_NAME, NULL ) != 0 ) {
+            Error( "problem with temporary library" );
+        }
+        QRemove( TEMP_OBJ_NAME );
     }
 }
 
@@ -381,38 +467,6 @@ static void ProcFile( char * fname )
         rename( TEMP_OBJ_NAME, name );
     }
     FileCleanup();
-}
-
-static void DoReplace( void )
-/***************************/
-// this supports concatenated object decks and libraries (PageLen != 0)
-{
-    FlushBuffer();
-    if( PageLen != 0 ) {         // NYI - spawning WLIB every time is
-        close( OutFile );       // rather slow. Replace this somehow??
-        OutFile = NOFILE;
-        if( spawnlp( P_WAIT, "WLIB.EXE", "WLIB.EXE", TEMP_LIB_NAME, "/b",
-                                      "+" TEMP_OBJ_NAME, NULL ) != 0 ) {
-            Error( "problem with temporary library" );
-        }
-        QRemove( TEMP_OBJ_NAME );
-    }
-}
-
-static void ReplaceExt( char * name, char * new_ext, BYTE force )
-/***************************************************************/
-{
-    char        buff[ _MAX_PATH2 ];
-    char *      p;
-    char *      d;
-    char *      n;
-    char *      e;
-
-    _splitpath2( name, buff, &d, &p, &n, &e );
-    if( force || e[0] == '\0' ) {
-        strcpy( e, new_ext );
-        _makepath( name, d, p, n, e );
-    }
 }
 
 int CopyFile( char * file1, char * file2 )
@@ -551,54 +605,4 @@ extern long int QSeek( int handle, long offset, int origin )
         IOError( "problem during seek" );
     }
     return( result );
-}
-
-static int QOpen( char *filename, int access, int permission )
-/************************************************************/
-{
-    int result;
-
-    result = open( filename, access, permission );
-    if( result == ERROR ) {
-        IOError( "problem opening file" );
-    }
-    return( result );
-}
-
-static void QRemove( char *filename )
-/***********************************/
-{
-    if( remove( filename ) != 0 ) {
-        IOError( "problem removing file" );
-    }
-}
-
-// the spawn & suicide support.
-
-static void *SpawnStack;
-
-static int Spawn1( void (*fn)(), void *data1 )
-/********************************************/
-{
-    void *  save_env;
-    jmp_buf env;
-    int     status;
-
-    save_env = SpawnStack;
-    SpawnStack = env;
-    status = setjmp( env );
-    if( status == 0 ) {
-        (*fn)( data1 );
-    }
-    SpawnStack = save_env;  /* unwind */
-    return( status );
-}
-
-
-static void Suicide( void )
-/*************************/
-{
-    if( SpawnStack != NULL ) {
-        longjmp( SpawnStack, 1 );
-    }
 }

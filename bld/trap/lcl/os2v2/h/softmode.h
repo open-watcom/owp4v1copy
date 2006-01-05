@@ -39,7 +39,6 @@ extern VOID InitSoftDebug( VOID );
 extern BOOL IsPMDebugger();
 extern char SetHardMode( char hard );
 extern VOID WakeThreads( PID pid );
-extern void WakeOneThread( PID pid, TID tid );
 extern void SetBrkPending( void );
 
 

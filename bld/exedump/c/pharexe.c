@@ -154,54 +154,6 @@ typedef struct {
 } seg_info_rec;
 
 /*
- * Dump the Pharlap Executable Header, if any.
- */
-bool Dmp_phar_head( void )
-/************************/
-{
-    unsigned_32     offset;
-
-    Wlseek( 0 );
-    Wread( &Phar_head, sizeof( simple_header ) );
-    if( Phar_head.signature == SIMPLE_SIGNATURE ) {
-        Banner( "Pharlap EXE Header" );
-        Dump_header( (char *)&Phar_head.mod_size, phar_exe_msg );
-    }
-    if( Phar_head.signature == REX_SIGNATURE ) {
-        Banner( "Pharlap REX Header" );
-        Dump_header( (char *)&Phar_head.mod_size, phar_exe_msg );
-        dmp_rex_reloc();
-    }
-    if( Phar_head.signature == SIMPLE_SIGNATURE ||
-                            Phar_head.signature == REX_SIGNATURE ) {
-        if( Options_dmp & (DOS_SEG_DMP | OS2_SEG_DMP) ) {
-            offset = Phar_head.reloc_offset + Phar_head.num_relocs *
-                                            sizeof( unsigned_32 );
-            Wdputslc( "\n" );
-            Banner( "Segments" );
-            Dmp_seg_data( offset, Phar_head.mod_size + 512 *
-                                    (Phar_head.file_size-1) - offset );
-        }
-        return( 1 );
-    }
-    Wlseek( 0 );
-    Wread( &Phar_ext_head, sizeof( Phar_ext_head.signature ) );
-    if( Phar_ext_head.signature == EXTENDED_SIGNATURE ) {
-        Wread( (char *)&Phar_ext_head + sizeof( Phar_ext_head.signature ),
-            sizeof( extended_header ) - sizeof( Phar_ext_head.signature ) );
-        Banner( "Pharlap EXE Extended Header" );
-        Dump_header( (char *)&Phar_ext_head.format_level, phar_ext_msg );
-        dmp_rtp_tbl();
-        dmp_seg_info_tbl();
-        dmp_reloc_tbl();
-        dmp_dts();
-        dmp_tss();
-        return( 1 );
-    }
-    return( 0 );
-}
-
-/*
  * Dump the rex relocation table.
  */
 static void dmp_rex_reloc( void )
@@ -340,37 +292,6 @@ static void dmp_tss( void )
 /*
  * Dump the gdt, ldt, idt.
  */
-static void dmp_dts( void )
-/*************************/
-{
-    unsigned_32     size;
-
-    size = Phar_ext_head.gdt_size;
-    if( size ) {
-        Wdputslc( "\n" );
-        Banner( "GDT table" );
-        Wlseek( Phar_ext_head.gdt_offset + Phar_ext_head.load_offset );
-        dmp_descriptor( size );
-    }
-    size = Phar_ext_head.ldt_size;
-    if( size ) {
-        Wdputslc( "\n" );
-        Banner( "LDT table" );
-        Wlseek( Phar_ext_head.ldt_offset + Phar_ext_head.load_offset );
-        dmp_descriptor( size );
-    }
-    size = Phar_ext_head.idt_size;
-    if( size ) {
-        Wdputslc( "\n" );
-        Banner( "IDT table" );
-        Wlseek( Phar_ext_head.idt_offset + Phar_ext_head.load_offset );
-        dmp_descriptor( size );
-    }
-}
-
-/*
- * Dump the gdt, ldt, idt.
- */
 static void dmp_descriptor( unsigned_32 size )
 /********************************************/
 {
@@ -400,4 +321,83 @@ static void dmp_descriptor( unsigned_32 size )
         Puthex( desc.bits2 >> 4, 1 );
         Wdputslc( "H\n" );
     }
+}
+
+/*
+ * Dump the gdt, ldt, idt.
+ */
+static void dmp_dts( void )
+/*************************/
+{
+    unsigned_32     size;
+
+    size = Phar_ext_head.gdt_size;
+    if( size ) {
+        Wdputslc( "\n" );
+        Banner( "GDT table" );
+        Wlseek( Phar_ext_head.gdt_offset + Phar_ext_head.load_offset );
+        dmp_descriptor( size );
+    }
+    size = Phar_ext_head.ldt_size;
+    if( size ) {
+        Wdputslc( "\n" );
+        Banner( "LDT table" );
+        Wlseek( Phar_ext_head.ldt_offset + Phar_ext_head.load_offset );
+        dmp_descriptor( size );
+    }
+    size = Phar_ext_head.idt_size;
+    if( size ) {
+        Wdputslc( "\n" );
+        Banner( "IDT table" );
+        Wlseek( Phar_ext_head.idt_offset + Phar_ext_head.load_offset );
+        dmp_descriptor( size );
+    }
+}
+
+/*
+ * Dump the Pharlap Executable Header, if any.
+ */
+bool Dmp_phar_head( void )
+/************************/
+{
+    unsigned_32     offset;
+
+    Wlseek( 0 );
+    Wread( &Phar_head, sizeof( simple_header ) );
+    if( Phar_head.signature == SIMPLE_SIGNATURE ) {
+        Banner( "Pharlap EXE Header" );
+        Dump_header( (char *)&Phar_head.mod_size, phar_exe_msg );
+    }
+    if( Phar_head.signature == REX_SIGNATURE ) {
+        Banner( "Pharlap REX Header" );
+        Dump_header( (char *)&Phar_head.mod_size, phar_exe_msg );
+        dmp_rex_reloc();
+    }
+    if( Phar_head.signature == SIMPLE_SIGNATURE ||
+                            Phar_head.signature == REX_SIGNATURE ) {
+        if( Options_dmp & (DOS_SEG_DMP | OS2_SEG_DMP) ) {
+            offset = Phar_head.reloc_offset + Phar_head.num_relocs *
+                                            sizeof( unsigned_32 );
+            Wdputslc( "\n" );
+            Banner( "Segments" );
+            Dmp_seg_data( offset, Phar_head.mod_size + 512 *
+                                    (Phar_head.file_size-1) - offset );
+        }
+        return( 1 );
+    }
+    Wlseek( 0 );
+    Wread( &Phar_ext_head, sizeof( Phar_ext_head.signature ) );
+    if( Phar_ext_head.signature == EXTENDED_SIGNATURE ) {
+        Wread( (char *)&Phar_ext_head + sizeof( Phar_ext_head.signature ),
+            sizeof( extended_header ) - sizeof( Phar_ext_head.signature ) );
+        Banner( "Pharlap EXE Extended Header" );
+        Dump_header( (char *)&Phar_ext_head.format_level, phar_ext_msg );
+        dmp_rtp_tbl();
+        dmp_seg_info_tbl();
+        dmp_reloc_tbl();
+        dmp_dts();
+        dmp_tss();
+        return( 1 );
+    }
+    return( 0 );
 }

@@ -478,6 +478,21 @@ static void pushPrag( PRAG_STACK **h, unsigned value )
     StackPush( h, stack_entry );
 }
 
+static boolean popPrag( PRAG_STACK **h, unsigned *pvalue )
+{
+    PRAG_STACK *pack_entry;
+
+    pack_entry = StackPop( h );
+    if( pack_entry != NULL ) {
+        if( pvalue != NULL ) {
+            *pvalue = pack_entry->value;
+        }
+        StackPush( &FreePrags, pack_entry );
+        return( TRUE );
+    }
+    return( FALSE );
+}
+
 // forms: (1) #pragma enum int
 //        (2) #pragma enum minimum
 //        (3) #pragma enum original
@@ -1047,21 +1062,6 @@ void PragInit(
     CompInfo.init_priority = INIT_PRIORITY_PROGRAM;
 }
 
-
-static boolean popPrag( PRAG_STACK **h, unsigned *pvalue )
-{
-    PRAG_STACK *pack_entry;
-
-    pack_entry = StackPop( h );
-    if( pack_entry != NULL ) {
-        if( pvalue != NULL ) {
-            *pvalue = pack_entry->value;
-        }
-        StackPush( &FreePrags, pack_entry );
-        return( TRUE );
-    }
-    return( FALSE );
-}
 
 typedef struct magic_word {
     char        *name;

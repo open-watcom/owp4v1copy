@@ -65,59 +65,6 @@ char * pe_import_msg[] = {
 extern char  Fname[ _MAX_FNAME ];
 
 /*
- * Dump the Export Table.
- */
-void Dmp_exports( void )
-/**********************/
-{
-    pe_export_directory     pe_export;
-
-    Wlseek( Exp_off );
-    Wread( &pe_export, sizeof( pe_export_directory ) );
-    Banner( "Export Directory Table" );
-    Dump_header( (char *)&pe_export.flags, pe_export_msg );
-    dmp_exp_addr( pe_export.address_table_rva -
-            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
-            pe_export.num_eat_entries );
-    dmp_exp_ord_name( pe_export.name_ptr_table_rva -
-            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
-            pe_export.ordinal_table_rva -
-            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
-            pe_export.num_name_ptrs, pe_export.ordinal_base );
-    Wdputslc( "\n" );
-}
-
-/*
- * Dump the Import Table.
- */
-void Dmp_imports( void )
-/**********************/
-{
-    pe_import_directory     pe_import;
-    unsigned_32             offset;
-    char                    name[BUFFERSIZE];
-
-    offset = Imp_off;
-    for( ;; ) {
-        Wlseek( offset );
-        Wread( &pe_import, sizeof( pe_import_directory ) );
-        if( pe_import.import_lookup_table_rva == NULL ) break;
-        Banner( "Import Directory Table" );
-        Dump_header( (char *)&pe_import.import_lookup_table_rva, pe_import_msg );
-        Wlseek( pe_import.name_rva - Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
-        Wread( name, sizeof( name ) );
-        Wdputs( "          DLL name = <" );
-        Wdputs( name );
-        Wdputslc( ">\n" );
-        dmp_imp_lookup( pe_import.import_lookup_table_rva -
-                Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
-        dmp_imp_addr( pe_import.import_address_table_rva -
-                Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
-        offset += sizeof( pe_import_directory );
-    }
-}
-
-/*
  * Dump the Export address Table.
  */
 static void dmp_exp_addr( unsigned_32 offset, unsigned_32 num_ent )
@@ -270,24 +217,6 @@ static void dmp_imp_lookup( unsigned_32 offset )
 }
 
 /*
- * Dump the Export Table.
- */
-void Dmp_exp_tab( void )
-/**********************/
-{
-    pe_export_directory     pe_export;
-
-    strupr( Fname );
-    Wlseek( Exp_off );
-    Wread( &pe_export, sizeof( pe_export_directory ) );
-    dmp_ord_name( pe_export.name_ptr_table_rva -
-            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
-            pe_export.ordinal_table_rva -
-            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
-            pe_export.num_name_ptrs, pe_export.ordinal_base );
-}
-
-/*
  * Dump the Export Name and Ordinal Tables.
  */
 static void dmp_ord_name( unsigned_32 nam_off, unsigned_32 ord_off,
@@ -320,5 +249,76 @@ static void dmp_ord_name( unsigned_32 nam_off, unsigned_32 ord_off,
         Wdputs( ".DLL\'." );
         Putdec( ord_addr[i] + base );
         Wdputslc( "\n" );
+    }
+}
+
+/*
+ * Dump the Export Table.
+ */
+void Dmp_exp_tab( void )
+/**********************/
+{
+    pe_export_directory     pe_export;
+
+    strupr( Fname );
+    Wlseek( Exp_off );
+    Wread( &pe_export, sizeof( pe_export_directory ) );
+    dmp_ord_name( pe_export.name_ptr_table_rva -
+            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
+            pe_export.ordinal_table_rva -
+            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
+            pe_export.num_name_ptrs, pe_export.ordinal_base );
+}
+
+/*
+ * Dump the Export Table.
+ */
+void Dmp_exports( void )
+/**********************/
+{
+    pe_export_directory     pe_export;
+
+    Wlseek( Exp_off );
+    Wread( &pe_export, sizeof( pe_export_directory ) );
+    Banner( "Export Directory Table" );
+    Dump_header( (char *)&pe_export.flags, pe_export_msg );
+    dmp_exp_addr( pe_export.address_table_rva -
+            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
+            pe_export.num_eat_entries );
+    dmp_exp_ord_name( pe_export.name_ptr_table_rva -
+            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
+            pe_export.ordinal_table_rva -
+            Pe_head.table[ PE_TBL_EXPORT ].rva + Exp_off,
+            pe_export.num_name_ptrs, pe_export.ordinal_base );
+    Wdputslc( "\n" );
+}
+
+/*
+ * Dump the Import Table.
+ */
+void Dmp_imports( void )
+/**********************/
+{
+    pe_import_directory     pe_import;
+    unsigned_32             offset;
+    char                    name[BUFFERSIZE];
+
+    offset = Imp_off;
+    for( ;; ) {
+        Wlseek( offset );
+        Wread( &pe_import, sizeof( pe_import_directory ) );
+        if( pe_import.import_lookup_table_rva == NULL ) break;
+        Banner( "Import Directory Table" );
+        Dump_header( (char *)&pe_import.import_lookup_table_rva, pe_import_msg );
+        Wlseek( pe_import.name_rva - Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
+        Wread( name, sizeof( name ) );
+        Wdputs( "          DLL name = <" );
+        Wdputs( name );
+        Wdputslc( ">\n" );
+        dmp_imp_lookup( pe_import.import_lookup_table_rva -
+                Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
+        dmp_imp_addr( pe_import.import_address_table_rva -
+                Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
+        offset += sizeof( pe_import_directory );
     }
 }

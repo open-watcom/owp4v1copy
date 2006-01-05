@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Expression support for classes.
 *
 ****************************************************************************/
 
-
-/*
-ANALCLSS.C -- expression support for classes
-*/
 
 /*
 WATCOM C++ uses two constructors to accomplish the task of turning raw memory
@@ -997,6 +992,26 @@ static PTREE genDefaultCopyDiag(// GENERATE COPY TO CLASS OBJECT, WITH DIAGNOSIS
 }
 
 
+static boolean accessCopyCtor(  // CHECK ACCESS TO DEFAULT COPY CTOR
+    TYPE type,                  // - type for class
+    SYMBOL *ctor )              // - addr[ copy ctor ]
+{
+    boolean retn;               // - TRUE ==> access is ok
+    SEARCH_RESULT *result;      // - search result
+
+    type = ClassTypeForType( type );
+    result = accessDefaultCopy( type, ctor );
+    if( result == NULL ) {
+        ctor = NULL;
+        retn = TRUE;
+    } else {
+        retn = ! ScopeCheckSymbol( result, *ctor );
+        ScopeFreeResult( result );
+    }
+    return( retn );
+}
+
+
 static PTREE defaultCopyDiag(   // COPY TO CLASS OBJECT, WITH DIAGNOSIS
     PTREE left,                 // - target expression
     PTREE src,                  // - source expression
@@ -1210,26 +1225,6 @@ PTREE ClassCopyTemp(            // COPY A TEMPORARY
 #endif
     }
     return expr;
-}
-
-
-static boolean accessCopyCtor(  // CHECK ACCESS TO DEFAULT COPY CTOR
-    TYPE type,                  // - type for class
-    SYMBOL *ctor )              // - addr[ copy ctor ]
-{
-    boolean retn;               // - TRUE ==> access is ok
-    SEARCH_RESULT *result;      // - search result
-
-    type = ClassTypeForType( type );
-    result = accessDefaultCopy( type, ctor );
-    if( result == NULL ) {
-        ctor = NULL;
-        retn = TRUE;
-    } else {
-        retn = ! ScopeCheckSymbol( result, *ctor );
-        ScopeFreeResult( result );
-    }
-    return( retn );
 }
 
 

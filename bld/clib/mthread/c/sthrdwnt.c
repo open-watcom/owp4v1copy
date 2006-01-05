@@ -51,7 +51,6 @@ thread_data *__AllocInitThreadData( thread_data *tdata )
 }
 
 int __NTThreadInit( void ) { return( 1 ); }
-void __NTThreadFini( void ) {}
 int __NTAddThread( thread_data *t ) { t = t; return( 1 ); }
 void __NTRemoveThread( int c ) { c = c; }
 void __InitMultipleThread( void ) {}

@@ -31,7 +31,6 @@
 
 void   WriteRegs( uDB_t * );
 void   ReadRegs( uDB_t * );
-void   RecordModHandle( ULONG value );
 void   WriteLinear( char *data, ULONG lin, USHORT size );
 void   ReadLinear( char *data, ULONG lin, USHORT size );
 USHORT WriteBuffer( char *data, USHORT segv, ULONG offv, USHORT size );

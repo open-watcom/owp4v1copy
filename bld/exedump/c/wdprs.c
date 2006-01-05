@@ -86,6 +86,19 @@ void Putdecl( unsigned_16 num, unsigned_16 len )
     Wdputc( num % 10 + '0' );
 }
 
+static void DecBZRecurse( unsigned_16 num, unsigned_16 len )
+/**********************************************************/
+{
+    if( len > 1 ) {
+        DecBZRecurse( num / 10, len - 1 );
+    }
+    if( num == 0 ) {        /* we are to the left of the 1st digit */
+        Wdputc( ' ' );
+    } else {
+        Wdputc( num % 10 + '0' );
+    }
+}
+
 /*
  * put a decimal number, always printing 'len' characters.
  * this will print only spaces if num == 0.
@@ -106,19 +119,6 @@ void Putdecbz( unsigned_16 num, unsigned_16 len )
     }
 }
 
-
-static void DecBZRecurse( unsigned_16 num, unsigned_16 len )
-/**********************************************************/
-{
-    if( len > 1 ) {
-        DecBZRecurse( num / 10, len - 1 );
-    }
-    if( num == 0 ) {        /* we are to the left of the 1st digit */
-        Wdputc( ' ' );
-    } else {
-        Wdputc( num % 10 + '0' );
-    }
-}
 
 char *get_file( bool lstf )
 /*************************/
@@ -142,30 +142,92 @@ char *get_file( bool lstf )
     return( fname );
 }
 
-void Parse_option( void )
-/***********************/
+/*
+ * skip the blanks
+ */
+static void skip_blank( void )
+/****************************/
 {
-    Options_dmp = EXE_INFO;
-    Segspec = 0;
-    Hexoff = 0;
-    skip_blank();
-#ifdef __UNIX__
-    while( *Cmd == '-' ) {
-#else
-    while( *Cmd == '/' || *Cmd == '-' ) {
-#endif
+    while isspace( *Cmd ) {
         Cmd++;
-        options( *Cmd++ );
-        skip_blank();
     }
-    Name = get_file( FALSE );
-#ifdef __UNIX__
-    while( *Cmd++ == '-' ) {
-#else
-    while( *Cmd++ == '/' || *Cmd++ == '-' ) {
-#endif
-        options( *Cmd++ );
-        skip_blank();
+}
+
+static void get_hex( void )
+/*************************/
+{
+    unsigned        i,m;
+    unsigned        j,l;
+    char            *num;
+
+    Cmd++;
+    l = 0;
+    num = Wmalloc( 16 );
+    for( m = 0; isxdigit( *Cmd ); Cmd++ ) {
+        num[m++] = *Cmd;
+    }
+    num[m] = '\0';
+    for( i = 0; num[i] != '\0'; i++ ) {
+        for( j = 0; hexchar[j] != '\0'; j++ ) {
+            if( toupper( num[m-i-1] ) == hexchar[j] ) break;
+        }
+        if( l == 0 ) {
+            l++;
+        } else {
+            l = l * 16;
+        }
+        Hexoff += j * l;
+    }
+}
+
+static void get_number( void )
+/****************************/
+{
+    unsigned_16     i;
+    char            *num;
+
+    Cmd++;
+    num = Wmalloc( 16 );
+    for( i = 0; isdigit( *Cmd ); Cmd++ ) {
+        num[i++] = *Cmd;
+    }
+    num[i] = '\0';
+    Segspec = atoi( num );
+    if( Segspec == 0 ) {
+        Options_dmp &= ~OS2_SEG_DMP;
+    } else {
+        Options_dmp &= ~DOS_SEG_DMP;
+    }
+}
+
+/*
+ * debug options
+ */
+static void debug_opts( char ch )
+/*******************************/
+{
+    switch( tolower( ch ) ) {
+    case 'x':
+        Debug_options = 0xff;
+        break;
+    case 'm':
+        Debug_options |= MODULE_INFO;
+        break;
+    case 'g':
+        Debug_options |= GLOBAL_INFO;
+        break;
+    case 'a':
+        Debug_options |= ADDR_INFO;
+        break;
+    case 'n':
+        Debug_options |= LINE_NUMS;
+        break;
+    case 'l':
+        Debug_options |= LOCALS;
+        break;
+    case 't':
+        Debug_options |= TYPES;
+        break;
     }
 }
 
@@ -243,91 +305,29 @@ static void options( char ch )
     }
 }
 
-static void get_hex( void )
-/*************************/
+void Parse_option( void )
+/***********************/
 {
-    unsigned        i,m;
-    unsigned        j,l;
-    char            *num;
-
-    Cmd++;
-    l = 0;
-    num = Wmalloc( 16 );
-    for( m = 0; isxdigit( *Cmd ); Cmd++ ) {
-        num[m++] = *Cmd;
-    }
-    num[m] = '\0';
-    for( i = 0; num[i] != '\0'; i++ ) {
-        for( j = 0; hexchar[j] != '\0'; j++ ) {
-            if( toupper( num[m-i-1] ) == hexchar[j] ) break;
-        }
-        if( l == 0 ) {
-            l++;
-        } else {
-            l = l * 16;
-        }
-        Hexoff += j * l;
-    }
-}
-
-static void get_number( void )
-/****************************/
-{
-    unsigned_16     i;
-    char            *num;
-
-    Cmd++;
-    num = Wmalloc( 16 );
-    for( i = 0; isdigit( *Cmd ); Cmd++ ) {
-        num[i++] = *Cmd;
-    }
-    num[i] = '\0';
-    Segspec = atoi( num );
-    if( Segspec == 0 ) {
-        Options_dmp &= ~OS2_SEG_DMP;
-    } else {
-        Options_dmp &= ~DOS_SEG_DMP;
-    }
-}
-
-/*
- * skip the blanks
- */
-static void skip_blank( void )
-/****************************/
-{
-    while isspace( *Cmd ) {
+    Options_dmp = EXE_INFO;
+    Segspec = 0;
+    Hexoff = 0;
+    skip_blank();
+#ifdef __UNIX__
+    while( *Cmd == '-' ) {
+#else
+    while( *Cmd == '/' || *Cmd == '-' ) {
+#endif
         Cmd++;
+        options( *Cmd++ );
+        skip_blank();
     }
-}
-
-/*
- * debug options
- */
-static void debug_opts( char ch )
-/*******************************/
-{
-    switch( tolower( ch ) ) {
-    case 'x':
-        Debug_options = 0xff;
-        break;
-    case 'm':
-        Debug_options |= MODULE_INFO;
-        break;
-    case 'g':
-        Debug_options |= GLOBAL_INFO;
-        break;
-    case 'a':
-        Debug_options |= ADDR_INFO;
-        break;
-    case 'n':
-        Debug_options |= LINE_NUMS;
-        break;
-    case 'l':
-        Debug_options |= LOCALS;
-        break;
-    case 't':
-        Debug_options |= TYPES;
-        break;
+    Name = get_file( FALSE );
+#ifdef __UNIX__
+    while( *Cmd++ == '-' ) {
+#else
+    while( *Cmd++ == '/' || *Cmd++ == '-' ) {
+#endif
+        options( *Cmd++ );
+        skip_blank();
     }
 }

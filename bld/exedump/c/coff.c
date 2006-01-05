@@ -98,82 +98,6 @@ static void unload_string_table( void )
     free( String_table );
 }
 
-/*
- * Dump the coff object, if any.
- */
-bool Dmp_coff_head( void )
-/************************/
-{
-    coff_file_header    header;
-
-    Wlseek( Coff_off );
-    Wread( &header, sizeof( coff_file_header ) );
-    if( header.cpu_type != IMAGE_FILE_MACHINE_I386
-        && header.cpu_type != IMAGE_FILE_MACHINE_ALPHA
-        && header.cpu_type != IMAGE_FILE_MACHINE_UNKNOWN
-        && header.cpu_type != IMAGE_FILE_MACHINE_POWERPC ) {
-        return 0;
-    }
-    Banner( "COFF object file" );
-    Wdputs( "file offset = " );
-    Puthex( Coff_off, 8 );
-    Wdputslc( "H\n" );
-    Wdputslc( "\n" );
-    Dump_header( (char *)&header, coff_hdr_msg );
-    DumpCoffHdrFlags( header.flags );
-    load_string_table( &header );
-    Wlseek( Coff_off + sizeof(coff_file_header) + header.opt_hdr_size );
-    dmp_objects( header.num_sections );
-    unload_string_table();
-    dmp_symtab( header.sym_table, header.num_symbols );
-    return 1;
-}
-
-
-bool Dmp_ar_head( void )
-/**********************/
-{
-    char                sig[AR_IDENT_LEN];
-    ar_header           hdr;
-    long                filesize;
-    unsigned long       size;
-
-    Wlseek( 0 );
-    Wread( sig, AR_IDENT_LEN );
-    if( memcmp( sig, AR_IDENT, AR_IDENT_LEN ) != 0 ) return 0;
-    filesize = WFileSize();
-    Coff_off = AR_IDENT_LEN;
-    for(;;) {
-        if( Coff_off + sizeof(ar_header) >= filesize ) break;
-        Wread( &hdr, sizeof(ar_header) );
-        Coff_off += sizeof(ar_header);
-        hdr.date[0]='\0';
-        Wdputs( "ar name = " );
-        Wdputs( hdr.name );
-        Wdputslc( "\n" );
-        hdr.header_ident[0] = '\0';
-        size = strtoul( hdr.size, NULL, 10 );
-        if( strcmp( hdr.name, "/               " ) == 0 ||
-                        strcmp( hdr.name, "//              " ) == 0 ) {
-            Dmp_seg_data( Coff_off, size );
-        } else if( !Dmp_coff_head() ) {
-            // then try and see if it's ELF
-            Wlseek( Coff_off );
-            if( !Dmp_elf_header( Coff_off ) ) {
-                Wdputslc( "archive entry not identified\n" );
-                Dmp_seg_data( Coff_off, size );
-                Wdputslc( "\n" );
-            }
-        }
-        if( size & 1 ) {
-            size++;
-        }
-        Coff_off += size;
-        Wlseek( Coff_off );
-    }
-    return 1;
-}
-
 static void dmp_symtab( unsigned long offset, unsigned long num_syms )
 /********************************************************************/
 {
@@ -249,4 +173,80 @@ static void dmp_symtab( unsigned long offset, unsigned long num_syms )
     }
     free( start );
     free( strtab );
+}
+
+/*
+ * Dump the coff object, if any.
+ */
+bool Dmp_coff_head( void )
+/************************/
+{
+    coff_file_header    header;
+
+    Wlseek( Coff_off );
+    Wread( &header, sizeof( coff_file_header ) );
+    if( header.cpu_type != IMAGE_FILE_MACHINE_I386
+        && header.cpu_type != IMAGE_FILE_MACHINE_ALPHA
+        && header.cpu_type != IMAGE_FILE_MACHINE_UNKNOWN
+        && header.cpu_type != IMAGE_FILE_MACHINE_POWERPC ) {
+        return 0;
+    }
+    Banner( "COFF object file" );
+    Wdputs( "file offset = " );
+    Puthex( Coff_off, 8 );
+    Wdputslc( "H\n" );
+    Wdputslc( "\n" );
+    Dump_header( (char *)&header, coff_hdr_msg );
+    DumpCoffHdrFlags( header.flags );
+    load_string_table( &header );
+    Wlseek( Coff_off + sizeof(coff_file_header) + header.opt_hdr_size );
+    dmp_objects( header.num_sections );
+    unload_string_table();
+    dmp_symtab( header.sym_table, header.num_symbols );
+    return 1;
+}
+
+
+bool Dmp_ar_head( void )
+/**********************/
+{
+    char                sig[AR_IDENT_LEN];
+    ar_header           hdr;
+    long                filesize;
+    unsigned long       size;
+
+    Wlseek( 0 );
+    Wread( sig, AR_IDENT_LEN );
+    if( memcmp( sig, AR_IDENT, AR_IDENT_LEN ) != 0 ) return 0;
+    filesize = WFileSize();
+    Coff_off = AR_IDENT_LEN;
+    for(;;) {
+        if( Coff_off + sizeof(ar_header) >= filesize ) break;
+        Wread( &hdr, sizeof(ar_header) );
+        Coff_off += sizeof(ar_header);
+        hdr.date[0]='\0';
+        Wdputs( "ar name = " );
+        Wdputs( hdr.name );
+        Wdputslc( "\n" );
+        hdr.header_ident[0] = '\0';
+        size = strtoul( hdr.size, NULL, 10 );
+        if( strcmp( hdr.name, "/               " ) == 0 ||
+                        strcmp( hdr.name, "//              " ) == 0 ) {
+            Dmp_seg_data( Coff_off, size );
+        } else if( !Dmp_coff_head() ) {
+            // then try and see if it's ELF
+            Wlseek( Coff_off );
+            if( !Dmp_elf_header( Coff_off ) ) {
+                Wdputslc( "archive entry not identified\n" );
+                Dmp_seg_data( Coff_off, size );
+                Wdputslc( "\n" );
+            }
+        }
+        if( size & 1 ) {
+            size++;
+        }
+        Coff_off += size;
+        Wlseek( Coff_off );
+    }
+    return 1;
 }

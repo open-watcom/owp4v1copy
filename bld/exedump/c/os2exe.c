@@ -304,60 +304,6 @@ bool Dmp_os2_head( void )
 }
 
 /*
- * Dump the 386 Executable Header, if any.
- */
-bool Dmp_386_head( void )
-/***********************/
-{
-    Wlseek( New_exe_off );
-    Wread( &Os2_386_head, sizeof( Os2_386_head ) );
-    if( Os2_386_head.signature == OSF_FLAT_SIGNATURE ) {
-        Form = FORM_LE;
-        Banner( "Linear EXE Header (OS/2 V2.x) - LE" );
-    } else if ( Os2_386_head.signature == OSF_FLAT_LX_SIGNATURE ) {
-        Form = FORM_LX;
-        Banner( "Linear EXE Header (OS/2 V2.x) - LX" );
-    } else {
-        return( 0 );
-    }
-    Wdputs( "file offset = " );
-    Puthex( New_exe_off, 8 );
-    Wdputslc( "H\n" );
-    Wdputslc( "\n" );
-    Dump_header( (char *)&Os2_386_head.byte_order, os2_386_msg );
-    dmp_mod_flag_lx( Os2_386_head.flags, Os2_386_head.os_type );
-    dmp_obj_table();
-    Dmp_resrc2_tab();
-    Dmp_le_lx_tbls();
-    return( 1 );
-}
-
-/*
- * dump the LE/LX object table
- */
-static void dmp_obj_table( void )
-/*******************************/
-{
-    unsigned_16     i;
-    object_record   os_obj;
-
-    Banner( "Object Table" );
-    for( i = 0; i < Os2_386_head.num_objects; i++ ) {
-        Wlseek( New_exe_off + Os2_386_head.objtab_off
-                            + i * sizeof( object_record ) );
-        Wread( &os_obj, sizeof( object_record ) );
-        Wdputs( "object " );
-        Putdec( i );
-        Wdputs( ": " );
-        Dump_header( (char *)&os_obj.size, os2_obj_msg );
-        Wdputs( "          flags = " );
-        dmp_obj_flags( os_obj.flags );
-        dmp_obj_page( os_obj );
-        Wdputslc( "\n" );
-    }
-}
-
-/*
  * dump the object page table
  */
 static void dmp_obj_page( object_record obj )
@@ -473,4 +419,58 @@ static void dmp_obj_flags( unsigned_32 flags )
     }
     Wdputs( name );
     Wdputslc( "\n" );
+}
+
+/*
+ * dump the LE/LX object table
+ */
+static void dmp_obj_table( void )
+/*******************************/
+{
+    unsigned_16     i;
+    object_record   os_obj;
+
+    Banner( "Object Table" );
+    for( i = 0; i < Os2_386_head.num_objects; i++ ) {
+        Wlseek( New_exe_off + Os2_386_head.objtab_off
+                            + i * sizeof( object_record ) );
+        Wread( &os_obj, sizeof( object_record ) );
+        Wdputs( "object " );
+        Putdec( i );
+        Wdputs( ": " );
+        Dump_header( (char *)&os_obj.size, os2_obj_msg );
+        Wdputs( "          flags = " );
+        dmp_obj_flags( os_obj.flags );
+        dmp_obj_page( os_obj );
+        Wdputslc( "\n" );
+    }
+}
+
+/*
+ * Dump the 386 Executable Header, if any.
+ */
+bool Dmp_386_head( void )
+/***********************/
+{
+    Wlseek( New_exe_off );
+    Wread( &Os2_386_head, sizeof( Os2_386_head ) );
+    if( Os2_386_head.signature == OSF_FLAT_SIGNATURE ) {
+        Form = FORM_LE;
+        Banner( "Linear EXE Header (OS/2 V2.x) - LE" );
+    } else if ( Os2_386_head.signature == OSF_FLAT_LX_SIGNATURE ) {
+        Form = FORM_LX;
+        Banner( "Linear EXE Header (OS/2 V2.x) - LX" );
+    } else {
+        return( 0 );
+    }
+    Wdputs( "file offset = " );
+    Puthex( New_exe_off, 8 );
+    Wdputslc( "H\n" );
+    Wdputslc( "\n" );
+    Dump_header( (char *)&Os2_386_head.byte_order, os2_386_msg );
+    dmp_mod_flag_lx( Os2_386_head.flags, Os2_386_head.os_type );
+    dmp_obj_table();
+    Dmp_resrc2_tab();
+    Dmp_le_lx_tbls();
+    return( 1 );
 }

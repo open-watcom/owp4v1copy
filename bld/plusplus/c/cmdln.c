@@ -76,7 +76,7 @@ void BadCmdLine(                // SIGNAL CMD-LINE ERROR
     CmdLnCtxInfo();
 }
 
-static void CmdLnWarn(          // ISSUE WARNING FOR A SWITCH
+void CmdLnWarn(                 // ISSUE WARNING FOR A SWITCH
     unsigned message )          // - message code
 {
     CErr1( message );

@@ -41,7 +41,6 @@
   void          __ReleaseTDList( void );
   #if defined(__NT__)
     BOOL        __NTThreadInit( void );
-    void        __NTThreadFini( void );
     BOOL        __NTAddThread( thread_data * );
     void        __NTRemoveThread( int );
   #endif

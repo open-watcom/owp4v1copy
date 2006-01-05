@@ -40,32 +40,6 @@
 #define BCD_GET_LOW( w )        ( w & 0x000F )
 
 
-_WCRTLINK unsigned short _bios_timeofday( unsigned cmd, long *timeval )
-{
-    unsigned char       necBuf[6];
-
-    if( !__NonIBM ) {
-        return( __ibm_bios_timeofday( cmd, timeval ) );
-    } else {
-        /*** Translate IBM commands to NEC98 commands ***/
-        switch( cmd ) {
-          case _IBM_TIME_GETCLOCK:
-            __nec98_bios_timeofday( _NEC98_TIME_GETCLOCK, necBuf );
-            nec_to_ibm( necBuf, timeval );
-            break;
-          case _IBM_TIME_SETCLOCK:
-            __nec98_bios_timeofday( _NEC98_TIME_GETCLOCK, necBuf );
-            ibm_to_nec( necBuf, timeval );
-            __nec98_bios_timeofday( _NEC98_TIME_SETCLOCK, necBuf );
-            break;
-          default:
-            return( -1 );       // invalid command for NEC 98
-        }
-        return( 0 );
-    }
-}
-
-
 static void nec_to_ibm( const unsigned char *necBuf, long *timeval )
 {
     unsigned            hours;
@@ -118,4 +92,30 @@ static void ibm_to_nec( unsigned char *necBuf, const long *timeval )
     high = seconds / 10;
     low = seconds % 10;
     necBuf[5] = (high<<4) | low;
+}
+
+
+_WCRTLINK unsigned short _bios_timeofday( unsigned cmd, long *timeval )
+{
+    unsigned char       necBuf[6];
+
+    if( !__NonIBM ) {
+        return( __ibm_bios_timeofday( cmd, timeval ) );
+    } else {
+        /*** Translate IBM commands to NEC98 commands ***/
+        switch( cmd ) {
+          case _IBM_TIME_GETCLOCK:
+            __nec98_bios_timeofday( _NEC98_TIME_GETCLOCK, necBuf );
+            nec_to_ibm( necBuf, timeval );
+            break;
+          case _IBM_TIME_SETCLOCK:
+            __nec98_bios_timeofday( _NEC98_TIME_GETCLOCK, necBuf );
+            ibm_to_nec( necBuf, timeval );
+            __nec98_bios_timeofday( _NEC98_TIME_SETCLOCK, necBuf );
+            break;
+          default:
+            return( -1 );       // invalid command for NEC 98
+        }
+        return( 0 );
+    }
 }

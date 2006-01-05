@@ -3451,6 +3451,21 @@ static SYMBOL sameVirtualFnSignature( SYMBOL_NAME sym_name, lookup_walk *data )
     return( chk_sym );
 }
 
+static boolean anyVirtualFns( SYMBOL_NAME sym_name )
+{
+    SYMBOL sym;
+    TYPE fn_type;
+
+    RingIterBeg( sym_name->name_syms, sym ) {
+        fn_type = FunctionDeclarationType( sym->sym_type );
+        if( fn_type == NULL ) break;
+        if( fn_type->flag & TF1_VIRTUAL ) {
+            return( TRUE );
+        }
+    } RingIterEnd( sym )
+    return( FALSE );
+}
+
 static SYMBOL recordVirtualOverride( lookup_walk *data, BASE_STACK *top, SYMBOL_NAME sym_name )
 {
     BASE_CLASS *base;
@@ -4173,21 +4188,6 @@ static boolean findBestConversion( lookup_walk *data )
     applyOverrideConversion( data );
     data->user_conv_list = gatherOverloadList( data );
     return( TRUE );
-}
-
-static boolean anyVirtualFns( SYMBOL_NAME sym_name )
-{
-    SYMBOL sym;
-    TYPE fn_type;
-
-    RingIterBeg( sym_name->name_syms, sym ) {
-        fn_type = FunctionDeclarationType( sym->sym_type );
-        if( fn_type == NULL ) break;
-        if( fn_type->flag & TF1_VIRTUAL ) {
-            return( TRUE );
-        }
-    } RingIterEnd( sym )
-    return( FALSE );
 }
 
 static void applySameVTable( lookup_walk *data )

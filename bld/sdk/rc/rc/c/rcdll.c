@@ -65,6 +65,8 @@ char                    ImageName[ _MAX_PATH ];
 
 /* forward declaration */
 static void flushPrintf( void );
+static void InitGlobs( void );
+static void FreeGlobs( void );
 
 unsigned IDEDLL_EXPORT IDEGetVersion( void ) {
 /*********************************************/

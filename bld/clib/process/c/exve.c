@@ -67,74 +67,7 @@ extern  void    __ccmdline( char *, char **, char *, int );
 
 #pragma on(check_stack);
 
-_WCRTLINK int execve( path, argv, envp )
-    const char          *path;          /* Path name of file to be executed */
-    char                *argv[];        /* Array of pointers to arguments */
-    char                *envp[];        /* Array of pointers to environment                                          settings */
-{
-    char                *name;
-    int                 file;
-    an_exe_header       exe;            /* Room for exe file header */
-    char                *envptr;
-    char                *envstrings;
-    unsigned            envseg;
-    unsigned            envpara;
-    size_t              cmdline_len;
-    char                cmdline[128];   /* Command line build up here */
-    char                buffer[80];     /* file name */
-    int                 isexe;
-    extern unsigned     __exec_para;
-    unsigned            para;
-
-    strncpy( buffer, path, 75 );
-    name = strrchr( buffer, '\\' );
-    if( strchr( name == NULL ? buffer : name, '.' ) ){
-        file = open( buffer, O_BINARY|O_RDONLY, 0 );
-        __set_errno( ENOENT );
-        if( file == -1 ) goto error;
-    } else {
-        strcat( buffer, ".com" );
-        file = open( buffer, O_BINARY|O_RDONLY, 0 );
-        if( file == -1 ){
-            strcpy( strrchr( buffer, '.' ), ".exe" );
-            file = open( buffer, O_BINARY|O_RDONLY, 0 );
-            __set_errno( ENOENT );
-            if( file == -1 ) goto error;
-        }
-    }
-
-    if( read( file, (char *) &exe, sizeof(exe) ) == -1 ){
-        close( file );
-        __set_errno( ENOEXEC );
-        __set_doserrno( E_badfmt );
-        goto error;
-    }
-    isexe = exe.id == EXE_ID || exe.id == _swap( EXE_ID );
-    if( isexe ){
-        para = (exe.length_div_512 - 1 )*(512/16)
-             + (exe.length_mod_512 + 15)/16
-             +  exe.min_para - exe.header_para;
-    } else {
-        para = (__lseek( file, 0, SEEK_END ) + MIN_COM_STACK + 15)/16;
-    }
-    close( file );
-    argv[0] = buffer;           /* 22-jan-88 set program name */
-    envpara = __cenvarg( argv, envp, &envptr, &envstrings,
-                         &envseg, &cmdline_len, TRUE );
-    if( envpara == -1 ) goto error;
-    para += PSP_SIZE/16 + __exec_para + (strlen( path ) + 15)/16;
-    __ccmdline( buffer, argv, cmdline, 0 );
-    if( doalloc( para, envseg, envpara ) )
-        save_file_handles();
-        _doexec( ( char _WCNEAR *)buffer, ( char _WCNEAR *)cmdline,
-            isexe, exe.ss, exe.sp, exe.cs, exe.ip );
-
-    free( envptr );
-    error: /* Clean up after error */
-    return( -1 );
-}
-
-#pragma pack(__push,1);
+#pragma pack( __push, 1 )
 typedef struct a_memblk {
     char                flag;           /* 'Z' if last; 'M' otherwise */
     unsigned            owner;          /* segment of psp; 0 if free */
@@ -142,7 +75,7 @@ typedef struct a_memblk {
     char                unknown[11];    /* rest of header */
     char                data[1];        /* size paragraphs of data */
 } a_memblk;
-#pragma pack(__pop);
+#pragma pack( __pop )
 
 #define _memblk( block )((a_memblk _WCFAR *) (((block) - 1)*0x10000))
 #define _flag( block )  (_memblk( block )->flag)
@@ -155,7 +88,7 @@ typedef struct a_memblk {
 
 #define DOS2SIZE        0x281   /* paragraphs to reserve for DOS 2.X */
 
-static unsigned doslowblock()
+static unsigned doslowblock( void )
 {
     union REGS          regs;
     struct SREGS        sregs;
@@ -201,7 +134,7 @@ static unsigned doscalve( block, size )
     };
 }
 
-static void resetints()
+static void resetints( void )
 /* reset ctrl-break, floating point, divide by 0 interrupt */
 {
     (*__int23_exit)();
@@ -290,7 +223,74 @@ static void save_file_handles( void )
     }
 }
 
-void __init_execve()            /* called from initializer segment */
+_WCRTLINK int execve( path, argv, envp )
+    const char          *path;          /* Path name of file to be executed */
+    char                *argv[];        /* Array of pointers to arguments */
+    char                *envp[];        /* Array of pointers to environment                                          settings */
+{
+    char                *name;
+    int                 file;
+    an_exe_header       exe;            /* Room for exe file header */
+    char                *envptr;
+    char                *envstrings;
+    unsigned            envseg;
+    unsigned            envpara;
+    size_t              cmdline_len;
+    char                cmdline[128];   /* Command line build up here */
+    char                buffer[80];     /* file name */
+    int                 isexe;
+    extern unsigned     __exec_para;
+    unsigned            para;
+
+    strncpy( buffer, path, 75 );
+    name = strrchr( buffer, '\\' );
+    if( strchr( name == NULL ? buffer : name, '.' ) ){
+        file = open( buffer, O_BINARY|O_RDONLY, 0 );
+        __set_errno( ENOENT );
+        if( file == -1 ) goto error;
+    } else {
+        strcat( buffer, ".com" );
+        file = open( buffer, O_BINARY|O_RDONLY, 0 );
+        if( file == -1 ){
+            strcpy( strrchr( buffer, '.' ), ".exe" );
+            file = open( buffer, O_BINARY|O_RDONLY, 0 );
+            __set_errno( ENOENT );
+            if( file == -1 ) goto error;
+        }
+    }
+
+    if( read( file, (char *) &exe, sizeof(exe) ) == -1 ){
+        close( file );
+        __set_errno( ENOEXEC );
+        __set_doserrno( E_badfmt );
+        goto error;
+    }
+    isexe = exe.id == EXE_ID || exe.id == _swap( EXE_ID );
+    if( isexe ){
+        para = (exe.length_div_512 - 1 )*(512/16)
+             + (exe.length_mod_512 + 15)/16
+             +  exe.min_para - exe.header_para;
+    } else {
+        para = (__lseek( file, 0, SEEK_END ) + MIN_COM_STACK + 15)/16;
+    }
+    close( file );
+    argv[0] = buffer;           /* 22-jan-88 set program name */
+    envpara = __cenvarg( argv, envp, &envptr, &envstrings,
+                         &envseg, &cmdline_len, TRUE );
+    if( envpara == -1 ) goto error;
+    para += PSP_SIZE/16 + __exec_para + (strlen( path ) + 15)/16;
+    __ccmdline( buffer, argv, cmdline, 0 );
+    if( doalloc( para, envseg, envpara ) )
+        save_file_handles();
+        _doexec( ( char _WCNEAR *)buffer, ( char _WCNEAR *)cmdline,
+            isexe, exe.ss, exe.sp, exe.cs, exe.ip );
+
+    free( envptr );
+    error: /* Clean up after error */
+    return( -1 );
+}
+
+void __init_execve( void )              /* called from initializer segment */
 {
     __Exec_addr = execve;
 }

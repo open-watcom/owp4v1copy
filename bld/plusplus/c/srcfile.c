@@ -801,6 +801,29 @@ static boolean readBuffer(      // READ NEXT BUFFER
     }
 }
 
+static int getTestCharFromFile( OPEN_FILE **pact )
+{
+    OPEN_FILE *act;
+    int c;
+
+    DbgAssert( *pact == activeSrc() );  // NYI: is always true we can optimize
+    for(;;) {
+        act = activeSrc();
+        c = *act->nextc++;
+        if( c != '\0' ) {
+            break;
+        }
+        // '\0' in the middle of the buffer must be processed as a char
+        if( act->nextc != ( act->lastc + 1 ) ) break;
+        if( readBuffer( getGuardState() == GUARD_IFNDEF ) ) {
+            c = CurrChar;
+            break;
+        }
+    }
+    *pact = activeSrc();
+    return( c );
+}
+
 static int getSecondMultiByte( void )
 {
     int c;
@@ -875,29 +898,6 @@ static int getCharAfterTwoQuestion( void )
     CurrChar = '?';
     NextChar = getCharAfterOneQuestion;
     return( CurrChar );
-}
-
-static int getTestCharFromFile( OPEN_FILE **pact )
-{
-    OPEN_FILE *act;
-    int c;
-
-    DbgAssert( *pact == activeSrc() );  // NYI: is always true we can optimize
-    for(;;) {
-        act = activeSrc();
-        c = *act->nextc++;
-        if( c != '\0' ) {
-            break;
-        }
-        // '\0' in the middle of the buffer must be processed as a char
-        if( act->nextc != ( act->lastc + 1 ) ) break;
-        if( readBuffer( getGuardState() == GUARD_IFNDEF ) ) {
-            c = CurrChar;
-            break;
-        }
-    }
-    *pact = activeSrc();
-    return( c );
 }
 
 static void outputTrigraphWarning( char c ) {

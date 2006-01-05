@@ -241,6 +241,14 @@ static char WaitTimeout( ECB *ecb, unsigned timeout, int can )
     }
 }
 
+static void PostAListen( int i )
+{
+    _INITECB( RecECB[i], RecHead[i], 2, SPX );
+    RecECB[i].fragmentDescriptor[1].address = &Buffer[i];
+    RecECB[i].fragmentDescriptor[1].size = sizeof( Buffer[i] );
+    _SPXListenForSequencedPacket( &RecECB[i] );
+}
+
 static unsigned DoRemoteGet( char *rec, unsigned len )
 {
     int         i;
@@ -307,14 +315,6 @@ unsigned RemotePut( char *snd, unsigned len )
         return( REQUEST_FAILED );
     }
     return( len );
-}
-
-static void PostAListen( int i )
-{
-    _INITECB( RecECB[i], RecHead[i], 2, SPX );
-    RecECB[i].fragmentDescriptor[1].address = &Buffer[i];
-    RecECB[i].fragmentDescriptor[1].size = sizeof( Buffer[i] );
-    _SPXListenForSequencedPacket( &RecECB[i] );
 }
 
 static void PostListens()

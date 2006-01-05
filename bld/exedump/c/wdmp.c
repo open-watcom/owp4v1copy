@@ -50,180 +50,6 @@ char *Exts[] = { ".exe", ".dll", ".exp", ".nlm", ".qnx", ".elf", ".lib", "obj",
                 NULL };
 char  Fname[ _MAX_FNAME ];
 
-static int find_file( char * file_path )
-/**************************************/
-{
-    int     access_rc;
-    char    path[ _MAX_PATH ];      /* this allows file_path to remain */
-                                    /* unaltered if we don't find anything */
-    char    drive[ _MAX_DRIVE ];
-    char    dir[ _MAX_DIR ];
-    char    given_ext[ _MAX_EXT ];
-    char    **ext;
-
-    _splitpath( file_path, drive, dir, Fname, given_ext );
-    /* check if the given file name exists */
-    access_rc = access( file_path, R_OK );
-    if (access_rc == 0) {
-        return( TRUE );
-    } else {
-        if( given_ext[0] == '\0' ) {
-            /* if no extention was given try the ones in Exts */
-            for (ext = Exts; *ext != NULL && access_rc != 0; ext++) {
-                _makepath( path, drive, dir, Fname, *ext );
-                access_rc = access( path, R_OK );
-            }
-        }
-        if( access_rc == 0 ) {
-            strcpy( file_path, path );
-            return( TRUE );
-        } else {
-            return( FALSE );
-        }
-    }
-}
-
-/*
- * handles file to be dumped and .lst file if required
- */
-static int open_files( void )
-/***************************/
-{
-    int                 ret;
-    char                listfile[ _MAX_PATH ];
-
-    Handle = open( Name, O_RDONLY | O_BINARY, 0 );
-    if( Handle != -1 ) {
-        ret = setjmp( Se_env );
-        if( ret == 0 ) {
-            if( Options_dmp & LST_REQD ) {
-                if( Lstf == NULL ) {
-                    _makepath( listfile, NULL, NULL, Fname, ".lst" );
-                    Lhandle = open( listfile, O_WRONLY | O_CREAT |
-                            O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
-                } else {
-                    Lhandle = open( Lstf, O_WRONLY | O_CREAT | O_TRUNC,
-                            S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
-                }
-                if( Lhandle == NULL ) {
-                    Options_dmp &= ~LST_REQD;
-                    Wdputslc( "Unable to open list file\n" );
-                }
-                Wdputs( "Module:  " );
-                Wdputs( Name );
-                Wdputs( "\n\n" );
-                dmp_exe();
-                close( Lhandle );
-            } else {
-                dmp_exe();
-            }
-        }
-        close( Handle );
-        return( ret );
-    }
-    return( 1 );
-}
-
-/*
- * The Increasingly More Misnamed Segmented .EXE File Header Dump Utility
- * for WLINK and WD (nee WVIDEO)
- */
-
-#ifndef __WATCOMC__
-char **_argv;
-#endif
-int main( int argc, char * const *argv )
-/**************************************/
-{
-    int     found_file;
-
-#ifndef __WATCOMC__
-    _argv = (char**)argv;
-#endif
-
-    Line_count = 0;
-    WSize = 0;
-    Write_buff[WSize] = 0;
-    Cmd = Wmalloc( BUFFERSIZE );
-    getcmd( Cmd );
-    Parse_option();
-    if( !(Options_dmp & QUIET) ) {
-        if( Options_dmp & LST_REQD ) {
-            Options_dmp &= ~LST_REQD;
-            wbanner();
-            Options_dmp |= LST_REQD;
-        } else {
-            wbanner();
-        }
-    }
-    if( *Name == '\0' ){
-        Options_dmp |= PAGE_DMP;
-        usage();
-        return( 1 );
-    }
-    found_file = find_file( Name );
-    if( found_file ) {
-        return( open_files() );
-    }
-    Options_dmp &= ~LST_REQD;   // output usage to STDOUT
-    Options_dmp |= PAGE_DMP;
-    Wdputs( "Could not open '" );
-    Wdputs( Name );
-    Wdputs( "': " );
-    Wdputslc( strerror( errno ) );
-    Wdputslc( "\n\n" );
-    usage();
-    return( 1 );
-}
-
-/*
- * The copyright banner
- */
-static void wbanner( void )
-/*************************/
-{
-    Wdputs( banner1w( "Executable Image Dump Utility", BAN_VER_STR ) "\n" );
-    Wdputs( banner2a() "\n" );
-    Wdputs( banner3 "\n" );
-    Wdputs( banner3a "\n\n" );
-}
-
-/*
- * Usage
- */
-static void usage( void )
-/***********************/
-{
-    Wdputs( "Usage: wdump [options] <pathname> [options]\n" );
-    Wdputs( "  <pathname> is a DOS .EXE file, a Windows or OS/2 executable or DLL,\n" );
-    Wdputs( "            a PharLap executable, NLM, a QNX executable,\n" );
-    Wdputs( "            an ELF executable, shared library or object file,\n" );
-    Wdputs( "            or a COFF object.\n" );
-    Wdputs( "  <pathname> has default extension of .EXE, .DLL, .EXP, .NLM, .QNX and .ELF\n" );
-    Wdputs( "  options:\n" );
-    Wdputs( "        -l[=<listfile>] information dumped in a listing file\n" );
-    Wdputs( "        -p information dumped by page.  <enter>: next line,\n" );
-    Wdputs( "            <esc> or 'q': quit, any other key: next page\n" );
-    Wdputs( "        -q quiet dump - don't write banner\n" );
-//    Wdputs( "        -m causes Microsoft debugging information to be dumped\n" );
-    Wdputs( "        -s[=<segnum>] the segments'( resp. that segment's )\n" );
-    Wdputs( "            info is dumped\n" );
-    Wdputs( "        -r causes more resource information to be dumped\n" );
-    Wdputs( "        -f causes fixup information to be dumped\n" );
-    Wdputs( "        -a[=<segnum>] causes segment, resource and fixup info to be dumped\n" );
-    Wdputs( "        -i dump export information for PE DLLs\n" );
-    Wdputs( "        -b[=<hexoff>] causes binary dump [beginning at offset in hex]\n" );
-    Wdputs( "        -d causes WATCOM debugging information to be dumped\n" );
-    Wdputs( "           a : show addr infomation\n" );
-    Wdputs( "           g : show global infomation\n" );
-    Wdputs( "           l : show locals (only if m specified)\n" );
-    Wdputs( "           m : show module informatiom\n" );
-    Wdputs( "           n : show line numbers (only if m specified)\n" );
-    Wdputs( "           t : show types (only if m specified)\n" );
-    Wdputs( "           x : show all information\n" );
-    Wdputs( "        -e causes executable information to be dumped as well\n" );
-}
-
 /*
  * parse the executable
  */
@@ -304,4 +130,178 @@ static void dmp_exe( void )
     if( WSize ) {
         write( Lhandle, Write_buff, WSize );
     }
+}
+
+static int find_file( char * file_path )
+/**************************************/
+{
+    int     access_rc;
+    char    path[ _MAX_PATH ];      /* this allows file_path to remain */
+                                    /* unaltered if we don't find anything */
+    char    drive[ _MAX_DRIVE ];
+    char    dir[ _MAX_DIR ];
+    char    given_ext[ _MAX_EXT ];
+    char    **ext;
+
+    _splitpath( file_path, drive, dir, Fname, given_ext );
+    /* check if the given file name exists */
+    access_rc = access( file_path, R_OK );
+    if (access_rc == 0) {
+        return( TRUE );
+    } else {
+        if( given_ext[0] == '\0' ) {
+            /* if no extention was given try the ones in Exts */
+            for (ext = Exts; *ext != NULL && access_rc != 0; ext++) {
+                _makepath( path, drive, dir, Fname, *ext );
+                access_rc = access( path, R_OK );
+            }
+        }
+        if( access_rc == 0 ) {
+            strcpy( file_path, path );
+            return( TRUE );
+        } else {
+            return( FALSE );
+        }
+    }
+}
+
+/*
+ * handles file to be dumped and .lst file if required
+ */
+static int open_files( void )
+/***************************/
+{
+    int                 ret;
+    char                listfile[ _MAX_PATH ];
+
+    Handle = open( Name, O_RDONLY | O_BINARY, 0 );
+    if( Handle != -1 ) {
+        ret = setjmp( Se_env );
+        if( ret == 0 ) {
+            if( Options_dmp & LST_REQD ) {
+                if( Lstf == NULL ) {
+                    _makepath( listfile, NULL, NULL, Fname, ".lst" );
+                    Lhandle = open( listfile, O_WRONLY | O_CREAT |
+                            O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
+                } else {
+                    Lhandle = open( Lstf, O_WRONLY | O_CREAT | O_TRUNC,
+                            S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
+                }
+                if( Lhandle == NULL ) {
+                    Options_dmp &= ~LST_REQD;
+                    Wdputslc( "Unable to open list file\n" );
+                }
+                Wdputs( "Module:  " );
+                Wdputs( Name );
+                Wdputs( "\n\n" );
+                dmp_exe();
+                close( Lhandle );
+            } else {
+                dmp_exe();
+            }
+        }
+        close( Handle );
+        return( ret );
+    }
+    return( 1 );
+}
+
+/*
+ * The copyright banner
+ */
+static void wbanner( void )
+/*************************/
+{
+    Wdputs( banner1w( "Executable Image Dump Utility", BAN_VER_STR ) "\n" );
+    Wdputs( banner2a() "\n" );
+    Wdputs( banner3 "\n" );
+    Wdputs( banner3a "\n\n" );
+}
+
+/*
+ * Usage
+ */
+static void usage( void )
+/***********************/
+{
+    Wdputs( "Usage: wdump [options] <pathname> [options]\n" );
+    Wdputs( "  <pathname> is a DOS .EXE file, a Windows or OS/2 executable or DLL,\n" );
+    Wdputs( "            a PharLap executable, NLM, a QNX executable,\n" );
+    Wdputs( "            an ELF executable, shared library or object file,\n" );
+    Wdputs( "            or a COFF object.\n" );
+    Wdputs( "  <pathname> has default extension of .EXE, .DLL, .EXP, .NLM, .QNX and .ELF\n" );
+    Wdputs( "  options:\n" );
+    Wdputs( "        -l[=<listfile>] information dumped in a listing file\n" );
+    Wdputs( "        -p information dumped by page.  <enter>: next line,\n" );
+    Wdputs( "            <esc> or 'q': quit, any other key: next page\n" );
+    Wdputs( "        -q quiet dump - don't write banner\n" );
+//    Wdputs( "        -m causes Microsoft debugging information to be dumped\n" );
+    Wdputs( "        -s[=<segnum>] the segments'( resp. that segment's )\n" );
+    Wdputs( "            info is dumped\n" );
+    Wdputs( "        -r causes more resource information to be dumped\n" );
+    Wdputs( "        -f causes fixup information to be dumped\n" );
+    Wdputs( "        -a[=<segnum>] causes segment, resource and fixup info to be dumped\n" );
+    Wdputs( "        -i dump export information for PE DLLs\n" );
+    Wdputs( "        -b[=<hexoff>] causes binary dump [beginning at offset in hex]\n" );
+    Wdputs( "        -d causes WATCOM debugging information to be dumped\n" );
+    Wdputs( "           a : show addr infomation\n" );
+    Wdputs( "           g : show global infomation\n" );
+    Wdputs( "           l : show locals (only if m specified)\n" );
+    Wdputs( "           m : show module informatiom\n" );
+    Wdputs( "           n : show line numbers (only if m specified)\n" );
+    Wdputs( "           t : show types (only if m specified)\n" );
+    Wdputs( "           x : show all information\n" );
+    Wdputs( "        -e causes executable information to be dumped as well\n" );
+}
+
+/*
+ * The Increasingly More Misnamed Segmented .EXE File Header Dump Utility
+ * for WLINK and WD (nee WVIDEO)
+ */
+
+#ifndef __WATCOMC__
+char **_argv;
+#endif
+int main( int argc, char * const *argv )
+/**************************************/
+{
+    int     found_file;
+
+#ifndef __WATCOMC__
+    _argv = (char**)argv;
+#endif
+
+    Line_count = 0;
+    WSize = 0;
+    Write_buff[WSize] = 0;
+    Cmd = Wmalloc( BUFFERSIZE );
+    getcmd( Cmd );
+    Parse_option();
+    if( !(Options_dmp & QUIET) ) {
+        if( Options_dmp & LST_REQD ) {
+            Options_dmp &= ~LST_REQD;
+            wbanner();
+            Options_dmp |= LST_REQD;
+        } else {
+            wbanner();
+        }
+    }
+    if( *Name == '\0' ){
+        Options_dmp |= PAGE_DMP;
+        usage();
+        return( 1 );
+    }
+    found_file = find_file( Name );
+    if( found_file ) {
+        return( open_files() );
+    }
+    Options_dmp &= ~LST_REQD;   // output usage to STDOUT
+    Options_dmp |= PAGE_DMP;
+    Wdputs( "Could not open '" );
+    Wdputs( Name );
+    Wdputs( "': " );
+    Wdputslc( strerror( errno ) );
+    Wdputslc( "\n\n" );
+    usage();
+    return( 1 );
 }

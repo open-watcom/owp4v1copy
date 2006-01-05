@@ -90,6 +90,7 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND, UINT, WPARAM, DWORD );
 static void CalcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info );
 static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info );
 static void PositionSegInfo( HWND hwnd );
+static BOOL GenLine( char digits, DWORD limit, WORD type, WORD sel, char *buf, DWORD offset );
 
 typedef enum {
     MT_FREE,

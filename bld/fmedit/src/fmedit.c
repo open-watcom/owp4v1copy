@@ -140,6 +140,74 @@ void WINEXP OpenFormEdit( HWND wnd, CREATE_TABLE objtable,
   }
 
 
+static void OffsetPoint( POINT * point )
+/**************************************/
+
+/* offset point according to scroling info */
+
+  {
+    POINT offset;
+
+    GetOffset( &offset );
+    point->x += offset.x;
+    point->y += offset.y;
+  }
+
+static void CutObjects()
+/**********************/
+
+/* Cut the current objects */
+
+  {
+    CURROBJPTR  currobj;
+    OBJPTR      saveobj;
+    CURROBJPTR  nextobj;
+    OBJPTR      appobj;
+
+    FMNewClipboard();
+    nextobj = GetECurrObject();
+    while( nextobj != NULL ) {
+        currobj = nextobj;
+        nextobj = GetNextECurrObject( currobj );
+        appobj = GetObjptr( currobj );
+        if( appobj != GetMainObject() ) {
+            if( !FMClipObjExists( appobj ) ) {
+                saveobj = NULL;
+                CutObject( appobj, &saveobj );
+                DeleteCurrObject( currobj );
+                FMAddClipboard( appobj, appobj );
+            }
+        }
+    }
+  }
+
+static void CopyObjects()
+/***********************/
+
+/* Copy the current objects */
+
+  {
+    CURROBJPTR currobj;
+    OBJPTR     copyobj;
+    OBJPTR      appobj;
+
+    FMNewClipboard();
+    currobj = GetECurrObject();
+    while( currobj != NULL ) {
+        appobj = GetObjptr( currobj );
+        if( appobj != GetMainObject() ) {
+            if( !FMClipObjExists( appobj ) ) {
+                copyobj = NULL;
+                if( CopyObject( appobj, &copyobj, NULL ) ) {
+                    FMAddClipboard( appobj, copyobj );
+                }
+            }
+        }
+        currobj = GetNextECurrObject( currobj );
+    }
+  }
+
+
 BOOL WINEXP FMEditWndProc( HWND wnd, unsigned message,
                             WPARAM wparam, LPARAM lparam )
 /****************************************************/
@@ -333,19 +401,6 @@ int WINAPI WEP( int parm )
 
 #endif
 
-static void OffsetPoint( POINT * point )
-/**************************************/
-
-/* offset point according to scroling info */
-
-  {
-    POINT offset;
-
-    GetOffset( &offset );
-    point->x += offset.x;
-    point->y += offset.y;
-  }
-
 BOOL WINEXP ObjectPress( OBJPTR obj, POINT * pt, WORD wparam, HWND wnd )
 /**********************************************************************/
 
@@ -359,58 +414,4 @@ BOOL WINEXP ObjectPress( OBJPTR obj, POINT * pt, WORD wparam, HWND wnd )
         return( TRUE );
     }
     return( FALSE );
-  }
-
-static void CutObjects()
-/**********************/
-
-/* Cut the current objects */
-
-  {
-    CURROBJPTR  currobj;
-    OBJPTR      saveobj;
-    CURROBJPTR  nextobj;
-    OBJPTR      appobj;
-
-    FMNewClipboard();
-    nextobj = GetECurrObject();
-    while( nextobj != NULL ) {
-        currobj = nextobj;
-        nextobj = GetNextECurrObject( currobj );
-        appobj = GetObjptr( currobj );
-        if( appobj != GetMainObject() ) {
-            if( !FMClipObjExists( appobj ) ) {
-                saveobj = NULL;
-                CutObject( appobj, &saveobj );
-                DeleteCurrObject( currobj );
-                FMAddClipboard( appobj, appobj );
-            }
-        }
-    }
-  }
-
-static void CopyObjects()
-/***********************/
-
-/* Copy the current objects */
-
-  {
-    CURROBJPTR currobj;
-    OBJPTR     copyobj;
-    OBJPTR      appobj;
-
-    FMNewClipboard();
-    currobj = GetECurrObject();
-    while( currobj != NULL ) {
-        appobj = GetObjptr( currobj );
-        if( appobj != GetMainObject() ) {
-            if( !FMClipObjExists( appobj ) ) {
-                copyobj = NULL;
-                if( CopyObject( appobj, &copyobj, NULL ) ) {
-                    FMAddClipboard( appobj, copyobj );
-                }
-            }
-        }
-        currobj = GetNextECurrObject( currobj );
-    }
   }

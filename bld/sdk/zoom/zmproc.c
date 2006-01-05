@@ -76,6 +76,52 @@ static void EndScrolling( MainWndInfo *info ) {
     }
 }
 
+static void UpdateScrollRange( MainWndInfo *info ) {
+
+    SetScrollRange( info->vscroll, SB_CTL, 0,
+                GetSystemMetrics( SM_CYSCREEN ) - info->magsize.y, TRUE );
+    SetScrollRange( info->hscroll, SB_CTL, 0,
+                GetSystemMetrics( SM_CXSCREEN ) - info->magsize.x, TRUE );
+}
+
+static void UpdateScrollPos( MainWndInfo *info ) {
+
+    SetScrollPos( info->vscroll, SB_CTL, info->magpos.y, TRUE );
+    SetScrollPos( info->hscroll, SB_CTL, info->magpos.x, TRUE );
+}
+
+/*
+ * CheckMagnifierPos - make sure the magnifier is completely on the screen
+ *                      and fix it if it is not
+ */
+static BOOL CheckMagnifierPos( MainWndInfo *info ) {
+
+    BOOL        ret;
+    int         xmax;
+    int         ymax;
+
+    ret = TRUE;
+    xmax = GetSystemMetrics( SM_CXSCREEN );
+    ymax = GetSystemMetrics( SM_CYSCREEN );
+    if( info->magpos.x < 0 ) {
+        info->magpos.x = 0;
+        ret = FALSE;
+    }
+    if( info->magpos.y < 0 ) {
+        info->magpos.y = 0;
+        ret = FALSE;
+    }
+    if( info->magpos.x + info->magsize.x + 1 >= xmax ) {
+        info->magpos.x = xmax - info->magsize.x;
+        ret = FALSE;
+    }
+    if( info->magpos.y + info->magsize.y + 1 >= ymax ) {
+        info->magpos.y = ymax - info->magsize.y;
+        ret = FALSE;
+    }
+    return( ret );
+}
+
 /*
  * DoScroll - process messages from the scrollbars
  */
@@ -224,20 +270,6 @@ static void DrawMagnifier( HDC dc, MainWndInfo *info ) {
     SelectObject( dc, oldpen );
 }
 
-static void UpdateScrollRange( MainWndInfo *info ) {
-
-    SetScrollRange( info->vscroll, SB_CTL, 0,
-                GetSystemMetrics( SM_CYSCREEN ) - info->magsize.y, TRUE );
-    SetScrollRange( info->hscroll, SB_CTL, 0,
-                GetSystemMetrics( SM_CXSCREEN ) - info->magsize.x, TRUE );
-}
-
-static void UpdateScrollPos( MainWndInfo *info ) {
-
-    SetScrollPos( info->vscroll, SB_CTL, info->magpos.y, TRUE );
-    SetScrollPos( info->hscroll, SB_CTL, info->magpos.x, TRUE );
-}
-
 static void GetWndSize( MainWndInfo *info, int *xsize, int *ysize ) {
 
     *xsize = ( info->magsize.x * info->magnif ) / ZOOM_FACTOR
@@ -247,38 +279,6 @@ static void GetWndSize( MainWndInfo *info, int *xsize, int *ysize ) {
             + GetSystemMetrics( SM_CYFRAME )
             + info->caption_hite
             + GetSystemMetrics( SM_CYHSCROLL );
-}
-
-/*
- * CheckMagnifierPos - make sure the magnifier is completely on the screen
- *                      and fix it if it is not
- */
-static BOOL CheckMagnifierPos( MainWndInfo *info ) {
-
-    BOOL        ret;
-    int         xmax;
-    int         ymax;
-
-    ret = TRUE;
-    xmax = GetSystemMetrics( SM_CXSCREEN );
-    ymax = GetSystemMetrics( SM_CYSCREEN );
-    if( info->magpos.x < 0 ) {
-        info->magpos.x = 0;
-        ret = FALSE;
-    }
-    if( info->magpos.y < 0 ) {
-        info->magpos.y = 0;
-        ret = FALSE;
-    }
-    if( info->magpos.x + info->magsize.x + 1 >= xmax ) {
-        info->magpos.x = xmax - info->magsize.x;
-        ret = FALSE;
-    }
-    if( info->magpos.y + info->magsize.y + 1 >= ymax ) {
-        info->magpos.y = ymax - info->magsize.y;
-        ret = FALSE;
-    }
-    return( ret );
 }
 
 static void BeginZooming( HWND hwnd, MainWndInfo *info ) {

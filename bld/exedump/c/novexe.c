@@ -108,114 +108,6 @@ char * nlm_ext_msg[] = {
 
 
 /*
- * Dump the Nlm Executable Header, if any.
- */
-bool Dmp_nlm_head( void )
-/***********************/
-{
-    unsigned_32     offset;
-    nlm_header_3    nlm_head3;
-    nlm_header_4    nlm_head4;
-    bool            extend;
-
-    Wlseek( 0 );
-    Wread( &Nlm_head, sizeof( Nlm_head.signature ) );
-    if( memcmp( Nlm_head.signature, NLM_SIGNATURE, sizeof( NLM_SIGNATURE ) - 1 ) ) {
-        return( 0 );
-    }
-    Wread( (char *)&Nlm_head + sizeof( Nlm_head.signature ),
-        sizeof( nlm_header ) - sizeof( Nlm_head.signature ) );
-    Banner( "Novell EXE Header" );
-    Wdputs( "version number                            = " );
-    Puthex( Nlm_head.version, 8 );
-    Wdputslc( "H\n" );
-    Wdputs( "module name                               = " );
-    Wdputs( &Nlm_head.moduleName[1] );
-    Wdputslc( "\n" );
-    Dump_header( (char *)&Nlm_head.codeImageOffset, nlm_exe_msg );
-    offset = dmp_nlm_head2();
-    offset += sizeof( nlm_header );
-    Wlseek( offset );
-    Wread( &nlm_head3, sizeof( nlm_header_3 ) );
-    if( !memcmp( nlm_head3.versionSignature, VERSION_SIGNATURE, VERSION_SIGNATURE_LENGTH ) ) {
-        Dump_header( (char *)&nlm_head3.majorVersion, nlm_date_msg );
-        offset += sizeof( nlm_header_3 );
-    }
-    Wlseek( offset );
-    Wread( &nlm_head4, sizeof( nlm_header_4 ) );
-    if( !memcmp( nlm_head4.copyrightSignature, COPYRIGHT_SIGNATURE, COPYRIGHT_SIGNATURE_LENGTH ) ) {
-        Wdputs( "copy right string                    = " );
-        Wdputs( nlm_head4.copyrightString );
-        Wdputslc( "\n" );
-        offset += sizeof( unsigned_8 ) + COPYRIGHT_SIGNATURE_LENGTH;
-        offset += nlm_head4.copyrightLength;
-    }
-    Wlseek( offset );
-    extend = FALSE;
-    Wread( &Nlm_ext_head, sizeof( extended_nlm_header ) );
-    if( !memcmp( Nlm_ext_head.stamp, EXTENDED_NLM_SIGNATURE, EXTENDED_NLM_SIGNATURE_LENGTH ) ) {
-        Dump_header( (char *)&Nlm_ext_head.languageID, nlm_ext_msg );
-        extend = TRUE;
-    }
-    if( Nlm_head.customDataSize != 0 ) {
-        Wdputslc( "\n" );
-        Banner( "Custom Data" );
-        Dmp_seg_data( Nlm_head.customDataOffset, Nlm_head.customDataSize );
-    }
-    dmp_module_dep();
-    if( Options_dmp & FIX_DMP ) {
-        dmp_reloc_fixup();
-    }
-    dmp_external_ref();
-    dmp_public_entry();
-    Wdputslc( "\n" );
-    if( extend ) {
-        dmp_extended();
-    }
-    return( 1 );
-}
-
-/*
- * Dump variable size part of Nlm Executable Header.
- */
-unsigned_32 dmp_nlm_head2( void )
-/*******************************/
-{
-    unsigned_32     offset;
-    nlm_header_2    nlm_head2;
-
-    Wread( nlm_head2.descriptionText, Nlm_head.descriptionLength + 1 );
-    Wdputs( "description text                          = " );
-    Wdputs( nlm_head2.descriptionText );
-    offset = Nlm_head.descriptionLength + 1;
-    Wread( &nlm_head2.stackSize, sizeof( unsigned_32 ) );
-    Wread( &nlm_head2.reserved, sizeof( unsigned_32 ) );
-    Wdputslc( "\nstack size                                = " );
-    Puthex( nlm_head2.stackSize, 8 );
-    Wdputslc( "H\nreserved                                  = " );
-    Puthex( nlm_head2.reserved, 8 );
-    offset += 2 * sizeof( unsigned_32 );
-    Wread( nlm_head2.oldThreadName, OLD_THREAD_NAME_LENGTH );
-    nlm_head2.oldThreadName[OLD_THREAD_NAME_LENGTH] = '\0';
-    Wdputslc( "H\nold thread name                           = " );
-    Wdputs( nlm_head2.oldThreadName );
-    offset += OLD_THREAD_NAME_LENGTH;
-    Wread( &nlm_head2.screenNameLength, sizeof( unsigned_8 ) );
-    Wread( nlm_head2.screenName, nlm_head2.screenNameLength + 1 );
-    Wdputslc( "\nscreen name                               = " );
-    Wdputs( nlm_head2.screenName );
-    offset += nlm_head2.screenNameLength + 1;
-    Wread( &nlm_head2.threadNameLength, sizeof( unsigned_8 ) );
-    offset += 2 * sizeof( unsigned_8 );
-    Wread( nlm_head2.threadName, nlm_head2.threadNameLength + 1 );
-    Wdputslc( "\nthread name                               = " );
-    Wdputs( nlm_head2.threadName );
-    offset += nlm_head2.threadNameLength + 1;
-    Wdputslc( "\n" );
-    return( offset );
-}
-
-/*
  * Dump module dependency table.
  */
 static void dmp_module_dep( void )
@@ -372,4 +264,112 @@ static void dmp_extended( void )
         Banner( "RPC Data" );
         Dmp_seg_data( Nlm_ext_head.RPCDataOffset, Nlm_ext_head.RPCDataLength );
     }
+}
+
+/*
+ * Dump the Nlm Executable Header, if any.
+ */
+bool Dmp_nlm_head( void )
+/***********************/
+{
+    unsigned_32     offset;
+    nlm_header_3    nlm_head3;
+    nlm_header_4    nlm_head4;
+    bool            extend;
+
+    Wlseek( 0 );
+    Wread( &Nlm_head, sizeof( Nlm_head.signature ) );
+    if( memcmp( Nlm_head.signature, NLM_SIGNATURE, sizeof( NLM_SIGNATURE ) - 1 ) ) {
+        return( 0 );
+    }
+    Wread( (char *)&Nlm_head + sizeof( Nlm_head.signature ),
+        sizeof( nlm_header ) - sizeof( Nlm_head.signature ) );
+    Banner( "Novell EXE Header" );
+    Wdputs( "version number                            = " );
+    Puthex( Nlm_head.version, 8 );
+    Wdputslc( "H\n" );
+    Wdputs( "module name                               = " );
+    Wdputs( &Nlm_head.moduleName[1] );
+    Wdputslc( "\n" );
+    Dump_header( (char *)&Nlm_head.codeImageOffset, nlm_exe_msg );
+    offset = dmp_nlm_head2();
+    offset += sizeof( nlm_header );
+    Wlseek( offset );
+    Wread( &nlm_head3, sizeof( nlm_header_3 ) );
+    if( !memcmp( nlm_head3.versionSignature, VERSION_SIGNATURE, VERSION_SIGNATURE_LENGTH ) ) {
+        Dump_header( (char *)&nlm_head3.majorVersion, nlm_date_msg );
+        offset += sizeof( nlm_header_3 );
+    }
+    Wlseek( offset );
+    Wread( &nlm_head4, sizeof( nlm_header_4 ) );
+    if( !memcmp( nlm_head4.copyrightSignature, COPYRIGHT_SIGNATURE, COPYRIGHT_SIGNATURE_LENGTH ) ) {
+        Wdputs( "copy right string                    = " );
+        Wdputs( nlm_head4.copyrightString );
+        Wdputslc( "\n" );
+        offset += sizeof( unsigned_8 ) + COPYRIGHT_SIGNATURE_LENGTH;
+        offset += nlm_head4.copyrightLength;
+    }
+    Wlseek( offset );
+    extend = FALSE;
+    Wread( &Nlm_ext_head, sizeof( extended_nlm_header ) );
+    if( !memcmp( Nlm_ext_head.stamp, EXTENDED_NLM_SIGNATURE, EXTENDED_NLM_SIGNATURE_LENGTH ) ) {
+        Dump_header( (char *)&Nlm_ext_head.languageID, nlm_ext_msg );
+        extend = TRUE;
+    }
+    if( Nlm_head.customDataSize != 0 ) {
+        Wdputslc( "\n" );
+        Banner( "Custom Data" );
+        Dmp_seg_data( Nlm_head.customDataOffset, Nlm_head.customDataSize );
+    }
+    dmp_module_dep();
+    if( Options_dmp & FIX_DMP ) {
+        dmp_reloc_fixup();
+    }
+    dmp_external_ref();
+    dmp_public_entry();
+    Wdputslc( "\n" );
+    if( extend ) {
+        dmp_extended();
+    }
+    return( 1 );
+}
+
+/*
+ * Dump variable size part of Nlm Executable Header.
+ */
+unsigned_32 dmp_nlm_head2( void )
+/*******************************/
+{
+    unsigned_32     offset;
+    nlm_header_2    nlm_head2;
+
+    Wread( nlm_head2.descriptionText, Nlm_head.descriptionLength + 1 );
+    Wdputs( "description text                          = " );
+    Wdputs( nlm_head2.descriptionText );
+    offset = Nlm_head.descriptionLength + 1;
+    Wread( &nlm_head2.stackSize, sizeof( unsigned_32 ) );
+    Wread( &nlm_head2.reserved, sizeof( unsigned_32 ) );
+    Wdputslc( "\nstack size                                = " );
+    Puthex( nlm_head2.stackSize, 8 );
+    Wdputslc( "H\nreserved                                  = " );
+    Puthex( nlm_head2.reserved, 8 );
+    offset += 2 * sizeof( unsigned_32 );
+    Wread( nlm_head2.oldThreadName, OLD_THREAD_NAME_LENGTH );
+    nlm_head2.oldThreadName[OLD_THREAD_NAME_LENGTH] = '\0';
+    Wdputslc( "H\nold thread name                           = " );
+    Wdputs( nlm_head2.oldThreadName );
+    offset += OLD_THREAD_NAME_LENGTH;
+    Wread( &nlm_head2.screenNameLength, sizeof( unsigned_8 ) );
+    Wread( nlm_head2.screenName, nlm_head2.screenNameLength + 1 );
+    Wdputslc( "\nscreen name                               = " );
+    Wdputs( nlm_head2.screenName );
+    offset += nlm_head2.screenNameLength + 1;
+    Wread( &nlm_head2.threadNameLength, sizeof( unsigned_8 ) );
+    offset += 2 * sizeof( unsigned_8 );
+    Wread( nlm_head2.threadName, nlm_head2.threadNameLength + 1 );
+    Wdputslc( "\nthread name                               = " );
+    Wdputs( nlm_head2.threadName );
+    offset += nlm_head2.threadNameLength + 1;
+    Wdputslc( "\n" );
+    return( offset );
 }

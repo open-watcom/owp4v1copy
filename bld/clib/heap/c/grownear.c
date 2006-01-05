@@ -288,6 +288,83 @@ static void *RationalAlloc( size_t size )
 #endif
 #endif
 
+static int __AdjustAmount( unsigned *amount )
+{
+    unsigned old_amount = *amount;
+    unsigned amt;
+    #if ! ( defined(__WINDOWS_286__) || \
+            defined(__WINDOWS_386__) || \
+            defined(__WARP__)        || \
+            defined(__NT__)             \
+        )
+        unsigned last_free_amt;
+    #endif
+
+    amt = old_amount;
+    amt = ( amt + TAG_SIZE + ROUND_SIZE) & ~ROUND_SIZE;
+    if( amt < old_amount ) {
+        return( 0 );
+    }
+    #if ! ( defined(__WINDOWS_286__) || \
+            defined(__WINDOWS_386__) || \
+            defined(__WARP__)        || \
+            defined(__NT__)             \
+        )
+        #if defined(__DOS_EXT__)
+            if( _IsRationalZeroBase() || _IsCodeBuilder() ) {
+                // Allocating extra to identify the dpmi block
+                amt += sizeof(struct dpmi_hdr);
+            } else {
+        #else
+            {
+        #endif
+                last_free_amt = __LastFree();   /* adjust for last free block */
+                if( last_free_amt >= amt ) {
+                    amt = 0;
+                } else {
+                    amt -= last_free_amt;
+                }
+            }
+    #endif
+    /* amount is even here */
+    /*
+      extra amounts        (22-feb-91 AFS)
+
+       (1) adding a new heap needs:
+           frl                    free block req'd for _nmalloc request
+                                  (frl is the MINIMUM because the block
+                                  may be freed)
+           tag                    end of miniheap descriptor
+           struct miniheapblkp    start of miniheap descriptor
+       (2) extending heap needs:
+           tag               free block req'd for _nmalloc request
+    */
+    *amount = amt;
+    amt += ( (TAG_SIZE) + sizeof(frl) + sizeof(struct miniheapblkp) );
+    if( amt < *amount ) return( 0 );
+    if( amt < _amblksiz ) {
+        /*
+          _amblksiz may not be even so round down to an even number
+          nb. pathological case: where _amblksiz == 0xffff, we don't
+                                 want the usual round up to even
+        */
+        amt = _amblksiz & ~1u;
+    }
+    #if defined(__WINDOWS_386__) || \
+        defined(__WARP__)        || \
+        defined(__NT__)          || \
+        defined(__CALL21__)      || \
+        defined(__DOS_EXT__)
+        /* make sure amount is a multiple of 4k */
+        *amount = amt;
+        amt += 0x0fff;
+        if( amt < *amount ) return( 0 );
+        amt &= ~0x0fff;
+    #endif
+    *amount = amt;
+    return( *amount != 0 );
+}
+
 #if defined(__WINDOWS_286__) || \
     defined(__WINDOWS_386__) || \
     defined(__WARP__)        || \
@@ -476,81 +553,4 @@ int __ExpandDGROUP( unsigned amount )
         _nfree( (PTR)flp + TAG_SIZE );
         return( 1 );
     #endif
-}
-
-static int __AdjustAmount( unsigned *amount )
-{
-    unsigned old_amount = *amount;
-    unsigned amt;
-    #if ! ( defined(__WINDOWS_286__) || \
-            defined(__WINDOWS_386__) || \
-            defined(__WARP__)        || \
-            defined(__NT__)             \
-        )
-        unsigned last_free_amt;
-    #endif
-
-    amt = old_amount;
-    amt = ( amt + TAG_SIZE + ROUND_SIZE) & ~ROUND_SIZE;
-    if( amt < old_amount ) {
-        return( 0 );
-    }
-    #if ! ( defined(__WINDOWS_286__) || \
-            defined(__WINDOWS_386__) || \
-            defined(__WARP__)        || \
-            defined(__NT__)             \
-        )
-        #if defined(__DOS_EXT__)
-            if( _IsRationalZeroBase() || _IsCodeBuilder() ) {
-                // Allocating extra to identify the dpmi block
-                amt += sizeof(struct dpmi_hdr);
-            } else {
-        #else
-            {
-        #endif
-                last_free_amt = __LastFree();   /* adjust for last free block */
-                if( last_free_amt >= amt ) {
-                    amt = 0;
-                } else {
-                    amt -= last_free_amt;
-                }
-            }
-    #endif
-    /* amount is even here */
-    /*
-      extra amounts        (22-feb-91 AFS)
-
-       (1) adding a new heap needs:
-           frl                    free block req'd for _nmalloc request
-                                  (frl is the MINIMUM because the block
-                                  may be freed)
-           tag                    end of miniheap descriptor
-           struct miniheapblkp    start of miniheap descriptor
-       (2) extending heap needs:
-           tag               free block req'd for _nmalloc request
-    */
-    *amount = amt;
-    amt += ( (TAG_SIZE) + sizeof(frl) + sizeof(struct miniheapblkp) );
-    if( amt < *amount ) return( 0 );
-    if( amt < _amblksiz ) {
-        /*
-          _amblksiz may not be even so round down to an even number
-          nb. pathological case: where _amblksiz == 0xffff, we don't
-                                 want the usual round up to even
-        */
-        amt = _amblksiz & ~1u;
-    }
-    #if defined(__WINDOWS_386__) || \
-        defined(__WARP__)        || \
-        defined(__NT__)          || \
-        defined(__CALL21__)      || \
-        defined(__DOS_EXT__)
-        /* make sure amount is a multiple of 4k */
-        *amount = amt;
-        amt += 0x0fff;
-        if( amt < *amount ) return( 0 );
-        amt &= ~0x0fff;
-    #endif
-    *amount = amt;
-    return( *amount != 0 );
 }

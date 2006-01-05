@@ -165,6 +165,60 @@ static void finiPRES( WPI_PRES pres )
 } /* finiPRES */
 
 /*
+ * makeInsideRect - make a rectangle the inside of a rectangle
+ */
+static void makeInsideRect( WPI_RECT *r )
+{
+    STATUS_DIM  r_left;
+    STATUS_DIM  r_right;
+    STATUS_DIM  r_top;
+    STATUS_DIM  r_bottom;
+
+    _wpi_getrectvalues( *r, &r_left, &r_top, &r_right, &r_bottom );
+    r_left += BORDER_SIZE;
+    r_top += BORDER_SIZE;
+    r_right -= BORDER_SIZE;
+    r_bottom -= BORDER_SIZE;
+
+    _wpi_setrectvalues( r, r_left, r_top, r_right, r_bottom );
+
+} /* makeInsideRect */
+
+/*
+ * outlineRect - draw the outline of a rectangle
+ */
+static void outlineRect( WPI_PRES pres, WPI_RECT *r )
+{
+    WPI_POINT   pt;
+    STATUS_DIM  left;
+    STATUS_DIM  right;
+    STATUS_DIM  top;
+    STATUS_DIM  bottom;
+    HPEN        oldpen;
+
+    _wpi_getrectvalues( *r, &left, &top, &right, &bottom );
+
+    _wpi_setpoint( &pt, left, bottom-1 );
+    _wpi_cvth_pt( &pt, wndHeight );
+    _wpi_movetoex( pres, &pt, NULL );
+
+    oldpen = _wpi_selectobject( pres, penLight );
+    pt.x = right - 1;
+    _wpi_lineto( pres, &pt );
+    pt.y = _wpi_cvth_y( top, wndHeight );
+    _wpi_lineto( pres, &pt );
+
+    _wpi_selectobject( pres, penShade );
+
+    pt.x = left;
+    _wpi_lineto( pres, &pt );
+    pt.y = _wpi_cvth_y( bottom-1, wndHeight );
+    _wpi_lineto( pres, &pt );
+
+    _wpi_selectobject( pres, oldpen );
+} /* outlineRect */
+
+/*
  * StatusWndCallback - handle messages for
  */
 CB StatusWndCallback( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lparam  )
@@ -394,60 +448,6 @@ HWND StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance,
     wndHeight = _wpi_getheightrect( *size );
     return( stat );
 } /* StatusWndCreate */
-
-/*
- * makeInsideRect - make a rectangle the inside of a rectangle
- */
-static void makeInsideRect( WPI_RECT *r )
-{
-    STATUS_DIM  r_left;
-    STATUS_DIM  r_right;
-    STATUS_DIM  r_top;
-    STATUS_DIM  r_bottom;
-
-    _wpi_getrectvalues( *r, &r_left, &r_top, &r_right, &r_bottom );
-    r_left += BORDER_SIZE;
-    r_top += BORDER_SIZE;
-    r_right -= BORDER_SIZE;
-    r_bottom -= BORDER_SIZE;
-
-    _wpi_setrectvalues( r, r_left, r_top, r_right, r_bottom );
-
-} /* makeInsideRect */
-
-/*
- * outlineRect - draw the outline of a rectangle
- */
-static void outlineRect( WPI_PRES pres, WPI_RECT *r )
-{
-    WPI_POINT   pt;
-    STATUS_DIM  left;
-    STATUS_DIM  right;
-    STATUS_DIM  top;
-    STATUS_DIM  bottom;
-    HPEN        oldpen;
-
-    _wpi_getrectvalues( *r, &left, &top, &right, &bottom );
-
-    _wpi_setpoint( &pt, left, bottom-1 );
-    _wpi_cvth_pt( &pt, wndHeight );
-    _wpi_movetoex( pres, &pt, NULL );
-
-    oldpen = _wpi_selectobject( pres, penLight );
-    pt.x = right - 1;
-    _wpi_lineto( pres, &pt );
-    pt.y = _wpi_cvth_y( top, wndHeight );
-    _wpi_lineto( pres, &pt );
-
-    _wpi_selectobject( pres, penShade );
-
-    pt.x = left;
-    _wpi_lineto( pres, &pt );
-    pt.y = _wpi_cvth_y( bottom-1, wndHeight );
-    _wpi_lineto( pres, &pt );
-
-    _wpi_selectobject( pres, oldpen );
-} /* outlineRect */
 
 /*
  * StatusWndDraw3DBox - called by StatusWndDrawLine or externally

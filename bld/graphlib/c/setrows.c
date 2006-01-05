@@ -108,43 +108,6 @@ extern void         InitGener( void );
 #endif
 
 
-short _SetRows( short rows )
-/*==========================
-
-   This function sets the number of text rows in the current mode. It only
-   affects the _VGA, _EGA, and _MCGA adapters.  */
-
-{
-    _ErrorStatus = _GROK;
-    _InitState();           // read the current machine state
-    if( _GrMode ) {
-        GrModeRows( rows );
-    } else {
-        TextModeRows( rows );
-    }
-    if( _ErrorStatus != _GROK ) {
-        return( 0 );
-    } else {
-        rows = *(char far *)_BIOS_data( ROWS ) + 1;     // 0 for Hercules
-        if( rows == 1 ) rows = 25;
-        _CurrState->vc.numtextrows = rows;
-        if( !_GrMode ) {
-            _CalcNumPages();              // update the video configuration
-        }
-        _Tx_Row_Min = 0;                            // text window is now
-        _Tx_Col_Min = 0;                            // the full screen
-        _Tx_Row_Max = _CurrState->vc.numtextrows - 1;
-        _Tx_Col_Max = _CurrState->vc.numtextcols - 1;
-        _TextPos.row = 0;                           // set mode function
-        _TextPos.col = 0;                           // sets position to 0,0
-        _CurrVisualPage = 0;
-        _CurrActivePage = 0;
-        VideoInt( _BIOS_VIDEO_PAGE, 0, 0, 0 );      // set to page 0
-        return( _CurrState->vc.numtextrows );
-    }
-}
-
-
 static void TextModeRows( short rows )
 //====================================
 
@@ -282,6 +245,43 @@ static void GrModeRows( short rows )
         VideoInt( font, 0, 0, rows );
     }
     _GrCursor = 0;                          // cursor is off
+}
+
+
+short _SetRows( short rows )
+/*==========================
+
+   This function sets the number of text rows in the current mode. It only
+   affects the _VGA, _EGA, and _MCGA adapters.  */
+
+{
+    _ErrorStatus = _GROK;
+    _InitState();           // read the current machine state
+    if( _GrMode ) {
+        GrModeRows( rows );
+    } else {
+        TextModeRows( rows );
+    }
+    if( _ErrorStatus != _GROK ) {
+        return( 0 );
+    } else {
+        rows = *(char far *)_BIOS_data( ROWS ) + 1;     // 0 for Hercules
+        if( rows == 1 ) rows = 25;
+        _CurrState->vc.numtextrows = rows;
+        if( !_GrMode ) {
+            _CalcNumPages();              // update the video configuration
+        }
+        _Tx_Row_Min = 0;                            // text window is now
+        _Tx_Col_Min = 0;                            // the full screen
+        _Tx_Row_Max = _CurrState->vc.numtextrows - 1;
+        _Tx_Col_Max = _CurrState->vc.numtextcols - 1;
+        _TextPos.row = 0;                           // set mode function
+        _TextPos.col = 0;                           // sets position to 0,0
+        _CurrVisualPage = 0;
+        _CurrActivePage = 0;
+        VideoInt( _BIOS_VIDEO_PAGE, 0, 0, 0 );      // set to page 0
+        return( _CurrState->vc.numtextrows );
+    }
 }
 
 

@@ -24,21 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Object file record management routines.
 *
 ****************************************************************************/
 
-
-/*
-    RECORDS : object file record management routines
-
-    Modified:   By:             Reason:
-    ---------   ---             -------
-    90/02/09    Jim Randall     Split from TDCVT & cleaned up
-    90/03/10    Jim Randall     catch & disallow 386 .obj files.
-    90/03/29    Jim Randall     Mangled & modified for use here.
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -204,27 +193,11 @@ extern void FinalCleanup( void )
     FreeList( ExcludeList );
 }
 
-extern void ProcessRec( void )
-/****************************/
+static void WriteRecord( void )
+/*****************************/
 {
-    bool    is386;
-
-    is386 = FALSE;
-    switch( Rec1->head.class ) {
-    case SEGD32: is386 = TRUE;      // note the fall through
-    case SEGDEF: procsegdef( is386 ); break;
-    case COMENT: proccoment(); break;
-    case LNAMES: proclnames(); break;
-    case LEDA32: is386 = TRUE;      //  even more fall through here.
-    case LIDA32: is386 = TRUE;
-    case LEDATA:
-    case LIDATA: ProcDataRec( is386 ); break;
-    case FIXU32:
-    case FIXUPP: procfixupp(); break;
-    default:
-        WriteRecord();
-        break;
-    }
+    BuildRecord( Rec1, Rec1->head.length + sizeof( HEAD ) );
+    SubTotal = 0;       // reset checksum calculations.
 }
 
 static void proccoment( void )
@@ -302,6 +275,16 @@ static bool MatchIndex( name_list *list, int index )
         list = list->next;
     }
     return( FALSE );
+}
+
+static void CheckSum( void )
+/**************************/
+{
+    BYTE    cksum;
+
+    cksum = -SubTotal;
+    BuildRecord( &cksum, 1 );
+    SubTotal = 0;
 }
 
 static void procsegdef( bool is386 )
@@ -405,6 +388,29 @@ static void procfixupp( void )
     WriteRecord();
 }
 
+extern void ProcessRec( void )
+/****************************/
+{
+    bool    is386;
+
+    is386 = FALSE;
+    switch( Rec1->head.class ) {
+    case SEGD32: is386 = TRUE;      // note the fall through
+    case SEGDEF: procsegdef( is386 ); break;
+    case COMENT: proccoment(); break;
+    case LNAMES: proclnames(); break;
+    case LEDA32: is386 = TRUE;      //  even more fall through here.
+    case LIDA32: is386 = TRUE;
+    case LEDATA:
+    case LIDATA: ProcDataRec( is386 ); break;
+    case FIXU32:
+    case FIXUPP: procfixupp(); break;
+    default:
+        WriteRecord();
+        break;
+    }
+}
+
 extern int GetIndex( char **rec )
 /*******************************/
 {
@@ -470,16 +476,6 @@ extern int ReadRec( void )
     return( OK );
 }
 
-static void CheckSum( void )
-/**************************/
-{
-    BYTE    cksum;
-
-    cksum = -SubTotal;
-    BuildRecord( &cksum, 1 );
-    SubTotal = 0;
-}
-
 static void AddToSubTotal( void * buff, int len )
 /***********************************************/
 {
@@ -489,13 +485,6 @@ static void AddToSubTotal( void * buff, int len )
     while( --len >= 0 ) {
         SubTotal += *data++;
     }
-}
-
-static void WriteRecord( void )
-/*****************************/
-{
-    BuildRecord( Rec1, Rec1->head.length + sizeof( HEAD ) );
-    SubTotal = 0;       // reset checksum calculations.
 }
 
 extern void BuildRecord( void *info, unsigned len )

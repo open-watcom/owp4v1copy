@@ -60,27 +60,6 @@
 extern unsigned __NFiles;
 
 
-_WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int mode, ... )
-{
-    int permission;
-    va_list args;
-
-    va_start( args, mode );
-    permission = va_arg( args, int );
-    va_end( args );
-    return( __F_NAME(sopen,_wsopen)( name, mode, 0, permission ) );
-}
-
-
-_WCRTLINK int __F_NAME(sopen,_wsopen)( const CHAR_TYPE *name, int mode, int shflag, ... )
-{
-    va_list             args;
-
-    va_start( args, shflag );
-    return( __F_NAME(_sopen,__wsopen)( name, mode, shflag, args ) );
-}
-
-
 static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shflag, va_list args )
 {
     int         rwmode;
@@ -286,3 +265,24 @@ int __set_binary( int handle )
 }
 #endif
 #endif
+
+
+_WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int mode, ... )
+{
+    int permission;
+    va_list args;
+
+    va_start( args, mode );
+    permission = va_arg( args, int );
+    va_end( args );
+    return( __F_NAME(sopen,_wsopen)( name, mode, 0, permission ) );
+}
+
+
+_WCRTLINK int __F_NAME(sopen,_wsopen)( const CHAR_TYPE *name, int mode, int shflag, ... )
+{
+    va_list             args;
+
+    va_start( args, shflag );
+    return( __F_NAME(_sopen,__wsopen)( name, mode, shflag, args ) );
+}

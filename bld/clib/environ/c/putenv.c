@@ -160,6 +160,65 @@ _WCRTLINK int __F_NAME(putenv,_wputenv)( const CHAR_TYPE *env_string )
 }
 
 
+#ifndef __NETWARE__
+static int findenv( const CHAR_TYPE *env_string, int delete_var )
+{
+    CHAR_TYPE           **envp, **tmp_envp;
+    const CHAR_TYPE     *p1, *p2, *env_str;
+    int                 index1;
+#ifndef __WIDECHAR__
+    int                 index2;
+    char                *envm;
+#endif
+
+    for( envp = __F_NAME(_RWD_environ,_RWD_wenviron); p1 = *envp; ++envp ) {
+        for( p2 = env_string; *p2; ++p1, ++p2 ) {
+#if defined(__UNIX__)
+            if( *p1 != *p2 ) break;
+#else
+            /* case independent search */
+            #ifdef __WIDECHAR__
+                if( towupper( *p1 ) != towupper( *p2 ) ) break;
+            #else
+                if( toupper( *p1 ) != toupper( *p2 ) ) break;
+            #endif
+#endif
+            if( *p1 == __F_NAME('=',L'=') ) {
+                index1 = envp - __F_NAME(_RWD_environ,_RWD_wenviron);
+                if( delete_var ) {
+                    env_str = *envp;
+                    tmp_envp = envp;        /* delete entry */
+                    for( ; *tmp_envp; ++tmp_envp ) {
+                        *tmp_envp = *(tmp_envp + 1);
+                    }
+                    #ifdef __WIDECHAR__
+                        lib_free( (void *)env_str );
+                    #else
+                        if( _RWD_env_mask != NULL ) {
+                            if( _RWD_env_mask[ index1 ] != 0 ) {
+                                lib_free( (void *)env_str );
+                            }
+                            envm = (char *)(tmp_envp);
+                            index2 = tmp_envp - _RWD_environ;
+                            memmove( envm, _RWD_env_mask, index2 * sizeof(char) );
+                            _RWD_env_mask = envm;
+                            for( ; index1 < index2; index1++ ) {
+                                envm[ index1 ] = envm[ index1 + 1 ];
+                            }
+                        }
+                    #endif
+                    return( 0 );            /* pretend it wasn't found */
+                } else {
+                    return( index1 + 1 );   /* return index origin 1 */
+                }
+            }
+        }
+    }
+    return( __F_NAME(_RWD_environ,_RWD_wenviron) - envp );  /* not found */
+}
+#endif
+
+
 int __F_NAME(__putenv,__wputenv)( const CHAR_TYPE *env_string )
 {
 #ifdef __NETWARE__
@@ -238,62 +297,3 @@ int __F_NAME(__putenv,__wputenv)( const CHAR_TYPE *env_string )
     return( 0 );
 #endif
 }
-
-
-#ifndef __NETWARE__
-static int findenv( const CHAR_TYPE *env_string, int delete_var )
-{
-    CHAR_TYPE           **envp, **tmp_envp;
-    const CHAR_TYPE     *p1, *p2, *env_str;
-    int                 index1;
-#ifndef __WIDECHAR__
-    int                 index2;
-    char                *envm;
-#endif
-
-    for( envp = __F_NAME(_RWD_environ,_RWD_wenviron); p1 = *envp; ++envp ) {
-        for( p2 = env_string; *p2; ++p1, ++p2 ) {
-#if defined(__UNIX__)
-            if( *p1 != *p2 ) break;
-#else
-            /* case independent search */
-            #ifdef __WIDECHAR__
-                if( towupper( *p1 ) != towupper( *p2 ) ) break;
-            #else
-                if( toupper( *p1 ) != toupper( *p2 ) ) break;
-            #endif
-#endif
-            if( *p1 == __F_NAME('=',L'=') ) {
-                index1 = envp - __F_NAME(_RWD_environ,_RWD_wenviron);
-                if( delete_var ) {
-                    env_str = *envp;
-                    tmp_envp = envp;        /* delete entry */
-                    for( ; *tmp_envp; ++tmp_envp ) {
-                        *tmp_envp = *(tmp_envp + 1);
-                    }
-                    #ifdef __WIDECHAR__
-                        lib_free( (void *)env_str );
-                    #else
-                        if( _RWD_env_mask != NULL ) {
-                            if( _RWD_env_mask[ index1 ] != 0 ) {
-                                lib_free( (void *)env_str );
-                            }
-                            envm = (char *)(tmp_envp);
-                            index2 = tmp_envp - _RWD_environ;
-                            memmove( envm, _RWD_env_mask, index2 * sizeof(char) );
-                            _RWD_env_mask = envm;
-                            for( ; index1 < index2; index1++ ) {
-                                envm[ index1 ] = envm[ index1 + 1 ];
-                            }
-                        }
-                    #endif
-                    return( 0 );            /* pretend it wasn't found */
-                } else {
-                    return( index1 + 1 );   /* return index origin 1 */
-                }
-            }
-        }
-    }
-    return( __F_NAME(_RWD_environ,_RWD_wenviron) - envp );  /* not found */
-}
-#endif

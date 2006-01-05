@@ -73,15 +73,6 @@ extern BOOL SnapRectToGrid( RECT * rec )
   }
 
 
-extern void SnapPointToGrid( POINT * pt )
-/***************************************/
-
-/* snap the given point to the current grid */
-
-  {
-    DoPointSnap( pt, GetVerticalInc(), GetHorizontalInc() );
-  }
-
 static void DoPointSnap( POINT * pt, unsigned vinc, unsigned hinc )
 /*****************************************************************/
 
@@ -90,6 +81,15 @@ static void DoPointSnap( POINT * pt, unsigned vinc, unsigned hinc )
     pt->x = ((pt->x + (hinc>>1)) / hinc ) * hinc;
   }
 
+
+extern void SnapPointToGrid( POINT * pt )
+/***************************************/
+
+/* snap the given point to the current grid */
+
+  {
+    DoPointSnap( pt, GetVerticalInc(), GetHorizontalInc() );
+  }
 
 extern void SnapPointToResizeGrid( POINT * pt )
 /*********************************************/

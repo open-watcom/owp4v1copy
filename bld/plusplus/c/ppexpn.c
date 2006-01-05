@@ -374,6 +374,98 @@ static void unexpectedCurToken( void )
     CErr2p( ERR_UNEXPECTED_IN_CONSTANT_EXPRESSION, Tokens[CurToken] );
 }
 
+static int isMacroDefined()
+{
+    PPState = PPS_EOL;
+    return MacroDependsDefined();
+}
+
+static boolean COperand()
+{
+    ppvalue p;
+    loc_info loc;
+    TOKEN_LOCN left_loc;
+    boolean done;
+
+    done = FALSE;
+    switch( CurToken ) {
+      case T_ID:
+        SrcFileGetTokenLocn( &loc.locn ); // need this to store result
+        loc.pos = Pos;
+        Pos++;
+        if( strcmp( "defined", Buffer ) == 0 ) {
+            PPState = PPS_EOL | PPS_NO_EXPAND;
+            NextToken(); // Don't error check: can have T_ID T_ID here
+            if( CurToken == T_LEFT_PAREN ) {
+                SrcFileGetTokenLocn( &left_loc );
+                NextToken(); // no need to error check or advance Pos
+                I32ToI64( isMacroDefined(), &(p.sval) );
+                NextToken(); // no need to error check or advance Pos
+                if( CurToken != T_RIGHT_PAREN ) {
+                    SetErrLoc( &left_loc );
+                    CErr1( ERR_UNMATCHED_LEFT_PAREN );
+                    done = TRUE;
+                }
+            } else {
+                I32ToI64( isMacroDefined(), &(p.sval) );
+            }
+        } else {
+            CErr2p( WARN_UNDEFD_MACRO_IS_ZERO, Buffer );
+            I64SetZero( p );
+        }
+        p.no_sign = 0;
+        if( !done ) {
+            PushOperand( p, &loc );
+            done = PpNextToken();
+        }
+        break;
+      case T_FALSE:
+      case T_TRUE:
+        I32ToI64( CurToken == T_TRUE, &(p.sval) );
+        p.no_sign = 0;
+        PushOperandCurLocation( p );
+        done = PpNextToken();
+        break;
+      case T_CONSTANT:
+        switch( ConstType ) {
+          case TYP_FLOAT:
+          case TYP_DOUBLE:
+          case TYP_LONG_DOUBLE:
+            CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
+            done = TRUE;
+            I32ToI64( SafeAtof( Buffer ), &(p.sval) );
+            // LMW add long double support if available
+            p.no_sign = 0;
+            break;
+          case TYP_WCHAR:
+          case TYP_UCHAR:
+          case TYP_USHORT:
+          case TYP_UINT:
+          case TYP_ULONG:
+          case TYP_ULONG64:
+            p.uval = Constant64;
+            p.no_sign = 1;
+            break;
+          default:
+            p.sval = Constant64;
+            p.no_sign = 0;
+        }
+        if (!done ) {
+            PushOperandCurLocation( p );
+            done = PpNextToken();
+        }
+        break;
+
+      default:
+        CErr2p( WARN_UNDEFD_MACRO_IS_ZERO, Buffer );
+        I64SetZero( p );
+        p.no_sign = 0;
+        PushOperandCurLocation( p );
+        done = PpNextToken();
+    }
+    return( done );
+}
+
 static void PrecedenceParse( ppvalue *p ) // main precedence parse algorithm
 {
     int prec_token;
@@ -900,96 +992,4 @@ static boolean CStart()
         unexpectedCurToken();
     }
     return( TRUE );
-}
-
-static boolean COperand()
-{
-    ppvalue p;
-    loc_info loc;
-    TOKEN_LOCN left_loc;
-    boolean done;
-
-    done = FALSE;
-    switch( CurToken ) {
-      case T_ID:
-        SrcFileGetTokenLocn( &loc.locn ); // need this to store result
-        loc.pos = Pos;
-        Pos++;
-        if( strcmp( "defined", Buffer ) == 0 ) {
-            PPState = PPS_EOL | PPS_NO_EXPAND;
-            NextToken(); // Don't error check: can have T_ID T_ID here
-            if( CurToken == T_LEFT_PAREN ) {
-                SrcFileGetTokenLocn( &left_loc );
-                NextToken(); // no need to error check or advance Pos
-                I32ToI64( isMacroDefined(), &(p.sval) );
-                NextToken(); // no need to error check or advance Pos
-                if( CurToken != T_RIGHT_PAREN ) {
-                    SetErrLoc( &left_loc );
-                    CErr1( ERR_UNMATCHED_LEFT_PAREN );
-                    done = TRUE;
-                }
-            } else {
-                I32ToI64( isMacroDefined(), &(p.sval) );
-            }
-        } else {
-            CErr2p( WARN_UNDEFD_MACRO_IS_ZERO, Buffer );
-            I64SetZero( p );
-        }
-        p.no_sign = 0;
-        if( !done ) {
-            PushOperand( p, &loc );
-            done = PpNextToken();
-        }
-        break;
-      case T_FALSE:
-      case T_TRUE:
-        I32ToI64( CurToken == T_TRUE, &(p.sval) );
-        p.no_sign = 0;
-        PushOperandCurLocation( p );
-        done = PpNextToken();
-        break;
-      case T_CONSTANT:
-        switch( ConstType ) {
-          case TYP_FLOAT:
-          case TYP_DOUBLE:
-          case TYP_LONG_DOUBLE:
-            CErr1( ERR_EXPR_MUST_BE_INTEGRAL );
-            done = TRUE;
-            I32ToI64( SafeAtof( Buffer ), &(p.sval) );
-            // LMW add long double support if available
-            p.no_sign = 0;
-            break;
-          case TYP_WCHAR:
-          case TYP_UCHAR:
-          case TYP_USHORT:
-          case TYP_UINT:
-          case TYP_ULONG:
-          case TYP_ULONG64:
-            p.uval = Constant64;
-            p.no_sign = 1;
-            break;
-          default:
-            p.sval = Constant64;
-            p.no_sign = 0;
-        }
-        if (!done ) {
-            PushOperandCurLocation( p );
-            done = PpNextToken();
-        }
-        break;
-
-      default:
-        CErr2p( WARN_UNDEFD_MACRO_IS_ZERO, Buffer );
-        I64SetZero( p );
-        p.no_sign = 0;
-        PushOperandCurLocation( p );
-        done = PpNextToken();
-    }
-    return( done );
-}
-
-static int isMacroDefined()
-{
-    PPState = PPS_EOL;
-    return MacroDependsDefined();
 }

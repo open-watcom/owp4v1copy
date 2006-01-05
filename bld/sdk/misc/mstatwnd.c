@@ -116,8 +116,35 @@ static void finiHDC( HDC hdc )
     SelectObject( hdc, oldBrush );
     SelectObject( hdc, oldFont );
     SetBkColor( hdc, oldBkColor );
-    
+
 } /* finiHDC */
+
+/*
+ * makeInsideRect - make a rectangle the inside of a rectangle
+ */
+static void makeInsideRect( RECT *r )
+{
+    r->left += BORDER_SIZE;
+    r->right -= BORDER_SIZE;
+    r->top += BORDER_SIZE;
+    r->bottom -= BORDER_SIZE;
+
+} /* makeInsideRect */
+
+/*
+ * outlineRect - draw the outline of a rectangle
+ */
+static void outlineRect( HDC hdc, RECT *r )
+{
+    MoveToEx( hdc, r->left, r->bottom - 1, NULL );
+    LineTo( hdc, r->right - 1, r->bottom - 1 );
+    LineTo( hdc, r->right - 1, r->top );
+    SelectObject( hdc, penShade );
+    LineTo( hdc, r->left, r->top );
+    LineTo( hdc, r->left, r->bottom - 1 );
+    SelectObject( hdc, penLight );
+
+} /* outlineRect */
 
 /*
  * StatusWndCallback - handle messages for
@@ -157,7 +184,7 @@ LONG CB StatusWndCallback( HWND hwnd, UINT msg, UINT wparam, LONG lparam  )
             if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
                 SelectObject( ps.hdc, (HFONT)GetStockObject(DEFAULT_GUI_FONT) );
             } else {
-                SelectObject( ps.hdc, (HFONT)GetStockObject(SYSTEM_FONT) ); 
+                SelectObject( ps.hdc, (HFONT)GetStockObject(SYSTEM_FONT) );
             }
 #endif
             for( i=0;i<=sw->numSections;i++ ) {
@@ -181,9 +208,9 @@ LONG CB StatusWndCallback( HWND hwnd, UINT msg, UINT wparam, LONG lparam  )
             brushButtonFace = CreateSolidBrush( colorButtonFace );
             penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
             penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
-            hasGDIObjects = TRUE;        
+            hasGDIObjects = TRUE;
         }
-#endif    
+#endif
         GetClientRect( hwnd, &r );
         UnrealizeObject( brushButtonFace );
         FillRect( (HDC)wparam, &r, brushButtonFace );
@@ -296,33 +323,6 @@ int StatusWndCreate( statwnd *sw, HWND parent, RECT *size,
 } /* StatusWndCreate */
 
 /*
- * makeInsideRect - make a rectangle the inside of a rectangle
- */
-static void makeInsideRect( RECT *r )
-{
-    r->left += BORDER_SIZE;
-    r->right -= BORDER_SIZE;
-    r->top += BORDER_SIZE;
-    r->bottom -= BORDER_SIZE;
-
-} /* makeInsideRect */
-
-/*
- * outlineRect - draw the outline of a rectangle
- */
-static void outlineRect( HDC hdc, RECT *r )
-{
-    MoveToEx( hdc, r->left, r->bottom - 1, NULL );
-    LineTo( hdc, r->right - 1, r->bottom - 1 );
-    LineTo( hdc, r->right - 1, r->top );
-    SelectObject( hdc, penShade );
-    LineTo( hdc, r->left, r->top );
-    LineTo( hdc, r->left, r->bottom - 1 );
-    SelectObject( hdc, penLight );
-
-} /* outlineRect */
-
-/*
  * StatusWndDraw3DBox - called by StatusWndDrawLine or externally
  *                      in StatusWndDrawLine is not used.
  */
@@ -378,7 +378,7 @@ void outputText( statwnd *sw, HDC hdc, char *buff, RECT *r,
         if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
             SelectObject( hdc, (HFONT)GetStockObject(DEFAULT_GUI_FONT) );
         } else {
-            SelectObject( hdc, (HFONT)GetStockObject(SYSTEM_FONT) ); 
+            SelectObject( hdc, (HFONT)GetStockObject(SYSTEM_FONT) );
         }
         GetTextExtentPoint( hdc, buff, len, &sz );
         ext = sz.cx;

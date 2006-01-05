@@ -654,6 +654,17 @@ done:
 }
 
 
+static int radix_value( register int c )
+{
+    if( c >= '0' && c <= '9' )
+        return( c - '0' );
+    c = __F_NAME(tolower,towlower)( c );
+    if( c >= 'a' && c <= 'f' )
+        return( c - 'a' + 10 );
+    return( 16 );
+}
+
+
 /*
  * scan_int -- handles integer numeric conversion
  */
@@ -829,16 +840,6 @@ done:
         }
     }
     return( len );
-}
-
-static int radix_value( register int c )
-{
-    if( c >= '0' && c <= '9' )
-        return( c - '0' );
-    c = __F_NAME(tolower,towlower)( c );
-    if( c >= 'a' && c <= 'f' )
-        return( c - 'a' + 10 );
-    return( 16 );
 }
 
 

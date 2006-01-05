@@ -38,63 +38,6 @@
 #include "wdfunc.h"
 
 /*
- * Dump Segment Table
- */
-void Dmp_seg_tab( void )
-/**********************/
-{
-    unsigned_16                     num_segs;
-    struct segment_record           *segtab;
-    unsigned_16                     segtabsize;
-    unsigned_16                     segnum;
-
-    Banner( "Segment Table" );
-    num_segs = Os2_head.segments;
-    if( num_segs == 0 ) {
-        return;
-    }
-    Wlseek( New_exe_off + Os2_head.segment_off );
-    segtabsize = sizeof( struct segment_record ) * num_segs;
-    segtab = Wmalloc( segtabsize );
-    Wread( segtab, segtabsize );
-    Int_seg_tab = segtab;
-    ++num_segs;
-    Wdputslc( "seg  fileoff  len  alloc prior priv flag\n" );
-    Wdputslc( "==== ======== ==== ====  ====  ==== ====\n" );
-    for( segnum = 1; segnum != num_segs; segnum++ ) {
-        Puthex( segnum, 4 );
-        dmp_seg_ent( segtab++ );
-    }
-    Wdputslc( "\n" );
-}
-
-/*
- * Dump Segment Table Entry
- */
-static void dmp_seg_ent( struct segment_record *seg_ent )
-/*******************************************************/
-{
-    Wdputc( ' ' );
-    Puthex( (unsigned_32)seg_ent->address
-        << Os2_head.align, 8 );
-    Wdputc( ' ' );
-    Puthex( seg_ent->size, 4 );
-    Wdputc( ' ' );
-    Puthex( seg_ent->min, 4 );
-    Wdputc( ' ' );
-    Wdputc( ' ' );
-    Puthex( seg_ent->info >> SEG_SHIFT_PRI_LVL , 4 );
-    Wdputc( ' ' );
-    Wdputc( ' ' );
-    Puthex( seg_ent->info >> SEG_SHIFT_PMODE_LVL, 4 );
-    Wdputc( ' ' );
-    Puthex( seg_ent->info, 4 );
-    Wdputslc( "\n" );
-    dmp_seg_flag( seg_ent->info );
-    Wdputslc( "\n" );
-}
-
-/*
  * Dump Segment Flag word
  */
 static void dmp_seg_flag( unsigned_16 flag )
@@ -163,4 +106,61 @@ static void dmp_seg_flag( unsigned_16 flag )
     if( flag & SEG_HUGE ) {
         Wdputs( "|PART OF HUGE" );
     }
+}
+
+/*
+ * Dump Segment Table Entry
+ */
+static void dmp_seg_ent( struct segment_record *seg_ent )
+/*******************************************************/
+{
+    Wdputc( ' ' );
+    Puthex( (unsigned_32)seg_ent->address
+        << Os2_head.align, 8 );
+    Wdputc( ' ' );
+    Puthex( seg_ent->size, 4 );
+    Wdputc( ' ' );
+    Puthex( seg_ent->min, 4 );
+    Wdputc( ' ' );
+    Wdputc( ' ' );
+    Puthex( seg_ent->info >> SEG_SHIFT_PRI_LVL , 4 );
+    Wdputc( ' ' );
+    Wdputc( ' ' );
+    Puthex( seg_ent->info >> SEG_SHIFT_PMODE_LVL, 4 );
+    Wdputc( ' ' );
+    Puthex( seg_ent->info, 4 );
+    Wdputslc( "\n" );
+    dmp_seg_flag( seg_ent->info );
+    Wdputslc( "\n" );
+}
+
+/*
+ * Dump Segment Table
+ */
+void Dmp_seg_tab( void )
+/**********************/
+{
+    unsigned_16                     num_segs;
+    struct segment_record           *segtab;
+    unsigned_16                     segtabsize;
+    unsigned_16                     segnum;
+
+    Banner( "Segment Table" );
+    num_segs = Os2_head.segments;
+    if( num_segs == 0 ) {
+        return;
+    }
+    Wlseek( New_exe_off + Os2_head.segment_off );
+    segtabsize = sizeof( struct segment_record ) * num_segs;
+    segtab = Wmalloc( segtabsize );
+    Wread( segtab, segtabsize );
+    Int_seg_tab = segtab;
+    ++num_segs;
+    Wdputslc( "seg  fileoff  len  alloc prior priv flag\n" );
+    Wdputslc( "==== ======== ==== ====  ====  ==== ====\n" );
+    for( segnum = 1; segnum != num_segs; segnum++ ) {
+        Puthex( segnum, 4 );
+        dmp_seg_ent( segtab++ );
+    }
+    Wdputslc( "\n" );
 }

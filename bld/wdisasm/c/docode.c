@@ -130,6 +130,68 @@ static uint_8 InsOffset()
 }
 
 
+#if !defined( O2A )
+static int  LookFor87Emulation()
+/******************************/
+
+{
+    char        second_byte;
+    int         inssize;
+    int         seg_reg;
+
+    inssize = 0;
+    if( Opcode == 0xCD ) {
+        second_byte = GetNextByte();
+        if( second_byte >= 0x34 && second_byte <= 0x3d ) {
+            CurrIns.pref |= EMU_INTERRUPT;
+            CurrIns.op[ OP_3 ].disp = second_byte;
+            if( second_byte <= 0x3b ) {
+                Opcode = GetDataByte() + 0xA4;
+                ++inssize;
+            } else if ( second_byte == 0x3D ) {
+                GetDataByte();
+                Opcode = 0x90;
+                inssize++;
+            } else {                            /* 0x3C */
+                GetDataByte();
+                Opcode = GetDataByte();
+                seg_reg = ( ~Opcode >> 6 ) & 3;
+                CurrIns.pref |= SegPrefixTab[ seg_reg ];
+                CurrIns.seg_used = FIRST_SEG_REG + seg_reg;
+                inssize += 2;
+                Opcode |= 0xC0;
+            }
+        }
+    }
+    return( inssize );
+}
+#endif
+
+
+static  void    SetOperands( char opcode )
+/****************************************/
+{
+    W_Bit = opcode & 1;
+    if( CurrIns.opcode == I_BOUND ) {
+        W_Bit = 1;
+    }
+    if( W_Bit ) {
+        if( CurrIns.pref & OPND_LONG ) {
+            CurrIns.mem_ref_size = 4;
+        } else {
+            CurrIns.mem_ref_size = 2;
+        }
+    } else {
+        CurrIns.mem_ref_size = 1;
+    }
+    if( CurrIns.opcode == I_ARPL ) {
+        D_Bit = 0;
+    } else {
+        D_Bit = opcode & 2;
+    }
+}
+
+
 void  DoCode( instruction *curr, char use_32 )
 /*******************************************/
 
@@ -293,68 +355,6 @@ static ins_name GetInsName( ins_name instr_name )
 }
 
 
-#if !defined( O2A )
-static int  LookFor87Emulation()
-/******************************/
-
-{
-    char        second_byte;
-    int         inssize;
-    int         seg_reg;
-
-    inssize = 0;
-    if( Opcode == 0xCD ) {
-        second_byte = GetNextByte();
-        if( second_byte >= 0x34 && second_byte <= 0x3d ) {
-            CurrIns.pref |= EMU_INTERRUPT;
-            CurrIns.op[ OP_3 ].disp = second_byte;
-            if( second_byte <= 0x3b ) {
-                Opcode = GetDataByte() + 0xA4;
-                ++inssize;
-            } else if ( second_byte == 0x3D ) {
-                GetDataByte();
-                Opcode = 0x90;
-                inssize++;
-            } else {                            /* 0x3C */
-                GetDataByte();
-                Opcode = GetDataByte();
-                seg_reg = ( ~Opcode >> 6 ) & 3;
-                CurrIns.pref |= SegPrefixTab[ seg_reg ];
-                CurrIns.seg_used = FIRST_SEG_REG + seg_reg;
-                inssize += 2;
-                Opcode |= 0xC0;
-            }
-        }
-    }
-    return( inssize );
-}
-#endif
-
-
-static  void    SetOperands( char opcode )
-/****************************************/
-{
-    W_Bit = opcode & 1;
-    if( CurrIns.opcode == I_BOUND ) {
-        W_Bit = 1;
-    }
-    if( W_Bit ) {
-        if( CurrIns.pref & OPND_LONG ) {
-            CurrIns.mem_ref_size = 4;
-        } else {
-            CurrIns.mem_ref_size = 2;
-        }
-    } else {
-        CurrIns.mem_ref_size = 1;
-    }
-    if( CurrIns.opcode == I_ARPL ) {
-        D_Bit = 0;
-    } else {
-        D_Bit = opcode & 2;
-    }
-}
-
-
 void DoControl( int base )
 /************************/
 {
@@ -411,6 +411,286 @@ static void SetPWord( void )
     } else {
         CurrIns.modifier = MOD_LINT;
         CurrIns.mem_ref_size = 4;
+    }
+}
+
+
+static void MMModRM( int direction )
+{
+    D_Bit = direction;
+    W_Bit = 0;
+    DoOTModRM();
+    CurrIns.modifier = MOD_NONE;
+
+    if( CurrIns.op[ OP_1 ].mode == ADDR_REG ) {
+        if( !(CurrIns.opcode == I_MOVD && direction == 0) ) {
+            CurrIns.op[ OP_1 ].base += FIRST_MM_REG - FIRST_BYTE_REG;
+        } else {
+            CurrIns.op[ OP_1 ].base += FIRST_DWORD_REG - FIRST_BYTE_REG;
+        }
+    }
+    if( CurrIns.op[ OP_2 ].mode == ADDR_REG ) {
+        if( !(CurrIns.opcode == I_MOVD && direction == 1) ) {
+            CurrIns.op[ OP_2 ].base += FIRST_MM_REG - FIRST_BYTE_REG;
+        } else {
+            CurrIns.op[ OP_2 ].base += FIRST_DWORD_REG - FIRST_BYTE_REG;
+        }
+    }
+}
+
+
+static  void    Opcode0F( char use_32 ) {
+/***************************************/
+
+    int                 index;
+    unsigned char       second;
+
+    GetDataByte();
+    second = SecondByte;
+    SecondByte = GetNextByte();
+    W_Bit = second & 1;
+    D_Bit = 0;
+    switch( ( second >> 4 ) & 0x0F ) {
+    case 0x00:
+        index = _RegField( SecondByte );
+        switch( second ) {
+        case 0:
+            CurrIns.opcode = S00Ops[ index ];
+            GetOperands( OT_RMW, use_32 );
+            CurrIns.mem_ref_size = 2;
+            break;
+        case 1:
+            CurrIns.opcode = S01Ops[ index ];
+            if( index == 7 ) {  // INVLPG
+                GetOperands( OT_M, use_32 );
+                CurrIns.modifier = MOD_NONE;
+                CurrIns.mem_ref_size = 1;
+            } else {
+                GetOperands( OT_RMW, use_32 );
+                if( index <= 3 ) {      // SIDT SGDT LGDT LIDT
+                    CurrIns.mem_ref_size = 6;
+                } else {
+                    CurrIns.mem_ref_size = 2;
+                }
+            }
+            break;
+        case 2:
+            CurrIns.opcode = I_LAR;
+            GetOperands( OT_RV_RMW, use_32 );
+            break;
+        case 3:
+            CurrIns.opcode = I_LSL;
+            GetOperands( OT_RV_RMW, use_32 );
+            break;
+        case 6:
+            CurrIns.opcode = I_CLTS;
+            break;
+        case 8:
+            CurrIns.opcode = I_INVD;
+            break;
+        case 9:
+            CurrIns.opcode = I_WBINVD;
+            break;
+        default:
+            CurrIns.opcode = I_INVALID;
+        }
+        break;
+    case 0x02:
+        CurrIns.opcode = I_MOV;
+        D_Bit = second & 2;
+        GetOperands( S2xOpType[ second & 0x0f ], use_32 );
+        break;
+    case 0x03:
+        switch( second & 0x0f ) {
+        case 0x00:
+            CurrIns.opcode = I_WRMSR;
+            break;
+        case 0x01:
+            CurrIns.opcode = I_RDTSC;
+            break;
+        case 0x02:
+            CurrIns.opcode = I_RDMSR;
+            break;
+        case 0x03:
+            CurrIns.opcode = I_RDMPC;
+            break;
+        default:
+            CurrIns.opcode = I_INVALID;
+            break;
+        }
+        break;
+    case 0x04:
+        CurrIns.opcode = S4xInsTab[ second & 0x0f ].name;
+        GetOperands( S4xInsTab[ second & 0x0f ].op_type, use_32 );
+        break;
+    case 0x08:
+        CurrIns.opcode = S8xOps[ second & 0x0f ];
+        GetOperands( OT_IP_INC16, use_32 );
+        break;
+    case 0x09:
+        CurrIns.opcode = S9xOps[ second & 0x0f ];
+        GetOperands( OT_RMB, use_32 );
+        break;
+    case 0x0A:
+        CurrIns.opcode = SAxOps[ second & 0x0f ];
+        if( CurrIns.opcode == I_IMUL ) {
+            D_Bit = 1;
+        }
+        GetOperands( SAxOpType[ second & 0x0f ], use_32 );
+        break;
+    case 0x0B:
+        CurrIns.opcode = SBxOps[ second & 0x0f ];
+        if( CurrIns.opcode == I_BSF || CurrIns.opcode == I_BSR ) D_Bit = 1;
+        if( CurrIns.opcode == I_BTx ) {
+            W_Bit = 1;
+            CurrIns.opcode = SBAOps[ _RegField( SecondByte ) ];
+        }
+        GetOperands( SBxOpType[ second & 0x0f ], use_32 );
+        break;
+    case 0x0C:
+        if( second & 0x08 ) {
+            CurrIns.opcode = I_BSWAP;
+            CurrIns.num_oper = 1;
+            CurrIns.op[ OP_1 ].mode = ADDR_REG;
+            CurrIns.op[ OP_1 ].base = VarReg( FIRST_WORD_REG + ( second & 7 ) );
+        } else if( (second & 0x0f) == 0x07 ) {
+            /* group 9 */
+            if( (SecondByte & 0x38) == 0x08 ) {
+                CurrIns.opcode = I_CMPXCHG8B;
+                CurrIns.num_oper = 1;
+                ModRMOp( OP_1, FALSE );
+            } else {
+                CurrIns.opcode = I_INVALID;
+            }
+        } else {
+            CurrIns.opcode = SCxOps[ second & 0x07 ];
+            GetOperands( SCxOpType[ second & 0x07 ], use_32 );
+        }
+        break;
+    case 0x06:
+        CurrIns.opcode = S6xInsTab[ second & 0x0f ].name;
+        GetOperands( S6xInsTab[ second & 0x0f ].op_type, use_32 );
+        break;
+    case 0x07:
+        CurrIns.opcode = S7xInsTab[ second & 0x0f ].name;
+        switch( second & 0x0f ) {
+        case 0x1:
+        case 0x2:
+        case 0x3:
+            /* a shift immediate opcode */
+            switch( SecondByte & 0xf8 ) {
+            case 0xF0: /* PSLL */
+                break;
+            case 0xD0: /* PSRL */
+                CurrIns.opcode += 1;
+                break;
+            case 0xE0: /* PSRA */
+                CurrIns.opcode += 2;
+                if( CurrIns.opcode == I_PSRAQ ) {
+                    /* doesn't exist */
+                    CurrIns.opcode = I_INVALID;
+                    return;
+                }
+                break;
+            default:
+                CurrIns.opcode = I_INVALID;
+                return;
+            }
+            GetDataByte(); /* get set up for grabbing the immediate */
+        }
+        GetOperands( S7xInsTab[ second & 0x0f ].op_type, use_32 );
+        break;
+    case 0x0d:
+        CurrIns.opcode = SDxInsTab[ second & 0x0f ].name;
+        GetOperands( SDxInsTab[ second & 0x0f ].op_type, use_32 );
+        break;
+    case 0x0e:
+        CurrIns.opcode = SExInsTab[ second & 0x0f ].name;
+        GetOperands( SExInsTab[ second & 0x0f ].op_type, use_32 );
+        break;
+    case 0x0f:
+        CurrIns.opcode = SFxInsTab[ second & 0x0f ].name;
+        GetOperands( SFxInsTab[ second & 0x0f ].op_type, use_32 );
+        break;
+    default:
+        CurrIns.opcode = I_INVALID;
+        break;
+    }
+}
+
+
+static  void  ConstByteOp( int op )
+/*********************************/
+
+{
+    operand     *opnd;
+
+    opnd = &CurrIns.op[ op ];
+    opnd->mode = ADDR_CONST;
+    opnd->size = 1;
+    opnd->offset = InsOffset();
+    opnd->disp = GetDataByte();
+}
+
+
+static void ConstSexOp( int op )
+/******************************/
+
+{
+    ConstByteOp( op );
+    CurrIns.op[ op ].size = ( CurrIns.pref & OPND_LONG ) ? 4 : 2;
+}
+
+
+static  void  ConstWordOp( int op )
+/*********************************/
+
+{
+    operand     *opnd;
+
+    opnd = &CurrIns.op[ op ];
+    opnd->mode = ADDR_CONST;
+    opnd->size = 2;
+    opnd->offset = InsOffset();
+    opnd->disp = GetDataWord();
+}
+
+
+static  void  ConstLongOp( int op )
+/*********************************/
+
+{
+    operand     *opnd;
+
+    opnd = &CurrIns.op[ op ];
+    opnd->mode = ADDR_CONST;
+    opnd->size = 4;
+    opnd->offset = InsOffset();
+    opnd->disp = GetDataLong();
+}
+
+
+static  void  ConstVarOp( int op )
+/*********************************/
+
+{
+    if( CurrIns.pref & OPND_LONG ) {
+        ConstLongOp( op );
+    } else {
+        ConstWordOp( op );
+    }
+}
+
+
+static  void  AccumOp( int op )
+/*****************************/
+
+{
+    CurrIns.op[ op ].mode = ADDR_REG;
+    if( W_Bit ) {
+        CurrIns.op[ op ].base = VarReg( AX_REG );
+    } else {
+        CurrIns.op[ op ].base = AL_REG;
     }
 }
 
@@ -819,208 +1099,6 @@ static  void  GetOperands( operand_type op_type, char use_32 )
     }
 }
 
-static void MMModRM( int direction )
-{
-    D_Bit = direction;
-    W_Bit = 0;
-    DoOTModRM();
-    CurrIns.modifier = MOD_NONE;
-
-    if( CurrIns.op[ OP_1 ].mode == ADDR_REG ) {
-        if( !(CurrIns.opcode == I_MOVD && direction == 0) ) {
-            CurrIns.op[ OP_1 ].base += FIRST_MM_REG - FIRST_BYTE_REG;
-        } else {
-            CurrIns.op[ OP_1 ].base += FIRST_DWORD_REG - FIRST_BYTE_REG;
-        }
-    }
-    if( CurrIns.op[ OP_2 ].mode == ADDR_REG ) {
-        if( !(CurrIns.opcode == I_MOVD && direction == 1) ) {
-            CurrIns.op[ OP_2 ].base += FIRST_MM_REG - FIRST_BYTE_REG;
-        } else {
-            CurrIns.op[ OP_2 ].base += FIRST_DWORD_REG - FIRST_BYTE_REG;
-        }
-    }
-}
-
-static  void    Opcode0F( char use_32 ) {
-/***************************************/
-
-    int                 index;
-    unsigned char       second;
-
-    GetDataByte();
-    second = SecondByte;
-    SecondByte = GetNextByte();
-    W_Bit = second & 1;
-    D_Bit = 0;
-    switch( ( second >> 4 ) & 0x0F ) {
-    case 0x00:
-        index = _RegField( SecondByte );
-        switch( second ) {
-        case 0:
-            CurrIns.opcode = S00Ops[ index ];
-            GetOperands( OT_RMW, use_32 );
-            CurrIns.mem_ref_size = 2;
-            break;
-        case 1:
-            CurrIns.opcode = S01Ops[ index ];
-            if( index == 7 ) {  // INVLPG
-                GetOperands( OT_M, use_32 );
-                CurrIns.modifier = MOD_NONE;
-                CurrIns.mem_ref_size = 1;
-            } else {
-                GetOperands( OT_RMW, use_32 );
-                if( index <= 3 ) {      // SIDT SGDT LGDT LIDT
-                    CurrIns.mem_ref_size = 6;
-                } else {
-                    CurrIns.mem_ref_size = 2;
-                }
-            }
-            break;
-        case 2:
-            CurrIns.opcode = I_LAR;
-            GetOperands( OT_RV_RMW, use_32 );
-            break;
-        case 3:
-            CurrIns.opcode = I_LSL;
-            GetOperands( OT_RV_RMW, use_32 );
-            break;
-        case 6:
-            CurrIns.opcode = I_CLTS;
-            break;
-        case 8:
-            CurrIns.opcode = I_INVD;
-            break;
-        case 9:
-            CurrIns.opcode = I_WBINVD;
-            break;
-        default:
-            CurrIns.opcode = I_INVALID;
-        }
-        break;
-    case 0x02:
-        CurrIns.opcode = I_MOV;
-        D_Bit = second & 2;
-        GetOperands( S2xOpType[ second & 0x0f ], use_32 );
-        break;
-    case 0x03:
-        switch( second & 0x0f ) {
-        case 0x00:
-            CurrIns.opcode = I_WRMSR;
-            break;
-        case 0x01:
-            CurrIns.opcode = I_RDTSC;
-            break;
-        case 0x02:
-            CurrIns.opcode = I_RDMSR;
-            break;
-        case 0x03:
-            CurrIns.opcode = I_RDMPC;
-            break;
-        default:
-            CurrIns.opcode = I_INVALID;
-            break;
-        }
-        break;
-    case 0x04:
-        CurrIns.opcode = S4xInsTab[ second & 0x0f ].name;
-        GetOperands( S4xInsTab[ second & 0x0f ].op_type, use_32 );
-        break;
-    case 0x08:
-        CurrIns.opcode = S8xOps[ second & 0x0f ];
-        GetOperands( OT_IP_INC16, use_32 );
-        break;
-    case 0x09:
-        CurrIns.opcode = S9xOps[ second & 0x0f ];
-        GetOperands( OT_RMB, use_32 );
-        break;
-    case 0x0A:
-        CurrIns.opcode = SAxOps[ second & 0x0f ];
-        if( CurrIns.opcode == I_IMUL ) {
-            D_Bit = 1;
-        }
-        GetOperands( SAxOpType[ second & 0x0f ], use_32 );
-        break;
-    case 0x0B:
-        CurrIns.opcode = SBxOps[ second & 0x0f ];
-        if( CurrIns.opcode == I_BSF || CurrIns.opcode == I_BSR ) D_Bit = 1;
-        if( CurrIns.opcode == I_BTx ) {
-            W_Bit = 1;
-            CurrIns.opcode = SBAOps[ _RegField( SecondByte ) ];
-        }
-        GetOperands( SBxOpType[ second & 0x0f ], use_32 );
-        break;
-    case 0x0C:
-        if( second & 0x08 ) {
-            CurrIns.opcode = I_BSWAP;
-            CurrIns.num_oper = 1;
-            CurrIns.op[ OP_1 ].mode = ADDR_REG;
-            CurrIns.op[ OP_1 ].base = VarReg( FIRST_WORD_REG + ( second & 7 ) );
-        } else if( (second & 0x0f) == 0x07 ) {
-            /* group 9 */
-            if( (SecondByte & 0x38) == 0x08 ) {
-                CurrIns.opcode = I_CMPXCHG8B;
-                CurrIns.num_oper = 1;
-                ModRMOp( OP_1, FALSE );
-            } else {
-                CurrIns.opcode = I_INVALID;
-            }
-        } else {
-            CurrIns.opcode = SCxOps[ second & 0x07 ];
-            GetOperands( SCxOpType[ second & 0x07 ], use_32 );
-        }
-        break;
-    case 0x06:
-        CurrIns.opcode = S6xInsTab[ second & 0x0f ].name;
-        GetOperands( S6xInsTab[ second & 0x0f ].op_type, use_32 );
-        break;
-    case 0x07:
-        CurrIns.opcode = S7xInsTab[ second & 0x0f ].name;
-        switch( second & 0x0f ) {
-        case 0x1:
-        case 0x2:
-        case 0x3:
-            /* a shift immediate opcode */
-            switch( SecondByte & 0xf8 ) {
-            case 0xF0: /* PSLL */
-                break;
-            case 0xD0: /* PSRL */
-                CurrIns.opcode += 1;
-                break;
-            case 0xE0: /* PSRA */
-                CurrIns.opcode += 2;
-                if( CurrIns.opcode == I_PSRAQ ) {
-                    /* doesn't exist */
-                    CurrIns.opcode = I_INVALID;
-                    return;
-                }
-                break;
-            default:
-                CurrIns.opcode = I_INVALID;
-                return;
-            }
-            GetDataByte(); /* get set up for grabbing the immediate */
-        }
-        GetOperands( S7xInsTab[ second & 0x0f ].op_type, use_32 );
-        break;
-    case 0x0d:
-        CurrIns.opcode = SDxInsTab[ second & 0x0f ].name;
-        GetOperands( SDxInsTab[ second & 0x0f ].op_type, use_32 );
-        break;
-    case 0x0e:
-        CurrIns.opcode = SExInsTab[ second & 0x0f ].name;
-        GetOperands( SExInsTab[ second & 0x0f ].op_type, use_32 );
-        break;
-    case 0x0f:
-        CurrIns.opcode = SFxInsTab[ second & 0x0f ].name;
-        GetOperands( SFxInsTab[ second & 0x0f ].op_type, use_32 );
-        break;
-    default:
-        CurrIns.opcode = I_INVALID;
-        break;
-    }
-}
-
 
 void  ModRMRegOp( int op )
 /************************/
@@ -1164,81 +1242,5 @@ void  ModRMOp( int op, char byte_ptr )
         } else {
             CurrIns.modifier = MOD_WORD;
         }
-    }
-}
-
-
-static  void  ConstByteOp( int op )
-/*********************************/
-
-{
-    operand     *opnd;
-
-    opnd = &CurrIns.op[ op ];
-    opnd->mode = ADDR_CONST;
-    opnd->size = 1;
-    opnd->offset = InsOffset();
-    opnd->disp = GetDataByte();
-}
-
-
-static void ConstSexOp( int op )
-/******************************/
-
-{
-    ConstByteOp( op );
-    CurrIns.op[ op ].size = ( CurrIns.pref & OPND_LONG ) ? 4 : 2;
-}
-
-
-static  void  ConstWordOp( int op )
-/*********************************/
-
-{
-    operand     *opnd;
-
-    opnd = &CurrIns.op[ op ];
-    opnd->mode = ADDR_CONST;
-    opnd->size = 2;
-    opnd->offset = InsOffset();
-    opnd->disp = GetDataWord();
-}
-
-
-static  void  ConstLongOp( int op )
-/*********************************/
-
-{
-    operand     *opnd;
-
-    opnd = &CurrIns.op[ op ];
-    opnd->mode = ADDR_CONST;
-    opnd->size = 4;
-    opnd->offset = InsOffset();
-    opnd->disp = GetDataLong();
-}
-
-
-static  void  ConstVarOp( int op )
-/*********************************/
-
-{
-    if( CurrIns.pref & OPND_LONG ) {
-        ConstLongOp( op );
-    } else {
-        ConstWordOp( op );
-    }
-}
-
-
-static  void  AccumOp( int op )
-/*****************************/
-
-{
-    CurrIns.op[ op ].mode = ADDR_REG;
-    if( W_Bit ) {
-        CurrIns.op[ op ].base = VarReg( AX_REG );
-    } else {
-        CurrIns.op[ op ].base = AL_REG;
     }
 }

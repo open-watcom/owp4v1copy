@@ -223,6 +223,16 @@ static BOOL startLogFile( void )
 } /* startLogFile */
 
 /*
+ * logFlush - flush the log file
+ */
+static void logFlush( void )
+{
+    TinyWrite( logFile, workBuff, buffPos );
+    buffPos = 0;
+
+} /* logFlush */
+
+/*
  * finishLogFile - close up log file
  */
 static void finishLogFile( void )
@@ -235,16 +245,6 @@ static void finishLogFile( void )
     workBuff = NULL;
 
 } /* finishLogFile */
-
-/*
- * logFlush - flush the log file
- */
-static void logFlush( void )
-{
-    TinyWrite( logFile, workBuff, buffPos );
-    buffPos = 0;
-
-} /* logFlush */
 
 /*
  * dologPrint - print to the log file

@@ -47,13 +47,15 @@
 extern WORD             FontWidth;
 extern WORD             FontHeight;
 
-static DWORD            Offset;
+static DWORD            _Offset;    // conflicts with extern in wdisasm/h/global.h
 static WORD             Sel;
 static DWORD            Limit;
 static BOOL             Is32Bit;
 static char             StatBuf[50];
 static DisAsmRtns       DisasmInfo;
 static BOOL             DisasmRegistered;
+
+static void GotoIns( MemWndInfo *info, DWORD ins_cnt );
 
 /*
   disassembler interface routines
@@ -63,8 +65,8 @@ int_16 MemWndGetDataByte() {
 
     char        buf;
 
-    ReadMem( Sel, Offset, &buf, 1 );
-    Offset++;
+    ReadMem( Sel, _Offset, &buf, 1 );
+    _Offset++;
     return( buf );
 } /* GetDataByte */
 
@@ -72,8 +74,8 @@ int_16 MemWndGetDataWord() {
 
     int_16      buf;
 
-    ReadMem( Sel, Offset, (char *)&buf, sizeof( int_16 ) );
-    Offset += sizeof( int_16 );
+    ReadMem( Sel, _Offset, (char *)&buf, sizeof( int_16 ) );
+    _Offset += sizeof( int_16 );
     return( buf );
 } /* GetDataWord */
 
@@ -82,7 +84,7 @@ int_16 MemWndGetNextByte() {
 
     char        buf;
 
-    ReadMem( Sel, Offset, &buf, 1 );
+    ReadMem( Sel, _Offset, &buf, 1 );
     return( buf );
 }
 
@@ -90,17 +92,17 @@ long MemWndGetDataLong() {
 
     long        buf;
 
-    ReadMem( Sel, Offset, (char *)&buf, sizeof( long ) );
-    Offset += sizeof( long );
+    ReadMem( Sel, _Offset, (char *)&buf, sizeof( long ) );
+    _Offset += sizeof( long );
     return( buf );
 }
 
 char MemWndEndOfSegment() {
-    return( Offset > Limit );
+    return( _Offset > Limit );
 }
 
 DWORD MemWndGetOffset() {
-    return( Offset );
+    return( _Offset );
 }
 
 /*
@@ -200,12 +202,12 @@ void DumpMemAsm( MemWndInfo *info, int hdl ) {
     WORD                len;
     instruction         ins;
 
-    Offset = 0;
+    _Offset = 0;
     Limit = info->limit;
     Is32Bit = ( info->disp_type == MEMINFO_CODE_32 );
     Sel = info->sel;
-    while( Offset < Limit ) {
-        sprintf( buf, "%08lX  ", Offset );
+    while( _Offset < Limit ) {
+        sprintf( buf, "%08lX  ", _Offset );
         MiscDoCode( &ins, Is32Bit, &DisasmInfo );
         MiscFormatIns( buf + 10 , &ins, 0, &DisasmInfo );
         len = strlen( buf );
@@ -220,14 +222,14 @@ BOOL NeedScrollBar( MemWndInfo *info ) {
     instruction         ins;
     BOOL                is_32;
 
-    Offset = 0;
+    _Offset = 0;
     Limit = info->limit;
     Sel = info->sel;
     is_32 = ( info->disp_type == MEMINFO_CODE_32 );
     for( line = 0; line < info->lastline; line ++ ) {
         MiscDoCode( &ins, is_32, &DisasmInfo );
     }
-    return( Offset < info->limit );
+    return( _Offset < info->limit );
 } /* NeedScrollBar */
 
 static DWORD GenAsmLine( MemWndInfo *info, DWORD ins_cnt, char *buf )
@@ -239,8 +241,8 @@ static DWORD GenAsmLine( MemWndInfo *info, DWORD ins_cnt, char *buf )
     Sel = info->sel;
     Limit = info->limit;
     GotoIns( info, ins_cnt );
-    offset = Offset;
-    sprintf( buf, "%08lX  ", Offset );
+    offset = _Offset;
+    sprintf( buf, "%08lX  ", _Offset );
     MiscDoCode( &ins, Is32Bit, &DisasmInfo );
     MiscFormatIns( buf + 10 , &ins, 0, &DisasmInfo );
     return( offset );
@@ -260,13 +262,13 @@ static void GenBackup( AsmInfo *asm ) {
     if( asm->usage_cnt < MAX_BACKUPS ) {
         cnt = asm->increment;
         wptr = (WORD *)asm->data;
-        Offset = wptr[asm->usage_cnt];
+        _Offset = wptr[asm->usage_cnt];
         while( cnt > 0 ) {
             MiscDoCode( &ins, Is32Bit, &DisasmInfo );
             cnt--;
         }
         asm->usage_cnt ++;
-        wptr[asm->usage_cnt] = Offset;
+        wptr[asm->usage_cnt] = _Offset;
     }
 } /* GenBackup */
 
@@ -284,13 +286,13 @@ static void GenBigBackup( AsmInfo *asm ) {
     if( asm->usage_cnt < MAX_BACKUPS ) {
         cnt = asm->increment;
         dwptr = (DWORD *)asm->data;
-        Offset = dwptr[asm->usage_cnt];
+        _Offset = dwptr[asm->usage_cnt];
         while( cnt > 0 ) {
             MiscDoCode( &ins, Is32Bit, &DisasmInfo );
             cnt--;
         }
         asm->usage_cnt ++;
-        dwptr[asm->usage_cnt] = Offset;
+        dwptr[asm->usage_cnt] = _Offset;
     }
 } /* GenBigBackup */
 
@@ -321,10 +323,10 @@ DWORD GetInsCnt( MemWndInfo *info, DWORD offset ) {
         }
         for( i=0; dwptr[i] <= offset && i < MAX_BACKUPS - 1; i++ );
         i--;
-        Offset = dwptr[i];
+        _Offset = dwptr[i];
         ins_cnt = i * asm->increment;
-        while( Offset <= offset ) {
-            old_offset = Offset;
+        while( _Offset <= offset ) {
+            old_offset = _Offset;
             MiscDoCode( &ins, Is32Bit, &DisasmInfo );
             ins_cnt ++;
         }
@@ -336,16 +338,16 @@ DWORD GetInsCnt( MemWndInfo *info, DWORD offset ) {
         }
         for( i=0; wptr[i] <= offset && i < MAX_BACKUPS - 1; i++ );
         i--;
-        Offset = wptr[i];
+        _Offset = wptr[i];
         ins_cnt = i * asm->increment;
-        while( Offset <= offset ) {
-            old_offset = Offset;
+        while( _Offset <= offset ) {
+            old_offset = _Offset;
             MiscDoCode( &ins, Is32Bit, &DisasmInfo );
             ins_cnt ++;
         }
     }
     /* we go one instruction too far if offset == info->limit */
-    if( Offset >= info->limit ) ins_cnt --;
+    if( _Offset >= info->limit ) ins_cnt --;
     if( ins_cnt > 0 ) ins_cnt--;
     return( ins_cnt );
 } /* GetInsCnt */
@@ -375,7 +377,7 @@ void ScrollAsm( HWND hwnd, WORD wparam, WORD pos, MemWndInfo *info ) {
             offset = Limit;
             wbrush = GetStockObject( WHITE_BRUSH );
             GotoIns( info, info->ins_cnt + 1 );
-            if( Offset < Limit ) {
+            if( _Offset < Limit ) {
                 area.right = info->width;
                 info->ins_cnt++;
                 ScrollWindow( hwnd, 0, -FontHeight, &area, NULL );
@@ -435,7 +437,7 @@ void ScrollAsm( HWND hwnd, WORD wparam, WORD pos, MemWndInfo *info ) {
     case SB_PAGEDOWN:
         info->ins_cnt += info->lastline;
         GotoIns( info, info->ins_cnt );
-        while( Offset >= Limit ) {
+        while( _Offset >= Limit ) {
             info->ins_cnt --;
             GotoIns( info, info->ins_cnt );
         }
@@ -474,7 +476,7 @@ void ScrollAsm( HWND hwnd, WORD wparam, WORD pos, MemWndInfo *info ) {
 }
 
 /*
- * GotoIns - sets Offset to the instruction ins_cnt instructions
+ * GotoIns - sets _Offset to the instruction ins_cnt instructions
  *           from the beginning of the item
  */
 static void GotoIns( MemWndInfo *info, DWORD ins_cnt ) {
@@ -519,7 +521,7 @@ static void GotoIns( MemWndInfo *info, DWORD ins_cnt ) {
         if( asm->big ) {
             dwptr = (DWORD *)asm->data;
             dwptr += asm->usage_cnt;
-            Offset = *dwptr;
+            _Offset = *dwptr;
             cnt = ins_cnt - ( ins_cnt % asm->increment );
             cnt -= asm->usage_cnt * asm->increment;
             cnt /= asm->increment;
@@ -530,7 +532,7 @@ static void GotoIns( MemWndInfo *info, DWORD ins_cnt ) {
         } else {
             wptr = (WORD *)asm->data;
             wptr += asm->usage_cnt;
-            Offset = (DWORD)*wptr;
+            _Offset = (DWORD)*wptr;
             cnt = ins_cnt - ( ins_cnt % asm->increment );
             cnt -= asm->usage_cnt * asm->increment;
             cnt /= asm->increment;
@@ -543,14 +545,14 @@ static void GotoIns( MemWndInfo *info, DWORD ins_cnt ) {
     if( asm != NULL ) {
         if( asm->big ) {
             dwptr = (DWORD *)asm->data;
-            Offset = dwptr[ins_cnt/asm->increment];
+            _Offset = dwptr[ins_cnt/asm->increment];
         } else {
             wptr = (WORD *) asm->data;
-            Offset = wptr[ins_cnt/asm->increment];
+            _Offset = wptr[ins_cnt/asm->increment];
         }
         ins_cnt = ins_cnt % asm->increment;
     } else {
-        Offset = 0;
+        _Offset = 0;
     }
     while( ins_cnt ) {
         MiscDoCode( &ins, Is32Bit, &DisasmInfo );
@@ -581,10 +583,10 @@ void RedrawAsCode( HDC dc, MemWndInfo *info ) {
     area.bottom = FontHeight;
     area.left = 0;
     area.right = info->width;
-//    MySetScrollPos( info->scrlbar, Offset, info->limit );
+//    MySetScrollPos( info->scrlbar, _Offset, info->limit );
     for( line = 0; line <= info->lastline; line ++ ) {
-        if( Offset >= Limit ) break;
-        sprintf( buf, "%08lX  ", Offset );
+        if( _Offset >= Limit ) break;
+        sprintf( buf, "%08lX  ", _Offset );
         MiscDoCode( &ins, Is32Bit, &DisasmInfo );
         MiscFormatIns( buf + 10 , &ins, 0, &DisasmInfo );
         FillRect( dc, &area, wbrush );

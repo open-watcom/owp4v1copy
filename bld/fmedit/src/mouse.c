@@ -738,6 +738,33 @@ extern void ProcessMouseMove( POINT point )
     }
   }
 
+static void FindPasteOffset( POINT * offset, POINT mouse )
+/********************************************************/
+
+/* Figure out how much to move all of the current objects so that the one
+ * that has it's top left corner fartherest to the left has the
+ * cursor at it's top left corner, and all other objects are positioned
+ * relative to it, to the right.
+ */
+
+  {
+    OBJPTR obj;
+    RECT   left;
+    RECT   rect;
+    void * clist;
+
+    left.left = SHRT_MAX;
+    for( clist = GetClipList(); clist != NULL; clist = NextClipList( clist ) ) {
+        obj = GetClipObject( clist );
+        Location( obj, &rect );
+        if( rect.left < left.left ) {
+            CopyRect( &left, &rect );
+        }
+    }
+    offset->x = mouse.x - left.left;
+    offset->y = mouse.y - left.top;
+  }
+
 static void BeginPaste( POINT pt, WORD keystate, OBJPTR d )
 /*********************************************************/
 
@@ -827,33 +854,6 @@ static void FinishPaste( POINT pt )
     }
     EndCurrObjMod();
     SetDefState();
-  }
-
-static void FindPasteOffset( POINT * offset, POINT mouse )
-/********************************************************/
-
-/* Figure out how much to move all of the current objects so that the one
- * that has it's top left corner fartherest to the left has the
- * cursor at it's top left corner, and all other objects are positioned
- * relative to it, to the right.
- */
-
-  {
-    OBJPTR obj;
-    RECT   left;
-    RECT   rect;
-    void * clist;
-
-    left.left = SHRT_MAX;
-    for( clist = GetClipList(); clist != NULL; clist = NextClipList( clist ) ) {
-        obj = GetClipObject( clist );
-        Location( obj, &rect );
-        if( rect.left < left.left ) {
-            CopyRect( &left, &rect );
-        }
-    }
-    offset->x = mouse.x - left.left;
-    offset->y = mouse.y - left.top;
   }
 
 static void PointSelect( POINT pt )

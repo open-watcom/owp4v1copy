@@ -57,37 +57,6 @@ typedef struct {
     unsigned_32 info_size;
 } debug_header;
 
-/*
- * verify browser identification bytes
- */
-bool Dmp_dwarf( void )
-/********************/
-{
-    char        *mbrHeaderString = "WBROWSE";
-    int         mbrHeaderStringLen = 7;
-    unsigned    mbrHeaderSignature = 0xcbcb;
-    char        mbrHeaderVersion = '1';
-    unsigned_16 signature;
-    char        buf[7];
-
-    Wlseek( 0 );
-    Wread( &signature, sizeof(unsigned_16) );
-    if( signature != mbrHeaderSignature ){
-        return( 0 );
-    }
-    Wread( buf, mbrHeaderStringLen );
-    if( memcmp( buf, mbrHeaderString, mbrHeaderStringLen ) != 0 ) {
-        return( 0 );
-    }
-    Wread( buf, sizeof(char) );
-    if( buf[0] != mbrHeaderVersion ) {
-        return( 0 );
-    }
-    set_sects();
-    Dump_all_sections();
-    return( 1 );
-}
-
 static void set_sects( void )
 /***************************/
 {
@@ -152,6 +121,46 @@ static bool os2_debug( void )
     return( FALSE );
 }
 
+/*
+ * Dump the Master Debug Header, if any.
+ */
+static void dmp_master( master_dbg_header mdh )
+/*********************************************/
+{
+    int                     i;
+
+    Banner( "Master Debug Info" );
+    Dump_header( (char *)&mdh.exe_major_ver, mdh_msg );
+    Wdputslc( "\n" );
+
+    Curr_sectoff -= (long)mdh.debug_size;
+    Wlseek( Curr_sectoff );
+    Lang_lst = Wmalloc( mdh.lang_size );
+    Wread( Lang_lst, mdh.lang_size );
+    Curr_sectoff += (long)mdh.lang_size;
+    i = 0;
+    Wdputslc( "Languages\n" );
+    Wdputslc( "=========\n" );
+    while( i < mdh.lang_size ) {
+        Wdputs( &Lang_lst[i] );
+        Wdputslc( "\n" );
+        i += strlen( &Lang_lst[i] ) + 1;
+    }
+    Wdputslc( "\n" );
+
+    Wbuff = Wmalloc( MAX_BUFF );
+    Wread( Wbuff, mdh.segment_size );
+    Curr_sectoff += (long)mdh.segment_size;
+    Wdputslc( "Segments\n" );
+    Wdputslc( "========\n" );
+    i = 0;
+    while( i < mdh.segment_size ) {
+        Puthex( *(unsigned_16 *)&Wbuff[i], 4 );
+        Wdputslc( "\n" );
+        i += sizeof( unsigned_16);
+    }
+    Wdputslc( "\n" );
+}
 
 /*
  * Dump the Debug Header, if any.
@@ -207,42 +216,32 @@ bool Dmp_mdbg_head( void )
 }
 
 /*
- * Dump the Master Debug Header, if any.
+ * verify browser identification bytes
  */
-static void dmp_master( master_dbg_header mdh )
-/*********************************************/
+bool Dmp_dwarf( void )
+/********************/
 {
-    int                     i;
+    char        *mbrHeaderString = "WBROWSE";
+    int         mbrHeaderStringLen = 7;
+    unsigned    mbrHeaderSignature = 0xcbcb;
+    char        mbrHeaderVersion = '1';
+    unsigned_16 signature;
+    char        buf[7];
 
-    Banner( "Master Debug Info" );
-    Dump_header( (char *)&mdh.exe_major_ver, mdh_msg );
-    Wdputslc( "\n" );
-
-    Curr_sectoff -= (long)mdh.debug_size;
-    Wlseek( Curr_sectoff );
-    Lang_lst = Wmalloc( mdh.lang_size );
-    Wread( Lang_lst, mdh.lang_size );
-    Curr_sectoff += (long)mdh.lang_size;
-    i = 0;
-    Wdputslc( "Languages\n" );
-    Wdputslc( "=========\n" );
-    while( i < mdh.lang_size ) {
-        Wdputs( &Lang_lst[i] );
-        Wdputslc( "\n" );
-        i += strlen( &Lang_lst[i] ) + 1;
+    Wlseek( 0 );
+    Wread( &signature, sizeof(unsigned_16) );
+    if( signature != mbrHeaderSignature ){
+        return( 0 );
     }
-    Wdputslc( "\n" );
-
-    Wbuff = Wmalloc( MAX_BUFF );
-    Wread( Wbuff, mdh.segment_size );
-    Curr_sectoff += (long)mdh.segment_size;
-    Wdputslc( "Segments\n" );
-    Wdputslc( "========\n" );
-    i = 0;
-    while( i < mdh.segment_size ) {
-        Puthex( *(unsigned_16 *)&Wbuff[i], 4 );
-        Wdputslc( "\n" );
-        i += sizeof( unsigned_16);
+    Wread( buf, mbrHeaderStringLen );
+    if( memcmp( buf, mbrHeaderString, mbrHeaderStringLen ) != 0 ) {
+        return( 0 );
     }
-    Wdputslc( "\n" );
+    Wread( buf, sizeof(char) );
+    if( buf[0] != mbrHeaderVersion ) {
+        return( 0 );
+    }
+    set_sects();
+    Dump_all_sections();
+    return( 1 );
 }

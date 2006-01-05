@@ -63,6 +63,68 @@ typedef struct {
 } state_info;
 
 
+static void init_state( state_info *state, int default_is_stmt )
+/**************************************************************/
+{
+    state->address = 0;
+    state->segment = 0;
+    state->file = 1;
+    state->line = 1;
+    state->column = 0;
+    state->is_stmt = default_is_stmt;
+    state->basic_block = 0;
+    state->end_sequence = 0;
+}
+
+
+static void dump_state( state_info *state )
+/*****************************************/
+{
+    Wdputs( "-- file " );
+    Putdec( state->file );
+    Wdputs( " addr  " );
+    if( state->segment != 0 ){
+        Puthex( state->segment, 4 );
+        Wdputs( ":" );
+    }
+    Puthex( state->address, 8 );
+    Wdputs( " line " );
+    Putdec( state->line );
+    Wdputs( " column " );
+    Putdec( state->column );
+    if( state->is_stmt ) {
+        Wdputs( " is_stmt" );
+    }
+    if( state->basic_block ) {
+        Wdputs( " basic_block" );
+    }
+    if( state->end_sequence ) {
+        Wdputs( " end_sequence" );
+    }
+    Wdputslc( "\n" );
+}
+
+
+static void get_standard_op( uint_8 value )
+/*****************************************/
+{
+    char *              result;
+    int                 i;
+
+    result = Getname( value, readableStandardOps, NUM_STANDARD_OPS );
+    if( result == NULL ) {
+        Wdputs( "OP_" );
+        Puthex( value, 2 );
+        Wdputs( "                   " );
+    } else {
+        Wdputs( result );
+        for( i = strlen( result ); i < 24; i++ ) {
+            Wdputc( ' ' );
+        }
+    }
+}
+
+
 void Dump_lines( const uint_8 *input, uint length )
 /*************************************************/
 {
@@ -335,65 +397,4 @@ void Dump_lines( const uint_8 *input, uint length )
         Puthex( p - input, 8 );
         Wdputslc( "\n" );
     }
-}
-
-
-static void get_standard_op( uint_8 value )
-/*****************************************/
-{
-    char *              result;
-    int                 i;
-
-    result = Getname( value, readableStandardOps, NUM_STANDARD_OPS );
-    if( result == NULL ) {
-        Wdputs( "OP_" );
-        Puthex( value, 2 );
-        Wdputs( "                   " );
-    } else {
-        Wdputs( result );
-        for( i = strlen( result ); i < 24; i++ ) {
-            Wdputc( ' ' );
-        }
-    }
-}
-
-static void init_state( state_info *state, int default_is_stmt )
-/**************************************************************/
-{
-    state->address = 0;
-    state->segment = 0;
-    state->file = 1;
-    state->line = 1;
-    state->column = 0;
-    state->is_stmt = default_is_stmt;
-    state->basic_block = 0;
-    state->end_sequence = 0;
-}
-
-
-static void dump_state( state_info *state )
-/*****************************************/
-{
-    Wdputs( "-- file " );
-    Putdec( state->file );
-    Wdputs( " addr  " );
-    if( state->segment != 0 ){
-        Puthex( state->segment, 4 );
-        Wdputs( ":" );
-    }
-    Puthex( state->address, 8 );
-    Wdputs( " line " );
-    Putdec( state->line );
-    Wdputs( " column " );
-    Putdec( state->column );
-    if( state->is_stmt ) {
-        Wdputs( " is_stmt" );
-    }
-    if( state->basic_block ) {
-        Wdputs( " basic_block" );
-    }
-    if( state->end_sequence ) {
-        Wdputs( " end_sequence" );
-    }
-    Wdputslc( "\n" );
 }

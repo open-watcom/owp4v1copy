@@ -174,6 +174,16 @@ void JoinPipeThread( void FAR * _thread )
 }
 
 
+static void FreeLink( a_link *junk )
+{
+    a_link      **owner;
+
+    for( owner = &Links; *owner != junk; owner = &(*owner)->next ) ;
+    *owner = junk->next;
+    free( junk->name );
+    free( junk );
+}
+
 
 void ConnectThread( void FAR * _thread )
 {
@@ -268,16 +278,6 @@ static a_link *FindLink( char *buff )
     return( link );
 }
 
-
-static void FreeLink( a_link *junk )
-{
-    a_link      **owner;
-
-    for( owner = &Links; *owner != junk; owner = &(*owner)->next ) ;
-    *owner = junk->next;
-    free( junk->name );
-    free( junk );
-}
 
 void ProcessRequest( HPIPE hdl, char *buff )
 {

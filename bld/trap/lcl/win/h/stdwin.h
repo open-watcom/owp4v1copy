@@ -104,7 +104,6 @@ extern HINSTANCE                Instance;
 extern HTASK                    DebuggerTask;
 extern HTASK                    DebugeeTask;
 extern HINSTANCE                DebugeeInstance;
-extern HANDLE                   TaskAtNotify;
 extern DWORD                    WindowsFlags;
 extern struct interrupt_struct  IntResult;
 extern struct fp_state          FPResult;

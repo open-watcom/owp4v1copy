@@ -89,6 +89,153 @@ char *resource_type_os2[] = {
 
 
 /*
+ * printout a resource name
+ */
+static void dmp_resrc_nam( unsigned_16 res_type )
+/***********************************************/
+{
+    char    *name;
+
+    Wdputc( ' ' );
+    if( res_type & SEG_RESRC_HIGH ) {
+        res_type &= ~SEG_RESRC_HIGH;
+        Wdputs( "resource id: " );
+        Putdec( res_type );
+        Wdputslc( "\n" );
+    } else {
+        name = get_resrc_nam( res_type );
+        Wdputs( name );
+        Wdputslc( "\n" );
+        free( name );
+    }
+}
+
+/*
+ * Dump a Resource Flag Word
+ */
+static void dmp_resrc_flag( unsigned_16 flag )
+/********************************************/
+{
+    if( flag & SEG_MOVABLE ) {
+        Wdputs( "MOVABLE" );
+    } else {
+        Wdputs( "FIXED" );
+    }
+    if( flag & SEG_PURE ) {
+        Wdputs( "|SHARE" );
+    } else {
+        Wdputs( "|NOSHARE" );
+    }
+    if( flag & SEG_PRELOAD ) {
+        Wdputs( "|PRELOAD" );
+    } else {
+        Wdputs( "|LOADONCALL" );
+    }
+    Wdputs( " Prior " );
+    Putdec( flag >> SEG_SHIFT_PRI_LVL );
+}
+
+/*
+ * dump a resource description
+ */
+static void dmp_resrc_desc( struct resource_record * res_ent )
+/************************************************************/
+{
+    unsigned_32                   res_off;
+    unsigned_32                   res_len;
+    unsigned_32                   res_end;
+
+    dmp_resrc_nam( res_ent->name );
+    Wdputs( " file offset " );
+    res_off = (unsigned_32)res_ent->offset
+        << Resrc_shift_cnt;
+    Puthex( res_off, 8 );
+    Wdputs( "H len " );
+    res_len = (unsigned_32)res_ent->length
+        << Resrc_shift_cnt;
+    Puthex( res_len, 8 );
+    Wdputs( " flag " );
+    dmp_resrc_flag( res_ent->flags );
+    Wdputslc( "\n" );
+    if( Options_dmp & RESRC_DMP ) {
+        Wdputslc( "    data =\n" );
+        Dmp_seg_data( res_off, res_len );
+    }
+    res_end = res_off + res_len;
+    if( res_end > Resrc_end ) {
+        Resrc_end = res_end;
+    }
+}
+
+/*
+ * dump some resource entries
+ */
+static void dmp_resrc_ent( unsigned_16 num_resources )
+/****************************************************/
+{
+    struct resource_record      *res_ent_tab;
+    struct resource_record      *res_ent;
+    unsigned_16                 res_group_size;
+    unsigned_16                 res_num;
+
+    if( num_resources == 0 ) {
+        return;
+    }
+    res_group_size = num_resources * sizeof( struct resource_record );
+    res_ent = res_ent_tab = Wmalloc( res_group_size );
+    Wread( res_ent_tab, res_group_size );
+    for( res_num = 0; res_num != num_resources; res_num++ ) {
+        Wdputs( " # " );
+        Putdec( res_num + 1 );
+        dmp_resrc_desc( res_ent++ );
+    }
+    free( res_ent_tab );
+}
+
+/*
+ * printout a resource type name
+ */
+static void dmp_resrc_type_nam( unsigned_16 res_type )
+/****************************************************/
+{
+    char    *name;
+
+    Wdputc( ' ' );
+    if( res_type & SEG_RESRC_HIGH ) {
+        res_type &= ~SEG_RESRC_HIGH;
+        if( res_type > 15 ) {
+            Wdputs( "Type number: " );
+            Putdec( res_type );
+            Wdputslc( "\n" );
+        } else {
+            Wdputslc( resource_type[ res_type ] );
+        }
+    } else {
+        name = get_resrc_nam( res_type );
+        Wdputs( name );
+        Wdputslc( "\n" );
+        free( name );
+    }
+}
+
+/*
+ * get a resource type name
+ */
+char *get_resrc_nam( unsigned_16 offset )
+/***************************************/
+{
+    unsigned_8      num_chars;
+    char            *name;
+
+    Wlseek( New_exe_off + Os2_head.resource_off + offset );
+    Wread( &num_chars, sizeof( unsigned_8 ) );
+    name = Wmalloc( num_chars + 1 );
+    Wread( name, num_chars );
+    name[ num_chars ] = '\0';
+    return( name );
+}
+
+/*
  * Dump The Resource Table for Windows NE module
  */
 static void dmp_resrc_tab_win( void )
@@ -170,153 +317,6 @@ void Dmp_resrc_tab( void )
         dmp_resrc_tab_os2();
     else
         dmp_resrc_tab_win();
-}
-
-/*
- * dump some resource entries
- */
-static void dmp_resrc_ent( unsigned_16 num_resources )
-/****************************************************/
-{
-    struct resource_record      *res_ent_tab;
-    struct resource_record      *res_ent;
-    unsigned_16                 res_group_size;
-    unsigned_16                 res_num;
-
-    if( num_resources == 0 ) {
-        return;
-    }
-    res_group_size = num_resources * sizeof( struct resource_record );
-    res_ent = res_ent_tab = Wmalloc( res_group_size );
-    Wread( res_ent_tab, res_group_size );
-    for( res_num = 0; res_num != num_resources; res_num++ ) {
-        Wdputs( " # " );
-        Putdec( res_num + 1 );
-        dmp_resrc_desc( res_ent++ );
-    }
-    free( res_ent_tab );
-}
-
-/*
- * dump a resource description
- */
-static void dmp_resrc_desc( struct resource_record * res_ent )
-/************************************************************/
-{
-    unsigned_32                   res_off;
-    unsigned_32                   res_len;
-    unsigned_32                   res_end;
-
-    dmp_resrc_nam( res_ent->name );
-    Wdputs( " file offset " );
-    res_off = (unsigned_32)res_ent->offset
-        << Resrc_shift_cnt;
-    Puthex( res_off, 8 );
-    Wdputs( "H len " );
-    res_len = (unsigned_32)res_ent->length
-        << Resrc_shift_cnt;
-    Puthex( res_len, 8 );
-    Wdputs( " flag " );
-    dmp_resrc_flag( res_ent->flags );
-    Wdputslc( "\n" );
-    if( Options_dmp & RESRC_DMP ) {
-        Wdputslc( "    data =\n" );
-        Dmp_seg_data( res_off, res_len );
-    }
-    res_end = res_off + res_len;
-    if( res_end > Resrc_end ) {
-        Resrc_end = res_end;
-    }
-}
-
-/*
- * printout a resource type name
- */
-static void dmp_resrc_type_nam( unsigned_16 res_type )
-/****************************************************/
-{
-    char    *name;
-
-    Wdputc( ' ' );
-    if( res_type & SEG_RESRC_HIGH ) {
-        res_type &= ~SEG_RESRC_HIGH;
-        if( res_type > 15 ) {
-            Wdputs( "Type number: " );
-            Putdec( res_type );
-            Wdputslc( "\n" );
-        } else {
-            Wdputslc( resource_type[ res_type ] );
-        }
-    } else {
-        name = get_resrc_nam( res_type );
-        Wdputs( name );
-        Wdputslc( "\n" );
-        free( name );
-    }
-}
-
-/*
- * printout a resource name
- */
-static void dmp_resrc_nam( unsigned_16 res_type )
-/***********************************************/
-{
-    char    *name;
-
-    Wdputc( ' ' );
-    if( res_type & SEG_RESRC_HIGH ) {
-        res_type &= ~SEG_RESRC_HIGH;
-        Wdputs( "resource id: " );
-        Putdec( res_type );
-        Wdputslc( "\n" );
-    } else {
-        name = get_resrc_nam( res_type );
-        Wdputs( name );
-        Wdputslc( "\n" );
-        free( name );
-    }
-}
-
-/*
- * Dump a Resource Flag Word
- */
-static void dmp_resrc_flag( unsigned_16 flag )
-/********************************************/
-{
-    if( flag & SEG_MOVABLE ) {
-        Wdputs( "MOVABLE" );
-    } else {
-        Wdputs( "FIXED" );
-    }
-    if( flag & SEG_PURE ) {
-        Wdputs( "|SHARE" );
-    } else {
-        Wdputs( "|NOSHARE" );
-    }
-    if( flag & SEG_PRELOAD ) {
-        Wdputs( "|PRELOAD" );
-    } else {
-        Wdputs( "|LOADONCALL" );
-    }
-    Wdputs( " Prior " );
-    Putdec( flag >> SEG_SHIFT_PRI_LVL );
-}
-
-/*
- * get a resource type name
- */
-char *get_resrc_nam( unsigned_16 offset )
-/***************************************/
-{
-    unsigned_8      num_chars;
-    char            *name;
-
-    Wlseek( New_exe_off + Os2_head.resource_off + offset );
-    Wread( &num_chars, sizeof( unsigned_8 ) );
-    name = Wmalloc( num_chars + 1 );
-    Wread( name, num_chars );
-    name[ num_chars ] = '\0';
-    return( name );
 }
 
 /*

@@ -137,6 +137,33 @@ static void finiHDC( HDC hdc )
 } /* finiHDC */
 
 /*
+ * makeInsideRect - make a rectangle the inside of a rectangle
+ */
+static void makeInsideRect( RECT *r )
+{
+    r->left += BORDER_SIZE;
+    r->right -= BORDER_SIZE;
+    r->top += BORDER_SIZE;
+    r->bottom -= BORDER_SIZE;
+
+} /* makeInsideRect */
+
+/*
+ * outlineRect - draw the outline of a rectangle
+ */
+static void outlineRect( HDC hdc, RECT *r )
+{
+    MoveToEx( hdc, r->left, r->bottom - 1, NULL );
+    LineTo( hdc, r->right - 1, r->bottom - 1 );
+    LineTo( hdc, r->right - 1, r->top );
+    SelectObject( hdc, penShade );
+    LineTo( hdc, r->left, r->top );
+    LineTo( hdc, r->left, r->bottom - 1 );
+    SelectObject( hdc, penLight );
+
+} /* outlineRect */
+
+/*
  * StatusWndCallback - handle messages for
  */
 LONG CB StatusWndCallback( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam  )
@@ -185,7 +212,7 @@ LONG CB StatusWndCallback( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam  )
             penLight = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNHIGHLIGHT ) );
             penShade = CreatePen( PS_SOLID, 1, GetSysColor( COLOR_BTNSHADOW ) );
             hasGDIObjects = TRUE;
-        }    
+        }
     break;
 #endif
     case WM_ERASEBKGND:
@@ -303,40 +330,13 @@ HWND StatusWndCreate( HWND parent, RECT *size, HINSTANCE hinstance,
        } else {
            systemDataFont = (HFONT) GetStockObject(SYSTEM_FONT);
        }
-#endif        
+#endif
         ShowWindow( stat, SW_SHOWNORMAL );
         UpdateWindow( stat );
     }
     return( stat );
 
 } /* StatusWndCreate */
-
-/*
- * makeInsideRect - make a rectangle the inside of a rectangle
- */
-static void makeInsideRect( RECT *r )
-{
-    r->left += BORDER_SIZE;
-    r->right -= BORDER_SIZE;
-    r->top += BORDER_SIZE;
-    r->bottom -= BORDER_SIZE;
-
-} /* makeInsideRect */
-
-/*
- * outlineRect - draw the outline of a rectangle
- */
-static void outlineRect( HDC hdc, RECT *r )
-{
-    MoveToEx( hdc, r->left, r->bottom - 1, NULL );
-    LineTo( hdc, r->right - 1, r->bottom - 1 );
-    LineTo( hdc, r->right - 1, r->top );
-    SelectObject( hdc, penShade );
-    LineTo( hdc, r->left, r->top );
-    LineTo( hdc, r->left, r->bottom - 1 );
-    SelectObject( hdc, penLight );
-
-} /* outlineRect */
 
 /*
  * StatusWndDraw3DBox - called by StatusWndDrawLine or externally

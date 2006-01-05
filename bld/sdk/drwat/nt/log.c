@@ -347,6 +347,48 @@ static void logRegisters( ExceptDlgInfo *info ) {
 }
 
 
+static void logModules( DWORD pid, WORD indent ) {
+
+    char        **modules;
+    char        end[10];
+    DWORD       cnt;
+    DWORD       i;
+    ProcNode    *pnode;
+    ModuleNode  *mnode;
+    char        *name;
+
+    pnode = FindProcess( pid );
+    if( pnode != NULL ) {
+        mnode = GetFirstModule( pnode );
+        while( mnode != NULL ) {
+            if( mnode->size == -1 ) {
+                strcpy( end, "????????" );
+            } else {
+                sprintf( end, "%08lX", mnode->base + mnode->size );
+            }
+            if( mnode->name == NULL ) {
+                name = "???";
+            } else {
+                name = mnode->name;
+            }
+            logPrintf( STR_MODULE_WITH_ADDR,
+                        indent, "", mnode->base, end, name );
+            mnode = GetNextModule( mnode );
+        }
+    } else {
+        modules = GetModuleList( pid, &cnt );
+        if( modules == NULL ) {
+            logPrintf( STR_MODULE_LST_UNAVAILABLE );
+        } else {
+            for( i=0; i < cnt; i++ ) {
+                logPrintf( STR_MODULE, indent, "", modules[i] );
+            }
+        }
+        FreeModuleList( modules, cnt );
+    }
+}
+
+
 /*
  * logProcessList
  */
@@ -639,47 +681,6 @@ static void logFaultInfo( ExceptDlgInfo *info ) {
 #endif
     if( LogData.log_mem_dmp ) {
         logMemDmp( info );
-    }
-}
-
-static void logModules( DWORD pid, WORD indent ) {
-
-    char        **modules;
-    char        end[10];
-    DWORD       cnt;
-    DWORD       i;
-    ProcNode    *pnode;
-    ModuleNode  *mnode;
-    char        *name;
-
-    pnode = FindProcess( pid );
-    if( pnode != NULL ) {
-        mnode = GetFirstModule( pnode );
-        while( mnode != NULL ) {
-            if( mnode->size == -1 ) {
-                strcpy( end, "????????" );
-            } else {
-                sprintf( end, "%08lX", mnode->base + mnode->size );
-            }
-            if( mnode->name == NULL ) {
-                name = "???";
-            } else {
-                name = mnode->name;
-            }
-            logPrintf( STR_MODULE_WITH_ADDR,
-                        indent, "", mnode->base, end, name );
-            mnode = GetNextModule( mnode );
-        }
-    } else {
-        modules = GetModuleList( pid, &cnt );
-        if( modules == NULL ) {
-            logPrintf( STR_MODULE_LST_UNAVAILABLE );
-        } else {
-            for( i=0; i < cnt; i++ ) {
-                logPrintf( STR_MODULE, indent, "", modules[i] );
-            }
-        }
-        FreeModuleList( modules, cnt );
     }
 }
 

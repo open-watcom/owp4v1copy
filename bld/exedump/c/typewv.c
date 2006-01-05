@@ -125,28 +125,6 @@ static void near_ptr( char *buff )
 }
 
 /*
- * near_far_proc - dump info
- */
-static void near_far_proc( char *buff )
-/*************************************/
-{
-    char            *ptr;
-    unsigned_16     index;
-    unsigned_8      num_parms;
-
-    ptr = buff+2;
-    Wdputs( "          return type = " );
-    num_parms = buff[0] - 4;
-    if( *ptr & 0x80 ) {
-        num_parms--;
-    }
-    ptr = Get_type_index( ptr, &index );
-    Putdec( index );
-    ptr++;
-    param_type_index( num_parms, ptr );
-}
-
-/*
  * param_type_index - dump info
  */
 static void param_type_index( unsigned_8 num_params, char * ptr )
@@ -167,6 +145,28 @@ static void param_type_index( unsigned_8 num_params, char * ptr )
         Putdec( index );
     }
     Wdputslc( "\n" );
+}
+
+/*
+ * near_far_proc - dump info
+ */
+static void near_far_proc( char *buff )
+/*************************************/
+{
+    char            *ptr;
+    unsigned_16     index;
+    unsigned_8      num_parms;
+
+    ptr = buff+2;
+    Wdputs( "          return type = " );
+    num_parms = buff[0] - 4;
+    if( *ptr & 0x80 ) {
+        num_parms--;
+    }
+    ptr = Get_type_index( ptr, &index );
+    Putdec( index );
+    ptr++;
+    param_type_index( num_parms, ptr );
 }
 
 /*

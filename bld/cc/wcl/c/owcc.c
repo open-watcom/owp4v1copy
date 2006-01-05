@@ -97,12 +97,13 @@ static  char    *O_Name;            /* name of -o option                  */
  *  Static function prototypes
  */
 
-int     Parse( int argc, char **argv );
-int     CompLink( void );
+static int  Parse( int argc, char **argv );
+static int  CompLink( void );
+static void MakeName( char *, char * );
+
 char    *SkipSpaces( char * );
 void    Fputnl( char *, FILE * );
 void    *MemAlloc( int );
-void    MakeName( char *, char * );
 void    Usage( void );
 #ifdef __UNIX__
   #define EXE_EXT ""

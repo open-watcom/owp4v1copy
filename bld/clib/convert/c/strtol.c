@@ -36,9 +36,9 @@
 #include <stdlib.h>
 #ifdef __WIDECHAR__
     #include <wctype.h>
-#else    
+#else
     #include <ctype.h>
-#endif    
+#endif
 #include <errno.h>
 #include <limits.h>
 #include "seterrno.h"
@@ -60,6 +60,18 @@ static unsigned long nearly_overflowing[] = {
 };
 
 #define hexstr(p) (p[0] == '0' && (p[1] == 'x' || p[1] == 'X'))
+
+
+static int radix_value( CHAR_TYPE c )
+    {
+        if( c >= '0'  &&  c <= '9' ) return( c - '0' );
+        c = __F_NAME(tolower,towlower)(c);
+        if( c >= 'a'  &&  c <= 'i' ) return( c - 'a' + 10 );
+        if( c >= 'j'  &&  c <= 'r' ) return( c - 'j' + 19 );
+        if( c >= 's'  &&  c <= 'z' ) return( c - 's' + 28 );
+        return( 37 );
+    }
+
 
 static unsigned long int _stol( const CHAR_TYPE *nptr,CHAR_TYPE **endptr,int base,int who)
     {
@@ -133,14 +145,4 @@ _WCRTLINK unsigned long int __F_NAME(strtoul,wcstoul)( const CHAR_TYPE *nptr,
 _WCRTLINK long int __F_NAME(strtol,wcstol)( const CHAR_TYPE *nptr, CHAR_TYPE **endptr, int base )
     {
         return( _stol( nptr, endptr, base, 1 ) );
-    }
-
-static int radix_value( CHAR_TYPE c )
-    {
-        if( c >= '0'  &&  c <= '9' ) return( c - '0' );
-        c = __F_NAME(tolower,towlower)(c);
-        if( c >= 'a'  &&  c <= 'i' ) return( c - 'a' + 10 );
-        if( c >= 'j'  &&  c <= 'r' ) return( c - 'j' + 19 );
-        if( c >= 's'  &&  c <= 'z' ) return( c - 's' + 28 );
-        return( 37 );
     }

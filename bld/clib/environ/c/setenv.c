@@ -154,6 +154,71 @@ _WCRTLINK int __F_NAME(setenv,_wsetenv)( const CHAR_TYPE *name, const CHAR_TYPE 
     return( rc );
 }
 
+/*
+ * if newvalue == NULL then find all matching entries and delete them
+ * if newvalue != NULL then find first matching entry in evironment list
+ */
+
+#ifndef __NETWARE__
+static int findenv( const CHAR_TYPE *name, const CHAR_TYPE *newvalue )
+{
+    CHAR_TYPE           **envp, **tmp_envp;
+    const CHAR_TYPE     *p1, *p2, *env_str;
+    int                 index1;
+#ifndef __WIDECHAR__
+    int                 index2;
+    char                *envm;
+#endif
+
+    for( envp = __F_NAME(_RWD_environ,_RWD_wenviron); p1 = *envp; ++envp ) {
+        for( p2 = name; ; ++p1, ++p2 ) {
+            if( (*p1 == __F_NAME('=',L'=')) && (*p2 == __F_NAME('\0',L'\0')) ) {
+                index1 = envp - __F_NAME(_RWD_environ,_RWD_wenviron);
+                if( newvalue == NULL ) {
+                    env_str = *envp;
+                    tmp_envp = envp;        /* delete entry */
+                    for( ; *tmp_envp; ++tmp_envp ) {
+                        *tmp_envp = *(tmp_envp+1);
+                    }
+                    #ifdef __WIDECHAR__
+                        lib_free( (void *)env_str );
+                    #else
+                        if( _RWD_env_mask != NULL ) {
+                            if( _RWD_env_mask[ index1 ] != 0 ) {
+                                lib_free( (void *)env_str );
+                            }
+                            envm = (char *)(tmp_envp);
+                            index2 = tmp_envp - _RWD_environ;
+                            memmove( envm, _RWD_env_mask, index2 * sizeof(char) );
+                            _RWD_env_mask = envm;
+                            for( ; index1 < index2; index1++ ) {
+                                envm[ index1 ] = envm[ index1 + 1 ];
+                            }
+                        }
+                    #endif
+                                            /* delete more entries */
+                } else {
+                    return( index1 + 1 );   /* return index origin 1 */
+                }
+            }
+#if defined(__UNIX__)
+            if( *p1 != *p2 ) break;
+#else
+            /* case independent search */
+            #ifdef __WIDECHAR__
+                if( towupper( *p1 ) != towupper( *p2 ) ) break;
+            #else
+                if( toupper( *p1 ) != toupper( *p2 ) ) break;
+            #endif
+#endif
+            /* QNX can have just NAME in env list instead of NAME=value */
+            if( *p2 == __F_NAME('\0',L'\0') ) break;
+        }
+    }
+    return( __F_NAME(_RWD_environ,_RWD_wenviron) - envp );  /* not found */
+}
+#endif
+
 
 _WCRTLINK int __F_NAME(_setenv,__wsetenv)( const CHAR_TYPE *name,
                                            const CHAR_TYPE *newvalue,
@@ -244,68 +309,3 @@ _WCRTLINK int __F_NAME(_setenv,__wsetenv)( const CHAR_TYPE *name,
     return( 0 );
 #endif
 }
-
-/*
- * if newvalue == NULL then find all matching entries and delete them
- * if newvalue != NULL then find first matching entry in evironment list
- */
-
-#ifndef __NETWARE__
-static int findenv( const CHAR_TYPE *name, const CHAR_TYPE *newvalue )
-{
-    CHAR_TYPE           **envp, **tmp_envp;
-    const CHAR_TYPE     *p1, *p2, *env_str;
-    int                 index1;
-#ifndef __WIDECHAR__
-    int                 index2;
-    char                *envm;
-#endif
-
-    for( envp = __F_NAME(_RWD_environ,_RWD_wenviron); p1 = *envp; ++envp ) {
-        for( p2 = name; ; ++p1, ++p2 ) {
-            if( (*p1 == __F_NAME('=',L'=')) && (*p2 == __F_NAME('\0',L'\0')) ) {
-                index1 = envp - __F_NAME(_RWD_environ,_RWD_wenviron);
-                if( newvalue == NULL ) {
-                    env_str = *envp;
-                    tmp_envp = envp;        /* delete entry */
-                    for( ; *tmp_envp; ++tmp_envp ) {
-                        *tmp_envp = *(tmp_envp+1);
-                    }
-                    #ifdef __WIDECHAR__
-                        lib_free( (void *)env_str );
-                    #else
-                        if( _RWD_env_mask != NULL ) {
-                            if( _RWD_env_mask[ index1 ] != 0 ) {
-                                lib_free( (void *)env_str );
-                            }
-                            envm = (char *)(tmp_envp);
-                            index2 = tmp_envp - _RWD_environ;
-                            memmove( envm, _RWD_env_mask, index2 * sizeof(char) );
-                            _RWD_env_mask = envm;
-                            for( ; index1 < index2; index1++ ) {
-                                envm[ index1 ] = envm[ index1 + 1 ];
-                            }
-                        }
-                    #endif
-                                            /* delete more entries */
-                } else {
-                    return( index1 + 1 );   /* return index origin 1 */
-                }
-            }
-#if defined(__UNIX__)
-            if( *p1 != *p2 ) break;
-#else
-            /* case independent search */
-            #ifdef __WIDECHAR__
-                if( towupper( *p1 ) != towupper( *p2 ) ) break;
-            #else
-                if( toupper( *p1 ) != toupper( *p2 ) ) break;
-            #endif
-#endif
-            /* QNX can have just NAME in env list instead of NAME=value */
-            if( *p2 == __F_NAME('\0',L'\0') ) break;
-        }
-    }
-    return( __F_NAME(_RWD_environ,_RWD_wenviron) - envp );  /* not found */
-}
-#endif

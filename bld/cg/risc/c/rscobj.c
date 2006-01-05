@@ -130,7 +130,7 @@ extern section_def *FindSection( seg_id id ) {
     return( curr );
 }
 
-static section_def *AddSection( seg_id id ) {
+extern section_def *AddSection( seg_id id ) {
 /*******************************************/
 
     section_def         *new;
