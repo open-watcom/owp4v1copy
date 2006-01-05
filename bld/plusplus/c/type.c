@@ -8116,6 +8116,10 @@ static unsigned typesBind_ptree( type_bind_info *data )
         PTreeFree( *b_top );
         PTreeFree( *u_top );
 
+        if( b_unmod_type == NULL ) {
+            return( TB_NULL );
+        }
+
         flags.arg_1st_level = FALSE;
         if( u_type == TypeGetCache( TYPC_FIRST_LEVEL ) ) {
             flags.arg_1st_level = TRUE;
