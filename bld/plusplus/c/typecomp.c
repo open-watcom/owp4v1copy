@@ -257,6 +257,7 @@ boolean TypeCompareExclude( TYPE type1, TYPE type2, type_exclude mask )
         // tweak type1 and type2 to ignore minor distinctions
         type1 = TypeModExtract( type1, &flag1, &base1, mask|TC1_NOT_MEM_MODEL );
         type2 = TypeModExtract( type2, &flag2, &base2, mask|TC1_NOT_MEM_MODEL );
+        if( type1 == NULL || type2 == NULL ) break;
 
         if( mask & TC1_PTR_FUN ) {
             type_flag   extra;
