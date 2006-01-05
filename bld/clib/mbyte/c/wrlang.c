@@ -53,7 +53,11 @@
 #include "wreslang.h"
 
 #ifdef __DOS__
+  #ifndef __386__
+    extern  unsigned short              dos_get_code_page( void );
+  #else
     static  unsigned short              dos_get_code_page( void );
+  #endif
 #endif
 
 static res_language_enumeration check_code_page( void );
