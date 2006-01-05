@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Microsoft CL clone utility.
 *
 ****************************************************************************/
 
@@ -70,53 +69,6 @@
 #define LINK_SUCCESS            0
 #define LINK_NOACTION           (-1)
 #define LINK_ERROR              (-2)
-
-
-/*
- * Program entry point.
- */
-void main( int argc, char *argv[] )
-/*********************************/
-{
-    OPT_STORAGE         cmdOpts;
-    CmdLine *           compCmdLine;
-    CmdLine *           linkCmdLine;
-    int                 itemsParsed;
-    int                 compRc = COMPILE_NOACTION;
-    int                 linkRc = LINK_NOACTION;
-
-    /*** Initialize ***/
-    SetBannerFuncError( BannerMessage );
-    compCmdLine = InitCmdLine( CL_C_NUM_SECTIONS );
-    linkCmdLine = InitCmdLine( CL_L_NUM_SECTIONS );
-    SetDefaultFile( TYPE_C_FILE, "source" );
-    AllowTypeFile( TYPE_C_FILE, TYPE_CPP_FILE, TYPE_DEF_FILE, TYPE_OBJ_FILE,
-                   TYPE_LIB_FILE, TYPE_RES_FILE, TYPE_INVALID_FILE );
-    InitMacro();
-
-    /*** Parse the command line and translate to Watcom options ***/
-    InitParse( &cmdOpts );
-    itemsParsed = do_parsing( &cmdOpts );
-    if( itemsParsed==0 || cmdOpts.help ) {
-        if( !cmdOpts.nologo )
-            BannerMessage();
-        PrintHelpMessage();
-        exit( EXIT_SUCCESS );
-    }
-    OptionsTranslate( &cmdOpts, compCmdLine, linkCmdLine );
-
-    /*** Spawn the compiler ***/
-    compRc = compile( &cmdOpts, compCmdLine );
-    if( compRc == COMPILE_ERROR )  exit( EXIT_FAILURE );
-    if( !cmdOpts.c ) {
-        linkRc = link( &cmdOpts, linkCmdLine );
-    }
-    if( compRc == COMPILE_NOACTION  &&  linkRc == LINK_NOACTION ) {
-        FatalError( "Nothing to do!" );
-    }
-    FiniParse( &cmdOpts );
-    exit( EXIT_SUCCESS );
-}
 
 
 /*
@@ -297,4 +249,51 @@ static int link( const OPT_STORAGE *cmdOpts, CmdLine *linkCmdLine )
         }
     }
     return( LINK_SUCCESS );
+}
+
+
+/*
+ * Program entry point.
+ */
+void main( int argc, char *argv[] )
+/*********************************/
+{
+    OPT_STORAGE         cmdOpts;
+    CmdLine *           compCmdLine;
+    CmdLine *           linkCmdLine;
+    int                 itemsParsed;
+    int                 compRc = COMPILE_NOACTION;
+    int                 linkRc = LINK_NOACTION;
+
+    /*** Initialize ***/
+    SetBannerFuncError( BannerMessage );
+    compCmdLine = InitCmdLine( CL_C_NUM_SECTIONS );
+    linkCmdLine = InitCmdLine( CL_L_NUM_SECTIONS );
+    SetDefaultFile( TYPE_C_FILE, "source" );
+    AllowTypeFile( TYPE_C_FILE, TYPE_CPP_FILE, TYPE_DEF_FILE, TYPE_OBJ_FILE,
+                   TYPE_LIB_FILE, TYPE_RES_FILE, TYPE_INVALID_FILE );
+    InitMacro();
+
+    /*** Parse the command line and translate to Watcom options ***/
+    InitParse( &cmdOpts );
+    itemsParsed = do_parsing( &cmdOpts );
+    if( itemsParsed==0 || cmdOpts.help ) {
+        if( !cmdOpts.nologo )
+            BannerMessage();
+        PrintHelpMessage();
+        exit( EXIT_SUCCESS );
+    }
+    OptionsTranslate( &cmdOpts, compCmdLine, linkCmdLine );
+
+    /*** Spawn the compiler ***/
+    compRc = compile( &cmdOpts, compCmdLine );
+    if( compRc == COMPILE_ERROR )  exit( EXIT_FAILURE );
+    if( !cmdOpts.c ) {
+        linkRc = link( &cmdOpts, linkCmdLine );
+    }
+    if( compRc == COMPILE_NOACTION  &&  linkRc == LINK_NOACTION ) {
+        FatalError( "Nothing to do!" );
+    }
+    FiniParse( &cmdOpts );
+    exit( EXIT_SUCCESS );
 }

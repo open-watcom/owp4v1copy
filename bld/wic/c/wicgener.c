@@ -50,6 +50,8 @@
 static int _fileNum = 0;
 static int MsgShift = 0;
 
+static void reportBadHeap(int retval);
+
 const char *FingerMsg[] = {
     banner1w( "Interface Converter", _WIC_VERSION_ ),
     banner2( "1993" ),

@@ -438,6 +438,28 @@ static bool SameExprTree( tree_node *a, tree_node *b )
     }
 }
 
+static void BurnTree( tree_node *tree )
+/*************************************/
+{
+    switch( tree->op ) {
+    case OP_AND:
+    case OP_OR:
+        BurnTree( tree->right );
+        /* fall thru */
+    case OP_NOT:
+        BurnTree( tree->u.left );
+        break;
+    case OP_EXIST:
+        GUIMemFree( tree->u.left );
+        break;
+    case OP_VAR:
+    case OP_TRUE:
+    case OP_FALSE:
+        break;
+    }
+    GUIMemFree( tree );
+}
+
 static int NewFileCond( char *str )
 /****************************************/
 {
@@ -534,28 +556,6 @@ static int EvalExprTree( tree_node *tree, bool is_minimal )
         break;
     }
     return( value );
-}
-
-static void BurnTree( tree_node *tree )
-/*************************************/
-{
-    switch( tree->op ) {
-    case OP_AND:
-    case OP_OR:
-        BurnTree( tree->right );
-        /* fall thru */
-    case OP_NOT:
-        BurnTree( tree->u.left );
-        break;
-    case OP_EXIST:
-        GUIMemFree( tree->u.left );
-        break;
-    case OP_VAR:
-    case OP_TRUE:
-    case OP_FALSE:
-        break;
-    }
-    GUIMemFree( tree );
 }
 
 static int DoEvalCondition( char *str, bool is_minimal )

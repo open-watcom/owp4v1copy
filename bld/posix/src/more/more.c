@@ -113,6 +113,30 @@ static int getChar( void )
 
 } /* getChar */
 
+static int ReadChar( FILE *f )
+/*****************************/
+/* read a char from the buffer */
+{
+    int         ch;
+    long        high;
+
+    if( f == stdin ) {
+        return fgetc( f );
+    }
+    if( BufferPos == FileSize ) return EOF;
+    high = BUFF_HIGH( BufferPos );
+    if( high != FilePos ) {
+        if( high != FilePos + 1 ) {
+            fseek( f, BUFF_START( BufferPos ), SEEK_SET );
+        }
+        fread( workBuff, 1, BUFF_SIZE, f );
+        FilePos = high;
+    }
+    ch = workBuff[BUFF_OFFSET(BufferPos)];
+    BufferPos++;
+    return ch;
+}
+
 /*
  * backUpLines - back up a given number of lines in a file
  */
@@ -147,30 +171,6 @@ static void InitFileBuffer( long size )
     BufferPos = 0;
     FilePos = -1;
     FileSize = size;
-}
-
-static int ReadChar( FILE *f )
-/*****************************/
-/* read a char from the buffer */
-{
-    int         ch;
-    long        high;
-
-    if( f == stdin ) {
-        return fgetc( f );
-    }
-    if( BufferPos == FileSize ) return EOF;
-    high = BUFF_HIGH( BufferPos );
-    if( high != FilePos ) {
-        if( high != FilePos + 1 ) {
-            fseek( f, BUFF_START( BufferPos ), SEEK_SET );
-        }
-        fread( workBuff, 1, BUFF_SIZE, f );
-        FilePos = high;
-    }
-    ch = workBuff[BUFF_OFFSET(BufferPos)];
-    BufferPos++;
-    return ch;
 }
 
 static void BufSeek( long pos )

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Microsoft NMAKE clone tool.
 *
 ****************************************************************************/
 
@@ -57,32 +56,6 @@
 
 #define NMAKE_SUCCESS           0
 #define NMAKE_ERROR             (-2)
-
-
-/*
- * Program entry point.
- */
-void main( int argc, char *argv[] )
-/*********************************/
-{
-    OPT_STORAGE         cmdOpts;
-    CmdLine *           cmdLine;
-
-
-    /*** Initialize ***/
-    SetBannerFuncError( BannerMessage );
-    cmdLine = InitCmdLine( NMAKE_NUM_SECTIONS );
-
-    /*** Parse the command line and translate to Watcom options ***/
-    InitParse( &cmdOpts );
-    do_parsing( &cmdOpts );
-    OptionsTranslate( &cmdOpts, cmdLine );
-
-    /*** Spawn the librarian ***/
-    nmake( &cmdOpts, cmdLine );
-    FiniParse( &cmdOpts );
-    exit( EXIT_SUCCESS );
-}
 
 
 /*
@@ -170,4 +143,30 @@ static int nmake( const OPT_STORAGE *cmdOpts, CmdLine *cmdLine )
     DestroyCmdLine( cmdLine );
 
     return( NMAKE_SUCCESS );
+}
+
+
+/*
+ * Program entry point.
+ */
+void main( int argc, char *argv[] )
+/*********************************/
+{
+    OPT_STORAGE         cmdOpts;
+    CmdLine *           cmdLine;
+
+
+    /*** Initialize ***/
+    SetBannerFuncError( BannerMessage );
+    cmdLine = InitCmdLine( NMAKE_NUM_SECTIONS );
+
+    /*** Parse the command line and translate to Watcom options ***/
+    InitParse( &cmdOpts );
+    do_parsing( &cmdOpts );
+    OptionsTranslate( &cmdOpts, cmdLine );
+
+    /*** Spawn the librarian ***/
+    nmake( &cmdOpts, cmdLine );
+    FiniParse( &cmdOpts );
+    exit( EXIT_SUCCESS );
 }

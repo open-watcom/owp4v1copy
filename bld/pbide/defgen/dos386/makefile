@@ -1,8 +1,10 @@
 #pmake: os_dos cpu_386
-host_os = dos
-host_cpu = 386
 
 proj_name = defgen
+
+host_OS  = dos
+host_CPU = 386
+
 xname = defgen.exe
 
 lnk = $(name).lnk
@@ -11,17 +13,16 @@ lnk = $(name).lnk
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = ..;
+inc_dirs = -I..
 
 objs = ytab.obj main.obj scan.obj error.obj semantic.obj output.obj
 
 $(xname) : ytab.h ytab.c $(objs) $(__MAKEFILES__)
-        @%create $(lnk)
-        @%append $(lnk) name $^@
-        @for %i in ($(objs)) do @%append $(lnk) file %i
-        $(linker) $(lflags) @$(lnk)
+        $(cl) $(clflags) $(objs) $(cl_libs)
 
 .c: ..
 
 ytab.c ytab.h: ../yydriver.c ../defgen.y
         $(byacc) -d $]@ $[@
+
+additional_cleanup = ytab.h ytab.c

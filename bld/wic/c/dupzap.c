@@ -55,6 +55,7 @@ static pEnumElem _dupEnumElem(void *elem);
 static pToken _dupToken(pToken elem);
 static pTokPos _dupTokPos(pTokPos elem);
 static pTokData _dupTokData(pTokData elem);
+static void _zapTokData(pTokData elem);
 #define _dupSLList dupSLList
 
 static pCTree _dupCTree(pCTree elem) {

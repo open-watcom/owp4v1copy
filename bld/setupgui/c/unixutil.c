@@ -61,9 +61,7 @@
 #include "errno.h"
 
 
-extern char     *NextToken( char *buf, char delim );
 extern void     BumpStatus( long );
-static char *   GetInstallName();
 
 bool            ConfigModified = FALSE;
 static enum { SRC_UNKNOWN, SRC_CD, SRC_DISK } SrcInstState;
@@ -913,7 +911,7 @@ static bool CheckPendingFiles()
     return( TRUE );
 }
 
-static int PromptUser( char *name, char *dlg, char *skip,
+extern int PromptUser( char *name, char *dlg, char *skip,
                         char *replace, int *value )
 /*************************************************/
 {
@@ -1380,7 +1378,7 @@ void DeleteObsoleteFiles()
     }
 }
 
-static char *GetInstallName()
+extern char *GetInstallName( void )
 {
     static char name[_MAX_FNAME];
     int         argc;

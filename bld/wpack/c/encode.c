@@ -63,7 +63,6 @@ extern int              QOpenM( char * );
 extern void             CopyInfo( int, int, unsigned long );
 extern int              WriteSeek( unsigned long );
 extern int              QOpenW( char * );
-extern bool             AssignCodes( int, arccmd * );
 extern void             SwitchBuffer( int, bool, void * );
 extern void             RestoreBuffer( bool );
 extern int              QRead( int, void *, int );

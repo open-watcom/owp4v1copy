@@ -215,20 +215,6 @@ static void genTmpFName( char *file, char *buf ) {
     }
 }
 
-void GenerateCPPFiles( sru_file *sru ) {
-/*************************************/
-
-    assert( sru );
-
-    generateLibMain();
-    if( !(Options & OPT_GEN_C_CODE) ) {
-        if( !generateHeaderFile( sru ) ) return;
-        generateCoverFile( sru );
-    }
-    generateCodeFile( sru );
-}
-
-
 static void generateLibMain( void ) {
 /*******************************/
 
@@ -254,6 +240,21 @@ static void generateLibMain( void ) {
     if( fputs( END_IF, fp ) == EOF ) Error( FILE_WRITE_ERR, fname );
     WigCloseFile( fp );
 }
+
+
+void GenerateCPPFiles( sru_file *sru ) {
+/*************************************/
+
+    assert( sru );
+
+    generateLibMain();
+    if( !(Options & OPT_GEN_C_CODE) ) {
+        if( !generateHeaderFile( sru ) ) return;
+        generateCoverFile( sru );
+    }
+    generateCodeFile( sru );
+}
+
 
 static void outInclude( FileInfo *fp ) {
 /**************************************/

@@ -288,6 +288,13 @@ static long gotoNewBlock( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     return( 0 );
 }
 
+
+static int eitherButtonDown( UINT w )
+{
+    return( (w&MK_RBUTTON)||(w&MK_LBUTTON) );
+}
+
+
 static long selectedNewColour( HWND hwnd, NewColourOps op, UINT wparam )
 {
     HDC     hdc;
@@ -304,11 +311,6 @@ static long selectedNewColour( HWND hwnd, NewColourOps op, UINT wparam )
     }
     return( 0 );
 }
-
-static int eitherButtonDown( UINT w ){
-    return( (w&MK_RBUTTON)||(w&MK_LBUTTON) );
-}
-
 
 extern char *windowName[1];
 

@@ -40,6 +40,8 @@
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
 static  int             AsmFuncNum;
 
+local   int             GetByteSeq( void );
+
 void AsmWarning( char *msg )
 /**************************/
 {

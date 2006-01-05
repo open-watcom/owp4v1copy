@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Translate Microsoft LINK to Watcom options.
 *
 ****************************************************************************/
 
@@ -81,35 +80,27 @@ static struct XlatStatus {
 
 
 /*
- * Translate scanned MS options to Watcom options.
- */
-void OptionsTranslate( OPT_STORAGE *cmdOpts, CmdLine *cmdLine )
-/*************************************************************/
-{
-    /*** Parse the /nologo switch now so we can print the banner ***/
-    init_status( &status );
-    if( cmdOpts->nologo ) {
-        QuietModeMessage();
-    } else {
-        BannerMessage();
-    }
-
-    /*** Parse everything ***/
-    unsupported_opts( cmdOpts );
-    default_opts( &status, cmdOpts, cmdLine );
-    def_file_opts( cmdOpts );
-    linker_opts( &status, cmdOpts, cmdLine );
-    merge_opts( &status, cmdOpts, cmdLine );
-}
-
-
-/*
  * Initialize a struct XlatStatus.
  */
 static void init_status( struct XlatStatus *status )
 /**************************************************/
 {
     memset( status, 0, sizeof(struct XlatStatus) );
+}
+
+
+/*
+ * Add one more unsupported option to optStr.
+ */
+static void append_unsupported( char *optStr, char *opt )
+/*******************************************************/
+{
+    if( optStr[0] != '\0' ) {
+        strcat( optStr, " /" );
+    } else {
+        strcat( optStr, "/" );
+    }
+    strcat( optStr, opt );
 }
 
 
@@ -144,17 +135,27 @@ static void unsupported_opts( const OPT_STORAGE *cmdOpts )
 
 
 /*
- * Add one more unsupported option to optStr.
+ * Add another string to an OPT_STRING.
  */
-static void append_unsupported( char *optStr, char *opt )
-/*******************************************************/
+static void add_string( OPT_STRING **p, char *str )
+/*************************************************/
 {
-    if( optStr[0] != '\0' ) {
-        strcat( optStr, " /" );
+    OPT_STRING *        buf;
+    OPT_STRING *        curElem;
+
+    /*** Make a new list item ***/
+    buf = AllocMem( sizeof(OPT_STRING) + strlen(str) );
+    strcpy( buf->data, str );
+    buf->next = NULL;
+
+    /*** Put it at the end of the list ***/
+    if( *p == NULL ) {
+        *p = buf;
     } else {
-        strcat( optStr, "/" );
+        curElem = *p;
+        while( curElem->next != NULL )  curElem = curElem->next;
+        curElem->next = buf;
     }
-    strcat( optStr, opt );
 }
 
 
@@ -472,6 +473,46 @@ static void init_fuzzy( OPT_STRING *objs, OPT_STRING *libs,
         FreeMem( libpathsvector[count] );
     }
     FreeMem( libpathsvector );
+}
+
+
+/*
+ * Determine the name of the executable, and place it in the given buffer.
+ */
+static void get_executable_name( const OPT_STORAGE *cmdOpts, char *firstObj,
+                                 char *executable )
+/**************************************************************************/
+{
+    char                drive[_MAX_DRIVE];
+    char                dir[_MAX_DIR];
+    char                fname[_MAX_FNAME];
+
+    if( cmdOpts->out ) {
+        strcpy( executable, cmdOpts->out_value->data );
+    } else {
+        _splitpath( firstObj, drive, dir, fname, NULL );
+        if( !cmdOpts->dll ) {
+            _makepath( executable, drive, dir, fname, ".exe" );
+        } else {
+            _makepath( executable, drive, dir, fname, ".dll" );
+        }
+    }
+}
+
+
+/*
+ * Destroy an OPT_STRING.
+ */
+static void del_string( OPT_STRING **p )
+/**************************************/
+{
+    OPT_STRING *        s;
+
+    while( *p != NULL ) {
+        s = *p;
+        *p = s->next;
+        FreeMem( s );
+    }
 }
 
 
@@ -860,64 +901,23 @@ static void merge_opts( struct XlatStatus *status, const OPT_STORAGE *cmdOpts,
 
 
 /*
- * Add another string to an OPT_STRING.
+ * Translate scanned MS options to Watcom options.
  */
-static void add_string( OPT_STRING **p, char *str )
-/*************************************************/
+void OptionsTranslate( OPT_STORAGE *cmdOpts, CmdLine *cmdLine )
+/*************************************************************/
 {
-    OPT_STRING *        buf;
-    OPT_STRING *        curElem;
-
-    /*** Make a new list item ***/
-    buf = AllocMem( sizeof(OPT_STRING) + strlen(str) );
-    strcpy( buf->data, str );
-    buf->next = NULL;
-
-    /*** Put it at the end of the list ***/
-    if( *p == NULL ) {
-        *p = buf;
+    /*** Parse the /nologo switch now so we can print the banner ***/
+    init_status( &status );
+    if( cmdOpts->nologo ) {
+        QuietModeMessage();
     } else {
-        curElem = *p;
-        while( curElem->next != NULL )  curElem = curElem->next;
-        curElem->next = buf;
+        BannerMessage();
     }
-}
 
-/*
- * Determine the name of the executable, and place it in the given buffer.
- */
-static void get_executable_name( const OPT_STORAGE *cmdOpts, char *firstObj,
-                                 char *executable )
-/**************************************************************************/
-{
-    char                drive[_MAX_DRIVE];
-    char                dir[_MAX_DIR];
-    char                fname[_MAX_FNAME];
-
-    if( cmdOpts->out ) {
-        strcpy( executable, cmdOpts->out_value->data );
-    } else {
-        _splitpath( firstObj, drive, dir, fname, NULL );
-        if( !cmdOpts->dll ) {
-            _makepath( executable, drive, dir, fname, ".exe" );
-        } else {
-            _makepath( executable, drive, dir, fname, ".dll" );
-        }
-    }
-}
-
-
-/*
- * Destroy an OPT_STRING.
- */
-static void del_string( OPT_STRING **p )
-/********************************************/
-{
-    OPT_STRING *        s;
-
-    while( *p != NULL ) {
-        s = *p;
-        *p = s->next;
-        FreeMem( s );
-    }
+    /*** Parse everything ***/
+    unsupported_opts( cmdOpts );
+    default_opts( &status, cmdOpts, cmdLine );
+    def_file_opts( cmdOpts );
+    linker_opts( &status, cmdOpts, cmdLine );
+    merge_opts( &status, cmdOpts, cmdLine );
 }

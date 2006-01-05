@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command line parsing for RC clone tool.
 *
 ****************************************************************************/
 
@@ -43,8 +42,6 @@
 #include "parse.h"
 #include "pathconv.h"
 #include "rc.h"
-
-#include "optparsc.gh"
 
 
 /*
@@ -64,6 +61,20 @@ void FiniParse( OPT_STORAGE *cmdOpts )
 /************************************/
 {
     OPT_FINI( cmdOpts );
+}
+
+
+/*
+ * Gripe about a command line error.
+ */
+static void cmd_line_error( void )
+/********************************/
+{
+    char *              str;
+
+    GoToMarkContext();
+    str = CmdScanString();
+    Warning( "Ignoring invalid option '%s'", str );
 }
 
 
@@ -109,6 +120,69 @@ void CmdStringParse( OPT_STORAGE *cmdOpts, int *itemsParsed )
         (*itemsParsed)++;
     }
     CloseContext();
+}
+
+
+/*
+ * Destroy an OPT_STRING.
+ */
+static void OPT_CLEAN_STRING( OPT_STRING **p )
+/********************************************/
+{
+    OPT_STRING *        s;
+
+    while( *p != NULL ) {
+        s = *p;
+        *p = s->next;
+        FreeMem( s );
+    }
+}
+
+
+/*
+ * Add another string to an OPT_STRING.
+ */
+static void add_string( OPT_STRING **p, char *str )
+/*************************************************/
+{
+    OPT_STRING *        buf;
+    OPT_STRING *        curElem;
+
+    /*** Make a new list item ***/
+    buf = AllocMem( sizeof(OPT_STRING) + strlen(str) );
+    strcpy( buf->data, str );
+    buf->next = NULL;
+
+    /*** Put it at the end of the list ***/
+    if( *p == NULL ) {
+        *p = buf;
+    } else {
+        curElem = *p;
+        while( curElem->next != NULL )  curElem = curElem->next;
+        curElem->next = buf;
+    }
+}
+
+
+/*
+ * For the /optName option, read in a string and store the string into the
+ * given OPT_STRING.  If onlyOne is non-zero, any previous string in p will
+ * be deleted.
+ */
+static int do_string_parse( OPT_STRING **p, char *optName, int onlyOne )
+/**********************************************************************/
+{
+    char *              str;
+
+    CmdScanWhitespace();
+    str = CmdScanString();
+    if( str == NULL ) {
+        FatalError( "/%s requires an argument", optName );
+        return( 0 );
+    }
+    if( onlyOne )  OPT_CLEAN_STRING( p );
+    add_string( p, str );
+    return( 1 );
 }
 
 
@@ -218,28 +292,6 @@ static int parse_passwopts( OPT_STRING **p )
 
 
 /*
- * For the /optName option, read in a string and store the string into the
- * given OPT_STRING.  If onlyOne is non-zero, any previous string in p will
- * be deleted.
- */
-static int do_string_parse( OPT_STRING **p, char *optName, int onlyOne )
-/**********************************************************************/
-{
-    char *              str;
-
-    CmdScanWhitespace();
-    str = CmdScanString();
-    if( str == NULL ) {
-        FatalError( "/%s requires an argument", optName );
-        return( 0 );
-    }
-    if( onlyOne )  OPT_CLEAN_STRING( p );
-    add_string( p, str );
-    return( 1 );
-}
-
-
-/*
  * Signal that an option longer than one character was parsed.  This info
  * is used for chaining of options.
  */
@@ -260,20 +312,6 @@ static void handle_nowwarn( OPT_STORAGE *cmdOpts, int x )
     x = x;
     cmdOpts = cmdOpts;
     DisableWarnings( 1 );
-}
-
-
-/*
- * Gripe about a command line error.
- */
-static void cmd_line_error( void )
-/********************************/
-{
-    char *              str;
-
-    GoToMarkContext();
-    str = CmdScanString();
-    Warning( "Ignoring invalid option '%s'", str );
 }
 
 
@@ -310,42 +348,5 @@ static void OPT_UNGET( void )
 }
 
 
-/*
- * Destroy an OPT_STRING.
- */
-static void OPT_CLEAN_STRING( OPT_STRING **p )
-/********************************************/
-{
-    OPT_STRING *        s;
-
-    while( *p != NULL ) {
-        s = *p;
-        *p = s->next;
-        FreeMem( s );
-    }
-}
-
-
-/*
- * Add another string to an OPT_STRING.
- */
-static void add_string( OPT_STRING **p, char *str )
-/*************************************************/
-{
-    OPT_STRING *        buf;
-    OPT_STRING *        curElem;
-
-    /*** Make a new list item ***/
-    buf = AllocMem( sizeof(OPT_STRING) + strlen(str) );
-    strcpy( buf->data, str );
-    buf->next = NULL;
-
-    /*** Put it at the end of the list ***/
-    if( *p == NULL ) {
-        *p = buf;
-    } else {
-        curElem = *p;
-        while( curElem->next != NULL )  curElem = curElem->next;
-        curElem->next = buf;
-    }
-}
+/* Include after all static functions were declared */
+#include "optparsc.gh"

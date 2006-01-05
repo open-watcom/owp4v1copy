@@ -97,20 +97,20 @@ void (__interrupt FAR *prev_int[NUM_INTS])();
 
 #define intx( N )                                   \
     void __interrupt FAR int_rtn_##N()              \
-      {                                             \
+    {                                               \
         if( Sample_On ) ++int_tick[N];              \
         if( prev_int[N] != NULL )                   \
             _chain_intr( prev_int[N] );             \
-      }
+    }
 
 #define intx2( N )                                  \
     void __interrupt FAR int_rtn_##N()              \
-      {                                             \
+    {                                               \
         if( Sample_On ) ++int_tick[N];              \
         __fstenv();                                 \
         if( prev_int[N] != NULL )                   \
             _chain_intr( prev_int[N] );             \
-      }
+    }
 
 intx( 0x00 )
 intx( 0x01 )
@@ -276,8 +276,64 @@ void (__interrupt FAR *new_int[NUM_INTS])() = {
     int_rtn_0x7C, int_rtn_0x7D, int_rtn_0x7E, int_rtn_0x7F
 };
 
+static void int_summary( void )
+{
+    int i;
+
+    for( i = 0; i < NUM_INTS; i++ ) {
+        if( int_tick[ i ] != 0 ) {
+            LineCount--;
+            techoutput( "\tint %02.2x ticks = %8d", i, int_tick[ i ] );
+            if( i == 0x00 ) techoutput( " divide error interrupt" );
+            if( i == 0x01 ) techoutput( " single-step interrupt" );
+            if( i == 0x02 ) techoutput( " hardware NMI interrupt" );
+            if( i == 0x03 ) techoutput( " break-point interrupt" );
+            if( i == 0x04 ) techoutput( " overflow interrupt" );
+            if( i == 0x05 ) techoutput( " print-screen interrupt" );
+            if( i == 0x06 ) techoutput( " undefined opcode interrupt" );
+            if( i == 0x07 ) techoutput( " no math unit interrupt" );
+            if( i == 0x08 ) techoutput( " IRQ 0 timer interrupt" );
+            if( i == 0x09 ) techoutput( " IRQ 1 keyboard interrupt" );
+            if( i == 0x0a ) techoutput( " IRQ 2 EGA vert retrace interrupt" );
+            if( i == 0x0b ) techoutput( " IRQ 3 COM2 interrupt" );
+            if( i == 0x0c ) techoutput( " IRQ 4 COM1 interrupt" );
+            if( i == 0x0d ) techoutput( " IRQ 5 fixed disk interrupt" );
+            if( i == 0x0e ) techoutput( " IRQ 6 diskette interrupt" );
+            if( i == 0x0f ) techoutput( " IRQ 7 printer interrupt" );
+            if( i == 0x10 ) techoutput( " video interrupt" );
+            if( i == 0x11 ) techoutput( " equip. determination" );
+            if( i == 0x12 ) techoutput( " memory size" );
+            if( i == 0x13 ) techoutput( " disk interrupt" );
+            if( i == 0x14 ) techoutput( " serial i/o s/w interrupt" );
+            if( i == 0x15 ) techoutput( " misc s/w interrupt" );
+            if( i == 0x16 ) techoutput( " keyboard s/w interrupt" );
+            if( i == 0x17 ) techoutput( " printer interrupt" );
+            if( i == 0x18 ) techoutput( " xfer to ROM BASIC" );
+            if( i == 0x19 ) techoutput( " disk boot" );
+            if( i == 0x1a ) techoutput( " clock s/w interrupt" );
+            if( i == 0x1b ) techoutput( " ctrl/break interrupt" );
+            if( i == 0x1c ) techoutput( " clock tick interrupt" );
+            if( i == 0x20 ) techoutput( " prog. termination" );
+            if( i == 0x21 ) techoutput( " DOS s/w interrupt" );
+            if( i == 0x29 ) techoutput( " fast putchar interrupt" );
+            if( i == 0x2a ) techoutput( " network interrupt" );
+            if( i == 0x33 ) techoutput( " mouse interrupt" );
+            if( i == 0x70 ) techoutput( " IRQ 8 real time clock interrupt" );
+            if( i == 0x71 ) techoutput( " IRQ 9 redirect cascade interrupt" );
+            if( i == 0x72 ) techoutput( " IRQ10 reserved interrupt" );
+            if( i == 0x73 ) techoutput( " IRQ11 reserved interrupt" );
+            if( i == 0x74 ) techoutput( " IRQ12 mouse interrupt" );
+            if( i == 0x75 ) techoutput( " IRQ13 math coprocessor exception interrupt" );
+            if( i == 0x76 ) techoutput( " IRQ14 fixed disk interrupt" );
+            if( i == 0x77 ) techoutput( " IRQ15 reserved interrupt" );
+            LineCount--;
+            techoutput( "\n" );
+        }
+    }
+}
+
 int monint( int print )
-  {
+{
     int i;
 
     for( i = 0; i < NUM_INTS; i++ ) {
@@ -332,60 +388,4 @@ int monint( int print )
     }
 
     return( (int_tick[ 2 ] != 0) && ((NDP_Status & SW_ZERODIVIDE) != 0) );
-  }
-
-static void int_summary()
-{
-    int i;
-
-    for( i = 0; i < NUM_INTS; i++ ) {
-        if( int_tick[ i ] != 0 ) {
-            LineCount--;
-            techoutput( "\tint %02.2x ticks = %8d", i, int_tick[ i ] );
-            if( i == 0x00 ) techoutput( " divide error interrupt" );
-            if( i == 0x01 ) techoutput( " single-step interrupt" );
-            if( i == 0x02 ) techoutput( " hardware NMI interrupt" );
-            if( i == 0x03 ) techoutput( " break-point interrupt" );
-            if( i == 0x04 ) techoutput( " overflow interrupt" );
-            if( i == 0x05 ) techoutput( " print-screen interrupt" );
-            if( i == 0x06 ) techoutput( " undefined opcode interrupt" );
-            if( i == 0x07 ) techoutput( " no math unit interrupt" );
-            if( i == 0x08 ) techoutput( " IRQ 0 timer interrupt" );
-            if( i == 0x09 ) techoutput( " IRQ 1 keyboard interrupt" );
-            if( i == 0x0a ) techoutput( " IRQ 2 EGA vert retrace interrupt" );
-            if( i == 0x0b ) techoutput( " IRQ 3 COM2 interrupt" );
-            if( i == 0x0c ) techoutput( " IRQ 4 COM1 interrupt" );
-            if( i == 0x0d ) techoutput( " IRQ 5 fixed disk interrupt" );
-            if( i == 0x0e ) techoutput( " IRQ 6 diskette interrupt" );
-            if( i == 0x0f ) techoutput( " IRQ 7 printer interrupt" );
-            if( i == 0x10 ) techoutput( " video interrupt" );
-            if( i == 0x11 ) techoutput( " equip. determination" );
-            if( i == 0x12 ) techoutput( " memory size" );
-            if( i == 0x13 ) techoutput( " disk interrupt" );
-            if( i == 0x14 ) techoutput( " serial i/o s/w interrupt" );
-            if( i == 0x15 ) techoutput( " misc s/w interrupt" );
-            if( i == 0x16 ) techoutput( " keyboard s/w interrupt" );
-            if( i == 0x17 ) techoutput( " printer interrupt" );
-            if( i == 0x18 ) techoutput( " xfer to ROM BASIC" );
-            if( i == 0x19 ) techoutput( " disk boot" );
-            if( i == 0x1a ) techoutput( " clock s/w interrupt" );
-            if( i == 0x1b ) techoutput( " ctrl/break interrupt" );
-            if( i == 0x1c ) techoutput( " clock tick interrupt" );
-            if( i == 0x20 ) techoutput( " prog. termination" );
-            if( i == 0x21 ) techoutput( " DOS s/w interrupt" );
-            if( i == 0x29 ) techoutput( " fast putchar interrupt" );
-            if( i == 0x2a ) techoutput( " network interrupt" );
-            if( i == 0x33 ) techoutput( " mouse interrupt" );
-            if( i == 0x70 ) techoutput( " IRQ 8 real time clock interrupt" );
-            if( i == 0x71 ) techoutput( " IRQ 9 redirect cascade interrupt" );
-            if( i == 0x72 ) techoutput( " IRQ10 reserved interrupt" );
-            if( i == 0x73 ) techoutput( " IRQ11 reserved interrupt" );
-            if( i == 0x74 ) techoutput( " IRQ12 mouse interrupt" );
-            if( i == 0x75 ) techoutput( " IRQ13 math coprocessor exception interrupt" );
-            if( i == 0x76 ) techoutput( " IRQ14 fixed disk interrupt" );
-            if( i == 0x77 ) techoutput( " IRQ15 reserved interrupt" );
-            LineCount--;
-            techoutput( "\n" );
-        }
-    }
 }

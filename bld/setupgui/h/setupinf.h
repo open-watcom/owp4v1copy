@@ -63,7 +63,6 @@ extern bool SimSubFileReadOnly( int parm, int subfile );
 extern long SimSubFileSize( int parm, int subfile );
 extern bool SimFileSplit( int parm );
 extern bool SimFileLastSplit( int parm );
-extern char *NextToken(char *buf,char delim);
 extern void SaveState(void);
 extern long SimInit( char *buff );
 extern void SimSetTargTempDisk( int parm, char disk );
@@ -142,7 +141,6 @@ extern bool SimDeleteIsDialog( int );
 extern bool SimDeleteIsDir( int );
 extern int SimNumUpgrades();
 extern char *SimGetUpgradeName( int );
-extern bool ProcLine( char *, pass_type );
 extern char *MakeDummyVar( char *buff );
 
 // Possible return values from sending the SIM_INITIALIZE message.

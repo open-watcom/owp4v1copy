@@ -64,7 +64,6 @@ typedef struct def_var {
     struct def_var      *link;
 } DEF_VAR;
 
-extern char     *NextToken( char *buf, char delim );
 extern void     BumpStatus( long );
 
 extern int      ReadInternal( char * );

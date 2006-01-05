@@ -68,6 +68,22 @@ void BannerMessage( void )
 
 
 /*
+ * Read a key from the console.
+ */
+static int get_key( void )
+/************************/
+{
+    int                 ch;
+
+    ch = getch();
+    if( ch == 0 ) {                     /* handle extended keys */
+        ch = getch();
+    }
+    return( ch );
+}
+
+
+/*
  * Print a help message.
  */
 void PrintHelpMessage( void )
@@ -111,20 +127,4 @@ void QuietModeMessage( void )
 /***************************/
 {
     quietMode = 1;
-}
-
-
-/*
- * Read a key from the console.
- */
-static int get_key( void )
-/************************/
-{
-    int                 ch;
-
-    ch = getch();
-    if( ch == 0 ) {                     /* handle extended keys */
-        ch = getch();
-    }
-    return( ch );
 }

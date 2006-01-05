@@ -57,6 +57,8 @@ extern RCSFiniFn                RCSFini = NULL;
 
     #define GET_ADDR( inst, name, proc, type ) proc = (type)GetProcAddress( inst, name )
     static HINSTANCE LibHandle;
+    static void getFunctionPtrs( void );
+
     int ViRCSInit()
     {
         LibHandle = LoadLibrary( RCS_DLLNAME );
@@ -78,7 +80,7 @@ extern RCSFiniFn                RCSFini = NULL;
     APIRET APIENTRY  DosFreeModule(HMODULE hmod);
     APIRET APIENTRY  DosQueryProcAddr(HMODULE hmod, ULONG ordinal, PSZ pszName,PFN* ppfn);
     #define GET_ADDR( inst, name, proc, type ) DosQueryProcAddr( inst, 0, name, (PFN*)(&proc) )
-    static void getFunctionPtrs();
+    static void getFunctionPtrs( void );
 
     int ViRCSInit()
     {
@@ -104,7 +106,7 @@ extern RCSFiniFn                RCSFini = NULL;
 #endif
 
 #if defined( __WINDOWS__ ) || defined( __NT__ ) || (defined( __OS2__ ) && defined( __386__ ))
-static void getFunctionPtrs()
+static void getFunctionPtrs( void )
 {
     GET_ADDR( LibHandle, GETVER_FN_NAME,        RCSGetVersion,                 RCSGetVerFn );
     GET_ADDR( LibHandle, INIT_FN_NAME,          RCSInit,                       RCSInitFn );

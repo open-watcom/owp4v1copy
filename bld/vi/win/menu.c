@@ -853,6 +853,22 @@ int MenuCommand( UINT w )
 
 } /* MenuCommand */
 
+static void tabs_to_slash_t( char *buffer, char *text )
+{
+    while( *text != 0 ) {
+        if( *text == '\t' ) {
+            *buffer = '\\';
+             buffer++;
+            *buffer = 't';
+        } else {
+            *buffer = *text;
+        }
+        buffer++;
+        text++;
+    }
+    *buffer = NULL;
+}
+
 /*
  * dumpMenu - dump out data for a menu to a file
  */
@@ -1269,20 +1285,4 @@ int GetMenuIdFromCoord( int x )
 int GetCurrentMenuId( void )
 {
     return( -1 );
-}
-
-static void tabs_to_slash_t( char *buffer, char *text ){
-
-    while( *text != 0 ){
-        if( *text == '\t' ){
-            *buffer = '\\';
-             buffer++;
-            *buffer = 't';
-        } else {
-            *buffer = *text;
-        }
-        buffer++;
-        text++;
-    }
-    *buffer = NULL;
 }

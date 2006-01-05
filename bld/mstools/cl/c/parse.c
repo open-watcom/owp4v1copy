@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command line parsing for CL clone tool.
 *
 ****************************************************************************/
 
@@ -44,17 +43,7 @@
 #include "message.h"
 #include "parse.h"
 #include "system.h"
-//#include "optparse.h"
 
-#if defined(__TARGET_386__)
-    #include "optp386c.gh"
-#elif defined(__TARGET_AXP__)
-    #include "optpaxpc.gh"
-#elif defined(__TARGET_PPC__)
-    #include "optpppcc.gh"
-#else
-    #error Unrecognized CPU type
-#endif
 
 #pragma disable_message (202);
 
@@ -75,6 +64,20 @@ void FiniParse( OPT_STORAGE *cmdOpts )
 /************************************/
 {
     OPT_FINI( cmdOpts );
+}
+
+
+/*
+ * Gripe about a command line error.
+ */
+static void cmd_line_error( void )
+/********************************/
+{
+    char *              str;
+
+    GoToMarkContext();
+    str = CmdScanString();
+    Warning( "Ignoring invalid option '%s'", str );
 }
 
 
@@ -150,6 +153,31 @@ static int parse_D( OPT_STRING **p )
 
 
 /*
+ * Add another string to an OPT_STRING.
+ */
+static void add_string( OPT_STRING **p, char *str )
+/*************************************************/
+{
+    OPT_STRING *        buf;
+    OPT_STRING *        curElem;
+
+    /*** Make a new list item ***/
+    buf = AllocMem( sizeof(OPT_STRING) + strlen(str) );
+    strcpy( buf->data, str );
+    buf->next = NULL;
+
+    /*** Put it at the end of the list ***/
+    if( *p == NULL ) {
+        *p = buf;
+    } else {
+        curElem = *p;
+        while( curElem->next != NULL )  curElem = curElem->next;
+        curElem->next = buf;
+    }
+}
+
+
+/*
  * Parse the /F option.
  */
 static int parse_F( OPT_STRING **p )
@@ -184,6 +212,22 @@ static int parse_FI( OPT_STRING **p )
     }
     add_string( p, str );
     return( 1 );
+}
+
+
+/*
+ * Destroy an OPT_STRING.
+ */
+static void OPT_CLEAN_STRING( OPT_STRING **p )
+/********************************************/
+{
+    OPT_STRING *        s;
+
+    while( *p != NULL ) {
+        s = *p;
+        *p = s->next;
+        FreeMem( s );
+    }
 }
 
 
@@ -318,6 +362,25 @@ static int parse_passwopts( OPT_STRING **p )
     add_string( p, str );
     return( 1 );
 } /* parse_passwopts() */
+
+
+/*
+ * Scan a filename.  No leading whitespace is permitted.
+ */
+static int OPT_GET_FILE( OPT_STRING **p )
+/***************************************/
+{
+    char *              filename;
+
+    filename = CmdScanFileName();
+    if( filename != NULL ) {
+        add_string( p, filename );
+        return( 1 );
+    } else {
+        OPT_CLEAN_STRING( p );
+        return( 0 );
+    }
+}
 
 
 /*
@@ -866,6 +929,47 @@ static void handle_precomp_headers( OPT_STORAGE *cmdOpts, int x )
 
 
 /*
+ * Handle options which can be either /option- to disable or /option to
+ * enable.  Option-specific information is passed as parameters.  Returns
+ * non-zero if the option should be enabled or zero if it should be disabled.
+ */
+static int handle_on_off_option( int *hasBeenCalled, char *optName, int isOn )
+/****************************************************************************/
+{
+    int                 rc = isOn;
+
+    if( *hasBeenCalled ) {
+        /*** Warn when one of /option and /option- overrides the other ***/
+        if( isOn ) {
+            if( GetCharContext() == '-' ) {
+                Warning( "Overriding /%s with /%s-", optName, optName );
+                rc = 0;
+            } else {
+                UngetCharContext();
+            }
+        } else {
+            if( GetCharContext() != '-' ) {
+                Warning( "Overriding /%s- with /%s", optName, optName );
+                rc = 1;
+            } else {
+                UngetCharContext();
+            }
+        }
+    } else {
+        /*** Handle /option- for the first time ***/
+        *hasBeenCalled = 1;
+        if( GetCharContext() == '-' ) {
+            rc = 0;
+        } else {
+            UngetCharContext();
+        }
+    }
+
+    return( rc );
+}
+
+
+/*
  * Parse the /GX and /GX- options.
  */
 static void handle_GX( OPT_STORAGE *cmdOpts, int x )
@@ -917,61 +1021,6 @@ static void handle_Oy( OPT_STORAGE *cmdOpts, int x )
 
 
 /*
- * Handle options which can be either /option- to disable or /option to
- * enable.  Option-specific information is passed as parameters.  Returns
- * non-zero if the option should be enabled or zero if it should be disabled.
- */
-static int handle_on_off_option( int *hasBeenCalled, char *optName, int isOn )
-/**************************(*************************************************/
-{
-    int                 rc = isOn;
-
-    if( *hasBeenCalled ) {
-        /*** Warn when one of /option and /option- overrides the other ***/
-        if( isOn ) {
-            if( GetCharContext() == '-' ) {
-                Warning( "Overriding /%s with /%s-", optName, optName );
-                rc = 0;
-            } else {
-                UngetCharContext();
-            }
-        } else {
-            if( GetCharContext() != '-' ) {
-                Warning( "Overriding /%s- with /%s", optName, optName );
-                rc = 1;
-            } else {
-                UngetCharContext();
-            }
-        }
-    } else {
-        /*** Handle /option- for the first time ***/
-        *hasBeenCalled = 1;
-        if( GetCharContext() == '-' ) {
-            rc = 0;
-        } else {
-            UngetCharContext();
-        }
-    }
-
-    return( rc );
-}
-
-
-/*
- * Gripe about a command line error.
- */
-static void cmd_line_error( void )
-/********************************/
-{
-    char *              str;
-
-    GoToMarkContext();
-    str = CmdScanString();
-    Warning( "Ignoring invalid option '%s'", str );
-}
-
-
-/*
  * Return the next character and advance to the next one.
  */
 static int OPT_GET_LOWER( void )
@@ -1010,25 +1059,6 @@ static void OPT_UNGET( void )
 /***************************/
 {
     UngetCharContext();
-}
-
-
-/*
- * Scan a filename.  No leading whitespace is permitted.
- */
-static int OPT_GET_FILE( OPT_STRING **p )
-/***************************************/
-{
-    char *              filename;
-
-    filename = CmdScanFileName();
-    if( filename != NULL ) {
-        add_string( p, filename );
-        return( 1 );
-    } else {
-        OPT_CLEAN_STRING( p );
-        return( 0 );
-    }
 }
 
 
@@ -1109,22 +1139,6 @@ static int OPT_GET_NUMBER_DEFAULT( unsigned *p, unsigned value )
 
 
 /*
- * Destroy an OPT_STRING.
- */
-static void OPT_CLEAN_STRING( OPT_STRING **p )
-/********************************************/
-{
-    OPT_STRING *        s;
-
-    while( *p != NULL ) {
-        s = *p;
-        *p = s->next;
-        FreeMem( s );
-    }
-}
-
-
-/*
  * Is this the end of an option chain?
  */
 static int OPT_END( void )
@@ -1144,27 +1158,13 @@ static int OPT_END( void )
     return( 0 );
 }
 
-
-/*
- * Add another string to an OPT_STRING.
- */
-static void add_string( OPT_STRING **p, char *str )
-/*************************************************/
-{
-    OPT_STRING *        buf;
-    OPT_STRING *        curElem;
-
-    /*** Make a new list item ***/
-    buf = AllocMem( sizeof(OPT_STRING) + strlen(str) );
-    strcpy( buf->data, str );
-    buf->next = NULL;
-
-    /*** Put it at the end of the list ***/
-    if( *p == NULL ) {
-        *p = buf;
-    } else {
-        curElem = *p;
-        while( curElem->next != NULL )  curElem = curElem->next;
-        curElem->next = buf;
-    }
-}
+/* Include after all static functions were declared */
+#if defined(__TARGET_386__)
+    #include "optp386c.gh"
+#elif defined(__TARGET_AXP__)
+    #include "optpaxpc.gh"
+#elif defined(__TARGET_PPC__)
+    #include "optpppcc.gh"
+#else
+    #error Unrecognized CPU type
+#endif

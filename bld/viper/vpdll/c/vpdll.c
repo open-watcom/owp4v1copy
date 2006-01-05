@@ -98,6 +98,15 @@ static HDDEDATA mkData( BOOL rc, UINT fmt, HSZ item ) {
     return( ret );
 }
 
+static void setCurTarget( char *targ )
+{
+    if( curTarget != NULL ) {
+        free( curTarget );
+    }
+    curTarget = malloc( strlen( targ ) + 1 );
+    strcpy( curTarget, targ );
+}
+
 HDDEDATA __export CALLBACK DdeProc( UINT type, UINT fmt, HCONV conv,
                                     HSZ hsz1, HSZ hsz2, HDDEDATA hdata,
                                     DWORD data1, DWORD data2 ) {
@@ -167,14 +176,6 @@ HDDEDATA __export CALLBACK DdeProc( UINT type, UINT fmt, HCONV conv,
         break;
     }
     return( NULL );
-}
-
-static void setCurTarget( char *targ ) {
-    if( curTarget != NULL ) {
-        free( curTarget );
-    }
-    curTarget = malloc( strlen( targ ) + 1 );
-    strcpy( curTarget, targ );
 }
 
 BOOL DLL_EXPORT VPDLL_Init( BOOL PASCAL (fn)( DWORD msg, DWORD parm1, DWORD parm2 ) ) {

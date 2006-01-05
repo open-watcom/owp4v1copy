@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command line parsing for NMAKE clone tool.
 *
 ****************************************************************************/
 
@@ -43,8 +42,6 @@
 #include "memory.h"
 #include "message.h"
 #include "parse.h"
-
-#include "optparsc.gh"
 
 
 /*
@@ -64,6 +61,63 @@ void FiniParse( OPT_STORAGE *cmdOpts )
 /************************************/
 {
     OPT_FINI( cmdOpts );
+}
+
+
+/*
+ * Add another string to an OPT_STRING.
+ */
+static void add_string( OPT_STRING **p, char *str, char quote )
+/*************************************************************/
+{
+    OPT_STRING *        buf;
+    OPT_STRING *        curElem;
+    int                 len;
+    int                 add_quote = 0;
+
+    len = strlen(str);
+    if( quote != 0 ) {
+        do {
+            if( str[0] == '"'  && str[len-1] == '"'  ) break;
+            if( str[0] == '\'' && str[len-1] == '\'' ) break;
+            len += 2;
+            add_quote = 1;
+        } while( 0 );
+    }
+    /*** Make a new list item ***/
+    buf = AllocMem( sizeof(OPT_STRING) + len );
+    if( add_quote ) {
+        buf->data[0] = quote;
+        strcpy( &(buf->data[1]), str );
+        buf->data[len-1] = quote;
+        buf->data[len] = '\0';
+    } else {
+        strcpy( buf->data, str );
+    }
+    buf->next = NULL;
+
+    /*** Put it at the end of the list ***/
+    if( *p == NULL ) {
+        *p = buf;
+    } else {
+        curElem = *p;
+        while( curElem->next != NULL )  curElem = curElem->next;
+        curElem->next = buf;
+    }
+}
+
+
+/*
+ * Gripe about a command line error.
+ */
+static void cmd_line_error( void )
+/********************************/
+{
+    char *              str;
+
+    GoToMarkContext();
+    str = CmdScanString();
+    Warning( "Ignoring invalid option '%s'", str );
 }
 
 
@@ -140,6 +194,45 @@ static int parse_t010101010101( OPT_STRING **p )
     return( 1 );
 }
 
+
+/*
+ * Destroy an OPT_STRING.
+ */
+static void OPT_CLEAN_STRING( OPT_STRING **p )
+/********************************************/
+{
+    OPT_STRING *        s;
+
+    while( *p != NULL ) {
+        s = *p;
+        *p = s->next;
+        FreeMem( s );
+    }
+}
+
+
+/*
+ * For the /optName option, read in :string and store the string into the
+ * given OPT_STRING.  If onlyOne is non-zero, any previous string in p will
+ * be deleted.  If quote is non-zero, make sure the string is quoted.
+ * Use quote if there aren't any quotes already.
+ */
+static int do_string_parse( OPT_STRING **p, char *optName, int onlyOne,
+/*********************************************************************/
+                            int quote )
+{
+    char *              str;
+
+    CmdScanWhitespace();
+    str = CmdScanString();
+    if( str == NULL ) {
+        FatalError( "/%s option requires a filename", optName );
+        return( 0 );
+    }
+    if( onlyOne )  OPT_CLEAN_STRING( p );
+    add_string( p, str, quote );
+    return( 1 );
+}
 
 
 /*
@@ -260,47 +353,6 @@ static int parse_passwopts( OPT_STRING **p )
 } /* parse_passwopts() */
 
 
-
-/*
- * For the /optName option, read in :string and store the string into the
- * given OPT_STRING.  If onlyOne is non-zero, any previous string in p will
- * be deleted.  If quote is non-zero, make sure the string is quoted.
- * Use quote if there aren't any quotes already.
- */
-static int do_string_parse( OPT_STRING **p, char *optName, int onlyOne,
-/*********************************************************************/
-                            int quote )
-{
-    char *              str;
-
-    CmdScanWhitespace();
-    str = CmdScanString();
-    if( str == NULL ) {
-        FatalError( "/%s option requires a filename", optName );
-        return( 0 );
-    }
-    if( onlyOne )  OPT_CLEAN_STRING( p );
-    add_string( p, str, quote );
-    return( 1 );
-}
-
-
-
-
-/*
- * Gripe about a command line error.
- */
-static void cmd_line_error( void )
-/********************************/
-{
-    char *              str;
-
-    GoToMarkContext();
-    str = CmdScanString();
-    Warning( "Ignoring invalid option '%s'", str );
-}
-
-
 /*
  * Return the next character (forced to lowercase since LINK's options are
  * not case-sensitive) and advance to the next one.
@@ -334,61 +386,5 @@ static void OPT_UNGET( void )
 }
 
 
-
-/*
- * Destroy an OPT_STRING.
- */
-static void OPT_CLEAN_STRING( OPT_STRING **p )
-/********************************************/
-{
-    OPT_STRING *        s;
-
-    while( *p != NULL ) {
-        s = *p;
-        *p = s->next;
-        FreeMem( s );
-    }
-}
-
-
-/*
- * Add another string to an OPT_STRING.
- */
-static void add_string( OPT_STRING **p, char *str, char quote )
-/*************************************************************/
-{
-    OPT_STRING *        buf;
-    OPT_STRING *        curElem;
-    int                 len;
-    int                 add_quote = 0;
-
-    len = strlen(str);
-    if( quote != 0 ) {
-        do {
-            if( str[0] == '"'  && str[len-1] == '"'  ) break;
-            if( str[0] == '\'' && str[len-1] == '\'' ) break;
-            len += 2;
-            add_quote = 1;
-        } while( 0 );
-    }
-    /*** Make a new list item ***/
-    buf = AllocMem( sizeof(OPT_STRING) + len );
-    if( add_quote ) {
-        buf->data[0] = quote;
-        strcpy( &(buf->data[1]), str );
-        buf->data[len-1] = quote;
-        buf->data[len] = '\0';
-    } else {
-        strcpy( buf->data, str );
-    }
-    buf->next = NULL;
-
-    /*** Put it at the end of the list ***/
-    if( *p == NULL ) {
-        *p = buf;
-    } else {
-        curElem = *p;
-        while( curElem->next != NULL )  curElem = curElem->next;
-        curElem->next = buf;
-    }
-}
+/* Include after all static functions were declared */
+#include "optparsc.gh"

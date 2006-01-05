@@ -415,6 +415,31 @@ BOOL WINEXP EnumChildProc( HWND hwndChild, DWORD lParam )
     return( TRUE );
 }
 
+
+static void cancelSettings( void )
+{
+    CurrentInfo->Language       = cancelData.Language;
+    EditFlags.PPKeywordOnly     = cancelData.PPKeywordOnly;
+    EditFlags.CMode             = cancelData.CMode;
+    EditFlags.ReadEntireFile    = cancelData.ReadEntireFile;
+    EditFlags.ReadOnlyCheck     = cancelData.ReadOnlyCheck;
+    EditFlags.IgnoreCtrlZ       = cancelData.IgnoreCtrlZ;
+    EditFlags.CRLFAutoDetect    = cancelData.CRLFAutoDetect;
+    EditFlags.WriteCRLF         = cancelData.WriteCRLF;
+    EditFlags.EightBits         = cancelData.EightBits;
+    EditFlags.RealTabs          = cancelData.RealTabs;
+    EditFlags.AutoIndent        = cancelData.AutoIndent;
+    EditFlags.IgnoreTagCase     = cancelData.IgnoreTagCase;
+    EditFlags.TagPrompt         = cancelData.TagPrompt;
+    EditFlags.ShowMatch         = cancelData.ShowMatch;
+    TabAmount                   = cancelData.TabAmount;
+    HardTab                     = cancelData.HardTab;
+    ShiftWidth                  = cancelData.ShiftWidth;
+
+    // strncpy( cancelData->TagFileName, TagFileName, TAGFILENAMEWIDTH - 1 );
+    // GrepDefault = cancelData->GrepDefault[ GREPDEFAULTWIDTH - 1 ] = '\0';
+}
+
 /*
  * SetFSProc - processes messages for the Data Control Dialog
  */
@@ -507,26 +532,3 @@ bool GetSetFSDialog( void )
     ReDisplayBuffers( TRUE );
     return( rc );
 } /* GetSetFSDialog */
-
-static void cancelSettings( void ){
-    CurrentInfo->Language       = cancelData.Language;
-    EditFlags.PPKeywordOnly     = cancelData.PPKeywordOnly;
-    EditFlags.CMode             = cancelData.CMode;
-    EditFlags.ReadEntireFile    = cancelData.ReadEntireFile;
-    EditFlags.ReadOnlyCheck     = cancelData.ReadOnlyCheck;
-    EditFlags.IgnoreCtrlZ       = cancelData.IgnoreCtrlZ;
-    EditFlags.CRLFAutoDetect    = cancelData.CRLFAutoDetect;
-    EditFlags.WriteCRLF         = cancelData.WriteCRLF;
-    EditFlags.EightBits         = cancelData.EightBits;
-    EditFlags.RealTabs          = cancelData.RealTabs;
-    EditFlags.AutoIndent        = cancelData.AutoIndent;
-    EditFlags.IgnoreTagCase     = cancelData.IgnoreTagCase;
-    EditFlags.TagPrompt         = cancelData.TagPrompt;
-    EditFlags.ShowMatch         = cancelData.ShowMatch;
-    TabAmount                   = cancelData.TabAmount;
-    HardTab                     = cancelData.HardTab;
-    ShiftWidth                  = cancelData.ShiftWidth;
-
-    // strncpy( cancelData->TagFileName, TagFileName, TAGFILENAMEWIDTH - 1 );
-    // GrepDefault = cancelData->GrepDefault[ GREPDEFAULTWIDTH - 1 ] = '\0';
-}

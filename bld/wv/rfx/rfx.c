@@ -250,6 +250,12 @@ static void WhatDidYouSay()
 }
 
 
+static void Error( char *err )
+{
+    WriteText( STD_ERR, err, strlen( err ) );
+}
+
+
 static void Usage()
 {
     Error( "Usage: rfx trap_file[;trap_parm] [rfx_command]" );
@@ -294,11 +300,6 @@ static char * RealName( char * name, int * loc )
     }
     if( *name == '\0' ) return( "." );
     return( name );
-}
-
-static void Error( char *err )
-{
-    WriteText( STD_ERR, err, strlen( err ) );
 }
 
 void StartupErr( char *err )
@@ -1291,6 +1292,11 @@ void ProcType( int argc, char **argv ) {
 /* DIR                                                                    */
 /**************************************************************************/
 
+static  void    DirClosef( dir_handle *h )
+{
+    DbgFree( h );
+}
+
 extern  dir_handle      *DirOpenf( char *fspec, int fnloc ) {
 
     dir_handle  *h;
@@ -1361,11 +1367,6 @@ extern  void    DirReadf( dir_handle *h, char *buff, bool wide ) {
             h->status = EOF;
         }
     }
-}
-
-static  void    DirClosef( dir_handle *h ) {
-
-    DbgFree( h );
 }
 
 extern  void    Format( char *buff, trap_dta *dir, bool wide ) {

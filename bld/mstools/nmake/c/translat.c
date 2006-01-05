@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Translate Microsoft NMAKE to Watcom options.
 *
 ****************************************************************************/
 
@@ -44,31 +43,18 @@
 
 
 /*
- * Translate scanned MS options to Watcom options.
+ * Add one more unsupported option to optStr.
  */
-void OptionsTranslate( OPT_STORAGE *cmdOpts, CmdLine *cmdLine )
-/*************************************************************/
+static void append_unsupported( char *optStr, char *opt )
+/*******************************************************/
 {
-    /*** Parse the /nologo switch now so we can print the banner ***/
-    if( cmdOpts->NOLOGO ) {
-        QuietModeMessage();
+    if( optStr[0] != '\0' ) {
+        strcat( optStr, " -" );
     } else {
-        BannerMessage();
+        strcat( optStr, "-" );
     }
-
-    if( cmdOpts->HELP || cmdOpts->_ ) {
-        PrintHelpMessage();
-        exit( EXIT_SUCCESS );
-
-    }
-
-    /*** Parse everything ***/
-    default_opts( cmdOpts, cmdLine );
-    unsupported_opts( cmdOpts );
-    nmake_opts( cmdOpts, cmdLine );
-    watcom_opts( cmdOpts, cmdLine );
+    strcat( optStr, opt );
 }
-
 
 
 /*
@@ -94,22 +80,6 @@ static void unsupported_opts( OPT_STORAGE *cmdOpts )
     }
 
 }
-
-
-/*
- * Add one more unsupported option to optStr.
- */
-static void append_unsupported( char *optStr, char *opt )
-/*******************************************************/
-{
-    if( optStr[0] != '\0' ) {
-        strcat( optStr, " -" );
-    } else {
-        strcat( optStr, "-" );
-    }
-    strcat( optStr, opt );
-}
-
 
 
 /*
@@ -206,4 +176,31 @@ static void watcom_opts( OPT_STORAGE *cmdOpts, CmdLine *cmdLine )
         }
     }
 
+}
+
+
+/*
+ * Translate scanned MS options to Watcom options.
+ */
+void OptionsTranslate( OPT_STORAGE *cmdOpts, CmdLine *cmdLine )
+/*************************************************************/
+{
+    /*** Parse the /nologo switch now so we can print the banner ***/
+    if( cmdOpts->NOLOGO ) {
+        QuietModeMessage();
+    } else {
+        BannerMessage();
+    }
+
+    if( cmdOpts->HELP || cmdOpts->_ ) {
+        PrintHelpMessage();
+        exit( EXIT_SUCCESS );
+
+    }
+
+    /*** Parse everything ***/
+    default_opts( cmdOpts, cmdLine );
+    unsupported_opts( cmdOpts );
+    nmake_opts( cmdOpts, cmdLine );
+    watcom_opts( cmdOpts, cmdLine );
 }

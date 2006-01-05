@@ -55,7 +55,7 @@ YYSTYPE *yyvp, yyval, yylval;
 #define YYACCEPT        return(0)
 #define YYERROR         goto yyerrlab
 
-static yyerror( char *str ) {
+static void yyerror( char *str ) {
     ReportError( str );
 }
 
@@ -213,7 +213,7 @@ static int yylex() {
     return( curtoken );
 }
 
-yyparse()
+int yyparse( void )
 {
   short yypnum;
   short yyi, yyk, yylhs, yyaction;
