@@ -30,3 +30,15 @@ source\diag0004.c(46): Warning! W124: Comparison result always 1
 source\diag0004.c(55): Warning! W124: Comparison result always 0
 source\diag0004.c(57): Warning! W136: Comparison equivalent to 'unsigned == 0'
 source\diag0004.c(59): Warning! W124: Comparison result always 1
+source\diag0005.c(7): Warning! W137: Extern function 'fn2' redeclared as static
+source\diag0005.c(7): Note! I2002: 'fn2' defined in: source\diag0005.c(6)
+source\diag0005.c(10): Warning! W137: Extern function 'fn3' redeclared as static
+source\diag0005.c(10): Note! I2002: 'fn3' defined in: source\diag0005.c(9)
+source\diag0005.c(30): Error! E1072: Storage class disagrees with previous definition of 'i2'
+source\diag0005.c(30): Note! I2002: 'i2' defined in: source\diag0005.c(29)
+source\diag0005.c(33): Error! E1072: Storage class disagrees with previous definition of 'i3'
+source\diag0005.c(33): Note! I2002: 'i3' defined in: source\diag0005.c(32)
+source\diag0005.c(42): Error! E1072: Storage class disagrees with previous definition of 'i6'
+source\diag0005.c(42): Note! I2002: 'i6' defined in: source\diag0005.c(41)
+source\diag0005.c(41): Warning! W202: Symbol 'i6' has been defined, but not referenced
+source\diag0005.c(38): Warning! W202: Symbol 'i5' has been defined, but not referenced

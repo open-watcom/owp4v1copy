@@ -246,6 +246,12 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
                     break;
                 }
             }
+            if( stg_class == SC_STATIC && old_sym.stg_class == SC_EXTERN ) {
+                /* can't redeclare extern function as static */
+                /* NB: We may want to handle SC_FORWARD functions too! */
+                CWarn( WARN_FUNCTION_STG_CLASS_REDECLARED,
+                       ERR_FUNCTION_STG_CLASS_REDECLARED, sym->name );
+            }
             CMemFree( sym->name );
             if( stg_class == SC_NULL && old_sym.stg_class != SC_FORWARD ) {     /* 05-jul-89 */
                 stg_class = old_sym.stg_class;
@@ -418,7 +424,7 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class, decl_state *state )
         (stg_class == SC_NULL || stg_class == SC_EXTERN ||
           (stg_class == SC_STATIC && SymLevel == 0)) ) {
 
-/*              make sure sym->sym_type same type as old_sym->sym_type */
+        /* make sure sym->sym_type same type as old_sym->sym_type */
 
         SetDiagSymbol( &old_sym, old_sym_handle );
         which = VerifyType( sym->sym_type, old_sym.sym_type, sym );
@@ -435,15 +441,26 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class, decl_state *state )
         CMemFree( sym->name );
         memcpy( sym, &old_sym, sizeof( SYM_ENTRY ) );
         sym_handle = old_sym_handle;
-        if( stg_class == SC_NULL  ||  stg_class == SC_STATIC ) {
+        SetDiagSymbol( &old_sym, old_sym_handle );
+        /* verify that newly specified storage class doesn't conflict */
+        if( (stg_class == SC_NULL) || (stg_class == SC_STATIC) ) {
             if( sym->stg_class == SC_EXTERN ) {
-                sym->stg_class = /*SC_NULL*/ stg_class; /* 03-oct-88 */
-            } else if( sym->stg_class == SC_STATIC ) {
+                /* was extern, OK to change to none */
                 if( stg_class == SC_NULL ) {
+                    sym->stg_class = stg_class;     /* 03-oct-88 */
+                } else {
+                    /* was extern, not OK to make static */
                     CErrSymName( ERR_STG_CLASS_DISAGREES, sym, sym_handle );
                 }
+            } else if( sym->stg_class == SC_STATIC && stg_class == SC_NULL ) {
+                /* was static, not OK to redefine */
+                CErrSymName( ERR_STG_CLASS_DISAGREES, sym, sym_handle );
+            } else if( sym->stg_class == SC_NULL && stg_class == SC_STATIC ) {
+                /* was extern linkage, not OK to to make static */
+                CErrSymName( ERR_STG_CLASS_DISAGREES, sym, sym_handle );
             }
         }
+        SetDiagPop();
     } else {
         if( stg_class == SC_EXTERN  &&  SymLevel != 0 ) {
             ; /* do nothing  29-jan-93 */

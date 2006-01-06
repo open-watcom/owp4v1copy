@@ -160,7 +160,7 @@ statement or change the function return type to
 :MSGJTXT. すでに定義されたtypedefを再定義しています
 :WARNING. 1
 .np
-A duplicate typedef is not allowed in ANSI C.
+A duplicate typedef is not allowed in ISO C.
 This warning is issued when compiling with extensions enabled.
 You should delete the duplicate typedef definition.
 :MSGSYM. ERR_UNUSED_1
@@ -269,9 +269,9 @@ This warning may indicate a potential problem when the program is overlayed.
 :MSGJTXT. 左辺値のキャストは，標準のCではありません
 :WARNING. 1
 .np
-A cast operation does not yield an lvalue in ANSI standard C.
+A cast operation does not yield an lvalue in ISO C.
 However, to provide compatibility with code written prior to the availability
-of ANSI standard C compilers, if an expression was an lvalue prior to the
+of ISO compliant C compilers, if an expression was an lvalue prior to the
 cast operation, and the cast operation does not cause any conversions, the
 compiler treats the result as an lvalue and issues this warning.
 :MSGSYM. ERR_JUNK_FOLLOWS_DIRECTIVE
@@ -300,14 +300,14 @@ of a C++ style comment ("//").  The warning can be removed by switching to
 a C style comment ("/**/").  If you require the comment to be terminated
 at the end of the line, make sure that the backslash character is not
 the last character in the line.
-.exam begin
+.errbad
 #define XX 23 // comment start \
 comment \
 end
 
 int x = XX; // comment start ...\
 comment end
-.exam end
+.eerrbad
 :MSGSYM. ERR_COMPARE_ALWAYS
 :MSGTXT. Comparison result always %d
 :MSGJTXT. 比較の結果は常に%dです
@@ -400,17 +400,17 @@ is assumed. If no storage class is specified, the default depends on
 scope (see the
 .us C Language Reference
 for details). For instance
-.exam begin
+.errgood
 auto i;
-.exam end
+.eerrgood
 is a valid declaration, as is
-.exam begin
+.errgood
 short i;
-.exam end
+.eerrgood
 However,
-.exam begin
+.errbad
 i;
-.exam end
+.eerrbad
 is not a correctly formed declaration.
 :MSGSYM. ERR_SYMBOL_NAME_TOO_LONG
 :MSGTXT. Symbol name truncated for '%s'
@@ -451,6 +451,30 @@ The value of 'a' in the above example is undefined.
 Comparing an unsigned expression to see whether it is <= 0 is equivalent to
 testing for == 0.
 Check to see if the expression should be signed instead of unsigned.
+:MSGSYM. ERR_FUNCTION_STG_CLASS_REDECLARED
+:MSGTXT. Extern function '%s' redeclared as static
+:MSGJTXT.
+:WARNING. 1
+.np
+The specified function was either explicitly or implicitly declared as
+.kw extern
+and later redeclared as
+.kw static.
+This is not allowed in ISO C and may produce unexpected results with ISO
+compliant compilers.
+:errbad.
+int bar( void );
+
+void foo( void )
+{
+    bar();
+}
+
+static int bar( void )
+{
+    return( 0 );
+}
+:eerrbad.
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2
@@ -511,7 +535,7 @@ for the symbol.
 While scanning a comment for its end, the compiler detected
 .id /*
 for the start of another comment.
-Nested comments are not allowed in ANSI C.
+Nested comments are not allowed in ISO C.
 You may be missing the
 .id */
 for the previous comment.
@@ -552,9 +576,9 @@ or option "-wce=303". It can be disabled later by using
 :WARNING. 3
 .np
 If a function is declared without specifying return type, such as
-.exam begin
+.errbad
 foo( void );
-.exam end
+.eerrbad
 then its return type will be assumed to be
 .kw int
 .
@@ -564,9 +588,9 @@ then its return type will be assumed to be
 :WARNING. 3
 .np
 If an object is declared without specifying its type, such as
-.exam begin
+.errbad
 register count;
-.exam end
+.eerrbad
 then its type will be assumed to be
 .kw int
 .
@@ -1152,7 +1176,7 @@ The type of the specified parameter is incompatible with the prototype
 for that function.
 The following example illustrates a problem that can arise when the
 sequence of declarations is in the wrong order.
-.exam begin
+.errbad
 /* Uncommenting the following line will
    eliminate the error */
 /* struct foo; */
@@ -1167,7 +1191,7 @@ void fn1( struct foo *bar )
 {
     fn2( bar );
 }
-.exam end
+.eerrbad
 .pc
 The problem can be corrected by reordering the sequence in which items
 are declared (by moving the description of the structure
@@ -1186,6 +1210,11 @@ The current definition must have a storage class of
 .kw static
 or
 .kw extern.
+.np
+Alternatively, a variable was previously declared as
+.kw extern
+and later defined as
+.kw static.
 :MSGSYM. ERR_INVALID_OPTION
 :MSGTXT. Invalid option '%s'
 :MSGJTXT. オプション'%s'は不適切です
@@ -1867,10 +1896,10 @@ remainder by zero.
 .np
 The argument to a macro that uses the stringize operator '#'
 on that argument must not end in a backslash character.
-.exam begin
+.errbad
 #define str(x) #x
 str(@#\)
-.exam end
+.eerrbad
 :MSGSYM. ERR_INVALID_DECLSPEC
 :MSGTXT. Invalid __declspec declaration
 :MSGJTXT. 不適切な__declspec宣言です

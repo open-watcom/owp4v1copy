@@ -5,7 +5,7 @@ diagnose_dir = source
 
 !include $(diagnose_dir)/diagnose.mif
 
-diagnose_opts += -we -wx -e1000 -zq
+diagnose_opts += -we -wx -e1000 -eq -zq
 archdep_opts = -dARCH=$(arch) -fr=.ser
 
 .c: $(diagnose_dir)
