@@ -233,7 +233,7 @@ extern char *FixName( char *name )
 extern int FNameCmp( const char *a, const char *b )
 /*************************************************/
 {
-#if defined( __OS2__ ) || defined( __NT__ )
+#if defined( __OS2__ ) || defined( __NT__ ) || defined( __DOS__ )
     return( stricmp( a, b ) );
 #else
     return( strcmp( a, b ) );
@@ -244,7 +244,7 @@ extern int FNameCmp( const char *a, const char *b )
 static int FNameCmpChr( char a, char b )
 /**************************************/
 {
-#if defined( __OS2__ ) || defined( __NT__ )
+#if defined( __OS2__ ) || defined( __NT__ ) || defined( __DOS__ )
     return( tolower( a ) - tolower( b ) );
 #else
     return( a - b );
@@ -256,7 +256,7 @@ static int FNameCmpChr( char a, char b )
 extern int _fFNameCmp( const char FAR *a, const char FAR *b )
 /***********************************************************/
 {
-#if defined( __OS2__ ) || defined( __NT__ )
+#if defined( __OS2__ ) || defined( __NT__ ) || defined( __DOS__ )
     return( _fstricmp( a, b ) );
 #else
     return( _fstrcmp( a, b ) );
