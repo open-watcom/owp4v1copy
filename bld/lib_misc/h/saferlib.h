@@ -60,6 +60,12 @@ extern  void    __rtct_fail( const char *fn, const char *reason, void *reserved 
 #define __check_constraint_maxsize( arg )   \
     ((arg > RSIZE_MAX) ? __rtct_fail( __func__, #arg " > RSIZE_MAX", NULL ), 0 : 1)
 
+#define __check_constraint_zero( arg )   \
+    ((arg == 0) ? __rtct_fail( __func__, #arg " == 0", NULL ), 0 : 1)
+
+#define __check_constraint_toosmall( name, left )   \
+    ((left == 0) ? __rtct_fail( __func__, #name " is too small to hold data", NULL ), 0 : 1)
+
 
 // For 16-bit targets, the RSIZE_MAX check is effectively no-op. Object sizes up
 // to SIZE_MAX are legal and not uncommon.

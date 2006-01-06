@@ -588,6 +588,14 @@ _WCRTLINK extern int      putws( const wchar_t * );
 :endsegment
 :endsegment
 
+:include saferpro.sp
+
+:include rsizet.sp
+
+_WCRTLINK extern char    *gets_s( char *s, rsize_t n );
+
+:include saferepi.sp
+
 :segment !SNAPDRV & QNX
 #ifdef _this_belongs_in_a_private_qnx_header
  extern int _input_line_max;            /* defaults to 20 */
