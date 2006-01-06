@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Common Subexpression Elimination (aka CommonSex).
 *
 ****************************************************************************/
 
@@ -99,6 +98,7 @@ extern  bool            ConstFold(block*);
 extern  int             GetLog2(unsigned_32);
 extern  bool            IsSegReg(hw_reg_set);
 extern  void            FindReferences(void);
+extern  bool            IsTrickyPointerConv( instruction * );
 
 /* forward declarations */
 static  void            TreeBits( block *root );
@@ -1138,6 +1138,7 @@ static  bool    CanLinkMove( instruction *ins ) {
     if( IsVolatile( ins->result ) ) return( FALSE );
     if( ReDefinedBy( ins, ins->operands[ 0 ] ) ) return( FALSE );
     if( FPIsConvert( ins ) ) return( FALSE );
+    if( IsTrickyPointerConv( ins ) ) return( FALSE );
     return( TRUE );
 }
 

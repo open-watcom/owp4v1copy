@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Constant folding on instruction level.
 *
 ****************************************************************************/
 
@@ -74,6 +73,22 @@ extern  cfloat          *OkToNegate( cfloat *, type_def * );
 extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
 
 extern  type_length     TypeClassSize[];
+
+
+extern  bool    IsTrickyPointerConv( instruction *ins )
+/******************************************************
+    Is "ins" a near (based) to far pointer conversion that has
+    to be carefully converted with taking segments into account?
+*/
+{
+#if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )
+    if( (ins->head.opcode == OP_CONVERT) && _IsPointer( ins->type_class ) ) {
+        if( TypeClassSize[ ins->type_class ] > TypeClassSize[ ins->base_type_class ] )
+            return( TRUE );
+    }
+#endif
+    return( FALSE );
+}
 
 static  bool    RelocConst( name *op ) {
 /***************************************
@@ -258,6 +273,10 @@ static  instruction    *FoldAbsolute( instruction *ins ) {
         fold = Fold1sComp( left, tipe );
         break;
     case OP_CONVERT:
+        // look out for CNV PT U2 t1 type instructions; if sizeof( PT ) is greater
+        // than sizeof( U2 ), we don't want to fold or we'll screw up based pointers
+        if( IsTrickyPointerConv( ins ) ) return( NULL );
+        // fall through!
     case OP_ROUND:
         fold = FoldCnvRnd( ins->head.opcode, left, tipe );
         break;

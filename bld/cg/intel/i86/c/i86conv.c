@@ -47,6 +47,7 @@ extern  void            PrefixIns(instruction*,instruction*);
 extern  instruction*    MakeMove(name*,name*,type_class_def);
 extern  void            DupSeg(instruction*,instruction*);
 extern  void            ReplIns(instruction*,instruction*);
+extern  bool            IsTrickyPointerConv( instruction *ins );
 
 extern    int   RoutineNum;
 
@@ -58,7 +59,7 @@ static  opcode_entry    C2to1[] = {
 {_Un( R,    ANY,  NONE ),  V_NO,       R_MOVOP1TEMP,     RG_,    FU_NO},
 {_Un( U,    ANY,  NONE ),  V_CONSTTEMP, G_UNKNOWN,       RG_,    FU_NO},
 {_Un( C,    ANY,  NONE ),  V_OP1RELOC, R_MOVOP1TEMP,     RG_,    FU_NO},
-{_Un( ANY,  ANY,  NONE ),  V_NO,       R_MOVELOW,        RG_,    FU_NO}, 
+{_Un( ANY,  ANY,  NONE ),  V_NO,       R_MOVELOW,        RG_,    FU_NO},
 };
 
 
@@ -225,7 +226,8 @@ extern  instruction     *rDOCVT( instruction *ins ) {
         ins->base_type_class = src->n.name_class;
     }
     ins->head.state = INS_NEEDS_WORK;
-    if( src->n.class == N_CONSTANT && src->c.const_type == CONS_ABSOLUTE ) {
+    if( src->n.class == N_CONSTANT && src->c.const_type == CONS_ABSOLUTE
+      && !IsTrickyPointerConv( ins ) ) {
         how = OK;
     } else {
         how = AskHow( ins->base_type_class, ins->type_class );
