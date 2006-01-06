@@ -238,7 +238,10 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
                     CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
                     break;
                 case DECLSPEC_DLLEXPORT:
-                    if( old_sym.declspec == DECLSPEC_DLLIMPORT ) {
+                    /* Allow the following:     void foo( void ); void _Export foo( void );
+                     * IBM's compiler allows this, so does our C++ compiler; and it's real useful!
+                     */
+                    if( old_sym.declspec == DECLSPEC_DLLIMPORT || old_sym.declspec == DECLSPEC_NONE ) {
                         old_sym.declspec = DECLSPEC_DLLEXPORT;
                     } else {
                         CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
