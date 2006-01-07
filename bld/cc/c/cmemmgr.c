@@ -46,19 +46,19 @@
 #endif
 
 typedef struct  mem_block {
-        unsigned          len;  /* length of stg */
-        struct mem_block *prev; /* pointer to previous free memory block */
-        struct mem_block *next; /* pointer to next     free memory block */
+        unsigned            len;    /* length of stg */
+        struct mem_block    *prev;  /* pointer to previous free memory block */
+        struct mem_block     *next; /* pointer to next     free memory block */
 } MCB;
 
 typedef struct mem_blk {
-    struct mem_blk   *next;
-    char             *ptr;  // old perm pointer
-    long             size;  // old perm size
+    struct mem_blk  *next;
+    char            *ptr;   // old perm pointer
+    long            size;   // old perm size
 #ifdef __AXP__
-    unsigned         pad;   // padding to get quadword aligned size
+    unsigned        pad;    // padding to get quadword aligned size
 #endif
-}mem_blk;
+} mem_blk;
 
 /*  variables used:
  *      char *PermArea;         pointer to start of permanent area
@@ -71,12 +71,12 @@ typedef struct mem_blk {
  *  Temporary allocations are made at the high end of permanent memory.
 */
 
-static  char    *PermPtr;       /* next free byte in PermArea */
-static  unsigned PermSize;      /* total size of permanent memory block */
-static  unsigned PermAvail;     /* # of bytes available in PermArea */
+static  char        *PermPtr;   /* next free byte in PermArea */
+static  unsigned    PermSize;   /* total size of permanent memory block */
+static  unsigned    PermAvail;  /* # of bytes available in PermArea */
 
-static  MCB      CFreeList;
-static  mem_blk *Blks;
+static  MCB         CFreeList;
+static  mem_blk     *Blks;
 
 // local functions
 static void Ccoalesce( MCB *p1 );
@@ -101,24 +101,21 @@ static void FiniPermArea( void )
     Blks = NULL;
 }
 
-static void AllocPermArea()
+static void AllocPermArea( void )
 {
-    char *perm_area;
-#if defined( __LARGE__ ) || defined( __COMPACT__ )
-    PermSize = 0xff80;  /* leave room for heap control */
-#else
+    char    *perm_area;
+
     PermSize = 0xfff0;
-#endif
     perm_area = NULL;
-    for(;PermSize;) {                                       /* 05-apr-91 */
+    for( ;PermSize; ) {                                     /* 05-apr-91 */
         mem_blk *blk;
-        blk = calloc( 1, sizeof( mem_blk)+ PermSize + sizeof(int) );
+        blk = calloc( 1, sizeof( mem_blk )+ PermSize + sizeof( int ) );
         if( blk != NULL ) {
-             blk->next = Blks;
-             blk->ptr = PermPtr;
-             blk->size = PermSize;
-             Blks = blk;
-             perm_area = (char*)blk +sizeof( mem_blk);
+            blk->next = Blks;
+            blk->ptr = PermPtr;
+            blk->size = PermSize;
+            Blks = blk;
+            perm_area = (char*)blk + sizeof( mem_blk );
             *(int *)(perm_area + PermSize) = -1;     /* null length tag */
             break;
         }
@@ -130,7 +127,7 @@ static void AllocPermArea()
 }
 
 
-void CMemInit ( void )
+void CMemInit( void )
 {
     InitPermArea();
     CFreeList.len = 0;
@@ -138,7 +135,7 @@ void CMemInit ( void )
     CFreeList.prev = &CFreeList;
 }
 
-void CMemFini ( void )
+void CMemFini( void )
 {
     CFreeList.len = 0;
     CFreeList.next = &CFreeList;
@@ -192,7 +189,7 @@ static void Ccoalesce( MCB *p1 )
     MCB *pnext;
     MCB *pprev;
 
-    for(;;) {
+    for( ;; ) {
         p2 = (MCB *)( (char *)p1 + p1->len );
         if( p2->len & 1 )  break;   /* quit if next block not free */
         /* coalesce p1 and p2 and remove p2 from free list */
@@ -208,7 +205,7 @@ static void Ccoalesce( MCB *p1 )
 void *CMemAlloc( unsigned size )
 /******************************/
 {
-    void *p;
+    void    *p;
 
     p = CFastAlloc( size );
     if( p == NULL ) {
@@ -225,11 +222,12 @@ void *CMemAlloc( unsigned size )
     return( memset( p, 0, size ) );
 }
 
+
 void *CMemRealloc( void *loc, unsigned size )
-     /**************************************/
+/*******************************************/
 {
-    void           *p;
-    MCB            *p1;
+    void            *p;
+    MCB             *p1;
     unsigned        len;
 
     if( loc == NULL )
@@ -253,20 +251,21 @@ enum cmem_kind {
     CMEM_NONE,
 };
 
-static enum cmem_kind CMemKind( void *loc ){
-    char           *ptr;
+static enum cmem_kind CMemKind( void *loc )
+{
+    char            *ptr;
     long            size;
-    mem_blk        *blk;
+    mem_blk         *blk;
 
     ptr  = PermPtr;
-    size = (long) PermSize;     // PermSize is unsigned
+    size = (long)PermSize;      // PermSize is unsigned
     blk  = Blks;
-    while( blk != NULL ){
-        if( (mem_blk *) loc > blk ){
-            if( (char *) loc < ptr ){
+    while( blk != NULL ) {
+        if( (mem_blk *)loc > blk ) {
+            if( (char *)loc < ptr ) {
                 return( CMEM_PERM );
             }
-            if( ((mem_blk *) loc < blk) + sizeof( mem_blk ) + size ){
+            if( ((mem_blk *)loc < blk) + sizeof( mem_blk ) + size ) {
                 return( CMEM_MEM );
             }
         }
@@ -277,6 +276,7 @@ static enum cmem_kind CMemKind( void *loc ){
     return( CMEM_NONE );
 }
 
+
 void CMemFree( void * loc )
 /************************/
 {
@@ -285,13 +285,13 @@ void CMemFree( void * loc )
     MCB         *pprev;
     MCB         *pnext;
 
-    if( loc == NULL ){ //Should try and get rid of these error cases
+    if( loc == NULL ) { //Should try and get rid of these error cases
         return;
     }
-    if( ((char *) loc >= PCH_Start)  &&  ((char *) loc < PCH_End) ){
+    if( ((char *) loc >= PCH_Start)  &&  ((char *) loc < PCH_End) ) {
         return;  // 29-dec-93
     }
-    switch( CMemKind( loc ) ){
+    switch( CMemKind( loc ) ) {
     case CMEM_PERM:
         return;
     case CMEM_MEM:
@@ -316,7 +316,7 @@ void CMemFree( void * loc )
         } else {
             p1->len = len;
             pprev = &CFreeList;
-            for(;;) {           /* insert in sorted order */
+            for( ;; ) {         /* insert in sorted order */
                 pnext = pprev;
                 pprev = pprev->prev;
                 if( pprev == &CFreeList ) break;
@@ -340,7 +340,7 @@ void *CPermAlloc( unsigned amount )
 {
     char        *p;
 
-    amount = (amount + MEM_ALIGN - 1) & - MEM_ALIGN;
+    amount = (amount + MEM_ALIGN - 1) & -MEM_ALIGN;
     if( amount > PermAvail ) {
         AllocPermArea();            /* allocate another permanent area */
         if( amount > PermAvail ) {
@@ -356,7 +356,7 @@ void *CPermAlloc( unsigned amount )
 
 void *FEmalloc( unsigned size )                 /* 16-jan-90 */
 {
-    void *p;
+    void    *p;
 
     p = malloc( size );
     if( p == NULL ) {
@@ -366,7 +366,14 @@ void *FEmalloc( unsigned size )                 /* 16-jan-90 */
     return( p );
 }
 
+
 void FEfree( void *p )
 {
     if( p != NULL )  free( p );
+}
+
+
+int FEMoreMem()
+{
+    return( 0 );
 }

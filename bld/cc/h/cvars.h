@@ -29,17 +29,12 @@
 ****************************************************************************/
 
 
-#ifdef  __WATCOMC__
-#pragma off(check_stack);
+#ifdef __WATCOMC__
+    #pragma off( check_stack )
 #endif
 
 
 #define BY_C_FRONT_END
-#ifdef  M_I86
- #define  __FAR far
-#else
- #define  __FAR
-#endif
 
 #include <stdio.h>
 #include <setjmp.h>
@@ -49,17 +44,17 @@
 #include "target.h"
 
 #ifndef _CPU
- #error _CPU macro not defined
+    #error _CPU macro not defined
 #endif
 
 #if _CPU != 8086
- /* enable Structured Exception Handling for all 32-bit targets */
- #define __SEH__
+    /* enable Structured Exception Handling for all 32-bit targets */
+    #define __SEH__
 #endif
 
-typedef char *  MACADDR_T;      /* contains actual pointer to block of memory */
-typedef char *  SEGADDR_T;      /* contains actual pointer to block of memory */
-typedef char *  MPTR_T;         /* first parm to MacroCopy */
+typedef char    *MACADDR_T;     /* contains actual pointer to block of memory */
+typedef char    *SEGADDR_T;     /* contains actual pointer to block of memory */
+typedef char    *MPTR_T;        /* first parm to MacroCopy */
 typedef void    *VOIDPTR;
 
 #include "macro.h"
@@ -75,11 +70,11 @@ typedef void    *VOIDPTR;
 #include "cmemmgr.h"
 
 #ifndef local
- #define local
+    #define local
 #endif
 
 #ifndef global
-#define global  extern
+    #define global  extern
 #endif
 
 #define SYM_HASH_SIZE   241
@@ -201,15 +196,15 @@ global  void     *FunctionProfileBlock; /* handle for profiling data block */
 global  int      FunctionProfileSegment; /* segment for profiling data block */
 #endif
 
-global  int     MacroDepth;
-global  byte    *MacroPtr;
-global  MEPTR   NextMacro;
-global  MEPTR   UndefMacroList;
-global  MEPTR   __FAR *MacHash;     /* [ MACRO_HASH_SIZE ] */
-global  ENUMPTR EnumTable[ ENUM_HASH_SIZE ];
-global  SYM_HASHPTR __FAR *HashTab;
-global  TYPEPTR BaseTypes[TYPE_LAST_ENTRY];
-global  int     CTypeCounts[TYPE_LAST_ENTRY];
+global  int         MacroDepth;
+global  byte        *MacroPtr;
+global  MEPTR       NextMacro;
+global  MEPTR       UndefMacroList;
+global  MEPTR       *MacHash;       /* [ MACRO_HASH_SIZE ] */
+global  ENUMPTR     EnumTable[ ENUM_HASH_SIZE ];
+global  SYM_HASHPTR *HashTab;
+global  TYPEPTR     BaseTypes[TYPE_LAST_ENTRY];
+global  int         CTypeCounts[TYPE_LAST_ENTRY];
 
 #define BUF_SIZE 512
 global  size_t BufSize;
@@ -278,13 +273,13 @@ global  char    __Date[12];     /* "MMM DD YYYY" for __DATE__ macro */
 global  char    *MsgFlags;      /* Bit mask of disabled messages */
 
 global  struct macro_seg_list {
-        struct macro_seg_list *next;
-        MACADDR_T segment;
-}               *MacSegList;     /* pointer to list of macro segments */
+    struct macro_seg_list *next;
+    MACADDR_T segment;
+} *MacSegList;                  /* pointer to list of macro segments */
 
-global  MACADDR_T MacroSegment;  /* segment for macro definitions */
-global  MACADDR_T MacroOffset;   /* first free byte in MacroSegment */
-global  MACADDR_T MacroLimit;    /* last  free byte in MacroSegment */
+global  MACADDR_T MacroSegment; /* segment for macro definitions */
+global  MACADDR_T MacroOffset;  /* first free byte in MacroSegment */
+global  MACADDR_T MacroLimit;   /* last  free byte in MacroSegment */
 
 global  int     SwitchChar;     /* DOS switch character */
 global  int     LoopDepth;      /* current nesting of loop constructs */
@@ -296,11 +291,13 @@ global  char    *PcodeLib_Name; /* "2p16fpc" for -fpc, "2p16fpi" for -fpi */
 #endif
 //global        struct scoreboard *ScoreBoard;
 #define USER_LIB_PRIO '9'
+
 global  struct library_list {
-        struct  library_list    *next;
-        char                    prio;
-        char                    name[1];
-}  *HeadLibs;
+    struct  library_list    *next;
+    char                    prio;
+    char                    name[1];
+} *HeadLibs;
+
 global  SYMPTR  CurFunc;        /* current function being worked on */
 global  SYM_ENTRY CurFuncSym;   /* for contents of current function symbol */
 global  SYM_HANDLE CurFuncHandle;/* sym_handle for current function */
@@ -355,55 +352,26 @@ global  int      GblPackAmount; /* packing alignment given on command line */
 global  struct textsegment *TextSegList; /* list of #pragma alloc_text segs*/
 
 typedef enum {
-    SEGTYPE_CODE       = 1,      /* #pragma code_seg("segname","class") */
-    SEGTYPE_DATA       = 2,      /* #pragma data_seg("segname","class") */
-    SEGTYPE_BASED      = 3,      /* __based(__segname("segname")) */
-    SEGTYPE_INITFINI   = 4,      /* "XI" or "YI" segment */
-    SEGTYPE_INITFINITR = 5,    /* thread data */
-}seg_type;
+    SEGTYPE_CODE       = 1,     /* #pragma code_seg("segname","class") */
+    SEGTYPE_DATA       = 2,     /* #pragma data_seg("segname","class") */
+    SEGTYPE_BASED      = 3,     /* __based(__segname("segname")) */
+    SEGTYPE_INITFINI   = 4,     /* "XI" or "YI" segment */
+    SEGTYPE_INITFINITR = 5,     /* thread data */
+} seg_type;
 
 struct user_seg;
 
-global struct user_seg *UserSegments;
+global struct user_seg  *UserSegments;
 
-#if defined( M_I86 ) && defined(__WATCOMC__)
-extern  int     far_strcmp(char far *, char *, int );
-#ifdef __LARGE__
-#pragma aux     far_strcmp = 0xf3        /* rep   */\
-                             0xa6        /* cmpsb */\
-                             0x74 0x03   /* je L1 */\
-                             0xb9 0x01 0x00 /* mov cx,1 */\
-         parm caller [es di] [ds si] [cx] value [cx] modify exact [si di cx];
-#else
-#pragma aux     far_strcmp = 0xf3        /* rep   */\
-                             0xa6        /* cmpsb */\
-                             0x74 0x03   /* je L1 */\
-                             0xb9 0x01 0x00 /* mov cx,1 */\
-         parm caller [es di] [si] [cx] value [cx] modify exact [si di cx];
-#endif
-extern  int     far_strlen_plus1(char far *);
-#pragma aux     far_strlen_plus1 = 0x29 0xc0    /* sub ax,ax */\
-                                   0x4f         /* dec di */\
-                                   0x47         /* L1:inc di */\
-                                   0x40         /* inc ax */\
-                                   0x26 0x80 0x3d 0x00 /* cmp es:[di],0 */\
-                                   0x75 0xf8    /* jne L1 */\
-        parm caller [es di] value [ax] modify exact [di ax];
-extern  void    far_memcpy( char far *, char far *, int );
-#pragma aux     far_memcpy = 0x1e       /* push ds */\
-                             0x8e 0xda  /* mov ds,dx */\
-                             0xf3 0xa4  /* rep movsb */\
-                             0x1f       /* pop ds  */\
-        parm caller [es di] [dx si] [cx] modify exact [si di cx];
+#if defined(__386__) && defined(__FLAT__) && defined(__WATCOMC__)
 
-#elif defined(__386__) && defined(__FLAT__) && defined(__WATCOMC__)
-extern  int     far_strcmp(char *, char *, int );
+extern  int     far_strcmp( char *, char *, int );
 #pragma aux     far_strcmp = 0xf3        /* rep   */\
                              0xa6        /* cmpsb */\
                              0x74 0x01   /* je L1 */\
                              0x41        /* inc ecx */\
          parm caller [edi] [esi] [ecx] value [ecx] modify exact [esi edi ecx];
-extern  int     far_strlen_plus1(char *);
+extern  int     far_strlen_plus1( char * );
 #pragma aux     far_strlen_plus1 = 0x29 0xc0    /* sub eax,eax */\
                                    0x4f         /* dec edi */\
                                    0x47         /* L1:inc edi */\
@@ -414,10 +382,13 @@ extern  int     far_strlen_plus1(char *);
 extern  void    far_memcpy( char *, char *, int );
 #pragma aux     far_memcpy = 0xf3 0xa4  /* rep movsb */\
         parm caller [edi] [esi] [ecx] modify exact [esi edi ecx];
+
 #else
-#define far_strcmp(__p1,__p2,__len)     memcmp(__p1,__p2,__len)
+
+#define far_strcmp(__p1,__p2,__len)     memcmp( __p1, __p2, __len )
 #define far_strlen_plus1( p )           (strlen( p ) + 1)
 #define far_memcpy( p1, p2, len )       memcpy( p1, p2, len )
+
 #endif
 
 global  int     (*NextChar)();
@@ -440,18 +411,18 @@ global  unsigned char   Stack87;
 global  char            *ErrorFileName;
 
 global struct  undef_names {
-        struct undef_names *next;
-        char               *name;
+    struct undef_names  *next;
+    char                *name;
 } *UndefNames;
 
 //================= Function Prototypes ========================
 
-extern  unsigned char TBreak(void);             /* casmsupp */
+extern  unsigned char TBreak( void );           /* casmsupp */
 
 extern  void    SetDBChar(int);                 /* casian */
 
-extern  struct aux_entry *AuxLookup(char *);    /* caux.c */
-extern  void    PragmaFini(void);               /* caux.c */
+extern  struct aux_entry *AuxLookup( char * );  /* caux.c */
+extern  void    PragmaFini( void );             /* caux.c */
 
 extern  int     ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck ); /*ccheck*/
 extern  void    TernChk( TYPEPTR typ1, TYPEPTR typ2 ); /*check */
@@ -837,75 +808,47 @@ extern  TAGPTR  TagLookup(void);
 extern  void    FreeTags(void);
 extern  unsigned long TypeSize(TYPEPTR);
 /* CarlYoung 31-Oct-03 */
-extern  unsigned long TypeSizeEx(TYPEPTR, unsigned long * pFieldWidth);
-extern  TAGPTR  VfyNewTag(TAGPTR,int);
-extern  void    VfyNewSym(int,char *);
-extern  unsigned GetTypeAlignment(TYPEPTR);
-extern  void    TypesPurge(void);
-extern  void    AddTypeHash(TYPEPTR);
-extern  void    AddPtrTypeHash(TYPEPTR);
+extern  unsigned long TypeSizeEx( TYPEPTR, unsigned long * pFieldWidth );
+extern  TAGPTR  VfyNewTag( TAGPTR, int );
+extern  void    VfyNewSym( int, char * );
+extern  unsigned GetTypeAlignment( TYPEPTR );
+extern  void    TypesPurge( void );
+extern  void    AddTypeHash( TYPEPTR );
+extern  void    AddPtrTypeHash( TYPEPTR );
 
-extern  void    CCusage(void);                  /* cusage */
+extern  void    CCusage( void );                        /* cusage */
 
-extern  void    CErrSymName(int,SYMPTR,SYM_HANDLE);/* cutil */
-extern  void    Expecting(char *);              /* cutil */
-extern  void    ExpectingAfter(char *,char *);  /* cutil */
-extern  void    ExpectConstant(void);           /* cutil */
-extern  void    ExpectEndOfLine(void);          /* cutil */
-extern  void    ExpectIdentifier(void);         /* cutil */
-extern  void    ExpectString(void);             /* cutil */
-extern  void    ExpectStructUnionTag();         /* cutil */
-extern  void    MustRecog(TOKEN);               /* cutil */
-extern  SYM_NAMEPTR SymName(SYMPTR,SYM_HANDLE); /* cutil */
+extern  void    CErrSymName( int, SYMPTR,SYM_HANDLE );  /* cutil */
+extern  void    Expecting( char * );                    /* cutil */
+extern  void    ExpectingAfter( char *, char * );       /* cutil */
+extern  void    ExpectConstant( void );                 /* cutil */
+extern  void    ExpectEndOfLine( void );                /* cutil */
+extern  void    ExpectIdentifier( void );               /* cutil */
+extern  void    ExpectString( void );                   /* cutil */
+extern  void    ExpectStructUnionTag();                 /* cutil */
+extern  void    MustRecog( TOKEN );                     /* cutil */
+extern  SYM_NAMEPTR SymName( SYMPTR, SYM_HANDLE );      /* cutil */
 
-extern  void    DwarfBrowseEmit(void);          /* dwarf */
-extern  char    *ftoa(FLOATVAL *);              /* ftoa */
-extern  unsigned int JIS2Unicode(unsigned);     /* jis2unic */
+extern  void    DwarfBrowseEmit( void );                /* dwarf */
+extern  char    *ftoa( FLOATVAL * );                    /* ftoa */
+extern  unsigned int JIS2Unicode( unsigned );           /* jis2unic */
 
 // pchdr.c
-extern  int     UsePreCompiledHeader(char *);
+extern  int     UsePreCompiledHeader( char * );
 extern  void    InitBuildPreCompiledHeader( void );
-extern  void    BuildPreCompiledHeader(char *);
+extern  void    BuildPreCompiledHeader( char * );
 extern  void    FreePreCompiledHeader( void );
 
-extern  unsigned char     _dos_switch_char(void);         /* swchar */
-extern  void    CBanner(void);                  /* watcom */
-extern  void    MyExit( int ret );              /* cintmain */
+extern  unsigned char     _dos_switch_char( void );     /* swchar */
+extern  void    CBanner( void );                        /* watcom */
+extern  void    MyExit( int ret );                      /* cintmain */
 
-extern  void    DBSetSymLoc(CGSYM_HANDLE,long); /* dbsupp */
+extern  void    DBSetSymLoc( CGSYM_HANDLE, long );      /* dbsupp */
 
 // cstmt2.c
 extern  SYM_HANDLE GetBlockSymList( void );
 extern  void    InitStmt( void );
 extern  void    SwitchPurge( void );
-
-#if defined( __CMS__ ) || ! defined(__WATCOMC__)
-    #define  __va_list  va_list
-    #define  __puts     puts
-    #define  __printf   printf
-    #define  __vfprintf vfprintf
-    #define  __fprintf  fprintf
-    #define myexit  exit
-    #define my_exit exit
-#else
-    extern  int     __puts(const char *__s);
-    extern  int     __printf(const char *__format,...);
-    extern  int     __vfprintf(FILE *__fp,const char *__format,__va_list __arg);
-    extern  int     __fprintf(FILE *__fp,const char *__format,...);
-#if defined(__386__)
-    #pragma aux myexit aborts;
-    #pragma aux my_exit aborts;
-#endif
-    extern  void    myexit( int );
-    extern  void    my_exit( int );
-#endif
-
-#if defined( __DOS__ ) || ( defined( __OS2__ ) && !defined(__386__))
-    #define _syserrno _doserrno
-#else
-    #define _syserrno errno
-    #include <errno.h>
-#endif
 
 #ifndef min
     #define min( a, b )  ((a < b ) ? (a) : (b))
@@ -914,3 +857,9 @@ extern  void    SwitchPurge( void );
 #ifndef max
     #define max( a, b )  ((a > b ) ? (a) : (b))
 #endif
+
+/* Macro to skip all typedefs and arrive at the underlying type */
+#define SKIP_TYPEDEFS( typeptr )                        \
+    while( typeptr->decl_type == TYPE_TYPEDEF ) {       \
+        typeptr = typeptr->object;                      \
+    }

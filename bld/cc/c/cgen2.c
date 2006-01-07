@@ -34,17 +34,8 @@
 #include "cgdefs.h"
 #include "cgswitch.h"
 #include "pragdefn.h"
-#include "standard.h"
 #include "cgprotos.h"
 #include "cgdllcli.h"
-#include <stdarg.h>
-#include <malloc.h>
-
-extern  void    InitExpressCode(int,int);
-extern  void    GenNewProc(cg_sym_handle);
-extern  TREEPTR GenExpressCode(TREEPTR,int,TREEPTR);
-extern  void    EmptyQueue(void);
-extern  int     StartWCG();
 
 local void      FreeExtVars( void );
 local void      FreeGblVars( SYM_HANDLE sym_handle );
@@ -68,8 +59,8 @@ static void     GenerateTryBlock( TREEPTR tree );
 #endif
 
 static  struct  local_vars {
-        struct local_vars       *next;
-        SYM_HANDLE              sym_list;
+    struct local_vars       *next;
+    SYM_HANDLE              sym_list;
 } *LocalVarList;
 
 extern  SYM_LISTS       *SymListHeads;
@@ -77,130 +68,136 @@ extern  SYM_LISTS       *SymListHeads;
 #ifdef __SEH__
 #include "tryblock.h"
 
-static int  TryRefno;
+static  int             TryRefno;
 
 static struct  try_table_back_handles {
-        struct try_table_back_handles   *next;
-        back_handle                     try_table_back_handle;
+    struct try_table_back_handles   *next;
+    back_handle                     try_table_back_handle;
 } *TryTableBackHandles;
 #endif
 
 #define PushCGName(name)        cgnames[index++] = name
 #define PopCGName()             cgnames[--index]
 
-static label_handle    *CGLabelHandles;
-static TREEPTR         FirstNode;
-static TREEPTR         LastNode;
-static OPNODE         *FuncNodePtr;
-static int             Refno;
-static temp_handle     SSVar;
-static SYM_HANDLE      Saved_CurFunc;
+static label_handle     *CGLabelHandles;
+static TREEPTR          FirstNode;
+static TREEPTR          LastNode;
+static OPNODE           *FuncNodePtr;
+static int              Refno;
+static temp_handle      SSVar;
+static SYM_HANDLE       Saved_CurFunc;
 
-extern  int     LabelIndex;
-static  int     InLineDepth;
+extern  int             LabelIndex;
+static  int             InLineDepth;
 
 struct func_save {
-        SYMPTR          func;
-        SYM_HANDLE      func_handle;
-        OPNODE         *funcnode;
-        label_handle   *cglabel_handles;
-        int             labelindex;
+    SYMPTR          func;
+    SYM_HANDLE      func_handle;
+    OPNODE          *funcnode;
+    label_handle    *cglabel_handles;
+    int             labelindex;
 };
 
 /* matches table of type in ctypes.h */
 static  char    CGDataType[TYPE_LAST_ENTRY] = {
-        T_INT_1,        /* TYPE_CHAR */
-        T_UINT_1,       /* TYPE_UCHAR */
-        T_INT_2,        /* TYPE_SHORT */
-        T_UINT_2,       /* TYPE_USHORT */
-        T_INTEGER,      /* TYPE_INT */
-        TY_UNSIGNED,    /* TYPE_UINT */
-        T_INT_4,        /* TYPE_LONG */
-        T_UINT_4,       /* TYPE_ULONG */
-        T_INT_8,        /* TYPE_LONG64*/
-        T_UINT_8,       /* TYPE_ULONG64 */
-        T_SINGLE,       /* TYPE_FLOAT */
-        TY_DOUBLE,      /* TYPE_DOUBLE */
-        T_POINTER,      /* TYPE_POINTER */
-        T_POINTER,      /* TYPE_ARRAY */
-        T_POINTER,      /* TYPE_STRUCT */
-        T_POINTER,      /* TYPE_UNION */
-        TY_DEFAULT,     /* TYPE_FUNCTION */
-        TY_DEFAULT,     /* TYPE_FIELD */
-        T_INTEGER,      /* TYPE_VOID */
-        T_INTEGER,      /* TYPE_ENUM */
-        T_INTEGER,      /* TYPE_TYPEDEF */
-        T_INTEGER,      /* TYPE_UFIELD unsigned bit field */
-        T_INTEGER,      /* TYPE_DOT_DOT_DOT  for the ... in prototypes */
-        T_INTEGER,      /* TYPE_PLAIN_CHAR */
-        T_INTEGER,      /* TYPE_WCHAR L'c' - a wide character constant */
-        T_LONG_DOUBLE,  /* TYPE_LONG_DOUBLE */
-        T_POINTER,      /* TYPE_FCOMPLEX */
-        T_POINTER,      /* TYPE_DCOMPLEX */
-        T_POINTER,      /* TYPE_LDCOMPLEX */
-        T_FLOAT,        /* TYPE_FIMAGINARY */
-        T_DOUBLE,       /* TYPE_DIMAGINARY */
-        T_LONG_DOUBLE,  /* TYPE_LDIMAGINARY */
-        T_UINT_1,       /* TYPE_BOOL */
-  };
+    T_INT_1,        /* TYPE_CHAR */
+    T_UINT_1,       /* TYPE_UCHAR */
+    T_INT_2,        /* TYPE_SHORT */
+    T_UINT_2,       /* TYPE_USHORT */
+    T_INTEGER,      /* TYPE_INT */
+    TY_UNSIGNED,    /* TYPE_UINT */
+    T_INT_4,        /* TYPE_LONG */
+    T_UINT_4,       /* TYPE_ULONG */
+    T_INT_8,        /* TYPE_LONG64*/
+    T_UINT_8,       /* TYPE_ULONG64 */
+    T_SINGLE,       /* TYPE_FLOAT */
+    TY_DOUBLE,      /* TYPE_DOUBLE */
+    T_POINTER,      /* TYPE_POINTER */
+    T_POINTER,      /* TYPE_ARRAY */
+    T_POINTER,      /* TYPE_STRUCT */
+    T_POINTER,      /* TYPE_UNION */
+    TY_DEFAULT,     /* TYPE_FUNCTION */
+    TY_DEFAULT,     /* TYPE_FIELD */
+    T_INTEGER,      /* TYPE_VOID */
+    T_INTEGER,      /* TYPE_ENUM */
+    T_INTEGER,      /* TYPE_TYPEDEF */
+    T_INTEGER,      /* TYPE_UFIELD unsigned bit field */
+    T_INTEGER,      /* TYPE_DOT_DOT_DOT  for the ... in prototypes */
+    T_INTEGER,      /* TYPE_PLAIN_CHAR */
+    T_INTEGER,      /* TYPE_WCHAR L'c' - a wide character constant */
+    T_LONG_DOUBLE,  /* TYPE_LONG_DOUBLE */
+    T_POINTER,      /* TYPE_FCOMPLEX */
+    T_POINTER,      /* TYPE_DCOMPLEX */
+    T_POINTER,      /* TYPE_LDCOMPLEX */
+    T_FLOAT,        /* TYPE_FIMAGINARY */
+    T_DOUBLE,       /* TYPE_DIMAGINARY */
+    T_LONG_DOUBLE,  /* TYPE_LDIMAGINARY */
+    T_UINT_1,       /* TYPE_BOOL */
+};
 
 static  char    CGOperator[] = {
-        O_PLUS,         //      OPR_ADD,        // +
-        O_MINUS,        //      OPR_SUB,        // -
-        O_TIMES,        //      OPR_MUL,        // *
-        O_DIV,          //      OPR_DIV,        // /
-        O_UMINUS,       //      OPR_NEG,        // negate
-        0,              //      OPR_CMP,        // compare
-        O_MOD,          //      OPR_MOD,        // %
-        O_COMPLEMENT,   //      OPR_COM,        // ~
-        O_FLOW_NOT,     //      OPR_NOT,        // !
-        O_OR,           //      OPR_OR,         // |
-        O_AND,          //      OPR_AND,        // &
-        O_XOR,          //      OPR_XOR,        // ^
-        O_RSHIFT,       //      OPR_RSHIFT,     // >>
-        O_LSHIFT,       //      OPR_LSHIFT,     // <<
-        O_GETS,         //      OPR_EQUALS,     // lvalue = rvalue
-        O_OR,           //      OPR_OR_EQUAL,   // |=
-        O_AND,          //      OPR_AND_EQUAL,  // &=
-        O_XOR,          //      OPR_XOR_EQUAL,  // ^=
-        O_RSHIFT,       //      OPR_RSHIFT_EQUAL,// >>=
-        O_LSHIFT,       //      OPR_LSHIFT_EQUAL,// <<=
-        O_PLUS,         //      OPR_PLUS_EQUAL, // +=
-        O_MINUS,        //      OPR_MINUS_EQUAL,// -=
-        O_TIMES,        //      OPR_TIMES_EQUAL,// *=
-        O_DIV,          //      OPR_DIV_EQUAL,  // /=
-        O_MOD,          //      OPR_MOD_EQUAL,  // %=
-        0,              //      OPR_QUESTION,   // ?
-        0,              //      OPR_COLON,      // :
-        O_FLOW_OR,      //      OPR_OR_OR,      // ||
-        O_FLOW_AND,     //      OPR_AND_AND,    // &&
-        O_POINTS,       //      OPR_POINTS,     // *ptr
-        0,              //      OPR_UNUSED1,    // spare
-        0,              //      OPR_UNUSED2,    // spare
-        O_PLUS,         //      OPR_POSTINC,    // lvalue++
-        O_MINUS,        //      OPR_POSTDEC,    // lvalue--
-        O_CONVERT,      //      OPR_CONVERT,    // do conversion
+    O_PLUS,         //      OPR_ADD,        // +
+    O_MINUS,        //      OPR_SUB,        // -
+    O_TIMES,        //      OPR_MUL,        // *
+    O_DIV,          //      OPR_DIV,        // /
+    O_UMINUS,       //      OPR_NEG,        // negate
+    0,              //      OPR_CMP,        // compare
+    O_MOD,          //      OPR_MOD,        // %
+    O_COMPLEMENT,   //      OPR_COM,        // ~
+    O_FLOW_NOT,     //      OPR_NOT,        // !
+    O_OR,           //      OPR_OR,         // |
+    O_AND,          //      OPR_AND,        // &
+    O_XOR,          //      OPR_XOR,        // ^
+    O_RSHIFT,       //      OPR_RSHIFT,     // >>
+    O_LSHIFT,       //      OPR_LSHIFT,     // <<
+    O_GETS,         //      OPR_EQUALS,     // lvalue = rvalue
+    O_OR,           //      OPR_OR_EQUAL,   // |=
+    O_AND,          //      OPR_AND_EQUAL,  // &=
+    O_XOR,          //      OPR_XOR_EQUAL,  // ^=
+    O_RSHIFT,       //      OPR_RSHIFT_EQUAL,// >>=
+    O_LSHIFT,       //      OPR_LSHIFT_EQUAL,// <<=
+    O_PLUS,         //      OPR_PLUS_EQUAL, // +=
+    O_MINUS,        //      OPR_MINUS_EQUAL,// -=
+    O_TIMES,        //      OPR_TIMES_EQUAL,// *=
+    O_DIV,          //      OPR_DIV_EQUAL,  // /=
+    O_MOD,          //      OPR_MOD_EQUAL,  // %=
+    0,              //      OPR_QUESTION,   // ?
+    0,              //      OPR_COLON,      // :
+    O_FLOW_OR,      //      OPR_OR_OR,      // ||
+    O_FLOW_AND,     //      OPR_AND_AND,    // &&
+    O_POINTS,       //      OPR_POINTS,     // *ptr
+    0,              //      OPR_UNUSED1,    // spare
+    0,              //      OPR_UNUSED2,    // spare
+    O_PLUS,         //      OPR_POSTINC,    // lvalue++
+    O_MINUS,        //      OPR_POSTDEC,    // lvalue--
+    O_CONVERT,      //      OPR_CONVERT,    // do conversion
 };
 
 static  char    CC2CGOp[] = { O_EQ, O_NE, O_LT, O_LE, O_GT, O_GE };
+
 #ifdef HEAP_SIZE_STAT
+
+#include <malloc.h>
+
 struct heap_stat {
-    int free;
-    int used;
+    int     free;
+    int     used;
 };
 
-static int heap_size( struct heap_stat *stat ){
-    struct _heapinfo h_info;
-    int heap_status;
+static int heap_size( struct heap_stat *stat )
+{
+    struct _heapinfo    h_info;
+    int                 heap_status;
+
     h_info._pentry = NULL;
     stat->free = 0;
     stat->used = 0;
-    for(;;){
+    for( ;; ) {
         heap_status = _heapwalk( &h_info );
-        if( heap_status != _HEAPOK )break;
-        if( h_info._useflag ){
+        if( heap_status != _HEAPOK ) break;
+        if( h_info._useflag ) {
             stat->used += h_info._size;
-        }else{
+        } else {
             stat->free += h_info._size;
         }
     }
@@ -211,7 +208,7 @@ static int heap_size( struct heap_stat *stat ){
 static void StartFunction( OPNODE *node )
 {
     FuncNodePtr = node;
-    if( InLineDepth == 0 ){
+    if( InLineDepth == 0 ) {
         LocalVarList = NULL;
     }
 
@@ -292,11 +289,11 @@ static void EndFunction( OPNODE *node )
     }
     FreeLocalVars( CurFunc->u.func.parms );
     FreeLocalVars( CurFunc->u.func.locals );
-    if( InLineDepth == 0 ){
+    if( InLineDepth == 0 ) {
         RelLocalVars( LocalVarList );
     }
     if( GenSwitches & DBG_LOCALS ) {
-        if( InLineDepth != 0 ){
+        if( InLineDepth != 0 ) {
             DBEndBlock();
         }
     }
@@ -390,7 +387,7 @@ static cg_name TryFieldAddr( unsigned offset )
     return( name );
 }
 
-static cg_name TryExceptionInfoAddr()
+static cg_name TryExceptionInfoAddr( void )
 {
     cg_name     name;
 
@@ -418,7 +415,7 @@ static void SetTryScope( int scope )
     CGDone( CGAssign( name, CGInteger( scope, T_UINT_1 ), T_UINT_1 ) );
 }
 
-static void EndFinally()
+static void EndFinally( void )
 {
     cg_name      name;
     cg_name      func;
@@ -437,7 +434,7 @@ static void EndFinally()
     BEFiniLabel( label_handle );
 }
 
-static cg_name TryAbnormalTermination()
+static cg_name TryAbnormalTermination( void )
 {
     cg_name      name;
 
@@ -534,9 +531,9 @@ static cg_name PushSym( OPNODE *node )
 
     SymGet( &sym, node->sym_handle );
     typ = sym.sym_type;
-    if( sym.flags & SYM_FUNCTION ){
+    if( sym.flags & SYM_FUNCTION ) {
         dtype = CodePtrType( sym.attrib );
-    }else{
+    } else {
         dtype = CGenType( typ );
     }
     if( sym.flags & SYM_FUNC_RETURN_VAR ) {
@@ -565,9 +562,9 @@ static cg_name PushSymAddr( OPNODE *node )
 
     SymGet( &sym, node->sym_handle );
     typ = sym.sym_type;
-    if( sym.flags & SYM_FUNCTION ){
+    if( sym.flags & SYM_FUNCTION ) {
         dtype = CodePtrType( sym.attrib );
-    }else{
+    } else {
         dtype = CGenType( typ );
     }
     if( sym.flags & SYM_FUNC_RETURN_VAR ) {
@@ -655,13 +652,13 @@ static cg_name IndexOperator( cg_name op1, OPNODE *node, cg_name op2 )
     element_size = SizeOfArg( node->result_type );
     if( element_size != 1 ) {
         index_type = T_INTEGER;
-        #if _CPU == 8086
-            if(( node->flags & OPFLAG_HUGEPTR) ||
-               ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA &&
-                (node->flags & (OPFLAG_NEARPTR | OPFLAG_FARPTR))==0)) {
-                index_type = T_INT_4;
-            }
-        #endif
+#if _CPU == 8086
+        if( (node->flags & OPFLAG_HUGEPTR) ||
+           ((TargetSwitches & (BIG_DATA | CHEAP_POINTER)) == BIG_DATA &&
+            (node->flags & (OPFLAG_NEARPTR | OPFLAG_FARPTR)) == 0) ) {
+            index_type = T_INT_4;
+        }
+#endif
         op2 = CGBinary( O_TIMES, op2,
                 CGInteger( element_size, T_INTEGER ), index_type );
     }
@@ -678,7 +675,7 @@ static cg_name DoAddSub( cg_name op1, OPNODE *node, cg_name op2 )
     TYPEPTR     typ;
 
     typ = node->result_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     name = CGBinary( CGOperator[node->opr], op1, op2, CGenType( typ ) );
 //  if( typ->decl_type == TYPE_POINTER ) {
 //      if( typ->u.p.decl_flags & FLAG_VOLATILE ) {
@@ -791,7 +788,7 @@ static call_handle InitFuncCall( OPNODE *node )
     dtype = CGenType( typ );
     name = CGFEName( node->sym_handle, dtype );
 //    dtype = FESymType( sym );
-    while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     return( CGInitCall( name, CGenType( typ->object ), node->sym_handle ) );
 }
 
@@ -802,7 +799,7 @@ static call_handle InitIndFuncCall( OPNODE *node, cg_name name )
 
     sym = SymGetPtr( node->sym_handle );
     typ = sym->sym_type;
-    while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     return( CGInitCall( name, CGenType( typ->object ), node->sym_handle ) );
 }
 
@@ -821,9 +818,10 @@ local void DoSwitch( OPNODE *node, cg_name name )
     CGSelect( table, name );
 }
 
-static bool IsStruct( TYPEPTR typ ){
+static bool IsStruct( TYPEPTR typ )
 /*********************************/
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+{
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_STRUCT  ||
         typ->decl_type == TYPE_FCOMPLEX ||
         typ->decl_type == TYPE_DCOMPLEX ||
@@ -879,11 +877,11 @@ local void EmitNodes( TREEPTR tree )
             if( node->flags & OPFLAG_VOLATILE ) { // is lvalue volatile
                  op1 = CGVolatile( op1 );
             }
-            if( IsStruct( node->result_type ) ){
+            if( IsStruct( node->result_type ) ) {
                 dtype = DataPointerType( node );
                 op1 = CGLVAssign( op1, op2, CGenType( node->result_type ));
                 op1 = PushRValue( node, op1 );
-            }else{
+            } else {
                 dtype =  CGenType( node->result_type );
                 op1 = CGAssign( op1, op2, CGenType( node->result_type ));
             }
@@ -1175,21 +1173,21 @@ local TREEPTR LinearizeTree( TREEPTR tree )
 }
 
 
-void EmitInit()
+void EmitInit( void )
 {
     SegListHead = NULL;
-    SegImport = SegData-1;
+    SegImport = SegData - 1;
     Refno = T_FIRST_FREE;
 }
 
 
-local int NewRefno()
+local int NewRefno( void )
 {
     return( Refno++ );
 }
 
 
-void EmitAbort()
+void EmitAbort( void )
 {
 }
 
@@ -1228,8 +1226,8 @@ local TREEPTR GenOptimizedCode( TREEPTR tree )
              SymGet( &sym,  right->op.func.sym_handle );
              if( ! (sym.flags & SYM_REFERENCED) ) {
                  if( (sym.attrib & FLAG_INLINE)
-                  && (sym.stg_class != SC_NULL) ){
-                    while( tree->right->op.opr != OPR_FUNCEND ){
+                  && (sym.stg_class != SC_NULL) ) {
+                    while( tree->right->op.opr != OPR_FUNCEND ) {
                         tree = tree->left;
                     }
                     break;
@@ -1252,7 +1250,8 @@ local TREEPTR GenOptimizedCode( TREEPTR tree )
 
 static void DoInLineFunction( TREEPTR tree )
 {   // Push some state info and use InLineDepth for turning some stuff off
-    struct func_save  save;
+    struct func_save    save;
+
     ++InLineDepth;
     save.func  = CurFunc;
     save.func_handle = CurFuncHandle;
@@ -1298,11 +1297,11 @@ bool IsInLineFunc( SYM_HANDLE sym_handle )
     TREEPTR     right;
 
     ret = FALSE;
-    if( InLineDepth < MAX_INLINE_DEPTH ){
+    if( InLineDepth < MAX_INLINE_DEPTH ) {
         tree = FindFuncStmtTree(sym_handle);
         if( tree != NULL ) {
            right = tree->right;
-           if( !(right->op.func.flags & FUNC_INUSE) ){
+           if( !(right->op.func.flags & FUNC_INUSE) ) {
                ret =  right->op.func.flags & FUNC_OK_TO_INLINE;
            }
         }
@@ -1310,7 +1309,7 @@ bool IsInLineFunc( SYM_HANDLE sym_handle )
     return( ret );
 }
 
-local void GenModuleCode()
+local void GenModuleCode( void )
 {
     TREEPTR     tree;
 
@@ -1323,17 +1322,17 @@ local void GenModuleCode()
     }
 }
 
-static void NoCodeGenDLL()
+static void NoCodeGenDLL( void )
 {
     extern void FEMessage( msg_class, void * );
     FEMessage( MSG_FATAL, "Unable to load code generator DLL" );
 }
 
-void DoCompile()
+void DoCompile( void )
 {
-    unsigned int /*jmp_buf*/ *old_env;
-    auto jmp_buf env;
-    auto cg_init_info cgi_info;
+    unsigned int    *old_env;
+    jmp_buf         env;
+    cg_init_info    cgi_info;
 
     old_env = Environment;
     if( ! setjmp( env ) ) {
@@ -1342,12 +1341,14 @@ void DoCompile()
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
             BEMemInit(); // cg has a strange static var that doesn't get reset
 #endif
-            if( ! CompFlags.zu_switch_used )  TargetSwitches &= ~ FLOATING_SS;
-            if( Toggles & TOGGLE_DUMP_CG ){
+            if( ! CompFlags.zu_switch_used ) {
+                TargetSwitches &= ~ FLOATING_SS;
+            }
+            if( Toggles & TOGGLE_DUMP_CG ) {
                 GenSwitches |= ECHO_API_CALLS;
             }
 #ifdef POSITION_INDEPENDANT
-            if( CompFlags.rent ){
+            if( CompFlags.rent ) {
                 GenSwitches |= POSITION_INDEPENDANT;
             }
 #endif
@@ -1368,7 +1369,7 @@ void DoCompile()
 #endif
 #endif
 #if _CPU == 386
-                if( TargetSwitches & (P5_PROFILING|NEW_P5_PROFILING) ) {
+                if( TargetSwitches & (P5_PROFILING | NEW_P5_PROFILING) ) {
                     FunctionProfileSegment = AddSegName( "TI", "DATA", SEGTYPE_INITFINI );
                 }
 #endif
@@ -1381,11 +1382,11 @@ void DoCompile()
                 SrcLineCount = 0;
                 EmitDataQuads();
                 FreeDataQuads();
-                #ifdef __SEH__
-                    TryRefno = NewRefno();
-                    BEDefType( TryRefno, 1, sizeof( struct try_block ) );
-                    TryTableBackHandles = NULL;
-                #endif
+#ifdef __SEH__
+                TryRefno = NewRefno();
+                BEDefType( TryRefno, 1, sizeof( struct try_block ) );
+                TryTableBackHandles = NULL;
+#endif
                 GenModuleCode();
                 FreeStrings();
                 FiniSegLabels();                        /* 15-mar-92 */
@@ -1397,9 +1398,9 @@ void DoCompile()
                 FreeGblVars( GlobalSym );
                 FreeGblVars( SpecialSyms );     /* 05-dec-89 */
                 FreeExtVars();                          /* 02-apr-92 */
-                #ifdef __SEH__
-                    FreeTryTableBackHandles();
-                #endif
+#ifdef __SEH__
+                FreeTryTableBackHandles();
+#endif
                 BEFini();
                 BEDLLUnload();
             }
@@ -1415,7 +1416,7 @@ local void EmitSym( SYMPTR sym, SYM_HANDLE sym_handle )
 {
     TYPEPTR             typ;
     int                 segment;
-    auto unsigned long  size;
+    unsigned long       size;
 
     typ = sym->sym_type;
     if( (GenSwitches & DBG_TYPES) && (sym->stg_class == SC_TYPEDEF) ) {
@@ -1424,13 +1425,13 @@ local void EmitSym( SYMPTR sym, SYM_HANDLE sym_handle )
                                   DBType( typ ) );
         }
     }
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     CGenType( typ );    /* create refno for ARRAY type, etc */
     if( sym->stg_class != SC_EXTERN     &&  /* if not imported */
         sym->stg_class != SC_TYPEDEF ) {
         if( ( sym->flags & SYM_FUNCTION ) == 0 ) {
             segment = sym->u.var.segment;
-            if( (sym->flags & SYM_INITIALIZED) == 0 || segment == SEG_BSS){
+            if( (sym->flags & SYM_INITIALIZED) == 0 || segment == SEG_BSS) {
                 BESetSeg( segment );
                 AlignIt( typ );
                 DGLabel( FEBack( sym_handle ) );
@@ -1462,7 +1463,7 @@ local void EmitSym( SYMPTR sym, SYM_HANDLE sym_handle )
 local void EmitSyms( void )
 {
     SYM_HANDLE          sym_handle;
-    auto SYM_ENTRY      sym;
+    SYM_ENTRY           sym;
 
     for( sym_handle = GlobalSym; sym_handle; ) {
         SymGet( &sym, sym_handle );
@@ -1472,7 +1473,7 @@ local void EmitSyms( void )
             ( (sym.flags & SYM_TEMP) == 0 )  && /* 06-oct-93 */
             ( sym.stg_class != SC_TYPEDEF )) {
 #if _CPU == 370
-                if( sym.stg_class != SC_EXTERN || sym.flags & SYM_REFERENCED){
+                if( sym.stg_class != SC_EXTERN || sym.flags & SYM_REFERENCED) {
                     DBModSym( sym_handle, TY_DEFAULT );
                 }
 #else
@@ -1496,7 +1497,7 @@ local int DoFuncDefn( SYM_HANDLE funcsym_handle )
     CurFuncHandle = funcsym_handle;
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
     if( ! CompFlags.zu_switch_used ) {
-        if( (CurFunc->attrib & FLAG_INTERRUPT) == FLAG_INTERRUPT ){
+        if( (CurFunc->attrib & FLAG_INTERRUPT) == FLAG_INTERRUPT ) {
             /* interrupt function */
             TargetSwitches |= FLOATING_SS;      /* force -zu switch on */
         } else {
@@ -1531,9 +1532,9 @@ local int DoFuncDefn( SYM_HANDLE funcsym_handle )
     }
 #endif
     if( GenSwitches & DBG_LOCALS ) {
-        if( InLineDepth == 0 ){
+        if( InLineDepth == 0 ) {
             DBModSym( CurFuncHandle, TY_DEFAULT );
-        }else{
+        } else {
             DBBegBlock();
         }
     }
@@ -1572,13 +1573,12 @@ local void CDoParmDecl( SYMPTR sym, SYM_HANDLE sym_handle )
     int     dtype;
 
     typ = sym->sym_type;
-    while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     dtype = CGenType( typ );
     CGParmDecl( sym_handle, dtype );
     if( (GenSwitches & NO_OPTIMIZATION)     /* 20-sep-88 */
 #if _CPU == 386
-        || ((! CompFlags.register_conventions) &&
-        CompFlags.debug_info_some)
+        || (!CompFlags.register_conventions && CompFlags.debug_info_some)
 #endif
     ) {
         if( GenSwitches & DBG_LOCALS ) {
@@ -1605,7 +1605,7 @@ local void CDoAutoDecl( SYM_HANDLE sym_handle )
     cg_type             dtype;
     char                emit_debug_info;                /* 01-mar-91 */
     char                emit_extra_info;                /* 25-nov-91 */
-    auto SYM_ENTRY      sym;
+    SYM_ENTRY           sym;
 
     while( sym_handle != 0 ) {
         SymGet( &sym, sym_handle );
@@ -1629,7 +1629,7 @@ local void CDoAutoDecl( SYM_HANDLE sym_handle )
                 emit_extra_info = 1;
             }
             typ = sym.sym_type;
-            while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+            SKIP_TYPEDEFS( typ );
             switch( typ->decl_type ) {
             case TYPE_UNION:
             case TYPE_STRUCT:
@@ -1690,9 +1690,9 @@ static void FreeTryTableBackHandles( void )
 {
     struct try_table_back_handles       *try_backinfo;
 
-    for(;;) {
+    for( ;; ) {
         try_backinfo = TryTableBackHandles;
-        if( try_backinfo == NULL )  break;
+        if( try_backinfo == NULL ) break;
         TryTableBackHandles = try_backinfo->next;
         BEFreeBack( try_backinfo->try_table_back_handle );
         CMemFree( try_backinfo );
@@ -1703,7 +1703,7 @@ static void FreeTryTableBackHandles( void )
 local void FreeLocalVars( SYM_HANDLE sym_list )
 {
     SYM_HANDLE          sym_handle;
-    auto SYM_ENTRY      sym;
+    SYM_ENTRY           sym;
 
     for( ; sym_handle = sym_list; ) {
         SymGet( &sym, sym_handle );
@@ -1751,7 +1751,7 @@ local void RelExtVars( SYM_HANDLE sym_handle )
     }
 }
 
-local void FreeExtVars()                                /* 02-apr-92 */
+local void FreeExtVars( void )                          /* 02-apr-92 */
 {
     SYM_LISTS   *sym_list;
     SYM_LISTS   *next_sym;
@@ -1770,7 +1770,7 @@ int CGenType( TYPEPTR typ )
     int         flags;
     int         align;
 
-    while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     switch( typ->decl_type ) {
 
     case TYPE_FCOMPLEX:
@@ -1844,7 +1844,7 @@ extern int PtrType( TYPEPTR typ, type_modifiers flags )
 {
     int         dtype;
 
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;/*03-dec-91*/
+    SKIP_TYPEDEFS( typ );       /*03-dec-91*/
     if( typ->decl_type == TYPE_FUNCTION ) {
         dtype = CodePtrType( flags );
     } else {
@@ -1972,7 +1972,7 @@ static void GenerateTryBlock( TREEPTR tree )
 
     try_index = 0;
     max_try_index = -1;
-    for(;;) {
+    for( ;; ) {
         stmt = tree->right;
         if( stmt->op.opr == OPR_FUNCEND ) break;
         switch( stmt->op.opr ) {

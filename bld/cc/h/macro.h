@@ -24,62 +24,59 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Preprocessor related data types and constants.
 *
 ****************************************************************************/
 
 
 
 enum    special_macros {
-        MACRO_LINE,
-        MACRO_FILE,
-        MACRO_DATE,
-        MACRO_TIME,
-        MACRO_STDC,
-        MACRO_FUNC,
- };
+    MACRO_LINE,
+    MACRO_FILE,
+    MACRO_DATE,
+    MACRO_TIME,
+    MACRO_STDC,
+    MACRO_FUNC,
+};
 
 struct  macro_parm {
-        struct  macro_parm *next_macro_parm;
-        char    *parm;
+    struct macro_parm   *next_macro_parm;
+    char                *parm;
 };
 
 /* Actual macro definition is at (char *)mentry + mentry->macro_defn */
 enum macro_flags {
-        MACRO_DEFINED_BEFORE_FIRST_INCLUDE  =   0x01,
-        MACRO_CAN_BE_REDEFINED              =   0x02,
-        MACRO_USER_DEFINED                  =   0x04,
-        MACRO_REFERENCED                    =   0x08,
-        // macro has varargs.
-        MACRO_VAR_ARGS                      =   0x10,
+    MACRO_DEFINED_BEFORE_FIRST_INCLUDE  =   0x01,
+    MACRO_CAN_BE_REDEFINED              =   0x02,
+    MACRO_USER_DEFINED                  =   0x04,
+    MACRO_REFERENCED                    =   0x08,
+    MACRO_VAR_ARGS                      =   0x10,   // macro has varargs.
 };
 
 typedef struct  macro_entry {
-        union {
-            struct  macro_entry __FAR *next_macro;
-            int         macro_index;    /* for pre-compiled header */
-        };
+    union {
+        struct  macro_entry     *next_macro;
+        int                     macro_index;    /* for pre-compiled header */
+    };
 #if defined(__386__)
-        unsigned short macro_defn;/* offset to defn, 0 ==>special macro name*/
-        unsigned short macro_len;/* length of macro definition */
-        char    parm_count;     /* special macro indicator if defn == 0 */
-        char    macro_flags;    /* flags */
+    unsigned short macro_defn;/* offset to defn, 0 ==>special macro name*/
+    unsigned short macro_len;/* length of macro definition */
+    char    parm_count;     /* special macro indicator if defn == 0 */
+    char    macro_flags;    /* flags */
 #else
-        unsigned macro_defn;    /* offset to defn, 0 ==>special macro name*/
-        unsigned macro_len;     /* length of macro definition */
-        unsigned parm_count;    /* special macro indicator if defn == 0 */
-        unsigned macro_flags;   /* flags */
+    unsigned macro_defn;    /* offset to defn, 0 ==>special macro name*/
+    unsigned macro_len;     /* length of macro definition */
+    unsigned parm_count;    /* special macro indicator if defn == 0 */
+    unsigned macro_flags;   /* flags */
 #endif
-        char    macro_name[1];  /* name,parms, and macro definition */
+    char    macro_name[1];  /* name,parms, and macro definition */
 } MEDEFN, *MEPTR;
 
 typedef struct  macro_stack {
-        struct  macro_stack *stacked_macro;
-        MEPTR   prev_macro;
-        char    **macro_parms;  /* pointer to array of actual parms */
-        char    *prev_ptr;
-        int     macro_class;    /* T_MACRO or T_MACRO_PARM */
-        char    macro_definition[1]; /* copy of current macro definition */
+    struct  macro_stack *stacked_macro;
+    MEPTR   prev_macro;
+    char    **macro_parms;  /* pointer to array of actual parms */
+    char    *prev_ptr;
+    int     macro_class;    /* T_MACRO or T_MACRO_PARM */
+    char    macro_definition[1]; /* copy of current macro definition */
 } MSTACK, *MSTACKPTR;
-

@@ -30,24 +30,18 @@
 
 
 #include "cvars.h"
-#include "pragdefn.h"
 #include "cgswitch.h"
 #include "i64.h"
 
-TYPEPTR             *MakeParmList( struct parm_list *, int, int );
-struct parm_list    *NewParm( TYPEPTR, struct parm_list * );
-static TYPEPTR      DeclPart2( TYPEPTR typ, type_modifiers mod );
-static TYPEPTR      DeclPart3( TYPEPTR typ, type_modifiers mod );
-static void         AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ );
-local void          FreeParmList( void );
-local void          GetFuncParmList( void );
+extern  TYPEPTR     *MakeParmList( struct parm_list *, int, int );
+struct  parm_list   *NewParm( TYPEPTR, struct parm_list * );
+static  TYPEPTR     DeclPart2( TYPEPTR typ, type_modifiers mod );
+static  TYPEPTR     DeclPart3( TYPEPTR typ, type_modifiers mod );
+static  void        AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ );
+local   void        FreeParmList( void );
+local   void        GetFuncParmList( void );
 
 static int          ThreadSeg;
-
-#define SKIP_TYPEDEFS( typeptr )                        \
-    while( typeptr->decl_type == TYPE_TYPEDEF ) {       \
-        typeptr = typeptr->object;                      \
-    }
 
 
 void Chk_Struct_Union_Enum( TYPEPTR typ )

@@ -107,15 +107,13 @@ int VarParm( SYMPTR sym )
     TYPEPTR     *parm;
     TYPEPTR     typ;
     TYPEPTR     fn_typ;
-    
+
     if( sym == NULL )
         return( 0 );
-    
+
     if( sym->flags & SYM_FUNCTION ) {
         fn_typ = sym->sym_type;
-        while( fn_typ->decl_type == TYPE_TYPEDEF )
-            fn_typ = fn_typ->object;
-        
+        SKIP_TYPEDEFS( fn_typ );
         parm = fn_typ->u.parms;
         if( parm != NULL ) {
             for( ; (typ = *parm); ++parm ) {
@@ -136,7 +134,7 @@ int VarFunc( SYMPTR sym )
 {
     int         hash;
     int         len;
-    char *        p;
+    char        *p;
 
     if( sym == NULL )
         return( 0 );
@@ -157,7 +155,7 @@ int VarFunc( SYMPTR sym )
 
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
 
-static struct inline_funcs __FAR *Flat( struct inline_funcs __FAR *ifunc )
+static struct inline_funcs *Flat( struct inline_funcs *ifunc )
 {
   #if _CPU == 386
     extern byte_seq *    FlatAlternates[];
@@ -175,9 +173,9 @@ static struct inline_funcs __FAR *Flat( struct inline_funcs __FAR *ifunc )
     return( ifunc );
 }
 
-struct inline_funcs __FAR *IF_Lookup( char *name )
+struct inline_funcs *IF_Lookup( char *name )
 {
-    struct inline_funcs __FAR *    ifunc;
+    struct inline_funcs     *ifunc;
 
     if( GET_FPU( ProcRevision ) > FPU_NONE ) {
         ifunc = _8087_Functions;
@@ -301,10 +299,10 @@ int ParmsToBeReversed( int flags, struct aux_info *inf )
 struct aux_info *ModifyLookup( SYMPTR sym )
 {
 #if _CPU == 386 || _CPU == 8086
-    char *                p;
-    struct aux_info *    inf;
-    int                    len;
-    int                    hash;
+    char                *p;
+    struct aux_info     *inf;
+    int                 len;
+    int                 hash;
 
     static unsigned char NoModifyWeights[] = {
     //a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y,z
@@ -379,7 +377,7 @@ struct aux_info *InfoLookup( SYMPTR sym )
         }
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
         {
-            struct inline_funcs __FAR *ifunc;
+            struct inline_funcs     *ifunc;
 
             ifunc = IF_Lookup( name );
             if( ifunc == NULL )
@@ -426,7 +424,7 @@ struct aux_info *InfoLookup( SYMPTR sym )
 
 struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
 {
-    auto SYM_ENTRY      sym_typedef;
+    SYM_ENTRY           sym_typedef;
     struct aux_entry    *ent;
     TYPEPTR             typ;
     struct aux_info     *inf;
@@ -437,10 +435,10 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
 
     SymGet( sym, sym_handle );
 #if _CPU == 386
-    if(( sym_handle == SymSTOSB ) || ( sym_handle == SymSTOSD )) {
+    if( (sym_handle == SymSTOSB) || (sym_handle == SymSTOSD) ) {
         return( &STOSBInfo );
     } else if( sym_handle == SymFinally ) {
-        static byte_seq FinallyCode = { 1, {0xc3} }; /* ret */
+        static byte_seq FinallyCode = { 1, { 0xc3 } };  /* ret */
 
         InlineInfo = DefaultInfo;
         InlineInfo.code = &FinallyCode;
@@ -451,7 +449,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
             HW_D( HW_EMPTY )
         };
         static byte_seq TryFiniCode = {
-            6, {0x64, 0xA3, 0,0,0,0}
+            6, { 0x64, 0xA3, 0, 0, 0, 0 }
         };  /* mov fs:[0],eax */
 
         InlineInfo = DefaultInfo;
@@ -460,7 +458,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
         return( &InlineInfo );
     }
 #endif
-    if( !( sym->flags & SYM_TEMP ) ) {
+    if( !(sym->flags & SYM_TEMP) ) {
         /* not an indirect func call*/
         inf = InfoLookup( sym );
         if( inf == &DefaultInfo ) {
@@ -511,8 +509,8 @@ int FunctionAborts( SYM_ENTRY *sym, SYM_HANDLE sym_handle )  /* 09-apr-93 */
 
 void GetCallClass( SYM_HANDLE sym_handle )
 {
-    struct aux_info *inf;
-    auto SYM_ENTRY sym;
+    struct aux_info     *inf;
+    SYM_ENTRY           sym;
 
     CallClass = DefaultInfo.cclass;
     if( sym_handle != 0 ) {
@@ -648,12 +646,6 @@ static time_t *getFileDepTimeStamp( FNAMEPTR flist )
     return( &stamp );
 }
 
-#ifdef __LARGE__
- #define PTR(x) (VOIDPTR)MK_FP((x),0)
-#else
- #define PTR(x) (VOIDPTR)(x)
-#endif
-
 static FNAMEPTR NextDependency( FNAMEPTR curr )
 {
     if( !CompFlags.emit_dependencies ) {
@@ -775,8 +767,7 @@ static int GetParmsSize( CGSYM_HANDLE sym_handle )
 
     SymGet( &sym, sym_handle );
     fn_typ = sym.sym_type;
-    while( fn_typ->decl_type == TYPE_TYPEDEF )
-        fn_typ = fn_typ->object;
+    SKIP_TYPEDEFS( fn_typ );
     parm = fn_typ->u.parms;
     if( parm != NULL ) {
         for( ; (typ = *parm); ++parm ) {
@@ -785,13 +776,13 @@ static int GetParmsSize( CGSYM_HANDLE sym_handle )
                 break;
             }
 
-            while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+            SKIP_TYPEDEFS( typ );
             if( typ->decl_type == TYPE_VOID )
                 break;
 
             parm_size = TypeSize( typ );
-            parm_size = (parm_size + sizeof(target_int) - 1)  &
-                            - sizeof(target_int);
+            parm_size = (parm_size + sizeof( target_int ) - 1)  &
+                            - sizeof( target_int );
             total_parm_size += parm_size;
         }
     }
@@ -808,17 +799,17 @@ static char *GetNamePattern( CGSYM_HANDLE sym_handle )
     struct aux_info      *inf;
 
     inf = FindInfo( &sym, sym_handle );
-  #ifdef __SEH__
+#ifdef __SEH__
     if(( sym_handle == SymTryInit )
       || ( sym_handle == SymTryFini )
       || ( sym_handle == SymTryUnwind )
       || ( sym_handle == SymExcept )) {
         pattern = "*";
     } else {
-  #endif
+#endif
         inf = LangInfo( sym.attrib, inf );
         if( inf->objname != NULL ) {
-  #if ( _CPU == 8086 ) || ( _CPU == 386 )
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
             if( VarFunc( &sym ) ) {
     #if 0
                 if( inf == &DefaultInfo )
@@ -834,17 +825,17 @@ static char *GetNamePattern( CGSYM_HANDLE sym_handle )
             } else {
                 pattern = inf->objname;
             }
-  #else
+#else
             pattern = inf->objname;
-  #endif
+#endif
         } else if( sym.flags & SYM_FUNCTION ) {
             pattern =  TS_CODE_MANGLE;
         } else {
             pattern =  TS_DATA_MANGLE;
         }
-  #ifdef __SEH__
+#ifdef __SEH__
     }       // close that else
-  #endif
+#endif
     return( pattern );
 }
 
@@ -901,9 +892,7 @@ static VOIDPTR NextImport( int index, aux_class request )
         ++index;
 
     switch( index ) {
-    /*-----------------------------------------------------------------------
-    //    handle entry points
-    -----------------------------------------------------------------------*/
+    /* handle entry points */
     case 1:
         /* wide char or MBCS entry */
         if( CompFlags.has_wchar_entry ) {
@@ -958,9 +947,7 @@ static VOIDPTR NextImport( int index, aux_class request )
         }
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle floating point support
-    -----------------------------------------------------------------------*/
+    /* handle floating point support */
     case 2:
         /* floating point used */
         name = "_fltused_";
@@ -973,9 +960,7 @@ static VOIDPTR NextImport( int index, aux_class request )
         }
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle code model library support
-    -----------------------------------------------------------------------*/
+    /* handle code model library support */
     case 3:
   #if _CPU == 8086
         name = "_small_code_";
@@ -992,9 +977,7 @@ static VOIDPTR NextImport( int index, aux_class request )
   #endif
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle floating point emulator
-    -----------------------------------------------------------------------*/
+    /* handle floating point emulator */
     case 4:
         /* generating FPU instructions OR this object used floats ?*/
         if( CompFlags.pgm_used_8087  || CompFlags.float_used ) {
@@ -1028,9 +1011,7 @@ static VOIDPTR NextImport( int index, aux_class request )
         }
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle entry point arg passing
-    -----------------------------------------------------------------------*/
+    /* handle entry point arg passing */
     case 6:
         /* wide char or MBCS entry */
         if( CompFlags.has_wchar_entry ) {
@@ -1049,9 +1030,7 @@ static VOIDPTR NextImport( int index, aux_class request )
             break;
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle default windowing app
-    -----------------------------------------------------------------------*/
+    /* handle default windowing app */
     case 7:
         /* is target default windowing application? */
         name = "__init_default_win";
@@ -1059,9 +1038,7 @@ static VOIDPTR NextImport( int index, aux_class request )
             break;
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle NetWare
-    -----------------------------------------------------------------------*/
+    /* handle NetWare */
     case 8:
         /* is target NETWARE or NETWARE5? */
         name = "__WATCOM_Prelude";
@@ -1071,9 +1048,7 @@ static VOIDPTR NextImport( int index, aux_class request )
             break;
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle 'old' profiling
-    -----------------------------------------------------------------------*/
+    /* handle 'old' profiling */
     case 9:
         /* is profiling enabled (-et)? */
         name = "__p5_profile";
@@ -1081,9 +1056,7 @@ static VOIDPTR NextImport( int index, aux_class request )
             break;
         }
 
-    /*-----------------------------------------------------------------------
-    //    handle 'new' profiling
-    -----------------------------------------------------------------------*/
+    /* handle 'new' profiling */
     case 10:
         /* is profiling enabled (-etp)? */
         name = "__new_p5_profile";
@@ -1091,24 +1064,18 @@ static VOIDPTR NextImport( int index, aux_class request )
             break;
         }
 
-    /*-----------------------------------------------------------------------
-    //    unknown / fallthrough
-    -----------------------------------------------------------------------*/
+    /* unknown / fallthrough */
     default:
         index = 0;                              // indicate no more
         name = NULL;
         break;
     }
 
-    /*
-    //    return the import name, or
-    */
+    /* return the import name, or */
     if( request == IMPORT_NAME )
         return( name );
 
-    /*
-    //    return the index
-    */
+    /* return the index */
     return( (char *)index );
 }
 
@@ -1159,7 +1126,7 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
         return( (VOIDPTR)SymChipBug ); /* 09-dec-94 */
     case CODE_LABEL_ALIGNMENT:
         {
-            static unsigned char Alignment[] = { 2, 1, 1 };
+            static unsigned char    Alignment[] = { 2, 1, 1 };
 
             if( OptSize == 0 )
                 Alignment[1] = TARGET_INT;
@@ -1272,6 +1239,7 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 //    This section is NOT 8086 and 386 , i.e.,
 //        _AXP
 //        _PPC
+//        _MIPS
 //
 //    NextImport
 //        Called (indirectly) from the code generator to inject automagically defined symbols.
@@ -1331,9 +1299,7 @@ static VOIDPTR NextImport( int index, aux_class request )
             break;
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle floating point support
-    -----------------------------------------------------------------------*/
+    /* handle floating-point support */
     case 2:
         name = "_fltused_";
         /* emit default library info OR -zlf emit all library info */
@@ -1345,9 +1311,7 @@ static VOIDPTR NextImport( int index, aux_class request )
         }
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle entry point arg passing
-    -----------------------------------------------------------------------*/
+    /* handle entry point arg passing */
     case 3:
         name = "_argc";
         /* does (w)main have any arguments (NOT int main(void)) */
@@ -1355,9 +1319,7 @@ static VOIDPTR NextImport( int index, aux_class request )
             break;
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    handle default windowing app
-    -----------------------------------------------------------------------*/
+    /* handle default windowing app */
     case 4:
         /* is target default windowing application? */
         name = "__init_default_win";
@@ -1365,23 +1327,17 @@ static VOIDPTR NextImport( int index, aux_class request )
             break;
         ++index;
 
-    /*-----------------------------------------------------------------------
-    //    unknown / fallthrough
-    -----------------------------------------------------------------------*/
+    /* unknown / fallthrough */
     default:
         index = 0;                              // indicate no more
         name = NULL;
         break;
     }
-    /*
-    //    return the import name, or
-    */
+    /* return the import name, or */
     if( request == IMPORT_NAME )
         return( name );
 
-    /*
-    //    return the index
-    */
+    /* return the index */
     return( (char *)index );
 }
 
@@ -1399,10 +1355,10 @@ static VOIDPTR NextImportS( int index, aux_class request )
 */
 VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 {
-    SYM_HANDLE            sym_handle = cgsym_handle;
-    struct aux_info *    inf;
-    auto SYM_ENTRY        sym;
-    static hw_reg_set    save_set;
+    SYM_HANDLE              sym_handle = cgsym_handle;
+    struct aux_info         *inf;
+    auto SYM_ENTRY          sym;
+    static hw_reg_set       save_set;
 
     switch( request ) {
     case SOURCE_LANGUAGE:
@@ -1438,11 +1394,11 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
     case TEMP_LOC_TELL:
         return( NULL );
     case NEXT_DEPENDENCY:                               /* 03-dec-92 */
-        return( NextDependency( (FNAMEPTR) cgsym_handle ) );
+        return( NextDependency( (FNAMEPTR)cgsym_handle ) );
     case DEPENDENCY_TIMESTAMP:
-        return( getFileDepTimeStamp( (FNAMEPTR) cgsym_handle ) );
+        return( getFileDepTimeStamp( (FNAMEPTR)cgsym_handle ) );
     case DEPENDENCY_NAME:
-        return( FNameFullPath( (FNAMEPTR) cgsym_handle ) );
+        return( FNameFullPath( (FNAMEPTR)cgsym_handle ) );
     default:
         break;
     }
@@ -1481,5 +1437,5 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 
 extern char *SrcFullPath( char *buff, char const *name, unsigned max )
 {
-    return _getFilenameFullPath( buff, name, max );
+    return( _getFilenameFullPath( buff, name, max ) );
 }

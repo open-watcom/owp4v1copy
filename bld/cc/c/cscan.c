@@ -65,7 +65,7 @@ static  int     SavedCurrChar;          // used when get tokens from macro
 unsigned char   ClassTable[260];
 
 extern  char    TokValue[];
-extern  unsigned short __FAR UniCode[];
+extern  unsigned short  UniCode[];
 
 
 unsigned char InitClassTable[] = {

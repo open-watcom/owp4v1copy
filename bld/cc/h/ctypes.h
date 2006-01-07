@@ -31,11 +31,7 @@
 
 #define ENUM_HANDLE     ENUMPTR
 
-#if defined( __386__ )
-    typedef char * SYM_NAMEPTR;
-#else
-    typedef char __FAR * SYM_NAMEPTR;
-#endif
+typedef char    *SYM_NAMEPTR;
 
 #include "cg.h"
 #include "cgaux.h"
@@ -325,7 +321,7 @@ extern  XREFPTR NewXref( XREFPTR );
 
 struct sym_hash_entry {   /* SYMBOL TABLE structure */
     union {
-        struct sym_hash_entry __FAR *next_sym;
+        struct sym_hash_entry   *next_sym;
         int     hash_index;         /* for pre-compiled header */
     };
     union {
@@ -342,8 +338,8 @@ struct sym_hash_entry {   /* SYMBOL TABLE structure */
     char            name[1];
 };
 
-typedef struct sym_hash_entry __FAR *SYM_HASHPTR;
-typedef struct expr_node            *TREEPTR;
+typedef struct sym_hash_entry   *SYM_HASHPTR;
+typedef struct expr_node        *TREEPTR;
 
 typedef struct symtab_entry {           /* SYMBOL TABLE structure */
     char                *name;

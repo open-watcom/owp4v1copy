@@ -68,9 +68,9 @@ local      void AddCallNode( TREEPTR tree );
 
 #define PTR_FLAGS  (FLAG_CONST | FLAG_VOLATILE | FLAG_UNALIGNED | FLAG_MEM_MODEL|FLAG_FAR16 | FLAG_BASED )
 
-       call_list  *CallNodeList;
-static call_list **LastCallLnk;
-static call_list **FirstCallLnk;
+        call_list   *CallNodeList;
+static  call_list   **LastCallLnk;
+static  call_list   **FirstCallLnk;
 
 void ExprInit( void )
 {
@@ -92,10 +92,8 @@ TREEPTR CallNode( TREEPTR func, TREEPTR parms, TYPEPTR func_result )
     tree->expr_type = func_result;
     tree->op.result_type = func_result;
     typ = func_result;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
-    if( typ->decl_type != TYPE_VOID && TypeSize(typ) == 0 ) {
+    SKIP_TYPEDEFS( typ );
+    if( typ->decl_type != TYPE_VOID && TypeSize( typ ) == 0 ) {
         CErr1( ERR_INCOMPLETE_EXPR_TYPE );
     }
     return( tree );
@@ -107,9 +105,7 @@ TYPEPTR Far16Type( TYPEPTR typ )
     TYPEPTR     typ2;
 
     typ2 = typ;
-    while( typ2->decl_type == TYPE_TYPEDEF ) {
-        typ2 = typ2->object;
-    }
+    SKIP_TYPEDEFS( typ2 );
     if( typ2->decl_type == TYPE_ENUM ) {
         typ2 = typ2->object;
     }
@@ -132,10 +128,8 @@ TREEPTR FarPtr16Cvt( TREEPTR newparm  )
     pointer_class   op1_class;
     pointer_class   op2_class;
 
-    parmtyp =  newparm->expr_type;
-    while( parmtyp->decl_type == TYPE_TYPEDEF ) {
-        parmtyp = parmtyp->object;
-    }
+    parmtyp = newparm->expr_type;
+    SKIP_TYPEDEFS( parmtyp );
     if( parmtyp->decl_type == TYPE_POINTER ) {
         op1_class = PTR_FAR16;
         op2_class = ExprTypeClass( newparm->expr_type );
@@ -466,9 +460,7 @@ local void IncSymWeight( SYMPTR sym )
 static bool IsStruct( TYPEPTR typ )
 /*********************************/
 {
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_STRUCT  ||
         typ->decl_type == TYPE_UNION ) {
             return( TRUE );
@@ -535,9 +527,7 @@ local TREEPTR TakeRValue( TREEPTR tree, int void_ok )
         }
     }
     typ = tree->expr_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_VOID ) {
         if( ! void_ok ) {
             CErr1( ERR_EXPR_HAS_VOID_TYPE );
@@ -591,7 +581,7 @@ local TREEPTR TakeRValue( TREEPTR tree, int void_ok )
         return( ErrorNode( tree ) );
     } else {
         if( SizeOfCount == 0 ) {                        /* 05-jan-89 */
-            if( tree->op.flags & OPFLAG_VOLATILE) {     /* 02-nov-91 */
+            if( tree->op.flags & OPFLAG_VOLATILE ) {    /* 02-nov-91 */
                 CompFlags.useful_side_effect = 1;
             }
         }
@@ -771,10 +761,8 @@ static TREEPTR FarPtrCvt( SYMPTR sym, SYM_HANDLE sym_handle )
     TYPEPTR         typ;
     TREEPTR         tree;
 
-    typ =  sym->sym_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    typ = sym->sym_type;
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_POINTER ) {
         if( typ->u.p.decl_flags & FLAG_FAR ) {
             tree = VarLeaf( sym, sym_handle );
@@ -799,9 +787,7 @@ static TREEPTR MakeFarOp( TREEPTR based_sym, TREEPTR tree )
     TYPEPTR     typ;
 
     typ = tree->expr_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     typ = PtrNode( typ->object, FLAG_FAR, 0 );
     tree = ExprNode( based_sym, OPR_FARPTR, tree );
     tree->expr_type = typ;
@@ -836,22 +822,16 @@ TREEPTR BasedPtrNode( TYPEPTR ptrtyp, TREEPTR tree )
         TYPEPTR     old;
 
         old = tree->expr_type;
-        while( old->decl_type == TYPE_TYPEDEF ) {
-            old = old->object;
-        }
+        SKIP_TYPEDEFS( old );
         sym = SymGetPtr( sym_handle );
         based_sym = VarLeaf( sym, sym_handle );
         based_sym->op.opr = OPR_PUSHSYM;
         typ = sym->sym_type;
-        while( typ->decl_type == TYPE_TYPEDEF ) {
-            typ = typ->object;
-        }
+        SKIP_TYPEDEFS( typ );
         if( typ->u.p.decl_flags & FLAG_BASED ) {
             based_sym  = BasedPtrNode( typ, based_sym );
             typ = based_sym->expr_type;
-            while( typ->decl_type == TYPE_TYPEDEF ) {
-                typ = typ->object;
-            }
+            SKIP_TYPEDEFS( typ );
         }
         old = PtrNode( old->object, typ->u.p.decl_flags, 0 );
         tree = ExprNode( based_sym, OPR_ADD, tree );
@@ -894,9 +874,7 @@ TREEPTR PtrOp( TREEPTR tree )
     if( tree->op.opr == OPR_ERROR )
         return( tree );
     typ = tree->expr_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type != TYPE_POINTER ) {
         CErr1( ERR_EXPR_MUST_BE_POINTER_TO );
         return( ErrorNode( tree ) );
@@ -910,7 +888,7 @@ TREEPTR PtrOp( TREEPTR tree )
     }
     tree = ExprNode( tree, OPR_POINTS, NULL );
     typ = typ->object;
-//  while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+//  SKIP_TYPEDEFS( typ );
     tree->expr_type = typ;
     tree->op.result_type = ptrtyp;
     tree->op.flags = OpFlags( flags );
@@ -936,9 +914,7 @@ FIELDPTR SearchFields( TYPEPTR *class_typ, unsigned long *field_offset,
     field = tag->u.field_list;
     while( field != NULL ) {
         typ = field->field_type;
-        while( typ->decl_type == TYPE_TYPEDEF ) {
-            typ = typ->object;
-        }
+        SKIP_TYPEDEFS( typ );
         if( field->name[0] == '\0' ) {  /* if nameless field: 15-sep-90 */
             if( typ->decl_type == TYPE_STRUCT  ||
                 typ->decl_type == TYPE_UNION ) {
@@ -967,9 +943,7 @@ local TYPEPTR Ptr2Struct( TYPEPTR typ )
         return( NULL );
     }
     typ = typ->object;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_STRUCT  ||
         typ->decl_type == TYPE_UNION ) {
             return( typ );
@@ -991,11 +965,10 @@ TREEPTR DotOp( TREEPTR tree )
         CErr1( ERR_EXPECTING_ID );
         return( ErrorNode( tree ) );
     }
-    if( tree->op.opr == OPR_ERROR )  return( tree );
+    if( tree->op.opr == OPR_ERROR )
+        return( tree );
     typ = tree->expr_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type != TYPE_STRUCT  &&
         typ->decl_type != TYPE_UNION ) {
         CErr1( ERR_MUST_BE_STRUCT_OR_UNION );
@@ -1088,9 +1061,7 @@ TREEPTR ArrowOp( TREEPTR tree )
     if( tree->op.opr == OPR_ERROR )
         return( tree );
     typ = tree->expr_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( Ptr2Struct( typ ) == NULL ) {
         CErr1( ERR_MUST_BE_PTR_TO_STRUCT_OR_UNION );
         return( ErrorNode( tree ) );
@@ -1105,9 +1076,7 @@ TREEPTR ArrowOp( TREEPTR tree )
         flags |= FLAG_FAR;
     }
     typ = typ->object;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     get_typ = typ;
     offset = 0;
     field = SearchFields( &get_typ, &offset, Buffer );
@@ -1578,9 +1547,7 @@ local TREEPTR ExprOpnd( void )
                 NextToken();
                 typ = TypeName();
                 if( typ != NULL ) {
-                    while( typ->decl_type == TYPE_TYPEDEF ) {
-                        typ = typ->object;
-                    }
+                    SKIP_TYPEDEFS( typ );
                     switch( typ->decl_type ) {
                     case TYPE_FLOAT:
                     case TYPE_DOUBLE:
@@ -1763,9 +1730,7 @@ local int LValueArray( TREEPTR tree )
         return( 1 );
     } else {
         typ = tree->expr_type;
-        while( typ->decl_type == TYPE_TYPEDEF ) {
-            typ = typ->object;
-        }
+        SKIP_TYPEDEFS( typ );
         if( typ->decl_type == TYPE_POINTER ) {
             return( 1 );
         }
@@ -1791,9 +1756,7 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
         return( ErrorNode( index_expr ) );
     }
     typ = tree->expr_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_ARRAY ) {
         tree_flags = tree->op.flags;  // get modifiers of array obj
     } else if( typ->decl_type == TYPE_POINTER ) {
@@ -1812,9 +1775,7 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
         CErr2p( ERR_FATAL_ERROR, "Bad array index tree" );
     }
     typ = typ->object;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     // Some crappy little optimization that probably does nothing
     if( index_expr->op.opr == OPR_PUSHINT  &&
         tree->expr_type->decl_type == TYPE_ARRAY ) {
@@ -1858,18 +1819,14 @@ local TREEPTR IndexOp( TREEPTR tree, TREEPTR index_expr )
     if( tree->op.opr == OPR_ERROR )
         return( tree );
     typ = tree->expr_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_ARRAY ) {
         tree = ArrayIndex( tree, index_expr );
     } else if( typ->decl_type == TYPE_POINTER ) {
         tree = GenIndex( RValue( tree ), index_expr );
     } else {                    /* try index[array] */
         typ = index_expr->expr_type;
-        while( typ->decl_type == TYPE_TYPEDEF ) {
-            typ = typ->object;
-        }
+        SKIP_TYPEDEFS( typ );
         if( typ->decl_type == TYPE_ARRAY ) {
             tree = ArrayIndex( index_expr, tree );
         } else if( typ->decl_type == TYPE_POINTER ) {
@@ -1995,9 +1952,7 @@ local TREEPTR GenNextParm( TREEPTR tree, TYPEPTR **plistptr )
             tree = ParmAss( tree, typ );
         } else if( typ->decl_type == TYPE_POINTER ) {   /* 17-nov-88 */
             typ2 = typ->object;
-            while( typ2->decl_type == TYPE_TYPEDEF ) {
-                typ2 = typ2->object;
-            }
+            SKIP_TYPEDEFS( typ );
             if( typ2->decl_type != TYPE_FUNCTION ) {
                 if( typ->u.p.decl_flags & FLAG_NEAR ) {
                     if( DataPtrSize == TARGET_FAR_POINTER ) {
@@ -2010,9 +1965,7 @@ local TREEPTR GenNextParm( TREEPTR tree, TYPEPTR **plistptr )
     }
     if( typ->decl_type == TYPE_POINTER )
         typ = typ->object;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_DOUBLE ||
         typ->decl_type == TYPE_FLOAT ) {
         CompFlags.float_used = 1;
@@ -2178,9 +2131,7 @@ local TREEPTR GenFuncCall( TREEPTR last_parm )
         sym_name = SymName( &sym, functree->op.sym_handle );
         flags = sym.attrib;
         typ = typ->object;
-        while( typ->decl_type == TYPE_TYPEDEF ) {
-            typ = typ->object;
-        }
+        SKIP_TYPEDEFS( typ );
         if( typ->decl_type == TYPE_DOUBLE ||    /* 20-apr-89 */
             typ->decl_type == TYPE_FLOAT ) {
             CompFlags.float_used = 1;
@@ -2263,7 +2214,7 @@ local TREEPTR GenFuncCall( TREEPTR last_parm )
                         }
                     }
                 }
-#if (_CPU == _AXP)  || (_CPU == _PPC) || (_CPU == _MIPS)
+#if (_CPU == _AXP) || (_CPU == _PPC) || (_CPU == _MIPS)
                 if( far_strcmp( sym_name, "__builtin_va_start", n ) == 0 ) {
                     tree = GenVaStartNode( last_parm );
                     goto done_call;
@@ -2351,16 +2302,12 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
     decl_flags = FLAG_NONE;
     typ = tree->expr_type;
     orig_typ = typ;
-    while( typ->decl_type == TYPE_TYPEDEF ) {
-        typ = typ->object;
-    }
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_POINTER ) {
         tree = PtrOp( RValue( tree ) );
         typ = tree->expr_type;
         orig_typ = typ;
-        while( typ->decl_type == TYPE_TYPEDEF ) {
-            typ = typ->object;
-        }
+        SKIP_TYPEDEFS( typ );
     }
     if( tree->op.opr == OPR_PUSHADDR ) {        /* direct call */
         tree->op.opr = OPR_FUNCNAME;            // change to funcname
@@ -2448,9 +2395,7 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
         }
 #endif
         typ = typ->object; //get return type
-        while( typ->decl_type == TYPE_TYPEDEF ) {
-            typ = typ->object;
-        }
+        SKIP_TYPEDEFS( typ );
         if( opr != OPR_CALL ) {
             tree = LeafNode( opr );
             tree->expr_type = GetType( TYPE_INT );
@@ -2612,22 +2557,22 @@ static TREEPTR TernOp( TREEPTR expr1, TREEPTR true_part, TREEPTR false_part )
     TREEPTR     tree;
     op_flags    ops;
 
-    if( true_part->op.opr == OPR_ERROR ) {      /* 14-sep-95 */
+    if( true_part->op.opr == OPR_ERROR ) {              /* 14-sep-95 */
         FreeExprTree( false_part );
         return( ErrorNode( expr1 ) );
     }
-    if( false_part->op.opr == OPR_ERROR ) {     /* 14-sep-95 */
+    if( false_part->op.opr == OPR_ERROR ) {             /* 14-sep-95 */
         FreeExprTree( true_part );
         return( ErrorNode( expr1 ) );
     }
     typ1 = true_part->expr_type;
     typ2 = false_part->expr_type;
     if( !IsStruct( typ1 ) ) {
-        true_part = VoidRValue( true_part );        /* 22-jul-91 */
+        true_part = VoidRValue( true_part );            /* 22-jul-91 */
         typ1 = true_part->expr_type;
     }
     if( !IsStruct( typ2 ) ) {
-        false_part = VoidRValue( false_part );        /* 22-jul-91 */
+        false_part = VoidRValue( false_part );          /* 22-jul-91 */
         typ2 = false_part->expr_type;
     }
     if( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ) {

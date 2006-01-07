@@ -31,18 +31,21 @@
 
 #include "cvars.h"
 
-#if defined( __UNIX__ )
-
-static char const *NextUsage( char const *p ) {
+static char const *NextUsage( char const *p )
+{
     while( *p ) {
         ++p;
     }
     return( p + 1 );
 }
 
-void CCusage()
+
+#if defined( __UNIX__ )
+
+void CCusage( void )
 {
-    char const *p;
+    char const  *p;
+
     p = UsageText();
     while( *p != '\0' ) {
         ConsMsg( p );
@@ -56,17 +59,9 @@ void CCusage()
 #include <unistd.h>
 
 
- #ifdef __OSI__
-   extern       char    *_Copyright;
- #endif
-
-
-static char const *NextUsage( char const *p ) {
-    while( *p ) {
-        ++p;
-    }
-    return( p + 1 );
-}
+#ifdef __OSI__
+    extern       char    *_Copyright;
+#endif
 
 
 local void Wait_for_return()
@@ -80,18 +75,18 @@ local void Wait_for_return()
 }
 
 
-void CCusage()
+void CCusage( void )
 {
-    char const  * p;
+    char const  *p;
     unsigned    count;
 
     count = 2;
-    #ifdef __OSI__
-        if( _Copyright != NULL ) {
-            ConsMsg( _Copyright );
-            count = 1;
-        }
-    #endif
+#ifdef __OSI__
+    if( _Copyright != NULL ) {
+        ConsMsg( _Copyright );
+        count = 1;
+    }
+#endif
     p = UsageText();
     while( *p != '\0' ) {
         if( ++count > 21 ) {

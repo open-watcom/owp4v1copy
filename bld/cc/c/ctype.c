@@ -782,7 +782,7 @@ local FIELDPTR NewField( FIELDPTR new_field, TYPEPTR decl )
     ++FieldCount;
     typ = new_field->field_type;
     if( typ != NULL ) {
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+        SKIP_TYPEDEFS( typ );
     }
     if( new_field->name[0] == '\0' ) {
         /* allow nameless structs and unions;  15-sep-90 */
@@ -846,7 +846,7 @@ local TYPEPTR EnumFieldType( TYPEPTR ftyp,
     if( plain_int ) {
         data_type = TYPE_INT;   /* default to signed bit fields */
     } else {
-        while( ftyp->decl_type == TYPE_TYPEDEF ) ftyp = ftyp->object;
+        SKIP_TYPEDEFS( ftyp );
         if( ftyp->decl_type == TYPE_ENUM ) {
             ftyp = ftyp->object;
         }
@@ -924,7 +924,7 @@ local unsigned long FieldAlign( unsigned long next_offset,
 
 local int UnQualifiedType( TYPEPTR typ )                        /* 21-mar-91 */
 {
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_ENUM ) {
         typ = typ->object;
     }
@@ -1279,7 +1279,7 @@ local TYPEPTR ComplexDecl( int decl_typ, int packed )
 
 local void CheckBitfieldType( TYPEPTR typ )
 {
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     if( CompFlags.extensions_enabled ) {
         if( typ->decl_type == TYPE_ENUM ) {
             typ = typ->object;
@@ -1515,7 +1515,7 @@ unsigned long TypeSizeEx( TYPEPTR typ , unsigned long * pFieldWidth)
     unsigned long size;
 
     if( typ == NULL ) return( 0 );                      /* 22-feb-90 */
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     switch( typ->decl_type ) {
     case TYPE_CHAR:
     case TYPE_UCHAR:

@@ -59,7 +59,6 @@ common_objs = &
     ctype.obj &
     cusage.obj &
     cutil.obj &
-    femore.obj &
     ftoa.obj &
     strsave.obj &
     swchar.obj &

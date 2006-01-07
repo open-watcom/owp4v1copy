@@ -35,72 +35,73 @@
 
 
 local unsigned long BitMask[] = {
-        0x00000001,
-        0x00000003,
-        0x00000007,
-        0x0000000F,
-        0x0000001F,
-        0x0000003F,
-        0x0000007F,
-        0x000000FF,
-        0x000001FF,
-        0x000003FF,
-        0x000007FF,
-        0x00000FFF,
-        0x00001FFF,
-        0x00003FFF,
-        0x00007FFF,
-        0x0000FFFF,
-        0x0001FFFF,
-        0x0003FFFF,
-        0x0007FFFF,
-        0x000FFFFF,
-        0x001FFFFF,
-        0x003FFFFF,
-        0x007FFFFF,
-        0x00FFFFFF,
-        0x01FFFFFF,
-        0x03FFFFFF,
-        0x07FFFFFF,
-        0x0FFFFFFF,
-        0x1FFFFFFF,
-        0x3FFFFFFF,
-        0x7FFFFFFF,
-        0xFFFFFFFF
+    0x00000001,
+    0x00000003,
+    0x00000007,
+    0x0000000F,
+    0x0000001F,
+    0x0000003F,
+    0x0000007F,
+    0x000000FF,
+    0x000001FF,
+    0x000003FF,
+    0x000007FF,
+    0x00000FFF,
+    0x00001FFF,
+    0x00003FFF,
+    0x00007FFF,
+    0x0000FFFF,
+    0x0001FFFF,
+    0x0003FFFF,
+    0x0007FFFF,
+    0x000FFFFF,
+    0x001FFFFF,
+    0x003FFFFF,
+    0x007FFFFF,
+    0x00FFFFFF,
+    0x01FFFFFF,
+    0x03FFFFFF,
+    0x07FFFFFF,
+    0x0FFFFFFF,
+    0x1FFFFFFF,
+    0x3FFFFFFF,
+    0x7FFFFFFF,
+    0xFFFFFFFF
  };
 
 /* use a double-linked list of dataquads to facilitate insertions */
 typedef struct data_quad_list {
-    DATA_QUAD dq;
-    unsigned long size;
-    struct data_quad_list *prev, *next;
+    DATA_QUAD               dq;
+    unsigned long           size;
+    struct data_quad_list   *prev, *next;
 } DATA_QUAD_LIST;
 
-#define DATA_QUAD_SEG_SIZE      (32*1024)
-#define DATA_QUADS_PER_SEG      (DATA_QUAD_SEG_SIZE/sizeof(DATA_QUAD_LIST))
+#define DATA_QUAD_SEG_SIZE      (32 * 1024)
+#define DATA_QUADS_PER_SEG      (DATA_QUAD_SEG_SIZE / sizeof( DATA_QUAD_LIST ))
 
-#define MAX_DATA_QUAD_SEGS (LARGEST_DATA_QUAD_INDEX/DATA_QUADS_PER_SEG + 1)
+#define MAX_DATA_QUAD_SEGS (LARGEST_DATA_QUAD_INDEX / DATA_QUADS_PER_SEG + 1)
 
 static DATA_QUAD_LIST  *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
 static DATA_QUAD_LIST  *CurDataQuad;
 static int             DataQuadSegIndex;
 static int             DataQuadIndex;
 
-local DATA_QUAD_LIST *NewDataQuad( void );
-local int CharArray( TYPEPTR typ );
-local int WCharArray( TYPEPTR typ );
-local void InitCharArray( TYPEPTR typ );
-local void InitWCharArray( TYPEPTR typ );
-local void StoreFloat( int float_type, unsigned long size );
-local void StoreInt64( TYPEPTR typ );
+local   DATA_QUAD_LIST  *NewDataQuad( void );
+local   int             CharArray( TYPEPTR typ );
+local   int             WCharArray( TYPEPTR typ );
+local   void            InitCharArray( TYPEPTR typ );
+local   void            InitWCharArray( TYPEPTR typ );
+local   void            StoreFloat( int float_type, unsigned long size );
+local   void            StoreInt64( TYPEPTR typ );
 
 int DataQuadsAvailable( void )
 {
-    DATA_QUAD_LIST *dql = DataQuadSegs[ 0 ];
+    DATA_QUAD_LIST  *dql = DataQuadSegs[ 0 ];
+
     return( dql != NULL && dql->next != NULL );
 }
 
-void InitDataQuads()
+void InitDataQuads( void )
 {
     DataQuadIndex = DATA_QUADS_PER_SEG;
     DataQuadSegIndex = -1;
@@ -112,7 +113,7 @@ void InitDataQuads()
     CurDataQuad->size = 0;
 }
 
-void FreeDataQuads()
+void FreeDataQuads( void )
 {
     unsigned    i;
 
@@ -123,7 +124,7 @@ void FreeDataQuads()
     InitDataQuads();
 }
 
-int StartDataQuadAccess()
+int StartDataQuadAccess( void )
 {
     if( DataQuadsAvailable() ) {
         CurDataQuad = DataQuadSegs[ 0 ]->next;
@@ -132,12 +133,12 @@ int StartDataQuadAccess()
     return( 0 );                        // indicate no data quads
 }
 
-DATA_QUAD *NextDataQuad()
+DATA_QUAD *NextDataQuad( void )
 {
     DATA_QUAD   *dq_ptr;
 
     if( CurDataQuad == NULL )
-        return NULL;
+        return( NULL );
     dq_ptr = &CurDataQuad->dq;
     CurDataQuad = CurDataQuad->next;
     return( dq_ptr );
@@ -145,10 +146,10 @@ DATA_QUAD *NextDataQuad()
 
 local DATA_QUAD_LIST *NewDataQuad( void )
 {
-    static DATA_QUAD_LIST  *DataQuadPtr;
-    DATA_QUAD_LIST         *dql;
+    static DATA_QUAD_LIST   *DataQuadPtr;
+    DATA_QUAD_LIST          *dql;
 
-    if( DataQuadIndex >= (DATA_QUADS_PER_SEG-1) ) {
+    if( DataQuadIndex >= (DATA_QUADS_PER_SEG - 1) ) {
         if( DataQuadSegIndex == MAX_DATA_QUAD_SEGS ) {
             CErr1( ERR_INTERNAL_LIMIT_EXCEEDED );
             CSuicide();
@@ -168,10 +169,10 @@ local DATA_QUAD_LIST *NewDataQuad( void )
    will have size "size" and the new one "oldsize - size" */
 local void SplitDataQuad( DATA_QUAD_LIST *dql, unsigned long size )
 {
-    DATA_QUAD_LIST *ndql;
-    DATA_QUAD      *ndq;
-    DATA_QUAD      *dq;
-    unsigned long  oldsize;
+    DATA_QUAD_LIST  *ndql;
+    DATA_QUAD       *ndq;
+    DATA_QUAD       *dq;
+    unsigned long   oldsize;
 
     ndql = NewDataQuad();
     ndql->next = dql->next;
@@ -223,8 +224,8 @@ local void DeleteDataQuad( DATA_QUAD_LIST *dql )
 
 local void GenDataQuad( DATA_QUAD *dq, unsigned long size )
 {
-    DATA_QUAD_LIST *dql;
-    unsigned long  cursize;
+    DATA_QUAD_LIST  *dql;
+    unsigned long   cursize;
 
     dql = CurDataQuad->next;
     if( dql != NULL ) {
@@ -255,7 +256,7 @@ local void GenDataQuad( DATA_QUAD *dq, unsigned long size )
 
 local void ZeroBytes( long n )
 {
-    auto DATA_QUAD dq;
+    DATA_QUAD   dq;
 
     if( n == 0 ) return;
     dq.opr = T_CONSTANT;
@@ -267,7 +268,7 @@ local void ZeroBytes( long n )
 
 local void RelSeekBytes( long n )
 {
-    DATA_QUAD_LIST *dql;
+    DATA_QUAD_LIST  *dql;
 
     dql = CurDataQuad;
     while( n < 0 && n <= -(long)dql->size ) {
@@ -283,7 +284,7 @@ local void RelSeekBytes( long n )
         SplitDataQuad( dql, dql->size + n );
     }
     CurDataQuad = dql;
-    if ( n > 0 ) {
+    if( n > 0 ) {
         /* dql->next == NULL */
         ZeroBytes( n );
     }
@@ -301,10 +302,10 @@ local void ChkConstant( unsigned long value, unsigned long max_value )
 local void StoreIValue( TOKEN int_type, unsigned long value,
                         unsigned long size )
 {
-    static DATA_QUAD_LIST *LastCurDataQuad;
-    DATA_QUAD_LIST      *dql;
-    DATA_QUAD           *dq_ptr;
-    auto DATA_QUAD      dq;
+    static DATA_QUAD_LIST   *LastCurDataQuad;
+    DATA_QUAD_LIST          *dql;
+    DATA_QUAD               *dq_ptr;
+    DATA_QUAD               dq;
 
     dq.flags = 0;
     dq.opr = 0;
@@ -349,7 +350,7 @@ local void StoreIValue( TOKEN int_type, unsigned long value,
 local void StoreIValue64( uint64 value )
 {
     DATA_QUAD           *dq_ptr;
-    auto DATA_QUAD      dq;
+    DATA_QUAD           dq;
 
     dq.opr = T___INT64;
     dq.flags = Q_DATA;
@@ -389,17 +390,16 @@ local void AddrFold( TREEPTR tree, addrfold_info *info )
         if( tree->op.float_value->len != 0 ) {
             info->offset = (long)atof( tree->op.float_value->string );
         } else {
-        #ifdef _LONG_DOUBLE_
+#ifdef _LONG_DOUBLE_
             long_double ld;
             double d;
 
             ld = tree->op.float_value->ld;
-            __LDFD( (long_double near *)&ld,
-                   (double near *)&d );
+            __LDFD( (long_double near *)&ld, (double near *)&d );
             info->offset = (long)d;
-        #else
+#else
             info->offset = (long)tree->op.float_value->ld.value;
-        #endif
+#endif
         }
         if( info->offset != 0 ) CompFlags.non_zero_data = 1;
         break;
@@ -520,7 +520,7 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type, unsigned long size )
     TREEPTR             tree;
     TYPEPTR             typ2;
     int                 address_wanted;
-    auto DATA_QUAD      dq;
+    DATA_QUAD           dq;
     addrfold_info       info;
 
     dq.flags = Q_DATA;
@@ -536,7 +536,7 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type, unsigned long size )
             flags = FLAG_NONE;
         } else {
             typ2 = typ->object;
-            while( typ2->decl_type == TYPE_TYPEDEF ) typ2 = typ2->object;
+            SKIP_TYPEDEFS( typ2 );
             if( typ2->decl_type == TYPE_FUNCTION ) {
                 dq.flags |= Q_CODE_POINTER;
             } else if( TypeSize( typ ) == TARGET_FAR_POINTER ) {
@@ -607,7 +607,7 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type, unsigned long size )
 local void StoreInt64( TYPEPTR typ )
 {
     TREEPTR     tree;
-    auto DATA_QUAD dq;
+    DATA_QUAD   dq;
 
     dq.opr = T___INT64;
     dq.flags = Q_DATA;
@@ -729,7 +729,7 @@ local void *DesignatedInit( TYPEPTR typ, TYPEPTR ctyp, void *field )
 
     new_field = 0;
     if( typ->decl_type == TYPE_ARRAY ) {
-        if ( CurToken != T_LEFT_BRACKET )
+        if( CurToken != T_LEFT_BRACKET )
             return( NULL );
         NextToken();
         tree = SingleExpr();
@@ -742,15 +742,15 @@ local void *DesignatedInit( TYPEPTR typ, TYPEPTR ctyp, void *field )
         FreeExprTree( tree );
         MustRecog( T_RIGHT_BRACKET );
     } else {
-        if ( CurToken != T_DOT )
+        if( CurToken != T_DOT )
             return( NULL );
         NextToken();
-        if ( CurToken != T_ID ) {
+        if( CurToken != T_ID ) {
             CErr1( ERR_EXPECTING_ID );
         }
         offs = 0;
         field = SearchFields( &typ, &offs, Buffer );
-        if ( field == NULL ) {
+        if( field == NULL ) {
             CErr( ERR_NAME_NOT_FOUND_IN_STRUCT, Buffer, typ->u.tag->name );
         }
         NextToken();
@@ -784,7 +784,7 @@ local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
 {
     unsigned long       n;
     unsigned long       m;
-    unsigned long      *pm;
+    unsigned long       *pm;
     unsigned long       array_size;
     unsigned long       elem_size;
 
@@ -858,8 +858,10 @@ local void InitStructUnion( TYPEPTR typ, TYPEPTR ctyp, FIELDPTR field )
             InitSymData( ftyp, ctyp, 1 );
             field = field->next_field;
         }
-        if ( typ->decl_type == TYPE_UNION ) {
-            if( offset != n ) ZeroBytes( n - offset );/* pad the rest */
+        if( typ->decl_type == TYPE_UNION ) {
+            if( offset != n ) {
+                ZeroBytes( n - offset );    /* pad the rest */
+            }
             offset = n;
             /* designated initializers may still override this field */
             field = NULL;
@@ -886,10 +888,10 @@ local void InitUnion( TYPEPTR typ, TYPEPTR ctyp )
     TYPEPTR             ftyp;
 
     field = typ->u.tag->u.field_list;
-    for(;;) {                           // skip unnamed bit fields
+    for( ;; ) {                             // skip unnamed bit fields
         if( field == NULL ) break;              // 12-nov-94
         ftyp = field->field_type;
-        while( ftyp->decl_type == TYPE_TYPEDEF ) ftyp = ftyp->object;
+        SKIP_TYPEDEFS( ftyp );
         if( field->name[0] != '\0' ) break;
         if( ftyp->decl_type == TYPE_STRUCT ) break;      /* 03-feb-95 */
         if( ftyp->decl_type == TYPE_UNION ) break;
@@ -903,7 +905,7 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
     int                 token;
     unsigned long       size;
 
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_ENUM ) typ = typ->object;        /* 07-nov-90 */
     token = CurToken;
     if( CurToken == T_LEFT_BRACE ) {
@@ -927,7 +929,7 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
             }
             if( typ == ctyp ) { /* initialize new current type */
                 /* first zero out the whole array; otherwise
-                   overlapping fields caused by designated 
+                   overlapping fields caused by designated
                    initializers will make life very difficult */
                 ZeroBytes( size );
                 RelSeekBytes( -size );
@@ -1030,7 +1032,7 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
 local int CharArray( TYPEPTR typ )
 {
     if( CurToken == T_STRING ) {
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+        SKIP_TYPEDEFS( typ );
         if( typ->decl_type == TYPE_CHAR || typ->decl_type == TYPE_UCHAR ) {
             return( TRUE );
         }
@@ -1042,7 +1044,7 @@ local int CharArray( TYPEPTR typ )
 local int WCharArray( TYPEPTR typ )
 {
     if( CurToken == T_STRING ) {
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+        SKIP_TYPEDEFS( typ );
         if( typ->decl_type == TYPE_SHORT || typ->decl_type == TYPE_USHORT ) {
             return( 1 );
         }
@@ -1055,7 +1057,7 @@ local void InitCharArray( TYPEPTR typ )
     unsigned            len;
     STRING_LITERAL      *str_lit;
     unsigned long       size;
-    auto DATA_QUAD      dq;
+    DATA_QUAD           dq;
 
 /*      This function handles the initialization of statements like:  */
 /*              char  name[4] = "abcd";  */
@@ -1080,9 +1082,9 @@ local void InitCharArray( TYPEPTR typ )
         ZeroBytes( size - len );
     }
     CompFlags.non_zero_data = 1;
- }
+}
 
-//
+
 local void InitWCharArray( TYPEPTR typ )
 {
     unsigned            len;
@@ -1091,7 +1093,7 @@ local void InitWCharArray( TYPEPTR typ )
     unsigned            value;
     unsigned short      *pwc;
     unsigned long       size;
-    auto DATA_QUAD      dq;
+    DATA_QUAD           dq;
 
     dq.opr = T_SHORT;
     dq.flags = Q_DATA;
@@ -1132,7 +1134,7 @@ local void InitWCharArray( TYPEPTR typ )
 local void StoreFloat( int float_type, unsigned long size )
 {
     TREEPTR     tree;
-    auto DATA_QUAD dq;
+    DATA_QUAD   dq;
 
     dq.opr = float_type;
     dq.flags = Q_DATA;
@@ -1151,15 +1153,14 @@ local void StoreFloat( int float_type, unsigned long size )
             if( tree->op.float_value->len != 0 ) {
                 dq.u.double_value = atof( tree->op.float_value->string );
             } else {
-                #ifdef _LONG_DOUBLE_
-                    long_double ld;
+#ifdef _LONG_DOUBLE_
+                long_double ld;
 
-                    ld = tree->op.float_value->ld;
-                    __LDFD( (long_double near *)&ld,
-                            (double near *)&dq.u.double_value );
-                #else
-                    dq.u.double_value = tree->op.float_value->ld.value;
-                #endif
+                ld = tree->op.float_value->ld;
+                __LDFD( (long_double near *)&ld, (double near *)&dq.u.double_value );
+#else
+                dq.u.double_value = tree->op.float_value->ld.value;
+#endif
             }
             break;
         default:
@@ -1174,7 +1175,7 @@ local void StoreFloat( int float_type, unsigned long size )
 
 local void GenStaticDataQuad( SYM_HANDLE sym_handle )
 {
-    auto DATA_QUAD      dq;
+    DATA_QUAD       dq;
 
     dq.opr = T_STATIC;
     dq.flags = Q_DATA;
@@ -1195,8 +1196,8 @@ void StaticInit( SYMPTR sym, SYM_HANDLE sym_handle )
     last_array = NULL;
     typ = sym->sym_type;
     /* Follow chain of typedefs/structs/arrays */
-    for(;;) {
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    for( ;; ) {
+        SKIP_TYPEDEFS( typ );
         if( typ->decl_type == TYPE_ARRAY ) {
             /* Remember innermost array type */
             last_array = typ;
@@ -1232,8 +1233,8 @@ void StaticInit( SYMPTR sym, SYM_HANDLE sym_handle )
             sym->sym_type->u.tag = struct_typ->u.tag;
             struct_typ = sym->sym_type;
             /* Create new array types as necessary */
-            for(;;) {
-                while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+            for( ;; ) {
+                SKIP_TYPEDEFS( typ );
                 if( typ->decl_type != TYPE_ARRAY )  break;
                 sym->sym_type = ArrayNode( sym->sym_type );
                 sym->sym_type->u.array->unspecified_dim = TRUE;
@@ -1246,8 +1247,8 @@ void StaticInit( SYMPTR sym, SYM_HANDLE sym_handle )
     }
     SymReplace( sym, sym_handle );              /* 31-aug-88 */
     InitSymData( sym->sym_type, sym->sym_type, 0 );
-    SymGet( sym, sym_handle );          /* 31-aug-88 */
-    if( struct_typ != NULL ) {          /* 17-mar-92 */
+    SymGet( sym, sym_handle );                  /* 31-aug-88 */
+    if( struct_typ != NULL ) {                  /* 17-mar-92 */
         /* Structure contains an unspecified length array as last field */
         struct_typ->object->u.array->dimension = typ->u.array->dimension;
         typ->u.array->unspecified_dim = TRUE;
@@ -1282,8 +1283,7 @@ local void AggregateVarDeclEquals( SYMPTR sym, SYM_HANDLE sym_handle )
     StaticInit( &sym2, sym2_handle );
     CompFlags.initializing_data = 0;
     SymReplace( &sym2, sym2_handle );
-    /* StaticInit will change sym2.sym_type if it is an
-        incomplete array type */
+    /* StaticInit will change sym2.sym_type if it is an incomplete array type */
     sym->sym_type = sym2.sym_type;
     AssignAggregate( VarLeaf( sym, sym_handle ),
                      VarLeaf( &sym2, sym2_handle ), sym->sym_type );
@@ -1301,7 +1301,7 @@ local void InitStructVar( unsigned base, SYMPTR sym, SYM_HANDLE sym_handle, TYPE
         token = CurToken;
         if( token == T_LEFT_BRACE )  NextToken();  //allow {}, and extra {expr}..}
         typ2 = field->field_type;
-        while( typ2->decl_type == TYPE_TYPEDEF ) typ2 = typ2->object;
+        SKIP_TYPEDEFS( typ2 );
         if( CurToken == T_RIGHT_BRACE ) {
             value = IntLeaf( 0 );
         } else {
@@ -1313,16 +1313,16 @@ local void InitStructVar( unsigned base, SYMPTR sym, SYM_HANDLE sym_handle, TYPE
 
             ufield = typ2->u.tag->u.field_list;
             typ2 = ufield->field_type;
-            while( typ2->decl_type == TYPE_TYPEDEF ) typ2 = typ2->object;
+            SKIP_TYPEDEFS( typ2 );
         }
-        opnd = ExprNode( opnd, OPR_DOT, UIntLeaf( base+field->offset ) );
+        opnd = ExprNode( opnd, OPR_DOT, UIntLeaf( base + field->offset ) );
         opnd->expr_type = typ2;
         opnd->op.result_type = typ2;
         AddStmt( AsgnOp( opnd, T_ASSIGN_LAST, value ) );
         if( token == T_LEFT_BRACE )  MustRecog( T_RIGHT_BRACE );
         if( CurToken == T_EOF ) break;
         field = field->next_field;
-        if( field == NULL )break;
+        if( field == NULL ) break;
         if( CurToken != T_RIGHT_BRACE ) {
             MustRecog( T_COMMA );
         }
@@ -1335,7 +1335,7 @@ static int SimpleUnion( TYPEPTR typ )
 
     field = typ->u.tag->u.field_list;
     typ = field->field_type;
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     switch( typ->decl_type ) {
     case TYPE_ARRAY:
     case TYPE_STRUCT:
@@ -1358,7 +1358,7 @@ static int SimpleStruct( TYPEPTR typ )
     }
     for( field = typ->u.tag->u.field_list; field; ) {
         typ = field->field_type;
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+        SKIP_TYPEDEFS( typ );
 
         switch( typ->decl_type ) {
         case TYPE_UNION:
@@ -1379,7 +1379,7 @@ static int SimpleStruct( TYPEPTR typ )
 }
 
 
-local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
+local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ )
 {
     unsigned    i;
     unsigned    n;
@@ -1391,7 +1391,7 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
     int         token;
 
     typ2 = typ->object;
-    while( typ2->decl_type == TYPE_TYPEDEF ) typ2 = typ2->object;
+    SKIP_TYPEDEFS( typ2 );
     switch( typ2->decl_type ) {
     case TYPE_CHAR:
     case TYPE_UCHAR:
@@ -1431,7 +1431,7 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
             if( sym2.u.var.segment == 0 ) {             /* 01-dec-91 */
                 SetFarHuge( &sym2, 0 );
                 SetSegment( &sym2 );
-                SetSegAlign( &sym2 );                     /* 02-feb-92 */
+                SetSegAlign( &sym2 );                   /* 02-feb-92 */
             }
             SymReplace( &sym2, sym2_handle );
             GenStaticDataQuad( sym2_handle );
@@ -1441,7 +1441,7 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
         } else {
             n = typ->u.array->dimension;
             i = 0;
-            for(;;) {   // accept some c++ { {1},.. }
+            for( ;; ) {     // accept some C++ { {1},.. }
                 token = CurToken;
                 if( token == T_LEFT_BRACE )  NextToken();
                 opnd = VarLeaf( sym, sym_handle );
@@ -1482,24 +1482,28 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
     case TYPE_STRUCT:
     case TYPE_UNION:
         if( SimpleStruct( typ2 ) ) {
-            unsigned base;
-            unsigned size;
+            unsigned    base;
+            unsigned    size;
 
             NextToken();                    // skip over T_LEFT_BRACE
             n = typ->u.array->dimension;
             i = 0;
             base = 0;
             size = SizeOfArg( typ2 );
-            for(;;) {
+            for( ;; ) {
                 token = CurToken;
-                if( token == T_LEFT_BRACE )  NextToken();
+                if( token == T_LEFT_BRACE ) {
+                    NextToken();
+                }
                 InitStructVar( base, sym, sym_handle, typ2 );
-                if( token == T_LEFT_BRACE )  MustRecog( T_RIGHT_BRACE );
+                if( token == T_LEFT_BRACE ) {
+                    MustRecog( T_RIGHT_BRACE );
+                }
                 ++i;
                 if( CurToken == T_EOF ) break;
-                if( CurToken == T_RIGHT_BRACE )break;
+                if( CurToken == T_RIGHT_BRACE ) break;
                 MustRecog( T_COMMA );
-                if( CurToken == T_RIGHT_BRACE )break;
+                if( CurToken == T_RIGHT_BRACE ) break;
                 if( i == n ) {
                     CErr1( ERR_TOO_MANY_INITS );
                }
@@ -1537,10 +1541,10 @@ void VarDeclEquals( SYMPTR sym, SYM_HANDLE sym_handle )
         CompFlags.initializing_data = 0;
     } else {
         SymReplace( sym, sym_handle );          /* 31-aug-88 */
-        SrcLineNum = TokenLine;         /* 15-mar-88 */
+        SrcLineNum = TokenLine;                 /* 15-mar-88 */
         SrcFno   = TokenFno;
         typ = sym->sym_type;
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+        SKIP_TYPEDEFS( typ );
         /* 07-jun-89  check for { before checking for array,struct
            or union  */
         if( CurToken != T_LEFT_BRACE  &&

@@ -24,18 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  asm statement processing
+* Description:  Inline assembler statement processing.
 *
 ****************************************************************************/
+
 
 #include "cvars.h"
 #include "pragdefn.h"
 #include "asmstmt.h"
 
 #if _INTEL_CPU
-#include "asminlin.h"
+    #include "asminlin.h"
 #else
-#include "asinline.h"
+    #include "asinline.h"
 #endif
 
 static int EndOfAsmStmt( void )
@@ -69,7 +70,7 @@ static void GetAsmLine( void )
     int         AsmLineNo;
     enum TOKEN  LastToken = T_DOT;
     char        buf[256] = { '\0' };
-   
+
     CompFlags.pre_processing = 1;
     AsmLineNo = TokenLine;
     if( strcmp( Buffer, "_emit" ) == 0 ) {
@@ -98,7 +99,7 @@ void AsmStmt( void )
 /******************/
 {
     int                 too_many_bytes;
-    auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
+    unsigned char       buff[ MAXIMUM_BYTESEQ + 32 ];
     enum TOKEN          skip_token;
 
     // indicate that we are inside an __asm statement so scanner will
@@ -110,7 +111,7 @@ void AsmStmt( void )
     too_many_bytes = 0;
     if( CurToken == T_LEFT_BRACE ) {
         NextToken();
-        for(;;) {               // grab assembler lines
+        for( ;; ) {             // grab assembler lines
             GetAsmLine();
             if( AsmCodeAddress > MAXIMUM_BYTESEQ ) {
                 if( ! too_many_bytes ) {

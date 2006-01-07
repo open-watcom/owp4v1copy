@@ -87,7 +87,7 @@ void PragmaInit( void )
     HeadLibs = NULL;
 
     PragmaAuxCallInfoInit( WatcallInfo.cclass & FAR, CompFlags.use_stdcall_at_number );
-    
+
 #if _CPU == 386
     HW_CTurnOff( AsmRegsSaved, HW_EAX );
     HW_CTurnOff( AsmRegsSaved, HW_EBX );
@@ -123,7 +123,7 @@ static int GetAliasInfo( void )
 /*****************************/
 {
     int         isfar16;
-    auto char   buff[256];
+    char        buff[256];
 
     CurrAlias = &DefaultInfo;
     if( CurToken != T_LEFT_PAREN ) return( 1 );
@@ -161,14 +161,14 @@ void PragAux( void )
 /******************/
 {
     struct {
-        unsigned f_call   : 1;
-        unsigned f_loadds : 1;
-        unsigned f_export : 1;
-        unsigned f_parm   : 1;
-        unsigned f_value  : 1;
-        unsigned f_modify : 1;
-        unsigned f_frame  : 1;
-        unsigned uses_auto: 1;
+        unsigned    f_call   : 1;
+        unsigned    f_loadds : 1;
+        unsigned    f_export : 1;
+        unsigned    f_parm   : 1;
+        unsigned    f_value  : 1;
+        unsigned    f_modify : 1;
+        unsigned    f_frame  : 1;
+        unsigned    uses_auto: 1;
     } have;
 
     if( !GetAliasInfo() ) return;
@@ -233,11 +233,11 @@ void PragAux( void )
 }
 
 typedef enum {
-        FIXWORD_NONE,
-        FIXWORD_FLOAT,
-        FIXWORD_SEGMENT,
-        FIXWORD_OFFSET,
-        FIXWORD_RELOFF
+    FIXWORD_NONE,
+    FIXWORD_FLOAT,
+    FIXWORD_SEGMENT,
+    FIXWORD_OFFSET,
+    FIXWORD_RELOFF
 } fix_words;
 
 local fix_words FixupKeyword( void )
@@ -257,8 +257,8 @@ local fix_words FixupKeyword( void )
 enum sym_state AsmQueryExternal( char *name )
 /*******************************************/
 {
-    SYM_HANDLE sym_handle;
-    auto SYM_ENTRY sym;
+    SYM_HANDLE  sym_handle;
+    SYM_ENTRY   sym;
 
     sym_handle = SymLook( CalcHash( name, strlen( name ) ), name );
     if( sym_handle == 0 ) return( SYM_UNDEFINED );
@@ -303,7 +303,8 @@ static int AsmCodePtrType( type_modifiers flags )
 static int AsmPtrType( TYPEPTR typ, type_modifiers flags )
 /********************************************************/
 {
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_FUNCTION ) {
         return( AsmCodePtrType( flags ) );
     } else if( flags & (FLAG_FAR|FLAG_HUGE) ) {
@@ -319,45 +320,45 @@ static int AsmPtrType( TYPEPTR typ, type_modifiers flags )
 
 /* matches enum DataType in ctypes.h */
 static enum sym_type AsmDataType[TYPE_LAST_ENTRY] = {
-        SYM_INT1,       /* TYPE_CHAR,*/
-        SYM_INT1,       /* TYPE_UCHAR,*/
-        SYM_INT2,       /* TYPE_SHORT,*/
-        SYM_INT2,       /* TYPE_USHORT,*/
-        SYM_INT,        /* TYPE_INT,*/
-        SYM_INT,        /* TYPE_UINT,*/
-        SYM_INT4,       /* TYPE_LONG,*/
-        SYM_INT4,       /* TYPE_ULONG,*/
-        SYM_INT8,       /* TYPE_LONG64,*/
-        SYM_INT8,       /* TYPE_ULONG64,*/
-        SYM_FLOAT4,     /* TYPE_FLOAT,*/
-        SYM_FLOAT8,     /* TYPE_DOUBLE,*/
-        0,              /* TYPE_POINTER,*/
-        0,              /* TYPE_ARRAY,*/
-        0,              /* TYPE_STRUCT,*/
-        0,              /* TYPE_UNION,*/
-        0,              /* TYPE_FUNCTION,*/
-        0,              /* TYPE_FIELD,*/
-        SYM_INT1,       /* TYPE_VOID,*/
-        0,              /* TYPE_ENUM,*/
-        0,              /* TYPE_TYPEDEF,*/
-        0,              /* TYPE_UFIELD,*/
-        0,              /* TYPE_DOT_DOT_DOT,*/
-        SYM_INT1,       /* TYPE_PLAIN_CHAR,*/
-        SYM_INT2,       /* TYPE_WCHAR,  */
-        SYM_FLOAT10,    /* TYPE_LONG_DOUBLE */
-        0,              /* TYPE_FCOMPLEX, */
-        0,              /* TYPE_DCOMPLEX, */
-        0,              /* TYPE_LDCOMPLEX, */
-        SYM_FLOAT4,     /* TYPE_FIMAGINARY, */
-        SYM_FLOAT8,     /* TYPE_DIMAGINARY, */
-        SYM_FLOAT10,    /* TYPE_LDIMAGINARY, */
-        SYM_INT1,       /* TYPE_BOOL, */
+    SYM_INT1,       /* TYPE_CHAR,*/
+    SYM_INT1,       /* TYPE_UCHAR,*/
+    SYM_INT2,       /* TYPE_SHORT,*/
+    SYM_INT2,       /* TYPE_USHORT,*/
+    SYM_INT,        /* TYPE_INT,*/
+    SYM_INT,        /* TYPE_UINT,*/
+    SYM_INT4,       /* TYPE_LONG,*/
+    SYM_INT4,       /* TYPE_ULONG,*/
+    SYM_INT8,       /* TYPE_LONG64,*/
+    SYM_INT8,       /* TYPE_ULONG64,*/
+    SYM_FLOAT4,     /* TYPE_FLOAT,*/
+    SYM_FLOAT8,     /* TYPE_DOUBLE,*/
+    0,              /* TYPE_POINTER,*/
+    0,              /* TYPE_ARRAY,*/
+    0,              /* TYPE_STRUCT,*/
+    0,              /* TYPE_UNION,*/
+    0,              /* TYPE_FUNCTION,*/
+    0,              /* TYPE_FIELD,*/
+    SYM_INT1,       /* TYPE_VOID,*/
+    0,              /* TYPE_ENUM,*/
+    0,              /* TYPE_TYPEDEF,*/
+    0,              /* TYPE_UFIELD,*/
+    0,              /* TYPE_DOT_DOT_DOT,*/
+    SYM_INT1,       /* TYPE_PLAIN_CHAR,*/
+    SYM_INT2,       /* TYPE_WCHAR,  */
+    SYM_FLOAT10,    /* TYPE_LONG_DOUBLE */
+    0,              /* TYPE_FCOMPLEX, */
+    0,              /* TYPE_DCOMPLEX, */
+    0,              /* TYPE_LDCOMPLEX, */
+    SYM_FLOAT4,     /* TYPE_FIMAGINARY, */
+    SYM_FLOAT8,     /* TYPE_DIMAGINARY, */
+    SYM_FLOAT10,    /* TYPE_LDIMAGINARY, */
+    SYM_INT1,       /* TYPE_BOOL, */
 };
 
 local int AsmType( TYPEPTR typ, type_modifiers flags )
 /****************************************************/
 {
-    while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     switch( typ->decl_type ) {
     case TYPE_STRUCT:
     case TYPE_UNION:
@@ -382,8 +383,8 @@ local int AsmType( TYPEPTR typ, type_modifiers flags )
 enum sym_type AsmQueryType( char *name )
 /**************************************/
 {
-    SYM_HANDLE sym_handle;
-    auto SYM_ENTRY sym;
+    SYM_HANDLE  sym_handle;
+    SYM_ENTRY   sym;
 
     sym_handle = SymLook( CalcHash( name, strlen( name ) ), name );
     if( sym_handle == 0 ) return( SYM_INT1 );
@@ -395,7 +396,7 @@ static int InsertFixups( unsigned char *buff, unsigned i )
 /********************************************************/
 {
                         /* additional slop in buffer to simplify the code */
-    unsigned char       temp[ MAXIMUM_BYTESEQ + 1 + 2*sizeof(long) ];
+    unsigned char       temp[ MAXIMUM_BYTESEQ + 1 + 2 * sizeof( long ) ];
     struct asmfixup     *fix;
     struct asmfixup     *head;
     struct asmfixup     *chk;
@@ -577,7 +578,7 @@ static int InsertFixups( unsigned char *buff, unsigned i )
         i = dst - temp;
         perform_fixups = DO_FLOATING_FIXUPS;
     }
-    seq = (byte_seq *) CMemAlloc( sizeof(byte_seq) + i );
+    seq = (byte_seq *)CMemAlloc( sizeof( byte_seq ) + i );
     seq->length = i | perform_fixups;
     memcpy( &seq->data[0], buff, i );
     CurrInfo->code = seq;
@@ -605,7 +606,7 @@ local void FreeAsmFixups( void )
 {
     struct asmfixup     *fix;
 
-    for(;;) {
+    for( ;; ) {
         fix = FixupHead;
         if( fix == NULL ) break;
         FixupHead = fix->next;
@@ -617,7 +618,7 @@ local void FreeAsmFixups( void )
 local int GetByteSeq( void )
 /**************************/
 {
-    auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
+    unsigned char       buff[ MAXIMUM_BYTESEQ + 32 ];
     char                *name;
     unsigned long       offset;
     unsigned            fixword;
@@ -629,7 +630,7 @@ local int GetByteSeq( void )
     NextToken();
     too_many_bytes = 0;
     uses_auto = 0;
-    for(;;) {
+    for( ;; ) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
             AsmLine( Buffer );
             NextToken();
@@ -874,9 +875,9 @@ local void GetSaveInfo( void )
     hw_reg_set  flt_n_seg;
 
     struct {
-        unsigned f_exact        : 1;
-        unsigned f_nomemory     : 1;
-        unsigned f_list         : 1;
+        unsigned    f_exact     : 1;
+        unsigned    f_nomemory  : 1;
+        unsigned    f_list      : 1;
     } have;
 
     have.f_exact    = 0;
@@ -911,7 +912,7 @@ local void GetSaveInfo( void )
 }
 
 void AsmSysInit( unsigned char *buf )
-/**************************/
+/***********************************/
 {
     AsmCodeBuffer = buf;
     AsmCodeAddress = 0;
@@ -932,7 +933,7 @@ void AsmSysMakeInlineAsmFunc( int code_ovrflw )
     SYM_HANDLE          sym_handle;
     TREEPTR             tree;
     int                 uses_auto;
-    auto char           name[8];
+    char                name[8];
 
     code_length = AsmCodeAddress;
     if( code_length != 0 ) {

@@ -62,7 +62,7 @@ typedef enum {
 
 #define __  NO
 
-local  cmp_type const __FAR CompTable[TYPE_LAST_ENTRY][TYPE_LAST_ENTRY] = {
+local  cmp_type const   CompTable[TYPE_LAST_ENTRY][TYPE_LAST_ENTRY] = {
 /*               CH,UC,SH,US,IN,UI,LO,UL,DL,DU,FL,DB,PO,AR,ST,UN,FU,FI,VO,EN,TY,UF,DD,PC,WC,LD,FC,DC,LC,FI,FI,LI,B  */
 /* CHAR     */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
 /* UCHAR    */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
@@ -103,8 +103,8 @@ static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment );
 static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
                                   voidptr_cmp_type voidptr_cmp );
 
-local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 );
-local bool IsPointer( TYPEPTR typ );
+local   int     TypeCheck( TYPEPTR typ1, TYPEPTR typ2 );
+local   bool    IsPointer( TYPEPTR typ );
 
 
 static cmp_type InUnion( TYPEPTR typ1, TYPEPTR typ2, int reversed )
@@ -134,7 +134,7 @@ static int ChkParmPromotion( TYPEPTR *plist, int topLevelCheck )    /* 25-nov-94
     for( ;; ) {
         typ = *plist++;
         if( typ == NULL ) break;
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+        SKIP_TYPEDEFS( typ );
         switch( typ->decl_type ) {
         case TYPE_CHAR:
         case TYPE_UCHAR:
@@ -147,14 +147,14 @@ static int ChkParmPromotion( TYPEPTR *plist, int topLevelCheck )    /* 25-nov-94
             }
             break;
         case TYPE_USHORT:
-            #if TARGET_SHORT != TARGET_INT
-                if( CompFlags.strict_ANSI )  {
-                    if ( topLevelCheck ) {
-                        CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
-                    }
-                    return( TC_TYPE_MISMATCH );
+#if TARGET_SHORT != TARGET_INT
+            if( CompFlags.strict_ANSI )  {
+                if( topLevelCheck ) {
+                    CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
                 }
-            #endif
+                return( TC_TYPE_MISMATCH );
+            }
+#endif
             break;
         case TYPE_FLOAT:
             if ( topLevelCheck ) {
@@ -165,15 +165,15 @@ static int ChkParmPromotion( TYPEPTR *plist, int topLevelCheck )    /* 25-nov-94
             break;
         }
     }
-    return TC_OK;
+    return( TC_OK );
 }
 
 TYPEPTR  SkipTypeFluff( TYPEPTR typ )
 {
-    while( typ->decl_type == TYPE_TYPEDEF ) {
+    SKIP_TYPEDEFS( typ );
+    if( typ->decl_type == TYPE_ENUM ) {
         typ = typ->object;
     }
-    if( typ->decl_type == TYPE_ENUM ) typ = typ->object;
     return( typ );
 }
 
@@ -184,8 +184,8 @@ static cmp_type CompatibleStructs( TAGPTR tag1, TAGPTR tag2 )
     TYPEPTR     typ1;
     TYPEPTR     typ2;
 
-    if( tag1 == tag2 )  return( OK );
-    if( tag1->size != tag2->size )  return( NO );
+    if( tag1 == tag2 ) return( OK );
+    if( tag1->size != tag2->size ) return( NO );
     field1 = tag1->u.field_list;
     field2 = tag2->u.field_list;
     /* if either struct is undefined, let's be conservative */
@@ -194,10 +194,10 @@ static cmp_type CompatibleStructs( TAGPTR tag1, TAGPTR tag2 )
         if( field1 == NULL ) break;
         if( field2 == NULL ) break;
         typ1 = field1->field_type;
-        while( typ1->decl_type == TYPE_TYPEDEF ) typ1 = typ1->object;
+        SKIP_TYPEDEFS( typ1 );
         typ2 = field2->field_type;
-        while( typ2->decl_type == TYPE_TYPEDEF ) typ2 = typ2->object;
-        if( ! IdenticalType( typ1, typ2 ) ) {
+        SKIP_TYPEDEFS( typ2 );
+        if( !IdenticalType( typ1, typ2 ) ) {
             if( (typ1->decl_type == TYPE_STRUCT  &&
                  typ2->decl_type == TYPE_STRUCT )    ||
                 (typ1->decl_type == TYPE_UNION   &&
@@ -228,9 +228,9 @@ int ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck )
     plist2 = typ2->u.parms;
     if( plist1 != plist2 ) {
         if( plist1 == NULL ) {
-            return ChkParmPromotion( plist2, topLevelCheck );
+            return( ChkParmPromotion( plist2, topLevelCheck ) );
         } else if( plist2 == NULL ) {
-            return ChkParmPromotion( plist1, topLevelCheck );
+            return( ChkParmPromotion( plist1, topLevelCheck ) );
         }
         parm_count = 1;
         for( ;; ) {
@@ -533,7 +533,7 @@ static void CompareParms( TYPEPTR *master,
     parm_num = 1;
     while( typ != NULL  &&  *passed != 0 ) {
         SymLoc = filename;
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+        SKIP_TYPEDEFS( typ );
         //TODO is crap needed or has it been done
         if( typ->decl_type == TYPE_FUNCTION ) {
             typ = PtrNode( typ, FLAG_NONE, SEG_CODE );
@@ -605,7 +605,7 @@ static void CompareParms( TYPEPTR *master,
     if( typ != NULL || *passed != 0 ) {     /* should both be NULL now */
 #if _CPU == 386
         /* can allow wrong number of parms with -3s option; 06-dec-91 */
-        if( ! CompFlags.register_conventions ) {
+        if( !CompFlags.register_conventions ) {
             SymLoc = filename;
             CWarn1( WARN_PARM_COUNT_MISMATCH, ERR_PARM_COUNT_WARNING );
             SymLoc = NULL;
@@ -639,7 +639,7 @@ extern void ChkCallParms( void )
             callsite = callnode->left;      // point to OPR_FUNCNAME node
             SymGet( &sym, callsite->op.sym_handle );
             typ = sym.sym_type;
-            while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
+            SKIP_TYPEDEFS( typ );
             if( typ->u.parms != NULL ) {
                 unsigned    parm_count;
                 TREEPTR     parm;
@@ -737,10 +737,10 @@ static bool IsPtrtoFunc( TYPEPTR typ )
 {
     int ret;
     ret = FALSE;
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_POINTER ) {
         typ = typ->object;
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+        SKIP_TYPEDEFS( typ );
         if( typ->decl_type == TYPE_FUNCTION ) {
             ret = TRUE;
         }
@@ -750,7 +750,7 @@ static bool IsPtrtoFunc( TYPEPTR typ )
 
 static bool IsPointer( TYPEPTR typ )
 {
-    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    SKIP_TYPEDEFS( typ );
     return( typ->decl_type == TYPE_POINTER );
 }
 
@@ -759,13 +759,13 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
 //TODO merge up with  ChkCalls
     TYPEPTR        typ2;
 
-    if( opnd2->op.opr == OPR_ERROR )  return;
+    if( opnd2->op.opr == OPR_ERROR ) return;
     typ2 = opnd2->expr_type;
 
     SetDiagType2( typ2, typ1 );
     switch( CompatibleType( typ1, typ2, 1 ) ) {
     case NO:
-        if ( parm_num == 0 ) {
+        if( parm_num == 0 ) {
             CErr1( ERR_TYPE_MISMATCH );
         } else {
             CErr2( ERR_PARM_TYPE_MISMATCH, parm_num );
@@ -790,7 +790,7 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
         }
         break;
     case PM:                                    /* 16-may-91 */
-        if ( parm_num == 0 ) {
+        if( parm_num == 0 ) {
             CWarn1( WARN_POINTER_TYPE_MISMATCH, ERR_POINTER_TYPE_MISMATCH );
         } else {
             CWarn2( WARN_POINTER_TYPE_MISMATCH,
@@ -798,7 +798,7 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
         }
         break;
     case PS:                                    /* 16-may-91 */
-        if ( parm_num == 0 ) {
+        if( parm_num == 0 ) {
             CWarn1( WARN_SIGN_MISMATCH, ERR_SIGN_MISMATCH );
         } else {
             CWarn2( WARN_SIGN_MISMATCH,
@@ -806,7 +806,7 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
         }
         break;
     case PW:
-        if ( parm_num == 0 ) {
+        if( parm_num == 0 ) {
             CWarn1( WARN_INCONSISTENT_INDIRECTION_LEVEL,
                     ERR_INCONSISTENT_INDIRECTION_LEVEL );
         } else {
@@ -818,7 +818,7 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
         if( IsPointer( typ1 ) && opnd2->op.opr == OPR_PUSHINT ) {
             if( opnd2->op.long_value != 0 ) {
                 CWarn1( WARN_NONPORTABLE_PTR_CONV,
-                        ERR_NONPORTABLE_PTR_CONV );
+                         ERR_NONPORTABLE_PTR_CONV );
             }
         } else {
             CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
@@ -827,7 +827,7 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
     case AC:
         /* CarlYoung 31-Oct-03 */
         {
-            unsigned long fsize_1 = 0, fsize_2 = 0;
+            unsigned long   fsize_1 = 0, fsize_2 = 0;
 
             if( TypeSizeEx( typ2, &fsize_2 ) > TypeSizeEx( typ1, &fsize_1 ) ) {
                 CWarn1( WARN_LOSE_PRECISION, ERR_LOSE_PRECISION );
@@ -869,7 +869,7 @@ void TernChk( TYPEPTR typ1, TYPEPTR typ2 )
         break;
     case PW:
         CWarn1( WARN_INCONSISTENT_INDIRECTION_LEVEL,
-                    ERR_INCONSISTENT_INDIRECTION_LEVEL );
+                 ERR_INCONSISTENT_INDIRECTION_LEVEL );
         break;
     case PC:
         CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
@@ -885,7 +885,7 @@ void ChkRetType( TREEPTR tree )
     TYPEPTR     ret_type;
     TYPEPTR     func_type;
 
-    if( tree->op.opr == OPR_ERROR )  return;
+    if( tree->op.opr == OPR_ERROR ) return;
     ret_type = TypeOf( tree );
     func_type = CurFunc->sym_type->object;
     if( func_type->decl_type == TYPE_VOID ) {
@@ -902,7 +902,7 @@ void ChkRetType( TREEPTR tree )
 
 int IdenticalType( TYPEPTR typ1, TYPEPTR typ2 )
 {
-    int rc;
+    int     rc;
 
     rc = TypeCheck( typ1, typ2 );
     return( rc == TC_OK  ||  rc == TC_TYPE2_HAS_MORE_INFO );
@@ -911,30 +911,30 @@ int IdenticalType( TYPEPTR typ1, TYPEPTR typ2 )
 
 int VerifyType( TYPEPTR new, TYPEPTR old, SYMPTR sym )
 {
-    int rc;
+    int     rc;
 
     rc = TypeCheck( new, old );
     switch( rc ) {
     case TC_OK:                     /* OK */
         break;
     case TC_TYPE_MISMATCH:          /* types didn't match */
-        while( new->decl_type == TYPE_TYPEDEF ) new = new->object;
-        while( old->decl_type == TYPE_TYPEDEF ) old = old->object;
+        SKIP_TYPEDEFS( new );
+        SKIP_TYPEDEFS( old );
         /*
             types won't match for:
 
             extern char a[];        char a[200];
             char a[200];            extern char a[];
         */
-        if(( new->decl_type == TYPE_ARRAY )                 &&
-           ( old->decl_type == TYPE_ARRAY )                 &&
-           ( IdenticalType( new->object, old->object ) ) ) {
-            if( TypeSize(new) != 0 ) {
-                if( TypeSize(old) == 0 ) {
+        if( (new->decl_type == TYPE_ARRAY)               &&
+          (old->decl_type == TYPE_ARRAY)                 &&
+          IdenticalType( new->object, old->object ) ) {
+            if( TypeSize( new ) != 0 ) {
+                if( TypeSize( old ) == 0 ) {
                     /* let it go but indicate that the new type holds */
                 }
             } else {
-                if( TypeSize(old) != 0 ) {
+                if( TypeSize( old ) != 0 ) {
                     /* let it go */
                     return( 1 );
                     break;
@@ -947,7 +947,7 @@ int VerifyType( TYPEPTR new, TYPEPTR old, SYMPTR sym )
         CErr1( ERR_PARM_COUNT_MISMATCH );
         break;
     case TC_TYPE2_HAS_MORE_INFO:    /* OK, new= void *, old= something *;*/
-        return( 1 );        /* indicate want old definition */
+        return( 1 );                /* indicate want old definition */
         break;
     default:        /* parm type mismatch */
         CErr2( ERR_PARM_TYPE_MISMATCH, rc - TC_PARM_TYPE_MISMATCH );

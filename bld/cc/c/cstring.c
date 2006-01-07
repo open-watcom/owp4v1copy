@@ -38,10 +38,10 @@
 #include <fcntl.h>
 
 #ifndef _MAX_PATH
-#define _MAX_PATH (PATH_MAX+1)
+    #define _MAX_PATH (PATH_MAX+1)
 #endif
 #ifndef O_BINARY
-#define O_BINARY 0
+    #define O_BINARY 0
 #endif
 
 extern TREEPTR         CurFuncNode;
@@ -76,13 +76,13 @@ static int OpenUnicodeFile( char *filename )
 
 static void ReadUnicodeFile( int handle )
 {
-    int         i;
-    unsigned short unicode_table[256];
+    int             i;
+    unsigned short  unicode_table[256];
 
-    read( handle, unicode_table, 256 * sizeof(unsigned short) );
+    read( handle, unicode_table, 256 * sizeof( unsigned short ) );
     /* UniCode might be a FAR table */
-    for( i = 0; i <= 255; i++ ) {
-        UniCode[ i ] = unicode_table[i];
+    for( i = 0; i < 256; i++ ) {
+        UniCode[i] = unicode_table[i];
     }
 }
 
@@ -103,9 +103,9 @@ void LoadUnicodeTable( long codePage )
     return;
 }
 
-void StringInit()
+void StringInit( void )
 {
-    int i;
+    int     i;
 
     for( i = 0; i < STRING_HASH_SIZE; ++i ) {
         StringHash[i] = 0;
@@ -155,12 +155,15 @@ STRING_LITERAL *GetLiteral( void )
     do {
         len2 = RemoveEscapes( NULL, q->literal, q->length );
         --len;
-        if( is_wide && len != 0 ) --len;
+        if( is_wide && len != 0 ) {
+            --len;
+        }
         s = CMemRealloc( s, len + len2 + 1 );
         RemoveEscapes( &s[len], q->literal, q->length );
         len += len2;
         p = q->next_string;
-        if( q != str_lit )  FreeLiteral( q );
+        if( q != str_lit )
+            FreeLiteral( q );
         q = p;
     } while ( q );
     CLitLength = len;
@@ -178,7 +181,7 @@ static int RemoveEscapes( char *buf, const char *inbuf, size_t length )
     unsigned int        c;
     size_t              j;
     char                error;
-    const char         *end;
+    const char          *end;
 
     j = 0;
     error = 0;
@@ -189,7 +192,8 @@ static int RemoveEscapes( char *buf, const char *inbuf, size_t length )
             ++inbuf;
             c = ESCChar( *inbuf, &inbuf, &error );
             if( CompFlags.wide_char_string ) {
-                if( buf ) buf[j] = c;
+                if( buf )
+                    buf[j] = c;
                 ++j;
                 c = c >> 8;                     /* 31-may-91 */
             }
@@ -200,10 +204,12 @@ static int RemoveEscapes( char *buf, const char *inbuf, size_t length )
                     CompFlags.wide_char_string ) {      /* 15-jun-93 */
                     c = (c << 8) + *inbuf;
                     c = JIS2Unicode( c );
-                    if( buf ) buf[j] = c;
+                    if( buf )
+                        buf[j] = c;
                     c = c >> 8;
                 } else {
-                    if( buf ) buf[j] = c;
+                    if( buf )
+                        buf[j] = c;
                     c = *inbuf;
                 }
                 ++j;
@@ -214,14 +220,16 @@ static int RemoveEscapes( char *buf, const char *inbuf, size_t length )
                 } else if( CompFlags.jis_to_unicode ) {
                     c = JIS2Unicode( c );
                 }
-                if( buf ) buf[j] = c;
+                if( buf )
+                    buf[j] = c;
                 ++j;
                 c = c >> 8;
             } else {
                 _ASCIIOUT( c );
             }
         }
-        if( buf )  buf[j] = c;
+        if( buf )
+            buf[j] = c;
         ++j;
     }
     if( error != 0 && buf != NULL ) {                   /* 16-nov-94 */
@@ -232,7 +240,7 @@ static int RemoveEscapes( char *buf, const char *inbuf, size_t length )
     return( j );
 }
 
-static TYPEPTR StringLeafType()
+static TYPEPTR StringLeafType( void )
 {
     TYPEPTR     typ;
 
@@ -265,8 +273,8 @@ TREEPTR StringLeaf( int flags )
 
     strlit = 0;
     new_lit = GetLiteral();
-    if( TargetSwitches & BIG_DATA ) {          /* 06-oct-88 */
-        if( ! CompFlags.strings_in_code_segment ) {         /* 01-sep-89 */
+    if( TargetSwitches & BIG_DATA ) {                   /* 06-oct-88 */
+        if( !CompFlags.strings_in_code_segment ) {      /* 01-sep-89 */
             if( new_lit->length > DataThreshold ) {
                 flags |= FLAG_FAR;
             }
