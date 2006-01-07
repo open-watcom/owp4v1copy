@@ -557,7 +557,6 @@ extern  void    SetSymLoc(SYMPTR);
 extern  void    CWarn1(int,int);
 extern  void    CWarn2(int,int,int);
 extern  void    CWarn(int,int,...);
-extern  void    CNote( int msgnum, ... );
 extern  void    PCHNote( int msgnum, ... );
 extern  void    CInfoMsg(int,...);
 extern  void    CSuicide(void);

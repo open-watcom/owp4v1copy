@@ -232,7 +232,6 @@ void CInfoMsg( int msgnum, ... )
 {
     va_list     args1;
     cmsg_info   info;
-    char        pre[MAX_MSG_LEN];
 
     if( CompFlags.cpp_output )  return;             /* 29-sep-90 */
     if( MsgDisabled( msgnum ) ) {                   /* 18-jun-92 */
@@ -243,28 +242,9 @@ void CInfoMsg( int msgnum, ... )
     va_start( args1, msgnum );
     CMsgInfo( &info, msgnum, args1 );
     va_end( args1 );
-    ConsErrMsg( &info );
-    if( ErrFile != NULL ) {
-        FmtCMsg( pre, &info );
-        fputs( pre, ErrFile );
-        fputs( info.msgtxt, ErrFile );
-        fputc( '\n', ErrFile );
-        CompFlags.errfile_written = 1;
-    }
+    OutMsg( &info );
 }
 
-// Output Note
-void CNote( int msgnum, ... )
-{
-    va_list     args1;
-    char        msgbuf[MAX_MSG_LEN];
-    char const  *msgstr;
-
-    va_start( args1, msgnum );
-    msgstr = CGetMsgStr( msgnum );
-    _vsnprintf( msgbuf,MAX_MSG_LEN, msgstr, args1 );
-    NoteMsg( msgbuf );
-}
 
 // Output pre-compiled header Note
 void PCHNote( int msgnum, ... )
