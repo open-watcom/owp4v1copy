@@ -83,7 +83,7 @@ extern  bool    IsTrickyPointerConv( instruction *ins )
 {
 #if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )
     if( (ins->head.opcode == OP_CONVERT) && _IsPointer( ins->type_class ) ) {
-        if( TypeClassSize[ ins->type_class ] > TypeClassSize[ ins->base_type_class ] )
+        if( ins->base_type_class == U2 && TypeClassSize[ ins->type_class ] > WORD_SIZE )
             return( TRUE );
     }
 #endif
