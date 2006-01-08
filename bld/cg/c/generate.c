@@ -290,26 +290,25 @@ static  void            PreOptimize() {
     }
 }
 
-#if 0
-static  block           *NextBlock( block *blk, void *parm ) {
-/************************************************************/
 
+static  block           *NextBlock( block *blk, void *parm )
+/**********************************************************/
+{
     parm = parm;
     return( blk->next_block );
 }
-#endif
 
-static  void            PostOptimize() {
-/**************************************/
 
+static  void            PostOptimize( void )
+/******************************************/
+{
     if( _IsntModel( NO_OPTIMIZATION ) ) {
-    #if 0
-        // peep opt doesn't check to make sure it can still generate
-        // instructions in many case - unsafe to run afte RegAlloc
+        // Run peephole optimizer again. Important: It is critical that the
+        // new instructions can be directly generated because RegAlloc is
+        // done by now. PeepOpt() is responsible for verifying that.
         if( PeepOpt( HeadBlock, NextBlock, NULL, TRUE ) ) {
             LiveInfoUpdate();
         }
-    #endif
         // this is important as BuildIndex cannot handle instructions with no operands
         DeadInstructions();
         BuildIndex();
@@ -336,13 +335,10 @@ static  void            PostOptimize() {
             HaveLiveInfo = TRUE;
         }
         LdStCompress();
-    #if 0
-        // see above...
         // run this again in case Scheduler messed around with indices
         if( PeepOpt( HeadBlock, NextBlock, NULL, TRUE ) ) {
             LiveInfoUpdate();
         }
-    #endif
     }
     FPOptimize();
 }
