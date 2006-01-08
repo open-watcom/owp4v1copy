@@ -234,6 +234,9 @@ extern  void    DumpOperand( name *operand ) {
     } else if( operand->n.class == N_CONSTANT ) {
         if( operand->c.const_type == CONS_ABSOLUTE ) {
             if( operand->c.int_value != 0 ) {
+                if( operand->c.int_value_2 != 0
+                && operand->c.int_value_2 != -1 )
+                    Dump8h( operand->c.int_value_2 );
                 Dump8h( operand->c.int_value );
             } else {
                 CFCnvFS( operand->c.value, buffer, 20 );
