@@ -24,30 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  Error handler called when runtime-constraint is violated.
+* Description:  Internal runtime error message output routine.
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "saferlib.h"
-#include <string.h>
-#include <errno.h>
+#include "widechar.h"
 
-void __rtct_fail( const char *fn, const char *reason, void *reserved )
-/********************************************************************/
-{
-    char    msg[RTCT_MSG_MAX];
-
-    /* Construct the error message the old fashioned unsafe way. We'd
-     * rather not get re-entered here, and we have the maximum length
-     * of the function name as well the error reason under control.
-     */
-    strcpy( msg, fn );
-    strcat( msg, ", " );
-    strcat( msg, reason );
-    strcat( msg, ".\n" );
-
-    /* Now call the current handler */
-    _RWD_rtcthandler( msg, reserved, EINVAL );
-}
+void __F_NAME(__rterr_msg,__wrterr_msg)( const CHAR_TYPE *hdr, const CHAR_TYPE *msg );

@@ -31,15 +31,13 @@
 
 #include "variety.h"
 #include "saferlib.h"
-#include <stdio.h>
+#include "rterrmsg.h"
 
 
 _WCRTLINK void abort_handler_s( const char * restrict msg,
                                 void * restrict ptr, errno_t error )
 /******************************************************************/
 {
-    // TODO: use the same mechanism that assert() does to potentially
-    // display a message box
-    fprintf( stderr, msg );
+    __rterr_msg( "Runtime-constraint violation", msg );
     abort();
 }

@@ -180,7 +180,8 @@ _WCRTLINK extern char volatile DEBUG_BREAK_ON_CATCH_NAME;
     }
 
 #ifdef __NT__
-    #define PassDebuggerAMessage OutputDebugString
+    // Why? #define PassDebuggerAMessage OutputDebugString
+    #define PassDebuggerAMessage CheckEnterDebuggerWithMessage
 #else
     #define PassDebuggerAMessage CheckEnterDebuggerWithMessage
 #endif
