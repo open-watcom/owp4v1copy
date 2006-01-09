@@ -65,7 +65,17 @@
 void __F_NAME(__rterr_msg,__wrterr_msg)( const CHAR_TYPE *hdr, const CHAR_TYPE *msg )
 {
 #if defined( __WINDOWS__ ) || defined( __WINDOWS_386__ )
-    MessageBox( NULL, msg, hdr, MB_OK | MB_TASKMODAL );
+    #ifdef __WIDECHAR__
+        char    outhdr[MB_CUR_MAX * STR_SIZE];
+        char    outmsg[MB_CUR_MAX * STR_SIZE];
+
+        wcstombs( outhdr, hdr, MB_CUR_MAX * STR_SIZE );
+        wcstombs( outmsg, msg, MB_CUR_MAX * STR_SIZE );
+    #else
+        const char  *outhdr = hdr;
+        const char  *outmsg = msg;
+    #endif
+    MessageBox( NULL, outmsg, outhdr, MB_OK | MB_TASKMODAL );
 #elif defined( __NT__ )
     int     rc;
 
