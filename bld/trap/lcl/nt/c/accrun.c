@@ -459,6 +459,18 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                     LastExceptionCode = STATUS_ACCESS_VIOLATION;
                     returnCode = COND_EXCEPTION;
                     goto done;
+                case DBG_ATTACH:
+                    /* Sent to let debugger know 16-bit environment is set up.
+                     * Only a notification, provides no further data. Must be
+                     * handled so that debugger doesn't get confused.
+                     */
+                    DebugeeTid = DebugEvent.dwThreadId;
+                    ti = FindThread( DebugeeTid );
+                    ti->is_dos = TRUE;
+                    break;
+                case DBG_INIT:
+                    // I have no idea how to handle this!
+                    break;                    
                 default:
                     DebugeeTid = DebugEvent.dwThreadId;
                     LastExceptionCode = STATUS_ACCESS_VIOLATION;
