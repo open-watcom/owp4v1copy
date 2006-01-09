@@ -29,30 +29,31 @@
 ****************************************************************************/
 
 
+#include "variety.h"
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
 
-char            *optarg;            // pointer to option argument
-int             optind = 1;         // current argv[] index
-int             optopt;             // currently processed chracter
-int             opterr = 1;         // error output control flag
+_WCRTLINK char      *optarg;            // pointer to option argument
+_WCRTLINK int       optind = 1;         // current argv[] index
+_WCRTLINK int       optopt;             // currently processed chracter
+_WCRTLINK int       opterr = 1;         // error output control flag
 
 #ifdef __UNIX__
-char            __altoptchar = '-';
+char                __altoptchar = '-';
 #else
-char            __altoptchar = '/'; // alternate option character
+char                __altoptchar = '/'; // alternate option character
 #endif
-char            __optchar;          // matched option char ('-' or altoptchar)
+char                __optchar;          // matched option char ('-' or altoptchar)
 
-static int      opt_offset = 0;     // position in currently parsed argument
+static int          opt_offset = 0;     // position in currently parsed argument
 
 // Error messages suggested by Single UNIX Specification
 #define NO_ARG_MSG      "%s: option requires an argument -- %c\n"
 #define BAD_OPT_MSG     "%s: illegal option -- %c\n"
 
-int getopt( int argc, char * const argv[], const char *optstring )
+_WCRTLINK int getopt( int argc, char * const argv[], const char *optstring )
 {
     char        *ptr;
     char        *curr_arg;
