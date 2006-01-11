@@ -1218,19 +1218,13 @@ local TREEPTR GenOptimizedCode( TREEPTR tree )
             unroll_count = tree->op.unroll_count;
             BEUnrollCount( unroll_count );
         }
-        /* eliminate functions that are always inlined */
+        /* eliminate functions that are always inlined or not used */
         if( tree->right->op.opr == OPR_FUNCTION ) {     // if start of func
             TREEPTR right;
-            SYM_ENTRY sym;
 
             right = tree->right;
-            SymGet( &sym,  right->op.func.sym_handle );
-            if( ! (sym.flags & SYM_ADDR_TAKEN) ) {
-                if( InLineDepth == 0 &&
-                   ( ( right->op.func.flags &
-                        ( FUNC_OK_TO_INLINE | FUNC_REJ_INLINE ) ) ==
-                        FUNC_OK_TO_INLINE )
-                  && (sym.stg_class != SC_NULL) ) {
+            if ( ! ( right->op.func.flags & FUNC_USED ) ) {
+                if( InLineDepth == 0 ) {
                     while( tree->right->op.opr != OPR_FUNCEND ) {
                         tree = tree->left;
                     }
@@ -1313,70 +1307,55 @@ bool IsInLineFunc( SYM_HANDLE sym_handle )
     return( ret );
 }
 
-/* This function recursively checks if a function is always inlined.
-   A function is not inlined if it calls itself recursively, or
-   if the InLineDepth goes over the limit.
-   In that case the function is marked with FUNC_REJ_INLINE
-   and the function is not eliminated from the object file.
-
-   In some cases this technique is still a bit too pessimistic. Example:
-
-static inline int foo1(int a, int b) { return a+b; }
-static inline int foo2(int a, int b) { return foo1(a,b); }
-static inline int foo3(int a, int b) { return foo2(a,b); }
-static inline int foo4(int a, int b) { return foo3(a,b); }
-static inline int foo5(int a, int b) { return foo4(a,b); }
-static inline int foo6(int a, int b) { return foo5(a,b); }
-static inline int foo7(int a, int b) { return foo6(a,b); }
-int main(void) { return foo5(1,2); }
-
-   here main() calls foo2 (foo5 with inline depth 3). foo4, foo5, and foo6
-   are eliminated. But foo1 and foo3 still exist because the C parser did
-   not mark foo4 and foo6 as "unused" (not referenced).
-   Sometimes the <call followed by return> to <jump> optimization also
-   gives a slightly different result, but never in a truely bad way, i.e.
-   we never eliminate a function which can't be eliminated.
+/* This function recursively checks if a function is really used and
+   needs to be emitted. 
+   A function is not inlined and generated if it calls itself recursively,
+   or if the inline depth goes over the limit.
+   In that case, and for normal function calls, the function is marked
+   as FUNC_USED and can't be skipped by the GenOptimizedCode().
 */
-local void ScanInlinedFunction( TREEPTR tree )
+local void ScanFunction( TREEPTR tree, int inline_depth )
 {
     TREEPTR             right;
-    TREEPTR             func;
-    SYM_ENTRY           sym;
     struct func_info   *f;
 
     if( tree == NULL || tree->right == NULL ) return;
     f = &tree->right->op.func;
 
-    if( ! ( f->flags & FUNC_OK_TO_INLINE ) ) return;
-    SymGet( &sym, f->sym_handle );
-    if( ! ( sym.flags & SYM_REFERENCED ) ) return;
-    if( ( f->flags & FUNC_INUSE ) || (InLineDepth + 1) >= MAX_INLINE_DEPTH ) {
-        f->flags |= FUNC_REJ_INLINE;
+    /* anything recursive is always emitted */
+    if( f->flags & FUNC_INUSE ) {
+        f->flags |= FUNC_USED;
         return;
     }
+    if( ( f->flags & FUNC_OK_TO_INLINE ) && inline_depth < MAX_INLINE_DEPTH ) {
+      /* simulate inlining */
+        inline_depth++;
+    } else {
+        inline_depth = 0;
+        f->flags |= FUNC_USED;
+    }
 
-    InLineDepth++;
-    tree->right->op.func.flags |= FUNC_INUSE;
-    func = tree->right;
+    f->flags |= FUNC_INUSE;
     while( tree != NULL ) {
         right = LinearizeTree( tree->right );
         while( right ) {
             if( right->op.opr == OPR_FUNCNAME )
-                ScanInlinedFunction( FindFuncStmtTree( right->op.sym_handle ) );
+                ScanFunction( FindFuncStmtTree( right->op.sym_handle ),
+                              inline_depth );
             right = right->thread;
         }
         if( tree->right->op.opr == OPR_FUNCEND ) break;
         tree = tree->left;
     }
-    func->op.func.flags &= ~FUNC_INUSE;
-    InLineDepth--;
+    f->flags &= ~FUNC_INUSE;
 }
 
-/* This function scans the source file tree for functions. These functions
-   are checked by ScanInlineFunction to see if they are inline functions
-   that can't be removed
+/* This function scans the source file tree for functions. Any non-static
+   function or static function whose address is taken is scanned for
+   any functions called, and not inlined.
+   These functions are marked as used.
 */
-local void PruneInLinedFunctions( void )
+local void PruneFunctions( void )
 {
     TREEPTR     tree;
     TREEPTR     func;
@@ -1384,24 +1363,24 @@ local void PruneInLinedFunctions( void )
     SYM_ENTRY   sym;
 
     tree = FirstStmt;
-    InLineDepth = 0;
     while( tree != NULL ) {
         right = LinearizeTree( tree->right );
         while( right ) {
             if( right->op.opr == OPR_FUNCTION ) {
                 SymGet( &sym, right->op.func.sym_handle );
                 func = NULL;
-                if( ( sym.flags & SYM_REFERENCED ) ) {
-                    right->op.func.flags |= FUNC_INUSE;
-                    func = right;
-                }
+                if( sym.stg_class == SC_STATIC &&
+                    ! ( sym.flags & SYM_ADDR_TAKEN ) )
+                    break;
+                right->op.func.flags |= FUNC_INUSE | FUNC_USED;
+                func = right;
             }
             if( func == NULL ) break;
             if( right->op.opr == OPR_FUNCEND ) {
                 func->op.func.flags &= ~FUNC_INUSE;
                 func = NULL;
             } else if( func && right->op.opr == OPR_FUNCNAME )
-                ScanInlinedFunction( FindFuncStmtTree( right->op.sym_handle ) );
+                ScanFunction( FindFuncStmtTree( right->op.sym_handle ), 0 );
             right = right->thread;
         }
         tree = tree->left;
@@ -1486,7 +1465,7 @@ void DoCompile( void )
                 BEDefType( TryRefno, 1, sizeof( struct try_block ) );
                 TryTableBackHandles = NULL;
 #endif
-                PruneInLinedFunctions();
+                PruneFunctions();
                 GenModuleCode();
                 FreeStrings();
                 FiniSegLabels();                        /* 15-mar-92 */

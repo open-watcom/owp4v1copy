@@ -183,7 +183,7 @@ typedef enum{
     FUNC_OK_TO_INLINE = 0x01,       // can inline this node
     FUNC_INUSE        = 0x02,       // inuse as inline or gen
     FUNC_USES_SEH     = 0x04,       // uses structure exceptions
-    FUNC_REJ_INLINE   = 0x08,       // was inline request rejected (depth)?
+    FUNC_USED         = 0x08,       // function should really be emitted
 }func_flags;
 
 typedef unsigned short  LABEL_INDEX;
