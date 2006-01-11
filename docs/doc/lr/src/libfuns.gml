@@ -1117,6 +1117,7 @@
 .fnc _set_matherr               _setmath.gml    DOS QXO   WIN32
 .fnm _setmbcp                   setmbcp.gml     DOS       WIN32
 .fnc setmode                    setmode.gml     DOS QNX W WIN32
+.fnc _setmode                   setmode.gml     DOS       WIN32
 .fnc _setmx                     setmx.gml           QXO
 .fnc _set_new_handler           setnew.gml      DOS QNX W WIN32
 .fnc set_new_handler            setnew.gml      DOS QNX W WIN32

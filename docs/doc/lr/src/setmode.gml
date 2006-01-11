@@ -1,8 +1,12 @@
-.func setmode
+.func setmode _setmode
 #include <&iohdr>
 #include <fcntl.h>
 int setmode( int &fd, int mode );
 .ixfunc2 '&OsIo' &func
+.if &'length(&_func.) ne 0 .do begin
+int _setmode( int &fd, int mode );
+.ixfunc2 '&OsIo' &_func
+.do end
 .funcend
 .desc begin
 .if '&machsys' eq 'QNX' .do begin
@@ -55,21 +59,21 @@ set for the file; otherwise, &minus.1 is returned.
 #include <fcntl.h>
 #include <&iohdr>
 
-void main()
-  {
+void main( void )
+{
     FILE *fp;
     long count;
 .exmp break
     fp = fopen( "file", "rb" );
     if( fp != NULL ) {
-      setmode( fileno( fp ), O_BINARY );
-      count = 0L;
-      while( fgetc( fp ) != EOF ) ++count;
-      printf( "File contains %lu characters\n",
-              count );
-      fclose( fp );
+        setmode( fileno( fp ), O_BINARY );
+        count = 0L;
+        while( fgetc( fp ) != EOF ) ++count;
+        printf( "File contains %lu characters\n",
+                count );
+        fclose( fp );
     }
-  }
+}
 .exmp end
 .class WATCOM
 .system
