@@ -2092,18 +2092,12 @@ local void Define_Memory_Model()
                 strcpy( CLIB_Name, "1clibdl?" );
             }
         }
-        #ifdef __PCODE__
-            PcodeLib_Name = "2p16fpi";                      /* 19-may-91 */
-        #endif
         if( GET_FPU_EMU( ProcRevision ) ) {         /* 07-jan-90 */
             strcpy( MATHLIB_Name, "8math87?" );
             EmuLib_Name = "9emu87";                     /* 02-apr-90 */
         } else if( GET_FPU_LEVEL( ProcRevision ) == FPU_NONE ) {
             strcpy( MATHLIB_Name, "5math?" );
             EmuLib_Name = NULL;
-            #ifdef __PCODE__
-                PcodeLib_Name = "2p16fpc";                  /* 19-may-91 */
-            #endif
         } else {
             strcpy( MATHLIB_Name, "8math87?" );
             EmuLib_Name = "9noemu87";                   /* 02-apr-90 */
@@ -2211,10 +2205,6 @@ void GenCOptions( char **cmdline )
     SetGenSwitches();
     SetCharacterEncoding();
     Define_Memory_Model();
-#ifdef __PCODE__                                                /* 04-feb-91 */
-    if( Toggles & TOGGLE_PCODE )
-        CompFlags.inline_functions = 0;
-#endif
 #if _CPU == 8086 || _CPU == 386
     if( GET_CPU( ProcRevision ) < CPU_386 ) {
         /* issue warning message if /zf[f|p] or /zg[f|p] spec'd? */

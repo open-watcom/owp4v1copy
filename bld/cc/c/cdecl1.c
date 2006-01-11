@@ -52,7 +52,6 @@ void ParsePgm( void )
 
     CompFlags.external_defn_found = 0;
     CompFlags.initializing_data   = 0;
-    CompFlags.pcode_was_generated = 0;          /* 24-oct-91 */
     dummysym = 0;
     GlobalSym = 0;
 

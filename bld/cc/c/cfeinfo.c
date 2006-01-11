@@ -730,14 +730,8 @@ static VOIDPTR NextLibrary( int index, aux_class request )
             name = EmuLib_Name;
             if( EmuLib_Name != NULL )
                 break;
-            ++index;
             // fall through
-        case 4: /* return 4 for PCODE */
-#ifdef __PCODE__
-            name = PcodeLib_Name;
-            if( CompFlags.pcode_generated )
-                break;
-#endif
+        case 4: /* used to be PCODE */
             name = NULL;
             index = 0;                  // indicate all done
             break;

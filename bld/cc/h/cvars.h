@@ -286,10 +286,6 @@ global  int     LoopDepth;      /* current nesting of loop constructs */
 global  char    CLIB_Name[10];   /* "1CLIBMT3x" */
 global  char    MATHLIB_Name[10];/* "5MATHx" or "8MATH87x" */
 global  char    *EmuLib_Name;   /* "9emu87" for -fpi, "9noemu87" for -fpi */
-#ifdef __PCODE__
-global  char    *PcodeLib_Name; /* "2p16fpc" for -fpc, "2p16fpi" for -fpi */
-#endif
-//global        struct scoreboard *ScoreBoard;
 #define USER_LIB_PRIO '9'
 
 global  struct library_list {

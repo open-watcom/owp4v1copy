@@ -600,7 +600,6 @@ struct comp_flags {
     unsigned extended_defines       : 1;
     unsigned errfile_written        : 1;
     unsigned main_has_parms         : 1;    /* on if "main" has parm(s) */
-    unsigned pcode_generated        : 1;    /* on if pcode generated */
 
     unsigned register_conventions   : 1;    /* on for -3r, off for -3s */
     unsigned pgm_used_8087          : 1;    /* on => 8087 ins. generated */
@@ -648,9 +647,7 @@ struct comp_flags {
     unsigned asciiout_used          : 1;    /* (asciiout specified  */
 
     unsigned noxedit_used           : 1;    /* (noxedit specified  */
-    unsigned in_pcode_func          : 1;    /* generating Pcode */
     unsigned addr_of_auto_taken     : 1;    /*=>can't opt tail recursion*/
-    unsigned pcode_was_generated    : 1;    /* some funcs were pcoded */
     unsigned continued_string       : 1;    /* continuing big string */
     unsigned sg_switch_used         : 1;    /* /sg switch used */
     unsigned bm_switch_used         : 1;    /* /bm switch used */

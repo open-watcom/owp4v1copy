@@ -577,8 +577,7 @@ local void ChkFunction( SYMPTR sym, SYM_NAMEPTR name )
                        ERR_ADDR_OF_STATIC_FUNC_TAKEN, name );
             }
         } else {
-            if( (CompFlags.pcode_was_generated == 0)
-            && (sym->attrib & (FLAG_FAR | FLAG_NEAR)) == 0
+            if( (sym->attrib & (FLAG_FAR | FLAG_NEAR)) == 0
             && (TargetSwitches & BIG_CODE)
             && !CompFlags.multiple_code_segments ) {
                 sym->attrib |= FLAG_NEAR;
