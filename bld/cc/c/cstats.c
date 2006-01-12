@@ -51,10 +51,7 @@ void InitStats()
     TmpSymCount = 0;
     LitPoolSize = 0;
     LitCount = 0;
-    ReclaimCount = 0;
     /* still useful for internal debugging */
-    AllocCount = 0;
-    FreeCount = 0;
     FuncCount = 0;
 }
 

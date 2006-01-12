@@ -136,9 +136,6 @@ global  int     MacroCount;     /* total # of macros defined */
 global  int     TagCount;       /* total # of tag entries */
 global  int     FieldCount;     /* total # of struct field names */
 global  int     EnumCount;      /* total # of enumerated symbols */
-global  int     ReclaimCount;   /* total # of reclaimed leaves */
-global  int     AllocCount;     /* total # of allocs */
-global  int     FreeCount;      /* total # of frees */
 global  int     SizeOfCount;    /* # of nested sizeof() expressions  */
 global  int     NestLevel;      /* pre-processing level of #if */
 global  int     SkipLevel;      /* pre-processing level of #if to skip to */

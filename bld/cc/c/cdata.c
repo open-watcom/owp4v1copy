@@ -33,7 +33,9 @@
 #define global
 #include "cvars.h"
 
-void InitGlobalVars( void ){
+
+void InitGlobalVars( void )
+{
     PCH_Start               = NULL; // start of precompiled memory block
     PCH_End                 = NULL; // end of precompiled memory block
     PCH_Macros              = NULL; // macros loaded from pre-compiled header
@@ -79,9 +81,6 @@ void InitGlobalVars( void ){
     GblSymCount             = 0;    /* total # of global symbols */
     LclSymCount             = 0;    /* total # of local and temporary symbols */
     FuncCount               = 0;    /* total # of functions defined in module */
-    ReclaimCount            = 0;    /* total # of reclaimed leaves */
-    AllocCount              = 0;    /* total # of allocs */
-    FreeCount               = 0;    /* total # of frees */
     SizeOfCount             = 0;    /* # of nested sizeof() expressions  */
     SymLevel                = 0;    /* current lex level (# of nested {) */
     HashValue               = 0;    /* hash value for identifier */
@@ -138,7 +137,6 @@ void InitGlobalVars( void ){
     MacroDepth              = 0;
     NextMacro               = NULL;
     HashTab                 = NULL;
-
 
     GenSwitches             = 0;    /* target independant switches for code generator */
     TargetSwitches          = 0;    /* target specific code generator switches */

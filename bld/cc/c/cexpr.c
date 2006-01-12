@@ -1005,47 +1005,6 @@ TREEPTR DotOp( TREEPTR tree )
 }
 
 
-TREEPTR DotOpNamed( TREEPTR tree, char *name )
-{
-    TYPEPTR             typ;
-    TYPEPTR             get_typ;
-    FIELDPTR            field;
-    unsigned long       offset;
-    op_flags            opflag;
-    SYM_ENTRY           sym;
-
-    typ = tree->expr_type;
-    get_typ = typ;
-    offset = 0;
-    field = SearchFields( &get_typ, &offset, name );
-    if( field == NULL ) {
-        CErr( ERR_NAME_NOT_FOUND_IN_STRUCT, name, typ->u.tag->name );
-        return( ErrorNode( tree ) );
-    }
-    typ = field->field_type;
-    opflag = tree->op.flags | OpFlags( field->attrib );
-    if( CompFlags.emit_browser_info ) {                 /* 27-oct-94 */
-        field->xref->next_xref = NewXref( field->xref->next_xref );
-    }
-    if( tree->op.opr == OPR_DOT || tree->op.opr == OPR_ARROW ) {
-        tree->right->op.ulong_value += offset;
-    } else {
-        if( tree->op.opr == OPR_PUSHADDR ) {
-            SymGet( &sym, tree->op.sym_handle );
-            if( !(sym.flags & SYM_ASSIGNED) ) {
-                sym.flags |= SYM_ASSIGNED;
-                SymReplace( &sym, tree->op.sym_handle );
-            }
-        }
-        tree = ExprNode( tree, OPR_DOT, UIntLeaf( offset ) );
-    }
-    tree->expr_type = typ;
-    tree->op.result_type = typ;
-    tree->op.flags = opflag;
-    return( tree );
-}
-
-
 TREEPTR ArrowOp( TREEPTR tree )
 {
     TYPEPTR             typ;

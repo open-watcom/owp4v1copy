@@ -680,21 +680,3 @@ extern void DwarfBrowseEmit( void )
     DwarfFini( Client );
     CMemFree( SymDWHandles );
 }
-
-
-extern void DwarfDebugInit( void )
-/********************************/
-{
-    SymDWHandles = (dw_handle *)
-                CMemAlloc( (NextSymHandle + 1) * sizeof(dw_handle) );
-    Client = DFClient();
-    dummyLoc = DWLocFini( Client, DWLocInit( Client ) );
-}
-
-extern void DwarfDebugFini( void )
-/****************************/
-{
-    DWLocTrash( Client, dummyLoc );
-    CMemFree( SymDWHandles );
-    SymDWHandles = NULL;
-}
