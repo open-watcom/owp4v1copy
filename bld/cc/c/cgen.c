@@ -1322,15 +1322,14 @@ local void ScanFunction( TREEPTR tree, int inline_depth )
     if( tree == NULL || tree->right == NULL ) return;
     f = &tree->right->op.func;
 
-    /* anything recursive is always emitted */
-    if( f->flags & FUNC_INUSE ) {
-        f->flags |= FUNC_USED;
-        return;
-    }
-    if( ( f->flags & FUNC_OK_TO_INLINE ) && inline_depth < MAX_INLINE_DEPTH ) {
-      /* simulate inlining */
+    if( ( f->flags & FUNC_OK_TO_INLINE ) && ! ( f->flags & FUNC_INUSE ) &&
+        inline_depth < MAX_INLINE_DEPTH ) {
+        /* simulate inlining when appropriate */
         inline_depth++;
     } else {
+        /* if already examined no need to do it again */
+        if( f->flags & FUNC_USED )
+            return;
         inline_depth = 0;
         f->flags |= FUNC_USED;
     }
@@ -1358,32 +1357,16 @@ local void ScanFunction( TREEPTR tree, int inline_depth )
 local void PruneFunctions( void )
 {
     TREEPTR     tree;
-    TREEPTR     func;
-    TREEPTR     right;
     SYM_ENTRY   sym;
 
-    tree = FirstStmt;
-    while( tree != NULL ) {
-        right = LinearizeTree( tree->right );
-        while( right ) {
-            if( right->op.opr == OPR_FUNCTION ) {
-                SymGet( &sym, right->op.func.sym_handle );
-                func = NULL;
-                if( sym.stg_class == SC_STATIC &&
-                    ! ( sym.flags & SYM_ADDR_TAKEN ) )
-                    break;
-                right->op.func.flags |= FUNC_INUSE | FUNC_USED;
-                func = right;
-            }
-            if( func == NULL ) break;
-            if( right->op.opr == OPR_FUNCEND ) {
-                func->op.func.flags &= ~FUNC_INUSE;
-                func = NULL;
-            } else if( func && right->op.opr == OPR_FUNCNAME )
-                ScanFunction( FindFuncStmtTree( right->op.sym_handle ), 0 );
-            right = right->thread;
+    for( tree = FirstStmt; tree != NULL; tree = tree->left ) {
+        if( tree->right->op.opr == OPR_FUNCTION ) {
+            SymGet( &sym, tree->right->op.func.sym_handle );
+            if( sym.stg_class != SC_STATIC || ( sym.flags & SYM_ADDR_TAKEN ) )
+                /* passing MAX_INLINE_DEPTH ensures these guys are marked
+                   with FUNC_USED themselves */
+                ScanFunction( tree, MAX_INLINE_DEPTH );
         }
-        tree = tree->left;
     }
 }
 
