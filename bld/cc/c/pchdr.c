@@ -60,7 +60,7 @@ extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 
 #define PH_BUF_SIZE     32768
 #define PCH_SIGNATURE   (unsigned long) 'WPCH'
-#define PCH_VERSION     0x0198
+#define PCH_VERSION     0x0199
 #if defined(__I86__)
 #define PCH_VERSION_HOST ( ( 1L << 16 ) | PCH_VERSION )
 #elif defined(__386__)
@@ -281,8 +281,8 @@ static void OutPutHeader( void )
     pch.tag_count         = PH_TagCount;
     pch.pragma_count      = PH_PragmaCount;
     pch.symhash_count     = PH_SymHashCount;
-    pch.symbol_count      = NextSymHandle + 1;
-    pch.specialsyms_count = SpecialSyms;
+    pch.symbol_count      = SymGetNumSyms();
+    pch.specialsyms_count = SymGetNumSpecialSyms();
     pch.cwd_len           = PH_cwd_len;
     if( MsgFlags != NULL ) {                            /* 06-jul-94 */
         pch.msgflags_len  = ((HIGHEST_MESSAGE_NUMBER + 7) / 8)
@@ -871,9 +871,9 @@ static void OutPutSymbols( void )
     int         rc;
 
     if( PH_computing_size ) {
-        PH_size += (NextSymHandle + 1) * sizeof( SYM_ENTRY );
+        PH_size += SymGetNumSyms() * sizeof( SYM_ENTRY );
     } else {
-        for( sym_handle = 0; sym_handle <= NextSymHandle; sym_handle++ ) {
+        for( sym_handle = SymGetFirst(); sym_handle != SYM_INVALID ; sym_handle = SymGetNext( sym_handle ) ) {
             SymGet( &sym, sym_handle );
             if( sym.sym_type != NULL ) {
                 sym.sym_type_index = sym.sym_type->type_index;
@@ -1282,7 +1282,7 @@ static char *FixupSymbols( char *p, unsigned symbol_count )
 {
     SYMPTR      symptr;
     SYM_ENTRY   sym;
-    SYM_HANDLE  sym_handle;
+    unsigned    sym_handle;     // TODO: don't cheat!
 
     sym_handle = 0;
     while( symbol_count != 0 ) {
@@ -1296,9 +1296,9 @@ static char *FixupSymbols( char *p, unsigned symbol_count )
         ++sym_handle;
         --symbol_count;
     }
-    for( sym_handle = 0; sym_handle < SpecialSyms; sym_handle++ ) {
-        SymGet( &sym, sym_handle );  // Redo special syms
-        symptr =  PCH_SymArray[ sym_handle ];
+    for( sym_handle = 0; sym_handle < (unsigned)SpecialSyms; sym_handle++ ) {
+        SymGet( &sym, (SYM_HANDLE)sym_handle );  // Redo special syms
+        symptr  = PCH_SymArray[ sym_handle ];
         *symptr = sym;
     }
     return( p );
@@ -1563,7 +1563,7 @@ int ValidHeader( struct pheader *pch )
       && (pch->version == PCH_VERSION_HOST)
       && (pch->size_of_header == sizeof( struct pheader ))
       && (pch->size_of_int == TARGET_INT)
-      && (pch->specialsyms_count == SpecialSyms)
+      && (pch->specialsyms_count == SymGetNumSpecialSyms())
       && (pch->pack_amount == PackAmount) ) {
         return( 1 );
     }
@@ -1581,6 +1581,8 @@ int LoadPreCompiledHeader( char *p, struct pheader *pch )
     return( rc );
 }
 
+extern void SetNextSymHandle( unsigned val );
+
 static int FixupDataStructures( char *p, struct pheader *pch )
 {
     p = FixupLibrarys( p, pch->library_count );
@@ -1597,7 +1599,7 @@ static int FixupDataStructures( char *p, struct pheader *pch )
         p += pch->msgflags_len;
     }
     PCH_MaxSymHandle = pch->symbol_count;
-    NextSymHandle = pch->symbol_count - 1;
+    SetNextSymHandle( pch->symbol_count - 1 );
     IncLineCount = pch->incline_count;
     Toggles = pch->toggles;
     FixupFNames();

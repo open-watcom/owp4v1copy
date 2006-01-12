@@ -524,8 +524,8 @@ static int InsertFixups( unsigned char *buff, unsigned i )
                 }
                 if( skip != 0 ) {
                     *dst++ = cg_fix;
-                    *((unsigned long *)dst) = sym_handle;
-                    dst += sizeof( long );
+                    *((CGSYM_HANDLE *)dst) = sym_handle;
+                    dst += sizeof( CGSYM_HANDLE );
                     *((unsigned long *)dst) = fix->offset;
                     dst += sizeof( long );
                     src += skip;

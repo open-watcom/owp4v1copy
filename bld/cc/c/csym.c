@@ -49,12 +49,14 @@ static struct sym_stats {
 } SymStats;
 static unsigned FirstSymInBuf;
 static char     *SymBufPtr;
+static unsigned NextSymHandle;
 
 void SymInit( void )
 {
     int         i;
     unsigned    seg_num;
 
+    NextSymHandle = 0;
     Cached_sym_num = ~0u;
     SymLevel = 0;
     GblSymCount = 0;
@@ -103,6 +105,37 @@ void SymFini( void )
     }
 }
 
+unsigned SymGetNumSyms( void )
+{
+    return( NextSymHandle + 1 );
+}
+
+unsigned SymGetNumSpecialSyms( void )
+{
+    return( (unsigned)SpecialSyms );
+}
+
+SYM_HANDLE SymGetFirst( void )
+{
+    return( 0 );
+}
+
+SYM_HANDLE SymGetNext( SYM_HANDLE sym_handle )
+{
+    unsigned    handle = (unsigned)sym_handle;
+
+    if( handle < NextSymHandle )
+        return( (SYM_HANDLE)(handle + 1) );
+    else
+        return( SYM_INVALID );
+}
+
+// This is a temporary function, to be deleted later
+void SetNextSymHandle( unsigned val )
+{
+    NextSymHandle = val;
+}
+
 SYM_HANDLE SegSymbol( char *name )                      /* 15-mar-92 */
 {
     SYM_ENTRY       sym;
@@ -113,8 +146,8 @@ SYM_HANDLE SegSymbol( char *name )                      /* 15-mar-92 */
     sym.name = name;
     sym.stg_class = SC_STATIC;
     sym.level = 1; //make invisible
-    SymReplace( &sym, NextSymHandle );
-    return( NextSymHandle );
+    SymReplace( &sym, (SYM_HANDLE)NextSymHandle );
+    return( (SYM_HANDLE)NextSymHandle );
 }
 
 SYM_HANDLE SpcSymbol( char *name, int stg_class )
@@ -126,8 +159,8 @@ SYM_HANDLE SpcSymbol( char *name, int stg_class )
     sym.sym_type = GetType( TYPE_USHORT );
     sym.name = name;
     sym.stg_class = stg_class;
-    SymReplace( &sym, NextSymHandle );
-    return( NextSymHandle );
+    SymReplace( &sym, (SYM_HANDLE)NextSymHandle );
+    return( (SYM_HANDLE)NextSymHandle );
 }
 
 void SpcSymInit( void )
@@ -143,26 +176,26 @@ void SpcSymInit( void )
     SymReplace( &sym, 0 );
 #ifdef __SEH__
     NewSym();                           /* 05-dec-92 */
-    TrySymHandle = NextSymHandle;               /* create special _try sym */
+    TrySymHandle = (SYM_HANDLE)NextSymHandle;               /* create special _try sym */
     sym.stg_class = SC_AUTO;
     sym.name = ".try";
     sym.sym_type = GetType( TYPE_VOID );
-    SymReplace( &sym, NextSymHandle );
+    SymReplace( &sym, (SYM_HANDLE)NextSymHandle );
 #endif
     /* create special symbol for "extern unsigned int __near __chipbug" */
     NewSym();
-    SymChipBug = NextSymHandle;
+    SymChipBug = (SYM_HANDLE)NextSymHandle;
     sym.stg_class = SC_EXTERN;
     sym.name = "__chipbug";
     sym.sym_type = GetType( TYPE_UINT );
-    SymReplace( &sym, NextSymHandle );
+    SymReplace( &sym, (SYM_HANDLE)NextSymHandle );
 
     /* create special symbol table entry for __segname("_CODE") */
     Sym_CS = SegSymbol( ".CS" );                        /* 18-jan-92 */
     /* create special symbol table entry for __segname("_STACK") */
     Sym_SS = SegSymbol( ".SS" );                        /* 13-dec-92 */
 
-    SpecialSyms = NextSymHandle;
+    SpecialSyms = (SYM_HANDLE)NextSymHandle;
 
     /* Create special symbol table entries for use by stosw, stosb pragmas
      * This should be a TYPE_FUNCTION returning pointer to char
@@ -192,9 +225,9 @@ void SpcSymInit( void )
 #endif
     SymCover = MakeFunction( "__COVERAGE", typ );       /* 04-apr-92 */
     MakeFunction( "__C", typ );                 /* 04-apr-92 */
-    SymGet( &sym, NextSymHandle );
+    SymGet( &sym, (SYM_HANDLE)NextSymHandle );
     sym.stg_class = SC_STATIC;
-    SymReplace( &sym, NextSymHandle );
+    SymReplace( &sym, (SYM_HANDLE)NextSymHandle );
 }
 
 
@@ -209,9 +242,9 @@ SYM_HANDLE MakeFunction( char *id, TYPEPTR typ )
     sym.handle = SpecialSyms;
     sym.sym_type = typ;
     NewSym();
-    SpecialSyms = NextSymHandle;
-    SymReplace( &sym, NextSymHandle );
-    return( NextSymHandle );
+    SpecialSyms = (SYM_HANDLE)NextSymHandle;
+    SymReplace( &sym, (SYM_HANDLE)NextSymHandle );
+    return( (SYM_HANDLE)NextSymHandle );
 }
 
 
@@ -267,16 +300,17 @@ void SymAccess( unsigned sym_num )
 
 SYMPTR SymGetPtr( SYM_HANDLE sym_handle )
 {
+    unsigned    handle = (unsigned)sym_handle;
     SYMPTR      symptr;
 
     ++SymStats.getptr;
     if( sym_handle == CurFuncHandle ) {
         symptr = &CurFuncSym;
-    } else if( sym_handle < PCH_MaxSymHandle ) {        /* 08-mar-94 */
-        symptr = PCH_SymArray[ sym_handle ];
+    } else if( handle < PCH_MaxSymHandle ) {        /* 08-mar-94 */
+        symptr = PCH_SymArray[ handle ];
     } else {
-        if( sym_handle != Cached_sym_num ) {
-            SymAccess( sym_handle );
+        if( handle != Cached_sym_num ) {
+            SymAccess( handle );
         }
         symptr = Cached_sym_addr;
     }
@@ -285,16 +319,17 @@ SYMPTR SymGetPtr( SYM_HANDLE sym_handle )
 
 void SymGet( SYMPTR sym, SYM_HANDLE sym_handle )
 {
+    unsigned    handle = (unsigned)sym_handle;
     SYMPTR      symptr;
 
     ++SymStats.get;
     if( sym_handle == CurFuncHandle ) {
         symptr = &CurFuncSym;
-    } else if( sym_handle < PCH_MaxSymHandle ) {        /* 08-mar-94 */
-        symptr = PCH_SymArray[ sym_handle ];
+    } else if( handle < PCH_MaxSymHandle ) {        /* 08-mar-94 */
+        symptr = PCH_SymArray[ handle ];
     } else {
-        if( sym_handle != Cached_sym_num ) {
-            SymAccess( sym_handle );
+        if( handle != Cached_sym_num ) {
+            SymAccess( handle );
         }
         symptr = Cached_sym_addr;
     }
@@ -304,15 +339,17 @@ void SymGet( SYMPTR sym, SYM_HANDLE sym_handle )
 
 void SymReplace( SYMPTR sym, SYM_HANDLE sym_handle )
 {
+    unsigned    handle = (unsigned)sym_handle;
+
     ++SymStats.replace;
     if( sym_handle == CurFuncHandle ) {
         memcpy( &CurFuncSym, sym, sizeof( SYM_ENTRY ) );
     }
-    if( sym_handle < PCH_MaxSymHandle ) {       /* 08-mar-94 */
-        memcpy( PCH_SymArray[ sym_handle ], sym, sizeof( SYM_ENTRY ) );
+    if( handle < PCH_MaxSymHandle ) {       /* 08-mar-94 */
+        memcpy( PCH_SymArray[ handle ], sym, sizeof( SYM_ENTRY ) );
     } else {
-        if( sym_handle != Cached_sym_num ) {
-            SymAccess( sym_handle );
+        if( handle != Cached_sym_num ) {
+            SymAccess( handle );
         }
         memcpy( Cached_sym_addr, sym, sizeof( SYM_ENTRY ) );
         SymBufDirty = 1;
@@ -361,7 +398,7 @@ SYM_HANDLE SymAdd( int h, SYMPTR sym )
     }
     NewSym();
     sym->level = SymLevel;
-    hsym = SymHash( sym, NextSymHandle );
+    hsym = SymHash( sym, (SYM_HANDLE)NextSymHandle );
     sym->info.hash_value = h;
     head = &HashTab[ h ];               /* add name to head of list */
     for( ;; ) {
@@ -384,7 +421,7 @@ SYM_HANDLE SymAddL0( int h, SYMPTR new_sym )    /* add symbol to level 0 */
     ++GblSymCount;
     NewSym();
     new_sym->level = 0;
-    new_hsym = SymHash( new_sym, NextSymHandle );
+    new_hsym = SymHash( new_sym, (SYM_HANDLE)NextSymHandle );
     new_hsym->next_sym = NULL;
     new_sym->info.hash_value = h;
     hsym = HashTab[h];
@@ -730,7 +767,7 @@ local SYM_HASHPTR GetSymList( void )                    /* 25-jun-92 */
         }
         for( hsym = sym_list; hsym; hsym = next_hsymptr ) {
             next_hsymptr = hsym->next_sym;
-            i = hsym->handle / (SYMS_PER_BUF * SYMBUFS_PER_SEG);
+            i = (unsigned)hsym->handle / (SYMS_PER_BUF * SYMBUFS_PER_SEG);
             hsym->next_sym = sym_seglist[i];
             sym_seglist[i] = hsym;
         }
@@ -743,7 +780,7 @@ local SYM_HASHPTR GetSymList( void )                    /* 25-jun-92 */
             }
             for( hsym = sym_seglist[i]; hsym; hsym = next_hsymptr ) {
                 next_hsymptr = hsym->next_sym;
-                j = (hsym->handle / SYMS_PER_BUF) % SYMBUFS_PER_SEG;
+                j = ((unsigned)hsym->handle / SYMS_PER_BUF) % SYMBUFS_PER_SEG;
                 hsym->next_sym = sym_buflist[j];
                 sym_buflist[j] = hsym;
                 if( sym_buftail[j] == NULL )
@@ -1054,7 +1091,7 @@ XREFPTR NewXref( XREFPTR next_xref )
 {
     XREFPTR     xref;
 
-    xref = (XREFPTR) CMemAlloc( sizeof( XREF_ENTRY ) );
+    xref = (XREFPTR)CMemAlloc( sizeof( XREF_ENTRY ) );
     xref->next_xref = next_xref;
     xref->linenum = TokenLine;
     xref->filenum = SrcFno;

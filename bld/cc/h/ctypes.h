@@ -143,9 +143,10 @@ typedef enum string_flags {     // string literal flags
     STRLIT_WIDE         = 0x80, // must not conflict with FLAG_MEM_MODEL
 } string_flags;
 
-typedef unsigned short SYM_HANDLE;
+typedef void    *SYM_HANDLE;
 typedef struct string_literal *STR_HANDLE;
 
+#define SYM_INVALID     ((SYM_HANDLE)~0)    // invalid symbol; never a real sym
 
 struct parm_list {
     struct  parm_list       *next_parm;
@@ -373,6 +374,8 @@ typedef struct symtab_entry {           /* SYMBOL TABLE structure */
         struct textsegment  *seginfo;       /* 26-oct-91 */
         int                 seginfo_index;  /* for pre-compiled header */
     };
+    dw_handle       dwarf_handle;           /* used for browsing info; could be
+                                             * perhaps stored in 'info' union. */
     type_modifiers  attrib;   /* LANG_CDECL, _PASCAL, _FORTRAN */
     sym_flags       flags;
     unsigned char   level;
@@ -616,7 +619,6 @@ struct comp_flags {
     unsigned banner_printed         : 1;    /* on => banner printed      */
     unsigned undefine_all_macros    : 1;    /* on => -u all macros       */
     unsigned emit_browser_info      : 1;    /* -db emit broswer info */
-    unsigned cppi_segment_used      : 1;    /* C++ initializer segment */
     unsigned rescan_buffer_done     : 1;    /* ## re-scan buffer used up */
 
     unsigned cpp_output             : 1;    /* WCC doing CPP output      */
@@ -646,9 +648,7 @@ struct comp_flags {
     unsigned no_debug_type_names    : 1;    /* -d2~ switch specified  */
     unsigned asciiout_used          : 1;    /* (asciiout specified  */
 
-    unsigned noxedit_used           : 1;    /* (noxedit specified  */
     unsigned addr_of_auto_taken     : 1;    /*=>can't opt tail recursion*/
-    unsigned continued_string       : 1;    /* continuing big string */
     unsigned sg_switch_used         : 1;    /* /sg switch used */
     unsigned bm_switch_used         : 1;    /* /bm switch used */
     unsigned bd_switch_used         : 1;    /* /bd switch used */
@@ -674,9 +674,8 @@ struct comp_flags {
     unsigned use_precompiled_header : 1;    /* use precompiled header */
     unsigned doing_macro_expansion  : 1;    /* doing macro expansion */
     unsigned no_pch_warnings        : 1;    /* disable PCH warnings */
-    unsigned align_structs_on_qwords: 1;    /* for ALPHA */
-    unsigned axp_align_emu          : 1;    /* for ALPHA */
-    unsigned no_check_inits         : 1;    /* ease init  type checking*/
+    unsigned align_structs_on_qwords: 1;    /* for Alpha */
+    unsigned no_check_inits         : 1;    /* ease init  type checking */
     unsigned no_check_qualifiers    : 1;    /* ease qualifier mismatch */
     unsigned curdir_inc             : 1;    /* check current dir for include files */
 
@@ -692,7 +691,7 @@ struct comp_flags {
 };
 
 struct global_comp_flags {  // things that live across compiles
-    unsigned cc_reuse               : 1;    /* in a resuable version batch, dll*/
+    unsigned cc_reuse               : 1;    /* in a reusable version batch, dll*/
     unsigned cc_first_use           : 1;    /* first time thru           */
 };
 
@@ -716,15 +715,12 @@ enum {
     TS_LINUX
 };
 
-/*
-   return values from CompatibleType
-*/
 /* values for ESCChar routine */
 #define RTN_SAVE_NEXT_CHAR      0
 #define RTN_NEXT_BUF_CHAR       1
 
 typedef struct call_list {
-    struct call_list   *next;
+    struct call_list    *next;
     TREEPTR             callnode;
     unsigned            source_fno;     // OPR_STMT
     int                 srclinenum;     // OPR_STMT, and OPR_NOP for callnode

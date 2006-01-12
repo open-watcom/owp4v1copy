@@ -179,7 +179,6 @@ global  SYM_HANDLE SymMAX;      /* builtin symbol for 'max(a,b)' */
 global  SYM_HANDLE SymMEMCMP;   /* builtin symbol for 'memcmp' func */
 global  SYM_HANDLE SymMEMCPY;   /* builtin symbol for 'memcpy' func */
 global  SYM_HANDLE SpecialSyms; /* builtin symbols (thread linked) */
-global  SYM_HANDLE NextSymHandle;/* next handle for a symbol */
 global  SYM_HANDLE CharSymHandle;/* sym handle for "char" typedef */
 global  SYM_HANDLE Sym_CS;      /* sym handle for __segname("_CODE") ie. CS */
 global  SYM_HANDLE Sym_SS;      /* sym handle for __segname("_STACK")ie. SS */
@@ -778,6 +777,10 @@ extern  LABELPTR LkLabel(char *);               /* csym */
 extern  void    FreeLabels(void);               /* csym */
 extern  XREFPTR NewXref(XREFPTR);               /* csym */
 extern  void    FreeXrefs(XREFPTR);             /* csym */
+extern  unsigned   SymGetNumSyms( void );       /* csym */
+extern  unsigned   SymGetNumSpecialSyms( void );/* csym */
+extern  SYM_HANDLE SymGetFirst( void );         /* csym */
+extern  SYM_HANDLE SymGetNext( SYM_HANDLE sym_handle ); /* csym */
 
 
 extern  void    TimeInit(void);                 /* ctimepc */
