@@ -28,7 +28,7 @@
 #define CCHMAXPATH          260
 #define CCHMAXPATHCOMP      256
 
-#if (defined(INCL_DOSPROCESS) || !defined(INCL_NOCOMMON))
+#if defined(INCL_DOSPROCESS) || !defined(INCL_NOCOMMON)
 
 #define EXIT_THREAD      0
 #define EXIT_PROCESS     1
@@ -38,7 +38,7 @@ VOID   APIENTRY DosExit(ULONG,ULONG);
 
 #endif
 
-#if defined(INCL_DOSPROCESS)
+#ifdef INCL_DOSPROCESS
 
 #define DosCwait          DosWaitChild
 #define DosSetPrty        DosSetPriority
@@ -150,7 +150,7 @@ typedef struct _TIB {
     ULONG tib_ordinal;
 } TIB, *PTIB;
 
-#if !defined(DBG_INCL_DOSDEBUG)
+#ifdef DBG_INCL_DOSDEBUG
 
 #define DBG_INCL_DOSDEBUG
 
@@ -987,7 +987,7 @@ APIRET APIENTRY DosSubUnsetMem(PVOID);
 
 #endif
 
-#if defined(INCL_DOSMODULEMGR)
+#ifdef INCL_DOSMODULEMGR
 
 #define PT_16BIT 0
 #define PT_32BIT 1
@@ -1013,7 +1013,7 @@ APIRET APIENTRY DosReplaceModule(PCSZ,PCSZ,PCSZ);
 
 #endif
 
-#if defined(INCL_DOSNMPIPES)
+#ifdef INCL_DOSNMPIPES
 
 #define NP_STATE_DISCONNECTED 1
 #define NP_STATE_LISTENING    2
@@ -1079,7 +1079,7 @@ APIRET APIENTRY DosWaitNPipe(PCSZ,ULONG);
 
 #endif
 
-#if defined(INCL_DOSQUEUES)
+#ifdef INCL_DOSQUEUES
 
 #define QUE_FIFO              0
 #define QUE_LIFO              1
@@ -1106,7 +1106,7 @@ APIRET APIENTRY DosWriteQueue(HQUEUE,ULONG,ULONG,PVOID,ULONG);
 
 #endif
 
-#if defined(INCL_DOSSEMAPHORES)
+#ifdef INCL_DOSSEMAPHORES
 
 #define DC_SEM_SHARED   1
 #define DCMW_WAIT_ANY   2
@@ -1165,7 +1165,7 @@ USHORT APIENTRY16 DosMonWrite(PBYTE,PBYTE,USHORT);
 
 #endif
 
-#if defined(INCL_DOSNLS)
+#ifdef INCL_DOSNLS
 
 #define DosCaseMap     DosMapCase
 #define DosGetCollate  DosQueryCollate
@@ -1259,32 +1259,41 @@ APIRET APIENTRY DosQueryResourceSize(HMODULE,ULONG,ULONG,PULONG);
 
 #endif
 
+#if defined(INCL_DOSDATETIME) || !defined(INCL_NOCOMMON)
+
+typedef struct _DATETIME {
+    UCHAR  hours;
+    UCHAR  minutes;
+    UCHAR  seconds;
+    UCHAR  hundredths;
+    UCHAR  day;
+    UCHAR  month;
+    USHORT year;
+    SHORT  timezone;
+    UCHAR  weekday;
+} DATETIME, *PDATETIME;
+
+APIRET APIENTRY DosGetDateTime(PDATETIME);
+APIRET APIENTRY DosSetDateTime(PDATETIME);
+
+#endif
+
 #ifdef INCL_DOSDATETIME
+
+#define DosTimerAsync   DosAsyncTimer
+#define DosTimerStart   DosStartTimer
+#define DosTimerStop    DosStopTimer
 
 typedef LHANDLE HTIMER;
 typedef HTIMER  *PHTIMER;
 
-typedef struct _DATETIME {
-    UCHAR   hours;
-    UCHAR   minutes;
-    UCHAR   seconds;
-    UCHAR   hundredths;
-    UCHAR   day;
-    UCHAR   month;
-    USHORT  year;
-    SHORT   timezone;
-    UCHAR   weekday;
-} DATETIME, *PDATETIME;
-
 APIRET APIENTRY DosAsyncTimer(ULONG,HSEM,PHTIMER);
-APIRET APIENTRY DosGetDateTime(PDATETIME);
-APIRET APIENTRY DosSetDateTime(PDATETIME);
 APIRET APIENTRY DosStartTimer(ULONG,HSEM,PHTIMER);
 APIRET APIENTRY DosStopTimer(HTIMER);
 
 #endif
 
-#if defined(INCL_DOSMISC)
+#ifdef INCL_DOSMISC
 
 #define DDP_DISABLEPROCDUMP 0
 #define DDP_ENABLEPROCDUMP  1
