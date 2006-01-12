@@ -73,11 +73,11 @@ common_objs = &
     browsio.obj  &
     intlload.obj  &
     autodept.obj  &
-    cexpr2.obj &
-    cfold2.obj &
-    cmath2.obj &
-    cstmt2.obj &
-    cgen2.obj &
+    cexpr.obj &
+    cfold.obj &
+    cmath.obj &
+    cstmt.obj &
+    cgen.obj &
     cgendata.obj &
     exprtree.obj &
     treewalk.obj
