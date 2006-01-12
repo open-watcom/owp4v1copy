@@ -74,7 +74,12 @@ typedef enum {
 
 typedef void *          cg_name;        /* retval for CGName(),CGUnary()*/
 typedef void *          call_handle;    /* retval for CGInitCall(), etc. */
+
+#ifdef BY_CPP_FRONT_END
+typedef unsigned        cg_sym_handle;
+#else
 typedef void *          cg_sym_handle;
+#endif
 
 typedef void *          label_handle;   /*  2nd parm to CGName for CG_LBL */
 typedef void *          sel_handle;     /*  return value for CGSelInit() */
