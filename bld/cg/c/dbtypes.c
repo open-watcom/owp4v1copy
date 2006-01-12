@@ -718,6 +718,7 @@ extern  struct_list * _CGAPI DBBegNameStruct( char *nm, cg_type tipe, char is_st
     strcpy( st->name, nm );
     st->num = 0;
     st->list = NULL;
+    st->list_tail = &st->list;
     st->size = TypeAddress( tipe )->length;
     st->is_struct = is_struct;   /* v.s. union */
     st->is_class = FALSE;
@@ -776,20 +777,12 @@ static  field_member     *CreateMember( char *nm, byte strt, byte len,
     return( field );
 }
 
-static  void    AddField( struct_list *st, field_any *field ){
-/***************************************************************/
-
-    field_any *curr;
-    field_any **owner;
-
-    owner = &st->list;
-    for(;;) {
-        curr = *owner;
-        if( curr == NULL ) break;
-        owner = &curr->entry.next;
-    }
+static  void    AddField( struct_list *st, field_any *field )
+/***********************************************************/
+{
     field->entry.next = NULL;
-    *owner = field;
+    *st->list_tail = field;
+    st->list_tail = &field->entry.next;
     st->num++;
 }
 

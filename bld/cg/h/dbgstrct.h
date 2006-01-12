@@ -134,6 +134,7 @@ typedef union field_any{
 
 typedef struct struct_list {
     field_any          *list;
+    field_any           **list_tail;
     uint                num;
     unsigned long       size;
     dbg_type            me;
