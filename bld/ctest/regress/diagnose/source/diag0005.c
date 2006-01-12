@@ -9,19 +9,19 @@ static int fn2( void );     // bad external->internal linkage redeclaration
 int fn3( void );            // implicitly extern
 static int fn3( void );     // bad external->internal linkage redeclaration
 
-#if 0
-
-// Pending resolution - we may or may not want to warn
+// We do not want to warn in this case - Watcom extension. Note that
+// in -za mode, a warning will be emitted (also a warning about missing
+// prototype).
 void foo( void )
 {
     fn4();                  // implicit extern declaration
 }
 
-static int fn4( void ) {    // bad extern->static redeclaration
+static int fn4( void ) {    // possibly bad extern->static redeclaration
     return( 0 );
 }
 
-#endif
+
 
 extern int i1;
 int i1;                     // definition OK
@@ -40,3 +40,9 @@ extern int i5;              // OK, symbol linkage remains internal
 
 static int i6;
 int i6;                     // bad internal->external linkage redeclaration
+
+// Avoid second 'unused static' warning. The symbol table will be iterated
+// through in somewhat non-deterministic fashion and two unused static
+// warnings may be output in different order depending on circumstances.
+// If we only have one warning, there's no problem.
+int *pi6 = &i6;

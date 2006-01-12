@@ -40,5 +40,4 @@ source\diag0005.c(33): Error! E1072: Storage class disagrees with previous defin
 source\diag0005.c(33): Note! I2002: 'i3' defined in: source\diag0005.c(32)
 source\diag0005.c(42): Error! E1072: Storage class disagrees with previous definition of 'i6'
 source\diag0005.c(42): Note! I2002: 'i6' defined in: source\diag0005.c(41)
-source\diag0005.c(41): Warning! W202: Symbol 'i6' has been defined, but not referenced
 source\diag0005.c(38): Warning! W202: Symbol 'i5' has been defined, but not referenced
