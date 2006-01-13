@@ -1008,8 +1008,12 @@ static MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
                         }
                     }
                 }
-                rem = next->next;  // save unseen stuff
-                next->next = NULL; // break link;
+                if( next != NULL ) {
+                    rem = next->next;   // save unseen stuff
+                    next->next = NULL;  // break link;
+                } else {
+                    rem = NULL;         // happens if no arg after comma
+                }
                 while( mtok != NULL ) { // free old stuff [mtoken,##,{atok,} next]
                     next = mtok->next;
                     CMemFree( mtok );
