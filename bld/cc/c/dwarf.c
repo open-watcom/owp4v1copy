@@ -39,7 +39,6 @@
 
 static dw_client       Client;
 static dw_loc_handle   dummyLoc;
-static dw_handle       *SymDWHandles;
 static int             CurFile;
 static int             CurLine;
 
@@ -656,22 +655,9 @@ static void dwarfEmit( void )
     InitDebugTypes();
 }
 
-static void InitSymDWHandles( void )
-/**********************************/
-{
-    int i, count;
-
-    count =  SymGetNumSyms();
-    SymDWHandles = (dw_handle *)CMemAlloc( count * sizeof( dw_handle ) );
-    for( i = 0; i < count; ++i ) {
-        SymDWHandles[i] = 0;
-    }
-}
-
 extern void DwarfBrowseEmit( void )
 /*********************************/
 {
-    InitSymDWHandles();
     Client = DwarfInit();
     dummyLoc = DWLocFini( Client, DWLocInit( Client ) );
     CurFile = 0;
@@ -679,5 +665,4 @@ extern void DwarfBrowseEmit( void )
     dwarfEmit();
     DWLocTrash( Client, dummyLoc );
     DwarfFini( Client );
-    CMemFree( SymDWHandles );
 }
