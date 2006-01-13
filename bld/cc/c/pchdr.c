@@ -285,8 +285,7 @@ static void OutPutHeader( void )
     pch.specialsyms_count = SymGetNumSpecialSyms();
     pch.cwd_len           = PH_cwd_len;
     if( MsgFlags != NULL ) {                            /* 06-jul-94 */
-        pch.msgflags_len  = ((HIGHEST_MESSAGE_NUMBER + 7) / 8)
-                            + (sizeof( int ) - 1) & -sizeof( int );
+        pch.msgflags_len  = _RoundUp( ((HIGHEST_MESSAGE_NUMBER + 7) / 8), sizeof( int ) );
     } else {
         pch.msgflags_len = 0;
     }
@@ -307,7 +306,7 @@ static void OutPutHFileList( void )     // output include paths
         rc = WritePHeader( &rc, sizeof( int ) );
     } else {
         len = strlen( HFileList ) + 1;
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         rc = WritePHeader( HFileList, len );
     }
     if( rc != 0 ) {
@@ -323,7 +322,7 @@ static void OutPutIncFileList( void )   // output primary include files
 
     for( ifile = IncFileList; ifile; ifile = ifile->nextfile ) {
         len = sizeof( INCFILE ) + ifile->len;
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         rc = WritePHeader( ifile, len );
         if( rc != 0 ) {
             longjmp( PH_jmpbuf, rc );
@@ -340,7 +339,7 @@ static void OutPutLibraries( void )
 
     for( lib = HeadLibs; lib; lib = lib->next ) {
         len = sizeof( struct library_list ) + strlen( lib->name );
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         rc = WritePHeader( lib, len );
         if( rc != 0 ) {
             longjmp( PH_jmpbuf, rc );
@@ -380,7 +379,7 @@ static void OutPutIncludes( void )
     while( flist != NULL ) {
         next_flist = flist->next;
         len = strlen( flist->name ) + sizeof( struct fname_list );
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         flist->fname_len = len;
         rc = WritePHeader( flist, len );
         flist->next = next_flist;
@@ -403,7 +402,7 @@ static void OutPutRoDirList( void )
     while( dirlist != NULL ) {
         next_dirlist = dirlist->next;
         len = strlen( dirlist->name ) + sizeof( struct rdir_list );
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         dirlist->name_len = len;
         rc = WritePHeader( dirlist, len );
         dirlist->next = next_dirlist;
@@ -428,7 +427,7 @@ static void OutPutSegInfo( void )
         len = strlen( seg->segname );           // segment name
         len += strlen( &seg->segname[len+1] );  // class name
         len += sizeof( struct textsegment ) + 1;
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         next = seg->next;                       // save next pointer
         seg->textsegment_len = len;             // replace with len
         rc = WritePHeader( seg, len );
@@ -446,7 +445,7 @@ static void OutPutEnums( ENUMPTR ep, TAGPTR parent )
 
     for( ; ep; ep = ep->thread ) {
         len = strlen( ep->name ) + sizeof( ENUMDEFN );
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         ep->enum_len = len;
         rc = WritePHeader( ep, len );
         ep->parent = parent;            // enum_len is union'ed with parent
@@ -465,7 +464,7 @@ static void OutPutFields( FIELDPTR field )
 
     while( field != NULL ) {
         len = strlen( field->name ) + sizeof( FIELD_ENTRY );
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         next_field = field->next_field;         // save pointer
         field->field_len = len;                 // replace with length
         if( next_field == NULL ) {
@@ -492,7 +491,7 @@ static void OutPutATag( TAGPTR tag )
     typ = tag->sym_type;
     tag->sym_type_index = typ->type_index;
     len = strlen( tag->name ) + sizeof( TAGDEFN );
-    len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+    len = _RoundUp( len, sizeof( int ) );
     rc = WritePHeader( tag, len );
     tag->sym_type = typ;
     if( rc != 0 ) {
@@ -713,7 +712,7 @@ static void OutPutAuxInfo( struct aux_info *info )
                                 + sizeof( byte_seq );
         len += info->code_size;
     }
-    padding = ((len + (sizeof( int ) - 1)) & -sizeof( int )) - len;
+    padding = _RoundUp( len, sizeof( int ) ) - len;
     rc = WritePHeader( info, sizeof( struct aux_info ) );
     if( save_parms != NULL ) {
         regs = save_parms;
@@ -771,7 +770,7 @@ static void OutPutPragmaInfo( void )
         ent->aux_info_index = info->index - PCH_FIRST_INDEX;
         // write out aux_entry
         len = sizeof( struct aux_entry ) + strlen( ent->name );
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         rc = WritePHeader( ent, len );
         ent->info = info;                       // restore pointer
         if( rc != 0 ) {
@@ -798,8 +797,7 @@ static void OutPutMacros( void )
             mentry->macro_index = i;        // replace with hash index
             rc = WritePHeader( mentry, mentry_len );
             mentry->next_macro = next_macro;        // restore pointer
-            mentry_len = ((mentry_len + (sizeof( int ) - 1)) & -sizeof( int ))
-                                - mentry_len;
+            mentry_len = _RoundUp( mentry_len, sizeof( int ) ) - mentry_len;
             rc |= WritePHeader( "    ", mentry_len );
             if( rc != 0 ) {
                 longjmp( PH_jmpbuf, rc );
@@ -812,8 +810,7 @@ static void OutPutMacros( void )
     for( mentry = UndefMacroList; mentry; mentry = mentry->next_macro ) {
         mentry_len = mentry->macro_len;
         rc = WritePHeader( mentry, mentry_len );
-        mentry_len = ((mentry_len + (sizeof( int ) - 1)) & -sizeof( int ))
-                            - mentry_len;
+        mentry_len = _RoundUp( mentry_len, sizeof( int ) ) - mentry_len;
         rc |= WritePHeader( "    ", mentry_len );
         if( rc != 0 ) {
             longjmp( PH_jmpbuf, rc );
@@ -852,7 +849,7 @@ static void OutPutSymHashTable( void )
                 hsym->sym_type_index = typ->type_index; // replace with index
             }
             len = strlen( hsym->name ) + sizeof( struct sym_hash_entry );
-            len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+            len = _RoundUp( len, sizeof( int ) );
             rc |= WritePHeader( hsym, len );
             hsym->sym_type = typ;               // restore type pointer
             hsym->next_sym = HashTab[i];
@@ -939,12 +936,11 @@ void BuildPreCompiledHeader( char *filename )
     PH_BufPtr = PH_Buffer;
     PH_BufSize = PH_BUF_SIZE;
     cwd = getcwd( PH_Buffer + sizeof( struct pheader ),
-                  PH_BUF_SIZE -sizeof( struct pheader ) );
+                  PH_BUF_SIZE - sizeof( struct pheader ) );
     rc = setjmp( PH_jmpbuf );
     if( rc == 0 ) {
         CreatePHeader( filename );
-        PH_cwd_len = ((strlen(cwd) + 1) + sizeof( int ) - 1)
-                                 & -sizeof( int );
+        PH_cwd_len = _RoundUp( strlen( cwd ) + 1, sizeof( int ) );
         PH_size = PH_cwd_len;
         PH_computing_size = 1;
         OutPutEverything();
@@ -983,7 +979,7 @@ static char *FixupIncFileList( char *p, unsigned incfile_count )
         do {
             ifile = (INCFILE *)p;
             len = sizeof( INCFILE ) + ifile->len;
-            len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+            len = _RoundUp( len, sizeof( int ) );
             p += len;
             ifile->nextfile = (INCFILE *)p;
         } while( --incfile_count > 0 );
@@ -1073,7 +1069,7 @@ static char *FixupLibrarys( char *p, unsigned library_count )
         HeadLibs = lib;
         for( ;; ) {
             len = sizeof( struct library_list ) + strlen( lib->name );
-            len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+            len = _RoundUp( len, sizeof( int ) );
             p += len;
             lib->next = (struct library_list *)p;
             --library_count;
@@ -1118,7 +1114,7 @@ static char *FixupMacros( char *p, unsigned macro_count )
         i = mentry->macro_index;                // get hash index
         mentry->next_macro = PCHMacroHash[i];
         PCHMacroHash[i] = mentry;
-        mentry_len = (mentry->macro_len + (sizeof( int ) - 1)) & -sizeof( int );
+        mentry_len = _RoundUp( mentry->macro_len, sizeof( int ) );
         p += mentry_len;
         --macro_count;
     }
@@ -1136,7 +1132,7 @@ static char *FixupUndefMacros( char *p, unsigned undef_macro_count )
         mentry = (MEPTR)p;
         *lnk = mentry;
         lnk = &mentry->next_macro;
-        mentry_len = (mentry->macro_len + (sizeof( int ) - 1)) & -sizeof( int );
+        mentry_len = _RoundUp( mentry->macro_len, sizeof( int ) );
         p += mentry_len;
         --undef_macro_count;
     }
@@ -1271,7 +1267,7 @@ static char *FixupSymHashTable( char *p, unsigned symhash_count )
             hsym->sym_type = TypeArray + hsym->sym_type_index;
         }
         len = strlen( hsym->name ) + sizeof( struct sym_hash_entry );
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         p += len;
         --symhash_count;
     }
@@ -1447,7 +1443,7 @@ static char *FixupTags( char *p, unsigned tag_count )
         typ = TypeArray + tag->sym_type_index;
         tag->sym_type = typ;
         len = strlen( tag->name ) + sizeof( TAGDEFN );
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         p += len;
         if( typ->decl_type == TYPE_ENUM ) {
             if( tag->u.enum_list != NULL ) {
@@ -1496,7 +1492,7 @@ static char *FixupAuxInfo( char *p, struct aux_info *info )
         p += codelen;
     }
     len += codelen;
-    p += ((len + (sizeof( int ) - 1)) & -sizeof( int )) - len;
+    p += _RoundUp( len, sizeof( int ) ) - len;
     return( p );
 }
 
@@ -1526,7 +1522,7 @@ static char *FixupPragmaInfo( char *p, unsigned pragma_count )
     for( ;; ) {
         ent = (struct aux_entry *)p;
         len = sizeof( struct aux_entry ) + strlen( ent->name );
-        len = (len + (sizeof( int ) - 1)) & -sizeof( int );
+        len = _RoundUp( len, sizeof( int ) );
         p += len;
         ent->info = info_array[ ent->aux_info_index ];
         if( ent->next == NULL ) break;
@@ -1713,7 +1709,7 @@ int UsePreCompiledHeader( char *filename )
         return( -1 );
     }
     len = strlen( p ) + 1;              // get length of saved HFileList
-    len = (len + sizeof( int ) - 1) & -sizeof( int );
+    len = _RoundUp( len, sizeof( int ) );
     if( ((HFileList == NULL) && (strlen( p ) > 0))
       || ((HFileList != NULL) && (strcmp( p, HFileList ) != 0)) ) {
         PCHNote( PCHDR_INCFILE_DIFFERENT );
