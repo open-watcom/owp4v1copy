@@ -1291,11 +1291,6 @@ void GetNextToken( void )
     CurToken = T_NULL;
     if( MacroPtr != NULL ) {
         GetMacroToken();
-        if( CurToken == T_NULL ) {                      /* 29-may-95 */
-            // prevents macro expansion from merging with trailing text
-            // to form new tokens in pre-processed output
-            CurToken = T_WHITE_SPACE;
-        }
     } else {
         for( ;; ) {
             if( CurrChar == EOF_CHAR ) break;

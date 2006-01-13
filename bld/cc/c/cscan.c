@@ -301,9 +301,6 @@ int doScanName()
     if( CompFlags.pre_processing == 2 ) return( T_ID );
     token = IdLookup( Buffer );
     if( token == T_MACRO ) {
-        if( CompFlags.cpp_output ) {
-            PrtChar( ' ' );     /* put white space in front */
-        }
         if( NextMacro->macro_defn == 0 ) {
             return( SpecialMacro( NextMacro ) );
         }
