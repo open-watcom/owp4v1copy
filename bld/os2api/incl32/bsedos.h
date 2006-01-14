@@ -150,7 +150,7 @@ typedef struct _TIB {
     ULONG tib_ordinal;
 } TIB, *PTIB;
 
-#ifdef DBG_INCL_DOSDEBUG
+#ifndef DBG_INCL_DOSDEBUG
 
 #define DBG_INCL_DOSDEBUG
 
