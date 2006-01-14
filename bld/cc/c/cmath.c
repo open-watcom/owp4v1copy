@@ -323,27 +323,27 @@ enum    conv_types {
     D2M,    /* double to long64 */
     D2F,    /* double to float  */
     P2P,    /* pointer to pointer*/
-    A2P,    /* arithmetic to pointer*/
-    P2A,    /* pointer to arithmetic*/
+    P2A,    /* arithmetic to pointer*/
+    A2P,    /* pointer to arithmetic*/
     CER,    /* conversion error  */
 };
 
 /* matches enum DATA_TYPE in ctypes.h */
 static enum  conv_types const CnvTable[TYPE_LAST_ENTRY][TYPE_LAST_ENTRY] = {
 /*          CHR,UCH,SHT,USH,INT,UIN,LNG,ULN,LN8,UL8,FLT,DBL,PTR,ARR,STC,UNI,FNC,FLD,VOD,ENM,TDF,UFD,...,PCH,WCH,TFT,FCX,DCX,TCX,FIM,DIM,TIM,BOL */
-/* CHR */ { NIL,C2U,C2S,C2S,C2I,C2U,C2L,C2L,C2M,C2M,C2F,C2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* UCH */ { U2C,NIL,C2S,C2S,C2I,C2U,C2L,C2L,C2M,C2M,C2F,C2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* SHT */ { S2C,S2C,NIL,S2U,S2I,S2U,S2L,S2L,S2M,S2M,S2F,S2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* USH */ { S2C,S2C,S2U,NIL,S2I,S2U,S2L,S2L,S2M,S2M,S2F,S2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* INT */ { I2C,I2C,I2S,I2S,NIL,I2U,I2L,I2L,I2M,I2M,I2F,I2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* UIN */ { I2C,I2C,I2S,I2S,I2U,NIL,U2L,U2L,U2M,U2M,U2F,U2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* LNG */ { L2C,L2C,L2S,L2S,L2I,L2U,NIL,L2U,L2M,L2M,L2F,L2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* ULN */ { L2C,L2C,L2S,L2S,L2I,L2U,L2U,NIL,L2M,L2M,L2F,L2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* LN8 */ { M2C,M2C,M2S,M2S,M2I,M2U,M2L,M2L,NIL,M2U,M2F,M2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* UL8 */ { M2C,M2C,M2S,M2S,M2I,M2U,M2L,M2L,M2U,NIL,M2F,M2D,P2A,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* CHR */ { NIL,C2U,C2S,C2S,C2I,C2U,C2L,C2L,C2M,C2M,C2F,C2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* UCH */ { U2C,NIL,C2S,C2S,C2I,C2U,C2L,C2L,C2M,C2M,C2F,C2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* SHT */ { S2C,S2C,NIL,S2U,S2I,S2U,S2L,S2L,S2M,S2M,S2F,S2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* USH */ { S2C,S2C,S2U,NIL,S2I,S2U,S2L,S2L,S2M,S2M,S2F,S2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* INT */ { I2C,I2C,I2S,I2S,NIL,I2U,I2L,I2L,I2M,I2M,I2F,I2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* UIN */ { I2C,I2C,I2S,I2S,I2U,NIL,U2L,U2L,U2M,U2M,U2F,U2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* LNG */ { L2C,L2C,L2S,L2S,L2I,L2U,NIL,L2U,L2M,L2M,L2F,L2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* ULN */ { L2C,L2C,L2S,L2S,L2I,L2U,L2U,NIL,L2M,L2M,L2F,L2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* LN8 */ { M2C,M2C,M2S,M2S,M2I,M2U,M2L,M2L,NIL,M2U,M2F,M2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* UL8 */ { M2C,M2C,M2S,M2S,M2I,M2U,M2L,M2L,M2U,NIL,M2F,M2D,A2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
 /* FLT */ { F2C,F2C,F2S,F2S,F2I,F2I,F2L,F2L,F2M,F2M,NIL,F2D,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
 /* DBL */ { D2C,D2C,D2S,D2S,D2I,D2I,D2L,D2L,D2M,D2M,D2F,NIL,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
-/* PTR */ { A2P,A2P,A2P,A2P,A2P,A2P,A2P,A2P,A2P,A2P,CER,CER,P2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
+/* PTR */ { P2A,P2A,P2A,P2A,P2A,P2A,P2A,P2A,P2A,P2A,CER,CER,P2P,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
 /* ARR */ { CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
 /* STC */ { CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
 /* UNI */ { CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER,CER },
@@ -696,7 +696,7 @@ static int CommRelOp( int opr )
 }
 
 
-bool IsZero(  TREEPTR tree )
+bool IsZero( TREEPTR tree )
 {
     bool    ret;
 
@@ -720,7 +720,7 @@ TREEPTR BaseConv( TYPEPTR typ1, TREEPTR op2 )
     if( typ1->decl_type == TYPE_POINTER && typ2->decl_type == TYPE_POINTER ) {
         typ1_flags = typ1->u.p.decl_flags;
         typ2_flags = typ2->u.p.decl_flags;
-        if( ( typ1_flags & FLAG_FAR) && (typ2_flags & FLAG_BASED) ) {
+        if( (typ1_flags & FLAG_FAR) && (typ2_flags & FLAG_BASED) ) {
             op2 = BasedPtrNode( typ2, op2 );
         }
     }
@@ -1594,7 +1594,7 @@ convert:                                /* moved here 30-aug-89 */
                         }
                         if( (typ->u.p.decl_flags & FLAG_BASED) &&
                             (newtyp->u.p.decl_flags & FLAG_FAR) ) {
-                            opnd = BasedPtrNode( typ,opnd);
+                            opnd = BasedPtrNode( typ, opnd );
                             opnd->expr_type = newtyp;
                             opnd->op.result_type = newtyp;
                             return( opnd );
@@ -1651,10 +1651,17 @@ convert:                                /* moved here 30-aug-89 */
                     new_class = ExprTypeClass( newtyp );
                     old_class = ExprTypeClass( typ );
                     if( new_class != old_class &&
-                    (new_class == PTR_FAR16  ||  old_class == PTR_FAR16 ) ) {// foriegn pointers
+                    (new_class == PTR_FAR16  ||  old_class == PTR_FAR16) ) {    // foreign pointers
                         opnd = ExprNode( NULL, OPR_CONVERT_PTR, opnd );
                         opnd->op.oldptr_class = old_class;
                         opnd->op.newptr_class = new_class;
+#if _CPU == 8086
+                    } else if( cnv == P2A && newtyp->type_flags & TF2_TYPE_SEGMENT ) {
+                        // getting segment value of pointer
+                        opnd = BasedPtrNode( typ, opnd );
+                        opnd = ExprNode( NULL, OPR_CONVERT_SEG, opnd );
+                        opnd->op.result_type = newtyp;
+#endif
                     } else {
                         opnd = ExprNode( NULL, OPR_CONVERT, opnd );
                         opnd->op.result_type = newtyp;
@@ -1667,7 +1674,7 @@ convert:                                /* moved here 30-aug-89 */
             CastConstValue( opnd, newtyp->decl_type );
             opnd->expr_type = newtyp;
         } else if( opnd->expr_type != newtyp ) {
-            opnd = ExprNode( 0, OPR_CONVERT, opnd );
+            opnd = ExprNode( NULL, OPR_CONVERT, opnd );
             opnd->expr_type = newtyp;
             opnd->op.result_type = newtyp;
         } else { // NIL convert

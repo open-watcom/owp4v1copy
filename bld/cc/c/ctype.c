@@ -272,8 +272,7 @@ void WalkTypeList( void (*func)(TYPEPTR) )
     }
 }
 
-#if 0
-TYPEPTR DupType( TYPEPTR typ, type_modifiers flags, bool force_duplicate )
+TYPEPTR DupType( TYPEPTR typ, enum type_state flags, bool force_duplicate )
 {
     TYPEPTR     newtype;
     TYPEPTR     next;
@@ -285,10 +284,10 @@ TYPEPTR DupType( TYPEPTR typ, type_modifiers flags, bool force_duplicate )
             next = CTypeHash[ typ->decl_type ];
         }
         for( ; next; next = next->next_type ) {
-            if( next->decl_type == typ->decl_type  &&
-                next->object    == typ->object     &&
-                next->u.tag     == typ->u.tag      &&
-                next->decl_flags == flags ) {
+            if( next->decl_type  == typ->decl_type  &&
+                next->object     == typ->object     &&
+                next->u.tag      == typ->u.tag      &&
+                next->type_flags == flags ) {
                 return( next );
             }
         }
@@ -297,10 +296,9 @@ TYPEPTR DupType( TYPEPTR typ, type_modifiers flags, bool force_duplicate )
     next = newtype->next_type;
     memcpy( newtype, typ, sizeof( TYPEDEFN ) );
     newtype->next_type = next;
-    newtype->decl_flags = flags;
+    newtype->type_flags = flags;
     return( newtype );
 }
-#endif
 
 static void SetPlainCharType( int char_type )
 {
@@ -421,8 +419,8 @@ local TYPEPTR GetScalarType( char *plain_int, int bmask, type_modifiers flags )
         data_type = TYPE_INT;
     }
     typ = GetType( data_type );
-//    if( flags & FLAG_SEGMENT )
-//        typ = DupType( typ, flags, FALSE );
+    if( flags & FLAG_SEGMENT )
+        typ = DupType( typ, TF2_TYPE_SEGMENT, FALSE );
 
     return( typ );
 }

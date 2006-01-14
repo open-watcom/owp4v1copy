@@ -1025,13 +1025,24 @@ local void EmitNodes( TREEPTR tree )
             if( node->result_type->decl_type != TYPE_VOID ) {
                 op1 = PopCGName();      // - get expression
                 PushCGName( CGUnary( O_CONVERT, op1,
-                                CGenType(node->result_type)) );
+                                CGenType( node->result_type )) );
             }
             break;
         case OPR_CONVERT_PTR:           // convert pointer
             op1 = PopCGName();          // - get expression
             PushCGName( ConvertPointer( node, op1 ) );
             break;
+        case OPR_CONVERT_SEG:           // convert pointer to segment
+          {
+            cg_name     name;
+
+            op1 = PopCGName();          // - get expression
+            name = CGUnary( O_CONVERT, op1, T_LONG_POINTER );
+            name = CGUnary( O_CONVERT, name, T_UINT_4 );
+            name = CGBinary( O_RSHIFT, name,
+                             CGInteger( 16, TY_UNSIGNED ), T_UINT_4 );
+            name = PushCGName( name );
+          } break;
         case OPR_MATHFUNC:              // intrinsic math func with 1 parm
             op1 = PopCGName();          // - get expression
             PushCGName( CGUnary( node->mathfunc, op1, TY_DOUBLE ) );
@@ -1308,7 +1319,7 @@ bool IsInLineFunc( SYM_HANDLE sym_handle )
 }
 
 /* This function recursively checks if a function is really used and
-   needs to be emitted. 
+   needs to be emitted.
    A function is not inlined and generated if it calls itself recursively,
    or if the inline depth goes over the limit.
    In that case, and for normal function calls, the function is marked
