@@ -79,12 +79,8 @@ int main( void )
     if( fn3( 0x7654 ) != 0x7654 ) fail( __LINE__ );
     if( fn4() != 0xB800 ) fail( __LINE__ );
     if( fn5( bvar ) != seg ) fail( __LINE__ );
-
-#if 0
-    // These are currently somewhat broken...
     if( fn6( bvvar ) != cs_seg ) fail( __LINE__ );
     if( fn7() != ds_seg ) fail( __LINE__ );
-#endif
 
     _PASS;
 }

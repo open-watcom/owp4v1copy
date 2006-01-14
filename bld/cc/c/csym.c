@@ -136,18 +136,23 @@ void SetNextSymHandle( unsigned val )
     NextSymHandle = val;
 }
 
-SYM_HANDLE SegSymbol( char *name )                      /* 15-mar-92 */
+SYM_HANDLE SegSymbol( char *name, int segment )             /* 15-mar-92 */
 {
     SYM_ENTRY       sym;
+    SYM_HANDLE      handle;
 
     NewSym();
+    handle = (SYM_HANDLE)NextSymHandle;
     memset( &sym, 0, sizeof( SYM_ENTRY ) );
     sym.sym_type = GetType( TYPE_USHORT );
     sym.name = name;
     sym.stg_class = SC_STATIC;
-    sym.level = 1; //make invisible
-    SymReplace( &sym, (SYM_HANDLE)NextSymHandle );
-    return( (SYM_HANDLE)NextSymHandle );
+    sym.level = 1;  // make invisible
+    SymReplace( &sym, handle );
+    if( segment ) {
+        SetSegSymHandle( handle, segment );
+    }
+    return( handle );
 }
 
 SYM_HANDLE SpcSymbol( char *name, int stg_class )
@@ -191,9 +196,13 @@ void SpcSymInit( void )
     SymReplace( &sym, (SYM_HANDLE)NextSymHandle );
 
     /* create special symbol table entry for __segname("_CODE") */
-    Sym_CS = SegSymbol( ".CS" );                        /* 18-jan-92 */
+    Sym_CS = SegSymbol( ".CS", SEG_CODE );              /* 18-jan-92 */
     /* create special symbol table entry for __segname("_STACK") */
-    Sym_SS = SegSymbol( ".SS" );                        /* 13-dec-92 */
+    Sym_SS = SegSymbol( ".SS", SEG_STACK );             /* 13-dec-92 */
+    /* create special symbol table entry for __segname("_CONST") */
+    SegSymbol( ".CONST", SEG_CONST );
+    /* create special symbol table entry for __segname("_DATA") */
+    SegSymbol( ".DS", SEG_DATA );
 
     SpecialSyms = (SYM_HANDLE)NextSymHandle;
 

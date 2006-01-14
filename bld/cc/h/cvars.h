@@ -487,6 +487,7 @@ extern  void InvDecl( void );
 
 // cinfo.c
 extern  segment_id SymSegId( SYMPTR sym );
+extern  void    SetSegSymHandle( SYM_HANDLE sym_handle, int segment );
 
 extern  void    InitDataQuads(void);            /* cdinit */
 extern  void    FreeDataQuads(void);            /* cdinit */
@@ -759,7 +760,7 @@ extern  void    SymInit(void);                  /* csym */
 extern  void    SpcSymInit(void);               /* csym */
 extern  void    SymFini(void);                  /* csym */
 extern  void    SymCreate(SYMPTR,char *);       /* csym */
-extern  SYM_HANDLE SegSymbol(char *);           /* csym */
+extern  SYM_HANDLE SegSymbol(char *,int);       /* csym */
 extern  SYM_HANDLE SpcSymbol(char *,int);       /* csym */
 extern  SYM_HANDLE SymAdd(int,SYMPTR);          /* csym */
 extern  SYM_HANDLE SymAddL0(int,SYMPTR);        /* csym */

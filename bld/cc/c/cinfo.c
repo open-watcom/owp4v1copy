@@ -245,7 +245,7 @@ void SetSegment( SYMPTR sym )
         }
     }
 #elif _CPU == 386
-    if( !CompFlags.rent ){
+    if( !CompFlags.rent ) {
         if( (sym->attrib & FLAG_FAR) || (TargetSwitches & FLAT_MODEL) ) {
            if( CONSTANT( sym->attrib ) && CompFlags.zc_switch_used ) {
                 sym->u.var.segment = SEG_CODE;
@@ -308,19 +308,20 @@ void SetSegment( SYMPTR sym )
 }
 
 struct  seg_name {
-    char        *name;
-    int         segment;
+    char            *name;
+    int             segment;
+    SYM_HANDLE      sym_handle;                     /* 13-jan-06 */
 };
 
 static struct seg_name Predefined_Segs[] = {
-    { "_CODE",      SEG_CODE },
-    { "_CONST",     SEG_CONST },
-    { "_DATA",      SEG_DATA },
-    { "_STACK",     SEG_STACK },                    /* 13-dec-92 */
-    { NULL,         0 }
+    { "_CODE",      SEG_CODE,   0 },
+    { "_CONST",     SEG_CONST,  0 },
+    { "_DATA",      SEG_DATA,   0 },
+    { "_STACK",     SEG_STACK,  0 },                /* 13-dec-92 */
+    { NULL,         0,          0 }
 };
 
-static int UserSegment;
+static  int     UserSegment;
 
 #define FIRST_USER_SEGMENT      10000
 
@@ -369,7 +370,7 @@ static struct spc_info *InitFiniLookup( char *name )
 {
     int     i;
 
-    for( i = 0; i < INITFINI_SIZE; ++i ){
+    for( i = 0; i < INITFINI_SIZE; ++i ) {
         if( strcmp( InitFiniSegs[i].name, name ) == 0 ) {
             i = (i / 3) * 3;
             return( &InitFiniSegs[i] );
@@ -387,7 +388,7 @@ static int AddSeg( char *segname, char *class_name, int segtype )
     char                *p;
 
     for( seg = &Predefined_Segs[0]; seg->name; seg++ ) {
-        if( strcmp( segname, seg->name ) == 0 ){
+        if( strcmp( segname, seg->name ) == 0 ) {
             return( seg->segment );
         }
     }
@@ -405,7 +406,7 @@ static int AddSeg( char *segname, char *class_name, int segtype )
         ++p;
     }
     lnk = &UserSegments;
-    while( (useg = *lnk) != NULL ){
+    while( (useg = *lnk) != NULL ) {
         if( strcmp( segname, useg->name ) == 0 ) {
             return( useg->segment ); /* 11-mar-93 - was return( segment ) */
         }
@@ -498,20 +499,38 @@ char *SegClassName( unsigned requested_seg )
     return( NULL );
 }
 
+
+void SetSegSymHandle( SYM_HANDLE sym_handle, int segment )
+{
+    struct seg_name     *seg;
+
+    for( seg = &Predefined_Segs[0]; seg->name; seg++ ) {
+        if( seg->segment == segment ) {
+            seg->sym_handle = sym_handle;
+            break;
+        }
+    }
+}
+
+
 SYM_HANDLE SegSymHandle( int segment )                  /* 15-mar-92 */
 {
+    struct seg_name     *seg;
     struct user_seg     *useg;
     char                *sym_name;
 
-    if( segment == SEG_CODE )  return( Sym_CS );
-    if( segment == SEG_STACK ) return( Sym_SS );        /* 13-dec-92 */
+    for( seg = &Predefined_Segs[0]; seg->name; seg++ ) {
+        if( seg->segment == segment ) {
+            return( seg->sym_handle );
+        }
+    }
     for( useg = UserSegments; useg; useg = useg->next ) {
         if( useg->segment == segment ) {
             if( useg->sym_handle == 0 ) {
-                sym_name = CMemAlloc( strlen(useg->name) + 2 );
+                sym_name = CMemAlloc( strlen( useg->name ) + 2 );
                 strcpy( &sym_name[1], useg->name );
                 sym_name[0] = '.';
-                useg->sym_handle = SegSymbol( sym_name );
+                useg->sym_handle = SegSymbol( sym_name, 0 );
             }
             return( useg->sym_handle );
         }
