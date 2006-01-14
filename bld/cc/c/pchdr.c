@@ -633,10 +633,10 @@ static void OutPutAFuncType( TYPEPTR typ, int index )
     TYPEPTR     *parm_list;
     int         rc;
 
-    parm_list = typ->u.parms;                   // save pointer
-    typ->u.parm_index = index;                  // replace with index
+    parm_list = typ->u.fn.parms;                // save pointer
+    typ->u.fn.parm_index = index;               // replace with index
     rc = WriteType( typ );
-    typ->u.parms = parm_list;                   // restore pointer
+    typ->u.fn.parms = parm_list;                // restore pointer
     if( rc != 0 ) {
         longjmp( PH_jmpbuf, rc );
     }
@@ -652,7 +652,7 @@ static void OutPutFuncParmList( TYPEPTR typ, int index )
     } parm;
 
     // index;      /* unused */
-    parm_list = typ->u.parms;
+    parm_list = typ->u.fn.parms;
     if( parm_list != NULL ) {
         for( ; *parm_list; ++parm_list ) {
             parm.type_index = (*parm_list)->type_index;
@@ -1346,16 +1346,16 @@ static char *FixupTypes( char *p, unsigned type_count )
     }
     parm_list = (union parmtype *)(typ + type_count);
     while( type_count != 0 ) {
-        index = typ->u.parm_index;
+        index = typ->u.fn.parm_index;
         typ->next_type = FuncTypeHead[ index ];
         FuncTypeHead[ index ] = typ;
         if( typ->object_index != 0 ) {
             typ->object = &TypeArray[ typ->object_index ];
         }
         if( parm_list->type_index == -1 ) {
-            typ->u.parms = NULL;
+            typ->u.fn.parms = NULL;
         } else {
-            typ->u.parms = (TYPEPTR *)parm_list;
+            typ->u.fn.parms = (TYPEPTR *)parm_list;
             for( ;; ) {
                 index = parm_list->type_index;
                 if( index == -1 ) break;

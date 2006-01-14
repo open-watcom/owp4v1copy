@@ -339,7 +339,7 @@ local void ParmDeclList( void )     /* process old style function definitions */
         }
     }
     ReverseParms();
-    if( CurFunc->sym_type->u.parms == NULL ) {
+    if( CurFunc->sym_type->u.fn.parms == NULL ) {
         CurFunc->flags |= SYM_OLD_STYLE_FUNC;   /* 13-sep-89 */
         AddParms();
     } else {
@@ -520,7 +520,7 @@ local void ChkParms( void )
     CurFunc->u.func.parms  = 0;
     parm = ParmList;
     prev_parm = NULL;
-    typ = *(CurFunc->sym_type->u.parms);
+    typ = *(CurFunc->sym_type->u.fn.parms);
     SKIP_TYPEDEFS( typ );
     if( typ->decl_type != TYPE_VOID ) {
         while( parm != NULL ) {

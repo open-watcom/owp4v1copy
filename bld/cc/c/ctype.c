@@ -271,13 +271,14 @@ void WalkTypeList( void (*func)(TYPEPTR) )
         }
     }
 }
+
 #if 0
-TYPEPTR DupType( TYPEPTR typ, type_modifiers flags, int force_duplicate )
+TYPEPTR DupType( TYPEPTR typ, type_modifiers flags, bool force_duplicate )
 {
     TYPEPTR     newtype;
     TYPEPTR     next;
 
-    if( ! force_duplicate ) {
+    if( !force_duplicate ) {
         if( typ->decl_type == TYPE_POINTER ) {
             next = PtrTypeHash[ typ->object->decl_type ];
         } else {
@@ -294,7 +295,7 @@ TYPEPTR DupType( TYPEPTR typ, type_modifiers flags, int force_duplicate )
     }
     newtype = TypeNode( typ->decl_type, typ->object );
     next = newtype->next_type;
-    memcpy( newtype, typ, sizeof(TYPEDEFN) );
+    memcpy( newtype, typ, sizeof( TYPEDEFN ) );
     newtype->next_type = next;
     newtype->decl_flags = flags;
     return( newtype );
@@ -352,7 +353,7 @@ int TypeQualifier( void )
     return( flags );
 }
 
-local TYPEPTR GetScalarType( char *plain_int, int bmask )
+local TYPEPTR GetScalarType( char *plain_int, int bmask, type_modifiers flags )
 {
     DATA_TYPE   data_type;
     TYPEPTR     typ;
@@ -420,6 +421,9 @@ local TYPEPTR GetScalarType( char *plain_int, int bmask )
         data_type = TYPE_INT;
     }
     typ = GetType( data_type );
+//    if( flags & FLAG_SEGMENT )
+//        typ = DupType( typ, flags, FALSE );
+
     return( typ );
 }
 
@@ -701,7 +705,7 @@ got_specifier:
         if( bmask != 0 )  CErr1( ERR_INV_TYPE );  // picked up an int
     } else {
         if( flags != FLAG_NONE || bmask != 0 ) {  // not just id hanging there
-            typ = GetScalarType( plain_int, bmask );
+            typ = GetScalarType( plain_int, bmask, flags );
         }
     }
     info->typ = typ;
@@ -1480,7 +1484,7 @@ int FuncHeadIndex( TYPEPTR *parm_types )
     return( index );
 }
 
-TYPEPTR FuncNode( TYPEPTR return_typ, int flag, TYPEPTR *parm_types )
+TYPEPTR FuncNode( TYPEPTR return_typ, type_modifiers flag, TYPEPTR *parm_types )
 {
     TYPEPTR     typ;
     int         index;
@@ -1488,16 +1492,16 @@ TYPEPTR FuncNode( TYPEPTR return_typ, int flag, TYPEPTR *parm_types )
     index = FuncHeadIndex( parm_types );
     if( return_typ != NULL ) {
         for( typ = FuncTypeHead[ index ]; typ; typ = typ->next_type ) {
-            if( typ->object     == return_typ &&
-                typ->type_flags == flag &&
-                typ->u.parms    == parm_types ) {
+            if( typ->object          == return_typ &&
+                typ->u.fn.decl_flags == flag       &&
+                typ->u.fn.parms      == parm_types ) {
                 return( typ );
             }
         }
     }
     typ = TypeNode( TYPE_FUNCTION, return_typ );
-    typ->type_flags = flag;
-    typ->u.parms = parm_types;
+    typ->u.fn.decl_flags = flag;
+    typ->u.fn.parms = parm_types;
     typ->next_type = FuncTypeHead[ index ];
     FuncTypeHead[ index ] = typ;
     return( typ );
@@ -1506,13 +1510,13 @@ TYPEPTR FuncNode( TYPEPTR return_typ, int flag, TYPEPTR *parm_types )
 /* CarlYoung 31-Oct-03 */
 unsigned long TypeSize( TYPEPTR typ )
 {
-    return(TypeSizeEx(typ, NULL));
+    return( TypeSizeEx( typ, NULL ) );
 }
 
 /* CarlYoung 31-Oct-03 */
-unsigned long TypeSizeEx( TYPEPTR typ , unsigned long * pFieldWidth)
+unsigned long TypeSizeEx( TYPEPTR typ, unsigned long *pFieldWidth )
 {
-    unsigned long size;
+    unsigned long   size;
 
     if( typ == NULL ) return( 0 );                      /* 22-feb-90 */
     SKIP_TYPEDEFS( typ );

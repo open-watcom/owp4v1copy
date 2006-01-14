@@ -242,7 +242,7 @@ static dw_handle dwarfTypeFunction( TYPEPTR typ, char *name )
                                 0,
                                 DW_FLAG_DECLARATION | DW_FLAG_PROTOTYPED );
     type_update( typ, TF2_DWARF_DEF, dh );
-    parm_list = typ->u.parms;
+    parm_list = typ->u.fn.parms;
     while( parm_list != NULL ) {
         typ = *parm_list++;
         if( typ == NULL ) break;

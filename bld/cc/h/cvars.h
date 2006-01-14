@@ -788,10 +788,9 @@ extern  void    TimeInit(void);                 /* ctimepc */
 extern  void    CTypeInit(void);
 extern  void    InitTypeHashTables(void);
 extern  void    SetSignedChar(void);
-extern  TYPEPTR DupType(TYPEPTR,type_modifiers,int);
 extern  TYPEPTR GetType(DATA_TYPE);
 extern  TYPEPTR ArrayNode(TYPEPTR);
-extern  TYPEPTR FuncNode(TYPEPTR, int, TYPEPTR *);
+extern  TYPEPTR FuncNode(TYPEPTR, type_modifiers, TYPEPTR *);
 extern  TYPEPTR TypeDefault(void);
 extern  TYPEPTR PtrNode(TYPEPTR,type_modifiers,int);
 extern  TYPEPTR BPtrNode(TYPEPTR,type_modifiers,int,SYM_HANDLE, BASED_KIND);

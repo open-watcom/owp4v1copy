@@ -2304,7 +2304,7 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
             }
         }
     }
-    parms = typ->u.parms;      /* Parameters (prototype), if any */
+    parms = typ->u.fn.parms;   /* Parameters (prototype), if any */
     NextToken();                                /* skip over '(' */
     if( CurToken != T_RIGHT_PAREN ) {
         // push previous plist for nested calls

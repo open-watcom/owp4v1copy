@@ -225,7 +225,7 @@ void DumpFuncDefn( void )
     char        *result;
 
     typ = CurFunc->sym_type;
-    DumpParmTags( typ->u.parms, DefFile );
+    DumpParmTags( typ->u.fn.parms, DefFile );
     flist = FileIndexToFName( CurFunc->defn_file_index );
     fprintf( DefFile, "//#line \"%s\" %u\n",            /* 07-jun-94 */
                 flist->name,
@@ -273,8 +273,8 @@ static void DumpTail( TYPEPTR typ, SYMPTR funcsym, type_modifiers pointer_flags,
     for( ;; ) {
         if( typ->decl_type == TYPE_FUNCTION ) {
             ChunkSaveChar( pch, '(' );
-            if( typ == top_typ  ||  typ->u.parms != NULL ) {
-                DumpParmList( typ->u.parms, funcsym, pch);
+            if( typ == top_typ  ||  typ->u.fn.parms != NULL ) {
+                DumpParmList( typ->u.fn.parms, funcsym, pch);
                 funcsym = NULL;
             }
             ChunkSaveChar( pch, ')' );

@@ -196,7 +196,7 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
             CmpFuncDecls( sym, &old_sym );
             PrevProtoType = old_sym.sym_type;               /* 12-may-91 */
             if( (old_sym.flags & SYM_DEFINED) == 0 ) {
-                if( sym->sym_type->u.parms != NULL ||       /* 11-jul-89 */
+                if( sym->sym_type->u.fn.parms != NULL ||    /* 11-jul-89 */
                    ( CurToken != T_COMMA &&                 /* 18-jul-89 */
                     CurToken != T_SEMI_COLON ) ) {
                     old_typ = old_sym.sym_type;
@@ -1039,9 +1039,6 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
         }
         ParseDeclPart2( &sym->sym_type, typ );
         typ = sym->sym_type;
-        // Transfer function attributes to type; TODO: figure out a better way
-        if( typ && typ->decl_type == TYPE_FUNCTION )
-            typ->type_flags = sym->attrib;
     } else {
         if( (CurToken == T_ID) || (CurToken == T_SAVED_ID) ) {
             for( ;; ) {
@@ -1431,7 +1428,7 @@ TYPEPTR *MakeParmList( struct parm_list *parm, int parm_count, int reversed )
             index = MAX_PARM_LIST_HASH_SIZE;
         }
         for( typ = FuncTypeHead[ index ]; typ; typ = typ->next_type ) {
-            type_list = typ->u.parms;
+            type_list = typ->u.fn.parms;
             next_parm = parm;
             for( ;; ) {
                 if( next_parm == NULL ) {
@@ -1441,7 +1438,7 @@ TYPEPTR *MakeParmList( struct parm_list *parm, int parm_count, int reversed )
                         CMemFree( parm );
                         parm = next_parm;
                     }
-                    return( typ->u.parms );
+                    return( typ->u.fn.parms );
                 }
                 if( next_parm->parm_type != *type_list ) break;
                 next_parm = next_parm->next_parm;

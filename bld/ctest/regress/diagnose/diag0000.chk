@@ -41,3 +41,27 @@ source\diag0005.c(33): Note! I2002: 'i3' defined in: source\diag0005.c(32)
 source\diag0005.c(42): Error! E1072: Storage class disagrees with previous definition of 'i6'
 source\diag0005.c(42): Note! I2002: 'i6' defined in: source\diag0005.c(41)
 source\diag0005.c(38): Warning! W202: Symbol 'i5' has been defined, but not referenced
+source\diag0006.c(31): Error! E1010: Type mismatch
+source\diag0006.c(31): Note! I2003: source conversion type is 'int (*)(int __p1)'
+source\diag0006.c(31): Note! I2004: target conversion type is 'int (__cdecl *)(int __p1)'
+source\diag0006.c(32): Error! E1010: Type mismatch
+source\diag0006.c(32): Note! I2003: source conversion type is 'int (__watcall *)(int __p1)'
+source\diag0006.c(32): Note! I2004: target conversion type is 'int (__cdecl *)(int __p1)'
+source\diag0006.c(33): Error! E1010: Type mismatch
+source\diag0006.c(33): Note! I2003: source conversion type is 'int (*)(int __p1)'
+source\diag0006.c(33): Note! I2004: target conversion type is 'int (__cdecl *)(int __p1)'
+source\diag0006.c(34): Error! E1010: Type mismatch
+source\diag0006.c(34): Note! I2003: source conversion type is 'int (__watcall *)(int __p1)'
+source\diag0006.c(34): Note! I2004: target conversion type is 'int (__cdecl *)(int __p1)'
+source\diag0006.c(36): Error! E1010: Type mismatch
+source\diag0006.c(36): Note! I2003: source conversion type is 'int (__cdecl *)(int __p1)'
+source\diag0006.c(36): Note! I2004: target conversion type is 'int (*)(int __p1)'
+source\diag0006.c(37): Error! E1010: Type mismatch
+source\diag0006.c(37): Note! I2003: source conversion type is 'int (__cdecl *)(int __p1)'
+source\diag0006.c(37): Note! I2004: target conversion type is 'int (*)(int __p1)'
+source\diag0006.c(39): Error! E1010: Type mismatch
+source\diag0006.c(39): Note! I2003: source conversion type is 'int (__cdecl *)(int __p1)'
+source\diag0006.c(39): Note! I2004: target conversion type is 'int (__watcall *)(int __p1)'
+source\diag0006.c(40): Error! E1010: Type mismatch
+source\diag0006.c(40): Note! I2003: source conversion type is 'int (__cdecl *)(int __p1)'
+source\diag0006.c(40): Note! I2004: target conversion type is 'int (__watcall *)(int __p1)'

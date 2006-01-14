@@ -50,12 +50,11 @@ typedef unsigned_64     uint64;
 #define L       I64LO32
 #define H       I64HI32
 
-/* CONST, VOLATILE can appear in typ->decl_flags and leaf->leaf_flags.
-*  NEAR, FAR, HUGE can appear in typ->decl_flags, leaf->leaf_flags,
+/* CONST, VOLATILE can appear in typ->u.p.decl_flags and leaf->leaf_flags.
+*  NEAR, FAR, HUGE can appear in typ->u.p.decl_flags, leaf->leaf_flags,
 *                               and sym->attrib.
 *  CDECL,PASCAL,FORTRAN,SYSCALL,STDCALL,OPTLINK,FASTCALL,WATCOM
-*                       can appear in typ->decl_flags and sym->attrib.
-*  LVALUE, CONSTANT, VOID will only appear in leaf->leaf_flags.
+*                       can appear in typ->u.p.decl_flags and sym->attrib.
 *
 * freed by CFOLD
 */
@@ -158,7 +157,8 @@ struct array_info {
     int             refno;
     bool            unspecified_dim;    // or flexible array member?
 };
-typedef enum BASED_KIND{
+
+typedef enum BASED_KIND {
     BASED_NONE,
     BASED_VOID,          //__based( void )       segment:>offset base op
     BASED_SELFSEG,       //__based( (__segment) __self ) use seg of self
@@ -228,6 +228,7 @@ enum type_state {
 //
     TF2_DUMMY_TYPEDEF     = 0x04,   // gone now dummy typedef to record modifiers
     TF2_TYPE_PLAIN_CHAR   = 0x10,   // indicates plain char
+    TF2_TYPE_SEGMENT      = 0x20,   // indicates __segment type
 };
 
 typedef struct type_definition {
@@ -248,17 +249,20 @@ typedef struct type_definition {
             short int       segment;    /* TYPE_POINTER */
             SYM_HANDLE      based_sym;  /* var with seg of based ptr*/
             BASED_KIND      based_kind; /* kind of base variable    */
-            type_modifiers  decl_flags; /* only symbols and ptr have attributes */
+            type_modifiers  decl_flags; /* only symbols, fn and ptr have attribs */
         } p;
         union {
             struct tag_entry *tag;      /* STRUCT, UNION, ENUM */
             int             tag_index;  /* for pre-compiled header */
         };
         SYM_HANDLE          typedefn;   /* TYPE_TYPEDEF */
-        union {
-            struct type_definition **parms;/* TYPE_FUNCTION */
-            int         parm_index;     /* for pre-compiled header */
-        };
+        struct {
+            union {
+                struct type_definition **parms;/* TYPE_FUNCTION */
+                int         parm_index; /* for pre-compiled header */
+            };
+            type_modifiers  decl_flags; /* only symbols, fn and ptr have attribs */
+        } fn;
         struct {                        /* TYPE_FIELD or TYPE_UFIELD */
             unsigned char field_width;  /* # of bits */
             unsigned char field_start;  /* # of bits to << by */

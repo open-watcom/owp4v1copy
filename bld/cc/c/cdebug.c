@@ -282,7 +282,7 @@ dbug_type DBType( TYPEPTR typ )
     case TYPE_FUNCTION:
         cg_pnt_mod = T_CODE_PTR;
         pr = DBBegProc( cg_pnt_mod, DBType( typ->object ) );
-        for( pparms = typ->u.parms; pparms; pparms++ ) {
+        for( pparms = typ->u.fn.parms; pparms; pparms++ ) {
             if( (*pparms == NULL) ) break;
             if( (*pparms)->decl_type == TYPE_DOT_DOT_DOT ) break;
             DBAddParm( pr, DBType( *pparms ));

@@ -224,8 +224,8 @@ int ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck )
     TYPEPTR     *plist2;
     int         parm_count;
 
-    plist1 = typ1->u.parms;
-    plist2 = typ2->u.parms;
+    plist1 = typ1->u.fn.parms;
+    plist2 = typ2->u.fn.parms;
     if( plist1 != plist2 ) {
         if( plist1 == NULL ) {
             return( ChkParmPromotion( plist2, topLevelCheck ) );
@@ -328,8 +328,8 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
     }
     if( typ1->decl_type==typ2->decl_type ) {
         if( typ1->decl_type == TYPE_FUNCTION ) {
-            typ1_flags = typ1->type_flags;
-            typ2_flags = typ2->type_flags;
+            typ1_flags = typ1->u.fn.decl_flags;
+            typ2_flags = typ2->u.fn.decl_flags;
             if( (typ1_flags & FLAG_LANGUAGES) != (typ2_flags & FLAG_LANGUAGES) ) {
                 ret_val = NO;
             } else {
@@ -640,7 +640,7 @@ extern void ChkCallParms( void )
             SymGet( &sym, callsite->op.sym_handle );
             typ = sym.sym_type;
             SKIP_TYPEDEFS( typ );
-            if( typ->u.parms != NULL ) {
+            if( typ->u.fn.parms != NULL ) {
                 unsigned    parm_count;
                 TREEPTR     parm;
 
@@ -664,7 +664,7 @@ extern void ChkCallParms( void )
                     }
                 }
                 SetDiagSymbol( &sym, callsite->op.sym_handle );
-                CompareParms( typ->u.parms, actualparmlist,
+                CompareParms( typ->u.fn.parms, actualparmlist,
                                     nextcall->source_fno,
                                     nextcall->srclinenum );
                 SetDiagPop();
