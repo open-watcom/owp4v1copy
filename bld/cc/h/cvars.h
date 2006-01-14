@@ -177,7 +177,6 @@ global  SYM_HANDLE SymSTOWB;    /* builtin symbol for 'rep stosw, stosb' */
 global  SYM_HANDLE SymMIN;      /* builtin symbol for 'min(a,b)' */
 global  SYM_HANDLE SymMAX;      /* builtin symbol for 'max(a,b)' */
 global  SYM_HANDLE SymMEMCMP;   /* builtin symbol for 'memcmp' func */
-global  SYM_HANDLE SymMEMCPY;   /* builtin symbol for 'memcpy' func */
 global  SYM_HANDLE SpecialSyms; /* builtin symbols (thread linked) */
 global  SYM_HANDLE CharSymHandle;/* sym handle for "char" typedef */
 global  SYM_HANDLE Sym_CS;      /* sym handle for __segname("_CODE") ie. CS */

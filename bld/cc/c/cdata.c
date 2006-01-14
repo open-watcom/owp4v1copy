@@ -118,7 +118,6 @@ void InitGlobalVars( void )
     SymMIN                  = 0;    /* builtin symbol for 'min(a,b)' */
     SymMAX                  = 0;    /* builtin symbol for 'max(a,b)' */
     SymMEMCMP               = 0;    /* builtin symbol for 'memcmp' func */
-    SymMEMCPY               = 0;    /* builtin symbol for 'memcpy' func */
     SpecialSyms             = 0;    /* builtin symbols (thread linked) */
     CharSymHandle           = 0;    /* sym handle for "char" typedef */
     Sym_CS                  = 0;    /* sym handle for __segname("_CODE") ie. CS */
