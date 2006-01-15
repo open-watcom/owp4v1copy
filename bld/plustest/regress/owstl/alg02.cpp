@@ -36,6 +36,10 @@ bool heap_test( )
 
   // Exercise heaps here.
 
+  // Currently std::sort is implemented in terms of heaps so perhaps we
+  // can get by without testing anything here for right now (obviously
+  // this needs to be fixed at some point).
+
   return( rc );
 }
 
@@ -109,8 +113,6 @@ bool sort_test( )
 {
   bool rc = true;
 
-  #ifdef _WATCOM_UNSUPPORTED
-
   // For each test...
   for( int i = 0; i < sizeof(tests)/sizeof(struct test_case); ++i ) {
 
@@ -131,8 +133,6 @@ bool sort_test( )
     }
   }
 
-  #endif
-
   return( rc );
 }
 
@@ -141,10 +141,8 @@ int main( )
 {
   int rc = 0;
   try {
-    // Heaps don't work because of a compiler bug. See bug02.cpp.
-    // NOTE: When fixed uncomment body of sort_test and fill in heap_test.
-    // if( !heap_test( )       ) rc = 1;
-    // if( !sort_test( )       ) rc = 1;
+    if( !heap_test( )       ) rc = 1;
+    if( !sort_test( )       ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";

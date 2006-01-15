@@ -15,6 +15,10 @@
 #error The header algorithm requires C++
 #endif
 
+#ifndef _CSTDLIB_INCLUDED
+  #include <cstdlib>
+#endif
+
 #ifndef _ITERATOR_INCLUDED
   #include <iterator>
 #endif
@@ -573,12 +577,42 @@ namespace std {
     return( ++result );
   }
 
+  // random_shuffle( RandomAccess, RandomAccess )
+  // ********************************************
+  template< class RandomAccess >
+  void random_shuffle( RandomAccess first, RandomAccess last )
+  {
+    typedef typename iterator_traits< RandomAccess >::difference_type Int;
+    Int length = last - first;
+    Int i = 1;
+
+    while( i < length ) {
+      swap( first[i], first[ rand( ) % ( i + 1 ) ] );
+      ++i;
+    }
+  }
+
+  // random_shuffle( RandomAccess, RandomAccess, RandomGenerator >
+  // *************************************************************
+  template< class RandomAccess, class RandomGenerator >
+  void random_shuffle( RandomAccess first,
+                       RandomAccess last,
+                       RandomGenerator rgen )
+  {
+    typedef typename iterator_traits< RandomAccess >::difference_type Int;
+    Int length = last - first;
+    Int i = 1;
+
+    while( i < length ) {
+      swap( first[i], first[ rgen( i + 1 ) ] );
+      ++i;
+    }
+  }
+
 
   // Sorting and related operations
   // ==============================
 
-:: A compiler bug appears to prevent this heap support from compiling.
-#ifdef _NEVER
   namespace _ow {
 
     template< class Int >
@@ -593,11 +627,19 @@ namespace std {
     inline Int heap_right( Int index )
       { return ( 2*index + 2 ); }
 
+:: The proper declaration doesn't work because of a compiler bug.
+#ifdef _NEVER
     template< class RandomAccess >
     void heapify(
       RandomAccess first,
       RandomAccess last,
       typename iterator_traits< RandomAccess >::difference_type index)
+#endif
+    template< class RandomAccess, class DifferenceType >
+    void heapify(
+      RandomAccess first,
+      RandomAccess last,
+      DifferenceType index)
     {
       typedef typename iterator_traits< RandomAccess >::difference_type Int;
       using std::swap;
@@ -712,7 +754,6 @@ namespace std {
     make_heap( first, last );
     sort_heap( first, last );
   }
-#endif
 
   // min( const Type &, const Type & )
   // *********************************
