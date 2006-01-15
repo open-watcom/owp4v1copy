@@ -141,7 +141,6 @@ global  int     NestLevel;      /* pre-processing level of #if */
 global  int     SkipLevel;      /* pre-processing level of #if to skip to */
 global  int     SymLevel;       /* current lex level (# of nested {) */
 global  int     HashValue;      /* hash value for identifier */
-global  TOKEN   KwHashValue;    /* hash value for keyword */
 global  int     MacHashValue;   /* hash value for macro name */
 global  char    *SavedId;       /* saved id when doing look ahead */
 global  int     SavedHash;      /* hash value for saved id */
@@ -720,23 +719,23 @@ extern  hw_reg_set PragRegName(char *);         /* cprag??? */
 extern  void    InitPurge(void);                /* cpurge */
 extern  void    PurgeMemory(void);              /* cpurge */
 
-extern  void    ScanInit(void);                 /* cscan */
-extern  int     InitPPScan(void);               /* cscan */
-extern  void    FiniPPScan(int);                /* cscan */
-extern  int     CalcHash(char *,int);           /* cscan */
-extern  unsigned hashpjw(char *);               /* cscan */
-extern  int     ESCChar(int,const char **,char *); /* cscan */
-extern  void    SkipAhead(void);                /* cscan */
-extern  int     ScanSlash(void);                /* cscan */
-extern  int     ScanToken(void);                /* cscan */
-extern  void    ReScanInit(char *);             /* cscan */
-extern  int     ReScanBuffer(void);             /* cscan */
-extern  int     ReScanToken(void);              /* cscan */
-extern  char    *ReScanPos(void);               /* cscan */
-extern  int     IdLookup(const char *);         /* cscan */
-extern  int     KwLookup(const char *);         /* cscan */
-extern  int     NextToken(void);                /* cscan */
-extern  int     PPNextToken(void);              /* cscan */
+extern  void    ScanInit( void );               /* cscan */
+extern  int     InitPPScan( void );             /* cscan */
+extern  void    FiniPPScan( int );              /* cscan */
+extern  int     CalcHash( const char *, int );  /* cscan */
+extern  unsigned hashpjw( const char * );       /* cscan */
+extern  int     ESCChar( int, const char **, char * );  /* cscan */
+extern  void    SkipAhead( void );              /* cscan */
+extern  int     ScanSlash( void );              /* cscan */
+extern  int     ScanToken( void );              /* cscan */
+extern  void    ReScanInit( char * );           /* cscan */
+extern  int     ReScanBuffer( void );           /* cscan */
+extern  int     ReScanToken( void );            /* cscan */
+extern  char    *ReScanPos( void );             /* cscan */
+extern  int     KwLookup( const char *, int );  /* cscan */
+extern  int     IdLookup( const char *, int );  /* cscan */
+extern  int     NextToken( void );              /* cscan */
+extern  int     PPNextToken( void );            /* cscan */
 
 extern  unsigned long SizeOfArg(TYPEPTR);       /* csizeof */
 

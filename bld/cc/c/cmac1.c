@@ -218,9 +218,9 @@ void GetMacroToken( void )
         }
         switch( CurToken ) {
         case T_UNEXPANDABLE_ID:
+            CalcHash( buf, i );
             if( !CompFlags.doing_macro_expansion ) {
-                CalcHash( buf, i );
-                CurToken = KwLookup( buf );
+                CurToken = KwLookup( buf, i );
             }
             break;
         case T_ID:
@@ -229,7 +229,7 @@ void GetMacroToken( void )
             if( CompFlags.doing_macro_expansion ) {     /* 04-nov-94 */
                 CurToken = T_ID;
             } else {
-                CurToken = KwLookup( buf );
+                CurToken = KwLookup( buf, i );
             }
             break;
         case T_CONSTANT:
@@ -800,7 +800,7 @@ static MACRO_TOKEN *ExpandNestedMacros( MACRO_TOKEN *head, int rescanning )
             i = 0;
             while( (buf[i] = mtok->data[i]) ) i++;
             CalcHash( buf, i );
-            if( IdLookup( buf ) == T_MACRO ) {
+            if( IdLookup( buf, i ) == T_MACRO ) {
                 if( rescanning ) {
                     if( MacroBeingExpanded( NextMacro ) ) {
                         mtok->token = T_UNEXPANDABLE_ID;

@@ -147,7 +147,7 @@ int SaveNextChar()
     return( c );
 }
 
-unsigned hashpjw( char *s )
+unsigned hashpjw( const char *s )
 {
     unsigned h;
     char     c;
@@ -173,11 +173,10 @@ unsigned hashpjw( char *s )
     return( h );
 }
 
-int CalcHash( char *id, int len )
+int CalcHash( const char *id, int len )
 {
     unsigned    hash;
 
-    KwHashValue = keyword_hash( id, TokValue, len ) + FIRST_KEYWORD;
     hash = hashpjw( id );
     HashValue = hash % SYM_HASH_SIZE;
 #if ( MACRO_HASH_SIZE > 0x0ff0 ) && ( MACRO_HASH_SIZE < 0x0fff )
@@ -192,15 +191,14 @@ int CalcHash( char *id, int len )
     return( HashValue );
 }
 
-
-int KwLookup( const char *buf )
+int KwLookup( const char *buf, int len )
 {
-    int         hash;
     char        *keyword;
-    /*  lookup id in keyword table */
+    TOKEN       hash;
 
-    hash = KwHashValue;
+    hash = keyword_hash( buf, TokValue, len ) + FIRST_KEYWORD;
 
+    /* look up id in keyword table */
     if( !CompFlags.c99_extensions ) {
         switch( hash ) {
         case T_INLINE:
@@ -219,14 +217,16 @@ int KwLookup( const char *buf )
 
     keyword = Tokens[ hash ];
     if( *keyword == buf[0] ) {
-        if( strcmp( keyword, buf ) == 0 )  return( hash );
+        if( strcmp( keyword, buf ) == 0 ) {
+            return( hash );
+        }
     }
 
     /* not in keyword table, so must be just an identifier */
     return( T_ID );
 }
 
-int IdLookup( const char *buf )
+int IdLookup( const char *buf, int len )
 {
     MEPTR       mentry;
 
@@ -235,10 +235,10 @@ int IdLookup( const char *buf )
         NextMacro = mentry;     /* save pointer to it */
         return( T_MACRO );
     }
-    return( KwLookup( buf ) );
+    return( KwLookup( buf, len ) );
 }
 
-int doScanName()
+int doScanName( void )
 {
     int         token;
     int         c;
@@ -250,7 +250,7 @@ int doScanName()
 //      so it is safe to inline the function here.
 //      NextChar could also be pointing to ReScanBuffer().
     p = &Buffer[TokenLen - 1];
-    for(;;) {
+    for( ;; ) {
         scanptr = ScanCharPtr;
         for(;;) {
             if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
@@ -299,7 +299,7 @@ int doScanName()
     CalcHash( Buffer, TokenLen );
     if( CompFlags.doing_macro_expansion ) return( T_ID );
     if( CompFlags.pre_processing == 2 ) return( T_ID );
-    token = IdLookup( Buffer );
+    token = IdLookup( Buffer, TokenLen );
     if( token == T_MACRO ) {
         if( NextMacro->macro_defn == 0 ) {
             return( SpecialMacro( NextMacro ) );
@@ -315,7 +315,7 @@ int doScanName()
                     Buffer[TokenLen] = '\0';
                     return( T_ID );
                 }
-                return( KwLookup( Buffer ) );
+                return( KwLookup( Buffer, TokenLen ) );
             }
         }
         DoMacroExpansion();             /* start macro expansion */
@@ -332,14 +332,14 @@ int doScanName()
     return( token );
 }
 
-int ScanName()
+int ScanName( void )
 {
     Buffer[0] = CurrChar;
     TokenLen = 1;
     return( doScanName() );
 }
 
-int ScanWide()          // scan something that starts with L
+int ScanWide( void )        // scan something that starts with L
 {
     int         c;
     int         token;
@@ -1578,7 +1578,7 @@ static void SkipWhiteSpace( int c )
 }
 
 
-void SkipAhead()
+void SkipAhead( void )
 {
     for(;;) {
         for(;;) {

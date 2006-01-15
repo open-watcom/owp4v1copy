@@ -24,13 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  keywords hash function, must correspond with findhash.c
+* Description:  Keyword hash function; must correspond to findhash.c.
 *
 ****************************************************************************/
 
 
-static unsigned keyword_hash( unsigned char *name, const unsigned char *weights,
-    unsigned len )
+static unsigned keyword_hash( const unsigned char *name,
+                              const unsigned char *weights, unsigned len )
 {
     unsigned hash;
 
