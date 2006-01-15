@@ -1039,6 +1039,9 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
         }
         ParseDeclPart2( &sym->sym_type, typ );
         typ = sym->sym_type;
+        // Transfer fn sym's calling convention to type; is there a better way?
+        if( typ && typ->decl_type == TYPE_FUNCTION )
+            typ->u.fn.decl_flags |= sym->attrib & FLAG_LANGUAGES;
     } else {
         if( (CurToken == T_ID) || (CurToken == T_SAVED_ID) ) {
             for( ;; ) {
