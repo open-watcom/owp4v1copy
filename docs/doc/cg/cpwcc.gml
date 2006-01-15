@@ -1455,6 +1455,18 @@ to be equivalent to the
 .kwm __self
 keyword.
 .*
+.note __restrict
+.ix 'keywords' '__restrict'
+&product provides the
+.kw __restrict
+type qualifier as an alternative to the ISO C99
+.kw restrict
+keyword; it is supported even when C99 keywords aren't visible. This type
+qualifier is used as an optimization hint. Any object accessed through a
+.kw restrict
+qualified pointer may only be accessed through that pointer and the compiler
+may assume that there will be no aliasing.
+.*
 .note _Packed
 .ix 'keywords' '_Packed'
 .ix 'segment references'

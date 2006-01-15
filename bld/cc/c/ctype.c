@@ -336,7 +336,7 @@ int TypeQualifier( void )
             NextToken();
             continue;
         }
-        if( CurToken == T_RESTRICT ) {
+        if( CurToken == T_RESTRICT || CurToken == T___RESTRICT ) {
             bit = FLAG_RESTRICT;
             NextToken();
             continue;
@@ -488,6 +488,7 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
             flags |= FLAG_VOLATILE;
             break;
         case T_RESTRICT:
+        case T___RESTRICT:
             if( flags & FLAG_RESTRICT )
                 CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_RESTRICT;

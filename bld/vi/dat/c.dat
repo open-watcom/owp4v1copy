@@ -57,6 +57,7 @@ __declspec
 __fastcall
 __inline
 __int64
+__restrict
 _Cdecl
 _Export
 _Fastcall
