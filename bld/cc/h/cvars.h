@@ -77,10 +77,10 @@ typedef void    *VOIDPTR;
     #define global  extern
 #endif
 
-#define SYM_HASH_SIZE   241
-#define ENUM_HASH_SIZE  241
-#define MACRO_HASH_SIZE 4093
-#define MAX_PARM_LIST_HASH_SIZE  5
+#define SYM_HASH_SIZE               241
+#define ENUM_HASH_SIZE              241
+#define MACRO_HASH_SIZE             4093
+#define MAX_PARM_LIST_HASH_SIZE     15
 
 
 global  char    *PCH_Start;     // start of precompiled memory block
