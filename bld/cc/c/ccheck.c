@@ -99,10 +99,6 @@ local  cmp_type const   CompTable[TYPE_LAST_ENTRY][TYPE_LAST_ENTRY] = {
 /* BOOL     */ { AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,__,__,__,__,__,__,__,__,__,__,__,__,__,AC,__,__,__,__,__,__,OK },
 };
 
-static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment );
-static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
-                                  voidptr_cmp_type voidptr_cmp );
-
 local   int     TypeCheck( TYPEPTR typ1, TYPEPTR typ2 );
 local   bool    IsPointer( TYPEPTR typ );
 
@@ -378,12 +374,28 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
             ret_val = PM;
         }
     } else if( typ1->decl_type == TYPE_ARRAY ) {
-        if( !IdenticalType( typ1->object, typ2 ) ) {
+        TYPEPTR     typ = typ1->object;
+
+        if( !IdenticalType( typ, typ2 ) ) {
             ret_val = NO;
+            while( typ->decl_type == TYPE_ARRAY ) {
+                typ = typ->object;
+            }
+            if( IdenticalType( typ, typ2 ) ) {
+                ret_val = PM;
+            }
         }
     } else if( typ2->decl_type == TYPE_ARRAY ) {
-        if( !IdenticalType( typ2->object, typ1 ) ) {
+        TYPEPTR     typ = typ2->object;
+
+        if( !IdenticalType( typ, typ1 ) ) {
             ret_val = NO;
+            while( typ->decl_type == TYPE_ARRAY ) {
+                typ = typ->object;
+            }
+            if( IdenticalType( typ, typ1 ) ) {
+                ret_val = PM;
+            }
         }
     } else if( typ1->decl_type >= TYPE_LAST_ENTRY  ||
             typ2->decl_type >= TYPE_LAST_ENTRY ) {
