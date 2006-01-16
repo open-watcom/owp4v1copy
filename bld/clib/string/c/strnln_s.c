@@ -24,18 +24,28 @@
 *
 *  ========================================================================
 *
-* Description:  Constraint handler ignoring runtime constraint violations.
+* Description:  Implementation of strnlen_s() - "safe" strnlen().
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include "saferlib.h"
+#include "widechar.h"
+#include <string.h>
+#include <wchar.h>
 
 
-_WCRTLINK void ignore_handler_s( const char * __restrict msg,
-                                 void * __restrict ptr, errno_t error )
-/*********************************************************************/
+_WCRTLINK size_t __F_NAME(strnlen_s,wcsnlen_s)( const CHAR_TYPE *s, size_t maxsize )
+/**********************************************************************************/
 {
-    /* That was easy! */
+    size_t  m = 0;
+
+    // ensure the pointer is not NULL
+    if( s != NULL ) {
+        // count chars up to '\0' or maxsize
+        while( *(s + m) != NULLCHAR  &&  m < maxsize )
+            ++m;
+    }
+    return( m );
 }

@@ -24,52 +24,56 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of getenv_s() - bounds checking getenv().
+* Description:  Implementation of strcat_s() - bounds-checking strcat().
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include "saferlib.h"
+#include "widechar.h"
 #include <string.h>
+#include <wchar.h>
 
 
-_WCRTLINK extern errno_t getenv_s( size_t * __restrict len, char * __restrict value,
-                                   rsize_t maxsize, const char * __restrict name )
-/**********************************************************************************/
+_WCRTLINK errno_t __F_NAME(strcat_s,wcscat_s)( CHAR_TYPE * __restrict s1,
+                          rsize_t s1max, const CHAR_TYPE * __restrict s2 )
+/************************************************************************/
 {
-    char        *env_str;
-    size_t      env_str_len = 0;
     errno_t     rc = -1;
+    const char  *msg;
 
-    /* Pre-set length *before* calling runtime-constraint handler! */
-    if( len != NULL ) {
-        *len = 0;
-    }
+    // strnlen_s is safe to use as it has no rt constraints
+    rsize_t     m = s1max - strnlen_s( s1, s1max );
 
-    /* Verify runtime-constraints */
-    if( __check_constraint_nullptr( name ) &&
-        __check_constraint_maxsize( maxsize ) &&
-        ((maxsize == 0) || __check_constraint_nullptr( value )) ) {
+    // Verify runtime-constraints
+    // s1 not NULL
+    // s2 not NULL
+    // s1max <= RSIZE_MAX
+    // s1max != 0
+    // m     != 0
+    // m     >  strnlen_s( s2, m )
+    // s1 and s2 no overlap
+    if( __check_constraint_nullptr_msg( msg, s1 ) &&
+        __check_constraint_nullptr_msg( msg, s2 ) &&
+        __check_constraint_maxsize_msg( msg, s1max ) &&
+        __check_constraint_zero_msg( msg, s1max ) &&
+        __check_constraint_zero_msg( msg, m ) &&
+        __check_constraint_a_gt_b_msg( msg, strnlen_s( s2, m ), m - 1 ) &&
+        __check_constraint_overlap_msg( msg, s1, s1max, s2, strnlen_s( s2, s1max )) ) {
 
-        /* Make sure destination string is always terminated */
-        if( maxsize > 0 ) {
-            *value = '\0';
+         while( *s1 != '\0' )  ++s1;       // find end of field
+         while( *s1++ = *s2++ );           // append source field
+
+         rc = 0;
+    } else {
+        // Runtime-constraints found, store zero in receiving field
+        if( (s1 != NULL) && (s1max > 0) && __lte_rsizmax( s1max ) ) {
+            s1[0] = '\0';
         }
-
-        env_str = getenv( name );
-        if( env_str != NULL ) {
-            /* Env var found, find out its size */
-            env_str_len = strlen( env_str );
-            if( len != NULL ) {
-                *len = env_str_len;
-            }
-            if( env_str_len < maxsize ) {
-                /* Target large enough; safe to copy */
-                strcpy( value, env_str );
-                rc = 0;
-            }
-        }
+        // Now call the handler
+        __rtct_fail( __func__, msg, NULL );
     }
     return( rc );
 }
+

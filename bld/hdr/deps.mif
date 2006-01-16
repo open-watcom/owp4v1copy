@@ -19,9 +19,9 @@ stdarg_deps = ../watcom/stdarg.mh ../readonly.sp $(cplus) ../crwat.sp ../valist.
 stddef_deps = ../watcom/stddef.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../ptrdiff.sp ../sizet.sp ../wchar_t.sp ../rsizet.sp $(saferc)
 stdio_deps  = ../watcom/stdio.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../valist.sp ../wchar_t.sp ../wctypet.sp
 stdlib_deps = ../watcom/stdlib.mh ../readonly.sp ../alloca.sp $(cplus) ../crwatqnx.sp ../errno.sp ../ext.sp ../maxpath.sp ../mbmax.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../wchar_t.sp ../errnot.sp ../rsizet.sp $(saferc)
-string_deps = ../watcom/string.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../nlserror.sp ../namwat.sp
+string_deps = ../watcom/string.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../nlserror.sp ../namwat.sp ../errnot.sp ../rsizet.sp $(saferc)
 time_deps   = ../watcom/time.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../timet.sp ../wchar_t.sp ../clockt.sp
-wchar_deps  = ../watcom/wchar.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
+wchar_deps  = ../watcom/wchar.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../errnot.sp ../rsizet.sp $(saferc)
 wctype_deps = ../watcom/wctype.mh ../readonly.sp $(cplus) ../crwat.sp ../wchar_t.sp ../wctypet.sp
 
 cassert      : $(assert_deps)

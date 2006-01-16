@@ -169,6 +169,14 @@ using std::towupper;
 
 :include sizet.sp
 
+:include saferpro.sp
+
+:include errnot.sp
+
+:include rsizet.sp
+
+:include saferepi.sp
+
 :include null.sp
 
 :include mbmax.sp
@@ -310,6 +318,22 @@ _WCRTLINK extern int    _vswprintf( wchar_t *__s, const wchar_t *__format, va_li
 :endsegment
 
 #endif
+
+:include saferpro.sp
+
+_WCRTLINK extern errno_t wcscpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2 );
+_WCRTLINK extern errno_t wcsncpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2, rsize_t __n );
+_WCRTLINK extern errno_t wmemcpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2, rsize_t __n );
+_WCRTLINK extern errno_t wmemmove_s( wchar_t *__s1, rsize_t __s1max, const wchar_t *__s2, rsize_t __n );
+
+_WCRTLINK extern errno_t wcscat_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2 );
+_WCRTLINK extern errno_t wcsncat_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2, rsize_t __n );
+
+_WCRTLINK extern wchar_t *wcstok_s( wchar_t * __restrict __s1, rsize_t * __restrict __s1max, const wchar_t * __restrict __s2, wchar_t ** __restrict __ptr );
+
+_WCRTLINK extern size_t  wcsnlen_s( const wchar_t *__s, size_t __maxsize );
+
+:include saferepi.sp
 
 :segment CNAME
 :include cplusepi.sp

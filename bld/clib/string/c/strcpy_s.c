@@ -24,18 +24,53 @@
 *
 *  ========================================================================
 *
-* Description:  Constraint handler ignoring runtime constraint violations.
+* Description:  Implementation of strcpy_s() - bounds-checking strcpy().
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include "saferlib.h"
+#include "widechar.h"
+#include <string.h>
+#include <wchar.h>
 
 
-_WCRTLINK void ignore_handler_s( const char * __restrict msg,
-                                 void * __restrict ptr, errno_t error )
-/*********************************************************************/
+_WCRTLINK errno_t __F_NAME(strcpy_s,wcscpy_s)( CHAR_TYPE * __restrict s1,
+                          rsize_t s1max, const CHAR_TYPE * __restrict s2 )
+/************************************************************************/
 {
-    /* That was easy! */
+    errno_t     rc = -1;
+    const char  *msg;
+
+    // strnlen_s is safe to use as it has no rt constraints
+    rsize_t     s2len = __F_NAME(strnlen_s,wcsnlen_s)( s2, s1max );
+
+    // Verify runtime-constraints
+    // s1 not NULL
+    // s2 not NULL
+    // s1max <= RSIZE_MAX
+    // s1max != 0
+    // s1max > strnlen_s( s2, s1max )
+    // s1 s2 no overlap
+    if( __check_constraint_nullptr_msg( msg, s1 ) &&
+        __check_constraint_nullptr_msg( msg, s2 ) &&
+        __check_constraint_maxsize_msg( msg, s1max ) &&
+        __check_constraint_zero_msg( msg, s1max ) &&
+        __check_constraint_a_gt_b_msg( msg, s2len, s1max - 1 ) &&
+        __check_constraint_overlap_msg( msg, s1, s1max, s2, s2len ) ) {
+
+         while( *s1++ = *s2++)
+            ;
+
+         rc = 0;
+    } else {
+        // Runtime-constraints violated, make destination string empty
+        if( (s1 != NULL) && (s1max > 0) && __lte_rsizmax( s1max ) ) {
+            s1[0] = NULLCHAR;
+        }
+        // Now call the handler
+        __rtct_fail( __func__, msg, NULL );
+    }
+    return( rc );
 }

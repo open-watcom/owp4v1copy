@@ -29,12 +29,16 @@
 ****************************************************************************/
 
 
+#define __STDC_WANT_LIB_EXT1__ 1       // Enable Safer C interfaces
+
 #include <errno.h>
 #include <locale.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
+#include <malloc.h>     // for malloc RSIZE_MAX buffer
 
 #ifdef __SW_BW
     #include <wdefwin.h>
@@ -63,6 +67,13 @@ int  Test_vsscanf( char *buf, char *format, ... );
 void Test_vsprintf( char *buf, char *format, ... );
 int  Test_vsnprintf( char *buf, char *format, ... );
 
+
+#if defined(__STDC_WANT_LIB_EXT1__) && __STDC_WANT_LIB_EXT1__ == 1
+// safer c tests
+void TestMove_s( void );
+#endif
+
+
 #if !defined(__AXP__)
 void TestCompareF( void );
 void TestCaseF( void );
@@ -76,61 +87,9 @@ void TestTokenF( void );
 char ProgramName[128];                          /* executable filename */
 int NumErrors = 0;                              /* number of errors */
 
-
-
-/****
-***** Program entry point.
-****/
-
-int main( int argc, char *argv[] )
-{
-    #ifdef __SW_BW
-        FILE *my_stdout;
-        my_stdout = freopen( "tmp.log", "a", stdout );
-        if( my_stdout == NULL ) {
-            fprintf( stderr, "Unable to redirect stdout\n" );
-            exit( -1 );
-        }
-    #endif
-    /*** Initialize ***/
-    strcpy( ProgramName, strlwr(argv[0]) );     /* store filename */
-
-    /*** Test various functions ***/
-    TestCompare();                              /* compare stuff */
-    TestMove();                                 /* moving data about */
-    TestCase();                                 /* upper/lowercase stuff */
-    TestSearch();                               /* searching stuff */
-    TestSubstring();                            /* substring stuff */
-    TestToken();                                /* tokenizing stuff */
-    TestLocale();                               /* locale stuff */
-    TestError();                                /* error string stuff */
-    TestFormatted();                            /* formatted I/O stuff */
-    TestBounded();                              /* bounded string stuff */
-    #if !defined(__AXP__)
-        TestCompareF();
-        TestMoveF();
-        TestCaseF();
-        TestSearchF();
-        TestSubstringF();
-        TestTokenF();
-    #endif
-
-    /*** Print a pass/fail message and quit ***/
-    if( NumErrors!=0 ) {
-        printf( "%s: FAILURE (%d errors).\n", ProgramName, NumErrors );
-        return( EXIT_FAILURE );
-    }
-    printf( "Tests completed (%s).\n", strlwr( argv[0] ) );
-    #ifdef __SW_BW
-    {
-        fprintf( stderr, "Tests completed (%s).\n", strlwr( argv[0] ) );
-        fclose( my_stdout );
-        _dwShutDown();
-    }
-    #endif
-    return( 0 );
-}
-
+#if defined(__STDC_WANT_LIB_EXT1__) && __STDC_WANT_LIB_EXT1__ == 1
+int  NumViolations = 0; /* runtime-constraint violation counter */
+#endif
 
 
 /****
@@ -756,4 +715,317 @@ void Test_vsprintf( char *buf, char *format, ... )
     status = vsprintf( buf, format, args );     /* print some stuff */
     VERIFY( status > 0 );
     va_end( args );
+}
+
+#if defined(__STDC_WANT_LIB_EXT1__) && __STDC_WANT_LIB_EXT1__ == 1
+
+/*  safer c tests */
+
+/* Runtime-constraint handler for tests; doesn't abort program. */
+void my_constraint_handler( const char *msg, void *ptr, errno_t error )
+{
+    fprintf( stderr, msg );
+    ++NumViolations;
+}
+
+/* Test memcpy_s(), memmove_s()                                       */
+/* Test strcpy_s(), strcat_s(), strnlen_s(), strncpy_s(), strncat_s() */
+
+void TestMove_s( void )
+{
+
+    char    buf[128];
+    char    s2[] = "VALUE";
+    char    str[] = "VALUE";
+
+    char    src1[100] = "hello";
+    char    src2[7] = {'g', 'o', 'o', 'd', 'b', 'y', 'e'};
+    char    dst1[6], dst2[5], dst3[5];
+
+    char    sc1[100] = "good";
+    char    sc2[6] = "hello";
+    char    sc3[6] = "hello";
+    char    sc4[7] = "abc";
+    char    sc5[1000] = "bye";
+
+    int     violations = NumViolations;
+
+    /***********************************************************************/
+    /*  set constraint-handler                                             */
+    /***********************************************************************/
+
+    set_constraint_handler_s( my_constraint_handler );
+
+    /***********************************************************************/
+    /*  memcpy_s                                                           */
+    /***********************************************************************/
+
+    /* Test the "good" case */
+    VERIFY( memcpy_s( buf, sizeof( buf ), s2, 0 ) == 0 );
+    VERIFY( memcpy_s( buf, sizeof( buf ), s2, 1 + strlen( s2 ) ) == 0 );
+    VERIFY( memcpy_s( buf, strlen( s2 ) + 2, s2, 1 + strlen( s2 ) ) == 0 );
+
+    VERIFY( strlen( buf ) == strlen( "VALUE" ) );
+    VERIFY( strcmp( buf, "VALUE" ) == 0 );
+    VERIFY( NumViolations == violations );
+
+    /* Test various failing cases */
+    /* Test runtime-constraint violations */
+    VERIFY( memcpy_s( buf, 3, s2, strlen( s2 ) ) != 0 );
+    VERIFY( buf[0] == '\0' );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( memcpy_s( NULL, sizeof( buf ), s2, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( memcpy_s( buf, sizeof( buf ), NULL, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( memcpy_s( buf, sizeof( buf ), s2, sizeof( buf ) + 1 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( memcpy_s( buf, sizeof( buf ), buf + 1, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+#if RSIZE_MAX != SIZE_MAX
+    VERIFY( memcpy_s( buf, sizeof( buf ), s2, ~0 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+#endif
+
+    /***********************************************************************/
+    /*  memmove_s                                                          */
+    /***********************************************************************/
+
+    /* Test the "good" cases */
+    VERIFY( memmove_s( buf, sizeof( buf ) , s2, 0 ) == 0 );
+    VERIFY( memmove_s( buf, sizeof( buf ) , s2, 1 + strlen( s2 ) ) == 0 );
+
+    VERIFY( memmove_s( buf, sizeof( buf ), buf + 1, 1 + strlen( s2 ) ) == 0 );
+
+    VERIFY( memmove_s( buf, 1 + strlen( s2 ), s2, 1 + strlen( s2 ) ) == 0 );
+
+    VERIFY( strlen( buf ) == strlen( "VALUE" ) );
+    VERIFY( strcmp( buf, "VALUE" ) == 0 );
+    VERIFY( NumViolations == violations );
+
+    /* Test various failing cases */
+    /* Test runtime-constraint violations */
+    VERIFY( memmove_s( buf, 3, s2, strlen( s2 ) ) != 0 );
+    VERIFY( buf[0] == '\0' );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( memmove_s( NULL, sizeof( buf ), s2, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( memmove_s( buf, sizeof( buf ), NULL, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( memmove_s( buf, sizeof( buf ), s2, sizeof( buf ) + 1 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+#if RSIZE_MAX != SIZE_MAX
+    VERIFY( memmove_s( buf, ~0, s2, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( memmove_s( buf, sizeof( buf ), s2, ~0 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+#endif
+
+    /***********************************************************************/
+    /*  strcpy_s                                                           */
+    /***********************************************************************/
+
+    /* Test the "good" cases */
+    VERIFY( strcpy_s( buf, sizeof( buf ), s2 ) == 0 );
+    VERIFY( strcpy_s( buf, sizeof( buf ), s2 ) == 0 );
+    VERIFY( strcpy_s( buf, strlen( s2 ) + 1, s2 ) == 0 );
+
+
+    VERIFY( strlen( buf ) == strlen( "VALUE" ) );
+    VERIFY( strcmp( buf, "VALUE" ) == 0 );
+    VERIFY( NumViolations == violations );
+
+    /* Test various failing cases */
+    /* Test runtime-constraint violations */
+    VERIFY( strcpy_s( buf, 3, s2 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+    VERIFY( buf[0] == '\0' );
+
+    VERIFY( strcpy_s( NULL, sizeof( buf ), s2 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( strcpy_s( buf, sizeof( buf ), NULL ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( strcpy_s( buf, 5, s2 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( strcpy_s( buf, sizeof( buf ), buf + 1 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+#if RSIZE_MAX != SIZE_MAX
+    VERIFY( strcpy_s( buf, ~0, s2 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+#endif
+
+    /***********************************************************************/
+    /*  strcat_s                                                           */
+    /***********************************************************************/
+    strcpy( sc1, src1 );
+    VERIFY( strcat_s( sc1, 100, sc5 ) == 0 );
+    VERIFY( strcmp( sc1, "hellobye") == 0 );
+
+    VERIFY( strcat_s( sc2, 6, "" ) == 0 );
+
+    VERIFY( strcat_s( sc3, 6, "X" ) != 0 );
+    VERIFY( NumViolations == ++violations );
+    VERIFY( sc3[0] == '\0');
+
+    VERIFY( strcat_s(sc4, 7, "defghijklmn") != 0);
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( strcmp(sc4, "" ) == 0);
+
+
+    /***********************************************************************/
+    /*  strnlen_s                                                          */
+    /***********************************************************************/
+
+    /* Test the "good" case */
+    VERIFY( strnlen_s( str, sizeof( str ) ) == strlen( str ) );
+    VERIFY( strnlen_s( str, 4 ) == 4 );
+    VERIFY( strnlen_s( str, 0 ) == 0 );
+    VERIFY( strnlen_s( NULL, 1000 ) == 0 );
+
+    /* Test various failing cases */
+
+    /* No runtime-constraint violations to test */
+
+    VERIFY( NumViolations == violations );
+
+    /***********************************************************************/
+    /*  strncpy_s                                                          */
+    /***********************************************************************/
+
+    /* Test the "good" case */
+    VERIFY( strncpy_s( buf, sizeof( buf ), s2, 0 ) == 0 );
+    VERIFY( strncpy_s( buf, sizeof( buf ), s2, strlen( s2 ) ) == 0 );
+    VERIFY( strncpy_s( buf, strlen( s2 ) + 1, s2, strlen( s2 ) ) == 0 );
+
+    VERIFY( strlen( buf ) == strlen( "VALUE" ) );
+    VERIFY( strcmp( buf, "VALUE" ) == 0 );
+    VERIFY( NumViolations == violations );
+
+    VERIFY( strncpy_s( dst1, 6, src1, 100 ) == 0 );
+    VERIFY( strcmp( dst1, src1 ) == 0 );
+
+    VERIFY( strncpy_s( dst3, 5, src2, 4 ) == 0 );
+
+    /* Test various failing cases */
+    /* Test runtime-constraint violations */
+    VERIFY( strncpy_s( buf, 3, s2, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+    VERIFY( buf[0] == '\0' );
+
+    VERIFY( strncpy_s( NULL, sizeof( buf ), s2, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( strncpy_s( buf, sizeof( buf ), NULL, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+
+    VERIFY( strncpy_s( buf, sizeof( buf ), buf + 1, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( strncpy_s( dst2, 5, src2, 7 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+
+#if RSIZE_MAX != SIZE_MAX
+    VERIFY( strncpy_s( buf, ~0, s2, strlen( s2 ) ) != 0 );
+    VERIFY( NumViolations == ++violations );
+
+    VERIFY( strncpy_s( buf, sizeof( buf ), s2, ~0 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+#endif
+
+
+    /***********************************************************************/
+    /*  strncat_s                                                          */
+    /***********************************************************************/
+
+    strcpy( sc1, "good" );
+    strcpy( sc2, "hello" );
+    strcpy( sc3, "hello" );
+    strcpy( sc4, "abc" );
+    VERIFY( strncat_s( sc1, 100, sc5, 1000 ) == 0);
+    VERIFY( strcmp( sc1, "goodbye" ) == 0 );
+
+    VERIFY( strncat_s( sc2, 6, "", 1 ) == 0 );
+
+    VERIFY( strncat_s( sc3, 6, "XXX", 3 ) != 0 );
+    VERIFY( NumViolations == ++violations );
+    VERIFY( sc3[0] == '\0');
+
+    VERIFY( strncat_s( sc4, 7, "defghijklmn", 3 ) == 0 );
+    VERIFY( strcmp( sc4, "abcdef" ) == 0 );
+}
+#endif
+
+/****
+***** Program entry point.
+****/
+
+int main( int argc, char *argv[] )
+{
+#ifdef __SW_BW
+    FILE *my_stdout;
+    my_stdout = freopen( "tmp.log", "a", stdout );
+    if( my_stdout == NULL ) {
+        fprintf( stderr, "Unable to redirect stdout\n" );
+        exit( -1 );
+    }
+#endif
+    /*** Initialize ***/
+    strcpy( ProgramName, strlwr( argv[0] ) );   /* store filename */
+
+    /*** Test various functions ***/
+    TestCompare();                              /* compare stuff */
+    TestMove();                                 /* moving data about */
+    TestCase();                                 /* upper/lowercase stuff */
+    TestSearch();                               /* searching stuff */
+    TestSubstring();                            /* substring stuff */
+    TestToken();                                /* tokenizing stuff */
+    TestLocale();                               /* locale stuff */
+    TestError();                                /* error string stuff */
+    TestFormatted();                            /* formatted I/O stuff */
+    TestBounded();                              /* bounded string stuff */
+#if !defined(__AXP__)
+    TestCompareF();
+    TestMoveF();
+    TestCaseF();
+    TestSearchF();
+    TestSubstringF();
+    TestTokenF();
+#endif
+
+#if defined(__STDC_WANT_LIB_EXT1__) && __STDC_WANT_LIB_EXT1__ == 1
+    // Safer C tests
+    TestMove_s();
+#endif
+
+    /*** Print a pass/fail message and quit ***/
+    if( NumErrors!=0 ) {
+        printf( "%s: FAILURE (%d errors).\n", ProgramName, NumErrors );
+        return( EXIT_FAILURE );
+    }
+    printf( "Tests completed (%s).\n", strlwr( argv[0] ) );
+#ifdef __SW_BW
+    {
+        fprintf( stderr, "Tests completed (%s).\n", strlwr( argv[0] ) );
+        fclose( my_stdout );
+        _dwShutDown();
+    }
+#endif
+    return( 0 );
 }

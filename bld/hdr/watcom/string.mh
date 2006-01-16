@@ -114,6 +114,14 @@ using std::wcsxfrm;
 
 :include sizet.sp
 
+:include saferpro.sp
+
+:include errnot.sp
+
+:include rsizet.sp
+
+:include saferepi.sp
+
 :include null.sp
 
 :include nlserror.sp
@@ -381,6 +389,24 @@ namespace std {
  #endif
 :endsegment
 #endif  /* __INLINE_FUNCTIONS__ */
+
+:include saferpro.sp
+
+_WCRTLINK extern errno_t memcpy_s( void * __restrict __s1, rsize_t __s1max, const void * __restrict __s2, rsize_t __n );
+_WCRTLINK extern errno_t memmove_s( void *__s1, rsize_t __s1max, const void *__s2, rsize_t __n );
+_WCRTLINK extern errno_t strcpy_s( char * __restrict __s1, rsize_t __s1max, const char * __restrict __s2 );
+_WCRTLINK extern errno_t strncpy_s( char * __restrict s1, rsize_t __s1max, const char * __restrict __s2, rsize_t __n );
+
+_WCRTLINK extern errno_t strcat_s( char * __restrict __s1, rsize_t __s1max, const char * __restrict __s2 );
+_WCRTLINK extern errno_t strncat_s( char * __restrict __s1, rsize_t __s1max, const char * __restrict __s2, rsize_t __n );
+
+_WCRTLINK extern char   *strtok_s( char * __restrict __s1, rsize_t * __restrict __s1max, const char * __restrict __s2, char ** __restrict __ptr );
+
+_WCRTLINK extern errno_t strerror_s( char *__s, rsize_t __maxsize, errno_t __errnum );
+_WCRTLINK extern size_t  strerrorlen_s( errno_t __errnum );
+_WCRTLINK extern size_t  strnlen_s( const char *__s, size_t __maxsize );
+
+:include saferepi.sp
 
 :segment CNAME
 :include cplusepi.sp

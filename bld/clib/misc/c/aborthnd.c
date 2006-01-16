@@ -34,9 +34,9 @@
 #include "rterrmsg.h"
 
 
-_WCRTLINK void abort_handler_s( const char * restrict msg,
-                                void * restrict ptr, errno_t error )
-/******************************************************************/
+_WCRTLINK void abort_handler_s( const char * __restrict msg,
+                                void * __restrict ptr, errno_t error )
+/********************************************************************/
 {
     __rterr_msg( "Runtime-constraint violation", msg );
     abort();

@@ -37,11 +37,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-// Horrible temporary HACK!
-// Needs to go when we decide how to handle 'restrict' keyword.
-#define restrict
-
-
 // Maximum length of runtime-constraint error message
 #define RTCT_MSG_MAX            128
 
@@ -67,11 +62,42 @@ extern  void    __rtct_fail( const char *fn, const char *reason, void *reserved 
     ((left == 0) ? __rtct_fail( __func__, #name " is too small to hold data", NULL ), 0 : 1)
 
 
-// For 16-bit targets, the RSIZE_MAX check is effectively no-op. Object sizes up
-// to SIZE_MAX are legal and not uncommon.
+// Runtime-constraint validation macros. Construct the message and return
+// zero if check failed, return non-zero value if check succeeded.
+// __rtct_fail has to be explicitly called later.
+
+#define __check_constraint_nullptr_msg( msg, arg )   \
+    ((arg == NULL) ? ( msg = #arg " == NULL" ), 0 : 1)
+
+#define __check_constraint_maxsize_msg( msg, arg )   \
+    ((arg > RSIZE_MAX) ? ( msg = #arg " > RSIZE_MAX" ), 0 : 1)
+
+#define __check_constraint_zero_msg( msg, arg )   \
+    ((arg == 0) ? ( msg = #arg " == 0" ), 0 : 1)
+
+#define __check_constraint_toosmall_msg( msg, name, left )   \
+    ((left == 0) ? ( msg = #name " is too small to hold data" ), 0 : 1)
+
+#define __check_constraint_a_gt_b_msg( msg, a, b )   \
+    ((a > b) ? ( msg = #a " > " #b ), 0 : 1)
+
+#define __check_constraint_overlap_msg( msg, p1, len1, p2, len2 )       \
+    (((p1 == p2) || ( (p1 > p2) && ( p1 < (CHAR_TYPE *)p2 + len2 ) )    \
+        || ( (p2 > p1) && ( p2 < (CHAR_TYPE *)p1 + len1 )))             \
+     ? ( msg = #p1 " overlap " #p2 ), 0 : 1)
+
+
+// For 16-bit targets, the RSIZE_MAX check is effectively no-op. Object sizes
+// up to SIZE_MAX are legal and not uncommon.
 #if RSIZE_MAX == SIZE_MAX
-    #undef __check_constraint_maxsize
+    #undef  __check_constraint_maxsize
     #define __check_constraint_maxsize( arg )   1
+    #undef  __check_constraint_maxsize_msg
+    #define __check_constraint_maxsize_msg( msg, arg )  1
+
+    #define __lte_rsizmax( arg )    1
+#else
+    #define __lte_rsizmax( arg )    (arg <= RSIZE_MAX)
 #endif
 
 #endif // _SAFERLIB_H_INCLUDED

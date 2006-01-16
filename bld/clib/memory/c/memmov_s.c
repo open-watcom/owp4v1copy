@@ -24,18 +24,47 @@
 *
 *  ========================================================================
 *
-* Description:  Constraint handler ignoring runtime constraint violations.
+* Description:  Implementation of memmove_s() - bounds-checking memmove().
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include "saferlib.h"
+#include <string.h>
 
 
-_WCRTLINK void ignore_handler_s( const char * __restrict msg,
-                                 void * __restrict ptr, errno_t error )
-/*********************************************************************/
+_WCRTLINK errno_t memmove_s( void * __restrict s1, rsize_t s1max,
+                       const void * __restrict s2, rsize_t n )
+/***************************************************************/
 {
-    /* That was easy! */
+    errno_t     rc = -1;
+    const char  *msg;
+
+
+    // Verify runtime-constraints
+    // s1 not NULL
+    // s2 not NULL
+    // s1max <= RSIZE_MAX
+    // n     <= RSIZE_MAX
+    // n     <= s1max
+    if( __check_constraint_nullptr_msg( msg, s1 ) &&
+        __check_constraint_nullptr_msg( msg, s2 ) &&
+        __check_constraint_maxsize_msg( msg, s1max ) &&
+        __check_constraint_maxsize_msg( msg, n ) &&
+        __check_constraint_a_gt_b_msg( msg, n, s1max ) ) {
+
+        /* now it's safe to use memmove */
+         memmove( s1, s2, n );
+         rc = 0;
+    } else {
+        // Runtime-constraints violated, zero out destination array
+        if( (s1 != NULL) && __lte_rsizmax( s1max ) ) {
+            memset( s1, 0, s1max );
+        }
+        // Now call the handler
+        __rtct_fail( __func__, msg, NULL );
+    }
+
+    return( rc );
 }

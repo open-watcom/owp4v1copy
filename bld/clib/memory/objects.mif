@@ -18,6 +18,8 @@
 !inject memmove.obj  d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32     lmp
 !inject memset.obj   d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32     lmp
 !inject movedata.obj d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32     lmp
+!inject memcpy_s.obj d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32     lmp
+!inject memmov_s.obj d16 d32             nt         nvc nvl o16 o32 q16 q32 w16 w32 osi l32     lmp
 !inject rmemccpy.obj                        nta ntp
 !inject rmemchr.obj                         nta ntp
 !inject rmemcmp.obj                         nta ntp
@@ -32,6 +34,7 @@
 !inject umemcpy.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject umemmov.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject umemset.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject umemcp_s.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject umemmv_s.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 
 !include ../../../../objlist.mif
-

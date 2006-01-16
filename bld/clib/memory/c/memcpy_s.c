@@ -24,18 +24,49 @@
 *
 *  ========================================================================
 *
-* Description:  Constraint handler ignoring runtime constraint violations.
+* Description:  Implementation of memcpy_s() - bounds-checking memcpy().
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include "saferlib.h"
+#include "widechar.h"
+#include <string.h>
 
 
-_WCRTLINK void ignore_handler_s( const char * __restrict msg,
-                                 void * __restrict ptr, errno_t error )
-/*********************************************************************/
+_WCRTLINK errno_t memcpy_s( void * __restrict s1, rsize_t s1max,
+                      const void * __restrict s2, rsize_t n )
+/**************************************************************/
 {
-    /* That was easy! */
+    errno_t     rc = -1;
+    const char  *msg;
+
+    // Verify runtime-constraints
+    // s1 not NULL
+    // s2 not NULL
+    // s1max <= RSIZE_MAX
+    // n     <= RSIZE_MAX
+    // n     <= s1max
+    // s1 and s2 no overlap
+    if( __check_constraint_nullptr_msg( msg, s1 ) &&
+        __check_constraint_nullptr_msg( msg, s2 ) &&
+        __check_constraint_maxsize_msg( msg, s1max ) &&
+        __check_constraint_maxsize_msg( msg, n ) &&
+        __check_constraint_a_gt_b_msg( msg, n, s1max ) &&
+        __check_constraint_overlap_msg( msg, s1, s1max, s2, n ) ) {
+
+        // now it's safe to use memcpy
+         memcpy( s1, s2, n );
+         rc = 0;
+    } else {
+        // Runtime-constraints violated, zero out destination array
+        if( (s1 != NULL) && __lte_rsizmax( s1max ) ) {
+            memset( s1, 0, s1max );
+        }
+        // Now call the handler
+        __rtct_fail( __func__, msg, NULL );
+    }
+
+    return( rc );
 }

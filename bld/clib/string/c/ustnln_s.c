@@ -24,18 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Constraint handler ignoring runtime constraint violations.
+* Description:  Wide character version of strnlen_s().
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "saferlib.h"
-
-
-_WCRTLINK void ignore_handler_s( const char * __restrict msg,
-                                 void * __restrict ptr, errno_t error )
-/*********************************************************************/
-{
-    /* That was easy! */
-}
+// this file should remain an indirected file
+// it is done this way to support the reuse of the source file
+#define __WIDECHAR__
+#undef __INLINE_FUNCTIONS__
+#include "strnln_s.c"
