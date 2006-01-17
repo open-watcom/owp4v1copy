@@ -710,6 +710,74 @@ int DeclList( SYM_HANDLE *sym_head )
 }
 
 
+int LoopDecl( SYM_HANDLE *sym_head )
+{
+    decl_state          state;
+    SYM_HANDLE          sym_handle;
+    SYM_HANDLE          prevsym_handle;
+    unsigned            line_num;
+    SYM_ENTRY           sym;
+    SYM_ENTRY           prevsym;
+    decl_info           info;
+
+    ParmList = NULL;
+    prevsym_handle = 0;
+    *sym_head = 0;
+    if( CurToken == T_EOF ) return( 0 );
+    line_num = TokenLine;
+    FullDeclSpecifier( &info );
+    if( info.stg == SC_NULL  &&  info.typ == NULL ) {
+        return( 0 );    /* No declaration-specifiers, get outta here */
+    }
+    if( info.stg != SC_NULL && info.stg != SC_AUTO && info.stg != SC_REGISTER ) {
+        CErr1( ERR_INVALID_STG_CLASS_FOR_LOOP_DECL );
+    }
+    state = DECL_STATE_FORLOOP;
+    if( info.typ == NULL ) {
+        /* C99 requires a type specifier; we could get away with defaulting
+         * to int but what would be the point?
+         */
+        CErr1( ERR_NO_TYPE_IN_DECL );
+        info.typ = TypeDefault();
+    }
+    if( CurToken != T_SEMI_COLON ) {
+        for( ;; ) {
+            sym_handle = InitDeclarator( &sym, &info, &state );
+            /* NULL is returned if sym already exists in symbol table */
+            if( sym_handle != 0 ) {
+                sym.handle = 0;
+                if( sym.flags & SYM_FUNCTION ) {
+                    if( !(state & DECL_STATE_NOTYPE ) ) {
+                        sym.flags |= SYM_TYPE_GIVEN;
+                    }
+                } else {    /* variable */
+                    if( prevsym_handle != 0 ) {
+                        SymGet( &prevsym, prevsym_handle );
+                        prevsym.handle = sym_handle;
+                        SymReplace( &prevsym, prevsym_handle );
+                    }
+                    if( *sym_head == 0 ) {
+                        *sym_head = sym_handle;
+                    }
+                    prevsym_handle = sym_handle;
+                }
+                SymReplace( &sym, sym_handle );
+            }
+            /* case "int x *p" ==> missing ',' msg already given */
+            if( CurToken != T_TIMES ) {
+                if( CurToken != T_COMMA ) break;
+                NextToken();
+            }
+        }
+        MustRecog( T_SEMI_COLON );
+    } else {
+        //  Chk_Struct_Union_Enum( info.typ );
+        NextToken();                /* skip over ';' */
+    }
+    return( 1 );    /* We found a declaration */
+}
+
+
 TYPEPTR TypeName( void )
 {
     TYPEPTR     typ;
@@ -1081,7 +1149,9 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
     }
     if( typ != NULL ) {
         if( typ->decl_type == TYPE_FUNCTION ) {         /* 07-jun-94 */
-            if( info.segment != 0 ) {           // __based( __segname("X"))
+            if( state & DECL_STATE_FORLOOP ) {
+                CErr2p( ERR_DECL_IN_LOOP_NOT_OBJECT, sym->name );
+            } else if( info.segment != 0 ) {            // __based( __segname("X"))
                 SetFuncSegment( sym, info.segment );
             }
         }

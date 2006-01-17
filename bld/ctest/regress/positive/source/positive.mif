@@ -26,6 +26,7 @@ opt_cmdln02 = /d+ /dXXX=0+1
 opt_cmdln03 = /dX /DXX /uXX /DXXX /uXXX /UXXX /dXXX /DXXXX /uXXXX /DXXXX /uXXXX
 opt_cmdln04 = /dCMDMAC -DCMD1= /DCMD2$#
 opt_cmdln05 = -dXN2=2 -dXS1="a-/ b"-dXN1=2 -dXS2#"a-/ b"
+opt_init21  = -za99
 opt_opt09 = -za
 opt_opt41 = -ot -ol+
 opt_pack04 = -wx
@@ -128,6 +129,7 @@ positive_tests = &
     init18.$(exe) &
     init19.$(exe) &
     init20.$(exe) &
+    init21.$(exe) &
     inline01.$(exe) &
     inline04.$(exe) &
     intel01.$(exe) &

@@ -2002,6 +2002,37 @@ end of the source program.
 :MSGJTXT. Invalid register name '%s' in #pragma
 .np
 The register name is invalid/unknown.
+:MSGSYM. ERR_INVALID_STG_CLASS_FOR_LOOP_DECL
+:MSGTXT. Storage class of 'for' statement declaration not register or auto
+:MSGJTXT.
+.np
+The only storage class allowed for the optional declaration part of a
+.kw for
+statement is
+.kw auto
+or
+.kw register.
+:MSGSYM. ERR_NO_TYPE_IN_DECL
+:MSGTXT. No type specified in declaration
+:MSGJTXT.
+.np
+A declaration specifier must include a type specifier.
+.errbad
+auto i;
+.eerrbad
+:MSGSYM. ERR_DECL_IN_LOOP_NOT_OBJECT
+:MSGTXT. Symbol '%s' declared in 'for' statement must be object
+:MSGJTXT.
+.np
+Any identifier declared in the optional declaration part of a
+.kw for
+statement must denote an object. Functions, structures, or enumerations may
+not be declared in this context.
+.errbad
+for( int i = 0, j( void ); i < 5; ++i ) {
+    ...
+}
+.eerrbad
 :eMSGGRP. Errs
 :cmt -------------------------------------------------------------------
 :MSGGRP. Info

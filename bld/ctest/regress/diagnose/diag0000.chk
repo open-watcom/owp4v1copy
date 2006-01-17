@@ -65,3 +65,8 @@ source\diag0006.c(39): Note! I2004: target conversion type is 'int (__watcall *)
 source\diag0006.c(40): Error! E1010: Type mismatch
 source\diag0006.c(40): Note! I2003: source conversion type is 'int (__cdecl *)(int __p1)'
 source\diag0006.c(40): Note! I2004: target conversion type is 'int (__watcall *)(int __p1)'
+source\diag0007.c(23): Error! E1186: Storage class of 'for' statement declaration not register or auto
+source\diag0007.c(24): Error! E1186: Storage class of 'for' statement declaration not register or auto
+source\diag0007.c(25): Error! E1186: Storage class of 'for' statement declaration not register or auto
+source\diag0007.c(26): Error! E1187: No type specified in declaration
+source\diag0007.c(27): Error! E1188: Symbol 'j' declared in 'for' statement must be object

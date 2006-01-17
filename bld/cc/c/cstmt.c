@@ -693,6 +693,10 @@ static void EndOfStmt( void )
             EndForStmt();
             --LoopDepth;
             DropBreakLabel();
+            if( CompFlags.c99_extensions ) {
+                EndBlock();     /* Terminate the scope introduced by 'for' */
+                PopBlock();
+            }
             break;
         case T_DO:
             DropContinueLabel();
@@ -936,15 +940,44 @@ static void GotoStmt( void )
     MustRecog( T_SEMI_COLON );
 }
 
+extern int LoopDecl( SYM_HANDLE *sym_head );
+
+static void PushBlock( void )
+{
+    startNewBlock();
+    ++SymLevel;
+    BlockStack->sym_list = 0;
+    // TODO: do we need to mess with FirstStmt/LastStmt here?
+}
 
 static void ForStmt( void )
 {
+    bool    parsed_semi_colon = FALSE;
+
     NextToken();
     MustRecog( T_LEFT_PAREN );
     if( CurToken != T_SEMI_COLON ) {
-        ChkStmtExpr();      // init_expr
+        if( CompFlags.c99_extensions ) {
+            PushBlock();    // 'for' opens new scope
+            if( !LoopDecl( &BlockStack->sym_list ) ) {
+                ChkStmtExpr();      // no declarator, try init_expr
+            } else {
+                TREEPTR     tree;
+
+                if( BlockStack->sym_list != 0 ) {
+                    tree = LeafNode( OPR_NEWBLOCK );
+                    tree->op.sym_handle = BlockStack->sym_list;
+                    AddStmt( tree );
+                }
+                parsed_semi_colon = TRUE;   // LoopDecl ate it up
+            }
+        } else {
+            ChkStmtExpr();          // init_expr
+        }
     }
-    MustRecog( T_SEMI_COLON );
+    if( !parsed_semi_colon ) {
+        MustRecog( T_SEMI_COLON );
+    }
     NewLoop();
     BlockStack->block_type = T_FOR;
     if( CurToken != T_SEMI_COLON ) {
