@@ -71,10 +71,10 @@ Phar Lap, 286|DOS-Extender, and 386|DOS-Extender are trademarks of
 Phar Lap Software, Inc.
 .*
 .np
-QNX is a registered trademark of QNX Software Systems Ltd.
+.tmarkqnx
 .*
 .np
-UNIX is a registered trademark of UNIX System Laboratories, Inc.
+.tmarkunix
 .*
 .np
 .im wtrdmrk

@@ -228,5 +228,5 @@ PC DOS is a trademark of IBM;
 PDP, VAX and VMS are trademarks of Digital Equipment
 Corporation;
 ICON is a registered trademark of Unisys;
-QNX is a registered trademark of QNX Software Systems;
-UNIX is a registered trademark of UNIX System Laboratories, Inc.
+.tmarkqnx
+.tmarkunix

@@ -116,11 +116,11 @@ PenPoint is a trademark of GO Corporation.
 .do end
 .if '&machsys' ne 'PP' .do begin
 .np
-QNX is a registered trademark of QNX Software Systems Ltd.
+.tmarkqnx
 .do end
 .if '&machsys' eq 'QNX' .do begin
 .np
-UNIX is a registered trademark of UNIX System Laboratories, Inc.
+.tmarkunix
 .do end
 .np
 .im wtrdmrk

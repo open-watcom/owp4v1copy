@@ -69,7 +69,7 @@ are trademarks of Digital Equipment Corporation.
 .*
 .if '&target' eq 'DOS' .do begin
 .np
-DOS/4G and DOS/16M are trademarks of Tenberry Software, Inc.
+.tmarkd4g
 .*
 .np
 OS/2 is a trademark of International Business Machines Corp.
@@ -98,11 +98,11 @@ Phar Lap Software, Inc.
 .*
 .if '&target' eq 'QNX' .do begin
 .np
-QNX is a registered trademark of QNX Software Systems Ltd.
+.tmarkqnx
 .do end
 .*
 .np
-UNIX is a registered trademark of UNIX System Laboratories, Inc.
+.tmarkunix
 .*
 .np
 .im wtrdmrk

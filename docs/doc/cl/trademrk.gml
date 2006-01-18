@@ -19,10 +19,10 @@ Microsoft and MS DOS are registered trademarks of Microsoft Corp.
 Windows is a trademark of Microsoft Corp.
 .*
 .pp
-QNX is a registered trademark of QNX Software Systems Ltd.
+.tmarkqnx
 .*
 .pp
-UNIX is a registered trademark of UNIX System Laboratories, Inc.
+.tmarkunix
 .*
 .pp
 .im wtrdmrk

@@ -95,7 +95,7 @@ commands.
 .*
 .sect Trademarks Used in this Manual
 .*
-UNIX is a trademark of AT&T.
+.tmarkunix
 .np
 IBM is a registered trademark and OS/2 is a trademark of International
 Business Machines Corp.
@@ -105,5 +105,4 @@ Intel is a registered trademark of Intel Corp.
 Microsoft is a registered trademark of Microsoft Corp.
 Microsoft Windows is a trademark of Microsoft Corp.
 .np
-QNX is a registered trademark of Quantum Software Systems Ltd.
-
+.tmarkqnx

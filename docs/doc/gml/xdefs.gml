@@ -13,14 +13,25 @@
 :set symbol="pcompany"  value="Sybase".
 :set symbol="spcompany" value="Sybase, Inc.".
 .do end
-:set symbol="cpyyear"   value="2002".
+:set symbol="cpyyear"   value="2006".
 .dm cpyrit begin
-Portions Copyright (c) &*, &cpyyear. Sybase, Inc. All Rights Reserved.
+Copyright (c) &cpyyear. the Open Watcom Contributors. All Rights Reserved.
+Portions Copyright (c) &*, 2002 Sybase, Inc. All Rights Reserved.
 .dm cpyrit end
 .dm trdmrk begin
 Source code is available under the Sybase Open Watcom Public License.
 See http://www.openwatcom.org/ for details.
 .dm trdmrk end
+.dm tmarkunix begin
+UNIX is a registered trademark of The Open Group.
+.dm tmarkunix end
+.dm tmarkd4g begin
+DOS/4G and DOS/16M are trademarks of Tenberry Software, Inc.
+.dm tmarkd4g end
+.dm tmarkqnx begin
+QNX is a registered trademark of QNX Software Systems Ltd.
+.dm tmarkqnx end
+
 :set symbol="ver"       value="1".
 :set symbol="rev"       value="5".
 :set symbol="pver"      value="10".
