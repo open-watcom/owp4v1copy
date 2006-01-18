@@ -82,13 +82,17 @@ static int ReadBuffer( FCB *srcfcb )
             return( 1 );
         }
     } while( srcfcb->src_cnt < 0 );
-    if( CompFlags.cpp_line_wanted ) {
-    //hoke up a newline so #line comes out after last token in include
-        if( feof( srcfcb->src_fp ) ){
-            if(  srcfcb->src_ptr[ srcfcb->src_cnt-1 ] != '\n' ){
-                srcfcb->src_ptr[ srcfcb->src_cnt ] = '\n';  // mark end of buffer
-                srcfcb->src_cnt++;
-            }
+    /* ANSI/ISO C says a non-empty source file must be terminated
+     * with a newline. If it's not, we insert one, otherwise
+     * whatever comes next will be tacked onto that unterminated
+     * line, possibly confusing the hell out of the user.
+     */
+    // can't use feof() here cause we didn't fread()
+    if( srcfcb->src_cnt < srcfcb->src_bufsize ) {
+        if( srcfcb->src_ptr[ srcfcb->src_cnt-1 ] != '\n' ) {
+            srcfcb->no_eol = 1; // emit warning later so line # is right
+            srcfcb->src_ptr[ srcfcb->src_cnt ] = '\n';  // mark end of buffer
+            srcfcb->src_cnt++;
         }
     }
     srcfcb->src_ptr[ srcfcb->src_cnt ] = '\0';  // mark end of buffer

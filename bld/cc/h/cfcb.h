@@ -29,8 +29,7 @@
 ****************************************************************************/
 
 
-#define SRC_BUF_SIZE            2048
-#define PRODUCTION_BUFFER_SIZE  (1024 * 4)
+#define SRC_BUF_SIZE            4096
 
 #define EOF_CHAR                256
 #define MACRO_CHAR              257
@@ -53,4 +52,5 @@ typedef struct fcb_struct {     /* file control block structure */
     unsigned    prevcount;      /* leftovers from prev read */
 #endif
     long        rseekpos;       /* if closed because of too many files reopen */
+    int         no_eol;         /* set if no EOL before EOF */
 } FCB;

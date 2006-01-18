@@ -475,6 +475,13 @@ static int bar( void )
     return( 0 );
 }
 :eerrbad.
+:MSGSYM. ERR_NO_EOL_BEFORE_EOF
+:MSGTXT. No newline at end of file
+:MSGJTXT.
+:WARNING. 1
+ISO C requires that a non-empty source file must include a newline character
+at the end of the last line. If no newline was found, it will be automatically
+inserted.
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2

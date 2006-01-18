@@ -3,12 +3,10 @@
 #
 # pch01.$(exe) &    # All of the PCH tests are currently broken!
 # pch02.$(exe) &    # There are at least three distinct problems
-# pch03.$(exe) &    # - Count of SpecialSyms may not match and
-# pch04.$(exe) &    #   PCH will be endlessly regenerated if there
-# pch05.$(exe) &    #   are inlined assembly functions in header
-# pch06.$(exe) &    #   (pch01/02)
-# pch07.$(exe) &    # - Missing CR/LF at the end of precompiled
-# pch08.$(exe) &    #   header throws off the parser (pch03/04)
+# pch05.$(exe) &    # - Count of SpecialSyms may not match and
+# pch06.$(exe) &    #   PCH will be endlessly regenerated if there
+# pch07.$(exe) &    #   are inlined assembly functions in header
+# pch08.$(exe) &    #   (pch01/02)
 # pch09.$(exe) &    # - Expression trees aren't stored in PCH, any
 # pch10.$(exe) &    #   functions defined in headers will screw
 # pch11.$(exe) &    #   things up (pch05/06 and others)
@@ -179,6 +177,8 @@ positive_tests = &
     pack05.$(exe) &
     parm01.$(exe) &
     parm02.$(exe) &
+    pch03.$(exe) &
+    pch04.$(exe) &
     pp01.$(exe) &
     pp02.$(exe) &
     pp03.$(exe) &

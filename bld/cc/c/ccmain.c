@@ -743,6 +743,11 @@ void CloseSrcFile( FCB *srcfcb )
     if( CompFlags.scanning_comment ) {
         CErr1( ERR_INCOMPLETE_COMMENT );
     }
+    if( srcfcb->no_eol ) {
+        --TokenLine;
+        CWarn1( WARN_NO_EOL_BEFORE_EOF, ERR_NO_EOL_BEFORE_EOF );
+        ++TokenLine;
+    }
     SrcFile = srcfcb->prev_file;
     CurrChar = srcfcb->prev_currchar;
     if( SrcFile == MainSrcFile ) {
@@ -1109,7 +1114,7 @@ static int FCB_Alloc( FILE *fp, char *filename )
 
    --IncFileDepth;
     srcfcb = (FCB *)CMemAlloc( sizeof( FCB ) );
-    i = PRODUCTION_BUFFER_SIZE;
+    i = SRC_BUF_SIZE;
     src_buffer = FEmalloc( i + 3 );
     if( srcfcb ) {
         srcfcb->src_buf = src_buffer;
@@ -1144,6 +1149,7 @@ static int FCB_Alloc( FILE *fp, char *filename )
             }
         }
         srcfcb->rseekpos = 0;
+        srcfcb->no_eol   = 0;
         SrcFile = srcfcb;
         CurrChar = '\n';    /* set next character to newline */
         if( CompFlags.cpp_output ) {            /* 10-aug-91 */
