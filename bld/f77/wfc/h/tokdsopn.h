@@ -43,4 +43,3 @@ pick( TO_EXT,  DSOPN_EXT,  &ExtendedC )      // extended
 pick( TO_OCT,  DSOPN_OCT,  &OctalC    )      // octal constant
 pick( TO_HEX,  DSOPN_HEX,  &HexC      )      // hexadecimal constant
 pick( TO_FMT,  DSOPN_FMT,  NULL       )      // FORMAT string
-                                      
