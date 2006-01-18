@@ -43,6 +43,7 @@ typedef struct block_entry {
     int         parent_index;   /* TRY: parent index */
     TREEPTR     inc_var;        /* variable used in FOR statement */
     SYM_HANDLE  sym_list;       /* symbols defined in this block */
+    bool        gen_endblock;   /* set if OPR_ENDBLOCK needed */
 } BLOCKDEFN, *BLOCKPTR;
 
 // values for return_type
@@ -743,10 +744,6 @@ static void EndOfStmt( void )
 static void LeftBrace( void )
 {
     TREEPTR     tree;
-    TREEPTR     first_stmt;
-    TREEPTR     last_stmt;
-    TREEPTR     new_first;
-    TREEPTR     new_last;
 
 /*
     <storage> <type> function( <parms> )
@@ -758,25 +755,12 @@ static void LeftBrace( void )
     startNewBlock();
     NextToken();
     ++SymLevel;
-    first_stmt = FirstStmt;
-    last_stmt = LastStmt;
-    FirstStmt = NULL;
-    LastStmt = NULL;
+    tree = LeafNode( OPR_NEWBLOCK );
+    AddStmt( tree );
     BlockStack->sym_list = 0;
+    BlockStack->gen_endblock = TRUE;
     DeclList( &BlockStack->sym_list );
-    new_first = FirstStmt;
-    new_last = LastStmt;
-    FirstStmt = first_stmt;
-    LastStmt = last_stmt;
-    if( BlockStack->sym_list != 0 ) {
-        tree = LeafNode( OPR_NEWBLOCK );
-        tree->op.sym_handle = BlockStack->sym_list;
-        AddStmt( tree );
-    }
-    if( new_first != NULL ) {
-        LastStmt->left = new_first;
-        LastStmt = new_last;
-    }
+    tree->op.sym_handle = BlockStack->sym_list;
 }
 
 static void JumpBreak( BLOCKPTR block )
@@ -947,7 +931,6 @@ static void PushBlock( void )
     startNewBlock();
     ++SymLevel;
     BlockStack->sym_list = 0;
-    // TODO: do we need to mess with FirstStmt/LastStmt here?
 }
 
 static void ForStmt( void )
@@ -958,17 +941,16 @@ static void ForStmt( void )
     MustRecog( T_LEFT_PAREN );
     if( CurToken != T_SEMI_COLON ) {
         if( CompFlags.c99_extensions ) {
+            TREEPTR     tree;
+
             PushBlock();    // 'for' opens new scope
+            tree = LeafNode( OPR_NEWBLOCK );
+            AddStmt( tree );
+            BlockStack->gen_endblock = TRUE;
             if( !LoopDecl( &BlockStack->sym_list ) ) {
                 ChkStmtExpr();      // no declarator, try init_expr
             } else {
-                TREEPTR     tree;
-
-                if( BlockStack->sym_list != 0 ) {
-                    tree = LeafNode( OPR_NEWBLOCK );
-                    tree->op.sym_handle = BlockStack->sym_list;
-                    AddStmt( tree );
-                }
+                tree->op.sym_handle = BlockStack->sym_list;
                 parsed_semi_colon = TRUE;   // LoopDecl ate it up
             }
         } else {
@@ -1276,6 +1258,7 @@ static void startNewBlock( void )
     block->break_label = 0;
     block->prev_block = BlockStack;
     block->prev_loop = LoopStack;
+    block->gen_endblock = FALSE;
     BlockStack = block;
 }
 
@@ -1285,10 +1268,12 @@ static void PopBlock( void )
     BLOCKPTR    block;
     TREEPTR     tree;
 
-    if( BlockStack->sym_list != 0 ) {
+    if( BlockStack->gen_endblock ) {
         tree = LeafNode( OPR_ENDBLOCK );
         tree->op.sym_handle = BlockStack->sym_list;
         AddStmt( tree );
+    }
+    if( BlockStack->sym_list != 0 ) {
         AddSymList( BlockStack->sym_list );
     }
     block = BlockStack;
