@@ -65,8 +65,25 @@ source\diag0006.c(39): Note! I2004: target conversion type is 'int (__watcall *)
 source\diag0006.c(40): Error! E1010: Type mismatch
 source\diag0006.c(40): Note! I2003: source conversion type is 'int (__cdecl *)(int __p1)'
 source\diag0006.c(40): Note! I2004: target conversion type is 'int (__watcall *)(int __p1)'
-source\diag0007.c(23): Error! E1186: Storage class of 'for' statement declaration not register or auto
-source\diag0007.c(24): Error! E1186: Storage class of 'for' statement declaration not register or auto
-source\diag0007.c(25): Error! E1186: Storage class of 'for' statement declaration not register or auto
-source\diag0007.c(26): Error! E1187: No type specified in declaration
-source\diag0007.c(27): Error! E1188: Symbol 'j' declared in 'for' statement must be object
+source\diag0007.c(37): Error! E1186: Storage class of 'for' statement declaration not register or auto
+source\diag0007.c(38): Error! E1186: Storage class of 'for' statement declaration not register or auto
+source\diag0007.c(39): Error! E1186: Storage class of 'for' statement declaration not register or auto
+source\diag0007.c(40): Error! E1187: No type specified in declaration
+source\diag0007.c(41): Error! E1188: Symbol 'j' declared in 'for' statement must be object
+source\diag0007.c(45): Error! E1189: Unexpected declaration
+source\diag0007.c(47): Error! E1189: Unexpected declaration
+source\diag0007.c(55): Error! E1189: Unexpected declaration
+source\diag0007.c(55): Error! E1009: Expecting 'while' but found 'unsigned'
+source\diag0007.c(55): Error! E1009: Expecting '(' but found 'u'
+source\diag0007.c(55): Error! E1063: Missing operand
+source\diag0007.c(55): Error! E1009: Expecting ')' but found ';'
+source\diag0007.c(61): Error! E1189: Unexpected declaration
+source\diag0007.c(69): Error! E1189: Unexpected declaration
+source\diag0007.c(45): Warning! W202: Symbol 'j' has been defined, but not referenced
+source\diag0007.c(61): Warning! W202: Symbol 'i' has been defined, but not referenced
+source\diag0007.c(52): Warning! W202: Symbol 'g' has been defined, but not referenced
+source\diag0007.c(47): Warning! W202: Symbol 'f' has been defined, but not referenced
+source\diag0007.c(58): Warning! W202: Symbol 'uu' has been defined, but not referenced
+source\diag0007.c(71): Warning! W107: Missing return value for function 'main'
+source\diag0007.c(71): Error! E1018: Label 'la_bel' not defined in function
+source\diag0007.c(72): Error! E1099: Statement must be inside function. Probable cause: missing {

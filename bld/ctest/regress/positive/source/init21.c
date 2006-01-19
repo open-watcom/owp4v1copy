@@ -2,12 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Test C99 'for' loop declarations */
+/* Test C99 style declarations */
 
-int foo( void )
+int foo( int arg )
 {
+    ++arg;
     int a = 0;
-    int i = 4;
+    --arg;
+    volatile int i = 4;
+    ++arg;
+    const char *s;
 
     for( int i = 2, j = 1; i < 10; ++i )
         a += i + j;     // i in scope opened by 'for'
@@ -17,6 +21,6 @@ int foo( void )
 
 int main( void )
 {
-    if( foo() != 48 ) fail( __LINE__ );
+    if( foo( 1 ) != 48 ) fail( __LINE__ );
     _PASS;
 }

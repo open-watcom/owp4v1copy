@@ -420,7 +420,7 @@ static void ChkRetValue( void )
     }
 }
 
-static void GetLocalVarDecls( void )
+static SYM_HANDLE GetLocalVarDecls( void )
 {
     SYM_HANDLE  symlist;
     SYM_HANDLE  symhandle;
@@ -443,6 +443,7 @@ static void GetLocalVarDecls( void )
             CurFunc->u.func.locals = symlist;
         }
     }
+    return( symlist );
 }
 
 
@@ -668,20 +669,22 @@ static void ForStmt( void )
 
     NextToken();
     MustRecog( T_LEFT_PAREN );
+    if( CompFlags.c99_extensions ) {
+        PushBlock();    // 'for' opens new scope
+    }
     if( CurToken != T_SEMI_COLON ) {
         if( CompFlags.c99_extensions ) {
             TREEPTR     tree;
 
-            PushBlock();    // 'for' opens new scope
             tree = LeafNode( OPR_NEWBLOCK );
             AddStmt( tree );
             BlockStack->gen_endblock = TRUE;
             if( !LoopDecl( &BlockStack->sym_list ) ) {
                 ChkStmtExpr();      // no declarator, try init_expr
             } else {
-                tree->op.sym_handle = BlockStack->sym_list;
                 parsed_semi_colon = TRUE;   // LoopDecl ate it up
             }
+            tree->op.sym_handle = BlockStack->sym_list;
         } else {
             ChkStmtExpr();          // init_expr
         }
@@ -1124,13 +1127,41 @@ static void EndOfStmt( void )
 }
 
 
+static bool IsDeclSpecifier( TOKEN token )
+{
+    if( TokenClass[ token ] == TC_STG_CLASS
+    ||  TokenClass[ token ] == TC_QUALIFIER ) {
+        return( TRUE );
+    }
+    switch( token ) {
+    case T_VOID:
+    case T_CHAR:
+    case T_SHORT:
+    case T_INT:
+    case T_LONG:
+    case T_FLOAT:
+    case T_DOUBLE:
+    case T_SIGNED:
+    case T_UNSIGNED:
+    case T__COMPLEX:
+    case T__IMAGINARY:
+    case T__BOOL:
+    case T___INT64:
+        return( TRUE );
+    default:
+        return( FALSE );
+    }
+}
+
+
 void Statement( void )
 {
     LABEL_INDEX         end_of_func_label;
     SYM_HANDLE          func_result;
     TREEPTR             tree;
-    char                return_at_outer_level;
-    char                skip_to_next_token;
+    bool                return_at_outer_level;
+    bool                skip_to_next_token;
+    bool                declaration_allowed;
     struct return_info  return_info;
     SYM_ENTRY           sym;
 
@@ -1146,7 +1177,8 @@ void Statement( void )
     CompFlags.label_dropped = 0;
     CompFlags.addr_of_auto_taken = 0;           /* 23-oct-91 */
     end_of_func_label = 0;
-    return_at_outer_level = 0;                  /* 28-feb-92 */
+    return_at_outer_level = FALSE;              /* 28-feb-92 */
+    declaration_allowed   = FALSE;
     DeadCode = 0;
     LoopDepth = 0;
     LabelIndex = 0;
@@ -1170,8 +1202,13 @@ void Statement( void )
     SymReplace( &sym, func_result );
     for( ;; ) {
         CompFlags.pending_dead_code = 0;
-        GrabLabels();
-        skip_to_next_token = 0;
+        if( GrabLabels() == 0 && declaration_allowed && IsDeclSpecifier( CurToken ) ) {
+            GetLocalVarDecls();
+        }
+        if( CompFlags.c99_extensions ) {
+            declaration_allowed = TRUE;
+        }
+        skip_to_next_token = FALSE;
         switch( CurToken ) {
         case T_IF:
             StartNewBlock();
@@ -1188,6 +1225,7 @@ void Statement( void )
                 SetErrLoc( NULL, 0 );                   /* 04-nov-91 */
                 break;
             }
+            declaration_allowed = FALSE;
             continue;
         case T_WHILE:
             NewLoop();
@@ -1201,6 +1239,7 @@ void Statement( void )
                     CWarn1( WARN_MEANINGLESS, ERR_MEANINGLESS );
                 }
             }
+            declaration_allowed = FALSE;
             continue;
         case T_DO:
             NewLoop();
@@ -1209,20 +1248,25 @@ void Statement( void )
                 CErr1( ERR_STMT_REQUIRED_AFTER_DO );
                 break;
             }
+            declaration_allowed = FALSE;
             continue;
         case T_FOR:
             ForStmt();
+            declaration_allowed = FALSE;
             continue;
         case T_SWITCH:
             SwitchStmt();
             DeadCode = 1;
+            declaration_allowed = FALSE;
             continue;
         case T_CASE:
             DeadCode = 0;
             CaseStmt();
+            declaration_allowed = FALSE;
             continue;
         case T_DEFAULT:
             DefaultStmt();
+            declaration_allowed = FALSE;
             continue;
         case T_BREAK:
             BreakStmt();
@@ -1245,7 +1289,7 @@ void Statement( void )
         case T_RETURN:
             ReturnStmt( func_result, &return_info );
             if( BlockStack->prev_block == NULL ) {      /* 28-feb-92 */
-                return_at_outer_level = 1;
+                return_at_outer_level = TRUE;
             }
             MustRecog( T_SEMI_COLON );
             if( SymLevel != 1  ||  CurToken != T_RIGHT_BRACE  ||
@@ -1263,7 +1307,12 @@ void Statement( void )
             continue;
         case T_SEMI_COLON:
             NextToken();
-            if( BlockStack->block_type != T_LEFT_BRACE ) break;
+            if( BlockStack->block_type != T_LEFT_BRACE ) {
+                if( CurToken == T_ELSE ) {
+                    declaration_allowed = FALSE;
+                }
+                break;
+            }
             continue;
         case T_LEFT_BRACE:
             LeftBrace();
@@ -1273,19 +1322,29 @@ void Statement( void )
                 CErr1( ERR_MISPLACED_RIGHT_BRACE );
             }
             if( BlockStack->prev_block == NULL ) {
-                skip_to_next_token = 1;
+                skip_to_next_token = TRUE;
             } else {
                 NextToken();
             }
             break;
-        case T_STATIC:
         case T_EXTERN:
+        case T_STATIC:
+        case T_AUTO:
+        case T_REGISTER:
         case T_VOID:
+        case T_CHAR:
+        case T_SHORT:
         case T_INT:
         case T_LONG:
-        case T_SHORT:
         case T_FLOAT:
         case T_DOUBLE:
+        case T_SIGNED:
+        case T_UNSIGNED:
+            if( CompFlags.c99_extensions )
+                CErr1( ERR_UNEXPECTED_DECLARATION );
+            else
+                CErr1( ERR_MISSING_RIGHT_BRACE );
+            break;
         case T_EOF:
             CErr1( ERR_MISSING_RIGHT_BRACE );
             break;
@@ -1308,7 +1367,9 @@ void Statement( void )
         }
         EndOfStmt();
         if( BlockStack == NULL ) break;
-        if( skip_to_next_token )  NextToken();
+        if( skip_to_next_token ) {
+            NextToken();
+        }
     }
     if( !return_info.with_expr ) {   /* no return values present */
         if( !CurFunc->naked ) {

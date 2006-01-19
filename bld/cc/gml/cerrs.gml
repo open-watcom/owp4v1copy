@@ -2040,6 +2040,37 @@ for( int i = 0, j( void ); i < 5; ++i ) {
     ...
 }
 .eerrbad
+:MSGSYM. ERR_UNEXPECTED_DECLARATION
+:MSGTXT. Unexpected declaration
+:MSGJTXT.
+.np
+Within a function body, in C99 mode a declaration is only allowed in 
+a compound statement and in the opening clause of a
+.kw for
+loop.
+Declarations are not allowed after
+.kw if,
+.kw while,
+or
+.kw switch
+statement, etc.
+.errbad
+void foo( int a )
+{
+    if( a > 0 )
+        int j = 3;
+}
+.eerrbad
+.np
+In C89 mode, declarations within a function body are only allowed at
+the beginning of a compound statement.
+.errbad
+void foo( int a )
+{
+    ++a;
+    int j = 3;
+}
+.eerrbad
 :eMSGGRP. Errs
 :cmt -------------------------------------------------------------------
 :MSGGRP. Info
