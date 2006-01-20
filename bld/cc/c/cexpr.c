@@ -874,12 +874,19 @@ static TREEPTR CheckBasedPtr( TREEPTR tree, TYPEPTR typ, type_modifiers *p_flags
     if( flags & FLAG_BASED ) {
         tree = BasedPtrNode( typ, tree );
         flags &= ~(FLAG_NEAR | FLAG_BASED);
-#if _CPU == 386
-        if( (TargetSwitches & FLAT_MODEL) && typ->u.p.based_kind == BASED_VAR )
-            flags |= FLAG_NEAR;
-        else
-#endif
+        if( typ->u.p.based_kind == BASED_VAR ) {
+            SYM_HANDLE  base_sym_handle;
+            SYMPTR      base_sym;
+            TYPEPTR     base_typ;
+
+            // For pointers based on another pointer, copy flags from the base ptr
+            base_sym_handle = typ->u.p.based_sym;
+            base_sym = SymGetPtr( base_sym_handle );
+            base_typ = base_sym->sym_type;
+            flags |= base_typ->u.p.decl_flags & PTR_FLAGS;
+        } else {
             flags |= FLAG_FAR;
+        }
     }
     *p_flags = flags;
     return( tree );
