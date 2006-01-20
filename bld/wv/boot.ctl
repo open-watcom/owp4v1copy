@@ -10,6 +10,7 @@ set PROJDIR=<CWD>
 #==================
     echo rm -f -r <PROJDIR>/<OBJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>
+    [ INCLUDE <PROJDIR>/linux/boot.ctl ]
 
 [ BLOCK <1> boot ]
 #=================
