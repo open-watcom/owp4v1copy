@@ -865,6 +865,27 @@ TREEPTR BasedPtrNode( TYPEPTR ptrtyp, TREEPTR tree )
     return( tree  );
 }
 
+
+static TREEPTR CheckBasedPtr( TREEPTR tree, TYPEPTR typ, type_modifiers *p_flags )
+{
+    type_modifiers  flags;
+
+    flags = typ->u.p.decl_flags & PTR_FLAGS;
+    if( flags & FLAG_BASED ) {
+        tree = BasedPtrNode( typ, tree );
+        flags &= ~(FLAG_NEAR | FLAG_BASED);
+#if _CPU == 386
+        if( (TargetSwitches & FLAT_MODEL) && typ->u.p.based_kind == BASED_VAR )
+            flags |= FLAG_NEAR;
+        else
+#endif
+            flags |= FLAG_FAR;
+    }
+    *p_flags = flags;
+    return( tree );
+}
+
+
 TREEPTR PtrOp( TREEPTR tree )
 {
     TYPEPTR         ptrtyp;
@@ -880,12 +901,7 @@ TREEPTR PtrOp( TREEPTR tree )
         return( ErrorNode( tree ) );
     }
     ptrtyp = typ;
-    flags = typ->u.p.decl_flags & PTR_FLAGS;
-    if( flags & FLAG_BASED ) {
-        tree = BasedPtrNode( typ, tree );
-        flags &= ~(FLAG_NEAR | FLAG_BASED);
-        flags |= FLAG_FAR;
-    }
+    tree = CheckBasedPtr( tree, typ, &flags );
     tree = ExprNode( tree, OPR_POINTS, NULL );
     typ = typ->object;
 //  SKIP_TYPEDEFS( typ );
@@ -1028,12 +1044,7 @@ TREEPTR ArrowOp( TREEPTR tree )
     if( tree->op.opr == OPR_PUSHADDR ) {
         tree->op.opr = OPR_PUSHSYM;
     }
-    flags = typ->u.p.decl_flags & PTR_FLAGS; // get pointer flags
-    if( flags & FLAG_BASED ) {
-        tree = BasedPtrNode( typ, tree );
-        flags &= ~(FLAG_NEAR | FLAG_BASED);
-        flags |= FLAG_FAR;
-    }
+    tree = CheckBasedPtr( tree, typ, &flags );
     typ = typ->object;
     SKIP_TYPEDEFS( typ );
     get_typ = typ;
@@ -1721,13 +1732,7 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
     } else if( typ->decl_type == TYPE_POINTER ) {
         type_modifiers  flags;
 
-        flags = typ->u.p.decl_flags;
-        if( flags & FLAG_BASED ) {
-            tree = BasedPtrNode( typ, tree );
-            flags &= ~(FLAG_NEAR | FLAG_BASED);
-            flags |= FLAG_FAR;
-        }
-
+        tree = CheckBasedPtr( tree, typ, &flags );
         // We will indirect so get modifiers of indirected obj
         tree_flags = OpFlags( flags );
     } else {
