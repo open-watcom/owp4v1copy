@@ -254,29 +254,9 @@ int doScanName( void )
             if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
             *p++ = c;
             c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
             if( p >= &Buffer[BufSize - 16] ) {
-                char *oldbuf = Buffer;
+                char    *oldbuf = Buffer;
+
                 EnlargeBuffer( BufSize * 2 );
                 p += Buffer - oldbuf;
             }
@@ -431,29 +411,9 @@ static void doScanAsmToken( void )
             if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
             *p++ = c;
             c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-            *p++ = c;
-            c = *scanptr++;
             if( p >= &Buffer[BufSize - 16] ) {
-                char *oldbuf = Buffer;
+                char    *oldbuf = Buffer;
+
                 EnlargeBuffer( BufSize * 2 );
                 p += Buffer - oldbuf;
             }
@@ -781,10 +741,9 @@ static int ScanNum( void )
     } else {    /* scan decimal number */
         bad_token_type = ERR_INVALID_CONSTANT;
         con.form = CON_DEC;
-        for( ;; ) {
+        do {
             c = SaveNextChar();
-            if( c < '0'  ||  c > '9' ) break;
-        }
+        } while( c >= '0'  &&  c <= '9' );
         if( c == '.' || c == 'e' || c == 'E' ) {
             return( doScanFloat() );
         }
@@ -960,10 +919,9 @@ static int ScanNum( void )
         }
     }
     if( CompFlags.pre_processing && (CharSet[c] & (C_AL | C_DI)) ) {
-        for( ;; ) {
+        do {
             c = SaveNextChar();
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-        }
+        } while( CharSet[c] & (C_AL | C_DI) );
         --TokenLen;
         Buffer[TokenLen] = '\0';
         BadTokenInfo = bad_token_type;
@@ -1214,32 +1172,10 @@ static void ScanComment( void )
         c = '\0';
         for( ;; ) {
             scanptr = ScanCharPtr;
-            for( ;; ) {
+            do {
                 prev_char = c;
                 c = *scanptr++;
-                if( CharSet[c] & C_EX ) break;
-                prev_char = c;
-                c = *scanptr++;
-                if( CharSet[c] & C_EX ) break;
-                prev_char = c;
-                c = *scanptr++;
-                if( CharSet[c] & C_EX ) break;
-                prev_char = c;
-                c = *scanptr++;
-                if( CharSet[c] & C_EX ) break;
-                prev_char = c;
-                c = *scanptr++;
-                if( CharSet[c] & C_EX ) break;
-                prev_char = c;
-                c = *scanptr++;
-                if( CharSet[c] & C_EX ) break;
-                prev_char = c;
-                c = *scanptr++;
-                if( CharSet[c] & C_EX ) break;
-                prev_char = c;
-                c = *scanptr++;
-                if( CharSet[c] & C_EX ) break;
-            }
+            } while( !(CharSet[c] & C_EX) );
             ScanCharPtr = scanptr;
             if( c != '/' ) {
                 c = GetCharCheck( c );
@@ -1532,32 +1468,16 @@ int ScanWhiteSpace( void )
     int         c;
 
     if( NextChar == getCharAfterBackSlash ) {
-        for( ;; ) {
+        do {
             c = NextChar();
-            if( (CharSet[c] & C_WS) == 0 ) break;
-        }
+        } while( CharSet[c] & C_WS );
     } else {
         c = 0;
         for( ;; ) {
             scanptr = ScanCharPtr;
-            for( ;; ) {
+            do {
                 c = *scanptr++;
-                if( (CharSet[c] & C_WS) == 0 ) break;
-                c = *scanptr++;
-                if( (CharSet[c] & C_WS) == 0 ) break;
-                c = *scanptr++;
-                if( (CharSet[c] & C_WS) == 0 ) break;
-                c = *scanptr++;
-                if( (CharSet[c] & C_WS) == 0 ) break;
-                c = *scanptr++;
-                if( (CharSet[c] & C_WS) == 0 ) break;
-                c = *scanptr++;
-                if( (CharSet[c] & C_WS) == 0 ) break;
-                c = *scanptr++;
-                if( (CharSet[c] & C_WS) == 0 ) break;
-                c = *scanptr++;
-                if( (CharSet[c] & C_WS) == 0 ) break;
-            }
+            } while( CharSet[c] & C_WS );
             ScanCharPtr = scanptr;
             if( (CharSet[c] & C_EX) == 0 ) break;
             c = GetCharCheck( c );
