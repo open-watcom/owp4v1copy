@@ -36,11 +36,11 @@ include exitwmsg.inc
 
         modstart        stk
 
-_DATA   segment dword public 'DATA'
+datasegment
         extrn   "C",_STACKLOW : dword
 SS_seg  dw      0
 msg     db      "Stack Overflow!", 0dh, 0ah, 0
-_DATA   ends
+enddata
 
 include xinit.inc
 

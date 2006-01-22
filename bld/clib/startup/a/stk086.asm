@@ -36,10 +36,10 @@ include exitwmsg.inc
 
         modstart        stk
 
-_DATA   segment word public 'DATA'
+datasegment
         extrn   "C",_STACKLOW : word
 SS_seg  dw      0
-_DATA   ends
+enddata
 
 include xinit.inc
 
