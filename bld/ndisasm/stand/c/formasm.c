@@ -548,7 +548,11 @@ static label_entry dumpAsmLabel( label_entry l_entry, section_ptr sec,
                         printRawAndAddress( buffer, curr_pos );
                     }
                 } else {
-                    BufferStore( "%c$%d:", LabelChar, l_entry->label.number );
+                    if( l_entry->offset != curr_pos ) {
+                        BufferStore( "%c$%d equ $-%d", LabelChar, l_entry->label.number, curr_pos - l_entry->offset );
+                    } else {
+                        BufferStore( "%c$%d:", LabelChar, l_entry->label.number );
+                    }
                 }
             } else {
                 if( !(DFormat & DFF_ASM) ) {
@@ -558,7 +562,11 @@ static label_entry dumpAsmLabel( label_entry l_entry, section_ptr sec,
                         printRawAndAddress( buffer, curr_pos );
                     }
                 } else {
-                    BufferStore( "%s:", l_entry->label.name );
+                    if( l_entry->offset != curr_pos ) {
+                        BufferStore( "%s equ $-%d", l_entry->label.name, curr_pos - l_entry->offset );
+                    } else {
+                        BufferStore( "%s:", l_entry->label.name );
+                    }
                 }
             }
             BufferConcatNL();

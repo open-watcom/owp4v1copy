@@ -516,7 +516,11 @@ static label_entry dumpLabel( label_entry l_entry, section_ptr sec,
             break;
         case LTYP_UNNAMED:
             PrintLinePrefix( NULL, loop, end, 1, 0 );
-            BufferStore("%c$%d:", LabelChar, l_entry->label.number );
+            if( loop != l_entry->offset ) {
+                BufferStore("%c$%d equ $-%d", LabelChar, l_entry->label.number, loop - l_entry->offset );
+            } else {
+                BufferStore("%c$%d:", LabelChar, l_entry->label.number );
+            }
             BufferConcatNL();
             break;
         case LTYP_SECTION:
@@ -525,7 +529,11 @@ static label_entry dumpLabel( label_entry l_entry, section_ptr sec,
                 break;
         default:
             PrintLinePrefix( NULL, loop, end, 1, 0 );
-            BufferStore("%s:", l_entry->label.name );
+            if( loop != l_entry->offset ) {
+                BufferStore("%s equ $-%d", l_entry->label.name, loop - l_entry->offset  );
+            } else {
+                BufferStore("%s:", l_entry->label.name );
+            }
             BufferConcatNL();
             break;
         }
