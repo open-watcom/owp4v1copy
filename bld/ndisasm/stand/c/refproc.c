@@ -39,6 +39,7 @@
 #include "memfuncs.h"
 #include "formasm.h"
 #include "main.h"
+#include "init.h"
 
 extern hash_table       HandleToRefListTable;
 extern hash_table       SymbolToLabelTable;
@@ -81,6 +82,8 @@ static char *getFrameModifier( orl_reloc *rel )
     if( rel->symbol == rel->frame ) {
         /* FRAME = TARGET
          */
+        if( GetFormat() == ORL_OMF )
+            return( NULL );
         typ = ORLSymbolGetType( rel->symbol );
         if( typ & ORL_SYM_TYPE_SECTION ) {
             shnd = ORLSymbolGetSecHandle( rel->symbol );
