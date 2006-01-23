@@ -40,6 +40,7 @@
 #include "asmalloc.h"
 #include "asmsym.h"
 #include "directiv.h"
+#include "asmlabel.h"
 
 #include "myassert.h"
 
@@ -382,6 +383,20 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
             break;
         case T_NUM:
             break;
+        case T_ID:
+            if( IS_SYM_COUNTER( AsmBuffer[start+i]->string_ptr ) ) {
+                char            buff[40];
+                /*
+                    We want a '$' symbol to have the value at it's
+                    point of definition, not point of expansion.
+                */
+                sprintf( buff, ".$%x/%lx", GetCurrSeg(), GetCurrAddr() );
+                AsmBuffer[start+i]->string_ptr = buff;
+                sym = AsmGetSymbol( buff );
+                if( sym == NULL )
+                    MakeLabel( buff, T_NEAR );
+                break;
+            }
         default:
             can_be_redefine = TRUE;
             break;

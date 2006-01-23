@@ -20,6 +20,7 @@ current &
 data &
 diag01 &
 diag02 &
+diag03 &
 dos16m &
 dosinite &
 dosstart &
@@ -104,6 +105,7 @@ loader2
 asm_flags_x = -c
 asm_flags_diag01 = -4s
 asm_flags_diag02 = -3
+asm_flags_diag03 = -wx
 asm_flags_getenv = -I"$(watcom_dir)/h"
 
 !include ../test.mif

@@ -133,6 +133,7 @@ uint                    LnamesIdx;      // Number of LNAMES definition
 obj_rec                 *ModendRec;     // Record for Modend
 
 static assume_info      AssumeTable[ASSUME_LAST];
+
 symbol_queue            Tables[TAB_LAST];// tables of definitions
 module_info             ModuleInfo;
 
@@ -2449,29 +2450,40 @@ int FixOverride( int index )
         SegOverride = sym;
         return( NOT_ERROR );
     } else if( sym->state == SYM_SEG ) {
-        SegOverride = sym->segment;
-        if( SegOverride != NULL ) {
-            return( NOT_ERROR );
-        }
+        SegOverride = sym;
+        return( NOT_ERROR );
     }
     AsmError( SYNTAX_ERROR );
     return( ERROR );
 }
 
-static enum assume_reg search_assume( struct asm_sym *sym, enum assume_reg def )
-/******************************************************************************/
+static enum assume_reg search_assume( struct asm_sym *sym, 
+                         enum assume_reg def, int override )
+/**********************************************************/
 {
     if( sym == NULL )
         return( ASSUME_NOTHING );
-
     if( def != ASSUME_NOTHING ) {
+        if( AssumeTable[def].symbol != NULL ) {
+            if( AssumeTable[def].symbol == sym )
+                return( def );
+            if( !override && ( AssumeTable[def].symbol == GetGrp( sym ) ) ) {
+                return( def );
+            }
+        }
+    }
+    for( def = ASSUME_FIRST; def < ASSUME_LAST; def++ ) {
         if( AssumeTable[def].symbol == sym ) {
             return( def );
         }
     }
+    if( override )
+        return( ASSUME_NOTHING );
 
     for( def = ASSUME_FIRST; def < ASSUME_LAST; def++ ) {
-        if( AssumeTable[def].symbol == sym ) {
+        if( AssumeTable[def].symbol == NULL )
+            continue;
+        if( AssumeTable[def].symbol == GetGrp( sym ) ) {
             return( def );
         }
     }
@@ -2564,53 +2576,32 @@ enum assume_reg GetAssume( struct asm_sym *sym, enum assume_reg def )
 /*******************************************************************/
 {
     enum assume_reg  reg;
-    struct asm_sym   *sym_over = SegOverride;
 
     if( ( def != ASSUME_NOTHING ) && AssumeTable[def].flat ) {
         Frame = FRAME_GRP;
         Frame_Datum = MAGIC_FLAT_GROUP;
         return( def );
     }
-
-    // first search for segment
-    if( ( SegOverride == NULL ) || ( SegOverride->state == SYM_SEG ) ) {
-        if( SegOverride == NULL ) {
-            sym_over = sym->segment;
-        }
-        reg = search_assume( sym_over, def );
-        if( reg != ASSUME_NOTHING ) {
-            Frame = FRAME_SEG;
-            Frame_Datum = GetSegIdx( AssumeTable[reg].symbol->segment );
-            return( reg );
+    if( SegOverride != NULL ) {
+        reg = search_assume( SegOverride, def, 1 );
+    } else {
+        reg = search_assume( sym->segment, def, 0 );
+    }
+    if( reg == ASSUME_NOTHING ) {
+        if( sym->state == SYM_EXTERNAL && sym->segment == NULL ) {
+            reg = def;
         }
     }
-
-    // second search for group
-    if( ( SegOverride == NULL ) || ( SegOverride->state == SYM_GRP ) ) {
-        if( SegOverride == NULL ) {
-            sym_over = GetGrp( sym );
-        }
-        reg = search_assume( sym_over, def );
-        if( reg != ASSUME_NOTHING ) {
+    if( reg != ASSUME_NOTHING ) {
+        if( AssumeTable[reg].symbol == NULL ) {
+        } else if( AssumeTable[reg].symbol->state == SYM_SEG ) {
+            Frame = FRAME_SEG;
+            Frame_Datum = GetSegIdx( AssumeTable[reg].symbol );
+        } else {
             Frame = FRAME_GRP;
             Frame_Datum = GetGrpIdx( AssumeTable[reg].symbol );
-            return( reg );
         }
-    }
-
-    if( def != ASSUME_NOTHING ) {
-        if( ( AssumeTable[def].symbol != NULL ) && ( Code->info.token != T_LEA ) ) {
-            if( AssumeTable[def].symbol->segment != NULL ) {
-                Frame = FRAME_SEG;
-                Frame_Datum = GetSegIdx( AssumeTable[def].symbol->segment );
-                return( def );
-            }
-            if( AssumeTable[def].symbol->state == SYM_GRP ) {
-                Frame = FRAME_GRP;
-                Frame_Datum = GetGrpIdx( AssumeTable[def].symbol );
-                return( def );
-            }
-        }
+        return( reg );
     }
     return( ASSUME_NOTHING );
 }

@@ -88,7 +88,7 @@ uint_8                  CheckSeg;       // if checking of opened segment is need
 int_8                   Frame;          // Frame of current fixup
 uint_8                  Frame_Datum;    // Frame datum of current fixup
 extern char             *CurrString;    // Current Input Line
-dir_node                *SegOverride;
+struct asm_sym          *SegOverride;
 
 static int              in_epilogue = 0;
 
@@ -115,7 +115,7 @@ void find_frame( struct asm_sym *sym )
 /*******************************************/
 {
     if( SegOverride != NULL ) {
-        sym = (struct asm_sym *)SegOverride;
+        sym = SegOverride;
         if( sym->state == SYM_GRP ) {
             Frame = FRAME_GRP;
             Frame_Datum = GetGrpIdx( sym );
@@ -228,7 +228,7 @@ static void seg_override( int seg_reg, asm_sym *sym )
                 break;
             }
             if( GetPrefixAssume( sym, assume_seg ) == ASSUME_NOTHING ) {
-                AsmWarn( 3, CANNOT_ADDRESS_WITH_ASSUMED_REGISTER );
+//                AsmWarn( 3, CANNOT_ADDRESS_WITH_ASSUMED_REGISTER );
             }
         }
     }
@@ -275,10 +275,8 @@ static void check_assume( struct asm_sym *sym, enum prefix_reg default_reg )
     case PREFIX_DS:
         def_reg = ASSUME_DS;
         break;
-    case EMPTY:
-        def_reg = ASSUME_NOTHING;
-        break;
     default:
+        def_reg = ASSUME_NOTHING;
         break;
     }
 
@@ -286,7 +284,7 @@ static void check_assume( struct asm_sym *sym, enum prefix_reg default_reg )
 
     if( reg == ASSUME_NOTHING ) {
         if( ( sym->state != SYM_EXTERNAL ) && ( sym->state != SYM_PROC ) ) {
-            if( Parse_Pass != PASS_1 ) {
+            if( Parse_Pass == PASS_2 ) {
                 AsmWarn( 3, CANNOT_ADDRESS_WITH_ASSUMED_REGISTER );
             }
         } else {
