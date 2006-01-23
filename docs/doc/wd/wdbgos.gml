@@ -435,7 +435,7 @@ file as the target).
 The supplied version of the
 .mono &dbgcmd..&dbgsuff
 file contains an "invoke" command referencing the file
-.mono setup..&dbgsuff.
+.mono setup.&dbgsuff..
 This file, in turn, contains a "configfile" command and "invoke"
 commands referencing other command files.
 The "configfile" command marks
@@ -545,7 +545,7 @@ file as the target).
 The supplied version of the
 .mono &dbgcmd..&dbgsuff
 file contains an "invoke" command referencing the file
-.mono setup..&dbgsuff.
+.mono setup.&dbgsuff..
 This file, in turn, contains a "configfile" command and "invoke"
 commands referencing other command files.
 The "configfile" command marks
