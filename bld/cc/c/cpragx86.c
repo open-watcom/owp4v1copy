@@ -332,6 +332,11 @@ static enum sym_type AsmDataType[TYPE_LAST_ENTRY] = {
     SYM_INT8,       /* TYPE_ULONG64,*/
     SYM_FLOAT4,     /* TYPE_FLOAT,*/
     SYM_FLOAT8,     /* TYPE_DOUBLE,*/
+    SYM_FLOAT10,    /* TYPE_LONG_DOUBLE */
+    SYM_FLOAT4,     /* TYPE_FIMAGINARY, */
+    SYM_FLOAT8,     /* TYPE_DIMAGINARY, */
+    SYM_FLOAT10,    /* TYPE_LDIMAGINARY, */
+    SYM_INT1,       /* TYPE_BOOL, */
     0,              /* TYPE_POINTER,*/
     0,              /* TYPE_ARRAY,*/
     0,              /* TYPE_STRUCT,*/
@@ -345,14 +350,9 @@ static enum sym_type AsmDataType[TYPE_LAST_ENTRY] = {
     0,              /* TYPE_DOT_DOT_DOT,*/
     SYM_INT1,       /* TYPE_PLAIN_CHAR,*/
     SYM_INT2,       /* TYPE_WCHAR,  */
-    SYM_FLOAT10,    /* TYPE_LONG_DOUBLE */
     0,              /* TYPE_FCOMPLEX, */
     0,              /* TYPE_DCOMPLEX, */
     0,              /* TYPE_LDCOMPLEX, */
-    SYM_FLOAT4,     /* TYPE_FIMAGINARY, */
-    SYM_FLOAT8,     /* TYPE_DIMAGINARY, */
-    SYM_FLOAT10,    /* TYPE_LDIMAGINARY, */
-    SYM_INT1,       /* TYPE_BOOL, */
 };
 
 local int AsmType( TYPEPTR typ, type_modifiers flags )

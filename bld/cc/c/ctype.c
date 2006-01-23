@@ -51,40 +51,40 @@ local void CheckBitfieldType( TYPEPTR typ );
 
 /* matches enum DataType in ctypes.h */
 static  char    CTypeSizes[TYPE_LAST_ENTRY] = {
-        TARGET_CHAR,    /* CHAR         */
-        TARGET_CHAR,    /* UCHAR        */
-        TARGET_SHORT,   /* SHORT        */
-        TARGET_SHORT,   /* USHORT       */
-        TARGET_INT,     /* INT          */
-        TARGET_INT,     /* UINT         */
-        TARGET_LONG,    /* LONG         */
-        TARGET_LONG,    /* ULONG        */
-        TARGET_LONG64,  /* LONGLONG    */
-        TARGET_LONG64,  /* ULONGLONG    */
-        TARGET_FLOAT,   /* FLOAT        */
-        TARGET_DOUBLE,  /* DOUBLE       */
-        0, /*TARGET_POINTER,*/ /* POINTER       */
-        0,              /* ARRAY        */
-        0,              /* STRUCT       */
-        0,              /* UNION        */
-        0,              /* FUNCTION     */
-        0,              /* FIELD        */
-        0, /*TARGET_CHAR,*/     /* VOID */
-        0,              /* ENUM         */
-        0,              /* TYPEDEF      */
-        0,              /* UFIELD       */
-        0,              /* DOT_DOT_DOT  */
-        TARGET_CHAR,        /* PLAIN_CHAR            */
-        TARGET_WCHAR,       /* WCHAR                 */
-        TARGET_LDOUBLE,     /* LONG DOUBLE           */
-        TARGET_FCOMPLEX,    /* FLOAT COMPLEX         */
-        TARGET_DCOMPLEX,    /* DOUBLE COMPLEX        */
-        TARGET_LDCOMPLEX,   /* LONG DOUBLE COMPLEX   */
-        TARGET_FIMAGINARY,  /* FLOAT IMAGINARY       */
-        TARGET_DIMAGINARY,  /* DOUBLE IMAGINARY      */
-        TARGET_LDIMAGINARY, /* LONG DOUBLE IMAGINARY */
-        TARGET_BOOL,    /* BOOL        */
-    };
+    TARGET_CHAR,        /* CHAR                     */
+    TARGET_CHAR,        /* UCHAR                    */
+    TARGET_SHORT,       /* SHORT                    */
+    TARGET_SHORT,       /* USHORT                   */
+    TARGET_INT,         /* INT                      */
+    TARGET_INT,         /* UINT                     */
+    TARGET_LONG,        /* LONG                     */
+    TARGET_LONG,        /* ULONG                    */
+    TARGET_LONG64,      /* LONGLONG                 */
+    TARGET_LONG64,      /* ULONGLONG                */
+    TARGET_FLOAT,       /* FLOAT                    */
+    TARGET_DOUBLE,      /* DOUBLE                   */
+    TARGET_LDOUBLE,     /* LONG DOUBLE              */
+    TARGET_FIMAGINARY,  /* FLOAT IMAGINARY          */
+    TARGET_DIMAGINARY,  /* DOUBLE IMAGINARY         */
+    TARGET_LDIMAGINARY, /* LONG DOUBLE IMAGINARY    */
+    TARGET_BOOL,        /* BOOL                     */
+    0, /*TARGET_POINTER,*/ /* POINTER               */
+    0,                  /* ARRAY                    */
+    0,                  /* STRUCT                   */
+    0,                  /* UNION                    */
+    0,                  /* FUNCTION                 */
+    0,                  /* FIELD                    */
+    0, /*TARGET_CHAR,*/ /* VOID                     */
+    0,                  /* ENUM                     */
+    0,                  /* TYPEDEF                  */
+    0,                  /* UFIELD                   */
+    0,                  /* DOT_DOT_DOT              */
+    TARGET_CHAR,        /* PLAIN_CHAR               */
+    TARGET_WCHAR,       /* WCHAR                    */
+    TARGET_FCOMPLEX,    /* FLOAT COMPLEX            */
+    TARGET_DCOMPLEX,    /* DOUBLE COMPLEX           */
+    TARGET_LDCOMPLEX,   /* LONG DOUBLE COMPLEX      */
+};
 
 TYPEPTR CTypeHash[TYPE_LAST_ENTRY];
 TYPEPTR PtrTypeHash[TYPE_LAST_ENTRY];

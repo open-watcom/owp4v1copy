@@ -259,6 +259,7 @@ global dbug_type B_Int32;
 global dbug_type B_UInt32;
 global dbug_type B_Int64;
 global dbug_type B_UInt64;
+global dbug_type B_Bool;
 
 global  int     OptSize;        /* 100 => make pgm small as possible */
 global  char    __Time[10];     /* "HH:MM:SS" for __TIME__ macro */

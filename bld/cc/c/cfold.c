@@ -322,7 +322,8 @@ int DoUnSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
 }
 
 
-static int64  LongValue64( TREEPTR leaf )
+int64 LongValue64( TREEPTR leaf )
+/*******************************/
 {
     int64           value;
     int_32          val32;
@@ -819,6 +820,15 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
     } else if( newtyp == TYPE_LONG64 || newtyp == TYPE_ULONG64 ) {
         val64 = LongValue64( leaf );
         leaf->op.ulong64_value = val64;
+    } else if( newtyp == TYPE_BOOL ) {
+        if( oldtyp == TYPE_LONG64 || oldtyp == TYPE_ULONG64 ) {
+            val64 = LongValue64( leaf );
+            leaf->op.ulong_value = U64Test( &val64 );
+        } else {
+            val32 = LongValue( leaf );
+            leaf->op.ulong_value = val32 ? 1 : 0;
+        }
+        newtyp = TYPE_UCHAR;
     } else {
         val32 = LongValue( leaf );
         switch( newtyp ) {
@@ -848,6 +858,7 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
             break;
         case TYPE_FLOAT:
         case TYPE_DOUBLE:
+        case TYPE_LONG_DOUBLE:
             CastFloatValue( leaf, newtyp );
             return;
         default:
@@ -859,7 +870,37 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
 }
 
 
-void FoldQuestionTree( TREEPTR tree )
+static bool IsConstantZero( TREEPTR tree )
+{
+    if( tree->op.opr == OPR_PUSHINT ) {
+        uint64      val64;
+
+        val64 = LongValue64( tree );
+        return( !U64Test( &val64 ) );
+    } else {
+        FLOATVAL    *flt;
+        char        *endptr;
+        long_double ld;
+        long_double ldzero;
+
+        assert( tree->op.opr == OPR_PUSHFLOAT );
+        flt = tree->op.float_value;
+        if( flt->len == 0 ) {           // if contains binary value
+            ld = flt->ld;
+        } else {
+            __Strtold( flt->string, &ld, &endptr );
+        }
+#ifdef _LONG_DOUBLE_
+        __I4LD( 0, (long_double near *)&ldzero );
+#else
+        ldzero.value = 0;
+#endif
+        return( !FltCmp( &ld, &ldzero ) );
+    }
+}
+
+
+static void FoldQuestionTree( TREEPTR tree )
 {
     TREEPTR     node;
     TREEPTR     true_part;
@@ -870,7 +911,7 @@ void FoldQuestionTree( TREEPTR tree )
     true_part  = node->left;
     false_part = node->right;
     FreeExprNode( node );
-    if( tree->left->op.long_value == 0 ) {
+    if( IsConstantZero( tree->left ) ) {
         node = false_part;              // want false_part
         FreeExprTree( true_part );
     } else {
@@ -938,6 +979,13 @@ static bool FoldableTree( TREEPTR tree )
             FreeExprNode( opnd );
         }
         break;
+    case OPR_RETURN:
+        opnd = tree->right;
+        if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
+            typ = tree->expr_type;
+            CastConstValue( opnd, typ->decl_type );
+        }
+        break;
     case OPR_COMMA:
         opnd = tree->left;
         if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
@@ -949,7 +997,8 @@ static bool FoldableTree( TREEPTR tree )
         }
         break;
     case OPR_QUESTION:
-        if( tree->left->op.opr == OPR_PUSHINT ) {
+        opnd = tree->left;
+        if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
             FoldQuestionTree( tree );
         }
         break;

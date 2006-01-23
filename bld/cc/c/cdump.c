@@ -48,6 +48,11 @@ static  char    *CTypeNames[TYPE_LAST_ENTRY] = {
     "unsigned __int64",
     "float",
     "double",
+    "long double",
+    "float _Imaginary",
+    "double _Imaginary",
+    "long double _Imaginary",
+    "_Bool",
     "pointer",
     "array",
     "struct",
@@ -61,14 +66,9 @@ static  char    *CTypeNames[TYPE_LAST_ENTRY] = {
     "...",
     "<char>",
     "<wide char>",
-    "long double",
     "float _Complex",
     "double _Complex",
     "long double _Complex",
-    "float _Imaginary",
-    "double _Imaginary",
-    "long double _Imaginary",
-    "_Bool",
  };
 
 static  char   do_message_output; /* Optimize output for human */

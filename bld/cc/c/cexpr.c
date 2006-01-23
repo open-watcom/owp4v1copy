@@ -65,6 +65,7 @@ local   TREEPTR SegOp(TREEPTR,TREEPTR);
 local      void PopNestedParms( TYPEPTR **plistptr );
 local      void IncSymWeight( SYMPTR sym );
 local      void AddCallNode( TREEPTR tree );
+extern    int64 LongValue64( TREEPTR leaf );
 
 #define PTR_FLAGS  (FLAG_CONST | FLAG_VOLATILE | FLAG_UNALIGNED | FLAG_MEM_MODEL|FLAG_FAR16 | FLAG_BASED )
 
@@ -2434,10 +2435,13 @@ TREEPTR BoolExpr( TREEPTR tree )
             }
         }
         tree = RValue( tree );
-        if( DataTypeOf( TypeOf(tree) ) > TYPE_POINTER ) {
+        if( DataTypeOf( TypeOf( tree ) ) > TYPE_POINTER ) {
             CErr1( ERR_EXPR_MUST_BE_SCALAR );
         } else if( tree->op.opr == OPR_PUSHINT ) {
-            if( tree->op.ulong_value != 0 ) {
+            uint64      val64;
+
+            val64 = LongValue64( tree );
+            if( U64Test( &val64 ) != 0 ) {
                 tree->op.ulong_value = 1;
             }
             tree->op.const_type = TYPE_INT;
@@ -2555,7 +2559,10 @@ static TREEPTR TernOp( TREEPTR expr1, TREEPTR true_part, TREEPTR false_part )
         result_typ = TernType( true_part, false_part );
     }
     if( expr1->op.opr == OPR_PUSHINT ) {
-        if( expr1->op.long_value == 0 ) {
+        uint64      val64;
+
+        val64 = LongValue64( expr1 );
+        if( U64Test( &val64 ) == 0 ) {
             FreeExprTree( true_part );
             tree = false_part;
         } else {

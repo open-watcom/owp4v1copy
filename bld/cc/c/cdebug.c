@@ -49,7 +49,8 @@ extern  SYMPTR  SymGetPtr(SYM_HANDLE);
 
 static void InitDBType( void )
 {
-    TYPEPTR  typ;
+    TYPEPTR     typ;
+
     ScopeStruct = DBScope( "struct" );
     ScopeUnion = DBScope( "union" );
     ScopeEnum = DBScope( "enum" );
@@ -74,6 +75,7 @@ static void InitDBType( void )
     B_UInt32  = DBScalar( "unsigned long", T_UINT_4 );
     B_Int64  = DBScalar( "__int64", T_INT_8 );
     B_UInt64 = DBScalar( "unsigned __int64", T_UINT_8 );
+    B_Bool   = DBScalar( "_Bool", T_UINT_1 );
     DebugNameList = NULL;
 }
 
@@ -164,6 +166,9 @@ static dbug_type DBIntegralType( int decl_type )
         break;
     case TYPE_ULONG64:
         ret_val = B_UInt64;
+        break;
+    case TYPE_BOOL:
+        ret_val = B_Bool;
         break;
     }
     return( ret_val );

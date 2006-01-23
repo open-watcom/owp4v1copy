@@ -168,10 +168,11 @@ typedef enum BASED_KIND {
     BASED_SEGNAME,       //__based( __segname( "name" )   use seg of segname
 } BASED_KIND;
 
+/* matches CompTable[] in ccheck.c */
 /* matches CTypenames[] table in cdump.c */
-/* matches CGDataType[] table in cgen2.c */
+/* matches CGDataType[] table in cgen.c */
 /* matches AddResult[],SubResult[],IntResult[],ShiftResult[],BinResult[],
-           CnvTable[] tables in cmath2.c */
+           CnvTable[] tables in cmath.c */
 /* matches AsmDataType[] table in cpragx86.c */
 /* matches CTypeSizes[] table in ctype.c */
 typedef enum DATA_TYPE {
@@ -188,7 +189,12 @@ typedef enum DATA_TYPE {
     TYPE_ULONG64,
     TYPE_FLOAT,
     TYPE_DOUBLE,
-    TYPE_POINTER,
+    TYPE_LONG_DOUBLE,
+    TYPE_FIMAGINARY,
+    TYPE_DIMAGINARY,
+    TYPE_LDIMAGINARY,
+    TYPE_BOOL,
+    TYPE_POINTER,           /* types up to here are scalars */
     TYPE_ARRAY,
     TYPE_STRUCT,
     TYPE_UNION,
@@ -201,14 +207,9 @@ typedef enum DATA_TYPE {
     TYPE_DOT_DOT_DOT,       /* for the ... in prototypes */
     TYPE_PLAIN_CHAR,        /* char */
     TYPE_WCHAR,             /* L'c' - a wide character constant */
-    TYPE_LONG_DOUBLE,
     TYPE_FCOMPLEX,
     TYPE_DCOMPLEX,
     TYPE_LDCOMPLEX,
-    TYPE_FIMAGINARY,
-    TYPE_DIMAGINARY,
-    TYPE_LDIMAGINARY,
-    TYPE_BOOL,
 
     TYPE_LAST_ENTRY,        /* make sure this is always last */
 } DATA_TYPE;

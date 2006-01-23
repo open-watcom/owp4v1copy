@@ -112,6 +112,11 @@ static  char    CGDataType[TYPE_LAST_ENTRY] = {
     T_UINT_8,       /* TYPE_ULONG64 */
     T_SINGLE,       /* TYPE_FLOAT */
     TY_DOUBLE,      /* TYPE_DOUBLE */
+    T_LONG_DOUBLE,  /* TYPE_LONG_DOUBLE */
+    T_FLOAT,        /* TYPE_FIMAGINARY */
+    T_DOUBLE,       /* TYPE_DIMAGINARY */
+    T_LONG_DOUBLE,  /* TYPE_LDIMAGINARY */
+    T_UINT_1,       /* TYPE_BOOL */
     T_POINTER,      /* TYPE_POINTER */
     T_POINTER,      /* TYPE_ARRAY */
     T_POINTER,      /* TYPE_STRUCT */
@@ -125,14 +130,9 @@ static  char    CGDataType[TYPE_LAST_ENTRY] = {
     T_INTEGER,      /* TYPE_DOT_DOT_DOT  for the ... in prototypes */
     T_INTEGER,      /* TYPE_PLAIN_CHAR */
     T_INTEGER,      /* TYPE_WCHAR L'c' - a wide character constant */
-    T_LONG_DOUBLE,  /* TYPE_LONG_DOUBLE */
     T_POINTER,      /* TYPE_FCOMPLEX */
     T_POINTER,      /* TYPE_DCOMPLEX */
     T_POINTER,      /* TYPE_LDCOMPLEX */
-    T_FLOAT,        /* TYPE_FIMAGINARY */
-    T_DOUBLE,       /* TYPE_DIMAGINARY */
-    T_LONG_DOUBLE,  /* TYPE_LDIMAGINARY */
-    T_UINT_1,       /* TYPE_BOOL */
 };
 
 static  char    CGOperator[] = {

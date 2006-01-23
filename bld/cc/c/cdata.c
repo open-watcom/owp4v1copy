@@ -181,6 +181,7 @@ void InitGlobalVars( void )
     B_UInt32                = 0;
     B_Int64                 = 0;
     B_UInt64                = 0;
+    B_Bool                  = 0;
 
     OptSize                 = 0;    /* 100 => make pgm small as possible */
     MsgFlags                = NULL; /* Bit mask of disabled messages */
