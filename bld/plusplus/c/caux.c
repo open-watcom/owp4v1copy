@@ -81,7 +81,7 @@ char *AuxObjnameDup(            // DUPLICATE AUX OBJNAME
 
 void freeAuxInfo( AUX_INFO *i ) // FREE ALL AUX INFO MEM
 {
-    if( i->parms != DefaultParms ) {
+    if( !IsAuxParmsBuiltIn( i->parms ) ) {
         CMemFree( i->parms );
     }
     CMemFree( i->objname );

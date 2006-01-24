@@ -53,6 +53,39 @@ static  hw_reg_set      STOSBParms[] = {
 };
 #endif
 
+void PragmaAuxInit( void )
+/************************/
+{
+    PragmaAuxInfoInit( CompFlags.use_stdcall_at_number );
+
+#if _CPU == 386
+    HW_CTurnOff( AsmRegsSaved, HW_EAX );
+    HW_CTurnOff( AsmRegsSaved, HW_EBX );
+    HW_CTurnOff( AsmRegsSaved, HW_ECX );
+    HW_CTurnOff( AsmRegsSaved, HW_EDX );
+    HW_CTurnOff( AsmRegsSaved, HW_ESI );
+    HW_CTurnOff( AsmRegsSaved, HW_EDI );
+#else
+    HW_CTurnOff( AsmRegsSaved, HW_ABCD );
+    HW_CTurnOff( AsmRegsSaved, HW_SI );
+    HW_CTurnOff( AsmRegsSaved, HW_DI );
+    HW_CTurnOff( AsmRegsSaved, HW_ES );
+#endif
+
+#if _CPU == 386
+    /* these are internal, and will never be pointed to by
+       an aux_entry, so we don't have to worry about them
+       or their fields being freed */
+
+    STOSBInfo = WatcallInfo;
+    STOSBInfo.cclass = NO_FLOAT_REG_RETURNS |
+                       NO_STRUCT_REG_RETURNS |
+                       SPECIAL_STRUCT_RETURN;
+    STOSBInfo.parms = STOSBParms;
+    STOSBInfo.objname = "*";
+#endif
+}
+
 void PragmaInit( void )
 /*********************/
 {
@@ -85,37 +118,6 @@ void PragmaInit( void )
     AsmInit( cpu, fpu, use32, 1 );
 
     HeadLibs = NULL;
-
-    PragmaAuxCallInfoInit( WatcallInfo.cclass & FAR, CompFlags.use_stdcall_at_number );
-
-#if _CPU == 386
-    HW_CTurnOff( AsmRegsSaved, HW_EAX );
-    HW_CTurnOff( AsmRegsSaved, HW_EBX );
-    HW_CTurnOff( AsmRegsSaved, HW_ECX );
-    HW_CTurnOff( AsmRegsSaved, HW_EDX );
-    HW_CTurnOff( AsmRegsSaved, HW_ESI );
-    HW_CTurnOff( AsmRegsSaved, HW_EDI );
-#else
-    HW_CTurnOff( AsmRegsSaved, HW_ABCD );
-    HW_CTurnOff( AsmRegsSaved, HW_SI );
-    HW_CTurnOff( AsmRegsSaved, HW_DI );
-    HW_CTurnOff( AsmRegsSaved, HW_ES );
-#endif
-
-#if _CPU == 386
-    /* these are internal, and will never be pointed to by
-       an aux_entry, so we don't have to worry about them
-       or their fields being freed */
-
-    STOSBInfo = WatcallInfo;
-    STOSBInfo.cclass = NO_FLOAT_REG_RETURNS |
-                       NO_STRUCT_REG_RETURNS |
-                       SPECIAL_STRUCT_RETURN;
-    STOSBInfo.parms = STOSBParms;
-    STOSBInfo.objname = "*";
-#endif
-
-    DefaultInfo = *DftCallConv;
 }
 
 

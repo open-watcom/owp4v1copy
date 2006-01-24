@@ -32,7 +32,7 @@
 :cmt                                            between options can be simulated
 
 :cmt    where:
-:cmt        <arch>:     i86, 386, axp, any, dbg, qnx
+:cmt        <arch>:     i86, 386, axp, any, dbg, qnx, ppc, linux, sparc
 
 :cmt    Translations are required for the :jtitle. and :jusage. tags
 :cmt    if there is no text associated with the tag.
@@ -300,7 +300,8 @@
 :jusage.
 
 :option. eco
-:target. i86 386
+:target. dbg
+:ntarget. axp qnx ppc linux sparc
 :enumerate. intel_call_conv
 :usage. set default calling convention to _Optlink
 :jusage.

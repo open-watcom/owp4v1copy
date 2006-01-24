@@ -28,17 +28,36 @@
 *
 ****************************************************************************/
 
-#if defined( BY_C_FRONT_END ) || defined( BY_CPP_FRONT_END ) || defined( BY_FORTRAN_FRONT_END )
+#include <string.h>
+#include <stdio.h>
+
+#if defined( BY_C_FRONT_END )
+    #define AUX_MEMALLOC    CMemAlloc
+    #define AUX_STRALLOC    CStrSave
+    #define AUX_MEMFREE     CMemFree
+#elif defined( BY_CPP_FRONT_END )
+    #define AUX_MEMALLOC    CMemAlloc
+    #define AUX_STRALLOC    strsave
+    #define AUX_MEMFREE     CMemFree
+#elif defined( BY_FORTRAN_FRONT_END )
+    #define AUX_MEMALLOC    FMemAlloc
+    #define AUX_STRALLOC    FMemAlloc
+    #define AUX_MEMFREE     FMemFree
+#else
+    #error "Unknown front end"
+#endif
+
 
 #if _INTEL_CPU
-
-#include <string.h>
 
 static  hw_reg_set  StackParms[] = {
     HW_D( HW_EMPTY )
 };
 
 #if _CPU == 386
+static  hw_reg_set  metaWareParms[] = {
+    HW_D( HW_EMPTY )
+};
 static  hw_reg_set  OptlinkParms[] = {
     HW_D_4( HW_EAX, HW_ECX, HW_EDX, HW_FLTS ),
     HW_D( HW_EMPTY )
@@ -54,30 +73,21 @@ static  hw_reg_set  FastcallParms[] = {
 };
 #endif
 
-#if defined( BY_C_FRONT_END )
-#define MEMALLOC CMemAlloc
-#define STRALLOC CStrSave
-#elif defined( BY_CPP_FRONT_END )
-#define MEMALLOC CMemAlloc
-#define STRALLOC strsave
-#elif defined( BY_FORTRAN_FRONT_END )
-#define MEMALLOC FMemAlloc
-#define STRALLOC CMemAlloc
-#else
-#endif
-
-void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
+void PragmaAuxInfoInit( int flag_stdatnum )
+/*****************************************/
 {
     hw_reg_set  full_no_segs;
+    call_class  call_type;
 
     HW_CAsgn( full_no_segs, HW_FULL );
     HW_CTurnOff( full_no_segs, HW_SEGS );
 
+    call_type = WatcallInfo.cclass & FAR;
 
 /*************************************************
  *  __fortran calling convention
  *************************************************/
-    FortranInfo.objname = STRALLOC( "^" );
+    FortranInfo.objname = AUX_STRALLOC( "^" );
 
 /*************************************************
  *  __cdecl calling convention
@@ -95,9 +105,8 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
                          //NO_8087_RETURNS |
                          //SPECIAL_RETURN |
                          SPECIAL_STRUCT_RETURN;
-    CdeclInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( StackParms ) );
-    memcpy( CdeclInfo.parms, StackParms, sizeof( StackParms ) );
-    CdeclInfo.objname = STRALLOC( "_*" );
+    CdeclInfo.parms = StackParms;
+    CdeclInfo.objname = AUX_STRALLOC( "_*" );
 
     HW_CAsgn( CdeclInfo.returns, HW_EMPTY );
     HW_CAsgn( CdeclInfo.streturn, HW_EMPTY );
@@ -128,9 +137,8 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
                          //NO_8087_RETURNS |
                          //SPECIAL_RETURN |
                          SPECIAL_STRUCT_RETURN;
-    PascalInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( StackParms ) );
-    memcpy( PascalInfo.parms, StackParms, sizeof( StackParms ) );
-    PascalInfo.objname = STRALLOC( "^" );
+    PascalInfo.parms = StackParms;
+    PascalInfo.objname = AUX_STRALLOC( "^" );
 
     HW_CAsgn( PascalInfo.returns, HW_EMPTY );
     HW_CAsgn( PascalInfo.streturn, HW_EMPTY );
@@ -160,16 +168,15 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
                          //NO_8087_RETURNS |
                          //SPECIAL_RETURN |
                          SPECIAL_STRUCT_RETURN;
-    StdcallInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( StackParms ) );
-    memcpy( StdcallInfo.parms, StackParms, sizeof( StackParms ) );
+    StdcallInfo.parms = StackParms;
 #if _CPU == 386
     if( flag_stdatnum ) {
-        StdcallInfo.objname = STRALLOC( "_*#" );
+        StdcallInfo.objname = AUX_STRALLOC( "_*#" );
     } else {
-        StdcallInfo.objname = STRALLOC( "_*" );
+        StdcallInfo.objname = AUX_STRALLOC( "_*" );
     }
 #else
-    StdcallInfo.objname = STRALLOC( "_*" );
+    StdcallInfo.objname = AUX_STRALLOC( "_*" );
 #endif
 
     HW_CAsgn( StdcallInfo.returns, HW_EMPTY );
@@ -203,9 +210,8 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
                          //NO_8087_RETURNS |
                          //SPECIAL_RETURN |
                          SPECIAL_STRUCT_RETURN;
-    FastcallInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( FastcallParms ) );
-    memcpy( FastcallInfo.parms, FastcallParms, sizeof( FastcallParms ) );
-    FastcallInfo.objname = STRALLOC( "@*#" );
+    FastcallInfo.parms = FastcallParms;
+    FastcallInfo.objname = AUX_STRALLOC( "@*#" );
 
     HW_CAsgn( FastcallInfo.returns, HW_EMPTY );
     HW_CAsgn( FastcallInfo.streturn, HW_EMPTY );
@@ -226,9 +232,8 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
                          //NO_8087_RETURNS |
                          //SPECIAL_RETURN |
                          SPECIAL_STRUCT_RETURN;
-    FastcallInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( FastcallParms ) );
-    memcpy( FastcallInfo.parms, FastcallParms, sizeof( FastcallParms ) );
-    FastcallInfo.objname = STRALLOC( "@*" );
+    FastcallInfo.parms = FastcallParms;
+    FastcallInfo.objname = AUX_STRALLOC( "@*" );
 
     HW_CAsgn( FastcallInfo.returns, HW_EMPTY );
     HW_CAsgn( FastcallInfo.streturn, HW_EMPTY );
@@ -255,13 +260,11 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
                          //SPECIAL_RETURN |
                          SPECIAL_STRUCT_RETURN;
 #if _CPU == 386
-    OptlinkInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( OptlinkParms ) );
-    memcpy( OptlinkInfo.parms, OptlinkParms, sizeof( OptlinkParms ) );
+    OptlinkInfo.parms = OptlinkParms;
 #else
-    OptlinkInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( StackParms ) );
-    memcpy( OptlinkInfo.parms, StackParms, sizeof( StackParms ) );
+    OptlinkInfo.parms = StackParms;
 #endif
-    OptlinkInfo.objname = STRALLOC( "*" );
+    OptlinkInfo.objname = AUX_STRALLOC( "*" );
 
     HW_CAsgn( OptlinkInfo.returns, HW_EMPTY );
 //    HW_CAsgn( OptlinkInfo.returns, HW_FLTS );
@@ -291,9 +294,8 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
                          //NO_8087_RETURNS |
                          //SPECIAL_RETURN |
                          SPECIAL_STRUCT_RETURN;
-    SyscallInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( StackParms ) );
-    memcpy( SyscallInfo.parms, StackParms, sizeof( StackParms ) );
-    SyscallInfo.objname = STRALLOC( "*" );
+    SyscallInfo.parms = StackParms;
+    SyscallInfo.objname = AUX_STRALLOC( "*" );
 
     HW_CAsgn( SyscallInfo.returns, HW_EMPTY );
     HW_CAsgn( SyscallInfo.streturn, HW_EMPTY );
@@ -319,21 +321,86 @@ void PragmaAuxCallInfoInit( call_class call_type, int flag_stdatnum )
 
     Far16CdeclInfo = CdeclInfo;
     Far16CdeclInfo.cclass |= FAR16_CALL;
-    Far16CdeclInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( StackParms ) );
-    memcpy( Far16CdeclInfo.parms, StackParms, sizeof( StackParms ) );
-    Far16CdeclInfo.objname = STRALLOC( CdeclInfo.objname );
+    Far16CdeclInfo.parms = StackParms;
+    Far16CdeclInfo.objname = AUX_STRALLOC( CdeclInfo.objname );
     // __far16 __cdecl depends on EBX being trashed in __cdecl
     // but NT 386 __cdecl preserves EBX
     HW_CTurnOff( Far16CdeclInfo.save, HW_EBX );
 
     Far16PascalInfo = PascalInfo;
     Far16PascalInfo.cclass |= FAR16_CALL;
-    Far16PascalInfo.parms = (hw_reg_set *)MEMALLOC( sizeof( StackParms ) );
-    memcpy( Far16PascalInfo.parms, StackParms, sizeof( StackParms ) );
-    Far16PascalInfo.objname = STRALLOC( PascalInfo.objname );
+    Far16PascalInfo.parms = StackParms;
+    Far16PascalInfo.objname = AUX_STRALLOC( PascalInfo.objname );
 #endif
 }
 
-#endif
+#if _CPU == 386
+void SetStackConventions( void )
+/******************************/
+{
+    WatcallInfo.cclass &= ( GENERATE_STACK_FRAME | FAR );
+    WatcallInfo.cclass |= CALLER_POPS | NO_8087_RETURNS;
+    WatcallInfo.parms = metaWareParms;
+    HW_CTurnOff( WatcallInfo.save, HW_EAX );
+    HW_CTurnOff( WatcallInfo.save, HW_EDX );
+    HW_CTurnOff( WatcallInfo.save, HW_ECX );
+    HW_CTurnOff( WatcallInfo.save, HW_FLTS );
+    WatcallInfo.objname = AUX_STRALLOC( "*" );
+}
 #endif
 
+#endif
+
+int IsAuxParmsBuiltIn( hw_reg_set *parms )
+/***************************************/
+{
+    if( parms == &DefaultParms ) {
+        return( TRUE );
+#if _INTEL_CPU
+    } else if( parms == &StackParms ) {
+        return( TRUE );
+    } else if( parms == &FastcallParms ) {
+        return( TRUE );
+#if _CPU == 386
+    } else if( parms == &OptlinkParms ) {
+        return( TRUE );
+    } else if( parms == &metaWareParms ) {
+        return( TRUE );
+#endif
+#endif
+    } else if( parms == NULL ) {
+        return( TRUE );
+    } else {
+        return( FALSE );
+    }
+}
+
+int IsAuxInfoBuiltIn( struct aux_info *inf )
+/*****************************************/
+{
+    if( inf == &DefaultInfo )
+        return( TRUE );
+    if( inf == &WatcallInfo )
+        return( TRUE );
+    if( inf == &CdeclInfo )
+        return( TRUE );
+    if( inf == &PascalInfo )
+        return( TRUE );
+    if( inf == &FortranInfo )
+        return( TRUE );
+    if( inf == &SyscallInfo )
+        return( TRUE );
+    if( inf == &StdcallInfo )
+        return( TRUE );
+    if( inf == &FastcallInfo )
+        return( TRUE );
+    if( inf == &OptlinkInfo )
+        return( TRUE );
+#if _CPU == 386
+    if( inf == &Far16PascalInfo )
+        return( TRUE );
+    if( inf == &Far16CdeclInfo )
+        return( TRUE );
+#endif
+    return( FALSE );
+}

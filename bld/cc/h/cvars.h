@@ -699,6 +699,7 @@ extern  struct textsegment *LkSegName(char *,char *);   /* cpragma */
 extern  struct textsegment *NewTextSeg(char *,char *,char *);
 extern  void    PragmaInit(void);               /* cpragma */
 extern  void    PragmaFini(void);               /* cpragma */
+extern  void    PragmaAuxInit(void);            /* cpragma */
 extern  void    PragInit(void);                 /* cpragma */
 extern  void    PragEnding(void);               /* cpragma */
 extern  void    PragObjNameInfo(void);          /* cpragma */

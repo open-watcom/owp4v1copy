@@ -40,6 +40,7 @@
 #ifdef __OSI__
  #include "ostype.h"
 #endif
+#include "callinfo.h"
 
 #include "cmdlnpr1.gh"
 #include "cmdlnsys.h"
@@ -901,24 +902,6 @@ static void macroDefs( void )
 #endif
 }
 
-#if _CPU == 386
-
-static  hw_reg_set      metaWareParms[] = { HW_D( HW_EMPTY ) };
-
-static void setStackConventions( void )    // SET 386 HARDWARE OPTIONS
-{
-    WatcallInfo.cclass &= ( GENERATE_STACK_FRAME | FAR );
-    WatcallInfo.cclass |= CALLER_POPS | NO_8087_RETURNS;
-    WatcallInfo.parms = AuxParmDup( metaWareParms );
-    HW_CTurnOff( WatcallInfo.save, HW_EAX );
-    HW_CTurnOff( WatcallInfo.save, HW_EDX );
-    HW_CTurnOff( WatcallInfo.save, HW_ECX );
-    HW_CTurnOff( WatcallInfo.save, HW_FLTS );
-    WatcallInfo.objname = strsave( "*" );
-}
-
-#endif
-
 static void miscAnalysis( OPT_STORAGE *data )
 {
 #if _CPU == 8086
@@ -951,7 +934,7 @@ static void miscAnalysis( OPT_STORAGE *data )
     }
 #if _CPU == 386
     if( ! CompFlags.register_conventions ) {
-        setStackConventions();
+        SetStackConventions();
     }
 #endif
     if( data->zx ) {
@@ -1254,9 +1237,11 @@ void CmdSysAnalyse( OPT_STORAGE *data )
     case OPT_intel_call_conv_ecf:
         DftCallConv = &FastcallInfo;
         break;
+#ifndef NDEBUG
     case OPT_intel_call_conv_eco:
         DftCallConv = &OptlinkInfo;
         break;
+#endif
     case OPT_intel_call_conv_ecp:
         DftCallConv = &PascalInfo;
         break;

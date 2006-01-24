@@ -1275,7 +1275,7 @@ static void copyParms(           // COPY PARMS PORTION
         /* new parms have already been allocated */
         return;
     }
-    if( CurrInfo->parms != DefaultParms ) {
+    if( !IsAuxParmsBuiltIn( CurrInfo->parms ) ) {
         CurrInfo->parms = AuxParmDup( CurrInfo->parms );
     }
 }
@@ -1482,7 +1482,7 @@ void PragManyRegSets(           // GET PRAGMA REGISTER SETS
     i *= sizeof( hw_reg_set );
     sets = (hw_reg_set *)CMemAlloc( i );
     memcpy( sets, buff, i );
-    if( CurrInfo->parms != DefaultParms ) {
+    if( !IsAuxParmsBuiltIn( CurrInfo->parms ) ) {
         CMemFree( CurrInfo->parms );
     }
     CurrInfo->parms = sets;

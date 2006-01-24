@@ -62,7 +62,7 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
     defn = defn;
     PragInit();
 
-    PragmaAuxCallInfoInit( DefaultInfo.cclass & FAR, CompFlags.use_stdcall_at_number );
+    PragmaAuxInfoInit( CompFlags.use_stdcall_at_number );
 
 #if _CPU == 386
     HW_CTurnOff( asmRegsSaved, HW_EAX );
@@ -88,7 +88,7 @@ static void freeInfo( AUX_INFO *info )
         CMemFree( info->code );
         info->code = NULL;
     }
-    if( info->parms != DefaultParms ) {
+    if( !IsAuxParmsBuiltIn( info->parms ) ) {
         CMemFree( info->parms );
         info->parms = NULL;
     }
@@ -115,23 +115,13 @@ static void pragmaFini(         // FINISH PRAGMAS
             } else {
                 freeInfo( next->info );
 #ifndef NDEBUG
-                if(( next->info == &DefaultInfo ) ||
-                   ( next->info == &CdeclInfo ) ||
-                   ( next->info == &PascalInfo ) ||
-                   ( next->info == &SyscallInfo ) ||
-                   ( next->info == &OptlinkInfo ) ||
-                   ( next->info == &StdcallInfo ) ||
-                   ( next->info == &FastcallInfo ) ||
-#if _CPU == 386
-                   ( next->info == &Far16CdeclInfo ) ||
-                   ( next->info == &Far16PascalInfo ) ||
-#endif
-                   ( next->info == &WatcallInfo ) ||
-                   ( next->info == &FortranInfo ) ) {
+                if( IsAuxInfoBuiltIn( next->info ) ) {
                     CFatal( "freeing a static calling convention info" );
                 }
 #endif
-                if( next->info != &DefaultInfo )  CMemFree( next->info );
+                if( !IsAuxInfoBuiltIn( next->info ) ) {
+                    CMemFree( next->info );
+                }
             }
         }
         next = next->next;

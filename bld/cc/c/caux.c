@@ -32,6 +32,7 @@
 #include "cvars.h"
 #include "pragdefn.h"
 #include "pdefn2.h"
+#include "callinfo.h"
 
 
 struct aux_entry *AuxLookup( char *name )
@@ -51,7 +52,7 @@ local void FreeInfo( struct aux_info *info )            /* 18-aug-90 */
         CMemFree( info->code );
         info->code = NULL;
     }
-    if( info->parms != NULL && info->parms != DefaultParms ) {
+    if( !IsAuxParmsBuiltIn( info->parms ) ) {
         CMemFree( info->parms );
         info->parms = NULL;
     }
@@ -83,7 +84,7 @@ void PragmaFini( void )
                 next->info->use--;
             } else {
                 FreeInfo( next->info );
-                if( next->info != &DefaultInfo ) {
+                if( !IsAuxInfoBuiltIn( next->info ) ) {
                     CMemFree( next->info );
                 }
             }

@@ -69,7 +69,9 @@ Options:
 -ecc          set default calling convention to __cdecl
 -ecd          set default calling convention to __stdcall
 -ecf          set default calling convention to __fastcall
+:segment HIDDEN
 -eco          set default calling convention to _Optlink
+:endsegment
 -ecp          set default calling convention to __pascal
 -ecr          set default calling convention to __fortran
 -ecs          set default calling convention to _Syscall

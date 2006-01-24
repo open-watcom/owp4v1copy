@@ -334,11 +334,10 @@ struct sym_hash_entry {   /* SYMBOL TABLE structure */
         TYPEPTR     sym_type;
         int         sym_type_index; /* for pre-compiled header */
     };
-#if defined(  __386__ )
     SYM_HANDLE      handle;
+#if defined(  __386__ )
     char            level;
 #else
-    unsigned        handle;
     unsigned        level;
 #endif
     char            name[1];

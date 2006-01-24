@@ -229,9 +229,9 @@
 .br
 .*
 :CMT. .note eco
-:hotlink refid='SWeco'.
-~b~b~b~b~b~b
-.br
+:CMT. :hotlink refid='SWeco'.
+:CMT. ~b~b~b~b~b~b
+:CMT. .br
 .*
 :CMT. .note ecp
 :hotlink refid='SWecp'.

@@ -2149,26 +2149,6 @@ local void Define_Memory_Model()
     #endif
 }
 
-#if _CPU == 386
-
-static hw_reg_set MetaWareParms[] = {
-    HW_D( HW_EMPTY )
-};
-
-local void SetStackConventions( void )
-{
-    WatcallInfo.cclass &= (GENERATE_STACK_FRAME | FAR);
-    WatcallInfo.cclass |= CALLER_POPS | NO_8087_RETURNS;
-    WatcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof(MetaWareParms) );
-    memcpy( WatcallInfo.parms, MetaWareParms, sizeof( MetaWareParms ) );
-    WatcallInfo.objname = CStrSave( "*" );
-    HW_CTurnOff( WatcallInfo.save, HW_EAX );
-    HW_CTurnOff( WatcallInfo.save, HW_EDX );
-    HW_CTurnOff( WatcallInfo.save, HW_ECX );
-    HW_CTurnOff( WatcallInfo.save, HW_FLTS );
-}
-#endif
-
 void GenCOptions( char **cmdline )
 {
     memset( &SwData,0, sizeof( SwData ) ); //re-useable

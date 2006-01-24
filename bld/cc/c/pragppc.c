@@ -36,3 +36,5 @@
 #include "toggle.h"
 
 #include "pdefnppc.h"
+
+#include "callinfo.c"

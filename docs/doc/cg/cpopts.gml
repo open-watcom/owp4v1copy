@@ -616,11 +616,11 @@ set default calling convention to __stdcall
 set default calling convention to __fastcall
 :optref refid='SWecf'.
 .do end
-.if &e'&$SWeco eq 1 .do begin
-.note eco
-set default calling convention to _Optlink
-:optref refid='SWeco'.
-.do end
+:CMT. .if &e'&$SWeco eq 1 .do begin
+:CMT. .note eco
+:CMT. set default calling convention to _Optlink
+:CMT. :optref refid='SWeco'.
+:CMT. .do end
 .if &e'&$SWecp eq 1 .do begin
 .note ecp
 set default calling convention to __pascal
@@ -3333,11 +3333,11 @@ set default calling convention to __stdcall
 set default calling convention to __fastcall
 .do end
 .*
-.if &e'&$SWeco eq 1 .do begin
-:OPT refid='SWeco' name='eco'.
-.ix 'options' 'eco'
-set default calling convention to _Optlink
-.do end
+:CMT. .if &e'&$SWeco eq 1 .do begin
+:CMT. :OPT refid='SWeco' name='eco'.
+:CMT. .ix 'options' 'eco'
+:CMT. set default calling convention to _Optlink
+:CMT. .do end
 .*
 .if &e'&$SWecp eq 1 .do begin
 :OPT refid='SWecp' name='ecp'.

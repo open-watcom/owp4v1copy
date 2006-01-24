@@ -104,6 +104,10 @@ void CPragmaInit( void ){
     FortranInfo = WatcallInfo;
     FastcallInfo= WatcallInfo;
 
+#if _INTEL_CPU
+    PragmaAuxInit();
+#endif
+
     DefaultInfo = *DftCallConv;
 
 /* call target specific init */

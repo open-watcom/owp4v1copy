@@ -273,10 +273,10 @@ set default calling convention to __stdcall
 set default calling convention to __fastcall
 :optref refid='SWecf'.
 .*
-.note eco
+:CMT. .note eco
 :CMT. .ix 'options' 'eco'
-set default calling convention to _Optlink
-:optref refid='SWeco'.
+:CMT. set default calling convention to _Optlink
+:CMT. :optref refid='SWeco'.
 .*
 .note ecp
 :CMT. .ix 'options' 'ecp'

@@ -41,6 +41,7 @@
 #include <sys/stat.h>
 #include "autodept.h"
 #include "langenv.h"
+#include "callinfo.h"
 
 #define TRUNC_SYMBOL_HASH_LEN        4
 #define TRUNC_SYMBOL_LEN_WARN        120
@@ -802,30 +803,26 @@ static char *GetNamePattern( CGSYM_HANDLE sym_handle )
     } else {
 #endif
         inf = LangInfo( sym.attrib, inf );
-        if( inf->objname != NULL ) {
-#if ( _CPU == 8086 ) || ( _CPU == 386 )
+        pattern = inf->objname;
+        if( sym.flags & SYM_FUNCTION ) {
+#if ( _CPU == 386 ) || ( _CPU == 8086 )
             if( VarFunc( &sym ) ) {
-    #if 0
-                if( inf == &DefaultInfo )
-                    inf = DftCallConv;
-    #endif
                 if( inf == &StdcallInfo ) {
                     pattern = CdeclInfo.objname;
                 } else if( inf == &FastcallInfo ) {
                     pattern = CdeclInfo.objname;
-                } else {
-                    pattern = inf->objname;
                 }
-            } else {
-                pattern = inf->objname;
             }
-#else
-            pattern = inf->objname;
 #endif
-        } else if( sym.flags & SYM_FUNCTION ) {
-            pattern =  TS_CODE_MANGLE;
+            if( pattern == NULL ) {
+                pattern =  TS_CODE_MANGLE;
+            }
         } else {
-            pattern =  TS_DATA_MANGLE;
+            if( IsAuxInfoBuiltIn( inf ) )
+                pattern = WatcallInfo.objname;
+            if( pattern == NULL ) {
+                pattern =  TS_DATA_MANGLE;
+            }
         }
 #ifdef __SEH__
     }       // close that else
