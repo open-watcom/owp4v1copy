@@ -4,6 +4,8 @@
 !inject lfind.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject lsearch.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject qsort.obj    d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject bsrch_s.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject qsort_s.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 
 !include ../../../../objlist.mif
 
@@ -17,3 +19,5 @@ bsearch_opts=$($(processor)_sub_opt)
 lfind_opts  =$($(processor)_sub_opt)
 lsearch_opts=$($(processor)_sub_opt)
 qsort_opts  =$($(processor)_sub_opt)
+bsrch_s_opts=$($(processor)_sub_opt)
+qsort_s_opts=$($(processor)_sub_opt)

@@ -24,13 +24,23 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of strncat_s().
+* Description:  Internal definitions for strerror() and friends.
 *
 ****************************************************************************/
 
 
-// this file should remain an indirected file
-// it is done this way to support the reuse of the source file
-#define __WIDECHAR__
-#undef __INLINE_FUNCTIONS__
-#include "stncat_s.c"
+#if defined(__NETWARE__) || defined(__WIDECHAR__)
+
+extern int _WCNEAR      sys_nerr;
+extern char             *sys_errlist[];
+#define _sys_nerr       sys_nerr
+#define _sys_errlist    sys_errlist
+
+#else
+
+extern char             *_sys_errlist[];
+extern int _WCNEAR      _sys_nerr;
+
+#endif
+
+#define UNKNOWN_ERROR   "unknown error"

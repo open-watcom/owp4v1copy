@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of strerror() function
+* Description:  Implementation of strerror() function.
 *
 ****************************************************************************/
 
@@ -35,19 +35,12 @@
 #include <errno.h>
 #include "rtdata.h"
 #if defined(__NT__)
- #include <windows.h>
+    #include <windows.h>
 #endif
+#include "errstr.h"
 
-#define UNKNOWN_ERROR   "unknown error"
 
-#if defined(__NETWARE__) || defined(__WIDECHAR__)
-
-extern int _WCNEAR      sys_nerr;
-extern char             *sys_errlist[];
-#define _sys_nerr       sys_nerr
-#define _sys_errlist    sys_errlist
-
-#else
+#ifndef __WIDECHAR__
 
 #ifdef __LINUX__
 char *_sys_errlist[] = {
@@ -226,15 +219,16 @@ char *_sys_errlist[] = {
 };
 #endif
 
-int _WCNEAR _sys_nerr = ( sizeof(_sys_errlist) / sizeof(*_sys_errlist) );
+int _WCNEAR _sys_nerr = ( sizeof( _sys_errlist ) / sizeof( *_sys_errlist ) );
+
 #endif
 
 _WCRTLINK CHAR_TYPE *__F_NAME(strerror,wcserror)( int errnum )
 {
-    #if defined(__WIDECHAR__ )
-        static wchar_t Wide_Error_String[40];
-    #endif
-    char        *msg;
+#ifdef __WIDECHAR__
+    static wchar_t  Wide_Error_String[40];
+#endif
+    char            *msg;
 
     if( errnum < 0 || errnum >= _sys_nerr ) {
         msg = UNKNOWN_ERROR;
@@ -250,10 +244,10 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strerror,wcserror)( int errnum )
     #define FORMAT_MESSAGE_MAX_WIDTH_MASK 255
 #endif
 
-#if defined(__WIDECHAR__ )
-static wchar_t Wide_Error_String[FORMAT_MESSAGE_MAX_WIDTH_MASK+1];
+#ifdef __WIDECHAR__
+static  wchar_t Wide_Error_String[FORMAT_MESSAGE_MAX_WIDTH_MASK+1];
 #else
-static char Error_String[FORMAT_MESSAGE_MAX_WIDTH_MASK+1];
+static  char    Error_String[FORMAT_MESSAGE_MAX_WIDTH_MASK+1];
 #endif
 
 
@@ -293,7 +287,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_strerror,_wcserror)( const CHAR_TYPE *strErrMsg )
     int errnum;
 
     errnum = _RWD_errno;
-#if defined(__WIDECHAR__ )
+#ifdef __WIDECHAR__
     Wide_Error_String[0] = L'\0';
     if( strErrMsg != NULL ) {
         wcsncpy( Wide_Error_String, strErrMsg, 94 );
@@ -320,7 +314,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_strerror,_wcserror)( const CHAR_TYPE *strErrMsg )
 
 _WCRTLINK CHAR_TYPE *__F_NAME(_doserror,_wdoserror)( int errnum )
 {
-#if defined(__WIDECHAR__ )
+#ifdef __WIDECHAR__
     Wide_Error_String[0] = L'\0';
     FormatMessageW( FORMAT_MESSAGE_IGNORE_INSERTS |
                     FORMAT_MESSAGE_FROM_SYSTEM |
@@ -348,4 +342,3 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_doserror,_wdoserror)( int errnum )
 }
 
 #endif
-

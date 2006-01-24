@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of strncat_s().
+* Description:  Wide character version of strerrorlen_s().
 *
 ****************************************************************************/
 
@@ -33,4 +33,4 @@
 // it is done this way to support the reuse of the source file
 #define __WIDECHAR__
 #undef __INLINE_FUNCTIONS__
-#include "stncat_s.c"
+#include "streln_s.c"

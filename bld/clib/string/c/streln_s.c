@@ -24,13 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of strncat_s().
+* Description:  Implementation of strerrorlen_s().
 *
 ****************************************************************************/
 
 
-// this file should remain an indirected file
-// it is done this way to support the reuse of the source file
-#define __WIDECHAR__
-#undef __INLINE_FUNCTIONS__
-#include "stncat_s.c"
+#include "variety.h"
+#include "saferlib.h"
+#include "widechar.h"
+#include <string.h>
+#include <wchar.h>
+#include "errstr.h"
+
+
+_WCRTLINK size_t __F_NAME(strerrorlen_s,wcstrerrorlen_s)( errno_t errnum )
+/************************************************************************/
+{
+    size_t  m = 0;
+    char    *msg;
+
+    if( errnum < 0 || errnum >= _sys_nerr ) {
+        msg = UNKNOWN_ERROR;
+    } else {
+        msg = _sys_errlist[ errnum ];
+    }
+
+    // count chars up to '\0'
+    while( *msg++ != '\0' ) {
+        ++m;
+    }
+    return( m );
+}
