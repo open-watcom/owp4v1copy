@@ -218,7 +218,7 @@ static bool DoRegisterClass( WPI_INST hinst, char *class_name,
     wc.lpszMenuName = NULL;
     wc.lpszClassName = class_name;
 
-    return( RegisterClass( &wc ) );
+    return( RegisterClass( &wc ) != 0 );
 #else
     return( WinRegisterClass( hinst.hab, class_name, call_back,
                               CS_CLIPCHILDREN | CS_SIZEREDRAW | CS_MOVENOTIFY |
