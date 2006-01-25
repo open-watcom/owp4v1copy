@@ -89,6 +89,7 @@ extern  void    PragmaAuxInfoInit( int );
 extern  void    SetStackConventions( void );
 extern  int     IsAuxParmsBuiltIn( hw_reg_set *parms );
 extern  int     IsAuxInfoBuiltIn( struct aux_info *info );
+extern  char    *VarNamePattern( struct aux_info *inf );
 
 #endif
 

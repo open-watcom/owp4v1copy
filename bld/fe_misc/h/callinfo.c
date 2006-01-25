@@ -404,3 +404,18 @@ int IsAuxInfoBuiltIn( struct aux_info *inf )
 #endif
     return( FALSE );
 }
+
+char *VarNamePattern( struct aux_info *inf )
+/******************************************/
+{
+    char    *pattern = inf->objname;
+#if _INTEL_CPU
+    if( inf == &DefaultInfo )
+        inf = DftCallConv;
+    if( inf == &StdcallInfo )
+        return( NULL );
+    if( inf == &FastcallInfo )
+        return( NULL );
+#endif
+    return( pattern );
+}

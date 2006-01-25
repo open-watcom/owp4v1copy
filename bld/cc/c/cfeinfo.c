@@ -803,10 +803,12 @@ static char *GetNamePattern( CGSYM_HANDLE sym_handle )
     } else {
 #endif
         inf = LangInfo( sym.attrib, inf );
-        pattern = inf->objname;
         if( sym.flags & SYM_FUNCTION ) {
+            pattern = inf->objname;
 #if ( _CPU == 386 ) || ( _CPU == 8086 )
             if( VarFunc( &sym ) ) {
+                if( inf == &DefaultInfo )
+                    inf = DftCallConv;
                 if( inf == &StdcallInfo ) {
                     pattern = CdeclInfo.objname;
                 } else if( inf == &FastcallInfo ) {
@@ -818,8 +820,7 @@ static char *GetNamePattern( CGSYM_HANDLE sym_handle )
                 pattern =  TS_CODE_MANGLE;
             }
         } else {
-            if( IsAuxInfoBuiltIn( inf ) )
-                pattern = WatcallInfo.objname;
+            pattern = VarNamePattern( inf );
             if( pattern == NULL ) {
                 pattern =  TS_DATA_MANGLE;
             }

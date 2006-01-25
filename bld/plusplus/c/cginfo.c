@@ -685,9 +685,7 @@ static char *GetNamePattern(           // MANGLE SYMBOL NAME
               || LinkageIsCpp( sym ) ) {
                 patbuff = allowStrictReplacement( patbuff );
             } else {
-                if( IsAuxInfoBuiltIn( inf ) ) {
-                    patbuff = WatcallInfo.objname;
-                }
+                patbuff = VarNamePattern( inf );
                 if( patbuff == NULL )
                     patbuff = TS_DATA_MANGLE ;
                 return( patbuff );
