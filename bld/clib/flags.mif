@@ -45,6 +45,9 @@ sw_c_mps =
 sw_c_386 += -d1-hd-etp
 !endif
 
+# Include system headers in dependency lists
+sw_c_common += -D_ENABLE_AUTODEPEND
+
 !ifeq release 0
 sw_c_common += -D__RUNTIME_HANDLE_CHECKS__
 sw_c_axp += -finonx86.h
