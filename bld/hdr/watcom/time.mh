@@ -78,6 +78,14 @@ using std::time;
 
 :include clockt.sp
 
+:include saferpro.sp
+
+:include errnot.sp
+
+:include rsizet.sp
+
+:include saferepi.sp
+
 :segment DOS
 #define CLK_TCK          1000
 #define CLOCKS_PER_SEC   1000
@@ -260,6 +268,20 @@ _WCRTLINK extern wchar_t     *__wasctime( const struct tm *, wchar_t * );
 :endsegment
 :endsegment
 #endif
+
+:include saferpro.sp
+
+_WCRTLINK extern errno_t      asctime_s( char * __s, rsize_t __maxsize, const struct tm *__timeptr );
+_WCRTLINK extern errno_t      ctime_s( char *__s, rsize_t __maxsize, const time_t *__timer );
+_WCRTLINK extern struct tm   *gmtime_s( const time_t * __restrict __timer, struct tm * __restrict __result );
+_WCRTLINK extern struct tm   *localtime_s( const time_t * __restrict __timer, struct tm * __restrict __t );
+
+:segment !NO_WIDECHAR
+_WCRTLINK extern errno_t      _wasctime_s( wchar_t * __s, rsize_t __maxsize, const struct tm *__timeptr );
+_WCRTLINK extern errno_t      _wctime_s( wchar_t *__s, rsize_t __maxsize, const time_t *__timer );
+:endsegment
+
+:include saferepi.sp
 
 :segment QNX | LINUX
 :include unixext.sp

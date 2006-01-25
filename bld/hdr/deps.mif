@@ -2,12 +2,12 @@
 # These dependency lists are used for both standard name.h and cname
 # headers. This is only relevant for headers in the C++ standard library.
 
-saferc = ../saferpro.sp ../saferepi.sp
+saferc = ../saferpro.sp ../saferepi.sp ../errnot.sp ../rsizet.sp
 cplus  = ../cpluspro.sp ../cplusepi.sp
 
 assert_deps = ../watcom/assert.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp
 ctype_deps  = ../watcom/ctype.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../wchar_t.sp ../wctypet.sp
-errno_deps  = ../watcom/errno.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../errno.sp ../errnot.sp $(saferc)
+errno_deps  = ../watcom/errno.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../errno.sp $(saferc)
 float_deps  = ../watcom/float.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp
 iso646_deps = ../watcom/iso646.mh ../readonly.sp ../crwat.sp
 limits_deps = ../watcom/limits.mh ../readonly.sp ../crwatqnx.sp ../crwatcnt.sp ../mbmax.sp ../ext.sp ../unixext.sp
@@ -16,12 +16,12 @@ math_deps   = ../watcom/math.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ..
 setjmp_deps = ../watcom/setjmp.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
 signal_deps = ../watcom/signal.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
 stdarg_deps = ../watcom/stdarg.mh ../readonly.sp $(cplus) ../crwat.sp ../valist.sp
-stddef_deps = ../watcom/stddef.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../ptrdiff.sp ../sizet.sp ../wchar_t.sp ../rsizet.sp $(saferc)
+stddef_deps = ../watcom/stddef.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../ptrdiff.sp ../sizet.sp ../wchar_t.sp $(saferc)
 stdio_deps  = ../watcom/stdio.mh ../readonly.sp $(cplus) ../crwatqnx.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../valist.sp ../wchar_t.sp ../wctypet.sp
-stdlib_deps = ../watcom/stdlib.mh ../readonly.sp ../alloca.sp $(cplus) ../crwatqnx.sp ../errno.sp ../ext.sp ../maxpath.sp ../mbmax.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../wchar_t.sp ../errnot.sp ../rsizet.sp $(saferc)
-string_deps = ../watcom/string.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../nlserror.sp ../namwat.sp ../errnot.sp ../rsizet.sp $(saferc)
-time_deps   = ../watcom/time.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../timet.sp ../wchar_t.sp ../clockt.sp
-wchar_deps  = ../watcom/wchar.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../errnot.sp ../rsizet.sp $(saferc)
+stdlib_deps = ../watcom/stdlib.mh ../readonly.sp ../alloca.sp $(cplus) ../crwatqnx.sp ../errno.sp ../ext.sp ../maxpath.sp ../mbmax.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../wchar_t.sp $(saferc)
+string_deps = ../watcom/string.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../nlserror.sp ../namwat.sp $(saferc)
+time_deps   = ../watcom/time.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../timet.sp ../wchar_t.sp ../clockt.sp $(saferc)
+wchar_deps  = ../watcom/wchar.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp $(saferc)
 wctype_deps = ../watcom/wctype.mh ../readonly.sp $(cplus) ../crwat.sp ../wchar_t.sp ../wctypet.sp
 
 cassert      : $(assert_deps)
