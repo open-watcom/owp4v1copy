@@ -58,10 +58,7 @@ Copies of this documentation may be ordered from:
 :cmt. over the past decade in other software projects in which these people
 :cmt. have been involved.
 :cmt. The major project members of the
-:cmt. .if '&machsys' eq 'PP' .do begin
-:cmt. PenPoint
-:cmt. .do end
-:cmt. .el .if '&machsys' eq 'QNX' .do begin
+:cmt. .if '&machsys' eq 'QNX' .do begin
 :cmt. QNX
 :cmt. .do end
 :cmt. .el .do begin
@@ -72,12 +69,6 @@ Copies of this documentation may be ordered from:
 :cmt. Michael Glaum, Jim Graham, Bill Hillis, Tom Ivey, Alex Kachura, Jim Randall,
 :cmt. Jack Schueler, Anthony Scian, Brian Stecher, Aaron Stein, Anderson Wai,
 :cmt. David Wellstood and David Yach.
-:cmt. .if '&machsys' eq 'PP' .do begin
-:cmt. .np
-:cmt. We also like to extend a special thanks to Craig Taylor of GO
-:cmt. Corporation for his contributions in creating the special libraries
-:cmt. for PenPoint and in proofreading this manual.
-:cmt. .do end
 :cmt. .if '&machsys' ne 'QNX' .do begin
 :cmt. .np
 :cmt. F. W. Crigger
@@ -99,28 +90,19 @@ FoxPro is a trademark of Fox Holdings, Inc.
 IBM is a registered trademark of International Business Machines Corp.
 .np
 Intel is a registered trademark of Intel Corp.
-.if '&machsys' ne 'PP' .do begin
 .np
 Microsoft, MS, MS-DOS, Windows, Win32, Win32s, Windows NT and
 Windows 2000 are either registered trademarks or trademarks of
 Microsoft Corporation in the United States and/or other countries.
-.do end
-.if '&machsys' ne 'PP' .do begin
 .np
 NetWare, NetWare 386, and Novell are registered trademarks of Novell,
 Inc.
-.do end
-.if '&machsys' eq 'PP' .do begin
 .np
-PenPoint is a trademark of GO Corporation.
-.do end
-.if '&machsys' ne 'PP' .do begin
-.np
-.tmarkqnx
-.do end
+.* not using .tmark macros here because xdefs.gml isn't included
+UNIX is a registered trademark of The Open Group.
 .if '&machsys' eq 'QNX' .do begin
 .np
-.tmarkunix
+QNX is a registered trademark of QNX Software Systems Ltd.
 .do end
 .np
 .im wtrdmrk
