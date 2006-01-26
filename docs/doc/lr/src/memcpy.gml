@@ -24,6 +24,9 @@ wchar_t *wmemcpy( wchar_t *dst,
 :cmt. .ixfunc2 '&Copy' &ufunc
 :cmt. .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function copies
 .arg length
@@ -55,14 +58,17 @@ is interpreted to mean the number of wide characters.
 :cmt. is interpreted to mean the number of Unicode characters.
 :cmt. .do end
 .desc end
+.*
 .return begin
 The original value of
 .arg dst
 is returned.
 .return end
+.*
 .see begin
-.seelist &function. memchr memcmp memcpy memicmp memmove memset
+.seelist &function. memchr memcmp memcpy memicmp memmove memset memcpy_s
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <string.h>
@@ -76,5 +82,6 @@ void main( void )
     printf( "%s\n", buffer );
 }
 .exmp end
+.*
 .class ANSI
 .system

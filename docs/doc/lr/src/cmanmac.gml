@@ -665,3 +665,5 @@ command
 .ix 'QNX command' '&*'
 .dm qnxcmd end
 .*
+:cmt. include 'Safer C Library' related macros
+:INCLUDE file='safecmac'.

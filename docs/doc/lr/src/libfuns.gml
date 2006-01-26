@@ -777,6 +777,8 @@
 .fnc memcpy                     memcpy.gml      DOS QNX W WIN32
 .fnf _fmemcpy                   memcpy.gml      DOS QNX W WIN32
 .fnw wmemcpy                    memcpy.gml      DOS QNX W WIN32
+.fnc memcpy_s                   memcpy_s.gml    DOS QNX W WIN32
+.fnw wmemcpy_s                  memcpy_s.gml    DOS QNX W WIN32
 .fnc memicmp                    memicmp.gml     DOS QNX W WIN32
 .fnc _memicmp                   memicmp.gml     DOS       WIN32
 .fnf _fmemicmp                  memicmp.gml     DOS QNX W WIN32

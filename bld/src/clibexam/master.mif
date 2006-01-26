@@ -537,6 +537,7 @@ memccpy.exe &
 memchr.exe &
 memcmp.exe &
 memcpy.exe &
+memcpy_s.exe &
 memicmp.exe &
 memmove.exe &
 memset.exe &

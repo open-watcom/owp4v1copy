@@ -1594,6 +1594,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)memccpy.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)memchr.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)memcmp.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)memcpy.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)memcpy_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)memicmp.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)memmove.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mempty.gml &
@@ -1701,6 +1702,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)rewind.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)rewinddi.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)rmdir.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sbrk.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)safecmac.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)scanf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)scanfs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)seealloc.gml &
