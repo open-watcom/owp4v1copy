@@ -37,7 +37,8 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char * pe_export_msg[] = {
+
+static  char    *pe_export_msg[] = {
     "4          export flags                      = ",
     "4          time/date stamp                   = ",
     "2          major version number              = ",
@@ -52,7 +53,7 @@ char * pe_export_msg[] = {
     NULL
 };
 
-char * pe_import_msg[] = {
+static  char    *pe_import_msg[] = {
     "4          rva of the start of import lookup tbl = ",
     "4          time/date stamp                       = ",
     "2          major version number                  = ",

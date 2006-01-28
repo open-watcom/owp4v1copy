@@ -35,6 +35,167 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
+
+/*
+ * Dump the internal reference table
+ */
+static unsigned_32 internal_ref( unsigned_8 flags, unsigned_8 src, unsigned_32 off )
+/**********************************************************************************/
+{
+    unsigned_32     taroff;
+    unsigned_16     object;
+
+    Wdputs( "   object #    = " );
+    if( flags & OSF_OBJ_ORD ) {
+        Wread( &object, sizeof( unsigned_16 ) );
+        Puthex( object, 4 );
+        off += sizeof( unsigned_16 );
+    } else {
+        Wread( &object, sizeof( unsigned_8 ) );
+        Puthex( object, 2 );
+        off += sizeof( unsigned_8 );
+    }
+    Wdputs( "   target off       = " );
+    if( (src & 0xf) != SELECTOR_FIX ) {
+        if( flags & OSF_TARGET_OFF ) {
+            Wread( &taroff, sizeof( unsigned_32 ) );
+            Puthex( taroff, 8 );
+            off += sizeof( unsigned_32 );
+        } else {
+            Wread( &taroff, sizeof( unsigned_16 ) );
+            Puthex( taroff, 4 );
+            off += sizeof( unsigned_16 );
+        }
+    }
+    return( off );
+}
+
+/*
+ * Dump the imported reference by ordinal table
+ */
+static unsigned_32 imp_ord_ref( unsigned_8 flags, unsigned_32 off )
+/*****************************************************************/
+{
+    unsigned_32     add_ord;
+    unsigned_16     object;
+
+    Wdputs( "   mod ord #   = " );
+    if( flags & OSF_OBJ_ORD ) {
+        Wread( &object, sizeof( unsigned_16 ) );
+        Puthex( object, 4 );
+        off += sizeof( unsigned_16 );
+    } else {
+        Wread( &object, sizeof( unsigned_8 ) );
+        Puthex( object, 2 );
+        off += sizeof( unsigned_8 );
+    }
+    Wdputs( "   import ord #     = " );
+    if( flags & OSF_ORD_FLAG ) {
+        Wread( &add_ord, sizeof( unsigned_8 ) );
+        Puthex( add_ord, 2 );
+        off += sizeof( unsigned_8 );
+    } else if( flags & OSF_TARGET_OFF ) {
+        Wread( &add_ord, sizeof( unsigned_32 ) );
+        Puthex( add_ord, 8 );
+        off += sizeof( unsigned_32 );
+    } else {
+        Wread( &add_ord, sizeof( unsigned_16 ) );
+        Puthex( add_ord, 4 );
+        off += sizeof( unsigned_16 );
+    }
+    if( flags & OSF_ADD_FIX ) {
+        Wdputslc( "\n          additive = " );
+        if( flags & OSF_ADD_FIX_32 ) {
+            Wread( &add_ord, sizeof( unsigned_32 ) );
+            Puthex( add_ord, 8 );
+            off += sizeof( unsigned_32 );
+        } else {
+            Wread( &add_ord, sizeof( unsigned_16 ) );
+            Puthex( add_ord, 4 );
+            off += sizeof( unsigned_16 );
+        }
+    }
+    return( off );
+}
+
+/*
+ * Dump the import reference by name table
+ */
+static unsigned_32 imp_name_ref( unsigned_8 flags, unsigned_32 off )
+/******************************************************************/
+{
+    unsigned_32     add_off;
+    unsigned_16     object;
+
+    Wdputs( "   mod ord #   = " );
+    if( flags & OSF_OBJ_ORD ) {
+        Wread( &object, sizeof( unsigned_16 ) );
+        Puthex( object, 4 );
+        off += sizeof( unsigned_16 );
+    } else {
+        Wread( &object, sizeof( unsigned_8 ) );
+        Puthex( object, 2 );
+        off += sizeof( unsigned_8 );
+    }
+    Wdputs( "   proc name offset = " );
+    if( flags & OSF_TARGET_OFF ) {
+        Wread( &add_off, sizeof( unsigned_32 ) );
+        Puthex( add_off, 8 );
+        off += sizeof( unsigned_32 );
+    } else {
+        Wread( &add_off, sizeof( unsigned_16 ) );
+        Puthex( add_off, 4 );
+        off += sizeof( unsigned_16 );
+    }
+    if( flags & OSF_ADD_FIX ) {
+        Wdputslc( "\n          additive = " );
+        if( flags & OSF_ADD_FIX_32 ) {
+            Wread( &add_off, sizeof( unsigned_32 ) );
+            Puthex( add_off, 8 );
+            off += sizeof( unsigned_32 );
+        } else {
+            Wread( &add_off, sizeof( unsigned_16 ) );
+            Puthex( add_off, 4 );
+            off += sizeof( unsigned_16 );
+        }
+    }
+    return( off );
+}
+
+/*
+ * Dump the internal reference via entry table
+ */
+static unsigned_32 int_ent_ref( unsigned_8 flags, unsigned_32 off )
+/*****************************************************************/
+{
+    unsigned_32     addfix;
+    unsigned_16     object;
+
+    Wdputs( "   entry ord # = " );
+    if( flags & OSF_OBJ_ORD ) {
+        Wread( &object, sizeof( unsigned_16 ) );
+        Puthex( object, 4 );
+        off += sizeof( unsigned_16 );
+    } else {
+        Wread( &object, sizeof( unsigned_8 ) );
+        Puthex( object, 2 );
+        off += sizeof( unsigned_8 );
+    }
+    if( flags & OSF_ADD_FIX ) {
+        Wdputs( "   additive         = " );
+        if( flags & OSF_ADD_FIX_32 ) {
+            Wread( &addfix, sizeof( unsigned_32 ) );
+            Puthex( addfix, 8 );
+            off += sizeof( unsigned_32 );
+        } else {
+            Wread( &addfix, sizeof( unsigned_16 ) );
+            Puthex( addfix, 4 );
+            off += sizeof( unsigned_16 );
+        }
+    }
+    return( off );
+}
+
 /*
  * Dump the fixup page table
  */
@@ -132,164 +293,4 @@ void Dmp_fixrec_tab( unsigned_32 fix_off )
         fix_off += cnt * sizeof( unsigned_16 );
         Wdputslc( "\n" );
     }
-}
-
-/*
- * Dump the internal reference table
- */
-unsigned_32 internal_ref( unsigned_8 flags, unsigned_8 src, unsigned_32 off )
-/***************************************************************************/
-{
-    unsigned_32     taroff;
-    unsigned_16     object;
-
-    Wdputs( "   object #    = " );
-    if( flags & OSF_OBJ_ORD ) {
-        Wread( &object, sizeof( unsigned_16 ) );
-        Puthex( object, 4 );
-        off += sizeof( unsigned_16 );
-    } else {
-        Wread( &object, sizeof( unsigned_8 ) );
-        Puthex( object, 2 );
-        off += sizeof( unsigned_8 );
-    }
-    Wdputs( "   target off       = " );
-    if( (src & 0xf) != SELECTOR_FIX ) {
-        if( flags & OSF_TARGET_OFF ) {
-            Wread( &taroff, sizeof( unsigned_32 ) );
-            Puthex( taroff, 8 );
-            off += sizeof( unsigned_32 );
-        } else {
-            Wread( &taroff, sizeof( unsigned_16 ) );
-            Puthex( taroff, 4 );
-            off += sizeof( unsigned_16 );
-        }
-    }
-    return( off );
-}
-
-/*
- * Dump the imported reference by ordinal table
- */
-unsigned_32 imp_ord_ref( unsigned_8 flags, unsigned_32 off )
-/**********************************************************/
-{
-    unsigned_32     add_ord;
-    unsigned_16     object;
-
-    Wdputs( "   mod ord #   = " );
-    if( flags & OSF_OBJ_ORD ) {
-        Wread( &object, sizeof( unsigned_16 ) );
-        Puthex( object, 4 );
-        off += sizeof( unsigned_16 );
-    } else {
-        Wread( &object, sizeof( unsigned_8 ) );
-        Puthex( object, 2 );
-        off += sizeof( unsigned_8 );
-    }
-    Wdputs( "   import ord #     = " );
-    if( flags & OSF_ORD_FLAG ) {
-        Wread( &add_ord, sizeof( unsigned_8 ) );
-        Puthex( add_ord, 2 );
-        off += sizeof( unsigned_8 );
-    } else if( flags & OSF_TARGET_OFF ) {
-        Wread( &add_ord, sizeof( unsigned_32 ) );
-        Puthex( add_ord, 8 );
-        off += sizeof( unsigned_32 );
-    } else {
-        Wread( &add_ord, sizeof( unsigned_16 ) );
-        Puthex( add_ord, 4 );
-        off += sizeof( unsigned_16 );
-    }
-    if( flags & OSF_ADD_FIX ) {
-        Wdputslc( "\n          additive = " );
-        if( flags & OSF_ADD_FIX_32 ) {
-            Wread( &add_ord, sizeof( unsigned_32 ) );
-            Puthex( add_ord, 8 );
-            off += sizeof( unsigned_32 );
-        } else {
-            Wread( &add_ord, sizeof( unsigned_16 ) );
-            Puthex( add_ord, 4 );
-            off += sizeof( unsigned_16 );
-        }
-    }
-    return( off );
-}
-
-/*
- * Dump the import reference by name table
- */
-unsigned_32 imp_name_ref( unsigned_8 flags, unsigned_32 off )
-/***********************************************************/
-{
-    unsigned_32     add_off;
-    unsigned_16     object;
-
-    Wdputs( "   mod ord #   = " );
-    if( flags & OSF_OBJ_ORD ) {
-        Wread( &object, sizeof( unsigned_16 ) );
-        Puthex( object, 4 );
-        off += sizeof( unsigned_16 );
-    } else {
-        Wread( &object, sizeof( unsigned_8 ) );
-        Puthex( object, 2 );
-        off += sizeof( unsigned_8 );
-    }
-    Wdputs( "   proc name offset = " );
-    if( flags & OSF_TARGET_OFF ) {
-        Wread( &add_off, sizeof( unsigned_32 ) );
-        Puthex( add_off, 8 );
-        off += sizeof( unsigned_32 );
-    } else {
-        Wread( &add_off, sizeof( unsigned_16 ) );
-        Puthex( add_off, 4 );
-        off += sizeof( unsigned_16 );
-    }
-    if( flags & OSF_ADD_FIX ) {
-        Wdputslc( "\n          additive = " );
-        if( flags & OSF_ADD_FIX_32 ) {
-            Wread( &add_off, sizeof( unsigned_32 ) );
-            Puthex( add_off, 8 );
-            off += sizeof( unsigned_32 );
-        } else {
-            Wread( &add_off, sizeof( unsigned_16 ) );
-            Puthex( add_off, 4 );
-            off += sizeof( unsigned_16 );
-        }
-    }
-    return( off );
-}
-
-/*
- * Dump the internal reference via entry table
- */
-unsigned_32 int_ent_ref( unsigned_8 flags, unsigned_32 off )
-/**********************************************************/
-{
-    unsigned_32     addfix;
-    unsigned_16     object;
-
-    Wdputs( "   entry ord # = " );
-    if( flags & OSF_OBJ_ORD ) {
-        Wread( &object, sizeof( unsigned_16 ) );
-        Puthex( object, 4 );
-        off += sizeof( unsigned_16 );
-    } else {
-        Wread( &object, sizeof( unsigned_8 ) );
-        Puthex( object, 2 );
-        off += sizeof( unsigned_8 );
-    }
-    if( flags & OSF_ADD_FIX ) {
-        Wdputs( "   additive         = " );
-        if( flags & OSF_ADD_FIX_32 ) {
-            Wread( &addfix, sizeof( unsigned_32 ) );
-            Puthex( addfix, 8 );
-            off += sizeof( unsigned_32 );
-        } else {
-            Wread( &addfix, sizeof( unsigned_16 ) );
-            Puthex( addfix, 4 );
-            off += sizeof( unsigned_16 );
-        }
-    }
-    return( off );
 }

@@ -37,7 +37,8 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char *qnx_def_msg[] = {
+
+static  char    *qnx_def_msg[] = {
     "2version number                              = ",
     "2cflags                                      = ",
     "2cpu (86, 186, 286, 386, 486)                = ",
@@ -59,7 +60,7 @@ char *qnx_def_msg[] = {
     NULL
 };
 
-char *qnx_data_msg[] = {
+static  char    *qnx_data_msg[] = {
     "2segment index          = ",
     "4offset                 = ",
     NULL

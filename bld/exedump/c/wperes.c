@@ -35,7 +35,8 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char * pe_resource_msg[] = {
+
+static  char    *pe_resource_msg[] = {
         "4          resource flags               = ",
         "4          time/date stamp              = ",
         "2          major version number         = ",
@@ -45,7 +46,7 @@ char * pe_resource_msg[] = {
         NULL
 };
 
-char * pe_fixup_msg[] = {
+static  char    *pe_fixup_msg[] = {
         "4          page rva                       = ",
         "4          number of bytes in fixup block = ",
         NULL
@@ -116,8 +117,8 @@ void Dmp_fixups( void  )
 /*
  * Get the Resource Name.
  */
-res_name get_name( unsigned_32 offset )
-/*************************************/
+static res_name get_name( unsigned_32 offset )
+/********************************************/
 {
     unsigned_16             i;
     char                    name[2*SLEN];

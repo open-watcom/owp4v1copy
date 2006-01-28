@@ -32,22 +32,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <setjmp.h>
 #include <unistd.h>
-#ifdef __WATCOMC__
-    #include <process.h>
-#else
-    #include "clibext.h"
-#endif
 
 #include "wdglb.h"
 #include "wdfunc.h"
 #include "banner.h"
 
-char *Exts[] = { ".exe", ".dll", ".exp", ".nlm", ".qnx", ".elf", ".lib", "obj",
-                NULL };
+static  char    *Exts[] = {
+    ".exe", ".dll", ".exp", ".nlm", ".qnx", ".elf", ".lib", "obj", NULL
+};
+
 char  Fname[ _MAX_FNAME ];
 
 /*
@@ -172,33 +170,12 @@ static int open_files( void )
 /***************************/
 {
     int                 ret;
-    char                listfile[ _MAX_PATH ];
 
     Handle = open( Name, O_RDONLY | O_BINARY, 0 );
     if( Handle != -1 ) {
         ret = setjmp( Se_env );
         if( ret == 0 ) {
-            if( Options_dmp & LST_REQD ) {
-                if( Lstf == NULL ) {
-                    _makepath( listfile, NULL, NULL, Fname, ".lst" );
-                    Lhandle = open( listfile, O_WRONLY | O_CREAT |
-                            O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
-                } else {
-                    Lhandle = open( Lstf, O_WRONLY | O_CREAT | O_TRUNC,
-                            S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
-                }
-                if( Lhandle == NULL ) {
-                    Options_dmp &= ~LST_REQD;
-                    Wdputslc( "Unable to open list file\n" );
-                }
-                Wdputs( "Module:  " );
-                Wdputs( Name );
-                Wdputs( "\n\n" );
-                dmp_exe();
-                close( Lhandle );
-            } else {
-                dmp_exe();
-            }
+            dmp_exe();
         }
         close( Handle );
         return( ret );
@@ -224,26 +201,27 @@ static void wbanner( void )
 static void usage( void )
 /***********************/
 {
-    Wdputs( "Usage: wdump [options] <pathname> [options]\n" );
-    Wdputs( "  <pathname> is a DOS .EXE file, a Windows or OS/2 executable or DLL,\n" );
+    Wdputs( "Usage: wdump [-?abdefiqrs] [-A<num>] [-B<off>] [-S<num>] [-W<opt>] <pathname>\n" );
+    Wdputs( "  <pathname> is a DOS EXE file, a Windows or OS/2 executable or DLL,\n" );
     Wdputs( "            a PharLap executable, NLM, a QNX executable,\n" );
     Wdputs( "            an ELF executable, shared library or object file,\n" );
     Wdputs( "            or a COFF object.\n" );
-    Wdputs( "  <pathname> has default extension of .EXE, .DLL, .EXP, .NLM, .QNX and .ELF\n" );
+    Wdputs( "  <pathname> has default extension of .exe, .dll, .exp, .nlm, .qnx and .elf\n" );
     Wdputs( "  options:\n" );
-    Wdputs( "        -l[=<listfile>] information dumped in a listing file\n" );
-    Wdputs( "        -p information dumped by page.  <enter>: next line,\n" );
-    Wdputs( "            <esc> or 'q': quit, any other key: next page\n" );
-    Wdputs( "        -q quiet dump - don't write banner\n" );
-//    Wdputs( "        -m causes Microsoft debugging information to be dumped\n" );
-    Wdputs( "        -s[=<segnum>] the segments'( resp. that segment's )\n" );
-    Wdputs( "            info is dumped\n" );
-    Wdputs( "        -r causes more resource information to be dumped\n" );
+    Wdputs( "        -a causes all segment, resource and fixup info to be dumped\n" );
+    Wdputs( "        -A<segnum> like -a but only applies to segment <segnum>\n" );
+    Wdputs( "        -b causes binary dump of the entire file\n" );
+    Wdputs( "        -B<hexoff> causes binary dump beginning at offset in hex\n" );
+    Wdputs( "        -d causes debugging information to be dumped\n" );
+    Wdputs( "        -e causes executable information to be dumped as well\n" );
     Wdputs( "        -f causes fixup information to be dumped\n" );
-    Wdputs( "        -a[=<segnum>] causes segment, resource and fixup info to be dumped\n" );
     Wdputs( "        -i dump export information for PE DLLs\n" );
-    Wdputs( "        -b[=<hexoff>] causes binary dump [beginning at offset in hex]\n" );
-    Wdputs( "        -d causes WATCOM debugging information to be dumped\n" );
+//    Wdputs( "        -m causes Microsoft debugging information to be dumped\n" );
+    Wdputs( "        -q quiet dump - don't write banner\n" );
+    Wdputs( "        -r causes more resource information to be dumped\n" );
+    Wdputs( "        -s causes segments' data to be dumped\n" );
+    Wdputs( "        -S <segnum> like -s but only applies to segment <segnum>\n" );
+    Wdputs( "        -W<opts> causes WATCOM debugging information to be dumped\n" );
     Wdputs( "           a : show addr infomation\n" );
     Wdputs( "           g : show global infomation\n" );
     Wdputs( "           l : show locals (only if m specified)\n" );
@@ -251,7 +229,148 @@ static void usage( void )
     Wdputs( "           n : show line numbers (only if m specified)\n" );
     Wdputs( "           t : show types (only if m specified)\n" );
     Wdputs( "           x : show all information\n" );
-    Wdputs( "        -e causes executable information to be dumped as well\n" );
+}
+
+/*
+ * debug options
+ */
+static void debug_opts( char ch )
+/*******************************/
+{
+    switch( tolower( ch ) ) {
+    case 'x':
+        Debug_options = 0xff;
+        break;
+    case 'm':
+        Debug_options |= MODULE_INFO;
+        break;
+    case 'g':
+        Debug_options |= GLOBAL_INFO;
+        break;
+    case 'a':
+        Debug_options |= ADDR_INFO;
+        break;
+    case 'n':
+        Debug_options |= LINE_NUMS;
+        break;
+    case 'l':
+        Debug_options |= LOCALS;
+        break;
+    case 't':
+        Debug_options |= TYPES;
+        break;
+    }
+}
+
+static int parse_options( int argc, char * const *argv )
+/******************************************************/
+{
+    int     c;
+    char    *arg;
+
+    Options_dmp = EXE_INFO;
+    Segspec = 0;
+    Hexoff = 0;
+
+    while( 1 ) {
+        while( (c = getopt( argc, argv, ":aA:bB:defiqrsS:W:" )) != -1 ) {
+            switch( c ) {
+            case 'A':
+                Options_dmp |= FIX_DMP | RESRC_DMP | EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
+                Segspec = atoi( optarg );
+                if( Segspec == 0 ) {
+                    Options_dmp &= ~OS2_SEG_DMP;
+                } else {
+                    Options_dmp &= ~DOS_SEG_DMP;
+                }
+                break;
+            case 'a':
+                Options_dmp |= FIX_DMP | RESRC_DMP | EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
+                break;
+            case 'B':
+                Hexoff = strtol( optarg, NULL, 16 );
+                /* fall through */
+            case 'b':
+                Options_dmp |= BINARY_DMP;
+                Options_dmp &= ~EXE_INFO;
+                break;
+            case 'd':
+                Options_dmp |= DEBUG_INFO;
+                Options_dmp &= ~EXE_INFO;
+                break;
+            case 'e':
+                Options_dmp |= EXE_INFO;
+                break;
+            case 'f':
+                Options_dmp |= EXE_INFO;
+                Options_dmp |= FIX_DMP;
+                break;
+            case 'i':
+                Options_dmp |= IMPORT_LIB;
+                Options_dmp |= QUIET;
+                Options_dmp &= ~EXE_INFO;
+                break;
+#if 0
+            case 'm':
+                Options_dmp |= DEBUG_INFO;
+                Options_dmp &= ~EXE_INFO;
+                Microsoft_dbi = TRUE;
+                break;
+#endif
+            case 'q':
+                Options_dmp |= QUIET;
+                break;
+            case 'r':
+                Options_dmp |= EXE_INFO | RESRC_DMP;
+                break;
+            case 'S':
+                Options_dmp |= EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
+                Segspec = atoi( optarg );
+                if( Segspec == 0 ) {
+                    Options_dmp &= ~OS2_SEG_DMP;
+                } else {
+                    Options_dmp &= ~DOS_SEG_DMP;
+                }
+                break;
+            case 's':
+                Options_dmp |= EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
+                break;
+            case 'W':
+                Options_dmp |= DEBUG_INFO;
+                Options_dmp &= ~EXE_INFO;
+                Debug_options = 0;
+                arg = optarg;
+                while( islower( *arg ) || isupper( *arg ) ) {
+                    debug_opts( *arg++ );
+                }
+                break;
+            case ':':
+                Wdputs( "wdump: option requires argument: -" );
+                Wdputc( optopt );
+                Wdputslc( "\n" );
+                return( 1 );
+            case '?':
+                usage();
+                return( 1 );
+            default:
+                Wdputs( "wdump: invalid option: -" );
+                Wdputc( c );
+                Wdputslc( "\n" );
+                return( 1 );
+            }
+        }
+        if( optind < argc ) {
+            if( Name == NULL ) {
+                Name = argv[optind++];
+            } else {
+                Wdputs( "wdump: multiple pathnames not accepted\n" );
+                return( 1 );
+            }
+        } else {
+            break;
+        }
+    }
+    return( 0 );
 }
 
 /*
@@ -259,35 +378,20 @@ static void usage( void )
  * for WLINK and WD (nee WVIDEO)
  */
 
-#ifndef __WATCOMC__
-char **_argv;
-#endif
 int main( int argc, char * const *argv )
 /**************************************/
 {
     int     found_file;
 
-#ifndef __WATCOMC__
-    _argv = (char**)argv;
-#endif
-
-    Line_count = 0;
     WSize = 0;
     Write_buff[WSize] = 0;
-    Cmd = Wmalloc( BUFFERSIZE );
-    getcmd( Cmd );
-    Parse_option();
-    if( !(Options_dmp & QUIET) ) {
-        if( Options_dmp & LST_REQD ) {
-            Options_dmp &= ~LST_REQD;
-            wbanner();
-            Options_dmp |= LST_REQD;
-        } else {
-            wbanner();
-        }
+    if( parse_options( argc, argv ) ) {
+        return( 1 );
     }
-    if( *Name == '\0' ){
-        Options_dmp |= PAGE_DMP;
+    if( !(Options_dmp & QUIET) ) {
+        wbanner();
+    }
+    if( Name == NULL || *Name == '\0' ) {
         usage();
         return( 1 );
     }
@@ -295,13 +399,10 @@ int main( int argc, char * const *argv )
     if( found_file ) {
         return( open_files() );
     }
-    Options_dmp &= ~LST_REQD;   // output usage to STDOUT
-    Options_dmp |= PAGE_DMP;
     Wdputs( "Could not open '" );
     Wdputs( Name );
     Wdputs( "': " );
     Wdputslc( strerror( errno ) );
-    Wdputslc( "\n\n" );
-    usage();
+    Wdputslc( "\n" );
     return( 1 );
 }

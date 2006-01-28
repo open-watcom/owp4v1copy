@@ -35,9 +35,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <limits.h>
-#ifdef __WATCOMC__
-    #include <conio.h>
-#endif
 
 #include "wdglb.h"
 #include "wdfunc.h"
@@ -116,10 +113,10 @@ void Wlseek( long offset )
     Sizeleft = Num_read - ( offset % BSIZE );
 }
 
-long WFileSize()
-/**************/
+long WFileSize( void )
+/********************/
 {
-    return filelength( Handle );
+    return( filelength( Handle ) );
 }
 
 /*
@@ -128,17 +125,7 @@ long WFileSize()
 void Wdputc( char c )
 /*******************/
 {
-    if( Options_dmp & LST_REQD ) {
-        Write_buff[WSize] = c;
-        WSize++;
-        if( WSize == BSIZE ) {
-            write( Lhandle, Write_buff, BSIZE );
-            WSize = 0;
-            Write_buff[WSize] = 0;
-        }
-    } else {
-        putchar( c );
-    }
+    putchar( c );
 }
 
 /*
@@ -147,65 +134,16 @@ void Wdputc( char c )
 void Wdputs( char *buf )
 /**********************/
 {
-    if( Options_dmp & LST_REQD ) {
-        int     len, len2;
-
-        len = strlen( buf );
-        if( WSize + strlen( buf ) >= BSIZE ) {
-            len2 = BSIZE - WSize ;
-            memcpy( &Write_buff[WSize], buf, len2 );
-            write( Lhandle, Write_buff, BSIZE );
-            memcpy( &Write_buff[0], &buf[len2], len - len2 );
-            WSize = len - len2;
-        } else {
-            memcpy( &Write_buff[WSize], buf, len );
-            WSize += len;
-        }
-    } else {
-        fputs( buf, stdout );
-    }
+    fputs( buf, stdout );
 }
 
-int Ch = 0;
-
 /*
- * writeout a msg - pause after NUMLINE lines printed if required
+ * writeout a msg - includes newline
  */
-void Wdputslc( char * buf )
-/*************************/
+void Wdputslc( char *buf )
+/************************/
 {
-    if( Options_dmp & LST_REQD ) {
-        int len, len2;
-
-        len = strlen( buf );
-        if( WSize + strlen( buf ) >= BSIZE ) {
-            len2 = BSIZE - WSize ;
-            memcpy( &Write_buff[WSize], buf, len2 );
-            write( Lhandle, Write_buff, BSIZE );
-            memcpy( &Write_buff[0], &buf[len2], len - len2 );
-            WSize = len - len2;
-        } else {
-            memcpy( &Write_buff[WSize], buf, len );
-            WSize += len;
-        }
-    } else {
-        fputs( buf, stdout );
-        if( Options_dmp & PAGE_DMP ) {
-            Line_count++;
-            if( Line_count == NUMLINE || Ch == 13 ) {
-                Line_count = 0;
-#ifdef __WATCOMC__
-                Ch = getch();
-#else
-                Ch = getchar();
-#endif
-            }
-            if ( Ch == 113 || Ch == 27 ) {
-                close( Handle );
-                exit( 1 );
-            }
-        }
-    }
+    fputs( buf, stdout );
 }
 
 void Dump_header( char *data, char **msg )

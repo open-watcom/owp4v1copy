@@ -37,7 +37,7 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char *os2_exe_msg[] = {
+static  char    *os2_exe_msg[] = {
     "2link version                                         = ",
     "2offset of entry table                                = ",
     "2length of entry table                                = ",
@@ -71,7 +71,7 @@ char *os2_exe_msg[] = {
     NULL
 };
 
-char *os2_386_msg[] = {
+static  char    *os2_386_msg[] = {
     "1byte order (0==little endian, 1==big endian)      = ",
     "1word order       \"                \"               = ",
     "4linear EXE format level                           = ",
@@ -121,7 +121,7 @@ char *os2_386_msg[] = {
     NULL
 };
 
-char *os2_obj_msg[] = {
+static  char    *os2_obj_msg[] = {
     "4virtual memory size              = ",
     "4          relocation base address          = ",
     "4          object flag bits                 = ",
@@ -131,7 +131,7 @@ char *os2_obj_msg[] = {
     NULL
 };
 
-char *map_flgs[] = {
+static  char    *map_flgs[] = {
     "Valid", "Iterated", "Invalid", "Zeroed", "Range", "Compressed"
 };
 
@@ -139,8 +139,8 @@ char *map_flgs[] = {
 /*
  * dump the NE module flag word
  */
-void dmp_mod_flag_ne( unsigned_16 flag, unsigned_8 target )
-/*********************************************************/
+static void dmp_mod_flag_ne( unsigned_16 flag, unsigned_8 target )
+/****************************************************************/
 {
     Wdputs( "Module Flag Word = " );
     if( flag & OS2_IS_DLL ) {
@@ -217,8 +217,8 @@ void dmp_mod_flag_ne( unsigned_16 flag, unsigned_8 target )
 /*
  * dump the LE/LX module flag word
  */
-void dmp_mod_flag_lx( unsigned_32 flag, unsigned_16 ostype )
-/**********************************************************/
+static void dmp_mod_flag_lx( unsigned_32 flag, unsigned_16 ostype )
+/*****************************************************************/
 {
     Wdputs( "Module Flags = " );
     if( (flag & OSF_MODTYPE_MASK) == OSF_VIRT_DEVICE ) {

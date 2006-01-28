@@ -37,6 +37,7 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
+
 extern struct int_entry_pnt     *Entry_pnts = NULL;
 
 /*
@@ -271,6 +272,58 @@ static void dmp_ent_tab( unsigned_32 ent_tab )
 }
 
 /*
+ * allocate a new int_entry_pnt structure
+ */
+static struct int_entry_pnt *new_ent_pnt( void )
+/**********************************************/
+{
+    struct int_entry_pnt    *new_ent;
+
+    new_ent = Wmalloc( sizeof( struct int_entry_pnt ) );
+    new_ent->next = Entry_pnts;
+    Entry_pnts = new_ent;
+    return( new_ent );
+}
+
+static void *dmp_fixed_seg_ent_pnts( unsigned_16 num_ent_pnts,
+        void *ent_pnts, unsigned_16 ent_pnt_index, unsigned_16 seg_num )
+/**********************************************************************/
+{
+    struct fixed_record             *fix_ent;
+    struct int_entry_pnt            *new;
+
+    fix_ent = ent_pnts;
+    for( ; num_ent_pnts != 0; num_ent_pnts-- ) {
+        new = new_ent_pnt();
+        new->ordinal = ent_pnt_index++;
+        new->seg_num = seg_num;
+        new->offset = fix_ent->entry;
+        new->ent_flag = fix_ent->info;
+        ++fix_ent;
+    }
+    return( fix_ent );
+}
+
+static void *dmp_movable_seg_ent_pnts( unsigned_16 num_ent_pnts,
+                        void *ent_pnts, unsigned_16 ent_pnt_index )
+/*****************************************************************/
+{
+    struct movable_record           *mov_ent;
+    struct int_entry_pnt            *new;
+
+    mov_ent = ent_pnts;
+    for( ; num_ent_pnts != 0; num_ent_pnts-- ) {
+        new = new_ent_pnt();
+        new->ordinal = ent_pnt_index++;
+        new->ent_flag = mov_ent->info;
+        new->seg_num = mov_ent->entrynum;
+        new->offset = mov_ent->entry;
+        ++mov_ent;
+    }
+    return( mov_ent );
+}
+
+/*
  * Parse the Entry Table
  */
 static void prs_ent_tab( unsigned_32 ent_tab, unsigned_16 ent_tab_len )
@@ -307,58 +360,6 @@ static void prs_ent_tab( unsigned_32 ent_tab, unsigned_16 ent_tab_len )
         ent_pnt_index += num_ent_pnts;
     }
     free( init_ent_bund );
-}
-
-void *dmp_fixed_seg_ent_pnts( unsigned_16 num_ent_pnts,
-        void *ent_pnts, unsigned_16 ent_pnt_index, unsigned_16 seg_num )
-/**********************************************************************/
-{
-    struct fixed_record             *fix_ent;
-    struct int_entry_pnt            *new;
-
-    fix_ent = ent_pnts;
-    for( ; num_ent_pnts != 0; num_ent_pnts-- ) {
-        new = new_ent_pnt();
-        new->ordinal = ent_pnt_index++;
-        new->seg_num = seg_num;
-        new->offset = fix_ent->entry;
-        new->ent_flag = fix_ent->info;
-        ++fix_ent;
-    }
-    return( fix_ent );
-}
-
-void *dmp_movable_seg_ent_pnts( unsigned_16 num_ent_pnts,
-                        void *ent_pnts, unsigned_16 ent_pnt_index )
-/*****************************************************************/
-{
-    struct movable_record           *mov_ent;
-    struct int_entry_pnt            *new;
-
-    mov_ent = ent_pnts;
-    for( ; num_ent_pnts != 0; num_ent_pnts-- ) {
-        new = new_ent_pnt();
-        new->ordinal = ent_pnt_index++;
-        new->ent_flag = mov_ent->info;
-        new->seg_num = mov_ent->entrynum;
-        new->offset = mov_ent->entry;
-        ++mov_ent;
-    }
-    return( mov_ent );
-}
-
-/*
- * allocate a new int_entry_pnt structure
- */
-struct int_entry_pnt *new_ent_pnt( void )
-/***************************************/
-{
-    struct int_entry_pnt    *new_ent;
-
-    new_ent = Wmalloc( sizeof( struct int_entry_pnt ) );
-    new_ent->next = Entry_pnts;
-    Entry_pnts = new_ent;
-    return( new_ent );
 }
 
 static void dmp_an_ord( struct int_entry_pnt *find )

@@ -39,7 +39,8 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char * reloc_addr_type[] = {
+
+static  char    *reloc_addr_type[] = {
     "OFF",
     "BAS",
     "PTR",
@@ -51,8 +52,8 @@ char * reloc_addr_type[] = {
 /*
  * Dump a segment
  */
-static void dmp_segment( struct segment_record * seg )
-/****************************************************/
+static void dmp_segment( struct segment_record *seg )
+/***************************************************/
 {
     unsigned_32           file_off;
     unsigned_32           iter;

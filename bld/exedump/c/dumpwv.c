@@ -40,11 +40,10 @@
 #include "dumpwv.h"
 #include "wdfunc.h"
 
-static int              currSect;
 
-char *OptEnvVar = "DUMPWV";
+static  int     currSect;
 
-char *sdh_msg[] = {
+static  char    *sdh_msg[] = {
     "4  Module info offset   = ",
     "4  Global info offset   = ",
     "4  Address info offset  = ",

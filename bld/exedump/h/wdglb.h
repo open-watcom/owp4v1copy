@@ -63,14 +63,12 @@
 #define RESRC_DMP       0x0002  /* dump the resources      */
 #define DOS_SEG_DMP     0x0004
 #define OS2_SEG_DMP     0x0008
-#define PAGE_DMP        0x0010  /* dump by page            */
-#define LST_REQD        0x0020  /* dump in list file       */
-#define DEBUG_INFO      0x0040
-#define EXE_INFO        0x0080
-#define HAS_NEW_EXE     0x0100
-#define QUIET           0x0200
-#define IMPORT_LIB      0x0400
-#define BINARY_DMP      0x0800
+#define DEBUG_INFO      0x0010
+#define EXE_INFO        0x0020
+#define HAS_NEW_EXE     0x0040
+#define QUIET           0x0080
+#define IMPORT_LIB      0x0100
+#define BINARY_DMP      0x0200
 
 #define MODULE_INFO     0x01
 #define GLOBAL_INFO     0x02
@@ -89,7 +87,6 @@ extern char                     Write_buff[BSIZE];      /* BSIZE buffer    */
 extern char                     *Wbuff;         /* buffer          */
 extern char                     *Lang_lst;      /* buffer          */
 extern int                      Num_read;       /* number of bytes read    */
-extern int                      Line_count;     /* number of lines written */
 extern unsigned_32              Data_count;     /* used in OS2, QNX and ELF*/
 extern unsigned_32              Curr_sectoff;
 extern unsigned_32              Coff_off;       // offset of coff file */
@@ -117,12 +114,10 @@ extern unsigned_16              Resrc_shift_cnt;/* the restab shift        */
 extern unsigned_16              Options_dmp;
 extern unsigned_8               Debug_options;
 extern char                     *Name;          /* file name               */
-extern char                     *Lstf;          /* list file name          */
 extern unsigned_32              Load_len;       /* start of debugging info */
 extern unsigned_32              Resrc_end;      /* end of resrc table      */
 extern jmp_buf                  Se_env;         /* for the setjmp          */
 extern int                      Form;
-extern char                     *Cmd;
 
 enum {
     FORM_NE,

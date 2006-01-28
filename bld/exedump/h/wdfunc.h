@@ -47,7 +47,6 @@ extern bool Dmp_pe_tab( void );
  * novexe.c
  */
 extern bool Dmp_nlm_head( void );
-extern unsigned_32 dmp_nlm_head2( void );
 
 /*
  * pharexe.c
@@ -111,7 +110,6 @@ extern void Dmp_exp_tab( void );
  */
 extern void Dmp_fixups( void );
 extern void Dmp_resources( void );
-extern res_name get_name( unsigned_32 );
 
 /*
  * wdseg.c
@@ -123,9 +121,6 @@ extern void Dmp_seg_tab( void );
  */
 extern void Dmp_ne_tbls( void );
 extern void Dmp_le_lx_tbls( void );
-extern void *dmp_fixed_seg_ent_pnts( unsigned_16, void *, unsigned_16, unsigned_16 );
-extern void *dmp_movable_seg_ent_pnts( unsigned_16, void *, unsigned_16 );
-extern struct int_entry_pnt *new_ent_pnt( void );
 extern void Dmp_ordinal( unsigned_16 );
 
 /*
@@ -133,10 +128,6 @@ extern void Dmp_ordinal( unsigned_16 );
  */
 extern void Dmp_fixrec_tab( unsigned_32 );
 extern void Dmp_fixpage_tab( unsigned_32, unsigned_32 );
-extern unsigned_32 internal_ref( unsigned_8, unsigned_8, unsigned_32 );
-extern unsigned_32 imp_ord_ref( unsigned_8, unsigned_32 );
-extern unsigned_32 imp_name_ref( unsigned_8, unsigned_32 );
-extern unsigned_32 int_ent_ref( unsigned_8, unsigned_32 );
 
 /*
  * wdata.c
@@ -158,7 +149,6 @@ extern void Putdecs( signed_16 );
 extern void Putdecl( unsigned_16, unsigned_16 );
 extern void Putdecbz( unsigned_16, unsigned_16);
 extern void Parse_option( void );
-extern char *get_file( bool );
 
 /*
  * dosexe.c
@@ -184,7 +174,6 @@ extern void Banner( char * );
  */
 extern void Dmp_resrc_tab( void );
 extern void Dmp_resrc2_tab( void );
-extern char *get_resrc_nam( unsigned_16 );
 
 /*
  * coff.c

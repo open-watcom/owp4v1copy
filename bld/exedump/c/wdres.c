@@ -37,12 +37,13 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
+
 typedef struct os2_res_entry {
     unsigned_16         type_id;
     unsigned_16         name_id;
 } os2_res_entry;
 
-char *resource_type[] = {
+static  char    *resource_type[] = {
     "Unkown resource type\n",
     "Cursor\n",
     "Bitmap\n",
@@ -61,7 +62,7 @@ char *resource_type[] = {
     "Nametable\n"
 };
 
-char *resource_type_os2[] = {
+static  char    *resource_type_os2[] = {
     "Unkown resource type\n",
     "Pointer\n",
     "Bitmap\n",
@@ -87,6 +88,23 @@ char *resource_type_os2[] = {
     "Default icon\n"
 };
 
+
+/*
+ * get a resource type name
+ */
+static char *get_resrc_nam( unsigned_16 offset )
+/**********************************************/
+{
+    unsigned_8      num_chars;
+    char            *name;
+
+    Wlseek( New_exe_off + Os2_head.resource_off + offset );
+    Wread( &num_chars, sizeof( unsigned_8 ) );
+    name = Wmalloc( num_chars + 1 );
+    Wread( name, num_chars );
+    name[ num_chars ] = '\0';
+    return( name );
+}
 
 /*
  * printout a resource name
@@ -216,23 +234,6 @@ static void dmp_resrc_type_nam( unsigned_16 res_type )
         Wdputslc( "\n" );
         free( name );
     }
-}
-
-/*
- * get a resource type name
- */
-char *get_resrc_nam( unsigned_16 offset )
-/***************************************/
-{
-    unsigned_8      num_chars;
-    char            *name;
-
-    Wlseek( New_exe_off + Os2_head.resource_off + offset );
-    Wread( &num_chars, sizeof( unsigned_8 ) );
-    name = Wmalloc( num_chars + 1 );
-    Wread( name, num_chars );
-    name[ num_chars ] = '\0';
-    return( name );
 }
 
 /*

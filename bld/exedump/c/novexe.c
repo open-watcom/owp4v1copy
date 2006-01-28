@@ -36,7 +36,8 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char * nlm_exe_msg[] = {
+
+static  char    *nlm_exe_msg[] = {
     "4code image offset                         = ",
     "4code image size                           = ",
     "4data image offset                         = ",
@@ -63,7 +64,7 @@ char * nlm_exe_msg[] = {
     NULL
 };
 
-char * nlm_date_msg[] = {
+static  char    *nlm_date_msg[] = {
     "4major version number                      = ",
     "4minor version number                      = ",
     "4revision                                  = ",
@@ -73,7 +74,7 @@ char * nlm_date_msg[] = {
     NULL
 };
 
-char * nlm_ext_msg[] = {
+static  char    *nlm_ext_msg[] = {
     "4language id                               = ",
     "4message file offset                       = ",
     "4message file length                       = ",
@@ -267,6 +268,46 @@ static void dmp_extended( void )
 }
 
 /*
+ * Dump variable size part of Nlm Executable Header.
+ */
+static unsigned_32 dmp_nlm_head2( void )
+/**************************************/
+{
+    unsigned_32     offset;
+    nlm_header_2    nlm_head2;
+
+    Wread( nlm_head2.descriptionText, Nlm_head.descriptionLength + 1 );
+    Wdputs( "description text                          = " );
+    Wdputs( nlm_head2.descriptionText );
+    offset = Nlm_head.descriptionLength + 1;
+    Wread( &nlm_head2.stackSize, sizeof( unsigned_32 ) );
+    Wread( &nlm_head2.reserved, sizeof( unsigned_32 ) );
+    Wdputslc( "\nstack size                                = " );
+    Puthex( nlm_head2.stackSize, 8 );
+    Wdputslc( "H\nreserved                                  = " );
+    Puthex( nlm_head2.reserved, 8 );
+    offset += 2 * sizeof( unsigned_32 );
+    Wread( nlm_head2.oldThreadName, OLD_THREAD_NAME_LENGTH );
+    nlm_head2.oldThreadName[OLD_THREAD_NAME_LENGTH] = '\0';
+    Wdputslc( "H\nold thread name                           = " );
+    Wdputs( nlm_head2.oldThreadName );
+    offset += OLD_THREAD_NAME_LENGTH;
+    Wread( &nlm_head2.screenNameLength, sizeof( unsigned_8 ) );
+    Wread( nlm_head2.screenName, nlm_head2.screenNameLength + 1 );
+    Wdputslc( "\nscreen name                               = " );
+    Wdputs( nlm_head2.screenName );
+    offset += nlm_head2.screenNameLength + 1;
+    Wread( &nlm_head2.threadNameLength, sizeof( unsigned_8 ) );
+    offset += 2 * sizeof( unsigned_8 );
+    Wread( nlm_head2.threadName, nlm_head2.threadNameLength + 1 );
+    Wdputslc( "\nthread name                               = " );
+    Wdputs( nlm_head2.threadName );
+    offset += nlm_head2.threadNameLength + 1;
+    Wdputslc( "\n" );
+    return( offset );
+}
+
+/*
  * Dump the Nlm Executable Header, if any.
  */
 bool Dmp_nlm_head( void )
@@ -332,44 +373,4 @@ bool Dmp_nlm_head( void )
         dmp_extended();
     }
     return( 1 );
-}
-
-/*
- * Dump variable size part of Nlm Executable Header.
- */
-unsigned_32 dmp_nlm_head2( void )
-/*******************************/
-{
-    unsigned_32     offset;
-    nlm_header_2    nlm_head2;
-
-    Wread( nlm_head2.descriptionText, Nlm_head.descriptionLength + 1 );
-    Wdputs( "description text                          = " );
-    Wdputs( nlm_head2.descriptionText );
-    offset = Nlm_head.descriptionLength + 1;
-    Wread( &nlm_head2.stackSize, sizeof( unsigned_32 ) );
-    Wread( &nlm_head2.reserved, sizeof( unsigned_32 ) );
-    Wdputslc( "\nstack size                                = " );
-    Puthex( nlm_head2.stackSize, 8 );
-    Wdputslc( "H\nreserved                                  = " );
-    Puthex( nlm_head2.reserved, 8 );
-    offset += 2 * sizeof( unsigned_32 );
-    Wread( nlm_head2.oldThreadName, OLD_THREAD_NAME_LENGTH );
-    nlm_head2.oldThreadName[OLD_THREAD_NAME_LENGTH] = '\0';
-    Wdputslc( "H\nold thread name                           = " );
-    Wdputs( nlm_head2.oldThreadName );
-    offset += OLD_THREAD_NAME_LENGTH;
-    Wread( &nlm_head2.screenNameLength, sizeof( unsigned_8 ) );
-    Wread( nlm_head2.screenName, nlm_head2.screenNameLength + 1 );
-    Wdputslc( "\nscreen name                               = " );
-    Wdputs( nlm_head2.screenName );
-    offset += nlm_head2.screenNameLength + 1;
-    Wread( &nlm_head2.threadNameLength, sizeof( unsigned_8 ) );
-    offset += 2 * sizeof( unsigned_8 );
-    Wread( nlm_head2.threadName, nlm_head2.threadNameLength + 1 );
-    Wdputslc( "\nthread name                               = " );
-    Wdputs( nlm_head2.threadName );
-    offset += nlm_head2.threadNameLength + 1;
-    Wdputslc( "\n" );
-    return( offset );
 }

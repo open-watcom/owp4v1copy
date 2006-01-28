@@ -39,7 +39,8 @@
 #include "dumpwv.h"
 #include "wdfunc.h"
 
-char *mdh_msg[] = {
+
+static  char    *mdh_msg[] = {
     "1EXE major                 = ",
     "1EXE minor                 = ",
     "1OBJ major                 = ",

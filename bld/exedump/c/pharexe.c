@@ -36,7 +36,8 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char *phar_exe_msg[] = {
+
+static  char    *phar_exe_msg[] = {
     "2file size mod 512                         = ",
     "2file size in blocks                       = ",
     "2number of relocation items                = ",
@@ -52,7 +53,7 @@ char *phar_exe_msg[] = {
     NULL
 };
 
-char *phar_ext_msg[] = {
+static  char    *phar_ext_msg[] = {
     "2file format level (1==flat, 2==multi-seg) = ",
     "2header size in bytes                      = ",
     "4file size in bytes                        = ",
@@ -90,7 +91,7 @@ char *phar_ext_msg[] = {
     NULL
 };
 
-char *rtp_blk_msg[] = {
+static  char    *rtp_blk_msg[] = {
     "2-MINREAL   switch value                   = ",
     "2-MAXREAL   switch value                   = ",
     "2-MINIBUF   switch value                   = ",
@@ -104,7 +105,7 @@ char *rtp_blk_msg[] = {
     NULL
 };
 
-char *tss_msg[] = {
+static  char    *tss_msg[] = {
     "2        LINK TO PREV TSS    = ",
     "2        zero                = ",
     "4        ESP0                = ",

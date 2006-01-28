@@ -37,7 +37,8 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char *pe_exe_msg[] = {
+
+static  char    *pe_exe_msg[] = {
     "2cpu type                                        = ",
     "2number of object entries                        = ",
     "4time/date stamp                                 = ",
@@ -78,7 +79,7 @@ char *pe_exe_msg[] = {
     NULL
 };
 
-char *pe_obj_msg[] = {
+static  char    *pe_obj_msg[] = {
     "4          virtual memory size                = ",
     "4          relative virtual address           = ",
     "4          physical size of initialized data  = ",
@@ -90,7 +91,7 @@ char *pe_obj_msg[] = {
     NULL
 };
 
-char *PEHeadFlags[] = {
+static  char    *PEHeadFlags[] = {
     "RELOCS_STRIPPED",
     "EXECUTABLE",
     "LINES_STRIPPED",
@@ -109,7 +110,7 @@ char *PEHeadFlags[] = {
     "BIG_ENDIAN"
 };
 
-char *PEObjFlags[] = {
+static  char    *PEObjFlags[] = {
     "DUMMY",
     "NOLOAD",
     "GROUPED",

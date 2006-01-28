@@ -37,7 +37,8 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char *coff_hdr_msg[] = {
+
+static  char    *coff_hdr_msg[] = {
     "2cpu type                                        = ",
     "2number of object entries                        = ",
     "4time/date stamp                                 = ",

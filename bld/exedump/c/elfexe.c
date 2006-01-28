@@ -37,7 +37,8 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
-char *elf_exe_msg[] = {
+
+static  char    *elf_exe_msg[] = {
     "2file type (i.e. object, executable file)    = ",
     "2required architecture                       = ",
     "4version of the file                         = ",
@@ -54,7 +55,7 @@ char *elf_exe_msg[] = {
     NULL
 };
 
-char *elf_prog_msg[] = {
+static  char    *elf_prog_msg[] = {
     "4type of segment                             = ",
     "4offset of segment from beginning of file    = ",
     "4segment virtual address                     = ",
@@ -66,7 +67,7 @@ char *elf_prog_msg[] = {
     NULL
 };
 
-char *elf_sec_msg[] = {
+static  char    *elf_sec_msg[] = {
     "4name of the section                         = ",
     "4section type                                = ",
     "4flags                                       = ",
