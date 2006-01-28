@@ -80,7 +80,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
 #endif
         m = *s1max;
         for( ; tc1 = *p1; ++p1 ) {
-            if( !(  __check_constraint_maxsize_msg( msg, m ) ) ) {
+            if( ! ((m == 0) ? ( msg = "no start of token found" ), 0 : 1 ) ) {
                break;                                   /* limit reached, quit */
             }
 
@@ -107,7 +107,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
         str = p1;                                       /* start of token */
 
         for( ; tc1 = *p1; ++p1 ) {
-            if( !(  __check_constraint_maxsize_msg( msg, m ) ) ) {
+            if( ! ((m == 0) ? ( msg = "no closing token delimiter found" ), 0 : 1 ) ) {
                break;                                   /* limit reached, quit */
             }
 
