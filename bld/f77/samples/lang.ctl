@@ -19,6 +19,7 @@ cdsay .
 <CPCMD> <DEVDIR>/f77/src/os2/*.*        <RELROOT>/rel2/src/fortran/os2/
 <CPCMD> <DEVDIR>/f77/samples/os2/*.*    <RELROOT>/rel2/samples/fortran/os2/
 <CPCMD> <DEVDIR>/f77/samples/os2/rexx/*.*       <RELROOT>/rel2/samples/fortran/os2/rexx/
+<CPCMD> <DEVDIR>/f77/samples/mtdll/*.*          <RELROOT>/rel2/samples/fortran/mtdll/
 <CPCMD> <DEVDIR>/f77/samples/mthread/mthrdos2.for       <RELROOT>/rel2/samples/fortran/os2/mthread.for
 <CPCMD> <DEVDIR>/f77/samples/mthread/makefile.os2       <RELROOT>/rel2/samples/fortran/os2/makefile
 <CPCMD> <DEVDIR>/f77/samples/mthread/mthrdnt.for        <RELROOT>/rel2/samples/fortran/win32/mthread.for

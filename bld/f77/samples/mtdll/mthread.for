@@ -1,15 +1,13 @@
 c$ifdef nt
-c$pragma aux __stdcall "_*" parm routine [] \
-c                           value struct struct caller [] \
-c                           modify [eax ebx ecx edx]
 c$pragma aux (__stdcall) Sleep parm( value*4 )
-c$pragma aux (__stdcall) CreateMutex "_*A" parm( reference, value*4, reference )
+c$pragma aux (__stdcall) CreateMutexA parm( reference, value*4, reference )
 c$pragma aux (__stdcall) CloseHandle parm( value*4 )
-c$pragma aux (__stdcall) WaitForSingleObject parm( value*4 )
+c$pragma aux (__stdcall) WaitForSingleObject parm( value*4, value*4 )
 c$pragma aux (__stdcall) ReleaseMutex parm( value*4 )
 c$else
 c$pragma aux (__syscall) DosSleep parm( value*4 )
 c$pragma aux (__syscall) DosEnterCritSec
+c$pragma aux (__syscall) DosExitCritSec
 c$pragma aux (__syscall) DosEnterExitSec
 c$pragma aux (__syscall) DosKillThread parm( value*4 )
 c$endif
@@ -29,7 +27,7 @@ c$endif
         integer i, threadid, beginthread, __getmaxthreads
         external a_thread, dll_thread
 c$ifdef nt
-        integer CreateMutex
+        integer CreateMutexA
 c$endif
 
         MaxThreads = __getmaxthreads()
@@ -37,7 +35,7 @@ c$endif
         NumThreads = 0
         HoldThreads = .true.
 c$ifdef nt
-        ThreadSem = CreateMutex( 0, 0, 0 )
+        ThreadSem = CreateMutexA( 0, 0, 0 )
 c$endif
         ! main thread counts as 1
 
