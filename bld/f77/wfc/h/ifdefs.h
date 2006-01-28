@@ -42,10 +42,11 @@ typedef enum {
 
 #include "ifdefn.h"
 
-    IF_MAX_NAME,
+    IF_NAME_COUNT,
 
-    IF_NO_MORE = 0xfe,
-    MAGIC      = 0xff
+    IF_MAX_NAME = IF_NAME_COUNT - 1,
+    IF_NO_MORE  = 0xfe,
+    MAGIC       = 0xff
 } IFF;
 
 #endif

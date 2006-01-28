@@ -54,6 +54,6 @@ STMT    RecStmtKW( void ) {
 IOKW    RecIOKW( void ) {
 //=======================
 
-    return( KwLookUp( IOKeywords, IO_KW_MAX - 1, CITNode->opnd,
+    return( KwLookUp( IOKeywords, IO_KW_MAX, CITNode->opnd,
                       CITNode->opnd_size, TRUE ) );
 }

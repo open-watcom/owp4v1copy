@@ -70,7 +70,7 @@ hw_reg_set  RegValue[] = {
 #include "regsdefn.h"
 };
 
-byte            MaxReg = { sizeof( RegNames ) / sizeof( RegNames[0] ) - 2 };
+byte            MaxReg = { sizeof( RegNames ) / sizeof( RegNames[0] ) - 1 };
 
 #if _CPU == 8086
 

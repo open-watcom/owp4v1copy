@@ -85,14 +85,14 @@ static iff_data __FAR IFFlags[] = {
 int     IFIndex( char *name ) {
 //=============================
 
-    return( KwLookUp( IFNames, IF_MAX_NAME - 1, name, strlen( name ), TRUE ) );
+    return( KwLookUp( IFNames, IF_MAX_NAME, name, strlen( name ), TRUE ) );
 }
 
 
 IFF     IFLookUp( void ) {
 //========================
 
-    return( KwLookUp( IFNames, IF_MAX_NAME - 1, CITNode->opnd, CITNode->opnd_size, TRUE ) );
+    return( KwLookUp( IFNames, IF_MAX_NAME, CITNode->opnd, CITNode->opnd_size, TRUE ) );
 }
 
 

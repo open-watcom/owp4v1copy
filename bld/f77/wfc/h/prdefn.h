@@ -43,4 +43,4 @@ typedef enum {
 #include "stmtdefn.h"
 } STMT;
 
-#define PR_KW_MAX       (PR_WRITE - 1)
+#define PR_KW_MAX       PR_WRITE

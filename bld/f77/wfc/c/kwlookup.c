@@ -52,10 +52,12 @@ int     KwLookUp( void **table, int high, char *id, int id_len, bool exact ) {
     int         low;
     int         kw_len;
 
-    low = 0;
+    // index 0 is reserved
+    // each keyword table has blank first item
+    low = 1;
     while( low <= high ) {
         mid = (low + high) / 2;    // find mid point
-        key = table[ mid + 1 ];
+        key = table[ mid ];
         ident = id;
         for(;;) {
             if( ident == id + id_len )
@@ -69,7 +71,7 @@ int     KwLookUp( void **table, int high, char *id, int id_len, bool exact ) {
         }
         // quit if perfect match
         if( ( ident == id + id_len ) && ( *key == NULLCHAR ) )
-            return( mid+1 );
+            return( mid );
         if( ( ident != id + id_len ) && ( *ident >= *key ) ) {
             // guess string is in 2nd half of subtable
             low = mid + 1;
@@ -83,13 +85,13 @@ int     KwLookUp( void **table, int high, char *id, int id_len, bool exact ) {
     // Look sequentially through table (going backwards).
     mid = high;
     while( mid >= 0 ) {
-        key = table[ mid + 1 ];
+        key = table[ mid ];
         if( *id > *key )
             break;
         kw_len = strlen( key );
         if( kw_len <= id_len ) {
             if( memcmp( id, key, kw_len ) == 0 ) {
-                return( mid + 1 );
+                return( mid );
             }
         }
         mid--;
