@@ -1597,6 +1597,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)memcpy.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)memcpy_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)memicmp.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)memmove.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)memmov_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mempty.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)memset.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mfromint.gml &

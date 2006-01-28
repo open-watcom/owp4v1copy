@@ -540,6 +540,7 @@ memcpy.exe &
 memcpy_s.exe &
 memicmp.exe &
 memmove.exe &
+memmov_s.exe &
 memset.exe &
 main.exe &
 malloc.exe &

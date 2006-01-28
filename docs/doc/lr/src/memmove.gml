@@ -14,7 +14,7 @@ void __far *_fmemmove( void __far *dst,
 #include <wchar.h>
 wchar_t *wmemmove( wchar_t *dst,
                    const wchar_t *src,
-	           size_t length );
+                   size_t length );
 .ixfunc2 '&Copy' &wfunc
 .do end
 :cmt. .if &'length(&ufunc.) ne 0 .do begin
@@ -24,6 +24,9 @@ wchar_t *wmemmove( wchar_t *dst,
 :cmt. .ixfunc2 '&Copy' &ufunc
 :cmt. .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function copies
 .arg length
@@ -55,13 +58,16 @@ is interpreted to mean the number of wide characters.
 :cmt. is interpreted to mean the number of Unicode characters.
 :cmt. .do end
 .desc end
+.*
 .return begin
 The &func function returns
 .arg dst.
 .return end
+.*
 .see begin
-.seelist &function. memchr memcmp memcpy memicmp memmove memset
+.seelist &function. memchr memcmp memcpy memicmp memmove memset memmove_s
 .see end
+.*
 .exmp begin
 #include <string.h>
 

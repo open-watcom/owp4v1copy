@@ -786,6 +786,9 @@
 .fnc memmove                    memmove.gml     DOS QNX W WIN32
 .fnf _fmemmove                  memmove.gml     DOS QNX W WIN32
 .fnw wmemmove                   memmove.gml     DOS QNX W WIN32
+.fnw memmove_s                  memmov_s.gml    DOS QNX W WIN32
+.fnw _fmemmove_s                memmov_s.gml    DOS QNX W WIN32
+.fnw wmemmove_s                 memmov_s.gml    DOS QNX W WIN32
 .fn7 _m_empty                   mempty.gml      DOS QXO   WIN32
 .fnc memset                     memset.gml      DOS QNX W WIN32
 .fnf _fmemset                   memset.gml      DOS QNX W WIN32
