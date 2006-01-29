@@ -1891,7 +1891,7 @@ made.
 .do end
 .*
 .if '&machine' eq '80386' .do begin
-.section Predefined "__watcall" Alias (registry calling convention)
+.section Predefined "__watcall" Alias (register calling convention)
 .do end
 .el .do begin
 .section Predefined "__watcall" Alias
@@ -1986,24 +1986,22 @@ is any character string enclosed in double quotes.
 .pc
 When specifying
 .id obj_name,
-some characters have a special meaning.
+some characters have a special meaning:
 .synote
 .note *
-placeholder for case-sensitive
-.id sym.
+is unmodified symbol name
 .note ^
-placeholder for upper-cased
-.id sym.
+is symbol name converted to uppercase
 .note !
-placeholder for lower-cased
-.id sym.
+is symbol name converted to lowercase
 .note #
-placeholder for "@nnn", where nnn is size of all function parameters on the stack.
+is a placeholder for "@nnn", where nnn is size of all function parameters
+on the stack.
 .note \
 next character is treated as literal
 .esynote
 .np
-Bellow a few examples for object name overriding use are given.
+Several examples of source to object form symbol name translation follow:
 .if '&lang' eq 'FORTRAN 77' .do begin
 By default, the upper case version "MYRTN" or "MYVAR" is placed in the object file.
 .do end
@@ -2031,10 +2029,10 @@ This is the default for all function names.
 .np
 In the following example, the name "MyVar" will be replaced by
 .if '&lang' eq 'FORTRAN 77' .do begin
-"_MYRTN"
+"_MYVAR"
 .do end
 .el .do begin
-"_MyRtn"
+"_MyVar"
 .do end
 in the object file.
 .millust begin
@@ -2067,7 +2065,8 @@ the object file.
 .*
 .np
 In the following example, the name "MyRtn" will be replaced by
-"_MyRtn@nnn" in the object file. "nnn" represent size of all routine parameters.
+"_MyRtn@nnn" in the object file. "nnn" represents the size of all function
+parameters.
 .millust begin
 &pragma aux MyRtn "_*#"&epragma
 .millust end
