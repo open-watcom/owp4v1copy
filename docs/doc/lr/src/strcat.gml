@@ -37,6 +37,9 @@ wchar_t *_ustrcat( wchar_t *dst, const wchar_t *src );
 .ixfunc2 '&Concats' &ufunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function appends a copy of the string pointed to
 by
@@ -59,20 +62,20 @@ The value of
 is returned.
 .return end
 .see begin
-.seelist &function. strcat strncat
+.seelist &function. strcat strncat strcat_s strncat_s
 .see end
 .exmp begin
 #include <stdio.h>
 #include <string.h>
 
 void main()
-  {
+{
     char buffer[80];
 .exmp break
     strcpy( buffer, "Hello " );
     strcat( buffer, "world" );
     printf( "%s\n", buffer );
-  }
+}
 .exmp output
 Hello world
 .exmp end

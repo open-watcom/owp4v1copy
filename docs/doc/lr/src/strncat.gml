@@ -44,6 +44,9 @@ wchar_t *_ustrncat( wchar_t *dst,
 .ixfunc2 '&Concats' &ufunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function appends not more than
 .arg n
@@ -67,7 +70,7 @@ The &func function returns the value of
 .arg dst.
 .return end
 .see begin
-.seelist strncat strcat strlcat
+.seelist strncat strcat strlcat strncat_s strcat_s
 .see end
 .exmp begin
 #include <stdio.h>

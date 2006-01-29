@@ -1,4 +1,4 @@
-.func memcpy_s _fmemcpy_s wmemcpy_s _umemcpy_s
+.func memcpy_s wmemcpy_s
 #define __STDC_WANT_LIB_EXT1__  1
 #include <string.h>
 errno_t memcpy_s( void * restrict s1,
@@ -6,7 +6,7 @@ errno_t memcpy_s( void * restrict s1,
                   const void * restrict s2,
                   rsize_t n );
 .ixfunc2 '&Copy' &func
-.if &'length(&_func.) ne 0 .do begin
+.if &'length(&ffunc.) ne 0 .do begin
 errno_t _fmemcpy_s( void __far * restrict s1,
                     rsize_t s1max,
                     const void __far * restrict s2,
@@ -56,7 +56,7 @@ if
 is not a null pointer and
 .arg s1max
 is
-not greater than 
+not greater than
 .kw RSIZE_MAX.
 .rtconst end
 .*

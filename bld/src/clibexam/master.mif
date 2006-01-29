@@ -433,19 +433,26 @@ write.exe
 FN_STRING = &
 strcase.exe &
 strcat.exe &
+strcat_s.exe &
+stncat_s.exe &
 strchr.exe &
 strcmp.exe &
 strcmpi.exe &
 strcoll.exe &
 strcpy.exe &
+strcpy_s.exe &
+stncpy_s.exe &
 strcspn.exe &
 strdup.exe &
 strerror.exe &
+strerr_s.exe &
+streln_s.exe &
 strftime.exe &
 stricmp.exe &
 strlcat.exe &
 strlcpy.exe &
 strlen.exe &
+strnln_s.exe &
 strlwr.exe &
 strncase.exe &
 strncat.exe &
@@ -463,6 +470,7 @@ strtoimx.exe &
 strtoumx.exe &
 strtod.exe &
 strtok.exe &
+strtok_s.exe &
 strtol.exe &
 strtoll.exe &
 strtoul.exe &

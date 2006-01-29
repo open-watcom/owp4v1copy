@@ -14,10 +14,17 @@
 .newtext Constraints:
 If any of the following runtime-constraints is violated, the currently
 active runtime-constraint handler will be invoked and &func will return
-a non-zero value to indicate an error.
+a non-zero value to indicate an error, or the runtime-constraint handler
+aborts the program.
 .np
 .do end
 .el .if '&*' eq 'end' .oldtext
+.el .if '&*' eq 'none' .do begin
+.newtext Constraints:
+None.
+.np
+.oldtext
+.do end
 .dm rtconst end
 .*
 .dm saferet begin
@@ -36,7 +43,7 @@ See xxx for a list of available functions.
 .dm safealt begin
 .newtext Safer C:
 .setsfunc
-The Safer C Library extension provides the 
+The Safer C Library extension provides the
 .seekw &function &function_s
 function which is a safer alternative to &func.. This newer &func_s function
 is recommended to be used instead of the traditional "unsafe" &func function.

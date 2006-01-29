@@ -15,6 +15,9 @@ wchar_t *_ustrerror( int errnum );
 .ixfunc2 '&Errs' &ufunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function maps the error number contained in
 .arg errnum
@@ -38,7 +41,7 @@ This array may be overwritten by a subsequent call to the &func
 function.
 .return end
 .see begin
-.seelist &function. clearerr feof ferror perror strerror
+.seelist &function. clearerr feof ferror perror strerror strerror_s strerrorlen_s
 .see end
 .exmp begin
 #include <stdio.h>
@@ -46,7 +49,7 @@ function.
 #include <errno.h>
 
 void main()
-  {
+{
     FILE *fp;
 .exmp break
     fp = fopen( "file.nam", "r" );
@@ -54,7 +57,7 @@ void main()
         printf( "Unable to open file: %s\n",
                  strerror( errno ) );
     }
-  }
+}
 .exmp end
 .class ANSI
 .system

@@ -46,6 +46,9 @@ wchar_t *_ustrncpy( wchar_t *dst,
 .ixfunc2 '&Copy' &ufunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function copies no more than
 .arg n
@@ -83,7 +86,7 @@ The &func function returns the value of
 .arg dst.
 .return end
 .see begin
-.seelist strncpy strlcpy strcpy strdup
+.seelist strncpy strlcpy strcpy strdup strncpy_s strcpy_s
 .see end
 .exmp begin
 #include <stdio.h>

@@ -1,4 +1,4 @@
-.func memmove_s _fmemmove_s wmemmove_s _umemmove_s
+.func memmove_s wmemmove_s
 #define __STDC_WANT_LIB_EXT1__  1
 #include <string.h>
 errno_t memmove_s( void * restrict s1,
@@ -6,13 +6,6 @@ errno_t memmove_s( void * restrict s1,
                    const void * restrict s2,
                    rsize_t n );
 .ixfunc2 '&Copy' &func
-.if &'length(&_ffunc.) ne 0 .do begin
-errno_t _fmemmove_s( void __far * restrict s1,
-                     rsize_t s1max,
-                     const void __far * restrict s2,
-                     size_t n );
-.ixfunc2 '&Copy' &ffunc
-.do end
 .if &'length(&wfunc.) ne 0 .do begin
 #include <wchar.h>
 errno_t wmemmove_s( wchar_t * restrict s1,
@@ -84,9 +77,6 @@ characters from the temporary array are copied into the object pointed to by
 See the
 .kw memcpy_s
 function if you wish to copy objects that do not overlap.
-.if &'length(&_ffunc.) ne 0 .do begin
-.im farfunc
-.do end
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc wide-character function is identical to &func except that it

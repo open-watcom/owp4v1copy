@@ -37,6 +37,9 @@ wchar_t *_ustrcpy( wchar_t *dst, const wchar_t *src );
 .ixfunc2 '&Copy' &ufunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function copies the string pointed to by
 .arg src
@@ -57,20 +60,20 @@ The value of
 is returned.
 .return end
 .see begin
-.seelist strcpy strdup strncpy
+.seelist strcpy strdup strncpy strcpy_s strncpy_s
 .see end
 .exmp begin
 #include <stdio.h>
 #include <string.h>
 
 void main()
-  {
+{
     auto char buffer[80];
 .exmp break
     strcpy( buffer, "Hello " );
     strcat( buffer, "world" );
     printf( "%s\n", buffer );
-  }
+}
 .exmp output
 Hello world
 .exmp end

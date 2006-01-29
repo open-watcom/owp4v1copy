@@ -38,6 +38,9 @@ wchar_t *_ustrtok( wchar_t *s1, const wchar_t *s2 );
 .ixfunc2 '&Search' &ufunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function is used to break the string pointed to by
 .arg s1
@@ -117,14 +120,14 @@ or
 if there is no token found.
 .return end
 .see begin
-.seelist strtok strcspn strpbrk
+.seelist strtok strcspn strpbrk strtok_s
 .see end
 .exmp begin
 #include <stdio.h>
 #include <string.h>
 .exmp break
 void main()
-  {
+{
     char *p;
     char *buffer;
     char *delims = { " .," };
@@ -137,7 +140,7 @@ void main()
       p = strtok( NULL, delims );
     }
     printf( "%s\n", buffer );
-  }
+}
 .exmp output
 Find words, all of them.
 word: Find

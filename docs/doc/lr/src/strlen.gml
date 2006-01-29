@@ -28,6 +28,9 @@ size_t _ustrlen( const wchar_t *s );
 .ixfunc2 '&String' &ufunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function computes the length of the string pointed to by
 .arg s.
@@ -40,16 +43,19 @@ The &func function computes the length of the string pointed to by
 The &func function returns the number of characters that precede the
 terminating null character.
 .return end
+.see begin
+.seelist &function. strnlen_s
+.see end
 .exmp begin
 #include <stdio.h>
 #include <string.h>
 
 void main()
-  {
+{
     printf( "%d\n", strlen( "Howdy" ) );
     printf( "%d\n", strlen( "Hello world\n" ) );
     printf( "%d\n", strlen( "" ) );
-  }
+}
 .exmp output
 5
 12
