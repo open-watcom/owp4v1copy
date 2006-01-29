@@ -1742,7 +1742,7 @@ or
 .ix 'watcall alias name'
 .kwm watcall
 .do end
-defines the default calling convention used by &company compilers.
+defines the calling convention used by &company compilers.
 .endnote
 .pc
 The following describes the attributes of the above alias names.
@@ -1890,6 +1890,79 @@ made.
 .*
 .do end
 .*
+.if '&machine' eq '80386' .do begin
+.section Predefined "__watcall" Alias (registry calling convention)
+.do end
+.el .do begin
+.section Predefined "__watcall" Alias
+.do end
+.*
+.millust begin
+&pragma aux __watcall "*_" \
+.if '&machine' eq '80386' .do begin
+&pragcont           parm routine [eax ebx ecx edx] \
+.do end
+.if '&machine' eq '8086' .do begin
+&pragcont           parm routine [ax bx cx dx] \
+.do end
+&pragcont           value struct caller
+.millust end
+.autonote Notes:
+.note
+Symbol names are followed by an underscore character.
+.note
+Arguments are processed from left to right. The leftmost arguments
+are passed in registers and the rightmost arguments are passed on
+the stack (if the registers used for argument passing have been
+exhausted). Arguments that are passed on the stack are pushed from
+right to left. The calling routine will remove the arguments if any
+were pushed on the stack.
+.note
+When a structure is returned, the caller allocates space on the stack.
+The address of the allocated space is put into &siup register. 
+The called routine then places the return value there.
+Upon returning from the call, register &axup will contain address of
+the space allocated for the return value.
+.note
+Floating-point values are returned using 80x86 registers ("fpc" option)
+or using 80x87 floating-point registers ("fpi" or "fpi87" option).
+.note
+All registers must be preserved by the called routine.
+.endnote
+.*
+.if '&machine' eq '80386' .do begin
+.section Predefined "__watcall" Alias (stack calling convention)
+.*
+.millust begin
+&pragma aux __watcall "*" \
+&pragcont           parm caller [] \
+&pragcont           value no8087 struct caller \
+&pragcont           modify [eax ecx edx 8087]
+.millust end
+.autonote Notes:
+.note
+All symbols appear in object form as they do in source form.
+.note
+Arguments are pushed on the stack from right to left.
+That is, the last argument is pushed first.
+The calling routine will remove the arguments from the stack.
+.note
+When a structure is returned, the caller allocates space on the stack.
+The address of the allocated space will be pushed on the stack
+immediately before the call instruction.
+Upon returning from the call, register &axup will contain address of
+the space allocated for the return value.
+.note
+Floating-point values are returned only using 80x86 registers.
+.note
+Registers EAX, ECX and EDX are not preserved by the called routine.
+.note
+Any local variables that are located in the 80x87 cache are not
+preserved by the called routine.
+.endnote
+.*
+.do end
+.*
 .endlevel
 .*
 .do end
@@ -1913,84 +1986,112 @@ is any character string enclosed in double quotes.
 .pc
 When specifying
 .id obj_name,
-the asterisk character ('*') has a special meaning; it is a
-placeholder for
-.if '&lang' eq 'FORTRAN 77' .do begin
-the upper case version of
-.do end
+some characters have a special meaning.
+.synote
+.note *
+placeholder for case-sensitive
 .id sym.
+.note ^
+placeholder for upper-cased
+.id sym.
+.note !
+placeholder for lower-cased
+.id sym.
+.note #
+placeholder for "@nnn", where nnn is size of all function parameters on the stack.
+.note \
+next character is treated as literal
+.esynote
 .np
-In the following example, the name "myrtn" will be replaced by
+Bellow a few examples for object name overriding use are given.
+.if '&lang' eq 'FORTRAN 77' .do begin
+By default, the upper case version "MYRTN" or "MYVAR" is placed in the object file.
+.do end
+.np
+In the following example, the name "MyRtn" will be replaced by
 .if '&lang' eq 'FORTRAN 77' .do begin
 "MYRTN_"
 .do end
 .el .do begin
-"myrtn_"
+"MyRtn_"
 .do end
 in the object file.
 .millust begin
-&pragma aux myrtn "*_"&epragma
+.if '&lang' eq 'FORTRAN 77' .do begin
+&pragma aux MyRtn "^_"&epragma
+.do end
+.el .do begin
+&pragma aux MyRtn "*_"&epragma
+.do end
 .millust end
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 .pc
 This is the default for all function names.
 .do end
 .np
-In the following example, the name "myvar" will be replaced by
+In the following example, the name "MyVar" will be replaced by
 .if '&lang' eq 'FORTRAN 77' .do begin
-"_MYVAR"
+"_MYRTN"
 .do end
 .el .do begin
-"_myvar"
+"_MyRtn"
 .do end
 in the object file.
 .millust begin
-&pragma aux myvar "_*"&epragma
+.if '&lang' eq 'FORTRAN 77' .do begin
+&pragma aux MyVar "_^"&epragma
+.do end
+.el .do begin
+&pragma aux MyVar "_*"&epragma
+.do end
 .millust end
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 .pc
 This is the default for all variable names.
 .do end
 .np
+In the following example, the lower case version "myrtn" will be placed in
+the object file.
+.millust begin
+&pragma aux MyRtn "!"&epragma
+.millust end
+.*
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+.np
+In the following example, the upper case version "MYRTN" will be placed in
+the object file.
+.millust begin
+&pragma aux MyRtn "^"&epragma
+.millust end
+.do end
+.*
+.np
+In the following example, the name "MyRtn" will be replaced by
+"_MyRtn@nnn" in the object file. "nnn" represent size of all routine parameters.
+.millust begin
+&pragma aux MyRtn "_*#"&epragma
+.millust end
+.np
+In the following example, the name "MyRtn" will be replaced by
+"_MyRtn#" in the object file.
+.millust begin
+&pragma aux MyRtn "_*\#"&epragma
+.millust end
+.*
+.np
 The default mapping for all symbols can also be changed as illustrated
 by the following example.
 .millust begin
+.if '&lang' eq 'FORTRAN 77' .do begin
+&pragma aux default "_^_"&epragma
+.do end
+.el .do begin
 &pragma aux default "_*_"&epragma
+.do end
 .millust end
 .pc
 The above auxiliary pragma specifies that all names will be prefixed
 and suffixed by an underscore character ('_').
-.*
-.if '&lang' eq 'FORTRAN 77' .do begin
-.np
-The '!' character also has a special meaning.
-Whenever it is encountered in
-.id obj_name,
-it is replaced by the lower case version of
-.id sym.
-.np
-In the following example, the lower case version of "myrtn" will be placed in
-the object file.
-By default, the upper case version of "MYRTN" is placed in the object file.
-.millust begin
-&pragma aux myrtn "!"&epragma
-.millust end
-.do end
-.*
-.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
-.np
-The '^' character also has a special meaning.
-Whenever it is encountered in
-.id obj_name,
-it is replaced by the upper case version of
-.id sym.
-.np
-In the following example, the name "myrtn" will be replaced by "MYRTN"
-in the object file.
-.millust begin
-&pragma aux myrtn "^"&epragma
-.millust end
-.do end
 .*
 .if '&cmpclass' ne 'load-n-go' .do begin
 .*
