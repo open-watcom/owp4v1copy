@@ -53,6 +53,7 @@ typedef signed_64       i8;
 #define CV4_NB07        "NB07"
 #define CV4_NB08        "NB08"
 #define CV4_NB09        "NB09"
+#define CV4_NB11        "NB11"
 
 /* leaf type codes as defined in CV4 doc 3.1 */
 

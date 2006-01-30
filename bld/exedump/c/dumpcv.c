@@ -95,14 +95,6 @@ static  char    *cv_lnoff16_msg[] = {
     NULL
 };
 
-static  char    *cv4_seg_msg[] = {
-    "2      Seg      - segment number               = ",
-    "2      pad      - padding                      = ",
-    "4      offset   - code start within segment    = ",
-    "4      cbSeg    - size of code in segment      = ",
-    NULL
-};
-
 static  int     currSect;
 
 
@@ -1036,7 +1028,7 @@ void Dump_zsection( void )
     Puthex( Curr_sectoff, 8 );
     Wdputslc( ")\n" );
     Wdputslc( "=========================\n" );
-    Dump_header( (char *)&sdh.mod_offset, sdh_msg );
+    Dump_header( &sdh.mod_offset, sdh_msg );
     Wdputslc( "\n" );
     currSect = sdh.section_id;
 
@@ -1109,7 +1101,7 @@ static void dump_cv4_sstPublic( unsigned_32 base, unsigned_32 offset,
     while( read < size ) {
         Wread( &pub16, sizeof( pub16 ) );
         name_len = pub16.name[0];
-        Dump_header( (char *)&pub16, cv_sstPublic_msg );
+        Dump_header( &pub16, cv_sstPublic_msg );
         read += sizeof( pub16 );
         Wread( name, name_len );
         name[name_len] = '\0';
@@ -1150,6 +1142,74 @@ static void dump_cv4_sstLibraries( unsigned_32 base, unsigned_32 offset,
 
 
 /*
+ * dump_cv4_sstFileIndex - dump CV4 sstFileIndex at 'offset'
+ * from 'base 'containing 'size' bytes
+ */
+static void dump_cv4_sstFileIndex( unsigned_32 base, unsigned_32 offset,
+                                                     unsigned_32 size )
+/**********************************************************************/
+{
+    unsigned_16     *file_index;
+    unsigned_16     cMod;
+    unsigned_16     cRef;
+    unsigned_16     *ModStart;
+    unsigned_16     *cRefCnt;
+    unsigned_32     *NameRef;
+    char            *Names;
+    unsigned        mod, file;
+    char            name[256];
+    unsigned_8      *len;
+
+    Wlseek( base + offset );
+    Wdputs( "==== sstFileIndex at offset " );
+    Puthex( offset, 8 );
+    Wdputslc( "\n\n" );
+    file_index = Wmalloc( size );
+    Wread( file_index, size );
+    cMod     = file_index[0];
+    cRef     = file_index[1];
+    ModStart = &file_index[2];
+    cRefCnt  = &file_index[2 + cMod];
+    NameRef  = (unsigned_32 *)(cRefCnt + cMod);
+    Names    = (char *)(NameRef + cRef);
+    Wdputslc( "  Module  File    Name\n" );
+    for( mod = 0; mod < cMod; ++mod ) {
+        for( file = 0; file < cRefCnt[mod]; ++file ) {
+            /* CV spec says names are zero terminated, but actual NB11 format
+             * data from MSVC 6 clearly uses length prefixed names!?!
+             */
+            Wdputs( "  " );
+            Puthex( mod + 1, 4 );
+            Wdputs( "H   " );
+            Puthex( file, 4 );
+            Wdputs( "H   \"" );
+            len = (unsigned_8 *)(Names + NameRef[ModStart[mod] + file]);
+            memcpy( name, (char *)len + 1, *len );
+            name[*len] = '\0';
+            Wdputs( name );
+            Wdputslc( "\"\n" );
+        }
+    }
+    Wdputslc( "\n" );
+}
+
+
+/*
+ * dump_cv4_seg - dump CV4 cv_seginfo structure
+ */
+static void dump_cv4_seg( cv_seginfo *seg )
+{
+    Wdputs( "      " );
+    Puthex( seg->Seg, 4 );
+    Wdputs( "H         " );
+    Puthex( seg->offset, 8 );
+    Wdputs( "H   " );
+    Puthex( seg->cbSeg, 8 );
+    Wdputslc( "H\n" );
+}
+
+
+/*
  * dump_cv4_sstModule - dump CV4 sstModule at 'offset' from 'base'
  */
 static void dump_cv4_sstModule( unsigned_32 base, unsigned_32 offset )
@@ -1159,17 +1219,17 @@ static void dump_cv4_sstModule( unsigned_32 base, unsigned_32 offset )
     cv_seginfo          seg;
 
     Wlseek( base + offset );
-    Wdputs( "    sstModule at offset " );
+    Wdputs( "==== sstModule at offset " );
     Puthex( offset, 8 );
     Wdputslc( "\n" );
     Wread( &mod, sizeof( mod ) );
-    Dump_header( (char *)&mod, cv4_sstModule_msg );
+    Dump_header( &mod, cv4_sstModule_msg );
     if( mod.cSeg-- ) {
-        Dump_header( (char *)&mod.SegInfo[0], cv4_seg_msg );
+        Wdputslc( "      Segment idx   Offset      Code size\n" );
+        dump_cv4_seg( mod.SegInfo );
         while( mod.cSeg-- ) {
-            Wdputslc( "      ====\n" );
             Wread( &seg, sizeof( seg ) );
-            Dump_header( (char *)&seg, cv4_seg_msg );
+            dump_cv4_seg( &seg );
         }
     } else {
         /* seek back in case there are no code segments in module */
@@ -1205,10 +1265,10 @@ static void dump_cv4_sstSrcLnSeg( unsigned_32 base, unsigned_32 offset )
     dump_name( 2 );
     Wdputslc( "\"\n" );
     Wread( &src_ln, sizeof( src_ln ) );
-    Dump_header( (char *)&src_ln, cv4_sstSrcLnSeg_msg );
+    Dump_header( &src_ln, cv4_sstSrcLnSeg_msg );
     while( src_ln.cPair-- ) {
         Wread( &lo_16, sizeof( lo_16 ) );
-        Dump_header( (char *)&lo_16, cv_lnoff16_msg );
+        Dump_header( &lo_16, cv_lnoff16_msg );
         first = FALSE;
     }
     Wdputslc( "\n" );
@@ -1241,7 +1301,14 @@ static void dump_cv4_subsection( unsigned_32 base, cv_directory_entry *dir )
         }
         break;
     case sstLibraries:
-        dump_cv4_sstLibraries( base, dir->lfo, dir->cb );
+        if( Debug_options & MODULE_INFO ) {
+            dump_cv4_sstLibraries( base, dir->lfo, dir->cb );
+        }
+        break;
+    case sstFileIndex:
+        if( Debug_options & MODULE_INFO ) {
+            dump_cv4_sstFileIndex( base, dir->lfo, dir->cb );
+        }
         break;
     }
 }
@@ -1260,17 +1327,21 @@ static void dump_cv4( unsigned_32 base )
 
     Wlseek( base );
     Wread( &header, sizeof( header ) );
-    if( memcmp( header.sig, CV4_NB09, CV_SIG_SIZE ) != 0 ) {
+    if( memcmp( header.sig, CV4_NB09, CV_SIG_SIZE ) == 0 ) {
+        Wdputslc( "Signature NB09\n\n" );
+    } else if( memcmp( header.sig, CV4_NB11, CV_SIG_SIZE ) == 0 ) {
+        Wdputslc( "Signature NB11\n\n" );
+    } else {
         return;
     }
     Wlseek( base + header.offset );
     Wread( &sst_dir_hdr, sizeof( sst_dir_hdr ) );
-    Dump_header( (char *)&sst_dir_hdr , cv4_dir_hdr_msg );
+    Dump_header( &sst_dir_hdr , cv4_dir_hdr_msg );
     Wdputslc( "\n" );
     for( i = 0; i < sst_dir_hdr.cDir; ++i ) {
         Wlseek( base + header.offset + sst_dir_hdr.cbDirHeader + i * sst_dir_hdr.cbDirEntry );
         Wread( &sst_dir_entry, sizeof( sst_dir_entry ) );
-        Dump_header( (char *)&sst_dir_entry, cv4_dir_entry_msg );
+        Dump_header( &sst_dir_entry, cv4_dir_entry_msg );
         Wdputslc( "\n" );
         dump_cv4_subsection( base, &sst_dir_entry );
     }
@@ -1291,14 +1362,15 @@ bool Dmp_cv_head( void )
     Wlseek( end_off - sizeof( trailer ) );
     Wread( &trailer, sizeof( trailer ) );
     dbg_off = end_off - trailer.offset;
-    if( memcmp( trailer.sig, CV4_NB09, CV_SIG_SIZE ) == 0 ) {
-        Banner( "CodeView NB09 debugging information" );
+    if( memcmp( trailer.sig, CV4_NB09, CV_SIG_SIZE ) == 0
+     || memcmp( trailer.sig, CV4_NB11, CV_SIG_SIZE ) == 0 ) {
+        Banner( "CodeView debugging information (CV4)" );
         Wdputs( "debugging information base  = " );
         Puthex( dbg_off, 8 );
         Wdputslc( "H\n" );
         Wdputs( "subsection directory offset = " );
         Puthex( trailer.offset, 8 );
-        Wdputslc( "H\n\n" );
+        Wdputslc( "H\n" );
         dump_cv4( dbg_off );
         return( 1 );
     }
