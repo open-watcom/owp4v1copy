@@ -33,7 +33,7 @@ shall be a null pointer. Neither
 nor
 .arg n
 shall be greater than
-.kw RSIZE_MAX.
+.arg RSIZE_MAX.
 .arg n
 shall not be greater than
 .arg s1max.
@@ -48,7 +48,7 @@ is not a null pointer and
 .arg s1max
 is
 not greater than
-.kw RSIZE_MAX.
+.arg RSIZE_MAX.
 .rtconst end
 .*
 .desc begin
@@ -75,13 +75,13 @@ characters from the temporary array are copied into the object pointed to by
 .arg s1.
 .np
 See the
-.kw memcpy_s
+.arg memcpy_s
 function if you wish to copy objects that do not overlap.
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc wide-character function is identical to &func except that it
 operates on characters of
-.kw wchar_t
+.arg wchar_t
 type.
 The arguments
 .arg s1max
@@ -111,11 +111,14 @@ are interpreted to mean the number of wide characters.
 #include <string.h>
 void main( void )
 {
-    char buffer[80];
+    char buffer[80] = "0123456789";
 .exmp break
     memmove_s( buffer + 1, sizeof( buffer ), buffer, 79 );
     buffer[0] = '*';
+    printf( buffer );
 }
+.exmp output
+*0123456789
 .exmp end
 .class ANSI
 .system

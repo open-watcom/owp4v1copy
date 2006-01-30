@@ -1,7 +1,7 @@
-#define _ _STDC_WANT_LIB_EXT1_ _ 1
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 #include <string.h>
-.exmp break
+
 void main()
 {
     char    *p;
