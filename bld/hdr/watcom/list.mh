@@ -196,6 +196,7 @@ public:
     void splice( iterator it, list &other, iterator first, iterator last );
 
     void reverse( );
+    void merge( list &other );
 
     //ow extentions
     bool _Sane( );
@@ -511,8 +512,77 @@ void list< Type, Allocator >::reverse( )
 }
 
 /* ------------------------------------------------------------------
+ * merge( list & )
+ * Merges the argument list into this list. No nodes are created or
+ * destroyed during this process. Only pointers and counters are
+ * changed.
+ */
+:: This isn't as exception safe as it could be. If operator< throws
+:: the partially processed lists won't be consistent.
+template< class Type, class Allocator >
+void list< Type, Allocator >::merge( list &other )
+{
+  list new_list;
+  DoubleLink *list0 = new_list.sentinel;
+  DoubleLink *list1 = sentinel->fwd;
+  DoubleLink *list2 = other.sentinel->fwd;
+
+  //compare elements on both lists as long as possible.
+  while( list1 != sentinel && list2 != other.sentinel ) {
+    if( static_cast< Node * >( list2 )->value <
+        static_cast< Node * >( list1 )->value ) {
+      list0->bwd->fwd = list2;
+      list2->bwd = list0->bwd;
+      list0->bwd = list2;
+      list2 = list2->fwd;
+      list0->bwd->fwd = list0;
+    }
+    else {
+      list0->bwd->fwd = list1;
+      list1->bwd = list0->bwd;
+      list0->bwd = list1;
+      list1 = list1->fwd;
+      list0->bwd->fwd = list0;
+    }
+  }
+
+  //now move the rest of longer list.
+:: This should be done without the while loops: do a splice-like operation.
+  if( list1 == sentinel ) {
+    while( list2 != other.sentinel ) {
+      list0->bwd->fwd = list2;
+      list2->bwd = list0->bwd;
+      list0->bwd = list2;
+      list2 = list2->fwd;
+      list0->bwd->fwd = list0;
+    }
+  }
+  else {
+    while( list1 != sentinel ) {
+      list0->bwd->fwd = list1;
+      list1->bwd = list0->bwd;
+      list0->bwd = list1;
+      list1 = list1->fwd;
+      list0->bwd->fwd = list0;
+    }
+  }
+
+  //patch things up so all lists are consistent
+  sentinel->fwd = sentinel;
+  sentinel->bwd = sentinel;
+  other.sentinel->fwd = other.sentinel;
+  other.sentinel->bwd = other.sentinel->bwd;
+  new_list.mSize = mSize + other.mSize;
+  mSize = 0;
+  other.mSize = 0;
+
+  //bring merged list into current list
+  swap( new_list );
+}
+
+/* ------------------------------------------------------------------
  * push( node*, x ) (private)
- * insert type x in list just before element identified by node* 
+ * insert copy of x in list just before element identified by node* 
  */
 template< class Type, class Allocator >
 list< Type, Allocator >::Node*

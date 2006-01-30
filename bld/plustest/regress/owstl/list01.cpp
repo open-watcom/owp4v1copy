@@ -435,6 +435,66 @@ bool reverse_test( )
 }
 
 /* ------------------------------------------------------------------
+ * merge_test
+ * test list merging methods
+ */
+
+struct merge_data {
+  int A[11];
+  int B[11];
+  int R[11];
+};
+struct merge_data merge_tests[] = {
+  { { 0, 2, 4, -1 },
+    { 1, 3, 5, -1 },
+    { 0, 1, 2, 3, 4, 5, -1 } },
+
+  { { 0, 2, 4, -1 },
+    { -1 },
+    { 0, 2, 4, -1 } },
+
+  { { -1 },
+    { 0, 2, 4, -1 },
+    { 0, 2, 4, -1 } },
+
+  { { 1, 3, 5, -1 },
+    { 1, 2, -1 },
+    { 1, 1, 2, 3, 5, -1 } },
+
+  { { 1, 2, -1 },
+    { 1, 3, 5, -1 },
+    { 1, 1, 2, 3, 5, -1 } }
+};
+const int merge_test_count = sizeof(merge_tests)/sizeof(merge_data);
+
+bool merge_test( )
+{
+  int *p;
+
+  for( int test_no = 0; test_no < merge_test_count; ++test_no ) {
+    std::list< int > lst_1, lst_2;
+
+    //prepare the two lists and merge them.
+    p = merge_tests[test_no].A;
+    while( *p != -1 ) { lst_1.push_back( *p ); ++p; }
+    p = merge_tests[test_no].B;
+    while( *p != -1 ) { lst_2.push_back( *p ); ++p; }
+    lst_1.merge( lst_2 );
+
+    //did it work?
+    if( INSANE( lst_1 ) || INSANE( lst_2 ) ) FAIL;
+    p = merge_tests[test_no].R;
+    while( *p != -1 ) {
+      if( lst_1.front( ) != *p ) FAIL;
+      lst_1.pop_front( );
+      ++p;
+    }
+  }
+
+  return( true );
+}
+
+/* ------------------------------------------------------------------
  * allocator_test
  * test stateful allocators and exception handling
  */
@@ -526,7 +586,8 @@ int main( )
         if( !copy_test( )             || !heap_ok( "t12" ) ) rc = 1;
         if( !splice_test( )           || !heap_ok( "t13" ) ) rc = 1;
         if( !reverse_test( )          || !heap_ok( "t14" ) ) rc = 1;
-        if( !allocator_test( )        || !heap_ok( "t15" ) ) rc = 1;
+        if( !merge_test( )            || !heap_ok( "t15" ) ) rc = 1;
+        if( !allocator_test( )        || !heap_ok( "t16" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
