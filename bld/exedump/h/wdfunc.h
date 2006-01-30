@@ -164,7 +164,7 @@ extern long WFileSize( void );
 extern void Wdputc( char );
 extern void Wdputs( char *);
 extern void Wdputslc( char *);
-extern void Dump_header( char *, char ** );
+extern void Dump_header( void *, char ** );
 extern void DumpFlags( unsigned_32, unsigned_32, char **, char * );
 extern void *Wmalloc( size_t );
 extern void Banner( char * );
@@ -181,3 +181,13 @@ extern void Dmp_resrc2_tab( void );
 extern bool Dmp_coff_head( void );
 extern bool Dmp_ar_head( void );
 extern char *Coff_obj_name( char * );
+
+/*
+ * dumpcv.c
+ */
+extern bool Dmp_cv_head( void );
+
+/*
+ * dumphll.c
+ */
+extern bool Dmp_hll_head( void );

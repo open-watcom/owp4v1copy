@@ -33,6 +33,8 @@ objs =                  &
 	wline.obj       &
 	dumpwv.obj      &
 	typewv.obj      &
+	dumpcv.obj      &
+	dumphll.obj     &
 	coff.obj
 
 !include exetarg.mif

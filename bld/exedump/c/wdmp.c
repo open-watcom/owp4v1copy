@@ -42,9 +42,6 @@
 #include "wdfunc.h"
 #include "banner.h"
 
-static  char    *Exts[] = {
-    ".exe", ".dll", ".exp", ".nlm", ".qnx", ".elf", ".lib", "obj", NULL
-};
 
 char  Fname[ _MAX_FNAME ];
 
@@ -101,14 +98,18 @@ static void dmp_exe( void )
                 /* done */
             } else {
                 Wdputs( Name );
-                Wdputslc( " does not have recognized format.\n" );
+                Wdputslc( " does not have recognized format\n" );
             }
         }
     }
     if( Options_dmp & DEBUG_INFO ) {
         Wdputslc( "\n" );
-        if( !Dmp_mdbg_head() ) {
-            Wdputslc( "Invalid symbol file!\n" );
+        if( Dmp_cv_head() ) {
+            /* done */
+        } else if( Dmp_hll_head() ) {
+            /* done */
+        } else if( !Dmp_mdbg_head() ) {
+            Wdputslc( "No debugging information found\n" );
         }
     }
     if( Options_dmp & IMPORT_LIB ) {
@@ -134,32 +135,17 @@ static int find_file( char * file_path )
 /**************************************/
 {
     int     access_rc;
-    char    path[ _MAX_PATH ];      /* this allows file_path to remain */
-                                    /* unaltered if we don't find anything */
     char    drive[ _MAX_DRIVE ];
     char    dir[ _MAX_DIR ];
     char    given_ext[ _MAX_EXT ];
-    char    **ext;
 
     _splitpath( file_path, drive, dir, Fname, given_ext );
     /* check if the given file name exists */
     access_rc = access( file_path, R_OK );
-    if (access_rc == 0) {
+    if( access_rc == 0 ) {
         return( TRUE );
     } else {
-        if( given_ext[0] == '\0' ) {
-            /* if no extention was given try the ones in Exts */
-            for (ext = Exts; *ext != NULL && access_rc != 0; ext++) {
-                _makepath( path, drive, dir, Fname, *ext );
-                access_rc = access( path, R_OK );
-            }
-        }
-        if( access_rc == 0 ) {
-            strcpy( file_path, path );
-            return( TRUE );
-        } else {
-            return( FALSE );
-        }
+        return( FALSE );
     }
 }
 
@@ -201,27 +187,18 @@ static void wbanner( void )
 static void usage( void )
 /***********************/
 {
-    Wdputs( "Usage: wdump [-?abdefiqrs] [-A<num>] [-B<off>] [-S<num>] [-W<opt>] <pathname>\n" );
+    Wdputs( "Usage: wdump [-?abdefiqrs] [-A<num>] [-B<off>] [-D<opt>] [-S<num>] <pathname>\n" );
     Wdputs( "  <pathname> is a DOS EXE file, a Windows or OS/2 executable or DLL,\n" );
     Wdputs( "            a PharLap executable, NLM, a QNX executable,\n" );
     Wdputs( "            an ELF executable, shared library or object file,\n" );
     Wdputs( "            or a COFF object.\n" );
-    Wdputs( "  <pathname> has default extension of .exe, .dll, .exp, .nlm, .qnx and .elf\n" );
     Wdputs( "  options:\n" );
     Wdputs( "        -a causes all segment, resource and fixup info to be dumped\n" );
     Wdputs( "        -A<segnum> like -a but only applies to segment <segnum>\n" );
     Wdputs( "        -b causes binary dump of the entire file\n" );
     Wdputs( "        -B<hexoff> causes binary dump beginning at offset in hex\n" );
     Wdputs( "        -d causes debugging information to be dumped\n" );
-    Wdputs( "        -e causes executable information to be dumped as well\n" );
-    Wdputs( "        -f causes fixup information to be dumped\n" );
-    Wdputs( "        -i dump export information for PE DLLs\n" );
-//    Wdputs( "        -m causes Microsoft debugging information to be dumped\n" );
-    Wdputs( "        -q quiet dump - don't write banner\n" );
-    Wdputs( "        -r causes more resource information to be dumped\n" );
-    Wdputs( "        -s causes segments' data to be dumped\n" );
-    Wdputs( "        -S <segnum> like -s but only applies to segment <segnum>\n" );
-    Wdputs( "        -W<opts> causes WATCOM debugging information to be dumped\n" );
+    Wdputs( "        -D<opts> controls debugging information to be dumped\n" );
     Wdputs( "           a : show addr infomation\n" );
     Wdputs( "           g : show global infomation\n" );
     Wdputs( "           l : show locals (only if m specified)\n" );
@@ -229,6 +206,13 @@ static void usage( void )
     Wdputs( "           n : show line numbers (only if m specified)\n" );
     Wdputs( "           t : show types (only if m specified)\n" );
     Wdputs( "           x : show all information\n" );
+    Wdputs( "        -e causes executable information to be dumped as well\n" );
+    Wdputs( "        -f causes fixup information to be dumped\n" );
+    Wdputs( "        -i dump export information for PE DLLs\n" );
+    Wdputs( "        -q quiet dump - don't write banner\n" );
+    Wdputs( "        -r causes more resource information to be dumped\n" );
+    Wdputs( "        -s causes segments' data to be dumped\n" );
+    Wdputs( "        -S <segnum> like -s but only applies to segment <segnum>\n" );
 }
 
 /*
@@ -273,7 +257,7 @@ static int parse_options( int argc, char * const *argv )
     Hexoff = 0;
 
     while( 1 ) {
-        while( (c = getopt( argc, argv, ":aA:bB:defiqrsS:W:" )) != -1 ) {
+        while( (c = getopt( argc, argv, ":aA:bB:dD:efiqrsS:" )) != -1 ) {
             switch( c ) {
             case 'A':
                 Options_dmp |= FIX_DMP | RESRC_DMP | EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
@@ -294,6 +278,13 @@ static int parse_options( int argc, char * const *argv )
                 Options_dmp |= BINARY_DMP;
                 Options_dmp &= ~EXE_INFO;
                 break;
+            case 'D':
+                Debug_options = 0;
+                arg = optarg;
+                while( islower( *arg ) || isupper( *arg ) ) {
+                    debug_opts( *arg++ );
+                }
+                /* fall through */
             case 'd':
                 Options_dmp |= DEBUG_INFO;
                 Options_dmp &= ~EXE_INFO;
@@ -310,13 +301,6 @@ static int parse_options( int argc, char * const *argv )
                 Options_dmp |= QUIET;
                 Options_dmp &= ~EXE_INFO;
                 break;
-#if 0
-            case 'm':
-                Options_dmp |= DEBUG_INFO;
-                Options_dmp &= ~EXE_INFO;
-                Microsoft_dbi = TRUE;
-                break;
-#endif
             case 'q':
                 Options_dmp |= QUIET;
                 break;
@@ -334,15 +318,6 @@ static int parse_options( int argc, char * const *argv )
                 break;
             case 's':
                 Options_dmp |= EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
-                break;
-            case 'W':
-                Options_dmp |= DEBUG_INFO;
-                Options_dmp &= ~EXE_INFO;
-                Debug_options = 0;
-                arg = optarg;
-                while( islower( *arg ) || isupper( *arg ) ) {
-                    debug_opts( *arg++ );
-                }
                 break;
             case ':':
                 Wdputs( "wdump: option requires argument: -" );

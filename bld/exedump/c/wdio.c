@@ -146,15 +146,17 @@ void Wdputslc( char *buf )
     fputs( buf, stdout );
 }
 
-void Dump_header( char *data, char **msg )
-/****************************************/
+void Dump_header( void *data_ptr, char **msg )
+/********************************************/
 {
+    unsigned_8  *data = (unsigned_8 *)data_ptr;
+
     for( ; *msg != NULL; ++msg ) {
         Wdputs( &msg[0][1] );
         switch( msg[0][0] ) {
         case '1':
             Wdputs( "      " );
-            Puthex( *data, 2 );
+            Puthex( *(unsigned_8 *)data, 2 );
             data += sizeof( unsigned_8 );
             break;
         case '2':

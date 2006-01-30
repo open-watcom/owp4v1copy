@@ -24,14 +24,22 @@
 *
 *  ========================================================================
 *
-* Description:  CodeView debugging information, CV4 format.
+* Description:  IBM HLL and pre-CV4 CodeView debugging information.
 *
 ****************************************************************************/
 
 
-#define CV_OMF_SIG          0x00000001
-#define CV_ALIGN            4
-#define CV_FIRST_USER_TYPE  0x1000
+/* Note: The following is conceptually similar to cv4.h, but significantly
+ * different in detail. Why lump together old CodeView with IBM HLL instead
+ * of keeping all CodeView information in one place? Firstly, the IBM HLL
+ * format is an outgrowth of old CodeView style debug data, and therefore old
+ * CodeView format is much closer to HLL than it is to CV4. Secondly, and more
+ * importantly, it is possible to have HLL and old CodeView debug information
+ * mixed in a single executable image, hence the need to support HLL and old
+ * CodeView in a single package.
+ */
+
+#define HLL_FIRST_USER_TYPE 0x200
 
 #include "watcom.h"
 typedef unsigned_8      u1;     /* short forms for read/written types */
@@ -48,12 +56,11 @@ typedef signed_64       i8;
 */
 
 
-#define CV_SIG_SIZE     4
-#define CV4_NB05        "NB05"
-#define CV4_NB07        "NB07"
-#define CV4_NB08        "NB08"
-#define CV4_NB09        "NB09"
+#define HLL_SIG_SIZE    4
+#define HLL_NB02        "NB02"
+#define HLL_NB04        "NB04"
 
+#if 0
 /* leaf type codes as defined in CV4 doc 3.1 */
 
 typedef enum  lf_values {   /* type enumerations */
@@ -84,83 +91,72 @@ typedef enum s_values { /* symbol enumerations */
     #include "cv4syms.h"
     #undef SLMAC
 } s_values;
+#endif
 
 #pragma pack( 1 )
 typedef enum {
-    sstModule=0x120,
-    sstTypes,
-    sstPublic,
-    sstPublicSym,
-    sstSymbols,
-    sstAlignSym,
-    sstSrcLnSeg,
-    sstSrcModule,
-    sstLibraries,
-    sstGlobalSym,
-    sstGlobalPub,
-    sstGlobalTypes,
-    sstMPC,
-    sstSegMap,
-    sstSegName,
-    sstPreComp,
-    sstPreCompMap,
-    sstOffsetMap16,
-    sstOffsetMap32,
-    sstFileIndex,
-    sstStaticSym
-} sst;
+    hll_sstModules = 0x101,
+    hll_sstPublics,
+    hll_sstTypes,
+    hll_sstSymbols,
+    hll_sstSrcLines,
+    hll_sstLibraries,
+    hll_sstImports,
+    hll_sstCompacted,
+    hll_sstSrcLnSeg,
+    hll_sstHLLSrc = 0x10B
+} hll_sst;
 
 typedef struct {
-    char        sig[CV_SIG_SIZE];
+    char        sig[HLL_SIG_SIZE];
     signed_32   offset;
-} cv_trailer;
+} hll_trailer;
 
 typedef struct {
     unsigned_16 cbDirHeader;
     unsigned_16 cbDirEntry;
     unsigned_32 cDir;
-    unsigned_32 lfoNextDir;
-    unsigned_32 flags;
-} cv_subsection_directory;
+} hll_debug_dirinfo;
 
 typedef struct {
     unsigned_16 subsection;
     unsigned_16 iMod;
     unsigned_32 lfo;
     unsigned_32 cb;
-} cv_directory_entry;
+} hll_debug_dir;
 
 typedef struct {
     unsigned_16 Seg;
-    unsigned_16 pad;
     unsigned_32 offset;
     unsigned_32 cbSeg;
-} cv_seginfo;
+} hll_debug_seg_32;
 
-#define CV_DEBUG_STYLE 'VC'
+#define HLL_DEBUG_STYLE_CV ('C' << 8 | 'V')
+#define HLL_DEBUG_STYLE_HL ('H' << 8 | 'L')
 
 typedef struct {
-    unsigned_16 ovlNumber;
-    unsigned_16 iLib;
-    unsigned_16 cSeg;
-    unsigned_16 Style;
-    cv_seginfo  SegInfo[1];
-//  char        name[];
-} cv_sst_module;
+    hll_debug_seg_32    SegInfo;
+    unsigned_16         ovlNumber;
+    unsigned_16         iLib;
+    unsigned_16         cSeg;
+    unsigned_16         Style;
+    unsigned_16         Version;
+//  char                name[];
+} hll_debug_mod_32;
+
+typedef struct {
+    unsigned_32 offset;
+    unsigned_16 seg;
+    unsigned_16 type;
+    char        name[1];
+} hll_public_32;
 
 typedef struct {
     unsigned_16 offset;
     unsigned_16 seg;
     unsigned_16 type;
     char        name[1];
-} cv_sst_public_16;
-
-typedef struct {
-    unsigned_32 offset;
-    unsigned_16 seg;
-    unsigned_16 type;
-    char        name[1];
-} cv_sst_public_32;
+} hll_public_16;
 
 typedef struct {
 //    char      name[1];
@@ -169,77 +165,72 @@ typedef struct {
 //      line_offset_parms[1];
 } cv_sst_src_lne_seg;
 
-typedef struct {
-    unsigned_16 cFile;
-    unsigned_16 cSeg;
-    unsigned_32 baseSrcFile[1];
-//  unsigned_64 start_end[];
-//  unsigned_16 seg[];
-//  char        pad[];
-} cv_sst_src_module_header;
 
 typedef struct {
-    unsigned_16 cSeg;
-    unsigned_16 pad;
-    unsigned_32 baseSrcLn[1];
-//  unsigned_64 start_end[];
-//  unsigned_16 cbName;
-//  char        name[];
-} cv_sst_src_module_file_table;
+    unsigned_16 lineNum;
+    unsigned_16 sfi;
+    unsigned_32 offset;
+} hll_linnum_entry;
+
+/* HLL version 4 (HL04) specific line number information */
+
+typedef struct {
+    unsigned_16 lineNum;
+    unsigned_8  entryType;
+    unsigned_8  reserved;
+    unsigned_16 numEntries;
+    unsigned_16 segNum;
+    unsigned_32 offset;
+} hl4_linnum_first;
+
+typedef struct {
+    unsigned_32 firstChar;
+    unsigned_32 numChars;
+    unsigned_32 numFiles;
+} hl4_filetab_entry;
+
+
+/* HLL version 3 (HL03) specific line number information */
+
+typedef struct {
+    unsigned_16 lineNum;
+    unsigned_8  entryType;
+    unsigned_8  reserved;
+    unsigned_16 numEntries;
+    unsigned_16 segNum;
+    unsigned_32 tableSize;
+} hl3_linnum_first;
+
+typedef struct {
+    unsigned_32 srcStart;
+    unsigned_32 numRecords;
+    unsigned_32 numFiles;
+} hl3_filetab_entry;
+
+
+/* Old pre-CV4 types and definitions (NB02 signature) */
+
+typedef struct {
+    unsigned_16 subsection;
+    unsigned_16 iMod;
+    signed_32   lfo;
+    unsigned_16 cb;
+} cv3_directory_entry;
 
 typedef struct {
     unsigned_16 Seg;
-    unsigned_16 cPair;
-    unsigned_32 offset[1];
-//  unsigned_16 linenumber[];
-//  char        pad[];
-} cv_sst_src_module_line_number;
+    unsigned_16 offset;
+    unsigned_16 cbSeg;
+} cv3_seginfo;
 
 typedef struct {
-    unsigned_16 symhash;
-    unsigned_16 addrhash;
-    unsigned_32 cbSymbol;
-    unsigned_32 cbSymHash;
-    unsigned_32 cbAddrHash;
-} cv_sst_global_pub_header;
-
-typedef struct {
-    unsigned_32 flags;
-    unsigned_32 cType;        /* number of types */
-    unsigned_32 offType[1];   /*[cType] */
-} cv_sst_global_types_header;
-
-struct seg_desc_flags {
-    unsigned_16 fRead:1;
-    unsigned_16 fWrite:1;
-    unsigned_16 fExecute:1;
-    unsigned_16 f32Bit:1;
-    unsigned_16 res3:4;
-    unsigned_16 fSel:1;
-    unsigned_16 fAbs:1;
-    unsigned_16 res2:2;
-    unsigned_16 fGroup:1;
-    unsigned_16 res:3;
-};
-
-typedef struct {
-    union {
-        struct seg_desc_flags   b;
-        unsigned_16             flags;
-    } u;
-    unsigned_16 ovl;
-    unsigned_16 group;
-    unsigned_16 frame;
-    unsigned_16 iSegName;
-    unsigned_16 iClassName;
-    unsigned_32 offset;
-    unsigned_32 cbseg;
-} seg_desc;
-
-typedef struct {
-    unsigned_16 cSeg;
-    unsigned_16 cSegLog;
-    seg_desc    segdesc[1];
-} cv_sst_seg_map;
+    cv3_seginfo SegInfo;
+    unsigned_16 ovlNumber;
+    unsigned_16 iLib;
+    unsigned_8  cSeg;
+    unsigned_8  reserved;
+//  char        name[];
+//  cv3_seginfo arnsg[];
+} cv3_sst_module;
 
 #pragma pack()

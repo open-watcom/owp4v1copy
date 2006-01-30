@@ -44,7 +44,7 @@ omf.pdf describes three possibilities:
 on 32-bit OS/2. No documentation appears to be publicly available, although
 it is possible to glean its structure from file dumps coupled with the output
 of IBM's LINK386. The IBM HLL style is only known to occur in 32-bit objects
-(because for 16-bit development IBM always relied Microsoft tools).
+(because for 16-bit development IBM always relied on Microsoft tools).
 
  IBM uses three types of LINNUM386 records: one lists all source files,
 files, another (rarely used?) describes path of flow through the program,
@@ -128,6 +128,6 @@ enough to have source files that big).
  Coupled with the information in the preceding LINNUM386 record, this uniquely
 identifies lines in particular source files.
 
- Some of our code parses the LINNUM records. If it vital that we only parse
-this data when we know what format it is in! Otherwise we're sure to get
+ Some of our code parses the LINNUM records. It is vital that we only parse
+this data when we know what format it is in; otherwise we're sure to get
 errors or crashes.
