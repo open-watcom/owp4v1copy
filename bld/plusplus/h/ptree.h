@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Parse tree structures, definitions, and prototypes.
 *
 ****************************************************************************/
 
@@ -171,7 +170,7 @@ ptree_op_t;
 
 typedef struct parse_tree_node {
     PTF_FLAG            flags;
-    uint_8              op;
+    ptree_op_t          op;
     CGOP                cgop;
     CGOP                id_cgop;
     uint_8              filler;
