@@ -8,6 +8,9 @@ struct tm *_gmtime( const time_t *timer,
 .ixfunc2 '&TimeFunc' _gmtime
 .im structtm
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func functions convert the calendar time pointed to by
 .arg timer
@@ -37,7 +40,7 @@ broken-down time.
 #include <time.h>
 
 void main()
-  {
+{
     time_t time_of_day;
     auto char buf[26];
     auto struct tm tmbuf;
@@ -46,7 +49,7 @@ void main()
     _gmtime( &time_of_day, &tmbuf );
     printf( "It is now: %.24s GMT\n",
             _asctime( &tmbuf, buf ) );
-  }
+}
 .exmp output
 It is now: Fri Dec 25 15:58:27 1987 GMT
 .exmp end

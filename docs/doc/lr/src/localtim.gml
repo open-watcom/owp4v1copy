@@ -8,7 +8,9 @@ struct tm *_localtime( const time_t *timer,
 .ixfunc2 '&TimeFunc' _localtime
 .im structtm
 .funcend
-.funcbold localtime
+.*
+.safealt
+.*
 .desc begin
 The &func functions convert the calendar time pointed to by
 .arg timer
@@ -49,7 +51,7 @@ structure containing the time information.
 #include <time.h>
 .exmp break
 void main()
-  {
+{
     time_t time_of_day;
     auto char buf[26];
     auto struct tm tmbuf;
@@ -57,7 +59,7 @@ void main()
     time_of_day = time( NULL );
     _localtime( &time_of_day, &tmbuf );
     printf( "It is now: %s", _asctime( &tmbuf, buf ) );
-  }
+}
 .exmp output
 It is now: Sat Mar 21 15:58:27 1987
 .exmp end

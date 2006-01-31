@@ -495,6 +495,7 @@ _vbprint.exe &
 abort.exe &
 access.exe &
 asctime.exe &
+asctim_s.exe &
 atexit.exe &
 bsearch.exe &
 calloc.exe &
@@ -512,12 +513,14 @@ cputs.exe &
 creat.exe &
 cscanf.exe &
 ctime.exe &
+ctime_s.exe &
 exit.exe &
 ffs.exe &
 getcmd.exe &
 getenv.exe &
 getosfha.exe &
 gmtime.exe &
+gmtime_s.exe &
 isalnum.exe &
 isalpha.exe &
 isascii.exe &
@@ -538,6 +541,7 @@ kbhit.exe &
 lfind.exe &
 localeco.exe &
 localtim.exe &
+lcltim_s.exe &
 lock.exe &
 longjmp.exe &
 lsearch.exe &

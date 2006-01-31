@@ -39,6 +39,8 @@
 .fnw __wasctime                 asctime.gml     DOS QNX W WIN32
 .fnu _uasctime                  asctime.gml     DOS       WIN32
 .fnu _u_asctime                 asctime.gml     DOS       WIN32
+.fnc asctime_s                  asctim_s.gml    DOS       WIN32
+.fnc wasctime_s                 asctim_s.gml    DOS       WIN32
 .fnc asin                       asin.gml        DOS QNX W WIN32
 .fnc asinh                      asinh.gml       DOS QNX W WIN32
 .fnc assert                     assert.gml      DOS QNX W WIN32
@@ -159,6 +161,8 @@
 .fnw __wctime                   ctime.gml       DOS QNX W WIN32
 .fnu _uctime                    ctime.gml       DOS       WIN32
 .fnu _u_ctime                   ctime.gml       DOS       WIN32
+.fnc ctime_s                    ctime_s.gml     DOS       WIN32
+.fnw wctime_s                   ctime_s.gml     DOS       WIN32
 .fnc cuserid                    cuserid.gml         QXO
 .fnc cwait                      cwait.gml       DOS       WIN32
 .fnc delay                      delay.gml       DOS QNX W WIN32
@@ -445,6 +449,7 @@
 .fnc _getwindowcoord            gr_getwc.gml    DOS QNX W GRAPH
 .fnc gmtime                     gmtime.gml      DOS QNX W WIN32
 .fnc _gmtime                    gmtime.gml      DOS QNX W WIN32
+.fnc gmtime_s                   gmtime_s.gml    DOS       WIN32
 .fnc _grow_handles              _grow_ha.gml    DOS QXO   WIN32
 .fnc _grstatus                  gr_stat.gml     DOS QNX W GRAPH
 .fnc _grtext                    gr_grtxt.gml    DOS QNX W GRAPH
@@ -669,6 +674,7 @@
 .fnc localeconv                 localeco.gml    DOS QNX W WIN32
 .fnc localtime                  localtim.gml    DOS QNX W WIN32
 .fnc _localtime                 localtim.gml    DOS QNX W WIN32
+.fnc localtime_s                lcltim_s.gml    DOS       WIN32
 .fnc lock                       lock.gml        DOS QNX W WIN32
 .fnc locking                    locking.gml     DOS QNX W WIN32
 .fnc _locking                   locking.gml     DOS QNX W WIN32

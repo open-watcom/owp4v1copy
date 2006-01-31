@@ -1216,6 +1216,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)acosh.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)alloca.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)allocmem.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)asctime.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)asctim_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)asin.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)asinh.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)assert.gml &
@@ -1285,6 +1286,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)crefuns.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)cscanf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)csumfuns.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)ctime.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)ctime_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)cwait.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)d_close.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)d_creat.gml &
@@ -1391,6 +1393,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)gfunmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)gfunrems.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)globdata.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)gmtime.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)gmtime_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)grmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)halloc.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)hantozen.gml &
@@ -1539,6 +1542,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)libmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)libpref.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)localeco.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)localtim.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)lcltim_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)lock.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)locking.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)log.gml &

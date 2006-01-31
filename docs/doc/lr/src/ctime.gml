@@ -24,6 +24,9 @@ wchar_t *_u_ctime( const time_t *timer, wchar_t *buf );
 .ixfunc2 '&TimeFunc' _u_ctime
 .do end
 .funcend
+.*
+.safealt
+.*
 .funcbold ctime
 .desc begin
 The &func functions convert the calendar time pointed to by
@@ -99,19 +102,20 @@ local time.
 .return end
 .see begin
 .im seetime ctime
+.seelist ctime_s
 .see end
 .exmp begin
 #include <stdio.h>
 #include <time.h>
 .exmp break
 void main()
-  {
+{
     time_t time_of_day;
     auto char buf[26];
 .exmp break
     time_of_day = time( NULL );
     printf( "It is now: %s", _ctime( &time_of_day, buf ) );
-  }
+}
 .exmp output
 It is now: Fri Dec 25 15:58:42 1987
 .exmp end

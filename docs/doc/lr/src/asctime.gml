@@ -27,6 +27,9 @@ wchar_t *_u_asctime( const struct tm *timeptr,
 .im structtm
 .funcend
 .funcbold asctime
+.*
+.safealt
+.*
 .desc begin
 The &func functions convert the time information in the structure
 pointed to by
