@@ -16,6 +16,7 @@ dir="binw"	usr="nmpserv.exe"	cond="doshost dostarg os2host | |"	where="c f77"	ol
 dir="binw"	usr="novserv.exe"	cond="dostarg"				where="c f77"	old="bin"
 dir="binw"	usr="parserv.exe"	cond="dostarg"				where="c f77"	old="bin"
 dir="binw"	usr="serserv.exe"	cond="dostarg"				where="c f77"	old="bin"
+dir="binw"	usr="tcpserv.exe"	cond="dostarg"				where="c f77"			desc="TCP/IP trap file"
 dir="binw"	usr="vdmserv.exe"	cond="dostarg os2host wnthost | |"	where="c f77"	old="bin"
 dir="binw"	usr="winserv.exe"	cond="dostarg"				where="c f77"	old="bin"
 dir="binw"	usr="cwhelp.exe"	cond="dostarg"				where="c f77"	old="bin"	desc="Debugger help file for CauseWay"
