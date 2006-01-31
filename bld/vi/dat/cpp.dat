@@ -44,7 +44,7 @@ enum
 explicit
 export
 extern
-flase
+false
 float
 for
 friend
