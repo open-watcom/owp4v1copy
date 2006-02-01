@@ -95,7 +95,7 @@ static void dmp_reloc_item( struct relocation_item *reloc )
     unsigned_16             seg_num;
     unsigned_16             ord_off;
     unsigned_32             imp_off;
-    unsigned_32             string_len;
+    unsigned_8              string_len;
     char                    *imp_nam;
 
     switch( reloc->reloc_type ) {
@@ -127,8 +127,9 @@ static void dmp_reloc_item( struct relocation_item *reloc )
         Wdputs( "nam " );
         Wdputs( Int_mod_ref_tab[ reloc->xtrnl.name.modref_idx - 1 ] );
         Wdputc( '.' );
+        /* One of Os2_386_head.impproc_off and Os2_head.import_off will be set */
         imp_off = reloc->xtrnl.name.impnam_off + Os2_386_head.impproc_off
-                                    + New_exe_off;
+                + Os2_head.import_off + New_exe_off;
         Wlseek( imp_off );
         Wread( &string_len, sizeof( unsigned_8 ) );
         imp_nam = Wmalloc( string_len + 1 );
