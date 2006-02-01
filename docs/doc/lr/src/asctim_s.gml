@@ -4,13 +4,13 @@
 errno_t asctime_s( char * s,
                    rsize_t maxsize,
                    const struct tm * timeptr);
-.ixfunc2 '&TimeFunc' asctime_s
+.*  .ixfunc2 '&TimeFunc' asctime_s
 .if &'length(&wfunc.) ne 0 .do begin
-errno_t asctime_s( wchar_t * s,
-                   rsize_t maxsize,
-                   const struct tm * timeptr);
-.ixfunc2 '&TimeFunc' wasctime_s
-.ixfunc2 '&Wide' wasctime_s
+errno_t _wasctime_s( wchar_t * s,
+                     rsize_t maxsize,
+                     const struct tm * timeptr);
+.* .ixfunc2 '&TimeFunc' _wasctime_s
+.* .ixfunc2 '&Wide' _wasctime_s
 .do end
 .im structtm
 .funcend

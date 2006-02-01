@@ -3,7 +3,7 @@
 #include <time.h>
 struct tm * localtime_s( const time_t * restrict timer,
                          struct tm * restrict result);
-.ixfunc2 '&TimeFunc' localtime_s
+.*  ixfunc2 '&TimeFunc' localtime_s
 .im structtm
 .funcend
 .*
@@ -33,7 +33,7 @@ or there is a runtime-constraint violation.
 .return end
 .*
 .see begin
-.im seetime localtime
+.im seetime localtime_s
 .see end
 .exmp begin
 #define __STDC_WANT_LIB_EXT1__ 1

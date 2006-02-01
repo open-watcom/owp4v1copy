@@ -4,14 +4,14 @@
 errno_t ctime_s( char * s,
                  rsize_t maxsize,
                  const time_t * timer);
-.ixfunc2 '&TimeFunc' &func
+.*   ixfunc2 '&TimeFunc' &func
 .if &'length(&wfunc.) ne 0 .do begin
 #include <wchar.h>
-errno_t wctime_s( wchar_t * s,
-                  rsize_t maxsize,
-                  const time_t * timer);
-.ixfunc2 '&TimeFunc' &wfunc
-.ixfunc2 '&Wide' &wfunc
+errno_t _wctime_s( wchar_t * s,
+                   rsize_t maxsize,
+                   const time_t * timer);
+.*   ixfunc2 '&TimeFunc' &wfunc
+.*   ixfunc2 '&Wide' &wfunc
 .do end
 .funcend
 .*
