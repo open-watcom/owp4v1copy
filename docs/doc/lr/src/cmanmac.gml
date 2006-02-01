@@ -53,16 +53,13 @@
 .   .   .sr wfunc=&*
 .   .do end
 .do end
-.el .if &'pos('wcs',&*) eq 1 .do begin
+.el .if &'pos('wc',&*) eq 1 .do begin
 .   .sr wfunc=&*
 .do end
 .el .if &'pos('wmem',&*) eq 1 .do begin
 .   .sr wfunc=&*
 .do end
 .el .if &'pos('wasc',&*) eq 1 .do begin
-.   .sr wfunc=&*
-.do end
-.el .if &'pos('wcti',&*) eq 1 .do begin
 .   .sr wfunc=&*
 .do end
 .el .if &'pos('_mb',&*) eq 1 .do begin
