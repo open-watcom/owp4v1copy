@@ -31,12 +31,16 @@
 
 #include "variety.h"
 #include "saferlib.h"
+#include "widechar.h"
 #include <string.h>
+#include  <wchar.h>
+#include "xstring.h"
 
-
-_WCRTLINK errno_t memmove_s( void * __restrict s1, rsize_t s1max,
-                       const void * __restrict s2, rsize_t n )
-/***************************************************************/
+_WCRTLINK errno_t __F_NAME(memmove_s,wmemmove_s)( VOID_WC_TYPE * __restrict s1,
+                                                  rsize_t s1max,
+                                            const VOID_WC_TYPE * __restrict s2,
+                                                  rsize_t n )
+/*******************************************************************************/
 {
     errno_t     rc = -1;
     const char  *msg;
@@ -55,12 +59,12 @@ _WCRTLINK errno_t memmove_s( void * __restrict s1, rsize_t s1max,
         __check_constraint_a_gt_b_msg( msg, n, s1max ) ) {
 
         /* now it's safe to use memmove */
-         memmove( s1, s2, n );
+         __F_NAME(memmove,wmemmove)( s1, s2, n );
          rc = 0;
     } else {
         // Runtime-constraints violated, zero out destination array
         if( (s1 != NULL) && __lte_rsizmax( s1max ) ) {
-            memset( s1, 0, s1max );
+            __F_NAME(memset,wmemset)( s1, 0, s1max );
         }
         // Now call the handler
         __rtct_fail( __func__, msg, NULL );

@@ -33,11 +33,14 @@
 #include "saferlib.h"
 #include "widechar.h"
 #include <string.h>
+#include  <wchar.h>
+#include "xstring.h"
 
-
-_WCRTLINK errno_t memcpy_s( void * __restrict s1, rsize_t s1max,
-                      const void * __restrict s2, rsize_t n )
-/**************************************************************/
+_WCRTLINK errno_t __F_NAME(memcpy_s,wmemcpy_s)( VOID_WC_TYPE * __restrict s1,
+                                                rsize_t s1max,
+                                          const VOID_WC_TYPE * __restrict s2,
+                                                rsize_t n )
+/*****************************************************************************/
 {
     errno_t     rc = -1;
     const char  *msg;
@@ -57,12 +60,12 @@ _WCRTLINK errno_t memcpy_s( void * __restrict s1, rsize_t s1max,
         __check_constraint_overlap_msg( msg, s1, s1max, s2, n ) ) {
 
         // now it's safe to use memcpy
-         memcpy( s1, s2, n );
+         __F_NAME(memcpy,wmemcpy)( s1, s2, n );
          rc = 0;
     } else {
         // Runtime-constraints violated, zero out destination array
         if( (s1 != NULL) && __lte_rsizmax( s1max ) ) {
-            memset( s1, 0, s1max );
+            __F_NAME(memset,wmemset)( s1, 0, s1max );
         }
         // Now call the handler
         __rtct_fail( __func__, msg, NULL );

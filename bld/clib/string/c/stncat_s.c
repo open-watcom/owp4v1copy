@@ -66,22 +66,22 @@ _WCRTLINK errno_t __F_NAME(strncat_s,wcsncat_s)( CHAR_TYPE * __restrict s1,
         ((n < m) || __check_constraint_a_gt_b_msg( msg, __F_NAME(strnlen_s,wcsnlen_s)( s2, m ), m - 1 )) &&
         __check_constraint_overlap_msg( msg, s1, s1max, s2, __F_NAME(strnlen_s,wcsnlen_s)( s2, s1max ))) {
 
-         while( *s1 != '\0' ) ++s1;            //find end of field
+         while( *s1 != NULLCHAR ) ++s1;            //find end of field
 
          while( n != 0 ) {
               *s1 = *s2;
-              if( *s2 == '\0' ) break;
+              if( *s2 == NULLCHAR ) break;
               ++s1;
               ++s2;
               --n;
          }
-         *s1 = '\0';
+         *s1 = NULLCHAR;
 
          rc = 0;
     } else {
         // Runtime-constraints found, store zero in receiving field
         if( (s1 != NULL) && (s1max > 0) && __lte_rsizmax( s1max ) ) {
-            s1[0] = '\0';
+            s1[0] = NULLCHAR;
         }
         // Now call the handler
         __rtct_fail( __func__, msg, NULL );

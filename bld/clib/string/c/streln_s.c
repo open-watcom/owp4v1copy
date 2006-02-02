@@ -37,7 +37,7 @@
 #include "errstr.h"
 
 
-_WCRTLINK size_t __F_NAME(strerrorlen_s,wcstrerrorlen_s)( errno_t errnum )
+_WCRTLINK size_t __F_NAME(strerrorlen_s,wcserrorlen_s)( errno_t errnum )
 /************************************************************************/
 {
     size_t  m = 0;
@@ -49,7 +49,7 @@ _WCRTLINK size_t __F_NAME(strerrorlen_s,wcstrerrorlen_s)( errno_t errnum )
         msg = _sys_errlist[ errnum ];
     }
 
-    // count chars up to '\0'
+    // count chars up to '\0'  assuming _sys_errlist is singlebyte
     while( *msg++ != '\0' ) {
         ++m;
     }

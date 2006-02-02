@@ -48,16 +48,16 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
 /****************************************************************************/
 {
 #ifdef __WIDECHAR__
-    const CHAR_TYPE     *p2;
-    CHAR_TYPE           tc2;
+    const CHAR_TYPE   *p2;
+    CHAR_TYPE         tc2;
 #else
-    char                vector[32];
+    char              vector[32];
 #endif
-    const char          *msg = NULL;
-    CHAR_TYPE           *p1 = s1;
-    CHAR_TYPE           *str;
-    rsize_t             m;
-    CHAR_TYPE           tc1;
+    char              *msg = NULL;
+    CHAR_TYPE         *p1 = s1;
+    CHAR_TYPE         *str;
+    rsize_t           m;
+    CHAR_TYPE         tc1;
 
     // Verify runtime-constraints
     // s1max not NULL
@@ -104,9 +104,9 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
             return( NULL );
         }
 
-        str = p1;                                       /* start of token */
+        str = p1++;                                     /* start of token */
 
-        for( ; tc1 = *p1; ++p1 ) {
+        for( ; tc1 = *p1; p1++ ) {
             if( ! ((m == 0) ? ( msg = "no closing token delimiter found" ), 0 : 1 ) ) {
                break;                                   /* limit reached, quit */
             }
@@ -118,9 +118,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
             for( p2 = s2; tc2 = *p2; p2++ ) {
                 if( tc1 == tc2 ) break;
             }
-            if( tc2 == NULLCHAR ) {
-                break;                                  /* end of s1 string reached */
-            } else {
+            if( tc2 != NULLCHAR ) {
 #else
             if( ( vector[ tc1 >> 3 ] & _Bits[ tc1 & 0x07 ] ) != 0 ) {
 #endif

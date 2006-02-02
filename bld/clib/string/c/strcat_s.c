@@ -44,7 +44,7 @@ _WCRTLINK errno_t __F_NAME(strcat_s,wcscat_s)( CHAR_TYPE * __restrict s1,
     const char  *msg;
 
     // strnlen_s is safe to use as it has no rt constraints
-    rsize_t     m = s1max - strnlen_s( s1, s1max );
+    rsize_t     m = s1max - __F_NAME(strnlen_s,wcsnlen_s)( s1, s1max );
 
     // Verify runtime-constraints
     // s1 not NULL
@@ -59,17 +59,19 @@ _WCRTLINK errno_t __F_NAME(strcat_s,wcscat_s)( CHAR_TYPE * __restrict s1,
         __check_constraint_maxsize_msg( msg, s1max ) &&
         __check_constraint_zero_msg( msg, s1max ) &&
         __check_constraint_zero_msg( msg, m ) &&
-        __check_constraint_a_gt_b_msg( msg, strnlen_s( s2, m ), m - 1 ) &&
-        __check_constraint_overlap_msg( msg, s1, s1max, s2, strnlen_s( s2, s1max )) ) {
+        __check_constraint_a_gt_b_msg( msg,
+            __F_NAME(strnlen_s,wcsnlen_s)( s2, m ), m - 1 ) &&
+        __check_constraint_overlap_msg( msg, s1, s1max, s2,
+                           __F_NAME(strnlen_s,wcsnlen_s)( s2, s1max ) ) ) {
 
-         while( *s1 != '\0' )  ++s1;       // find end of field
+         while( *s1 != NULLCHAR ) ++s1;       // find end of field
          while( *s1++ = *s2++ );           // append source field
 
          rc = 0;
     } else {
         // Runtime-constraints found, store zero in receiving field
         if( (s1 != NULL) && (s1max > 0) && __lte_rsizmax( s1max ) ) {
-            s1[0] = '\0';
+            s1[0] = NULLCHAR;
         }
         // Now call the handler
         __rtct_fail( __func__, msg, NULL );
