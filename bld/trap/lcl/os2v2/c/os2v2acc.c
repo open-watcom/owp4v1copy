@@ -105,6 +105,9 @@ static void OutNum( ULONG i )
 #define EXE_IS_PMC              0x0200
 #define EXE_IS_PM               0x0300
 
+/* Kernel memory not accessible via DosDebug */
+#define KERNEL_MEM_OFFSET       0xE0000000
+
 static ULONG            ExceptLinear;
 static UCHAR            TypeProcess;
 static BOOL             Is32Bit;
@@ -486,7 +489,8 @@ USHORT WriteBuffer( char *data, USHORT segv, ULONG offv, USHORT size )
         while( length != 0 ) {
             Buff.Cmd = DBG_C_WriteMem_D;
             if( length == 1 ) {
-                if( iugs ) {
+                /* Don't want to write anything in the kernel area - that means no breakpoints! */
+                if( iugs /*|| offv > KERNEL_MEM_OFFSET*/ ) {
                     if( !TaskReadWord( segv, offv, &resdata ) ) {
                         break;
                     }
@@ -558,7 +562,7 @@ static USHORT ReadBuffer( char *data, USHORT segv, ULONG offv, USHORT size )
             }
         }
         while( length != 0 ) {
-            if( iugs ) {
+            if( iugs || offv > KERNEL_MEM_OFFSET ) {
                 if( !TaskReadWord( segv, offv, &resdata ) ) {
                     break;
                 }
