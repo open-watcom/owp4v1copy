@@ -45,6 +45,10 @@
 #error LDBL_MAX_10_EXP has changed from 308
 #endif
 
+/* We must use more than DBL_DIG/LDBL_DIG, otherwise we lose precision! */
+#define DBL_CVT_DIGITS      20
+#define LDBL_CVT_DIGITS     23
+
 // this manufactures a value from macros defined in float.h
 #define __local_glue( __x, __y ) __x ## __y
 #define local_glue( __x, __y ) __local_glue( __x, __y )
@@ -624,10 +628,10 @@ _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
         n = cvt->ndigits + 3 + NDIG / 2;
     }
 
-    maxsize = DBL_DIG;
+    maxsize = DBL_CVT_DIGITS;
 #ifdef _LONG_DOUBLE_
     if( cvt->flags & LONG_DOUBLE ) {        // number is long double
-        maxsize = LDBL_DIG;
+        maxsize = LDBL_CVT_DIGITS;
     }
 #endif
     if( cvt->flags & NO_TRUNC ) {
@@ -703,10 +707,10 @@ _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
             nsig = n;
         }
 
-        maxsize = DBL_DIG;
+        maxsize = DBL_CVT_DIGITS;
 #ifdef _LONG_DOUBLE_
         if( cvt->flags & LONG_DOUBLE ) {    // number is long double
-            maxsize = LDBL_DIG;
+            maxsize = LDBL_CVT_DIGITS;
         }
 #endif
         if( cvt->flags & NO_TRUNC ) {
