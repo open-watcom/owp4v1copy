@@ -10,9 +10,87 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2005/09/22
+:cmt. Reflects main Perforce branch as of 2006/02/03
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
+.*
+.*
+.section Differences from Open Watcom Version 1.4
+.*
+.np
+Following is a list of changes made in &product 1.5:
+.begbull
+.bull
+The C compiler now supports C99 style declarations intermixed with statements
+in a compound statement, as well as declarations in the opening clause of
+a for loop.
+.bull
+A __restrict keyword has been added to the C compiler. It is functionally
+equivalent to the C99 'restrict' keyword but is always visible, even in
+non-C99 mode.
+.bull
+The C compiler has been fixed so that it no longer loses track of pointer
+base when using __based(__self) pointers. The C compiler has also been
+fixed to properly handle dereferencing of based arrays.
+.bull
+The 16-bit C++ compiler now correctly casts pointers to __segment type
+without crashing. Proper semantics of the cast were implemented.
+.bull
+The 16-bit C compiler has also been modified to handle casts to __segment
+type correctly, ie. return segment portion of a pointer.
+.bull
+The C compiler has been fixed to properly support named based segments
+(ie. __based( __segname( <name> ) ) pointers) that reference the default
+_DATA and _CONST segments.
+.bull
+New warning W137, "Extern function 'fn' redeclared as static", has been added
+to the C compiler. Existing error E1072, "Storage class disagrees with
+previous definition of 'symbol'" has been extended to cover redefinitions
+from 'extern' to 'static' and not only from 'static' to 'extern'. Changing
+the linkage of a symbol invokes undefined behaviour according to ISO C.
+.bull
+New warning W138, "No newline at end of file", has been added to the C
+compiler. It is emitted if no line terminator character was found before the
+end of a source file. Such files do not conform to ISO C. The missing newline
+character will be automatically inserted; this matches the C++ compiler
+behaviour. Note that missing newlines could previously lead to
+"#endif matches #if in different source file" errors.
+.bull
+The C compiler has been modified to allow the __export or __declspec(dllexport)
+modifier on a declaration when earlier declaration exists with no modifier.
+The updated behaviour is compatible with the C++ compiler as well as some
+compilers from other vendors.
+.bull
+In ISO/ANSI mode (-za), the compiler now always warns if it encounters a call
+to unprototyped function. In extensions mode (default, -ze), this warning
+(W131) is suppressed if a matching prototype is found later in the source
+file. Note that the behaviour in extensions mode is unchanged from earlier
+versions.
+.bull
+The C compiler now eliminates static functions that are always inlined from
+the object file (the functions are of course still emitted if their address
+is taken).
+.bull
+The C compiler has been fixed to properly evaluate boolean expressions
+(especially the ternary operator) where the condition is a 64-bit integer
+constant. Previously, the high 32 bits were in some cases ignored, which could
+lead to erroneous results.
+.bull
+The peephole optimizer is now run again after register allocation. This
+allows the code generator to take advantage of some optimization opportunities
+that were previously missed.
+.bull
+A performance problem related to emitting debugging information for structures
+or unions with many members has been corrected in the code generator.
+.bull
+The math library has been fixed to perform binary to decimal floating-point
+conversions with greater precision. This fixes a problem where in some cases
+a conversion from binary to decimal and back was losing precision or producing
+erroneous results.
+.bull
+A random but very rare startup failure of Windows based GUI tools (notably
+wdw) has been fixed.
+.endbull
 .*
 .*
 .section Differences from Open Watcom Version 1.3
