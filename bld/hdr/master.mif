@@ -277,7 +277,9 @@ QNX_files = &
 LINUX_files = &
       $(common) &
         dirent.h &
+        grp.h &
         netdb.h &
+        pwd.h &
         unistd.h &
         utime.h &
         termios.h &

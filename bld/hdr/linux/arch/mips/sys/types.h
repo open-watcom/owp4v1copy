@@ -12,6 +12,7 @@ typedef int             pid_t;  /* Used for process IDs & group IDs */
  typedef long           uid_t;  /* Used for user IDs                */
  #define _UID_T_DEFINED_
 #endif
+typedef long            id_t;   /* Generic ID, may be uid, gid, pid */
 #if defined(_LINUX_SOURCE) || !defined(NO_EXT_KEYS)
 #ifndef _TIMER_T_DEFINED_
  #define _TIMER_T_DEFINED_
