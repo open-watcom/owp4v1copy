@@ -169,6 +169,7 @@ using std::towupper;
 
 :include sizet.sp
 
+:segment !CNAME
 :include saferpro.sp
 
 :include errnot.sp
@@ -176,6 +177,7 @@ using std::towupper;
 :include rsizet.sp
 
 :include saferepi.sp
+:endsegment
 
 :include null.sp
 
@@ -319,6 +321,7 @@ _WCRTLINK extern int    _vswprintf( wchar_t *__s, const wchar_t *__format, va_li
 
 #endif
 
+:segment !CNAME
 :include saferpro.sp
 
 _WCRTLINK extern errno_t wcscpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2 );
@@ -343,6 +346,7 @@ _WCRTLINK extern errno_t _wasctime_s( wchar_t * __restrict __s, rsize_t __maxsiz
 _WCRTLINK extern errno_t _wctime_s( wchar_t * __restrict s, rsize_t __maxsize, const time_t * __timer );
 
 :include saferepi.sp
+:endsegment
 
 :segment CNAME
 :include cplusepi.sp

@@ -114,6 +114,7 @@ using std::wcsxfrm;
 
 :include sizet.sp
 
+:segment !CNAME
 :include saferpro.sp
 
 :include errnot.sp
@@ -121,6 +122,7 @@ using std::wcsxfrm;
 :include rsizet.sp
 
 :include saferepi.sp
+:endsegment
 
 :include null.sp
 
@@ -390,6 +392,7 @@ namespace std {
 :endsegment
 #endif  /* __INLINE_FUNCTIONS__ */
 
+:segment !CNAME
 :include saferpro.sp
 
 _WCRTLINK extern errno_t memcpy_s( void * __restrict __s1, rsize_t __s1max, const void * __restrict __s2, rsize_t __n );
@@ -407,6 +410,7 @@ _WCRTLINK extern size_t  strerrorlen_s( errno_t __errnum );
 _WCRTLINK extern size_t  strnlen_s( const char *__s, size_t __maxsize );
 
 :include saferepi.sp
+:endsegment
 
 :segment CNAME
 :include cplusepi.sp

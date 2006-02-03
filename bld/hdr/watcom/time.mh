@@ -78,6 +78,7 @@ using std::time;
 
 :include clockt.sp
 
+:segment !CNAME
 :include saferpro.sp
 
 :include errnot.sp
@@ -85,6 +86,7 @@ using std::time;
 :include rsizet.sp
 
 :include saferepi.sp
+:endsegment
 
 :segment DOS
 #define CLK_TCK          1000
@@ -269,6 +271,7 @@ _WCRTLINK extern wchar_t     *__wasctime( const struct tm *, wchar_t * );
 :endsegment
 #endif
 
+:segment !CNAME
 :include saferpro.sp
 
 _WCRTLINK extern errno_t      asctime_s( char * __s, rsize_t __maxsize, const struct tm *__timeptr );
@@ -282,6 +285,7 @@ _WCRTLINK extern errno_t      _wctime_s( wchar_t *__s, rsize_t __maxsize, const 
 :endsegment
 
 :include saferepi.sp
+:endsegment
 
 :segment QNX | LINUX
 :include unixext.sp

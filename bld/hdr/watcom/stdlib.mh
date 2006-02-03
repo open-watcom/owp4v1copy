@@ -101,6 +101,7 @@ using std::wcstoull;
 
 :include sizet.sp
 
+:segment !CNAME
 :include saferpro.sp
 
 :include errnot.sp
@@ -110,6 +111,7 @@ using std::wcstoull;
 typedef void (*constraint_handler_t)( const char * __restrict __msg, void * __restrict __ptr, errno_t __error );
 
 :include saferepi.sp
+:endsegment
 
 :include null.sp
 
@@ -345,6 +347,7 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
 #endif
 :endsegment
 
+:segment !CNAME
 :include saferpro.sp
 
 _WCRTLINK extern constraint_handler_t set_constraint_handler_s( constraint_handler_t __handler );
@@ -363,6 +366,7 @@ _WCRTLINK extern errno_t mbstowcs_s( size_t * __restrict __retval, wchar_t * __r
 _WCRTLINK extern errno_t wcstombs_s( size_t * __restrict __retval, char * __restrict __dst, rsize_t __dstmax, const wchar_t * __restrict __src, rsize_t __len );
 
 :include saferepi.sp
+:endsegment
 
 /* min and max macros */
 #if !defined(__max)

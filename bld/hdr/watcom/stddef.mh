@@ -55,11 +55,13 @@ using std::ptrdiff_t;
 
 :include ptrdiff.sp
 
+:segment !CNAME
 :include saferpro.sp
 
 :include rsizet.sp
 
 :include saferepi.sp
+:endsegment
 
 #ifdef __cplusplus
 #define offsetof(__typ,__id) __offsetof(__typ,__id)
