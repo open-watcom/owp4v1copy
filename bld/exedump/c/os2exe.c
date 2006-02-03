@@ -441,7 +441,9 @@ static void dmp_obj_table( void )
         Dump_header( (char *)&os_obj.size, os2_obj_msg );
         Wdputs( "          flags = " );
         dmp_obj_flags( os_obj.flags );
-        dmp_obj_page( os_obj );
+        if( Options_dmp & PAGE_DMP ) {
+            dmp_obj_page( os_obj );
+        }
         Wdputslc( "\n" );
     }
 }

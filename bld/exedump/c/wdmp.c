@@ -187,8 +187,8 @@ static void wbanner( void )
 static void usage( void )
 /***********************/
 {
-    Wdputs( "Usage: wdump [-?abdefiqrs] [-A<num>] [-B<off>] [-D<opt>] [-S<num>] <pathname>\n" );
-    Wdputs( "  <pathname> is a DOS EXE file, a Windows or OS/2 executable or DLL,\n" );
+    Wdputs( "Usage: wdump [-?abdefipqrs] [-A<num>] [-B<off>] [-D<opt>] [-S<num>] <file>\n" );
+    Wdputs( "  <file> is a DOS EXE file, a Windows or OS/2 executable or DLL,\n" );
     Wdputs( "            a PharLap executable, NLM, a QNX executable,\n" );
     Wdputs( "            an ELF executable, shared library or object file,\n" );
     Wdputs( "            or a COFF object.\n" );
@@ -209,10 +209,11 @@ static void usage( void )
     Wdputs( "        -e causes executable information to be dumped as well\n" );
     Wdputs( "        -f causes fixup information to be dumped\n" );
     Wdputs( "        -i dump export information for PE DLLs\n" );
+    Wdputs( "        -p causes LE/LX page map to be dumped\n" );
     Wdputs( "        -q quiet dump - don't write banner\n" );
     Wdputs( "        -r causes more resource information to be dumped\n" );
     Wdputs( "        -s causes segments' data to be dumped\n" );
-    Wdputs( "        -S <segnum> like -s but only applies to segment <segnum>\n" );
+    Wdputs( "        -S<segnum> like -s but only applies to segment <segnum>\n" );
 }
 
 /*
@@ -257,10 +258,10 @@ static int parse_options( int argc, char * const *argv )
     Hexoff = 0;
 
     while( 1 ) {
-        while( (c = getopt( argc, argv, ":aA:bB:dD:efiqrsS:" )) != -1 ) {
+        while( (c = getopt( argc, argv, ":aA:bB:dD:efipqrsS:" )) != -1 ) {
             switch( c ) {
             case 'A':
-                Options_dmp |= FIX_DMP | RESRC_DMP | EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
+                Options_dmp |= FIX_DMP | PAGE_DMP | RESRC_DMP | EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
                 Segspec = atoi( optarg );
                 if( Segspec == 0 ) {
                     Options_dmp &= ~OS2_SEG_DMP;
@@ -269,7 +270,7 @@ static int parse_options( int argc, char * const *argv )
                 }
                 break;
             case 'a':
-                Options_dmp |= FIX_DMP | RESRC_DMP | EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
+                Options_dmp |= FIX_DMP | PAGE_DMP | RESRC_DMP | EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
                 break;
             case 'B':
                 Hexoff = strtol( optarg, NULL, 16 );
@@ -300,6 +301,9 @@ static int parse_options( int argc, char * const *argv )
                 Options_dmp |= IMPORT_LIB;
                 Options_dmp |= QUIET;
                 Options_dmp &= ~EXE_INFO;
+                break;
+            case 'p':
+                Options_dmp |= EXE_INFO | PAGE_DMP;
                 break;
             case 'q':
                 Options_dmp |= QUIET;
