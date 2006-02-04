@@ -433,6 +433,7 @@
 .fnc gets                       gets.gml        DOS QNX W WIN32
 .fnw _getws                     gets.gml        DOS QNX W WIN32
 .fnu _ugets                     gets.gml        DOS       WIN32
+.fnc gets_s                     gets_s.gml      DOS QNX W WIN32
 .fnc _gettextcolor              gr_gettc.gml    DOS QNX W GRAPH
 .fnc _gettextcursor             gr_gettu.gml    DOS QNX W GRAPH
 .fnc _gettextextent             gr_gette.gml    DOS QNX W GRAPH

@@ -19,6 +19,9 @@ aborts the program.
 .np
 .do end
 .el .if '&*' eq 'end' .oldtext
+.el .if '&*' eq 'freetext' .do begin
+.newtext Constraints:
+.do end
 .el .if '&*' eq 'none' .do begin
 .newtext Constraints:
 None.
