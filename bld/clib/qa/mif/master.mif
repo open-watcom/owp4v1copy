@@ -178,27 +178,27 @@ runtests : .symbolic
 
 dos_s.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ms -bt=dos $(c_dbg_flags)
-    wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM dos $(link_opts) $(link_i86) OPTION stack=5k FILE $^*.obj
     @rm $^*.obj
 
 dos_c.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mc -bt=dos $(c_dbg_flags)
-    wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM dos $(link_opts) $(link_i86) OPTION stack=5k FILE $^*.obj
     @rm $^*.obj
 
 dos_m.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mm -bt=dos $(c_dbg_flags)
-    wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM dos $(link_opts) $(link_i86) OPTION stack=5k FILE $^*.obj
     @rm $^*.obj
 
 dos_l.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -bt=dos $(c_dbg_flags)
-    wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM dos $(link_opts) $(link_i86) OPTION stack=5k FILE $^*.obj
     @rm $^*.obj
 
 dos_h.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mh -bt=dos $(c_dbg_flags)
-    wlink SYSTEM dos $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM dos $(link_opts) $(link_i86) OPTION stack=5k FILE $^*.obj
     @rm $^*.obj
 
 pls_3s.exe : $(srcfile)
@@ -239,32 +239,32 @@ x32_3r.exe : $(srcfile)
 
 os2_s.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ms -2 -bt=os2 $(c_dbg_flags)
-    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) OPTION stack=20k FILE $^*.obj
     @rm $^*.obj
 
 os2_c.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mc -2 -bt=os2 $(c_dbg_flags)
-    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) OPTION stack=20k FILE $^*.obj
     @rm $^*.obj
 
 os2_m.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mm -2 -bt=os2 $(c_dbg_flags)
-    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) OPTION stack=20k FILE $^*.obj
     @rm $^*.obj
 
 os2_l.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -2 -bt=os2 $(c_dbg_flags)
-    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) OPTION stack=20k FILE $^*.obj
     @rm $^*.obj
 
 os2_h.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -mh -2 -bt=os2 $(c_dbg_flags)
-    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) OPTION stack=20k FILE $^*.obj
     @rm $^*.obj
 
 os2_mt.exe : $(srcfile)
     $(cc_i86) $[@ $(comp_opts) $(comp_i86) -ml -bm -2 -bt=os2 $(c_dbg_flags)
-    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) FILE $^*.obj
+    wlink SYSTEM os2 pmcompatible $(link_opts) $(link_i86) OPTION stack=20k FILE $^*.obj
     @rm $^*.obj
 
 os3_3r.exe : $(srcfile)
