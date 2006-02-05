@@ -82,8 +82,8 @@ extern  void    __rtct_fail( const char *fn, const char *reason, void *reserved 
     ((a > b) ? ( msg = #a " > " #b ), 0 : 1)
 
 #define __check_constraint_overlap_msg( msg, p1, len1, p2, len2 )       \
-    (((p1 == p2) || ( (p1 > p2) && ( p1 < (CHAR_TYPE *)p2 + len2 ) )    \
-        || ( (p2 > p1) && ( p2 < (CHAR_TYPE *)p1 + len1 )))             \
+    (((p1 == p2) || ( (p1 > p2) && ( p1 < (CHAR_TYPE *)p2 + len2 * sizeof( CHAR_TYPE )))    \
+        || ( (p2 > p1) && ( p2 < (CHAR_TYPE *)p1 + len1 * sizeof( CHAR_TYPE ))))            \
      ? ( msg = #p1 " overlap " #p2 ), 0 : 1)
 
 
