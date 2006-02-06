@@ -207,7 +207,7 @@ private:
 
     //Allocator::rebind< Node >::other mMem;
         //moved above constructors for the time being
-        //as this seems to stop compiler crashing !?
+        //as this seems to stop compiler crashing.
     size_type mSize;
 };
 
@@ -517,72 +517,62 @@ void list< Type, Allocator >::reverse( )
  * destroyed during this process. Only pointers and counters are
  * changed.
  */
-:: This isn't as exception safe as it could be. If operator< throws
-:: the partially processed lists won't be consistent.
 template< class Type, class Allocator >
 void list< Type, Allocator >::merge( list &other )
 {
-  list new_list;
-  DoubleLink *list0 = new_list.sentinel;
+  DoubleLink *temp_link;
+  size_type   temp_size;
+
+  if( other.mSize == 0 ) return;
+  if( mSize == 0 ) {
+    temp_link      = sentinel;
+    sentinel       = other.sentinel;
+    other.sentinel = temp_link;
+    temp_size      = mSize;
+    mSize          = other.mSize;
+    other.mSize    = temp_size;
+  }
+
   DoubleLink *list1 = sentinel->fwd;
   DoubleLink *list2 = other.sentinel->fwd;
 
   //compare elements on both lists as long as possible.
   while( list1 != sentinel && list2 != other.sentinel ) {
-    if( static_cast< Node * >( list2 )->value <
-        static_cast< Node * >( list1 )->value ) {
-      list0->bwd->fwd = list2;
-      list2->bwd = list0->bwd;
-      list0->bwd = list2;
-      list2 = list2->fwd;
-      list0->bwd->fwd = list0;
+    if( !( static_cast< Node * >( list2 )->value <
+           static_cast< Node * >( list1 )->value ) ) {
+      list1 = list1->fwd;
     }
     else {
-      list0->bwd->fwd = list1;
-      list1->bwd = list0->bwd;
-      list0->bwd = list1;
-      list1 = list1->fwd;
-      list0->bwd->fwd = list0;
+      list1->bwd->fwd = list2;
+      temp_link       = list1->bwd;
+      list1->bwd      = list2;
+      list2->bwd->fwd = list2->fwd;
+      list2->fwd->bwd = list2->bwd;
+      list2           = list2->fwd;
+      list1->bwd->fwd = list1;
+      list1->bwd->bwd = temp_link;
+      mSize++;
+      other.mSize--;
     }
   }
 
-  //now move the rest of longer list.
-:: This should be done without the while loops: do a splice-like operation.
-  if( list1 == sentinel ) {
-    while( list2 != other.sentinel ) {
-      list0->bwd->fwd = list2;
-      list2->bwd = list0->bwd;
-      list0->bwd = list2;
-      list2 = list2->fwd;
-      list0->bwd->fwd = list0;
-    }
+  //deal with the tail end of list2 (if anything is left).
+  if( list2 != other.sentinel ) {
+    list1 = sentinel->bwd;
+    list1->fwd               = list2;
+    list2->bwd               = list1;
+    sentinel->bwd            = other.sentinel->bwd;
+    other.sentinel->bwd->fwd = sentinel;
+    other.sentinel->bwd      = other.sentinel;
+    other.sentinel->fwd      = other.sentinel;
+    mSize += other.mSize;
+    other.mSize = 0;
   }
-  else {
-    while( list1 != sentinel ) {
-      list0->bwd->fwd = list1;
-      list1->bwd = list0->bwd;
-      list0->bwd = list1;
-      list1 = list1->fwd;
-      list0->bwd->fwd = list0;
-    }
-  }
-
-  //patch things up so all lists are consistent
-  sentinel->fwd = sentinel;
-  sentinel->bwd = sentinel;
-  other.sentinel->fwd = other.sentinel;
-  other.sentinel->bwd = other.sentinel->bwd;
-  new_list.mSize = mSize + other.mSize;
-  mSize = 0;
-  other.mSize = 0;
-
-  //bring merged list into current list
-  swap( new_list );
 }
 
 /* ------------------------------------------------------------------
- * push( node*, x ) (private)
- * insert copy of x in list just before element identified by node* 
+ * push( Node*, x ) (private)
+ * insert copy of x in list just before element identified by Node* 
  */
 template< class Type, class Allocator >
 list< Type, Allocator >::Node*

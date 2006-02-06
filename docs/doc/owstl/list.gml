@@ -47,6 +47,7 @@ Completed members:
 :LI.splice( iterator, list &, iterator )
 :LI.splice( iterator list &, iterator, literator )
 :LI.reverse()
+:LI.merge( list const & )
 :eUL.
 
 :H1.Design Details
@@ -56,45 +57,43 @@ Completed members:
 :H2.Description of a Double Linked List
 :P.
 This is a data structure that is made up of nodes, where each node
-contains the data, a pointer to the next node, and a pointer to the previous
-node.
-The overall structure also knows where the first element in the list is and 
-usually the last.
-Obviously it requires two pointers for every piece of data held in the list,
-but this allows movement between adjacent nodes in both directions 
-in constant time.
+contains the data, a pointer to the next node, and a pointer to the
+previous node. The overall structure also knows where the first element
+in the list is and usually the last. Obviously it requires two pointers
+for every piece of data held in the list, but this allows movement
+between adjacent nodes in both directions in constant time.
 
 :H2.Overview of the class
 :P.
-The class defines a internal DoubleLink structure that only holds forward and
-backward pointers to itself.
-It then defines a Node structure that inherits the DoubleLink and adds to it
-the space for the real data (of type value_type) that is held in the list 
-nodes.
-This is done so a special sentinel object can be created that is related to 
-every other node in the list, but it doesn't use the space of a value_type
-type.
-This sentinel is used by the list class to point to the first and last elements
-in the list.
-A sentinel is useful in this case (the alternative would just be individual first
-and last pointers) because it means the insertion and deletion code does
-not have to check for the special case of editing the list at the begining
-and end.
-The sentinel is initialised pointing to itself and is used as the reference
-point of the end of the list.
-When the an element is inserted or deleted before the end or at the begining
-all the pointer manipulation just falls out in the wash.
-[This seems to be a good uses of sentinels, I can't see the point of using
-them in a tree structure for example.]
+The class defines a internal DoubleLink structure that only holds
+forward and backward pointers to itself. It then defines a Node
+structure that inherits the DoubleLink and adds to it the space for the
+real data (of type value_type) that is held in the list nodes. This is
+done so a special sentinel object can be created that is related to
+every other node in the list, but it doesn't require space for a
+value_type object. This sentinel is used by the list class to point to
+the first and last elements in the list. A sentinel is useful in this
+case (the alternative would just be individual first and last pointers)
+because it means the insertion and deletion code does not have to check
+for the special case of editing the list at the begining and end. The
+sentinel is initialised pointing to itself and is used as the reference
+point of the end of the list. When the an element is inserted or deleted
+before the end or at the begining all the pointer manipulation just
+falls out in the wash. [This seems to be a good uses of sentinels, I
+can't see the point of using them in a tree structure for example.]
 
 :P.
-There are two allocators that need to be rebound for the Node and 
-DoubleLink types.
-[For review: DJFC called the first one mMem where the lower case m was for 
-:Q.member:eQ. then PCC needed to add another for DoubleLink and called it 
-dlMem, we could really do with standadising a naming convention 
-- perhaps mMem should be nMem or dlMem should be mDLMem???
-Also need to write down what was the reason for needing dlMem? ]
+There are two allocators that need to be rebound for the Node and
+DoubleLink types. [For review: DJFC called the first one mMem where the
+lower case m was for
+:Q.member:eQ. then PCC needed to add another for
+DoubleLink and called it dlMem, we could really do with standadising a
+naming convention---perhaps mMem should be nMem or dlMem should be
+mDLMem???] The two allocators are needed because objects of different
+types are being allocated: the node allocation allocates nodes (with
+their contained value_type) while the link allocator allocates the
+sentinel node of type DoubleLink.
+
 
 
 :H2.Inserting nodes
