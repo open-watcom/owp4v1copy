@@ -32,7 +32,7 @@ by Jon Louis Bentley and M. Douglas McIlroy in the article
 The &func function returns no value.
 .return end
 .see begin
-.seelist qsort bsearch
+.seelist qsort qsort_s bsearch bsearch_s
 .see end
 .exmp begin
 #include <stdio.h>

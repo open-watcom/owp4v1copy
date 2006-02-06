@@ -90,6 +90,7 @@
 .fnc break_off                  breakoff.gml    DOS
 .fnc break_on                   breakoff.gml    DOS
 .fnc bsearch                    bsearch.gml     DOS QNX W WIN32
+.fnc bsearch_s                  bsrch_s.gml     DOS QNX W WIN32
 .fnc btom                       btom.gml        NEC
 .fnf _fbtom                     btom.gml        NEC
 .fn8 bzero                      bzero.gml       DOS QNX W WIN32
@@ -1037,6 +1038,7 @@
 .fnc qnx_vc_name_attach         qvcn_at.gml         QXO
 .fnc qnx_vc_poll_parm           qvc_pp.gml          QXO
 .fnc qsort                      qsort.gml       DOS QNX W WIN32
+.fnc qsort_s                    qsort_s.gml     DOS QNX W WIN32
 .fnc raise                      raise.gml       DOS QNX W WIN32
 .fnc rand                       rand.gml        DOS QNX W WIN32
 .fnc read                       read.gml        DOS QNX W WIN32

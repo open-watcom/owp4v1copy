@@ -1247,6 +1247,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)bdos.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)bessel.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)breakoff.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)bsearch.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)bsrch_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)btom.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)bzero.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)cabs.gml &
@@ -1697,6 +1698,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)putenv.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)puts.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)putw.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)qsort.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)qsort_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)raise.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)rand.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)read.gml &

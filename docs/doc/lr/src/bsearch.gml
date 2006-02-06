@@ -44,7 +44,7 @@ the return value is not necessarily the first occurrence of a matching
 value when the array is searched linearly.
 .return end
 .see begin
-.seelist bsearch lfind lsearch qsort
+.seelist bsearch bsearch_s lfind lsearch qsort qsort_s
 .see end
 .exmp begin
 #include <stdio.h>
