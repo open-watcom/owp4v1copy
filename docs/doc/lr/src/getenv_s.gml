@@ -1,24 +1,56 @@
-.func getenv _wgetenv _ugetenv
+.func getenv_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
-char *getenv( const char *name );
-.ixfunc2 '&Process' &func
-.if &'length(&wfunc.) ne 0 .do begin
-wchar_t *_wgetenv( const wchar_t *name );
-.ixfunc2 '&Process' &wfunc
-.ixfunc2 '&Wide' &wfunc
-.do end
-.if &'length(&ufunc.) ne 0 .do begin
-wchar_t  *_ugetenv( const wchar_t *name );
-.ixfunc2 '&Process' &ufunc
-.do end
+errno_t getenv_s( size_t * restrict len,
+                  char * restrict value,
+		  rsize_t maxsize,
+                  const char * restrict name );
 .funcend
 .*
-.safealt
+.rtconst begin
+.arg name
+shall not be a null pointer.
+.arg maxsize
+shall neither be equal to zero nor be greater than
+.kw RSIZE_MAX.
+If
+.arg maxsize
+is not equal to zero, then
+.arg value
+shall not be a null pointer.
+.np
+If there is a runtime-constraint violation, the integer pointed to by
+.arg len
+(if
+.arg len
+is not null) is set to zero, and the environment list is not searched.
+.rtconst end
 .*
 .desc begin
 The &func function searches the environment list for an entry matching
 the string pointed to by
 .arg name.
+.np
+If that entry is found, &func performs the following actions. If
+.arg len
+is not a null pointer, the length of the string associated with the matched
+entry is stored in the integer pointed to by
+.arg len.
+If the length of the associated string is less than
+.arg maxsize,
+then the associated string is copied to the array pointed to by
+.arg value.
+.np
+If that entry is not found, &func performs the following actions. If
+.arg len
+is not a null pointer, zero is stored in the integer pointed to by
+.arg len.
+If
+.arg maxsize
+is greater than zero, then
+.arg value[0]
+is set to the null character.
+.np
 .if '&machsys' eq 'QNX' .do begin
 The matching is case-sensitive; all lowercase letters are treated
 as different from uppercase letters.
@@ -95,60 +127,33 @@ assignments:
     INCLUDE=C:\WATCOM\H
 .millust end
 .do end
-.if &'length(&wfunc.) ne 0 .do begin
-.np
-&wfunc is a wide-character version of &func; the argument and return
-value of &wfunc are wide-character strings.
-:CMT. The
-:CMT. .kw _wenviron
-:CMT. global variable is a wide-character version of
-:CMT. .kw _environ.
-:CMT. .np
-:CMT. In an MBCS program (for example, in an SBCS ASCII program),
-:CMT. .kw _wenviron
-:CMT. is initially NULL because the environment is composed of
-:CMT. multibyte-character strings.
-:CMT. Then, on the first call to
-:CMT. .kw _wputenv,
-:CMT. or on the first call to
-:CMT. .kw _wgetenv
-:CMT. if an (MBCS) environment already exists, a corresponding
-:CMT. wide-character string environment is created and is then
-:CMT. pointed to by
-:CMT. .kw _wenviron.
-.do end
-.if &'length(&ufunc.) ne 0 .do begin
-.np
-The &ufunc Unicode function is identical to &func except that it
-accepts a Unicode string argument and returns a pointer to a Unicode
-string.
-.do end
 .desc end
 .*
 .return begin
-The &func function returns a pointer to the string assigned to the
-environment variable if found, and NULL if no match was found.
-Note: the value returned should be duplicated if you intend to
-modify the contents of the string.
+The &func function returns zero if the environment string specified by
+.arg name
+was found and successfully stored in the buffer pointed to by
+.arg value.
+Otherwise, a non-zero value is returned.
 .return end
 .*
 .see begin
-.im seeenv getenv
+.im seeenv getenv_s
 .see end
 .*
 .exmp begin
-#include <stdio.h>
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
+#include <stdio.h>
 .exmp break
 void main( void )
 {
-    char *path;
+    char    buffer[128];
+    size_t  len;
 .exmp break
-    path = getenv( "INCLUDE" );
-    if( path != NULL )
-        printf( "INCLUDE=%s\n", path );
+    if( getenv_s( &len, buffer, sizeof( buffer ), "INCLUDE" ) == 0 )
+        printf( "INCLUDE=%s\n", buffer );
 }
 .exmp end
-.*
 .class ANSI
 .system

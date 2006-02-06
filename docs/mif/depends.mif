@@ -1379,6 +1379,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)getdcwd.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)getdiskf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)getdrive.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)getenv.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)getenv_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)getfattr.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)getftime.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)getmbcp.gml &

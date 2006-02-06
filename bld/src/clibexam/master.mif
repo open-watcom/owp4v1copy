@@ -518,6 +518,7 @@ exit.exe &
 ffs.exe &
 getcmd.exe &
 getenv.exe &
+getenv_s.exe &
 getosfha.exe &
 gmtime.exe &
 gmtime_s.exe &

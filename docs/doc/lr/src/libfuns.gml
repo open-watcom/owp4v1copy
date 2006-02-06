@@ -396,6 +396,7 @@
 .fnc getenv                     getenv.gml      DOS QNX W WIN32
 .fnw _wgetenv                   getenv.gml      DOS QNX W WIN32
 .fnu _ugetenv                   getenv.gml      DOS
+.fnc getenv_s                   getenv_s.gml    DOS QNX W WIN32
 .fnc geteuid                    geteuid.gml         QXO
 .fnc _getfillmask               gr_getfm.gml    DOS QNX W GRAPH
 .fnc _getfontinfo               gr_getfi.gml    DOS QNX W GRAPH
