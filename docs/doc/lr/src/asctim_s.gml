@@ -1,5 +1,5 @@
 .func asctime_s wasctime_s
-#define _ _STDC_WANT_LIB_EXT1_ _ 1
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <time.h>
 errno_t asctime_s( char * s,
                    rsize_t maxsize,

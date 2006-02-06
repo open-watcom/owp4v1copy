@@ -1,5 +1,5 @@
 .func strtok_s wcstok_s
-#define _ _STDC_WANT_LIB_EXT1_ _ 1
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <string.h>
 char *strtok_s( char * restrict s1,
                 rsize_t * restrict s1max,
@@ -115,7 +115,7 @@ pointer if there is no token or there is a runtime-constraint violation.
 .seelist &function. strtok strcspn strpbrk
 .see end
 .exmp begin
-#define _ _STDC_WANT_LIB_EXT1_ _ 1
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 #include <string.h>
 .exmp break
