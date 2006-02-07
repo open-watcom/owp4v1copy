@@ -55,7 +55,6 @@
 #define CC          "wcc386"          /* Open Watcom C compiler          */
 #define CCXX        "wpp386"          /* Open Watcom C++ compiler        */
 #define WCLENV      "OWCC"
-#define STACKSIZE   "8192"            /* default stack size              */
 #define _NAME_      "C/C++32 "
 
 #ifdef __UNIX__
@@ -97,8 +96,6 @@ static  char    *O_Name;            /* name of -o option                  */
  *  Static function prototypes
  */
 
-static int  Parse( int argc, char **argv );
-static int  CompLink( void );
 static void MakeName( char *, char * );
 
 char    *SkipSpaces( char * );
@@ -128,7 +125,7 @@ void print_banner( void )
     static int  done;
 
     if( done ) return;
-    puts( banner1w( _NAME_ "Compiler Driver Program",_WCL_VERSION_) );
+    puts( banner1w( _NAME_ "Compiler Driver Program", _WCL_VERSION_ ) );
     puts( banner2( "1988" ) );
     puts( banner3 );
     puts( banner3a );
@@ -159,10 +156,10 @@ static int FileExtension( char *p, char *ext )
     }
     if( dot != NULL ) {
         if( strfcmp( dot, ext ) == 0 ) {
-            return( 1 );                // indicate file extension matches
+            return( 1 );                /* indicate file extension matches */
         }
     }
-    return( 0 );                        // indicate no match
+    return( 0 );                        /* indicate no match */
 }
 
 static  void AddDirective( char *directive )
@@ -316,7 +313,7 @@ static  int  Parse( int argc, char **argv )
             break;
         case 'd':
         parse_d:
-            if( DebugFlag == 0 ){ /* not set by -h yet */
+            if( DebugFlag == 0 ) {  /* not set by -h yet */
                 if( strcmp( Word, "1" ) == 0 ) {
                     DebugFlag = 1;
                 } else if( strcmp( Word, "1+" ) == 0 ) { /* 02-mar-91 */
@@ -520,11 +517,11 @@ static char *SrcName( char *name )
         exename = "wasm" EXE_EXT;
         cc_name = "wasm";
     } else {
-        exename = CC EXE_EXT;            // assume C compiler
+        exename = CC EXE_EXT;           /* assume C compiler */
         cc_name = CC;
         if( !Flags.force_c ) {
             if( Flags.force_c_plus || useCPlusPlus( p ) ) {
-                exename = CCXX EXE_EXT;  // use C++ compiler
+                exename = CCXX EXE_EXT; /* use C++ compiler */
                 cc_name = CCXX;
             }
         }
