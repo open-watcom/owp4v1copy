@@ -29,6 +29,11 @@
 ****************************************************************************/
 
 
+/* FIXME
+ *  -S mustn't link; and must run wdis on object files
+ *  if linking is done, remove objects afterwards!
+ */
+
 #include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -132,6 +137,39 @@ void print_banner( void )
     done = 1;
 }
 
+static char *xlate_fname( char *name )
+{
+#ifndef __UNIX__
+    /* On non-POSIX hosts, pathnames must be translated to format
+     * expected buy other tools.
+     */
+    char    *run = name;
+
+    while( *run ) {
+    if( *run == '/' )
+        *run = '\\';
+    run++;
+    }
+#endif
+    return( name );
+}
+
+/* The following 'f' functions are designed to handle filenames */
+static char *strfcat( char *target, const char *source )
+{
+    return( xlate_fname( strcat( target, source ) ) );
+}
+
+static char *strfcpy( char *target, const char *source )
+{
+    return( xlate_fname( strcpy( target, source ) ) );
+}
+
+static char *strfdup( const char *source )
+{
+    return( xlate_fname( strdup( source ) ) );
+}
+
 void addccopt( int option, char *opt )
 {
     char    op[4];
@@ -171,7 +209,7 @@ static  void AddDirective( char *directive )
     p = MemAlloc( sizeof( struct directives ) );
     p->next = NULL;
     p->directive = MemAlloc( strlen( directive ) + 1 );
-    strcpy( p->directive, Word );
+    strcpy( p->directive, directive );
     if( Directive_List == NULL ) {
         Directive_List = p;
     } else {
@@ -231,20 +269,20 @@ static  int  Parse( int argc, char **argv )
                 Link_Name = "__WCL__.LNK";
                 if( Word[1] == '='  ||  Word[1] == '#' ) {
                     MakeName( Word, ".lnk" );    /* add extension */
-                    Link_Name = strdup( Word + 2 );
+                    Link_Name = strfdup( Word + 2 );
                 }
                 wcc_option = 0;
                 break;
             case 'e':           /* name of exe file */
                 if( Word[1] == '='  ||  Word[1] == '#' ) {
-                    strcpy( Exe_Name, Word + 2 );
+                    strfcpy( Exe_Name, Word + 2 );
                 }
                 wcc_option = 0;
                 break;
             case 'm':           /* name of map file */
                 Flags.map_wanted = TRUE;
                 if( Word[1] == '='  ||  Word[1] == '#' ) {
-                    Map_Name = strdup( Word + 2 );
+                    Map_Name = strfdup( Word + 2 );
                 }
                 wcc_option = 0;
                 break;
@@ -255,7 +293,7 @@ static  int  Parse( int argc, char **argv )
                 if( Word[1] == '='  ||  Word[1] == '#' ) {
                     ++p;
                 }
-                Obj_Name = strdup( p );         /* 08-mar-90 */
+                Obj_Name = strfdup( p );        /* 08-mar-90 */
                 break;
             case 'p':           /* floating-point option */
                 if( Word[1] == 'c' ) {
@@ -403,7 +441,7 @@ static  int  Parse( int argc, char **argv )
                 break;
             break;
         case 'o':
-            O_Name = strdup( OptArg );
+            O_Name = strfdup( OptArg );
             wcc_option = 0;
             break;
         case 'g':
@@ -450,6 +488,9 @@ static  int  Parse( int argc, char **argv )
                 }
             }
             break;
+        case 'I':
+            xlate_fname( Word );
+            break;
         }
         /* don't add linker-specific options */
         /* to compiler command line:     */
@@ -477,9 +518,9 @@ static  int  Parse( int argc, char **argv )
         Word = argv[i];
         if( FileExtension( Word, ".lib" ) || FileExtension( Word, ".a" ) ) {
             strcat( Libs, Libs[0] != '\0' ? "," : " " );
-            strcat( Libs, Word );
+            strfcat( Libs, Word );
         } else {
-            strcat( Files, Word );
+            strfcat( Files, Word );
             strcat( Files, " " );
         }
     }
