@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Setup for standard CGA modes.
 *
 ****************************************************************************/
 
@@ -65,11 +64,11 @@ static short _CGAInit( short mode )
 
 {
     if( _SetMode( mode ) == mode ) {
-        //             x,   y, col, bpp, pag, seg,     off,     siz, mis
+        //             x,   y, str, col, bpp, pag, seg,     off,     siz, mis
         if( mode == 6 ) {
-            _GrInit( 640, 200,   2,   1,   1, _CgaSeg, _CgaOff,   0,   0 );
+            _GrInit( 640, 200,  40,   2,   1,   1, _CgaSeg, _CgaOff,   0,   0 );
         } else {    // modes 4 and 5
-            _GrInit( 320, 200,   4,   2,   1, _CgaSeg, _CgaOff,   0,   0 );
+            _GrInit( 320, 200,  40,   4,   2,   1, _CgaSeg, _CgaOff,   0,   0 );
         }
         return( TRUE );
     } else {

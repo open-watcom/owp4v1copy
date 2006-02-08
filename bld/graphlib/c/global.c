@@ -100,6 +100,7 @@ char                    _VGAPage;                   // SuperVGA page number
 char                    _VGAGran;                   // SuperVGA page granularity
 short                   _SVGAType;                  // type of SuperVGA
 void                    ( _FARC *_SetVGAPage )( short );  // function to set SVGA page
+short                   _VGAStride;                 // SuperVGA mode stride
 #endif
 
 // segments of screen memory and BIOS and ROM BIOS data area

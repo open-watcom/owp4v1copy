@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Setup for standard EGA modes.
 *
 ****************************************************************************/
 
@@ -120,15 +119,15 @@ static short _EGAInit( short mode )
 
 {
     if( _SetMode( mode ) == mode ) {
-        //             x,   y, col, bpp, pag, seg,     off,     siz,   mis
+        //             x,   y, str, col, bpp, pag, seg,     off,     siz,   mis
         if( mode == 13 ) {
-            _GrInit( 320, 200,  16,   4,   8, _EgaSeg, _EgaOff, 0x200, PLANAR );
+            _GrInit( 320, 200,  40,  16,   4,   8, _EgaSeg, _EgaOff, 0x200, PLANAR );
         } else if( mode == 14 ) {
-            _GrInit( 640, 200,  16,   4,   4, _EgaSeg, _EgaOff, 0x400, PLANAR );
+            _GrInit( 640, 200,  80,  16,   4,   4, _EgaSeg, _EgaOff, 0x400, PLANAR );
         } else if( mode == 15 ) {
-            _GrInit( 640, 350,   4,   2,   2, _EgaSeg, _EgaOff, 0x800, PLANAR );
+            _GrInit( 640, 350,  40,   4,   2,   2, _EgaSeg, _EgaOff, 0x800, PLANAR );
         } else {    // mode is 16
-            _GrInit( 640, 350,  16,   4,   2, _EgaSeg, _EgaOff, 0x800, PLANAR );
+            _GrInit( 640, 350,  80,  16,   4,   2, _EgaSeg, _EgaOff, 0x800, PLANAR );
         }
         if( ( EGA_Memory() & 0x00ff ) == 0 ) {      // only 64K memory
             _CurrState->vc.numvideopages = max( 1, _CurrState->vc.numvideopages / 4 );

@@ -87,6 +87,7 @@ extern char             _VGAPage;                   // SuperVGA page number
 extern char             _VGAGran;                   // SuperVGA page granularity
 extern short            _SVGAType;                  // type of SuperVGA
 extern void             ( _FARC *_SetVGAPage )( short );  // function to set SVGA page
+extern short            _VGAStride;                 // SuperVGA mode stride
 
 extern unsigned short   _BiosSeg;                   // seg of BIOS data area
 extern unsigned short   _MonoSeg;                   // seg of MONO screen

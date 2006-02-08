@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Setup for Hercules Graphics modes.
 *
 ****************************************************************************/
 
@@ -110,8 +109,8 @@ static short _HercInit( short mode )
     if( ( monitor >= MT_HERC && monitor <= MT_HERCINCL ) ||
         ( alternate >= MT_HERC && alternate <= MT_HERCINCL ) ) {
         GraphicsMode();
-        //         x,   y, col, bpp, pag, seg,      off,      siz, mis
-        _GrInit( 720, 350,   2,   1,   1, _MonoSeg, _MonoOff,   0, NO_BIOS );
+        //         x,   y, str, col, bpp, pag, seg,      off,      siz, mis
+        _GrInit( 720, 350,  90,   2,   1,   1, _MonoSeg, _MonoOff,   0, NO_BIOS );
         return( TRUE );
     } else {
         return( FALSE );

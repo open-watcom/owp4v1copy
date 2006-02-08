@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Utility routines for SuperVGA modes.
 ;*
 ;*****************************************************************************
 
@@ -41,6 +40,7 @@ include graph.inc
         extrn   __PlotAct : word
         extrn   __Transparent : word
         extrn   __VGAPage : byte
+        extrn   __VGAStride : word
         extrn   __VGAGran : byte
         extptr  __SetVGAPage
 
@@ -439,7 +439,7 @@ E_MoveRight256:
 
         db      E_MoveUp640-_MoveUp640_
 _MoveUp640_:                    ; 640x???, 256 colour SuperVGA modes
-        sub     di,640
+        sub     di,ss:__VGAStride
         _if     c               ; if < 0
           push    _eax           ; - move to previous page
           mov     al,ss:__VGAPage
@@ -452,7 +452,7 @@ E_MoveUp640:
 
         db      E_MoveDown640-_MoveDown640_
 _MoveDown640_:                  ; 640x???, 256 colour SuperVGA modes
-        add     di,640
+        add     di,ss:__VGAStride
         _if     c               ; if < 0
           push    _eax           ; - move to next page
           mov     al,ss:__VGAPage
@@ -465,7 +465,7 @@ E_MoveDown640:
 
         db      E_MoveUp800-_MoveUp800_
 _MoveUp800_:                    ; 800x600, 256 colour SuperVGA modes
-        sub     di,800
+        sub     di,ss:__VGAStride
         _if     c               ; if < 0
           push    _eax           ; - move to previous page
           mov     al,ss:__VGAPage
@@ -478,7 +478,7 @@ E_MoveUp800:
 
         db      E_MoveDown800-_MoveDown800_
 _MoveDown800_:                  ; 800x600, 256 colour SuperVGA modes
-        add     di,800
+        add     di,ss:__VGAStride
         _if     c               ; if < 0
           push    _eax           ; - move to next page
           mov     al,ss:__VGAPage
@@ -491,7 +491,7 @@ E_MoveDown800:
 
         db      E_MoveUp1024-_MoveUp1024_
 _MoveUp1024_:                   ; 1024x768, 256 colour SuperVGA modes
-        sub     di,1024
+        sub     di,ss:__VGAStride
         _if     c               ; if < 0
           push    _eax           ; - move to previous page
           mov     al,ss:__VGAPage
@@ -504,7 +504,7 @@ E_MoveUp1024:
 
         db      E_MoveDown1024-_MoveDown1024_
 _MoveDown1024_:                  ; 1024x768, 256 colour SuperVGA modes
-        add     di,1024
+        add     di,ss:__VGAStride
         _if     c               ; if < 0
           push    _eax           ; - move to next page
           mov     al,ss:__VGAPage

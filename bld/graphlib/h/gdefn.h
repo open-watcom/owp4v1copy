@@ -99,6 +99,7 @@ struct videoinfo {
     unsigned int            screen_off_base;
     unsigned short          page_size;
     unsigned short          misc_info;
+    unsigned short          stride;
 };
 
 #define PLANAR          0x0001      // videoinfo.misc_info bits
@@ -178,7 +179,7 @@ extern unsigned             _GetStackLow( void );
 extern short                _GraphMode( void );
 extern void                 _GrClear( short, short, short, short );
 extern void                 _TxtClear( short, short, short, short );
-extern void                 _GrInit( short, short, short, short,
+extern void                 _GrInit( short, short, short, short, short,
                                      short, short, int, short, short );
 extern short                _GrProlog( void );
 extern void                 _GrEpilog( void );

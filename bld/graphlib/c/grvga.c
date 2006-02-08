@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Setup for standard VGA modes.
 *
 ****************************************************************************/
 
@@ -83,13 +82,13 @@ static short _VGAInit( short mode )
 
 {
     if( _SetMode( mode ) == mode ) {
-        //             x,   y, col, bpp, pag, seg,     off,     siz,   mis
+        //             x,   y, str, col, bpp, pag, seg,     off,     siz,   mis
         if( mode == 17 ) {
-            _GrInit( 640, 480,   2,   1,   1, _EgaSeg, _EgaOff,   0,   0 );
+            _GrInit( 640, 480,  80,   2,   1,   1, _EgaSeg, _EgaOff,   0,   0 );
         } else if( mode == 18 ) {
-            _GrInit( 640, 480,  16,   4,   1, _EgaSeg, _EgaOff,   0,   PLANAR );
+            _GrInit( 640, 480,  80,  16,   4,   1, _EgaSeg, _EgaOff,   0,   PLANAR );
         } else {    // mode is 19
-            _GrInit( 320, 200, 256,   8,   1, _EgaSeg, _EgaOff,   0,   0 );
+            _GrInit( 320, 200, 320, 256,   8,   1, _EgaSeg, _EgaOff,   0,   0 );
         }
         return( TRUE );
     } else {

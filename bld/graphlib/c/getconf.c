@@ -233,7 +233,7 @@ void _InitState( void )
 }
 
 
-void _GrInit( short x, short y, short col, short bpp,
+void _GrInit( short x, short y, short stride, short col, short bpp,
               short pag, short seg, int off, short siz, short mis )
 //=================================================================
 
@@ -253,4 +253,5 @@ void _GrInit( short x, short y, short col, short bpp,
     _CurrState->misc_info        |= mis;
     _CurrState->screen_seg       = seg;     /* page 0 screen segment */
     _CurrState->screen_off       = off;     /* page 0 screen offset */
+    _CurrState->stride           = stride;
 }

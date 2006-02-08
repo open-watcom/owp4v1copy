@@ -221,4 +221,5 @@
 #pragma aux _VGAGran "_*";
 #pragma aux _SVGAType "_*";
 #pragma aux _SetVGAPage "_*";
+#pragma aux _VGAStride "_*";
 #endif
