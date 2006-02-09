@@ -1349,6 +1349,8 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)flushall.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fmod.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fms2ieee.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fopen.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)fopen_s.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)freop_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fp_off.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fp_seg.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fprintf.gml &
@@ -1359,6 +1361,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)fread.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)free.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)freemem.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)freopen.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)freop_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)frexp.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fscanf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fseek.gml &
