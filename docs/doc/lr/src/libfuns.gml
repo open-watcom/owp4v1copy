@@ -20,6 +20,9 @@
 .*      "TEST" are functions that are included in a "test" version of
 .*      the documentation.
 .*
+.* All functions described in one gml file must be in adjacent lines!
+.*
+.*
 .fnc abort                      abort.gml       DOS QNX W WIN32
 .fnc abs                        abs.gml         DOS QNX W WIN32
 .fnc access                     access.gml      DOS QXO   WIN32
@@ -312,6 +315,8 @@
 .fnc fnmatch                    fnmatch.gml         QXO
 .fnc fopen                      fopen.gml       DOS QNX W WIN32
 .fnw _wfopen                    fopen.gml       DOS QNX W WIN32
+.fnc fopen_s                    fopen_s.gml     DOS QNX W WIN32
+.fnc _wfopen_s                  fopen_s.gml     DOS QNX W WIN32
 .fnu _ufopen                    fopen.gml       DOS       WIN32
 .fnc fork                       fork.gml            QXO
 .fnc FP_OFF                     fp_off.gml      DOS QNX W WIN32
@@ -340,6 +345,8 @@
 .fnc freopen                    freopen.gml     DOS QNX W WIN32
 .fnw _wfreopen                  freopen.gml     DOS QNX W WIN32
 .fnu _ufreopen                  freopen.gml     DOS       WIN32
+.fnc freopen_s                  freop_s.gml     DOS QNX W WIN32
+.fnc _wfreopen_s                freop_s.gml     DOS QNX W WIN32
 .fnc frexp                      frexp.gml       DOS QNX W WIN32
 .fnc fscanf                     fscanf.gml      DOS QNX W WIN32
 .fnw fwscanf                    fscanf.gml      DOS QNX W WIN32

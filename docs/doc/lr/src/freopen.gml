@@ -18,6 +18,9 @@ FILE *_ufreopen( const wchar_t *filename,
 .ixfunc2 '&StrIo' &ufunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The stream located by the
 .kw fp
@@ -62,15 +65,15 @@ If the open operation fails, &func returns
 .im errnoref
 .return end
 .see begin
-.seelist &function. _dos_open fclose fcloseall fdopen fopen freopen
-.seelist &function. _fsopen _grow_handles _hdopen open _open_osfhandle
-.seelist &function. _popen sopen
+.seelist freopen _dos_open fclose fcloseall fdopen fopen fopen_s freopen_s
+.seelist freopen _fsopen _grow_handles _hdopen open _open_osfhandle
+.seelist freopen _popen sopen
 .see end
 .exmp begin
 #include <stdio.h>
 
 void main()
-  {
+{
     FILE *fp;
     int c;
 .exmp break
@@ -80,7 +83,7 @@ void main()
         fputchar(c);
       fclose( fp );
     }
-  }
+}
 .exmp end
 .class ANSI
 .system

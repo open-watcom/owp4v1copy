@@ -1,10 +1,14 @@
-.func fopen _wfopen _ufopen
+.func fopen_s _wfopen_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
-FILE *fopen( const char *filename, const char *mode );
+errno_t fopen_s( FILE * restrict * restrict streamptr,
+                 const char * restrict filename,
+                 const char * restrict mode);
 .ixfunc2 '&StrIo' &func
 .if &'length(&wfunc.) ne 0 .do begin
-FILE *_wfopen( const wchar_t *filename,
-               const wchar_t *mode );
+errno_t _wfopen_s( FILE * restrict * restrict streamptr,
+                   const wchar_t * restrict filename,
+                   const wchar_t * restrict mode);
 .ixfunc2 '&StrIo' &wfunc
 .ixfunc2 '&Wide' &wfunc
 .do end
@@ -15,31 +19,70 @@ FILE *_ufopen( const wchar_t *filename,
 .do end
 .funcend
 .*
-.safealt
+.rtconst begin
+None of
+.arg streamptr,
+.arg filename,
+or
+.arg mode
+shall be a null pointer.
+If there is a runtime-constraint violation, &func does not attempt to open a file.
+Furthermore, if
+.arg streamptr
+is not a null pointer, &func sets
+.arg *streamptr
+to the null pointer.
+.rtconst end
 .*
 .desc begin
 The &func function opens the file whose name is the string pointed to by
 .arg filename,
 and associates a stream with it.
-The argument
+The
 .arg mode
-points to a string beginning with one of the following sequences:
+string shall be as described for fopen, with the addition that modes starting
+with the character 'w' or 'a' may be preceded by the character 'u', see below:
 .begnote
 .termhd1 Mode
 .termhd2 Meaning
-.note "r"
-open file for reading
-.note "w"
-create file for writing, or truncate to zero length
-.note "a"
-append: open file or create for writing at end-of-file
-.note "r+"
-open file for update (reading and/or writing)
-.note "w+"
-create file for update, or truncate to zero length
-.note "a+"
-append: open file or create for update, writing at end-of-file
+.note "uw"
+truncate to zero length or create text file for writing, default permissions
+.note "ua"
+append; open or create text file for writing at end-of-file, default permissions
+.note "uwb"
+truncate to zero length or create binary file for writing, default permissions
+.note "uab"
+append; open or create binary file for writing at end-of-file, default
+permissions
+.note "uw+"
+truncate to zero length or create text file for update, default permissions
+.note "ua+"
+append; open or create text file for update, writing at end-of-file, default
+permissions
+.note "uw+b or uwb+"
+truncate to zero length or create binary file for update, default
+permissions
+.note "ua+b or uab+"
+append; open or create binary file for update, writing at end-of-file,
+default permissions
 .endnote
+.np
+.np
+To the extent that the underlying system supports the concepts, files opened for writing
+shall be opened with exclusive (also known as non-shared) access. If the file is being
+created, and the first character of the
+.arg mode
+string is not 'u', to the extent that the
+underlying system supports it, the file shall have a file permission that prevents other
+users on the system from accessing the file. If the file is being created and first character
+of the mode string is 'u', then by the time the file has been closed, it shall have the
+system default file access permissions.
+If the file was opened successfully, then the pointer to FILE pointed to by
+.arg streamptr
+will be set to the pointer to the object controlling the opened file. Otherwise, the pointer
+to FILE pointed to by
+.arg streamptr
+will be set to a null pointer.
 .np
 In addition to the above characters, you can also include one of the
 following characters in
@@ -121,14 +164,12 @@ link your program with
 This option is not supported under Netware.
 .endnote
 .np
-The "t", "c", and "n" mode options are extensions for &func and
-.kw _fdopen
+The "t", "c", and "n" mode options are extensions for &func
 and should not be used where ANSI portability is desired.
 .do end
 .el .do begin
 .np
-The "t" mode option is an extension for &func and
-.kw _fdopen
+The "t" mode option is an extension for &func
 and should not be used where ANSI portability is desired.
 .do end
 .np
@@ -184,27 +225,24 @@ and
 .do end
 .desc end
 .return begin
-The &func function returns a pointer to the object controlling the
-stream.
-This pointer must be passed as a parameter to subsequent functions for
-performing operations on the file.
-If the open operation fails, &func returns
-.mono NULL.
-.im errnoref
+The &func function returns zero if it opened the file. If it did not open the file or if
+there was a runtime-constraint violation, &func returns a non-zero value.
 .return end
 .see begin
-.seelist fopen _dos_open fclose fcloseall fdopen fopen_s freopen freopen_s
-.seelist fopen _fsopen _grow_handles _hdopen open _open_osfhandle
-.seelist fopen _popen sopen
+.seelist fopen_s _dos_open fclose fcloseall fdopen fopen freopen freopen_s
+.seelist fopen_s _fsopen _grow_handles _hdopen open _open_osfhandle
+.seelist fopen_s _popen sopen
 .see end
 .exmp begin
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 
 void main()
 {
-    FILE *fp;
+    errno_t rc;
+    FILE    *fp;
 .exmp break
-    fp = fopen( "file", "r" );
+    rc = fopen_s( &fp, "file", "r" );
     if( fp != NULL ) {
       /* rest of code goes here */
       fclose( fp );
