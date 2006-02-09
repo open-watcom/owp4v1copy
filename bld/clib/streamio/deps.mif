@@ -3,6 +3,8 @@ ufgetc.obj   : ../../../c/ufgetc.c   ../../../c/fgetc.c
 ufgetcha.obj : ../../../c/ufgetcha.c ../../../c/fgetchar.c
 ufgets.obj   : ../../../c/ufgets.c   ../../../c/fgets.c
 ufopen.obj   : ../../../c/ufopen.c   ../../../c/fopen.c
+ufopen_s.obj : ../../../c/ufopen_s.c ../../../c/fopen_s.c
+ufreop_s.obj : ../../../c/ufreop_s.c ../../../c/freop_s.c
 ufprintf.obj : ../../../c/ufprintf.c ../../../c/fprintf.c
 ufprtf.obj   : ../../../c/ufprtf.c   ../../../c/fprtf.c
 ufputc.obj   : ../../../c/ufputc.c   ../../../c/fputc.c
