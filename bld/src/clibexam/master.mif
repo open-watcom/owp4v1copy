@@ -493,6 +493,7 @@ _msize.exe &
 _splitpa.exe &
 _vbprint.exe &
 abort.exe &
+abrt_hnd.exe &
 access.exe &
 asctime.exe &
 asctim_s.exe &
@@ -522,6 +523,7 @@ getenv_s.exe &
 getosfha.exe &
 gmtime.exe &
 gmtime_s.exe &
+ign_hnd.exe &
 isalnum.exe &
 isalpha.exe &
 isascii.exe &
@@ -570,6 +572,7 @@ perror.exe &
 qsort.exe &
 realloc.exe &
 segread.exe &
+set_chnd.exe &
 setbuf.exe &
 setlocal.exe &
 setmode.exe &

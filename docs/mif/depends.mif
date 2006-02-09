@@ -1209,6 +1209,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)_vbprint.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_vsnprnt.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_wdirent.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)abort.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)abrt_hnd.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)abs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)access.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)acos.gml &
@@ -1406,6 +1407,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)hcfunmac.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)header.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)hfree.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)hypot.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)ign_hnd.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)imaxabs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)imaxdiv.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)inp.gml &
@@ -1749,6 +1751,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)seevprtf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)seevscnf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)segread.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)segregs.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)set_chnd.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)setblock.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)setbuf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)setdate.gml &

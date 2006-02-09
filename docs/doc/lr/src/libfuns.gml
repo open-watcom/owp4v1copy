@@ -24,6 +24,7 @@
 .*
 .*
 .fnc abort                      abort.gml       DOS QNX W WIN32
+.fnc abort_handler_s            abrt_hnd.gml    DOS QNX W WIN32
 .fnc abs                        abs.gml         DOS QNX W WIN32
 .fnc access                     access.gml      DOS QXO   WIN32
 .fnc _access                    access.gml      DOS       WIN32
@@ -496,6 +497,7 @@
 .fnc _nheapwalk                 _heapwal.gml    DOS QNX W WIN32
 .fnc hfree                      hfree.gml       DOS QNX W
 .fnc hypot                      hypot.gml       DOS QNX W WIN32
+.fnc ignore_handler_s           ign_hnd.gml     DOS QNX W WIN32
 .fnc _imagesize                 gr_imsiz.gml    DOS QNX W GRAPH
 .fnc _imagesize_w               gr_imsiz.gml    DOS QNX W GRAPH
 .fnc _imagesize_wxy             gr_imsiz.gml    DOS QNX W GRAPH
@@ -1112,6 +1114,7 @@
 .fnc Sendfd                     sendfd.gml          QXO
 .fnc Sendfdmx                   sendfdmx.gml        QXO
 .fnc Sendmx                     sendmx.gml          QXO
+.fnc set_constraint_handler_s   set_chnd.gml    DOS QNX W WIN32
 .fnc _setactivepage             gr_setap.gml    DOS QNX W GRAPH
 .fnc _setbkcolor                gr_setbc.gml    DOS QNX W GRAPH
 .fnc setbuf                     setbuf.gml      DOS QNX W WIN32
