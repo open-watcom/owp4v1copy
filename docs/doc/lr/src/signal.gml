@@ -205,11 +205,15 @@ stream followed by program termination).
 When the program begins execution, the equivalent of
 .millust begin
     signal( SIGABRT, SIG_DFL );
-    signal( SIGFPE, SIG_IGN );
+    signal( SIGFPE, SIG_DFL );
     signal( SIGILL, SIG_DFL );
     signal( SIGINT, SIG_DFL );
     signal( SIGSEGV, SIG_DFL );
     signal( SIGTERM, SIG_DFL );
+    signal( SIGBREAK, SIG_DFL );
+    signal( SIGUSR1, SIG_IGN );
+    signal( SIGUSR2, SIG_IGN );
+    signal( SIGUSR3, SIG_IGN );
 .millust end
 .pc
 is executed.
