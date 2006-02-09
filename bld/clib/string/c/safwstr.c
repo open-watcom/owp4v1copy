@@ -51,7 +51,7 @@
                             NumErrors++;                                    \
                             exit( -1 );                                     \
                         }
-
+#define ARRAYCOUNT( array )  ( sizeof( array )  / sizeof( array[ 0 ] ) )
 
 char    ProgramName[128];   /* executable filename */
 int     NumErrors = 0;      /* number of errors */
@@ -93,9 +93,9 @@ void TestMove_s( void )
     static wchar_t     str2[] = L"\t \t";
     static wchar_t     str3[] = L"?a???b,,,#c";
     wchar_t            *t, *ptr1, *ptr2, *ptr3;
-    rsize_t         max1 = sizeof( str1 ) / sizeof( str1[0] );
-    rsize_t         max2 = sizeof( str2 ) / sizeof( str2[0] );
-    rsize_t         max3 = sizeof( str3 ) / sizeof( str3[0] );
+    rsize_t         max1 = ARRAYCOUNT( str1 );
+    rsize_t         max2 = ARRAYCOUNT( str2 );
+    rsize_t         max3 = ARRAYCOUNT( str3 );
 
 
     /***********************************************************************/
@@ -107,10 +107,11 @@ void TestMove_s( void )
     /***********************************************************************/
     /*  memcpy_s                                                           */
     /***********************************************************************/
+//  printf( "Test memcpys      (%s).\n", ProgramName );
 
     /* Test the "good" case */
-    VERIFY( wmemcpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, 0 ) == 0 );
-    VERIFY( wmemcpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, 1 + wcslen( s2 ) ) == 0 );
+    VERIFY( wmemcpy_s( buf, ARRAYCOUNT( buf ), s2, 0 ) == 0 );
+    VERIFY( wmemcpy_s( buf, ARRAYCOUNT( buf ), s2, 1 + wcslen( s2 ) ) == 0 );
     VERIFY( wmemcpy_s( buf, wcslen( s2 ) + 2, s2, 1 + wcslen( s2 ) ) == 0 );
 
     VERIFY( wcslen( buf ) == wcslen( L"VALUE" ) );
@@ -123,32 +124,33 @@ void TestMove_s( void )
     VERIFY( buf[0] == L'\0' );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wmemcpy_s( NULL, sizeof( buf ) / sizeof( buf[0] ), s2, wcslen( s2 ) ) != 0 );
+    VERIFY( wmemcpy_s( NULL, ARRAYCOUNT( buf ), s2, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wmemcpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), NULL, wcslen( s2 ) ) != 0 );
+    VERIFY( wmemcpy_s( buf, ARRAYCOUNT( buf ), NULL, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wmemcpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, sizeof( buf ) / sizeof( buf[0] )+ 1 ) != 0 );
+    VERIFY( wmemcpy_s( buf, ARRAYCOUNT( buf ), s2, sizeof( buf ) / sizeof( buf[0] )+ 1 ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wmemcpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), buf + 1, wcslen( s2 ) ) != 0 );
+    VERIFY( wmemcpy_s( buf, ARRAYCOUNT( buf ), buf + 1, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
 #if RSIZE_MAX != SIZE_MAX
-    VERIFY( wmemcpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, ~0 ) != 0 );
+    VERIFY( wmemcpy_s( buf, ARRAYCOUNT( buf ), s2, ~0 ) != 0 );
     VERIFY( NumViolations == ++violations );
 #endif
 
     /***********************************************************************/
     /*  memmove_s                                                          */
     /***********************************************************************/
+//  printf( "Test memmove      (%s).\n", ProgramName );
 
     /* Test the "good" cases */
-    VERIFY( wmemmove_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, 0 ) == 0 );
-    VERIFY( wmemmove_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, 1 + wcslen( s2 ) ) == 0 );
+    VERIFY( wmemmove_s( buf, ARRAYCOUNT( buf ), s2, 0 ) == 0 );
+    VERIFY( wmemmove_s( buf, ARRAYCOUNT( buf ), s2, 1 + wcslen( s2 ) ) == 0 );
 
-    VERIFY( wmemmove_s( buf, sizeof( buf ) / sizeof( buf[0] ), buf + 1, 1 + wcslen( s2 ) ) == 0 );
+    VERIFY( wmemmove_s( buf, ARRAYCOUNT( buf ), buf + 1, 1 + wcslen( s2 ) ) == 0 );
 
     VERIFY( wmemmove_s( buf, 1 + wcslen( s2 ), s2, 1 + wcslen( s2 ) ) == 0 );
 
@@ -162,31 +164,31 @@ void TestMove_s( void )
     VERIFY( buf[0] == L'\0' );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wmemmove_s( NULL, sizeof( buf ) / sizeof( buf[0] ), s2, wcslen( s2 ) ) != 0 );
+    VERIFY( wmemmove_s( NULL, ARRAYCOUNT( buf ), s2, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wmemmove_s( buf, sizeof( buf ) / sizeof( buf[0] ), NULL, wcslen( s2 ) ) != 0 );
+    VERIFY( wmemmove_s( buf, ARRAYCOUNT( buf ), NULL, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wmemmove_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2,
-                        sizeof( buf ) / sizeof( buf[0] ) + 1 ) != 0 );
+    VERIFY( wmemmove_s( buf, ARRAYCOUNT( buf ), s2, ARRAYCOUNT( buf ) + 1 ) != 0 );
     VERIFY( NumViolations == ++violations );
 
 #if RSIZE_MAX != SIZE_MAX
     VERIFY( wmemmove_s( buf, ~0, s2, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wmemmove_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, ~0 ) != 0 );
+    VERIFY( wmemmove_s( buf, ARRAYCOUNT( buf ), s2, ~0 ) != 0 );
     VERIFY( NumViolations == ++violations );
 #endif
 
     /***********************************************************************/
     /*  wcscpy_s                                                           */
     /***********************************************************************/
+//  printf( "Test memcpy       (%s).\n", ProgramName );
 
     /* Test the "good" cases */
-    VERIFY( wcscpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2 ) == 0 );
-    VERIFY( wcscpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2 ) == 0 );
+    VERIFY( wcscpy_s( buf, ARRAYCOUNT( buf ), s2 ) == 0 );
+    VERIFY( wcscpy_s( buf, ARRAYCOUNT( buf ), s2 ) == 0 );
     VERIFY( wcscpy_s( buf, wcslen( s2 ) + 1, s2 ) == 0 );
 
 
@@ -200,16 +202,16 @@ void TestMove_s( void )
     VERIFY( NumViolations == ++violations );
     VERIFY( buf[0] == L'\0' );
 
-    VERIFY( wcscpy_s( NULL, sizeof( buf ) / sizeof( buf[0] ), s2 ) != 0 );
+    VERIFY( wcscpy_s( NULL, ARRAYCOUNT( buf ), s2 ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wcscpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), NULL ) != 0 );
+    VERIFY( wcscpy_s( buf, ARRAYCOUNT( buf ), NULL ) != 0 );
     VERIFY( NumViolations == ++violations );
 
     VERIFY( wcscpy_s( buf, 5, s2 ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wcscpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), buf + 1 ) != 0 );
+    VERIFY( wcscpy_s( buf, ARRAYCOUNT( buf ), buf + 1 ) != 0 );
     VERIFY( NumViolations == ++violations );
 
 #if RSIZE_MAX != SIZE_MAX
@@ -220,6 +222,7 @@ void TestMove_s( void )
     /***********************************************************************/
     /*  wcscat_s                                                           */
     /***********************************************************************/
+//  printf( "Test wcscat       (%s).\n", ProgramName );
     wcscpy( sc1,src1 );
     VERIFY( wcscmp( sc1,src1 ) == 0 );
     VERIFY( wcscat_s( sc1, 100, sc5 ) == 0 );
@@ -241,8 +244,9 @@ void TestMove_s( void )
     /*  wcsnlen_s                                                          */
     /***********************************************************************/
 
+//  printf( "Test wcsnlen      (%s).\n", ProgramName );
     /* Test the "good" case */
-    VERIFY( wcsnlen_s( str, sizeof( str )  / sizeof( str[0] ) ) == wcslen( str ) );
+    VERIFY( wcsnlen_s( str, ARRAYCOUNT( str ) ) == wcslen( str ) );
     VERIFY( wcsnlen_s( str, 4 ) == 4 );
     VERIFY( wcsnlen_s( str, 0 ) == 0 );
     VERIFY( wcsnlen_s( NULL, 1000 ) == 0 );
@@ -257,9 +261,10 @@ void TestMove_s( void )
     /*  wcsncpy_s                                                          */
     /***********************************************************************/
 
+//  printf( "Test wcsncpy      (%s).\n", ProgramName );
     /* Test the "good" case */
-    VERIFY( wcsncpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, 0 ) == 0 );
-    VERIFY( wcsncpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, wcslen( s2 ) ) == 0 );
+    VERIFY( wcsncpy_s( buf, ARRAYCOUNT( buf ), s2, 0 ) == 0 );
+    VERIFY( wcsncpy_s( buf, ARRAYCOUNT( buf ), s2, wcslen( s2 ) ) == 0 );
     VERIFY( wcsncpy_s( buf, wcslen( s2 ) + 1, s2, wcslen( s2 ) ) == 0 );
 
     VERIFY( wcslen( buf ) == wcslen( L"VALUE" ) );
@@ -277,13 +282,13 @@ void TestMove_s( void )
     VERIFY( NumViolations == ++violations );
     VERIFY( buf[0] == '\0' );
 
-    VERIFY( wcsncpy_s( NULL, sizeof( buf ) / sizeof( buf[0] ), s2, wcslen( s2 ) ) != 0 );
+    VERIFY( wcsncpy_s( NULL, ARRAYCOUNT( buf ), s2, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wcsncpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), NULL, wcslen( s2 ) ) != 0 );
+    VERIFY( wcsncpy_s( buf, ARRAYCOUNT( buf ), NULL, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wcsncpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), buf + 1, wcslen( s2 ) ) != 0 );
+    VERIFY( wcsncpy_s( buf, ARRAYCOUNT( buf ), buf + 1, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
     VERIFY( wcsncpy_s( dst2, 5, src2, 7 ) != 0 );
@@ -294,7 +299,7 @@ void TestMove_s( void )
     VERIFY( wcsncpy_s( buf, ~0, s2, wcslen( s2 ) ) != 0 );
     VERIFY( NumViolations == ++violations );
 
-    VERIFY( wcsncpy_s( buf, sizeof( buf ) / sizeof( buf[0] ), s2, ~0 ) != 0 );
+    VERIFY( wcsncpy_s( buf, ARRAYCOUNT( buf ), s2, ~0 ) != 0 );
     VERIFY( NumViolations == ++violations );
 #endif
 
@@ -303,6 +308,7 @@ void TestMove_s( void )
     /*  wcsncat_s                                                          */
     /***********************************************************************/
 
+//  printf( "Test wcsncat      (%s).\n", ProgramName );
     wcscpy( sc1, L"good" );
     wcscpy( sc2, L"hello" );
     wcscpy( sc3, L"hello" );
@@ -324,6 +330,7 @@ void TestMove_s( void )
     /*  wcstok_s                                                           */
     /***********************************************************************/
 
+//  printf( "Test wcstok       (%s).\n", ProgramName );
     VERIFY( (t = wcstok_s( str1, &max1, L"?", &ptr1 )) != NULL );    /* points to the token "a" */
     VERIFY( wcscmp( t, L"a" ) == 0 );
 
@@ -338,9 +345,10 @@ void TestMove_s( void )
     VERIFY( ptr1 == NULL );
 
     wcscpy( str1, str3 );
-    max1 = sizeof( str1 ) / sizeof( str1[0] );
+    max1 = ARRAYCOUNT( str1 );
     VERIFY( NULL == wcstok_s( str1, &max1, str3, &ptr3 ) );         /* only delimiter chars */
 
+//  printf( "Test wcstok rtc   (%s).\n", ProgramName );
     /* Test runtime-constraint violations */
     VERIFY( NULL == wcstok_s( NULL, &max1, L"?", &ptr1 ) );          /* null pointer */
     VERIFY( NumViolations == ++violations );
@@ -378,7 +386,7 @@ void TestError_s( void )
     errlen = wcserrorlen_s( EBADF );
     VERIFY( errlen != 0 );
 
-    VERIFY( wcserror_s( error, sizeof( error ) / sizeof( error[0] ), EBADF ) == 0 ); /* get an error string */
+    VERIFY( wcserror_s( error, ARRAYCOUNT( error ), EBADF ) == 0 ); /* get an error string */
     VERIFY( wcslen( error ) != 0 );
 
     VERIFY( wcserror_s( error, errlen - 1, EBADF ) != 0 ); /* truncated error string */
