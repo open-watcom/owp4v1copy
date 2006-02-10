@@ -62,24 +62,36 @@ struct dostime_t {
 #define _dostime_t dostime_t
 
 struct find_t {
-        char reserved[21];      /* reserved for use by DOS    */
+        unsigned short cr_time; /* time of file creation      */
+        unsigned short cr_date; /* date of file creation      */
+        unsigned short ac_time; /* time of last file access   */
+        unsigned short ac_date; /* date of last file access   */
+        unsigned short lfnax;   /* DOS LFN search handle      */
+        unsigned char  lfnsup;  /* DOS LFN support status     */
+        char reserved[10];      /* reserved for use by DOS    */
         char attrib;            /* attribute byte for file    */
         unsigned short wr_time; /* time of last write to file */
         unsigned short wr_date; /* date of last write to file */
         unsigned long  size;    /* length of file in bytes    */
-#if defined(__OS2__) || defined(__NT__)
+#if defined(__OS2__) || defined(__NT__) || defined(__WATCOM_LFN__)
         char name[256];         /* null-terminated filename   */
 #else
         char name[13];          /* null-terminated filename   */
 #endif
 };
 struct _wfind_t {
-        char reserved[21];      /* reserved for use by DOS    */
+        unsigned short cr_time; /* time of file creation      */
+        unsigned short cr_date; /* date of file creation      */
+        unsigned short ac_time; /* time of last file access   */
+        unsigned short ac_date; /* date of last file access   */
+        unsigned short lfnax;   /* DOS LFN search handle      */
+        unsigned char  lfnsup;  /* DOS LFN support status     */
+        char reserved[10];      /* reserved for use by DOS    */
         char attrib;            /* attribute byte for file    */
         unsigned short wr_time; /* time of last write to file */
         unsigned short wr_date; /* date of last write to file */
         unsigned long  size;    /* length of file in bytes    */
-#if defined(__OS2__) || defined(__NT__)
+#if defined(__OS2__) || defined(__NT__) || defined(__WATCOM_LFN__)
         wchar_t name[256];      /* null-terminated filename   */
 #else
         wchar_t name[13];       /* null-terminated filename   */

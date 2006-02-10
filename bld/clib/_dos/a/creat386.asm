@@ -52,14 +52,36 @@ ifdef __STACK__
         mov     EBX,20[ESP]     ; handle
 endif
         push    ECX             ; save CX
+if __WATCOM_LFN__
+        push    ESI
+endif
         mov     ECX,EDX         ; get attribute
+if __WATCOM_LFN__
+        mov     ESI,EAX         ; SI = path in lfn
+endif
         mov     EDX,EAX         ; DX = path
+if __WATCOM_LFN__
+        mov     DX,12h          ; create or truncate file (lfn)
+        mov     AX,716Ch        ; create/open file
+        push    ECX             ; save attributes
+        int21h
+        pop     ECX             ; restore ECX (attributes arg)
+        jc      nonlfn          ; if error use non-lfn
+        cmp     AX,7100h        ; check for lfn support
+        jnz     creathandle
+nonlfn:
+        mov     EDX,ESI         ; prepare for sfn function
+endif
         mov     AH,3Ch          ; creat file
         int21h                  ; ...
+creathandle:
         _if     nc              ; if no error
           mov   [EBX],EAX       ; - store handle
         _endif                  ; endif
         call    __doserror_     ; set return code
+if __WATCOM_LFN__
+        pop     ESI
+endif
         pop     ECX             ; restore CX
 ifdef __STACK__
         pop     EDX
@@ -81,14 +103,36 @@ ifdef __STACK__
         mov     EBX,20[ESP]     ; handle
 endif
         push    ECX             ; save CX
+if __WATCOM_LFN__
+        push    ESI
+endif
         mov     ECX,EDX         ; get attribute
+if __WATCOM_LFN__
+        mov     ESI,EAX         ; SI = path in LFN
+endif
         mov     EDX,EAX         ; DX = path
+if __WATCOM_LFN__
+        mov     DX,10h          ; create but not truncate in lfn
+        mov     AX,716Ch        ; create / open file (lfn)
+        push    CX              ; save CX (attributes)
+        int21h
+        pop     CX              ; restore CX (attributes)
+        jc      old             ; if error use non-lfn
+        cmp     AX,7100h        ; check for lfn support
+        jnz     creatnewhandle  ; return
+old:
+        mov     DX,SI           ; DX = path in sfn
+endif
         mov     AH,5Bh          ; create a new file
         int21h                  ; ...
+creatnewhandle:
         _if     nc              ; if no error
           mov   [EBX],EAX       ; - store handle
         _endif                  ; endif
         call    __doserror_     ; set return code
+if __WATCOM_LFN__
+        pop     ESI
+endif
         pop     ECX             ; restore CX
 ifdef __STACK__
         pop     EDX

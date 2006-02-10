@@ -44,17 +44,55 @@ create  macro   func_code
         push    BX              ; save BX
         push    CX              ; save CX
         push    DX              ; save DX
+if __WATCOM_LFN__
+        push    SI              ; save SI
+endif
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
         push    DS              ; save DS
         mov     DS,DX           ; get FP_SEG(path)
-        mov     DX,AX           ; get FP_OFF(path)
         mov     CX,BX           ; get attr
 else
         mov     CX,DX           ; get attr
+endif
+if __WATCOM_LFN__
+        mov     SI,AX           ; get path
+endif
         mov     DX,AX           ; get path
+if __WATCOM_LFN__
+        mov     AX,716Ch        ; creat/open lfn function
+if func_code eq 3ch
+        mov     DX,12h          ; creat/truncate
+else
+        mov     DX,10h          ; creat
+endif
+        push    CX              ; save the attributes
+        int     21h             ; call DOS
+        pop     CX              ; restore the attributes
+if func_code eq 3ch
+   jc  old             ; if error use non-lfn
+else
+   jc  nonlfn
+endif
+        cmp     AX,7100h        ; check for lfn support
+if func_code eq 3ch
+        jnz     finish          ; supported, return the handle
+else
+   jnz finishandret
+endif
+if func_code eq 3ch
+old:
+else
+nonlfn:
+endif
+        mov     DX,SI           ; prepare for sfn version
 endif
         mov     AH,func_code    ; get function code
         int     21h             ; create the file
+if func_code eq 3ch
+finish:
+else
+finishandret:
+endif
         _if     nc              ; if no error
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
  if _MODEL and _BIG_CODE
@@ -69,6 +107,9 @@ if _MODEL and (_BIG_DATA or _HUGE_DATA)
         pop     DS              ; restore DS
 endif
         call    __doserror_     ; set return code
+if __WATCOM_LFN__
+        pop     SI              ; restore SI
+endif
         pop     DX              ; restore DX
         pop     CX              ; restore CX
         pop     BX              ; restore BX

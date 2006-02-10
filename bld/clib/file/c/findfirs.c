@@ -117,6 +117,11 @@
             __F_NAME(__dos_finddata_cvt,__dos_wfinddata_cvt)( findbuf,
                                                               fileinfo );
         #endif
+        #ifdef __WATCOM_LFN__
+        if( findbuf->lfnsup ) {
+            return( (long)findbuf->lfnax );
+        } else
+        #endif
         return( (long) findbuf );
     #endif
 }
@@ -200,8 +205,15 @@
 #endif
 {
     fileinfo->attrib = findbuf->attrib;
+#ifdef __WATCOM_LFN__
+    if( findbuf->cr_time ) {
+        fileinfo->time_create = findbuf->cr_time | findbuf->cr_date;
+        fileinfo->time_access = findbuf->ac_time | findbuf->ac_date;
+    }
+#else
     fileinfo->time_create = -1L;
     fileinfo->time_access = -1L;
+#endif
     fileinfo->time_write = __dos_filetime_cvt( findbuf->wr_time,
                                                findbuf->wr_date );
     #ifdef __INT64__

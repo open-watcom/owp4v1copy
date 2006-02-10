@@ -86,13 +86,37 @@ ifdef __STACK__
         mov     EDX,16[ESP]     ; mode
         mov     EBX,20[ESP]     ; handle
 endif
+if __WATCOM_LFN__
+        push    EBX
+        push    ESI
+endif
         xchg    EAX,EDX         ; AX = mode, EDX = path
+if __WATCOM_LFN__
+        mov     ESI,EDX         ; DS:ESI for lfn
+        mov     EBX,EAX         ; BX=attribs for lfn
+        mov     DX,0            ; open
+        push    EBX             ; save mode
+        mov     AX,716Ch        ; create/open file
+        int21h                  ; ...
+        pop     EBX             ; restore mode
+        jc      nonlfn          ; if error use non-lfn
+        cmp     AX,7100h        ; test for lfn support
+        jnz     finishandret    ; finish
+nonlfn:
+        mov     EDX,ESI         ; DS:EDX for sfn version
+        mov     EAX,EBX         ; EAX=mode for sfn version
+endif
         mov     AH,3Dh          ; open the file
         int21h                  ; ...
+finishandret:
         _if     nc              ; if no error
           mov   [EBX],EAX       ; - store handle
         _endif                  ; endif
         call    __doserror_     ; set return code
+if __WATCOM_LFN__
+        pop     ESI
+        pop     EBX
+endif
 ifdef __STACK__
         pop     EDX
         pop     EBX

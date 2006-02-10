@@ -121,7 +121,7 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
         dta.size      = 0;
         dta.name[0] = NULLCHAR;
     } else {                            /* not a root directory */
-        #if defined(__OSI__)
+        #if defined(__OSI__) || defined(__WATCOM_LFN__)
             rc = _dos_findfirst( path, _A_NORMAL | _A_RDONLY | _A_HIDDEN |
                     _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
         #else

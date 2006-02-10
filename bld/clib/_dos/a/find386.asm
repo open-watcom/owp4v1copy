@@ -44,8 +44,13 @@ include int21.inc
         extrn   "C",_Extender : byte
         enddata
 
+if __WATCOM_LFN__
+        defp    _old_dos_findfirst
+        xdefp   "C",_old_dos_findfirst
+else
         defp    _dos_findfirst
         xdefp   "C",_dos_findfirst
+endif
 ;
 ;       unsigned _dos_findfirst( char *path, unsigned attr, struct find_t *buf)
 ;       struct find_t {
@@ -88,10 +93,19 @@ ifdef __STACK__
         pop     EBX
 endif
         ret                     ; return to caller
+if __WATCOM_LFN__
+        endproc _old_dos_findfirst
+else
         endproc _dos_findfirst
+endif
 
+if __WATCOM_LFN__
+        defp    _old_dos_findnext
+        xdefp   "C",_old_dos_findnext
+else
         defp    _dos_findnext
         xdefp   "C",_dos_findnext
+endif
 ;
 ;       unsigned _dos_findnext( struct find_t *buf)
 ;
@@ -116,8 +130,13 @@ ifndef __OSI__
 endif
         pop     EDX             ; restore EDX
         ret                     ; return to caller
+if __WATCOM_LFN__
+        endproc _old_dos_findnext
+else
         endproc _dos_findnext
+endif
 
+ifndef __WATCOM_LFN__
         defp    _dos_findclose
         xdefp   "C",_dos_findclose
 ;
@@ -136,6 +155,7 @@ endif
         xor     EAX,EAX         ; indicate no error
         ret                     ; return to caller
         endproc _dos_findclose
+endif
 
 ifndef __OSI__
 __CopyDTA proc  near

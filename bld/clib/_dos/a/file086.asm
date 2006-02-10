@@ -77,6 +77,9 @@ include struct.inc
         push    BX              ; save BX
         push    CX              ; save CX
         push    DX              ; save DX
+if __WATCOM_LFN__
+        push    SI              ; save SI
+endif
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
         push    DS              ; save DS
         mov     DS,DX           ; get FP_SEG(path)
@@ -85,8 +88,24 @@ if _MODEL and (_BIG_DATA or _HUGE_DATA)
 else
         xchg    DX,AX           ; AX = mode, DX = address of path
 endif
+if __WATCOM_LFN__
+        mov     SI,DX           ; FP_OFF(path) for lfn
+        mov     BX,AX           ; mode for lfn
+        mov     DX,0            ; open existing file
+        push    BX              ; save mode
+        mov     AX,716Ch        ; create/open file
+        int     21h             ; ...
+        pop     BX              ; restore mode
+        jc      nonlfn          ; if error use non-lfn
+        cmp     AX,7100h        ; check for lfn support
+        jnz     finishandret    ; finish
+nonlfn:
+        mov     DX,SI           ; DS:SI for sfn version
+        mov     AX,BX           ; AX=mode for sfn version
+endif
         mov     AH,3Dh          ; open the file
         int     21h             ; ...
+finishandret:
         _if     nc              ; if no error
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
  if _MODEL and _BIG_CODE
@@ -101,6 +120,9 @@ if _MODEL and (_BIG_DATA or _HUGE_DATA)
         pop     DS              ; restore DS
 endif
         call    __doserror_     ; set return code
+if __WATCOM_LFN__
+        pop     SI              ; restore SI
+endif
         pop     DX              ; restore DX
         pop     CX              ; restore CX
         pop     BX              ; restore BX

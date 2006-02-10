@@ -75,7 +75,7 @@
         __set_errno_dos( ERROR_FILE_NOT_FOUND );
         return( -1 );
     }
-      
+
     /*** Got one! ***/
  #ifdef __INT64__
     __F_NAME(__nt_finddatai64_cvt,__nt_wfinddatai64_cvt)( &ffb, fileinfo );
@@ -86,7 +86,10 @@
 #else
     DOSFINDTYPE *   findbuf = (DOSFINDTYPE*) handle;
     unsigned        rc;
-      
+
+#ifdef __WATCOM_LFN__
+    findbuf->lfnax = (int)handle;
+#endif
     rc = __F_NAME(_dos_findnext,_wdos_findnext)( findbuf );
     if( rc != 0 ) {
         return( -1 );

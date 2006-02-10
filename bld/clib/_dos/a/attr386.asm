@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Functions to get and set file attributes (32-bit)
 ;*
 ;*****************************************************************************
 
@@ -54,8 +53,20 @@ endif
         mov     EBX,EDX         ; save pointer to attributes
         mov     EDX,EAX         ; get path
         sub     ECX,ECX         ; zero ECX
+if __WATCOM_LFN__
+        mov     AX,7143h        ; test lfn function first
+        push    BX
+        mov     BL,0            ; get attributes
+        int21h
+        pop     BX
+        jc      nonlfn          ; if error, use non-lfn
+        cmp     AX,7100h
+        jnz     getattrs
+nonlfn:
+endif
         mov     AX,4300h        ; get file attributes
         int21h                  ; ...
+getattrs:
         _if     nc              ; if no error
           mov   [EBX],CX        ; - store file attributes
         _endif                  ; endif
@@ -81,8 +92,20 @@ endif
         push    ECX             ; save CX
         mov     ECX,EDX         ; get attributes
         mov     EDX,EAX         ; get path
+if __WATCOM_LFN__
+        mov     AX,7143h        ; test lfn function first
+        push    BX
+        mov     BL,1            ; set attributes
+        int21h
+        pop     BX
+        jc      old             ; if error use non-lfn
+        cmp     AX,7100h        ; test for lfn support
+        jnz     finishset
+old:
+endif
         mov     AX,4301h        ; set file attributes
         int21h                  ; ...
+finishset:
         call    __doserror_     ; set return code
         pop     ECX             ; restore CX
 ifdef __STACK__

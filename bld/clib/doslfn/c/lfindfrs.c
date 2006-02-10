@@ -24,46 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  LFN-enabled _dos_findfirst(). Indirected file.
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include <io.h>
-#ifdef __NT__
-    #include <windows.h>
-#else
-    #include <dos.h>
-    #include "liballoc.h"
-#endif
-
-
-_WCRTLINK int _findclose( long handle )
-{
-    #ifdef __NT__
-        if( FindClose( (HANDLE)handle )  ==  TRUE ) {
-            return( 0 );
-        } else {
-            return( -1 );
-        }
-    #else
-        unsigned        rc;
-#ifdef USING_LFN
-        struct find_t * handlestuff = ( struct find_t * )handle;
-
-        handlestuff->lfnax = (int)handle;
-        rc = _dos_findclose( handlestuff );
-#else
-
-        rc = _dos_findclose( (struct find_t*) handle );
-#endif
-        lib_free( (void*) handle );
-        if( rc == 0 ) {
-            return( 0 );
-        } else {
-            return( -1 );
-        }
-    #endif
-}
+#define __WATCOM_LFN__
+#include "../../file/c/findfirs.c"

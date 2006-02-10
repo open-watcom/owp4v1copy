@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Functions to get and set file attributes (16-bit)
 ;*
 ;*****************************************************************************
 
@@ -56,14 +55,26 @@ else
         mov     BX,DX           ; save pointer to attributes
 endif
         mov     DX,AX           ; get path
-        mov     AX,4300h        ; get file attributes
+if __WATCOM_LFN__
+        mov     AX,7143h        ; test LFN version first
+        push    BX
+        mov     BL,0            ; get attributes
         int     21h             ; ...
+        pop     BX
+        jc      nonlfn          ; on error use non-lfn
+        cmp     AX,7100h        ; test if function was supported
+        jnz     getsuccess      ; AX won't equal 7100h if function succeeded
+nonlfn:
+endif
+        mov     AX,4300h        ; otherwise use the regular function
+        int     21h             ; ...
+        jc      finishget       ; skip storing attributes if error
+getsuccess:
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
         pop     DS              ; get segment part of attr
 endif
-        _if     nc              ; if no error
-          mov   [BX],CX         ; - store file attributes
-        _endif                  ; endif
+        mov     [BX],CX         ; - store file attributes
+finishget:
         call    __doserror_     ; set return code
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
         pop     DS              ; restore DS
@@ -90,8 +101,20 @@ else
         mov     CX,DX           ; get attr
         mov     DX,AX           ; get path
 endif
+if __WATCOM_LFN__
+        mov     AX,7143h        ; try the LFN function first
+        push    BX
+        mov     BL,1            ; set attributes (BL=0 is get)
+        int     21h             ; ...
+        pop     BX
+        jc      old             ; if error use non-lfn
+        cmp     AX,7100         ; test for failure
+        jnz     finishset       ; if success, finish
+old:
+endif
         mov     AX,4301h        ; set file attributes
         int     21h             ; ...
+finishset:
         call    __doserror_     ; set return code
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
         pop     DS              ; restore DS

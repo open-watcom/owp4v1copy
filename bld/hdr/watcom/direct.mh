@@ -21,17 +21,23 @@
  #include <sys/types.h>
 #endif
 
-#if defined(__OS2__) || defined(__NT__)
+#if defined(__OS2__) || defined(__NT__) || defined(__WATCOM_LFN__)
 #define NAME_MAX        255             /* maximum filename for HPFS or NTFS */
 #else
 #define NAME_MAX        12              /* 8 chars + '.' +  3 chars */
 #endif
 
 struct _wdirent {
-    char               d_dta[21];       /* disk transfer area */
+    char               d_dta[10];       /* disk transfer area */
+    unsigned short int d_ctime;         /* file's creation time */
+    unsigned short int d_cdate;         /* file's creation date */
+    unsigned short int d_atime;         /* file's last access time */
+    unsigned short int d_adate;         /* file's last access date */
+    unsigned short     d_lfnax;         /* DOS LFN search handle */
+    unsigned char      d_lfnsup;        /* DOS LFN support status */
     char               d_attr;          /* file's attribute */
-    unsigned short int d_time;          /* file's time */
-    unsigned short int d_date;          /* file's date */
+    unsigned short int d_time;          /* file's modification time */
+    unsigned short int d_date;          /* file's modification date */
     long               d_size;          /* file's size */
     wchar_t            d_name[NAME_MAX+1];/* file's name */
 :segment DOS
@@ -44,7 +50,13 @@ struct _wdirent {
 };
 
 struct dirent {
-    char               d_dta[21];       /* disk transfer area */
+    char               d_dta[10];       /* disk transfer area */
+    unsigned short int d_ctime;         /* file's creation time */
+    unsigned short int d_cdate;         /* file's creation date */
+    unsigned short int d_atime;         /* file's last access time */
+    unsigned short int d_adate;         /* file's last access date */
+    unsigned short     d_lfnax;         /* DOS LFN search handle */
+    unsigned char      d_lfnsup;        /* DOS LFN support status */
     char               d_attr;          /* file's attribute */
     unsigned short int d_time;          /* file's time */
     unsigned short int d_date;          /* file's date */
