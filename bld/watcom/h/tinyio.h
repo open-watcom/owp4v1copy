@@ -1019,7 +1019,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "sbb eax,eax"   \
         parm caller     [bx] \
         value           [eax] \
-        modify exact    [ax];
+        modify exact    [eax];
 
 #pragma aux             _TinyDPMIRawPMtoRMAddr = \
         "mov ah,3"      \
@@ -1048,7 +1048,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov bx,cx"     \
         "L2:"           \
         value           [ebx] \
-        modify exact    [eax cx si edi];
+        modify exact    [eax ebx cx si edi];
 
 #pragma aux             _TinyDPMISaveRMStateAddr = \
         "mov ah,3"      \
@@ -1076,7 +1076,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov bx,cx"     \
         "L2:"           \
         value           [ebx] \
-        modify exact    [ax bx cx si edi];
+        modify exact    [ax ebx cx si edi];
 
 #pragma aux             _TinyDPMISaveStateSize = \
         "mov ah,3"      \
@@ -1140,7 +1140,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "sbb eax,eax"   \
         parm caller     [bl] [cx edx] \
         value           [eax] \
-        modify exact    [ax bx cx edx];
+        modify exact    [eax bx cx edx];
 
 #pragma aux             _TinyDPMIGetProtectExcpt = \
         "mov ah,2"      \
@@ -1161,7 +1161,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "sbb eax,eax"   \
         parm caller     [bl] [cx edx] \
         value           [eax] \
-        modify exact    [ax bx cx edx];
+        modify exact    [eax bx cx edx];
 
 #pragma aux             _TinyDPMIAlloc = \
         "mov    ah,5",  \
@@ -1284,7 +1284,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
          "mov eax,ecx"   \
          parm caller     [edx] [bx] \
          value           [eax] \
-         modify exact    [ecx];
+         modify exact    [eax ecx];
 #else
 #pragma aux             _nTinyAccess = \
         _XOR_AX_AX      \
@@ -1303,7 +1303,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AX_CX      /* ^ Use 16-bit registers */ \
         parm caller     [edx] [bx] \
         value           [eax] \
-        modify exact    [ecx];
+        modify exact    [eax ecx];
 #endif
 
 #ifdef __WATCOM_LFN__
