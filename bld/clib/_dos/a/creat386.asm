@@ -52,15 +52,15 @@ ifdef __STACK__
         mov     EBX,20[ESP]     ; handle
 endif
         push    ECX             ; save CX
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         push    ESI
 endif
         mov     ECX,EDX         ; get attribute
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     ESI,EAX         ; SI = path in lfn
 endif
         mov     EDX,EAX         ; DX = path
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     DX,12h          ; create or truncate file (lfn)
         mov     AX,716Ch        ; create/open file
         push    ECX             ; save attributes
@@ -79,7 +79,7 @@ creathandle:
           mov   [EBX],EAX       ; - store handle
         _endif                  ; endif
         call    __doserror_     ; set return code
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         pop     ESI
 endif
         pop     ECX             ; restore CX
@@ -103,15 +103,15 @@ ifdef __STACK__
         mov     EBX,20[ESP]     ; handle
 endif
         push    ECX             ; save CX
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         push    ESI
 endif
         mov     ECX,EDX         ; get attribute
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     ESI,EAX         ; SI = path in LFN
 endif
         mov     EDX,EAX         ; DX = path
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     DX,10h          ; create but not truncate in lfn
         mov     AX,716Ch        ; create / open file (lfn)
         push    CX              ; save CX (attributes)
@@ -130,7 +130,7 @@ creatnewhandle:
           mov   [EBX],EAX       ; - store handle
         _endif                  ; endif
         call    __doserror_     ; set return code
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         pop     ESI
 endif
         pop     ECX             ; restore CX

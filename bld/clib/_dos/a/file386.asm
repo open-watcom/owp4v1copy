@@ -86,12 +86,12 @@ ifdef __STACK__
         mov     EDX,16[ESP]     ; mode
         mov     EBX,20[ESP]     ; handle
 endif
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         push    EBX
         push    ESI
 endif
         xchg    EAX,EDX         ; AX = mode, EDX = path
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     ESI,EDX         ; DS:ESI for lfn
         mov     EBX,EAX         ; BX=attribs for lfn
         mov     DX,0            ; open
@@ -113,7 +113,7 @@ finishandret:
           mov   [EBX],EAX       ; - store handle
         _endif                  ; endif
         call    __doserror_     ; set return code
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         pop     ESI
         pop     EBX
 endif

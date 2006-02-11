@@ -44,7 +44,7 @@ create  macro   func_code
         push    BX              ; save BX
         push    CX              ; save CX
         push    DX              ; save DX
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         push    SI              ; save SI
 endif
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
@@ -54,11 +54,11 @@ if _MODEL and (_BIG_DATA or _HUGE_DATA)
 else
         mov     CX,DX           ; get attr
 endif
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     SI,AX           ; get path
 endif
         mov     DX,AX           ; get path
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     AX,716Ch        ; creat/open lfn function
 if func_code eq 3ch
         mov     DX,12h          ; creat/truncate
@@ -107,7 +107,7 @@ if _MODEL and (_BIG_DATA or _HUGE_DATA)
         pop     DS              ; restore DS
 endif
         call    __doserror_     ; set return code
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         pop     SI              ; restore SI
 endif
         pop     DX              ; restore DX

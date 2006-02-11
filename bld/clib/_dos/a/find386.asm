@@ -44,7 +44,7 @@ include int21.inc
         extrn   "C",_Extender : byte
         enddata
 
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         defp    _old_dos_findfirst
         xdefp   "C",_old_dos_findfirst
 else
@@ -93,13 +93,13 @@ ifdef __STACK__
         pop     EBX
 endif
         ret                     ; return to caller
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         endproc _old_dos_findfirst
 else
         endproc _dos_findfirst
 endif
 
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         defp    _old_dos_findnext
         xdefp   "C",_old_dos_findnext
 else
@@ -130,7 +130,7 @@ ifndef __OSI__
 endif
         pop     EDX             ; restore EDX
         ret                     ; return to caller
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         endproc _old_dos_findnext
 else
         endproc _dos_findnext

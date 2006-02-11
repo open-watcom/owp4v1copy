@@ -53,7 +53,7 @@ endif
         mov     EBX,EDX         ; save pointer to attributes
         mov     EDX,EAX         ; get path
         sub     ECX,ECX         ; zero ECX
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     AX,7143h        ; test lfn function first
         push    BX
         mov     BL,0            ; get attributes
@@ -92,7 +92,7 @@ endif
         push    ECX             ; save CX
         mov     ECX,EDX         ; get attributes
         mov     EDX,EAX         ; get path
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     AX,7143h        ; test lfn function first
         push    BX
         mov     BL,1            ; set attributes

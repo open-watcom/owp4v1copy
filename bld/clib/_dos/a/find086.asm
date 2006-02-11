@@ -38,7 +38,7 @@ include struct.inc
         xref    __doserror_
         modstart dosfind
 
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         defp    _old_dos_findfirst
         xdefp   "C",_old_dos_findfirst
 else
@@ -96,13 +96,13 @@ if _MODEL and (_BIG_DATA or _HUGE_DATA)
 else
         ret                     ; return to caller
 endif
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         endproc _old_dos_findfirst
 else
         endproc _dos_findfirst
 endif
 
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         defp    _old_dos_findnext
         xdefp   "C",_old_dos_findnext
 else
@@ -128,7 +128,7 @@ endif
         call    __doserror_     ; set return code
         pop     DX              ; restore DX
         ret                     ; return to caller
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         endproc _old_dos_findnext
 else
         endproc _dos_findnext

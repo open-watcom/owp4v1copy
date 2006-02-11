@@ -77,7 +77,7 @@ include struct.inc
         push    BX              ; save BX
         push    CX              ; save CX
         push    DX              ; save DX
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         push    SI              ; save SI
 endif
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
@@ -88,7 +88,7 @@ if _MODEL and (_BIG_DATA or _HUGE_DATA)
 else
         xchg    DX,AX           ; AX = mode, DX = address of path
 endif
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     SI,DX           ; FP_OFF(path) for lfn
         mov     BX,AX           ; mode for lfn
         mov     DX,0            ; open existing file
@@ -120,7 +120,7 @@ if _MODEL and (_BIG_DATA or _HUGE_DATA)
         pop     DS              ; restore DS
 endif
         call    __doserror_     ; set return code
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         pop     SI              ; restore SI
 endif
         pop     DX              ; restore DX

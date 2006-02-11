@@ -55,7 +55,7 @@ else
         mov     BX,DX           ; save pointer to attributes
 endif
         mov     DX,AX           ; get path
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     AX,7143h        ; test LFN version first
         push    BX
         mov     BL,0            ; get attributes
@@ -101,7 +101,7 @@ else
         mov     CX,DX           ; get attr
         mov     DX,AX           ; get path
 endif
-if __WATCOM_LFN__
+ifdef __WATCOM_LFN__
         mov     AX,7143h        ; try the LFN function first
         push    BX
         mov     BL,1            ; set attributes (BL=0 is get)
