@@ -1546,6 +1546,9 @@
 .fnc timer_settime              timerset.gml        QXO
 .fnc times                      times.gml           QXO
 .fnc tmpfile                    tmpfile.gml     DOS QNX W WIN32
+.fnc tmpfile_s                  tmpfil_s.gml    DOS QNX W WIN32
+.fnc tmpnam_s                   tmpnam_s.gml    DOS QNX W WIN32
+.fnc _wtmpnam_s                 tmpnam_s.gml    DOS       WIN32
 .fnc tmpnam                     tmpnam.gml      DOS QNX W WIN32
 .fnw _wtmpnam                   tmpnam.gml      DOS       WIN32
 .fnu _utmpnam                   tmpnam.gml      DOS       WIN32
