@@ -373,6 +373,7 @@ fileleng.exe &
 fileno.exe &
 flushall.exe &
 fopen.exe &
+fopen_s.exe &
 fprintf.exe &
 fputc.exe &
 fputchar.exe &
@@ -380,6 +381,7 @@ fputs.exe &
 fread.exe &
 free.exe &
 freopen.exe &
+freop_s.exe &
 fscanf.exe &
 fseek.exe &
 fsetpos.exe &
@@ -414,7 +416,9 @@ sscanf.exe &
 stat.exe &
 tell.exe &
 tmpfile.exe &
+tmpfl_s.exe &
 tmpnam.exe &
+tmpnm_s.exe &
 umask.exe &
 ungetc.exe &
 ungetch.exe &
@@ -499,6 +503,7 @@ asctime.exe &
 asctim_s.exe &
 atexit.exe &
 bsearch.exe &
+bsrch_s.exe &
 calloc.exe &
 cgets.exe &
 chdir.exe &
@@ -570,6 +575,7 @@ outp.exe &
 outpw.exe &
 perror.exe &
 qsort.exe &
+qsort_s.exe &
 realloc.exe &
 segread.exe &
 set_chnd.exe &
