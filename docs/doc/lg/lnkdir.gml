@@ -170,6 +170,7 @@
 .dir nlmflags           opnlmfla.gml    netware
 .dir noautodata         opnoauto.gml    os2 win16
 .dir nodefaultlibs      opnodefa.gml    all
+.dir noextension        opnoexte.gml    all
 .if '&overlay' eq 'yes' .do begin
 .dir noindirect         opnoindi.gml    dos
 .do end

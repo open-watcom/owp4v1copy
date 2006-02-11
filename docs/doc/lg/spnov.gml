@@ -68,6 +68,7 @@ is any of the following:
 .note NAMELEN=n
 .note NLMFLAGS=some_value
 .note NODEFAULTLIBS
+.note NOEXTENSION
 .note OSDOMAIN
 .note OSNAME='string'
 .note PSEUDOPREEMPTION

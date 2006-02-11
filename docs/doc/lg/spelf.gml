@@ -57,6 +57,7 @@ is any of the following:
 .note MAXERRORS=n
 .note NAMELEN=n
 .note NODEFAULTLIBS
+.note NOEXTENSION
 .note OSNAME='string'
 .note QUIET
 .note REDEFSOK

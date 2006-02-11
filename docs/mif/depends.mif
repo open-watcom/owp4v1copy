@@ -1071,6 +1071,7 @@ $(docsrc_dir)$(SL)lg$(SL)opnewfil.gml &
 $(docsrc_dir)$(SL)lg$(SL)opnlmfla.gml &
 $(docsrc_dir)$(SL)lg$(SL)opnoauto.gml &
 $(docsrc_dir)$(SL)lg$(SL)opnodefa.gml &
+$(docsrc_dir)$(SL)lg$(SL)opnoexte.gml &
 $(docsrc_dir)$(SL)lg$(SL)opnoindi.gml &
 $(docsrc_dir)$(SL)lg$(SL)opnorelo.gml &
 $(docsrc_dir)$(SL)lg$(SL)opnostdc.gml &
@@ -1131,7 +1132,6 @@ $(docsrc_dir)$(SL)lg$(SL)wlerrmsg.gml &
 $(docsrc_dir)$(SL)lg$(SL)wlerror.gml &
 $(docsrc_dir)$(SL)lg$(SL)wlfcopt.gml &
 $(docsrc_dir)$(SL)lg$(SL)wlib.gml &
-$(docsrc_dir)$(SL)lg$(SL)wlink.str &
 $(docsrc_dir)$(SL)lg$(SL)wlinkerr.gml &
 $(docsrc_dir)$(SL)lg$(SL)wlinklnk.gml &
 $(docsrc_dir)$(SL)lg$(SL)wlintro.gml &

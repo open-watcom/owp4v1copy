@@ -56,6 +56,7 @@ is any of the following:
 .note MINDATA=n
 .note NAMELEN=n
 .note NODEFAULTLIBS
+.note NOEXTENSION
 .note OFFSET=n
 .note OSNAME='string'
 .note QUIET

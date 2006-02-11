@@ -97,6 +97,7 @@ is any of the following:
 .note NOAUTODATA
 .do end
 .note NODEFAULTLIBS
+.note NOEXTENSION
 .if '&exeformat' eq 'win nt' .do begin
 .note NORELOCS
 .note NOSTDCALL

@@ -244,10 +244,10 @@ pick(	 MSG_GENERAL_HELP_33,	"            | \"Dosseg\" | \"ELiminate\" | \"INCrem
 				"            | \"Dosseg\" | \"ELiminate\" | \"INCremental[=ファイル名]\"")
 pick(	 MSG_GENERAL_HELP_34,	"            | \"MANGlednames\" | \"Map\"[\"=\"map_file] | \"MAXErrors=\"n | \"NAMELen=\"n", 
 				"            | \"MANGlednames\" | \"Map\"[\"=\"マップファイル] | \"MAXErrors=\"n | \"NAMELen=\"n" ) 
-pick(	 MSG_GENERAL_HELP_35,	"            | \"NODefaultlibs\" | \"OSName=\"string | \"Quiet\" | \"[NO]REDefsok\"",
-				"            | \"NODefaultlibs\" | \"OSName=\"文字列 | \"Quiet\" | \"[NO]REDefsok\"" )
-pick(	 MSG_GENERAL_HELP_36,	"            | \"STack\"=n | \"START=\"symbol_name | \"STATics\"",
-				"            | \"STack\"=n | \"START=\"シンボル名 | \"STATics\"" )
+pick(	 MSG_GENERAL_HELP_35,	"            | \"NODefaultlibs\" | \"NOEXTension\" | \"OSName=\"string | \"Quiet\"",
+				"            | \"NODefaultlibs\" | \"NOEXTension\" | \"OSName=\"文字列 | \"Quiet\"" )
+pick(	 MSG_GENERAL_HELP_36,	"            | \"[NO]REDefsok\" | \"STack\"=n | \"START=\"symbol_name | \"STATics\"",
+				"            | \"[NO]REDefsok\" | \"STack\"=n | \"START=\"シンボル名 | \"STATics\"" )
 pick(    MSG_GENERAL_HELP_37,   "            | \"SYMFile\"[\"=\"symbol_file], | \"[NO]Undefsok\" | \"Verbose\"",
 				"            | \"SYMFile\"[\"=\"シンボルファイル], | \"[NO]Undefsok\" | \"Verbose\"" )
 pick(	 MSG_GENERAL_HELP_38,   "            | \"VFRemoval\"" ,

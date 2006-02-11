@@ -75,6 +75,7 @@ is any of the following:
 .note MAXERRORS=n
 .note NAMELEN=n
 .note NODEFAULTLIBS
+.note NOEXTENSION
 .if '&overlay' eq 'yes' .do begin
 .note NOINDIRECT
 .do end
