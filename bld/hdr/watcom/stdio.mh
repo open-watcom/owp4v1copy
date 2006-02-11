@@ -611,7 +611,7 @@ _WCRTLINK extern errno_t  tmpnam_s( char * s, rsize_t maxsize );
 
 :segment QNX | LINUX
 #define L_tmpnam_s  255             /* has to be same as L_tmpnam */
-:else
+:elsesegment
 #define L_tmpnam_s  13              /* has to be same as L_tmpnam */
 :endsegment
 
