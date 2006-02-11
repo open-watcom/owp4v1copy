@@ -130,7 +130,10 @@ TestFile *TestFile_Get( const char *cur_mode )
     cur_test = malloc( sizeof( TestFile ) );
     INTERNAL( cur_test!=NULL );
 
-    EXPECT( tmpnam( cur_test->filename ) != NULL );
+//    EXPECT( tmpnam( cur_test->filename ) != NULL );
+    rc = tmpnam_s( cur_test->filename, sizeof(cur_test->filename ) );
+    VERIFYS( rc == 0 );
+    VERIFYS( cur_test->filename[0] != '\0' );
     rc = fopen_s( &(cur_test->fp), cur_test->filename, cur_mode );
 
     if( cur_mode[0] == 'u' ) pos++; /* ignore u */

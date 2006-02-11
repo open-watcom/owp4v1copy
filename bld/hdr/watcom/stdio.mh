@@ -597,13 +597,23 @@ _WCRTLINK extern int      putws( const wchar_t * );
 
 _WCRTLINK extern char    *gets_s( char *s, rsize_t n );
 
-_WCRTLINK extern errno_t fopen_s( FILE * __restrict * __restrict streamptr,
-                                  const char * __restrict filename,
-                                  const char * __restrict mode);
-_WCRTLINK extern errno_t freopen_s( FILE * __restrict * __restrict newstreamptr,
-                                    const char * __restrict filename,
-                                    const char * __restrict mode,
-                                    FILE * __restrict stream );
+_WCRTLINK extern errno_t  fopen_s( FILE * __restrict * __restrict streamptr,
+                                   const char * __restrict filename,
+                                   const char * __restrict mode);
+_WCRTLINK extern errno_t  freopen_s( FILE * __restrict * __restrict newstreamptr,
+                                     const char * __restrict filename,
+                                     const char * __restrict mode,
+                                     FILE * __restrict stream );
+_WCRTLINK extern errno_t  tmpfile_s( FILE * __restrict * __restrict streamptr);
+_WCRTLINK extern errno_t  tmpnam_s( char * s, rsize_t maxsize );
+
+#define TMP_MAX_S   (26*26*26)      /* has to be same as TMP_MAX */
+
+:segment QNX | LINUX
+#define L_tmpnam_s  255             /* has to be same as L_tmpnam */
+:else
+#define L_tmpnam_s  13              /* has to be same as L_tmpnam */
+:endsegment
 
 :segment !NO_WIDECHAR
 /* These functions pertain to wide character handling. */
@@ -614,6 +624,7 @@ _WCRTLINK extern errno_t _wfreopen_s( FILE * __restrict * __restrict newstreampt
                                       const wchar_t * __restrict filename,
                                       const wchar_t * __restrict mode,
                                       FILE * __restrict stream );
+_WCRTLINK extern errno_t _wtmpnam_s( wchar_t * s, rsize_t maxsize );
 :endsegment
 
 :include saferepi.sp

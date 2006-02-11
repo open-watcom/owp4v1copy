@@ -34,6 +34,7 @@ u64stwnt.obj : ../../../c/u64stwnt.c ../../../c/ustatwnt.c ../../../c/statwnt.c
 utempnam.obj : ../../../c/utempnam.c ../../../c/tempnam.c
 
 utmpnm.obj   : ../../../c/utmpnm.c   ../../../c/tmpnm.c
+utmpnm_s.obj : ../../../c/utmpnm_s.c   ../../../c/tmpnm_s.c
 
 uutim.obj    : ../../../c/uutim.c    ../../../c/utime.c
 uutimos2.obj : ../../../c/uutimos2.c ../../../c/utimeos2.c
