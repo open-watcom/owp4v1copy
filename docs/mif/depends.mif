@@ -1848,7 +1848,9 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)tell.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tempnam.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)time.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tmpfile.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)tmpfil_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tmpnam.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)tmpnam_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tolower.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)toupper.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tzref.gml &

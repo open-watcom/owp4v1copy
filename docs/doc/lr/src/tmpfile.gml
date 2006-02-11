@@ -3,6 +3,9 @@
 FILE *tmpfile( void );
 .ixfunc2 '&StrIo' &func
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function creates a temporary binary file that will
 automatically be removed when it is closed or at program termination.
@@ -29,7 +32,7 @@ If the file cannot be created, the &func function returns
 .im errnoref
 .return end
 .see begin
-.seelist &function. fopen freopen mkstemp _mktemp _tempnam tmpfile tmpnam
+.seelist &function. fopen fopen_s freopen freopen_s mkstemp _mktemp _tempnam tmpfile tmpfile_s tmpnam tmpnam_s
 .see end
 .exmp begin
 #include <stdio.h>
@@ -37,13 +40,13 @@ If the file cannot be created, the &func function returns
 static FILE *TempFile;
 
 void main()
-  {
+{
     TempFile = tmpfile();
     /* . */
     /* . */
     /* . */
     fclose( TempFile );
-  }
+}
 .exmp end
 .class ANSI
 .system

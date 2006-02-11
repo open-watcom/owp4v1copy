@@ -12,6 +12,9 @@ wchar_t *_utmpnam( wchar_t *buffer );
 .ixfunc2 '&FileOp' &ufunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function generates a unique string for use as a valid file
 name.
@@ -103,13 +106,13 @@ name2 = strdup( tmpnam( NULL ) );
 .millust end
 .return end
 .see begin
-.seelist &function. fopen freopen mkstemp _mktemp _tempnam tmpfile tmpnam
+.seelist &function. fopen fopen_s freopen freopen_s mkstemp _mktemp _tempnam tmpfile tmpfile_s tmpnam tmpnam_s
 .see end
 .exmp begin
 #include <stdio.h>
 
 void main()
-  {
+{
     char filename[ L_tmpnam ];
     FILE *fp;
 .exmp break
@@ -120,7 +123,7 @@ void main()
     /* . */
     fclose( fp );
     remove( filename );
-  }
+}
 .exmp end
 .class ANSI
 .system
