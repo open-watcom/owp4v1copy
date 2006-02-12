@@ -95,9 +95,6 @@ void main( int argc, char *argv[] )
 
     int     violations = NumViolations;
 
-    /*** Initialize ***/
-    strcpy( ProgramName, strlwr( argv[0] ) );   /* store filename */
-
     #ifdef __SW_BW
         FILE *my_stdout;
         my_stdout = freopen( "tmp.log", "a", stdout );
@@ -107,6 +104,9 @@ void main( int argc, char *argv[] )
         }
     #endif
     argc=argc;
+
+    /*** Initialize ***/
+    strcpy( ProgramName, strlwr( argv[0] ) );   /* store filename */
 
     /***********************************************************************/
     /*  set constraint-handler                                             */
