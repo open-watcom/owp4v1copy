@@ -29,8 +29,6 @@
 ****************************************************************************/
 
 
-#define __STDC_WANT_LIB_EXT1__ 1       // Enable Safer C interfaces
-
 #include <errno.h>
 #include <locale.h>
 #include <stdarg.h>
