@@ -54,10 +54,10 @@ static void __SLIB_CALLBACK mem_putc( SPECS __SLIB *specs, int op_char )
 {
     struct vswprtf_buf  *info;
 
-    info = (struct vswprtf_buf*) specs->_o._dest;
+    info = (struct vswprtf_buf*) specs->_dest;
     if( info->chars_output + 1 <= info->max_chars ) {
         *( info->bufptr++ ) = op_char;
-        specs->_o._output_count++;
+        specs->_output_count++;
         info->chars_output++;
     }
 }
@@ -67,8 +67,8 @@ static void __SLIB_CALLBACK mem_putc( SPECS __SLIB *specs, int op_char )
 static slib_callback_t mem_putc; // setup calling convention
 static void __SLIB_CALLBACK mem_putc( SPECS __SLIB *specs, int op_char )
 {
-    *( specs->_o._dest++ ) = op_char;
-    specs->_o._output_count++;
+    *( specs->_dest++ ) = op_char;
+    specs->_output_count++;
 }
 
 #endif

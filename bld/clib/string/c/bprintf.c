@@ -59,10 +59,10 @@ static void __SLIB_CALLBACK buf_putc( SPECS __SLIB *specs, int op_char )
 {
     struct buf_limit    *bufinfo;
     
-    bufinfo = (struct buf_limit *)specs->_o._dest;
-    if( specs->_o._output_count < bufinfo->bufsize ) {
+    bufinfo = (struct buf_limit *)specs->_dest;
+    if( specs->_output_count < bufinfo->bufsize ) {
         *( bufinfo->bufptr++ ) = op_char;
-        specs->_o._output_count++;
+        specs->_output_count++;
     } else {
         bufinfo->bufover = -1;
     }

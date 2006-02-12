@@ -47,8 +47,8 @@ extern  int     __flush( FILE * );
 static slib_callback_t file_putc; // setup calling convention
 static void __SLIB_CALLBACK file_putc( SPECS __SLIB *specs, int op_char )
 {
-    __F_NAME(fputc,fputwc)( op_char, (FILE *)specs->_o._dest );
-    specs->_o._output_count++;
+    __F_NAME(fputc,fputwc)( op_char, (FILE *)specs->_dest );
+    specs->_output_count++;
 }
 
 

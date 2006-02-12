@@ -29,17 +29,12 @@
 *
 ****************************************************************************/
 
+
 #ifndef _PRINTF_H_INCLUDED
 #define _PRINTF_H_INCLUDED
 
 #include "variety.h"
 #include "widechar.h"
-
-#if defined(_M_IX86)
-  #pragma pack(push,1);
-#else
-  #pragma pack(push,8);
-#endif
 
 #if defined(__QNX__)
     #if defined(__386__)
@@ -63,74 +58,55 @@
     #endif
 #endif
 
-#define SPECS_VERSION           100
+#define SPECS_VERSION           200
 
 /*
- * This is the specs structure for pre-11.0.  It is needed for backwards
- * compatibility.
+ * This is the __prtf specs structure. NB - should be naturally aligned.
  *
  * There are both wide and MBCS versions explicitly because part of __wprtf
  * needs to access both kinds of structure.
  */
-typedef struct
-{
-    char        __SLIB *_dest;
-    int         _fld_width;     // field width
-    int         _prec;          // precision
-    int         _zero_fill_count;
-    int         _output_count;  // # of characters outputed for %n
-    char        _flags;         // flags (see below)
-    char        _character;     // format character
-    char        _pad_char;
-    char        _alt_prefix[3];
-} _mbcs_SPECS105;
 
 typedef struct
 {
-    wchar_t     __SLIB *_dest;
-    int         _fld_width;     // field width
-    int         _prec;          // precision
-    int         _zero_fill_count;
-    int         _output_count;  // # of characters outputed for %n
-    wchar_t     _flags;         // flags (see below)
-    wchar_t     _character;     // format character
-    wchar_t     _pad_char;
-    wchar_t     _alt_prefix[3];
-} _wide_SPECS105;
-
-typedef struct
-{
-    _mbcs_SPECS105  _o;
-    char            _unused[2];
-    short           _version;       // structure version # (11.0 --> 1100)
+    char    __SLIB *_dest;
     short           _flags;         // flags (see below)
+    short           _version;       // structure version # (2.0 --> 200)
+    int             _fld_width;     // field width
+    int             _prec;          // precision
+    int             _output_count;  // # of characters outputted for %n
     int             _n0;            // number of chars to deliver first
     int             _nz0;           // number of zeros to deliver next
     int             _n1;            // number of chars to deliver next
     int             _nz1;           // number of zeros to deliver next
     int             _n2;            // number of chars to deliver next
     int             _nz2;           // number of zeros to deliver next
+    char            _character;     // format character
+    char            _pad_char;
+    char            _padding[2];    // to keep struct aligned
 } _mbcs_SPECS;
 
 typedef struct
 {
-    _wide_SPECS105  _o;
-    char            _unused[2];
-    short           _version;       // structure version # (11.0 --> 1100)
+    wchar_t __SLIB *_dest;
     short           _flags;         // flags (see below)
+    short           _version;       // structure version # (2.0 --> 200)
+    int             _fld_width;     // field width
+    int             _prec;          // precision
+    int             _output_count;  // # of characters outputted for %n
     int             _n0;            // number of chars to deliver first
     int             _nz0;           // number of zeros to deliver next
     int             _n1;            // number of chars to deliver next
     int             _nz1;           // number of zeros to deliver next
     int             _n2;            // number of chars to deliver next
     int             _nz2;           // number of zeros to deliver next
+    wchar_t         _character;     // format character
+    wchar_t         _pad_char;
 } _wide_SPECS;
 
 #ifdef __WIDECHAR__
-    #define SPECS105            _wide_SPECS105
     #define SPECS               _wide_SPECS
 #else
-    #define SPECS105            _mbcs_SPECS105
     #define SPECS               _mbcs_SPECS
 #endif
 
@@ -181,6 +157,4 @@ int __prtf_slib( void __SLIB *dest,             /* parm for use by out_putc */
     #endif
 #endif
 
-#pragma pack(pop);
 #endif
-

@@ -43,7 +43,7 @@ static slib_callback_t con_putc; // setup calling convention
 static void __SLIB_CALLBACK con_putc( SPECS __SLIB *specs, int op_char )
 {
     if( op_char == putch( op_char ) ) {
-        specs->_o._output_count++;
+        specs->_output_count++;
     }
 }
 
