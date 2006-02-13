@@ -57,8 +57,18 @@ namespace std {
     Type1 first;
     Type2 second;
 
-    pair( ) : first( Type1( ) ), second( Type2( ) ) { }
-    pair( const Type1 &x, const Type2 &y ) : first(x), second(y) { }
+    pair( ) :
+      first( Type1( ) ), second( Type2( ) )
+      { }
+
+    pair( const Type1 &x, const Type2 &y ) :
+      first( x ), second( y )
+      { }
+
+    template< class OtherType1, class OtherType2 >
+    pair( const pair< OtherType1, OtherType2 > &other ) :
+      first( other.first ), second( other.second )
+      { }
   };
 
   template< class Type1, class Type2 >

@@ -30,17 +30,18 @@
 
 #include <utility>
 #include <iostream>
+#include "sanity.cpp"
 
 bool pair_test( )
 {
-  bool rc = true;
+  std::pair< int, char > object1( 1, 'H' );
+  if( !( object1 == std::make_pair( 1, 'H' ) ) ) FAIL;
 
-  std::pair< int, char > object( 1, 'H' );
-  if( !( object == std::make_pair( 1, 'H' ) ) ) {
-    std::cout << "pair FAIL 0001\n"; rc = false;
-  }
+  // This sort of thing comes up when map's value_type is used.
+  std::pair< const int, int > object2( std::make_pair( 1, 2 ) );
+  if( !( object2.first == 1 ) || !( object2.second == 2 ) ) FAIL;
 
-  return rc;
+  return true;
 }
 
 int main()
