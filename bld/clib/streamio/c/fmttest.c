@@ -330,11 +330,8 @@ int Test_print_float( void )
     VERIFY( sprintf( buf, "%.0f", 0.8 ) == 1 );
     VERIFY( !strcmp( buf, "1" ) );
 
-    VERIFY( sprintf( buf, "%2.4f", 4.5 ) == 11 );
-    VERIFY( !strcmp( buf, "4.5000e+000" ) );
-
-    VERIFY( sprintf( buf, "%2.4F", 4.5 ) == 11 );
-    VERIFY( !strcmp( buf, "4.5000E+000" ) );
+    VERIFY( sprintf( buf, "%2.4e", 4.5 ) == 10 );
+    VERIFY( !strcmp( buf, "4.5000e+00" ) );
 
     VERIFY( sprintf( buf, "%2.4g", 4.5 ) == 3 );
     VERIFY( !strcmp( buf, "4.5" ) );
@@ -507,6 +504,7 @@ int main( int argc, char *argv[] )
     Test_scan();
     Test_scan_std_xmp();
     Test_print_integer();
+    Test_print_float();
     Test_print_character();
     Test_jzthh();
 
