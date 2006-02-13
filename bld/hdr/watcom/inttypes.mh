@@ -30,92 +30,92 @@ typedef struct {
    if __STDC_FORMAT_MACROS is defined. */
 #if !defined(__cplusplus) || defined(__STDC_FORMAT_MACROS)
 
-#define PRId8   "hd"   /* Should be "hhd" but "hh" not yet implemented. */
+#define PRId8   "hhd"
 #define PRId16  "hd"
 #define PRId32  "ld"
 #define PRId64  "lld"
-#define PRIi8   "hi"   /* Should be "hhi". */
+#define PRIi8   "hhi"
 #define PRIi16  "hi"
 #define PRIi32  "li"
 #define PRIi64  "lli"
-#define PRIo8   "ho"   /* Should be "hho". */
+#define PRIo8   "hho"
 #define PRIo16  "ho"
 #define PRIo32  "lo"
 #define PRIo64  "llo"
-#define PRIu8   "hu"   /* Should be "hhu". */
+#define PRIu8   "hhu"
 #define PRIu16  "hu"
 #define PRIu32  "lu"
 #define PRIu64  "llu"
-#define PRIx8   "hx"   /* Should be "hhx". */
+#define PRIx8   "hhx"
 #define PRIx16  "hx"
 #define PRIx32  "lx"
 #define PRIx64  "llx"
-#define PRIX8   "hX"   /* Should be "hhX". */
+#define PRIX8   "hhX"
 #define PRIX16  "hX"
 #define PRIX32  "lX"
 #define PRIX64  "llX"
-/* #define SCNd8   "hhd" */
+#define SCNd8   "hhd"
 #define SCNd16  "hd"
 #define SCNd32  "ld"
 #define SCNd64  "lld"
-/* #define SCNi8   "hhi" */
+#define SCNi8   "hhi"
 #define SCNi16  "hi"
 #define SCNi32  "li"
 #define SCNi64  "lli"
-/* #define SCNo8   "hho" */
+#define SCNo8   "hho"
 #define SCNo16  "ho"
 #define SCNo32  "lo"
 #define SCNo64  "llo"
-/* #define SCNu8   "hhu" */
+#define SCNu8   "hhu"
 #define SCNu16  "hu"
 #define SCNu32  "lu"
 #define SCNu64  "llu"
-/* #define SCNx8   "hhx" */
+#define SCNx8   "hhx"
 #define SCNx16  "hx"
 #define SCNx32  "lx"
 #define SCNx64  "llx"
 
-#define PRIdLEAST8   "hd"
+#define PRIdLEAST8   "hhd"
 #define PRIdLEAST16  "hd"
 #define PRIdLEAST32  "ld"
 #define PRIdLEAST64  "lld"
-#define PRIiLEAST8   "hi"
+#define PRIiLEAST8   "hhi"
 #define PRIiLEAST16  "hi"
 #define PRIiLEAST32  "li"
 #define PRIiLEAST64  "lli"
-#define PRIoLEAST8   "ho"
+#define PRIoLEAST8   "hho"
 #define PRIoLEAST16  "ho"
 #define PRIoLEAST32  "lo"
 #define PRIoLEAST64  "llo"
-#define PRIuLEAST8   "hu"
+#define PRIuLEAST8   "hhu"
 #define PRIuLEAST16  "hu"
 #define PRIuLEAST32  "lu"
 #define PRIuLEAST64  "llu"
-#define PRIxLEAST8   "hx"
+#define PRIxLEAST8   "hhx"
 #define PRIxLEAST16  "hx"
 #define PRIxLEAST32  "lx"
 #define PRIxLEAST64  "llx"
-#define PRIXLEAST8   "hX"
+#define PRIXLEAST8   "hhX"
 #define PRIXLEAST16  "hX"
 #define PRIXLEAST32  "lX"
 #define PRIXLEAST64  "llX"
-/* #define SCNdLEAST8   "hhd" */
+#define SCNdLEAST8   "hhd"
 #define SCNdLEAST16  "hd"
 #define SCNdLEAST32  "ld"
 #define SCNdLEAST64  "lld"
-/* #define SCNiLEAST8   "hhi" */
+#define SCNiLEAST8   "hhi"
 #define SCNiLEAST16  "hi"
 #define SCNiLEAST32  "li"
 #define SCNiLEAST64  "lli"
-/* #define SCNoLEAST8   "hho" */
+#define SCNoLEAST8   "hho"
 #define SCNoLEAST16  "ho"
 #define SCNoLEAST32  "lo"
 #define SCNoLEAST64  "llo"
-/* #define SCNuLEAST8   "hhu" */
+#define SCNuLEAST8   "hhu"
 #define SCNuLEAST16  "hu"
 #define SCNuLEAST32  "lu"
 #define SCNuLEAST64  "llu"
-/* #define SCNxLEAST8   "hhx" */
+#define SCNxLEAST8   "hhx"
 #define SCNxLEAST16  "hx"
 #define SCNxLEAST32  "lx"
 #define SCNxLEAST64  "llx"
@@ -241,12 +241,12 @@ typedef struct {
 
 #endif  /* __STDC_FORMAT_MACROS */
 
-_WCRTLINK extern intmax_t   imaxabs( intmax_t j );
-_WCRTLINK extern imaxdiv_t  imaxdiv( intmax_t numer, intmax_t denom );
-_WCRTLINK extern intmax_t   strtoimax( const char *nptr, char **endptr, int base );
-_WCRTLINK extern uintmax_t  strtoumax( const char *nptr, char **endptr, int base );
-_WCRTLINK extern intmax_t   wcstoimax( const wchar_t *nptr, wchar_t **endptr, int base );
-_WCRTLINK extern uintmax_t  wcstoumax( const wchar_t *nptr, wchar_t **endptr, int base );
+_WCRTLINK extern intmax_t   imaxabs( intmax_t __j );
+_WCRTLINK extern imaxdiv_t  imaxdiv( intmax_t __numer, intmax_t __denom );
+_WCRTLINK extern intmax_t   strtoimax( const char *__nptr, char **__endptr, int __base );
+_WCRTLINK extern uintmax_t  strtoumax( const char *__nptr, char **__endptr, int __base );
+_WCRTLINK extern intmax_t   wcstoimax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
+_WCRTLINK extern uintmax_t  wcstoumax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
 
 :include cplusepi.sp
 #endif

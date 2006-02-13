@@ -24,45 +24,68 @@
 *
 *  ========================================================================
 *
-* Description:  Format specification descriptor for scanf family.
+* Description:  Configure 'j', 'z', and 't' modifiers for __scnf and __prtf.
 *
 ****************************************************************************/
 
 
-#ifndef _SCANF_H_INCLUDED
-#define _SCANF_H_INCLUDED
+#ifndef PTRSCNF_H_INCLUDED
+#define PTRSCNF_H_INCLUDED
 
-#include "variety.h"
-#include "widechar.h"
-#include <stdarg.h>
+#include <limits.h>
+#include <stdint.h>
 
-typedef struct {
-    int         (*cget_rtn)();  /* character get rtn */
-    void        (*uncget_rtn)();/* unget a character rtn */
-    CHAR_TYPE   *ptr;           /* file or string pointer */
-    int         width;          /* conversion field width */
-    unsigned    assign  : 1;    /* assignment flag for current argument */
-    unsigned    eoinp   : 1;    /* end of input reached */
-    unsigned    far_ptr : 1;    /* F  - far pointer */
-    unsigned    near_ptr: 1;    /* N  - near pointer */
-    unsigned    char_var: 1;    /* hh - char variable */
-    unsigned    short_var:1;    /* h  - short variable */
-    unsigned    long_var: 1;    /* l  - long variable */
-    unsigned    long_double_var:1;/* L - long double variable */
-    unsigned    p_format: 1;    /* %p (pointer conversion) */
-} SCNF_SPECS;
+/* Currently size_t is always 'unsigned int', but won't be on LP64 systems */
 
-#if defined(__HUGE__)
-    #define PTR_SCNF_SPECS SCNF_SPECS _WCFAR *
+#if SIZE_MAX == UINT_MAX
+    #define ZSPEC_IS_INT
+#elif SIZE_MAX == ULONG_MAX
+    #define ZSPEC_IS_LONG
 #else
-    #define PTR_SCNF_SPECS SCNF_SPECS *
+    #error Could not configure zspec
 #endif
 
-#if defined(__WIDECHAR__)
-    extern int __wscnf( PTR_SCNF_SPECS, const CHAR_TYPE *, va_list );
+/* Currently intmax_t is always 'long long int' but might be something
+ * else, in theory at least
+ */
+#if INTMAX_MAX == LLONG_MAX
+    #define JSPEC_IS_LLONG
+    #define JSPEC_CASE_LLONG    case 'j':
 #else
-    extern int __scnf( PTR_SCNF_SPECS, const CHAR_TYPE *, va_list );
+    #error Could not configure jspec
 #endif
 
-//#pragma off(unreferenced);
+/* Currently ptrdiff_t can be either 'long int' or 'int' */
+#if PTRDIFF_MAX == INT_MAX
+    #define TSPEC_IS_INT
+#elif PTRDIFF_MAX == LONG_MAX
+    #define TSPEC_IS_LONG
+#else
+    #error Could not configure tspec
+#endif
+
+#ifdef ZSPEC_IS_INT
+    #define ZSPEC_CASE_INT      case 'z':
+#else
+    #define ZSPEC_CASE_INT
+#endif
+
+#ifdef ZSPEC_IS_LONG
+    #define ZSPEC_CASE_LONG     case 'z':
+#else
+    #define ZSPEC_CASE_LONG
+#endif
+
+#ifdef TSPEC_IS_INT
+    #define TSPEC_CASE_INT      case 't':
+#else
+    #define TSPEC_CASE_INT
+#endif
+
+#ifdef TSPEC_IS_LONG
+    #define TSPEC_CASE_LONG     case 't':
+#else
+    #define TSPEC_CASE_LONG
+#endif
+
 #endif

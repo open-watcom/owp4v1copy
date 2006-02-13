@@ -47,6 +47,7 @@
 #endif
 #include <stdarg.h>
 #include "scanf.h"
+#include "prtscncf.h"
 #include "fixpoint.h"
 #include "ftos.h"
 #include "farsupp.h"
@@ -101,14 +102,15 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
 {
     int     c, width;
 
-    specs->assign = TRUE;
-    specs->far_ptr = 0;
-    specs->near_ptr = 0;
+    specs->assign    = TRUE;
+    specs->far_ptr   = 0;
+    specs->near_ptr  = 0;
+    specs->char_var  = 0;
     specs->short_var = 0;
-    specs->long_var = 0;
+    specs->long_var  = 0;
     specs->long_double_var = 0;
-    specs->p_format = 0;                    /* 21-nov-89 */
-    specs->width  = -1;
+    specs->p_format  = 0;                   /* 21-nov-89 */
+    specs->width     = -1;
     if( *opt_str == '*' ) {
         specs->assign = FALSE;
         ++opt_str;
@@ -134,22 +136,33 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
 #endif
     switch( *opt_str ) {
     case 'h':
+        if( opt_str[1] == 'h' ) {
+            specs->char_var = 1;
+            opt_str += 2;
+            break;
+        }
         specs->short_var = 1;
         ++opt_str;
         break;
     case 'l':
 #if defined( __LONG_LONG_SUPPORT__ )
-        if ( opt_str[1] == 'l' ) {
+        if( opt_str[1] == 'l' ) {
             specs->long_double_var = 1;
             opt_str += 2;
             break;
         }
 #endif
         /* fall through */
+    ZSPEC_CASE_LONG
+    TSPEC_CASE_LONG
     case 'w':
         specs->long_var = 1;
         ++opt_str;
         break;
+#if defined( __LONG_LONG_SUPPORT__ )
+    JSPEC_CASE_LLONG
+        /* fall through */
+#endif
     case 'L':
         specs->long_double_var = 1;
         ++opt_str;
@@ -160,6 +173,12 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
             specs->long_double_var = 1;
             opt_str += 3;
         }
+        break;
+#endif
+#if defined( TSPEC_IS_INT ) || defined( ZSPEC_IS_INT )
+    TSPEC_CASE_INT      /* If either 't' or 'z' spec corresponds to 'int',  */
+    ZSPEC_CASE_INT      /* we need to parse and ignore the spec.            */
+        ++opt_str;
         break;
 #endif
     }
@@ -393,10 +412,16 @@ static void report_scan( PTR_SCNF_SPECS specs, my_va_list *arg, int match )
 #else
         iptr = va_arg( arg->v, int * );
 #endif
-        if( specs->short_var ) {
+        if( specs->char_var ) {
+            *((FAR_CHAR)iptr) = match;
+        } else if( specs->short_var ) {
             *((FAR_SHORT)iptr) = match;
         } else if( specs->long_var ) {
             *((FAR_LONG)iptr) = match;
+#if defined( __LONG_LONG_SUPPORT__ )
+        } else if( specs->long_double_var ) {
+            *((FAR_INT64)iptr) = match;
+#endif
         } else {
             *iptr = match;
         }
@@ -827,10 +852,12 @@ done:
 #else
                 iptr = va_arg( arg->v, int * );
 #endif
-                if( specs->short_var ) {
-                    *((FAR_SHORT) iptr) = value;
+                if( specs->char_var ) {
+                    *((FAR_CHAR)iptr) = value;
+                } else if( specs->short_var ) {
+                    *((FAR_SHORT)iptr) = value;
                 } else if( specs->long_var ) {
-                    *((FAR_LONG) iptr) = value;
+                    *((FAR_LONG)iptr) = value;
                 } else {
                     *iptr = value;
                 }
@@ -895,6 +922,7 @@ int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_
             case 'e':
             case 'E':
             case 'f':
+            case 'F':
             case 'g':
             case 'G':
                 match_len = scan_float( specs, &margs );
@@ -942,11 +970,14 @@ check_match:
             }
         }
         if( specs->eoinp ) {
-            if( *format == '%' ) {                          /* 26-mar-91 */
+            while( *format == '%' ) {
                 ++format;
                 format = get_opt( format, specs );
                 if( *format == 'n' ) {
+                    ++format;
                     report_scan( specs, &margs, char_match );
+                } else {
+                    break;
                 }
             }
             break;

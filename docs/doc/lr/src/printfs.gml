@@ -29,7 +29,7 @@ followed by an optional decimal integer or an asterisk character (*);
 .bull
 an optional
 .us type length
-specification: one of "h", "l", "ll", "L", "I64", "w"
+specification: one of "hh", "h", "l", "ll", "j", "z", "t", "L", "I64", "w"
 .if &farfnc eq 0 .do begin
 .ct
 ; and
@@ -64,7 +64,7 @@ precision is incremented, if necessary, so that the first digit is "0".
 for "x" or "X" (unsigned hexadecimal) conversions, a non-zero value
 is prepended with "0x" or "0X" respectively.
 .bull
-for "e", "E", "f", "g" or "G" (any floating-point) conversions, the
+for "e", "E", "f", "F", "g" or "G" (any floating-point) conversions, the
 result always contains a decimal-point character, even if no digits
 follow it; normally, a decimal-point character appears in the result only
 if there is a digit to follow it.
@@ -101,7 +101,7 @@ The precision value affects the following conversions:
 For "b", "d", "i", "o", "u", "x" and "X" (integer) conversions, the
 precision specifies the minimum number of digits to appear.
 .bull
-For "e", "E" and "f" (fixed-precision, floating-point) conversions, the
+For "e", "E", "f" and "F" (fixed-precision, floating-point) conversions, the
 precision specifies the number of digits to appear after the
 decimal-point character.
 .bull
@@ -114,6 +114,21 @@ maximum number of characters to appear.
 .np
 A type length specifier affects the conversion as follows:
 .begbull
+.bull
+"hh" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) format
+conversion to treat the argument as a
+.id signed char
+or
+.id unsigned char
+argument.
+Note that, although the argument may have been promoted to an
+.id int
+as part of the function call, the value is converted to the smaller
+type before it is formatted.
+.bull
+"hh" causes an "n" (converted length assignment) operation to assign the
+converted length to an object of type
+.id signed char.
 .bull
 "h" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) format
 conversion to treat the argument as a
@@ -150,7 +165,7 @@ This is a &company extension.
 .bull
 "h" causes an "n" (converted length assignment) operation to assign the
 converted length to an object of type
-.id unsigned short int.
+.id short int.
 .bull
 "h" causes an "s" operation to treat the argument string as an ASCII
 character string composed of 8-bit characters.
@@ -178,7 +193,7 @@ argument.
 .bull
 "l" causes an "n" (converted length assignment) operation to assign the
 converted length to an object of type
-.id unsigned long int.
+.id long int.
 .bull
 "l" or "w" cause an "s" operation to treat the argument string as a
 wide character string (a string composed of characters of type
@@ -203,7 +218,6 @@ wprintf( L"%s%d", L"Num=", 12345 );
 "F" causes the pointer associated with "n", "p", "s" conversions to
 be treated as a far pointer.
 .do end
-.if &version ge 110 .do begin
 .bull
 .ix 'long long'
 "ll" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion to
@@ -212,6 +226,43 @@ process a
 or
 .id unsigned long long
 argument (e.g., %lld).
+.bull
+"ll" causes an "n" (converted length assignment) operation to assign the
+converted length to an object of type
+.id long long int.
+.bull
+.ix 'intmax_t'
+.ix 'uintmax_t'
+"j" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion to
+process an
+.id intmax_t
+or
+.id uintmax_t
+argument.
+.bull
+"j" causes an "n" (converted length assignment) operation to assign the
+converted length to an object of type
+.id intmax_t.
+.bull
+.ix 'size_t'
+"z" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion to
+process a
+.id size_t
+or the corresponding signed integer type argument.
+.bull
+"z" causes an "n" (converted length assignment) operation to assign the
+converted length to an object of signed integer type corresponding to
+.id size_t.
+.bull
+.ix 'ptrdiff_t'
+"t" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion to
+process a
+.id ptrdiff_t
+or the corresponding unsigned integer type argument.
+.bull
+"t" causes an "n" (converted length assignment) operation to assign the
+converted length to an object of type
+.id ptrdiff_t.
 .bull
 .ix '__int64'
 "L" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion to
@@ -229,7 +280,6 @@ or
 .id unsigned __int64
 argument (e.g., %I64d).
 The "L" specifier provides the same functionality.
-.do end
 .bull
 .ix 'long double'
 "L" causes an "e", "E", "f", "g", "G" (double) conversion to process a
@@ -289,7 +339,7 @@ than "e".
 The exponent sign and a three-digit number
 (that indicates the power of ten
 by which the decimal fraction is multiplied) are always produced.
-.note f
+.note f, F
 An argument of type
 .id double
 is converted to a decimal notation in the form
@@ -307,7 +357,7 @@ The value is rounded to the appropriate number of digits.
 .note g, G
 An argument of type
 .id double
-is converted using either the "f" or "e" (or "E", for a "G" conversion)
+is converted using either the "f" or "e" (or "F" or "E", for a "G" conversion)
 style of conversion depending on the value of the argument.
 In either case, the precision specifies the number of significant digits
 that are contained in the result.
@@ -400,10 +450,10 @@ to right in the string; otherwise, indeterminate results will occur.
 .np
 .ix '_finite'
 .ix 'infinity'
-.ix 'NAN'
+.ix 'NaN'
 If the value corresponding to a floating-point specifier is infinity, or
-not a number (NAN), then the output will be "inf" or "-inf" for infinity,
-and "nan" or "-nan" for NAN's.
+not a number (NaN), then the output will be "inf" or "-inf" for infinity,
+and "nan" or "-nan" for NaN's.
 .np
 For example, a specifier of the form
 .id "%8.*f"
@@ -411,9 +461,9 @@ will define a field to be at least 8 characters wide, and will get the
 next argument for the precision to be used in the conversion.
 .oldtext end
 .if &farfnc eq 0 .do begin
-.class ANSI
+.class ANSI (except for b and I64 specifiers)
 .do end
 .el .do begin
-.class ANSI, (except for F and N modifiers)
+.class ANSI (except for F, N modifiers and b, I64 specifiers)
 .do end
 .system

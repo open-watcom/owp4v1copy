@@ -14,6 +14,7 @@ int _uprintf( const wchar_t *format, ... );
 .ixfunc2 '&StrIo' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function writes output to the file designated by
 .kw stdout
@@ -36,19 +37,22 @@ accepts a Unicode string argument for
 and produces Unicode character output.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns the number of characters written, or a
 negative value if an output error occurred.
 .im errnoref
 .return end
+.*
 .see begin
 .im seeprtf printf
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 
-void main()
-  {
+void main( void )
+{
     char *weekday, *month;
 .exmp break
     weekday = "Saturday";
@@ -57,9 +61,10 @@ void main()
           weekday, month, 18, 1987 );
     printf( "f1 = %8.4f f2 = %10.2E x = %#08x i = %d\n",
             23.45,      3141.5926,   0x1db,     -1 );
-  }
+}
 .exmp output
 Saturday, April 18, 1987
 f1 =  23.4500 f2 =  3.14E+003 x = 0x0001db i = -1
 .exmp end
+.*
 .im printfs

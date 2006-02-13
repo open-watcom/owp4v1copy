@@ -33,10 +33,10 @@ specification: one of "N" or "F";
 .bull
 an optional
 .us type length
-specification: one of "h", "l", "L" or "I64";
+specification: one of "hh", "h", "l", "ll", "j", "z", "t", "L" or "I64";
 .bull
 a character that specifies the type of conversion to be performed: one
-of the characters "cCdefginopsSux[".
+of the characters "cCdeEfFgGinopsSuxX[".
 .endbull
 .np
 As each format directive in the format string is processed, the
@@ -104,6 +104,16 @@ for which the program has been compiled.
 A type length specifier affects the conversion as follows:
 .begbull
 .bull
+"hh" causes a "d", "i", "o", "u" or "x" (integer) conversion to
+assign the converted value to an object of type
+.id signed char
+or
+.id unsigned char.
+.bull
+"hh" causes an "n" (read length assignment) operation to assign the
+number of characters that have been read to an object of type
+.id signed char.
+.bull
 "h" causes a "d", "i", "o", "u" or "x" (integer) conversion to
 assign the converted value to an object of type
 .id short int
@@ -132,7 +142,7 @@ struct fixpt foo2 =
 .bull
 "h" causes an "n" (read length assignment) operation to assign the
 number of characters that have been read to an object of type
-.id unsigned short int.
+.id short int.
 
 .if &'length(&wfunc.) ne 0 .do begin
 .bull
@@ -163,7 +173,7 @@ or
 .bull
 "l" causes an "n" (read length assignment) operation to assign the
 number of characters that have been read to an object of type
-.id unsigned long int.
+.id long int.
 .bull
 "l" causes an "e", "f" or "g" (floating-point) conversion to assign
 the converted value to an object of type
@@ -187,7 +197,50 @@ be converted to a 16-bit Unicode character string; otherwise it will
 not be converted.
 .do end
 
-.if &version ge 110 .do begin
+.bull
+"ll" causes a "d", "i", "o", "u" or "x" (integer) conversion to
+assign the converted value to an object of type
+.id long long
+or
+.id unsigned long long
+(e.g., %lld).
+.bull
+"ll" causes an "n" (read length assignment) operation to assign the
+number of characters that have been read to an object of type
+.id long long int.
+.bull
+.ix 'intmax_t'
+.ix 'uintmax_t'
+"j" causes a "d", "i", "o", "u" or "x" (integer) conversion to
+assign the converted value to an object of type
+.id intmax_t
+or
+.id uintmax_t.
+.bull
+"j" causes an "n" (read length assignment) operation to assign the
+number of characters that have been read to an object of type
+.id intmax_t.
+.bull
+.ix 'size_t'
+"z" causes a "d", "i", "o", "u" or "x" (integer) conversion to
+assign the converted value to an object of type
+.id size_t
+or the corresponding signed integer type.
+.bull
+"z" causes an "n" (read length assignment) operation to assign the
+number of characters that have been read to an object of signed integer
+type corresponding to
+.id size_t.
+.bull
+.ix 'ptrdiff_t'
+"t" causes a "d", "i", "o", "u" or "x" (integer) conversion to
+assign the converted value to an object of type
+.id ptrdiff_t
+or the corresponding unsigned integer type.
+.bull
+"t" causes an "n" (read length assignment) operation to assign the
+number of characters that have been read to an object of type
+.id ptrdiff_t.
 .bull
 .ix '__int64'
 "L" causes a "d", "i", "o", "u" or "x" (integer) conversion to
@@ -205,7 +258,6 @@ or
 .id unsigned __int64
 (e.g., %I64d).
 The "L" specifier provides the same functionality.
-.do end
 .bull
 .ix 'long double'
 "L" causes an "e", "f" or "g" (floating-point) conversion to assign
@@ -348,7 +400,7 @@ character.
 A conversion type specifier of "%" is treated as a single ordinary
 character that matches a single "%" character in the input data.
 A conversion type specifier other than those listed above causes
-scanning to terminate the function to return.
+scanning to terminate and the function to return.
 .np
 The line
 .blkcode begin
@@ -384,14 +436,14 @@ The program
 #include <stdio.h>
 
 void main()
-  {
+{
     char string1[80], string2[80];
 
     scanf( "%[abcdefghijklmnopqrstuvwxyz"
            "ABCDEFGHIJKLMNOPQRSTUVWZ ]%*2s%[^\n]",
            string1, string2 );
     printf( "%s\n%s\n", string1, string2 );
-  }
+}
 .blkcode end
 .blktext begin
 with input
@@ -423,9 +475,10 @@ to
 .oldtext end
 .if &farfnc eq 0 .do begin
 .class ANSI
+The I64 modifier is an extension to ANSI.
 .do end
 .el .do begin
 .class ANSI
-The F and N modifiers are extensions to ANSI.
+The F, N and I64 modifiers are extensions to ANSI.
 .do end
 .system

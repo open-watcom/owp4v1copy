@@ -40,27 +40,29 @@
 
 #if defined(__AXP__) || defined(__PPC__)
   #undef __FAR_SUPPORT__
-  typedef CHAR_TYPE * FAR_STRING;
-  typedef char      * FAR_ASCII_STRING;
-  typedef wchar_t   * FAR_UNI_STRING;
-  typedef int       * FAR_INT;
-  typedef short     * FAR_SHORT;
-  typedef long      * FAR_LONG;
-  typedef float     * FAR_FLOAT;
-  typedef double    * FAR_DOUBLE;
+  typedef CHAR_TYPE     *FAR_STRING;
+  typedef char          *FAR_ASCII_STRING;
+  typedef wchar_t       *FAR_UNI_STRING;
+  typedef int           *FAR_INT;
+  typedef signed char   *FAR_CHAR;
+  typedef short         *FAR_SHORT;
+  typedef long          *FAR_LONG;
+  typedef float         *FAR_FLOAT;
+  typedef double        *FAR_DOUBLE;
   #ifdef __LONG_LONG_SUPPORT__
-    typedef UINT64_TYPE * FAR_INT64;
+    typedef UINT64_TYPE *FAR_INT64;
   #endif
 #else
   #define __FAR_SUPPORT__
-  typedef CHAR_TYPE _WCFAR *FAR_STRING;
-  typedef char      _WCFAR *FAR_ASCII_STRING;
-  typedef wchar_t   _WCFAR *FAR_UNI_STRING;
-  typedef int       _WCFAR *FAR_INT;
-  typedef short     _WCFAR *FAR_SHORT;
-  typedef long      _WCFAR *FAR_LONG;
-  typedef float     _WCFAR *FAR_FLOAT;
-  typedef double    _WCFAR *FAR_DOUBLE;
+  typedef CHAR_TYPE     _WCFAR *FAR_STRING;
+  typedef char          _WCFAR *FAR_ASCII_STRING;
+  typedef wchar_t       _WCFAR *FAR_UNI_STRING;
+  typedef int           _WCFAR *FAR_INT;
+  typedef signed char   _WCFAR *FAR_CHAR;
+  typedef short         _WCFAR *FAR_SHORT;
+  typedef long          _WCFAR *FAR_LONG;
+  typedef float         _WCFAR *FAR_FLOAT;
+  typedef double        _WCFAR *FAR_DOUBLE;
   #ifdef __LONG_LONG_SUPPORT__
     typedef UINT64_TYPE _WCFAR *FAR_INT64;
   #endif

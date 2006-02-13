@@ -51,6 +51,7 @@
 #endif
 #include "farsupp.h"
 #include "printf.h"
+#include "prtscncf.h"
 #include "fixpoint.h"
 #include "myvalist.h"
 
@@ -132,9 +133,9 @@ int (FUNC)( void __SLIB *dest,              /* parm for use by out_putc */
   #endif
           )
 {
-    auto CHAR_TYPE      buffer[ BUF_SIZE ];
-    auto CHAR_TYPE      null_char = '\0';
-    register CHAR_TYPE  *a;
+    CHAR_TYPE           buffer[ BUF_SIZE ];
+    CHAR_TYPE           null_char = '\0';
+    CHAR_TYPE           *a;
     FAR_STRING          arg;
     const CHAR_TYPE     *ctl;
     SPECS               specs;
@@ -187,45 +188,31 @@ int (FUNC)( void __SLIB *dest,              /* parm for use by out_putc */
                 break;        /* 05-jan-89 */
 
             if( specs._character == 'n' ) {
-                if( specs._flags & SPF_LONG ) {
-  #if defined( __FAR_SUPPORT__ )
-                    if( specs._flags & SPF_FAR ) {
-                        *va_arg( args, long int _WCFAR *) = specs._output_count;
-                    } else if( specs._flags & SPF_NEAR ) {
-                        a = CVT_NEAR( va_arg( args, long int _WCNEAR * ) );
-                        *(long int *)a = specs._output_count;
-                    } else {
-                        *va_arg( args, long int * ) = specs._output_count;
-                    }
-  #else
-                    *va_arg( args, long int * ) = specs._output_count;
-  #endif
-                } else if( specs._flags & SPF_SHORT ) {     /* JBS 92/02/12 */
-  #if defined( __FAR_SUPPORT__ )
-                    if( specs._flags & SPF_FAR ) {
-                        *va_arg( args, short int _WCFAR * ) = specs._output_count;
-                    } else if( specs._flags & SPF_NEAR ) {
-                        a = CVT_NEAR( va_arg( args, short int _WCNEAR * ) );
-                        *(short int *)a = specs._output_count;
-                    } else {
-                        *va_arg( args, short int * ) = specs._output_count;
-                    }
-  #else
-                    *va_arg( args, short int * ) = specs._output_count;
-  #endif
+                FAR_INT         iptr;
+
+#if defined( __FAR_SUPPORT__ )
+                if( specs._flags & SPF_FAR ) {
+                    iptr = va_arg( args, int _WCFAR * );
+                } else if( specs._flags & SPF_NEAR ) {
+                    iptr = va_arg( args, int _WCNEAR * );
                 } else {
-  #if defined( __FAR_SUPPORT__ )
-                    if( specs._flags & SPF_FAR ) {
-                        *va_arg( args, int _WCFAR * ) = specs._output_count;
-                    } else if( specs._flags & SPF_NEAR ) {
-                        a = CVT_NEAR( va_arg( args, long int _WCNEAR * ) );
-                        *(int *)a = specs._output_count;
-                    } else {
-                        *va_arg( args, int * ) = specs._output_count;
-                    }
-  #else
-                    *va_arg( args, int * ) = specs._output_count;
-  #endif
+                    iptr = va_arg( args, int * );
+                }
+#else
+                iptr = va_arg( args, int * );
+#endif
+                if( specs._flags & SPF_CHAR ) {
+                    *((FAR_CHAR)iptr) = specs._output_count;
+                } else if( specs._flags & SPF_SHORT ) {
+                    *((FAR_SHORT)iptr) = specs._output_count;
+                } else if( specs._flags & SPF_LONG ) {
+                    *((FAR_LONG)iptr) = specs._output_count;
+#if defined( __LONG_LONG_SUPPORT__ )
+                } else if( specs._flags & SPF_LONG_DOUBLE ) {
+                    *((FAR_INT64)iptr) = specs._output_count;
+#endif
+                } else {
+                    *iptr = specs._output_count;
                 }
             } else {
                 {
@@ -367,11 +354,18 @@ static const CHAR_TYPE * getprintspecs( const CHAR_TYPE *ctl,
         }
   #endif
         /* fall through */
+    ZSPEC_CASE_LONG
+    TSPEC_CASE_LONG
     case 'w':
         specs->_flags |= SPF_LONG;
         ctl++;
         break;
     case 'h':
+        if( ctl[1] == 'h' ) {
+            specs->_flags |= SPF_CHAR;
+            ctl += 2;
+            break;
+        }
         specs->_flags |= SPF_SHORT;
         ctl++;
         break;
@@ -382,6 +376,8 @@ static const CHAR_TYPE * getprintspecs( const CHAR_TYPE *ctl,
             ctl += 3;
         }
         break;
+    JSPEC_CASE_LLONG
+        /* fall through */
   #endif
     case 'L':
         specs->_flags |= SPF_LONG_DOUBLE;
@@ -394,6 +390,12 @@ static const CHAR_TYPE * getprintspecs( const CHAR_TYPE *ctl,
         break;
     case 'N':                   /* 8086 specific flag for NEAR pointer */
         specs->_flags |= SPF_NEAR;
+        ctl++;
+        break;
+  #endif
+  #if defined( TSPEC_IS_INT ) || defined( ZSPEC_IS_INT )
+    TSPEC_CASE_INT      /* If either 't' or 'z' spec corresponds to 'int',  */
+    ZSPEC_CASE_INT      /* we need to parse and ignore the spec.            */
         ctl++;
         break;
   #endif
@@ -739,6 +741,8 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
             long_value = va_arg( pargs->v, unsigned );
             if( specs->_flags & SPF_SHORT ) {    /* JBS 92/02/12 */
                 long_value = (unsigned short) long_value;
+            } else if( specs->_flags & SPF_CHAR ) {
+                long_value = (unsigned char)long_value;
             }
         }
     } else
@@ -757,6 +761,8 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
             long_value = va_arg( pargs->v, int );
             if( specs->_flags & SPF_SHORT ) {    /* JBS 92/02/12 */
                 long_value = (short) long_value;
+            } else if( specs->_flags & SPF_CHAR ) {
+                long_value = (signed char)long_value;
             }
         }
         {
@@ -906,20 +912,16 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
                 buffer[specs->_n0++] = specs->_character;
             }
         }
-        radix = 16;                     /* base 16 */
+        radix = 16;                 /* base 16 */
         goto processNumericTypes;
 
     case 'b':           /* CDH 2003 Apr 23 *//* Add binary mode */
         radix = 2;                  /* base 2 */
-        goto checkFlags;
+        goto processNumericTypes;
 
     case 'o':
         radix = 8;                  /* base 8 */
-checkFlags:
-        if( specs->_flags & SPF_ALT ) {
-            buffer[specs->_n0++] = '0';
-        }
-        /* types b & o fall through */
+        /* 'o' conversion falls through */
 
     case 'd':
     case 'i':
@@ -962,6 +964,13 @@ processNumericTypes:
         specs->_n1 = length;
         if( specs->_n1 < specs->_prec ) {
             specs->_nz0 = specs->_prec - specs->_n1;
+        } else if( specs->_flags & SPF_ALT && radix < 10
+         && (!length || (arg[0] != '0')) ) {
+            /* For 'b' and 'o' conversions, alternate format forces the number to
+             * start with a zero (effectively increases precision by one), but
+             * only if it doesn't start with a zero already.
+             */
+            ++specs->_nz0;
         }
         if( specs->_prec == -1 ) {
             SetZeroPad( specs );
