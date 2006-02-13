@@ -39,6 +39,7 @@ stack_axp=opt stack=16k
 template = &
         alg01$(ext)     &
         alg02$(ext)     &
+        bitset01$(ext)  &
         clib01$(ext)    &
         cmplx01$(ext)   &
         deque01$(ext)   &

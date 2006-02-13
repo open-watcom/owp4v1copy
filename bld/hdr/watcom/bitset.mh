@@ -1,10 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////
-// FILE: bitset (...)
+// FILE: bitset (Container for N bits)
 //
 :keep CPP_HDR
 :include crwatcnt.sp
 //
-// Description: This header is part of the C++ standard library.
+// Description: This header is part of the C++ standard library. It defines
+//              a template that provides a container for bits. The usual
+//              bit manipulation operators are provided.
 ///////////////////////////////////////////////////////////////////////////
 #ifndef _BITSET_INCLUDED
 #define _BITSET_INCLUDED
@@ -15,7 +17,438 @@
 #error The header bitset requires C++
 #endif
 
+#ifndef _CSTDDEF_INCLUDED
+  #include <cstddef>
+#endif
+
+#ifndef _STRING_INCLUDED
+  #include <string>
+#endif
+
+#ifndef _STDEXCEPT_INCLUDED
+  #include <stdexcept>
+#endif
+
+#ifndef _IOSFWD_INCLUDED
+  #include <iosfwd>
+#endif
+
 namespace std {
+
+    template< size_t N > class bitset {
+    public:
+        class reference {
+            friend class bitset;
+            reference( );
+        public:
+           ~reference( );
+            reference& operator=( bool x );
+            reference& operator=( const reference& x );
+            bool operator~( ) const;
+            operator bool( ) const;
+            reference& flip( );
+
+        private:
+            bool bit;
+        };
+
+        // Constructors
+        bitset( );
+        bitset( unsigned long val );
+
+#if _NEVER
+        template<class Ch, class Tr, class A>
+        explicit bitset(const basic_string<Ch, Tr, A>& str,
+                        typename basic_string<Ch, Tr, A>::size_type pos = 0,
+                        typename basic_string<Ch, Tr, A>::size_type n = basic_string<Ch, Tr, A>::npos);
+#endif
+
+        // Bitset operations
+        bool operator[] ( size_t pos ) const;
+        reference operator[] ( size_t pos );
+
+        bitset< N >& operator&=( const bitset< N >& s );
+        bitset< N >& operator|=( const bitset< N >& s );
+        bitset< N >& operator^=( const bitset< N >& s );
+
+        bitset< N >& operator<<=( size_t s );
+        bitset< N >& operator>>=( size_t s );
+
+        bitset< N >& set( );
+        bitset< N >& set( size_t pos, int val = 1 );
+
+        bitset< N >& reset( );
+        bitset< N >& reset( size_t pos );
+
+        bitset< N >& flip( );
+        bitset< N >& flip( size_t pos );
+
+        bitset< N > operator~( ) const
+          { return bitset< N >( *this ).flip( ); }
+
+        bitset< N > operator<<( size_t n ) const
+          { return bitset< N >( *this ) <<= n; }
+
+        bitset< N > operator>>( size_t n ) const
+          { return bitset< N >( *this ) >>= n; }
+
+        unsigned long to_ulong( ) const;
+
+#if _NEVER
+        template<class Ch, class Tr, class A> basic_string<Ch, Tr, A> to_string() const;
+#endif
+        size_t count( ) const;
+        size_t size( ) const { return N; }
+
+        bool operator==( const bitset< N >& s ) const;
+        bool operator!=( const bitset< N >& s ) const;
+        bool test( size_t pos ) const;
+        bool any( ) const;
+        bool none( ) const;
+
+    private:
+        reference bits[N];
+    };
+
+    // *********************************
+    // Members of bitset< N >::reference
+    // *********************************
+
+    template< size_t N >
+    inline bitset< N >::reference::reference( ) : bit( 0 )
+      { }
+
+    template< size_t N >
+    inline bitset< N >::reference::~reference( )
+      { }
+
+    template< size_t N >
+    inline bitset< N >::reference &bitset< N >::reference::operator=( bool x )
+    {
+        bit = x;
+        return *this;
+    }
+
+    template< size_t N >
+    inline
+    bitset< N >::reference &
+      bitset< N >::reference::operator=( const reference &x )
+    {
+        bit = x.bit;
+        return *this;
+    }
+
+    template< size_t N >
+    inline bool bitset< N >::reference::operator~( ) const
+    {
+        return !bit;
+    }
+
+    template< size_t N >
+    inline bitset< N >::reference::operator bool( ) const
+    {
+        return bit;
+    }
+
+    template< size_t N >
+    inline bitset< N >::reference &bitset< N >::reference::flip( )
+    {
+        bit ^= true;
+        return *this;
+    }
+
+    // **********************
+    // Members of bitset< N >
+    // **********************
+
+    template< size_t N >
+    bitset< N >::bitset( )
+      { }
+
+    template< size_t N >
+    bitset< N >::bitset( unsigned long val )
+    {
+        int pos = 0;
+
+        for( int pos = 0; pos < N && val; pos++, val >>= 1 ) {
+            if( ( val & 1 ) == true ) {
+                set( pos );
+            }
+        }
+    }
+
+#if _NEVER
+    template<size_t N>
+    template<class Ch, class Tr, class A>
+    explicit bitset<N>::bitset(const basic_string<Ch, Tr, A>& str,
+                               typename basic_string<Ch, Tr, A>::size_type pos = 0,
+                               typename basic_string<Ch, Tr, A>::size_type n = basic_string<Ch, Tr, A>::npos)
+    {
+        // TODO: implement me.
+    }
+#endif
+
+    template< size_t N >
+    bool bitset< N >::operator[]( size_t pos ) const
+    {
+        if( pos >= N )
+            throw std::out_of_range( "bitset::operator[]" );
+        return bits[pos].bit;
+    }
+
+
+    template< size_t N >
+    bitset< N >::reference bitset< N >::operator[]( size_t pos )
+    {
+        if( pos >= N )
+            throw std::out_of_range( "bitset::operator[]" );
+        return bits[pos];
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::operator&=( const bitset< N > &s )
+    {
+        for( int i = 0; i < N; i++ ) {
+            if( s.bits[i] == false )
+                bits[i] = false;
+        }
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::operator|=( const bitset< N > &s )
+    {
+        for( int i = 0; i < N; i++ ) {
+            if( s.bits[i] == true )
+                bits[i] = true;
+        }
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::operator^=( const bitset< N > &s )
+    {
+        for( int i = 0; i < N; i++ ) {
+            if( s.bits[i] == true )
+                bits[i].flip();
+        }
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::operator<<=( size_t s )
+    {
+        if( s == 0 ) return *this;
+        if( s > N ) s = N;
+
+        for( int i = N-1; i >= s; i-- ) {
+            bits[i] = bits[i - s];
+        }
+        for( int i = 0; i < s; i++ ) {
+            bits[i] = false;
+        }
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::operator>>=( size_t s )
+    {
+        if( s == 0 ) return *this;
+        if( s > N ) s = N;
+
+        for( int i = 0; i < N-s; i++ ) {
+            bits[i] = bits[i + s];
+        }
+        for( int i = N-s; i < N; i++ ) {
+            bits[i] = false;
+        }
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::set( )
+    {
+        for( int i = 0; i < N; i++ )
+            bits[i] = true;
+
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::set( size_t pos, int val )
+    {
+        if( pos >= N )
+            throw std::out_of_range( "bitset::set" );
+
+        bits[pos] = ( val != 0 );
+
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::reset( )
+    {
+        for( int i = 0; i < N; i++ )
+            bits[i] = false;
+
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::reset( size_t pos )
+    {
+        if( pos >= N )
+            throw std::out_of_range( "bitset::reset" );
+
+        bits[pos] = false;
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::flip( )
+    {
+        for( int i = 0; i < N; i++ )
+            bits[i].flip( );
+
+        return *this;
+    }
+
+    template< size_t N >
+    bitset< N > &bitset< N >::flip( size_t pos )
+    {
+        if( pos >= N )
+            throw std::out_of_range( "bitset::flip" );
+
+        bits[pos].flip( );
+        return *this;
+    }
+
+    template< size_t N >
+    unsigned long bitset< N >::to_ulong( ) const
+    {
+#if _NEVER
+        // Is this correct? N could be large with only a few bits set.
+        if( ( sizeof ( unsigned long ) * 8 ) < N )
+            throw std::overflow_error( "bitset::to_ulong" );
+#endif
+        unsigned long value = 0;
+
+        for( int i = 0; i < N; i++ ) {
+            value |= bits[i] << i;
+        }
+        return value;
+    }
+
+#if _NEVER
+    template<size_t N>
+    template<class Ch, class Tr, class A> basic_string<Ch, Tr, A> bitset<N>::to_string() const
+    {
+        // TODO: implement me.
+    }
+#endif
+
+    template< size_t N >
+    size_t bitset< N >::count( ) const
+    {
+        int cnt = 0;
+
+        for( int i = 0; i < N; i++ ) {
+            if( bits[i] == true )
+                cnt++;
+        }
+        return cnt;
+    }
+
+    template< size_t N >
+    bool bitset< N >::operator==( const bitset< N > &s ) const
+    {
+        for( int i = 0; i < N; i++ ) {
+            if( bits[i] != s.bits[i] )
+                return false;
+        }
+        return true;
+    }
+
+    template< size_t N >
+    bool bitset< N >::operator!=( const bitset< N > &s ) const
+    {
+        for( int i = 0; i < N; i++ ) {
+            if( bits[i] != s.bits[i] )
+                return true;
+        }
+        return false;
+    }
+
+    template< size_t N >
+    bool bitset< N >::test( size_t pos ) const
+    {
+        if( pos >= N )
+            throw std::out_of_range( "bitset::test" );
+
+        return bits[pos];
+    }
+
+    template< size_t N >
+    bool bitset< N >::any( ) const
+    {
+        for( int i = 0; i < N; i++ ) {
+            if( bits[i] == true )
+                return true;
+        }
+        return false;
+    }
+
+    template< size_t N >
+    bool bitset< N >::none( ) const
+    {
+        for( int i = 0; i < N; i++ ) {
+            if( bits[i] == true )
+                return false;
+        }
+        return true;
+    }
+
+#if _NEVER
+    template< size_t N >
+    bitset< N > operator&( const bitset< N > &s1, const bitset< N > &s2 )
+    {
+        bitset< N > tmp = s1;
+        tmp &= s2;
+        return tmp;
+    }
+
+    template< size_t N >
+    bitset< N > operator|( const bitset< N > &s1, const bitset< N > &s2 )
+    {
+        bitset< N > tmp = s1;
+        tmp |= s2;
+        return tmp;
+    }
+
+    template< size_t N >
+    bitset< N > operator^( const bitset< N > &s1, const bitset< N > &s2 )
+    {
+        bitset< N > tmp = s1;
+        tmp ^= s2;
+        return tmp;
+    }
+#endif
+
+#if _NEVER
+    template<class Ch, class Tr, size_t N>
+    basic_istream<Ch, Tr>& operator<< (basic_ostream<Ch, Tr>& os, const bitset<N>& x)
+    {
+        // TODO: implement me.
+    }
+
+    template<class Ch, class Tr, size_t N>
+    basic_istream<Ch, Tr>& operator>> (basic_ostream<Ch, Tr>& os, const bitset<N>& x)
+    {
+        // TODO: implement me.
+    }
+
+#endif
+
 
 } // End of namespace std.
 

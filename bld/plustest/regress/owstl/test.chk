@@ -11,6 +11,7 @@ Already sorted ................... passed.
 Already reverse sorted ........... passed.
 One pair of duplicate elements ... passed.
 All duplicate elements ........... passed.
+----------bitset01----------
 ----------clib01----------
 ----------cmplx01----------
 ----------deque01----------
