@@ -73,8 +73,8 @@ static char __far *qnx_mmap_physical( long addr, unsigned long len, unsigned per
 }
 
 
-void _InitSegments()
-//==================
+void _InitSegments( void )
+//========================
 
 {
     char __far          *adr;
@@ -121,7 +121,16 @@ void _InitSegments()
 #elif defined( DOSX286 )        // 286 DOS-Extender
 
 
+#if 0
 #include "phapi.h"
+#else
+typedef unsigned short USHORT;
+typedef unsigned long ULONG;
+typedef unsigned short far * PSEL;
+extern void far pascal DosMapRealSeg( USHORT, ULONG, PSEL );
+extern void far pascal DosGetBIOSSeg( PSEL );
+extern void far pascal DosCreateCSAlias( USHORT, PSEL );
+#endif
 
 #define NUM_SELECTORS   4
 
@@ -139,8 +148,8 @@ static struct seg_table _SegTable[ NUM_SELECTORS ] = {
 };
 
 
-void _InitSegments()
-//==================
+void _InitSegments( void )
+//========================
 
 {
     int                 i;
@@ -189,8 +198,8 @@ extern dbcs_pair far *  dbcs_vector_table( void );
 #endif
 
 
-void _InitSegments()
-//==================
+void _InitSegments( void )
+//========================
 
 {
     unsigned short      seg;
