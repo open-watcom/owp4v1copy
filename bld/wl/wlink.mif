@@ -143,7 +143,7 @@ wl.dll : wlink.res $(comp_objs_dll) $(xlibs) $(rc_objs) dll.lnk
     wstrip -q -a -r $@ . wlink.res
 
 wlink.lib : wl.dll
-    $(librarian) -n $@ +$<
+    $(librarian) $(libflags) $@ +$<
 
 drv.lnk: $(__MAKEFILES__)
     @%write $@ $(lflags)

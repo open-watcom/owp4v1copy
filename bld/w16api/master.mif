@@ -1,6 +1,7 @@
 proj_name = w16api
 
 w16api_autodepends = .autodepend
+w16api_distrib_lib = 1
 
 !include cproj.mif
 !include defrule.mif
@@ -28,6 +29,8 @@ winlibs =            &
         user.lbc     &
         win87em.lbc
 
+extra_lib_flags = -io -ii -p=16
+
 .def: ../lib
 .asm: ../asm
 
@@ -35,7 +38,7 @@ winlibs =            &
         $(vi) -s ../def16lbc.vi -p"$*" ../lib/$[.
 
 .lbc.lib:
-        $(librarian) -b -n -p=16 -io -ii $@ @$<
+        $(librarian) $(libflags) $@ @$<
 
 $(libs):
 
@@ -44,4 +47,4 @@ windows.lbc : $(winlibs)
         @for %i in ($(winlibs)) do @%append $^@ @ %i
 
 windows.lib: windows.lbc profc.obj
-        $(librarian) -b -n -p=16 -io -ii $@ @$<
+        $(librarian) $(libflags) $@ @$<

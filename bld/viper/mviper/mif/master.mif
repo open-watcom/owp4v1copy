@@ -48,4 +48,6 @@ inc_dirs = $(wclass_inc_dirs)
 .cpp : ..
 
 $(name).lib : $(objects)
-        $(librarian) -b -n $^@ $(objects)
+        @%create $^&.lbc
+        @for %f in ($(objects)) do @%append $^&.lbc +%f
+        $(librarian) $(libflags) $^@ @$^&.lbc

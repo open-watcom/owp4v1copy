@@ -104,10 +104,9 @@ objs =  guimain.obj &
         wndimain.obj
 
 aui.lib : $(objs) $(__makefiles__) $(aui_dir)/h/aui.rc
-        @%create tmp.lbc
-        @for %i in ($(objs)) do @%append tmp.lbc +%i
-        $(librarian) -b -n $^@ @tmp.lbc
-        @rm -f tmp.lbc
+        @%create $^&.lbc
+        @for %i in ($(objs)) do @%append $^&.lbc +%i
+        $(librarian) $(libflags) $@ @$^&.lbc
 
 .rc: ../h
 !ifdef pm

@@ -1,8 +1,7 @@
 proj_name = conv
 
-!ifndef conv_autodepends
 conv_autodepends = .AUTODEPEND
-!endif
+conv_distrib_lib = 1
 
 !include cproj.mif
 !include deftarg.mif
@@ -34,6 +33,8 @@ win31_16.def &
 
 extra_a_flags_fldenv = -i"$(watcomdir)h"
 
+extra_lib_flags = -p=16
+
 all : ./conv.exe win386.lib
 
 ./conv.exe : conv.c makefile
@@ -42,7 +43,7 @@ all : ./conv.exe win386.lib
 win386.lib : ./conv.exe $(def_files) ../def/win386 fldenv.obj _call16.obj
     $[@ ../def/win386 ../def -s -q
     ls -1 win*.obj >tmp.lbc
-    $(librarian) -n -b -p=16 win386.lib +fldenv.obj +_call16.obj @tmp.lbc
+    $(librarian) $(libflags) win386.lib +fldenv.obj +_call16.obj @tmp.lbc
     @cp winglue.asm ../../asm >$(nulldevice)
     @cp dllthunk.c ../../c >$(nulldevice)
     @cp dllthk.asm ../../asm >$(nulldevice)

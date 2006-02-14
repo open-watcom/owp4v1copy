@@ -43,12 +43,14 @@ extra_objs_win = new_win.obj
 extra_objs_os2 = new_os2.obj
 !endif
 
+extra_lib_flags = -p=16
+
 objs = $(objs_$(host_OS)) $(extra_objs_$(host_OS))
 
 wpi.lib: $(objs)
         @%create tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
-        $(librarian) -n -p=16 $^@ @tmp.lbc
+        $(librarian) $(libflags) $^@ @tmp.lbc
 
 wpi_win.obj : wpi_win.c wpi_win.h wpitypes.h wpi.h
 wpi_os2.obj : wpi_os2.c wpi_os2.h wpitypes.h wpi.h

@@ -105,7 +105,7 @@ $(xname) : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
 !endif
         wstrip -q -a -r $@ . $(name).res
 !ifeq sys_dll 1
-        $(librarian) -n $(name).lib +$(xname)
+        $(librarian) $(libflags) $(name).lib +$(xname)
 !endif
 
 # ytab.c is renamed to ytabw.c to avoid filename conflict

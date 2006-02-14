@@ -5,6 +5,7 @@
 proj_name = emu86
 
 emu86_autodepends = .AUTODEPEND
+emu86_distrib_lib = 1
 
 memory_model_i86 = s
 memory_model_386 = s
@@ -63,6 +64,8 @@ objs_dos = initemu.obj emu8087.obj dosinit.obj
 objs_os2 = initemu2.obj emu8087.obj hook8087.obj
 objs_win = initemuw.obj
 
+extra_lib_flags = -p=16
+
 !ifeq host_os qnx
 !ifeq host_cpu i86
 
@@ -78,12 +81,12 @@ emu86_$(cpu_size): qnxemu87.obj emu8087.obj fpeqnx.obj
 !else ifeq host_OS stub
 
 noemu87.lib: emustub.obj
-    $(librarian) -n -b $^@ +$[@
+    $(librarian) $(libflags) $^@ +$[@
 
 !else
 
 emu87.lib: $(objs_$(host_OS))
-    $(librarian) -n -b $^@ $<
+    $(librarian) $(libflags) $^@ $<
 
 !endif
 

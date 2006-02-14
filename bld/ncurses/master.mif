@@ -28,5 +28,5 @@ ncurses_objs = &
 
 ncurses.lib : $(ncurses_objs)
     rm -f $^&.lbc
-    @for %i in ($<) do @%append $^&.lbc -+%i
-    $(librarian) -n -q -b $^. @$^&.lbc
+    @for %i in ($<) do @%append $^&.lbc +%i
+    $(librarian) $(libflags) $^. @$^&.lbc

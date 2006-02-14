@@ -4,6 +4,7 @@
 proj_name = pgchart
 
 pgchart_autodepends = .AUTODEPEND
+pgchart_distrib_lib = 1
 
 suppress_zc = 1
 
@@ -63,9 +64,11 @@ extra_c_flags_i86 = -nt=GRAPH_TEXT -d_CGRAPH=_loadds
 
 extra_c_flags_win = -zW
 
+extra_lib_flags = -p=16
+
 $(libname).lib : pgchart.lbc
-        $(librarian) -b -n $@ @$<
+        $(librarian) $(libflags) $@ @$<
 
 pgchart.lbc : $(objs)
         %create $@
-        @for %i in ($<) do @%append $@ -+%i
+        @for %i in ($<) do @%append $@ +%i

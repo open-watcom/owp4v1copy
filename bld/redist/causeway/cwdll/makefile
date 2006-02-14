@@ -6,6 +6,7 @@ host_cpu = 386
 proj_name = cwdll
 
 cwdll_autodepends = .autodepend
+cwdll_distrib_lib = 1
 
 !include cproj.mif
 !include defrule.mif
@@ -13,7 +14,7 @@ cwdll_autodepends = .autodepend
 extra_a_flags = -ms
 
 cwdll.lib: dllfunc.obj cwapi.obj
-    $(librarian) -b -c -n -p=512 $@ +dllfunc.obj +cwapi.obj
+    $(librarian) $(libflags) $@ +dllfunc.obj +cwapi.obj
 
 clean: .SYMBOLIC
     rm -f *.lib

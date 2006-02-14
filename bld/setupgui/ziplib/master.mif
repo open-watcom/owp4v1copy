@@ -54,5 +54,5 @@ objs = &
 
 $(proj_name).lib : $(objs)
         @%create $^&.lbc
-        @for %i in ($(objs)) do @%append $^&.lbc -+%i
-        $(librarian) -b $^@ @$^&.lbc
+        @for %i in ($(objs)) do @%append $^&.lbc +%i
+        $(librarian) $(libflags) $^@ @$^&.lbc

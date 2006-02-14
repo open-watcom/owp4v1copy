@@ -36,11 +36,13 @@ extra_l_flags_os2 = initinstance terminstance pm op manyautodata
 
 !ifdef sys_dll
 rcsdll.lib: rcsdll.dll
-    $(librarian) -b -n $^@ +$[@
+    $(librarian) $(libflags) $@ +$[@
 !else
 rcsdll.lib: $(OBJS)
-    $(librarian) -b -n $^@ $(OBJS)
+    @%create $^&.lbc
+    @for %f in ($(OBJS)) do @%append $^&.lbc +%f
+    $(librarian) $(libflags) $@ @$^&.lbc
 !endif
 
 rcsdll.dll : $(OBJS)
-    $(linker) $(lflags) name $^@ file {$(OBJS)}
+    $(linker) name $@ $(lflags) file {$(OBJS)}

@@ -36,5 +36,5 @@ orl_objs  = orlentry.obj &
 
 orl.lib : $(orl_objs)
         @%create $^&.lbc
-        @for %i in ($(orl_objs)) do @%append $^&.lbc -+%i
-        $(librarian) -b $^@ @$^&.lbc
+        @for %i in ($(orl_objs)) do @%append $^&.lbc +%i
+        $(librarian) $(libflags) $^@ @$^&.lbc

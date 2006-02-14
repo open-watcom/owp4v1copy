@@ -1,5 +1,7 @@
 proj_name =  os2api
 
+os2api_distrib_lib = 1
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -57,39 +59,39 @@ componentsmmpm2 =    &
         mmio.lbc     &
         sw.lbc
 
+extra_lib_flags = -io -ii -p=32
+
 .def .asm : ../$(srcdir)
 
 .def.lbc:
         $(vi) -s ../def2lbc.vi -p"$*" ../$(srcdir)/$[.
 
 .lbc.lib:
-        $(librarian) -b -c -n -io -ii -p=32 $@ @$<
+        $(librarian) $(libflags) $@ @$<
 
 .obj.lib:
-        $(librarian) -b -c -n $@ $<
+        $(librarian) $(libflags) $@ $<
 
 os2.lib: lib286.lbc msgseg.obj
-        $(librarian) -b -c -n -io -ii -p=32 $@ @$<
-        $(librarian) -b -c -p=32 $@ +msgseg.obj
+        $(librarian) $(libflags) $@ @$[@ +$]@
 
 lib286.lbc: $(components286)
         cat $< > $@
 
 os2386.lib: lib386.lbc msgseg32.obj
-        $(librarian) -b -c -n -io -ii -p=32 $@ @$<
-        $(librarian) -b -c -p=32 $@ +msgseg32.obj
+        $(librarian) $(libflags) $@ @$[@ +$]@
 
 lib386.lbc: $(components386)
         cat $< > $@
 
 rexx.lib: rexxall.lbc
-        $(librarian) -b -c -n -io -ii -p=32 $@ @$<
+        $(librarian) $(libflags) $@ @$<
 
 rexxall.lbc: $(componentsrexx)
         cat $< > $@
 
 mmpm2.lib: mmpm2all.lbc
-        $(librarian) -b -c -n -io -ii -p=32 $@ @$<
+        $(librarian) $(libflags) $@ @$<
 
 mmpm2all.lbc: $(componentsmmpm2)
         cat $< > $@

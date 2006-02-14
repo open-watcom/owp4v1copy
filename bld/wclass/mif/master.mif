@@ -95,5 +95,7 @@ extra_objlib_os2_386    = $(win_objs) $(ndos_objs) wddeobj.obj
 
 extra_objlib = $(extra_objlib_$(host_OS)_$(host_CPU))
 
+extra_lib_flags = -p=512
+
 $(name).lib : $(WCLASS_OBJS) $(extra_objlib)
-        $(librarian) -b -c -n -p=512 $^@ $(WCLASS_OBJS) $(extra_objlib)
+        $(librarian) $(libflags) $^@ $(WCLASS_OBJS) $(extra_objlib)

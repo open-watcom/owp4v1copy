@@ -19,8 +19,6 @@ extra_c_flags_memwrap   = $(track_flags_$(host_cpu))
 extra_c_flags_trmem     = $(track_flags_$(host_cpu))
 !endif
 
-wlib_parms      = -b
-
 !ifeq release 0
 !else
 std_defines = -DNDEBUG
@@ -38,14 +36,13 @@ inc_dirs += -I. $(inc_dirs_targ) -I"$(dwarf_dir)/dw/h" $(mem_include)
 
 libfile: .PROCEDURE
         rm -f $^&.lbc
-        @for %i in ($<) do @%append $^&.lbc -+%i
-
 !ifdef bootstrap
 # to be fixed: wlib -fa now produces a library that gnu ld can't read
 # can be a bug in wlib or in gnu ld, I don't know right now...
         ar crs $^. $<
 !else
-        $(librarian) $(wlib_parms) $^. @$^&.lbc
+        @for %i in ($<) do @%append $^&.lbc +%i
+        $(librarian) $(libflags) $^. @$^&.lbc
 !endif
 
 !ifdef bootstrap

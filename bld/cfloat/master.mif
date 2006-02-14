@@ -1,4 +1,6 @@
 proj_name       = cf
+cf_autodepends = .autodepend
+
 inc_dirs        = -I"../h"
 
 !include cproj.mif
@@ -29,7 +31,7 @@ cf.lib : $(cf_objs)
 
 cf.lib : $(cf_objs)
         rm -f $^&.lbc
-        @for %i in ($<) do @%append $^&.lbc -+%i
-        $(librarian) -n -b $^@ @$^&.lbc
+        @for %i in ($<) do @%append $^&.lbc +%i
+        $(librarian) $(libflags) $@ @$^&.lbc
 
 !endif

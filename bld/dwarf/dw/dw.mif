@@ -46,7 +46,7 @@ extra_c_flags = -s
 dw.lib : dwabenum.gh $(objs)
         @%create tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
-        $(librarian) -n -b -q $^@ @tmp.lbc
+        $(librarian) $(libflags) $^@ @tmp.lbc
 
 !endif
 

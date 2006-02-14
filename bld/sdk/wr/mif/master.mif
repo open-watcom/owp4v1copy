@@ -97,8 +97,8 @@ extra_c_flags_trmem = $(trmem_cflags)
 inc_dirs = -I. -I"../h" -I"$(misc_dir)" -I$(cpp_dir) -I"$(wres_dir)/h" -I"$(wrc_dir)/h"
 
 #------------- LIB
-$(name).lib: $(__MAKEFILES__) $(name).dll
-        $(librarian) -b -n $(name) +$]@
+$(name).lib: $(name).dll $(__MAKEFILES__)
+        $(librarian) $(libflags) $@ +$[@
 
 #------------- LINK
 extra_l_flags = libpath $(misc_dir) op map,v,static

@@ -387,7 +387,7 @@ $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
 wd.lib : litdef.gh $(engine_objs) $(sysobjs)
         @%create tmp.lbc
         @for %i in ($(engine_objs) $(sysobjs)) do @%append tmp.lbc +%i
-        $(librarian) -b -n wd.lib @tmp.lbc
+        $(librarian) $(libflags) wd.lib @tmp.lbc
 
 $(lnk) : $(__MAKEFILES__)
     %create $(lnk)

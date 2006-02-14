@@ -140,8 +140,7 @@ spymsgnt.dlg spymsgnt.gh: spyarray.h ./mkdlgnt.exe
         $(bld_cl) -I".." -D__NOSPYMSGS__ -DNT_MSGS $(wcl_util_opts) $[@
 
 $(dllname).lib : $(dllname).dll
-        @rm -f $(dllname).lib
-        $(librarian) $(dllname).lib +$(dllname).dll
+        $(librarian) $(libflags) $@ +$[@
 
 $(dllname).dll : $(dllobjs)
         $(linker) $(wspy_dll_lflags_$(host_os)$(host_cpu))

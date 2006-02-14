@@ -247,7 +247,7 @@ wlibd.dll: msg.gh $(depends_dll) wlib.res dll.lnk
     wstrip -q -a -r $@ . wlib.res
 
 wlibd.lib: wlibd.dll
-    $(librarian) -b -n -c $@ +$[@
+    $(librarian) $(libflags) $@ +$[@
 
 drv.lnk : $(__MAKEFILES__)
     @%write $@ $(lflags)

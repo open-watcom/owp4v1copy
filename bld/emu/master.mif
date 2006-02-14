@@ -4,9 +4,8 @@ proj_name = emu
 !include deftarg.mif
 !include defrule.mif
 
-!ifndef emu_autodepends
 emu_autodepends = .AUTODEPEND
-!endif
+emu_distrib_lib = 1
 
 .ERASE
 
@@ -34,10 +33,12 @@ extra_c_flags = -s -fpc
 extra_c_flags_dos = -zl -zls
 extra_c_flags_qnx = -oais-w3 -I"$(new_qnx_h)" -DQNX32
 
+extra_lib_flags = -p=16
+
 !ifeq host_OS dos
 
 emu387.lib: emu387.obj 386inite.obj
-    $(librarian) -s -t -n -b $@ +emu387.obj +386inite.obj
+    $(librarian) $(libflags) $@ +emu387.obj +386inite.obj
 
 !else ifeq host_OS qnx
 
@@ -51,7 +52,7 @@ INCS += win30vxd.inc
 !else
 
 emu387.lib: 386stub.obj
-    $(librarian) -s -t -n -b $@ +386stub.obj
+    $(librarian) $(libflags) $@ +386stub.obj
 
 !endif
 

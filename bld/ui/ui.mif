@@ -89,10 +89,12 @@ extra_c_flags += -os-s
 !endif
 !endif
 
+extra_lib_flags = -p=16
+
 !include trmem.mif
 
 $(name).lib: $(objfiles)
-        $(librarian) -b -n -p=16 $^@ $<
+        $(librarian) $(libflags) $^@ $<
 
 !ifeq SAMPLE_MODE WIN_C_M_J
 sample.exe : samplew.obj sampdial.obj $(name).lib

@@ -5,9 +5,8 @@
 
 proj_name = wres
 
-!ifndef wres_autodepends
 wres_autodepends = .AUTODEPEND
-!endif
+wres_distrib_lib = 1
 
 !ifeq linkage dynamic
 wres_rtdll = 1
@@ -64,6 +63,8 @@ extra_c_flags_i86 = -zdp
 extra_c_flags_i86 = -zw-zu
 !endif
 
+extra_lib_flags = -p=16
+
 # where to look for various files
 
 .c : $(wres_dir)/c
@@ -75,4 +76,4 @@ inc_dirs = -I"$(wres_dir)/h"
 wres.lib : $(objs) $(__MAKEFILES__) .PRECIOUS
     %create $^&.lbc
     @for %i in ($(objs)) do @%append $^&.lbc +%i
-    $(librarian) -n -b $@ @$^&.lbc
+    $(librarian) $(libflags) $@ @$^&.lbc

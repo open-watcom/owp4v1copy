@@ -175,13 +175,11 @@ all_lib : msg.gh $(asi_lib) $(asi_lib_j) .symbolic
 
 $(asi_lib) : $(asi_objs)
         @rm -f $^&.lbc
-        @for %i in ($<) do @%append $^&.lbc -+%i
-        $(librarian) -b $^@ @$^&.lbc
+        @for %i in ($<) do @%append $^&.lbc +%i
+        $(librarian) $(libflags) $^@ @$^&.lbc
 
 $(asi_lib_j) : $(asi_lib) asmsgj.obj
-        cp $[@ $^@
-        $(librarian) -b $^@ -asmsg.obj
-        $(librarian) -b $^@ +asmsgj.obj
+        $(librarian) $(libflags) $^@ +$[@ -asmsg.obj +asmsgj.obj
 !endif
 
 $(name).exe : msg.gh $(as_objs) $(libs) $(owl_lib) $(name).res

@@ -4,6 +4,7 @@ host_cpu = i86
 
 proj_name = ovlldr
 ovlldr_autodepends = .autodepend
+ovlldr_distrib_lib = 1
 
 sobjs = sovlret.obj sovlmain.obj sovldbg.obj ovlstd.obj ovlshare.obj
 lobjs = lovlret.obj lovlmain.obj lovldbg.obj ovlstd.obj ovlshare.obj
@@ -17,8 +18,6 @@ debugobjs = dovlboth.obj dovldata.obj
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
-
-lib_opts = -b -p16
 
 extra_c_flags = $(inc_path) -Fo=$^@ -r -d1 -zu -zl -nc=_OVLCODE -nt=_TEXT -nm=$^&
 
@@ -50,6 +49,8 @@ extra_a_flags_movlmain = -DOVL_MULTITHREAD
 
 extra_a_flags_sovlret  = -DOVL_SMALL
 extra_a_flags_lovlret  =
+
+extra_lib_flags = -p=16
 
 wovl : .symbolic wovl.lib wmovl.lib
     @%null
@@ -121,15 +122,11 @@ dovldata.obj : ovldata.asm $($(proj_name)_autodepends)
 
 
 makedbglib: .procedure
-    %create $*.lbc
-    @for %i in ($?) do @%append $*.lbc -+%i
-    $(librarian) $(lib_opts) $@ @$*.lbc
+    %create $^&.lbc
+    @for %i in ($<) do @%append $^&.lbc +%i
+    $(librarian) -b-n $(extra_lib_flags) $@ @$^&.lbc
 
 makelib: .procedure
-    %create $*.lbc
-    @for %i in ($?) do @%append $*.lbc -+%i
-!ifeq release 0
-    $(librarian) $(lib_opts) $@ @$*.lbc
-!else
-    $(librarian) $(lib_opts) -s -t $@ @$*.lbc
-!endif
+    %create $^&.lbc
+    @for %i in ($<) do @%append $^&.lbc +%i
+    $(librarian) $(libflags) $@ @$^&.lbc
