@@ -2,6 +2,8 @@ proj_name = graph
 
 graph_autodepends = .AUTODEPEND
 
+graph_distrib_lib = 1
+
 suppress_zc = 1
 
 memory_model_i86 = s
@@ -167,10 +169,10 @@ inc_dirs += -I"$(hdr_dir)/dos"
 !endif
 
 !ifeq host_cpu 386
-.asm: $(dev_dir)/graphlib/386asm;$(dev_dir)/graphlib/asm
+.asm: $(dev_dir)/graphlib/386asm #;$(dev_dir)/graphlib/asm
 !else
-.asm: $(dev_dir)/graphlib/asm
 !endif
+.asm: $(dev_dir)/graphlib/asm
 
 .c: ../c
 
@@ -192,9 +194,9 @@ extra_a_flags_386 = $(extra_a_flags_386_$(convention))
 
 extra_a_flags_qnx = -D_QNX
 
-$(libname).lib : $(special_objs) graphics.lbc
-        $(librarian) -b -n $@ @$]@
+extra_lib_flags = -p=16
 
-graphics.lbc : $(objs)
-        %create $@
-        @for %i in ($<) do @%append $@ -+%i
+$(libname).lib : $(special_objs) $(objs)
+        %create $^&.lbc
+        @for %i in ($(objs)) do @%append $^&.lbc +%i
+        $(librarian) $(libflags) $@ @$^&.lbc

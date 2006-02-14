@@ -17,7 +17,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 [ BLOCK <1> clean ]
 #==================
     cdsay <PROJDIR>/fixtools
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    pmake -d fixtools <2> <3> <4> <5> <6> <7> <8> <9> -h clean
     rm -f <OWBINDIR>/objchg
     rm -f <OWBINDIR>/objfind
     rm -f <OWBINDIR>/objlist
