@@ -66,9 +66,37 @@ directive.
 .mkwix &mkwSTDC_sp.
 .mkwfont &mkwSTDC.
 .discuss begin
-The decimal constant 1, meaning that the compiler is a
+The integer constant 1, indicating that the compiler is a
 .ix 'standard conforming'
 standard-conforming implementation.
+.discuss end
+.keep end
+.pp
+.mkwix &mkwSTDCHsp.
+.mkwfont &mkwSTDCH.
+.discuss begin
+The integer constant 1, indicating that the compiler is a
+.ix 'hosted'
+hosted (not freestanding) implementation.
+.discuss end
+.keep end
+.pp
+.mkwix &mkwSTDCXsp.
+.mkwfont &mkwSTDCX.
+.discuss begin
+The long integer constant 200509L, indicating conformance to the ISO/IEC
+Technical Report 24731, Extensions to the C Library, Part I: Bounds-checking
+interfaces.
+.discuss end
+.keep end
+.pp
+.mkwix &mkwSTDCVsp.
+.mkwfont &mkwSTDCV.
+.discuss begin
+A decimal constant indicating the version of ISO C language standard that the
+compiler adheres to. Depending on compile time switches, this will be either
+199901L (to indicate conformance with ISO/IEC 9899:1999) or 199409L (to
+indicate conformance with ISO/IEC 9899/AMD1:1995).
 .discuss end
 .keep end
 .pp

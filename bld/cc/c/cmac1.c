@@ -78,12 +78,15 @@ struct special_macro_names {
     int     value;
  };
 static struct special_macro_names  SpcMacros[] = {
-    { "__LINE__",   MACRO_LINE },
-    { "__FILE__",   MACRO_FILE },
-    { "__DATE__",   MACRO_DATE },
-    { "__TIME__",   MACRO_TIME },
-    { "__STDC__",   MACRO_STDC },
-    { NULL,         0}
+    { "__DATE__",           MACRO_DATE          },
+    { "__FILE__",           MACRO_FILE          },
+    { "__LINE__",           MACRO_LINE          },
+    { "__STDC__",           MACRO_STDC          },
+    { "__STDC_HOSTED__",    MACRO_STDC_HOSTED   },
+    { "__STDC_LIB_EXT1__",  MACRO_STDC_LIB_EXT1 },
+    { "__STDC_VERSION__",   MACRO_STDC_VERSION  },
+    { "__TIME__",           MACRO_TIME          },
+    { NULL,                 0                   }
  };
 
 
@@ -376,6 +379,27 @@ int SpecialMacro( MEPTR mentry )
         Buffer[0] = '1';
         Buffer[1] = '\0';
         Constant = 1;
+        ConstType = TYPE_INT;
+        return( T_CONSTANT );
+    case MACRO_STDC_HOSTED:
+        Buffer[0] = '1';
+        Buffer[1] = '\0';
+        Constant = 1;
+        ConstType = TYPE_INT;
+        return( T_CONSTANT );
+    case MACRO_STDC_LIB_EXT1:
+        strcpy( Buffer, "200509L" );
+        Constant = 200509;
+        ConstType = TYPE_INT;
+        return( T_CONSTANT );
+    case MACRO_STDC_VERSION:
+        if( CompFlags.c99_extensions ) {
+            strcpy( Buffer, "199901L" );
+            Constant = 199901;
+        } else {
+            strcpy( Buffer, "199409L" );
+            Constant = 199409;
+        }
         ConstType = TYPE_INT;
         return( T_CONSTANT );
     case MACRO_FUNC:

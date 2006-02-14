@@ -31,11 +31,14 @@
 
 
 enum    special_macros {
-    MACRO_LINE,
-    MACRO_FILE,
     MACRO_DATE,
-    MACRO_TIME,
+    MACRO_FILE,
+    MACRO_LINE,
     MACRO_STDC,
+    MACRO_STDC_HOSTED,
+    MACRO_STDC_LIB_EXT1,
+    MACRO_STDC_VERSION,
+    MACRO_TIME,
     MACRO_FUNC,
 };
 

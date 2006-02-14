@@ -1224,7 +1224,6 @@ static void Set_XD()           { TargetSwitches |= EXCEPT_FILTER_USED; }
 
 static void Set_ZA99()
 {
-    PreDefine_Macro( "__STDC_VERSION__=199901L" );
     CompFlags.c99_extensions = 1;
 }
 

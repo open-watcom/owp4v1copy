@@ -207,6 +207,18 @@
 :SET symbol='mkwSTDC'       value='__STDC__'.
 :SET symbol='mkwSTDC_sp'    value='_&SYSRB._STDC_&SYSRB._'.
 :CMT.
+:SET symbol='mkwSTDC'       value='__STDC__'.
+:SET symbol='mkwSTDC_sp'    value='_&SYSRB._STDC_&SYSRB._'.
+:CMT.
+:SET symbol='mkwSTDCH'      value='__STDC_HOSTED__'.
+:SET symbol='mkwSTDCHsp'    value='_&SYSRB._STDC_HOSTED_&SYSRB._'.
+:CMT.
+:SET symbol='mkwSTDCX'      value='__STDC_LIB_EXT1__'.
+:SET symbol='mkwSTDCXsp'    value='_&SYSRB._STDC_LIB_EXT1_&SYSRB._'.
+:CMT.
+:SET symbol='mkwSTDCV'      value='__STDC_VERSION__'.
+:SET symbol='mkwSTDCVsp'    value='_&SYSRB._STDC_VERSION_&SYSRB._'.
+:CMT.
 :SET symbol='mkwTIME'       value='__TIME__'.
 :SET symbol='mkwTIME_sp'    value='_&SYSRB._TIME_&SYSRB._'.
 :CMT.
