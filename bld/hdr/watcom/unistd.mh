@@ -241,7 +241,7 @@ _WCRTLINK extern int    unlock( int __fildes, long __offset, long __nbytes );
 :segment QNX | LINUX
 :include posix.sp
 _WCRTLINK extern int    getopt( int __argc, char * const __argv[], const char *__optstring );
-_WCRTLINK extern char   *basename( const char * __fname );
+_WCRTLINK extern char   *basename( char * __fname );
 _WCRTLINK extern size_t confstr( int, char*, size_t );
 _WCRTLINK extern int    fnmatch( const char *__pattern, const char *__string, int __flag );
 _WCRTLINK extern off_t  ltrunc( int __fildes, off_t __offset, int __origin );

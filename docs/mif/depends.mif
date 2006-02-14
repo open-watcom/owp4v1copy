@@ -1242,6 +1242,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)b_seri98.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)b_serial.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)b_time.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)b_time98.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)basename.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)bcmp.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)bcopy.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)bdos.gml &
@@ -1302,6 +1303,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)dgetdskf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)dieee2ms.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)difftime.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)dirent.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)dirname.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)div.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)dms2ieee.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)dosattr.gml &

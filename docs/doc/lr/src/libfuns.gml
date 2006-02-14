@@ -62,7 +62,7 @@
 .fnc atoll                      atoll.gml       DOS QNX W WIN32
 .fnw _wtoll                     atoll.gml       DOS QNX W WIN32
 .fnc _atouni                    _atouni.gml     DOS QNX W WIN32
-.fnc basename                   basename.gml        QXO
+.fnc basename                   basename.gml    DOS QNX W WIN32
 .fnc bdos                       bdos.gml        DOS
 .fnc _beginthread               _bthread.gml    DOS QXO   WIN32
 .fnc _beginthreadex             _bthread.gml    DOS       WIN32
@@ -181,6 +181,7 @@
 .fnc dev_state                  dev_stat.gml        QXO
 .fn8 _dieeetomsbin              dieee2ms.gml    DOS QNX W WIN32
 .fnc difftime                   difftime.gml    DOS QNX W WIN32
+.fnc dirname                    dirname.gml     DOS QNX W WIN32
 .fnc _disable                   _disable.gml    DOS QNX W WIN32
 .fnc disk_get_entry             disk_get.gml        QXO
 .fnc disk_space                 disk_spa.gml        QXO

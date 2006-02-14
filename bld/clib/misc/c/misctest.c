@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <libgen.h>
 #ifdef __SW_BW
   #include <wdefwin.h>
 #endif
@@ -102,6 +103,33 @@ void TestRot( void )
 }
 
 /****
+***** Test libgen.h functions
+****/
+
+void TestLibgen( void )
+{
+    /* NB: We deliberately pass string literals that may be read only.
+     * Our libgen.h functions are supposed to handle that.
+     */
+    VERIFY( !strcmp( basename( "/usr/lib" ), "lib" ) );
+    VERIFY( !strcmp( basename( "/usr/" ), "usr" ) );
+    VERIFY( !strcmp( basename( "/" ), "/" ) );
+    VERIFY( !strcmp( basename( "///" ), "/" ) );
+    VERIFY( !strcmp( basename( "//usr//lib//" ), "lib" ) );
+    VERIFY( !strcmp( basename( "" ), "." ) );
+    VERIFY( !strcmp( basename( NULL ), "." ) );
+
+    VERIFY( !strcmp( dirname( "/usr/lib" ), "/usr" ) );
+    VERIFY( !strcmp( dirname( "/usr/" ), "/" ) );
+    VERIFY( !strcmp( dirname( "usr" ), "." ) );
+    VERIFY( !strcmp( dirname( "/" ), "/" ) );
+    VERIFY( !strcmp( dirname( "." ), "." ) );
+    VERIFY( !strcmp( dirname( ".." ), "." ) );
+    VERIFY( !strcmp( dirname( "" ), "." ) );
+    VERIFY( !strcmp( dirname( NULL ), "." ) );
+}
+
+/****
 ***** Test assert macro.
 ****/
 
@@ -167,6 +195,7 @@ int main( int argc, char *argv[] )
 
     /*** Test various functions ***/
     TestRot();
+    TestLibgen();
 
     /*** Test assert macro ***/
     TestAssert1( 1 );

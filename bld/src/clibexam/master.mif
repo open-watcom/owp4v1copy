@@ -502,6 +502,7 @@ access.exe &
 asctime.exe &
 asctim_s.exe &
 atexit.exe &
+basename.exe &
 bsearch.exe &
 bsrch_s.exe &
 calloc.exe &
@@ -520,6 +521,7 @@ creat.exe &
 cscanf.exe &
 ctime.exe &
 ctime_s.exe &
+dirname.exe &
 exit.exe &
 ffs.exe &
 getcmd.exe &

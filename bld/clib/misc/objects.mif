@@ -3,6 +3,8 @@
 !inject aborthnd.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject assert.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject assert99.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject basename.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject ffs.obj      d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject dbgbreak.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject dbgdata.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject dbgrpt.obj   d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
@@ -10,6 +12,7 @@
 !inject dbgrptho.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject dbgrptmo.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject demangl.obj  d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject dirname.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject ffs.obj      d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject fullpath.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32     l32 lpc lmp
 !inject fpathosi.obj                                                                        osi
