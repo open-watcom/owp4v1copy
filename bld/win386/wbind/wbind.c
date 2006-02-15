@@ -315,9 +315,6 @@ int main( int argc, char *argv[] )
      * get files to use
      */
     _splitpath( path, drive, dir, fname, ext );
-    strlwr( drive );
-    strlwr( dir );
-    strlwr( fname );
     _makepath( rex, drive, dir, fname, ".rex" );
     if( dllflag ) {
         _makepath( dll, drive, dir, fname, ".dll" );
@@ -364,7 +361,6 @@ int main( int argc, char *argv[] )
     } else {
         strcpy( winext, wext );
     }
-    strlwr( winext );
     if( dllflag ) {
         myPrintf("Loading 32-bit Windows DLL Supervisor \"%s\"\n",winext );
     } else {
