@@ -510,6 +510,10 @@ static void ParseArOption( char **init_c, operation *mode )
     c = *init_c;
     while( *c != '\0' && !isspace( *c ) ) {
         switch( tolower( *c ) ) {
+        case '?':
+            Banner();
+            Usage();
+            break;
         case 'c':
             if( Options.no_c_warn ) {
                 DuplicateOption( *init_c );
@@ -626,6 +630,10 @@ void ProcessCmdLine( char *argv[] )
         env = WlibGetEnv( "AR" );
     } else {
         env = WlibGetEnv( "WLIB" );
+    }
+    if( env == NULL && argv[1] == NULL || argv[1][0] == '\0' ) {
+        Banner();
+        Usage();
     }
     if( env != NULL ) {
         parse = DupStr( env );

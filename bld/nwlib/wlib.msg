@@ -22,8 +22,8 @@ pick( ERR_DELETE_AND_CREATE,    "Files can not be extracted using the -n option"
                 "-nオプションを指定するとファイルを取り出すことはできません" )
 pick( ERR_BAD_CMDLINE,      "Invalid command line near '%s'",
                 "'%s'の付近のコマンドラインの指定が不適切です" )
-pick( ERR_BAD_OPTION,       "Invalid option '/%c'",
-                "不適切なオプション '/%c'" )
+pick( ERR_BAD_OPTION,       "Invalid option '-%c'",
+                "不適切なオプション '-%c'" )
 pick( ERR_NO_LIBNAME,       "Library name required on command line",
                 "コマンドラインでライブラリ名を指定してください" )
 pick( ERR_TWO_LIBNAMES,     "Library name specified twice near '%s'",
@@ -174,7 +174,7 @@ pick( USAGE_WLIB_46,        "The default filename extensions are lib, bak, lst, 
 #endif
 pick( USAGE_WLIB_LAST,      "Enclose a file name with quotes, i.e. 'filename', if it contains '-' or '@'.",
                 "ﾌｧｲﾙ名に'-'や'@'が含まれるときは、'filename'のように引用符でﾌｧｲﾙ名を囲みます" )
-pick( USAGE_AR_FIRST,       "ar  -d [-v] archieve file..." ,
+pick( USAGE_AR_FIRST,       "ar  -d [-v] archive file..." ,
                 "ar  -d [-v] アーカイブ名 ファイル名..." )
 pick( USAGE_AR_1,       "ar  -r [-cuv] archive file..." ,
                 "ar  -r [-cuv] アーカイブ名 ファイル名..." )

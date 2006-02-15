@@ -993,13 +993,13 @@ extern void ListContents( void )
                 }
             }
         } else {
-            if (Options.terse_listing) {
+            if( Options.verbose ) {
                 for( file = FileTable.first; file != NULL; file = file->next ) {
-                    Message("%s", file->arch.name);
+                    printVerboseTableEntry( & ( file->arch ) );
                 }
             } else {
                 for( file = FileTable.first; file != NULL; file = file->next ) {
-                    printVerboseTableEntry( & ( file->arch ) );
+                    Message( "%s", MakeFName( file->arch.name ) );
                 }
             }
         }

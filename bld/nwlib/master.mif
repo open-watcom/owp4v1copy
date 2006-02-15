@@ -175,11 +175,7 @@ extra_l_flags_qnx = op offset=64k, stack=60k
 #############
 # lflags .DLL
 
-!ifeq release 0
-extra_l_flags_dll = op map
-!else
 extra_l_flags_dll = op map, symfile
-!endif
 
 extra_l_flags_dll_nt = initinstance terminstance op offset=0x6A000000
 extra_l_flags_dll_os2 = INITINSTANCE TERMINSTANCE reference __DLLstart_
