@@ -57,12 +57,14 @@ static void dmp_res_nonres_nam( unsigned_16 string_len )
     Wread( resident, string_len );
     Wread( &entry_index, sizeof( unsigned_16 ) );
     resident[ string_len ] = '\0';
-    Wdputs( resident );
     if( Form == FORM_NE ) {
+        Wdputs( resident );
         Dmp_ordinal( entry_index );
     } else {
-        Wdputs( "   ordinal = " );
+        Wdputs( "ordinal " );
         Puthex( entry_index, 4 );
+        Wdputs( ": " );
+        Wdputs( resident );
     }
     Wdputslc( "\n" );
 }
@@ -254,7 +256,7 @@ static void dmp_ent_tab( unsigned_32 ent_tab )
     Wdputslc( "\n" );
     Banner( "Entry Point Table" );
     for( ; ent_bund_pfx.b32_cnt != 0; ) {
-        Wdputs( "number of entries in bundle = " );
+        Wdputs( "\nnumber of entries in bundle = " );
         Puthex( ent_bund_pfx.b32_cnt, 2 );
         Wdputslc( "\ntype = " );
         Puthex( ent_bund_pfx.b32_type, 2 );
@@ -266,6 +268,7 @@ static void dmp_ent_tab( unsigned_32 ent_tab )
         for( ; ent_bund_pfx.b32_cnt != 0; ent_bund_pfx.b32_cnt-- ) {
             dmp_ent_type( ent_bund_pfx.b32_type );
         }
+        Wdputslc( "\n" );
         Wread( &ent_bund_pfx, sizeof( flat_bundle_prefix ) );
     }
     Wdputslc( "\n" );

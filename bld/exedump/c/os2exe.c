@@ -436,9 +436,9 @@ static void dmp_obj_table( void )
                             + i * sizeof( object_record ) );
         Wread( &os_obj, sizeof( object_record ) );
         Wdputs( "object " );
-        Putdec( i );
+        Putdec( i + 1 );
         Wdputs( ": " );
-        Dump_header( (char *)&os_obj.size, os2_obj_msg );
+        Dump_header( &os_obj.size, os2_obj_msg );
         Wdputs( "          flags = " );
         dmp_obj_flags( os_obj.flags );
         if( Options_dmp & PAGE_DMP ) {
