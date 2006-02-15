@@ -474,7 +474,7 @@ int Test_StdWrite( FILE *fp, FILE **my_fp, const char *filename )
     fflush( *my_fp );
 
     /* Check the data just written */
-    fseek( *my_fp, SEEK_SET, 0 );
+    fseek( *my_fp, 0, SEEK_SET );
     VERIFY( fgetc( *my_fp ) == 'a' );
 
     if( fp == stdout ) {
@@ -485,7 +485,7 @@ int Test_StdWrite( FILE *fp, FILE **my_fp, const char *filename )
         EXPECT( freopen( CONSOLE_IN, "r+t", *my_fp ) != NULL );
         VERIFY( (*my_fp = freopen( filename, "rt", stdin )) != NULL );
 
-        fseek( *my_fp, SEEK_SET, 0 );
+        fseek( *my_fp, 0, SEEK_SET );
         VERIFY( getc( stdin ) == 'a' );
         VERIFY( getchar() == 'b' );
         VERIFY( fgetchar() == 'c' );
