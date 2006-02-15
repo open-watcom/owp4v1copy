@@ -29,6 +29,7 @@ int _umkdir( const wchar_t *path );
 .ixfunc2 '&Direct' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function creates a new subdirectory with name
 .arg path.
@@ -83,10 +84,12 @@ The &ufunc Unicode function is identical to &func except that it
 accepts a Unicode string argument.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns zero if successful, and a non-zero value
 otherwise.
 .return end
+.*
 .error begin
 .begterm 12
 .termhd1 Constant
@@ -130,9 +133,11 @@ read-only file system.
 .do end
 .endterm
 .error end
+.*
 .see begin
 .seelist &function. chdir chmod getcwd mkdir mknod rmdir stat umask
 .see end
+.*
 .exmp begin
 .blktext begin
 To make a new directory called
@@ -156,8 +161,8 @@ on drive
 #include <direct.h>
 .do end
 
-void main()
-  {
+void main( void )
+{
 .if '&machsys' eq 'QNX' .do begin
     mkdir( "//2/hd/watcom",
            S_IRWXU |
@@ -167,7 +172,7 @@ void main()
 .el .do begin
     mkdir( "c:\\watcom" );
 .do end
-  }
+}
 .blkcode end
 .im dblslash
 .exmp end

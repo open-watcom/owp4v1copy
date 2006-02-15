@@ -1,6 +1,6 @@
-.func rmdir _wrmdir _urmdir
+.func rmdir _rmdir _wrmdir _urmdir
 #include <sys&pc.types.h>
-.if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 #include <unistd.h>
 .do end
 .el .do begin
@@ -8,6 +8,10 @@
 .do end
 int rmdir( const char *path );
 .ixfunc2 '&Direct' &func
+.if &'length(&_func.) ne 0 .do begin
+int _rmdir( const char *path );
+.ixfunc2 '&Direct' &_func
+.do end
 .if &'length(&wfunc.) ne 0 .do begin
 int _wrmdir( const wchar_t *path );
 .ixfunc2 '&Direct' &wfunc
@@ -18,6 +22,7 @@ int _urmdir( const wchar_t *path );
 .ixfunc2 '&Direct' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function removes (deletes) the specified directory.
 The directory must not contain any files or directories.
@@ -47,6 +52,11 @@ and
 .us st_mtime
 fields of the parent directory.
 .do end
+.if &'length(&_func.) ne 0 .do begin
+.np
+The &_func function is identical to &func..
+Use &_func for ANSI/ISO naming conventions.
+.do end
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is identical to &func except that it accepts a
@@ -58,9 +68,11 @@ The &ufunc Unicode function is identical to &func except that it
 accepts a Unicode string argument.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns zero if successful and -1 otherwise.
 .return end
+.*
 .error begin
 .if '&machsys' eq 'QNX' .do begin
 .begterm 12
@@ -111,18 +123,15 @@ The directory entry to be removed resides on a read-only file system.
 .endterm
 .do end
 .error end
+.*
 .see begin
 .seelist &function. chdir chmod getcwd mkdir mknod rmdir stat umask
 .see end
+.*
 .exmp begin
 .blktext begin
 To remove the directory called
-.if '&machsys' eq 'PP' .do begin
-.filename myapp
-in the directory
-.filename \\foo\penpoint\app
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 .filename /home/terry
 .do end
 .el .do begin
@@ -132,7 +141,7 @@ on drive
 .do end
 .blktext end
 .blkcode begin
-.if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 #include <sys&pc.types.h>
 #include <sys&pc.stat.h>
 .do end
@@ -141,20 +150,21 @@ on drive
 #include <direct.h>
 .do end
 
-void main()
-  {
-.if '&machsys' eq 'PP' .do begin
-    rmdir( "\\\\foo\\penpoint\\app\\myapp" );
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+void main( void )
+{
+.if '&machsys' eq 'QNX' .do begin
     rmdir( "/home/terry" );
 .do end
 .el .do begin
     rmdir( "c:\\watcom" );
 .do end
-  }
+}
 .blkcode end
 .im dblslash
 .exmp end
 .class POSIX 1003.1
+.if &'length(&_func.) ne 0 .do begin
+.np
+&_func conforms to ANSI/ISO naming conventions
+.do end
 .system

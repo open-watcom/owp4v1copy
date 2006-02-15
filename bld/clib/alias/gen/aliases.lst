@@ -104,6 +104,7 @@ mkdir_          mkdir           _mkdir          d16 d32 nt  nta ntp         o16 
 open__          open            _open           d16 d32 nt  nta ntp         o16 o32         w16 w32
 putenv          putenv          _putenv         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 putws_          putws           _putws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
+rmdir_          rmdir           _rmdir          d16 d32 nt  nta ntp         o16 o32         w16 w32
 setmod          setmode         _setmode        d16 d32 nt  nta ntp nvc nvl o16 o32         w16 w32
 stat__          stat            _stat           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 lstat_          stat            lstat           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi

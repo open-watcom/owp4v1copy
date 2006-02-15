@@ -100,6 +100,7 @@ _WCRTLINK extern struct dirent *  opendir( const char * );
 _WCRTLINK extern struct dirent *  readdir( struct dirent * );
 _WCRTLINK extern void             rewinddir( struct dirent * );
 _WCRTLINK extern int              rmdir( const char *__path );
+_WCRTLINK extern int              _rmdir( const char *__path );
 
 _WCRTLINK extern int              _wchdir( const wchar_t *__path );
 _WCRTLINK extern int              _wclosedir( struct _wdirent * );

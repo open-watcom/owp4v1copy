@@ -1089,6 +1089,7 @@
 .fnw _wrewinddir                rewinddi.gml    DOS       WIN32
 .fnu _urewinddir                rewinddi.gml    DOS
 .fnc rmdir                      rmdir.gml       DOS QNX W WIN32
+.fn8 _rmdir                     rmdir.gml       DOS       WIN32
 .fnw _wrmdir                    rmdir.gml       DOS       WIN32
 .fnu _urmdir                    rmdir.gml       DOS       WIN32
 .fnc _rotl                      _rotl.gml       DOS QNX W WIN32
