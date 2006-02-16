@@ -34,18 +34,13 @@
 #include "widechar.h"
 #include <stddef.h>
 #include <string.h>
+#include "setbits.h"
 
 /*  The strcspn function computes the length of the initial segment of the
     string pointed to by str which consists entirely of characters not from
     the string pointed to by charset. The terminating NULL character is not
     considered part of charset.
 */
-
-#if !defined(__WIDECHAR__)
-extern  void    __setbits();            /* bits.c */
-
-extern const unsigned char _HUGEDATA _Bits[8];
-#endif
 
 
 _WCRTLINK size_t __F_NAME(strcspn,wcscspn) ( const CHAR_TYPE *str, const CHAR_TYPE *charset )

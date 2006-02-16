@@ -40,12 +40,7 @@
 #else
     #include "nexttok.h"
 #endif
-
-#if !defined(__WIDECHAR__)
-extern  void    __setbits();            /* bits.c */
-
-extern const unsigned char _HUGEDATA _Bits[8];
-#endif
+#include "setbits.h"
 
 
 #ifdef __WIDECHAR__

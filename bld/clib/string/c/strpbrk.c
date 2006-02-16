@@ -34,15 +34,11 @@
 #include "widechar.h"
 #include <stddef.h>
 #include <string.h>
+#include "setbits.h"
 
 /*  The strpbrk function locates the first occurrence in the string pointed
     to by str of any character from the string pointed to by charset.
 */
-
-
-extern  void    __setbits();            /* bits.c */
-
-extern const unsigned char _HUGEDATA _Bits[8];
 
 
 _WCRTLINK CHAR_TYPE *__F_NAME(strpbrk,wcspbrk) ( const CHAR_TYPE *str, const CHAR_TYPE *charset )

@@ -24,55 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  declaration for character set bit array routines
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "widechar.h"
-#include <stddef.h>
-#include <string.h>
-#include "setbits.h"
+extern void __setbits( unsigned char *vector, const char *charset );
+extern void __fsetbits( unsigned char _WCFAR *vector, const char _WCFAR *charset );
 
-/*  The strspn function computes the length of the initial segment of the
-    string pointed to by str which consists entirely of characters from
-    the string pointed to by charset.
-*/
+extern const unsigned char _HUGEDATA _Bits[8];
 
-
-_WCRTLINK size_t __F_NAME(strspn,wcsspn) ( const CHAR_TYPE *str, const CHAR_TYPE *charset )
-{
-#if defined(__WIDECHAR__)
-
-    const CHAR_TYPE             *p1;
-    const CHAR_TYPE             *p2;
-    CHAR_TYPE           tc1;
-    CHAR_TYPE           tc2;
-    size_t              len;
-
-    len = 0;
-    for( p1 = str; tc1 = *p1; p1++, len++ ) {
-        for( p2 = charset; tc2 = *p2; p2++ ) {
-            if( tc1 == tc2 ) break;
-        }
-        if( tc2 == NULLCHAR ) break;
-    }
-    return( len );
-
-
-#else
-    unsigned /*char*/ tc;
-    unsigned char vector[32];
-    size_t len;
-
-    __setbits( vector, charset );
-    len = 0;
-    for( ; tc = (unsigned char) *str; ++str, ++len ) {
-        /* quit if we find any char not in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) == 0 )  break;
-    }
-    return( len );
-#endif
-}

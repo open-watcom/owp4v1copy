@@ -32,10 +32,9 @@
 
 #include "variety.h"
 #include <string.h>
+#include "setbits.h"
 
-extern const unsigned char _HUGEDATA _Bits[8];
-
-void __fsetbits( unsigned char _WCFAR *vector, unsigned char _WCFAR *charset )
+void __fsetbits( unsigned char _WCFAR *vector, const char _WCFAR *charset )
 {
     unsigned char c;
 

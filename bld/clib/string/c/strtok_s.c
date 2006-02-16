@@ -34,13 +34,8 @@
 #include "widechar.h"
 #include <string.h>
 #include <wchar.h>
+#include "setbits.h"
 
-
-#ifndef __WIDECHAR__
-extern  void    __setbits();            /* bits.c */
-
-extern const unsigned char _HUGEDATA _Bits[8];
-#endif
 
 _WCRTLINK CHAR_TYPE *__F_NAME(strtok_s,wcstok_s)( CHAR_TYPE * __restrict s1,
                 rsize_t * __restrict s1max, const CHAR_TYPE * __restrict s2,

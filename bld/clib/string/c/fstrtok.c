@@ -35,10 +35,7 @@
 #include <string.h>
 #include "rtdata.h"
 #include "nextftok.h"
-
-extern void __fsetbits(unsigned char _WCFAR *vec,const char _WCFAR *charset );
-
-extern const unsigned char _HUGEDATA _Bits[8];
+#include "setbits.h"
 
 
 _WCRTLINK char _WCFAR *_fstrtok( char _WCFAR *str, const char _WCFAR *charset )

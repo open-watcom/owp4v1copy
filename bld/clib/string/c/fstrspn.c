@@ -32,15 +32,12 @@
 
 #include "variety.h"
 #include <string.h>
+#include "setbits.h"
 
 /*  The strspn function computes the length of the initial segment of the
     string pointed to by str which consists entirely of characters from
     the string pointed to by charset.
 */
-
-extern void __fsetbits(unsigned char _WCFAR *vec,const char _WCFAR *charset );
-
-extern const unsigned char _HUGEDATA _Bits[8];
 
 _WCRTLINK size_t _fstrspn( const char _WCFAR *str, const char _WCFAR *charset )
 {
