@@ -98,7 +98,10 @@ STATIC void doBuiltIns( const char *makeopts )
             InsString( cpy, FALSE );
             list = Parse();
             FreeTList( list );
-            if( Glob.unix ) {
+            if( Glob.posix ) {
+                suffices = POSIXSuffixList;
+                builtins = POSIXBuiltIn;
+            } else if( Glob.unix ) {
                 suffices = UNIXSuffixList;
                 builtins = UNIXBuiltIn;
             }
@@ -307,6 +310,13 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
                 }
                 if( option == 's'  && tolower( p[2] ) == 'n' ) {
                     Glob.silentno  = TRUE;
+                    options[(option | 0x20) + 1] = TRUE;
+                    continue;
+                }
+                if( option == 'u'  && tolower( p[2] ) == 'x' ) {
+                    Glob.unix       = TRUE;
+                    Glob.posix      = TRUE;
+                    Glob.nomakeinit = TRUE;
                     options[(option | 0x20) + 1] = TRUE;
                     continue;
                 }

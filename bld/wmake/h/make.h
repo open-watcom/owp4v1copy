@@ -90,6 +90,7 @@ struct Glob {
     BIT     macreadonly : 1;/* should macro definitions be read only?        */
     BIT     headerout   : 1;/* has the header been printed out yet?          */
     BIT     unix        : 1;/* TRUE if UNIX compatibility desired            */
+    BIT     posix       : 1;/* TRUE if POSIX conformance desired             */
 
     BIT     rcs_make    : 1;/* TRUE if new target's date is max of dep dates */
     BIT     fuzzy       : 1;/* TRUE .AUTODEPEND times can be off by 1 minute */
@@ -115,9 +116,11 @@ extern struct Glob      Glob;
 extern const char FAR   *BuiltIns;
 extern const char FAR   *MSBuiltIn;
 extern const char FAR   *UNIXBuiltIn;
+extern const char FAR   *POSIXBuiltIn;
 extern const char FAR   *SuffixList;
 extern const char FAR   *MSSuffixList;
 extern const char FAR   *UNIXSuffixList;
+extern const char FAR   *POSIXSuffixList;
 
 extern int  ExitSafe( int rc );
 extern void Header( void );

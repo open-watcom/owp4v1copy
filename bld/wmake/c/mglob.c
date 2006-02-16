@@ -132,6 +132,11 @@ const char FAR *UNIXSuffixList = {
         ".exe .obj .c .y .l .f"
 };
 
+const char FAR *POSIXSuffixList = {
+    ".SUFFIXES: "
+        ".o .c .y .l .a .sh .f"
+};
+
 /*
  * Be careful that this doesn't exceed 2048 characters.  Note that this is just
  * one big string - not an array of strings.
@@ -222,6 +227,62 @@ const char FAR* UNIXBuiltIn = {
      ".l.c:\n"
      "    $(LEX) $(LFLAGS) $<\n"
      "    move lex.yy.c $@\n"
+};
+
+/* The following definitions are taken from SUSv3 */
+const char FAR* POSIXBuiltIn = {
+    /* Predefined Macros */
+    "MAKE=make\n"
+    "AR=ar\n"
+    "ARFLAGS=-rv\n"
+    "YACC=yacc\n"
+    "YFLAGS=\n"
+    "LEX=lex\n"
+    "LFLAGS=\n"
+    "LDFLAGS=\n"
+    "CC=owcc\n"     /* SUSv3 says 'CC=c99' */
+    "CFLAGS=-O\n"
+    "FC=fort77\n"
+    "FFLAGS=-O 1\n"
+    /* Single suffix rules */
+#if 0
+    ".c:\n"
+    "    $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<\n"
+    ".f:\n"
+    "    $(FC) $(FFLAGS) $(LDFLAGS) -o $@ $<\n"
+    ".sh:\n"
+    "    cp $< $@\n"
+    "    chmod a+x $@\n"
+#endif
+    /* Double suffix rules */
+    ".c.o:\n"
+    "    $(CC) $(CFLAGS) -c $<\n"
+    ".f.o:\n"
+    "    $(FC) $(FFLAGS) -c $<\n"
+    ".y.o:\n"
+    "    $(YACC) $(YFLAGS) $<\n"
+    "    $(CC) $(CFLAGS) -c y.tab.c\n"
+    "    rm -f y.tab.c\n"
+    "    mv y.tab.o $@\n"
+    ".l.o:\n"
+    "    $(LEX) $(LFLAGS) $<\n"
+    "    $(CC) $(CFLAGS) -c lex.yy.c\n"
+    "    rm -f lex.yy.c\n"
+    "    mv lex.yy.o $@\n"
+    ".y.c:\n"
+    "    $(YACC) $(YFLAGS) $<\n"
+    "    mv y.tab.c $@\n"
+    ".l.c:\n"
+    "    $(LEX) $(LFLAGS) $<\n"
+    "    mv lex.yy.c $@\n"
+    ".c.a:\n"
+    "    $(CC) -c $(CFLAGS) $<\n"
+    "    $(AR) $(ARFLAGS) $@ $*.o\n"
+    "    rm -f $*.o\n"
+    ".f.a:\n"
+    "    $(FC) -c $(FFLAGS) $<\n"
+    "    $(AR) $(ARFLAGS) $@ $*.o\n"
+    "    rm -f $*.o\n"
 };
 
 /*
