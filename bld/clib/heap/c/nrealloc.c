@@ -48,10 +48,6 @@ _WCRTLINK void *realloc( void *stg, size_t amount )
 
 #endif
 
-#if defined(__DOS_EXT__)
- void *__ReAllocDPMIBlock( frlptr, unsigned );
-#endif
-
 #pragma intrinsic(memcpy)
 
 _WCRTLINK void _WCNEAR *_nrealloc( void _WCI86NEAR *stg, size_t req_size )

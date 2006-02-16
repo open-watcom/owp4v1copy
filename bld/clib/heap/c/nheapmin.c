@@ -38,7 +38,6 @@
 #include "heapacc.h"
 #if defined(__DOS_EXT__)
  #include "extender.h"
- extern void __FreeDPMIBlocks( void );
 #endif
 #if defined(__WINDOWS_286__) || defined(__NT__)
  #include "windows.h"

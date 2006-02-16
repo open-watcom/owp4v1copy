@@ -147,6 +147,17 @@ extern int __HeapMin( __segment seg, unsigned one_seg );
 extern int __HeapSet( __segment seg, unsigned fill );
 #endif
 
+#if defined(__DOS_EXT__)
+extern void __FreeDPMIBlocks( void );
+extern void *__ReAllocDPMIBlock( frlptr p1, unsigned req_size );
+extern void *__ExpandDPMIBlock( frlptr, unsigned );
+#endif
+
+extern int __HeapManager_expand( __segment seg, unsigned offset,
+                            size_t req_size, size_t *growth_size );
+
+extern void _WCFAR __HeapInit( void _WCNEAR *start, unsigned int amount );
+
 _WCRTLINK extern void _WCNEAR *__brk( unsigned );
 
 #if defined(_M_IX86)
