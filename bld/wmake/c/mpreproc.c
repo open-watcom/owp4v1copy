@@ -1025,6 +1025,35 @@ STATIC void handleBang( void )
 }
 
 
+static int PreTestString( const char *str )
+/******************************************
+ * Test if 'str' is the next sequence of characters in stream.
+ * If not, push back any characters read.
+ */
+{
+    const char  *s = str;
+    STRM_T      t;
+    int         rc = FALSE;
+
+    for( ;; ) {
+        t = GetCHR();
+        if( t != *s ) {
+            UnGetCH( t );
+            while( s-- > str ) {
+                UnGetCH( *s );
+            }
+            break;
+        }
+        ++s;
+        if( *s == '\0' ) {
+            rc = TRUE;
+            break;
+        }
+    }
+    return( rc );
+}
+
+
 extern STRM_T PreGetCH( void )
 /*****************************
  * returns: next character of input that is not a preprocessor directive
@@ -1051,6 +1080,14 @@ extern STRM_T PreGetCH( void )
                 }
             }
             doingPreProc = TRUE;
+
+            if( Glob.posix ) {
+                /* Check for GNU compatible 'include' directive */
+                if( t == 'i' && PreTestString( "nclude" ) ) {
+                    UnGetCH( eatWhite() );
+                    bangInclude();
+                }
+            }
             while( t == BANG ) {
                 handleBang();
 
@@ -1329,7 +1366,7 @@ STATIC void makeAlphaToken( char *inString, TOKEN_TYPE *current, int *index )
 
     r = inString;
     pwrite = current->data.string;
-    pwritelast = pwrite + sizeof( current->data.string ) - 1; 
+    pwritelast = pwrite + sizeof( current->data.string ) - 1;
     current->type = OP_STRING;
 
     // Note that in this case we are looking at a string that has no quotations
@@ -1398,7 +1435,7 @@ STATIC void makeFuncToken( char *inString, TOKEN_TYPE *current, int *index )
  */
 {
     char    *probe;
-    
+
     makeAlphaToken( inString, current, index );
     // check that the next token is a '(', swallow it, and check we have more.
     probe = probeToken( currentPtr + *index );

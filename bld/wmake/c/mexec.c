@@ -1856,7 +1856,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     if( !(flags & FLAG_SILENT) ||
         (Glob.noexec && (comnum != COM_FOR || (flags & FLAG_SHELL)) &&
         !percent_cmd) ) {
-        if( !Glob.noheader ) {
+        if( !Glob.noheader && !Glob.posix ) {
             PrtMsg( INF | NEOL | JUST_A_TAB );
         }
         dumpCommand( cmd );

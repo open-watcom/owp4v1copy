@@ -376,11 +376,13 @@ STATIC const char *GetMacroValueProcess( const char *name )
     }
 
     // If not defined as a macro then get it as a Environment variable
-    if( Glob.microsoft ) {
-        // Check if macro is all caps
-        for( pos = 0; macro[pos] != NULLCHAR; ++pos ) {
-            if( macro[pos] != toupper( macro[pos] ) ) {
-                return( NULL );
+    if( Glob.microsoft || Glob.posix ) {
+        // Check if macro is all caps in NMAKE mode
+        if( Glob.microsoft ) {
+            for( pos = 0; macro[pos] != NULLCHAR; ++pos ) {
+                if( macro[pos] != toupper( macro[pos] ) ) {
+                    return( NULL );
+                }
             }
         }
         env = getenv( macro );

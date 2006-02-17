@@ -317,6 +317,7 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
                     Glob.unix       = TRUE;
                     Glob.posix      = TRUE;
                     Glob.nomakeinit = TRUE;
+                    Glob.nocheck    = TRUE;
                     options[(option | 0x20) + 1] = TRUE;
                     continue;
                 }
