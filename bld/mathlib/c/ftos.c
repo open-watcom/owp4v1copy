@@ -34,8 +34,7 @@
 #include <math.h>
 #include <string.h>
 #include "xfloat.h"
-#define FALSE   0
-#define TRUE    1
+
 
 /*
 NOTES ON USAGE
@@ -81,16 +80,15 @@ extern  int     __Nan_Inf( double, char * );
 #define SIG_DIGITS              17
 
 static int MaxPrec = {
-        SIG_DIGITS              /* maximum allowed precision */
+    SIG_DIGITS              /* maximum allowed precision */
 };
 
 
-void _SetMaxPrec( value )
-/***********************/
-        register int value;
-    {
-        MaxPrec = value;
-    }
+void _SetMaxPrec( int value )
+/***************************/
+{
+    MaxPrec = value;
+}
 
 /**************************************************************************/
 /***                                                                    ***/
@@ -100,53 +98,53 @@ void _SetMaxPrec( value )
 
 static int DoEFormat( char *bufptr, int exponent, int expwidth, int width_left )
 /******************************************************************************/
-    {
-        register int    n;
-        register int    divisor;
-        register int    width;
-        char    sign;
+{
+    int     n;
+    int     divisor;
+    int     width;
+    char    sign;
 
-        if( exponent < 0 ) {
-            exponent = -exponent;
-            sign = '-';
-        } else {
-            sign = '+';
-        }
-        /* assume 3 digits required for exponent */
-        n = 3;
-        divisor = 100;
-        if( exponent < 100 ) {
-            n = 2;
-            divisor = 10;
-            if( exponent < 10 ) {
-                n = 1;
-                divisor = 1;
-            }
-        }
-        if( expwidth == 0 ) {
-            expwidth = 2;
-            if( n == 3 ) expwidth = 3;
-        }
-        width = expwidth + 1;
-        if( expwidth + 1 <= width_left ) {
-            if( n <= expwidth ) {
-                *bufptr++ = sign;
-                while( expwidth > n ) {
-                    /* put in leading zeroes for exponent */
-                    *bufptr++ = '0';
-                    --expwidth;
-                }
-                do {
-                    *bufptr++ = exponent / divisor + '0';
-                    exponent = exponent % divisor;
-                    divisor = divisor / 10;
-                } while( divisor != 0 );
-            } else {
-                width = n + 1;
-            }
-        }
-        return( width );
+    if( exponent < 0 ) {
+        exponent = -exponent;
+        sign = '-';
+    } else {
+        sign = '+';
     }
+    /* assume 3 digits required for exponent */
+    n = 3;
+    divisor = 100;
+    if( exponent < 100 ) {
+        n = 2;
+        divisor = 10;
+        if( exponent < 10 ) {
+            n = 1;
+            divisor = 1;
+        }
+    }
+    if( expwidth == 0 ) {
+        expwidth = 2;
+        if( n == 3 ) expwidth = 3;
+    }
+    width = expwidth + 1;
+    if( expwidth + 1 <= width_left ) {
+        if( n <= expwidth ) {
+            *bufptr++ = sign;
+            while( expwidth > n ) {
+                /* put in leading zeroes for exponent */
+                *bufptr++ = '0';
+                --expwidth;
+            }
+            do {
+                *bufptr++ = exponent / divisor + '0';
+                exponent = exponent % divisor;
+                divisor = divisor / 10;
+            } while( divisor != 0 );
+        } else {
+            width = n + 1;
+        }
+    }
+    return( width );
+}
 
 
 /**************************************************************************/
@@ -157,186 +155,176 @@ static int DoEFormat( char *bufptr, int exponent, int expwidth, int width_left )
 
 static  char *DoFFormat( char *bufptr, char *p, int left, int sigdigits )
 /***********************************************************************/
-    {
-        if( sigdigits == 0 && left <= 0 ) {
-            *bufptr++ = '0';
-            *bufptr++ = '.';
-        } else {
-            for( ;; ) {
-                if( left <= 0 ) break;
-                if( *p == '\0' ) break;
-                *bufptr++ = *p++;
-                --left;
-            }
-            if( left > 0 ) {
-                do {
-                    *bufptr++ = '0';
-                } while( --left > 0 );
-            }
-            *bufptr++ = '.';
+{
+    if( sigdigits == 0 && left <= 0 ) {
+        *bufptr++ = '0';
+        *bufptr++ = '.';
+    } else {
+        for( ;; ) {
+            if( left <= 0 ) break;
+            if( *p == '\0' ) break;
+            *bufptr++ = *p++;
+            --left;
+        }
+        if( left > 0 ) {
+            do {
+                *bufptr++ = '0';
+            } while( --left > 0 );
+        }
+        *bufptr++ = '.';
 /*
-    note :  Only leading zero's may be printed if the decimal accuracy
-            specified in the  f-format specifier is not large enough
-                   ie f4.2 for .0000566
-            Once we decide that some significant digits get printed, we
-            can print all the digits returned by CanForm since it takes
-            into account the number of leading zero's necessary when it
-            decides what number of digits to round to. CanForm always
-            returns at least 1 digit, so we must check for the above
-            case before we print the result returned by CanForm.
+ note:  Only leading zeroes may be printed if the decimal accuracy
+        specified in the  f-format specifier is not large enough
+               ie f4.2 for .0000566
+        Once we decide that some significant digits get printed, we
+        can print all the digits returned by CanForm since it takes
+        into account the number of leading zero's necessary when it
+        decides what number of digits to round to. CanForm always
+        returns at least 1 digit, so we must check for the above
+        case before we print the result returned by CanForm.
 */
-            if( sigdigits > 0 ) {
-                while( left != 0 ) {
-                    *bufptr++ = '0';
-                    ++left;
-                    if( --sigdigits == 0 ) break;
-                }
-            }
-            if( sigdigits > 0 ) {
-                while( *p != '\0' ) {
-                    *bufptr++ = *p++;
-                    if( --sigdigits == 0 ) break;
-                }
-                while( sigdigits != 0 ) {
-                    *bufptr++ = '0';
-                    --sigdigits;
-                }
+        if( sigdigits > 0 ) {
+            while( left != 0 ) {
+                *bufptr++ = '0';
+                ++left;
+                if( --sigdigits == 0 ) break;
             }
         }
-/*      *bufptr = '\0';           commented out 21-jul-88, FWC */
-        return( bufptr );
+        if( sigdigits > 0 ) {
+            while( *p != '\0' ) {
+                *bufptr++ = *p++;
+                if( --sigdigits == 0 ) break;
+            }
+            while( sigdigits != 0 ) {
+                *bufptr++ = '0';
+                --sigdigits;
+            }
+        }
     }
+    return( bufptr );
+}
 
 static  void AdjField( char *userbuf, int actual_width, int width )
 /*****************************************************************/
-    {
-        char    second_char;
+{
+    char    second_char;
 
-        if( actual_width != width ) {
-            second_char = userbuf[1];
-            do {
-                --actual_width;
-                --width;
-                userbuf[ width ] = userbuf[ actual_width ];
-            } while( actual_width != 0 );
-            if( userbuf[ 0 ] == '.' ) {
-                --width;
+    if( actual_width != width ) {
+        second_char = userbuf[1];
+        do {
+            --actual_width;
+            --width;
+            userbuf[ width ] = userbuf[ actual_width ];
+        } while( actual_width != 0 );
+        if( userbuf[ 0 ] == '.' ) {
+            --width;
+            userbuf[ width ] = '0';
+        } else {
+            if( ( userbuf[ 0 ] == '+' || userbuf[ 0 ] == '-' ) &&
+                ( second_char == '.' ) ) {
                 userbuf[ width ] = '0';
-            } else {
-                if( ( userbuf[ 0 ] == '+' || userbuf[ 0 ] == '-' ) &&
-                    ( second_char == '.' ) ) {
-                    userbuf[ width ] = '0';
-                    --width;
-                    userbuf[ width ] = userbuf[ 0 ];
-                }
+                --width;
+                userbuf[ width ] = userbuf[ 0 ];
             }
-            memset( userbuf, ' ', width );
         }
+        memset( userbuf, ' ', width );
     }
+}
 
 
-void _FtoS( userbuffer, realnum, digs, plus,
-            maxwidth, scale, expwidth,  expchar, user_format )
+void _FtoS( char *userbuffer, double *realnum, int digs,
+            char plus, int maxwidth, int scale, int expwidth,
+            char expchar, char user_format )
 /************************************************************/
-        char    *userbuffer;
-        double  *realnum;
-        int     digs;
-        char    plus;
-        int     maxwidth;
-        int     scale;
-        int     expwidth;
-        char    expchar;
-        char    user_format;
-    {
-        int     sigdigits;
-        char    *bufptr;
-        int     len;
-        char    format;
-        int     exp;
-        int     dec;            /* decimal place */
-        int     sign;           /* 0 => +ve, -1 => -ve */
-        double  x;
-        auto    char buf[ __FPCVT_BUFFERLEN + 1 ];
+{
+    int     sigdigits;
+    char    *bufptr;
+    int     len;
+    char    format;
+    int     exp;
+    int     dec;            /* decimal place */
+    int     sign;           /* 0 => +ve, -1 => -ve */
+    double  x;
+    char    buf[ __FPCVT_BUFFERLEN + 1 ];
 
-        if( __Nan_Inf( *realnum, buf ) ) {              /* 05-mar-91 */
-            for( len = 0; buf[len]; len++ ) {
-                if( len < maxwidth )  userbuffer[len] = buf[len];
-            }
-            goto check_field_width;
+    if( __Nan_Inf( *realnum, buf ) ) {              /* 05-mar-91 */
+        for( len = 0; buf[len]; len++ ) {
+            if( len < maxwidth )  userbuffer[len] = buf[len];
         }
-        format = user_format;
-        if( format == 'G' ) {
-            x = fabs( *realnum );                       /* 02-may-91 */
-            if( x != 0.0 ) {
-                x = log10( x );
-                exp = floor( x );
-                if( exp < -4  ||  exp >= digs ) {
-                    format = 'E';
-                } else {
-                    if( x >= 0.0 )  ++exp;              /* 19-nov-91 */
-                    digs -= exp;                        /* 21-jul-88 */
-                    scale = 0;
-                    format = 'F';
-                }
+        goto check_field_width;
+    }
+    format = user_format;
+    if( format == 'G' ) {
+        x = fabs( *realnum );                       /* 02-may-91 */
+        if( x != 0.0 ) {
+            x = log10( x );
+            exp = floor( x );
+            if( exp < -4  ||  exp >= digs ) {
+                format = 'E';
             } else {
-                exp = 0;
+                if( x >= 0.0 )  ++exp;              /* 19-nov-91 */
+                digs -= exp;                        /* 21-jul-88 */
                 scale = 0;
                 format = 'F';
             }
-        }
-        if( format == 'E' && (scale <= -digs || scale >= digs + 2) ) {
-            memset( userbuffer, '*', maxwidth );
         } else {
-            sigdigits = digs;
-            /* 27-oct-88, format changed to user_format */
-            if( user_format == 'E' ) {
-                if( scale > 0 ) {
-                    ++sigdigits;
-                } else if( scale < 0 ) {
-                    sigdigits += scale;
-                }
-            }
-            x = *realnum;
-            if( x != 0.0 ) {
-                if( format != 'E' && scale != 0 ) {
-                    x = _Scale10V( x, scale );
-                }
-            }
-            __cvt( x, sigdigits, &dec, &sign, format, &buf );
-            bufptr = userbuffer;
-            if( sign != 0 ) {
-                *bufptr++ = '-';
-            } else {
-                if( plus ) *bufptr++ = '+';
-            }
-            if( format == 'E' ) {
-                bufptr = DoFFormat( bufptr, &buf, scale, sigdigits - scale );
-                len = bufptr - userbuffer;
-                if( expchar != '\0' ) {
-                    if( len < maxwidth ) {
-                        *bufptr++ = expchar;
-                        ++len;
-                    }
-                }
-                if( x != 0.0 ) {
-                    dec -= scale;
-                }
-                len += DoEFormat( bufptr, dec, expwidth, maxwidth - len );
-            } else {
-                len = bufptr - userbuffer;
-                if( maxwidth < dec + 1 + sigdigits + len ) {
-                    len = maxwidth + 1; /* indicate # too big for field */
-                } else {
-                    bufptr = DoFFormat( bufptr, &buf, dec, sigdigits );
-                    len = bufptr - userbuffer;
-                }
-            }
-check_field_width:
-            if( len > maxwidth ) {
-                memset( userbuffer, '*', maxwidth );
-            } else {
-                AdjField( userbuffer, len, maxwidth );
-            }
+            exp = 0;
+            scale = 0;
+            format = 'F';
         }
     }
-
+    if( format == 'E' && (scale <= -digs || scale >= digs + 2) ) {
+        memset( userbuffer, '*', maxwidth );
+    } else {
+        sigdigits = digs;
+        /* 27-oct-88, format changed to user_format */
+        if( user_format == 'E' ) {
+            if( scale > 0 ) {
+                ++sigdigits;
+            } else if( scale < 0 ) {
+                sigdigits += scale;
+            }
+        }
+        x = *realnum;
+        if( x != 0.0 ) {
+            if( format != 'E' && scale != 0 ) {
+                x = _Scale10V( x, scale );
+            }
+        }
+        __cvt( x, sigdigits, &dec, &sign, format, &buf );
+        bufptr = userbuffer;
+        if( sign != 0 ) {
+            *bufptr++ = '-';
+        } else {
+            if( plus ) *bufptr++ = '+';
+        }
+        if( format == 'E' ) {
+            bufptr = DoFFormat( bufptr, &buf, scale, sigdigits - scale );
+            len = bufptr - userbuffer;
+            if( expchar != '\0' ) {
+                if( len < maxwidth ) {
+                    *bufptr++ = expchar;
+                    ++len;
+                }
+            }
+            if( x != 0.0 ) {
+                dec -= scale;
+            }
+            len += DoEFormat( bufptr, dec, expwidth, maxwidth - len );
+        } else {
+            len = bufptr - userbuffer;
+            if( maxwidth < dec + 1 + sigdigits + len ) {
+                len = maxwidth + 1; /* indicate # too big for field */
+            } else {
+                bufptr = DoFFormat( bufptr, &buf, dec, sigdigits );
+                len = bufptr - userbuffer;
+            }
+        }
+check_field_width:
+        if( len > maxwidth ) {
+            memset( userbuffer, '*', maxwidth );
+        } else {
+            AdjField( userbuffer, len, maxwidth );
+        }
+    }
+}

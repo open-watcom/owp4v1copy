@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Determine whether value is NaN or infinity.
 *
 ****************************************************************************/
 
@@ -35,23 +34,23 @@
 
 
 int __Nan_Inf( double value, char *buf )
-    {
-        union {
-                double  x;
-                unsigned short int ui[4];
-        } u;
-        char *p;
+{
+    union {
+        double          x;
+        unsigned short  ui[4];
+    } u;
+    char    *p;
 
-        u.x = value;
-        if( (u.ui[3] & 0x7FF0) == 0x7FF0 ) {    /* NaN or Inf */
-            p = buf;
-            if( u.ui[3] & 0x8000 )  *p++ = '-';
-            if( (u.ui[0] | u.ui[1] | u.ui[2] | (u.ui[3] & 0x000F)) == 0 ) {
-                strcpy( p, "inf" );
-            } else {
-                strcpy( p, "nan" );
-            }
-            return( 1 );        /* indicate NaN or Inf */
+    u.x = value;
+    if( (u.ui[3] & 0x7FF0) == 0x7FF0 ) {    /* NaN or Inf */
+        p = buf;
+        if( u.ui[3] & 0x8000 )  *p++ = '-';
+        if( (u.ui[0] | u.ui[1] | u.ui[2] | (u.ui[3] & 0x000F)) == 0 ) {
+            strcpy( p, "inf" );
+        } else {
+            strcpy( p, "nan" );
         }
-        return( 0 );            /* indicate not a Nan or Inf */
+        return( 1 );        /* indicate NaN or Inf */
     }
+    return( 0 );            /* indicate not a Nan or Inf */
+}

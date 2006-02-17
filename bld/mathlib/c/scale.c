@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Scale a number up or down into desired interval.
 *
 ****************************************************************************/
 
@@ -33,13 +32,13 @@
 #include "variety.h"
 
 typedef struct pow10table {
-        short   exponent;
-        double  powerof10;
+    short   exponent;
+    double  powerof10;
 } pow10table;
 
 
 extern  const pow10table    _BigPow10Table[8];
-extern  void                _Rnd2Int(double _WCNEAR *,int _WCNEAR *);
+extern  void                _Rnd2Int( double _WCNEAR *,int _WCNEAR * );
 extern  int                 _CmpBigInt(int, int _WCNEAR *);
 extern  double              _Scale10V( double, int );
 
@@ -59,13 +58,10 @@ extern  double              _Scale10V( double, int );
 /***                                                                    ***/
 /**************************************************************************/
 
-int _Scale( exponent, realnum, sigdigits, bigint )
-/************************************************/
-        register int            exponent;
-                 double         realnum;
-        register int            sigdigits;
-        register int    _WCNEAR *bigint;
-    {
+int _Scale( int exponent, double realnum, int sigdigits,
+            int _WCNEAR *bigint )
+/******************************************************/
+{
     if( exponent != sigdigits ) {
         realnum = _Scale10V( realnum, sigdigits - exponent );
     }
@@ -74,57 +70,55 @@ int _Scale( exponent, realnum, sigdigits, bigint )
 }
 
 
-double _Scale10V( x, scale )
-/**************************/
-        double  x;
-        register int    scale;
-    {
-        register const pow10table   *table;
-        register int                n;
-        auto     double             z;
-        union u {
-            unsigned short int ui[4];
-            double   x;
-        };
-        static const union u PlusInf  = { 0x0000, 0x0000, 0x0000, 0x7ff0 };
-        static const union u NegInf   = { 0x0000, 0x0000, 0x0000, 0xfff0 };
-        static const union u PlusInf1 = { 0xffff, 0xffff, 0xffff, 0x7fef };
-        static const union u NegInf1  = { 0xffff, 0xffff, 0xffff, 0xffef };
+double _Scale10V( double x, int scale )
+/*************************************/
+{
+    const pow10table    *table;
+    int                 n;
+    double              z;
+    union u {
+        unsigned short  ui[4];
+        double          x;
+    };
+    static const union u    PlusInf  = { 0x0000, 0x0000, 0x0000, 0x7ff0 };
+    static const union u    NegInf   = { 0x0000, 0x0000, 0x0000, 0xfff0 };
+    static const union u    PlusInf1 = { 0xffff, 0xffff, 0xffff, 0x7fef };
+    static const union u    NegInf1  = { 0xffff, 0xffff, 0xffff, 0xffef };
 
-        if( x == PlusInf.x ) {                          /* 31-jan-91 */
-            x = PlusInf1.x;
-        } else if( x == NegInf.x ) {
-            x = NegInf1.x;
-        }
-        table = _BigPow10Table;
-        if( scale < 0 ) {
-            n = -scale;
-            if( n > 308 ) {
-                x /= table->powerof10;
-                n -= 216;
-            }
-        } else {
-            n = scale;
-            if( n > 308 ) {
-                x *= table->powerof10;
-                n -= 216;
-            }
-        }
-        z = 1.0;
-        for( ;; ) {
-            if( n >= table->exponent ) {
-                n -= table->exponent;
-                z *= table->powerof10;
-            }
-            if( n == 0 ) break;
-            if( table->exponent != 1 ) {
-                ++table;
-            }
-        }
-        if( scale < 0 ) {
-            x /= z;
-        } else {
-            x *= z;
-        }
-        return( x );
+    if( x == PlusInf.x ) {                          /* 31-jan-91 */
+        x = PlusInf1.x;
+    } else if( x == NegInf.x ) {
+        x = NegInf1.x;
     }
+    table = _BigPow10Table;
+    if( scale < 0 ) {
+        n = -scale;
+        if( n > 308 ) {
+            x /= table->powerof10;
+            n -= 216;
+        }
+    } else {
+        n = scale;
+        if( n > 308 ) {
+            x *= table->powerof10;
+            n -= 216;
+        }
+    }
+    z = 1.0;
+    for( ;; ) {
+        if( n >= table->exponent ) {
+            n -= table->exponent;
+            z *= table->powerof10;
+        }
+        if( n == 0 ) break;
+        if( table->exponent != 1 ) {
+            ++table;
+        }
+    }
+    if( scale < 0 ) {
+        x /= z;
+    } else {
+        x *= z;
+    }
+    return( x );
+}
