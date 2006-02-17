@@ -64,6 +64,7 @@
 !inject hypot.obj    d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 !inject i4ld086.obj  d16c                          wnc
 !inject i4ld386.obj            d32c      n32c
+!inject inf_nan.obj  d16c d16i d32c d32i n32c n32i wnc wni axp ntp op lpc lmp
 !inject j0.obj       d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 !inject j1.obj       d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 !inject jn.obj       d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
