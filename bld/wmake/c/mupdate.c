@@ -960,7 +960,7 @@ extern RET_T Update( TARGET *targ )
         }
     }
 
-    if( (targ->attr.symb || Glob.noexec || Glob.query)
+    if( (targ->attr.symb || Glob.noexec || Glob.query || Glob.nocheck)
         && startcount != cListCount ) {
         targ->existing = TRUE;
         targ->touched = TRUE;
@@ -969,7 +969,7 @@ extern RET_T Update( TARGET *targ )
     }
 
     target_exists = targExists( targ );                         /* 18-nov-91 */
-    if( Glob.nocheck == FALSE && Glob.ignore == FALSE ) {
+    if( !Glob.ignore ) {
         if( targ->attr.symb == FALSE && !target_exists ) {
             if( Glob.cont ) {
                 targ->error = TRUE;

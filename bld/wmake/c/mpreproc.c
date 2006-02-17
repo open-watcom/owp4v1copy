@@ -1081,11 +1081,12 @@ extern STRM_T PreGetCH( void )
             }
             doingPreProc = TRUE;
 
-            if( Glob.posix ) {
-                /* Check for GNU compatible 'include' directive */
+            if( Glob.microsoft || Glob.posix ) {
+                /* Check for NMAKE and UNIX compatible 'include' directive */
                 if( t == 'i' && PreTestString( "nclude" ) ) {
                     UnGetCH( eatWhite() );
                     bangInclude();
+                    t = GetCHR();
                 }
             }
             while( t == BANG ) {
