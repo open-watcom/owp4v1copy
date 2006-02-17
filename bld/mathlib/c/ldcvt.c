@@ -55,9 +55,9 @@
 #define ONE_TO_DBL_MAX_10_EXP local_glue( 1e, DBL_MAX_10_EXP )
 #define ONE_TO_DBL_MIN_10_EXP 1e307
 
-char _WCNEAR *Fmt8Digits( unsigned long value, char *p );
 
 #if defined( __386__ )
+ char _WCNEAR *Fmt8Digits( unsigned long value, char *p );
  #pragma aux    Fmt8Digits = \
                 "       push    ecx"\
                 "       push    edx"\
@@ -102,6 +102,7 @@ char _WCNEAR *Fmt8Digits( unsigned long value, char *p );
                 "       mov     [ebx],al"\
                 parm caller [eax] [ebx] value [ebx];
 #elif defined( M_I86 )
+ char _WCNEAR *Fmt8Digits( unsigned long value, char *p );
  #pragma aux    Fmt8Digits = \
                 "       push    cx"\
                 "       call    fmt8"\
