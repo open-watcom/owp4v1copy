@@ -95,6 +95,7 @@ enum    ldcvt_flags {
     F_DOT       = 0x0010,       // always put '.' in result
     LONG_DOUBLE = 0x0020,       // number is true long double
     NO_TRUNC    = 0x0040,       // always provide ndigits in buffer
+    IN_CAPS     = 0x0080,       // 'inf'/'nan' is uppercased
 };
 
 typedef struct cvt_info {
@@ -133,7 +134,7 @@ extern void __FLDD(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNE
 extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
 #endif
 
-#ifdef __WATCOMC__        
+#ifdef __WATCOMC__
 #if defined(__386__)
  #pragma aux    __ZBuf2LD       "*"  parm caller [eax] [edx];
  #if defined(__FPI__)

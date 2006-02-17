@@ -40,6 +40,9 @@
 #include "farsupp.h"
 
 
+/* NB: This code assumes ASCII character encoding. Probably not unreasonable. */
+
+
 _WMRTLINK FAR_STRING _EFG_Format( char *buffer, my_va_list *args, SPECS __SLIB *specs )
 {
     int         digits;
@@ -62,6 +65,9 @@ _WMRTLINK FAR_STRING _EFG_Format( char *buffer, my_va_list *args, SPECS __SLIB *
     } else {
         cvt.flags = F_FMT;
         cvt.scale = 0;
+    }
+    if( !(specs->_character & 0x20) ) { /* test for 'E', 'F', or 'G' */
+        cvt.flags |= IN_CAPS;           /* INF/NAN needs to be uppercase */
     }
     if( specs->_flags & SPF_ALT ) {
         cvt.flags |= F_DOT;

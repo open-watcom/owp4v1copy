@@ -503,6 +503,8 @@ static void DoEFormat( CVT_INFO *cvt, char *p, int nsig, int xexp, char *buf )
 #define STK_BUF_SIZE    64              // size of stack buffer required
                                         // if long double and NO_TRUNC is on.
 
+/* NB: Just like _EFG_Format(), the following assumes ASCII character  encoding */
+
 _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
 {
     int         i;
@@ -550,10 +552,17 @@ _WMRTLINK void __LDcvt( long_double *pld, CVT_INFO *cvt, char *buf )
         break;
     case __NAN:
         buf[0] = 'n'; buf[1] = 'a'; buf[2] = 'n'; buf[3] = '\0';
-        cvt->n1 = 3;
-        goto end_cvt;
+        goto nan_inf;
     case __INFINITY:
         buf[0] = 'i'; buf[1] = 'n'; buf[2] = 'f'; buf[3] = '\0';
+nan_inf:
+        if( cvt->flags & IN_CAPS ) {
+            unsigned long _WCUNALIGNED  *text;
+
+            /* Uppercase entire four-char ASCII string in one go */
+            text = (unsigned long *)buf;
+            *text &= ~0x20202020;
+        }
         cvt->n1 = 3;
         goto end_cvt;
     case __NONZERO:

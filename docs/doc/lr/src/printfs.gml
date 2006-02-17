@@ -213,11 +213,6 @@ redundant.
 printf(  "%ls%d", L"Num=", 12345 );
 wprintf( L"%s%d", L"Num=", 12345 );
 .millust end
-.if &farfnc ne 0 .do begin
-.bull
-"F" causes the pointer associated with "n", "p", "s" conversions to
-be treated as a far pointer.
-.do end
 .bull
 .ix 'long long'
 "ll" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion to
@@ -286,6 +281,9 @@ The "L" specifier provides the same functionality.
 .id long double
 argument.
 .if &farfnc ne 0 .do begin
+.bull
+"F" causes the pointer associated with "n", "p", "s" conversions to
+be treated as a far pointer.
 .bull
 "N" causes the pointer associated with "n", "p", "s" conversions to
 be treated as a near pointer.
@@ -453,7 +451,9 @@ to right in the string; otherwise, indeterminate results will occur.
 .ix 'NaN'
 If the value corresponding to a floating-point specifier is infinity, or
 not a number (NaN), then the output will be "inf" or "-inf" for infinity,
-and "nan" or "-nan" for NaN's.
+and "nan" or "-nan" for NaN's. If the conversion specifier is an uppercase
+character (ie. "E", "F", or "G"), the output will be uppercase as well
+("INF", "NAN"), otherwise the output will be lowercase as noted above.
 .np
 For example, a specifier of the form
 .id "%8.*f"
