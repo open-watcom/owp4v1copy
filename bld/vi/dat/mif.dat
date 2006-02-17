@@ -1,4 +1,5 @@
-38
+42
+define
 else
 endif
 error
@@ -12,6 +13,7 @@ ifneqi
 include
 inject
 loaddll
+message
 undef
 AFTER
 ALWAYS
@@ -32,8 +34,10 @@ JUST_ENOUGH
 MULTIPLE
 NOCHECK
 OPTIMIZE
+POSIX
 PRECIOUS
 PROCEDURE
+RECHECK
 SILENT
 SUFFIXES
 SYMBOLIC
