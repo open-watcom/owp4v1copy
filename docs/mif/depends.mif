@@ -2230,6 +2230,7 @@ $(docsrc_dir)$(SL)owstl$(SL)owstl.gml &
 $(docsrc_dir)$(SL)owstl$(SL)rbtree.gml &
 $(docsrc_dir)$(SL)owstl$(SL)stack.gml &
 $(docsrc_dir)$(SL)owstl$(SL)string.gml &
+$(docsrc_dir)$(SL)owstl$(SL)type_tra.gml &
 $(docsrc_dir)$(SL)owstl$(SL)vector.gml
 
 # pg sub-directory

@@ -24,23 +24,26 @@
 :H0.Introduction 
 :INCLUDE file='Intro'.
 
+:H0.Algorithms
+:INCLUDE file='algorith'
+
 :H0.Deque
 :INCLUDE file='deque'.
 
 :H0.List
 :INCLUDE file='list'.
 
-:H0.RBTree
+:H0.Red Black Tree
 :INCLUDE file='rbtree'.
+
+:H0.Stack
+:INCLUDE file='stack'
 
 :H0.String
 :INCLUDE file='string'.
 
-:H0.Algorithms
-:INCLUDE file='algorith'
-
-:H0.Stack
-:INCLUDE file='stack'
+:H0.Type Traits
+:INCLUDE file='type_tra'
 
 :H0.Vector
 :INCLUDE file='vector'

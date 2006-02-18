@@ -64,6 +64,7 @@ common_no_ext = &
         string &
         strstrea &
         typeinfo &
+        type_tra &
         utility &
         valarray &
         vector
@@ -100,7 +101,7 @@ common = &
         jctype.h &
         jstring.h &
         jtime.h &
-	libgen.h &
+        libgen.h &
         limits.h &
         locale.h &
         malloc.h &
@@ -129,7 +130,7 @@ common = &
         streambu.h &
         string.h &
         string.hpp &
-	strings.h &
+        strings.h &
         strstrea.h &
         sys/locking.h &
         sys/stat.h &
@@ -181,7 +182,7 @@ DOS_files = &
         win/windows.h &
         win/win386.h &
         unistd.h &
-	utime.h
+        utime.h
 
 QNX_files = &
       $(common) &

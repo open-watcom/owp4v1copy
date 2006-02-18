@@ -86,6 +86,7 @@ set_deps = ../watcom/set.mh ../readonly.sp ../crwatcnt.sp
 stack_deps = ../watcom/stack.mh ../readonly.sp ../crwatcnt.sp
 stdexcept_deps = ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp ../throws.sp
 typeinfo_deps = ../watcom/typeinfo.mh ../readonly.sp ../crwat.sp
+type_tra_deps = ../watcom/type_tra.mh ../readonly.sp ../crwat.sp
 utility_deps = ../watcom/utility.mh ../readonly.sp ../crwatcnt.sp
 valarray_deps = ../watcom/valarray.mh ../readonly.sp ../crwatcnt.sp
 vector_deps = ../watcom/vector.mh ../readonly.sp ../crwatcnt.sp
@@ -110,6 +111,7 @@ stack        : $(stack_deps)
 stdexcep     : $(stdexcept_deps)
 string       : $(string_deps)
 typeinfo     : $(typeinfo_deps)
+type_tra     : $(type_tra_deps)
 utility      : $(utility_deps)
 valarray     : $(valarray_deps)
 vector       : $(vector_deps)

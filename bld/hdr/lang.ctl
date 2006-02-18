@@ -65,6 +65,7 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/string         <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/strstrea       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/typeinfo       <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/type_tra       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/utility        <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/valarray       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/vector         <RELROOT>/rel2/h/
@@ -121,6 +122,7 @@ cdsay .
     <CPCMD> <PROJDIR>/linux/string       <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/strstrea     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/typeinfo     <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/type_tra     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/utility      <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/valarray     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/vector       <RELROOT>/rel2/lh/

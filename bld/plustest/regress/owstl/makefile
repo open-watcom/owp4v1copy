@@ -57,6 +57,7 @@ template = &
         set02$(ext)     &
         string01$(ext)  &
         string02$(ext)  &
+        typetr01$(ext)  &
         util01$(ext)    &
         vector01$(ext)
 
@@ -71,8 +72,11 @@ names = $+ $(template) $-
 ext = ._do_test_
 do_tests = $+ $(template) $-
 
-.cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000
+# define flags specific to tests here
+extra_cflags_typetr01 = -za0x
+
+.cpp.obj :
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000 $(extra_cflags_$[*)
 
 # this is my laziness bit...
 $(names) : .symbolic
