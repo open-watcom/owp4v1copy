@@ -58,26 +58,12 @@ typedef CONST char *PCSZ;
 #define CALLBACK
 #endif
 
-#if defined( __WATCOMC__ )
-
 #ifndef DECL_IMPORT
 #define DECL_IMPORT __declspec(dllimport)
 #endif
 
 #ifndef DECL_EXPORT
 #define DECL_EXPORT __declspec(dllexport)
-#endif
-
-#else
-
-#ifndef DECL_IMPORT
-#define DECL_IMPORT __attribute__((dllimport))
-#endif
-
-#ifndef DECL_EXPORT
-#define DECL_EXPORT __attribute__((dllexport))
-#endif
-
 #endif
 
 /* Windows NT status codes */

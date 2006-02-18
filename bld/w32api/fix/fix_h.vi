@@ -4,4 +4,60 @@ set nomagic
 # fix WIN32 header files
 #
 #
+
+#
+# fix1 - wvsprintfA, wvsprintfW va_list 
+#
+assign %fix1l1 = "#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)  /* OW fix */"
+assign %fix1l2 = "#else                                                              /* OW fix */"
+assign %fix1l3 = "WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,char *);             /* OW fix */"
+assign %fix1l4 = "WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,char *);           /* OW fix */"
+assign %fix1l5 = "#endif                                                             /* OW fix */"
+assign %fix1l6 = "#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)  /* OW fix */"
+assign %fix1l7 = "#else                                                              /* OW fix */"
+assign %fix1l8 = "#define wvsprintf(a,b,c) wvsprintfW(a,b,*(c))                      /* OW fix */"
+assign %fix1l9 = "#endif                                                             /* OW fix */"
+assign %fix1l10 = "#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)  /* OW fix */"
+assign %fix1l11 = "#else                                                              /* OW fix */"
+assign %fix1l12 = "#define wvsprintf(a,b,c) wvsprintfA(a,b,*(c))                      /* OW fix */"
+assign %fix1l13 = "#endif                                                             /* OW fix */"
+edit include/winuser.h
+/OW fix
+if lastrc != ERR_NO_ERR
+/WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,va_list arglist);
+if lastrc == ERR_NO_ERR
+insert 
+%(fix1l1)
+.
++3
+insert 
+%(fix1l2)
+%(fix1l3)
+%(fix1l4)
+%(fix1l5)
+.
+/#define wvsprintf wvsprintfW
+insert 
+%(fix1l6)
+.
++2
+insert 
+%(fix1l7)
+%(fix1l8)
+%(fix1l9)
+.
+/#define wvsprintf wvsprintfA
+insert 
+%(fix1l10)
+.
++2
+insert 
+%(fix1l11)
+%(fix1l12)
+%(fix1l13)
+.
+endif
+endif
+x
+#
 q

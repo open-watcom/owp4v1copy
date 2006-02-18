@@ -43,6 +43,31 @@ extern "C" {
 #define UNALIGNED
 #endif
 
+#ifndef DECLSPEC_ALIGN
+#ifdef __GNUC__
+#define DECLSPEC_ALIGN(x) __attribute__((aligned(x)))
+#else
+#define DECLSPEC_ALIGN(x)
+#endif
+#endif
+
+#ifndef DECLSPEC_SELECTANY
+#if (__GNUC__ >= 4)
+#define DECLSPEC_SELECTANY  __attribute__((selectany))
+#else
+#define DECLSPEC_SELECTANY
+#endif
+#endif
+
+#ifndef FORCEINLINE
+#if (__GNUC__ >= 3)
+#define FORCEINLINE __inline  __attribute__((always_inline))
+#else
+#define FORCEINLINE __inline
+#endif
+#endif
+
+
 #ifndef VOID
 #define VOID void
 #endif

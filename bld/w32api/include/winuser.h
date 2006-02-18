@@ -3343,8 +3343,8 @@ WINUSERAPI HMENU WINAPI CreatePopupMenu(void);
 #define CreateWindowW(a,b,c,d,e,f,g,h,i,j,k) CreateWindowExW(0,a,b,c,d,e,f,g,h,i,j,k)
 WINUSERAPI HWND WINAPI CreateWindowExA(DWORD,LPCSTR,LPCSTR,DWORD,int,int,int,int,HWND,HMENU,HINSTANCE,LPVOID);
 WINUSERAPI HWND WINAPI CreateWindowExW(DWORD,LPCWSTR,LPCWSTR,DWORD,int,int,int,int,HWND,HMENU,HINSTANCE,LPVOID);
-WINUSERAPI HWINSTA WINAPI CreateWindowStationA(LPSTR,DWORD,DWORD,LPSECURITY_ATTRIBUTES);
-WINUSERAPI HWINSTA WINAPI CreateWindowStationW(LPWSTR,DWORD,DWORD,LPSECURITY_ATTRIBUTES);
+WINUSERAPI HWINSTA WINAPI CreateWindowStationA(LPCSTR,DWORD,DWORD,LPSECURITY_ATTRIBUTES);
+WINUSERAPI HWINSTA WINAPI CreateWindowStationW(LPCWSTR,DWORD,DWORD,LPSECURITY_ATTRIBUTES);
 WINUSERAPI LRESULT WINAPI DefDlgProcA(HWND,UINT,WPARAM,LPARAM);
 WINUSERAPI LRESULT WINAPI DefDlgProcW(HWND,UINT,WPARAM,LPARAM);
 WINUSERAPI HDWP WINAPI DeferWindowPos(HDWP,HWND,HWND,int,int,int,int,UINT);
@@ -3923,13 +3923,8 @@ WINUSERAPI BOOL WINAPI WinHelpA(HWND,LPCSTR,UINT,DWORD);
 WINUSERAPI BOOL WINAPI WinHelpW(HWND,LPCWSTR,UINT,DWORD);
 WINUSERAPI int WINAPIV wsprintfA(LPSTR,LPCSTR,...);
 WINUSERAPI int WINAPIV wsprintfW(LPWSTR,LPCWSTR,...);
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,va_list arglist);
 WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,va_list arglist);
-#else
-WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,char *);
-WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,char *);
-#endif
 #if (_WIN32_WINNT >= 0x0500 || _WIN32_WINDOWS >= 0x0490)
 WINUSERAPI BOOL WINAPI AllowSetForegroundWindow(DWORD);
 WINUSERAPI BOOL WINAPI LockSetForegroundWindow(UINT);
@@ -4099,11 +4094,7 @@ typedef MONITORINFOEXW MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExW
 #define WinHelp WinHelpW
 #define wsprintf wsprintfW
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvsprintf wvsprintfW
-#else
-#define wvsprintf(a,b,c) wvsprintfW(a,b,*(c))
-#endif
 #ifndef NOGDI
 typedef ICONMETRICSW ICONMETRICS,*LPICONMETRICS;
 typedef NONCLIENTMETRICSW NONCLIENTMETRICS,*LPNONCLIENTMETRICS;
@@ -4270,11 +4261,7 @@ typedef MONITORINFOEXA MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExA
 #define WinHelp WinHelpA
 #define wsprintf wsprintfA
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvsprintf wvsprintfA
-#else
-#define wvsprintf(a,b,c) wvsprintfA(a,b,*(c))
-#endif
 #ifndef NOGDI
 typedef ICONMETRICSA ICONMETRICS,*LPICONMETRICS;
 typedef NONCLIENTMETRICSA NONCLIENTMETRICS,*LPNONCLIENTMETRICS;

@@ -1,6 +1,5 @@
 #ifndef _WINDOWSX_H
 #define _WINDOWSX_H
-#define _INC_WINDOWSX
 #if __GNUC__ >=3
 #pragma GCC system_header
 #endif

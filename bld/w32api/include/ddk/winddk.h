@@ -34,67 +34,9 @@ extern "C" {
 /*
 ** Definitions specific to this Device Driver Kit
 */
-#if defined( __WATCOMC__ )
-#if __WATCOMC__ < 1240
-#pragma aux __fastcall "@*" \
-        parm caller [ecx] [edx] \
-        value struct [] \
-        modify [eax ecx edx];
-#pragma aux (__fastcall) InterlockedIncrement;
-#pragma aux (__fastcall) InterlockedDecrement;
-#pragma aux (__fastcall) InterlockedCompareExchange;
-#pragma aux (__fastcall) InterlockedExchange;
-#pragma aux (__fastcall) InterlockedExchangeAdd;
-#pragma aux (__fastcall) InterlockedPopEntrySList;
-#pragma aux (__fastcall) InterlockedPushEntrySList;
-#pragma aux (__fastcall) KefAcquireSpinLockAtDpcLevel;
-#pragma aux (__fastcall) KefReleaseSpinLockFromDpcLevel;
-#pragma aux (__fastcall) RtlPrefetchMemoryNonTemporal;
-#pragma aux (__fastcall) RtlUlongByteSwap;
-#pragma aux (__fastcall) RtlUlonglongByteSwap;
-#pragma aux (__fastcall) RtlUshortByteSwap;
-#pragma aux (__fastcall) ExAcquireFastMutex;
-#pragma aux (__fastcall) ExAcquireFastMutexUnsafe;
-#pragma aux (__fastcall) ExInterlockedPopEntrySList;
-#pragma aux (__fastcall) ExInterlockedPushEntrySList;
-#pragma aux (__fastcall) ExInterlockedAddLargeStatistic;
-#pragma aux (__fastcall) ExfInterlockedAddUlong;
-#pragma aux (__fastcall) ExInterlockedCompareExchange64;
-#pragma aux (__fastcall) ExInterlockedFlushSList;
-#pragma aux (__fastcall) ExfInterlockedInsertHeadList;
-#pragma aux (__fastcall) ExfInterlockedInsertTailList;
-#pragma aux (__fastcall) ExfInterlockedPopEntryList;
-#pragma aux (__fastcall) ExfInterlockedPushEntryList;
-#pragma aux (__fastcall) ExfInterlockedRemoveHeadList;
-#pragma aux (__fastcall) ExReleaseFastMutex;
-#pragma aux (__fastcall) ExReleaseFastMutexUnsafe;
-#pragma aux (__fastcall) ExReleaseResourceLite;
-#pragma aux (__fastcall) ExTryToAcquireFastMutex;
-#pragma aux (__fastcall) HalExamineMBR;
-#pragma aux (__fastcall) IofCallDriver;
-#pragma aux (__fastcall) IofCompleteRequest;
-#pragma aux (__fastcall) KeAcquireInStackQueuedSpinLock;
-#pragma aux (__fastcall) KeAcquireInStackQueuedSpinLockAtDpcLevel;
-#pragma aux (__fastcall) KeReleaseInStackQueuedSpinLock;
-#pragma aux (__fastcall) KeReleaseInStackQueuedSpinLockFromDpcLevel;
-#pragma aux (__fastcall) KeSetTimeUpdateNotifyRoutine;
-#pragma aux (__fastcall) ObfDereferenceObject;
-#pragma aux (__fastcall) ObfReferenceObject;
-
-#define DDKAPI __stdcall
-#define DDKFASTAPI __stdcall
-#define DDKCDECLAPI __cdecl
-#else
 #define DDKAPI __stdcall
 #define DDKFASTAPI __fastcall
 #define DDKCDECLAPI __cdecl
-#endif
-
-#else
-#define DDKAPI __attribute__((stdcall))
-#define DDKFASTAPI __attribute__((fastcall))
-#define DDKCDECLAPI __attribute__((cdecl))
-#endif
 
 #if defined(_NTOSKRNL_)
 #ifndef NTOSAPI
@@ -172,26 +114,31 @@ typedef ULONG LOGICAL;
 #define TAG(_a, _b, _c, _d) (ULONG) \
 	(((_a) << 0) + ((_b) << 8) + ((_c) << 16) + ((_d) << 24))
 
-#if defined( __WATCOMC__ )
-
-static struct _KPCR * KeGetCurrentKPCR( void );
-#pragma aux KeGetCurrentKPCR = \
-  "mov eax, fs:[0x18]" \
-  value [ eax ];
-
-#else
-
+#ifdef __GNUC__
 static __inline struct _KPCR * KeGetCurrentKPCR(
   VOID)
 {
   ULONG Value;
 
-  __asm__ __volatile__ ("movl %%fs:0x18, %0\n\t"
-	  : "=r" (Value)
-    : /* no inputs */
+  __asm__ __volatile__ (
+#if (__GNUC__ >= 3)
+    /* support -masm=intel */
+    "mov{l} {%%fs:0x18, %0|%0, %%fs:0x18}\n\t"
+#else
+    "movl %%fs:0x18, %0\n\t"
+#endif
+     : "=r" (Value)
+     : /* no inputs */
   );
   return (struct _KPCR *) Value;
 }
+
+#elif defined( __WATCOMC__ )
+
+extern struct _KPCR * KeGetCurrentKPCR( void );
+#pragma aux KeGetCurrentKPCR = \
+  "mov eax, fs:[0x18]" \
+  value [ eax ];
 
 #endif
 
@@ -495,100 +442,100 @@ typedef enum _IO_ALLOCATION_ACTION {
   DeallocateObjectKeepRegisters
 } IO_ALLOCATION_ACTION, *PIO_ALLOCATION_ACTION;
 
-typedef IO_ALLOCATION_ACTION DDKAPI
-(*PDRIVER_CONTROL)(
+typedef IO_ALLOCATION_ACTION
+(DDKAPI *PDRIVER_CONTROL)(
   IN struct _DEVICE_OBJECT  *DeviceObject,
   IN struct _IRP  *Irp,
   IN PVOID  MapRegisterBase,
   IN PVOID  Context);
 
-typedef VOID DDKAPI
-(*PDRIVER_LIST_CONTROL)(
+typedef VOID
+(DDKAPI *PDRIVER_LIST_CONTROL)(
   IN struct _DEVICE_OBJECT  *DeviceObject,
   IN struct _IRP  *Irp,
   IN struct _SCATTER_GATHER_LIST  *ScatterGather,
   IN PVOID  Context);
 
-typedef NTSTATUS DDKAPI
-(*PDRIVER_ADD_DEVICE)(
+typedef NTSTATUS
+(DDKAPI *PDRIVER_ADD_DEVICE)(
   IN struct _DRIVER_OBJECT  *DriverObject,
   IN struct _DEVICE_OBJECT  *PhysicalDeviceObject);
 
-typedef NTSTATUS DDKAPI
-(*PIO_COMPLETION_ROUTINE)(
+typedef NTSTATUS
+(DDKAPI *PIO_COMPLETION_ROUTINE)(
   IN struct _DEVICE_OBJECT  *DeviceObject,
   IN struct _IRP  *Irp,
   IN PVOID  Context);
 
-typedef VOID DDKAPI
-(*PDRIVER_CANCEL)(
+typedef VOID
+(DDKAPI *PDRIVER_CANCEL)(
   IN struct _DEVICE_OBJECT  *DeviceObject,
   IN struct _IRP  *Irp);
 
-typedef VOID DDKAPI
-(*PKDEFERRED_ROUTINE)(
+typedef VOID
+(DDKAPI *PKDEFERRED_ROUTINE)(
   IN struct _KDPC  *Dpc,
   IN PVOID  DeferredContext,
   IN PVOID  SystemArgument1,
   IN PVOID  SystemArgument2);
 
-typedef NTSTATUS DDKAPI
-(*PDRIVER_DISPATCH)(
+typedef NTSTATUS
+(DDKAPI *PDRIVER_DISPATCH)(
   IN struct _DEVICE_OBJECT  *DeviceObject,
   IN struct _IRP  *Irp);
 
-typedef VOID DDKAPI
-(*PIO_DPC_ROUTINE)(
+typedef VOID
+(DDKAPI *PIO_DPC_ROUTINE)(
   IN struct _KDPC  *Dpc,
   IN struct _DEVICE_OBJECT  *DeviceObject,
   IN struct _IRP  *Irp,
   IN PVOID  Context);
 
-typedef NTSTATUS DDKAPI
-(*PMM_DLL_INITIALIZE)(
+typedef NTSTATUS
+(DDKAPI *PMM_DLL_INITIALIZE)(
   IN PUNICODE_STRING  RegistryPath);
 
-typedef NTSTATUS DDKAPI
-(*PMM_DLL_UNLOAD)(
+typedef NTSTATUS
+(DDKAPI *PMM_DLL_UNLOAD)(
   VOID);
 
-typedef NTSTATUS DDKAPI
-(*PDRIVER_ENTRY)( 
+typedef NTSTATUS
+(DDKAPI *PDRIVER_ENTRY)( 
   IN struct _DRIVER_OBJECT  *DriverObject, 
   IN PUNICODE_STRING  RegistryPath); 
 
-typedef NTSTATUS DDKAPI
-(*PDRIVER_INITIALIZE)(
+typedef NTSTATUS
+(DDKAPI *PDRIVER_INITIALIZE)(
   IN struct _DRIVER_OBJECT  *DriverObject, 
   IN PUNICODE_STRING  RegistryPath);
 
-typedef BOOLEAN DDKAPI
-(*PKSERVICE_ROUTINE)(
+typedef BOOLEAN
+(DDKAPI *PKSERVICE_ROUTINE)(
   IN struct _KINTERRUPT  *Interrupt,
   IN PVOID  ServiceContext);
 
-typedef VOID DDKAPI
-(*PIO_TIMER_ROUTINE)(
+typedef VOID
+(DDKAPI *PIO_TIMER_ROUTINE)(
   IN struct _DEVICE_OBJECT  *DeviceObject,
   IN PVOID  Context);
 
-typedef VOID DDKAPI
-(*PDRIVER_REINITIALIZE)( 
+typedef VOID
+(DDKAPI *PDRIVER_REINITIALIZE)( 
   IN struct _DRIVER_OBJECT  *DriverObject, 
   IN PVOID  Context, 
   IN ULONG  Count); 
 
-typedef NTSTATUS DDKAPI
-(*PDRIVER_STARTIO)(
+typedef NTSTATUS
+(DDKAPI *PDRIVER_STARTIO)(
   IN struct _DEVICE_OBJECT  *DeviceObject,
   IN struct _IRP  *Irp);
 
-typedef BOOLEAN DDKAPI
-(*PKSYNCHRONIZE_ROUTINE)(
+typedef BOOLEAN
+(DDKAPI *PKSYNCHRONIZE_ROUTINE)(
   IN PVOID  SynchronizeContext);
 
-typedef VOID DDKAPI
-(*PDRIVER_UNLOAD)( 
+typedef VOID
+(DDKAPI *PDRIVER_UNLOAD)( 
   IN struct _DRIVER_OBJECT  *DriverObject); 
 
 
@@ -613,7 +560,7 @@ typedef BOOLEAN DDKAPI
   IN OUT PULONG  AddressSpace,
   OUT PPHYSICAL_ADDRESS  TranslatedAddress);
 
-typedef struct _DMA_ADAPTER *
+typedef struct _DMA_ADAPTER* DDKAPI
 (*PGET_DMA_ADAPTER)(
   IN PVOID  Context,
   IN struct _DEVICE_DESCRIPTION  *DeviceDescriptor,
@@ -1807,23 +1754,11 @@ typedef struct _SCATTER_GATHER_ELEMENT {
   ULONG_PTR  Reserved;
 } SCATTER_GATHER_ELEMENT, *PSCATTER_GATHER_ELEMENT;
 
-#if defined( __WATCOMC__ )
-
 typedef struct _SCATTER_GATHER_LIST {
   ULONG  NumberOfElements;
   ULONG_PTR  Reserved;
   SCATTER_GATHER_ELEMENT  Elements[];
 } SCATTER_GATHER_LIST, *PSCATTER_GATHER_LIST;
-
-#else
-
-typedef struct _SCATTER_GATHER_LIST {
-  ULONG  NumberOfElements;
-  ULONG_PTR  Reserved;
-  SCATTER_GATHER_ELEMENT  Elements[0];
-} SCATTER_GATHER_LIST, *PSCATTER_GATHER_LIST;
-
-#endif
 
 typedef struct _MDL {
   struct _MDL  *Next;

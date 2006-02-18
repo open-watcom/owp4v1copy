@@ -1,3 +1,131 @@
+2006-02-06  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/shlobj.h (PathResolve): Fix typo in _WIN32_WINNT guard.
+
+2006-02-06  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/shlobj.h (PRF_VERIFYEXISTS, PRF_TRYPROGRAMEXTENSIONS,
+	PRF_FIRSTDIRDEF, PRF_DONTFINDLNK): Define.
+	* lib/shell32.def (PathResolve): Define.
+
+2006-02-06  Christopher Faylor  <cgf@timesys.com>
+
+	* include/shlobj.h (PathResolve): Fix typo.
+
+2006-02-06  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/shlobj.h (PathResolve): Define.
+	(PRF_VERIFYEXISTS, PRF_TRYPROGRAMEXTENSIONS, PRF_FIRSTDIRDEF,
+	PRF_DONTFINDLNK): Ditto.
+	* lib/shell32.def (PathResolve): Define.
+
+2006-02-04  Ron Lee  <ronl@users.sourceforge.net>
+
+	* include/winnls.h: Remove stray end ';' from preprocessor defines.
+
+2006-02-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/iphlpapi.def: (NotifyAddrChange@8): Define.
+	Reported by: Daniel Atallah  <datallah at users dot sf dot net>
+	(NotifyRouteChange@8): Define.
+
+2006-01-29  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winsock2.h (WINSOCK_API_LINKAGE): Define.  Add to
+	prototypes.
+
+2006-01-29  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (FORCEINLINE): Define.
+
+2006-01-26  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (DECLSPEC_SELECTANY): Define.
+
+2006-01-26  Filip Navara  <xnavara@volny.cz>
+
+	* include/winnt.h (DECLSPEC_ALIGN): Define.
+
+2006-01-24  Danny Smith  <dannysmith@users.sourceforge.net>
+
+        * include/commctrl.h: Correct spelling of 'compatibility' in
+	comments.
+	* include/setupapi.h: Likewise.
+	* include/ws2tcpip.h: Likewise.
+
+2006-01-24  Danny Smith  <dannysmith@users.sourceforge.net>
+
+        * include/ddk/winddk.h (KeGetCurrentKPCR): Support -masm=intel.
+
+2006-01-24  Jiri Malak  <Jiri.Malak@iol.cz>
+
+	WATCOM compatibility changes. 
+	* include/ddk/ntddk.h (DECL_IMPORT): Define using __declspec,
+	rather than __attribute__.
+	(DECL_EXPORT): Likewise.
+	* include/ddk/winddk.h (DDKAPI): Avoid using __attribute__.
+	(DDKFASTAPI): Likewise.
+	(DDKCDECLAPI): Likwise.
+	(KeGetCurrentKPCR): Provide __WATCOMC__ syntax for inline code.
+
+2006-01-23  Brandon Sneed  <brandon@redf.net>
+
+	* setupapi.def: Add all CM_* functions defined in ddk/cfgmgr32.h
+	to exports.
+
+2006-01-17  Chris Sutcliffe  <ir0nh34d@users.sf.net>
+
+	* include/w32api.h: Increment version to 3.6.
+	* Makefile.in: Ditto.
+
+2006-01-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wincrypt.h (WINADVAPI): Add to prototypes of
+	advapi32.dll functions.
+
+2006-01-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winsock2.h (struct sockaddr_storage):  Use RFC 2553
+	names for padding size constants.
+
+2006-01-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/aclapi.h (WINADVAPI): Add to prototypes.
+	* include/winreg.h (WINADVAPI): Likewise.
+	* include/winsvc.h (WINADVAPI): Likewise.
+
+2006-01-05  Michael Gerdau  <mgd@technosis.de>
+
+	* include/winbase.h (WINADVAPI): Define.
+
+2006-01-03  Christopher Faylor  <cgf@timesys.com>
+
+	* include/winuser.h (CreateWindowStation): Correctly identify first
+	argument as constant.
+	(CreateWindowStation@): Ditto.
+
+2006-01-03  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/uxtheme.h  [_WIN32_WINNT >= 0x0501]
+	(TMT_*, BT_*): Add constants.
+
+2005-12-31  Corinna Vinschen  <corinna@vinschen.de>
+
+	* include/winsock2.h: Don't define struct sockaddr_storage when
+	building Cygwin.
+
+2005-12-22  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/ws2_32.c: New file, defining IPv6 constants. 
+	* lib/Makefile.in (SOURCES): Add ws2_32.c
+	(EXTRA_OBJS): Add ws2_32.o.
+
+2005-12-21  Michael Jung  <mjung@iss.tu-darmstadt.de>
+
+	* lib/user32.def (PrivateExtractIconsA@32, 
+	PrivateExtractIconsW@32): Define.
+	* lib/shell32.c (IID_IShellLinkDataList): Add GUID.
+
 2005-12-12  Christopher Faylor  <cgf@timesys.com>
 
 	* include/winuser.h (WINSTA_ALL_ACCESS): Define.
