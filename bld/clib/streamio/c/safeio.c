@@ -33,6 +33,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <malloc.h>
 #include <unistd.h>
@@ -57,7 +58,7 @@
 #define NUM_OMODES 6         /* Number of (r, w, a) style modes */
                              /*  ur, uw, ua  Safer C Library */
 #define NUM_FTYPES 3         /* Number of file types */
-#define MAX_FILE_SIZE 100    /* Maximum number of bytes in a test file */
+#define MAX_FILE_SIZE 50     /* Maximum number of bytes in a test file */
 #define NUM_FILES 10         /* Maximum number of files open at one time */
 
 /* Test macros */
@@ -265,51 +266,6 @@ TestFile *Test_File_Create( char *cur_mode, char *cur_string, char test1 )
 /* Main test routines */
 /**********************/
 
-#if 0
-int Test_File_Seek( TestFile *cur_test, char *cur_mode )
-/******************************************************/
-{
-    VERIFY( fseek( cur_test->fp, (1+MAX_FILE_SIZE), SEEK_SET ) == 0 );
-    VERIFY( ftell( cur_test->fp ) == (1+MAX_FILE_SIZE) );
-    VERIFY( fseek( cur_test->fp, -(1+MAX_FILE_SIZE), SEEK_CUR ) == 0 );
-    VERIFY( ftell( cur_test->fp ) == 0 );
-    VERIFY( fseek( cur_test->fp, 0L, SEEK_END ) == 0 );
-    VERIFY( ftell( cur_test->fp ) == (1+MAX_FILE_SIZE) );
-    rewind( cur_test->fp );
-    VERIFY( ftell( cur_test->fp ) == 0 );
-
-    return( 1 );
-}
-
-int Test_File_Writes( TestFile *cur_test, char *cur_mode, char test1 )
-/********************************************************************/
-{
-    fpos_t      position;
-    int         pos = 0;
-
-    /* Test append and write modes */
-
-    if( strchr( cur_mode, '+' )  !=  NULL ) {
-        VERIFY( fseek( cur_test->fp, (1+MAX_FILE_SIZE), SEEK_SET ) == 0 );
-        VERIFY( fgetpos( cur_test->fp, &position ) == 0 );
-        VERIFY( fseek( cur_test->fp, 0, SEEK_SET ) == 0 );
-        VERIFY( fputc( test1, cur_test->fp ) == test1 );
-        EXPECT( fsetpos( cur_test->fp, &position ) == 0 );
-
-        if( cur_mode[0] == 'u' ) pos++; /* ignore u */
-
-        if( cur_mode[pos] == 'a' ) {
-            VERIFY( fgetc( cur_test->fp ) != EOF );
-            VERIFY( feof( cur_test->fp ) == 0 );
-        } else {
-            VERIFY( fgetc( cur_test->fp ) == EOF );
-            VERIFY( feof( cur_test->fp ) != 0 );
-        }
-    }
-
-    return( 1 );
-}
-#endif
 
 int Test_vfprintf( FILE *fp, char *format, ... )
 /**********************************************/
@@ -394,51 +350,6 @@ int Test_File_FWriteRead( TestFile *cur_test, char *cur_mode )
     return( 1 );
 }
 
-int Test_File_Reads( TestFile *cur_test, char *cur_mode, char test1, char *cur_string )
-/*************************************************************************************/
-{
-    char    buff[MAX_FILE_SIZE + 1];
-    int     pos = 0;
-
-    /* Test the reads from the test file  */
-    if( cur_mode[0] == 'u' ) pos++; /* ignore u */
-    if( cur_mode[pos] == 'r' ) {
-        INTERNAL( TestFile_ReOpen( cur_test, cur_mode ) );
-        VERIFY( fseek( cur_test->fp, 0, SEEK_SET ) == 0 );
-        VERIFY( fgetc( cur_test->fp ) == test1 );
-        VERIFY( fgets( buff, MAX_FILE_SIZE + 1, cur_test->fp ) != NULL );
-        EXPECT( strcmp( cur_string, buff ) == 0 );
-    }
-
-    return( 1 );
-}
-#if 0
-int Test_File_IO( char *cur_mode )
-/********************************/
-{
-    TestFile    *cur_test;
-    char        cur_string[MAX_FILE_SIZE + 1];
-    char        test1 = 'a';
-
-    cur_test = Test_File_Create( cur_mode, cur_string, test1 );
-
-    if( cur_test != 0 ) {
-        /* seek type functions */
-          Test_File_Seek( cur_test, cur_mode );
-
-        if( Test_File_Writes( cur_test, cur_mode, test1 ) != 0 ) {
-            /* read functions */
-            TestFile_ReOpen( cur_test, cur_mode );
-            Test_File_Reads( cur_test, cur_mode, test1, cur_string );
-        }
-    }
-
-    /* Free memory; close and remove test file */
-    TestFile_Destroy( cur_test );
-
-    return( 1 );
-}
-#endif
 int Test_File_IO_More( char *cur_mode )
 /*************************************/
 {
@@ -500,12 +411,21 @@ int Test_Temp_IO( void )
     return( 1 );
 }
 
-int Test_StdWrite( FILE *fp, FILE **my_fp, const char *filename )
+int Test_Safeio( FILE *fp, FILE **my_fp, const char *filename )
 /***************************************************************/
 {
-    int     test_int = 21718, test_buff;
-    char    test_str[10] = "Hello", buff[80] = "Different";
+
+/***************************************************************************/
+/*  slightly modified Test_StdWrite() to use gets_s() instead of gets()    */
+/*  therefore some tests are just duplicates                               */
+/***************************************************************************/
+
     char    cur_mode[10];
+
+    char    *p;
+    char    rbuff[10];
+    size_t  maxsize = sizeof( rbuff );
+    int     violations = NumViolations;
 
     if( fp == stdout ) {
         strcpy( cur_mode, "stdout" );
@@ -513,53 +433,68 @@ int Test_StdWrite( FILE *fp, FILE **my_fp, const char *filename )
         strcpy( cur_mode, "stderr" );
     }
 
-    /* Test all the standard write and read routines */
 
-    VERIFY( putc( 'a', fp ) != EOF );
+    /***********************************************************************/
+    /*  write testdata for gets_s                                          */
+    /***********************************************************************/
 
-    if( fp == stdout ) {
-        VERIFY( putchar( 'b' ) != EOF );
-        VERIFY( fputchar( 'c' ) != EOF );
-        VERIFY( printf( "%d\n", test_int ) > 0 );
-        VERIFY( puts( test_str ) > 0 );
-        VERIFY( putchar( '\n' ) != EOF );
-        Test_vprintf( "%d\n", 53 );
-    }
+    VERIFY( fprintf( *my_fp, "%s\n", "LENGTH08" ) > 0 );
+    VERIFY( fprintf( *my_fp, "%s\n\n", "LENGTH16--------" ) > 0 );
+    VERIFY( fprintf( *my_fp, "%s\n", "LENGTH009" ) > 0 );
 
     fflush( *my_fp );
 
-    /* Check the data just written */
-    fseek( *my_fp, SEEK_SET, 0 );
-    VERIFY( fgetc( *my_fp ) == 'a' );
+    EXPECT( freopen( CONSOLE_IN, "r+t", *my_fp ) != NULL );
+    VERIFY( (*my_fp = freopen( filename, "rt", stdin )) != NULL );
 
-    if( fp == stdout ) {
-        VERIFY( fgetc( *my_fp ) == 'b' );
-        VERIFY( fgetc( *my_fp ) == 'c' );
+    fseek( *my_fp, 0, SEEK_SET );
 
-        /* Check all the reads as well */
-        EXPECT( freopen( CONSOLE_IN, "r+t", *my_fp ) != NULL );
-        VERIFY( (*my_fp = freopen( filename, "rt", stdin )) != NULL );
+    /***********************************************************************/
+    /*  now test get_s                                                     */
+    /***********************************************************************/
 
-        fseek( *my_fp, SEEK_SET, 0 );
-        VERIFY( getc( stdin ) == 'a' );
-        VERIFY( getchar() == 'b' );
-        VERIFY( fgetchar() == 'c' );
-        VERIFY( scanf( "%d", &test_buff ) > 0 );
-        VERIFY( test_buff == test_int );
-        VERIFY( ( gets( buff ) ) != NULL );
-        VERIFY( ( gets( buff ) ) != NULL );
-        VERIFY( strcmp( buff, test_str ) == 0 );
-        Test_vscanf( "%d\n", &test_int );
-        VERIFY( test_int == 53 );
-    }
+    p = gets_s( rbuff, maxsize );       /* normal input */
+    VERIFYS( p != NULL );
+    VERIFYS( strcmp( p ,"LENGTH08" ) == 0 );
+    VERIFYS( NumViolations == violations );
+
+    p = gets_s( rbuff, maxsize );       /* no nl within maxsize chars*/
+    VERIFYS( p == NULL );
+    VERIFYS( rbuff[ 0 ] == '\0' );
+    VERIFYS( NumViolations == ++violations );
+
+    p = gets_s( rbuff, maxsize );       /* empty line */
+    VERIFYS( p != NULL );
+    VERIFYS( *p == '\0' );
+    VERIFYS( NumViolations == violations );
+
+    p = gets_s( rbuff, maxsize );       /* normal input */
+    VERIFYS( p != NULL );
+    VERIFYS( strcmp( p ,"LENGTH009" ) == 0 );
+    VERIFYS( NumViolations == violations );
+
+    /* Test runtime-constraints for gets_s */
+    p = gets_s( NULL, maxsize );
+    VERIFYS( p == NULL );
+    VERIFYS( NumViolations == ++violations );
+
+    p = gets_s( rbuff, 0 );
+    VERIFYS( p == NULL );
+    VERIFYS( NumViolations == ++violations );
+
+#if RSIZE_MAX != SIZE_MAX
+    p = gets_s( rbuff, ~0 );
+    VERIFYS( p == NULL );
+    VERIFYS( NumViolations == ++violations );
+#endif
 
     return( 1 );
 }
 
-int Test_StdWrites( FILE *fp )
+int Test_Safeios( FILE *fp )
 /****************************/
 {
-    char    cur_mode[10] = "stdio";
+    char    cur_mode[10] = "safeio";
     char    filename[ L_tmpnam ];
     FILE    *my_fp;
 
@@ -568,7 +503,7 @@ int Test_StdWrites( FILE *fp )
 
     /* A separate function is used to assure the deletion of the test file. */
 
-    Test_StdWrite( fp, &my_fp, filename );
+    Test_Safeio( fp, &my_fp, filename ); /* for gets_s() */
 
     EXPECT( (fp = freopen( CONSOLE_IN, "r+t", my_fp )) != NULL );
     EXPECT( remove( filename ) == 0 );
@@ -886,14 +821,8 @@ int main( int argc, char *argv[] )
     EXPECT( (old_stdout_fd = dup( old_stdout_fd )) != -1 );
     EXPECT( (old_stdout = fdopen( old_stdout_fd, "wt" )) != NULL );
 
-    Test_StdWrites( stderr );
-    Test_StdWrites( stdout );
-    Test_File_Errors( );   /* eg.  perror, ferror, etc.. */
-    Test_Flushes( );
-    Test_fdopen( );
-    Test_setbuf( );
-    Test_setvbuf( );
-    Test_ungetc( );
+    Test_Safeios( stdout );
+
 
     fprintf( old_stdout, "Tests completed (%s).\n", strlwr( argv[0] ) );
     fclose( old_stdout );
