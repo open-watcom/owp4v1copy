@@ -106,7 +106,7 @@ pick( CHANGING_DIR,                "CD'ing to %E: %Z",
 pick( CHANGING_DRIVE,                "Changing to drive %C:",
                                 "ドライフ %C: に変ります" )
 pick( PARSE_IFEXPR,             "!IF Parse Error",
-                                "!IF フェーズエラー" ) 
+                                "!IF フェーズエラー" )
 pick( TMP_PATH_TOO_LONG,        "TMP Path/File Too Long",
                                 "TMP パス/ファイル名が長すぎます" )
 pick( UNEXPECTED_EOF,           "Unexpected End of File",
@@ -115,10 +115,10 @@ pick( NOKEEP_ONLY,              "Only NO\(KEEP\) allowed here",
                                 "ここでは NO\(KEEP\) だけができます")
 pick( NON_MATCHING_QUOTE,       "Non-matching \"",
                                 "一致しません \"")
-pick( INVALID_STRING_SUBSTITUTE,"Invalid String Macro Substitution", 
+pick( INVALID_STRING_SUBSTITUTE,"Invalid String Macro Substitution",
                                 "不適切な文字列マクロ置換です")
-pick( MAX_FILE_LENGTH_EXCEED,   "File Name Length Exceeded", 
-                                "ファイル名の長さが制限を越えました") 
+pick( MAX_FILE_LENGTH_EXCEED,   "File Name Length Exceeded",
+                                "ファイル名の長さが制限を越えました")
 pick( DOT_DEFAULT_REDEFINITION, "Redefinition of .DEFAULT Command List",
                                 ".DEFAULT コマンド･･リストの再定義です")
 pick( NON_MATCHING_CURL_PAREN,  "Non-matching \{ In Implicit Rule",
@@ -147,8 +147,8 @@ pick( ERROR_TRMEM,              "Error in Memory Tracking Encountered",
                                 "メモリトラッキング中にエラーになりました")
 pick( MICROSOFT_MAKEFILE,       "Makefile may be Microsoft; try /ms switch",
                                 "Makefile may be Microsoft; try /ms switch")
-pick( ERROR_STRING_OPEN,	"Expecting double quote character to end open string.",
-				"Expecting double quote character to end open string.")
+pick( ERROR_STRING_OPEN,    "Expecting double quote character to end open string.",
+                "Expecting double quote character to end open string.")
 
 #if defined( __DOS__ )
 pick( OS_CORRUPTED,                "DOS memory inconsistency detected! System may halt ...",
@@ -262,6 +262,9 @@ pick( WILL_BE_BUILT_BECAUSE_OF,                "%s will be built because of %s",
                                 "%s will be built because of %s" )
 pick( DELETING_FILE,            "Deleting file %s",
                                 "Deleting file %s" )
+pick( TARGET_FORCED_UPTODATE,   "%E is considered uptodate",
+                                "%E is considered uptodate" )
+
 
 pick( JUST_A_TAB,                "\t",
                                 "\t" )

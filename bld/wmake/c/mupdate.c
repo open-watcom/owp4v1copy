@@ -139,11 +139,6 @@ STATIC void getStats( TARGET *targ )
         } else {
             targ->existing = TRUE;
         }
-        // Means that there are no dependents so it is symbolic since it
-        // does not exist (Microsoft Option)
-        if( Glob.microsoft && !targ->existing && (targ->depend == NULL) ) {
-            targ->attr.symb = TRUE;
-        }
     } /* else: no changes in the status */
 }
 
@@ -353,9 +348,9 @@ STATIC RET_T perform( TARGET *targ, DEPEND *dep, time_t max_time )
     if( clist == NULL ) {
         clist = DotCList( DOT_DEFAULT );
         if( clist == NULL ) {
-            // No commands in Microsoft mode is considered OK
+            // No commands in Microsoft and POSIX mode is considered OK
             // and executed
-            if( Glob.microsoft ) {
+            if( Glob.microsoft || Glob.posix ) {
                 targ->cmds_done = TRUE;
                 return( RET_SUCCESS );
             }
@@ -960,7 +955,7 @@ extern RET_T Update( TARGET *targ )
         }
     }
 
-    if( (targ->attr.symb || Glob.noexec || Glob.query || Glob.nocheck)
+    if( (targ->attr.symb || Glob.noexec || Glob.query)
         && startcount != cListCount ) {
         targ->existing = TRUE;
         targ->touched = TRUE;
@@ -969,19 +964,29 @@ extern RET_T Update( TARGET *targ )
     }
 
     target_exists = targExists( targ );                         /* 18-nov-91 */
-    if( !Glob.ignore ) {
-        if( targ->attr.symb == FALSE && !target_exists ) {
-            if( Glob.cont ) {
-                targ->error = TRUE;
-                targ->busy = FALSE;
-                PrtMsg( ERR | UNABLE_TO_MAKE, targ->node.name );
-            } else {
-                PrtMsg( FTL | UNABLE_TO_MAKE, targ->node.name );
-            }
+    if( target_exists || targ->attr.symb || Glob.ignore ) {
+        // Target exists or it is symbolic or we're ignoring errors,
+        // therefore everyone's happy and we can charge forward
+        PrtMsg( DBG | INF | TARGET_IS_UPDATED, targ->node.name );
+    } else {
+        // Target doesn't exist, we may be in trouble
+        if( targ->cmds_done && Glob.nocheck ) {
+            // Target doesn't exist even though we processed some commands,
+            // but we're not checking existence of files. Consider it uptodate.
+            targ->existing = TRUE;
+            PrtMsg( DBG | INF | TARGET_FORCED_UPTODATE, targ->node.name );
+        } else if( Glob.cont ) {
+            // Target doesn't exist but we're forcibly continuing. Report
+            // nonfatal error.
+            targ->error = TRUE;
+            targ->busy = FALSE;
+            PrtMsg( ERR | UNABLE_TO_MAKE, targ->node.name );
+            return( RET_ERROR );
+        } else {
+            // Target doesn't exist and we have no clue how to make it. Bomb out.
+            PrtMsg( FTL | UNABLE_TO_MAKE, targ->node.name );
             return( RET_ERROR );
         }
-    } else {
-        PrtMsg( DBG | INF | TARGET_IS_UPDATED, targ->node.name );
     }
 
     targ->updated = targ->attr.multi == FALSE;
