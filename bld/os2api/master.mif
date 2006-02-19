@@ -96,3 +96,8 @@ mmpm2.lib: mmpm2all.lbc
 mmpm2all.lbc: $(componentsmmpm2)
         cat $< > $@
 
+libuls.lib: libuni.lbc
+        $(librarian) $(libflags) $@ @$<
+
+libconv.lib: uconv.lbc
+        $(librarian) $(libflags) $@ @$<

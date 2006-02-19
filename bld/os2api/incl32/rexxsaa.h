@@ -53,6 +53,23 @@ extern "C" {
 #define RXSUBCOM_BADTYPE  1003
 #define RXSUBCOM_NOTINIT  1004
 
+#define RXARI_OK                   0
+#define RXARI_NOT_FOUND            1
+#define RXARI_PROCESSING_ERROR     2
+
+#define RXMACRO_SEARCH_BEFORE      1
+#define RXMACRO_SEARCH_AFTER       2
+#define RXMACRO_OK                 0
+#define RXMACRO_NO_STORAGE         1
+#define RXMACRO_NOT_FOUND          2
+#define RXMACRO_EXTENSION_REQUIRED 3
+#define RXMACRO_ALREADY_EXISTS     4
+#define RXMACRO_FILE_ERROR         5
+#define RXMACRO_SIGNATURE_ERROR    6
+#define RXMACRO_SOURCE_NOT_FOUND   7
+#define RXMACRO_INVALID_POSITION   8
+#define RXMACRO_NOT_INIT           9
+
 #define RXENDLST 0
 #define RXFNC    2
 #define RXFNCCAL 1
@@ -110,6 +127,9 @@ extern "C" {
 #define RXEXIT_NOT_HANDLED   1
 #define RXEXIT_RAISE_ERROR (-1)
 
+#define RXEXIT_DROPPABLE     0x00
+#define RXEXIT_NONDROP       0x01
+
 #define RXEXIT_ISREG         1
 #define RXEXIT_ERROR         1
 #define RXEXIT_FAILURE       2
@@ -125,6 +145,31 @@ extern "C" {
 #define RXEXIT_NOCANDROP    40
 #define RXEXIT_LOADERR      50
 #define RXEXIT_NOPROC      127
+
+#define REXXSTART               RexxStart
+#define REXXREGISTERSUBCOMDLL   RexxRegisterSubcomDll
+#define REXXREGISTERSUBCOMEXE   RexxRegisterSubcomExe
+#define REXXQUERYSUBCOM         RexxQuerySubcom
+#define REXXDEREGISTERSUBCOM    RexxDeregisterSubcom
+#define REXXVARIABLEPOOL        RexxVariablePool
+#define REXXREGISTERFUNCTIONDLL RexxRegisterFunctionDll
+#define REXXREGISTERFUNCTIONEXE RexxRegisterFunctionExe
+#define REXXDEREGISTERFUNCTION  RexxDeregisterFunction
+#define REXXQUERYFUNCTION       RexxQueryFunction
+#define REXXREGISTEREXITDLL     RexxRegisterExitDll
+#define REXXREGISTEREXITEXE     RexxRegisterExitExe
+#define REXXDEREGISTEREXIT      RexxDeregisterExit
+#define REXXSETHALT             RexxSetHalt
+#define REXXQUERYEXIT           RexxQueryExit
+#define REXXSETTRACE            RexxSetTrace
+#define REXXRESETTRACE          RexxResetTrace
+#define REXXADDMACRO            RexxAddMacro
+#define REXXDROPMACRO           RexxDropMacro
+#define REXXSAVEMACROSPACE      RexxSaveMacroSpace
+#define REXXLOADMACROSPACE      RexxLoadMacroSpace
+#define REXXQUERYMACRO          RexxQueryMacro
+#define REXXREORDERMACRO        RexxReorderMacro
+#define REXXCLEARMACROSPACE     RexxClearMacroSpace
 
 typedef PUCHAR PEXIT;
 
@@ -149,21 +194,95 @@ typedef struct _RXSYSEXIT {
 } RXSYSEXIT, *PRXSYSEXIT;
 
 typedef struct _RXSIOSAY_PARM {
-    RXSTRING    rxsio_string;
+    RXSTRING rxsio_string;
 } RXSIOSAY_PARM;
 
 typedef struct _RXSIOTRC_PARM {
-    RXSTRING    rxsio_string;
+    RXSTRING rxsio_string;
 } RXSIOTRC_PARM;
 
 typedef struct _RXSIOTRD_PARM {
-    RXSTRING    rxsiotrd_retc;
+    RXSTRING rxsiotrd_retc;
 } RXSIOTRD_PARM;
 
 typedef struct _RXSIODTR_PARM {
-    RXSTRING    rxsiodtr_retc;
+    RXSTRING rxsiodtr_retc;
 } RXSIODTR_PARM;
 
+typedef struct _RXMSQSIZ_PARM {
+    ULONG rxmsq_size;
+} RXMSQSIZ_PARM;
+
+typedef struct _RXMSQNAM_PARM {
+    RXSTRING rxmsq_name;
+} RXMSQNAM_PARM;
+
+typedef struct _RXHLT_FLAGS {
+    unsigned rxfhhalt:1;
+} RXHLT_FLAGS;
+
+typedef struct _RXHLTTST_PARM {
+    RXHLT_FLAGS rxhlt_flags;
+} RXHLTTST_PARM;
+
+typedef struct _RXTRC_FLAGS {
+    unsigned rxftrace:1;
+} RXTRC_FLAGS;
+
+typedef struct _RXTRCTST_PARM {
+    RXTRC_FLAGS rxtrc_flags;
+} RXTRCTST_PARM;
+
+typedef struct _RXMSQPLL_PARM {
+    RXSTRING     rxmsq_retc;
+} RXMSQPLL_PARM;
+
+#pragma pack( __push, 1)
+
+typedef struct _RXFNC_FLAGS {
+    unsigned rxfferr :1;
+    unsigned rxffnfnd:1;
+    unsigned rxffsub :1;
+} RXFNC_FLAGS;
+
+typedef struct _RXFNCCAL_PARM {
+    RXFNC_FLAGS rxfnc_flags;
+    PUCHAR      rxfnc_name;
+    USHORT      rxfnc_namel;
+    PUCHAR      rxfnc_que;
+    USHORT      rxfnc_quel;
+    USHORT      rxfnc_argc;
+    PRXSTRING   rxfnc_argv;
+    RXSTRING    rxfnc_retc;
+} RXFNCCAL_PARM;
+
+typedef struct _RXCMD_FLAGS {
+    unsigned rxfcfail:1;
+    unsigned rxfcerr :1;
+} RXCMD_FLAGS;
+
+typedef struct _RXCMDHST_PARM {
+    RXCMD_FLAGS rxcmd_flags;
+    PUCHAR      rxcmd_address;
+    USHORT      rxcmd_addressl;
+    PUCHAR      rxcmd_dll;
+    USHORT      rxcmd_dll_len;
+    RXSTRING    rxcmd_command;
+    RXSTRING    rxcmd_retc;
+} RXCMDHST_PARM;
+
+typedef struct _RXMSQ_FLAGS {
+    unsigned rxfmlifo:1;
+} RXMSQ_FLAGS;
+
+typedef struct _RXMSQPSH_PARM {
+    RXMSQ_FLAGS rxmsq_flags;
+    RXSTRING    rxmsq_value;
+} RXMSQPSH_PARM;
+
+#pragma pack( __pop )
+
+typedef LONG APIENTRY  RexxExitHandler(LONG,LONG,PEXIT);
 typedef ULONG APIENTRY RexxSubcomHandler(PRXSTRING,PUSHORT,PRXSTRING);
 typedef ULONG APIENTRY RexxFunctionHandler(PUCHAR,ULONG,PRXSTRING,PSZ,PRXSTRING);
 
@@ -172,9 +291,18 @@ APIRET APIENTRY RexxDeregisterFunction(PCSZ);
 APIRET APIENTRY RexxDeregisterSubcom(PCSZ,PCSZ);
 APIRET APIENTRY RexxQueryFunction(PCSZ);
 APIRET APIENTRY RexxQuerySubcom(PCSZ,PCSZ,PUSHORT,PUCHAR);
+APIRET APIENTRY RexxQueryExit(PCSZ,PCSZ,PUSHORT,PUCHAR);
 APIRET APIENTRY RexxRegisterExitExe(PCSZ,PFN,PUCHAR);
+APIRET APIENTRY RexxRegisterExitDll(PCSZ,PCSZ,PCSZ,PUCHAR,ULONG);
 APIRET APIENTRY RexxRegisterFunctionDll(PCSZ,PCSZ,PCSZ);
 APIRET APIENTRY RexxRegisterFunctionExe(PCSZ,PFN);
+APIRET APIENTRY RexxClearMacroSpace(VOID);
+APIRET APIENTRY RexxReorderMacro(PCSZ,ULONG);
+APIRET APIENTRY RexxQueryMacro(PCSZ,PUSHORT);
+APIRET APIENTRY RexxLoadMacroSpace(ULONG,PCSZ *,PCSZ);
+APIRET APIENTRY RexxSaveMacroSpace(ULONG,PCSZ *,PCSZ);
+APIRET APIENTRY RexxDropMacro(PCSZ);
+APIRET APIENTRY RexxAddMacro(PCSZ,PCSZ,ULONG);
 
 APIRET APIENTRY RexxRegisterSubcomDll(PCSZ,PCSZ,PCSZ,PUCHAR,ULONG);
 APIRET APIENTRY RexxRegisterSubcomExe(PCSZ,PFN,PUCHAR);

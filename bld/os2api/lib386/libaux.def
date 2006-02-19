@@ -1,5 +1,5 @@
-EXPORTS
 LIBRARY LIBAUX
+EXPORTS
     auxOS2HAB                                   @1
     auxOS2Window                                @2
     auxGetCurrentConfig                         @3
