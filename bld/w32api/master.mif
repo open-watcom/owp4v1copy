@@ -214,3 +214,9 @@ vfw32.lbc: $(vfw32_libs)
         @for %i in ($(vfw32_libs)) do @%append $@ @ %i
 
 uuid.lib: uuid.obj mshtml-u.obj msxml-uuid.obj
+
+mshtml-u.obj: mshtml-u.c .autodepend
+        $(cc) $(cflags) $(inc_path) $<
+
+msxml-uuid.obj: msxml-uuid.c .autodepend
+        $(cc) $(cflags) $(inc_path) $<
