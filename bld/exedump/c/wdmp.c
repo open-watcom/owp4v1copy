@@ -117,6 +117,11 @@ static void dmp_exe( void )
             Wdputslc( "Invalid PE file\n" );
         }
     }
+    if( Options_dmp & IMPORT_DEF ) {
+        if( !Dmp_os2_exports() ) {
+            Wdputslc( "No exports found\n" );
+        }
+    }
     if( Options_dmp & BINARY_DMP ) {
         len = lseek( Handle, -Hexoff, SEEK_END );
         Wdputs( "offset = " );
@@ -214,6 +219,7 @@ static void usage( void )
     Wdputs( "        -r causes more resource information to be dumped\n" );
     Wdputs( "        -s causes segments' data to be dumped\n" );
     Wdputs( "        -S<segnum> like -s but only applies to segment <segnum>\n" );
+    Wdputs( "        -x dump export information for NE/LX DLLs in .DEF format\n" );
 }
 
 /*
@@ -258,7 +264,7 @@ static int parse_options( int argc, char * const *argv )
     Hexoff = 0;
 
     while( 1 ) {
-        while( (c = getopt( argc, argv, ":aA:bB:dD:efipqrsS:" )) != -1 ) {
+        while( (c = getopt( argc, argv, ":aA:bB:dD:efipqrsS:x" )) != -1 ) {
             switch( c ) {
             case 'A':
                 Options_dmp |= FIX_DMP | PAGE_DMP | RESRC_DMP | EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
@@ -322,6 +328,11 @@ static int parse_options( int argc, char * const *argv )
                 break;
             case 's':
                 Options_dmp |= EXE_INFO | DOS_SEG_DMP | OS2_SEG_DMP;
+                break;
+            case 'x':
+                Options_dmp |= IMPORT_DEF;
+                Options_dmp |= QUIET;
+                Options_dmp &= ~EXE_INFO;
                 break;
             case ':':
                 Wdputs( "wdump: option requires argument: -" );
