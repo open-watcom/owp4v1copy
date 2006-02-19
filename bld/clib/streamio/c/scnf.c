@@ -279,6 +279,8 @@ static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
             } else {
                 *str++ = c;
             }
+#else
+            *str++ = c;
 #endif
         }
     }
