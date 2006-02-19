@@ -433,6 +433,10 @@ STATIC void parseFiles( void )
         ret = InsFile( MAKEFILE_NAME, FALSE );
         if( ret == RET_SUCCESS ) {
             setFirstTarget( Parse() );
+#ifdef MAKEFILE_ALT
+        } else if( (ret = InsFile( MAKEFILE_ALT, FALSE )) == RET_SUCCESS ) {
+            setFirstTarget( Parse() );
+#endif
         }
     } else {
         newhead = NULL;     /* reverse order of files stacked by procFlags */

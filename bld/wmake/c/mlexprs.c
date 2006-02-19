@@ -225,7 +225,7 @@ STATIC TOKEN_T lexFileName( STRM_T t )
     unsigned    pos;
 
     assert( isfilec( t ) || t == DOUBLEQUOTE ||
-       Glob.microsoft && t == SPECIAL_TMP_DOL_C );
+       (Glob.microsoft || Glob.posix) && t == SPECIAL_TMP_DOL_C );
 
     if( t == DOUBLEQUOTE ) {
         return( lexLongFilePathName( t, TOK_FILENAME ) );
@@ -233,7 +233,7 @@ STATIC TOKEN_T lexFileName( STRM_T t )
 
     pos = 0;
     while( pos < _MAX_PATH && (isfilec( t ) ||
-            t == SPECIAL_TMP_DOL_C && Glob.microsoft) ) {
+            t == SPECIAL_TMP_DOL_C && (Glob.microsoft || Glob.posix) ) ) {
         file[pos++] = t;
         t = PreGetCH();
     }
@@ -674,7 +674,7 @@ extern TOKEN_T LexParser( TOKEN_T t )
             return( TOK_SCOLON );
         default:
             if( isfilec( t ) || t == DOUBLEQUOTE ||
-                Glob.microsoft &&  t == SPECIAL_TMP_DOL_C ) {
+                (Glob.microsoft || Glob.posix) &&  t == SPECIAL_TMP_DOL_C ) {
                 return( lexFileName( t ) );
             }
             PrtMsg( WRN | LOC | UNKNOWN_TOKEN, t );

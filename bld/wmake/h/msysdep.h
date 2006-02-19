@@ -140,6 +140,9 @@ enum {
 };
 
 #define MAKEFILE_NAME   "makefile"
+#ifdef __UNIX__
+#define MAKEFILE_ALT    "Makefile"
+#endif
 #define MAKEINIT_NAME   "makeinit"
 #define MAKEFINI_NAME   "makefini"
 #define TOOLSINI_NAME   "tools.ini"

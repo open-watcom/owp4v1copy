@@ -1060,16 +1060,10 @@ extern char *GetCurDeps( BOOLEAN younger, BOOLEAN isMacInf )
 
     cur = exGetCurVars();
 
-    // This is for Glob.microsoft
+    // This is for Glob.microsoft and Glob.posix
     // $< and $** are different
-    if( Glob.microsoft ) {
-        if( isMacInf ) {
-            cur.dep = cur.impDep;
-        } else {
-            if( cur.dep == NULL ) {
-                cur.dep = cur.impDep;
-            }
-        }
+    if( isMacInf ) {
+        cur.dep = cur.impDep;
     } else {
         if( cur.dep == NULL ) {
             cur.dep = cur.impDep;

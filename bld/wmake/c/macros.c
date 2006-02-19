@@ -220,12 +220,12 @@ STATIC void makeMacroName( char *buffer, const char *name )
 /**********************************************************
  * convert name to internal form (upcased)
  * buffer must be at least as large as name
- * Microsoft environment variables are case insensitive
+ * Microsoft and POSIX environment variables are case sensitive
  */
 {
     assert( IsMacroName( name ) );
 
-    if( Glob.microsoft ) {
+    if( Glob.microsoft || Glob.posix ) {
         strcpy( buffer, name );
     } else {
         while( (*buffer = toupper( *name )) != NULLCHAR ) {
@@ -244,7 +244,7 @@ STATIC MACRO *getMacroNode( const char *name )
 
     assert( name != NULL && *name != ENVVAR );
 
-    if( Glob.microsoft ) {
+    if( Glob.microsoft || Glob.posix ) {
         caseSensitive = TRUE;
     } else {
         caseSensitive = FALSE;
@@ -698,12 +698,12 @@ STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
     switch( t ) {
     case MAC_START:                     /* recurse, get macro name */
         /*
-         * in microsoft nmake,
+         * in microsoft nmake and in POSIX mode,
          * $HELLO is considered as $(H)ELLO
-         * if there are no parenthesis then it takes only first char.
+         * if there are no parentheses then it takes only first char.
          * after the $
          */
-        if( !Glob.microsoft ) {
+        if( !Glob.microsoft && !Glob.posix ) {
             p = deMacroText( depth + 1, end1, MAC_PUNC );
         } else {
             temp = PreGetCH ();
@@ -734,7 +734,7 @@ STATIC char *ProcessToken( int depth, TOKEN_T end1, TOKEN_T end2, TOKEN_T t )
         return( StrDupSafe( TMP_COMMENT_S ) );  /* write a place holder */
 
     case MAC_OPEN:                      /* recurse, get macro name */
-        if( !Glob.microsoft ) {
+        if( !Glob.microsoft && !Glob.posix ) {
             p = deMacroText( depth + 1, end1, MAC_CLOSE );
             if( IsMacroName( p ) ) {
                 p2 =  WrnGetMacroValue( p );
@@ -1119,7 +1119,7 @@ extern BOOLEAN ForceDeMacro ( void )
  * For Watcom the default is FALSE
  */
 {
-    return( Glob.microsoft && !ImplicitDeMacro );
+    return( (Glob.microsoft || Glob.posix) && !ImplicitDeMacro );
 }
 
 
@@ -1133,7 +1133,7 @@ extern char *PartDeMacro( BOOLEAN ForcedDeMacro )
     STRM_T  t;
     char    *temp;
 
-    if( Glob.microsoft ) {
+    if( Glob.microsoft || Glob.posix ) {
         IsPartDeMacro = TRUE;
     }
     if( ForcedDeMacro ) {
@@ -1143,12 +1143,12 @@ extern char *PartDeMacro( BOOLEAN ForcedDeMacro )
         UnGetCH(t);
         temp = DeMacro( EOL );
         t = PreGetCH();
-        if( Glob.microsoft ) {
+        if( Glob.microsoft || Glob.posix ) {
             IsPartDeMacro = FALSE;
         }
         return( temp );
     } else {
-        if( Glob.microsoft ) {
+        if( Glob.microsoft || Glob.posix ) {
             IsPartDeMacro = FALSE;
         }
         return( PartDeMacroProcess() );
@@ -1159,7 +1159,7 @@ extern char *PartDeMacro( BOOLEAN ForcedDeMacro )
 STATIC int CompareNMacroName( const char *name1, const char *name2, size_t len )
 /******************************************************************************/
 {
-    if( Glob.microsoft ) {
+    if( Glob.microsoft || Glob.posix ) {
         return( strncmp( name1, name2, len ) );
     } else {
         return( strnicmp( name1, name2, len ) );
