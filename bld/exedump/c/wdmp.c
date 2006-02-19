@@ -192,7 +192,7 @@ static void wbanner( void )
 static void usage( void )
 /***********************/
 {
-    Wdputs( "Usage: wdump [-?abdefipqrs] [-A<num>] [-B<off>] [-D<opt>] [-S<num>] <file>\n" );
+    Wdputs( "Usage: wdump [-?abdefipqrsx] [-A<num>] [-B<off>] [-D<opt>] [-S<num>] <file>\n" );
     Wdputs( "  <file> is a DOS EXE file, a Windows or OS/2 executable or DLL,\n" );
     Wdputs( "            a PharLap executable, NLM, a QNX executable,\n" );
     Wdputs( "            an ELF executable, shared library or object file,\n" );
