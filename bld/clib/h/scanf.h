@@ -37,19 +37,20 @@
 #include <stdarg.h>
 
 typedef struct {
-    int         (*cget_rtn)();  /* character get rtn */
-    void        (*uncget_rtn)();/* unget a character rtn */
-    CHAR_TYPE   *ptr;           /* file or string pointer */
-    int         width;          /* conversion field width */
-    unsigned    assign  : 1;    /* assignment flag for current argument */
-    unsigned    eoinp   : 1;    /* end of input reached */
-    unsigned    far_ptr : 1;    /* F  - far pointer */
-    unsigned    near_ptr: 1;    /* N  - near pointer */
-    unsigned    char_var: 1;    /* hh - char variable */
-    unsigned    short_var:1;    /* h  - short variable */
-    unsigned    long_var: 1;    /* l  - long variable */
-    unsigned    long_double_var:1;/* L - long double variable */
-    unsigned    p_format: 1;    /* %p (pointer conversion) */
+    int         (*cget_rtn)();      /* character get rtn */
+    void        (*uncget_rtn)();    /* unget a character rtn */
+    CHAR_TYPE   *ptr;               /* file or string pointer */
+    int         width;              /* conversion field width */
+    unsigned    assign         : 1; /* assignment flag for current argument */
+    unsigned    eoinp          : 1; /* end of input reached */
+    unsigned    far_ptr        : 1; /* F  - far pointer */
+    unsigned    near_ptr       : 1; /* N  - near pointer */
+    unsigned    char_var       : 1; /* hh - char variable */
+    unsigned    short_var      : 1; /* h  - short variable */
+    unsigned    long_var       : 1; /* l  - long variable */
+    unsigned    long_long_var  : 1; /* ll - long long variable */
+    unsigned    long_double_var: 1; /* L - long double variable */
+    unsigned    p_format       : 1; /* %p (pointer conversion) */
 } SCNF_SPECS;
 
 #if defined(__HUGE__)

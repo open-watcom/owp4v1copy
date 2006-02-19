@@ -208,7 +208,7 @@ int (FUNC)( void __SLIB *dest,              /* parm for use by out_putc */
                 } else if( specs._flags & SPF_LONG ) {
                     *((FAR_LONG)iptr) = specs._output_count;
 #if defined( __LONG_LONG_SUPPORT__ )
-                } else if( specs._flags & SPF_LONG_DOUBLE ) {
+                } else if( specs._flags & SPF_LONG_LONG ) {
                     *((FAR_INT64)iptr) = specs._output_count;
 #endif
                 } else {
@@ -348,7 +348,7 @@ static const CHAR_TYPE * getprintspecs( const CHAR_TYPE *ctl,
     case 'l':
   #if defined( __LONG_LONG_SUPPORT__ )
         if( ctl[1] == 'l' ) {
-            specs->_flags |= SPF_LONG_DOUBLE;
+            specs->_flags |= SPF_LONG_LONG;
             ctl += 2;
             break;
         }
@@ -372,7 +372,7 @@ static const CHAR_TYPE * getprintspecs( const CHAR_TYPE *ctl,
   #if defined( __LONG_LONG_SUPPORT__ )
     case 'I':
         if(( ctl[1] == '6' ) && ( ctl[2] == '4' )) {
-            specs->_flags |= SPF_LONG_DOUBLE;
+            specs->_flags |= SPF_LONG_LONG;
             ctl += 3;
         }
         break;
@@ -380,11 +380,14 @@ static const CHAR_TYPE * getprintspecs( const CHAR_TYPE *ctl,
         /* fall through */
   #endif
     case 'L':
-        specs->_flags |= SPF_LONG_DOUBLE;
+        specs->_flags |= SPF_LONG_DOUBLE | SPF_LONG_LONG;
         ctl++;
         break;
   #if defined( __FAR_SUPPORT__ )
-    case 'F':                   /* 8086 specific flag for FAR pointer */
+    case 'F':                   /* conflicts with ISO-defined 'F' conversion */
+        /* fall through */
+  #endif
+    case 'W':                   /* 8086 specific flag for FAR pointer */
         specs->_flags |= SPF_FAR;
         ctl++;
         break;
@@ -392,7 +395,6 @@ static const CHAR_TYPE * getprintspecs( const CHAR_TYPE *ctl,
         specs->_flags |= SPF_NEAR;
         ctl++;
         break;
-  #endif
   #if defined( TSPEC_IS_INT ) || defined( ZSPEC_IS_INT )
     TSPEC_CASE_INT      /* If either 't' or 'z' spec corresponds to 'int',  */
     ZSPEC_CASE_INT      /* we need to parse and ignore the spec.            */
@@ -708,7 +710,7 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
     int                     length;
     int                     radix;
   #if defined( __LONG_LONG_SUPPORT__ )
-    auto unsigned __int64   long_long_value;
+    unsigned long long      long_long_value;
   #endif
     auto unsigned long      long_value;
     auto unsigned int       int_value;
@@ -731,8 +733,8 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
         ( specs->_character == 'x' ) ||
         ( specs->_character == 'X' ) ) {
   #if defined( __LONG_LONG_SUPPORT__ )
-        if( specs->_flags & SPF_LONG_DOUBLE ) {
-            long_long_value = va_arg( pargs->v, unsigned __int64 );
+        if( specs->_flags & SPF_LONG_LONG ) {
+            long_long_value = va_arg( pargs->v, unsigned long long );
         } else
   #endif
         if( specs->_flags & SPF_LONG ) {
@@ -751,8 +753,8 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
         ( specs->_character == 'i' ) ) {
 
   #if defined( __LONG_LONG_SUPPORT__ )
-        if( specs->_flags & SPF_LONG_DOUBLE ) {
-            long_long_value = va_arg( pargs->v, __int64 );
+        if( specs->_flags & SPF_LONG_LONG ) {
+            long_long_value = va_arg( pargs->v, long long );
         } else
   #endif
         if( specs->_flags & SPF_LONG ) {
@@ -769,8 +771,8 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
             int negative = FALSE;
 
   #if defined( __LONG_LONG_SUPPORT__ )
-            if( specs->_flags & SPF_LONG_DOUBLE ) {
-                if( (__int64)long_long_value < 0 ) {
+            if( specs->_flags & SPF_LONG_LONG ) {
+                if( (long long)long_long_value < 0 ) {
                     negative = TRUE;
                 }
             } else
@@ -782,7 +784,7 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
                 buffer[specs->_n0++] = '-';
 
   #if defined( __LONG_LONG_SUPPORT__ )
-                if( specs->_flags & SPF_LONG_DOUBLE ) {
+                if( specs->_flags & SPF_LONG_LONG ) {
                     long_long_value = -long_long_value;
                 } else
   #endif
@@ -900,7 +902,7 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
     case 'X':
         if( specs->_flags & SPF_ALT ) {
   #if defined( __LONG_LONG_SUPPORT__ )
-            if( specs->_flags & SPF_LONG_DOUBLE ) {
+            if( specs->_flags & SPF_LONG_LONG ) {
                 if( long_long_value != 0 ) {
                     buffer[specs->_n0++] = '0';
                     buffer[specs->_n0++] = specs->_character;
@@ -938,7 +940,7 @@ processNumericTypes:
         arg = &buffer[ specs->_n0 ];
 
   #if defined( __LONG_LONG_SUPPORT__ )
-        if( specs->_flags & SPF_LONG_DOUBLE ) {
+        if( specs->_flags & SPF_LONG_LONG ) {
             if(( specs->_prec == 0 ) && ( long_long_value == 0 )) {
                 *arg = '\0';
                 length = 0;

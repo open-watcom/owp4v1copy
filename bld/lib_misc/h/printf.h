@@ -122,10 +122,11 @@ typedef void (__SLIB_CALLBACK slib_callback_t)( SPECS __SLIB *, int );
 #define SPF_CHAR        0x0010
 #define SPF_SHORT       0x0020
 #define SPF_LONG        0x0040
-#define SPF_LONG_DOUBLE 0x0080          // also used for __int64/long long
-#define SPF_NEAR        0x0100
-#define SPF_FAR         0x0200
-#define SPF_CVT         0x0400          // __cvt function
+#define SPF_LONG_LONG   0x0080
+#define SPF_LONG_DOUBLE 0x0100          // may be also used for __int64
+#define SPF_NEAR        0x0200
+#define SPF_FAR         0x0400
+#define SPF_CVT         0x0800          // __cvt function
 
 #ifdef __QNX__
 #define SPF_ZERO_PAD    0x8000

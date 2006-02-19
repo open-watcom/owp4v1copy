@@ -36,7 +36,7 @@ specification: one of "hh", "h", "l", "ll", "j", "z", "t", "L", "I64", "w"
 .do end
 .el .do begin
 .ct ,
-"N" or "F"; and
+"N" or "W"; and
 .do end
 .bull
 a character that specifies the type of conversion to be performed: one of
@@ -260,29 +260,20 @@ converted length to an object of type
 .id ptrdiff_t.
 .bull
 .ix '__int64'
-"L" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion to
-process an
-.id __int64
-or
-.id unsigned __int64
-argument (e.g., %Ld).
-.bull
-.ix '__int64'
 "I64" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion
 to process an
 .id __int64
 or
 .id unsigned __int64
 argument (e.g., %I64d).
-The "L" specifier provides the same functionality.
 .bull
 .ix 'long double'
-"L" causes an "e", "E", "f", "g", "G" (double) conversion to process a
+"L" causes an "e", "E", "f", "F", "g", "G" (double) conversion to process a
 .id long double
 argument.
 .if &farfnc ne 0 .do begin
 .bull
-"F" causes the pointer associated with "n", "p", "s" conversions to
+"W" causes the pointer associated with "n", "p", "s" conversions to
 be treated as a far pointer.
 .bull
 "N" causes the pointer associated with "n", "p", "s" conversions to
@@ -455,6 +446,9 @@ and "nan" or "-nan" for NaN's. If the conversion specifier is an uppercase
 character (ie. "E", "F", or "G"), the output will be uppercase as well
 ("INF", "NAN"), otherwise the output will be lowercase as noted above.
 .np
+The pointer size specification ("N" or "W") is only effective on platforms
+that use a segmented memory model, although it is always recognized.
+.np
 For example, a specifier of the form
 .id "%8.*f"
 will define a field to be at least 8 characters wide, and will get the
@@ -464,6 +458,6 @@ next argument for the precision to be used in the conversion.
 .class ANSI (except for b and I64 specifiers)
 .do end
 .el .do begin
-.class ANSI (except for F, N modifiers and b, I64 specifiers)
+.class ANSI (except for N, W pointer size modifiers and b, I64 specifiers)
 .do end
 .system

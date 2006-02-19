@@ -56,13 +56,13 @@ To scan a date in the form "Saturday April 18 1987":
 .blkcode begin
 #include <stdio.h>
 
-void main()
-  {
+void main( void )
+{
     int day, year;
     char weekday[10], month[10];
 .exmp break
     scanf( "%s %s %d %d", weekday, month, &day, &year );
-  }
+}
 .blkcode end
 .exmp end
 .im scanfs

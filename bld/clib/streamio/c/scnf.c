@@ -102,15 +102,16 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
 {
     int     c, width;
 
-    specs->assign    = TRUE;
-    specs->far_ptr   = 0;
-    specs->near_ptr  = 0;
-    specs->char_var  = 0;
-    specs->short_var = 0;
-    specs->long_var  = 0;
-    specs->long_double_var = 0;
-    specs->p_format  = 0;                   /* 21-nov-89 */
-    specs->width     = -1;
+    specs->assign           = TRUE;
+    specs->far_ptr          = 0;
+    specs->near_ptr         = 0;
+    specs->char_var         = 0;
+    specs->short_var        = 0;
+    specs->long_var         = 0;
+    specs->long_long_var    = 0;
+    specs->long_double_var  = 0;
+    specs->p_format         = 0;                    /* 21-nov-89 */
+    specs->width            = -1;
     if( *opt_str == '*' ) {
         specs->assign = FALSE;
         ++opt_str;
@@ -125,15 +126,20 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
         } while( __F_NAME(isdigit,iswdigit)( c ) );
         specs->width = width;
     }
-#if defined( __FAR_SUPPORT__ )
-    if( *opt_str == 'N' ) {
+    switch( *opt_str ) {
+    case 'N':
         specs->near_ptr = 1;
         ++opt_str;
-    } else if( *opt_str == 'F' ) {
+        break;
+#if defined( __FAR_SUPPORT__ )
+    case 'F':   /* conflicts with ISO-defined 'F' conversion */
+        /* fall through */
+#endif
+    case 'W':
         specs->far_ptr = 1;
         ++opt_str;
+        break;
     }
-#endif
     switch( *opt_str ) {
     case 'h':
         if( opt_str[1] == 'h' ) {
@@ -147,7 +153,7 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
     case 'l':
 #if defined( __LONG_LONG_SUPPORT__ )
         if( opt_str[1] == 'l' ) {
-            specs->long_double_var = 1;
+            specs->long_long_var = 1;
             opt_str += 2;
             break;
         }
@@ -165,12 +171,13 @@ static const CHAR_TYPE *get_opt( const CHAR_TYPE *opt_str, PTR_SCNF_SPECS specs 
 #endif
     case 'L':
         specs->long_double_var = 1;
+        specs->long_long_var = 1;
         ++opt_str;
         break;
 #if defined( __LONG_LONG_SUPPORT__ )
     case 'I':
         if( opt_str[1] == '6' && opt_str[2] == '4' ) {
-            specs->long_double_var = 1;
+            specs->long_long_var = 1;
             opt_str += 3;
         }
         break;
@@ -419,7 +426,7 @@ static void report_scan( PTR_SCNF_SPECS specs, my_va_list *arg, int match )
         } else if( specs->long_var ) {
             *((FAR_LONG)iptr) = match;
 #if defined( __LONG_LONG_SUPPORT__ )
-        } else if( specs->long_double_var ) {
+        } else if( specs->long_long_var ) {
             *((FAR_INT64)iptr) = match;
 #endif
         } else {
@@ -760,7 +767,7 @@ static int scan_int( PTR_SCNF_SPECS specs, my_va_list *arg, int base, int sign_f
         }
     }
 #if defined( __LONG_LONG_SUPPORT__ )
-    if( specs->long_double_var ) {
+    if( specs->long_long_var ) {
         for( ;; ) {
             digit = radix_value( c );
             if( digit >= base )
@@ -811,7 +818,7 @@ ugdone:
     uncget( c, specs );
 done:
 #if defined( __LONG_LONG_SUPPORT__ )
-    if( specs->long_double_var ) {
+    if( specs->long_long_var ) {
         if( sign == '-' ) {
             long_value =- long_value;
         }

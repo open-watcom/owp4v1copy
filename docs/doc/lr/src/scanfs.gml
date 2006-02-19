@@ -28,7 +28,7 @@ to be scanned for the conversion;
 .bull
 an optional
 .us pointer-type
-specification: one of "N" or "F";
+specification: one of "N" or "W";
 .do end
 .bull
 an optional
@@ -91,11 +91,14 @@ and order to the conversion specifiers in the format string
 A pointer-type specification is used to indicate the type of pointer
 used to locate the next argument to be scanned:
 .begnote $setptnt 5
-.note F
+.note W
 pointer is a far pointer
 .note N
 pointer is a near pointer
 .endnote
+.np
+The pointer-type specification is only effective on platforms that use
+a segmented memory model, although it is always recognized.
 .do end
 .np
 The pointer type defaults to that used for data in the memory model
@@ -243,21 +246,12 @@ number of characters that have been read to an object of type
 .id ptrdiff_t.
 .bull
 .ix '__int64'
-"L" causes a "d", "i", "o", "u" or "x" (integer) conversion to
-assign the converted value to an object of type
-.id __int64
-or
-.id unsigned __int64
-(e.g., %Ld).
-.bull
-.ix '__int64'
 "I64" causes a "d", "i", "o", "u" or "x" (integer) conversion to
 assign the converted value to an object of type
 .id __int64
 or
 .id unsigned __int64
 (e.g., %I64d).
-The "L" specifier provides the same functionality.
 .bull
 .ix 'long double'
 "L" causes an "e", "f" or "g" (floating-point) conversion to assign
@@ -402,6 +396,9 @@ character that matches a single "%" character in the input data.
 A conversion type specifier other than those listed above causes
 scanning to terminate and the function to return.
 .np
+Conversion type specifiers "E", "F", "G", "X" have meaning identical to
+their lowercase equivalents.
+.np
 The line
 .blkcode begin
 scanf( "%s%*f%3hx%d", name, &hexnum, &decnum )
@@ -435,7 +432,7 @@ The program
 .blkcode begin
 #include <stdio.h>
 
-void main()
+void main( void )
 {
     char string1[80], string2[80];
 
@@ -479,6 +476,6 @@ The I64 modifier is an extension to ANSI.
 .do end
 .el .do begin
 .class ANSI
-The F, N and I64 modifiers are extensions to ANSI.
+The N, W pointer size modifiers and the I64 modifier are extensions to ANSI.
 .do end
 .system
