@@ -33,6 +33,7 @@
 #include "cgswitch.h"
 #include "langenv.h"
 
+extern  struct  parm_list   *NewParm( TYPEPTR, struct parm_list * );
 
 extern  TREEPTR     CurFuncNode;
 
@@ -402,7 +403,6 @@ local void AddParms( void )
     int                 parm_count;
     int                 hash;
     struct parm_list    *parmlist;
-    struct parm_list    *NewParm();
     SYM_ENTRY           new_sym;
 
     CurFunc->u.func.locals = 0;
