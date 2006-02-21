@@ -36,5 +36,5 @@ HWND PASCAL _Cover_CreateDialogIndirectParam( HANDLE inst, LPSTR temp,
                               HWND wnd, DLGPROC p, LONG param )
 {
     return( CreateDialogIndirectParam( inst, temp, wnd,
-                SetProc( p, GETPROC_CALLBACK ), param ) );
+                SetProc( (FARPROC)p, GETPROC_CALLBACK ), param ) );
 }

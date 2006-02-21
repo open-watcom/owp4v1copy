@@ -34,5 +34,5 @@
 
 BOOL PASCAL _Cover_EnumWindows( WNDENUMPROC p, LPARAM param )
 {
-    return( EnumWindows( SetProc( p, GETPROC_ENUMWINDOWS ), param ) );
+    return( EnumWindows( SetProc( (FARPROC)p, GETPROC_ENUMWINDOWS ), param ) );
 }

@@ -35,6 +35,6 @@
 HHOOK PASCAL _Cover_SetWindowsHookEx(short idHook, HOOKPROC lpfn,
                                         HINSTANCE hInstance, HTASK hTask)
 {
-    return( SetWindowsHookEx( idHook, SetProc( lpfn, GETPROC_SETWINDOWSHOOK ),
+    return( SetWindowsHookEx( idHook, SetProc( (FARPROC)lpfn, GETPROC_SETWINDOWSHOOK ),
                                 hInstance, hTask ) );
 }

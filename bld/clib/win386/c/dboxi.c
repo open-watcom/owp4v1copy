@@ -36,5 +36,5 @@ short PASCAL _Cover_DialogBoxIndirect( HANDLE inst, HANDLE htmp, HWND wnd,
                                          DLGPROC p )
 {
     return( DialogBoxIndirect( inst, htmp, wnd,
-                    SetProc( p, GETPROC_CALLBACK ) ) );
+                    SetProc( (FARPROC)p, GETPROC_CALLBACK ) ) );
 }

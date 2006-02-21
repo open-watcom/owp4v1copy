@@ -35,5 +35,5 @@
 short PASCAL _Cover_DialogBox( HANDLE inst, LPSTR temp, HWND wnd,
                                  DLGPROC p )
 {
-    return( DialogBox( inst, temp, wnd, SetProc( p, GETPROC_CALLBACK ) ) );
+    return( DialogBox( inst, temp, wnd, SetProc( (FARPROC)p, GETPROC_CALLBACK ) ) );
 }
