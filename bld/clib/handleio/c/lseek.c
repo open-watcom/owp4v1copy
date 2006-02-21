@@ -38,8 +38,7 @@
 #include "iomode.h"
 #include "rtcheck.h"
 #include "seterrno.h"
-
-extern _WCRTLINK long __lseek( int handle, long offset, int origin );
+#include "lseek.h"
 
 _WCRTLINK long lseek( int handle, long offset, int origin )
 {

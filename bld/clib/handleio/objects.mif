@@ -94,3 +94,8 @@
 !inject write.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32 osi
 
 !include ../../../../objlist.mif
+
+qread_opts=-I"$(clib_dir)/streamio/h"
+qreadunx_opts=-I"$(clib_dir)/streamio/h"
+qwrit_opts=-I"$(clib_dir)/streamio/h"
+qwritunx_opts=-I"$(clib_dir)/streamio/h"

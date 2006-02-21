@@ -36,12 +36,13 @@
 #include <stdlib.h>
 #include <wos2.h>
 #include "seterrno.h"
+#include <unistd.h>
 #ifdef __WIDECHAR__
     #include <mbstring.h>
 #endif
 
 
-_WCRTLINK int __F_NAME(unlink,_wunlink)( CHAR_TYPE *filename )
+_WCRTLINK int __F_NAME(unlink,_wunlink)( const CHAR_TYPE *filename )
     {
         APIRET  rc;
 #ifdef __WIDECHAR__
@@ -53,13 +54,13 @@ _WCRTLINK int __F_NAME(unlink,_wunlink)( CHAR_TYPE *filename )
             #if defined(__386__) || defined(__PPC__)
                 rc = DosDelete( mbFilename );
             #else
-                rc = DosDelete( mbFilename, 0 );
+                rc = DosDelete( (PSZ)mbFilename, 0 );
             #endif
         #else
             #if defined(__386__) || defined(__PPC__)
                 rc = DosDelete( filename );
             #else
-                rc = DosDelete( filename, 0 );
+                rc = DosDelete( (PSZ)filename, 0 );
             #endif
         #endif
 

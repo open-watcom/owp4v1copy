@@ -34,6 +34,7 @@
 #define INCL_DOSMEMMGR
 #include <wos2.h>
 #include <stdlib.h>
+#include <dos.h>
 #include "rtdata.h"
 #include "seterrno.h"
 

@@ -31,6 +31,7 @@
 
 
 #include "variety.h"
+#include <dos.h>
 #include "tinyio.h"
 
 extern  void    _keep(unsigned,unsigned);

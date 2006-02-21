@@ -32,6 +32,7 @@
 
 #include "variety.h"
 #include <math.h>
+#include <float.h>
 #include "rtdata.h"
 
 extern  void    __fstcw();

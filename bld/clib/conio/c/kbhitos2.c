@@ -34,6 +34,7 @@
 #define INCL_16
 #define INCL_SUB
 #include <wos2.h>
+#include <conio.h>
 #include "rtdata.h"
 #include "defwin.h"
 

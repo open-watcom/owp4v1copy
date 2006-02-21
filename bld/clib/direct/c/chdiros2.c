@@ -34,6 +34,7 @@
 #include "widechar.h"
 #include <wos2.h>
 #include <stdlib.h>
+#include <direct.h>
 #include "seterrno.h"
 #ifdef __WIDECHAR__
     #include <mbstring.h>

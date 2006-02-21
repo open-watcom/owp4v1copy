@@ -352,13 +352,6 @@ static signed char xlat[] = {
 #define E_MAXERR        19      /* unknown error, DOS 2.0 */
 #endif
 
-int _dosret0( int ax, int carry )
-{
-    if( carry == 0 ) return( 0 );
-    return( _dosretax( ax, carry ) );
-}
-
-
 int _dosretax( int ax, int carry )
 {
     if( carry != 0 ) {
@@ -366,6 +359,13 @@ int _dosretax( int ax, int carry )
     }
     return( ax );
 }
+
+int _dosret0( int ax, int carry )
+{
+    if( carry == 0 ) return( 0 );
+    return( _dosretax( ax, carry ) );
+}
+
 
 _WCRTLINK int __set_errno_dos( unsigned int err )
 {

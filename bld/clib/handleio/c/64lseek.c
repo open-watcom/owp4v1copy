@@ -39,11 +39,7 @@
 #define __INT64__
 #include "int64.h"
 #include <limits.h>
-#ifdef __UNIX__
-    #include <unistd.h>
-#else
-    #include <io.h>
-#endif
+#include <unistd.h>
 
 
 _WCRTLINK __int64 _lseeki64( int hid, __int64 _offset, int origin )

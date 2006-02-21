@@ -32,12 +32,13 @@
 #include "variety.h"
 #include "widechar.h"
 #include "enterdb.h"
-#include <assert.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "rterrmsg.h"
+#undef NDEBUG
+#include <assert.h>
 
 #define STR_SIZE        256
 

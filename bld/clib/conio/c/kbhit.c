@@ -31,7 +31,8 @@
 
 
 #include "variety.h"
-#include "dos.h"
+#include <dos.h>
+#include <conio.h>
 #include "rtdata.h"
 #include "defwin.h"
 

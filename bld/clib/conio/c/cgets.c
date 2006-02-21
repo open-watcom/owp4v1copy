@@ -35,10 +35,7 @@
 #include <conio.h>
 #include <dos.h>
 #include "defwin.h"
-
-#ifdef DEFAULT_WINDOWING
-    extern int __qread( int, char *, unsigned );
-#endif
+#include "qread.h"
 
 extern  void    _dos_kb_input();
 extern  void    _bd_dos_kb_input();

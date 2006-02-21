@@ -37,7 +37,8 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
-#include "dos.h"
+#include <dos.h>
+#include <direct.h>
 #include <windows.h>
 #include "libwin32.h"
 #include "rtdata.h"

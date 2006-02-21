@@ -37,6 +37,7 @@
 #include "iomode.h"
 #include "rtcheck.h"
 #include "seterrno.h"
+#include <unistd.h>
 
 /*
     DWORD SetFilePointer(

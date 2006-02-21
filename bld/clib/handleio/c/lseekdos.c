@@ -36,6 +36,7 @@
 #include "tinyio.h"
 #include "rtcheck.h"
 #include "seterrno.h"
+#include "lseek.h"
 
 _WCRTLINK long __lseek( int handle, long offset, int origin )
 {

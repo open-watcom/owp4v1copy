@@ -36,7 +36,7 @@
 #include "nonibm.h"
 
 
-_WCRTLINK unsigned short _bios_disk( unsigned ibmCmd, struct _ibm_diskinfo_t *ibmBuf )
+_WCRTLINK unsigned short _bios_disk( unsigned ibmCmd, struct diskinfo_t *ibmBuf )
 {
 //    unsigned                  necCmd;
 //    struct _nec98_diskinfo_t  necBuf;

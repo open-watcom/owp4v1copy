@@ -38,6 +38,7 @@
 #include "fileacc.h"
 #include "defwin.h"
 #include <unistd.h>
+#include <conio.h>
 
 _WCRTLINK int kbhit( void )
 {

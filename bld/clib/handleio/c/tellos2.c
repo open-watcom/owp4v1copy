@@ -35,6 +35,7 @@
 #include <wos2.h>
 #include "rtcheck.h"
 #include "seterrno.h"
+#include <unistd.h>
 
 
 _WCRTLINK long int tell( int handle )

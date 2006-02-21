@@ -36,15 +36,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include "dos.h"
-#include "dosfunc.h"
+#include <dos.h>
+#include <dosfunc.h>
 #include "tinyio.h"
 #include "liballoc.h"
 #include "rtdata.h"
 #include "seterrno.h"
 #include "variety.h"
+#include <direct.h>
 #ifdef __WIDECHAR__
-    #include <direct.h>
     #include <mbstring.h>
 #endif
 

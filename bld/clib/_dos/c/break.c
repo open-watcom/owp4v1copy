@@ -31,6 +31,7 @@
 
 
 #include "variety.h"
+#include <stdlib.h>
 #include "tinyio.h"
 
 _WCRTLINK void break_on()

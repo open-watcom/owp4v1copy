@@ -33,3 +33,6 @@
 
 !include ../../../../objlist.mif
 
+cgets_opts=-I"$(clib_dir)/streamio/h"
+cgetsos2_opts=-I"$(clib_dir)/streamio/h"
+cgetswnt_opts=-I"$(clib_dir)/streamio/h"

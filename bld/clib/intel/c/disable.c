@@ -31,12 +31,13 @@
 
 
 #include "variety.h"
+#include <i86.h>
 
-extern  void    __cli();
+extern  void    __cli( void );
 #pragma aux     __cli = 0xfa;
 
 
-_WCRTLINK void _disable()       /* disable interrupts */
-    {
-        __cli();
-    }
+_WCRTLINK void _disable( void )       /* disable interrupts */
+{
+    __cli();
+}

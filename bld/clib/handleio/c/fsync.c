@@ -43,6 +43,7 @@
         #include <owfileng.h>
     #endif
 #endif
+#include <unistd.h>
 #include "iomode.h"
 #include "rtcheck.h"
 #include "seterrno.h"

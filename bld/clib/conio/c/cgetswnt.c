@@ -36,12 +36,12 @@
 #include "ntex.h"
 #include "fileacc.h"
 #include "defwin.h"
+#include "qread.h"
 
 #define BACKSPACE       8
 #define SPACE           ' '
 #define CRLF            13
 
-extern int __qread( int, char *, unsigned );
 
 _WCRTLINK char *cgets( char *buff )
 {

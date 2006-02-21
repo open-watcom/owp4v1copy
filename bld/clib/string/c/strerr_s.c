@@ -33,6 +33,7 @@
 #include "saferlib.h"
 #include "widechar.h"
 #include <string.h>
+#include <wchar.h>
 #include <errno.h>
 #include "errstr.h"
 

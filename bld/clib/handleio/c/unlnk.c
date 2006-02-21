@@ -36,12 +36,13 @@
 #include <stdlib.h>
 #include "tinyio.h"
 #include "seterrno.h"
+#include <unistd.h>
 #ifdef __WIDECHAR__
     #include <mbstring.h>
 #endif
 
 
-_WCRTLINK int __F_NAME(unlink,_wunlink)( CHAR_TYPE *filename ) {
+_WCRTLINK int __F_NAME(unlink,_wunlink)( const CHAR_TYPE *filename ) {
     tiny_ret_t  rc;
 #ifdef __WIDECHAR__
     char        mbFilename[MB_CUR_MAX*_MAX_PATH];   /* single-byte char */

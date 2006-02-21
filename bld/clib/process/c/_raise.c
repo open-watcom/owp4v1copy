@@ -30,8 +30,7 @@
 
 
 #include "variety.h"
-
-extern int raise(int sig);
+#include <signal.h>
 
 #if defined(_M_IX86)
     #if defined(__386__)

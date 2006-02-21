@@ -38,6 +38,7 @@
 #include <share.h>
 #include <direct.h>
 #include <windows.h>
+#include <dos.h>
 #include "iomode.h"
 #include "fileacc.h"
 #include "ntex.h"

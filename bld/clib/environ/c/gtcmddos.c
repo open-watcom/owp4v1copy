@@ -35,6 +35,7 @@
 #include <ctype.h>
 #include <dos.h>
 #include <limits.h>
+#include <process.h>
 #include "rtdata.h"
 
 _WCRTLINK int _bgetcmd( char *buffer, int len )

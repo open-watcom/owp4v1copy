@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <termios.h>
+#include <conio.h>
 
 extern  unsigned    _cbyte;
 

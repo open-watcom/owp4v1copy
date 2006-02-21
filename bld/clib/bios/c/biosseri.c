@@ -32,6 +32,7 @@
 
 #include "variety.h"
 #include <stddef.h>
+#include <bios.h>
 #include "necibm.h"
 #include "nonibm.h"
 

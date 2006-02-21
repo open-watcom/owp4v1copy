@@ -38,11 +38,7 @@
 #include "variety.h"
 #define __INT64__
 #include "int64.h"
-#ifdef __UNIX__
-    #include <unistd.h>
-#else
-    #include <io.h>
-#endif
+#include <unistd.h>
 
 
 _WCRTLINK __int64 _telli64( int hid )

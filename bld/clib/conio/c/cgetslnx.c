@@ -31,6 +31,7 @@
 
 #include "variety.h"
 #include <unistd.h>
+#include <conio.h>
 
 _WCRTLINK char *(cgets)( char *buf )
 {

@@ -34,8 +34,9 @@
 #define INCL_SUB
 #include <wos2.h>
 #include "defwin.h"
+#include <conio.h>
+#include "qread.h"
 
-extern int __qread( int, char *, unsigned );
 
 _WCRTLINK char *cgets( char *s )
     {

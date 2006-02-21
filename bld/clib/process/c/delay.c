@@ -44,12 +44,9 @@
  was scrapped.
 */ 
 
-#include <stdio.h>
 #include "variety.h"
-
-#if !defined(_WCRTLINK)
-#define _WCRTLINK
-#endif
+#include <stdio.h>
+#include <i86.h>
 
 /*
  * Using interupt 21 service 2C, we get the time from DOS

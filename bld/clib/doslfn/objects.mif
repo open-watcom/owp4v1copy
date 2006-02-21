@@ -17,4 +17,5 @@
 
 lfindfrs_opts = -I"$(clib_dir)/file/h"
 lfindnxt_opts = -I"$(clib_dir)/file/h"
-lfnstat_opts  = -I"$(clib_dir)/file/h"
+lfnstat_opts  = -I"$(clib_dir)/file/h" -I"$(clib_dir)/handleio/h"
+lfndir_opts   = -I"$(clib_dir)/direct/h"
