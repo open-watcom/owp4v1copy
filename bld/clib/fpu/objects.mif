@@ -54,6 +54,6 @@ old87_postopts=$(fpi87_postopts)
 fpe87_postopts=$(fpi87_postopts)
 fpe387_postopts=$(fpi87_postopts)
 fpeinth_postopts=$(fpi87_postopts)
-fenv_postopts=$(fpi87_postopts)
+fenv_postopts=$(fpi87_postopts) -za99
 cntrl87_postopts=$(fpi87_postopts)
 dosinite_postopts=$(fpi87_postopts)
