@@ -34,6 +34,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <float.h>
 
 #ifdef __SW_BW
     #include <wdefwin.h>
@@ -335,6 +336,48 @@ int Test_print_float( void )
 
     VERIFY( sprintf( buf, "%2.4g", 4.5 ) == 3 );
     VERIFY( !strcmp( buf, "4.5" ) );
+
+    /* Test NaN/inf formatting */
+    VERIFY( sprintf( buf, "%e", _INF ) == 3 );
+    VERIFY( !strcmp( buf, "inf" ) );
+
+    VERIFY( sprintf( buf, "%f", _INF ) == 3 );
+    VERIFY( !strcmp( buf, "inf" ) );
+
+    VERIFY( sprintf( buf, "%g", _INF ) == 3 );
+    VERIFY( !strcmp( buf, "inf" ) );
+
+    VERIFY( sprintf( buf, "%E", _INF ) == 3 );
+    VERIFY( !strcmp( buf, "INF" ) );
+
+    VERIFY( sprintf( buf, "%G", _INF ) == 3 );
+    VERIFY( !strcmp( buf, "INF" ) );
+
+    VERIFY( sprintf( buf, "%e", _NAN ) == 3 );
+    VERIFY( !strcmp( buf, "nan" ) );
+
+    VERIFY( sprintf( buf, "%f", _NAN ) == 3 );
+    VERIFY( !strcmp( buf, "nan" ) );
+
+    VERIFY( sprintf( buf, "%g", _NAN ) == 3 );
+    VERIFY( !strcmp( buf, "nan" ) );
+
+    VERIFY( sprintf( buf, "%E", _NAN ) == 3 );
+    VERIFY( !strcmp( buf, "NAN" ) );
+
+    VERIFY( sprintf( buf, "%G", _NAN ) == 3 );
+    VERIFY( !strcmp( buf, "NAN" ) );
+
+    /* Currently %F is a far pointer modified in some libs, to
+     * be changed later. Most libs are ISO C compliant in this regard.
+     */
+#if !defined( __MSDOS__ ) && !defined( _M_IX86 )
+    VERIFY( sprintf( buf, "%F", _INF ) == 3 );
+    VERIFY( !strcmp( buf, "INF" ) );
+
+    VERIFY( sprintf( buf, "%F", _NAN ) == 3 );
+    VERIFY( !strcmp( buf, "NAN" ) );
+#endif
 
     return( 0 );
 }
