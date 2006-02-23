@@ -11928,3 +11928,21 @@ struct A {
 :MSGJTXT.
 The register name is invalid/unknown.
 
+:MSGSYM. WARN_MISSING_KEYWORD_IN_EXPLICT_INSTANTIATION
+:MSGTXT. Archaic syntax: class/struct missing in explicit template instatiation
+:MSGJTXT.
+:WARNING. 1
+Archaic syntax has been used.  The standard requires a 
+.kw class
+or
+.kw struct
+keyword to be used.
+:errbad.
+template< class T >
+class MyTemplate { };
+
+template MyTemplate< int >;
+:eerrbad.
+:errgood.
+template class MyTemplate< int >;
+:eerrgood.
