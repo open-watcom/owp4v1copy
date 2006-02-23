@@ -31,6 +31,7 @@ extra_c_flags += -DWCLPPC
 name = wclmps.exe
 extra_c_flags += -DWCLMPS
 !else
+extra_deps = owcchelp.gh
 objs = owcc.obj clcommon.obj getopt.obj quit.obj
 !ifeq host_os linux
 name = owcc.elf
@@ -38,14 +39,17 @@ name = owcc.elf
 name = owcc.exe
 !endif
 !endif
-extra_c_flags_swchar = -i"../../h;../../dos386.i86;$(comp_cfg_dir)/h"
-extra_c_flags_owcc = -i"$(posix_dir)/h"
-extra_c_flags_getopt = -i"$(posix_dir)/h"
-extra_c_flags_quit = -i"$(posix_dir)/h"
+extra_c_flags_swchar = -I"../../h;../../dos386.i86" -I"$(comp_cfg_dir)/h"
+extra_c_flags_owcc   = -I"$(posix_dir)/h"
+extra_c_flags_getopt = -I"$(posix_dir)/h"
+extra_c_flags_quit   = -I"$(posix_dir)/h"
 
 extra_l_flags = op map
 
 .c: ../c;../../c;$(posix_dir)/misc
 
-$(name) : $(objs)
-        $(linker) $(lflags) name $^@ file {$<}
+$(name) : $(extra_deps) $(objs)
+        $(linker) $(lflags) name $^@ file {$(objs)}
+
+owcchelp.gh: ../owcchelp.sp
+        wsplice "-f\"%s\"," $< $@

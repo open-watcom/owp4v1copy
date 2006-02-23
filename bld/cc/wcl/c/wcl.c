@@ -90,40 +90,31 @@
 #else
 #define PATH_SEP_STR "\\"
 #endif
-#define LINK        "wlink"             /* Open Watcom linker              */
-#define TEMPFILE    "@__WCL__.LNK"      /* temporary linker directive file */
+#define LINK        "wlink"         /* Open Watcom linker                 */
+#define TEMPFILE    "@__wcl__.lnk"  /* temporary linker directive file    */
+
 static  char    *Word;              /* one parameter                      */
 static  char    *SystemName;        /* system to link for                 */
 static  char    Files[MAX_CMD];     /* list of filenames from Cmd         */
-        char    Libs[MAX_CMD];      /* list of libraries from Cmd         */
 static  char    Resources[MAX_CMD]; /* list of resources from Cmd         */
 static  char    CC_Opts[MAX_CMD];   /* list of compiler options from Cmd  */
 static  char    CC_Path[_MAX_PATH]; /* path name for wcc.exe              */
 static  char    PathBuffer[_MAX_PATH];/* buffer for path name of tool     */
-        FILE    *Fp;                /* file pointer for Temp_Link         */
 static  char    *Link_Name;         /* Temp_Link copy if /fd specified    */
 static  char    *Temp_Link;         /* temporary linker directive file    */
                                     /* Temp_Link concurrent usages clash  */
-        struct  list *Obj_List;     /* linked list of object filenames    */
 static  struct directives *Directive_List; /* linked list of directives   */
-        char    Exe_Name[_MAX_PATH];/* name of executable                 */
-        char    *Map_Name;          /* name of map file                   */
-        char    *Obj_Name;          /* object file name pattern           */
 static  char    *StackSize = NULL;  /* size of stack                      */
 static  char    DebugFlag = 0;      /* debug info wanted                  */
 static  char    Conventions;        /* 'r' for -3r or 's' for -3s         */
 static  char    Switch_Chars[4];    /* valid switch characters            */
 static  int     via_environment = FALSE;
 
-struct  flags   Flags;
-
 /*
  *  Static function prototypes
  */
 static int     Parse( char *Cmd );
 
-extern void    Fputnl( char *, FILE * );
-extern void    *MemAlloc( int );
 
 #if defined( __UNIX__ )
     #define _dos_switch_char() '-'
@@ -131,11 +122,6 @@ extern void    *MemAlloc( int );
     #define _dos_switch_char() '/'
 #else
     extern  int     _dos_switch_char();
-#endif
-#ifdef __UNIX__
-    #define EXE_EXT ""
-#else
-    #define EXE_EXT ".exe"
 #endif
 
 
@@ -159,7 +145,6 @@ static void initialize_Flags( void )
 
     Flags = zero_flags;
     Flags.math_8087 = 1;
-
 }
 
 
@@ -296,8 +281,8 @@ static  void  MakeName( char *name, char *ext )
 }
 
 
-static  void  Usage( void )
-/*************************/
+static void  Usage( void )
+/************************/
 {
     char const  **list;
     char const  *p;
@@ -918,7 +903,7 @@ static  int  CompLink( void )
         while( file != NULL ) {         /* while more filenames: */
             BuildQuotedFName( Word, path, file, "\"" );
 
-            if( !FileExtension( Word, OBJ_EXT ) &&  // if not .obj or .o, compile
+            if( !FileExtension( Word, OBJ_EXT ) &&  /* if not .obj or .o, compile */
                 !FileExtension( Word, OBJ_EXT_SECONDARY ) ) {
                 void    *tmp_env = NULL;
 

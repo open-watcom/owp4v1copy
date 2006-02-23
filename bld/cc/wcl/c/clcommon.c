@@ -24,33 +24,44 @@
 *
 *  ========================================================================
 *
-* Description:  Common stuff for wcl and owcc
+* Description:  Common stuff for wcl and owcc.
 *
 ****************************************************************************/
+
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <assert.h>
 #ifndef __UNIX__
 #include <direct.h>
 #else
 #include <dirent.h>
 #endif
+
 #include "clcommon.h"
 
 #ifndef __UNIX__
 #define ATTR_MASK   _A_HIDDEN + _A_SYSTEM + _A_VOLID + _A_SUBDIR
 #endif
 
+struct  flags   Flags;
+FILE    *Fp;                /* file pointer for Temp_Link         */
+char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
+char    *Map_Name;          /* name of map file                   */
+struct  list *Obj_List;     /* linked list of object filenames    */
+char    *Obj_Name;          /* object file name pattern           */
+char    Exe_Name[_MAX_PATH];/* name of executable                 */
+
 extern char *DebugOptions[] = {
-        "",
-        "debug dwarf\n",
-        "debug dwarf\n",
-        "debug watcom all\n",
-        "debug codeview\n",
-        "debug dwarf\n",
+    "",
+    "debug dwarf\n",
+    "debug dwarf\n",
+    "debug watcom all\n",
+    "debug codeview\n",
+    "debug dwarf\n",
 };
 
 void PrintMsg( const char *fmt, ... )
@@ -67,14 +78,14 @@ void PrintMsg( const char *fmt, ... )
     value = value;
     va_start( args, fmt );
     len = 0;
-    for(;;) {
+    for( ;; ) {
         c = *fmt++;
         if( c == '\0' ) break;
         if( c == '%' ) {
             c = *fmt++;
             if( c == 's' ) {
                 p = va_arg( args, char * );
-                for(;;) {
+                for( ;; ) {
                     c = *p++;
                     if( c == '\0' ) break;
                     putchar(c);
@@ -97,14 +108,17 @@ void  Fputnl( char *text, FILE *fptr )
     fputs( "\n", fptr );
 }
 
-void BuildLinkFile()
-/******************/
+void BuildLinkFile( void )
+/************************/
 {
-    char quoted[_MAX_PATH ];
+    char    quoted[_MAX_PATH ];
 
     fputs( "name ", Fp );
     BuildQuotedFName( quoted, "", Exe_Name, "'" );
     Fputnl( quoted, Fp );
+    if( Flags.keep_exename ) {
+        Fputnl( "option noextension", Fp );
+    }
     if( Flags.map_wanted ) {
         if( Map_Name == NULL ) {
             Fputnl( "option map", Fp );
@@ -118,7 +132,9 @@ void BuildLinkFile()
         fputs( "library ", Fp );
         Fputnl( Libs, Fp );
     }
-    if( Flags.two_case )  Fputnl( "option caseexact", Fp );
+    if( Flags.two_case ) {
+        Fputnl( "option caseexact", Fp );
+    }
     fclose( Fp );       /* close Temp_Link */
 }
 
@@ -140,20 +156,20 @@ void  AddName( char *name, FILE *link_fp )
 /****************************************/
 {
     struct list *curr_name, *last_name, *new_name;
-    char path  [_MAX_PATH ];
-    char quoted[_MAX_PATH ];
-    char buff1[_MAX_PATH2];
-    char buff2[_MAX_PATH2];
-    char *drive;
-    char *dir;
-    char *fname;
-    char *ext1;
-    char *ext2;
-    char *extension;
+    char        path  [_MAX_PATH ];
+    char        quoted[_MAX_PATH ];
+    char        buff1 [_MAX_PATH2];
+    char        buff2 [_MAX_PATH2];
+    char        *drive;
+    char        *dir;
+    char        *fname;
+    char        *ext1;
+    char        *ext2;
+    char        *extension;
 
     curr_name = Obj_List;
     while( curr_name != NULL ) {
-        if( strcmp( name, curr_name->filename ) == 0 )  return;
+        if( strcmp( name, curr_name->filename ) == 0 ) return;
         last_name = curr_name;
         curr_name = curr_name->next;
     }
@@ -233,15 +249,16 @@ char  *GetName( char *path )
     closedir( dirp );
     return( NULL );
 #else
-    char *name;
-    if ( path == NULL )
-            return NULL;
+    char    *name;
+
+    if( path == NULL )
+            return( NULL );
     name = strrchr(path, '/');
-    if ( name == NULL )
+    if( name == NULL )
         name = path;
     else
         name++;
-    return ( strdup(name) );
+    return( strdup(name) );
 #endif
 }
 
@@ -260,15 +277,17 @@ int BuildQuotedFName( char *buffer, const char *path, const char *filename, cons
 {
     int has_space = 0;
 
-    if( strchr( path, ' ' ) != NULL ) has_space = 1;
-    if( strchr( filename, ' ' ) != NULL ) has_space = 1;
+    if( strchr( path, ' ' ) != NULL )
+        has_space = 1;
+    if( strchr( filename, ' ' ) != NULL )
+        has_space = 1;
 
     strcpy( buffer, has_space ? quote_char : "" );
     strcat( buffer, path);
     strcat( buffer, filename);
     strcat( buffer, has_space ? quote_char : "" );
 
-    return has_space;
+    return( has_space );
 }
 
 int UnquoteFName( char *dst, int maxlen, const char *src )
@@ -279,10 +298,10 @@ int UnquoteFName( char *dst, int maxlen, const char *src )
  * removed from orginal filename, 0 otherwise.
  */
 {
-    char string_open = 0;
-    int pos = 0;
-    int t;
-    int un_quoted = 0;
+    char    string_open = 0;
+    int     pos = 0;
+    int     t;
+    int     un_quoted = 0;
 
     assert( maxlen );
 
@@ -292,12 +311,12 @@ int UnquoteFName( char *dst, int maxlen, const char *src )
     while( pos < ( maxlen - 1 ) ) {
         t = *src++;
 
-        if ( t == '\0' ) break;
+        if( t == '\0' ) break;
 
-        if ( t == '\\' ) {
+        if( t == '\\' ) {
             t = *src++;
 
-            if ( t == '\"' ) {
+            if( t == '\"' ) {
                 *dst++ = '\"';
                 pos++;
                 un_quoted = 1;
@@ -305,21 +324,21 @@ int UnquoteFName( char *dst, int maxlen, const char *src )
                 *dst++ = '\\';
                 pos++;
 
-                if ( pos < ( maxlen - 1 ) ) {
+                if( pos < ( maxlen - 1 ) ) {
                     *dst++ = t;
                     pos++;
                 }
             }
         } else {
-            if ( t == '\"' ) {
+            if( t == '\"' ) {
                 string_open = !string_open;
                 un_quoted = 1;
             } else {
-                if ( string_open ) {
+                if( string_open ) {
                     *dst++ = t;
                     pos++;
                 } else
-                if ( isws( t ) ) {
+                if( isblank( t ) ) {
                     break;
                 } else {
                     *dst++ = t;
@@ -331,31 +350,21 @@ int UnquoteFName( char *dst, int maxlen, const char *src )
 
     *dst = '\0';
 
-    return un_quoted;
-}
-
-int isws( char ch )
-{
-    if(ch == ' ') return 1;
-    if(ch == '\t') return 1;
-
-    return 0;
+    return( un_quoted );
 }
 
 int iswsOrOpt( char ch, char opt, char *Switch_Chars )
 {
-    if(ch == ' ') return 1;
-    if(ch == '\t') return 1;
+    if( isblank( ch ) ) return( 1 );
 
     if( opt == '-'  ||  opt == Switch_Chars[1] ) {
         /* if we are processing a switch, stop at a '-' */
-        if( ch == '-' ) return 1;
+        if( ch == '-' ) return( 1 );
 #ifndef __UNIX__
-        if( ch == Switch_Chars[1] ) return 1;
+        if( ch == Switch_Chars[1] ) return( 1 );
 #endif
     }
-
-    return 0;
+    return( 0 );
 }
 
 char *FindNextWS( char *str )
@@ -364,35 +373,33 @@ char *FindNextWS( char *str )
  * be used to specify strings with white spaces.
  */
 {
-    char string_open = 0;
+    char    string_open = 0;
 
     while( *str != '\0' ) {
-        if ( *str == '\\' ) {
+        if( *str == '\\' ) {
             str++;
-            if (*str != '\0' )
-            {
-                if ( !string_open && isws ( *str ) ) {
+            if( *str != '\0' ) {
+                if( !string_open && isblank( *str ) ) {
                     break;
                 }
                 str++;
             }
-        } else
-        {
-            if ( *str == '\"' ) {
+        } else {
+            if( *str == '\"' ) {
                 string_open = !string_open;
                 str++;
             } else {
-                if ( string_open ) {
+                if( string_open ) {
                     str++;
                 } else {
-                    if ( isws( *str ) ) break;
+                    if( isblank( *str ) ) break;
                     str++;
                 }
             }
         }
     }
 
-    return str;
+    return( str );
 }
 
 char *FindNextWSOrOpt( char *str, char opt, char *Switch_Chars )
@@ -401,33 +408,30 @@ char *FindNextWSOrOpt( char *str, char opt, char *Switch_Chars )
  * be used to specify strings with white spaces.
  */
 {
-    char string_open = 0;
+    char    string_open = 0;
 
     while( *str != '\0' ) {
-        if ( *str == '\\' ) {
+        if( *str == '\\' ) {
             str++;
-            if (*str != '\0' )
-            {
-                if ( !string_open && iswsOrOpt ( *str, opt, Switch_Chars ) ) {
+            if( *str != '\0' ) {
+                if( !string_open && iswsOrOpt( *str, opt, Switch_Chars ) ) {
                     break;
                 }
                 str++;
             }
-        } else
-        {
-            if ( *str == '\"' ) {
+        } else {
+            if( *str == '\"' ) {
                 string_open = !string_open;
                 str++;
             } else {
-                if ( string_open ) {
+                if( string_open ) {
                     str++;
                 } else {
-                    if ( iswsOrOpt( *str, opt, Switch_Chars ) ) break;
+                    if( iswsOrOpt( *str, opt, Switch_Chars ) ) break;
                     str++;
                 }
             }
         }
     }
-
-    return str;
+    return( str );
 }

@@ -30,8 +30,8 @@
 
 
 /* FIXME
- *  -S mustn't link; and must run wdis on object files
- *  if linking is done, remove objects afterwards!
+ *  if linking is done, remove objects afterwards?
+ *  -S should remove .o files
  */
 
 #include <sys/types.h>
@@ -77,41 +77,26 @@ static  char    *Cmd;               /* command line parameters            */
 static  char    *Word;              /* one parameter                      */
 static  char    *SystemName;        /* system to link for                 */
 static  char    Files[MAX_CMD];     /* list of filenames from Cmd         */
-        char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
 static  char    CC_Opts[MAX_CMD];   /* list of compiler options from Cmd  */
+static  char    target_CC[20] = CC;    /* name of the wcc variant to use     */
+static  char    target_CCXX[20] = CCXX; /* name of the wpp variant to use     */
 static  char    CC_Path[_MAX_PATH]; /* path name for wcc.exe              */
 static  char    PathBuffer[_MAX_PATH];/* buffer for path name of tool     */
-        FILE    *Fp;                /* file pointer for Temp_Link         */
 static  char    *Link_Name;         /* Temp_Link copy if /fd specified    */
 static  char    *Temp_Link;         /* temporary linker directive file    */
                                     /* Temp_Link concurrent usages clash  */
-        struct  list *Obj_List;     /* linked list of object filenames    */
 static  struct directives *Directive_List; /* linked list of directives   */
-        char    Exe_Name[_MAX_PATH];/* name of executable                 */
-        char    *Map_Name;          /* name of map file                   */
-        char    *Obj_Name;          /* object file name pattern           */
 static  char    *StackSize;         /* size of stack                      */
 static  char    DebugFlag;          /* debug info wanted                  */
 static  char    Conventions;        /* 'r' for -3r or 's' for -3s         */
 static  char    *O_Name;            /* name of -o option                  */
 
-        struct flags Flags;
 
 /*
  *  Static function prototypes
  */
 
 static void MakeName( char *, char * );
-
-char    *SkipSpaces( char * );
-void    Fputnl( char *, FILE * );
-void    *MemAlloc( int );
-void    Usage( void );
-#ifdef __UNIX__
-    #define EXE_EXT ""
-#else
-    #define EXE_EXT ".exe"
-#endif
 
 #undef pick
 #define pick(code,english)      english
@@ -121,7 +106,7 @@ extern const char *WclMsgs[] = {
 };
 
 static const char *EnglishHelp[] = {
-    "",
+#include "owcchelp.gh"
     NULL
 };
 
@@ -158,11 +143,6 @@ static char *xlate_fname( char *name )
 static char *strfcat( char *target, const char *source )
 {
     return( xlate_fname( strcat( target, source ) ) );
-}
-
-static char *strfcpy( char *target, const char *source )
-{
-    return( xlate_fname( strcpy( target, source ) ) );
 }
 
 static char *strfdup( const char *source )
@@ -221,6 +201,61 @@ static  void AddDirective( char *directive )
     }
 }
 
+static  int  ConsultSpecsFile( const char *system )
+/*************************************************/
+{
+    FILE    *specs = fopen( "specs.owc", "r" );
+    char    line[MAX_CMD];
+    char    start_line[MAX_CMD] = "system begin ";
+    int     in_system = FALSE;
+    char    *p, *blank;
+
+    if( !specs ) {
+        fputs( "Could not find specs file\n", stderr );
+    }
+    strcat( start_line, system );
+
+    while( fgets( line, MAX_CMD, specs ) ) {
+        p = strchr( line, '\n' );
+        if( p ) {
+            *p = '\0';
+        }
+        if( ! stricmp( line, start_line ) ) {
+            in_system = TRUE;
+        } else if( !stricmp( line, "end" ) ) {
+            in_system = FALSE;
+        } else if( in_system ) {
+            for( p = line; isspace( *p ); p++ )
+                ; /* do nothing else */
+            if( strnicmp ( p, "wcc", 3 ) ) {
+                /* wrong format --> don't use this line */
+                continue;
+            }
+            blank = strchr( p, ' ' );
+            if( ! blank ) {
+                blank = strchr( p, '\t' );
+            }
+            if( blank ) {
+                *blank = '\0';
+            }
+            strcpy( target_CC, p );
+            /* nasty: transform 'wcc386' into 'wpp386' */
+            *p = tolower( *p );
+            p[1] = p[2] = 'p';
+            strcpy( target_CCXX, p );
+            if( blank ) {
+                /* if there are options, copy them */
+                *blank = ' ';
+                strcat( CC_Opts, blank );
+            }
+            fclose( specs );
+            return( 1 );
+        }
+    }
+    fclose( specs );
+    return( 0 );
+}
+
 static  int  Parse( int argc, char **argv )
 /*****************************************/
 {
@@ -243,13 +278,16 @@ static  int  Parse( int argc, char **argv )
     Flags.windows      = 0;
     Flags.is32bit      = 1;
     Flags.math_8087    = 1;
+    Flags.keep_exename = 0;
+    Flags.want_errfile = 0;
+    Flags.strip_all    = 0;
     DebugFlag          = 1;
     StackSize = NULL;
     Conventions = 'r';
 
     AltOptChar = '-'; /* Suppress '/' as option herald */
     while( (c = GetOpt( &argc, argv,
-                        "0123::456a::b:c::D:d:Ee:f:Gg::h:I:i:jk:L:l:Mm:N:n:"
+                        "0123::456a::b:c::D:d:Ee:f:Gg::h:I:i:jk:L:l:M:m:N:n:"
                         "O::o:P::p::Qr::Sst:U:vW:w:Xx::yz:",
                         EnglishHelp )) != -1 ) {
 
@@ -273,12 +311,6 @@ static  int  Parse( int argc, char **argv )
                 }
                 wcc_option = 0;
                 break;
-            case 'e':           /* name of exe file */
-                if( Word[1] == '='  ||  Word[1] == '#' ) {
-                    strfcpy( Exe_Name, Word + 2 );
-                }
-                wcc_option = 0;
-                break;
             case 'm':           /* name of map file */
                 Flags.map_wanted = TRUE;
                 if( Word[1] == '='  ||  Word[1] == '#' ) {
@@ -293,9 +325,14 @@ static  int  Parse( int argc, char **argv )
                 if( Word[1] == '='  ||  Word[1] == '#' ) {
                     ++p;
                 }
+                free( Obj_Name );
                 Obj_Name = strfdup( p );        /* 08-mar-90 */
                 break;
+            case 'r':           /* name of error report file */
+                Flags.want_errfile = TRUE;
+                break;
             case 'p':           /* floating-point option */
+                /* FIXME: should be mapped to -mfp... */
                 if( Word[1] == 'c' ) {
                     Flags.math_8087 = 0;
                 }
@@ -390,8 +427,6 @@ static  int  Parse( int argc, char **argv )
             } else {
                 Flags.no_link = TRUE;
             }
-            /* fall through */
-        case 'y':
             wcc_option = 0;
             break;
         case 'm':           /* memory model */
@@ -417,6 +452,8 @@ static  int  Parse( int argc, char **argv )
             break;
         case 'E':
             Flags.no_link = TRUE;
+            free( Obj_Name );           /* preprocess to stdout by default */
+            Obj_Name = NULL;
             c = 'p';
             Word = "l";
             break;
@@ -461,6 +498,7 @@ static  int  Parse( int argc, char **argv )
                 Word = "1";
                 goto parse_d;
             }
+            wcc_option = 0;
             break;
         case 's':
             Flags.strip_all = 1;
@@ -491,10 +529,48 @@ static  int  Parse( int argc, char **argv )
         case 'I':
             xlate_fname( Word );
             break;
+        case 'b':
+            Flags.link_for_sys = TRUE;
+            SystemName = strdup( Word );
+        /* if Word found in specs.owc, add options from there: */
+            if( ConsultSpecsFile( Word ) ) {
+        /* all set */
+        wcc_option = 0;
+        } else {
+            /* not found --- default to bt=<system> */
+        strcpy( Word, "t=" );
+        strcat( Word, SystemName );
         }
+            break;
+        case 'l':
+            strcat( Libs, Libs[0] != '\0' ? ",lib" : " lib" );
+            strcat( Libs, OptArg );
+            strcat( Libs, ".a" );
+            wcc_option = 0;
+            break;
+        case 'L':
+            xlate_fname( Word );
+            fputs( "libpath ", Fp );
+            Fputnl( Word, Fp );
+            wcc_option = 0;
+            break;
+        case 'M':               /* autodepend for Unix makes */
+            if( !strcmp( OptArg, "D" ) ||
+                !strcmp( OptArg, "MD" ) ) {
+                /* translate to -adt=.o */
+                /* NB: only -MMD really matches OW's behaviour, but
+                 * accept -MD to mean the same */
+                c = 'a';
+                strcpy( Word, "dt=.o" );
+            } else {
+                /* avoid passing on incompatible options */
+                wcc_option = 0;
+            }
+            break;
+        }
+
         /* don't add linker-specific options */
         /* to compiler command line:     */
-
         if( wcc_option ) {
             addccopt( c, Word );
         }
@@ -507,12 +583,18 @@ static  int  Parse( int argc, char **argv )
         if( Flags.no_link && !Flags.do_disas ) {
             free( Obj_Name );
             Obj_Name = O_Name;
-            strcat( CC_Opts, " -fo=" );
-            strcat( CC_Opts, O_Name );
         } else {
             strcpy( Exe_Name, O_Name );
+            Flags.keep_exename = 1;
         }
         O_Name = NULL;
+    }
+    if ( Obj_Name ) {
+        strcat( CC_Opts, " -fo=" );
+        strcat( CC_Opts, Obj_Name );
+    }
+    if ( ! Flags.want_errfile ) {
+        strcat( CC_Opts, " -fr" );
     }
     for( i = 1; i < argc ; i++ ) {
         Word = argv[i];
@@ -548,25 +630,24 @@ static char *SrcName( char *name )
 /********************************/
 {
     char        *cc_name;
-    char        *exename;
+    char        exename[20];  /* enough to hold even "wasm_mips.exe" */
     char        *p;
 
     p = strrchr( name, '.' );
     if( p == NULL || strpbrk( p, PATH_SEP_STR ) )
         p = name + strlen( name );
     if( strfcmp( p, ".asm" ) == 0 || stricmp( p, ".s" ) == 0 ) {
-        exename = "wasm" EXE_EXT;
         cc_name = "wasm";
     } else {
-        exename = CC EXE_EXT;           /* assume C compiler */
-        cc_name = CC;
+        cc_name = target_CC;          /* assume C compiler */
         if( !Flags.force_c ) {
             if( Flags.force_c_plus || useCPlusPlus( p ) ) {
-                exename = CCXX EXE_EXT; /* use C++ compiler */
-                cc_name = CCXX;
+                cc_name = target_CCXX;/* use C++ compiler */
             }
         }
+        strcpy( exename, cc_name );
     }
+    strcat( exename, EXE_EXT );
     FindPath( exename, CC_Path );
     return( cc_name );
 }
@@ -613,10 +694,6 @@ static  int  CompLink( void )
             Fputnl( "system windows", Fp );
         } else if( Flags.tiny_model ) {
             Fputnl( "system com", Fp );
-        } else if( Flags.link_for_dos ) {
-            Fputnl( "system dos", Fp );
-        } else if( Flags.link_for_os2 ) {
-            Fputnl( "system os2", Fp );
         } else {
 #if defined(__OS2__)
             Fputnl( "system os2", Fp );
@@ -649,7 +726,8 @@ static  int  CompLink( void )
         while( file != NULL ) {         /* while more filenames: */
             strcpy( Word, path );
             strcat( Word, file );
-            if( !FileExtension( Word, OBJ_EXT ) ) { /* if not .obj, compile */
+            if( !FileExtension( Word, OBJ_EXT ) &&  // if not .obj or .o, compile
+                !FileExtension( Word, OBJ_EXT_SECONDARY ) ) {
                 if( !Flags.be_quiet ) {
                     PrintMsg( "       %s %s %s\n", cc_name, Word, CC_Opts );
                     fflush( stdout );
@@ -665,21 +743,31 @@ static  int  CompLink( void )
                     errors_found = 1;           /* 21-jan-92 */
                 }
                 p = strrchr( file, '.' );
-                if( p != NULL )  *p = NULLCHAR;
+                if( p != NULL )  {
+                    *p = NULLCHAR;
+                }
                 strcpy( Word, file );
             }
             AddName( Word, Fp );
             if( Obj_List != NULL && Flags.do_disas ) {
                 char    *sfile;
-                char    *ofile = file;
+                char    *ofile;
 
-                if( Exe_Name[0] )
+                ofile = malloc( strlen( file ) + 6 );
+                strcpy( ofile, file );
+
+                if( Exe_Name[0] )       /* have "-S -o output.name" */
                     sfile = Exe_Name;
                 else {
-                    if( FileExtension( Word, OBJ_EXT ) ) {  /* if not .obj, compile */
+                    if( FileExtension( Word, OBJ_EXT ) ||
+                        FileExtension( Word, OBJ_EXT_SECONDARY) ) {
                         p = strrchr( file, '.' );
-                        if( p != NULL )  *p = NULLCHAR;
+                        if( p != NULL )  {
+                            *p = NULLCHAR;
+                        }
                         strcpy( Word, file );
+                    } else {            /* wdis needs extension */
+                        strcat(ofile, Obj_Name);
                     }
                     sfile = Word;
                     strcat( Word, ".s" );
@@ -701,10 +789,12 @@ static  int  CompLink( void )
                                     Word );
                     }
                 }
+                free( ofile );
             }
-            if( Exe_Name[0] == '\0' ) {
+            if( Exe_Name[0] == NULLCHAR ) {
 #ifdef __UNIX__
                 strcpy( Exe_Name, OUTPUTFILE );
+                Flags.keep_exename = 1;
 #else
                 p = strrchr( Word, '.' );
                 if( p != NULL ) {
@@ -770,6 +860,13 @@ int   main( int argc, char **argv )
     int     rc;
 
     Temp_Link = TEMPFILE;
+
+    if( argc <= 1 ) {
+        /* no arguments: just tell the user who I am */
+        puts( "Usage: owcc [-?] [options] file ..." );
+        return( EXIT_SUCCESS );
+    }
+
     errno = 0; /* Standard C does not require fopen failure to set errno */
     if( ( Fp = fopen( &Temp_Link[ 1 ], "w" ) ) == NULL ) {
         /* Message before banner decision as '@' option uses Fp in Parse() */
@@ -778,7 +875,7 @@ int   main( int argc, char **argv )
         exit( 1 );
     }
     Map_Name = NULL;
-    Obj_Name = NULL;
+    Obj_Name = strdup( ".o" );
     Directive_List = NULL;
 
     rc = Parse( argc, argv );

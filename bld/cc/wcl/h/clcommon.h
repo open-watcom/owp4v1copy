@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 /* Several char foo[MAX_CMD] arrays are defined. Overflow goes undetected */
 #if defined(__OS2__) || defined(__NT__) || defined(__UNIX__)
 #define MAX_CMD 10240
@@ -39,10 +40,12 @@
 #define OBJ_EXT                 ".o"
 #define OBJ_EXT_SECONDARY       ".obj"
 #define PATH_SEP    '/'
+#define EXE_EXT ""
 #else
 #define OBJ_EXT                 ".obj"
 #define OBJ_EXT_SECONDARY       ".o"
 #define PATH_SEP    '\\'
+#define EXE_EXT ".exe"
 #endif
 
 #define NULLCHAR    '\0'
@@ -68,23 +71,25 @@ extern  const char    *WclMsgs[];
 extern  struct  list *Obj_List;     /* linked list of object filenames    */
 
 struct  flags {
-        unsigned math_8087    : 1;  /* 0 ==> no 8087, otherwise /7 option */
-        unsigned map_wanted   : 1;  /* -fm option specified               */
-        unsigned two_case     : 1;  /* two case option                    */
-        unsigned tiny_model   : 1;  /* tiny memory model                  */
-        unsigned be_quiet     : 1;  /* -zq option to be quiet             */
-        unsigned no_link      : 1;  /* -c compile only, no link step      */
-        unsigned do_link      : 1;  /* flag for link if no .obj in Cmd    */
-        unsigned do_disas     : 1;  /* flag to call wdis                  */
-        unsigned do_cvpack    : 1;  /* flag for link do codeview cvpack   */
-        unsigned link_for_dos : 1;  /* -lr produce DOS executable         */
-        unsigned link_for_os2 : 1;  /* -lp produce OS/2 executable        */
-        unsigned windows      : 1;  /* -zw specified for Windows          */
-        unsigned link_for_sys : 1;  /* -l<system> option given            */
-        unsigned is32bit      : 1;  /* 32bit link                         */
-        unsigned force_c      : 1;  /* -cc option                         */
-        unsigned force_c_plus : 1;  /* -cc++ option                       */
-        unsigned strip_all    : 1;  /* -s option for owcc                 */
+    unsigned math_8087    : 1;  /* 0 ==> no 8087, otherwise /7 option */
+    unsigned map_wanted   : 1;  /* -fm option specified               */
+    unsigned two_case     : 1;  /* two case option                    */
+    unsigned tiny_model   : 1;  /* tiny memory model                  */
+    unsigned be_quiet     : 1;  /* -zq option to be quiet             */
+    unsigned no_link      : 1;  /* -c compile only, no link step      */
+    unsigned do_link      : 1;  /* flag for link if no .obj in Cmd    */
+    unsigned do_disas     : 1;  /* flag to call wdis                  */
+    unsigned do_cvpack    : 1;  /* flag for link do codeview cvpack   */
+    unsigned link_for_dos : 1;  /* -lr produce DOS executable         */
+    unsigned link_for_os2 : 1;  /* -lp produce OS/2 executable        */
+    unsigned windows      : 1;  /* -zw specified for Windows          */
+    unsigned link_for_sys : 1;  /* -l<system> option given            */
+    unsigned is32bit      : 1;  /* 32bit link                         */
+    unsigned force_c      : 1;  /* -cc option                         */
+    unsigned force_c_plus : 1;  /* -cc++ option                       */
+    unsigned strip_all    : 1;  /* -s option for owcc                 */
+    unsigned want_errfile : 1;  /* -fr option in owcc                 */
+    unsigned keep_exename : 1;  /* verbatim -o name from owcc         */
 };
 
 extern  struct flags Flags;
@@ -95,6 +100,8 @@ void    PrintMsg( const char *fmt, ... );
 void    FindPath( char *name, char *buf );
 void    BuildLinkFile( void );
 void    AddName( char *, FILE * );
+void    Fputnl( char *, FILE * );
+void    *MemAlloc( int );
 char    *MakePath( char * );
 char    *GetName( char * );
 int     BuildQuotedFName( char *buffer, const char *path, const char *filename, const char *quote_char );
