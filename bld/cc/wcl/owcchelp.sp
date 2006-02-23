@@ -30,12 +30,13 @@ Usage:  owcc [options] file ...
 -mabi=d                         set calling conv. to __stdcall
 -mabi=f                         set calling conv. to __fastcall
 :: _Optlink is undocumented
-::-mabi=o                         set calling conv. to _Optlink
+:: -mabi=o                         set calling conv. to _Optlink
 -mabi=p                         set calling conv. to __pascal
 -mabi=r                         set calling conv. to __fortran
 -mabi=s                         set calling conv. to _System
 -mabi=w                         set calling conv. to __watcall
 -mwindows                       generate code for MS Windows
+-shared                         generate code for a DLL
 -fno-short-enum                 force enums to be type int
 -fshort-enum                    use minimum base type for enum
 -fsigned-char                   change char default to signed
@@ -47,9 +48,11 @@ Usage:  owcc [options] file ...
 -Wall                           set warning level to 4
 -Wextra                         enable maximal warnings
 -Werror                         treat all warnings as errors
--Wn <n>                         enable warning message <n>
--Wno-n <n>                      disable warning message <n>
+-Wn<n>                          enable warning message <n>
+-Wno-n<n>                       disable warning message <n>
+-Woverlay                       warn about problems in overlaying
 -Wpadded                        warn when padding a struct
+-Wstop-after-errors=<n>         stop compiler after <n> errors
 -fmessage-full-path             full paths in messages
 -femit-names                    emit routine names in the code
 -fbrowser                       generate browsing information
@@ -59,12 +62,14 @@ Usage:  owcc [options] file ...
 -fo=<ext>                       set object file extension
 -fr=<file>                      output errors to a file name
 -fwrite-def                     output func declarations to .def
+-fwrite-def-without-typedefs    same, but skip typedef names
 -fno-stack-check                remove stack overflow checks
 -fgrow-stack                    generate calls to grow the stack
 -fstack-probe                   touch stack through SS first
--fwritable-strings              don't place strings in CODE segment
+-fno-writable-strings           don't place strings in CODE segment
 -fnostdlib                      remove default library information
 -ffunction-sections             functions in separate segments
+-fvoid-ptr-arithmetic           allow arithmetic operations on (void *)
 
 -fsyntax-only                   check syntax only
 -Wc,<option>                    pass any option to WCC
@@ -92,7 +97,7 @@ Usage:  owcc [options] file ...
 -Os                             optimize for space
 -Ot                             optimize for time
 
--fno-striact-aliasing           relax alias checking
+-fno-strict-aliasing            relax alias checking
 -fguess-branch-probability      branch prediction
 -fno-optimize-sibling-calls     disable call/ret optimization
 -finline-functions              expand functions inline
