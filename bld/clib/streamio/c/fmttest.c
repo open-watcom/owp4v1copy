@@ -337,6 +337,7 @@ int Test_print_float( void )
     VERIFY( sprintf( buf, "%2.4g", 4.5 ) == 3 );
     VERIFY( !strcmp( buf, "4.5" ) );
 
+#if defined( _NAN ) && defined( _INF )
     /* Test NaN/inf formatting */
     VERIFY( sprintf( buf, "%e", _INF ) == 3 );
     VERIFY( !strcmp( buf, "inf" ) );
@@ -377,6 +378,7 @@ int Test_print_float( void )
 
     VERIFY( sprintf( buf, "%F", _NAN ) == 3 );
     VERIFY( !strcmp( buf, "NAN" ) );
+#endif
 #endif
 
     return( 0 );
