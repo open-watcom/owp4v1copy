@@ -382,7 +382,7 @@ extern  void    far_memcpy( char *, char *, int );
 
 #endif
 
-global  int     (*NextChar)();
+global  int     (*NextChar)( void );
 global  struct debug_fwd_types *DebugNameList;
 
 global  unsigned Column;        /* skip to Column when reading */
@@ -442,6 +442,7 @@ extern  int     OpenSrcFile(char *,int);
 extern  void    OpenDefFile(void);
 extern  FILE    *OpenBrowseFile(void);
 extern  void    CloseFiles(void);
+extern  void    CClose( FILE *fp );
 extern  void    FreeFNames(void);
 extern  char    *ErrFileName(void);
 extern  char    *DepFileName(void);
@@ -529,7 +530,7 @@ extern  void    SetDiagSymbol(SYMPTR sym, SYM_HANDLE handle);
 extern  void    SetDiagType2(TYPEPTR typ_source, TYPEPTR typ_target);
 extern  void    SetDiagPop(void);
 
-//  cexpr2.c
+//  cexpr.c
 extern  void    ExprInit(void);
 extern  void    ChkCallNode( TREEPTR tree );
 extern  TREEPTR Expr(void);
@@ -564,14 +565,14 @@ extern  int     FunctionAborts(SYMPTR,SYM_HANDLE);
 extern  int     ParmsToBeReversed(int,struct aux_info *);
 extern  char    *SrcFullPath( char *, char const *, unsigned );
 
-//cfold2.c
+//cfold.c
 extern  void CastFloatValue( TREEPTR leaf, DATA_TYPE newtype );
 extern  void CastConstValue(TREEPTR,DATA_TYPE);
 extern  void DoConstFold(TREEPTR);
 extern  void FoldExprTree(TREEPTR);
 extern  bool BoolConstExpr( void );
 
-//cgen2.c
+//cgen.c
 extern  void    DoCompile(void);
 extern  void    EmitInit(void);
 extern  void    EmitAbort(void);
@@ -650,7 +651,7 @@ extern  MEPTR   MacroLookup(const char *);
 extern  void    MacroOverflow(unsigned,unsigned);
 extern  SYM_HASHPTR SymHashAlloc(unsigned);
 
-//cmath2.c
+//cmath.c
 extern  TREEPTR AddOp(TREEPTR,TOKEN,TREEPTR);
 extern  TREEPTR InitAsgn( TYPEPTR,TREEPTR );
 extern  TREEPTR AsgnOp(TREEPTR,TOKEN,TREEPTR);
@@ -821,7 +822,7 @@ extern  void    ExpectConstant( void );                 /* cutil */
 extern  void    ExpectEndOfLine( void );                /* cutil */
 extern  void    ExpectIdentifier( void );               /* cutil */
 extern  void    ExpectString( void );                   /* cutil */
-extern  void    ExpectStructUnionTag();                 /* cutil */
+extern  void    ExpectStructUnionTag( void );           /* cutil */
 extern  void    MustRecog( TOKEN );                     /* cutil */
 extern  SYM_NAMEPTR SymName( SYMPTR, SYM_HANDLE );      /* cutil */
 
@@ -841,7 +842,7 @@ extern  void    MyExit( int ret );                      /* cintmain */
 
 extern  void    DBSetSymLoc( CGSYM_HANDLE, long );      /* dbsupp */
 
-// cstmt2.c
+// cstmt.c
 extern  SYM_HANDLE GetBlockSymList( void );
 extern  void    InitStmt( void );
 extern  void    SwitchPurge( void );

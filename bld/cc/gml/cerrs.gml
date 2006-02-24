@@ -608,7 +608,33 @@ then its type will be assumed to be
 .np
 A problem has been detected by the in-line assembler.
 The message indicates the problem detected.
-.
+:MSGSYM. ERR_OBSOLETE_FUNC_DECL
+:MSGTXT. Obsolete non-prototype declarator
+:MSGJTXT.
+:WARNING. 3
+.np
+Function parameter declarations containing only empty parentheses,
+that is, non-prototype declarations, are an obsolescent language feature.
+Their use is dangerous and discouraged.
+.errbad
+int func();
+.eerrbad
+:MSGSYM. ERR_NONPROTO_FUNC_CALLED
+:MSGTXT. Unprototyped function '%s' called
+:MSGJTXT.
+:WARNING. 3
+.np
+A call to an unprototyped function was made, preventing the compiler
+from checking the number of function arguments and their types. Use
+of unprototyped functions is obsolescent, dangerous and discouraged.
+.errbad
+int func();
+
+void bar( void )
+{
+    func( 4, "s" );     /* possible argument mismatch */
+}
+.eerrbad
 :eMSGGRP. Warn3
 :cmt -------------------------------------------------------------------
 :MSGGRP. Errs
@@ -2044,7 +2070,7 @@ for( int i = 0, j( void ); i < 5; ++i ) {
 :MSGTXT. Unexpected declaration
 :MSGJTXT.
 .np
-Within a function body, in C99 mode a declaration is only allowed in 
+Within a function body, in C99 mode a declaration is only allowed in
 a compound statement and in the opening clause of a
 .kw for
 loop.

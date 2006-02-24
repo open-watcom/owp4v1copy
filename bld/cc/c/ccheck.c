@@ -632,9 +632,10 @@ static void CompareParms( TYPEPTR *master,
 
 extern  call_list *CallNodeList;
 
+/* Check parameters of function that were called before a prototype was seen */
 extern void ChkCallParms( void )
 {
-    call_list  *nextcall;
+    call_list   *nextcall;
     TREEPTR     *actualparmlist;
 
     actualparmlist = (TREEPTR *)&ValueStack[0];
@@ -652,6 +653,7 @@ extern void ChkCallParms( void )
             SymGet( &sym, callsite->op.sym_handle );
             typ = sym.sym_type;
             SKIP_TYPEDEFS( typ );
+            SetDiagSymbol( &sym, callsite->op.sym_handle );
             if( typ->u.fn.parms != NULL ) {
                 unsigned    parm_count;
                 TREEPTR     parm;
@@ -675,12 +677,14 @@ extern void ChkCallParms( void )
                         actualparmlist[j] = tmp;
                     }
                 }
-                SetDiagSymbol( &sym, callsite->op.sym_handle );
                 CompareParms( typ->u.fn.parms, actualparmlist,
                                     nextcall->source_fno,
                                     nextcall->srclinenum );
-                SetDiagPop();
+            } else {
+                CWarn( WARN_NONPROTO_FUNC_CALLED,
+                        ERR_NONPROTO_FUNC_CALLED, SymName( &sym, callsite->op.sym_handle ) );
             }
+            SetDiagPop();
         }
         next = nextcall->next;
         CMemFree( nextcall  );

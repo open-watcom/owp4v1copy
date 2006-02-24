@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Get a character from source stream.
 *
 ****************************************************************************/
 
@@ -158,7 +157,7 @@ int getCharAfterBackSlash( void )
     return( GetCharCheck( LastChar ) );
 }
 
-static int getTestCharFromFile()
+static int getTestCharFromFile( void )
 {
     int c;
 
@@ -204,7 +203,7 @@ static char translateTriGraph( char c )
     return( c );
 }
 
-static int tryBackSlashNewLine()
+static int tryBackSlashNewLine( void )
 {
     int nc;
 

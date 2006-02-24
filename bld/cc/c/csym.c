@@ -604,7 +604,7 @@ local void ChkDefined( SYM_ENTRY *sym, SYM_NAMEPTR name )
                 sym->stg_class = SC_EXTERN;
                 if( CompFlags.extensions_enabled ) {
                     /* No prototype ever found. In ISO mode, we already warned
-                     * in cexpr2.c when unprototyped function was first seen.
+                     * in cexpr.c when unprototyped function was first seen.
                      */
                     CWarn( WARN_ASSUMED_IMPORT, ERR_ASSUMED_IMPORT, name );
                 }

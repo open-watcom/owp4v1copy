@@ -463,12 +463,12 @@ char *ObjFileName( char *ext )
     return( CreateFileName( ObjectFileName, ext, FALSE ) );
 }
 
-char *DepFileName()
+char *DepFileName( void )
 {
     return( CreateFileName( DependFileName, DEP_EXT, FALSE ) );
 }
 
-char *ErrFileName()
+char *ErrFileName( void )
 {
     if( ErrorFileName == NULL ) return( NULL );
     return( CreateFileName( ErrorFileName, ERR_EXT, FALSE ) );
@@ -563,7 +563,7 @@ void CppPrtf( char *fmt, ... )
 }
 
 
-void OpenCppFile()
+void OpenCppFile( void )
 {
     char  *name = NULL;
 
@@ -1253,7 +1253,7 @@ void EmitLine( unsigned line_num, char *filename )
     EmitPoundLine( line_num, filename, 0 );
 }
 
-int CppPrinting()
+int CppPrinting( void )
 {
     if( NestLevel != SkipLevel ) return( 0 );   /* 01-dec-89 */
     return( 1 );

@@ -42,7 +42,7 @@ static dw_loc_handle   dummyLoc;
 static int             CurFile;
 static int             CurLine;
 
-extern  void    InitDebugTypes();               /* from pchdr.c */
+extern  void    InitDebugTypes( void );         /* from pchdr.c */
 
 typedef enum
 {   DC_RETURN           = 0x01,         // this is a return type

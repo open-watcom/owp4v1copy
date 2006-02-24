@@ -214,7 +214,7 @@ char *AddUndefName( char *str )
 }
 
 
-static void FreeUndefNames()
+static void FreeUndefNames( void )
 {
     struct undef_names *uname;
 
@@ -226,7 +226,7 @@ static void FreeUndefNames()
 }
 
 
-static void Define_Extensions()
+static void Define_Extensions( void )
 {
     PreDefine_Macro( "_far16=__far16" );
     PreDefine_Macro( "near=__near" );

@@ -437,7 +437,7 @@ _WCRTLINK extern wchar_t **_WCNEAR _wenviron; /*  pointer to wide environment */
 :include errno.sp
 
 :segment !QNX & !LINUX
-#define _doserrno (*__get_doserrno_ptr())
+#define _doserrno (*__get_doserrno_ptr( void ))
 _WCRTLINK extern int                _doserrno;  /* DOS system error code value */
 #if !defined(__NETWARE__)
 #define sys_errlist _sys_errlist
@@ -538,8 +538,8 @@ _WCRTLINK extern void _WCNEAR *sbrk( int __increment );
 #endif
 :endsegment
 
- typedef void (*onexit_t)();
-_WCRTLINK extern onexit_t onexit(onexit_t __func);
+ typedef void (*onexit_t)( void );
+_WCRTLINK extern onexit_t onexit( onexit_t __func );
 
 #endif /* End of extensions section. */
 
