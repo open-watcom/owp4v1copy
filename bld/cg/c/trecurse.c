@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Tail recursion elimination.
 *
 ****************************************************************************/
 
@@ -42,8 +41,6 @@ extern proc_def         *CurrProc;
 extern block            *HeadBlock;
 extern bool             BlockByBlock;
 
-extern  void            DumpIns(instruction*);
-extern  void            DumpNL();
 extern  sym_handle      AskForLblSym(label_handle);
 extern  bool            SideEffect(instruction*);
 extern  pointer         SafeRecurse(pointer(*)(),pointer);
@@ -278,8 +275,8 @@ static bool ScaryOperand( name *var )
     return( FALSE );
 }
 
-static bool ScaryConditions()
-/****************************
+static bool ScaryConditions( void )
+/**********************************
     Traverse the current function and return
     TRUE if there are any conditions present which
     would scare us out of doing tail recursion
@@ -383,8 +380,8 @@ extern void     TRDeclareParm( instruction *parm_ins )
     _PROC_LINK( CurrProc ) = (void *)parm_ins;
 }
 
-extern bool     TailRecursion()
-/******************************
+extern bool     TailRecursion( void )
+/************************************
     Eliminate any tail recursion. We assume that, for any call in
     the function, we have a linked list of the parameters to that
     call which was built up while creating the call instruction from

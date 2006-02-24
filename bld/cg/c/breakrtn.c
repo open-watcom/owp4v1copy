@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Handle break and return statements.
 *
 ****************************************************************************/
 
@@ -45,11 +44,11 @@ typedef struct  edge_list {
 extern  block           *NewBlock(label_handle,bool);
 extern  void            RemoveInputEdge(block_edge*);
 extern  bool            AskIfReachedLabel(label_handle);
-extern  label_handle    AskForNewLabel();
-extern  bool            FixReturns();
-extern  void            FixEdges();
-extern  void            UnFixEdges();
-extern  void            FreeABlock();
+extern  label_handle    AskForNewLabel( void );
+extern  bool            FixReturns( void );
+extern  void            FixEdges( void );
+extern  void            UnFixEdges( void );
+extern  void            FreeABlock( block * );
 
 extern  block           *HeadBlock;
 extern  block           *CurrBlock;
@@ -62,9 +61,9 @@ static  block           *Tail = { NULL };
 static  bool            HaveBreak = { FALSE };
 
 
-static  void            FreeBranchOuts() {
-/**************************************/
-
+static  void            FreeBranchOuts( void )
+/********************************************/
+{
     edge_list   *junk;
     edge_list   *curr;
 
@@ -77,9 +76,9 @@ static  void            FreeBranchOuts() {
 }
 
 
-extern  bool            CreateBreak() {
-/*************************************/
-
+extern  bool            CreateBreak( void )
+/*****************************************/
+{
     block       *blk;
     block       *break_blk;
     block       *back_break_blk;
@@ -237,7 +236,7 @@ extern  bool            CreateBreak() {
     a label (~DEST_IS_BLOCK) branch.
 */
     edge = HeadBlock->input_edges;
-    for(;;) {
+    for( ;; ) {
         if( edge == NULL ) break;
         next_edge = edge->next_source;
         if( edge->source->gen_id >= break_blk->gen_id ) {
@@ -280,9 +279,9 @@ extern  bool            CreateBreak() {
 }
 
 
-extern  void            RemoveBreak() {
-/*************************************/
-
+extern  void            RemoveBreak( void )
+/*****************************************/
+{
     HeadBlock = Break;
     CurrBlock = Curr;
     BlockList = Tail;
@@ -292,9 +291,9 @@ extern  void            RemoveBreak() {
 }
 
 
-extern  void            FixBreak() {
-/**********************************/
-
+extern  void            FixBreak( void )
+/**************************************/
+{
     block       *blk;
     edge_list   *exit_edge;
 
@@ -316,14 +315,14 @@ extern  void            FixBreak() {
     FreeBranchOuts();
 }
 
-extern  block           *TailBlocks() {
-/*************************************/
-
+extern  block           *TailBlocks( void )
+/*****************************************/
+{
     return( Tail );
 }
 
-extern  bool            BreakExists() {
-/*************************************/
-
+extern  bool            BreakExists( void )
+/*****************************************/
+{
     return( HaveBreak );
 }

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Register scoreboarding on a basic block.
 *
 ****************************************************************************/
 
@@ -54,7 +53,7 @@ extern  bool            ScoreZero(pointer,instruction**);
 extern  bool            RegThrash(block*);
 extern  bool            RegsEqual(score*,int,int);
 extern  void            UpdateLive(instruction*,instruction*);
-extern  void            SCBlip();
+extern  void            SCBlip(void);
 extern  void            FreeIns(instruction*);
 extern  bool            SideEffect(instruction*);
 extern  bool            DoesSomething(instruction*);
@@ -63,12 +62,12 @@ extern  void            DoNothing(instruction*);
 extern  score_reg       **ScoreList;
 extern  score_info      *ScZero;
 
-extern  void    FreeJunk( block *blk ) {
-/***************************************
+extern  void    FreeJunk( block *blk )
+/*************************************
     Free instructions which aren't going to be generated.
 
 */
-
+{
     instruction *ins;
     instruction *next;
 
@@ -85,9 +84,9 @@ extern  void    FreeJunk( block *blk ) {
     }
 }
 
-static bool StupidMove( score *sc, instruction *ins ) {
-/*****************************************************/
-
+static bool StupidMove( score *sc, instruction *ins )
+/***************************************************/
+{
     score_info  info;
     int         dst_index;
 
@@ -115,14 +114,14 @@ static bool StupidMove( score *sc, instruction *ins ) {
 }
 
 
-static  bool    RemDeadCode( block *blk ) {
-/******************************************
+static  bool    RemDeadCode( block *blk )
+/****************************************
     This removes any instructions in "blk" which assign to a register which
     dies immediately following that instruction and has no side effects.
     Returns TRUE if any instructions were killed, in which case the
     live information must be updated.
 */
-
+{
     bool        change;
     name        *result;
     instruction *ins;
@@ -149,14 +148,14 @@ static  bool    RemDeadCode( block *blk ) {
     return( change );
 }
 
-extern  bool    DoScore( block *blk ) {
-/**************************************
+extern  bool    DoScore( block *blk )
+/************************************
     Do register scoreboarding on a basic block. Remember which
     registers contain which values as we run through the block and
     then use that information to try to replace memory references
     with register references.
 */
-
+{
     instruction *next_ins;
     score       *scoreboard;
     name        *dst;
@@ -167,7 +166,7 @@ extern  bool    DoScore( block *blk ) {
     hw_reg_set  tmp;
 
     change = FALSE;
-    for(;;) {
+    for( ;; ) {
         SCBlip();
         while( RemDeadCode( blk ) ) {
             UpdateLive( blk->ins.hd.next, blk->ins.hd.prev );
@@ -265,13 +264,13 @@ extern  bool    DoScore( block *blk ) {
 }
 
 
-extern  byte    HasZero( score *sc, name *n ) {
-/**********************************************
+extern  byte    HasZero( score *sc, name *n )
+/********************************************
     given a scoreboard "sc", determine if name "n" is equal to
     zero or has any portions which are equal to zero. This is recursive
     since a regisiter like EAX on the 386 has pieces AX, AH, and AL.
 */
-
+{
     byte        bits;
     int         i;
     int         hi;

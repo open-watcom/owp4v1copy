@@ -54,12 +54,12 @@
 #include <string.h>
 
 extern  type_def        *TypeAddress(cg_type);
-extern  instruction     *MakeNop();
+extern  instruction     *MakeNop(void);
 extern  void            AddIns(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  seg_id          SetOP(seg_id);
-extern  seg_id          AskCodeSeg();
-extern  void            EmptyQueue();
+extern  seg_id          AskCodeSeg(void);
+extern  void            EmptyQueue(void);
 extern  void            InputOC(any_oc *);
 extern  char            DBNested( char nested );
 extern  dbg_loc         LocDupl(dbg_loc);
@@ -70,19 +70,19 @@ extern  dbg_loc         DBLocSym(dbg_loc,sym_handle);
 extern  void            DBLocFini(dbg_loc);
 #if _TARGET &( _TARG_IAPX86 | _TARG_80386 )
 /* WV interface */
-extern  void    WVInitDbgInfo() ;
-extern  void    WVFiniDbgInfo() ;
-extern  void    WVGenStatic( sym_handle sym, dbg_loc loc ) ;
-extern  void    WVObjectPtr(  cg_type ptr_type );
-extern  void    WVSetBase() ;
-extern  void    WVBlkEnd( dbg_block *blk, offset lc ) ;
-extern  void    WVRtnEnd( dbg_rtn *rtn, offset lc ) ;
+extern  void    WVInitDbgInfo( void );
+extern  void    WVFiniDbgInfo( void );
+extern  void    WVGenStatic( sym_handle sym, dbg_loc loc );
+extern  void    WVObjectPtr( cg_type ptr_type );
+extern  void    WVSetBase( void );
+extern  void    WVBlkEnd( dbg_block *blk, offset lc );
+extern  void    WVRtnEnd( dbg_rtn *rtn, offset lc );
 #endif
 /* DF interface */
-extern  void    DFInitDbgInfo();
+extern  void    DFInitDbgInfo( void );
 extern  void    DFObjInitInfo( void );
-extern  void    DFFiniDbgInfo();
-extern  void    DFObjFiniDbgInfo();
+extern  void    DFFiniDbgInfo( void );
+extern  void    DFObjFiniDbgInfo( void );
 extern  void    DFGenStatic( sym_handle sym, dbg_loc loc );
 extern  void    DFTypedef( char *nm, dbg_type tipe );
 extern  void    DFProEnd( dbg_rtn *rtn, offset lc );
@@ -92,13 +92,13 @@ extern  void    DFEpiBeg( dbg_rtn *blk, offset lc );
 extern  void    DFRtnEnd( dbg_rtn *rtn, offset lc );
 
 /* CV interface */
-extern  void    CVInitDbgInfo();
+extern  void    CVInitDbgInfo( void );
 extern  void    CVObjInitInfo( void );
-extern  void    CVFiniDbgInfo();
-extern  void    CVObjFiniDbgInfo();
+extern  void    CVFiniDbgInfo( void );
+extern  void    CVObjFiniDbgInfo( void );
 extern  void    CVGenStatic( sym_handle sym, dbg_loc loc, bool mem );
 extern  void    CVTypedef( char *nm, dbg_type tipe );
-extern  void    CVSetBase();
+extern  void    CVSetBase( void );
 extern  void    CVRtnBeg( dbg_rtn *rtn, offset lc );
 extern  void    CVProEnd( dbg_rtn *rtn, offset lc );
 extern  void    CVBlkBeg( dbg_block *blk, offset lc );

@@ -44,9 +44,9 @@ extern    block         *CurrBlock;
 extern    block         *BlockList;
 extern    proc_def      *CurrProc;
 
-extern  instruction_id  Renumber();
+extern  instruction_id  Renumber( void );
 extern  block           *NewBlock(label_handle,bool);
-extern  label_handle    AskForNewLabel();
+extern  label_handle    AskForNewLabel( void );
 extern  bool            FloodForward( block *, bool (*)( block *, void * ), void * );
 
 static  void            NewInterval( block *blk, int level );
@@ -54,9 +54,9 @@ static  void            NewInterval( block *blk, int level );
 static    interval_def  *Intervals;
 
 
-static  void    Irreducable() {
-/*****************************/
-
+static  void    Irreducable( void )
+/*********************************/
+{
     block       *blk;
 
     for( blk = HeadBlock; blk != NULL; blk = blk->next_block ) {
@@ -67,9 +67,9 @@ static  void    Irreducable() {
 }
 
 
-static  void    NoBlocksToSelf() {
-/********************************/
-
+static  void    NoBlocksToSelf( void )
+/************************************/
+{
     block       *blk;
     block       *new_blk;
     block_edge  *edge;
@@ -109,7 +109,7 @@ static  void    NoBlocksToSelf() {
                 new_edge->source = new_blk;
                 /* replace edge with new_edge in blk's input edge list*/
                 owner = &blk->input_edges;
-                for(;;) {
+                for( ;; ) {
                     curr = *owner;
                     if( curr == edge ) break;
                     owner = &(*owner)->next_source;
@@ -126,11 +126,10 @@ static  void    NoBlocksToSelf() {
 }
 
 
-static  void    ReturnsToBottom() {
-/*********************************/
-
+static  void    ReturnsToBottom( void )
+/*************************************/
 /* moving return blocks to the bottom*/
-
+{
     block       *curr;
     block       *prev;
     block       *last;
@@ -158,9 +157,9 @@ static  void    ReturnsToBottom() {
     BlockList = last;
 }
 
-static  pointer MarkVisited( pointer bl ) {
-/*****************************************/
-
+static  pointer MarkVisited( pointer bl )
+/***************************************/
+{
     int         i;
     block      *blk = bl;
 
@@ -174,9 +173,9 @@ static  pointer MarkVisited( pointer bl ) {
     return NULL;
 }
 
-static  bool    DepthFirstSearch() {
-/**********************************/
-
+static  bool    DepthFirstSearch( void )
+/**************************************/
+{
     block       *blk;
     bool        reducible;
 
@@ -195,9 +194,9 @@ static  bool    DepthFirstSearch() {
 }
 
 
-static  void    RestoreLinks() {
-/******************************/
-
+static  void    RestoreLinks( void )
+/**********************************/
+{
     block       *blk;
     block       *prev;
 
@@ -210,9 +209,9 @@ static  void    RestoreLinks() {
 }
 
 
-static  void    FixLinks() {
-/**************************/
-
+static  void    FixLinks( void )
+/******************************/
+{
     block       *blk;
     block       *prev;
     int         id;
@@ -221,7 +220,7 @@ static  void    FixLinks() {
     HeadBlock = blk;
     prev = NULL;
     id = 0;
-    for(;;) {
+    for( ;; ) {
         blk->next_block = blk->prev_block;
         blk->prev_block = prev;
         blk->id = ++ id;
@@ -233,9 +232,9 @@ static  void    FixLinks() {
 }
 
 
-static  interval_def    *IntervalNo( block *blk, int level ) {
-/************************************************************/
-
+static  interval_def    *IntervalNo( block *blk, int level )
+/**********************************************************/
+{
     interval_def        *curr;
 
     curr = blk->u.interval;
@@ -246,9 +245,9 @@ static  interval_def    *IntervalNo( block *blk, int level ) {
 }
 
 
-static  bool    FindIntervals() {
-/*******************************/
-
+static  bool    FindIntervals( void )
+/***********************************/
+{
     block               *blk;
     block_edge          *edge;
     interval_def        *curr;
@@ -261,7 +260,7 @@ static  bool    FindIntervals() {
 
     num = 0;
     blk = HeadBlock;
-    for(;;) {
+    for( ;; ) {
         ++ num;
         _Alloc( curr, sizeof( interval_def ) );
         curr->link = Intervals;
@@ -278,12 +277,12 @@ static  bool    FindIntervals() {
         if( blk == NULL ) break;
     }
     level = 1;
-    for(;;) {
+    for( ;; ) {
         prev_num = num;
         num = 1;                       /* at least one node at new level*/
         NewInterval( HeadBlock, level );
         blk = HeadBlock;
-        for(;;) {
+        for( ;; ) {
             blk = blk->next_block;
             if( blk == NULL ) break;
             curr = IntervalNo( blk, level - 1 );
@@ -291,7 +290,7 @@ static  bool    FindIntervals() {
                 prev_int = NULL;
                 edge = blk->input_edges;
                 add = FALSE;
-                for(;;) {
+                for( ;; ) {
                     test = IntervalNo( edge->source, level - 1 );
                                                 /* guess - internal edge*/
                     if( test != curr ) {
@@ -336,20 +335,19 @@ static  bool    FindIntervals() {
 }
 
 
-static  void    ReorderBlocks() {
-/*******************************/
-
+static  void    ReorderBlocks( void )
+/***********************************/
 /*   Reorder blocks according to the interval ordering*/
 /*   This allows each interval to be identified as a continuous range of blocks*/
-
+{
     interval_def        *curr;
     block               *last_block;
     block               *next_block;
 
     last_block = HeadBlock;
     curr = HeadBlock->u.interval;
-    for(;;) {
-        for(;;) {
+    for( ;; ) {
+        for( ;; ) {
             if( curr->next_sub_int != NULL ) break;
             curr = curr->parent;
             if( curr == NULL )break;
@@ -371,21 +369,21 @@ static  void    ReorderBlocks() {
 }
 
 
-static  void    EdgeLevels() {
-/****************************/
-
+static  void    EdgeLevels( void )
+/********************************/
+{
     block               *blk;
     block_edge          *edge;
     interval_def        *interval;
     block_num           id;
 
     blk = HeadBlock;
-    for(;;) {
+    for( ;; ) {
         edge = blk->input_edges;
         while( edge != NULL ) {
             id = edge->source->id;
             interval = blk->u.interval;
-            for(;;) {
+            for( ;; ) {
                 if( id >= interval->first_block->id
                     && id <= interval->last_block->id ) break;
                 edge->join_level = interval->level;
@@ -400,9 +398,9 @@ static  void    EdgeLevels() {
 }
 
 
-static  void    NewInterval( block *blk, int level ) {
-/****************************************************/
-
+static  void    NewInterval( block *blk, int level )
+/**************************************************/
+{
     interval_def        *prev;
     interval_def        *new;
 
@@ -420,9 +418,9 @@ static  void    NewInterval( block *blk, int level ) {
 }
 
 
-static  void    NestingDepth() {
-/******************************/
-
+static  void    NestingDepth( void )
+/**********************************/
+{
     block               *blk;
     int                 level;
     interval_def        *interval;
@@ -435,7 +433,7 @@ static  void    NestingDepth() {
     while( interval->parent != NULL ) {
         level = interval->level - 1;
         blk = BlockList;               /* borrow 'next_block'*/
-        for(;;) {                            /* identify all back edges at this level*/
+        for( ;; ) {                         /* identify all back edges at this level*/
             blk->next_block = NULL;
             i = blk->targets;
             while( --i >= 0 ) {
@@ -455,10 +453,10 @@ static  void    NestingDepth() {
             blk = blk->prev_block;
             if( blk == NULL ) break;
         }
-        for(;;) {
+        for( ;; ) {
             change = FALSE;
             blk = BlockList;
-            for(;;) {
+            for( ;; ) {
                 if( blk->next_block == NULL ) {
                     i = blk->targets;
                     while( --i >= 0 ) {
@@ -490,7 +488,7 @@ static  void    NestingDepth() {
 
     blk = BlockList;
     HeadBlock = NULL;
-    for(;;) {
+    for( ;; ) {
         blk->next_block = HeadBlock;
         HeadBlock = blk;
         blk = blk->prev_block;
@@ -498,9 +496,9 @@ static  void    NestingDepth() {
     }
 }
 
-static  void    KillIntervals() {
-/*******************************/
-
+static  void    KillIntervals( void )
+/***********************************/
+{
     interval_def        *junk;
     block               *blk;
 
@@ -518,9 +516,9 @@ static  void    KillIntervals() {
 
 static bool functionDegenerate;
 
-static  bool    FlowDone( block *curr, void *parm ) {
-/***************************************************/
-
+static  bool    FlowDone( block *curr, void *parm )
+/*************************************************/
+{
     if( curr == (block *)parm ) {
         functionDegenerate = TRUE;
         return( FALSE );
@@ -528,9 +526,9 @@ static  bool    FlowDone( block *curr, void *parm ) {
     return( TRUE );
 }
 
-static  bool    Degenerate() {
-/****************************/
-
+static  bool    Degenerate( void )
+/********************************/
+{
     block       *blk;
     block_edge  *edge;
 
@@ -547,10 +545,9 @@ static  bool    Degenerate() {
     return( FALSE );
 }
 
-extern  void    MakeFlowGraph() {
-/*******************************/
-
-
+extern  void    MakeFlowGraph( void )
+/***********************************/
+{
     Irreducable();
     if( CurrProc->state.attr & ROUTINE_WANTS_DEBUGGING ) {
         return;

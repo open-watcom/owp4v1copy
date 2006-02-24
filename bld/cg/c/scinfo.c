@@ -38,7 +38,7 @@
 
 extern  void            FreeScListEntry(score_list*);
 extern  void            RegAdd(score*,int,int);
-extern  score_list      *NewScListEntry();
+extern  score_list      *NewScListEntry(void);
 extern  pointer         Copy(pointer,pointer,uint);
 
 extern  int     ScoreCount;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Propagate null pointer comparisons.
 *
 ****************************************************************************/
 
@@ -39,17 +38,18 @@
 #include "cgdefs.h"
 #include "model.h"
 
-extern  bool            ReDefinedBy(instruction*,name*);
+extern  bool            ReDefinedBy( instruction *, name * );
 extern  name            *AllocS32Const( signed_32 );
 extern void             KillCondBlk( block *blk, instruction *ins, int dest );
 extern  bool            SideEffect( instruction * );
 extern  pointer         SafeRecurse( pointer (* rtn)( pointer ), pointer arg );
-extern  void            BlockTrim();
+extern  void            BlockTrim( void );
 
 extern  block           *HeadBlock;
 
-extern  void            ClearBlockBits( block_class mask ) {
-/**********************************************************/
+extern  void            ClearBlockBits( block_class mask )
+/********************************************************/
+{
     block               *blk;
 
     mask = ~mask;
@@ -58,8 +58,9 @@ extern  void            ClearBlockBits( block_class mask ) {
     }
 }
 
-static  instruction     *CompareIns( block *blk ) {
-/*************************************************/
+static  instruction     *CompareIns( block *blk )
+/***********************************************/
+{
     instruction         *last;
 
     if( blk->class & CONDITIONAL ) {
@@ -72,8 +73,9 @@ static  instruction     *CompareIns( block *blk ) {
     return( NULL );
 }
 
-static  bool            IsZero( name *op ) {
-/******************************************/
+static  bool            IsZero( name *op )
+/****************************************/
+{
     return( op->n.class == N_CONSTANT && op->c.const_type == CONS_ABSOLUTE && op->c.int_value == 0 );
 }
 
@@ -87,8 +89,9 @@ typedef struct edge_stack {
     edge_entry          *top;
 } edge_stack;
 
-static  edge_stack      *InitStack() {
-/************************************/
+static  edge_stack      *InitStack( void )
+/****************************************/
+{
     edge_stack          *stk;
 
     _Alloc( stk, sizeof( edge_stack ) );
@@ -96,13 +99,15 @@ static  edge_stack      *InitStack() {
     return( stk );
 }
 
-static  bool            Empty( edge_stack *stk ) {
-/************************************************/
+static  bool            Empty( edge_stack *stk )
+/**********************************************/
+{
     return( stk->top == NULL );
 }
 
-static  void            Push( edge_stack *stk, block_edge *edge ) {
-/*****************************************************************/
+static  void            Push( edge_stack *stk, block_edge *edge )
+/***************************************************************/
+{
     edge_entry          *new_entry;
 
     _Alloc( new_entry, sizeof( edge_entry ) );
@@ -111,8 +116,9 @@ static  void            Push( edge_stack *stk, block_edge *edge ) {
     stk->top = new_entry;
 }
 
-static  block_edge      *Pop( edge_stack *stk ) {
-/***********************************************/
+static  block_edge      *Pop( edge_stack *stk )
+/*********************************************/
+{
     edge_entry          *top;
     block_edge          *edge;
 
@@ -126,19 +132,21 @@ static  block_edge      *Pop( edge_stack *stk ) {
     return( NULL );
 }
 
-static  void            FiniStack( edge_stack *stk ) {
-/****************************************************/
+static  void            FiniStack( edge_stack *stk )
+/**************************************************/
+{
     while( !Empty( stk ) ) {
         Pop( stk );
     }
     _Free( stk, sizeof( edge_stack ) );
 }
 
-static  bool            DereferencedBy( instruction *ins, name *ptr ) {
-/**********************************************************************
+static  bool            DereferencedBy( instruction *ins, name *ptr )
+/********************************************************************
     Return TRUE if the instruction dereferences the given name. Any use as
     an index (with op as index), providing the base is NULL, is considered a deref.
 */
+{
     int                 i;
     name                *op;
 
@@ -156,8 +164,9 @@ static  bool            DereferencedBy( instruction *ins, name *ptr ) {
     return( FALSE );
 }
 
-static  void            PushTargets( edge_stack *stk, block *blk, bool forward ) {
-/********************************************************************************/
+static  void            PushTargets( edge_stack *stk, block *blk, bool forward )
+/******************************************************************************/
+{
     block_num           i;
     block_edge          *edge;
 
@@ -174,8 +183,9 @@ static  void            PushTargets( edge_stack *stk, block *blk, bool forward )
     }
 }
 
-static  instruction     *NextIns( instruction *ins, bool forward ) {
-/******************************************************************/
+static  instruction     *NextIns( instruction *ins, bool forward )
+/****************************************************************/
+{
     instruction         *next;
 
     if( forward ) {
@@ -186,8 +196,9 @@ static  instruction     *NextIns( instruction *ins, bool forward ) {
     return( next );
 }
 
-static  instruction     *FirstIns( block *blk, bool forward ) {
-/*************************************************************/
+static  instruction     *FirstIns( block *blk, bool forward )
+/***********************************************************/
+{
     instruction         *first;
 
     if( forward ) {
@@ -198,8 +209,9 @@ static  instruction     *FirstIns( block *blk, bool forward ) {
     return( first );
 }
 
-static  block           *EdgeBlock( block_edge *edge, bool forward ) {
-/********************************************************************/
+static  block           *EdgeBlock( block_edge *edge, bool forward )
+/******************************************************************/
+{
     if( forward ) {
         return( edge->destination );
     } else {
@@ -207,8 +219,9 @@ static  block           *EdgeBlock( block_edge *edge, bool forward ) {
     }
 }
 
-static  bool            LastBlock( block *blk, bool forward ) {
-/*************************************************************/
+static  bool            LastBlock( block *blk, bool forward )
+/***********************************************************/
+{
     if( forward ) {
         if( blk->class & RETURN ) return( TRUE );
     } else {
@@ -232,11 +245,12 @@ typedef struct goofy_struct_so_we_can_use_saferecurse {
 
 static  void            *DominatingDeref( parm_struct * );
 
-static  int             BlockSearch( block *blk, instruction *ins, name *op, bool forward ) {
-/********************************************************************************************
+static  int             BlockSearch( block *blk, instruction *ins, name *op, bool forward )
+/******************************************************************************************
     Search the block for something interesting - either a dereference or a
     redefinition of the given operand.
 */
+{
     instruction         *curr;
 
     blk = blk;
@@ -272,14 +286,15 @@ static  int             BlockSearch( block *blk, instruction *ins, name *op, boo
     return( BLOCK_NOTHING );
 }
 
-static  void            *DominatingDeref( parm_struct *parms ) {
-/**************************************************************
+static  void            *DominatingDeref( parm_struct *parms )
+/************************************************************
     Return TRUE if the given instruction is dominated by a dereference of op. This is not a true
     dominator in the sense of the dragon book, but a dominator in the sense that every path from
     the instruction given to the return encounters a dereference of op (if forward) or every
     path from the first instruction in the function to the instruction given encounters a deref
     of op (if backwards or forwards = FALSE ).
 */
+{
     block_edge          *edge;
     edge_stack          *stk;
     int                 result;
@@ -332,8 +347,9 @@ static  void            *DominatingDeref( parm_struct *parms ) {
     return( dominated ? (void *)TRUE : (void *)FALSE );
 }
 
-extern  void            FloodDown( block *blk, block_class bits ) {
-/*****************************************************************/
+extern  void            FloodDown( block *blk, block_class bits )
+/***************************************************************/
+{
     edge_stack          *stk;
     block_edge          *edge;
 
@@ -350,8 +366,9 @@ extern  void            FloodDown( block *blk, block_class bits ) {
     FiniStack( stk );
 }
 
-static  bool            BlockSideEffect( block *blk ) {
-/*****************************************************/
+static  bool            BlockSideEffect( block *blk )
+/***************************************************/
+{
     instruction         *ins;
 
     for( ins = blk->ins.hd.next; ins->head.opcode != OP_BLOCK; ins = ins->head.next ) {
@@ -361,8 +378,9 @@ static  bool            BlockSideEffect( block *blk ) {
     return( FALSE );
 }
 
-static  bool            EdgeHasSideEffect( block *blk, instruction *cmp, bool cmp_result ) {
-/******************************************************************************************/
+static  bool            EdgeHasSideEffect( block *blk, instruction *cmp, bool cmp_result )
+/****************************************************************************************/
+{
     edge_stack          *stk;
     block               *elim;
     block               *taken;
@@ -407,8 +425,9 @@ static  bool            EdgeHasSideEffect( block *blk, instruction *cmp, bool cm
     return( side_effect );
 }
 
-static  bool            NullProp( block *blk ) {
-/**********************************************/
+static  bool            NullProp( block *blk )
+/********************************************/
+{
     instruction         *cmp;
     name                **ptr;
     parm_struct         parms;
@@ -455,11 +474,12 @@ static  bool            NullProp( block *blk ) {
     return( FALSE );
 }
 
-extern  void            PropNullInfo() {
-/***************************************
+extern  void            PropNullInfo( void )
+/*******************************************
     Use pointer dereferences as information to enable folding of
     pointer comparisons versus NULL.
 */
+{
     block               *blk;
     bool                change;
 

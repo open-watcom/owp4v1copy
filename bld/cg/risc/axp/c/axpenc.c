@@ -393,9 +393,9 @@ extern  void    GenFSTORE( hw_reg_set dst, signed_16 displacement, hw_reg_set sr
     GenMEMINS( 0x27, RegTrans( src ), RegTrans( dst ), displacement );
 }
 
-extern  void    GenRET() {
-/************************/
-
+extern  void    GenRET( void )
+/****************************/
+{
     oc_ret      oc;
 
     oc.op.class = OC_RET;

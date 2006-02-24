@@ -46,9 +46,10 @@ extern    bool  BlockByBlock;
 #define NO_LOAD_STORE   BLOCK_VISITED
 #define CONTAINS_CALL   LOOP_EXIT /* borrow. Only used during loop opts */
 
-static  void    BitsOff() {
-/*************************/
 
+static  void    BitsOff( void )
+/*****************************/
+{
     block               *blk;
 
     blk = HeadBlock;
@@ -59,9 +60,9 @@ static  void    BitsOff() {
 }
 
 
-static  bool    SameConf( name *op, instruction *ins, conflict_node *conf ) {
-/***************************************************************************/
-
+static  bool    SameConf( name *op, instruction *ins, conflict_node *conf )
+/*************************************************************************/
+{
     if( op->n.class == N_INDEXED ) {
         if( NameConflict( ins, op->i.index ) == conf ) return( TRUE );
         if( HasTrueBase( op ) ) {
@@ -74,12 +75,12 @@ static  bool    SameConf( name *op, instruction *ins, conflict_node *conf ) {
 }
 
 
-static  void    CheckRefs( conflict_node *conf, block *blk ) {
-/*************************************************************
+static  void    CheckRefs( conflict_node *conf, block *blk )
+/***********************************************************
     mark block as REAL_REFERENCE if it contains a reference to conf.
     Also mark as CONTAINS_CALL if it does
 */
-
+{
     int         i;
     instruction *ins;
 
@@ -112,8 +113,8 @@ static  void    CheckRefs( conflict_node *conf, block *blk ) {
 }
 
 
-static  void    LoadStoreIfCall( global_bit_set *id ) {
-/******************************************************
+static  void    LoadStoreIfCall( global_bit_set *id )
+/****************************************************
     Turn on bits for need_load/need_store for conflict id in all blocks
     which have a call but no real reference to id.  This is sort of
     backwards, since it would cause a load at the start of the block and
@@ -123,8 +124,8 @@ static  void    LoadStoreIfCall( global_bit_set *id ) {
     this block, and we achieve an optimial load/store scheme for
     cacheing a static.
 */
-
-    block       *blk;
+{
+    block               *blk;
     data_flow_def       *flow;
 
     blk = HeadBlock;
@@ -140,13 +141,13 @@ static  void    LoadStoreIfCall( global_bit_set *id ) {
 }
 
 
-static  void    TurnOffLoadStoreBits( global_bit_set *id ) {
-/***************************************************
+static  void    TurnOffLoadStoreBits( global_bit_set *id )
+/*********************************************************
     If a block has need_load and need_store but never really references
     id, we can get rid of the load/store.
 */
-
-    block       *blk;
+{
+    block               *blk;
     data_flow_def       *flow;
 
     blk = HeadBlock;
@@ -164,13 +165,13 @@ static  void    TurnOffLoadStoreBits( global_bit_set *id ) {
 }
 
 
-static  void    PropagateLoadStoreBits( block *start, global_bit_set *id ) {
-/***************************************************************************
+static  void    PropagateLoadStoreBits( block *start, global_bit_set *id )
+/*************************************************************************
     Make sure that ancestors of need_load blocks do a store at the end
     and successors of need_store blocks do a load at the beginning.  This
     will be a conservative estimate, fixed up by TurnOffLoadStoreBits
 */
-
+{
     data_flow_def       *source_dat;
     data_flow_def       *blk_dat;
     bool                change;
@@ -210,8 +211,8 @@ static  void    PropagateLoadStoreBits( block *start, global_bit_set *id ) {
 }
 
 
-static  void    CalculateLoadStore( conflict_node *conf ) {
-/**********************************************************
+static  void    CalculateLoadStore( conflict_node *conf )
+/********************************************************
     If we are going to cache a global variable in a register, we have a
     few problems, which are resolved in this routine.  If a subroutine
     is called, we must store the register into memory just before the
@@ -230,7 +231,7 @@ static  void    CalculateLoadStore( conflict_node *conf ) {
     the variable at all. Internal "need load"/"need store" attributes
     are turned off in these regions.
 */
-
+{
     global_bit_set      id;
     block               *blk;
     data_flow_def       *flow;
@@ -296,11 +297,11 @@ static  void    CalculateLoadStore( conflict_node *conf ) {
 }
 
 
-extern  void    CalcLoadStore( conflict_node *conf ) {
-/*****************************************************
+extern  void    CalcLoadStore( conflict_node *conf )
+/***************************************************
     see below
 */
-
+{
     if( BlockByBlock == FALSE ) {
         CalculateLoadStore( conf );
     }

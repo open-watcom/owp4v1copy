@@ -64,9 +64,9 @@ static bool HasSegRegs( reg_tree *tree )
 #endif
 
 
-static  reg_tree        *AllocRegTree() {
-/***************************************/
-
+static  reg_tree        *AllocRegTree( void )
+/*******************************************/
+{
     reg_tree    *tree;
 
     tree = AllocFrl( &TreeFrl, sizeof( reg_tree ) );
@@ -75,16 +75,16 @@ static  reg_tree        *AllocRegTree() {
 
 
 
-static  void    FreeRegTree( reg_tree *tree ) {
-/*********************************************/
-
+static  void    FreeRegTree( reg_tree *tree )
+/*******************************************/
+{
     FrlFreeSize( &TreeFrl, (pointer *)tree, sizeof( reg_tree ) );
 }
 
 
-static  hw_reg_set      *AllocRegSet() {
-/**************************************/
-
+static  hw_reg_set      *AllocRegSet( void )
+/******************************************/
+{
     int         i;
     hw_reg_set  *regs;
     hw_reg_set  *curr;
@@ -100,15 +100,16 @@ static  hw_reg_set      *AllocRegSet() {
 }
 
 
-static  void    FreeRegSet( hw_reg_set *regs ) {
-/**********************************************/
+static  void    FreeRegSet( hw_reg_set *regs )
+/********************************************/
+{
+    FrlFreeSize( &RegFrl, (pointer *)regs, SET_SIZE * sizeof( hw_reg_set ) );
+}
 
-FrlFreeSize( &RegFrl, (pointer *)regs, SET_SIZE*sizeof( hw_reg_set ) ); }
 
-
-extern  bool    RegTreeFrlFree() {
-/********************************/
-
+extern  bool    RegTreeFrlFree( void )
+/************************************/
+{
     bool        freed;
 
     freed = FrlFreeAll( &TreeFrl, sizeof( reg_tree ) );
@@ -117,9 +118,9 @@ extern  bool    RegTreeFrlFree() {
 }
 
 
-static  void    CheckBigPointer( reg_tree *tree ) {
-/*************************************************/
-
+static  void    CheckBigPointer( reg_tree *tree )
+/***********************************************/
+{
 #if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )
 /* this routine is a sickening concession to the foolish design of the 8086
    (may all intel designers rot in hell forever, amen)
@@ -146,9 +147,9 @@ static  void    CheckBigPointer( reg_tree *tree ) {
 }
 
 
-static  reg_tree        *NewTree() {
-/**********************************/
-
+static  reg_tree        *NewTree( void )
+/**************************************/
+{
     reg_tree    *tree;
 
     tree = AllocRegTree();
@@ -163,9 +164,9 @@ static  reg_tree        *NewTree() {
 }
 
 
-static  void    BuildPossible( reg_tree *tree ) {
-/***********************************************/
-
+static  void    BuildPossible( reg_tree *tree )
+/*********************************************/
+{
     hw_reg_set  *src;
     hw_reg_set  *dst;
 
@@ -187,9 +188,9 @@ static  void    BuildPossible( reg_tree *tree ) {
 }
 
 
-static  void    SimpleTree( conflict_node *conf ) {
-/*************************************************/
-
+static  void    SimpleTree( conflict_node *conf )
+/***********************************************/
+{
     reg_tree    *tree;
     name        *temp;
 
@@ -205,9 +206,9 @@ static  void    SimpleTree( conflict_node *conf ) {
 
 
 static  reg_tree        *BuildTree( name *alias, name *master,
-                                    type_length offset, type_length size ) {
-/**************************************************************************/
-
+                                    type_length offset, type_length size )
+/************************************************************************/
+{
     reg_tree    *tree;
     name        *temp;
     bool        have_lo;
@@ -282,9 +283,9 @@ static  reg_tree        *BuildTree( name *alias, name *master,
 }
 
 
-extern  void    BurnRegTree( reg_tree *tree ) {
-/*********************************************/
-
+extern  void    BurnRegTree( reg_tree *tree )
+/*******************************************/
+{
     if( tree != NULL ) {
         BurnRegTree( tree->lo );
         BurnRegTree( tree->hi );
@@ -296,9 +297,9 @@ extern  void    BurnRegTree( reg_tree *tree ) {
 }
 
 
-static  void    TrimTree( reg_tree *tree ) {
-/******************************************/
-
+static  void    TrimTree( reg_tree *tree )
+/****************************************/
+{
     if( tree->lo != NULL ) {
         if( tree->lo->has_name == FALSE ) {
             BurnRegTree( tree->lo );
@@ -318,15 +319,15 @@ static  void    TrimTree( reg_tree *tree ) {
 }
 
 
-static  reg_tree        *CheckTree( reg_tree *tree ) {
-/****************************************************/
-
+static  reg_tree        *CheckTree( reg_tree *tree )
+/**************************************************/
+{
     name        *alias;
     name        *temp;
 
     alias = tree->temp;
     temp = alias;
-    for(;;) {
+    for( ;; ) {
         temp = temp->t.alias;
         if( ( temp->t.temp_flags & VISITED ) == EMPTY ) {
             BurnRegTree( tree );
@@ -339,9 +340,9 @@ static  reg_tree        *CheckTree( reg_tree *tree ) {
 }
 
 
-static  void    CompressSets( reg_tree *tree ) {
-/**********************************************/
-
+static  void    CompressSets( reg_tree *tree )
+/********************************************/
+{
     hw_reg_set  *src;
     hw_reg_set  *dst;
     int         i;
@@ -370,9 +371,10 @@ static  void    CompressSets( reg_tree *tree ) {
 
 
 static  bool    PartIntersect( reg_tree *part,
-                               reg_tree *whole, hw_reg_set (*rtn)() ) {
-/*********************************************************************/
-
+                               reg_tree *whole,
+                               hw_reg_set (*rtn)( hw_reg_set ) )
+/****************************************************************/
+{
     bool        change;
     int         i;
     int         j;
@@ -454,9 +456,9 @@ static  bool    PartIntersect( reg_tree *part,
 }
 
 
-static  bool    Intersect( reg_tree *tree ) {
-/*******************************************/
-
+static  bool    Intersect( reg_tree *tree )
+/*****************************************/
+{
     bool        change;
 
     change = FALSE;
@@ -472,24 +474,24 @@ static  bool    Intersect( reg_tree *tree ) {
 }
 
 
-extern  void    BurnNameTree( reg_tree *tree ) {
-/**********************************************/
-
+extern  void    BurnNameTree( reg_tree *tree )
+/********************************************/
+{
     BurnRegTree( tree );
 }
 
 
-extern  void    RegTreeInit() {
-/*****************************/
-
+extern  void    RegTreeInit( void )
+/*********************************/
+{
     InitFrl( &RegFrl );
     InitFrl( &TreeFrl );
 }
 
 
-extern  void    BuildNameTree( conflict_node *conf ) {
-/****************************************************/
-
+extern  void    BuildNameTree( conflict_node *conf )
+/**************************************************/
+{
     name        *temp;
     reg_tree    *tree;
 
@@ -507,9 +509,9 @@ extern  void    BuildNameTree( conflict_node *conf ) {
 }
 
 
-extern  void    BuildRegTree( conflict_node *conf ) {
-/***************************************************/
-
+extern  void    BuildRegTree( conflict_node *conf )
+/*************************************************/
+{
     name        *temp;
     reg_tree    *tree;
 

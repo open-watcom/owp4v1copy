@@ -82,7 +82,7 @@ extern  name            *SAllocIndex(name*,name*,type_length,type_class_def,type
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  instruction     *PushOneParm(instruction*,name*,type_class_def,type_length,call_state*);
 extern  bool            IsVolatile(name*);
-extern  void            TNZapParms();
+extern  void            TNZapParms(void);
 extern  name            *AllocS32Const(signed_32);
 extern  void            FPNotStack(name*);
 extern  void            FreeIns(instruction*);

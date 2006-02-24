@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Relative branch optimizations.
 *
 ****************************************************************************/
 
@@ -42,15 +41,15 @@ extern  code_lbl        *AddNewLabel(ins_entry*,int);
 extern  ins_entry       *PrevIns(ins_entry*);
 extern  void            ChgLblRef(ins_entry*,code_lbl*);
 extern  ins_entry       *NextIns(ins_entry*);
-extern  offset          AskLocation();
+extern  offset          AskLocation(void);
 extern  int             OptInsSize(oc_class,oc_dest_attr);
 
 static    code_lbl      *Handle;
 
 
-static  bool    Jmp_to_lbl( ins_entry *instr ) {
-/*********************************************/
-
+static  bool    Jmp_to_lbl( ins_entry *instr )
+/********************************************/
+{
   optbegin
     if( _Class( instr ) != OC_JMP ) optreturn( FALSE );
     if( _Label( instr ) != Handle ) optreturn( FALSE );
@@ -59,12 +58,11 @@ static  bool    Jmp_to_lbl( ins_entry *instr ) {
 
 
 static  bool    CanReach( code_lbl *lbl, ins_entry **add_ptr,
-                                ins_entry **jmp_ptr ) {
+                                ins_entry **jmp_ptr )
 /************************************************************
-
     Can a short branch at instruction 'FirstIns' reach label 'lbl'?
-
 */
+{
     ins_entry   *add;
     ins_entry   *jmp;
     ins_entry   *instr;
@@ -101,9 +99,9 @@ static  bool    CanReach( code_lbl *lbl, ins_entry **add_ptr,
 }
 
 
-static  void    HndlRedirect( code_lbl *new ) {
-/*********************************************/
-
+static  void    HndlRedirect( code_lbl *new )
+/*******************************************/
+{
     code_lbl    *redir;
 
   optbegin
@@ -119,11 +117,10 @@ static  void    HndlRedirect( code_lbl *new ) {
   optend
 
 
-static  bool    InRange() {
-/*************************/
-
+static  bool    InRange( void )
+/*****************************/
 /* Check if redirection is still within range*/
-
+{
     code_lbl    *jmp_lbl;
 
   optbegin
@@ -143,12 +140,11 @@ static  bool    InRange() {
 }
 
 
-static  void    BigBranch( ins_entry *add, ins_entry *jmp ) {
-/************************************************************
-
+static  void    BigBranch( ins_entry *add, ins_entry *jmp )
+/**********************************************************
     We can't get to where we want to go, have to redirect
 */
-
+{
   optbegin
     if( jmp != NULL && _IsntModel( NO_OPTIMIZATION ) ) {
         /* jump to a jump that's going where we want*/
@@ -173,9 +169,9 @@ static  void    BigBranch( ins_entry *add, ins_entry *jmp ) {
   optend
 
 
-static  void    SetShort() {
-/**************************/
-
+static  void    SetShort( void )
+/******************************/
+{
     ins_entry   *l_ins;
     int         size;
     bool        floating;
@@ -208,11 +204,10 @@ static  void    SetShort() {
   optend
 
 
-extern  void    SetBranches() {
-/*****************************/
-
+extern  void    SetBranches( void )
+/*********************************/
 /* Check whether the actual label itself can be targeted*/
-
+{
   ins_entry     *add;
   ins_entry     *jmp;
   ins_entry     *next;

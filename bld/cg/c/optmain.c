@@ -43,27 +43,27 @@ extern    pointer       Handles;
 extern    pointer       *InstrFrl;
 
 extern  seg_id          SetOP(seg_id);
-extern  seg_id          AskCodeSeg();
-extern  void            FreePendingDeletes();
+extern  seg_id          AskCodeSeg(void);
+extern  void            FreePendingDeletes(void);
 extern  ins_entry       *DelInstr(ins_entry*);
 extern  void            OutputOC(any_oc*,any_oc*);
-extern  void            OptPull();
-extern  void            PLBlip();
-extern  void            OptPush();
+extern  void            OptPull(void);
+extern  void            PLBlip(void);
+extern  void            OptPush(void);
 extern  void            AddInstr(ins_entry*,ins_entry*);
 extern  ins_entry       *NewInstr(any_oc*);
 extern  oc_class        PrevClass(ins_entry*);
 extern  void            TryScrapLabel(code_lbl*);
-extern  void            PSBlip();
+extern  void            PSBlip(void);
 extern  void            FreeInstr(ins_entry*);
-extern  pointer_int     MemInUse();
+extern  pointer_int     MemInUse(void);
 extern  ins_entry       *NextIns(ins_entry*);
 extern  bool            UniqueLabel(code_lbl*);
 
 
-static  void    PullQueue() {
-/***************************/
-
+static  void    PullQueue( void )
+/*******************************/
+{
     code_lbl    *lbl;
     code_lbl    *next;
     oc_class    cl;
@@ -129,9 +129,9 @@ static  void    PullQueue() {
   optend
 
 
-static  bool    LDone( any_oc *oc ) {
-/*******************************************/
-
+static  bool    LDone( any_oc *oc )
+/*********************************/
+{
     code_lbl    *lbl;
 
   optbegin
@@ -144,9 +144,9 @@ static  bool    LDone( any_oc *oc ) {
     optreturn( TRUE );
 }
 
-extern  void    InputOC( any_oc *oc ) {
-/***************************************/
-
+extern  void    InputOC( any_oc *oc )
+/***********************************/
+{
   optbegin
     PSBlip();
     if( LDone( oc ) == FALSE ) {
@@ -176,9 +176,9 @@ extern  void    InputOC( any_oc *oc ) {
   optend
 
 
-extern  bool    ShrinkQueue( pointer_int size ) {
-/***********************************************/
-
+extern  bool    ShrinkQueue( pointer_int size )
+/*********************************************/
+{
     signed_32   freed;
     signed_32   need;
 
@@ -196,9 +196,9 @@ extern  bool    ShrinkQueue( pointer_int size ) {
 }
 
 
-extern  void    InitQueue() {
-/***************************/
-
+extern  void    InitQueue( void )
+/*******************************/
+{
   optbegin
     QCount = 0;
     FirstIns = NULL;
@@ -213,18 +213,18 @@ extern  void    InitQueue() {
   optend
 
 
-extern  void    EmptyQueue() {
-/****************************/
-
+extern  void    EmptyQueue( void )
+/********************************/
+{
   optbegin
     while( QCount != 0 ) {
         PullQueue();
     }
   optend
 
-extern  void    FlushQueue() {
-/****************************/
-
+extern  void    FlushQueue( void )
+/********************************/
+{
     seg_id      old;
 
   optbegin
@@ -233,9 +233,9 @@ extern  void    FlushQueue() {
     SetOP( old );
   optend
 
-extern  void    FiniQueue() {
-/***************************/
-
+extern  void    FiniQueue( void )
+/*******************************/
+{
   optbegin
     SetOP( AskCodeSeg() );
     EmptyQueue();
@@ -243,9 +243,9 @@ extern  void    FiniQueue() {
   optend
 
 
-extern  void    AbortQueue() {
-/****************************/
-
+extern  void    AbortQueue( void )
+/********************************/
+{
     ins_entry   *instr;
 
   optbegin

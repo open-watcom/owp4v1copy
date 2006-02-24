@@ -62,7 +62,7 @@ extern  name            *AllocS64Const(signed_32,signed_32);
 extern  bool            ReDefinedBy(instruction*,name*);
 extern  int             GetLog2(unsigned_32);
 extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  instruction     *MakeNop();
+extern  instruction     *MakeNop(void);
 extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
@@ -71,7 +71,7 @@ extern  name            *AllocTemp(type_class_def);
 extern  name            *AllocConst(pointer);
 extern  name            *AllocS32Const(signed_32);
 extern  block           *NewBlock(label_handle,bool);
-extern  label_handle    AskForNewLabel();
+extern  label_handle    AskForNewLabel(void);
 extern  bool            SameThing(name*,name*);
 extern  void            RevCond(instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
@@ -79,7 +79,7 @@ extern  void            PrefixInsRenum(instruction*,instruction*,bool);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            ReplIns(instruction*,instruction*);
 extern  void            FreeIns(instruction*);
-extern  bool            LoopInsDead();
+extern  bool            LoopInsDead(void);
 extern  bool            TempsOverlap(name*,name*);
 extern  bool            RepOp(name**,name*,name*);
 extern  void            FlipCond(instruction*);
@@ -96,8 +96,8 @@ extern  int             CountIns(block*);
 extern  instruction     *NewIns(int);
 extern  byte            *Copy(void*,void*,uint);
 extern  void            PropIndexes(block*);
-extern  void            FixBlockIds();
-extern  bool            UnRoll();
+extern  void            FixBlockIds(void);
+extern  bool            UnRoll(void);
 extern  void            MoveEdge(block_edge*,block*);
 extern  void            PointEdge(block_edge*,block*);
 
@@ -113,19 +113,19 @@ block                   *PreHead;
 induction               *IndVarList;
 block                   *Loop;
 
-extern  void    InitIndVars() {
-/******************************
+extern  void    InitIndVars( void )
+/**********************************
     Initialize for induction variable processing
 */
-
-    IndVarList = NULL;                 /* initialize*/
+{
+    IndVarList = NULL;                 /* initialize */
 }
 
-static  interval_depth  MaxDepth( ) {
-/************************************
+static  interval_depth  MaxDepth( void )
+/***************************************
     return the depth of the deepest nested loop in the procedure
 */
-
+{
     interval_depth      depth;
     block               *blk;
 
@@ -141,11 +141,11 @@ static  interval_depth  MaxDepth( ) {
 }
 
 
-static  void    ReplaceAllOccurences( name *of, name *with ) {
-/*************************************************************
+static  void    ReplaceAllOccurences( name *of, name *with )
+/***********************************************************
     Replace all occurences of "of" with "with" in the program.
 */
-
+{
     block       *blk;
     instruction *ins;
     int         i;
@@ -168,12 +168,11 @@ static  void    ReplaceAllOccurences( name *of, name *with ) {
 }
 
 
-static  bool    InLoop( block *blk ) {
-/*************************************
+static  bool    InLoop( block *blk )
+/***********************************
     return TRUE if blk is in the loop defined by Head.
 */
-
-
+{
     if( blk == Head ) return( TRUE );
     while( blk != NULL ) {
         if( blk->loop_head == Head ) return( TRUE );
@@ -183,15 +182,14 @@ static  bool    InLoop( block *blk ) {
 }
 
 
-extern  block   *AddPreBlock( block *postblk ) {
-/***********************************************
+extern  block   *AddPreBlock( block *postblk )
+/*********************************************
     There is no preheader for this loop (loop has no initialization) so
     add a block right in front of the loop header and move any branch
     that goes from outside the loop to the header, go through the
     preheader first.
 */
-
-
+{
     block_edge  *edge;
     block       *preblk;
 
@@ -265,17 +263,17 @@ static  bool    IsPreHeader( block *test ) {
 }
 
 
-static  block   *FindPreHeader() {
-/*********************************
+static  block   *FindPreHeader( void )
+/*************************************
     See if there is a basic block that will suffice as a pre-header for
     "Loop".
 */
-
+{
     block       *preheader;
     block_edge  *edge;
 
     edge = Head->input_edges;
-    for(;;) {
+    for( ;; ) {
         if( edge == NULL ) { /* maybe there is a 'user defined' preheader*/
             preheader = HeadBlock;
             while( preheader != NULL ) {
@@ -291,10 +289,11 @@ static  block   *FindPreHeader() {
 }
 
 
-static  void    PreHeader() {
-/****************************
+static  void    PreHeader( void )
+/********************************
     Make sure that "Loop" has a preheader "PreHead"
 */
+{
     block_edge  *edge;
     block_edge  *next;
 
@@ -314,12 +313,12 @@ static  void    PreHeader() {
 }
 
 
-extern  void    MarkLoop() {
-/***************************
+extern  void    MarkLoop( void )
+/*******************************
     Mark the current loop (defined by Head) as IN_LOOP.  Also mark any
     blocks in the loop containing a branch out of the loop as LOOP_EXIT.
 */
-
+{
     block       *other_blk;
     int         targets;
     block_edge  *edge;
@@ -350,11 +349,11 @@ extern  void    MarkLoop() {
 }
 
 
-extern  void    UnMarkLoop() {
-/*****************************
+extern  void    UnMarkLoop( void )
+/*********************************
     Turn off the loop marking bits for the current loop.
 */
-
+{
     block       *blk;
 
     blk = HeadBlock;
@@ -365,26 +364,26 @@ extern  void    UnMarkLoop() {
     }
 }
 
-extern  block   *NextInLoop( block *blk ) {
-/****************************************/
-
+extern  block   *NextInLoop( block *blk )
+/***************************************/
+{
     return( blk->u.loop );
 }
 
 
-extern  block   *NextInProg( block *blk ) {
-/****************************************/
-
+extern  block   *NextInProg( block *blk )
+/***************************************/
+{
     return( blk->next_block );
 }
 
 
-extern  void            MakeJumpBlock( block *cond_blk, block_edge *exit_edge ) {
-/************************************************************************
-
+extern  void            MakeJumpBlock( block *cond_blk, block_edge *exit_edge )
+/******************************************************************************
     Turn the loop condition exit block into one that just transfers out
     of the loop.
 */
+{
     block_edge  *edge;
 
     RemoveInputEdge( &cond_blk->edge[ 0 ] );
@@ -402,11 +401,11 @@ extern  void            MakeJumpBlock( block *cond_blk, block_edge *exit_edge ) 
 }
 
 
-static  bool    KillOneTrippers() {
-/**********************************
-
+static  bool    KillOneTrippers( void )
+/**************************************
     Nuke the loops that are only going to go around one time.
 */
+{
     block       *blk;
     block       *curr;
     block       *loop_head;
@@ -450,11 +449,11 @@ static  bool    KillOneTrippers() {
 }
 
 
-extern  void    UnMarkInvariants() {
-/***********************************
+extern  void    UnMarkInvariants( void )
+/***************************************
     Turn off the bits which indicate that a name is loop invariant
 */
-
+{
     name        *op;
 
     for( op = Names[ N_TEMP ]; op != NULL; op = op->n.next_name ) {
@@ -466,11 +465,11 @@ extern  void    UnMarkInvariants() {
 }
 
 
-static  void    ZapRegister( hw_reg_set regs ) {
-/***********************************************
+static  void    ZapRegister( hw_reg_set regs )
+/*********************************************
     Flip bits required given that N_REGISTER "regs" has been changed
 */
-
+{
     name        *other;
 
     for( other = Names[N_REGISTER]; other != NULL; other=other->n.next_name ) {
@@ -481,15 +480,15 @@ static  void    ZapRegister( hw_reg_set regs ) {
 }
 
 
-static  void    ZapTemp( name *op ) {
-/************************************
+static  void    ZapTemp( name *op )
+/**********************************
     Flip bits required given that N_TEMP "op" has been changed
 */
-
+{
     name        *alias;
 
     alias = op;
-    for(;;) {
+    for( ;; ) {
         if( TempsOverlap( alias, op ) ) {
             if( alias->v.block_usage & INVARIANT ) {
                 alias->v.block_usage = VARIANT | VARIED_ONCE;
@@ -510,11 +509,11 @@ static  void    ZapTemp( name *op ) {
 }
 
 
-static  void    ZapMemory( name *op ) {
+static  void    ZapMemory( name *op )
 /************************************
     Flip bits required given that N_MEMORY "op" has been changed
 */
-
+{
     name        *other;
 
     for( other = Names[N_MEMORY]; other != NULL; other=other->n.next_name ) {
@@ -529,8 +528,8 @@ static  void    ZapMemory( name *op ) {
 }
 
 
-extern  void    MarkInvariants() {
-/*********************************
+extern  void    MarkInvariants( void )
+/*************************************
     Mark all N_TEMP/N_MEMORY names as INVARIANT with respect to the
     current loop "Loop", then traverse the loop and turn off the
     INVARIANT bit for anything that could be modified by an instruction
@@ -540,7 +539,7 @@ extern  void    MarkInvariants() {
     once (VARIED_ONCE) from names which are varied more than once within
     the loop.
 */
-
+{
     name        *op;
     block       *blk;
     instruction *ins;
@@ -662,11 +661,11 @@ static  bool    InvariantReg( name *op )
 }
 
 
-extern  bool    InvariantOp( name *op ) {
-/****************************************
+extern  bool    InvariantOp( name *op )
+/**************************************
     return TRUE if "op" is invariant with respect to "Loop"
 */
-
+{
     switch( op->n.class ) {
     case N_CONSTANT:
         return( TRUE );
@@ -709,11 +708,11 @@ static  value   OpEQZero( name *op, bool fp ) {
 }
 
 
-extern  bool    Hoistable( instruction *ins, block *blk ) {
-/**********************************************************
+extern  bool    Hoistable( instruction *ins, block *blk )
+/********************************************************
     Is it safe to hoist instruction "ins" out of the loop (or if)?
 */
-
+{
     bool        will_execute;
     bool        dangerous;
     int         i;
@@ -790,13 +789,13 @@ extern  bool    Hoistable( instruction *ins, block *blk ) {
 
 
 
-static  bool    InvariantExpr( instruction *ins, block *blk ) {
-/**************************************************************
+static  bool    InvariantExpr( instruction *ins, block *blk )
+/************************************************************
     Return true if the operands of instruction "ins" are invariant with
     respect to "Loop", and "ins" could be safely brought out of the
     loop.
 */
-
+{
     int         i;
 
     if( Hoistable( ins, blk ) == FALSE ) return( FALSE );
@@ -808,9 +807,9 @@ static  bool    InvariantExpr( instruction *ins, block *blk ) {
 }
 
 
-static  void    UpdateLoopLiveInfo( instruction *ins ) {
-/******************************************************/
-
+static  void    UpdateLoopLiveInfo( instruction *ins )
+/****************************************************/
+{
     hw_reg_set  reg;
     block       *blk;
     int         i;
@@ -833,11 +832,11 @@ static  void    UpdateLoopLiveInfo( instruction *ins ) {
     }
 }
 
-extern  induction       *FindIndVar( name *op ) {
-/************************************************
+extern  induction       *FindIndVar( name *op )
+/**********************************************
     Find an existing induction variable entry for "op".
 */
-
+{
     induction   *var;
 
     var = IndVarList;
@@ -849,11 +848,11 @@ extern  induction       *FindIndVar( name *op ) {
 }
 
 
-static  pointer CopyInvariant( pointer invari ) {
-/************************************************
+static  pointer CopyInvariant( pointer invari )
+/**********************************************
     Return a copy of invariant list "invar"
 */
-
+{
     invariant   *new;
     invariant   *invar = invari;
 
@@ -870,11 +869,11 @@ static  pointer CopyInvariant( pointer invari ) {
 }
 
 
-static  void    MulInvariant( invariant *invar, signed_32 by ) {
-/***************************************************************
+static  void    MulInvariant( invariant *invar, signed_32 by )
+/*************************************************************
     Multiply all entries in invariant list "invar" by "by"
 */
-
+{
     while( invar != NULL ) {
         invar->times *= by;
         invar = invar->next;
@@ -882,11 +881,11 @@ static  void    MulInvariant( invariant *invar, signed_32 by ) {
 }
 
 
-static  invariant       *NewInvariant( name *op, int times ) {
-/*************************************************************
-    bag a new "invaraint"
+static  invariant       *NewInvariant( name *op, int times )
+/***********************************************************
+    bag a new "invariant"
 */
-
+{
     invariant   *new;
 
     _Alloc( new, sizeof( invariant ) );
@@ -898,11 +897,11 @@ static  invariant       *NewInvariant( name *op, int times ) {
 }
 
 
-static  void    FreeInvariant( invariant *invar ) {
-/**************************************************
+static  void    FreeInvariant( invariant *invar )
+/************************************************
     Free an invariant list.
 */
-
+{
     invariant   *junk;
 
     while( invar != NULL ) {
@@ -913,12 +912,12 @@ static  void    FreeInvariant( invariant *invar ) {
 }
 
 
-static  bool    SameInvariant( invariant *i1, invariant *i2 ) {
-/**************************************************************
+static  bool    SameInvariant( invariant *i1, invariant *i2 )
+/************************************************************
     return true if "i1" and "i2" are idential invariant lists.
 */
-
-    for(;;) {
+{
+    for( ;; ) {
         if( i1 == NULL && i2 == NULL ) return( TRUE );
         if( i1 == NULL ) return( FALSE );
         if( i2 == NULL ) return( FALSE );
@@ -929,25 +928,25 @@ static  bool    SameInvariant( invariant *i1, invariant *i2 ) {
     }
 }
 
-static  bool    DifferentClasses( type_class_def c1, type_class_def c2 ) {
-/*************************************************************************
+static  bool    DifferentClasses( type_class_def c1, type_class_def c2 )
+/***********************************************************************
     return true if "c1" and "c2" are different, ignoring signed v.s.
     unsigned differences.
 */
-
+{
     return( Unsigned[ c1 ] != Unsigned[ c2 ] );
 }
 
 
-extern  void    CommonInvariant() {
-/**********************************
+extern  void    CommonInvariant( void )
+/**************************************
     find moves from one ONE_DEFINITION temp to another. These are
     loop invariant expressions that got hauled out of the loop
     from different places, then got caught as common subexpressions
     in the loop header. We can replace all occurences of the destination
     with the source.
 */
-
+{
     block               *blk;
     instruction         *ins;
     name                *op;
@@ -1098,11 +1097,11 @@ static  void    FreeVar( induction *var ) {
 }
 
 
-extern  void    FiniIndVars() {
-/******************************
+extern  void    FiniIndVars( void )
+/**********************************
     clean up the induction variable lists.
 */
-
+{
     induction   *junk;
 
     while( IndVarList != NULL ) {
@@ -1127,17 +1126,17 @@ static  bool    ListContainsVar( name * list, name *ivname ) {
 }
 
 
-static  void    FreeBadVars() {
-/******************************
+static  void    FreeBadVars( void )
+/**********************************
     LoopInsDead may have freed some N_TEMP names.  Free the associated
     induction variables.
 */
-
+{
     induction   **owner;
     induction   *var;
 
     owner = &IndVarList;
-    for(;;) {
+    for( ;; ) {
         var = *owner;
         if( var == NULL ) break;
         if( ListContainsVar( Names[ N_TEMP ], var->name )
@@ -1460,9 +1459,9 @@ static  void    ChkIVUses( induction *var, name *op ) {
 }
 
 
-static  void    MarkUses( instruction *ins ) {
-/********************************************/
-
+static  void    MarkUses( instruction *ins )
+/******************************************/
+{
     induction   *var;
     int         i;
 
@@ -1480,11 +1479,11 @@ static  void    MarkUses( instruction *ins ) {
 }
 
 
-static  void    MarkSurvivors() {
-/********************************
+static  void    MarkSurvivors( void )
+/************************************
     Mark induction variables that have survived one pass of the loop
 */
-
+{
     block       *blk;
     instruction *ins;
     induction   *var;
@@ -1551,9 +1550,9 @@ static  void    AdjustIndex( induction *var, induction *new ) {
 }
 
 
-static  void    MergeVars() {
-/******************************/
-
+static  void    MergeVars( void )
+/*******************************/
+{
     induction   *var;
     block       *varblock;
     induction   *other;
@@ -1593,9 +1592,9 @@ static  void    MergeVars() {
 }
 
 
-static  bool    IsAddressMode( induction *var ) {
-/***********************************************/
-
+static  bool    IsAddressMode( induction *var )
+/*********************************************/
+{
     #if 0 // when this doesn't work, it REALLY doesn't work
         if( var->use_count != 1 ) return( FALSE );
         if( _IsntV( var, IV_INDEXED ) ) return( FALSE );
@@ -1620,11 +1619,11 @@ static  bool    IsAddressMode( induction *var ) {
 }
 
 
-static  void    ScanNonBasic( instruction *ins ) {
-/*************************************************
+static  void    ScanNonBasic( instruction *ins )
+/***********************************************
     see FindNonBasics ^
 */
-
+{
     induction   *var;
     name        *op;
 
@@ -1665,11 +1664,11 @@ static  void    ScanNonBasic( instruction *ins ) {
 }
 
 
-static  void    ScanForNonBasics( block *blk ) {
-/***********************************************
+static  void    ScanForNonBasics( block *blk )
+/*********************************************
     see FindNonBasics ^
 */
-
+{
     instruction *ins;
 
     ins = blk->ins.hd.next;
@@ -1680,14 +1679,14 @@ static  void    ScanForNonBasics( block *blk ) {
 }
 
 
-static  void    FindNonBasics() {
-/********************************
+static  void    FindNonBasics( void )
+/************************************
     Find all non-basic induction variables 'i' in the loop this is a
     variable whose only definition in the loop is i = j + - * / << const
     or  i = j +- loop invariant variable where j is an existing
     induction variable
 */
-
+{
     block       *blk;
 
     blk = Loop;
@@ -1699,11 +1698,11 @@ static  void    FindNonBasics() {
 }
 
 
-static  void    ScanBasic( instruction *ins ) {
-/**********************************************
+static  void    ScanBasic( instruction *ins )
+/********************************************
     see FindBasics ^
 */
-
+{
     name    *op;
 
     if( KillIndVars( ins ) ) return;
@@ -1730,11 +1729,11 @@ static  void    ScanBasic( instruction *ins ) {
 }
 
 
-static  void    ScanForBasics( block *blk ) {
-/********************************************
+static  void    ScanForBasics( block *blk )
+/******************************************
     See FindBasics ^
 */
-
+{
     instruction *ins;
 
     ins = blk->ins.hd.next;
@@ -1745,14 +1744,13 @@ static  void    ScanForBasics( block *blk ) {
 }
 
 
-static  void    FindBasics() {
-/*****************************
+static  void    FindBasics( void )
+/*********************************
     Find all the basic induction variables in the current loop a basic
     induction variable is one whose only defn in the loop is i = i +-
     constant;
 */
-
-
+{
     block       *blk;
 
     blk = Loop;
@@ -2101,9 +2099,9 @@ static  bool    NoPathThru( instruction *ins1,
 }
 
 
-static  void    MarkWillExecBlocks() {
-/************************************/
-
+static  void    MarkWillExecBlocks( void )
+/****************************************/
+{
     block       *blk;
     int         i;
     instruction *nop;
@@ -2155,9 +2153,9 @@ static  void    MarkWillExecBlocks() {
 }
 
 
-static  void    UnMarkWillExecBlocks() {
-/**************************************/
-
+static  void    UnMarkWillExecBlocks( void )
+/******************************************/
+{
     block       *blk;
 
     for( blk = Loop; blk != NULL; blk = blk->u.loop ) {
@@ -2965,8 +2963,8 @@ static  bool    DoLoopInvariant( bool (*rtn)(void) ) {
 }
 
 
-static  bool    FindRegInvariants() {
-/************************************
+static  bool    FindRegInvariants( void )
+/****************************************
     Find any invariant, hoistable expressions in "Loop", and
     pre-calculate the expression in the loop pre-header, putting the
     result into a tempory and replaceing the calculation within the loop
@@ -2975,7 +2973,7 @@ static  bool    FindRegInvariants() {
     propagate the constant values into the loop.  The copy propagator in
     CSE does not handle this so we do it here.
 */
-
+{
     block       *blk;
     instruction *ins;
     instruction *next;
@@ -3012,8 +3010,8 @@ static  bool    FindRegInvariants() {
 }
 
 
-static  bool    FindInvariants() {
-/*********************************
+static  bool    FindInvariants( void )
+/*************************************
     Find any invariant, hoistable expressions in "Loop", and
     pre-calculate the expression in the loop pre-header, putting the
     result into a tempory and replaceing the calculation within the loop
@@ -3022,7 +3020,7 @@ static  bool    FindInvariants() {
     propagate the constant values into the loop.  The copy propagator in
     CSE does not handle this so we do it here.
 */
-
+{
     block       *blk;
     instruction *ins;
     instruction *next;
@@ -3083,23 +3081,23 @@ static  bool    FindInvariants() {
 }
 
 
-extern  bool    LoopInvariant() {
-/*******************************/
-
+extern  bool    LoopInvariant( void )
+/***********************************/
+{
     return( DoLoopInvariant( &FindInvariants ) );
 }
 
 
-extern  bool    LoopRegInvariant() {
-/**********************************/
-
+extern  bool    LoopRegInvariant( void )
+/**************************************/
+{
     return( DoLoopInvariant( &FindRegInvariants ) );
 }
 
 
-extern  void    LoopEnregister() {
-/********************************/
-
+extern  void    LoopEnregister( void )
+/************************************/
+{
     interval_depth      i;
     block               *blk;
 
@@ -3120,15 +3118,14 @@ extern  void    LoopEnregister() {
 }
 
 
-static  void    ElimIndVars() {
-/******************************
+static  void    ElimIndVars( void )
+/**********************************
     Eliminate induction variables whose only use in the loop is in
     comparisons and the single induction instruction by replacing it
     with another induction variable of it's family in the compare
     instructions.
 */
-
-
+{
     induction   *next;
     induction   *var;
     induction   *replacement;
@@ -3156,8 +3153,8 @@ static  void    ElimIndVars() {
 }
 
 
-static  bool    ReduceVar( induction *var ) {
-/********************************************
+static  bool    ReduceVar( induction *var )
+/******************************************
     Do strength reduction on induction variable "var", if it is current
     to this loop, and the top, or end result, of an induction
     expression.  Once strength reduction is done on the "top" of an
@@ -3174,7 +3171,7 @@ static  bool    ReduceVar( induction *var ) {
     will be removed.
 
 */
-
+{
     induction           *alias;
     name                *new_temp;
     type_class_def      class;
@@ -3222,11 +3219,11 @@ static  bool    ReduceVar( induction *var ) {
 }
 
 
-static  bool    ReduceInStrength() {
-/***********************************
+static  bool    ReduceInStrength( void )
+/***************************************
     For each induction variable, see if we can reduce it in strength.
 */
-
+{
     induction   *var;
     bool        change;
 
@@ -3488,11 +3485,11 @@ static  bool    DoInduction( block_list *header, bool reduce, bool unroll ) {
 }
 
 
-static  bool    Induction( bool reduce, bool unroll ) {
-/*****************************************
+static  bool    Induction( bool reduce, bool unroll )
+/****************************************************
     Do induction variable processing
 */
-
+{
     block_list  list;
     bool        change;
 
@@ -3508,15 +3505,15 @@ static  bool    Induction( bool reduce, bool unroll ) {
 }
 
 
-extern  bool    IndVars() {
-/*************************/
-
+extern  bool    IndVars( void )
+/*****************************/
+{
     return( Induction( TRUE, FALSE ) );
 }
 
 
-extern  bool    TransLoops( bool unroll ) {
-/*****************************************/
-
+extern  bool    TransLoops( bool unroll )
+/***************************************/
+{
     return( Induction( FALSE, unroll ) );
 }

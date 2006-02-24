@@ -38,17 +38,17 @@
 extern    block         *HeadBlock;
 extern    conflict_node *ConfList;
 
-extern  bool            PropagateMoves();
-extern  instruction_id  Renumber();
+extern  bool            PropagateMoves(void);
+extern  instruction_id  Renumber(void);
 extern  bool            FPIsStack(name*);
 extern  bool            SideEffect(instruction*);
 extern  void            FreeIns(instruction*);
 extern  conflict_node*  FindConflictNode(name*,block*,instruction*);
-extern  void            FreeConflicts();
+extern  void            FreeConflicts(void);
 extern  void            NullConflicts(var_usage);
-extern  void            FindReferences();
-extern  void            MakeConflicts();
-extern  void            MakeLiveInfo();
+extern  void            FindReferences(void);
+extern  void            MakeConflicts(void);
+extern  void            MakeLiveInfo(void);
 extern  bool            ReDefinedBy(instruction*,name*);
 extern  void            FreeJunk(block*);
 

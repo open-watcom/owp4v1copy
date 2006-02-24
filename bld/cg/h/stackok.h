@@ -49,16 +49,16 @@
 #endif
 
 
-extern char near        *bp();
+extern char near        *bp( void );
 #pragma aux bp = 0x89 0xe8 value [ __AX ];
 
-extern char near        *sp();
+extern char near        *sp( void );
 #pragma aux sp = value [ __SP ];
 
-extern void             setsp(char near *);
+extern void             setsp( char near * );
 #pragma aux setsp = 0x89 0xc4 parm [ __AX ] modify [ __SP ];
 
-extern void             setbp(char near *);
+extern void             setbp( char near * );
 #pragma aux setbp = 0x89 0xc5 parm [ __AX ];
 
 #pragma aux SafeRecurse parm caller [ __AX __BX __CX __DX ]; /* just to be sure! */
@@ -69,4 +69,4 @@ extern void             setbp(char near *);
 
 #endif
 
-extern pointer          SafeRecurse( pointer (*)( void * ), pointer );
+extern pointer          SafeRecurse( pointer (*)( pointer ), pointer );

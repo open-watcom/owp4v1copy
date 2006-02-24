@@ -37,8 +37,8 @@
 
 extern  type_def        *TypeAddress(cg_type);
 extern  type_def        *TypeAlias(cg_type,cg_type);
-extern  void            TargTypeInit();
-extern  void            InitTyping();
+extern  void            TargTypeInit(void);
+extern  void            InitTyping(void);
 
 
 extern    type_def      *TypeInteger;

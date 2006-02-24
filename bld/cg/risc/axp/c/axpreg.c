@@ -45,16 +45,17 @@ extern  hw_reg_set      ReturnReg(type_class_def);
 extern  hw_reg_set      *ParmRegs( void );
 extern type_class_def   ReturnClass(type_def*,call_attributes);
 extern  byte            *Copy(void*,void*,uint);
-extern  hw_reg_set      FixedRegs();
-extern  hw_reg_set      StackReg();
-extern  hw_reg_set      DisplayReg();
-extern  int             SizeDisplayReg();
-extern  hw_reg_set      ReturnAddrReg(void);
+extern  hw_reg_set      FixedRegs( void );
+extern  hw_reg_set      StackReg( void );
+extern  hw_reg_set      DisplayReg( void );
+extern  int             SizeDisplayReg( void );
+extern  hw_reg_set      ReturnAddrReg( void );
 extern  hw_reg_set      VarargsHomePtr( void );
 extern  sym_handle      AskForLblSym( label_handle );
 
-extern hw_reg_set SavedRegs() {
-/*****************************/
+extern hw_reg_set SavedRegs( void )
+/*********************************/
+{
     hw_reg_set          saved;
 
     HW_CAsgn( saved, HW_EMPTY );
@@ -170,9 +171,9 @@ extern  hw_reg_set      CallZap( call_state *state ) {
     return( zap );
 }
 
-extern  hw_reg_set      MustSaveRegs() {
-/**************************************/
-
+extern  hw_reg_set      MustSaveRegs( void )
+/******************************************/
+{
     hw_reg_set  save;
     hw_reg_set  tmp;
 
@@ -199,9 +200,9 @@ extern  hw_reg_set      MustSaveRegs() {
     return( save );
 }
 
-extern  hw_reg_set      SaveRegs() {
-/**********************************/
-
+extern  hw_reg_set      SaveRegs( void )
+/**************************************/
+{
     hw_reg_set   save;
 
     save = MustSaveRegs();

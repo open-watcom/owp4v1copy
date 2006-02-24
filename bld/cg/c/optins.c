@@ -44,12 +44,12 @@ extern  oc_class        NextClass(ins_entry*);
 extern  void            ChgLblRef(ins_entry*,code_lbl*);
 extern  byte            ReverseCondition(byte);
 extern  ins_entry       *DelInstr(ins_entry*);
-extern  void            SetBranches();
+extern  void            SetBranches(void);
 extern  ins_entry       *NextIns(ins_entry*);
 extern  bool            StraightenCode(ins_entry*);
 extern  void            CheckStraightenCode(ins_entry*);
 extern  ins_entry       *IsolatedCode(ins_entry*);
-extern  void            FreePendingDeletes();
+extern  void            FreePendingDeletes(void);
 extern  bool            ComTail(ins_entry*,ins_entry*);
 extern  void            RetAftrCall(ins_entry*);
 extern  bool            RetAftrLbl(ins_entry*);
@@ -64,9 +64,10 @@ extern  bool            UniqueLabel(code_lbl*);
 
 static  ins_entry       *Redirect( ins_entry *, ins_entry * );
 
-static  bool    LineLabel( ins_entry *label ) {
-/*********************************************/
 
+static  bool    LineLabel( ins_entry *label )
+/*******************************************/
+{
 #if _TARGET & _TARG_RISC
     if( _LblLine( label ) != 0 ) {
         return( TRUE );
@@ -78,9 +79,9 @@ static  bool    LineLabel( ins_entry *label ) {
 }
 
 
-static  bool    CompressLabels( ins_entry *label ) {
-/*************************************************/
-
+static  bool    CompressLabels( ins_entry *label )
+/************************************************/
+{
     ins_entry   *other_label;
     bool        lbl_unique;
 
@@ -106,9 +107,9 @@ static  bool    CompressLabels( ins_entry *label ) {
 }
 
 
-static  bool    UnTangle1( ins_entry *jmp, ins_entry **instr ) {
-/****************************************************************/
-
+static  bool    UnTangle1( ins_entry *jmp, ins_entry **instr )
+/************************************************************/
+{
     ins_entry   *c_jmp;
     oc_class    cl;
 
@@ -186,14 +187,14 @@ static  bool    UnTangle2( ins_entry *jmp, ins_entry **instr ) {
     return( TRUE );
 }
 
-extern  ins_entry       *Untangle( ins_entry *instr ) {
-/*****************************************************/
-
+extern  ins_entry       *Untangle( ins_entry *instr )
+/***************************************************/
+{
     ins_entry   *jmp;
     bool        change;
 
   optbegin
-    for(;;) {
+    for( ;; ) {
         if( instr == NULL ) break;
         if( _Class( instr ) != OC_LABEL ) break;
         if( !CompressLabels( instr ) ) break;
@@ -211,9 +212,10 @@ extern  ins_entry       *Untangle( ins_entry *instr ) {
 }
 
 
-static  ins_entry       *Redirect( ins_entry *l_ins, ins_entry *j_ins ) {
-/***********************************************************************/
+static  ins_entry       *Redirect( ins_entry *l_ins, ins_entry *j_ins )
+/*********************************************************************/
 // Redirect all refs to l_ins to the target of j_ins
+{
     ins_entry   *ref;
     code_lbl    *new;
     ins_entry   *ins;
@@ -249,14 +251,14 @@ static  ins_entry       *Redirect( ins_entry *l_ins, ins_entry *j_ins ) {
 }
 
 
-extern  void    OptPush() {
-/*************************/
-
+extern  void    OptPush( void )
+/*****************************/
+{
     ins_entry   *ins;
 
   optbegin
     ins = LastIns;
-    for(;;) {
+    for( ;; ) {
         InsDelete = FALSE;
         switch( _Class( ins ) ) {
         case OC_INFO:
@@ -303,13 +305,13 @@ extern  void    OptPush() {
   optend
 
 
-extern  void    OptPull() {
-/*************************/
-
+extern  void    OptPull( void )
+/*****************************/
+{
     oc_class    ins_class;
 
   optbegin
-    for(;;) {
+    for( ;; ) {
         InsDelete = FALSE;
         ins_class = _Class( FirstIns );
         switch( ins_class ) {

@@ -196,8 +196,8 @@ static tag      _ClassSizes[ MAX_CLASS + 1 ];
 
 #if  defined( __DOS__ ) || defined( __QNX__ )
 
-static  void    NotEnoughMem()
-/****************************/
+static  void    NotEnoughMem( void )
+/**********************************/
 {
     FatalError( "Not enough memory to satisfy WCGMEMORY" );
 }
@@ -236,8 +236,8 @@ static void myitoa( int i, char *p )
 }
 
 
-static  void    CalcMemSize()
-/***************************/
+static  void    CalcMemSize( void )
+/*********************************/
 {
     bool        max_size_queried;
     bool        size_queried;
@@ -352,8 +352,8 @@ static  void    CalcMemSize()
     }
 }
 
-static  void    MemInit()
-/***********************/
+static  void    MemInit( void )
+/*****************************/
 {
     if( !Initialized ) {
         int i;
@@ -398,7 +398,7 @@ static int SizeToClass( tag amount )
 
 
 static tag ClassToSize( int mem_class )
-/*********************************/
+/*************************************/
 {
     return( _ClassSizes[mem_class] );
 }
@@ -500,15 +500,15 @@ extern void     MemFree( char *block )
     }
 }
 
-extern void     MemCoalesce()
-/***************************/
+extern void     MemCoalesce( void )
+/*********************************/
 {
     return;
 }
 
 
-extern pointer_int      MemInUse( )
-/*********************************/
+extern pointer_int      MemInUse( void )
+/**************************************/
 {
     if( !Initialized )
         MemInit();
@@ -516,8 +516,8 @@ extern pointer_int      MemInUse( )
 }
 
 
-extern pointer_int      MemSize( )
-/********************************/
+extern pointer_int      MemSize( void )
+/*************************************/
 {
     switch( Initialized ) {
     case 0:

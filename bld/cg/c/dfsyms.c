@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Emit DWARF symbol information.
 *
 ****************************************************************************/
 
@@ -70,17 +69,17 @@ extern  void            OutLabel(label_handle);
 extern  void            DoBigBckPtr(back_handle,offset);
 extern  name            *DeAlias(name*);
 extern  seg_id          SetOP(seg_id);
-extern  seg_id          AskCodeSeg();
+extern  seg_id          AskCodeSeg(void);
 extern  segment_id      AskSegID(pointer,cg_class);
 extern  sym_handle      AskForLblSym(label_handle);
-extern  offset          AskLocation();
+extern  offset          AskLocation(void);
 extern  void            SetLocation(offset);
-extern  offset          AskMaxSize();
+extern  offset          AskMaxSize(void);
 extern  void            SetBigLocation( long_offset loc );
-extern  long_offset     AskBigLocation();
-extern  long_offset     AskBigMaxSize();
+extern  long_offset     AskBigLocation(void);
+extern  long_offset     AskBigMaxSize(void);
 extern  offset          AskAddress(label_handle);
-extern  bool            NeedBaseSet();
+extern  bool            NeedBaseSet(void);
 extern  void            DataInt(short_offset);
 extern  void            DataLong( long );
 extern  void            DataBytes(unsigned_32,byte*);
@@ -94,7 +93,6 @@ extern uint             DFStkReg( void );
 extern uint             DFDisplayReg( void );
 extern void             DFFEPtrRef( sym_handle sym );
 extern char             GetMemModel( void );
-extern  bool            NeedBaseSet();
 extern  name            *DeAlias(name*);
 extern  name            *AllocUserTemp(pointer,type_class_def);
 extern  type_length     NewBase(name*);

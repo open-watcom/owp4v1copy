@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Strength reduction of multiplication operations.
 *
 ****************************************************************************/
 
@@ -41,10 +40,10 @@ extern  name            *AllocIntConst(int);
 extern  name            *AllocTemp(type_class_def);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            FreeIns(instruction*);
-extern  int             SubCost();
-extern  int             AddCost();
+extern  int             SubCost(void);
+extern  int             AddCost(void);
 extern  int             MulCost(unsigned_32);
-extern  int             ShiftCost();
+extern  int             ShiftCost(void);
 extern  uint_32         CountBits( uint_32 );
 
 extern  block           *HeadBlock;
@@ -66,9 +65,9 @@ typedef struct op {
 static  op      Ops[MAXOPS];
 
 
-static  int     Factor( unsigned_32 num, int *cost ) {
-/*********************************************************/
-
+static  int     Factor( unsigned_32 num, int *cost )
+/**************************************************/
+{
     int         shlcnt;
     int         i;
     unsigned    num_oprs;
@@ -156,9 +155,9 @@ static  int     Factor( unsigned_32 num, int *cost ) {
     return( i );
 }
 
-static  instruction     *CheckMul( instruction *ins ) {
-/*****************************************************/
-
+static  instruction     *CheckMul( instruction *ins )
+/***************************************************/
+{
     signed_32           rhs;
     int                 i;
     bool                neg;
@@ -213,9 +212,9 @@ static  instruction     *CheckMul( instruction *ins ) {
 }
 
 
-extern  void    MulToShiftAdd() {
-/*******************************/
-
+extern  void    MulToShiftAdd( void )
+/***********************************/
+{
     block       *blk;
     instruction *ins;
     instruction *next;

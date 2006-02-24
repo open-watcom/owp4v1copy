@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Alpha AXP specific instruction splitting.
 *
 ****************************************************************************/
 
@@ -51,9 +50,9 @@ extern  name            *AllocAddrConst(name*,int,constant_class,type_class_def)
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  name            *STempOffset(name*,type_length,type_class_def,type_length);
 
-extern  hw_reg_set      StackReg();
-extern  hw_reg_set      ScratchReg();
-extern  hw_reg_set      ReturnAddrReg();
+extern  hw_reg_set      StackReg(void);
+extern  hw_reg_set      ScratchReg(void);
+extern  hw_reg_set      ReturnAddrReg(void);
 
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            PrefixIns(instruction*,instruction*);

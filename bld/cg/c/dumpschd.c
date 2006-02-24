@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dump instruction scheduling information.
 *
 ****************************************************************************/
 
@@ -44,7 +43,6 @@
 #include "sched.h"
 #include "dump.h"
 
-extern  void            DumpNL();
 extern  void            DumpPtr(pointer);
 extern  void            DumpInt(int);
 extern  void            DumpIns(instruction *);
@@ -89,8 +87,8 @@ void DumpADataDag( data_dag *dag )
     DumpNL();
 }
 
-static void ReverseList()
-/***********************/
+static void ReverseList( void )
+/*****************************/
 {
 
     data_dag    *head;
@@ -106,8 +104,8 @@ static void ReverseList()
     DataDag = head;
 }
 
-void DumpDataDag()
-/****************/
+void DumpDataDag( void )
+/**********************/
 {
     data_dag    *dag;
 

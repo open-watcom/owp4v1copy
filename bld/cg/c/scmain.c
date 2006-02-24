@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Scoreboard entire routine.
 *
 ****************************************************************************/
 
@@ -41,7 +40,7 @@
 #include "opcodes.h"
 
 extern  byte            *Copy(void*,void*,uint);
-extern  score_list      *NewScListEntry();
+extern  score_list      *NewScListEntry(void);
 extern  void            RegAdd(score*,int,int);
 extern  void            RegDelete(score*,int);
 extern  bool            RegsEqual(score*,int,int);
@@ -50,15 +49,15 @@ extern  bool            ScoreLookup(score*,score_info*);
 extern  void            ScoreInsert(score*,int,score_info*);
 extern  void            ScoreFreeList(score*);
 extern  void            ScInitRegs(score*);
-extern  hw_reg_set      AllCacheRegs();
+extern  hw_reg_set      AllCacheRegs(void);
 extern  void            ScFree(pointer,int);
 extern  void            FreeScoreBoard(score*);
 extern  bool            DoScore(block*);
-extern  void            MakeLiveInfo();
+extern  void            MakeLiveInfo(void);
 extern  void            ScoreClear(score*);
 extern  pointer         ScAlloc(int);
 extern  void            FreeJunk(block*);
-extern  void            ScoreCalcList();
+extern  void            ScoreCalcList(void);
 extern  void            ProcMessage(msg_class);
 extern  sym_handle      AskForLblSym(label_handle);
 extern  mem_out_action  SetMemOut(mem_out_action);
@@ -75,15 +74,16 @@ extern  block           *HeadBlock;
 extern  bool            BlockByBlock;
 extern  name            *Names[];
 
-extern  void    ScoreInit() {
-/***************************/
 
+extern  void    ScoreInit( void )
+/*******************************/
+{
     InitFrl( &ScListFrl );
 }
 
-extern  void    ScoreFini() {
-/***************************/
-
+extern  void    ScoreFini( void )
+/*******************************/
+{
 }
 
 
@@ -117,10 +117,9 @@ static  void    ScoreSeed( block *blk, block *son, unsigned index )
 
 
 static  void    CopyList( score *frm, score *to,
-                          list_head **sc_heads, int i ) {
-/*****************************************************************/
-
-
+                          list_head **sc_heads, int i )
+/*****************************************************/
+{
     score_list  *first;
     score_list  *new;
     score       *next;
@@ -149,16 +148,16 @@ static  void    CopyList( score *frm, score *to,
 }
 
 
-static  void    ScoreCopy( score *other_sc, score *sc ) {
-/********************************************************/
-
+static  void    ScoreCopy( score *other_sc, score *sc )
+/*****************************************************/
+{
     list_head   **sc_heads;
     int         i;
 
     FreeScoreBoard( sc );
     sc_heads = (list_head **)&sc[ ScoreCount ];
     i = ScoreCount;
-    for(;;) {
+    for( ;; ) {
         --i;
         sc[ i ].next_reg = &sc[ other_sc[ i ].next_reg->index ];
         sc[ i ].prev_reg = &sc[ other_sc[ i ].prev_reg->index ];
@@ -171,7 +170,7 @@ static  void    ScoreCopy( score *other_sc, score *sc ) {
     *sc_heads = NULL;
     i = ScoreCount;
     sc_heads = (list_head **)&sc[ ScoreCount ];
-    for(;;) {
+    for( ;; ) {
         --i;
         CopyList( other_sc, sc, sc_heads, i );
         if( i == 0 ) break;
@@ -179,9 +178,9 @@ static  void    ScoreCopy( score *other_sc, score *sc ) {
 }
 
 
-static  pointer    ScoreDescendants( pointer bl ) {
-/**************************************************/
-
+static  pointer    ScoreDescendants( pointer bl )
+/***********************************************/
+{
     int         i;
     block       *son;
     hw_reg_set  regs;
@@ -223,13 +222,11 @@ static  pointer    ScoreDescendants( pointer bl ) {
 }
 
 
-static  void    InitZero() {
-/**************************/
-
-
-/* Must be allocd. Could be modified by ScoreAssign but that's ok*/
-/* since it will just set offset to 0*/
-
+static  void    InitZero( void )
+/******************************/
+/* Must be allocd. Could be modified by ScoreAssign but that's ok */
+/* since it will just set offset to 0 */
+{
     ScZero = ScAlloc( sizeof( score_info ) );
     ScZero->class     = N_CONSTANT;
     ScZero->offset    = 0;
@@ -239,9 +236,9 @@ static  void    InitZero() {
 }
 
 
-static  void    ScoreRoutine() {
-/******************************/
-
+static  void    ScoreRoutine( void )
+/**********************************/
+{
     block       *blk;
     bool        change;
 
@@ -280,9 +277,9 @@ static  void    ScoreRoutine() {
 }
 
 
-static  void    CleanUp() {
-/*************************/
-
+static  void    CleanUp( void )
+/*****************************/
+{
     block       *blk;
 
     blk = HeadBlock;
@@ -298,9 +295,9 @@ static  void    CleanUp() {
 }
 
 
-static  void    ConstSizes() {
-/****************************/
-
+static  void    ConstSizes( void )
+/********************************/
+{
     name        *cons;
 
     cons = Names[ N_CONSTANT ];
@@ -317,9 +314,9 @@ static  void    ConstSizes() {
 }
 
 
-extern  void    Score() {
-/****************************/
-
+extern  void    Score( void )
+/***************************/
+{
     mem_out_action      old_memout;
     block               *blk;
 

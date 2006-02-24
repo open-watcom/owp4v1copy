@@ -46,7 +46,7 @@
 
 extern  block           *MakeBlock(label_handle,block_num);
 extern  instruction     *DupInstrs(instruction*,instruction*,instruction*,induction*,signed_32);
-extern  label_handle    AskForNewLabel();
+extern  label_handle    AskForNewLabel( void );
 extern  void            MoveEdge(block_edge*,block*);
 extern  void            PointEdge(block_edge*,block*);
 extern  bool            AnalyseLoop(induction*,bool*,instruction**,block**);
@@ -65,10 +65,10 @@ extern  induction       *FindIndVar( name *);
 extern  void            RemoveInputEdge( block_edge * );
 extern  void            SuffixPreHeader( instruction * );
 extern  block           *NewBlock( label_handle, bool );
-extern  void            MarkLoop();
-extern  void            UnMarkLoop();
-extern  void            MarkInvariants();
-extern  void            UnMarkInvariants();
+extern  void            MarkLoop( void );
+extern  void            UnMarkLoop( void );
+extern  void            MarkInvariants( void );
+extern  void            UnMarkInvariants( void );
 extern  instruction     *MakeMove( name *, name *, type_class_def );
 extern  instruction     *DupIns( instruction *, instruction *, name *, signed_32 );
 extern  void            RemoveBlock( block * );
@@ -79,7 +79,7 @@ extern  void            MoveDownLoop( block * );
 extern  block           *ReGenBlock( block *, label_handle );
 extern  void            MakeJumpBlock( block *, block_edge * );
 extern  void            FreeIns( instruction * );
-extern  void            URBlip();
+extern  void            URBlip( void );
 
 extern type_class_def   Signed[];
 extern block            *HeadBlock;
@@ -106,8 +106,8 @@ typedef struct loop_condition {
 } loop_condition;
 
 
-extern  void    FixBlockIds()
-/****************************
+extern  void    FixBlockIds( void )
+/**********************************
     Fix up the block_id field of temps.
 */
 {

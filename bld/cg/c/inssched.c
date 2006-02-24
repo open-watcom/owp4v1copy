@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction reordering for better pipeline utilization.
 *
 ****************************************************************************/
 
@@ -99,16 +98,16 @@ static dep_list_block   *CurrDepBlock;
 static block            *SBlock;
 
 
-extern  bool    SchedFrlFree()
-/****************************
+extern  bool    SchedFrlFree( void )
+/***********************************
     Free the instruction schedulers dependancy link lists.
 */
 {
     return( FrlFreeAll( &DepFrl, sizeof( dep_list_block ) ) );
 }
 
-static dep_list_entry *AllocDep()
-/*******************************
+static dep_list_entry *AllocDep( void )
+/**************************************
     Allocate one dependancy link structure.
 */
 {
@@ -156,8 +155,8 @@ static unsigned InsStallable( instruction *ins )
     return( stallable );
 }
 
-static void InitDag()
-/********************
+static void InitDag( void )
+/**************************
     Allocate the data dependancy dag list, and initialize the fields
     in it.
 */
@@ -235,9 +234,9 @@ static bool StackOp( instruction *ins )
 
 
 static  bool    ReallyDefinedBy( instruction *ins_i, instruction *ins_j,
-                                 name *op, bool ins_linked ) {
-/***************************************************************/
-
+                                 name *op, bool ins_linked )
+/**********************************************************************/
+{
     bool        redefd;
     instruction *ins;
 
@@ -417,10 +416,9 @@ static bool ImplicitDependancy( instruction *imp, instruction *ins )
 }
 
 
-extern bool InsOrderDependant( instruction *ins_i, instruction *ins_j ) {
-/***********************************************************************/
-
-
+extern bool InsOrderDependant( instruction *ins_i, instruction *ins_j )
+/*********************************************************************/
+{
     if( ins_j->head.opcode == OP_NOP
         && ins_j->result == NULL
         && !DoesSomething( ins_j ) ) return( TRUE );
@@ -448,11 +446,11 @@ extern bool InsOrderDependant( instruction *ins_i, instruction *ins_j ) {
 }
 
 
-static  bool    MultiIns( instruction *ins ) {
-/*********************************************
+static  bool    MultiIns( instruction *ins )
+/*******************************************
     Is ins part of a two instruction sequence, like SUB, SBB?
 */
-
+{
     switch( ins->head.opcode ) {
     case OP_ADD:
     case OP_SUB:
@@ -463,11 +461,11 @@ static  bool    MultiIns( instruction *ins ) {
     return( FALSE );
 }
 
-static  bool    InsUsesCC( instruction *ins ) {
-/**********************************************
+static  bool    InsUsesCC( instruction *ins )
+/********************************************
     Does 'ins' uses the condition codes set from a previous instruction?
 */
-
+{
     switch( ins->head.opcode ) {
     case OP_EXT_ADD:
     case OP_EXT_SUB:
@@ -500,8 +498,8 @@ static void BuildLink( data_dag *i, data_dag *j )
     dep->dep = j;
 }
 
-static void BuildDag()
-/*********************
+static void BuildDag( void )
+/***************************
     Build the data dependancy DAG. Note that this sucker is an N**2 algorithm
     on the size of the basic block, so blocks had better not be too big.
 */
@@ -603,8 +601,8 @@ static pointer AnnointADag( data_dag *dag )
     return( NULL );
 }
 
-static void AnnointDag()
-/***********************
+static void AnnointDag( void )
+/*****************************
     Add additional information to data dependancy DAG.
 */
 {
@@ -766,8 +764,8 @@ static void FixIndexAdjust( instruction *adj, bool forward )
 }
 
 
-static void ScheduleIns()
-/************************
+static void ScheduleIns( void )
+/******************************
     Rearrange the instructions in a block according to the data dependancy
     DAG for maximum overlap of the instruction pipeline. The block is built
     from bottom to the top. At each point we have an list of instructions
@@ -935,8 +933,8 @@ static void ScheduleIns()
     }
 }
 
-static  void    FreeDataDag()
-/****************************
+static  void    FreeDataDag( void )
+/**********************************
     Free all the memory allocated for the data dependancy DAG.
 */
 {
@@ -957,8 +955,8 @@ static  void    FreeDataDag()
     CurrDepBlock = NULL;
 }
 
-static  void    SchedBlock()
-/***************************
+static  void    SchedBlock( void )
+/*********************************
     Reorder one block for maximum parallelism.
 */
 {
@@ -986,12 +984,12 @@ static  void    SchedBlock()
     }
 }
 
-void    Schedule() {
-/*******************
+void    Schedule( void )
+/***********************
     Reorder the instructions in a routine for maximum overlap of the
     instruction pipeline.
 */
-
+{
     mem_out_action      old_memout;
     bool                first_time;
 

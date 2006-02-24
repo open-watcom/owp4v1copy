@@ -38,11 +38,11 @@
 
 extern    code_lbl      *Handles;
 
-extern  array_control   *InitPatch();
+extern  array_control   *InitPatch( void );
 
-static  label_handle    DoAskForLabel( sym_handle sym ) {
-/*******************************************************/
-
+static  label_handle    DoAskForLabel( sym_handle sym )
+/*****************************************************/
+{
     code_lbl    *new;
 
   optbegin
@@ -71,9 +71,9 @@ static  label_handle    DoAskForLabel( sym_handle sym ) {
 }
 
 
-extern  label_handle    AskForNewLabel() {
-/****************************************/
-
+extern  label_handle    AskForNewLabel( void )
+/********************************************/
+{
     code_lbl    *new;
 
   optbegin
@@ -85,9 +85,9 @@ extern  label_handle    AskForNewLabel() {
 }
 
 
-extern  label_handle    AskRTLabel( sym_handle *sym ) {
-/*****************************************************/
-
+extern  label_handle    AskRTLabel( sym_handle *sym )
+/***************************************************/
+{
     code_lbl    *lbl;
 
   optbegin
@@ -97,9 +97,9 @@ extern  label_handle    AskRTLabel( sym_handle *sym ) {
 }
 
 
-extern  label_handle    AskForLabel( sym_handle sym ) {
-/*****************************************************/
-
+extern  label_handle    AskForLabel( sym_handle sym )
+/***************************************************/
+{
     code_lbl    *new;
     fe_attr     attr;
 
@@ -113,54 +113,54 @@ extern  label_handle    AskForLabel( sym_handle sym ) {
 }
 
 
-extern  bool    AskIfReachedLabel( code_lbl *lbl ) {
-/**************************************************/
-
+extern  bool    AskIfReachedLabel( code_lbl *lbl )
+/************************************************/
+{
   optbegin
     _ValidLbl( lbl );
     optreturn( _TstStatus( lbl, REACHED ) );
 }
 
 
-extern  bool    AskIfRTLabel( code_lbl *lbl ) {
-/**********************************************/
-
+extern  bool    AskIfRTLabel( code_lbl *lbl )
+/*******************************************/
+{
   optbegin
     _ValidLbl( lbl );
     optreturn( _TstStatus( lbl, RUNTIME ) );
 }
 
 
-extern  bool    AskIfUniqueLabel( code_lbl *lbl ) {
-/*************************************************/
-
+extern  bool    AskIfUniqueLabel( code_lbl *lbl )
+/***********************************************/
+{
   optbegin
     _ValidLbl( lbl );
     optreturn( _TstStatus( lbl, UNIQUE ) != 0 );
 }
 
 
-extern  bool    AskIfCommonLabel( code_lbl *lbl ) {
-/*************************************************/
-
+extern  bool    AskIfCommonLabel( code_lbl *lbl )
+/***********************************************/
+{
   optbegin
     _ValidLbl( lbl );
     optreturn( _TstStatus( lbl, COMMON_LBL ) != 0 );
 }
 
 
-extern  offset  AskAddress( code_lbl *lbl ) {
-/********************************************/
-
+extern  offset  AskAddress( code_lbl *lbl )
+/*****************************************/
+{
   optbegin
     _ValidLbl( lbl );
     optreturn( lbl->lbl.address );
 }
 
 
-extern  pointer AskLblPatch( code_lbl *lbl ) {
-/*********************************************/
-
+extern  pointer AskLblPatch( code_lbl *lbl )
+/******************************************/
+{
   optbegin
     _ValidLbl( lbl );
     if( lbl->lbl.patch == NULL ) {
@@ -170,9 +170,9 @@ extern  pointer AskLblPatch( code_lbl *lbl ) {
 }
 
 
-extern  sym_handle      AskForLblSym( code_lbl *lbl ) {
-/******************************************************/
-
+extern  sym_handle      AskForLblSym( code_lbl *lbl )
+/***************************************************/
+{
   optbegin
     _ValidLbl( lbl );
     optreturn( lbl->lbl.sym );

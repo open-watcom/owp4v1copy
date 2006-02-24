@@ -34,7 +34,7 @@
 #include "opcodes.h"
 #include "dump.h"
 
-extern  void            DumpNL();
+extern  void            DumpNL(void);
 extern  void            DumpPtr(pointer);
 extern  void            DumpIns(instruction*);
 extern  void            DumpLineNum(instruction*);
@@ -50,9 +50,9 @@ extern  block   *HeadBlock;
 extern  name    *Names[];
 
 
-static void DumpBlkFlags( block *blk ) {
-/**************************************/
-
+static void DumpBlkFlags( block *blk )
+/************************************/
+{
     if( blk->class & RETURN ) {
         DumpLiteral( "Ret " );
     } else {
@@ -137,10 +137,9 @@ static void DumpBlkFlags( block *blk ) {
 }
 
 
-extern  void    DumpRefs( name *op ) {
-/************************************/
-
-
+extern  void    DumpRefs( name *op )
+/**********************************/
+{
     block       *blk;
     instruction *ins;
     int         dsize;
@@ -209,9 +208,9 @@ extern  void    DumpRefs( name *op ) {
 }
 
 
-static  void    DumpBlkLabel( block *b ) {
-/****************************************/
-
+static  void    DumpBlkLabel( block *b )
+/**************************************/
+{
     if( b->label != NULL ) {
         DumpLiteral( " L" );
         DumpPtr( b->label );
@@ -224,22 +223,22 @@ static  void    DumpBlkLabel( block *b ) {
 }
 
 
-static  bool    FindBlock( block *b ) {
-/*************************************/
-
+static  bool    FindBlock( block *b )
+/***********************************/
+{
     block       *blk;
 
     blk = HeadBlock;
-    for(;;) {
+    for( ;; ) {
         if( blk == NULL ) return( FALSE );
         if( blk == b ) return( TRUE );
         blk = blk->next_block;
     }
 }
 
-extern  void    DumpBlkId( block *b ) {
-/*************************************/
-
+extern  void    DumpBlkId( block *b )
+/***********************************/
+{
     DumpLiteral( "Block " );
     DumpInt( b->id );
     DumpLiteral( "(" );
@@ -247,9 +246,9 @@ extern  void    DumpBlkId( block *b ) {
     DumpLiteral( ")" );
 }
 
-static  void    DumpInputs( block *b ) {
-/**************************************/
-
+static  void    DumpInputs( block *b )
+/************************************/
+{
     int         i;
     block_edge  *edge;
 
@@ -278,23 +277,23 @@ static  void    DumpInputs( block *b ) {
 }
 
 
-extern  void    DumpLBit( local_bit_set *bit ) {
-/***********************************************/
-
+extern  void    DumpLBit( local_bit_set *bit )
+/********************************************/
+{
     _LBitIter( Dump8h, (*bit) );
 }
 
 
-extern  void    DumpGBit( global_bit_set *bit ) {
-/***********************************************/
-
+extern  void    DumpGBit( global_bit_set *bit )
+/*********************************************/
+{
     _GBitIter( Dump8h, (*bit) );
 }
 
 
-static  void    DumpDataFlo( block *b ) {
-/***************************************/
-
+static  void    DumpDataFlo( block *b )
+/*************************************/
+{
     if( b->dataflow != NULL ) {
         DumpLiteral( "IN   " );
         DumpGBit( &b->dataflow->in );
@@ -315,9 +314,9 @@ static  void    DumpDataFlo( block *b ) {
 }
 
 
-static  void    DumpGotos( block *b, bool all ) {
-/***********************************************/
-
+static  void    DumpGotos( block *b, bool all )
+/*********************************************/
+{
     int         i;
 
     DumpPtr( &b->edge[ 0 ] );
@@ -350,9 +349,9 @@ static  void    DumpGotos( block *b, bool all ) {
 }
 
 
-extern  void    DumpLoops() {
-/***************************/
-
+extern  void    DumpLoops( void )
+/*******************************/
+{
     block       *blk;
 
     blk = HeadBlock;
@@ -373,9 +372,9 @@ extern  void    DumpLoops() {
 }
 
 
-extern  void    DumpFlowGraph( block *blk ) {
-/*******************************************/
-
+extern  void    DumpFlowGraph( block *blk )
+/*****************************************/
+{
     interval_def        *head;
     interval_def        *curr;
     int                 i;
@@ -426,13 +425,13 @@ extern  void    DumpFlowGraph( block *blk ) {
 }
 
 
-extern  void    DumpSymTab() {
-/****************************/
-
+extern  void    DumpSymTab( void )
+/********************************/
+{
     int         class;
 
     class = N_CONSTANT;
-    for(;;) {
+    for( ;; ) {
         if( Names[ class ] != NULL ) {
             DumpNL();
             switch( class ) {
@@ -459,9 +458,9 @@ extern  void    DumpSymTab() {
     }
 }
 
-extern  void    DumpEdge( block_num i, block_edge *edge ) {
-/*********************************************************/
-
+extern  void    DumpEdge( block_num i, block_edge *edge )
+/*******************************************************/
+{
     DumpLiteral( "\n\tEdge " );
     DumpInt( i );
     DumpLiteral( "(" );
@@ -477,9 +476,9 @@ extern  void    DumpEdge( block_num i, block_edge *edge ) {
     DumpNL();
 }
 
-extern  void    DumpEdges( block *b ) {
-/*************************************/
-
+extern  void    DumpEdges( block *b )
+/***********************************/
+{
     block_edge  *edge;
     block_num   i;
 
@@ -490,9 +489,9 @@ extern  void    DumpEdges( block *b ) {
     }
 }
 
-extern  void    DumpInputEdges( block *b ) {
-/******************************************/
-
+extern  void    DumpInputEdges( block *b )
+/****************************************/
+{
     block_edge  *edge;
     block_num   i;
 
@@ -502,9 +501,9 @@ extern  void    DumpInputEdges( block *b ) {
     }
 }
 
-static  void    DumpBlkI() {
-/**************************/
-
+static  void    DumpBlkI( void )
+/******************************/
+{
     block       *blk;
 
     blk = HeadBlock;
@@ -538,17 +537,16 @@ static  void    DumpBlkI() {
 }
 
 
-extern  void    DumpRange(int first,int last) {
-/**************************************/
-
+extern  void    DumpRange(int first,int last)
+/*******************************************/
+{
     first=first;last=last;
     DumpBlkI();
 }
 
-extern  void    DumpABlk( block *b ) {
-/************************************/
-
-
+extern  void    DumpABlk( block *b )
+/**********************************/
+{
     DumpPtr( b );
     DumpLiteral( " " );
     DumpBlkId( b );
@@ -564,9 +562,9 @@ extern  void    DumpABlk( block *b ) {
     DumpNL();
 }
 
-extern  void    DumpBlock( block *b ) {
-/*************************************/
-
+extern  void    DumpBlock( block *b )
+/***********************************/
+{
     while( b != NULL ) {
         DumpABlk( b );
         b = b->next_block;
@@ -575,8 +573,8 @@ extern  void    DumpBlock( block *b ) {
     DumpNL();
 }
 
-extern  void    DumpBlk() {
-/*************************/
-
+extern  void    DumpBlk( void )
+/*****************************/
+{
     DumpBlock( HeadBlock );
 }

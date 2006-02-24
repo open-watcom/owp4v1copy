@@ -36,7 +36,7 @@
 #include "memcheck.h"
 #include "freelist.h"
 
-extern  void            AddRegs();
+extern  void            AddRegs(void);
 extern  hw_reg_set      LowOffsetReg(hw_reg_set);
 extern  name            *AllocRegName(hw_reg_set);
 extern  hw_reg_set      HighOffsetReg(hw_reg_set);
@@ -47,26 +47,27 @@ extern  score_reg       **ScoreList;
 extern  name            *Names[];
 extern  pointer         ScListFrl;
 
-extern  pointer ScAlloc( int size ) {
-/***********************************/
 
+extern  pointer ScAlloc( int size )
+/*********************************/
+{
     pointer     chunk;
 
     _Alloc( chunk, size );
     return( chunk );
 }
 
-extern  void    ScFree( pointer chunk, int size ) {
-/*************************************************/
-
+extern  void    ScFree( pointer chunk, int size )
+/***********************************************/
+{
     if( chunk != NULL ) {
         _Free( chunk, size );
     }
 }
 
-extern  void    ScoreCalcList() {
-/*******************************/
-
+extern  void    ScoreCalcList( void )
+/***********************************/
+{
     score_reg   *curr;
     name        *reg_name;
     int         i;
@@ -150,9 +151,9 @@ extern  void    ScoreCalcList() {
 }
 
 
-extern  void    ScoreClear( score *p ) {
-/**************************************/
-
+extern  void    ScoreClear( score *p )
+/************************************/
+{
     int         i;
     list_head   *list_heads;
 
@@ -160,7 +161,7 @@ extern  void    ScoreClear( score *p ) {
     list_heads = (list_head *)&p[ i ];
     *list_heads = NULL;  /* initialize free list*/
     i = 0;
-    for(;;) {
+    for( ;; ) {
         ++list_heads;
         p->list = list_heads;
         *list_heads = NULL;
@@ -174,16 +175,16 @@ extern  void    ScoreClear( score *p ) {
 }
 
 
-extern  void    FreeScListEntry( score_list *list ) {
-/***************************************************/
-
+extern  void    FreeScListEntry( score_list *list )
+/*************************************************/
+{
     FrlFreeSize( &ScListFrl, (pointer *)list, sizeof( score_list ) );
 }
 
 
-extern  void    ScoreFreeList( score *p ) {
-/*****************************************/
-
+extern  void    ScoreFreeList( score *p )
+/***************************************/
+{
     score_list  *curr;
     score_list  *next;
 
@@ -199,9 +200,9 @@ extern  void    ScoreFreeList( score *p ) {
 }
 
 
-extern  void    FreeScoreBoard( score *p ) {
-/******************************************/
-
+extern  void    FreeScoreBoard( score *p )
+/****************************************/
+{
     int         i;
     list_head   *list_heads;
     score       *q;
@@ -233,9 +234,9 @@ extern  void    FreeScoreBoard( score *p ) {
 }
 
 
-extern  void    MemChanged( score *p, bool statics_too ) {
-/********************************************************/
-
+extern  void    MemChanged( score *p, bool statics_too )
+/******************************************************/
+{
     int         i;
     score_list  **owner;
     score_list  *curr;
@@ -288,9 +289,9 @@ extern  void    MemChanged( score *p, bool statics_too ) {
 }
 
 
-extern  score_list      *NewScListEntry() {
-/*****************************************/
-
+extern  score_list      *NewScListEntry( void )
+/*********************************************/
+{
     score_list  *list;
 
     list = AllocFrl( &ScListFrl, sizeof( score_list ) );
@@ -298,8 +299,8 @@ extern  score_list      *NewScListEntry() {
 }
 
 
-extern  bool    ScoreFrlFree() {
-/******************************/
-
+extern  bool    ScoreFrlFree( void )
+/**********************************/
+{
     return( FrlFreeAll( &ScListFrl, sizeof( score_list ) ) );
 }

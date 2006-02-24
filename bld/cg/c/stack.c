@@ -34,9 +34,9 @@
 
 #if defined( __AXP__ ) || defined( __MIPS__ ) || defined( __NT__ ) || !defined( __WATCOMC__ )
 
-pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {
-/*****************************************************/
-
+pointer SafeRecurse( pointer (* rtn)( pointer ), pointer arg )
+/************************************************************/
+{
     return( rtn( arg ) );
 }
 
@@ -49,9 +49,9 @@ pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {
 #include "memout.h"
 #include "cg.h"
 
-pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {
-/*****************************************************/
-
+pointer SafeRecurse( pointer (* rtn)( pointer ), pointer arg )
+/************************************************************/
+{
     #define SAVE_SIZE   512     /* this must be smaller than the stack */
 
     extern  mem_out_action  SetMemOut(mem_out_action);
@@ -93,9 +93,6 @@ pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {
 
 static uint_32  oldValue;
 const char *errString = "Stack hit!";
-
-extern void DumpString( char * );
-extern void DumpNL( void );
 
 #pragma aux _stashit modify exact [] = \
         "push   eax" \

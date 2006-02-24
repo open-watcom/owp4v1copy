@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction creation and deletion.
 *
 ****************************************************************************/
 
@@ -37,16 +36,16 @@ extern    ins_entry     *FirstIns;
 extern    pointer       *InstrFrl;
 
 extern  void            AddInstr(ins_entry*,ins_entry*);
-extern  label_handle    AskForNewLabel();
+extern  label_handle    AskForNewLabel(void);
 extern  ins_entry       *NextIns(ins_entry*);
 extern  oc_class        NextClass(ins_entry*);
 extern  pointer         Copy(pointer,pointer,uint);
 extern  int             OptInsSize(oc_class,oc_dest_attr);
 
 
-extern  ins_entry       *NewInstr( any_oc *oc ) {
-/*************************************************/
-
+extern  ins_entry       *NewInstr( any_oc *oc )
+/*********************************************/
+{
     ins_entry   *instr;
     oc_length   len;
 
@@ -64,9 +63,9 @@ extern  ins_entry       *NewInstr( any_oc *oc ) {
 }
 
 
-extern  void    FreeInstr( ins_entry *instr ) {
-/*********************************************/
-
+extern  void    FreeInstr( ins_entry *instr )
+/*******************************************/
+{
     oc_length   len;
 
     len = instr->oc.oc_entry.reclen + sizeof( ins_link );
@@ -78,16 +77,16 @@ extern  void    FreeInstr( ins_entry *instr ) {
 }
 
 
-extern  bool    InstrFrlFree() {
-/******************************/
-
+extern  bool    InstrFrlFree( void )
+/**********************************/
+{
     return( FrlFreeAll( &InstrFrl, INSTR_FRLSIZE ) );
 }
 
 
-extern  code_lbl        *AddNewLabel( ins_entry *new, int align ) {
-/*****************************************************************/
-
+extern  code_lbl        *AddNewLabel( ins_entry *new, int align )
+/***************************************************************/
+{
     code_lbl    *lbl;
     any_oc      lbl_oc;
 
@@ -108,9 +107,9 @@ extern  code_lbl        *AddNewLabel( ins_entry *new, int align ) {
 }
 
 
-extern  void    AddNewJump( ins_entry *new, code_lbl *lbl ) {
-/***********************************************************/
-
+extern  void    AddNewJump( ins_entry *new, code_lbl *lbl )
+/*********************************************************/
+{
     any_oc     jmp_oc;
 
   optbegin

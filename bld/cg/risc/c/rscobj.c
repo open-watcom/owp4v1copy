@@ -55,8 +55,8 @@
 
 extern  pointer         CGAlloc( unsigned size );
 extern  void            CGFree( pointer );
-extern  void            CloseObj();
-extern  void            OpenObj();
+extern  void            CloseObj( void );
+extern  void            OpenObj( void );
 extern  void            PutObjBytes( const char *, uint );
 extern  sym_handle      AskForLblSym( label_handle );
 extern  label_handle    AskForSymLabel( sym_handle, cg_class );
@@ -72,8 +72,8 @@ extern  code_lbl        *RTLabel( int );
 extern  void            TellAddress( code_lbl *, offset );
 extern  type_length     TempLocation( name * );
 extern  pointer         SymBack( pointer );
-extern  void            EmptyQueue();
-extern  void            TellUnreachLabels();
+extern  void            EmptyQueue( void );
+extern  void            TellUnreachLabels( void );
 extern  void            *SortList( void *, unsigned, bool (*)( void *, void * ) );
 extern  void            EmitInsReloc( axp_ins, pointer, owl_reloc_type );
 
@@ -81,7 +81,7 @@ extern  void            EmitInsReloc( axp_ins, pointer, owl_reloc_type );
 extern  void            DFObjInitInfo( void );
 extern  void            DFObjLineInitInfo( void );
 extern  void            DFBegCCU( seg_id code, long sym );
-extern  void            DFDefSegs();
+extern  void            DFDefSegs( void );
 extern  void            DFObjFiniDbgInfo( offset codesize );
 extern  void            DFObjLineFiniDbgInfo( void );
 extern  void            DFLineNum( cue_state *, offset );
@@ -89,11 +89,11 @@ extern  void            DFSegRange( void );
 extern  void            DFSymRange( sym_handle, offset );
 /* CV interface */
 extern  void            CVObjInitInfo( void );
-extern  void            CVDefSegs();
+extern  void            CVDefSegs( void );
 extern  void            CVDefSymNormal( void );
 extern  void            CVDefSymComdat( owl_section_handle depof );
 extern  void            CVLineNum( cue_state *, offset );
-extern  void            CVObjFiniDbgInfo();
+extern  void            CVObjFiniDbgInfo( void );
 
 static  owl_section_handle      owlTocSect; // contributions to TOC for PPC
 static  owl_section_handle      globalPdata;
@@ -252,14 +252,14 @@ static  void    EmitImports( void ) {
     }
 }
 
-// FIXME - should likely be different for ELF under OS/2 et all
+// FIXME - should likely be different for ELF under OS/2 et al
 // and should match stuff in langenv (except we need runtime dependency on OS,
 // not compile time).
 static char *dependSectionName = ".depend";
 
-static  void    EmitDependencyInfo() {
-/************************************/
-
+static  void    EmitDependencyInfo( void )
+/****************************************/
+{
     owl_section_handle  sect;
     void                *depend;
     char                *name;
@@ -287,9 +287,9 @@ static  void    EmitDependencyInfo() {
 }
 
 
-static void DoDFSegRange( void ) {
-/**********************************/
-
+static void DoDFSegRange( void )
+/******************************/
+{
     unsigned            bucket;
     section_def         *ptr;
     section_def         *old;
@@ -361,9 +361,9 @@ extern  void    ObjFini( void )
 // FIXME: This sucks - but time runneth out
 #define MAGIC_FLAG      0
 
-static  int     PutBytes( void *handle, const char *buffer, uint len ) {
-/**********************************************************************/
-
+static  int     PutBytes( void *handle, const char *buffer, uint len )
+/********************************************************************/
+{
     handle = handle;
 #ifndef NDEBUG
     // enable OWL logging
@@ -383,14 +383,15 @@ static  int     PutBytes( void *handle, const char *buffer, uint len ) {
 
 static  char            objName[ MAX_OBJ_NAME ];
 
-static  void            NameGatherer( char *name, void *data ) {
-/**************************************************************/
-
+static  void            NameGatherer( char *name, void *data )
+/************************************************************/
+{
     CopyStr( name, (char *)data );
 }
 
-static  char            *LabelName( code_lbl *label ) {
-/*****************************************************/
+static  char            *LabelName( code_lbl *label )
+/***************************************************/
+{
     sym_handle          sym;
     char                *name;
     char                *buff;
@@ -429,18 +430,18 @@ static  char            *LabelName( code_lbl *label ) {
     return( NULL );
 }
 
-static  owl_symbol_handle labelOwlSym( code_lbl *lbl ) {
-/******************************************************/
-
+static  owl_symbol_handle labelOwlSym( code_lbl *lbl )
+/****************************************************/
+{
     if( lbl->owl_symbol == NULL ) {
         lbl->owl_symbol = OWLSymbolInit( owlFile, LabelName( lbl ) );
     }
     return( lbl->owl_symbol );
 }
 
-extern  void    InitSegDefs() {
-/*****************************/
-
+extern  void    InitSegDefs( void )
+/*********************************/
+{
     // fixme - should use routines with some error checking
     owl_client_funcs    funcs = { PutBytes, NULL, NULL, CGAlloc, CGFree };
     owl_format          format;
@@ -477,9 +478,9 @@ extern  void    InitSegDefs() {
 }
 
 
-extern  void    DefSegment( seg_id id, seg_attr attr, char *str, uint align, bool use_16 ) {
-/******************************************************************************************/
-
+extern  void    DefSegment( seg_id id, seg_attr attr, char *str, uint align, bool use_16 )
+/****************************************************************************************/
+{
     section_def         *new;
     owl_section_type    type;
 
@@ -514,10 +515,11 @@ extern  void    DefSegment( seg_id id, seg_attr attr, char *str, uint align, boo
     new->owl_handle = OWLSectionInit( owlFile, str, type, 16 );
 }
 
-extern void    OutFileStart( int line ){
-/***************************************/
-    cue_state            info;
-    char *fname;
+extern void    OutFileStart( int line )
+/*************************************/
+{
+    cue_state           info;
+    char                *fname;
 
     if( _IsModel( DBG_DF ) || _IsModel( DBG_CV ) ){
         CueFind( line, &info );
@@ -529,8 +531,9 @@ extern void    OutFileStart( int line ){
         }
     }
 }
-extern void    OutFuncStart( code_lbl *label, offset start, cg_linenum line ) {
-/*****************************************************************************/
+extern void    OutFuncStart( code_lbl *label, offset start, cg_linenum line )
+/***************************************************************************/
+{
     cue_state            info;
 
     if( _IsModel( DBG_DF ) || _IsModel( DBG_CV ) ){
@@ -549,15 +552,16 @@ extern void    OutFuncStart( code_lbl *label, offset start, cg_linenum line ) {
 
 }
 
-extern void    OutFuncEnd( offset end ) {
-/***************************************/
-
+extern void    OutFuncEnd( offset end )
+/*************************************/
+{
     OWLDebugFuncEnd( currSection->func, currSection->line, end );
     currSection->func = NULL;
 }
 
-extern  void    OutLineNum( cg_linenum line, bool label_line ) {
-/***************************************************************/
+extern  void    OutLineNum( cg_linenum line, bool label_line )
+/************************************************************/
+{
     cue_state            info;
     offset               lc;
 
@@ -588,9 +592,10 @@ extern  void    OutLineNum( cg_linenum line, bool label_line ) {
 }
 
 
-extern char GetMemModel( void ){
-/***************************/
-    char model;
+extern char GetMemModel( void )
+/*****************************/
+{
+    char    model;
 
     if( _IsTargetModel( BIG_CODE ) ) {
         if( _IsTargetModel( BIG_DATA ) ) {
@@ -610,9 +615,9 @@ extern char GetMemModel( void ){
     return( model );
 }
 
-extern seg_id DbgSegDef( char *str ){
-/*****************************************/
-
+extern seg_id DbgSegDef( char *str )
+/**********************************/
+{
     section_def         *new;
     seg_id              id;
 
@@ -622,27 +627,27 @@ extern seg_id DbgSegDef( char *str ){
     return( id );
 }
 
-extern  bool    HaveCodeSeg() {
-/*****************************/
-
+extern  bool    HaveCodeSeg( void )
+/*********************************/
+{
     return( codeSection != BACKSEGS );
 }
 
-extern  seg_id  AskCodeSeg() {
-/****************************/
-
+extern  seg_id  AskCodeSeg( void )
+/********************************/
+{
      return( codeSection );
 }
 
-extern  seg_id  AskAltCodeSeg() {
-/****************************/
-
+extern  seg_id  AskAltCodeSeg( void )
+/***********************************/
+{
     return( codeSection );
 }
 
-extern  seg_id  AskBackSeg() {
-/****************************/
-
+extern  seg_id  AskBackSeg( void )
+/********************************/
+{
      return( dataSection );
 }
 
@@ -654,8 +659,9 @@ extern  seg_id  AskOP() {
      return( currSection->id );
 }
 
-static  bool            InlineFunction( pointer hdl ) {
-/*****************************************************/
+static  bool            InlineFunction( pointer hdl )
+/***************************************************/
+{
     call_class          rtn_class;
     aux_handle          aux;
 
@@ -666,9 +672,9 @@ static  bool            InlineFunction( pointer hdl ) {
     return( rtn_class & MAKE_CALL_INLINE );
 }
 
-extern  seg_id      AskSegID( pointer hdl, cg_class class ) {
-/******************************************************************/
-
+extern  seg_id      AskSegID( pointer hdl, cg_class class )
+/*********************************************************/
+{
     switch( class ) {
     case CG_FE:
         if( InlineFunction( hdl ) ) {
@@ -687,16 +693,16 @@ extern  seg_id      AskSegID( pointer hdl, cg_class class ) {
     }
 }
 
-extern  void    ObjBytes( char *buffer, unsigned size ) {
-/*******************************************************/
-
+extern  void    ObjBytes( char *buffer, unsigned size )
+/*****************************************************/
+{
     assert( currSection != NULL );
     OWLEmitData( currSection->owl_handle, buffer, size );
 }
 
-extern  bool    AskSegBlank( seg_id id ) {
-/****************************************/
-
+extern  bool    AskSegBlank( seg_id id )
+/**************************************/
+{
     section_def         *sect;
     owl_section_type    tipe;
 
@@ -707,9 +713,9 @@ extern  bool    AskSegBlank( seg_id id ) {
 
 #define MAX_ALIGN       128
 
-extern  void    AlignObject( unsigned align ) {
-/*********************************************/
-
+extern  void    AlignObject( unsigned align )
+/*******************************************/
+{
     offset      off;
     unsigned    mod;
     unsigned    add;
@@ -735,9 +741,9 @@ extern  void    AlignObject( unsigned align ) {
 }
 
 
-extern  seg_id  SetOP( seg_id seg ) {
-/***********************************/
-
+extern  seg_id  SetOP( seg_id seg )
+/*********************************/
+{
     seg_id      old;
     section_def *new;
 
@@ -757,9 +763,9 @@ extern  seg_id  SetOP( seg_id seg ) {
 }
 
 
-extern  void    FlushOP( seg_id id ) {
-/************************************/
-
+extern  void    FlushOP( seg_id id )
+/**********************************/
+{
     section_def         *sect;
     seg_id              old;
     owl_section_type    tipe;
@@ -789,9 +795,9 @@ extern  void    FlushOP( seg_id id ) {
     OWLSectionFini( sect->owl_handle );
 }
 
-extern  bool    NeedBaseSet() {
-/****************************/
-
+extern  bool    NeedBaseSet( void )
+/*********************************/
+{
     bool        need;
 
     if( currSection->is_start ){
@@ -803,55 +809,55 @@ extern  bool    NeedBaseSet() {
     return( need );
 }
 
-extern  offset  AskLocation() {
-/*****************************/
-
+extern  offset  AskLocation( void )
+/*********************************/
+{
     assert( currSection != NULL );
     return( OWLTellOffset( currSection->owl_handle ) );
 }
 
 
-extern  long_offset  AskBigLocation() {
-/*****************************/
-
+extern  long_offset  AskBigLocation( void )
+/*****************************************/
+{
     assert( currSection != NULL );
     return( OWLTellOffset( currSection->owl_handle ) );
 }
 
-extern  offset  AskMaxSize() {
-/*****************************/
-
+extern  offset  AskMaxSize( void )
+/********************************/
+{
     assert( currSection != NULL );
     return( OWLTellSize( currSection->owl_handle ) );
 }
 
-extern  long_offset  AskBigMaxSize() {
-/*****************************/
-
+extern  long_offset  AskBigMaxSize( void )
+/****************************************/
+{
     assert( currSection != NULL );
     return( OWLTellSize( currSection->owl_handle ) );
 }
 
-extern  void    SetLocation( offset loc ) {
-/*****************************************/
-
+extern  void    SetLocation( offset loc )
+/***************************************/
+{
     OWLSetLocation( currSection->owl_handle, loc );
 }
 
-extern  void    SetBigLocation( long_offset loc ) {
-/*****************************************/
-
+extern  void    SetBigLocation( long_offset loc )
+/***********************************************/
+{
     OWLSetLocation( currSection->owl_handle, loc );
 }
 
-static void DumpImportResolve( code_lbl *label ) {
-/************************************************/
-
+static void DumpImportResolve( code_lbl *label )
+/**********************************************/
+{
     sym_handle          def_resolve;
     sym_handle          sym;
     pointer             cond;
     int                 type;
-    bck_info           *bck;
+    bck_info            *bck;
 
     if( AskIfRTLabel( label ) ) return;
     sym = AskForLblSym( label );
@@ -882,9 +888,9 @@ static void DumpImportResolve( code_lbl *label ) {
     }
 }
 
-extern  void            OutReloc( code_lbl *label, owl_reloc_type tipe, unsigned offset ) {
-/*****************************************************************************************/
-
+extern  void            OutReloc( code_lbl *label, owl_reloc_type tipe, unsigned offset )
+/***************************************************************************************/
+{
     DumpImportResolve( label );
     offset = offset;
     OWLEmitReloc( currSection->owl_handle,
@@ -892,8 +898,9 @@ extern  void            OutReloc( code_lbl *label, owl_reloc_type tipe, unsigned
         labelOwlSym( label ), tipe );
 }
 
-extern  void            OutSegReloc( code_lbl *label, seg_id seg ) {
-/***********************************************************************/
+extern  void            OutSegReloc( code_lbl *label, seg_id seg )
+/****************************************************************/
+{
     section_def             *sect;
 
     label = label;
@@ -903,9 +910,9 @@ extern  void            OutSegReloc( code_lbl *label, seg_id seg ) {
         sect->owl_handle, OWL_RELOC_SECTION_INDEX );
 }
 
-extern  owl_sym_linkage labelLinkage( label_handle label ) {
-/**********************************************************/
-
+extern  owl_sym_linkage labelLinkage( label_handle label )
+/********************************************************/
+{
     sym_handle          sym;
     owl_sym_linkage     linkage;
     fe_attr             attr;
@@ -921,9 +928,9 @@ extern  owl_sym_linkage labelLinkage( label_handle label ) {
     return( linkage );
 }
 
-extern  void            OutLabel( label_handle label ) {
-/******************************************************/
-
+extern  void            OutLabel( label_handle label )
+/****************************************************/
+{
     sym_handle          sym;
     fe_attr             attr;
     owl_sym_type        tipe;
@@ -950,9 +957,9 @@ extern  void            OutLabel( label_handle label ) {
 static long const Zero = 0;
 
 #if _TARGET & _TARG_PPC
-extern void OutTOCRec( code_lbl *label ) {
-/****************************************/
-
+extern void OutTOCRec( code_lbl *label )
+/**************************************/
+{
     code_lbl            *dot_lbl;
     code_lbl            *toc_lbl;
 
@@ -969,8 +976,9 @@ extern void OutTOCRec( code_lbl *label ) {
 }
 #endif
 
-static owl_section_handle getPData( code_lbl *label ) {
-/*****************************************************/
+static owl_section_handle getPData( code_lbl *label )
+/***************************************************/
+{
     sym_handle          sym;
     owl_section_handle  pdata;
 
@@ -988,8 +996,9 @@ static owl_section_handle getPData( code_lbl *label ) {
     return( globalPdata );
 }
 
-extern void OutPDataRec( code_lbl *label, offset proc_size, offset pro_size ) {
-/*****************************************************************************/
+extern void OutPDataRec( code_lbl *label, offset proc_size, offset pro_size )
+/***************************************************************************/
+{
     owl_section_handle  owl_pdata;
     sym_handle          sym;
     sym_handle          curr;
@@ -1027,28 +1036,29 @@ extern void OutPDataRec( code_lbl *label, offset proc_size, offset pro_size ) {
 }
 
 
-extern  void            *InitPatch() {
-/************************************/
-
+extern  void            *InitPatch( void )
+/****************************************/
+{
     return( NULL );
 }
 
-extern void     AbsPatch(void * patch,offset lc) {
-/************************************************/
+extern void     AbsPatch( void * patch, offset lc )
+/*************************************************/
+{
     patch = patch;
     lc = lc;
 }
 
-extern void DoEmptyQueue()
-/************************/
+extern void DoEmptyQueue( void )
+/******************************/
 {
     EmptyQueue();
     TellUnreachLabels();
 }
 
-extern  void    TellObjNewProc( sym_handle proc ) {
-/*************************************************/
-
+extern  void    TellObjNewProc( sym_handle proc )
+/***********************************************/
+{
     segment_id  proc_id;
     segment_id  old;
 
@@ -1072,36 +1082,38 @@ extern  void    TellObjNewProc( sym_handle proc ) {
     SetOP( old );
 }
 
-extern  void    IncLocation( offset by ) {
-/****************************************/
-
+extern  void    IncLocation( offset by )
+/**************************************/
+{
     /* This should only be used for bumping up our location in a BSS section */
     OWLEmitData( currSection->owl_handle, NULL, by );
 }
 
-extern  bool    AskNameROM( name *n ) {
-/*************************************/
+extern  bool    AskNameROM( name *n )
+/***********************************/
+{
     n = n;
     return( FALSE );
 }
 
 
-extern  unsigned DepthAlign( unsigned depth ) {
-/*********************************************/
-
+extern  unsigned DepthAlign( unsigned depth )
+/*******************************************/
+{
     depth = depth;
     return( 4 );
 }
 
-extern  bool    CodeHasAbsPatch( oc_entry *code ) {
-/*************************************************/
-
+extern  bool    CodeHasAbsPatch( oc_entry *code )
+/***********************************************/
+{
     code = code;
     return( FALSE );    // NYI
 }
 
-static  bool    relocBefore( void *_p1, void *_p2 ) {
-/*********************************************************************/
+static  bool    relocBefore( void *_p1, void *_p2 )
+/*************************************************/
+{
     byte_seq_reloc *p1 = _p1;
     byte_seq_reloc *p2 = _p2;
 
@@ -1116,9 +1128,9 @@ static  bool    relocBefore( void *_p1, void *_p2 ) {
     return( p1->off < p2->off );
 }
 
-extern  void    ObjEmitSeq( risc_byte_seq *code ) {
-/*************************************************/
-
+extern  void    ObjEmitSeq( risc_byte_seq *code )
+/***********************************************/
+{
     byte_seq_reloc      *curr;
     bck_info            *back;
     type_length         loc;
@@ -1157,9 +1169,9 @@ extern  void    ObjEmitSeq( risc_byte_seq *code ) {
     }
 }
 
-extern  void    DoAlignment( int align ) {
-/****************************************/
-
+extern  void    DoAlignment( int align )
+/**************************************/
+{
     // NYI
     align = align;
 }

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  High level code generation routines.
+* Description:  High level code generation routines. Lots of action here.
 *
 ****************************************************************************/
 
@@ -43,117 +43,115 @@
 
 #include "addrcnst.h"
 
-extern  void            FreeAName(name*);
-extern  instruction*    MakeNop();
-extern  void            AddAnIns(block*,instruction*);
-extern  void            UnFixEdges();
-extern  void            AssignTemps();
-extern  void            AssgnMoreTemps(block_num);
-extern  void            FixEdges();
-extern  bool            CommonSex(bool);
-extern  bool            SetOnCondition();
-extern  void            BlockTrim();
-extern  void            MakeFlowGraph();
-extern  void            InitRegTbl();
-extern  bool            LoopInvariant();
-extern  bool            LoopEnregister();
-extern  bool            CommonInvariant();
+extern  void            FreeAName( name * );
+extern  instruction*    MakeNop( void );
+extern  void            AddAnIns( block *, instruction * );
+extern  void            UnFixEdges( void );
+extern  void            AssignTemps( void );
+extern  void            AssgnMoreTemps( block_num );
+extern  void            FixEdges( void );
+extern  bool            CommonSex( bool );
+extern  bool            SetOnCondition( void );
+extern  void            BlockTrim( void );
+extern  void            MakeFlowGraph( void );
+extern  void            InitRegTbl( void );
+extern  bool            LoopInvariant( void );
+extern  bool            LoopEnregister( void );
+extern  bool            CommonInvariant( void );
 extern  bool            TransLoops( bool );
-extern  bool            IndVars();
-extern  void            BlowAwayFreeLists();
-extern  bool            BlkTooBig();
-extern  void            FindReferences();
-extern  void            FreeConflicts();
-extern  bool            SplitConflicts();
-extern  void            NullConflicts(var_usage);
-extern  void            FreeAConflict(conflict_node*);
-extern  conflict_node   *InMemory(conflict_node*);
-extern  void            FreeProc();
-extern  void            GenProlog();
-extern  void            GenObject();
-extern  void            SortBlocks();
-extern  void            InitNames();
-extern  void            InitMakeAddr();
-extern  void            RegTreeInit();
-extern  void            InitConflict();
-extern  void            InitRT();
-extern  void            InitIns();
-extern  void            InitSegment();
-extern  void            FiniSegment();
-extern  void            PushPostOps();
-extern  void            DeadTemps();
-extern  void            AxeDeadCode();
-extern  bool            InsDead();
-extern  void            OptSegs();
-extern  void            Conditions();
-extern  void            MakeConflicts();
-extern  void            MakeLiveInfo();
-extern  void            LiveInfoUpdate(void);
-extern  int             ExpandOps(bool);
-extern  void            FPRegAlloc();
-extern  void            FixIndex();
-extern  void            FixSegments();
-extern  void            FixMemRefs();
-extern  bool            RegAlloc(bool);
-extern  void            LoopRegInvariant();
-extern  void            Score();
-extern  void            MergeIndex(void);
-extern  void            FPExpand();
-extern  void            FPOptimize();
-extern  void            FPParms();
-extern  void            ScoreInit();
-extern  void            ScoreFini();
-extern  type_class_def  TypeClass(type_def*);
-extern  void            TypeInit();
-extern  void            TypeFini();
-extern  void            ObjInit();
-extern  void            InitFP();
-extern  void            ObjFini();
-extern  void            AbortObj();
-extern  void            FlushOpt();
-extern  hw_reg_set      AllCacheRegs();
-extern  void            AllocALocal(name*);
-extern  void            ParmPropagate();
-extern  void            InitStackMap();
-extern  void            FiniStackMap();
-extern  void            ProcMessage(msg_class);
-extern  sym_handle      AskForLblSym(label_handle);
-extern  void            InitQueue();
-extern  void            FiniQueue();
-extern  void            AbortQueue();
-extern  void            TellFreeAllLabels();
-extern  bool            FixReturns();
-extern  instruction_id  Renumber();
-extern  void            GenEpilog();
-extern  void            SplitVars();
-extern  name            *DeAlias(name*);
-extern  void            AssignOtherLocals();
-extern  void            BuildIndex();
-extern  bool            CreateBreak();
-extern  void            FixBreak();
-extern  void            RemoveBreak();
-extern  instruction     *NeedIndex(instruction*);
-extern  bool            ConstFold(block *);
-extern  void            DeadInstructions(void);
-extern  void            Schedule(void);
-extern  bool            CharsAndShortsToInts(void);
-extern  void            LNBlip(source_line_number);
-extern  void            SetInOut(block *);
-extern  bool            LdStAlloc(void);
-extern  void            LdStCompress(void);
+extern  bool            IndVars( void );
+extern  void            BlowAwayFreeLists( void );
+extern  bool            BlkTooBig( void );
+extern  void            FindReferences( void );
+extern  void            FreeConflicts( void );
+extern  bool            SplitConflicts( void );
+extern  void            NullConflicts( var_usage );
+extern  void            FreeAConflict( conflict_node * );
+extern  conflict_node   *InMemory( conflict_node * );
+extern  void            FreeProc( void );
+extern  void            GenProlog( void );
+extern  void            GenObject( void );
+extern  void            SortBlocks( void );
+extern  void            InitNames( void );
+extern  void            InitMakeAddr( void );
+extern  void            RegTreeInit( void );
+extern  void            InitConflict( void );
+extern  void            InitRT( void );
+extern  void            InitIns( void );
+extern  void            InitSegment( void );
+extern  void            FiniSegment( void );
+extern  void            PushPostOps( void );
+extern  void            DeadTemps( void );
+extern  void            AxeDeadCode( void );
+extern  bool            InsDead( void );
+extern  void            OptSegs( void );
+extern  void            Conditions( void );
+extern  void            MakeConflicts( void );
+extern  void            MakeLiveInfo( void );
+extern  void            LiveInfoUpdate( void );
+extern  int             ExpandOps( bool );
+extern  void            FPRegAlloc( void );
+extern  void            FixIndex( void );
+extern  void            FixSegments( void );
+extern  void            FixMemRefs( void );
+extern  bool            RegAlloc( bool );
+extern  void            LoopRegInvariant( void );
+extern  void            Score( void );
+extern  void            MergeIndex( void );
+extern  void            FPExpand( void );
+extern  void            FPOptimize( void );
+extern  void            FPParms( void );
+extern  void            ScoreInit( void );
+extern  void            ScoreFini( void );
+extern  type_class_def  TypeClass( type_def * );
+extern  void            TypeInit( void );
+extern  void            TypeFini( void );
+extern  void            ObjInit( void );
+extern  void            InitFP( void );
+extern  void            ObjFini( void );
+extern  void            AbortObj( void );
+extern  void            FlushOpt( void );
+extern  hw_reg_set      AllCacheRegs( void );
+extern  void            AllocALocal( name * );
+extern  void            ParmPropagate( void );
+extern  void            InitStackMap( void );
+extern  void            FiniStackMap( void );
+extern  void            ProcMessage( msg_class );
+extern  sym_handle      AskForLblSym( label_handle );
+extern  void            InitQueue( void );
+extern  void            FiniQueue( void );
+extern  void            AbortQueue( void );
+extern  void            TellFreeAllLabels( void );
+extern  bool            FixReturns( void );
+extern  instruction_id  Renumber( void );
+extern  void            GenEpilog( void );
+extern  void            SplitVars( void );
+extern  name            *DeAlias( name * );
+extern  void            AssignOtherLocals( void );
+extern  void            BuildIndex( void );
+extern  bool            CreateBreak( void );
+extern  void            FixBreak( void );
+extern  void            RemoveBreak( void );
+extern  instruction     *NeedIndex( instruction * );
+extern  bool            ConstFold( block * );
+extern  void            DeadInstructions( void );
+extern  void            Schedule( void );
+extern  bool            CharsAndShortsToInts( void );
+extern  void            LNBlip( source_line_number );
+extern  void            SetInOut( block * );
+extern  bool            LdStAlloc( void );
+extern  void            LdStCompress( void );
 extern  void            MemtoBaseTemp( void );
-extern  void            FixMemBases(void );
-extern  bool            BGInInline();
-extern  void            AddCacheRegs();
-extern  void            MulToShiftAdd();
-extern  bool            PropagateMoves(void);
-extern  bool            TailRecursion(void);
+extern  void            FixMemBases( void );
+extern  bool            BGInInline( void );
+extern  void            AddCacheRegs( void );
+extern  void            MulToShiftAdd( void );
+extern  bool            TailRecursion( void );
 extern  bool            PeepOpt( block *, block *(*)(block *,void *), block *, bool );
-extern  void            PropNullInfo();
-extern  void            FixP5Divs();
-extern  void            ReConstFold();
-extern  void            FlushQueue();
-extern  bool            CalcDominatorInfo();
+extern  void            PropNullInfo( void );
+extern  void            ReConstFold( void );
+extern  void            FlushQueue( void );
+extern  bool            CalcDominatorInfo( void );
 
 extern proc_def                 *CurrProc;
 extern block                    *HeadBlock;
@@ -175,9 +173,9 @@ extern source_line_number       SrcLine;
 static  bool                    abortCG;
 
 
-extern  void    InitCG() {
-/************************/
-
+extern  void    InitCG( void )
+/****************************/
+{
     InOptimizer = 0;
     InsId = 0;
     CurrProc = NULL;
@@ -202,16 +200,16 @@ extern  void    InitCG() {
 }
 
 
-extern  void    AbortCG() {
-/*************************/
-
+extern  void    AbortCG( void )
+/*****************************/
+{
     abortCG = TRUE;
 }
 
 
-extern  void    FiniCG() {
-/************************/
-
+extern  void    FiniCG( void )
+/****************************/
+{
     FiniQueue();
     FiniSegment();
     if( abortCG ) {
@@ -224,16 +222,16 @@ extern  void    FiniCG() {
 }
 
 
-static  void    AddANop() {
-/*************************/
-
+static  void    AddANop( void )
+/*****************************/
+{
     AddAnIns( BlockList, MakeNop() );
 }
 
 
-static  void            PreOptimize() {
-/*************************************/
-
+static  void            PreOptimize( void )
+/*****************************************/
+{
     bool        change;
 
     if( _IsntModel( NO_OPTIMIZATION ) ) {
@@ -344,14 +342,14 @@ static  void            PostOptimize( void )
 }
 
 
-static  void    FreeExtraTemps( name *last, block_num id ) {
-/**********************************************************/
-
+static  void    FreeExtraTemps( name *last, block_num id )
+/********************************************************/
+{
     name        **owner;
     name        *temp;
 
     owner = &Names[ N_TEMP ];
-    for(;;) {
+    for( ;; ) {
         temp = *owner;
         if( temp == last ) break;
         if( ( temp->v.usage & USE_IN_ANOTHER_BLOCK ) == 0
@@ -366,9 +364,9 @@ static  void    FreeExtraTemps( name *last, block_num id ) {
 }
 
 
-static  void    ForceTempsMemory() {
-/**********************************/
-
+static  void    ForceTempsMemory( void )
+/**************************************/
+{
     name        *op;
     name        *next;
 
@@ -399,9 +397,9 @@ static  void    ForceTempsMemory() {
 }
 
 
-static  void    BlockToCode( bool partly_done ) {
-/***********************************************/
-
+static  void    BlockToCode( bool partly_done )
+/*********************************************/
+{
     block_num           inputs;
     block_num           targets;
     block_edge          *input_edges;
@@ -429,7 +427,7 @@ static  void    BlockToCode( bool partly_done ) {
     }
     HeadBlock->next_block = NULL;
 
-    /* force anything that spans blocks to memory*/
+    /* force anything that spans blocks to memory */
 
     HeadBlock->u.partition = HeadBlock;
     ConstFold( HeadBlock );
@@ -463,7 +461,7 @@ static  void    BlockToCode( bool partly_done ) {
     } else {
         conflist = NULL;
         owner = &ConfList;
-        for(;;) {
+        for( ;; ) {
             curr = *owner;
             if( curr == NULL ) break;
             if( curr->start_block == HeadBlock ) {
@@ -520,12 +518,11 @@ static  void    BlockToCode( bool partly_done ) {
 }
 
 
-static  void    FlushBlocks( bool partly_done ) {
-/***********************************************/
-
+static  void    FlushBlocks( bool partly_done )
+/*********************************************/
 /* we're in deep trouble. Try to get out of it using as little memory as*/
 /* possible*/
-
+{
     block       *blk;
     block       *next;
     block       *curr;
@@ -555,9 +552,9 @@ static  void    FlushBlocks( bool partly_done ) {
 }
 
 
-static  void    FreeExtraSyms( name *last ) {
-/*******************************************/
-
+static  void    FreeExtraSyms( name *last )
+/*****************************************/
+{
     name        **owner;
     name        *temp;
     name        *junk;
@@ -591,9 +588,9 @@ static  void    FreeExtraSyms( name *last ) {
 }
 
 
-static  void    FinishIndex() {
-/*****************************/
-
+static  void    FinishIndex( void )
+/*********************************/
+{
     block       *blk;
     instruction *ins;
     instruction *old;
@@ -613,9 +610,9 @@ static  void    FinishIndex() {
 }
 
 
-static  void    ForceConflictsMemory() {
-/**************************************/
-
+static  void    ForceConflictsMemory( void )
+/******************************************/
+{
     conflict_node       *conf;
     conflict_node       *next;
 
@@ -639,9 +636,9 @@ static  void    ForceConflictsMemory() {
 }
 
 
-static  void    Panic( bool partly_done ) {
-/*****************************************/
-
+static  void    Panic( bool partly_done )
+/***************************************/
+{
     proc_def    *curr_proc;
 
     if( partly_done ) {
@@ -663,9 +660,9 @@ static  void    Panic( bool partly_done ) {
 }
 
 
-static  void            GenPartialRoutine( bool routine_done ) {
-/**************************************************************/
-
+static  void            GenPartialRoutine( bool routine_done )
+/************************************************************/
+{
     while( routine_done || _MemLow ) {
         if( CreateBreak() ) {
             BlockByBlock = TRUE;
@@ -690,9 +687,9 @@ static  void            GenPartialRoutine( bool routine_done ) {
 }
 
 
-extern  void    ProcMessage( msg_class msg ) {
-/********************************************/
-
+extern  void    ProcMessage( msg_class msg )
+/******************************************/
+{
     static proc_def *lastproc = NULL;
 
     if( _IsntModel( NO_OPTIMIZATION ) && lastproc != CurrProc ) {
@@ -702,10 +699,12 @@ extern  void    ProcMessage( msg_class msg ) {
 }
 
 
-extern  void    Generate( bool routine_done ) {
-/*********************************************/
-
-
+extern  void    Generate( bool routine_done )
+/*******************************************/
+/* The big one - here's where most of code generation happens.
+ * Follow this routine to see the transformation of code unfold.
+ */
+{
     if( BGInInline() ) return;
     HaveLiveInfo = FALSE;
     HaveDominatorInfo = FALSE;
@@ -811,5 +810,4 @@ extern  void    Generate( bool routine_done ) {
 #else
     FlushQueue();
 #endif
-
 }

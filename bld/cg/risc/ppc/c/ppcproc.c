@@ -47,30 +47,23 @@ extern  seg_id          SetOP( seg_id );
 extern  seg_id          AskCodeSeg( void );
 extern  unsigned        DepthAlign( unsigned );
 extern  void            CodeLabel( label_handle, unsigned );
-extern  hw_reg_set      *GPRegs();
-extern  hw_reg_set      *FPRegs();
-extern  hw_reg_set      *ParmRegs();
-extern  hw_reg_set      SaveRegs();
+extern  hw_reg_set      *GPRegs( void );
+extern  hw_reg_set      *FPRegs( void );
+extern  hw_reg_set      SaveRegs( void );
 extern  pointer         CGAlloc( unsigned );
 extern  void            CGFree( pointer );
-extern  hw_reg_set      StackReg();
-extern  hw_reg_set      ScratchReg();
-extern  hw_reg_set      FrameReg();
-extern  hw_reg_set      FrameBaseReg();
-extern  hw_reg_set      TocReg();
-extern  hw_reg_set      VarargsHomePtr();
+extern  hw_reg_set      FrameBaseReg( void );
 extern  sym_handle      AskForLblSym( label_handle );
 extern  fe_attr         FEAttr( sym_handle );
 extern  void            DbgRtnBeg( dbg_rtn *rtn,  offset lc );
 extern  void            DbgProEnd( dbg_rtn *rtn, offset lc );
 extern  void            DbgEpiBeg( dbg_rtn *rtn, offset lc );
 extern  void            DbgRtnEnd( dbg_rtn *rtn, offset lc );
-extern  offset          AskLocation();
+extern  offset          AskLocation( void );
 extern  void            OutFuncStart( label_handle label, offset start, int line );
 extern  void            OutFileStart( int line );
 extern  void            OutFuncEnd( offset end );
 extern void             OutPDataRec( label_handle label, uint_32 pro_size, uint_32 proc_end );
-extern  hw_reg_set      FrameReg(void);
 extern  uint_8          RegTrans(hw_reg_set);
 extern  void            OutTOCRec( label_handle lbl );
 extern  type_length     TempLocation( name * );
@@ -79,10 +72,10 @@ extern  proc_def        *CurrProc;
 extern  block           *HeadBlock;
 extern  type_length     MaxStack;
 
-static  void    CalcUsedRegs() {
-/******************************/
 
-
+static  void    CalcUsedRegs( void )
+/**********************************/
+{
     block       *blk;
     instruction *ins;
     name        *result;
@@ -113,8 +106,9 @@ static  void    CalcUsedRegs() {
     HW_TurnOn( CurrProc->state.used, used );
 }
 
-extern  void    AddCacheRegs() {
-/******************************/
+extern  void    AddCacheRegs( void )
+/**********************************/
+{
     if( !CurrProc->targ.base_is_fp ) {
         HW_TurnOff( CurrProc->state.unalterable, FrameBaseReg() );
     }
@@ -122,9 +116,9 @@ extern  void    AddCacheRegs() {
 
 #define _unused( x )    ( (x) = (x) )
 
-static  void    initParmCache( stack_record *pc, type_length *offset ) {
-/**********************************************************************/
-
+static  void    initParmCache( stack_record *pc, type_length *offset )
+/********************************************************************/
+{
     pc->start = *offset;
     pc->size = MaxStack;
     if( !CurrProc->targ.leaf ) {
@@ -137,41 +131,41 @@ static  void    initParmCache( stack_record *pc, type_length *offset ) {
     }
 }
 
-static  void    emitParmCacheProlog( stack_record *pc ) {
-/*******************************************************/
-
+static  void    emitParmCacheProlog( stack_record *pc )
+/*****************************************************/
+{
     _unused( pc );
 }
 
-static  void    emitParmCacheEpilog( stack_record *pc ) {
-/*******************************************************/
-
+static  void    emitParmCacheEpilog( stack_record *pc )
+/*****************************************************/
+{
     _unused( pc );
 }
 
-static  void    initLocals( stack_record *locals, type_length *offset ) {
-/***********************************************************************/
-
+static  void    initLocals( stack_record *locals, type_length *offset )
+/*********************************************************************/
+{
     locals->start = *offset;
     locals->size = CurrProc->locals.size;
     *offset += locals->size;
 }
 
-static  void    emitLocalProlog( stack_record *locals ) {
-/*******************************************************/
-
+static  void    emitLocalProlog( stack_record *locals )
+/*****************************************************/
+{
     _unused( locals );
 }
 
-static  void    emitLocalEpilog( stack_record *locals ) {
-/*******************************************************/
-
+static  void    emitLocalEpilog( stack_record *locals )
+/*****************************************************/
+{
     _unused( locals );
 }
 
-static  uint_32 registerMask( hw_reg_set rs, hw_reg_set *rl ) {
-/*************************************************************/
-
+static  uint_32 registerMask( hw_reg_set rs, hw_reg_set *rl )
+/***********************************************************/
+{
     hw_reg_set          *curr;
     uint_32             result;
 
@@ -184,9 +178,9 @@ static  uint_32 registerMask( hw_reg_set rs, hw_reg_set *rl ) {
     return( result );
 }
 
-static  void    initSavedRegs( stack_record *saved_regs, type_length *offset ) {
-/******************************************************************************/
-
+static  void    initSavedRegs( stack_record *saved_regs, type_length *offset )
+/****************************************************************************/
+{
     unsigned            num_regs;
     hw_reg_set          saved;
 
@@ -220,21 +214,21 @@ static  void    initSavedRegs( stack_record *saved_regs, type_length *offset ) {
 #define FRAME_REG       31
 #define VARARGS_PTR     14
 
-static  void    genMove( uint_32 src, uint_32 dst ) {
-/***************************************************/
-
+static  void    genMove( uint_32 src, uint_32 dst )
+/*************************************************/
+{
     GenOPINS( 31, 444, dst, src, src );
 }
 
-static  void    genAdd( uint_32 src, signed_16 disp, uint_32 dst ) {
-/******************************************************************/
-
+static  void    genAdd( uint_32 src, signed_16 disp, uint_32 dst )
+/****************************************************************/
+{
     GenOPIMM( ADDI_OPCODE, dst, src, disp );
 }
 
-static  void    saveReg( uint_32 index, type_length offset, bool fp ) {
-/*********************************************************************/
-
+static  void    saveReg( uint_32 index, type_length offset, bool fp )
+/*******************************************************************/
+{
     uint_8              opcode;
 
     opcode = STORE_DWORD;
@@ -244,9 +238,9 @@ static  void    saveReg( uint_32 index, type_length offset, bool fp ) {
     GenMEMINS( opcode, index, STACK_REG, offset );
 }
 
-static  void    loadReg( uint_32 index, type_length offset, bool fp ) {
-/*********************************************************************/
-
+static  void    loadReg( uint_32 index, type_length offset, bool fp )
+/*******************************************************************/
+{
     uint_8              opcode;
     uint_8              frame_reg;
 
@@ -261,15 +255,15 @@ static  void    loadReg( uint_32 index, type_length offset, bool fp ) {
     GenMEMINS( opcode, index, frame_reg, offset + CurrProc->locals.size );
 }
 
-static  int     regSize( bool fp ) {
-/**********************************/
-
+static  int     regSize( bool fp )
+/********************************/
+{
     return( fp ? 8 : 4 );
 }
 
-static  void    saveRegSet( uint_32 reg_set, type_length offset, bool fp ) {
-/**************************************************************************/
-
+static  void    saveRegSet( uint_32 reg_set, type_length offset, bool fp )
+/************************************************************************/
+{
     uint_32     index;
     uint_32     high_bit;
 
@@ -285,9 +279,9 @@ static  void    saveRegSet( uint_32 reg_set, type_length offset, bool fp ) {
     }
 }
 
-static  void    loadRegSet( uint_32 reg_set, type_length offset, bool fp ) {
-/**************************************************************************/
-
+static  void    loadRegSet( uint_32 reg_set, type_length offset, bool fp )
+/************************************************************************/
+{
     uint_32     index;
 
     index = 0;
@@ -301,9 +295,9 @@ static  void    loadRegSet( uint_32 reg_set, type_length offset, bool fp ) {
     }
 }
 
-static  void    emitSavedRegsProlog( stack_record *saved_regs ) {
-/***************************************************************/
-
+static  void    emitSavedRegsProlog( stack_record *saved_regs )
+/*************************************************************/
+{
     type_length         offset;
 
     offset = saved_regs->start + saved_regs->size - regSize( FALSE );
@@ -315,9 +309,9 @@ static  void    emitSavedRegsProlog( stack_record *saved_regs ) {
     saveRegSet( CurrProc->targ.fpr_mask, offset, TRUE );
 }
 
-static  void    emitSavedRegsEpilog( stack_record *saved_regs ) {
-/***************************************************************/
-
+static  void    emitSavedRegsEpilog( stack_record *saved_regs )
+/*************************************************************/
+{
     type_length         offset;
 
     offset = saved_regs->start - regSize( TRUE );
@@ -329,16 +323,16 @@ static  void    emitSavedRegsEpilog( stack_record *saved_regs ) {
     loadRegSet( CurrProc->targ.gpr_mask, offset, FALSE );
 }
 
-static  void    initVarargs( stack_record *varargs, type_length *offset ) {
-/*************************************************************************/
-
+static  void    initVarargs( stack_record *varargs, type_length *offset )
+/***********************************************************************/
+{
     varargs->start = *offset;
     varargs->size = 0;
 }
 
-static  void    emitVarargsProlog( stack_record *varargs ) {
-/**********************************************************/
-
+static  void    emitVarargsProlog( stack_record *varargs )
+/********************************************************/
+{
     type_length         offset;
     int                 i;
 
@@ -352,16 +346,16 @@ static  void    emitVarargsProlog( stack_record *varargs ) {
     }
 }
 
-static  void    emitVarargsEpilog( stack_record *varargs ) {
-/**********************************************************/
-
+static  void    emitVarargsEpilog( stack_record *varargs )
+/********************************************************/
+{
     // NB see FrameSaveEpilog below
     _unused( varargs );
 }
 
-static  void    initSlop( stack_record *slop, type_length *offset ) {
-/*******************************************************************/
-
+static  void    initSlop( stack_record *slop, type_length *offset )
+/*****************************************************************/
+{
     type_length         off;
 
     off = *offset;
@@ -373,42 +367,42 @@ static  void    initSlop( stack_record *slop, type_length *offset ) {
     }
 }
 
-static  void    emitSlopProlog( stack_record *fs ) {
-/**************************************************/
-
+static  void    emitSlopProlog( stack_record *fs )
+/************************************************/
+{
     _unused( fs );
 }
 
-static  void    emitSlopEpilog( stack_record *fs ) {
-/**************************************************/
-
+static  void    emitSlopEpilog( stack_record *fs )
+/************************************************/
+{
     _unused( fs );
 }
 
-static  void    initStackHeader( stack_record *stk, type_length *offset ) {
-/*************************************************************************/
-
+static  void    initStackHeader( stack_record *stk, type_length *offset )
+/***********************************************************************/
+{
     stk->start = *offset;
     stk->size = STACK_HEADER_SIZE;
     *offset += stk->size;
 }
 
-static  void    emitStackHeaderProlog( stack_record *stk ) {
-/**********************************************************/
-
+static  void    emitStackHeaderProlog( stack_record *stk )
+/********************************************************/
+{
     _unused( stk );
 }
 
-static  void    emitStackHeaderEpilog( stack_record *stk ) {
-/**********************************************************/
-
+static  void    emitStackHeaderEpilog( stack_record *stk )
+/********************************************************/
+{
     _unused( stk );
 }
 
 
-static  signed_32 frameSize( stack_map *map ) {
-/*********************************************/
-
+static  signed_32 frameSize( stack_map *map )
+/*******************************************/
+{
     signed_32           size;
 
     size = map->varargs.size + map->slop.size + map->saved_regs.size +
@@ -424,9 +418,9 @@ static  signed_32 frameSize( stack_map *map ) {
     return( size );
 }
 
-static  void    initStackLayout( stack_map *map ) {
-/*************************************************/
-
+static  void    initStackLayout( stack_map *map )
+/***********************************************/
+{
     type_length         offset;
 
     offset = 0;
@@ -438,9 +432,9 @@ static  void    initStackLayout( stack_map *map ) {
     initVarargs( &map->varargs, &offset );
 }
 
-static  void    emitProlog( stack_map *map ) {
-/********************************************/
-
+static  void    emitProlog( stack_map *map )
+/******************************************/
+{
     type_length         frame_size;
 
     frame_size = frameSize( map );
@@ -463,9 +457,9 @@ static  void    emitProlog( stack_map *map ) {
     }
 }
 
-static  void    emitEpilog( stack_map *map ) {
-/********************************************/
-
+static  void    emitEpilog( stack_map *map )
+/******************************************/
+{
     type_length         frame_size;
     uint_8              frame_reg;
 
@@ -488,9 +482,9 @@ static  void    emitEpilog( stack_map *map ) {
     }
 }
 
-extern  void    GenProlog() {
-/***************************/
-
+extern  void    GenProlog( void )
+/*******************************/
+{
     seg_id              old;
     label_handle        label;
     offset              lc;
@@ -529,9 +523,9 @@ extern  void    GenProlog() {
 }
 
 
-extern  void    GenEpilog() {
-/***************************/
-
+extern  void    GenEpilog( void )
+/*******************************/
+{
     seg_id              old;
     offset              lc;
 
@@ -556,31 +550,32 @@ extern  void    GenEpilog() {
 }
 
 
-extern  int     AskDisplaySize( int level ) {
-/*******************************************/
-
+extern  int     AskDisplaySize( int level )
+/*****************************************/
+{
     return( 0 );
 }
 
-extern  void    InitStackDepth( block *blk ) {
-/********************************************/
+extern  void    InitStackDepth( block *blk )
+/******************************************/
+{
 }
 
-extern  type_length     PushSize( type_length len ) {
-/***************************************************/
-
+extern  type_length     PushSize( type_length len )
+/*************************************************/
+{
     if( len < REG_SIZE ) return( REG_SIZE );
     return( len );
 }
 
-extern  type_length     NewBase( name *op ) {
-/*******************************************/
-
+extern  type_length     NewBase( name *op )
+/*****************************************/
+{
     return( TempLocation( op ) );
 }
 
-extern  int     ParmsAtPrologue( void ) {
-/***************************************/
-
+extern  int     ParmsAtPrologue( void )
+/*************************************/
+{
     return( 0 );
 }

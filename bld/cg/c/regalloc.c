@@ -50,29 +50,29 @@ extern  bool            SideEffect(instruction*);
 extern  void            NowDead(name*,conflict_node*,name_set*,block*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            BurnRegTree(reg_tree*);
-extern  void            IMBlip();
+extern  void            IMBlip(void);
 extern  conflict_node   *NameConflict(instruction*,name*);
 extern  void            BuildNameTree(conflict_node*);
-extern  void            AxeDeadCode();
+extern  void            AxeDeadCode(void);
 extern  void            BurnNameTree(reg_tree*);
 extern  bool            WorthProlog(conflict_node*,hw_reg_set);
 extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  void            DoNothing(instruction*);
 extern  int             ExpandOps(bool);
-extern  void            FindReferences();
+extern  void            FindReferences(void);
 extern  void            NowAlive(name*,conflict_node*,name_set*,block*);
 extern  name            *DeAlias(name*);
 extern  void            BuildRegTree(conflict_node*);
 extern  void            FreeAConflict(conflict_node*);
 extern  bool            IsIndexReg(hw_reg_set,type_class_def,bool);
-extern  void            LiveInfoUpdate();
-extern  void            MakeLiveInfo();
-extern  void            FreeConflicts();
-extern  reg_set_index   SegIndex();
+extern  void            LiveInfoUpdate(void);
+extern  void            MakeLiveInfo(void);
+extern  void            FreeConflicts(void);
+extern  reg_set_index   SegIndex(void);
 extern  void            DelSegOp(instruction*,int);
-extern  void            FixChoices();
+extern  void            FixChoices(void);
 extern  void            DelSegRes(instruction*);
-extern  void            MakeConflicts();
+extern  void            MakeConflicts(void);
 extern  void            AddSegment(instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
@@ -81,22 +81,22 @@ extern  int             NumOperands(instruction*);
 extern  void            CalcSavings(conflict_node*);
 extern  hw_reg_set      LowOffsetReg(hw_reg_set);
 extern  name            *AllocRegName(hw_reg_set);
-extern  bool            PropagateMoves();
-extern  bool            PropRegsOne();
+extern  bool            PropagateMoves(void);
+extern  bool            PropRegsOne(void);
 extern  conflict_node   *FindConflictNode(name*,block*,instruction*);
 extern  hw_reg_set      HighOffsetReg(hw_reg_set);
-extern  void            DeadInstructions();
-extern  void            GRBlip();
+extern  void            DeadInstructions(void);
+extern  void            GRBlip(void);
 extern  bool            IsSegReg(hw_reg_set);
 extern  void            *SortList(void *,unsigned,bool (*)(void*,void*) );
-extern  bool            MoreConflicts();
+extern  bool            MoreConflicts(void);
 extern  void            DBAllocReg(name*,name*);
 extern  void            MemConstTemp(conflict_node*);
-extern  void            ConstSavings();
+extern  void            ConstSavings(void);
 extern  void            RegInsDead(void);
 extern  instruction     *FoldIns( instruction * );
 extern  bool            IsUncacheableMemory( name * );
-extern  hw_reg_set      MustSaveRegs();
+extern  hw_reg_set      MustSaveRegs(void);
 
 extern  proc_def         *CurrProc;
 extern  conflict_node    *ConfList;
@@ -176,14 +176,14 @@ static  name    *ReplIndex( instruction *ins,
 }
 
 
-static  void    AssignMoreBits() {
-/*********************************
+static  void    AssignMoreBits( void )
+/*************************************
     Run through the list of conflicts and turn off the CONFLICT_ON_HOLD
     bit.  This is on for conflicts that needed an id bit but didn't get
     one.  MoreConflicts will assign a bit to any of these that weren't
     allocated the first time around.
 */
-
+{
     conflict_node       *conf;
 
     conf = ConfList;
@@ -215,14 +215,14 @@ static  void    InitAChoice( name *temp ) {
 }
 
 
-static  void    InitChoices() {
-/******************************
+static  void    InitChoices( void )
+/**********************************
     Set the possible register choices of all conflicts/temps to be
     RL_NUMBER_OF_SETS meaning there are no restrictions as yet.  This
     choice gets more restricted as each instruction involving the
     conflict is expanded.
 */
-
+{
     conflict_node       *conf;
     name                *opnd;
     block               *blk;
@@ -308,8 +308,8 @@ static  void    ReAlias( reg_tree *tree ) {
 }
 
 
-static  bool    SplitConflicts() {
-/*********************************
+static  bool    SplitConflicts( void )
+/*************************************
     Build a name tree for each conflict, and then if the top of the tree
     has no restrictions on which registers it can have, its name mustn't
     be referenced by any instructions, so we call ReAlias to split make
@@ -318,7 +318,7 @@ static  bool    SplitConflicts() {
     trees.
 
 */
-
+{
     conflict_node       *conf;
     bool                change;
 
@@ -1222,24 +1222,24 @@ static  bool            ConfBefore( void *c1, void *c2 ) {
 }
 
 
-static  void    SortConflicts() {
-/********************************
+static  void    SortConflicts( void )
+/************************************
     Sort the conflicts in order of descending savings.
 */
-
+{
     ConfList = SortList( ConfList, offsetof( conflict_node, next_conflict ),
                          ConfBefore );
 }
 
 
-static  enum allocation_state    AssignConflicts() {
-/***************************************************
+static  enum allocation_state    AssignConflicts( void )
+/*******************************************************
     Run through the conflict list and calculate the savings associated
     with giving a register to each one.  Sort the list in order of
     descending savings and then give a register (or memory location) to
     each conflict in the list that is not ON_HOLD.
 */
-
+{
     conflict_node               *conf;
     conflict_node               *next;
     enum allocation_state       state;
@@ -1303,14 +1303,14 @@ static  enum allocation_state    AssignConflicts() {
 }
 
 
-extern  void    ReConstFold() {
-/******************************
+extern  void    ReConstFold( void )
+/**********************************
     Call FoldIns on each instruction in case we propagated a constant
     into an instruction leaving something which looks like C op C -> T,
     which none of the regalloc tables can handle. Can't just call
     ConstFold because it works on a stupid partition.
 */
-
+{
     instruction                 *ins;
     instruction                 *next;
     block                       *blk;

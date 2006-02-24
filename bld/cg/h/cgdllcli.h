@@ -24,11 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface to DLL-based code generator.
 *
 ****************************************************************************/
 
 
 int BEDLLLoad( char *dll_name );
-void BEDLLUnload();
+void BEDLLUnload( void );

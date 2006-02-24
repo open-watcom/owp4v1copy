@@ -44,17 +44,17 @@
 
 extern  void            CGFree(pointer);
 extern  void            FreeIns(instruction*);
-extern  void            TellBeginExecutions();
-extern  void            FreeNames();
+extern  void            TellBeginExecutions(void);
+extern  void            FreeNames(void);
 extern  int             AskDisplaySize(int);
-extern  void            ReInitNames();
-extern  label_handle    AskForNewLabel();
+extern  void            ReInitNames(void);
+extern  label_handle    AskForNewLabel(void);
 extern  type_class_def  CallState(aux_handle,type_def*,call_state*);
 extern  name    *       AllocMemory(pointer,type_length,cg_class,type_class_def);
 extern  type_class_def  TypeClass(type_def*);
 extern  sym_handle      AskForLblSym(label_handle);
 extern  byte    *       Copy(void*,void*,uint);
-extern  void            NamesCrossBlocks();
+extern  void            NamesCrossBlocks(void);
 extern  void            RemoveInputEdge(block_edge*);
 extern  pointer         SafeRecurse( pointer (* rtn)(), pointer arg );
 extern  void            SaveToTargProc(void);
@@ -78,8 +78,10 @@ extern    bool                  HaveCurrBlock;
 proc_def              *CurrProc;
 block                 *CurrBlock;
 
-extern  block   *MakeBlock( label_handle label, block_num edges ) {
-/*****************************************************************/
+
+extern  block   *MakeBlock( label_handle label, block_num edges )
+/***************************************************************/
+{
     block       *blk;
     block_edge  *edge;
     block_num   i;
@@ -115,8 +117,9 @@ extern  block   *MakeBlock( label_handle label, block_num edges ) {
 }
 
 
-extern  block   *NewBlock( label_handle label, bool label_dies ) {
-/****************************************************************/
+extern  block   *NewBlock( label_handle label, bool label_dies )
+/**************************************************************/
+{
     block       *blk;
 
     blk = MakeBlock( label, 1 );
@@ -129,9 +132,9 @@ extern  block   *NewBlock( label_handle label, bool label_dies ) {
 }
 
 
-extern  void    FreeABlock( block * blk ) {
-/*****************************************/
-
+extern  void    FreeABlock( block * blk )
+/***************************************/
+{
     if( blk->targets <= 1 ) {
         _Free( blk, sizeof( block ) );
     } else {
@@ -140,9 +143,9 @@ extern  void    FreeABlock( block * blk ) {
 }
 
 
-extern  void    FreeBlock() {
-/***************************/
-
+extern  void    FreeBlock( void )
+/*******************************/
+{
     while( CurrBlock->ins.hd.next != (instruction *)&CurrBlock->ins ) {
         FreeIns( CurrBlock->ins.hd.next );
     }
@@ -153,9 +156,9 @@ extern  void    FreeBlock() {
 }
 
 
-extern  void    EnLink( label_handle label, bool label_dies ) {
-/*************************************************************/
-
+extern  void    EnLink( label_handle label, bool label_dies )
+/***********************************************************/
+{
     block       *blk;
 
     blk = NewBlock( label, label_dies );
@@ -164,9 +167,9 @@ extern  void    EnLink( label_handle label, bool label_dies ) {
     SrcLine = 0;
 }
 
-extern  void    AddIns( instruction *ins ) {
-/******************************************/
-
+extern  void    AddIns( instruction *ins )
+/****************************************/
+{
     if( HaveCurrBlock == FALSE ) {
         EnLink( AskForNewLabel(), TRUE );
         HaveCurrBlock = TRUE;
@@ -182,9 +185,9 @@ extern  void    AddIns( instruction *ins ) {
 }
 
 
-extern  void    GenBlock( int class, int targets ) {
-/**************************************************/
-
+extern  void    GenBlock( int class, int targets )
+/************************************************/
+{
     block       *new;
     block_edge  *edge;
     instruction *ins;
@@ -251,9 +254,9 @@ extern  void    GenBlock( int class, int targets ) {
 }
 
 
-extern  block   *ReGenBlock( block *blk, label_handle lbl ) {
-/***********************************************************/
-
+extern  block   *ReGenBlock( block *blk, label_handle lbl )
+/*********************************************************/
+{
     block       *new;
     block_edge  *edge;
     int         targets;
@@ -300,9 +303,9 @@ extern  block   *ReGenBlock( block *blk, label_handle lbl ) {
 }
 
 
-extern  type_class_def  InitCallState( type_def *tipe ) {
-/***************************************************/
-
+extern  type_class_def  InitCallState( type_def *tipe )
+/*****************************************************/
+{
     name        *name;
     sym_handle  sym;
     pointer     aux;
@@ -315,11 +318,10 @@ extern  type_class_def  InitCallState( type_def *tipe ) {
 }
 
 
-extern  void    AddTarget( label_handle dest, bool dest_label_dies ) {
-/********************************************************************/
-
-  /*   Don't handle expression jumps yet*/
-
+extern  void    AddTarget( label_handle dest, bool dest_label_dies )
+/******************************************************************/
+/*   Don't handle expression jumps yet*/
+{
     block_edge  *edge;
 
     edge = &CurrBlock->edge[  CurrBlock->targets++  ];
@@ -332,13 +334,13 @@ extern  void    AddTarget( label_handle dest, bool dest_label_dies ) {
 }
 
 
-extern  block   *FindBlockWithLbl( label_handle label ) {
-/*******************************************************/
-
+extern  block   *FindBlockWithLbl( label_handle label )
+/*****************************************************/
+{
     block       *blk;
 
     blk = HeadBlock;
-    for(;;) {
+    for( ;; ) {
         if( blk == NULL ) return( NULL );
         if( blk->label == label ) return( blk );
         blk = blk->next_block;
@@ -346,9 +348,9 @@ extern  block   *FindBlockWithLbl( label_handle label ) {
 }
 
 
-extern  void    FixEdges() {
-/**************************/
-
+extern  void    FixEdges( void )
+/******************************/
+{
     block       *blk;
     block       *dest;
     int         targets;
@@ -376,9 +378,10 @@ extern  void    FixEdges() {
 
 
 static label_handle LinkReturnsParms[ 2 ];
-static  pointer  LinkReturns() {
-/******************************/
 
+static  pointer  LinkReturns( void )
+/**********************************/
+{
     block               *blk;
     int                 i;
     bool                found;
@@ -393,7 +396,7 @@ static  pointer  LinkReturns() {
     if( blk->class & BLOCK_VISITED ) return( (pointer)TRUE );
     if( blk->class & LABEL_RETURN ) {
         i = blk->targets;
-        for(;;) {
+        for( ;; ) {
             if( --i < 0 ) {
                 blk = ReGenBlock( blk, link_to );
                 break;
@@ -426,12 +429,11 @@ static  pointer  LinkReturns() {
     return( (pointer)TRUE );
 }
 
-extern  bool        FixReturns() {
-/********************************/
-
+extern  bool        FixReturns( void )
+/************************************/
 /* link all LABEL_RETURN blocks to any CALL_LABEL block they could*/
 /* have been invoked from*/
-
+{
     block       *blk;
     block       *other_blk;
 
@@ -458,9 +460,9 @@ extern  bool        FixReturns() {
 }
 
 
-extern  void    UnFixEdges() {
-/****************************/
-
+extern  void    UnFixEdges( void )
+/********************************/
+{
     block       *blk;
     int         targets;
     block_edge  *edge;
@@ -483,9 +485,9 @@ extern  void    UnFixEdges() {
 }
 
 
-extern  void    AddAnIns( block *blk, instruction *ins ) {
-/********************************************************/
-
+extern  void    AddAnIns( block *blk, instruction *ins )
+/******************************************************/
+{
     block       *curr_block;
 
     curr_block = CurrBlock;
@@ -495,9 +497,9 @@ extern  void    AddAnIns( block *blk, instruction *ins ) {
 }
 
 
-extern  bool    BlkTooBig() {
-/***************************/
-
+extern  bool    BlkTooBig( void )
+/*******************************/
+{
     label_handle        blk;
 
     if( !HaveCurrBlock ) return( FALSE );
@@ -514,9 +516,9 @@ extern  bool    BlkTooBig() {
 }
 
 
-extern  void    NewProc( int level ) {
-/************************************/
-
+extern  void    NewProc( int level )
+/**********************************/
+{
     proc_def    *new;
 
     if( CurrProc != NULL ) {
@@ -558,12 +560,12 @@ extern  void    NewProc( int level ) {
 }
 
 
-extern  void    FreeProc() {
-/**************************/
-
+extern  void    FreeProc( void )
+/******************************/
+{
     proc_def    *oldproc;
 
-    for(;;) {
+    for( ;; ) {
         CurrBlock = HeadBlock;
         if( CurrBlock == NULL ) break;
         HeadBlock = CurrBlock->next_block;

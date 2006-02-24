@@ -44,7 +44,7 @@
 extern  void            ObjBytes( char *, unsigned );
 extern  constant_defn   *GetFloat( name *, type_class_def );
 extern  seg_id          SetOP( seg_id );
-extern  seg_id          AskBackSeg();
+extern  seg_id          AskBackSeg( void );
 extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def);
 extern  label_handle    AskForLabel( sym_handle );
 extern  void            OutLabel( label_handle );
@@ -56,7 +56,7 @@ extern  void            TellOptimizerByPassed( void );
 extern  void            TellByPassOver( void );
 extern  bool            AskSegBlank( seg_id );
 extern  void            IncLocation( offset );
-extern  seg_id          AskOP();
+extern  seg_id          AskOP( void );
 
 extern  type_length     TypeClassSize[];
 

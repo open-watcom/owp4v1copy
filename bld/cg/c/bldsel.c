@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Build code for a selection (switch) statement.
 *
 ****************************************************************************/
 
@@ -42,7 +41,7 @@
 
 #include "bldins.h"
 
-extern  label_handle    AskForNewLabel();
+extern  label_handle    AskForNewLabel(void);
 extern  type_def        *TypeAddress(cg_type);
 extern  void            AddTarget(label_handle,bool);
 extern  signed_32       IfCost(select_node*,int);

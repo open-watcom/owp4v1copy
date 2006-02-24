@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  RISC specific type conversion optimizations.
 *
 ****************************************************************************/
 
@@ -82,7 +81,7 @@ static instruction *AndResult( instruction *ins, type_class_def class )
 
 
 static void ConvertOtherOperands( instruction *ins, name *temp )
-/***************************************************
+/***************************************************************
 
     Change ins to an integer instruction, and convert any other operands
     to integer.
@@ -152,8 +151,8 @@ static bool ConvertInsToInt( instruction *ins, name *temp )
 }
 
 
-static void FixConverts()
-/************************
+static void FixConverts( void )
+/******************************
 
     We may have created some convert from type X to type X instructions.
     Make them into move instructions, to give later optimizations an
@@ -233,8 +232,8 @@ static bool ConvertIfPossible( name *temp )
 }
 
 
-extern bool CharsAndShortsToInts()
-/***********************************
+extern bool CharsAndShortsToInts( void )
+/***************************************
 
     Convert char and short variables to integer.
 */

@@ -425,9 +425,9 @@ extern  void    ReplIns( instruction *ins, instruction *new ) {
 }
 
 
-extern  instruction_id  Renumber() {
-/**********************************/
-
+extern  instruction_id  Renumber( void )
+/**************************************/
+{
     block               *blk;
     instruction         *ins;
     instruction_id      id;

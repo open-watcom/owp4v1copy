@@ -43,7 +43,7 @@
 
 extern  reg_set_index   IndexIntersect(reg_set_index,type_class_def,bool);
 extern  reg_set_index   RegIntersect(reg_set_index,reg_set_index);
-extern  reg_set_index   SegIndex();
+extern  reg_set_index   SegIndex(void);
 extern  name            *DeAlias(name*);
 
 extern  conflict_node   *ConfList;
@@ -54,9 +54,9 @@ extern  void    MarkPossible( instruction *ins,
                               name *opnd, reg_set_index idx );
 extern  void    FreeAConflict( conflict_node *conf );
 
-extern  conflict_node   *AddConflictNode( name *opnd ) {
-/******************************************************/
-
+extern  conflict_node   *AddConflictNode( name *opnd )
+/****************************************************/
+{
     conflict_node       *new;
     name                *scan;
     t_flags             flags;
@@ -106,9 +106,9 @@ extern  conflict_node   *AddConflictNode( name *opnd ) {
 }
 
 
-static  conflict_node   *AddOne( name *opnd, block *blk ) {
-/*********************************************************/
-
+static  conflict_node   *AddOne( name *opnd, block *blk )
+/*******************************************************/
+{
     if( opnd->v.usage & USE_MEMORY ) {
         if( opnd->n.class == N_TEMP ) {
             if( !( opnd->v.usage & USE_IN_ANOTHER_BLOCK ) ) {
@@ -128,9 +128,9 @@ static  conflict_node   *AddOne( name *opnd, block *blk ) {
 
 
 static  conflict_node   *FindConf( name *opnd,
-                                  block *blk, instruction *ins ) {
-/*************************************************************************/
-
+                                  block *blk, instruction *ins )
+/**************************************************************/
+{
     conflict_node *conf;
 
     conf = opnd->v.conflict;
@@ -158,9 +158,9 @@ static  conflict_node   *FindConf( name *opnd,
 
 
 extern  conflict_node   *FindConflictNode( name *opnd,
-                                          block *blk, instruction *ins ) {
-/*************************************************************************/
-
+                                          block *blk, instruction *ins )
+/**********************************************************************/
+{
     conflict_node       *conf;
     name                *old;
     name                *scan;
@@ -202,16 +202,16 @@ extern  conflict_node   *FindConflictNode( name *opnd,
 }
 
 
-extern  void    MarkSegment( instruction *ins, name *opnd ) {
-/***********************************************************/
-
+extern  void    MarkSegment( instruction *ins, name *opnd )
+/*********************************************************/
+{
     MarkPossible( ins, opnd, SegIndex() );
 }
 
 
-extern  conflict_node   *NameConflict( instruction *ins, name *opnd ) {
-/*********************************************************************/
-
+extern  conflict_node   *NameConflict( instruction *ins, name *opnd )
+/*******************************************************************/
+{
     conflict_node       *conf;
 
     if( opnd->n.class == N_TEMP ) {
@@ -233,10 +233,9 @@ extern  conflict_node   *NameConflict( instruction *ins, name *opnd ) {
 
 
 extern  void    MarkPossible( instruction *ins,
-                              name *opnd, reg_set_index idx ) {
-/*************************************************************/
-
-
+                              name *opnd, reg_set_index idx )
+/***********************************************************/
+{
     conflict_node       *conf;
     reg_set_index       possible;
 
@@ -258,10 +257,9 @@ extern  void    MarkPossible( instruction *ins,
 
 
 extern  reg_set_index   MarkIndex( instruction *ins,
-                                   name *opnd, bool is_temp_index ) {
-/*******************************************************************/
-
-
+                                   name *opnd, bool is_temp_index )
+/*****************************************************************/
+{
     conflict_node       *conf;
     reg_set_index       possible;
     type_class_def      class;
@@ -288,18 +286,18 @@ extern  reg_set_index   MarkIndex( instruction *ins,
 }
 
 
-extern  void    FreeConflicts() {
-/*******************************/
-
+extern  void    FreeConflicts( void )
+/***********************************/
+{
     while( ConfList != NULL ) {
         FreeAConflict( ConfList );
     }
 }
 
 
-extern  void    FreeAConflict( conflict_node *conf ) {
-/****************************************************/
-
+extern  void    FreeAConflict( conflict_node *conf )
+/**************************************************/
+{
     name                *opnd;
     name                *scan;
     conflict_node       *prev;
@@ -350,16 +348,16 @@ extern  void    FreeAConflict( conflict_node *conf ) {
 }
 
 
-extern  void    InitConflict() {
-/******************************/
-
+extern  void    InitConflict( void )
+/**********************************/
+{
     InitFrl( &ConfFrl );
     ConfList = NULL;
 }
 
 
-extern  bool    ConfFrlFree() {
-/*****************************/
-
+extern  bool    ConfFrlFree( void )
+/*********************************/
+{
     return( FrlFreeAll( &ConfFrl, sizeof( conflict_node ) ) );
 }

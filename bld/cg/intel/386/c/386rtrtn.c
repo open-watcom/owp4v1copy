@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate calls to runtime support routines.
 *
 ****************************************************************************/
 
@@ -67,7 +66,7 @@ extern  void            AddIns(instruction*);
 extern  name            *AllocTemp(type_class_def);
 extern  name            *AllocIndex(name*,name*,type_length,type_class_def);
 extern  name            *AddrConst(name*,int,constant_class);
-extern  seg_id          AskBackSeg();
+extern  seg_id          AskBackSeg(void);
 extern  void            LookupRoutine(instruction *);
 extern  label_handle    RTLabel(int);
 extern  int             FindRTLabel(label_handle);
@@ -239,7 +238,7 @@ rtn_info RTInfo[RT_NOP-BEG_RTNS+1] = {
 typedef struct {
         call_class      class;
         byte_seq_len    length;
-        char            data[];    
+        char            data[];
 } rt_aux_info;
 
 static  rt_aux_info Scn1 = {
@@ -292,9 +291,9 @@ static  rt_aux_info Scn4ES = {          /* or Scn2 in USE16 */
 #include "cgrealgn.h"
 
 
-extern  char    *AskRTName( int rtindex ) {
-/*****************************************/
-
+extern  char    *AskRTName( int rtindex )
+/***************************************/
+{
     if( _IsTargetModel( INDEXED_GLOBALS ) ) {
         switch( rtindex + BEG_RTNS ) {
         case RT_FDA:
@@ -319,27 +318,27 @@ extern  char    *AskRTName( int rtindex ) {
 }
 
 
-extern  bool    RTLeaveOp2( instruction *ins ) {
-/***********************************************
+extern  bool    RTLeaveOp2( instruction *ins )
+/*********************************************
     return true if it's a bad idea to put op2 into a temporary since we're
     gonna take the bugger's address in rMAKECALL.
 */
-
+{
     ins = ins;
     return( FALSE );
 }
 
 
 extern  name    *ScanCall( tbl_control *table, name *value,
-                           type_class_def tipe ) {
-/*************************************************
+                           type_class_def tipe )
+/**********************************************************
     generates a fake call to a rutime routine that looks up "value" in a table
     and jumps to the appropriate case, using either a pointer or index
     returned by the "routine". The "routine" will be generated inline later.
     See BEAuxInfo for the code sequences generated. That will explain
     how the jump destination is determined as well.
 */
-
+{
     instruction *new_ins;
     name        *reg_name;
     name        *result;
@@ -414,22 +413,22 @@ extern  name    *ScanCall( tbl_control *table, name *value,
 }
 
 
-extern  name    *Addressable( name *cons, type_class_def class ) {
-/*****************************************************************
+extern  name    *Addressable( name *cons, type_class_def class )
+/***************************************************************
     make sure a floating point constant is addressable (dropped
     it into memory if it isnt)
 */
-
+{
     if( cons->n.class == N_CONSTANT ) return( GenFloat( cons, class ) );
     return( cons );
 }
 
 
-extern  pointer BEAuxInfo( pointer hdl, aux_class request ) {
-/************************************************************
+extern  pointer BEAuxInfo( pointer hdl, aux_class request )
+/**********************************************************
     see ScanCall for explanation
 */
-
+{
     pointer     info;
 
     switch( request ) {
@@ -469,9 +468,10 @@ extern  pointer BEAuxInfo( pointer hdl, aux_class request ) {
     }
 }
 
-extern  instruction     *rMAKEFNEG( instruction *ins ) {
-/*******************************************************
+extern  instruction     *rMAKEFNEG( instruction *ins )
+/*****************************************************
     this is intentionally a stub for the 386.
 */
+{
     return( ins );
 }

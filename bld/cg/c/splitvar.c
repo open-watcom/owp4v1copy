@@ -40,13 +40,13 @@
 extern  block           *HeadBlock;
 extern  conflict_node   *ConfList;
 
-extern  void            NullConflicts(var_usage);
-extern  void            FreeConflicts();
-extern  void            FindReferences();
-extern  void            MakeConflicts();
-extern  name            *SAllocTemp(type_class_def,type_length);
-extern  bool            InsDead(void);
-extern  bool            MoreConflicts();
+extern  void            NullConflicts( var_usage );
+extern  void            FreeConflicts( void );
+extern  void            FindReferences( void );
+extern  void            MakeConflicts( void );
+extern  name            *SAllocTemp( type_class_def, type_length );
+extern  bool            InsDead( void );
+extern  bool            MoreConflicts( void );
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,
                                     type_length,int,i_flags);
 
@@ -54,9 +54,9 @@ static  block_num       Instance;
 static  global_bit_set  Id;
 static  pointer         MarkInstance(pointer);
 
-static  block   *FindUnMarkedInstance() {
-/***************************************/
-
+static  block   *FindUnMarkedInstance( void )
+/*******************************************/
+{
     block               *blk;
     data_flow_def       *flow;
 
@@ -72,9 +72,9 @@ static  block   *FindUnMarkedInstance() {
 }
 
 
-static  void    NotVisited() {
-/****************************/
-
+static  void    NotVisited( void )
+/********************************/
+{
     block       *blk;
 
     blk = HeadBlock;
@@ -86,9 +86,9 @@ static  void    NotVisited() {
 }
 
 
-extern  bool    RepOp( name **pop, name *of, name *with ) {
-/*********************************************************/
-
+extern  bool    RepOp( name **pop, name *of, name *with )
+/*******************************************************/
+{
     name        *op;
     name        *base;
     name        *index;
@@ -120,9 +120,9 @@ extern  bool    RepOp( name **pop, name *of, name *with ) {
 }
 
 
-static  void    ReplaceInstances( name *of, name *with ) {
-/*****************************************************************/
-
+static  void    ReplaceInstances( name *of, name *with )
+/******************************************************/
+{
     block       *blk;
     instruction *ins;
     int         i;
@@ -149,9 +149,9 @@ static  void    ReplaceInstances( name *of, name *with ) {
 }
 
 
-static  bool    Split1Var( conflict_node *conf ) {
-/************************************************/
-
+static  bool    Split1Var( conflict_node *conf )
+/**********************************************/
+{
     block       *unlabeled;
     bool        change;
     name        *op;
@@ -159,7 +159,7 @@ static  bool    Split1Var( conflict_node *conf ) {
     NotVisited();
     Instance = 0;
     _GBitAssign( Id, conf->id.out_of_block );
-    for(;;) {
+    for( ;; ) {
         unlabeled = FindUnMarkedInstance();
         if( unlabeled == NULL ) break;
         ++Instance;
@@ -176,9 +176,9 @@ static  bool    Split1Var( conflict_node *conf ) {
 }
 
 
-static  void    CleanUp() {
-/*************************/
-
+static  void    CleanUp( void )
+/*****************************/
+{
     block       *blk;
     block_num   id;
 
@@ -192,9 +192,9 @@ static  void    CleanUp() {
 }
 
 
-static  pointer MarkInstance( pointer bl ) {
-/******************************************/
-
+static  pointer MarkInstance( pointer bl )
+/****************************************/
+{
     block_edge          *edge;
     int                 i;
     data_flow_def       *flow;
@@ -230,13 +230,12 @@ static  pointer MarkInstance( pointer bl ) {
 }
 
 
-extern  void    SplitVars() {
-/***************************/
-
+extern  void    SplitVars( void )
+/*******************************/
 /* For each variable, find out if it can be split into two separate variables.*/
 /* This often happens when programmers re-use variables rather than defining*/
 /* a new one.*/
-
+{
     name                *op;
     conflict_node       *conf;
 

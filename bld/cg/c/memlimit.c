@@ -49,28 +49,28 @@ extern    pointer       MemStart;
 extern    pointer       MemFinish;
 extern    pointer_int   FrlSize;
 
-extern  bool            InsFrlFree();
-extern  bool            InstrFrlFree();
-extern  bool            NameFrlFree();
-extern  bool            ConfFrlFree();
-extern  bool            RegTreeFrlFree();
-extern  bool            ScoreFrlFree();
-extern  bool            RegTreeFrlFree();
-extern  bool            AddrFrlFree();
-extern  bool            SchedFrlFree();
-extern  bool            ShrinkQueue(pointer_int);
-extern  seg_id          SetOP(seg_id);
-extern  seg_id          AskCodeSeg();
-extern  bool            HaveCodeSeg();
-extern  pointer_int     MemInUse();
-extern  pointer_int     MemSize();
-extern  bool            TreeFrlFree();
-extern  bool            FreeObjCache();
+extern  bool            InsFrlFree( void );
+extern  bool            InstrFrlFree( void );
+extern  bool            NameFrlFree( void );
+extern  bool            ConfFrlFree( void );
+extern  bool            RegTreeFrlFree( void );
+extern  bool            ScoreFrlFree( void );
+extern  bool            RegTreeFrlFree( void );
+extern  bool            AddrFrlFree( void );
+extern  bool            SchedFrlFree( void );
+extern  bool            ShrinkQueue( pointer_int );
+extern  seg_id          SetOP( seg_id );
+extern  seg_id          AskCodeSeg( void );
+extern  bool            HaveCodeSeg( void );
+extern  pointer_int     MemInUse( void );
+extern  pointer_int     MemSize( void );
+extern  bool            TreeFrlFree( void );
+extern  bool            FreeObjCache( void );
 
 
-static  bool    FlushSomeOpt( pointer_int size ) {
-/************************************************/
-
+static  bool    FlushSomeOpt( pointer_int size )
+/**********************************************/
+{
     seg_id      old;
     bool        freed;
 
@@ -89,9 +89,9 @@ static  bool    FlushSomeOpt( pointer_int size ) {
 }
 
 
-static  bool    ChkMemLimit( pointer_int limit ) {
-/************************************************/
-
+static  bool    ChkMemLimit( pointer_int limit )
+/**********************************************/
+{
     if( _IsModel( MEMORY_LOW_FAILS ) ) return( FALSE );
     if( MemInUse() - FrlSize <= limit ) return( FALSE );
     FlushSomeOpt( MemInUse() - limit - FrlSize );
@@ -100,9 +100,9 @@ static  bool    ChkMemLimit( pointer_int limit ) {
 }
 
 
-extern  void    CalcMemLimit() {
-/******************************/
-
+extern  void    CalcMemLimit( void )
+/**********************************/
+{
     pointer_int size;
     size = MemSize();
     MemLimit = size - size / 4;
@@ -110,30 +110,30 @@ extern  void    CalcMemLimit() {
 }
 
 
-extern  void    FlushOpt() {
-/**************************/
-
+extern  void    FlushOpt( void )
+/******************************/
+{
     FlushSomeOpt( -1 );
 }
 
 
-extern  bool    MemCritical() {
-/*****************************/
-
+extern  bool    MemCritical( void )
+/*********************************/
+{
     return( ChkMemLimit( MemLimit - MemLimit/4 ) );
 }
 
 
-extern  bool    MemLow() {
-/************************/
-
+extern  bool    MemLow( void )
+/****************************/
+{
     return( ChkMemLimit( MemLimit ) );
 }
 
 
-extern  void    BlowAwayFreeLists() {
-/***********************************/
-
+extern  void    BlowAwayFreeLists( void )
+/***************************************/
+{
     AddrFrlFree();
     ScoreFrlFree();
     TreeFrlFree();
@@ -147,9 +147,9 @@ extern  void    BlowAwayFreeLists() {
 }
 
 
-extern  bool    MemCheck( int size ) {
-/************************************/
-
+extern  bool    MemCheck( int size )
+/**********************************/
+{
     if( FEMoreMem( size ) ) return( TRUE );
     if( FreeObjCache() ) return( TRUE );
     if( ScoreFrlFree() ) return( TRUE );

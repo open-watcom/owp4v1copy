@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Variable/memory usage routines.
+* Description:  Variable/memory usage analysis.
 *
 ****************************************************************************/
 
@@ -44,14 +44,14 @@ extern    conflict_node *ConfList;
 extern    bool          BlockByBlock;
 
 
-static  void    Use( name *op, block *blk, var_usage usage ) {
-/***************************************************************
+static  void    Use( name *op, block *blk, var_usage usage )
+/***********************************************************
     Mark "op" as used in "blk".  assume that if it hasn't already been
     defined in this block, that it must be USE_IN_ANOTHER_BLOCK.  "usage"
     may be set to USE_ADDRESS indicating that we are using the address
     of the name.
 */
-
+{
     if( op->n.class == N_CONSTANT && op->c.const_type == CONS_TEMP_ADDR ) {
         Use( (name*)op->c.value, blk, USE_ADDRESS );
         return;
@@ -74,15 +74,15 @@ static  void    Use( name *op, block *blk, var_usage usage ) {
 }
 
 
-static  bool    CoveringDefinitions( name *op ) {
-/************************************************
+static  bool    CoveringDefinitions( name *op )
+/**********************************************
     If we are only defining a piece of "op", we check all of its aliases
     to see if they have been defined in this block as well.  Only if all
     the definitions cause the entire name to be redefined do we mark the
     master symbol table entry for the name as "DEF_WITHIN_BLOCK" and
     flip on its bit in dataflo->def.
 */
-
+{
     name        *alias;
     int         i;
     uint        loc;
@@ -113,11 +113,11 @@ static  bool    CoveringDefinitions( name *op ) {
 }
 
 
-static  void    Define( name *op, block *blk ) {
-/***********************************************
+static  void    Define( name *op, block *blk )
+/*********************************************
     Mark "op" as defined within "blk".
 */
-
+{
     name        *actual;
 
     actual = op;
@@ -131,12 +131,12 @@ static  void    Define( name *op, block *blk ) {
 }
 
 
-static  void    UseDefGlobals( block *blk ) {
-/********************************************
+static  void    UseDefGlobals( block *blk )
+/******************************************
     If a call instruction is encountered, all N_MEMORY names (visible
     outside this procedure), could be both used and defined by the call.
 */
-
+{
     conflict_node       *conf;
     var_usage           usage;
 
@@ -156,11 +156,11 @@ static  void    UseDefGlobals( block *blk ) {
 }
 
 
-static void TransferBlockUsage( name *op ) {
-/*******************************************
+static void TransferBlockUsage( name *op )
+/*****************************************
     Never have both USE_WITHIN_BLOCK and USE_IN_ANOTHER_BLOCK set.
 */
-
+{
     op->v.usage |= op->v.block_usage;
     if( op->v.usage & USE_IN_ANOTHER_BLOCK ) {
         op->v.usage &= ~ USE_WITHIN_BLOCK;
@@ -169,11 +169,11 @@ static void TransferBlockUsage( name *op ) {
 }
 
 
-static void TransferOneTempBlockUsage( name *op ) {
-/****************************************
+static void TransferOneTempBlockUsage( name *op )
+/************************************************
     see TransferTempBlockUsage ^
 */
-
+{
     name        *alias;
 
     if( op->n.class == N_CONSTANT && op->c.const_type == CONS_TEMP_ADDR ) {
@@ -185,7 +185,7 @@ static void TransferOneTempBlockUsage( name *op ) {
         }
     } else if ( op->n.class == N_TEMP ) {
         alias = op->t.alias;
-        for(;;) {
+        for( ;; ) {
             TransferBlockUsage( alias );
             if( alias == op ) break;
             alias = alias->t.alias;
@@ -194,8 +194,8 @@ static void TransferOneTempBlockUsage( name *op ) {
 }
 
 
-static void TransferTempBlockUsage( block *blk ) {
-/*************************************************
+static void TransferTempBlockUsage( block *blk )
+/***********************************************
     Traverse the block "blk", and for each variable referenced by an
     instruction within block, Make sure that USE_WITHIN_BLOCK and
     USE_IN_OTHER_BLOCK are not on simultaneously for each variable and
@@ -203,7 +203,7 @@ static void TransferTempBlockUsage( block *blk ) {
     since running down the list of temps could be very expensive (if
     long).  Blocks on the other hand are always reasonably short
 */
-
+{
     instruction *ins;
     int         i;
 
@@ -221,11 +221,11 @@ static void TransferTempBlockUsage( block *blk ) {
 }
 
 
-static  void    TransferAllMemBlockUsage() {
-/*******************************************
+static  void    TransferAllMemBlockUsage( void )
+/***********************************************
     Like TransferTempBlockUsage.
 */
-
+{
     name        *mem;
 
     for( mem = Names[N_MEMORY]; mem != NULL; mem = mem->n.next_name ) {
@@ -234,11 +234,11 @@ static  void    TransferAllMemBlockUsage() {
 }
 
 
-static void TransferOneMemBlockUsage( name *op ) {
-/*************************************************
+static void TransferOneMemBlockUsage( name *op )
+/***********************************************
     see TransferMemBlockUsage ^
 */
-
+{
     if( op->n.class == N_INDEXED ) {
         TransferOneMemBlockUsage( op->i.index );
         if( HasTrueBase( op ) ) {
@@ -250,11 +250,11 @@ static void TransferOneMemBlockUsage( name *op ) {
 }
 
 
-static  void    TransferMemBlockUsage( block *blk ) {
-/****************************************************
+static  void    TransferMemBlockUsage( block *blk )
+/**************************************************
     Like TransferTempBlockUsage.
 */
-
+{
     instruction *ins;
     int         i;
 
@@ -272,9 +272,9 @@ static  void    TransferMemBlockUsage( block *blk ) {
 }
 
 
-static void TransferOneTempFlag( name *t ) {
-/*****************************************/
-
+static void TransferOneTempFlag( name *t )
+/****************************************/
+{
     name        *alias;
     var_usage   usage;
 
@@ -300,16 +300,15 @@ static void TransferOneTempFlag( name *t ) {
 }
 
 
-extern  void    TransferTempFlags() {
-/************************************
+extern  void    TransferTempFlags( void )
+/****************************************
     Run through the program and for each variable reference, transfer
     the usage flags from each variable to all of its aliases.  (if we
     use the address of T1, we're effectively using the address of T1+1
     as well, etc).  We could traverse Names[N_TEMP] but it could be much
     longer than the block list.
 */
-
-
+{
     block       *blk;
     instruction *ins;
     int         i;
@@ -337,13 +336,12 @@ extern  void    TransferTempFlags() {
 }
 
 
-static  void    TransferMemoryFlags() {
-/**************************************
+static  void    TransferMemoryFlags( void )
+/******************************************
     If we use the address of FOOBAR, we're effectively using the address
     of FOOBAR+1 as well
 */
-
-
+{
     name        *m;
     name        *same_sym;
     var_usage   usage;
@@ -381,11 +379,11 @@ static  void    TransferMemoryFlags() {
 }
 
 
-static  void    SearchDefUse() {
-/*******************************
+static  void    SearchDefUse( void )
+/***********************************
     see FindReferences ^
 */
-
+{
     block       *blk;
     instruction *ins;
     name        *name;
@@ -393,7 +391,7 @@ static  void    SearchDefUse() {
     bool        touched_non_op;
 
     blk = HeadBlock;
-    for(;;) {
+    for( ;; ) {
         touched_non_op = FALSE;
         ins = blk->ins.hd.next;
         while( ins->head.opcode != OP_BLOCK ) {
@@ -454,8 +452,8 @@ static  void    SearchDefUse() {
 }
 
 
-extern  void    FindReferences() {
-/*********************************
+extern  void    FindReferences( void )
+/*************************************
     Traverse the blocks an allocate a data_flow_def for each one if it
     is needed.  Then calculate which variables are USE_WITHIN_BLOCK,
     USE_IN_OTHER_BLOCK, DEF_IN_BLOCK and turn on their bits in the
@@ -466,7 +464,7 @@ extern  void    FindReferences() {
     through this block and be used in a subsequent block.  USE_IN_ANOTHER
     block means that a variable is used in more than one block.
 */
-
+{
     block       *curr;
 
     curr = HeadBlock;

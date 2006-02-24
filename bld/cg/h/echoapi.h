@@ -47,8 +47,8 @@ select_node *EchoAPISelHandleReturn( select_node *retn );
 call_handle EchoAPITempHandleReturn( temp_handle retn );
 cg_type     EchoAPICgtypeReturn( cg_type retn );
 
-void        EchoAPIInit();
-void        EchoAPIFini();
+void        EchoAPIInit( void );
+void        EchoAPIFini( void );
 
 void        EchoAPICallBack( tn node, cg_callback rtn, callback_handle param, char *start_end );
 

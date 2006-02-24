@@ -63,9 +63,10 @@ extern  int             BGInlineDepth( void );
 static  FILE    *EchoAPIFile = NULL;
 static  int     EchoAPIFlush = 0;
 
-static void     EchoAPIRedirect() {
-/******************************/
-    char tmpfile[PATH_MAX];
+static void     EchoAPIRedirect( void )
+/*************************************/
+{
+    char    tmpfile[PATH_MAX];
 
     if( GetEnvVar("echoapiflush", tmpfile, 11 ) ) {
         EchoAPIFlush = 1;
@@ -75,17 +76,17 @@ static void     EchoAPIRedirect() {
     }
 }
 
-static  void    EchoAPIUnredirect() {
-/********************************/
-
+static  void    EchoAPIUnredirect( void )
+/***************************************/
+{
     if( EchoAPIFile == NULL ) return;
     fclose( EchoAPIFile );
     EchoAPIFile = NULL;
 }
 
-static  void    EchoAPIChar( char c ) {
-/**********************************/
-
+static  void    EchoAPIChar( char c )
+/***********************************/
+{
     /* if the codegen is crashing we want flushing to occur
      */
     if( EchoAPIFile != NULL ) {
@@ -101,9 +102,9 @@ static  void    EchoAPIChar( char c ) {
     }
 }
 
-static  void    EchoAPIString( char const *s ) {
-/*************************************/
-
+static  void    EchoAPIString( char const *s )
+/********************************************/
+{
     while( *s ) {
         EchoAPIChar( *s );
         s++;
@@ -118,7 +119,7 @@ static void errMsg              // PRINT ERROR MESSAGE
     DumpChar( '\n' );
 }
 
-static void handleFailure()
+static void handleFailure( void )
 {
     DumpString( "Aborted after CgDbg Failure" );
     EchoAPIUnredirect();
@@ -644,7 +645,7 @@ void CgEchoAPICbName                // REGISTER A CALL-BACK NAME
     callback_names = cbn;
 }
 
-void EchoAPIInit()
+void EchoAPIInit( void )
 {
     callback_names = NULL;
     EchoAPIRedirect();
@@ -652,7 +653,7 @@ void EchoAPIInit()
 
 // remove callback name from list
 
-void EchoAPIFini()
+void EchoAPIFini( void )
 {
     CB_NAME *cbn, *next;               // - call back name
 

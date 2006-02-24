@@ -41,7 +41,7 @@ extern  conflict_node   *FindConflictNode(name*,block*,instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            PrefixInsRenum(instruction*,instruction*,bool);
-extern  instruction     *MakeNop();
+extern  instruction     *MakeNop(void);
 extern  void            Renumber(void);
 extern  int             NumOperands(instruction*);
 
@@ -52,8 +52,8 @@ extern  global_bit_set  MemoryBits;
 extern  bool            HaveLiveInfo;
 
 
-static  void            GlobalConflictsFirst()
-/*********************************************
+static  void            GlobalConflictsFirst( void )
+/***************************************************
 
     Run down the list of conflicts and rip out any which are
     USE_IN_ANOTHER_BLOCK and not CONFLICT_ON_HOLD (ones with global
@@ -89,17 +89,15 @@ static  void            GlobalConflictsFirst()
 }
 
 
-static  void    ExtendConflicts( block *blk, conflict_node *first_global ) {
-/**************************************************************************/
-
+static  void    ExtendConflicts( block *blk, conflict_node *first_global )
+/************************************************************************/
 /*
  * Make sure that first & last pointers of extended conflicts point
  * to instructions that will never be replaced. (ie: OP_NOP)
  * Also, make sure there's a NOP at the end of the block to hold
  * live information
  */
-
-
+{
     conflict_node       *conf;
     instruction         *last_ins;
     instruction         *first_ins;
@@ -171,9 +169,9 @@ static  void    ExtendConflicts( block *blk, conflict_node *first_global ) {
 }
 
 
-static  void    AssignBit( conflict_node *conf, block *blk ) {
-/************************************************************/
-
+static  void    AssignBit( conflict_node *conf, block *blk )
+/**********************************************************/
+{
     local_bit_set     bit;
 
     if( _LBitEmpty( blk->available_bit ) ) {
@@ -191,8 +189,9 @@ static  void    AssignBit( conflict_node *conf, block *blk ) {
 
 
 extern  void    NowAlive( name *opnd, conflict_node *conf,
-                          name_set *alive, block *blk ) {
-
+                          name_set *alive, block *blk )
+/********************************************************/
+{
     if( opnd->n.class == N_REGISTER ) {
         HW_TurnOn( alive->regs, opnd->r.reg );
     } else if( conf != NULL ) {
@@ -209,8 +208,9 @@ extern  void    NowAlive( name *opnd, conflict_node *conf,
 
 
 extern  void    NowDead( name *opnd, conflict_node *conf,
-                         name_set *alive, block *blk ) {
-
+                         name_set *alive, block *blk )
+/*******************************************************/
+{
     if( opnd->n.class == N_REGISTER ) {
         HW_TurnOff( alive->regs, opnd->r.reg );
     } else if( conf != NULL ) {
@@ -231,15 +231,13 @@ extern  void    NowDead( name *opnd, conflict_node *conf,
 
 
 static  void    FlowConflicts( instruction *first,
-                               instruction *last, block *blk ) {
-/**************************************************************/
-
-
+                               instruction *last, block *blk )
+/************************************************************/
 /* Scan through instructions backwards in the block*/
 /* Mark each instruction with the set of names live*/
 /* from the assignment of the previous instruction to the*/
 /* assignment of the current instruction*/
-
+{
     instruction         *ins;
     name                *opnd;
     conflict_node       *conf;
@@ -256,10 +254,10 @@ static  void    FlowConflicts( instruction *first,
     }
 #endif
     ins = last;
-    for(;;) {
+    for( ;; ) {
 
-        /*   The operands of the current instruction are live in*/
-        /*   previous instructions*/
+        /*   The operands of the current instruction are live in */
+        /*   previous instructions */
 
         opcode = ins->head.opcode;
         i = 0;
@@ -321,9 +319,9 @@ static  void    FlowConflicts( instruction *first,
 }
 
 
-extern  void    MakeLiveInfo() {
-/******************************/
-
+extern  void    MakeLiveInfo( void )
+/**********************************/
+{
     block               *blk;
     conflict_node       *first_global;
     bool                havelive;
@@ -347,13 +345,13 @@ extern  void    MakeLiveInfo() {
 }
 
 
-extern  void    LiveInfoUpdate() {
-/*****************************/
-
+extern  void    LiveInfoUpdate( void )
+/************************************/
+{
     block       *blk;
 
     blk = HeadBlock;
-    for(;;) {
+    for( ;; ) {
         if( blk->ins.hd.next != (instruction *)&blk->ins ) {
             FlowConflicts( (instruction *)&blk->ins,
                            (instruction *)&blk->ins, blk );
@@ -364,11 +362,10 @@ extern  void    LiveInfoUpdate() {
 }
 
 
-extern  void    UpdateLive( instruction *first, instruction *last ) {
-/*******************************************************************/
-
+extern  void    UpdateLive( instruction *first, instruction *last )
+/*****************************************************************/
 /* update the live information from 'first'.prev to 'last'.next inclusive*/
-
+{
     instruction *ins;
 
     last = last->head.next;
