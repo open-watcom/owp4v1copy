@@ -6,6 +6,8 @@
 !inject lcrea386.obj     d32
 !inject lfile086.obj d16     dpm
 !inject lfile386.obj     d32
+!inject lfind086.obj d16     dpm
+!inject lfind386.obj     d32
 !inject lfndir.obj   d16 d32 dpm
 !inject lfindcls.obj d16 d32 dpm
 !inject lfindfrs.obj d16 d32 dpm
