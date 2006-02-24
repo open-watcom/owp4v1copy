@@ -1325,39 +1325,45 @@ bool IsInLineFunc( SYM_HANDLE sym_handle )
    In that case, and for normal function calls, the function is marked
    as FUNC_USED and can't be skipped by the GenOptimizedCode().
 */
-local void ScanFunction( TREEPTR tree, int inline_depth )
+local int ScanFunction( TREEPTR tree, int inline_depth )
 {
     TREEPTR             right;
     struct func_info   *f;
+    int                 marked;
 
-    if( tree == NULL || tree->right == NULL ) return;
+    if( tree == NULL || tree->right == NULL ) return 0;
     f = &tree->right->op.func;
 
-    if( ( f->flags & FUNC_OK_TO_INLINE ) && ! ( f->flags & FUNC_INUSE ) &&
+    if( inline_depth == -1 ) {
+        /* non-recursive call */
+        inline_depth = 0;
+    } else if( ( f->flags & FUNC_OK_TO_INLINE ) && ! ( f->flags & FUNC_INUSE ) &&
         inline_depth < MAX_INLINE_DEPTH ) {
         /* simulate inlining when appropriate */
         inline_depth++;
     } else {
         /* if already examined no need to do it again */
         if( f->flags & FUNC_USED )
-            return;
-        inline_depth = 0;
-        f->flags |= FUNC_USED;
+            return 0;
+        f->flags |= FUNC_USED | FUNC_MARKED;
+        return 1;
     }
 
     f->flags |= FUNC_INUSE;
+    marked = 0;
     while( tree != NULL ) {
         right = LinearizeTree( tree->right );
         while( right ) {
             if( right->op.opr == OPR_FUNCNAME )
-                ScanFunction( FindFuncStmtTree( right->op.sym_handle ),
-                              inline_depth );
+                marked += ScanFunction( FindFuncStmtTree( right->op.sym_handle ),
+                                        inline_depth );
             right = right->thread;
         }
         if( tree->right->op.opr == OPR_FUNCEND ) break;
         tree = tree->left;
     }
     f->flags &= ~FUNC_INUSE;
+    return marked;
 }
 
 /* This function scans the source file tree for functions. Any non-static
@@ -1369,14 +1375,27 @@ local void PruneFunctions( void )
 {
     TREEPTR     tree;
     SYM_ENTRY   sym;
+    int         marked;
 
+    marked = 0;
     for( tree = FirstStmt; tree != NULL; tree = tree->left ) {
         if( tree->right->op.opr == OPR_FUNCTION ) {
             SymGet( &sym, tree->right->op.func.sym_handle );
-            if( sym.stg_class != SC_STATIC || ( sym.flags & SYM_ADDR_TAKEN ) )
-                /* passing MAX_INLINE_DEPTH ensures these guys are marked
-                   with FUNC_USED themselves */
-                ScanFunction( tree, MAX_INLINE_DEPTH );
+            if( sym.stg_class != SC_STATIC || ( sym.flags & SYM_ADDR_TAKEN ) ) {
+                tree->right->op.func.flags |= FUNC_MARKED | FUNC_USED;
+                marked++;
+            }
+        }
+    }
+    while( marked ) {
+        marked = 0;
+        for( tree = FirstStmt; tree != NULL; tree = tree->left ) {
+            if( tree->right->op.opr == OPR_FUNCTION ) {
+                if (tree->right->op.func.flags & FUNC_MARKED) {
+                    tree->right->op.func.flags &= ~FUNC_MARKED;
+                    marked += ScanFunction( tree, -1 );
+                }
+            }
         }
     }
 }

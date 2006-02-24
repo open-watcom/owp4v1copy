@@ -185,6 +185,7 @@ typedef enum{
     FUNC_INUSE        = 0x02,       // inuse as inline or gen
     FUNC_USES_SEH     = 0x04,       // uses structure exceptions
     FUNC_USED         = 0x08,       // function should really be emitted
+    FUNC_MARKED       = 0x10,       // function marked for emit investigation
 }func_flags;
 
 typedef unsigned short  LABEL_INDEX;
