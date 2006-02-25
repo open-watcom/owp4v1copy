@@ -164,7 +164,8 @@ enum {
     IMAGE_FILE_MACHINE_MIPSFPU          = 0x0366, // MIPS
     IMAGE_FILE_MACHINE_MIPSFPU16        = 0x0466, // MIPS
     IMAGE_FILE_MACHINE_ALPHA64          = 0x0284, // ALPHA64
-    IMAGE_FILE_MACHINE_AXP64            = IMAGE_FILE_MACHINE_ALPHA64
+    IMAGE_FILE_MACHINE_AXP64            = IMAGE_FILE_MACHINE_ALPHA64,
+    IMAGE_FILE_MACHINE_AMD64            = 0x8664  // AMD64 / Intel EM64T
 };
 
 // file flag values
@@ -451,6 +452,13 @@ enum {
 #define IMAGE_REL_PPC_BRTAKEN           0x0200  // fix branch prediction bit to predict branch taken
 #define IMAGE_REL_PPC_BRNTAKEN          0x0400  // fix branch prediction bit to predict branch not taken
 #define IMAGE_REL_PPC_TOCDEFN           0x0800  // toc slot defined in file (or, data in toc)
+
+//
+// AMD64 (X86-64) relocations
+//
+#define IMAGE_REL_AMD64_ABSOLUTE        0x0000  // Reference is absolute, no relocation is necessary
+#define IMAGE_REL_AMD64_REL32           0x0004  // PC-relative 32-bit reference to the symbols virtual address
+
 
 typedef struct {
     uint_32     rva;
