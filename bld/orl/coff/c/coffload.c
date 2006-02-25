@@ -75,6 +75,9 @@ static int determine_file_specs( coff_file_handle coff_file_hnd,
         case IMAGE_FILE_MACHINE_POWERPC:
             coff_file_hnd->machine_type = ORL_MACHINE_TYPE_PPC601;
             break;
+        case IMAGE_FILE_MACHINE_AMD64:
+            coff_file_hnd->machine_type = ORL_MACHINE_TYPE_AMD64;
+            break;
         case IMAGE_FILE_MACHINE_UNKNOWN:
             coff_file_hnd->machine_type = ORL_MACHINE_TYPE_NONE;
             break;
@@ -440,7 +443,7 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     if( f_hdr->opt_hdr_size > 0 ) {     // skip optional header
         pe_opt_hdr *opt_hdr = (pe_opt_hdr *)_ClientRead(coff_file_hnd, f_hdr->opt_hdr_size);
 
-        if (opt_hdr->magic == 0x10b) {
+        if( (opt_hdr->magic == 0x10b) || (opt_hdr->magic == 0x20b) ) {
             coff_file_hnd->export_table_rva = opt_hdr->export_table_rva;
         } else {
             coff_file_hnd->export_table_rva = 0L;
