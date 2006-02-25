@@ -43,7 +43,7 @@ struct  tokens {
 
 typedef struct macro_token {
     struct macro_token  *next;
-    byte                token;
+    TOKEN               token;
     char                data[1];
 } MACRO_TOKEN;
 
@@ -321,6 +321,9 @@ local char *ExpandMacroToken( void )
         buf[i++] = '"';
         buf[i] = '\0';
         return( buf );
+    case T_NULL:
+        len = 0;
+        break;
     default:                                            /* 28-mar-90 */
         p = Tokens[ *MacroPtr++ ];
         len = strlen( p );
@@ -640,6 +643,7 @@ void DumpMDefn( unsigned char *p )
             continue;
         case T_LSTRING:
             putchar( 'L' );
+            /* fall through */
         case T_STRING:
             ++p;
             putchar( '\"' );
@@ -660,11 +664,11 @@ void DumpMDefn( unsigned char *p )
             continue;
         case T_MACRO_PARM:
             ++p;
-            printf( "parm#%c", '1' + *p++ );
+            printf( "<parm#%c>", '1' + *p++ );
             continue;
         case T_MACRO_VAR_PARM:
             ++p;
-            printf( "varparm#%c", '1' + *p++ );
+            printf( "<varparm#%c>", '1' + *p++ );
             continue;
         default:
             printf( "%s", Tokens[ *p ] );
@@ -673,6 +677,7 @@ void DumpMDefn( unsigned char *p )
         }
     }
     putchar( '\n' );
+    fflush( stdout );
 }
 
 
@@ -682,6 +687,7 @@ void DumpMTokens( MACRO_TOKEN *mtok )
         printf( "%s\n", mtok->data );
         mtok = mtok->next;
     }
+    fflush( stdout );
 }
 
 
@@ -694,6 +700,7 @@ void DumpNestedMacros( void )
         printf( "%s\n", nested->mentry->macro_name );
         nested = nested->next;
     }
+    fflush( stdout );
 }
 #endif
 
@@ -1044,8 +1051,14 @@ static MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
                     mtok = next;
                 }
                 if( pos >= 0 ) {
-                    mtok = ReTokenGlueBuffer( gluebuf );
-                    if( gluebuf != NULL ) CMemFree( gluebuf );
+                    if( gluebuf != NULL ) {
+                        mtok = ReTokenGlueBuffer( gluebuf );
+                        CMemFree( gluebuf );
+                    } else {
+                        /* Both ends of ## were empty */
+                        mtok = BuildAToken( "P-<placemarker>" );
+                        mtok->token = T_NULL;
+                    }
                     *lnk = mtok;  // link in new mtok to mtok's link
                     while( mtok && mtok->next != NULL ) {   //position mtok & lnk to last token
                         _lnk = lnk;
@@ -1251,10 +1264,7 @@ static MACRO_TOKEN *BuildMTokenList( byte *p, MACRO_ARG *macro_parms )
             nested->substituting_parms = 1;             /* 09-nov-93 */
             if( macro_parms ) {
                 mtok = BuildMTokenList( macro_parms[buf[0]].arg, NULL );
-                if( mtok == NULL ) {    // deal with empty arguments
-                    mtok = BuildAToken( "" );
-                    mtok->token = T_UNEXPANDABLE_ID;
-                }
+                /* NB: mtok is now NULL if macro arg was empty */
             } else {
                 mtok = BuildAToken( "" );
                 mtok->token = T_WHITE_SPACE;
@@ -1265,6 +1275,9 @@ static MACRO_TOKEN *BuildMTokenList( byte *p, MACRO_ARG *macro_parms )
                     mtok = AppendToken( mtok, T_NULL, "P-<end of parm>" );
                     mtok = ExpandNestedMacros( mtok, 0 );
                 }
+            } else if( mtok == NULL ) {
+                mtok = BuildAToken( "P-<placemarker>" );
+                mtok->token = T_NULL;
             }
             nested->substituting_parms = 0;
             break;
