@@ -256,6 +256,13 @@ orl_reloc_type CoffConvertRelocType( coff_file_handle coff_file_hnd, coff_reloc_
             default:
                 return( ORL_RELOC_TYPE_NONE );
         }
+    } else if( coff_file_hnd->machine_type == ORL_MACHINE_TYPE_AMD64 ) {
+        switch( coff_type ) {
+            case IMAGE_REL_AMD64_REL32:
+                return( ORL_RELOC_TYPE_WORD_32 );
+            default:
+                return( ORL_RELOC_TYPE_NONE );
+        }
     } else if( coff_file_hnd->machine_type == ORL_MACHINE_TYPE_PPC601 ) {
         switch( coff_type & IMAGE_REL_PPC_TYPEMASK ) {
             case IMAGE_REL_PPC_ABSOLUTE: // NOP
