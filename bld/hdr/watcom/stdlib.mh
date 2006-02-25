@@ -437,8 +437,8 @@ _WCRTLINK extern wchar_t **_WCNEAR _wenviron; /*  pointer to wide environment */
 :include errno.sp
 
 :segment !QNX & !LINUX
-#define _doserrno (*__get_doserrno_ptr( void ))
-_WCRTLINK extern int                _doserrno;  /* DOS system error code value */
+#define _doserrno (*__get_doserrno_ptr())
+_WCRTLINK extern int    *__get_doserrno_ptr( void );  /* DOS system error code value */
 #if !defined(__NETWARE__)
 #define sys_errlist _sys_errlist
 #define sys_nerr _sys_nerr
