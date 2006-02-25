@@ -359,6 +359,8 @@ prepare_wgml_opts : .PROCEDURE
     @%append $(optfile_wgml) ( file cgdps
 !else ifeq hbook wddoc
     @%append $(optfile_wgml) ( file nb7x9psn
+!else ifeq hbook wgmlref
+    @%append $(optfile_wgml) ( file wbrfman
 !else
     @%append $(optfile_wgml) ( file nb7x9ps
 !endif
@@ -376,6 +378,8 @@ prepare_wgml_opts : .PROCEDURE
 !else ifeq hbook lguide
     @%append $(optfile_wgml) ( passes 3
 !else ifeq hbook vi
+    @%append $(optfile_wgml) ( passes 3
+!else ifeq hbook wgmlref
     @%append $(optfile_wgml) ( passes 3
 !else
     @%append $(optfile_wgml) ( passes 2
@@ -442,17 +446,17 @@ prepare_wgml_opts : .PROCEDURE
 #
 # !!!!!!!!!!!!!!!  IMPORTANT   !!!!!!!!!!!!!!!!!!!!
 #
-# wgml must run two times to get correct data for help
+# wgml must run twice to get correct data for help
 #
-#  1st pass generate image of .idx, .tbl and .kw
+#  1st pass generates image of .idx, .tbl and .kw
 #
-#  2nd pass create final data with correct table of
-#      content and index of topic
+#  2nd pass creates final data with correct table of
+#      contents and index of topics
 #
-#  whpcvt must be call after 2. pass with -h and -hn
-#  option, it create correct index in .h file
+#  whpcvt must be called after 2nd pass with -h and -hn
+#  options; it creates correct index in .h file
 #
-#  next whpcvt calls must be done only with -hn option
+#  following whpcvt call must be done only with -hn option
 #   do not use -h option
 #
 # !!!!!!!!!!!!!!!  IMPORTANT   !!!!!!!!!!!!!!!!!!!!

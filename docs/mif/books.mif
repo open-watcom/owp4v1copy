@@ -59,6 +59,7 @@
 !inject zoom                   nt                win
 !inject cmix        dos            os2           win # depends on zoom, etc.
 !inject fmix        dos            os2           win # depends on zoom, etc.
+!inject wgmlref                              ps
 
 !ifndef dotarget
 !error $$(dotarget) unset for documentation. Must be dos, html, nt, os2, pdf, ps or win.
@@ -582,6 +583,16 @@ book_objs_ps=$(objs_vi_ps)
 book_incs=$(incs_vi)
 book_bmroot=$(bmroot_vi)
 book_src=vi
+book_multi_chapter=1
+
+!else ifeq hbook wgmlref
+# wgmlref
+book_title=WGML Reference Manual
+book_objs=$(objs_wgmlref)
+book_objs_ps=$(objs_wgmlref_ps)
+book_incs=$(incs_wgmlref)
+book_bmroot=$(bmroot_wgmlref)
+book_src=rfman
 book_multi_chapter=1
 
 !else
