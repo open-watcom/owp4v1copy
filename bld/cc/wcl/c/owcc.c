@@ -33,7 +33,7 @@
  *  if linking is done, remove objects afterwards?
  *  should owcc output a warning message if -b names unknown target?
  *  -S should remove .o files
- *  -? leaves behind a __WCL__.LNK corpse
+ *  -? leaves behind a __wcl__.lnk corpse
  */
 
 #include <sys/types.h>
@@ -71,7 +71,7 @@
 #endif
 #define OUTPUTFILE  "a.out"
 #define LINK        "wlink"             /* Open Watcom linker              */
-#define TEMPFILE    "@__WCL__.LNK"      /* temporary linker directive file */
+#define TEMPFILE    "@__wcl__.lnk"      /* temporary linker directive file */
 
 char *OptEnvVar = WCLENV;           /* Data interface for GetOpt()        */
 
