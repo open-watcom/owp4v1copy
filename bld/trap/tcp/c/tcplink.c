@@ -115,6 +115,10 @@
 
 #define DEFAULT_PORT    0xDEB
 
+#ifndef IPPROTO_TCP
+    #define IPPROTO_TCP 6
+#endif
+
 int data_socket;
 struct sockaddr_in socket_address;
 struct hostent *hp;
@@ -213,10 +217,12 @@ static void nodelay()
 {
     struct protoent     *proto;
     int                 delayoff;
+    int                 p;
 
     delayoff = 1;
     proto = getprotobyname( "tcp" );
-    setsockopt( data_socket, proto->p_proto, TCP_NODELAY, (void *)&delayoff, sizeof( delayoff ) );
+    p = proto ? proto->p_proto : IPPROTO_TCP;
+    setsockopt( data_socket, p, TCP_NODELAY, (void *)&delayoff, sizeof( delayoff ) );
 }
 
 char RemoteConnect( void )
