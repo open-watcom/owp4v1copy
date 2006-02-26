@@ -98,7 +98,9 @@
 "-ecc set calling conv. to __cdecl",
 "-ecd set calling conv. to __stdcall",
 "-ecf set calling conv. to __fastcall",
+#if 0
 "-eco set calling conv. to _Optlink",
+#endif
 "-ecp set calling conv. to __pascal",
 "-ecr set calling conv. to __fortran",
 "-ecs set calling conv. to _Syscall",
