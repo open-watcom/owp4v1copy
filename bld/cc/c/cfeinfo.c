@@ -41,7 +41,6 @@
 #include <sys/stat.h>
 #include "autodept.h"
 #include "langenv.h"
-#include "callinfo.h"
 #define BY_CLI
 #include "feprotos.h"
 
@@ -244,6 +243,30 @@ struct inline_funcs *IF_Lookup( char *name )
 }
 #endif
 
+struct aux_info *GetLangInfo( type_modifiers flags )
+{
+    switch( flags & FLAG_LANGUAGES ) {
+    case LANG_WATCALL:
+        return( &WatcallInfo );
+    case LANG_CDECL:
+        return( &CdeclInfo );
+    case LANG_PASCAL:
+        return( &PascalInfo );
+    case LANG_FORTRAN:
+        return( &FortranInfo );
+    case LANG_SYSCALL:
+        return( &SyscallInfo );
+    case LANG_STDCALL:
+        return( &StdcallInfo );
+    case LANG_FASTCALL:
+        return( &FastcallInfo );
+    case LANG_OPTLINK:
+        return( &OptlinkInfo );
+    default:
+        return( &DefaultInfo );
+    }
+}
+
 /*
 //    return language specific info
 */
@@ -252,35 +275,7 @@ static struct aux_info *LangInfo( type_modifiers flags, struct aux_info *inf )
     if( inf != &DefaultInfo )
         return( inf );
 
-    switch( flags & FLAG_LANGUAGES ) {
-    case LANG_WATCALL:
-        inf = &WatcallInfo;
-        break;
-    case LANG_CDECL:
-        inf = &CdeclInfo;
-        break;
-    case LANG_PASCAL:
-        inf = &PascalInfo;
-        break;
-    case LANG_FORTRAN:
-        inf = &FortranInfo;
-        break;
-    case LANG_SYSCALL:                          /* 04-jul-91 */
-        inf = &SyscallInfo;
-        break;
-    case LANG_STDCALL:                          /* 08-jan-92 */
-        inf = &StdcallInfo;
-        break;
-    case LANG_FASTCALL:
-        inf = &FastcallInfo;
-        break;
-    case LANG_OPTLINK:                          /* 08-jan-92 */
-        inf = &OptlinkInfo;
-        break;
-    default:
-        break;
-    }
-    return( inf );
+    return( GetLangInfo( flags ) );
 }
 
 int ParmsToBeReversed( int flags, struct aux_info *inf )
@@ -402,7 +397,7 @@ struct aux_info *InfoLookup( SYMPTR sym )
                 }
             }
             inf = &InlineInfo;
-            inf->cclass = (DefaultInfo.cclass & FAR) | MODIFY_EXACT;
+            inf->cclass = (WatcallInfo.cclass & FAR) | MODIFY_EXACT;
             inf->code = ifunc->code;
             inf->parms = ifunc->parms;
             inf->returns = ifunc->returns;
@@ -417,7 +412,7 @@ struct aux_info *InfoLookup( SYMPTR sym )
             }
             HW_CAsgn( inf->streturn, HW_EMPTY );
             inf->save = ifunc->save;
-            inf->objname = DefaultInfo.objname; /* 26-jan-93 */
+            inf->objname = WatcallInfo.objname; /* 26-jan-93 */
             inf->use = 1;
         }
 #endif
@@ -443,7 +438,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
     } else if( sym_handle == SymFinally ) {
         static byte_seq FinallyCode = { 1, { 0xc3 } };  /* ret */
 
-        InlineInfo = DefaultInfo;
+        InlineInfo = WatcallInfo;
         InlineInfo.code = &FinallyCode;
         return( &InlineInfo );
     } else if( sym_handle == SymTryFini ) {
@@ -455,7 +450,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
             6, { 0x64, 0xA3, 0, 0, 0, 0 }
         };  /* mov fs:[0],eax */
 
-        InlineInfo = DefaultInfo;
+        InlineInfo = WatcallInfo;
         InlineInfo.parms = TryFiniParms;
         InlineInfo.code = &TryFiniCode;
         return( &InlineInfo );
@@ -519,52 +514,18 @@ void GetCallClass( SYM_HANDLE sym_handle )
     if( sym_handle != 0 ) {
         inf = FindInfo( &sym, sym_handle );
         if( sym.flags & SYM_FUNCTION ) {
-            switch( sym.attrib & FLAG_LANGUAGES ) {
-            case LANG_WATCALL:
-                CallClass = WatcallInfo.cclass;
-                break;
-            case LANG_CDECL:
-                if( inf != &DefaultInfo ) {
-                    CallClass = inf->cclass;
-                } else {
-                    CallClass = CdeclInfo.cclass;
-                }
-#if _CPU == 8086                        /* 18-nov-94 */
+            if( inf != &DefaultInfo ) {
+                CallClass = inf->cclass;
+            } else {
+                CallClass = GetLangInfo( sym.attrib )->cclass;
+#if _CPU == 8086
                 if( TargSys == TS_WINDOWS ) {
                     CallClass |= FAT_WINDOWS_PROLOG;
+                    if( sym.attrib & (LANG_CDECL | LANG_PASCAL) ) {
+                        CallClass |= FAT_WINDOWS_PROLOG;
+                    }
                 }
-#endif
-                break;
-            case LANG_PASCAL:
-                if( inf != &DefaultInfo ) {
-                    CallClass = inf->cclass;
-                } else {
-                    CallClass = PascalInfo.cclass;
-                }
-#if _CPU == 8086                        /* 21-jan-93 */
-                if( TargSys == TS_WINDOWS ) {       /* 01-mar-91 */
-                    CallClass |= FAT_WINDOWS_PROLOG;
-                }
-#endif
-                break;
-            case LANG_FORTRAN:
-                CallClass = FortranInfo.cclass;
-                break;
-            case LANG_SYSCALL:
-                CallClass = SyscallInfo.cclass;
-                break;
-            case LANG_STDCALL:
-                CallClass = StdcallInfo.cclass;
-                break;
-            case LANG_FASTCALL:
-                CallClass = FastcallInfo.cclass;
-                break;
-            case LANG_OPTLINK:
-                CallClass = OptlinkInfo.cclass;
-                break;
-            default:
-                CallClass = inf->cclass;
-                break;
+   #endif
             }
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
             if( CompFlags.emit_names ) {
