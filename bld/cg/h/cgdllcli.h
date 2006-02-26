@@ -29,5 +29,7 @@
 ****************************************************************************/
 
 
-int BEDLLLoad( char *dll_name );
-void BEDLLUnload( void );
+#include "cgapi.h"
+
+int     _CGAPI BEDLLLoad( char *dll_name );
+void    _CGAPI BEDLLUnload( void );

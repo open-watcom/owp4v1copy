@@ -33,6 +33,7 @@
 #include <signal.h>
 #include "standard.h"
 #include "cg.h"
+#include "cgmisc.h"
 #include "coderep.h"
 #include "feprotos.h"
 

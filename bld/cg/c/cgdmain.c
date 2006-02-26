@@ -38,11 +38,11 @@
 #include "sysmacro.h"
 #include "cfloat.h"
 #include "cgaux.h"
+#include "cgdll.h"
 
 #define BY_CG
 #include "cgprotos.h"
 #include "feprotos.h"
-#include "cgdll.h"
 
 struct  cg_interface OptCGTable = {
     #define  CGAPIDEF(a,b,c) a,
@@ -53,16 +53,16 @@ struct  cg_interface OptCGTable = {
 cg_interface    *CGFuncTable = &OptCGTable;
 fe_interface    *FEFuncTable;
 
-cg_interface *_CGDLLEXPORT BEDLLInit( fe_interface *func_table ) {
-/****************************************************************/
-
+cg_interface *_CGDLLEXPORT BEDLLInit( fe_interface *func_table )
+/**************************************************************/
+{
     FEFuncTable = func_table;
     return( CGFuncTable );
 }
 
-void _CGDLLEXPORT BEDLLFini( cg_interface *func_table ) {
-/*******************************************************/
-
+void _CGDLLEXPORT BEDLLFini( cg_interface *func_table )
+/*****************************************************/
+{
     // nothing yet
 }
 

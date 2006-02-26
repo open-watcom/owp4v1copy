@@ -39,6 +39,7 @@
 #include "tree.h"
 #include "seldef.h"
 #include "cgswitch.h"
+#define BY_CG
 #include "cgprotos.h"
 
 #define MIN_JUMPS       4            /* to make it worth while for jum*/

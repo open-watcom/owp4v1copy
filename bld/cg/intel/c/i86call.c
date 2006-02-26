@@ -43,6 +43,7 @@
 #include "regset.h"
 #include "rtclass.h"
 #include "zoiks.h"
+#define BY_CG
 #include "cgprotos.h"
 
 extern  instruction     *MakeMove(name*,name*,type_class_def);

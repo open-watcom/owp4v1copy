@@ -45,10 +45,11 @@
 #include "ptrint.h"
 #include "zoiks.h"
 #include "cgaux.h"
-#include "feprotos.h"
 
 #define BY_CG
+#include "feprotos.h"
 #include "cgprotos.h"
+
 #ifndef NDEBUG
 #include "echoapi.h"
 #include <string.h>

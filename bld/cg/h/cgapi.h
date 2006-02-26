@@ -24,35 +24,30 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  code generator API calling convention declaration
 *
 ****************************************************************************/
 
 
-#ifndef _FEPROTOS_H_INCLUDED
-#define _FEPROTOS_H_INCLUDED
+#ifndef _CGAPI_H_INCLUDED
+#define _CGAPI_H_INCLUDED
 
-#include "cgapi.h"
+#define _CGCALLBACKAPI
+#define _CGAPI
 
-// always want the prototypes
-#define CGCALLBACKDEF( a, b, c )        extern b _CGCALLBACKAPI a c;
-#include "cgfertns.h"
-#undef  CGCALLBACKDEF
+#if defined( _CGDLL )
 
-#ifdef _CGDLL
-
-typedef struct fe_interface {
-    #define CGCALLBACKDEF( a, b, c ) b _CGCALLBACKAPI (*a) c;
-    #include "cgfertns.h"
-    #undef  CGCALLBACKDEF
-} fe_interface;
-
-extern fe_interface *FEFuncTable;
-
-#ifndef BY_CLI
-#include "feprotos.gh"
+#if defined( __NT__ )
+#define _CGDLLEXPORT    __stdcall __export
+#elif defined( __OS2V2__ ) || defined( __OS2__ ) && !defined(__I86__)
+#define _CGDLLEXPORT    __syscall __export
+#else
+#error Unsupported OS
 #endif
+
+#else
+
+#define _CGDLLEXPORT
 
 #endif
 

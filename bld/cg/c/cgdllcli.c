@@ -38,13 +38,15 @@
 #undef IGNORE
 #endif
 
-#define BY_CLI
 #include "standard.h"
 #include "coderep.h"
 #include "targsys.h"
 #include "cgdefs.h"
 #include "model.h"
-#include "cgdll.h"
+#include "cgmisc.h"
+#include "cgdllcli.h"
+
+#define BY_CLI
 #include "cgprotos.h"
 #include "feprotos.h"
 
@@ -73,14 +75,14 @@ char *defaultDLLName =
 cg_interface *CGFuncTable;
 
 #ifdef __OS2__
-static HMODULE dllHandle;
+static HMODULE  dllHandle;
 #else
 static HANDLE   dllHandle;
 #endif
 
-int BEDLLLoad( char *dll_name ) {
-/*******************************/
-
+int _CGAPI BEDLLLoad( char *dll_name )
+/************************************/
+{
 #ifdef __OS2__
 #define SIZE 32
     unsigned char badfile[SIZE];
@@ -100,7 +102,7 @@ int BEDLLLoad( char *dll_name ) {
     if( retval == 0 ) {
         cg_interface * _CGDLLEXPORT (*func_ptr)( fe_interface * );
 #ifdef __OS2__
-        retval = DosQueryProcAddr( dllHandle, 0, (PSZ)"_BEDLLInit@4", (PFN*)&func_ptr );
+        retval = DosQueryProcAddr( dllHandle, 0, (PSZ)"BEDLLInit", (PFN*)&func_ptr );
 #else
         func_ptr = (cg_interface * _CGDLLEXPORT(*)( fe_interface * ))GetProcAddress( dllHandle, "_BEDLLInit@4" );
         retval = ( func_ptr == 0 );
@@ -113,9 +115,9 @@ int BEDLLLoad( char *dll_name ) {
     return( FALSE );
 }
 
-void BEDLLUnload() {
-/******************/
-
+void _CGAPI BEDLLUnload( void )
+/*****************************/
+{
 #ifdef __OS2__
     DosFreeModule( dllHandle );
 #else
@@ -123,9 +125,14 @@ void BEDLLUnload() {
 #endif
 }
 
-bool TBreak() {
-
+bool _CGAPI TBreak( void )
+/************************/
+{
     return( FALSE );
 }
 
+void _CGAPI CauseTBreak( void )
+/*****************************/
+{
+}
 

@@ -52,6 +52,7 @@
 #include "dw.h"
 #include "dwarf.h"
 #include "dfdbg.h"
+#define BY_CG
 #include "cgprotos.h"
 
 extern  seg_id          DbgSegDef( char *name );
