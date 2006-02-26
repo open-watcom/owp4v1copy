@@ -31,6 +31,7 @@
 
 #include "cvars.h"
 #include "cgswitch.h"
+#include "pragdefn.h"
 
 
 /*  return types from TypeCheck */
@@ -61,6 +62,8 @@ typedef enum {
 } voidptr_cmp_type;
 
 #define __  NO
+
+extern struct aux_info *GetLangInfo( type_modifiers flags );
 
 local  cmp_type const   CompTable[TYPE_LAST_ENTRY][TYPE_LAST_ENTRY] = {
 /*               CH,UC,SH,US,IN,UI,LO,UL,DL,DU,FL,DB,LD,FI,DI,LI,BL,PO,AR,ST,UN,FU,FI,VO,EN,TY,UF,DD,PC,WC,FC,DC,LC, */
@@ -253,6 +256,21 @@ int ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck )
     return( TC_OK );        /* indicate functions are compatible */
 }
 
+int ChkCompatibleLanguage( type_modifiers typ1, type_modifiers typ2 )
+{
+    typ1 &= FLAG_LANGUAGES;
+    typ2 &= FLAG_LANGUAGES;
+    if( typ1 == typ2 ) {
+        return( 1 );
+    } else if( typ1 == 0 ) {
+        return( DftCallConv == GetLangInfo( typ2 ) );
+    } else if( typ2 == 0 ) {
+        return( DftCallConv == GetLangInfo( typ1 ) );
+    } else  {
+        return( 0 );
+    }
+}
+
 #define PTR_FLAGS (FLAG_MEM_MODEL|QUAL_FLAGS)
 #define QUAL_FLAGS (FLAG_CONST|FLAG_VOLATILE|FLAG_UNALIGNED)
 
@@ -326,7 +344,7 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
         if( typ1->decl_type == TYPE_FUNCTION ) {
             typ1_flags = typ1->u.fn.decl_flags;
             typ2_flags = typ2->u.fn.decl_flags;
-            if( (typ1_flags & FLAG_LANGUAGES) != (typ2_flags & FLAG_LANGUAGES) ) {
+            if( !ChkCompatibleLanguage( typ1_flags, typ2_flags ) ) {
                 ret_val = NO;
             } else {
                 /* check to see if the two functions have identical parameters

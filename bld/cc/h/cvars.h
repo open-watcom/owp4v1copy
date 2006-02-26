@@ -414,6 +414,7 @@ extern  struct aux_entry *AuxLookup( char * );  /* caux.c */
 extern  void    PragmaFini( void );             /* caux.c */
 
 extern  int     ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck ); /*ccheck*/
+extern  int     ChkCompatibleLanguage( type_modifiers typ1, type_modifiers typ2 ); /*ccheck*/
 extern  void    TernChk( TYPEPTR typ1, TYPEPTR typ2 ); /*check */
 extern  void    ChkCallParms(void);             /* ccheck */
 extern  void    ChkRetType(TREEPTR);            /* ccheck */
