@@ -85,6 +85,7 @@ inspick( pushfq,        "pushfq",       0x0000009c,     0x000000ff,     X64NoOp_
 
 inspick( adc,           "adc",          0x00000010,     0x000000fc,     X64RegModRM_16)
 inspick( adc2,          "adc",          0x00000014,     0x000000fe,     X64ImmAcc_8)
+inspick( adc3,          "adc",          0x00001080,     0x000038fc,     X64ModRMImm_16)
 
 /*
 inspick( pop,           "pop",          0x0000008f,     0x000038ff,     X64ModRM_16)

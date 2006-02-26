@@ -457,6 +457,7 @@ enum {
 // AMD64 (X86-64) relocations
 //
 #define IMAGE_REL_AMD64_ABSOLUTE        0x0000  // Reference is absolute, no relocation is necessary
+#define IMAGE_REL_AMD64_ADDR32          0x0002  // 32-bit address
 #define IMAGE_REL_AMD64_REL32           0x0004  // PC-relative 32-bit reference to the symbols virtual address
 
 
