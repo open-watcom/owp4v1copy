@@ -1,20 +1,20 @@
 :CMT. This driver definition is used for a PostScript printer.
 
-:CMT. Definition file		      Driver name
+:CMT. Definition file                 Driver name
 :CMT. ------------------------------------------------------
-:CMT. PSDRV			      psdrv
+:CMT. PSDRV                           psdrv
 
 :CMT. Corresponding device
-:CMT. definition file		      Device name
+:CMT. definition file                 Device name
 :CMT. ------------------------------------------------------
-:CMT. PS			      ps
+:CMT. PS                              ps
 :CMT.eoc
 
 :DRIVER
    defined_name = 'psdrv'
-   member_name	= 'PSDRV'
-   rec_spec	= '(t:79)'
-   fill_char	= ' '
+   member_name  = 'PSDRV'
+   rec_spec     = '(t:79)'
+   fill_char    = ' '
 
 :INIT
    place=start
@@ -135,13 +135,13 @@
       %image('.072 .072 scale' )%recordbreak()
       %image('2 setlinecap')%recordbreak()
       %ifeqs(%lower(%getstrsymbol('$draft')),'yes')
-	  %image('(')
-	  %image(%getstrsymbol('$drtext'))%image(') draft')%recordbreak()
+          %image('(')
+          %image(%getstrsymbol('$drtext'))%image(') draft')%recordbreak()
       %endif()
    :evalue
 :eINIT.
 
-:CMT. The following sequence forces out the last page.	The recordbreak
+:CMT. The following sequence forces out the last page.  The recordbreak
 :CMT. ensures that these last control characters are sent to the
 :CMT. output device.
 :FINISH
@@ -181,8 +181,8 @@
       %image('.072 .072 scale' )%recordbreak()
       %image('2 setlinecap')%recordbreak()
       %ifeqs(%lower(%getstrsymbol('$draft')),'yes')
-	  %image('(')
-	  %image(%getstrsymbol('$drtext'))%image(') draft ')
+          %image('(')
+          %image(%getstrsymbol('$drtext'))%image(') draft ')
       %endif()
       %image('@fs')%image(%decimal(%font_number()))%recordbreak()
    :evalue.
@@ -193,17 +193,17 @@
    :lineproc
       pass=1
       :startvalue.
-	 %textpass()
+         %textpass()
       :estartvalue.
       :firstword.
-	 %dotab()
-	 %image('@uline')
-	 %recordbreak()
+         %dotab()
+         %image('@uline')
+         %recordbreak()
       :efirstword.
       :endvalue.
-	 %dotab()
-	 %image('@euline')
-	 %recordbreak()
+         %dotab()
+         %image('@euline')
+         %recordbreak()
       :eendvalue.
    :elineproc.
 :eFONTSTYLE.
@@ -213,17 +213,17 @@
    :lineproc
       pass=1
       :startvalue.
-	 %textpass()
+         %textpass()
       :estartvalue.
       :startword.
-	 %dotab()
-	 %image('@uline')
-	 %recordbreak()
+         %dotab()
+         %image('@uline')
+         %recordbreak()
       :estartword.
       :endword.
-	 %dotab()
-	 %image('@euline')
-	 %recordbreak()
+         %dotab()
+         %image('@euline')
+         %recordbreak()
       :eendword.
    :elineproc.
 :eFONTSTYLE.
@@ -233,13 +233,13 @@
    :lineproc
       pass=1
       :startvalue.
-	 %textpass()
+         %textpass()
       :estartvalue.
    :elineproc.
    :lineproc
       pass=2
       :startvalue.
-	 %textpass()
+         %textpass()
       :estartvalue.
    :elineproc.
 :eFONTSTYLE.
@@ -249,23 +249,23 @@
    :lineproc
       pass=1
       :startvalue.
-	 %textpass()
+         %textpass()
       :estartvalue.
       :firstword.
-	 %dotab()
-	 %image('@uline')
-	 %recordbreak()
+         %dotab()
+         %image('@uline')
+         %recordbreak()
       :efirstword.
       :endvalue.
-	 %dotab()
-	 %image('@euline')
-	 %recordbreak()
+         %dotab()
+         %image('@euline')
+         %recordbreak()
       :eendvalue.
    :elineproc.
    :lineproc
       pass=2
       :startvalue.
-	 %textpass()
+         %textpass()
       :estartvalue.
    :elineproc.
 :eFONTSTYLE.
@@ -275,23 +275,23 @@
    :lineproc
       pass=1
       :startvalue.
-	 %textpass()
+         %textpass()
       :estartvalue.
       :startword.
-	 %dotab()
-	 %image('@uline')
-	 %recordbreak()
+         %dotab()
+         %image('@uline')
+         %recordbreak()
       :estartword.
       :endword.
-	 %dotab()
-	 %image('@euline')
-	 %recordbreak()
+         %dotab()
+         %image('@euline')
+         %recordbreak()
       :eendword.
    :elineproc.
    :lineproc
       pass=2
       :startvalue.
-	 %textpass()
+         %textpass()
       :estartvalue.
    :elineproc.
 :eFONTSTYLE.
@@ -301,10 +301,10 @@
    :lineproc
       pass=1
       :startvalue.
-	 %dotab()
-	 %recordbreak()
-	 %image('shadepara')
-	 %recordbreak()
+         %dotab()
+         %recordbreak()
+         %image('shadepara')
+         %recordbreak()
       :estartvalue.
    :elineproc.
 :eFONTSTYLE.
@@ -314,10 +314,10 @@
    :lineproc
       pass=1
       :startvalue.
-	 %dotab()
-	 %recordbreak()
-	 %image('shadeslim')
-	 %recordbreak()
+         %dotab()
+         %recordbreak()
+         %image('shadeslim')
+         %recordbreak()
       :estartvalue.
    :elineproc.
 :eFONTSTYLE.
@@ -327,10 +327,10 @@
    :lineproc
       pass=1
       :startvalue.
-	 %dotab()
-	 %recordbreak()
-	 %image('shadefig')
-	 %recordbreak()
+         %dotab()
+         %recordbreak()
+         %image('shadefig')
+         %recordbreak()
       :estartvalue.
    :elineproc.
 :eFONTSTYLE.
