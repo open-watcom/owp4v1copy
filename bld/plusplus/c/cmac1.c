@@ -80,13 +80,17 @@ static unsigned macroDepth;
 static MACRO_TOKEN  *macroExpansion( MEPTR, int );
 static MACRO_TOKEN  *nestedMacroExpansion( MEPTR, boolean );
 
+#ifdef pick
+#undef pick
+#endif
+
+#define pick( s, i, f )    { s, i, f },
 typedef struct special_macro_name SPECIAL_MACRO_NAME;
 static struct special_macro_name {
     char        *name;
     int         value;
     unsigned    flags;
 } SpcMacros[] = {
-#define pick( s, i, f )    { s, i, f },
 #include "specmac.h"
     { NULL, 0, 0 }
 };

@@ -86,7 +86,9 @@ global struct aux_info          Far16PascalInfo;
 #endif
 
 extern  void    PragmaAuxInfoInit( int );
-extern  void    SetStackConventions( void );
+extern  void    SetAuxStackConventions( void );
+extern  void    SetAuxWatcallInfo( void );
+extern  void    SetAuxDefaultInfo( void );
 extern  int     IsAuxParmsBuiltIn( hw_reg_set *parms );
 extern  int     IsAuxInfoBuiltIn( struct aux_info *info );
 extern  char    *VarNamePattern( struct aux_info *inf );

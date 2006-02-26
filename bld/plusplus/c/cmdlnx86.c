@@ -40,7 +40,6 @@
 #ifdef __OSI__
  #include "ostype.h"
 #endif
-#include "callinfo.h"
 
 #include "cmdlnpr1.gh"
 #include "cmdlnsys.h"
@@ -934,7 +933,7 @@ static void miscAnalysis( OPT_STORAGE *data )
     }
 #if _CPU == 386
     if( ! CompFlags.register_conventions ) {
-        SetStackConventions();
+        SetAuxStackConventions();
     }
 #endif
     if( data->zx ) {

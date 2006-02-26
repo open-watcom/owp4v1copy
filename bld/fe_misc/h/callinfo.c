@@ -335,8 +335,8 @@ void PragmaAuxInfoInit( int flag_stdatnum )
 }
 
 #if _CPU == 386
-void SetStackConventions( void )
-/******************************/
+void SetAuxStackConventions( void )
+/*********************************/
 {
     WatcallInfo.cclass &= ( GENERATE_STACK_FRAME | FAR );
     WatcallInfo.cclass |= CALLER_POPS | NO_8087_RETURNS;
@@ -375,6 +375,33 @@ int IsAuxParmsBuiltIn( hw_reg_set *parms )
     }
 }
 
+void SetAuxWatcallInfo( void )
+/****************************/
+{
+    DftCallConv         = &WatcallInfo;
+
+    WatcallInfo.cclass  = 0;
+    WatcallInfo.code    = NULL;
+    WatcallInfo.parms   = DefaultParms;
+#if _CPU == 370
+    WatcallInfo.linkage = &DefaultLinkage;
+#endif
+    HW_CAsgn( WatcallInfo.returns, HW_EMPTY );
+    HW_CAsgn( WatcallInfo.streturn, HW_EMPTY );
+    HW_CAsgn( WatcallInfo.save, HW_FULL );
+    WatcallInfo.use     = 0;
+    WatcallInfo.objname = NULL;
+}
+
+void SetAuxDefaultInfo( void )
+/****************************/
+{
+    DefaultInfo = *DftCallConv;
+    if( DefaultInfo.objname != NULL ) {
+        DefaultInfo.objname = AUX_STRALLOC( DefaultInfo.objname );
+    }
+}
+
 int IsAuxInfoBuiltIn( struct aux_info *inf )
 /*****************************************/
 {
@@ -408,14 +435,23 @@ int IsAuxInfoBuiltIn( struct aux_info *inf )
 char *VarNamePattern( struct aux_info *inf )
 /******************************************/
 {
-    char    *pattern = inf->objname;
-#if _INTEL_CPU
     if( inf == &DefaultInfo )
         inf = DftCallConv;
+    if( inf == &WatcallInfo )
+        return( WatcallInfo.objname );
+    if( inf == &CdeclInfo )
+        return( WatcallInfo.objname );
+    if( inf == &PascalInfo )
+        return( WatcallInfo.objname );
+    if( inf == &FortranInfo )
+        return( WatcallInfo.objname );
+    if( inf == &SyscallInfo )
+        return( WatcallInfo.objname );
     if( inf == &StdcallInfo )
-        return( NULL );
+        return( WatcallInfo.objname );
     if( inf == &FastcallInfo )
-        return( NULL );
-#endif
-    return( pattern );
+        return( WatcallInfo.objname );
+    if( inf == &OptlinkInfo )
+        return( WatcallInfo.objname );
+    return( inf->objname );
 }

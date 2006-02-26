@@ -2220,7 +2220,7 @@ void GenCOptions( char **cmdline )
     }
   #if _CPU == 386
     if( ! CompFlags.register_conventions )
-        SetStackConventions();
+        SetAuxStackConventions();
   #endif
 #endif
     MacroDefs();                                        /* 07-aug-90 */

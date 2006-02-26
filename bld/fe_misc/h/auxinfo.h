@@ -24,36 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  define values for pragma aux magic words
 *
 ****************************************************************************/
 
-
-#include "plusplus.h"
-
-#include <limits.h>
-
-#include "preproc.h"
-#include "scan.h"
-
-#if INT_MAX == SHRT_MAX
-    #define TC_A0
-    #define TC_A1 "\x00"
-    #define TC_A2
-    #define TC_A3 "\x00"
-#else
-    #define TC_A0
-    #define TC_A1 "\x00"
-    #define TC_A2 "\x00\x00"
-    #define TC_A3 "\x00\x00\x00"
-#endif
-
-#ifdef pick
-#undef pick
-#endif
-
-char *Tokens[] = {
-
-#define pick(token,string,class) string class
-#include "ctokens.h"
+pick( M_DEFAULT,  "default",  &DefaultInfo  )
+pick( M_CDECL,    "cdecl",    &CdeclInfo    )
+pick( M_PASCAL,   "pascal",   &PascalInfo   )
+pick( M_FORTRAN,  "fortran",  &FortranInfo  )
+pick( M_SYSCALL,  "syscall",  &SyscallInfo  )
+pick( M_STDCALL,  "stdcall",  &StdcallInfo  )
+pick( M_FASTCALL, "fastcall", &FastcallInfo )
+pick( M_OPTLINK,  "optlink",  &OptlinkInfo  )
+pick( M_SYSTEM,   "system",   &SyscallInfo  )
+pick( M_WATCALL,  "watcall",  &WatcallInfo  )
+pick( M_UNKNOWN,  NULL,       NULL          )

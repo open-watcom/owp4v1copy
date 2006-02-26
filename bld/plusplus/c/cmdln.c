@@ -321,14 +321,9 @@ void InitModInfo(               // INITIALIZE MODULE INFORMATION
     CompFlags.emit_targimp_symbols = 1;
     CompFlags.check_truncated_fnames = 1;
     CompFlags.inline_functions = 1;
-    WatcallInfo.cclass = 0;
-    WatcallInfo.code = NULL;
-    WatcallInfo.parms = DefaultParms;
-    HW_CAsgn( WatcallInfo.returns, HW_EMPTY );
-    HW_CAsgn( WatcallInfo.streturn, HW_EMPTY );
-    HW_CAsgn( WatcallInfo.save, HW_FULL );
-    WatcallInfo.use = 0;
-    WatcallInfo.objname = NULL;
+
+    SetAuxWatcallInfo();
+
     HeadPacks = NULL;
     HeadEnums = NULL;
     FreePrags = NULL;

@@ -108,7 +108,7 @@ void CPragmaInit( void ){
     PragmaAuxInit();
 #endif
 
-    DefaultInfo = *DftCallConv;
+    SetAuxDefaultInfo();
 
 /* call target specific init */
     PragmaInit();
@@ -321,55 +321,34 @@ local void PragPack( void )
     MustRecog( T_RIGHT_PAREN );
 }
 
+#ifdef pick
+#undef pick
+#endif
+
+#define pick(a,b,c) { b, c },
 struct magic_words {
-        char *  name;
-        int     index;
+    char            *name;
+    struct aux_info *info;
+} MagicWords[] = {
+#include "auxinfo.h"
 };
 
-enum {
-        M_UNKNOWN,
-        M_DEFAULT,
-        M_WATCALL,
-        M_CDECL,
-        M_PASCAL,
-        M_FORTRAN,
-        M_SYSTEM,
-        M_STDCALL,
-        M_FASTCALL,
-        M_OPTLINK
-};
-
-struct magic_words MagicWords[] = {                     /* 18-aug-90 */
-        { "default",    M_DEFAULT },
-        { "watcall",    M_WATCALL },
-        { "cdecl",      M_CDECL },
-        { "pascal",     M_PASCAL },
-        { "fortran",    M_FORTRAN },
-        { "system",     M_SYSTEM },
-        { "syscall",    M_SYSTEM },
-        { "stdcall",    M_STDCALL },
-        { "fastcall",   M_FASTCALL },
-        { "Optlink",    M_OPTLINK },
-        { "__watcall",  M_WATCALL },
-        { "__cdecl",    M_CDECL },
-        { "__pascal",   M_PASCAL },
-        { "__fortran",  M_FORTRAN },
-        { "__system",   M_SYSTEM },
-        { "__syscall",  M_SYSTEM },
-        { "__stdcall",  M_STDCALL },
-        { "__fastcall", M_FASTCALL },
-        { "_Optlink",   M_OPTLINK },
-        { NULL,         M_UNKNOWN }
-};
-
-local int MagicKeyword( void )
+struct aux_info *MagicKeyword( char *name )
 {
     int         i;
 
-    for( i = 0; MagicWords[i].name; ++i ) {
-        if( strcmp( Buffer, MagicWords[i].name ) == 0 ) break;
+    if( *name == '_' ) {
+        ++name;
+        if( *name == '_' ) {
+            ++name;
+        }
     }
-    return( MagicWords[i].index );
+    for( i = 0; MagicWords[i].name; ++i ) {
+        if( strcmp( name, MagicWords[i].name ) == 0 ) {
+            break;
+        }
+    }
+    return( MagicWords[i].info );
 }
 
 
@@ -387,73 +366,34 @@ void CreateAux( char *id )
 
 void SetCurrInfo( void )
 {
-    switch( MagicKeyword() ) {
-    case M_DEFAULT:
-        CurrInfo = &DefaultInfo;
-        break;
-    case M_WATCALL:
-        CurrInfo = &WatcallInfo;
-        break;
-    case M_CDECL:
-        CurrInfo = &CdeclInfo;
-        break;
-    case M_PASCAL:
-        CurrInfo = &PascalInfo;
-        break;
-    case M_FORTRAN:
-        CurrInfo = &FortranInfo;
-        break;
-    case M_SYSTEM:
-        CurrInfo = &SyscallInfo;
-        break;
-    case M_STDCALL:
-        CurrInfo = &StdcallInfo;
-        break;
-    case M_FASTCALL:
-        CurrInfo = &FastcallInfo;
-        break;
-    case M_OPTLINK:
-        CurrInfo = &OptlinkInfo;
-        break;
-    default:
-        CreateAux( Buffer );
+    char    *name;
+    
+    if( CurToken == T_SAVED_ID ) {
+        name = SavedId;
+    } else {
+        name = Buffer;
+    }
+    CurrInfo = MagicKeyword( name );
+    if( CurrInfo == NULL ) {
+        CreateAux( name );
     }
 }
 
 
-void PragCurrAlias()
+void PragCurrAlias( void )
 {
     struct aux_entry *search;
-
+    char    *name;
+    
+    if( CurToken == T_SAVED_ID ) {
+        name = SavedId;
+    } else {
+        name = Buffer;
+    }
     search = NULL;
-    CurrAlias = &DefaultInfo;
-    switch( MagicKeyword() ) {
-    case M_WATCALL:
-        CurrAlias = &WatcallInfo;
-        break;
-    case M_CDECL:
-        CurrAlias = &CdeclInfo;
-        break;
-    case M_PASCAL:
-        CurrAlias = &PascalInfo;
-        break;
-    case M_FORTRAN:
-        CurrAlias = &FortranInfo;
-        break;
-    case M_SYSTEM:
-        CurrAlias = &SyscallInfo;
-        break;
-    case M_STDCALL:
-        CurrAlias = &StdcallInfo;
-        break;
-    case M_FASTCALL:
-        CurrAlias = &FastcallInfo;
-        break;
-    case M_OPTLINK:
-        CurrAlias = &OptlinkInfo;
-        break;
-    default:
-        search = AuxLookup( Buffer );
+    CurrAlias = MagicKeyword( name );
+    if( CurrAlias == NULL ) {
+        search = AuxLookup( name );
         if( search != NULL ) {
             CurrAlias = search->info;
         }

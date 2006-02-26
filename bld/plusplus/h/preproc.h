@@ -52,17 +52,13 @@ typedef unsigned char TOKEN;
 #define BUF_SIZE_SHIFT          (9)
 #define BUF_SIZE                (1<<BUF_SIZE_SHIFT)
 
+#ifdef pick
+#undef pick
+#endif
+#define pick( a, b, c ) a,
 enum
-{       M_UNKNOWN
-,       M_DEFAULT
-,       M_CDECL
-,       M_PASCAL
-,       M_FORTRAN
-,       M_SYSCALL
-,       M_STDCALL
-,       M_FASTCALL
-,       M_OPTLINK
-,       M_WATCALL
+{
+#include "auxinfo.h"
 };
 
 //typedef target_ulong target_int_const;

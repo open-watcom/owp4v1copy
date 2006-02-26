@@ -32,7 +32,6 @@
 #include "cvars.h"
 #include "pragdefn.h"
 #include "pdefn2.h"
-#include "callinfo.h"
 
 
 struct aux_entry *AuxLookup( char *name )

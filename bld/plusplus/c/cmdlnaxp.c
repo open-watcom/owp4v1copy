@@ -326,8 +326,6 @@ void CmdSysAnalyse( OPT_STORAGE *data )
         CompFlags.zm_switch_used = 1;
     }
 
-    DftCallConv = &WatcallInfo;
-
     // frees 'target_name' memory
     setFinalTargetSystem( data, target_name );
     miscAnalysis( data );

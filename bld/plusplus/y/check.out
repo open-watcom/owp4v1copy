@@ -704,7 +704,7 @@ Y_CLASS Y_GT_SPECIAL Y_STRUCT Y_LEFT_BRACE Y_UNION
 
 unit reduction states removed:              99
 unit reduction optimizations:             3762
-actions combined:                          116
+actions combined:                          115
 parser states:                             951
 # states (1 reduce only):                  424
 reduce/reduce conflicts:                    20

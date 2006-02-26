@@ -1925,7 +1925,7 @@ pragma-modifier
     | Y___SYSCALL
     { $$ = MakeIndexPragma( M_SYSCALL ); }
     | Y__SYSTEM
-    { $$ = MakeIndexPragma( M_SYSCALL ); }
+    { $$ = MakeIndexPragma( M_SYSTEM ); }
     | Y___WATCALL
     { $$ = MakeIndexPragma( M_WATCALL ); }
     ;

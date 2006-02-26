@@ -76,6 +76,10 @@
 #define I64SetZero( a ) ( I32ToI64( 0, &(a).sval) );
 #define U64SetZero( a ) ( U32ToU64( 0, &(a).uval) );
 
+#ifdef pick
+#undef pick
+#endif
+
 /* include ctokens.h for the precedence values */
 #define prec(value) value
 #define pick(token,string,class)

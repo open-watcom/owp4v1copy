@@ -53,6 +53,7 @@ static void pragmaInit(         // INIT PRAGMAS
     if( ! CompFlags.dll_subsequent ) {
         AsmInit();
     }
+    SetAuxDefaultInfo();
 }
 
 static void pragmaFini(         // FINISH PRAGMAS

@@ -349,17 +349,5 @@ void InitModInfo( void )
     CompFlags.use_stdcall_at_number = 1;
     CompFlags.rent = 0;
 
-    DftCallConv         = &WatcallInfo;
-
-    WatcallInfo.cclass   = 0;
-    WatcallInfo.code    = NULL;
-    WatcallInfo.parms   = DefaultParms;
-#if _CPU == 370
-    WatcallInfo.linkage = &DefaultLinkage;
-#endif
-    HW_CAsgn( WatcallInfo.returns, HW_EMPTY );
-    HW_CAsgn( WatcallInfo.streturn, HW_EMPTY );
-    HW_CAsgn( WatcallInfo.save, HW_FULL );
-    WatcallInfo.use     = 0;
-    WatcallInfo.objname = NULL;      /* DefaultObjName; */
+    SetAuxWatcallInfo();
 }
