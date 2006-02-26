@@ -241,6 +241,49 @@ string_data *X86InsTable[] = {
 
 #endif
 
+#if DISCPU & DISCPU_x64
+
+ins_decode_data X64DecodeTable1[] = {
+    #undef inspick
+    #define inspick( idx, name, opcode, mask, handler ) { opcode, mask, DI_X64_##idx, #idx, #handler },
+    #include "insX64.h"
+};
+
+string_data X64InsTable1[] = {
+    #undef inspick
+    #define inspick( idx, name, opcode, mask, handler ) { name, 0 },
+    #include "insX64.h"
+};
+
+string_data X64RegTable[] = {
+    #undef regpick
+    #define regpick( idx, name ) { name, 0 },
+    #include "regX64.h"
+};
+
+string_data X64RefTable[] = {
+    #undef refpick
+    #define refpick( idx, name ) { name, 0 },
+    #include "refX64.h"
+};
+
+unsigned X64InsNum[] = {
+    NUM_ELTS( X64DecodeTable1 ),
+    0
+};
+
+ins_decode_data *X64DecodeTable[] = {
+    X64DecodeTable1,
+    NULL
+};
+
+string_data *X64InsTable[] = {
+    X64InsTable1,
+    NULL
+};
+
+#endif
+
 #if DISCPU & DISCPU_jvm
 
 ins_decode_data JVMDecodeTable1[] = {
@@ -402,6 +445,9 @@ machine_data AMachine[] = {
 #endif
 #if DISCPU & DISCPU_x86
     TABLE( X86 ),
+#endif
+#if DISCPU & DISCPU_x64
+    TABLE( X64 ),
 #endif
 #if DISCPU & DISCPU_jvm
     TABLE( JVM ),

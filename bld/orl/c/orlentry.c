@@ -153,6 +153,7 @@ orl_file_format ORLFileIdentify( orl_handle orl_hnd, void * file )
     case IMAGE_FILE_MACHINE_R4000:
     case IMAGE_FILE_MACHINE_ALPHA:
     case IMAGE_FILE_MACHINE_POWERPC:
+    case IMAGE_FILE_MACHINE_AMD64:
     case IMAGE_FILE_MACHINE_UNKNOWN:
         return ORL_COFF;
     }
@@ -189,6 +190,7 @@ orl_file_format ORLFileIdentify( orl_handle orl_hnd, void * file )
             case IMAGE_FILE_MACHINE_R4000:
             case IMAGE_FILE_MACHINE_ALPHA:
             case IMAGE_FILE_MACHINE_POWERPC:
+            case IMAGE_FILE_MACHINE_AMD64:
                 return ORL_COFF;
             }
         }

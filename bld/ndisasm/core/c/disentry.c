@@ -45,6 +45,9 @@ extern const dis_cpu_data       PPCData;
 #if DISCPU & DISCPU_x86
 extern const dis_cpu_data       X86Data;
 #endif
+#if DISCPU & DISCPU_x64
+extern const dis_cpu_data       X64Data;
+#endif
 #if DISCPU & DISCPU_jvm
 extern const dis_cpu_data       JVMData;
 #endif
@@ -114,6 +117,11 @@ dis_return DisInit( dis_cpu cpu, dis_handle *h, bool swap_bytes )
 #if DISCPU & DISCPU_x86
     case DISCPU_x86:
         h->d = &X86Data;
+        break;
+#endif
+#if DISCPU & DISCPU_x64
+    case DISCPU_x64:
+        h->d = &X64Data;
         break;
 #endif
 #if DISCPU & DISCPU_jvm

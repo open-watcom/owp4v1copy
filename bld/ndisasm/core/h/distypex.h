@@ -42,6 +42,7 @@
 #define DISCPU_jvm      0x08
 #define DISCPU_sparc    0x10
 #define DISCPU_mips     0x20
+#define DISCPU_x64      0x40
 
 #if defined( NDIS_axp )
 #define DISCPU DISCPU_axp
@@ -49,6 +50,8 @@
 #define DISCPU DISCPU_ppc
 #elif defined( NDIS_x86 )
 #define DISCPU DISCPU_x86
+#elif defined( NDIS_x64 )
+#define DISCPU DISCPU_x64
 #elif defined( NDIS_jvm )
 #define DISCPU DISCPU_jvm
 #elif defined( NDIS_sparc )
@@ -56,9 +59,9 @@
 #elif defined( NDIS_mips )
 #define DISCPU DISCPU_mips
 #elif defined( NDIS_test )
-#define DISCPU ( DISCPU_axp | DISCPU_ppc | DISCPU_x86 | DISCPU_jvm | DISCPU_sparc | DISCPU_mips )
+#define DISCPU ( DISCPU_axp | DISCPU_ppc | DISCPU_x86 | DISCPU_jvm | DISCPU_sparc | DISCPU_mips | DISCPU_x64 )
 #else
-#define DISCPU ( DISCPU_axp | DISCPU_ppc | DISCPU_x86 | DISCPU_sparc | DISCPU_mips )
+#define DISCPU ( DISCPU_axp | DISCPU_ppc | DISCPU_x86 | DISCPU_sparc | DISCPU_mips | DISCPU_x64 )
 #endif
 
 typedef struct dis_range        dis_range;
@@ -95,6 +98,13 @@ typedef enum {
     #include "insx86e2.h"
     #include "insx86e3.h"
     #include "insx86e4.h"
+#endif
+#if DISCPU & DISCPU_x64
+    DI_X64_FIRST,
+    DI_X64_SKIPBACK = DI_X64_FIRST - 1,
+    #undef inspick
+    #define inspick( idx, name, opcode, mask, handler ) DI_X64_##idx,
+    #include "insx64.h"
 #endif
 #if DISCPU & DISCPU_jvm
     DI_JVM_FIRST,
@@ -144,6 +154,13 @@ typedef enum {
     #define regpick( idx, name ) DR_X86_##idx,
     #include "regx86.h"
 #endif
+#if DISCPU & DISCPU_x64
+    DR_X64_FIRST,
+    DR_X64_SKIPBACK = DR_X64_FIRST - 1,
+    #undef regpick
+    #define regpick( idx, name ) DR_X64_##idx,
+    #include "regx64.h"
+#endif
 #if DISCPU & DISCPU_jvm
     DR_JVM_FIRST,
     DR_JVM_SKIPBACK = DR_JVM_FIRST - 1,
@@ -191,6 +208,13 @@ typedef enum {
     #undef refpick
     #define refpick( idx, name ) DRT_X86_##idx,
     #include "refx86.h"
+#endif
+#if DISCPU & DISCPU_x64
+    DRT_X64_FIRST,
+    DRT_X64_SKIPBACK = DRT_X64_FIRST - 1,
+    #undef refpick
+    #define refpick( idx, name ) DRT_X64_##idx,
+    #include "refx64.h"
 #endif
 #if DISCPU & DISCPU_jvm
     DRT_JVM_FIRST,
@@ -255,6 +279,22 @@ typedef enum {
     DIF_X86_FP_INS      = 0x8000,       /* not a prefix */
     DIF_X86_USE16_FLAGS = 0,
     DIF_X86_USE32_FLAGS = DIF_X86_OPND_LONG|DIF_X86_ADDR_LONG,
+#endif
+#if DISCPU & DISCPU_x64
+    DIF_X64_CS          = 0x0001,
+    DIF_X64_DS          = 0x0002,
+    DIF_X64_ES          = 0x0004,
+    DIF_X64_FS          = 0x0008,
+    DIF_X64_GS          = 0x0010,
+    DIF_X64_SS          = 0x0020,
+    DIF_X64_OPND_SIZE   = 0x0040,
+    DIF_X64_ADDR_SIZE   = 0x0080,
+    DIF_X64_EMU_INT     = 0x0100,
+    DIF_X64_PEX_PR      = 0x0800,
+    DIF_X64_REX_B       = 0x1000,      /* REX prefixes */
+    DIF_X64_REX_X       = 0x2000,
+    DIF_X64_REX_R       = 0x4000,
+    DIF_X64_REX_W       = 0x8000,
 #endif
 #if DISCPU & DISCPU_jvm
     DIF_JVM_WIDE        = 0x01<<0,

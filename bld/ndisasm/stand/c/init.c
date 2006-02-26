@@ -690,6 +690,13 @@ static return_val initORL( void )
                     return( ERROR );
                 }
                 break;
+            case ORL_MACHINE_TYPE_AMD64:
+                if( DisInit( DISCPU_x64, &DHnd, byte_swap ) != DR_OK ) {
+                    ORLFini( ORLHnd );
+                    PrintErrorMsg( OKAY, WHERE_UNSUPPORTED_PROC );
+                    return( ERROR );
+                }
+                break;
             case ORL_MACHINE_TYPE_SPARC:
                 if( DisInit( DISCPU_sparc, &DHnd, byte_swap ) != DR_OK ) {
                     ORLFini( ORLHnd );
