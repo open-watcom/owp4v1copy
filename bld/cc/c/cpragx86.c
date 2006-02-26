@@ -942,7 +942,7 @@ void AsmSysMakeInlineAsmFunc( int code_ovrflw )
         sprintf( name, "F.%d", AsmFuncNum );
         ++AsmFuncNum;
         CreateAux( name );
-        *CurrInfo = DefaultInfo;
+        *CurrInfo = WatcallInfo;
         CurrInfo->use = 1;
         CurrInfo->save = AsmRegsSaved;  // indicate no registers saved
         uses_auto = InsertFixups( AsmCodeBuffer, code_length );
