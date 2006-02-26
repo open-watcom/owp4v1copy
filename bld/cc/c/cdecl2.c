@@ -151,6 +151,20 @@ local void CmpFuncDecls( SYMPTR new_sym, SYMPTR old_sym )
     ChkCompatibleFunction( type_new, type_old, 1 );
 }
 
+local void UpdateFuncNodeType( SYMPTR old, SYMPTR new )
+{
+    if( old->attrib == old->sym_type->u.fn.decl_flags ) {
+    } else if( old->attrib == new->sym_type->u.fn.decl_flags
+      && old->sym_type->object == new->sym_type->object
+      && old->sym_type->u.fn.parms == new->sym_type->u.fn.parms ) {
+        old->sym_type = new->sym_type;
+    } else {
+        old->sym_type = FuncNode(old->sym_type->object,
+                    old->attrib, old->sym_type->u.fn.parms);
+    }
+}
+
+
 local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state )
 {
     SYM_HANDLE          sym_handle;
@@ -253,6 +267,7 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
             if( stg_class == SC_NULL && old_sym.stg_class != SC_FORWARD ) {     /* 05-jul-89 */
                 stg_class = old_sym.stg_class;
             }
+            UpdateFuncNodeType( &old_sym, sym );
             memcpy( sym, &old_sym, sizeof( SYM_ENTRY ) );
             sym_handle = old_sym_handle;
         }
