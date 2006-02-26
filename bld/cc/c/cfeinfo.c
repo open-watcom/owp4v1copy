@@ -42,6 +42,8 @@
 #include "autodept.h"
 #include "langenv.h"
 #include "callinfo.h"
+#define BY_CLI
+#include "feprotos.h"
 
 #define TRUNC_SYMBOL_HASH_LEN        4
 #define TRUNC_SYMBOL_LEN_WARN        120
@@ -1083,7 +1085,7 @@ static VOIDPTR NextImportS( int index, aux_class request )
 /*
 //    pass auxiliary information to back end
 */
-VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
+VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, int request )
 {
     SYM_HANDLE           sym_handle = cgsym_handle;
     struct aux_info *    inf;
@@ -1345,7 +1347,7 @@ static VOIDPTR NextImportS( int index, aux_class request )
 /*
 //    pass auxiliary information to back end
 */
-VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
+VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, int request )
 {
     SYM_HANDLE              sym_handle = cgsym_handle;
     struct aux_info         *inf;

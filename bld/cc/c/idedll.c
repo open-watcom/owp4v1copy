@@ -30,18 +30,18 @@
 ****************************************************************************/
 
 
+#include "cvars.h"
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
 #include <setjmp.h>
 #include "bool.h"
 #include "idedll.h"
-#include "cmsg.h"
-extern  void    FrontEndInit( bool reuse );     /* ccmain */
-extern  int     FrontEnd(char const **);        /* ccmain */
-extern  void    FrontEndFini( void );           /* ccmain */
-extern  void    CauseTBreak( void );    // stop compiler
-extern  void    TBreak( void );    // stop compiler
+#include "cgmisc.h"
+#include "cgdllcli.h"
+#define BY_CLI
+#include "feprotos.h"
+
 extern  void    SetNoCurrInc( void ); // no curr inc
 
 static   IDECBHdl      Hdl;          // - handle for this instantiation
@@ -293,7 +293,7 @@ IDEBool IDEDLL_EXPORT IDERunYourSelf // COMPILE A PROGRAM
     }
     argv[0] = opts;
     argv[3] = NULL;
-    ret = FrontEnd( argv );
+    ret = FrontEnd( (char **)argv );
 #if HEAP_CHK  == 1
 
     switch( heap_size( &after ) ){

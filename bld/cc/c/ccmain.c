@@ -38,6 +38,9 @@
 #ifdef __OSI__
     #include "ostype.h"
 #endif
+#define BY_CLI
+#include "feprotos.h"
+
 #ifndef _MAX_PATH
     #define _MAX_PATH   (PATH_MAX + 1)
 #endif

@@ -47,6 +47,9 @@ typedef dbg_type        dbug_type;
 typedef signed_64       int64;
 typedef unsigned_64     uint64;
 
+typedef void            *SYM_HANDLE;
+typedef SYM_HANDLE      sym_handle;
+
 #define L       I64LO32
 #define H       I64HI32
 
@@ -142,7 +145,6 @@ typedef enum string_flags {     // string literal flags
     STRLIT_WIDE         = 0x80, // must not conflict with FLAG_MEM_MODEL
 } string_flags;
 
-typedef void    *SYM_HANDLE;
 typedef struct string_literal *STR_HANDLE;
 
 #define SYM_INVALID     ((SYM_HANDLE)~0)    // invalid symbol; never a real sym

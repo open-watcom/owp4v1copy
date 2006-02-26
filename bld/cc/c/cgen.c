@@ -34,8 +34,10 @@
 #include "cgdefs.h"
 #include "cgswitch.h"
 #include "pragdefn.h"
-#include "cgprotos.h"
 #include "cgdllcli.h"
+#define BY_CLI
+#include "cgprotos.h"
+#include "feprotos.h"
 
 local void      FreeExtVars( void );
 local void      FreeGblVars( SYM_HANDLE sym_handle );
@@ -1415,7 +1417,6 @@ local void GenModuleCode( void )
 
 static void NoCodeGenDLL( void )
 {
-    extern void FEMessage( msg_class, void * );
     FEMessage( MSG_FATAL, "Unable to load code generator DLL" );
 }
 

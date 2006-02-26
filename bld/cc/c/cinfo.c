@@ -34,9 +34,11 @@
 #include "cgdefs.h"
 #include "cgswitch.h"
 #include "standard.h"
-#include "cgprotos.h"
 #include "cgaux.h"
 #include "langenv.h"
+#define BY_CLI
+#include "cgprotos.h"
+#include "feprotos.h"
 
 
 struct user_seg {
@@ -695,8 +697,8 @@ char *FEName( CGSYM_HANDLE cgsym_handle )
 }
 
 
-void FEMessage( msg_class class, void *parm )
-/*******************************************/
+void FEMessage( int class, void *parm )
+/*************************************/
 {
     char    msgtxt[80];
     char    msgbuf[MAX_MSG_LEN];

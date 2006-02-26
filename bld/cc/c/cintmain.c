@@ -38,6 +38,8 @@
 #ifdef __OSI__
   #include "ostype.h"
 #endif
+#define BY_CLI
+#include "feprotos.h"
 
 void ResetHandlers()
 {

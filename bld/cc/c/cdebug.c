@@ -34,7 +34,9 @@
 #include "cgswitch.h"
 #include "cg.h"
 #include "standard.h"
+#define BY_CLI
 #include "cgprotos.h"
+#include "feprotos.h"
 
 
 static dbug_type DBTypeStruct();
@@ -402,7 +404,7 @@ static dbug_type DBTypeEnum( TYPEPTR typ )
 
 dbug_type FEDbgType( CGSYM_HANDLE cgsym_handle )
 {
-    SYM_HANDLE          sym_handle = cgsym_handle;
+    SYM_HANDLE     sym_handle = cgsym_handle;
 
     return( DBType( SymGetPtr( sym_handle )->sym_type ) );
 }

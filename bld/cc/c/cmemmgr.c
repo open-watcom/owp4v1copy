@@ -30,6 +30,8 @@
 
 
 #include "cvars.h"
+#define BY_CLI
+#include "feprotos.h"
 
 /*
  * RISC platforms are likely to take a big hit for misaligned accesses.
@@ -373,7 +375,7 @@ void FEfree( void *p )
 }
 
 
-int FEMoreMem()
+int FEMoreMem( int size )
 {
     return( 0 );
 }

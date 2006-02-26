@@ -408,8 +408,6 @@ global struct  undef_names {
 
 //================= Function Prototypes ========================
 
-extern  unsigned char TBreak( void );           /* casmsupp */
-
 extern  void    SetDBChar(int);                 /* casian */
 
 extern  struct aux_entry *AuxLookup( char * );  /* caux.c */
@@ -471,8 +469,6 @@ extern  void    InitGlobalVars( void );
 // from cdebug.c
 extern  dbug_type DBType(TYPEPTR);
 extern  void    EmitDBType(void);
-extern  dbug_type FEDbgType( CGSYM_HANDLE cgsym_handle );
-extern  dbug_type FEDbgRetType( CGSYM_HANDLE cgsym_handle );
 
 extern  void    ParsePgm(void);
 extern  void    AdjParmType(SYMPTR sym);
@@ -595,11 +591,6 @@ extern  void    CloseSrcFile(FCB *);            /* cgetch */
 
 // cinfo.c
 extern  void    SegInit(void);
-extern  fe_attr FEAttr(CGSYM_HANDLE);
-extern  back_handle FEBack(CGSYM_HANDLE);
-extern  char    *FEName(CGSYM_HANDLE);
-extern  int     FEParmType(CGSYM_HANDLE,CGSYM_HANDLE,int);
-extern  segment_id FESegID(CGSYM_HANDLE);
 extern  int     AddSegName(char *,char *,int);
 extern  int     DefThreadSeg( void );
 extern  void    EmitSegLabels(void);
@@ -622,7 +613,6 @@ extern void     DebugMsg( char const  *line );
 extern void     NoteMsg( char const  *line );
 extern void     ConBlip( void );
 extern bool     ConTTY( void );
-extern char    *FEGetEnv( char const  *name );
 extern void     FESetCurInc( void );
 
 //cmac1.c
@@ -711,7 +701,7 @@ extern  void    PragCurrAlias(void);            /* cpragma */
 extern  TOKEN   PragRegSet(void);               /* cpragma */
 extern  void    ChkPragmas(void);               /* cpragma */
 extern  void    CreateAux(char *);              /* cpragma */
-extern  void    SetCurrInfo(void);              /* cpragma */
+extern  void    SetCurrInfo( void );            /* cpragma */
 extern  void    XferPragInfo(char*,char*);      /* cpragma */
 extern  void    EnableDisableMessage(int,unsigned);/* cpragma */
 

@@ -47,6 +47,9 @@
 #ifdef __OSI__
  #include "ostype.h"
 #endif
+#define BY_CLI
+#include "feprotos.h"
+
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif

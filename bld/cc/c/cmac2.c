@@ -32,6 +32,7 @@
 #include "cvars.h"
 #include "scan.h"
 #include <stddef.h>
+#include "cgmisc.h"
 
 static void    CSkip( void );
 static void    CSkipIf( void );
