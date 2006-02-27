@@ -460,12 +460,11 @@ void GetCallClass( SYM_HANDLE sym_handle )
                 CallClass = GetLangInfo( sym.attrib )->cclass;
 #if _CPU == 8086
                 if( TargSys == TS_WINDOWS ) {
-                    CallClass |= FAT_WINDOWS_PROLOG;
                     if( sym.attrib & (LANG_CDECL | LANG_PASCAL) ) {
                         CallClass |= FAT_WINDOWS_PROLOG;
                     }
                 }
-   #endif
+#endif
             }
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
             if( CompFlags.emit_names ) {
