@@ -344,3 +344,6 @@ For more complex applications, you should use the "Make" utility.
 .if '&target' eq 'QNX' .do begin
 See the QNX utilities manual for a description of "Make".
 .do end
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+. .im owcc
+.do end

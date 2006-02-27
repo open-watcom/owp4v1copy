@@ -145,7 +145,6 @@ assume short integers are aligned
 .*
 .note bc
 :CMT. .ix 'options' 'bc'
-(C++ only)
 build target is a console application
 :optref refid='SWbc'.
 .*
@@ -156,7 +155,6 @@ build target is a Dynamic Link Library (DLL)
 .*
 .note bg
 :CMT. .ix 'options' 'bg'
-(C++ only)
 build target is a GUI application
 :optref refid='SWbg'.
 .*

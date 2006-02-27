@@ -47,7 +47,9 @@ Options:
 :segment Taxp
 -as           assume short integers are aligned
 :endsegment
+-bc           build target is a console application
 -bd           build target is a dynamic link library (DLL)
+-bg           build target is a GUI application
 -bm           build target is a multi-thread environment
 :segment T386 | Taxp
 -br           build with dll run-time library

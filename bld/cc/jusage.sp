@@ -44,7 +44,9 @@ Options:
 :segment Taxp
 -as       2バイト整数が整列されるものと仮定します
 :endsegment
+-bc       build target is a console application
 -bd       作成ターゲットはダイナミック・リンク・ライブラリ(DLL)
+-bg       build target is a GUI application
 -bm       作成ターゲットはマルチ・スレッド環境
 :segment T386 | Taxp
 -br       dll実行時ライブラリを使用して作成します
