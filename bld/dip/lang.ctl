@@ -57,6 +57,8 @@ cdsay .
         <CPCMD> <DEVDIR>/dip/watcom/os2386/watcom.sym       <RELROOT>/rel2/binp/
         <CPCMD> <DEVDIR>/dip/mapsym/os2386/mapsym.d32       <RELROOT>/rel2/binp/
         <CPCMD> <DEVDIR>/dip/mapsym/os2386/mapsym.sym       <RELROOT>/rel2/binp/
+        <CPCMD> <DEVDIR>/dip/hllcv/os2386/hllcv.d32         <RELROOT>/rel2/binp/
+        <CPCMD> <DEVDIR>/dip/hllcv/os2386/hllcv.sym         <RELROOT>/rel2/binp/
 
   [ IFDEF (os_nt "") <2*> ]
         <CPCMD> <DEVDIR>/dip/dwarf/nt386/dwarf.dll          <RELROOT>/rel2/binnt/

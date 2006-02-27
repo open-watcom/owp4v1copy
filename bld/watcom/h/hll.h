@@ -141,7 +141,7 @@ typedef struct {
     unsigned_16         cSeg;
     unsigned_16         Style;
     unsigned_16         Version;
-//  char                name[];
+    char                name[];
 } hll_debug_mod_32;
 
 typedef struct {
@@ -163,8 +163,12 @@ typedef struct {
     unsigned_16 seg;
     unsigned_16 cPair;
 //      line_offset_parms[1];
-} cv_sst_src_lne_seg;
+} cv_linnum_seg;
 
+typedef struct {
+    unsigned_16     line;
+    unsigned_16     offset;
+} cv_srcln_off_16;
 
 typedef struct {
     unsigned_16 lineNum;

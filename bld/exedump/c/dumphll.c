@@ -369,18 +369,13 @@ static void dump_hll_sstModules( unsigned_32 base, unsigned_32 offset )
 }
 
 
-typedef struct {
-    unsigned_16     line;
-    unsigned_16     offset;
-} cv_srcln_off_16;
-
 /*
  * dump_cv_sstSrcLnSeg - dump sstSrcLnSeg at 'offset' from 'base'
  */
 static void dump_cv_sstSrcLnSeg( unsigned_32 base, unsigned_32 offset )
 /*********************************************************************/
 {
-    cv_sst_src_lne_seg  src_ln;
+    cv_linnum_seg       src_ln;
     cv_srcln_off_16     lo_16;
 
     Wlseek( base + offset );
