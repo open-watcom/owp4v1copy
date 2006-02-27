@@ -1031,11 +1031,10 @@ local TYPEPTR Pointer( TYPEPTR ptr_typ, struct mod_info *info )
 }
 
 
-local void ParseDeclPart2( TYPEPTR *typep, TYPEPTR typ )
+local void ParseDeclPart2( TYPEPTR *typep, TYPEPTR typ, type_modifiers mod )
 {
     TYPEPTR         decl1;
     TYPEPTR         decl2;
-    type_modifiers  mod = FLAG_NONE;
 
     decl1 = *typep;
     if( decl1 != NULL ) {
@@ -1075,7 +1074,7 @@ static void AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ )
             AbsDecl( sym, info.modifier, (TYPEPTR)NULL );
             info.modifier = FLAG_NONE;
             MustRecog( T_RIGHT_PAREN );
-            ParseDeclPart2( &sym->sym_type, typ );
+            ParseDeclPart2( &sym->sym_type, typ, FLAG_NONE );
         }
     } else {
         sym->attrib = info.modifier;
@@ -1120,11 +1119,8 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
                 MustRecog( T_RIGHT_PAREN );
             }
         }
-        ParseDeclPart2( &sym->sym_type, typ );
+        ParseDeclPart2( &sym->sym_type, typ, sym->attrib );
         typ = sym->sym_type;
-        // Transfer fn sym's calling convention to type; is there a better way?
-        if( typ && typ->decl_type == TYPE_FUNCTION )
-            typ->u.fn.decl_flags |= sym->attrib & FLAG_LANGUAGES;
     } else {
         if( (CurToken == T_ID) || (CurToken == T_SAVED_ID) ) {
             for( ;; ) {
@@ -1202,7 +1198,7 @@ FIELDPTR FieldDecl( TYPEPTR typ, type_modifiers mod, decl_state state )
         field = FieldDecl( (TYPEPTR)NULL, info.modifier, DECL_STATE_NONE );
         info.modifier = FLAG_NONE;
         MustRecog( T_RIGHT_PAREN );
-        ParseDeclPart2( &field->field_type, typ );
+        ParseDeclPart2( &field->field_type, typ, FLAG_NONE );
     } else {
         if( CurToken == T_ID ) {
             for( ;; ) {
