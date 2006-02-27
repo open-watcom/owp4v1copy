@@ -294,63 +294,6 @@ int ParmsToBeReversed( int flags, struct aux_info *inf )
     return( 0 );
 }
 
-struct aux_info *ModifyLookup( SYMPTR sym )
-{
-#if _CPU == 386 || _CPU == 8086
-    char                *p;
-    struct aux_info     *inf;
-    int                 len;
-    int                 hash;
-
-    static unsigned char NoModifyWeights[] = {
-    //a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y,z
-      1, 4, 5, 0, 0,11, 0, 0, 8, 0, 0,15, 0,14,10, 0, 0, 9, 3, 7, 0, 0, 0, 0, 0,0
-    };
-
-    static char *NoModifyFuncs[] = {
-        "sqrt",
-        "ceil",
-        "cos",
-        "fabs",
-        "atan2",
-        "sinh",
-        "atan",
-        "labs",
-        "abs",
-        "tanh",
-        "floor",
-        "tan",
-        "cosh",
-        "asin",
-        "sin",
-        "acos",
-    };
-
-    p = sym->name;
-    if( p != NULL ) {                           /* 01-jun-90 */
-        len = strlen( p );
-        hash = (len + NoModifyWeights[ p[0] - 'a' ]
-                    + NoModifyWeights[ p[len-2] - 'a' ]) & 15;
-
-        if( strcmp( NoModifyFuncs[ hash ], p ) == 0 ) {
-            inf = &InlineInfo;
-            inf->cclass = DefaultInfo.cclass | NO_MEMORY_READ | NO_MEMORY_CHANGED;
-            inf->code = NULL;
-            inf->parms = DefaultInfo.parms;
-            inf->returns = DefaultInfo.returns;
-            HW_CAsgn( inf->streturn, HW_EMPTY );
-            inf->save = DefaultInfo.save;
-            inf->objname = DefaultInfo.objname;
-            inf->use = 1;
-            return( inf );
-        }
-    }
-#else
-    sym = sym;
-#endif
-    return( &DefaultInfo );
-}
-
 struct aux_info *InfoLookup( SYMPTR sym )
 {
     char                  *name;
@@ -459,9 +402,6 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
     if( !(sym->flags & SYM_TEMP) ) {
         /* not an indirect func call*/
         inf = InfoLookup( sym );
-        if( inf == &DefaultInfo ) {
-            inf = ModifyLookup( sym );
-        }
     }
     if( inf == &DefaultInfo ) {
         typ = SkipDummyTypedef( sym->sym_type );

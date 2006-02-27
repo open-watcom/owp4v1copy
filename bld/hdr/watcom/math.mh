@@ -88,6 +88,10 @@ namespace std {
 :endsegment
 _WMRTLINK extern double ceil( double __x );
 _WMRTLINK extern double floor( double __x );
+#if defined(_M_IX86)
+#pragma aux ceil  parm nomemory modify nomemory;
+#pragma aux floor parm nomemory modify nomemory;
+#endif
 _WMRTLINK extern double frexp( double __value, int *__exp );
 _WMRTLINK extern double ldexp( double __x, int __exp );
 _WMRTLINK extern double modf( double __value, double *__iptr );
@@ -109,6 +113,20 @@ _WMIRTLINK extern double sinh( double __x );
 _WMIRTLINK extern double sqrt( double __x );
 _WMIRTLINK extern double tan( double __x );
 _WMIRTLINK extern double tanh( double __x );
+#if defined(_M_IX86)
+#pragma aux acos  parm nomemory modify nomemory;
+#pragma aux asin  parm nomemory modify nomemory;
+#pragma aux atan  parm nomemory modify nomemory;
+#pragma aux atan2 parm nomemory modify nomemory;
+#pragma aux cos   parm nomemory modify nomemory;
+#pragma aux cosh  parm nomemory modify nomemory;
+#pragma aux sin   parm nomemory modify nomemory;
+#pragma aux sinh  parm nomemory modify nomemory;
+#pragma aux fabs  parm nomemory modify nomemory;
+#pragma aux sqrt  parm nomemory modify nomemory;
+#pragma aux tan   parm nomemory modify nomemory;
+#pragma aux tanh  parm nomemory modify nomemory;
+#endif
 :segment CNAME
 }
 :endsegment

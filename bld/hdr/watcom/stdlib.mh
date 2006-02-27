@@ -142,6 +142,9 @@ typedef struct  {
 
 _WCRTLINK extern void    abort( void );
 _WCIRTLINK extern int    abs( int __j );
+#if defined(_M_IX86)
+#pragma aux abs     parm nomemory modify nomemory;
+#endif
 :: extra 'register' is used to prevent C++ compiler from entering a parser
 :: disambiguation stage (i.e., it has a use, so don't delete it) AFS (atexit)
           extern int     atexit( register void ( *__func )( void ) );
@@ -158,6 +161,9 @@ _WCRTLINK extern void    exit( int __status );
 _WCRTLINK extern void    free( void *__ptr );
 _WCRTLINK extern char   *getenv( const char *__name );
 _WCIRTLINK extern long int labs( long int __j );
+#if defined(_M_IX86)
+#pragma aux labs    parm nomemory modify nomemory;
+#endif
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
 _WCIRTLINK
 #else
