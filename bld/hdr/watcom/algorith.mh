@@ -182,8 +182,6 @@ namespace std {
     return( last1 );
   }
 
-:: Temporarly removed to avoid warnings due to possible compiler bug.
-#ifdef _NEVER
   // count( InputIterator, InputIterator, const Type & )
   // ***************************************************
   template< class InputIterator, class Type >
@@ -215,7 +213,6 @@ namespace std {
     }
     return( number );
   }
-#endif
 
   // equal( InputIterator1, InputIterator1, InputIterator2 )
   // *******************************************************
