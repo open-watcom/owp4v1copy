@@ -62,8 +62,8 @@ use_owl_lib_i86   = 0
 cg_inc_dirs = $(i_path)
 
 !ifeq cg_dll 1
-cg_deps = $(o_dir).dll/cgdllcli.lib
-cg_libs = lib $(o_dir).dll/cgdllcli.lib
+cg_deps = $(o_dir)/cgdllcli.lib
+cg_libs = lib $(o_dir)/cgdllcli.lib
 !else
 !ifeq use_owl_lib_$(target_cpu) 1
 cg_deps = &
