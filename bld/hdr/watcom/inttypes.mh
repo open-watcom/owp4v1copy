@@ -74,6 +74,10 @@ typedef struct {
 #define SCNx16  "hx"
 #define SCNx32  "lx"
 #define SCNx64  "llx"
+#define SCNX8   "hhX"
+#define SCNX16  "hX"
+#define SCNX32  "lX"
+#define SCNX64  "llX"
 
 #define PRIdLEAST8   "hhd"
 #define PRIdLEAST16  "hd"
@@ -119,6 +123,10 @@ typedef struct {
 #define SCNxLEAST16  "hx"
 #define SCNxLEAST32  "lx"
 #define SCNxLEAST64  "llx"
+#define SCNXLEAST8   "hhX"
+#define SCNXLEAST16  "hX"
+#define SCNXLEAST32  "lX"
+#define SCNXLEAST64  "llX"
 
 #define PRIdFAST8   "d"
 #define PRIdFAST16  "d"
@@ -164,6 +172,10 @@ typedef struct {
 #define SCNxFAST16  "x"
 #define SCNxFAST32  "lx"
 #define SCNxFAST64  "llx"
+#define SCNXFAST8   "X"
+#define SCNXFAST16  "X"
+#define SCNXFAST32  "lX"
+#define SCNXFAST64  "llX"
 
 #define PRIdMAX     "lld"
 #define PRIiMAX     "lli"
@@ -176,6 +188,7 @@ typedef struct {
 #define SCNoMAX     "llo"
 #define SCNuMAX     "llu"
 #define SCNxMAX     "llx"
+#define SCNXMAX     "llX"
 
 #if defined(__386__) || defined(__AXP__) || defined (__PPC__) || defined(__MIPS__)
 #if defined(__COMPACT__) || defined(__LARGE__)
@@ -192,6 +205,7 @@ typedef struct {
 #define SCNoPTR     "llo"
 #define SCNuPTR     "llu"
 #define SCNxPTR     "llx"
+#define SCNXPTR     "llX"
 #else
 :: typedef long intptr_t;
 :: typedef unsigned long uintptr_t;
@@ -206,6 +220,7 @@ typedef struct {
 #define SCNoPTR     "lo"
 #define SCNuPTR     "lu"
 #define SCNxPTR     "lx"
+#define SCNXPTR     "lX"
 #endif
 #else /* 16 bit */
 #if defined(__COMPACT__) || defined(__LARGE__) || defined(__HUGE__)
@@ -222,6 +237,7 @@ typedef struct {
 #define SCNoPTR     "lo"
 #define SCNuPTR     "lu"
 #define SCNxPTR     "lx"
+#define SCNXPTR     "lX"
 #else
 :: typedef int intptr_t;
 :: typedef unsigned int uintptr_t;
@@ -236,6 +252,7 @@ typedef struct {
 #define SCNoPTR     "o"
 #define SCNuPTR     "u"
 #define SCNxPTR     "x"
+#define SCNXPTR     "X"
 #endif
 #endif
 
