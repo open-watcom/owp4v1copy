@@ -114,6 +114,7 @@ static void dwarfStructInfo( TAGPTR tag )
                         DW_FLAG_PUBLIC );
         } else {
             fld_dh =  dwarfType( typ, DC_DEFAULT );
+            xref = field->xref; // re-get in case the struct was freed during recursion
             if( xref != NULL ){  //stupid struct { int x; int y[] ) = init thing
                   dwarfFile( xref->filenum );
                   DWDeclPos( Client, xref->linenum, 0 );
