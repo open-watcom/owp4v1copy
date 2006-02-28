@@ -198,7 +198,7 @@ void *AsmSysCreateAux( char *name )
 /**********************************/
 {
     CreateAux( name );
-    AuxCopy( CurrInfo, &DefaultInfo );
+    AuxCopy( CurrInfo, &WatcallInfo );
     CurrInfo->use = 1;
     CurrEntry->info = CurrInfo;
     return( CurrInfo );
