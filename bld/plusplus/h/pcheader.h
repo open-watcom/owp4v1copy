@@ -54,7 +54,7 @@ enum {
 #endif
 
 #define PHH_MAJOR               0x03
-#define PHH_MINOR               0x27
+#define PHH_MINOR               0x28
 
 #define TEXT_HEADER_SIZE        40
 #ifdef __UNIX__
