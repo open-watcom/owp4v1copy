@@ -174,7 +174,7 @@ PTREE AsmStmt( void )
 /*******************/
 {
     boolean     uses_auto;
-    void        *aux_info;
+    AUX_INFO    *aux_info;
     unsigned    skip_token;
     unsigned    skip_alt_token;
     PTREE       expr;

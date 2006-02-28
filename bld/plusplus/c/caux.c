@@ -98,7 +98,7 @@ AUX_ENTRY *AuxLookup( char *name )
     return( ent );
 }
 
-char *AuxRetrieve( void *pragma )
+char *AuxRetrieve( AUX_INFO *pragma )
 {
     AUX_ENTRY *ent;
 
@@ -120,12 +120,12 @@ static void readAuxInfo( AUX_INFO *i, unsigned control )
     }
     PCHRead( i, sizeof( *i ) );
     AsmSysPCHReadCode( i );
-    parms_size = (size_t) i->parms;
+    parms_size = i->parms_size;
     if( parms_size != 0 ) {
         i->parms = CMemAlloc( parms_size );
         PCHRead( i->parms, parms_size );
     }
-    objname_size = (size_t) i->objname;
+    objname_size = i->objname_size;
     if( objname_size != 0 ) {
         i->objname = CMemAlloc( objname_size );
         PCHRead( i->objname, objname_size );
@@ -134,13 +134,13 @@ static void readAuxInfo( AUX_INFO *i, unsigned control )
 
 pch_status PCHReadPragmas( void )
 {
-    size_t xlat_size;
-    size_t entry_len;
-    unsigned info_index;
-    AUX_ENTRY *e;
-    AUX_ENTRY *f;
-    AUX_ENTRY *next_f;
-    AUX_INFO *i;
+    size_t      xlat_size;
+    size_t      entry_len;
+    unsigned    info_index;
+    AUX_ENTRY   *e;
+    AUX_ENTRY   *f;
+    AUX_ENTRY   *next_f;
+    AUX_INFO    *i;
 
     for( f = AuxList; f != NULL; f = next_f ) {
         next_f = f->next;
@@ -168,12 +168,12 @@ pch_status PCHReadPragmas( void )
         e = CMemAlloc( sizeof( AUX_ENTRY ) + entry_len );
         PCHRead( e->name, entry_len + 1 );
         info_index = PCHReadCVIndex();
-        if( info_index == 0 ) {
+        if( info_index == PCH_NULL_INDEX ) {
             i = CMemAlloc( sizeof( AUX_INFO ) );
             e->info = i;
             readAuxInfo( i, RAUX_RAW );
         } else {
-            e->info = PragmaMapIndex( (void *) info_index );
+            e->info = PragmaMapIndex( info_index );
         }
         // must be after PragmaMapIndex
         e->next = AuxList;
@@ -204,37 +204,33 @@ pch_status PCHReadPragmas( void )
 
 static void writeAuxInfo( AUX_INFO *info, cv_index *index )
 {
-    size_t parms_size;
-    size_t objname_size;
-    hw_reg_set *regs;
-    hw_reg_set *save_parms;
-    char *save_objname;
+    hw_reg_set  *regs;
+    hw_reg_set  *save_parms;
+    char        *save_objname;
 
     info->index = (*index)++;
     save_parms = info->parms;
     save_objname = info->objname;
-    parms_size = 0;
+    info->parms_size = 0;
     if( save_parms != NULL ) {
         regs = save_parms;
         for(;;) {
-            parms_size += sizeof( hw_reg_set );
+            info->parms_size += sizeof( hw_reg_set );
             if( HW_CEqual( *regs, HW_EMPTY ) ) break;
             ++regs;
         }
-        info->parms = (void *) parms_size;
     }
-    objname_size = 0;
+    info->objname_size = 0;
     if( save_objname != NULL ) {
-        objname_size = strlen( save_objname ) + 1;
-        info->objname = (void *) objname_size;
+        info->objname_size = strlen( save_objname ) + 1;
     }
     PCHWrite( info, sizeof( *info ) );
     AsmSysPCHWriteCode( info );
-    if( parms_size != 0 ) {
-        PCHWrite( save_parms, parms_size );
+    if( info->parms_size != 0 ) {
+        PCHWrite( save_parms, info->parms_size );
     }
-    if( objname_size != 0 ) {
-        PCHWrite( save_objname, objname_size );
+    if( info->objname_size != 0 ) {
+        PCHWrite( save_objname, info->objname_size );
     }
     info->parms = save_parms;
     info->objname = save_objname;
@@ -242,11 +238,11 @@ static void writeAuxInfo( AUX_INFO *info, cv_index *index )
 
 pch_status PCHWritePragmas( void )
 {
-    cv_index index;
-    cv_index write_index;
-    size_t len;
-    AUX_INFO *info;
-    AUX_ENTRY *e;
+    cv_index    index;
+    cv_index    write_index;
+    size_t      len;
+    AUX_INFO    *info;
+    AUX_ENTRY   *e;
 
     for( e = AuxList; e != NULL; e = e->next ) {
         e->info->index = PCH_NULL_INDEX;
@@ -282,10 +278,8 @@ pch_status PCHWritePragmas( void )
     return( PCHCB_OK );
 }
 
-void *PragmaGetIndex( void *e )
+unsigned PragmaGetIndex( AUX_INFO *i )
 {
-    AUX_INFO *i = e;
-
     if( i == NULL ) {
         return( PCH_NULL_INDEX );
     }
@@ -294,14 +288,13 @@ void *PragmaGetIndex( void *e )
         CFatal( "aux info not assigned an index" );
     }
 #endif
-    return (void *) i->index;
+    return( i->index );
 }
 
-void *PragmaMapIndex( void *pi )
+AUX_INFO *PragmaMapIndex( unsigned i )
 {
-    unsigned i = (unsigned) pi;
-    AUX_ENTRY *e;
-    AUX_INFO *mapped_info;
+    AUX_ENTRY   *e;
+    AUX_INFO    *mapped_info;
 
     if( i == PCH_NULL_INDEX ) {
         return( NULL );

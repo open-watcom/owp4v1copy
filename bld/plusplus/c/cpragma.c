@@ -1310,8 +1310,8 @@ void PragObjNameInfo(           // RECOGNIZE OBJECT NAME INFORMATION
 #endif
 
 
-void *PragmaLookup( char *name, unsigned index )
-/**********************************************/
+AUX_INFO *PragmaLookup( char *name, unsigned index )
+/**************************************************/
 {
     struct aux_entry *ent;
 
@@ -1331,10 +1331,10 @@ void *PragmaLookup( char *name, unsigned index )
 }
 
 
-void *GetTargetHandlerPragma    // GET PRAGMA FOR FS HANDLER
+AUX_INFO *GetTargetHandlerPragma    // GET PRAGMA FOR FS HANDLER
     ( void )
 {
-    void *prag;
+    AUX_INFO *prag;
 
     prag = NULL;
     switch( TargetSystem ) {
@@ -1447,12 +1447,10 @@ struct textsegment *LkSegName(  // LOOKUP SEGMENT NAME
 #endif
 
 
-boolean ReverseParms( void *pragma )
-/**********************************/
+boolean ReverseParms( AUX_INFO *pragma )
+/**************************************/
 {
-    AUX_INFO *aux = pragma;
-
-    if( aux->cclass & REVERSE_PARMS ) {
+    if( pragma->cclass & REVERSE_PARMS ) {
         return( TRUE );
     }
     return( FALSE );

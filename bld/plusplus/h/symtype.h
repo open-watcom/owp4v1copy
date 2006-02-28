@@ -62,6 +62,7 @@ typedef struct pool_con POOL_CON;               // defined in CONPOOL.H
 #include "linkage.h"
 #include "toknlocn.h"
 #include "hashtab.h"
+#include "pragdefn.h"
 
 /* types used for collecting decl-specifiers */
 
@@ -612,11 +613,17 @@ PCH_struct type {
         } a;
         struct {                        // TYP_MODIFIER
             void        *base;
-            void        *pragma;
+            union {
+                AUX_INFO    *pragma;
+                unsigned    pragma_idx;
+            };
         } m;
         struct {                        // TYP_FUNCTION
             arg_list    *args;
-            void        *pragma;
+            union {
+                AUX_INFO    *pragma;
+                unsigned    pragma_idx;
+            };
         } f;
         struct {                        // TYP_MEMBER_POINTER
             TYPE        host;           // may not be TYP_CLASS! (can be NULL)
@@ -1120,7 +1127,7 @@ typedef enum {
 // defined in LINKAGE.C
 
 extern void LinkageReset( void );
-extern LINKAGE LinkageAdd( char *, void * );
+extern LINKAGE LinkageAdd( char *, AUX_INFO * );
 extern void LinkagePush( char * );
 extern void LinkagePushC( void );
 extern void LinkagePushCpp( void );
@@ -1266,7 +1273,7 @@ extern SYMBOL ScopeASMUseSymbol( char *, boolean * );
 extern void ScopeASMUsesAuto( void );
 extern SYMBOL ScopeASMLookup( char * );
 extern SYMBOL ScopeIntrinsic( boolean );
-extern void ScopeAuxName( char *, void * );
+extern void ScopeAuxName( char *, AUX_INFO * );
 
 extern SYMBOL ScopeInsert( SCOPE, SYMBOL, char * );
 extern boolean ScopeCarefulInsert( SCOPE, SYMBOL *, char * );
@@ -1480,9 +1487,9 @@ extern TYPE MakeTypedefOf( TYPE, SCOPE, SYMBOL );
 extern TYPE TypeClassModCombine( TYPE, TYPE );
 extern TYPE MakeClassModDeclSpec( DECL_SPEC * );
 extern boolean IdenticalClassModifiers( TYPE, TYPE );
-extern TYPE AbsorbBaseClassModifiers( TYPE, type_flag *, type_flag *, void ** );
-extern TYPE ProcessClassModifiers( TYPE, type_flag *, type_flag *, void ** );
-extern void SetFnClassMods( TYPE, type_flag, void * );
+extern TYPE AbsorbBaseClassModifiers( TYPE, type_flag *, type_flag *, AUX_INFO ** );
+extern TYPE ProcessClassModifiers( TYPE, type_flag *, type_flag *, AUX_INFO ** );
+extern void SetFnClassMods( TYPE, type_flag, AUX_INFO * );
 extern void CheckDeclarationDSpec( DECL_SPEC *, SCOPE );
 extern void CheckFunctionDSpec( DECL_SPEC * );
 extern DECL_SPEC *CheckArgDSpec( DECL_SPEC * );
@@ -1499,7 +1506,7 @@ extern TYPE MakeVirtualFunction( TYPE );
 extern TYPE MakePureFunction( TYPE );
 extern TYPE MakePureVirtualFunction( TYPE );
 extern TYPE MakePlusPlusFunction( TYPE );
-extern TYPE ChangeFunctionPragma( TYPE, void * );
+extern TYPE ChangeFunctionPragma( TYPE, AUX_INFO * );
 extern TYPE AddFunctionFlag( TYPE, type_flag );
 extern TYPE RemoveFunctionFlag( TYPE, type_flag );
 extern TYPE RemoveFunctionPragma( TYPE );
@@ -1551,8 +1558,8 @@ extern TYPE MakeVBTableFieldType( boolean );
 extern boolean VerifyPureFunction( DECL_INFO * );
 extern void VerifyMemberFunction( DECL_SPEC *, DECL_INFO * );
 extern void TypedefReset( SYMBOL, TYPE );
-extern void *TypeHasPragma( TYPE );
-extern TYPE MakePragmaModifier( void * );
+extern AUX_INFO *TypeHasPragma( TYPE );
+extern TYPE MakePragmaModifier( AUX_INFO * );
 extern TYPE AddNonFunctionPragma( TYPE, TYPE );
 extern void ForceNoDefaultArgs( DECL_INFO *, int );
 

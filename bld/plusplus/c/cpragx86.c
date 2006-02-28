@@ -907,8 +907,8 @@ boolean AsmSysInsertFixups( VBUF *code )
     return( uses_auto );
 }
 
-void *AsmSysCreateAux( char *name )
-/*********************************/
+AUX_INFO *AsmSysCreateAux( char *name )
+/*************************************/
 {
     CreateAux( name );
     AuxCopy( CurrInfo, &WatcallInfo );
@@ -1279,7 +1279,7 @@ boolean PragmasTypeEquivalent(  // TEST IF TWO PRAGMAS ARE TYPE-EQUIVALENT
 }
 
 boolean PragmaOKForInlines(     // TEST IF PRAGMA IS SUITABLE FOR INLINED FN
-    struct aux_info *fnp )      // - pragma
+    AUX_INFO *fnp )             // - pragma
 {
     if( fnp->code != NULL ) {
         return FALSE;

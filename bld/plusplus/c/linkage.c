@@ -43,7 +43,7 @@
 
 struct linkage_name {
     LINKAGE                     next;
-    void                        *pragma;
+    AUX_INFO                    *pragma;
     char                        name[1];
 };
 
@@ -78,8 +78,8 @@ static LINKAGE findLinkage( char *name )
     return( NULL );
 }
 
-LINKAGE LinkageAdd( char *name, void *defn )
-/******************************************/
+LINKAGE LinkageAdd( char *name, AUX_INFO *defn )
+/**********************************************/
 {
     LINKAGE p;
     size_t len;

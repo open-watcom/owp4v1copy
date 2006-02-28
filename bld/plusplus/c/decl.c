@@ -683,21 +683,21 @@ static boolean combinableSyms( SYMBOL prev, SYMBOL curr, prev_sym_adjust *adjust
 
 static SYMBOL combineFunctions( SYMBOL prev_fn, SYMBOL curr_fn )
 {
-    void *prev_base;
-    void *curr_base;
-    void *prev_pragma;
-    void *curr_pragma;
-    type_flag new_flags;
-    type_flag prev_flags;
-    type_flag curr_flags;
-    type_flag prev_fn_flags;
-    type_flag curr_fn_flags;
-    TYPE prev_type;
-    TYPE curr_type;
-    TYPE unmod_prev_type;
-    TYPE unmod_curr_type;
-    arg_list *prev_args;
-    arg_list *curr_args;
+    void        *prev_base;
+    void        *curr_base;
+    AUX_INFO    *prev_pragma;
+    AUX_INFO    *curr_pragma;
+    type_flag   new_flags;
+    type_flag   prev_flags;
+    type_flag   curr_flags;
+    type_flag   prev_fn_flags;
+    type_flag   curr_fn_flags;
+    TYPE        prev_type;
+    TYPE        curr_type;
+    TYPE        unmod_prev_type;
+    TYPE        unmod_curr_type;
+    arg_list    *prev_args;
+    arg_list    *curr_args;
     struct {
         unsigned check_bases : 1;
     } flag;

@@ -2024,8 +2024,8 @@ static boolean checkForCallingConventionChange( SYMBOL sym, SYMBOL above )
 {
     TYPE fn_type1 = FunctionDeclarationType( sym->sym_type );
     TYPE fn_type2 = FunctionDeclarationType( above->sym_type );
-    void *prag1 = TypeHasPragma( fn_type1 );
-    void *prag2 = TypeHasPragma( fn_type2 );
+    AUX_INFO *prag1 = TypeHasPragma( fn_type1 );
+    AUX_INFO *prag2 = TypeHasPragma( fn_type2 );
 
     if( prag1 == prag2 ) {
         return( FALSE );

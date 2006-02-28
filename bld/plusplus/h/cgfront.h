@@ -43,6 +43,7 @@
 #include "ptree.h"
 #include "module.h"
 #include "intsupp.h"
+#include "pragdefn.h"
 
 #define BIT_VECT( b1, b2, b3, b4, b5, b6, b7, b8 ) \
     b8 + b7*2 + b6*4 + b5*8 + b4*16 + b3*32 + b2*64 +b1*128
@@ -1309,10 +1310,10 @@ unsigned PtrConvertCommon(      // CONVERT TO COMMON PTR
     PTREE expr )                // - expression
 ;
 boolean ReverseParms(           // ASK IF PRAGMA REQUIRES REVERSED PARMS
-    void * pragma )             // - pragma
+    AUX_INFO * pragma )         // - pragma
 ;
 boolean PragmaName(             // RETURN TRUE IF NAME OF PRAGMA IS SIMPLE
-    void *pragma,               // - pragma
+    AUX_INFO *pragma,           // - pragma
     char **id )                 // - returned name
 ;
 void ScopeGenAccessReset(       // RESET ACCESS SCOPE FOR GENERATION

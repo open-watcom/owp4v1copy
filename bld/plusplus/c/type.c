@@ -88,7 +88,7 @@ static TYPE arrayHashTable[TYPE_HASH_MODULUS];
 static TYPE modifierHashTable[TYPE_HASH_MODULUS];
 static TYPE* typeHashTables[TYP_MAX];
 static TYPE uniqueTypes;
-static void *cdeclPragma;
+static AUX_INFO *cdeclPragma;
 static type_flag defaultFunctionMemFlag;
 static type_flag defaultDataMemFlag;
 static unsigned typeHashCtr;
@@ -420,7 +420,7 @@ TYPE MakeInternalType( target_size_t size )
     return( MakeArrayOf( size, GetBasicType( TYP_UCHAR ) ) );
 }
 
-static TYPE makeFullModifier( type_flag flag, void *base, void *pragma )
+static TYPE makeFullModifier( type_flag flag, void *base, AUX_INFO *pragma )
 {
     TYPE new_type;
 
@@ -2779,7 +2779,7 @@ TYPE MakeThunkFunction( TYPE type )
 }
 
 TYPE MakeThunkPragmaFunction( TYPE type )
-/*********************************/
+/***************************************/
 {
     return makeThunkType( type, MTT_COPY_PRAGMA );
 }
@@ -2804,7 +2804,7 @@ static TYPE adjustFullFunctionType( TYPE type
                                   , type_flag on_flags
                                   , type_flag off_flags
                                   , TYPE new_ret
-                                  , void *new_pragma )
+                                  , AUX_INFO *new_pragma )
 {
     TYPE new_fn_type;
     TYPE fn_type;
@@ -2877,8 +2877,8 @@ TYPE MakePlusPlusFunction( TYPE type )
     return( adjustFunctionType( type, TF1_PLUSPLUS, NULL ) );
 }
 
-TYPE ChangeFunctionPragma( TYPE type, void *new_pragma )
-/******************************************************/
+TYPE ChangeFunctionPragma( TYPE type, AUX_INFO *new_pragma )
+/**********************************************************/
 {
     return( adjustFullFunctionType( type, TF1_NULL, TF1_NULL, NULL, new_pragma ) );
 }
@@ -3229,8 +3229,8 @@ static TYPE combineFunctionMods( TYPE fnmod_type, TYPE curr_type )
 {
     type_flag curr_flag;
     type_flag fnmod_flag;
-    void *curr_pragma;
-    void *fnmod_pragma;
+    AUX_INFO *curr_pragma;
+    AUX_INFO *fnmod_pragma;
 
     if( fnmod_type == NULL ) {
         return( curr_type );
@@ -3420,8 +3420,8 @@ static TYPE makeMSDeclSpecType( DECL_SPEC *dspec )
 }
 
 
-void SetFnClassMods( TYPE fn_type, type_flag fn_flag, void *fn_pragma )
-/*********************************************************************/
+void SetFnClassMods( TYPE fn_type, type_flag fn_flag, AUX_INFO *fn_pragma )
+/*************************************************************************/
 {
     fn_type->flag |= fn_flag;
     fn_type->u.f.pragma = fn_pragma;
@@ -3433,7 +3433,7 @@ static void adjustMemberFn( TYPE fn_type, TYPE member_ptr )
     TYPE class_mod;
     type_flag fn_flag;
     type_flag mod_flag;
-    void *fn_pragma;
+    AUX_INFO *fn_pragma;
 
     DbgAssert( fn_type->id == TYP_FUNCTION );
     DbgAssert( member_ptr->id == TYP_MEMBER_POINTER );
@@ -3678,7 +3678,7 @@ DECL_INFO *FinishDeclarator( DECL_SPEC *dspec, DECL_INFO *dinfo )
     type_flag mod_flags;
     type_flag fn_flag;
     type_flag ptr_flags;
-    void *fn_pragma;
+    AUX_INFO *fn_pragma;
     struct {
         unsigned memory_model_movement : 1;
         unsigned add_type : 1;
@@ -4122,8 +4122,8 @@ boolean IdenticalClassModifiers( TYPE cmod1, TYPE cmod2 )
     return( TRUE );
 }
 
-TYPE AbsorbBaseClassModifiers( TYPE class_mod, type_flag *pmflags, type_flag *pfflags, void **pfpragma )
-/******************************************************************************************************/
+TYPE AbsorbBaseClassModifiers( TYPE class_mod, type_flag *pmflags, type_flag *pfflags, AUX_INFO **pfpragma )
+/**********************************************************************************************************/
 {
     TYPE keep_type;
     TYPE fn_type;
@@ -4152,15 +4152,15 @@ TYPE AbsorbBaseClassModifiers( TYPE class_mod, type_flag *pmflags, type_flag *pf
 }
 
 
-TYPE ProcessClassModifiers( TYPE list, type_flag *pmflags, type_flag *pfflags, void **pfpragma )
-/**********************************************************************************************/
+TYPE ProcessClassModifiers( TYPE list, type_flag *pmflags, type_flag *pfflags, AUX_INFO **pfpragma )
+/**************************************************************************************************/
 {
     TYPE fn_type;
     TYPE next;
     type_flag list_flag;
     type_flag fn_flags;
     type_flag mod_flags;
-    void *fn_pragma;
+    AUX_INFO *fn_pragma;
 
     mod_flags = TF1_NULL;
     fn_flags = TF1_NULL;
@@ -4338,7 +4338,7 @@ TYPE MakePragma( char *name )
 /***************************/
 {
     TYPE type;
-    void *pragma;
+    AUX_INFO *pragma;
 
     pragma = PragmaLookup( name, M_UNKNOWN );
     if( pragma == NULL ) {
@@ -4353,7 +4353,7 @@ TYPE MakeIndexPragma( unsigned index )
 /************************************/
 {
     TYPE type;
-    void *pragma;
+    AUX_INFO *pragma;
 
     pragma = PragmaLookup( NULL, index );
     type = MakePragmaModifier( pragma );
@@ -4361,8 +4361,8 @@ TYPE MakeIndexPragma( unsigned index )
     return( type );
 }
 
-TYPE MakePragmaModifier( void *pragma )
-/*************************************/
+TYPE MakePragmaModifier( AUX_INFO *pragma )
+/*****************************************/
 {
     return( makeFullModifier( TF1_NULL, NULL, pragma ) );
 }
@@ -4997,10 +4997,10 @@ TYPE TypeCommonBase( TYPE class_1, TYPE class_2 )
     return( ScopeClass( scope ) );
 }
 
-void *TypeHasPragma( TYPE type )
-/******************************/
+AUX_INFO *TypeHasPragma( TYPE type )
+/**********************************/
 {
-    void *pragma;
+    AUX_INFO *pragma;
 
     for( ; type != NULL; type = type->of ) {
         if( type->id == TYP_MODIFIER ) {
@@ -6700,7 +6700,7 @@ arg_list *TypeArgList(          // GET ARGUMENT LIST FOR A FUNCTION TYPE
 boolean TypeHasReverseArgs( TYPE type )
 /*************************************/
 {
-    void *fn_pragma;
+    AUX_INFO *fn_pragma;
 
     type = FunctionDeclarationType( type );
     if( type == NULL ) {
@@ -9374,7 +9374,7 @@ static void saveType( void *e, carve_walk_base *d )
     CLASSINFO *save_info;
     TYPE save_type;
     void *save_base;
-    void *save_pragma;
+    AUX_INFO *save_pragma;
     arg_list *save_args;
 
     if( s->id == TYP_FREE ) {
@@ -9416,13 +9416,13 @@ static void saveType( void *e, carve_walk_base *d )
             }
         }
         save_pragma = s->u.m.pragma;
-        s->u.m.pragma = PragmaGetIndex( save_pragma );
+        s->u.m.pragma_idx = PragmaGetIndex( save_pragma );
         break;
     case TYP_FUNCTION:
         save_args = s->u.f.args;
         s->u.f.args = argListGetIndex( ed, save_args );
         save_pragma = s->u.f.pragma;
-        s->u.f.pragma = PragmaGetIndex( save_pragma );
+        s->u.f.pragma_idx = PragmaGetIndex( save_pragma );
         break;
     }
     s->dbgflag |= ed->dbgflag_mask;
@@ -9509,7 +9509,7 @@ pch_status PCHWriteTypes( void )
     cv_index terminator = CARVE_NULL_INDEX;
     unsigned i;
     unsigned tci;
-    void *tmp_pragma;
+    unsigned tmp_pragma;
     auto type_pch_walk type_data;
     auto carve_walk_base data;
 
@@ -9622,11 +9622,11 @@ static void readTypes( type_pch_walk *type_data )
                     break;
                 }
             }
-            t->u.m.pragma = PragmaMapIndex( pch->u.m.pragma );
+            t->u.m.pragma = PragmaMapIndex( pch->u.m.pragma_idx );
             break;
         case TYP_FUNCTION:
             t->u.f.args = argListMapIndex( type_data, pch->u.f.args );
-            t->u.f.pragma = PragmaMapIndex( pch->u.f.pragma );
+            t->u.f.pragma = PragmaMapIndex( pch->u.f.pragma_idx );
             break;
         default :
             t->u = pch->u;
@@ -9673,7 +9673,7 @@ pch_status PCHReadTypes( void )
     arg_list **translate;
     arg_list *args;
     arg_list **set;
-    void *tmp_pragma;
+    unsigned tmp_pragma;
     auto type_pch_walk type_data;
     auto arg_list tmp_arglist;
 
@@ -9710,7 +9710,7 @@ pch_status PCHReadTypes( void )
     for( i = ARGS_HASH; i < ARGS_MAX; ++i ) {
         readType( &fnTable[i-ARGS_HASH] );
     }
-    tmp_pragma = PCHReadPtr();
+    tmp_pragma = PCHReadUInt();
     cdeclPragma = PragmaMapIndex( tmp_pragma );
     arglist_count = PCHReadUInt();
     translate = CMemAlloc( arglist_count * sizeof( arg_list * ) );

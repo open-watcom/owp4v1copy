@@ -7009,10 +7009,10 @@ static void changeSymType( SYMBOL sym, TYPE type )
 
 static boolean changePragmaType(// TEST IF NEW NEW PRAGMA TYPE REQUIRED
     SYMBOL sym,                 // - old symbol
-    void *aux_info )            // - new aux info
+    AUX_INFO *aux_info )        // - new aux info
 {
-    boolean retn;               // - return: TRUE ==> change required
-    void *old_pragma;           // - old aux info
+    boolean     retn;           // - return: TRUE ==> change required
+    AUX_INFO    *old_pragma;    // - old aux info
 
     old_pragma = TypeHasPragma( sym->sym_type );
     if( old_pragma == NULL ) {
@@ -7028,7 +7028,7 @@ static boolean changePragmaType(// TEST IF NEW NEW PRAGMA TYPE REQUIRED
     return retn;
 }
 
-static void changeNonFunction( SYMBOL sym, void *aux_info )
+static void changeNonFunction( SYMBOL sym, AUX_INFO *aux_info )
 {
     TYPE type;                  // - modifier type
 
@@ -7038,8 +7038,8 @@ static void changeNonFunction( SYMBOL sym, void *aux_info )
     }
 }
 
-void ScopeAuxName( char *id, void *aux_info )
-/*******************************************/
+void ScopeAuxName( char *id, AUX_INFO *aux_info )
+/***********************************************/
 {
     char *name;
     SEARCH_RESULT *result;

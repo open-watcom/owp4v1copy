@@ -241,8 +241,8 @@ static void fmtTypeBased( TYPE type, VBUF *pvbuf )
     VStrConcStr( pvbuf, closeBased );
 }
 
-static void fmtNicePragma( void *pragma, VBUF *pvbuf )
-/****************************************************/
+static void fmtNicePragma( AUX_INFO *pragma, VBUF *pvbuf )
+/********************************************************/
 {
     char *id;
 
@@ -266,7 +266,7 @@ static void fmtNicePragma( void *pragma, VBUF *pvbuf )
 static void fmtTypePragma( TYPE type, VBUF *pvbuf )
 /*************************************************/
 {
-    void *pragma;
+    AUX_INFO *pragma;
 
     if( type->id == TYP_MODIFIER ) {
         pragma = type->u.m.pragma;
@@ -522,7 +522,7 @@ void FormatFunctionType( TYPE type, VBUF *pprefix, VBUF *psuffix, int num_def,
     FMT_INFO    *top;
     type_flag   flags;
     char        *name;
-    void        *pragma;
+    AUX_INFO    *pragma;
     int         use_def;
     FMT_CONTROL fn_control;
 

@@ -93,7 +93,7 @@ struct aux_entry *AuxLookup(    // LOOK UP AUX ENTRY
     char *name )
 ;
 char *AuxRetrieve(              // RETRIEVE NAME OF AUX ENTRY
-    void *pragma )
+    AUX_INFO *pragma )
 ;
 void CgInfoAddPragmaExtref(     // ADD EXTREF FOR PRAGMA'D NAME
     SYMBOL sym )
@@ -138,18 +138,18 @@ void PragManyRegSets(           // GET PRAGMA REGISTER SETS
     void )
 ;
 boolean PragmaChangeConsistent( // TEST IF PRAGMA CHANGE IS CONSISTENT
-    struct aux_info *oldp,      // - pragma, old
-    struct aux_info *newp )     // - pragma, new
+    AUX_INFO *oldp,             // - pragma, old
+    AUX_INFO *newp )            // - pragma, new
 ;
 boolean PragmasTypeEquivalent(  // TEST IF TWO PRAGMAS ARE TYPE-EQUIVALENT
-    struct aux_info *inf1,      // - pragma [1]
-    struct aux_info *inf2 )     // - pragma [2]
+    AUX_INFO *inf1,             // - pragma [1]
+    AUX_INFO *inf2 )            // - pragma [2]
 ;
 boolean PragmaOKForVariables(   // TEST IF PRAGMA IS SUITABLE FOR A VARIABLE
-    struct aux_info *datap )    // - pragma
+    AUX_INFO *datap )           // - pragma
 ;
 boolean PragmaOKForInlines(     // TEST IF PRAGMA IS SUITABLE FOR INLINED FN
-    struct aux_info *fnp )      // - pragma
+    AUX_INFO *fnp )             // - pragma
 ;
 void PragmaSetToggle(           // SET TOGGLE
     boolean set_flag )          // - TRUE ==> set flag
@@ -173,7 +173,7 @@ int PragSet(                    // GET ENDING PRAGMA DELIMITER
     void )
 ;
 boolean ReverseParms(           // ASK IF PRAGMA REQUIRES REVERSED PARMS
-    void * pragma )             // - pragma
+    AUX_INFO * pragma )         // - pragma
 ;
 void SetCurrInfo(               // SET CURRENT INFO. STRUCTURE
     void )
