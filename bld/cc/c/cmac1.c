@@ -393,7 +393,7 @@ int SpecialMacro( MEPTR mentry )
     case MACRO_STDC_LIB_EXT1:
         strcpy( Buffer, "200509L" );
         Constant = 200509;
-        ConstType = TYPE_INT;
+        ConstType = TYPE_LONG;
         return( T_CONSTANT );
     case MACRO_STDC_VERSION:
         if( CompFlags.c99_extensions ) {
@@ -403,7 +403,7 @@ int SpecialMacro( MEPTR mentry )
             strcpy( Buffer, "199409L" );
             Constant = 199409;
         }
-        ConstType = TYPE_INT;
+        ConstType = TYPE_LONG;
         return( T_CONSTANT );
     case MACRO_FUNC:
         p = "";
