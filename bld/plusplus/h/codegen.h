@@ -52,7 +52,7 @@
 #include "cgstd.h"
 #include "cgdefs.h"
 #include "cgswitch.h"
-#define BY_CG
+#define BY_CLI
 #include "cgprotos.h"
 
 #include "ppops.h"
