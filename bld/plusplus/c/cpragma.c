@@ -1057,8 +1057,6 @@ void PragInit(
     StdcallInfo  = WatcallInfo;
     FastcallInfo = WatcallInfo;
 
-    DefaultInfo = *DftCallConv;
-
     CompInfo.init_priority = INIT_PRIORITY_PROGRAM;
 }
 
