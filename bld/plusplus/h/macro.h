@@ -34,8 +34,12 @@
 
 typedef char *  MACADDR_T;       /* contains actual pointer to block of memory */
 
-enum special_macros {
+#ifdef pick
+#undef pick
+#endif
+
 #define pick( s, i, f )    i,
+enum special_macros {
 #include "specmac.h"
     MACRO_MAX
 };
