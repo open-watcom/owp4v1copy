@@ -561,7 +561,7 @@ typedef struct _VIOFONTINFO {
     USHORT  type;
     USHORT  cxCell;
     USHORT  cyCell;
-    PVOID   pbData;
+    PVOID16 pbData;
     USHORT  cbData;
 } VIOFONTINFO, *PVIOFONTINFO;
 

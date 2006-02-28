@@ -98,6 +98,7 @@ typedef UCHAR    * _Seg16 PUCHAR16;
 
 typedef VOID     *PVOID;
 typedef PVOID    *PPVOID;
+typedef VOID     * _Seg16 PVOID16;
 
 typedef int (APIENTRY _PFN)();
 typedef _PFN  *PFN;
