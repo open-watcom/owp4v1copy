@@ -83,6 +83,18 @@ using std::log2;
 _WCRTLINK extern const double _WCDATA _HugeValue;
 #define HUGE_VAL _HugeValue
 
+#if __STDC_VERSION__ >= 199901L
+
+:: The following externs are also defined in float.h
+/* Floating-point Infinity and NaN constants */
+_WMRTLINK extern const float        __f_infinity;
+_WMRTLINK extern const float        __f_posqnan;
+
+#define INFINITY   __f_infinity
+#define NAN        __f_posqnan
+
+#endif
+
 :segment CNAME
 namespace std {
 :endsegment
