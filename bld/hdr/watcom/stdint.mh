@@ -217,16 +217,16 @@ typedef unsigned long long uintmax_t;
 
 #define INT8_C(x)    (x)
 #define INT16_C(x)   (x)
-#define INT32_C(x)   (x ## L)
-#define INT64_C(x)   (x ## LL)
+#define INT32_C(x)   (x + (INT32_MAX - INT32_MAX))
+#define INT64_C(x)   (x + (INT64_MAX - INT64_MAX))
 
 #define UINT8_C(x)   (x)
 #define UINT16_C(x)  (x)
-#define UINT32_C(x)  (x ## UL)
-#define UINT64_C(x)  (x ## ULL)
+#define UINT32_C(x)  (x + (UINT32_MAX - UINT32_MAX))
+#define UINT64_C(x)  (x + (UINT64_MAX - UINT64_MAX))
 
-#define INTMAX_C(x)  (x ## LL)
-#define UINTMAX_C(x) (x ## ULL)
+#define INTMAX_C(x)  (x + (INT64_MAX - INT64_MAX))
+#define UINTMAX_C(x) (x + (UINT64_MAX - UINT64_MAX))
 
 #endif /* Constant macros. */
 
