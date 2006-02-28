@@ -96,6 +96,7 @@
 .fnc bsearch                    bsearch.gml     DOS QNX W WIN32
 .fnc bsearch_s                  bsrch_s.gml     DOS QNX W WIN32
 .fnc btom                       btom.gml        NEC
+.fnw btowc                      btowc.gml       DOS       WIN32
 .fnf _fbtom                     btom.gml        NEC
 .fn8 bzero                      bzero.gml       DOS QNX W WIN32
 .fnc cabs                       cabs.gml        DOS QNX W WIN32
@@ -374,6 +375,7 @@
 .fnc _fullpath                  _fullpat.gml    DOS QNX W WIN32
 .fnw _wfullpath                 _fullpat.gml    DOS       WIN32
 .fnu _u_fullpath                _fullpat.gml    DOS       WIN32
+.fnw fwide                      fwide.gml       DOS QNX W WIN32
 .fnc fwrite                     fwrite.gml      DOS QNX W WIN32
 .fnc gcvt                       gcvt.gml        DOS QNX W WIN32
 .fnc _gcvt                      gcvt.gml        DOS QNX W WIN32
@@ -1185,6 +1187,7 @@
 .fnc sigsuspend                 sigsusp.gml         QXO
 .fnc sin                        sin.gml         DOS QNX W WIN32
 .fnc sinh                       sinh.gml        DOS QNX W WIN32
+.fnm mbsinit                    sisinit.gml     DOS       WIN32
 .fnm sisinit                    sisinit.gml     DOS       WIN32
 .fnc sleep                      sleep.gml       DOS QNX W WIN32
 .fnc _smalloc                   _smalloc.gml

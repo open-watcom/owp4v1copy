@@ -188,16 +188,19 @@ namespace std {
 :endsegment
 typedef int mbstate_t;
 
+_WCRTLINK extern wint_t   btowc( int __c );
 _WCRTLINK extern wint_t   fgetwc( FILE *__strm );
 _WCRTLINK extern wchar_t *fgetws( wchar_t *__s, int __n, FILE *__strm );
 _WCRTLINK extern wint_t   fputwc( wint_t __wc, FILE *__strm );
 _WCRTLINK extern int      fputws( const wchar_t *__s, FILE *__strm );
+_WCRTLINK extern int      fwide( FILE *__strm, int __mode );
 _WCRTLINK extern int      fwprintf( FILE *__strm, const wchar_t *__format, ... );
 _WCRTLINK extern int      fwscanf( FILE *__strm, const wchar_t *__format, ... );
 _WCRTLINK extern wint_t   getwc( FILE *__strm );
 _WCRTLINK extern wint_t   getwchar( void );
 _WCRTLINK extern int      mbrlen( const char *__s, size_t __n, mbstate_t *__ps );
 _WCRTLINK extern int      mbrtowc( wchar_t *__pwc, const char *__s, size_t __n, mbstate_t *__ps );
+_WCRTLINK extern int      mbsinit( const mbstate_t *__ps );
 _WCRTLINK extern size_t   mbsrtowcs( wchar_t *__dst, const char **__src, size_t __n, mbstate_t *__ps );
 _WCRTLINK extern wint_t   putwc( wint_t __wc, FILE *__strm );
 _WCRTLINK extern wint_t   putwchar( wint_t __wc );

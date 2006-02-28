@@ -1253,6 +1253,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)breakoff.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)bsearch.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)bsrch_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)btom.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)btowc.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)bzero.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)cabs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)calloc.gml &
@@ -1375,6 +1376,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)fstat.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fsync.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)ftell.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)ftime.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)fwide.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fwrite.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)gcvt.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)getc.gml &

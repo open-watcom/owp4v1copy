@@ -497,8 +497,8 @@ between upper and lowercase.
 .fd *fun="mbrlen" determine length of next multibyte character
 .fd *fun="mbrtowc" convert multibyte character to wide character
 .fd *fun="_mbsbtype" return type of byte in multibyte character string
+.fd *fun="mbsinit" determine if mbstate_t object describes an initial conversion state
 .fd *fun="mbtowc" convert multibyte character to wide character
-.fd *fun="sisinit" determine if mbstate_t object describes an initial conversion state
 .fdend
 .*======================================================================
 .section Memory Manipulation Functions
@@ -760,6 +760,7 @@ pointers as their arguments allowing manipulation of any memory location
 regardless of which memory model your program has been compiled for.
 .do end
 .fdbeg
+.fd *fun="btowc" return wide-character version of single-byte character
 .fd *fun="_fmbscat" concatenate two far strings
 .fd *fun="_fmbschr" locate character in far string
 .fd *fun="_fmbscmp" compare two far strings
@@ -812,6 +813,7 @@ regardless of which memory model your program has been compiled for.
 .fd *fun="_mbsdup" allocate and duplicate a string
 .fd *fun="_mbsicmp" compare two strings with case insensitivity
 .fd *fun="_mbsinc" return pointer to next character in string
+.fd *fun="mbsinit" determine if mbstate_t object describes an initial conversion state
 .fd *fun="_mbslen" string length
 .fd *fun="_mbslwr" convert string to lowercase
 .fd *fun="_mbsnbcat" append up to "n" bytes of string to another string
@@ -841,7 +843,6 @@ regardless of which memory model your program has been compiled for.
 .fd *fun="_mbsupr" convert string to uppercase
 .fd *fun="_mbterm" determine if next multibyte character in string is null
 .fd *fun="_mbvtop" store multibyte character into string
-.fd *fun="sisinit" determine if mbstate_t object describes an initial conversion state
 .fd *fun="wcrtomb" convert wide character to multibyte character and store
 .fd *fun="wcsrtombs" convert wide character string to multibyte character string
 .fd *fun="wcstombs" convert wide character string to multibyte character string

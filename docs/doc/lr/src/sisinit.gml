@@ -1,8 +1,10 @@
-.func sisinit
+.func mbsinit sisinit
 #include <wchar.h>
+int mbsinit( const mbstate_t *ps );
 int sisinit( const mbstate_t *ps );
 .ixfunc2 '&Multibyte' &func
 .funcend
+.*
 .desc begin
 If
 .arg ps
@@ -11,15 +13,18 @@ the pointed-to
 .kw mbstate_t
 object describes an initial conversion state.
 .desc end
+.*
 .return begin
 The &func function returns nonzero if
 .arg ps
 is a null pointer or if the pointed-to object describes an initial
 conversion state; otherwise, it returns zero.
 .return end
+.*
 .see begin
 .im seembc &function.
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <wchar.h>
@@ -43,8 +48,8 @@ const char chars[] = {
     0x00
 };
 
-void main()
-  {
+void main( void )
+{
     int         i, j, k;
     wchar_t     pwc;
     mbstate_t   pstate = { 0 };
@@ -53,7 +58,7 @@ void main()
     j = 1;
     for( i = 0; j > 0; i += j ) {
       printf( "We are %sin an initial conversion state\n",
-              sisinit( &pstate ) ? "not " : "" );
+              mbsinit( &pstate ) ? "not " : "" );
       j = mbrtowc( &pwc, &chars[i], MB_CUR_MAX, &pstate );
       printf( "%d bytes in character ", j );
       if( errno == EILSEQ ) {
@@ -69,7 +74,7 @@ void main()
         printf( "(%#6.4x->%#6.4x)\n", k, pwc );
       }
     }
-  }
+}
 .exmp output
 We are in an initial conversion state
 1 bytes in character (0x0020->0x0020)
