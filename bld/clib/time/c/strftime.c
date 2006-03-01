@@ -28,11 +28,12 @@
 *
 ****************************************************************************/
 
+
 #include "variety.h"
 #include "widechar.h"
 #ifdef __WIDECHAR__
-#include <mbstring.h>
-#include <malloc.h>
+    #include <mbstring.h>
+    #include <malloc.h>
 #endif
 #include <stdio.h>
 #include <time.h>
@@ -40,7 +41,6 @@
 #include <limits.h>
 #include "rtdata.h"
 
-//#define TZNAME_MAX    128     /* defined in <limits.h> */
 
 static const char awday_name[] = { "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat" };
 
@@ -73,6 +73,7 @@ static const char * const mon_name[12] = {
     "December"
 };
 
+
 static void TwoDigits( CHAR_TYPE *buffer, int value )
 {
     buffer[0] = ( CHAR_TYPE ) ( value / 10 + '0' );
@@ -80,7 +81,7 @@ static void TwoDigits( CHAR_TYPE *buffer, int value )
     buffer[2] = NULLCHAR;
 }
 
-_WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
+_WCRTLINK size_t __F_NAME(strftime,wcsftime)( CHAR_TYPE *s, size_t maxsize,
              const CHAR_TYPE *format, const struct tm *timeptr )
 {
     CHAR_TYPE           buffer[TZNAME_MAX + 1];
@@ -169,7 +170,7 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
                 break;
             case 'j' :                         /* day of the year (001-366) */
                 // sprintf( buffer, "%.3d", timeptr->tm_yday + 1 );
-                __F_NAME( itoa, _itow ) ( timeptr->tm_yday + 101, buffer, 10 );
+                __F_NAME(itoa,_itow)( timeptr->tm_yday + 101, buffer, 10 );
                 buffer[0]--;
                 // itoa( timeptr->tm_yday + 1001, buffer, 10 );
                 // p = &buffer[1];         /* only want last 3 digits */
@@ -214,11 +215,12 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
                                 + 7 - timeptr->tm_wday ) / 7 );
                 break;
             case 'w' :   /* weekday (0-6) Sunday=0 */
-                buffer[0] = ( CHAR_TYPE ) ( timeptr->tm_wday + '0' );
+                buffer[0] = (CHAR_TYPE)( timeptr->tm_wday + '0' );
                 buffer[1] = '\0';
                 break;
             case 'W' : { /* week number of the year (00-53) Mon first day */
-                    int x = ( timeptr->tm_yday % 7 - timeptr->tm_wday + 7 );
+                    int x = timeptr->tm_yday % 7 - timeptr->tm_wday + 7;
+
                     TwoDigits( buffer, ( 6 - x % 7 + timeptr->tm_yday ) / 7 );
                 }
                 break;
@@ -252,7 +254,7 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
                 TwoDigits( buffer, timeptr->tm_year % 100 );
                 break;
             case 'Y' :   /* year with century */
-                __F_NAME( itoa, _itow ) ( timeptr->tm_year + 1900, buffer, 10 );
+                __F_NAME(itoa,_itow)( timeptr->tm_year + 1900, buffer, 10 );
                 break;
             case 'Z' :   /* time zone name */
             case 'z' :
@@ -267,18 +269,18 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
             }
         }
 #if defined( __WIDECHAR__ )
-        if( p != ( char *) buffer ) {
+        if( p != (char *)buffer ) {
             /*** Convert the MBCS string to wide chars in buffer ***/
-            if( mbstowcs( buffer, p, _mbslen( p ) + 1 ) == ( size_t ) - 1 )
+            if( mbstowcs( buffer, p, _mbslen( p ) + 1 ) == (size_t)-1 )
                 buffer[0] = L'\0';
-            p = ( const char*) buffer;
+            p = (const char *)buffer;
         }
 #endif
         ++format;
-        piece = __F_NAME( strlen, wcslen ) ( ( const CHAR_TYPE* ) p );
+        piece = __F_NAME(strlen,wcslen)( (const CHAR_TYPE *)p );
         if( piece > amt_left )
             piece = amt_left;
-        memcpy( &s[len], ( const CHAR_TYPE* ) p, piece * CHARSIZE );
+        memcpy( &s[len], (const CHAR_TYPE *)p, piece * CHARSIZE );
         amt_left -= piece;
         len += piece;
     }
@@ -300,7 +302,7 @@ _WCRTLINK size_t _wstrftime_ms( CHAR_TYPE *s, size_t maxsize, const char *format
     int         length;
 
     length = _mbslen( format ) + 1;
-    auto_buf = ( wchar_t* ) alloca( length * CHARSIZE );
+    auto_buf = (wchar_t *)alloca( length * CHARSIZE );
     mbstowcs( auto_buf, format, length );
     return( wcsftime( s, maxsize, auto_buf, timeptr ) );
 }
