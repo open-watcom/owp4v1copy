@@ -218,11 +218,9 @@ _WCRTLINK size_t __F_NAME(strftime,wcsftime)( CHAR_TYPE *s, size_t maxsize,
                 buffer[0] = (CHAR_TYPE)( timeptr->tm_wday + '0' );
                 buffer[1] = '\0';
                 break;
-            case 'W' : { /* week number of the year (00-53) Mon first day */
-                    int x = timeptr->tm_yday % 7 - timeptr->tm_wday + 7;
-
-                    TwoDigits( buffer, ( 6 - x % 7 + timeptr->tm_yday ) / 7 );
-                }
+            case 'W' :  /* week number of the year (00-53) Mon first day */
+                TwoDigits( buffer, ( timeptr->tm_yday
+                                + 7 - (timeptr->tm_wday + 6) % 7 ) / 7 );
                 break;
             case 'x' :   /* locale's appropriate date representation */
 #if 0
