@@ -173,10 +173,12 @@ typedef struct link_def {
 #define EXT_INPUT_FILE  ".whp"
 #define EXT_OUTRTF_FILE ".rtf"
 #define EXT_OUTIPF_FILE ".ipf"
-#ifdef __QNX__
-  #define EXT_OUTHTML_FILE ".html"
-#else
+#ifdef __DOS__
   #define EXT_OUTHTML_FILE ".htm"
+  #define EXT_OUTWIKI_FILE ".wik"
+#else
+  #define EXT_OUTHTML_FILE ".html"
+  #define EXT_OUTWIKI_FILE ".wiki"
 #endif
 #define EXT_OUTIB_FILE  ".ib"
 #define EXT_IDX_FILE    ".idx"
@@ -372,6 +374,15 @@ extern void html_output_file(
     void
 );
 
+extern int wiki_trans_line(
+    section_def         *section,
+    int                 alloc_size
+);
+
+extern void wiki_output_file(
+    void
+);
+
 extern void add_link(
     char                *link_name
 );
@@ -393,5 +404,6 @@ extern void rtf_topic_init( void );
 extern void ipf_topic_init( void );
 extern void ib_topic_init( void );
 extern void html_topic_init( void );
+extern void wiki_topic_init( void );
 
 #endif

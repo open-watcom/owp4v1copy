@@ -19,6 +19,7 @@ objs =              &
         rtf.obj     &
         ipf.obj     &
         ib.obj      &
+	wiki.obj    &
         html.obj
 
 !include exetarg.mif

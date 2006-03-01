@@ -27,12 +27,14 @@
 * Description:  This program converts WHP files (WATCOM Help) into OS
 *               dependent help files. Currently supported formats:
 *
-*                * Windows RTF.
-*                * OS/2 IPF.
-*                * DOS InfoBench Help (maybe).
+*                * Windows RTF
+*                * OS/2 IPF
+*                * DOS InfoBench Help (maybe)
 *                * HTML
+*                * MediaWiki tags
 *
 ****************************************************************************/
+
 
 #define WHPCVT_GBL
 #include "whpcvt.h"
@@ -44,6 +46,7 @@ static const char *Help_info[] = {
     "     -ipf     : generate OS/2 IPF output",
     "     -ib      : generate DOS InfoBench output",
     "     -html    : generate HTML output",
+    "     -wiki    : generate wiki output",
     "     -@ <opt_file> : read more options from <opt_file> after the command line",
     "     -i       : generate <in_file>.idx file containing index of topics",
     "     -iw      : generate '.idx' file in WHP format (instead of GML)",
@@ -100,6 +103,7 @@ static const char *Help_info[] = {
     "       for OS/2 IPF:      " EXT_OUTIPF_FILE,
     "       for Dos Infobench: " EXT_OUTIB_FILE,
     "       for HTML:          " EXT_OUTHTML_FILE,
+    "       for wiki:          " EXT_OUTWIKI_FILE,
     NULL
 };
 
@@ -148,6 +152,7 @@ enum {
     ARG_DPI,
     ARG_DPB,
     ARG_HTML,
+    ARG_WIKI,
     ARG_END
 };
 
@@ -196,6 +201,7 @@ static char *Args[]={
     "dpi",
     "dpb",
     "html",
+    "wiki",
     NULL
 };
 
@@ -249,7 +255,8 @@ enum {
     OUT_RTF,
     OUT_IPF,
     OUT_IB,
-    OUT_HTML
+    OUT_HTML,
+    OUT_WIKI
 };
 static int              Output_type = OUT_RTF;
 
@@ -582,6 +589,10 @@ static int process_args(
 
             case ARG_HTML:
                 Output_type = OUT_HTML;
+                break;
+
+            case ARG_WIKI:
+                Output_type = OUT_WIKI;
                 break;
 
             case ARG_BL:
@@ -1132,6 +1143,8 @@ static int trans_line(
         return( ib_trans_line( section, alloc_size ) );
     case OUT_HTML:
         return( html_trans_line( section, alloc_size ) );
+    case OUT_WIKI:
+        return( wiki_trans_line( section, alloc_size ) );
     }
     return( 0 );
 }
@@ -1153,6 +1166,9 @@ static void topic_init(
         break;
     case OUT_HTML:
         html_topic_init();
+        break;
+    case OUT_WIKI:
+        wiki_topic_init();
         break;
     }
 }
@@ -2200,6 +2216,9 @@ int main(
     case OUT_HTML:
         strcpy( Output_file_ext, EXT_OUTHTML_FILE );
         break;
+    case OUT_WIKI:
+        strcpy( Output_file_ext, EXT_OUTWIKI_FILE );
+        break;
     }
 
     if( argc == start_arg + 1 ) {
@@ -2282,6 +2301,9 @@ int main(
         break;
     case OUT_HTML:
         html_output_file();
+        break;
+    case OUT_WIKI:
+        wiki_output_file();
         break;
     }
 
