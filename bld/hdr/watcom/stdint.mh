@@ -181,6 +181,13 @@ typedef unsigned long long uintmax_t;
 #define INTMAX_MAX   9223372036854775807LL
 #define UINTMAX_MAX  18446744073709551615ULL
 
+/* Limits of wide character types */
+:: Also in wchar.h
+#define WCHAR_MIN       0
+#define WCHAR_MAX       65535U
+#define WINT_MIN        WCHAR_MIN
+#define WINT_MAX        WCHAR_MAX
+
 /* Limits of other integer types. */
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
 #define PTRDIFF_MIN     (-2147483647-1)
@@ -188,10 +195,6 @@ typedef unsigned long long uintmax_t;
 #define SIG_ATOMIC_MIN  (-2147483647-1)
 #define SIG_ATOMIC_MAX  2147483647
 #define SIZE_MAX        4294967295U
-#define WCHAR_MIN       0
-#define WCHAR_MAX       65535
-#define WINT_MIN        WCHAR_MIN
-#define WINT_MAX        WCHAR_MAX
 #else /* 16 bit */
 #if defined(__HUGE__)
 #define PTRDIFF_MIN     (-2147483647L-1)
@@ -203,10 +206,6 @@ typedef unsigned long long uintmax_t;
 #define SIG_ATOMIC_MIN  (-32767-1)
 #define SIG_ATOMIC_MAX  32767
 #define SIZE_MAX        65535U
-#define WCHAR_MIN       0
-#define WCHAR_MAX       65535U
-#define WINT_MIN        WCHAR_MIN
-#define WINT_MAX        WCHAR_MAX
 #endif
 
 #endif /* Limit macros. */
