@@ -51,7 +51,7 @@ struct class_data {
 #endif
     DECL_INFO       *inlines;           /* ring of pending inline functions */
     DECL_INFO       *defargs;           /* ring of pending default arg exprs */
-    void            *fn_pragma;         /* function pragma for member functions */
+    AUX_INFO        *fn_pragma;         /* function pragma for member functions */
     TYPE            class_mod_type;     /* type representing mod in class <mod> X */
     TYPE            base_class_with_mod;/* base class with a class mod */
     VF_HIDE         *vf_hide_list;      /* vfns possibly hidden by this class */
