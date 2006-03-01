@@ -30,16 +30,23 @@
 ****************************************************************************/
 
 
-#include <windows.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include "cover.h"
 
 #define MAX_CB_PARMS    50
 #define MAX_CB_JUMPTABLE        512
-DWORD                   __cdecl CBJumpTable[MAX_CB_JUMPTABLE];
-extern  CALLBACKPTR     __cdecl _16BitCallBackAddr;
-extern  void (far * far * __cdecl _32BitCallBackAddr)(void);
-extern  void            far __cdecl _32BitCallBack();
+
+DWORD               _CBJumpTable[MAX_CB_JUMPTABLE];
+extern  CALLBACKPTR __16BitCallBackAddr;
+extern  void        (far * far *__32BitCallBackAddr)( void );
+extern  void        far __32BitCallBack( void );
+
+#pragma aux _CBJumpTable        "*";
+#pragma aux __16BitCallBackAddr "*";
+#pragma aux __32BitCallBackAddr "*";
+#pragma aux __32BitCallBack     "*";
+
 extern DWORD far *_CodeSelectorBaseAddr;
 extern DWORD far *_DataSelectorBaseAddr;
 
@@ -59,6 +66,7 @@ static int              MaxCBIndex;
 #define PUSH_ES         0x06
 #define POP_DS          0x1f
 #define RET             0xc3
+
 
 /*
  * code emitting functions follow
@@ -194,7 +202,7 @@ CALLBACKPTR DoEmitCode( int argcnt, int bytecnt, char *array,
      * get a callback jump table entry
      */
     for( i = 0; i < MAX_CB_JUMPTABLE; i++ ) {
-        if( CBJumpTable[i] == 0L ) {
+        if( _CBJumpTable[i] == 0L ) {
             break;
         }
     }
@@ -216,11 +224,11 @@ CALLBACKPTR DoEmitCode( int argcnt, int bytecnt, char *array,
     /*
      * set up the callback jump table, and return the proper callback rtn
      */
-    CBJumpTable[i] = (DWORD) emitWhere  - *_DataSelectorBaseAddr
+    _CBJumpTable[i] = (DWORD) emitWhere  - *_DataSelectorBaseAddr
                                         + *_CodeSelectorBaseAddr;
     if( i > MaxCBIndex )  MaxCBIndex = i;
-    *_32BitCallBackAddr = (void (far *)(void))&_32BitCallBack;
-    return( (char *)_16BitCallBackAddr - (i+1) * CB_CODE_SIZE );
+    *__32BitCallBackAddr = (void (far *)(void))&__32BitCallBack;
+    return( (char *)__16BitCallBackAddr - (i+1) * CB_CODE_SIZE );
 
 } /* DoEmitCode */
 
@@ -265,11 +273,11 @@ void ReleaseCallbackRoutine( CALLBACKPTR cbp )
     int         i;
     DWORD       cb;
 
-    i = ((char *)_16BitCallBackAddr - (char *)cbp) / CB_CODE_SIZE;
+    i = ((char *)__16BitCallBackAddr - (char *)cbp) / CB_CODE_SIZE;
     --i;
-    cb = CBJumpTable[i] - *_CodeSelectorBaseAddr + *_DataSelectorBaseAddr;
+    cb = _CBJumpTable[i] - *_CodeSelectorBaseAddr + *_DataSelectorBaseAddr;
     free( (void *)cb );
-    CBJumpTable[i] = 0L;
+    _CBJumpTable[i] = 0L;
 
 } /* ReleaseCallbackRoutine */
 
@@ -280,10 +288,10 @@ void *SetProc( FARPROC fp, int type )
 
     if( fp == NULL )  return( NULL );
     for( i = 0; i <= MaxCBIndex; i++ ) {
-        cbp = (char *)(CBJumpTable[i] - *_CodeSelectorBaseAddr
+        cbp = (char *)(_CBJumpTable[i] - *_CodeSelectorBaseAddr
                                       + *_DataSelectorBaseAddr);
         if( *(FARPROC *)(cbp+1) == fp ) {
-            return( (char *)_16BitCallBackAddr - (i+1) * CB_CODE_SIZE );
+            return( (char *)__16BitCallBackAddr - (i+1) * CB_CODE_SIZE );
         }
     }
     return( GetProc16( (PROCPTR)fp, type ) );
@@ -308,12 +316,12 @@ void PASCAL FreeProcInstance( FARPROC fp )
     int         i;
     char        *cbp;
 
-    for( i = 0; i <= MaxCBIndex  &&  CBJumpTable[i] != 0L; i++ ) {
-        cbp = (char *)(CBJumpTable[i] - *_CodeSelectorBaseAddr
+    for( i = 0; i <= MaxCBIndex  &&  _CBJumpTable[i] != 0L; i++ ) {
+        cbp = (char *)(_CBJumpTable[i] - *_CodeSelectorBaseAddr
                                       + *_DataSelectorBaseAddr);
         if( *(FARPROC *)(cbp+1) == fp ) {
             free( cbp );
-            CBJumpTable[i] = 0L;
+            _CBJumpTable[i] = 0L;
         }
     }
 }
