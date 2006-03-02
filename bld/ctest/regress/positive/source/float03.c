@@ -57,17 +57,15 @@ unsigned d[] = {
     8,
 };
 
-int main() {
+int main( void ) {
     unsigned *nn;
     unsigned *dd;
     double *p;
 
-#ifdef __X86__
-    if( (unsigned)34.99999999999999999999999999999999999999 != 34 ) fail(__LINE__);
-#else
-    /* Same as above - non-x86 platforms don't have enough accuracy */
+    /* Note: using more digits will cause fp constant to be rounded
+     * up to 35 and the test will fail.
+     */
     if( (unsigned)34.99999999999999 != 34 ) fail(__LINE__);
-#endif
     if( ((double)2)/2/2*2*2 != 2 ) fail(__LINE__);
     nn = n;
     dd = d;

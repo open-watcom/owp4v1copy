@@ -303,10 +303,9 @@ extern  int     WalkExprTree( TREEPTR,
                         void (*postfix_operator)(TREEPTR) );
 extern void     CastFloatValue(TREEPTR,DATA_TYPE);
 extern void     CastConstValue(TREEPTR,DATA_TYPE);
-extern void     InitExpressCode(int,int);
+extern void     MakeBinaryFloat(TREEPTR);
 
 typedef struct  sym_lists {
     struct sym_lists    *next;
     SYM_HANDLE          sym_head;
 } SYM_LISTS;
-

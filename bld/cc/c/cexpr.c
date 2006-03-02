@@ -253,6 +253,8 @@ TREEPTR ConstLeaf( void )
         flt->next = NULL;
         leaf->op.float_value = flt;
         leaf->op.opr = OPR_PUSHFLOAT;
+        /* Convert constant to binary; that ensures it'll be cast properly. */
+        MakeBinaryFloat( leaf );
         break;
     }
     leaf->expr_type = GetType( leaf->op.const_type );
