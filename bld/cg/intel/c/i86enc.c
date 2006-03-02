@@ -1603,6 +1603,10 @@ static  void    LayMF( name *op ) {
         case FD:
             Inst[ KEY ] |= MF_FD;
             break;
+        case FL:
+            Inst[ KEY ] |= MF_FL;
+            Inst[ RMR ] |= B_RMR_FMT_FL;
+            break;
         case U2:
         case I2:
             Inst[ KEY ] |= MF_I2;
