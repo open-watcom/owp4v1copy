@@ -24,10 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  LFN support functions for _dos_find* (32-bit).
+;* Description:  Non-LFN _dos_find* fallback for findlfn.c. (32-bit)
 ;*
 ;*****************************************************************************
 
 
 __WATCOM_LFN__ EQU 1
 include ../../_dos/a/find386.asm
+

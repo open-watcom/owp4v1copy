@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  DOS platform chmod() implementation.
+* Description:  DOS implementation of chmod().
 *
 ****************************************************************************/
 
@@ -47,6 +47,39 @@ extern  unsigned long _chmode(const char *,unsigned);
 extern  unsigned long _BDchmode(const char *,unsigned);
 
 #if defined(__386__)
+#if defined(__WATCOM_LFN__)
+#pragma aux     _chmode   = "   sub eax,eax" \
+                            "   mov ax,7143h"\
+                            "   push bx"     \
+                            "   mov bl,00h"  \
+                                _INT_21      \
+                            "   jnc short L0"\
+                            "   cmp ax,7100h"\
+                            "   jnz short L0"\
+                            "   pop bx"      \
+                            "   mov ah,43h"  \
+                                _INT_21      \
+                            "   jc  short L3"\
+                            "   jmp short L4"\
+                            "L0:pop bx"      \
+                            "L4:test bl,80h" \
+                            "   je  short L1"\
+                            "   and cl,0feh" \
+                            "   jmp short L2"\
+                            "L1:or  cl,01h"  \
+                            "L2:mov ax,7143h"\
+                            "   mov bl,01h"  \
+                                _INT_21      \
+                            "   jnc short L3"\
+                            "   cmp ax,7100h"\
+                            "   jnz short L3"\
+                            "   mov ah,43h"  \
+                            "   mov al,01h"  \
+                                _INT_21      \
+                            "L3:rcl eax,1"   \
+                            "   ror eax,1"   \
+                        parm caller [edx] [ebx] value [eax] modify [ecx ebx];
+#else
 #pragma aux     _chmode   = "   sub eax,eax" \
                             "   mov ah,43h"  \
                                 _INT_21      \
@@ -62,7 +95,70 @@ extern  unsigned long _BDchmode(const char *,unsigned);
                             "L3:rcl eax,1"   \
                             "   ror eax,1"   \
                         parm caller [edx] [ebx] value [eax] modify [ecx];
+#endif
 #elif defined(M_I86)
+#if defined(__WATCOM_LFN__)
+#pragma aux     _chmode   = "   mov ax,7143h"\
+                            "   push bx"     \
+                            "   mov bl,00h"  \
+                            "   int 21h"     \
+                            "   jnc short L0"\
+                            "   cmp ax,7100h"\
+                            "   jnz short L0"\
+                            "   pop bx"      \
+                            "   mov ax,4300h"\
+                            "   int 21h"     \
+                            "   jc  short L3"\
+                            "   jmp short L4"\
+                            "L0:pop bx"      \
+                            "L4:test bl,80h" \
+                            "   je  short L1"\
+                            "   and cl,0feh" \
+                            "   jmp short L2"\
+                            "L1:or  cl,01h"  \
+                            "L2:mov ax,7143h"\
+                            "   mov bl,01h"  \
+                            "   int 21h"     \
+                            "   jnc short L3"\
+                            "   cmp ax,7100h"\
+                            "   jnz short L3"\
+                            "   mov ax,4301h"\
+                            "   int 21h"     \
+                            "L3:sbb dx,dx"   \
+                        parm caller [dx] [bx] value [ax dx] modify [cx bx];
+
+#pragma aux     _BDchmode = "   mov ax,7143h"\
+                            "   push bx"     \
+                            "   mov bl,00h"  \
+                            "   push ds"     \
+                            "   mov ds,cx"   \
+                            "   int 21h"     \
+                            "   jnc short L0"\
+                            "   cmp ax,7100h"\
+                            "   jnz short L0"\
+                            "   pop bx"      \
+                            "   mov ax,4300h"\
+                            "   int 21h"     \
+                            "   jc  short L3"\
+                            "   jmp short L4"\
+                            "L0:pop bx"      \
+                            "L4:test bl,80h" \
+                            "   je  short L1"\
+                            "   and cl,0feh" \
+                            "   jmp short L2"\
+                            "L1:or  cl,01h"  \
+                            "L2:mov ax,7143h"\
+                            "   mov bl,01h"  \
+                            "   int 21h"     \
+                            "   jnc short L3"\
+                            "   cmp ax,7100h"\
+                            "   jnz short L3"\
+                            "   mov ax,4301h"\
+                            "   int 21h"     \
+                            "L3:sbb dx,dx"   \
+                            "   pop ds"      \
+                        parm caller [dx cx] [bx] value [ax dx] modify [cx bx];
+#else
 #pragma aux     _chmode   = "   mov ax,4300h"\
                             "   int 21h"     \
                             "   jc  short L3"\
@@ -91,6 +187,7 @@ extern  unsigned long _BDchmode(const char *,unsigned);
                             "L3:sbb dx,dx"   \
                             "   pop ds"      \
                         parm caller [dx cx] [bx] value [ax dx] modify [cx];
+#endif
 #else
 #error platform not supported
 #endif
@@ -113,6 +210,5 @@ _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
 #endif
     ax = rc & 0xffff;
     dx = rc >> 16;
-    return _dosret0( ax, dx );
+    return( _dosret0( ax, dx ) );
 }
-

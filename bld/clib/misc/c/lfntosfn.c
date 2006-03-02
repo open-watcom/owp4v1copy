@@ -24,66 +24,61 @@
 *
 *  ========================================================================
 *
-* Description:  DOS implementation of access().
+* Description:  A function to convert long filenames to short filenames (DOS)
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include "widechar.h"
-#include <io.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 #include <dos.h>
-#include "tinyio.h"
-#ifdef __WIDECHAR__
-    #include <mbstring.h>
-    #include <stdlib.h>
-    #include "mbwcconv.h"
-#endif
 
-#ifdef __WATCOM_LFN__
-static int CTinyAccess( const char *path, int mode )
+_WCRTLINK int _islfn( const char *path )
 {
-    unsigned    attrs;
+    char *buff = strrchr( path, '\\' );
+    if( buff == NULL ) {
+        if( strlen( path ) > 12 || strrchr( path, ' ' ) != NULL )
+            return( 1 );
+    }
+    if( strlen( buff ) > 12 || strrchr( path, ' ' ) != NULL )
+        return( 1 );
 
-    if( _dos_getfileattr( path, &attrs ) != 0 ) return( -1 );
-    return( ( attrs & _A_RDONLY && mode == W_OK ) ? -1 : 0 );
+    return( 0 );
 }
 
-#undef  TinyAccess
-#define TinyAccess   CTinyAccess
-#else
-
-extern  int           _dosret0(unsigned,unsigned);
-#endif
-
-
-_WCRTLINK int __F_NAME(access,_waccess)( const CHAR_TYPE *pathname, int pmode )
+_WCRTLINK char *_lfntosfn( char *orgname, char *shortname )
 {
 #ifndef __WATCOM_LFN__
-    unsigned long   rc;
-    unsigned        ax, dx;
-#endif
-#ifdef __WIDECHAR__
-    char            mbPath[MB_CUR_MAX*_MAX_PATH]; /* single-byte char */
-#endif
-
-#ifdef __WATCOM_LFN__
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbPath, pathname );
-        return( TinyAccess( mbPath, pmode ) );
-    #else
-        return( TinyAccess( pathname, pmode ) );
-    #endif
+    strcpy( shortname, orgname );
+    return( orgname );
 #else
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbPath, pathname );
-        rc = TinyAccess( mbPath, pmode );
-    #else
-        rc = TinyAccess( pathname, pmode );
-    #endif
+    union  REGS     r;
+    struct SREGS    s;
 
-    ax = rc & 0xffff;
-    dx = rc >> 16;
-    return( _dosret0( ax, dx ) );
+    r.w.ax = 0x7160;              /* LFN Truename, CL = 1 */
+    r.h.cl = 1;
+    r.h.ch = 0;
+    s.ds   = FP_SEG( orgname   ); /* LFN path goes in DS:SI */
+    r.w.si = FP_OFF( orgname   );
+    s.es   = FP_SEG( shortname ); /* Buffer for short name goes in ES:DI */
+    r.w.di = FP_OFF( shortname );
+
+    intdosx( &r, &r, &s );        /* Let's call the interrupt */
+
+    /*
+     * If ax = 7100, there is probably an LFN TSR but no LFN support for
+     * whatever drive or directory is being searched. In that case, return the
+     * original path/name.  Also if the function fails, it could be because of
+     * no LFN TSR so fall back to the original name.
+     */
+    if( r.w.ax == 0x7100 || r.w.cflag ) {
+        strcpy( shortname, orgname );
+        return( NULL );
+    }
+
+    /* If there was no failure, return the new short filename */
+    return( shortname );
 #endif
 }

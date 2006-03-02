@@ -55,12 +55,70 @@
 
 /* file attributes */
 
+_WCRTLINK extern char   *_lfntosfn( char *orgname, char *shortname );
+_WCRTLINK extern int    _islfn( const char *path );
+
 #define _A_RDONLY       0x01
+
+#ifdef __WATCOM_LFN__
+static int CTinyOpen( const char *path, int mode )
+{
+    char    short_name[128];
+    union   REGS      r;
+    struct  SREGS     s;
+
+    if( _lfntosfn( ( char * )path, short_name ) == NULL ) {
+        return( -2 );
+    }
+
+    r.w.ax = ( short_name[0] != '\0' ) ?
+        TinyOpen( short_name, mode ) : -1;
+
+    if( TINY_OK( r.w.ax ) ) return ( r.w.ax );
+
+    s.ds   = FP_SEG( path );
+    r.w.si = FP_OFF( path );
+    r.w.bx = mode;
+    r.w.dx = 0;
+    r.w.ax = 0x716C;
+
+    intdosx( &r, &r, &s );
+
+    if( r.x.cflag || r.w.ax == 0x7100 ) return ( TinyOpen( path, mode ) );
+    return ( ( r.w.ax < 5 ) ? -1 : r.w.ax );
+}
+
+static int CTinyCreate( const char *path, int attribs )
+{
+    union REGS      r;
+    struct SREGS    s;
+
+    s.ds   = FP_SEG( path );
+    r.w.si = FP_OFF( path );
+    r.w.bx = O_WRONLY;
+    r.w.cx = attribs;
+    r.w.dx = 0x12;
+    r.w.ax = 0x716C;
+
+    intdosx( &r, &r, &s );
+
+    if( ( r.x.cflag || r.w.ax == 0x7100 ) && !_islfn( path ) )
+        return ( TinyCreate( path, attribs ) );
+    else if( _islfn( path ) && ( r.x.cflag || r.w.ax == 0x7100 ) )
+        return -r.w.ax;
+    return ( ( r.w.ax < 5 ) ? CTinyOpen( path, O_WRONLY ) : r.w.ax );
+}
+
+#undef   TinyOpen
+#undef   TinyCreate
+#define  TinyOpen    CTinyOpen
+#define  TinyCreate  CTinyCreate
+#endif
 
 extern unsigned __NFiles;
 
-
-static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shflag, va_list args )
+static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode,
+                                      int shflag, va_list args )
 {
     int         rwmode;
     int         handle;
@@ -82,6 +140,7 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shfla
     #endif
                                                     /* 05-sep-91 */
     rwmode = mode & ( O_RDONLY | O_WRONLY | O_RDWR | O_NOINHERIT );
+
     #ifdef __WIDECHAR__
         rc = TinyOpen( mbName, rwmode | shflag );
     #else
@@ -131,7 +190,8 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shfla
     }
     if( handle == -1 ) {                    /* could not open */
         if(( mode & O_CREAT ) == 0
-            || TINY_INFO( rc ) != TIO_FILE_NOT_FOUND ) {
+            || ( TINY_INFO( rc ) != TIO_FILE_NOT_FOUND
+            && ( TINY_INFO( rc ) != TINY_INFO( -TIO_FILE_NOT_FOUND ) ) ) ) {
             return( __set_errno_dos( TINY_INFO( rc ) ) );
         }
         /* creating the file */
@@ -175,7 +235,7 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shfla
                 return( __set_errno_dos( TINY_INFO( rc ) ) );
             }
 
-            handle = TINY_INFO( rc );
+             handle = TINY_INFO( rc );
             if (handle >= __NFiles)
             {
                     TinyClose(handle);

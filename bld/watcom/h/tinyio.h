@@ -1256,36 +1256,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax] \
         modify exact    [eax ebx ecx edx];
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyAccess = \
-         "mov ax,7143h" \
-         "push bx"       \
-         "mov bl,0"      \
-         _INT_21         \
-         "pop bx"        \
-         "jc old"        \
-         "cmp ax,7100"   \
-         "jnz donefunc"  \
-         "old:"          \
-         "mov ax,4300h"  \
-         _INT_21         \
-         "donefunc:"     \
-         "jc finish"     \
-         "test bl,2"     \
-         "jz finish"     \
-         "test cl,1"     \
-         "jz finish"     \
-         "mov al,0"      \
-         "mov ah,6"/*EACCES*/ \
-         "stc"           \
-         "finish:"       \
-         "sbb ecx,ecx"   \
-         "mov cx,ax"     \
-         "mov eax,ecx"   \
-         parm caller     [edx] [bx] \
-         value           [eax] \
-         modify exact    [eax ecx];
-#else
 #pragma aux             _nTinyAccess = \
         _XOR_AX_AX      \
         _MOV_AH DOS_CHMOD    \
@@ -1304,27 +1274,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [edx] [bx] \
         value           [eax] \
         modify exact    [eax ecx];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux        _nTinyOpen = \
-        "mov dx,0"      \
-        "mov ax,716Ch"  \
-        _INT_21         \
-        "jc old"        \
-        "cmp ax,7100"   \
-        "jnz finish"    \
-        "old:"          \
-        "mov edx,esi"   \
-        "mov ax,bx"     \
-        "mov ah,3Dh"    \
-        _INT_21         \
-        "finish:"       \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [esi] [bx] \
-        value           [eax];
-#else
 #pragma aux             _nTinyOpen = \
         "mov ah,3Dh"    \
         _INT_21         \
@@ -1332,27 +1282,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [edx] [al] \
         value           [eax];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyCreate = \
-        "mov dx,12h"    \
-        "mov ax,716Ch"  \
-        _INT_21         \
-        "jc old"        \
-        "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
-        "mov edx,esi"   \
-        "mov ecx,ebx"   \
-        "mov ah,3Ch"    \
-         _INT_21        \
-        "finish:"       \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [esi] [ebx] \
-        value           [eax];
-#else
 #pragma aux             _nTinyCreate = \
         "mov ah,3Ch"    \
         _INT_21         \
@@ -1360,23 +1290,20 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [edx] [ecx] \
         value           [eax];
-#endif
 
 #ifdef __WATCOM_LFN__
 #pragma aux             _nTinyCreateEx = \
+        "mov ax,716Ch"  \
         "push ecx"      \
-        "mov cl,1"      \
-        "mov ch,0"      \
-        "mov ax,7160h"  \
         _INT_21         \
         "pop ecx"       \
-        "jc callfunc"   \
+        "jc old"        \
         "cmp ax,7100h"  \
-        "jz callfunc"   \
-        "mov esi,edi"   \
-        "callfunc:"     \
+        "jnz finish"    \
+        "old:"          \
         "mov ax,6C00h"  \
         _INT_21         \
+        "finish:"       \
         "rcl eax,1"     \
         "ror eax,1"     \
         parm caller     [esi] [ebx] [ecx] [edx]\
@@ -1391,25 +1318,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 #endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyCreateNew = \
-        "mov dx,10h"    \
-        "mov ax,716Ch"  \
-        _INT_21         \
-        "jc old"        \
-        "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
-        "mov edx,esi"   \
-        "mov ecx,ebx"   \
-        "mov ah,5Bh"    \
-        _INT_21         \
-        "finish:"       \
-        "rcl eax,1"     \
-        "ror eax,1"     \
-        parm caller     [esi] [ebx] \
-        value           [eax];
-#else
 #pragma aux             _nTinyCreateNew = \
         "mov ah,5Bh"    \
         _INT_21         \
@@ -1417,7 +1325,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "ror eax,1"     \
         parm caller     [edx] [ecx] \
         value           [eax];
-#endif
 
 #ifdef __WATCOM_LFN__
 #pragma aux             _nTinyCreateTemp = \
@@ -1935,63 +1842,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
  * 8086 versions of pragmas
  **************************/
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyAccess = \
-        _SET_DS_DGROUP  \
-        "mov ax,7143h"  \
-        "push bx"       \
-        "mov bl,0"      \
-        _INT_21         \
-        "pop bx"        \
-        "jc old"        \
-        "cmp ax,7100"   \
-        "jnz donefunc"  \
-        "old:"          \
-        "mov ax,4300h"  \
-        _INT_21         \
-        "donefunc:"     \
-        "jc finish"     \
-        "test bl,2"     \
-        "jz finish"     \
-        "test cl,1"     \
-        "jz finish"     \
-        "mov ax,6"/*EACCES*/    \
-        "stc"           \
-        "finish:"       \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [dx] [bx] \
-        value           [dx ax] \
-        modify exact    [ax bx cx dx];
-
-#pragma aux             _fTinyAccess = \
-        _SET_DS_SREG    \
-        "mov ax,7143h"  \
-        "push bx"       \
-        "mov bl,0"      \
-        _INT_21         \
-        "pop bx"        \
-        "jc old"        \
-        "cmp ax,7100"   \
-        "jnz donefunc"  \
-        "old:"          \
-        "mov ax,4300h"  \
-        _INT_21         \
-        "donefunc:"     \
-        "jc finish"     \
-        "test bl,2"     \
-        "jz finish"     \
-        "test cl,1"     \
-        "jz finish"     \
-        "mov ax,6"/*EACCES*/    \
-        "stc"           \
-        "finish:"       \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG dx] [bx] \
-        value           [dx ax] \
-        modify exact    [ax bx cx dx _SREG];
-#else
 #pragma aux             _nTinyAccess = \
         _SET_DS_DGROUP  \
         _MOV_AX 0x00 DOS_CHMOD \
@@ -2025,49 +1875,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [_SREG dx] [bx] \
         value           [dx ax] \
         modify exact    [ax bx cx dx _SREG];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyOpen = \
-        _SET_DS_DGROUP_SAFE \
-        "mov dx,0"      \
-        "mov ax,716Ch"  \
-        _INT_21         \
-        "jc old"        \
-        "cmp ax,7100"   \
-        "jnz finish"    \
-        "old:"          \
-        "mov dx,si"     \
-        "mov ax,bx"     \
-        "mov ah,3Dh"    \
-        _INT_21         \
-        "finish:"       \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [si] [bx] \
-        value           [dx ax] \
-        modify exact    [bx si ax dx];
-
-#pragma aux             _fTinyOpen = \
-        _SET_DS_SREG_SAFE   \
-        "mov dx,0"      \
-        "mov ax,716Ch"  \
-        _INT_21         \
-        "jc old"        \
-        "cmp ax,7100"   \
-        "jnz finish"    \
-        "old:"          \
-        "mov dx,si"     \
-        "mov ax,bx"     \
-        "mov ah,3Dh"    \
-        _INT_21         \
-        "finish:"       \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG si] [bx] \
-        value           [dx ax] \
-        modify exact    [bx si ax dx _SREG];
-#else
 #pragma aux             _nTinyOpen = \
         _SET_DS_DGROUP_SAFE \
         _MOV_AH DOS_OPEN \
@@ -2087,49 +1895,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [_SREG dx] [al] \
         value           [dx ax] \
         modify exact    [ax dx _SREG];
-#endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyCreate = \
-        _SET_DS_DGROUP  \
-        "mov dx,12h"    \
-        "mov ax,716Ch"  \
-        _INT_21         \
-        "jc old"        \
-        "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
-        "mov dx,si"     \
-        "mov cx,bx"     \
-        "mov ah,3Ch"    \
-        _INT_21         \
-        "finish:"       \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [si] [bx] \
-        value           [dx ax] \
-        modify exact    [si bx ax cx dx];
-
-#pragma aux             _fTinyCreate = \
-        _SET_DS_SREG    \
-        "mov dx,12h"    \
-        "mov ax,716Ch"  \
-        _INT_21         \
-        "jc old"        \
-        "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
-        "mov dx,si"     \
-        "mov cx,bx"     \
-        "mov ah,3Ch"    \
-        _INT_21         \
-        "finish:"       \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG si] [bx] \
-        value           [dx ax] \
-        modify exact    [si bx ax cx dx _SREG];
-#else
 #pragma aux             _nTinyCreate = \
         _SET_DS_DGROUP  \
         _MOV_AH DOS_CREAT \
@@ -2149,24 +1915,21 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [_SREG dx] [cx] \
         value           [dx ax] \
         modify exact    [ax cx dx _SREG];
-#endif
 
 #ifdef __WATCOM_LFN__
 #pragma aux             _nTinyCreateEx = \
         _SET_DS_DGROUP  \
+        "mov ax, 716Ch" \
         "push cx"       \
-        "mov cl,1"      \
-        "mov ch,0"      \
-        "mov ax,7160h"  \
         _INT_21         \
         "pop cx"        \
-        "jc callfunc"   \
+        "jc old"        \
         "cmp ax,7100h"  \
-        "jz callfunc"   \
-        "mov si,di"     \
-        "callfunc:"     \
+        "jnz finish"    \
+        "old:"          \
         "mov ah,0x6C"   \
         _INT_21         \
+        "finish:"       \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
         parm caller     [si] [bx] [cx] [dx]\
@@ -2175,19 +1938,17 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _fTinyCreateEx = \
         _SET_DS_SREG    \
+        "mov ax, 716Ch" \
         "push cx"       \
-        "mov cl,1"      \
-        "mov ch,0"      \
-        "mov ax,7160h"  \
         _INT_21         \
         "pop cx"        \
-        "jc callfunc"   \
+        "jc old"        \
         "cmp ax,7100h"  \
-        "jz callfunc"   \
-        "mov si,di"     \
-        "callfunc:"     \
+        "jnz finish"    \
+        "old:"          \
         "mov ah,0x6C"   \
         _INT_21         \
+        "finish:"       \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
         parm caller     [_SREG si] [bx] [cx] [dx]\
@@ -2215,47 +1976,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify exact    [ax bx cx dx si _SREG];
 #endif
 
-#ifdef __WATCOM_LFN__
-#pragma aux             _nTinyCreateNew = \
-        _SET_DS_DGROUP  \
-        "mov dx,10h"    \
-        "mov ax,716Ch"  \
-        _INT_21         \
-        "jc old"        \
-        "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
-        "mov dx,si"     \
-        "mov cx,bx"     \
-        "mov ah,5Bh"    \
-        _INT_21         \
-        "finish:"       \
-        "sbb dx,dx"     \
-        _RST_DS_DGROUP  \
-        parm caller     [si] [bx] \
-        value           [dx ax] \
-        modify exact    [si bx ax cx dx];
-
-#pragma aux             _fTinyCreateNew = \
-        _SET_DS_SREG    \
-        "mov dx,10h"    \
-        "mov ax,716Ch"  \
-        _INT_21         \
-        "jc old"        \
-        "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
-        "mov dx,si"     \
-        "mov cx,bx"     \
-        "mov ah,5Bh"    \
-        _INT_21         \
-        "finish:"       \
-        "sbb dx,dx"     \
-        _RST_DS_SREG    \
-        parm caller     [_SREG si] [bx] \
-        value           [dx ax] \
-        modify exact    [si bx ax cx dx _SREG];
-#else
 #pragma aux             _nTinyCreateNew = \
         _SET_DS_DGROUP  \
         _MOV_AH 0x5B    \
@@ -2275,7 +1995,6 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [_SREG dx] [cx] \
         value           [dx ax] \
         modify exact    [ax cx dx _SREG];
-#endif
 
 #ifdef __WATCOM_LFN__
 #pragma aux             _nTinyCreateTemp = \

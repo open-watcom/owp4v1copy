@@ -24,66 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  DOS implementation of access().
+* Description:  LFN-enabled directory traversal routines. Indirected file.
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "widechar.h"
-#include <io.h>
-#include <dos.h>
-#include "tinyio.h"
-#ifdef __WIDECHAR__
-    #include <mbstring.h>
-    #include <stdlib.h>
-    #include "mbwcconv.h"
-#endif
-
-#ifdef __WATCOM_LFN__
-static int CTinyAccess( const char *path, int mode )
-{
-    unsigned    attrs;
-
-    if( _dos_getfileattr( path, &attrs ) != 0 ) return( -1 );
-    return( ( attrs & _A_RDONLY && mode == W_OK ) ? -1 : 0 );
-}
-
-#undef  TinyAccess
-#define TinyAccess   CTinyAccess
-#else
-
-extern  int           _dosret0(unsigned,unsigned);
-#endif
-
-
-_WCRTLINK int __F_NAME(access,_waccess)( const CHAR_TYPE *pathname, int pmode )
-{
-#ifndef __WATCOM_LFN__
-    unsigned long   rc;
-    unsigned        ax, dx;
-#endif
-#ifdef __WIDECHAR__
-    char            mbPath[MB_CUR_MAX*_MAX_PATH]; /* single-byte char */
-#endif
-
-#ifdef __WATCOM_LFN__
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbPath, pathname );
-        return( TinyAccess( mbPath, pmode ) );
-    #else
-        return( TinyAccess( pathname, pmode ) );
-    #endif
-#else
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbPath, pathname );
-        rc = TinyAccess( mbPath, pmode );
-    #else
-        rc = TinyAccess( pathname, pmode );
-    #endif
-
-    ax = rc & 0xffff;
-    dx = rc >> 16;
-    return( _dosret0( ax, dx ) );
-#endif
-}
+#define __WATCOM_LFN__
+#include "../../file/c/accss.c"

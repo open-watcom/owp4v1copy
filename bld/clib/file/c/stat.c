@@ -122,8 +122,17 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
         dta.name[0] = NULLCHAR;
     } else {                            /* not a root directory */
         #if defined(__OSI__) || defined(__WATCOM_LFN__)
-            rc = _dos_findfirst( path, _A_NORMAL | _A_RDONLY | _A_HIDDEN |
-                    _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
+            #if defined(__WIDECHAR__) && defined(__WATCOM_LFN__)
+                char    mbPath[MB_CUR_MAX*_MAX_PATH];
+                __filename_from_wide( mbPath, path );
+                rc = _dos_findfirst( mbPath,
+                        _A_NORMAL | _A_RDONLY | _A_HIDDEN |
+                        _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
+            #else
+                rc = _dos_findfirst( path,
+                        _A_NORMAL | _A_RDONLY | _A_HIDDEN |
+                        _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
+            #endif
         #else
             #ifdef __WIDECHAR__
                 char    mbPath[MB_CUR_MAX*_MAX_PATH];

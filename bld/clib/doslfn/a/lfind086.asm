@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  LFN support functions for _dos_find* (16-bit).
+;* Description:  Non-LFN _dos_find fallback for findlfn.c (16-bit).
 ;*
 ;*****************************************************************************
 

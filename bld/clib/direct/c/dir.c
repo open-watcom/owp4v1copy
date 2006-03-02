@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS implementation of directory functions.
 *
 ****************************************************************************/
 
@@ -54,7 +53,7 @@
  * Copies a dirent struct to an LFN findfirst struct
  */
 #ifdef __WATCOM_LFN__
-static void copy_dirent_lfn( struct find_t *lfnblock, struct dirent *dosblock )
+static void copy_dirent_lfn( struct find_t *lfnblock, DIR_TYPE *dosblock )
 {
     lfnblock->cr_time = dosblock->d_ctime;
     lfnblock->cr_date = dosblock->d_cdate;
@@ -72,7 +71,7 @@ static void copy_dirent_lfn( struct find_t *lfnblock, struct dirent *dosblock )
 /*
  * Copies an LFN findfirst struct to a dirent struct
  */
-static void copy_lfn_dirent( struct dirent *dosblock, struct find_t *lfnblock )
+static void copy_lfn_dirent( DIR_TYPE *dosblock, struct find_t *lfnblock )
 {
     dosblock->d_ctime  = lfnblock->cr_time;
     dosblock->d_cdate  = lfnblock->cr_date;
@@ -329,11 +328,14 @@ _WCRTLINK int __F_NAME(closedir,_wclosedir)( DIR_TYPE *dirp )
     struct find_t   lfntemp;
 
     copy_dirent_lfn( &lfntemp, dirp );
-    _dos_findclose( &lfntemp );
-#endif
+    if( _dos_findclose( &lfntemp ) != 0 ) {
+        return( 1 );
+    }
+#else
     if( dirp == NULL || dirp->d_first > _DIR_MAX_FOR_CLOSE_OK ) {
         return( 1 );
     }
+#endif
     dirp->d_first = _DIR_CLOSED;
     if( dirp->d_openpath != NULL )
         free( dirp->d_openpath );
