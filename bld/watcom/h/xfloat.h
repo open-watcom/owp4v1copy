@@ -24,13 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C/C++ run-time library floating-point definitions.
 *
 ****************************************************************************/
 
 
-// C/C++ run-time library floating-point definitions
 #ifndef _XFLOAT_H_INCLUDED
 #define _XFLOAT_H_INCLUDED
 
@@ -80,6 +78,20 @@ typedef struct {                // This layout matches Intel 8087
   #endif
 } long_double;
 
+typedef struct {                // Layout of IEEE 754 double (FD)
+    union {
+        double          value;  // - double value
+        unsigned long   word[2];// - so we can access bits
+    };
+} float_double;
+
+typedef struct {                // Layout of IEEE 754 single (FS)
+    union {
+        float           value;  // - double value
+        unsigned long   word;   // - so we can access bits
+    };
+} float_single;
+
 enum    ld_classification {
     __ZERO      = 0,
     __NONZERO   = 1,
@@ -87,6 +99,7 @@ enum    ld_classification {
     __INFINITY  = 3,
     __DENORMAL  = 4
 };
+
 enum    ldcvt_flags {
     E_FMT       = 0x0001,       // 'E' format
     F_FMT       = 0x0002,       // 'F' format
@@ -116,7 +129,9 @@ _WMRTLINK
 extern  void    __LDcvt( long_double *pld,      // pointer to long_double
               CVT_INFO  *cvt,                   // conversion info
               char      *buf );                 // buffer
-extern  int     __LDClass(long_double *);
+extern  int     __FSClass( float_single * );
+extern  int     __FDClass( float_double * );
+extern  int     __LDClass( long_double * );
 extern  void    __ZBuf2LD(char _WCNEAR *, long_double _WCNEAR *);
 extern  void    _LDScale10x(long_double _WCNEAR *,int);
 #ifdef _LONG_DOUBLE_
