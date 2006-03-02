@@ -1565,6 +1565,7 @@
 .fnc _toupper                   toupper.gml     DOS QNX W WIN32
 .fnw towupper                   toupper.gml     DOS QNX W WIN32
 .fnu _utoupper                  toupper.gml     DOS       WIN32
+.fnw towctrans                  towctrns.gml    DOS QNX W WIN32
 .fnc Trace                      trace.gml           QXO
 .fnc Trace0                     trace.gml           QXO
 .fnc Trace0b                    trace.gml           QXO
@@ -1646,6 +1647,7 @@
 .fnw wctob                      wctob.gml       DOS       WIN32
 .fnc wctomb                     wctomb.gml      DOS QNX W WIN32
 .fnn _fwctomb                   wctomb.gml      DOS       WIN32
+.fnw wctrans                    wctrans.gml     DOS QNX W WIN32
 .fnw wctype                     wctype.gml      DOS QNX W WIN32
 .fnc _wrapon                    gr_wrpon.gml    DOS QNX W GRAPH
 .fnc write                      write.gml       DOS QNX W WIN32

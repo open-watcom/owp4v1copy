@@ -275,9 +275,11 @@ strdate.exe &
 stricoll.exe &
 strspnp.exe &
 strtime.exe &
+towctrns.exe &
 vsnprint.exe &
 vsprintf.exe &
-wctype.exe
+wctype.exe &
+wctrans.exe
 
 # Macros (available everywhere!)
 FN_MACRO = alloca.exe &

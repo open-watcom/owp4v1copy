@@ -1,9 +1,10 @@
 .func wctype
-#include <wchar.h>
+#include <wctype.h>
 wctype_t wctype( const char *property );
-.ixfunc2 '&String' &func
+.ixfunc2 '&CharTest' &func
 .ixfunc2 '&Wide' &func
 .funcend
+.*
 .desc begin
 The &func function constructs a value with type
 .kw wctype_t
@@ -92,6 +93,7 @@ is true
 any wide character corresponding to a hexadecimal digit character
 .endterm
 .desc end
+.*
 .return begin
 If
 .arg property
@@ -102,9 +104,11 @@ value that is valid as the second argument to the
 .kw iswctype
 function; otherwise, it returns zero.
 .return end
+.*
 .see begin
 .im seeis &function.
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <wchar.h>
@@ -123,15 +127,15 @@ char *types[11] = {
     "xdigit"
 };
 .exmp break
-void main()
-  {
+void main( void )
+{
     int     i;
     wint_t  wc = 'A';
 .exmp break
     for( i = 0; i < 11; i++ )
-      if( iswctype( wc, wctype( types[i] ) ) )
-        printf( "%s\n", types[ i ] );
-  }
+        if( iswctype( wc, wctype( types[i] ) ) )
+            printf( "%s\n", types[i] );
+}
 .exmp output
 alnum
 alpha
@@ -140,5 +144,6 @@ print
 upper
 xdigit
 .exmp end
+.*
 .class ANSI
 .system

@@ -415,6 +415,8 @@ between upper and lowercase.
 .fd *fun="iswctype" test a character for a specific property
 .fd *fun="towlower" convert character to lowercase
 .fd *fun="towupper" convert character to uppercase
+.fd *fun="wctrans" construct mapping value for a given "property"
+.fd *fun="towctrans" convert a character based on a specific property
 .fdend
 .*======================================================================
 .section Multibyte Character Manipulation Functions

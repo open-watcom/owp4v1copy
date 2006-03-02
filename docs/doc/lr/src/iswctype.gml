@@ -4,6 +4,7 @@ int iswctype( wint_t wc, wctype_t desc );
 .ixfunc2 '&CharTest' &wfunc
 .ixfunc2 '&Wide' &wfunc
 .funcend
+.*
 .desc begin
 The &func function determines whether the wide character
 .arg wc
@@ -55,6 +56,7 @@ iswupper(wc)
 iswxdigit(wc)
 .endterm
 .desc end
+.*
 .return begin
 The &func function returns non-zero (true) if and only if the value of
 the wide character
@@ -62,9 +64,11 @@ the wide character
 has the property described by
 .arg desc.
 .return end
+.*
 .see begin
 .im seeis &function.
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <wctype.h>
@@ -83,14 +87,14 @@ char *types[11] = {
     "xdigit"
 };
 .exmp break
-void main()
+void main( void )
 {
     int     i;
     wint_t  wc = 'A';
 .exmp break
     for( i = 0; i < 11; i++ )
         if( iswctype( wc, wctype( types[i] ) ) )
-            printf( "%s\n", types[ i ] );
+            printf( "%s\n", types[i] );
 }
 .exmp output
 alnum
@@ -100,5 +104,6 @@ print
 upper
 xdigit
 .exmp end
+.*
 .class ANSI
 .system

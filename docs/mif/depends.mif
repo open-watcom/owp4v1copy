@@ -1859,6 +1859,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)tmpnam.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tmpnam_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tolower.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)toupper.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)towctrns.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tzref.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)tzset.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)udirent.gml &
@@ -1890,6 +1891,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)wcsrtomb.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wcstombs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wctob.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wctomb.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)wctrans.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wctype.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)widefunc.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)write.gml &
