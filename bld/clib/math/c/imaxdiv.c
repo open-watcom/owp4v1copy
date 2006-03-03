@@ -31,10 +31,13 @@
 
 #include "variety.h"
 #include <inttypes.h>
+#undef imaxdiv
 
-_WCRTLINK imaxdiv_t (imaxdiv)( intmax_t numer, intmax_t denom )
+
+_WCRTLINK imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom )
+/*************************************************************/
 {
-    imaxdiv_t result;
+    imaxdiv_t   result;
 
     result.quot = numer / denom;
     result.rem  = numer % denom;
