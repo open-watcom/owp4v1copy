@@ -19,8 +19,8 @@ sw_c_alias   = -D__MAKE_DLL_MATHLIB
 
 sw_c_intel    = -of
 sw_c_calls    = -fpc
-sw_c_register = -5r
-sw_c_stack    = -5s
+sw_c_register = -6r
+sw_c_stack    = -6s
 sw_c_bigcode  = -nt=_TEXT
 sw_c_bigdata  = -zu
 
