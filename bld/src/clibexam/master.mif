@@ -284,6 +284,11 @@ wctrans.exe
 # Macros (available everywhere!)
 FN_MACRO = alloca.exe &
 assert.exe &
+fpclassf.exe &
+isfinite.exe &
+isinf.exe &
+isnan.exe &
+isnormal &
 mk_fp.exe &
 offsetof.exe &
 setjmp.exe &
@@ -292,6 +297,7 @@ va_end.exe &
 va_start.exe &
 mbsnbcnt.exe &
 mbsnbcnt.exe &
+signbit.exe &
 strdec.exe &
 strdec.exe &
 strinc.exe &

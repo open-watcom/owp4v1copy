@@ -31,6 +31,7 @@
 
 #include "variety.h"
 #include <string.h>
+#include <math.h>
 #include "xfloat.h"
 
 
@@ -65,4 +66,10 @@ int __LDClass( long_double *ld )
     }
     return( __NONZERO );
 #endif
+}
+
+_WMRTLINK int _FLClass( long double x )
+/*************************************/
+{
+    return( __LDClass( (long_double *)&x ) );
 }

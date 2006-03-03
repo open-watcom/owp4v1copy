@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Determine class of an IEEE 754 double.
+* Description:  Determine sign of an IEEE 754 single.
 *
 ****************************************************************************/
 
@@ -34,23 +34,11 @@
 #include "xfloat.h"
 
 
-_WMRTLINK int _FDClass( double x )
-/********************************/
+_WMRTLINK int _FSSign( float x )
+/******************************/
 {
-    float_double    fd;
+    float_single    fs;
 
-    fd.value = x;
-    if( (fd.word[1] & 0x7FF00000) == 0x7FF00000 ) {    /* NaN or Inf */
-        if( (fd.word[1] & 0x7FFFFFFF) == 0x7FF00000 && fd.word[0] == 0 ) {
-            return( __INFINITY );
-        }
-        return( __NAN );
-    }
-    if( (fd.word[1] & 0x7FFFFFFF) == 0 && fd.word[0] == 0 ) {
-        return( __ZERO );
-    }
-    if( (fd.word[1] & 0x7FF00000) == 0 ) {
-        return( __DENORMAL );
-    }
-    return( __NONZERO );
+    fs.value = x;
+    return( fs.word >> 31 );
 }

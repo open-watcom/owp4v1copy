@@ -30,22 +30,26 @@
 
 
 #include "variety.h"
-#include <string.h>
+#include <math.h>
 #include "xfloat.h"
 
 
-int __FSClass( float_single *fs )
+_WMRTLINK int _FSClass( float x )
+/*******************************/
 {
-    if( (fs->word & 0x7F800000) == 0x7F800000 ) {   /* NaN or Inf */
-        if( (fs->word & 0x7FFFFFFF) == 0x7F800000 ) {
+    float_single    fs;
+
+    fs.value = x;
+    if( (fs.word & 0x7F800000) == 0x7F800000 ) {   /* NaN or Inf */
+        if( (fs.word & 0x7FFFFFFF) == 0x7F800000 ) {
             return( __INFINITY );
         }
         return( __NAN );
     }
-    if( (fs->word & 0x7FFFFFFF) == 0 ) {
+    if( (fs.word & 0x7FFFFFFF) == 0 ) {
         return( __ZERO );
     }
-    if( (fs->word & 0x7F800000) == 0 ) {
+    if( (fs.word & 0x7F800000) == 0 ) {
         return( __DENORMAL );
     }
     return( __NONZERO );

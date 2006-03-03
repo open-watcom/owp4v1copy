@@ -325,6 +325,7 @@
 .fnc FP_OFF                     fp_off.gml      DOS QNX W WIN32
 .fnc FP_SEG                     fp_seg.gml      DOS QNX W WIN32
 .fnc fpathconf                  fpathcnf.gml        QXO
+.fnc fpclassify                 fpclassf.gml    DOS QNX W WIN32
 .fnc _fpreset                   _fpreset.gml    DOS QNX W WIN32
 .fnc fprintf                    fprintf.gml     DOS QNX W WIN32
 .fnw fwprintf                   fprintf.gml     DOS QNX W WIN32
@@ -541,10 +542,12 @@
 .fnc isdigit                    isdigit.gml     DOS QNX W WIN32
 .fnw iswdigit                   isdigit.gml     DOS QNX W WIN32
 .fnu _uisdigit                  isdigit.gml     DOS       WIN32
+.fnc isfinite                   isfinite.gml    DOS QNX W WIN32
 .fnc isgraph                    isgraph.gml     DOS QNX W WIN32
 .fnw iswgraph                   isgraph.gml     DOS QNX W WIN32
 .fnu _uisgraph                  isgraph.gml     DOS       WIN32
 .fnc isgrkana                   isgrkana.gml    NEC
+.fnc isinf                      isinf.gml       DOS QNX W WIN32
 .fnc iskana                     iskana.gml      NEC
 .fnc iskanji                    iskanji.gml     NEC
 .fnc iskanji2                   iskanji2.gml    NEC
@@ -584,6 +587,8 @@
 .fnm _ismbcsymbol               ismbcsym.gml    DOS       WIN32
 .fnm _ismbcupper                ismbcupp.gml    DOS       WIN32
 .fnm _ismbcxdigit               ismbcxdi.gml    DOS       WIN32
+.fnc isnan                      isnan.gml       DOS QNX W WIN32
+.fnc isnormal                   isnormal.gml    DOS QNX W WIN32
 .fnc ispnkana                   ispnkana.gml    NEC
 .fnc isprint                    isprint.gml     DOS QNX W WIN32
 .fnw iswprint                   isprint.gml     DOS QNX W WIN32
@@ -1181,6 +1186,7 @@
 .fnc sigismember                sigis.gml           QXO
 .fnc siglongjmp                 siglongj.gml        QXO
 .fnc signal                     signal.gml      DOS QNX W WIN32
+.fnc signbit                    signbit.gml     DOS QNX W WIN32
 .fnc sigpending                 sigpend.gml         QXO
 .fnc sigprocmask                sigpmask.gml        QXO
 .fnc sigsetjmp                  sigsetj.gml         QXO

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Determine class of an IEEE 754 double.
+* Description:  Determine sign of a long double.
 *
 ****************************************************************************/
 
@@ -34,23 +34,17 @@
 #include "xfloat.h"
 
 
-_WMRTLINK int _FDClass( double x )
-/********************************/
+int __LDSign( long_double *ld )
 {
-    float_double    fd;
+#ifdef _LONG_DOUBLE_
+    return( ld->exponent >> 15 );
+#else
+    return( ld->word[1] >> 31 );
+#endif
+}
 
-    fd.value = x;
-    if( (fd.word[1] & 0x7FF00000) == 0x7FF00000 ) {    /* NaN or Inf */
-        if( (fd.word[1] & 0x7FFFFFFF) == 0x7FF00000 && fd.word[0] == 0 ) {
-            return( __INFINITY );
-        }
-        return( __NAN );
-    }
-    if( (fd.word[1] & 0x7FFFFFFF) == 0 && fd.word[0] == 0 ) {
-        return( __ZERO );
-    }
-    if( (fd.word[1] & 0x7FF00000) == 0 ) {
-        return( __DENORMAL );
-    }
-    return( __NONZERO );
+_WMRTLINK int _FLSign( long double x )
+/************************************/
+{
+    return( __LDSign( (long_double *)&x ) );
 }

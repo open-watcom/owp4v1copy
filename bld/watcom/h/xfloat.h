@@ -130,8 +130,6 @@ _WMRTLINK
 extern  void    __LDcvt( long_double *pld,      // pointer to long_double
               CVT_INFO  *cvt,                   // conversion info
               char      *buf );                 // buffer
-extern  int     __FSClass( float_single * );
-extern  int     __FDClass( float_double * );
 extern  int     __LDClass( long_double * );
 extern  void    __ZBuf2LD(char _WCNEAR *, long_double _WCNEAR *);
 extern  void    _LDScale10x(long_double _WCNEAR *,int);

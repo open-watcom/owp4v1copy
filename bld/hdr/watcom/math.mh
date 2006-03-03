@@ -83,7 +83,39 @@ using std::log2;
 _WCRTLINK extern const double _WCDATA _HugeValue;
 #define HUGE_VAL _HugeValue
 
-#if __STDC_VERSION__ >= 199901L
+:: Always enable C99 stuff
+::#if __STDC_VERSION__ >= 199901L
+
+/* Internal library helper routines */
+_WMRTLINK extern int _FSClass( float __x );
+_WMRTLINK extern int _FDClass( double __x );
+_WMRTLINK extern int _FLClass( long double __x );
+_WMRTLINK extern int _FSSign( float __x );
+_WMRTLINK extern int _FDSign( double __x );
+_WMRTLINK extern int _FLSign( long double __x );
+
+/* Floating-point classification macros */
+:: NB: The following values *must* match ld_classification in xfloat.h!
+#define FP_ZERO         0
+#define FP_SUBNORMAL    1
+#define FP_NORMAL       2
+#define FP_NAN          3
+#define FP_INFINITE     4
+
+#define fpclassify(x)                               \
+    ((sizeof(x) == sizeof(float)) ? _FSClass(x) :   \
+    (sizeof(x) == sizeof(double)) ? _FDClass(x) :   \
+                                    _FLClass(x))
+
+#define isfinite(x)     (fpclassify(x) <= FP_NORMAL)
+#define isinf(x)        (fpclassify(x) == FP_INFINITE)
+#define isnan(x)        (fpclassify(x) == FP_NAN)
+#define isnormal(x)     (fpclassify(x) == FP_NORMAL)
+
+#define signbit(x)                                  \
+    ((sizeof(x) == sizeof(float)) ? _FSSign(x) :    \
+    (sizeof(x) == sizeof(double)) ? _FDSign(x) :    \
+                                    _FLSign(x))
 
 :: The following externs are also defined in float.h
 /* Floating-point Infinity and NaN constants */
@@ -93,7 +125,7 @@ _WMRTLINK extern const float        __f_posqnan;
 #define INFINITY   __f_infinity
 #define NAN        __f_posqnan
 
-#endif
+::#endif
 
 :segment CNAME
 namespace std {

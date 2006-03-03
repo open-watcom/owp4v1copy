@@ -28,7 +28,7 @@
 
 mathtest = $(new_mlib)\c\mathtest.c
 
-comp_opts = -ox -d2 -zq -fo=$^*.obj
+comp_opts = -za99 -ox -d2 -zq -fo=$^*.obj
 link_opts = NAME $^* OPTION quiet, map DEBUG all
 
 exes = &
