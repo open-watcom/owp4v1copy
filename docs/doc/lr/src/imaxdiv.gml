@@ -7,6 +7,7 @@ typedef struct {
     intmax_t    rem;   /* remainder */
 } imaxdiv_t;
 .funcend
+.*
 .desc begin
 The &func
 function calculates the quotient and remainder of the division of the
@@ -15,6 +16,7 @@ numerator
 by the denominator
 .arg denom.
 .desc end
+.*
 .return begin
 The &func function returns a structure of type
 .kw imaxdiv_t
@@ -26,9 +28,11 @@ and
 which are both of type
 .id intmax_t.
 .return end
+.*
 .see begin
-.seelist imaxdiv ldiv div
+.seelist imaxdiv div ldiv lldiv
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <inttypes.h>
@@ -40,16 +44,16 @@ void print_time( intmax_t ticks )
 
     sec_ticks = imaxdiv( ticks, 1000000 );
     min_sec   = imaxdiv( sec_ticks.quot, 60 );
-    printf( "It took %"PRIdMAX" minutes and %"PRIdMAX" seconds\n",
+    printf( "It took %jd minutes and %jd seconds\n",
             min_sec.quot, min_sec.rem );
 }
 .exmp break
-void main()
+void main( void )
 {
     print_time( 9876543210 );
 }
 .exmp output
 It took 164 minutes and 36 seconds
 .exmp end
-.class ANSI
+.class ISO C99
 .system

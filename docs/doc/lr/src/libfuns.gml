@@ -258,6 +258,7 @@
 .fnw _wexecve                   exec.gml        DOS       WIN32
 .fnw _wexecvp                   exec.gml        DOS       WIN32
 .fnw _wexecvpe                  exec.gml        DOS       WIN32
+.fnc _Exit                      _exit.gml       DOS QNX W WIN32
 .fnc _exit                      _exit.gml       DOS QNX W WIN32
 .fnc exit                       exit.gml        DOS QNX W WIN32
 .fnc exp                        exp.gml         DOS QNX W WIN32
@@ -691,6 +692,8 @@
 .fnc _lineto                    gr_linto.gml    DOS QNX W GRAPH
 .fnc _lineto_w                  gr_linto.gml    DOS QNX W GRAPH
 .fnc link                       link.gml            QXO
+.fnc llabs                      llabs.gml       DOS QNX W WIN32
+.fnc lldiv                      lldiv.gml       DOS QNX W WIN32
 .fnc localeconv                 localeco.gml    DOS QNX W WIN32
 .fnc localtime                  localtim.gml    DOS QNX W WIN32
 .fnc _localtime                 localtim.gml    DOS QNX W WIN32

@@ -1,6 +1,7 @@
-.func _exit
+.func _exit _Exit
 #include <stdlib.h>
 void _exit( int status );
+void _Exit( int status );
 .ixfunc2 '&Process' &func
 .funcend
 .desc begin
@@ -14,30 +15,7 @@ or
 .kw onexit
 functions are not called.
 .do end
-.if '&machsys' eq 'PP' .do begin
-.note
-The functions registered by the
-.kw atexit
-function are not called.
-.note
-All open file descriptors and directory streams in the calling process
-are closed.
-Any buffered output is not flushed to the associated files or devices.
-.note
-Any files created by
-.kw tmpfile
-are not removed.
-.note
-The return
-.arg status
-is made available to the parent process.
-The
-.arg status
-value is typically set to 0 to indicate successful termination and
-set to some other value to indicate an error.
-.endnote
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 .note
 All open file descriptors and directory streams in the calling process
 are closed.
@@ -131,22 +109,24 @@ The &func function does not return to its caller.
 #include <stdlib.h>
 
 void main( int argc, char *argv[] )
-  {
+{
     FILE *fp;
 .exmp break
     if( argc <= 1 ) {
-      fprintf( stderr, "Missing argument\n" );
-      exit( EXIT_FAILURE );
+        fprintf( stderr, "Missing argument\n" );
+        exit( EXIT_FAILURE );
     }
 .exmp break
     fp = fopen( argv[1], "r" );
     if( fp == NULL ) {
-      fprintf( stderr, "Unable to open '%s'\n", argv[1] );
-      _exit( EXIT_FAILURE );
+        fprintf( stderr, "Unable to open '%s'\n", argv[1] );
+        _exit( EXIT_FAILURE );
     }
     fclose( fp );
     _exit( EXIT_SUCCESS );
-  }
+}
 .exmp end
 .class POSIX 1003.1
+.np
+_Exit is ISO C99
 .system

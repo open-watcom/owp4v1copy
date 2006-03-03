@@ -131,14 +131,19 @@ typedef void (*constraint_handler_t)( const char * __restrict __msg, void * __re
 namespace std {
 :endsegment
 typedef struct  {
-        int     quot;
-        int     rem;
+    int     quot;
+    int     rem;
 } div_t;
 
 typedef struct  {
-        long    quot;
-        long    rem;
+    long    quot;
+    long    rem;
 } ldiv_t;
+
+typedef struct  {
+    long long   quot;
+    long long   rem;
+} lldiv_t;
 
 _WCRTLINK extern void    abort( void );
 _WCIRTLINK extern int    abs( int __j );
@@ -158,6 +163,7 @@ _WCRTLINK extern void   *bsearch( const void *__key, const void *__base,
 _WCRTLINK extern void   *calloc( size_t __n, size_t __size );
 _WCIRTLINK extern div_t  div( int __numer, int __denom );
 _WCRTLINK extern void    exit( int __status );
+_WCRTLINK extern void    _Exit( int __status );
 _WCRTLINK extern void    free( void *__ptr );
 _WCRTLINK extern char   *getenv( const char *__name );
 _WCIRTLINK extern long int labs( long int __j );
@@ -170,6 +176,8 @@ _WCIRTLINK
 _WCRTLINK
 #endif
 extern ldiv_t ldiv( long int __numer, long int __denom );
+_WCRTLINK extern long long int llabs( long long int __j );
+_WCRTLINK extern lldiv_t lldiv( long long int __numer, long long int __denom );
 _WCRTLINK extern void   *malloc( size_t __size );
 :segment !NO_WIDECHAR
 _WCRTLINK extern int     mblen( const char *__s, size_t __n );
@@ -184,6 +192,8 @@ _WCRTLINK extern int     rand( void );
 _WCRTLINK extern void   *realloc( void *__ptr, size_t __size );
 _WCRTLINK extern void    srand( unsigned int __seed );
 _WMRTLINK extern double  strtod( const char *__nptr, char **__endptr );
+_WMRTLINK extern float   strtof( const char *__nptr, char **__endptr );
+_WMRTLINK extern long double strtold( const char *__nptr, char **__endptr );
 _WCRTLINK extern long int strtol( const char *__nptr, char **__endptr, int __base );
 _WCRTLINK extern long long int strtoll( const char *__nptr, char **__endptr, int __base );
 _WCRTLINK extern unsigned long strtoul( const char *__nptr, char **__endptr, int __base );

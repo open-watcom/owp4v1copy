@@ -1,11 +1,12 @@
-.func ldiv
+.func lldiv
 #include <stdlib.h>
-ldiv_t ldiv( long int numer, long int denom );
+lldiv_t lldiv( long long int numer, 
+               long long int denom );
 
 typedef struct {
-    long int quot;     /* quotient */
-    long int rem;      /* remainder */
-} ldiv_t;
+    long long int quot; /* quotient */
+    long long int rem;  /* remainder */
+} lldiv_t;
 .funcend
 .*
 .desc begin
@@ -19,42 +20,42 @@ by the denominator
 .*
 .return begin
 The &func function returns a structure of type
-.kw ldiv_t
+.kw lldiv_t
 that contains the fields
 .kw quot
 and
 .kw rem
 .ct,
 which are both of type
-.id long int.
+.id long long int.
 .return end
 .*
 .see begin
-.seelist ldiv div lldiv imaxdiv
+.seelist ldiv div imaxdiv
 .see end
 .*
 .exmp begin
 #include <stdio.h>
 #include <stdlib.h>
 
-void print_time( long int ticks )
+void print_time( long long int ticks )
 {
-    ldiv_t sec_ticks;
-    ldiv_t min_sec;
+    lldiv_t sec_ticks;
+    lldiv_t min_sec;
 
-    sec_ticks = ldiv( ticks, 100L );
-    min_sec   = ldiv( sec_ticks.quot, 60L );
-    printf( "It took %ld minutes and %ld seconds\n",
+    sec_ticks = lldiv( ticks, 100 );
+    min_sec   = lldiv( sec_ticks.quot, 60 );
+    printf( "It took %lld minutes and %lld seconds\n",
             min_sec.quot, min_sec.rem );
 }
 .exmp break
 void main( void )
 {
-    print_time( 86712L );
+    print_time( 73495132 );
 }
 .exmp output
-It took 14 minutes and 27 seconds
+It took 12249 minutes and 11 seconds
 .exmp end
 .*
-.class ISO C90
+.class ISO C99
 .system

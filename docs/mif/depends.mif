@@ -1553,6 +1553,8 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)libfuns.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)liblist7.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)libmacs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)libpref.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)llabs.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)lldiv.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)localeco.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)localtim.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)lcltim_s.gml &

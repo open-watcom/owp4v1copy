@@ -62,6 +62,7 @@
 !inject i8rs386.obj                  g32
 !inject ldiv086.obj              g16                                        w16
 !inject ldiv386.obj                  g32
+!inject lldiv386.obj                 g32
 !inject lrot.obj                 g16                                        w16
 !inject mcpyaxp.obj                         nta
 !inject mcpymps.obj                                                                             lmp

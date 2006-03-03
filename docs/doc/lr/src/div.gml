@@ -7,6 +7,7 @@ typedef struct {
     int rem;      /* remainder */
 } div_t;
 .funcend
+.*
 .desc begin
 The &func function calculates the quotient
 and remainder of the division of the numerator
@@ -14,6 +15,7 @@ and remainder of the division of the numerator
 by the denominator
 .arg denom.
 .desc end
+.*
 .return begin
 The &func function returns a structure of type
 .kw div_t
@@ -22,9 +24,11 @@ which contains the fields
 and
 .kw rem.
 .return end
+.*
 .see begin
-.seelist div ldiv imaxdiv
+.seelist div ldiv lldiv imaxdiv
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,12 +42,12 @@ void print_time( int seconds )
              min_sec.quot, min_sec.rem );
 }
 .exmp break
-void main()
+void main( void )
 {
     print_time( 130 );
 }
 .exmp output
 It took 2 minutes and 10 seconds
 .exmp end
-.class ANSI
+.class ISO C90
 .system

@@ -90,9 +90,9 @@ int matherr( struct _exception *err )
 
 void test_integer_math( void )
 {
-    div_t div_result;
-    ldiv_t ldiv_result;
-    int num[20], ctr;
+    div_t   div_result;
+    ldiv_t  ldiv_result;
+    int     num[20], ctr;
 
     printf( "Testing integer functions...\n" );
     VERIFY( abs( -1 ) == 1 );
@@ -122,6 +122,19 @@ void test_integer_math( void )
         num[ctr] -= rand();
         VERIFY( num[ctr] == 0 );
     }
+#if (__STDC_VERSION__ >= 199901L) && !defined( __WINDOWS__ )
+    int         foo;    // work around bug in wcc, remove when that's fixed
+    lldiv_t     lldiv_result;
+
+    VERIFY( llabs( -1 ) == 1 );
+    VERIFY( llabs( 0 ) == 0 );
+    VERIFY( llabs( 1 ) == 1 );
+    VERIFY( llabs( 1234567890 ) == 1234567890 );
+    VERIFY( llabs( -1234567890 ) == 1234567890 );
+    lldiv_result = lldiv( 0, 100 );
+    VERIFY( lldiv_result.quot == 0 && lldiv_result.rem == 0 );
+    lldiv_result = lldiv( 100000010, 100000000 );
+#endif
 }
 
 void test_complex_math( void )

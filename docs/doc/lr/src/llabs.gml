@@ -1,37 +1,32 @@
-.func labs
+.func llabs
 #include <stdlib.h>
-long int labs( long int j );
+long long int llabs( long long int j );
 .funcend
-.*
 .desc begin
 The &func function returns the absolute value
-of its long-integer argument
+of its long long integer argument
 .arg j.
 .desc end
-.*
 .return begin
 The &func function returns the absolute value of its argument.
 .return end
-.*
 .see begin
-.seelist labs abs llabs imaxabs fabs
+.seelist labs abs imaxabs fabs
 .see end
-.*
 .exmp begin
 #include <stdio.h>
 #include <stdlib.h>
 
 void main( void )
 {
-    long x, y;
+    long long x, y;
 .exmp break
-    x = -50000L;
-    y = labs( x );
-    printf( "labs(%ld) = %ld\n", x, y );
+    x = -5000000000;
+    y = llabs( x );
+    printf( "llabs(%lld) = %lld\n", x, y );
 }
 .exmp output
-labs(-50000) = 50000
+llabs(-5000000000) = 5000000000
 .exmp end
-.*
-.class ISO C90
+.class ISO C99
 .system

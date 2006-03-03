@@ -344,6 +344,8 @@ imaxdiv.exe &
 labs.exe &
 ldexp.exe &
 ldiv.exe &
+llabs.exe &
+lldiv.exe &
 lltoa.exe &
 log.exe &
 log10.exe &

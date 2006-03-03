@@ -1506,6 +1506,7 @@ is used
 .fd *fun="execvp" chain to program
 .fd *fun="execvpe" chain to program, pass environment
 .fd *fun="exit" exit process, set return code
+.fd *fun="_Exit" exit process, set return code
 .fd *fun="_exit" exit process, set return code
 .fd *fun="fork" create a new process
 .fd *fun="kill" send a signal to specified process

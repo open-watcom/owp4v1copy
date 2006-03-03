@@ -4,7 +4,7 @@
 .seelist &*1 close
 .do end
 .seelist &*1 exec Functions
-.seelist &*1 exit _exit getcmd getenv main onexit putenv
+.seelist &*1 exit _Exit _exit getcmd getenv main onexit putenv
 .if '&machsys' eq 'QNX' .do begin
 .seelist &*1 sigaction signal
 .do end
