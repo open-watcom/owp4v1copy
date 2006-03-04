@@ -189,6 +189,7 @@
 %type <token>           dialogtemplate
 %type <dataelem>        diag-data-elements
 %type <nameorord>       ctl-class-name
+%type <token>           dialog-or-frame
 %type <diagctrllist>    diag-control-section
 %type <diagctrllist>    diag-control-stmts
 %type <diagctrl>        diag-control-stmt
@@ -1093,10 +1094,6 @@ diag-control-section
         { $$ = $2; }
     | Y_LBRACE diag-control-stmts Y_RBRACE
         { $$ = $2; }
-    | Y_BEGIN Y_END
-        { $$ = NULL; }
-    | Y_LBRACE Y_RBRACE
-        { $$ = NULL; }
     ;
 
 diag-data-elements
@@ -1323,24 +1320,31 @@ cntl-text
     : name-id
     ;
 
+dialog-or-frame
+    : Y_DIALOG
+        { $$ = Y_DIALOG; }
+    | Y_FRAME
+        { $$ = Y_FRAME; }
+    ;
+
 dialog-stmt
-    : Y_DIALOG cntl-text-options presparam-list
+    : dialog-or-frame cntl-text-options presparam-list
         {
             IntMask mask = {0};
-            $$ = SemOS2SetWindowData( $2, mask, $3, NULL );
+            $$ = SemOS2SetWindowData( $2, mask, $3, NULL, $1 );
         }
-    | Y_DIALOG cntl-text-options Y_COMMA frame-style presparam-list
+    | dialog-or-frame cntl-text-options Y_COMMA frame-style presparam-list
         {
-            $$ = SemOS2SetWindowData( $2, $4, $5, NULL );
+            $$ = SemOS2SetWindowData( $2, $4, $5, NULL, $1 );
         }
-    | Y_DIALOG cntl-text-options presparam-list diag-control-section
+    | dialog-or-frame cntl-text-options presparam-list diag-control-section
         {
             IntMask mask = {0};
-            $$ = SemOS2SetWindowData( $2, mask, $3, $4 );
+            $$ = SemOS2SetWindowData( $2, mask, $3, $4, $1 );
         }
-    | Y_DIALOG cntl-text-options Y_COMMA frame-style presparam-list diag-control-section
+    | dialog-or-frame cntl-text-options Y_COMMA frame-style presparam-list diag-control-section
         {
-            $$ = SemOS2SetWindowData( $2, $4, $5, $6 );
+            $$ = SemOS2SetWindowData( $2, $4, $5, $6, $1 );
         }
     ;
 

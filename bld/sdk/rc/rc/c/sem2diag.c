@@ -188,7 +188,7 @@ extern FullDialogBoxControlOS2 *SemOS2NewDiagCtrl( uint_8 token,
     uint_16                     ctlClass;
     ControlClass                *cont_class;
 
-    switch (token) {
+    switch( token ) {
     case Y_AUTOCHECKBOX:
         ctlClass = OS2_WC_BUTTON;
         defstyle = DEF_AUTOCHECKBOX;
@@ -746,7 +746,7 @@ extern FullDialogBoxControlOS2 *SemOS2SetControlData( ResNameOrOrdinal *name,
 
 extern FullDialogBoxControlOS2 *SemOS2SetWindowData( FullDiagCtrlOptionsOS2 opts,
                     IntMask framectl, PresParamListOS2 *presparams,
-                    FullDiagCtrlListOS2 *childctls )
+                    FullDiagCtrlListOS2 *childctls, uint_16 token )
 /*******************************************************************************/
 {
     FullDialogBoxControlOS2 *control;
@@ -757,10 +757,19 @@ extern FullDialogBoxControlOS2 *SemOS2SetWindowData( FullDiagCtrlOptionsOS2 opts
 
     control = SemOS2InitDiagCtrl();
 
-    defstyle    = OS2_WS_CLIPSIBLINGS | OS2_WS_SAVEBITS | OS2_FS_DLGBORDER;
+    if( token == Y_FRAME ) {
+        defstyle = OS2_WS_VISIBLE;
+    } else {
+        /* it's gotta be a Y_DIALOG */
+        defstyle = OS2_WS_CLIPSIBLINGS | OS2_WS_SAVEBITS | OS2_FS_DLGBORDER;
+    }
     style_mask  = opts.Style.Mask;
     style_value = opts.Style.Value;
     style = (style_mask & style_value) | (~style_mask & defstyle);
+
+    /* IBM's RC is trying to be clever */
+    if( framectl.Value & OS2_FCF_SIZEBORDER )
+        style &= ~OS2_FS_DLGBORDER;
 
     control->ctrl.ID         = opts.ID;
     control->ctrl.Size       = opts.Size;
