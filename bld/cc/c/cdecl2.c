@@ -257,6 +257,7 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
                     break;
                 }
             }
+            old_sym.naked |= sym->naked;
             if( stg_class == SC_STATIC && old_sym.stg_class == SC_EXTERN ) {
                 /* can't redeclare extern function as static */
                 /* NB: We may want to handle SC_FORWARD functions too! */
