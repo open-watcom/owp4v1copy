@@ -89,6 +89,7 @@ extern void             SemOS2CheckResFlags( FullOptFlagsOS2 *currflags,
                                 ResMemFlags pureopts );
 extern char             *SemOS2TokenToString( uint_8 token );
 extern uint_32          SemOS2DefaultCodepage( void );
+extern void             SemOS2SetCodepage( uint_32 codepage );
 extern void             SetDefLang( void );
 extern void             SemSetGlobalLanguage( WResLangType *newlang );
 extern void             SemSetResourceLanguage( WResLangType *newlang,

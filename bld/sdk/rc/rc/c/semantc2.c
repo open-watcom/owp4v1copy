@@ -46,6 +46,12 @@ uint_32 SemOS2DefaultCodepage( void )
     return( curCodepage );
 }
 
+void SemOS2SetCodepage( uint_32 codepage )
+/****************************************/
+{
+    curCodepage = codepage;
+}
+
 FullOptFlagsOS2 SemOS2AddFirstResOption( uint_8 token, uint_32 value )
 /********************************************************************/
 {

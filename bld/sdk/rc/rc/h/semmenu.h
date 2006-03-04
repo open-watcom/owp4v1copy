@@ -113,6 +113,6 @@ MenuFlags SemOS2AddFirstMenuOption( uint_8 token );
 MenuFlags SemOS2AddMenuOption( MenuFlags oldflags, uint_8 token );
 FullMenuOS2 * SemOS2NewMenu( FullMenuItemOS2 firstitem );
 FullMenuOS2 * SemOS2AddMenuItem( FullMenuOS2 * currmenu, FullMenuItemOS2 curritem );
-void SemOS2WriteMenu( WResID * name, ResMemFlags flags, FullMenuOS2 * menu, uint_16 );
+void SemOS2WriteMenu( WResID * name, ResMemFlags flags, FullMenuOS2 * menu, uint_16, uint_32 codepage );
 
 #endif
