@@ -54,7 +54,7 @@ extern void SemOS2AddSingleLineResource( WResID *name, uint_8 type,
 /*****************************************************************/
 {
     ResLocation     start;
-    ResMemFlags     flags;
+    ResMemFlags     flags, flagsMDP, flagsMP;
     char            full_filename[ _MAX_PATH ];
     static int      firstIcon = TRUE;
 
@@ -72,6 +72,9 @@ extern void SemOS2AddSingleLineResource( WResID *name, uint_8 type,
 
     if( AddDependency( full_filename ) ) goto HANDLE_ERROR;
 
+    flagsMDP = MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE | MEMFLAG_PURE;
+    flagsMP  = MEMFLAG_MOVEABLE | MEMFLAG_PURE;
+
     switch( type ) {
     case Y_DEFAULTICON:
         /* DEFAULTICON doesn't have a name, let's make our own */
@@ -87,7 +90,7 @@ extern void SemOS2AddSingleLineResource( WResID *name, uint_8 type,
                               MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE, 0 );
             flags = fullflags->flags;
         } else {
-            flags = MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE | MEMFLAG_PURE;
+            flags = flagsMDP;
         }
 
         /* Duplicate the first icon encountered as the default icon IFF it
@@ -109,7 +112,7 @@ extern void SemOS2AddSingleLineResource( WResID *name, uint_8 type,
 
             start = SemCopyRawFile( filename );
             SemAddResourceFree( id, WResIDFromNum( OS2_RT_DEFAULTICON ),
-                                flags, start );
+                                flagsMDP, start );
         }
         else {
             start = SemCopyRawFile( filename );
@@ -123,7 +126,7 @@ extern void SemOS2AddSingleLineResource( WResID *name, uint_8 type,
             SemOS2CheckResFlags( fullflags, 0, MEMFLAG_MOVEABLE, MEMFLAG_PURE );
             flags = fullflags->flags;
         } else {
-            flags = MEMFLAG_MOVEABLE | MEMFLAG_PURE;
+            flags = flagsMP;
         }
         start = SemCopyRawFile( filename );
         SemAddResourceFree( name, WResIDFromNum( OS2_RT_BITMAP ),
@@ -137,7 +140,7 @@ extern void SemOS2AddSingleLineResource( WResID *name, uint_8 type,
                                 MEMFLAG_PURE );
             flags = fullflags->flags;
         } else {
-            flags = MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE | MEMFLAG_PURE;
+            flags = flagsMDP;
         }
         AddFontResources( name, flags, full_filename );
         break;
