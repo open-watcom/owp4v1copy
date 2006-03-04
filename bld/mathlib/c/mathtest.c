@@ -123,7 +123,6 @@ void test_integer_math( void )
         VERIFY( num[ctr] == 0 );
     }
 #if (__STDC_VERSION__ >= 199901L) && !defined( __WINDOWS__ )
-    int         foo;    // work around bug in wcc, remove when that's fixed
     lldiv_t     lldiv_result;
 
     VERIFY( llabs( -1 ) == 1 );

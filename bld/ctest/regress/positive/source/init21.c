@@ -16,7 +16,17 @@ int foo( int arg )
     for( int i = 2, j = 1; i < 10; ++i )
         a += i + j;     // i in scope opened by 'for'
 
-    return( a - i );    // back to the i in function scope
+    typedef int ynt;
+    --arg;
+    ynt y;
+    ++arg;
+    y = 3;
+    struct { ynt a; } str = { 0 };
+    --arg;
+    enum { En = 3 };
+    ++arg;
+    
+    return( a - i + En - y + str.a );    // back to the i in function scope
 }
 
 int main( void )

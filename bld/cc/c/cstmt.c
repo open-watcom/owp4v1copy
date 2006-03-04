@@ -1129,12 +1129,19 @@ static void EndOfStmt( void )
 }
 
 
-static bool IsDeclSpecifier( TOKEN token )
+static bool IsDeclarator( TOKEN token )
 {
+    SYM_HANDLE      sym_handle;
+    SYM_ENTRY       sym;
+
+    /* If token class is storage class or qualifier, it's a declaration */
     if( TokenClass[ token ] == TC_STG_CLASS
-    ||  TokenClass[ token ] == TC_QUALIFIER ) {
+    ||  TokenClass[ token ] == TC_QUALIFIER
+    ||  TokenClass[ token ] == TC_DECLSPEC ) {
         return( TRUE );
     }
+
+    /* If token is one of the following, it's a declaration */
     switch( token ) {
     case T_VOID:
     case T_CHAR:
@@ -1149,10 +1156,26 @@ static bool IsDeclSpecifier( TOKEN token )
     case T__IMAGINARY:
     case T__BOOL:
     case T___INT64:
+    case T_STRUCT:
+    case T_UNION:
+    case T_ENUM:
         return( TRUE );
     default:
-        return( FALSE );
+        break;
     }
+
+    /* If token is an ID, it might be a typedef */
+    if( (CurToken == T_ID) || (CurToken == T_SAVED_ID) ) {
+        if( CurToken == T_ID ) {
+            sym_handle = SymLookTypedef( HashValue, Buffer, &sym );
+        } else {    /* T_SAVED_ID */
+            sym_handle = SymLookTypedef( SavedHash, SavedId, &sym );
+        }
+        if( sym_handle != 0 && sym.stg_class == SC_TYPEDEF ) {
+            return( TRUE );
+        }
+    }
+    return( FALSE );
 }
 
 
@@ -1204,7 +1227,7 @@ void Statement( void )
     SymReplace( &sym, func_result );
     for( ;; ) {
         CompFlags.pending_dead_code = 0;
-        if( GrabLabels() == 0 && declaration_allowed && IsDeclSpecifier( CurToken ) ) {
+        if( GrabLabels() == 0 && declaration_allowed && IsDeclarator( CurToken ) ) {
             GetLocalVarDecls();
         }
         if( CompFlags.c99_extensions ) {
