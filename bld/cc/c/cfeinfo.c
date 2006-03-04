@@ -305,13 +305,12 @@ struct aux_info *InfoLookup( SYMPTR sym )
     if( name == NULL )
         return( inf );                   /* 01-jun-90 */
     ent = AuxLookup( name );
-    if( ent != NULL ) {
+    if( ent != NULL )
         inf = ent->info;
-    } else {
+    if( ( ent == NULL ) || (sym->flags & SYM_INTRINSIC) ) {
         if( sym->flags & SYM_DEFINED )
             return( inf );
-
-        if( ! (sym->flags & SYM_INTRINSIC) ) {  /* 12-oct-92 */
+        if( !(sym->flags & SYM_INTRINSIC) ) {
             if( memcmp( name, "_inline_", 8 ) != 0 )
                 return( inf );
             name += 8;
@@ -341,6 +340,8 @@ struct aux_info *InfoLookup( SYMPTR sym )
             }
             inf = &InlineInfo;
             inf->cclass = (WatcallInfo.cclass & FAR) | MODIFY_EXACT;
+            if( (sym->flags & SYM_INTRINSIC) && ( ent != NULL ) )
+                inf->cclass |= ent->info->cclass;
             inf->code = ifunc->code;
             inf->parms = ifunc->parms;
             inf->returns = ifunc->returns;
