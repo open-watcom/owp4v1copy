@@ -1,0 +1,7 @@
+#define foo 2
+
+ICON foo test.ico
+
+#define foo 3
+
+ICON foo test.ico

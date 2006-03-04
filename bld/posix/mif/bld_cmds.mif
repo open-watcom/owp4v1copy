@@ -9,7 +9,7 @@
 COMMANDS = &
 #    basename &
     cat &
-#    cmp &
+    cmp &
 #    comm &
 #    compress &
 #    cut &
