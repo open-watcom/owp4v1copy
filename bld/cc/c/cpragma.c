@@ -44,34 +44,7 @@ struct enums_info {
     int    make_enums;
 } *EnumInfo;
 
-// local functions
-local void EndOfPragma( void );
-local void PragFlag( int value );
-local void GetLibraryNames( void );
-local void PragComment( void );
-local void SetPackAmount( void );
-local void PragPack( void );
-local void PragAllocText( void );
-local void PragEnableDisableMessage( int enable );
-local void PragSTDCOption( void );
-local void PragAddExtRef ( char * );
-static void PragMessage( void );
-static void PragEnum ( void );
-static void PragLibs( void );
-static void PragCodeSeg( void );
-static void PragIntrinsic( int intrinsic );
-static void PragDataSeg( void );
-static void PragUnroll( void );
-static void PragReadOnlyFile( void );
-static void PragReadOnlyDir( void );
-static void PragOnce( void );
-static void PragSTDC( void );
-static void PragExtRef( void );
-local void CopyParms( void );
-local void CopyLinkage( void );
-local void CopyCode( void );
-local void CopyObjName( void );
-
+extern struct aux_info *GetLangInfo( type_modifiers flags );
 
 // local variables
 static struct toggle ToggleNames[] = {
@@ -81,7 +54,7 @@ static struct toggle ToggleNames[] = {
         { NULL, 0 }
     };
 
-void CPragmaInit( void ){
+void CPragmaInit( void ) {
 //********************************//
 // Init any general pragma things //
 //********************************//
@@ -113,71 +86,6 @@ void CPragmaInit( void ){
 /* call target specific init */
     PragmaInit();
 }
-
-void CPragma( void )
-{
-    if( CompFlags.cpp_output ) {                    /* 29-sep-90 */
-        if( ! CppPrinting() ) return;               /* 12-dec-89 */
-        CppPrtf( "#pragma" );
-        CompFlags.pre_processing = 1;               /* 28-feb-89 */
-        CompFlags.in_pragma = 1;
-        for(;;) {
-            GetNextToken();
-            if( CurToken == T_NULL ) break;
-            PrtToken();
-        }
-        CompFlags.in_pragma = 0;
-    } else {
-        NextToken();
-        if( PragRecog( "on" ) ) {
-            PragFlag( 1 );
-        } else if( PragRecog( "off" ) ) {
-            PragFlag( 0 );
-        } else if( PragRecog( "aux" ) || PragRecog( "linkage" ) ) {
-            PragAux();
-        } else if( PragRecog( "library" ) ) {
-            PragLibs();
-        } else if( PragRecog( "comment" ) ) {
-            PragComment();
-        } else if( PragRecog( "pack" ) ) {
-            PragPack();
-        } else if( PragRecog( "alloc_text" ) ) {    /* 26-oct-91 */
-            PragAllocText();
-        } else if( PragRecog( "code_seg" ) ) {      /* 22-oct-92 */
-            PragCodeSeg();
-        } else if( PragRecog( "data_seg" ) ) {      /* 22-oct-92 */
-            PragDataSeg();
-        } else if( PragRecog( "disable_message" ) ) {/* 18-jun-92 */
-            PragEnableDisableMessage( 0 );
-        } else if( PragRecog( "enable_message" ) ) {/* 18-jun-92 */
-            PragEnableDisableMessage( 1 );
-        } else if( PragRecog( "message" ) ) {   /* 13-oct-94 */
-            PragMessage();
-        } else if( PragRecog( "intrinsic" ) ) { /* 09-oct-92 */
-            PragIntrinsic( 1 );
-        } else if( PragRecog( "function" ) ) {
-            PragIntrinsic( 0 );
-        } else if( PragRecog( "enum" ) ) {
-            PragEnum();
-        } else if( PragRecog( "read_only_file" ) ) {
-            PragReadOnlyFile();
-        } else if( PragRecog( "read_only_directory" ) ) {
-            PragReadOnlyDir();
-        } else if( PragRecog( "once" ) ) {
-            PragOnce();
-        } else if( PragRecog( "unroll" ) ) {
-            PragUnroll();
-        } else if( PragRecog( "STDC" ) ) {
-            PragSTDC();
-        } else if( PragRecog( "extref" ) ) {
-            PragExtRef();
-        } else {
-            return;                     /* don't recognize anything */
-        }
-        EndOfPragma();
-    }
-}
-
 
 local void EndOfPragma( void )
 /*****************************/
@@ -211,6 +119,7 @@ extern int SetToggleFlag( char const *name, int const value )
 }
 
 local void PragFlag( int value )
+/******************************/
 {
 
     if( CurToken != T_LEFT_PAREN ) return;
@@ -223,6 +132,7 @@ local void PragFlag( int value )
 }
 
 local void GetLibraryNames( void )
+/********************************/
 {
     struct library_list **owner;
     struct library_list *new;
@@ -242,6 +152,7 @@ local void GetLibraryNames( void )
 }
 
 static void PragLibs( void )
+/**************************/
 {
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -250,6 +161,7 @@ static void PragLibs( void )
 }
 
 local void PragComment( void )
+/****************************/
 {
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -261,6 +173,7 @@ local void PragComment( void )
 }
 
 local void SetPackAmount( void )
+/******************************/
 {
     PackAmount = Constant;
     switch( PackAmount ) {
@@ -276,6 +189,7 @@ local void SetPackAmount( void )
 }
 
 local void PragPack( void )
+/*************************/
 {
     struct pack_info    *pi;
 
@@ -353,6 +267,7 @@ struct aux_info *MagicKeyword( char *name )
 
 
 void CreateAux( char *id )
+/************************/
 {
     CurrEntry = (struct aux_entry *)
             CMemAlloc( sizeof(struct aux_entry) + strlen( id ) );
@@ -360,36 +275,38 @@ void CreateAux( char *id )
 #if _CPU == 370
     CurrEntry->offset = -1;
 #endif
-    CurrInfo = (struct aux_info *)CMemAlloc( sizeof( struct aux_info ) );
 }
 
 
-void SetCurrInfo( void )
+void SetCurrInfo( char *name )
+/****************************/
 {
-    char    *name;
+    SYM_HANDLE      sym_handle;
+    SYM_ENTRY       sym;
+    type_modifiers  sym_attrib = FLAG_NONE;
     
-    if( CurToken == T_SAVED_ID ) {
-        name = SavedId;
-    } else {
-        name = Buffer;
-    }
     CurrInfo = MagicKeyword( name );
     if( CurrInfo == NULL ) {
+        if( CurrAlias == NULL ) {
+            sym_handle = SymLook( HashValue, name );
+            if( sym_handle != 0 ) {
+                SymGet( &sym, sym_handle );
+                sym_attrib = sym.attrib;
+            }
+            CurrAlias = GetLangInfo( sym_attrib );
+        }
         CreateAux( name );
+    } else if( CurrAlias == NULL ) {
+        CurrAlias = CurrInfo;
     }
 }
 
 
-void PragCurrAlias( void )
+void PragCurrAlias( char *name )
+/******************************/
 {
     struct aux_entry *search;
-    char    *name;
     
-    if( CurToken == T_SAVED_ID ) {
-        name = SavedId;
-    } else {
-        name = Buffer;
-    }
     search = NULL;
     CurrAlias = MagicKeyword( name );
     if( CurrAlias == NULL ) {
@@ -402,6 +319,7 @@ void PragCurrAlias( void )
 
 
 void XferPragInfo( char *from, char *to )
+/***************************************/
 {
     struct aux_entry *ent;
 
@@ -418,30 +336,8 @@ void XferPragInfo( char *from, char *to )
 }
 
 
-void PragEnding( void )
-{
-    if( CurrEntry == NULL )
-        return;
-    CurrInfo->use = CurrAlias->use; /* for compare */
-    if( memcmp( CurrAlias, CurrInfo,
-                sizeof( struct aux_info ) ) == 0 ) {
-        CurrEntry->info = CurrAlias;
-        CurrAlias->use++;
-        CMemFree( CurrInfo );
-    } else {
-        CopyParms();
-        CopyLinkage();
-        CopyCode();
-        CopyObjName();
-        CurrInfo->use = 1;
-        CurrEntry->info = CurrInfo;
-    }
-    CurrEntry->next = AuxList;
-    AuxList = CurrEntry;
-}
-
-
 local void CopyLinkage( void )
+/****************************/
 {
 #if _CPU == 370
     linkage_regs *regs;
@@ -457,11 +353,13 @@ local void CopyLinkage( void )
 
 
 local void CopyParms( void )
+/**************************/
 {
     int         i;
     hw_reg_set  *regs;
 
     if( CurrInfo->parms != CurrAlias->parms ) return;
+    if( IsAuxParmsBuiltIn( CurrInfo->parms ) ) return;
     for( i = 1, regs = CurrInfo->parms;
          !HW_CEqual( *regs, HW_EMPTY ); ++i, ++regs )
         ;
@@ -471,47 +369,77 @@ local void CopyParms( void )
     CurrInfo->parms = regs;
 }
 
-#if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
+#if _RISC_CPU
+#define BYTE_SEQ    risc_byte_seq
+#else
+#define BYTE_SEQ    byte_seq
+#endif
+
 local void CopyCode( void )
+/*************************/
 {
-    risc_byte_seq    *code;
-    int              size;
+    BYTE_SEQ    *code;
+    int         size;
 //TODO deal with reloc list
     if( CurrInfo->code == NULL ) return;
     if( CurrInfo->code != CurrAlias->code ) return;
-    size = sizeof( risc_byte_seq ) + CurrInfo->code->length;
-    code = (risc_byte_seq *)CMemAlloc( size );
+    size = sizeof( BYTE_SEQ ) + CurrInfo->code->length;
+    code = (BYTE_SEQ *)CMemAlloc( size );
     memcpy( code, CurrInfo->code, size );
     CurrInfo->code = code;
 }
-#else
-local void CopyCode()
-{
-    byte_seq    *code;
-    int         size;
 
-    if( CurrInfo->code == NULL ) return;
-    if( CurrInfo->code != CurrAlias->code ) return;
-    size = sizeof( byte_seq ) + CurrInfo->code->length;
-    code = (byte_seq *)CMemAlloc( size );
-    memcpy( code, CurrInfo->code, size );
-    CurrInfo->code = code;
+local void CopyObjName( void )
+/****************************/
+{
+    if( CurrInfo->objname == NULL )
+        return;
+    if( CurrInfo->objname != CurrAlias->objname )
+        return;
+    CurrInfo->objname = CStrSave( CurrInfo->objname );
+}
+
+#if _CPU == _AXP
+local void CopyExceptRtn( void )
+/******************************/
+{
+    if( CurrInfo->except_rtn == NULL )
+        return;
+    if( CurrInfo->except_rtn != CurrAlias->except_rtn )
+        return;
+    CurrInfo->except_rtn = CStrSave( CurrInfo->except_rtn );
 }
 #endif
 
-local void CopyObjName( void )
+void PragEnding( void )
+/*********************/
 {
-    char        *name;
-
-    if( CurrInfo->objname == NULL ) return;
-    if( CurrInfo->objname != CurrAlias->objname ) return;
-    name = CMemAlloc( strlen( CurrInfo->objname ) + 1 );
-    strcpy( name, CurrInfo->objname );
-    CurrInfo->objname = name;
+    if( CurrEntry == NULL )
+        return;
+    CurrInfo->use = CurrAlias->use; /* for compare */
+    if( memcmp( CurrAlias, CurrInfo,
+                sizeof( struct aux_info ) ) == 0 ) {
+        CurrEntry->info = CurrAlias;
+        CurrAlias->use++;
+        CMemFree( CurrInfo );
+    } else {
+        CopyParms();
+        CopyLinkage();
+        CopyCode();
+        CopyObjName();
+#if _CPU == _AXP
+        CopyExceptRtn();
+#endif
+        CurrInfo->use = 1;
+        CurrEntry->info = CurrInfo;
+    }
+    CurrEntry->next = AuxList;
+    AuxList = CurrEntry;
 }
 
 
 int PragRecog( char *what )
+/*************************/
 {
     char        *p;
 
@@ -530,16 +458,17 @@ int PragRecog( char *what )
 }
 
 
-void PragObjNameInfo( void )
+void PragObjNameInfo( char **objname )
+/************************************/
 {
     if( CurToken == T_STRING ) {
-        CurrInfo->objname = CMemAlloc( strlen( Buffer ) + 1 );
-        strcpy( CurrInfo->objname, Buffer );
+        *objname = CStrSave( Buffer );
         NextToken();
     }
 }
 
 TOKEN PragRegSet( void )
+/**********************/
 {
     if( CurToken == T_LEFT_BRACKET )
         return( T_RIGHT_BRACKET );
@@ -550,6 +479,7 @@ TOKEN PragRegSet( void )
 
 
 hw_reg_set PragRegList( void )
+/****************************/
 {
     hw_reg_set  res, reg;
     TOKEN       close;
@@ -577,10 +507,12 @@ hw_reg_set PragRegList( void )
     return( res );
 }
 
-void PragManyRegSets( void )
+hw_reg_set *PragManyRegSets( void )
+/*********************************/
 {
     int         i;
-    hw_reg_set  list, *sets;
+    hw_reg_set  list;
+    hw_reg_set  *sets;
     hw_reg_set  buff[ MAXIMUM_PARMSETS ];
 
     list = PragRegList();
@@ -597,10 +529,11 @@ void PragManyRegSets( void )
     i *= sizeof( hw_reg_set );
     sets = (hw_reg_set *)CMemAlloc( i );
     memcpy( sets, buff, i );
-    CurrInfo->parms = sets;
+    return( sets );
 }
 
 struct textsegment *NewTextSeg( char *name, char *suffix, char *classname )
+/*************************************************************************/
 {
     struct textsegment  *seg;
     int         len1;
@@ -620,6 +553,7 @@ struct textsegment *NewTextSeg( char *name, char *suffix, char *classname )
 }
 
 struct textsegment *LkSegName( char *segname, char *classname )
+/*************************************************************/
 {
     struct textsegment  *seg;
     int                 len;
@@ -636,6 +570,7 @@ struct textsegment *LkSegName( char *segname, char *classname )
 }
 
 local void PragAllocText( void )                              /* 26-oct-91 */
+/******************************/
 {
     struct textsegment  *seg;
     SYM_HANDLE          sym_handle;
@@ -672,6 +607,7 @@ local void PragAllocText( void )                              /* 26-oct-91 */
 }
 
 void EnableDisableMessage( int enable, unsigned msg_num )
+/*******************************************************/
 {
     unsigned char       mask;
 
@@ -696,6 +632,7 @@ void EnableDisableMessage( int enable, unsigned msg_num )
 // dis- enable display of selected message number
 //
 local void PragEnableDisableMessage( int enable )
+/***********************************************/
 {
     if( CurToken != T_LEFT_PAREN ) return;
     NextToken();
@@ -715,6 +652,7 @@ local void PragEnableDisableMessage( int enable )
 // this output is _not_ dependent on setting
 // of #pragma enable_message or disable_message.
 static void PragMessage( void )
+/*****************************/
 {
     if( CurToken != T_LEFT_PAREN ) return;
     CompFlags.pre_processing = 1;           /* enable macros */
@@ -766,6 +704,7 @@ static void PopEnum( void ){
 }
 
 static void PragEnum( void )    // #pragma enum PARSING
+/**************************/
 {
     if( PragRecog( "int" ) ) {
         PushEnum();
@@ -782,6 +721,7 @@ static void PragEnum( void )    // #pragma enum PARSING
 }
 
 static void PragIntrinsic( int intrinsic )              /* 09-oct-92 */
+/****************************************/
 {
     SYM_HANDLE  sym_handle;
     SYM_ENTRY   sym;
@@ -805,6 +745,7 @@ static void PragIntrinsic( int intrinsic )              /* 09-oct-92 */
 }
 
 static void PragCodeSeg( void )                       /* 22-oct-92 */
+/*****************************/
 {
     struct textsegment  *seg;
     char                *segname;
@@ -841,6 +782,7 @@ static void PragCodeSeg( void )                       /* 22-oct-92 */
 }
 
 static void PragDataSeg( void )                       /* 22-oct-92 */
+/*****************************/
 {
     char        *segname;
     int         segment;
@@ -872,6 +814,7 @@ static void PragDataSeg( void )                       /* 22-oct-92 */
 }
 
 static void PragUnroll( void )
+/****************************/
 {
     unsigned    unroll_count;
 
@@ -898,6 +841,7 @@ static void PragUnroll( void )
 //      - file must have started inclusion (may have completed)
 //
 static void PragReadOnlyFile( void )
+/**********************************/
 {
     if( CurToken == T_STRING ) {
         do {
@@ -918,6 +862,7 @@ static void PragReadOnlyFile( void )
 // (1) causes all files within directory to be marked read-only
 //
 static void PragReadOnlyDir( void )
+/*********************************/
 {
     while( CurToken == T_STRING ) {
         SrcFileReadOnlyDir( Buffer );
@@ -933,11 +878,13 @@ static void PragReadOnlyDir( void )
 // (1) include file once
 //
 static void PragOnce( void )
+/**************************/
 {
     SetSrcFNameOnce();
 }
 
 local void PragSTDCOption( void )
+/*******************************/
 {
     if( PragRecog( "ON" ) ) {
     }
@@ -951,6 +898,7 @@ local void PragSTDCOption( void )
 // #pragma STDC (FP_CONTRACT|FENV_ACCESS|CX_LIMITED_RANGE) (ON|OFF|DEFAULT)
 //
 static void PragSTDC( void )
+/**************************/
 {
     if( PragRecog( "FP_CONTRACT" ) ) {
            PragSTDCOption();
@@ -964,6 +912,7 @@ static void PragSTDC( void )
 }
 
 local void PragAddExtRef ( char *symbol )
+/***************************************/
 {
     SpcSymbol( symbol, SC_EXTERN  );
 }
@@ -971,6 +920,7 @@ local void PragAddExtRef ( char *symbol )
 // #pragma extref symbolname
 //
 static void PragExtRef( void )
+/****************************/
 {
     while( CurToken == T_ID ) {
         PragAddExtRef( Buffer );
@@ -981,3 +931,67 @@ static void PragExtRef( void )
     }
 }
 
+void CPragma( void )
+/******************/
+{
+    if( CompFlags.cpp_output ) {                    /* 29-sep-90 */
+        if( ! CppPrinting() ) return;               /* 12-dec-89 */
+        CppPrtf( "#pragma" );
+        CompFlags.pre_processing = 1;               /* 28-feb-89 */
+        CompFlags.in_pragma = 1;
+        for(;;) {
+            GetNextToken();
+            if( CurToken == T_NULL ) break;
+            PrtToken();
+        }
+        CompFlags.in_pragma = 0;
+    } else {
+        NextToken();
+        if( PragRecog( "on" ) ) {
+            PragFlag( 1 );
+        } else if( PragRecog( "off" ) ) {
+            PragFlag( 0 );
+        } else if( PragRecog( "aux" ) || PragRecog( "linkage" ) ) {
+            PragAux();
+        } else if( PragRecog( "library" ) ) {
+            PragLibs();
+        } else if( PragRecog( "comment" ) ) {
+            PragComment();
+        } else if( PragRecog( "pack" ) ) {
+            PragPack();
+        } else if( PragRecog( "alloc_text" ) ) {    /* 26-oct-91 */
+            PragAllocText();
+        } else if( PragRecog( "code_seg" ) ) {      /* 22-oct-92 */
+            PragCodeSeg();
+        } else if( PragRecog( "data_seg" ) ) {      /* 22-oct-92 */
+            PragDataSeg();
+        } else if( PragRecog( "disable_message" ) ) {/* 18-jun-92 */
+            PragEnableDisableMessage( 0 );
+        } else if( PragRecog( "enable_message" ) ) {/* 18-jun-92 */
+            PragEnableDisableMessage( 1 );
+        } else if( PragRecog( "message" ) ) {   /* 13-oct-94 */
+            PragMessage();
+        } else if( PragRecog( "intrinsic" ) ) { /* 09-oct-92 */
+            PragIntrinsic( 1 );
+        } else if( PragRecog( "function" ) ) {
+            PragIntrinsic( 0 );
+        } else if( PragRecog( "enum" ) ) {
+            PragEnum();
+        } else if( PragRecog( "read_only_file" ) ) {
+            PragReadOnlyFile();
+        } else if( PragRecog( "read_only_directory" ) ) {
+            PragReadOnlyDir();
+        } else if( PragRecog( "once" ) ) {
+            PragOnce();
+        } else if( PragRecog( "unroll" ) ) {
+            PragUnroll();
+        } else if( PragRecog( "STDC" ) ) {
+            PragSTDC();
+        } else if( PragRecog( "extref" ) ) {
+            PragExtRef();
+        } else {
+            return;                     /* don't recognize anything */
+        }
+        EndOfPragma();
+    }
+}

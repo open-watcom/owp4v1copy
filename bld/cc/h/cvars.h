@@ -694,15 +694,15 @@ extern  void    PragmaFini(void);               /* cpragma */
 extern  void    PragmaAuxInit(void);            /* cpragma */
 extern  void    PragInit(void);                 /* cpragma */
 extern  void    PragEnding(void);               /* cpragma */
-extern  void    PragObjNameInfo(void);          /* cpragma */
+extern  void    PragObjNameInfo(char **);       /* cpragma */
 extern  int     PragRecog(char *);              /* cpragma */
 extern  hw_reg_set PragRegList(void);           /* cpragma */
-extern  void    PragManyRegSets(void);          /* cpragma */
-extern  void    PragCurrAlias(void);            /* cpragma */
+extern  hw_reg_set *PragManyRegSets(void);      /* cpragma */
+extern  void    PragCurrAlias(char *);          /* cpragma */
 extern  TOKEN   PragRegSet(void);               /* cpragma */
 extern  void    ChkPragmas(void);               /* cpragma */
 extern  void    CreateAux(char *);              /* cpragma */
-extern  void    SetCurrInfo( void );            /* cpragma */
+extern  void    SetCurrInfo(char *);            /* cpragma */
 extern  void    XferPragInfo(char*,char*);      /* cpragma */
 extern  void    EnableDisableMessage(int,unsigned);/* cpragma */
 
