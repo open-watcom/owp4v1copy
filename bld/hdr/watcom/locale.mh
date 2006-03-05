@@ -93,14 +93,14 @@ struct lconv {
         char n_sign_posn;
 };
 
-_WCRTLINK extern char *setlocale(int __category,const char *__locale);
-_WCRTLINK extern struct lconv *localeconv(void);
+_WCRTLINK extern char    * _WRTLCALL setlocale(int __category,const char *__locale);
+_WCRTLINK extern struct lconv * _WRTLCALL localeconv(void);
 :segment CNAME
 }
 :endsegment
 
 :segment !NO_WIDECHAR
-_WCRTLINK extern wchar_t *_wsetlocale(int __category,const wchar_t *__locale);
+_WCRTLINK extern wchar_t * _WRTLCALL _wsetlocale(int __category,const wchar_t *__locale);
 :endsegment
 
 :include poppack.sp

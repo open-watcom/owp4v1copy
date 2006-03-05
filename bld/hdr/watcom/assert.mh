@@ -22,14 +22,14 @@
 #ifdef NDEBUG
  #define assert(ignore) ((void)0)
 #else
- _WCRTLINK extern void _assert( char *, char *, int );
- _WCRTLINK extern void _wassert( char *, char *, int );
- _WCRTLINK extern void __assert( int, char *, char *, int );
- _WCRTLINK extern void __wassert( int, char *, char *, int );
- _WCRTLINK extern void _assert99( char *, char *, char *, int );
- _WCRTLINK extern void _wassert99( char *, char *, char *, int );
- _WCRTLINK extern void __assert99( int, char *, char *, char *, int );
- _WCRTLINK extern void __wassert99( int, char *, char *, char *, int );
+ _WCRTLINK extern void _WRTLCALL _assert( char *, char *, int );
+ _WCRTLINK extern void _WRTLCALL _wassert( char *, char *, int );
+ _WCRTLINK extern void _WRTLCALL __assert( int, char *, char *, int );
+ _WCRTLINK extern void _WRTLCALL __wassert( int, char *, char *, int );
+ _WCRTLINK extern void _WRTLCALL _assert99( char *, char *, char *, int );
+ _WCRTLINK extern void _WRTLCALL _wassert99( char *, char *, char *, int );
+ _WCRTLINK extern void _WRTLCALL __assert99( int, char *, char *, char *, int );
+ _WCRTLINK extern void _WRTLCALL __wassert99( int, char *, char *, char *, int );
 :include ext.sp
  #ifdef __C89
   #ifdef _UNICODE

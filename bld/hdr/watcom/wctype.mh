@@ -88,28 +88,28 @@ using std::iswblank;
 :segment CNAME
 namespace std {
 :endsegment
-_WCRTLINK extern int      iswalnum( wint_t __wc );
-_WCRTLINK extern int      iswalpha( wint_t __wc );
-_WCRTLINK extern int      iswascii( wint_t __wc );
-_WCRTLINK extern int      iswcntrl( wint_t __wc );
-_WCRTLINK extern int      iswdigit( wint_t __wc );
-_WCRTLINK extern int      iswgraph( wint_t __wc );
-_WCRTLINK extern int      iswlower( wint_t __wc );
-_WCRTLINK extern int      iswprint( wint_t __wc );
-_WCRTLINK extern int      iswpunct( wint_t __wc );
-_WCRTLINK extern int      iswspace( wint_t __wc );
-_WCRTLINK extern int      iswupper( wint_t __wc );
-_WCRTLINK extern int      iswxdigit( wint_t __wc );
-_WCRTLINK extern int      iswctype( wint_t __wc, wctype_t __desc );
-_WCRTLINK extern wctype_t wctype( const char *__property );
-_WCRTLINK extern wint_t   towctrans( wint_t __wc, wctrans_t __desc );
-_WCRTLINK extern wint_t   towlower( wint_t __wc );
-_WCRTLINK extern wint_t   towupper( wint_t __wc );
-_WCRTLINK extern wctrans_t wctrans( const char *__property );
+_WCRTLINK extern int      _WRTLCALL iswalnum( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswalpha( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswascii( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswcntrl( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswdigit( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswgraph( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswlower( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswprint( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswpunct( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswspace( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswupper( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswxdigit( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswctype( wint_t __wc, wctype_t __desc );
+_WCRTLINK extern wctype_t _WRTLCALL wctype( const char *__property );
+_WCRTLINK extern wint_t   _WRTLCALL towctrans( wint_t __wc, wctrans_t __desc );
+_WCRTLINK extern wint_t   _WRTLCALL towlower( wint_t __wc );
+_WCRTLINK extern wint_t   _WRTLCALL towupper( wint_t __wc );
+_WCRTLINK extern wctrans_t _WRTLCALL wctrans( const char *__property );
 
 :include ext.sp
 /* These names are in ctype.h according to C99. */
-_WCRTLINK extern int      iswblank( wint_t __wc );
+_WCRTLINK extern int      _WRTLCALL iswblank( wint_t __wc );
 #endif
 :segment CNAME
 }

@@ -15,8 +15,8 @@
 #endif
 
 :include cpluspro.sp
-_WCRTLINK extern unsigned char   *jasctime( const struct tm *__timeptr );
-_WCRTLINK extern unsigned char   *jctime( const time_t *__timer );
+_WCRTLINK extern unsigned char   * _WRTLCALL jasctime( const struct tm *__timeptr );
+_WCRTLINK extern unsigned char   * _WRTLCALL jctime( const time_t *__timer );
 :include cplusepi.sp
 
 #endif

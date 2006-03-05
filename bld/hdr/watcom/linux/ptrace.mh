@@ -56,7 +56,7 @@ struct pt_regs {
     int     xss;
 };
 
-_WCRTLINK extern long ptrace (int __request, int __pid, void *__addr, void *__data);
+_WCRTLINK extern long _WRTLCALL ptrace (int __request, int __pid, void *__addr, void *__data);
 
 :include poppack.sp
 :include cplusepi.sp

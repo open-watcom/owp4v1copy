@@ -201,7 +201,7 @@ struct termio {
  * One argument may follow; its presence and type depend on REQUEST.
  * Return value depends on REQUEST.  Usually -1 indicates error.
  */
-_WCRTLINK extern int ioctl( int __fd, unsigned long int __request, ... );
+_WCRTLINK extern int _WRTLCALL ioctl( int __fd, unsigned long int __request, ... );
 
 :include poppack.sp
 :include cplusepi.sp

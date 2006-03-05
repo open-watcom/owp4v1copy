@@ -15,8 +15,8 @@
 /*
  *  POSIX 1003.1 Prototypes.
  */
-_WCRTLINK extern char   *basename( char *__path );
-_WCRTLINK extern char   *dirname( char *__path );
+_WCRTLINK extern char   * _WRTLCALL basename( char *__path );
+_WCRTLINK extern char   * _WRTLCALL dirname( char *__path );
 
 :include cplusepi.sp
 #endif

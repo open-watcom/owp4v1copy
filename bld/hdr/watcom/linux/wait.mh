@@ -49,7 +49,7 @@
 /* Wait for a child to die.  When one does, put its status in *STAT_LOC
  * and return its process ID.  For errors, return (pid_t) -1.
  */
-_WCRTLINK extern pid_t wait (__WAIT_STATUS __stat_loc);
+_WCRTLINK extern pid_t _WRTLCALL wait(__WAIT_STATUS __stat_loc);
 
 /* Wait for a child matching PID to die.
  * If PID is greater than 0, match any process whose process ID is PID.
@@ -64,7 +64,7 @@ _WCRTLINK extern pid_t wait (__WAIT_STATUS __stat_loc);
  * Return (pid_t) -1 for errors.  If the WUNTRACED bit is
  * set in OPTIONS, return status for stopped children; otherwise don't.
  */
-_WCRTLINK extern pid_t waitpid (pid_t __pid, int *__stat_loc, int __options);
+_WCRTLINK extern pid_t _WRTLCALL waitpid(pid_t __pid, int *__stat_loc, int __options);
 
 :include poppack.sp
 :include cplusepi.sp

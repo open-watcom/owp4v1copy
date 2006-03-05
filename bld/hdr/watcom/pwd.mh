@@ -33,11 +33,11 @@ struct passwd {
 /*
  *  POSIX 1003.1 Prototypes.
  */
-_WCRTLINK extern struct passwd *getpwnam( const char *__name );
-_WCRTLINK extern struct passwd *getpwuid( uid_t __uid );
-_WCRTLINK extern struct passwd *getpwent( void );
-_WCRTLINK extern int           setpwent( void );
-_WCRTLINK extern int           endpwent( void );
+_WCRTLINK extern struct passwd * _WRTLCALL getpwnam( const char *__name );
+_WCRTLINK extern struct passwd * _WRTLCALL getpwuid( uid_t __uid );
+_WCRTLINK extern struct passwd * _WRTLCALL getpwent( void );
+_WCRTLINK extern int           _WRTLCALL setpwent( void );
+_WCRTLINK extern int           _WRTLCALL endpwent( void );
 
 :include cplusepi.sp
 #endif

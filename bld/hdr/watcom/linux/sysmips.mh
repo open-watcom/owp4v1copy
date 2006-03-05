@@ -24,7 +24,7 @@
 #define MIPS_RDNVRAM              10    /* read NVRAM */
 #define MIPS_ATOMIC_SET         2001    /* atomically set variable       */
 
-_WCRTLINK extern int sysmips( const int __cmd, const int __arg1, const int __arg2, const int __arg3 );
+_WCRTLINK extern int _WRTLCALL sysmips( const int __cmd, const int __arg1, const int __arg2, const int __arg3 );
 
 :include cplusepi.sp
 #endif /* !_SYS_SYSMIPS_H_INCLUDED */

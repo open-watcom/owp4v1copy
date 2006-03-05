@@ -258,12 +258,12 @@ typedef struct {
 
 #endif  /* __STDC_FORMAT_MACROS */
 
-_WCRTLINK extern intmax_t   imaxabs( intmax_t __j );
-_WCRTLINK extern imaxdiv_t  imaxdiv( intmax_t __numer, intmax_t __denom );
-_WCRTLINK extern intmax_t   strtoimax( const char *__nptr, char **__endptr, int __base );
-_WCRTLINK extern uintmax_t  strtoumax( const char *__nptr, char **__endptr, int __base );
-_WCRTLINK extern intmax_t   wcstoimax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
-_WCRTLINK extern uintmax_t  wcstoumax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
+_WCRTLINK extern intmax_t   _WRTLCALL imaxabs( intmax_t __j );
+_WCRTLINK extern imaxdiv_t  _WRTLCALL imaxdiv( intmax_t __numer, intmax_t __denom );
+_WCRTLINK extern intmax_t   _WRTLCALL strtoimax( const char *__nptr, char **__endptr, int __base );
+_WCRTLINK extern uintmax_t  _WRTLCALL strtoumax( const char *__nptr, char **__endptr, int __base );
+_WCRTLINK extern intmax_t   _WRTLCALL wcstoimax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
+_WCRTLINK extern uintmax_t  _WRTLCALL wcstoumax( const wchar_t *__nptr, wchar_t **__endptr, int __base );
 
 :include cplusepi.sp
 #endif

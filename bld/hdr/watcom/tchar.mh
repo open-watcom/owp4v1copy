@@ -73,7 +73,7 @@ inline int _vstprintf( wchar_t *__p1, const wchar_t *__p2, __va_list __p3 ) {
 #else
 #define _vstprintf(__p1,__p2,__p3)  vswprintf((__p1),32767,(__p2),(__p3))
 #endif
-_WCRTLINK extern int _stprintf(wchar_t *, const wchar_t *, ...);
+_WCRTLINK extern int _WRTLCALL _stprintf(wchar_t *, const wchar_t *, ...);
 
 
 /* Unformatted i/o */
@@ -341,9 +341,9 @@ inline wchar_t *_wcsspnp( const wchar_t *__p1, const wchar_t *__p2 ) {
 #ifdef __cplusplus
 namespace std {
 #endif
-_WMRTLINK extern double wcstod( const wchar_t *__nptr, wchar_t **__endptr );
-_WCRTLINK extern long int wcstol( const wchar_t *, wchar_t **, int );
-_WCRTLINK extern unsigned long int wcstoul( const wchar_t *, wchar_t **, int );
+_WMRTLINK extern double _WRTLCALL wcstod( const wchar_t *__nptr, wchar_t **__endptr );
+_WCRTLINK extern long int _WRTLCALL wcstol( const wchar_t *, wchar_t **, int );
+_WCRTLINK extern unsigned long int _WRTLCALL wcstoul( const wchar_t *, wchar_t **, int );
 #ifdef __cplusplus
 }
 using std::wcstod;
@@ -351,14 +351,14 @@ using std::wcstol;
 using std::wcstoul;
 #endif
 
-_WCRTLINK extern int _wcsicmp( const wchar_t *, const wchar_t * );
-_WCRTLINK extern int _wcsnicmp( const wchar_t *, const wchar_t *, size_t );
-_WCRTLINK extern wchar_t *_wcsdup( const wchar_t * );
-_WCRTLINK extern wchar_t *_wcslwr( wchar_t * );
-_WCRTLINK extern wchar_t *_wcsupr( wchar_t * );
-_WCRTLINK extern wchar_t *_wcsset( wchar_t *, wchar_t );
-_WCRTLINK extern wchar_t *_wcsnset( wchar_t *, int, size_t );
-_WCRTLINK extern wchar_t *_wcsrev( wchar_t * );
+_WCRTLINK extern int _WRTLCALL _wcsicmp( const wchar_t *, const wchar_t * );
+_WCRTLINK extern int _WRTLCALL _wcsnicmp( const wchar_t *, const wchar_t *, size_t );
+_WCRTLINK extern wchar_t * _WRTLCALL _wcsdup( const wchar_t * );
+_WCRTLINK extern wchar_t * _WRTLCALL _wcslwr( wchar_t * );
+_WCRTLINK extern wchar_t * _WRTLCALL _wcsupr( wchar_t * );
+_WCRTLINK extern wchar_t * _WRTLCALL _wcsset( wchar_t *, wchar_t );
+_WCRTLINK extern wchar_t * _WRTLCALL _wcsnset( wchar_t *, int, size_t );
+_WCRTLINK extern wchar_t * _WRTLCALL _wcsrev( wchar_t * );
 
 :include cplusepi.sp
 
@@ -798,59 +798,59 @@ inline unsigned int _tcsnextc( const char *__p ) {
 
 /* String functions */
 
-_WCRTLINK extern char *_tcschr(const char *, unsigned int);
-_WCRTLINK extern size_t _tcscspn(const char *, const char *);
-_WCRTLINK extern char *_tcsncat(char *, const char *, size_t);
-_WCRTLINK extern char *_tcsncpy(char *, const char *, size_t);
-_WCRTLINK extern char *_tcspbrk(const char *, const char *);
-_WCRTLINK extern char *_tcsrchr(const char *, int);
-_WCRTLINK extern size_t _tcsspn(const char *, const char *);
-_WCRTLINK extern char *_tcsstr(const char *, const char *);
-_WCRTLINK extern char *_tcstok(char *, const char *);
+_WCRTLINK extern char * _WRTLCALL _tcschr(const char *, unsigned int);
+_WCRTLINK extern size_t _WRTLCALL _tcscspn(const char *, const char *);
+_WCRTLINK extern char * _WRTLCALL _tcsncat(char *, const char *, size_t);
+_WCRTLINK extern char * _WRTLCALL _tcsncpy(char *, const char *, size_t);
+_WCRTLINK extern char * _WRTLCALL _tcspbrk(const char *, const char *);
+_WCRTLINK extern char * _WRTLCALL _tcsrchr(const char *, int);
+_WCRTLINK extern size_t _WRTLCALL _tcsspn(const char *, const char *);
+_WCRTLINK extern char * _WRTLCALL _tcsstr(const char *, const char *);
+_WCRTLINK extern char * _WRTLCALL _tcstok(char *, const char *);
 
-_WCRTLINK extern char *_tcsnset(char *, unsigned int, size_t);
-_WCRTLINK extern char *_tcsrev(char *);
-_WCRTLINK extern char *_tcsset(char *, unsigned int);
+_WCRTLINK extern char * _WRTLCALL _tcsnset(char *, unsigned int, size_t);
+_WCRTLINK extern char * _WRTLCALL _tcsrev(char *);
+_WCRTLINK extern char * _WRTLCALL _tcsset(char *, unsigned int);
 
-_WCRTLINK extern int _tcscmp(const char *, const char *);
-_WCRTLINK extern int _tcsicmp(const char *, const char *);
-_WCRTLINK extern int _tcsnccmp(const char *, const char *, size_t);
-_WCRTLINK extern int _tcsncmp(const char *, const char *, size_t);
-_WCRTLINK extern int _tcsncicmp(const char *, const char *, size_t);
-_WCRTLINK extern int _tcsnicmp(const char *, const char *, size_t);
+_WCRTLINK extern int _WRTLCALL _tcscmp(const char *, const char *);
+_WCRTLINK extern int _WRTLCALL _tcsicmp(const char *, const char *);
+_WCRTLINK extern int _WRTLCALL _tcsnccmp(const char *, const char *, size_t);
+_WCRTLINK extern int _WRTLCALL _tcsncmp(const char *, const char *, size_t);
+_WCRTLINK extern int _WRTLCALL _tcsncicmp(const char *, const char *, size_t);
+_WCRTLINK extern int _WRTLCALL _tcsnicmp(const char *, const char *, size_t);
 
-_WCRTLINK extern int _tcscoll(const char *, const char *);
-_WCRTLINK extern int _tcsicoll(const char *, const char *);
-_WCRTLINK extern int _tcsnccoll(const char *, const char *, size_t);
-_WCRTLINK extern int _tcsncoll(const char *, const char *, size_t);
-_WCRTLINK extern int _tcsncicoll(const char *, const char *, size_t);
-_WCRTLINK extern int _tcsnicoll(const char *, const char *, size_t);
+_WCRTLINK extern int _WRTLCALL _tcscoll(const char *, const char *);
+_WCRTLINK extern int _WRTLCALL _tcsicoll(const char *, const char *);
+_WCRTLINK extern int _WRTLCALL _tcsnccoll(const char *, const char *, size_t);
+_WCRTLINK extern int _WRTLCALL _tcsncoll(const char *, const char *, size_t);
+_WCRTLINK extern int _WRTLCALL _tcsncicoll(const char *, const char *, size_t);
+_WCRTLINK extern int _WRTLCALL _tcsnicoll(const char *, const char *, size_t);
 
 
 /* "logical-character" mappings */
 
-_WCRTLINK extern size_t _tcsclen(const char *);
-_WCRTLINK extern char *_tcsnccat(char *, const char *, size_t);
-_WCRTLINK extern char *_tcsnccpy(char *, const char *, size_t);
-_WCRTLINK extern char *_tcsncset(char *, unsigned int, size_t);
+_WCRTLINK extern size_t _WRTLCALL _tcsclen(const char *);
+_WCRTLINK extern char * _WRTLCALL _tcsnccat(char *, const char *, size_t);
+_WCRTLINK extern char * _WRTLCALL _tcsnccpy(char *, const char *, size_t);
+_WCRTLINK extern char * _WRTLCALL _tcsncset(char *, unsigned int, size_t);
 
 
 /* MBCS-specific mappings */
 
-_WCRTLINK extern char *_tcsdec(const char *, const char *);
-_WCRTLINK extern char *_tcsinc(const char *);
-_WCRTLINK extern size_t _tcsnbcnt(const char *, size_t);
-_WCRTLINK extern size_t _tcsnccnt(const char *, size_t);
-_WCRTLINK extern unsigned int _tcsnextc (const char *);
-_WCRTLINK extern char *_tcsninc(const char *, size_t);
-_WCRTLINK extern char *_tcsspnp(const char *, const char *);
+_WCRTLINK extern char * _WRTLCALL _tcsdec(const char *, const char *);
+_WCRTLINK extern char * _WRTLCALL _tcsinc(const char *);
+_WCRTLINK extern size_t _WRTLCALL _tcsnbcnt(const char *, size_t);
+_WCRTLINK extern size_t _WRTLCALL _tcsnccnt(const char *, size_t);
+_WCRTLINK extern unsigned int _WRTLCALL _tcsnextc (const char *);
+_WCRTLINK extern char * _WRTLCALL _tcsninc(const char *, size_t);
+_WCRTLINK extern char * _WRTLCALL _tcsspnp(const char *, const char *);
 
-_WCRTLINK extern char *_tcslwr(char *);
-_WCRTLINK extern char *_tcsupr(char *);
+_WCRTLINK extern char * _WRTLCALL _tcslwr(char *);
+_WCRTLINK extern char * _WRTLCALL _tcsupr(char *);
 
-_WCRTLINK extern size_t _tclen(const char *);
-_WCRTLINK extern void _tccpy(char *, const char *);
-_WCRTLINK extern int _tccmp(const char *, const char *);
+_WCRTLINK extern size_t _WRTLCALL _tclen(const char *);
+_WCRTLINK extern void _WRTLCALL _tccpy(char *, const char *);
+_WCRTLINK extern int _WRTLCALL _tccmp(const char *, const char *);
 
 #endif
 
