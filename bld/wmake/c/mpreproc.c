@@ -39,6 +39,7 @@
 #include "mlex.h"
 #include "macros.h"
 #include "make.h"
+#include "mexec.h"
 #include "mmemory.h"
 #include "mmisc.h"
 #include "mparse.h"
@@ -1328,7 +1329,7 @@ STATIC void makeStringToken( char *inString, TOKEN_TYPE *current, int *index )
     current->type = OP_STRING;
     for( ;; ) {
         if( inString[inIndex] == DOUBLEQUOTE ) {
-            //skip the second double quote
+            // skip the second double quote
             ++inIndex;
             break;
         }
@@ -1472,6 +1473,50 @@ STATIC void makeFuncToken( char *inString, TOKEN_TYPE *current, int *index )
     }
 }
 
+STATIC void makeCmdToken( char *inString, TOKEN_TYPE *current, int *index )
+/**************************************************************************
+ * get a command token enclosed in square brackets; very basic - a right
+ * square bracket terminates command regardless of quoting
+ */
+{
+    int     inIndex;
+    int     currentIndex;
+
+    inIndex       = 1;   // skip opening bracket
+    currentIndex  = 0;
+    current->type = OP_SHELLCMD;
+    for( ;; ) {
+        if( inString[inIndex] == BRACKET_RIGHT ) {
+            // skip the closing bracket
+            ++inIndex;
+            break;
+        }
+        if( currentIndex >= MAX_STRING ) {
+            current->type = OP_ENDOFSTRING;
+            break;
+        }
+        switch( inString[inIndex] ) {
+            // error did not find closing quotation
+            case NULLCHAR :
+            case EOL:
+            case COMMENT:
+                current->type = OP_ERROR;
+                break;
+            default:
+                current->data.string[currentIndex] = inString[inIndex];
+        }
+
+        if( current->type == OP_ERROR ) {
+            break;
+        }
+        ++inIndex;
+        ++currentIndex;
+    }
+
+    current->data.string[currentIndex] = NULLCHAR;
+    *index = inIndex;
+}
+
 STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength )
 /****************************************************************************/
 {
@@ -1580,6 +1625,9 @@ STATIC void ScanToken( char *inString, TOKEN_TYPE *current, int *tokenLength )
             break;
         case DOUBLEQUOTE:
             makeStringToken( currentString, current, &index );
+            break;
+        case BRACKET_LEFT:
+            makeCmdToken( currentString, current, &index );
             break;
         default:
             if( currentString[index] >= '0' && currentString[index] <= '9') {
@@ -2040,6 +2088,13 @@ STATIC void unaryExpr( DATAVALUE *leftValue )
     case OP_INTEGER:
         leftValue->type        = currentToken.type;
         leftValue->data.number = currentToken.data.number;
+        nextToken();
+        break;
+    case OP_SHELLCMD:
+        leftValue->type        = OP_INTEGER;
+        PrtMsg( DBG | INF | EXECING_CMD, currentToken.data.string );
+        leftValue->data.number = ExecCommand( currentToken.data.string );
+        PrtMsg( DBG | INF | CMD_RETCODE, leftValue->data.number );
         nextToken();
         break;
     default:

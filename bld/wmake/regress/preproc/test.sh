@@ -50,4 +50,10 @@ $1 -h -f prep03 > tmp.out 2>&1
 diff -b prep03.cmp tmp.out
 do_check
 
+TEST=4
+print_header
+$1 -h -f prep04 > tmp.out 2>&1
+diff -b prep04.cmp tmp.out
+do_check
+
 rm -f tmp.out

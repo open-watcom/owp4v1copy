@@ -194,6 +194,8 @@
 #define WILL_BE_BUILT_BECAUSE_OF        183
 #define DELETING_FILE                   184
 #define TARGET_FORCED_UPTODATE          185
+#define EXECING_CMD                     186
+#define CMD_RETCODE                     187
 
 #define JUST_A_TAB                      188
 #define NEWLINE                         189

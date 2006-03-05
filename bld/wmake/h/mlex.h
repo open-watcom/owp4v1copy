@@ -160,6 +160,7 @@ enum Tokens {
     OP_PAREN_RIGHT,                /* ")"                */
     OP_DEFINED,                    /* DEFINED(MACRONAME) */
     OP_EXIST,                      /* EXIST[S](FILEPATH) */
+    OP_SHELLCMD,                   /* "[ shellcmd ]"     */
     OP_ENDOFSTRING,                /* End of string Character */
     OP_ERROR,                      /* Token returned has error */
 
@@ -183,6 +184,8 @@ enum Tokens {
 #define GREATERTHAN     '>'
 #define PAREN_LEFT      '('
 #define PAREN_RIGHT     ')'
+#define BRACKET_LEFT    '['
+#define BRACKET_RIGHT   ']'
 #define DOUBLEQUOTE     '\"'
 #define BACKSLASH       '\\'
 #define MAX_STRING      256

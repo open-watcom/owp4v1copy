@@ -264,6 +264,10 @@ pick( DELETING_FILE,            "Deleting file %s",
                                 "Deleting file %s" )
 pick( TARGET_FORCED_UPTODATE,   "%E is considered uptodate",
                                 "%E is considered uptodate" )
+pick( EXECING_CMD,              "About to execute [%s]",
+                                "About to execute [%s]" )
+pick( CMD_RETCODE,              "Return code was %d",
+                                "Return code was %d" )
 
 
 pick( JUST_A_TAB,                "\t",

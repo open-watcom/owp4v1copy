@@ -79,7 +79,8 @@ enum {
     FLAG_SHELL      = 0x01,
     FLAG_SILENT     = 0x02,
     FLAG_ENV_ARGS   = 0x04,
-    FLAG_IGNORE     = 0x08
+    FLAG_IGNORE     = 0x08,
+    FLAG_SHELL_RC   = 0x10
 };
 
 #define COM_MAX_LEN 16              /* must be able to hold any OS cmdname */
@@ -1949,7 +1950,11 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
             }
         }
         lastErrorLevel = (UINT8)retcode;
-        my_ret = retcode ? RET_ERROR : RET_SUCCESS;
+        if( flags & FLAG_SHELL_RC ) {
+            my_ret = retcode;
+        } else {
+            my_ret = retcode ? RET_ERROR : RET_SUCCESS;
+        }
     }
     if( flags & FLAG_ENV_ARGS ) {    /* cleanup for makeTmpEnv */
         killTmpEnv( tmp_env );
@@ -2013,6 +2018,39 @@ STATIC RET_T execLine( char *line )
         return( RET_ERROR );
     }
     return( RET_SUCCESS );
+}
+
+int_32 ExecCommand( char *line )
+/*******************************
+ * Execute an '!if [cmd]' style command
+ */
+{
+    char    *p;
+    RET_T   rc;
+    int     old_err = Glob.erroryet;
+
+    assert( line != NULL );
+
+    CheckForBreak();
+    p = SkipWS( line );
+    assert( !isws( *p ) );
+
+    // NMAKE quietly ignores empty commands here; should we as well?
+    if( Glob.microsoft && *p == '\0' ) {
+        return( RET_SUCCESS );
+    }
+    // Execute command - run it always, always silent, and get real retcode
+    rc = shellSpawn( p, FLAG_SILENT | FLAG_SHELL_RC );
+    if( OSCorrupted() ) {
+        PrtMsg( FTL | OS_CORRUPTED );
+    }
+    CheckForBreak();
+
+    // Errors during [cmd] execution don't count
+    Glob.erroryet = old_err;
+
+    // Report return code from shell
+    return( (UINT8)rc );
 }
 
 
