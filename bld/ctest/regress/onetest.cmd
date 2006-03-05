@@ -19,6 +19,9 @@ cd ..
 cd diagnose
 call onetest.cmd
 cd ..
+cd callconv
+call onetest.cmd
+cd ..
 wmake -h clean
 wmake -h
 wmake -h clean

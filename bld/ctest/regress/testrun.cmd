@@ -18,6 +18,9 @@ cd ..
 cd diagnose
 call testrun.cmd
 cd ..
+cd callconv
+call testrun.cmd
+cd ..
 wmake -h clean
 wmake -h
 wmake -h clean
