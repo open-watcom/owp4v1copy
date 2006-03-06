@@ -33,6 +33,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include "grfuncs.h"
 
 #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
     #define FARstrcpy strcpy

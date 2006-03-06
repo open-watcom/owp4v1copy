@@ -24,42 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  Wrapper routines for the graph library.
+* Description:  interface between math and graphic library for float precision
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include <math.h>
-#include "grfuncs.h"
-
-
-_WMRTLINK void _WCI86FAR _GR_ceil( float _WCI86FAR *value )
-{
-    *value = ceil( *value );
-}
-
-_WMRTLINK void _WCI86FAR _GR_cos( float _WCI86FAR *value )
-{
-    *value = cos( *value );
-}
-
-_WMRTLINK void _WCI86FAR _GR_sin( float _WCI86FAR *value )
-{
-    *value = sin( *value );
-}
-
-_WMRTLINK void _WCI86FAR _GR_log( float _WCI86FAR *value )
-{
-    *value = log( *value );
-}
-
-_WMRTLINK void _WCI86FAR _GR_log10( float _WCI86FAR *value )
-{
-    *value = log10( *value );
-}
-
-_WMRTLINK void _WCI86FAR _GR_sqrt( float _WCI86FAR *value )
-{
-    *value = sqrt( *value );
-}
+_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_ceil( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_cos( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_sin( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_log( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_log10( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_sqrt( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_ecvt( float _WCI86FAR *value,int ndigits, int _WCI86FAR *far_dec, int _WCI86FAR *far_sign, char _WCI86FAR *far_buf );
+_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_fcvt( float _WCI86FAR *value,int ndigits, int _WCI86FAR *far_dec, int _WCI86FAR *far_sign, char _WCI86FAR *far_buf );

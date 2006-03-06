@@ -159,7 +159,7 @@ objs += $(english_objs)
 !include defrule.mif
 !include deftarg.mif
 
-inc_dirs = -I"$(dev_dir)/graphlib/h"
+inc_dirs = -I"$(dev_dir)/graphlib/h" -I"$(mathlib_dir)/h"
 !ifeq host_os qnx
 inc_dirs += -I"$(hdr_dir)/qnx"
 !else ifeq host_os win
