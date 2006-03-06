@@ -16,6 +16,7 @@ int _u_bprintf( wchar_t *buf, size_t bufsize,
 .ixfunc2 '&StrIo' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function is equivalent to the
 .kw sprintf
@@ -29,12 +30,7 @@ string.
 The
 .arg format
 string is described under the description of the
-.if '&machsys' eq 'FOX' .do begin
-.kw sprintf
-.do end
-.el .do begin
 .kw printf
-.do end
 function.
 .if &'length(&wfunc.) ne 0 .do begin
 .np
@@ -54,27 +50,31 @@ accepts a Unicode string argument for
 and produces Unicode character output.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns the number of characters written into the
 array, not counting the terminating null character.
 An error can occur while converting a value for output.
 .im errnoref
 .return end
+.*
 .see begin
 .im seeprtf _bprintf
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 
 void main( int argc, char *argv[] )
-  {
+{
     char file_name[9];
     char file_ext[4];
 .exmp break
     _bprintf( file_name, 9, "%s", argv[1] );
     _bprintf( file_ext,  4, "%s", argv[2] );
     printf( "%s.%s\n", file_name, file_ext );
-  }
+}
 .exmp end
+.*
 .class WATCOM
 .system

@@ -252,43 +252,34 @@ files that are located in the
 directory are described first.
 .dfbeg
 .*------------------------------
-.if '&machsys' ne 'FOX' .do begin
 .df assert.h
-This ANSI header file is required when an
+This ISO C90 header file is required when an
 .kw assert
 macro is used. These assertions will be ignored when the identifier
 .mono NDEBUG
 is defined.
-.do end
 .*------------------------------
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df bios.h
 This header file declares all BIOS related functions.
-.do end
 .do end
 .*------------------------------
 .df conio.h
 .ix '&KbIo'
 .ix '&PortIo'
-This header file declares
-.if '&machsys' ne 'PP' .do begin
-console and
-.do end
+This header file declares console and
 Intel 80x86 port input/output functions.
 .*------------------------------
 .df ctype.h
-This ANSI header file declares functions that perform character
+This ISO C90 header file declares functions that perform character
 classification and case conversion operations. Similar functions for
 wide characters are declared in <wctype.h>.
 .*------------------------------
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df direct.h
 This header file declares functions related to directories and the type
 .kw DIR
 which describes an entry in a directory.
-.do end
 .do end
 .*------------------------------
 .if '&machsys' eq 'PP' or '&machsys' eq 'QNX' .do begin
@@ -299,7 +290,6 @@ the type
 which describes an entry in a directory.
 .do end
 .*------------------------------
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df dos.h
 This header file declares functions that interact with DOS. It includes
@@ -323,14 +313,13 @@ describes the CPU registers and segment registers for Intel 8086 family.
 describes the input parameter to an "interrupt" function.
 .sfend
 .do end
-.do end
 .*------------------------------
 .df env.h
 This POSIX header file declares environment string functions.
 .*------------------------------
 .df errno.h
 .ix '&Errs'
-This ANSI header file provides the
+This ISO C90 header file provides the
 .kw extern
 declaration for error variable
 .kw errno
@@ -365,7 +354,7 @@ functions can be used to control status flags and control modes in the
 floating point processor.
 .*------------------------------
 .df float.h
-This ANSI header file declares constants related to floating-point
+This ISO C90 header file declares constants related to floating-point
 numbers, declarations for low-level floating-point functions, and the
 declaration of the floating-point exception codes.
 .*------------------------------
@@ -429,7 +418,6 @@ macro
 .kw __STDC_FORMAT_MACROS
 is defined.
 .*------------------------------
-.if '&machsys' ne 'PP' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df io.h
 This header file declares functions that perform input/output
@@ -440,26 +428,21 @@ is declared in the
 .hdrfile sys&pc.stat.h
 header file.
 .do end
-.do end
 .*------------------------------
 .df limits.h
-This ANSI header file contains constant declarations for limits or
+This ISO C90 header file contains constant declarations for limits or
 boundary values for ranges of integers and characters.
 .*------------------------------
-.if '&machsys' ne 'PP' .do begin
 .df locale.h
-This ANSI header file contains declarations for the categories
+This ISO C90 header file contains declarations for the categories
 .mono (LC...)
 of locales which can be selected using the
 .kw setlocale
 function which is also declared.
-.do end
 .*------------------------------
-.if '&machsys' ne 'FOX' .do begin
 .df malloc.h
 This header file declares the memory allocation and deallocation
 functions.
-.do end
 .*------------------------------
 .df math.h
 .ix '&Math'
@@ -493,8 +476,6 @@ It also contains prototypes for multimedia functions and pragmas for the
 in-line generation of code that operates on multimedia registers.
 .do end
 .*------------------------------
-.if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .df process.h
 .ix '&Process'
 This header file declares the
@@ -512,8 +493,6 @@ function. The file also contains declarations for the constants
 .ct,
 and
 .kw P_OVERLAY.
-.do end
-.do end
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df pwd.h
@@ -535,30 +514,26 @@ and
 .*------------------------------
 .df setjmp.h
 .ix 'Non-local jumps'
-This ANSI header file declares the
+This ISO C90 header file declares the
 .kw setjmp
 and
 .kw longjmp
 functions.
 .*------------------------------
-.if '&machsys' ne 'PP' .do begin
 .df share.h
 This header file defines constants for shared access to files using the
 .kw sopen
 function.
-.do end
 .*------------------------------
-.if '&machsys' ne 'FOX' .do begin
 .df signal.h
-This ANSI header file declares the
+This ISO C90 header file declares the
 .kw signal
 and
 .kw raise
 functions.
-.do end
 .*------------------------------
 .df stdarg.h
-This ANSI header file defines the macros which handle variable argument
+This ISO C90 header file defines the macros which handle variable argument
 lists.
 .*------------------------------
 .df stdbool.h
@@ -584,7 +559,7 @@ parameter and a structure containing a
 member can both be shared between C and C++ without error.
 .*------------------------------
 .df stddef.h
-This ANSI header file defines a few popular constants and types
+This ISO C90 header file defines a few popular constants and types
 including
 .mono NULL
 (null pointer),
@@ -613,20 +588,18 @@ the macro
 .kw __STDC_CONSTANT_MACROS
 is defined.
 .*------------------------------
-.if '&machsys' ne 'FOX' .do begin
 .df stdio.h
-This ANSI header file declares the standard input/output functions.
+This ISO C90 header file declares the standard input/output functions.
 Files, devices and directories are referenced using pointers to objects
 of the type
 .kw FILE.
-.do end
 .*------------------------------
 .df stdlib.h
-This ANSI header file declares many standard functions excluding those
+This ISO C90 header file declares many standard functions excluding those
 declared in other header files discussed in this section.
 .*------------------------------
 .df string.h
-This ANSI header file declares functions that manipulate strings or
+This ISO C90 header file declares functions that manipulate strings or
 blocks of memory.
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
@@ -755,11 +728,6 @@ This header file contains debugger data structures.
 This header file contains "public" device administrator definitions.
 .do end
 .*------------------------------
-:cmt. .if '&machsys' eq 'QNX' .do begin
-:cmt. .df sys&pc.devdrvr.h
-:cmt. This header file contains "public" device driver definitions.
-:cmt. .do end
-.*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df sys&pc.dev_msg.h
 This header file contains "public" device driver messages.
@@ -769,11 +737,6 @@ This header file contains "public" device driver messages.
 .df sys&pc.disk.h
 This header file contains non-portable file system definitions.
 .do end
-.*------------------------------
-:cmt. .if '&machsys' eq 'QNX' .do begin
-:cmt. .df sys&pc.diskdrvr.h
-:cmt. This header file contains "public" disk driver definitions.
-:cmt. .do end
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df sys&pc.dumper.h
@@ -867,29 +830,6 @@ This header file contains "private" definitions for the mouse driver.
 This header file contains structure definitions and prototypes for QNX
 "name" functions.
 .do end
-.*------------------------------
-:cmt. .if '&machsys' eq 'QNX' .do begin
-:cmt. .df sys&pc.nameloc.h
-:cmt. This header file contains structure definitions for the network name
-:cmt. locator.
-:cmt. .do end
-.*------------------------------
-:cmt. .if '&machsys' eq 'QNX' .do begin
-:cmt. .df sys&pc.net_msg.h
-:cmt. This header file contains manifests and structure definitions for
-:cmt. messages to QNX net.
-:cmt. .do end
-.*------------------------------
-:cmt. .if '&machsys' eq 'QNX' .do begin
-:cmt. .df sys&pc.net_nq.h
-:cmt. This header file contains manifests and structure definitions for QNX
-:cmt. net enqueuing.
-:cmt. .do end
-.*------------------------------
-:cmt. .if '&machsys' eq 'QNX' .do begin
-:cmt. .df sys&pc.net_text.h
-:cmt. This header file contains network error message text.
-:cmt. .do end
 .*------------------------------
 .if '&machsys' eq 'QNX' .do begin
 .df sys&pc.osinfo.h

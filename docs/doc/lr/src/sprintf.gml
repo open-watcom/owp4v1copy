@@ -17,6 +17,7 @@ int _usprintf( wchar_t *buf,
 .ixfunc2 '&String' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function is equivalent to the
 .kw fprintf
@@ -26,18 +27,11 @@ specifies a character array into which the generated output is placed,
 rather than to a file.
 A null character is placed at the end of the generated character
 string.
-.if '&machsys' eq 'FOX' .do begin
-The
-.arg format
-string is described below.
-.do end
-.el .do begin
 The
 .arg format
 string is described under the description of the
 .kw printf
 function.
-.do end
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is identical to &func except that the argument
@@ -59,6 +53,7 @@ accepts a Unicode string argument for
 and produces Unicode character output.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns the number of characters written into the
 array, not counting the terminating null character.
@@ -72,9 +67,11 @@ or more wide characters were requested to be generated.
 .do end
 .im errnoref
 .return end
+.*
 .see begin
 .im seeprtf sprintf
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 
@@ -83,14 +80,14 @@ or more wide characters were requested to be generated.
 char namebuf[13];
 int  TempCount = 0;
 .exmp break
-char *make_temp_name()
-  {
+char *make_temp_name( void )
+{
     sprintf( namebuf, "ZZ%.6o.TMP", TempCount++ );
     return( namebuf );
-  }
+}
 .exmp break
-void main()
-  {
+void main( void )
+{
     FILE *tf1, *tf2;
 .exmp break
     tf1 = fopen( make_temp_name(), "w" );
@@ -99,12 +96,8 @@ void main()
     fputs( "temp file 2", tf2 );
     fclose( tf1 );
     fclose( tf2 );
-  }
+}
 .exmp end
-.if '&machsys' eq 'FOX' .do begin
-.im printfs
-.do end
-.el .do begin
+.*
 .class ANSI
-.do end
 .system

@@ -121,18 +121,14 @@ A set of functions that convert to and from Unicode character strings
 is also provided.
 .do end
 .*
-.if '&machsys' ne 'FOX' .do begin
 .note Memory Allocation Functions
 .sk 0
 These functions are concerned with allocating and deallocating memory.
-.do end
 .*
-.if '&machsys' ne 'FOX' .do begin
 .note Heap Functions
 .sk 0
 These functions provide the ability to shrink and grow the heap,
 as well as, find heap related problems.
-.do end
 .*
 .note Math Functions
 .sk 0
@@ -156,25 +152,20 @@ times and dates.
 These functions provide the capability to process a variable number of
 arguments to a function.
 .*
-.if '&machsys' ne 'FOX' .do begin
 .note Stream I/O Functions
 .sk 0
 These functions provide the "standard" functions to read and write
 files.
 Data can be transmitted as characters, strings, blocks of memory or
 under format control.
-.do end
 .*
-.if '&machsys' ne 'FOX' .do begin
 .note Wide Character Stream I/O Functions
 .sk 0
 These functions provide the "standard" functions to read and write
 files of wide characters.
 Data can be transmitted as wide characters, wide character strings,
 blocks of memory or under format control.
-.do end
 .*
-.if '&machsys' ne 'FOX' .do begin
 .note Process Primitive Functions
 .sk 0
 .if '&machsys' eq 'QNX' .do begin
@@ -184,7 +175,6 @@ signal handling, and timer operations.
 .el .do begin
 These functions deal with process creation, execution and termination,
 signal handling, and timer operations.
-.do end
 .do end
 .*
 .note Process Environment
@@ -239,19 +229,15 @@ A set of functions that handle a file system based upon Unicode
 filenames is also provided.
 .do end
 .*
-.if '&machsys' ne 'FOX' .do begin
 .note Console I/O Functions
 .sk 0
 These functions provide the capability to directly read and write
 characters from the console.
-.do end
 .*
-.if '&machsys' ne 'FOX' .do begin
 .note Default Windowing Functions
 .sk 0
 These functions provide the capability to manipulate various dialog
 boxes in &company's default windowing system.
-.do end
 .*
 .if '&machsys' eq 'QNX' .do begin
 .note POSIX Realtime Timer Functions
@@ -938,15 +924,12 @@ and
 .kw _mbsupr
 which convert the cases of characters and strings.
 .*======================================================================
-.if '&machsys' ne 'FOX' .do begin
 .section Memory Allocation Functions
 .*
 .np
 .ix '&Memory'
 These functions allocate and de-allocate blocks of memory.
-.if '&machsys' eq 'PP' .do begin
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 .np
 The default data segment has a maximum size of 64K bytes.
 It may be less in a machine with insufficient memory or when other
@@ -1078,10 +1061,7 @@ functions can both be used in either data memory model.
 .fd *fun="_smalloc" allocate a memory block from a shared heap
 .fd *fun="stackavail" determine available amount of stack space
 .fdend
-.do end
 .*======================================================================
-.if '&machsys' ne 'FOX' .do begin
-.if '&machsys' ne 'PP' .do begin
 .section Heap Functions
 .*
 .np
@@ -1113,8 +1093,6 @@ as well as, find heap related problems.
 .fd *fun="_fheapwalk" walk through each entry in the far heap
 .fd *fun="_nheapwalk" walk through each entry in the near heap
 .fdend
-.do end
-.do end
 .*======================================================================
 .section Math Functions
 .*
@@ -1241,7 +1219,6 @@ These macros provide the capability to access these arguments.
 .fd *fun="va_start" start access of variable arguments
 .fdend
 .*======================================================================
-.if '&machsys' ne 'FOX' .do begin
 .section Stream I/O Functions
 .*
 .np
@@ -1370,9 +1347,7 @@ functions should be used with caution to avoid unexpected results.
 See the section
 .us Directory Functions
 for functions which are related to directories.
-.do end
 .*======================================================================
-.if '&machsys' ne 'FOX' .do begin
 .section Wide Character Stream I/O Functions
 .*
 .np
@@ -1444,9 +1419,7 @@ converted to multibyte characters.
 See the section
 .us Directory Functions
 for functions which are related to directories.
-.do end
 .*======================================================================
-.if '&machsys' ne 'FOX' .do begin
 .section Process Primitive Functions
 .*
 .np
@@ -1575,7 +1548,6 @@ environment variable is searched to locate the program for the process
 "e" (optional) to indicate that the
 environment variables are being passed
 .endbull
-.do end
 .do end
 .*======================================================================
 .section Process Environment
@@ -1760,7 +1732,6 @@ filenames is also provided.
 .fd *fun="_wutime" set modification time for a file
 .fdend
 .*======================================================================
-.if '&machsys' ne 'FOX' .do begin
 .section Console I/O Functions
 .*
 .np
@@ -1782,10 +1753,8 @@ not opened or closed), since the functions operate at the hardware level.
 .fd *fun="putch" write a character to the console
 .fd *fun="ungetch" push back next character from console
 .fdend
-.do end
 .*======================================================================
 .if '&machsys' ne 'QNX' .do begin
-.if '&machsys' ne 'FOX' .do begin
 .section Default Windowing Functions
 .*
 .np
@@ -1802,7 +1771,6 @@ Microsoft Windows and IBM OS/2.
 .fd *fun="_dwShutDown" shut down default windowing system
 .fd *fun="_dwYield" yield control to other processes
 .fdend
-.do end
 .do end
 .*======================================================================
 .if '&machsys' eq 'QNX' .do begin

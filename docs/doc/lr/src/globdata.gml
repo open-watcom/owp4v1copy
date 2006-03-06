@@ -312,7 +312,6 @@ Prefix.
 Consult the technical documentation for your DOS system for the
 process information contained in the Program Segment Prefix.
 .do end
-.if '&machsys' ne 'FOX' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df _stacksize
 On 16-bit 80x86 systems, this
@@ -327,8 +326,6 @@ follows can be included with the program.
 unsigned int _stacksize = { 8 * 1024 };
 .millust end
 .do end
-.do end
-.if '&machsys' ne 'FOX' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df stdaux
 .proto stdio.h
@@ -337,32 +334,24 @@ This variable (with type
 indicates the standard auxiliary port
 (not available in some Windows platforms).
 .do end
-.do end
-.if '&machsys' ne 'FOX' .do begin
 .df stderr
 .proto stdio.h
 This variable (with type
 .mono FILE *)
 indicates the standard error stream (set to the
 console by default).
-.do end
-.if '&machsys' ne 'FOX' .do begin
 .df stdin
 .proto stdio.h
 This variable (with type
 .mono FILE *)
 indicates the standard input stream (set to the
 console by default).
-.do end
-.if '&machsys' ne 'FOX' .do begin
 .df stdout
 .proto stdio.h
 This variable (with type
 .mono FILE *)
 indicates the standard output stream (set to the
 console by default).
-.do end
-.if '&machsys' ne 'FOX' .do begin
 .if '&machsys' ne 'QNX' .do begin
 .df stdprn
 .proto stdio.h
@@ -370,7 +359,6 @@ This variable (with type
 .mono FILE *)
 indicates the standard printer.
 (not available in some Windows platforms).
-.do end
 .do end
 .if '&machsys' ne 'QNX' .do begin
 .df sys_errlist
@@ -434,7 +422,6 @@ These values will be determined from the value of the
 .mono TZ
 environment variable.
 .if '&machsys' ne 'QNX' .do begin
-.if &version ge 107 .do begin
 .df __wargc
 .proto stdlib.h
 This
@@ -454,7 +441,6 @@ This
 .id wchar_t ** __near
 data item is a pointer to an array of wide-character pointers to the
 wide-character equivalents of the environment strings.
-.do end
 .df __win_flags_alloc
 .proto stdlib.h
 This
@@ -469,7 +455,6 @@ variable contains the flags to be used when reallocating memory in
 Windows.
 .do end
 .if '&machsys' ne 'QNX' .do begin
-.if &version ge 110 .do begin
 .df _winmajor
 (Win32 only)
 .proto stdlib.h
@@ -485,9 +470,7 @@ Note that the Win32
 function is the preferred method for obtaining operating system
 version number information.
 .do end
-.do end
 .if '&machsys' ne 'QNX' .do begin
-.if &version ge 110 .do begin
 .df _winminor
 (Win32 only)
 .proto stdlib.h
@@ -503,9 +486,7 @@ Note that the Win32
 function is the preferred method for obtaining operating system
 version number information.
 .do end
-.do end
 .if '&machsys' ne 'QNX' .do begin
-.if &version ge 110 .do begin
 .df _winver
 (Win32 only)
 .proto stdlib.h
@@ -527,6 +508,5 @@ Note that the Win32
 .kw GetVersionEx
 function is the preferred method for obtaining operating system
 version number information.
-.do end
 .do end
 .dfend

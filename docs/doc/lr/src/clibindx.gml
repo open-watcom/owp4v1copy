@@ -18,25 +18,14 @@
 .sr Memory = 'Memory Allocation'
 .sr Conversion = 'Conversion Functions'
 .sr TimeFunc = 'Time Functions'
-.if '&machsys' eq 'FOX' .do begin
-.sr OsIo = 'DOS I/O Functions'
-.sr DosFunc = 'DOS Functions'
-.do end
-.el .do begin
 .sr OsIo = '&machsys I/O Functions'
 .sr DosFunc = '&machsys Functions'
-.do end
 .sr WinIo = 'Default Windowing Functions'
 .sr OS2Func = 'OS/2 Functions'
 .sr NTFunc = 'Win32 Functions'
 .sr TNTFunc = 'PharLap TNT Functions'
 .sr BiosFunc = 'BIOS Functions'
-.if '&machsys' eq 'FOX' .do begin
-.sr OsInt = 'DOS Interrupts'
-.do end
-.el .do begin
 .sr OsInt = '&machsys Interrupts'
-.do end
 .sr CpuInt = '8086 Interrupts'
 .sr KbIo = 'Console I/O'
 .sr PortIo = 'Port I/O'

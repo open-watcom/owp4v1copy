@@ -5,9 +5,7 @@
 :INCLUDE file='SYMBOLS'.
 :INCLUDE file='CMANMAC'.
 :INCLUDE file='LIBFUNS'.
-.if '&machsys' ne 'PP' .do begin
 :INCLUDE file='LIBLIST'.
-.do end
 :GDOC.
 .*
 :FRONTM.
@@ -22,17 +20,13 @@
 :INCLUDE file='CLIBFUNS'.
 :set symbol="headtxt0$" value=''.
 :set symbol="headtxt1$" value=''.
-:cmt. .if '&machsys' ne 'PP' .do begin
 :cmt. :INCLUDE file='CREFUNS'.
-:cmt. .do end
 :cmt. .if '&machsys' eq 'DOS' .do begin
 :cmt. :INCLUDE file='CSUMFUNS'.
 :cmt. .do end
-:cmt. .if '&machsys' ne 'FOX' .do begin
 :cmt. .sepsect Appendices
 :cmt. :APPENDIX.
 :cmt. :INCLUDE file='CLIBFUNC'.
-:cmt. .do end
 :BACKM.
 :cmt. :INDEX.
 :eGDOC.

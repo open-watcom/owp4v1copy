@@ -8,31 +8,16 @@
 .el .if '&machsys' eq 'WIN32' .do begin
 .   .sr isbn=""
 .do end
-.el .if '&machsys' eq 'FOX' .do begin
-.   .sr isbn=""
-.do end
-.el .if '&machsys' eq 'PP' .do begin
-.   .sr isbn="1-55094-057-0"
-.   .sr forw="for PenPoint
-.do end
 .el .if '&machsys' eq 'QNX' .do begin
 .   .sr isbn="1-55094-xxx-y"
 .   .sr forw="for QNX"
 .   .sr vol2="putw.gml"
-.do end
-.el .if '&machsys' eq 'NEC' .do begin
-.   .sr volm=""
-.   .sr isbn="10.6-Beta"
 .do end
 .el .if '&machsys' eq 'TEST' .do begin
 .   .sr isbn="11.0-Alpha"
 .do end
 .*
 :INCLUDE file='LYTCHG'.
-.if '&machsys' eq 'FOX' .do begin
-:INCLUDE file='FOXLAY'.
-:INCLUDE file='BANFOX'.
-.do end
 :INCLUDE file='BANTOP'.
 :INCLUDE file='FMTMACRO'.
 :INCLUDE file='SYMBOLS'.
@@ -44,14 +29,7 @@
 :INCLUDE file='CMANMAC'.
 :INCLUDE file='LIBMACS'.
 :INCLUDE file='LIBFUNS'.
-.if '&machsys' ne 'PP' .do begin
-.if &version le 106 .do begin
-:INCLUDE file='LIBLIST6'.
-.do end
-.el .do begin
 :INCLUDE file='LIBLIST7'.
-.do end
-.do end
 .*
 :GDOC.
 .*
@@ -93,7 +71,6 @@
 .*
 .sepsect &company C Library Reference &volm.
 :INCLUDE file='CLIBINDX'.
-.if '&machsys' ne 'NEC' .do begin
 .if '&machsys' ne 'TEST' .do begin
 :INCLUDE file='CLIBOVER'.
 .if '&machsys' eq 'DOS' or '&machsys' eq 'QNX' .do begin
@@ -102,7 +79,6 @@
 .im gfunmacs
 :INCLUDE file='GRAPHOV'
 .im gfunrems
-.do end
 .do end
 .do end
 .if '&machsys' eq 'DOS' .do begin
@@ -125,22 +101,16 @@
 :CMT.    :INCLUDE gr_index
 :CMT.    .do end
 .*
-.if '&machsys' ne 'NEC' .do begin
 .if '&machsys' ne 'PP' .do begin
 :INCLUDE file='CREFUNS'.
-.do end
 .do end
 :cmt. .if '&machsys' eq 'DOS' .do begin
 :cmt. :INCLUDE file='CSUMFUNS'.
 :cmt. .do end
-.if '&machsys' ne 'FOX' .do begin
 .sepsect Appendices
 :APPENDIX.
-.if '&machsys' ne 'NEC' .do begin
 :INCLUDE file='CLIBFUNC'.
-.do end
 .*
-.do end
 .*
 .if &e'&dohelp eq 0 .do begin
 :BACKM.

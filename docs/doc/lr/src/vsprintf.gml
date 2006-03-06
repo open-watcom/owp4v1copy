@@ -23,6 +23,7 @@ int _uvsprintf( wchar_t *buf,
 .ixfunc2 '&String' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function formats data under control of the
 .arg format
@@ -31,12 +32,7 @@ control string and writes the result to
 The
 .arg format
 string is described under the description of the
-.if '&machsys' eq 'FOX' .do begin
-.kw sprintf
-.do end
-.el .do begin
 .kw printf
-.do end
 function.
 The &func function is equivalent to the
 .kw sprintf
@@ -66,6 +62,7 @@ accepts a Unicode string argument for
 and produces Unicode character output.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns the number of characters written, or a
 negative value if an output error occurred.
@@ -77,9 +74,11 @@ negative value if
 or more wide characters were requested to be generated.
 .do end
 .return end
+.*
 .see begin
 .im seevprtf vsprintf
 .see end
+.*
 .exmp begin
 .blktext begin
 The following shows the use of &func in a general error message routine.
@@ -92,7 +91,7 @@ The following shows the use of &func in a general error message routine.
 char msgbuf[80];
 .exmp break
 char *fmtmsg( char *format, ... )
-  {
+{
     va_list arglist;
 .exmp break
     va_start( arglist, format );
@@ -100,16 +99,17 @@ char *fmtmsg( char *format, ... )
     vsprintf( &msgbuf[7], format, arglist );
     va_end( arglist );
     return( msgbuf );
-  }
+}
 .exmp break
-void main()
-  {
+void main( void )
+{
     char *msg;
 
     msg = fmtmsg( "%s %d %s", "Failed", 100, "times" );
     printf( "%s\n", msg );
-  }
+}
 .blkcode end
 .exmp end
+.*
 .class ANSI
 .system

@@ -28,7 +28,7 @@
 .*
 :set symbol="lang"      value="C".
 .*
-.* O/S specific definitions (DOS, OS/2, QNX, PenPoint, FOX, etc.)
+.* O/S specific definitions (DOS, OS/2, QNX, PenPoint etc.)
 .*
 .* define default values
 .*
@@ -50,10 +50,6 @@
 :set symbol="handle"    value="handle".
 :set symbol="fd"        value="handle".
 :set symbol="off_t"     value="long int".
-.*
-.if '&machsys' eq 'FOX' .do begin
-:set symbol="target"    value="FOX".
-.do end
 .*
 .if '&machsys' eq 'PP' .do begin
 :set symbol="target"    value="PP".

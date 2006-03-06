@@ -30,12 +30,7 @@ into which the generated output is placed.
 The
 .arg format
 string is described under the description of the
-.if '&machsys' eq 'FOX' .do begin
-.kw sprintf
-.do end
-.el .do begin
 .kw printf
-.do end
 function.
 The &func function is equivalent to the
 .kw _bprintf

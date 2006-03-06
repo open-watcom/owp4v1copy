@@ -1903,19 +1903,15 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)zentohan.gml
 incs_lr3 = $(docsrc_dir)$(SL)lr
 objs_lr3 = &
 $(docsrc_dir)$(SL)lr$(SL)authors.gml &
-$(docsrc_dir)$(SL)lr$(SL)banfox.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_dos.gml &
-$(docsrc_dir)$(SL)lr$(SL)clib_fox.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_nec.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_nt.gml &
-$(docsrc_dir)$(SL)lr$(SL)clib_pp.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_qnx.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_tst.gml &
 $(docsrc_dir)$(SL)lr$(SL)clibban.gml &
 $(docsrc_dir)$(SL)lr$(SL)clibhelp.gml &
 $(docsrc_dir)$(SL)lr$(SL)clibref.gml &
 $(docsrc_dir)$(SL)lr$(SL)f77graph.gml &
-$(docsrc_dir)$(SL)lr$(SL)nobanfox.gml &
 $(docsrc_dir)$(SL)lr$(SL)os2help.gml &
 $(docsrc_dir)$(SL)lr$(SL)symbols.gml
 incs_lr3+=;$(incs_lr1)
@@ -2506,7 +2502,6 @@ $(docsrc_dir)$(SL)gml$(SL)dup.ps        &
 $(docsrc_dir)$(SL)gml$(SL)enlarge.ps    &
 $(docsrc_dir)$(SL)gml$(SL)eoj.ps        &
 $(docsrc_dir)$(SL)gml$(SL)fmtmacro.gml  &
-$(docsrc_dir)$(SL)gml$(SL)foxlay.gml    &
 $(docsrc_dir)$(SL)gml$(SL)gmlack.gml    &
 $(docsrc_dir)$(SL)gml$(SL)gmlmacs.gml   &
 $(docsrc_dir)$(SL)gml$(SL)help.gml      &

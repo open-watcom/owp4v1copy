@@ -28,12 +28,7 @@ under control of the argument
 The
 .arg format
 string is described under the description of the
-.if '&machsys' eq 'FOX' .do begin
-.kw sscanf
-.do end
-.el .do begin
 .kw scanf
-.do end
 function.
 .pp
 The &func function is equivalent to the

@@ -83,10 +83,6 @@ Copies of this documentation may be ordered from:
 .sect Trademarks Used in this Manual
 .*
 .np
-.if '&machsys' eq 'FOX' .do begin
-FoxPro is a trademark of Fox Holdings, Inc.
-.np
-.do end
 IBM is a registered trademark of International Business Machines Corp.
 .np
 Intel is a registered trademark of Intel Corp.
