@@ -45,10 +45,13 @@ fmbsspnp.obj : ../../../c/fmbsspnp.c ../../../c/mbsspnp.c
 fmbsstr.obj  : ../../../c/fmbsstr.c  ../../../c/mbsstr.c
 fmbstok.obj  : ../../../c/fmbstok.c  ../../../c/mbstok.c
 fmbstowc.obj : ../../../c/fmbstowc.c ../../../c/mbstowcs.c
+fmbsto_s.obj : ../../../c/fmbsto_s.c ../../../c/mbstow_s.c
 fmbsupr.obj  : ../../../c/fmbsupr.c  ../../../c/mbsupr.c
 fmbterm.obj  : ../../../c/fmbterm.c  ../../../c/mbterm.c
 fmbtowc.obj  : ../../../c/fmbtowc.c  ../../../c/mbtowc.c
 fwcrtomb.obj : ../../../c/fwcrtomb.c ../../../c/wcrtomb.c
 fwcsrtom.obj : ../../../c/fwcsrtom.c ../../../c/wcsrtomb.c
+fwcsto_s.obj : ../../../c/fwcsto_s.c ../../../c/wcstom_s.c
 fwcstomb.obj : ../../../c/fwcstomb.c ../../../c/wcstombs.c
 fwctomb.obj  : ../../../c/fwctomb.c  ../../../c/wctomb.c
+fwctom_s.obj : ../../../c/fwctom_s.c ../../../c/wctomb_s.c
