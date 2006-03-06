@@ -132,6 +132,25 @@ typedef void (__SLIB_CALLBACK slib_callback_t)( SPECS __SLIB *, int );
 #define SPF_ZERO_PAD    0x8000
 #endif // __QNX__
 
+#if defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 1
+
+#if !defined( __WIDECHAR__ )
+int __prtf_s( void __SLIB *dest,                /* parm for use by out_putc */
+            const char * __restrict format,     /* pointer to format string */
+            va_list args,                       /* pointer to pointer to args*/
+            const char **errmsg,                /* constraint violation msg */
+            slib_callback_t *out_putc );        /* character output routine */
+
+#else
+int __wprtf_s( void __SLIB *dest,               /* parm for use by out_putc */
+            const CHAR_TYPE * __restrict format,/* pointer to format string */
+            va_list args,                       /* pointer to pointer to args*/
+            const char **errmsg,                /* constraint violation msg */
+            slib_callback_t *out_putc );        /* character output routine */
+#endif
+
+#else
+
 #if !defined(__WIDECHAR__)
 int __prtf( void __SLIB *dest,                  /* parm for use by out_putc */
                 const char *format,             /* pointer to format string */
@@ -158,5 +177,7 @@ int __prtf_slib( void __SLIB *dest,             /* parm for use by out_putc */
         #define __prtf_slib(a,b,c,d,e) ((int(_WCFAR *) (void _WCFAR *,const char _WCFAR *,char * _WCFAR *args,void (_WCFAR *__out)(SPECS _WCFAR *,int),int)) __f[24])(a,b,c,d,e)
     #endif
 #endif
+
+#endif  /* Safer C */
 
 #endif

@@ -24,9 +24,25 @@
 *
 *  ========================================================================
 *
-* Description:  Prototype for __fprtf() internal routine.
+* Description:  Implementation of fprintf_s() - safe formatted stream output.
 *
 ****************************************************************************/
 
 
-extern int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_list arg );
+#include "variety.h"
+#include "saferlib.h"
+#include "widechar.h"
+#include <stdio.h>
+#include <stdarg.h>
+#include <wchar.h>
+#include "fprtf_s.h"
+
+
+_WCRTLINK int __F_NAME(fprintf_s,fwprintf_s)( FILE * __restrict io,
+                                   const CHAR_TYPE * __restrict format, ... )
+{
+    va_list     args;
+
+    va_start( args, format );
+    return( __F_NAME(__fprtf_s,__fwprtf_s)( io, format, args ) );
+}

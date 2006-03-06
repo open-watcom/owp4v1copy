@@ -25,8 +25,10 @@
 *  ========================================================================
 *
 * Description:  Non-exhaustive test of Safer C library stream I/O functions.
-*               copied from iotest.c and modified
+*               Cloned from iotest.c and modified.
+*
 ****************************************************************************/
+
 
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdio.h>

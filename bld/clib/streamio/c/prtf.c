@@ -36,6 +36,9 @@
 #endif
 
 #include "variety.h"
+#ifdef SAFE_PRINTF
+    #include "saferlib.h"
+#endif
 #include "widechar.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -101,11 +104,17 @@ static void write_skinny_string( FAR_ASCII_STRING str, SPECS *specs,
                                  slib_callback_t *out_putc );
 #endif
 
-
-
-int __F_NAME(__prtf,__wprtf)( void __SLIB *dest,    /* parm for use by out_putc */
+#ifdef SAFE_PRINTF
+    int __F_NAME(__prtf_s,__wprtf_s)
+#else
+    int __F_NAME(__prtf,__wprtf)
+#endif
+                            ( void __SLIB *dest,    /* parm for use by out_putc */
                         const CHAR_TYPE *format,    /* pointer to format string */
                         va_list args,               /* pointer to pointer to args*/
+#ifdef SAFE_PRINTF
+                        const char **msg,           /* rt-constraint message */
+#endif
                         slib_callback_t *out_putc ) /* char output routine */
 {
     CHAR_TYPE           buffer[ BUF_SIZE ];
@@ -137,6 +146,11 @@ int __F_NAME(__prtf,__wprtf)( void __SLIB *dest,    /* parm for use by out_putc 
                 break;        /* 05-jan-89 */
 
             if( specs._character == 'n' ) {
+#ifdef SAFE_PRINTF
+                /* The %n specifier is not allowed - too dangerous. */
+                *msg = "%n";
+                break;
+#else
                 FAR_INT         iptr;
 
 #if defined( __FAR_SUPPORT__ )
@@ -163,7 +177,51 @@ int __F_NAME(__prtf,__wprtf)( void __SLIB *dest,    /* parm for use by out_putc 
                 } else {
                     *iptr = specs._output_count;
                 }
+#endif  /* SAFE_PRINTF */
             } else {
+#ifdef SAFE_PRINTF
+                if( specs._character == 's' || specs._character == 'S' ) {
+                    FAR_STRING  str;
+                    va_list     args_copy;
+
+                    /* Make sure %s argument is not NULL. Note that near pointers
+                     * in segmented models need special handling because only
+                     * offset will be NULL, not segment.
+                     */
+                    va_copy( args_copy, args );
+#if defined( __FAR_SUPPORT__ )
+                    if( specs._flags & SPF_FAR ) {
+                        str = va_arg( args_copy, CHAR_TYPE _WCFAR * );
+                    } else if( specs._flags & SPF_NEAR ) {
+                        CHAR_TYPE _WCNEAR   *ptr;
+
+                        ptr = va_arg( args_copy, CHAR_TYPE _WCNEAR * );
+                        if( ptr == NULL ) {
+                            str = NULL;
+                        } else {
+                            str = ptr;
+                        }
+                    } else {
+                        CHAR_TYPE   *ptr;
+
+                        ptr = va_arg( args_copy, CHAR_TYPE * );
+                        if( ptr == NULL ) {
+                            str = NULL;
+                        } else {
+                            str = ptr;
+                        }
+                    }
+#else
+                    str = va_arg( args_copy, CHAR_TYPE * );
+#endif
+                    va_end( args_copy );
+                    if( str == NULL ) {
+                        *msg = "%s -> NULL";
+                        break;  /* bail out */
+                    }
+                }
+#endif  /* SAFE_PRINTF */
+
                 {
                     my_va_list  pargs;
                     pargs = MY_VA_LIST( args );

@@ -24,9 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  Prototype for __fprtf() internal routine.
+* Description:  Prototype for __fprtf_s() internal routine.
 *
 ****************************************************************************/
 
 
-extern int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_list arg );
+extern int __F_NAME(__fprtf_s,__fwprtf_s)( FILE *fp, const CHAR_TYPE *format, va_list arg );
