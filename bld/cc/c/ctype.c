@@ -555,8 +555,8 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
                 type_modifiers  modifier;
 
                 decl = DECLSPEC_NONE;
-                modifier = 0;
                 while( CurToken != T_RIGHT_PAREN ) {
+                    modifier = 0;
                     switch( CurToken ) {
                     case T___WATCALL:
                         modifier = LANG_WATCALL;
@@ -1033,7 +1033,7 @@ local unsigned long GetFields( TYPEPTR decl )
         for( ;; ) {
             field = NULL;
             if( CurToken != T_COLON ) {
-                field = FieldDecl( typ,info.mod, state );
+                field = FieldDecl( typ, info.mod, state );
                 field->level = struct_level;
                 field = NewField( field, decl );
             }
