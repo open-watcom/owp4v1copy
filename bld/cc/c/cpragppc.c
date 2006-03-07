@@ -156,6 +156,10 @@ enum sym_state AsmQueryExternal( char *name )
     if( sym_handle == 0 )
         return( SYM_UNDEFINED );
     SymGet( &sym, sym_handle );
+    if( !(sym.flags & SYM_REFERENCED) ) {
+        sym.flags |= SYM_REFERENCED;
+        SymReplace( &sym, sym_handle );
+    }
     switch( sym.stg_class ) {
     case SC_AUTO:
     case SC_REGISTER:
