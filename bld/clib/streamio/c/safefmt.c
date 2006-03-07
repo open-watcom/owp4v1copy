@@ -370,7 +370,7 @@ int Test_print_wide( void )
 
 
     /* But we can properly test the string output functions... */
-    VERIFY( swprintf_s( buf, 2, L"hi" ) == 0 );
+    VERIFY( swprintf_s( buf, 2, L"hi" ) < 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
@@ -415,7 +415,7 @@ int Test_print_wide( void )
     VERIFY( my_swprintf_s( buf, 6, L"%c%s%d", 'z', L"oo", 36 ) == 5 );
     VERIFY( !wcscmp( buf, L"zoo36" ) );
 
-    VERIFY( my_swprintf_s( buf, 5, L"%c%s%d", 'z', L"oo", 36 ) == 0 );
+    VERIFY( my_swprintf_s( buf, 5, L"%c%s%d", 'z', L"oo", 36 ) < 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 

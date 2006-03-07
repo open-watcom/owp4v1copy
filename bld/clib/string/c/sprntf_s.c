@@ -67,6 +67,7 @@ _WCRTLINK int __F_NAME(sprintf_s,swprintf_s)( CHAR_TYPE * __restrict s, rsize_t 
     va_list                 arg;
     struct vsprtf_s_buf     info;
     const char              *msg;
+    int                     rc = 0;
 
     /* First check the critical conditions; if any of those
      * is violated, return immediately and don't touch anything.
@@ -93,11 +94,14 @@ _WCRTLINK int __F_NAME(sprintf_s,swprintf_s)( CHAR_TYPE * __restrict s, rsize_t 
                 }
                 /* If we got here, the output buffer was too small */
                 msg = "n < chars_output";
+#ifdef __WIDECHAR__
+                rc = -1;    /* Return value for swprintf_s is different! */
+#endif
             }
         }
         /* Something went wrong, output buffer will contain empty string */
         *s = NULLCHAR;
     }
     __rtct_fail( __func__, msg, NULL );
-    return( 0 );
+    return( rc );
 }
