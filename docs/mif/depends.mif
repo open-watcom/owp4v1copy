@@ -1360,6 +1360,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)freop_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fp_off.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fp_seg.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fprintf.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)fprntf_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fputc.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fputchar.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)fputs.gml &
@@ -1702,6 +1703,7 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)perror.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)portdesc.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)pow.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)printf.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)printf_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)printfs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)privity.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)putc.gml &
@@ -1781,11 +1783,13 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)sinh.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sisinit.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sleep.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)snprintf.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)snprtf_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sopen.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sort.prg &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sound.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)spawn.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sprintf.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)sprntf_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sqrt.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)srand.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)sscanf.gml &
@@ -1880,11 +1884,15 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)va_start.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vcprintf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vcscanf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vfprintf.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)vfprtf_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vfscanf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vprintf.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)vprntf_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vscanf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vsnprint.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)vsnprt_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vsprintf.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)vsprtf_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vsscanf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wait.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)waitstat.gml &

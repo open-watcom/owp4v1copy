@@ -24,6 +24,8 @@ int _uvsprintf( wchar_t *buf,
 .do end
 .funcend
 .*
+.safealt
+.*
 .desc begin
 The &func function formats data under control of the
 .arg format

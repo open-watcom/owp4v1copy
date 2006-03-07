@@ -331,6 +331,8 @@
 .fnc fprintf                    fprintf.gml     DOS QNX W WIN32
 .fnw fwprintf                   fprintf.gml     DOS QNX W WIN32
 .fnu _ufprintf                  fprintf.gml     DOS       WIN32
+.fnc fprintf_s                  fprntf_s.gml    DOS QNX W WIN32
+.fnw fwprintf_s                 fprntf_s.gml    DOS QNX W WIN32
 .fnc fputc                      fputc.gml       DOS QNX W WIN32
 .fnw fputwc                     fputc.gml       DOS QNX W WIN32
 .fnu _ufputc                    fputc.gml       DOS
@@ -971,6 +973,8 @@
 .fnc printf                     printf.gml      DOS QNX W WIN32
 .fnw wprintf                    printf.gml      DOS QNX W WIN32
 .fnu _uprintf                   printf.gml      DOS       WIN32
+.fnc printf_s                   printf_s.gml    DOS QNX W WIN32
+.fnw wprintf_s                  printf_s.gml    DOS QNX W WIN32
 .fnc print_usage                p_usage.gml         QXO
 .fnc putc                       putc.gml        DOS QNX W WIN32
 .fnw putwc                      putc.gml        DOS QNX W WIN32
@@ -1204,6 +1208,8 @@
 .fnc _snwprintf                 _snprntf.gml    DOS QNX W WIN32
 .fnc snprintf                   snprintf.gml    DOS QNX W WIN32
 .fnc snwprintf                  snprintf.gml    DOS QNX W WIN32
+.fnc snprintf_s                 snprtf_s.gml    DOS QNX W WIN32
+.fnc snwprintf_s                snprtf_s.gml    DOS QNX W WIN32
 .fnc sopen                      sopen.gml       DOS QNX W WIN32
 .fnw _wsopen                    sopen.gml       DOS       WIN32
 .fnu _usopen                    sopen.gml       DOS       WIN32
@@ -1234,6 +1240,8 @@
 .fnc sprintf                    sprintf.gml     DOS QNX W WIN32
 .fnw swprintf                   sprintf.gml     DOS QNX W WIN32
 .fnu _usprintf                  sprintf.gml     DOS QNX W WIN32
+.fnc sprintf_s                  sprntf_s.gml    DOS QNX W WIN32
+.fnw swprintf_s                 sprntf_s.gml    DOS QNX W WIN32
 .fnc sqrt                       sqrt.gml        DOS QNX W WIN32
 .fnc srand                      srand.gml       DOS QNX W WIN32
 .fnc sscanf                     sscanf.gml      DOS QNX W WIN32
@@ -1626,12 +1634,16 @@
 .fnc vfprintf                   vfprintf.gml    DOS QNX W WIN32
 .fnw vfwprintf                  vfprintf.gml    DOS QNX W WIN32
 .fnu _uvfprintf                 vfprintf.gml    DOS       WIN32
+.fnc vfprintf_s                 vfprtf_s.gml    DOS QNX W WIN32
+.fnw vfwprintf_s                vfprtf_s.gml    DOS QNX W WIN32
 .fnc vfscanf                    vfscanf.gml     DOS QNX W WIN32
 .fnw vfwscanf                   vfscanf.gml     DOS QNX W WIN32
 .fnu _uvfscanf                  vfscanf.gml     DOS       WIN32
 .fnc vprintf                    vprintf.gml     DOS QNX W WIN32
 .fnw vwprintf                   vprintf.gml     DOS QNX W WIN32
 .fnu _uvprintf                  vprintf.gml     DOS       WIN32
+.fnc vprintf_s                  vprntf_s.gml    DOS QNX W WIN32
+.fnw vwprintf_s                 vprntf_s.gml    DOS QNX W WIN32
 .fnc vscanf                     vscanf.gml      DOS QNX W WIN32
 .fnw vwscanf                    vscanf.gml      DOS QNX W WIN32
 .fnu _uvscanf                   vscanf.gml      DOS       WIN32
@@ -1639,9 +1651,13 @@
 .fnc _vsnwprintf                _vsnprnt.gml    DOS QNX W WIN32
 .fnc vsnprintf                  vsnprint.gml    DOS QNX W WIN32
 .fnc vsnwprintf                 vsnprint.gml    DOS QNX W WIN32
+.fnc vsnprintf_s                vsnprt_s.gml    DOS QNX W WIN32
+.fnc vsnwprintf_s               vsnprt_s.gml    DOS QNX W WIN32
 .fnc vsprintf                   vsprintf.gml    DOS QNX W WIN32
 .fnw vswprintf                  vsprintf.gml    DOS QNX W WIN32
 .fnu _uvsprintf                 vsprintf.gml    DOS QNX W WIN32
+.fnc vsprintf_s                 vsprtf_s.gml    DOS QNX W WIN32
+.fnw vswprintf_s                vsprtf_s.gml    DOS QNX W WIN32
 .fnc vsscanf                    vsscanf.gml     DOS QNX W WIN32
 .fnw vswscanf                   vsscanf.gml     DOS QNX W WIN32
 .fnu _uvsscanf                  vsscanf.gml     DOS       WIN32

@@ -18,6 +18,8 @@ int _usprintf( wchar_t *buf,
 .do end
 .funcend
 .*
+.safealt
+.*
 .desc begin
 The &func function is equivalent to the
 .kw fprintf
@@ -82,7 +84,7 @@ int  TempCount = 0;
 .exmp break
 char *make_temp_name( void )
 {
-    sprintf( namebuf, "ZZ%.6o.TMP", TempCount++ );
+    sprintf( namebuf, "zz%.6o.tmp", TempCount++ );
     return( namebuf );
 }
 .exmp break

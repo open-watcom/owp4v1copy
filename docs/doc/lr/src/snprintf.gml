@@ -14,6 +14,9 @@ int snwprintf( wchar_t *buf,
 .ixfunc2 '&Wide &wfunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function is equivalent to the
 .kw fprintf
@@ -45,6 +48,7 @@ The &wfunc function accepts a wide-character string argument for
 .arg format
 .do end
 .desc end
+.*
 .return begin
 The &func function returns the number of characters that would have been
 written had
@@ -66,17 +70,19 @@ if the returned value is nonnegative and less than
 .do end
 .im errnoref
 .return end
+.*
 .see begin
 .im seeprtf snprintf
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <stdlib.h>
 
 /* Format output into a buffer after determining its size */
 
-void main()
-  {
+void main( void )
+{
     int     bufsize;
     char    *buffer;
 
@@ -84,7 +90,8 @@ void main()
     buffer  = malloc( bufsize + 1 );
     snprintf( buffer, bufsize + 1, "%3d %P", 42, 42 );
     free( buffer );
-  }
+}
 .exmp end
+.*
 .class ANSI
 .system

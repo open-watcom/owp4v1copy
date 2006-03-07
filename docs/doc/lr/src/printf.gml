@@ -15,6 +15,8 @@ int _uprintf( const wchar_t *format, ... );
 .do end
 .funcend
 .*
+.safealt
+.*
 .desc begin
 The &func function writes output to the file designated by
 .kw stdout
@@ -41,6 +43,11 @@ and produces Unicode character output.
 .return begin
 The &func function returns the number of characters written, or a
 negative value if an output error occurred.
+.if &'length(&wfunc.) ne 0 .do begin
+.np
+The &wfunc function returns the number of wide characters written, or
+a negative value if an output error occurred.
+.do end
 .im errnoref
 .return end
 .*
