@@ -355,7 +355,7 @@ extern  void        CVPutINum64( cv_out *out, signed_64 val )
         ptr = out->ptr;
         LC( ptr[0],u2 ) = LF_QUADWORD;
         LC( ptr[2],u4 ) = val.u._32[I64LO32];
-        LC( ptr[2],u4 ) = val.u._32[I64HI32];
+        LC( ptr[6],u4 ) = val.u._32[I64HI32];
         ptr += sizeof(u2) + sizeof( u8 );
         out->ptr = ptr;
     }
