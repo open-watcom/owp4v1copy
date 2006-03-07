@@ -602,15 +602,38 @@ _WCRTLINK extern int      _WRTLCALL putws( const wchar_t * );
 
 _WCRTLINK extern char    * _WRTLCALL gets_s( char *s, rsize_t n );
 
-_WCRTLINK extern errno_t _WRTLCALL fopen_s( FILE * __restrict * __restrict streamptr,
-                                   const char * __restrict filename,
-                                   const char * __restrict mode);
-_WCRTLINK extern errno_t _WRTLCALL freopen_s( FILE * __restrict * __restrict newstreamptr,
-                                     const char * __restrict filename,
-                                     const char * __restrict mode,
-                                     FILE * __restrict stream );
-_WCRTLINK extern errno_t _WRTLCALL tmpfile_s( FILE * __restrict * __restrict streamptr);
-_WCRTLINK extern errno_t _WRTLCALL tmpnam_s( char * s, rsize_t maxsize );
+_WCRTLINK extern int      fprintf_s( FILE * __restrict __stream,
+                                     const char * __restrict __format, ... );
+_WCRTLINK extern int      fscanf_s( FILE * __restrict __stream,
+                                     const char * __restrict __format, ... );
+_WCRTLINK extern int      printf_s( const char * __restrict __format, ... );
+_WCRTLINK extern int      scanf_s( const char * __restrict __format, ... );
+_WCRTLINK extern int      snprintf_s( char * __restrict __s, rsize_t __n,
+                                      const char * __restrict __format, ... );
+_WCRTLINK extern int      sprintf_s( char * __restrict s, rsize_t __n,
+                                     const char * __restrict __format, ... );
+_WCRTLINK extern int      sscanf_s( const char * __restrict __s,
+                                    const char * __restrict __format, ... );
+_WCRTLINK extern int      vfprintf_s( FILE * __restrict __stream,
+                                      const char * __restrict __format, __va_list __arg );
+_WCRTLINK extern int      vfscanf_s( FILE * __restrict __stream,
+                                      const char * __restrict __format, __va_list __arg );
+_WCRTLINK extern int      vprintf_s( const char * __restrict __format, __va_list __arg );
+_WCRTLINK extern int      vscanf_s( const char * __restrict __format, __va_list __arg );
+_WCRTLINK extern int      vsnprintf_s( char * __restrict __s, rsize_t __n,
+                                       const char * __restrict __format, __va_list __arg );
+_WCRTLINK extern int      vsprintf_s( char * __restrict __s, rsize_t __n,
+                                      const char * __restrict __format, __va_list __arg );
+_WCRTLINK extern int      vsscanf_s( const char * __restrict __s,
+                                     const char * __restrict __format, __va_list __arg );
+_WCRTLINK extern errno_t  fopen_s( FILE * __restrict * __restrict __streamptr,
+                                   const char * __restrict __filename,
+                                   const char * __restrict __mode);
+_WCRTLINK extern errno_t  freopen_s( FILE * __restrict * __restrict __newstreamptr,
+                                     const char * __restrict __filename,
+                                     const char * __restrict __mode, FILE * __restrict __stream );
+_WCRTLINK extern errno_t  tmpfile_s( FILE * __restrict * __restrict __streamptr);
+_WCRTLINK extern errno_t  tmpnam_s( char * s, rsize_t __maxsize );
 
 #define TMP_MAX_S   (26*26*26)      /* has to be same as TMP_MAX */
 
