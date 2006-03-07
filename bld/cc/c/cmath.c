@@ -1957,14 +1957,14 @@ TYPEPTR TernType( TREEPTR true_part, TREEPTR false_part )
             CWarn1( WARN_NONPORTABLE_PTR_CONV,
                      ERR_NONPORTABLE_PTR_CONV );
         }
-        return( typ1 );
+        return( MergedType( typ1, typ2 ) ); /* merge near/far/const etc. */
     }
     if( dtype2 == TYPE_POINTER && true_part->op.opr == OPR_PUSHINT ) {
         if( true_part->op.long_value != 0 ) {
             CWarn1( WARN_NONPORTABLE_PTR_CONV,
                      ERR_NONPORTABLE_PTR_CONV );
         }
-        return( typ2 );
+        return( MergedType( typ2, typ1 ) ); /* merge near/far/const etc. */
     }
 /*
     (arithmetic type) : (arithmetic type)       -> (promoted arithmetic type)
