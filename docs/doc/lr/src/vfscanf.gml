@@ -20,6 +20,7 @@ int _uvfscanf( FILE *fp,
 .ixfunc2 '&StrIo' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function scans input from the file designated by
 .arg fp
@@ -52,35 +53,37 @@ accepts a Unicode string argument for
 and the input consists of 16-bit Unicode characters.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns
 .kw EOF
-when the scanning is terminated by reaching the end of the input
-stream.
+if an input failure occurred before any conversion.
 Otherwise, the number of input arguments for which values were
 successfully scanned and stored is returned.
 When a file input error occurs, the
 .kw errno
 global variable may be set.
 .return end
+.*
 .see begin
 .im seevscnf vfscanf
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <stdarg.h>
 .exmp break
 void ffind( FILE *fp, char *format, ... )
-  {
+{
     va_list arglist;
 
     va_start( arglist, format );
     vfscanf( fp, format, arglist );
     va_end( arglist );
-  }
+}
 .exmp break
-void main()
-  {
+void main( void )
+{
     int day, year;
     char weekday[10], month[10];
 .exmp break
@@ -89,7 +92,8 @@ void main()
             weekday, month, &day, &year );
     printf( "\n%s, %s %d, %d\n",
             weekday, month, day, year );
-  }
+}
 .exmp end
-.class WATCOM
+.*
+.class ISO C99
 .system

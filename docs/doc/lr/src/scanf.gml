@@ -14,6 +14,7 @@ int _uscanf( const wchar_t *format, ... );
 .ixfunc2 '&StrIo' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function scans input from the file designated by
 .kw stdin
@@ -38,17 +39,19 @@ accepts a Unicode string argument for
 and the input consists of 16-bit Unicode characters.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns
 .kw EOF
-when the scanning is terminated by reaching the end of the input
-stream.
+if an input failure occured before any conversion.
 Otherwise, the number of input arguments for which values were
 successfully scanned and stored is returned.
 .return end
+.*
 .see begin
 .im seevscnf scanf
 .see end
+.*
 .exmp begin
 .blktext begin
 To scan a date in the form "Saturday April 18 1987":
@@ -64,5 +67,6 @@ void main( void )
     scanf( "%s %s %d %d", weekday, month, &day, &year );
 }
 .blkcode end
+.*
 .exmp end
 .im scanfs

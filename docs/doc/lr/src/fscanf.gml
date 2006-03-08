@@ -15,6 +15,7 @@ int _ufscanf( FILE *fp, const wchar_t *format, ... );
 .ixfunc2 '&StrIo' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function scans input from the file designated by
 .arg fp
@@ -40,19 +41,22 @@ accepts a Unicode string argument for
 and the input consists of 16-bit Unicode characters.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns
 .kw EOF
-when the scanning is terminated by reaching the end of the input stream.
+if an input failure occurred before any conversion.
 Otherwise, the number of input arguments for which
 values were successfully scanned and stored is returned.
 When a file input error occurs, the
 .kw errno
 global variable may be set.
 .return end
+.*
 .see begin
 .im seevscnf fscanf
 .see end
+.*
 .exmp begin
 .blktext begin
 To scan a date in the form "Saturday April 18 1987":
@@ -60,22 +64,23 @@ To scan a date in the form "Saturday April 18 1987":
 .blkcode begin
 #include <stdio.h>
 
-void main()
-  {
+void main( void )
+{
     int day, year;
     char weekday[10], month[10];
     FILE *in_data;
 .exmp break
     in_data = fopen( "file", "r" );
     if( in_data != NULL ) {
-      fscanf( in_data, "%s %s %d %d",
-              weekday, month, &day, &year );
-      printf( "Weekday=%s Month=%s Day=%d Year=%d\n",
-              weekday, month, day, year );
-      fclose( in_data );
+        fscanf( in_data, "%s %s %d %d",
+                weekday, month, &day, &year );
+        printf( "Weekday=%s Month=%s Day=%d Year=%d\n",
+                weekday, month, day, year );
+        fclose( in_data );
     }
-  }
+}
 .blkcode end
 .exmp end
-.class ANSI
+.*
+.class ISO C90
 .system

@@ -456,7 +456,19 @@ Prototype in
 .do end
 .el .do begin
 .   &function. is &*
-.   .sr *cls=&'strip(&*1,'T',',')
+.   .if &*1 eq ISO .do begin
+.   .   .sr *cls=&'strip(&*,'T',',')
+.   .   .if |&*| eq |ISO C90| .do begin
+.   .   .   .sr *wcls='ISO C95'
+.   .   .do end
+.   .   .el .do begin
+.   .   .   .sr *wcls=&'strip(&*,'T',',')
+.   .   .do end
+.   .do end
+.   .el .do begin
+.   .   .sr *cls=&'strip(&*1,'T',',')
+.   .   .sr *wcls=&'strip(&*1,'T',',')
+.   .do end
 .   .if &'length(&_func.) ne 0 .do begin
 .   .   .ct , &_func. is not &*cls
 .   .do end
@@ -468,7 +480,7 @@ Prototype in
 .   .   .   .ct , &wfunc. is not &*cls
 .   .   .do end
 .   .   .el .do begin
-.   .   .   .ct , &wfunc. is &*cls
+.   .   .   .ct , &wfunc. is &*wcls
 .   .   .do end
 .   .do end
 .   .if &'length(&mfunc.) ne 0 .do begin

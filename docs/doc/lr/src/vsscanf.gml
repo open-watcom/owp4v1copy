@@ -20,6 +20,7 @@ int _uvsscanf( const wchar_t *in_string,
 .ixfunc2 '&String' &ufunc
 .do end
 .funcend
+.*
 .desc begin
 The &func function scans input from the string designated by
 .arg in_string
@@ -54,31 +55,33 @@ and the input string
 consists of 16-bit Unicode characters.
 .do end
 .desc end
+.*
 .return begin
 The &func function returns
 .kw EOF
-when the scanning is terminated by reaching the end of the input string.
+if the end of the input string was reached before any conversion.
 Otherwise, the number of input arguments for which
 values were successfully scanned and stored is returned.
 .return end
 .see begin
 .im seevscnf vsscanf
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <stdarg.h>
 .exmp break
 void sfind( char *string, char *format, ... )
-  {
+{
     va_list arglist;
 .exmp break
     va_start( arglist, format );
     vsscanf( string, format, arglist );
     va_end( arglist );
-  }
+}
 .exmp break
-void main()
-  {
+void main( void )
+{
     int day, year;
     char weekday[10], month[10];
 .exmp break
@@ -87,7 +90,8 @@ void main()
             weekday, month, &day, &year );
     printf( "\n%s, %s %d, %d\n",
             weekday, month, day, year );
-  }
+}
 .exmp end
-.class WATCOM
+.*
+.class ISO C99
 .system

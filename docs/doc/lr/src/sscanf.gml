@@ -54,8 +54,7 @@ consists of 16-bit Unicode characters.
 .return begin
 The &func function returns
 .kw EOF
-when the scanning is terminated by reaching the end of the input
-string.
+if the end of the input string was reached before any input conversion.
 Otherwise, the number of input arguments for which values were
 successfully scanned and stored is returned.
 .return end
@@ -84,5 +83,5 @@ void main( void )
 Friday August 14 1987
 .exmp end
 .*
-.class ANSI
+.class ISO C90
 .system

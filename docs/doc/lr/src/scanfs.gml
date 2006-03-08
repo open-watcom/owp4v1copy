@@ -471,11 +471,11 @@ to
 .blktext end
 .oldtext end
 .if &farfnc eq 0 .do begin
-.class ANSI
-The I64 modifier is an extension to ANSI.
+.class ISO C90
+The I64 modifier is an extension to ISO C.
 .do end
 .el .do begin
-.class ANSI
-The N, W pointer size modifiers and the I64 modifier are extensions to ANSI.
+.class ISO C90
+The N, W pointer size modifiers and the I64 modifier are extensions to ISO C.
 .do end
 .system
