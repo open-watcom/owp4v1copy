@@ -37,6 +37,7 @@
 #include "fileacc.h"
 #include "printf.h"
 #include "fprtf.h"
+#include "orient.h"
 
 extern  void    __ioalloc( FILE * );
 extern  int     __flush( FILE * );
@@ -64,27 +65,7 @@ int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_list arg )
     _AccessFile( fp );
 
     /*** Deal with stream orientation ***/
-#ifndef __NETWARE__
-  #ifdef __WIDECHAR__
-    if( _FP_ORIENTATION(fp) != _WIDE_ORIENTED ) {
-        if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-            _FP_ORIENTATION(fp) = _WIDE_ORIENTED;
-        } else {
-            _ReleaseFile( fp );
-            return( 0 );                /* error return */
-        }
-    }
-  #else
-    if( _FP_ORIENTATION(fp) != _BYTE_ORIENTED ) {
-        if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-            _FP_ORIENTATION(fp) = _BYTE_ORIENTED;
-        } else {
-            _ReleaseFile( fp );
-            return( 0 );                /* error return */
-        }
-    }
-  #endif
-#endif
+    ORIENT_STREAM(fp,0);
 
     oflag = fp->_flag & (_SFERR | _EOF);                  /* 06-sep-91 */
     fp->_flag &= ~(_SFERR | _EOF);

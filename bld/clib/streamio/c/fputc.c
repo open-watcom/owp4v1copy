@@ -36,6 +36,7 @@
 #include "fileacc.h"
 #include "rtdata.h"
 #include "seterrno.h"
+#include "orient.h"
 #ifdef __WIDECHAR__
     #include <mbstring.h>
     #include <wchar.h>
@@ -56,16 +57,7 @@ _WCRTLINK int fputc( int c, FILE *fp )
     _AccessFile( fp );
 
     /*** Deal with stream orientation ***/
-#ifndef __NETWARE__
-    if( _FP_ORIENTATION(fp) != _BYTE_ORIENTED ) {
-        if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-            _FP_ORIENTATION(fp) = _BYTE_ORIENTED;
-        } else {
-            _ReleaseFile( fp );
-            return( EOF );              /* error return */
-        }
-    }
-#endif
+    ORIENT_STREAM(fp,EOF);
 
     if( !(fp->_flag & _WRITE) ) {
         __set_errno( EBADF );
@@ -140,16 +132,7 @@ _WCRTLINK wint_t fputwc( wint_t c, FILE *fp )
     _AccessFile( fp );
 
     /*** Deal with stream orientation ***/
-#ifndef __NETWARE__
-    if( _FP_ORIENTATION(fp) != _WIDE_ORIENTED ) {
-        if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-            _FP_ORIENTATION(fp) = _WIDE_ORIENTED;
-        } else {
-            _ReleaseFile( fp );
-            return( WEOF );             /* error return */
-        }
-    }
-#endif
+    ORIENT_STREAM(fp,WEOF);
 
     /*** Write the character ***/
     if( !__write_wide_char( fp, c ) ) {

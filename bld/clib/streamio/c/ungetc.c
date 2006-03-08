@@ -38,6 +38,7 @@
 #include "exitwmsg.h"
 #include "liballoc.h"
 #include "seterrno.h"
+#include "orient.h"
 #ifdef __WIDECHAR__
     #include <mbstring.h>
     #include <string.h>
@@ -57,27 +58,7 @@ _WCRTLINK INTCHAR_TYPE __F_NAME(ungetc,ungetwc)( INTCHAR_TYPE c, FILE *fp )
     _AccessFile( fp );
 
     /*** Deal with stream orientation ***/
-#ifndef __NETWARE__
-    #ifdef __WIDECHAR__
-        if( _FP_ORIENTATION(fp) != _WIDE_ORIENTED ) {
-            if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-                _FP_ORIENTATION(fp) = _WIDE_ORIENTED;
-            } else {
-                _ReleaseFile( fp );
-                return( WEOF );
-            }
-        }
-    #else
-        if( _FP_ORIENTATION(fp) != _BYTE_ORIENTED ) {
-            if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-                _FP_ORIENTATION(fp) = _BYTE_ORIENTED;
-            } else {
-                _ReleaseFile( fp );
-                return( EOF );
-            }
-        }
-    #endif
-#endif
+    ORIENT_STREAM(fp,__F_NAME(EOF,WEOF));
 
     if( fp->_flag & _DIRTY ) {        /* cannot unget after a put */
         _ReleaseFile( fp );

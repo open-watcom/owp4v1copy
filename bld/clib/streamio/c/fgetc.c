@@ -45,6 +45,7 @@
     #include <wchar.h>
 #endif
 #include "qread.h"
+#include "orient.h"
 
 
 #define DOS_EOF_CHAR        0x1a
@@ -125,16 +126,7 @@ _WCRTLINK int fgetc( FILE *fp )
     _AccessFile( fp );
 
     /*** Deal with stream orientation ***/
-#ifndef __NETWARE__
-    if( _FP_ORIENTATION(fp) != _BYTE_ORIENTED ) {
-        if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-            _FP_ORIENTATION(fp) = _BYTE_ORIENTED;
-        } else {
-            _ReleaseFile( fp );
-            return( EOF );              /* error return */
-        }
-    }
-#endif
+    ORIENT_STREAM(fp,EOF);
 
     if( (fp->_flag & _READ) == 0 ) {
         __set_errno( EBADF );
@@ -216,16 +208,7 @@ _WCRTLINK wint_t fgetwc( FILE *fp )
     _AccessFile( fp );
 
     /*** Deal with stream orientation ***/
-#ifndef __NETWARE__
-    if( _FP_ORIENTATION(fp) != _WIDE_ORIENTED ) {
-        if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) {
-            _FP_ORIENTATION(fp) = _WIDE_ORIENTED;
-        } else {
-            _ReleaseFile( fp );
-            return( WEOF );             /* error return */
-        }
-    }
-#endif
+    ORIENT_STREAM(fp,WEOF);
 
     /*** Read the character ***/
     if( !__read_wide_char( fp, &c ) ) {
