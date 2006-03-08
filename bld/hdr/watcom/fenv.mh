@@ -19,8 +19,7 @@
 /* type for holding FPU environment */
 :include pshpackl.sp
 #if defined(__386__)
-typedef struct
-{
+typedef struct {
     unsigned short control_word;
     unsigned short pad0;
     unsigned short status_word;
@@ -35,8 +34,7 @@ typedef struct
     unsigned short pad3;
 } fenv_t;
 #else
-typedef struct
-{
+typedef struct {
     unsigned short control_word;
     unsigned short status_word;
     unsigned short tag_word;
@@ -72,27 +70,27 @@ _WCRTLINK extern const fenv_t __fenv_h_default_environment;
 #define FE_DFL_ENV &__fenv_h_default_environment
 
 /* exception handling functions */
-_WCRTLINK extern void _WRTLCALL feclearexcept(int excepts);
-_WCRTLINK extern void _WRTLCALL fegetexceptflag(fexcept_t *flagp, int excepts);
-_WCRTLINK extern void _WRTLCALL feraiseexcept(int excepts);
-_WCRTLINK extern void _WRTLCALL fesetexceptflag(const fexcept_t *flagp, int excepts);
-_WCRTLINK extern int  _WRTLCALL fetestexcept(int excepts);
+_WCRTLINK extern int  _WRTLCALL feclearexcept( int __excepts );
+_WCRTLINK extern int  _WRTLCALL fegetexceptflag( fexcept_t *__flagp, int __excepts );
+_WCRTLINK extern int  _WRTLCALL feraiseexcept( int __excepts );
+_WCRTLINK extern int  _WRTLCALL fesetexceptflag( const fexcept_t *__flagp, int __excepts );
+_WCRTLINK extern int  _WRTLCALL fetestexcept( int __excepts );
 
 #ifndef NO_EXT_KEYS
 /* OW extensions */
-_WCRTLINK extern void _WRTLCALL __feenableexcept(int excepts);
-_WCRTLINK extern void _WRTLCALL __fedisableexcept(int excepts);
+_WCRTLINK extern void _WRTLCALL __feenableexcept( int __excepts );
+_WCRTLINK extern void _WRTLCALL __fedisableexcept( int __excepts );
 #endif
 
 /* rounding mode functions */
-_WCRTLINK extern int  _WRTLCALL fegetround(void);
-_WCRTLINK extern int  _WRTLCALL fesetround(int round);
+_WCRTLINK extern int  _WRTLCALL fegetround( void );
+_WCRTLINK extern int  _WRTLCALL fesetround( int __round );
 
 /* FPU environment functions */
-_WCRTLINK extern void _WRTLCALL fegetenv(fenv_t *envp);
-_WCRTLINK extern int  _WRTLCALL feholdexcept(fenv_t *envp);
-_WCRTLINK extern void _WRTLCALL fesetenv(const fenv_t *envp);
-_WCRTLINK extern void _WRTLCALL feupdateenv(const fenv_t *envp);
+_WCRTLINK extern int  _WRTLCALL fegetenv( fenv_t *__envp );
+_WCRTLINK extern int  _WRTLCALL feholdexcept( fenv_t *__envp );
+_WCRTLINK extern int  _WRTLCALL fesetenv( const fenv_t *__envp );
+_WCRTLINK extern int  _WRTLCALL feupdateenv( const fenv_t *__envp );
 
 #endif
 #endif

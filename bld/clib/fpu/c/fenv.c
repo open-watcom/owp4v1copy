@@ -28,14 +28,18 @@
 *
 ****************************************************************************/
 
+
 #include "variety.h"
 #include <fenv.h>
+#include <inttypes.h>
 
-#pragma disable_message(200,202);
 
 /***************************************************************************/
 
 #ifdef __386__
+
+/* 32-bit versions */
+
 _WCRTLINK const fenv_t __fenv_h_default_environment = {
     0x127f,   /*CW*/
     0,
@@ -45,14 +49,104 @@ _WCRTLINK const fenv_t __fenv_h_default_environment = {
     0,
     0,0,0,0,0,0,
 };
+
+/* Load floating-point environment from memory to hardware */
+extern void fenv_load( const fenv_t *env );
+#pragma aux fenv_load = \
+    "fldenv     [eax]"  \
+    parm [eax]          \
+    modify exact nomemory [];
+
+/* Store floating-point environment from hardware to memory */
+extern void fenv_store( fenv_t *env );
+#pragma aux fenv_store =    \
+    "fstenv     [eax]"      \
+    parm [eax]              \
+    modify exact [];
+
+/* Load floating-point control word from memory to hardware */
+extern void fpcw_load( const uint16_t *control );
+#pragma aux fpcw_load = \
+    "fldcw      [eax]"  \
+    parm [eax]          \
+    modify exact nomemory [];
+
+/* Store floating-point control word from hardware to memory */
+extern void fpcw_store( uint16_t *control );
+#pragma aux fpcw_store =    \
+    "fnstcw     [eax]"      \
+    parm [eax]              \
+    modify exact [];
+
+/* Store floating-point status word from hardware to memory */
+extern void fpsw_store( uint16_t *status );
+#pragma aux fpsw_store =    \
+    "fnstsw     [eax]"      \
+    parm [eax]              \
+    modify exact [];
+
 #else
+
+/* 16-bit versions */
+
 _WCRTLINK const fenv_t __fenv_h_default_environment = {
     0x127f,   /*CW*/
     0,        /*SW*/
     0xffff,   /*TAG*/
     0,0,0,0,
 };
+
+#if defined( __SMALL__ ) || defined( __MEDIUM__ )
+    /* no need to load seg regs */
+    #define DATA_SEG
+#else
+    /* seg reg needs to be loaded to point to data */
+    #define DATA_SEG    es
 #endif
+
+/* Load floating-point environment from memory to hardware */
+extern void fenv_load( const fenv_t *env );
+#pragma aux fenv_load = \
+    "fldenv     [di]"   \
+    parm [DATA_SEG di]  \
+    modify exact nomemory [];
+
+/* Store floating-point environment from hardware to memory */
+extern void fenv_store( fenv_t *env );
+#pragma aux fenv_store =    \
+    "fstenv     [di]"       \
+    parm [DATA_SEG di]      \
+    modify exact [];
+
+/* Load floating-point control word from memory to hardware */
+extern void fpcw_load( const uint16_t *control );
+#pragma aux fpcw_load = \
+    "fldcw      [di]"   \
+    parm [DATA_SEG di]  \
+    modify exact nomemory [];
+
+/* Store floating-point control word from hardware to memory */
+extern void fpcw_store( uint16_t *control );
+#pragma aux fpcw_store =    \
+    "fnstcw     [di]"       \
+    parm [DATA_SEG di]      \
+    modify exact [];
+
+/* Store floating-point status word from hardware to memory */
+extern void fpsw_store( uint16_t *status );
+#pragma aux fpsw_store =    \
+    "fnstsw     [di]"       \
+    parm [DATA_SEG di]      \
+    modify exact [];
+
+#endif
+
+/* FPU wait */
+extern void fwait( void );
+#pragma aux fwait = \
+    "fwait"         \
+    modify exact [] nomemory;
+
 
 /****************************************************************************
 * exception handling functions
@@ -62,27 +156,31 @@ _WCRTLINK const fenv_t __fenv_h_default_environment = {
 The feclearexcept function clears the supported floating-point exceptions
 represented by its argument.
 */
-_WCRTLINK void feclearexcept(int excepts)
+_WCRTLINK int feclearexcept( int excepts )
+/****************************************/
 {
-    fenv_t env;
+    fenv_t      env;
 
-    __asm fnstenv env;
+    fenv_store( &env );
     env.status_word &= ~excepts;
-    __asm fldenv env;
+    fenv_load( &env );
+    return( 0 );
 }
 
 /*
-The fegetexceptflag function stores an implementation-defined 
+The fegetexceptflag function stores an implementation-defined
 representation of the states of the floating-point status flags
 indicated by the argument excepts in the object pointed to by
 the argument flagp.
 */
-_WCRTLINK void fegetexceptflag(fexcept_t *flagp, int excepts)
+_WCRTLINK int fegetexceptflag( fexcept_t *flagp, int excepts )
+/************************************************************/
 {
-    unsigned short status;
+    uint16_t    status;
 
-    __asm fnstsw [status];
+    fpsw_store( &status );
     *flagp = excepts & status & FE_ALL_EXCEPT;
+    return( 0 );
 }
 
 /*
@@ -93,40 +191,44 @@ as stated in F.7.6. Whether the feraiseexcept function additionally
 raises the inexact floating-point exception whenever it raises the
 overflow or underflow floating-point exception is implementation-defined.
 */
-_WCRTLINK void feraiseexcept(int excepts)
+_WCRTLINK int feraiseexcept( int excepts )
+/****************************************/
 {
-    fenv_t env;
-    __asm fnstenv env
-    env.status_word &= ~FE_ALL_EXCEPT;
-    env.status_word |= excepts;
-    __asm fldenv env;
-    __asm fwait;
+    fenv_t      env;
+
+    fenv_store( &env );
+    env.status_word |= excepts & FE_ALL_EXCEPT;
+    fenv_load( &env );
+    fwait();    /* Make sure exception gets triggered now */
+    return( 0 );
 }
 
 /*
 _feenableexcept is an OW extension to unmask the given fpu exception
 */
-_WCRTLINK void __feenableexcept(int excepts)
+_WCRTLINK void __feenableexcept( int excepts )
+/********************************************/
 {
-    unsigned short status;
+    uint16_t    status;
 
-    __asm   fnstcw  [status]
+    fpcw_store( &status );
     status &= ~FE_ALL_EXCEPT;
     status |= excepts ^ FE_ALL_EXCEPT;
-    __asm   fldcw   [status];
+    fpcw_load( &status );
 }
 
 /*
 _fedisableexcept is an OW extension to mask the given fpu exception
 */
-_WCRTLINK void __fedisableexcept(int excepts)
+_WCRTLINK void __fedisableexcept( int excepts )
+/*********************************************/
 {
-    unsigned short status;
+    uint16_t    status;
 
-    __asm   fnstcw  [status]
+    fpcw_store( &status );
     status &= ~FE_ALL_EXCEPT;
     status |= excepts;
-    __asm   fldcw [status];
+    fpcw_load( &status );
 }
 
 /*
@@ -138,14 +240,16 @@ at least those floating-point exceptions represented by the argument
 excepts. This function does not raise floating-point exceptions,
 but only sets the state of the flags.
 */
-_WCRTLINK void fesetexceptflag(const fexcept_t *flagp, int excepts)
+_WCRTLINK int fesetexceptflag( const fexcept_t *flagp, int excepts )
+/******************************************************************/
 {
-    fenv_t env;
+    fenv_t      env;
 
-    __asm fnstenv env;
+    fenv_store( &env );
     env.status_word &= ~FE_ALL_EXCEPT;
     env.status_word |= excepts & *flagp & FE_ALL_EXCEPT;
-    __asm fldenv env;
+    fenv_load( &env );
+    return( 0 );
 }
 
 /*
@@ -157,11 +261,13 @@ Returns: the value of the bitwise OR of the floating-point
 exception macros corresponding to the currently set floating-point
 exceptions included in excepts.
 */
-_WCRTLINK int fetestexcept(int excepts)
+_WCRTLINK int fetestexcept( int excepts )
+/***************************************/
 {
-    fexcept_t curr;
-    fegetexceptflag(&curr, excepts);
-    return (int)curr;
+    fexcept_t   curr;
+
+    fegetexceptflag( &curr, excepts );
+    return( curr );
 }
 
 /****************************************************************************
@@ -171,34 +277,35 @@ _WCRTLINK int fetestexcept(int excepts)
 /*
 The fegetround function gets the current rounding direction.
 */
-_WCRTLINK int fegetround(void)
+_WCRTLINK int fegetround( void )
+/******************************/
 {
-    unsigned short status;
-    __asm fnstcw [status];
-    return (int)(status & 0x0C00);
+    uint16_t    status;
+
+    fpcw_store( &status );
+    return( status & 0x0C00 );
 }
 
 /*
 The fesetround function sets the current rounding direction.
 */
-_WCRTLINK int fesetround(int round)
+_WCRTLINK int fesetround( int round )
+/***********************************/
 {
+    uint16_t    status;
 
-    switch (round) {
-        case FE_TONEAREST:
-        case FE_DOWNWARD:
-        case FE_TOWARDZERO:
-        case FE_UPWARD:
-            {
-            unsigned short status;
-            __asm fnstcw [status];
-            status &= ~0x0C00;
-            status |= (unsigned short)round;
-            __asm fldcw [status];
-            }
-        return 0;
+    switch( round ) {
+    case FE_TONEAREST:
+    case FE_DOWNWARD:
+    case FE_TOWARDZERO:
+    case FE_UPWARD:
+        fpcw_store( &status );
+        status &= ~0x0C00;
+        status |= (uint16_t)round;
+        fpcw_load( &status );
+        return( 0 );
     }
-    return 1;
+    return( 1 );
 }
 
 /****************************************************************************
@@ -209,11 +316,11 @@ _WCRTLINK int fesetround(int round)
 The fegetenv function stores the current floating-point environment
 in the object pointed to by envp.
 */
-_WCRTLINK void fegetenv(fenv_t *envp)
+_WCRTLINK int fegetenv( fenv_t *envp )
+/************************************/
 {
-    fenv_t env;
-    __asm fnstenv env;
-    *envp = env;
+    fenv_store( envp );
+    return( 0 );
 }
 
 /*
@@ -224,16 +331,15 @@ mode, if available, for all floating-point exceptions.
 Returns: zero if and only if non-stop floating-point exception handling
 was successfully installed.
 */
-_WCRTLINK int feholdexcept(fenv_t *envp)
+_WCRTLINK int feholdexcept( fenv_t *envp )
+/****************************************/
 {
-    unsigned short status;
-    fenv_t env;
+    uint16_t    status;
 
-    __asm fnstenv env;
-    status = env.control_word | FE_ALL_EXCEPT;
-    __asm fldcw [status];
-    *envp = env;
-    return 0;
+    fenv_store( envp );
+    status = envp->control_word | FE_ALL_EXCEPT;
+    fpcw_load( &status );
+    return( 0 );
 }
 
 /*
@@ -244,11 +350,11 @@ environment macro. Note that fesetenv merely installs the state of the
 floating-point status flags represented through its argument, and does not
 raise these floating-point exceptions.
 */
-_WCRTLINK void fesetenv(const fenv_t *envp)
+_WCRTLINK int fesetenv( const fenv_t *envp )
+/******************************************/
 {
-    fenv_t env;
-    env = *envp;
-    __asm fldenv env
+    fenv_load( envp );
+    return( 0 );
 }
 
 /*
@@ -258,10 +364,13 @@ by the object pointed to by envp, and then raises the saved floating-point
 exceptions. The argument envp shall point to an object set by a call to
 feholdexcept or fegetenv, or equal a floating-point environment macro.
 */
-_WCRTLINK void feupdateenv(const fenv_t *envp)
+_WCRTLINK int feupdateenv( const fenv_t *envp )
+/*********************************************/
 {
-    unsigned short status;
-    __asm fnstsw [status];
-    fesetenv(envp);
-    feraiseexcept(status & FE_ALL_EXCEPT);
+    uint16_t    status;
+
+    fpsw_store( &status );
+    fenv_load( envp );
+    feraiseexcept( status & FE_ALL_EXCEPT );
+    return( 0 );
 }
