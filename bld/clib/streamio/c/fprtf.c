@@ -36,6 +36,7 @@
 #include "rtdata.h"
 #include "fileacc.h"
 #include "printf.h"
+#include "fprtf.h"
 
 extern  void    __ioalloc( FILE * );
 extern  int     __flush( FILE * );
@@ -52,7 +53,7 @@ static void __SLIB_CALLBACK file_putc( SPECS __SLIB *specs, int op_char )
 }
 
 
-_WCRTLINK int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_list arg )
+int __F_NAME(__fprtf,__fwprtf)( FILE *fp, const CHAR_TYPE *format, va_list arg )
 {
     int             not_buffered;
     int             amount_written;

@@ -54,8 +54,8 @@ static void __SLIB_CALLBACK file_putc( SPECS __SLIB *specs, int op_char )
 }
 
 
-_WCRTLINK int __F_NAME(__fprtf_s,__fwprtf_s)( FILE * __restrict stream,
-                                   const CHAR_TYPE * __restrict format, va_list arg )
+int __F_NAME(__fprtf_s,__fwprtf_s)( FILE * __restrict stream,
+                         const CHAR_TYPE * __restrict format, va_list arg )
 {
     int             not_buffered;
     int             amount_written;
