@@ -201,6 +201,7 @@ option_mapping mappings[] = {
     { "Wc,-:", "" },
     { "Wstop-after-errors=:", "e" },
     { "ansi", "za" },
+    { "std=c99", "za99" },
     { "std=c89", "za" },
     { "std=ow", "ze" },
     { "O0", "od" },

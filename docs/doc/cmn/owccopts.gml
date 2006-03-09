@@ -327,8 +327,9 @@ warn about problems with overlaid code
 .note feh-table
 (C++ only) enable exception handling (table-driven destructors)
 .*
-.note std={c89,ow}
+.note std={c89,c99,ow}
 select language dialect; c89 is (almost) strictly ANSI/ISO standard C89 only,
+c99 enables C99 support (may be incomplete),
 ow enables all &cmpname extensions.
 .*
 .note fno-writable-strings
