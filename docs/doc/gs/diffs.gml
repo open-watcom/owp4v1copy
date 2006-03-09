@@ -10,7 +10,7 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2006/02/03
+:cmt. Reflects main Perforce branch as of 2006/03/08
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
 .*
@@ -21,9 +21,21 @@ recompile your application.
 Following is a list of changes made in &product 1.5:
 .begbull
 .bull
-The C compiler now supports C99 style declarations intermixed with statements
-in a compound statement, as well as declarations in the opening clause of
-a for loop.
+Support for ISO/IEC TR 24731, "Extensions to the C Library, Part I:
+Bounds-checking interfaces" has been added to the C runtime library. The C
+compiler now predefines the macro __STDC_LIB_EXT1__ (which evaluates to
+200509L) to indicate this support. This set of functions is also known as
+the Safer C Library. Please see the C Library Reference for detailed
+documentation of these functions.
+.bull
+In C99 mode, the C compiler now supports C99 style declarations intermixed
+with statements within a block, as well as declarations in the opening clause
+of a for loop.
+.bull
+The C compiler now predefines additional macros required by the C standards.
+These include __STDC_HOSTED__ (evaluates to 1) to indicate a hosted
+implementation and __STDC_VERSION__ (either 199409L or 199901L) to indicate
+C94 or C99 support depending on compilation switches.
 .bull
 A __restrict keyword has been added to the C compiler. It is functionally
 equivalent to the C99 'restrict' keyword but is always visible, even in
@@ -53,8 +65,8 @@ New warning W138, "No newline at end of file", has been added to the C
 compiler. It is emitted if no line terminator character was found before the
 end of a source file. Such files do not conform to ISO C. The missing newline
 character will be automatically inserted; this matches the C++ compiler
-behaviour. Note that missing newlines could previously lead to
-"#endif matches #if in different source file" errors.
+behaviour. Note that missing newlines could previously lead to spurious
+"#endif matches #if in different source file" warnings.
 .bull
 The C compiler has been modified to allow the __export or __declspec(dllexport)
 modifier on a declaration when earlier declaration exists with no modifier.
@@ -76,6 +88,14 @@ The C compiler has been fixed to properly evaluate boolean expressions
 constant. Previously, the high 32 bits were in some cases ignored, which could
 lead to erroneous results.
 .bull
+The C compiler has been modified to properly cast floating-point constants
+to the specified type. Notably FLT_MIN stored or passed as double is now
+handled correctly (without spurious precision).
+.bull
+Handling of empty macro arguments has been corrected in the C compiler's
+preprocessor. Previously, empty macro arguments could result in invalid tokens
+in certain cases.
+.bull
 The peephole optimizer is now run again after register allocation. This
 allows the code generator to take advantage of some optimization opportunities
 that were previously missed.
@@ -83,10 +103,60 @@ that were previously missed.
 A performance problem related to emitting debugging information for structures
 or unions with many members has been corrected in the code generator.
 .bull
+The POSIX-defined header libgen.h has been implemented. This includes two
+functions, basename() and dirname().
+.bull
+The functions btowc(), fwide(), mbsinit(), wctrans(), and towctrans() have
+been added to the C runtime library. These functions are all related to
+wide-character and multi-byte support, and were first defined by the ISO C
+Normative Amendment 1.
+.bull
+C99 functions llabs(), lldiv(), and _Exit() have been added to the C runtime
+library. Note that the latter is equivalent to _exit(), defined by POSIX.
+.bull
+Support for C99 floating-point classification macros has been implemented.
+This includes fpclassify, isfinite, isinf, isnan, isnormal, and signbit.
+.bull
+Modifiers 'hh', 'j', 'z', and 't' defined by C99 for the printf and scanf
+family of functions have been implemented in the C runtime library. Please
+see the C Library Reference for details.
+.bull
+The 'F' modifier for printf and scanf families of functions conflicts with
+'F' format specifier defined by ISO C for floating-point conversions. It has
+been replaced by a 'W' modifier which is now used to denote a far pointer.
+The 'F' modifier is still recognized in DOS builds of the runtime library
+(which therefore cannot handle the 'F' format specifier as defined by ISO C),
+but is no longer documented and will be removed in a future release.
+.bull
+Several very obscure bugs have been fixed in the printf and scanf family of
+functions. These problems were discovered thanks to a more stringent testing
+procedure and had never been reported by users.
+.bull
 The math library has been fixed to perform binary to decimal floating-point
 conversions with greater precision. This fixes a problem where in some cases
 a conversion from binary to decimal and back was losing precision or producing
 erroneous results.
+.bull
+The graphics library has been fixed to correctly work with VESA modes where
+the number of bytes per line does not directly correspond to width of the
+mode in pixels.
+.bull
+The owcc utility has been much improved and documented; this tool is a POSIX
+style compiler driver, designed to provide certain level of command line
+compatibility with gcc and ease porting.
+.bull
+The NOEXTension linker option has been documented; this option instructs the
+linker not to add any extension (.exe, .dll, etc.) to the executable name.
+Any argument to the NAME directive will be used verbatim. This option had
+been supported by earlier versions of the linker but not documented.
+.bull
+The 'include' preprocessor directive not prefixed by an exclamation mark
+is now recognized in wmake -ms mode for compatibility with Microsoft and
+IBM NMAKE.
+.bull
+The wmake utility has been enhanced to evaluate NMAKE style '[cmd]'
+expressions (ie. shell commands) in preprocessor !if directives. This
+functionality is supported in both wmake and -ms mode.
 .bull
 A random but very rare startup failure of Windows based GUI tools (notably
 wdw) has been fixed.
