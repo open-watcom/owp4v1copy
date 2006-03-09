@@ -59,10 +59,18 @@ typedef struct {
     #define PTR_SCNF_SPECS SCNF_SPECS *
 #endif
 
-#if defined(__WIDECHAR__)
-    extern int __wscnf( PTR_SCNF_SPECS, const CHAR_TYPE *, va_list );
+#if defined( __STDC_WANT_LIB_EXT1__ ) && __STDC_WANT_LIB_EXT1__ == 1
+  #if defined(__WIDECHAR__)
+    extern int __wscnf_s( PTR_SCNF_SPECS, const CHAR_TYPE *, const char **msg, va_list );
+  #else
+    extern int __scnf_s( PTR_SCNF_SPECS, const CHAR_TYPE *, const char **msg, va_list );
+  #endif
 #else
+  #if defined(__WIDECHAR__)
+    extern int __wscnf( PTR_SCNF_SPECS, const CHAR_TYPE *, va_list );
+  #else
     extern int __scnf( PTR_SCNF_SPECS, const CHAR_TYPE *, va_list );
+  #endif
 #endif
 
 //#pragma off(unreferenced);

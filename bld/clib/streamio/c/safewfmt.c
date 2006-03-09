@@ -24,10 +24,22 @@
 *
 *  ========================================================================
 *
-* Description:  Non-exhaustive test of Safer C Library formatted I/O.
+* Description:  Non-exhaustive test of Safer C Library wide formatted I/O.
 *
 ****************************************************************************/
 
+
+/* The wide-character tests are separate from test of regular routines
+ * for two reasons:
+ *
+ * - Doing byte output on a stream sets its orientation, preventing later
+ *   wide-character output.
+ *
+ * - Lumping everything into one executable causes problems with code
+ *   segment size, especially for compact memory models. Changing the
+ *   memory model is obviously not a solution.
+ *
+ */
 
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdio.h>
@@ -37,6 +49,7 @@
 #include <stdint.h>
 #include <float.h>
 #include <stdarg.h>
+#include <wchar.h>
 
 #ifdef __SW_BW
     #include <wdefwin.h>
@@ -71,360 +84,350 @@ void my_constraint_handler( const char *msg, void *ptr, errno_t error )
 /**********************/
 
 
-static int my_scanf_s( const char *fmt, ... )
+static int my_wscanf_s( const wchar_t *fmt, ... )
 {
     va_list     arg;
     int         rc;
 
     va_start( arg, fmt );
-    rc = vscanf_s( fmt, arg );
+    rc = vwscanf_s( fmt, arg );
     va_end( arg );
     return( rc );
 }
 
-static int my_fscanf_s( FILE * stream, const char *fmt, ... )
+static int my_fwscanf_s( FILE * stream, const wchar_t *fmt, ... )
 {
     va_list     arg;
     int         rc;
 
     va_start( arg, fmt );
-    rc = vfscanf_s( stream, fmt, arg );
+    rc = vfwscanf_s( stream, fmt, arg );
     va_end( arg );
     return( rc );
 }
 
-static int my_sscanf_s( const char *s, const char *fmt, ... )
+static int my_swscanf_s( const wchar_t *s, const wchar_t *fmt, ... )
 {
     va_list     arg;
     int         rc;
 
     va_start( arg, fmt );
-    rc = vsscanf_s( s, fmt, arg );
+    rc = vswscanf_s( s, fmt, arg );
     va_end( arg );
     return( rc );
 }
 
 
-int Test_scan( void )
-/*******************/
+int Test_scan_wide( void )
+/************************/
 {
-    int     number;
-    int     violations = NumViolations;
-    char    buf[64];
+    int         number;
+    int         violations = NumViolations;
+    wchar_t     buf[64];
 
-    VERIFY( sscanf_s( "123", "%d", &number ) == 1 );
+    VERIFY( swscanf_s( L"123", L"%d", &number ) == 1 );
     VERIFY( number == 123 );
 
-    VERIFY( sscanf_s( NULL, "%d", &number ) == EOF );
+    VERIFY( swscanf_s( NULL, L"%d", &number ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( sscanf_s( "123", NULL, &number ) == EOF );
+    VERIFY( swscanf_s( L"123", NULL, &number ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( sscanf_s( "123", "%d", NULL ) == EOF );
+    VERIFY( swscanf_s( L"123", L"%d", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( sscanf_s( "123", "%*d", NULL ) == 0 );
+    VERIFY( swscanf_s( L"123", L"%*d", NULL ) == 0 );
 
-    VERIFY( sscanf_s( "123", "%s", NULL ) == EOF );
+    VERIFY( swscanf_s( L"123", L"%s", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( sscanf_s( "123", "%c", NULL ) == EOF );
+    VERIFY( swscanf_s( L"123", L"%c", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( sscanf_s( "123", "%f", NULL ) == EOF );
+    VERIFY( swscanf_s( L"123", L"%f", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( sscanf_s( "123", "%n", NULL ) == EOF );
+    VERIFY( swscanf_s( L"123", L"%n", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( sscanf_s( "123", "%*d%n%n", &number, NULL ) == EOF );
+    VERIFY( swscanf_s( L"123", L"%*d%n%n", &number, NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( sscanf_s( " 123", "%s%n", &buf, sizeof( buf ), &number ) == 1 );
-    VERIFY( number == 4 && !strcmp( "123", buf ) );
+    VERIFY( swscanf_s( L" 123", L"%s%n", &buf, sizeof( buf ), &number ) == 1 );
+    VERIFY( number == 4 && !wcscmp( L"123", buf ) );
 
-    VERIFY( sscanf_s( " 123", "%s%n", &buf, 3 ) == 0 );
+    VERIFY( swscanf_s( L" 123", L"%s%n", &buf, 3 ) == 0 );
 
-    VERIFY( sscanf_s( "aaa", "%[a]%n", &buf, 4, &number ) == 1 );
-    VERIFY( number == 3 && !strcmp( "aaa", buf ) );
+    VERIFY( swscanf_s( L"aaa", L"%[a]%n", &buf, 4, &number ) == 1 );
+    VERIFY( number == 3 && !wcscmp( L"aaa", buf ) );
 
-    VERIFY( sscanf_s( "aaaa", "%[a]", &buf, 4 ) == 0 );
+    VERIFY( swscanf_s( L"aaaa", L"%[a]", &buf, 4 ) == 0 );
 
-    memset( buf, 'Q', 6 );
-    VERIFY( sscanf_s( "aaa", "%3c%n", &buf, 3, &number ) == 1 );
-    VERIFY( number == 3 && !memcmp( "aaaQQQ", buf, 6 ) );
+    wmemset( buf, 'Q', 6 );
+    VERIFY( swscanf_s( L"aaaaa", L"%5c%n", &buf, 5, &number ) == 1 );
+    VERIFY( number == 5 && !wmemcmp( L"aaaaaQ", buf, 6 ) );
 
-    VERIFY( sscanf_s( "aaa", "%3c%n", &buf, 2 ) == 0 );
+    VERIFY( swscanf_s( L"aaa", L"%3c%n", &buf, 2 ) == 0 );
 
-    VERIFY( my_sscanf_s( "123", "%d", &number ) == 1 );
+
+    VERIFY( my_swscanf_s( L"123", L"%d", &number ) == 1 );
     VERIFY( number == 123 );
 
-    VERIFY( my_sscanf_s( NULL, "%d", &number ) == EOF );
+    VERIFY( my_swscanf_s( NULL, L"%d", &number ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_sscanf_s( "123", NULL, &number ) == EOF );
+    VERIFY( my_swscanf_s( L"123", NULL, &number ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_sscanf_s( "123", "%d", NULL ) == EOF );
+    VERIFY( my_swscanf_s( L"123", L"%d", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_sscanf_s( "123", "%*d", NULL ) == 0 );
+    VERIFY( my_swscanf_s( L"123", L"%*d", NULL ) == 0 );
 
-    VERIFY( my_sscanf_s( "123", "%s", NULL ) == EOF );
+    VERIFY( my_swscanf_s( L"123", L"%s", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_sscanf_s( "123", "%c", NULL ) == EOF );
+    VERIFY( my_swscanf_s( L"123", L"%c", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_sscanf_s( "123", "%f", NULL ) == EOF );
+    VERIFY( my_swscanf_s( L"123", L"%f", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_sscanf_s( "123", "%n", NULL ) == EOF );
-    VERIFY( ++violations == NumViolations );
-
-
-    VERIFY( scanf_s( NULL ) == EOF );
-    VERIFY( ++violations == NumViolations );
-
-    VERIFY( scanf_s( "%n", NULL ) == EOF );
+    VERIFY( my_swscanf_s( L"123", L"%n", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
 
-    VERIFY( my_scanf_s( NULL ) == EOF );
+    VERIFY( wscanf_s( NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_scanf_s( "%n", NULL ) == EOF );
-    VERIFY( ++violations == NumViolations );
-
-
-    VERIFY( fscanf_s( NULL, "%d", &number ) == EOF );
-    VERIFY( ++violations == NumViolations );
-
-    VERIFY( fscanf_s( stdin, NULL ) == EOF );
-    VERIFY( ++violations == NumViolations );
-
-    VERIFY( fscanf_s( stdin, "%n", NULL ) == EOF );
+    VERIFY( wscanf_s( L"%n", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
 
-    VERIFY( my_fscanf_s( NULL, "%d", &number ) == EOF );
+    VERIFY( my_wscanf_s( NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_fscanf_s( stdin, NULL ) == EOF );
+    VERIFY( my_wscanf_s( L"%n", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_fscanf_s( stdin, "%n", NULL ) == EOF );
+
+    VERIFY( fwscanf_s( NULL, L"%n", &number ) == WEOF );
+    VERIFY( ++violations == NumViolations );
+
+    VERIFY( fwscanf_s( stdin, NULL ) == WEOF );
+    VERIFY( ++violations == NumViolations );
+
+    VERIFY( fwscanf_s( stdin, L"%n", NULL ) == WEOF );
+    VERIFY( ++violations == NumViolations );
+
+
+    VERIFY( my_fwscanf_s( NULL, L"%d", &number ) == WEOF );
+    VERIFY( ++violations == NumViolations );
+
+    VERIFY( my_fwscanf_s( stdin, NULL ) == WEOF );
+    VERIFY( ++violations == NumViolations );
+
+    VERIFY( my_fwscanf_s( stdin, L"%n", NULL ) == WEOF );
     VERIFY( ++violations == NumViolations );
 
     return( 1 );
 }
 
 
-static int my_printf_s( const char *fmt, ... )
+static int my_wprintf_s( const wchar_t *fmt, ... )
 {
     va_list     arg;
     int         rc;
 
     va_start( arg, fmt );
-    rc = vprintf_s( fmt, arg );
+    rc = vwprintf_s( fmt, arg );
     va_end( arg );
     return( rc );
 }
 
-static int my_fprintf_s( FILE *fp, const char *fmt, ... )
+static int my_fwprintf_s( FILE *fp, const wchar_t *fmt, ... )
 {
     va_list     arg;
     int         rc;
 
     va_start( arg, fmt );
-    rc = vfprintf_s( fp, fmt, arg );
+    rc = vfwprintf_s( fp, fmt, arg );
     va_end( arg );
     return( rc );
 }
 
-static int my_sprintf_s( char *buf, rsize_t n, const char *fmt, ... )
+
+static int my_swprintf_s( wchar_t *buf, rsize_t n, const wchar_t *fmt, ... )
 {
     va_list     arg;
     int         rc;
 
     va_start( arg, fmt );
-    rc = vsprintf_s( buf, n, fmt, arg );
+    rc = vswprintf_s( buf, n, fmt, arg );
     va_end( arg );
     return( rc );
 }
 
-static int my_snprintf_s( char *buf, rsize_t n, const char *fmt, ... )
+static int my_snwprintf_s( wchar_t *buf, rsize_t n, const wchar_t *fmt, ... )
 {
     va_list     arg;
     int         rc;
 
     va_start( arg, fmt );
-    rc = vsnprintf_s( buf, n, fmt, arg );
+    rc = vsnwprintf_s( buf, n, fmt, arg );
     va_end( arg );
     return( rc );
 }
 
 
-int Test_print( void )
-/********************/
+int Test_print_wide( void )
+/*************************/
 {
-    char    buf[128];
-    int     n;
-    int     violations = NumViolations;
+    wchar_t     buf[128];
+    int         n;
+    int         violations = NumViolations;
 
-    VERIFY( printf_s( NULL ) < 0 );
+
+    VERIFY( wprintf_s( NULL ) < 0 );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( printf_s( "%n", &n ) < 0 );
+    VERIFY( wprintf_s( L"%n", &n ) < 0 );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( printf_s( "%s", NULL ) < 0 );
-    VERIFY( ++violations == NumViolations );
-
-
-    VERIFY( fprintf_s( NULL, "hello" ) < 0 );
-    VERIFY( ++violations == NumViolations );
-
-    VERIFY( fprintf_s( stdout, NULL, 3 ) < 0 );
-    VERIFY( ++violations == NumViolations );
-
-    VERIFY( fprintf_s( stdout, "%hhn", &n ) < 0 );
+    VERIFY( wprintf_s( L"%s", NULL ) < 0 );
     VERIFY( ++violations == NumViolations );
 
 
-    VERIFY( my_printf_s( NULL, 3, 6 ) < 0 );
+    VERIFY( fwprintf_s( NULL, L"hello" ) < 0 );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_printf_s( "%jn", &n ) < 0 );
+    VERIFY( fwprintf_s( stdout, NULL, 3 ) < 0 );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_printf_s( "%S", NULL ) < 0 );
-    VERIFY( ++violations == NumViolations );
-
-
-    VERIFY( my_fprintf_s( NULL, "hi" ) < 0 );
-    VERIFY( ++violations == NumViolations );
-
-    VERIFY( my_fprintf_s( stdout, NULL ) < 0 );
-    VERIFY( ++violations == NumViolations );
-
-    VERIFY( my_fprintf_s( stdout, "%-8.3zn", &n ) < 0 );
-    VERIFY( ++violations == NumViolations );
-
-    VERIFY( my_fprintf_s( stdout, "%S", NULL ) < 0 );
+    VERIFY( fwprintf_s( stdout, L"%hhn", &n ) < 0 );
     VERIFY( ++violations == NumViolations );
 
 
-    VERIFY( sprintf_s( buf, 2, "hi" ) == 0 );
+    VERIFY( my_wprintf_s( NULL, 3, 6 ) < 0 );
+    VERIFY( ++violations == NumViolations );
+
+    VERIFY( my_fwprintf_s( NULL, L"hi" ) < 0 );
+    VERIFY( ++violations == NumViolations );
+
+    VERIFY( my_fwprintf_s( stdout, NULL ) < 0 );
+    VERIFY( ++violations == NumViolations );
+
+
+    VERIFY( swprintf_s( buf, 2, L"hi" ) < 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
-    VERIFY( sprintf_s( buf, sizeof( buf ), "%%n%d", 1 ) == 3 );
-    VERIFY( !strcmp( buf, "%n1" ) );
+    VERIFY( swprintf_s( buf, sizeof( buf ), L"%%n%d", 1 ) == 3 );
+    VERIFY( !wcscmp( buf, L"%n1" ) );
 
     *buf = 'z';
-    VERIFY( sprintf_s( buf, sizeof( buf ), NULL ) == 0 );
+    VERIFY( swprintf_s( buf, sizeof( buf ), NULL ) == 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
     *buf = 'z'; /* preinit output buffer ... */
-    VERIFY( sprintf_s( NULL, sizeof( buf ), "hi" ) == 0 );
+    VERIFY( swprintf_s( NULL, sizeof( buf ), L"hi" ) == 0 );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( sprintf_s( buf, 0, "hi" ) == 0 );
+    VERIFY( swprintf_s( buf, 0, L"hi" ) == 0 );
     VERIFY( ++violations == NumViolations );
 
 #if RSIZE_MAX != SIZE_MAX
-    VERIFY( sprintf_s( buf, ~0, "hi" ) == 0 );
+    VERIFY( swprintf_s( buf, ~0, L"hi" ) == 0 );
     VERIFY( ++violations == NumViolations );
 #endif
 
 
-    VERIFY( my_sprintf_s( NULL, sizeof( buf ), "hi" ) == 0 );
+    VERIFY( my_swprintf_s( NULL, sizeof( buf ), L"hi" ) == 0 );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_sprintf_s( buf, 0, "hi" ) == 0 );
+    VERIFY( my_swprintf_s( buf, 0, L"hi" ) == 0 );
     VERIFY( ++violations == NumViolations );
 
 #if RSIZE_MAX != SIZE_MAX
-    VERIFY( my_sprintf_s( buf, ~0, "hi" ) == 0 );
+    VERIFY( my_swprintf_s( buf, ~0, L"hi" ) == 0 );
     VERIFY( ++violations == NumViolations );
 #endif
 
     VERIFY( *buf == 'z' );  /* ... and make sure no one touched it */
 
-    VERIFY( my_sprintf_s( buf, 5, NULL, 'z', "oo", 36 ) == 0 );
+    VERIFY( my_swprintf_s( buf, 5, NULL, 'z', "oo", 36 ) == 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
-    VERIFY( my_sprintf_s( buf, 6, "%c%s%d", 'z', "oo", 36 ) == 5 );
-    VERIFY( !strcmp( buf, "zoo36" ) );
+    VERIFY( my_swprintf_s( buf, 6, L"%c%s%d", 'z', L"oo", 36 ) == 5 );
+    VERIFY( !wcscmp( buf, L"zoo36" ) );
 
-    VERIFY( my_sprintf_s( buf, 5, "%c%s%d", 'z', "oo", 36 ) == 0 );
+    VERIFY( my_swprintf_s( buf, 5, L"%c%s%d", 'z', L"oo", 36 ) < 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
-    VERIFY( my_sprintf_s( buf, sizeof( buf ), "hi%#6.3n", &n ) == 0 );
+    VERIFY( my_swprintf_s( buf, sizeof( buf ), L"hi%#6.3n", &n ) == 0 );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_sprintf_s( buf, sizeof( buf ), "%%n%s", "Y" ) == 3 );
-    VERIFY( !strcmp( buf, "%nY" ) );
+    VERIFY( my_swprintf_s( buf, sizeof( buf ), L"%%n%s", L"Y" ) == 3 );
+    VERIFY( !wcscmp( buf, L"%nY" ) );
 
-    VERIFY( my_sprintf_s( buf, sizeof( buf ), "hi%s", NULL ) == 0 );
-    VERIFY( ++violations == NumViolations );
-    VERIFY( *buf == '\0' );
-
-
-    VERIFY( my_snprintf_s( buf, sizeof( buf ), "hi%#6.3n", &n ) < 0 );
+    VERIFY( my_swprintf_s( buf, sizeof( buf ), L"hi%s", NULL ) == 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
-    VERIFY( my_snprintf_s( buf, 1, "hi%s", NULL ) < 0 );
+
+    VERIFY( my_snwprintf_s( buf, sizeof( buf ), L"hi%#6.3n", &n ) < 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
-    memset( buf, 'Q', 10 );
-    VERIFY( my_snprintf_s( buf, 4, "%c%s%d", 'z', "oo", 3676 ) == 7 );
-    VERIFY( !memcmp( buf, "zoo\0QQQQQQ", 10 ) );
+    VERIFY( my_snwprintf_s( buf, 1, L"hi%s", NULL ) < 0 );
+    VERIFY( ++violations == NumViolations );
+    VERIFY( *buf == '\0' );
 
-    VERIFY( my_snprintf_s( buf, sizeof( buf ), "%c%s%d", 'z', "oo", 36 ) == 5 );
-    VERIFY( !strcmp( buf, "zoo36" ) );
+    wmemset( buf, 'Q', 10 );
+    VERIFY( my_snwprintf_s( buf, 4, L"%c%s%d", 'z', L"oo", 3676 ) == 7 );
+    VERIFY( !wmemcmp( buf, L"zoo\0QQQQQQ", 10 ) );
 
-    VERIFY( my_snprintf_s( NULL, sizeof( buf ), "hi" ) < 0 );
+    VERIFY( my_snwprintf_s( buf, sizeof( buf ), L"%c%s%d", 'z', L"oo", 36 ) == 5 );
+    VERIFY( !wcscmp( buf, L"zoo36" ) );
+
+    VERIFY( my_snwprintf_s( NULL, sizeof( buf ), L"hi" ) < 0 );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( my_snprintf_s( buf, 0, "hi" ) < 0 );
+    VERIFY( my_snwprintf_s( buf, 0, L"hi" ) < 0 );
     VERIFY( ++violations == NumViolations );
 
 #if RSIZE_MAX != SIZE_MAX
-    VERIFY( my_snprintf_s( buf, ~0, "hi" ) < 0 );
+    VERIFY( my_snwprintf_s( buf, ~0, L"hi" ) < 0 );
     VERIFY( ++violations == NumViolations );
 #endif
 
 
-    VERIFY( snprintf_s( NULL, sizeof( buf ), "hi" ) < 0 );
+    VERIFY( snwprintf_s( NULL, sizeof( buf ), L"hi" ) < 0 );
     VERIFY( ++violations == NumViolations );
 
-    VERIFY( snprintf_s( buf, 0, "hi" ) < 0 );
+    VERIFY( snwprintf_s( buf, 0, L"hi" ) < 0 );
     VERIFY( ++violations == NumViolations );
 
 #if RSIZE_MAX != SIZE_MAX
-    VERIFY( snprintf_s( buf, ~0, "hi" ) < 0 );
+    VERIFY( snwprintf_s( buf, ~0, L"hi" ) < 0 );
     VERIFY( ++violations == NumViolations );
 #endif
 
     VERIFY( *buf == 'z' );
 
-    VERIFY( snprintf_s( buf, sizeof( buf ), NULL, 3, 5 ) < 0 );
+    VERIFY( snwprintf_s( buf, sizeof( buf ), NULL, 3, 5 ) < 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
-    VERIFY( snprintf_s( buf, sizeof( buf ), "hi%#3.55n", &n ) < 0 );
+    VERIFY( snwprintf_s( buf, sizeof( buf ), L"hi%#3.55n", &n ) < 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
-    VERIFY( snprintf_s( buf, sizeof( buf ), "hi%s", NULL ) < 0 );
+    VERIFY( snwprintf_s( buf, sizeof( buf ), L"hi%s", NULL ) < 0 );
     VERIFY( ++violations == NumViolations );
     VERIFY( *buf == '\0' );
 
@@ -457,8 +460,8 @@ int main( int argc, char *argv[] )
     /* Start of tests */
     /******************/
 
-    Test_scan();
-    Test_print();
+    Test_scan_wide();
+    Test_print_wide();
 
     /****************/
     /* End of tests */
@@ -469,7 +472,7 @@ int main( int argc, char *argv[] )
         printf( "%s: FAILURE (%d errors).\n", ProgramName, NumErrors );
         return( EXIT_FAILURE );
     }
-    printf( "Tests completed (%s).\n", strlwr( argv[0] ) );
+    wprintf( L"Tests completed (%hs).\n", strlwr( argv[0] ) );
 #ifdef __SW_BW
     fprintf( stderr, "Tests completed (%s).\n", strlwr( argv[0] ) );
     fclose( my_stdout );

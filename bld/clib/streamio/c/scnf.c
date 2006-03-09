@@ -36,6 +36,9 @@
 #endif
 
 #include "variety.h"
+#ifdef SAFE_SCANF
+    #include "saferlib.h"
+#endif
 #include "widechar.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -80,6 +83,20 @@
     #define SCNF_FAR
 #endif
 
+
+/* Macros to reduce the already large number of ifdefs in the code */
+#ifdef SAFE_SCANF
+
+    #define GET_MAXELEM(x)      x = va_arg( arg->v, rsize_t )
+    #define DEFINE_VARS(x,y)    rsize_t x, y = 0
+    #define CHECK_ELEMS(x,y,z)  if( x < ++y ) return( z )
+#else
+
+    #define GET_MAXELEM(x)
+    #define DEFINE_VARS(x,y)
+    #define CHECK_ELEMS(x,y,z)
+
+#endif
 
 static int cget( PTR_SCNF_SPECS specs )
 {
@@ -221,6 +238,7 @@ static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
     int             width;
     FAR_STRING      str;
     int             c;
+    DEFINE_VARS( maxelem, nelem );
 
     if( specs->assign ) {
 #if defined( __FAR_SUPPORT__ )
@@ -234,6 +252,7 @@ static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
 #else
         str = va_arg( arg->v, CHAR_TYPE * );
 #endif
+        GET_MAXELEM( maxelem );
     }
     len = 0;
     if( (width = specs->width) == -1 )
@@ -245,6 +264,7 @@ static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
         ++len;
         --width;
         if( specs->assign ) {
+            CHECK_ELEMS( maxelem, nelem, -1 );
 #if defined( __WIDECHAR__ ) && defined( USE_MBCS_TRANSLATION )
             if( specs->short_var ) {
                 char        mbBuf[MB_CUR_MAX];
@@ -253,6 +273,7 @@ static int scan_char( PTR_SCNF_SPECS specs, my_va_list *arg )
                     *(FAR_ASCII_STRING)str = mbBuf[0];
                     str = (FAR_STRING) ( (FAR_ASCII_STRING)str + 1 );
                     if( _ismbblead( mbBuf[0] ) )  {
+                        CHECK_ELEMS( maxelem, nelem, -1 );
                         *(FAR_ASCII_STRING)str = mbBuf[1];
                         str = (FAR_STRING) ( (FAR_ASCII_STRING)str + 1 );
                     }
@@ -312,6 +333,7 @@ static int scan_string( PTR_SCNF_SPECS specs, my_va_list *arg )
     int                     len;
     FAR_ASCII_STRING        str;
     char                    chsize;
+    DEFINE_VARS( maxelem, nelem );
 
     if( specs->long_var ) {         /* %ls or %ws */
         chsize = sizeof( wchar_t );
@@ -332,6 +354,7 @@ static int scan_string( PTR_SCNF_SPECS specs, my_va_list *arg )
 #else
         str = va_arg( arg->v, char * );
 #endif
+        GET_MAXELEM( maxelem );
     }
     len = 0;
     for( ;; ) {
@@ -349,6 +372,7 @@ static int scan_string( PTR_SCNF_SPECS specs, my_va_list *arg )
     do {
         ++len;
         if( specs->assign ) {
+            CHECK_ELEMS( maxelem, nelem, -1 );
             if( chsize == 1 ) {
 #if defined( __WIDECHAR__ ) && defined( USE_MBCS_TRANSLATION )
                 char        mbBuf[MB_CUR_MAX];
@@ -356,6 +380,7 @@ static int scan_string( PTR_SCNF_SPECS specs, my_va_list *arg )
                 if( wctomb( mbBuf, c ) != -1 ) {
                     *(FAR_ASCII_STRING)str = mbBuf[0];
                     if( _ismbblead( mbBuf[0] ) ) {
+                        CHECK_ELEMS( maxelem, nelem, -1 );
                         str++;
                         *(FAR_ASCII_STRING)str = mbBuf[1];
                     }
@@ -392,6 +417,7 @@ ugdone:
     uncget( c, specs );
 done:
     if( specs->assign && len > 0 ) {
+        CHECK_ELEMS( maxelem, nelem, -1 );
         if( chsize == 1 ) {
             *str = '\0';
         } else {
@@ -481,6 +507,7 @@ static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **fo
 #else
     char                scanset[SCANSET_LENGTH];
 #endif
+    DEFINE_VARS( maxelem, nelem );
 
     if( not_flag = (**format == '^') ) {
         ++(*format);
@@ -500,6 +527,7 @@ static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **fo
 #else
         str = va_arg( arg->v, CHAR_TYPE * );
 #endif
+        GET_MAXELEM( maxelem );
     }
     len = 0;
     width = specs->width;
@@ -532,11 +560,18 @@ static int scan_arb( PTR_SCNF_SPECS specs, my_va_list *arg, const CHAR_TYPE **fo
         ++len;
         --width;
         if( specs->assign ) {
+            CHECK_ELEMS( maxelem, nelem, -1 );
             *str++ = c;
         }
     }
-    if( specs->assign && len > 0 )
+    if( specs->assign && len > 0 ) {
+        CHECK_ELEMS( maxelem, nelem, -1 );
         *str = '\0';
+    }
+#if defined( __WIDECHAR__ )
+    while( *(*format)++ != ']' )  /* skip past format specifier */
+        ;
+#endif
     return( len );
 }
 
@@ -877,10 +912,66 @@ done:
 }
 
 
+#ifdef SAFE_SCANF
+
+/*
+ * null_arg -- check for a null pointer passed in arguments
+ */
+static int null_arg( PTR_SCNF_SPECS specs, my_va_list *arg )
+{
+    FAR_STRING      str = NULL;
+    va_list         args_copy;
+
+    va_copy( args_copy, arg->v );
+#if defined( __FAR_SUPPORT__ )
+    if( specs->far_ptr ) {
+        str = va_arg( args_copy, CHAR_TYPE _WCFAR * );
+    } else if( specs->near_ptr ) {
+        CHAR_TYPE _WCNEAR   *ptr;
+
+        ptr = va_arg( args_copy, CHAR_TYPE _WCNEAR * );
+        /* The following should work:
+         *
+         * str = (ptr == NULL) ? (void _WCFAR *)NULL : ptr;
+         *
+         * but doesn't due to a bug in C compiler introduced in
+         * 11.0 and fixe in OW 1.4. Ternary operator may be used
+         * when building with OW 1.5. See also similar code in prtf.c.
+         */
+        if( ptr == NULL ) {
+            str = NULL;
+        } else {
+            str = ptr;
+        }
+    } else {
+        CHAR_TYPE   *ptr;
+
+        ptr = va_arg( args_copy, CHAR_TYPE * );
+        if( ptr == NULL ) {
+            str = NULL;
+        } else {
+            str = ptr;
+        }
+    }
+#else
+    str = va_arg( args_copy, CHAR_TYPE * );
+#endif
+    va_end( args_copy );
+    return( str == NULL ? 1 : 0 );
+}
+
+#endif
+
+
+#ifdef SAFE_SCANF
+int __F_NAME(__scnf_s,__wscnf_s)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, const char **msg, va_list args )
+#else
 int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_list args )
+#endif
 {
     int         char_match;
-    int         item_match;
+    int         items_converted;
+    int         items_assigned;
     int         match_len;
     int         c;
     int         fmt_chr;
@@ -888,7 +979,7 @@ int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_
 
     margs = MY_VA_LIST( args );
 
-    char_match = item_match = 0;
+    char_match = items_assigned = items_converted = 0;
     specs->eoinp = 0;
 
     while( (fmt_chr = *format++) != NULLCHAR ) {
@@ -905,6 +996,15 @@ int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_
             format = get_opt( format, specs );
             if( (fmt_chr = *format) != NULLCHAR )
                 ++format;
+#ifdef SAFE_SCANF
+            if( fmt_chr != '%' ) {
+                /* The '%' specifier is the only one not expecting pointer arg */
+                if( specs->assign && null_arg( specs, &margs ) ) {
+                    *msg = "%ptr -> NULL";
+                    return( __F_NAME(EOF,WEOF) );
+                }
+            }
+#endif
             switch( fmt_chr ) {
             case 'd':
                 match_len = scan_int( specs, &margs, 10, TRUE );
@@ -957,12 +1057,22 @@ int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_
 check_match:
                 if( match_len > 0 ) {
                     char_match += match_len;
-                    /* only increment count if value assigned 17-jun-88 */
+                    ++items_converted;
                     if( specs->assign ) {
-                        ++item_match;
+                        ++items_assigned;
                     }
-                } else
+                } else {
+#ifdef SAFE_SCANF
+                    if( match_len < 0 ) {
+                        /* Matching failure caused by insufficient space in output
+                         * is not input failure, hence we won't return EOF regardless
+                         * of specs->eoinp state.
+                         */
+                        ++items_converted;
+                    }
+#endif
                     goto fail;
+                }
                 break;
             case 'n':
                 report_scan( specs, &margs, char_match );
@@ -984,6 +1094,12 @@ check_match:
                 format = get_opt( format, specs );
                 if( *format == 'n' ) {
                     ++format;
+#ifdef SAFE_SCANF
+                    if( specs->assign && null_arg( specs, &margs ) ) {
+                        *msg = "%ptr -> NULL";
+                        return( __F_NAME(EOF,WEOF) );
+                    }
+#endif
                     report_scan( specs, &margs, char_match );
                 } else {
                     break;
@@ -994,7 +1110,7 @@ check_match:
     }
 
 fail:
-    if( item_match == 0 && specs->eoinp )
-        return( EOF );
-    return( item_match );
+    if( items_converted == 0 && specs->eoinp )
+        return( __F_NAME(EOF,WEOF) );
+    return( items_assigned );
 }
