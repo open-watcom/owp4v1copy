@@ -50,5 +50,6 @@ void main( void )
 Runtime-constraint violation: getenv_s, name == NULL.
 ABNORMAL TERMINATION
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system

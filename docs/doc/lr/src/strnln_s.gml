@@ -44,21 +44,22 @@ be accessed by &func.
 .see begin
 .seelist &function. strlen
 .see end
+.*
 .exmp begin
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdio.h>
 #include <string.h>
 
-void main()
+void main( void )
 {
     char    buffer[ 30 ] = "Hello world.";
     size_t  len;
 .exmp break
-
     len = strnlen_s( buffer, sizeof( buffer ) );
     printf( "Length of text: %d\n", emsglen );
     printf( "Text: %s\n", buffer );
 }
 .exmp end
+.*
 .class ANSI
 .system

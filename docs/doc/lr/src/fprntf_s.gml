@@ -87,5 +87,5 @@ void main( void )
 Friday, August 13, 2004
 .exmp end
 .*
-.class TR24731
+.class TR 24731
 .system

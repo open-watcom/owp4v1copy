@@ -91,5 +91,5 @@ void main( void )
 Error: Failed 100 times
 .exmp end
 .*
-.class TR24731
+.class TR 24731
 .system

@@ -42,5 +42,6 @@ void main( void )
 .exmp output
 getenv_s failed
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system

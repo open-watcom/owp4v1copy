@@ -79,12 +79,13 @@ take unspecified values when &func returns.
 .see begin
 .seelist &function. strcat strncat strncat_s
 .see end
+.*
 .exmp begin
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdio.h>
 #include <string.h>
 
-void main()
+void main( void )
 {
     char buffer[80];
 .exmp break
@@ -95,5 +96,6 @@ void main()
 .exmp output
 Hello world
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system

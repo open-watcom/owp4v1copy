@@ -72,7 +72,7 @@ take unspecified values when &func returns.
 #include <stdio.h>
 #include <string.h>
 
-void main()
+void main( void )
 {
     auto char buffer[80];
 .exmp break
@@ -83,5 +83,6 @@ void main()
 .exmp output
 Hello world
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system

@@ -90,6 +90,7 @@ returns.
 .see begin
 .seelist &function. strncpy strlcpy strcpy strdup strcpy_s
 .see end
+.*
 .exmp begin
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdio.h>
@@ -117,5 +118,6 @@ abcdefg
 abc
 (nothing)
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system

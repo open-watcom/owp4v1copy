@@ -456,7 +456,7 @@ Prototype in
 .do end
 .el .do begin
 .   &function. is &*
-.   .if &*1 eq ISO .do begin
+.   .if &*1 eq ISO OR &*1 eq TR .do begin
 .   .   .sr *cls=&'strip(&*,'T',',')
 .   .   .if |&*| eq |ISO C90| .do begin
 .   .   .   .sr *wcls='ISO C95'

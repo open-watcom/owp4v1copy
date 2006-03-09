@@ -144,5 +144,5 @@ void main( void )
 .blkcode end
 .exmp end
 .*
-.class TR24731
+.class TR 24731
 .system

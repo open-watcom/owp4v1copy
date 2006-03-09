@@ -71,5 +71,6 @@ void main( void )
 rt-constraint violation caught: getenv_s, name == NULL.
 getenv_s failed
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system

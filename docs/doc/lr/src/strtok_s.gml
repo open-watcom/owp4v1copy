@@ -106,6 +106,7 @@ value for
 shall start searching just past the element overwritten by a null character (if any).
 .im widefunc
 .desc end
+.*
 .return begin
 The &func function returns a pointer to the first character of a token, or a null
 pointer if there is no token or there is a runtime-constraint violation.
@@ -114,12 +115,13 @@ pointer if there is no token or there is a runtime-constraint violation.
 .see begin
 .seelist &function. strtok strcspn strpbrk
 .see end
+.*
 .exmp begin
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 #include <string.h>
 .exmp break
-void main()
+void main( void )
 {
     char    *p;
     char    *buffer;
@@ -146,5 +148,6 @@ word: of
 word: them
 Find
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system

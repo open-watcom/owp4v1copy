@@ -155,5 +155,6 @@ void main( void )
         printf( "INCLUDE=%s\n", buffer );
 }
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system

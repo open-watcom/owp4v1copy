@@ -85,5 +85,5 @@ Saturday, April 18, 1987
 f1 =  23.4500 f2 =  3.14E+003 x = 0x0001db i = -1
 .exmp end
 .*
-.class TR24731
+.class TR 24731
 .system

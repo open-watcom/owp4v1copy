@@ -31,13 +31,14 @@ null character) in the full message string.
 .see begin
 .seelist &function. strerror strerror_s
 .see end
+.*
 .exmp begin
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
 
-void main()
+void main( void )
 {
     FILE    *fp;
     char    emsg[ 100 ];
@@ -52,5 +53,6 @@ void main()
     }
 }
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system
