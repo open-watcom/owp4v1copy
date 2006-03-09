@@ -87,8 +87,8 @@
 /* Macros to reduce the already large number of ifdefs in the code */
 #ifdef SAFE_SCANF
 
-    #define GET_MAXELEM(x)      x = va_arg( arg->v, rsize_t )
-    #define DEFINE_VARS(x,y)    rsize_t x, y = 0
+    #define GET_MAXELEM(x)      x = va_arg( arg->v, size_t )
+    #define DEFINE_VARS(x,y)    size_t x, y = 0
     #define CHECK_ELEMS(x,y,z)  if( x < ++y ) return( z )
 #else
 
