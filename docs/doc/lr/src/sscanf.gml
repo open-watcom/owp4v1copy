@@ -18,6 +18,8 @@ int _usscanf( const wchar_t *in_string,
 .do end
 .funcend
 .*
+.safealt
+.*
 .desc begin
 The &func function scans input from the character string
 .arg in_string

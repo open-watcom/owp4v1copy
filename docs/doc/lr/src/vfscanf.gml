@@ -21,6 +21,8 @@ int _uvfscanf( FILE *fp,
 .do end
 .funcend
 .*
+.safealt
+.*
 .desc begin
 The &func function scans input from the file designated by
 .arg fp

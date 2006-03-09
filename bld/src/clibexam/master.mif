@@ -395,6 +395,7 @@ free.exe &
 freopen.exe &
 freop_s.exe &
 fscanf.exe &
+fscanf_s.exe &
 fseek.exe &
 fsetpos.exe &
 fstat.exe &
@@ -423,9 +424,11 @@ rename.exe &
 rewind.exe &
 rmdir.exe &
 scanf.exe &
+scanf_s.exe &
 sopen.exe &
 sprintf.exe &
 sscanf.exe &
+sscanf_s.exe &
 stat.exe &
 tell.exe &
 tmpfile.exe &
@@ -441,9 +444,11 @@ vcprintf.exe &
 vcscanf.exe &
 vfprintf.exe &
 vfscanf.exe &
+vfscnf_s.exe &
 vprintf.exe &
 vscanf.exe &
-vsscanf.exe &
+vscanf_s.exe &
+vsscnf_s.exe &
 write.exe
 
 # String Functions (all + NetWare)

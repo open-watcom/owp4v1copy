@@ -21,6 +21,8 @@ int _uvsscanf( const wchar_t *in_string,
 .do end
 .funcend
 .*
+.safealt
+.*
 .desc begin
 The &func function scans input from the string designated by
 .arg in_string

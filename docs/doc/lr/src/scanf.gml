@@ -15,6 +15,8 @@ int _uscanf( const wchar_t *format, ... );
 .do end
 .funcend
 .*
+.safealt
+.*
 .desc begin
 The &func function scans input from the file designated by
 .kw stdin

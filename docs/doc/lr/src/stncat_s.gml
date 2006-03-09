@@ -9,9 +9,9 @@ errno_t strncat_s( char * restrict s1,
 .ixfunc2 '&Concats' &func
 .if &'length(&wfunc.) ne 0 .do begin
 #include <wchar.h>
-errno_t wcsncat_s( wchar_t * __restrict s1,
+errno_t wcsncat_s( wchar_t * restrict s1,
                    rsize_t s1max,
-                   const wchar_t * __restrict s2,
+                   const wchar_t * restrict s2,
                    rsize_t n )
 .ixfunc2 '&String' &wfunc
 .ixfunc2 '&Concats' &wfunc
@@ -92,6 +92,7 @@ take unspecified values when &func returns.
 .see begin
 .seelist strncat strcat strlcat strcat_s
 .see end
+.*
 .exmp begin
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdio.h>
@@ -111,5 +112,6 @@ void main( void )
 Hello world
 Hello world****
 .exmp end
-.class ANSI
+.*
+.class TR 24731
 .system

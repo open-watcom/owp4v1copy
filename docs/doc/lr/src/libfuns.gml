@@ -358,6 +358,8 @@
 .fnc fscanf                     fscanf.gml      DOS QNX W WIN32
 .fnw fwscanf                    fscanf.gml      DOS QNX W WIN32
 .fnu _ufscanf                   fscanf.gml      DOS       WIN32
+.fnc fscanf_s                   fscanf_s.gml    DOS QNX W WIN32
+.fnw fwscanf_s                  fscanf_s.gml    DOS QNX W WIN32
 .fnc fseek                      fseek.gml       DOS QNX W WIN32
 .fnc fsetpos                    fsetpos.gml     DOS QNX W WIN32
 .fnc _fsopen                    _fsopen.gml     DOS QNX W WIN32
@@ -1112,6 +1114,8 @@
 .fnc scanf                      scanf.gml       DOS QNX W WIN32
 .fnw wscanf                     scanf.gml       DOS QNX W WIN32
 .fnu _uscanf                    scanf.gml       DOS       WIN32
+.fnc scanf_s                    scanf_s.gml     DOS QNX W WIN32
+.fnw wscanf_s                   scanf_s.gml     DOS QNX W WIN32
 .fnc sched_getparam             scgetpa.gml         QXO
 .fnc sched_get_priority_max     scgetmax.gml        QXO
 .fnc sched_get_priority_min     scgetmin.gml        QXO
@@ -1247,6 +1251,8 @@
 .fnc sscanf                     sscanf.gml      DOS QNX W WIN32
 .fnw swscanf                    sscanf.gml      DOS QNX W WIN32
 .fnu _usscanf                   sscanf.gml      DOS       WIN32
+.fnc sscanf_s                   sscanf_s.gml    DOS QNX W WIN32
+.fnw swscanf_s                  sscanf_s.gml    DOS QNX W WIN32
 .fnc stackavail                 stackava.gml    DOS QNX W WIN32
 .fnc stat                       stat.gml        DOS QNX W WIN32
 .fnc _stat                      stat.gml        DOS       WIN32
@@ -1639,6 +1645,8 @@
 .fnc vfscanf                    vfscanf.gml     DOS QNX W WIN32
 .fnw vfwscanf                   vfscanf.gml     DOS QNX W WIN32
 .fnu _uvfscanf                  vfscanf.gml     DOS       WIN32
+.fnc vfscanf_s                  vfscnf_s.gml    DOS QNX W WIN32
+.fnw vfwscanf_s                 vfscnf_s.gml    DOS QNX W WIN32
 .fnc vprintf                    vprintf.gml     DOS QNX W WIN32
 .fnw vwprintf                   vprintf.gml     DOS QNX W WIN32
 .fnu _uvprintf                  vprintf.gml     DOS       WIN32
@@ -1647,6 +1655,8 @@
 .fnc vscanf                     vscanf.gml      DOS QNX W WIN32
 .fnw vwscanf                    vscanf.gml      DOS QNX W WIN32
 .fnu _uvscanf                   vscanf.gml      DOS       WIN32
+.fnc vscanf_s                   vscanf_s.gml    DOS QNX W WIN32
+.fnw vwscanf_s                  vscanf_s.gml    DOS QNX W WIN32
 .fnc _vsnprintf                 _vsnprnt.gml    DOS QNX W WIN32
 .fnc _vsnwprintf                _vsnprnt.gml    DOS QNX W WIN32
 .fnc vsnprintf                  vsnprint.gml    DOS QNX W WIN32
@@ -1661,6 +1671,8 @@
 .fnc vsscanf                    vsscanf.gml     DOS QNX W WIN32
 .fnw vswscanf                   vsscanf.gml     DOS QNX W WIN32
 .fnu _uvsscanf                  vsscanf.gml     DOS       WIN32
+.fnc vsscanf_s                  vsscnf_s.gml    DOS QNX W WIN32
+.fnw vswscanf_s                 vsscnf_s.gml    DOS QNX W WIN32
 .fnc wait                       wait.gml        DOS QNX W WIN32
 .fnc waitpid                    waitpid.gml         QXO
 .fnw wcrtomb                    wcrtomb.gml     DOS       WIN32
