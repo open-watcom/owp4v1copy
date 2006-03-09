@@ -31,6 +31,7 @@
 
 #ifdef __NETWARE__
     /* One less thing to worry about */
+    #define ORIENT_STREAM(stream,error_return)
 #else
   #ifdef __WIDECHAR__
     #define ORIENT_STREAM(stream,error_return)                  \
