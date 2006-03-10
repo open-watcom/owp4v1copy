@@ -951,7 +951,7 @@ static char *GlueTokenToBuffer( MACRO_TOKEN *first, char *gluebuf )
 
     buf = NULL;
     if( first != NULL ) {                               /* 19-apr-93 */
-        MacroPtr = &first->token;
+        MacroPtr = (byte *)&first->token;
         buf = ExpandMacroToken();
     }
     if ( buf == NULL )
