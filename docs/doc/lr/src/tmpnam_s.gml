@@ -81,5 +81,5 @@ void main()
     }
 }
 .exmp end
-.class ANSI
+.class TR 24731
 .system

@@ -249,13 +249,5 @@ void main()
     }
 }
 .exmp end
-.if '&machsys' eq 'PP' .do begin
-.class ANSI
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
-.class ANSI
-.do end
-.el .do begin
-.class ANSI, ('t', 'c', 'n' are &company extensions)
-.do end
+.class TR 24731
 .system

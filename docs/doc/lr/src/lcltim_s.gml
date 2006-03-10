@@ -54,5 +54,5 @@ void main()
 .exmp output
 It is now: Mon Jan 30 15:28:33 2006
 .exmp end
-.class ANSI
+.class TR 24731
 .system

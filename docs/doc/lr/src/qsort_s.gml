@@ -80,5 +80,5 @@ void main()
 .exmp output
 first last middle
 .exmp end
-.class ANSI
+.class TR 24731
 .system

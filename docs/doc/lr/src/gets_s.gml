@@ -19,7 +19,7 @@ shall neither be equal to zero nor be greater than
 .kw RSIZE_MAX
  .
 A new-line character, end-of-file, or read error shall occur within reading
-.arg n-1 
+.arg n-1
 characters from
 .kw stdin
  .
@@ -36,10 +36,10 @@ Size of the array
 .arg s
 is specified by the argument
 .arg n
-, this information is used to protect buffer from overflow. If buffer 
+, this information is used to protect buffer from overflow. If buffer
 .arg s
-is about to be overflown, runtime-constraint is activated. Any new-line character 
-is discarded, and a null character is placed immediately after the last character 
+is about to be overflown, runtime-constraint is activated. Any new-line character
+is discarded, and a null character is placed immediately after the last character
 read into the array.
 .desc end
 
@@ -48,8 +48,8 @@ The &func function returns
 .arg s
 if successful.
 .mono NULL
-is returned if there was a runtime-constraint violation, or if end-of-file 
-is encountered and no caracters have been read into the array, or if a 
+is returned if there was a runtime-constraint violation, or if end-of-file
+is encountered and no caracters have been read into the array, or if a
 read error occurs.
 .return end
 

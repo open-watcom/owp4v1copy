@@ -114,5 +114,5 @@ Date and time is: Mon Jan 30 11:32:45 2006
 .exmp end
 .* The following line forces an entry out for the function
 .*  ??? .sr mfunc='x __wasctime'
-.class ANSI
+.class TR 24731
 .system

@@ -80,5 +80,5 @@ It is now: Mon Jan 30 14:29:55 2006
 .exmp end
 .* The following line forces an entry out for the function
 .*       sr mfunc='x __wctime'
-.class ANSI
+.class TR 24731
 .system

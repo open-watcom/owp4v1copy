@@ -119,5 +119,5 @@ void main( void )
 }
 .exmp end
 .*
-.class ANSI
+.class TR 24731
 .system

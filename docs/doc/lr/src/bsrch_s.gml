@@ -113,5 +113,5 @@ int main()
 -1
 0
 .exmp end
-.class ANSI
+.class TR 24731
 .system

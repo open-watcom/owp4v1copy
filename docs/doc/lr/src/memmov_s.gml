@@ -120,5 +120,5 @@ void main( void )
 .exmp output
 *0123456789
 .exmp end
-.class ANSI
+.class TR 24731
 .system
