@@ -830,7 +830,6 @@ static void merge_opts( struct XlatStatus *status, const OPT_STORAGE *cmdOpts,
     OPT_STRING *curr;
     char       *p;
     char       *system = SYS_NT_CHARMODE;
-    char       *start = NULL;
 
     if( cmdOpts->subsystem ) {
         p = strchr( cmdOpts->subsystem_value->data, ',' );
@@ -853,41 +852,6 @@ static void merge_opts( struct XlatStatus *status, const OPT_STORAGE *cmdOpts,
     } else {
         AppendFmtCmdLine( cmdLine, LINK_SYSTEM_SECTION, "SYSTEM %s", system );
     }
-
-    /*** If needed, reference the appropriate default startup symbol ***/
-
-    if (!cmdOpts->entry && !cmdOpts->nowopts && !cmdOpts->nowref)
-    {
-        start = NULL;
-
-        if (!cmdOpts->dll)
-        {
-            if (!stricmp("nt", system))
-                start = "_cstart_";
-            else if (!stricmp("nt_win", system))
-                start = "_wstart_";
-            else if (!stricmp("ntaxp", system))
-                start = "mainCRTStartup";
-            else if (!stricmp("ntaxp_win", system))
-                start = "WinMainCRTStartup";
-        } else {
-            if (!stricmp("nt", system) || !stricmp("nt_win", system)) {
-                start = "__DLLstartw_";
-            } else if (!stricmp("ntaxp", system)
-                                    || !stricmp("ntaxp_win", system)) {
-                start = "DllMainCRTStartup";
-            }
-        }
-
-        if (start)
-        {
-#ifdef __TARGET_386__
-            AppendFmtCmdLine(cmdLine, LINK_OPTS_SECTION, "REFERENCE %s OPTION START=%s", start, start);
-#else
-            AppendFmtCmdLine(cmdLine, LINK_OPTS_SECTION, "REFERENCE %s", start);
-#endif
-        }
-    } /* if */
 
     /*** Add any options meant for the Watcom tools ***/
     if (cmdOpts->passwopts)
