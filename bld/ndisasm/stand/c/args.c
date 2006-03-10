@@ -42,6 +42,7 @@
 #include "buffer.h"
 #include "memfuncs.h"
 #include "print.h"
+#include "cmdlinehelpers.h"
 
 extern wd_options               Options;
 extern char                     LabelChar;
@@ -86,6 +87,15 @@ static void printUsage( int msg ) {
     exit( 1 );
 }
 
+static int iswsOrOpt( char ch )
+{
+    if( isspace( ch ) ) return( 1 );
+
+    if( IS_OPT_DELIM( ch ) ) return( 1 );
+
+    return( 0 );
+}
+
 static char *skipBlanks( char *cmd ) {
     while( isspace( *cmd ) ) {
         cmd++;
@@ -93,32 +103,54 @@ static char *skipBlanks( char *cmd ) {
     return( cmd );
 }
 
-static char *skipFileName( char * cmd ) {
-    do {
-        cmd++;
-    } while( !isspace( *cmd ) && *cmd );
-    return( cmd );
-}
-
 static char *skipToNextArg( char * cmd ) {
-    while( !isspace( *cmd ) && !IS_OPT_DELIM( *cmd ) && *cmd ) {
-        cmd++;
+    char    string_open = 0;
+
+    while( *cmd != '\0' ) {
+        if( *cmd == '\\' ) {
+            cmd++;
+            if( *cmd != '\0' ) {
+                if( !string_open && iswsOrOpt( *cmd ) ) {
+                    break;
+                }
+                cmd++;
+            }
+        } else {
+            if( *cmd == '\"' ) {
+                string_open = !string_open;
+                cmd++;
+            } else {
+                if( !string_open && iswsOrOpt( *cmd ) ) {
+                    break;
+                }
+                cmd++;
+            }
+        }
     }
-    while( isspace( *cmd ) && *cmd ) {
-        cmd++;
-    }
+
+    cmd = skipBlanks( cmd );
+
     return( cmd );
 }
 
 static char *getFileName( char *start, char *following )
 {
-    int                                 length;
-    char *                              name;
+    int		length;
+    char *	name;
+    char *	tmp;
 
     length = following - start;
+    tmp = (char *) MemAlloc( length + 1 );
+    memcpy( tmp, start, length );
+    tmp[length] = 0;
+
+    if( strchr( tmp, '\"' ) == NULL )
+        return tmp;
+
     name = (char *) MemAlloc( length + 1 );
-    memcpy( name, start, length );
-    name[length] = 0;
+    UnquoteFName( name, length + 1, tmp );
+    MemFree( tmp );
+
     return( name );
 }
 
@@ -208,7 +240,7 @@ void HandleArgs( char *cmd )
                         if( *cmd == '=' ) {
                             cmd++;
                             ptr = cmd;
-                            cmd = skipFileName( cmd );
+                            cmd = FindNextWS( cmd );
                             ListFileName = getFileName( ptr, cmd );
                         }
                         break;
@@ -263,7 +295,7 @@ void HandleArgs( char *cmd )
                         if( *cmd == '=' ) {
                             cmd++;
                             ptr = cmd;
-                            cmd = skipFileName( cmd );
+                            cmd = FindNextWS( cmd );
                             SourceFileName = getFileName( ptr, cmd );
                         }
                         break;
@@ -279,7 +311,7 @@ void HandleArgs( char *cmd )
                     printUsage( ONLY_ONE_OBJECT );
                 }
                 ptr = cmd;
-                cmd = skipFileName( cmd );
+                cmd = FindNextWS( cmd );
                 ObjFileName = getFileName( ptr, cmd );
             }
             cmd = skipToNextArg( cmd );
