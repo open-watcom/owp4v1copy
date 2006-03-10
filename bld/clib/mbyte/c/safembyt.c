@@ -33,8 +33,12 @@
 
 #define __STDC_WANT_LIB_EXT1__ 1       // Enable Safer C interfaces
 
+#include <errno.h>
+#include <locale.h>
+#include <stdarg.h>
 #include <mbstring.h>
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
@@ -42,7 +46,6 @@
 #ifdef __SW_BW
     #include <wdefwin.h>
 #endif
-
 
 /* DUMMY_DBCS won't be needed now that Windows and DOS are fully supported */
 //#if !defined(__NT__) && !defined(__OS2__) && !defined(__WINDOWS__)
@@ -82,7 +85,11 @@ void TestToWide( void )
     errno_t             rc;
     size_t              retval;
     size_t              retval2;
+    mbstate_t           ps;
+    const char         *pchar;
+    const char         *pchar2;
     int                 violations = NumViolations;
+
 
 
     rc = mbstowcs_s( &retval, wcs, 20, "", 0 );
@@ -114,6 +121,44 @@ void TestToWide( void )
     VERIFY( wcs[4] == '\0' );
     VERIFY( violations == NumViolations );
     rc = mbstowcs_s( &retval2, NULL, 0, "\x81\xFC""foo", 10 );
+    VERIFY( retval == retval2 );
+    VERIFY( violations == NumViolations );
+
+    pchar = "";
+    rc = mbsrtowcs_s( &retval, wcs, 20, &pchar, 0, &ps );
+    VERIFY( rc == 0 );
+    VERIFY( wcs[0] == L'\0' );
+    VERIFY( violations == NumViolations );
+
+    pchar = "foo";
+    rc = mbsrtowcs_s( &retval, wcs, 20, &pchar, 3, &ps );
+    VERIFY( rc == 0 );
+    VERIFY( retval == 3 );
+    VERIFY( violations == NumViolations );
+
+    pchar = "\x81\xFC""foo";
+    rc = mbsrtowcs_s( &retval, wcs, 20, &pchar, 0, &ps );
+    VERIFY( rc == 0 );
+    VERIFY( retval == 0 );
+    VERIFY( violations == NumViolations );
+
+    pchar = "foo";
+    rc = mbsrtowcs_s( &retval, wcs, 20, &pchar, 10, &ps );
+    VERIFY( rc == 0 );
+    VERIFY( retval == 3 );
+    VERIFY( violations == NumViolations );
+
+    pchar = "\x81\xFC""foo";
+    rc = mbsrtowcs_s( &retval, wcs, 6, &pchar, 10, &ps );
+    VERIFY( rc == 0 );
+    VERIFY( retval == 4 );
+    VERIFY( wcs[1] == 'f' );
+    VERIFY( wcs[2] == 'o' );
+    VERIFY( wcs[3] == 'o' );
+    VERIFY( wcs[4] == '\0' );
+    VERIFY( violations == NumViolations );
+    pchar2 = "\x81\xFC""foo";
+    rc = mbsrtowcs_s( &retval2, NULL, 0, &pchar2, 10, &ps );
     VERIFY( retval == retval2 );
     VERIFY( violations == NumViolations );
 
@@ -158,9 +203,70 @@ void TestToWide( void )
     VERIFY( retval == -1 );
     VERIFY( wcs[0] == L'\0' );
     VERIFY( ++violations == NumViolations );
+
 #if 0
     /* don't know how to force an encoding error */
     rc = mbstowcs_s( &retval, wcs, 20, "\x01\x11""foo", 10 );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( wcs[0] == L'\0' );
+    VERIFY( ++violations == NumViolations );
+#endif
+
+    pchar = "\x81\xFC""foo";
+    rc = mbsrtowcs_s( NULL, wcs, 20, &pchar, 10, &ps );
+    VERIFY( rc != 0 );
+    VERIFY( wcs[0] == L'\0' );
+    VERIFY( ++violations == NumViolations );
+
+    rc = mbsrtowcs_s( &retval, wcs, 6, NULL, 10, &ps );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( wcs[0] == L'\0' );
+    VERIFY( ++violations == NumViolations );
+
+    pchar = NULL;
+    rc = mbsrtowcs_s( &retval, wcs, 6, &pchar, 10, &ps );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( wcs[0] == L'\0' );
+    VERIFY( ++violations == NumViolations );
+
+#if RSIZE_MAX != SIZE_MAX
+    wcs[0] = L'X';
+    pchar = "\x81\xFC""foo";
+    rc = mbsrtowcs_s( &retval, wcs, ~0, &pchar, 10, &ps );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( wcs[0] == L'X' );
+    VERIFY( ++violations == NumViolations );
+
+    pchar = "\x81\xFC""foo";
+    rc = mbsrtowcs_s( &retval, wcs, 20, &pchar, ~0, &ps );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( wcs[0] == L'\0' );
+    VERIFY( ++violations == NumViolations );
+#endif
+
+    pchar = "\x81\xFC""foo";
+    wcs[0] = L'X';
+    rc = mbsrtowcs_s( &retval, wcs, 0, &pchar, 10, &ps );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( wcs[0] == L'X' );
+    VERIFY( ++violations == NumViolations );
+
+    pchar = "\x81\xFC""foo";
+    rc = mbsrtowcs_s( &retval, wcs, 2, &pchar, 10, &ps );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( wcs[0] == L'\0' );
+    VERIFY( ++violations == NumViolations );
+#if 0
+    /* don't know how to force an encoding error */
+    pchar = "\x01\x11""foo";
+    rc = mbsrtowcs_s( &retval, wcs, 20, &pchar, 10, &ps );
     VERIFY( rc != 0 );
     VERIFY( retval == -1 );
     VERIFY( wcs[0] == L'\0' );
@@ -181,9 +287,9 @@ void TestFromWide( void )
     wchar_t             wcs[] = { 'H', 'e', 'l', 'l', 'o', '\0' };
 
     errno_t             rc;
-    int                 status;
     size_t              retval;
     size_t              retval2;
+    int                 status;
     int                 violations = NumViolations;
 
     rc = wctomb_s( &status, mbs, 20, wc );
@@ -227,7 +333,7 @@ void TestFromWide( void )
     VERIFY( rc != 0 );
     VERIFY( ++violations == NumViolations );
 
-#if !(RSIZE_MAX == SIZE_MAX)
+#if RSIZE_MAX != SIZE_MAX
     rc = wctomb_s( &status, mbs, ~0, wc );
     VERIFY( rc != 0 );
     VERIFY( ++violations == NumViolations );
@@ -290,6 +396,10 @@ void TestAddendum( void )
     unsigned char       mbcs[10*MB_LEN_MAX+1];
     unsigned char *     mbcsPtr;
 
+    errno_t             rc;
+    size_t              retval;
+    int                 violations = NumViolations;
+
     status = wctob( L'!' );
     VERIFY( status == '!' );
 
@@ -321,70 +431,122 @@ void TestAddendum( void )
     status = mbrlen( "!", 2, &state );
     VERIFY( status == 1 );
 
-    status = mbrlen( "\x90\x90""!", 1, &state );
-    #ifndef DUMMY_DBCS
-        VERIFY( status == -2 );
-    #else
-        VERIFY( status == 1 );
-    #endif
+    wc = L'\0';
+    rc = wcrtomb_s( &retval, mbc, MB_LEN_MAX, wc, &state );
+    VERIFY( rc == 0 );
+    VERIFY( *mbc == '\0' );
+    VERIFY( retval == 1 );
+    VERIFY( violations == NumViolations );
 
-    status = mbrtowc( NULL, NULL, 0, &state );
-    VERIFY( status == 0 );
+    rc = wcrtomb_s( &retval, mbc, MB_LEN_MAX, L'X', &state );
+    VERIFY( rc == 0 );
+    VERIFY( *mbc == 'X' );
+    VERIFY( retval == 1 );
+    VERIFY( violations == NumViolations );
 
-    status = mbrtowc( &wc, "!", 20, &state );
-    VERIFY( status == 1 );
-    VERIFY( wc == L'!' );
+    rc = wcrtomb_s( &retval, NULL, 0, L'X', &state );
+    VERIFY( rc == 0 );
+    VERIFY( retval == 1 );
+    VERIFY( violations == NumViolations );
 
-    status = wcrtomb( NULL, wc, &state );
-    VERIFY( status == 0 );
-
-    status = wcrtomb( mbc, wc, &state );
-    VERIFY( status == 1 );
-    VERIFY( *mbc == '!' );
 
     _mbscpy( mbcs, "Foo!\x90\x90" );
     mbcsPtr = mbcs;
     wcs[5] = wcs[6] = L'-';
-    #ifndef DUMMY_DBCS
-        status = mbsrtowcs( wcs, (const char**)(&mbcsPtr), 5, &state );
-        VERIFY( status == 5 );
-    #else
-        status = mbsrtowcs( wcs, (const char**)(&mbcsPtr), 6, &state );
-        VERIFY( status == 6 );
-    #endif
+    rc = mbsrtowcs_s( &retval, wcs, 10, (const char**)(&mbcsPtr), 6, &state );
+    VERIFY( rc == 0 );
+    VERIFY( retval == 5 );
     VERIFY( wcs[0] == L'F' );
     VERIFY( wcs[1] == L'o' );
     VERIFY( wcs[2] == L'o' );
     VERIFY( wcs[3] == L'!' );
-    #ifndef DUMMY_DBCS
-        VERIFY( wcs[4] & 0xFF00 );
-        VERIFY( wcs[5] == L'-' );
-        wcs[5] = L'\0';
-    #else
-        VERIFY( wcs[4] == 0x90 );
-        VERIFY( wcs[5] == 0x90 );
-        VERIFY( wcs[6] == L'-' );
-        wcs[6] = L'\0';
-    #endif
 
     mbcsPtr = mbcs;
-    status = mbsrtowcs( NULL, (const char**)(&mbcsPtr), 1, &state );
-    #ifdef DUMMY_DBCS
-        VERIFY( status == 6 );  /* ignore len when dst==NULL */
-    #else
-        VERIFY( status == 5 );  /* ignore len when dst==NULL */
-    #endif
+    rc = mbsrtowcs_s( &retval, NULL, 0, (const char**)(&mbcsPtr), 1, &state );
+    VERIFY( rc == 0 );
+    VERIFY( retval == 5 );
 
     wcsPtr = wcs;
     _mbsset( mbcs, _mbsnextc("#") );
-    status = wcsrtombs( mbcs, (const wchar_t**)(&wcsPtr), 6, &state );
-    VERIFY( status == 6 );
-    mbcs[status] = '\0';
+    rc = wcsrtombs_s( &retval, mbcs, 10, (const wchar_t**)(&wcsPtr), 6, &state );
+    VERIFY( rc == 0 );
+    VERIFY( retval == 6 );
+    mbcs[retval] = '\0';
     VERIFY( _mbscmp( mbcs, "Foo!\x90\x90" ) == 0 );
 
     wcsPtr = wcs;
-    status = wcsrtombs( NULL, (const wchar_t**)(&wcsPtr), 20, &state );
-    VERIFY( status == 6 );
+    rc = wcsrtombs_s( &retval, NULL, 0, (const wchar_t**)(&wcsPtr), 20, &state );
+    VERIFY( rc == 0 );
+    VERIFY( retval == 6 );
+
+    /***********************************************************************/
+    /*  test runtime-constraints                                           */
+    /***********************************************************************/
+
+    *mbc = 'X';
+    rc = wcrtomb_s( NULL, mbc, MB_LEN_MAX, wc, &state );
+    VERIFY( rc != 0 );
+    VERIFY( *mbc == '\0' );
+    VERIFY( ++violations == NumViolations );
+
+    *mbc = 'X';
+    rc = wcrtomb_s( &retval, mbc, MB_LEN_MAX, L'X', NULL );
+    VERIFY( rc != 0 );
+    VERIFY( *mbc == '\0' );
+    VERIFY( retval == -1 );
+    VERIFY( ++violations == NumViolations );
+
+    rc = wcrtomb_s( &retval, NULL, MB_LEN_MAX, L'X', &state );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( ++violations == NumViolations );
+
+    *mbc = 'X';
+    rc = wcrtomb_s( &retval, mbc, 0, L'X', &state );
+    VERIFY( rc != 0 );
+    VERIFY( *mbc == 'X' );
+    VERIFY( retval == -1 );
+    VERIFY( ++violations == NumViolations );
+
+#if RSIZE_MAX != SIZE_MAX
+    rc = wcrtomb_s( &retval, mbc, ~0, L'X', &state );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( *mbc == 'X' );
+    VERIFY( ++violations == NumViolations );
+#endif
+
+    mbcsPtr = mbcs;
+    rc = mbsrtowcs_s( NULL, NULL, 0, (const char**)(&mbcsPtr), 1, &state );
+    VERIFY( rc != 0 );
+    VERIFY( ++violations == NumViolations );
+
+    rc = mbsrtowcs_s( &retval, NULL, 0, NULL, 1, &state );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( ++violations == NumViolations );
+
+    mbcsPtr = NULL;
+    rc = mbsrtowcs_s( &retval, NULL, 0, (const char**)(&mbcsPtr), 1, &state );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( ++violations == NumViolations );
+
+    rc = mbsrtowcs_s( &retval, NULL, 0, (const char**)(&wcsPtr), 1, NULL );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( ++violations == NumViolations );
+
+    rc = mbsrtowcs_s( &retval, NULL, 111, (const char**)(&wcsPtr), 1, &state );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( ++violations == NumViolations );
+
+    wcsPtr = wcs;
+    rc = wcsrtombs_s( &retval, mbcs, 5, (const wchar_t**)(&wcsPtr), 10, &state );
+    VERIFY( rc != 0 );
+    VERIFY( retval == -1 );
+    VERIFY( ++violations == NumViolations );
 }
 
 

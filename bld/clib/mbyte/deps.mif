@@ -39,6 +39,7 @@ fmbspbrk.obj : ../../../c/fmbspbrk.c ../../../c/mbspbrk.c
 fmbsrchr.obj : ../../../c/fmbsrchr.c ../../../c/mbsrchr.c
 fmbsrev.obj  : ../../../c/fmbsrev.c  ../../../c/mbsrev.c
 fmbsrtow.obj : ../../../c/fmbsrtow.c ../../../c/mbsrtowc.c
+fmbsrt_s.obj : ../../../c/fmbsrt_s.c ../../../c/mbsrto_s.c
 fmbsset.obj  : ../../../c/fmbsset.c  ../../../c/mbsset.c
 fmbsspn.obj  : ../../../c/fmbsspn.c  ../../../c/mbsspn.c
 fmbsspnp.obj : ../../../c/fmbsspnp.c ../../../c/mbsspnp.c
@@ -50,6 +51,8 @@ fmbsupr.obj  : ../../../c/fmbsupr.c  ../../../c/mbsupr.c
 fmbterm.obj  : ../../../c/fmbterm.c  ../../../c/mbterm.c
 fmbtowc.obj  : ../../../c/fmbtowc.c  ../../../c/mbtowc.c
 fwcrtomb.obj : ../../../c/fwcrtomb.c ../../../c/wcrtomb.c
+fwcrto_s.obj : ../../../c/fwcrto_s.c ../../../c/wcrtom_s.c
+fwcsrt_s.obj : ../../../c/fwcsrt_s.c ../../../c/wcsrto_s.c
 fwcsrtom.obj : ../../../c/fwcsrtom.c ../../../c/wcsrtomb.c
 fwcsto_s.obj : ../../../c/fwcsto_s.c ../../../c/wcstom_s.c
 fwcstomb.obj : ../../../c/fwcstomb.c ../../../c/wcstombs.c
