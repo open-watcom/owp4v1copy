@@ -10,10 +10,15 @@ cdsay .
 
 [ BLOCK <1> build rel2 ]
 #=======================
+    echo wsplice -k Pspecs <OWROOT>/bld/wl/specs.sp specs.owc
+    wsplice -k Pspecs <OWROOT>/bld/wl/specs.sp specs.owc
     pmake -d buildwcl <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
+
+    <CPCMD> <PROJDIR>/specs.owc                 <RELROOT>/rel2/binw/specs.owc
+    
   [ IFDEF (os_dos "") <2*> ]
     <CPCMD> <PROJDIR>/dosi86.i86/wcl.exe        <RELROOT>/rel2/binw/wcl.exe
     <CPCMD> <PROJDIR>/dosi86.386/wcl386.exe     <RELROOT>/rel2/binw/wcl386.exe
@@ -52,6 +57,7 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
+    rm  -f specs.owc
     pmake -d buildwcl <2> <3> <4> <5> <6> <7> <8> <9> -h clean
 
 [ BLOCK . . ]
