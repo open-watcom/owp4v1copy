@@ -41,6 +41,7 @@
 #include <dirent.h>
 #endif
 
+#include "cmdlinehelpers.h"
 #include "clcommon.h"
 
 #ifndef __UNIX__
@@ -114,7 +115,7 @@ void BuildLinkFile( void )
     char    quoted[_MAX_PATH ];
 
     fputs( "name ", Fp );
-    BuildQuotedFName( quoted, "", Exe_Name, "'" );
+    BuildQuotedFName( quoted, sizeof( quoted ), "", Exe_Name, "'" );
     Fputnl( quoted, Fp );
     if( Flags.keep_exename ) {
         Fputnl( "option noextension", Fp );
@@ -124,7 +125,7 @@ void BuildLinkFile( void )
             Fputnl( "option map", Fp );
         } else {
             fputs( "option map=", Fp );
-            BuildQuotedFName( quoted, "", Map_Name, "'" );
+            BuildQuotedFName( quoted, sizeof( quoted ), "", Map_Name, "'" );
             Fputnl( quoted, Fp );
         }
     }
@@ -194,7 +195,7 @@ void  AddName( char *name, FILE *link_fp )
         _makepath( path, drive, dir, fname, extension );
         name = path;
     }
-    BuildQuotedFName( quoted, "", name, "'" );
+    BuildQuotedFName( quoted, sizeof( quoted ), "", name, "'" );
     Fputnl( quoted, link_fp );
 }
 
@@ -272,87 +273,6 @@ void FindPath( char *name, char *buf )
     }
 }
 
-int BuildQuotedFName( char *buffer, const char *path, const char *filename, const char *quote_char )
-/**************************************************************************************************/
-{
-    int has_space = 0;
-
-    if( strchr( path, ' ' ) != NULL )
-        has_space = 1;
-    if( strchr( filename, ' ' ) != NULL )
-        has_space = 1;
-
-    strcpy( buffer, has_space ? quote_char : "" );
-    strcat( buffer, path);
-    strcat( buffer, filename);
-    strcat( buffer, has_space ? quote_char : "" );
-
-    return( has_space );
-}
-
-int UnquoteFName( char *dst, int maxlen, const char *src )
-/***********************************************************************
- * Removes doublequote characters from filename and copies other content
- * from src to dst. Only maxlen number of characters are copied to dst
- * including terminating NUL character. Returns value 1 when quotes was
- * removed from orginal filename, 0 otherwise.
- */
-{
-    char    string_open = 0;
-    int     pos = 0;
-    int     t;
-    int     un_quoted = 0;
-
-    assert( maxlen );
-
-    // leave space for NUL terminator
-    maxlen--;
-
-    while( pos < ( maxlen - 1 ) ) {
-        t = *src++;
-
-        if( t == '\0' ) break;
-
-        if( t == '\\' ) {
-            t = *src++;
-
-            if( t == '\"' ) {
-                *dst++ = '\"';
-                pos++;
-                un_quoted = 1;
-            } else {
-                *dst++ = '\\';
-                pos++;
-
-                if( pos < ( maxlen - 1 ) ) {
-                    *dst++ = t;
-                    pos++;
-                }
-            }
-        } else {
-            if( t == '\"' ) {
-                string_open = !string_open;
-                un_quoted = 1;
-            } else {
-                if( string_open ) {
-                    *dst++ = t;
-                    pos++;
-                } else
-                if( isblank( t ) ) {
-                    break;
-                } else {
-                    *dst++ = t;
-                    pos++;
-                }
-            }
-        }
-    }
-
-    *dst = '\0';
-
-    return( un_quoted );
-}
-
 int iswsOrOpt( char ch, char opt, char *Switch_Chars )
 {
     if( isblank( ch ) ) return( 1 );
@@ -365,41 +285,6 @@ int iswsOrOpt( char ch, char opt, char *Switch_Chars )
 #endif
     }
     return( 0 );
-}
-
-char *FindNextWS( char *str )
-/***********************************
- * Finds next free white space character, allowing doublequotes to
- * be used to specify strings with white spaces.
- */
-{
-    char    string_open = 0;
-
-    while( *str != '\0' ) {
-        if( *str == '\\' ) {
-            str++;
-            if( *str != '\0' ) {
-                if( !string_open && isblank( *str ) ) {
-                    break;
-                }
-                str++;
-            }
-        } else {
-            if( *str == '\"' ) {
-                string_open = !string_open;
-                str++;
-            } else {
-                if( string_open ) {
-                    str++;
-                } else {
-                    if( isblank( *str ) ) break;
-                    str++;
-                }
-            }
-        }
-    }
-
-    return( str );
 }
 
 char *FindNextWSOrOpt( char *str, char opt, char *Switch_Chars )

@@ -104,9 +104,6 @@ void    Fputnl( char *, FILE * );
 void    *MemAlloc( int );
 char    *MakePath( char * );
 char    *GetName( char * );
-int     BuildQuotedFName( char *buffer, const char *path, const char *filename, const char *quote_char );
-int     UnquoteFName( char *dst, int maxlen, const char *src );
-char    *FindNextWS( char *str );
 char    *FindNextWSOrOpt( char *str, char opt, char *Switch_Chars );
 
 enum {

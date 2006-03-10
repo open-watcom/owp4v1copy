@@ -8,7 +8,7 @@ wcl_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
-objs = wcl.obj clcommon.obj
+objs = wcl.obj clcommon.obj cmdlinehelpers.obj
 !ifeq host_os dos
 objs += swchar.obj
 !endif
@@ -32,7 +32,7 @@ name = wclmps.exe
 extra_c_flags += -DWCLMPS
 !else
 extra_deps = owcchelp.gh
-objs = owcc.obj clcommon.obj getopt.obj quit.obj
+objs = owcc.obj clcommon.obj getopt.obj quit.obj cmdlinehelpers.obj
 !ifeq host_os linux
 name = owcc.elf
 !else
@@ -46,7 +46,7 @@ extra_c_flags_quit   = -I"$(posix_dir)/h"
 
 extra_l_flags = op map
 
-.c: ../c;../../c;$(posix_dir)/misc
+.c: ../c;../../c;$(posix_dir)/misc;$(watcom_dir)/c
 
 $(name) : $(extra_deps) $(objs)
         $(linker) $(lflags) name $^@ file {$(objs)}

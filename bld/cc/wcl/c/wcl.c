@@ -44,6 +44,7 @@
 #include <malloc.h>
 #include <conio.h>
 
+#include "cmdlinehelpers.h"
 #include "clcommon.h"
 #include "banner.h"
 #undef  _BANEXTRA
@@ -464,7 +465,7 @@ static int Parse( char *Cmd )
 
                     /* remove quotes and change them to be compatible with wlink */
                     UnquoteFName( unquoted, sizeof( unquoted ), Word );
-                    BuildQuotedFName( Word, "", unquoted, "'" );
+                    BuildQuotedFName( Word, MAX_CMD, "", unquoted, "'" );
 
                     strcat( Libs, Word );
                 } else if( FileExtension( Word, ".res" ) ) {
@@ -901,7 +902,7 @@ static  int  CompLink( void )
         file = GetName( Word );         /* get first matching filename */
         path = MakePath( Word );        /* isolate path portion of filespec */
         while( file != NULL ) {         /* while more filenames: */
-            BuildQuotedFName( Word, path, file, "\"" );
+            BuildQuotedFName( Word, MAX_CMD, path, file, "\"" );
 
             if( !FileExtension( Word, OBJ_EXT ) &&  /* if not .obj or .o, compile */
                 !FileExtension( Word, OBJ_EXT_SECONDARY ) ) {
