@@ -42,7 +42,7 @@
 #include "buffer.h"
 #include "memfuncs.h"
 #include "print.h"
-#include "cmdlinehelpers.h"
+#include "cmdlhelp.h"
 
 extern wd_options               Options;
 extern char                     LabelChar;

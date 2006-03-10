@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-#ifndef _CMDLINEHELPERS_H
-#define _CMDLINEHELPERS_H
+#ifndef _CMDLHELP_H
+#define _CMDLHELP_H
 
 int BuildQuotedFName( char *buffer, int bufferlen, const char *path, const char *filename, const char *quote_char );
 int UnquoteFName( char *dst, int maxlen, const char *src );

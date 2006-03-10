@@ -34,7 +34,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
-#include "cmdlinehelpers.h"
+#include "cmdlhelp.h"
 
 int BuildQuotedFName( char *dst, int maxlen, const char *path, const char *filename, const char *quote_char )
 /*****************************************************************************************************************/

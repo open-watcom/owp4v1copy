@@ -8,7 +8,7 @@ wcl_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
-objs = wcl.obj clcommon.obj cmdlinehelpers.obj
+objs = wcl.obj clcommon.obj cmdlhelp.obj
 !ifeq host_os dos
 objs += swchar.obj
 !endif
@@ -32,7 +32,7 @@ name = wclmps.exe
 extra_c_flags += -DWCLMPS
 !else
 extra_deps = owcchelp.gh
-objs = owcc.obj clcommon.obj getopt.obj quit.obj cmdlinehelpers.obj
+objs = owcc.obj clcommon.obj getopt.obj quit.obj cmdlhelp.obj
 !ifeq host_os linux
 name = owcc.elf
 !else

@@ -41,7 +41,7 @@
 #include <dirent.h>
 #endif
 
-#include "cmdlinehelpers.h"
+#include "cmdlhelp.h"
 #include "clcommon.h"
 
 #ifndef __UNIX__

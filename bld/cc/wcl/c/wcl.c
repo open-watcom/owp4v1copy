@@ -44,7 +44,7 @@
 #include <malloc.h>
 #include <conio.h>
 
-#include "cmdlinehelpers.h"
+#include "cmdlhelp.h"
 #include "clcommon.h"
 #include "banner.h"
 #undef  _BANEXTRA
