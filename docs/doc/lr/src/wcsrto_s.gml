@@ -1,4 +1,4 @@
-.func wcsrtombs_s
+.func wcsrtombs_s _fwcsrtombs_s
 #define __STDC_WANT_LIB_EXT1__ 1
 errno_t wcsrtombs_s( size_t * __restrict retval,
                      char * __restrict dst,

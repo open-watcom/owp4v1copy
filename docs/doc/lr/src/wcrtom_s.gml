@@ -44,7 +44,7 @@ shall equal zero.
 If there is a runtime-constraint violation, then &func does the following. If
 .arg s
 is not a null pointer and
-smax
+.arg smax
 is greater than zero and not greater than
 .kw RSIZE_MAX,
 then &func. sets
@@ -62,9 +62,9 @@ to (size_t)(-1).
 If
 .arg s
 is a null pointer, the &func. function is equivalent to the call
-.exmp begin
+.break
 wcrtomb_s(&retval, buf, sizeof buf, L'\0', ps)
-.exmp end
+.break
 where
 .arg retval
 and
