@@ -1605,7 +1605,9 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)mbsnbset.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mbsnccnt.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mbsnextc.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mbsrstrt.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)mbsrto_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mbsrtowc.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)mbstow_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mbstowcs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mbterm.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)mbtowc.gml &
@@ -1896,11 +1898,15 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)vsprtf_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)vsscanf.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wait.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)waitstat.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)wcrtom_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wcrtomb.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)wcsrto_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wcsrtomb.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)wcstom_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wcstombs.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wctob.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wctomb.gml &
+$(docsrc_dir)$(SL)lr$(SL)src$(SL)wctomb_s.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wctrans.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)wctype.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)widefunc.gml &

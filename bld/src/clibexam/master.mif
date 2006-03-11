@@ -130,7 +130,9 @@ strinc.exe &
 strspnp.exe &
 tempnam.exe &
 wcrtomb.exe &
+wcrtom_s.exe &
 wcsrtomb.exe &
+wcsrto_s.exe &
 wctob.exe &
 dgetdriv.exe &
 dgetdskf.exe &
@@ -615,7 +617,9 @@ tzset.exe &
 utime.exe &
 utoa.exe &
 wcstombs.exe &
+wcstom_s.exe &
 wctomb.exe &
+wctomb_s.exe &
 _atouni.exe &
 _bgetcmd.exe &
 _cmdname.exe &

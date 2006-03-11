@@ -790,8 +790,12 @@
 .fnw _wcsnextc                  mbsnextc.gml    DOS QNX W WIN32
 .fnm mbsrtowcs                  mbsrtowc.gml    DOS       WIN32
 .fnn _fmbsrtowcs                mbsrtowc.gml    DOS       WIN32
+.fnc mbsrtowcs_s                mbsrto_s.gml    DOS       WIN32
+.fnm _fmbsrtowcs_s              mbsrto_s.gml    DOS       WIN32
 .fnc mbstowcs                   mbstowcs.gml    DOS QNX W WIN32
 .fnn _fmbstowcs                 mbstowcs.gml    DOS       WIN32
+.fnc mbstowcs_s                 mbstow_s.gml    DOS QNX W WIN32
+.fnm _fmbstowcs_s               mbstow_s.gml    DOS       WIN32
 .fnm _mbterm                    mbterm.gml      DOS       WIN32
 .fnn _fmbterm                   mbterm.gml      DOS       WIN32
 .fnc mbtowc                     mbtowc.gml      DOS QNX W WIN32
@@ -819,7 +823,7 @@
 .fnc memmove                    memmove.gml     DOS QNX W WIN32
 .fnf _fmemmove                  memmove.gml     DOS QNX W WIN32
 .fnw wmemmove                   memmove.gml     DOS QNX W WIN32
-.fnw memmove_s                  memmov_s.gml    DOS       WIN32
+.fnc memmove_s                  memmov_s.gml    DOS       WIN32
 .fnw wmemmove_s                 memmov_s.gml    DOS       WIN32
 .fn7 _m_empty                   mempty.gml      DOS QXO   WIN32
 .fnc memset                     memset.gml      DOS QNX W WIN32
@@ -1576,7 +1580,7 @@
 .fnc tmpfile                    tmpfile.gml     DOS QNX W WIN32
 .fnc tmpfile_s                  tmpfil_s.gml    DOS QNX W WIN32
 .fnc tmpnam_s                   tmpnam_s.gml    DOS QNX W WIN32
-.fnc _wtmpnam_s                 tmpnam_s.gml    DOS       WIN32
+.fnw _wtmpnam_s                 tmpnam_s.gml    DOS       WIN32
 .fnc tmpnam                     tmpnam.gml      DOS QNX W WIN32
 .fnw _wtmpnam                   tmpnam.gml      DOS       WIN32
 .fnu _utmpnam                   tmpnam.gml      DOS       WIN32
@@ -1677,13 +1681,21 @@
 .fnc waitpid                    waitpid.gml         QXO
 .fnw wcrtomb                    wcrtomb.gml     DOS       WIN32
 .fnn _fwcrtomb                  wcrtomb.gml     DOS       WIN32
+.fnw wcrtomb_s                  wcrtom_s.gml    DOS       WIN32
+.fnw _fwcrtomb_s                wcrtom_s.gml    DOS       WIN32
 .fnw wcsrtombs                  wcsrtomb.gml    DOS       WIN32
-.fnn _fwcsrtombs                wcsrtomb.gml    DOS       WIN32
-.fnc wcstombs                   wcstombs.gml    DOS QNX W WIN32
-.fnn _fwcstombs                 wcstombs.gml    DOS       WIN32
+.fnw _fwcsrtombs                wcsrtomb.gml    DOS       WIN32
+.fnw wcsrtombs_s                wcsrto_s.gml    DOS       WIN32
+.fnw _fwcsrtombs_s              wcsrto_s.gml    DOS       WIN32
+.fnw wcstombs                   wcstombs.gml    DOS QNX W WIN32
+.fnw _fwcstombs                 wcstombs.gml    DOS       WIN32
+.fnw wcstombs_s                 wcstom_s.gml    DOS QNX W WIN32
+.fnw _fwcstombs_s               wcstom_s.gml    DOS       WIN32
 .fnw wctob                      wctob.gml       DOS       WIN32
-.fnc wctomb                     wctomb.gml      DOS QNX W WIN32
-.fnn _fwctomb                   wctomb.gml      DOS       WIN32
+.fnw wctomb                     wctomb.gml      DOS QNX W WIN32
+.fnw _fwctomb                   wctomb.gml      DOS       WIN32
+.fnw wctomb_s                   wctomb_s.gml    DOS QNX W WIN32
+.fnw _fwctomb_s                 wctomb_s.gml    DOS       WIN32
 .fnw wctrans                    wctrans.gml     DOS QNX W WIN32
 .fnw wctype                     wctype.gml      DOS QNX W WIN32
 .fnc _wrapon                    gr_wrpon.gml    DOS QNX W GRAPH
