@@ -63,13 +63,6 @@ static  const double    ExpConsts[] = {
 
 
 
-_WMRTLINK extern double _IF_dexp( double );
-
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_exp "IF@EXP";
-  #pragma aux (if_rtn) _IF_dexp "IF@DEXP";
-#endif
-
 _WMRTLINK float _IF_exp( float x )
 /********************************/
 {

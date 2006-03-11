@@ -44,11 +44,6 @@ extern  void __fprem( double x, double y, int *quot, double *rem );
     where the magnitude of f is less than the magnitude of y.
 */
 
-_WMRTLINK extern double _IF_dfmod( double, double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_fmod "IF@FMOD";
-  #pragma aux (if_rtn) _IF_dfmod "IF@DFMOD";
-#endif
 
 _WMRTLINK float _IF_fmod( float x, float y )
 /******************************************/

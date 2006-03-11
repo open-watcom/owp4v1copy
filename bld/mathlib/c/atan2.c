@@ -57,12 +57,6 @@ otherwise: compute z = atan( y/x )
 
 extern  int             __sgn(double);   /* determine sgn(x) */
 
-_WMRTLINK extern double _IF_datan2( double, double );
-
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_atan2 "IF@ATAN2";
-  #pragma aux (if_rtn) _IF_datan2 "IF@DATAN2";
-#endif
 
 _WMRTLINK float _IF_atan2( float y, float x )
 /*******************************************/

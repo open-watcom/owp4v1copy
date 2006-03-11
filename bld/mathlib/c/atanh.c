@@ -33,12 +33,9 @@
 #include <math.h>
 #include "mathcode.h"
 #include "pdiv.h"
+#include "ifprag.h"
 
 //      atanh(x) = log( (1.0 + x) / (1.0 - x) ) / 2.0;
-
-#if defined(_M_IX86)
-  #pragma aux __atanh "IF@DATANH";
-#endif
 
 _WMRTLINK double __atanh( double x )
 {

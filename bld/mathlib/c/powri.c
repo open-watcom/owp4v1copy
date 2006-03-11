@@ -39,12 +39,6 @@
 #include "cplx.h"
 #include "mathcode.h"
 
-_WMRTLINK extern double _IF_dpowi( double, long );
-
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_dpowi "IF@DPOWI";
-  #pragma aux (if_rtn) _IF_powi "IF@POWI";
-#endif
 
 _WMRTLINK float _IF_powi( float base, long power )
 /************************************************/

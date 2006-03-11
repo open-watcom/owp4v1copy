@@ -48,11 +48,6 @@
   #endif
 #endif
 
-_WMRTLINK extern double _IF_dsqrt( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_sqrt "IF@SQRT";
-  #pragma aux (if_rtn) _IF_dsqrt "IF@DSQRT";
-#endif
 
 _WMRTLINK float _IF_sqrt( float x )
 /*********************************/

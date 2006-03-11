@@ -32,12 +32,9 @@
 #include "variety.h"
 #include <math.h>
 #include "mathcode.h"
+#include "ifprag.h"
 
 #define log2_of_e    1.44269504888963407
-
-#if defined(_M_IX86)
-  #pragma aux __log2 "IF@DLOG2";
-#endif
 
 _WMRTLINK double __log2( double x )
 {

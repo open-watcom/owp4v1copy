@@ -36,11 +36,6 @@
 
 #define log10_of_e    0.4342944819032518
 
-_WMRTLINK extern double _IF_dlog10( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_log10 "IF@LOG10";
-  #pragma aux (if_rtn) _IF_dlog10 "IF@DLOG10";
-#endif
 
 _WMRTLINK float _IF_log10( float x )
 /**********************************/

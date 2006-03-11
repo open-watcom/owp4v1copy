@@ -38,12 +38,6 @@
 #include "pdiv.h"
 
 
-_WMRTLINK extern double _IF_dacos( double );
-#if defined(_M_IX86)
- #pragma aux (if_rtn) _IF_acos "IF@ACOS";
- #pragma aux (if_rtn) _IF_dacos "IF@DACOS";
-#endif
-
 _WMRTLINK float _IF_acos( float x )
 /*********************************/
 {

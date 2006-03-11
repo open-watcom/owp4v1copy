@@ -82,12 +82,6 @@ static  const double    AtanPoly[] = {
      1.0
 };
 
-_WMRTLINK extern double _IF_datan( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_atan "IF@ATAN";
-  #pragma aux (if_rtn) _IF_datan "IF@DATAN";
-#endif
-
 _WMRTLINK float _IF_atan( float x )
 /*********************************/
 {

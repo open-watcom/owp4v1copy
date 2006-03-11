@@ -36,11 +36,6 @@
 #include "mathcode.h"
 #include "pdiv.h"
 
-_WMRTLINK extern double _IF_dsinh( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_sinh "IF@SINH";
-  #pragma aux (if_rtn) _IF_dsinh "IF@DSINH";
-#endif
 
 _WMRTLINK float _IF_sinh( float x )
 /*********************************/

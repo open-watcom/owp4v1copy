@@ -185,12 +185,6 @@ double __sincos( double x, int flag )
 
 
 
-_WMRTLINK extern double _IF_dsin( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_sin "IF@SIN";
-  #pragma aux (if_rtn) _IF_dsin "IF@DSIN";
-#endif
-
 _WMRTLINK float _IF_sin( float x )
 /********************************/
 {
@@ -215,12 +209,6 @@ _WMRTLINK double _IF_dsin( double x )
 
 
 
-_WMRTLINK extern double _IF_dcos( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_cos "IF@COS";
-  #pragma aux (if_rtn) _IF_dcos "IF@DCOS";
-#endif
-
 _WMRTLINK float _IF_cos( float x )
 /********************************/
 {
@@ -244,12 +232,6 @@ _WMRTLINK double _IF_dcos( double x )
 
 
 
-
-_WMRTLINK extern double _IF_dtan( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_tan "IF@TAN";
-  #pragma aux (if_rtn) _IF_dtan "IF@DTAN";
-#endif
 
 _WMRTLINK float _IF_tan( float x )
 /********************************/

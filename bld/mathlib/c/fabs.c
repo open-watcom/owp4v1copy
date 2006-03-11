@@ -34,12 +34,6 @@
 #include <ifprag.h>
 
 
-_WMRTLINK extern double _IF_dfabs( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_fabs "IF@FABS";
-  #pragma aux (if_rtn) _IF_dfabs "IF@DFABS";
-#endif
-
 _WMRTLINK float _IF_fabs( float x )
 /*********************************/
 {

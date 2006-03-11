@@ -41,12 +41,6 @@
 extern  int     __sgn(double);
 
 
-_WMRTLINK extern double _IF_dpow( double, double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_pow "IF@POW";
-  #pragma aux (if_rtn) _IF_dpow "IF@DPOW";
-#endif
-
 _WMRTLINK float _IF_pow( float x, float y )
 /*****************************************/
 {

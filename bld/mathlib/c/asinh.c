@@ -31,12 +31,9 @@
 
 #include "variety.h"
 #include <math.h>
+#include "ifprag.h"
 
 //      asinh(x) = log( x + sqrt(x*x + 1.0) );
-
-#if defined(_M_IX86)
-  #pragma aux __asinh "IF@DASINH";
-#endif
 
 _WMRTLINK double __asinh( double x )
 {

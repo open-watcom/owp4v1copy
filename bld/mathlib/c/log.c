@@ -36,11 +36,6 @@
 #include "mathcode.h"
 #include "rtdata.h"
 
-_WMRTLINK extern double _IF_dlog( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_log "IF@LOG";
-  #pragma aux (if_rtn) _IF_dlog "IF@DLOG";
-#endif
 
 _WMRTLINK float _IF_log( float x )
 /********************************/

@@ -38,11 +38,6 @@
 #include "cplx.h"
 #include "mathcode.h"
 
-#if defined(__386__)
-  #pragma aux (if_rtn) _IF_ipow "IF@IPOW" value [EAX];
-#elif defined(M_I86)
-  #pragma aux (if_rtn) _IF_ipow "IF@IPOW";
-#endif
 
 _WMRTLINK long _IF_ipow( long base, long power )
 /**********************************************/

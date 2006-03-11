@@ -38,12 +38,6 @@
 #include "pdiv.h"
 
 
-_WMRTLINK extern double _IF_dasin( double );
-#if defined(_M_IX86)
-  #pragma aux (if_rtn) _IF_asin "IF@ASIN";
-  #pragma aux (if_rtn) _IF_dasin "IF@DASIN";
-#endif
-
 _WMRTLINK float _IF_asin( float x )
 /*********************************/
 {
