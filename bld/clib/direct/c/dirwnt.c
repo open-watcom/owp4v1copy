@@ -45,6 +45,7 @@
 #include "rtdata.h"
 #include "ntex.h"
 #include "seterrno.h"
+#include "_direct.h"
 
 #define SEEK_ATTRIB (~_A_VOLID)
 
@@ -114,7 +115,7 @@ static int is_directory( const CHAR_TYPE *name )
 }
 
 _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
-                                                    int attr, DIR_TYPE *dirp )
+                                               unsigned attr, DIR_TYPE *dirp )
 /****************************************************************************/
 {
     WIN32_FIND_DATA     ffb;
@@ -138,8 +139,8 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
     return( dirp );
 }
 
-_WCRTLINK DIR_TYPE *__F_NAME(_opendir,__wopendir)( const CHAR_TYPE *dirname,
-                                                    int attr )
+_WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
+                                                             unsigned attr )
 /**************************************************************************/
 {
 
@@ -244,7 +245,7 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,__wopendir)( const CHAR_TYPE *dirname,
 _WCRTLINK DIR_TYPE *__F_NAME(opendir,_wopendir)( const CHAR_TYPE *dirname )
 /*************************************************************************/
 {
-    return( __F_NAME(_opendir,__wopendir)( dirname, SEEK_ATTRIB ) );
+    return( __F_NAME(_opendir,_w_opendir)( dirname, SEEK_ATTRIB ) );
 }
 
 _WCRTLINK DIR_TYPE *__F_NAME(readdir,_wreaddir)( DIR_TYPE *dirp )

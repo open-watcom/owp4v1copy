@@ -46,6 +46,7 @@
 #include "strdup.h"
 #include "seterrno.h"
 #include "msdos.h"
+#include "_direct.h"
 
 #if defined(__WARP__)
   #define FF_LEVEL      1
@@ -137,7 +138,7 @@ static int is_directory( const CHAR_TYPE *name )
 
 
 _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
-                                                    int attr, DIR_TYPE *dirp )
+                                               unsigned attr, DIR_TYPE *dirp )
 /****************************************************************************/
 {
 
@@ -205,7 +206,7 @@ _WCRTLINK DIR_TYPE *__F_NAME(__opendir,_w__opendir)( const CHAR_TYPE *dirname,
 
 
 _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *dirname,
-                                                    int attr )
+                                                             unsigned attr )
 /**************************************************************************/
 {
 

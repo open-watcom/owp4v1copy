@@ -59,7 +59,7 @@ static  int     is_directory( const char *name ) {
     return( 0 );
 }
 
-_WCRTLINK DIR_TYPE *_opendir( const char *name, char attr )
+_WCRTLINK DIR_TYPE *_opendir( const char *name, unsigned attr )
 {
     DIR_TYPE    *parent;
     int         i;

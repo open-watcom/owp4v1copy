@@ -41,6 +41,7 @@
 #include "tinyio.h"
 #include "seterrno.h"
 #include "msdos.h"
+#include "_direct.h"
 
 #define SEEK_ATTRIB (TIO_HIDDEN | TIO_SYSTEM | TIO_SUBDIRECTORY)
 
@@ -140,7 +141,7 @@ static void filenameToWide( DIR_TYPE *dir )
 #endif
 
 
-_WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, char attr )
+_WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, unsigned attr )
 {
 #ifdef __WATCOM_LFN__
     struct find_t   lfntemp;
