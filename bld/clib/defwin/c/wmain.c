@@ -33,7 +33,7 @@
 #include "variety.h"
 #include <windows.h>
 
-_WCRTLINK extern int PASCAL DefaultWinMain( HINSTANCE inst, HINSTANCE previnst,
+extern int PASCAL DefaultWinMain( HINSTANCE inst, HINSTANCE previnst,
                                             LPSTR cmd, int show,
                                             int (*pmain)( int, char ** ) );
 extern int main( int, char ** );
