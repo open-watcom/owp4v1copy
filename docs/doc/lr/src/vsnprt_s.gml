@@ -1,5 +1,6 @@
 .func vsnprintf_s vsnwprintf_s
 .funcw vsnwprintf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
 int vsnprintf_s( char * restrict s, rsize_t n
@@ -109,7 +110,7 @@ returned value is nonnegative and less than
 The following shows the use of &func in a general error message routine.
 .blktext end
 .blkcode begin
-#define __STDC_WANT_LIB_EXT1__
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>

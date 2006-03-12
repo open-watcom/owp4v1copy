@@ -1,5 +1,6 @@
 .func freopen_s _wfreopen_s
 #include <stdio.h>
+#define __STDC_WANT_LIB_EXT1__ 1
 FILE *freopen( const char *filename,
                const char *mode,
                FILE *fp );

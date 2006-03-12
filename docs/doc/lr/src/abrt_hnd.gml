@@ -32,7 +32,7 @@ The &func function does not return to its caller.
 .see end
 .*
 .exmp begin
-#define __STDC_WANT_LIB_EXT1__  1
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
 #include <stdio.h>
 .exmp break

@@ -1,5 +1,6 @@
 .func vscanf_s vwscanf_s _uvscanf_s
 .funcw vwscanf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
 int vscanf_s( const char * restrict format, va_list arg );

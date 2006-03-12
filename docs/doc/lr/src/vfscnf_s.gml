@@ -1,5 +1,6 @@
 .func vfscanf_s vfwscanf_s _uvfscanf_s
 .funcw vfwscanf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
 int vfscanf_s( FILE * restrict stream,

@@ -1,5 +1,6 @@
 .func fscanf_s fwscanf_s _ufscanf_s
 .funcw fwscanf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 int fscanf_s( FILE * restrict stream,
         const char * restrict format, ... );

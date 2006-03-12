@@ -1,5 +1,6 @@
 .func printf_s wprintf_s
 .funcw wprintf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 int printf_s( const char * restrict format, ... );
 .ixfunc2 '&StrIo' &func

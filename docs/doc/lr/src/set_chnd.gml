@@ -46,7 +46,7 @@ The &func function returns a pointer to the previously registered handler.
 .see end
 .*
 .exmp begin
-#define __STDC_WANT_LIB_EXT1__  1
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
 #include <stdio.h>
 .exmp break

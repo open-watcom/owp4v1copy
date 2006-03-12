@@ -1,5 +1,6 @@
 .func vprintf_s vwprintf_s
 .funcw vwprintf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
 int vprintf_s( const char * restrict format,

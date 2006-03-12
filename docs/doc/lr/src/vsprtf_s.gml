@@ -1,5 +1,6 @@
 .func vsprintf_s vswprintf_s
 .funcw vswprintf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
 int vsprintf_s( char * restrict s, rsize_t n

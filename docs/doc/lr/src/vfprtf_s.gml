@@ -1,5 +1,6 @@
 .func vfprintf_s vfwprintf_s
 .funcw vfwprintf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
 int vfprintf_s( FILE * restrict stream,

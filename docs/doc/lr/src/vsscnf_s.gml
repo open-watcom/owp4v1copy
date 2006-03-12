@@ -1,5 +1,6 @@
 .func vsscanf_s vswscanf_s _uvsscanf_s
 .funcw vswscanf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
 int vsscanf_s( const char * restrict s,

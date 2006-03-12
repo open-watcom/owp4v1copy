@@ -1,5 +1,6 @@
 .func fprintf_s fwprintf_s
 .funcw fwprintf_s
+#define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 int fprintf_s( FILE * restrict stream,
          const char * restrict format, ... );
