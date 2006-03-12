@@ -22,13 +22,13 @@
 /*
  *  POSIX 1003.1 Prototypes
  */
-_WCRTLINK extern int _WRTLCALL execl( const char *__path, const char *__arg0, ... );
-_WCRTLINK extern int _WRTLCALL execle( const char *__path, const char *__arg0, ... );
-_WCRTLINK extern int _WRTLCALL execlp( const char *__file, const char *__arg0, ... );
-_WCRTLINK extern int _WRTLCALL execv( const char *__path, const char *const __argv[] );
-_WCRTLINK extern int _WRTLCALL execve( const char *__path, const char *const __argv[],
+_WCRTLINK extern int execl( const char *__path, const char *__arg0, ... );
+_WCRTLINK extern int execle( const char *__path, const char *__arg0, ... );
+_WCRTLINK extern int execlp( const char *__file, const char *__arg0, ... );
+_WCRTLINK extern int execv( const char *__path, const char *const __argv[] );
+_WCRTLINK extern int execve( const char *__path, const char *const __argv[],
                             const char *const __envp[] );
-_WCRTLINK extern int _WRTLCALL execvp( const char *__file, const char *const __argv[] );
+_WCRTLINK extern int execvp( const char *__file, const char *const __argv[] );
 
 :segment QNX | LINUX
 :include ext.sp
@@ -76,45 +76,45 @@ _WCRTLINK extern int __p_overlay;
  *  Prototypes for non-POSIX functions
  */
 
-_WCRTLINK extern int _WRTLCALL execlpe( const char *__file, const char *__arg0, ... );
-_WCRTLINK extern int _WRTLCALL execvpe( const char *__file, const char *const __argv[],
+_WCRTLINK extern int execlpe( const char *__file, const char *__arg0, ... );
+_WCRTLINK extern int execvpe( const char *__file, const char *const __argv[],
                               const char *const __envp[] );
 
 :segment QNX | LINUX
 #if defined(__386__)
 :: extra 'register' is used to prevent C++ compiler from entering a parser
 :: disambiguation stage (i.e., it has a use, so don't delete it) AFS
-_WCRTLINK extern int  _WRTLCALL _beginthread( register void (*__start_address)(void *),
+_WCRTLINK extern int  _beginthread( register void (*__start_address)(void *),
    void *__stack_bottom, unsigned __stack_size, void *__arglist );
 #pragma intrinsic(_beginthread);
-_WCRTLINK extern void _WRTLCALL _endthread( void );
+_WCRTLINK extern void _endthread( void );
 :elsesegment
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
 #if defined(__NT__)
-_WCRTLINK extern unsigned long _WRTLCALL _beginthread(
+_WCRTLINK extern unsigned long _beginthread(
                 register void (*__start_address)(void *),
                 unsigned __stack_size, void *__arglist );
-_WCRTLINK extern unsigned long _WRTLCALL _beginthreadex( void *__security,
+_WCRTLINK extern unsigned long _beginthreadex( void *__security,
                 unsigned __stack_size,
                 register unsigned (__stdcall *__start_address)(void *),
                 void *__arglist, unsigned __initflag, unsigned *__thrdaddr );
 #pragma intrinsic(_beginthread,_beginthreadex);
-_WCRTLINK extern void _WRTLCALL _endthreadex( unsigned __retval );
-_WCRTLINK extern unsigned long _WRTLCALL __threadhandle( void );
+_WCRTLINK extern void _endthreadex( unsigned __retval );
+_WCRTLINK extern unsigned long __threadhandle( void );
 #else
-_WCRTLINK extern int _WRTLCALL _beginthread( register void (*__start_address)(void *),
+_WCRTLINK extern int _beginthread( register void (*__start_address)(void *),
    void *__stack_bottom, unsigned __stack_size, void *__arglist );
 #pragma intrinsic(_beginthread);
 #endif
-_WCRTLINK extern void _WRTLCALL _endthread( void );
+_WCRTLINK extern void _endthread( void );
 #else
-_WCRTLINK extern int _WCFAR  _WRTLCALL _beginthread(
+_WCRTLINK extern int _WCFAR  _beginthread(
     register void (_WCFAR *__start_address)(void _WCFAR *),
     void _WCFAR *__stack_bottom, unsigned __stack_size, void _WCFAR *__arglist );
 #pragma intrinsic(_beginthread);
-_WCRTLINK extern void _WCFAR _WRTLCALL _endthread( void );
+_WCRTLINK extern void _WCFAR _endthread( void );
 #ifndef __SW_ZU
-  _WCRTLINK void _WCFAR * _WRTLCALL __chkstack( void _WCFAR * );
+  _WCRTLINK void _WCFAR *__chkstack( void _WCFAR * );
   #define _beginthread( __sa, __sb, __ss, __al ) \
           _beginthread( __sa, __chkstack(__sb), __ss, __al )
 #endif
@@ -127,9 +127,9 @@ _WCRTLINK extern void _WCFAR _WRTLCALL _endthread( void );
 #define WAIT_CHILD 0
 #define WAIT_GRANDCHILD 1
 
-_WCRTLINK extern int   _WRTLCALL cwait( int *__status, int __process_id,
+_WCRTLINK extern int   cwait( int *__status, int __process_id,
                              int __action_code );
-_WCRTLINK extern int   _WRTLCALL _cwait( int *__status, int __process_id,
+_WCRTLINK extern int   _cwait( int *__status, int __process_id,
                              int __action_code );
 :endsegment
 
@@ -139,10 +139,10 @@ _WCRTLINK extern int   _WRTLCALL _cwait( int *__status, int __process_id,
 #ifdef __cplusplus
 namespace std {
 #endif
-_WCRTLINK extern void  _WRTLCALL abort( void );
-_WCRTLINK extern void  _WRTLCALL exit( int __status );
-_WCRTLINK extern char  * _WRTLCALL getenv( const char *__name );
-_WCRTLINK extern int   _WRTLCALL system( const char *__cmd );
+_WCRTLINK extern void  abort( void );
+_WCRTLINK extern void  exit( int __status );
+_WCRTLINK extern char  *getenv( const char *__name );
+_WCRTLINK extern int   system( const char *__cmd );
 #ifdef __cplusplus
 }
 using std::abort;
@@ -151,72 +151,72 @@ using std::getenv;
 using std::system;
 #endif
 
-_WCRTLINK extern void  _WRTLCALL _exit( int __status );
+_WCRTLINK extern void  _exit( int __status );
 
 :segment QNX | LINUX
 #if !(defined(SYSV) || defined(BSD) || defined(XENIX) || defined(_UNIX_H_INCLUDED))
 :endsegment
-_WCRTLINK extern char  * _WRTLCALL getcmd( char *__buffer );
-_WCRTLINK extern int   _WRTLCALL _bgetcmd( char *__buffer, int __len );
-_WCRTLINK extern char  * _WRTLCALL _cmdname( char *__name );
+_WCRTLINK extern char  *getcmd( char *__buffer );
+_WCRTLINK extern int   _bgetcmd( char *__buffer, int __len );
+_WCRTLINK extern char  *_cmdname( char *__name );
 :segment QNX | LINUX
 #endif
 :endsegment
-_WCRTLINK extern int   _WRTLCALL putenv( const char *__string );
-_WCRTLINK extern int   _WRTLCALL spawnl( int __mode, const char *__path,
+_WCRTLINK extern int   putenv( const char *__string );
+_WCRTLINK extern int   spawnl( int __mode, const char *__path,
                               const char *__arg0, ... );
-_WCRTLINK extern int   _WRTLCALL spawnle( int __mode, const char *__path,
+_WCRTLINK extern int   spawnle( int __mode, const char *__path,
                                const char *__arg0, ... );
-_WCRTLINK extern int   _WRTLCALL spawnlp( int __mode, const char *__path,
+_WCRTLINK extern int   spawnlp( int __mode, const char *__path,
                                const char *__arg0, ... );
-_WCRTLINK extern int   _WRTLCALL spawnlpe( int __mode, const char *__path,
+_WCRTLINK extern int   spawnlpe( int __mode, const char *__path,
                                 const char *__arg0, ... );
-_WCRTLINK extern int   _WRTLCALL spawnv( int __mode, const char *__path,
+_WCRTLINK extern int   spawnv( int __mode, const char *__path,
                               const char * const *__argv );
-_WCRTLINK extern int   _WRTLCALL spawnve( int __mode, const char *__path,
+_WCRTLINK extern int   spawnve( int __mode, const char *__path,
                                const char * const *__argv,
                                const char * const *__envp );
-_WCRTLINK extern int   _WRTLCALL spawnvp( int __mode, const char *__path,
+_WCRTLINK extern int   spawnvp( int __mode, const char *__path,
                                const char * const *__argv );
-_WCRTLINK extern int   _WRTLCALL spawnvpe( int __mode, const char *__path,
+_WCRTLINK extern int   spawnvpe( int __mode, const char *__path,
                                 const char * const *__argv,
                                 const char * const *__envp );
 
-_WCRTLINK extern wchar_t * _WRTLCALL _wgetenv( const wchar_t *__name );
-_WCRTLINK extern int    _WRTLCALL _wsetenv( const wchar_t *__name,
+_WCRTLINK extern wchar_t *_wgetenv( const wchar_t *__name );
+_WCRTLINK extern int    _wsetenv( const wchar_t *__name,
                                       const wchar_t *__newvalue,
                                       int __overwrite );
-_WCRTLINK extern int    _WRTLCALL _wputenv( const wchar_t *__env_string );
+_WCRTLINK extern int    _wputenv( const wchar_t *__env_string );
 
-_WCRTLINK extern int    _WRTLCALL _wexecl( const wchar_t *__path, const wchar_t *__arg0, ... );
-_WCRTLINK extern int    _WRTLCALL _wexecle( const wchar_t *__path, const wchar_t *__arg0, ... );
-_WCRTLINK extern int    _WRTLCALL _wexeclp( const wchar_t *__file, const wchar_t *__arg0, ... );
-_WCRTLINK extern int    _WRTLCALL _wexecv( const wchar_t *__path, const wchar_t *const __argv[] );
-_WCRTLINK extern int    _WRTLCALL _wexecve( const wchar_t *__path, const wchar_t *const __argv[],
+_WCRTLINK extern int    _wexecl( const wchar_t *__path, const wchar_t *__arg0, ... );
+_WCRTLINK extern int    _wexecle( const wchar_t *__path, const wchar_t *__arg0, ... );
+_WCRTLINK extern int    _wexeclp( const wchar_t *__file, const wchar_t *__arg0, ... );
+_WCRTLINK extern int    _wexecv( const wchar_t *__path, const wchar_t *const __argv[] );
+_WCRTLINK extern int    _wexecve( const wchar_t *__path, const wchar_t *const __argv[],
                                   const wchar_t *const __envp[] );
-_WCRTLINK extern int    _WRTLCALL _wexecvp( const wchar_t *__file, const wchar_t *const __argv[] );
-_WCRTLINK extern int    _WRTLCALL _wexeclpe( const wchar_t *__file, const wchar_t *__arg0, ... );
-_WCRTLINK extern int    _WRTLCALL _wexecvpe( const wchar_t *__file, const wchar_t *const __argv[],
+_WCRTLINK extern int    _wexecvp( const wchar_t *__file, const wchar_t *const __argv[] );
+_WCRTLINK extern int    _wexeclpe( const wchar_t *__file, const wchar_t *__arg0, ... );
+_WCRTLINK extern int    _wexecvpe( const wchar_t *__file, const wchar_t *const __argv[],
                                    const wchar_t *const __envp[] );
-_WCRTLINK extern int    _WRTLCALL _wspawnl( int __mode, const wchar_t *__path,
+_WCRTLINK extern int    _wspawnl( int __mode, const wchar_t *__path,
                                   const wchar_t *__arg0, ... );
-_WCRTLINK extern int    _WRTLCALL _wspawnle( int __mode, const wchar_t *__path,
+_WCRTLINK extern int    _wspawnle( int __mode, const wchar_t *__path,
                                    const wchar_t *__arg0, ... );
-_WCRTLINK extern int    _WRTLCALL _wspawnlp( int __mode, const wchar_t *__path,
+_WCRTLINK extern int    _wspawnlp( int __mode, const wchar_t *__path,
                                    const wchar_t *__arg0, ... );
-_WCRTLINK extern int    _WRTLCALL _wspawnlpe( int __mode, const wchar_t *__path,
+_WCRTLINK extern int    _wspawnlpe( int __mode, const wchar_t *__path,
                                     const wchar_t *__arg0, ... );
-_WCRTLINK extern int    _WRTLCALL _wspawnv( int __mode, const wchar_t *__path,
+_WCRTLINK extern int    _wspawnv( int __mode, const wchar_t *__path,
                                   const wchar_t * const *__argv );
-_WCRTLINK extern int    _WRTLCALL _wspawnve( int __mode, const wchar_t *__path,
+_WCRTLINK extern int    _wspawnve( int __mode, const wchar_t *__path,
                                    const wchar_t * const *__argv,
                                    const wchar_t * const *__envp );
-_WCRTLINK extern int    _WRTLCALL _wspawnvp( int __mode, const wchar_t *__path,
+_WCRTLINK extern int    _wspawnvp( int __mode, const wchar_t *__path,
                                    const wchar_t * const *__argv );
-_WCRTLINK extern int    _WRTLCALL _wspawnvpe( int __mode, const wchar_t *__path,
+_WCRTLINK extern int    _wspawnvpe( int __mode, const wchar_t *__path,
                                     const wchar_t * const *__argv,
                                     const wchar_t * const *__envp );
-_WCRTLINK extern int    _WRTLCALL _wsystem( const wchar_t *__cmd );
+_WCRTLINK extern int    _wsystem( const wchar_t *__cmd );
 
 :segment DOS
 #if defined(__NT__)
@@ -229,11 +229,11 @@ _WCRTLINK extern int    _WRTLCALL _wsystem( const wchar_t *__cmd );
   extern int (__stdcall *_pRawDllMain)( void *, unsigned, void * );
  #endif
 #endif
-_WCRTLINK extern int    _WRTLCALL getpid( void );
-_WCRTLINK extern int    _WRTLCALL wait( int *__status );
+_WCRTLINK extern int    getpid( void );
+_WCRTLINK extern int    wait( int *__status );
 :elsesegment QNX | LINUX
-_WCRTLINK extern pid_t  _WRTLCALL getpid( void );
-_WCRTLINK extern pid_t  _WRTLCALL wait( int *__status );
+_WCRTLINK extern pid_t  getpid( void );
+_WCRTLINK extern pid_t  wait( int *__status );
 :endsegment
 
 :segment QNX | LINUX

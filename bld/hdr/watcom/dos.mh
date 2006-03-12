@@ -118,86 +118,86 @@ struct _wfind_t {
 
 :include dskfreet.sp
 
-_WCRTLINK extern int      _WRTLCALL bdos( int __dosfn, unsigned int __dx,
+_WCRTLINK extern int      bdos( int __dosfn, unsigned int __dx,
                                 unsigned int __al);
 :: extra 'register' is used to prevent C++ compiler from entering a parser
 :: disambiguation stage (i.e., it has a use, so don't delete it) AFS
-_WCRTLINK extern void     _WRTLCALL _chain_intr( register void
+_WCRTLINK extern void     _chain_intr( register void
                                       (_WCINTERRUPT _DOSFAR *__handler)() );
 #if defined(__NT__) || ( defined(__OS2__) && (defined(__386__)||defined(__PPC__)) )
-_WCRTLINK extern unsigned _WRTLCALL _dos_allocmem( unsigned __size, void **__storage );
+_WCRTLINK extern unsigned _dos_allocmem( unsigned __size, void **__storage );
 #else
-_WCRTLINK extern unsigned _WRTLCALL _dos_allocmem( unsigned __size,
+_WCRTLINK extern unsigned _dos_allocmem( unsigned __size,
                                          unsigned short *__seg );
 #endif
-_WCRTLINK extern unsigned _WRTLCALL _dos_close( int __handle );
-_WCRTLINK extern unsigned _WRTLCALL _dos_commit( int __handle );
-_WCRTLINK extern unsigned _WRTLCALL _dos_creat( const char *__path,
+_WCRTLINK extern unsigned _dos_close( int __handle );
+_WCRTLINK extern unsigned _dos_commit( int __handle );
+_WCRTLINK extern unsigned _dos_creat( const char *__path,
                                       unsigned __attr, int *__handle );
-_WCRTLINK extern unsigned _WRTLCALL _dos_creatnew( const char *__path,
+_WCRTLINK extern unsigned _dos_creatnew( const char *__path,
                                          unsigned __attr, int *__handle );
-_WCRTLINK extern unsigned _WRTLCALL _dos_findfirst( const char *__path,
+_WCRTLINK extern unsigned _dos_findfirst( const char *__path,
                                           unsigned __attr,
                                           struct find_t *__buf );
-_WCRTLINK extern unsigned _WRTLCALL _dos_findnext( struct find_t *__buf );
-_WCRTLINK extern unsigned _WRTLCALL _dos_findclose( struct find_t *__buf );
+_WCRTLINK extern unsigned _dos_findnext( struct find_t *__buf );
+_WCRTLINK extern unsigned _dos_findclose( struct find_t *__buf );
 #if defined(__NT__) || ( defined(__OS2__) && (defined(__386__)||defined(__PPC__)) )
-_WCRTLINK extern unsigned _WRTLCALL _dos_freemem( void *__storage );
+_WCRTLINK extern unsigned _dos_freemem( void *__storage );
 #else
-_WCRTLINK extern unsigned _WRTLCALL _dos_freemem( unsigned short __seg );
+_WCRTLINK extern unsigned _dos_freemem( unsigned short __seg );
 #endif
-_WCRTLINK extern void     _WRTLCALL _dos_getdate( struct dosdate_t *__date );
-_WCRTLINK extern unsigned _WRTLCALL _dos_getdiskfree( unsigned __drive,
+_WCRTLINK extern void     _dos_getdate( struct dosdate_t *__date );
+_WCRTLINK extern unsigned _dos_getdiskfree( unsigned __drive,
                                             struct _diskfree_t *__diskspace );
-_WCRTLINK extern unsigned _WRTLCALL _getdiskfree( unsigned __drive,
+_WCRTLINK extern unsigned _getdiskfree( unsigned __drive,
                                         struct _diskfree_t *__diskspace );
-_WCRTLINK extern void     _WRTLCALL _dos_getdrive( unsigned *__drive );
-_WCRTLINK extern unsigned _WRTLCALL _getdrive( void );
-_WCRTLINK extern unsigned _WRTLCALL _dos_getfileattr( const char *__path,
+_WCRTLINK extern void     _dos_getdrive( unsigned *__drive );
+_WCRTLINK extern unsigned _getdrive( void );
+_WCRTLINK extern unsigned _dos_getfileattr( const char *__path,
                                             unsigned *__attr );
-_WCRTLINK extern unsigned _WRTLCALL _dos_getftime( int __handle, unsigned short *__date,
+_WCRTLINK extern unsigned _dos_getftime( int __handle, unsigned short *__date,
                                          unsigned short *__time );
-_WCRTLINK extern void     _WRTLCALL _dos_gettime( struct dostime_t *__time );
-_WCRTLINK extern void     (_WCINTERRUPT _DOSFAR * _WRTLCALL _dos_getvect( int __intnum ))();
-_WCRTLINK extern void     _WRTLCALL _dos_keep( unsigned __retcode, unsigned __memsize );
+_WCRTLINK extern void     _dos_gettime( struct dostime_t *__time );
+_WCRTLINK extern void     (_WCINTERRUPT _DOSFAR *_dos_getvect( int __intnum ))();
+_WCRTLINK extern void     _dos_keep( unsigned __retcode, unsigned __memsize );
 
-_WCRTLINK extern unsigned _WRTLCALL _dos_open( const char *__path, unsigned __mode,
+_WCRTLINK extern unsigned _dos_open( const char *__path, unsigned __mode,
                                      int *__handle );
-_WCRTLINK extern unsigned _WRTLCALL _dos_read( int __handle, void _DOSFAR *__buf,
+_WCRTLINK extern unsigned _dos_read( int __handle, void _DOSFAR *__buf,
                                      unsigned __count, unsigned *__bytes );
-_WCRTLINK extern unsigned _WRTLCALL _dos_setblock( unsigned __size, unsigned short __seg,
+_WCRTLINK extern unsigned _dos_setblock( unsigned __size, unsigned short __seg,
                                          unsigned  *__maxsize );
-_WCRTLINK extern unsigned _WRTLCALL _dos_setdate( struct dosdate_t *__date );
-_WCRTLINK extern void     _WRTLCALL _dos_setdrive( unsigned __drivenum,
+_WCRTLINK extern unsigned _dos_setdate( struct dosdate_t *__date );
+_WCRTLINK extern void     _dos_setdrive( unsigned __drivenum,
                                          unsigned *__drives );
-_WCRTLINK extern unsigned _WRTLCALL _dos_setfileattr( const char *__path,
+_WCRTLINK extern unsigned _dos_setfileattr( const char *__path,
                                             unsigned __attr );
-_WCRTLINK extern unsigned _WRTLCALL _dos_setftime( int __handle, unsigned short __date,
+_WCRTLINK extern unsigned _dos_setftime( int __handle, unsigned short __date,
                                          unsigned short __time );
-_WCRTLINK extern unsigned _WRTLCALL _dos_settime( struct dostime_t *__time );
-_WCRTLINK extern void     _WRTLCALL _dos_setvect( int __intnum, void
+_WCRTLINK extern unsigned _dos_settime( struct dostime_t *__time );
+_WCRTLINK extern void     _dos_setvect( int __intnum, void
                                        (_WCINTERRUPT _DOSFAR *__handler)() );
-_WCRTLINK extern unsigned _WRTLCALL _dos_write( int __handle, void const _DOSFAR *__buf,
+_WCRTLINK extern unsigned _dos_write( int __handle, void const _DOSFAR *__buf,
                                       unsigned __count, unsigned *__bytes );
-_WCRTLINK extern int      _WRTLCALL dosexterr( struct _DOSERROR * );
+_WCRTLINK extern int      dosexterr( struct _DOSERROR * );
 :: extra 'register' is used to prevent C++ compiler from entering a parser
 :: disambiguation stage (i.e., it has a use, so don't delete it) AFS
-_WCRTLINK extern void     _WRTLCALL _harderr( register int (_DOSFAR *__func)(
+_WCRTLINK extern void     _harderr( register int (_DOSFAR *__func)(
                                     unsigned __deverr, unsigned __errcode,
                                     unsigned _DOSFAR *__devhdr));
-_WCRTLINK extern void     _WRTLCALL _hardresume( int __result );
-_WCRTLINK extern void     _WRTLCALL _hardretn( int __error );
+_WCRTLINK extern void     _hardresume( int __result );
+_WCRTLINK extern void     _hardretn( int __error );
 #if defined(_M_IX86)
-_WCRTLINK extern int      _WRTLCALL intdos( union REGS *, union REGS * );
-_WCRTLINK extern int      _WRTLCALL intdosx( union REGS *, union REGS *, struct SREGS * );
+_WCRTLINK extern int      intdos( union REGS *, union REGS * );
+_WCRTLINK extern int      intdosx( union REGS *, union REGS *, struct SREGS * );
 #endif
-_WCRTLINK extern unsigned _WRTLCALL sleep( unsigned __seconds );
+_WCRTLINK extern unsigned sleep( unsigned __seconds );
 
-_WCRTLINK extern unsigned _WRTLCALL _wdos_findfirst( const wchar_t *__path,
+_WCRTLINK extern unsigned _wdos_findfirst( const wchar_t *__path,
                                            unsigned __attr,
                                            struct _wfind_t *__buf );
-_WCRTLINK extern unsigned _WRTLCALL _wdos_findnext( struct _wfind_t *__buf );
-_WCRTLINK extern unsigned _WRTLCALL _wdos_findclose( struct _wfind_t *__buf );
+_WCRTLINK extern unsigned _wdos_findnext( struct _wfind_t *__buf );
+_WCRTLINK extern unsigned _wdos_findclose( struct _wfind_t *__buf );
 
 :include poppack.sp
 

@@ -29,7 +29,7 @@ struct tms {
 #define	DST_TUR		9	/* Turkey */
 #define	DST_AUSTALT	10	/* Australian style with shift in 1986 */
 
-_WCRTLINK extern clock_t _WRTLCALL times( struct tms *__buf );
+_WCRTLINK extern clock_t times( struct tms *__buf );
 
 :include poppack.sp
 :include cplusepi.sp

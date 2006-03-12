@@ -65,21 +65,21 @@
 /* Return value of `mmap' in case of an error.  */
 #define MAP_FAILED      ((void *) -1)
 
-_WCRTLINK extern void * _WRTLCALL mmap(void *__addr, size_t __len, int __prot, int __flags, int __fd, off_t __offset);
+_WCRTLINK extern void *mmap( void *__addr, size_t __len, int __prot, int __flags, int __fd, off_t __offset );
 
-_WCRTLINK extern int _WRTLCALL munmap(void *__addr, size_t __len);
+_WCRTLINK extern int munmap( void *__addr, size_t __len );
 
-_WCRTLINK extern int _WRTLCALL mprotect(void *__addr, size_t __len, int __prot);
+_WCRTLINK extern int mprotect( void *__addr, size_t __len, int __prot );
 
-_WCRTLINK extern int _WRTLCALL msync(void *__addr, size_t __len, int __flags);
+_WCRTLINK extern int msync( void *__addr, size_t __len, int __flags );
 
-_WCRTLINK extern int _WRTLCALL mlock(const void *__addr, size_t __len);
+_WCRTLINK extern int mlock( const void *__addr, size_t __len );
 
-_WCRTLINK extern int _WRTLCALL munlock(const void *__addr, size_t __len);
+_WCRTLINK extern int munlock( const void *__addr, size_t __len );
 
-_WCRTLINK extern int _WRTLCALL mlockall(int __flags);
+_WCRTLINK extern int mlockall( int __flags );
 
-_WCRTLINK extern int _WRTLCALL munlockall(void);
+_WCRTLINK extern int munlockall( void );
 
 :include poppack.sp
 :include cplusepi.sp

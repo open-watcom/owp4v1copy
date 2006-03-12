@@ -188,82 +188,82 @@ namespace std {
 :endsegment
 typedef int mbstate_t;
 
-_WCRTLINK extern wint_t   _WRTLCALL btowc( int __c );
-_WCRTLINK extern wint_t   _WRTLCALL fgetwc( FILE *__strm );
-_WCRTLINK extern wchar_t  * _WRTLCALL fgetws( wchar_t *__s, int __n, FILE *__strm );
-_WCRTLINK extern wint_t   _WRTLCALL fputwc( wint_t __wc, FILE *__strm );
-_WCRTLINK extern int      _WRTLCALL fputws( const wchar_t *__s, FILE *__strm );
-_WCRTLINK extern int      _WRTLCALL fwide( FILE *__strm, int __mode );
-_WCRTLINK extern int      _WRTLCALL fwprintf( FILE *__strm, const wchar_t *__format, ... );
-_WCRTLINK extern int      _WRTLCALL fwscanf( FILE *__strm, const wchar_t *__format, ... );
-_WCRTLINK extern wint_t   _WRTLCALL getwc( FILE *__strm );
-_WCRTLINK extern wint_t   _WRTLCALL getwchar( void );
-_WCRTLINK extern int      _WRTLCALL mbrlen( const char *__s, size_t __n, mbstate_t *__ps );
-_WCRTLINK extern int      _WRTLCALL mbrtowc( wchar_t *__pwc, const char *__s, size_t __n, mbstate_t *__ps );
-_WCRTLINK extern int      _WRTLCALL mbsinit( const mbstate_t *__ps );
-_WCRTLINK extern size_t   _WRTLCALL mbsrtowcs( wchar_t *__dst, const char **__src, size_t __n, mbstate_t *__ps );
-_WCRTLINK extern wint_t   _WRTLCALL putwc( wint_t __wc, FILE *__strm );
-_WCRTLINK extern wint_t   _WRTLCALL putwchar( wint_t __wc );
+_WCRTLINK extern wint_t   btowc( int __c );
+_WCRTLINK extern wint_t   fgetwc( FILE *__strm );
+_WCRTLINK extern wchar_t  *fgetws( wchar_t *__s, int __n, FILE *__strm );
+_WCRTLINK extern wint_t   fputwc( wint_t __wc, FILE *__strm );
+_WCRTLINK extern int      fputws( const wchar_t *__s, FILE *__strm );
+_WCRTLINK extern int      fwide( FILE *__strm, int __mode );
+_WCRTLINK extern int      fwprintf( FILE *__strm, const wchar_t *__format, ... );
+_WCRTLINK extern int      fwscanf( FILE *__strm, const wchar_t *__format, ... );
+_WCRTLINK extern wint_t   getwc( FILE *__strm );
+_WCRTLINK extern wint_t   getwchar( void );
+_WCRTLINK extern int      mbrlen( const char *__s, size_t __n, mbstate_t *__ps );
+_WCRTLINK extern int      mbrtowc( wchar_t *__pwc, const char *__s, size_t __n, mbstate_t *__ps );
+_WCRTLINK extern int      mbsinit( const mbstate_t *__ps );
+_WCRTLINK extern size_t   mbsrtowcs( wchar_t *__dst, const char **__src, size_t __n, mbstate_t *__ps );
+_WCRTLINK extern wint_t   putwc( wint_t __wc, FILE *__strm );
+_WCRTLINK extern wint_t   putwchar( wint_t __wc );
 #ifndef swprintf
-_WCRTLINK extern int      _WRTLCALL swprintf( wchar_t *__s, size_t __n, const wchar_t *__format, ... );
+_WCRTLINK extern int      swprintf( wchar_t *__s, size_t __n, const wchar_t *__format, ... );
 #endif
-_WCRTLINK extern int      _WRTLCALL swscanf( const wchar_t *__s, const wchar_t *__format, ... );
-_WCRTLINK extern wint_t   _WRTLCALL ungetwc( wint_t __wc, FILE *__strm );
-_WCRTLINK extern int      _WRTLCALL vfwprintf( FILE *__strm, const wchar_t *__format, va_list __arg );
-_WCRTLINK extern int      _WRTLCALL vswprintf( wchar_t *__s, size_t __n, const wchar_t *__format, va_list __arg );
-_WCRTLINK extern int      _WRTLCALL vwprintf( const wchar_t *__format, va_list __arg );
-_WCRTLINK extern int      _WRTLCALL vwscanf( const wchar_t *, __va_list );
-_WCRTLINK extern int      _WRTLCALL wcrtomb( char *__s, wchar_t __wc, mbstate_t *__ps );
-_WCRTLINK extern wchar_t  * _WRTLCALL wcscat( wchar_t *__s1, const wchar_t *__s2 );
-_WCRTLINK extern wchar_t  * _WRTLCALL wcschr( const wchar_t *__s, wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL wcscmp( const wchar_t *__s1, const wchar_t *__s2 );
-_WCRTLINK extern int      _WRTLCALL wcscoll( const wchar_t *__s1, const wchar_t *__s2 );
-_WCRTLINK extern wchar_t  * _WRTLCALL wcscpy( wchar_t *__s1, const wchar_t *__s2 );
-_WCRTLINK extern size_t   _WRTLCALL wcscspn( const wchar_t *__s1, const wchar_t *__s2 );
-_WCRTLINK extern size_t   _WRTLCALL wcsftime( wchar_t *__s, size_t __maxsize, const wchar_t *__format, const struct tm *__timeptr );
-_WCRTLINK extern size_t   _WRTLCALL wcslen( const wchar_t *__s );
-_WCRTLINK extern wchar_t  * _WRTLCALL wcsncat( wchar_t *__s1, const wchar_t *__s2, size_t __n );
-_WCRTLINK extern int      _WRTLCALL wcsncmp( const wchar_t *__s1, const wchar_t *__s2, size_t __n );
-_WCRTLINK extern wchar_t  * _WRTLCALL wcsncpy( wchar_t *__s1, const wchar_t *__s2, size_t __n );
-_WCRTLINK extern wchar_t  * _WRTLCALL wcspbrk( const wchar_t *__s1, const wchar_t *__s2 );
-_WCRTLINK extern wchar_t  * _WRTLCALL wcsrchr( const wchar_t *__s, wint_t __wc );
-_WCRTLINK extern size_t   _WRTLCALL wcsrtombs( char *__dst, const wchar_t **__src, size_t __n, mbstate_t *__ps );
-_WCRTLINK extern size_t   _WRTLCALL wcsspn( const wchar_t *__s1, const wchar_t *__s2 );
-_WCRTLINK extern wchar_t  * _WRTLCALL wcsstr( const wchar_t *__s1, const wchar_t *__s2 );
-_WMRTLINK extern double   _WRTLCALL wcstod( const wchar_t *__nptr, wchar_t **__endptr );
-_WCRTLINK extern wchar_t  * _WRTLCALL wcstok( wchar_t *__s1, const wchar_t *__s2, wchar_t **__ptr );
-_WCRTLINK extern long int _WRTLCALL wcstol( const wchar_t *, wchar_t **, int );
-_WCRTLINK extern long long int _WRTLCALL wcstoll( const wchar_t *, wchar_t **, int );
-_WCRTLINK extern unsigned long int _WRTLCALL wcstoul( const wchar_t *, wchar_t **, int );
-_WCRTLINK extern unsigned long long int _WRTLCALL wcstoull( const wchar_t *, wchar_t **, int );
-_WCRTLINK extern size_t   _WRTLCALL wcsxfrm( wchar_t *__s1, const wchar_t *__s2, size_t __n );
-_WCRTLINK extern int      _WRTLCALL wctob( wint_t __wc );
-_WCRTLINK extern wchar_t  * _WRTLCALL wmemchr( const wchar_t *__s, wchar_t __wc, size_t __n );
-_WCRTLINK extern int      _WRTLCALL wmemcmp( const wchar_t *__s1, const wchar_t *__s2, size_t __n );
-_WCRTLINK extern wchar_t  * _WRTLCALL wmemcpy( wchar_t *__s1, const wchar_t *__s2, size_t __n );
-_WCRTLINK extern wchar_t  * _WRTLCALL wmemmove( wchar_t *__s1, const wchar_t *__s2, size_t __n );
-_WCRTLINK extern wchar_t  * _WRTLCALL wmemset( wchar_t *__s, wchar_t __wc, size_t __n );
-_WCRTLINK extern int      _WRTLCALL wprintf( const wchar_t *__format, ... );
-_WCRTLINK extern int      _WRTLCALL wscanf( const wchar_t *__format, ... );
+_WCRTLINK extern int      swscanf( const wchar_t *__s, const wchar_t *__format, ... );
+_WCRTLINK extern wint_t   ungetwc( wint_t __wc, FILE *__strm );
+_WCRTLINK extern int      vfwprintf( FILE *__strm, const wchar_t *__format, va_list __arg );
+_WCRTLINK extern int      vswprintf( wchar_t *__s, size_t __n, const wchar_t *__format, va_list __arg );
+_WCRTLINK extern int      vwprintf( const wchar_t *__format, va_list __arg );
+_WCRTLINK extern int      vwscanf( const wchar_t *, __va_list );
+_WCRTLINK extern int      wcrtomb( char *__s, wchar_t __wc, mbstate_t *__ps );
+_WCRTLINK extern wchar_t  *wcscat( wchar_t *__s1, const wchar_t *__s2 );
+_WCRTLINK extern wchar_t  *wcschr( const wchar_t *__s, wint_t __wc );
+_WCRTLINK extern int      wcscmp( const wchar_t *__s1, const wchar_t *__s2 );
+_WCRTLINK extern int      wcscoll( const wchar_t *__s1, const wchar_t *__s2 );
+_WCRTLINK extern wchar_t  *wcscpy( wchar_t *__s1, const wchar_t *__s2 );
+_WCRTLINK extern size_t   wcscspn( const wchar_t *__s1, const wchar_t *__s2 );
+_WCRTLINK extern size_t   wcsftime( wchar_t *__s, size_t __maxsize, const wchar_t *__format, const struct tm *__timeptr );
+_WCRTLINK extern size_t   wcslen( const wchar_t *__s );
+_WCRTLINK extern wchar_t  *wcsncat( wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern int      wcsncmp( const wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern wchar_t  *wcsncpy( wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern wchar_t  *wcspbrk( const wchar_t *__s1, const wchar_t *__s2 );
+_WCRTLINK extern wchar_t  *wcsrchr( const wchar_t *__s, wint_t __wc );
+_WCRTLINK extern size_t   wcsrtombs( char *__dst, const wchar_t **__src, size_t __n, mbstate_t *__ps );
+_WCRTLINK extern size_t   wcsspn( const wchar_t *__s1, const wchar_t *__s2 );
+_WCRTLINK extern wchar_t  *wcsstr( const wchar_t *__s1, const wchar_t *__s2 );
+_WMRTLINK extern double   wcstod( const wchar_t *__nptr, wchar_t **__endptr );
+_WCRTLINK extern wchar_t  *wcstok( wchar_t *__s1, const wchar_t *__s2, wchar_t **__ptr );
+_WCRTLINK extern long int wcstol( const wchar_t *, wchar_t **, int );
+_WCRTLINK extern long long int wcstoll( const wchar_t *, wchar_t **, int );
+_WCRTLINK extern unsigned long int wcstoul( const wchar_t *, wchar_t **, int );
+_WCRTLINK extern unsigned long long int wcstoull( const wchar_t *, wchar_t **, int );
+_WCRTLINK extern size_t   wcsxfrm( wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern int      wctob( wint_t __wc );
+_WCRTLINK extern wchar_t  *wmemchr( const wchar_t *__s, wchar_t __wc, size_t __n );
+_WCRTLINK extern int      wmemcmp( const wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern wchar_t  *wmemcpy( wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern wchar_t  *wmemmove( wchar_t *__s1, const wchar_t *__s2, size_t __n );
+_WCRTLINK extern wchar_t  *wmemset( wchar_t *__s, wchar_t __wc, size_t __n );
+_WCRTLINK extern int      wprintf( const wchar_t *__format, ... );
+_WCRTLINK extern int      wscanf( const wchar_t *__format, ... );
 :segment CNAME
 }
 :endsegment
 
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsdup( const wchar_t * );
-_WCRTLINK extern int      _WRTLCALL _wcsicmp( const wchar_t *, const wchar_t * );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcslwr( wchar_t * );
+_WCRTLINK extern wchar_t  *_wcsdup( const wchar_t * );
+_WCRTLINK extern int      _wcsicmp( const wchar_t *, const wchar_t * );
+_WCRTLINK extern wchar_t  *_wcslwr( wchar_t * );
 :segment CNAME
-_WCRTLINK extern int      _WRTLCALL _wcsnicmp( const wchar_t *, const wchar_t *, std::size_t );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsnset( wchar_t *, int, std::size_t );
+_WCRTLINK extern int      _wcsnicmp( const wchar_t *, const wchar_t *, std::size_t );
+_WCRTLINK extern wchar_t  *_wcsnset( wchar_t *, int, std::size_t );
 :elsesegment
-_WCRTLINK extern int      _WRTLCALL _wcsnicmp( const wchar_t *, const wchar_t *, size_t );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsnset( wchar_t *, int, size_t );
+_WCRTLINK extern int      _wcsnicmp( const wchar_t *, const wchar_t *, size_t );
+_WCRTLINK extern wchar_t  *_wcsnset( wchar_t *, int, size_t );
 :endsegment
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsupr( wchar_t * );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsrev( wchar_t * );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsset( wchar_t *, wchar_t );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wmktemp( wchar_t *__template );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wtempnam( wchar_t *__dir, wchar_t *__prefix );
+_WCRTLINK extern wchar_t  *_wcsupr( wchar_t * );
+_WCRTLINK extern wchar_t  *_wcsrev( wchar_t * );
+_WCRTLINK extern wchar_t  *_wcsset( wchar_t *, wchar_t );
+_WCRTLINK extern wchar_t  *_wmktemp( wchar_t *__template );
+_WCRTLINK extern wchar_t  *_wtempnam( wchar_t *__dir, wchar_t *__prefix );
 
 :: Also in stdint.h
 #define WCHAR_MIN       0
@@ -280,49 +280,49 @@ _WCRTLINK extern wchar_t  * _WRTLCALL _wtempnam( wchar_t *__dir, wchar_t *__pref
 :segment CNAME
 namespace std {
 :endsegment
-_WCRTLINK extern int      _WRTLCALL iswalnum( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswalpha( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswascii( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswcntrl( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswdigit( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswgraph( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswlower( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswprint( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswpunct( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswspace( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswupper( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswxdigit( wint_t __wc );
-_WCRTLINK extern int      _WRTLCALL iswctype( wint_t __wc, wctype_t __desc );
-_WCRTLINK extern wctype_t _WRTLCALL wctype( const char *__property );
-_WCRTLINK extern wint_t   _WRTLCALL towlower( wint_t __wc );
-_WCRTLINK extern wint_t   _WRTLCALL towupper( wint_t __wc );
+_WCRTLINK extern int      iswalnum( wint_t __wc );
+_WCRTLINK extern int      iswalpha( wint_t __wc );
+_WCRTLINK extern int      iswascii( wint_t __wc );
+_WCRTLINK extern int      iswcntrl( wint_t __wc );
+_WCRTLINK extern int      iswdigit( wint_t __wc );
+_WCRTLINK extern int      iswgraph( wint_t __wc );
+_WCRTLINK extern int      iswlower( wint_t __wc );
+_WCRTLINK extern int      iswprint( wint_t __wc );
+_WCRTLINK extern int      iswpunct( wint_t __wc );
+_WCRTLINK extern int      iswspace( wint_t __wc );
+_WCRTLINK extern int      iswupper( wint_t __wc );
+_WCRTLINK extern int      iswxdigit( wint_t __wc );
+_WCRTLINK extern int      iswctype( wint_t __wc, wctype_t __desc );
+_WCRTLINK extern wctype_t wctype( const char *__property );
+_WCRTLINK extern wint_t   towlower( wint_t __wc );
+_WCRTLINK extern wint_t   towupper( wint_t __wc );
 :segment CNAME
 }
 :endsegment
 
 :segment CNAME
 :: C99 says this function is named mbsinit.
-_WCRTLINK extern int     _WRTLCALL sisinit( const std::mbstate_t *__ps );
+_WCRTLINK extern int     sisinit( const std::mbstate_t *__ps );
 
-_WCRTLINK extern int    _WRTLCALL _fmbrlen( const char _WCFAR *__s, std::size_t __n, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern int    _WRTLCALL _fmbrtowc( wchar_t _WCFAR *__pwc, const char _WCFAR *__s, std::size_t __n, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern size_t _WRTLCALL _fmbsrtowcs( wchar_t _WCFAR *__dst, const char _WCFAR * _WCFAR *__src, std::size_t __n, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern int    _WRTLCALL _fwcrtomb( char _WCFAR *__s, wchar_t __wc, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern size_t _WRTLCALL _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * _WCFAR *__src, std::size_t __n, std::mbstate_t _WCFAR *__ps );
-_WCRTLINK extern int    _WRTLCALL _swprintf( wchar_t *__s, const wchar_t *__format, ... );
-_WCRTLINK extern int    _WRTLCALL _vswprintf( wchar_t *__s, const wchar_t *__format, std::va_list __arg );
+_WCRTLINK extern int    _fmbrlen( const char _WCFAR *__s, std::size_t __n, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern int    _fmbrtowc( wchar_t _WCFAR *__pwc, const char _WCFAR *__s, std::size_t __n, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern size_t _fmbsrtowcs( wchar_t _WCFAR *__dst, const char _WCFAR * _WCFAR *__src, std::size_t __n, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern int    _fwcrtomb( char _WCFAR *__s, wchar_t __wc, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern size_t _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * _WCFAR *__src, std::size_t __n, std::mbstate_t _WCFAR *__ps );
+_WCRTLINK extern int    _swprintf( wchar_t *__s, const wchar_t *__format, ... );
+_WCRTLINK extern int    _vswprintf( wchar_t *__s, const wchar_t *__format, std::va_list __arg );
 
 :elsesegment
 :: C99 says this function is named mbsinit.
-_WCRTLINK extern int     _WRTLCALL sisinit( const mbstate_t *__ps );
+_WCRTLINK extern int     sisinit( const mbstate_t *__ps );
 
-_WCRTLINK extern int    _WRTLCALL _fmbrlen( const char _WCFAR *__s, size_t __n, mbstate_t _WCFAR *__ps );
-_WCRTLINK extern int    _WRTLCALL _fmbrtowc( wchar_t _WCFAR *__pwc, const char _WCFAR *__s, size_t __n, mbstate_t _WCFAR *__ps );
-_WCRTLINK extern size_t _WRTLCALL _fmbsrtowcs( wchar_t _WCFAR *__dst, const char _WCFAR * _WCFAR *__src, size_t __n, mbstate_t _WCFAR *__ps );
-_WCRTLINK extern int    _WRTLCALL _fwcrtomb( char _WCFAR *__s, wchar_t __wc, mbstate_t _WCFAR *__ps );
-_WCRTLINK extern size_t _WRTLCALL _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * _WCFAR *__src, size_t __n, mbstate_t _WCFAR *__ps );
-_WCRTLINK extern int    _WRTLCALL _swprintf( wchar_t *__s, const wchar_t *__format, ... );
-_WCRTLINK extern int    _WRTLCALL _vswprintf( wchar_t *__s, const wchar_t *__format, va_list __arg );
+_WCRTLINK extern int    _fmbrlen( const char _WCFAR *__s, size_t __n, mbstate_t _WCFAR *__ps );
+_WCRTLINK extern int    _fmbrtowc( wchar_t _WCFAR *__pwc, const char _WCFAR *__s, size_t __n, mbstate_t _WCFAR *__ps );
+_WCRTLINK extern size_t _fmbsrtowcs( wchar_t _WCFAR *__dst, const char _WCFAR * _WCFAR *__src, size_t __n, mbstate_t _WCFAR *__ps );
+_WCRTLINK extern int    _fwcrtomb( char _WCFAR *__s, wchar_t __wc, mbstate_t _WCFAR *__ps );
+_WCRTLINK extern size_t _fwcsrtombs( char _WCFAR *__dst, const wchar_t _WCFAR * _WCFAR *__src, size_t __n, mbstate_t _WCFAR *__ps );
+_WCRTLINK extern int    _swprintf( wchar_t *__s, const wchar_t *__format, ... );
+_WCRTLINK extern int    _vswprintf( wchar_t *__s, const wchar_t *__format, va_list __arg );
 
 :endsegment
 
@@ -346,28 +346,28 @@ _WCRTLINK extern int     vwscanf_s( const wchar_t * __restrict __format, __va_li
 _WCRTLINK extern int     wprintf_s( const wchar_t * __restrict __format, ... );
 _WCRTLINK extern int     wscanf_s( const wchar_t * __restrict __format, ... );
 
-_WCRTLINK extern errno_t _WRTLCALL wcscpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2 );
-_WCRTLINK extern errno_t _WRTLCALL wcsncpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2, rsize_t __n );
-_WCRTLINK extern errno_t _WRTLCALL wmemcpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2, rsize_t __n );
-_WCRTLINK extern errno_t _WRTLCALL wmemmove_s( wchar_t *__s1, rsize_t __s1max, const wchar_t *__s2, rsize_t __n );
-_WCRTLINK extern errno_t _WRTLCALL wcscat_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2 );
-_WCRTLINK extern errno_t _WRTLCALL wcsncat_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2, rsize_t __n );
-_WCRTLINK extern wchar_t * _WRTLCALL wcstok_s( wchar_t * __restrict __s1, rsize_t * __restrict __s1max, const wchar_t * __restrict __s2, wchar_t ** __restrict __ptr );
-_WCRTLINK extern size_t  _WRTLCALL wcsnlen_s( const wchar_t *__s, size_t __maxsize );
+_WCRTLINK extern errno_t wcscpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2 );
+_WCRTLINK extern errno_t wcsncpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2, rsize_t __n );
+_WCRTLINK extern errno_t wmemcpy_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2, rsize_t __n );
+_WCRTLINK extern errno_t wmemmove_s( wchar_t *__s1, rsize_t __s1max, const wchar_t *__s2, rsize_t __n );
+_WCRTLINK extern errno_t wcscat_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2 );
+_WCRTLINK extern errno_t wcsncat_s( wchar_t * __restrict __s1, rsize_t __s1max, const wchar_t * __restrict __s2, rsize_t __n );
+_WCRTLINK extern wchar_t *wcstok_s( wchar_t * __restrict __s1, rsize_t * __restrict __s1max, const wchar_t * __restrict __s2, wchar_t ** __restrict __ptr );
+_WCRTLINK extern size_t  wcsnlen_s( const wchar_t *__s, size_t __maxsize );
 
-_WCRTLINK extern size_t  _WRTLCALL wcserrorlen_s( errno_t __errnum );
-_WCRTLINK extern errno_t _WRTLCALL wcserror_s( wchar_t * __restrict __s, rsize_t __maxsize, errno_t __errnum );
+_WCRTLINK extern size_t  wcserrorlen_s( errno_t __errnum );
+_WCRTLINK extern errno_t wcserror_s( wchar_t * __restrict __s, rsize_t __maxsize, errno_t __errnum );
 
 
-_WCRTLINK extern errno_t _WRTLCALL _wasctime_s( wchar_t * __restrict __s, rsize_t __maxsize, const struct tm * __timeptr );
-_WCRTLINK extern errno_t _WRTLCALL _wctime_s( wchar_t * __restrict s, rsize_t __maxsize, const time_t * __timer );
+_WCRTLINK extern errno_t _wasctime_s( wchar_t * __restrict __s, rsize_t __maxsize, const struct tm * __timeptr );
+_WCRTLINK extern errno_t _wctime_s( wchar_t * __restrict s, rsize_t __maxsize, const time_t * __timer );
 
-_WCRTLINK extern errno_t _WRTLCALL mbsrtowcs_s( size_t * __restrict __retval, wchar_t * __restrict __dst, rsize_t __dstmax, const char * * __restrict __src, rsize_t __len, mbstate_t * __restrict __ps );
-_WCRTLINK extern errno_t _WRTLCALL wcrtomb_s( size_t * __restrict __retval, char * __restrict __s,  rsize_t __smax, wchar_t __wc, mbstate_t * __restrict __ps );
-_WCRTLINK extern errno_t _WRTLCALL wcsrtombs_s( size_t * __restrict __retval, char * __restrict __dst, rsize_t __dstmax, const wchar_t ** __restrict __src, rsize_t __len, mbstate_t * __restrict __ps );
-_WCRTLINK extern errno_t _WRTLCALL _fmbsrtowcs_s( size_t _WCFAR * __restrict __retval, wchar_t _WCFAR * __restrict __dst, rsize_t __dstmax, const char _WCFAR * _WCFAR * __restrict __src, rsize_t __len, mbstate_t _WCFAR * __restrict __ps );
-_WCRTLINK extern errno_t _WRTLCALL _fwcrtomb_s( size_t _WCFAR * __restrict __retval, char _WCFAR * __restrict __s, rsize_t __smax, wchar_t __wc, mbstate_t _WCFAR * __restrict __ps );
-_WCRTLINK extern errno_t _WRTLCALL _fwcsrtombs_s( size_t _WCFAR * __restrict __retval, char _WCFAR * __restrict __dst, rsize_t __dstmax, const wchar_t _WCFAR * _WCFAR * __restrict __src, rsize_t __len, mbstate_t _WCFAR * __restrict __ps );
+_WCRTLINK extern errno_t mbsrtowcs_s( size_t * __restrict __retval, wchar_t * __restrict __dst, rsize_t __dstmax, const char * * __restrict __src, rsize_t __len, mbstate_t * __restrict __ps );
+_WCRTLINK extern errno_t wcrtomb_s( size_t * __restrict __retval, char * __restrict __s,  rsize_t __smax, wchar_t __wc, mbstate_t * __restrict __ps );
+_WCRTLINK extern errno_t wcsrtombs_s( size_t * __restrict __retval, char * __restrict __dst, rsize_t __dstmax, const wchar_t ** __restrict __src, rsize_t __len, mbstate_t * __restrict __ps );
+_WCRTLINK extern errno_t _fmbsrtowcs_s( size_t _WCFAR * __restrict __retval, wchar_t _WCFAR * __restrict __dst, rsize_t __dstmax, const char _WCFAR * _WCFAR * __restrict __src, rsize_t __len, mbstate_t _WCFAR * __restrict __ps );
+_WCRTLINK extern errno_t _fwcrtomb_s( size_t _WCFAR * __restrict __retval, char _WCFAR * __restrict __s, rsize_t __smax, wchar_t __wc, mbstate_t _WCFAR * __restrict __ps );
+_WCRTLINK extern errno_t _fwcsrtombs_s( size_t _WCFAR * __restrict __retval, char _WCFAR * __restrict __dst, rsize_t __dstmax, const wchar_t _WCFAR * _WCFAR * __restrict __src, rsize_t __len, mbstate_t _WCFAR * __restrict __ps );
 
 :include saferepi.sp
 :endsegment

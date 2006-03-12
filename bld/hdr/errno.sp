@@ -1,5 +1,5 @@
 #ifndef errno
-_WCRTLINK extern int * _WRTLCALL __get_errno_ptr( void );
+_WCRTLINK extern int *__get_errno_ptr( void );
 #define errno (*__get_errno_ptr())
 #endif
 :: cannot be made volatile because users are allowed to

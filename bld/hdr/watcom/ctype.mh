@@ -70,23 +70,23 @@ using std::isblank;
 :segment CNAME
 namespace std {
 :endsegment
-_WCRTLINK extern int    _WRTLCALL isalnum(int);
-_WCRTLINK extern int    _WRTLCALL isalpha(int);
-_WCRTLINK extern int    _WRTLCALL iscntrl(int);
-_WCRTLINK extern int    _WRTLCALL isdigit(int);
-_WCRTLINK extern int    _WRTLCALL isgraph(int);
-_WCRTLINK extern int    _WRTLCALL islower(int);
-_WCRTLINK extern int    _WRTLCALL isprint(int);
-_WCRTLINK extern int    _WRTLCALL ispunct(int);
-_WCRTLINK extern int    _WRTLCALL isspace(int);
-_WCRTLINK extern int    _WRTLCALL isupper(int);
-_WCRTLINK extern int    _WRTLCALL isxdigit(int);
-_WCRTLINK extern int    _WRTLCALL tolower(int);
-_WCRTLINK extern int    _WRTLCALL toupper(int);
+_WCRTLINK extern int    isalnum(int);
+_WCRTLINK extern int    isalpha(int);
+_WCRTLINK extern int    iscntrl(int);
+_WCRTLINK extern int    isdigit(int);
+_WCRTLINK extern int    isgraph(int);
+_WCRTLINK extern int    islower(int);
+_WCRTLINK extern int    isprint(int);
+_WCRTLINK extern int    ispunct(int);
+_WCRTLINK extern int    isspace(int);
+_WCRTLINK extern int    isupper(int);
+_WCRTLINK extern int    isxdigit(int);
+_WCRTLINK extern int    tolower(int);
+_WCRTLINK extern int    toupper(int);
 
 :include ext.sp
 /* These names are in ctype.h according to C99. */
-_WCRTLINK extern int    _WRTLCALL isblank(int);
+_WCRTLINK extern int    isblank(int);
 #endif
 :segment CNAME
 }
@@ -94,16 +94,16 @@ _WCRTLINK extern int    _WRTLCALL isblank(int);
 
 :segment !SNAP & !SNAPDRV
 /* These names are not in ctype.h according to C99. */
-_WCRTLINK extern int    _WRTLCALL _tolower(int);
-_WCRTLINK extern int    _WRTLCALL _toupper(int);
-_WCRTLINK extern int    _WRTLCALL __iscsymf(int);
-_WCRTLINK extern int    _WRTLCALL __iscsym(int);
+_WCRTLINK extern int    _tolower(int);
+_WCRTLINK extern int    _toupper(int);
+_WCRTLINK extern int    __iscsymf(int);
+_WCRTLINK extern int    __iscsym(int);
 :endsegment
 
 :include ext.sp
- _WCRTLINK extern int   _WRTLCALL isleadbyte(int);
- _WCRTLINK extern int   _WRTLCALL isascii(int);
- _WCRTLINK extern int   _WRTLCALL __isascii(int);
+ _WCRTLINK extern int   isleadbyte(int);
+ _WCRTLINK extern int   isascii(int);
+ _WCRTLINK extern int   __isascii(int);
  #if !defined(__FUNCTION_DATA_ACCESS)
   #define isascii(__c) ((unsigned)(__c) <= 0x7f)
   #define __isascii(__c) ((unsigned)(__c) <= 0x7f)

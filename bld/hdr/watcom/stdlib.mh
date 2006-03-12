@@ -108,7 +108,7 @@ using std::wcstoull;
 
 :include rsizet.sp
 
-typedef void _WRTLCALL (*constraint_handler_t)( const char * __restrict __msg, void * __restrict __ptr, errno_t __error );
+typedef void (*constraint_handler_t)( const char * __restrict __msg, void * __restrict __ptr, errno_t __error );
 
 :include saferepi.sp
 :endsegment
@@ -145,30 +145,30 @@ typedef struct  {
     long long   rem;
 } lldiv_t;
 
-_WCRTLINK extern void    _WRTLCALL abort( void );
+_WCRTLINK extern void    abort( void );
 
-_WCIRTLINK extern int    _WRTLCALL abs( int __j );
+_WCIRTLINK extern int    abs( int __j );
 #if defined(_M_IX86)
 #pragma aux abs     parm nomemory modify nomemory;
 #endif
 :: extra 'register' is used to prevent C++ compiler from entering a parser
 :: disambiguation stage (i.e., it has a use, so don't delete it) AFS (atexit)
-          extern int     _WRTLCALL atexit( register void ( *__func )( void ) );
-_WMRTLINK extern double  _WRTLCALL atof( const char *__nptr );
-_WCRTLINK extern int     _WRTLCALL atoi( const char *__nptr );
-_WCRTLINK extern long int _WRTLCALL atol( const char *__nptr );
-_WCRTLINK extern long long int _WRTLCALL atoll( const char *__nptr );
-_WCRTLINK extern void    * _WRTLCALL bsearch( const void *__key, const void *__base,
+          extern int     atexit( register void ( *__func )( void ) );
+_WMRTLINK extern double  atof( const char *__nptr );
+_WCRTLINK extern int     atoi( const char *__nptr );
+_WCRTLINK extern long int atol( const char *__nptr );
+_WCRTLINK extern long long int atoll( const char *__nptr );
+_WCRTLINK extern void    *bsearch( const void *__key, const void *__base,
                                   size_t __nmemb, size_t __size,
                                   int (*__compar)(const void *__pkey, const void *__pbase) );
-_WCRTLINK extern void    * _WRTLCALL calloc( size_t __n, size_t __size );
-_WCIRTLINK extern div_t  _WRTLCALL div( int __numer, int __denom );
-_WCRTLINK extern void    _WRTLCALL exit( int __status );
-_WCRTLINK extern void    _WRTLCALL _Exit( int __status );
-_WCRTLINK extern void    _WRTLCALL free( void *__ptr );
-_WCRTLINK extern char    * _WRTLCALL getenv( const char *__name );
+_WCRTLINK extern void    *calloc( size_t __n, size_t __size );
+_WCIRTLINK extern div_t  div( int __numer, int __denom );
+_WCRTLINK extern void    exit( int __status );
+_WCRTLINK extern void    _Exit( int __status );
+_WCRTLINK extern void    free( void *__ptr );
+_WCRTLINK extern char    *getenv( const char *__name );
 
-_WCIRTLINK extern long int _WRTLCALL labs( long int __j );
+_WCIRTLINK extern long int labs( long int __j );
 #if defined(_M_IX86)
 #pragma aux labs    parm nomemory modify nomemory;
 #endif
@@ -178,30 +178,30 @@ _WCIRTLINK
 #else
 _WCRTLINK
 #endif
-extern ldiv_t _WRTLCALL ldiv( long int __numer, long int __denom );
-_WCRTLINK extern long long int _WRTLCALL llabs( long long int __j );
-_WCRTLINK extern lldiv_t _WRTLCALL lldiv( long long int __numer, long long int __denom );
-_WCRTLINK extern void    * _WRTLCALL malloc( size_t __size );
+extern ldiv_t ldiv( long int __numer, long int __denom );
+_WCRTLINK extern long long int llabs( long long int __j );
+_WCRTLINK extern lldiv_t lldiv( long long int __numer, long long int __denom );
+_WCRTLINK extern void    *malloc( size_t __size );
 :segment !NO_WIDECHAR
-_WCRTLINK extern int     _WRTLCALL mblen( const char *__s, size_t __n );
-_WCRTLINK extern size_t  _WRTLCALL mbstowcs( wchar_t *__pwcs, const char *__s, size_t __n );
-_WCRTLINK extern int     _WRTLCALL mbtowc( wchar_t *__pwc, const char *__s, size_t __n );
-_WCRTLINK extern size_t  _WRTLCALL wcstombs( char *__s, const wchar_t *__pwcs, size_t __n );
-_WCRTLINK extern int     _WRTLCALL wctomb( char *__s, wchar_t __wchar );
+_WCRTLINK extern int     mblen( const char *__s, size_t __n );
+_WCRTLINK extern size_t  mbstowcs( wchar_t *__pwcs, const char *__s, size_t __n );
+_WCRTLINK extern int     mbtowc( wchar_t *__pwc, const char *__s, size_t __n );
+_WCRTLINK extern size_t  wcstombs( char *__s, const wchar_t *__pwcs, size_t __n );
+_WCRTLINK extern int     wctomb( char *__s, wchar_t __wchar );
 :endsegment
-_WCRTLINK extern void    _WRTLCALL qsort( void *__base, size_t __nmemb, size_t __size,
+_WCRTLINK extern void    qsort( void *__base, size_t __nmemb, size_t __size,
                                 int (*__compar)( const void *, const void * ) );
-_WCRTLINK extern int     _WRTLCALL rand( void );
-_WCRTLINK extern void    * _WRTLCALL realloc( void *__ptr, size_t __size );
-_WCRTLINK extern void    _WRTLCALL srand( unsigned int __seed );
-_WMRTLINK extern double  _WRTLCALL strtod( const char *__nptr, char **__endptr );
-_WMRTLINK extern float   _WRTLCALL strtof( const char *__nptr, char **__endptr );
-_WMRTLINK extern long double _WRTLCALL strtold( const char *__nptr, char **__endptr );
-_WCRTLINK extern long int _WRTLCALL strtol( const char *__nptr, char **__endptr, int __base );
-_WCRTLINK extern long long int _WRTLCALL strtoll( const char *__nptr, char **__endptr, int __base );
-_WCRTLINK extern unsigned long _WRTLCALL strtoul( const char *__nptr, char **__endptr, int __base );
-_WCRTLINK extern unsigned long long int _WRTLCALL strtoull( const char *__nptr, char **__endptr, int __base );
-_WCRTLINK extern int     _WRTLCALL system( const char *__string );
+_WCRTLINK extern int     rand( void );
+_WCRTLINK extern void    *realloc( void *__ptr, size_t __size );
+_WCRTLINK extern void    srand( unsigned int __seed );
+_WMRTLINK extern double  strtod( const char *__nptr, char **__endptr );
+_WMRTLINK extern float   strtof( const char *__nptr, char **__endptr );
+_WMRTLINK extern long double strtold( const char *__nptr, char **__endptr );
+_WCRTLINK extern long int strtol( const char *__nptr, char **__endptr, int __base );
+_WCRTLINK extern long long int strtoll( const char *__nptr, char **__endptr, int __base );
+_WCRTLINK extern unsigned long strtoul( const char *__nptr, char **__endptr, int __base );
+_WCRTLINK extern unsigned long long int strtoull( const char *__nptr, char **__endptr, int __base );
+_WCRTLINK extern int     system( const char *__string );
 :segment CNAME
 }
 :endsegment
@@ -228,134 +228,134 @@ namespace std {
 
 :segment QNX | LINUX
 :include unixext.sp
-_WCRTLINK void           _WRTLCALL _exit( int __status );
+_WCRTLINK void           _exit( int __status );
 #endif
 :endsegment
 
 :include ext.sp
 
-_WCRTLINK extern void    _WRTLCALL break_on( void );
-_WCRTLINK extern void    _WRTLCALL break_off( void );
+_WCRTLINK extern void    break_on( void );
+_WCRTLINK extern void    break_off( void );
 
 :segment QNX
-_WCRTLINK extern unsigned _WRTLCALL atoh( const char *__nptr );
+_WCRTLINK extern unsigned atoh( const char *__nptr );
 :endsegment
 :segment DOS
-_WCRTLINK extern void    _WRTLCALL _exit( int __status );
+_WCRTLINK extern void    _exit( int __status );
 :endsegment
-_WMRTLINK extern char    * _WRTLCALL ecvt( double __val, int __ndig, int *__dec, int *__sign );
-_WMRTLINK extern char    * _WRTLCALL _ecvt( double __val, int __ndig, int *__dec, int *__sign );
-_WMRTLINK extern char    * _WRTLCALL fcvt( double __val, int __ndig, int *__dec, int *__sign );
-_WMRTLINK extern char    * _WRTLCALL _fcvt( double __val, int __ndig, int *__dec, int *__sign );
-_WCRTLINK extern char    * _WRTLCALL _fullpath( char *__buf, const char *__path, _w_size_t __size );
-_WMRTLINK extern char    * _WRTLCALL gcvt( double __val, int __ndig, char *__buf );
-_WMRTLINK extern char    * _WRTLCALL _gcvt( double __val, int __ndig, char *__buf );
-_WCRTLINK extern char    * _WRTLCALL itoa( int __value, char *__buf, int __radix );
-_WCRTLINK extern char    * _WRTLCALL _itoa( int __value, char *__buf, int __radix );
+_WMRTLINK extern char    *ecvt( double __val, int __ndig, int *__dec, int *__sign );
+_WMRTLINK extern char    *_ecvt( double __val, int __ndig, int *__dec, int *__sign );
+_WMRTLINK extern char    *fcvt( double __val, int __ndig, int *__dec, int *__sign );
+_WMRTLINK extern char    *_fcvt( double __val, int __ndig, int *__dec, int *__sign );
+_WCRTLINK extern char    *_fullpath( char *__buf, const char *__path, _w_size_t __size );
+_WMRTLINK extern char    *gcvt( double __val, int __ndig, char *__buf );
+_WMRTLINK extern char    *_gcvt( double __val, int __ndig, char *__buf );
+_WCRTLINK extern char    *itoa( int __value, char *__buf, int __radix );
+_WCRTLINK extern char    *_itoa( int __value, char *__buf, int __radix );
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
 _WCIRTLINK
 #else
 _WCRTLINK
 #endif
-extern unsigned long     _WRTLCALL _lrotl( unsigned long __value, unsigned int __shift );
+extern unsigned long     _lrotl( unsigned long __value, unsigned int __shift );
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
 _WCIRTLINK
 #else
 _WCRTLINK
 #endif
-extern unsigned long     _WRTLCALL _lrotr( unsigned long __value, unsigned int __shift );
-_WCRTLINK extern char    * _WRTLCALL ltoa( long int __value, char *__buf, int __radix );
-_WCRTLINK extern char    * _WRTLCALL lltoa( long long int __value, char *__buf, int __radix );
-_WCRTLINK extern char    * _WRTLCALL _ltoa( long int __value, char *__buf, int __radix );
-_WCRTLINK extern char    * _WRTLCALL _lltoa( long long int __value, char *__buf, int __radix );
-_WCRTLINK extern void    _WRTLCALL _makepath( char *__path, const char *__drive,
+extern unsigned long     _lrotr( unsigned long __value, unsigned int __shift );
+_WCRTLINK extern char    *ltoa( long int __value, char *__buf, int __radix );
+_WCRTLINK extern char    *lltoa( long long int __value, char *__buf, int __radix );
+_WCRTLINK extern char    *_ltoa( long int __value, char *__buf, int __radix );
+_WCRTLINK extern char    *_lltoa( long long int __value, char *__buf, int __radix );
+_WCRTLINK extern void    _makepath( char *__path, const char *__drive,
                                     const char *__dir, const char *__fname, const char *__ext );
-_WCRTLINK extern int     _WRTLCALL mkstemp( char *__template );
-_WCIRTLINK extern unsigned int _WRTLCALL _rotl( unsigned int __value, unsigned int __shift );
-_WCIRTLINK extern unsigned int _WRTLCALL _rotr( unsigned int __value, unsigned int __shift );
+_WCRTLINK extern int     mkstemp( char *__template );
+_WCIRTLINK extern unsigned int _rotl( unsigned int __value, unsigned int __shift );
+_WCIRTLINK extern unsigned int _rotr( unsigned int __value, unsigned int __shift );
 :segment !NO_WIDECHAR
 
-_WMRTLINK extern wchar_t  * _WRTLCALL _wecvt( double __val, int __ndig, int *__dec, int *__sign );
-_WMRTLINK extern wchar_t  * _WRTLCALL _wfcvt( double __val, int __ndig, int *__dec, int *__sign );
-_WMRTLINK extern wchar_t  * _WRTLCALL _wgcvt( double __val, int __ndig, wchar_t *__buf );
-_WCRTLINK extern int      _WRTLCALL _wtoi( const wchar_t * );
-_WCRTLINK extern long int _WRTLCALL _wtol( const wchar_t * );
-_WCRTLINK extern long long int _WRTLCALL _wtoll( const wchar_t * );
-_WCRTLINK extern wchar_t  * _WRTLCALL _itow( int, wchar_t *, int );
-_WCRTLINK extern wchar_t  * _WRTLCALL _ltow( long int, wchar_t *, int );
-_WCRTLINK extern wchar_t  * _WRTLCALL _lltow( long long int, wchar_t *, int );
-_WCRTLINK extern wchar_t  * _WRTLCALL _utow( unsigned int, wchar_t *, int );
-_WCRTLINK extern wchar_t  * _WRTLCALL _ultow( unsigned long int, wchar_t *, int );
-_WCRTLINK extern wchar_t  * _WRTLCALL _ulltow( unsigned long long int, wchar_t *, int );
-_WMRTLINK extern double   _WRTLCALL _wtof( const wchar_t * );
-_WMRTLINK extern double   _WRTLCALL _watof( const wchar_t * );
+_WMRTLINK extern wchar_t  *_wecvt( double __val, int __ndig, int *__dec, int *__sign );
+_WMRTLINK extern wchar_t  *_wfcvt( double __val, int __ndig, int *__dec, int *__sign );
+_WMRTLINK extern wchar_t  *_wgcvt( double __val, int __ndig, wchar_t *__buf );
+_WCRTLINK extern int      _wtoi( const wchar_t * );
+_WCRTLINK extern long int _wtol( const wchar_t * );
+_WCRTLINK extern long long int _wtoll( const wchar_t * );
+_WCRTLINK extern wchar_t  *_itow( int, wchar_t *, int );
+_WCRTLINK extern wchar_t  *_ltow( long int, wchar_t *, int );
+_WCRTLINK extern wchar_t  *_lltow( long long int, wchar_t *, int );
+_WCRTLINK extern wchar_t  *_utow( unsigned int, wchar_t *, int );
+_WCRTLINK extern wchar_t  *_ultow( unsigned long int, wchar_t *, int );
+_WCRTLINK extern wchar_t  *_ulltow( unsigned long long int, wchar_t *, int );
+_WMRTLINK extern double   _wtof( const wchar_t * );
+_WMRTLINK extern double   _watof( const wchar_t * );
 :segment CNAME
 namespace std {
 :endsegment
-_WCRTLINK extern long int _WRTLCALL wcstol( const wchar_t *, wchar_t **, int );
-_WCRTLINK extern long long int _WRTLCALL wcstoll( const wchar_t *, wchar_t **, int );
-_WMRTLINK extern double  _WRTLCALL wcstod( const wchar_t *, wchar_t ** );
-_WCRTLINK extern unsigned long int _WRTLCALL wcstoul( const wchar_t *, wchar_t **, int );
-_WCRTLINK extern unsigned long long int _WRTLCALL wcstoull( const wchar_t *, wchar_t **, int );
+_WCRTLINK extern long int wcstol( const wchar_t *, wchar_t **, int );
+_WCRTLINK extern long long int wcstoll( const wchar_t *, wchar_t **, int );
+_WMRTLINK extern double  wcstod( const wchar_t *, wchar_t ** );
+_WCRTLINK extern unsigned long int wcstoul( const wchar_t *, wchar_t **, int );
+_WCRTLINK extern unsigned long long int wcstoull( const wchar_t *, wchar_t **, int );
 :segment CNAME
 }
 :endsegment
-_WCRTLINK extern wchar_t  * _WRTLCALL _atouni( wchar_t *, const char * );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wfullpath( wchar_t *, const wchar_t *, _w_size_t );
-_WCRTLINK extern void     _WRTLCALL _wmakepath( wchar_t *__path, const wchar_t *__drive,
+_WCRTLINK extern wchar_t  *_atouni( wchar_t *, const char * );
+_WCRTLINK extern wchar_t  *_wfullpath( wchar_t *, const wchar_t *, _w_size_t );
+_WCRTLINK extern void     _wmakepath( wchar_t *__path, const wchar_t *__drive,
                                       const wchar_t *__dir,
                                       const wchar_t *__fname,
                                       const wchar_t *__ext );
-_WCRTLINK extern int      _WRTLCALL _wcsicmp( const wchar_t *, const wchar_t * );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsdup( const wchar_t * );
-_WCRTLINK extern int      _WRTLCALL _wcsnicmp( const wchar_t *, const wchar_t *, _w_size_t );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcslwr( wchar_t * );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsupr( wchar_t * );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsrev( wchar_t * );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsset( wchar_t *, wchar_t );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wcsnset( wchar_t *, int, _w_size_t );
-_WCRTLINK extern wchar_t  * _WRTLCALL _wgetenv( const wchar_t *__name );
-_WCRTLINK extern int      _WRTLCALL _wsetenv( const wchar_t *__name,
+_WCRTLINK extern int      _wcsicmp( const wchar_t *, const wchar_t * );
+_WCRTLINK extern wchar_t  *_wcsdup( const wchar_t * );
+_WCRTLINK extern int      _wcsnicmp( const wchar_t *, const wchar_t *, _w_size_t );
+_WCRTLINK extern wchar_t  *_wcslwr( wchar_t * );
+_WCRTLINK extern wchar_t  *_wcsupr( wchar_t * );
+_WCRTLINK extern wchar_t  *_wcsrev( wchar_t * );
+_WCRTLINK extern wchar_t  *_wcsset( wchar_t *, wchar_t );
+_WCRTLINK extern wchar_t  *_wcsnset( wchar_t *, int, _w_size_t );
+_WCRTLINK extern wchar_t  *_wgetenv( const wchar_t *__name );
+_WCRTLINK extern int      _wsetenv( const wchar_t *__name,
                                       const wchar_t *__newvalue,
                                       int __overwrite );
-_WCRTLINK extern int      _WRTLCALL _wputenv( const wchar_t *__env_string );
+_WCRTLINK extern int      _wputenv( const wchar_t *__env_string );
 :segment !QNX & !LINUX
-_WCRTLINK extern void     _WRTLCALL _wsearchenv( const wchar_t *__name,
+_WCRTLINK extern void     _wsearchenv( const wchar_t *__name,
                                          const wchar_t *__env_var,
                                          wchar_t *__buf );
-_WCRTLINK extern void     _WRTLCALL _wsplitpath2( const wchar_t *__inp,
+_WCRTLINK extern void     _wsplitpath2( const wchar_t *__inp,
                                           wchar_t *__outp, wchar_t **__drive,
                                           wchar_t **__dir, wchar_t **__fn,
                                           wchar_t **__ext );
-_WCRTLINK extern void     _WRTLCALL _wsplitpath( const wchar_t *__path,
+_WCRTLINK extern void     _wsplitpath( const wchar_t *__path,
                                          wchar_t *__drive, wchar_t *__dir,
                                          wchar_t *__fname, wchar_t *__ext );
-_WCRTLINK extern int      _WRTLCALL _wsystem( const wchar_t *__cmd );
+_WCRTLINK extern int      _wsystem( const wchar_t *__cmd );
 :endsegment
 :endsegment
 
-_WCRTLINK extern int     _WRTLCALL setenv( const char *__name, const char *__newvalue, int __overwrite );
-_WCRTLINK extern void    _WRTLCALL unsetenv( const char *name );
+_WCRTLINK extern int     setenv( const char *__name, const char *__newvalue, int __overwrite );
+_WCRTLINK extern void    unsetenv( const char *name );
 
-_WCRTLINK extern int     _WRTLCALL putenv( const char *__string );
-_WCRTLINK extern void    _WRTLCALL _searchenv( const char *__name, const char *__env_var, char *__buf );
+_WCRTLINK extern int     putenv( const char *__string );
+_WCRTLINK extern void    _searchenv( const char *__name, const char *__env_var, char *__buf );
 :segment QNX
-_WCRTLINK extern int     _WRTLCALL need_usage( char **argv );
-_WCRTLINK extern int     _WRTLCALL print_usage( char **argv );
-_WCRTLINK extern void    _WRTLCALL searchenv( const char *__name, const char *__env_var, char *__buf );
+_WCRTLINK extern int     need_usage( char **argv );
+_WCRTLINK extern int     print_usage( char **argv );
+_WCRTLINK extern void    searchenv( const char *__name, const char *__env_var, char *__buf );
 :endsegment
-_WCRTLINK extern void    _WRTLCALL _splitpath2( const char *__inp, char *__outp,
+_WCRTLINK extern void    _splitpath2( const char *__inp, char *__outp,
                                       char **__drive, char **__dir,
                                       char **__fn, char **__ext );
-_WCRTLINK extern void    _WRTLCALL _splitpath( const char *__path, char *__drive,
+_WCRTLINK extern void    _splitpath( const char *__path, char *__drive,
                                      char *__dir, char *__fname, char *__ext );
-_WCRTLINK extern void    _WRTLCALL swab( char *__src, char *__dest, int __num );
-_WCRTLINK extern char    * _WRTLCALL ultoa( unsigned long int __value, char *__buf, int __radix );
-_WCRTLINK extern char    * _WRTLCALL ulltoa( unsigned long long int __value, char *__buf, int __radix );
-_WCRTLINK extern char    * _WRTLCALL _ultoa( unsigned long int __value, char *__buf, int __radix );
-_WCRTLINK extern char    * _WRTLCALL _ulltoa( unsigned long long int __value, char *__buf, int __radix );
-_WCRTLINK extern char    * _WRTLCALL utoa( unsigned int __value, char *__buf, int __radix );
-_WCRTLINK extern char    * _WRTLCALL _utoa( unsigned int __value, char *__buf, int __radix );
+_WCRTLINK extern void    swab( char *__src, char *__dest, int __num );
+_WCRTLINK extern char    *ultoa( unsigned long int __value, char *__buf, int __radix );
+_WCRTLINK extern char    *ulltoa( unsigned long long int __value, char *__buf, int __radix );
+_WCRTLINK extern char    *_ultoa( unsigned long int __value, char *__buf, int __radix );
+_WCRTLINK extern char    *_ulltoa( unsigned long long int __value, char *__buf, int __radix );
+_WCRTLINK extern char    *utoa( unsigned int __value, char *__buf, int __radix );
+_WCRTLINK extern char    *_utoa( unsigned int __value, char *__buf, int __radix );
 
 :segment !CNAME
 #if defined(__INLINE_FUNCTIONS__)
@@ -370,19 +370,19 @@ _WCRTLINK extern char    * _WRTLCALL _utoa( unsigned int __value, char *__buf, i
 :include saferpro.sp
 
 _WCRTLINK extern constraint_handler_t set_constraint_handler_s( constraint_handler_t __handler );
-_WCRTLINK extern void _WRTLCALL abort_handler_s( const char * __restrict __msg, void * __restrict __ptr, errno_t __error );
-_WCRTLINK extern void _WRTLCALL ignore_handler_s( const char * __restrict __msg, void * __restrict __ptr, errno_t __error );
+_WCRTLINK extern void abort_handler_s( const char * __restrict __msg, void * __restrict __ptr, errno_t __error );
+_WCRTLINK extern void ignore_handler_s( const char * __restrict __msg, void * __restrict __ptr, errno_t __error );
 
-_WCRTLINK extern errno_t _WRTLCALL getenv_s( size_t * __restrict __len, char * __restrict __value, rsize_t __maxsize, const char * __restrict __name );
+_WCRTLINK extern errno_t getenv_s( size_t * __restrict __len, char * __restrict __value, rsize_t __maxsize, const char * __restrict __name );
 
-_WCRTLINK extern void    * _WRTLCALL bsearch_s( const void *__key, const void *__base, rsize_t __nmemb, rsize_t __size,
+_WCRTLINK extern void    *bsearch_s( const void *__key, const void *__base, rsize_t __nmemb, rsize_t __size,
                                      int (*__compar)(const void *__x, const void *__y, void *__context), void *__context);
-_WCRTLINK extern errno_t _WRTLCALL qsort_s( void *__base, rsize_t __nmemb, rsize_t __size,
+_WCRTLINK extern errno_t qsort_s( void *__base, rsize_t __nmemb, rsize_t __size,
                                   int (*__compar)(const void *__x, const void *__y, void *__context), void *__context);
 
-_WCRTLINK extern errno_t _WRTLCALL wctomb_s( int * __restrict __status, char * __restrict __s, rsize_t __smax, wchar_t __wc );
-_WCRTLINK extern errno_t _WRTLCALL mbstowcs_s( size_t * __restrict __retval, wchar_t * __restrict __dst, rsize_t __dstmax, const char * __restrict __src, rsize_t __len );
-_WCRTLINK extern errno_t _WRTLCALL wcstombs_s( size_t * __restrict __retval, char * __restrict __dst, rsize_t __dstmax, const wchar_t * __restrict __src, rsize_t __len );
+_WCRTLINK extern errno_t wctomb_s( int * __restrict __status, char * __restrict __s, rsize_t __smax, wchar_t __wc );
+_WCRTLINK extern errno_t mbstowcs_s( size_t * __restrict __retval, wchar_t * __restrict __dst, rsize_t __dstmax, const char * __restrict __src, rsize_t __len );
+_WCRTLINK extern errno_t wcstombs_s( size_t * __restrict __retval, char * __restrict __dst, rsize_t __dstmax, const wchar_t * __restrict __src, rsize_t __len );
 
 :include saferepi.sp
 :endsegment
@@ -433,9 +433,9 @@ _WCRTLINK extern errno_t _WRTLCALL wcstombs_s( size_t * __restrict __retval, cha
                                     for _splitpath2() */
 
 :segment !QNX & !LINUX
-_WCRTLINK char     *** _WRTLCALL __get_environ_ptr( void );
-_WCRTLINK wchar_t  *** _WRTLCALL __get_wenviron_ptr( void );
-_WCRTLINK int      * _WRTLCALL __get_fileinfo_ptr( void );
+_WCRTLINK char     ***__get_environ_ptr( void );
+_WCRTLINK wchar_t  ***__get_wenviron_ptr( void );
+_WCRTLINK int      *__get_fileinfo_ptr( void );
 #if defined(__FUNCTION_DATA_ACCESS)
  #define environ   (*__get_environ_ptr())
  #define _wenviron (*__get_wenviron_ptr())
@@ -463,7 +463,7 @@ _WCRTLINK extern wchar_t **_WCNEAR _wenviron;   /*  pointer to wide environment 
 :include errno.sp
 
 :segment !QNX & !LINUX
-_WCRTLINK extern int    * _WRTLCALL __get_doserrno_ptr( void );
+_WCRTLINK extern int    *__get_doserrno_ptr( void );
 #define _doserrno       (*__get_doserrno_ptr())     /* DOS system error code value */
 _WCRTLINK extern int    _doserrno;
 
@@ -471,14 +471,14 @@ _WCRTLINK extern int    _doserrno;
 #define sys_errlist _sys_errlist
 #define sys_nerr _sys_nerr
 #endif
-_WCRTLINK unsigned           * _WRTLCALL __get_psp_ptr( void );
-_WCRTLINK unsigned char      * _WRTLCALL __get_osmode_ptr( void );
-_WCRTLINK int                * _WRTLCALL __get_fmode_ptr( void );
-_WCRTLINK char               ** _WRTLCALL __get_sys_errlist_ptr( void );
-_WCRTLINK int                * _WRTLCALL __get_sys_nerr_ptr( void );
-_WCRTLINK unsigned           * _WRTLCALL __get_minreal_ptr( void );
-_WCRTLINK unsigned long      * _WRTLCALL __get_win_alloc_flags_ptr( void );
-_WCRTLINK unsigned long      * _WRTLCALL __get_win_realloc_flags_ptr( void );
+_WCRTLINK unsigned           *__get_psp_ptr( void );
+_WCRTLINK unsigned char      *__get_osmode_ptr( void );
+_WCRTLINK int                *__get_fmode_ptr( void );
+_WCRTLINK char               **__get_sys_errlist_ptr( void );
+_WCRTLINK int                *__get_sys_nerr_ptr( void );
+_WCRTLINK unsigned           *__get_minreal_ptr( void );
+_WCRTLINK unsigned long      *__get_win_alloc_flags_ptr( void );
+_WCRTLINK unsigned long      *__get_win_realloc_flags_ptr( void );
 #if defined(__FUNCTION_DATA_ACCESS)
  #define _psp                (*__get_psp_ptr())
  #define _osmode             (*__get_osmode_ptr())
@@ -503,16 +503,16 @@ _WCRTLINK extern unsigned _WCDATA    _psp;      /* Program Segment Prefix */
 #define OS2_MODE 1                              /* Protected Address Mode */
 _WCRTLINK extern unsigned char _WCNEAR _osmode; /* DOS_MODE or OS2_MODE */
 _WCRTLINK extern int _WCNEAR        _fmode;     /* default file translation mode */
-_WCRTLINK extern char *             _sys_errlist[];/* strerror error message table */
+_WCRTLINK extern char               *_sys_errlist[];/* strerror error message table */
 _WCRTLINK extern int _WCNEAR        _sys_nerr;  /* # of entries in _sys_errlist array */
 _WCRTLINK extern unsigned _WCDATA   __minreal;  /* DOS4GW var for WLINK MINREAL option*/
 _WCRTLINK extern unsigned long _WCDATA __win_alloc_flags; /* Windows allocation flags */
 _WCRTLINK extern unsigned long _WCDATA __win_realloc_flags;/* Windows reallocation flags */
 
 :endsegment
-_WCRTLINK unsigned      * _WRTLCALL __get_amblksiz_ptr( void );
-_WCRTLINK unsigned char * _WRTLCALL __get_osmajor_ptr( void );
-_WCRTLINK unsigned char * _WRTLCALL __get_osminor_ptr( void );
+_WCRTLINK unsigned      *__get_amblksiz_ptr( void );
+_WCRTLINK unsigned char *__get_osmajor_ptr( void );
+_WCRTLINK unsigned char *__get_osminor_ptr( void );
 #if defined(__FUNCTION_DATA_ACCESS)
  #define _amblksiz      (*__get_amblksiz_ptr())
  #define _osmajor       (*__get_osmajor_ptr())
@@ -528,11 +528,11 @@ _WCRTLINK extern unsigned char _WCNEAR  _osminor;    /*  O/S minor version # */
 
 :segment !QNX & !LINUX
 #if defined(__NT__)
- _WCRTLINK unsigned short   * _WRTLCALL __get_osbuild_ptr( void );
- _WCRTLINK unsigned int     * _WRTLCALL __get_osver_ptr( void );
- _WCRTLINK unsigned int     * _WRTLCALL __get_winmajor_ptr( void );
- _WCRTLINK unsigned int     * _WRTLCALL __get_winminor_ptr( void );
- _WCRTLINK unsigned int     * _WRTLCALL __get_winver_ptr( void );
+ _WCRTLINK unsigned short   *__get_osbuild_ptr( void );
+ _WCRTLINK unsigned int     *__get_osver_ptr( void );
+ _WCRTLINK unsigned int     *__get_winmajor_ptr( void );
+ _WCRTLINK unsigned int     *__get_winminor_ptr( void );
+ _WCRTLINK unsigned int     *__get_winver_ptr( void );
  #if defined(__FUNCTION_DATA_ACCESS)
   #define _osbuild          (*__get_osbuild_ptr())
   #define _osver            (*__get_osver_ptr())
@@ -570,22 +570,22 @@ extern  wchar_t **__wargv;      /* vector of wide cmd line args */
 #if defined(__386__)
 :endsegment
 :segment QNX | LINUX
-_WCRTLINK extern int          _WRTLCALL brk( void *endds );
-_WCRTLINK extern void _WCNEAR * _WRTLCALL sbrk( int incr );
+_WCRTLINK extern int          brk( void *endds );
+_WCRTLINK extern void _WCNEAR *sbrk( int incr );
 :endsegment
 :segment QNX
 #else
 :endsegment
 :segment !LINUX
-_WCRTLINK extern void _WCNEAR * _WRTLCALL __brk( unsigned __new_brk_value );
-_WCRTLINK extern void _WCNEAR * _WRTLCALL sbrk( int __increment );
+_WCRTLINK extern void _WCNEAR *__brk( unsigned __new_brk_value );
+_WCRTLINK extern void _WCNEAR *sbrk( int __increment );
 :endsegment
 :segment QNX
 #endif
 :endsegment
 
  typedef void (*onexit_t)( void );
-_WCRTLINK extern onexit_t     _WRTLCALL onexit( onexit_t __func );
+_WCRTLINK extern onexit_t     onexit( onexit_t __func );
 
 #endif /* End of extensions section. */
 

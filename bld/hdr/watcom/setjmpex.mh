@@ -18,7 +18,7 @@
 #endif
 
 #if defined(__AXP__)
- _WCRTLINK extern int _WRTLCALL _setjmpex(jmp_buf __env);
+ _WCRTLINK extern int _setjmpex(jmp_buf __env);
 
  #undef setjmp
  #define setjmp(__env)  _setjmpex(__env)

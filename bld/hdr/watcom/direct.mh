@@ -46,7 +46,7 @@ struct _wdirent {
     ino_t              d_ino;           /* serial number (not used) */
 :endsegment
     char               d_first;         /* flag for 1st time */
-    wchar_t *          d_openpath;      /* path specified to _wopendir */
+    wchar_t            *d_openpath;      /* path specified to _wopendir */
 };
 
 struct dirent {
@@ -68,7 +68,7 @@ struct dirent {
     ino_t              d_ino;           /* serial number (not used) */
 :endsegment
     char               d_first;         /* flag for 1st time */
-    char *             d_openpath;      /* path specified to opendir */
+    char               *d_openpath;      /* path specified to opendir */
 };
 typedef struct dirent   DIR;
 
@@ -84,34 +84,34 @@ typedef struct dirent   DIR;
 
 :include dskfreet.sp
 
-_WCRTLINK extern int                _WRTLCALL chdir( const char *__path );
-_WCRTLINK extern int                _WRTLCALL closedir( struct dirent * );
-_WCRTLINK extern char               * _WRTLCALL getcwd( char *__buf, size_t __size );
-_WCRTLINK extern char               * _WRTLCALL _getcwd( char *__buf, size_t __size );
-_WCRTLINK extern char               * _WRTLCALL _getdcwd( int __drive, char *__buffer,
+_WCRTLINK extern int              chdir( const char *__path );
+_WCRTLINK extern int              closedir( struct dirent * );
+_WCRTLINK extern char             *getcwd( char *__buf, size_t __size );
+_WCRTLINK extern char             *_getcwd( char *__buf, size_t __size );
+_WCRTLINK extern char             *_getdcwd( int __drive, char *__buffer,
                                             size_t __maxlen );
-_WCRTLINK extern unsigned           _WRTLCALL _getdrive( void );
-_WCRTLINK extern unsigned           _WRTLCALL _getdiskfree( unsigned __drive,
+_WCRTLINK extern unsigned         _getdrive( void );
+_WCRTLINK extern unsigned         _getdiskfree( unsigned __drive,
                                                 struct _diskfree_t
                                                 *__diskspace);
-_WCRTLINK extern int                _WRTLCALL mkdir( const char *__path );
-_WCRTLINK extern int                _WRTLCALL _mkdir( const char *__path );
-_WCRTLINK extern struct dirent      * _WRTLCALL opendir( const char * );
-_WCRTLINK extern struct dirent      * _WRTLCALL readdir( struct dirent * );
-_WCRTLINK extern void               _WRTLCALL rewinddir( struct dirent * );
-_WCRTLINK extern int                _WRTLCALL rmdir( const char *__path );
-_WCRTLINK extern int                _WRTLCALL _rmdir( const char *__path );
+_WCRTLINK extern int              mkdir( const char *__path );
+_WCRTLINK extern int              _mkdir( const char *__path );
+_WCRTLINK extern struct dirent    *opendir( const char * );
+_WCRTLINK extern struct dirent    *readdir( struct dirent * );
+_WCRTLINK extern void             rewinddir( struct dirent * );
+_WCRTLINK extern int              rmdir( const char *__path );
+_WCRTLINK extern int              _rmdir( const char *__path );
 
-_WCRTLINK extern int                _WRTLCALL _wchdir( const wchar_t *__path );
-_WCRTLINK extern int                _WRTLCALL _wclosedir( struct _wdirent * );
-_WCRTLINK extern wchar_t *          _WRTLCALL _wgetcwd( wchar_t *__buf, size_t __size );
-_WCRTLINK extern wchar_t *          _WRTLCALL _wgetdcwd( int __drive, wchar_t *__buffer,
+_WCRTLINK extern int              _wchdir( const wchar_t *__path );
+_WCRTLINK extern int              _wclosedir( struct _wdirent * );
+_WCRTLINK extern wchar_t          *_wgetcwd( wchar_t *__buf, size_t __size );
+_WCRTLINK extern wchar_t          *_wgetdcwd( int __drive, wchar_t *__buffer,
                                              size_t __maxlen );
-_WCRTLINK extern int                _WRTLCALL _wmkdir( const wchar_t *__path );
-_WCRTLINK extern struct _wdirent    * _WRTLCALL _wopendir( const wchar_t * );
-_WCRTLINK extern struct _wdirent    * _WRTLCALL _wreaddir( struct _wdirent * );
-_WCRTLINK extern void               _WRTLCALL _wrewinddir( struct _wdirent * );
-_WCRTLINK extern int                _WRTLCALL _wrmdir( const wchar_t *__path );
+_WCRTLINK extern int              _wmkdir( const wchar_t *__path );
+_WCRTLINK extern struct _wdirent  *_wopendir( const wchar_t * );
+_WCRTLINK extern struct _wdirent  *_wreaddir( struct _wdirent * );
+_WCRTLINK extern void             _wrewinddir( struct _wdirent * );
+_WCRTLINK extern int              _wrmdir( const wchar_t *__path );
 
 :include poppack.sp
 :include cplusepi.sp

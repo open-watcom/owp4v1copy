@@ -214,12 +214,12 @@
 #define FPE_LOGERR          _FPE_LOGERR
 #define FPE_MODERR          _FPE_MODERR
 
-_WMRTLINK extern unsigned _WRTLCALL _clear87(void);
-_WCRTLINK extern unsigned _WRTLCALL _control87(unsigned,unsigned);
-_WCRTLINK extern unsigned _WRTLCALL _controlfp(unsigned,unsigned);
-_WCRTLINK extern void     _WRTLCALL _fpreset(void);
-_WMRTLINK extern unsigned _WRTLCALL _status87(void);
-_WMRTLINK extern int      _WRTLCALL _finite(double);
+_WMRTLINK extern unsigned _clear87(void);
+_WCRTLINK extern unsigned _control87(unsigned,unsigned);
+_WCRTLINK extern unsigned _controlfp(unsigned,unsigned);
+_WCRTLINK extern void     _fpreset(void);
+_WMRTLINK extern unsigned _status87(void);
+_WMRTLINK extern int      _finite(double);
 
 /* Floating-point Infinity and NaN constants */
 

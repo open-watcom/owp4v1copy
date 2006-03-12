@@ -206,9 +206,9 @@ typedef long           fpos_t;
 :endsegment
 
 :segment CNAME
-_WCRTLINK extern std::FILE  * _WRTLCALL __get_iob_ptr( void );
+_WCRTLINK extern std::FILE  *__get_iob_ptr( void );
 :elsesegment
-_WCRTLINK extern FILE       * _WRTLCALL __get_iob_ptr( void );
+_WCRTLINK extern FILE       *__get_iob_ptr( void );
 :endsegment
 #if defined(__FUNCTION_DATA_ACCESS)
  #define __iob          (*__get_iob_ptr())
@@ -255,9 +255,9 @@ _WCRTLINK extern FILE _WCNEAR __iob[];
 #else /* __OBSCURE_STREAM_INTERNALS is defined */
 
 :segment CNAME
-_WCRTLINK extern std::FILE * _WRTLCALL __get_std_file(unsigned handle);
+_WCRTLINK extern std::FILE *__get_std_file(unsigned handle);
 :elsesegment
-_WCRTLINK extern FILE * _WRTLCALL __get_std_file(unsigned handle);
+_WCRTLINK extern FILE *__get_std_file(unsigned handle);
 :endsegment
 
 #define stdin   (__get_std_file(0))     /* standard input file  */
@@ -337,52 +337,52 @@ _WCRTLINK extern FILE * _WRTLCALL __get_std_file(unsigned handle);
 :segment CNAME
 namespace std {
 :endsegment
-_WCRTLINK extern void   _WRTLCALL clearerr( FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL fclose( FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL feof( FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL ferror( FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL fflush( FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL fgetc( FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL fgetpos( FILE *__fp, fpos_t *__pos );
-_WCRTLINK extern char  * _WRTLCALL fgets( char *__s, int __n, FILE *__fp );
-_WCRTLINK extern FILE  * _WRTLCALL fopen( const char *__filename, const char *__mode );
-_WCRTLINK extern int    _WRTLCALL fprintf( FILE *__fp, const char *__format, ... );
-_WCRTLINK extern int    _WRTLCALL fputc( int __c, FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL fputs( const char *__s, FILE *__fp );
-_WCRTLINK extern size_t _WRTLCALL fread( void *__ptr, size_t __size, size_t __n,
+_WCRTLINK extern void   clearerr( FILE *__fp );
+_WCRTLINK extern int    fclose( FILE *__fp );
+_WCRTLINK extern int    feof( FILE *__fp );
+_WCRTLINK extern int    ferror( FILE *__fp );
+_WCRTLINK extern int    fflush( FILE *__fp );
+_WCRTLINK extern int    fgetc( FILE *__fp );
+_WCRTLINK extern int    fgetpos( FILE *__fp, fpos_t *__pos );
+_WCRTLINK extern char   *fgets( char *__s, int __n, FILE *__fp );
+_WCRTLINK extern FILE   *fopen( const char *__filename, const char *__mode );
+_WCRTLINK extern int    fprintf( FILE *__fp, const char *__format, ... );
+_WCRTLINK extern int    fputc( int __c, FILE *__fp );
+_WCRTLINK extern int    fputs( const char *__s, FILE *__fp );
+_WCRTLINK extern size_t fread( void *__ptr, size_t __size, size_t __n,
                                FILE *__fp );
-_WCRTLINK extern FILE  * _WRTLCALL freopen( const char *__filename, const char *__mode,
+_WCRTLINK extern FILE   *freopen( const char *__filename, const char *__mode,
                                  FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL fscanf( FILE*__fp, const char *__format, ... );
-_WCRTLINK extern int    _WRTLCALL fseek( FILE *__fp, long int __offset, int __whence );
-_WCRTLINK extern int    _WRTLCALL fsetpos( FILE *__fp, const fpos_t *__pos );
-_WCRTLINK extern long   _WRTLCALL ftell( FILE *__fp );
-_WCRTLINK extern size_t _WRTLCALL fwrite( const void *__ptr, size_t __size, size_t __n,
+_WCRTLINK extern int    fscanf( FILE*__fp, const char *__format, ... );
+_WCRTLINK extern int    fseek( FILE *__fp, long int __offset, int __whence );
+_WCRTLINK extern int    fsetpos( FILE *__fp, const fpos_t *__pos );
+_WCRTLINK extern long   ftell( FILE *__fp );
+_WCRTLINK extern size_t fwrite( const void *__ptr, size_t __size, size_t __n,
                                 FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL getc( FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL getchar( void );
-_WCRTLINK extern char  * _WRTLCALL gets( char *__s );
-_WCRTLINK extern void   _WRTLCALL perror( const char *__s );
-_WCRTLINK extern int    _WRTLCALL printf( const char *__format, ... );
-_WCRTLINK extern int    _WRTLCALL putc( int __c, FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL putchar( int __c );
-_WCRTLINK extern int    _WRTLCALL puts( const char *__s );
-_WCRTLINK extern int    _WRTLCALL remove( const char *__filename );
-_WCRTLINK extern int    _WRTLCALL rename( const char *__old, const char *__new );
-_WCRTLINK extern void   _WRTLCALL rewind( FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL scanf( const char *__format, ... );
-_WCRTLINK extern void   _WRTLCALL setbuf( FILE *__fp, char *__buf );
-_WCRTLINK extern int    _WRTLCALL setvbuf( FILE *__fp, char *__buf, int __mode,
+_WCRTLINK extern int    getc( FILE *__fp );
+_WCRTLINK extern int    getchar( void );
+_WCRTLINK extern char   *gets( char *__s );
+_WCRTLINK extern void   perror( const char *__s );
+_WCRTLINK extern int    printf( const char *__format, ... );
+_WCRTLINK extern int    putc( int __c, FILE *__fp );
+_WCRTLINK extern int    putchar( int __c );
+_WCRTLINK extern int    puts( const char *__s );
+_WCRTLINK extern int    remove( const char *__filename );
+_WCRTLINK extern int    rename( const char *__old, const char *__new );
+_WCRTLINK extern void   rewind( FILE *__fp );
+_WCRTLINK extern int    scanf( const char *__format, ... );
+_WCRTLINK extern void   setbuf( FILE *__fp, char *__buf );
+_WCRTLINK extern int    setvbuf( FILE *__fp, char *__buf, int __mode,
                                  size_t __size );
-_WCRTLINK extern int    _WRTLCALL sprintf( char *__s, const char *__format, ... );
-_WCRTLINK extern int    _WRTLCALL sscanf( const char *__s, const char *__format, ... );
-_WCRTLINK extern FILE  * _WRTLCALL tmpfile( void );
-_WCRTLINK extern char  * _WRTLCALL tmpnam( char *__s );
-_WCRTLINK extern int    _WRTLCALL ungetc( int __c, FILE *__fp );
-_WCRTLINK extern int    _WRTLCALL vfprintf( FILE *__fp, const char *__format,
+_WCRTLINK extern int    sprintf( char *__s, const char *__format, ... );
+_WCRTLINK extern int    sscanf( const char *__s, const char *__format, ... );
+_WCRTLINK extern FILE   *tmpfile( void );
+_WCRTLINK extern char   *tmpnam( char *__s );
+_WCRTLINK extern int    ungetc( int __c, FILE *__fp );
+_WCRTLINK extern int    vfprintf( FILE *__fp, const char *__format,
                                   __va_list __arg );
-_WCRTLINK extern int    _WRTLCALL vprintf( const char *__format, __va_list __arg );
-_WCRTLINK extern int    _WRTLCALL vsprintf( char *__s, const char *__format,
+_WCRTLINK extern int    vprintf( const char *__format, __va_list __arg );
+_WCRTLINK extern int    vsprintf( char *__s, const char *__format,
                                   __va_list __arg );
 :: End of namespace std
 :segment CNAME
@@ -392,18 +392,18 @@ _WCRTLINK extern int    _WRTLCALL vsprintf( char *__s, const char *__format,
 :: Implementation specific functions remain in the global namespace.
 :segment !SNAP & !SNAPDRV
 :segment CNAME
-_WCRTLINK extern int        _WRTLCALL _getw( std::FILE *__fp );
-_WCRTLINK extern int        _WRTLCALL _pclose( std::FILE *__fp );
-_WCRTLINK extern std::FILE * _WRTLCALL _popen( const char *__command,
+_WCRTLINK extern int        _getw( std::FILE *__fp );
+_WCRTLINK extern int        _pclose( std::FILE *__fp );
+_WCRTLINK extern std::FILE  *_popen( const char *__command,
                                      const char *__mode );
-_WCRTLINK extern int        _WRTLCALL _putw( int __binint, std::FILE *__fp );
+_WCRTLINK extern int        _putw( int __binint, std::FILE *__fp );
 :elsesegment
-_WCRTLINK extern int   _WRTLCALL _getw( FILE *__fp );
-_WCRTLINK extern int   _WRTLCALL _pclose( FILE *__fp );
-_WCRTLINK extern FILE * _WRTLCALL _popen( const char *__command, const char *__mode );
-_WCRTLINK extern int   _WRTLCALL _putw( int __binint, FILE *__fp );
+_WCRTLINK extern int   _getw( FILE *__fp );
+_WCRTLINK extern int   _pclose( FILE *__fp );
+_WCRTLINK extern FILE  *_popen( const char *__command, const char *__mode );
+_WCRTLINK extern int   _putw( int __binint, FILE *__fp );
 :endsegment
-_WCRTLINK extern char * _WRTLCALL _tempnam( char *__dir, char *__prefix );
+_WCRTLINK extern char  *_tempnam( char *__dir, char *__prefix );
 :endsegment
 
 :: Extensions section.
@@ -422,43 +422,43 @@ _WCRTLINK extern char * _WRTLCALL _tempnam( char *__dir, char *__prefix );
 namespace std {
 :endsegment
 /* These names are in stdio according to C99. */
-_WCRTLINK extern int     _WRTLCALL snprintf( char *__buf, size_t __bufsize,
+_WCRTLINK extern int     snprintf( char *__buf, size_t __bufsize,
                                    const char *__fmt, ... );
-_WCRTLINK extern int     _WRTLCALL vfscanf( FILE *__fp, const char *__format,
+_WCRTLINK extern int     vfscanf( FILE *__fp, const char *__format,
                                   __va_list __arg );
-_WCRTLINK extern int     _WRTLCALL vscanf( const char *__format, __va_list __arg );
-_WCRTLINK extern int     _WRTLCALL vsnprintf( char *__s, size_t __bufsize,
+_WCRTLINK extern int     vscanf( const char *__format, __va_list __arg );
+_WCRTLINK extern int     vsnprintf( char *__s, size_t __bufsize,
                                     const char *__format, __va_list __arg );
-_WCRTLINK extern int     _WRTLCALL vsscanf( const char *__s, const char *__format,
+_WCRTLINK extern int     vsscanf( const char *__s, const char *__format,
                                   __va_list __arg );
 
 :segment !SNAPDRV & !NO_WIDECHAR
 /* These names are not in stdio according to C99. */
-_WCRTLINK extern wint_t   _WRTLCALL getwc( FILE * );
-_WCRTLINK extern wint_t   _WRTLCALL getwchar( void );
-_WCRTLINK extern wint_t   _WRTLCALL fgetwc( FILE * );
-_WCRTLINK extern wchar_t * _WRTLCALL fgetws( wchar_t *, int, FILE * );
-_WCRTLINK extern wint_t   _WRTLCALL fputwc( wint_t, FILE * );
-_WCRTLINK extern int      _WRTLCALL fputws( const wchar_t *, FILE * );
-_WCRTLINK extern int      _WRTLCALL fwprintf( FILE *, const wchar_t *, ... );
-_WCRTLINK extern int      _WRTLCALL fwscanf( FILE *, const wchar_t *, ... );
-_WCRTLINK extern wint_t   _WRTLCALL putwc( wint_t, FILE * );
-_WCRTLINK extern wint_t   _WRTLCALL putwchar( wint_t );
+_WCRTLINK extern wint_t   getwc( FILE * );
+_WCRTLINK extern wint_t   getwchar( void );
+_WCRTLINK extern wint_t   fgetwc( FILE * );
+_WCRTLINK extern wchar_t  *fgetws( wchar_t *, int, FILE * );
+_WCRTLINK extern wint_t   fputwc( wint_t, FILE * );
+_WCRTLINK extern int      fputws( const wchar_t *, FILE * );
+_WCRTLINK extern int      fwprintf( FILE *, const wchar_t *, ... );
+_WCRTLINK extern int      fwscanf( FILE *, const wchar_t *, ... );
+_WCRTLINK extern wint_t   putwc( wint_t, FILE * );
+_WCRTLINK extern wint_t   putwchar( wint_t );
 #ifndef swprintf
-_WCRTLINK extern int      _WRTLCALL swprintf( wchar_t *, size_t, const wchar_t *, ... );
+_WCRTLINK extern int      swprintf( wchar_t *, size_t, const wchar_t *, ... );
 #endif
-_WCRTLINK extern int      _WRTLCALL swscanf( const wchar_t *, const wchar_t *, ... );
-_WCRTLINK extern wint_t   _WRTLCALL ungetwc( wint_t, FILE * );
-_WCRTLINK extern int      _WRTLCALL vfwprintf( FILE *, const wchar_t *, __va_list );
-_WCRTLINK extern int      _WRTLCALL vfwscanf( FILE *, const wchar_t *, __va_list );
-_WCRTLINK extern int      _WRTLCALL vswprintf( wchar_t *, size_t, const wchar_t *,
+_WCRTLINK extern int      swscanf( const wchar_t *, const wchar_t *, ... );
+_WCRTLINK extern wint_t   ungetwc( wint_t, FILE * );
+_WCRTLINK extern int      vfwprintf( FILE *, const wchar_t *, __va_list );
+_WCRTLINK extern int      vfwscanf( FILE *, const wchar_t *, __va_list );
+_WCRTLINK extern int      vswprintf( wchar_t *, size_t, const wchar_t *,
                                      __va_list );
-_WCRTLINK extern int      _WRTLCALL vswscanf( const wchar_t *, const wchar_t *,
+_WCRTLINK extern int      vswscanf( const wchar_t *, const wchar_t *,
                                     __va_list );
-_WCRTLINK extern int      _WRTLCALL vwprintf( const wchar_t *, __va_list );
-_WCRTLINK extern int      _WRTLCALL vwscanf( const wchar_t *, __va_list );
-_WCRTLINK extern int      _WRTLCALL wprintf( const wchar_t *, ... );
-_WCRTLINK extern int      _WRTLCALL wscanf( const wchar_t *, ... );
+_WCRTLINK extern int      vwprintf( const wchar_t *, __va_list );
+_WCRTLINK extern int      vwscanf( const wchar_t *, __va_list );
+_WCRTLINK extern int      wprintf( const wchar_t *, ... );
+_WCRTLINK extern int      wscanf( const wchar_t *, ... );
 :endsegment
 :segment CNAME
 }
@@ -468,127 +468,127 @@ _WCRTLINK extern int      _WRTLCALL wscanf( const wchar_t *, ... );
 ::
 :: The following is generated into cstdio
 :segment CNAME
-_WCRTLINK extern int           _WRTLCALL flushall( void );
+_WCRTLINK extern int           flushall( void );
 :segment !SNAPDRV
 :segment !QNX & !LINUX
-_WCRTLINK extern std::FILE    * _WRTLCALL _fdopen( int __handle, const char *__mode );
-_WCRTLINK extern std::FILE    * _WRTLCALL fdopen( int __handle, const char *__mode );
+_WCRTLINK extern std::FILE     *_fdopen( int __handle, const char *__mode );
+_WCRTLINK extern std::FILE     *fdopen( int __handle, const char *__mode );
 :endsegment
-_WCRTLINK extern int           _WRTLCALL _bprintf( char *__buf, std::size_t __bufsize,
+_WCRTLINK extern int           _bprintf( char *__buf, std::size_t __bufsize,
                                          const char *__fmt, ... );
-_WCRTLINK extern int           _WRTLCALL _fgetchar( void );
-_WCRTLINK extern int           _WRTLCALL _fileno(std::FILE *);
-_WCRTLINK extern int           _WRTLCALL _fputchar( int __c );
-_WCRTLINK extern std::FILE    * _WRTLCALL _fsopen( const char *__filename,
+_WCRTLINK extern int           _fgetchar( void );
+_WCRTLINK extern int           _fileno(std::FILE *);
+_WCRTLINK extern int           _fputchar( int __c );
+_WCRTLINK extern std::FILE     *_fsopen( const char *__filename,
                                         const char *__mode, int __shflag );
-_WCRTLINK extern int           _WRTLCALL _grow_handles( int __new_count );
-_WCRTLINK extern int           _WRTLCALL _snprintf( char *__buf, std::size_t __bufsize,
+_WCRTLINK extern int           _grow_handles( int __new_count );
+_WCRTLINK extern int           _snprintf( char *__buf, std::size_t __bufsize,
                                           const char *__fmt, ... );
-_WCRTLINK extern int           _WRTLCALL _vbprintf( char *__s, std::size_t __bufsize,
+_WCRTLINK extern int           _vbprintf( char *__s, std::size_t __bufsize,
                                        const char *__format, __va_list __arg );
-_WCRTLINK extern int           _WRTLCALL _vsnprintf( char *__s, std::size_t __bufsize,
+_WCRTLINK extern int           _vsnprintf( char *__s, std::size_t __bufsize,
                                        const char *__format, __va_list __arg );
-_WCRTLINK extern int           _WRTLCALL fcloseall( void );
-_WCRTLINK extern int           _WRTLCALL fgetchar( void );
-_WCRTLINK extern int           _WRTLCALL fileno(std::FILE *);
-_WCRTLINK extern int           _WRTLCALL fputchar( int __c );
+_WCRTLINK extern int           fcloseall( void );
+_WCRTLINK extern int           fgetchar( void );
+_WCRTLINK extern int           fileno(std::FILE *);
+_WCRTLINK extern int           fputchar( int __c );
 
 :segment !NO_WIDECHAR
 /* These functions pertain to wide character handling. */
-_WCRTLINK extern int           _WRTLCALL _bwprintf( wchar_t *, std::size_t,
+_WCRTLINK extern int           _bwprintf( wchar_t *, std::size_t,
                                           const wchar_t *, ... );
-_WCRTLINK extern wchar_t      * _WRTLCALL _getws( wchar_t * );
-_WCRTLINK extern std::wint_t   _WRTLCALL _fgetwchar( void );
-_WCRTLINK extern std::wint_t   _WRTLCALL _fputwchar( std::wint_t );
-_WCRTLINK extern int           _WRTLCALL _putws( const wchar_t * );
-_WCRTLINK extern int           _WRTLCALL _snwprintf( wchar_t *, std::size_t,
+_WCRTLINK extern wchar_t       *_getws( wchar_t * );
+_WCRTLINK extern std::wint_t   _fgetwchar( void );
+_WCRTLINK extern std::wint_t   _fputwchar( std::wint_t );
+_WCRTLINK extern int           _putws( const wchar_t * );
+_WCRTLINK extern int           _snwprintf( wchar_t *, std::size_t,
                                            const wchar_t *, ... );
-_WCRTLINK extern int           _WRTLCALL _swprintf( wchar_t *, const wchar_t *, ... );
-_WCRTLINK extern int           _WRTLCALL _vbwprintf( wchar_t *, std::size_t,
+_WCRTLINK extern int           _swprintf( wchar_t *, const wchar_t *, ... );
+_WCRTLINK extern int           _vbwprintf( wchar_t *, std::size_t,
                                            const wchar_t *, __va_list );
-_WCRTLINK extern int           _WRTLCALL _vsnwprintf( wchar_t *, std::size_t,
+_WCRTLINK extern int           _vsnwprintf( wchar_t *, std::size_t,
                                             const wchar_t *, __va_list );
-_WCRTLINK extern int           _WRTLCALL _vswprintf( wchar_t *,
+_WCRTLINK extern int           _vswprintf( wchar_t *,
                                            const wchar_t *, __va_list );
-_WCRTLINK extern std::FILE    * _WRTLCALL _wfdopen( int, const wchar_t * );
-_WCRTLINK extern std::FILE    * _WRTLCALL _wfopen( const wchar_t *, const wchar_t * );
-_WCRTLINK extern std::FILE    * _WRTLCALL _wfreopen( const wchar_t *,
+_WCRTLINK extern std::FILE     *_wfdopen( int, const wchar_t * );
+_WCRTLINK extern std::FILE     *_wfopen( const wchar_t *, const wchar_t * );
+_WCRTLINK extern std::FILE     *_wfreopen( const wchar_t *,
                                           const wchar_t *, std::FILE * );
-_WCRTLINK extern std::FILE    * _WRTLCALL _wfsopen( const wchar_t *__filename,
+_WCRTLINK extern std::FILE     *_wfsopen( const wchar_t *__filename,
                                          const wchar_t *__mode, int __shflag );
-_WCRTLINK extern void          _WRTLCALL _wperror( const wchar_t * );
-_WCRTLINK extern std::FILE    * _WRTLCALL _wpopen( const wchar_t *__command,
+_WCRTLINK extern void          _wperror( const wchar_t * );
+_WCRTLINK extern std::FILE     *_wpopen( const wchar_t *__command,
                                         const wchar_t *__mode );
-_WCRTLINK extern int           _WRTLCALL _wremove( const wchar_t * );
-_WCRTLINK extern int           _WRTLCALL _wrename( const wchar_t *, const wchar_t * );
-_WCRTLINK extern wchar_t      * _WRTLCALL _wtempnam( wchar_t *__dir, wchar_t *__prefix );
-_WCRTLINK extern wchar_t      * _WRTLCALL _wtmpnam( wchar_t * );
-_WCRTLINK extern std::wint_t   _WRTLCALL fgetwchar( void );
-_WCRTLINK extern std::wint_t   _WRTLCALL fputwchar( std::wint_t );
-_WCRTLINK extern wchar_t      * _WRTLCALL getws( wchar_t * );
-_WCRTLINK extern int           _WRTLCALL putws( const wchar_t * );
+_WCRTLINK extern int           _wremove( const wchar_t * );
+_WCRTLINK extern int           _wrename( const wchar_t *, const wchar_t * );
+_WCRTLINK extern wchar_t       *_wtempnam( wchar_t *__dir, wchar_t *__prefix );
+_WCRTLINK extern wchar_t       *_wtmpnam( wchar_t * );
+_WCRTLINK extern std::wint_t   fgetwchar( void );
+_WCRTLINK extern std::wint_t   fputwchar( std::wint_t );
+_WCRTLINK extern wchar_t       *getws( wchar_t * );
+_WCRTLINK extern int           putws( const wchar_t * );
 :endsegment
 :endsegment
 ::
 :: The following is generated into stdio.h
 :elsesegment
-_WCRTLINK extern int      _WRTLCALL flushall( void );
+_WCRTLINK extern int      flushall( void );
 :segment !SNAPDRV
 :segment !QNX & !LINUX
-_WCRTLINK extern FILE    * _WRTLCALL _fdopen( int __handle, const char *__mode );
-_WCRTLINK extern FILE    * _WRTLCALL fdopen( int __handle, const char *__mode );
+_WCRTLINK extern FILE     *_fdopen( int __handle, const char *__mode );
+_WCRTLINK extern FILE     *fdopen( int __handle, const char *__mode );
 :endsegment
-_WCRTLINK extern int      _WRTLCALL _bprintf( char *__buf, size_t __bufsize,
+_WCRTLINK extern int      _bprintf( char *__buf, size_t __bufsize,
                                     const char *__fmt, ... );
-_WCRTLINK extern int      _WRTLCALL _fgetchar( void );
-_WCRTLINK extern int      _WRTLCALL _fileno(FILE *);
-_WCRTLINK extern int      _WRTLCALL _fputchar( int __c );
-_WCRTLINK extern FILE    * _WRTLCALL _fsopen( const char *__filename, const char *__mode,
+_WCRTLINK extern int      _fgetchar( void );
+_WCRTLINK extern int      _fileno(FILE *);
+_WCRTLINK extern int      _fputchar( int __c );
+_WCRTLINK extern FILE     *_fsopen( const char *__filename, const char *__mode,
                                    int __shflag );
-_WCRTLINK extern int      _WRTLCALL _grow_handles( int __new_count );
-_WCRTLINK extern int      _WRTLCALL _snprintf( char *__buf, size_t __bufsize,
+_WCRTLINK extern int      _grow_handles( int __new_count );
+_WCRTLINK extern int      _snprintf( char *__buf, size_t __bufsize,
                                      const char *__fmt, ... );
-_WCRTLINK extern int      _WRTLCALL _vbprintf( char *__s, size_t __bufsize,
+_WCRTLINK extern int      _vbprintf( char *__s, size_t __bufsize,
                                      const char *__format, __va_list __arg );
-_WCRTLINK extern int      _WRTLCALL _vsnprintf( char *__s, size_t __bufsize,
+_WCRTLINK extern int      _vsnprintf( char *__s, size_t __bufsize,
                                       const char *__format, __va_list __arg );
-_WCRTLINK extern int      _WRTLCALL fcloseall( void );
-_WCRTLINK extern int      _WRTLCALL fgetchar( void );
-_WCRTLINK extern int      _WRTLCALL fileno(FILE *);
-_WCRTLINK extern int      _WRTLCALL fputchar( int __c );
+_WCRTLINK extern int      fcloseall( void );
+_WCRTLINK extern int      fgetchar( void );
+_WCRTLINK extern int      fileno(FILE *);
+_WCRTLINK extern int      fputchar( int __c );
 
 :segment !NO_WIDECHAR
 /* These functions pertain to wide character handling. */
-_WCRTLINK extern int      _WRTLCALL _bwprintf( wchar_t *, size_t, const wchar_t *, ... );
-_WCRTLINK extern wint_t   _WRTLCALL _fgetwchar( void );
-_WCRTLINK extern wint_t   _WRTLCALL _fputwchar( wint_t );
-_WCRTLINK extern wchar_t * _WRTLCALL _getws( wchar_t * );
-_WCRTLINK extern int      _WRTLCALL _putws( const wchar_t * );
-_WCRTLINK extern int      _WRTLCALL _snwprintf( wchar_t *, size_t,
+_WCRTLINK extern int      _bwprintf( wchar_t *, size_t, const wchar_t *, ... );
+_WCRTLINK extern wint_t   _fgetwchar( void );
+_WCRTLINK extern wint_t   _fputwchar( wint_t );
+_WCRTLINK extern wchar_t  *_getws( wchar_t * );
+_WCRTLINK extern int      _putws( const wchar_t * );
+_WCRTLINK extern int      _snwprintf( wchar_t *, size_t,
                                       const wchar_t *, ... );
-_WCRTLINK extern int      _WRTLCALL _swprintf( wchar_t *, const wchar_t *, ... );
-_WCRTLINK extern FILE    * _WRTLCALL _wfdopen( int, const wchar_t * );
-_WCRTLINK extern FILE    * _WRTLCALL _wfopen( const wchar_t *, const wchar_t * );
-_WCRTLINK extern FILE    * _WRTLCALL _wfreopen( const wchar_t *, const wchar_t *,
+_WCRTLINK extern int      _swprintf( wchar_t *, const wchar_t *, ... );
+_WCRTLINK extern FILE     *_wfdopen( int, const wchar_t * );
+_WCRTLINK extern FILE     *_wfopen( const wchar_t *, const wchar_t * );
+_WCRTLINK extern FILE     *_wfreopen( const wchar_t *, const wchar_t *,
                                      FILE * );
-_WCRTLINK extern FILE    * _WRTLCALL _wfsopen( const wchar_t *__filename,
+_WCRTLINK extern FILE     *_wfsopen( const wchar_t *__filename,
                                    const wchar_t *__mode,  int __shflag );
-_WCRTLINK extern void     _WRTLCALL _wperror( const wchar_t * );
-_WCRTLINK extern FILE    * _WRTLCALL _wpopen( const wchar_t *__command,
+_WCRTLINK extern void     _wperror( const wchar_t * );
+_WCRTLINK extern FILE     *_wpopen( const wchar_t *__command,
                                    const wchar_t *__mode );
-_WCRTLINK extern int      _WRTLCALL _wremove( const wchar_t * );
-_WCRTLINK extern int      _WRTLCALL _wrename( const wchar_t *, const wchar_t * );
-_WCRTLINK extern wchar_t * _WRTLCALL _wtempnam( wchar_t *__dir, wchar_t *__prefix );
-_WCRTLINK extern wchar_t * _WRTLCALL _wtmpnam( wchar_t * );
-_WCRTLINK extern int      _WRTLCALL _vbwprintf( wchar_t *, size_t, const wchar_t *,
+_WCRTLINK extern int      _wremove( const wchar_t * );
+_WCRTLINK extern int      _wrename( const wchar_t *, const wchar_t * );
+_WCRTLINK extern wchar_t  *_wtempnam( wchar_t *__dir, wchar_t *__prefix );
+_WCRTLINK extern wchar_t  *_wtmpnam( wchar_t * );
+_WCRTLINK extern int      _vbwprintf( wchar_t *, size_t, const wchar_t *,
                                       __va_list );
-_WCRTLINK extern int      _WRTLCALL _vsnwprintf( wchar_t *, size_t, const wchar_t *,
+_WCRTLINK extern int      _vsnwprintf( wchar_t *, size_t, const wchar_t *,
                                        __va_list );
-_WCRTLINK extern int      _WRTLCALL _vswprintf( wchar_t *, const wchar_t *, __va_list );
-_WCRTLINK extern wint_t   _WRTLCALL fgetwchar( void );
-_WCRTLINK extern wint_t   _WRTLCALL fputwchar( wint_t );
-_WCRTLINK extern wchar_t * _WRTLCALL getws( wchar_t * );
-_WCRTLINK extern int      _WRTLCALL putws( const wchar_t * );
+_WCRTLINK extern int      _vswprintf( wchar_t *, const wchar_t *, __va_list );
+_WCRTLINK extern wint_t   fgetwchar( void );
+_WCRTLINK extern wint_t   fputwchar( wint_t );
+_WCRTLINK extern wchar_t  *getws( wchar_t * );
+_WCRTLINK extern int      putws( const wchar_t * );
 :endsegment
 :endsegment
 :endsegment
@@ -600,7 +600,7 @@ _WCRTLINK extern int      _WRTLCALL putws( const wchar_t * );
 
 :include errnot.sp
 
-_WCRTLINK extern char    * _WRTLCALL gets_s( char *s, rsize_t n );
+_WCRTLINK extern char     *gets_s( char *__s, rsize_t __n );
 
 _WCRTLINK extern int      fprintf_s( FILE * __restrict __stream,
                                      const char * __restrict __format, ... );
@@ -633,7 +633,7 @@ _WCRTLINK extern errno_t  freopen_s( FILE * __restrict * __restrict __newstreamp
                                      const char * __restrict __filename,
                                      const char * __restrict __mode, FILE * __restrict __stream );
 _WCRTLINK extern errno_t  tmpfile_s( FILE * __restrict * __restrict __streamptr);
-_WCRTLINK extern errno_t  tmpnam_s( char * s, rsize_t __maxsize );
+_WCRTLINK extern errno_t  tmpnam_s( char *__s, rsize_t __maxsize );
 
 #define TMP_MAX_S   (26*26*26)      /* has to be same as TMP_MAX */
 
@@ -645,14 +645,14 @@ _WCRTLINK extern errno_t  tmpnam_s( char * s, rsize_t __maxsize );
 
 :segment !NO_WIDECHAR
 /* These functions pertain to wide character handling. */
-_WCRTLINK extern errno_t _WRTLCALL _wfopen_s( FILE * __restrict * __restrict streamptr,
-                                    const wchar_t * __restrict filename,
-                                    const wchar_t * __restrict mode);
-_WCRTLINK extern errno_t _WRTLCALL _wfreopen_s( FILE * __restrict * __restrict newstreamptr,
-                                      const wchar_t * __restrict filename,
-                                      const wchar_t * __restrict mode,
-                                      FILE * __restrict stream );
-_WCRTLINK extern errno_t _WRTLCALL _wtmpnam_s( wchar_t * s, rsize_t maxsize );
+_WCRTLINK extern errno_t _wfopen_s( FILE * __restrict * __restrict __streamptr,
+                                    const wchar_t * __restrict __filename,
+                                    const wchar_t * __restrict __mode);
+_WCRTLINK extern errno_t _wfreopen_s( FILE * __restrict * __restrict __newstreamptr,
+                                      const wchar_t * __restrict __filename,
+                                      const wchar_t * __restrict __mode,
+                                      FILE * __restrict __stream );
+_WCRTLINK extern errno_t _wtmpnam_s( wchar_t *__s, rsize_t __maxsize );
 :endsegment
 
 :include saferepi.sp
@@ -677,11 +677,11 @@ extern char       *cuserid( char * );
 :segment CNAME
 extern std::FILE  *fdopen( int __handle, const char *__mode );
 extern std::FILE  *popen( const char *__filename, const char *__mode );
-extern int         pclose( std::FILE *stream );
+extern int         pclose( std::FILE *__stream );
 :elsesegment
 extern FILE       *fdopen( int __handle, const char *__mode );
 extern FILE       *popen( const char *__filename, const char *__mode );
-extern int         pclose( FILE *stream );
+extern int         pclose( FILE *__stream );
 :endsegment
 #endif
 :endsegment

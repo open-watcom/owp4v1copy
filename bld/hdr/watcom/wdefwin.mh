@@ -18,12 +18,12 @@
 
 #if ( defined(__OS2__) && (defined(__386__)||defined(__PPC__)) ) || defined(__NT__) || \
     defined(__WINDOWS_386__) || defined(__WINDOWS__)
-_WCRTLINK extern int _WRTLCALL _dwDeleteOnClose( int handle );
-_WCRTLINK extern int _WRTLCALL _dwSetAboutDlg( const char *title, const char *text );
-_WCRTLINK extern int _WRTLCALL _dwSetAppTitle( const char *title );
-_WCRTLINK extern int _WRTLCALL _dwSetConTitle( int handle, const char *title );
-_WCRTLINK extern int _WRTLCALL _dwYield( void );
-_WCRTLINK extern int _WRTLCALL _dwShutDown( void );
+_WCRTLINK extern int _dwDeleteOnClose( int handle );
+_WCRTLINK extern int _dwSetAboutDlg( const char *title, const char *text );
+_WCRTLINK extern int _dwSetAppTitle( const char *title );
+_WCRTLINK extern int _dwSetConTitle( int handle, const char *title );
+_WCRTLINK extern int _dwYield( void );
+_WCRTLINK extern int _dwShutDown( void );
 #else
   #error You cannot use the default windowing system in a non GUI environment
   #error Make sure you use the /bt= switch to select the target system

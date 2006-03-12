@@ -162,17 +162,17 @@ struct termios {
 #define TCSADRAIN       1
 #define TCSAFLUSH       2
 
-_WCRTLINK extern speed_t _WRTLCALL cfgetospeed( const struct termios *__termios_p );
-_WCRTLINK extern speed_t _WRTLCALL cfgetispeed( const struct termios *__termios_p );
-_WCRTLINK extern int     _WRTLCALL cfsetospeed( struct termios *__termios_p, speed_t __speed );
-_WCRTLINK extern int     _WRTLCALL cfsetispeed( struct termios *__termios_p, speed_t __speed );
-_WCRTLINK extern int     _WRTLCALL tcgetattr( int __fd, struct termios *__termios_p );
-_WCRTLINK extern int     _WRTLCALL tcsetattr( int __fd, int __optional_actions, const struct termios *__termios_p );
-_WCRTLINK extern void    _WRTLCALL cfmakeraw( struct termios *__termios_p );
-_WCRTLINK extern int     _WRTLCALL tcsendbreak( int __fd, int __duration );
-_WCRTLINK extern int     _WRTLCALL tcdrain( int __fd );
-_WCRTLINK extern int     _WRTLCALL tcflush( int __fd, int __queue_selector );
-_WCRTLINK extern int     _WRTLCALL tcflow( int __fd, int __action );
+_WCRTLINK extern speed_t cfgetospeed( const struct termios *__termios_p );
+_WCRTLINK extern speed_t cfgetispeed( const struct termios *__termios_p );
+_WCRTLINK extern int     cfsetospeed( struct termios *__termios_p, speed_t __speed );
+_WCRTLINK extern int     cfsetispeed( struct termios *__termios_p, speed_t __speed );
+_WCRTLINK extern int     tcgetattr( int __fd, struct termios *__termios_p );
+_WCRTLINK extern int     tcsetattr( int __fd, int __optional_actions, const struct termios *__termios_p );
+_WCRTLINK extern void    cfmakeraw( struct termios *__termios_p );
+_WCRTLINK extern int     tcsendbreak( int __fd, int __duration );
+_WCRTLINK extern int     tcdrain( int __fd );
+_WCRTLINK extern int     tcflush( int __fd, int __queue_selector );
+_WCRTLINK extern int     tcflow( int __fd, int __action );
 
 :include poppack.sp
 :include cplusepi.sp

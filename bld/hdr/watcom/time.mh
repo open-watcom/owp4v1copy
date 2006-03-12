@@ -158,33 +158,33 @@ struct itimercb {
 #define _TICKSIZE_CLOSEST       1
 #define _TICKSIZE_EXTERNAL      2
 
-_WCRTLINK extern int _WRTLCALL clock_gettime( clockid_t clock_id, struct timespec *tp );
-_WCRTLINK extern int _WRTLCALL clock_settime( clockid_t clock_id, struct timespec *tp );
-_WCRTLINK extern int _WRTLCALL clock_getres( clockid_t clock_id, struct timespec *res );
+_WCRTLINK extern int clock_gettime( clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int clock_settime( clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int clock_getres( clockid_t clock_id, struct timespec *res );
 :segment QNX
-_WCRTLINK extern int _WRTLCALL clock_setres( clockid_t clock_id, struct timespec *res );
+_WCRTLINK extern int clock_setres( clockid_t clock_id, struct timespec *res );
 :include ext.sp
-_WCRTLINK extern int _WRTLCALL qnx_getclock( pid_t pid, clockid_t clock_id, struct timespec *tp );
-_WCRTLINK extern int _WRTLCALL qnx_setclock( pid_t pid, clockid_t clock_id, struct timespec *tp );
-_WCRTLINK extern int _WRTLCALL qnx_clock( nid_t nid, clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int qnx_getclock( pid_t pid, clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int qnx_setclock( pid_t pid, clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int qnx_clock( nid_t nid, clockid_t clock_id, struct timespec *tp );
 #endif
 :endsegment
 
 struct sigevent;               /* for C++ */
 
-_WCRTLINK extern timer_t _WRTLCALL timer_create( clockid_t clock_id, struct sigevent *evp );
-_WCRTLINK extern int     _WRTLCALL timer_delete( timer_t timerid );
-_WCRTLINK extern int     _WRTLCALL timer_gettime( timer_t timerid, struct itimerspec *value );
-_WCRTLINK extern int     _WRTLCALL timer_settime( timer_t timerid, int flags, struct itimerspec *value, struct itimerspec *ovalue );
+_WCRTLINK extern timer_t timer_create( clockid_t clock_id, struct sigevent *evp );
+_WCRTLINK extern int     timer_delete( timer_t timerid );
+_WCRTLINK extern int     timer_gettime( timer_t timerid, struct itimerspec *value );
+_WCRTLINK extern int     timer_settime( timer_t timerid, int flags, struct itimerspec *value, struct itimerspec *ovalue );
 :segment QNX
 :include ext.sp
-_WCRTLINK extern long    _WRTLCALL qnx_timerperiod( long );
-_WCRTLINK extern long    _WRTLCALL qnx_ticksize( long nsec, int flags );
-_WCRTLINK extern int     _WRTLCALL qnx_adj_time( long, long, long *, long * );
+_WCRTLINK extern long    qnx_timerperiod( long );
+_WCRTLINK extern long    qnx_ticksize( long nsec, int flags );
+_WCRTLINK extern int     qnx_adj_time( long, long, long *, long * );
 #endif
 :endsegment
 
-_WCRTLINK extern int     _WRTLCALL nanosleep( const struct timespec *rqtp, struct timespec *rmtp );
+_WCRTLINK extern int     nanosleep( const struct timespec *rqtp, struct timespec *rmtp );
 #endif
 :: End of QNX | LINUX segment
 :endsegment
@@ -210,17 +210,17 @@ struct tm {
 :segment CNAME
 namespace std {
 :endsegment
-_WCRTLINK extern char        * _WRTLCALL asctime( const struct tm *__timeptr );
-_WCRTLINK extern clock_t      _WRTLCALL clock( void );
-_WCRTLINK extern char        * _WRTLCALL ctime( const time_t *__timer );
-_WMRTLINK extern double       _WRTLCALL difftime( time_t __t1, time_t __t0 );
-_WCRTLINK extern struct tm   * _WRTLCALL gmtime( const time_t *__timer );
-_WCRTLINK extern struct tm   * _WRTLCALL localtime( const time_t *__timer );
-_WCRTLINK extern time_t       _WRTLCALL mktime( struct tm *__timeptr );
-_WCRTLINK extern size_t       _WRTLCALL strftime( char *__s, size_t __maxsiz, const char *__fmt, const struct tm *__tp );
-_WCRTLINK extern time_t       _WRTLCALL time( time_t *__timer );
+_WCRTLINK extern char         *asctime( const struct tm *__timeptr );
+_WCRTLINK extern clock_t      clock( void );
+_WCRTLINK extern char         *ctime( const time_t *__timer );
+_WMRTLINK extern double       difftime( time_t __t1, time_t __t0 );
+_WCRTLINK extern struct tm    *gmtime( const time_t *__timer );
+_WCRTLINK extern struct tm    *localtime( const time_t *__timer );
+_WCRTLINK extern time_t       mktime( struct tm *__timeptr );
+_WCRTLINK extern size_t       strftime( char *__s, size_t __maxsiz, const char *__fmt, const struct tm *__tp );
+_WCRTLINK extern time_t       time( time_t *__timer );
 :segment !NO_WIDECHAR
-_WCRTLINK extern size_t       _WRTLCALL wcsftime( wchar_t *, size_t, const wchar_t *, const struct tm * );
+_WCRTLINK extern size_t       wcsftime( wchar_t *, size_t, const wchar_t *, const struct tm * );
 :endsegment
 :segment CNAME
 }
@@ -232,41 +232,41 @@ _WCRTLINK extern size_t       _WRTLCALL wcsftime( wchar_t *, size_t, const wchar
 
 :segment !NO_WIDECHAR
 :segment CNAME
-_WCRTLINK extern wchar_t      * _WRTLCALL _wasctime( const std::tm * );
-_WCRTLINK extern wchar_t      * _WRTLCALL _wctime( const std::time_t * );
-_WCRTLINK extern wchar_t      * _WRTLCALL _wstrdate( wchar_t *__buf );
-_WCRTLINK extern wchar_t      * _WRTLCALL _wstrtime( wchar_t *__buf );
-_WCRTLINK extern std::size_t   _WRTLCALL _wstrftime_ms( wchar_t *, std::size_t, const char *, const std::tm * );
+_WCRTLINK extern wchar_t      *_wasctime( const std::tm * );
+_WCRTLINK extern wchar_t      *_wctime( const std::time_t * );
+_WCRTLINK extern wchar_t      *_wstrdate( wchar_t *__buf );
+_WCRTLINK extern wchar_t      *_wstrtime( wchar_t *__buf );
+_WCRTLINK extern std::size_t  _wstrftime_ms( wchar_t *, std::size_t, const char *, const std::tm * );
 :elsesegment
-_WCRTLINK extern wchar_t     * _WRTLCALL _wasctime( const struct tm * );
-_WCRTLINK extern wchar_t     * _WRTLCALL _wctime( const time_t * );
-_WCRTLINK extern wchar_t     * _WRTLCALL _wstrdate( wchar_t *__buf );
-_WCRTLINK extern wchar_t     * _WRTLCALL _wstrtime( wchar_t *__buf );
-_WCRTLINK extern size_t       _WRTLCALL _wstrftime_ms( wchar_t *, size_t, const char *, const struct tm * );
+_WCRTLINK extern wchar_t      *_wasctime( const struct tm * );
+_WCRTLINK extern wchar_t      *_wctime( const time_t * );
+_WCRTLINK extern wchar_t      *_wstrdate( wchar_t *__buf );
+_WCRTLINK extern wchar_t      *_wstrtime( wchar_t *__buf );
+_WCRTLINK extern size_t       _wstrftime_ms( wchar_t *, size_t, const char *, const struct tm * );
 :endsegment
 :endsegment
 
 :include ext.sp
 :segment CNAME
-_WCRTLINK extern char        * _WRTLCALL _asctime( const std::tm *__timeptr, char *__buf );
-_WCRTLINK extern char        * _WRTLCALL _ctime( const std::time_t *__timer, char *__buf );
-_WCRTLINK extern std::tm     * _WRTLCALL _gmtime( const std::time_t *__timer, std::tm *__tmbuf );
-_WCRTLINK extern std::tm     * _WRTLCALL _localtime( const std::time_t *__timer, std::tm *__tmbuf );
+_WCRTLINK extern char        *_asctime( const std::tm *__timeptr, char *__buf );
+_WCRTLINK extern char        *_ctime( const std::time_t *__timer, char *__buf );
+_WCRTLINK extern std::tm     *_gmtime( const std::time_t *__timer, std::tm *__tmbuf );
+_WCRTLINK extern std::tm     *_localtime( const std::time_t *__timer, std::tm *__tmbuf );
 :elsesegment
-_WCRTLINK extern char        * _WRTLCALL _asctime( const struct tm *__timeptr, char *__buf );
-_WCRTLINK extern char        * _WRTLCALL _ctime( const time_t *__timer, char *__buf );
-_WCRTLINK extern struct tm   * _WRTLCALL _gmtime( const time_t *__timer, struct tm *__tmbuf );
-_WCRTLINK extern struct tm   * _WRTLCALL _localtime( const time_t *__timer, struct tm *__tmbuf );
+_WCRTLINK extern char        *_asctime( const struct tm *__timeptr, char *__buf );
+_WCRTLINK extern char        *_ctime( const time_t *__timer, char *__buf );
+_WCRTLINK extern struct tm   *_gmtime( const time_t *__timer, struct tm *__tmbuf );
+_WCRTLINK extern struct tm   *_localtime( const time_t *__timer, struct tm *__tmbuf );
 :endsegment
-_WCRTLINK extern char        * _WRTLCALL _strdate( char *__buf );
-_WCRTLINK extern char        * _WRTLCALL _strtime( char *__buf );
+_WCRTLINK extern char        *_strdate( char *__buf );
+_WCRTLINK extern char        *_strtime( char *__buf );
 :segment !NO_WIDECHAR
 :segment CNAME
-_WCRTLINK extern wchar_t     * _WRTLCALL __wctime( const std::time_t *, wchar_t * );
-_WCRTLINK extern wchar_t     * _WRTLCALL __wasctime( const std::tm *, wchar_t * );
+_WCRTLINK extern wchar_t     *__wctime( const std::time_t *, wchar_t * );
+_WCRTLINK extern wchar_t     *__wasctime( const std::tm *, wchar_t * );
 :elsesegment
-_WCRTLINK extern wchar_t     * _WRTLCALL __wctime( const time_t *, wchar_t * );
-_WCRTLINK extern wchar_t     * _WRTLCALL __wasctime( const struct tm *, wchar_t * );
+_WCRTLINK extern wchar_t     *__wctime( const time_t *, wchar_t * );
+_WCRTLINK extern wchar_t     *__wasctime( const struct tm *, wchar_t * );
 :endsegment
 :endsegment
 #endif
@@ -274,14 +274,14 @@ _WCRTLINK extern wchar_t     * _WRTLCALL __wasctime( const struct tm *, wchar_t 
 :segment !CNAME
 :include saferpro.sp
 
-_WCRTLINK extern errno_t      _WRTLCALL asctime_s( char * __s, rsize_t __maxsize, const struct tm *__timeptr );
-_WCRTLINK extern errno_t      _WRTLCALL ctime_s( char *__s, rsize_t __maxsize, const time_t *__timer );
-_WCRTLINK extern struct tm   * _WRTLCALL gmtime_s( const time_t * __restrict __timer, struct tm * __restrict __result );
-_WCRTLINK extern struct tm   * _WRTLCALL localtime_s( const time_t * __restrict __timer, struct tm * __restrict __t );
+_WCRTLINK extern errno_t      asctime_s( char *__s, rsize_t __maxsize, const struct tm *__timeptr );
+_WCRTLINK extern errno_t      ctime_s( char *__s, rsize_t __maxsize, const time_t *__timer );
+_WCRTLINK extern struct tm    *gmtime_s( const time_t * __restrict __timer, struct tm * __restrict __result );
+_WCRTLINK extern struct tm    *localtime_s( const time_t * __restrict __timer, struct tm * __restrict __t );
 
 :segment !NO_WIDECHAR
-_WCRTLINK extern errno_t      _WRTLCALL _wasctime_s( wchar_t * __s, rsize_t __maxsize, const struct tm *__timeptr );
-_WCRTLINK extern errno_t      _WRTLCALL _wctime_s( wchar_t *__s, rsize_t __maxsize, const time_t *__timer );
+_WCRTLINK extern errno_t      _wasctime_s( wchar_t *__s, rsize_t __maxsize, const struct tm *__timeptr );
+_WCRTLINK extern errno_t      _wctime_s( wchar_t *__s, rsize_t __maxsize, const time_t *__timer );
 :endsegment
 
 :include saferepi.sp
@@ -290,8 +290,8 @@ _WCRTLINK extern errno_t      _WRTLCALL _wctime_s( wchar_t *__s, rsize_t __maxsi
 :segment QNX | LINUX
 :include unixext.sp
 :endsegment
-_WCRTLINK extern void   _WRTLCALL tzset( void );
-_WCRTLINK extern char   ** _WRTLCALL __get_tzname_ptr( void );
+_WCRTLINK extern void   tzset( void );
+_WCRTLINK extern char   **__get_tzname_ptr( void );
 
 #if defined(__FUNCTION_DATA_ACCESS)
 #define tzname          (*__get_tzname_ptr())
@@ -303,8 +303,8 @@ _WCRTLINK extern char   *tzname[2];             /*  time zone names */
 :segment QNX | LINUX
 :include ext.sp
 :endsegment
-_WCRTLINK extern long   * _WRTLCALL __get_timezone_ptr( void );
-_WCRTLINK extern int    * _WRTLCALL __get_daylight_ptr( void );
+_WCRTLINK extern long   *__get_timezone_ptr( void );
+_WCRTLINK extern int    *__get_daylight_ptr( void );
 #if defined( __FUNCTION_DATA_ACCESS )
 #define timezone        (*__get_timezone_ptr())
 #define daylight        (*__get_daylight_ptr())

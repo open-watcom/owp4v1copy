@@ -217,24 +217,24 @@ typedef void (*__sig_func)( int );
 :segment CNAME
 namespace std {
 :endsegment
-_WCRTLINK extern int  _WRTLCALL raise( int __sig );
-_WCRTLINK extern void (* _WRTLCALL signal( int __sig, void (*__func)(int) ) )(int);
+_WCRTLINK extern int  raise( int __sig );
+_WCRTLINK extern void (*signal( int __sig, void (*__func)(int) ) )(int);
 :segment CNAME
 }
 :endsegment
 
 :segment QNX | LINUX
 #if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
-_WCRTLINK extern int  _WRTLCALL kill( pid_t __pid, int __signum );
-_WCRTLINK extern int  _WRTLCALL sigaction( int __signo, const struct sigaction *__act, struct sigaction *__oact );
-_WCRTLINK extern int  _WRTLCALL sigaddset( sigset_t *__set, int __signo );
-_WCRTLINK extern int  _WRTLCALL sigdelset( sigset_t *__set, int __signo );
-_WCRTLINK extern int  _WRTLCALL sigemptyset( sigset_t *__set );
-_WCRTLINK extern int  _WRTLCALL sigfillset( sigset_t *__set );
-_WCRTLINK extern int  _WRTLCALL sigismember( const sigset_t *__set, int __signo );
-_WCRTLINK extern int  _WRTLCALL sigpending( sigset_t *__set );
-_WCRTLINK extern int  _WRTLCALL sigprocmask( int __how, const sigset_t *__set, sigset_t *__oset );
-_WCRTLINK extern int  _WRTLCALL sigsuspend( const sigset_t *sigmask );
+_WCRTLINK extern int  kill( pid_t __pid, int __signum );
+_WCRTLINK extern int  sigaction( int __signo, const struct sigaction *__act, struct sigaction *__oact );
+_WCRTLINK extern int  sigaddset( sigset_t *__set, int __signo );
+_WCRTLINK extern int  sigdelset( sigset_t *__set, int __signo );
+_WCRTLINK extern int  sigemptyset( sigset_t *__set );
+_WCRTLINK extern int  sigfillset( sigset_t *__set );
+_WCRTLINK extern int  sigismember( const sigset_t *__set, int __signo );
+_WCRTLINK extern int  sigpending( sigset_t *__set );
+_WCRTLINK extern int  sigprocmask( int __how, const sigset_t *__set, sigset_t *__oset );
+_WCRTLINK extern int  sigsuspend( const sigset_t *sigmask );
 #endif  /* _POSIX_SOURCE || _QNX_SOURCE || !NO_EXT_KEYS */
 :endsegment
 

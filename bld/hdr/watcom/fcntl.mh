@@ -206,30 +206,30 @@ typedef struct flock {
 /*
  *  POSIX 1003.1 Prototypes.
  */
-_WCRTLINK extern int _WRTLCALL open( const char *__path, int __oflag, ... );
-_WCRTLINK extern int _WRTLCALL sopen( const char *__path, int __oflag, int __share, ... );
+_WCRTLINK extern int open( const char *__path, int __oflag, ... );
+_WCRTLINK extern int sopen( const char *__path, int __oflag, int __share, ... );
 :segment QNX | LINUX
-_WCRTLINK extern int _WRTLCALL creat( const char *__path, mode_t __mode );
+_WCRTLINK extern int creat( const char *__path, mode_t __mode );
 :endsegment
 
 :segment !NO_WIDECHAR
-_WCRTLINK extern int _WRTLCALL _wopen( const wchar_t *, int, ... );
-_WCRTLINK extern int _WRTLCALL _wsopen( const wchar_t *, int, int, ... );
-_WCRTLINK extern int _WRTLCALL _wcreat( const wchar_t *, int );
+_WCRTLINK extern int _wopen( const wchar_t *, int, ... );
+_WCRTLINK extern int _wsopen( const wchar_t *, int, int, ... );
+_WCRTLINK extern int _wcreat( const wchar_t *, int );
 :endsegment
 :segment QNX | LINUX
 
-_WCRTLINK extern int _WRTLCALL fcntl( int __fildes, int __cmd, ... );
+_WCRTLINK extern int fcntl( int __fildes, int __cmd, ... );
 
 :segment QNX
 struct _io_open; /* for C++ */
 
-_WCRTLINK extern int _WRTLCALL __fcntl_slib( int, int, int, struct flock * );
-_WCRTLINK extern int _WRTLCALL __open_slib( const char *__path, int __oflag,
+_WCRTLINK extern int __fcntl_slib( int, int, int, struct flock * );
+_WCRTLINK extern int __open_slib( const char *__path, int __oflag,
                                   mode_t __mode );
-_WCRTLINK extern int _WRTLCALL __sopen_slib( const char *__path, int __oflag, int __share,
+_WCRTLINK extern int __sopen_slib( const char *__path, int __oflag, int __share,
                                    mode_t __mode );
-_WCRTLINK extern int _WRTLCALL __resolve_net( unsigned, int, struct _io_open *,
+_WCRTLINK extern int __resolve_net( unsigned, int, struct _io_open *,
                                     const char *, unsigned, char * );
 
 :endsegment

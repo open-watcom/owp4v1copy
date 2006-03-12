@@ -20,11 +20,11 @@
 #define MS_NODIRATIME 2048 /* do not update dir access times */
 #define MS_BIND       4096 /* bind subtree elsewhere */
 
-_WCRTLINK extern int _WRTLCALL mount( const char *__specialfile, const char *__dir,
+_WCRTLINK extern int mount( const char *__specialfile, const char *__dir,
        const char *__filesystemtype, unsigned long __mountflags,
        const void *__data);
 
-_WCRTLINK extern int _WRTLCALL umount(const char *__dir);
+_WCRTLINK extern int umount(const char *__dir);
 
 :include poppack.sp
 :include cplusepi.sp

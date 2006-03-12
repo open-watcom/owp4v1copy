@@ -70,16 +70,16 @@ using std::ptrdiff_t;
 #endif
 :segment QNX | LINUX
 #if defined(__386__)
- _WCRTLINK extern int * _WRTLCALL __threadid(void); /* pointer to thread id */
+ _WCRTLINK extern int *__threadid(void); /* pointer to thread id */
  #define _threadid (__threadid())
 #endif
 :elsesegment DOS
 :include ext.sp
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
- _WCRTLINK extern int * _WRTLCALL __threadid(void); /* pointer to thread id */
+ _WCRTLINK extern int *__threadid(void); /* pointer to thread id */
  #define _threadid (__threadid())
  #if defined(__NT__)
-  _WCRTLINK extern unsigned long _WRTLCALL __threadhandle( void );
+  _WCRTLINK extern unsigned long __threadhandle( void );
  #endif
 #else
  _WCRTLINK extern int _WCFAR *_threadid;        /* pointer to thread id */

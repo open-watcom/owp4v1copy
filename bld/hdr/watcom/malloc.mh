@@ -36,106 +36,106 @@ typedef struct _heapinfo {
     int         _useflag;       /* heap entry 'in-use' flag */
 } _HEAPINFO;
 
-_WCRTLINK extern int _WRTLCALL _heapenable( int __enabled );
-_WCRTLINK extern int _WRTLCALL _heapchk( void );
-_WCRTLINK extern int _WRTLCALL _nheapchk( void );
+_WCRTLINK extern int _heapenable( int __enabled );
+_WCRTLINK extern int _heapchk( void );
+_WCRTLINK extern int _nheapchk( void );
 :segment DOS
-_WCRTLINK extern int _WRTLCALL _fheapchk( void );
+_WCRTLINK extern int _fheapchk( void );
 :endsegment
-_WCRTLINK extern int _WRTLCALL _heapset( unsigned int __fill );
-_WCRTLINK extern int _WRTLCALL _nheapset( unsigned int __fill );
+_WCRTLINK extern int _heapset( unsigned int __fill );
+_WCRTLINK extern int _nheapset( unsigned int __fill );
 :segment DOS
-_WCRTLINK extern int _WRTLCALL _fheapset( unsigned int __fill );
+_WCRTLINK extern int _fheapset( unsigned int __fill );
 :endsegment
-_WCRTLINK extern int _WRTLCALL _heapwalk( struct _heapinfo *__entry );
-_WCRTLINK extern int _WRTLCALL _nheapwalk( struct _heapinfo *__entry );
+_WCRTLINK extern int _heapwalk( struct _heapinfo *__entry );
+_WCRTLINK extern int _nheapwalk( struct _heapinfo *__entry );
 :segment DOS
-_WCRTLINK extern int _WRTLCALL _fheapwalk( struct _heapinfo *__entry );
-:endsegment
-
-_WCRTLINK extern void _WRTLCALL _heapgrow( void );
-_WCRTLINK extern void _WRTLCALL _nheapgrow( void );
-:segment DOS
-_WCRTLINK extern void _WRTLCALL _fheapgrow( void );
-:endsegment
-_WCRTLINK extern int _WRTLCALL _heapmin( void );
-_WCRTLINK extern int _WRTLCALL _nheapmin( void );
-:segment DOS
-_WCRTLINK extern int _WRTLCALL _fheapmin( void );
-:endsegment
-_WCRTLINK extern int _WRTLCALL _heapshrink( void );
-_WCRTLINK extern int _WRTLCALL _nheapshrink( void );
-:segment DOS
-_WCRTLINK extern int _WRTLCALL _fheapshrink( void );
+_WCRTLINK extern int _fheapwalk( struct _heapinfo *__entry );
 :endsegment
 
-_WCRTLINK extern int _WRTLCALL __nmemneed( size_t );
+_WCRTLINK extern void _heapgrow( void );
+_WCRTLINK extern void _nheapgrow( void );
 :segment DOS
-_WCRTLINK extern int _WRTLCALL __fmemneed( size_t );
+_WCRTLINK extern void _fheapgrow( void );
+:endsegment
+_WCRTLINK extern int _heapmin( void );
+_WCRTLINK extern int _nheapmin( void );
+:segment DOS
+_WCRTLINK extern int _fheapmin( void );
+:endsegment
+_WCRTLINK extern int _heapshrink( void );
+_WCRTLINK extern int _nheapshrink( void );
+:segment DOS
+_WCRTLINK extern int _fheapshrink( void );
+:endsegment
+
+_WCRTLINK extern int __nmemneed( size_t );
+:segment DOS
+_WCRTLINK extern int __fmemneed( size_t );
 :endsegment
 :segment DOS
 #if !defined(_fcalloc) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WCFAR * _WRTLCALL _fcalloc( size_t __n, size_t __size );
+_WCRTLINK extern void _WCFAR *_fcalloc( size_t __n, size_t __size );
 #endif
 :endsegment
 #if !defined(_ncalloc) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WCNEAR * _WRTLCALL _ncalloc( size_t __n, size_t __size );
+_WCRTLINK extern void _WCNEAR *_ncalloc( size_t __n, size_t __size );
 #endif
-_WCRTLINK extern void * _WRTLCALL _expand( void *__ptr, size_t __size );
+_WCRTLINK extern void *_expand( void *__ptr, size_t __size );
 :segment DOS
 #if !defined(_fexpand) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WCFAR * _WRTLCALL _fexpand( void _WCFAR *__ptr, size_t __size );
+_WCRTLINK extern void _WCFAR *_fexpand( void _WCFAR *__ptr, size_t __size );
 #endif
 :endsegment
 #if !defined(_nexpand) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WCNEAR * _WRTLCALL _nexpand( void _WCNEAR *__ptr, size_t __size );
+_WCRTLINK extern void _WCNEAR *_nexpand( void _WCNEAR *__ptr, size_t __size );
 #endif
 :segment DOS
 #if !defined(_ffree) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WRTLCALL _ffree( void _WCFAR *__ptr );
+_WCRTLINK extern void _ffree( void _WCFAR *__ptr );
 #endif
 #if !defined(_fmalloc) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WCFAR * _WRTLCALL _fmalloc( size_t __size );
+_WCRTLINK extern void _WCFAR *_fmalloc( size_t __size );
 #endif
 :endsegment
-_WCRTLINK extern unsigned int _WRTLCALL _freect( size_t __size );
+_WCRTLINK extern unsigned int _freect( size_t __size );
 :segment DOS
-_WCRTLINK extern void _WCHUGE * _WRTLCALL halloc( long __n, size_t __size );
-_WCRTLINK extern void _WRTLCALL hfree( void _WCHUGE * );
+_WCRTLINK extern void _WCHUGE *halloc( long __n, size_t __size );
+_WCRTLINK extern void hfree( void _WCHUGE * );
 :endsegment
 #if !defined(_nfree) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WRTLCALL _nfree( void _WCNEAR *__ptr );
+_WCRTLINK extern void _nfree( void _WCNEAR *__ptr );
 #endif
 #if !defined(_nmalloc) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WCNEAR * _WRTLCALL _nmalloc( size_t __size );
+_WCRTLINK extern void _WCNEAR *_nmalloc( size_t __size );
 #endif
 #if !defined(_nrealloc) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WCNEAR * _WRTLCALL _nrealloc( void _WCNEAR *__ptr, size_t __size );
+_WCRTLINK extern void _WCNEAR *_nrealloc( void _WCNEAR *__ptr, size_t __size );
 #endif
 :segment DOS
 #if !defined(_frealloc) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern void _WCFAR * _WRTLCALL _frealloc( void _WCFAR *__ptr, size_t __size );
+_WCRTLINK extern void _WCFAR *_frealloc( void _WCFAR *__ptr, size_t __size );
 #endif
 :endsegment
-_WCRTLINK extern size_t _WRTLCALL _msize( void *__ptr );
+_WCRTLINK extern size_t _msize( void *__ptr );
 #if !defined(_nmsize) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern size_t _WRTLCALL _nmsize( void _WCNEAR *__ptr );
+_WCRTLINK extern size_t _nmsize( void _WCNEAR *__ptr );
 #endif
 :segment DOS
 #if !defined(_fmsize) || !defined(_INC_WINDOWSX)
-_WCRTLINK extern size_t _WRTLCALL _fmsize( void _WCFAR *__ptr );
+_WCRTLINK extern size_t _fmsize( void _WCFAR *__ptr );
 #endif
 :endsegment
 
-_WCRTLINK extern size_t _WRTLCALL _memavl( void );
-_WCRTLINK extern size_t _WRTLCALL _memmax( void );
+_WCRTLINK extern size_t _memavl( void );
+_WCRTLINK extern size_t _memmax( void );
 #ifdef __cplusplus
 namespace std {
 #endif
-_WCRTLINK extern void * _WRTLCALL calloc( size_t __n, size_t __size );
-_WCRTLINK extern void _WRTLCALL free( void *__ptr );
-_WCRTLINK extern void * _WRTLCALL malloc( size_t __size );
-_WCRTLINK extern void * _WRTLCALL realloc( void *__ptr, size_t __size );
+_WCRTLINK extern void *calloc( size_t __n, size_t __size );
+_WCRTLINK extern void free( void *__ptr );
+_WCRTLINK extern void *malloc( size_t __size );
+_WCRTLINK extern void *realloc( void *__ptr, size_t __size );
 #ifdef __cplusplus
 }
 using std::calloc;
@@ -151,19 +151,19 @@ using std::realloc;
 #define _NULLSEG ((__segment)0)
 #define _NULLOFF ((void __based(void) *)~0)
 
-_WCRTLINK extern int _WRTLCALL _bfreeseg( __segment __seg );
-_WCRTLINK extern __segment _WRTLCALL _bheapseg( size_t size );
-_WCRTLINK extern void __based(void) * _WRTLCALL _bcalloc( __segment __seg, size_t __num, size_t __size );
-_WCRTLINK extern void __based(void) * _WRTLCALL _bexpand( __segment __seg, void __based(void) *__mem, size_t __size );
-_WCRTLINK extern void _WRTLCALL _bfree( __segment __seg, void __based(void) *__mem );
-_WCRTLINK extern int _WRTLCALL _bheapchk( __segment __seg );
-_WCRTLINK extern int _WRTLCALL _bheapmin( __segment __seg );
-_WCRTLINK extern int _WRTLCALL _bheapshrink( __segment __seg );
-_WCRTLINK extern int _WRTLCALL _bheapset( __segment __seg, unsigned int __fill );
-_WCRTLINK extern int _WRTLCALL _bheapwalk( __segment __seg, struct _heapinfo *__entry );
-_WCRTLINK extern void __based(void) * _WRTLCALL _bmalloc( __segment __seg, size_t __size );
-_WCRTLINK extern size_t _WRTLCALL _bmsize( __segment __seg, void __based(void) *__mem );
-_WCRTLINK extern void __based(void) * _WRTLCALL _brealloc( __segment __seg, void __based(void) *__mem, size_t __size );
+_WCRTLINK extern int _bfreeseg( __segment __seg );
+_WCRTLINK extern __segment _bheapseg( size_t size );
+_WCRTLINK extern void __based(void) *_bcalloc( __segment __seg, size_t __num, size_t __size );
+_WCRTLINK extern void __based(void) *_bexpand( __segment __seg, void __based(void) *__mem, size_t __size );
+_WCRTLINK extern void _bfree( __segment __seg, void __based(void) *__mem );
+_WCRTLINK extern int _bheapchk( __segment __seg );
+_WCRTLINK extern int _bheapmin( __segment __seg );
+_WCRTLINK extern int _bheapshrink( __segment __seg );
+_WCRTLINK extern int _bheapset( __segment __seg, unsigned int __fill );
+_WCRTLINK extern int _bheapwalk( __segment __seg, struct _heapinfo *__entry );
+_WCRTLINK extern void __based(void) *_bmalloc( __segment __seg, size_t __size );
+_WCRTLINK extern size_t _bmsize( __segment __seg, void __based(void) *__mem );
+_WCRTLINK extern void __based(void) *_brealloc( __segment __seg, void __based(void) *__mem, size_t __size );
 #endif
 
 :endsegment

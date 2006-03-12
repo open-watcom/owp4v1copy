@@ -29,8 +29,8 @@ struct _timeb {
 };
 :include poppack.sp
 
-_WCRTLINK extern int _WRTLCALL ftime( struct timeb *__timeptr );
-_WCRTLINK extern int _WRTLCALL _ftime( struct _timeb *__timeptr );
+_WCRTLINK extern int ftime( struct timeb *__timeptr );
+_WCRTLINK extern int _ftime( struct _timeb *__timeptr );
 
 :include cplusepi.sp
 #endif

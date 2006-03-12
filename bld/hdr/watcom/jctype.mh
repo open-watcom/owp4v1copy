@@ -35,16 +35,16 @@
 #define _J2     0x08    /* Kanji 2nd byte */
 
 :include cpluspro.sp
-_WCRTLINK extern int    _WRTLCALL iskana(int);
-_WCRTLINK extern int    _WRTLCALL iskpun(int);
-_WCRTLINK extern int    _WRTLCALL iskmoji(int);
-_WCRTLINK extern int    _WRTLCALL isalkana(int);
-_WCRTLINK extern int    _WRTLCALL ispnkana(int);
-_WCRTLINK extern int    _WRTLCALL isalnmkana(int);
-_WCRTLINK extern int    _WRTLCALL isprkana(int);
-_WCRTLINK extern int    _WRTLCALL isgrkana(int);
-_WCRTLINK extern int    _WRTLCALL iskanji(int);
-_WCRTLINK extern int    _WRTLCALL iskanji2(int);
+_WCRTLINK extern int    iskana(int);
+_WCRTLINK extern int    iskpun(int);
+_WCRTLINK extern int    iskmoji(int);
+_WCRTLINK extern int    isalkana(int);
+_WCRTLINK extern int    ispnkana(int);
+_WCRTLINK extern int    isalnmkana(int);
+_WCRTLINK extern int    isprkana(int);
+_WCRTLINK extern int    isgrkana(int);
+_WCRTLINK extern int    iskanji(int);
+_WCRTLINK extern int    iskanji2(int);
 
 /* kana, kanji type table */
 #if defined(__SW_BR) || defined(_RTDLL)

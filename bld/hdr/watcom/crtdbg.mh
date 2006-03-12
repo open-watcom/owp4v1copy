@@ -28,11 +28,11 @@
  */
 
 #ifdef __NT__
-    typedef void *      _HFILE;
+    typedef void        *_HFILE;
 #else
     typedef int         _HFILE;
 #endif
-typedef int             (_WRTLCALL *_CRT_REPORT_HOOK)( int, char *, int * );
+typedef int             (*_CRT_REPORT_HOOK)( int, char *, int * );
 
 #define _CRT_WARN               0
 #define _CRT_ERROR              1
@@ -55,17 +55,17 @@ typedef int             (_WRTLCALL *_CRT_REPORT_HOOK)( int, char *, int * );
  * Function prototypes.
  */
 
-_WCRTLINK void              _WRTLCALL _CrtDbgBreak( void );
+_WCRTLINK void              _CrtDbgBreak( void );
 
-_WCRTLINK int               _WRTLCALL _CrtSetReportMode( int reporttype,
+_WCRTLINK int               _CrtSetReportMode( int reporttype,
                                                int reportmode );
 
-_WCRTLINK _HFILE            _WRTLCALL _CrtSetReportFile( int reporttype,
+_WCRTLINK _HFILE            _CrtSetReportFile( int reporttype,
                                                _HFILE reportfile );
 
-_WCRTLINK _CRT_REPORT_HOOK  _WRTLCALL _CrtSetReportHook( _CRT_REPORT_HOOK hook );
+_WCRTLINK _CRT_REPORT_HOOK  _CrtSetReportHook( _CRT_REPORT_HOOK hook );
 
-_WCRTLINK int               _WRTLCALL _CrtDbgReport( int reporttype,
+_WCRTLINK int               _CrtDbgReport( int reporttype,
                                            const char *filename,
                                            int linenumber,
                                            const char *modulename,

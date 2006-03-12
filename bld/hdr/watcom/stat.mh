@@ -104,15 +104,15 @@
 /*
  *  POSIX 1003.1 Prototypes.
  */
-_WCRTLINK extern int     _WRTLCALL chmod( const char *__path, mode_t __mode );
-_WCRTLINK extern int     _WRTLCALL stat( const char * __path, struct stat * __buf );
-_WCRTLINK extern int     _WRTLCALL lstat( const char * __path, struct stat * __buf );
-_WCRTLINK extern int     _WRTLCALL fchmod( int __fildes, mode_t __mode );
-_WCRTLINK extern int     _WRTLCALL fstat( int __fildes, struct stat * __buf );
-_WCRTLINK extern int     _WRTLCALL mkdir( const char *__path, mode_t __mode );
-_WCRTLINK extern int     _WRTLCALL mkfifo( const char *__path, mode_t __mode );
-_WCRTLINK extern int     _WRTLCALL mknod( const char *__path, mode_t __mode, int __dev );
-_WCRTLINK extern mode_t  _WRTLCALL umask( mode_t __cmask );
+_WCRTLINK extern int     chmod( const char *__path, mode_t __mode );
+_WCRTLINK extern int     stat( const char *__path, struct stat *__buf );
+_WCRTLINK extern int     lstat( const char *__path, struct stat *__buf );
+_WCRTLINK extern int     fchmod( int __fildes, mode_t __mode );
+_WCRTLINK extern int     fstat( int __fildes, struct stat *__buf );
+_WCRTLINK extern int     mkdir( const char *__path, mode_t __mode );
+_WCRTLINK extern int     mkfifo( const char *__path, mode_t __mode );
+_WCRTLINK extern int     mknod( const char *__path, mode_t __mode, int __dev );
+_WCRTLINK extern mode_t  umask( mode_t __cmask );
 #ifdef __cplusplus
 };
 #endif
@@ -275,16 +275,16 @@ struct _stati64 {
 #define S_ISGID         0002000
 #define S_ISVTX         0001000
 
-_WCRTLINK extern int _WRTLCALL _fstat( int, struct _stat * );
-_WCRTLINK extern int _WRTLCALL _stat( const char *, struct _stat * );
+_WCRTLINK extern int _fstat( int, struct _stat * );
+_WCRTLINK extern int _stat( const char *, struct _stat * );
 
-_WCRTLINK extern int _WRTLCALL _wstat( const wchar_t *, struct _stat * );
-_WCRTLINK extern int _WRTLCALL _wfstat( int, struct _stat * );
+_WCRTLINK extern int _wstat( const wchar_t *, struct _stat * );
+_WCRTLINK extern int _wfstat( int, struct _stat * );
 
-_WCRTLINK extern int _WRTLCALL _fstati64( int, struct _stati64 * );
-_WCRTLINK extern int _WRTLCALL _wfstati64( int, struct _stati64 * );
-_WCRTLINK extern int _WRTLCALL _stati64( const char *, struct _stati64 * );
-_WCRTLINK extern int _WRTLCALL _wstati64( const wchar_t *, struct _stati64 * );
+_WCRTLINK extern int _fstati64( int, struct _stati64 * );
+_WCRTLINK extern int _wfstati64( int, struct _stati64 * );
+_WCRTLINK extern int _stati64( const char *, struct _stati64 * );
+_WCRTLINK extern int _wstati64( const wchar_t *, struct _stati64 * );
 
 :include ext.sp
 /* non-ISO names */
@@ -300,9 +300,9 @@ _WCRTLINK extern int _WRTLCALL _wstati64( const wchar_t *, struct _stati64 * );
 #define S_IWRITE _S_IWRITE
 #define S_IEXEC  _S_IEXEC
 
-_WCRTLINK extern int _WRTLCALL fstat( int, struct stat * );
-_WCRTLINK extern int _WRTLCALL stat( const char *, struct stat * );
-_WCRTLINK extern int _WRTLCALL lstat( const char *, struct stat * );
+_WCRTLINK extern int fstat( int, struct stat * );
+_WCRTLINK extern int stat( const char *, struct stat * );
+_WCRTLINK extern int lstat( const char *, struct stat * );
 :: end of extensions
 #endif
 

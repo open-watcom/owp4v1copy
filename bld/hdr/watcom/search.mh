@@ -12,10 +12,10 @@
  #include <_comdef.h>
 #endif
 
-_WCRTLINK extern void * _WRTLCALL lfind( const void *__key, const void *__base,
+_WCRTLINK extern void *lfind( const void *__key, const void *__base,
                               unsigned *__num, unsigned __width,
                               int (* __compare)(const void *, const void *) );
-_WCRTLINK extern void * _WRTLCALL lsearch( const void *__key, void *__base,
+_WCRTLINK extern void *lsearch( const void *__key, void *__base,
                                 unsigned *__num, unsigned __width,
                                 int (* __compare)(const void *, const void *) );
 :include cplusepi.sp

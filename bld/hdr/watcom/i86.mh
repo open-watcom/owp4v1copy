@@ -202,31 +202,31 @@ enum {
     INTR_OF     = 0x0800        /* overflow */
 };
 
-_WCIRTLINK extern void _WRTLCALL _disable( void );
-_WCIRTLINK extern void _WRTLCALL _enable( void );
+_WCIRTLINK extern void _disable( void );
+_WCIRTLINK extern void _enable( void );
 
 #ifdef  __INLINE_FUNCTIONS__
  #pragma intrinsic(_disable,_enable)
 #endif
 
 :segment QNX | LINUX
-_WCRTLINK extern unsigned _WRTLCALL delay(unsigned int __milliseconds);
+_WCRTLINK extern unsigned delay(unsigned int __milliseconds);
 :elsesegment
-_WCRTLINK extern void    _WRTLCALL delay(unsigned int __milliseconds);
+_WCRTLINK extern void    delay(unsigned int __milliseconds);
 :endsegment
 #if defined(__386__) && !defined(__WINDOWS_386__)
-_WCRTLINK extern int     _WRTLCALL int386( int, union REGS *, union REGS * );
-_WCRTLINK extern int     _WRTLCALL int386x( int, union REGS *, union REGS *,
+_WCRTLINK extern int     int386( int, union REGS *, union REGS * );
+_WCRTLINK extern int     int386x( int, union REGS *, union REGS *,
                                   struct SREGS * );
 #else
-_WCRTLINK extern int     _WRTLCALL int86( int, union REGS *, union REGS * );
-_WCRTLINK extern int     _WRTLCALL int86x( int, union REGS *, union REGS *,
+_WCRTLINK extern int     int86( int, union REGS *, union REGS * );
+_WCRTLINK extern int     int86x( int, union REGS *, union REGS *,
                                  struct SREGS * );
 #endif
-_WCRTLINK extern void    _WRTLCALL intr( int, union REGPACK * );
-_WCRTLINK extern void    _WRTLCALL nosound( void );
-_WCRTLINK extern void    _WRTLCALL segread( struct SREGS * );
-_WCRTLINK extern void    _WRTLCALL sound( unsigned __frequency );
+_WCRTLINK extern void    intr( int, union REGPACK * );
+_WCRTLINK extern void    nosound( void );
+_WCRTLINK extern void    segread( struct SREGS * );
+_WCRTLINK extern void    sound( unsigned __frequency );
 
 /* macros to break 'far' pointers into segment and offset components */
 

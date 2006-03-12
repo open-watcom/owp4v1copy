@@ -22,8 +22,8 @@
  typedef unsigned int jmp_buf[13];
 #endif
 
-_WCRTLINK extern int  _WRTLCALL _setjmp( jmp_buf __env );
-_WCRTLINK extern void _WRTLCALL longjmp( jmp_buf __env, int __val );
+_WCRTLINK extern int  _setjmp( jmp_buf __env );
+_WCRTLINK extern void longjmp( jmp_buf __env, int __val );
 
 #if !defined(_SETJMPEX_H_INCLUDED_)
  #define setjmp(__env)  _setjmp(__env)
@@ -53,8 +53,8 @@ typedef struct {
 } sigjmp_buf[1];
 :include poppack.sp
 
-_WCRTLINK extern void _WRTLCALL __sigjmpsave( sigjmp_buf __env, int __msk );
-_WCRTLINK extern void _WRTLCALL siglongjmp( sigjmp_buf __env, int __val );
+_WCRTLINK extern void __sigjmpsave( sigjmp_buf __env, int __msk );
+_WCRTLINK extern void siglongjmp( sigjmp_buf __env, int __val );
 
 #define sigsetjmp( __env, __msk ) ( __sigjmpsave( __env, __msk ), \
                                     _setjmp( (__env)[0].__buf ) )

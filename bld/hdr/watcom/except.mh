@@ -23,10 +23,10 @@
 
 namespace std {
 
-  _WPRTLINK extern void     _WRTLCALL terminate( void );
-  _WPRTLINK extern PFV      _WRTLCALL set_terminate( PFV );
-  _WPRTLINK extern void     _WRTLCALL unexpected( void );
-  _WPRTLINK extern PFV      _WRTLCALL set_unexpected( PFV );
+  _WPRTLINK extern void     terminate( void );
+  _WPRTLINK extern PFV      set_terminate( PFV );
+  _WPRTLINK extern void     unexpected( void );
+  _WPRTLINK extern PFV      set_unexpected( PFV );
 
 }
 using std::terminate;

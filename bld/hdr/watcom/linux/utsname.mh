@@ -26,7 +26,7 @@ struct utsname {
     char domainname[_UTSNAME_LENGTH];   /* domainname for network node */
 };
 
-_WCRTLINK extern int _WRTLCALL uname(struct utsname *__name);
+_WCRTLINK extern int uname( struct utsname *__name );
 
 :include poppack.sp
 :include cplusepi.sp
