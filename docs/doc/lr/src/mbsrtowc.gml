@@ -12,6 +12,9 @@ size_t _fmbsrtowcs( wchar_t __far *dst,
 .ixfunc2 '&Multibyte' &ffunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function converts a sequence of multibyte characters
 that begins in the shift state described by

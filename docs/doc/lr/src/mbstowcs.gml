@@ -10,6 +10,9 @@ size_t _fmbstowcs( const wchar_t __far *pwcs,
 .ixfunc2 '&Multibyte' &ffunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function converts a sequence of multibyte characters pointed
 to by
@@ -35,7 +38,7 @@ Otherwise, the &func function returns the number of array elements
 modified, not including the terminating zero code if present.
 .return end
 .see begin
-.seelist mbstowcs mblen mbtowc wctomb wcstombs
+.seelist mbstowcs mbstowcs_s mblen mbtowc wctomb wctomb_s wcstombs wcstombs_s
 .see end
 .exmp begin
 #include <stdio.h>

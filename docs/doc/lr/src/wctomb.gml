@@ -10,6 +10,9 @@ int _fwctomb( char __far *s, wchar_t wc );
 .ixfunc2 '&Multibyte' &ffunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function determines the number of bytes required to
 represent the multibyte character corresponding to the wide character
@@ -47,7 +50,7 @@ corresponding to the value of
 .endnote
 .return end
 .see begin
-.seelist wctomb mblen mbstowcs mbtowc wcstombs
+.seelist wctomb wctomb_s mblen mbstowcs mbstowcs_s mbtowc wcstombs wcstombs_s
 .see end
 .exmp begin
 #include <stdio.h>

@@ -14,6 +14,9 @@ size_t _fwcsrtombs( char __far *dst,
 .ixfunc2 '&Multibyte' &ffunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function converts a sequence of wide characters from the
 array indirectly pointed to by

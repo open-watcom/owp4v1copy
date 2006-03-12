@@ -12,6 +12,9 @@ size_t _fwcstombs( char __far *s,
 .ixfunc2 '&Multibyte' &ffunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 The &func function converts a sequence of wide character codes from the
 array pointed to by
@@ -37,7 +40,7 @@ Otherwise, the &func function returns the number of array elements
 modified, not including the terminating zero code if present.
 .return end
 .see begin
-.seelist wcstombs mblen mbtowc mbstowcs wctomb
+.seelist wcstombs wcstombs_s mblen mbtowc mbstowcs mbstowcs_s wctomb wctomb_s
 .see end
 .exmp begin
 #include <stdio.h>

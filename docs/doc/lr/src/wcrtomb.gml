@@ -9,6 +9,9 @@ int _fwcrtomb( char __far *s, wchar_t wc, mbstate_t __far *ps );
 .ixfunc2 '&Multibyte' &ffunc
 .do end
 .funcend
+.*
+.safealt
+.*
 .desc begin
 If
 .arg s
