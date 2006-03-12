@@ -337,7 +337,7 @@ _WCRTLINK extern  void  (*__sig_fini_rtn)( void );
 static void __SetSigInit( void ) {
     __sig_init_rtn = &__SigInit;
     __sig_fini_rtn = &__SigFini;
-    _RWD_FPE_handler = (__sig_func)__sigfpe_handler;
+    _RWD_FPE_handler = (FPEhandler *)__sigfpe_handler;
 }
 
 AXI( __SetSigInit, INIT_PRIORITY_LIBRARY )

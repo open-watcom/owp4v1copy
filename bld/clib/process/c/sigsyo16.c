@@ -70,7 +70,7 @@ void __grab_int23( void )
     __int23_exit = restore_handler;
 }
 
-static void (_WCI86FAR *__old_FPE_handler)( int ) = NULL;
+static FPEhandler   *__old_FPE_handler = NULL;
 
 void __restore_FPE_handler( void )
 {

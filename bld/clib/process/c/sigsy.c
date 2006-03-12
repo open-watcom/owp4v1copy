@@ -363,7 +363,7 @@ void __grab_int_ctrl_break( void )
 
 #if defined( __DOS__ )
 
-static void (_WCI86FAR *__old_FPE_handler)( int ) = NULL;
+static FPEhandler   *__old_FPE_handler = NULL;
 
 void __restore_FPE_handler( void )
 {

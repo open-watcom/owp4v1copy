@@ -64,6 +64,8 @@ typedef struct __stream_link {
 #endif
 } __stream_link;
 
+typedef void _WCI86FAR      FPEhandler( int );
+
 #define _FP_BASE(__fp)          ((__fp)->_link->_base)
 #ifndef __NETWARE__
     #define _FP_ORIENTATION(__fp)   ((__fp)->_link->_orientation)
@@ -77,7 +79,7 @@ typedef struct __stream_link {
 extern __stream_link        *__OpenStreams;
 extern __stream_link        *__ClosedStreams;
 extern      char            * _WCNEAR __env_mask;  /* ptr to char array of flags */
-extern      void            (_WCI86FAR *__FPE_handler)( int );
+extern      FPEhandler      *__FPE_handler;
 extern      void            (*__FPE_handler_exit)( void );
 #if !defined(__NETWARE__)
     extern  int             _cbyte;

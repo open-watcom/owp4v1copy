@@ -287,7 +287,7 @@ void __sig_init( void )
 {
     __sig_init_rtn = __SigInit;
     __sig_fini_rtn = __SigFini;
-    _RWD_FPE_handler = (__sig_func)__sigfpe_handler;
+    _RWD_FPE_handler = (FPEhandler *)__sigfpe_handler;
 }
 
 

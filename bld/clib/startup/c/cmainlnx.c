@@ -42,8 +42,6 @@ char    **_argv;                    /* argument vector */
 
 /* address of FP exception handler */
 #if defined( __386__ )
-extern  void    (*__FPE_handler)( int );
-
 static void __null_FPE_rtn( int i )
 {
 }
