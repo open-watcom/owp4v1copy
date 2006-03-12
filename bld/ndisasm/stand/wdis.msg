@@ -90,17 +90,15 @@ pick( USAGE_6,                  "        -e              generate lists of exter
                                 "        -e              externのリストを生成します" )
 pick( USAGE_7,                  "        -m              leave C++ names mangled",
                                 "        -m              C++のマングルド名を残す" )
-pick( USAGE_8,                  "        -o              print list of operands beside instructions",
-                                "        -o              命令の横のオペランドのリストを表示する" )
-pick( USAGE_9,                  "        -p              generate list of publics",
+pick( USAGE_8,                  "        -p              generate list of publics",
                                 "        -p              パブリックのリストを生成する" )
-pick( USAGE_10,                 "        -s[=src_file]   include source lines",
+pick( USAGE_9,                  "        -s[=src_file]   include source lines",
                                 "        -s[=src_file]   ソース行を含めて表示する" )
-pick( USAGE_11,                 "        -fp             do not use instruction name pseudonyms",
+pick( USAGE_10,                 "        -fp             do not use instruction name pseudonyms",
                                 "        -fp             命令名として擬似ニーモニックを使用しない" )
-pick( USAGE_12,                 "        -fr             do not use register name pseudonyms [RISC only]",
+pick( USAGE_11,                 "        -fr             do not use register name pseudonyms [RISC only]",
                                 "        -fr             レジスタ名として擬似ニーモニックを使用しない[RISCのみ]" )
-pick( USAGE_13,                 "        -fi             use alternate indexing format [80(x)86 only]",
+pick( USAGE_12,                 "        -fi             use alternate indexing format [80(x)86 only]",
                                 "        -fi             別のインデクシング形式を使用する[80(x)86のみ]" )
 pick( USAGE_LAST,               "        -fu             instructions/registers in upper case",
                                 "        -fu             命令/レジスタを大文字にする" )

@@ -81,13 +81,13 @@ $(exe_name) : $(proj_name).res $(dis_prereq) $(disasm_objs) $(pre_deps_$(host_os
 $(proj_name).res : wdis.rc msg.gh
         $(rc_aui) $[@ -fo=$@
 
-./mkstr.exe : $(disasm_dir)/stand/mkstr.c
+./mkstr.exe : $(disasm_dir)/stand/mkstr.c wdis.msg
         $(bld_cl) $(wcl_util_opts) -I"$(disasm_dir)/stand" $[@
 
 msg.gh : ./mkstr.exe wdis.msg
         $[@ $^@
 
-./mkuse.exe : mkstr.c
+./mkuse.exe : mkstr.c wdis.msg
         $(bld_cl) $(wcl_util_opts) -DUSAGE -I"$(disasm_dir)/stand" $[@
 
 wdis.u : ./mkuse.exe wdis.msg

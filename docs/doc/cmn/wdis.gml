@@ -99,8 +99,6 @@ redefine the initial character of internal labels (default: L)
 create a listing file
 .note m
 leave C++ names mangled
-.note o
-print list of operands beside instructions
 .note p
 include list of public names
 .note s[=<source_file>]
