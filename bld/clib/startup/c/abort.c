@@ -37,9 +37,9 @@
 #include <signal.h>
 #include <unistd.h>
 
-void __terminate( void );
 
-void    (*_RWD_abort)() = __terminate;
+void    (*_RWD_abort)( void ) = __terminate;
+
 
 // TODO: Use the QNX code once we get signal handling working properly
 
