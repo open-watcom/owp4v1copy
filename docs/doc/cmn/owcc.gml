@@ -232,3 +232,100 @@ include additional linker directives from <file>.
 This is actually just a special case of -Wl used to pass the
 linker's @ directive to pull in directives from <file>
 .endnote
+.*
+.section owcc Command Line Examples
+.*
+.np
+For most small applications, the
+.kw owcc
+command will suffice.
+We have only scratched the surface in describing the capabilities
+of the
+.kw owcc
+command.
+The following examples describe the
+.kw owcc
+commands in more detail.
+.np
+Suppose that your application is contained in three files called
+.fi apdemo.c
+.ct ,
+.fi aputils.c
+.ct , and
+.fi apdata.c.
+We can compile and link all three files with one command.
+.exam begin 2 ~b1
+&prompt.owcc -g apdemo.c aputils.c apdata.c
+.exam end
+.pc
+The executable program will be stored in
+.fi a.out.
+Each of the three files is compiled with the "g" debug option.
+Debugging information is included in the executable file.
+.np
+We can issue a simpler command if the current directory contains only
+our three &lang source files.
+.exam begin 2 ~b2
+&prompt.owcc -g *.c
+.exam end
+.pc
+.kw owcc
+will locate all files with the "&cxt" filename extension and compile
+each of them.
+The default name of the executable file will be
+.fi a.out.
+Since it is only possible to have one executable with the name
+.fi a.out
+in a directory,
+.kw owcc
+has an option, "o", which will allow you to specify the name to
+be used.
+.exam begin 2 ~b3
+&prompt.owcc -g -o apdemo *.c
+.exam end
+.pc
+By using the "o" option, the executable file will always be called
+.fi apdemo.
+.np
+If the directory contains other &lang source files which are not
+part of the application then other tricks may be used to identify a
+subset of the files to be compiled and linked.
+.exam begin 2 ~b4
+&prompt.owcc -g -o apdemo ap*.c
+.exam end
+.pc
+Here we compile only those &lang source files that begin with the
+letters "ap".
+.np
+In our examples, we have recompiled all the source files each time.
+In general, we will only compile one of them and include the object
+code for the others.
+.exam begin 2 ~b5
+&prompt.owcc -g -o apdemo aputils.c ap*&obj
+.exam end
+.pc
+The source file
+.fi aputils.c
+is recompiled and
+.fi apdemo&obj
+and
+.fi apdata&obj
+are included when linking the application.
+The "&obj" filename extension indicates that this file need not be
+compiled.
+.exam begin 2 ~b6
+&prompt.owcc -o demo *.c utility&obj
+.exam end
+.pc
+All of the &lang source files in the current directory are compiled
+and then linked with
+.fi utility&obj
+to generate
+.fi demo.
+The temporary linker directive file that is created by
+.kw owcc
+will be kept and renamed to
+.fi grdemo.lnk.
+.pc
+For more complex applications, you should use a "Make" utility.
+
