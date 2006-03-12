@@ -123,6 +123,8 @@ namespace std {
     );
   }
 
+:: Commented out due to compiler bug.
+#ifdef _NEVER
   // distance( Iterator, Iterator )
   // ******************************
 
@@ -187,6 +189,7 @@ namespace std {
       first, last, iterator_traits< InputIterator >::iterator_catagory( )
     ) );
   }
+#endif
 
   // reverse_iterator
   // ****************

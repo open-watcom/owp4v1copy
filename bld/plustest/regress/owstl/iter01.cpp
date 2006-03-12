@@ -107,6 +107,7 @@ bool advance_test( )
   return( rc );
 }
 
+#ifdef NEVER
 bool distance_test( )
 {
   bool rc = true;
@@ -116,6 +117,7 @@ bool distance_test( )
 
   return( rc );
 }
+#endif
 
 char reverse_array[] = { 'a', 'b', 'c', 'd' };
 
@@ -175,7 +177,7 @@ int main( )
   try {
     if( !traits_test( )         || !heap_ok( "t01" )  ) rc = 1;
     if( !advance_test( )        || !heap_ok( "t02" )  ) rc = 1;
-    if( !distance_test( )       || !heap_ok( "t03" )  ) rc = 1;
+    // if( !distance_test( )       || !heap_ok( "t03" )  ) rc = 1;
     if( !reverse_test( )        || !heap_ok( "t04" )  ) rc = 1;
     if( !back_inserter_test( )  || !heap_ok( "t05" )  ) rc = 1;
     if( !front_inserter_test( ) || !heap_ok( "t06" )  ) rc = 1;

@@ -173,6 +173,7 @@ bool find_first_of_test( )
   return( true );
 }
 
+#ifdef NEVER
 bool count_test( )
 {
   bool rc = true;
@@ -198,6 +199,7 @@ bool count_test( )
 
   return( rc );
 }
+#endif
 
 bool equal_test( )
 {
@@ -539,7 +541,7 @@ int main( )
     if( !find_test( )           || !heap_ok( "t02" ) ) rc = 1;
     if( !find_end_test( )       || !heap_ok( "t03" ) ) rc = 1;
     if( !find_first_of_test( )  || !heap_ok( "t04" ) ) rc = 1;
-    if( !count_test( )       || !heap_ok( "t05" ) ) rc = 1;
+    // if( !count_test( )       || !heap_ok( "t05" ) ) rc = 1;
     if( !equal_test( )          || !heap_ok( "t06" ) ) rc = 1;
     if( !copy_test( )           || !heap_ok( "t07" ) ) rc = 1;
     if( !swap_test( )           || !heap_ok( "t08" ) ) rc = 1;
