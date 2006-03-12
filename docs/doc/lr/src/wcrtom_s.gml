@@ -1,16 +1,16 @@
 .func wcrtomb_s _fwcrtomb_s
 #define __STDC_WANT_LIB_EXT1__  1
 #include <wchar.h>
-errno_t wcrtomb_s( size_t * __restrict retval,
-                   char * __restrict s, rsize_t smax,
-                   wchar_t wc, mbstate_t * __restrict ps);
+errno_t wcrtomb_s( size_t * restrict retval,
+                   char * restrict s, rsize_t smax,
+                   wchar_t wc, mbstate_t * restrict ps);
 .ixfunc2 '&Wide' &func
 .ixfunc2 '&Multibyte' &func
 .if &farfnc eq 1 .do begin
 
-errno_t _wcrtomb_s( size_t __far * __restrict retval,
-                   char __far * __restrict s, rsize_t smax,
-                   wchar_t wc, mbstate_t __far * __restrict ps);
+errno_t _wcrtomb_s( size_t __far * restrict retval,
+                   char __far * restrict s, rsize_t smax,
+                   wchar_t wc, mbstate_t __far * restrict ps);
 .ixfunc2 '&Wide' &ffunc
 .ixfunc2 '&Multibyte' &ffunc
 .do end

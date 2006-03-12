@@ -1,17 +1,17 @@
 .func mbstowcs_s _fmbstowcs_s
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdlib.h>
-errno_t mbstowcs_s( size_t * __restrict retval,
-                    wchar_t * __restrict dst,
+errno_t mbstowcs_s( size_t * restrict retval,
+                    wchar_t * restrict dst,
                     rsize_t dstmax,
-                    const char * __restrict src, rsize_t len);
+                    const char * restrict src, rsize_t len);
 .ixfunc2 '&Multibyte' &func
 .if &farfnc eq 1 .do begin
 .ixfunc2 '&Multibyte' &ffunc
-errno_t _fmbstowcs_s( size_t __far * __restrict retval,
-                    wchar_t __far * __restrict dst,
+errno_t _fmbstowcs_s( size_t __far * restrict retval,
+                    wchar_t __far * restrict dst,
                     rsize_t dstmax,
-                    const char __far * __restrict src, rsize_t len);
+                    const char __far * restrict src, rsize_t len);
 .do end
 .funcend
 .*

@@ -1,15 +1,15 @@
 .func wctomb_s _fwctomb_s
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
-errno_t wctomb_s( int * __restrict status,
-                  char * __restrict s,
+errno_t wctomb_s( int * restrict status,
+                  char * restrict s,
                   rsize_t smax,
                   wchar_t wc);
 .ixfunc2 '&Wide' &func
 .ixfunc2 '&Multibyte' &func
 .if &farfnc eq 1 .do begin
-errno_t wctomb_s( int __far * __restrict status,
-                  char __far * __restrict s,
+errno_t wctomb_s( int __far * restrict status,
+                  char __far * restrict s,
                   rsize_t smax,
                   wchar_t wc);
 .ixfunc2 '&Wide' &ffunc

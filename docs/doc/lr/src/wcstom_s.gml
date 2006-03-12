@@ -1,19 +1,19 @@
 .func wcstombs_s _fwcstombs_s
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
-errno_t wcstombs_s( size_t * __restrict retval,
-                    char * __restrict dst,
+errno_t wcstombs_s( size_t * restrict retval,
+                    char * restrict dst,
                     rsize_t dstmax,
-                    const wchar_t * __restrict src,
+                    const wchar_t * restrict src,
                     rsize_t len);
 .ixfunc2 '&Wide' &func
 .ixfunc2 '&Multibyte' &func
 .if &farfnc eq 1 .do begin
 
-errno_t _fwcstombs_s( size_t __far * __restrict retval,
-                      char __far * __restrict dst,
+errno_t _fwcstombs_s( size_t __far * restrict retval,
+                      char __far * restrict dst,
                       rsize_t dstmax,
-                      const wchar_t __far * __restrict src,
+                      const wchar_t __far * restrict src,
                       rsize_t len);
 .ixfunc2 '&Wide' &ffunc
 .ixfunc2 '&Multibyte' &ffunc
