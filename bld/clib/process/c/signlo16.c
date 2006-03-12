@@ -75,12 +75,12 @@ void __sigabort( void )
 
 _WCRTLINK void _WCI86FAR __sigfpe_handler( int fpe_type )
 {
-    sig_func func;
+    __sig_func  func;
 
     func = _RWD_sigtab[ SIGFPE ].func;
     if( func != SIG_IGN  &&  func != SIG_DFL  &&  func != SIG_ERR ) {
         _RWD_sigtab[ SIGFPE ].func = SIG_DFL;      /* 09-nov-87 FWC */
-        (*(sigfpe_func)func)( SIGFPE, fpe_type );        /* so we can pass 2'nd parm */
+        (*(__sigfpe_func)func)( SIGFPE, fpe_type );        /* so we can pass 2'nd parm */
     }
 }
 
@@ -116,9 +116,9 @@ static void restore_handler( void )
 }
 
 
-_WCRTLINK sig_func signal( int sig, sig_func func )
+_WCRTLINK __sig_func signal( int sig, __sig_func func )
 {
-    sig_func prev_func;
+    __sig_func  prev_func;
 
     if(( sig < 1 ) || ( sig > __SIGLAST )) {
         __set_errno( EINVAL );
@@ -150,7 +150,7 @@ _WCRTLINK sig_func signal( int sig, sig_func func )
 
 _WCRTLINK int raise( int sig )
 {
-    sig_func func;
+    __sig_func  func;
 
     func = _RWD_sigtab[ sig ].func;
     switch( sig ) {

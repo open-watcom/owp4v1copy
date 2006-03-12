@@ -42,7 +42,7 @@
 #include "fpusig.h"
 #include "excptwnt.h"
 
-sig_func    (*__oscode_check_func)( int, long ) = NULL;
+__sig_func  (*__oscode_check_func)( int, long ) = NULL;
 int         (*__raise_func)( int )              = NULL;
 unsigned char   __ExceptionHandled;
 unsigned char   __ReportInvoked;
@@ -433,7 +433,7 @@ int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
          * If the signal handling code is linked in then we need to see if the
          * user has installed a signal handler.
          */
-        sig_func func;
+        __sig_func  func;
 
         for( sig = 1; sig <= __SIGLAST; sig++ ) {
             func = __oscode_check_func( sig, ex->ExceptionCode );

@@ -76,12 +76,12 @@ sigtab  SignalTable[] = {
 _WCRTLINK int   __sigfpe_handler( int fpe )
 /*****************************************/
 {
-    sig_func func;
+    __sig_func  func;
 
     func = _RWD_sigtab[ SIGFPE ].func;
     if(( func != SIG_IGN ) && ( func != SIG_DFL ) && ( func != SIG_ERR )) {
         _RWD_sigtab[ SIGFPE ].func = SIG_DFL;
-        (*(sigfpe_func)func)( SIGFPE, fpe );
+        (*(__sigfpe_func)func)( SIGFPE, fpe );
         return( 0 );
     } else if( func == SIG_IGN ) {
         return( 0 );
@@ -258,10 +258,10 @@ static  void    restore_handler( void )
 }
 
 
-_WCRTLINK sig_func signal( int sig, sig_func func ) {
+_WCRTLINK __sig_func signal( int sig, __sig_func func ) {
 /***************************************************************/
 
-    sig_func    prev_func;
+    __sig_func  prev_func;
     ULONG       nesting;
 
     if(( sig < 1 ) || ( sig > __SIGLAST )) {
@@ -296,7 +296,7 @@ _WCRTLINK sig_func signal( int sig, sig_func func ) {
 _WCRTLINK int raise( int sig ) {
 /*****************************/
 
-    sig_func func;
+    __sig_func  func;
 
     func = _RWD_sigtab[ sig ].func;
     switch( sig ) {
@@ -337,7 +337,7 @@ _WCRTLINK extern  void  (*__sig_fini_rtn)( void );
 static void __SetSigInit( void ) {
     __sig_init_rtn = &__SigInit;
     __sig_fini_rtn = &__SigFini;
-    _RWD_FPE_handler = (sig_func)__sigfpe_handler;
+    _RWD_FPE_handler = (__sig_func)__sigfpe_handler;
 }
 
 AXI( __SetSigInit, INIT_PRIORITY_LIBRARY )

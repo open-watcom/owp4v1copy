@@ -58,8 +58,9 @@ namespace std {
 typedef int sig_atomic_t;
 :endsegment
 
+typedef void (*__sig_func)( int );
 :segment LINUX
-typedef void (*__sighandler_t)(int);
+typedef __sig_func __sighandler_t;
 
 :include incdir.sp
 #include _ARCH_INCLUDE(signal.h)
@@ -70,10 +71,8 @@ typedef void (*__sighandler_t)(int);
 :include poppack.sp
 #endif  /* _POSIX_SOURCE || _QNX_SOURCE || !NO_EXT_KEYS */
 
-:endsegment
+:elsesegment QNX
 
-
-:segment QNX
 #define __SIG_FAR _WCI86FAR
 
 #if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
@@ -134,7 +133,6 @@ struct msigevent {
 #endif  /* _POSIX_SOURCE || _QNX_SOURCE || !NO_EXT_KEYS */
 
 typedef void (__SIG_FAR *__far_sig_func)( int );
-typedef void (*__sig_func)( int );
 
 #define __FAR_SIG_ERR       ((__far_sig_func)(unsigned)-1)
 #define __FAR_SIG_DFL       ((__far_sig_func)(unsigned)0)
@@ -178,9 +176,7 @@ typedef void (*__sig_func)( int );
 #define SIGDEV      28  /* Dev event */
 
 #define _SIGMAX     32
-:endsegment
-:segment !QNX & !LINUX
-typedef void (*__sig_func)( int );
+:elsesegment
 
 #define SIG_IGN         ((__sig_func) 1)
 #define SIG_DFL         ((__sig_func) 2)

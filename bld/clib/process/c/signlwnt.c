@@ -65,9 +65,9 @@ sigtab  SignalTable[] = {
 static char CtrlHandlerRunning = FALSE;
 
 
-sig_func __SetSignalFunc( int sig, sig_func new_func )
+__sig_func __SetSignalFunc( int sig, __sig_func new_func )
 {
-    sig_func prev_func = NULL;
+    __sig_func  prev_func = NULL;
 
     if(( sig == SIGBREAK ) || ( sig == SIGINT )) {
         prev_func = SignalTable[ sig ].func;
@@ -80,7 +80,7 @@ sig_func __SetSignalFunc( int sig, sig_func new_func )
 }
 
 
-sig_func __GetSignalFunc( int sig )
+__sig_func __GetSignalFunc( int sig )
 {
     if(( sig == SIGBREAK ) || ( sig == SIGINT ))
         return( SignalTable[ sig ].func );
@@ -98,7 +98,7 @@ long __GetSignalOSCode( int sig )
 }
 
 
-sig_func __CheckSignalExCode( int sig, long code )
+__sig_func __CheckSignalExCode( int sig, long code )
 {
     if( code == __GetSignalOSCode( sig ) )
         return( __GetSignalFunc( sig ) );
@@ -109,7 +109,7 @@ sig_func __CheckSignalExCode( int sig, long code )
 
 static BOOL WINAPI CtrlSignalHandler( IN ULONG Event )
 {
-    sig_func func;
+    __sig_func  func;
 
     switch( Event ) {
     case CTRL_C_EVENT:
@@ -137,8 +137,8 @@ static BOOL WINAPI CtrlSignalHandler( IN ULONG Event )
 
 static BOOL CtrlHandlerIsNeeded( void )
 {
-    sig_func int_func = __GetSignalFunc( SIGINT );
-    sig_func brk_func = __GetSignalFunc( SIGBREAK );
+    __sig_func  int_func = __GetSignalFunc( SIGINT );
+    __sig_func  brk_func = __GetSignalFunc( SIGBREAK );
 
     return((( int_func != SIG_DFL ) && ( int_func != SIG_ERR ))
         || (( brk_func != SIG_DFL ) && ( brk_func != SIG_ERR )));
@@ -170,12 +170,12 @@ void __sigabort( void )
 
 _WCRTLINK int __sigfpe_handler( int fpe )
 {
-    sig_func func;
+    __sig_func  func;
 
     func = __GetSignalFunc( SIGFPE );
     if(( func != SIG_IGN ) && ( func != SIG_DFL ) && ( func != SIG_ERR )) {
         __SetSignalFunc( SIGFPE, SIG_DFL );
-        (*(sigfpe_func)func)( SIGFPE, fpe );
+        (*(__sigfpe_func)func)( SIGFPE, fpe );
         return( 0 );
     } else if( func == SIG_IGN ) {
         return( 0 );
@@ -184,9 +184,9 @@ _WCRTLINK int __sigfpe_handler( int fpe )
 }
 
 
-_WCRTLINK sig_func signal( int sig, sig_func func )
+_WCRTLINK __sig_func signal( int sig, __sig_func func )
 {
-    sig_func prev_func;
+    __sig_func  prev_func;
 
     if(( sig < 1 ) || ( sig > __SIGLAST )) {
         __set_errno( EINVAL );
@@ -208,7 +208,7 @@ _WCRTLINK sig_func signal( int sig, sig_func func )
 
 _WCRTLINK int raise( int sig )
 {
-    sig_func func;
+    __sig_func  func;
 
     func = __GetSignalFunc( sig );
     switch( sig ) {
@@ -287,7 +287,7 @@ void __sig_init( void )
 {
     __sig_init_rtn = __SigInit;
     __sig_fini_rtn = __SigFini;
-    _RWD_FPE_handler = (sig_func)__sigfpe_handler;
+    _RWD_FPE_handler = (__sig_func)__sigfpe_handler;
 }
 
 
