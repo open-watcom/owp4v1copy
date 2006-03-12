@@ -46,9 +46,9 @@ inspick( addr_pr,       "addr",         0X00000067,     0x000000ff,     X64Prefi
 inspick( cs_pr,         "cs",           0x0000002e,     0x000000ff,     X64PrefixCS )
 inspick( fs_pr,         "fs",           0x00000064,     0x000000ff,     X64PrefixFS )
 inspick( gs_pr,         "gs",           0x00000065,     0x000000ff,     X64PrefixGS )
-inspick( ss_pr,         "ss",           0x00000036,     0x000000ff,     X86PrefixSS )
-inspick( ds_pr,         "ds",           0x0000003e,     0x000000ff,     X86PrefixDS )
-inspick( es_pr,         "es",           0x00000026,     0x000000ff,     X86PrefixES )
+inspick( ss_pr,         "ss",           0x00000036,     0x000000ff,     X64PrefixSS )
+inspick( ds_pr,         "ds",           0x0000003e,     0x000000ff,     X64PrefixDS )
+inspick( es_pr,         "es",           0x00000026,     0x000000ff,     X64PrefixES )
 
 // Instructions
 inspick( cwde,          "cwde",         0x00000098,     0x000000ff,     X64NoOp_8)
@@ -86,6 +86,28 @@ inspick( pushfq,        "pushfq",       0x0000009c,     0x000000ff,     X64NoOp_
 inspick( adc,           "adc",          0x00000010,     0x000000fc,     X64RegModRM_16)
 inspick( adc2,          "adc",          0x00000014,     0x000000fe,     X64ImmAcc_8)
 inspick( adc3,          "adc",          0x00001080,     0x000038fc,     X64ModRMImm_16)
+
+inspick( add,           "add",          0x00000000,     0x000000fc,     X64RegModRM_16)
+inspick( add2,          "add",          0x00000004,     0x000000fe,     X64ImmAcc_8)
+inspick( add3,          "add",          0x00000080,     0x000038fc,     X64ModRMImm_16)
+
+inspick( and,           "and",          0x00000020,     0x000000fc,     X64RegModRM_16)
+inspick( and2,          "and",          0x00000024,     0x000000fe,     X64ImmAcc_8)
+inspick( and3,          "and",          0x00002080,     0x000038fc,     X64ModRMImm_16)
+
+inspick( bsf,           "bsf",          0x0000bc0f,     0x0000ffff,     X64RegModRM_24B)
+inspick( bsr,           "bsr",          0x0000bd0f,     0x0000ffff,     X64RegModRM_24B)
+
+inspick( bswap,         "bswap",        0x0000c80f,     0x0000f8ff,     X64Reg_16)
+
+inspick( bt,            "bt",           0x0000a30f,     0x0000ffff,     X64RegModRM_24B)
+inspick( bt2,           "bt",           0x0020ba0f,     0x0038ffff,     X64ModRMImm_24)
+inspick( btc,           "btc",          0x0000bb0f,     0x0000ffff,     X64RegModRM_24B)
+inspick( btc2,          "btc",          0x0038ba0f,     0x0038ffff,     X64ModRMImm_24)
+inspick( btr,           "btr",          0x0000b30f,     0x0000ffff,     X64RegModRM_24B)
+inspick( btr2,          "btr",          0x0030ba0f,     0x0038ffff,     X64ModRMImm_24)
+inspick( bts,           "bts",          0x0000ab0f,     0x0000ffff,     X64RegModRM_24B)
+inspick( bts2,          "bts",          0x0028ba0f,     0x0038ffff,     X64ModRMImm_24)
 
 /*
 inspick( pop,           "pop",          0x0000008f,     0x000038ff,     X64ModRM_16)

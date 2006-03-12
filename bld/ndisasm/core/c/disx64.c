@@ -1359,20 +1359,39 @@ static void X64GetRegModRM( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,
     }
 }*/
 
-//void X64GetRegModRM_B( DBIT dir, MOD mod, RM rm, RM reg, void *d, dis_dec_ins *ins )
+void X64GetRegModRM_B( DBIT dir, MOD mod, RM rm, RM reg, void *d, dis_dec_ins *ins )
 /**********************************************************************/
 //    dir                   1                 0
 //   Destination           Reg              MODRM
 //   Source               MODRM              Reg
-/*{
-    if( dir ) {
-        X64GetReg( W_DEFAULT, reg, ins );
-        X64GetModRM( W_DEFAULT, mod, W_DEFAULT, rm, d, ins, X64GetRefType( W_DEFAULT ,ins ) );
-    } else {
-        X64GetModRM( W_DEFAULT, mod, W_DEFAULT, rm, d, ins, X64GetRefType( W_DEFAULT ,ins ) );
-        X64GetReg( W_DEFAULT, reg, ins );
+{
+    REGWIDTH rw_mod = RW_32BIT;
+    REGWIDTH rw_reg = RW_32BIT;
+    
+    // modrm is 16 bit if opcode prefix is present
+    if( DIF_X64_OPND_SIZE & ins->flags ) {
+        rw_mod = RW_16BIT;
+        rw_reg = RW_16BIT;
     }
-}*/
+    
+    // modrm is 64 bit if rex.w set
+    if( DIF_X64_REX_W & ins->flags ) {
+        rw_mod = rw_reg = RW_64BIT;
+    }
+
+    // REX.R modifies reg to access r8-r15
+    if( DIF_X64_REX_R & ins->flags ) {
+        reg += X64_EXTENDED_REG_OFFSET;
+    }
+
+    if( dir ) {
+        X64GetReg( rw_reg, reg, ins );
+        X64GetModRM( rw_mod, mod, rw_reg, rm, d, ins, X64GetRefType( rw_reg ,ins ) );
+    } else {
+        X64GetModRM( rw_mod, mod, rw_reg, rm, d, ins, X64GetRefType( rw_reg ,ins ) );
+        X64GetReg( rw_reg, reg, ins );
+    }
+}
 
 
 
@@ -2047,6 +2066,170 @@ dis_handler_return X64ModRMImm_16( dis_handle *h, void *d, dis_dec_ins *ins )
     }
     return( DHR_DONE );
 }
+    
+dis_handler_return X64Reg_16( dis_handle *h, void *d , dis_dec_ins *ins )
+/**********************************************************************/
+//  Format:
+//  Byte       OOOO OOOO OOOO ORRR
+//                op1          reg
+{
+    code_16  code;
+    RM       reg;
+    REGWIDTH rw = RW_32BIT;
+
+    code.full       = ins->opcode;
+    ins->num_ops    = 0;
+    ins->size      += 2;
+    
+    reg = code.type1.rm;
+    
+    // if rex.w present then instruction is 64-bit
+    if( DIF_X64_REX_W & ins->flags ) {
+        rw = RW_64BIT;
+    }
+
+    // REX.B modifies reg to access r8-r15
+    if( DIF_X64_REX_B & ins->flags ) {
+        reg += X64_EXTENDED_REG_OFFSET;
+    }
+    
+    X64GetReg( rw, reg, ins );
+
+    return( DHR_DONE );
+}
+
+
+/*=====================================================================*/
+/*                24-BIT OPCODE FUNCTIONS                              */
+/*=====================================================================*/
+
+typedef union {
+    unsigned_32 full;
+    struct {
+        unsigned_32 op1: 8;
+        unsigned_32 w  : 1;
+        unsigned_32 s  : 1;
+        unsigned_32 op2: 6;
+        unsigned_32 rm : 3;
+        unsigned_32 reg: 3;
+        unsigned_32 mod: 2;
+    } type1;
+    struct {
+        unsigned_32 op1: 8;
+        unsigned_32 w  : 1;
+        unsigned_32 dir: 1;
+        unsigned_32 op2: 6;
+        unsigned_32 rm : 3;
+        unsigned_32 reg: 3;
+        unsigned_32 mod: 2;
+    } type2;
+} code_24;
+
+
+dis_handler_return X64RegModRM_24B( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************/
+// Format:    OOOO OOOO OOOO OOOO MM REG RRR
+//                     op1       mod reg1 rm/reg2
+{
+    code_24 code;
+
+    code.full = ins->opcode;
+    ins->size    += 3;
+    ins->num_ops = 0;
+
+/*    if( code.type1.mod == MOD_3 ) {
+        switch( ins->type ) {
+        case DI_X86_lgs:
+        case DI_X86_lss:
+        case DI_X86_lfs:
+            return( DHR_INVALID );
+        default:
+            break;
+        }
+    }*/
+
+    switch(ins->type) {
+/*    case DI_X86_cmpxchg8b:
+        X86GetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins,
+                               X86GetRefType( W_DEFAULT ,ins ) );
+        break;
+    case DI_X86_shld:
+    case DI_X86_shrd:
+        X86GetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins,
+                               X86GetRefType( W_DEFAULT ,ins ) );
+        X86GetReg( W_DEFAULT, code.type1.reg, ins );
+        ins->op[ins->num_ops].base = DR_X86_cl;
+        ins->op[ins->num_ops].type = DO_REG;
+        ++ins->num_ops;
+        break;
+    case DI_X86_shld2:
+    case DI_X86_shrd2:
+        X86GetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins,
+                               X86GetRefType( W_DEFAULT ,ins ) );
+        X86GetReg( W_DEFAULT, code.type1.reg, ins );
+        ins->op[ins->num_ops].value = GetUByte( d, ins->size );
+        ins->op[ins->num_ops].type = DO_IMMED;
+        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
+        ++ins->size;
+        ++ins->num_ops;
+        break;*/
+    case DI_X64_bt:
+    case DI_X64_btc:
+    case DI_X64_btr:
+    case DI_X64_bts:
+        X64GetRegModRM_B( D_RM_REG, code.type1.mod, code.type1.rm,
+                           code.type1.reg, d, ins );
+        break;
+    default:
+        X64GetRegModRM_B( D_REG_RM, code.type1.mod, code.type1.rm,
+                           code.type1.reg, d, ins );
+        break;
+    }
+    return( DHR_DONE );
+}
+
+dis_handler_return X64ModRMImm_24( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************/
+// Format:    OOOO OOOO OOOO OO S X   MM  OOO RRR
+//                op1    op2    s X  mod op3 rm
+
+{
+    code_24  code;
+    REGWIDTH rw_mod = RW_32BIT;
+    REGWIDTH rw_reg = RW_32BIT;
+    RM       reg;
+    
+    code.full     = ins->opcode;
+    ins->size    += 3;
+    ins->num_ops = 0;
+    
+    reg = code.type1.rm;
+
+    // modrm is 16 bit if opcode prefix is present
+    if( DIF_X64_OPND_SIZE & ins->flags ) {
+        rw_mod = RW_16BIT;
+        rw_reg = RW_16BIT;
+    }
+    
+    // modrm is 64 bit if rex.w set
+    if( DIF_X64_REX_W & ins->flags ) {
+        rw_mod = rw_reg = RW_64BIT;
+    }
+
+    // REX.R modifies reg to access r8-r15
+    if( DIF_X64_REX_R & ins->flags ) {
+        reg += X64_EXTENDED_REG_OFFSET;
+    }
+
+    X64GetModRM( rw_mod, code.type1.mod, rw_reg, reg, d, ins, X64GetRefType( rw_reg ,ins ) );
+    
+    //BUGBUG: Check X64GetImmedVal because the disassembly of bt <reg>, 0x9A is bt <reg>, 0xffffff9a!!
+    
+    X64GetImmedVal( code.type1.s, W_DEFAULT, d, ins );
+    
+    return( DHR_DONE );
+}
+
 
 /*=====================================================================*/
 /*                HOOK FUNCTIONS                                       */
