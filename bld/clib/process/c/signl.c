@@ -47,16 +47,12 @@ extern      void    __restore_int23( void );
 extern      void    __grab_int_ctrl_break( void );
 extern      void    __restore_int_ctrl_break( void );
 #endif
-
-extern  void    __terminate( void );
 #endif
 
 #if defined( __DOS__ )
 extern      void    __grab_FPE_handler( void );
 extern      void    __restore_FPE_handler( void );
 #endif
-
-extern  void    (*__abort)( void );
 
 #define __SIGLAST       SIGIOVFL
 
@@ -141,7 +137,7 @@ _WCRTLINK __sig_func signal( int sig, __sig_func func )
         __set_errno( EINVAL );
         return( SIG_ERR );
     }
-    __abort = __sigabort;           /* change the abort rtn address */
+    _RWD_abort = __sigabort;           /* change the abort rtn address */
 #if !defined( __WINDOWS_386__ ) && !defined( __NETWARE__ )
     if( sig == SIGINT ) {
         if( func == SIG_DFL ) {

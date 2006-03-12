@@ -31,8 +31,5 @@
 extern  __sig_func      (*__oscode_check_func)( int, long );
 extern  int             (*__raise_func)( int );
 extern  unsigned char   __ExceptionHandled;
-extern  void            __terminate( void );
-extern  void            (*__abort)( void );
 extern  void            __null_int23_exit( void );
 extern  void            (*__int23_exit)( void );
-

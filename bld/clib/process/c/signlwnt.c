@@ -193,7 +193,7 @@ _WCRTLINK __sig_func signal( int sig, __sig_func func )
         return( SIG_ERR );
     }
 
-    __abort = __sigabort;               /* change the abort rtn address */
+    _RWD_abort = __sigabort;               /* change the abort rtn address */
 
     prev_func = __GetSignalFunc( sig );
     __SetSignalFunc( sig, func );

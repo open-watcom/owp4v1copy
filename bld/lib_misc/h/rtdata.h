@@ -205,6 +205,7 @@ _WCRTLINK   extern  void    __exit( unsigned );
     #pragma aux     __exit aborts;
 #endif
 
+extern      void    (*__abort)( void );     // Defined in abort.c
 extern      void    __terminate( void );    // Defined in abort.c
 
 #endif // _RTDATA_H_INCLUDED

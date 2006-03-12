@@ -43,8 +43,6 @@
 #include "sigfunc.h"
 #include "seterrno.h"
 
-extern  void    __terminate( void );
-extern  void    (*__abort)( void );
 extern  void    __null_int23_exit( void );
 extern  void    (*__int23_exit)( void );
 extern  void    __grab_FPE_handler( void );
@@ -124,7 +122,7 @@ _WCRTLINK __sig_func signal( int sig, __sig_func func )
         __set_errno( EINVAL );
         return( SIG_ERR );
     }
-    __abort = __sigabort;           /* change the abort rtn address */
+    _RWD_abort = __sigabort;           /* change the abort rtn address */
     if( _RWD_sigtab[ sig ].os_sig_code != 0 ) {
         if( func != SIG_DFL  &&  func != SIG_ERR ) {
             if( _RWD_sigtab[ sig ].os_func == NULL ) {
@@ -181,4 +179,3 @@ _WCRTLINK int raise( int sig )
     }
     return( 0 );
 }
-
