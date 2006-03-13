@@ -36,6 +36,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <float.h>
+#include <math.h>
 
 #ifdef __SW_BW
     #include <wdefwin.h>
@@ -68,6 +69,105 @@ int Test_scan( void )
     VERIFY( sscanf( "-82.25 31.6e-1", "%f%f", &f, &g ) == 2 );
     VERIFY( f == -82.25f );
     VERIFY( g == 3.16f );
+
+    return( 1 );
+}
+
+
+int Test_string_to_float( void )
+/******************************/
+{
+    double  x, y;
+    char    *eptr;
+
+
+    /* This one needs full 17 decimal places */
+    x = strtod( "1.1920928955078125E-007", NULL );
+    y = strtod( "0x1P-23", NULL );
+    VERIFY( x == y );
+
+    x = strtod( "-1.0e-0a", &eptr );
+    VERIFY( x == -1.0 );
+    VERIFY( *eptr == 'a' );
+
+    x = strtod( "+3.14159265", &eptr );
+    VERIFY( x == 3.14159265 );
+    VERIFY( *eptr == '\0' );
+
+    x = strtod( "-0", NULL );
+    VERIFY( x == 0 );   // Should that be true??
+
+    x = strtod( "0x1g", &eptr );
+    VERIFY( x == 1.0 );
+    VERIFY( *eptr == 'g' );
+
+    x = strtod( "0x2", &eptr );
+    VERIFY( x == 2.0 );
+
+    x = strtod( "0x4", &eptr );
+    VERIFY( x == 0x4 );
+
+    x = strtod( "0x8", NULL );
+    VERIFY( x == 8.0 );
+
+    x = strtod( "0x10", &eptr );
+    VERIFY( x == 16.0 );
+
+    x = strtod( "-0x10.0p-0z", &eptr );
+    VERIFY( x == -16 );
+    VERIFY( *eptr == 'z' );
+
+    x = strtod( "-0x100.0P-8P", &eptr );
+    VERIFY( x == -1 );
+    VERIFY( *eptr == 'P' );
+
+    x = strtod( "0x.cq", &eptr );
+    VERIFY( x == 12.0 / 16 );
+    VERIFY( *eptr == 'q' );
+
+    x = strtod( "0x.0000Ap20", &eptr );
+    VERIFY( x == 10 );
+
+    x = strtod( "0xF.a", &eptr );
+    VERIFY( x == 250.0 / 16 );
+
+    x = strtod( "0xfAp-04", &eptr );
+    VERIFY( x == 250.0 / 16 );
+
+    x = strtod( "0x1..0p3", &eptr );
+    VERIFY( x == 1 );
+    VERIFY( !strcmp( eptr, ".0p3" ) );
+
+    x = strtod( "0x0000000000000000000000000000000000000000000000001234567890123j", &eptr );
+    VERIFY( x == 0x1234567890123 );
+    VERIFY( *eptr == 'j' );
+
+    x = strtod( "-0x1p-1a", &eptr );
+    VERIFY( x == -.5 );
+    VERIFY( *eptr == 'a' );
+
+    x = strtod( "NaNumber", &eptr );
+    VERIFY( isnan(x) && !signbit( x ) );
+    VERIFY( *eptr == 'u' );
+
+    x = strtod( "NAN()", &eptr );
+    VERIFY( isnan(x) && !signbit( x ) );
+    VERIFY( *eptr == '\0' );
+
+    x = strtod( "-nan(non_sense_354)", &eptr );
+    VERIFY( isnan( x ) && signbit( x ) );
+    VERIFY( *eptr == '\0' );
+
+    x = strtod( "Infiniti", &eptr );
+    VERIFY( isinf( x ) && !signbit( x ) );
+    VERIFY( !strcmp( eptr, "initi" ) );
+
+    x = strtod( "InFiNiTy01", &eptr );
+    VERIFY( isinf( x ) && !signbit( x ) );
+    VERIFY( *eptr == '0' );
+
+    x = strtod( "-INF", NULL );
+    VERIFY( isinf( x ) && signbit( x ) );
 
     return( 1 );
 }
@@ -196,6 +296,7 @@ int main( int argc, char *argv[] )
 
     Test_scan();
     Test_scan_std_xmp();
+    Test_string_to_float();
     Test_print_float();
 
     /****************/
