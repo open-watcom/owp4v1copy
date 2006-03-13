@@ -158,20 +158,6 @@ _WMIRTLINK extern double sinh( double __x );
 _WMIRTLINK extern double sqrt( double __x );
 _WMIRTLINK extern double tan( double __x );
 _WMIRTLINK extern double tanh( double __x );
-#if defined(_M_IX86)
-#pragma aux acos  parm nomemory modify nomemory;
-#pragma aux asin  parm nomemory modify nomemory;
-#pragma aux atan  parm nomemory modify nomemory;
-#pragma aux atan2 parm nomemory modify nomemory;
-#pragma aux cos   parm nomemory modify nomemory;
-#pragma aux cosh  parm nomemory modify nomemory;
-#pragma aux sin   parm nomemory modify nomemory;
-#pragma aux sinh  parm nomemory modify nomemory;
-#pragma aux fabs  parm nomemory modify nomemory;
-#pragma aux sqrt  parm nomemory modify nomemory;
-#pragma aux tan   parm nomemory modify nomemory;
-#pragma aux tanh  parm nomemory modify nomemory;
-#endif
 :segment CNAME
 }
 :endsegment
