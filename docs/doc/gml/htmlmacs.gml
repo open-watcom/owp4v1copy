@@ -573,12 +573,7 @@
 .dm book end
 .*
 .dm fie begin
-.if '&target' eq 'QNX' .do begin
-<CODE>&'lower(&*.)
-.do end
-.el .do begin
-<CODE>&'upper(&*.)
-.do end
+<CODE>&*
 .dm fie end
 .*
 .dm fi begin

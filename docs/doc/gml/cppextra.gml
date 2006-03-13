@@ -734,12 +734,7 @@
 .*
 .dm fi begin
 :SF font=4.
-.if '&target' eq 'QNX' .do begin
-..li 1;&'lower(&*.)
-.do end
-.el .do begin
-..li 1;&'upper(&*.)
-.do end
+..li 1;&*.
 :eSF.
 .dm fi end
 .*

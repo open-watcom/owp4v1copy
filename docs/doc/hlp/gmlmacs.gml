@@ -48,12 +48,7 @@
 .dm book end
 .*
 .dm fie begin
-.if '&target' eq 'QNX' .do begin
-:SF font=4.&'lower(&*.)
-.do end
-.el .do begin
-:SF font=4.&'upper(&*.)
-.do end
+:SF font=4.&*.
 .dm fie end
 .*
 .dm fi begin
