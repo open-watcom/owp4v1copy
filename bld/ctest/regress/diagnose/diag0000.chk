@@ -84,6 +84,21 @@ source\diag0007.c(61): Warning! W202: Symbol 'i' has been defined, but not refer
 source\diag0007.c(52): Warning! W202: Symbol 'g' has been defined, but not referenced
 source\diag0007.c(47): Warning! W202: Symbol 'f' has been defined, but not referenced
 source\diag0007.c(58): Warning! W202: Symbol 'uu' has been defined, but not referenced
-source\diag0007.c(71): Warning! W107: Missing return value for function 'main'
 source\diag0007.c(71): Error! E1018: Label 'la_bel' not defined in function
 source\diag0007.c(72): Error! E1099: Statement must be inside function. Probable cause: missing {
+source\diag0008.c(2): Error! E1100: Definition of macro '__DATE__' not identical to previous definition
+source\diag0008.c(3): Error! E1100: Definition of macro '__FILE__' not identical to previous definition
+source\diag0008.c(4): Error! E1100: Definition of macro '__LINE__' not identical to previous definition
+source\diag0008.c(5): Error! E1100: Definition of macro '__STDC__' not identical to previous definition
+source\diag0008.c(6): Error! E1100: Definition of macro '__STDC_HOSTED__' not identical to previous definition
+source\diag0008.c(7): Error! E1100: Definition of macro '__STDC_LIB_EXT1__' not identical to previous definition
+source\diag0008.c(8): Error! E1100: Definition of macro '__STDC_VERSION__' not identical to previous definition
+source\diag0008.c(9): Error! E1100: Definition of macro '__TIME__' not identical to previous definition
+source\diag0008.c(11): Error! E1101: Cannot #undef '__DATE__'
+source\diag0008.c(12): Error! E1101: Cannot #undef '__FILE__'
+source\diag0008.c(13): Error! E1101: Cannot #undef '__LINE__'
+source\diag0008.c(14): Error! E1101: Cannot #undef '__STDC__'
+source\diag0008.c(15): Error! E1101: Cannot #undef '__STDC_HOSTED__'
+source\diag0008.c(16): Error! E1101: Cannot #undef '__STDC_LIB_EXT1__'
+source\diag0008.c(17): Error! E1101: Cannot #undef '__STDC_VERSION__'
+source\diag0008.c(18): Error! E1101: Cannot #undef '__TIME__'

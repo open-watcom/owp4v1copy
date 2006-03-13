@@ -1179,6 +1179,26 @@ static bool IsDeclarator( TOKEN token )
 }
 
 
+static void FixupC99MainReturn( SYM_HANDLE func_result, struct return_info *info )
+{
+    TREEPTR             tree;
+    TYPEPTR             main_type;
+
+    /* In C99 mode, return statement need not be explicit for main()... */
+    main_type = CurFunc->sym_type->object;
+    SKIP_TYPEDEFS( main_type );
+    /* ... as long as return type is compatible with int */
+    if( main_type->decl_type == TYPE_INT ) {
+        tree = IntLeaf( 0 );    /* zero is the default return value */
+        tree = ExprNode( 0, OPR_RETURN, tree );
+        tree->expr_type = main_type;
+        tree->op.sym_handle = func_result;
+        AddStmt( tree );
+        info->with_expr = TRUE;
+    }
+}
+
+
 void Statement( void )
 {
     LABEL_INDEX         end_of_func_label;
@@ -1395,6 +1415,10 @@ void Statement( void )
         if( skip_to_next_token ) {
             NextToken();
         }
+    }
+    if( CompFlags.c99_extensions && !strcmp( CurFunc->name, "main" ) ) {
+        FixupC99MainReturn( func_result, &return_info );
+        return_at_outer_level = TRUE;
     }
     if( !return_info.with_expr ) {   /* no return values present */
         if( !CurFunc->naked ) {
