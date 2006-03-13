@@ -29,9 +29,9 @@
 ****************************************************************************/
 
 
+#undef __INLINE_FUNCTIONS__
 #include "variety.h"
 #include <stdlib.h>
-#undef div
 
 
 #if defined(_M_I86)

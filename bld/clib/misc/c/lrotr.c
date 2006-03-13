@@ -29,11 +29,10 @@
 ****************************************************************************/
 
 
+#undef __INLINE_FUNCTIONS__
 #include "variety.h"
 #include <stdlib.h>
 #include <limits.h>
-
-#undef _lrotr
 
 extern  unsigned long __lrotr( unsigned long, unsigned );
 

@@ -29,9 +29,10 @@
 ****************************************************************************/
 
 
+#undef __INLINE_FUNCTIONS__
 #include "variety.h"
-#include <stdio.h>
-#undef abs
+#include <stdlib.h>
+
 
 
 _WCRTLINK int abs( int i )

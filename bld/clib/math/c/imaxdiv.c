@@ -31,7 +31,6 @@
 
 #include "variety.h"
 #include <inttypes.h>
-#undef imaxdiv
 
 
 _WCRTLINK imaxdiv_t imaxdiv( intmax_t numer, intmax_t denom )

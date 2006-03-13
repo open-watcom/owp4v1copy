@@ -31,7 +31,6 @@
 
 #include "variety.h"
 #include <inttypes.h>
-#undef imaxabs
 
 
 _WCRTLINK intmax_t imaxabs( intmax_t j )

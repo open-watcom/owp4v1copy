@@ -30,8 +30,7 @@
 
 
 #include "variety.h"
-#include <stdio.h>
-#undef llabs
+#include <stdlib.h>
 
 
 _WCRTLINK long long int llabs( long long int i )

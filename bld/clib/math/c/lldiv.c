@@ -31,7 +31,6 @@
 
 #include "variety.h"
 #include <stdlib.h>
-#undef lldiv
 
 
 _WCRTLINK lldiv_t lldiv( long long int numer, long long int denom )

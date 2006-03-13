@@ -29,11 +29,10 @@
 ****************************************************************************/
 
 
+#undef __INLINE_FUNCTIONS__
 #include "variety.h"
 #include <stdlib.h>
 #include <limits.h>
-
-#undef  _rotr
 
 extern unsigned int __rotr( unsigned int value, unsigned int shift );
 

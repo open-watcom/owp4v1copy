@@ -29,9 +29,9 @@
 ****************************************************************************/
 
 
+#undef __INLINE_FUNCTIONS__
 #include "variety.h"
 #include <stdlib.h>
-#undef ldiv
 
 
 _WCRTLINK ldiv_t ldiv( long int numer, long int denom )

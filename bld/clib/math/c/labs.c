@@ -29,9 +29,9 @@
 ****************************************************************************/
 
 
+#undef __INLINE_FUNCTIONS__
 #include "variety.h"
-#include <stdio.h>
-#undef labs
+#include <stdlib.h>
 
 
 _WCRTLINK long int labs( long int i )
