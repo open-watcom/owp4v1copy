@@ -50,7 +50,7 @@ static char *filterList = "C Files (*.c;*.h)\0*.c;*.h\0"
                           "GML Files (*.gml)\0*.gml\0"
                           "DBTest (*.tst)\0*.tst\0"
                           "Makefiles (makefile;*.mk;*.mif;*.mak)\0makefile;*.mk;*.mif;*.mak\0"
-                          "Asm Files (*.asm)\0*.asm\0"
+                          "Asm Files (*.asm;*.inc)\0*.asm;*.inc\0"
                           "All Files (*.*)\0*.*\0"
                           "\0";
 static char *FileNameList;
