@@ -31,6 +31,7 @@
 
 #include <unistd.h>
 #include <errno.h>
+#include <sys/stat.h>
 #include "syslinux.h"
 
 _WCRTLINK int lstat( const char *filename, struct stat * __buf )

@@ -30,6 +30,7 @@
 
 
 #include "variety.h"
+#include <unistd.h>
 #include <wos2.h>
 #include "defwin.h"
 #include "rtcheck.h"

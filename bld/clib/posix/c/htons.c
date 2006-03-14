@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "syslinux.h"
+#include <netinet/in.h>
 
 _WCRTLINK unsigned short htons( unsigned short hostshort )
 {

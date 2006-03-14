@@ -40,8 +40,8 @@
     #include <wos2.h>
 #endif
 
-#if defined (_NETWARE_LIBC)
-#include <process.h>
+#if !defined( __NETWARE__ ) || defined( _NETWARE_LIBC )
+    #include <process.h>
 #endif
 
 #ifdef __NT__

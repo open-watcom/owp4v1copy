@@ -31,6 +31,7 @@
 
 #include "variety.h"
 #include <stdlib.h>
+#include <env.h>
 #include "liballoc.h"
 #include "rtdata.h"
 

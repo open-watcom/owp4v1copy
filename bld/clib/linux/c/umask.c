@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "syslinux.h"
+#include <sys/stat.h>
 
 _WCRTLINK mode_t umask( mode_t __cmask )
 {

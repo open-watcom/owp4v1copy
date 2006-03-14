@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "syslinux.h"
+#include <sys/utsname.h>
 
 _WCRTLINK int uname( struct utsname *__name )
 {

@@ -33,6 +33,7 @@
 #include "widechar.h"
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 #include "seterrno.h"
 #include "liballoc.h"
 

@@ -30,6 +30,7 @@
 
 
 #include "variety.h"
+#include <unistd.h>
 #include <windows.h>
 #include "defwin.h"
 #include "iomode.h"

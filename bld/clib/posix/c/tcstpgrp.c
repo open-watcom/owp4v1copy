@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 #include <termios.h>
+#include <unistd.h>
 #include <sys/ioctl.h>
 
 _WCRTLINK  int   tcsetpgrp( int __fildes, pid_t __pgrp_id )

@@ -32,6 +32,7 @@
 
 #include "variety.h"
 #include <stdio.h>
+#include <unistd.h>
 #include "rtcheck.h"
 
 extern  long    filelength(int);
