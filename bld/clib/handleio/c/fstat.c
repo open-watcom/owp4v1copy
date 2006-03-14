@@ -41,9 +41,7 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 #include "widechar.h"
-
-
-extern time_t _d2ttime();
+#include "d2ttime.h"
 
 
 #ifdef __WIDECHAR__
@@ -88,7 +86,8 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
             if( TINY_ERROR(u.rc) ) {
                 return( __set_errno_dos( TINY_INFO(u.rc) ) );
             }
-            buf->st_mtime = _d2ttime( u.stamp.date, u.stamp.time );
+            buf->st_mtime = _d2ttime( TODDATE( u.stamp.date ),
+                                      TODTIME( u.stamp.time ) );
             buf->st_atime = buf->st_ctime = buf->st_mtime;
             buf->st_size = filelength( handle );
             buf->st_mode |= S_IFREG;

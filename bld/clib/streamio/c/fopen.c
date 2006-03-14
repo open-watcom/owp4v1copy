@@ -45,17 +45,13 @@
 #include "rtdata.h"
 #include "seterrno.h"
 #include "defwin.h"
+#include "streamio.h"
 
 #ifdef __UNIX__
     #define PMODE   (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
 #else
     #define PMODE   (S_IREAD | S_IWRITE)
 #endif
-
-extern  FILE    *__allocfp( int handle );
-extern  void    __freefp( FILE * );
-extern  void    __chktty( FILE *fp );
-extern  int     __doclose( FILE *fp, int );
 
 
 int __F_NAME(__open_flags,__wopen_flags)( const CHAR_TYPE *modestr, int *extflags )

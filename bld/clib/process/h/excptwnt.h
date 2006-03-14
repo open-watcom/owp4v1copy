@@ -29,9 +29,6 @@
 ****************************************************************************/
 
 
-extern int      __sigfpe_handler(int);
-extern void     _ClearFPE(void);
-
 /*
  * MICROSOFT, as usual, refuses to document stuff that other compiler
  * vendors need, so this had to be reverse engineered

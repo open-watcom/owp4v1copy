@@ -34,9 +34,8 @@
 #include "liballoc.h"
 #include <unistd.h>
 #include "rtdata.h"
+#include "streamio.h"
 
-
-extern  void    __chktty( FILE * );
 
 void __ioalloc( FILE *fp )
 {

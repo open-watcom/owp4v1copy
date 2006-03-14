@@ -35,10 +35,9 @@
 #include <limits.h>
 #include "fileacc.h"
 #include "rtdata.h"
+#include "streamio.h"
 
 
-extern  void    __chktty( FILE *fp );
-extern  void    __ioalloc( FILE * );
 extern  void    __full_io_exit();
 
 

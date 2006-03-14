@@ -41,6 +41,7 @@
 #include "msdos.h"
 #include "rtdata.h"
 #include "seterrno.h"
+#include "_process.h"
 
 
 _WCRTLINK int __F_NAME(execvpe,_wexecvpe)( const CHAR_TYPE *file, const CHAR_TYPE * const *argv, const CHAR_TYPE * const *envp )

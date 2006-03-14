@@ -34,6 +34,7 @@
 #include "liballoc.h"
 #include "fileacc.h"
 #include "rtdata.h"
+#include "streamio.h"
 
 /*
     NOTE: This routine does not actually free the link/FILE structures.

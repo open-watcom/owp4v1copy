@@ -34,14 +34,15 @@
 #include <unistd.h>
 #include <limits.h>
 #include "rtcheck.h"
+#include "qread.h"
 
 #define MAX_OS_TRANSFER (((unsigned)INT_MAX+1) - 512)
 
-unsigned __qread( int file, void *buffer, unsigned len )
+int __qread( int file, void *buffer, unsigned len )
 {
     unsigned    total;
     int         h;
-    int         amount;
+    unsigned    amount;
 
     __handle_check( file, -1 );
 
@@ -50,8 +51,8 @@ unsigned __qread( int file, void *buffer, unsigned len )
         if( len == 0 ) return( total );
         amount = (len > MAX_OS_TRANSFER) ? MAX_OS_TRANSFER : len;
         h = read( file, buffer, amount );
-        if( h < 0 ) return( h );
-        total += h;
+        if( h == -1 ) return( h );
+        total += (unsigned)h;
         if( h != amount ) return( total );
         buffer = (char *)buffer + amount;
         len -= amount;

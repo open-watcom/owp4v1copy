@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "_direct.h"
 
 static char *try_one( char *p, char *buff )
 {

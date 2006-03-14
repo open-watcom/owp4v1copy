@@ -36,9 +36,8 @@
 #include "fileacc.h"
 #include "rtdata.h"
 #include "seterrno.h"
+#include "flush.h"
 
-
-extern int __flush( FILE * );
 
 static int __update_buffer( long diff, FILE *fp )
 {

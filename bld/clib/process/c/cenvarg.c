@@ -43,6 +43,7 @@
 #include "msdos.h"
 #include "rtdata.h"
 #include "seterrno.h"
+#include "_process.h"
 
 #ifdef __WIDECHAR__
 extern _WCRTLINK void   __create_wide_environment( void );
@@ -64,8 +65,8 @@ int __F_NAME(__cenvarg,__wcenvarg)( argv, envp, envptr, envstrings, envseg, cmdl
  *  Build environment and command line for new process.  Length of environment
  *  (in bytes) is returned on success.  -1 is returned on failure.
  */
-    CHAR_TYPE           *argv[];        /* i: arguments for new process */
-    CHAR_TYPE           *envp[];        /* i: env strings for new process */
+    const CHAR_TYPE     * const argv[]; /* i: arguments for new process */
+    const CHAR_TYPE     * const envp[]; /* i: env strings for new process */
     CHAR_TYPE           **envptr;       /* o: allocated memory for env */
     CHAR_TYPE           **envstrings;   /* o: pointer to environment strings */
     unsigned            *envseg;        /* o: start of env (on para boundary) */
@@ -75,22 +76,20 @@ int __F_NAME(__cenvarg,__wcenvarg)( argv, envp, envptr, envstrings, envseg, cmdl
     unsigned            length;
     unsigned            oamblksiz;
     CHAR_TYPE           *p;
-    CHAR_TYPE           **envv;
     unsigned            len;
-    CHAR_TYPE           *arg;
+    int                 i;
 
     if( envp == NULL ){
-        #ifdef __WIDECHAR__
-            if( _RWD_wenviron == NULL )  __create_wide_environment();
-            envp = _RWD_wenviron;
-        #else
-            envp = _RWD_environ;
-        #endif
+#ifdef __WIDECHAR__
+        if( _RWD_wenviron == NULL )
+            __create_wide_environment();
+#endif
+        envp = (const CHAR_TYPE * const *)__F_NAME(_RWD_environ,_RWD_wenviron);
     }
     length = 0;
     if( envp != NULL ){
-        for( envv = envp; *envv != NULL; ++envv ){
-            length += __F_NAME(strlen,wcslen)( *envv ) + 1;
+        for( i = 0; envp[i] != NULL; i++ ) {
+            length += __F_NAME(strlen,wcslen)( envp[i] ) + 1;
         }
     }
     ++length; /* trailing \0 for env */
@@ -131,8 +130,8 @@ int __F_NAME(__cenvarg,__wcenvarg)( argv, envp, envptr, envstrings, envseg, cmdl
 #endif
     *envstrings = p;            /* save ptr to env strings. 07-oct-92 */
     if( envp != NULL ){
-        for( envv = envp; *envv != NULL; ++envv ){
-            p = stpcpy( p, *envv ) + 1;
+        for( i = 0; envp[i] != NULL; ++i ){
+            p = stpcpy( p, envp[i] ) + 1;
         }
     }
     *p++ = '\0';
@@ -142,9 +141,9 @@ int __F_NAME(__cenvarg,__wcenvarg)( argv, envp, envptr, envstrings, envseg, cmdl
 
     len = 0;
     if( argv[0] != NULL ) {
-        for( ++argv; (arg = *argv) != NULL; ++argv ){
+        for( i = 1; argv[i] != NULL; ++i ){
             if( len != 0 ) ++len;       /* plus 1 for blank separator */
-            len += __F_NAME(strlen,wcslen)( arg );
+            len += __F_NAME(strlen,wcslen)( argv[i] );
         }
     }
 #if defined( __NT__ )
@@ -167,8 +166,8 @@ int __F_NAME(__cenvarg,__wcenvarg)( argv, envp, envptr, envstrings, envseg, cmdl
 }
 
 
-void __F_NAME(__ccmdline,__wccmdline)( CHAR_TYPE *path, CHAR_TYPE *argv[], CHAR_TYPE *buffer,
-                                       int just_args )
+void __F_NAME(__ccmdline,__wccmdline)( CHAR_TYPE *path, const CHAR_TYPE * const argv[],
+                                      CHAR_TYPE *buffer, int just_args )
 {
 /*
  * path is the name of the program we are about to spawn

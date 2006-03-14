@@ -32,6 +32,7 @@
 
 #include "rtdata.h"
 #include "variety.h"
+#include "clearfpe.h"
 
 
 extern unsigned long _GetFPCR(void);

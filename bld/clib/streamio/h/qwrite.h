@@ -32,5 +32,5 @@
 #ifdef __NETWARE__
     #define __qwrite( h, b, l ) write( h, (void *)b, l )
 #else
-    extern unsigned __qwrite( int, const void *, unsigned );
+    extern int __qwrite( int, const void *, unsigned );
 #endif

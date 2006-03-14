@@ -32,5 +32,5 @@
 #ifdef __NETWARE__
     #define __qread( h, b, l ) read( h, b, l )
 #else
-    extern int  __qread( int handle, char *buffer, unsigned len );
+    extern int __qread( int handle, void *buffer, unsigned len );
 #endif

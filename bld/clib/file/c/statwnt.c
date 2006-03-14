@@ -59,8 +59,7 @@
 #include "ntex.h"
 #include "osver.h"
 #include "seterrno.h"
-
-extern time_t _d2ttime();
+#include "d2ttime.h"
 
 static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
 {
@@ -244,18 +243,18 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
     #endif
     buf->st_mode = at2mode( ffb.dwFileAttributes, ffb.cFileName );
     __MakeDOSDT( &ffb.ftLastWriteTime, &md, &mt );
-    buf->st_mtime = _d2ttime( md, mt );
+    buf->st_mtime = _d2ttime( TODDATE( md ), TODTIME( mt ) );
     __MakeDOSDT( &ffb.ftCreationTime, &d, &t );
     if( d == md && t == mt ) {
         buf->st_ctime = buf->st_mtime;
     } else {
-        buf->st_ctime = _d2ttime( d, t );
+        buf->st_ctime = _d2ttime( TODDATE( d ), TODTIME( t ) );
     }
     __MakeDOSDT( &ffb.ftLastAccessTime, &d, &t );
     if( d == md && t == mt ) {
         buf->st_atime = buf->st_mtime;
     } else {
-        buf->st_atime = _d2ttime( d, t );
+        buf->st_atime = _d2ttime( TODDATE( d ), TODTIME( t ) );
     }
     buf->st_nlink = 1;
     buf->st_ino = buf->st_uid = buf->st_gid = 0;

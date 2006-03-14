@@ -39,6 +39,7 @@
 #include "seterrno.h"
 #include "qwrite.h"
 #include "lseek.h"
+#include "flush.h"
 
 #if defined( __NETWARE__ ) && defined( _THIN_LIB )
 

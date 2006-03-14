@@ -44,6 +44,8 @@
 #include "fileacc.h"
 #include "rtinit.h"
 #include "seterrno.h"
+#include "iomode.h"
+#include "handleio.h"
 
 #if defined(__NETWARE__)
 #error NO IO MODE MANAGER UNDER NETWARE
@@ -51,8 +53,6 @@
 
 extern  unsigned _HUGEDATA __init_mode[_NFILES];
 extern  unsigned __NFiles;              /* maximum # of files we can open */
-extern  unsigned *__io_mode;
-extern  void     __ChkTTYIOMode( unsigned handle );
 
 static  unsigned _init_NFiles;          // original __NFiles value;
 
@@ -103,7 +103,7 @@ AYI(__shrink_iomode,INIT_PRIORITY_IOSTREAM);
 
 extern  unsigned    __NHandles;
 
-void __preinit_iomode_os2(void)
+static void __preinit_iomode_os2(void)
 {
     LONG    req_count;
     ULONG   curr_max_fh;
@@ -125,7 +125,7 @@ AXI( __preinit_iomode_os2, INIT_PRIORITY_RUNTIME );
 
 #define _INITIALIZED    _DYNAMIC
 
-signed __SetIOMode( unsigned handle, unsigned value )
+signed __SetIOMode( int handle, unsigned value )
 {
     int         i;
 

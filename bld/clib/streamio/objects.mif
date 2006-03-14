@@ -125,6 +125,7 @@ objsuffix=files
 !include ../../../../objlist.mif
 objsuffix=
 
+comtflag_opts    =-I"$(clib_dir)/startup/h"
 ufgetc_postopts  =-os
 ufgetcha_postopts=-os
 ufgets_postopts  =-os

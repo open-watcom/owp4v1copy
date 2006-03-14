@@ -46,9 +46,7 @@
 #include "fpusig.h"
 #include "seterrno.h"
 #include "rtinit.h"
-
-extern  void            __null_int23_exit( void );
-extern  void            (*__int23_exit)( void );
+#include "_int23.h"
 
 unsigned        char    __ExceptionHandled;
 

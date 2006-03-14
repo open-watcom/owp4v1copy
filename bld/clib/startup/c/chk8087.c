@@ -31,6 +31,7 @@
 
 #include "variety.h"
 #include <stdlib.h>
+#include <float.h>
 #if defined( __OS2__ )
   #define INCL_DOSEXCEPTIONS
   #define INCL_DOSDEVICES
@@ -43,6 +44,7 @@
 
 #include "rtdata.h"
 #include "exitwmsg.h"
+#include "87state.h"
 
 extern void __GrabFP87( void );
 
@@ -83,16 +85,8 @@ extern unsigned char _WCI86NEAR __x87id( void );
 
 #if !defined( __UNIX__ ) && !defined( __OS2_386__ )
 
-struct  _87state {              /* 80x87 save area */
-#if defined( __386__ )
-    char data[108];             /* 32-bit save area size */
-#else
-    char data[94];              /* 16-bit save area size */
-#endif
-};
-
-extern void __fsave( struct _87state * );
-extern void __frstor( struct _87state * );
+extern void __fsave( _87state * );
+extern void __frstor( _87state * );
 
 #if defined( __386__ )
 
@@ -152,12 +146,12 @@ extern void __frstor( struct _87state * );
 
 #endif
 
-static void __save_8087( struct _87state * __fs )
+static void __save_8087( _87state * __fs )
 {
     __fsave( __fs );
 }
 
-static void __rest_8087( struct _87state * __fs )
+static void __rest_8087( _87state * __fs )
 {
     __frstor( __fs );
 }

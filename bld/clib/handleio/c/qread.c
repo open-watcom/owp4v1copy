@@ -44,12 +44,13 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 #include "defwin.h"
+#include "qread.h"
 
 #ifdef __WINDOWS_386__
 
 #define MAXBUFF 0x8000
 
-tiny_ret_t __TinyRead( int handle, char *buffer, unsigned len )
+static tiny_ret_t __TinyRead( int handle, char *buffer, unsigned len )
 {
     unsigned    total = 0;
     unsigned    readamt;
@@ -79,7 +80,7 @@ tiny_ret_t __TinyRead( int handle, char *buffer, unsigned len )
 
 
 
-int __qread( int handle, char *buffer, unsigned len )
+int __qread( int handle, void *buffer, unsigned len )
 {
 #if defined( __NT__ )
     DWORD           amount_read;

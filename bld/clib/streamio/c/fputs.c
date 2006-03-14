@@ -34,10 +34,8 @@
 #include <stdio.h>
 #include "fileacc.h"
 #include "rtdata.h"
-
-
-extern void __ioalloc( FILE * );
-extern int  __flush( FILE * );
+#include "flush.h"
+#include "streamio.h"
 
 
 _WCRTLINK int __F_NAME(fputs,fputws)( const CHAR_TYPE *s, FILE *fp )

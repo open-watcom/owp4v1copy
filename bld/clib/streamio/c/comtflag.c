@@ -31,16 +31,15 @@
 
 #include "variety.h"
 #include <stdio.h>
+#include "commode.h"
 
 
-int             _commode = 0;
+int     _commode = 0;
 
 
 /*
  * Before changing any of this, check startup/c/commode.c!
  */
-
-#pragma aux __set_commode "*_";
 
 _WCRTLINK void _WCI86FAR __set_commode( void )
 {

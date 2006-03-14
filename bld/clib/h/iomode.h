@@ -34,8 +34,9 @@
 
 #if defined(__NT__)
 
+#include <windows.h>
+
 #define NULL_HANDLE  (HANDLE)-1
-// define a temporary dummy handle that isn't 0 or -1
 #define DUMMY_HANDLE (HANDLE)-2
 
 extern  unsigned    __NHandles;
@@ -51,7 +52,7 @@ extern  HANDLE      __NTGetFakeHandle( void );
 extern  HANDLE      *__OSHandles;
 
 #define __getOSHandle( hid ) __OSHandles[ hid ]
-#define NT_STDIN_FILENO (__getOSHandle( STDIN_FILENO ))
+#define NT_STDIN_FILENO  (__getOSHandle( STDIN_FILENO ))
 #define NT_STDOUT_FILENO (__getOSHandle( STDOUT_FILENO ))
 #define NT_STDERR_FILENO (__getOSHandle( STDERR_FILENO ))
 
@@ -60,8 +61,8 @@ extern  HANDLE      *__OSHandles;
 #if !defined(__NETWARE__)
 
 extern  unsigned    __GetIOMode( int __handle );
-extern  unsigned    __SetIOMode( int __handle, unsigned __value );
-extern  unsigned    __SetIOMode_nogrow( int __handle, unsigned __value );
+extern  int         __SetIOMode( int __handle, unsigned __value );
+extern  void        __SetIOMode_nogrow( int __handle, unsigned __value );
 extern  void        __ChkTTYIOMode( int __handle );
 
 #endif

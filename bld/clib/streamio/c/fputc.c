@@ -41,10 +41,8 @@
     #include <mbstring.h>
     #include <wchar.h>
 #endif
-
-
-extern void __ioalloc( FILE * );
-extern int  __flush( FILE * );
+#include "flush.h"
+#include "streamio.h"
 
 
 #ifndef __WIDECHAR__

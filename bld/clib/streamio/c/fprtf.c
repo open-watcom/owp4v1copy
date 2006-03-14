@@ -38,9 +38,8 @@
 #include "printf.h"
 #include "fprtf.h"
 #include "orient.h"
-
-extern  void    __ioalloc( FILE * );
-extern  int     __flush( FILE * );
+#include "flush.h"
+#include "streamio.h"
 
 
 /*

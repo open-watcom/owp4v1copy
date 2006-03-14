@@ -38,6 +38,7 @@
 #include "iomode.h"
 #include "seterrno.h"
 #include "defwin.h"
+#include "close.h"
 
 int __close( int handle )
 {

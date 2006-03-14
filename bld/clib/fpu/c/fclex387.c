@@ -32,11 +32,12 @@
 
 #include "rtdata.h"
 #include "variety.h"
+#include "clearfpe.h"
 
 extern void __ClearFPE(void);
 #pragma aux __ClearFPE = "fnclex"
 
-void _ClearFPE(void)
+void _ClearFPE( void )
 {
     __ClearFPE();
 } /* _ClearFPE() */

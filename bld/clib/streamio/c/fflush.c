@@ -35,8 +35,7 @@
 #include <fcntl.h>
 #include "rtdata.h"
 #include "fileacc.h"
-
-extern int      __flush( FILE * );
+#include "flush.h"
 
 _WCRTLINK int fflush( FILE *fp )
 {

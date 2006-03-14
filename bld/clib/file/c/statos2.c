@@ -53,6 +53,7 @@
 #else
     #include <ctype.h>
 #endif
+#include "d2ttime.h"
 
 #if defined(__WARP__)
   #define FF_ATTR       ULONG
@@ -63,8 +64,6 @@
   #define FF_LEVEL      0
   #define FF_BUFFER     FILEFINDBUF
 #endif
-
-extern  time_t                  _d2ttime();
 
 static  unsigned short          at2mode(FF_ATTR,char *);
 
@@ -177,12 +176,12 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     buf->st_size = dir_buff.cbFile;
     buf->st_mode = at2mode( dir_buff.attrFile, dir_buff.achName );
 
-    buf->st_ctime = _d2ttime( dir_buff.fdateCreation,
-                              dir_buff.ftimeCreation );
-    buf->st_atime = _d2ttime( dir_buff.fdateLastAccess,
-                              dir_buff.ftimeLastAccess );
-    buf->st_mtime = _d2ttime( dir_buff.fdateLastWrite,
-                              dir_buff.ftimeLastWrite );
+    buf->st_ctime = _d2ttime( TODDATE( dir_buff.fdateCreation ),
+                              TODTIME( dir_buff.ftimeCreation ) );
+    buf->st_atime = _d2ttime( TODDATE( dir_buff.fdateLastAccess ),
+                              TODTIME( dir_buff.ftimeLastAccess ) );
+    buf->st_mtime = _d2ttime( TODDATE( dir_buff.fdateLastWrite ),
+                              TODTIME( dir_buff.ftimeLastWrite ) );
     buf->st_btime = buf->st_mtime;
     buf->st_nlink = 1;
     buf->st_ino = buf->st_uid = buf->st_gid = 0;

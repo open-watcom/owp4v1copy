@@ -42,8 +42,7 @@
 #include "iomode.h"
 #include "rtcheck.h"
 #include "seterrno.h"
-
-extern time_t _d2ttime();
+#include "d2ttime.h"
 
 
 static unsigned short at2mode( int attr )
@@ -96,9 +95,12 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
             if( error ) {
                 return( __set_errno_dos( error ) );
             }
-            buf->st_ctime = _d2ttime( info.fdateCreation, info.ftimeCreation );
-            buf->st_atime = _d2ttime( info.fdateLastAccess, info.ftimeLastAccess );
-            buf->st_mtime = _d2ttime( info.fdateLastWrite, info.ftimeLastWrite );
+            buf->st_ctime = _d2ttime( TODDATE( info.fdateCreation ),
+                                      TODTIME( info.ftimeCreation ) );
+            buf->st_atime = _d2ttime( TODDATE( info.fdateLastAccess ),
+                                      TODTIME( info.ftimeLastAccess ) );
+            buf->st_mtime = _d2ttime( TODDATE( info.fdateLastWrite ),
+                                      TODTIME( info.ftimeLastWrite ) );
             buf->st_size = info.cbFile;
             buf->st_mode |= at2mode( info.attrFile );
             buf->st_dev = buf->st_rdev = 0;

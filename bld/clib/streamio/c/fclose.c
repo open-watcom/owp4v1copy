@@ -39,11 +39,11 @@
 #include "tmpfname.h"
 #include "rtdata.h"
 #include "lseek.h"
+#include "streamio.h"
+#include "close.h"
+#include "flush.h"
 
 
-extern  void    __freefp( FILE *fp );
-extern  int     __flush( FILE *fp );
-extern  int     __close( int );
 #ifndef __UNIX__
 void    (*__RmTmpFileFn)( FILE *fp );
 #endif

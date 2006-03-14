@@ -38,12 +38,12 @@
 #include "rtdata.h"
 #include "seterrno.h"
 #include "qread.h"
+#include "streamio.h"
 
 
 #define DOS_EOF_CHAR    0x1a
 
 extern int  __fill_buffer( FILE * );    /* located in fgetc */
-extern void __ioalloc( FILE *fp );
 
 
 _WCRTLINK size_t fread( void *_buf, size_t size, size_t n, FILE *fp )

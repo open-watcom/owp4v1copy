@@ -38,9 +38,8 @@
 #include "rtdata.h"
 #include "seterrno.h"
 #include "qwrite.h"
-
-extern void __ioalloc( FILE *fp );
-extern int __flush( FILE * );
+#include "flush.h"
+#include "streamio.h"
 
 
 _WCRTLINK size_t fwrite( const void *buf, size_t size, size_t n, FILE *fp )

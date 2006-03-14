@@ -47,6 +47,7 @@
 #include "rtdata.h"
 #include "extfunc.h"
 #include "seterrno.h"
+#include "thrdreg.h"
 
 extern  void            __InitMultipleThread( void );
 

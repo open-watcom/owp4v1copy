@@ -36,6 +36,8 @@
 #include "iomode.h"
 #include "rtcheck.h"
 #include "seterrno.h"
+#include "lseek.h"
+#include "handleio.h"
 
 /*
     DWORD SetFilePointer(
@@ -52,7 +54,7 @@
 
 #ifdef __INT64__
 
- _WCRTLINK __int64 __lseeki64( int hid, __int64 _offset, int origin )
+_WCRTLINK __int64 __lseeki64( int hid, __int64 _offset, int origin )
 {
     DWORD               rc;
     LONG                loworder, highorder;
@@ -78,7 +80,7 @@
     RETURN_INT64(retval);
 }
 
- _WCRTLINK __int64 _lseeki64( int hid, __int64 offset, int origin )
+_WCRTLINK __int64 _lseeki64( int hid, __int64 offset, int origin )
 {
     unsigned            iomode_flags;
 
@@ -95,7 +97,7 @@
 
 #else
 
- _WCRTLINK long __lseek( int hid, long offset, int origin )
+_WCRTLINK long __lseek( int hid, long offset, int origin )
 {
     DWORD               rc;
 

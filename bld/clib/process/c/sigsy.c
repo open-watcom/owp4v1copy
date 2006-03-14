@@ -38,6 +38,7 @@
 #include "rtdata.h"
 #include "stacklow.h"
 #include "sigfunc.h"
+#include "_int23.h"
 
 typedef void (_WCINTERRUPT _WCFAR *pfun)( void );
 
@@ -106,9 +107,6 @@ typedef void (_WCINTERRUPT _WCFAR *pfun)( void );
 
  #endif
 #endif
-
-extern  void    (*__int23_exit)( void );
-extern  void    __null_int23_exit( void );
 
         void    __restore_int23( void );
         void    __restore_int_ctrl_break( void );

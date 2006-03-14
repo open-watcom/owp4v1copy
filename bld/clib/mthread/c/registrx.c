@@ -33,6 +33,7 @@
 #include "variety.h"
 #include "extfunc.h"
 #include "thread.h"
+#include "thrdreg.h"
 
 extern beginnerex   __CBeginThreadEx;
 extern enderex      __CEndThreadEx;

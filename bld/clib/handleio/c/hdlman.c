@@ -49,6 +49,7 @@
 #include "fileacc.h"
 #include "rtinit.h"
 #include "seterrno.h"
+#include "handleio.h"
 
 #undef __getOSHandle
 

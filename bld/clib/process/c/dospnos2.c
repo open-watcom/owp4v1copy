@@ -50,6 +50,7 @@
 #include <wos2.h>
 #include "rtdata.h"
 #include "seterrno.h"
+#include "_process.h"
 
 #define FS_SESSION      0
 #define PMC_SESSION     2
@@ -57,9 +58,6 @@
 #define DETACH_SESSION  4
 #define TERM_QUEUE      "\\queues\\session"
 
-extern  void    __ccmdline( char *, char **, char *, int );
-
-#pragma aux     _dospawn "_*" parm caller [];
 #pragma on(stack_check);
 
 #define MakeHexDigit( c )  ((c > 9) ? (c - 0x0A + 'A') : (c + '0'))
@@ -88,8 +86,7 @@ static void makeqname( char *qname, ULONG pid, ULONG tid )
     }
     *px = 0;
 }
-
-int _dospawn( int mode, char *pgm, char *cmdline, char *envp, char *argv[] )
+int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const argv[] )
 {
     APIRET      rc;
     RESULTCODES returncodes;

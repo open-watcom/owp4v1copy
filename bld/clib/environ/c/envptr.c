@@ -33,11 +33,7 @@
 #include <stdlib.h>
 #include "rtdata.h"
 
-#ifdef __NETWARE__
-_WCRTLINK extern char **_WCNEAR environ;    /* pointer to environment table */
-#endif
-
-_WCRTLINK char ** (*__get_environ_ptr( void ))
+_WCRTLINK char ***__get_environ_ptr( void )
 {
     return( &environ );
 }

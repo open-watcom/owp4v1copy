@@ -47,6 +47,7 @@
 #include "rtdata.h"
 #include "seterrno.h"
 #include "defwin.h"
+#include "qwrite.h"
 
 /*
     Use caution when setting the file pointer in a multithreaded
@@ -61,7 +62,7 @@
 
 #define MAXBUFF 0x8000
 
-tiny_ret_t __TinyWrite( int handle, const void *buffer, unsigned len )
+static tiny_ret_t __TinyWrite( int handle, const void *buffer, unsigned len )
 {
     unsigned    total = 0;
     unsigned    writamt;

@@ -33,9 +33,8 @@
 #include <stdio.h>
 #include "rtdata.h"
 #include "fileacc.h"
+#include "flush.h"
 
-
-extern  int     __flush( FILE * );
 
 /* __fill_buffer calls this routine with _ISTTY mask */
 

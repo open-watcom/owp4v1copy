@@ -33,13 +33,12 @@
 #include "rtdata.h"
 #include "liballoc.h"
 #include "fileacc.h"
+#include "handleio.h"
+#include "iomode.h"
 
 #define _INITIALIZED    _DYNAMIC
 
-extern unsigned __GetIOMode( unsigned handle );
-extern unsigned *__io_mode;
-
-void __ChkTTYIOMode( unsigned handle )
+void __ChkTTYIOMode( int handle )
 {
     if( handle < NUM_STD_STREAMS && !(__io_mode[handle] & _INITIALIZED) ) {
         __io_mode[handle] |= _INITIALIZED;
@@ -51,7 +50,7 @@ void __ChkTTYIOMode( unsigned handle )
 
 // For F77 to call
 
-unsigned __IOMode( unsigned handle )
+unsigned __IOMode( int handle )
 {
     __ChkTTYIOMode( handle );
     return( __GetIOMode( handle ) );

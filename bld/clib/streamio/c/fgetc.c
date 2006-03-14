@@ -46,6 +46,8 @@
 #endif
 #include "qread.h"
 #include "orient.h"
+#include "flush.h"
+#include "streamio.h"
 
 
 #define DOS_EOF_CHAR        0x1a
@@ -55,10 +57,6 @@
 #else
     #define CHARMASK        0xff
 #endif
-
-extern  void    __ioalloc( FILE * );
-extern  int     __flushall( int );
-
 
 int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
 {

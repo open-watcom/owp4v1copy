@@ -439,7 +439,7 @@ _WCRTLINK int write( int handle, const void *buffer, unsigned len )
             writeamt = len;
         }
         rc = __write( handle, buffer, writeamt );
-        if( rc < 0 )
+        if( rc == -1 )
             return( rc );
         total += (unsigned)rc;
         if( rc != writeamt )

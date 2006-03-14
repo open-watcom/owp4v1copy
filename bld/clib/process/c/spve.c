@@ -50,6 +50,8 @@
 #include "rtdata.h"
 #include "msdos.h"
 #include "seterrno.h"
+#include "_process.h"
+#include "87state.h"
 
 #ifdef __USE_POSIX_HANDLE_STRINGS
     #define _POSIX_HANDLE_CLEANUP   {                                   \
@@ -70,43 +72,9 @@
 
 #define OLD_P_OVERLAY   2
 
-#if defined(_M_IX86)
-struct  _87state {      /* 8087 save area */
-#if defined(__386__)
-        char data[108];         /* 32-bit save area size */
-#else
-        char data[94];
-#endif
-};
-#endif
-
 #define FALSE   0
 
-#ifdef __WIDECHAR__
-extern  int     __wcenvarg( const CHAR_TYPE* const*, const CHAR_TYPE* const*, CHAR_TYPE**, CHAR_TYPE**, unsigned*, size_t*, int );
-extern  void    __wccmdline( CHAR_TYPE *, const CHAR_TYPE * const*, CHAR_TYPE *, int );
-extern  int     _wdospawn( int, CHAR_TYPE SPVE_NEAR *, CHAR_TYPE SPVE_NEAR *, CHAR_TYPE *, const CHAR_TYPE * const* );
-extern  CHAR_TYPE *     __wSlash_C( CHAR_TYPE *switch_c, CHAR_TYPE prot_mode286 );
-#else
-extern  int     __cenvarg( const char* const*, const char* const*, char**,
-                           char**, unsigned*, size_t*, int );
-extern  void    __ccmdline( char *, const char * const *, char *, int );
-#if defined(__386__) || defined(__AXP__) || defined(__OS2__) || defined(__PPC__)
-extern  int     _dospawn(int,char SPVE_NEAR *,char SPVE_NEAR *, char *, const char *const *);
-#else
-extern  int     _dospawn(int,char SPVE_NEAR *,char SPVE_NEAR *,unsigned, const char *const *);
-#endif
-extern  CHAR_TYPE *     __Slash_C( CHAR_TYPE *switch_c, CHAR_TYPE prot_mode286 );
-#if defined(M_I86)
-extern  int     (*__execaddr())();
-#endif
-#endif
-
-#if defined(_M_IX86)
-extern  void    (*__Save8087)(struct _87state *);
-extern  void    (*__Rest8087)(struct _87state *);
-#pragma aux     _dospawn "_*" parm caller [];
-#endif
+extern CHAR_TYPE *__F_NAME(__Slash_C,__wSlash_C)( CHAR_TYPE *, CHAR_TYPE );
 
 static int file_exists( const CHAR_TYPE *filename )                     /* 05-apr-91 */
 {
@@ -128,11 +96,11 @@ static int file_exists( const CHAR_TYPE *filename )                     /* 05-ap
 #define x_dospawn __F_NAME(_dospawn,_wdospawn)
 #else
 static int x_dospawn( int mode, CHAR_TYPE SPVE_NEAR *pgmname, CHAR_TYPE SPVE_NEAR *cmdline,
-#if defined( __386__ ) || defined( __AXP__ ) || defined(__PPC__)
-    CHAR_TYPE *env,
-#else
+  #if defined( __DOS__ )
     unsigned env,
-#endif
+  #else
+    CHAR_TYPE *env,
+  #endif
     const CHAR_TYPE * const *argv ) {
 
     /* do this here instead of in the .asm files */
@@ -163,17 +131,17 @@ _WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
     CHAR_TYPE               switch_c[4];
     CHAR_TYPE               prot_mode286;
 #if defined(_M_IX86)
-    auto struct _87state    _87save;
+    auto _87state           _87save;
 #endif
     CHAR_TYPE               *drive;
     CHAR_TYPE               *dir;
     CHAR_TYPE               *fname;
     CHAR_TYPE               *ext;
     
-#if defined(__386__) || defined(__AXP__) || defined(__OS2__) || defined(__PPC__)
-#define        ENVPARM envmem
+#if defined(__DOS__)
+ #define        ENVPARM envseg
 #else
-#define        ENVPARM envseg
+ #define        ENVPARM envmem
 #endif
     
 #ifdef __USE_POSIX_HANDLE_STRINGS
@@ -214,59 +182,59 @@ _WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
     prot_mode286 = FALSE;
     
-#if defined(__OS2__) || defined(__NT__)
+ #if defined(__OS2__) || defined(__NT__)
     if( mode == OLD_P_OVERLAY ) {
-#ifdef __USE_POSIX_HANDLE_STRINGS
+  #ifdef __USE_POSIX_HANDLE_STRINGS
         rc = __F_NAME(execve,_wexecve)(path, argv, envp);
         _POSIX_HANDLE_CLEANUP;
         return( rc );
-#else
+  #else
         return( __F_NAME(execve,_wexecve)(path, argv, envp) );
-#endif
+  #endif
     }
-#endif
-#if !defined(__OS2__) && !defined(__NT__)
+ #endif
+ #if !defined(__OS2__) && !defined(__NT__)
     if( mode >= OLD_P_OVERLAY ) {
         __set_errno( EINVAL );
-#ifdef __USE_POSIX_HANDLE_STRINGS
+  #ifdef __USE_POSIX_HANDLE_STRINGS
         _POSIX_HANDLE_CLEANUP;
-#endif
+  #endif
         return( -1 );
     }
-#endif
+ #endif
 #else
-#if defined( __OS2__ )
+ #if defined( __OS2__ )
     prot_mode286 = _RWD_osmode;
     if( mode == OLD_P_OVERLAY ) {
-#ifdef __USE_POSIX_HANDLE_STRINGS
+  #ifdef __USE_POSIX_HANDLE_STRINGS
         rc = execve(path, argv, envp);
         _POSIX_HANDLE_CLEANUP;
         return( rc );
-#else
+  #else
         return( execve(path, argv, envp) );
-#endif
+  #endif
     }
-#else
+ #else
     prot_mode286 = FALSE;
     if( mode == OLD_P_OVERLAY ) {
-        int             (*execve)();
+        execveaddr_type    execve;
         execve = __execaddr();
         if( execve != NULL ) {
-#ifdef __USE_POSIX_HANDLE_STRINGS
+  #ifdef __USE_POSIX_HANDLE_STRINGS
             rc = (*execve)( path, argv, envp );
             _POSIX_HANDLE_CLEANUP;
             return( rc );
-#else
+  #else
             return( (*execve)( path, argv, envp ) );
-#endif
+  #endif
         }
         __set_errno( EINVAL );
-#ifdef __USE_POSIX_HANDLE_STRINGS
+  #ifdef __USE_POSIX_HANDLE_STRINGS
         _POSIX_HANDLE_CLEANUP;
-#endif
+  #endif
         return( -1 );
     }
-#endif
+ #endif
 #endif
     retval = __F_NAME(__cenvarg,__wcenvarg)( argv, envp, &envmem,
         &envstrings, &envseg,
@@ -297,9 +265,9 @@ _WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
         p = np;
     }
     __F_NAME(_splitpath2,_wsplitpath2)( path, p + (len-_MAX_PATH2),
-        &drive, &dir, &fname, &ext );
+                                        &drive, &dir, &fname, &ext );
 #if defined(_M_IX86)
-    __Save8087( &_87save );
+    _RWD_Save8087( &_87save );
 #endif
 #if !defined(__OS2__) && defined(M_I86)
     if( _osmode != DOS_MODE ) {     /* if protect-mode e.g. DOS/16M */
@@ -308,9 +276,9 @@ _WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
         if( _dos_allocmem( num_of_paras, &segment ) != 0 ) {
             lib_nfree( np );
             lib_free( envmem );
-#ifdef __USE_POSIX_HANDLE_STRINGS
+  #ifdef __USE_POSIX_HANDLE_STRINGS
             _POSIX_HANDLE_CLEANUP;
-#endif
+  #endif
             return( -1 );
         }
         envseg = segment;
@@ -351,23 +319,23 @@ _WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
 #if defined( __OS2__ )
         if( stricmp( ext, ".cmd" ) == 0 || stricmp( ext, ".bat" ) == 0 )
 #else
-            if( __F_NAME(stricmp,wcscmp)( ext, __F_NAME(".bat",L".bat") ) == 0 )
+        if( __F_NAME(stricmp,wcscmp)( ext, __F_NAME(".bat",L".bat") ) == 0 )
 #endif
-            {
-                retval = -1; /* assume file doesn't exist */
-                if( file_exists( p ) ) goto spawn_command_com;
-            } else {
-                __set_errno( 0 );
-                /* user specified an extension, so try it */
-                retval = x_dospawn( mode, p, cmdline, ENVPARM, argv );
-            }
+        {
+            retval = -1; /* assume file doesn't exist */
+            if( file_exists( p ) ) goto spawn_command_com;
+        } else {
+            __set_errno( 0 );
+            /* user specified an extension, so try it */
+            retval = x_dospawn( mode, p, cmdline, ENVPARM, argv );
+        }
     }
 #if defined( __OS2__ ) || defined( __NT__ )
     /*
-    * consider the following valid executable filenames:
-    *      a.b.exe  a.cmd.exe  a.exe.cmd  a.cmd
-    * we must always try to add .exe, etc.
-    */
+     * consider the following valid executable filenames:
+     *      a.b.exe  a.cmd.exe  a.exe.cmd  a.cmd
+     * we must always try to add .exe, etc.
+     */
     if( _RWD_errno == ENOENT || _RWD_errno == EINVAL ) {
 #else
     else {
@@ -433,7 +401,7 @@ cleanup:
     }
 #endif
 #if defined(_M_IX86)
-    __Rest8087( &_87save );
+    _RWD_Rest8087( &_87save );
 #endif
     return( retval );
 }

@@ -43,6 +43,7 @@
 #include "fileacc.h"
 #include "rtinit.h"
 #include "seterrno.h"
+#include "iomode.h"
 
 unsigned __NFiles   = _NFILES;          /* maximum # of files we can open */
 
@@ -62,7 +63,7 @@ unsigned _HUGEDATA __init_mode[_NFILES] = { /* file mode information (flags) */
 
 unsigned *__io_mode = __init_mode;      /* initially points to static array */
 
-unsigned __GetIOMode( unsigned handle )
+unsigned __GetIOMode( int handle )
 {
     if( handle >= __NFiles ) {
         return( 0 );
@@ -70,7 +71,7 @@ unsigned __GetIOMode( unsigned handle )
     return( __io_mode[handle] );
 }
 
-void __SetIOMode_nogrow( unsigned handle, unsigned value )
+void __SetIOMode_nogrow( int handle, unsigned value )
 {
     if( handle < __NFiles ) {
         __io_mode[handle] = value;    /* we're closing it; smite _INITIALIZED */

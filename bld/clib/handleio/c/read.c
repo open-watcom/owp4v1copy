@@ -57,7 +57,7 @@
 
 
 #if defined(__WINDOWS_386__)
-  int __read( int handle, void *buf, unsigned len )
+  static int __read( int handle, void *buf, unsigned len )
 #else
   _WCRTLINK int read( int handle, void *buf, unsigned len )
 #endif
@@ -216,7 +216,7 @@ _WCRTLINK int read( int handle, void *buffer, unsigned len )
             readamt = len;
         }
         rc = __read( handle, buffer, readamt );
-        if( rc < 0 )
+        if( rc == -1 )
             return( rc );
         total += (unsigned)rc;
         if( rc != readamt )

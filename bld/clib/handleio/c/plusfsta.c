@@ -38,6 +38,7 @@
 #include <windows.h>
 #endif
 #include "iomode.h"
+#include "handleio.h"
 
 // these must be the same as is defined in iostream.h
 

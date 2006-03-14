@@ -44,9 +44,7 @@
     #include <string.h>
     #include <wchar.h>
 #endif
-
-
-extern void __ioalloc( FILE * );
+#include "streamio.h"
 
 
 _WCRTLINK INTCHAR_TYPE __F_NAME(ungetc,ungetwc)( INTCHAR_TYPE c, FILE *fp )

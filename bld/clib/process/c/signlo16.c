@@ -42,11 +42,7 @@
 #include "sigtab.h"
 #include "sigfunc.h"
 #include "seterrno.h"
-
-extern  void    __null_int23_exit( void );
-extern  void    (*__int23_exit)( void );
-extern  void    __grab_FPE_handler( void );
-extern  void    __restore_FPE_handler( void );
+#include "_int23.h"
 
 
 static struct sigtab SignalTable[] = {

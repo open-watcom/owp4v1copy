@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include "rtdata.h"
 #include "fileacc.h"
+#include "streamio.h"
 
 
 void __chktty( FILE  *fp )

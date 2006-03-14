@@ -33,11 +33,7 @@
 #include <stdlib.h>
 #include "rtdata.h"
 
-#ifdef __NETWARE__
-_WCRTLINK extern wchar_t **_WCDATA _wenviron; /* pointer to wide environment */
-#endif
-
-_WCRTLINK wchar_t ** (*__get_wenviron_ptr( void ))
+_WCRTLINK wchar_t ***__get_wenviron_ptr( void )
 {
     return( &_wenviron );
 }

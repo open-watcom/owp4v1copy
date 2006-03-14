@@ -53,8 +53,8 @@
 #include "ntex.h"
 #include "rtcheck.h"
 #include "seterrno.h"
+#include "d2ttime.h"
 
-extern time_t _d2ttime();
 
 /*
     DWORD GetFileSize(
@@ -188,7 +188,7 @@ extern time_t _d2ttime();
             return( __set_errno_nt() );
         }
         __MakeDOSDT( &mtime, &md, &mt );
-        buf->st_mtime = _d2ttime( md, mt );
+        buf->st_mtime = _d2ttime( TODDATE( md ), TODTIME( mt ) );
         if(( ctime.dwLowDateTime == mtime.dwLowDateTime ) &&
            ( ctime.dwHighDateTime == mtime.dwHighDateTime )) {
             buf->st_ctime = buf->st_mtime;
@@ -197,7 +197,7 @@ extern time_t _d2ttime();
             if( d == md && t == mt ) {
                 buf->st_ctime = buf->st_mtime;
             } else {
-                buf->st_ctime = _d2ttime( d, t );
+                buf->st_ctime = _d2ttime( TODDATE( d ), TODTIME( t ) );
             }
         }
         if(( atime.dwLowDateTime == mtime.dwLowDateTime ) &&
@@ -208,7 +208,7 @@ extern time_t _d2ttime();
             if( d == md && t == mt ) {
                 buf->st_atime = buf->st_mtime;
             } else {
-                buf->st_atime = _d2ttime( d, t );
+                buf->st_atime = _d2ttime( TODDATE( d ), TODTIME( t ) );
             }
         }
 

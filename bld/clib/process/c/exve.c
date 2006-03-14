@@ -48,14 +48,12 @@
 #include "rtdata.h"
 #include "seterrno.h"
 #include "lseek.h"
+#include "_process.h"
+#include "_int23.h"
 
-extern  void    (*__int23_exit)();
 extern  int     (*__Exec_addr)();
-extern  int     __cenvarg( char**, char**, char**,
-                           char**, unsigned*, size_t*, int );
 extern  void    _WCFAR cdecl _doexec(char _WCNEAR *,char _WCNEAR *,
                                 int,unsigned,unsigned,unsigned,unsigned );
-extern  void    __ccmdline( char *, char **, char *, int );
 
 #define TRUE            1
 #define FALSE           0
@@ -225,8 +223,8 @@ static void save_file_handles( void )
 
 _WCRTLINK int execve( path, argv, envp )
     const char          *path;          /* Path name of file to be executed */
-    char                *argv[];        /* Array of pointers to arguments */
-    char                *envp[];        /* Array of pointers to environment                                          settings */
+    const char * const  argv[];         /* Array of pointers to arguments */
+    const char * const  envp[];         /* Array of pointers to environment settings */
 {
     char                *name;
     int                 file;
@@ -241,6 +239,8 @@ _WCRTLINK int execve( path, argv, envp )
     int                 isexe;
     extern unsigned     __exec_para;
     unsigned            para;
+    const char          **argvv;
+    int                 i;
 
     strncpy( buffer, path, 75 );
     name = strrchr( buffer, '\\' );
@@ -274,18 +274,25 @@ _WCRTLINK int execve( path, argv, envp )
         para = (__lseek( file, 0, SEEK_END ) + MIN_COM_STACK + 15)/16;
     }
     close( file );
-    argv[0] = buffer;           /* 22-jan-88 set program name */
-    envpara = __cenvarg( argv, envp, &envptr, &envstrings,
+    for( i = 0, argvv = (const char**)argv; *argvv != NULL; argvv++, i++ )
+        ;
+    argvv = malloc( i * sizeof(char *) );
+    while( --i > 0 ) {
+        argvv[i] = argv[i];
+    }
+    argvv[0] = buffer;           /* 22-jan-88 set program name */
+    envpara = __cenvarg( argvv, envp, &envptr, &envstrings,
                          &envseg, &cmdline_len, TRUE );
     if( envpara == -1 ) goto error;
     para += PSP_SIZE/16 + __exec_para + (strlen( path ) + 15)/16;
-    __ccmdline( buffer, argv, cmdline, 0 );
+    __ccmdline( buffer, (const char * const *)argvv, cmdline, 0 );
     if( doalloc( para, envseg, envpara ) )
         save_file_handles();
         _doexec( ( char _WCNEAR *)buffer, ( char _WCNEAR *)cmdline,
             isexe, exe.ss, exe.sp, exe.cs, exe.ip );
 
     free( envptr );
+    free( argvv );
     error: /* Clean up after error */
     return( -1 );
 }

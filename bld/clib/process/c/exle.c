@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <process.h>
+#include "_process.h"
 
 _WCRTLINK int __F_NAME(execle,_wexecle)( const CHAR_TYPE *path, const CHAR_TYPE *arg0, ... )
     {

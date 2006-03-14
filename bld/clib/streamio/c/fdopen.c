@@ -44,12 +44,10 @@
 #include "iomode.h"
 #include "rtdata.h"
 #include "seterrno.h"
+#include "streamio.h"
 
 
-extern FILE     *__allocfp( int handle );
-extern  void    __freefp( FILE * );
 extern int      __F_NAME(__open_flags,__wopen_flags)( const CHAR_TYPE *, int * );
-extern  void    __chktty( FILE *fp );
 
 
 #ifndef __NETWARE__

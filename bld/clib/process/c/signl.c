@@ -49,11 +49,6 @@ extern      void    __restore_int_ctrl_break( void );
 #endif
 #endif
 
-#if defined( __DOS__ )
-extern      void    __grab_FPE_handler( void );
-extern      void    __restore_FPE_handler( void );
-#endif
-
 #define __SIGLAST       SIGIOVFL
 
 static __sig_func _HUGEDATA SignalTable[] = {

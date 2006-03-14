@@ -38,9 +38,7 @@
 #include <wos2.h>
 #include "rtdata.h"
 #include "sigfunc.h"
-
-extern  void    __null_int23_exit( void );
-extern  void    (*__int23_exit)( void );
+#include "_int23.h"
 
 static PFNSIGHANDLER handler = 0;
 static USHORT        action;
