@@ -47,8 +47,6 @@ extern int              trademark( void );
 extern char             *get_curr_filename( void );
 
 void                    OpenErrFile( void );
-void                    PrtMsg( register char *prefix, register int msgnum, va_list args1,
-                                va_list args2 );
 void                    print_include_file_nesting_structure( void );
 
 //    WngLvls[level] // warning levels associated with warning messages
@@ -75,6 +73,8 @@ static FILE             *ErrFile = NULL;
 
 static void             AsmSuicide( void );
 static void             PutMsg( FILE *fp, char *prefix, int msgnum, va_list args );
+static void             PrtMsg1( register char *prefix, register int msgnum,
+                                              va_list args1, va_list args2 );
 
 void AsmError( int msgnum )
 /*************************/
@@ -103,7 +103,7 @@ void AsmNote( int msgnum, ... )
     va_start( args1, msgnum );
     va_start( args2, msgnum );
 
-    PrtMsg( "Note!", msgnum, args1, args2 );
+    PrtMsg1( "Note!", msgnum, args1, args2 );
     va_end( args1 );
     va_end( args2 );
 }
@@ -119,13 +119,13 @@ void AsmErr( int msgnum, ... )
     va_start( args1, msgnum );
     va_start( args2, msgnum );
     if( ErrLimit == -1  ||  ErrCount < ErrLimit ) {
-        PrtMsg( "Error!", msgnum, args1, args2 );
+        PrtMsg1( "Error!", msgnum, args1, args2 );
         va_end( args1 );
         va_end( args2 );
         ++ErrCount;
         print_include_file_nesting_structure();
     } else {
-        PrtMsg( "", ERR_TOO_MANY_ERRORS, args1, args2 );
+        PrtMsg1( "", ERR_TOO_MANY_ERRORS, args1, args2 );
         AsmSuicide();
     }
 }
@@ -142,10 +142,10 @@ void AsmWarn( int level, int msgnum, ... )
         va_start( args1, msgnum );
         va_start( args2, msgnum );
         if( !Options.warning_error ) {
-            PrtMsg( "Warning!", msgnum, args1, args2 );
+            PrtMsg1( "Warning!", msgnum, args1, args2 );
             ++WngCount;
         } else {
-            PrtMsg( "Error!", msgnum, args1, args2 );
+            PrtMsg1( "Error!", msgnum, args1, args2 );
             ++ErrCount;
         }
         va_end( args1 );
@@ -153,8 +153,8 @@ void AsmWarn( int level, int msgnum, ... )
     }
 }
 
-void PrtMsg( register char *prefix, register int msgnum, va_list args1,
-             va_list args2 )
+static void PrtMsg1( register char *prefix, register int msgnum,
+                   va_list args1, va_list args2 )
 /**************************/
 // print messages from WOMP !!!
 {
@@ -169,6 +169,23 @@ void PrtMsg( register char *prefix, register int msgnum, va_list args1,
         Errfile_Written = TRUE;
         PutMsg( ErrFile, prefix, msgnum, args2 );
     }
+}
+
+void PrtMsg( int msgnum, ... )
+/****************************/
+// print messages from WOMP !!!
+{
+    va_list args1;
+
+    if( !Options.banner_printed ) {
+        Options.banner_printed = TRUE;
+        trademark();
+    }
+    if( ErrFile == NULL )
+        OpenErrFile();
+    va_start( args1, msgnum );
+    PutMsg( errout, "Warning!", msgnum, args1 );
+    fflush( errout );
 }
 
 void DelErrFile() {
