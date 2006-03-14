@@ -90,6 +90,10 @@ int Test_string_to_float( void )
     VERIFY( x == -1.0 );
     VERIFY( *eptr == 'a' );
 
+    x = strtod( ".", &eptr );
+    VERIFY( x == 0.0 );
+    VERIFY( *eptr == '.' );
+
     x = strtod( "+3.14159265", &eptr );
     VERIFY( x == 3.14159265 );
     VERIFY( *eptr == '\0' );

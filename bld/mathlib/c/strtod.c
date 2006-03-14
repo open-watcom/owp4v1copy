@@ -244,7 +244,7 @@ static flt_flags subject_seq( const CHAR_TYPE *s, const CHAR_TYPE **endptr )
 /* Parse a decimal floating-point number: collect siginficant digits
  * into buffer and determine exponent (power of ten).
  */
-static flt_flags parse_decimal( const CHAR_TYPE *s, CHAR_TYPE *buffer,
+static flt_flags parse_decimal( const CHAR_TYPE *input, CHAR_TYPE *buffer,
                                 const CHAR_TYPE **endptr, int *exp,
                                 int *sig, int maxdigits )
 {
@@ -254,6 +254,7 @@ static flt_flags parse_decimal( const CHAR_TYPE *s, CHAR_TYPE *buffer,
     int                 fdigits   = 0;
     int                 exponent  = 0;
     CHAR_TYPE           digitflag = '0';
+    const CHAR_TYPE     *s = input;
 
     /* Parse the mantissa */
     for( ;; ) {
@@ -308,19 +309,21 @@ static flt_flags parse_decimal( const CHAR_TYPE *s, CHAR_TYPE *buffer,
         } else {    /* digits found, but no e or E */
             --s;
         }
-    }
 
-    exponent -= fdigits;
+        exponent -= fdigits;
 
-    if( sigdigits > maxdigits ) {
-        exponent += sigdigits - maxdigits;
-        sigdigits = maxdigits;
-    }
+        if( sigdigits > maxdigits ) {
+            exponent += sigdigits - maxdigits;
+            sigdigits = maxdigits;
+        }
 
-    while( sigdigits > 0 ) {
-        if( buffer[ sigdigits - 1 ] != '0' ) break;
-        ++exponent;
-        --sigdigits;
+        while( sigdigits > 0 ) {
+            if( buffer[ sigdigits - 1 ] != '0' ) break;
+            ++exponent;
+            --sigdigits;
+        }
+    } else {
+        s = input;  /* not a number (could be just dot) */
     }
 
     *exp = exponent;
@@ -333,7 +336,7 @@ static flt_flags parse_decimal( const CHAR_TYPE *s, CHAR_TYPE *buffer,
 /* Parse a hexadecimal floating-point number: collect siginficant
  * digits into buffer and determine exponent (power of two).
  */
-static flt_flags parse_hex( const CHAR_TYPE *s, CHAR_TYPE *buffer,
+static flt_flags parse_hex( const CHAR_TYPE *input, CHAR_TYPE *buffer,
                             const CHAR_TYPE **endptr, int *exp,
                             int *sig, int maxxdigits )
 {
@@ -343,6 +346,7 @@ static flt_flags parse_hex( const CHAR_TYPE *s, CHAR_TYPE *buffer,
     int                 fdigits   = 0;
     int                 exponent  = 0;
     CHAR_TYPE           digitflag = '0';
+    const CHAR_TYPE     *s = input;
 
     /* Parse the mantissa */
     for( ;; ) {
@@ -397,20 +401,22 @@ static flt_flags parse_hex( const CHAR_TYPE *s, CHAR_TYPE *buffer,
         } else {    /* digits found, but no e or E */
             --s;
         }
-    }
 
-    /* each hex digit accounts for 4 bits */
-    exponent -= fdigits * 4;
+        /* each hex digit accounts for 4 bits */
+        exponent -= fdigits * 4;
 
-    if( sigdigits > maxxdigits ) {
-        exponent += sigdigits - maxxdigits * 4;
-        sigdigits = maxxdigits;
-    }
+        if( sigdigits > maxxdigits ) {
+            exponent += sigdigits - maxxdigits * 4;
+            sigdigits = maxxdigits;
+        }
 
-    while( sigdigits > 0 ) {
-        if( buffer[ sigdigits - 1 ] != '0' ) break;
-        exponent += 4;
-        --sigdigits;
+        while( sigdigits > 0 ) {
+            if( buffer[ sigdigits - 1 ] != '0' ) break;
+            exponent += 4;
+            --sigdigits;
+        }
+    } else {
+        s = input;  /* not a number (could be just dot) */
     }
 
     *exp = exponent;
