@@ -111,6 +111,7 @@ static PRLINE conn_line;        // buffering for connectors line
 static DECORATED* decoration;   // decorated nodes
 static DECOR decor_numb;        // decoration counter
 
+static COL buildNode( PTREE expr, SUBTREE *subtree, LINE *pred );
 
 static char *stxcpy(            // CONCATENATE HEXADECIMAL NUMBER
     char *tgt,                  // - target location
@@ -438,6 +439,21 @@ static char *textPTREE(         // GET TEXT FOR A PARSE-TREE NODE
 }
 
 
+static void buildSubtree(       // BUILD A SUBTREE
+    PTREE root )                // - root of subtree
+{
+    SUBTREE *subtree;           // - info for subtree
+
+    RingIterBeg( subtrees, subtree ) {
+        if( subtree->root == root ) return;
+    } RingIterEnd( subtree )
+    subtree = RingCarveAlloc( carveSubtree, &subtrees );
+    subtree->lines = NULL;
+    subtree->root = root;
+    subtree->centre = buildNode( root, subtree, NULL );
+}
+
+
 static COL buildNode(           // BUILD A NODE
     PTREE expr,                 // - parse-tree expression
     SUBTREE *subtree,           // - subtree under construction
@@ -511,21 +527,6 @@ static COL buildNode(           // BUILD A NODE
         }
     }
     return centre;
-}
-
-
-static void buildSubtree(       // BUILD A SUBTREE
-    PTREE root )                // - root of subtree
-{
-    SUBTREE *subtree;           // - info for subtree
-
-    RingIterBeg( subtrees, subtree ) {
-        if( subtree->root == root ) return;
-    } RingIterEnd( subtree )
-    subtree = RingCarveAlloc( carveSubtree, &subtrees );
-    subtree->lines = NULL;
-    subtree->root = root;
-    subtree->centre = buildNode( root, subtree, NULL );
 }
 
 

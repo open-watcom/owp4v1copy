@@ -1376,6 +1376,8 @@ static int FNOV_infinite_ctr = 0;
 
 #define FNOV_ARG_RANK my_fnov_arg_rank
 
+void FNOV_ARG_RANK( TYPE src, TYPE tgt, PTREE *pt, FNOV_RANK *rank );
+
 void FnovArgRank( TYPE src, TYPE tgt, PTREE *pt, FNOV_RANK *rank )
 {
     DbgVerify( ++FNOV_infinite_ctr <= INFINITY, "Infinite Overload LOOP" );

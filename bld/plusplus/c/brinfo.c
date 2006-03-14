@@ -958,6 +958,19 @@ MEPTR BrinfDeclMacro            // DECLARE MACRO
 }
 
 
+void BrinfDependsMacroValue     // DEPENDENCY: MACRO VALUE
+    ( MEPTR mac )               // - the macro
+{
+    MACVALUE* val;              // - value for macro
+
+    if( BrinfActive() ) {
+        ExtraRptIncrementCtr( ctr_dep_macro_value );
+        val = BrinfMacAddValue( mac );
+        BrinfDepMacAdd( mac, val, MVT_VALUE );
+    }
+}
+
+
 MEPTR BrinfReferenceMacro       // REFERENCE A MACRO VALUE
     ( MEPTR mac )               // - the macro
 {
@@ -999,19 +1012,6 @@ boolean BrinfDependsMacroDefined // DEPENDENCY: MACRO DEFINED OR NOT
         BrinfDepMacAdd( mac, val, type );
     }
     return defed;
-}
-
-
-void BrinfDependsMacroValue     // DEPENDENCY: MACRO VALUE
-    ( MEPTR mac )               // - the macro
-{
-    MACVALUE* val;              // - value for macro
-
-    if( BrinfActive() ) {
-        ExtraRptIncrementCtr( ctr_dep_macro_value );
-        val = BrinfMacAddValue( mac );
-        BrinfDepMacAdd( mac, val, MVT_VALUE );
-    }
 }
 
 

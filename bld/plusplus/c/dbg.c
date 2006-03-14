@@ -451,6 +451,16 @@ static void dumpNameSpaceInfo( NAME_SPACE *ns )
           );
 }
 
+static void dumpLocation( TOKEN_LOCN *locn )
+{
+    if( locn->src_file != NULL ) {
+        printf( "    " );
+        DbgDumpTokenLocn( locn );
+        printf( F_EOL );
+    }
+}
+
+
 //
 //  SYMBOL-TABLE FUNCTIONS
 //
@@ -1058,16 +1068,6 @@ void DbgDumpTokenLocn           // DUMP A TOKEN_LOCN
               , locn->line
               , locn->column
               );
-    }
-}
-
-
-static void dumpLocation( TOKEN_LOCN *locn )
-{
-    if( locn->src_file != NULL ) {
-        printf( "    " );
-        DbgDumpTokenLocn( locn );
-        printf( F_EOL );
     }
 }
 
