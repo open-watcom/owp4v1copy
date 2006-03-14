@@ -99,7 +99,7 @@ where <bn> is one of
         rcerrs              Resource Compiler Diagnostic Messages (obsolete)
         tools               C/C++ Tools User's Guide
         wasaxp              AXP Assembler User's Guide (obsolete)
-        wdbg                Debugger User's Guide
+        wd                  Debugger User's Guide
         wlinkerr            Linker Error Messages (obsolete)
 
 The output file is of type ".ps". You should be able to send this to
