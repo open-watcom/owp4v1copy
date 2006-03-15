@@ -31,6 +31,7 @@
 
 /* FIXME
  *  if linking is done, remove objects afterwards?
+ *  unrecognized options should warn, possibly error 
  *  should owcc output a warning message if -b names unknown target?
  *  -S should remove .o files
  *  -? leaves behind a __wcl__.lnk corpse
@@ -463,25 +464,25 @@ static  int  Parse( int argc, char **argv )
 
         switch( c ) {
         case 'f':
-        if( ! strcmp( Word, "syntax-only" ) ) {
-        c = 'z';
-        strcpy( Word, "s" );
-        Flags.no_link = 1;
-        break;
-        }
-        if( ! strncmp( Word, "cpp-wrap=", 9 ) ) {
-        if( cpp_linewrap )
-            free( cpp_linewrap );
-        Word[7] = 'w';
-        cpp_linewrap = strdup( Word + 7 );
-        wcc_option = 0;
-        break;
-        }
-        if( ! strcmp( Word, "mangle-cpp" ) ) {
-        cpp_encrypt_names = 1;
-        wcc_option = 0;
-        break;
-        }
+            if( ! strcmp( Word, "syntax-only" ) ) {
+                c = 'z';
+                strcpy( Word, "s" );
+                Flags.no_link = 1;
+                break;
+            }
+            if( ! strncmp( Word, "cpp-wrap=", 9 ) ) {
+                if( cpp_linewrap )
+                    free( cpp_linewrap );
+                Word[7] = 'w';
+                cpp_linewrap = strdup( Word + 7 );
+                wcc_option = 0;
+                break;
+            }
+            if( ! strcmp( Word, "mangle-cpp" ) ) {
+                cpp_encrypt_names = 1;
+                wcc_option = 0;
+                break;
+            }
             switch( Word[0] ) {
             case 'd':           /* name of linker directive file */
                 Link_Name = "__owcc__.lnk";
@@ -512,9 +513,10 @@ static  int  Parse( int argc, char **argv )
                 Flags.want_errfile = TRUE;
                 break;
             }
-        /* avoid passing on unknown options */
-        wcc_option = 0;
+            /* avoid passing on unknown options */
+            wcc_option = 0;
             break;
+
         case 'k':               /* stack size option */
             if( Word[0] != '\0' ) {
                 StackSize = strdup( Word );
@@ -522,29 +524,11 @@ static  int  Parse( int argc, char **argv )
             wcc_option = 0;
             break;
 
-            /* compiler options that affect the linker */
-#if 0
-           /* Replaced by pair of options:
-           { "-mtune={3,4,5,6}86", "" }, { "-mregparm=<n>", "" }, */
-        case '0':
-        case '1':
-        case '2':
-            CPU_Class = c;
-            Conventions[0] = '\0';
-            break;
-        case '3':
-        case '4':
-        case '5':                           /* 22-sep-92 */
-        case '6':
-            CPU_Class = c;
-            if( Word[0] )
-                Conventions[0] = tolower( (unsigned char) Word[0] );
-            break;
-#endif
+        /* compiler options that affect the linker */
         case 'c':           /* compile only */
-        Flags.no_link = TRUE;
-        wcc_option = 0;
-        break;
+            Flags.no_link = TRUE;
+            wcc_option = 0;
+            break;
         case 'x':           /* change source language */
             if( strcmp( Word, "c" ) == 0 ) {
                 Flags.force_c = TRUE;
@@ -555,50 +539,52 @@ static  int  Parse( int argc, char **argv )
             }
             wcc_option = 0;
             break;
+
         case 'm':
-        if( ( ! strncmp("cmodel=", Word, 7 ) )
-            && ( Word[8] == '\0' ) ) {
-        if( Word[7] == 't' ) {      /* tiny model */
-            Word[0] = 's';              /* change to small */
-            Flags.tiny_model = TRUE;
-        } else {
-           Word[0] = Word[7];
-        }
-        Word[1] = '\0';
-        break;
-        }
-        if( ! strncmp("regparm=", Word, 8 ) ) {
-        if( !strcmp( Word + 8, "0" ) )
-            Conventions[0] =  's';
-        else
-            Conventions[0] = 'r';
-        wcc_option = 0;
-        break;
-        }
-        if( ! strncmp("tune=i", Word, 6 ) ) {
-        switch( Word[6] ) {
-        case '0':
-        case '1':
-        case '2':
-            CPU_Class = Word[6];
-            Conventions[0] = '\0';
+            if( ( ! strncmp("cmodel=", Word, 7 ) )
+                && ( Word[8] == '\0' ) ) {
+                if( Word[7] == 't' ) {      /* tiny model */
+                    Word[0] = 's';              /* change to small */
+                    Flags.tiny_model = TRUE;
+                } else {
+                    Word[0] = Word[7];
+                }
+                Word[1] = '\0';
+                break;
+            }
+            if( ! strncmp("regparm=", Word, 8 ) ) {
+                if( !strcmp( Word + 8, "0" ) )
+                    Conventions[0] =  's';
+                else
+                    Conventions[0] = 'r';
+                wcc_option = 0;
+                break;
+            }
+            if( ! strncmp("tune=i", Word, 6 ) ) {
+                switch( Word[6] ) {
+                case '0':
+                case '1':
+                case '2':
+                    CPU_Class = Word[6];
+                    Conventions[0] = '\0';
+                    break;
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                    CPU_Class = Word[6];
+                    break;
+                default:
+                    /* Unknown CPU type --- disable generation of this
+                     * option */
+                    CPU_Class = '\0';
+                }
+                wcc_option = 0;
+                break;
+            }
+            wcc_option = 0;     /* dont' pass on unknown options */
             break;
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-            CPU_Class = Word[6];
-            break;
-        default:
-            /* Unknown CPU type --- disable generation of this
-             * option */
-            CPU_Class = '\0';
-        }
-        wcc_option = 0;
-        break;
-        }
-        wcc_option = 0;     /* dont' pass on unknown options */
-        break;
+            
         case 'z':                   /* 12-jan-89 */
             switch( tolower( Word[0] ) ) {
             case 's':
@@ -612,17 +598,17 @@ static  int  Parse( int argc, char **argv )
             }
             break;
         case 'E':
-        preprocess_only = 1;
-        wcc_option = 0;
+            preprocess_only = 1;
+            wcc_option = 0;
             break;
-    case 'P':
-        cpp_want_lines = 0;
-        wcc_option = 0;
-        break;
-    case 'C':
-        cpp_keep_comments = 1;
-        wcc_option = 0;
-        break;
+        case 'P':
+            cpp_want_lines = 0;
+            wcc_option = 0;
+            break;
+        case 'C':
+            cpp_keep_comments = 1;
+            wcc_option = 0;
+            break;
         case 'o':
             O_Name = strfdup( OptArg );
             wcc_option = 0;
@@ -677,9 +663,9 @@ static  int  Parse( int argc, char **argv )
         case 's':
             if( OptArg ) {
                 /* leave -shared to mapping table */
-        wcc_option = 0;
+                wcc_option = 0;
                 break;
-        }
+            }
             Flags.strip_all = 1;
             DebugFlag = 0;
             wcc_option = 0;
@@ -723,13 +709,13 @@ static  int  Parse( int argc, char **argv )
             Fputnl( Word, Fp );
             wcc_option = 0;
             break;
-    case 'i':       /* -include <file> --> -fi=<file> */
+        case 'i':       /* -include <file> --> -fi=<file> */
             if( !OptArg ) {
                 wcc_option = 0;
                 break;
             }
-        if( !strcmp( OptArg, "nclude" ) ) {
-        c = 'f';
+            if( !strcmp( OptArg, "nclude" ) ) {
+                c = 'f';
                 Word = realloc( Word, strlen( argv[OptInd] ) + 6 );
                 if( OptInd >= argc - 1 ) {
                     PrintMsg( "Argument of -include missing\n", OptArg );
@@ -738,11 +724,11 @@ static  int  Parse( int argc, char **argv )
                 strcpy( Word, "i=" );
                 strfcat( Word, argv[OptInd] );
                 argv[OptInd++][0] = NULLCHAR;
-        break;
-        }
-        /* avoid passing un unknown options */
-        wcc_option = 0;
-        break;
+                break;
+            }
+            /* avoid passing un unknown options */
+            wcc_option = 0;
+            break;
 
         case 'M':               /* autodepend information for Unix makes */
             if( !OptArg ) {
@@ -791,23 +777,23 @@ static  int  Parse( int argc, char **argv )
     }
 
     if( preprocess_only ) {
-    Flags.no_link = TRUE;
-    if( ! O_Name ) {
+        Flags.no_link = TRUE;
+        if( ! O_Name ) {
             free( Obj_Name );           /* preprocess to stdout by default */
             Obj_Name = NULL;
-    }
-    strcat( CC_Opts, " -p" );
-    if( cpp_encrypt_names )
-        strcat( CC_Opts, "e" );
-    if( cpp_want_lines )
-        strcat( CC_Opts, "l" );
-    if( cpp_keep_comments )
-        strcat( CC_Opts, "c" );
-    if( cpp_linewrap )
-        strcat( CC_Opts, cpp_linewrap );
+        }
+        strcat( CC_Opts, " -p" );
+        if( cpp_encrypt_names )
+            strcat( CC_Opts, "e" );
+        if( cpp_want_lines )
+            strcat( CC_Opts, "l" );
+        if( cpp_keep_comments )
+            strcat( CC_Opts, "c" );
+        if( cpp_linewrap )
+            strcat( CC_Opts, cpp_linewrap );
     }
     if( CPU_Class )
-    addccopt( CPU_Class, Conventions );
+        addccopt( CPU_Class, Conventions );
     if( Flags.be_quiet )
         addccopt( 'z', "q" );
     if( O_Name ) {
@@ -1093,6 +1079,14 @@ static  void  MakeName( char *name, char *ext )
     }
 }
 
+static void ExitHandler( void )
+/*****************************/
+{
+    if( Fp )
+        fclose( Fp );
+    remove(Temp_Link + 1);
+}
+
 int   main( int argc, char **argv )
 {
     int     rc;
@@ -1106,7 +1100,7 @@ int   main( int argc, char **argv )
     }
 
     errno = 0; /* Standard C does not require fopen failure to set errno */
-    if( ( Fp = fopen( &Temp_Link[ 1 ], "w" ) ) == NULL ) {
+    if( ( Fp = fopen( Temp_Link + 1, "w" ) ) == NULL ) {
         /* Message before banner decision as '@' option uses Fp in Parse() */
         PrintMsg( WclMsgs[ UNABLE_TO_OPEN_TEMPORARY_FILE ], Temp_Link + 1,
             strerror( errno ) );
@@ -1116,6 +1110,8 @@ int   main( int argc, char **argv )
     Obj_Name = strdup( ".o" );
     Directive_List = NULL;
 
+    /* destruct the temp. linker script in case of -? or parse errors */
+    atexit( ExitHandler );
     rc = Parse( argc, argv );
     if( rc == 0 ) {
         if( !Flags.be_quiet ) {
@@ -1127,12 +1123,12 @@ int   main( int argc, char **argv )
         fclose( Fp );
     }
     if( Link_Name != NULL ) {
-        if( strfcmp( Link_Name, &Temp_Link[ 1 ] ) != 0 ) {
+        if( strfcmp( Link_Name, Temp_Link + 1) != 0 ) {
             remove( Link_Name );
-            rename( &Temp_Link[ 1 ], Link_Name );
+            rename( Temp_Link + 1, Link_Name );
         }
     } else {
-        remove( &Temp_Link[ 1 ] );
+        remove( Temp_Link + 1 );
     }
     return( rc == 0 ? 0 : 1 );
 }
