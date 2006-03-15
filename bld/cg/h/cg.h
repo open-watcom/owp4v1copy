@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Common types and constants used by code generator interface.
 *
 ****************************************************************************/
 
@@ -157,7 +156,8 @@ typedef enum {
         PRIVATE         = 0x0040,       /* private segment */
         GIVEN_NAME      = 0x0080,       /* use the segment name as given */
         COMDAT          = 0x0100,       /* COMDAT segment (ALPHA) */
-        THREAD_LOCAL    = 0x0200        /* Thread Local Storage */
+        THREAD_LOCAL    = 0x0200,       /* Thread Local Storage */
+        NOGROUP         = 0x0400        /* Not part of a group (DGROUP) */
 } seg_attr;
 
 

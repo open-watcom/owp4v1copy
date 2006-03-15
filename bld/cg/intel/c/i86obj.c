@@ -860,7 +860,7 @@ static  void    DoSegment( segdef *seg, array_control *dgroup_def,
                 OutGroup( rec->sidx, tgroup_def, &TLSGIndex );
                 rec->base = TLSGIndex;
                 rec->btype = BASE_GRP;
-            } else if( NoDGroup ) {
+            } else if( NoDGroup || (seg->attr & NOGROUP) ) {
                 rec->btype = BASE_SEG;
                 rec->base = SegmentIndex;
             } else {
