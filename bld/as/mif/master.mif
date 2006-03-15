@@ -2,6 +2,7 @@ name = $(proj_name)
 
 .extensions: .rc .y .re .gh .msg
 
+#additional_cleanup = *.y *.re asytab.c asytab.h ytab.c ytab.h aslexyy.c
 additional_cleanup = *.y *.re
 
 !include cproj.mif
