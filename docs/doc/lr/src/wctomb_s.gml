@@ -1,4 +1,7 @@
-.func wctomb_s _fwctomb_s
+.functinit
+.funct_w wctomb_s
+.funct_fw _fwctomb_s
+.functgen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
 errno_t wctomb_s( int * restrict status,
@@ -8,14 +11,14 @@ errno_t wctomb_s( int * restrict status,
 .ixfunc2 '&Wide' &func
 .ixfunc2 '&Multibyte' &func
 .if &farfnc eq 1 .do begin
-errno_t wctomb_s( int __far * restrict status,
+errno_t _fwctomb_s( int __far * restrict status,
                   char __far * restrict s,
                   rsize_t smax,
                   wchar_t wc);
-.ixfunc2 '&Wide' &ffunc
-.ixfunc2 '&Multibyte' &ffunc
+.ixfunc2 '&Wide' &fmfunc
+.ixfunc2 '&Multibyte' &fmfunc
 .do end
-.funcend
+.functend
 .*
 .rtconst begin
 Let
@@ -86,7 +89,7 @@ do or do not have state-dependent encodings.
 .np
 If
 .arg s
-is not a null pointer,the &func function stores into the int pointed to by
+is not a null pointer,the &func. function stores into the int pointed to by
 .arg status
 either
 .arg n
@@ -101,7 +104,7 @@ In no case will the int pointed to by
 be set to a value greater than the
 .kw MB_CUR_MAX
 macro.
-.im farparm
+.im safefar
 .desc end
 .*
 .return begin
@@ -142,5 +145,5 @@ int main()
 Character encodings are not state dependent
 s(1)
 .exmp end
-.class TR 24731
+.class TR_24731
 .system

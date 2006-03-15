@@ -1,4 +1,7 @@
-.func mbstowcs_s _fmbstowcs_s
+.functinit
+.funct_m  mbstowcs_s
+.funct_fm _fmbstowcs_s
+.functgen
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdlib.h>
 errno_t mbstowcs_s( size_t * restrict retval,
@@ -13,7 +16,7 @@ errno_t _fmbstowcs_s( size_t __far * restrict retval,
                     rsize_t dstmax,
                     const char __far * restrict src, rsize_t len);
 .do end
-.funcend
+.functend
 .*
 .rtconst begin
 Neither
@@ -121,7 +124,7 @@ values.
 .return end
 .*
 .see begin
-.seelist mbstowcs_s _fmbstowcs_s mbstowcs mblen mbtowc wctomb wctomb_s wcstombs wcstombs_s
+.seelist mbstowcs_s mbstowcs mblen mbtowc wctomb wctomb_s wcstombs wcstombs_s
 .see end
 .*
 .exmp begin

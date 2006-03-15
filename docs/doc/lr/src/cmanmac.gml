@@ -480,7 +480,9 @@ Prototype in
 .   .   .   .ct , &wfunc. is not &*cls
 .   .   .do end
 .   .   .el .do begin
-.   .   .   .ct , &wfunc. is &*wcls
+.   .   .   .if '&wfunc.' ne '&funcn.' .do begin
+.   .   .   .   .ct , &wfunc. is &*wcls
+.   .   .   .do end
 .   .   .do end
 .   .do end
 .   .if &'length(&mfunc.) ne 0 .do begin
@@ -679,6 +681,151 @@ QNX
 command
 .ix 'QNX command' '&*'
 .dm qnxcmd end
+.*
+.*       describe functions for c library
+.*   .functinit
+.*   .funct     norm
+.*   .funct_    _norm
+.*   .funct_f   fnorm
+.*   .funct_w   wnorm
+.*   .funct_fw  fwnorm
+.*   .funct_u   unorm
+.*   .functgener
+.*
+.*   .functend
+.*
+.*
+.*  .functinit
+.*      init set symbols must be first call of functxxx macros
+.*
+.dm functinit begin
+.sr function=''
+.sr func=''
+.sr _func=''
+.sr ffunc=''
+.sr wfunc=''
+.sr mfunc=''
+.sr fmfunc=''
+.sr ufunc=''
+.sr fncttl=''
+.se __fnx=0
+.dm functinit end
+.*
+.*
+.*  functii internal macro for funct_xxx
+.*
+.dm functii begin
+.se *fnd=&'vecpos(&*1,fnclst)
+.if &*fnd. eq 0 .me
+.if &__sysl(&*fnd.) eq 0 .ty ***WARNING*** &* not in library
+.if |&fncttl.| eq || .do begin
+.   .sr fncttl=&*1
+.do end
+.el .do begin
+.   .sr fncttl=&fncttl., &*1
+.do end
+.se __fnx=&__fnx.+1
+.se $$fnc(&__fnx.)=&*1
+.sr funcn=&function.
+.dm functii end
+.*
+.*   .functinit
+.*   .funct     norm
+.*   .funct_    _norm
+.*   .funct_f   fnorm
+.*   .funct_w   wnorm
+.*   .funct_fw  fwnorm
+.*   .funct_u   unorm
+.*   .functgen
+.*
+.*   .functend
+.*
+.*
+.dm funct  begin
+.sr func=&*1
+.if '&function' eq '' .sr function=&*1.
+.functii &*1
+.dm funct  end
+.*
+.dm funct_  begin
+.sr _func=&*1
+.if '&function' eq '' .sr function=&*1.
+.functii &*1
+.dm funct_  end
+.*
+.dm funct_f begin
+.sr ffunc=&*1
+.if '&function' eq '' .sr function=&*1.
+.functii &*1
+.dm funct_f end
+.*
+.dm funct_m begin
+.sr mfunc=&*1
+.if '&function' eq '' .sr function=&*1.
+.functii &*1
+.dm funct_m end
+.*
+.dm funct_w begin
+.sr wfunc=&*1
+.if '&function' eq '' .sr function=&*1.
+.functii &*1
+.dm funct_w end
+.*
+.dm funct_fm begin
+.sr fmfunc=&*1
+.if '&function' eq '' .sr function=&*1.
+.functii &*1
+.dm funct_fm end
+.*
+.dm funct_fw begin
+.sr fmfunc=&*1
+.if '&function' eq '' .sr function=&*1.
+.functii &*1
+.dm funct_fw end
+.*
+.dm funct_u begin
+.sr ufunc=&*1
+.if '&function' eq '' .sr function=&*1.
+.functii &*1
+.dm funct_u end
+.*
+.*  .functgen
+.*     generate title and start of code (declaration)
+.*
+.dm functgen begin
+.topsect &fncttl.
+.cp 5
+.newcode Synopsis:
+.dm functgen end
+.*
+.*
+.*  final processing for functions
+.*
+.dm functend begin
+.endcode
+.se *i=1
+.pe &__fnx.
+.   .funix &$$fnc(&*i.);.se *i=&*i.+1
+.if &'length(&_func.) ne 0 .do begin
+.   :set symbol="_func" value=";.sf4 &_func.;.esf ".
+.do end
+.if &'length(&ffunc.) ne 0 .do begin
+.   :set symbol="ffunc" value=";.sf4 &ffunc.;.esf ".
+.do end
+.if &'length(&wfunc.) ne 0 .do begin
+.   :set symbol="wfunc" value=";.sf4 &wfunc.;.esf ".
+.do end
+.if &'length(&mfunc.) ne 0 .do begin
+.   :set symbol="mfunc" value=";.sf4 &mfunc.;.esf ".
+.do end
+.if &'length(&fmfunc.) ne 0 .do begin
+.   :set symbol="fmfunc" value=";.sf4 &fmfunc.;.esf ".
+.do end
+.if &'length(&ufunc.) ne 0 .do begin
+.   :set symbol="ufunc" value=";.sf4 &ufunc.;.esf ".
+.do end
+:set symbol="func" value=";.sf4 &function.;.esf ".
+.dm functend end
 .*
 :cmt. include 'Safer C Library' related macros
 :INCLUDE file='safecmac'.
