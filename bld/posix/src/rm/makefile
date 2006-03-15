@@ -14,4 +14,4 @@ model=f
 !include $(posix_dir)/mif/makeone.mif
 
 xlnk: .PROCEDURE
-    @%append $(LNK) op stack=10k
+    @%append $(name).lnk op stack=10k

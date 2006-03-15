@@ -11,4 +11,4 @@ extra_lnk = xlnk
 # this is required for OS2V2 because some thunk routines need a big chunk
 # of stack space
 xlnk: .PROCEDURE
-    @%append $(LNK) op stack=20k
+    @%append $(name).lnk op stack=20k
