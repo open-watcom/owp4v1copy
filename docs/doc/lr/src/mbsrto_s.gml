@@ -1,4 +1,7 @@
-.func mbsrtowcs_s _fmbsrtowcs_s
+.functinit
+.funct_m  mbsrtowcs_s   TR 24731
+.funct_fm _fmbsrtowcs_s
+.functgen
 #define __STDC_WANT_LIB_EXT1__  1
 #include <wchar.h>
 errno_t mbsrtowcs_s( size_t * restrict retval,
@@ -11,9 +14,9 @@ errno_t _fmbsrtowcs_s( size_t __far * restrict retval,
                        wchar_t __far * restrict dst, rsize_t dstmax,
                        const char __far * __far * restrict src, rsize_t len,
                        mbstate_t __far * restrict ps);
-.ixfunc2 '&Multibyte' &ffunc
+.ixfunc2 '&Multibyte' &fmfunc
 .do end
-.funcend
+.functend
 .*
 .rtconst begin
 None of
@@ -133,7 +136,7 @@ take unspecified values when &func. returns.
 .np
 If copying takes place between objects that overlap, the objects take on unspecified
 values.
-.im farparm
+.im safefarm
 .desc end
 .*
 .return begin
@@ -188,5 +191,5 @@ int main()
     return( 0 );
 }
 .exmp end
-.class TR 24731
+.classt
 .system

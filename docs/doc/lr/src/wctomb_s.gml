@@ -1,5 +1,5 @@
 .functinit
-.funct_w wctomb_s
+.funct_w  wctomb_s   TR 24731
 .funct_fw _fwctomb_s
 .functgen
 #define __STDC_WANT_LIB_EXT1__ 1
@@ -15,8 +15,8 @@ errno_t _fwctomb_s( int __far * restrict status,
                   char __far * restrict s,
                   rsize_t smax,
                   wchar_t wc);
-.ixfunc2 '&Wide' &fmfunc
-.ixfunc2 '&Multibyte' &fmfunc
+.ixfunc2 '&Wide' &fwfunc
+.ixfunc2 '&Multibyte' &fwfunc
 .do end
 .functend
 .*
@@ -104,7 +104,7 @@ In no case will the int pointed to by
 be set to a value greater than the
 .kw MB_CUR_MAX
 macro.
-.im safefar
+.im safefarw
 .desc end
 .*
 .return begin
@@ -145,5 +145,5 @@ int main()
 Character encodings are not state dependent
 s(1)
 .exmp end
-.class TR_24731
+.classt
 .system

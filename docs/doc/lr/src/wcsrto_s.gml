@@ -1,4 +1,7 @@
-.func wcsrtombs_s _fwcsrtombs_s
+.functinit
+.funct_w   wcsrtombs_s   TR 24731
+.funct_fw  _fwcsrtombs_s
+.functgen
 #define __STDC_WANT_LIB_EXT1__ 1
 errno_t wcsrtombs_s( size_t * restrict retval,
                      char * restrict dst,
@@ -15,10 +18,10 @@ errno_t _fwcsrtombs_s( size_t __far * restrict retval,
                        const wchar_t __far * __far * restrict src,
                        rsize_t len,
                        mbstate_t __far * restrict ps);
-.ixfunc2 '&Wide' &ffunc
-.ixfunc2 '&Multibyte' &ffunc
+.ixfunc2 '&Wide' &fwfunc
+.ixfunc2 '&Multibyte' &fwfunc
 .do end
-.funcend
+.functend
 .*
 .rtconst begin
 None of
@@ -87,10 +90,10 @@ Conversion continues up to and including a terminating null wide character,
 which is also stored.
 .np
 Conversion stops earlier in two cases:
-.break
+.br
 when a wide character is reached that does not correspond to a valid multibyte
 character;
-.break
+.br
 (if
 .arg dst
 is not a null pointer) when the next multibyte character would exceed the
@@ -148,7 +151,7 @@ take unspecified values when &func. returns.
 .np
 If copying takes place between objects that overlap, the objects take on unspecified
 values.
-.im farparm
+.im safefarw
 .desc end
 .*
 .return begin
@@ -222,5 +225,5 @@ int main()
 0xe0
 0xa1
 .exmp end
-.class TR 24731
+.classt
 .system

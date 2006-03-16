@@ -1,5 +1,5 @@
 .functinit
-.funct_m  mbstowcs_s
+.funct_m  mbstowcs_s TR 24731
 .funct_fm _fmbstowcs_s
 .functgen
 #define __STDC_WANT_LIB_EXT1__  1
@@ -10,7 +10,7 @@ errno_t mbstowcs_s( size_t * restrict retval,
                     const char * restrict src, rsize_t len);
 .ixfunc2 '&Multibyte' &func
 .if &farfnc eq 1 .do begin
-.ixfunc2 '&Multibyte' &ffunc
+.ixfunc2 '&Multibyte' &fmfunc
 errno_t _fmbstowcs_s( size_t __far * restrict retval,
                     wchar_t __far * restrict dst,
                     rsize_t dstmax,
@@ -116,7 +116,7 @@ take unspecified values when &func returns.
 .np
 If copying takes place between objects that overlap, the objects take on unspecified
 values.
-.im farparm
+.im safefarm
 .desc end
 .*
 .return begin
@@ -154,5 +154,5 @@ int  main()
 string(6)
 /0073/0074/0072/0069/006e/0067
 .exmp end
-.class TR 24731
+.classt
 .system

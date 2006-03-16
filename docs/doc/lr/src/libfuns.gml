@@ -792,10 +792,10 @@
 .fnn _fmbsrtowcs                mbsrtowc.gml    DOS       WIN32
 .fnc mbsrtowcs_s                mbsrto_s.gml    DOS       WIN32
 .fnm _fmbsrtowcs_s              mbsrto_s.gml    DOS       WIN32
-.fnc mbstowcs                   mbstowcs.gml    DOS QNX W WIN32
-.fnn _fmbstowcs                 mbstowcs.gml    DOS       WIN32
-.fnc mbstowcs_s                 mbstow_s.gml    DOS QNX W WIN32
-.fnm _fmbstowcs_s               mbstow_s.gml    DOS       WIN32
+.fnc mbstowcs                   mbstowcs.gml    DOS QNX W WIN32 TEST
+.fnn _fmbstowcs                 mbstowcs.gml    DOS       WIN32 TEST
+.fnc mbstowcs_s                 mbstow_s.gml    DOS QNX W WIN32 TEST
+.fnm _fmbstowcs_s               mbstow_s.gml    DOS       WIN32 TEST
 .fnm _mbterm                    mbterm.gml      DOS       WIN32
 .fnn _fmbterm                   mbterm.gml      DOS       WIN32
 .fnc mbtowc                     mbtowc.gml      DOS QNX W WIN32
@@ -1694,8 +1694,8 @@
 .fnw wctob                      wctob.gml       DOS       WIN32
 .fnw wctomb                     wctomb.gml      DOS QNX W WIN32
 .fnw _fwctomb                   wctomb.gml      DOS       WIN32
-.fnw wctomb_s                   wctomb_s.gml    DOS QNX W WIN32
-.fnw _fwctomb_s                 wctomb_s.gml    DOS       WIN32
+.fnw wctomb_s                   wctomb_s.gml    DOS QNX W WIN32 TEST
+.fnw _fwctomb_s                 wctomb_s.gml    DOS       WIN32 TEST
 .fnw wctrans                    wctrans.gml     DOS QNX W WIN32
 .fnw wctype                     wctype.gml      DOS QNX W WIN32
 .fnc _wrapon                    gr_wrpon.gml    DOS QNX W GRAPH

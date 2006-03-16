@@ -1,4 +1,7 @@
-.func wcrtomb_s _fwcrtomb_s
+.functinit
+.funct_w   wcrtomb_s TR24731
+.funct_fw  _fwcrtomb_s
+.functgen
 #define __STDC_WANT_LIB_EXT1__  1
 #include <wchar.h>
 errno_t wcrtomb_s( size_t * restrict retval,
@@ -11,10 +14,10 @@ errno_t wcrtomb_s( size_t * restrict retval,
 errno_t _wcrtomb_s( size_t __far * restrict retval,
                    char __far * restrict s, rsize_t smax,
                    wchar_t wc, mbstate_t __far * restrict ps);
-.ixfunc2 '&Wide' &ffunc
-.ixfunc2 '&Multibyte' &ffunc
+.ixfunc2 '&Wide' &fwfunc
+.ixfunc2 '&Multibyte' &fwfunc
 .do end
-.funcend
+.functend
 .*
 .rtconst begin
 Neither
@@ -62,9 +65,9 @@ to (size_t)(-1).
 If
 .arg s
 is a null pointer, the &func. function is equivalent to the call
-.break
+.br
 wcrtomb_s(&retval, buf, sizeof buf, L'\0', ps)
-.break
+.br
 where
 .arg retval
 and
@@ -75,7 +78,7 @@ is greater than MB_CUR_MAX.
 .np
 If
 .arg s
-is not a null pointer, the &func function determines the number of bytes
+is not a null pointer, the &func. function determines the number of bytes
 needed to represent the multibyte character that corresponds to the wide character given
 by
 .arg wc
@@ -102,7 +105,7 @@ conversion state is unspecified. Otherwise, the &func function stores into
 the number of bytes (including any shift sequences) stored in the array pointed
 to by
 .arg s.
-.im farparm
+.im safefarw
 .desc end
 .*
 .return begin
@@ -181,5 +184,5 @@ int main()
 2 bytes in character (0x720d->0xe0a1)
 1 bytes in character (  0000->0x0069)
 .exmp end
-.class TR 24731
+.classt
 .system
