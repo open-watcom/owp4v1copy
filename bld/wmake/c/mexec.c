@@ -1645,6 +1645,9 @@ STATIC RET_T handleRM( char *cmd )
     PrtMsg( DBG | INF | INTERPRETING, dosInternals[COM_RM] );
 #endif
 
+    if( Glob.noexec )
+        return RET_SUCCESS;
+        
     rt = getRMArgs( cmd, &flags, &pfname );
 
     while( RET_SUCCESS == rt ) {
