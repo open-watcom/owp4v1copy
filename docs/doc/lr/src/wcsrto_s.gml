@@ -90,10 +90,11 @@ Conversion continues up to and including a terminating null wide character,
 which is also stored.
 .np
 Conversion stops earlier in two cases:
-.br
+:ul.
+:li.
 when a wide character is reached that does not correspond to a valid multibyte
 character;
-.br
+:li.
 (if
 .arg dst
 is not a null pointer) when the next multibyte character would exceed the
@@ -108,7 +109,7 @@ Otherwise, n is the lesser of
 .arg len
 or
 .arg dstmax-1.
-.np
+:eul.
 If the conversion stops without converting a null wide character and
 .arg dst
 is not a null
