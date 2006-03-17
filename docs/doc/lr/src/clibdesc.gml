@@ -28,6 +28,14 @@ indicates that the array pointed at by
 .arg string
 is not changed.
 .*
+.note Constraints:
+.*
+This subsection describes Runtime-constraints for Safer C Library functions.
+.*
+.note Safer C:
+.*
+This subsection points to the Safer C version of the described "unsafe" function.
+.*
 .note Description:
 .*
 This subsection is a description of the function or macro.
@@ -166,6 +174,11 @@ These functions are specific to Microsoft Windows.
 These functions or macros are neither ANSI/ISO nor POSIX.
 They may be found in other implementations of the C language, but
 caution should be used if portability is a consideration.
+.*
+.point TR 24731
+.ix 'TR 24731 classification'
+These functions are "safer" versions of normal C library functions.
+They perform more checks on parameters and should be used in preference over their "unsafe" version.
 .endpoint
 .*
 .if '&machsys' ne 'WIN32' .do begin
