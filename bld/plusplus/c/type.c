@@ -2487,9 +2487,14 @@ DECL_SPEC *PTypeStgClass( stg_class_t val )
 DECL_SPEC *PTypeMSDeclSpec( DECL_SPEC *dspec, PTREE id )
 /******************************************************/
 {
-    char *name;
-    DECL_SPEC *spec;
+    char        *name;
+    DECL_SPEC   *spec;
 
+    if( id == NULL ) {
+        if( dspec == NULL )
+            dspec = makeDeclSpec();
+        return( dspec );
+    }
     name = id->u.id.name;
     spec = makeDeclSpec();
     if( strcmp( name, "dllimport" ) == 0 ) {
