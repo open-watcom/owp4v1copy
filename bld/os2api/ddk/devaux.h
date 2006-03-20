@@ -602,7 +602,7 @@ USHORT DevHelp_VerifyAccessPtr( PVOID Pointer, USHORT Length, UCHAR AccessFlag )
     "mov  dl,27h"                       \
     DEVHELP_CALL                        \
     parm caller nomemory [ax di] [cx] [dh] \
-    modify nomemory exact [ax dl];
+    modify nomemory exact [ax dl di];
 
 
 
