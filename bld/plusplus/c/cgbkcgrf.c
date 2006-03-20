@@ -242,7 +242,7 @@ static CGFILE* nodeCgFile(      // GET CGFILE FOR NODE
 static boolean funcInlineable(  // DETERMINE IF FUNCTION INLINE-ABLE
     SYMBOL sym )                // - function symbol
 {
-    void *pragma;
+    AUX_INFO *pragma;
 
     DbgAssert( sym != NULL );
     if( max_inline_depth == 0 ) {
