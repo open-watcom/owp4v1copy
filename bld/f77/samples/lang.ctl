@@ -28,6 +28,8 @@ cdsay .
 <CPCMD> <DEVDIR>/f77/samples/windll/*.* <RELROOT>/rel2/samples/fortran/win/dll/
 <CPCMD> <DEVDIR>/f77/samples/dll/*.*    <RELROOT>/rel2/samples/fortran/os2/dll/
 <CPCMD> <DEVDIR>/f77/samples/dll/*.*    <RELROOT>/rel2/samples/fortran/win32/dll/
+<CPCMD> <DEVDIR>/f77/samples/dll/os2/makefile   <RELROOT>/rel2/samples/fortran/os2/dll/
+<CPCMD> <DEVDIR>/f77/samples/dll/win32/makefile <RELROOT>/rel2/samples/fortran/win32/dll/
 
 [ BLOCK <1> clean ]
 #==================
