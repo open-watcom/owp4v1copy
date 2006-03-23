@@ -44,13 +44,9 @@ target_objs = $(objs)
 target_xbjs = $(xbjs)
 !endif
 
-lib_flags = -b -c
-!ifeq release 1
-lib_flags += -t
-!ifeq host_CPU axp
-!else
-lib_flags += -s
-!endif
+lib_flags = -b-c-n
+!ifneq release 0
+lib_flags += -s-t
 !endif
 
 !ifndef lib_page_size
@@ -79,13 +75,13 @@ libs : .symbolic $(target_lib) $(files)
 $(target_lib) : $(target_objs) $(__MAKEFILES__)
     %create $^&.lbc
     @for %i in ($(target_objs)) do @%append $^&.lbc +%i
-    $(librarian) -n $(lib_flags) $^@ @$^&.lbc
+    $(librarian) $(lib_flags) $^@ @$^&.lbc
 
 !ifdef target_lib_x
 $(target_lib_x) : $(target_xbjs) $(__MAKEFILES__)
     %create $^&.lbc
     @for %i in ($(target_xbjs)) do @%append $^&.lbc +%i
-    $(librarian) -n $(lib_flags) $^@ @$^&.lbc
+    $(librarian) $(lib_flags) $^@ @$^&.lbc
 !endif
 
 define_c=-D__OBSCURE_STREAM_INTERNALS
@@ -104,6 +100,10 @@ define_c +=-D__USE_RW
 
 # -xr has to be on in case the user uses -xr
 extra_c_flags=-zl-xr-fhwe
+
+# Include system headers in dependency lists
+extra_c_flags +=-D_ENABLE_AUTODEPEND
+
 !ifdef mthreaded
 extra_c_flags +=-bm
 !endif
@@ -137,8 +137,9 @@ extra_c_flags_win = -zW
 
 comp_flags = $(cflags) $(define_c)
 
+extra_a_flags  = -we
 !ifdef mthreaded
-extra_a_flags =-D__MT__
+extra_a_flags += -D__MT__
 !endif
 
 extra_a_flags_i86 = $(model_switch_i86)

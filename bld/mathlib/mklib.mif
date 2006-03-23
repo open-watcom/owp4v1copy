@@ -5,6 +5,7 @@ all : $(objfiles) $(libname).lib .symbolic
     @%null
 
 $(libname).lib : $(objs) $(libs) $(__MAKEFILES__)
+    @rm -f tmp.def
     $(librarian) $(lib_flags) $(lib_flags_linkage) $^@ $(objs) $(libs)
 !ifeq linkage dynamic
     $(vi) -s $(lib_misc_dir)/vi/export.vi tmp.def

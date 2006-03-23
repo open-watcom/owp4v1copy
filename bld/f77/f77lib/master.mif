@@ -48,7 +48,17 @@ $(libname).lib : $(files)
     $(librarian) $(lib_flags) $^@ @$(libname).lbc
 
 .c.obj : .autodepend
+!ifeq verbose 1
     $(cc) $($[&_opts) $(c_flags) $(build_target) $($[&_postopts) $(c_dbg_flags) $(include_c_path) $[@
+!else
+    @echo flib_cc $@
+    @$(cc) $($[&_opts) $(c_flags) $(build_target) $($[&_postopts) $(c_dbg_flags) $(include_c_path) $[@
+!endif
 
 .asm.obj : .autodepend
+!ifeq verbose 1
     $(as) $($[&_opts) $(a_flags) $(build_target) $($[&_postopts) $(a_dbg_flags) $(include_a_path) $[@
+!else
+    @echo flib_as $@
+    @$(as) $($[&_opts) $(a_flags) $(build_target) $($[&_postopts) $(a_dbg_flags) $(include_a_path) $[@
+!endif

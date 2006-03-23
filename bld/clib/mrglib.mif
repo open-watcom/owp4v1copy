@@ -32,24 +32,22 @@ lib_flags    +=-p=16
 !endif
 !endif
 
+all : $(libname).lib .symbolic
+    @%null
+
 $(libname).lib : $(libs)
     @%write tmp.mak !include ../../objects.mif
     @wmake -f tmp.mak $(make_flags)
     @rm -f tmp.mak
     %create tmp.lbc
     @for %i in ($(libs)) do @%append tmp.lbc +%i
-!ifeq linkage dynamic
     @rm -f export.def
-!endif
-    $(librarian) $(lib_flags) $(lib_flags_new) $(lib_flags_linkage) $^@ @tmp.lbc +timstamp.obj
+    $(librarian) $(lib_flags) $(lib_flags_linkage) $^@ @tmp.lbc +timstamp.obj
 !ifeq linkage dynamic
     $(vi) -s $(lib_misc_dir)/vi/export.vi export.def
 !endif
     @rm -f tmp.lbc
     @rm -f timstamp.obj
-
-all : $(libname).lib .symbolic
-    @%null
 
 !include $(clib_dir)/clean.mif
 !include $(clib_dir)/updlib.mif

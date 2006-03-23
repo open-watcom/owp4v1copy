@@ -11,7 +11,7 @@ all : $(objfiles) $(libname).lib .symbolic
     @%null
 
 $(libname).lib : $(objs)
-    $(librarian) $(lib_flags) $(lib_flags_new) $^@ $(objs)
+    $(librarian) $(lib_flags) $^@ $(objs)
 
 .c.obj : .autodepend
 !ifeq verbose 1

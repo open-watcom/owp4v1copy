@@ -1,5 +1,5 @@
 sw_c_common =-oax-w4-we-zl
-sw_a_common =
+sw_a_common =-we
 
 !ifdef __UNIX__
 sw_c_common += -fo=.obj
@@ -12,6 +12,9 @@ sw_c_common += -D$(debug)
 sw_a_common += -D$(debug)
 !endif
 !endif
+
+# Include system headers in dependency lists
+sw_c_common += -D_ENABLE_AUTODEPEND
 
 sw_c_static  =
 sw_c_dynamic = -D__MAKE_DLL_MATHLIB
@@ -71,7 +74,7 @@ sw_c_linux    =
 sw_c_netware  =
 sw_c_qnx      =
 
-sw_a_intel   = -w4-we -e -DPDIV
+sw_a_intel   = -w4 -e -DPDIV
 sw_a_static  =
 sw_a_dynamic = -D__MAKE_DLL_MATHLIB -D_EXPORT
 sw_a_alias   = -D__MAKE_DLL_MATHLIB -D_EXPORT

@@ -1,9 +1,12 @@
 sw_c_common = -we-w4-zl-d__RT__
-sw_a_common = -zq
+sw_a_common = -we
 !ifdef __UNIX__
 sw_c_common += -fo=.obj
 sw_a_common += -fo=.obj
 !endif
+
+# Include system headers in dependency lists
+sw_c_common += -D_ENABLE_AUTODEPEND
 
 sw_l_common = option quiet,impfile reference __DLLstart_ disable 121
 !ifeq release 0
@@ -248,8 +251,8 @@ bt_linux      =-bt=linux
 build_target = $(bt_$(system))
 
 # libname_(model)
-libname_086_ms =s
-libname_087_ms =7s
+libname_086_ms  =s
+libname_087_ms  =7s
 libname_286_ms  =s
 libname_287_ms  =7s
 libname_086_mm  =m
@@ -277,13 +280,9 @@ libname_387_mf  =7$(libname_$(convention))
 libname_        =
 libname =flib$(libname_$(processor)_$(model))
 
-lib_flags = -p=32 -b -c -n
+lib_flags = -b-c-n-p=32
 !ifeq release 1
-!ifeq processor axp
-lib_flags += -t
-!else
-lib_flags += -s -t
-!endif
+lib_flags += -s-t
 !endif
 
 !include ../../include.mif

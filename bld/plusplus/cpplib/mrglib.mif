@@ -15,12 +15,9 @@ source_libs = $(libs)
 source_libs_x = $(libx)
 !endif
 
-lib_flags = -b -c -n -t
+lib_flags = -b-c-n
 !ifneq release 0
-!ifeq host_CPU axp
-!else
-lib_flags += -s
-!endif
+lib_flags += -s-t
 !endif
 
 !ifndef lib_page_size
