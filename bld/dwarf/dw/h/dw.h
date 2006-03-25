@@ -537,14 +537,9 @@ dw_handle       DWENTRY DWConstant( dw_client, dw_handle __type,
                             dw_handle __member_of, char const * __name,
                             dw_addr_offset __start_scope, uint __flags );
 /* name list      */
-dw_handle DWENTRY DWNameListBegin(
-    dw_client                   cli,
-    char const *                name );
-void DWENTRY DWNameListItem(
-    dw_client                   cli,
-    dw_handle                    ref );
-void DWENTRY DWEndNameList(
-    dw_client                   cli );
+dw_handle       DWENTRY DWNameListBegin( dw_client cli, char const *name );
+void            DWENTRY DWNameListItem( dw_client cli, dw_handle ref );
+void            DWENTRY DWEndNameList( dw_client cli );
 /* address ranges */
 void            DWENTRY DWAddress( dw_client, uint_32 );
 
@@ -552,11 +547,7 @@ void            DWENTRY DWAddress( dw_client, uint_32 );
 void            DWENTRY DWPubname( dw_client, dw_handle __hdl,
                             char const *__name );
 /* util used for PCH */
-uint_32         DWDebugRefOffset(
-    dw_client                   cli,
-    dw_handle                   hdl );
-dw_handle DWENTRY DWRefPCH(
-    dw_client                   cli,
-    uint_32                     ref );
+uint_32         DWENTRY DWDebugRefOffset( dw_client cli, dw_handle hdl );
+dw_handle       DWENTRY DWRefPCH( dw_client cli, uint_32 ref );
 
 #endif
