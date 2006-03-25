@@ -64,8 +64,6 @@
 #endif
 #endif
 
-extern  time_t      _d2ttime( unsigned int date, unsigned int time );
-
 extern touchflags   TouchFlags;
 extern timestruct   TimeAdjust;
 extern datestruct   DateAdjust;
@@ -86,6 +84,40 @@ static struct file_list {
 extern void DoDOption( char * );
 extern void DoTOption( char * );
 extern void WhereAmI( void );
+
+#if !defined( __UNIX__ )
+
+#pragma pack( push, 1 )
+
+typedef struct {
+    unsigned            twosecs : 5;
+    unsigned            minutes : 6;
+    unsigned            hours   : 5;
+} _ftime_t;
+
+typedef struct {
+    unsigned            day     : 5;
+    unsigned            month   : 4;
+    unsigned            year    : 7;
+} _fdate_t;
+
+#pragma pack( pop )
+
+static time_t _d2ttime( unsigned short int date, unsigned short int time )
+{
+    auto struct tm t;
+
+    t.tm_year = ((_fdate_t *)&date)->year + 80;
+    t.tm_mon  = ((_fdate_t *)&date)->month - 1;
+    t.tm_mday = ((_fdate_t *)&date)->day;
+    t.tm_hour = ((_ftime_t *)&time)->hours;
+    t.tm_min  = ((_ftime_t *)&time)->minutes;
+    t.tm_sec  = ((_ftime_t *)&time)->twosecs * 2;
+    t.tm_isdst = -1;
+    return( mktime( &t ) );
+}
+
+#endif
 
 static void writeStr( char *p )
 /*****************************/
