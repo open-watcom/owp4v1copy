@@ -41,6 +41,9 @@
 #elif defined( _M_IX86 )
   #include <i86.h>
 #endif
+#if defined( __DOS__ )
+  #include "nonibm.h"
+#endif
 
 #if defined( __OS2__ )
   #if defined( __386__ )
@@ -82,7 +85,6 @@ typedef void            (*fsig_func)(intstar4);
 #endif
 
 #if defined( __DOS__ )
-  extern _WCRTLINK int  __NonIBM;       // 0 if IBM, non-zero if NEC
   extern byte           BreakVector;
          void           (* __UserBreakHandler)(intstar4) = { (fsig_func)SIG_DFL };
   static void           (_handler *CBSave)();
