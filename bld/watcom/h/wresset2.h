@@ -36,23 +36,6 @@
 #include "windows.h"
 #endif
 
-/*
-   This next set of lines is a temp fix until the 11.0 headers are
-   in universal usage.
-   The net result is that for 16bit Intel platforms _WCI86FAR will be __far
-   for all other compilation targets it will be nothing.
-*/
-#ifndef _WCI86FAR
-    #include <errno.h>
-    #ifndef _WCI86FAR
-        #ifdef M_I86
-            #define _WCI86FAR __far
-        #else
-            #define _WCI86FAR
-        #endif
-    #endif
-#endif
-
 typedef struct handle_info {
         int     handle;
         char    *filename;

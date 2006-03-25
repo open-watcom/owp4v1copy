@@ -35,28 +35,6 @@
 #include <stddef.h>     // for wchar_t
 #include <float.h>      // for LDBL_DIG
 
-#ifndef _WCNEAR
-  #if defined(_M_IX86)
-    #define _WCNEAR __near
-  #elif defined(__AXP__)
-    #define _WCNEAR
-  #elif defined(__PPC__)
-    #define _WCNEAR
-  #endif
-#endif
-#ifndef _WMRTLINK
-  #if defined(__SW_BR)
-    #if defined(__NT__)
-      #define _WMRTLINK __declspec(dllimport)
-    #elif defined(__OS2__) && (defined(__386__)||defined(__PPC__))
-      #define _WMRTLINK
-    #else
-      #define _WMRTLINK
-    #endif
-  #else
-    #define _WMRTLINK
-  #endif
-#endif
 #ifdef __cplusplus
 extern "C" {
 #endif

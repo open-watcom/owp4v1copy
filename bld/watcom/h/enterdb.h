@@ -86,17 +86,6 @@ extern "C" {
 
  */
 
-/*
-   This next set of lines is a temp fix until the 11.0 headers are
-   in universal usage.
-*/
-#ifndef _WCRTLINK
-    #include <errno.h>
-    #ifndef _WCRTLINK
-        #define _WCRTLINK
-    #endif
-#endif
-
 #define DEBUG_PRESENT_NAME __WD_Present
 #define DEBUG_BREAK_ON_CATCH_NAME __WD_Break_On_Catch
 #define DEBUG_BREAK_ON_THROW_NAME __WD_Break_On_Throw
