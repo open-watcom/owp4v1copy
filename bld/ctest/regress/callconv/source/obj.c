@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -46,3 +50,7 @@ int main( void )
     if( res[4] != 5 ) fail( __LINE__ );
     _PASS;
 }
+
+#ifdef __cplusplus
+}
+#endif
