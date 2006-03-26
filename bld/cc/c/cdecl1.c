@@ -188,8 +188,9 @@ local void BeginFunc( void )
     }
     name = CurFunc->name;
     for( main_entry = MAIN_WMAIN; main_entry < MAIN_NUM; ++main_entry ) {
-       if( strcmp( name, MainNames[main_entry] ) == 0 )
+       if( strcmp( name, MainNames[main_entry] ) == 0 ) {
            break;
+       }
     }
 
     switch( main_entry ) {
@@ -252,16 +253,16 @@ static void  ArgPromotion( SYMPTR sym )
 #endif
     case TYPE_ENUM:
         arg_typ = GetType( TYPE_INT );
-    break;
+        break;
 
 #if 0
     case TYPE_USHORT:
         arg_typ = GetType( TYPE_UINT );
-    break;
+        break;
 
     case TYPE_FLOAT:
         arg_typ = GetType( TYPE_DOUBLE );
-    break;
+        break;
 #endif
     default:
         break;
@@ -302,14 +303,15 @@ local void ParmDeclList( void )     /* process old style function definitions */
                 Chk_Struct_Union_Enum( typ );
             } else {
                 sym.name = NULL;                        /* 04-oct-91 */
-                Declarator( &sym, info.mod,typ, state );
+                Declarator( &sym, info.mod, typ, state );
                 if( sym.name == NULL  ||  sym.name[0] == '\0' ) {
                     InvDecl();
                 } else {
                     for( parm = ParmList; parm; ) {
                         if( parm->sym.name != NULL ) {  /* 03-may-93 */
-                            if( strcmp( parm->sym.name, sym.name ) == 0 )
+                            if( strcmp( parm->sym.name, sym.name ) == 0 ) {
                                 break;
+                            }
                         }
                         parm = parm->next_parm;
                     }
@@ -420,8 +422,7 @@ local void AddParms( void )
             /* no name ==> ... */
             parm->sym.sym_type = GetType( TYPE_DOT_DOT_DOT );
             parm->sym.stg_class = SC_AUTO;
-        }
-        else if( parm->sym.sym_type == NULL ) {
+        } else if( parm->sym.sym_type == NULL ) {
             parm->sym.sym_type = TypeDefault();
             parm->sym.stg_class = SC_AUTO;
         } else {
@@ -440,7 +441,7 @@ local void AddParms( void )
                 if( CompFlags.strict_ANSI ) {
                     parm->sym.sym_type = GetType( TYPE_INT );
                 }
-            break;
+                break;
 
             case TYPE_USHORT:
                 if( CompFlags.strict_ANSI ) {
@@ -450,7 +451,7 @@ local void AddParms( void )
                     parm->sym.sym_type = GetType( TYPE_INT );
 #endif
                 }
-            break;
+                break;
 
             case TYPE_FLOAT:
                 memcpy( &new_sym, &parm->sym, sizeof(SYM_ENTRY) );
@@ -551,7 +552,7 @@ local void ChkParms( void )
             parm = parm->next_parm;
         }
         if( prev_parm != NULL ) {
-            #if _CPU == 370                     /* 24-oct-91 */
+#if _CPU == 370                     /* 24-oct-91 */
             {
                 SYM_ENTRY   var_parm;
 
@@ -563,7 +564,7 @@ local void ChkParms( void )
                     prev_parm->sym.handle = sym_handle;
                 }
             }
-            #endif
+#endif
             SymReplace( &prev_parm->sym, prev_sym_handle );
             CMemFree( prev_parm );
         }
