@@ -14,9 +14,9 @@ test_cflags_386 = -os-d1-3s-xss-xr
 test_cflags_i86 = -os-d1-xss-xr
 test_cflags_axp = -os-d1-xss-xr
 !else ifdef test4
-test_cflags_386 = -ot-d1-3r-fpd-xs -oe1000
+test_cflags_386 = -ot-d1-3r-fpd-xs -oe500
 test_cflags_i86 = -ot-d1-fpd-xs -oe100
-test_cflags_axp = -ot-d1-xs -oe1000
+test_cflags_axp = -ot-d1-xs -oe500
 !else ifdef test5
 test_cflags_386 = -d2-br-xs
 test_cflags_i86 = -d2-xs
