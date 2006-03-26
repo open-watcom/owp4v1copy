@@ -209,7 +209,7 @@ void SpcSymInit( void )
     /* Create special symbol table entries for use by stosw, stosb pragmas
      * This should be a TYPE_FUNCTION returning pointer to char
      */
-    ptr2char = PtrNode( GetType( TYPE_CHAR ), 0, SEG_DATA );
+    ptr2char = PtrNode( GetType( TYPE_CHAR ), FLAG_NONE, SEG_DATA );
     typ = TypeNode( TYPE_FUNCTION, ptr2char );
 
     /* The ".stosw" functions are done through internal AUX entries */
