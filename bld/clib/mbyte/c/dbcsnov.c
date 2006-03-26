@@ -34,4 +34,4 @@
 #include <mbstring.h>
 
 
-_WCRTLINK int                   __IsDBCS = 0;
+_WCRTLINKD int                  __IsDBCS = 0;

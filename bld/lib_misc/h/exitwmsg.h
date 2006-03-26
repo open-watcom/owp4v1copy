@@ -71,7 +71,7 @@ extern void __do_exit_with_msg( char _WCI86FAR *, unsigned );
 #undef _EWM_PARM1
 #undef _EWM_PARM2
 
-_WCRTLINK extern char volatile __WD_Present;
+_WCRTLINKD extern char volatile __WD_Present;
 
 // WVIDEO interface
 // this function should be called before __exit_with_msg()

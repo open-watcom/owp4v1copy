@@ -104,13 +104,22 @@ typedef struct cvt_info {
       int       nz2;            // OUTPUT: followed by this many '0's
 } CVT_INFO;
 
-_WMRTLINK
-extern  void    __LDcvt( long_double *pld,      // pointer to long_double
-              CVT_INFO  *cvt,                   // conversion info
-              char      *buf );                 // buffer
+_WMRTLINK extern void __LDcvt(
+                         long_double *pld,      // pointer to long_double
+                         CVT_INFO  *cvt,        // conversion info
+                         char      *buf );      // buffer
+#if defined( __WATCOMC__ )
+_WMRTLINK extern int __Strtold(
+                        const char *bufptr,
+                        long_double *pld,
+                        char **endptr );
+#endif
 extern  int     __LDClass( long_double * );
 extern  void    __ZBuf2LD(char _WCNEAR *, long_double _WCNEAR *);
 extern  void    _LDScale10x(long_double _WCNEAR *,int);
+_WMRTLINK extern void  __cnvd2ld( double _WCNEAR *src, long_double _WCNEAR *dst );
+_WMRTLINK extern void  __cnvs2d( char *buf, double *value );
+_WMRTLINK extern int   __cnvd2f( double *src, float *tgt );
 #ifdef _LONG_DOUBLE_
 extern  void    __iLDFD(long_double _WCNEAR *, double _WCNEAR *);
 extern  void    __iLDFS(long_double _WCNEAR *, float _WCNEAR *);

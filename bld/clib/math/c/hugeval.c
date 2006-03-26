@@ -31,4 +31,4 @@
 
 
 #include "variety.h"
-_WCRTLINK unsigned short const _HUGEDATA _HugeValue[] = { 0x0000, 0x0000, 0x0000, 0x7ff0 };
+_WCRTLINKD unsigned short const _HUGEDATA _HugeValue[] = { 0x0000, 0x0000, 0x0000, 0x7ff0 };

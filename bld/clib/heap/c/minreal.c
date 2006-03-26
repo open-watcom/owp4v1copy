@@ -33,4 +33,4 @@
 #include "variety.h"
 #include <stdlib.h>
 
-_WCRTLINK unsigned _WCNEAR __minreal /* = 0 */;
+_WCRTLINKD unsigned _WCNEAR __minreal /* = 0 */;

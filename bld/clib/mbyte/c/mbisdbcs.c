@@ -34,4 +34,4 @@
 #include <mbstring.h>
 #include "rtinit.h"
 
-_WCRTLINK int                   __IsDBCS;
+_WCRTLINKD int                  __IsDBCS;

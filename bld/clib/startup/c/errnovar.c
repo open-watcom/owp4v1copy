@@ -34,6 +34,6 @@
 
 extern void __initerrno( void );
 
-_WCRTLINK unsigned errno;
+_WCRTLINKD unsigned errno;
 
 AXI( __initerrno, INIT_PRIORITY_LIBRARY )

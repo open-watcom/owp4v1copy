@@ -33,7 +33,7 @@
 #include "variety.h"
 #include <windows.h>
 
-_WCRTLINK BOOL WINAPI _CRT_INIT( HINSTANCE hDLL, DWORD dwReason, LPVOID reserved )
+_WCRTLINKD BOOL WINAPI _CRT_INIT( HINSTANCE hDLL, DWORD dwReason, LPVOID reserved )
 {
     hDLL = hDLL;
     dwReason = dwReason;

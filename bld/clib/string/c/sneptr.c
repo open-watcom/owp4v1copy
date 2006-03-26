@@ -35,7 +35,7 @@
 #include "rtdata.h"
 
 #ifdef __NETWARE__
-_WCRTLINK extern int _WCNEAR    sys_nerr;   /* # of entries in sys_errlist array */
+_WCRTLINKD extern int _WCNEAR   sys_nerr;   /* # of entries in sys_errlist array */
 #define _sys_nerr               sys_nerr
 #endif
 

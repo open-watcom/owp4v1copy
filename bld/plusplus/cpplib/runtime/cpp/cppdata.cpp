@@ -65,18 +65,18 @@ extern "C" {
     #pragma aux no_extra_underscores "*";
 
     #if defined( FS_REGISTRATION_NT )
-        _WPRTLINK int __pragma("no_extra_underscores") __compiled_under_NT;
+        _WPRTLINKD int __pragma("no_extra_underscores") __compiled_under_NT;
     #elif defined( FS_REGISTRATION_OS2 )
-        _WPRTLINK int __pragma("no_extra_underscores") __compiled_under_OS2;
+        _WPRTLINKD int __pragma("no_extra_underscores") __compiled_under_OS2;
     #else
-        _WPRTLINK int __pragma("no_extra_underscores") __compiled_under_generic;
+        _WPRTLINKD int __pragma("no_extra_underscores") __compiled_under_generic;
     #endif
 
 };
 #elif defined( M_ALPHA )
 extern "C" {
 
-        _WPRTLINK int __compiled_under_generic;
+        _WPRTLINKD int __compiled_under_generic;
 
 };
 #endif

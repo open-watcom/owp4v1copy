@@ -42,13 +42,13 @@
 #include "rtinit.h"
 #include "p5prof.h"
 #include "ljmphdl.h"
+#include "widechar.h"
+#include "initarg.h"
 
 #ifdef __UNIX__
     extern char **_argv;
     #define PGM_NAME _argv[0]
 #else
-    extern char *_LpDllName;
-    _WCRTLINK extern char *_LpPgmName;
     #define PGM_NAME _LpPgmName
 #endif
 

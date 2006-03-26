@@ -32,6 +32,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include "widechar.h"
+#include "initarg.h"
 
 #pragma aux     _CMain  "_*";
 
@@ -39,9 +41,6 @@
         ___Argc, ___Argv will be filled in by an initializer routine
         if main is defined with parameters.
 */
-_WCRTLINK extern        int     ___Argc;        /* argument count */
-_WCRTLINK extern        char ** ___Argv;        /* argument vector */
-
 
 #if defined(__SW_BD)
 extern unsigned __dll_initialize( void );

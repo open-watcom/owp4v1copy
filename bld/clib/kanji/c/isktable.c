@@ -33,7 +33,7 @@
 #include "variety.h"
 #include <jctype.h>
 
-_WCRTLINK const char _HUGEDATA _IsKTable[257] = {
+_WCRTLINKD const char _HUGEDATA _IsKTable[257] = {
 
 #define ___0__ 0
 #define ___K__ _K

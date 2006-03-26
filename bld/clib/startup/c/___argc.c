@@ -31,6 +31,7 @@
 
 #include "variety.h"
 #include "widechar.h"
+#include "initarg.h"
 
-_WCRTLINK unsigned      __F_NAME(___Argc,___wArgc); /* argument count */
-_WCRTLINK CHAR_TYPE**   __F_NAME(___Argv,___wArgv); /* argument vector */
+_WCRTLINKD int          __F_NAME(___Argc,___wArgc); /* argument count */
+_WCRTLINKD CHAR_TYPE**  __F_NAME(___Argv,___wArgv); /* argument vector */

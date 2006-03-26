@@ -223,12 +223,12 @@ _WMRTLINK extern int      _finite(double);
 
 /* Floating-point Infinity and NaN constants */
 
-_WMRTLINK extern const float        __f_infinity;
-_WMRTLINK extern const float        __f_posqnan;
-_WMRTLINK extern const double       __d_infinity;
-_WMRTLINK extern const double       __d_posqnan;
-_WMRTLINK extern const long double  __ld_infinity;
-_WMRTLINK extern const long double  __ld_posqnan;
+_WMRTLINKD extern const float        __f_infinity;
+_WMRTLINKD extern const float        __f_posqnan;
+_WMRTLINKD extern const double       __d_infinity;
+_WMRTLINKD extern const double       __d_posqnan;
+_WMRTLINKD extern const long double  __ld_infinity;
+_WMRTLINKD extern const long double  __ld_posqnan;
 
 #define _INFF      __f_infinity
 #define _INFINITYF __f_infinity

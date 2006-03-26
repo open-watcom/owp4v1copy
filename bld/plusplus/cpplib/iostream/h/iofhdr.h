@@ -37,12 +37,12 @@
 
 extern std::ios::iostate __GetLDFloat( streambuf *, char *);
 
-typedef void  (*_type_EFG_cnvs2d)( char *, double * );
-typedef int   (*_type_EFG_cnvd2f)( double *, float * );
-typedef void  (*_type_EFG_LDcvt)( long_double *, CVT_INFO *, char * );
-typedef char  *(*_type_EFG_fcvt)( double, int, int *, int * );
+_WPRTLINK typedef void  (*_type_EFG_cnvs2d)( char *, double * );
+_WPRTLINK typedef int   (*_type_EFG_cnvd2f)( double *, float * );
+_WPRTLINK typedef void  (*_type_EFG_LDcvt)( long_double *, CVT_INFO *, char * );
+_WPRTLINK typedef char  *(*_type_EFG_fcvt)( double, int, int *, int * );
 #ifdef _LONG_DOUBLE_
-typedef void  (*_type_EFG__FDLD)( double _WCNEAR *, long_double _WCNEAR * );
+_WPRTLINK typedef void  (*_type_EFG__FDLD)( double _WCNEAR *, long_double _WCNEAR * );
 #endif
 
 _WPRTLINK extern _type_EFG_cnvs2d __EFG_cnvs2d;

@@ -40,15 +40,15 @@
 #ifdef __NT__
  #include <windows.h>
 #endif
+#include "widechar.h"
+#include "initarg.h"
 
 #define info new_P5_timing_info
 
 char                    _data_ProfEnable;
 __int64                 _data_P5_overhead;
-_WCRTLINK extern pfun   __longjmp_handler;
+_WCRTLINKD extern pfun  __longjmp_handler;
 pfun                    __prof_old_longjmp_handler;
-
-_WCRTLINK extern char * _LpPgmName;
 
 #ifdef __NT__
 #if 0 // not currently in use

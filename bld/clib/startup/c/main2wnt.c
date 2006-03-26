@@ -39,15 +39,12 @@
 #include "ntex.h"
 #include "sigtab.h"
 #include "initfini.h"
+#include "initarg.h"
 
 extern void __InitThreadData( thread_data * );
 
 #ifdef __SW_BR
     _WCRTLINK extern    void    (*__process_fini)( unsigned, unsigned );
-    _WCRTLINK extern    int     ___Argc;        /* argument count */
-    _WCRTLINK extern    int     ___wArgc;       /* argument count */
-    _WCRTLINK extern    char    **___Argv;      /* argument vector */
-    _WCRTLINK extern    wchar_t **___wArgv;     /* argument vector */
     extern      void    __CommonInit( void );
     extern      int     wmain( int, wchar_t ** );
     extern      int     main( int, char ** );
@@ -81,7 +78,7 @@ void __F_NAME(__NTMain,__wNTMain)( void )
         __InitRtns( 255 );
         __CommonInit();
         #ifdef __WIDECHAR__
-            exit( wmain( ___Argc, ___wArgv ) );
+            exit( wmain( ___wArgc, ___wArgv ) );
         #else
             exit( main( ___Argc, ___Argv ) );
         #endif

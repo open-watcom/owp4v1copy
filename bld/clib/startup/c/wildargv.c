@@ -36,6 +36,8 @@
 #include <direct.h>
 #include <malloc.h>
 #include <tchar.h>
+#include "widechar.h"
+#include "initarg.h"
 
 #ifdef _UNICODE
     #define CMDLINE _LpwCmdLine
@@ -63,12 +65,6 @@ extern "C" {
 
 extern  int     __historical_splitparms;
 extern  void    _Not_Enough_Memory();
-_WCRTLINK extern TCHAR  *CMDLINE;
-_WCRTLINK extern TCHAR  *PGMNAME;
-extern  int     _ARGC;                  /* argument count  */
-extern  TCHAR   **_ARGV;                /* argument vector */
-_WCRTLINK extern int        ___ARGC;    /* argument count */
-_WCRTLINK extern TCHAR      **___ARGV;  /* argument vector */
 
 #ifdef __cplusplus
 };

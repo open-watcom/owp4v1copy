@@ -107,7 +107,7 @@ int __is_nonIBM( void )
 ***** which will initialize the __NonIBM global variable.
 ****/
 
-_WCRTLINK int           __NonIBM = -1;  // start at -1 for debugging purposes
+_WCRTLINKD int          __NonIBM = -1;  // start at -1 for debugging purposes
                                         // (-1 ==> not yet initialized)
 
 static void init_on_startup( void )

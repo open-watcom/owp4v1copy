@@ -38,7 +38,7 @@
 #include "tmpfname.h"
 
 
-_WCRTLINK FILE _WCNEAR __iob[_NFILES] = {
+_WCRTLINKD FILE _WCNEAR __iob[_NFILES] = {
     { NULL, 0, NULL, _READ,         0, 0, 0  }  /* stdin */
    ,{ NULL, 0, NULL, _WRITE,        1, 0, 0  }  /* stdout */
    ,{ NULL, 0, NULL, _WRITE,        2, 0, 0  }  /* stderr */
@@ -52,7 +52,7 @@ __stream_link *__ClosedStreams;
 __stream_link *__OpenStreams;
 
 #if !defined( __UNIX__ )
-_WCRTLINK int _WCNEAR   _fmode = O_TEXT;  /* default file translation mode */
+_WCRTLINKD int _WCNEAR  _fmode = O_TEXT;  /* default file translation mode */
 #endif
 
 extern void __InitFiles();

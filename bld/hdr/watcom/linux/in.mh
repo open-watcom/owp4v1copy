@@ -26,10 +26,10 @@ struct sockaddr_in {
 #define INADDR_BROADCAST        0xffffffffUL
 #define INADDR_NONE             0xffffffffUL
 
-unsigned long int htonl(unsigned long int hostlong);
-unsigned short int htons(unsigned short int hostshort);
-unsigned long int ntohl(unsigned long int netlong);
-unsigned short int ntohs(unsigned short int netshort);
+_WCRTLINK unsigned long int htonl(unsigned long int hostlong);
+_WCRTLINK unsigned short int htons(unsigned short int hostshort);
+_WCRTLINK unsigned long int ntohl(unsigned long int netlong);
+_WCRTLINK unsigned short int ntohs(unsigned short int netshort);
 
 :include poppack.sp
 :include cplusepi.sp

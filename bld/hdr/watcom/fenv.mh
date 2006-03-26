@@ -66,7 +66,7 @@ typedef unsigned short fexcept_t;
 #define FE_UPWARD     0x0800
 
 /* default FPU setup */
-_WCRTLINK extern const fenv_t __fenv_h_default_environment;
+_WCRTLINKD extern const fenv_t __fenv_h_default_environment;
 #define FE_DFL_ENV &__fenv_h_default_environment
 
 /* exception handling functions */

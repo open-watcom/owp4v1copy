@@ -40,6 +40,8 @@
 #include <windows.h>
 #endif
 #include "defwin.h"
+#include "widechar.h"
+#include "initarg.h"
 
 /*
   __int23_exit is used by OS/2 as a general termination routine which unhooks
@@ -54,12 +56,7 @@
 extern  void            _exit( int );
 #endif
 
-#if defined(__WINDOWS_386__)
-extern  char            __Is_DLL;
-#endif
-
 #if defined(__NT__) || defined(__WARP__)
-extern  char            __Is_DLL;
 _WCRTLINK extern void (*__process_fini)( unsigned, unsigned );
 #endif
 

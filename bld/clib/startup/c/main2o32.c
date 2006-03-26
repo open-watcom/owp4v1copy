@@ -41,14 +41,11 @@
 #include "sigtab.h"
 #include "initfini.h"
 #include "thread.h"
+#include "initarg.h"
 
 #ifdef __SW_BR
-    _WCRTLINK extern    unsigned    __hmodule;
+    _WCRTLINKD extern   unsigned    __hmodule;
     _WCRTLINK extern    void        (*__process_fini)( unsigned, unsigned );
-    _WCRTLINK extern    int         ___Argc;    /* argument count */
-    _WCRTLINK extern    char        **___Argv;  /* argument vector */
-    _WCRTLINK extern    int         ___wArgc;   /* argument count */
-    _WCRTLINK extern    wchar_t     **___wArgv; /* argument vector */
     _WCRTLINK extern    void        (*__sig_init_rtn)( void );
 
     extern      void    __CommonInit( void );

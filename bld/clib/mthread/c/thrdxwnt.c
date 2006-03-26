@@ -48,11 +48,12 @@
 #include "extfunc.h"
 #include "seterrno.h"
 #include "thrdreg.h"
+#include "widechar.h"
+#include "initarg.h"
 
 extern  void            __InitMultipleThread( void );
 
 extern  DWORD           __TlsIndex;
-extern  int             __Is_DLL;
 
 extern  void            (*__sig_init_rtn)(void);
 extern  void            (*__sig_fini_rtn)(void);

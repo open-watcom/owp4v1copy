@@ -33,6 +33,6 @@
 #include "variety.h"
 #include <windows.h>
 
-_WCRTLINK unsigned long _WCNEAR __win_alloc_flags = GMEM_MOVEABLE;
-_WCRTLINK unsigned long _WCNEAR __win_realloc_flags = GMEM_MOVEABLE;
+_WCRTLINKD unsigned long _WCNEAR __win_alloc_flags = GMEM_MOVEABLE;
+_WCRTLINKD unsigned long _WCNEAR __win_realloc_flags = GMEM_MOVEABLE;
 

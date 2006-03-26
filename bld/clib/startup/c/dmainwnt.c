@@ -36,16 +36,14 @@
 #include "initfini.h"
 #include "libwin32.h"
 #include "osthread.h"
+#include "widechar.h"
+#include "initarg.h"
 
 extern int APIENTRY LibMain( HANDLE, DWORD, LPVOID );
 extern void __CommonInit( void );
 extern BOOL __disallow_single_dgroup( HANDLE );
 
-#ifdef __SW_BR
-    extern int          __Is_DLL;       /* TRUE => DLL, else not a DLL */
-    extern char *       _LpDllName;
-    extern wchar_t *    _LpwDllName;
-#else
+#ifndef __SW_BR
     extern int  __NTInit( int, void *, HANDLE );
     extern void __NTFini( void );
     extern BOOL __NTThreadInit( void );

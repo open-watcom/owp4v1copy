@@ -89,42 +89,61 @@
     #define _WCDATA _WCNEAR
   #endif
 :segment QNX | LINUX
-  #define _WCRTLINK
-  #define _WCIRTLINK
-  #define _WMRTLINK
-  #define _WMIRTLINK
-  #define _WPRTLINK
-  #define _WPIRTLINK
+  #define _WCRTLINK _WRTLCALL
+  #define _WCRTLINKD
+  #define _WMRTLINK _WRTLCALL
+  #define _WMRTLINKD
+  #define _WPRTLINK _WRTLCALL
+  #define _WPRTLINKD
 :elsesegment
   #if defined(__SW_BR)
     #if defined(__NT__)
-      #define _WCRTLINK __declspec(dllimport)
-      #define _WMRTLINK __declspec(dllimport)
-      #define _WPRTLINK __declspec(dllimport)
+      #define _WCRTLINK __declspec(dllimport) _WRTLCALL
+      #define _WCRTLINKD __declspec(dllimport)
+      #define _WMRTLINK __declspec(dllimport) _WRTLCALL
+      #define _WMRTLINKD __declspec(dllimport)
+      #define _WPRTLINK __declspec(dllimport) _WRTLCALL
+      #define _WPRTLINKD __declspec(dllimport)
     #elif defined(__OS2__) && (defined(__386__) || defined(__PPC__))
-      #define _WCRTLINK
-      #define _WMRTLINK
-      #define _WPRTLINK
+      #define _WCRTLINK _WRTLCALL
+      #define _WCRTLINKD
+      #define _WMRTLINK _WRTLCALL
+      #define _WMRTLINKD
+      #define _WPRTLINK _WRTLCALL
+      #define _WPRTLINKD
     #else
-      #define _WCRTLINK
-      #define _WMRTLINK
-      #define _WPRTLINK
+      #define _WCRTLINK _WRTLCALL
+      #define _WCRTLINKD
+      #define _WMRTLINK _WRTLCALL
+      #define _WMRTLINKD
+      #define _WPRTLINK _WRTLCALL
+      #define _WPRTLINKD
     #endif
   #else
     #ifndef _WCRTLINK
-      #define _WCRTLINK
+      #define _WCRTLINK _WRTLCALL
+    #endif
+    #ifndef _WCRTLINKD
+      #define _WCRTLINKD
     #endif
     #ifndef _WMRTLINK
-      #define _WMRTLINK
+      #define _WMRTLINK _WRTLCALL
+    #endif
+    #ifndef _WMRTLINKD
+      #define _WMRTLINKD
     #endif
     #ifndef _WPRTLINK
-      #define _WPRTLINK
+      #define _WPRTLINK _WRTLCALL
+    #endif
+    #ifndef _WPRTLINKD
+      #define _WPRTLINKD
     #endif
   #endif
+:endsegment
   /* control import modifier on intrinsic functions */
   #ifndef _WCIRTLINK
     #if defined(__INLINE_FUNCTIONS__)
-      #define _WCIRTLINK
+      #define _WCIRTLINK _WRTLCALL
     #else
       #define _WCIRTLINK _WCRTLINK
     #endif
@@ -133,13 +152,12 @@
     #if defined(__NO_MATH_OPS) || defined(__AXP__) || defined(__PPC__)
       #define _WMIRTLINK _WMRTLINK
     #else
-      #define _WMIRTLINK
+      #define _WMIRTLINK _WRTLCALL
     #endif
   #endif
   #ifndef _WPIRTLINK
     #define _WPIRTLINK _WPRTLINK
   #endif
-:endsegment
   /* for MS compatibility */
   #ifndef _CRTAPI1
     #define _CRTAPI1

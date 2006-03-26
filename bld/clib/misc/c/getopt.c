@@ -35,10 +35,10 @@
 #include <ctype.h>
 #include <unistd.h>
 
-_WCRTLINK char      *optarg;            // pointer to option argument
-_WCRTLINK int       optind = 1;         // current argv[] index
-_WCRTLINK int       optopt;             // currently processed chracter
-_WCRTLINK int       opterr = 1;         // error output control flag
+_WCRTLINKD char     *optarg;            // pointer to option argument
+_WCRTLINKD int      optind = 1;         // current argv[] index
+_WCRTLINKD int      optopt;             // currently processed chracter
+_WCRTLINKD int      opterr = 1;         // error output control flag
 
 #ifdef __UNIX__
 char                __altoptchar = '-';

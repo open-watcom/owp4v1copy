@@ -37,7 +37,7 @@
 extern void     (*_AccessTDList)(void);
 extern void     (*_ReleaseTDList)(void);
 
-extern _WCRTLINK unsigned __ThreadDataSize;
+_WCRTLINKD extern unsigned __ThreadDataSize;
 
 _WCRTLINK unsigned __RegisterThreadDataSize( unsigned size )
 /*********************************************************/

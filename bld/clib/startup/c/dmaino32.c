@@ -45,6 +45,8 @@
 #include "initfini.h"
 #include "osthread.h"
 #include "stacklow.h"
+#include "widechar.h"
+#include "initarg.h"
 
 extern  unsigned            __hmodule;
 
@@ -57,13 +59,7 @@ extern  int                 __disallow_single_dgroup(unsigned);
     char                    *_LpDllName;        /* pointer to dll name */
     wchar_t                 *_LpwDllName;       /* pointer to dll name */
 #else
-    extern      char        *_LpDllName;        /* pointer to dll name */
-    extern      wchar_t     *_LpwDllName;       /* pointer to dll name */
     extern      char        *_Envptr;
-    _WCRTLINK extern char       *_LpCmdLine;    /* pointer to command line */
-    _WCRTLINK extern wchar_t    *_LpwCmdLine;   /* pointer to command line */
-    _WCRTLINK extern char       *_LpPgmName;    /* pointer to program name */
-    _WCRTLINK extern wchar_t    *_LpwPgmName;   /* pointer to program name */
     extern      unsigned    __MaxThreads;
     extern      unsigned    __ASTACKSIZ;        /* alternate stack size */
     extern      char        *__ASTACKPTR;       /* alternate stack pointer */

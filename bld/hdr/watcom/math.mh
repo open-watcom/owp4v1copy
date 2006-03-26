@@ -81,7 +81,7 @@ _WCRTLINK extern const double   *__get_HugeValue_ptr( void );
 #elif defined(__SW_BR) || defined(_RTDLL)
   #define _HugeValue            _HugeValue_br
 #endif
-_WCRTLINK extern const double _WCDATA   _HugeValue;
+_WCRTLINKD extern const double _WCDATA   _HugeValue;
 #define HUGE_VAL                _HugeValue
 
 :: Always enable C99 stuff
@@ -120,8 +120,8 @@ _WMRTLINK extern int _FLSign( long double __x );
 
 :: The following externs are also defined in float.h
 /* Floating-point Infinity and NaN constants */
-_WMRTLINK extern const float        __f_infinity;
-_WMRTLINK extern const float        __f_posqnan;
+_WMRTLINKD extern const float       __f_infinity;
+_WMRTLINKD extern const float       __f_posqnan;
 
 #define INFINITY   __f_infinity
 #define NAN        __f_posqnan
@@ -133,7 +133,7 @@ namespace std {
 :endsegment
 _WMRTLINK extern double ceil( double __x );
 _WMRTLINK extern double floor( double __x );
-#if defined(_M_IX86)
+#if defined(_M_IX86) && 0
 #pragma aux ceil  parm nomemory modify nomemory;
 #pragma aux floor parm nomemory modify nomemory;
 #endif

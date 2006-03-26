@@ -40,7 +40,7 @@
 
 /* 32-bit versions */
 
-_WCRTLINK const fenv_t __fenv_h_default_environment = {
+_WCRTLINKD const fenv_t __fenv_h_default_environment = {
     0x127f,   /*CW*/
     0,
     0,        /*SW*/
@@ -89,7 +89,7 @@ extern void fpsw_store( uint16_t *status );
 
 /* 16-bit versions */
 
-_WCRTLINK const fenv_t __fenv_h_default_environment = {
+_WCRTLINKD const fenv_t __fenv_h_default_environment = {
     0x127f,   /*CW*/
     0,        /*SW*/
     0xffff,   /*TAG*/

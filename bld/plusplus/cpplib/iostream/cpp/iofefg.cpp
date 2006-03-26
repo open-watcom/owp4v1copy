@@ -39,6 +39,7 @@
 #include "stdlib.h"
 #include "rtinit.h"
 #include "iofhdr.h"
+#include "xfloat.h"
 
 static void __setiofEFGfmt( void ) {
 #ifndef IN_SLIB

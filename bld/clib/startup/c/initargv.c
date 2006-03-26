@@ -41,19 +41,12 @@
 #include <string.h>
 #include <io.h>
 #include "liballoc.h"
+#include "initarg.h"
 
 extern  int         __historical_splitparms;
 extern  void        _Not_Enough_Memory( void );             /* 25-jul-89 */
 static  unsigned    _SplitParms(int, CHAR_TYPE *, CHAR_TYPE **, CHAR_TYPE ** );
-_WCRTLINK extern CHAR_TYPE  *__F_NAME(_LpCmdLine,_LpwCmdLine);
-_WCRTLINK extern CHAR_TYPE  *__F_NAME(_LpPgmName,_LpwPgmName);
-extern  int         __F_NAME(_argc,_wargc);             /* argument count  */
-extern  int         __F_NAME(__argc,__wargc);           /* argument count  */
-extern  CHAR_TYPE **__F_NAME(_argv,_wargv);             /* argument vector */
-extern  CHAR_TYPE **__F_NAME(__argv,__wargv);           /* argument vector */
-_WCRTLINK extern int        __F_NAME(___Argc,___wArgc); /* argument count */
-_WCRTLINK extern CHAR_TYPE**__F_NAME(___Argv,___wArgv); /* argument vector */
-static CHAR_TYPE   *__F_NAME(__CmdLine,__wCmdLine);     /* cmdline buffer */
+_WCRTLINKD static CHAR_TYPE  *__F_NAME(__CmdLine,__wCmdLine);       /* cmdline buffer */
 
 _WCRTLINK void *__F_NAME( _getargv, _wgetargv )(
         int historical, CHAR_TYPE *exe, CHAR_TYPE *cmd,

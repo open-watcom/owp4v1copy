@@ -32,4 +32,4 @@
 
 #include "variety.h"
 
-_WCRTLINK char *__lmt = __DATE__ " " __TIME__;
+_WCRTLINKD char *__lmt = __DATE__ " " __TIME__;

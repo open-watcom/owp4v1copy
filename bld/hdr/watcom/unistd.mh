@@ -96,10 +96,10 @@
 
 :include posix.sp
 
-extern int   optind;        /*  index of current option being scanned */
-extern char *optarg;        /*  points to optional argument */
-extern int   opterr;        /*  print|don't print error message */
-extern int   optopt;        /*  offending letter when error detected */
+_WCRTLINKD extern int   optind;        /*  index of current option being scanned */
+_WCRTLINKD extern char *optarg;        /*  points to optional argument */
+_WCRTLINKD extern int   opterr;        /*  print|don't print error message */
+_WCRTLINKD extern int   optopt;        /*  offending letter when error detected */
 
 /* Symbolic constants for confstr */
 
@@ -248,8 +248,8 @@ _WCRTLINK extern off_t  ltrunc( int __fildes, off_t __offset, int __origin );
 _WCRTLINK extern int    putenv( const char *__estring );
 
 /* Globals used and set by getopt() */
-_WCRTLINK extern char   *optarg;
-_WCRTLINK extern int    optind, opterr, optopt;
+_WCRTLINKD extern char   *optarg;
+_WCRTLINKD extern int    optind, opterr, optopt;
 #endif
 
 :endsegment
@@ -279,8 +279,8 @@ _WCRTLINK extern int    getopt( int __argc, char * const __argv[], const char *_
 _WCRTLINK extern unsigned int sleep( unsigned int __seconds );
 
 /* Globals used and set by getopt() */
-_WCRTLINK extern char   *optarg;
-_WCRTLINK extern int    optind, opterr, optopt;
+_WCRTLINKD extern char   *optarg;
+_WCRTLINKD extern int    optind, opterr, optopt;
 :endsegment
 
 :include cplusepi.sp

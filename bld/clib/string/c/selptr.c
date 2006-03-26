@@ -35,7 +35,7 @@
 #include "rtdata.h"
 
 #ifdef __NETWARE__
-_WCRTLINK extern char *             sys_errlist[];/* strerror error message table */
+_WCRTLINKD extern char              *sys_errlist[];/* strerror error message table */
 #define _sys_errlist                sys_errlist
 #endif
 

@@ -34,8 +34,8 @@
 #include "rtdata.h"
 #include "rtinit.h"
 
-_WCRTLINK char ** _WCNEAR environ;      /* pointer to environment table */
-_WCRTLINK wchar_t ** _WCNEAR _wenviron; /* pointer to wide char environment */
+_WCRTLINKD char ** _WCNEAR environ;      /* pointer to environment table */
+_WCRTLINKD wchar_t ** _WCNEAR _wenviron; /* pointer to wide char environment */
 char * _WCNEAR __env_mask;              /* ptr to char array of flags */
 
 extern void __setenvp( void );

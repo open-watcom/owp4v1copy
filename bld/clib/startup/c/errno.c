@@ -54,7 +54,7 @@ _WCRTLINK int *__get_errno_ptr( void )
 #include "errorno.h"
 
 #if !defined( __SW_BM )
-    _WCRTLINK int               errno;
+    _WCRTLINKD int              errno;
 #endif
 
 _WCRTLINK int *__get_errno_ptr( void )
@@ -67,8 +67,8 @@ _WCRTLINK int *__get_errno_ptr( void )
 #include "errorno.h"
 
 #if !defined( __SW_BM )
-    _WCRTLINK int               errno;
-    _WCRTLINK int               _doserrno;
+    _WCRTLINKD int              errno;
+    _WCRTLINKD int              _doserrno;
 #endif
 
 _WCRTLINK int *__get_errno_ptr( void )

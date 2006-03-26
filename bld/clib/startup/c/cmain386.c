@@ -32,6 +32,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include "widechar.h"
+#include "initarg.h"
 
 extern  void    __CommonInit( void );
 #if !defined(__OSI__)
@@ -44,8 +46,6 @@ extern  char            *__ASTACKPTR;   /* alternate stack pointer */
 #endif
 
 #ifdef __WIDECHAR__
-    _WCRTLINK extern    int          ___wArgc;  /* argument count */
-    _WCRTLINK extern    wchar_t    **___wArgv;  /* argument vector */
     extern      int     wmain( int, wchar_t ** );
     #if defined(_M_IX86)
         #pragma aux     __wCMain  "*";
@@ -60,8 +60,6 @@ extern  char            *__ASTACKPTR;   /* alternate stack pointer */
         exit( wmain( ___wArgc, ___wArgv ) );
     }
 #else
-    _WCRTLINK extern    int       ___Argc;      /* argument count */
-    _WCRTLINK extern    char    **___Argv;      /* argument vector */
     extern      int     main( int, char ** );
     #if defined(_M_IX86)
         #pragma aux     __CMain  "*";

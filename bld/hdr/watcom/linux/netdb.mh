@@ -33,7 +33,7 @@ struct hostent {
 };
 #define h_addr  h_addr_list[0]  /* for backward compatibility */
 
-_WCRTLINK extern int h_errno;
+_WCRTLINKD extern int h_errno;
 
 _WCRTLINK extern struct protoent *getprotoent( void );
 _WCRTLINK extern struct protoent *getprotobyname( const char *__name );

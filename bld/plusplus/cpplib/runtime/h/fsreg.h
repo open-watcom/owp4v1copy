@@ -33,7 +33,7 @@
 #ifndef __FSREG_H__
 #define __FSREG_H__
 
-#include <variety.h>
+#include "variety.h"
 
 // FSREG.H -- registration using fs register
 //
@@ -368,7 +368,7 @@ typedef unsigned FS_REGISTRATION_CONVENTION FS_HANDLER
 extern "C" {
 #endif
 
-_WPRTLINK
+_WPRTLINKD
 unsigned FS_REGISTRATION_CONVENTION CPPLIB( fs_handler )   // HANDLER FOR FS REGISTRATIONS
     ( FsExcRec* rec_exc         // - exception record
     , RW_DTREG* rw              // - current R/W block

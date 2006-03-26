@@ -40,6 +40,7 @@
 #include "ntex.h"
 #include "initfini.h"
 #include "thread.h"
+#include "initarg.h"
 
 extern void __InitThreadData( thread_data * );
 
@@ -56,9 +57,6 @@ extern void __InitThreadData( thread_data * );
         #pragma aux     __ASTACKSIZ "*"
     #endif
 #endif
-
-_WCRTLINK extern char   *_LpCmdLine;    /* pointer to command line */
-_WCRTLINK extern wchar_t*_LpwCmdLine;   /* pointer to command line */
 
 extern void __CommonInit( void );
 extern int APIENTRY __F_NAME(WinMain,wWinMain)( HINSTANCE, HINSTANCE, CHAR_TYPE*, int );

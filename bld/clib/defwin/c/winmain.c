@@ -34,6 +34,8 @@
 #include <stdio.h>
 #include "strdup.h"
 #include "win.h"
+#include "widechar.h"
+#include "initarg.h"
 #ifdef __NT__
     #include <ctype.h>
 #endif
@@ -73,9 +75,6 @@ _WCRTLINK int   __InitDefaultWin()
 _WCRTLINK void  __FiniDefaultWin() {}
 
 #endif
-
-_WCRTLINK extern int        ___Argc;    /* argument count */
-_WCRTLINK extern char **    ___Argv;    /* argument vector */
 
 /*
  * DefaultWinMain - main windows entry point

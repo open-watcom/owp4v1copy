@@ -47,11 +47,11 @@
 #include "extfunc.h"
 #include "trdlist.h"
 #include "mthread.h"
+#include "widechar.h"
+#include "initarg.h"
 
 #pragma aux __threadstksize "*"
 extern  unsigned        __threadstksize;
-
-extern  int             __Is_DLL;
 
 extern  thread_data     **__InitThreadProcessing(void);
 extern  void            __InitMultipleThread(void);
