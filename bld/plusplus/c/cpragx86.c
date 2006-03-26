@@ -1329,6 +1329,14 @@ boolean PragmaOKForVariables(   // TEST IF PRAGMA IS SUITABLE FOR A VARIABLE
 }
 
 
+static boolean okClassChange(   // TEST IF OK TO CHANGE A CLASS IN PRAGMA
+    call_class oldp,                 // - old
+    call_class newp,                 // - new
+    call_class defp )                // - default
+{
+    return ( ( oldp & newp) == oldp ) || ( oldp == defp );
+}
+
 static boolean okPtrChange(     // TEST IF OK TO CHANGE A PTR IN PRAGMA
     void *oldp,                 // - old ptr
     void *newp,                 // - new ptr
@@ -1382,7 +1390,9 @@ boolean PragmaChangeConsistent( // TEST IF PRAGMA CHANGE IS CONSISTENT
     if( oldp == newp ) {
         return TRUE;
     }
-    return ( ( oldp->cclass & newp->cclass ) == oldp->cclass )
+    return( ( okClassChange( oldp->cclass
+                         , newp->cclass
+                         , DefaultInfo.cclass ) )
         && ( ( oldp->flags & newp->flags ) == oldp->flags )
         && ( okParmChange( oldp->parms
                          , newp->parms
@@ -1401,6 +1411,5 @@ boolean PragmaChangeConsistent( // TEST IF PRAGMA CHANGE IS CONSISTENT
                         , DefaultInfo.objname ) )
         && ( okPtrChange( oldp->code
                         , newp->code
-                        , DefaultInfo.code ) )
-        ;
+                        , DefaultInfo.code ) ) );
 }
