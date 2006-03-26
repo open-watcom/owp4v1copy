@@ -32,9 +32,6 @@
 #include "cvars.h"
 #include "i64.h"
 
-#ifdef __WATCOMC__
-extern  int     __Strtold(char *,long_double *,char **);
-#endif
 
 uint_32 DoOp32( uint_32 left, opr_code opr, uint_32 right, bool sign )
 {
