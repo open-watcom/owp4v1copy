@@ -448,8 +448,6 @@ DATA_TYPE DataTypeOf( TYPEPTR typ )
     return( data_type );
 }
 
-#define PTR_FLAGS (FLAG_NEAR|FLAG_FAR|FLAG_HUGE|FLAG_BASED|FLAG_FAR16)
-
 // 0 - near data
 // 1 - based data
 // 2 - far data
@@ -466,7 +464,7 @@ pointer_class PointerClass( TYPEPTR typ )
     type_modifiers    flags;
     pointer_class     class;
 
-    flags = typ->u.p.decl_flags & PTR_FLAGS;;
+    flags = typ->u.p.decl_flags;
     typ = typ->object;
     SKIP_TYPEDEFS( typ );
     class = PTR_NEAR;                   // assume NEAR
@@ -481,7 +479,8 @@ pointer_class PointerClass( TYPEPTR typ )
     } else if( flags & FLAG_HUGE ) {
         class = PTR_HUGE;
     }
-    if( typ->decl_type == TYPE_FUNCTION )  class += PTR_FUNC;
+    if( typ->decl_type == TYPE_FUNCTION )
+        class += PTR_FUNC;
     return( class );
 }
 
