@@ -1,4 +1,5 @@
 #include "macro.h"
+#include "wreslang.h"
 
 #define MSG_LANG_BASE 0
 #if _CPU == 8086

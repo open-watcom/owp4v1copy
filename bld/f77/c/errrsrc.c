@@ -30,13 +30,13 @@
 
 
 #include "ftnstd.h"
-#include "cioconst.h"
-#include "wressetr.h"
-#include "errrtns.h"
-
 #include <unistd.h>
 #include <fcntl.h>
 #include <malloc.h>
+#include "cioconst.h"
+#include "wressetr.h"
+#include "errrtns.h"
+#include "wreslang.h"
 
 extern  void            Substitute(char *,char *,va_list args);
 

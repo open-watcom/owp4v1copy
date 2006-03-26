@@ -46,4 +46,3 @@
 #if !defined( MSG_LANG_SPACING )
 #define MSG_LANG_SPACING 16000
 #endif
-#include "wreslang.h"
