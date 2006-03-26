@@ -186,7 +186,7 @@ _WPRTLINK WCSLink * WCHashBase::base_set_insert( TTypePtr elem ) {
 // Basic hash destructor
 //
 
-_WPRTLINK WCHashBase::~WCHashBase() {};
+_WPRTLINKD WCHashBase::~WCHashBase() {};
 
 
 

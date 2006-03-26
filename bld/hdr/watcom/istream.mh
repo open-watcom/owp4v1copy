@@ -83,8 +83,8 @@ namespace std {
     istream &operator >> (           double & __f );
     istream &operator >> (      long double & __f );
     istream &operator >> (        streambuf * __sb );
-    istream &operator >> ( ios &(*__f)( ios & ) );
-    istream &operator >> ( istream &(*__f)( istream & ) );
+    istream &operator >> ( _WPRTLINK ios &(*__f)( ios & ) );
+    istream &operator >> ( _WPRTLINK istream &(*__f)( istream & ) );
 
     int        ipfx( int __noskipws = 0 );
     void       isfx();

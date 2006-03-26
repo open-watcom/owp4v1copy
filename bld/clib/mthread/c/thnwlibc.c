@@ -53,7 +53,7 @@
 extern  void            __InitMultipleThread( void );
 
 static thread_data      *__SingleThread( void );
-thread_data             *(*__GetThreadPtr)( void ) = &__SingleThread;
+_WCRTLINKD thread_data  *(*__GetThreadPtr)( void ) = &__SingleThread;
 thread_data             *__FirstThreadData;
 
 

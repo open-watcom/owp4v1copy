@@ -617,8 +617,7 @@ void CPPLIB( throw_zero )(      // THROW AN EXCEPTION OBJECT (CONST ZERO)
 
 #ifdef RW_REGISTRATION
 
-_WPRTLINKD
-unsigned FS_REGISTRATION_CONVENTION CPPLIB( fs_handler_rtn ) // HANDLER FOR FS REGISTRATIONS
+FSREGAPI unsigned CPPLIB( fs_handler_rtn ) // HANDLER FOR FS REGISTRATIONS
     ( FsExcRec* rec_exc         // - exception record
     , RW_DTREG* rw              // - current R/W block
     , FsCtxRec* rec_ctx         // - context record

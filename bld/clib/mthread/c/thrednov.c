@@ -60,7 +60,7 @@ extern  void            _endthread( void );
 extern  unsigned        __MaxThreads;
 extern  void            **__ThreadIDs;
 
-thread_data             *(*__GetThreadPtr)( void ) = &__SingleThread;
+_WCRTLINKD thread_data  *(*__GetThreadPtr)( void ) = &__SingleThread;
 thread_data             *__FirstThreadData;
 
 

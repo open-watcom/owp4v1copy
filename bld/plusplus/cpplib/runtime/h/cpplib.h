@@ -36,10 +36,12 @@
     #error CPPLIB.H only compiles under C++
 #endif
 
-#include <variety.h>
+#include "variety.h"
 #ifdef _WPRTLINK_RESIDENT
   #undef _WPRTLINK
   #define _WPRTLINK
+  #undef _WPRTLINKD
+  #define _WPRTLINKD
 #endif
 
 struct  ACTIVE_EXC;

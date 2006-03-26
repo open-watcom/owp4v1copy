@@ -77,8 +77,8 @@ namespace std {
     ostream &operator << (          char const *__buf );
     ostream &operator << (   signed char const *__buf );
     ostream &operator << ( unsigned char const *__buf );
-    ostream &operator << ( ostream &(*__f)( ostream & ) );
-    ostream &operator << ( ios &(*__f)( ios & ) );
+    ostream &operator << ( _WPRTLINK ostream &(*__f)( ostream & ) );
+    ostream &operator << ( _WPRTLINK ios &(*__f)( ios & ) );
 
     int        opfx();
     void       osfx();

@@ -29,11 +29,11 @@
 ****************************************************************************/
 
 
-_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_ceil( float _WCI86FAR *value );
-_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_cos( float _WCI86FAR *value );
-_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_sin( float _WCI86FAR *value );
-_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_log( float _WCI86FAR *value );
-_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_log10( float _WCI86FAR *value );
-_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_sqrt( float _WCI86FAR *value );
-_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_ecvt( float _WCI86FAR *value,int ndigits, int _WCI86FAR *far_dec, int _WCI86FAR *far_sign, char _WCI86FAR *far_buf );
-_WMRTLINK extern void _WCI86FAR _WRTLCALL _GR_fcvt( float _WCI86FAR *value,int ndigits, int _WCI86FAR *far_dec, int _WCI86FAR *far_sign, char _WCI86FAR *far_buf );
+_WMRTLINK extern void _WCI86FAR _GR_ceil( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _GR_cos( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _GR_sin( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _GR_log( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _GR_log10( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _GR_sqrt( float _WCI86FAR *value );
+_WMRTLINK extern void _WCI86FAR _GR_ecvt( float _WCI86FAR *value,int ndigits, int _WCI86FAR *far_dec, int _WCI86FAR *far_sign, char _WCI86FAR *far_buf );
+_WMRTLINK extern void _WCI86FAR _GR_fcvt( float _WCI86FAR *value,int ndigits, int _WCI86FAR *far_dec, int _WCI86FAR *far_sign, char _WCI86FAR *far_buf );

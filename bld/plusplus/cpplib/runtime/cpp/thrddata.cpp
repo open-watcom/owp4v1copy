@@ -35,7 +35,7 @@
 #include "rtinit.h"
 
 extern "C"
-_WPRTLINK
+_WPRTLINKD
 void CPPLIB(multi_thread_init)( // MULTI-THREAD INITIALIZATION
     void )
 {

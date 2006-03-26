@@ -99,7 +99,7 @@ static DWORD WINAPI begin_thread_helper( thread_args *td )
 int __CBeginThreadEx(
     void *security,
     unsigned stack_size,
-    thread_fnex start_addr,
+    thread_fnex *start_addr,
     void *arglist,
     unsigned initflag,
     unsigned *thrdaddr )
