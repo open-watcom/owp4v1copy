@@ -35,8 +35,6 @@ extern "C" {
 #include "ntddk.h"
 #include "ntapi.h"
 
-#pragma pack(push,4)
-
 #define VER_PRODUCTBUILD 10000
 
 #ifndef NTSYSAPI
@@ -4719,8 +4717,6 @@ NTAPI
 ZwYieldExecution (
     VOID
 );
-
-#pragma pack(pop)
 
 #ifdef __cplusplus
 }

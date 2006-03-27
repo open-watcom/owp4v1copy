@@ -84,6 +84,7 @@ base_libs =        &
         uuid.lib &
         user32.lib &
         userenv.lib &
+        usp10.lib &
         uxtheme.lib &
         vdmdbg.lib &
         version.lib &
@@ -98,7 +99,8 @@ base_libs =        &
         ws2_32.lib &
         wsnmp32.lib &
         wsock32.lib &
-        wst.lib
+        wst.lib &
+        wtsapi32.lib
 
 directx_libs = &
         d3d8.lib &
@@ -207,6 +209,9 @@ ksuser.lib: ksuser.lbc ksuser.obj
         $(librarian) $(libflags) $@ @$[@ +$]@
 
 shell32.lib: shell32.lbc shell32.obj
+        $(librarian) $(libflags) $@ @$[@ +$]@
+
+ws2_32.lib: ws2_32.lbc ws2_32.obj
         $(librarian) $(libflags) $@ @$[@ +$]@
 
 vfw32.lbc: $(vfw32_libs)

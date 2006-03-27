@@ -1,3 +1,117 @@
+
+2006-03-27  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wincon.h (GetConsoleProcessList): Declare.
+
+2006-03-27  Hansres Engel  <engel@node.ch>
+
+	* include/mlang.h: New file.
+
+2006-03-26  Chris Sutcliffe <ir0nh34d@users.sourceforge.net>
+
+    * include/winbase.h (SetProcessWorkingSetSize): Corrected define.
+
+2006-03-26  Hansres Engel  <engel@node.ch>
+
+         Add Uniscribe API for typography and for complex scripts.
+	 * include/usp10.h: New file.
+         * lib/usp10.def: New file.
+
+	* include/winver.h:  Change first argument of GetFileVersionInfo[...] to const.
+
+        * include/imm.h (IMECHARPOSITION): Add structure.
+	(RECONVERTSTRING): Likwise.
+
+	* include/commdlg.h (OPENFILENAME_SIZE_VERSION_400): Define.
+	
+        * lib/uuid.c (CMultiLanguage): Add UUID definition.
+	(IMLangFontLink2): Likewise.
+	(IMultiLanguage): Likewise.
+
+2006-03-18  Julien Lecomte <julienlecomte@users.sourceforge.net>
+
+	* include/wincon.h  (ENABLE_*): Add more defines.
+
+2006-03-18  Jan Nijtmans <nijtmans@users.sourceforge.net>
+
+	* include/winnt.h (INHERITED_ACE): Define.
+	(VALID_INHERIT_FLAGS): Correct definition.
+
+2006-03-18  Peter Åstrand  <astrand@cendio.se>
+
+         * lib/wtsapi32.def: New file.
+
+2006-03-15  Christopher Faylor  <cgf@timesys.com>
+
+	* include/winbase.h (STATUS_DLL_INIT_FAILED): New define.
+	(STATUS_DLL_INIT_FAILED_LOGOFF): Ditto.
+
+2006-03-09  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+	* include/winspool.h (DI_MEMORYMAP_WRITE): Define (DWORD type).
+	(FORM_USER,FORM_PRINTER): Define (DWORD type).
+	* include/winspool.h [_WIN32_WINNT >= 0x0500]
+	(DSPRINT_*): Define (DWORD type).
+	Thanks to:   Roland Schwingel <rolandschwingel at users dot sf dot net>
+
+2006-03-09  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+	* include/winspool.h (JOB_CONTROL_*,JOB_STATUS_*): Define.
+	Thanks to:   Roland Schwingel <rolandschwingel at users dot sf dot net>
+
+2006-03-07  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+	* include/shellapi.h  [_WIN32_IE >= 0x0600]
+	(SEE_MASK_NOZONECHECKS,SEE_MASK_FLAG_LOG_USAGE): Define on
+	Windows XP SP1 and Windows XP respectively.
+
+2006-03-07  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+	* include/shellapi.h (NOTIFYICONDATA_V*_SIZE): Define.
+	Thanks to:  Daniel Atallah <datallah at users dot sf dot net>
+	* include/shellapi.h  [_WIN32_IE >= 0x0500]
+	(NIS_*): Introduced in Version 5.0.
+
+2006-03-06  Danny Smith  <dannysmith@users.sourceforge.net>
+	* include/wingdi.h (CS_*): Correct WINVER guard on
+	Image Color Matching colour definitions.
+
+2006-03-06  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/shlobj.h (SFGAO_ISSLOW): Define.
+	(SFGAO_DISPLAYATTRMASK): Define in terms of preceding display
+	attribute constants.
+
+2006-03-06  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/wingdi.h  [WINVER >= 0x0500]
+	(GRADIENT_FILL_*,*_EMBEDED): Included in Windows 2000 and later.
+	Thanks to: David A. Capello <dacap at users dot sf dot net>
+
+2006-03-05  Paul J. Lucas  <pauljlucas@users.sourceforge.net>
+
+	* include/wininet.h (INTERNET_CONNECTED_INFO): Define structure.
+	(INTERNET_STATE_*): Define flags.
+	(INTERNET_OPTION_CONNECTED_STATE): Define constant.
+
+2006-03-05  Chris Wilson  <chris+mingw@qwirx.com>
+
+	* include/sddl.h: New file.
+
+2006-02-21  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ddk/ntifs.h (FILE_ID_FULL_DIRECTORY_INFORMATION): Revert
+	last change.
+	Remove file level #pragma pack(push,4)/#pragma pop.
+
+2006-02-19  Corinna Vinschen  <corinna@vinschen.de>
+
+	* include/ddk/ntifs.h (FILE_ID_FULL_DIRECTORY_INFORMATION): Add filler
+	value to force correct alignment.
+
+2006-02-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commctrl.h (LPNMLVCACHEHINT): Correct spelling.
+	Thanks to: Sebastian Pipping <hartwork at users dot sf dot net>
+	(PNM_CACHEHINT): Add backward compatibilty define.
+	(LPNM_CACHEHINT): Likewise.
+
 2006-02-06  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* include/shlobj.h (PathResolve): Fix typo in _WIN32_WINNT guard.

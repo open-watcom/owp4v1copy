@@ -83,6 +83,7 @@
 #include <dhcpcsdk.h>
 #include <errorrep.h>
 #include <windns.h>
+#include <usp10.h>
 
 #ifndef __OBJC__  /* problems with BOOL */
 #include <ole2.h>
@@ -104,7 +105,7 @@
 #include <mshtml.h>
 #include <servprov.h>
 #include <aclui.h>
-
+#include <mlang.h>
 #else
 #undef BOOL
 #endif
