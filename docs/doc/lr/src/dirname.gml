@@ -14,7 +14,7 @@ The &func function may modify the string pointed to by
 and may return a pointer to static storage that may be overwritten by
 a subsequent call to &func..
 .np
-The &func function is not reentrant or thread-safe.
+The &func function is not re-entrant or thread-safe.
 .desc end
 .*
 .return begin
