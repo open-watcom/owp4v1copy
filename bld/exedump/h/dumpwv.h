@@ -39,6 +39,8 @@ extern void debugout( char *, ... );
 #define dbgout( a )
 #endif
 
+#pragma pack( push, 1 )
+
 typedef struct {
     unsigned_32 off;
     unsigned_16 seg;
@@ -95,6 +97,8 @@ typedef struct {
     unsigned_32 off;
     unsigned_16 seg;
 } set_base386;
+
+#pragma pack( pop )
 
 /*
  * locals
