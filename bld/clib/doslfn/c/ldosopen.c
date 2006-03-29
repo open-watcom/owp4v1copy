@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #define __WATCOM_LFN__
 
 #include "variety.h"
@@ -42,8 +43,6 @@
 #include "seterrno.h"
 #include "tinyio.h"
 
-_WCRTLINK extern char   *_lfntosfn( char *orgname, char *shortname );
-_WCRTLINK extern int    _islfn( const char *path );
 
 static int CTinyOpen( const char *path, int mode )
 {
