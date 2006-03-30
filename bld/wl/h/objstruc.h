@@ -429,10 +429,10 @@ typedef struct segdata {
         signed_32   delta;      // P2: for calc'ing segment & symbol addrs
     } a;
     union {
-        unsigned_32     addrinfo; // P2VIDEO: offset into addrinfo of seg.
         mod_entry *     mod;      // P2CV&DW: pointer to defining module.
         char *          clname;   // INC: class name for segment
     } o;
+    unsigned_32     addrinfo;   // P2VIDEO: offset into addrinfo of seg.
     unsigned        align       : 5;
     unsigned        select      : 3; // comdat: selection type
 

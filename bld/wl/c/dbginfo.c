@@ -547,7 +547,7 @@ static bool CheckFirst( void *_seg, void *_firstseg )
     segdata **firstseg = _firstseg;
 
     if( ( seg->a.delta < (*firstseg)->a.delta )
-            && ( seg->o.addrinfo == (*firstseg)->o.addrinfo ) ) {
+            && ( seg->addrinfo == (*firstseg)->addrinfo ) ) {
         *firstseg = seg;
     }
     return( FALSE );
@@ -576,7 +576,7 @@ extern void ODBIGenLines( segdata * seg, void *lines, unsigned size,
     lineqty = CalcLineQty( size, is32bit );
     DoGenLocal( &dinfo->line, &dinfo->linelinks, &CurrMod->d.o->lines,
                 lineqty * sizeof( ln_off_386 ) + sizeof( lineseg ) );
-    lseg.segment = seg->o.addrinfo;
+    lseg.segment = seg->addrinfo;
     lseg.num = lineqty;
     DumpInfo( dinfo, &lseg, sizeof( lineseg ) );
 /*
@@ -681,7 +681,7 @@ static void ODBIGenAddrInit( segdata *sdata, void *_dinfo )
         seghdr.off = seg->seg_addr.off;
         seghdr.seg = seg->seg_addr.seg;
     } else {
-        seghdr.off = seg->group->grp_addr.off 
+        seghdr.off = seg->group->grp_addr.off
                      + SUB_ADDR( seg->seg_addr, seg->group->grp_addr );
         seghdr.seg = seg->group->grp_addr.seg;
     }
@@ -704,8 +704,10 @@ static void ODBIGenAddrAdd( segdata *sdata, offset delta, offset size,
         addr.size = size;
         addr.mod_idx = sdata->o.mod->d.o->modnum;
         DumpInfo( dptr, &addr, sizeof( addrinfo ) );
-        sdata->o.addrinfo = dptr->addr.curr - dptr->addr.init;
+        sdata->addrinfo = dptr->addr.curr - dptr->addr.init;
         dptr->addr.curr += sizeof( addrinfo );
+    } else {
+        sdata->addrinfo = dptr->addr.curr - dptr->addr.init;
     }
 }
 
