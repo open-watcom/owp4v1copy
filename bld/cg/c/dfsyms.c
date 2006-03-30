@@ -425,11 +425,12 @@ static  void    FiniLineSegBck( void ){
 
 extern  void    DFSymRange( sym_handle sym, offset size ){
 /*********************************************************/
-#if 0
     // I don't see what this is good for. The aranges for any
     // comdat symbols will be taken care of by DFSegRange().
-    // Running this code will produce overlapping aranges that
-    // confuse the hell out of the debugger.
+    // Running this code may produce overlapping aranges that
+    // confuse the hell out of the debugger. However, not running
+    // this may cause debug information to be missing... call it
+    // a FIXME
 
     bck_info    *bck;
 
@@ -437,7 +438,6 @@ extern  void    DFSymRange( sym_handle sym, offset size ){
     bck = FEBack( sym );
     ARange = bck;
     DWAddress( Client, size );
-#endif
 }
 
 extern  void    DFSegRange( void ){
@@ -485,17 +485,14 @@ extern  void    DFBegCCU( seg_id code, dw_sym_handle dbg_pch ){
             OutLabel( bck->lbl );
             Pc_Low = bck;
             Pc_High = MakeLabel();
-#if 0
-            cu.flags = TRUE;
-#else
             // Emitting DW_AT_low_pc and DW_AT_high_pc is valid *only* if the
             // compilation unit's code is in a single contiguous block (see
             // DWARF 2, section 3.1).
             // I don't know how to find out at the time of this call if there's
             // only one code segment or not, hence these attributes are always
-            // disabled.
+            // disabled. The low/high pc attribs should probably be handled by
+            // the linker.
             cu.flags = FALSE;
-#endif
             cu.segment_size = 0;
         }else{
             cu.flags = FALSE;
