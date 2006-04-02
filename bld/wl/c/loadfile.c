@@ -339,7 +339,7 @@ static void DefBSSEndSize( char * name, class_entry * class )
         sym->addr.seg = seg->seg_addr.seg;
         sym->addr.off = seg->seg_addr.off + seg->size;
         ConvertToFrame( &sym->addr, seg->group->grp_addr.seg );
-    } else if( LinkFlags & DOSSEG_FLAG ) {
+    } else if( LinkState & DOSSEG_FLAG ) {
         CheckBSSInStart( sym, name );
     }
 }
