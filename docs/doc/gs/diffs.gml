@@ -41,6 +41,11 @@ A __restrict keyword has been added to the C compiler. It is functionally
 equivalent to the C99 'restrict' keyword but is always visible, even in
 non-C99 mode.
 .bull
+In C99 mode, the C compiler no longer requires explicit return statement in
+a main function returning an integer. In accordance with C99 standard,
+'return 0;' is implied if end of function is reached and no return statement
+was encountered.
+.bull
 The C compiler has been fixed so that it no longer loses track of pointer
 base when using __based(__self) pointers. The C compiler has also been
 fixed to properly handle dereferencing of based arrays.
@@ -54,6 +59,11 @@ type correctly, ie. return segment portion of a pointer.
 The C compiler has been fixed to properly support named based segments
 (ie. __based( __segname( <name> ) ) pointers) that reference the default
 _DATA and _CONST segments.
+.bull
+The C compiler has been modified so that segments created through #pragma
+data_seg are no longer part of DGROUP. Typically, the pragma is used only
+when data segments need to be located in a physically separate segment in
+output module.
 .bull
 New warning W137, "Extern function 'fn' redeclared as static", has been added
 to the C compiler. Existing error E1072, "Storage class disagrees with
@@ -100,6 +110,12 @@ The peephole optimizer is now run again after register allocation. This
 allows the code generator to take advantage of some optimization opportunities
 that were previously missed.
 .bull
+The code generator has been modified to copy DS into ES in __interrupt routine
+prolog (right after DS was loaded) if the ES register is considered
+unalterable, ie. in flat model. This may avoid crashes if ES is dereferenced
+explicitly or implicitly in interrupt handlers, for instance when calling
+memcpy().
+.bull
 A performance problem related to emitting debugging information for structures
 or unions with many members has been corrected in the code generator.
 .bull
@@ -132,6 +148,10 @@ Several very obscure bugs have been fixed in the printf and scanf family of
 functions. These problems were discovered thanks to a more stringent testing
 procedure and had never been reported by users.
 .bull
+The strtod function has been enhanced to follow C99 specification. It will
+now parse infinity and NaN, as well as exadecimal floating-point numbers.
+See the C Library Reference for details.
+.bull
 The math library has been fixed to perform binary to decimal floating-point
 conversions with greater precision. This fixes a problem where in some cases
 a conversion from binary to decimal and back was losing precision or producing
@@ -157,6 +177,10 @@ IBM NMAKE.
 The wmake utility has been enhanced to evaluate NMAKE style '[cmd]'
 expressions (ie. shell commands) in preprocessor !if directives. This
 functionality is supported in both wmake and -ms mode.
+.bull
+Several problems related to the Watcom debugging information format have
+been fixed in the linker and debugger. Note that the Watcom format is
+considered obsolete and its use is not recommended.
 .bull
 A random but very rare startup failure of Windows based GUI tools (notably
 wdw) has been fixed.
