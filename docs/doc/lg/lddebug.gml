@@ -58,6 +58,12 @@ Alternatively, you can run CVPACK from the command line.
 (short form "N") specifies a form of global symbol information that
 can only be processed by the NetWare debugger.
 .endpoint
+.remark
+Except in rare cases, the most appropriate use of the "DEBUG" directive is
+specifying "DEBUG ALL" (short form "D A") prior to any "FILE" or "LIBRARY"
+directives. This will cause the &lnkname to emit all available debugging
+information in the default format.
+.eremark
 .np
 For the Watcom debugging information format, we can be selective about
 the types of debugging information that we include with the executable
