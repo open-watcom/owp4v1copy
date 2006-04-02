@@ -860,9 +860,12 @@ extern  type_length NewBase( name *op ) {
 }
 
 
-static  int PushAll( void ) {
+static  int PushAll( void )
 /*************************/
-
+/* Save all registers and establish somewhat sane environment.
+ * Used for __interrupt routines only.
+ */
+{
     if( _CPULevel( CPU_186 ) ) {
         Gpusha();
     } else {
@@ -889,6 +892,12 @@ static  int PushAll( void ) {
     Gcld();
     if( HW_COvlap( CurrProc->state.unalterable, HW_DS ) ) {
         DoLoadDS();
+        // If ES is also unalterable, copy DS to ES; else things
+        // like memcpy() are likely to blow up
+        if( HW_COvlap( CurrProc->state.unalterable, HW_ES ) ) {
+            QuickSave( HW_DS, OP_PUSH );
+            QuickSave( HW_ES, OP_POP );
+        }
     }
     return( ALL_REG_SIZE );
 }
