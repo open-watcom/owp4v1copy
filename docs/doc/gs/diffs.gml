@@ -10,7 +10,7 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2006/03/08
+:cmt. Reflects main Perforce branch as of 2006/04/02
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
 .*
