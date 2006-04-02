@@ -554,7 +554,7 @@ static void ProcAlias( void )
         targetlen = *ObjBuff;
         ObjBuff++;
         sym = SymXOp( ST_FIND | ST_NOALIAS, alias, aliaslen );
-        if( !(sym->info & SYM_DEFINED) ) {
+        if( !sym || !(sym->info & SYM_DEFINED) ) {
             _ChkAlloc( target, targetlen + 1 );
             memcpy( target, ObjBuff, targetlen );
             target[targetlen] = '\0';
