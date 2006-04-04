@@ -132,13 +132,14 @@ void test_date_time() {
   d1.parse( "5:44pm 6 15 90");
   TEST ("d1.get_time_zone()", strcmp (d1.get_time_zone(),"NZ"), 0);
  
-  d1.parse( "5:44pm 6 15 90", 1);
+  d1.parse( "5:44PM 6 15 90", 1);
   TEST("5:44pm 6 15 90", tst(d1,1990,6,15,17,44,0),1);
   TEST ("d1.get_time_zone()", strcmp (d1.get_time_zone(),"NZ"), 0);
 
   d1.set_country(UNITED_STATES);
   d1.set_time_zone(US_CENTRAL);
-  d1.parse( "5:44pm United States US/Central10 15 86", 1);
+  char buf[] = "5:44pm United States US/Central10 15 86";
+  d1.parse( buf, 1);
   TEST("5:44pm US/Central10 15 86", tst(d1,1986,10,15,17,44,0),1);
   TEST ("d1.get_time_zone()", strcmp (d1.get_time_zone(),"US/Central"), 0);
 
@@ -148,7 +149,7 @@ void test_date_time() {
   d1.parse("24 May 1965, 4:30 pm");
   TEST ("24 May 1965, 4:30 pm", tst(d1,1965,5,24,16,30,0),1);
  
-  d1.parse( "5:44pm 6 15 1890", 1);
+  d1.parse( "5:44PM 6 15 1890", 1);
   TEST("5:44pm 6 15 1890", tst(d1,1890,6,15,17,44,0),1);
 
   d1.set_local_time();

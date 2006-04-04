@@ -1,5 +1,5 @@
 plustest_name = cool
-!include ..\..\environ.mif
+!include ../../environ.mif
 
 exps = &
 ex2_4.$(exe) &
@@ -35,9 +35,9 @@ test_cflags = -op-d2-xds
 test_cflags = -ot-op-d1
 !endif
 
-test_cflags += -zq -i..\.. -w0
+test_cflags += -zq -I../.. -w0
 
-test_cflags_i86 = -mm -zm
+test_cflags_i86 = -ml -zm
 
 stack_386=opt stack=64k
 stack_i86=opt stack=48k

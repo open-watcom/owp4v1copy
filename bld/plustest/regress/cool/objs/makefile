@@ -1,5 +1,5 @@
 plustest_name = cool
-!include ..\..\environ.mif
+!include ../../environ.mif
 
 objs = &
    associat.obj base_bnn.obj base_bnt.obj base_has.obj base_lis.obj &
@@ -21,20 +21,20 @@ test_cflags = -op-d2-xds
 test_cflags = -op-d2
 !endif
 
-test_cflags += -zq -i..\.. -w0
+test_cflags += -zq -I../.. -w0
 
-test_cflags_i86 = -mm -zm
+test_cflags_i86 = -ml -zm -s
    
 .c: ..
 .c.obj:
     $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
-test : .symbolic ..\cool.lib
+test : .symbolic ../cool.lib
     %make global
     %append $(log_file) PASS $(%__CWD__)
     
 ..\cool.lib : $(objs) cool.lbc
-    $(librarian_$(arch)) /n/q/b/p=512 $^@ @cool.lbc
+    $(librarian_$(arch)) -n -q -b -p=512 $^@ @cool.lbc
     
 cool.lbc : makefile
     %create $^@

@@ -654,7 +654,8 @@ CoolString& strncpy(CoolString& s, const char* source, long length) {
 #endif
   s.length = length;                    // Set new string length
   if (s.size <= length) {               // If not enough allocated memory
-    if (s.str) *s.str = END_OF_STRING;  // Don't copy old string
+    if (s.str && s.str != Empty_String_g)
+        *s.str = END_OF_STRING;         // Don't copy old string
     update_memory (s);                  // Adjust/update memory if necessary
   }
   char* p = s.str;
