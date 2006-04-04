@@ -515,6 +515,7 @@ typedef struct {
     int                  seg;       // seg from a typedef
     stg_classes          stg;       // storage class
     type_modifiers       mod;       // const, vol flags
+    type_modifiers       decl_mod;  // declspec call info
     declspec_class       decl;      // dllimport...
     bool                 naked;     // declspec naked
 } decl_info;

@@ -994,15 +994,15 @@ int VerifyType( TYPEPTR new, TYPEPTR old, SYMPTR sym )
 local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
 {
     int                 pointer_type;
-    type_modifiers      mask;
+    type_modifiers      ptr_mask;
     int                 retcode;
 
     pointer_type = 0;
     /* "char *s" and "char s[]" differs only by FLAG_WAS_ARRAY, ignore it too */
     if( TargetSwitches & BIG_DATA )
-        mask = ~(FLAG_FAR  | FLAG_WAS_ARRAY);
+        ptr_mask = ~(FLAG_FAR  | FLAG_WAS_ARRAY | FLAG_LANGUAGES);
     else
-        mask = ~(FLAG_NEAR | FLAG_WAS_ARRAY);
+        ptr_mask = ~(FLAG_NEAR | FLAG_WAS_ARRAY | FLAG_LANGUAGES);
     for( ;; ) {
         typ1 = SkipTypeFluff( typ1 );
         typ2 = SkipTypeFluff( typ2 );
@@ -1026,7 +1026,7 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
         }
         if( typ1->decl_type == TYPE_POINTER ) {
             pointer_type = 1;
-            if( (typ1->u.p.decl_flags & mask) != (typ2->u.p.decl_flags & mask) ) {
+            if( (typ1->u.p.decl_flags & ptr_mask) != (typ2->u.p.decl_flags & ptr_mask) ) {
                  return( TC_TYPE_MISMATCH );
             }
         }

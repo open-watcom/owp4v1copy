@@ -151,19 +151,6 @@ local void CmpFuncDecls( SYMPTR new_sym, SYMPTR old_sym )
     ChkCompatibleFunction( type_new, type_old, 1 );
 }
 
-local void UpdateFuncNodeType( SYMPTR old, SYMPTR new )
-{
-    if( old->attrib == old->sym_type->u.fn.decl_flags ) {
-    } else if( old->attrib == new->sym_type->u.fn.decl_flags
-      && old->sym_type->object == new->sym_type->object
-      && old->sym_type->u.fn.parms == new->sym_type->u.fn.parms ) {
-        old->sym_type = new->sym_type;
-    } else {
-        old->sym_type = FuncNode(old->sym_type->object,
-                    old->attrib, old->sym_type->u.fn.parms);
-    }
-}
-
 
 local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state )
 {
@@ -268,7 +255,10 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
             if( stg_class == SC_NULL && old_sym.stg_class != SC_FORWARD ) {     /* 05-jul-89 */
                 stg_class = old_sym.stg_class;
             }
-            UpdateFuncNodeType( &old_sym, sym );
+            if( old_sym.sym_type->decl_type == TYPE_FUNCTION ) {
+                old_sym.sym_type = FuncNode( old_sym.sym_type->object,
+                    old_sym.attrib, old_sym.sym_type->u.fn.parms );
+            }
             memcpy( sym, &old_sym, sizeof( SYM_ENTRY ) );
             sym_handle = old_sym_handle;
         }
@@ -529,6 +519,50 @@ new_var:
     return( sym_handle );
 }
 
+local void AdjSymTypeNode( SYMPTR sym, type_modifiers decl_mod )
+{
+    TYPEPTR     typ;
+    
+    if( decl_mod ) {
+        typ = sym->sym_type;
+        if( typ->decl_type == TYPE_FUNCTION ) {
+            if( (sym->attrib & FLAG_LANGUAGES) != decl_mod ) {
+                if( sym->attrib & FLAG_LANGUAGES ) {
+                    CErr1( ERR_INVALID_DECLSPEC );
+                } else {
+                    sym->attrib |= decl_mod;
+                    if( (typ->u.fn.decl_flags & FLAG_LANGUAGES) != decl_mod ) {
+                        if( typ->u.fn.decl_flags & FLAG_LANGUAGES ) {
+                            CErr1( ERR_INVALID_DECLSPEC );
+                        } else {
+                            sym->sym_type = FuncNode( typ->object, typ->u.fn.decl_flags | decl_mod, typ->u.fn.parms );
+                        }
+                    }
+                }
+            }
+        } else {
+            TYPEPTR     *xtyp;
+            
+            xtyp = &sym->sym_type;
+            while( ( typ->object != NULL ) && ( typ->decl_type == TYPE_POINTER ) ) {
+                xtyp = &typ->object;
+                typ = typ->object;
+            }
+            if( typ->decl_type == TYPE_FUNCTION ) {
+                if( (typ->u.fn.decl_flags & FLAG_LANGUAGES) != decl_mod ) {
+                    if( typ->u.fn.decl_flags & FLAG_LANGUAGES ) {
+                        CErr1( ERR_INVALID_DECLSPEC );
+                    } else {
+                        *xtyp = FuncNode( typ->object, typ->u.fn.decl_flags | decl_mod, typ->u.fn.parms );
+                    }
+                }
+            } else {
+                CErr1( ERR_INVALID_DECLSPEC );
+            }
+        }
+    }
+}
+
 static SYM_HANDLE InitDeclarator( SYMPTR sym, decl_info const * const info, decl_state *state )
 {
     SYM_HANDLE      sym_handle;
@@ -575,6 +609,7 @@ static SYM_HANDLE InitDeclarator( SYMPTR sym, decl_info const * const info, decl
         }
         VfyNewSym( sym->info.hash_value, sym->name );
         sym->stg_class = info->stg;
+        AdjSymTypeNode( sym, info->decl_mod );
         sym_handle = SymAdd( sym->info.hash_value, sym );
     } else {
         sym->declspec = info->decl;
@@ -588,6 +623,7 @@ static SYM_HANDLE InitDeclarator( SYMPTR sym, decl_info const * const info, decl
                  CErr1( ERR_INVALID_DECLSPEC );
             }
         }
+        AdjSymTypeNode( sym, info->decl_mod );
         if( typ->decl_type == TYPE_FUNCTION ) {
             sym_handle = FuncDecl( sym, info->stg, state );
         } else {
@@ -1455,6 +1491,7 @@ local TYPEPTR *GetProtoType( decl_info *first )
             }
         }
         sym->stg_class = stg_class;
+        AdjSymTypeNode( sym, info.decl_mod );
         AdjParmType( sym );
         parmlist = NewParm( sym->sym_type, parmlist );
         if( parm_count == 0 ) {

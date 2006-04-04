@@ -451,6 +451,7 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
 
     *plain_int = 0;
     info->mod = FLAG_NONE;
+    info->decl_mod = FLAG_NONE;
     info->decl = DECLSPEC_NONE;
     info->naked = FALSE;
     info->seg = 0;
@@ -545,16 +546,12 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
             break;
 
         case T___DECLSPEC:
-            if( info->stg == 0 ) {
-                CErr1( ERR_INVALID_DECLARATOR );
-            }
             AdvanceToken();                   // declspec( dllimport naked )
             MustRecog( T_LEFT_PAREN );
             {
                 declspec_class decl;
                 type_modifiers  modifier;
 
-                decl = DECLSPEC_NONE;
                 while( CurToken != T_RIGHT_PAREN ) {
                     modifier = 0;
                     switch( CurToken ) {
@@ -589,6 +586,10 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
                         break;
                     case T_ID:
                         decl = DECLSPEC_NONE;
+                        if( info->stg == 0 ) {
+                            CErr1( ERR_INVALID_DECLARATOR );
+                            break;
+                        }
                         if( strcmp( Buffer, "dllimport" ) == 0 ) {
                             decl = DECLSPEC_DLLIMPORT;
                         } else if( strcmp( Buffer, "overridable" ) == 0 ) {
@@ -619,10 +620,10 @@ static void DeclSpecifiers( char *plain_int, decl_info *info )
                         goto done;
                     }
                     if( modifier & FLAG_LANGUAGES ) {
-                        if( flags & FLAG_LANGUAGES ) {
+                        if( info->decl_mod & FLAG_LANGUAGES ) {
                             CErr1( ERR_INVALID_DECLSPEC );
                         } else {
-                            flags |= modifier;
+                            info->decl_mod |= modifier;
                         }
                     }
                     NextToken();
@@ -979,6 +980,32 @@ local void ClearFieldHashTable( TAGPTR tag )
     }
 }
 
+static void AdjFieldTypeNode( FIELDPTR field, type_modifiers decl_mod )
+{
+    if( decl_mod ) {
+        TYPEPTR     *xtyp;
+        TYPEPTR     typ;
+        
+        xtyp = &field->field_type;
+        typ = *xtyp;
+        while( ( typ->object != NULL ) && ( typ->decl_type == TYPE_POINTER ) ) {
+            xtyp = &typ->object;
+            typ = *xtyp;
+        }
+        if( typ->decl_type == TYPE_FUNCTION ) {
+            if( (typ->u.fn.decl_flags & FLAG_LANGUAGES) != decl_mod ) {
+                if( typ->u.fn.decl_flags & FLAG_LANGUAGES ) {
+                    CErr1( ERR_INVALID_DECLSPEC );
+                } else {
+                    *xtyp = FuncNode( typ->object, typ->u.fn.decl_flags | decl_mod, typ->u.fn.parms );
+                }
+            }
+        } else {
+            CErr1( ERR_INVALID_DECLSPEC );
+        }
+    }
+}
+
 local unsigned long GetFields( TYPEPTR decl )
 {
     unsigned long       start = 0;
@@ -1035,6 +1062,7 @@ local unsigned long GetFields( TYPEPTR decl )
             if( CurToken != T_COLON ) {
                 field = FieldDecl( typ, info.mod, state );
                 field->level = struct_level;
+                AdjFieldTypeNode( field, info.decl_mod );
                 field = NewField( field, decl );
             }
             if( CurToken == T_COLON ) {
@@ -1190,6 +1218,7 @@ local void GetComplexFieldTypeSpecifier( decl_info *info, DATA_TYPE data_type )
 {
     info->stg = SC_NULL;      // indicate don't want any storage class specifiers
     info->mod = FLAG_NONE;
+    info->decl_mod = FLAG_NONE;
     info->decl = DECLSPEC_NONE;
     info->naked = FALSE;
     info->seg = 0;
