@@ -87,6 +87,7 @@ positive_tests = &
     bf01.$(exe) &
     bf02.$(exe) &
     bf03.$(exe) &
+    callc01.$(exe) &
     conv02.$(exe) &
     conv03.$(exe) &
     conv04.$(exe) &

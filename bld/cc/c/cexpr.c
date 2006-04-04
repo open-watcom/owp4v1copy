@@ -742,7 +742,7 @@ static TREEPTR AddrOp( TREEPTR tree )
                 modifiers |= FLAG_FAR;
             }
         }
-        typ = PtrNode( typ, modifiers, segid );
+        typ = PtrNode( typ, modifiers & PTR_FLAGS, segid );
     } else if( tree->op.opr == OPR_POINTS ) {
         typ = tree->op.result_type;
     } else {
@@ -2297,7 +2297,7 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
             CErr1( ERR_NOT_A_CONSTANT_EXPR );
         } else {
             if( tree->op.opr == OPR_POINTS ) {  //need to recover decl flags
-                decl_flags = tree->op.result_type->u.p.decl_flags;
+                decl_flags = typ->u.fn.decl_flags;
             }
             sym_handle = MakeNewSym( &sym, 'F', orig_typ, SC_AUTO );
             sym.flags |= SYM_FUNCTION;
