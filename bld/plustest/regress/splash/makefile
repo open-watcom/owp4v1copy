@@ -23,7 +23,7 @@ test_cflags = -ox-d1 -oe1000
 test_cflags += -zq-w0-dTEST
 
 test_cflags_386 = $(test_cflags) -3s
-test_cflags_i86 = $(test_cflags) -ml
+test_cflags_i86 = $(test_cflags) -mm
 test_cflags_axp = $(test_cflags)
     
 stack_386=opt stack=64k
