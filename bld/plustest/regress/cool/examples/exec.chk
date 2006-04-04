@@ -37,16 +37,16 @@ The pattern `O(.*r)' is found in `That's OK for me. OK for you?'
 The pattern begins at zero-relative index 7 and ends at index 24
 ex3_4.c
 Simple random number generator:
-  Random number 0 is: 3.00005
-  Random number 1 is: 3.00002
-  Random number 2 is: 3.00003
-  Random number 3 is: 3.00005
-  Random number 4 is: 3.00009
-  Random number 5 is: 3.00002
-  Random number 6 is: 3.00006
-  Random number 7 is: 3.00002
-  Random number 8 is: 3.00005
-  Random number 9 is: 3.00001
+  Random number 0 is: 6.08313
+  Random number 1 is: 4.05432
+  Random number 2 is: 4.85175
+  Random number 3 is: 6.20709
+  Random number 4 is: 8.68561
+  Random number 5 is: 4.03033
+  Random number 6 is: 7.21326
+  Random number 7 is: 4.35846
+  Random number 8 is: 5.96851
+  Random number 9 is: 3.74817
 
 Three congruential linear random number generator:
   Random number 0 is: 9.26861
@@ -103,8 +103,8 @@ ex6_6.c
 22
 1
 ex6_8.c
-[ 3.00005 3.00002 3.00003 3.00005 3.00009 ]
-[ 3.00005 ]
+[ 6.08313 4.05432 4.85175 6.20709 8.68561 ]
+[ 6.08313 4.85175 6.20709 8.68561 ]
 ex6_10.c
 17 21 25 29 
 23 29 35 41 

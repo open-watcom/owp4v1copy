@@ -60,14 +60,10 @@ CoolRandom::CoolRandom (RNG_TYPE rng, int seed, float lower, float upper){
 // Output: None
 
 void CoolRandom::init (RNG_TYPE rng) {
-  unsigned int i = 2;                           // Starting value
-  unsigned int j = i;                           // Temporary
+  unsigned int i;                               // Temporary
+  unsigned int j;                               // Temporary
   long mj,mk;                                   // Temporaries for Knuth
-  do {                                          // While still valid bits
-    j = i;                                      // Set maximum random number
-    i <<= 1;                                    // Shift left by one bit
-  } while (i);                                  // Until no more bits left
-  this->maxran = j;                             // Set maximum number
+  this->maxran = RAND_MAX;                      // Set maximum number
   switch (rng) {                                // Select generator function
   case SIMPLE:
     this->generator = &CoolRandom::simple;              // Set pointer to function
