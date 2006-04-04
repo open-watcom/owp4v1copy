@@ -647,6 +647,10 @@ void ProcComDef( void )
             size = GetVariable();
             Output( INDENT "%u - %N Type %u, NEAR, Size:%X" CRLF,
                 ++Importindex, type, size );
+        } else if( seg < 0x60 ) {   // Borland style COMDEF
+            size = GetVariable();
+            Output( INDENT "%u - %N Type %u, Seg: %u, Size:%X" CRLF,
+                ++Importindex, type, seg, size );
         } else {
             Output( INDENT "%u - %N Type %u" BAILOUT "Unknown seg(%b)" CRLF,
                 ++Importindex, type, seg );
