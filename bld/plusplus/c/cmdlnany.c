@@ -934,11 +934,13 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
         GenSwitches |= INS_SCHEDULING;          // -or
         CmdSysSetMaxOptimization();             // -om
         CompFlags.inline_intrinsics = 1;        // -oi
+#if 0   // Disabled - introduces too many problems which no one is ready to fix
         if( ! data->oe ) {
             data->oe = 1;                       // -oe
             // keep in sync with options.gml
             data->oe_value = 100;
         }
+#endif
         PragToggle.check_stack = 0;             // -s
         break;
     case OPT_opt_level_od:
