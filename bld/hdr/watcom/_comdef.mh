@@ -34,7 +34,7 @@
     #error The macro _WCUNALIGNED is reserved for use by the runtime library.
   #endif
   #if __WATCOMC__ > 1240
-    #define _WRTLCALL
+    #define _WRTLCALL __declspec(__watcall)
   #else
     #define _WRTLCALL
   #endif
