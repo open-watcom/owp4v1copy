@@ -132,7 +132,13 @@ stack_axp=opt stack=16k
 test : .symbolic overload.lnk $(exes)
     %create overload.out
     @for %i in ( $(exes) ) do $(run) %i >>overload.out
+!ifeq arch i86
+    # There are certain unavoidable differences between 16-bit and
+    # 32-bit platforms, causing slightly different (but valid) results
+    diff overload.out overload.i86
+!else
     diff overload.out overload.chk
+!endif
     %make global
     %append $(log_file) PASS $(%__CWD__)
     
