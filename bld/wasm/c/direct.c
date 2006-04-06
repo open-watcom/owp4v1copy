@@ -1414,10 +1414,8 @@ static seg_type ClassNameType( char *name )
     if( name == NULL )
         return( SEGTYPE_UNDEF );
     if( ModuleInfo.init ) {
-        if( strcmp( name, Options.code_class ) == 0 ) {
+        if( stricmp( name, Options.code_class ) == 0 ) {
             return( SEGTYPE_ISCODE );
-        } else {
-            return( SEGTYPE_ISDATA );
         }
     }
     slen = strlen( name );

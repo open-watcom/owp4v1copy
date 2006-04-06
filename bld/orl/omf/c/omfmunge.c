@@ -798,6 +798,8 @@ static orl_sec_flags    getSegSecFlags( omf_file_handle ofh, omf_idx name,
         } else {
             flags |= ORL_SEC_FLAG_READ_PERMISSION;
             slen = OmfGetLName( ofh->lnames, name, lname );
+            lname[slen] = '\0';
+            strNUpper( lname, slen );
             if( ( slen > 3 ) &&
                 ( !strcmp( "CODE", &lname[slen - 4] ) ||
                   !strcmp( "TEXT", &lname[slen - 4] ) ) ) {
