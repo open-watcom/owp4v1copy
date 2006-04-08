@@ -5,5 +5,5 @@ Setup=wini86\f77setup\setup.exe
 Exe=dos386\f77setup\dossetup.exe
 Exe=nt386\f77setup\setup32.exe
 Exe=os2386.gui\f77setup\install.exe
-DefPMGroup=wf7732.grp, Watcom FORTRAN, %DstDir%\watcom.ico
+DefPMGroup=wf7732.grp, Open Watcom FORTRAN, %DstDir%\watcom.ico
 include=common.inf
