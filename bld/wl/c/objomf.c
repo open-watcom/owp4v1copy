@@ -372,6 +372,7 @@ static void LinkDirective( void )
     case LDIR_OPT_FAR_CALLS:
         seg = (segnode *)FindNode( SegNodes, GetIdx() );
         seg->entry->canfarcall = TRUE;
+        seg->entry->iscode = TRUE;
         break;
     case LDIR_FLAT_ADDRS:
         CurrMod->modinfo |= MOD_FLATTEN_DBI;
