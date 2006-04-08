@@ -81,7 +81,7 @@ extern int              SymIs32( struct asm_sym *sym );
 
 static void             check_assume( struct asm_sym *, enum prefix_reg );
 
-extern  int_8           DefineProc;     // TRUE if the definition of procedure
+extern int_8            DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
 
 uint_8                  CheckSeg;       // if checking of opened segment is needed
@@ -823,10 +823,8 @@ static int proc_check( void )
         }
     }
 
-    /* 1st instruction following a procedure definition */
     if( WritePrologue() == ERROR )
         return( ERROR );
-    InputQueueLine( CurrString );
     DefineProc = FALSE;
     return( TRUE );
 }

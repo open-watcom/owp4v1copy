@@ -44,6 +44,8 @@
 #include "asmexpnd.h"
 #include "macro.h"
 
+extern int              in_prologue;
+
 #endif
 
 
@@ -201,6 +203,7 @@ bool PopLineQueue()
 
     /* pop the line_queue stack */
     tmp = line_queue;
+    in_prologue = FALSE;
     if( tmp == NULL ) return( FALSE );
     line_queue = line_queue->next;
     AsmFree( tmp );

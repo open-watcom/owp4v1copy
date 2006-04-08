@@ -40,10 +40,8 @@
 #if defined( _STANDALONE_ )
 
 #include "directiv.h"
-#include "queues.h"
 
-static void AddLinnumDataRef( void );
-
+extern void AddLinnumDataRef( void );
 extern int  AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool );
 
 #endif
@@ -886,21 +884,3 @@ static int match_phase_3( int *i, OPNDTYPE determinant )
     (*i)--;
     return( EMPTY );
 }
-
-#if defined( _STANDALONE_ )
-
-static void AddLinnumDataRef( void )
-/**********************************/
-/* store a reference for the current line at the current address */
-{
-    struct linnum_data  *curr;
-
-    if( LineNumber < 0x8000 )  {
-        curr = AsmAlloc( sizeof( struct linnum_data ) );
-        curr->number = LineNumber;
-        curr->offset = AsmCodeAddress;
-
-        AddLinnumData( curr );
-    }
-}
-#endif

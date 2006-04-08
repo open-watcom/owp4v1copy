@@ -75,6 +75,7 @@ extern uint_32          BufSize;
 extern obj_rec          *ModendRec;     // Record for Modend
 
 extern int              MacroExitState;
+extern int              in_prologue;
 
 int                     MacroLocalVarCounter = 0; // counter for temp. var names
 char                    Parse_Pass;     // phase of parsing
@@ -103,6 +104,7 @@ typedef struct  fname_list {
 global_vars     Globals = { 0, 0, 0, 0, 0, 0, 0 };
 
 static FNAMEPTR FNames = NULL;
+static uint     lastLineNumber;
 
 void AddFlist( char const *filename )
 /***********************************/
@@ -705,6 +707,30 @@ static int write_autodep( void )
     return NOT_ERROR;
 }
 
+void AddLinnumDataRef( void )
+/***************************/
+/* store a reference for the current line at the current address */
+{
+    struct linnum_data  *curr;
+    uint                line_number;
+
+    if( in_prologue ) {
+        line_number = CurrProc->line;
+    } else {
+        line_number = LineNumber;
+    }
+    if( line_number < 0x8000 )  {
+        if( lastLineNumber != line_number ) {
+            curr = AsmAlloc( sizeof( struct linnum_data ) );
+            curr->number = line_number;
+            curr->offset = AsmCodeAddress;
+
+            AddLinnumData( curr );
+            lastLineNumber = line_number;
+        }
+    }
+}
+
 static void write_linnum( void )
 /******************************/
 {
@@ -1052,6 +1078,7 @@ static unsigned long OnePass( char *string )
     Modend = FALSE;
     PassTotal = 0;
     LineNumber = 0;
+    lastLineNumber = 0;
     MacroExitState = 0;
 
     for(;;) {
