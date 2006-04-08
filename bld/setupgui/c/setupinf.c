@@ -1117,7 +1117,7 @@ static bool dialog_dynamic( char *next, DIALOG_INFO *dlg )
             GUIStrDup( line,
                        &dlg->curr_dialog->pVisibilityConds[ dlg->curr_dialog->num_controls ] );
         }
-        dlg->max_width = max( dlg->max_width, max( len, 50 ) );
+        dlg->max_width = max( dlg->max_width, max( len, 60 ) );
         set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num-1,
                              text, VarGetId( var_handle ), C0, dlg->row_num, C0 + dlg->max_width );
     } else {
