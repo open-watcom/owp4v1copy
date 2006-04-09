@@ -66,7 +66,7 @@ struct asm_code         *Code = &Code_Info;
 
 unsigned char           Opnd_Count;
 
-extern int              dup_array( struct asm_sym *, char, char );
+extern int              dup_array( struct asm_sym *, struct asm_sym *, char, char );
 extern int              data_init( int, int );
 
 static void             SizeString( unsigned op_size );
@@ -1811,7 +1811,7 @@ int AsmParse( void )
         // drop flag
         More_Array_Element = FALSE;
         // action
-        return( dup_array( NULL, 0, Last_Element_Size ) );
+        return( dup_array( NULL, NULL, 0, Last_Element_Size ) );
     }
 
 #if defined( _STANDALONE_ )
