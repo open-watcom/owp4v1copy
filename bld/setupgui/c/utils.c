@@ -623,9 +623,12 @@ static unsigned GetDriveInfo( int drive, bool removable )
         if( io != -1 ) {
             close( io );
             remove( path );
+#if 0  // FIXME it doesn't work correctly if target directory doesn't exist
+       // (new installation) and you have insufficient rights to drive root
         } else {
             info->cluster_size = 1;
             info->free_space = -1;
+#endif
         }
     }
     }
