@@ -36,6 +36,7 @@
 #include "objio.h"
 #include "pcobj.h"
 #include "memutil.h"
+#include "genmsomf.h"
 #include "genutil.h"
 #include "myassert.h"
 #include "msdbg.h"

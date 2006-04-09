@@ -41,4 +41,4 @@
 
 extern int MsgInit( char *fname );
 extern void MsgGet( int resourceid, char *buffer );
-extern int MsgFini();
+extern int MsgFini( void );
