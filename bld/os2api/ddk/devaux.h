@@ -5,6 +5,14 @@
 extern "C" {
 #endif
 
+typedef ULONG   LIN;        // 32-Bit linear address
+typedef ULONG   FAR *PLIN;  // 16:16 pointer to a 32-Bit linear address
+
+typedef struct _PAGELIST {
+    ULONG   PhysAddr;
+    ULONG   Size;
+} PAGELIST, NEAR *NPPAGELIST, FAR *PPAGELIST;
+
 extern ULONG  Device_Help;
 
 /* Device helper codes */
@@ -689,6 +697,39 @@ USHORT DevHelp_PhysToGDTSel( ULONG PhysAddr, ULONG Count, SEL Selector, UCHAR Ac
 
 
 
+USHORT DevHelp_VirtToLin( SEL Selector, ULONG Offset, PLIN LinearAddr );
+#pragma aux DevHelp_VirtToLin =         \
+    "mov  esi,[esp]"                    \
+    "mov  dl,5Bh"                       \
+    "call dword ptr [Device_Help]"      \
+    "jc   error"                        \
+    "les  bx,[esp+4]"                   \
+    "mov  es:[bx],eax"                  \
+    "sub  ax,ax"                        \
+    "error:"                            \
+    value [ax]                          \
+    parm caller nomemory [ax] []        \
+    modify exact [ax si es bx dl];
+
+/* Modified version of VirtToLin that takes a far pointer instead of selector/offset */
+USHORT DevHelp_VirtToLinPtr( PVOID Pointer, PLIN LinearAddr );
+#pragma aux DevHelp_VirtToLinPtr =      \
+    "xchg ax,si"                        \
+    "movzx esi,si"                      \
+    "mov  dl,5Bh"                       \
+    "call dword ptr [Device_Help]"      \
+    "jc   error"                        \
+    "pop  bx"                           \
+    "pop  es"                           \
+    "mov  es:[bx],eax"                  \
+    "sub  ax,ax"                        \
+    "error:"                            \
+    value [ax]                          \
+    parm routine nomemory [ax si] []    \
+    modify exact [ax si es bx dl];
+
+
+
 
 USHORT DevHelp_OpenEventSem( ULONG hEvent );
 #pragma aux DevHelp_OpenEventSem =      \
@@ -717,10 +758,10 @@ USHORT DevHelp_PostEventSem( ULONG hEvent );
     modify nomemory exact [ax dl];
 
 
-USHORT DevHelp_ResetEventSem( ULONG hEvent, PULONG pNumPosts );
+USHORT DevHelp_ResetEventSem( ULONG hEvent, LIN pNumPosts );
 #pragma aux DevHelp_ResetEventSem =     \
-    "pop  edi"                          \
     "pop  eax"                          \
+    "pop  edi"                          \
     "mov  dl,6Ah"                       \
     DEVHELP_CALL                        \
     parm routine nomemory []            \
