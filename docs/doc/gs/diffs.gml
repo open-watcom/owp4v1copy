@@ -10,7 +10,7 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2006/04/02
+:cmt. Reflects main Perforce branch as of 2006/04/11
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
 .*
@@ -60,10 +60,14 @@ The C compiler has been fixed to properly support named based segments
 (ie. __based( __segname( <name> ) ) pointers) that reference the default
 _DATA and _CONST segments.
 .bull
-The C compiler has been modified so that segments created through #pragma
+The compilers and library headers have been modified to properly support
+use of standard libraries when one of the -ec switches is used to change
+default calling convention.
+.bull
+The C compiler has been modified such that segments created through #pragma
 data_seg are no longer part of DGROUP. Typically, the pragma is used only
 when data segments need to be located in a physically separate segment in
-output module.
+the output module.
 .bull
 New warning W137, "Extern function 'fn' redeclared as static", has been added
 to the C compiler. Existing error E1072, "Storage class disagrees with
@@ -115,6 +119,10 @@ prolog (right after DS was loaded) if the ES register is considered
 unalterable, ie. in flat model. This may avoid crashes if ES is dereferenced
 explicitly or implicitly in interrupt handlers, for instance when calling
 memcpy().
+.bull
+The linker and other tools have been fixed to correctly classify code segments.
+Previously, code segments could be misclassified as data, which led to incorrect
+disassembly and generation of debugging information.
 .bull
 A performance problem related to emitting debugging information for structures
 or unions with many members has been corrected in the code generator.
