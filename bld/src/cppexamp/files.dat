@@ -1,11 +1,12 @@
-i:\bld\src\CPPEXAMP\CPPEXAMP.MIF
-i:\bld\src\CPPEXAMP\LOCAL.MIF
-i:\bld\src\CPPEXAMP\README.TXT
-i:\bld\src\CPPEXAMP\EXCAREA\EXCAREA.CPP
-i:\bld\src\CPPEXAMP\EXCAREA\MAIN.CPP
-i:\bld\src\CPPEXAMP\EXCAREA\MAKEFILE
-i:\bld\src\CPPEXAMP\EXCAREA\README.TXT
-i:\bld\src\CPPEXAMP\MEMBFUN\CFUN.C
-i:\bld\src\CPPEXAMP\MEMBFUN\MAIN.CPP
-i:\bld\src\CPPEXAMP\MEMBFUN\MAKEFILE
-i:\bld\src\CPPEXAMP\MEMBFUN\README.TXT
+[ default type="s" cond="samples" where="c jc ac" desc="Advanced C++ Usage Sample Code" ]
+dir="samples/cppexamp"	usr="cppexamp.mif"
+dir="samples/cppexamp"	usr="local.mif"
+dir="samples/cppexamp"	usr="readme.txt"
+dir="samples/cppexamp/excarea"	usr="excarea.cpp"
+dir="samples/cppexamp/excarea"	usr="main.cpp"
+dir="samples/cppexamp/excarea"	usr="makefile"
+dir="samples/cppexamp/excarea"	usr="readme.txt"
+dir="samples/cppexamp/membfun"	usr="cfun.c"
+dir="samples/cppexamp/membfun"	usr="main.cpp"
+dir="samples/cppexamp/membfun"	usr="makefile"
+dir="samples/cppexamp/membfun"	usr="readme.txt"

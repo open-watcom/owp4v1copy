@@ -1,6 +1,7 @@
 [ DEFAULT ]
 [ INCLUDE <DEVDIR>/src/clibexam/files.dat ]
 [ INCLUDE <DEVDIR>/src/cplbexam/files.dat ]
+[ INCLUDE <DEVDIR>/src/cppexamp/files.dat ]
 [ INCLUDE <DEVDIR>/src/dll/files.dat ]
 [ INCLUDE <DEVDIR>/src/goodies/files.dat ]
 [ INCLUDE <DEVDIR>/src/win/files.dat ]
@@ -16,5 +17,4 @@ usr="wclist.cpp"
 usr="wcskip.cpp"
 usr="wcexcept.cpp"
 
-#[ INCLUDE <DEVDIR>/src/cppexam/files.dat ] what is this
 #[ INCLUDE <DEVDIR>/src/p16/files.dat ]
