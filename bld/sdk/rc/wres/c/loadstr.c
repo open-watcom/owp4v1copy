@@ -33,14 +33,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <malloc.h>
+#include <stdlib.h>
 #if defined( __UNIX__ ) && !defined( __WATCOMC__ )
-    #include <alloca.h>
     #ifdef _AIX
+        #include <alloca.h>
         #define alloca __alloca
     #endif
+    #define _WCI86FAR
+#else
+    #include <malloc.h>
 #endif
-
+   
 #ifdef WIN_GUI
 #include <windows.h>
 #else
