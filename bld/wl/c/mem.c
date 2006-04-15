@@ -31,10 +31,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <string.h>
+#ifdef __WATCOMC__
+    #include <malloc.h>     /* for _expand() */
+#endif
 #ifdef TRMEM
-#include "trmem.h"
+    #include "trmem.h"
 #endif
 #include "linkstd.h"
 #include "msg.h"

@@ -28,9 +28,10 @@
 *
 ****************************************************************************/
 
+
 #include <string.h>
-#include <malloc.h>
 #include <stdlib.h>
+#include "walloca.h"
 #include "linkstd.h"
 #include "pcobj.h"
 #include "alloc.h"

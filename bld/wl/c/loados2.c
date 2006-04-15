@@ -32,7 +32,6 @@
 
 #include <string.h>
 #include <ctype.h>
-#include <malloc.h>
 #include "linkstd.h"
 #include "ring.h"
 #include "pcobj.h"

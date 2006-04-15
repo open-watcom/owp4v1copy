@@ -32,8 +32,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
 #ifdef __WATCOMC__
+    #include <malloc.h>
     #include <process.h>
 #endif
 #if defined( __WATCOMC__ ) && defined( __X86__ )

@@ -24,13 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  IMPEXP : utilities for handling imports and exports
+* Description:  Utilities for handling imports and exports.
 *
 ****************************************************************************/
 
+
 #include <string.h>
-#include <malloc.h>
 #include <ctype.h>
+#include "walloca.h"
 #include "linkstd.h"
 #include "msg.h"
 #include "wlnkmsg.h"

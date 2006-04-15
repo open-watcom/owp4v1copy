@@ -32,7 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "linkstd.h"
 #include "loadfile.h"
 #include "command.h"

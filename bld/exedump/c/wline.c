@@ -30,9 +30,9 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <setjmp.h>
 #include <string.h>
-#include <malloc.h>
 
 #include "wdglb.h"
 #include "wdfunc.h"

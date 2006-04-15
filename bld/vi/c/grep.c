@@ -35,8 +35,8 @@
 #include <string.h>
 #include "posix.h"
 #include <fcntl.h>
-#include <malloc.h>
 #include <assert.h>
+#include "walloca.h"
 #include "vi.h"
 #include "keys.h"
 #include "rxsupp.h"

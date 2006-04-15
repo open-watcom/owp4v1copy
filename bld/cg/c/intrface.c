@@ -53,7 +53,7 @@
 #ifndef NDEBUG
 #include "echoapi.h"
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <assert.h>
 #endif
 

@@ -24,15 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Wildcard file matching.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "vi.h"
 #include "rxsupp.h"
 

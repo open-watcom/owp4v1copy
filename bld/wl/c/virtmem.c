@@ -24,15 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Virtual memory support for linker.
 *
 ****************************************************************************/
 
 
 #include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "linkstd.h"
 #include "newmem.h"
 #include "msg.h"

@@ -24,12 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  LOADQNX : routines for creating QNX load files.
+* Description:  Routines for creating QNX load files.
 *
 ****************************************************************************/
 
+
 #include <string.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "linkstd.h"
 #include "ring.h"
 #include "alloc.h"

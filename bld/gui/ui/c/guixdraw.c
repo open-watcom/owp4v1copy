@@ -42,11 +42,9 @@
 #include "guistat.h"
 #include "guixinit.h"
 #include "guixdlg.h"
-#include <malloc.h>
 #include <string.h>
-#if defined( UNIX )
-    #include <alloca.h>
-#endif
+#include "walloca.h"
+
 
 extern int uionnec();
 

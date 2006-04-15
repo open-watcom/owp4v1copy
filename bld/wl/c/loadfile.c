@@ -30,8 +30,8 @@
 
 
 #include <string.h>
-#include <malloc.h>
 #include <stdlib.h>
+#include "walloca.h"
 #include "linkstd.h"
 #if !defined( __LINUX__ ) || defined(__WATCOMC__)
 #include <process.h>
@@ -944,7 +944,7 @@ extern void WriteGroupLoad( group_entry *group )
     class_entry *    class;
 
     class = group->leaders->class;
-    
+
     info.pos = PosLoad();
     // If group is a copy group, substitute source group(s) here
     if (class->flags & CLASS_COPY ) {

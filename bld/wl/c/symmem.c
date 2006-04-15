@@ -24,19 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Symbol table extra memory routines.
 *
 ****************************************************************************/
 
 
-/*
-   SYMMEM  : symbol table extra memory routines
-
-*/
 #include <string.h>
 #include <stdlib.h>
-#include <malloc.h>
 #include <limits.h>
 #include "linkstd.h"
 #include "pcobj.h"

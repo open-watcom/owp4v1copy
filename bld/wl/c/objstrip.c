@@ -24,19 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dead code elimination routines.
 *
 ****************************************************************************/
 
 
-/*
- *  OBJSTRIP:  Dead code elimination routines.
- *
- */
-
 #include <string.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "linkstd.h"
 #include "alloc.h"
 #include "objstrip.h"

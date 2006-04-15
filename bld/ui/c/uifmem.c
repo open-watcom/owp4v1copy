@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-#include <malloc.h>
 #include "uidef.h"
 
 void __FAR * global uifaralloc( size )

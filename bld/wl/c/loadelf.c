@@ -57,7 +57,8 @@ String table for sections
 ----------------------------------------------------------------------------
 */
 
-#include <malloc.h>
+#include <string.h>
+#include "walloca.h"
 #include "linkstd.h"
 #include "exeelf.h"
 #include "loadelf.h"
@@ -75,7 +76,6 @@ String table for sections
 #include "dbgall.h"
 #include "dbgdwarf.h"
 #include "objcalc.h"
-#include <string.h>
 
 static stringtable      SymStrTab;
 static ElfSymTable *    ElfSymTab;

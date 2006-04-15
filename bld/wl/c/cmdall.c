@@ -24,16 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  CMDALL : commands common to all executable formats 
+* Description:  Commands common to all executable formats
 *
 ****************************************************************************/
 
 
-#include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <limits.h>
+#include "walloca.h"
 #include "linkstd.h"
 #include "msg.h"
 #include "alloc.h"
@@ -1275,7 +1275,7 @@ extern bool ProcOutput( void )
    while( ProcOne( OutputOpts, SEP_NO, FALSE )) {
       ret = TRUE;
    }
-   return ret;      
+   return ret;
 }
 
 extern bool ProcOutputRaw( void )
@@ -1316,7 +1316,7 @@ extern bool ProcOutputOfs( void )
     else {
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "output segment offset");
         return FALSE;
-    }      
+    }
 }
 
 extern bool ProcOutputHshift( void )
@@ -1337,7 +1337,7 @@ extern bool ProcOutputHshift( void )
    else {
       LnkMsg(LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "Hex HSHIFT");
       return FALSE;
-   }      
+   }
 }
 
 extern bool ProcHshift( void )
@@ -1358,7 +1358,7 @@ extern bool ProcHshift( void )
     else {
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "HSHIFT");
         return FALSE;
-    }      
+    }
 }
 
 extern bool ProcFillchar( void )
@@ -1378,7 +1378,7 @@ extern bool ProcFillchar( void )
     else {
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "FillChar");
         return FALSE;
-    }      
+    }
 }
 
 static ORDER_CLASS *CurrOClass;
@@ -1397,14 +1397,14 @@ extern bool ProcOrder( void )
    while( ProcOne( OrderOpts, SEP_NO, FALSE )) {
       ret = TRUE;
    }
-   return ret;      
+   return ret;
 }
 
 extern bool ProcOrdClass( void )
 /**********************************/
 {
    ORDER_CLASS *LastOClass;
-   
+
    if( !GetToken( SEP_NO, TOK_INCLUDE_DOT ) ) {
       return FALSE;
    }
@@ -1448,7 +1448,7 @@ extern bool ProcOrdSegAdr( void )
         CurrOClass->FixedAddr = FALSE;
         LnkMsg(LOC+LINE+WRN+MSG_ADDR_INFO_TOO_LARGE, NULL);
         return FALSE;
-    }      
+    }
 }
 
 extern bool ProcOrdOfsAdr( void )
@@ -1470,7 +1470,7 @@ extern bool ProcOrdOfsAdr( void )
         CurrOClass->FixedAddr = FALSE;
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "output segment offset");
         return FALSE;
-    }      
+    }
 }
 
 extern bool ProcOrdCopy( void )
@@ -1527,7 +1527,7 @@ extern bool ProcOrdSegSegAdr( void )
         CurrOSeg->FixedAddr = FALSE;
         LnkMsg(LOC+LINE+WRN+MSG_ADDR_INFO_TOO_LARGE, NULL);
         return FALSE;
-    }      
+    }
 }
 
 extern bool ProcOrdSegOfsAdr( void )
@@ -1549,7 +1549,7 @@ extern bool ProcOrdSegOfsAdr( void )
         CurrOSeg->FixedAddr = FALSE;
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "output segment offset");
         return FALSE;
-   }      
+   }
 }
 
 extern bool ProcOrdSegNoEmit( void )

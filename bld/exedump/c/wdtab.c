@@ -31,8 +31,8 @@
 
 #include <stdio.h>
 #include <setjmp.h>
-#include <malloc.h>
 #include <unistd.h>
+#include "walloca.h"
 
 #include "wdglb.h"
 #include "wdfunc.h"

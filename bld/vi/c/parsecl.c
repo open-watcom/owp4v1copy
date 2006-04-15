@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "vi.h"
 #include "parsecl.h"
 #include "ex.h"
