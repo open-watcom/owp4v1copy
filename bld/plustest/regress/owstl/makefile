@@ -59,7 +59,8 @@ template = &
         string02$(ext)  &
         typetr01$(ext)  &
         util01$(ext)    &
-        vector01$(ext)
+        vector01$(ext)  &
+	nominmax$(ext)
 
 # the list of .exe targets
 ext = .$(exe)
