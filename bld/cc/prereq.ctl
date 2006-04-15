@@ -25,7 +25,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>/<OBJDIR>
     cp -f ../linux386.386/target.h .
     wmake -h -f ../linux386.386/makefile bootstrap=1
-    <CPCMD> wcc386 <OWBINDIR>/wcc386
+    <CPCMD> wcc386c.exe <OWBINDIR>/wcc386
 
 [ BLOCK . . ]
 #============
