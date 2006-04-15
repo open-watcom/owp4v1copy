@@ -132,8 +132,8 @@ static void InitAuxInfo( void )
     CurrInfo    = NULL;
     CurrEntry   = NULL;
 
-    memset( &AuxInfo, 0, sizeof( AuxInfo ) );    
-   
+    memset( &AuxInfo, 0, sizeof( AuxInfo ) );
+
     AuxInfoFlg.f_near           = 0;
     AuxInfoFlg.f_routine_pops   = 0;
     AuxInfoFlg.f_caller_return  = 0;
@@ -815,39 +815,6 @@ local void GetParmInfo( void )
 }
 
 
-local void GetRetInfo( void )
-/***************************/
-{
-    struct {
-        unsigned f_no8087        : 1;
-        unsigned f_list          : 1;
-        unsigned f_struct        : 1;
-    } have;
-
-    have.f_no8087  = 0;
-    have.f_list    = 0;
-    have.f_struct  = 0;
-    AuxInfo.cclass &= ~ NO_8087_RETURNS;               /* 29-mar-90 */
-    AuxInfoFlg.f_8087_returns = 1;
-    for( ;; ) {
-        if( !have.f_no8087 && PragRecog( "no8087" ) ) {
-            have.f_no8087 = 1;
-            HW_CTurnOff( AuxInfo.returns, HW_FLTS );
-            AuxInfo.cclass |= NO_8087_RETURNS;
-        } else if( !have.f_list && PragRegSet() != T_NULL ) {
-            have.f_list = 1;
-            AuxInfo.cclass |= SPECIAL_RETURN;
-            AuxInfo.returns = PragRegList();
-        } else if( !have.f_struct && PragRecog( "struct" ) ) {
-            have.f_struct = 1;
-            GetSTRetInfo();
-        } else {
-            break;
-        }
-    }
-}
-
-
 local void GetSTRetInfo( void )
 /*****************************/
 {
@@ -880,6 +847,39 @@ local void GetSTRetInfo( void )
             have.f_list = 1;
             AuxInfo.cclass |= SPECIAL_STRUCT_RETURN;
             AuxInfo.streturn = PragRegList();
+        } else {
+            break;
+        }
+    }
+}
+
+
+local void GetRetInfo( void )
+/***************************/
+{
+    struct {
+        unsigned f_no8087        : 1;
+        unsigned f_list          : 1;
+        unsigned f_struct        : 1;
+    } have;
+
+    have.f_no8087  = 0;
+    have.f_list    = 0;
+    have.f_struct  = 0;
+    AuxInfo.cclass &= ~ NO_8087_RETURNS;               /* 29-mar-90 */
+    AuxInfoFlg.f_8087_returns = 1;
+    for( ;; ) {
+        if( !have.f_no8087 && PragRecog( "no8087" ) ) {
+            have.f_no8087 = 1;
+            HW_CTurnOff( AuxInfo.returns, HW_FLTS );
+            AuxInfo.cclass |= NO_8087_RETURNS;
+        } else if( !have.f_list && PragRegSet() != T_NULL ) {
+            have.f_list = 1;
+            AuxInfo.cclass |= SPECIAL_RETURN;
+            AuxInfo.returns = PragRegList();
+        } else if( !have.f_struct && PragRecog( "struct" ) ) {
+            have.f_struct = 1;
+            GetSTRetInfo();
         } else {
             break;
         }
