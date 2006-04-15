@@ -49,7 +49,10 @@ _WCRTLINK char *_cmdname( char *name )
 {
     int save_errno = errno;
     int result = readlink( "/proc/self/exe", name, PATH_MAX );
-
+    if( result == -1 ) {
+        /* try another way for BSD */
+        result = readlink( "/proc/curproc/file", name, PATH_MAX );
+    }
     errno = save_errno;
 
     /* fall back to argv[0] if readlink doesn't work */
