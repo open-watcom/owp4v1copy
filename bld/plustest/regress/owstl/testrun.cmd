@@ -26,4 +26,5 @@ wmake -h global
 wmake -h test5= arch=%extra_arch%
 :no_extra
 wmake -h global
+call mmtest
 popd
