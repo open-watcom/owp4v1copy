@@ -35,6 +35,10 @@
 #include <stddef.h>     // for wchar_t
 #include <float.h>      // for LDBL_DIG
 
+#ifndef _WMRTLINK
+    #define _WMRTLINK   // This SUCKS!
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
