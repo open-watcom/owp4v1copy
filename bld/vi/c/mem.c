@@ -31,15 +31,17 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "vi.h"
 #include "colors.h"
 #include "fcbmem.h"
 #include "win.h"
+#ifdef __WATCOMC__
+    #include <malloc.h>
+#endif
 #ifdef TRMEM
     #include <fcntl.h>
     #include <unistd.h>
-    #include <stdlib.h>
     #include "trmem.h"
 
     static int                  trmemOutput;

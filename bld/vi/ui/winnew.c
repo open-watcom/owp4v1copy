@@ -33,7 +33,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "vi.h"
 #include "win.h"
 

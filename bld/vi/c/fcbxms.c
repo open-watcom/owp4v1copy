@@ -32,7 +32,6 @@
 
 #include <stdio.h>
 #include <stddef.h>
-#include <malloc.h>
 #include "vi.h"
 
 #ifndef NOXMS
