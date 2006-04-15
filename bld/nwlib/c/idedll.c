@@ -30,8 +30,10 @@
 
 
 #include "wlib.h"
-#include <malloc.h>
 #include "idedll.h"
+#ifdef __WATCOMC__
+    #include <malloc.h> // for _heapshrink()
+#endif
 
 static IDECBHdl   ideHdl;
 static IDECallBacks  *ideCb;
