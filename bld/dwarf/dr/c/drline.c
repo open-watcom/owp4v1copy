@@ -31,8 +31,8 @@
 
 #include "drpriv.h"
 #include "drutils.h"
-#include <malloc.h>
 #include <string.h>
+#include "walloca.h"
 
 
 static unsigned_32 ReadVWord( dr_handle where, int size )

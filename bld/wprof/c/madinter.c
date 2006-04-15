@@ -24,14 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  MAD interface client callback routines.
 *
 ****************************************************************************/
 
 
 #include <string.h>
-#include <malloc.h>
 #include <stddef.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -50,6 +48,7 @@
 #include "common.h"
 #include "sampinfo.h"
 #include "msg.h"
+
 
 extern void     ErrorMsg(char *msg,... );
 extern void     fatal(char *msg,... );

@@ -32,7 +32,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "ppc.h"
 #include "ppctypes.h"
 #include "madregs.h"

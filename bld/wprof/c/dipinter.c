@@ -24,14 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DIG interface client callback routines.
 *
 ****************************************************************************/
 
 
 #include <string.h>
-#include <malloc.h>
 #include <stddef.h>
 #include <fcntl.h>
 #include <stdlib.h>

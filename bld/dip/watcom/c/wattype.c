@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Watcom debugging information type support.
 *
 ****************************************************************************/
 
@@ -33,7 +32,8 @@
 #include "dipwat.h"
 #include "wattype.h"
 #include <string.h>
-#include <malloc.h>
+#include "walloca.h"
+
 
 extern void             *InfoLoad(imp_image_handle *, imp_mod_handle, unsigned, unsigned, void (*)() );
 extern void             InfoSpecUnlock( void * );

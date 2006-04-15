@@ -34,7 +34,6 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <time.h>
-#include <malloc.h>
 #include <stdlib.h>
 #include <unistd.h>
 

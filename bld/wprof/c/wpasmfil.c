@@ -24,15 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Profiler disassembly view routines.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
-#include <malloc.h>
 #include <string.h>
+#include "walloca.h"
 
 #include "common.h"
 #include "aui.h"
@@ -45,13 +44,7 @@
 #include "srcmgt.h"
 #include "msg.h"
 
-//#include "wpasmfil.def"
-//#include "wpsrcfil.def"
-//#include "srcmgt.def"
-//#include "support.def"
-//#include "memutil.def"
-//#include "setsamps.def"
-//#include "msg.def"
+
 extern massgd_sample_addr *WPGetMassgdSampData(sio_data *curr_sio,clicks_t click_index);
 extern void *ProfRealloc(void *p,size_t new_size);
 extern void *ProfCAlloc(size_t size);

@@ -32,11 +32,11 @@
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
-#include <malloc.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include "walloca.h"
 
 #include "common.h"
 #include "dip.h"
@@ -47,6 +47,7 @@
 #include "sampinfo.h"
 #include "ovltab.h"
 #include "msg.h"
+
 
 extern void *ProfAlloc(size_t size);
 extern void ProfFree(void *ptr);

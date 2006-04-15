@@ -32,7 +32,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "demangle.h"
 #include "hllinfo.h"
 

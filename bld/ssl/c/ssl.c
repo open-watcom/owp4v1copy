@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for ssl utility.
 *
 ****************************************************************************/
 
@@ -35,7 +34,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
-#include <malloc.h>
 
 #include "preproc.h"
 #undef T_LEFT_PAREN

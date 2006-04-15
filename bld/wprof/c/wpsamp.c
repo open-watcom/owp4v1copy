@@ -30,8 +30,8 @@
 
 
 #include <stdio.h>
-#include <malloc.h>
 #include <string.h>
+#include "walloca.h"
 
 #include "common.h"
 #include "aui.h"
@@ -41,6 +41,7 @@
 #include "wpsrcfil.h"
 #include "wpasmfil.h"
 #include "msg.h"
+
 
 extern image_info *SImageGetImage(a_window *wnd,int row);
 extern mod_info *SModGetModule(a_window *wnd,int row);

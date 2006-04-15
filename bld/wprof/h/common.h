@@ -57,6 +57,7 @@ typedef enum { B_FALSE = (0==1), B_TRUE = (0==0) } bint;
 #endif
 
 #if defined(__LARGE__)
+#include <malloc.h>
 #define _MALLOC     _fmalloc
 #define _REALLOC    _frealloc
 #define _FREE       _ffree

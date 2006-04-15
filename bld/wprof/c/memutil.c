@@ -24,13 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Memory allocation routines for profiler.
 *
 ****************************************************************************/
 
 
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "common.h"
@@ -40,13 +39,8 @@
 #include "trmemcvr.h"
 #endif
 
-//#include "memutil.def"
-//#include "msg.def"
-#ifdef TRMEM
-//#include "dumpmem.def"
-#endif
-extern void fatal(char *msg,... );
 
+extern void fatal(char *msg,... );
 
 STATIC void * profTryAlloc( size_t );
 STATIC void * profTryRealloc( void *, size_t );

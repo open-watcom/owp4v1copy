@@ -31,8 +31,8 @@
 
 #include "drpriv.h"
 #include "drutils.h"
-#include <malloc.h>
 #include <string.h>
+#include "walloca.h"
 
 // these are the increments in which the dynamically growing tables will
 // grow. NOTE that the code relies on VBL_ARRAY_DELTA being a power of 2

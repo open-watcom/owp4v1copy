@@ -32,10 +32,10 @@
 
 #include <fcntl.h>
 #include <string.h>
-#include <malloc.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include "walloca.h"
 
 #include "common.h"
 #include "aui.h"
@@ -46,13 +46,7 @@
 #include "sampinfo.h"
 #include "pathlist.h"
 
-//#include "setsamps.def"
-//#include "clrsamps.def"
-//#include "msg.def"
-//#include "memutil.def"
-//#include "support.def"
-//#include "utils.def"
-//#include "dipinter.def"
+
 extern void ClearMassaged(sio_data *curr_sio);
 extern void ClearModuleInfo(image_info *curr_image);
 extern void ClearFileInfo(mod_info *curr_mod);

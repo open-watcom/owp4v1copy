@@ -31,7 +31,7 @@
 
 #include "drpriv.h"
 #include "drutils.h"
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 
 static dw_locop_op const LocOpr[] = {

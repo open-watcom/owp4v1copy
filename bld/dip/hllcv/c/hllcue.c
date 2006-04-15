@@ -29,9 +29,9 @@
 ****************************************************************************/
 
 
-#include <malloc.h>
 #include <stddef.h>
 #include <string.h>
+#include "walloca.h"
 #include "hllinfo.h"
 
 

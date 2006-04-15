@@ -33,7 +33,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "jvm.h"
 #include "jvmtypes.h"
 #include "madregs.h"

@@ -32,7 +32,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <malloc.h>
+#include "walloca.h"
 #include "mips.h"
 #include "mipstypes.h"
 #include "madregs.h"
