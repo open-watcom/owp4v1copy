@@ -69,7 +69,7 @@ static void Outc( char c )
     write( STDOUT_FILENO, &c, 1 );
 }
 
-void Banner()
+void Banner( void )
 {
     Outs( 1, banner1w( "Executable Strip Utility", _WSTRIP_VERSION_ ) );
     Outs( 1, banner2( "1988" ) );
@@ -119,7 +119,7 @@ void Fatal( int reason, char *insert )
 }
 
 
-static long res_seek(WResFileID handle, long position, int where )
+static long res_seek( WResFileID handle, off_t position, int where )
 /* fool the resource compiler into thinking that the resource information
  * starts at offset 0 */
 {
@@ -145,7 +145,7 @@ static int Msg_Get( int resourceid, char *buffer )
 }
 
 
-int Msg_Init()
+int Msg_Init( void )
 {
     int         initerror;
     char        name[_MAX_PATH];
@@ -179,7 +179,7 @@ int Msg_Init()
 }
 
 
-int Msg_Fini(void)
+int Msg_Fini( void )
 {
     int     retcode = EXIT_SUCCESS;
 

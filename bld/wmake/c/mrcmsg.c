@@ -62,8 +62,8 @@ extern  long        FileShift;  // Defined in %devdir%\sdk\rc\wres\c\loadstr.c
 #define NO_RES_SIZE (sizeof(NO_RES_MESSAGE)-1)
 
 
-static long resSeek( int handle, long position, int where )
-/**********************************************************
+static long resSeek( int handle, off_t position, int where )
+/***********************************************************
  * fool the resource compiler into thinking that the resource information
  * starts at offset 0
  */
