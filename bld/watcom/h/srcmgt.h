@@ -24,13 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Source file management for debugger, profiler, etc.
 *
 ****************************************************************************/
 
 
-#include <malloc.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 
