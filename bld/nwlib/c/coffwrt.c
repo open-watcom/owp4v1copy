@@ -24,14 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Write COFF style imports.
 *
 ****************************************************************************/
 
 
 #include "wlib.h"
-#include <malloc.h>
+#include "walloca.h"
 #include <assert.h>
 #include <error.h>
 
