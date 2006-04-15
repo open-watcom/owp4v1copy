@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Client callback routines for wres library.
 *
 ****************************************************************************/
 
@@ -40,11 +39,10 @@
 #if defined( __UNIX__ )
 #include <fcntl.h>
 #endif
-#include <malloc.h>
+#include <stdlib.h>
 #include "wressetr.h"
 #if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
-    #include <stdlib.h>  // malloc for AIX
 #endif
 
 WResSetRtns( open, close, read, write, lseek, tell, malloc, free );

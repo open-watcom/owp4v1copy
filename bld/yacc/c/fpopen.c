@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Path-searching file open routine.
 *
 ****************************************************************************/
 
@@ -34,7 +33,9 @@
 #include <string.h>
 #include <stdio.h>
 #ifdef UNIX
-#include <alloca.h>     /* alloca is not defined in malloc.h on unix systems */
+    #include <alloca.h>
+#else
+    #include <malloc.h>
 #endif
 
 
