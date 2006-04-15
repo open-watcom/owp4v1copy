@@ -246,25 +246,25 @@ string_data *X86InsTable[] = {
 ins_decode_data X64DecodeTable1[] = {
     #undef inspick
     #define inspick( idx, name, opcode, mask, handler ) { opcode, mask, DI_X64_##idx, #idx, #handler },
-    #include "insX64.h"
+    #include "insx64.h"
 };
 
 string_data X64InsTable1[] = {
     #undef inspick
     #define inspick( idx, name, opcode, mask, handler ) { name, 0 },
-    #include "insX64.h"
+    #include "insx64.h"
 };
 
 string_data X64RegTable[] = {
     #undef regpick
     #define regpick( idx, name ) { name, 0 },
-    #include "regX64.h"
+    #include "regx64.h"
 };
 
 string_data X64RefTable[] = {
     #undef refpick
     #define refpick( idx, name ) { name, 0 },
-    #include "refX64.h"
+    #include "refx64.h"
 };
 
 unsigned X64InsNum[] = {
