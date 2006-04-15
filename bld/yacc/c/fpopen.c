@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 
-#include <malloc.h>
 #include <string.h>
 #include <stdio.h>
 #include "walloca.h"
