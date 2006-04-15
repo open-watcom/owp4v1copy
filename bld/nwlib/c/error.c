@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Message output for librarian.
 *
 ****************************************************************************/
 
@@ -43,7 +42,7 @@ extern  long            FileShift;
 
 
 
-static long res_seek( int handle, long position, int where )
+static long res_seek( int handle, off_t position, int where )
 /* fool the resource compiler into thinking that the resource information
  * starts at offset 0 */
 {
@@ -56,7 +55,7 @@ static long res_seek( int handle, long position, int where )
 
 WResSetRtns( open, close, read, write, res_seek, tell, MemAllocGlobal, MemFreeGlobal );
 
-void InitMsg()
+void InitMsg( void )
 {
     int initerror;
 
@@ -91,7 +90,7 @@ void MsgGet( int resourceid, char *buffer )
     }
 }
 
-void FiniMsg()
+void FiniMsg( void )
 {
     if( Res_Flag == EXIT_SUCCESS ) {
         if( CloseResFile( &hInstance ) != -1 ) {

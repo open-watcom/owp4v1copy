@@ -66,8 +66,8 @@ static int ResWrite( int dummy, const void *buff, size_t size )
 }
 
 extern int WLinkItself;
-static long ResSeek( int handle, long position, int where )
-/*********************************************************/
+static long ResSeek( int handle, off_t position, int where )
+/**********************************************************/
 /* Workaround wres bug */
 {
     if( ( where == SEEK_SET ) && ( handle == WLinkItself ) ) {
