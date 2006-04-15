@@ -215,6 +215,22 @@ static void DropLabel( LABEL_INDEX label )
 }
 
 
+static void DropBreakLabel( void )
+{
+    if( BlockStack->break_label != 0 ) {        /* 05-apr-92 */
+        DropLabel( BlockStack->break_label );
+    }
+}
+
+
+static void DropContinueLabel( void )
+{
+    if( BlockStack->continue_label != 0 ) {
+        DropLabel( BlockStack->continue_label );
+    }
+}
+
+
 static TREEPTR BracketExpr( void )
 {
     TREEPTR     tree;
@@ -825,22 +841,6 @@ static void CaseStmt( void )
         CErr1( ERR_MISPLACED_CASE );
         ConstExprAndType( &val );        /* grab constant expression */
         MustRecog( T_COLON );
-    }
-}
-
-
-static void DropBreakLabel( void )
-{
-    if( BlockStack->break_label != 0 ) {        /* 05-apr-92 */
-        DropLabel( BlockStack->break_label );
-    }
-}
-
-
-static void DropContinueLabel( void )
-{
-    if( BlockStack->continue_label != 0 ) {
-        DropLabel( BlockStack->continue_label );
     }
 }
 
