@@ -30,6 +30,7 @@
 
 
 #include "wlib.h"
+#include <malloc.h>
 #include "idedll.h"
 
 static IDECBHdl   ideHdl;
