@@ -34,11 +34,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "yacc.h"
-#ifdef UNIX
-    #include <alloca.h>
-#else
-    #include <malloc.h>
-#endif
+#include "walloca.h"
 
 FILE *yaccin, *actout, *tokout;
 char *loadpath, *srcname;

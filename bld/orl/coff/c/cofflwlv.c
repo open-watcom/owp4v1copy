@@ -31,7 +31,7 @@
 
 #include "cofflwlv.h"
 #include "orlhash.h"
-#include <malloc.h>
+#include "walloca.h"
 #ifdef _BSD_SOURCE
 #define stricmp strcasecmp
 #endif
