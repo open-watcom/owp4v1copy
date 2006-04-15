@@ -829,6 +829,22 @@ static void CaseStmt( void )
 }
 
 
+static void DropBreakLabel( void )
+{
+    if( BlockStack->break_label != 0 ) {        /* 05-apr-92 */
+        DropLabel( BlockStack->break_label );
+    }
+}
+
+
+static void DropContinueLabel( void )
+{
+    if( BlockStack->continue_label != 0 ) {
+        DropLabel( BlockStack->continue_label );
+    }
+}
+
+
 #ifdef __SEH__
 static void MarkTryVolatile( SYM_HANDLE sym_handle )
 {
@@ -1036,22 +1052,6 @@ static void EndSwitch( void )
     }
     CMemFree( sw );
 #endif
-}
-
-
-static void DropBreakLabel( void )
-{
-    if( BlockStack->break_label != 0 ) {        /* 05-apr-92 */
-        DropLabel( BlockStack->break_label );
-    }
-}
-
-
-static void DropContinueLabel( void )
-{
-    if( BlockStack->continue_label != 0 ) {
-        DropLabel( BlockStack->continue_label );
-    }
 }
 
 
