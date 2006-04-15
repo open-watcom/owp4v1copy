@@ -24,14 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resource compiler memory layer 0.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 #include "rcalloc0.h"
 #include "errors.h"
@@ -199,4 +198,3 @@ extern void RCMemLayer0ShutDown( HeapHandle *heap )
     }
     free( heap );
 }
-
