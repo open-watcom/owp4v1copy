@@ -125,7 +125,16 @@ static unsigned ProcSet( char *cmd )
     if( *rep == '\0' ) {
         rep = NULL;             // get rid of the variable! Needed by Optima!
     }
+#ifdef __WATCOMC__
+    // We don't have unsetenv(), but our setenv() is extended vs. POSIX 
     return( setenv( var, rep, 1 ) );
+#else
+    if( rep == NULL ) {
+        unsetenv( var );
+        return( 0 );
+    } else
+        return( setenv( var, rep, 1 ) );
+#endif
 }
 
 void ResetArchives( copy_entry *list )
