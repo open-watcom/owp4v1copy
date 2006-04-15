@@ -24,7 +24,6 @@ extra_l_flags           = library $(orl_lib)
         set include=$(inc_path)
 
 test_objs       =   test$(obj) &
-                    getopt$(obj) &
                     trmemcvr$(obj)
 !ifeq release 0
 test_objs       +=  trmem$(obj)
