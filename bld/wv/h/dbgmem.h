@@ -33,7 +33,7 @@
 #ifndef __DBGMEM_INCLUDED
 #define __DBGMEM_INCLUDED
 
-#include <malloc.h>
+#include "walloca.h"
 #ifndef __alloca
 #define __alloca(s)     _alloca( __ALLOCA_ALIGN( s ) )
 #endif

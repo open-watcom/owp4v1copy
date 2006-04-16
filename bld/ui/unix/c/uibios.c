@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  BIOS emulation routines for UNIX platforms.
 *
 ****************************************************************************/
 
@@ -37,7 +36,6 @@
     #include <curses.h>
 #elif !defined( HP )
     #include <curses.h>
-    #include <termio.h>
 #else
     #include <stdarg.h>
     #include <curses.h>
