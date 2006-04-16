@@ -33,7 +33,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #ifndef __WATCOMC__
-#include <alloca.h>
+#include "walloca.h"
 #endif
 #include <sys/types.h>
 #include <unistd.h>

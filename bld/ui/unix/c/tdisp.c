@@ -48,9 +48,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <assert.h>
-#ifndef __WATCOMC__
-#include <alloca.h>
-#endif
 #ifdef _AIX
     #define alloca __alloca
     #define _HAS_NO_CHAR_BIT_FIELDS
@@ -59,7 +56,6 @@
 
 #if defined( __WATCOMC__ )
 #elif !defined( HP )
-    #include <termio.h>
 #else
     #define TIOCGWINSZ      _IOR('t', 107, struct winsize) /* get window size */
     struct  winsize {

@@ -48,16 +48,11 @@
 #include "guidead.h"
 #ifndef __WATCOMC__
     #include "clibext.h"
-    #include <termio.h>
 #elif defined( UNIX )
     #include "clibext.h"
     #include "stdtypes.h"
-    #ifdef HP
-        #include <termios.h>
-    #else
-        #include <termio.h>
-    #endif
 #endif
+#include <termios.h>
 
 extern int GUIXMain( int argc, char * argv[] );
 

@@ -62,8 +62,8 @@ static HANDLE_INFO      hInstance = {0};
 static unsigned         msgShift;
 extern long             FileShift;
 
-static long resSeek( int handle, long position, int where ) {
-//***********************************************************
+static long resSeek( int handle, off_t position, int where ) {
+//************************************************************
 
     if( where == SEEK_SET ) {
         return( lseek( handle, position+FileShift, where ) - FileShift );
