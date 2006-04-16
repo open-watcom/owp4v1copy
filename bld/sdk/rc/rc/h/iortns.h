@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Client callback prototypes for wres library.
 *
 ****************************************************************************/
 
@@ -34,8 +33,8 @@ int  RcOpen( const char *, int, ... );
 int  RcClose( int );
 int  RcWrite( int, const void *, size_t );
 int  RcRead( int, void *, size_t );
-long RcSeek( int, long, int );
-long RcTell( int );
+off_t RcSeek( int, off_t, int );
+off_t RcTell( int );
 
 void CloseAllFiles( void );
 void RegisterOpenFile( int fhdl );
