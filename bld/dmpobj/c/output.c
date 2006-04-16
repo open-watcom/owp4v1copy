@@ -211,7 +211,7 @@ void Output( const char *fmt, ... )
         fmt = probe + 1;
         switch( *fmt ) {
         case 'c':
-            *p++ = va_arg( args, char );
+            *p++ = va_arg( args, int );
             break;
         case 's':
             str = va_arg( args, const char * );
@@ -234,14 +234,14 @@ void Output( const char *fmt, ... )
             *p++ = '\'';
             break;
         case 'b':
-            p = toHex2( p, va_arg( args, unsigned_8 ) );
+            p = toHex2( p, va_arg( args, unsigned ) );
             *p++ = 'h';
             break;
         case '2':
-            p = toHex2( p, va_arg( args, unsigned_8 ) );
+            p = toHex2( p, va_arg( args, unsigned ) );
             break;
         case 'x':
-            p = toHex4( p, va_arg( args, unsigned_16 ) );
+            p = toHex4( p, va_arg( args, unsigned ) );
             *p++ = 'h';
             break;
         case 'X':
@@ -252,10 +252,10 @@ void Output( const char *fmt, ... )
             p = toHex8( p, va_arg( args, unsigned_32 ) );
             break;
         case 'u':
-            p = toDec16( p, va_arg( args, unsigned_16 ) );
+            p = toDec16( p, va_arg( args, unsigned ) );
             break;
         case '5':
-            p = to5Dec16( p, va_arg( args, unsigned_16 ) );
+            p = to5Dec16( p, va_arg( args, unsigned ) );
             break;
         case '<':
             len = va_arg( args, unsigned );
