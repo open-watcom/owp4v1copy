@@ -41,9 +41,17 @@ struct  tokens {
     char    buf[1];
 };
 
+// FIXME: the 'token' should be of type TOKEN, but there is code that
+// expects it's only a byte. This breaks if enum is not byte-sized, which
+// it won't be with non-Watcom compilers. The structure and code should
+// probably be rewriten to not make any unwarranted assumptions.
 typedef struct macro_token {
     struct macro_token  *next;
+#ifdef __WATCOMC__
     TOKEN               token;
+#else
+    byte                token;
+#endif
     char                data[1];
 } MACRO_TOKEN;
 
