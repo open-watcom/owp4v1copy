@@ -316,6 +316,11 @@ dis_value HandleAddend( ref_entry r_entry )
     case ORL_RELOC_TYPE_SEC_REL:
     case ORL_RELOC_TYPE_REL_32:
     case ORL_RELOC_TYPE_REL_32_NOADJ:
+    case ORL_RELOC_TYPE_REL_32_ADJ1:
+    case ORL_RELOC_TYPE_REL_32_ADJ2:
+    case ORL_RELOC_TYPE_REL_32_ADJ3:
+    case ORL_RELOC_TYPE_REL_32_ADJ4:
+    case ORL_RELOC_TYPE_REL_32_ADJ5:
     case ORL_RELOC_TYPE_PLTREL_32:
     case ORL_RELOC_TYPE_PLT_32:
     default:
@@ -346,6 +351,11 @@ int IsDataReloc( ref_entry r_entry )
     case ORL_RELOC_TYPE_SECTION:
     case ORL_RELOC_TYPE_REL_32:
     case ORL_RELOC_TYPE_REL_32_NOADJ:
+    case ORL_RELOC_TYPE_REL_32_ADJ1:
+    case ORL_RELOC_TYPE_REL_32_ADJ2:
+    case ORL_RELOC_TYPE_REL_32_ADJ3:
+    case ORL_RELOC_TYPE_REL_32_ADJ4:
+    case ORL_RELOC_TYPE_REL_32_ADJ5:
     case ORL_RELOC_TYPE_PLTREL_32:
     case ORL_RELOC_TYPE_PLT_32:
     case ORL_RELOC_TYPE_WORD_64:
@@ -370,6 +380,11 @@ orl_sec_offset RelocSize( ref_entry r_entry )
     case ORL_RELOC_TYPE_REL_24:
     case ORL_RELOC_TYPE_REL_32:
     case ORL_RELOC_TYPE_REL_32_NOADJ:
+    case ORL_RELOC_TYPE_REL_32_ADJ1:
+    case ORL_RELOC_TYPE_REL_32_ADJ2:
+    case ORL_RELOC_TYPE_REL_32_ADJ3:
+    case ORL_RELOC_TYPE_REL_32_ADJ4:
+    case ORL_RELOC_TYPE_REL_32_ADJ5:
     case ORL_RELOC_TYPE_PLTREL_24:
     case ORL_RELOC_TYPE_PLTREL_32:
     case ORL_RELOC_TYPE_PLT_32:

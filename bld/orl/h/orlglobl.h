@@ -239,6 +239,15 @@ typedef enum {
     ORL_RELOC_TYPE_REL_24,      // relative ref to a 24-bit address shifted 2
     ORL_RELOC_TYPE_REL_32,      // relative ref to a 32-bit address
     ORL_RELOC_TYPE_REL_32_NOADJ,// as above, but doesn't need -4 adjustment
+
+// these special REL_32_ADJx are for x64 coff files, there are only used in ndisasm yet!
+// for information look into watcom/h/coff.h in amd64 section for more information
+    ORL_RELOC_TYPE_REL_32_ADJ1, // relative ref to a 32-bit address, need special adjustment
+    ORL_RELOC_TYPE_REL_32_ADJ2, // relative ref to a 32-bit address, need special adjustment
+    ORL_RELOC_TYPE_REL_32_ADJ3, // relative ref to a 32-bit address, need special adjustment
+    ORL_RELOC_TYPE_REL_32_ADJ4, // relative ref to a 32-bit address, need special adjustment
+    ORL_RELOC_TYPE_REL_32_ADJ5, // relative ref to a 32-bit address, need special adjustment
+    
     ORL_RELOC_TYPE_TOCREL_16,   // relative ref to 16-bit offset from TOC base.
     ORL_RELOC_TYPE_TOCREL_14,   // rel. ref to 14-bit offset from TOC base shifted 2.
     ORL_RELOC_TYPE_TOCVREL_16,  // ditto, data explicitely defined in .tocd

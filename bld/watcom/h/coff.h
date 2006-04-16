@@ -457,8 +457,38 @@ enum {
 // AMD64 (X86-64) relocations
 //
 #define IMAGE_REL_AMD64_ABSOLUTE        0x0000  // Reference is absolute, no relocation is necessary
+#define IMAGE_REL_AMD64_ADDR64          0x0001  // 64-bit address
 #define IMAGE_REL_AMD64_ADDR32          0x0002  // 32-bit address
-#define IMAGE_REL_AMD64_REL32           0x0004  // PC-relative 32-bit reference to the symbols virtual address
+#define IMAGE_REL_AMD64_ADDR32NB        0x0003  // 32-bit address reference to the virtual address, base not included
+#define IMAGE_REL_AMD64_REL32           0x0004  // PC-relative 32-bit reference to the symbols virtual address (0 byte distance to target)
+#define IMAGE_REL_AMD64_REL32_1         0x0005  // PC-relative 32-bit reference to the symbols virtual address (1 byte distance to target)
+#define IMAGE_REL_AMD64_REL32_2         0x0006  // PC-relative 32-bit reference to the symbols virtual address (2 byte distance to target)
+#define IMAGE_REL_AMD64_REL32_3         0x0007  // PC-relative 32-bit reference to the symbols virtual address (3 byte distance to target)
+#define IMAGE_REL_AMD64_REL32_4         0x0008  // PC-relative 32-bit reference to the symbols virtual address (4 byte distance to target)
+#define IMAGE_REL_AMD64_REL32_5         0x0009  // PC-relative 32-bit reference to the symbols virtual address (5 byte distance to target)
+#define IMAGE_REL_AMD64_SECTION         0x000A  // va of containing section (size unknown yet; I think its 32-bit)
+#define IMAGE_REL_AMD64_SECREL          0x000B  // 32-bit section relative reference
+#define IMAGE_REL_AMD64_SECREL7         0x000C  // 7-bit section relative reference
+//
+// I think that I've figured out for what these REL32_x relocations are.
+// following is a simple asm program to demonstate the behavoir:
+//
+// asdf:
+// ; ex for IMAGE_REL_AMD64_REL32
+// ;          vvvvvvvvvvv <- distance: 0 (to the end)
+// ; 44 12 05 00 00 00 00
+// adc r8b, byte ptr [asdf]
+//
+// ; ex for IMAGE_REL_AMD64_REL32_1
+// ;       vvvvvvvvvvv <- distance: 1 (to the end)
+// ; 83 15 00 00 00 00 12 
+// adc    dword ptr asdf, 12h
+//
+// ; ex for IMAGE_REL_AMD64_REL32_4
+// ;          vvvvvvvvvvv  <- distance: 4 (to the end)
+// ; 48 81 15 00 00 00 00 78 56 34 12
+// adc qword ptr [asdf], 12345678h
+//
 
 
 typedef struct {

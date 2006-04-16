@@ -257,12 +257,23 @@ orl_reloc_type CoffConvertRelocType( coff_file_handle coff_file_hnd, coff_reloc_
                 return( ORL_RELOC_TYPE_NONE );
         }
     } else if( coff_file_hnd->machine_type == ORL_MACHINE_TYPE_AMD64 ) {
+        printf("coff_type is %d\n", coff_type);
         switch( coff_type ) {
+            
             case IMAGE_REL_AMD64_REL32:              // 32-Bit PC-relative offset
+                return( ORL_RELOC_TYPE_REL_32 );
+            case IMAGE_REL_AMD64_ADDR32:
                 return( ORL_RELOC_TYPE_WORD_32 );
-                //return( ORL_RELOC_TYPE_REL_32 );    // should be this! but for now it's better to use the line above.
-            case IMAGE_REL_AMD64_ADDR32:             // 32-Bit address
-                return( ORL_RELOC_TYPE_WORD_32 );
+            case IMAGE_REL_AMD64_REL32_1:
+                return( ORL_RELOC_TYPE_REL_32_ADJ1 );
+            case IMAGE_REL_AMD64_REL32_2:
+                return( ORL_RELOC_TYPE_REL_32_ADJ2 );
+            case IMAGE_REL_AMD64_REL32_3:
+                return( ORL_RELOC_TYPE_REL_32_ADJ3 );
+            case IMAGE_REL_AMD64_REL32_4:
+                return( ORL_RELOC_TYPE_REL_32_ADJ4 );
+            case IMAGE_REL_AMD64_REL32_5:
+                return( ORL_RELOC_TYPE_REL_32_ADJ5 );
             default:
                 return( ORL_RELOC_TYPE_NONE );
         }

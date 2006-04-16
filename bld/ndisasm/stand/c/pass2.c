@@ -299,6 +299,35 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
                                  flags );
             }
             break;
+        case ORL_RELOC_TYPE_REL_32_ADJ5:
+            // nvalue = 5 (for processing)
+            nvalue += 1;
+        case ORL_RELOC_TYPE_REL_32_ADJ4:
+            // nvalue = 4 (for processing)
+            nvalue += 1;
+        case ORL_RELOC_TYPE_REL_32_ADJ3:
+            // nvalue = 3 (for processing)
+            nvalue += 1;
+        case ORL_RELOC_TYPE_REL_32_ADJ2:
+            // nvalue = 2 (for processing)
+            nvalue += 1;
+        case ORL_RELOC_TYPE_REL_32_ADJ1:
+            // nvalue = 1 (for processing)
+            nvalue += 1;
+            // For some reason we add the instruction size to the value
+            // of the displacement in a relative call and get a bad
+            // offset, due to CORE implementation
+            //
+            // Main reason :
+            // instruction size with displacement and with addend is correct for
+            // relative addresses without relocate
+            //
+            if( (*r_entry)->no_val == 0 ) {
+                nvalue -= ins_size;
+            }
+            referenceString( *r_entry, sec_size, "", "", "", buff, flags );
+            break;
+
         case ORL_RELOC_TYPE_REL_32_NOADJ:
             // this is a little kluge because Brian's ELF files seem to have
             // -4 in the implicit addend for calls and such BBB May 09, 1997
