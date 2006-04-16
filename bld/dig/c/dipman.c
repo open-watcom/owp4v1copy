@@ -30,8 +30,8 @@
 
 
 #include <string.h>
-#include <malloc.h>
 #include <limits.h>
+#include "walloca.h"
 #include "dip.h"
 #include "dipimp.h"
 #include "dipcli.h"
@@ -645,7 +645,7 @@ static walk_result DoWalkSymList( symbol_source ss, void *start, walk_glue *wd )
 {
     image_handle        *ih;
     sym_handle          *sh = __alloca( DIPHandleSize( HK_SYM ) );
-    image_idx           ii;
+    image_idx           ii = NULL;
     imp_mod_handle      im;
     mod_handle          mh;
     type_handle         *it;
