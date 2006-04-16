@@ -1,4 +1,5 @@
-#pmake: build os_nt os_win os_os2 cpu_386 cpu_axp
+#pmake: build os_nt os_win os_os2 os_linux cpu_386 cpu_axp
+
 all : .symbolic IDE PBIDE
 IDE : win/idex.cfg nt/idex.cfg ide.cfg .SYMBOLIC
 PBIDE : win/pbidex.cfg nt/pbidex.cfg win/pbide.cfg nt/pbide.cfg .SYMBOLIC

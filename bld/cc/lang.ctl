@@ -127,10 +127,10 @@ cdsay .
     <CCCMD> nt386.mps/wccdmpsc.dll    <RELROOT>/rel2/binnt/wccdmps.dll
     <CCCMD> nt386.mps/wccdmpsc.sym    <RELROOT>/rel2/binnt/wccdmps.sym
     <CCCMD> nt386.mps/wccmps01.int    <RELROOT>/rel2/binnt/wccmps01.int
-    <CPCMD> os2386.mps/wccmpsc.exe    <RELROOT>/rel2/binp/wccmps.exe
-    <CPCMD> os2386.mps/wccmpsc.sym    <RELROOT>/rel2/binp/wccmps.sym
-    <CPCMD> os2386.mps/wccdmpsc.dll   <RELROOT>/rel2/binp/dll/wccdmps.dll
-    <CPCMD> os2386.mps/wccdmpsc.sym   <RELROOT>/rel2/binp/dll/wccdmps.sym
+    <CCCMD> os2386.mps/wccmpsc.exe    <RELROOT>/rel2/binp/wccmps.exe
+    <CCCMD> os2386.mps/wccmpsc.sym    <RELROOT>/rel2/binp/wccmps.sym
+    <CCCMD> os2386.mps/wccdmpsc.dll   <RELROOT>/rel2/binp/dll/wccdmps.dll
+    <CCCMD> os2386.mps/wccdmpsc.sym   <RELROOT>/rel2/binp/dll/wccdmps.sym
 
   [ IFDEF (os_qnx) <2*> ]
     <CPCMD> qnx386.i86/wcci86c.exe    <RELROOT>/rel2/qnx/binq/wcc.
