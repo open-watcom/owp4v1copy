@@ -225,7 +225,6 @@ static void setFinalTargetSystem( OPT_STORAGE *data, char *target_name )
     if( 0 == strcmp( target_name, "DOS" ) ) {
         TargetSystem = TS_DOS;
         PreDefineStringMacro( "MSDOS" );
-        PreDefineStringMacro( "__MSDOS__" );
         PreDefineStringMacro( "__DOS__" );
         PreDefineStringMacro( "_DOS" );
 #if _CPU == 386

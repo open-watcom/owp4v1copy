@@ -266,7 +266,7 @@ int Test_print_float( void )
     /* Currently %F is a far pointer modified in some libs, to
      * be changed later. Most libs are ISO C compliant in this regard.
      */
-#if !defined( __MSDOS__ ) && !defined( _M_IX86 )
+#if !defined( __DOS__ ) && !defined( _M_IX86 )
     VERIFY( sprintf( buf, "%F", _INF ) == 3 );
     VERIFY( !strcmp( buf, "INF" ) );
 

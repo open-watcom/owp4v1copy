@@ -339,7 +339,6 @@ local void SetTargSystem( void )                            /* 07-aug-90 */
     {
     case TS_DOS:
         PreDefine_Macro( "MSDOS" );
-        PreDefine_Macro( "__MSDOS__" );
         PreDefine_Macro( "_DOS" );
     break;
 
