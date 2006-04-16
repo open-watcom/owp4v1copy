@@ -257,9 +257,7 @@ orl_reloc_type CoffConvertRelocType( coff_file_handle coff_file_hnd, coff_reloc_
                 return( ORL_RELOC_TYPE_NONE );
         }
     } else if( coff_file_hnd->machine_type == ORL_MACHINE_TYPE_AMD64 ) {
-        printf("coff_type is %d\n", coff_type);
         switch( coff_type ) {
-            
             case IMAGE_REL_AMD64_REL32:              // 32-Bit PC-relative offset
                 return( ORL_RELOC_TYPE_REL_32 );
             case IMAGE_REL_AMD64_ADDR32:
