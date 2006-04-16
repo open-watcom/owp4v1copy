@@ -1,24 +1,24 @@
 [ DEFAULT ]
-# dos and windows
+# DOS and Windows 3.x
 type="e" dir="binw"	usr="wd.exe"		cond="doshost dostarg |"			where="c jc f77 jf77"		descr="Character mode debugger"			old="bin"
 type="e" dir="binw"	usr="wdc.exe"		cond="wintarg winhost |"			where="c jc f77 jf77"		descr="Character-mode debugger"
 type="e" dir="binw"	usr="wdw.exe"		cond="wintarg winhost |"			where="c jc f77 jf77"		descr="GUI debugger"
-
-# japanese NEC98 dos 
-type="e" dir="n98bw"	usr="wd.exe"		cond="doshost dostarg | nechost nectarg |"	where="jc jf77"			descr="Gui debugger"
-type="e" dir="n98bw"	usr="wdc.exe"		cond="wintarg winhost | nechost nectarg |"	where="jc jf77"			descr="Character-mode debugger"
 
 # OS/2
 type="e" dir="binp"	usr="wd.exe"		cond="os2host os2targ |"			where="c jc f77 jf77"		descr="Character-mode debugger"
 type="e" dir="binp"	usr="wdw.exe"		cond="os2host os2targ |"			where="c jc f77 jf77"		descr="GUI debugger"
 
-# WINDOWS NT - INTEL
+# Windows NT - 386
 type="e" dir="binnt"	usr="wd.exe"		cond="wnthost wnttarg |"			where="c jc f77 jf77 ac"	descr="Character mode debugger"
 type="e" dir="binnt"	usr="wdw.exe"		cond="wnthost wnttarg |"			where="c jc f77 jf77 ac"	descr="GUI debugger"
 
-# WINDOWS NT - ALPHA
+# Windows NT - Alpha AXP
 type="e" dir="axpnt"	usr="wd.exe"		cond="alphahost alphatarg |"			where="ac"			descr="Character mode debugger"
 type="e" dir="axpnt"	usr="wdw.exe"		cond="alphahost alphatarg |"			where="ac"			descr="GUI debugger"
+
+# Linux - 386
+# OS/2
+type="e" dir="binl"	usr="wd"		cond="lnxhost lnxtarg |"			where="c jc f77 jf77"		descr="Character-mode debugger"
 
 # Debugger Command Files
 type="s" dir="binw"	usr="animate.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"

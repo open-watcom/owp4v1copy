@@ -50,6 +50,20 @@ usr="wpp38601.int" 	dir="binw" 	cond="doshost winhost | cplusplus" 		where="  jc
 #usr="wppaxp.exe" 	dir="binw" 	cond="doshost winhost | cplusplus" 		where=""
 
 #
+# 386 Linux hosted compilers
+#
+#  i86 target
+usr="wpp" 		dir="binl" 	cond="lnxhost cplusplus tools16"		where="c jc"
+usr="wppi8601.int"	dir="binl" 	cond="lnxhost cplusplus tools16"		where="  jc"
+
+#  386 target
+usr="wpp386"		dir="binl" 	cond="lnxhost cplusplus"			where="c jc"
+usr="wpp38601.int" 	dir="binl" 	cond="lnxhost cplusplus"			where="  jc"
+
+#  axp target
+#usr="wppaxp"		dir="binl" 	cond="lnxhost cplusplus"			where=""
+
+#
 # AXP NT compilers
 #
 

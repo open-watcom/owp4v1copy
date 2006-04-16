@@ -61,6 +61,13 @@ dir="binp"	usr="tcpserv.exe"	cond="os2targ"				where="c f77"
 dir="binp"	usr="wdpmhelp.exe"	cond="os2host os2targ |"		where="c f77"
 dir="binp"	usr="nmpbind.exe"	cond="winhost IsOS2DosBox & os2host | MinimalInstall |"				where="c f77"
 
+# Linux 386
+dir="binl"	usr="std.trp"		cond="lnxtarg"				where="c f77"
+dir="binl"	usr="tcp.trp"		cond="lnxtarg lnxhost |"		where="c f77"
+dir="binl"	usr="par.trp"		cond="lnxtarg lnxhost |"		where="c f77"
+dir="binl"	usr="tcpserv"		cond="lnxtarg"				where="c f77"
+dir="binl"	usr="parserv"		cond="lnxtarg"				where="c f77"
+
 # 386 NT
 dir="binnt"	usr="std.dll"		cond="wnttarg"				where="c ac f77"
 dir="binnt"	usr="nov.dll"		cond="wnthost wnttarg |"		where="c ac f77"

@@ -17,6 +17,11 @@ dir="binp"	usr="madaxp.d32" cond="os2host os2targ |"  	where="c f77 ac"
 dir="binp"	usr="madppc.d32" cond="os2host os2targ |"  	where="c f77"
 dir="binp"	usr="madmips.d32" cond="os2host os2targ |"  	where="c f77"
 
+dir="binl"	usr="madx86.mad" cond="lnxhost lnxtarg |"  	where="c f77"
+dir="binl"	usr="madaxp.mad" cond="lnxhost lnxtarg |"  	where="c f77 ac"
+dir="binl"	usr="madppc.mad" cond="lnxhost lnxtarg |"  	where="c f77"
+dir="binl"	usr="madmips.mad" cond="lnxhost lnxtarg |"  	where="c f77"
+
 dir="axpnt"	usr="madx86.dll" cond="alphahost alphatarg |" 	where="ac"
 dir="axpnt"	usr="madaxp.dll" cond="alphahost alphatarg |" 	where="ac"
 dir="axpnt"	usr="madppc.dll" cond="alphahost alphatarg |" 	where="ac"
