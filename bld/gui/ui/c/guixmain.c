@@ -52,7 +52,9 @@
     #include "clibext.h"
     #include "stdtypes.h"
 #endif
-#include <termios.h>
+#ifdef __UNIX__
+    #include <termios.h>
+#endif
 
 extern int GUIXMain( int argc, char * argv[] );
 
