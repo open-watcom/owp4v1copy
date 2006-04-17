@@ -58,8 +58,9 @@ static char const * const SectionNames[DR_DEBUG_NUM_SECTS] = {
     ".WATCOM_references"
 };
 
-uint Lookup_section_name( const char *name ){
+uint Lookup_section_name( const char *name )
 /******************************************/
+{
     uint        sect;
 
     for( sect = 0 ; sect < DR_DEBUG_NUM_SECTS; sect++ ) {
@@ -70,7 +71,9 @@ uint Lookup_section_name( const char *name ){
     return( sect );
 }
 
+
 static void ByteSwapShdr( Elf32_Shdr *elf_sec, int byteswap )
+/***********************************************************/
 {
     if( byteswap ) {
         SWAP_32( elf_sec->sh_name );
@@ -86,6 +89,7 @@ static void ByteSwapShdr( Elf32_Shdr *elf_sec, int byteswap )
     }
 }
 
+
 static dip_status GetSectInfo( dig_fhandle f, uint_32 *sizes,
                                uint_32 *bases, unsigned *byteswap )
 /*****************************************************************/
@@ -96,14 +100,14 @@ static dip_status GetSectInfo( dig_fhandle f, uint_32 *sizes,
     Elf32_Shdr          elf_sec;
     unsigned_32         offset;
     unsigned_32         start;
-    char               *string_table;
+    char                *string_table;
     int                 i;
     uint                sect;
 
     // Find TIS header seek to elf header
     start = DCSeek( f, -(int)sizeof( dbg_head ), DIG_END );
-    for(;;){
-        if( DCRead( f, &dbg_head, sizeof(dbg_head)) != sizeof(dbg_head) ) {
+    for( ;; ) {
+        if( DCRead( f, &dbg_head, sizeof( dbg_head ) ) != sizeof( dbg_head ) ) {
             return( DS_FAIL );
         }
         if( dbg_head.signature != TIS_TRAILER_SIGNATURE ) {
@@ -113,13 +117,13 @@ static dip_status GetSectInfo( dig_fhandle f, uint_32 *sizes,
             break;
         }
         start += sizeof( dbg_head );
-        start  -= dbg_head.size;
+        start -= dbg_head.size;
         DCSeek( f, start, DIG_ORG );
         if( dbg_head.vendor == TIS_TRAILER_VENDOR_TIS
-         && dbg_head.type == TIS_TRAILER_TYPE_TIS_DWARF )break;
+         && dbg_head.type == TIS_TRAILER_TYPE_TIS_DWARF ) break;
     }
     // read elf header find dwarf info
-    if( DCRead( f, &elf_head, sizeof( elf_head )) != sizeof( elf_head ) ){
+    if( DCRead( f, &elf_head, sizeof( elf_head )) != sizeof( elf_head ) ) {
         return( DS_FAIL );
     }
     if( memcmp( elf_head.e_ident, ELF_SIGNATURE, ELF_SIGNATURE_LEN ) ) {
@@ -153,14 +157,14 @@ static dip_status GetSectInfo( dig_fhandle f, uint_32 *sizes,
     }
 
     // grab the string table, if it exists
-    if( !elf_head.e_shstrndx ){
-        return( DS_FAIL );  // no strings no dwarf
+    if( !elf_head.e_shstrndx ) {
+        return( DS_FAIL );  // no strings no DWARF
     }
-    if( elf_head.e_shnum == 0 ){
-        return( DS_FAIL ); // no sections no dwarf
+    if( elf_head.e_shnum == 0 ) {
+        return( DS_FAIL );  // no sections no DWARF
     }
-    memset( bases, 0, DR_DEBUG_NUM_SECTS * sizeof(unsigned_32) );
-    memset( sizes, 0, DR_DEBUG_NUM_SECTS * sizeof(unsigned_32) );
+    memset( bases, 0, DR_DEBUG_NUM_SECTS * sizeof( unsigned_32 ) );
+    memset( sizes, 0, DR_DEBUG_NUM_SECTS * sizeof( unsigned_32 ) );
     offset = elf_head.e_shoff
            + elf_head.e_shstrndx * elf_head.e_shentsize+start;
     DCSeek( f, offset, DIG_ORG );
@@ -189,47 +193,58 @@ static dip_status GetSectInfo( dig_fhandle f, uint_32 *sizes,
     return( DS_OK );
 }
 
-static void DWRRead( void *_f, dr_section sect, void *buff, size_t size ) {
-/******************************************************************/
-    imp_image  f = _f;
-    uint_32    base;
+
+static void DWRRead( void *_f, dr_section sect, void *buff, size_t size )
+/***********************************************************************/
+{
+    imp_image   f = _f;
+    uint_32     base;
 
     base = f->dwarf->sect_offsets[sect];
     DCRead( f->sym_file, buff, size );
 }
 
-static void DWRSeek( void *_f, dr_section sect, long offs ) {
-/******************************************************/
-    imp_image f = _f;
-    long base;
+
+static void DWRSeek( void *_f, dr_section sect, long offs )
+/*********************************************************/
+{
+    imp_image   f = _f;
+    long        base;
 
     base = f->dwarf->sect_offsets[sect];
     DCSeek( f->sym_file, offs+base, DIG_ORG );
 }
 
-static void *DWRAlloc( size_t size ){
-/***********************************/
+
+static void *DWRAlloc( size_t size )
+/**********************************/
+{
     return( DCAlloc( size ) );
 }
 
-static void *DWRRealloc( void *what, size_t size ){
-/***********************************/
+
+static void *DWRRealloc( void *what, size_t size )
+/************************************************/
+{
     return( DCRealloc( what, size ) );
 }
 
-static void DWRFree( void *what ){
-/*********************************/
+
+static void DWRFree( void *what )
+/*******************************/
+{
     DCFree( what );
 }
 
 
-static void DWRErr( dr_except code ){
-/************************************/
+static void DWRErr( dr_except code )
+/**********************************/
+{
 #if !defined( NDEBUG ) && defined( __WATCOMC__ ) && defined( __386__ )
     // for easier debugging
     __asm int 3;
 #endif
-    switch( code ){
+    switch( code ) {
     case DREXCEP_OUT_OF_VM:
         DCStatus( DS_ERR | DS_NO_READ_MEM );
         break;
@@ -242,55 +257,58 @@ static void DWRErr( dr_except code ){
     case DREXCEP_OUT_OF_MMEM:        // DWRMALLOC or DWRREALLOC failed
         DCStatus( DS_ERR | DS_NO_MEM );
         break;
-    case DREXCEP_DWARF_LIB_FAIL:     // bug in the dwarf library
+    case DREXCEP_DWARF_LIB_FAIL:     // bug in the DWARF library
         DCStatus( DS_ERR  );
         break;
     }
 }
 
-DWRSetRtns(DWRRead, DWRSeek, DWRAlloc, DWRRealloc, DWRFree, DWRErr);
+DWRSetRtns( DWRRead, DWRSeek, DWRAlloc, DWRRealloc, DWRFree, DWRErr );
 
-static dip_status InitDwarf( imp_image_handle *ii ){
-/**************************************************/
+static dip_status InitDwarf( imp_image_handle *ii )
+/*************************************************/
+{
     unsigned long   sect_sizes[DR_DEBUG_NUM_SECTS];
     dwarf_info      *dwarf;
     dip_status      ret;
 
     dwarf = DCAlloc( sizeof( *dwarf ) );
     ii->dwarf = dwarf;
-    if( dwarf == NULL ){
+    if( dwarf == NULL ) {
         ret = DS_ERR | DS_NO_MEM;
         DCStatus( ret );
         goto error_exit;
     }
     ret = GetSectInfo( ii->sym_file, sect_sizes, dwarf->sect_offsets, &ii->is_byteswapped );
-    if( ret != DS_OK )goto error_exit;
+    if( ret != DS_OK ) goto error_exit;
     dwarf->handle = DRDbgInitNFT( ii, sect_sizes, ii->is_byteswapped );
-    if( dwarf->handle == NULL ){
+    if( dwarf->handle == NULL ) {
         ret = DS_ERR | DS_NO_MEM;
         DCStatus( ret );
         goto error_exit;
     }
-    if( sect_sizes[DR_DEBUG_PUBNAMES] > 0 ){
+    if( sect_sizes[DR_DEBUG_PUBNAMES] > 0 ) {
         ii->has_pubnames = TRUE;
-    }else{
+    } else {
         ii->has_pubnames = FALSE;
     }
     return( ret );
 error_exit:
-    if( dwarf != NULL ){
+    if( dwarf != NULL ) {
         DCFree( dwarf );
         ii->dwarf = NULL;
     }
     return( ret );
 }
 
-static void FiniDwarf( imp_image_handle *ii ){
-/**************************************************/
+
+static void FiniDwarf( imp_image_handle *ii )
+/*******************************************/
+{
     dwarf_info      *dwarf;
 
     dwarf = ii->dwarf;
-    if( dwarf != NULL ){
+    if( dwarf != NULL ) {
         DRDbgDone( dwarf->handle ); /* free the sections */
         DRDbgFini( dwarf->handle );
         DCFree( dwarf );
@@ -298,79 +316,83 @@ static void FiniDwarf( imp_image_handle *ii ){
 //      DRFini();
     }
 }
-/*
-        Loading/unloading symbolic information.
-*/
 
-static int APubName( void *_ii, dr_pubname_data *curr ) {
-//*************************************************
+/* Loading/unloading symbolic information. */
+
+static int APubName( void *_ii, dr_pubname_data *curr )
+/*****************************************************/
 // Add name from pubdefs to global name hash
-//*************************************************
-    imp_image_handle *ii = _ii;
+{
+    imp_image_handle    *ii = _ii;
 
-    if( curr->is_start ){
+    if( curr->is_start ) {
         SetModPubNames( ii, curr->dbg_cu );
     }
     AddHashName( ii->name_map, curr->name, curr->dbg_handle );
     return( TRUE );
 }
 
-static int AModHash( dr_handle sym, void *_ii, dr_search_context *cont ) {
-//*******************************************
+
+static int AModHash( dr_handle sym, void *_ii, dr_search_context *cont )
+/**********************************************************************/
 // Add any global symbol to the hash
-//******************************************
-    imp_image_handle *ii = _ii;
-    int     len;
-    char    buff[256];
+{
+    imp_image_handle    *ii = _ii;
+    int                 len;
+    char                buff[256];
 
     cont = cont;
-    if( !DRIsFunctionStatic( sym ) ){
-        len =  DRGetNameBuff( sym, buff, sizeof(buff) );
+    if( !DRIsFunctionStatic( sym ) ) {
+        len = DRGetNameBuff( sym, buff, sizeof( buff ) );
         AddHashName( ii->name_map, buff, sym );
     }
     return( TRUE );
 }
 
-static walk_result ModGlbSymHash( imp_image_handle *ii,
-                          im_idx            imx,
-                          void             *d   ){
-//*******************************************
+
+static walk_result ModGlbSymHash( imp_image_handle  *ii,
+                                  im_idx            imx,
+                                  void              *d )
+/******************************************************/
 // Add module's global syms to the name hash
-//*******************************************
+{
     dr_handle       cu_tag;
 
-    d=d;
+    d = d;
     cu_tag = ii->mod_map[imx].cu_tag;
-    DRWalkModFunc( cu_tag, FALSE, AModHash, ii ); /* load hash */
+    DRWalkModFunc( cu_tag, FALSE, AModHash, ii );   /* load hash */
     return( WR_CONTINUE );
 }
 
-static void LoadGlbHash( imp_image_handle *ii ){
-//**********************************************
+
+static void LoadGlbHash( imp_image_handle *ii )
+/*********************************************/
 // Load a name hash of all the gobal symbols
-//**********************************************
-    DRSetDebug( ii->dwarf->handle ); /* must do at each interface */
-    if( ii->has_pubnames ){
+{
+    DRSetDebug( ii->dwarf->handle );    /* must do at each interface */
+    if( ii->has_pubnames ) {
         DRWalkPubName( APubName, ii );
         DFWalkModListSrc( ii, FALSE, ModGlbSymHash, NULL );
-    }else{  /* big load up */
+    } else {    /* big load up */
         DFWalkModList( ii, ModGlbSymHash, NULL );
     }
 }
 
+
 dip_status      DIPENTRY DIPImpLoadInfo( dig_fhandle file, imp_image_handle *ii )
+/*******************************************************************************/
 {
     dip_status          ret;
 
     if( file == DIG_NIL_HANDLE ) {
-        DCStatus( DS_ERR|DS_FOPEN_FAILED );
-        return( DS_ERR|DS_FOPEN_FAILED );
+        DCStatus( DS_ERR | DS_FOPEN_FAILED );
+        return( DS_ERR | DS_FOPEN_FAILED );
     }
     ii->sym_file = file;
     ret = InitDwarf( ii );
-    if( ret == DS_OK ){
+    if( ret == DS_OK ) {
         ret = InitModMap( ii );
-        if( ret == DS_OK ){
+        if( ret == DS_OK ) {
             InitImpCueInfo( ii );
             ii->name_map = InitHashName();
             LoadGlbHash( ii );
@@ -382,39 +404,42 @@ dip_status      DIPENTRY DIPImpLoadInfo( dig_fhandle file, imp_image_handle *ii 
     return( ret );
 }
 
-typedef struct{
-    imp_image_handle  *ii;
-    addr_off        low_pc;
-    addr_off        high_pc;
-    im_idx imx;
-}a_walk_info;
 
-static int ARangeItem( void *_info, dr_arange_data *curr ){
-    a_walk_info  *info = _info;
-    off_info addr_info;
-    uint_16  seg;
-    imp_image_handle *ii;
+typedef struct {
+    imp_image_handle    *ii;
+    addr_off            low_pc;
+    addr_off            high_pc;
+    im_idx              imx;
+} a_walk_info;
+
+static int ARangeItem( void *_info, dr_arange_data *curr )
+/********************************************************/
+{
+    a_walk_info         *info = _info;
+    off_info            addr_info;
+    uint_16             seg;
+    imp_image_handle    *ii;
 
     ii = info->ii;
-    if( curr->is_start ){
+    if( curr->is_start ) {
         info->imx  = Dwarf2ModIdx( ii, curr->dbg );
-        if( info->imx == INVALID_IMX ){
+        if( info->imx == INVALID_IMX ) {
             return( TRUE );
         }
-        if( ii->mod_map[info->imx].is_segment ){
+        if( ii->mod_map[info->imx].is_segment ) {
             info->low_pc = 0;
             info->high_pc = 0;
-        }else{
+        } else {
             DRGetLowPc( ii->mod_map[info->imx].cu_tag , &info->low_pc );
             DRGetHighPc( ii->mod_map[info->imx].cu_tag , &info->high_pc );
         }
     }
-    if( curr->seg_size != 0 ){ /* reset because we know better */
+    if( curr->seg_size != 0 ) { /* reset because we know better */
         ii->mod_map[info->imx].is_segment = TRUE;
     }
-    if( ii->mod_map[info->imx].is_segment ){
+    if( ii->mod_map[info->imx].is_segment ) {
         seg = curr->seg;
-    }else{
+    } else {
         seg = SEG_FLAT;
     }
     addr_info.imx  = info->imx;
@@ -426,27 +451,30 @@ static int ARangeItem( void *_info, dr_arange_data *curr ){
 }
 
 
-void    DIPENTRY DIPImpMapInfo( imp_image_handle *ii, void *d ){
-//*************************************************************
-//  Read in a ranges build map
-    a_walk_info info;
+void    DIPENTRY DIPImpMapInfo( imp_image_handle *ii, void *d )
+/*************************************************************/
+// Read in address ranges and build map
+{
+    a_walk_info     info;
 
     ii->dcmap = d;
-    DRSetDebug( ii->dwarf->handle ); /* set dwarf to image */
+    DRSetDebug( ii->dwarf->handle );    /* set DWARF to image */
     InitAddrInfo( ii->addr_map );
     info.ii = ii;
     info.low_pc = 0;
     info.high_pc = 0;
     DRWalkARange( ARangeItem, &info );
     SortMapAddr( ii->addr_map );
-    DRDbgClear( ii->dwarf->handle ); /* clear some memory */
+    DRDbgClear( ii->dwarf->handle );    /* clear some memory */
     ii->last.len = 0;
     ii->last.imx = 0;
     ii->last.mach.segment = 0;
     ii->last.mach.offset = 0;
 }
 
-void            DIPENTRY DIPImpUnloadInfo( imp_image_handle *ii )
+
+void    DIPENTRY DIPImpUnloadInfo( imp_image_handle *ii )
+/*******************************************************/
 {
     FiniDwarf( ii );
     DCClose( ii->sym_file );
