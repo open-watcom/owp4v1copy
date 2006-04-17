@@ -24,21 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command line parsing for the ELF load file format.
 *
 ****************************************************************************/
 
-
-/*
- *  CMDELF : command line parsing for the ELF load file format.
- *
-*/
 
 #include "linkstd.h"
 #include "loadelf.h"
 #include "command.h"
 #include "cmdelf.h"
+#include "msg.h"
+#include "wlnkmsg.h"
+#include "exeelf.h"
+
 
 extern bool ProcELF( void )
 /*************************/
@@ -61,6 +59,8 @@ extern void SetELFFmt( void )
     FmtData.u.elf.exp.export = NULL;
     FmtData.u.elf.exp.module = NULL;
     FmtData.u.elf.extrasects = 0;
+    FmtData.u.elf.abitype    = 0;
+    FmtData.u.elf.abiversion = 0;
 }
 
 extern void FreeELFFmt( void )
@@ -116,7 +116,7 @@ extern bool ProcELFAlignment( void )
     if( ret != ST_IS_ORDINAL || value == 0 ) {
         return( FALSE );
     }
-    for(;;) {
+    for( ;; ) {
         lessone = value & (value - 1);  // remove the low order bit.
         if( lessone == 0 ) break;       // until we are at a power of 2.
         value = lessone;
@@ -138,3 +138,93 @@ extern bool ProcELFNoRelocs( void )
     return TRUE;
 }
 
+static void ParseABITypeAndVersion( void )
+/****************************************/
+{
+    ord_state   retval;
+    unsigned_16 type;
+    unsigned_16 version;
+
+    FmtData.u.elf.abitype    = 0;
+    FmtData.u.elf.abiversion = 0;
+    if( !GetToken( SEP_EQUALS, 0 ) ) return;
+    FmtData.u.pe.subminor = 0;
+    retval = getatoi( &type );
+    if( retval != ST_IS_ORDINAL || type > 255 ) {
+        LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "ELF ABI type" );
+        return;
+    }
+    FmtData.u.elf.abitype = type;
+    if( !GetToken( SEP_PERIOD, 0 ) ) {  /* if we don't get ABI version */
+       return;                          /* that's OK */
+    }
+    retval = getatoi( &version );
+    if( retval != ST_IS_ORDINAL || version > 255 ) {
+        LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "ELF ABI version" );
+        return;
+    }
+    FmtData.u.elf.abiversion = version;
+}
+
+static void ParseABIVersion( void )
+/*********************************/
+{
+    ord_state   retval;
+    unsigned_16 version;
+
+    if( !GetToken( SEP_EQUALS, 0 ) ) return;
+    FmtData.u.elf.abiversion = 0;
+    retval = getatoi( &version );
+    if( retval != ST_IS_ORDINAL || version > 255 ) {
+        LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "ELF ABI version" );
+    } else {
+        FmtData.u.elf.abiversion = version;
+    }
+}
+
+extern bool ProcELFRNumber( void )
+/********************************/
+{
+    ParseABITypeAndVersion();
+    return( TRUE );
+}
+
+extern bool ProcELFRSVR4( void )
+/******************************/
+{
+    FmtData.u.elf.abitype = ELFOSABI_NONE;
+    ParseABIVersion();
+    return( TRUE );
+}
+
+extern bool ProcELFRNetBSD( void )
+/********************************/
+{
+    FmtData.u.elf.abitype = ELFOSABI_NETBSD;
+    ParseABIVersion();
+    return( TRUE );
+}
+
+extern bool ProcELFRLinux( void )
+/*******************************/
+{
+    FmtData.u.elf.abitype = ELFOSABI_LINUX;
+    ParseABIVersion();
+    return( TRUE );
+}
+
+extern bool ProcELFRSolrs( void )
+/*******************************/
+{
+    FmtData.u.elf.abitype = ELFOSABI_SOLARIS;
+    ParseABIVersion();
+    return( TRUE );
+}
+
+extern bool ProcELFRFBSD( void )
+/******************************/
+{
+    FmtData.u.elf.abitype = ELFOSABI_FREEBSD;
+    ParseABIVersion();
+    return( TRUE );
+}

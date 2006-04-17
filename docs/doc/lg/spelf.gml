@@ -73,6 +73,7 @@ is any of the following:
 .note OPTLIB library_file{,library_file}
 .note PATH path_name{&ps.path_name}
 .note REFERENCE symbol_name{,symbol_name}
+.note RUNTIME run_option
 .note SORT [GLOBAL] [ALPHABETICAL]
 .note STARTLINK
 .note SYMTRACE symbol_name{,symbol_name}

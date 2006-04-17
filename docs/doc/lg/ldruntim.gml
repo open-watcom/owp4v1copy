@@ -9,6 +9,9 @@ environment under which the application will run.
 For PharLap applications, the "RUNTIME" directive describes
 information that is used by 386|DOS-Extender to setup the environment
 for execution of the program.
+.np
+For ELF applications, the "RUNTIME" directive specifes ABI type and version
+under which the application will run.
 .*
 .beglevel
 .*
@@ -240,4 +243,69 @@ This is the default privilege level.
 .*
 .esynote
 .*
+.section RUNTIME - ELF only
+.*
+.np
+The "RUNTIME" directive specifies the Application Binary Interface (ABI)
+type and version under which the application will run.
+The format of the "RUNTIME" directive (short form "RU") is as follows.
+.mbigbox
+     RUNTIME  ABIVER[=abinum.abiversion] | abispec
+
+     abispec ::= abiname[=abiversion]
+
+     abiname ::= SVR4 | LINUX | FREEBSD | NETBSD | SOLARIS
+.embigbox
+.synote
+.*
+.mnote abi=abinum.abiversion
+.ix 'RUNTIME options' 'version'
+.ix 'runtime version option'
+Specifying ABI/OS type and optional version indicates specific ABI that an
+ELF application is written for. This information may affect how the ELF
+executable will be interpreted by the operating system. If ABI version is
+not specified, zero will be used. A list of official ABI types may be found
+in the System V Application Binary Interface specification.
+.np
+For example, both of the following example indicate that the application
+requires Linux, but does not specify ABI version (numeric value zero).
+.millust begin
+runtime linux
+runtime abiver=3.0
+.millust end
+.*
+.mnote SVR4
+.ix 'RUNTIME options' 'SVR4'
+.ix 'SVR runtime option'
+indicates that the application is a generic ELF application conforming to
+the System V Release 4 ABI. This is the default.
+.*
+.mnote LINUX 
+.ix 'RUNTIME options' 'LINUX'
+.ix 'LINUX runtime option'
+(short form "LIN") indicates that the application is a Linux application.
+.*
+.mnote FREEBSD
+.ix 'RUNTIME options' 'FREEBSD'
+.ix 'FREEBSD runtime option'
+(short form "FRE") indicates that the application is a FreeBSD application.
+.*
+.mnote NETBSD
+.ix 'RUNTIME options' 'NETBSD'
+.ix 'NETBSD runtime option'
+(short form "NET") indicates that the application is a NetBSD application.
+.*
+.mnote SOLARIS
+.ix 'RUNTIME options' 'SOLARIS'
+.ix 'SOLARIS runtime option'
+(short form "SOL") indicates that the application is a Sun Solaris application.
+.*
+.mnote ABIVER
+.ix 'RUNTIME options' 'ABIVER'
+.ix 'ABIVER runtime option'
+(short form "ABI") specifies the numeric ABI type and optionally version. This
+method allows specification of ABI types not explicitly supported by
+the &lnkname..
+.*
+.esynote
 .endlevel

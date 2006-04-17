@@ -628,6 +628,10 @@ bool Dmp_elf_header( unsigned_32 start )
     Puthex( Elf_head.e_ident[EI_DATA], 2 );
     Wdputslc( "H\nversion                                     =       " );
     Puthex( Elf_head.e_ident[EI_VERSION], 2 );
+    Wdputslc( "H\nOS/ABI type (0==unspecified)                =       " );
+    Puthex( Elf_head.e_ident[EI_OSABI], 2 );
+    Wdputslc( "H\nABI version (0==unspecified)                =       " );
+    Puthex( Elf_head.e_ident[EI_ABIVERSION], 2 );
     Wdputslc( "H\n" );
     dmp_hdr_type( Elf_head.e_type );
     Dump_header( (char *)&Elf_head.e_type, elf_exe_msg );

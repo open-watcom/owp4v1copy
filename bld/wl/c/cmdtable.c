@@ -127,8 +127,8 @@ extern parse_entry     Directives[] = {
     "VEctor",   &ProcVector,            MK_OVERLAYS, CF_AFTER_INC,
     "FORCEVEctor",&ProcForceVector,     MK_OVERLAYS, CF_AFTER_INC,
 #endif
-#if defined( _PHARLAP ) || defined( _OS2 )
-    "RUntime",  &ProcRuntime,           (MK_PHAR_LAP | MK_PE), 0,
+#if defined( _PHARLAP ) || defined( _OS2 ) || defined( _ELF )
+    "RUntime",  &ProcRuntime,           (MK_PHAR_LAP | MK_PE | MK_ELF), 0,
 #endif
 #ifdef _NOVELL
     "MODUle",   &ProcModule,            MK_NOVELL | MK_ELF, 0,
@@ -253,8 +253,8 @@ extern  parse_entry     SysDirectives[] = {
     "SOrt",     &ProcSort,              MK_ALL, 0,
     "ORDer",    &ProcOrder,             MK_ALL, 0,
     "OUTput",   &ProcOutput,            MK_ALL, 0,
-#if defined( _PHARLAP ) || defined( _OS2 )
-    "RUntime",  &ProcRuntime,           (MK_PHAR_LAP | MK_PE), 0,
+#if defined( _PHARLAP ) || defined( _OS2 ) || defined( _ELF )
+    "RUntime",  &ProcRuntime,           (MK_PHAR_LAP | MK_PE | MK_ELF), 0,
 #endif
 #if defined( _OS2 ) || defined( _QNXLOAD )
     "SEGment",  &ProcSegment,           (MK_QNX | MK_OS2 | MK_PE | MK_WIN_VXD ), 0,
@@ -316,6 +316,14 @@ extern parse_entry  RunOptions[] = {
         "POSix",        &ProcRunPosix,  MK_PE, 0,
         "OS2",          &ProcRunOS2,    MK_PE, 0,
         "DOSstyle",     &ProcRunDosstyle,MK_PE, 0,
+#endif
+#ifdef _ELF
+        "ABIver",       &ProcELFRNumber,MK_ELF, 0,
+        "SVR4",         &ProcELFRSVR4,  MK_ELF, 0,
+        "NETbsd",       &ProcELFRNetBSD,MK_ELF, 0,
+        "LINux",        &ProcELFRLinux, MK_ELF, 0,
+        "FREebsd",      &ProcELFRFBSD,  MK_ELF, 0,
+        "SOLaris",      &ProcELFRSolrs, MK_ELF, 0,
 #endif
         NULL };
 

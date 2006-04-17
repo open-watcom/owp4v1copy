@@ -189,6 +189,8 @@ struct fmt_elf_data {
     struct exp_common   exp;            // must be at the start
     unsigned long       alignment;
     unsigned_32         extrasects;
+    unsigned_8          abitype;        // EI_OSABI contents
+    unsigned_8          abiversion;     // EI_ABIVERSION contents
     unsigned            exportallsyms : 1;
 };
 

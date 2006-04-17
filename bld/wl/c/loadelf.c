@@ -147,8 +147,8 @@ static void SetHeaders( ElfHdr *hdr )
     hdr->eh.e_ident[EI_DATA] = ELFDATA2LSB;
 #endif
     hdr->eh.e_ident[EI_VERSION] = EV_CURRENT;
-    hdr->eh.e_ident[EI_OSABI] = ELFOSABI_NONE;
-    hdr->eh.e_ident[EI_ABIVERSION] = 0;
+    hdr->eh.e_ident[EI_OSABI] = FmtData.u.elf.abitype;
+    hdr->eh.e_ident[EI_ABIVERSION] = FmtData.u.elf.abiversion;
     memset( &hdr->eh.e_ident[EI_PAD], 0, EI_NIDENT - EI_PAD );
     hdr->eh.e_type = ET_EXEC;
     if( LinkState & HAVE_PPC_CODE ) {

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  ELF command line parsing function prototypes.
 *
 ****************************************************************************/
 
@@ -44,3 +43,9 @@ extern bool     ProcExportAll( void );
 
 extern bool     ProcELFNoRelocs( void );
 
+extern bool     ProcELFRNumber( void );
+extern bool     ProcELFRSVR4( void );
+extern bool     ProcELFRNetBSD( void );
+extern bool     ProcELFRLinux( void );
+extern bool     ProcELFRSolrs( void );
+extern bool     ProcELFRFBSD( void );
