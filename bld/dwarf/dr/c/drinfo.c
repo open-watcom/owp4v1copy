@@ -351,8 +351,8 @@ extern dr_access DRGetAccess( dr_handle entry )
     return( DR_ACCESS_PUBLIC );
 }
 
-extern int DRIsFunctionStatic( dr_handle entry )
-/**********************************************/
+extern int DRIsStatic( dr_handle entry )
+/**************************************/
 {
     dr_handle   abbrev;
 

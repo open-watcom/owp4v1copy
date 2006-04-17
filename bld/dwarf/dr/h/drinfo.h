@@ -46,7 +46,7 @@ extern dr_access        DRGetAccess( dr_handle );
 extern int              DRIsMemberStatic( dr_handle );
 extern int              DRIsFunc( dr_handle );
 extern int              DRIsParm( dr_handle entry );
-extern int              DRIsFunctionStatic( dr_handle );
+extern int              DRIsStatic( dr_handle );
 extern int              DRIsArtificial( dr_handle );
 extern int              DRIsSymDefined( dr_handle );
 extern dr_virtuality    DRGetVirtuality( dr_handle );

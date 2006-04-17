@@ -461,7 +461,7 @@ dip_status      DIPENTRY DIPImpSymInfo( imp_image_handle *ii,
         DRSetDebug( ii->dwarf->handle ); /* must do at each interface */
         is->stype = DRGetTagType( is->sym );
         is->acc   = DRGetAccess( is->sym );
-        is->isstatic = DRIsFunctionStatic( is->sym );
+        is->isstatic = DRIsStatic( is->sym );
         is->isartificial = DRIsArtificial( is->sym );
         is->state = DF_SET;
     }
@@ -1208,24 +1208,28 @@ static int ASymLookup( dr_handle var, int index, void *_df )
 {
     blk_wlk_lookup  *df = _df;
     imp_sym_handle  *is;
-    int             cont;
     int             len;
 
-    len =  DRGetNameBuff( var, df->buff, df->len );
+    len = DRGetNameBuff( var, df->buff, df->len );
     if( len == df->len
       && df->comp( df->buff, df->li->name.start, df->li->name.len ) == 0 ) {
-        is = DCSymCreate( df->com.ii, df->com.d );
-        is->sclass = SYM_VAR;
-        is->imx = df->com.imx;
-        is->sym = var;
-        is->state = DF_NOT;
-        df->sr = SR_EXACT;
-        df->com.cont = FALSE;
-        cont = TRUE;
-    } else {
-        cont = TRUE;
+        /* Found symbol by name */
+        if( !DRIsFunc( var ) && !DRIsStatic( var ) && !DRIsSymDefined( var ) ) {
+            /* If symbol is a global variable declaration, ignore it; it
+             * won't have location information and will likely be found in
+             * another module.
+             */
+        } else {
+            is = DCSymCreate( df->com.ii, df->com.d );
+            is->sclass = SYM_VAR;
+            is->imx = df->com.imx;
+            is->sym = var;
+            is->state = DF_NOT;
+            df->sr = SR_EXACT;
+            df->com.cont = FALSE;
+        }
     }
-    return( cont );
+    return( TRUE );
 }
 
 

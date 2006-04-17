@@ -107,7 +107,7 @@ static int ClassType::memberHook( dr_sym_type symtype, dr_handle handle,
 
     if( symtype == DR_SYM_FUNCTION ) {
         if( !quit && !(filt._members & MemberFilter::MemFuncStatic) ) {
-            quit = ( DRIsFunctionStatic( handle ) != 0 );
+            quit = ( DRIsStatic( handle ) != 0 );
         }
     } else {
         if( !quit && !(filt._members & MemberFilter::MemVarStatic) ) {

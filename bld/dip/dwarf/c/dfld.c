@@ -342,7 +342,7 @@ static int AModHash( dr_handle sym, void *_ii, dr_search_context *cont )
     char                buff[256];
 
     cont = cont;
-    if( !DRIsFunctionStatic( sym ) ) {
+    if( !DRIsStatic( sym ) ) {
         len = DRGetNameBuff( sym, buff, sizeof( buff ) );
         AddHashName( ii->name_map, buff, sym );
     }
