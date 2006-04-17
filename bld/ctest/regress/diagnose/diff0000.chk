@@ -1,0 +1,10 @@
+105,113d104
+< source\diag0009.c(11): Warning! W106: Constant out of range - truncated
+< source\diag0009.c(13): Warning! W106: Constant out of range - truncated
+< source\diag0009.c(19): Warning! W106: Constant out of range - truncated
+< source\diag0009.c(19): Note! I2003: source conversion type is 'int '
+< source\diag0009.c(19): Note! I2004: target conversion type is '<ufield> '
+< source\diag0009.c(22): Warning! W106: Constant out of range - truncated
+< source\diag0009.c(22): Note! I2003: source conversion type is 'long '
+< source\diag0009.c(22): Note! I2004: target conversion type is 'field '
+< source\diag0009.c(29): Warning! W124: Comparison result always 1

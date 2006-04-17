@@ -439,9 +439,8 @@ DATA_TYPE DataTypeOf( TYPEPTR typ )
     case TYPE_ENUM:
         return( typ->object->decl_type );  /* true size of enum */
     case TYPE_FIELD:
-        return( TYPE_INT );
     case TYPE_UFIELD:
-        return( TYPE_UINT );
+        return( typ->u.f.field_type );     /* true bitfield type */
     default:
         break;
     }
@@ -566,10 +565,8 @@ static char NumSize( int op_type )
         break;
 #endif
     case TYPE_INT:
-    case TYPE_FIELD:
         size = 0x80;
     case TYPE_UINT:
-    case TYPE_UFIELD:
 #if TARGET_INT == 2
         size |= 16;
 #else
@@ -620,12 +617,12 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
     }
     if( NumSign( op1_size ) && NumSign( op1_size ) != NumSign( result_size ) ) {
         if( NumBits( op1_size ) < NumBits( result_size ) ) {
-         // signed promoted to bigger unsigned num gets signed extended
-        //  could have two ranges unsigned
+            // signed promoted to bigger unsigned num gets signed extended
+            // could have two ranges unsigned
             return( CMP_VOID ); //TODO: could check == & !=
         } else if( NumBits( op1_size) == NumBits( result_size ) ) {
-          // signed promoted to unsigned use unsigned range
-          op1_size &= 0x7f;
+            // signed promoted to unsigned use unsigned range
+            op1_size &= 0x7f;
         }
     }
     if( NumSign( result_size ) == 0 && NumBits( result_size ) == 16 ) {

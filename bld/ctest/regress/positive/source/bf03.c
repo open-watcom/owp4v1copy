@@ -194,7 +194,26 @@ void check_X5( struct X5 x5 )
     check_X4( x5.x4 );
 };
 
-int main()
+struct X6 {
+    long    f0 : 20;
+    long    f1 : 20;
+//    sbase   f2 : 40;  TODO - some other day
+//    sbase   f3 : 40;
+};
+
+struct X6 x6 = { 0xC0000, 0x90000 };
+
+long op_x6( struct X6 x6 )
+{
+    return( x6.f0 & x6.f1 );    // This was a problem in 16-bit
+}
+
+void check_X6( struct X6 x6 )
+{
+    if( op_x6( x6 ) != 0xFFF80000 ) fail(__LINE__);
+}
+
+int main( void )
 {
     check_X1( x1 );
     check_X1a();
@@ -202,5 +221,6 @@ int main()
     check_X3( x3 );
     check_X4( x4 );
     check_X5( x5 );
+    check_X6( x6 );
     _PASS;
 }
