@@ -2,6 +2,7 @@
 objs = &
 3dnow &
 absjumps &
+abslabel &
 addrmode &
 allign &
 callcnv1 &
@@ -36,6 +37,7 @@ push &
 retiret &
 seg16 &
 segatrep &
+segregs &
 shift &
 sse &
 sse2 &

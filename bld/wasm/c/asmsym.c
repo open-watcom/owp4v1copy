@@ -86,6 +86,7 @@ static char *InitAsmSym( struct asm_sym *sym, char *name )
         sym->first_length = 0;
         sym->total_size = 0;
         sym->total_length = 0;
+        sym->count = 0;
         sym->mangler = NULL;
         sym->state = SYM_UNDEFINED;
         sym->mem_type = MT_EMPTY;

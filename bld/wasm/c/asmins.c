@@ -1163,12 +1163,15 @@ static int idata_fixup( expr_list *opndx )
 #if defined( _STANDALONE_ )
     if( ( opndx->sym->state == SYM_SEG )
         || ( opndx->sym->state == SYM_GRP )
-        || ( opndx->instr == T_SEG ) )
+        || ( opndx->instr == T_SEG ) ) {
         sym32 = 0;
-    else
+    } else if( opndx->abs ) {
+        sym32 = 0;
+    } else {
         sym32 = SymIs32( opndx->sym );
+    }
 #else
-        sym32 = Code->use32;
+    sym32 = Code->use32;
 #endif
     if( opndx->instr != EMPTY ) {
         if( ( opndx->base_reg != EMPTY )
@@ -1213,6 +1216,23 @@ static int idata_fixup( expr_list *opndx )
                 break;
             }
         }
+        if( opndx->abs ) {
+            if( opndx->mem_type == MT_BYTE ) {
+                Code->mem_type = MT_BYTE;
+                Code->info.opnd_type[Opnd_Count] = OP_I8;
+                break;
+            } else if( opndx->mem_type == MT_EMPTY ) {
+                SET_OPSIZ_NO( Code );
+                if( oper_32( Code ) ) {
+                    Code->mem_type = MT_DWORD;
+                    Code->info.opnd_type[Opnd_Count] = OP_I32;
+                    sym32 = 1;
+                    break;
+                }
+            } else if( opndx->mem_type == MT_DWORD ) {
+                sym32 = 1;
+            }
+        }
         if( ( Code->info.token == T_PUSHD ) || sym32 ) {
             Code->mem_type = MT_DWORD;
             Code->info.opnd_type[Opnd_Count] = OP_I32;
@@ -1241,7 +1261,9 @@ static int idata_fixup( expr_list *opndx )
     if( opndx->instr == T_SEG ) {
         fixup_type = FIX_SEG;
     } else {
-        if( oper_32( Code ) ) {
+        if( Code->mem_type == MT_BYTE ) {
+            fixup_type = FIX_LOBYTE;
+        } else if( oper_32( Code ) ) {
             fixup_type = ( sym32 ) ? FIX_OFF32 : FIX_OFF16;
         } else {
             if( sym32 ) {
@@ -1452,7 +1474,11 @@ static int memory_operand( expr_list *opndx, bool with_fixup )
         }
 
 #if defined( _STANDALONE_ )
-        sym32 = SymIs32( sym );
+        if( opndx->abs ) {
+            sym32 = addr_32( Code );
+        } else {
+            sym32 = SymIs32( sym );
+        }
         if( ( opndx->base_reg == EMPTY ) && ( opndx->idx_reg == EMPTY ) ) {
             SET_ADRSIZ( Code, sym32 );
             fixup_type = ( sym32 ) ? FIX_OFF32 : FIX_OFF16;
@@ -1585,12 +1611,12 @@ static int process_address( expr_list *opndx )
                 } else {
                     // CODE location is converted to OFFSET symbol
                     mem_type = ( opndx->explicit ) ? opndx->mem_type : opndx->sym->mem_type;
-                    switch( mem_type ) {
 #if defined( _STANDALONE_ )
-                    case MT_ABS:
+                    if( opndx->abs ) {
                         return( idata_fixup( opndx ) );
-                        break;
+                    }
 #endif
+                    switch( mem_type ) {
                     case MT_FAR:
                     case MT_NEAR:
                     case MT_SHORT:

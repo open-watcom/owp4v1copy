@@ -71,6 +71,7 @@ static void init_expr( expr_list *new )
     new->idx_reg  = EMPTY;
     new->indirect = FALSE;
     new->explicit = FALSE;
+    new->abs      = FALSE;
     new->mem_type = MT_EMPTY;
     new->value    = 0;
     new->scale    = 1;
@@ -91,6 +92,7 @@ static void TokenAssign( expr_list *t1, expr_list *t2 )
     t1->idx_reg  = t2->idx_reg;
     t1->indirect = t2->indirect;
     t1->explicit = t2->explicit;
+    t1->abs      = t2->abs;
     t1->mem_type = t2->mem_type;
     t1->value    = t2->value;
     t1->scale    = t2->scale;
@@ -339,11 +341,16 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
                 new->type = EXPR_ADDR;
                 break;
             }
+            if( new->sym->mem_type == MT_ABS ) {
+                new->abs = TRUE;
+            } else {
+                new->mem_type = new->sym->mem_type;
+            }
         }
 #else
         new->sym = AsmLookup( AsmBuffer[i]->string_ptr );
-#endif
         new->mem_type = new->sym->mem_type;
+#endif
         new->empty = FALSE;
         new->type = EXPR_ADDR;
         new->label = i;
@@ -1209,21 +1216,49 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 return( ERROR );
             switch( AsmBuffer[index]->value ) {
             case T_LENGTH:
-                token_1->value = sym->first_length;
-                if( sym->mem_type != MT_STRUCT ) {
-                    break;
+                if( sym->mem_type == MT_STRUCT ) {
+                    token_1->value = sym->count;
+                } else if( sym->mem_type == MT_EMPTY ) {
+                    token_1->value = 0;
+                } else {
+                    token_1->value = sym->first_length;
                 }
+                break;
             case T_LENGTHOF:
-                token_1->value = sym->total_length;
+                if( sym->mem_type == MT_STRUCT ) {
+                    token_1->value = sym->count;
+                } else if( sym->mem_type == MT_EMPTY ) {
+                    token_1->value = 0;
+                } else {
+                    token_1->value = sym->total_length;
+                }
                 break;
             case T_SIZE:
-                token_1->value = sym->first_size;
-                if( sym->mem_type != MT_STRUCT ) {
-                    break;
+                if( sym->mem_type == MT_STRUCT ) {
+                    token_1->value = sym->total_size * sym->count;
+                } else if( sym->state == SYM_STRUCT ) {
+                    token_1->value = sym->total_size;
+                } else if( sym->mem_type == MT_NEAR ) {
+                    token_1->value = 0xFF02;
+                } else if( sym->mem_type == MT_FAR ) {
+                    token_1->value = 0xFF04;
+                } else {
+                    token_1->value = sym->first_size;
                 }
-            case T_SIZEOF:
-                token_1->value = sym->total_size;
                 break;
+            case T_SIZEOF:
+                if( sym->mem_type == MT_STRUCT ) {
+                    token_1->value = sym->total_size * sym->count;
+                } else {
+                    token_1->value = sym->total_size;
+                }
+                break;
+            }
+            if( Parse_Pass != PASS_1 && token_1->value == 0 ) {
+                if( error_msg )
+                    AsmError( DATA_LABEL_IS_EXPECTED );
+                token_1->type = EXPR_UNDEF;
+                return( ERROR );
             }
             token_1->label = EMPTY;
             token_1->sym = NULL;

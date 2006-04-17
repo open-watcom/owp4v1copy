@@ -56,7 +56,8 @@ typedef struct expr_list {
                                     //
     unsigned        indirect : 1;   // Whether inside [] or not
     unsigned        explicit : 1;   // Whether expression type explicitly given
-    unsigned        empty : 1;
+    unsigned        empty    : 1;
+    unsigned        abs      : 1;
     memtype         mem_type;       // Whether expr is BYTE, WORD, DWORD, etc.
     uint_8          scale;          // scaling factor 1, 2, 4, or 8 - 386 code only
     struct asm_sym  *sym;

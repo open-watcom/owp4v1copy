@@ -79,6 +79,8 @@ int MakeLabel( char *symbol_name, memtype mem_type )
     int                     addr;
     char                    buffer[20];
 
+    if( CurrSeg == NULL ) 
+        AsmError( LABEL_OUTSIDE_SEGMENT );
     if( strcmp( symbol_name, "@@" ) == 0 ) {
         struct asm_sym          *newsym;
         /* anonymous label */

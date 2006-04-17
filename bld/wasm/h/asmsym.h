@@ -75,6 +75,7 @@ typedef struct asm_sym {
         uint_32         first_length; /* size of 1st initializer--elts. dup'd */
         uint_32         total_size;   /* total number of bytes (sizeof) */
         uint_32         total_length; /* total number of elements (lengthof) */
+        uint_32         count;
         char            *(*mangler)( struct asm_sym *sym, char *buffer );
         unsigned        public:1;
         unsigned        langtype:3;
