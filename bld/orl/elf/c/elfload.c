@@ -145,7 +145,6 @@ static void determine_file_specs( elf_file_handle elf_file_hnd, Elf32_Ehdr *e_hd
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_I860;
         break;
     case EM_PPC:
-    case EM_PPC_O:
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_PPC601;
         break;
     case EM_MIPS:

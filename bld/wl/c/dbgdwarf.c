@@ -838,6 +838,8 @@ extern void DwarfWriteDBI( void )
     elf_header.e_ident[EI_DATA] = ELFDATA2LSB;
 #endif
     elf_header.e_ident[EI_VERSION] = EV_CURRENT;
+    elf_header.e_ident[EI_OSABI] = ELFOSABI_NONE;
+    elf_header.e_ident[EI_ABIVERSION] = 0;
     memset( &elf_header.e_ident[EI_PAD], 0, EI_NIDENT - EI_PAD );
     elf_header.e_type = ET_EXEC;
     elf_header.e_machine = EM_386;
