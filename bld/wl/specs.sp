@@ -384,6 +384,7 @@ system begin linux
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/linux
     format elf
+    runtime linux
     op exportall
     op norelocs
 :endsegment
@@ -396,6 +397,7 @@ system begin linuxmips
     libpath %WATCOM%/libmps
     libpath %WATCOM%/libmps/linux
     format elf
+    runtime linux
     op exportall
     op norelocs
 :endsegment
