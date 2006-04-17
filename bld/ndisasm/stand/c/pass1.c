@@ -250,11 +250,28 @@ return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
                         switch( decoded.op[i].type & DO_MASK ) {
                         case DO_MEMORY_REL:
                         case DO_MEMORY_ABS:
-                            // create an LTYP_ABSOLUTE label
-                            CreateAbsoluteLabel( shnd, decoded.op[i].value, &rs );
-                            if( rs.error != OKAY )
-                                return( rs.error );
-                            error = CreateAbsoluteLabelRef( shnd, rs.entry, op_pos );
+                            // use decoded instruction size for absolute memory on amd64.
+                            // the cpu will reference rip _after_ the instruction is
+                            // completely fetched and decoded.
+                            // relocations in pass2 are not applied because they break
+                            // relative memory references if no relocation is present!
+                            if( GetMachineType() == ORL_MACHINE_TYPE_AMD64 ) {
+                                decoded.op[i].value += decoded.size;
+                                
+                                // I don't know if this is neccessary, but it will generate
+                                // labels for memory references if no symbol is present
+                                // (ex: executable file)
+                                CreateUnnamedLabel( shnd, decoded.op[i].value, &rs );
+                                if( rs.error != OKAY )
+                                    return( rs.error );
+                                error = CreateUnnamedLabelRef( shnd, rs.entry, op_pos );
+                            } else {
+                                // create an LTYP_ABSOLUTE label
+                                CreateAbsoluteLabel( shnd, decoded.op[i].value, &rs );
+                                if( rs.error != OKAY )
+                                    return( rs.error );
+                                error = CreateAbsoluteLabelRef( shnd, rs.entry, op_pos );
+                            }
                             break;
                         default:
                             // create an LTYP_UNNAMED label
