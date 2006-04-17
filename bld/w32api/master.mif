@@ -41,6 +41,7 @@ base_libs =        &
         mfcuia32.lib &
         mgmtapi.lib &
         mpr.lib &
+        mqrt.lib &
         msacm32.lib &
         msimg32.lib &
         msvcp60.lib &

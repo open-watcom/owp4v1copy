@@ -1,12 +1,13 @@
-#ifndef _W32API_H_
+#ifndef _W32API_H
+#define _W32API_H
 #define _W32API_H_
 #if __GNUC__ >=3
 #pragma GCC system_header
 #endif
 
-#define __W32API_VERSION 3.6
+#define __W32API_VERSION 3.7
 #define __W32API_MAJOR_VERSION 3
-#define __W32API_MINOR_VERSION 6
+#define __W32API_MINOR_VERSION 7
 
 /* The following defines are for documentation purposes.  The following defines
  * identify the versions of Windows and Internet Explorer.  They are not to be
@@ -19,16 +20,17 @@
 
 /* Use these values to set _WIN32_WINDOWS and WINVER to your minimum support 
  * level */
-#define Windows95   0x0400
-#define Windows98   0x0410
-#define WindowsME   0x0500
+#define Windows95    0x0400
+#define Windows98    0x0410
+#define WindowsME    0x0500
 
 /* Use these values to set _WIN32_WINNT and WINVER to your mimimum support 
  * level. */
-#define WindowsNT4  0x0400
-#define Windows2000 0x0500
-#define WindowsXP   0x0501
-#define Windows2003 0x0502
+#define WindowsNT4   0x0400
+#define Windows2000  0x0500
+#define WindowsXP    0x0501
+#define Windows2003  0x0502
+#define WindowsVista 0x0600
 
 /* Use these values to set _WIN32_IE to your minimum support level */
 #define IE3	0x0300
@@ -43,5 +45,8 @@
 #define IE55	0x0501
 #define IE56	0x0560
 #define IE6	0x0600
+#define IE601	0x0601
+#define IE602	0x0603
+#define IE7	0x0700
 
-#endif /* ndef _W32API_H_ */
+#endif /* ndef _W32API_H */

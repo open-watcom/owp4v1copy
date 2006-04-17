@@ -74,6 +74,8 @@ extern "C" {
 #define WC_COMBOBOXW	L"ComboBox"
 #define WC_SCROLLBARA	"ScrollBar"
 #define WC_SCROLLBARW	L"ScrollBar"
+#define WC_LINKA	"SysLink"
+#define WC_LINKW	L"SysLink"
 
 #ifdef UNICODE
 #define HOTKEY_CLASS HOTKEY_CLASSW
@@ -101,6 +103,7 @@ extern "C" {
 #define WC_LISTBOX WC_LISTBOXW
 #define WC_COMBOBOX WC_COMBOBOXW
 #define WC_SCROLLBAR WC_SCROLLBARW
+#define WC_LINK WC_LINKW
 #else
 #define ANIMATE_CLASS ANIMATE_CLASSA
 #define HOTKEY_CLASS HOTKEY_CLASSA
@@ -127,6 +130,7 @@ extern "C" {
 #define WC_LISTBOX WC_LISTBOXA
 #define WC_COMBOBOX WC_COMBOBOXA
 #define WC_SCROLLBAR WC_SCROLLBARA
+#define WC_LINK WC_LINKA
 #endif
 
 #if (_WIN32_IE >= 0x0500)
@@ -998,6 +1002,41 @@ extern "C" {
 #define LVM_GETIMAGELIST	(LVM_FIRST+2)
 #define LVM_SETIMAGELIST	(LVM_FIRST+3)
 #define LVM_GETITEMCOUNT	(LVM_FIRST+4)
+#define LVM_SORTITEMSEX		(LVM_FIRST+81)
+#if (_WIN32_WINNT >= 0x501)
+#define LVM_SETSELECTEDCOLUMN	(LVM_FIRST+140)
+#endif
+#define LVM_SETVIEW		(LVM_FIRST+142)
+#define LVM_GETVIEW		(LVM_FIRST+143)
+#define LVM_INSERTGROUP		(LVM_FIRST+145)
+#define LVM_SETGROUPINFO	(LVM_FIRST+147)
+#define LVM_GETGROUPINFO	(LVM_FIRST+149)
+#define LVM_REMOVEGROUP		(LVM_FIRST+150)
+#define LVM_MOVEGROUP		(LVM_FIRST+151)
+#define LVM_SETGROUPMETRICS	(LVM_FIRST+155)
+#define LVM_GETGROUPMETRICS	(LVM_FIRST+156)
+#define LVM_ENABLEGROUPVIEW	(LVM_FIRST+157)
+#define LVM_SORTGROUPS		(LVM_FIRST+158)
+#define LVM_INSERTGROUPSORTED	(LVM_FIRST+159)
+#define LVM_REMOVEALLGROUPS	(LVM_FIRST+160)
+#define LVM_HASGROUP		(LVM_FIRST+161)
+#define LVM_SETTILEVIEWINFO	(LVM_FIRST+162)
+#define LVM_GETTILEVIEWINFO	(LVM_FIRST+163)
+#define LVM_SETTILEINFO		(LVM_FIRST+164)
+#define LVM_GETTILEINFO		(LVM_FIRST+165)
+#define LVM_SETINSERTMARK	(LVM_FIRST+166)
+#define LVM_GETINSERTMARK	(LVM_FIRST+167)
+#define LVM_INSERTMARKHITTEST	(LVM_FIRST+168)
+#define LVM_GETINSERTMARKRECT	(LVM_FIRST+169)
+#define LVM_SETINSERTMARKCOLOR	(LVM_FIRST+170)
+#define LVM_GETINSERTMARKCOLOR	(LVM_FIRST+171)
+#define LVM_SETINFOTIP		(LVM_FIRST+173)
+#define LVM_GETSELECTEDCOLUMN	(LVM_FIRST+174)
+#define LVM_ISGROUPVIEWENABLED	(LVM_FIRST+175)
+#define LVM_GETOUTLINECOLOR	(LVM_FIRST+176)
+#define LVM_SETOUTLINECOLOR	(LVM_FIRST+177)
+#define LVM_CANCELEDITLABEL	(LVM_FIRST+179)
+#define LVM_MAPIDTOINDEX	(LVM_FIRST+181)
 #define LVIF_TEXT	1
 #define LVIF_IMAGE	2
 #define LVIF_PARAM	4
@@ -1690,7 +1729,6 @@ extern "C" {
 #define PGM_GETBUTTONSIZE (PGM_FIRST+11)
 #define PGM_GETBUTTONSTATE (PGM_FIRST+12)
 #define PGM_GETDROPTARGET CCM_GETDROPTARGET
-
 #define RBS_REGISTERDROP 4096
 #define RBS_AUTOSIZE 8192
 #define RBS_VERTICALGRIPPER 16384
@@ -1797,6 +1835,21 @@ extern "C" {
 #define FSB_ENCARTA_MODE	1
 #define FSB_REGULAR_MODE	0
 #endif /* _WIN32_IE >= 0x400 */
+#if (_WIN32_WINNT >= 0x0501)
+#define LIF_ITEMINDEX	0x00000001
+#define LIF_STATE	0x00000002
+#define LIF_ITEMID	0x00000004
+#define LIF_URL	0x00000008
+#define LIS_FOCUSED	0x00000001
+#define LIS_ENABLED	0x00000002
+#define LIS_VISITED	0x00000004
+#define LM_HITTEST	(WM_USER + 768)
+#define LM_GETIDEALHEIGHT	(WM_USER + 769)
+#define LM_SETITEM	(WM_USER + 770)
+#define LM_GETITEM	(WM_USER + 771)
+#define MAX_LINKID_TEXT	48
+#define L_MAX_URL_LENGTH	2084
+#endif
 
 #ifndef RC_INVOKED
 typedef struct tagCOMBOBOXEXITEMA{
@@ -2860,6 +2913,22 @@ typedef INT (CALLBACK *PFNDSAENUMCALLBACK)(PVOID,PVOID);
 typedef INT (CALLBACK *PFNDPACOMPARE)(PVOID,PVOID,LPARAM);
 #if (_WIN32_WINNT >= 0x0501)
 typedef LRESULT (CALLBACK *SUBCLASSPROC)(HWND,UINT,WPARAM,LPARAM,UINT_PTR,DWORD_PTR);
+typedef struct tagLITEM {
+	UINT mask;
+	int iLink;
+	UINT state;
+	UINT stateMask;
+	WCHAR szID[MAX_LINKID_TEXT];
+	WCHAR szUrl[L_MAX_URL_LENGTH];
+} LITEM,*PLITEM;
+typedef struct tagLHITTESTINFO {
+	POINT pt;
+	LITEM item;
+} LHITTESTINFO,*PLHITTESTINFO;
+typedef struct tagNMLINK {
+	NMHDR hdr;
+	LITEM item;
+} NMLINK,*PNMLINK;
 #endif /* _WIN32_WINNT >= 0x0501 */
 
 #define INDEXTOOVERLAYMASK(i) ((i)<<8)
@@ -3016,7 +3085,7 @@ int WINAPI LBItemFromPt(HWND,POINT,BOOL);
 #define ListView_InsertItem(w,i) (int)SNDMSG((w),LVM_INSERTITEM,0,(LPARAM)(const LV_ITEM*)(i))
 #define ListView_DeleteItem(w,i) (BOOL)SNDMSG((w),LVM_DELETEITEM,i,0)
 #define ListView_DeleteAllItems(w) (BOOL)SNDMSG((w),LVM_DELETEALLITEMS,0,0)
-#define ListView_GetCallbackMask(w) (BOOL)SNDMSG((w),LVM_GETCALLBACKMASK,0,0)
+#define ListView_GetCallbackMask(w) (UINT)SNDMSG((w),LVM_GETCALLBACKMASK,0,0)
 #define ListView_SetCallbackMask(w,m) (BOOL)SNDMSG((w),LVM_SETCALLBACKMASK,m,0)
 #define ListView_GetNextItem(w,i,f) (int)SNDMSG((w),LVM_GETNEXTITEM,i,MAKELPARAM((f),0))
 #define ListView_FindItem(w,i,p) (int)SNDMSG((w), LVM_FINDITEM,(WPARAM)i,(LPARAM)(const LV_FINDINFO*)(p))
@@ -3027,7 +3096,7 @@ int WINAPI LBItemFromPt(HWND,POINT,BOOL);
 #define ListView_GetStringWidth(w,s) (int)SNDMSG((w),LVM_GETSTRINGWIDTH,0,(LPARAM)s)
 #define ListView_HitTest(w,p) (int)SNDMSG((w),LVM_HITTEST,0,(LPARAM)(LV_HITTESTINFO*)(p))
 #define ListView_EnsureVisible(w,i,f) (BOOL)SNDMSG((w),LVM_ENSUREVISIBLE,i,MAKELPARAM((f),0))
-#define ListView_Scroll(w,dx,dy) (BOOL)SNDMSG((w),LVM_SCROLL,dx,dy)
+#define ListView_Scroll(w,x,y) (BOOL)SNDMSG((w),LVM_SCROLL,x,y)
 #define ListView_RedrawItems(w,f,l) (BOOL)SNDMSG((w),LVM_REDRAWITEMS,f,l)
 #define ListView_Arrange(w,c) (BOOL)SNDMSG((w),LVM_ARRANGE,c,0)
 #define ListView_EditLabel(w,i) (HWND)SNDMSG((w),LVM_EDITLABEL,i,0)
@@ -3048,7 +3117,7 @@ int WINAPI LBItemFromPt(HWND,POINT,BOOL);
 #define ListView_GetCountPerPage(w) (int)SNDMSG((w),LVM_GETCOUNTPERPAGE,0,0)
 #define ListView_GetOrigin(w,p) (BOOL)SNDMSG((w),LVM_GETORIGIN,0,(LPARAM)(POINT*)(p))
 #define ListView_GetOrigin(w,p) (BOOL)SNDMSG((w),LVM_GETORIGIN,0,(LPARAM)(POINT*)(p))
-#define ListView_Update(w,i) (BOOL)SNDMSG((w),LVM_UPDATE,i,0)
+#define ListView_Update(w,i) (BOOL)SNDMSG((w),LVM_UPDATE,(WPARAM)(i),0)
 #define ListView_SetItemState(w,i,d,m) \
 { \
 	LV_ITEM _lvi;\
@@ -3072,7 +3141,7 @@ int WINAPI LBItemFromPt(HWND,POINT,BOOL);
 	_lvi.pszText=s;\
 	SNDMSG((w),LVM_SETITEMTEXT,i,(LPARAM)(LV_ITEM*)&_lvi);\
 }
-#define ListView_SetItemCount(w,n) SNDMSG((w),LVM_SETITEMCOUNT,n,0)
+#define ListView_SetItemCount(w,n) (void)SNDMSG((w),LVM_SETITEMCOUNT,n,0)
 #define ListView_SortItems(w,f,l) (BOOL)SNDMSG((w),LVM_SORTITEMS,l,(LPARAM)f)
 #define ListView_SetItemPosition32(w,i,x,y) \
 { \
@@ -3082,11 +3151,46 @@ int WINAPI LBItemFromPt(HWND,POINT,BOOL);
 #define ListView_GetSelectedCount(w) (UINT)SNDMSG((w),LVM_GETSELECTEDCOUNT,0,0)
 #define ListView_GetCheckState(w,i) ((((UINT)(SNDMSG((w),LVM_GETITEMSTATE,(WPARAM)(i),LVIS_STATEIMAGEMASK)))>>12)-1)
 #define ListView_SetCheckState(w,i,f) ListView_SetItemState(w,i,INDEXTOSTATEIMAGEMASK((f)+1),LVIS_STATEIMAGEMASK)
-#define ListView_GetISearchString(w, lpsz) (BOOL)SNDMSG((w), LVM_GETISEARCHSTRING, 0, (LPARAM) (LPTSTR)(lpsz)) 
+#define ListView_GetISearchString(w,lpsz) (BOOL)SNDMSG((w),LVM_GETISEARCHSTRING,0,(LPARAM)(LPTSTR)(lpsz)) 
+#define ListView_CancelEditLabel(w) (VOID)SNDMSG((w),LVM_CANCELEDITLABEL,0,0)
+#define ListView_EnableGroupView(w,i) (int)SNDMSG((w),LVM_ENABLEGROUPVIEW,(WPARAM)(i),0)
+#define ListView_GetGroupInfo(w,i,p) (int)SNDMSG((w),LVM_GETGROUPINFO,(WPARAM)(i),(LPARAM)(p))
+#define ListView_GetGroupMetrics(w,p) SNDMSG((w),LVM_GETGROUPMETRICS,0,(LPARAM)(p))
+#define ListView_GetInsertMark(w,p) (BOOL)SNDMSG((w),LVM_GETINSERTMARK,0,(LPARAM)(p))
+#define ListView_GetInsertMarkColor(w) (COLORREF)SNDMSG((w),LVM_GETINSERTMARKCOLOR,0,0)
+#define ListView_GetInsertMarkRect(w,p) (int)SNDMSG((w),LVM_GETINSERTMARKRECT,0,(LPARAM)(p))
+#define ListView_GetOutlineColor(w) (COLORREF)SNDMSG((w),LVM_GETOUTLINECOLOR,0,0)
+#define ListView_GetSelectedColumn(w) (UINT)SNDMSG((w),LVM_GETSELECTEDCOLUMN,0,0)
+#define ListView_GetTileInfo(w,p) SNDMSG((w),LVM_GETTILEINFO,0,(LPARAM)(p))
+#define ListView_GetTileViewInfo(w,p) SNDMSG((w),LVM_GETTILEVIEWINFO,0,(LPARAM)(p))
+#define ListView_GetView(w) (DWORD)SNDMSG((w),LVM_GETVIEW,0,0)
+#define ListView_HasGroup(w,i) (BOOL)SNDMSG((w),LVM_HASGROUP,(WPARAM)(i),0)
+#define ListView_InsertGroup(w,i,p) (int)SNDMSG((w),LVM_INSERTGROUP,(WPARAM)(i),(LPARAM)(p))
+#define ListView_InsertGroupSorted(w,p) SNDMSG((w),LVM_INSERTGROUPSORTED,(WPARAM)(p),0)
+#define ListView_InsertMarkHitTest(w,p,t) (BOOL)SNDMSG((w),LVM_INSERTMARKHITTEST,(WPARAM)(p),(LPARAM)(t))
+#define ListView_IsGroupViewEnabled(w) (BOOL)SNDMSG((w),LVM_ISGROUPVIEWENABLED,0,0)
+#define ListView_MapIDToIndex(w,i) (UINT)SNDMSG((w),LVM_MAPIDTOINDEX,(WPARAM)(i),0)
+#define ListView_MoveGroup(w,i,t) SNDMSG((w),LVM_MOVEGROUP,(WPARAM)(i),(LPARAM)(t))
+#define ListView_RemoveAllGroups(w) SNDMSG((w),LVM_REMOVEALLGROUPS,0,0)
+#define ListView_RemoveGroup(w,i) (int)SNDMSG((w),LVM_REMOVEGROUP,(WPARAM)(i),0)
+#define ListView_SetGroupInfo(w,i,p) (int)SNDMSG((w),LVM_SETGROUPINFO,(WPARAM)(i),(LPARAM)(p))
+#define ListView_SetGroupMetrics(w,p) SNDMSG((w),LVM_SETGROUPMETRICS,0,(LPARAM)(p))
+#define ListView_SetInfoTip(w,p) (BOOL)SNDMSG((w),LVM_SETINFOTIP,0,(LPARAM)(p))
+#define ListView_SetInsertMark(w,p) (BOOL)SNDMSG((w),LVM_SETINSERTMARK,0,(LPARAM)(p))
+#define ListView_SetInsertMarkColor(w,c) (COLORREF)SNDMSG((w),LVM_SETINSERTMARKCOLOR,0,(LPARAM)(c))
+#define ListView_SetOutlineColor(w,c) (COLORREF)SNDMSG((w),LVM_SETOUTLINECOLOR,0,(LPARAM)(c))
+#if (_WIN32_WINNT >= 0x0501)
+#define ListView_SetSelectedColumn(w,i) SNDMSG((w),LVM_SETSELECTEDCOLUMN,(WPARAM)i,0)
+#endif
+#define ListView_SetTileInfo(w,p) (BOOL)SNDMSG((w),LVM_SETTILEINFO,0,(LPARAM)(p))
+#define ListView_SetTileViewInfo(w,p) (BOOL)SNDMSG((w),LVM_SETTILEVIEWINFO,0,(LPARAM)(p))
+#define ListView_SetView(w,i) (int)SNDMSG((w),LVM_SETVIEW,(WPARAM)(i),0)
+#define ListView_SortGroups(w,c,p) (int)SNDMSG((w),LVM_SORTGROUPS,(WPARAM)(c),(LPARAM)(p))
+#define ListView_SortItemsEx(w,c,p) (BOOL)SNDMSG((w),LVM_SORTITEMSEX,(WPARAM)(p),(LPARAM)(c))
 
 #if (_WIN32_WINNT >= 0x0501)
-#define ComboBox_SetMinVisible(w,i) (BOOL)SNDMSG((w), CB_SETMINVISIBLE, (WPARAM)(i), 0);
-#define ComboBox_GetMinVisible(w) (int)SNDMSG((w), CB_GETMINVISIBLE, 0, 0);
+#define ComboBox_SetMinVisible(w,i) (BOOL)SNDMSG((w), CB_SETMINVISIBLE,(WPARAM)(i),0);
+#define ComboBox_GetMinVisible(w) (INT)SNDMSG((w),CB_GETMINVISIBLE,0,0);
 #endif
 
 BOOL WINAPI MakeDragList(HWND);
@@ -3188,19 +3292,19 @@ BOOL WINAPI _TrackMouseEvent(LPTRACKMOUSEEVENT);
 #define ListView_SetHotCursor(w,c) (HCURSOR)SNDMSG((w),LVM_SETHOTCURSOR,0,(LPARAM)(c))
 #define ListView_SetHotItem(w,i) (int)SNDMSG((w),LVM_SETHOTITEM,(WPARAM)(i),0)
 #define ListView_SetIconSpacing(w,x,y) (DWORD)SNDMSG((w),LVM_SETICONSPACING,0,MAKELONG(x,y))
-#define ListView_SubItemHitTest(w,p) (int)SNDMSG((w),LVM_SUBITEMHITTEST,0,(LPARAM)(LPLVHITTESTINFO)(p))
-#define ListView_SetItemCountEx(w, i, f) SNDMSG((w), LVM_SETITEMCOUNT, (WPARAM)(i), (LPARAM)(f))
+#define ListView_SubItemHitTest(w,p) (INT)SNDMSG((w),LVM_SUBITEMHITTEST,0,(LPARAM)(LPLVHITTESTINFO)(p))
+#define ListView_SetItemCountEx(w,i,f) (void)SNDMSG((w),LVM_SETITEMCOUNT,(WPARAM)(i),(LPARAM)(f))
 WINBOOL WINAPI ImageList_SetImageCount(HIMAGELIST,UINT);
 WINBOOL WINAPI ImageList_Copy(HIMAGELIST,int,HIMAGELIST,int,UINT);
 WINBOOL WINAPI ImageList_DrawIndirect(IMAGELISTDRAWPARAMS*);
-#define TabCtrl_SetMinTabWidth(hwnd, x) SNDMSG((hwnd), TCM_SETMINTABWIDTH, 0, x)
-#define TabCtrl_DeselectAll(hwnd, fExcludeFocus) SNDMSG((hwnd), TCM_DESELECTALL, fExcludeFocus, 0)
+#define TabCtrl_SetMinTabWidth(hwnd,x) SNDMSG((hwnd),TCM_SETMINTABWIDTH,0,x)
+#define TabCtrl_DeselectAll(hwnd,fExcludeFocus) SNDMSG((hwnd),TCM_DESELECTALL,fExcludeFocus,0)
 #define TreeView_GetToolTips(w) (HWND)SNDMSG((w),TVM_GETTOOLTIPS,0,0)
 #define TreeView_SetToolTips(w,wt) (HWND)SNDMSG((w),TVM_SETTOOLTIPS,(WPARAM)(wt),0)
 #endif
 #if (_WIN32_IE >= 0x0400)
-#define ListView_GetBkImage(h,plvbki) (BOOL)SNDMSG((h), LVM_GETBKIMAGE, 0, (LPARAM)(plvbki))
-#define ListView_SetBkImage(h, plvbki) (BOOL)SNDMSG((h), LVM_SETBKIMAGE, 0, (LPARAM)(plvbki))
+#define ListView_GetBkImage(h,plvbki) (BOOL)SNDMSG((h),LVM_GETBKIMAGE,0,(LPARAM)(plvbki))
+#define ListView_SetBkImage(h,plvbki) (BOOL)SNDMSG((h),LVM_SETBKIMAGE,0,(LPARAM)(plvbki))
 #define ListView_SetExtendedListViewStyleEx(w,m,s) (DWORD)SNDMSG((w),LVM_SETEXTENDEDLISTVIEWSTYLE,(m),(s))
 #define ListView_SetWorkAreas(w,n,r) (BOOL)SNDMSG((w),LVM_SETWORKAREAS,(WPARAM)(n),(LPARAM)(RECT *)(r))
 #define ListView_GetWorkAreas(w,n,r) (BOOL)SNDMSG((w),LVM_GETWORKAREAS,(WPARAM)(n),(LPARAM)(RECT *)(r))
@@ -3211,13 +3315,13 @@ WINBOOL WINAPI ImageList_DrawIndirect(IMAGELISTDRAWPARAMS*);
 #define ListView_SetSelectionMark(w,i) (INT)SNDMSG((w),LVM_SETSELECTIONMARK,0,(LPARAM)(i))
 #define ListView_SetToolTips(w,n) (HWND)SNDMSG((w),LVM_SETTOOLTIPS,(WPARAM)(n),0)
 #define ListView_GetToolTips(w) (HWND)SNDMSG((w),LVM_GETTOOLTIPS,0,0)
-#define ListView_SetUnicodeFormat(w, f) (BOOL)SNDMSG((w), LVM_SETUNICODEFORMAT, (WPARAM)(f), 0)
-#define ListView_GetUnicodeFormat(w) (BOOL)SNDMSG((w), LVM_GETUNICODEFORMAT, 0, 0)
-#define TabCtrl_HighlightItem(hwnd, i, fHighlight) SNDMSG((hwnd), TCM_HIGHLIGHTITEM, (WPARAM)i, (LPARAM)MAKELONG (fHighlight, 0))
-#define TabCtrl_SetExtendedStyle(hwnd, dw) SNDMSG((hwnd), TCM_SETEXTENDEDSTYLE, 0, dw)
-#define TabCtrl_GetExtendedStyle(hwnd) SNDMSG((hwnd), TCM_GETEXTENDEDSTYLE, 0, 0)
-#define TabCtrl_SetUnicodeFormat(hwnd, fUnicode) SNDMSG((hwnd), TCM_SETUNICODEFORMAT, (WPARAM)(fUnicode), 0)
-#define TabCtrl_GetUnicodeFormat(hwnd) SNDMSG((hwnd), TCM_GETUNICODEFORMAT, 0, 0)
+#define ListView_SetUnicodeFormat(w,f) (BOOL)SNDMSG((w),LVM_SETUNICODEFORMAT,(WPARAM)(f),0)
+#define ListView_GetUnicodeFormat(w) (BOOL)SNDMSG((w),LVM_GETUNICODEFORMAT,0,0)
+#define TabCtrl_HighlightItem(w,i,fHighlight) SNDMSG((w),TCM_HIGHLIGHTITEM,(WPARAM)i,(LPARAM)MAKELONG(fHighlight,0))
+#define TabCtrl_SetExtendedStyle(w,dw) SNDMSG((w),TCM_SETEXTENDEDSTYLE,0,dw)
+#define TabCtrl_GetExtendedStyle(w) SNDMSG((w),TCM_GETEXTENDEDSTYLE,0,0)
+#define TabCtrl_SetUnicodeFormat(w,u) SNDMSG((w),TCM_SETUNICODEFORMAT,(WPARAM)(u),0)
+#define TabCtrl_GetUnicodeFormat(w) SNDMSG((w),TCM_GETUNICODEFORMAT,0,0)
 #define TreeView_GetBkColor(w) (COLORREF)SNDMSG((w),TVM_GETBKCOLOR,0,0)
 #define TreeView_GetInsertMarkColor(w) (COLORREF)SNDMSG((w),TVM_GETINSERTMARKCOLOR,0,0)
 #define TreeView_GetItemHeight(w) (int)SNDMSG((w),TVM_GETITEMHEIGHT,0,0)
