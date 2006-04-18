@@ -48,21 +48,21 @@ _TEXT   segment dword '_OVLCODE' PUBLIC
 
 XNAME   public, OVLLDR
 XNAME   public, OVLINIT
-XNAME   public, DBG_HOOK
-XNAME   extrn,  OVLTINIT,   :near
-XNAME   extrn,  OVLLOAD,    :near
+XNAME   <public "C",>, DBG_HOOK
+XNAME   <extrn "C",>, OVLTINIT,   :near
+XNAME   <extrn "C",>, OVLLOAD,    :near
 XNAME   extrn,  OVLSETRTN,  :near
-XNAME   extrn,  DBG_HANDLER,:far
+XNAME   <extrn "C",>, DBG_HANDLER,:far
 XNAME   extrn,  OVLPARINIT, :near
 
-        extrn   __OVLPSP__  :word
-        extrn   __OVLCAUSE__:word
-        extrn   __OVLDOPAR__:byte
-        extrn   __OVLISRET__:byte
+        extrn   "C",__OVLPSP__  :word
+        extrn   "C",__OVLCAUSE__:word
+        extrn   "C",__OVLDOPAR__:byte
+        extrn   "C",__OVLISRET__:byte
         extrn   __SaveRegs__:word
         extrn   __TopStack__:byte
-        extrn   __OVLFLAGS__:word
-        extrn   __CloseOvl__:far
+        extrn   "C",__OVLFLAGS__:word
+        extrn   "C",__CloseOvl__:far
 
 SaveSS          dw      ?
 SaveSP          dw      ?
@@ -140,7 +140,7 @@ else
         mov     AX,[BP+4]                   ; ...
         mov     __OVLCAUSE__+2,AX           ; stash it
 endif
-        mov     byte ptr __OVLISRET__,0     ; indicate not a return
+        mov     __OVLISRET__,0              ; indicate not a return
         pop     BP                          ; remove return address offset
         mov     AX,CS:[BP]                  ; get overlay to load
         pushf                               ; save flags

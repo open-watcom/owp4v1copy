@@ -80,7 +80,7 @@ DGROUP  group   _DATA
 _DATA   segment byte 'DATA' PUBLIC
 
 ifdef OVL_MULTITHREAD
-        extrn   _Context_list:word
+        extrn   "C",Context_list:word
 endif
 
 _DATA   ends
@@ -91,27 +91,27 @@ ifdef OVL_MULTITHREAD
         assume  SS:DGROUP
 endif
 
-        extrn   __NOVLTINIT__:near
-        extrn   __WOVLLDR__:near
-        extrn   __OvlExit__:near
-        extrn   __OVLMAXSECT__:near
-        extrn   __FINDOVLADDR__:far
-        extrn   __OVLLONGJMP__:near
-        extrn   __NDBG_HANDLER__:far
+        extrn   "C",__NOVLTINIT__:near
+        extrn   "C",__WOVLLDR__:near
+        extrn   "C",__OvlExit__:near
+        extrn   "C",__OVLMAXSECT__:near
+        extrn   "C",__FINDOVLADDR__:far
+        extrn   "C",__OVLLONGJMP__:near
+        extrn   "C",__NDBG_HANDLER__:far
         extrn   __OVLTAB__:near
         extrn   __OVLTABEND__:near
-        extrn   __OVLPSP__:word
-        extrn   __OVLCAUSE__:word
-        extrn   __LoadNewOverlay__:near
-        extrn   __OVLINITAREA__:near
-        extrn   __OVLFLAGS__:word
-        extrn   __CloseOvl__:far
+        extrn   "C",__OVLPSP__:word
+        extrn   "C",__OVLCAUSE__:word
+        extrn   "C",__LoadNewOverlay__:near
+        extrn   "C",__OVLINITAREA__:near
+        extrn   "C",__OVLFLAGS__:word
+        extrn   "C",__CloseOvl__:far
 
-        public  __NDBG_HOOK__
-        public  __OVLAREALIST__
-        public  __OVLROVER__
-        public  __OVLSTARTPARA__
-        public  __OVLDBGINFO__
+        public  "C",__NDBG_HOOK__
+        public  "C",__OVLAREALIST__
+        public  "C",__OVLROVER__
+        public  "C",__OVLSTARTPARA__
+        public  "C",__OVLDBGINFO__
 
 ;
 ;   void __NOVLINIT__( DOS EXE startup parms )
@@ -246,7 +246,7 @@ __NOVLINIT__ endp
 ;
 ; unsigned near __WhichArea__( unsigned seg )
 ;
-        public  __WhichArea__
+        public  "C",__WhichArea__
 __WhichArea__ proc near
 ;
 ;       Determine the overlay area that seg belongs to.  Return 0 if it
@@ -277,7 +277,7 @@ __WhichArea__ endp
 ;
 ; unsigned near __OVLSCANCALLCHAIN__( void )
 ;
-        public __OVLSCANCALLCHAIN__
+        public "C",__OVLSCANCALLCHAIN__
 __OVLSCANCALLCHAIN__ proc near
 ;
 ;   This function modifies all start_paras in the ovltab so that they are
@@ -296,7 +296,7 @@ __OVLSCANCALLCHAIN__ proc near
         push    ES
         push    DS
 ifdef OVL_MULTITHREAD
-        mov     BP,_Context_list; get list before switching DS
+        mov     BP,Context_list ; get list before switching DS
 endif
         mov     AX,CS           ; set ds == cs for speed (& size)
         mov     BX,offset __OVLTAB__.ov_entries.ove_start_para - size OVLTAB_ENTRY
@@ -362,7 +362,7 @@ __OVLSCANCALLCHAIN__ endp
 ;
 ; void near __OVLBUILDRETTRAP__( unsigned old_handle, unsigned rt_seg );
 ;
-        public  __OVLBUILDRETTRAP__
+        public  "C",__OVLBUILDRETTRAP__
 __OVLBUILDRETTRAP__ proc near
 ;
 ;   This function constructs a return trap in rt_seg.  It only initializes
@@ -376,7 +376,7 @@ __OVLBUILDRETTRAP__ proc near
         push    CX
 ifdef OVL_MULTITHREAD
         push    BX
-        mov     BP,_Context_list; get list of contexts
+        mov     BP,Context_list ; get list of contexts
 endif
         mov     DS,DX           ; set ds to rt_seg
 ifdef OVL_MULTITHREAD
@@ -468,7 +468,7 @@ __OVLBUILDRETTRAP__ endp
 ;
 ;endif
 
-        public  __OVLUNDORETTRAP__
+        public  "C",__OVLUNDORETTRAP__
 __OVLUNDORETTRAP__ proc near
 ;
 ; Walk up the linked list created by __OVLBUILDRETTRAP__ and set the segments
@@ -548,7 +548,7 @@ __OVLUNDORETTRAP__ endp
 ;
 ; void near __OVLFIXCALLCHAIN__( unsigned old, unsigned new )
 ;
-        public  __OVLFIXCALLCHAIN__
+        public  "C",__OVLFIXCALLCHAIN__
 __OVLFIXCALLCHAIN__ proc near
 ;
 ; Scan through the call chain and change any far rets that point to seg
@@ -557,7 +557,7 @@ __OVLFIXCALLCHAIN__ proc near
         push    BP
         push    CX
 ifdef OVL_MULTITHREAD
-        mov     BP,_Context_list
+        mov     BP,Context_list
         _loop
           push  BP
           mov   BP,[BP+tl_saved_bp]
@@ -593,9 +593,9 @@ __OVLFIXCALLCHAIN__  endp
 
 
 ;
-; int near __NCheckRetAddr__( void far *data )
+; int near __NCheckRetAddr__( ovl_addr far *data )
 ;
-        public __NCheckRetAddr__
+        public "C",__NCheckRetAddr__
 __NCheckRetAddr__ proc near
 ;
 ; This routine is for debugging support.  It checks if the return address
@@ -658,7 +658,7 @@ __NCheckRetAddr__ endp
 ; void far __OVLRETTRAP__( void )
 ;
         align   16
-        public  __OVLRETTRAP__
+        public  "C",__OVLRETTRAP__
 __OVLRETTRAP__  proc far
 ;
 ;   This is the entry point that all return traps use.

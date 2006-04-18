@@ -36,18 +36,18 @@
 
         name ngrablow
 
-        extrn __OVLAREALIST__:near
-        extrn _ovl_addarea_:far
-
 THRESHOLD equ 2         ; only allocate blocks larger than this
 
 _TEXT   segment byte '_OVLCODE' PUBLIC
 
+        extrn "C",__OVLAREALIST__:word
+        extrn "C",_ovl_addarea:far
+
 ;
 ; void far _ovl_grablow( unsigned must_leave )
 ;
-        public _ovl_grablow_
-_ovl_grablow_ proc far
+        public "C",_ovl_grablow
+_ovl_grablow proc far
 ;
 ;       Grab low memory leaving at least must_leave paras for caller.
 ;
@@ -75,7 +75,7 @@ _ovl_grablow_ proc far
             mov ah,48h          ; dos alloc memory request
             int 21h             ; allocate the block
             _quif c             ; some sort of fatal error occured
-            call  _ovl_addarea_ ; add the area
+            call  _ovl_addarea  ; add the area
           _endloop
           test  cx,cx           ; check if we have to free a seg
           _if   ne
@@ -90,7 +90,7 @@ _ovl_grablow_ proc far
         pop     bx
         pop     ax
         ret
-_ovl_grablow_ endp
+_ovl_grablow endp
 
 _TEXT   ends
 

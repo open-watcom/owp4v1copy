@@ -56,10 +56,8 @@ typedef unsigned char byte;
 #if defined( OVL_WHOOSH )
 extern int  near __LoadNewOverlay__( int );
 extern int  near __LoadSectionCode__( ovltab_entry far * );
-extern int  near __NCheckRetAddr__( void far * );
 #else
 extern int  near NAME( LoadOverlay )( int );
-extern int  near NAME( CheckRetAddr )( ovl_addr far * );
 #endif
 
 #ifndef OVL_WHOOSH
@@ -358,12 +356,8 @@ unsigned near __OVLMAXSECT__( void )
 }
 #endif
 
-#if defined( OVL_WHOOSH )
-int far __NDBG_HANDLER__( int service, void far *data )
-#else
-int far NAME( DBG_HANDLER )( int service, void far *data )
-#endif
-/****************************************************/
+int far GNAME( DBG_HANDLER )( int service, void far *data )
+/*********************************************************/
 {
     int ret;
 
@@ -382,11 +376,7 @@ int far NAME( DBG_HANDLER )( int service, void far *data )
         ret = GetSizeOverlays();
         break;
     case OVLDBG_TRANSLATE_RETURN_ADDR:
-#ifndef OVL_WHOOSH
-        ret = NAME( CheckRetAddr )( data );
-#else
-        ret = __NCheckRetAddr__( data );
-#endif
+        ret = GNAME( CheckRetAddr )( data );
         break;
     case OVLDBG_GET_OVL_TBL_ADDR:
         *(void far *far *)data = &__OVLTAB__;

@@ -31,14 +31,12 @@
 
 #include "ovlstd.h"
 
-extern void far __CloseOvl__( void );
-
 /* this can be called by the app. */
 
 #define SHARE_SHIFT     4
 
-extern unsigned far _ovl_openflags_( unsigned share )
-/***************************************************/
+extern unsigned far _ovl_openflags( unsigned share )
+/**************************************************/
 {
     unsigned    old;
 

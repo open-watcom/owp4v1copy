@@ -25,10 +25,10 @@ extra_c_flags_sovlldr  = -mc -DOVL_SMALL
 extra_c_flags_dsovlldr = -mc -DOVL_SMALL -DOVL_DEBUG
 extra_c_flags_lovlldr  =
 extra_c_flags_dlovlldr = -DOVL_DEBUG
-extra_c_flags_novlldr  =
-extra_c_flags_dnovlldr = -DOVL_DEBUG
-extra_c_flags_movlldr  = -DOVL_MULTITHREAD
-extra_c_flags_dmovlldr = -DOVL_MULTITHREAD -DOVL_DEBUG
+extra_c_flags_novlldr  = -DOVL_WHOOSH
+extra_c_flags_dnovlldr = -DOVL_WHOOSH -DOVL_DEBUG
+extra_c_flags_movlldr  = -DOVL_WHOOSH -DOVL_MULTITHREAD
+extra_c_flags_dmovlldr = -DOVL_WHOOSH -DOVL_MULTITHREAD -DOVL_DEBUG
 
 extra_c_flags_sovldbg  = -mc -DOVL_SMALL
 extra_c_flags_lovldbg  =
@@ -44,8 +44,8 @@ extra_a_flags_dovldata = -DOVL_DEBUG
 
 extra_a_flags_sovlmain = -DOVL_SMALL
 extra_a_flags_lovlmain =
-extra_a_flags_novlmain =
-extra_a_flags_movlmain = -DOVL_MULTITHREAD
+extra_a_flags_novlmain = -DOVL_WHOOSH
+extra_a_flags_movlmain = -DOVL_WHOOSH -DOVL_MULTITHREAD
 
 extra_a_flags_sovlret  = -DOVL_SMALL
 extra_a_flags_lovlret  =

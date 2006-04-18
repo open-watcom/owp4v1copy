@@ -851,7 +851,7 @@ extern unsigned_32 near __OVLLONGJMP__( unsigned ovl_num, unsigned segment,
 #ifdef OVL_DEBUG
 #include <conio.h>
 
-#pragma aux cprintf "*_" modify [es ds];
+#pragma aux cprintf modify [es ds];
 
 #define CRLF "\r\n"
 

@@ -34,11 +34,11 @@
 _TEXT   segment word '_OVLCODE' PUBLIC
 
         public  __BankBeg__
-        public  __OVLISRET__
+        public  "C",__OVLISRET__
         public  __SaveRegs__
-        public  __OVLDOPAR__
+        public  "C",__OVLDOPAR__
         public  __TopStack__
-        public  __BankStack__
+        public  "C",__BankStack__
 
 __SaveRegs__    dw      ?,?,?
 __OVLISRET__    db      ?

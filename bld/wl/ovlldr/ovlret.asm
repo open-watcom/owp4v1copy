@@ -51,16 +51,16 @@ _DATA   ends
 _TEXT   segment byte '_OVLCODE' PUBLIC
 
 XNAME   public, OVLSETRTN
-XNAME   public, CHPOVLLDR
-XNAME   public, CheckRetAddr
+XNAME   <public "C",>, CHPOVLLDR
+XNAME   <public "C",>, CheckRetAddr
 XNAME   public, OVLPARINIT
-XNAME   extrn,  OVLLOAD,     :near
+XNAME   <extrn "C",>, OVLLOAD,     :near
 
-        extrn   __BankStack__:word
+        extrn   "C",__BankStack__:word
         extrn   __BankBeg__  :byte
         extrn   __SaveRegs__ :word
-        extrn   __OVLCAUSE__ :word
-        extrn   __OVLISRET__ :byte
+        extrn   "C",__OVLCAUSE__ :word
+        extrn   "C",__OVLISRET__ :byte
 
 XPROC   CHPOVLLDR, near
         mov     __SaveRegs__+0,AX   ; save registers
@@ -151,7 +151,7 @@ else
 endif
         mov     AX,CS:[BX+2]                ; stash return offset
         mov     __OVLCAUSE__,AX             ; ...
-        mov     byte ptr __OVLISRET__,1     ; indicate it's a return
+        mov     __OVLISRET__,1              ; indicate it's a return
         pop     AX                          ; restore AX
         call    PopEntry                    ; reload overlay if required
         popf                                ; restore flags

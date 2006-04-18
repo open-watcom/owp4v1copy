@@ -33,14 +33,14 @@
 
 _TEXT   segment word '_OVLCODE' PUBLIC
 
-        public  __OVLCAUSE__
-        public  __OVLPSP__
-        public  __OVLMSGS__
-        public  __OVLFILEPREV__
-        public  __OVLHDLPREV__
-        public  __OVLFLAGS__
-        public  __OVLSHARE__
-        public  __OVLNULLSTR__
+        public  "C",__OVLCAUSE__
+        public  "C",__OVLPSP__
+        public  "C",__OVLMSGS__
+        public  "C",__OVLFILEPREV__
+        public  "C",__OVLHDLPREV__
+        public  "C",__OVLFLAGS__
+        public  "C",__OVLSHARE__
+        public  "C",__OVLNULLSTR__
 
 __OVLPSP__      dw      ?
 __OVLCAUSE__    dw      ?,?

@@ -42,8 +42,6 @@ typedef struct {
 
 // definitions used in the overlay loader.
 
-#pragma aux default "*" modify [];
-
 #define CALL_INSTRUCTION 0xe8
 
 /* this definition used in the old overlay loader only */
@@ -78,6 +76,7 @@ enum {
 
 /* flags in __OVLFLAGS__ */
 extern unsigned_16 far __OVLFLAGS__;
+
 enum {
     OVL_386FLAG         = 0x0001, /* whoosh only: 386 present */
     OVL_DOS3            = 0x0002, /* DOS major version 3 or greater */
@@ -97,6 +96,12 @@ enum {
 #define vector          lvector
 #endif
 
+#if defined( OVL_WHOOSH )
+#define GNAME( n )       __N##n##__
+#else
+#define GNAME( n )       NAME( n )
+#endif
+
 /*
     Common overlay routines
 */
@@ -110,6 +115,7 @@ extern  void        near __OvlNum__( unsigned int );
 extern  void        near __OvlMsg__( unsigned int );
 extern  tiny_ret_t  near __OpenOvl__( unsigned int );
 extern  tiny_ret_t  near __OvlOpen__( char far *fname );
+extern  void        far  __CloseOvl__( void );
 extern  void        near __OvlClose__( tiny_handle_t hdl );
 
 /*
@@ -128,3 +134,22 @@ extern  vector          far __OVLSTARTVEC__;
 extern  vector          far __OVLENDVEC__;
 extern  unsigned        far __OVLSHARE__;
 extern  char            far __OVLNULLSTR__[];
+
+extern void (far * far GNAME( DBG_HOOK ))( int, char, void far * );
+extern int  near GNAME( CheckRetAddr )( void far * );
+extern int  far GNAME( DBG_HANDLER )( int service, void far *data );
+
+/*
+    Global symbols used by linker
+    They mustn't be mangled
+*/
+#pragma aux __OVLTAB__ "*";
+#pragma aux __OVLTABEND__ "*";
+#pragma aux __OVLSTARTVEC__ "*";
+#pragma aux __OVLENDVEC__ "*";
+#pragma aux __LOVLLDR__ "*";
+#pragma aux __LOVLINIT__ "*";
+#pragma aux __NOVLLDR__ "*";
+#pragma aux __NOVLINIT__ "*";
+#pragma aux __SOVLLDR__ "*";
+#pragma aux __SOVLINIT__ "*";
