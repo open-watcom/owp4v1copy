@@ -1,7 +1,7 @@
-Open Watcom C/C++ Version 1.5 - README
+Open Watcom C/C++ Version 1.6 - README
 --------------------------------------
 
-Welcome to the Open Watcom C/C++ version 1.5 release! This README provides
+Welcome to the Open Watcom C/C++ version 1.6 release! This README provides
 helpful hints to help you get the software package up and running. For more
 detailed information on installation and setup, please refer to online
 Getting Started Guide (c_readme.hlp/c_readme.inf).

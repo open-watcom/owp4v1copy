@@ -1,7 +1,7 @@
-Open Watcom FORTRAN Version 1.5 - README
+Open Watcom FORTRAN Version 1.6 - README
 ----------------------------------------
 
-Welcome to the Open Watcom FORTRAN/77 version 1.5 release! This README
+Welcome to the Open Watcom FORTRAN/77 version 1.6 release! This README
 provides helpful hints to help you get the software package up and
 running. For more detailed information on installation and setup, please
 refer to online Getting Started Guide (f_readme.hlp/f_readme.inf).

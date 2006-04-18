@@ -36,8 +36,8 @@ QNX is a registered trademark of QNX Software Systems Ltd.
 :set symbol="rev"       value="5".
 :set symbol="pver"      value="10".
 :set symbol="prev"      value="6".
-:set symbol="version"   value="150".
-:set symbol="vermacro"  value="1250".
+:set symbol="version"   value="160".
+:set symbol="vermacro"  value="1260".
 :set symbol="minram"    value="8 MB".
 :set symbol="mfc16"     value="MFC 2.52b".
 :set symbol="mfc32"     value="MFC 4.1".
