@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Support for debugging overlays.
 *
 ****************************************************************************/
 
@@ -43,11 +42,11 @@ typedef struct {
     unsigned_16 spacer;         /* to make a power of two */
 } section_info;
 
-extern void             RemoteSectTblRead(void *);
-extern void             RemoteSectTblWrite(void *);
+extern void             RemoteSectTblRead( void * );
+extern void             RemoteSectTblWrite( void * );
 extern bool             RemoteOvlRetAddr( address *, unsigned );
 extern bool             RemoteOvlSectPos( unsigned, mem_block * );
-extern unsigned         RemoteOvlSectSize();
+extern unsigned         RemoteOvlSectSize( void );
 
 extern unsigned         OvlSize;
 extern machine_state    *DbgRegs;
@@ -58,7 +57,7 @@ static unsigned         OvlCount;
 static bool             TblCacheValid;
 
 
-bool InitOvlState()
+bool InitOvlState( void )
 {
     unsigned    i;
     mem_block   where;
@@ -83,7 +82,7 @@ bool InitOvlState()
     return( TRUE );
 }
 
-void FiniOvlState()
+void FiniOvlState( void )
 {
     _Free( TblCache );
     TblCache = NULL;
@@ -92,7 +91,7 @@ void FiniOvlState()
     OvlSize = OvlCount = 0;
 }
 
-void InvalidateTblCache()
+void InvalidateTblCache( void )
 {
     TblCacheValid = FALSE;
 }

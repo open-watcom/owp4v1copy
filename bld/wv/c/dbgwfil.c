@@ -44,34 +44,34 @@
 #include <string.h>
 #include <limits.h>
 
-extern bool             ScanItem(bool ,char **,unsigned int *);
-extern void             ReqEOC(void);
+extern bool             ScanItem( bool, char **, unsigned int * );
+extern void             ReqEOC( void );
 extern bool             ScanSelectedExpr( char * );
 extern void             BreakOnSelected( char *item );
 
-extern char             *StrCopy(char*,char*);
+extern char             *StrCopy( char *, char * );
 extern a_window         *WndFileInspect( char *file, bool binary );
-extern void             *OpenSrcFile(cue_handle * );
-extern int              FReadLine(void   *,int ,int ,char *,int );
-extern void             FDoneSource(void         *);
-extern char             *ScanPos(void);
-extern unsigned int     ScanCmd(char *);
-extern void             Scan(void);
-extern char             *ReScan(char *);
-extern unsigned long    FSize(void*);
-extern unsigned long    FLastOffset(void*);
+extern void             *OpenSrcFile( cue_handle * );
+extern int              FReadLine( void *, int, int, char *, int );
+extern void             FDoneSource( void * );
+extern char             *ScanPos( void );
+extern unsigned int     ScanCmd( char * );
+extern void             Scan( void );
+extern char             *ReScan( char * );
+extern unsigned long    FSize( void * );
+extern unsigned long    FLastOffset( void * );
 extern brk              *FindBreakByLine( mod_handle, cue_file_id, unsigned );
 extern void             WndFuncInspect( mod_handle mod );
-extern void             *AddBreak(address);
-extern bool             DlgBreak(address);
-extern void             WndInspect(char*);
-extern a_window         *WndAsmInspect(address);
-extern int              DlgSearch(a_window*,void*);
-extern bool             DlgLongExpr(char*title,long*value);
+extern void             *AddBreak( address );
+extern bool             DlgBreak( address );
+extern void             WndInspect( char * );
+extern a_window         *WndAsmInspect( address );
+extern int              DlgSearch( a_window *, void * );
+extern bool             DlgLongExpr( char *title, long *value );
 extern void             GoToAddr( address addr );
-extern void             ToggleBreak(address);
-extern void             SetCodeDot(address);
-extern address          GetCodeDot(void);
+extern void             ToggleBreak( address );
+extern void             SetCodeDot( address );
+extern address          GetCodeDot( void );
 extern a_window         *WndClassInspect( wnd_class class );
 extern void             WndVarInspect( char * );
 extern void             AsmMoveDot( a_window *, address );
@@ -83,25 +83,25 @@ extern void             StepIntoFunction( char * );
 extern bool             FirstLinInfo( mod_handle, address *, unsigned * );
 extern int              FCurrLine( struct browser *hndl );
 extern int              FileIsRemote( struct browser *hndl );
-extern unsigned         NewCurrRadix(unsigned int );
-extern bool             DbgWndSearch(a_window *,bool,int);
-extern char             *DupStr(char*);
-extern char             *Format(char *,char *,... );
+extern unsigned         NewCurrRadix( unsigned int );
+extern bool             DbgWndSearch( a_window *, bool, int );
+extern char             *DupStr( char * );
+extern char             *Format( char *, char *, ... );
 extern bool             DlgCodeAddr( char *title, address *value );
 extern void             WndSrcInspect( address addr );
 extern bool             DlgModName( char *title, mod_handle *mod );
 extern void             WndModInspect( mod_handle mod );
-extern a_window         *AsmWndFind( a_window* asm, address addr,bool track );
+extern a_window         *AsmWndFind( a_window *asm, address addr, bool track );
 extern a_window         *DoWndSrcOpen( cue_handle *, bool track );
-extern unsigned         ExprSize(stack_entry*);
+extern unsigned         ExprSize( stack_entry * );
 extern void             EvalLValExpr( int );
-extern void             PopEntry(void);
+extern void             PopEntry( void );
 extern char             *ModImageName( mod_handle handle );
 extern char             *FGetName( void *viewhndl );
 extern unsigned         ModName( mod_handle mh, char *result, unsigned max );
 extern a_window         *WndNewSrcInspect( address addr );
 extern int              AddrComp( address a, address b );
-extern void             GoHome(void);
+extern void             GoHome( void );
 extern void             DbgUpdate( update_list );
 
 extern char             *TxtBuff;
@@ -126,7 +126,7 @@ static gui_menu_struct FileMenu[] = {
 };
 
 typedef struct {
-    void         *      viewhndl;
+    void                *viewhndl;
     unsigned long       size;
     unsigned            active;
     mod_handle          mod;
@@ -531,7 +531,7 @@ static void SeekToTheEnd( file_window *file )
 }
 
 
-static unsigned ActiveLine()
+static unsigned ActiveLine( void )
 {
     DIPHDL( cue, ch );
 
@@ -926,7 +926,7 @@ extern a_window *DoWndSrcOpen( cue_handle *ch, bool track )
 
 
 extern WNDOPEN WndSrcOpen;
-extern a_window *WndSrcOpen()
+extern a_window *WndSrcOpen( void )
 {
     mod_handle  mod;
     address     addr;
@@ -943,7 +943,7 @@ extern a_window *WndSrcOpen()
 }
 
 
-void ProcView()
+void ProcView( void )
 {
     char                *start;
     unsigned            len;

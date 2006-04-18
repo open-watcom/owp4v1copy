@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Top level debugger menu.
 *
 ****************************************************************************/
 
@@ -42,63 +41,63 @@
 #include <string.h>
 
 extern a_window         *WndClassInspect( wnd_class class );
-extern void             DebugExit(void);
-extern void             DlgSource(void);
-extern char             *ReScan(char*);
-extern void             ProcSearchAll(void);
-extern void             ProcWndSearch(a_window*);
-extern void             ProcWndFindNext(a_window*);
-extern void             ProcWndFindPrev(a_window*);
-extern void             DlgOptSet();
-extern void             DlgCmd();
-extern void             DoSystem(char *,unsigned int ,int );
+extern void             DebugExit( void );
+extern void             DlgSource( void );
+extern char             *ReScan( char * );
+extern void             ProcSearchAll( void );
+extern void             ProcWndSearch( a_window * );
+extern void             ProcWndFindNext( a_window * );
+extern void             ProcWndFindPrev( a_window * );
+extern void             DlgOptSet( void );
+extern void             DlgCmd( void );
+extern void             DoSystem( char *, unsigned int, int );
 extern void             ExecTrace( trace_cmd_type, debug_level );
 extern unsigned         Go( bool );
 extern void             ReStart( void );
 extern bool             SetProgStartHook( bool );
 extern void             GoToReturn( void );
-extern void             DlgNewProg();
-extern bool             DlgBreak(address);
-extern void             BreakSave(bool);
-extern void             ReplaySave(bool);
-extern void             BrkEnableAll(void);
-extern void             BrkDisableAll(void);
-extern void             BrkClearAll(void);
-extern void             ConfigSave(bool);
-extern void             ReqEOC(void);
-extern bool             ScanEOC(void);
+extern void             DlgNewProg( void );
+extern bool             DlgBreak( address );
+extern void             BreakSave( bool );
+extern void             ReplaySave( bool );
+extern void             BrkEnableAll( void );
+extern void             BrkDisableAll( void );
+extern void             BrkClearAll( void );
+extern void             ConfigSave( bool );
+extern void             ReqEOC( void );
+extern bool             ScanEOC( void );
 extern unsigned         ScanCmd( char *cmd_table );
-extern bool             ScanItem(bool ,char **,unsigned int *);
-extern wnd_class        ReqWndName();
-extern char             *StrCopy(char*,char*);
-extern void             FileBrowse();
-extern void             LastMachState();
-extern void             LastStackPos();
+extern bool             ScanItem( bool, char **, unsigned int * );
+extern wnd_class        ReqWndName( void );
+extern char             *StrCopy( char *, char * );
+extern void             FileBrowse( void );
+extern void             LastMachState( void );
+extern void             LastStackPos( void );
 extern void             MoveStackPos( int by );
 extern void             PosMachState( int rel_pos );
-extern void             Flip(unsigned);
-extern void             WndAsmInspect(address);
-extern void             WndSrcInspect(address);
-extern void             DlgAbout();
-extern void             FontChange(void);
-extern void             ToggleHardMode();
+extern void             Flip( unsigned );
+extern void             WndAsmInspect( address );
+extern void             WndSrcInspect( address );
+extern void             DlgAbout( void );
+extern void             FontChange( void );
+extern void             ToggleHardMode( void );
 extern void             WndDumpPrompt( a_window * );
 extern void             WndDumpLog( a_window * );
 extern char             *GetCmdName( int );
-extern void             DlgWndSet();
-extern bool             VarInfoRelease();
+extern void             DlgWndSet( void );
+extern bool             VarInfoRelease( void );
 extern void             SkipToAddr( address );
 extern void             GoToAddr( address );
-extern address          GetCodeDot();
-extern void             ToggleBreak(address);
+extern address          GetCodeDot( void );
+extern void             ToggleBreak( address );
 extern void             FuncNewMod( a_window *wnd, mod_handle mod );
 extern void             GlobNewMod( a_window *wnd, mod_handle mod );
 extern void             ModNewHandle( a_window *wnd, mod_handle mod );
-extern void             GoHome();
+extern void             GoHome( void );
 extern void             DoProcHelp( gui_help_actions );
-extern void             DlgBreakDLL();
-extern bool             DebugScreen(void);
-extern void             UnknownScreen(void);
+extern void             DlgBreakDLL( void );
+extern bool             DebugScreen( void );
+extern void             UnknownScreen( void );
 extern bool             DlgCodeAddr( char *title, address *value );
 extern bool             DlgDataAddr( char *title, address *value );
 extern void             WndAddrInspect( address addr );
@@ -360,7 +359,7 @@ static bool DoProcAccel( bool add_to_menu, gui_menu_struct **menu,
     return( FALSE );
 }
 
-extern void ProcAccel()
+extern void ProcAccel( void )
 {
     gui_menu_struct     *menu,*parent;
     int                 num_sibs;
@@ -399,7 +398,7 @@ static void LoadLabels( gui_menu_struct *menu, int num_menus )
     }
 }
 
-void SetBrkMenuItems()
+void SetBrkMenuItems( void )
 {
     bool        on;
 
@@ -427,12 +426,12 @@ void SetMADMenuItems( void )
     WndEnableMainMenu( MENU_MAIN_OPEN_XMM, rsd != NULL );
 }
 
-void SetTargMenuItems()
+void SetTargMenuItems( void )
 {
     WndEnableMainMenu( MENU_MAIN_BREAK_ON_DLL, _IsOn( SW_HAVE_RUNTIME_DLLS ) );
-    #if defined(__GUI__) && defined(__OS2__)
-        WndEnableMainMenu( MENU_MAIN_FILE_FONT, FALSE );
-    #endif
+#if defined(__GUI__) && defined(__OS2__)
+    WndEnableMainMenu( MENU_MAIN_FILE_FONT, FALSE );
+#endif
     SetMADMenuItems();
 }
 
@@ -446,7 +445,7 @@ static void ForAllMenus( void (*rtn)( gui_menu_struct *menu, int num_menus ) )
     }
 }
 
-extern void InitMenus()
+extern void InitMenus( void )
 {
     int         i;
 
@@ -462,7 +461,7 @@ extern void InitMenus()
     SetBrkMenuItems();
 }
 
-extern void FiniMenus()
+extern void FiniMenus( void )
 {
     ForAllMenus( FreeLabels );
 }
@@ -511,7 +510,7 @@ extern gui_menu_struct *AddMenuAccel( char *key, char *cmd,
 }
 
 
-static void     DoMatch()
+static void     DoMatch( void )
 {
     a_window    *wnd;
 
@@ -536,7 +535,7 @@ static  void    ExamMemAt( void )
 }
 
 
-static void GoToPromptedAddr( void )
+static  void    GoToPromptedAddr( void )
 {
     address     addr;
 

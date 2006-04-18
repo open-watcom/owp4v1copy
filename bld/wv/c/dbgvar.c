@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Evaluation and formatting of program variables.
 *
 ****************************************************************************/
 
@@ -48,69 +47,69 @@
 #include <string.h>
 
 extern image_entry      *ImageEntry( mod_handle mh );
-extern char             *ScanPos(void);
-extern void             ReqEOC(void);
-extern void             ChkExpr(void);
+extern char             *ScanPos( void );
+extern void             ReqEOC( void );
+extern void             ChkExpr( void );
 extern void             StartPrintBuff( char *buff, int len );
-extern void             EndPrintBuff();
-extern void             PrintChar();
-extern void             PrintString();
-extern void             ForcePrintString();
-extern char             *ReScan(char *);
-extern void             NormalExpr(void);
+extern void             EndPrintBuff( void );
+extern void             PrintChar( void );
+extern void             PrintString( void );
+extern void             ForcePrintString( void );
+extern char             *ReScan( char * );
+extern void             NormalExpr( void );
 extern void             EvalLValExpr( int );
-extern void             ExprValue(stack_entry *);
-extern void             PopEntry(void);
-extern void             DupStack(void);
+extern void             ExprValue( stack_entry * );
+extern void             PopEntry( void );
+extern void             DupStack( void );
 extern void             SwapStack( int entry );
-extern void             ExprPurge(void);
-extern bool             TokenName(unsigned int ,char **,unsigned int *);
-extern void             SetTokens(bool );
-extern void             PushNum(long );
-extern void             DoPlus(void);
-extern void             DoPoints(type_kind );
-extern void             DoAssign();
-extern char             *CnvLongDec(long,char*);
-extern void             Scan(void);
-extern bool             ScanEOC(void);
-extern int              AddrComp(address,address);
-extern bool             DlgVarExpand(dlg_var_expand *);
-extern bool             DlgAnyExpr(char *,char*,unsigned);
+extern void             ExprPurge( void );
+extern bool             TokenName( unsigned int ,char **, unsigned int * );
+extern void             SetTokens( bool );
+extern void             PushNum( long );
+extern void             DoPlus( void );
+extern void             DoPoints( type_kind );
+extern void             DoAssign( void );
+extern char             *CnvLongDec( long, char * );
+extern void             Scan( void );
+extern bool             ScanEOC( void );
+extern int              AddrComp( address, address );
+extern bool             DlgVarExpand( dlg_var_expand *);
+extern bool             DlgAnyExpr( char *, char *, unsigned );
 extern void             WndVarNewWindow( char *);
 extern void             WndVarInspect( char *);
-extern void             DlgNewWithSym(char*title,char*buff,int len);
-extern void             BreakOnExprSP(void*);
-extern unsigned         NewCurrRadix(unsigned int );
-extern void             FreezeInpStack();
-extern void             PopInpStack();
-extern void             FreezeStack();
+extern void             DlgNewWithSym( char * title, char * buff, int len );
+extern void             BreakOnExprSP( void * );
+extern unsigned         NewCurrRadix( unsigned int );
+extern void             FreezeInpStack( void );
+extern void             PopInpStack( void );
+extern void             FreezeStack( void );
 extern void             UnFreezeStack( bool );
-extern void             PrintValue();
+extern void             PrintValue( void );
 extern void             DoGivenField( sym_handle *member );
-extern void             StartSubscript(void);
-extern void             AddSubscript(void);
-extern void             EndSubscript(void);
+extern void             StartSubscript( void );
+extern void             AddSubscript( void );
+extern void             EndSubscript( void );
 extern void             PushSymHandle( sym_handle * );
 extern void             SetUpExpr( unsigned addr_depth );
 extern bool             UnMapAddress( mappable_addr *loc, image_entry *image );
 extern remap_return     ReMapImageAddress( mappable_addr *loc, image_entry *image );
-extern char             *DupStr(char*);
+extern char             *DupStr( char * );
 extern void             WndInspectExprSP( char *item );
-extern void             CollapseMachState();
+extern void             CollapseMachState( void );
 extern char             *CnvNearestAddr( address, char *, unsigned );
 extern char             *GetCmdName( int );
-extern void             RecordEvent(char*);
-extern void             Warn(char *);
+extern void             RecordEvent( char * );
+extern void             Warn( char * );
 extern void             InitMappableAddr( mappable_addr *loc );
 extern void             FiniMappableAddr( mappable_addr *loc );
 extern void             DbgUpdate( update_list );
 extern char             *StrCopy( char*, char* );
 extern bool             AdvMachState( int );
-extern void             LValue(stack_entry *);
+extern void             LValue( stack_entry * );
 
 extern tokens           CurrToken;
 extern mod_handle       ContextMod;
-extern unsigned char  CurrRadix;
+extern unsigned char    CurrRadix;
 
 extern char             *TxtBuff;
 extern stack_entry      *ExprSP;
@@ -261,8 +260,8 @@ void VarDisplayDirty( type_display *curr )
     }
 }
 
-extern void VarDisplayInit()
-/**************************/
+extern void VarDisplayInit( void )
+/********************************/
 {
     TypeDisplay = NULL;
 }
@@ -312,8 +311,8 @@ static void VarDisplayFree( type_display *junk )
     DbgFree( junk );
 }
 
-extern void VarDisplayFini()
-/**************************/
+extern void VarDisplayFini( void )
+/********************************/
 {
     type_display *curr, *next, *alias;
     type_display *fcurr, *fnext;
@@ -379,7 +378,7 @@ static char *TagName( symbol_type tag )
 }
 
 static type_display *VarDisplayAddStructType( type_handle *th )
-/******************************************************/
+/*************************************************************/
 {
     symbol_type         tag;
     int                 len;
@@ -410,7 +409,7 @@ type_display *VarDisplayAddField( type_display *parent, char *name )
 }
 
 static type_display *VarDisplayAddFieldSym( type_display *parent, sym_handle *field )
-/****************************************************************************/
+/***********************************************************************************/
 {
     int         len;
 
@@ -439,7 +438,7 @@ void VarDisplayAlias( type_display *type, type_display *to )
 }
 
 static void VarDisplayAliasNode( var_node *v, type_display *to )
-/**********************************************************/
+/**************************************************************/
 {
     if( v->display_type == NULL ) {
         v->display_type = to;
@@ -520,7 +519,7 @@ static  void    CheckExprStackTimeStamp( var_node *v, long exprsp_timestamp )
 */
 static  int             VarErrStateCount;
 
-bool            VarErrState()
+bool            VarErrState( void )
 {
     _SwitchOn( SW_ERR_IN_TXTBUFF );
     _SwitchOn( SW_AMBIGUITY_FATAL );
@@ -531,7 +530,7 @@ bool            VarErrState()
     return( TRUE );
 }
 
-bool            VarOldErrState()
+bool            VarOldErrState( void )
 {
     if( --VarErrStateCount == 0 ) {
         _SwitchOff( SW_ERR_IN_TXTBUFF );
@@ -543,7 +542,7 @@ bool            VarOldErrState()
     return( FALSE );
 }
 
-static void     CheckRValue()
+static void     CheckRValue( void )
 {
     DupStack();
     ExprValue( ExprSP );
@@ -720,14 +719,14 @@ static void     PushSubScript( long index )
 }
 
 
-static void     PointStack()
+static void     PointStack( void )
 {
     DoPoints( TK_NONE );
     CheckRValue();
 }
 
 
-static void     PushPointStackFirstField()
+static void     PushPointStackFirstField( void )
 {
     DupStack();
     DoPoints( TK_NONE );
@@ -739,14 +738,14 @@ static void     PushPointStackFirstField()
 }
 
 
-static void     PushPoints()
+static void     PushPoints( void )
 {
     DupStack();
     PointStack();
 }
 
 
-static bool     CheckPointerValid()
+static bool     CheckPointerValid( void )
 {
     bool        ok;
 
@@ -922,8 +921,8 @@ static walk_result AllocOneField( sym_walk_info swi, sym_handle *sh, void *_d )
     return( WR_CONTINUE );
 }
 
-static bool PointerToChar()
-/*************************/
+static bool PointerToChar( void )
+/*******************************/
 {
     DIPHDL( type, type );
 
@@ -937,8 +936,8 @@ static bool PointerToChar()
     return( FALSE );
 }
 
-static bool PointerToStruct()
-/***************************/
+static bool PointerToStruct( void )
+/*********************************/
 {
     if( !CheckPointerValid() ) return( FALSE );
 
@@ -2187,7 +2186,7 @@ static scope_state **FindScope( var_info *i, scope_block *scope, mod_handle mod 
 }
 
 
-static scope_state *NilScope()
+static scope_state *NilScope( void )
 {
     scope_state *s;
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Miscellaneous remote access routines (via trap file).
 *
 ****************************************************************************/
 
@@ -38,17 +37,18 @@
 #include "dbglit.h"
 #include "dbgio.h"
 
-extern void RestoreHandlers();
-extern void GrabHandlers();
-extern void StartupErr(char *);
-//extern void TrapErrTranslate( char *, int );
-extern void             FiniCoreSupp(void);
-extern bool             InitCoreSupp(void);
-extern bool             InitFileSupp(void);
-extern bool             InitFileInfoSupp(void);
-extern bool             InitEnvSupp(void);
-extern bool             InitOvlSupp(void);
-extern bool             InitThreadSupp(void);
+
+extern void             RestoreHandlers( void );
+extern void             GrabHandlers( void );
+extern void             StartupErr( char * );
+//extern void             TrapErrTranslate( char *, int );
+extern void             FiniCoreSupp( void );
+extern bool             InitCoreSupp( void );
+extern bool             InitFileSupp( void );
+extern bool             InitFileInfoSupp( void );
+extern bool             InitEnvSupp( void );
+extern bool             InitOvlSupp( void );
+extern bool             InitThreadSupp( void );
 extern void             StartupErr( char *err );
 extern char             *DupStr( char * );
 
@@ -63,13 +63,13 @@ unsigned int            MaxPacketLen;
 
 #if !defined( BUILD_RFX )
 
-static void TrapFailed()
+static void TrapFailed( void )
 {
     KillTrap();
     StartupErr( LIT( ERR_REMOTE_LINK_BROKEN ) );
 }
 
-void InitSuppServices()
+void InitSuppServices( void )
 {
     if( InitCoreSupp() ) {
         InitFileSupp();
@@ -80,7 +80,7 @@ void InitSuppServices()
     }
 }
 
-void FiniSuppServices()
+void FiniSuppServices( void )
 {
     FiniCoreSupp();
 }
@@ -172,7 +172,7 @@ trap_shandle GetSuppId( char *name )
 }
 
 
-void RemoteSuspend()
+void RemoteSuspend( void )
 {
     suspend_req         acc;
 
@@ -180,7 +180,7 @@ void RemoteSuspend()
     TrapSimpAccess( sizeof( acc ), &acc, 0, NULL );
 }
 
-void RemoteResume()
+void RemoteResume( void )
 {
     resume_req          acc;
 
@@ -198,7 +198,7 @@ void RemoteErrMsg( sys_error err, char *msg )
 //    TrapErrTranslate( msg, MAX_ERR_MSG_SIZE );
 }
 
-void FiniTrap()
+void FiniTrap( void )
 {
     disconnect_req      in_mx;
 

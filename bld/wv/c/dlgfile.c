@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File dialog.
 *
 ****************************************************************************/
 
@@ -44,19 +43,19 @@
 
 
 extern a_window         *WndFileInspect( char *name, bool binary );
-extern char             *StrCopy(char *,char *);
+extern char             *StrCopy( char *, char * );
 extern void             SaveConfigToFile( char* );
 extern void             RestoreConfigFromFile( char* );
-extern void             SaveBreaksToFile( char* );
-extern void             RestoreBreaksFromFile( char* );
-extern void             SaveReplayToFile( char* );
-extern void             RestoreReplayFromFile( char* );
-extern char             *DupStr(char*);
-extern void             ReqEOC(void);
-extern bool             OkToSaveReplay();
-extern void             SaveMainWindowPos();
-extern void             FiniHelp();
-extern bool             KillProgOvlay(void);
+extern void             SaveBreaksToFile( char * );
+extern void             RestoreBreaksFromFile( char * );
+extern void             SaveReplayToFile( char * );
+extern void             RestoreReplayFromFile( char * );
+extern char             *DupStr( char * );
+extern void             ReqEOC( void );
+extern bool             OkToSaveReplay( void );
+extern void             SaveMainWindowPos( void );
+extern void             FiniHelp( void );
+extern bool             KillProgOvlay( void );
 
 
 extern char             *TxtBuff;
@@ -127,7 +126,7 @@ void SetLastExe( char *to )
     SetLast( &LastExe, to );
 }
 
-char *GetLastExe()
+char *GetLastExe( void )
 {
     return( LastExe );
 }
@@ -137,7 +136,7 @@ void SetLastCfg( char *to )
     SetLast( &LastCfg, TxtBuff );
 }
 
-static void WritableConfig()
+static void WritableConfig( void )
 {
     if( FindWritable( LastCfg, TxtBuff ) ) {
         SetLast( &LastCfg, TxtBuff );
@@ -146,7 +145,7 @@ static void WritableConfig()
     }
 }
 
-void InitBrowse()
+void InitBrowse( void )
 {
     SetLast( &LastFile, LIT( Empty ) );
     SetLast( &LastExe, LIT( Empty ) );
@@ -156,7 +155,7 @@ void InitBrowse()
     SetLast( &LastRep, LIT( Empty ) );
 }
 
-void FiniBrowse()
+void FiniBrowse( void )
 {
     _Free( LastFile );
     _Free( LastExe );
@@ -188,7 +187,7 @@ static bool DoFileBrowse( char **last, char *title, char *filter, unsigned long 
 }
 
 
-void ProcConfigFile()
+void ProcConfigFile( void )
 {
     input_stack *inp;
     invokes     *inv;
@@ -203,14 +202,14 @@ void ProcConfigFile()
     }
 }
 
-static bool AskIfKillPB()
+static bool AskIfKillPB( void )
 {
     return( WndDisplayMessage( LIT( WARN_Kill_PowerBuilder ), LIT( Empty ),
                              GUI_YES_NO ) == GUI_RET_YES );
 }
 
 static bool     WndDead = FALSE;
-bool WndShutDownHook()
+bool WndShutDownHook( void )
 {
 
     if( WndDead ) return( TRUE );
@@ -285,7 +284,7 @@ bool ReplaySave( bool writing )
 }
 
 
-extern void FileBrowse()
+extern void FileBrowse( void )
 {
     if( DoFileBrowse( &LastFile, LIT( Enter_File_Name ),
                       SourceFilter, OFN_FLAGS( 0 ) )){
@@ -294,7 +293,7 @@ extern void FileBrowse()
 }
 
 
-extern bool ExeBrowse()
+extern bool ExeBrowse( void )
 {
     return( DoFileBrowse( &LastExe, LIT( Program_Name ), ExeFilter, OFN_FLAGS( 0 ) ) );
 }
@@ -312,7 +311,7 @@ extern bool AllBrowse( char *name )
 }
 
 
-extern char *GetDmpName()
+extern char *GetDmpName( void )
 {
     bool        rc;
 

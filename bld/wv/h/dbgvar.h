@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Structures and prototypes for display of program variables.
 *
 ****************************************************************************/
 
@@ -239,10 +238,10 @@ extern bool             VarDisplayIsPointer( var_node *v );
 extern bool             VarDisplayIsChar( var_node *v );
 extern void             VarBreakOnWrite(var_info *i,var_node*v);
 extern void             VarAddWatch( var_info *i, var_node *v );
-extern void             VarInspectMemory();
-extern void             VarInspectPointer();
-extern void             VarInspectCode();
-extern bool             VarIsLValue();
+extern void             VarInspectMemory( void );
+extern void             VarInspectPointer( void );
+extern void             VarInspectCode( void );
+extern bool             VarIsLValue( void );
 
 extern bool             VarDisplayShowMembers( var_info *i );
 extern void             VarDisplaySetMembers( var_info *i, bool on );

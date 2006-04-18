@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Local and remote file access routines.
 *
 ****************************************************************************/
 
@@ -39,12 +38,12 @@
 #include "dui.h"
 #include <string.h>
 
-extern int              DUIEnvLkup(char *,char *, int);
-extern char             *StrCopy(char const *,char *);
-extern void             FreeRing(char_ring *);
-extern unsigned         RemoteStringToFullName(bool,char *,char *,unsigned);
+extern int              DUIEnvLkup( char *, char *, int );
+extern char             *StrCopy( char const *, char * );
+extern void             FreeRing( char_ring * );
+extern unsigned         RemoteStringToFullName( bool, char *, char *, unsigned );
 extern void             StartupErr( char * );
-extern bool             HaveRemoteFiles(void);
+extern bool             HaveRemoteFiles( void );
 
 extern unsigned         RemoteErase( char const * );
 extern void             RemoteErrMsg( sys_error, char * );
@@ -63,7 +62,7 @@ extern unsigned long    LocalSeek( sys_handle, unsigned long, seek_method );
 extern sys_handle       LocalOpen( char const *, open_access );
 extern unsigned         LocalClose( sys_handle );
 extern sys_handle       LocalHandle( handle );
-extern void             DUIWndUser();
+extern void             DUIWndUser( void );
 
 
 extern file_components  RemFile;
@@ -150,7 +149,7 @@ static file_components *PathInfo( char const *path, open_access loc )
     return( info );
 }
 
-static handle FindFreeHandle()
+static handle FindFreeHandle( void )
 {
     handle      i;
 
@@ -615,7 +614,7 @@ handle LocalPathOpen( char const *name, unsigned len, char *ext )
     return( PathOpenInternal( name, len, ext, TRUE ) );
 }
 
-void SysFileInit()
+void SysFileInit( void )
 {
     unsigned    i;
 
@@ -629,7 +628,7 @@ void SysFileInit()
 
 #if !defined( BUILD_RFX )
 
-void PathFini()
+void PathFini( void )
 {
     FreeRing( LclPath );
 }
@@ -667,7 +666,7 @@ static void EnvParse( char_ring **owner, char *src )
 }
 #endif
 
-void PathInit()
+void PathInit( void )
 {
 #if !defined( BUILD_RFX )
     #define BSIZE 2048

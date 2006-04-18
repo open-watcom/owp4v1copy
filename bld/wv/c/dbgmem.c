@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Access to program memory.
 *
 ****************************************************************************/
 
@@ -36,20 +35,20 @@
 #include "dbgerr.h"
 #include "mad.h"
 
-extern char             *GetCmdName(int);
+extern char             *GetCmdName( int );
 extern char             *Format( char *buff, char *fmt, ... );
-extern char             *CnvULong(unsigned long,char *);
-extern unsigned         ProgPeek(address ,void *,unsigned int );
-extern unsigned         ChangeMem(address ,void *,unsigned int );
+extern char             *CnvULong( unsigned long, char * );
+extern unsigned         ProgPeek( address, void *, unsigned int );
+extern unsigned         ChangeMem( address, void *, unsigned int );
 extern unsigned         PortPeek( unsigned, void *, unsigned );
 extern unsigned         PortPoke( unsigned, void *, unsigned );
 extern char             *StrCopy( char *, char * );
-extern char             *AddHexSpec(char*);
+extern char             *AddHexSpec( char * );
 extern void             AddrFix( address * );
-extern address          AddrAddWrap(address,long);
-extern void             RecordEvent(char*);
+extern address          AddrAddWrap( address, long );
+extern void             RecordEvent( char * );
 extern bool             AdvMachState( int );
-extern void             CollapseMachState();
+extern void             CollapseMachState( void );
 extern void             DbgUpdate( update_list );
 
 extern char             *TxtBuff;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Breakpoint and watchpoint management.
 *
 ****************************************************************************/
 
@@ -56,77 +55,77 @@
 extern cue_file_id      CueFileId( cue_handle * );
 extern unsigned         CueFile( cue_handle *ch, char *file, unsigned max );
 extern unsigned long    CueLine( cue_handle *ch );
-extern unsigned long    ReqLongExpr();
-extern unsigned int     ReqExpr(void);
-extern char             *ReScan(char*);
-extern void             ReqMemAddr(memory_expr ,address *);
-extern bool             ScanQuote(char **,unsigned int *);
-extern bool             ScanEOC(void);
-extern int              AddrComp(address ,address );
-extern unsigned int     ScanCmd(char *);
-extern void             ReqEOC(void);
-extern void             Scan(void);
-extern cmd_list         *AllocCmdList(char *,unsigned int );
-extern void             FreeCmdList(cmd_list *);
-extern void             PushCmdList(cmd_list *);
-extern address          GetRegIP(void);
-extern int              SectIsLoaded(unsigned int ,int  );
-extern dword            RemoteSetBreak(address);
-extern void             RemoteRestoreBreak(address,dword);
-OVL_EXTERN brk          *TypePoint(memory_expr );
-OVL_EXTERN brk          *BadPoint(memory_expr );
-OVL_EXTERN brk          *ImageBreak(memory_expr );
-OVL_EXTERN brk          *ActivatePoint(memory_expr );
-OVL_EXTERN brk          *ClearPoint(memory_expr );
-OVL_EXTERN brk          *TogglePoint(memory_expr );
-OVL_EXTERN brk          *ResumePoint(memory_expr );
-OVL_EXTERN brk          *UnResumePoint(memory_expr );
-OVL_EXTERN brk          *DeactivatePoint(memory_expr );
-OVL_EXTERN brk          *SetBreak(memory_expr );
-OVL_EXTERN brk          *SetWatch(memory_expr );
+extern unsigned long    ReqLongExpr( void );
+extern unsigned int     ReqExpr( void );
+extern char             *ReScan( char * );
+extern void             ReqMemAddr( memory_expr, address * );
+extern bool             ScanQuote( char **, unsigned int * );
+extern bool             ScanEOC( void );
+extern int              AddrComp( address, address );
+extern unsigned int     ScanCmd( char * );
+extern void             ReqEOC( void );
+extern void             Scan( void );
+extern cmd_list         *AllocCmdList( char *, unsigned int );
+extern void             FreeCmdList( cmd_list * );
+extern void             PushCmdList( cmd_list * );
+extern address          GetRegIP( void );
+extern int              SectIsLoaded( unsigned int, int  );
+extern dword            RemoteSetBreak( address );
+extern void             RemoteRestoreBreak( address, dword );
+OVL_EXTERN brk          *TypePoint( memory_expr );
+OVL_EXTERN brk          *BadPoint( memory_expr );
+OVL_EXTERN brk          *ImageBreak( memory_expr );
+OVL_EXTERN brk          *ActivatePoint( memory_expr );
+OVL_EXTERN brk          *ClearPoint( memory_expr );
+OVL_EXTERN brk          *TogglePoint( memory_expr );
+OVL_EXTERN brk          *ResumePoint( memory_expr );
+OVL_EXTERN brk          *UnResumePoint( memory_expr );
+OVL_EXTERN brk          *DeactivatePoint( memory_expr );
+OVL_EXTERN brk          *SetBreak( memory_expr );
+OVL_EXTERN brk          *SetWatch( memory_expr );
 OVL_EXTERN brk          *SetPoint( memory_expr def_seg, mad_type_handle );
-extern bool             RemoteSetWatch(address, unsigned, unsigned long *);
-extern void             RemoteRestoreWatch(address,unsigned);
-extern void             ErrorBox(char*);
-extern bool             DlgBreak(address);
-extern void             SetProgState(unsigned);
-extern void             TypeInpStack(input_type);
-extern char             *DupStr(char*);
+extern bool             RemoteSetWatch( address, unsigned, unsigned long * );
+extern void             RemoteRestoreWatch( address, unsigned );
+extern void             ErrorBox( char * );
+extern bool             DlgBreak( address );
+extern void             SetProgState( unsigned );
+extern void             TypeInpStack( input_type );
+extern char             *DupStr( char * );
 extern char             *DupStrLen( char const *str, unsigned len );
-extern bool             CheckBPIns(void);
-extern char             *GetCmdEntry(char *,int ,char *);
+extern bool             CheckBPIns( void );
+extern char             *GetCmdEntry( char *, int, char * );
 extern char             *Format( char *buff, char *fmt, ... );
-extern void             InvokeAFile(char*);
-extern void             CreateInvokeFile( char *name, void (*rtn)(void) );
+extern void             InvokeAFile( char * );
+extern void             CreateInvokeFile( char *name, void (*rtn)( void ) );
 extern void             UnAsm( address addr, unsigned, char *buff );
-extern char             *AddHexSpec(char*);
+extern char             *AddHexSpec( char * );
 extern char             *GetCmdName( int );
 extern bool             DlgAreYouNuts( unsigned long );
 extern inspect_type     WndGetExprSPInspectType( address *paddr );
-extern char             *StrCopy(char*,char*);
+extern char             *StrCopy( char *, char * );
 extern void             RecordEvent( char *p );
 extern void             SetRecord( bool on );
 extern unsigned         DefaultSize( default_kind );
-extern void             ReadDbgRegs();
-extern void             WriteDbgRegs();
-extern bool             SetMsgText(char*,unsigned*);
+extern void             ReadDbgRegs( void );
+extern void             WriteDbgRegs( void );
+extern bool             SetMsgText( char *, unsigned * );
 extern unsigned         GetMADTypeNameForCmd( mad_type_handle th, unsigned max, char *p );
 extern mad_type_handle  ScanType( mad_type_kind, mad_type_kind * );
 extern mad_type_handle  FindMADTypeHandle( mad_type_kind tk, unsigned size );
 extern char             *CnvULongHex( unsigned long value, char *p );
 extern unsigned         NewCurrRadix( unsigned );
-extern void             WriteDbgRegs(void);
+extern void             WriteDbgRegs( void );
 extern void             BreakOnImageLoad( char *name, unsigned len, bool clear );
 extern bool             ScanItem( bool blank_delim, char **start, unsigned *len );
 extern void             InitMappableAddr( mappable_addr *loc );
 extern void             FiniMappableAddr( mappable_addr *loc );
-extern void             UnMapPoints( image_entry* );
-extern void             ReMapPoints( image_entry* );
+extern void             UnMapPoints( image_entry * );
+extern void             ReMapPoints( image_entry * );
 extern char             *StrAddr( address *addr, char *buff, unsigned max );
 extern image_entry      *ImageEntry( mod_handle mh );
 extern char             *AddrToString( address *a, mad_address_format af, char *p, unsigned );
 extern bool             DlgScanCodeAddr( char *str, address *value );
-extern void             DoInput(void);
+extern void             DoInput( void );
 extern char             *CnvNearestAddr( address, char *, unsigned );
 extern void             DbgUpdate( update_list );
 extern bool             DUIGetSourceLine( cue_handle *ch, char *buff, unsigned len );
@@ -201,7 +200,7 @@ static bpjmptab_type BPJmpTab[] = {
 };
 
 
-static char *BrkFmt()
+static char *BrkFmt( void )
 {
     return( (DbgLevel != ASM) ? "%l" : "%a" );
 }
@@ -211,7 +210,7 @@ static char *BrkFmt()
  * InitBPs -- initialize breakpoints
  */
 
-void InitBPs()
+void InitBPs( void )
 {
     NullStatus( &UserTmpBrk );
     NullStatus( &DbgTmpBrk );
@@ -307,7 +306,7 @@ static void RemoveOneWP( brk *bp )
  * RemoveBPs -- remove breakpoints from memory
  */
 
-void RemoveBPs()
+void RemoveBPs( void )
 {
     brk     *bp;
 
@@ -620,7 +619,7 @@ void ActPoint( brk *bp, bool act )
     DbgUpdate( UP_BREAK_CHANGE );
 }
 
-void BrkEnableAll()
+void BrkEnableAll( void )
 {
     brk         *bp;
 
@@ -631,7 +630,7 @@ void BrkEnableAll()
 }
 
 
-void BrkDisableAll()
+void BrkDisableAll( void )
 {
     brk     *bp;
 
@@ -676,7 +675,7 @@ bool RemoveBreak( address addr )
 }
 
 
-void BrkClearAll()
+void BrkClearAll( void )
 {
     while( BrkList != NULL ) {
         RemoveBreak( BrkList->loc.addr );
@@ -688,7 +687,7 @@ void BrkClearAll()
  * BPsDeac -- deactivate all breakpoints
  */
 
-void BPsDeac()
+void BPsDeac( void )
 {
     brk     *bp;
 
@@ -705,7 +704,7 @@ void BPsDeac()
  * BPsUnHit -- turn off all BP_HIT indicators
  */
 
-void BPsUnHit()
+void BPsUnHit( void )
 {
     brk     *bp;
 
@@ -724,7 +723,7 @@ void RecordNewPoint( brk *bp )
 }
 
 
-void RecordPointStart()
+void RecordPointStart( void )
 {
     brk *bp;
 
@@ -757,7 +756,7 @@ void GetBreakOnImageCmd( char *name, char *buff, bool clear )
 }
 
 
-void ShowBPs()
+void ShowBPs( void )
 {
     brk         *bp;
     char_ring   *dll;
@@ -777,7 +776,7 @@ void ShowBPs()
  * ProcBreak -- process break command
  */
 
-static void DoProcBreak()
+static void DoProcBreak( void )
 {
     int         cmd;
 
@@ -792,7 +791,7 @@ static void DoProcBreak()
     }
 }
 
-void ProcBreak()
+void ProcBreak( void )
 {
     DoProcBreak();
 }
@@ -1235,7 +1234,7 @@ OVL_EXTERN brk *TogglePoint( memory_expr def_seg )
 }
 
 
-void BrkAddrRefresh()
+void BrkAddrRefresh( void )
 {
     brk         *bp;
 
@@ -1249,7 +1248,7 @@ void BrkAddrRefresh()
  * SetPoint -- set specified break point
  */
 
-static void ReqComma()
+static void ReqComma( void )
 {
     if( CurrToken != T_COMMA ) {
         Error( ERR_LOC, LIT( ERR_BAD_OPTION ), GetCmdName( CMD_BREAK ) );
@@ -1553,7 +1552,7 @@ extern void BreakOnExprSP( char *comment )
 }
 
 
-void PointFini()
+void PointFini( void )
 {
     SetRecord( FALSE );
     while( BrkList != NULL ) {
@@ -1726,7 +1725,7 @@ unsigned CheckBPs( unsigned conditions, unsigned run_conditions )
 }
 
 
-bool UpdateWPs()
+bool UpdateWPs( void )
 {
     brk                 *wp;
     bool                have_active;
@@ -1745,7 +1744,7 @@ bool UpdateWPs()
 }
 
 
-void InsertWPs()
+void InsertWPs( void )
 {
     brk                 *wp;
     unsigned long       mult;

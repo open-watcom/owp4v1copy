@@ -55,27 +55,27 @@ search_result           LineCue( mod_handle, cue_file_id,
 extern cue_file_id      CueFileId( cue_handle * );
 extern unsigned         CueFile( cue_handle *ch, char *file, unsigned max );
 extern unsigned long    CueLine( cue_handle *ch );
-extern void             StdInNew(void);
-extern void             StdOutNew(void);
-extern void             Warn(char *);
-extern unsigned int     ScanCmd(char *);
-extern void             Scan(void);
-extern bool             ScanItem(bool ,char **,unsigned int *);
-extern void             ReqEOC(void);
-extern bool             KillProgOvlay(void);
-extern void             ReportTask(task_status, unsigned );
-extern void             BPsDeac(void);
-extern void             BPsUnHit(void);
-extern unsigned         DoLoad(char *, unsigned long *);
-extern void             ClearMachState(void);
-extern void             SetupMachState(void);
+extern void             StdInNew( void );
+extern void             StdOutNew( void );
+extern void             Warn( char * );
+extern unsigned int     ScanCmd( char * );
+extern void             Scan( void );
+extern bool             ScanItem( bool, char **, unsigned int * );
+extern void             ReqEOC( void );
+extern bool             KillProgOvlay( void );
+extern void             ReportTask( task_status, unsigned );
+extern void             BPsDeac( void );
+extern void             BPsUnHit( void );
+extern unsigned         DoLoad( char *, unsigned long * );
+extern void             ClearMachState( void );
+extern void             SetupMachState( void );
 extern unsigned long    RemoteGetLibName( unsigned long, void *, unsigned );
 extern unsigned         RemoteStringToFullName( bool, char *, char *, unsigned );
 extern char             *GetCmdArg( int );
 extern void             SetCmdArgStart( int, char * );
 extern void             RemoteSplitCmd( char *, char **, char ** );
 extern void             SymInfoMvHdl( handle, handle );
-extern handle           PathOpen(char *,unsigned,char *);
+extern handle           PathOpen( char *, unsigned, char * );
 extern handle           FullPathOpen( char *name, char *ext, char *result, unsigned max_result );
 extern void             ChkExpr( void );
 extern bool             ScanEOC( void );
@@ -98,20 +98,20 @@ extern void             SetLastExe( char *name );
 extern void             SetPointAddr( brk *bp, address addr );
 extern void             RemoteMapAddr( addr_ptr *, addr_off *, addr_off *, unsigned long handle );
 extern void             AddrSection( address *, unsigned );
-extern void             VarFreeScopes();
+extern void             VarFreeScopes( void );
 extern void             VarUnMapScopes( image_entry * );
 extern void             VarReMapScopes( image_entry * );
-extern char             *DIPMsgText(dip_status);
-extern address          GetRegSP();
+extern char             *DIPMsgText( dip_status );
+extern address          GetRegSP( void );
 extern bool             FindNullSym( mod_handle, address * );
 extern bool             SetWDPresent( mod_handle );
 extern void             RecordStart( void );
 extern char             *GetCmdName( int index );
 extern char             *GetCmdEntry( char *tab, int index, char *buff );
-extern void             RecordEvent(char*);
-extern bool             HookPendingPush();
+extern void             RecordEvent( char * );
+extern bool             HookPendingPush( void );
 extern char             *CheckForPowerBuilder( char * );
-extern char             *DupStr(char*);
+extern char             *DupStr( char * );
 extern mod_handle       LookupImageName( char *start, unsigned len );
 extern mod_handle       LookupModName( mod_handle search, char *start, unsigned len );
 extern bool             GetBPSymAddr( brk *bp, address *addr );
@@ -120,7 +120,7 @@ extern long             RemoteGetFileDate( char *name );
 extern long             LocalGetFileDate( char *name );
 extern bool             RemoteSetFileDate( char *name, long date );
 extern unsigned         RemoteErase( char const * );
-extern unsigned         MaxRemoteWriteSize();
+extern unsigned         MaxRemoteWriteSize( void );
 
 extern void             InsertRing( char_ring **owner, char *start, unsigned len );
 extern void             DeleteRing( char_ring **owner, char *start, unsigned len );
@@ -132,7 +132,7 @@ static bool             CopyToRemote( char *local, char *remote, bool strip, voi
 char                    *RealFName( char *name, open_access *loc );
 
 extern void             DUIImageLoaded( image_entry*, bool, bool, bool* );
-extern void             FClearOpenSourceCache();
+extern void             FClearOpenSourceCache( void );
 
 extern tokens           CurrToken;
 extern char             *TxtBuff;
@@ -154,7 +154,7 @@ char_ring               *LocalDebugInfo;
 
 #define SYM_FILE_IND ':'
 
-bool InitCmd()
+bool InitCmd( void )
 {
     unsigned    argc;
     char        *curr;
@@ -258,8 +258,8 @@ void FindLocalDebugInfo( char *name )
     InsertRing( RingEnd( &LocalDebugInfo ), buff, len + 4 + 2 );
 }
 
-static void DoDownLoadCode()
-/**************************/
+static void DoDownLoadCode( void )
+/********************************/
 {
     handle local;
 
@@ -274,8 +274,8 @@ static void DoDownLoadCode()
 }
 
 
-bool DownLoadCode()
-/*******************/
+bool DownLoadCode( void )
+/***********************/
 {
     return( Spawn( DoDownLoadCode ) == 0 );
 }
@@ -290,13 +290,13 @@ void InitLocalInfo()
     LocalDebugInfo = NULL;
 }
 
-void FiniLocalInfo()
+void FiniLocalInfo( void )
 {
     FreeRing( LocalDebugInfo );
     LocalDebugInfo = NULL;
 }
 
-image_entry *ImagePrimary()
+image_entry *ImagePrimary( void )
 {
     return( DbgImageList );
 }
@@ -496,7 +496,7 @@ static image_entry *DoCreateImage( char *exe, char *sym )
     return( image );
 }
 
-char *GetLastImageName()
+char *GetLastImageName( void )
 {
     image_entry         *image;
 
@@ -809,7 +809,7 @@ static void InitImageInfo( image_entry *image )
 }
 
 
-bool LoadDeferredSymbols()
+bool LoadDeferredSymbols( void )
 {
     image_entry *image;
     bool        rc = FALSE;
@@ -886,7 +886,7 @@ bool SetProgStartHook( bool new )
     return( old );
 }
 
-static void WndNewProg()
+static void WndNewProg( void )
 {
     DUIWndDebug();
     CodeAddrMod = NO_MOD;
@@ -950,7 +950,7 @@ static int DoLoadProg( char *task, char *sym, unsigned *error )
     return( TASK_NEW );
 }
 
-void LoadProg()
+void LoadProg( void )
 {
     unsigned            error;
     int                 ret;
@@ -1008,7 +1008,7 @@ void ReleaseProgOvlay( bool free_sym )
 
 
 
-OVL_EXTERN void BadNew()
+OVL_EXTERN void BadNew( void )
 {
     Error( ERR_LOC, LIT( ERR_BAD_OPTION ), "new" );
 }
@@ -1264,7 +1264,7 @@ static void ResNew( void )
     }
 }
 
-void ReStart()
+void ReStart( void )
 {
     char                prog[FILENAME_MAX];
     char                args[UTIL_LEN];
@@ -1290,7 +1290,7 @@ static char NogoTab[] = {
 
 
 
-static void ProgNew()
+static void ProgNew( void )
 {
     char        *start;
     char        *cmd;
@@ -1425,7 +1425,7 @@ OVL_EXTERN void MapAddrUser( image_entry *image, addr_ptr *addr,
  * SymFileNew - process a new symbolic file request
  */
 
-OVL_EXTERN void SymFileNew()
+OVL_EXTERN void SymFileNew( void )
 {
     char        *fname;
     unsigned    fname_len;
@@ -1604,7 +1604,7 @@ static char NewNameTab[] = {
 };
 
 
-static void (* const NewJmpTab[])() = {
+static void (* const NewJmpTab[])( void ) = {
     &BadNew,
     &ProgNew,
     &ResNew,
@@ -1618,7 +1618,7 @@ static void (* const NewJmpTab[])() = {
  *
  */
 
-void ProcNew()
+void ProcNew( void )
 {
     if( CurrToken == T_DIV ) {
         Scan();
@@ -1629,7 +1629,7 @@ void ProcNew()
     HookPendingPush();
 }
 
-void RecordNewProg()
+void RecordNewProg( void )
 {
     char        buff[40];
     char        *p;

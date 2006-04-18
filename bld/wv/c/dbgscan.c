@@ -44,6 +44,7 @@
 #include "dui.h"
 #include "i64.h"
 
+
 typedef struct rad_str {
     struct   rad_str *next;
     unsigned char    radval;
@@ -51,13 +52,12 @@ typedef struct rad_str {
 } rad_str;
 
 extern unsigned         Lookup( char *, char *, unsigned );
-extern unsigned int     ReqExpr(void);
-extern void             ConfigLine(char *);
-extern char             *Format(char *,char *,... );
-extern char             *CnvULongDec(unsigned long,char *);
+extern unsigned int     ReqExpr( void );
+extern void             ConfigLine( char * );
+extern char             *Format( char *, char *, ... );
+extern char             *CnvULongDec( unsigned long, char * );
 extern unsigned         GetMADTypeNameForCmd( mad_type_handle th, unsigned max, char *p );
 extern void             DbgUpdate( update_list );
-
 extern char             *ReScan( char *point );
 
 extern tokens         CurrToken;
@@ -121,7 +121,7 @@ static void SetRadixSpec( char *str, unsigned len, unsigned radix, bool clear )
  * InitScan -- initialize scanner
  */
 
-void InitScan()
+void InitScan( void )
 {
     ScanPtr = LIT( Empty );
     TokenStart = ScanPtr;
@@ -132,7 +132,7 @@ void InitScan()
 }
 
 
-void FiniScan()
+void FiniScan( void )
 {
     rad_str     *old;
 
@@ -148,7 +148,7 @@ void FiniScan()
  * ScanPos -- return the current scan position
  */
 
-char *ScanPos()
+char *ScanPos( void )
 {
     return( TokenStart );
 }
@@ -159,7 +159,7 @@ char *ScanPos()
  * ScanLen -- return the length of current token
  */
 
-unsigned ScanLen()
+unsigned ScanLen( void )
 {
     return( ScanPtr - TokenStart );
 }
@@ -265,7 +265,7 @@ mad_type_handle ScanType( mad_type_kind tk, mad_type_kind *tkr )
     return( th );
 }
 
-mad_string ScanCall()
+mad_string ScanCall( void )
 {
     char                *p;
     char                *q;
@@ -296,7 +296,7 @@ mad_string ScanCall()
  * ScanEOC -- check if at end of command
  */
 
-bool ScanEOC()
+bool ScanEOC( void )
 {
     return( CurrToken == T_CMD_SEPARATOR || CurrToken == T_LINE_SEPARATOR );
 }
@@ -426,7 +426,7 @@ bool ScanItem( bool blank_delim, char **start, unsigned *len )
  * ReqEOC -- require end of command
  */
 
-void ReqEOC()
+void ReqEOC( void )
 {
     if( !ScanEOC() ) Error( ERR_LOC, LIT( ERR_WANT_EOC ) );
 }
@@ -436,7 +436,7 @@ void ReqEOC()
  * ReqEOC -- require end of command
  */
 
-void FlushEOC()
+void FlushEOC( void )
 {
     while( !ScanEOC() ) Scan();
 }
@@ -462,9 +462,9 @@ static bool ScanExprDelim( char *table )
 }
 
 
-static bool ScanCmdLnDelim()
+static bool ScanCmdLnDelim( void )
 {
-    char *ptr;
+    char    *ptr;
 
     for( ptr = CmdLnDelimTab; ; ptr++ ) {
         if( *ScanPtr == *ptr ) break;
@@ -482,9 +482,9 @@ static bool ScanCmdLnDelim()
  * ScanRealNum -- try to scan a real number
  */
 
-static bool ScanRealNum()
+static bool ScanRealNum( void )
 {
-    char *curr;
+    char    *curr;
 
     curr = ScanPtr;
     while( isdigit( *curr ) ) ++curr;
@@ -552,7 +552,7 @@ static bool GetNum( unsigned base )
  * ScanNumber -- scan for a number
  */
 
-static char ScanNumber()
+static char ScanNumber( void )
 {
     rad_str *pref;
     bool    ret;
@@ -594,13 +594,13 @@ static char ScanNumber()
 
 #define NAME_ESC        '`'
 
-char *NamePos()
+char *NamePos( void )
 {
     if( *TokenStart == NAME_ESC ) return( TokenStart + 1 );
     return( TokenStart );
 }
 
-unsigned NameLen()
+unsigned NameLen( void )
 {
     char        *end;
     char        *start;
@@ -623,7 +623,7 @@ unsigned NameLen()
  * ScanId -- scan for an identifier
  */
 
-static bool ScanId()
+static bool ScanId( void )
 {
     char        c;
 
@@ -706,13 +706,13 @@ void AddActualChar( char data )
 }
 
 
-void AddChar()
+void AddChar( void )
 {
     AddActualChar( *ScanPtr );
 }
 
 
-void AddCEscapeChar()
+void AddCEscapeChar( void )
 {
     static char escape_seq[] = "\n\t\v\b\r\f\a\\\?\'\"\0";
                                 /* the order above must match with SSL file */
@@ -721,7 +721,7 @@ void AddCEscapeChar()
 }
 
 
-static void RawScan()
+static void RawScan( void )
 {
     if( ScanPtr[-1] == NULLCHAR ) {
         /* missing end quote; scanned past eol -- error */
@@ -776,23 +776,23 @@ void Scan( void )
 }
 
 
-void RawScanInit()
+void RawScanInit( void )
 {
     ScanPtr = TokenStart;
     CurrToken = T_UNKNOWN;
 }
 
-char RawScanChar()
+char RawScanChar( void )
 {
     return( *ScanPtr );
 }
 
-void RawScanAdvance()
+void RawScanAdvance( void )
 {
     if( *ScanPtr != NULLCHAR ) ++ScanPtr;
 }
 
-void RawScanFini()
+void RawScanFini( void )
 {
     TokenStart = ScanPtr;
     Scan();
@@ -802,7 +802,7 @@ void RawScanFini()
  * IntNumVal -- return a integer number's value
  */
 
-unsigned_64 IntNumVal()
+unsigned_64 IntNumVal( void )
 {
     return( TokenVal.int_val );
 }
@@ -812,7 +812,7 @@ unsigned_64 IntNumVal()
  * RealNumVal -- return a real number's value
  */
 
-xreal RealNumVal()
+xreal RealNumVal( void )
 {
     return( TokenVal.real_val );
 }
@@ -846,7 +846,7 @@ unsigned SetCurrRadix( unsigned rad )
 }
 
 
-void RestoreRadix()
+void RestoreRadix( void )
 {
     SetCurrRadix( DefRadix );
 }
@@ -863,7 +863,7 @@ void DefaultRadixSet( unsigned radix )
  * RadixSet - set the default numeric radix
  */
 
-void RadixSet()
+void RadixSet( void )
 {
     unsigned   radix;
     unsigned   old;
@@ -880,7 +880,7 @@ void RadixSet()
 }
 
 
-void RadixConf()
+void RadixConf( void )
 {
     *CnvULongDec( DefRadix, TxtBuff ) = NULLCHAR;
     ConfigLine( TxtBuff );

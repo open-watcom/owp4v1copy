@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dump window contents to a file.
 *
 ****************************************************************************/
 
@@ -37,14 +36,16 @@
 #include "dbgadget.h"
 #include <string.h>
 
-extern char              *GetDmpName();
-extern void             ReqEOC(void);
-extern bool             ScanItem(bool ,char **,unsigned int *);
+
+extern char             *GetDmpName( void );
+extern void             ReqEOC( void );
+extern bool             ScanItem( bool, char **, unsigned int * );
 extern bool             WndDlgTxt( char *buff );
 extern char             *StrCopy( char *src, char *dest );
 
 extern gui_resource     WndGadgetArray[];
 extern char             *TxtBuff;
+
 
 typedef void WRITERTN( handle, char * );
 

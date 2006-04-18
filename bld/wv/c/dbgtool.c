@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger toolbar.
 *
 ****************************************************************************/
 
@@ -34,7 +33,7 @@
 #include "dbgwind.h"
 #include "rcdef.h"
 
-extern bool SysGUI();
+extern bool SysGUI( void );
 
 #include "menudef.h"
 static gui_toolbar_struct ToolBar[] = {
@@ -42,14 +41,14 @@ static gui_toolbar_struct ToolBar[] = {
 { "",  BITMAP_OVER,  MENU_TOOL_TRACE_OVER,      MENU_LIT( HELP_XOver ) },
 { "",  BITMAP_INTO,  MENU_TOOL_STEP_INTO,       MENU_LIT( HELP_XInto ) },
 { "",  BITMAP_RETURN,MENU_TOOL_RETURN_TO_CALLER,MENU_LIT( HELP_XReturn ) },
-{ "",  BITMAP_BACK,  MENU_TOOL_UNDO,         MENU_LIT( HELP_XUndo ) },
-{ "",  BITMAP_FOR,   MENU_TOOL_REDO,         MENU_LIT( HELP_XRedo ) },
+{ "",  BITMAP_BACK,  MENU_TOOL_UNDO,            MENU_LIT( HELP_XUndo ) },
+{ "",  BITMAP_FOR,   MENU_TOOL_REDO,            MENU_LIT( HELP_XRedo ) },
 { "",  BITMAP_UP,    MENU_TOOL_UP_STACK,        MENU_LIT( HELP_UXnwind_Stack ) },
 { "",  BITMAP_DOWN,  MENU_TOOL_DOWN_STACK,      MENU_LIT( HELP_RXewind_Stack ) },
 { "",  BITMAP_HOME,  MENU_TOOL_HOME,            MENU_LIT( HELP_XHome ) },
 };
 
-void    InitToolBar()
+void    InitToolBar( void )
 {
     int         i;
 
@@ -58,7 +57,7 @@ void    InitToolBar()
     }
 }
 
-void    FiniToolBar()
+void    FiniToolBar( void )
 {
     int         i;
 
@@ -74,7 +73,7 @@ void    WndToolOpen( gui_ord height, bool fixed )
     }
 }
 
-void    WndToolClose()
+void    WndToolClose( void )
 {
     if( SysGUI() ) {
         WndCloseToolBar();

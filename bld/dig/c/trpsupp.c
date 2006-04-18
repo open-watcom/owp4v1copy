@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Trap file access wrapper routine.
 *
 ****************************************************************************/
 
@@ -48,12 +47,12 @@ unsigned        (TRAPENTRY *ReqFunc)( unsigned, mx_entry *,
 static          void (*pFailure)(void) = NULL;
 static          void (*pAccess)(void) = NULL;
 
-static void Failure()
+static void Failure( void )
 {
     if( pFailure ) pFailure();
 }
 
-static void Access()
+static void Access( void )
 {
     if( pAccess ) pAccess();
 }

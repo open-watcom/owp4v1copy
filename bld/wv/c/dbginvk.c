@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Invoke a debugger script.
 *
 ****************************************************************************/
 
@@ -47,31 +46,31 @@ extern unsigned         InvCount;
 extern char             *TxtBuff;
 
 
-extern bool             ScanItem(bool ,char **,unsigned int *);
-extern bool             ScanEOC(void);
-extern bool             SwitchOnOff();
-extern void             ShowSwitch(bool);
+extern bool             ScanItem( bool, char **, unsigned int * );
+extern bool             ScanEOC( void );
+extern bool             SwitchOnOff( void );
+extern void             ShowSwitch( bool );
 extern handle           LocalFullPathOpen( char *name, char *ext, char *result, unsigned max_result );
-extern void             PushInpStack(void *,bool (*)(),bool );
-extern void             TypeInpStack(input_type);
-extern char             *ReScan(char *);
-extern unsigned int     ScanCmd(char *);
-extern void             FreeRing(char_ring *);
-extern char             *CnvULongDec(unsigned long ,char *);
-extern void             LogStart(void);
-extern void             LogEnd(void);
+extern void             PushInpStack( void *, bool (*)(), bool );
+extern void             TypeInpStack( input_type );
+extern char             *ReScan( char * );
+extern unsigned int     ScanCmd( char * );
+extern void             FreeRing( char_ring * );
+extern char             *CnvULongDec( unsigned long, char * );
+extern void             LogStart( void );
+extern void             LogEnd( void );
 
 
 /*
  * ImplicitSet - set implicit/explicit invoke file processing
  */
 
-extern void ImplicitSet()
+extern void ImplicitSet( void )
 {
     _SwitchSet( SW_IMPLICIT, SwitchOnOff() );
 }
 
-extern void ImplicitConf()
+extern void ImplicitConf( void )
 {
     ShowSwitch( _IsOn( SW_IMPLICIT ) );
 }
@@ -329,7 +328,7 @@ void ProfileInvoke( char *name )
  * ProcInvoke -- process invoke command
  */
 
-void ProcInvoke()
+void ProcInvoke( void )
 {
     char      *fstart;
     unsigned   flen;

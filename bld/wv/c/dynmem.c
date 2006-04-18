@@ -58,24 +58,26 @@
 
 
 
-extern bool     VarInfoRelease();
-extern bool     DlgInfoRelease(void);
-extern char     *Format(char *,char *,... );
-extern int      DUIEnvLkup(char *,char *,int);
-extern void     PopErrBox(char*);
+extern bool     VarInfoRelease( void );
+extern bool     DlgInfoRelease( void );
+extern char     *Format( char *, char *, ... );
+extern int      DUIEnvLkup( char *, char *, int );
+extern void     PopErrBox( char * );
 
 
 #ifdef TRMEM
 static  int             TrackFile;
 static _trmem_hdl       TRMemHandle;
 
+
 /* extern to avoid problems with taking address and overlays */
 static bool Closing = FALSE;
+
 static void TRPrintLine( int * handle, const char * buff, size_t len )
 /********************************************************************/
 {
     handle = handle;
-    len=len;
+    len = len;
     if( !Closing ) PopErrBox( (void*)buff );
     write( TrackFile, buff, len );
 }
@@ -121,7 +123,7 @@ extern void TRMemPrtUsage( void )
 }
 
 static unsigned TRMemPrtList( void )
-/******************************/
+/**********************************/
 {
     return( _trmem_prt_list( TRMemHandle ) );
 }
@@ -132,8 +134,8 @@ extern int TRMemValidate( void * ptr )
     return( _trmem_validate( ptr, _trmem_guess_who(), TRMemHandle ) );
 }
 
-extern void TRMemCheck()
-/**********************/
+extern void TRMemCheck( void )
+/****************************/
 {
     _trmem_validate_all( TRMemHandle );
 }
@@ -144,7 +146,7 @@ extern int TRMemChkRange( void * start, size_t len )
     return( _trmem_chk_range( start, len, _trmem_guess_who(), TRMemHandle ) );
 }
 
-static void MemTrackInit()
+static void MemTrackInit( void )
 {
     char        name[FILENAME_MAX];
 
@@ -158,7 +160,7 @@ static void MemTrackInit()
 static char UnFreed[] = { "Memory UnFreed" };
 static char TrackErr[] = { "Memory Tracker Errors Detected" };
 
-static void MemTrackFini()
+static void MemTrackFini( void )
 {
     Closing = TRUE;
     if( TrackFile != STDERR_FILENO ) {
@@ -230,7 +232,7 @@ void *ChkAlloc( unsigned size, char *error )
 
 #define Heap_Corupt     "ERROR - Heap is corrupted - %s"
 
-void MemFini()
+void MemFini( void )
 {
 #ifdef TRMEM
     MemTrackFini();
@@ -243,7 +245,7 @@ void MemFini()
 
     if( getenv( "TRMEMFILE" ) == NULL ) return;
     h_info._pentry = NULL;
-    for(;;) {
+    for( ;; ) {
         status = _heapwalk( &h_info );
         if( status != _HEAPOK ) break;
 #ifdef DBG_DBG
@@ -287,7 +289,7 @@ extern unsigned long MemSize;
 #endif
 
 
-void MemExpand()
+void MemExpand( void )
 {
     unsigned long   size;
     void            **link;
@@ -314,7 +316,7 @@ void MemExpand()
     }
 }
 
-void MemInit()
+void MemInit( void )
 {
 #ifdef TRMEM
     MemTrackInit();

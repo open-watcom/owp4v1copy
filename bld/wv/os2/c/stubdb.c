@@ -321,7 +321,8 @@ void DlgCmd( void )
 
                 DosQueryModuleHandle( TrpFile, &hmod );
                 DosQueryProcAddr( hmod, 5, 0, &proc );
-                if( proc != NULL ) proc();
+//                if( proc != NULL )
+//                    proc();
             }
             // break the task
             break;
@@ -685,7 +686,7 @@ extern  void    FiniMacros( void )
 {
     // stub for old UI
 }
-int TabIntervalGet()
+int TabIntervalGet( void )
 {
     // stub for old UI
     return( 0 );
@@ -883,7 +884,7 @@ int DUIEnvLkup( char *src, char *dst, int max_len )
     return( EnvLkup( src, dst, max_len ) );
 }
 
-void DUIDirty()
+void DUIDirty( void )
 {
 }
 
@@ -968,7 +969,7 @@ bool DUICopyCancelled( void * cookie )
     return( FALSE );
 }
 
-unsigned OnAnotherThread( unsigned(*a)(), unsigned b, void *c, unsigned d, void *e )
+unsigned OnAnotherThread( unsigned(*a)( unsigned, void *, unsigned, void * ), unsigned b, void *c, unsigned d, void *e )
 {
     return( a( b, c, d, e ) );
 }

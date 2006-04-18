@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Invoke online help (F1 key).
 *
 ****************************************************************************/
 
@@ -40,7 +39,7 @@
 
 extern handle   LocalFullPathOpen( char *name, char *ext, char *result, unsigned max_result );
 extern char     *StrCopy( char *src, char *dst );
-extern int      DUIEnvLkup(char *,char *,int);
+extern int      DUIEnvLkup( char *, char *, int );
 
 extern char             *TxtBuff;
 
@@ -49,12 +48,13 @@ extern a_window         *WndMain;
 
 #define HELPNAME "wd"
 
-void InitHelp()
+
+void InitHelp( void )
 {
     Handle = GUIHelpInit( WndGui( WndMain ), HELPNAME ".hlp", "Open Watcom Debugger Help" );
 }
 
-void FiniHelp()
+void FiniHelp( void )
 {
     if( Handle != 0 ) {
         GUIHelpFini( Handle, WndGui( WndMain ), HELPNAME ".hlp" );
@@ -62,7 +62,7 @@ void FiniHelp()
 }
 
 #if !defined(__GUI__)
-static void LocateHelpFile()
+static void LocateHelpFile( void )
 {
     handle              h;
 #if !defined(__UNIX__)
@@ -102,7 +102,7 @@ void DoProcHelp( gui_help_actions action )
     }
 }
 
-void ProcHelp()
+void ProcHelp( void )
 {
     DoProcHelp( GUI_HELP_CONTENTS );
 }

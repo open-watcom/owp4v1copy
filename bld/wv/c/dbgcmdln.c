@@ -43,21 +43,21 @@
 #include <stdio.h>
 
 
-extern unsigned         ConfigScreen(void);
-extern unsigned         Lookup(char *, char *, unsigned);
-extern int              DUIEnvLkup(char *,char *, int );
-extern char             *Format(char *,char *,... );
+extern unsigned         ConfigScreen( void );
+extern unsigned         Lookup( char *, char *, unsigned );
+extern int              DUIEnvLkup( char *, char *, int );
+extern char             *Format( char *, char *, ... );
 extern bool             OptDelim( char );
-extern void             ProcSysOptInit(void);
+extern void             ProcSysOptInit( void );
 extern bool             ProcSysOption( char *, unsigned, int );
 extern char             *GetCmdArg( int );
 extern void             SetCmdArgStart( int, char * );
 extern void             PopErrBox( char * );
-extern void             SysSetMemLimit(void);
+extern void             SysSetMemLimit( void );
 extern void             SetNumColumns( int cols );
 extern void             SetNumLines( int lines );
 extern char             *DupStr( char * );
-extern char             *StrCopy(char*src,char*dst);
+extern char             *StrCopy( char *src, char *dst );
 void                    FindLocalDebugInfo( char *name );
 extern void             StartupErr( char *err );
 
@@ -69,7 +69,7 @@ extern char             *DipFiles[];
 
 extern unsigned long    MemSize;
 
-static char             *(*GetArg)(int);
+static char             *(*GetArg)( int );
 static int              CurrArgc;
 static char             *CurrArgp;
 static char             CurrChar;
@@ -137,7 +137,7 @@ enum { OPT_INVOKE=1,
 };
 
 
-void SetupChar()
+void SetupChar( void )
 {
    CurrChar = *CurrArgp;
    if( CurrChar == NULLCHAR ) {
@@ -153,7 +153,7 @@ void SetupChar()
 }
 
 
-void NextChar()
+void NextChar( void )
 {
     ++CurrArgp;
     SetupChar();
@@ -181,7 +181,7 @@ void OptError( char *err )
 }
 
 
-void SkipSpaces()
+void SkipSpaces( void )
 {
     while( CurrChar == ' ' || CurrChar == '\t' ) {
         NextChar();
@@ -189,14 +189,14 @@ void SkipSpaces()
 }
 
 
-bool HasEquals()
+bool HasEquals( void )
 {
     SkipSpaces();
     return( CurrChar == '=' || CurrChar == '#' );
 }
 
 
-void WantEquals()
+void WantEquals( void )
 {
     SkipSpaces();
     if( CurrChar != '=' && CurrChar != '#' ) OptError( LIT( STARTUP_Expect_Eql ) );
@@ -208,7 +208,7 @@ void WantEquals()
 /*
  * GetValueLong -- get a long numeric value from command line
  */
-unsigned long GetValueLong()
+unsigned long GetValueLong( void )
 {
     unsigned long val;
 
@@ -222,7 +222,7 @@ unsigned long GetValueLong()
     return( val );
 }
 
-unsigned GetValue()
+unsigned GetValue( void )
 {
     unsigned long val;
 
@@ -231,7 +231,7 @@ unsigned GetValue()
     return( val );
 }
 
-unsigned long GetMemory()
+unsigned long GetMemory( void )
 {
     unsigned long   val;
 
@@ -503,7 +503,7 @@ OVL_EXTERN char *GetEnvArg( int i )
  * ProcCmd -- start processing command line options
  */
 
-void ProcCmd()
+void ProcCmd( void )
 {
     char        buff[TXT_LEN];
     unsigned    screen_mem;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run program until the next debugger event.
 *
 ****************************************************************************/
 
@@ -50,23 +49,23 @@
 
 
 extern bool             AdvMachState( int );
-extern bool             DispBPMsg(bool );
-extern bool             InsertBPs(bool );
-extern void             RemoveBPs(void);
-extern bool             InsertWPs(void);
-extern bool             UpdateWPs(void);
-extern unsigned         CheckBPs(unsigned,unsigned);
-extern void             Ring(void);
-extern unsigned         MakeProgRun(bool);
-extern void             DoSetWatchPnt(unsigned int, brk *);
-extern bool             TBreak();
-extern void             PopInpStack(void);
-extern bool             PurgeInpStack(void);
-extern void             ReadDbgRegs();
-extern void             WriteDbgRegs();
-extern void             SectTblRead(machine_state *);
-extern address          GetRegIP(void);
-extern bool             AddLibInfo(bool,bool*);
+extern bool             DispBPMsg( bool );
+extern bool             InsertBPs( bool );
+extern void             RemoveBPs( void );
+extern bool             InsertWPs( void );
+extern bool             UpdateWPs( void );
+extern unsigned         CheckBPs( unsigned, unsigned );
+extern void             Ring( void );
+extern unsigned         MakeProgRun( bool );
+extern void             DoSetWatchPnt( unsigned int, brk * );
+extern bool             TBreak( void );
+extern void             PopInpStack( void );
+extern bool             PurgeInpStack( void );
+extern void             ReadDbgRegs( void );
+extern void             WriteDbgRegs( void );
+extern void             SectTblRead( machine_state * );
+extern address          GetRegIP( void );
+extern bool             AddLibInfo( bool, bool * );
 extern char             *StrCopy( char *, char * );
 extern char             *Format( char *buff, char *fmt, ... );
 extern unsigned         RemoteGetMsgText( char *, unsigned );
@@ -76,25 +75,25 @@ extern bool             SourceStep( void );
 extern bool             SetUpTrace( bool );
 extern void             CheckForNewThreads( bool );
 extern void             CheckSegAlias( void );
-extern void             SetMemBefore(bool);
-extern void             SetMemAfter(bool);
+extern void             SetMemBefore( bool );
+extern void             SetMemAfter( bool );
 extern void             SetCodeDot( address );
-extern char             DlgFatal();
-extern void             InvalidateTblCache(void);
-extern bool             CheckStackPos();
+extern char             DlgFatal( void );
+extern void             InvalidateTblCache( void );
+extern bool             CheckStackPos( void );
 extern void             RecordEvent( char *p );
 extern void             RecordGo( char *p );
-extern void             CheckEventRecorded();
+extern void             CheckEventRecorded( void );
 extern char             *GetCmdName( int );
-extern void             RecordAsynchEvent();
-extern dtid_t           RemoteSetThread(dtid_t);
-extern char             *GetLastImageName();
-extern bool             DLLMatch();
+extern void             RecordAsynchEvent( void );
+extern dtid_t           RemoteSetThread( dtid_t );
+extern char             *GetLastImageName( void );
+extern bool             DLLMatch( void );
 extern void             DUIPlayDead( bool );
 extern bool             TraceSimulate( void );
 extern bool             TraceStart( bool );
 extern mad_trace_how    TraceHow( bool force_into );
-extern unsigned         TraceCheck(unsigned);
+extern unsigned         TraceCheck( unsigned );
 extern void             TraceStop( bool );
 extern void             ReMapPoints( image_entry *);
 extern void             DbgUpdate( update_list );
@@ -108,8 +107,8 @@ extern void             FreeCmdList(cmd_list *);
 extern void             PushCmdList(cmd_list *);
 extern void             TypeInpStack(input_type);
 extern char             *CnvNearestAddr( address, char *, unsigned );
-extern void             PopInpStack(void);
-extern void             ProcACmd(void);
+extern void             PopInpStack( void );
+extern void             ProcACmd( void );
 extern bool             SymUserModLoad( char *fname, address *loadaddr );
 extern bool             SymUserModUnload( char *fname );
 
@@ -150,7 +149,7 @@ void SetProgState( unsigned run_conditions )
     if( run_conditions & COND_ALIASING ) CheckSegAlias();
 }
 
-static void SetThreadStates()
+static void SetThreadStates( void )
 {
     thread_state        *thd;
 
@@ -486,8 +485,8 @@ unsigned ExecProg( bool tracing, bool do_flip, bool want_wps )
 }
 
 
-static void DisplayMsgText()
-/**************************/
+static void DisplayMsgText( void )
+/********************************/
 {
     if( MsgText != NULL ) {
         DUIDlgTxt( MsgText );

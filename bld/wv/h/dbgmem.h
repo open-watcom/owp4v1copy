@@ -43,8 +43,8 @@ extern void     *ChkAlloc( unsigned, char * );
 extern void     *DbgAlloc( unsigned );
 extern void     *DbgMustAlloc( unsigned );
 extern void     DbgFree( void * );
-extern void     MemInit();
-extern void     MemFini();
+extern void     MemInit( void );
+extern void     MemFini( void );
 
 #define _ChkAlloc( res, size, type )    res = ChkAlloc( size, type )
 #define _Realloc( res, size )           res = DbgRealloc( res, size )

@@ -41,13 +41,14 @@ extern char             *TxtBuff;
 
 extern unsigned         GetProgName( char *where, unsigned len );
 extern unsigned         GetProgArgs( char *where, unsigned len );
-extern void             DoInput(void);
+extern void             DoInput( void );
 
-extern void LoadNewProg( char *cmd, char *parms );
-extern bool ExeBrowse();
+extern void             LoadNewProg( char *cmd, char *parms );
+extern bool             ExeBrowse( void );
 
 static char     prog[UTIL_LEN];
 static char     args[UTIL_LEN];
+
 
 OVL_EXTERN bool ProgEvent( gui_window * gui, gui_event gui_ev, void * param )
 {
@@ -100,7 +101,7 @@ static void DoDlgNewProg( dlg_new_prog  *pdlg )
     ResDlgOpen( &ProgEvent, pdlg, DIALOG_NEW_PROG );
 }
 
-extern  void    DlgNewProg()
+extern  void    DlgNewProg( void )
 {
     dlg_new_prog        dlg;
 

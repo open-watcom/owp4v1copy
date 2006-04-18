@@ -43,7 +43,7 @@
 #include "swap.h"
 
 extern void far HookRtn( unsigned event, unsigned info );
-extern void (far __pascal *HookFunc)();
+extern void (far __pascal *HookFunc)( void far (*)( unsigned, unsigned ) );
 extern int      GUIInitMouse( int );
 extern void     GUIFiniMouse( void );
 
@@ -72,12 +72,12 @@ bool WndUseGMouse = FALSE;
 
 static display_configuration    HWDisplay;
 
-void InitHookFunc()
+void InitHookFunc( void )
 {
     HookFunc( HookRtn );
 }
 
-void FiniHookFunc()
+void FiniHookFunc( void )
 {
 }
 
@@ -91,7 +91,7 @@ void ForceLines( unsigned lines )
     ScrnLines = lines;
 }
 
-int SwapScrnLines()
+int SwapScrnLines( void )
 {
     return( ScrnLines );
 }
@@ -102,7 +102,7 @@ int SwapScrnLines()
 unsigned ConfigScreen( void )
 {
     GetDispConfig();
-    if( !(FlipMech == FLIP_TWO && HWDisplay.alt == DISP_MONOCHROME )) {
+    if( !(FlipMech == FLIP_TWO && HWDisplay.alt == DISP_MONOCHROME) ) {
         FlipMech = FLIP_SWAP;
         switch( HWDisplay.active ) {
         case DISP_VGA_MONO:
@@ -163,7 +163,7 @@ bool DebugScreen( void )
     }
 }
 
-bool DebugScreenRecover()
+bool DebugScreenRecover( void )
 {
     return( TRUE );
 }
@@ -183,7 +183,7 @@ bool UserScreen( void )
     return( rc );
 }
 
-void SaveMainWindowPos()
+void SaveMainWindowPos( void )
 {
 }
 
@@ -308,7 +308,7 @@ void uifarfree( void *ptr )
     ExtraFree( ptr );
 }
 
-void uirefresh()
+void uirefresh( void )
 {
     extern void uidorefresh(void);
 
@@ -317,7 +317,7 @@ void uirefresh()
     }
 }
 
-bool SysGUI()
+bool SysGUI( void )
 {
     return( FALSE );
 }

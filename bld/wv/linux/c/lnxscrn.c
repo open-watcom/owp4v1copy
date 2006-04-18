@@ -102,7 +102,7 @@ struct vt_stat {
 
 enum { C_XWIN, C_VC, C_TTY, C_CURTTY } ConMode;
 
-void RingBell()
+void RingBell( void )
 {
     write( DbgConHandle, "\a", 1 );
 }
@@ -112,7 +112,7 @@ void RingBell()
  * ConfigScreen -- figure out screen configuration we're going to use.
  */
 
-unsigned ConfigScreen()
+unsigned ConfigScreen( void )
 {
     return( 0 );
 }
@@ -129,7 +129,7 @@ static void HupHandler( int signo )
     KillDebugger( 0 );
 }
 
-static bool TryXWindows()
+static bool TryXWindows( void )
 {
     int         slavefd;
     int         masterfd;
@@ -143,13 +143,13 @@ static bool TryXWindows()
     char        buf;
     int         res;
     struct termios termio;
-    
+
     /* we're in the X (or helper)environment */
     if ( getenv("DISPLAY") == NULL )
         return( FALSE );
     masterfd = open("/dev/ptmx", O_RDWR);
     if ( masterfd < 0 )
-        return( FALSE );            
+        return( FALSE );
     fcntl( masterfd, F_SETFD, 0 );
     ioctl( masterfd, TIOCGPTN, &slavefd ); /* slavefd = ptsname(masterfd); */
     ioctl( masterfd, TIOCSPTLCK, &unlock ); /* unlockpt(masterfd); */
@@ -158,7 +158,7 @@ static bool TryXWindows()
     DbgConHandle = slavefd;
     if( DbgConHandle == -1 ) {
         StartupErr( "unable to open debugger console" );
-        return( FALSE );            
+        return( FALSE );
     }
     tcgetattr(slavefd, &termio);
     termio.c_lflag &= ~ECHO;
@@ -197,7 +197,7 @@ static bool TryXWindows()
     Format( p, "-SXX%u", masterfd );
     argv[argc++] = p;
     argv[argc] = NULL;
-    
+
     fcntl( slavefd, F_SETFD, FD_CLOEXEC );
     XTermPid = fork();
     if (XTermPid == 0) { /* child */
@@ -265,7 +265,7 @@ static bool TryVC( void )
     return( TRUE );
 }
 
-static bool TryTTY()
+static bool TryTTY( void )
 {
     unsigned long       num;
     char                *end;
@@ -290,7 +290,7 @@ static bool TryTTY()
     return( TRUE );
 }
 
-void InitScreen()
+void InitScreen( void )
 {
     extern bool DebugScreen( void );
 
@@ -327,7 +327,7 @@ void InitScreen()
  * UsrScrnMode -- setup the user screen mode
  */
 
-bool UsrScrnMode()
+bool UsrScrnMode( void )
 {
     switch( ConMode ) {
     case C_TTY:
@@ -339,7 +339,7 @@ bool UsrScrnMode()
 }
 
 
-void DbgScrnMode()
+void DbgScrnMode( void )
 {
 }
 
@@ -353,11 +353,11 @@ static int DebugPutc( int c )
  * DebugScreen -- swap/page to debugger screen
  */
 
-bool DebugScreen()
+bool DebugScreen( void )
 {
     extern bool UserForcedTermRefresh;
     struct vt_stat vt_state;
-    
+
     switch( ConMode ) {
     case C_TTY:
         return( TRUE );
@@ -378,7 +378,7 @@ bool DebugScreen()
     return( FALSE );
 }
 
-bool DebugScreenRecover()
+bool DebugScreenRecover( void )
 {
     return( TRUE );
 }
@@ -388,7 +388,7 @@ bool DebugScreenRecover()
  * UserScreen -- swap/page to user screen
  */
 
-bool UserScreen()
+bool UserScreen( void )
 {
     switch( ConMode ) {
     case C_TTY:
@@ -406,14 +406,14 @@ bool UserScreen()
     return( FALSE );
 }
 
-void SaveMainWindowPos()
+void SaveMainWindowPos( void )
 {
 }
 
-void FiniScreen()
+void FiniScreen( void )
 {
     struct vt_sizes vt_sizes;
-    
+
     if( _IsOn( SW_USE_MOUSE ) ) GUIFiniMouse();
     uistop();
     switch( ConMode ) {

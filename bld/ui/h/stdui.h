@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  ui library definitions
+* Description:  User Interface (UI) library public interface.
 *
 ****************************************************************************/
 
@@ -467,9 +467,9 @@ typedef struct image_hld {
 } IMAGE_HLD;
 
 typedef struct image_def {      // this gets attached to the graphic field
-    void __FAR                  *(_FAR *get_image)();
-    void                        (_FAR *put_image)();
-    void                        (_FAR *done_image)();
+    void __FAR                  *(_FAR *get_image)( void );
+    void                        (_FAR *put_image)( void );
+    void                        (_FAR *done_image)( void );
     IMAGE_HLD __FAR             *images;
 } IMAGE_DEF;
 
@@ -478,7 +478,7 @@ typedef struct window {
         SAREA               area;
         SAREA               dirty;
         int                 priority;
-        void                (_FAR *update)();
+        void                (_FAR *update)( struct sarea, void * );
         void _FARD          *parm;
         struct window _FARD *next;
         struct window _FARD *prev;
@@ -654,8 +654,8 @@ extern          SAREA          *uisetscreenarea( SAREA *, int, int );
 extern          void            uisetsnow( int );
 extern          void            uispawnend( void );
 extern          void            uispawnstart( void );
-extern          int             uistart();
-extern          void            uistop();
+extern          int             uistart( void );
+extern          void            uistop( void );
 extern          void            uiswap( void );
 extern          void            uiswapcursor( void );
 extern          void            uiswapmouse( void );
@@ -689,9 +689,9 @@ extern          void            uivtextput( VSCREEN _FARD*, ORD, ORD,
 extern          void            uitextfield( VSCREEN _FARD*, ORD, ORD,
                                 ORD, ATTR, char __FAR *, int );
 extern          void            uimousespeed( unsigned );
-extern          unsigned char   uicheckshift();
-extern          EVENT           uikeyboardevent();
-extern          int             uimouseinstalled();
+extern          unsigned char   uicheckshift( void );
+extern          EVENT           uikeyboardevent( void );
+extern          int             uimouseinstalled( void );
 
 extern          int             FlipCharacterMap( void );
 extern          int             UIMapCharacters( char mapchar[], char mapdata[][16] );
@@ -699,8 +699,8 @@ extern          int             UIMapCharacters( char mapchar[], char mapdata[][
 extern          void            uiyield( void );
 extern          int             uiforceevadd( EVENT );  // int is a bool
 extern          void            uiforceevflush( void );
-extern          int             uiisdbcs(); // bool
-extern          int             uionnec();      // bool
+extern          int             uiisdbcs( void ); // bool
+extern          int             uionnec( void );  // bool
 extern          int             uicharlen( int ); // returns 2 if dbcs lead byte
 extern          void            UIMemOpen( void );
 extern          void            UIMemClose( void );

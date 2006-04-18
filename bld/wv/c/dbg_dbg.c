@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Built-in dbg$ variables.
 *
 ****************************************************************************/
 
@@ -42,15 +41,15 @@
 #include "dui.h"
 
 
-extern void             GetSysConfig(void);
-extern address          GetRegIP(void);
+extern void             GetSysConfig( void );
+extern address          GetRegIP( void );
 extern address          GetRegSP( void );
 extern address          GetRegBP( void );
 extern address          GetDataDot( void );
 extern address          GetCodeDot( void );
-extern dtid_t		GetNextTID( void );
+extern dtid_t           GetNextTID( void );
 extern void             AddrFix( address * );
-extern bool             TokenName(unsigned int ,char **,unsigned int *);
+extern bool             TokenName( unsigned int, char **, unsigned int * );
 extern bool             IsInternalMod( mod_handle );
 extern void             GetMADTypeDefault( mad_type_kind, mad_type_info * );
 
@@ -195,7 +194,7 @@ CONST wv_sym_entry *const ListInternal[] = {
 
 static wv_sym_entry *StaticLookup( const wv_sym_entry * const *list, lookup_item *li )
 {
-    int                 (*cmp)();
+    int                 (*cmp)( const void *, const void *, size_t );
     wv_sym_entry        *curr;
 
     if( li->scope.start != NULL ) return( FALSE );
@@ -255,7 +254,7 @@ wv_sym_entry *LookupInternalName( lookup_item *li )
     wv_sym_entry        *se;
     char        *null_start;
     unsigned    null_len;
-    int         (*cmp)();
+    int         (*cmp)( const void *, const void *, size_t );
 
     se = StaticLookup( ListInternal, li );
     if( se != NULL ) return( se );
@@ -277,7 +276,7 @@ wv_sym_entry *LookupInternalName( lookup_item *li )
 wv_sym_entry *LookupUserName( lookup_item *li )
 {
     wv_sym_list         *sl;
-    int                 (*cmp)();
+    int                 (*cmp)( const void *, const void *, size_t );
 
     if( li->case_sensitive ) {
         cmp = memcmp;
@@ -292,7 +291,7 @@ wv_sym_entry *LookupUserName( lookup_item *li )
     return( NULL );
 }
 
-void PurgeUserNames()
+void PurgeUserNames( void )
 {
     wv_sym_list *sl;
     wv_sym_list *next;
@@ -353,7 +352,7 @@ bool CreateSym( lookup_item *li, type_info *ti )
     return( TRUE );
 }
 
-static void GetNPXType()
+static void GetNPXType( void )
 {
     if( _IsOff( SW_KNOW_EMULATOR ) ) {
         GetSysConfig(); /* might be emulator */
@@ -429,8 +428,8 @@ void InternalValue( unsigned index, void *d )
         *(unsigned_16 *)d = DbgRegs->tid;
         break;
     case INTERNAL_ntid:
-	*(unsigned_16 *)d = GetNextTID();
-	break;
+    *(unsigned_16 *)d = GetNextTID();
+    break;
     case INTERNAL_ip:
         *(address *)d = GetRegIP();
         AddrFix( d );

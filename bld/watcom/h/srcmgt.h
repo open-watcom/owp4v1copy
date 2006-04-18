@@ -59,11 +59,11 @@
 
 struct browser;
 extern struct browser *FOpenSource( char *name, sm_mod_handle mod, sm_cue_file_id id );
-extern void FDoneSource(struct browser *);
-extern unsigned long FSize(struct browser *);
-extern unsigned long FLastOffset(struct browser *);
-extern int FileIsRemote(struct browser *);
-extern char *FGetName(struct browser *);
-extern int FCurrLine(struct browser *);
-extern int FReadLine(struct browser *,int ,int ,char *,int );
-extern void FClearOpenSourceCache();
+extern void FDoneSource( struct browser * );
+extern unsigned long FSize( struct browser * );
+extern unsigned long FLastOffset( struct browser * );
+extern int FileIsRemote( struct browser * );
+extern char *FGetName( struct browser * );
+extern int FCurrLine( struct browser * );
+extern int FReadLine( struct browser *, int, int, char *, int );
+extern void FClearOpenSourceCache( void );

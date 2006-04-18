@@ -46,17 +46,17 @@ extern BOOL APIENTRY WinThreadAssocQueue(HAB, HMQ);
 
 extern HMQ      GUIPMmq;
 
-extern void     *ExtraAlloc(unsigned);
-extern void     ExtraFree(void *);
-extern void     StartupErr(char *);
-extern int      GUIInitMouse(int);
-extern void     GUIFiniMouse(void);
-extern void     TellHandles(HAB hab, HWND hwnd);
-extern HAB      GUIGetHAB();
-extern HWND     GUIGetSysHandle(gui_window*);
-extern void     SaveMainScreen(char*);
-extern void     RestoreMainScreen(char*);
-extern bool     IsTrapFilePumpingMessageQueue();
+extern void     *ExtraAlloc( unsigned );
+extern void     ExtraFree( void * );
+extern void     StartupErr( char * );
+extern int      GUIInitMouse( int );
+extern void     GUIFiniMouse( void );
+extern void     TellHandles( HAB hab, HWND hwnd );
+extern HAB      GUIGetHAB( void );
+extern HWND     GUIGetSysHandle( gui_window * );
+extern void     SaveMainScreen( char * );
+extern void     RestoreMainScreen( char * );
+extern bool     IsTrapFilePumpingMessageQueue( void );
 
 
 unsigned                NumLines;
@@ -70,27 +70,27 @@ HEV                     PumpMessageDoneSem = NULL;
 #define STACK_SIZE      32768
 
 
-void WndInitWndMain(wnd_create_struct *info)
+void WndInitWndMain( wnd_create_struct *info )
 {
-    WndInitCreateStruct(info);
+    WndInitCreateStruct( info );
     info->style |= GUI_INIT_INVISIBLE;
 }
 
-void TellWinHandle()
+void TellWinHandle( void )
 {
-    if (!ToldWinHandle) {
-        TellHandles(GUIGetHAB(), GUIGetSysHandle(WndGui(WndMain)));
+    if( !ToldWinHandle ) {
+        TellHandles( GUIGetHAB(), GUIGetSysHandle( WndGui( WndMain ) ) );
         ToldWinHandle = TRUE;
     }
 }
 
-void ToggleHardMode()
+void ToggleHardMode( void )
 {
 }
 
-void RingBell()
+void RingBell( void )
 {
-    DosBeep(1000, 250);
+    DosBeep( 1000, 250 );
 }
 
 
@@ -98,9 +98,9 @@ void RingBell()
  * ConfigScreen -- figure out screen configuration we're going to use.
  */
 
-unsigned ConfigScreen()
+unsigned ConfigScreen( void )
 {
-    return 0;
+    return( 0 );
 }
 
 
@@ -173,7 +173,7 @@ VOID PumpMessageQueue( VOID )
     }
 }
 
-void InitScreen()
+void InitScreen( void )
 {
     TID                 tid;
 
@@ -189,13 +189,13 @@ void InitScreen()
  * UsrScrnMode -- setup the user screen mode
  */
 
-bool UsrScrnMode()
+bool UsrScrnMode( void )
 {
-    return FALSE;
+    return( FALSE );
 }
 
 
-void DbgScrnMode()
+void DbgScrnMode( void )
 {
 }
 
@@ -206,25 +206,25 @@ void DbgScrnMode()
 
 static HWND FocusWnd, ActiveWnd;
 
-bool DebugScreen()
+bool DebugScreen( void )
 {
-    if (!WndMain)
+    if( !WndMain )
         return FALSE;
-    if (FocusWnd && WinIsWindow(GUIGetHAB(), FocusWnd) &&
-        FocusWnd != WinQueryFocus(HWND_DESKTOP)) {
+    if( FocusWnd && WinIsWindow( GUIGetHAB(), FocusWnd ) &&
+        FocusWnd != WinQueryFocus( HWND_DESKTOP ) ) {
         WinSetFocus(HWND_DESKTOP, FocusWnd);
     }
-    if (ActiveWnd && WinIsWindow(GUIGetHAB(), ActiveWnd) &&
-        ActiveWnd != WinQueryActiveWindow(HWND_DESKTOP)) {
-        WinSetActiveWindow(HWND_DESKTOP, ActiveWnd);
+    if( ActiveWnd && WinIsWindow( GUIGetHAB(), ActiveWnd ) &&
+        ActiveWnd != WinQueryActiveWindow( HWND_DESKTOP ) ) {
+        WinSetActiveWindow( HWND_DESKTOP, ActiveWnd );
     }
-    return FALSE;
+    return( FALSE );
 }
 
 
-bool DebugScreenRecover()
+bool DebugScreenRecover( void )
 {
-    return TRUE;
+    return( TRUE );
 }
 
 
@@ -232,21 +232,21 @@ bool DebugScreenRecover()
  * UserScreen -- swap/page to user screen
  */
 
-bool UserScreen()
+bool UserScreen( void )
 {
-    if (!WndMain)
-        return FALSE;
+    if( !WndMain )
+        return( FALSE );
     FocusWnd = WinQueryFocus( HWND_DESKTOP );
     ActiveWnd = WinQueryActiveWindow( HWND_DESKTOP );
-    return FALSE;
+    return( FALSE );
 }
 
-void SaveMainWindowPos()
+void SaveMainWindowPos( void )
 {
     SaveMainScreen( "WDPM" );
 }
 
-void FiniScreen()
+void FiniScreen( void )
 {
     DosCloseEventSem( PumpMessageSem );
     DosCloseEventSem( PumpMessageDoneSem );
@@ -259,34 +259,35 @@ void FiniScreen()
  *                                                                           *
 \*****************************************************************************/
 
-void *uifaralloc(unsigned size)
+void *uifaralloc( unsigned size )
 {
-    return(ExtraAlloc(size));
+    return( ExtraAlloc( size ) );
 }
 
 
-void uifarfree(void *ptr)
+void uifarfree( void *ptr )
 {
-    ExtraFree(ptr);
+    ExtraFree( ptr );
 }
 
-bool SysGUI()
+bool SysGUI( void )
 {
-    return TRUE;
+    return( TRUE );
 }
-void PopErrBox(char *buff)
+void PopErrBox( char *buff )
 {
-    WinMessageBox(HWND_DESKTOP, HWND_DESKTOP, buff,
+    WinMessageBox( HWND_DESKTOP, HWND_DESKTOP, buff,
                   LIT(Debugger_Startup_Error), 1001,
-                  MB_MOVEABLE | MB_CUACRITICAL | MB_CANCEL);
+                  MB_MOVEABLE | MB_CUACRITICAL | MB_CANCEL );
 }
 
-unsigned OnAnotherThread(unsigned (*rtn)(), unsigned in_len, void *in, unsigned out_len, void *out)
+unsigned OnAnotherThread( unsigned (*rtn)( unsigned, void *, unsigned, void *),
+                          unsigned in_len, void *in, unsigned out_len, void *out )
 {
     unsigned    result;
     ULONG       ulCount;
 
-    if ( !ToldWinHandle || IsTrapFilePumpingMessageQueue() ) {
+    if( !ToldWinHandle || IsTrapFilePumpingMessageQueue() ) {
         return rtn( in_len, in, out_len, out );
     } else {
         DosPostEventSem( PumpMessageSem );

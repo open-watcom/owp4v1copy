@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Miscellaneous odds and ends that don't have a home.
 *
 ****************************************************************************/
 
@@ -44,52 +43,53 @@
 #include "dbglit.h"
 #include "i64.h"
 
-extern char             *StrCopy(char *,char *);
-extern unsigned int     ReqExpr(void);
-extern unsigned_64      ReqU64Expr(void);
+
+extern char             *StrCopy( char *, char * );
+extern unsigned int     ReqExpr( void );
+extern unsigned_64      ReqU64Expr( void );
 extern void             ReqMemAddr( memory_expr ,address *);
 extern unsigned         OptExpr( unsigned );
-extern unsigned int     ScanCmd(char *);
-extern void             DebugExit(void);
-extern void             ReqEOC(void);
-extern bool             ScanQuote(char **,unsigned int *);
-extern bool             ScanItem( bool, char **,unsigned int *);
-extern void             Scan(void);
-extern bool             ScanEOC(void);
+extern unsigned int     ScanCmd( char * );
+extern void             DebugExit( void );
+extern void             ReqEOC( void );
+extern bool             ScanQuote( char **, unsigned int * );
+extern bool             ScanItem( bool, char **, unsigned int * );
+extern void             Scan( void );
+extern bool             ScanEOC( void );
 extern unsigned         Go( bool );
-extern void             PopEntry(void);
-extern void             NormalExpr(void);
-extern cmd_list         *AllocCmdList(char *,unsigned int );
-extern void             FreeCmdList(cmd_list *);
-extern char             *GetCmdEntry(char *,int ,char *);
+extern void             PopEntry( void );
+extern void             NormalExpr( void );
+extern cmd_list         *AllocCmdList( char *, unsigned int );
+extern void             FreeCmdList( cmd_list * );
+extern char             *GetCmdEntry( char *, int , char * );
 extern char             *GetCmdName( int );
-extern void             FlipScreen(void);
+extern void             FlipScreen( void );
 extern void             DbgUpdate( update_list );
-extern void             PushCmdList(cmd_list *);
-extern address          GetRegIP(void);
-extern void             RecordSetRegIP(address );
-extern char             *ScanPos(void);
-extern char             *ReScan(char *);
-extern void             DUIWndUser(void);
+extern void             PushCmdList( cmd_list * );
+extern address          GetRegIP( void );
+extern void             RecordSetRegIP( address );
+extern char             *ScanPos( void );
+extern char             *ReScan( char * );
+extern void             DUIWndUser( void );
 extern unsigned         RemoteReadUserKey( unsigned );
-extern void             ReadDbgRegs();
-extern void             WriteDbgRegs();
+extern void             ReadDbgRegs( void );
+extern void             WriteDbgRegs( void );
 extern dtid_t           RemoteGetNextThread( dtid_t, unsigned * );
-extern dtid_t           RemoteSetThreadWithErr(dtid_t, unsigned *);
+extern dtid_t           RemoteSetThreadWithErr( dtid_t, unsigned * );
 extern void             RemoteThdName( dtid_t, char * );
 extern void             TraceKill( void );
 extern unsigned         SetCurrRadix( unsigned );
-extern address          ReturnAddress();
+extern address          ReturnAddress( void );
 extern void             SetCodeDot( address );
-extern void             ChkExpr(void);
+extern void             ChkExpr( void );
 extern bool             AdvMachState( int );
-extern void             CopyInpFlags();
-extern void             FlushEOC();
+extern void             CopyInpFlags( void );
+extern void             FlushEOC( void );
 extern void             RecordCommand( char *startpos, int cmd );
-extern void             RawScanInit();
-extern char             RawScanChar();
-extern void             RawScanAdvance();
-extern void             RawScanFini();
+extern void             RawScanInit( void );
+extern char             RawScanChar( void );
+extern void             RawScanAdvance( void );
+extern void             RawScanFini( void );
 extern char             *CnvULongHex( unsigned long value, char *p );
 extern int              AddrComp( address a, address b );
 
@@ -132,7 +132,7 @@ void Flip( unsigned wait )
     }
 }
 
-void ProcFlip()
+void ProcFlip( void )
 {
     char        *old;
     unsigned    wait;
@@ -162,7 +162,7 @@ void ProcFlip()
 }
 
 
-void ConfigFlip()
+void ConfigFlip( void )
 {
     char *p;
 
@@ -177,7 +177,7 @@ void ConfigFlip()
  * ProcRemark - process a remark command
  */
 
-void ProcRemark()
+void ProcRemark( void )
 {
     char        c;
 
@@ -199,7 +199,7 @@ void ProcRemark()
  * ProcDo - process do command
  */
 
-void ProcDo()
+void ProcDo( void )
 {
     NormalExpr();
     PopEntry();
@@ -207,7 +207,7 @@ void ProcDo()
 }
 
 
-void ProcAssign()
+void ProcAssign( void )
 {
     char        *startpos;
 
@@ -262,7 +262,7 @@ void SkipToAddr( address addr )
 }
 
 
-void GoToReturn()
+void GoToReturn( void )
 {
     address     ra;
 
@@ -279,7 +279,7 @@ void GoToReturn()
  * ProcGo -- process go command
  */
 
-void ProcGo()
+void ProcGo( void )
 {
     address     start;
     address     stop;
@@ -374,7 +374,7 @@ void ProcGo()
  * ProcSkip -- process skip command
  */
 
-void ProcSkip()
+void ProcSkip( void )
 {
     address    start;
 
@@ -387,7 +387,7 @@ void ProcSkip()
  * ProcIf -- process if command
  */
 
-void ProcIf()
+void ProcIf( void )
 {
     char                *start;
     unsigned            len;
@@ -436,7 +436,7 @@ void ProcIf()
  * ProcWhile -- process While command
  */
 
-void ProcWhile()
+void ProcWhile( void )
 {
     char                *start;
     unsigned            len;
@@ -462,7 +462,7 @@ void ProcWhile()
  * ProcError -- proccess error command
  */
 
-void ProcError()
+void ProcError( void )
 {
     char        *start;
     unsigned    len;
@@ -479,7 +479,7 @@ void ProcError()
  * ProcQuit -- process quit command
  */
 
-void ProcQuit()
+void ProcQuit( void )
 {
     ReqEOC();
     DebugExit();
@@ -591,8 +591,8 @@ static thread_state     *AddThread( dtid_t tid, unsigned state )
 }
 
 
-dtid_t GetNextTID()
-/*****************/
+dtid_t GetNextTID( void )
+/***********************/
 {
     thread_state    *thd;
 
@@ -627,7 +627,7 @@ void NameThread( dtid_t tid, char *name )
     }
 }
 
-static void MarkThreadsDead()
+static void MarkThreadsDead( void )
 {
     thread_state    *thd;
 
@@ -636,7 +636,7 @@ static void MarkThreadsDead()
     }
 }
 
-static void KillDeadThreads()
+static void KillDeadThreads( void )
 {
     thread_state    **owner;
     thread_state    *thd;
@@ -684,7 +684,7 @@ thread_state   *FindThread( dtid_t tid )
 }
 
 
-void ProcThread()
+void ProcThread( void )
 {
     enum thread_cmds cmd;
     dtid_t          tid;
@@ -731,7 +731,7 @@ void ProcThread()
     }
 }
 
-void FreeThreads()
+void FreeThreads( void )
 {
     thread_state    *thd;
 

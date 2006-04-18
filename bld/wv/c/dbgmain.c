@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger mainline.
 *
 ****************************************************************************/
 
@@ -185,12 +184,12 @@ extern int              ScanSavePtr;
 extern address          NilAddr;
 extern char             *InvokeFile;
 
-OVL_EXTERN void         ProcNil(void);
+OVL_EXTERN void         ProcNil( void );
 
 
 
 
-#define pick( a, b, c ) extern void b(void);
+#define pick( a, b, c ) extern void b( void );
 #include "dbgcmd.h"
 
 static char CmdNameTab[] = {
@@ -200,7 +199,7 @@ static char CmdNameTab[] = {
 
 
 
-static void (* const CmdJmpTab[])() = {
+static void (* const CmdJmpTab[])( void ) = {
     &ProcNil,
     #define pick( a, b, c ) &b,
     #include "dbgcmd.h"
@@ -219,7 +218,7 @@ char *GetCmdName( int index )
  * DebugInit -- mainline for initialization
  */
 
-void DebugInit()
+void DebugInit( void )
 {
     _SwitchOn( SW_ERROR_STARTUP );
     _SwitchOn( SW_CHECK_SOURCE_EXISTS );
@@ -264,7 +263,7 @@ void DebugInit()
  * ProcNil -- process NIL command
  */
 
-OVL_EXTERN void ProcNil()
+OVL_EXTERN void ProcNil( void )
 {
     if( ScanLen() == 0 ) Scan();
     Error( ERR_NONE, LIT( ERR_BAD_COMMAND ), ScanPos(), ScanLen() );
@@ -302,7 +301,7 @@ void ReportTask( task_status task, unsigned code )
  * ChkBreak -- report an error if there is a pending user interrupt
  */
 
-void ChkBreak()
+void ChkBreak( void )
 {
     if( TBreak() ) Error( ERR_NONE, LIT( ERR_DBG_INTERRUPT ) );
 }
@@ -313,7 +312,7 @@ void ChkBreak()
  */
 
 
-void ProcACmd()
+void ProcACmd( void )
 {
     unsigned cmd;
 
@@ -364,7 +363,7 @@ void ProcACmd()
 }
 
 
-OVL_EXTERN void Profile()
+OVL_EXTERN void Profile( void )
 {
     if( InvokeFile != NULL ) {
         ProfileInvoke( InvokeFile );
@@ -374,7 +373,7 @@ OVL_EXTERN void Profile()
     }
 }
 
-static void PushInitCmdList()
+static void PushInitCmdList( void )
 {
     cmd_list    *cmds;
 
@@ -392,7 +391,7 @@ static void PushInitCmdList()
  */
 
 
-void DebugMain()
+void DebugMain( void )
 {
     bool        save;
 
@@ -434,12 +433,12 @@ void DebugExit( void )
 }
 
 
-void DebugFini()
+void DebugFini( void )
 {
     PointFini();
-    #if !(defined(__GUI__) && defined(__OS2__))
-        ReleaseProgOvlay( TRUE ); // see dlgfile.c
-    #endif
+#if !(defined(__GUI__) && defined(__OS2__))
+    ReleaseProgOvlay( TRUE ); // see dlgfile.c
+#endif
     VarDisplayFini();
     FiniHook();
     FiniCmd();

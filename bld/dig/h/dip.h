@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Public DIP (Debugging Information Processor) interface.
 *
 ****************************************************************************/
 
@@ -113,7 +112,7 @@ int             TypeCmp( type_handle *, type_handle * );
 unsigned        TypeName( type_handle *, unsigned, symbol_type *, char *, unsigned );
 dip_status      TypeAddRef( type_handle * );
 dip_status      TypeRelease( type_handle * );
-dip_status      TypeFreeAll();
+dip_status      TypeFreeAll( void );
 
 /*
  * Symbol Information
@@ -135,7 +134,7 @@ search_result   ScopeOuter( mod_handle, scope_block *, scope_block * );
 int             SymCmp( sym_handle *, sym_handle * );
 dip_status      SymAddRef( sym_handle * );
 dip_status      SymRelease( sym_handle * );
-dip_status      SymFreeAll();
+dip_status      SymFreeAll( void );
 
 
 /*

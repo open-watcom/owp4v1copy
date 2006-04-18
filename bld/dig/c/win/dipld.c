@@ -38,7 +38,7 @@
 #include "dipimp.h"
 #include "dipcli.h"
 
-typedef void (DIPENTRY INTER_FUNC)();
+typedef void (DIPENTRY INTER_FUNC)( void );
 
 HMODULE DIPLastHandle;  /* for Dr. WATCOM */
 
@@ -54,7 +54,7 @@ void Say( char *buff )
 
 void DIPSysUnload( unsigned long sys_hdl )
 {
-    void        (DIPENTRY *fini_func)() = (void *)sys_hdl;
+    void        (DIPENTRY *fini_func)( void ) = (void *)sys_hdl;
 
     if( fini_func != NULL ) {
         fini_func();

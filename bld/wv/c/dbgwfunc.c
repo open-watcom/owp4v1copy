@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  The 'Functions' window.
 *
 ****************************************************************************/
 
@@ -42,17 +41,17 @@
 #include "namelist.h"
 
 
-extern brk              *FindBreak(address);
-extern a_window         *WndAsmInspect(address);
-extern a_window         *WndSrcInspect(address);
-extern void             *AddBreak(address );
-extern void             RemoveBreak(address );
+extern brk              *FindBreak( address );
+extern a_window         *WndAsmInspect( address );
+extern a_window         *WndSrcInspect( address );
+extern void             *AddBreak( address );
+extern void             RemoveBreak( address );
 extern bool             DlgBreak( address );
 extern void             GoToAddr( address addr );
 extern bool             HasLineInfo( address );
-extern void             ToggleBreak(address);
-extern char             *FileBreakGadget( a_window *,wnd_line_piece *,bool curr, brk *bp );
-extern address          GetCodeDot();
+extern void             ToggleBreak( address );
+extern char             *FileBreakGadget( a_window *, wnd_line_piece *, bool curr, brk *bp );
+extern address          GetCodeDot( void );
 extern search_result    DeAliasAddrMod( address a, mod_handle *mh );
 
 extern char             *TxtBuff;
@@ -292,7 +291,7 @@ static bool FuncEventProc( a_window * wnd, gui_event gui_ev, void *parm )
     return( FALSE );
 }
 
-void FuncChangeOptions()
+void FuncChangeOptions( void )
 {
     WndForAllClass( WND_GBLFUNCTIONS, FuncSetOptions );
 }
@@ -337,13 +336,13 @@ extern a_window *DoWndFuncOpen( bool global, mod_handle mod )
 }
 
 extern WNDOPEN WndFuncOpen;
-extern a_window *WndFuncOpen()
+extern a_window *WndFuncOpen( void )
 {
     return( DoWndFuncOpen( FALSE, NO_MOD ) );
 }
 
 extern WNDOPEN WndGblFuncOpen;
-extern a_window *WndGblFuncOpen()
+extern a_window *WndGblFuncOpen( void )
 {
     return( DoWndFuncOpen( TRUE, NO_MOD ) );
 }

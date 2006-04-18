@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger utility routines.
 *
 ****************************************************************************/
 
@@ -50,6 +49,7 @@
 #include <float.h>
 #include <limits.h>
 
+
 extern char             *NameBuff;
 extern unsigned char    CurrRadix;
 extern input_stack      *InpStack;
@@ -63,19 +63,20 @@ extern machine_state    *DbgRegs;
 
 extern unsigned         CueFile( cue_handle *ch, char *file, unsigned max );
 extern unsigned long    CueLine( cue_handle *ch );
-extern char             *StrCopy(char *,char *);
-extern char             *ReScan(char *);
-extern char             *ScanPos(void);
-extern void             NewLang(char *);
-extern char             *AddHexSpec(char*);
-extern char             *DupStr(char*);
+extern char             *StrCopy( char *, char * );
+extern char             *ReScan( char * );
+extern char             *ScanPos( void );
+extern void             NewLang( char * );
+extern char             *AddHexSpec( char * );
+extern char             *DupStr( char * );
 extern void             AddrFloat( address * );
 extern void             AddrFix( address * );
-extern address          GetCodeDot(void);
+extern address          GetCodeDot( void );
 extern void             GetMADTypeDefaultAt( address, mad_type_kind, mad_type_info * );
 extern unsigned         NewCurrRadix( unsigned );
 extern image_entry      *ImageEntry( mod_handle mh );
-extern image_entry      *ImagePrimary(void);
+extern image_entry      *ImagePrimary( void );
+
 
 unsigned DefaultSize( default_kind dk )
 {
@@ -133,7 +134,7 @@ char    *CnvULongDec( unsigned long value, char *p )
     return( DoMadLongConv( p, value, 10, sizeof( value ) ) );
 }
 
-char *CnvLong( long value, char *p )
+char    *CnvLong( long value, char *p )
 {
     return( DoMadLongConv( p, value, CurrRadix, -(int)sizeof( value ) ) );
 }
@@ -354,7 +355,7 @@ char *LineAddr( address  *addr, char *buff )
  * Ring - ring a bell, if required
  */
 
-void Ring()
+void Ring( void )
 {
     if( _IsOn( SW_BELL ) ) {
         DUIRingBell();
@@ -467,7 +468,7 @@ input_type SetInpStack( input_type new )
  * PopInpStack -- remove a level from the input stack
  */
 
-void PopInpStack()
+void PopInpStack( void )
 {
     input_stack *old;
     char        buff[ TXT_LEN ];
@@ -491,7 +492,7 @@ void PopInpStack()
  * PushInpStack -- add a new level to the input stack
  */
 
-void PushInpStack( void *handle, bool (*rtn)(), bool save_lang )
+void PushInpStack( void *handle, bool (*rtn)( void *, inp_rtn_action ), bool save_lang )
 {
     input_stack *new;
     char        *lang;
@@ -527,8 +528,10 @@ void CopyInpFlags()
 }
 
 
-OVL_EXTERN bool DoneCmdList( cmd_list *cmds, inp_rtn_action action )
+OVL_EXTERN bool DoneCmdList( void *_cmds, inp_rtn_action action )
 {
+    cmd_list    *cmds = _cmds;
+
     switch( action ) {
     case INP_RTN_INIT:
         ReScan( cmds->buff );
@@ -587,7 +590,7 @@ void PushCmdText( char *cmds )
  * PurgeInpStack -- clean up input stack
  */
 
-bool PurgeInpStack()
+bool PurgeInpStack( void )
 {
     for( ;; ) {
         if( InpStack == NULL ) return( TRUE );
@@ -596,8 +599,10 @@ bool PurgeInpStack()
     }
 }
 
-OVL_EXTERN bool DoneNull( char *buff, inp_rtn_action action )
+OVL_EXTERN bool DoneNull( void *_buff, inp_rtn_action action )
 {
+    char    *buff = _buff;
+
     switch( action ) {
     case INP_RTN_INIT:
         ReScan( buff );
@@ -610,7 +615,7 @@ OVL_EXTERN bool DoneNull( char *buff, inp_rtn_action action )
     return( FALSE ); // silence compiler
 }
 
-void FreezeInpStack()
+void FreezeInpStack( void )
 {
     PushInpStack( LIT( Empty ), &DoneNull, FALSE );
     TypeInpStack( INP_NEW_LANG | INP_HOLD | INP_STOP_PURGE );

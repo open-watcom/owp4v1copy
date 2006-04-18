@@ -52,46 +52,47 @@ extern char             *TxtBuff;
 
 extern unsigned long    CueLine( cue_handle *ch );
 extern GUICALLBACK      WndMainEventProc;
-extern void             TellWinHandle(void);
-extern void             DlgNewProg();
-extern void             InitToolBar(void);
-extern void             InitMemWindow(void);
-extern void             InitAboutMessage(void);
-extern void             InitIOWindow(void);
-extern void             InitMenus(void);
-extern void             InitHelp();
-extern void             InitGadget();
-extern void             InitPaint(void);
-extern void             InitBrowse(void);
-extern void             InitFont(void);
-extern void             InitFileMap(void);
-extern void             FiniMacros(void);
-extern void             FiniBrowse(void);
-extern void             FiniPaint(void);
-extern void             FiniGadget();
-extern void             FiniFont(void);
-extern void             FiniAboutMessage(void);
-extern void             FiniMenus(void);
-extern void             FiniIOWindow(void);
-extern void             FiniMemWindow(void);
-extern void             FiniToolBar(void);
-extern void             FiniFileMap(void);
-extern void             WndDlgFini(void);
-extern void             DoProcPending();
-extern void             SetTargMenuItems();
-extern void             SetBrkMenuItems();
-extern void             SetIOMenuItems();
+extern void             TellWinHandle( void );
+extern void             DlgNewProg( void );
+extern void             InitToolBar( void );
+extern void             InitMemWindow( void );
+extern void             InitAboutMessage( void );
+extern void             InitIOWindow( void );
+extern void             InitMenus( void );
+extern void             InitHelp( void );
+extern void             InitGadget( void );
+extern void             InitPaint( void );
+extern void             InitBrowse( void );
+extern void             InitFont( void );
+extern void             InitFileMap( void );
+extern void             FiniMacros( void );
+extern void             FiniBrowse( void );
+extern void             FiniPaint( void );
+extern void             FiniGadget( void );
+extern void             FiniFont( void );
+extern void             FiniAboutMessage( void );
+extern void             FiniMenus( void );
+extern void             FiniIOWindow( void );
+extern void             FiniMemWindow( void );
+extern void             FiniToolBar( void );
+extern void             FiniFileMap( void );
+extern void             WndDlgFini( void );
+extern void             DoProcPending( void );
+extern void             SetTargMenuItems( void );
+extern void             SetBrkMenuItems( void );
+extern void             SetIOMenuItems( void );
 extern void             DoInput( void );
 extern void             *OpenSrcFile(cue_handle *);
-extern int              FReadLine(void   *,int ,int ,char *,int );
-extern void             FDoneSource(void         *);
-extern bool             GUIIsDBCS();
+extern int              FReadLine( void *, int, int, char *, int );
+extern void             FDoneSource( void * );
+extern bool             GUIIsDBCS( void );
 extern int              EnvLkup( char *src, char *dst, int );
 extern void             PopErrBox( char *buff );
 extern void             KillDebugger( int ret_code );
-extern char             *Format(char *,char *,... );
+extern char             *Format( char *, char *, ... );
 
 extern void             InitSuppServices( void );
+
 
 void DUIUpdate( update_list flags )
 {
@@ -127,17 +128,17 @@ void DUIInfoBox( char *text )
     WndInfoBox( text );
 }
 
-void DUIStop()
+void DUIStop( void )
 {
     WndStop();
 }
 
-bool DUIClose()
+bool DUIClose( void )
 {
     return( WndFini() );
 }
 
-void DUIInit()
+void DUIInit( void )
 {
     CmdHistory = WndInitHistory();
     SrchHistory = WndInitHistory();
@@ -148,9 +149,9 @@ void DUIInit()
     InitMenus();
     WndInit( LIT( The_WATCOM_Debugger ) );
     _SwitchOff( SW_ERROR_STARTUP );
-    #if defined(__GUI__)
-        TellWinHandle();
-    #endif
+#if defined(__GUI__)
+    TellWinHandle();
+#endif
     if( WndMain != NULL ) WndSetIcon( WndMain, &MainIcon );
     InitHelp();
     InitGadget();
@@ -159,7 +160,7 @@ void DUIInit()
     InitFont();
 }
 
-void DUIFini()
+void DUIFini( void )
 {
     WndFiniHistory( SrchHistory );
     WndFiniHistory( CmdHistory );
@@ -176,7 +177,7 @@ void DUIFini()
     WndDlgFini();
 }
 
-extern void DUIFreshAll()
+extern void DUIFreshAll( void )
 {
     WndFreshAll();
 }
@@ -186,7 +187,7 @@ extern bool DUIStopRefresh( bool ok )
     return( WndStopRefresh( ok ) );
 }
 
-extern void DUIShow()
+extern void DUIShow( void )
 {
     WndDebug();
     WndShowAll();
@@ -197,26 +198,26 @@ extern void DUIShow()
     }
 }
 
-extern void WndUser();
-extern void DUIWndUser()
+extern void WndUser( void );
+extern void DUIWndUser( void )
 {
     WndUser();
 }
 
-extern void WndDebug();
-extern void DUIWndDebug()
+extern void WndDebug( void );
+extern void DUIWndDebug( void )
 {
     WndDebug();
 }
 
 extern a_window         *WndClassInspect( wnd_class class );
-extern void DUIShowLogWindow()
+extern void DUIShowLogWindow( void )
 {
     WndClassInspect( WND_DIALOGUE );
 }
 
 unsigned ScanCmd( char *cmd_table );
-wnd_class ReqWndName()
+wnd_class ReqWndName( void )
 {
     wnd_class   class;
 
@@ -225,7 +226,7 @@ wnd_class ReqWndName()
     return( class-1 );
 }
 
-extern int DUIGetMonitorType()
+extern int DUIGetMonitorType( void )
 {
     if( GUIIsGUI() ) {
         return( 1 );
@@ -236,12 +237,12 @@ extern int DUIGetMonitorType()
     }
 }
 
-extern int DUIScreenSizeY()
+extern int DUIScreenSizeY( void )
 {
     return( WndScreen.y );
 }
 
-extern int DUIScreenSizeX()
+extern int DUIScreenSizeX( void )
 {
     return( WndScreen.x );
 }
@@ -251,7 +252,7 @@ void DUIErrorBox( char *buff )
     WndDisplayMessage( buff, LIT( Error ), GUI_INFORMATION + GUI_SYSTEMMODAL );
 }
 
-extern void DUIArrowCursor()
+extern void DUIArrowCursor( void )
 {
     WndArrowCursor();
 }
@@ -262,14 +263,14 @@ extern char *DUILoadString( int i )
     return( WndLoadString( i ) );
 }
 
-bool DUIAskIfAsynchOk()
+bool DUIAskIfAsynchOk( void )
 {
     return( WndDisplayMessage( LIT( WARN_Asynch_Event ), LIT( Empty ),
                              GUI_YES_NO ) == GUI_RET_YES );
 }
 
-extern void WndFlushKeys();
-extern void DUIFlushKeys()
+extern void WndFlushKeys( void );
+extern void DUIFlushKeys( void )
 {
     WndFlushKeys();
 }
@@ -286,42 +287,49 @@ extern void DUISysEnd( bool pause )
     WndSysEnd( pause );
 }
 
-extern void WndSysStart();
-extern void DUISysStart()
+extern void WndSysStart( void );
+extern void DUISysStart( void )
 {
     WndSysStart();
 }
-extern void RingBell();
-extern void DUIRingBell()
+
+extern void RingBell( void );
+extern void DUIRingBell( void )
 {
     RingBell();
 }
-extern void ProcPendingPaint(void);
-extern void DUIProcPendingPaint(void)
+
+extern void ProcPendingPaint( void );
+extern void DUIProcPendingPaint( void )
 {
     ProcPendingPaint();
 }
-extern bool DlgInfoRelease();
-extern bool VarInfoRelease();
-extern bool DUIInfoRelease()
+
+extern bool DlgInfoRelease( void );
+extern bool VarInfoRelease( void );
+extern bool DUIInfoRelease( void )
 {
     if( DlgInfoRelease() ) return( TRUE );
     if( VarInfoRelease() ) return( TRUE );
     return( FALSE );
 }
+
 extern void *DUIHourGlass( void *x )
 {
     return( WndHourGlass( x ) );
 }
-extern void WndDoInput()
+
+extern void WndDoInput( void )
 {
     InitSuppServices();
     DoInput();
 }
-void DUIEnterCriticalSection()
+
+void DUIEnterCriticalSection( void )
 {
 }
-void DUIExitCriticalSection()
+
+void DUIExitCriticalSection( void )
 {
 }
 
@@ -336,7 +344,7 @@ bool DUIGetSourceLine( cue_handle *ch, char *buff, unsigned len )
     return( TRUE );
 }
 
-bool DUIIsDBCS()
+bool DUIIsDBCS( void )
 {
     return( GUIIsDBCS() );
 }
@@ -346,10 +354,11 @@ int DUIEnvLkup( char *src, char *dst, int max_len )
     return( EnvLkup( src, dst, max_len ) );
 }
 
-void DUIDirty()
+void DUIDirty( void )
 {
     WndDirty( NULL );
 }
+
 extern void WndSrcOrAsmInspect( address );
 void DUISrcOrAsmInspect( address addr )
 {
@@ -378,14 +387,14 @@ void StartupErr( char *err )
 }
 
 void DUICopySize( void *cookie, long size )
-/***************************/
+/*****************************************/
 {
     size = size;
     cookie = cookie;
 }
 
 void DUICopyCopied( void *cookie, long size )
-/*****************************/
+/*******************************************/
 {
     size = size;
     cookie = cookie;
@@ -398,8 +407,8 @@ bool DUICopyCancelled( void * cookie )
     return( FALSE );
 }
 
-bool DUISymbolsCancelled()
-/************************/
+bool DUISymbolsCancelled( void )
+/******************************/
 {
     return( FALSE );
 }

@@ -44,54 +44,54 @@
 #include "madcli.h"
 
 
-extern unsigned int     ScanCmd(char *);
+extern unsigned int     ScanCmd( char * );
 extern void             Scan( void );
 extern char             *ScanPos( void );
 extern char             *ReScan( char * );
-extern bool             ScanEOC(void);
-extern bool             ScanItem(bool ,char **,unsigned int *);
-extern void             ReqEOC(void);
-extern unsigned         SetCurrRadix(unsigned int );
-extern char             *GetCmdEntry(char *,int ,char *);
-extern char             *CnvULongDec(unsigned long ,char *);
-extern unsigned         ReqExpr();
-extern unsigned         OptExpr();
-extern void             WndUserAdd(char *,unsigned int );
-extern void             CallSet(void);
-extern void             ImplicitSet(void);
-extern void             LookSet(void);
-extern void             RadixSet(void);
-extern void             SourceSet(void);
-extern void             LevelSet(void);
-extern void             CallConf(void);
-extern void             ImplicitConf(void);
-extern void             LookConf(void);
-extern void             RadixConf(void);
-extern void             SourceConf(void);
-extern void             LevelConf(void);
-extern void             DoConfig(char *,char *,void (**)(), void (**)() );
-extern void             ConfigLine(char *);
-extern void             WndMenuOn(void);
-extern void             WndMenuOff(void);
-extern void             LangInit(void);
-extern void             LangFini(void);
-extern bool             LangLoad(char *,int );
-extern char             *StrCopy(char *,char *);
-extern cmd_list         *AllocCmdList(char *,unsigned int );
-extern void             FreeCmdList(cmd_list *);
-extern char             *Format(char *,char *,... );
-extern void             Recog(unsigned int );
-extern void             VarChangeOptions();
-extern void             RegChangeOptions();
-extern void             FPUChangeOptions();
-extern void             MMXChangeOptions();
-extern void             XMMChangeOptions();
-extern void             AsmChangeOptions();
-extern void             FuncChangeOptions();
-extern void             GlobChangeOptions();
-extern void             ModChangeOptions();
+extern bool             ScanEOC( void );
+extern bool             ScanItem( bool, char **, unsigned int * );
+extern void             ReqEOC( void );
+extern unsigned         SetCurrRadix( unsigned int );
+extern char             *GetCmdEntry( char *, int, char * );
+extern char             *CnvULongDec( unsigned long, char * );
+extern unsigned         ReqExpr( void );
+extern unsigned         OptExpr( void );
+extern void             WndUserAdd( char *, unsigned int );
+extern void             CallSet( void );
+extern void             ImplicitSet( void );
+extern void             LookSet( void );
+extern void             RadixSet( void );
+extern void             SourceSet( void );
+extern void             LevelSet( void );
+extern void             CallConf( void );
+extern void             ImplicitConf( void );
+extern void             LookConf( void );
+extern void             RadixConf( void );
+extern void             SourceConf( void );
+extern void             LevelConf( void );
+extern void             DoConfig( char *,char *,void (**)(), void (**)() );
+extern void             ConfigLine( char * );
+extern void             WndMenuOn( void );
+extern void             WndMenuOff( void );
+extern void             LangInit( void );
+extern void             LangFini( void );
+extern bool             LangLoad( char *, int );
+extern char             *StrCopy( char *, char * );
+extern cmd_list         *AllocCmdList( char *, unsigned int );
+extern void             FreeCmdList( cmd_list * );
+extern char             *Format( char *, char *, ... );
+extern void             Recog( unsigned int );
+extern void             VarChangeOptions( void );
+extern void             RegChangeOptions( void );
+extern void             FPUChangeOptions( void );
+extern void             MMXChangeOptions( void );
+extern void             XMMChangeOptions( void );
+extern void             AsmChangeOptions( void );
+extern void             FuncChangeOptions( void );
+extern void             GlobChangeOptions( void );
+extern void             ModChangeOptions( void );
 extern void             ConfigCmdList( char *cmds, int indent );
-extern void             WndDlgTxt(char*);
+extern void             WndDlgTxt( char * );
 extern char             *UniqStrAddr( address *addr, char *p ,unsigned);
 extern char             *GetCmdName( int );
 extern void             RegFindData( mad_type_kind kind, mad_reg_set_data const **pdata );
@@ -159,50 +159,50 @@ static char SetNameTab[] = {
     "SUpportroutine\0"
 };
 
-static void     AutoConf();
-static void     AsmConf();
-static void     VarConf();
-static void     FuncConf();
-static void     GlobConf();
-static void     ModConf();
-static void     RegConf();
-static void     FPUConf();
-static void     MMXConf();
-static void     XMMConf();
-extern void     DClickConf();
-extern void     TabConf();
-extern void     TypeConf();
-extern void     InputConf();
-extern void     MacroConf();
-static void     BellConf();
-extern void     SearchConf();
-static void     LangConf();
-static void     RecursionConf();
-static void     SupportConf();
+static void     AutoConf( void );
+static void     AsmConf( void );
+static void     VarConf( void );
+static void     FuncConf( void );
+static void     GlobConf( void );
+static void     ModConf( void );
+static void     RegConf( void );
+static void     FPUConf( void );
+static void     MMXConf( void );
+static void     XMMConf( void );
+extern void     DClickConf( void );
+extern void     TabConf( void );
+extern void     TypeConf( void );
+extern void     InputConf( void );
+extern void     MacroConf( void );
+static void     BellConf( void );
+extern void     SearchConf( void );
+static void     LangConf( void );
+static void     RecursionConf( void );
+static void     SupportConf( void );
 
-static void     BadSet();
-static void     AutoSet();
-static void     AsmSet();
-static void     VarSet();
-static void     FuncSet();
-static void     GlobSet();
-static void     ModSet();
-static void     RegSet();
-static void     FPUSet();
-static void     MMXSet();
-static void     XMMSet();
-extern void     DClickSet();
-static void     BellSet();
-extern void     TabSet();
-extern void     TypeSet();
-static void     LangSet();
-extern void     InputSet();
-extern void     MacroSet();
-extern void     SearchSet();
-static void     RecursionSet();
-static void     SupportSet();
+static void     BadSet( void );
+static void     AutoSet( void );
+static void     AsmSet( void );
+static void     VarSet( void );
+static void     FuncSet( void );
+static void     GlobSet( void );
+static void     ModSet( void );
+static void     RegSet( void );
+static void     FPUSet( void );
+static void     MMXSet( void );
+static void     XMMSet( void );
+extern void     DClickSet( void );
+static void     BellSet( void );
+extern void     TabSet( void );
+extern void     TypeSet( void );
+static void     LangSet( void );
+extern void     InputSet( void );
+extern void     MacroSet( void );
+extern void     SearchSet( void );
+static void     RecursionSet( void );
+static void     SupportSet( void );
 
-static void (* const SetJmpTab[])() = {
+static void (* const SetJmpTab[])( void ) = {
     &BadSet,
     &AutoSet,
     &AsmSet,
@@ -232,7 +232,7 @@ static void (* const SetJmpTab[])() = {
     &SupportSet,
 };
 
-static void (* SetConfJmpTab[])() = {
+static void (* SetConfJmpTab[])( void ) = {
     &AutoConf,
     &AsmConf,
     &VarConf,
@@ -263,7 +263,7 @@ static void (* SetConfJmpTab[])() = {
 };
 
 
-static void (* SetNotAllTab[])() =
+static void (* SetNotAllTab[])( void ) =
 {
     &CallConf,
     &LevelConf,
@@ -275,7 +275,7 @@ static void (* SetNotAllTab[])() =
 
 
 
-bool SwitchOnOff()
+bool SwitchOnOff( void )
 {
     unsigned which;
 
@@ -293,7 +293,7 @@ void ShowSwitch( bool on )
 }
 
 
-static void BadSet()
+static void BadSet( void )
 {
     Error( ERR_LOC, LIT( ERR_BAD_SUBCOMMAND ), GetCmdName( CMD_SET ) );
 }
@@ -304,13 +304,13 @@ static void BadSet()
  */
 
 
-void ProcSet()
+void ProcSet( void )
 {
     (*SetJmpTab[ ScanCmd( SetNameTab ) ])();
 }
 
 
-void ConfigSet()
+void ConfigSet( void )
 {
     DoConfig( GetCmdName( CMD_SET ), SetNameTab, SetConfJmpTab, SetNotAllTab );
 }
@@ -320,12 +320,12 @@ void ConfigSet()
  * BellSet - set bell on/off processing
  */
 
-static void BellSet()
+static void BellSet( void )
 {
     _SwitchSet( SW_BELL, SwitchOnOff() );
 }
 
-static void BellConf()
+static void BellConf( void )
 {
     ShowSwitch( _IsOn( SW_BELL ) );
 }
@@ -335,12 +335,12 @@ static void BellConf()
  * AutoSet - set autoconfig on/off processing
  */
 
-static void AutoSet()
+static void AutoSet( void )
 {
     _SwitchSet( SW_AUTO_SAVE_CONFIG, SwitchOnOff() );
 }
 
-static void AutoConf()
+static void AutoConf( void )
 {
     ShowSwitch( _IsOn( SW_AUTO_SAVE_CONFIG ) );
 }
@@ -350,18 +350,18 @@ static void AutoConf()
  * RecursionSet - set recursion checking on/off processing
  */
 
-static void RecursionSet()
+static void RecursionSet( void )
 {
     _SwitchSet( SW_RECURSE_CHECK, SwitchOnOff() );
 }
 
-static void RecursionConf()
+static void RecursionConf( void )
 {
     ShowSwitch( _IsOn( SW_RECURSE_CHECK ) );
 }
 
 
-bool LangSetInit()
+bool LangSetInit( void )
 {
     static char InitialLang[] = { "cpp" };
 
@@ -372,7 +372,7 @@ bool LangSetInit()
     return( LangLoad( Language, strlen( Language ) ) );
 }
 
-void LangSetFini()
+void LangSetFini( void )
 {
     _Free( Language );
     LangFini();
@@ -408,7 +408,7 @@ void NewLang( char *lang )
 }
 
 
-static void LangSet()
+static void LangSet( void )
 {
     char        *start;
     unsigned    len;
@@ -418,7 +418,7 @@ static void LangSet()
     NewLang( start );
 }
 
-static void LangConf()
+static void LangConf( void )
 {
     ConfigLine( Language );
 }
@@ -580,7 +580,7 @@ static bool DoOneToggle( mad_window_toggles wt )
     return( TRUE );
 }
 
-void PendingToggles()
+void PendingToggles( void )
 {
     mad_window_toggles          wt;
     pending_toggle_list         **owner;
@@ -794,13 +794,13 @@ static window_toggle    AsmToggle[] = {
     { ASM_HEX, ASM_DECIMAL, SW_ASM_HEX },
 };
 
-static void AsmSet()
+static void AsmSet( void )
 {
     ToggleWindowSwitches( AsmToggle, ArraySize( AsmToggle ), AsmSettings, MWT_ASM );
     AsmChangeOptions();
 }
 
-static void AsmConf()
+static void AsmConf( void )
 {
     ConfWindowSwitches( AsmToggle, ArraySize( AsmToggle ), AsmSettings, MWT_ASM );
 }
@@ -809,13 +809,13 @@ static void AsmConf()
         FPU Window
 */
 
-static void FPUSet()
+static void FPUSet( void )
 {
     ToggleWindowSwitches( NULL, 0, NULL, MWT_FPU );
     FPUChangeOptions();
 }
 
-static void FPUConf()
+static void FPUConf( void )
 {
     ConfWindowSwitches( NULL, 0, NULL, MWT_FPU );
 }
@@ -873,13 +873,13 @@ static window_toggle VarToggle[] = {
     { VAR_STATIC, VAR_NOSTATIC, SW_VAR_SHOW_STATIC },
 };
 
-static void VarSet()
+static void VarSet( void )
 {
     ToggleWindowSwitches( VarToggle, ArraySize( VarToggle ), VarSettings, MWT_LAST );
     VarChangeOptions();
 }
 
-static void VarConf()
+static void VarConf( void )
 {
     ConfWindowSwitches( VarToggle, ArraySize( VarToggle ), VarSettings, MWT_LAST );
     ConfigLine( TxtBuff );
@@ -900,13 +900,13 @@ static window_toggle FuncToggle[] = {
     { FUNC_TYPED, FUNC_ALL, SW_FUNC_D2_ONLY },
 };
 
-static void FuncSet()
+static void FuncSet( void )
 {
     ToggleWindowSwitches( FuncToggle, ArraySize( FuncToggle ), FuncSettings, MWT_LAST );
     FuncChangeOptions();
 }
 
-static void FuncConf()
+static void FuncConf( void )
 {
     ConfWindowSwitches( FuncToggle, ArraySize( FuncToggle ), FuncSettings, MWT_LAST );
 }
@@ -916,13 +916,13 @@ static window_toggle GlobToggle[] = {
     { FUNC_TYPED, FUNC_ALL, SW_GLOB_D2_ONLY },
 };
 
-static void GlobSet()
+static void GlobSet( void )
 {
     ToggleWindowSwitches( GlobToggle, ArraySize( GlobToggle ), FuncSettings, MWT_LAST );
     GlobChangeOptions();
 }
 
-static void GlobConf()
+static void GlobConf( void )
 {
     ConfWindowSwitches( GlobToggle, ArraySize( GlobToggle ), FuncSettings, MWT_LAST );
 }
@@ -932,55 +932,55 @@ static window_toggle ModToggle[] = {
     { FUNC_ALL, FUNC_TYPED, SW_MOD_ALL_MODULES },
 };
 
-static void ModSet()
+static void ModSet( void )
 {
     ToggleWindowSwitches( ModToggle, ArraySize( ModToggle ), FuncSettings, MWT_LAST );
     ModChangeOptions();
 }
 
-static void ModConf()
+static void ModConf( void )
 {
     ConfWindowSwitches( ModToggle, ArraySize( ModToggle ), FuncSettings, MWT_LAST );
 }
 
 
-static void RegSet()
+static void RegSet( void )
 {
     ToggleWindowSwitches( NULL, 0, NULL, MWT_REG );
     RegChangeOptions();
 }
 
-static void RegConf()
+static void RegConf( void )
 {
     ConfWindowSwitches( NULL, 0, NULL, MWT_REG );
 }
 
 
-static void MMXSet()
+static void MMXSet( void )
 {
     ToggleWindowSwitches( NULL, 0, NULL, MWT_MMX );
     MMXChangeOptions();
 }
 
-static void MMXConf()
+static void MMXConf( void )
 {
     ConfWindowSwitches( NULL, 0, NULL, MWT_MMX );
 }
 
 
-static void XMMSet()
+static void XMMSet( void )
 {
     ToggleWindowSwitches( NULL, 0, NULL, MWT_XMM );
     XMMChangeOptions();
 }
 
-static void XMMConf()
+static void XMMConf( void )
 {
     ConfWindowSwitches( NULL, 0, NULL, MWT_XMM );
 }
 
 
-void SupportFini()
+void SupportFini( void )
 {
     char_ring   *curr, *junk;
 
@@ -994,7 +994,7 @@ void SupportFini()
 }
 
 
-static void SupportSet()
+static void SupportSet( void )
 {
     char_ring   *new;
     char        *start;
@@ -1016,7 +1016,7 @@ static void SupportSet()
     }
 }
 
-static void SupportConf()
+static void SupportConf( void )
 {
     char_ring   *curr;
     char        *p;

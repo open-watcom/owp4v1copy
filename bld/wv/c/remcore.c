@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Remote access core - trap file interface. 
+* Description:  Remote access core - trap file interface.
 *
 ****************************************************************************/
 
@@ -44,12 +44,12 @@
 #include "mad.h"
 #include "dui.h"
 
-extern void             FiniSuppServices();
-extern void             InitSuppServices();
-extern void             RestoreHandlers();
-extern void             GrabHandlers();
-extern int              SameAddrSpace(address ,address );
-extern void             SectLoad(unsigned int );
+extern void             FiniSuppServices( void );
+extern void             InitSuppServices( void );
+extern void             RestoreHandlers( void );
+extern void             GrabHandlers( void );
+extern int              SameAddrSpace( address, address );
+extern void             SectLoad( unsigned int );
 extern void             FreeThreads( void );
 extern void             RemapSection( unsigned, unsigned );
 extern void             CheckForNewThreads( bool );
@@ -62,16 +62,16 @@ extern void             InitLC( location_context *new, bool use_real_regs );
 extern dtid_t           RemoteSetThread( dtid_t );
 extern void             RemoteSectTblRead( void * );
 extern void             RemoteSectTblWrite( void * );
-extern void             CheckMADChange(void);
+extern void             CheckMADChange( void );
 #if defined(__GUI__) && defined(__OS2__)
-extern unsigned         OnAnotherThread( unsigned(*)(), unsigned, void*, unsigned, void* );
+extern unsigned         OnAnotherThread( unsigned(*)(), unsigned, void *, unsigned, void * );
 #else
 #define                 OnAnotherThread( a,b,c,d,e ) a( b,c,d,e )
 #endif
 
 extern unsigned         MaxPacketLen;
 extern unsigned         TaskId;
-extern machine_state   *DbgRegs;
+extern machine_state    *DbgRegs;
 extern system_config    SysConfig;
 extern address          NilAddr;
 extern struct location_context Context;
@@ -141,14 +141,14 @@ static unsigned MemRead( address addr, void *ptr, unsigned size )
         left -= got;
         if( left == 0 ) break;
         if( got != piece ) break;
-	addr.mach.offset += piece;
+    addr.mach.offset += piece;
         acc.mem_addr = addr.mach;
         ptr = (char *)ptr + piece;
     }
     return( size - left );
 }
 
-void FiniCache()
+void FiniCache( void )
 {
     _Free( Cache.data );
     Cache.data = NULL;
@@ -167,7 +167,7 @@ void InitCache( address addr, unsigned size )
     Cache.len = MemRead( addr, ptr, size );
 }
 
-bool HaveCache()
+bool HaveCache( void )
 {
     return( Cache.data != NULL );
 }
@@ -232,7 +232,7 @@ unsigned ProgPoke( address addr, void *data, unsigned len )
         left -= ret.len;
         if( left == 0 ) break;
         if( ret.len != piece ) break;
-	addr.mach.offset += piece;
+    addr.mach.offset += piece;
         acc.mem_addr = addr.mach;
         data = (char *)data + piece;
     }
@@ -302,7 +302,7 @@ static void ReadRegs( machine_state *state )
     }
 }
 
-void ReadDbgRegs()
+void ReadDbgRegs( void )
 {
     ReadRegs( DbgRegs );
     InitLC( &Context, TRUE );
@@ -329,7 +329,7 @@ static void WriteRegs( machine_state *state )
     }
 }
 
-void WriteDbgRegs()
+void WriteDbgRegs( void )
 {
     WriteRegs( DbgRegs );
 }
@@ -345,7 +345,7 @@ unsigned int ArgsLen( char *args )
     return( len );
 }
 
-void ClearMachineDataCache()
+void ClearMachineDataCache( void )
 {
     MData->addr = NilAddr;
     MData->end  = 0;
@@ -408,7 +408,7 @@ unsigned DoLoad( char *args, unsigned long *phandle )
 }
 
 
-bool KillProgOvlay()
+bool KillProgOvlay( void )
 {
     prog_kill_req       acc;
     prog_kill_ret       ret;
@@ -505,15 +505,15 @@ void RemoteMapAddr( addr_ptr *addr, addr_off *lo_bound,
     *hi_bound = ret.hi_bound;
 }
 
-void RemoteSetUserScreen()
+void RemoteSetUserScreen( void )
 {
-    set_user_screen_req acc;
+    set_user_screen_req         acc;
 
     acc.req = REQ_SET_USER_SCREEN;
     TrapSimpAccess( sizeof( acc ), &acc, 0, NULL );
 }
 
-void RemoteSetDebugScreen()
+void RemoteSetDebugScreen( void )
 {
     set_debug_screen_req        acc;
 
@@ -695,7 +695,7 @@ void RemoteSplitCmd( char *cmd, char **end, char **parm )
 }
 
 
-void CheckSegAlias()
+void CheckSegAlias( void )
 {
     get_next_alias_req  acc;
     get_next_alias_ret  ret;
@@ -714,7 +714,7 @@ void CheckSegAlias()
     }
 }
 
-void GetSysConfig()
+void GetSysConfig( void )
 {
     get_sys_config_req  acc;
 
@@ -723,7 +723,7 @@ void GetSysConfig()
     CONV_LE_16( SysConfig.mad );
 }
 
-bool InitCoreSupp()
+bool InitCoreSupp( void )
 {
     if( MData == NULL ) {
         _Alloc( MData, sizeof( *MData ) );
@@ -737,7 +737,7 @@ bool InitCoreSupp()
     }
 }
 
-void FiniCoreSupp()
+void FiniCoreSupp( void )
 {
     _Free( MData );
     MData = NULL;

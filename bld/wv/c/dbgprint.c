@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger 'print' command.
 *
 ****************************************************************************/
 
@@ -54,26 +53,26 @@
 #define MAX_WIDTH       40
 #define NAME_WIDTH      25
 
-extern void             ChkExpr(void);
-extern void             NormalExpr(void);
-extern void             ExprValue(stack_entry *);
-extern void             PopEntry(void);
-extern void             DupStack(void);
-extern void             DoGivenField(sym_handle *);
-extern void             ReqEOC(void);
-extern void             Scan(void);
-extern unsigned int     ScanCmd(char *);
-extern bool             ScanQuote(char **,unsigned int *);
-extern bool             ScanEOC(void);
-extern char             *LineAddr(address *,char *);
-extern char             *StrAddr(address *,char * ,unsigned);
-extern void             FindRadixSpec(unsigned char ,char **,unsigned int *);
-extern void             WriteToPgmScreen(void *,unsigned int );
-extern void             GraphicDisplay(void);
-extern void             ConvertTo(stack_entry *,type_kind,type_modifier,unsigned );
-extern void             PushNum(long );
-extern void             DoPlus(void);
-extern void             DoPoints(type_kind );
+extern void             ChkExpr( void );
+extern void             NormalExpr( void );
+extern void             ExprValue( stack_entry * );
+extern void             PopEntry( void );
+extern void             DupStack( void );
+extern void             DoGivenField( sym_handle * );
+extern void             ReqEOC( void );
+extern void             Scan( void );
+extern unsigned int     ScanCmd( char * );
+extern bool             ScanQuote( char **, unsigned int * );
+extern bool             ScanEOC( void );
+extern char             *LineAddr( address *, char * );
+extern char             *StrAddr( address *, char *, unsigned );
+extern void             FindRadixSpec( unsigned char, char **, unsigned int * );
+extern void             WriteToPgmScreen( void *, unsigned int );
+extern void             GraphicDisplay( void );
+extern void             ConvertTo( stack_entry *, type_kind, type_modifier, unsigned );
+extern void             PushNum( long );
+extern void             DoPlus( void );
+extern void             DoPoints( type_kind );
 extern void             DefAddr( memory_expr, address * );
 extern void             ChkBreak( void );
 extern void             PushType( type_handle * );
@@ -86,9 +85,9 @@ extern void             AddrFix( address * );
 extern void             StartSubscript( void );
 extern void             AddSubscript( void );
 extern void             EndSubscript( void );
-extern void             DlgNewWithSym(char*,char*,int);
-extern char             *ReScan(char*);
-extern unsigned         ProgPeek(address ,void *,unsigned int );
+extern void             DlgNewWithSym( char *, char *, int);
+extern char             *ReScan( char * );
+extern unsigned         ProgPeek( address, void *, unsigned int );
 extern char             *GetCmdName( int );
 extern void             GetMADTypeDefaultAt( address a, mad_type_kind mtk, mad_type_info *mti );
 
@@ -99,8 +98,8 @@ extern void             GetMADTypeDefaultAt( address a, mad_type_kind mtk, mad_t
 extern stack_entry      *ExprSP;
 extern tokens           CurrToken;
 extern unsigned char    CurrRadix;
-extern unsigned char  DefRadix;
-extern machine_state   *DbgRegs;
+extern unsigned char    DefRadix;
+extern machine_state    *DbgRegs;
 
 
 static char             *OutPtr;
@@ -111,7 +110,7 @@ static bool             First;
 
 static char PrintOps[] = { "Program\0Window\0" };
 
-extern void PrintValue();
+extern void PrintValue( void );
 
 typedef enum { NUM_SIGNED, NUM_UNSIGNED, NUM_CHECK } sign_class;
 
@@ -125,7 +124,7 @@ extern void StartPrintBuff( char *buff, unsigned len )
 }
 
 
-static void PrtBuff()
+static void PrtBuff( void )
 {
     if( OutPgm ) {
         WriteToPgmScreen( OutBuff, OutPtr - OutBuff );
@@ -154,7 +153,7 @@ static void PrtChar( unsigned ch )
 }
 
 
-extern void EndPrintBuff()
+extern void EndPrintBuff( void )
 {
     PrtChar( '\0' );
 }
@@ -168,7 +167,7 @@ static void PrtNeed( unsigned len )
 }
 
 
-static void EndBuff()
+static void EndBuff( void )
 {
     if( OutBuff != OutPtr || *OutPtr != NULLCHAR ) {
         PrtBuff();
@@ -438,7 +437,7 @@ static void PrintComplex( char format )
 /*
  * PrintChar -- print expression as a character
  */
-void PrintChar()
+void PrintChar( void )
 {
     PrtChar( '\'' );
     switch( ExprSP->info.kind ) {
@@ -510,19 +509,19 @@ static void DoPrintString( bool force )
 }
 
 
-void PrintString()
+void PrintString( void )
 {
     DoPrintString( FALSE );
 }
 
 
-void ForcePrintString()
+void ForcePrintString( void )
 {
     DoPrintString( TRUE );
 }
 
 
-static void PrintCharBlock()
+static void PrintCharBlock( void )
 {
     char        *ascii_start;
     unsigned_16 *unicode_start;
@@ -560,7 +559,7 @@ static void PrintCharBlock()
     PrtChar( '\'' );
 }
 
-static void GetExpr()
+static void GetExpr( void )
 {
     if( !First && CurrToken == T_COMMA ) Scan();
     NormalExpr();
@@ -846,7 +845,7 @@ static unsigned ValueToName( char *buff, unsigned len )
     return( p - buff );
 }
 
-void PrintValue()
+void PrintValue( void )
 {
     char                *pref;
     unsigned            pref_len;
@@ -918,7 +917,7 @@ void PrintValue()
 }
 
 
-static void DoDefault()
+static void DoDefault( void )
 {
     char        buff[BUFLEN+1];
 
@@ -931,8 +930,8 @@ static void DoDefault()
 
 void DoPrintList( bool output )
 {
-    char *fmt_start;
-    unsigned fmt_len;
+    char        *fmt_start;
+    unsigned    fmt_len;
 
     OutPgm = output;
     First = TRUE;
@@ -945,7 +944,7 @@ void DoPrintList( bool output )
     }
 }
 
-static void LogPrintList()
+static void LogPrintList( void )
 {
     if( _IsOn( SW_CMD_INTERACTIVE ) ) {
         DUIShowLogWindow();
@@ -953,11 +952,11 @@ static void LogPrintList()
     DoPrintList( FALSE );
 }
 
-void ChkPrintList()
+void ChkPrintList( void )
 {
-    bool first;
-    char *start;
-    unsigned len;
+    bool        first;
+    char        *start;
+    unsigned    len;
 
     first = TRUE;
     while( !ScanEOC() ) {
@@ -976,7 +975,7 @@ void ChkPrintList()
  */
 
 static char     PrintBuff[TXT_LEN];
-void ProcPrint()
+void ProcPrint( void )
 {
     char        *old;
 
