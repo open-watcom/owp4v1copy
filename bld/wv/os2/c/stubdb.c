@@ -41,6 +41,7 @@
 #include "mad.h"
 #include "dui.h"
 #include "dbgvar.h"
+#include "dbgstk.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -51,14 +52,12 @@ extern void             FlushEOC( void );
 extern char             *DupStr( char * );
 extern void             DoCmd( char * );
 extern bool             InsMemRef( mad_disasm_data *dd );
-extern address          GetCodeDot();
+extern address          GetCodeDot( void );
 extern void             *WndAsmInspect( address addr );
-extern void             DebugMain();
-extern void             DebugFini();
+extern void             DebugMain( void );
+extern void             DebugFini( void );
 extern void             DoInput( void );
-extern void             DlgCmd( void );
 extern void             UnAsm( address addr, unsigned max, char *buff );
-extern address          GetCodeDot();
 extern char             *DupStr( char * );
 extern bool             DUIGetSourceLine( cue_handle *ch, char *buff, unsigned len );
 extern void             ExecTrace( trace_cmd_type type, debug_level level );
@@ -66,8 +65,7 @@ extern unsigned         Go( bool );
 extern void             *OpenSrcFile( cue_handle * );
 extern int              FReadLine( void *, int, int, char *, int );
 extern void             FDoneSource( void * );
-extern var_node         *VarGetDisplayPiece( var_info *i, int row, int piece, int *pdepth, int *pinherit );
-
+extern void             ExprValue( stack_entry * );
 
 extern debug_level      DbgLevel;
 extern char             *TxtBuff;
@@ -75,6 +73,7 @@ extern unsigned char    CurrRadix;
 static bool             Done;
 extern char             *TrpFile;
 extern char             *CmdData;
+extern stack_entry      *ExprSP;
 
 unsigned                NumLines;
 unsigned                NumColumns;
@@ -113,19 +112,74 @@ unsigned ConfigScreen( void )
     return( 0 );
 }
 
-bool DUIClose()
+bool DUIClose( void )
 {
     Done = TRUE;
     return( TRUE );
+}
+
+// The following routine is cut & pasted verbatim from dbgwvar.c
+// (which we really don't want to drag in here)
+var_node *VarGetDisplayPiece( var_info *i, int row, int piece, int *pdepth, int *pinherit )
+{
+    var_node    *row_v;
+    var_node    *v;
+
+    if( piece >= VAR_PIECE_LAST ) return( NULL );
+    if( VarFirstNode( i ) == NULL ) return( NULL );
+    if( row >= VarRowTotal( i ) ) return( NULL );
+    row_v = VarFindRowNode( i, row );
+    if( !row_v->value_valid ) {
+        VarSetValue( row_v, LIT( Quest_Marks ) );
+        row_v->value_valid = FALSE;
+    }
+    if( !row_v->gadget_valid ) {
+        VarSetGadget( row_v, VARGADGET_NONE );
+        row_v->gadget_valid = FALSE;
+    }
+    v = row_v;
+    if( piece == VAR_PIECE_NAME ||
+        ( piece == VAR_PIECE_GADGET && row_v->gadget_valid ) ||
+        ( piece == VAR_PIECE_VALUE && row_v->value_valid ) ) {
+        VarError = FALSE;
+    } else if( !_IsOn( SW_TASK_RUNNING ) ) {
+        if( row == i->exprsp_cacherow && i->exprsp_cache != NULL ) {
+            VarError = FALSE;
+            v = i->exprsp_cache;
+        } else if( row == i->exprsp_cacherow && i->exprsp_cache_is_error ) {
+            VarError = TRUE;
+            v = NULL;
+        } else {
+            VarErrState();
+            v = VarFindRow( i, row );
+            VarOldErrState();
+            i->exprsp_cacherow = row;
+            i->exprsp_cache = v;
+            i->exprsp_cache_is_error = VarError;
+        }
+        if( v == NULL ) {
+            if( !VarError ) return( NULL );
+            v = row_v;
+        }
+        VarNodeInvalid( v );
+        VarErrState();
+        ExprValue( ExprSP );
+        VarSetGadget( v, VarGetGadget( v ) );
+        VarSetOnTop( v, VarGetOnTop( v ) );
+        VarSetValue( v, VarGetValue( i, v ) );
+        VarOldErrState();
+        VarDoneRow( i );
+    }
+    VarGetDepths( i, v, pdepth, pinherit );
+    return( v );
 }
 
 var_info        Locals;
 HEV             Requestsem;
 HEV             Requestdonesem;
 
-static void DumpLocals()
+static void DumpLocals( void )
 {
-#if 0
     address     addr;
     int         row;
     int         depth;
@@ -149,7 +203,7 @@ static void DumpLocals()
         case VARGADGET_OPEN:
             printf( "+ " );
             break;
-        case VARGADGET_CLOSE:
+        case VARGADGET_CLOSED:
             printf( "- " );
             break;
         case VARGADGET_POINTS:
@@ -166,10 +220,9 @@ static void DumpLocals()
         VarOkToCache( &Locals, FALSE );
         VarOldErrState();
     }
-#endif
 }
 
-static void DumpSource()
+static void DumpSource( void )
 {
     char        buff[256];
     DIPHDL( cue, ch );
@@ -232,38 +285,7 @@ void RunRequest( int req )
     DosPostEventSem( Requestsem ); // tell worker to go
 }
 
-int main( int argc, char **argv )
-{
-    char        buff[256];
-    TID         tid;
-    APIRET      rc;
-
-    MemInit();
-    getcmd( buff );
-    CmdData = buff;
-    DebugMain();
-    _SwitchOff( SW_ERROR_STARTUP );
-    DoInput();
-    VarInitInfo( &Locals );
-    DosCreateEventSem( NULL, &Requestsem, 0, FALSE );
-    DosCreateEventSem( NULL, &Requestdonesem, 0, FALSE );
-    DosPostEventSem( Requestdonesem ); // signal req done
-    rc = DosCreateThread( &tid, ControlFunc, 0, 0, 32768 );
-    if( rc != 0 ) {
-        printf( "Stubugger: Error creating thread!\n" );
-    }
-    while( !Done ) {
-        DlgCmd();
-    }
-    DosCloseEventSem( Requestsem );
-    DosCloseEventSem( Requestdonesem );
-    DebugFini();
-    RunRequest( REQ_BYE );
-    MemFini();
-    return( 0 );
-}
-
-void DlgCmd()
+void DlgCmd( void )
 {
     char        buff[256];
 
@@ -312,6 +334,39 @@ void DlgCmd()
     }
 }
 
+int main( int argc, char **argv )
+{
+    char        buff[256];
+    TID         tid;
+    APIRET      rc;
+
+    MemInit();
+    getcmd( buff );
+    CmdData = buff;
+    DebugMain();
+    _SwitchOff( SW_ERROR_STARTUP );
+    DoInput();
+    VarInitInfo( &Locals );
+    DosCreateEventSem( NULL, &Requestsem, 0, FALSE );
+    DosCreateEventSem( NULL, &Requestdonesem, 0, FALSE );
+    DosPostEventSem( Requestdonesem ); // signal req done
+    rc = DosCreateThread( &tid, ControlFunc, 0, 0, 32768 );
+    if( rc != 0 ) {
+        printf( "Stubugger: Error creating thread!\n" );
+    }
+    while( !Done ) {
+        DlgCmd();
+    }
+    DosCloseEventSem( Requestsem );
+    DosCloseEventSem( Requestdonesem );
+    DebugFini();
+    RunRequest( REQ_BYE );
+    MemFini();
+    return( 0 );
+}
+
+// Minimalist DUI callback routines
+
 extern char *DUILoadString( int id )
 {
     char        buff[256];
@@ -357,37 +412,43 @@ bool DlgGivenAddr( char *title, address *value )
     // needed when segment's don't map (from new/sym command)
     return( FALSE );
 }
+
 void DlgNewWithSym( char *text, char *buff, int buff_len )
 {
     // used by print command with no arguments
 }
-bool DlgUpTheStack()
+
+bool DlgUpTheStack( void )
 {
     // used when trying to trace, but we've unwound the stack a bit
     return( FALSE );
 }
+
 bool DlgAreYouNuts( unsigned long mult )
 {
     // used when too many break on write points are set
     return( FALSE );
 }
-bool DlgBackInTime()
+
+bool DlgBackInTime( void )
 {
     // used when trying to trace, but we've backed up over a call or asynch
     return( FALSE );
 }
-bool DlgIncompleteUndo()
+
+bool DlgIncompleteUndo( void )
 {
     // used when trying to trace, but we've backed up over a call or asynch
     return( FALSE );
 }
+
 bool DlgBreak( address addr )
 {
     // used when an error occurs in the break point expression or it is entered wrong
     return( FALSE );
 }
 
-bool DUIInfoRelease()
+bool DUIInfoRelease( void )
 {
     // used when we're low on memory
     return( FALSE );
@@ -397,187 +458,230 @@ void DUIUpdate( update_list flags )
     // flags indicates what conditions have changed.  They should be saved
     // until an appropriate time, then windows updated accordingly
 }
-void DUIStop()
+
+void DUIStop( void )
 {
     // close down the UI - we're about to change modes.
 }
-void DUIFini()
+
+void DUIFini( void )
 {
     // finish up the UI
 }
-void DUIInit()
+
+void DUIInit( void )
 {
     // Init the UI
 }
-extern void DUIFreshAll()
+
+extern void DUIFreshAll( void )
 {
     // refresh all screens - initialization has been done
 }
+
 extern bool DUIStopRefresh( bool stop )
 {
     // temporarily turn off/on screen refreshing, cause we're going to run a
     // big command file and we don't want flashing.
     return( FALSE );
 }
-extern void DUIShow()
+
+extern void DUIShow( void )
 {
     // show the main screen - the splash page has been closed
 }
-extern void DUIWndUser()
+
+extern void DUIWndUser( void )
 {
     // switch to the program screen
 }
-extern void DUIWndDebug()
+
+extern void DUIWndDebug( void )
 {
     // switch to the debugger screen
 }
-extern void DUIShowLogWindow()
+
+extern void DUIShowLogWindow( void )
 {
     // bring up the log window, cause some printout is coming
 }
-extern int DUIGetMonitorType()
+
+extern int DUIGetMonitorType( void )
 {
     // stub for old UI
     return( 1 );
 }
-extern int DUIScreenSizeY()
+
+extern int DUIScreenSizeY( void )
 {
     // stub for old UI
     return( 0 );
 }
-extern int DUIScreenSizeX()
+
+extern int DUIScreenSizeX( void )
 {
     // stub for old UI
     return( 0 );
 }
-extern void DUIArrowCursor()
+
+extern void DUIArrowCursor( void )
 {
     // we're about to suicide, so restore the cursor to normal
 }
-bool DUIAskIfAsynchOk()
+
+bool DUIAskIfAsynchOk( void )
 {
     // we're about to try to replay across an asynchronous event.  Ask user
     return( FALSE );
 }
-extern void DUIFlushKeys()
+
+extern void DUIFlushKeys( void )
 {
     // we're about to suicide - clear the keyboard typeahead
 }
+
 extern void DUIPlayDead( bool dead )
 {
     // the app is about to run - make the debugger play dead
 }
+
 extern void DUISysEnd( bool pause )
 {
     // done calling system();
 }
-extern void DUISysStart()
+
+extern void DUISysStart( void )
 {
     // about to call system();
 }
-extern void DUIRingBell()
+
+extern void DUIRingBell( void )
 {
     // ring ring (error)
 }
+
 extern int DUIDisambiguate( ambig_info *ambig, int count )
 {
     // the expression processor detected an ambiguous symbol.  Ask user which one
     return( 0 );
 }
+
 extern void *DUIHourGlass( void *x )
 {
     return( x );
 }
-void ProcAccel()
+
+void ProcAccel( void )
 {
     // stub for old UI
     FlushEOC();
 }
-void ProcCapture()
+
+void ProcCapture( void )
 {
     // stub for old UI
     FlushEOC();
 }
-void ProcDisplay()
+
+void ProcDisplay( void )
 {
     // stub for old UI
     FlushEOC();
 }
-void ProcFont()
+
+void ProcFont( void )
 {
     // stub for old UI
     FlushEOC();
 }
-void ProcHelp()
+
+void ProcHelp( void )
 {
     // stub for old UI
     FlushEOC();
 }
-void ProcInternal()
+
+#ifdef DBG_DBG
+void ProcInternal( void )
 {
     // stub for old UI
     FlushEOC();
 }
-void ProcPaint()
+#endif
+
+void ProcPaint( void )
 {
     // stub for old UI
     FlushEOC();
 }
-void ProcView()
+
+void ProcView( void )
 {
     // stub for old UI
     FlushEOC();
 }
-void ProcWindow()
+
+void ProcWindow( void )
 {
     // stub for old UI
     FlushEOC();
 }
-void ProcConfigFile()
+
+void ProcConfigFile( void )
 {
     // called when main config file processed
     FlushEOC();
 }
-void ConfigDisp()
+
+void ConfigDisp( void )
 {
     // stub for old UI
 }
-void ConfigFont()
+
+void ConfigFont( void )
 {
     // stub for old UI
 }
-void ConfigPaint()
+
+void ConfigPaint( void )
 {
     // stub for old UI
 }
-extern void DClickSet()
-{
-    // stub for old UI
-    FlushEOC();
-}
-extern void DClickConf()
-{
-    // stub for old UI
-}
-extern void InputSet()
+
+extern void DClickSet( void )
 {
     // stub for old UI
     FlushEOC();
 }
-extern void InputConf()
+
+extern void DClickConf( void )
 {
     // stub for old UI
 }
-extern void MacroSet()
+
+extern void InputSet( void )
 {
     // stub for old UI
     FlushEOC();
 }
-extern void MacroConf()
+
+extern void InputConf( void )
 {
     // stub for old UI
 }
-extern  void    FiniMacros()
+
+extern void MacroSet( void )
+{
+    // stub for old UI
+    FlushEOC();
+}
+
+extern void MacroConf( void )
+{
+    // stub for old UI
+}
+
+extern  void    FiniMacros( void )
 {
     // stub for old UI
 }
@@ -590,60 +694,74 @@ void TabIntervalSet( int new )
 {
     // stub for old UI
 }
-extern void TabSet()
+
+extern void TabSet( void )
 {
     // stub for old UI
     FlushEOC();
 }
-extern void TabConf()
+
+extern void TabConf( void )
 {
     // stub for old UI
 }
-extern void SearchSet()
+
+extern void SearchSet( void )
 {
     // stub for old UI
     FlushEOC();
 }
-extern void SearchConf()
+
+extern void SearchConf( void )
 {
     // stub for old UI
 }
-extern void FingClose()
-{
-    // open a splash page
-}
-extern void FingOpen()
+
+extern void FingClose( void )
 {
     // close the splash page
 }
-extern void AsmChangeOptions()
+
+extern void FingOpen( void )
+{
+    // open a splash page
+}
+
+extern void AsmChangeOptions( void )
 {
     // assembly window options changed
 }
-extern void RegChangeOptions()
+
+extern void RegChangeOptions( void )
 {
     // reg window options changed
 }
-extern void VarChangeOptions()
+
+extern void VarChangeOptions( void )
 {
     // var window options changed
 }
-extern void FuncChangeOptions()
+
+extern void FuncChangeOptions( void )
 {
     // func window options changed
 }
-extern void GlobChangeOptions()
+
+extern void GlobChangeOptions( void )
 {
     // glob window options changed
 }
-extern void ModChangeOptions()
+
+extern void ModChangeOptions( void )
 {
     // mod window options changed
 }
-extern void WndVarInspect(char*buff)
+
+extern void WndVarInspect( char *buff )
 {
 }
-extern void *WndAsmInspect(address addr)
+
+extern void *WndAsmInspect( address addr )
 {
     // used by examine/assembly command
     int         i;
@@ -659,54 +777,67 @@ extern void *WndAsmInspect(address addr)
     }
     return( NULL );
 }
+
 extern void *WndSrcInspect( address addr )
 {
     // used by examine/source command
     return( NULL );
 }
+
 extern void WndMemInspect( address addr, char *next, unsigned len,
                            mad_type_handle type )
 {
     // used by examine/byte/word/etc command
 }
+
 extern void WndIOInspect(address*addr,mad_type_handle type)
 {
     // used by examine/iobyte/ioword/etc command
 }
-extern void GraphicDisplay()
+
+extern void GraphicDisplay( void )
 {
     // used by print/window command
 }
-extern void VarUnMapScopes()
+
+extern void VarUnMapScopes( struct image_entry *img )
 {
     // unmap variable scopes - prog about to restart
 }
-extern void VarReMapScopes()
+
+extern void VarReMapScopes( struct image_entry *img )
 {
     // remap variable scopes - prog about to restart
 }
-extern void VarFreeScopes()
+
+extern void VarFreeScopes( void )
 {
     // free variable scope info
 }
+
 extern void SetLastExe( char *name )
 {
     // remember last exe debugged name
 }
-extern void CaptureError()
+
+extern void CaptureError( void )
 {
     // error in capture command (stub)
 }
-extern void DUIProcPendingPaint(void)
+
+extern void DUIProcPendingPaint( void )
 {
     // a paint command was issued - update the screen (stub)
 }
+
 void VarSaveWndToScope( void *wnd )
 {
 }
+
 void VarRestoreWndFromScope( void *wnd )
 {
 }
+
 void PopErrBox( char *buff )
 {
     printf( "%s: %s\n", buff, LIT( Debugger_Startup_Error ) );
@@ -714,19 +845,19 @@ void PopErrBox( char *buff )
 //            MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
 }
 
-void DUIEnterCriticalSection()
+void DUIEnterCriticalSection( void )
 {
 }
 
-void DUIExitCriticalSection()
+void DUIExitCriticalSection( void )
 {
 }
 
-void DUIInitLiterals()
+void DUIInitLiterals( void )
 {
 }
 
-void DUIFiniLiterals()
+void DUIFiniLiterals( void )
 {
 }
 
@@ -741,7 +872,7 @@ bool DUIGetSourceLine( cue_handle *ch, char *buff, unsigned len )
     return( TRUE );
 }
 
-bool DUIIsDBCS()
+bool DUIIsDBCS( void )
 {
     return( FALSE );
 }
