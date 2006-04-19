@@ -68,7 +68,9 @@ WEXPORT WFile::~WFile()
 
 bool WEXPORT WFile::open( const char* name, OpenStyle style )
 {
-    #define PERM S_IRWXU | S_IRWXG | S_IRWXO
+// Why should execute permission be set?
+//    #define PERM S_IRWXU | S_IRWXG | S_IRWXO
+    #define PERM S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH
     _handle = ::open( name, style, PERM );
     _style = style;
     _ok = (bool)( _handle != FILE_ERROR );
