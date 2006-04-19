@@ -31,6 +31,18 @@ cdsay .
     <CPCMD> viper/ideaxp.cfg     <RELROOT>/rel2/binw/ideaxp.cfg
     <CPCMD> viper/idelnx.cfg     <RELROOT>/rel2/binw/idelnx.cfg
 
+    <CPCMD> viper/ide.cfg        <RELROOT>/rel2/binl/ide.cfg
+    <CPCMD> viper/idedos.cfg     <RELROOT>/rel2/binl/idedos.cfg
+    <CPCMD> viper/idedos32.cfg   <RELROOT>/rel2/binl/idedos32.cfg
+    <CPCMD> viper/idewin.cfg     <RELROOT>/rel2/binl/idewin.cfg
+    <CPCMD> viper/ideos2.cfg     <RELROOT>/rel2/binl/ideos2.cfg
+    <CPCMD> viper/ideos232.cfg   <RELROOT>/rel2/binl/ideos232.cfg
+    <CPCMD> viper/idew32.cfg     <RELROOT>/rel2/binl/idew32.cfg
+    <CPCMD> viper/idew386.cfg    <RELROOT>/rel2/binl/idew386.cfg
+    <CPCMD> viper/idenlm.cfg     <RELROOT>/rel2/binl/idenlm.cfg
+    <CPCMD> viper/ideaxp.cfg     <RELROOT>/rel2/binl/ideaxp.cfg
+    <CPCMD> viper/idelnx.cfg     <RELROOT>/rel2/binl/idelnx.cfg
+
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> viper/wini86/ide.exe <RELROOT>/rel2/binw/ide.exe
     <CPCMD> viper/win/idex.cfg   <RELROOT>/rel2/binw/idex.cfg
