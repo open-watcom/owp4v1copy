@@ -2166,9 +2166,10 @@ void GenCOptions( char **cmdline )
      * because Windows and OS/2 API headers use it
      */
     EnableDisableMessage( 0, ERR_OBSOLETE_FUNC_DECL );
-    /* Warning about calling function with non-prototype declaration */
-    /* Temporarily disabled until source tree is cleaned up. */
+    /* Warnings about calling functions with non-prototype declaration */
+    /* Disabled at least until source tree is cleaned up. */
     EnableDisableMessage( 0, ERR_NONPROTO_FUNC_CALLED );
+    EnableDisableMessage( 0, ERR_NONPROTO_FUNC_CALLED_INDIRECT );
     InitModInfo();
     InitCPUModInfo();
 #if _CPU == 386

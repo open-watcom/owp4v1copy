@@ -635,6 +635,22 @@ void bar( void )
     func( 4, "s" );     /* possible argument mismatch */
 }
 .eerrbad
+:MSGSYM. ERR_NONPROTO_FUNC_CALLED_INDIRECT
+:MSGTXT. Unprototyped function indirectly called
+:MSGJTXT.
+:WARNING. 3
+.np
+An indirect call to an unprototyped function was made, preventing the
+compiler from checking the number of function arguments and their types.
+Use of unprototyped functions is obsolescent, dangerous and discouraged.
+.errbad
+int (*func)();
+
+void bar( void )
+{
+    func( 4, "s" );     /* possible argument mismatch */
+}
+.eerrbad
 :eMSGGRP. Warn3
 :cmt -------------------------------------------------------------------
 :MSGGRP. Errs

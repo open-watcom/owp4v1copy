@@ -671,7 +671,8 @@ extern void ChkCallParms( void )
             SymGet( &sym, callsite->op.sym_handle );
             typ = sym.sym_type;
             SKIP_TYPEDEFS( typ );
-            SetDiagSymbol( &sym, callsite->op.sym_handle );
+            if( !(sym.flags & SYM_TEMP) )
+                SetDiagSymbol( &sym, callsite->op.sym_handle );
             if( typ->u.fn.parms != NULL ) {
                 unsigned    parm_count;
                 TREEPTR     parm;
@@ -699,13 +700,23 @@ extern void ChkCallParms( void )
                                     nextcall->source_fno,
                                     nextcall->srclinenum );
             } else {
-                CWarn( WARN_NONPROTO_FUNC_CALLED,
-                        ERR_NONPROTO_FUNC_CALLED, SymName( &sym, callsite->op.sym_handle ) );
+                // Unprototyped function called. Note that for indirect calls, there
+                // is no symbol associated with the function and diagnostic information
+                // is hence limited.
+                SetErrLocFno( nextcall->source_fno, nextcall->srclinenum );
+                if( sym.flags & SYM_TEMP ) {
+                    CWarn( WARN_NONPROTO_FUNC_CALLED_INDIRECT,
+                            ERR_NONPROTO_FUNC_CALLED_INDIRECT );
+                } else {
+                    CWarn( WARN_NONPROTO_FUNC_CALLED,
+                            ERR_NONPROTO_FUNC_CALLED, SymName( &sym, callsite->op.sym_handle ) );
+                }
             }
-            SetDiagPop();
+            if( !(sym.flags & SYM_TEMP) )
+                SetDiagPop();
         }
         next = nextcall->next;
-        CMemFree( nextcall  );
+        CMemFree( nextcall );
         nextcall = next;
     }
 }

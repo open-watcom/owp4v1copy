@@ -275,6 +275,12 @@ void SetErrLoc( char *fname, unsigned line_num )
     ErrLine = line_num;
 }
 
+void SetErrLocFno( unsigned findex, unsigned line_num )
+{
+    SymLoc  = FileIndexToCorrectName( findex );
+    ErrLine = line_num;
+}
+
 
 void OpenErrFile( void )
 {

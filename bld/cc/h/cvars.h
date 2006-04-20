@@ -514,6 +514,7 @@ extern  void    CErr2(int,int);
 extern  void    CErr2p(int,char *);
 extern  void    CErr(int,...);
 extern  void    SetErrLoc(char *,unsigned);
+extern  void    SetErrLocFno( unsigned findex, unsigned line_num );
 extern  void    SetSymLoc(SYMPTR);
 extern  void    CWarn1(int,int);
 extern  void    CWarn2(int,int,int);
