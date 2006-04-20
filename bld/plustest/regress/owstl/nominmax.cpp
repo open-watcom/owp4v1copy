@@ -25,21 +25,28 @@
 *  ========================================================================
 *
 * Description:  Verify that NOMINMAX works correctly with <windows.h>.
-*               This is in OWSTL because, if NOMINMAX is not working,
-*               including <windows.h> before <algorithm> or <limits> (or
-*               <deque> or <vector>, which include <limits>) produces
-*               compiler errors when the min(a,b) and max(a,b) macros are
-*               defined since those files define template functions
-*               (<algorithm>) or static member functions (<limits>) with the
-*               names min() and max().
+*               This is in OWSTL because, if the macros max(a,b) and
+*               min(a,b) are defined by <windows.h> when it is included
+*               before <algorithm> or <limits> (or <deque> or <vector>,
+*               which include <limits>), then compiler errors result
+*               because the macros conflict with the template functions
+*               (<algorithm>) or static member functions (<limits>) with
+*               the same names.
 *
-* Useage Notes: This file should be used to test the Win32, Win16 and Win386
-*               targets.
-*               Sadly, from the IDE, it appears that Win16 targets use the Watcom
-*               default windowing system whether -bw is used or not, leaving only
-*               Win32 and Win386 for command-line testing.
-*               Target Win386 causes _WINDOWS_386_ to be defined, which
-*               in turn causes NOMINMAX to be defined in h\win\_win386.h
+* Useage Notes: This file should be used to test these two files:
+*                   Windefs.h in h\nt
+*                   Win16.h in h\win
+*               It has been tested with Windows XP and OS/2 and it works
+*               with bt=nt or bt=os2 (respectively), provided the include
+*               path includes exactly one of h\nt or h\win (depending on
+*               which one is being tested).
+*               To verify this test's functionality, simply open the
+*               file(s) given above and de-activate (comment out) the
+*               NOMINMAX macro test. When the macro test in the file is
+*               disabled, this test will report failure; when the macro
+*               test is enabled (uncommented), this test will report
+*               success. Doing this one file at a time will show that
+*               each test is, in fact, testing the correct file.
 *
 ****************************************************************************/
 
@@ -47,45 +54,81 @@
 
 #include "sanity.cpp"
 
-#if !defined (_WINDOWS_386_)
-    #define NOMINMAX
-#endif
+#define NOMINMAX
 
+// mmWin16 is used with NO_EXT_KEYS to trap use of -za (strict ANSI
+// compliance) on the compiler command line. 
+// win16.h, it appears, is not ANSI-compliant.
+
+#if defined( mmWin16 )
+#if !defined( NO_EXT_KEYS )
 #include <windows.h>
+#endif
+#else
+#include <windows.h>
+#endif
 
 bool some_test( )
 {
-  bool rc = true;
+    bool rc = true;
 
-#ifdef min
-  rc = false;
+// The macro FAIL is not used because it uses cout.
+
+#if defined( min ) || defined( max )
+    rc = false;
 #endif
 
-#ifdef max
-  rc = false;
-#endif
-
-  return( rc );
+    return( rc );
 }
 
-int main( )
-{
-  int rc = 0;
-  int original_count = heap_count( );
+int main( ) {
+    int rc = 0;
+    int original_count = heap_count( );
 
-  try {
-    if( !some_test( )    || !heap_ok( "t01" ) ) rc = 1;
-  }
-  catch( ... ) {
-    std::cout << "Unexpected exception of unexpected type.\n";
-    rc = 1;
-  }
+// Using error_msg prevents cout from affecting the final heap check.
 
-  if( heap_count( ) != original_count ) {
-    std::cout << "Possible memory leak!\n";
-    rc = 1;
-  }
+    char const * error_msg = NULL;
 
-  return( rc );
+    try {
+
+        if( !some_test( ) ) {
+
+// The output string here depends on which test was done.
+
+#if defined( mmWin16 )
+            error_msg = "mmwin16 test failed!\n";
+#else
+            error_msg = "mmwindef test failed!\n";
+#endif
+            rc = 1;
+        }
+
+// heap_ok uses cout to output the parameter.
+
+        if( !heap_ok( "Possible heap problem!\n" ) ) rc = 1;
+    }
+    
+    catch( ... ) {
+        error_msg = "Unexpected exception of unexpected type.\n";
+        rc = 1;
+    }
+
+// Because cout uses the heap in outputting a string literal, this test
+// will fail if heap_ok() reports an error. FAIL is not used in
+// some_test() so that my test's failure report will not producing a 
+// bogus error report here.
+
+    if( heap_count( ) != original_count ) {
+        error_msg = "Possible memory leak!\n";
+        rc = 1;
+    }
+
+// Emit the error_msg, if there is one.
+
+    if( error_msg != NULL ) {
+        std::cout << error_msg;
+    }
+    
+    return( rc );
 }
 

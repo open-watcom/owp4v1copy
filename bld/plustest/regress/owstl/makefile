@@ -51,6 +51,8 @@ template = &
         map01$(ext)     &
         map02$(ext)     &
         mem01$(ext)     &
+	mmwin16$(ext)	&
+	mmwindef$(ext)  &
         numer01$(ext)   &
         stack01$(ext)   &
         set01$(ext)     &
@@ -59,7 +61,7 @@ template = &
         string02$(ext)  &
         typetr01$(ext)  &
         util01$(ext)    &
-        vector01$(ext)
+        vector01$(ext)  
 
 # the list of .exe targets
 ext = .$(exe)
@@ -74,6 +76,8 @@ do_tests = $+ $(template) $-
 
 # define flags specific to tests here
 extra_cflags_typetr01 = -za0x
+extra_cflags_mmwin16 = -i$(%WATCOM)\h\win -dmmWin16
+extra_cflags_mmwindef = -i$(%WATCOM)\h\nt
 
 .cpp.obj :
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000 $(extra_cflags_$[*)
@@ -115,3 +119,13 @@ test.lnk : makefile
 
 global : .SYMBOLIC
     @%make common_clean
+
+# ensures mmwindef.cpp and mmwin16.cpp are always identical to 
+# nominmax.cpp
+
+mmwin16.cpp : nominmax.cpp
+    copy nominmax.cpp mmwin16.cpp /v
+
+mmwindef.cpp : nominmax.cpp
+    copy nominmax.cpp mmwindef.cpp /v
+
