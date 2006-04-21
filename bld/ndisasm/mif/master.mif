@@ -33,6 +33,9 @@ extra_l_flags_qnx = op res=wdis.u, off=8k
 extra_c_flags_memfuncs = $(trmem_cover_cflags)
 extra_c_flags_trmem    = $(trmem_cflags)
 
+extra_c_flags   += -wce=309 -wce=308
+
+
 inc_dirs  = -I. $(dis_includes) -I"$(disasm_dir)/stand/h" 
 inc_dirs += -I"$(disasm_dir)/h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" 
 inc_dirs += -I"$(comp_cfg_dir)/h"

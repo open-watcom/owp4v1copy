@@ -93,7 +93,7 @@ typedef enum {
     ASCIZ
 } string_type;
 
-int IsMasmOutput()
+int IsMasmOutput( void )
 {
     return( !( DFormat & DFF_X86_UNIX ) && ( GetFormat() == ORL_OMF ) );
 }

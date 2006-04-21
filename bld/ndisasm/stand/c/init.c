@@ -136,7 +136,7 @@ static unsigned long            objFilePos;
 static unsigned long            objFileLen;
 
 
-int IsIntelx86()
+int IsIntelx86( void )
 {
     switch( GetMachineType() ) {
     case( ORL_MACHINE_TYPE_I386 ):
@@ -147,7 +147,7 @@ int IsIntelx86()
     }
 }
 
-orl_file_format GetFormat()
+orl_file_format GetFormat( void )
 {
     return( ORLFileGetFormat( ObjFileHnd ) );
 }
@@ -571,7 +571,7 @@ static return_val initHashTables( void )
     return( error );
 }
 
-orl_machine_type GetMachineType()
+orl_machine_type GetMachineType( void )
 {
     return( ORLFileGetMachineType( ObjFileHnd ) );
 }
@@ -729,7 +729,7 @@ static return_val initORL( void )
     return( error );
 }
 
-static return_val initServicesUsed()
+static return_val initServicesUsed( void )
 {
     return( initORL() );
 }

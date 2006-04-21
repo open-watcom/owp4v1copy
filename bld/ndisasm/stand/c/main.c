@@ -781,7 +781,7 @@ static void numberUnnamedLabels( label_entry l_entry )
     }
 }
 
-static hash_table emitGlobls()
+static hash_table emitGlobls( void )
 {
     section_ptr         sec;
     hash_data *         data_ptr;
@@ -923,7 +923,7 @@ void UseFlatModel( void )
     }
 }
 
-static void doPrologue()
+static void doPrologue( void )
 {
     int         masm;
 
@@ -964,7 +964,7 @@ static void doPrologue()
     }
 }
 
-static void    doEpilogue()
+static void    doEpilogue( void )
 {
     if( IsMasmOutput() ) {
         if( DFormat & DFF_ASM ) {

@@ -220,7 +220,7 @@ extern void GetSourceFile( section_ptr sec )
     SourceFileName = NULL;
 }
 
-static char *getNextLine()
+static char *getNextLine( void )
 {
     long int len, pos;
     char *buff;
@@ -244,7 +244,7 @@ static char *getNextLine()
     return buff;
 }
 
-static void printLine()
+static void printLine( void )
 {
     char *buff;
 
