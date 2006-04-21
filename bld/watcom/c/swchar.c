@@ -24,39 +24,31 @@
 *
 *  ========================================================================
 *
-* Description:  Determine option separator character.
+* Description:  get switch char function
 *
 ****************************************************************************/
 
-#include <stdlib.h>
 
-#if defined( __DOS__ )
-extern  unsigned char     _DOS_Switch_Char();
+#include "swchar.h"
 
+#ifdef __DOS__
+
+extern unsigned char    _DOS_Switch_Char( void );
 #pragma aux     _DOS_Switch_Char = \
-    "push dx"    \
-    "mov ah,37h" \
-    "mov al,00h" \
-    "int 21h"    \
-    "mov al,dl"  \
-    "pop dx";
+    "mov ax,3700h"  \
+    "int 21h"       \
+    "mov al,dl"     \
+    modify [dx];
+
 #endif
 
-int _dos_switch_char()
+unsigned char _dos_switch_char( void )
 {
-#if defined( __DOS__ )
-    #if defined( __386__ )
-        return( _DOS_Switch_Char() );
-    #else
-        if( _osmode == DOS_MODE ) {
-            return( _DOS_Switch_Char() );
-        } else {
-            return( '/' );
-        }
-    #endif
-#elif defined( __NT__ ) || defined( __OS2__ ) || defined( __OSI__ )
-    return( '/' );
-#else
+#ifdef __DOS__
+    return( _DOS_Switch_Char() );
+#elif defined( __UNIX__ )
     return( '-' );
+#else
+    return( '/' );
 #endif
 }

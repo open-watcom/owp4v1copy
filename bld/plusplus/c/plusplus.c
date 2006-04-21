@@ -62,6 +62,7 @@
 #include "brinfo.h"
 #include "idedrv.h"
 #include "autodep.h"
+#include "swchar.h"
 
 #ifndef NDEBUG
 #include <stdio.h>

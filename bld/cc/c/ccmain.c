@@ -40,6 +40,7 @@
 #endif
 #define BY_CLI
 #include "feprotos.h"
+#include "swchar.h"
 
 #ifndef _MAX_PATH
     #define _MAX_PATH   (PATH_MAX + 1)
