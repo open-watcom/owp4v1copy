@@ -47,11 +47,11 @@ static char Err3[] = { "fshapes.for(51): *ERR* SX-16 column 15, expecting LOGICA
 
 static int      CurrLocation = { 0 };
 static int      NumLocations = { 3 };
-static Row[] = { 3, 7, 10 };
-static Col[] = { 12, 3, 7 };
-static Len[] = { 5, 2, 3 };
-static ResourceId[] = { 28728, 26659, 30000 };
-static char* Errors[] = { &Err1, &Err2, &Err3 };
+static long     Row[] = { 3, 7, 10 };
+static int      Col[] = { 12, 3, 7 };
+static int      Len[] = { 5, 2, 3 };
+static int      ResourceId[] = { 28728, 26659, 30000 };
+static char     *Errors[] = { &Err1, &Err2, &Err3 };
 
 
 MRESULT EXPENTRY MainDriver( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 ) {
