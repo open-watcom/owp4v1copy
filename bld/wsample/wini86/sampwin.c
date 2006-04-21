@@ -83,7 +83,7 @@ void FlushSamples( WORD limit )
 
 } /* FlushSamples */
 
-int VersionCheck()
+int VersionCheck( void )
 {
     return( TRUE );
 }
@@ -140,7 +140,7 @@ unsigned NextThread( unsigned tid )
     return( !tid );
 }
 
-void InitTimerRate()
+void InitTimerRate( void )
 {
     SleepTime = 55;
 }
@@ -150,16 +150,16 @@ void SetTimerRate( char **cmd )
     SleepTime = GetNumber( 1, 1000, cmd, 10 );
 }
 
-unsigned long TimerRate()
+unsigned long TimerRate( void )
 {
     return( 1000L * SleepTime );
 }
 
-unsigned SafeMargin()
+unsigned SafeMargin( void )
 {
     return( Ceiling-20 );
 }
-void StopProg()
+void StopProg( void )
 {
 }
 

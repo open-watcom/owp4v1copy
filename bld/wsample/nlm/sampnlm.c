@@ -47,9 +47,9 @@
 
 #include <ownwthrd.h>
 
-extern void StartTimer();
-extern void StopTimer();
-extern void REPORT_TYPE report();
+extern void StartTimer( void );
+extern void StopTimer( void );
+extern void REPORT_TYPE report( void );
 extern void WriteCodeLoad( seg_offset ovl_tbl, char *name, samp_block_kinds );
 extern void WriteAddrMap( seg map_start,  seg load_start, off load_offset );
 extern int SampWrite( void FAR_PTR *buff, unsigned len );
@@ -85,7 +85,7 @@ int                             Resumed;
 
 
 #pragma aux GetCS = 0x8c 0xc8 value [ ax ];
-extern short GetCS();
+extern short GetCS( void );
 
 typedef struct code_load {
     char                buff[512];
@@ -98,7 +98,7 @@ typedef struct code_load {
 code_load *LoadedNLMs;
 
 
-void SysInit()
+void SysInit( void )
 {
     AllocTag = AllocateResourceTag(
         (void *)GetNLMHandle(),
@@ -110,7 +110,7 @@ void SysInit()
         EventSignature);
 }
 
-void StopProg()
+void StopProg( void )
 {
 }
 
@@ -143,7 +143,7 @@ void RecordCodeLoad( struct LoadDefinitionStructure *loaded, samp_block_kinds ki
 }
 
 
-void WriteRecordedLoads()
+void WriteRecordedLoads( void )
 {
     seg_offset          ovl_tbl;
     code_load           *curr,*next;
@@ -159,12 +159,12 @@ void WriteRecordedLoads()
 }
 
 static volatile unsigned nModeSwitched = 0;
-void ModeSwitched()
+void ModeSwitched( LONG dummy )
 {
     nModeSwitched++;
 }
 
-void WakeMeUp()
+void WakeMeUp( LONG dummy )
 {
     static int Already = FALSE;
     struct LoadDefinitionStructure *loaded;
@@ -246,7 +246,7 @@ void StartProg( char *cmd, char *prog, char *args )
 }
 
 
-void SaveOutSamples()
+void SaveOutSamples( void *dummy )
 {
     StopAndSave();
     AES.AProcessToCall = NULL;
@@ -276,24 +276,24 @@ void RecordSample( union INTPACK FAR_PTR *r ) {
  *  hooks are handled (for CommonAddr passing and for marks).  19-aug-92 CMS
  */
 
-void GetCommArea()
+void GetCommArea( void )
 {
 }
 
-void ResetCommArea()
+void ResetCommArea( void )
 {
 }
 
-void GetNextAddr()
+void GetNextAddr( void )
 {
 }
 
-int VersionCheck()
+int VersionCheck( void )
 {
     return( TRUE );
 }
 
-int InDOS()
+int InDOS( void )
 {
     return( TRUE );
 }
@@ -318,7 +318,7 @@ void GetProg( char *cmd, char *eoc )
 }
 
 
-void fatal(void)
+void fatal( void )
 {
     if( Samples != NULL ) mfree( Samples );
     if( CallGraph != NULL ) mfree( CallGraph );
@@ -330,8 +330,8 @@ void SysDefaultOptions( void )
 {
 }
 
-extern unsigned long count_pit0(void);
-extern unsigned long cpuspeed(void);
+extern unsigned long count_pit0( void );
+extern unsigned long cpuspeed( void );
 
 static unsigned long RoundSpeed(unsigned long speed)
 {
@@ -343,7 +343,7 @@ static unsigned long RoundSpeed(unsigned long speed)
 
 static unsigned long volatile * pRealModeTimerFlag = NULL;
 
-/*static */void EstimateRate(void)
+/*static */void EstimateRate( void )
 {
     char            EstRate[16];
     unsigned long   currCount;

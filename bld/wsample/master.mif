@@ -73,6 +73,8 @@ extra_c_flags_i86     += -DSHORT_OFF
 extra_c_flags = -DREPORT_TYPE= -DFAR_PTR=
 !endif
 
+#extra_c_flags += -wce=308 -wce=309  -wce=307
+
 extra_a_flags_dos_rsi = -Dlarge
 extra_a_flags_dos     = $(extra_a_flags_dos_$(target))
 
