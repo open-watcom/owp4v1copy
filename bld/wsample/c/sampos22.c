@@ -88,7 +88,7 @@ unsigned NextThread( unsigned tid )
     return( tid+1 );
 }
 
-void InitTimerRate()
+void InitTimerRate( void )
 {
     SleepTime = 55;
 }
@@ -98,17 +98,17 @@ void SetTimerRate( char **cmd )
     SleepTime = GetNumber( 1, 1000, cmd, 10 );
 }
 
-unsigned long TimerRate()
+unsigned long TimerRate( void )
 {
     return( 1000L * SleepTime );
 }
 
-unsigned SafeMargin()
+unsigned SafeMargin( void )
 {
     return( Ceiling-10 );
 }
 
-int VersionCheck()
+int VersionCheck( void )
 {
     return( TRUE );
 }
@@ -182,7 +182,7 @@ void RecordSample( unsigned offset, unsigned short segment, TID tid )
 }
 
 
-void GetCommArea()
+void GetCommArea( void )
 {
     uDB_t   mybuff;
 
@@ -205,7 +205,7 @@ void GetCommArea()
 }
 
 
-void ResetCommArea()
+void ResetCommArea( void )
 {
     uDB_t   mybuff;
 
@@ -223,7 +223,7 @@ void ResetCommArea()
 }
 
 
-void GetNextAddr()
+void GetNextAddr( void )
 {
     uDB_t   mybuff;
     struct {
@@ -250,7 +250,7 @@ void GetNextAddr()
 }
 
 
-void StopProg()
+void StopProg( void )
 {
 }
 
