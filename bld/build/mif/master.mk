@@ -19,7 +19,7 @@ ifndef TARG_CPU
 TARG_CPU=__386__
 endif
 
-CFLAGS = -funsigned-char -Wall -g -O2
+CFLAGS = -funsigned-char -g -O2 -Wall -Wno-switch
 CPPFLAGS = $(addprefix -I,$(INCDIRS)) $(DEFS)
 DEFS = -D$(TARG_CPU) -D__LINUX__ -DLINUX -D__UNIX__= -DUNIX -D_WCUNALIGNED="__attribute__((packed))" -D_LINKER=_WLINK -D__FLAT__ -Uunix -DBOOTSTRAP
 

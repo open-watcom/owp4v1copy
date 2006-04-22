@@ -95,13 +95,16 @@ cppflags_mips = -D__MIPS__ -Umips
 inc_dirs_lang_linux =
 inc_dirs_lang_osi =
 
+# Warning flags: all enabled except the ones that have no use besides annoy people
+cflags_wng = -Wall -Wno-switch
+
 cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__LINUX__ &
 -D__SMALL__ -DUNIX -DLINUX -D__FLAT__ $(cppflags_$(host_cpu)) &
 -D_WCUNALIGNED="__attribute__((packed))"
-cflags = $(extra_c_flags) $(cppflags) -g -c -Wall -funsigned-char -fno-asm -pipe -O -o $@
+cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -funsigned-char -fno-asm -pipe -O -o $@
 
 # options for single source utility compilations
-wcl_util_opts = -funsigned-char -Wall $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
+wcl_util_opts = -funsigned-char $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
 
 # options for linking via cc
 clflags = -o $@
