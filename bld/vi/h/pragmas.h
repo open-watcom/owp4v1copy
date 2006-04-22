@@ -42,7 +42,7 @@ extern void Out61( char );
 extern void Out43( char );
 extern void Out42( char );
 extern U_INT DosMaxAlloc( void );
-extern void (interrupt _FAR *DosGetVect())( char );
+extern void (interrupt _FAR *DosGetVect( char ))();
 extern void DosSetVect( char, void (interrupt _FAR *)());
 #endif
 

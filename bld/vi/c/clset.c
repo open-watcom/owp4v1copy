@@ -58,7 +58,7 @@ static void setMessage( char *msg, bool redisplay )
     needsRedisplay = redisplay;
 }
 
-static void putMessage()
+static void putMessage( void )
 {
     if( needsRedisplay ) {
         ReDisplayScreen();

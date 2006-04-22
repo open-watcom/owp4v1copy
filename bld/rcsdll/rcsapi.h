@@ -67,7 +67,7 @@ typedef int RCSAPI ( *MessageBoxCallbackFP )( rcsstring text, rcsstring title, c
 // this file should be identical for all app implementations
 
 /* common functions */
-int RCSAPI RCSGetVersion();
+int RCSAPI RCSGetVersion( void );
 int RCSAPI RCSSetSystem( rcsdata, int );
 int RCSAPI RCSQuerySystem( rcsdata );
 int RCSAPI RCSRegisterBatchCallback( rcsdata, BatchCallbackFP, void * );

@@ -314,7 +314,7 @@ int DoEGREP( char *, char * );
 
 /* file.c */
 void SaveInfo( info * );
-void SaveCurrentInfo();
+void SaveCurrentInfo( void );
 bool RestoreInfo( info * );
 int DisplayFileStatus( void );
 void CTurnOffFileDisplayBits( void );
@@ -449,7 +449,7 @@ void IDEGetKeys( void );
 /* init.c */
 void InitializeEditor( void );
 void SetConfigFileName( char *fn );
-char *GetConfigFileName();
+char *GetConfigFileName( void );
 void FiniCFName( void );
 
 /* io.c */
@@ -601,8 +601,8 @@ void StaticFini( void );
 char *MemStrDup( char * );
 int DumpMemory( void );
 #ifdef TRMEM
-    void InitTRMEM();
-    void DumpTRMEM();
+    void InitTRMEM( void );
+    void DumpTRMEM( void );
 #endif
 
 /* misc.c */
@@ -610,7 +610,7 @@ int ExecCmd( char *, char *, char * );
 int GetResponse( char *, char * );
 void ExitWithVerify( void );
 bool ExitWithPrompt( bool );
-bool PromptFilesForSave();
+bool PromptFilesForSave( void );
 bool PromptThisFileForSave( const char * );
 bool QueryFile( const char * );
 int PrintHexValue( void );

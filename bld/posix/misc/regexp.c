@@ -254,16 +254,16 @@ static char *regcode;           /* Code-emit pointer; &regdummy = don't. */
 static long regsize;            /* Code size. */
 
 /* Forward declarations for RegComp()'s friends.  */
-static char *reg();
-static char *regbranch();
-static char *regpiece();
-static char *regatom();
+static char *reg( void );
+static char *regbranch( void );
+static char *regpiece( void );
+static char *regatom( void );
 static char *regnode( char op );
-static char *regnext();
+static char *regnext( void );
 static void regc( char b );
 static void reginsert( char op, char * opnd );
-static void regtail();
-static void regoptail();
+static void regtail( void );
+static void regoptail( void );
 
 /*
  - RegComp - compile a regular expression into internal code
@@ -822,9 +822,9 @@ static char     **regstartp;        /* Pointer to startp array. */
 static char     **regendp;          /* Ditto for endp. */
 
 /* Forwards.  */
-static int      regtry();
-static int      regmatch();
-static int      regrepeat();
+static int      regtry( void );
+static int      regmatch( void );
+static int      regrepeat( void );
 
 /* RegExec2 - match a regexp against a string */
 static int RegExec2( regexp *prog, char *string, bool anchflag )

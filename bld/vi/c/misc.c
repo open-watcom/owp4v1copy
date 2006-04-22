@@ -325,7 +325,7 @@ int GetResponse( char *str, char *res )
  * PromptFilesForSave - prompt to save for each file which has
  * been modified.
  */
-bool PromptFilesForSave()
+bool PromptFilesForSave( void )
 {
     #ifdef __WIN__
     info        *cinfo;

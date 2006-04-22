@@ -59,7 +59,7 @@ extern RCSFiniFn                RCSFini = NULL;
     static HINSTANCE LibHandle;
     static void getFunctionPtrs( void );
 
-    int ViRCSInit()
+    int ViRCSInit( void )
     {
         LibHandle = LoadLibrary( RCS_DLLNAME );
         if( LibHandle < (HINSTANCE)32 ) {
@@ -68,7 +68,7 @@ extern RCSFiniFn                RCSFini = NULL;
         getFunctionPtrs();
         return( TRUE );
     }
-    int ViRCSFini()
+    int ViRCSFini( void )
     {
         FreeLibrary( LibHandle );
         return( TRUE );
@@ -82,7 +82,7 @@ extern RCSFiniFn                RCSFini = NULL;
     #define GET_ADDR( inst, name, proc, type ) DosQueryProcAddr( inst, 0, name, (PFN*)(&proc) )
     static void getFunctionPtrs( void );
 
-    int ViRCSInit()
+    int ViRCSInit( void )
     {
         #define BUFF_LEN 128
         char fail_name[BUFF_LEN];
@@ -95,14 +95,14 @@ extern RCSFiniFn                RCSFini = NULL;
             return( LibHandle );
         }
     }
-    int ViRCSFini()
+    int ViRCSFini( void )
     {
         DosFreeModule( LibHandle );
         return( TRUE );
     }
 #else
-    int ViRCSInit() { return( TRUE ); }
-    int ViRCSFini() { return( TRUE ); }
+    int ViRCSInit( void ) { return( TRUE ); }
+    int ViRCSFini( void ) { return( TRUE ); }
 #endif
 
 #if defined( __WINDOWS__ ) || defined( __NT__ ) || (defined( __OS2__ ) && defined( __386__ ))

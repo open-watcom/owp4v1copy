@@ -69,7 +69,7 @@ void HeapMsg( int msg )
 } /* HeapMsg */
 #endif
 
-int HeapCheck()
+int HeapCheck( void )
 {
 #ifdef DBG
     int                 i;
@@ -102,7 +102,7 @@ int HeapCheck()
 
 } /* HeapCheck */
 
-int FcbDump()
+int FcbDump( void )
 {
 #ifdef DBG
     int         i,lc,fcbcnt=0;
@@ -148,7 +148,7 @@ int FcbDump()
 
 }
 
-int FcbThreadDump()
+int FcbThreadDump( void )
 {
 #ifdef DBG
     int         i,lc,fcbcnt=0;
@@ -197,7 +197,7 @@ int FcbThreadDump()
 
 }
 
-int SanityCheck()
+int SanityCheck( void )
 {
 #ifdef DBG
     int         i,lc,tfcbcnt=0,fcbcnt,sum;
@@ -276,7 +276,7 @@ int SanityCheck()
 
 }
 
-int LineInfo()
+int LineInfo( void )
 {
 #ifdef DBG
     fcb         *cfcb;
@@ -411,7 +411,7 @@ extern int maxStatic;
 /*
  * DumpMemory - dump memory avaliable
  */
-int DumpMemory()
+int DumpMemory( void )
 {
     int         i,ln=1;
     window_id   wn;

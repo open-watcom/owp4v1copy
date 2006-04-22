@@ -105,7 +105,7 @@ static void drawClock( void )
 /*
  * handleInt1c - int 0x1c handler (clock timer)
  */
-static void interrupt handleInt1c()
+static void interrupt handleInt1c( void )
 {
     ClockTicks++;
     cTick1--;
@@ -157,7 +157,7 @@ static void interrupt handleInt1c()
 /*
  * handleInt1b_23
  */
-static void interrupt handleInt1b_23()
+static void interrupt handleInt1b_23( void )
 {
     if( EditFlags.WatchForBreak ) {
         EditFlags.BreakPressed = TRUE;

@@ -157,7 +157,7 @@ void MyBeep( void )
 
 } /* MyBeep */
 
-static void getExitAttr()
+static void getExitAttr( void )
 {
     short       cursor;
     short       x, y;

@@ -137,5 +137,5 @@ extern RCSFiniFn                RCSFini;
  #define SET_PAUSE_FN_NAME              "RCSSetPause"
 #endif
 
-extern int ViRCSInit(); // just stubs for dos
-extern int ViRCSFini();
+extern int ViRCSInit( void ); // just stubs for dos
+extern int ViRCSFini( void );
