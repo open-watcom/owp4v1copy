@@ -161,13 +161,9 @@ char *valloc(unsigned size)
 /*
  * Make a directory.  Compatible with the mkdir() system call on 4.2BSD.
  */
-int
-mkdir(dpath, dmode)
-char           *dpath;
-int             dmode;
+int mkdir( char *dpath, int dmode )
 {
         int             cpid, status;
-        extern int      errno;
 
         switch (cpid = fork())
         {

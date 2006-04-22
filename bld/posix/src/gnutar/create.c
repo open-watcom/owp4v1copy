@@ -48,6 +48,7 @@
 #include <unistd.h>
 
 #include "tar.h"
+#include "create.h"
 #include "list.h"
 #include "buffer.h"
 
@@ -108,23 +109,15 @@
 
 #include <errno.h>
 
-union record   *start_header();
-void            finish_header();
-void            finduname();
-void            findgname();
-char           *name_next();
-void            to_oct();
+union record   *start_header( char *name, struct stat *st );
 
-
-void
-create_archive()
+void create_archive( void )
 {
-        register char  *p;
+        char  *p;
 
         open_archive(0);                        /* Open for writing */
 
-        while (p = name_next())
-        {
+        while (p = name_next()) {
                 dump_file(p);
         }
 
@@ -141,9 +134,7 @@ create_archive()
  * out is to read the whole file in order to let the MSC library routines
  * determine how many characters will actually be in the file...
  */
-long
-countbytes(f)
-int             f;
+long countbytes( int f )
 {
         long            cb;
         int             n;
@@ -166,9 +157,7 @@ int             f;
  * Dump a single file.  If it's a directory, recurse.
  * Result is 1 for success, 0 for failure.
  */
-int
-dump_file(p)
-char           *p;                              /* File name to dump */
+int dump_file( char *fname )
 {
         struct stat     statbuff[1];
         struct stat    *statbuf = statbuff;
@@ -180,10 +169,10 @@ char           *p;                              /* File name to dump */
          * Otherwise, use lstat (which, on non-4.2 systems, is #define'd to stat
          * anyway.
          */
-        if (0 != f_follow_links ? stat(p, statbuf) : lstat(p, statbuf))
+        if (0 != f_follow_links ? stat(fname, statbuf) : lstat(fname, statbuf))
         {
 badperror:
-                perror(p);
+                perror(fname);
 badfile:
                 errors++;
                 return 0;
@@ -194,14 +183,14 @@ badfile:
 
         case S_IFREG:                           /* Regular file */
                 {
-                        int             f;      /* File descriptor */
-                        int             bufsize, count;
-                        register long   sizeleft;
-                        register union record *start;
-                        long            exp, actl;      /* byte counts for file size errs */
-                        int             need;           /* for block read loop */
-                        int             n;      /* # bytes read in this read() call */
-                        char           *bufp;           /* where to start this read in buf */
+                        int     f;      /* File descriptor */
+                        int     bufsize, count;
+                        long    sizeleft;
+                        long    exp, actl;      /* byte counts for file size errs */
+                        int     need;           /* for block read loop */
+                        int     n;      /* # bytes read in this read() call */
+                        char    *bufp;           /* where to start this read in buf */
+                        union record *start;
 
                         /*
                          * Handle a regular file with multiple links.
@@ -212,7 +201,7 @@ badfile:
                          */
                         if (statbuf->st_nlink > 1)
                         {
-                                register struct link *lp;
+                                struct link *lp;
 
                                 /*
                                  * First quick and dirty.  Hashing, etc later FIXME
@@ -224,7 +213,7 @@ badfile:
                                         {
                                                 /* We found a link. */
                                                 statbuf->st_size = 0;
-                                                header = start_header(p, statbuf);
+                                                header = start_header(fname, statbuf);
                                                 if (header == NULL)
                                                         goto badfile;
                                                 strcpy(header->header.linkname,
@@ -234,7 +223,7 @@ badfile:
                                                 if (f_verbose)
                                                         annorec(stdout, (char *) NULL);
                                                 printf("%s link to %s\n",
-                                                        p, lp->name);
+                                                        fname, lp->name);
 
                                                 /*
                                                  * Maybe remove from list after all links found?
@@ -257,10 +246,10 @@ badfile:
 
                                 /* Not found.  Add it to the list. */
                                 lp = (struct link *) malloc((unsigned)
-                                        (strlen(p) + sizeof(struct link) - NAMSIZ));
+                                        (strlen(fname) + sizeof(struct link) - NAMSIZ));
                                 lp->ino = statbuf->st_ino;
                                 lp->dev = statbuf->st_dev;
-                                strcpy(lp->name, p);
+                                strcpy(lp->name, fname);
                                 lp->next = linklist;
                                 linklist = lp;
                         }
@@ -272,7 +261,7 @@ badfile:
                         if (sizeleft > 0 || 0444 != (0444 & statbuf->st_mode))
                         {
 #endif
-                                f = open(p, O_RDONLY | convmode(p));
+                                f = open(fname, O_RDONLY | convmode(fname));
                                 if (f < 0)
                                         goto badperror;
 #ifdef NOTDEF
@@ -288,7 +277,7 @@ badfile:
                         /*
                          * See comment before countbytes(), above.
                          */
-                        if (convmode(p) & O_TEXT)
+                        if (convmode(fname) & O_TEXT)
                         {
                                 statbuf->st_size = countbytes(f);
                                 sizeleft = statbuf->st_size;
@@ -297,7 +286,7 @@ badfile:
                         exp = sizeleft;         /* number of bytes we expect to see */
                         actl = 0;                       /* number of bytes we really saw */
 
-                        header = start_header(p, statbuf);
+                        header = start_header(fname, statbuf);
                         if (header == NULL)
                                 goto badfile;
                         finish_header(header);
@@ -315,15 +304,13 @@ badfile:
                                 need = bufsize;
                                 bufp = start->charptr;
                                 count = 0;
-                                do
-                                {
-                                        n = read(f, bufp, need);
-                                        if (n > 0)
-                                        {
-                                                count += n;
-                                                bufp += n;
-                                                need -= n;
-                                        }
+                                do {
+                                    n = read(f, bufp, need);
+                                    if (n > 0) {
+                                        count += n;
+                                        bufp += n;
+                                        need -= n;
+                                    }
                                 } while (need > 0 && n > 0);
 
                                 if (n < 0)
@@ -333,7 +320,7 @@ badfile:
                                                 "read error at byte %ld, reading %d bytes, in file ",
                                                 statbuf->st_size - sizeleft,
                                                 bufsize);
-                                        perror(p);      /* FIXME */
+                                        perror(fname);      /* FIXME */
                                         goto padit;
                                 }
 
@@ -347,10 +334,10 @@ badfile:
                                 annorec(stderr, tar);
                                 fprintf(stderr,
                                         "%s: file size error: expected %ld, read %ld.\n",
-                                        p, exp, actl);
+                                        fname, exp, actl);
                                 fprintf(stderr,
                                         "%s: file shrunk by %d bytes, padding with zeros.\n",
-                                        p, sizeleft);
+                                        fname, sizeleft);
                                 goto padit;             /* Short read */
                         }
                         if (f >= 0)
@@ -359,10 +346,9 @@ badfile:
                         /* Clear last block garbage to zeros, FIXME */
 
 #ifdef OLDVERBOSE
-                        if (f_verbose)
-                        {
-                                annorec(stdout, (char *) NULL);
-                                printf("%s\n", p);
+                        if (f_verbose) {
+                            annorec(stdout, (char *) NULL);
+                            printf("%s\n", fname);
                         }
 #endif
         donefile:
@@ -383,17 +369,17 @@ badfile:
                         int             size;
 
                         statbuf->st_size = 0;           /* Force 0 size on symlink */
-                        header = start_header(p, statbuf);
+                        header = start_header(fname, statbuf);
                         if (header == NULL)
                                 goto badfile;
-                        size = readlink(p, header->header.linkname, NAMSIZ);
+                        size = readlink(fname, header->header.linkname, NAMSIZ);
                         if (size < 0)
                                 goto badperror;
                         if (size == NAMSIZ)
                         {
                                 annorec(stderr, tar);
                                 fprintf(stderr,
-                                        "%s: symbolic link too long\n", p);
+                                        "%s: symbolic link too long\n", fname);
                                 break;
                         }
                         header->header.linkname[size] = '\0';
@@ -403,7 +389,7 @@ badfile:
                         if (f_verbose)
                         {
                                 annorec(stdout, (char *) NULL);
-                                printf("%s\n", p);
+                                printf("%s\n", fname);
                         }
 #endif
                 }
@@ -412,13 +398,13 @@ badfile:
 
         case S_IFDIR:                           /* Directory */
                 {
-                        register DIR   *dirp;
-                        register struct dirent *d;
-                        char            namebuf[NAMSIZ + 2];
-                        register int    len;
+                        DIR     *dirp;
+                        struct dirent *d;
+                        char    namebuf[NAMSIZ + 2];
+                        int     len;
 
                         /* Build new prototype name */
-                        strncpy(namebuf, p, sizeof(namebuf));
+                        strncpy(namebuf, fname, sizeof(namebuf));
                         len = strlen(namebuf);
                         while (len >= 1 && '/' == namebuf[len - 1])
                                 len--;                  /* Delete trailing slashes */
@@ -454,7 +440,7 @@ badfile:
                         if (f_verbose)
                         {
                                 annorec(stdout, (char *) NULL);
-                                printf("%s\n", p);
+                                printf("%s\n", fname);
                         }
 #endif
                         /*
@@ -467,20 +453,16 @@ badfile:
 
                         /* Now output all the files in the directory */
                         errno = 0;
-                        dirp = opendir(p);
-                        if (!dirp)
-                        {
-                                if (errno)
-                                {
-                                        perror(p);
-                                }
-                                else
-                                {
-                                        annorec(stderr, tar);
-                                        fprintf(stderr, "%s: error opening directory",
-                                                p);
-                                }
-                                break;
+                        dirp = opendir(fname);
+                        if (!dirp) {
+                            if (errno) {
+                                perror(fname);
+                            } else {
+                                annorec(stderr, tar);
+                                fprintf(stderr, "%s: error opening directory",
+                                                fname);
+                            }
+                            break;
                         }
 
                         /* Should speed this up by cd-ing into the dir, FIXME */
@@ -538,7 +520,7 @@ easy:
                  * this size since it's used to size the device. - JER */
                 statbuf->st_size = 0;   /* Force 0 size */
 #endif
-                header = start_header(p, statbuf);
+                header = start_header(fname, statbuf);
                 if (header == NULL)
                         goto badfile;           /* eg name too long */
 
@@ -556,7 +538,7 @@ easy:
                 if (f_verbose)
                 {
                         annorec(stdout, (char *) NULL);
-                        printf("%s\n", p);
+                        printf("%s\n", fname);
                 }
 #endif
                 break;
@@ -565,7 +547,7 @@ easy:
 unknown:
                 annorec(stderr, tar);
                 fprintf(stderr,
-                        "%s: Unknown file type; file ignored.\n", p);
+                        "%s: Unknown file type; file ignored.\n", fname);
                 break;
         }
 
@@ -577,13 +559,9 @@ unknown:
  * Make a header block for the file  name  whose stat info is  st .
  * Return header pointer for success, NULL if the name is too long.
  */
-union record   *
-start_header(name, st)
-char           *name;
-register struct stat *st;
+union record   *start_header( char *name, struct stat *st )
 {
-        register union record *header;
-        extern struct stat hstat[1];
+        union record *header;
 
         hstat[0] = *st;                         /* save stat for verbose-mode listing */
 
@@ -610,8 +588,7 @@ register struct stat *st;
         /* header->header.linkflag is left as null */
 
         /* Fill in new Unix Standard fields if desired. */
-        if (f_standard)
-        {
+        if (f_standard) {
                 header->header.linkflag = LF_NORMAL;    /* New default */
                 strcpy(header->header.magic, TMAGIC);   /* Mark as Unix Std */
 #ifndef NONAMES
@@ -629,46 +606,42 @@ register struct stat *st;
 /*
  * Finish off a filled-in header block and write it out.
  */
-void
-finish_header(header)
-register union record *header;
+void finish_header( union record *header )
 {
-        register int    i, sum;
-        register char  *p;
-        extern union record *head;
+    int    i, sum;
+    char  *p;
 
-        bcopy(CHKBLANKS, header->header.chksum, sizeof(header->header.chksum));
+    bcopy(CHKBLANKS, header->header.chksum, sizeof(header->header.chksum));
 
-        sum = 0;
-        p = header->charptr;
-        for (i = sizeof(*header); --i >= 0;)
-        {
-
-                /*
-                 * We can't use unsigned char here because of old compilers, e.g. V7.
-                 */
-                sum += 0xFF & *p++;
-        }
-
+    sum = 0;
+    p = header->charptr;
+    for (i = sizeof(*header); --i >= 0;) {
         /*
-         * Fill in the checksum field.  It's formatted differently from the other
-         * fields:  it has [6] digits, a null, then a space -- rather than
-         * digits, a space, then a null. We use to_oct then write the null in
-         * over to_oct's space. The final space is already there, from
-         * checksumming, and to_oct doesn't modify it.
-         *
-         * This is a fast way to do: (void) sprintf(header->header.chksum, "%6o",
-         * sum);
-         */
-        to_oct((long) sum, 8, header->header.chksum);
-        header->header.chksum[6] = '\0';        /* Zap the space */
+        * We can't use unsigned char here because of old compilers, e.g. V7.
+        */
+        sum += 0xFF & *p++;
+    }
 
-        head = header;
-        if (f_verbose)
-                print_header(header->header.name);
+    /*
+    * Fill in the checksum field.  It's formatted differently from the other
+    * fields:  it has [6] digits, a null, then a space -- rather than
+    * digits, a space, then a null. We use to_oct then write the null in
+    * over to_oct's space. The final space is already there, from
+    * checksumming, and to_oct doesn't modify it.
+    *
+    * This is a fast way to do: (void) sprintf(header->header.chksum, "%6o",
+    * sum);
+    */
+    to_oct((long) sum, 8, header->header.chksum);
+    header->header.chksum[6] = '\0';        /* Zap the space */
 
-        userec(header);
-        return;
+    head = header;
+    if (f_verbose) {
+        print_header(header->header.name);
+    }
+    
+    userec(header);
+    return;
 }
 
 
@@ -685,26 +658,22 @@ register union record *header;
  *      (void) sprintf(where, "%*lo ", digs-2, value);
  * except that sprintf fills in the trailing null and we don't.
  */
-void
-to_oct(value, digs, where)
-register long   value;
-register int    digs;
-register char  *where;
+void to_oct( long value, int digs, char *where)
 {
 
-        --digs;                                         /* Trailing null slot is left alone */
-        where[--digs] = ' ';            /* Put in the space, though */
+    --digs;                                         /* Trailing null slot is left alone */
+    where[--digs] = ' ';            /* Put in the space, though */
 
-        /* Produce the digits -- at least one */
-        do
-        {
-                where[--digs] = '0' + (value & 7);              /* one octal digit */
-                value >>= 3;
-        } while (digs > 0 && value != 0);
+    /* Produce the digits -- at least one */
+    do {
+        where[--digs] = '0' + (value & 7);              /* one octal digit */
+        value >>= 3;
+    } while (digs > 0 && value != 0);
 
-        /* Leading spaces, if necessary */
-        while (digs > 0)
-                where[--digs] = ' ';
+    /* Leading spaces, if necessary */
+    while (digs > 0) {
+        where[--digs] = ' ';
+    }
 
 }
 

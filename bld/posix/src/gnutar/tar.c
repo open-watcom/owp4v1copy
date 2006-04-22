@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  A public domain tar(1) program.
 *
 ****************************************************************************/
 
@@ -55,9 +54,6 @@ FILE *fopen();
 char *fgets();
 #endif
 
-extern char    *optarg;                 /* Pointer to argument */
-extern int      optind;                 /* Global argv index from getopt */
-
 /*
  * The following causes "tar.h" to produce definitions of all the
  * global variables, rather than just "extern" declarations of them.
@@ -65,17 +61,17 @@ extern int      optind;                 /* Global argv index from getopt */
 #define TAR_EXTERN                              /**/
 #include "tar.h"
 #include "port.h"
+#include "list.h"
+#include "create.h"
+#include "extract.h"
+#include "buffer.h"
+#include "getopt.h"
 
 /*
  * We should use a conversion routine that does reasonable error
  * checking -- atoi doesn't.  For now, punt.  FIXME.
  */
 #define intconv atoi
-extern int      getoldopt();
-extern void     read_and();
-extern void     list_archive();
-extern void     extract_archive();
-extern void     create_archive();
 
 static FILE    *namef;                  /* File to read names from */
 static char   **n_argv;                 /* Argv used by name routines */
@@ -105,15 +101,13 @@ static char    *binexts[NBINEXTS] =             /* extensions for O_BINARY files
 
 #endif
 
-void            describe();
-
+static void name_init( int argc, char **argv );
+static void addbinext( char *s );
 
 /*
  * Main routine for tar.
  */
-int main(argc, argv)
-int             argc;
-char          **argv;
+int main( int argc, char **argv )
 {
 
         /*
@@ -130,8 +124,7 @@ char          **argv;
 #else /* !MSDOS */
         ftty = open("/dev/tty", 2);
 #endif /* !MSDOS */
-        if (ftty < 0)
-        {
+        if (ftty < 0) {
                 fprintf(stderr, "Can't open %s for I/O\n",
 #ifdef MSDOS
                 "console"
@@ -147,8 +140,7 @@ char          **argv;
         name_init(argc, argv);
 
 #if defined(MSDOS) && !defined(__NO_PHYS__)
-        if (f_phys)
-        {
+        if (f_phys) {
                 uprintf(ftty,"tar: archive on %dK drive %c\n",
                         devsize/2, 'A' +  physdrv);
                 uprintf(ftty,"tar: insert %s disk in drive '%c' and press [Enter]: ",
@@ -158,26 +150,17 @@ char          **argv;
         }
 #endif
 
-        if (f_create)
-        {
+        if (f_create) {
                 if (f_extract || f_list)
                         goto dupflags;
                 create_archive();
-        }
-        else
-        if (f_extract)
-        {
+        } else if (f_extract) {
                 if (f_list)
                         goto dupflags;
                 read_and(extract_archive);
-        }
-        else
-        if (f_list)
-        {
+        } else if (f_list) {
                 read_and(list_archive);
-        }
-        else
-        {
+        } else {
 dupflags:
                 fprintf(stderr,
                         "tar: you must specify exactly one of the c, t, or x options\n");
@@ -196,13 +179,9 @@ dupflags:
 /*
  * Parse the options for tar.
  */
-void
-options(argc, argv)
-int             argc;
-char          **argv;
+void options( int argc, char **argv )
 {
-        register int    c;                      /* Option letter */
-        void            addbinext();
+        int    c;                      /* Option letter */
 
         /* Set default option values */
         blocking = DEFBLOCKING;         /* From Makefile */
@@ -333,8 +312,7 @@ char          **argv;
 
 
 /* FIXME, describe tar options here */
-void
-describe()
+void describe( void )
 {
 
         fputs("tar: valid options:\n\
@@ -382,39 +360,28 @@ describe()
  *
  * They can either come from stdin or from argv.
  */
-void name_init(argc, argv)
-int             argc;
-char          **argv;
+static void name_init( int argc, char **argv )
 {
-
-        if (f_namefile)
-        {
-                if (optind < argc)
-                {
-                        fprintf(stderr, "tar: too many args with -T option\n");
-                        exit(EX_ARGSBAD);
-                }
-                if (!strcmp(name_file, "-"))
-                {
-                        namef = stdin;
-                }
-                else
-                {
-                        namef = fopen(name_file, "r");
-                        if (namef == NULL)
-                        {
-                                fprintf(stderr, "tar: ");
-                                perror(name_file);
-                                exit(EX_BADFILE);
-                        }
-                }
+    if (f_namefile) {
+        if (optind < argc) {
+            fprintf(stderr, "tar: too many args with -T option\n");
+            exit(EX_ARGSBAD);
         }
-        else
-        {
-                /* Get file names from argv, after options. */
-                n_argc = argc;
-                n_argv = argv;
+        if (!strcmp(name_file, "-")) {
+            namef = stdin;
+        } else {
+            namef = fopen(name_file, "r");
+            if (namef == NULL) {
+                fprintf(stderr, "tar: ");
+                perror(name_file);
+                exit(EX_BADFILE);
+            }
         }
+    } else {
+        /* Get file names from argv, after options. */
+        n_argc = argc;
+        n_argv = argv;
+    }
 }
 
 /*
@@ -456,14 +423,12 @@ char          **argv;
  * FIXME: This code is embarassingly complex and needs to be rewritten.
  */
 
-char           *
-fixname(s)
-char           *s;
+char* fixname( char *s )
 {
-        register char  *q;
-        char           *prd;
-        char           *lsl;
-        int             name_cnt;
+        char  *q;
+        char  *prd;
+        char  *lsl;
+        int   name_cnt;
         static char     buf[256];       /* where the copy of the name is stored */
 
 #ifdef MSDOS
@@ -581,7 +546,7 @@ char           *s;
  * least this is a head start, I hope...
  */
 
-int convmode(char * s)
+int convmode( char * s )
 {
         char          **p;
 
@@ -619,11 +584,9 @@ int convmode(char * s)
  * won't get O_BINARY translation (see convmode(), above)
  */
 
-void
-addbinext(s)
-char           *s;
+static void addbinext( char *s )
 {
-        register char **exts;
+        char **exts;
         int             n;
 
         for (exts = binexts, n = 0; *exts; exts++, n++);        /* find end */
@@ -651,12 +614,11 @@ char           *s;
  *
  * Result is in static storage and can't be relied upon across two calls.
  */
-char           *
-name_next()
+char *name_next( void )
 {
         static char     buffer[NAMSIZ + 2];     /* Holding pattern */
-        register char  *p;
-        register char  *q;
+        char  *p;
+        char  *q;
 
         if (namef == NULL)
         {
@@ -680,8 +642,9 @@ name_next()
 
 /*
  * Close the name file, if any.
+ * BartoszP: used only in create.c
  */
-void name_close(void)
+void name_close( void )
 {
 
         if (namef != NULL && namef != stdin)
@@ -700,9 +663,9 @@ void name_close(void)
  * This option lets users of small machines extract an arbitrary
  * number of files by doing "tar t" and editing down the list of files.
  */
-void name_gather()
+void name_gather( void )
 {
-        register char  *p;
+        char  *p;
         static struct name namebuff[1];         /* One-name buffer */
         struct name *namebuf = namebuff;
 
@@ -738,11 +701,10 @@ void name_gather()
 /*
  * Add a name to the namelist.
  */
-void addname(name)
-char           *name;                   /* pointer to name */
+static void addname( char *name )
 {
-        register int    i;                      /* Length of string */
-        register struct name *p;        /* Current struct pointer */
+        int    i;                      /* Length of string */
+        struct name *p;        /* Current struct pointer */
 
         i = strlen(name);
         /* NOSTRICT */
@@ -766,10 +728,10 @@ char           *name;                   /* pointer to name */
  *
  * FIXME: Allow regular expressions in the name list.
  */
-int name_match(register char *p)
+int name_match( char *p )
 {
-        register struct name *nlp;
-        register int    len;
+        struct name *nlp;
+        int    len;
 
 again:
         if (0 == (nlp = namelist))      /* Empty namelist is easy */
@@ -807,10 +769,10 @@ again:
 /*
  * Print the names of things in the namelist that were not matched.
  */
-void names_notfound(void)
+void names_notfound( void )
 {
-        register struct name *nlp;
-        register char  *p;
+        struct name *nlp;
+        char  *p;
 
         for (nlp = namelist; nlp != 0; nlp = nlp->next)
         {

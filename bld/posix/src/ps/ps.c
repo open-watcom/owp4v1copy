@@ -79,7 +79,7 @@ struct device {
     char                name[8];
 };
 
-extern void far *__first_pid();
+void far *__first_pid( void );
 #ifdef __386__
 #pragma aux __first_pid = \
                            "xor ebx,ebx" \

@@ -59,7 +59,6 @@
 #define PREAD   0                               /* Read  file descriptor from pipe() */
 #define PWRITE  1                               /* Write file descriptor from pipe() */
 
-extern char    *valloc();
 
 /*
  * V7 doesn't have a #define for this.
@@ -104,16 +103,14 @@ static int      r_error_count;
 /*
  * Return the location of the next available input or output record.
  */
-union record   *
-findrec()
+union record   *findrec( void )
 {
+    if (ar_record == ar_last) {
+        flush_archive();
         if (ar_record == ar_last)
-        {
-                flush_archive();
-                if (ar_record == ar_last)
-                        return (union record *) NULL;           /* EOF */
-        }
-        return ar_record;
+            return (union record *) NULL;           /* EOF */
+    }
+    return ar_record;
 }
 
 
@@ -121,20 +118,19 @@ findrec()
  * Indicate that we have used all records up thru the argument.
  * (should the arg have an off-by-1? XXX FIXME)
  */
-void
-userec(rec)
-union record   *rec;
+void userec( union record   *rec )
 {
-        while (rec >= ar_record)
-                ar_record++;
+    while (rec >= ar_record) {
+        ar_record++;
+    }
 
-        /*
-         * Do NOT flush the archive here.  If we do, the same argument to
-         * userec() could mean the next record (if the input block is exactly one
-         * record long), which is not what is intended.
-         */
-        if (ar_record > ar_last)
-                abort();
+    /*
+     * Do NOT flush the archive here.  If we do, the same argument to
+     * userec() could mean the next record (if the input block is exactly one
+     * record long), which is not what is intended.
+     */
+    if (ar_record > ar_last)
+        abort();
 }
 
 
@@ -143,10 +139,9 @@ union record   *rec;
  * All the space between findrec() and endofrecs() is available
  * for filling with data, or taking data from.
  */
-union record   *
-endofrecs()
+union record   *endofrecs( void )
 {
-        return ar_last;
+    return ar_last;
 }
 
 
@@ -159,7 +154,7 @@ endofrecs()
  * as binary or ASCII, but we always write the archive without making
  * any translations from what this program saw when it did the write.
  */
-void open_archive(int read)
+void open_archive( int read )
 {
 
         if (ar_file[0] == '-' && ar_file[1] == '\0')
@@ -377,10 +372,9 @@ rewrite:
  *
  * If the read should be retried, readerror() returns to the caller.
  */
-void
-readerror()
+void readerror( void )
 {
-#       define  READ_ERROR_MAX  10
+#define READ_ERROR_MAX  10
 
         read_error_flag++;                      /* Tell callers */
 
@@ -618,11 +612,7 @@ static int      qqobjfixups[] = /* do not delete */
  * If the third argument is 1, the "saved" record # is used; if 0, the
  * "current" record # is used.
  */
-void
-anno(stream, prefix, savedp)
-FILE           *stream;
-char           *prefix;
-int             savedp;
+void anno( FILE *stream, char *prefix, int savedp )
 {
 #       define  MAXANNO 50
         char            buffer[MAXANNO];        /* Holds annorecment */

@@ -31,10 +31,13 @@
 #ifndef _BUFFER_H_E26634FC_AA8D_4160_A1C7_FD5A689FB8F0
 #define _BUFFER_H_E26634FC_AA8D_4160_A1C7_FD5A689FB8F0
 
-void open_archive(int read);
-void close_archive(void);
-void saverec(union record  **pointer);
+extern void    open_archive( int read );
+extern void    close_archive( void );
+extern void    saverec( union record  **pointer );
+extern void    anno( FILE *stream, char *prefix, int savedp );
+extern void    userec( union record   *rec );
 
-
+extern union record    *endofrecs( void );
+extern union record    *findrec( void );
 
 #endif /* _BUFFER_H_E26634FC_AA8D_4160_A1C7_FD5A689FB8F0 */
