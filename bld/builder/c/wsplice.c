@@ -151,28 +151,28 @@ struct ipathlst {                       // define ipathlst
 };
 
 // LOCAL ROUTINES
-local void      ProcessSource();                // - process source file
-local void      ProcessTarget();                // - produce target file
-local void      SegmentCheck();                 // - check if a seg section should be output
-local SEGMENT   *ScanSegment();                 // - scan a new segment
-local void      AddText();                      // - add text to a ring
-local TEXTENT   *AddTextEntry();                // - add text entry
-local void      CmdAdd();                       // - execute or add a command
-local void      CmdExecute();                   // - execute a command
-local FILE      *OpenFileTruncate();            // - open a file, truncate if necessary
-local void      OpenFile();                     // - open a file
-local void      CloseFile();                    // - close a file
-local unsigned  ReadInput();                    // - read input record
-local SEGMENT   *SegmentLookUp();               // - look up a segment
-local SEGSTK    *PushSegStack();                // - push the segment stack
-local void      PopSegStack();                  // - pop the segment stack
-local void      Error( char*, ... );            // - write an error
-local int       ScanString();                   // - scan a string
-local void      *GetMem();                      // - get a block of memory
-local unsigned  RecordInitialize();             // - initialize for record processing
-local void      OutputString();                 // - send string to output file
-local void      PutNL();                        // - output a newline
-local void      AddIncludePathList();           // - add to list of include paths
+local void ProcessSource( char *src_file );           // - process source file
+local void      ProcessTarget( void );                // - produce target file
+local void      SegmentCheck( void );                 // - check if a seg section should be output
+local SEGMENT   *ScanSegment( void );                 // - scan a new segment
+local void      AddText( void );                      // - add text to a ring
+local TEXTENT   *AddTextEntry( void );                // - add text entry
+local void      CmdAdd( void );                       // - execute or add a command
+local void      CmdExecute( void );                   // - execute a command
+local FILE      *OpenFileTruncate( char *, char * ); // - open a file, truncate if necessary
+local void      OpenFile( char *, char * );         // - open a file
+local void      CloseFile( void );                    // - close a file
+local unsigned  ReadInput( void );                   // - read input record
+local SEGMENT   *SegmentLookUp( char *seg_name );    // - look up a segment
+local SEGSTK    *PushSegStack( void );               // - push the segment stack
+local void      PopSegStack( void );                 // - pop the segment stack
+local void      Error( char*, ... );                // - write an error
+local int       ScanString( void );                   // - scan a string
+local void      *GetMem( unsigned size );            // - get a block of memory
+local unsigned  RecordInitialize( char *record );    // - initialize for record processing
+local void      OutputString( char *p, char *record );// - send string to output file
+local void      PutNL( void );                        // - output a newline
+local void      AddIncludePathList( char *path );     // - add to list of include paths
 local void      ProcessRecord( int, char * );   // - PROCESS A RECORD OF INPUT
 local void      EatWhite( void );               // - eat white space
 local int       Expr( void );
@@ -410,9 +410,8 @@ int main(               // MAIN-LINE
 #undef tgt_file
 }
 
-
-local void ProcessSource( // PROCESS SOURCE FILE
-    char *src_file )// - starting file
+// PROCESS SOURCE FILE
+local void ProcessSource( char *src_file ) // - starting file
 {
     int kw;     // - current key-word
 
@@ -557,7 +556,7 @@ local void OutputString( char *p, char *record )
     }
 }
 
-local void PutNL()
+local void PutNL( void )
 {
 #if !defined( __UNIX__ )
     if( !UnixStyle )
@@ -576,7 +575,7 @@ local int GetToken( int op )
     }
 }
 
-local int PrimaryExpr()
+local int PrimaryExpr( void )
 {
     SEGMENT     *new;           // - new segment
     int         ret;
@@ -599,7 +598,7 @@ local int PrimaryExpr()
     return( ret );
 }
 
-local int NotExpr()
+local int NotExpr( void )
 {
     if( GetToken( OP_NOT ) ) {
         return( !PrimaryExpr() );
@@ -608,7 +607,7 @@ local int NotExpr()
     }
 }
 
-local int AndExpr()
+local int AndExpr( void )
 {
     int ret;
 
@@ -619,7 +618,7 @@ local int AndExpr()
     return( ret );
 }
 
-local int Expr()
+local int Expr( void )
 {
     int ret;
 
@@ -630,7 +629,8 @@ local int Expr()
     return( ret );
 }
 
-local void SegmentCheck()// See if a segment section should be output
+// See if a segment section should be output
+local void SegmentCheck( void )
 {
     ScanString();       // Get next token ready
     if( Expr() ) {
@@ -661,7 +661,7 @@ local SEGSTK *PushSegStack()// PUSH THE SEGMENT STACK
 
 
 
-local void PopSegStack()// POP SEGMENTS STACK
+local void PopSegStack( void )// POP SEGMENTS STACK
 {
     SEGSTK      *top;           // - top entry on stack
 
@@ -676,7 +676,7 @@ local void PopSegStack()// POP SEGMENTS STACK
 }
 
 
-local SEGMENT *ScanSegment()// SCAN A SEGMENT
+local SEGMENT *ScanSegment( void )// SCAN A SEGMENT
 {
     SEGMENT     *new;           // - new segment
 
@@ -689,9 +689,8 @@ local SEGMENT *ScanSegment()// SCAN A SEGMENT
     return( new );
 }
 
-
-local SEGMENT *SegmentLookUp( // LOOK UP A SEGMENT
-        char *seg_name )// - name of segment to be found
+// LOOK UP A SEGMENT
+local SEGMENT *SegmentLookUp( char *seg_name )
 {
     SEGMENT     *sptr;          // - points to current segment
     unsigned    size;           // - size of name
@@ -717,8 +716,8 @@ local SEGMENT *SegmentLookUp( // LOOK UP A SEGMENT
 }
 
 
-local void AddIncludePathList( // ADD TO PATH LIST
-    char *path )// - path to add
+// ADD TO PATH LIST
+local void AddIncludePathList( char *path )
 {
     IPATHLST    *lptr;          // - point to new path entry
     IPATHLST    *p;             // - point to list
@@ -749,8 +748,8 @@ local void AddIncludePathList( // ADD TO PATH LIST
     }
 }
 
-
-local FILE *OpenFileTruncate( //OPEN FILE, TRUNCATE NAME IF NECESSARY
+//OPEN FILE, TRUNCATE NAME IF NECESSARY
+local FILE *OpenFileTruncate( 
     char *file_name, // - file to be opened
     char *mode )// - file mode
 {
@@ -802,7 +801,8 @@ local FILE *OpenFilePathList( //OPEN FILE, TRY EACH LOCATION IN PATH LIST
 }
 
 
-local void OpenFile( // OPEN FILE
+// OPEN FILE
+local void OpenFile( 
     char *file_name, // - file to be opened
     char *mode )// - file mode
 {
@@ -827,8 +827,8 @@ local void OpenFile( // OPEN FILE
     }
 }
 
-
-local void CloseFile()// CLOSE CURRENT FILE
+// CLOSE CURRENT FILE
+local void CloseFile( void )
 {
     FILESTK     *stk;           // - file stack
 
@@ -843,8 +843,8 @@ local void CloseFile()// CLOSE CURRENT FILE
     free( stk );
 }
 
-
-local unsigned ReadInput()// READ A RECORD
+// READ A RECORD
+local unsigned ReadInput( void )
 {
     unsigned    retn;           // - return: type of record
 
@@ -858,9 +858,8 @@ local unsigned ReadInput()// READ A RECORD
     return( retn );
 }
 
-
-local unsigned RecordInitialize( // INITIALIZE TO PROCESS RECORD
-    char *record )// - record
+// INITIALIZE TO PROCESS RECORD
+local unsigned RecordInitialize( char *record )
 {
     KW  *pkw;           // - ptr. into KW table
 
@@ -887,7 +886,7 @@ local unsigned RecordInitialize( // INITIALIZE TO PROCESS RECORD
 }
 
 
-local void EatWhite()
+local void EatWhite( void )
 {
     while( isspace( *Rptr ) )
         ++Rptr;
@@ -905,7 +904,8 @@ local int IsOper( char ch )
     return( FALSE );
 }
 
-local int ScanString()// SCAN A STRING
+// SCAN A STRING
+local int ScanString( void )
 {
     char        *eptr;          // - end-of-string ptr.
     char        *cptr;          // - points into string
@@ -967,9 +967,8 @@ local void Error( // ERROR MESSAGE
     ++ErrCount;
 }
 
-
-local void *GetMem( // GET MEMORY BLOCK
-    unsigned size )// - size
+// GET MEMORY BLOCK
+local void *GetMem( unsigned size )
 {
     void        *block;                         // - new memory
     static int  FirstMemoryError = { TRUE };    // - indicates first "out of memory" error

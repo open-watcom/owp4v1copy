@@ -337,7 +337,7 @@ static char *RelativePath( char *oldpath, char *newpath )
 
 #define MAX_EVAL_DEPTH  64
 
-static int TrueTarget()
+static int TrueTarget( void )
 {
     target_list *curr;
     char        eval_stk[MAX_EVAL_DEPTH];
@@ -495,7 +495,7 @@ static char *GetString( void )
     return( new );
 }
 
-static void SortDirectories()
+static void SortDirectories( void )
 {
     pmake_list  **dir_array;
     pmake_list  *curr;
@@ -529,7 +529,7 @@ static void SortDirectories()
     }
 }
 
-static void DoIt()
+static void DoIt( void )
 {
     target_list **owner;
     target_list *curr;

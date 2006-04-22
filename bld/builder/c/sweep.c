@@ -102,7 +102,7 @@ dirstack        *Stack = NULL;
 int             DoneFlag = 0;
 
 
-void SetDoneFlag()
+void SetDoneFlag( int dummy )
 {
     DoneFlag = 1;
 }
@@ -113,7 +113,7 @@ void *SafeMalloc( size_t n )
     void *p = malloc( n );
     if( p == NULL ) {
         puts( "Out of memory!" );
-        SetDoneFlag();
+        SetDoneFlag( 17 /* dummy - could be any value */  );
     }
     return( p );
 }
@@ -121,7 +121,7 @@ void *SafeMalloc( size_t n )
 
 static char     CurrPathBuff[_MAX_PATH + 2];
 
-char *CurrPath()
+char *CurrPath( void )
 {
     char        *p;
     dirstack    *stack;
@@ -313,7 +313,7 @@ void SubstituteAndRun( char *fname )
 }
 
 
-void ExecuteCommands()
+void ExecuteCommands( void )
 {
     DIR                 *dirh;
     struct dirent       *dp;
@@ -350,7 +350,7 @@ void ExecuteCommands()
 }
 
 
-void ProcessCurrentDirectory()
+void ProcessCurrentDirectory( void )
 {
     DIR                 *dirh;
     struct dirent       *dp;
@@ -407,7 +407,7 @@ void ProcessCurrentDirectory()
 }
 
 
-void PrintHelp()
+void PrintHelp( void )
 {
     int i;
 

@@ -235,7 +235,7 @@ static void PushInclude( const char *name )
     getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
 }
 
-static bool PopInclude()
+static bool PopInclude( void )
 {
     include     *curr;
 

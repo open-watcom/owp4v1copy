@@ -79,7 +79,7 @@ void LogStream( bool quiet, const char *str, size_t len )
     }
 }
 
-void LogFlush()
+void LogFlush( void )
 {
     fflush( stderr );
     if( LogFile != NULL )
@@ -99,7 +99,7 @@ void OpenLog( const char *name )
     setvbuf( LogFile, NULL, _IOLBF, BUFSIZ );
 }
 
-void CloseLog()
+void CloseLog( void )
 {
     LogFlush();
     if( LogFile != NULL ) {

@@ -101,7 +101,7 @@ static char **getvalue( char **argv, char *buff )
     return( argv );
 }
 
-static void Usage()
+static void Usage( void )
 {
     printf( "Usage: langdat [-c <ctl_file>]* [-l <log_file>] [-v] [-u] [-q] <product>\n" );
     exit( 0 );
@@ -187,7 +187,7 @@ static void PushInclude( const char *name )
     getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
 }
 
-static bool PopInclude()
+static bool PopInclude( void )
 {
     include     *curr;
 
