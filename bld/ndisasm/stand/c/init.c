@@ -58,8 +58,8 @@
 #include "formasm.h"
 
 
-typedef struct recognized_struct {
-    char *              name;
+struct recognized_struct {
+    char                *name;
     section_type        type;
 };
 

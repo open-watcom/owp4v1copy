@@ -202,7 +202,7 @@ void HandleArgs( char *cmd )
     DFormat |= DFF_PSEUDO | DFF_SYMBOLIC_REG;
     cmd = skipBlanks( cmd );
     if( *cmd == '\0' || *cmd == '?' ) {
-        printUsage( NULL );
+        printUsage( 0 );
     } else {
         while( *cmd ) {
             if( IS_OPT_DELIM( *cmd ) ) {
@@ -303,7 +303,7 @@ void HandleArgs( char *cmd )
                         BufferMsg( INVALID_OPTION );
                         BufferStore( "  -%c\n\n", *cmd );
                         BufferPrint();
-                        printUsage( NULL );
+                        printUsage( 0 );
                         break;
                 }
             } else {

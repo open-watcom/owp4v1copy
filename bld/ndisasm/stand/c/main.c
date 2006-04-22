@@ -253,7 +253,7 @@ static void printMasmHeader( section_ptr sec )
     char                *gname;
     char                *astr;
     orl_sec_handle      sh;
-    orl_group_handle    grp;
+    orl_group_handle    grp = NULL;
     char                comname[ MAX_LINE_LEN ];
 
     size = ORLSecGetSize( sec->shnd );
