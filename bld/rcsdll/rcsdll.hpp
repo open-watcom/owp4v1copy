@@ -31,9 +31,6 @@
 
 #include "rcsapi.h"
 
-#define WPROJ           7
-#define MAX_RCS_TYPE    7
-
 #define RCS_CFG "rcs.cfg"
 #define RCS_SECTION "rcs settings"
 #define RCS_KEY "rcs settings"

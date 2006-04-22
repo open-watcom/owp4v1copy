@@ -51,6 +51,7 @@
 #define IDM_SET_GENERIC 117
 #define IDM_TEST_MSG    118
 #define IDM_QUERY_SYS   119
+#define IDM_SET_PERFORCE 120
 
 int PASCAL WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
 BOOL InitApplication(HANDLE);

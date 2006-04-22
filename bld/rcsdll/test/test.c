@@ -59,7 +59,21 @@
 #include <malloc.h>
 #include "test.h"
 #include "rcsapi.h"
-#define WPROJ 5
+
+/* common functions */
+extern RCSGetVersionFn  RCSGetVersion;
+extern RCSSetSystemFn   RCSSetSystem;
+extern RCSQuerySystemFn RCSQuerySystem;
+extern RCSRegBatchCbFn  RCSRegisterBatchCallback;
+extern RCSRegMsgBoxCbFn RCSRegisterMessageBoxCallback;
+/* system specific functions -- mapped to function for appropriate system */
+extern RCSInitFn        RCSInit;
+extern RCSCheckoutFn    RCSCheckout;
+extern RCSCheckinFn     RCSCheckin;
+extern RCSHasShellFn    RCSHasShell;
+extern RCSRunShellFn    RCSRunShell;
+extern RCSFiniFn        RCSFini;
+extern RCSSetPauseFn    RCSSetPause;
 
 HINSTANCE hInst;
 
@@ -257,6 +271,14 @@ long WINAPI MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 SetWindowText( hwnd, "error setting RCS system" );
             }
             break;
+        case IDM_SET_PERFORCE:
+            RCSSetSystem( Cookie, PERFORCE );
+            if( RCSQuerySystem( Cookie ) == PERFORCE ) {
+                SetWindowText( hwnd, "Perforce" );
+            } else {
+                SetWindowText( hwnd, "error setting RCS system" );
+            }
+            break;
         case IDM_QUERY_SYS:
             switch( RCSQuerySystem( Cookie ) ) {
                 case NO_RCS: SetWindowText( hwnd, "none" ); break;
@@ -265,6 +287,7 @@ long WINAPI MainWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 case PVCS: SetWindowText( hwnd, "pvcs" ); break;
                 case GENERIC: SetWindowText( hwnd, "GENERIC" ); break;
                 case WPROJ: SetWindowText( hwnd, "wproj" ); break;
+                case PERFORCE: SetWindowText( hwnd, "Perforce" ); break;
             }
             break;
         case IDM_EXIT:

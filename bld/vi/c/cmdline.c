@@ -52,13 +52,10 @@
 #endif
 #include "sstyle.h"
 #include "fts.h"
-#include "rcs.h"
-#if !defined( __WINDOWS__ ) && !defined( __NT__ ) && !defined( __OS2__ )
-    #include "rcsapi.h"
-#endif
+#include "rcscli.h"
 
 #if defined( __WINDOWS__ ) && defined( VI_RCS )
-static bool isOS2()
+static bool isOS2( void )
 {
     union {
         DWORD dVersion;
@@ -121,25 +118,25 @@ static int doProcessCommandLine( bool is_fancy )
         return( ERR_NO_MEMORY );
     }
     is_fancy = is_fancy;
-    #ifdef __WIN__
-        if( is_fancy ) {
-            if( !GetCmdDialog( st, MaxLine ) ) {
-                MemFree( st );
+#ifdef __WIN__
+    if( is_fancy ) {
+        if( !GetCmdDialog( st, MaxLine ) ) {
+            MemFree( st );
+            return( ERR_NO_ERR );
+        }
+    } else {
+#endif
+        rc = PromptForString( ":", st, MaxLine, &CLHist );
+        if( rc ) {
+            MemFree( st );
+            if( rc == NO_VALUE_ENTERED ) {
                 return( ERR_NO_ERR );
             }
-        } else {
-    #endif
-            rc = PromptForString( ":", st, MaxLine, &CLHist );
-            if( rc ) {
-                MemFree( st );
-                if( rc == NO_VALUE_ENTERED ) {
-                    return( ERR_NO_ERR );
-                }
-                return( rc );
-            }
-    #ifdef __WIN__
+            return( rc );
         }
-    #endif
+#ifdef __WIN__
+    }
+#endif
     CommandBuffer = st;
     rc = SourceHook( SRC_HOOK_COMMAND, ERR_NO_ERR );
     if( !rc ) {
@@ -455,13 +452,13 @@ int RunCommandLine( char *cl )
         }
 
     case PCL_T_GENCONFIG:
-    #ifndef __WIN__
+#ifndef __WIN__
         if( NextWord1( dataBuff,st ) >= 0 ) {
             rc = GenerateConfiguration( st, TRUE );
         } else {
             rc = GenerateConfiguration( NULL, TRUE );
         }
-    #else
+#else
         {
             int temp = EditFlags.SaveConfig;
             EditFlags.SaveConfig = TRUE;
@@ -469,7 +466,7 @@ int RunCommandLine( char *cl )
             EditFlags.SaveConfig = temp;
             rc=ERR_NO_ERR;
         }
-    #endif
+#endif
         break;
 
     case PCL_T_COMPRESS:
@@ -617,16 +614,16 @@ int RunCommandLine( char *cl )
             }
         } else {
             if( NextWord1( dataBuff, st ) >= 0 ) {
-                #ifdef __WIN__
-                    if( st[ 0 ] == '?' && st[ 1 ] == '\0' ) {
-                        rc = SaveFileAs();
-                        break;
-                    } else {
-                        rc = SaveFile( st, -1, -1, dmt );
-                    }
-                #else
+#ifdef __WIN__
+                if( st[ 0 ] == '?' && st[ 1 ] == '\0' ) {
+                    rc = SaveFileAs();
+                    break;
+                } else {
                     rc = SaveFile( st, -1, -1, dmt );
-                #endif
+                }
+#else
+                rc = SaveFile( st, -1, -1, dmt );
+#endif
             } else {
                 rc = SaveFile( NULL, -1, -1, dmt );
                 if( !rc ) {
@@ -644,11 +641,11 @@ int RunCommandLine( char *cl )
         if( dmt ) {
             rc = NextFileDammit();
         } else {
-            #ifdef __WIN__
-                rc = CurFileExitOptionSaveChanges();
-            #else
-                rc = NextFile();
-            #endif
+#ifdef __WIN__
+            rc = CurFileExitOptionSaveChanges();
+#else
+            rc = NextFile();
+#endif
         }
         break;
 
@@ -672,14 +669,14 @@ int RunCommandLine( char *cl )
     case PCL_T_SHELL:
     EVIL_SHELL:
         {
-            #if defined( __NT__ ) && !defined( __WIN__ )
+#if defined( __NT__ ) && !defined( __WIN__ )
             ExecCmd( NULL, NULL, NULL );
-            #else
+#else
             char foo[FILENAME_MAX];
 
             strcpy( foo, Comspec );
             ExecCmd( NULL, NULL, foo );
-            #endif
+#endif
             DoVersion();
             rc = ERR_NO_ERR;
         }
@@ -767,7 +764,7 @@ int RunCommandLine( char *cl )
                 } else if( dataBuff[1] == 'f' ) {
                     EliminateFirstN( dataBuff, 2 );
                     RemoveLeadingSpaces( dataBuff );
-                    #ifdef __WIN__
+#ifdef __WIN__
                     // call fancy grep window
                     {
                         fancy_find      *ff;
@@ -796,7 +793,7 @@ int RunCommandLine( char *cl )
                         }
                         break;
                     }
-                    #endif
+#endif
                 }
             } else {
                 rc = GetStringWithPossibleQuote( dataBuff, st );
@@ -879,9 +876,9 @@ int RunCommandLine( char *cl )
 #ifdef VI_RCS
     case PCL_T_CHECKOUT:
         rc = ERR_NO_ERR;
-        #ifdef __WINDOWS__
-            if( isOS2() ) break; // OS/2 shell returns before checkout finishes
-        #endif
+  #ifdef __WINDOWS__
+        if( isOS2() ) break; // OS/2 shell returns before checkout finishes
+  #endif
         if( CurrentFile == NULL ) break;
         if( RCSInit == NULL || RCSRegisterBatchCallback == NULL ||
             RCSSetPause == NULL || RCSCheckout == NULL || RCSFini == NULL ) {
@@ -890,24 +887,24 @@ int RunCommandLine( char *cl )
             linenum row;
             int col;
             rcsdata r;
-            #ifdef __WIN__
+  #ifdef __WIN__
             FARPROC fp;
             r = RCSInit( (unsigned long)Root, getenv( "WATCOM" ) );
             fp = MakeProcInstance( (FARPROC)(&Batcher), InstanceHandle );
             RCSRegisterBatchCallback( r, (BatchCallbackFP)fp, NULL );
-            #else
+  #else
             r = RCSInit( NULL, getenv( "WATCOM" ) );
             RCSRegisterBatchCallback( r, (BatchCallbackFP)&Batcher, NULL );
-            #endif
+  #endif
             if( RCSQuerySystem( r ) != 0 ) {
                 if( GenericQueryBool( "File is read only, check out?" ) ) {
                     char full1[FILENAME_MAX];
-                    #ifdef __WINDOWS__
-                        void WinGetFullPath( char *filename, char *full );
-                        WinGetFullPath( CurrentFile->name, full1 );
-                    #else
-                        DosGetFullPath( CurrentFile->name, full1 );
-                    #endif
+  #ifdef __WINDOWS__
+                    void WinGetFullPath( char *filename, char *full );
+                    WinGetFullPath( CurrentFile->name, full1 );
+  #else
+                    DosGetFullPath( CurrentFile->name, full1 );
+  #endif
                     RCSSetPause( r, TRUE );
                     if( RCSCheckout( r, full1, NULL, NULL ) ) {
                         strcpy( dataBuff, CurrentFile->name );
@@ -920,9 +917,9 @@ int RunCommandLine( char *cl )
                     }
                 }
             }
-            #ifdef __WIN__
+  #ifdef __WIN__
             FreeProcInstance( (FARPROC) fp );
-            #endif
+  #endif
             RCSFini( r );
 
             break;
@@ -937,15 +934,15 @@ int RunCommandLine( char *cl )
         int col;
         rcsdata r;
 
-        #ifdef __WIN__
+  #ifdef __WIN__
         FARPROC fp;
         r = RCSInit( (unsigned long)Root, getenv( "WATCOM" ) );
         fp = MakeProcInstance( (FARPROC)(&Batcher), InstanceHandle );
         RCSRegisterBatchCallback( r, (BatchCallbackFP)fp, NULL );
-        #else
+  #else
         r = RCSInit( NULL, getenv( "WATCOM" ) );
         RCSRegisterBatchCallback( r, (BatchCallbackFP)&Batcher, NULL );
-        #endif
+  #endif
         RCSSetPause( r, TRUE );
         if( CurrentFile->modified ) {
             FilePromptForSaveChanges( CurrentFile );
@@ -959,9 +956,9 @@ int RunCommandLine( char *cl )
             GoToLineNoRelCurs( row );
             GoToColumnOnCurrentLine( col );
         }
-        #ifdef __WIN__
+  #ifdef __WIN__
         FreeProcInstance( (FARPROC) fp );
-        #endif
+  #endif
         RCSFini( r );
         break;
         }

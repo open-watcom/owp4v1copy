@@ -35,18 +35,31 @@
 extern "C" {
 #endif
 
+#if defined( _RCSDLL_ )
+    #define RCSDLLEXPORT    __export
+#else
+    #define RCSDLLEXPORT
+#endif
+
 #if defined( __NT__ )
+    #include <windows.h>
     typedef const char *rcsstring;
     typedef void *rcsdata;
-    #define RCSAPI      __export WINAPI
+    #define RCSAPI  RCSDLLEXPORT WINAPI
 #elif defined( __WINDOWS__ )
+    #include <windows.h>
     typedef const char far *rcsstring;
     typedef void far *rcsdata;
-    #define RCSAPI      __export WINAPI
+    #define RCSAPI  RCSDLLEXPORT WINAPI
 #elif defined( __OS2__ )
+    #include <os2.h>
     typedef const char *rcsstring;
     typedef void *rcsdata;
-    #define RCSAPI      __export _syscall
+  #if !defined( __WATCOMC__ )
+    #define RCSAPI
+  #else
+    #define RCSAPI  RCSDLLEXPORT APIENTRY
+  #endif
 #elif defined( __DOS__ )
     typedef const char *rcsstring;
     typedef void *rcsdata;
@@ -60,26 +73,22 @@ extern "C" {
     #define RCSAPI
 #endif
 
-typedef int RCSAPI ( *BatchCallbackFP )( rcsstring str, void *cookie );
-typedef int RCSAPI ( *MessageBoxCallbackFP )( rcsstring text, rcsstring title, char *buffer, int len, void *cookie );
 
+typedef int RCSAPI (*BatchCallbackFP)( rcsstring str, void *cookie );
+typedef int RCSAPI (*MessageBoxCallbackFP)( rcsstring text, rcsstring title, char *buffer, int len, void *cookie );
 
-// this file should be identical for all app implementations
-
-/* common functions */
-int RCSAPI RCSGetVersion( void );
-int RCSAPI RCSSetSystem( rcsdata, int );
-int RCSAPI RCSQuerySystem( rcsdata );
-int RCSAPI RCSRegisterBatchCallback( rcsdata, BatchCallbackFP, void * );
-int RCSAPI RCSRegisterMessageBoxCallback( rcsdata, MessageBoxCallbackFP, void* );
-/* system specific functions -- mapped to function for appropriate system */
-rcsdata RCSAPI RCSInit( unsigned long window, char *cfg_dir );
-int RCSAPI RCSCheckout( rcsdata, rcsstring name, rcsstring pj, rcsstring tgt );
-int RCSAPI RCSCheckin( rcsdata, rcsstring name, rcsstring pj, rcsstring tgt );
-int RCSAPI RCSHasShell( rcsdata );
-int RCSAPI RCSRunShell( rcsdata );
-void RCSAPI RCSFini( rcsdata );
-void RCSAPI RCSSetPause( rcsdata, int );
+typedef int RCSAPI      RCSGetVersionFn( void );
+typedef rcsdata RCSAPI  RCSInitFn( unsigned long, char *cfg_dir );
+typedef int RCSAPI      RCSCheckoutFn( rcsdata, rcsstring, rcsstring, rcsstring );
+typedef int RCSAPI      RCSCheckinFn( rcsdata, rcsstring, rcsstring, rcsstring );
+typedef int RCSAPI      RCSHasShellFn( rcsdata );
+typedef int RCSAPI      RCSRunShellFn( rcsdata );
+typedef int RCSAPI      RCSSetSystemFn( rcsdata, int );
+typedef int RCSAPI      RCSQuerySystemFn( rcsdata );
+typedef int RCSAPI      RCSRegBatchCbFn( rcsdata, BatchCallbackFP, void * );
+typedef int RCSAPI      RCSRegMsgBoxCbFn( rcsdata, MessageBoxCallbackFP, void * );
+typedef void RCSAPI     RCSSetPauseFn( rcsdata, int );
+typedef void RCSAPI     RCSFiniFn( rcsdata );
 
 /* parms to RCSSetSystem, retvals from RCSQuerySystem */
 #define NO_RCS   0
@@ -89,8 +98,10 @@ void RCSAPI RCSSetPause( rcsdata, int );
 #define GENERIC  4
 #define O_CYCLE  5
 #define PERFORCE 6
+#define WPROJ    7
+#define MAX_RCS_TYPE    7
 
-#define RCS_DLL_VER             1
+#define RCS_DLL_VER     1
 #ifdef __cplusplus
 };
 #endif

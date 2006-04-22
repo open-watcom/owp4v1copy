@@ -357,7 +357,9 @@ static void doInitializeEditor( int argc, char *argv[] )
     GetSpinStart();
     SelRgnInit();
     SSInitAfterConfig();
+#if defined( VI_RCS )
     ViRCSInit();
+#endif
 
     /*
      * create windows

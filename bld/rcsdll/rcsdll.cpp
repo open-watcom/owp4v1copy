@@ -55,6 +55,22 @@ genericRcs      Generic;
 p4System        Perforce;
 wprojRcs        Wproj;
 
+extern "C" {
+/* common functions */
+extern RCSGetVersionFn  RCSGetVersion;
+extern RCSSetSystemFn   RCSSetSystem;
+extern RCSQuerySystemFn RCSQuerySystem;
+extern RCSRegBatchCbFn  RCSRegisterBatchCallback;
+extern RCSRegMsgBoxCbFn RCSRegisterMessageBoxCallback;
+/* system specific functions -- mapped to function for appropriate system */
+extern RCSInitFn        RCSInit;
+extern RCSCheckoutFn    RCSCheckout;
+extern RCSCheckinFn     RCSCheckin;
+extern RCSHasShellFn    RCSHasShell;
+extern RCSRunShellFn    RCSRunShell;
+extern RCSFiniFn        RCSFini;
+extern RCSSetPauseFn    RCSSetPause;
+
 static char *rcs_type_strings[] = {
     "no_rcs",
     "mks_rcs",
@@ -75,18 +91,18 @@ static char *pause_strings[] = {
 static rcsSystem *rcs_systems[] = {
     NULL,
     &MksRcs,
-    #if defined( __WINDOWS__ ) || defined( __NT__ )
+#if defined( __WINDOWS__ ) || defined( __NT__ )
     &MksSI,
-    #else
+#else
     NULL,
-    #endif
+#endif
     &Pvcs,
     &Generic,
-    #if defined( __NT__ ) && !defined( __AXP__ )
+#if defined( __NT__ ) && !defined( __AXP__ )
     &ObjCycle,
-    #else
+#else
     NULL,
-    #endif
+#endif
     &Perforce,
     &Wproj // hidden
 };
@@ -157,18 +173,6 @@ int RCSAPI RCSSetSystem( rcsdata data, int rcs_type )
 
 }
 
-int userData::setSystem( int rcs_type )
-{
-    if( currentSystem != NULL ) {
-        currentSystem->fini();
-    }
-    currentSystem = rcs_systems[rcs_type];
-    if( currentSystem != NULL ) {
-        if( !currentSystem->init( this ) ) return( FALSE );
-    }
-    return( TRUE );
-}
-
 int RCSAPI RCSQuerySystem( rcsdata data )
 {
     char buffer[MAX_RCS_STRING_LEN];
@@ -212,8 +216,7 @@ int WINAPI LibMain( HINSTANCE hDll, DWORD reason, LPVOID res )
     return( 1 );
 }
 
-#else
-#ifdef __WINDOWS__
+#elif defined( __WINDOWS__ )
 
 int WINAPI LibMain( HINSTANCE hInst, WORD wDataSeg, WORD wHeapSize,
                         LPSTR lpszCmdLine )
@@ -233,7 +236,7 @@ int CALLBACK WEP( int q )
     return( 1);
 }
 
-#else   // OS/2
+#elif defined( __OS2__ )
 
 int     __dll_initialize( void )
 {
@@ -244,8 +247,22 @@ int     __dll_terminate( void )
 {
     return( 1 );
 }
+
 #endif
-#endif
+
+}  // extern "C"
+
+int userData::setSystem( int rcs_type )
+{
+    if( currentSystem != NULL ) {
+        currentSystem->fini();
+    }
+    currentSystem = rcs_systems[rcs_type];
+    if( currentSystem != NULL ) {
+        if( !currentSystem->init( this ) ) return( FALSE );
+    }
+    return( TRUE );
+}
 
 virtual int rcsSystem::checkout( userData *d, rcsstring name,
                                 rcsstring pj, rcsstring tgt )
@@ -260,6 +277,7 @@ virtual int rcsSystem::checkout( userData *d, rcsstring name,
     }
     return( 1 );
 }
+
 virtual int rcsSystem::checkin( userData *d, rcsstring name,
                                 rcsstring pj, rcsstring tgt )
 {

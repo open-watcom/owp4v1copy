@@ -24,13 +24,14 @@ OBJS += mkssi.obj
 
 inc_dirs = -I..
 
-!ifeq host_cpu 386
-extra_c_flags_dos = -D__PHAR__
+!ifdef sys_dll
+extra_c_flags = -D_RCSDLL_
 !endif
 extra_c_flags_win = -zw-zu
 
+extra_l_flags = op map
 !ifdef sys_dll
-extra_l_flags_win = op rwr,map
+extra_l_flags_win = op rwr
 !endif
 extra_l_flags_os2 = initinstance terminstance pm op manyautodata
 

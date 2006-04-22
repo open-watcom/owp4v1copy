@@ -211,7 +211,9 @@ void ExitEditor( int rc )
     ChangeDirectory( HomeDirectory );
     MemFree( HomeDirectory );
     MemFree( CurrentDirectory );
+#if defined( VI_RCS )
     ViRCSFini();
+#endif
 #ifdef TRMEM
         DumpTRMEM();
 #endif
