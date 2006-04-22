@@ -58,7 +58,7 @@ static void __NullAccIOBRtn(void) {}
 static void __NullAccHeapRtn(void) {}
 static void __NullAccTDListRtn(void) {}
 
-_WCRTLINKD struct thread_data *(*__GetThreadPtr)() = &__SingleThread;
+_WCRTLINKD struct thread_data *(*__GetThreadPtr)( void ) = &__SingleThread;
 void                    (*_AccessFileH)(int)     = &__NullAccessRtn;
 void                    (*_ReleaseFileH)(int)    = &__NullAccessRtn;
 void                    (*_AccessIOB)(void)      = &__NullAccIOBRtn;

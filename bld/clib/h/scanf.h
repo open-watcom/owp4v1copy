@@ -36,9 +36,14 @@
 #include "widechar.h"
 #include <stdarg.h>
 
-typedef struct {
-    int         (*cget_rtn)();      /* character get rtn */
-    void        (*uncget_rtn)();    /* unget a character rtn */
+typedef struct _SCNF_SPECS {
+#if defined(__HUGE__)
+    int         (*cget_rtn)( struct _SCNF_SPECS _WCFAR *specs );          /* character get rtn */
+    void        (*uncget_rtn)( int c, struct _SCNF_SPECS _WCFAR *specs ); /* unget a character rtn */
+#else
+    int         (*cget_rtn)( struct _SCNF_SPECS *specs );           /* character get rtn */
+    void        (*uncget_rtn)( int c, struct _SCNF_SPECS *specs);   /* unget a character rtn */
+#endif
     CHAR_TYPE   *ptr;               /* file or string pointer */
     int         width;              /* conversion field width */
     unsigned    assign         : 1; /* assignment flag for current argument */

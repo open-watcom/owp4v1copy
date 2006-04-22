@@ -39,14 +39,14 @@
 #elif defined(__QNX__)
 #elif defined(__LINUX__)
 #elif defined(__WARP__)
-  extern void *__InitThreadProcessing(void);
+  extern void *__InitThreadProcessing( void );
 #endif
 #if defined(__OS2_286__) || defined(__NETWARE__)
     #if defined(__SW_BM)
         int __imthread;
     #endif
 #else
-    extern void __InitMultipleThread();
+    extern void __InitMultipleThread( void );
 
     static void __imthread_fn( void ) {
         #if defined(__NT__)

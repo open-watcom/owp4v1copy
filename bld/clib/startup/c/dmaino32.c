@@ -51,8 +51,8 @@
 extern  unsigned            __hmodule;
 
 extern  unsigned APIENTRY   LibMain( unsigned, unsigned );
-extern  void                __CommonInit(void);
-extern  int                 __disallow_single_dgroup(unsigned);
+extern  void                __CommonInit( void );
+extern  int                 __disallow_single_dgroup( unsigned );
 
 #ifdef __SW_BR
     int                     __Is_DLL;           /* TRUE => DLL, else not a DLL */
@@ -64,14 +64,14 @@ extern  int                 __disallow_single_dgroup(unsigned);
     extern      unsigned    __ASTACKSIZ;        /* alternate stack size */
     extern      char        *__ASTACKPTR;       /* alternate stack pointer */
 
-    extern      void        __OS2Init(int, void *);
-    extern      void        __OS2Fini(void);
-    extern      int         __OS2AddThread(int, void *);
-    extern      void        __shutdown_stack_checking();
-    extern      void        *__InitThreadProcessing(void);
-    extern      void        __InitMultipleThread(void);
-    extern      thread_data *__AllocInitThreadData(thread_data *tdata);
-    extern      void        __FreeInitThreadData(thread_data *);
+    extern      void        __OS2Init( int, void * );
+    extern      void        __OS2Fini( void );
+    extern      int         __OS2AddThread( int, void * );
+    extern      void        __shutdown_stack_checking( void );
+    extern      void        *__InitThreadProcessing( void );
+    extern      void        __InitMultipleThread( void );
+    extern      thread_data *__AllocInitThreadData( thread_data *tdata );
+    extern      void        __FreeInitThreadData( thread_data * );
     extern      thread_data *__FirstThreadData;
 
     #ifdef __386__

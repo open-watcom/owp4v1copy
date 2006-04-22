@@ -51,8 +51,8 @@ void                    **__ThreadIDs;
 
 
 #if !defined(__NT__) && !defined(__UNIX__) && !defined(_NETWARE_LIBC)
-void *__InitThreadProcessing()
-/****************************/
+void *__InitThreadProcessing( void )
+/**********************************/
 {
 // Thread structures must be initialized to 0 so that if it's for a DLL
 // _STACKLOW is 0.
@@ -90,8 +90,8 @@ void __SetupThreadProcessing( int i ) {
 #endif
 
 
-void __FiniThreadProcessing()
-/***************************/
+void __FiniThreadProcessing( void )
+/*********************************/
 {
 
     #ifdef _NETWARE_CLIB

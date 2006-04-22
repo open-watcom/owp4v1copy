@@ -104,12 +104,8 @@ static void copypart( CHAR_TYPE *buf, const CHAR_TYPE *p, int len, int maxlen )
 
 /* Under Netware, 'drive' maps to 'volume' */
 
-_WCRTLINK void __F_NAME(_splitpath,_wsplitpath)( path, drive, dir, fname, ext )
-const CHAR_TYPE  *path;
-CHAR_TYPE           *drive,
-            *dir,
-            *fname,
-            *ext;
+_WCRTLINK void __F_NAME(_splitpath,_wsplitpath)( const CHAR_TYPE *path,
+    CHAR_TYPE *drive, CHAR_TYPE *dir, CHAR_TYPE *fname, CHAR_TYPE *ext )
 {
     const CHAR_TYPE *dotp;
     const CHAR_TYPE *fnamep;

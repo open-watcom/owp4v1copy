@@ -33,7 +33,7 @@
 #include <time.h>
 #include "rtdata.h"
 
-_WCRTLINK long( *__get_timezone_ptr() )
+_WCRTLINK long *__get_timezone_ptr( void )
 {
-    return &timezone;
+    return( &timezone );
 }

@@ -32,7 +32,7 @@
 
 #if defined(__SW_BD)
 
-extern          int     main();
+extern          int     main( void );
 
 unsigned __dll_initialize( void )
 /*******************************/

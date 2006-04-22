@@ -50,7 +50,7 @@ extern  char            *__ASTACKPTR;   /* alternate stack pointer */
     #if defined(_M_IX86)
         #pragma aux     __wCMain  "*";
     #endif
-    void __wCMain()
+    void __wCMain( void )
     {
         #if !defined(__OSI__)
             /* allocate alternate stack for F77 */
@@ -64,7 +64,7 @@ extern  char            *__ASTACKPTR;   /* alternate stack pointer */
     #if defined(_M_IX86)
         #pragma aux     __CMain  "*";
     #endif
-    void __CMain()
+    void __CMain( void )
     {
         #if !defined(__OSI__)
             /* allocate alternate stack for F77 */

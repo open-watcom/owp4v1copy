@@ -99,13 +99,13 @@ int                     _nothread;
 /* End of static data - used in OS/2 DLL to find beginning of near heap */
 extern char             end;
 
-void __far __null_FPE_handler()
+void __far __null_FPE_handler( void )
 {
 }
 
 void    (__far *__FPE_handler)() = __null_FPE_handler;
 
-extern  int _CMain();
+extern  int _CMain( void );
 #pragma aux _CMain "_*";
 #pragma aux _OS2Main "_*" parm caller [ dx ax ] [ cx bx ];
 

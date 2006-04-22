@@ -77,7 +77,7 @@
     );
  */
 
-extern  void    __STKOVERFLOW();
+extern  void    __STKOVERFLOW( void );
 
 /*
     Win32 Note:

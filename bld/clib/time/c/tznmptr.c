@@ -33,7 +33,7 @@
 #include <time.h>
 #include "rtdata.h"
 
-_WCRTLINK char * ( *__get_tzname_ptr() )[]
+_WCRTLINK char * (*__get_tzname_ptr( void ))[]
 {
-    return &tzname;
+    return( &tzname );
 }

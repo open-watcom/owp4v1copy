@@ -39,6 +39,6 @@ _WCRTLINKD extern char              *sys_errlist[];/* strerror error message tab
 #define _sys_errlist                sys_errlist
 #endif
 
-_WCRTLINK char * (*__get_sys_errlist_ptr())[] {
+_WCRTLINK char * (*__get_sys_errlist_ptr( void ))[] {
     return &_sys_errlist;
 }

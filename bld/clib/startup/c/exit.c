@@ -62,10 +62,10 @@ _WCRTLINK extern void (*__process_fini)( unsigned, unsigned );
 
 
 #if !defined(__UNIX__) && !defined(__WINDOWS_386__)
-void    __null_int23_exit() {}              /* SIGNAL needs it */
-void    (*__int23_exit)() = __null_int23_exit;
-static void _null_exit_rtn() {}
-void    (*__FPE_handler_exit)() = _null_exit_rtn;
+void    __null_int23_exit( void ) {}              /* SIGNAL needs it */
+void    (*__int23_exit)( void ) = __null_int23_exit;
+static void _null_exit_rtn( void ) {}
+void    (*__FPE_handler_exit)( void ) = _null_exit_rtn;
 #endif
 
 _WCRTLINK void exit( int status )

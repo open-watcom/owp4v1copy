@@ -34,8 +34,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-_WCRTLINK long (tell)( fd )         /* return current file position */
-int fd;
+_WCRTLINK long (tell)( int fd )         /* return current file position */
 {
     return( lseek( fd, 0L, SEEK_CUR ) );
 }

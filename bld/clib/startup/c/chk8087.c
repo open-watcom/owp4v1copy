@@ -44,7 +44,6 @@
 
 #include "rtdata.h"
 #include "exitwmsg.h"
-#include "87state.h"
 
 extern void __GrabFP87( void );
 

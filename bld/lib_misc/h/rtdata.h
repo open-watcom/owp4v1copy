@@ -64,6 +64,16 @@ typedef struct __stream_link {
 #endif
 } __stream_link;
 
+#if defined(_M_IX86)
+typedef struct _87state {
+#if defined( __386__ )
+    char data[108];         /* 32-bit save area size */
+#else
+    char data[94];          /* 16-bit save area size */
+#endif
+} _87state;
+#endif
+
 typedef void _WCI86FAR      FPEhandler( int );
 
 #define _FP_BASE(__fp)          ((__fp)->_link->_base)
@@ -93,8 +103,8 @@ extern      void            (*__FPE_handler_exit)( void );
 extern      unsigned        _STACKTOP;
 #endif
 #if !defined(__QNX__) && !defined(__LINUX__)
-    extern void         (*__Save8087)();/* Ptr to FP state save rtn (spawn) */
-    extern void         (*__Rest8087)();/* Ptr to FP state restore rtn (spawn) */
+    extern void         (*__Save8087)(_87state *);/* Ptr to FP state save rtn (spawn) */
+    extern void         (*__Rest8087)(_87state *);/* Ptr to FP state restore rtn (spawn) */
 #endif
 extern unsigned short       _8087cw;    /* control word initializer */
 extern unsigned char        _no87;      /* NO87 environment var defined */

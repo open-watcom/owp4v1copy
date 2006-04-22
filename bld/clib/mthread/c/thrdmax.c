@@ -37,9 +37,9 @@ extern  unsigned        __MaxThreads;
 #pragma aux __GetMaxThreads "^"
 
 
-_WCRTLINK unsigned __GetMaxThreads() {
-/***********************************/
-
+_WCRTLINK unsigned __GetMaxThreads( void )
+/****************************************/
+{
 // Get maximum number of threads (functional interface required for FORTRAN).
 
     return( __MaxThreads );

@@ -48,7 +48,7 @@ extern int __no87;
 extern unsigned char __8087;
 #pragma aux __8087 "*";
 
-extern  int gorealmode();
+extern  int gorealmode( void );
 #pragma aux gorealmode = \
         "mov ah,30h" \
         "int 21h";
@@ -65,10 +65,10 @@ extern int DPMICheckVendorSpecificAPI( char __far * );
         "pop es" \
         parm [ cx esi ] modify [ edi ] value[ eax ];
 
-extern int getcr0();
+extern int getcr0( void );
 #pragma aux getcr0 = "mov eax,cr0" value [ eax ];
 
-extern void putcr0(int);
+extern void putcr0( int );
 #pragma aux putcr0 = "mov cr0,eax" parm [ eax ];
 
 extern char IsWindows( void );
@@ -77,7 +77,7 @@ extern char IsWindows( void );
         "int 2fh" \
         value [al];
 
-void __set_dos_vector(unsigned, void __far *);
+void __set_dos_vector( unsigned, void __far * );
 #pragma aux __set_dos_vector = \
         "push ds" \
         "mov ds,cx" \

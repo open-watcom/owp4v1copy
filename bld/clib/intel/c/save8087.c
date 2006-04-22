@@ -31,7 +31,6 @@
 
 
 #include "variety.h"
-#include "87state.h"
 #include "rtdata.h"
 
 static void _do_nothing( _87state *st ) {}

@@ -33,23 +33,23 @@
 #pragma aux __init_default_win "*";
 char __init_default_win;
 
-LPWDATA (*_WindowsIsWindowedHandle)() = { 0 };
-void (*_WindowsRemoveWindowedHandle)() = { 0 };
-unsigned (*_WindowsNewWindow)() = { 0 };
-int (*_WindowsCloseWindow)() = { 0 };
-int (*_WindowsSetAbout)() = { 0 };
-int (*_WindowsSetAppTitle)() = { 0 };
-int (*_WindowsSetConTitle)() = { 0 };
-int (*_WindowsDestroyOnClose)() = { 0 };
-int (*_WindowsYieldControl)() = { 0 };
-int (*_WindowsShutDown)() = { 0 };
-unsigned (*_WindowsStdin)() = { 0 };
-unsigned (*_WindowsStdout)() = { 0 };
-unsigned (*_WindowsKbhit)() = { 0 };
-unsigned (*_WindowsGetch)() = { 0 };
-unsigned (*_WindowsGetche)() = { 0 };
-void (*_WindowsPutch)() = { 0 };
-void (*_WindowsExitRtn)() = { 0 };
+LPWDATA (*_WindowsIsWindowedHandle)( int h ) = { 0 };
+void (*_WindowsRemoveWindowedHandle)( int h ) = { 0 };
+unsigned (*_WindowsNewWindow)( char *s, ... ) = { 0 };
+int (*_WindowsCloseWindow)( LPWDATA lp ) = { 0 };
+int (*_WindowsSetAbout)( char *p1, char *p2 ) = { 0 };
+int (*_WindowsSetAppTitle)( char *p ) = { 0 };
+int (*_WindowsSetConTitle)( LPWDATA lp, char *s ) = { 0 };
+int (*_WindowsDestroyOnClose)( LPWDATA lp ) = { 0 };
+int (*_WindowsYieldControl)( void ) = { 0 };
+int (*_WindowsShutDown)( void ) = { 0 };
+unsigned (*_WindowsStdin)( LPWDATA lp, void *p, unsigned u ) = { 0 };
+unsigned (*_WindowsStdout)( LPWDATA lp, const void *p, unsigned u ) = { 0 };
+unsigned (*_WindowsKbhit)( LPWDATA lp ) = { 0 };
+unsigned (*_WindowsGetch)( LPWDATA lp ) = { 0 };
+unsigned (*_WindowsGetche)( LPWDATA lp ) = { 0 };
+void (*_WindowsPutch)( LPWDATA lp, unsigned u ) = { 0 };
+void (*_WindowsExitRtn)( void ) = { 0 };
 
 #if ( defined(__OS2__) && (defined(__386__)||defined(__PPC__)) ) || defined(__NT__) || \
     defined(__WINDOWS_386__) || defined(__WINDOWS__)

@@ -49,9 +49,8 @@ extern  unsigned                _curbrk;
 extern  unsigned                _STACKTOP;
 
 #ifdef __WINDOWS_386__
- extern void * pascal DPMIAlloc(unsigned long);
+ extern void * pascal DPMIAlloc( unsigned long );
 #else
-extern  int                     SetBlock();
 
 extern  int                     SetBlock( unsigned short selector, int size );
 #pragma aux SetBlock            = \
@@ -87,7 +86,7 @@ extern  int                     SegmentLimit( void );
         modify exact            [eax];
 #endif
 
-extern  unsigned short          GetDS();
+extern  unsigned short          GetDS( void );
 #pragma aux GetDS               = \
         "mov    ax,ds"          \
         value                   [ax];
@@ -95,97 +94,97 @@ extern  unsigned short          GetDS();
 _WCRTLINK void _WCNEAR *__brk( unsigned brk_value );
 
 _WCRTLINK void _WCNEAR *sbrk( int increment )
-    {
+{
 #if defined(__OS2__)
-        if( increment > 0 ) {
-            PBYTE       p;
+    if( increment > 0 ) {
+        PBYTE       p;
 
-            increment = ( increment + 0x0fff ) & ~0x0fff;
-            if( !DosAllocMem( &p, increment, PAG_COMMIT|PAG_READ|PAG_WRITE ) ) {
-                return( p );
-            }
-            errno = ENOMEM;
-        } else {
-            errno = EINVAL;
+        increment = ( increment + 0x0fff ) & ~0x0fff;
+        if( !DosAllocMem( &p, increment, PAG_COMMIT|PAG_READ|PAG_WRITE ) ) {
+            return( p );
         }
-        return( (void _WCNEAR *) -1 );
+        errno = ENOMEM;
+    } else {
+        errno = EINVAL;
+    }
+    return( (void _WCNEAR *) -1 );
 #elif defined(__WINDOWS_386__)                          /* 26-may-93 */
-        increment = ( increment + 0x0fff ) & ~0x0fff;
-        return DPMIAlloc( increment );
+    increment = ( increment + 0x0fff ) & ~0x0fff;
+    return DPMIAlloc( increment );
 #elif defined(__CALL21__)                               /* 10-aug-93 */
-        increment = ( increment + 0x0fff ) & ~0x0fff;
-        return (void *)TinyMemAlloc( increment );
+    increment = ( increment + 0x0fff ) & ~0x0fff;
+    return (void *)TinyMemAlloc( increment );
 #else
-        if( _IsRationalZeroBase() || _IsCodeBuilder() ) {
-            void _WCNEAR *p;
+    if( _IsRationalZeroBase() || _IsCodeBuilder() ) {
+        void _WCNEAR *p;
 
-            if( increment > 0 ) {
-                increment = ( increment + 0x0fff ) & ~0x0fff;
-                if( _IsRational() ) {
-                    p = TinyDPMIAlloc( increment );
-                } else {
-                    p = TinyCBAlloc( increment );
-                }
-                if( p == NULL ) {
-                    errno = ENOMEM;
-                    p = (void _WCNEAR *) -1;
-                }
+        if( increment > 0 ) {
+            increment = ( increment + 0x0fff ) & ~0x0fff;
+            if( _IsRational() ) {
+                p = TinyDPMIAlloc( increment );
             } else {
-                errno = EINVAL;
+                p = TinyCBAlloc( increment );
+            }
+            if( p == NULL ) {
+                errno = ENOMEM;
                 p = (void _WCNEAR *) -1;
             }
-            return( p );
-        } else if( _IsPharLap() ) {             /* 17-sep-93 */
-            _curbrk = SegmentLimit();
+        } else {
+            errno = EINVAL;
+            p = (void _WCNEAR *) -1;
         }
-        return( __brk( _curbrk + increment ) );
-#endif
+        return( p );
+    } else if( _IsPharLap() ) {             /* 17-sep-93 */
+        _curbrk = SegmentLimit();
     }
+    return( __brk( _curbrk + increment ) );
+#endif
+}
 
 
 #if !defined(__OS2__) && !defined(__WINDOWS_386__)
 _WCRTLINK void _WCNEAR *__brk( unsigned brk_value )
-    {
-        unsigned        old_brk_value;
+{
+    unsigned        old_brk_value;
 #if !defined(__CALL21__)
-        unsigned        seg;
-        int             parent;
+    unsigned        seg;
+    int             parent;
 #endif
 
-        if( brk_value < _STACKTOP ) {
+    if( brk_value < _STACKTOP ) {
+        errno = ENOMEM;
+        return( (void _WCNEAR *) -1 );
+    }
+#if !defined(__CALL21__)
+    if( _IsOS386() ) {
+        seg = ( brk_value + 15U ) / 16U;
+        if( seg == 0 ) seg = 0x0FFFFFFF;            /* 26-sep-89 */
+        parent = SegInfo( GetDS() );
+        if( parent < 0 ) {
+            if( SetBlock( parent & 0xffff, seg ) < 0 ) {
+                errno = ENOMEM;
+                return( (void _WCNEAR *) -1 );
+            }
+        }
+        if( SetBlock( GetDS(), seg ) < 0 ) {
             errno = ENOMEM;
             return( (void _WCNEAR *) -1 );
         }
-#if !defined(__CALL21__)
-        if( _IsOS386() ) {
-            seg = ( brk_value + 15U ) / 16U;
-            if( seg == 0 ) seg = 0x0FFFFFFF;            /* 26-sep-89 */
-            parent = SegInfo( GetDS() );
-            if( parent < 0 ) {
-                if( SetBlock( parent & 0xffff, seg ) < 0 ) {
-                    errno = ENOMEM;
-                    return( (void _WCNEAR *) -1 );
-                }
-            }
-            if( SetBlock( GetDS(), seg ) < 0 ) {
-                errno = ENOMEM;
-                return( (void _WCNEAR *) -1 );
-            }
-        } else {        /* _IsPharLap() || IsRationalNonZeroBase() */
-            seg = ( brk_value + 4095U ) / 4096U;
-            if( seg == 0 ) seg = 0x000FFFFF;            /* 26-sep-89 */
-            if( _IsRationalNonZeroBase() ) {
-                // convert from 4k pages to paragraphs
-                seg = seg * 256U;
-            }
-            if( SetBlock( GetDS(), seg ) < 0 ) {
-                errno = ENOMEM;
-                return( (void _WCNEAR *) -1 );
-            }
+    } else {        /* _IsPharLap() || IsRationalNonZeroBase() */
+        seg = ( brk_value + 4095U ) / 4096U;
+        if( seg == 0 ) seg = 0x000FFFFF;            /* 26-sep-89 */
+        if( _IsRationalNonZeroBase() ) {
+            // convert from 4k pages to paragraphs
+            seg = seg * 256U;
         }
-#endif
-        old_brk_value = _curbrk;        /* return old value of _curbrk */
-        _curbrk = brk_value;            /* set new break value */
-        return( (void _WCNEAR *) old_brk_value );
+        if( SetBlock( GetDS(), seg ) < 0 ) {
+            errno = ENOMEM;
+            return( (void _WCNEAR *) -1 );
+        }
     }
+#endif
+    old_brk_value = _curbrk;        /* return old value of _curbrk */
+    _curbrk = brk_value;            /* set new break value */
+    return( (void _WCNEAR *) old_brk_value );
+}
 #endif

@@ -39,12 +39,12 @@
     #include "dpmi.h"
 #endif
 
-extern  void    __Init_FPE_handler();
-extern  void    __Fini_FPE_handler();
+extern  void    __Init_FPE_handler( void );
+extern  void    __Fini_FPE_handler( void );
 #ifdef __DOS_386__
 extern int __FPEHandlerStart_;
 extern int __FPEHandlerEnd_;
-extern int __DPMI_hosted(void);
+extern int __DPMI_hosted( void );
 #endif
 
 void __GrabFP87( void )

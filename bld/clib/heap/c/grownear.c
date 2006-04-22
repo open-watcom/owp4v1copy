@@ -51,14 +51,14 @@
  #include <wos2.h>
 #endif
 #if defined(__WINDOWS_386__)
- extern void * pascal DPMIAlloc(unsigned long);
+ extern void * pascal DPMIAlloc( unsigned long );
 #endif
 
 static frlptr __LinkUpNewMHeap( mheapptr );
 
 #if defined(__DOS_EXT__)
 
-extern  int                     SegmentLimit();
+extern  int SegmentLimit( void );
 #pragma aux SegmentLimit        = \
         "xor    eax,eax"        \
         "mov    ax,ds"          \
@@ -91,7 +91,7 @@ static void __unlink( mheapptr miniheapptr )
     if( next_link != NULL )  next_link->prev = prev_link;
 }
 
-void __FreeDPMIBlocks()
+void __FreeDPMIBlocks( void )
 {
     mheapptr            mhp;
     struct dpmi_hdr     *dpmi;

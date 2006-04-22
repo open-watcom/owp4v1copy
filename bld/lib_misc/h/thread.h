@@ -205,7 +205,7 @@ extern "C" {
     #endif
     #if defined(__QNX__)
         // QNX uses magic memory for thread specific data
-        extern struct thread_data *__MultipleThread();
+        extern struct thread_data *__MultipleThread( void );
     #endif
 
 #ifdef __cplusplus
@@ -220,7 +220,7 @@ extern "C" {
 
     extern int _WCFAR *_threadid;
     extern thread_data **__ThreadData;
-    extern struct thread_data * __MultipleThread();
+    extern struct thread_data * __MultipleThread( void );
     #define __THREADDATAPTR     (__MultipleThread())
 
 #ifdef __cplusplus

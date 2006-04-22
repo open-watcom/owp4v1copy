@@ -60,18 +60,18 @@ static CHAR_TYPE *stpcpy( CHAR_TYPE *dest, const CHAR_TYPE *src ) {
 }
 
 
-int __F_NAME(__cenvarg,__wcenvarg)( argv, envp, envptr, envstrings, envseg, cmdline_len, exec )
+int __F_NAME(__cenvarg,__wcenvarg)( 
 /*
  *  Build environment and command line for new process.  Length of environment
  *  (in bytes) is returned on success.  -1 is returned on failure.
  */
-    const CHAR_TYPE     * const argv[]; /* i: arguments for new process */
-    const CHAR_TYPE     * const envp[]; /* i: env strings for new process */
-    CHAR_TYPE           **envptr;       /* o: allocated memory for env */
-    CHAR_TYPE           **envstrings;   /* o: pointer to environment strings */
-    unsigned            *envseg;        /* o: start of env (on para boundary) */
-    size_t              *cmdline_len;   /* o: size required to hold cmd line */
-    int                 exec;           /* i: TRUE if for exec */
+    const CHAR_TYPE     *const argv[],  /* i: arguments for new process */
+    const CHAR_TYPE     *const envp[],  /* i: env strings for new process */
+    CHAR_TYPE           **envptr,       /* o: allocated memory for env */
+    CHAR_TYPE           **envstrings,   /* o: pointer to environment strings */
+    unsigned            *envseg,        /* o: start of env (on para boundary) */
+    size_t              *cmdline_len,   /* o: size required to hold cmd line */
+    int                 exec )          /* i: TRUE if for exec */
 {
     unsigned            length;
     unsigned            oamblksiz;

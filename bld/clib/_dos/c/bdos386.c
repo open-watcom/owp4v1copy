@@ -34,8 +34,7 @@
 #include <dos.h>
 #include "tinyio.h"
 
-extern  int                     DoBDosCall();
-
+extern  int                     DoBDosCall( unsigned eax, unsigned edx );
 #pragma aux                     DoBDosCall = \
         _INT_21         \
         parm caller     [eax] [edx] \

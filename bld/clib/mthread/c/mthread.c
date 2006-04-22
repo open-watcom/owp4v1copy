@@ -54,24 +54,24 @@
   extern thread_data *__QNXAddThread( thread_data *tdata );
 #endif
 
-extern  void            __FiniThreadProcessing(void);
+extern  void            __FiniThreadProcessing( void );
 #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
-  extern void           (*_AccessFileH)(int);
-  extern void           (*_ReleaseFileH)(int);
-  extern void           (*_AccessIOB)(void);
-  extern void           (*_ReleaseIOB)(void);
-  extern void           (*_AccessTDList)(void);
-  extern void           (*_ReleaseTDList)(void);
+  extern void           (*_AccessFileH)( int );
+  extern void           (*_ReleaseFileH)( int );
+  extern void           (*_AccessIOB)( void );
+  extern void           (*_ReleaseIOB)( void );
+  extern void           (*_AccessTDList)( void );
+  extern void           (*_ReleaseTDList)( void );
   #if !defined( __NETWARE__ )
-    extern void         (*_AccessNHeap)(void);
-    extern void         (*_AccessFHeap)(void);
-    extern void         (*_ReleaseNHeap)(void);
-    extern void         (*_ReleaseFHeap)(void);
+    extern void         (*_AccessNHeap)( void );
+    extern void         (*_AccessFHeap)( void );
+    extern void         (*_ReleaseNHeap)( void );
+    extern void         (*_ReleaseFHeap)( void );
   #endif
   #if defined( __NT__ )
-    extern void         (*_AccessFList)(int);
-    extern void         (*_ReleaseFList)(int);
-    extern void         (*_ThreadExitRtn)(void);
+    extern void         (*_AccessFList)( void );
+    extern void         (*_ReleaseFList)( void );
+    extern void         (*_ThreadExitRtn)( void );
     static semaphore_object FListSemaphore;
   #endif
 #endif
@@ -82,7 +82,7 @@ extern  void            __FiniThreadProcessing(void);
     _WCRTLINKD void (*__ReleaseSema4)( semaphore_object *) = &nullSema4Rtn;
     _WCRTLINKD void (*__CloseSema4)( semaphore_object *) = &nullSema4Rtn;
     #if !defined( __NETWARE__ )
-        static void __NullAccHeapRtn(void) {}
+        static void __NullAccHeapRtn( void ) {}
     #endif
 #endif
 
@@ -292,14 +292,14 @@ _WCRTLINK void __ReleaseSemaphore( semaphore_object *obj )
     }
 }
 
-void    __AccessIOB()
-/*******************/
+void    __AccessIOB( void )
+/*************************/
 {
     __AccessSemaphore( &IOBSemaphore );
 }
 
-void    __ReleaseIOB()
-/********************/
+void    __ReleaseIOB( void )
+/**************************/
 {
     __ReleaseSemaphore( &IOBSemaphore );
 }
@@ -321,26 +321,26 @@ void __ReleaseFileH( int handle )
 
 
 #if !defined( __NETWARE__ )
-void    __AccessNHeap()
-/*********************/
+void    __AccessNHeap( void )
+/***************************/
 {
     __AccessSemaphore( &NHeapSemaphore );
 }
 
-void    __ReleaseNHeap()
-/**********************/
+void    __ReleaseNHeap( void )
+/****************************/
 {
     __ReleaseSemaphore( &NHeapSemaphore );
 }
 
-void    __AccessFHeap()
-/*********************/
+void    __AccessFHeap( void )
+/***************************/
 {
     __AccessSemaphore( &FHeapSemaphore );
 }
 
-void    __ReleaseFHeap()
-/**********************/
+void    __ReleaseFHeap( void )
+/****************************/
 {
     __ReleaseSemaphore( &FHeapSemaphore );
 }
@@ -348,27 +348,27 @@ void    __ReleaseFHeap()
 
 #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
 
-void    __AccessTDList()
-/*********************/
+void    __AccessTDList( void )
+/****************************/
 {
     __AccessSemaphore( &TDListSemaphore );
 }
 
-void    __ReleaseTDList()
-/**********************/
+void    __ReleaseTDList( void )
+/*****************************/
 {
     __ReleaseSemaphore( &TDListSemaphore );
 }
 
 #if defined( __NT__ )
-void    __AccessFList()
-/*********************/
+void    __AccessFList( void )
+/***************************/
 {
     __AccessSemaphore( &FListSemaphore );
 }
 
-void    __ReleaseFList()
-/**********************/
+void    __ReleaseFList( void )
+/****************************/
 {
     __ReleaseSemaphore( &FListSemaphore );
 }
@@ -551,8 +551,8 @@ void __NTRemoveThread( int close_handle )
     }
 }
 
-static void __ThreadExit()
-/************************/
+static void __ThreadExit( void )
+/******************************/
 {
     __NTRemoveThread( TRUE );
     __NTThreadFini();
@@ -645,8 +645,8 @@ void __LinuxRemoveThread( void )
 
 #endif
 
-void __InitMultipleThread()
-/*************************/
+void __InitMultipleThread( void )
+/*******************************/
 {
     if( __GetThreadPtr != &__MultipleThread ) {
         #if defined( _NETWARE_CLIB )
@@ -749,8 +749,8 @@ void __InitMultipleThread()
 }
 #endif
 
-static void __FiniSema4s()              // called from finalizer
-/************************/
+static void __FiniSema4s( void )              // called from finalizer
+/******************************/
 {
     int         i;
 

@@ -349,7 +349,7 @@ void __ResizeThreadDataList( void )
 
 // clean up list of thread data
 // don't need semaphores because shutdown only has one thread executing
-void __FreeThreadDataList()
+void __FreeThreadDataList( void )
 {
     thread_data_list *tdl;
     thread_data_list *next;
@@ -366,7 +366,7 @@ void __FreeThreadDataList()
 }
 
 // a sanity check routine that can be called from a termination routine
-int __ActiveThreads()
+int __ActiveThreads( void )
 {
 
     thread_data_list *tdl;

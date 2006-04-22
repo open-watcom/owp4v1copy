@@ -64,7 +64,7 @@ extern "C" {
 #endif
 
 extern  int     __historical_splitparms;
-extern  void    _Not_Enough_Memory();
+extern  void    _Not_Enough_Memory( void );
 
 #ifdef __cplusplus
 };

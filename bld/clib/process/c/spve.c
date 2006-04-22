@@ -51,7 +51,6 @@
 #include "msdos.h"
 #include "seterrno.h"
 #include "_process.h"
-#include "87state.h"
 
 #ifdef __USE_POSIX_HANDLE_STRINGS
     #define _POSIX_HANDLE_CLEANUP   {                                   \

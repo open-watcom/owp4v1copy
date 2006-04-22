@@ -35,15 +35,17 @@
 #include <float.h>
 #include "rtdata.h"
 
-extern  void    __fstcw();
-extern  void    __fldcw();
+typedef unsigned short _WCNEAR *cwp;
+
+extern  void    __fstcw( cwp cw );
+extern  void    __fldcw( cwp cw );
 
 #if defined(__WINDOWS__) && !defined(__WINDOWS_386__)
 
-extern void __far _fpmath();
+extern void __far _fpmath( void );
 #pragma aux _fpmath "__fpmath";
 
-void __win87em_fldcw(unsigned int);
+void __win87em_fldcw( unsigned int );
 #pragma aux __win87em_fldcw = \
         "push   bx"                                     \
         "mov    bx, 4h"                                 \
@@ -51,7 +53,7 @@ void __win87em_fldcw(unsigned int);
         "pop    bx"                                     \
         parm [ax]
 
-unsigned int __win87em_fstcw(void);
+unsigned int __win87em_fstcw( void );
 #pragma aux __win87em_fstcw = \
         "push   bx"                                     \
         "mov    bx, 5h"                                 \
@@ -111,37 +113,37 @@ _WCRTLINK unsigned _control87( unsigned new, unsigned mask )
     control_word = 0;
     if( _RWD_8087 ) {
 #if defined(__WINDOWS__) && !defined(__WINDOWS_386__)
-        __fstcw( &control_word );
+        __fstcw( (cwp)&control_word );
         control_word = __win87em_fstcw();
         if( mask != 0 ) {
             control_word = (control_word & ~mask) | (new & mask);
-            __fldcw( &control_word );
-            __fstcw( &control_word );               /* 17-sep-91 */
+            __fldcw( (cwp)&control_word );
+            __fstcw( (cwp)&control_word );               /* 17-sep-91 */
             __win87em_fldcw(control_word);
         }
 #elif defined( __DOS_086__ )
         if( __dos87real ) {
-            __fstcw( &control_word );
+            __fstcw( (cwp)&control_word );
             if( mask != 0 ) {
                 control_word = (control_word & ~mask) | (new & mask);
-                __fldcw( &control_word );
-                __fstcw( &control_word );
+                __fldcw( (cwp)&control_word );
+                __fstcw( (cwp)&control_word );
             }
         }
         if( __dos87emucall ) {
-            __dos_emu_fstcw( &control_word );
+            __dos_emu_fstcw( (cwp)&control_word );
             if( mask != 0 ) {
                 control_word = (control_word & ~mask) | (new & mask);
-                __dos_emu_fldcw( &control_word );
-                __dos_emu_fstcw( &control_word );
+                __dos_emu_fldcw( (cwp)&control_word );
+                __dos_emu_fstcw( (cwp)&control_word );
             }
         }
 #else
-        __fstcw( &control_word );
+        __fstcw( (cwp)&control_word );
         if( mask != 0 ) {
             control_word = (control_word & ~mask) | (new & mask);
-            __fldcw( &control_word );
-            __fstcw( &control_word );               /* 17-sep-91 */
+            __fldcw( (cwp)&control_word );
+            __fstcw( (cwp)&control_word );               /* 17-sep-91 */
         }
 #endif
     }

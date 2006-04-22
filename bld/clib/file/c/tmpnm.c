@@ -83,7 +83,7 @@ static CHAR_TYPE *__F_NAME(putbits,_wputbits)( CHAR_TYPE *p, unsigned val )
     return( p + 1 );
 }
 
-static size_t init_name()
+static size_t init_name( void )
 {
     CHAR_TYPE   *p;
 

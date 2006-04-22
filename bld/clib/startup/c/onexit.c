@@ -32,11 +32,6 @@
 #include "variety.h"
 #include <stdlib.h>
 
-#if defined(__NETWARE__)
-// this should be defined in stdlib.h
-typedef void (*onexit_t)();
-#endif
-
 _WCRTLINK onexit_t onexit( onexit_t func )
 {
     if( atexit( func ) == 0 )  return( func );

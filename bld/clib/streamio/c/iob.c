@@ -55,8 +55,8 @@ __stream_link *__OpenStreams;
 _WCRTLINKD int _WCNEAR  _fmode = O_TEXT;  /* default file translation mode */
 #endif
 
-extern void __InitFiles();
-extern void __full_io_exit();
+extern void __InitFiles( void );
+extern void __full_io_exit( void );
 
 AXI(__InitFiles,INIT_PRIORITY_LIBRARY);
 AYI(__full_io_exit,INIT_PRIORITY_LIBRARY);

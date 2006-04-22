@@ -35,7 +35,9 @@
 
 #if defined(__OS2__)
 extern  unsigned GetThreadStack( void );
-#pragma aux GetThreadStack = "mov eax,fs:[4]" value [eax];
+#pragma aux GetThreadStack = \
+    "mov eax,fs:[4]" \
+    value [eax];
 #endif
 
 _WCRTLINK unsigned stackavail( void )

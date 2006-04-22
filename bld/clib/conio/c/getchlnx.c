@@ -37,7 +37,7 @@
 
 extern unsigned    _cbyte;
 
-_WCRTLINK int (getch)()
+_WCRTLINK int (getch)( void )
 {
     auto char buf[1];
     register unsigned int c;
@@ -60,4 +60,3 @@ _WCRTLINK int (getch)()
     }
     return( c );
 }
-

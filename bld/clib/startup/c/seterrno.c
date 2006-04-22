@@ -42,17 +42,17 @@ _WCRTLINK void __set_errno( unsigned int err )
     _RWD_errno = err;
 }
 
-_WCRTLINK void __set_EDOM()
+_WCRTLINK void __set_EDOM( void )
 {
     __set_errno( EDOM );
 }
 
-_WCRTLINK void __set_ERANGE()
+_WCRTLINK void __set_ERANGE( void )
 {
     __set_errno( ERANGE );
 }
 
-_WCRTLINK int __set_EINVAL()
+_WCRTLINK int __set_EINVAL( void )
 {
     __set_errno( EINVAL );
     return( -1 );

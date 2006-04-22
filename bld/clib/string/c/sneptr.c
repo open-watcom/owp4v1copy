@@ -39,6 +39,7 @@ _WCRTLINKD extern int _WCNEAR   sys_nerr;   /* # of entries in sys_errlist array
 #define _sys_nerr               sys_nerr
 #endif
 
-_WCRTLINK int (*__get_sys_nerr_ptr()) {
-    return &_sys_nerr;
+_WCRTLINK int *__get_sys_nerr_ptr( void )
+{
+    return( &_sys_nerr );
 }

@@ -35,15 +35,15 @@
 /* macros for serialization of accesses to the heap */
 #if defined(__SW_BM)
     #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-        extern void (*_AccessFHeap)();
-        extern void (*_ReleaseFHeap)();
-        extern void (*_AccessNHeap)();
-        extern void (*_ReleaseNHeap)();
+        extern void (*_AccessFHeap)( void );
+        extern void (*_ReleaseFHeap)( void );
+        extern void (*_AccessNHeap)( void );
+        extern void (*_ReleaseNHeap)( void );
     #else
-        extern void __AccessFHeap();
-        extern void __ReleaseFHeap();
-        extern void __AccessNHeap();
-        extern void __ReleaseNHeap();
+        extern void __AccessFHeap( void );
+        extern void __ReleaseFHeap( void );
+        extern void __AccessNHeap( void );
+        extern void __ReleaseNHeap( void );
         #define _AccessFHeap()  __AccessFHeap()
         #define _ReleaseFHeap() __ReleaseFHeap()
         #define _AccessNHeap()  __AccessNHeap()

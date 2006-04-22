@@ -39,32 +39,33 @@
 #include "defwin.h"
 
 #if defined(__OS2_286__)
-    extern  signed char _kbhit();
+    extern  signed char _kbhit( void );
     #pragma aux     _kbhit = 0xb4 0x0b      /* mov ah,0bh */\
                              0xcd 0x21      /* int 21h    */\
                              value [al];
 #endif
 
-_WCRTLINK int kbhit()
-    {
-        KBDKEYINFO  info;
+_WCRTLINK int kbhit( void )
+{
+    KBDKEYINFO  info;
 
-        if( _RWD_cbyte != 0 ) return( 1 );
+    if( _RWD_cbyte != 0 )
+        return( 1 );
 #ifdef DEFAULT_WINDOWING
-        if( _WindowsKbhit != 0 ) {      // Default windowing
-            LPWDATA     res;
-            res = _WindowsIsWindowedHandle( (int) STDIN_FILENO );
-            return( _WindowsKbhit( res ) );
-        }
-#endif
-        #if defined(__OS2_286__)
-            if( _RWD_osmode == DOS_MODE ) {
-                return( _kbhit() );
-            }
-            KbdPeek( &info, 0 );
-            return( ( info.fbStatus & 0xe0 ) != 0 );
-        #else
-            KbdPeek( &info, 0 );
-            return( ( info.fbStatus & 0xe0 ) != 0 );
-        #endif
+    if( _WindowsKbhit != 0 ) {      // Default windowing
+        LPWDATA     res;
+        res = _WindowsIsWindowedHandle( (int) STDIN_FILENO );
+        return( _WindowsKbhit( res ) );
     }
+#endif
+#if defined(__OS2_286__)
+    if( _RWD_osmode == DOS_MODE ) {
+        return( _kbhit() );
+    }
+    KbdPeek( &info, 0 );
+    return( ( info.fbStatus & 0xe0 ) != 0 );
+#else
+    KbdPeek( &info, 0 );
+    return( ( info.fbStatus & 0xe0 ) != 0 );
+#endif
+}

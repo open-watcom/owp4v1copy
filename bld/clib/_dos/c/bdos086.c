@@ -33,8 +33,7 @@
 #include "variety.h"
 #include <dos.h>
 
-extern  int                     DoBDosCall();
-
+extern  int                     DoBDosCall( unsigned ax, unsigned dx );
 #if defined(__386__)
 #pragma aux                     DoBDosCall = \
         0xcd 0x21       /* int 021h     */ \
@@ -51,6 +50,6 @@ extern  int                     DoBDosCall();
 
 
 _WCRTLINK int bdos( int dosfn, unsigned dx, unsigned int al )
-    {
-        return( DoBDosCall( (dosfn << 8) + (al & 0xff), dx ) );
-    }
+{
+    return( DoBDosCall( (dosfn << 8) + (al & 0xff), dx ) );
+}
