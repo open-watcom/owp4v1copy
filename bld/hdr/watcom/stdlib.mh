@@ -476,7 +476,6 @@ _WCRTLINK wchar_t  ***__get_wenviron_ptr( void );
 :segment !QNX & !LINUX
 _WCRTLINK extern int    *__get_doserrno_ptr( void );
 #define _doserrno       (*__get_doserrno_ptr())     /* DOS system error code value */
-_WCRTLINKD extern int   _doserrno;
 
 #if !defined(__NETWARE__)
 #define sys_errlist _sys_errlist
