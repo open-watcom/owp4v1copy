@@ -58,7 +58,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include "test.h"
-#include "api.h"
+#include "rcsapi.h"
 #define WPROJ 5
 
 HINSTANCE hInst;

@@ -54,7 +54,7 @@
 #include "fts.h"
 #include "rcs.h"
 #if !defined( __WINDOWS__ ) && !defined( __NT__ ) && !defined( __OS2__ )
-    #include "api.h"
+    #include "rcsapi.h"
 #endif
 
 #if defined( __WINDOWS__ ) && defined( VI_RCS )

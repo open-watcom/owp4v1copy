@@ -33,7 +33,7 @@
 #ifndef RCS_CLIENT_DEFINED
 #define RCS_CLIENT_DEFINED
 
-#include "api.h"
+#include "rcsapi.h"
 #include "wfilenam.hpp"
 #ifdef __WINDOWS__
 #include "system.hpp"

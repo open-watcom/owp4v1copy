@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include "api.h"
+#include "rcsapi.h"
 
 #define WPROJ           7
 #define MAX_RCS_TYPE    7
