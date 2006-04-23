@@ -91,6 +91,7 @@ static char             exeBuff[BUFF_SIZE];
 
 STATIC void             AdvanceCurrentOffset( uint_32 );
 STATIC uint_32          TransformExeOffset( uint_16, uint_32, uint_16 );
+extern void             MapAddressToMap( addr_ptr *addr );
 
 extern sio_data         *CurrSIOData;
 

@@ -80,6 +80,16 @@ extern void WndDoInput( void )
 
 
 
+extern void WPPushEvent( int event )
+/**********************************/
+{
+    wpStackSize++;
+    wpEventStack = ProfRealloc( wpEventStack, wpStackSize * sizeof( int ) );
+    wpEventStack[wpStackSize-1] = event;
+}
+
+
+
 extern void WPPushPtrEvent( int event, void *ptr )
 /************************************************/
 {
@@ -90,16 +100,6 @@ extern void WPPushPtrEvent( int event, void *ptr )
     wpDataStack = ProfRealloc( wpDataStack, wpDataSize );
     data_point = (char *)wpDataStack + wpDataSize - sizeof(pointer);
     *(char **)data_point = ptr;
-}
-
-
-
-extern void WPPushEvent( int event )
-/**********************************/
-{
-    wpStackSize++;
-    wpEventStack = ProfRealloc( wpEventStack, wpStackSize * sizeof( int ) );
-    wpEventStack[wpStackSize-1] = event;
 }
 
 

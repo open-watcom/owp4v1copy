@@ -92,7 +92,6 @@ STATIC bint             sampleProcBotStatus( a_window *, int, int, wnd_line_piec
 STATIC bint             sampleProcStatus( a_window *, int, int, wnd_line_piece * );
 STATIC bint             sampleProcOverview( a_window *, int, int, wnd_line_piece * );
 STATIC bool             sampleEventProc( a_window *, gui_event, void * );
-STATIC image_info *     sampleGetImage( a_window *, int );
 STATIC bint             sampleSetLine( a_window *, int, int, wnd_line_piece * );
 STATIC bool             sampleGetLine( a_window *, wnd_row, int, wnd_line_piece * );
 STATIC int              simageDetailLine( a_window *, int, bint );
@@ -1407,6 +1406,20 @@ extern void WPBackOut( a_window * wnd )
 
 
 
+extern void WPDoPopUp( a_window * wnd, gui_menu_struct * gui_menu )
+/*****************************************************************/
+{
+    sio_data *      curr_sio;
+
+    WndPopUp( wnd, gui_menu );
+    WndNoSelect( wnd );
+    curr_sio = WndExtra( wnd );
+    curr_sio->curr_proc_row = -WND_MAX_ROW;
+    curr_sio->curr_display_row = -WND_MAX_ROW;
+}
+
+
+
 extern void WPFindDoPopUp( a_window * wnd, int id )
 /*************************************************/
 {
@@ -1419,20 +1432,6 @@ extern void WPFindDoPopUp( a_window * wnd, int id )
         if( gui_menu->id == id ) break;
     }
     WPDoPopUp( wnd, gui_menu );
-}
-
-
-
-extern void WPDoPopUp( a_window * wnd, gui_menu_struct * gui_menu )
-/*****************************************************************/
-{
-    sio_data *      curr_sio;
-
-    WndPopUp( wnd, gui_menu );
-    WndNoSelect( wnd );
-    curr_sio = WndExtra( wnd );
-    curr_sio->curr_proc_row = -WND_MAX_ROW;
-    curr_sio->curr_display_row = -WND_MAX_ROW;
 }
 
 
