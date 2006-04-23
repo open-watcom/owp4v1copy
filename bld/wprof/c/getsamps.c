@@ -58,63 +58,15 @@ extern void SetCurrentMAD( mad_handle );
 extern char             SamplePath[];
 extern system_config    DefSysConfig;
 
-sio_data *              SIOData;
-sio_data *              CurrSIOData;
-
-STATIC bint verifyHeader();
-STATIC bint readSampleFile();
-STATIC bint initCurrSIO();
-STATIC void procInfoBlock( clicks_t, samp_data * );
-STATIC void procMarkBlock( clicks_t, samp_data * );
-STATIC void procAddrBlock( uint_16, samp_data * );
-STATIC void procOverlayBlock( clicks_t, samp_data * );
-STATIC void procImageBlock( samp_data *, bint );
-STATIC void procRemapBlock( clicks_t tick, uint_16, samp_data * );
-STATIC bint procSampleBlock( clicks_t, uint_16, samp_data * );
+sio_data                *SIOData;
+sio_data                *CurrSIOData;
 
 
 
-extern bint GetSampleInfo()
-/*************************/
+STATIC bint initCurrSIO( void )
+/*****************************/
 {
-    if( !initCurrSIO() ) {
-        return( B_FALSE );
-    }
-    if( !verifyHeader() ) {
-        ClearSample( CurrSIOData );
-        return( B_FALSE );
-    }
-    if( !readSampleFile() ) {
-        ClearSample( CurrSIOData );
-        return( B_FALSE );
-    }
-    /* there must be at least one address map for the first module, or */
-    /* we cannot resolve overlays and do mapping.  Should generate an error*/
-    if( !LoadImageOverlays() ) {
-        ClearSample( CurrSIOData );
-        return( B_FALSE );
-    }
-    close( CurrSIOData->fh );
-    /* do the SIOData sets near the end to make it easier to de-link */
-    /* the new data if we have an error */
-    if( SIOData == NULL ) {
-        CurrSIOData->next = CurrSIOData;
-    } else {
-        CurrSIOData->next = SIOData->next;
-        SIOData->next = CurrSIOData;
-    }
-    SIOData = CurrSIOData;
-    SetSampleInfo( CurrSIOData );
-    SamplePath[0] = 0;
-    return( B_TRUE );
-}
-
-
-
-STATIC bint initCurrSIO()
-/***********************/
-{
-    image_info *    new_image;
+    image_info      *new_image;
     file_handle     fh;
     int             name_len;
 
@@ -150,8 +102,8 @@ STATIC bint initCurrSIO()
 
 
 
-STATIC bint verifyHeader()
-/************************/
+STATIC bint verifyHeader( void )
+/******************************/
 {
     file_handle     fh;
     off_t           header_position;
@@ -186,17 +138,262 @@ STATIC bint verifyHeader()
 
 
 
-STATIC bint readSampleFile()
-/**************************/
+STATIC void procInfoBlock( clicks_t ticks, samp_data *data )
+/**********************************************************/
+{
+    /* is this for backward compatability */
+//    if( pref->length >= SIZE_INFO + SIZE_PREFIX &&
+//                               data->info.count[ SAMP_CALLGRAPH ].number ) {
+//        CallGraph = B_TRUE;     /* sample file includes callgraph records */
+//    } else {
+//        CallGraph = B_FALSE;    /* sample file doesn't have callgraph info */
+//    }
+    if( ticks == 0 ) {
+        ticks = 1;
+    }
+    if( CurrSIOData->header.major_ver == 2 && CurrSIOData->header.minor_ver < 2 ) {
+        /* pre-MAD sample file */
+        CurrSIOData->config = DefSysConfig;
+    } else {
+        CurrSIOData->config = data->info.config;
+        /* sanity check for non-MADified sampler */
+        if( CurrSIOData->config.mad == MAD_NIL ) {
+            CurrSIOData->config = DefSysConfig;
+        }
+    }
+    SetCurrentMAD( CurrSIOData->config.mad );
+
+    CurrSIOData->timer_rate = data->info.timer_rate;
+}
+
+
+
+STATIC void procMarkBlock( clicks_t tick, samp_data *data )
+/*********************************************************/
+{
+    mark_data       *new_mark;
+    int             name_len;
+
+    name_len = strlen( data->mark.mark_string );
+    new_mark = ProfCAlloc( sizeof(mark_data)+name_len );
+    new_mark->tick = tick;
+    new_mark->thread = data->mark.thread_id;
+    /* make sure to handle overlay resolution */
+    new_mark->addr.mach.segment = data->mark.addr.segment;
+    new_mark->addr.mach.offset = data->mark.addr.offset;
+    memcpy( new_mark->name, data->mark.mark_string, name_len );
+    if( CurrSIOData->marks == NULL ) {
+        new_mark->next = new_mark;
+    } else {
+        new_mark->next = CurrSIOData->marks->next;
+        CurrSIOData->marks->next = new_mark;
+    }
+    CurrSIOData->marks = new_mark;
+}
+
+
+
+STATIC void procOverlayBlock( clicks_t tick, samp_data * data )
+/*************************************************************/
+{
+    overlay_data *  new_ovl;
+
+    new_ovl = ProfCAlloc( sizeof(overlay_data) );
+    new_ovl->tick = tick;
+    new_ovl->section = data->ovl.req_section;
+    if( new_ovl->section & OVL_RETURN ) {
+        new_ovl->overlay_return = B_TRUE;
+        new_ovl->section &= ~OVL_RETURN;
+    } else {
+        new_ovl->overlay_return = B_FALSE;
+    }
+    /* make sure to handle overlay resolution */
+    new_ovl->req_addr.mach.segment = data->ovl.addr.segment;
+    new_ovl->req_addr.mach.offset = data->ovl.addr.offset;
+    if( CurrSIOData->ovl_loads == NULL ) {
+        new_ovl->next = new_ovl;
+    } else {
+        new_ovl->next = CurrSIOData->ovl_loads->next;
+        CurrSIOData->ovl_loads->next = new_ovl;
+    }
+    CurrSIOData->ovl_loads = new_ovl;
+}
+
+
+
+STATIC void procImageBlock( samp_data *data, bint main_exe )
+/**********************************************************/
+{
+    image_info      *new_image;
+    int             name_len;
+    int             image_index;
+
+    name_len = strlen( data->code.name ) + 1;
+    new_image = ProfCAlloc( sizeof(image_info) );
+    image_index = CurrSIOData->image_count;
+    CurrSIOData->image_count++;
+    CurrSIOData->images = ProfRealloc( CurrSIOData->images,
+                                     CurrSIOData->image_count*sizeof(pointer));
+    CurrSIOData->images[image_index] = new_image;
+    CurrSIOData->curr_image = new_image;
+    new_image->name = ProfAlloc( name_len );
+    memcpy( new_image->name, data->code.name, name_len );
+    new_image->overlay_table.mach.segment = data->code.ovl_tab.segment;
+    new_image->overlay_table.mach.offset = data->code.ovl_tab.offset;
+    new_image->time_stamp = data->code.time_stamp;
+    new_image->main_load = main_exe;
+}
+
+
+
+STATIC void procAddrBlock( uint_16 total_len, samp_data * data )
+/**************************************************************/
+{
+    image_info *    curr_image;
+    int             map_count;
+    int             new_count;
+    int             i;
+    int             j;
+    map_to_actual   *map;
+
+    total_len -= offsetof( samp_block, d.map );
+    new_count = total_len / sizeof( mapping );
+    curr_image = CurrSIOData->curr_image;
+    map_count = curr_image->map_count + new_count;
+    map = curr_image->map_data;
+    if( map == NULL ) {
+        map = ProfAlloc( map_count * sizeof(*map) );
+    } else {
+        map = ProfRealloc( map, map_count * sizeof(*map) );
+    }
+    for( i = 0, j = curr_image->map_count; i < new_count; ++i, ++j ) {
+        map[j].map.mach.segment    = data->map.data[i].map.segment;
+        map[j].map.mach.offset     = data->map.data[i].map.offset;
+        map[j].actual.mach.segment = data->map.data[i].actual.segment;
+        map[j].actual.mach.offset  = data->map.data[i].actual.offset;
+        map[j].length              = 0xffff; //NYI: get from executable....
+    }
+    curr_image->map_count = map_count;
+    curr_image->map_data = map;
+}
+
+
+
+STATIC void procRemapBlock( clicks_t tick, uint_16 total_len,
+                                             samp_data *data )
+/************************************************************/
+{
+    remap_data      *new_remap;
+    int             count;
+    int             index;
+
+    index = 0;
+    total_len -= offsetof( samp_block, d.remap );
+    count = total_len / sizeof( remapping );
+    while( count-- > 0 ) {
+        new_remap = ProfCAlloc( sizeof(remap_data) );
+        if( CurrSIOData->remaps == NULL ) {
+            new_remap->next = new_remap;
+        } else {
+            new_remap->next = CurrSIOData->remaps->next;
+            CurrSIOData->remaps->next = new_remap;
+        }
+        CurrSIOData->remaps = new_remap;
+        new_remap->tick = tick;
+        new_remap->section = data->remap.data[index].section;
+        new_remap->segment = data->remap.data[index].segment;
+        index++;
+    }
+}
+
+
+
+STATIC bint procSampleBlock( clicks_t tick, uint_16 total_len,
+                                              samp_data *data )
+/*************************************************************/
+{
+    thread_id   thread;
+    unsigned    data_index;
+    unsigned    index;
+    unsigned    index2;
+    unsigned    count;
+    unsigned    buckets;
+    clicks_t    end_tick;
+    ldiv_t      div_result;
+    thread_data *thd;
+    thread_data **owner;
+    address     *samp;
+
+    thread = data->sample.thread_id;
+    total_len -= offsetof( samp_block, d.sample );
+    count = total_len / sizeof( samp_address );
+    CurrSIOData->total_samples += count;
+    end_tick = tick + count;
+    owner = &CurrSIOData->samples;
+    for( ;; ) {
+        thd = *owner;
+        if( thd == NULL ) {
+            thd = ProfAlloc( sizeof( *thd ) );
+            *owner = thd;
+            thd->next = NULL;
+            thd->thread = thread;
+            thd->start_time = tick;
+            thd->end_time = end_tick;
+            buckets = RAW_BUCKET_IDX( count ) + 1;
+            thd->raw_bucket = ProfAlloc( buckets * sizeof( *thd->raw_bucket ) );
+            for( index = 0; index < buckets; ++index ) {
+                thd->raw_bucket[index] = ProfCAlloc( MAX_RAW_BUCKET_SIZE );
+            }
+            break;
+
+        }
+        if( thd->thread == thread ) break;
+        owner = &thd->next;
+    }
+    if( end_tick > thd->end_time ) {
+        index = RAW_BUCKET_IDX( thd->end_time - thd->start_time ) + 1;
+        buckets = RAW_BUCKET_IDX( end_tick - thd->start_time ) + 1;
+        if( buckets > index ) {
+            thd->raw_bucket = ProfRealloc( thd->raw_bucket, buckets * sizeof( *thd->raw_bucket ) );
+            for( ; index < buckets; ++index ) {
+                thd->raw_bucket[index] = ProfCAlloc( MAX_RAW_BUCKET_SIZE );
+            }
+        }
+        thd->end_time = end_tick;
+    }
+
+
+    div_result = ldiv( tick - thd->start_time, MAX_RAW_BUCKET_INDEX );
+    index = div_result.quot;
+    index2 = div_result.rem;
+    data_index = 0;
+    while( count > 0 ) {
+        samp = &thd->raw_bucket[index][index2];
+        samp->mach.segment = data->sample.sample[data_index].segment;
+        samp->mach.offset  = data->sample.sample[data_index].offset;
+        if( ++index2 >= MAX_RAW_BUCKET_INDEX ) {
+            index2 = 0;
+            ++index;
+        }
+        ++data_index;
+        --count;
+    }
+    return( B_TRUE );
+}
+
+
+
+STATIC bint readSampleFile( void )
+/********************************/
 {
     file_handle             fh;
     uint_16                 size;
-    void *                  buff;
+    void                    *buff;
     int                     buff_len;
     off_t                   start_position;
     bint                    main_exe;
     samp_block_prefix       prefix;
-    samp_block_prefix *     next_prefix;
+    samp_block_prefix       *next_prefix;
 
 /* we can add error checking for things like */
 /**/
@@ -288,245 +485,37 @@ STATIC bint readSampleFile()
 
 
 
-STATIC void procInfoBlock( clicks_t ticks, samp_data * data )
-/***********************************************************/
+extern bint GetSampleInfo( void )
+/*******************************/
 {
-    /* is this for backward compatability */
-//    if( pref->length >= SIZE_INFO + SIZE_PREFIX &&
-//                               data->info.count[ SAMP_CALLGRAPH ].number ) {
-//        CallGraph = B_TRUE;     /* sample file includes callgraph records */
-//    } else {
-//        CallGraph = B_FALSE;    /* sample file doesn't have callgraph info */
-//    }
-    if( ticks == 0 ) {
-        ticks = 1;
+    if( !initCurrSIO() ) {
+        return( B_FALSE );
     }
-    if( CurrSIOData->header.major_ver == 2 && CurrSIOData->header.minor_ver < 2 ) {
-        /* pre-MAD sample file */
-        CurrSIOData->config = DefSysConfig;
+    if( !verifyHeader() ) {
+        ClearSample( CurrSIOData );
+        return( B_FALSE );
+    }
+    if( !readSampleFile() ) {
+        ClearSample( CurrSIOData );
+        return( B_FALSE );
+    }
+    /* there must be at least one address map for the first module, or */
+    /* we cannot resolve overlays and do mapping.  Should generate an error*/
+    if( !LoadImageOverlays() ) {
+        ClearSample( CurrSIOData );
+        return( B_FALSE );
+    }
+    close( CurrSIOData->fh );
+    /* do the SIOData sets near the end to make it easier to de-link */
+    /* the new data if we have an error */
+    if( SIOData == NULL ) {
+        CurrSIOData->next = CurrSIOData;
     } else {
-        CurrSIOData->config = data->info.config;
-        /* sanity check for non-MADified sampler */
-        if( CurrSIOData->config.mad == MAD_NIL ) {
-            CurrSIOData->config = DefSysConfig;
-        }
+        CurrSIOData->next = SIOData->next;
+        SIOData->next = CurrSIOData;
     }
-    SetCurrentMAD( CurrSIOData->config.mad );
-
-    CurrSIOData->timer_rate = data->info.timer_rate;
-}
-
-
-
-STATIC void procMarkBlock( clicks_t tick, samp_data * data )
-/**********************************************************/
-{
-    mark_data *     new_mark;
-    int             name_len;
-
-    name_len = strlen( data->mark.mark_string );
-    new_mark = ProfCAlloc( sizeof(mark_data)+name_len );
-    new_mark->tick = tick;
-    new_mark->thread = data->mark.thread_id;
-    /* make sure to handle overlay resolution */
-    new_mark->addr.mach.segment = data->mark.addr.segment;
-    new_mark->addr.mach.offset = data->mark.addr.offset;
-    memcpy( new_mark->name, data->mark.mark_string, name_len );
-    if( CurrSIOData->marks == NULL ) {
-        new_mark->next = new_mark;
-    } else {
-        new_mark->next = CurrSIOData->marks->next;
-        CurrSIOData->marks->next = new_mark;
-    }
-    CurrSIOData->marks = new_mark;
-}
-
-
-
-STATIC void procOverlayBlock( clicks_t tick, samp_data * data )
-/*************************************************************/
-{
-    overlay_data *  new_ovl;
-
-    new_ovl = ProfCAlloc( sizeof(overlay_data) );
-    new_ovl->tick = tick;
-    new_ovl->section = data->ovl.req_section;
-    if( new_ovl->section & OVL_RETURN ) {
-        new_ovl->overlay_return = B_TRUE;
-        new_ovl->section &= ~OVL_RETURN;
-    } else {
-        new_ovl->overlay_return = B_FALSE;
-    }
-    /* make sure to handle overlay resolution */
-    new_ovl->req_addr.mach.segment = data->ovl.addr.segment;
-    new_ovl->req_addr.mach.offset = data->ovl.addr.offset;
-    if( CurrSIOData->ovl_loads == NULL ) {
-        new_ovl->next = new_ovl;
-    } else {
-        new_ovl->next = CurrSIOData->ovl_loads->next;
-        CurrSIOData->ovl_loads->next = new_ovl;
-    }
-    CurrSIOData->ovl_loads = new_ovl;
-}
-
-
-
-STATIC void procImageBlock( samp_data * data, bint main_exe )
-/***********************************************************/
-{
-    image_info *    new_image;
-    int             name_len;
-    int             image_index;
-
-    name_len = strlen( data->code.name ) + 1;
-    new_image = ProfCAlloc( sizeof(image_info) );
-    image_index = CurrSIOData->image_count;
-    CurrSIOData->image_count++;
-    CurrSIOData->images = ProfRealloc( CurrSIOData->images,
-                                     CurrSIOData->image_count*sizeof(pointer));
-    CurrSIOData->images[image_index] = new_image;
-    CurrSIOData->curr_image = new_image;
-    new_image->name = ProfAlloc( name_len );
-    memcpy( new_image->name, data->code.name, name_len );
-    new_image->overlay_table.mach.segment = data->code.ovl_tab.segment;
-    new_image->overlay_table.mach.offset = data->code.ovl_tab.offset;
-    new_image->time_stamp = data->code.time_stamp;
-    new_image->main_load = main_exe;
-}
-
-
-
-STATIC void procAddrBlock( uint_16 total_len, samp_data * data )
-/**************************************************************/
-{
-    image_info *    curr_image;
-    int             map_count;
-    int             new_count;
-    int             i;
-    int             j;
-    map_to_actual   *map;
-
-    total_len -= offsetof( samp_block, d.map );
-    new_count = total_len / sizeof( mapping );
-    curr_image = CurrSIOData->curr_image;
-    map_count = curr_image->map_count + new_count;
-    map = curr_image->map_data;
-    if( map == NULL ) {
-        map = ProfAlloc( map_count * sizeof(*map) );
-    } else {
-        map = ProfRealloc( map, map_count * sizeof(*map) );
-    }
-    for( i = 0, j = curr_image->map_count; i < new_count; ++i, ++j ) {
-        map[j].map.mach.segment    = data->map.data[i].map.segment;
-        map[j].map.mach.offset     = data->map.data[i].map.offset;
-        map[j].actual.mach.segment = data->map.data[i].actual.segment;
-        map[j].actual.mach.offset  = data->map.data[i].actual.offset;
-        map[j].length              = 0xffff; //NYI: get from executable....
-    }
-    curr_image->map_count = map_count;
-    curr_image->map_data = map;
-}
-
-
-
-STATIC void procRemapBlock( clicks_t tick, uint_16 total_len,
-                                             samp_data * data )
-/*************************************************************/
-{
-    remap_data *    new_remap;
-    int             count;
-    int             index;
-
-    index = 0;
-    total_len -= offsetof( samp_block, d.remap );
-    count = total_len / sizeof( remapping );
-    while( count-- > 0 ) {
-        new_remap = ProfCAlloc( sizeof(remap_data) );
-        if( CurrSIOData->remaps == NULL ) {
-            new_remap->next = new_remap;
-        } else {
-            new_remap->next = CurrSIOData->remaps->next;
-            CurrSIOData->remaps->next = new_remap;
-        }
-        CurrSIOData->remaps = new_remap;
-        new_remap->tick = tick;
-        new_remap->section = data->remap.data[index].section;
-        new_remap->segment = data->remap.data[index].segment;
-        index++;
-    }
-}
-
-
-
-STATIC bint procSampleBlock( clicks_t tick, uint_16 total_len,
-                                              samp_data * data )
-/**************************************************************/
-{
-    thread_id   thread;
-    unsigned    data_index;
-    unsigned    index;
-    unsigned    index2;
-    unsigned    count;
-    unsigned    buckets;
-    clicks_t    end_tick;
-    ldiv_t      div_result;
-    thread_data *thd;
-    thread_data **owner;
-    address     *samp;
-
-    thread = data->sample.thread_id;
-    total_len -= offsetof( samp_block, d.sample );
-    count = total_len / sizeof( samp_address );
-    CurrSIOData->total_samples += count;
-    end_tick = tick + count;
-    owner = &CurrSIOData->samples;
-    for( ;; ) {
-        thd = *owner;
-        if( thd == NULL ) {
-            thd = ProfAlloc( sizeof( *thd ) );
-            *owner = thd;
-            thd->next = NULL;
-            thd->thread = thread;
-            thd->start_time = tick;
-            thd->end_time = end_tick;
-            buckets = RAW_BUCKET_IDX( count ) + 1;
-            thd->raw_bucket = ProfAlloc( buckets * sizeof( *thd->raw_bucket ) );
-            for( index = 0; index < buckets; ++index ) {
-                thd->raw_bucket[index] = ProfCAlloc( MAX_RAW_BUCKET_SIZE );
-            }
-            break;
-
-        }
-        if( thd->thread == thread ) break;
-        owner = &thd->next;
-    }
-    if( end_tick > thd->end_time ) {
-        index = RAW_BUCKET_IDX( thd->end_time - thd->start_time ) + 1;
-        buckets = RAW_BUCKET_IDX( end_tick - thd->start_time ) + 1;
-        if( buckets > index ) {
-            thd->raw_bucket = ProfRealloc( thd->raw_bucket, buckets * sizeof( *thd->raw_bucket ) );
-            for( ; index < buckets; ++index ) {
-                thd->raw_bucket[index] = ProfCAlloc( MAX_RAW_BUCKET_SIZE );
-            }
-        }
-        thd->end_time = end_tick;
-    }
-
-
-    div_result = ldiv( tick - thd->start_time, MAX_RAW_BUCKET_INDEX );
-    index = div_result.quot;
-    index2 = div_result.rem;
-    data_index = 0;
-    while( count > 0 ) {
-        samp = &thd->raw_bucket[index][index2];
-        samp->mach.segment = data->sample.sample[data_index].segment;
-        samp->mach.offset  = data->sample.sample[data_index].offset;
-        if( ++index2 >= MAX_RAW_BUCKET_INDEX ) {
-            index2 = 0;
-            ++index;
-        }
-        ++data_index;
-        --count;
-    }
+    SIOData = CurrSIOData;
+    SetSampleInfo( CurrSIOData );
+    SamplePath[0] = 0;
     return( B_TRUE );
 }

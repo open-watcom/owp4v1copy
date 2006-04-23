@@ -44,10 +44,7 @@
 #include "msg.h"
 #include "pathlist.h"
 
-//#include "dlgcnvt.def"
-//#include "wpdriver.def"
-//#include "utils.def"
-//#include "msg.def"
+
 extern void ReplaceExt(char *path,char *addext);
 extern void ErrorMsg(char *msg,... );
 
@@ -62,16 +59,11 @@ STATIC char     convertPath[_MAX_PATH];
 
 bint            OptDIFFormat = B_TRUE;
 bint            OptCommaFormat = B_FALSE;
-FILE *          ConvertFile;
+FILE            *ConvertFile;
 
-STATIC void     getDlgValues( gui_window * );
-STATIC void     setDlgValues( gui_window * );
-STATIC void     setDlgDefaults( gui_window * );
-STATIC bint     dlgOpenFmtFile();
-STATIC void     dlgBrowseFmtFile( gui_window * );
 STATIC bool     progEvent( gui_window *, gui_event, void * );
 
-extern sio_data *   CurrSIOData;
+extern sio_data *CurrSIOData;
 
 
 
@@ -91,8 +83,8 @@ extern void DlgGetConvert( a_window * wnd )
 
 
 
-STATIC void getDlgValues( gui_window * gui )
-/******************************************/
+STATIC void getDlgValues( gui_window *gui )
+/*****************************************/
 {
     OptDIFFormat = GUIIsChecked( gui, CTL_DIF_FMT );
     OptCommaFormat = GUIIsChecked( gui, CTL_COMMA_FMT );
@@ -101,10 +93,10 @@ STATIC void getDlgValues( gui_window * gui )
 
 
 
-STATIC void setDlgValues( gui_window * gui )
-/******************************************/
+STATIC void setDlgValues( gui_window *gui )
+/*****************************************/
 {
-    char *      add_ext;
+    char        *add_ext;
 
     GUISetChecked( gui, CTL_DIF_FMT, OptDIFFormat );
     GUISetChecked( gui, CTL_COMMA_FMT, OptCommaFormat );
@@ -119,8 +111,8 @@ STATIC void setDlgValues( gui_window * gui )
 
 
 
-STATIC void setDlgDefaults( gui_window * gui )
-/********************************************/
+STATIC void setDlgDefaults( gui_window *gui )
+/*******************************************/
 {
     OptDIFFormat = B_TRUE;
     OptCommaFormat = B_FALSE;
@@ -130,8 +122,8 @@ STATIC void setDlgDefaults( gui_window * gui )
 
 
 
-STATIC bint dlgOpenFmtFile()
-/**************************/
+STATIC bint dlgOpenFmtFile( void )
+/********************************/
 {
     ConvertFile = fopen( convertPath, "w" );
     if( ConvertFile == NULL ) {
@@ -143,8 +135,8 @@ STATIC bint dlgOpenFmtFile()
 
 
 
-STATIC void dlgBrowseFmtFile( gui_window * gui )
-/**********************************************/
+STATIC void dlgBrowseFmtFile( gui_window *gui )
+/*********************************************/
 {
     for( ;; ) {
         if( !DlgFileBrowse( LIT( Convert_File_Name ), cnvtFilterList,

@@ -198,10 +198,10 @@ extern bool WndMainMenuProc( a_window * wnd, unsigned id )
 
 
 
-extern void OpenSample()
-/**********************/
+extern void OpenSample( void )
+/****************************/
 {
-    void *      cursor_type;
+    void        *cursor_type;
 
 #if defined( __WINDOWS__ ) || defined( __NT__ ) || defined( __OS2_PM__ )
     AboutClose();

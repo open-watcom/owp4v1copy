@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Profiler window callback routines.
 *
 ****************************************************************************/
 
@@ -35,10 +34,8 @@
 #include "wpaui.h"
 #include "msg.h"
 
-//#include "wpwind.def"
 
 extern void     WndGetClientRect( a_window *, gui_rect * );
-extern wnd_row  WndGetMouseRow();
 
 extern a_window *   WndMain;
 

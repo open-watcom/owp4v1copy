@@ -84,7 +84,7 @@ static browser *FInitSource( sm_file_handle fp, sm_mod_handle mod, sm_cue_file_i
 }
 
 
-void FClearOpenSourceCache()
+void FClearOpenSourceCache( void )
 {
     browser             *hndl;
 

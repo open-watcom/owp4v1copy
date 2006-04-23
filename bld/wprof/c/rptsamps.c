@@ -50,31 +50,6 @@ extern sio_data         *SIOData;
 
 STATIC FILE             *df;
 
-STATIC void dumpSampleImages( bint, sio_data * );
-STATIC void dumpSampleInfo();
-
-
-
-extern void ReportSampleInfo()
-/****************************/
-{
-    sio_data        *curr_sio;
-
-    if( SIOData == NULL ) return;
-    df = fopen( "report.dmp", "w" );
-    if( df != NULL ) {
-        curr_sio = SIOData;
-        for( ;; ) {
-            curr_sio = curr_sio->next;
-            dumpSampleInfo();
-            fprintf( df, "\n" );
-            dumpSampleImages( B_TRUE, curr_sio );
-            if( curr_sio == SIOData ) break;
-        }
-        fclose( df );
-    }
-}
-
 
 
 STATIC void dumpSampleImages( bint all_info, sio_data * curr_sio )
@@ -157,8 +132,8 @@ STATIC void dumpSampleImages( bint all_info, sio_data * curr_sio )
 
 
 
-STATIC void dumpSampleInfo()
-/**************************/
+STATIC void dumpSampleInfo( void )
+/********************************/
 {
     sio_data            *sio_rover;
     mark_data           *mark;
@@ -308,5 +283,27 @@ STATIC void dumpSampleInfo()
                     massgd->raw->sect_id, buff1, massgd->hits );
         }
         if( sio_rover == SIOData ) break;
+    }
+}
+
+
+
+extern void ReportSampleInfo( void )
+/**********************************/
+{
+    sio_data        *curr_sio;
+
+    if( SIOData == NULL ) return;
+    df = fopen( "report.dmp", "w" );
+    if( df != NULL ) {
+        curr_sio = SIOData;
+        for( ;; ) {
+            curr_sio = curr_sio->next;
+            dumpSampleInfo();
+            fprintf( df, "\n" );
+            dumpSampleImages( B_TRUE, curr_sio );
+            if( curr_sio == SIOData ) break;
+        }
+        fclose( df );
     }
 }

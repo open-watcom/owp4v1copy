@@ -85,8 +85,8 @@ extern void SetCurrentMAD( mad_handle );
 extern sio_data *       SIOData;
 extern sio_data *       CurrSIOData;
 
-STATIC void *           sampleCreateWin();
-STATIC void             sampleOpenMainImage();
+STATIC void *           sampleCreateWin( void );
+STATIC void             sampleOpenMainImage( void );
 STATIC bint             sampleProcTopStatus( a_window *, int, int, wnd_line_piece * );
 STATIC bint             sampleProcBotStatus( a_window *, int, int, wnd_line_piece * );
 STATIC bint             sampleProcStatus( a_window *, int, int, wnd_line_piece * );
@@ -253,8 +253,8 @@ wnd_info WPSampleInfo = {
 
 
 
-extern void WPSampleOpen()
-/************************/
+extern void WPSampleOpen( void )
+/******************************/
 {
     if( CurrSIOData->sample_window == NULL ) {
         CurrSIOData->sample_window = sampleCreateWin();
@@ -272,12 +272,12 @@ extern void WPSampleOpen()
 
 
 
-STATIC void * sampleCreateWin()
-/*****************************/
+STATIC void *sampleCreateWin( void )
+/**********************************/
 {
-    a_window *          wnd;
+    a_window            *wnd;
     wnd_create_struct   info;
-    char *              title;
+    char                *title;
 
 #define TITLE_LEN       255
 
@@ -302,10 +302,10 @@ STATIC void * sampleCreateWin()
 
 
 
-STATIC void sampleOpenMainImage()
-/*******************************/
+STATIC void sampleOpenMainImage( void )
+/*************************************/
 {
-    image_info *    curr_image;
+    image_info      *curr_image;
     int             count;
 
     gatherSort( CurrSIOData );
@@ -327,10 +327,10 @@ STATIC void sampleOpenMainImage()
 
 
 
-STATIC bool sampleEventProc( a_window * wnd, gui_event gui_ev, void * parm )
-/**************************************************************************/
+STATIC bool sampleEventProc( a_window *wnd, gui_event gui_ev, void *parm )
+/************************************************************************/
 {
-    sio_data *      curr_sio;
+    sio_data        *curr_sio;
 
     parm=parm;
     switch( gui_ev ) {
@@ -365,11 +365,11 @@ STATIC bool sampleEventProc( a_window * wnd, gui_event gui_ev, void * parm )
 
 
 
-STATIC bool sampleGetLine( a_window * wnd, wnd_row row, int piece,
-                                        wnd_line_piece * line )
+STATIC bool sampleGetLine( a_window *wnd, wnd_row row, int piece,
+                                        wnd_line_piece *line )
 /*************************************************************/
 {
-    sio_data *      curr_sio;
+    sio_data        *curr_sio;
 
     if( row <= -4  ) {
         return( sampleProcOverview( wnd, row, piece, line ) );
@@ -390,9 +390,9 @@ STATIC bool sampleGetLine( a_window * wnd, wnd_row row, int piece,
 
 
 
-STATIC bint sampleProcTopStatus( a_window * wnd, int row, int piece,
-                                               wnd_line_piece * line )
-/********************************************************************/
+STATIC bint sampleProcTopStatus( a_window *wnd, int row, int piece,
+                                             wnd_line_piece *line )
+/*****************************************************************/
 {
     gui_point           start;
     gui_point           end;
@@ -434,9 +434,9 @@ STATIC bint sampleProcTopStatus( a_window * wnd, int row, int piece,
 
 
 
-STATIC bint sampleProcBotStatus( a_window * wnd, int row, int piece,
-                                               wnd_line_piece * line )
-/********************************************************************/
+STATIC bint sampleProcBotStatus( a_window *wnd, int row, int piece,
+                                               wnd_line_piece *line )
+/*******************************************************************/
 {
     gui_point           start;
     gui_point           end;
@@ -480,11 +480,11 @@ STATIC bint sampleProcBotStatus( a_window * wnd, int row, int piece,
 
 
 
-STATIC bint sampleProcStatus( a_window * wnd, int row, int piece,
-                                            wnd_line_piece * line )
-/*****************************************************************/
+STATIC bint sampleProcStatus( a_window *wnd, int row, int piece,
+                                           wnd_line_piece *line )
+/***************************************************************/
 {
-    sio_data *      curr_sio;
+    sio_data        *curr_sio;
     clicks_t        abs_count;
     clicks_t        rel_count;
     gui_ord         point_adjust;
@@ -747,11 +747,11 @@ STATIC bint simageGetLine( a_window * wnd, int row )
 
 
 
-STATIC bint smodGetLine( a_window * wnd, int row )
-/************************************************/
+STATIC bint smodGetLine( a_window *wnd, int row )
+/***********************************************/
 {
-    sio_data *      curr_sio;
-    mod_info *      mod;
+    sio_data        *curr_sio;
+    mod_info        *mod;
 
     curr_sio = WndExtra( wnd );
     sampNewRow = row != curr_sio->curr_proc_row;
@@ -776,11 +776,11 @@ STATIC bint smodGetLine( a_window * wnd, int row )
 
 
 
-STATIC bint sfileGetLine( a_window * wnd, int row )
-/*************************************************/
+STATIC bint sfileGetLine( a_window *wnd, int row )
+/************************************************/
 {
-    sio_data *      curr_sio;
-    file_info *     curr_file;
+    sio_data        *curr_sio;
+    file_info       *curr_file;
 
     curr_sio = WndExtra( wnd );
     sampNewRow = row != curr_sio->curr_proc_row;
@@ -804,11 +804,11 @@ STATIC bint sfileGetLine( a_window * wnd, int row )
 
 
 
-STATIC bint srtnGetLine( a_window * wnd, int row )
-/************************************************/
+STATIC bint srtnGetLine( a_window *wnd, int row )
+/***********************************************/
 {
-    sio_data *      curr_sio;
-    rtn_info *      curr_rtn;
+    sio_data        *curr_sio;
+    rtn_info        *curr_rtn;
 
     curr_sio = WndExtra( wnd );
     sampNewRow = row != curr_sio->curr_proc_row;
@@ -832,12 +832,12 @@ STATIC bint srtnGetLine( a_window * wnd, int row )
 
 
 
-STATIC bint ssrcGetLine( a_window * wnd, int row )
-/************************************************/
+STATIC bint ssrcGetLine( a_window *wnd, int row )
+/***********************************************/
 {
-    sio_data *      curr_sio;
-    wp_srcfile *    wp_src;
-    wp_srcline *    lines;
+    sio_data        *curr_sio;
+    wp_srcfile      *wp_src;
+    wp_srcline      *lines;
     int             index;
     int             adjusted_row;
 
@@ -876,12 +876,12 @@ STATIC bint ssrcGetLine( a_window * wnd, int row )
 
 
 
-STATIC bint sasmGetLine( a_window * wnd, int row )
-/************************************************/
+STATIC bint sasmGetLine( a_window *wnd, int row )
+/***********************************************/
 {
-    sio_data *      curr_sio;
-    wp_asmfile *    wpasm_file;
-    wp_asmline *    asm_line;
+    sio_data        *curr_sio;
+    wp_asmfile      *wpasm_file;
+    wp_asmline      *asm_line;
     int             asm_group;
     int             asm_row;
 
@@ -917,11 +917,11 @@ STATIC bint sasmGetLine( a_window * wnd, int row )
 
 
 
-STATIC bint sampleSetLine( a_window * wnd, int row, int piece,
-                                         wnd_line_piece * line )
-/**************************************************************/
+STATIC bint sampleSetLine( a_window *wnd, int row, int piece,
+                                        wnd_line_piece *line )
+/************************************************************/
 {
-    sio_data *      curr_sio;
+    sio_data        *curr_sio;
     clicks_t        bar_range;
     gui_ord         catcher_extent;
     gui_ord         slacker;
@@ -1031,13 +1031,13 @@ STATIC bint sampleSetLine( a_window * wnd, int row, int piece,
 
 
 
-STATIC void findRtnFromRow( sio_data * curr_sio, int row )
-/********************************************************/
+STATIC void findRtnFromRow( sio_data *curr_sio, int row )
+/*******************************************************/
 {
-    file_info *         curr_file;
-    rtn_info *          curr_rtn;
-    cue_handle *        ch;
-    sym_handle *        sh;
+    file_info           *curr_file;
+    rtn_info            *curr_rtn;
+    cue_handle          *ch;
+    sym_handle          *sh;
     int                 index;
     mod_handle          mh;
     address             addr;
@@ -1065,12 +1065,12 @@ STATIC void findRtnFromRow( sio_data * curr_sio, int row )
 
 
 
-STATIC void sampFixDirtyCurr( a_window * wnd )
-/********************************************/
+STATIC void sampFixDirtyCurr( a_window *wnd )
+/*******************************************/
 {
-    sio_data *      curr_sio;
-    wp_srcfile *    src_file;
-    rtn_info *      curr_rtn;
+    sio_data        *curr_sio;
+    wp_srcfile      *src_file;
+    rtn_info        *curr_rtn;
     int             src_line;
     int             row;
     int             piece;
@@ -1132,11 +1132,11 @@ STATIC void sampFixDirtyCurr( a_window * wnd )
 
 
 
-STATIC int simageDetailLine( a_window * wnd, int row, bint multi_level )
-/**********************************************************************/
+STATIC int simageDetailLine( a_window *wnd, int row, bint multi_level )
+/*********************************************************************/
 {
-    sio_data *      curr_sio;
-    image_info *    image;
+    sio_data        *curr_sio;
+    image_info      *image;
 
     curr_sio = WndExtra( wnd );
     image = SImageGetImage( wnd, row );
@@ -1172,11 +1172,11 @@ STATIC int simageDetailLine( a_window * wnd, int row, bint multi_level )
 
 
 
-STATIC int smodDetailLine( a_window * wnd, int row, bint multi_level )
-/********************************************************************/
+STATIC int smodDetailLine( a_window *wnd, int row, bint multi_level )
+/*******************************************************************/
 {
-    sio_data *      curr_sio;
-    mod_info *      mod;
+    sio_data        *curr_sio;
+    mod_info        *mod;
 
     curr_sio = WndExtra( wnd );
     mod = SModGetModule( wnd, row );
@@ -1194,11 +1194,11 @@ STATIC int smodDetailLine( a_window * wnd, int row, bint multi_level )
 
 
 
-STATIC int sfileDetailLine( a_window * wnd, int row, bint multi_level )
-/*********************************************************************/
+STATIC int sfileDetailLine( a_window *wnd, int row, bint multi_level )
+/********************************************************************/
 {
-    sio_data *      curr_sio;
-    file_info *     curr_file;
+    sio_data        *curr_sio;
+    file_info       *curr_file;
 
     curr_sio = WndExtra( wnd );
     curr_file = SFileGetFile( wnd, row );
@@ -1216,11 +1216,11 @@ STATIC int sfileDetailLine( a_window * wnd, int row, bint multi_level )
 
 
 
-STATIC int srtnDetailLine( a_window * wnd, int row, bint multi_level )
-/********************************************************************/
+STATIC int srtnDetailLine( a_window *wnd, int row, bint multi_level )
+/*******************************************************************/
 {
-    sio_data *      curr_sio;
-    rtn_info *      curr_rtn;
+    sio_data        *curr_sio;
+    rtn_info        *curr_rtn;
     int             line;
 
     multi_level = multi_level;
@@ -1233,11 +1233,11 @@ STATIC int srtnDetailLine( a_window * wnd, int row, bint multi_level )
 
 
 
-STATIC int srtnOpenDetail( sio_data * curr_sio, bint go_down )
-/************************************************************/
+STATIC int srtnOpenDetail( sio_data *curr_sio, bint go_down )
+/***********************************************************/
 {
-    a_window *      wnd;
-    wp_srcfile *    src_file;
+    a_window        *wnd;
+    wp_srcfile      *src_file;
     int             line;
     int             top_line;
 
@@ -1272,11 +1272,11 @@ STATIC int srtnOpenDetail( sio_data * curr_sio, bint go_down )
 
 
 
-STATIC int ssrcDetailLine( a_window * wnd, int row, bint multi_level )
-/********************************************************************/
+STATIC int ssrcDetailLine( a_window *wnd, int row, bint multi_level )
+/*******************************************************************/
 {
-    sio_data *      curr_sio;
-    wp_asmfile *    asm_file;
+    sio_data        *curr_sio;
+    wp_asmfile      *asm_file;
     int             top_line;
 
     curr_sio = WndExtra( wnd );
@@ -1295,8 +1295,8 @@ STATIC int ssrcDetailLine( a_window * wnd, int row, bint multi_level )
 
 
 
-STATIC int sasmDetailLine( a_window * wnd, int row, bint multi_level )
-/********************************************************************/
+STATIC int sasmDetailLine( a_window *wnd, int row, bint multi_level )
+/*******************************************************************/
 {
     wnd=wnd;
     multi_level=multi_level;
@@ -1306,18 +1306,18 @@ STATIC int sasmDetailLine( a_window * wnd, int row, bint multi_level )
 
 
 
-STATIC void sampleRefresh( a_window * wnd )
-/****************************************/
+STATIC void sampleRefresh( a_window *wnd )
+/***************************************/
 {
     WndZapped( wnd );
 }
 
 
 
-extern void WPZoomIn( a_window * wnd, int row )
-/*********************************************/
+extern void WPZoomIn( a_window *wnd, int row )
+/********************************************/
 {
-    sio_data *      curr_sio;
+    sio_data        *curr_sio;
     int             detail_rows;
     int             top_line;
     int             old_level;

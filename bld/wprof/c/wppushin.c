@@ -38,39 +38,37 @@
 #include "dip.h"
 #include "sampinfo.h"
 
-//#include "wppushin.def"
-//#include "setsamps.def"
-//#include "memutil.def"
+
 extern void *ProfRealloc(void *p,size_t new_size);
 extern void SetSampleInfo(sio_data *curr_sio);
 
 
-static int *    wpEventStack = 0;
-static void *   wpDataStack = 0;
+static int      *wpEventStack = 0;
+static void     *wpDataStack = 0;
 static int      wpStackSize = 0;
 static int      wpDataSize = 0;
 
 
 
-extern void * WPPopPtr()
-/**********************/
+extern void *WPPopPtr( void )
+/***************************/
 {
-    void *      data_point;
+    void        *data_point;
 
     if( wpDataSize == 0 ) {
         return( NULL );
     }
-    wpDataSize -= sizeof(void *);
-    data_point = *(char * *)wpDataStack;
+    wpDataSize -= sizeof( void * );
+    data_point = *(char **)wpDataStack;
     return( data_point );
 }
 
 
 
-extern void WndDoInput()
-/**********************/
+extern void WndDoInput( void )
+/****************************/
 {
-    void *  data_point;
+    void    *data_point;
     int     event;
 
     event = WPPopEvent();
@@ -82,16 +80,16 @@ extern void WndDoInput()
 
 
 
-extern void WPPushPtrEvent( int event, void * ptr )
-/*************************************************/
+extern void WPPushPtrEvent( int event, void *ptr )
+/************************************************/
 {
-    void *      data_point;
+    void    *data_point;
 
     WPPushEvent( event );
-    wpDataSize += sizeof(void *);
+    wpDataSize += sizeof( void * );
     wpDataStack = ProfRealloc( wpDataStack, wpDataSize );
     data_point = (char *)wpDataStack + wpDataSize - sizeof(pointer);
-    *(char * *)data_point = ptr;
+    *(char **)data_point = ptr;
 }
 
 
@@ -100,14 +98,14 @@ extern void WPPushEvent( int event )
 /**********************************/
 {
     wpStackSize++;
-    wpEventStack = ProfRealloc( wpEventStack, wpStackSize*sizeof(int) );
+    wpEventStack = ProfRealloc( wpEventStack, wpStackSize * sizeof( int ) );
     wpEventStack[wpStackSize-1] = event;
 }
 
 
 
-extern int WPPopEvent()
-/*********************/
+extern int WPPopEvent( void )
+/***************************/
 {
     if( wpStackSize == 0 ) {
         return( WP_NO_EVENT );

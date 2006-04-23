@@ -288,7 +288,7 @@ dip_status DIPMoreMem( unsigned amount )
     return( DS_FAIL );
 }
 
-void DIPCancel()
+void DIPCancel( void )
 {
     unsigned            i;
     image_handle        *ih;
@@ -939,8 +939,8 @@ dip_status TypeRelease( type_handle *th )
     }
 }
 
-dip_status TypeFreeAll()
-/**********************/
+dip_status TypeFreeAll( void )
+/****************************/
 {
     image_handle        *ih;
 
@@ -1173,8 +1173,8 @@ dip_status SymRelease( sym_handle *sh )
     }
 }
 
-dip_status SymFreeAll()
-/*********************/
+dip_status SymFreeAll( void )
+/***************************/
 {
     image_handle        *ih;
 

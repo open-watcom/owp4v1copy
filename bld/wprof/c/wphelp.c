@@ -43,15 +43,15 @@ extern char *FindFile(char *path,char *name,path_list *path_tail);
 
 STATIC gui_help_instance    helpHandle;
 
-extern a_window *           WndMain;
-extern path_list *          HelpPathList;
+extern a_window             *WndMain;
+extern path_list            *HelpPathList;
 
 #define HELPNAME "wprof.hlp"
 
 
 
-void WPInitHelp()
-/***************/
+void WPInitHelp( void )
+/*********************/
 {
     helpHandle = GUIHelpInit( WndGui( WndMain ), HELPNAME,
                               "Open Watcom Profiler Help" );
@@ -59,8 +59,8 @@ void WPInitHelp()
 
 
 
-void WPFiniHelp()
-/***************/
+void WPFiniHelp( void )
+/*********************/
 {
     GUIHelpFini( helpHandle, WndGui( WndMain ), HELPNAME );
 }

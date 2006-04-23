@@ -139,16 +139,16 @@ STATIC char * cmdUsage[] = {
 
 bint        WPWndInitDone = B_FALSE;
 char        SamplePath[ _MAX_PATH ];
-char *      WProfDips = NULL;
+char        *WProfDips = NULL;
 
 static int  WProfDipSize = 0;
 
 
 
-extern void WPInit()
-/******************/
+extern void WPInit( void )
+/************************/
 {
-    char *      rover;
+    char        *rover;
     bint        do_report;
     char        buff[256];
 
@@ -178,8 +178,8 @@ extern void WPInit()
 
 
 
-extern void WPFini()
-/******************/
+extern void WPFini( void )
+/************************/
 {
 #ifdef TRMEM
     ClearAllSamples();
@@ -198,7 +198,7 @@ extern void WPFini()
 STATIC bint procCmd( char * cmd )
 /*******************************/
 {
-    char *  rover;
+    char    *rover;
     int     name_len;
     int     old_len;
     int     cmd_type;
@@ -207,7 +207,7 @@ STATIC bint procCmd( char * cmd )
     bint    do_option;
 
     do_report = B_FALSE;
-    for(;;) {
+    for( ;; ) {
         cmd = eatBlanks( cmd );
         if( *cmd == NULLCHAR ) break;
 #ifdef __UNIX__

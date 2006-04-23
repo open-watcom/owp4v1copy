@@ -157,10 +157,10 @@ mad_handle DIGCLIENT DIPCliCurrMAD( void )
 
 
 
-extern void WPDipInit()
-/*********************/
+extern void WPDipInit( void )
+/***************************/
 {
-    char *      dip_name;
+    char        *dip_name;
     unsigned    dip_count;
     dip_status  dip_stat;
 
@@ -188,16 +188,16 @@ extern void WPDipInit()
 
 
 
-extern process_info * WPDipProc()
-/*******************************/
+extern process_info *WPDipProc( void )
+/************************************/
 {
     return( DIPCreateProcess() );
 }
 
 
 
-extern void WPDipDestroyProc( process_info * dip_proc )
-/*****************************************************/
+extern void WPDipDestroyProc( process_info *dip_proc )
+/****************************************************/
 {
     if( dip_proc != NULL ) {
         DIPDestroyProcess( dip_proc );
@@ -206,8 +206,8 @@ extern void WPDipDestroyProc( process_info * dip_proc )
 
 
 
-extern void WPDipSetProc( process_info * dip_proc )
-/*************************************************/
+extern void WPDipSetProc( process_info *dip_proc )
+/************************************************/
 {
     DIPSetProcess( dip_proc );
 }
@@ -242,8 +242,8 @@ extern mod_handle WPDipLoadInfo( int f_handle, char * f_name, void * image,
 
 
 
-extern void WPDipFini()
-/*********************/
+extern void WPDipFini( void )
+/***************************/
 {
     DIPFini();
 }

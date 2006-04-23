@@ -183,14 +183,14 @@ system_config   *DIGCLIENT MADCliSystemConfig( void )
  *      Debugger routines
  */
 
-void InitMADInfo()
+void InitMADInfo( void )
 {
     if( MADInit() != MS_OK ) {
         fatal( LIT( Mad_Init_Failed ) );
     }
 }
 
-void FiniMADInfo()
+void FiniMADInfo( void )
 {
     MADFini();
     AsmFini();

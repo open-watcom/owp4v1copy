@@ -52,7 +52,7 @@ STATIC bool aboutEventProc( a_window *, gui_event, void * );
 STATIC int  AboutNumRows( a_window * );
 STATIC bool aboutGetLine( a_window *, wnd_row, int, wnd_line_piece * );
 
-static a_window *   aboutWindow = NULL;
+static a_window     *aboutWindow = NULL;
 static bint         aboutOn = TRUE;
 
 
@@ -75,8 +75,8 @@ wnd_info AboutInfo = {
 
 
 
-extern void AboutOpen()
-/*********************/
+extern void AboutOpen( void )
+/***************************/
 {
     if( aboutWindow == NULL ) {
         aboutWindow = WndCreate(
@@ -92,8 +92,8 @@ extern void AboutOpen()
 
 
 
-extern void AboutClose()
-/**********************/
+extern void AboutClose( void )
+/****************************/
 {
     a_window *  wnd;
 
@@ -165,8 +165,8 @@ STATIC bool aboutEventProc( a_window * wnd, gui_event gui_ev, void * parm )
 
 
 
-extern void AboutSetOff()
-/***********************/
+extern void AboutSetOff( void )
+/*****************************/
 {
     aboutOn = B_FALSE;
     if( aboutWindow != NULL ) {
@@ -176,11 +176,11 @@ extern void AboutSetOff()
 
 
 
-extern void DlgAbout()
-/********************/
+extern void DlgAbout( void )
+/**************************/
 {
-    char *      about_data;
-    char *      about_rover;
+    char        *about_data;
+    char        *about_rover;
     int         about_len;
     int         index;
 
