@@ -74,7 +74,7 @@ short _SetRows( short rows )
 #define SCAN_400        0x1202
 
 
-static void             Load_25();
+static void             Load_25( void );
 static void             Load_VGA( short, short, short );
 static void             Load_EGA( short, short, short );
 static void             Load_MCGA( short, short, short );
@@ -285,7 +285,7 @@ short _SetRows( short rows )
 }
 
 
-static void Load_25()
+static void Load_25( void )
 /*===================
 
    When we want to go back to a 25-row display, just do a set mode

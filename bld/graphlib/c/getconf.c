@@ -73,7 +73,7 @@ struct videoconfig _WCI86FAR * _WCI86FAR _CGRAPH
 Entry( _GETVIDEOCONFIG, _getvideoconfig ) // alternate entry-point
 
 
-void _CalcNumPages()
+void _CalcNumPages( void )
 /*==================
 
    This routine updates the number of alphanumeric video pages after a

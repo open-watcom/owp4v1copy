@@ -49,8 +49,8 @@ short _L1PutDot( short x, short y )
     WPI_PRES            dc;
 #else
     gr_device _FARD     *dev_ptr;
-    short DOT_FUNC      (near *getdot)();
-    void DOT_FUNC       (near *putdot)();
+    short DOT_FUNC      (near *getdot)( char far *, short, short );
+    void DOT_FUNC       (near *putdot)( char far *, short, short );
 #endif
 
     if( _L1OutCode( x, y ) == 0 ) {             /* check if inside viewport */

@@ -55,7 +55,7 @@ extern unsigned         LoadSegLimit( unsigned );
 #endif
 
 
-static int TestForVESA()
+static int TestForVESA( void )
 //======================
 {
     short               val;
@@ -91,7 +91,7 @@ static int TestForVESA()
 }
 
 
-short _SuperVGAType()
+short _SuperVGAType( void )
 //===================
 
 {

@@ -137,7 +137,7 @@ void _PutChar( short row, short col, short ch )
     short far           *screen;
     char _WCI86FAR           *mask;
     gr_device _FARD     *dev_ptr;
-    void FILL_FUNC      (near* fill)();
+    void FILL_FUNC      (near* fill)( char far *, short, char, short, int );
 
     if( IsTextMode ) {
         if( _CurrState->vc.mode == _TEXTMONO ) {

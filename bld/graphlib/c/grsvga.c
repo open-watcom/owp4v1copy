@@ -75,7 +75,7 @@ extern void pascal      _PixRead256();
 extern short pascal     _ScanLeft256();
 extern short pascal     _ScanRight256();
 extern void             _EGASet();
-extern void             _EGAReset();
+extern void             _EGAReset( void );
 extern void pascal      _EGAMoveLeft();
 extern void pascal      _EGAMoveRight();
 extern void pascal      _MoveUp100();

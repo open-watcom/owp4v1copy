@@ -57,11 +57,11 @@ static struct line_entry    VectB;
 static struct ellipse_info  EllInfo;
 
 
-static void             FastPlot();
-static void             SlowPlot();
-static void             ArcPlot();
-static void             EllFill();
-static void             ArcFill();
+static void             FastPlot( short x, short y, short q );
+static void             SlowPlot( short x, short y, short q );
+static void             ArcPlot( short x, short y, short q );
+static void             EllFill(  short x, short y, short q );
+static void             ArcFill( short x, short y, short q );
 static void             InitLineMasks( short x1, short y1, short x2, short y2 );
 static void             HollowArc( short x1, short y1, short x2, short y2, short a, short b );
 static void             FilledArc( short x1, short y1, short x2, short y2, short a, short b );
@@ -204,8 +204,8 @@ static void FastPlot( short x, short y, short q )
 // plot the ellipse point (x,y)
 
 {
-    void                ( *setup ) ();
-    void DOT_FUNC       ( near *putdot )();
+    void                (*setup )( short, short, short );
+    void DOT_FUNC       (near *putdot)( char far *, short, short );
     gr_device _FARD     *dev_ptr;
 
     dev_ptr = _CurrState->deviceptr;
@@ -237,8 +237,8 @@ static void PutDot( short x, short y, short q )
 //=============================================
 
 {
-    void                ( *setup ) ();
-    void DOT_FUNC       ( near *putdot )();
+    void                (*setup )( short, short, short );
+    void DOT_FUNC       (near *putdot)( char far *, short, short );
     gr_device _FARD     *dev_ptr;
 
     if( _L1OutCode( x, y ) == 0 ) {     // inside viewport

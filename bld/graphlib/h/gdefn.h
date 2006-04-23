@@ -200,7 +200,7 @@ extern short                _SetMode( short );
 extern short                _SetRows( short );
 extern short                _SwapBits( short );
 extern short                _SysMonType( void );
-extern short                _SuperVGAType();
+extern short                _SuperVGAType( void );
 
 extern short                _L0BlockClip( short *, short *, short *, short * );
 extern void                 _L0DrawLine( char far *, short, short, short,

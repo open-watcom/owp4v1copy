@@ -69,11 +69,10 @@ static char             GTable[ 12 ] = {
 };
 
 
-static void GraphicsMode()
+static void GraphicsMode( void )
 /*========================
 
     Switch into Hercules graphics mode. */
-
 {
     short           i;
 

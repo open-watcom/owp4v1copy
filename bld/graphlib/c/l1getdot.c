@@ -46,7 +46,7 @@ short _L1GetDot( short x, short y )
     WPI_COLOUR          RGB_color;
 #else
     gr_device _FARD     *dev_ptr;
-    short DOT_FUNC      (near *getdot)();
+    short DOT_FUNC      (near *getdot)( char far *, short, short );
 #endif
 
     if( _L1OutCode( x, y ) == 0 ) {             /* check if inside viewport */

@@ -1099,7 +1099,7 @@ static void _outdot( short x, short y )
 
 {
     gr_device _FARD     *dev_ptr;
-    void DOT_FUNC       (near *putdot)();
+    void DOT_FUNC       ( near *putdot )( char far *, short, short );
 
     if( _L1OutCode( x, y ) == 0 ) {             /* check if inside viewport */
         dev_ptr = _CurrState->deviceptr;

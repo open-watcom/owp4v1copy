@@ -38,7 +38,7 @@ struct arcinfo {
     struct xycoord      vecta;
     struct xycoord      vectb;
     short               qinf[ 4 ];
-    void                (*plot)();
+    void                (*plot)( short x, short y, short );
 };
 
 

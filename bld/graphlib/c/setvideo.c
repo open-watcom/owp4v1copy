@@ -147,7 +147,7 @@ static short            SelectMode( short );
 #endif
 
 
-static void SetTextInfo()
+static void SetTextInfo( void )
 /*=======================
 
    This routine initializes the graphics text defaults. */

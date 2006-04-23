@@ -39,7 +39,7 @@ void _L1Fill( short x, short y, short length )
 
 {
     gr_device _FARD     *dev_ptr;
-    void FILL_FUNC      (near* fill)();
+    void FILL_FUNC      (near* fill)( char far *, short, char, short, int );
 
     if( length <= 0 ) {
         return;

@@ -99,7 +99,8 @@ void _L0DrawLine( char far *screen_ptr, short color, short style,
     char                major_len;
     char COMP_FAR       *stack;
     char COMP_FAR       *start;
-    void LINE_FUNC      (FUNC_FAR * line)();
+    void LINE_FUNC      (FUNC_FAR * line)( char far *, short, short,
+                                            short, short, short );
 
     plot_len = *( (char FUNC_FAR *)plot - 1 );
     minor_len = *( (char FUNC_FAR *)minorfn - 1 );
