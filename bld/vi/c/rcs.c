@@ -31,6 +31,7 @@
 
 #include <stdlib.h>
 #include "rcscli.h"
+#include "rcs.h"
 
 #ifndef TRUE
 #define TRUE 1
