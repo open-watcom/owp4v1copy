@@ -290,7 +290,7 @@ static ATTR local_attrs[] =
 ,       _bg( BLACK )    | _fg( BRIGHT | UNDERLINE ) // RADIO_HOTSPOT
 };
 
-bool uiattrs()
+bool uiattrs( void )
 {
     ATTR    *from;
 
@@ -322,7 +322,7 @@ static void setvgacolours( void )
     uisetblinkattr( 0 );
 }
 
-bool uivgaattrs()
+bool uivgaattrs( void )
 {
     if( UIData->colour == M_VGA || UIData->colour == M_EGA ) {
         setvgacolours();

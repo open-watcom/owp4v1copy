@@ -32,10 +32,8 @@
 
 #include "uidef.h"
 
-void __FAR * global uifaralloc( size )
-/**********************************/
-
-register        int                     size;
+void __FAR * global uifaralloc( int size )
+/****************************************/
 {
     register    void*                   ptr;
 
@@ -49,10 +47,8 @@ register        int                     size;
 }
 
 
-void global uifarfree( ptr )
-/**************************/
-
-    void __FAR *        ptr;
+void global uifarfree( void __FAR *ptr )
+/**************************************/
 {
    uifree( (void*) ptr );
 }

@@ -303,8 +303,8 @@ static          EVENT                   EventsRelease[] = {
                 EV_INSERT_RELEASE
 };
 
-unsigned int intern getkey()
-/**************************/
+unsigned int intern getkey( void )
+/********************************/
 {
     int       ev;
 
@@ -316,15 +316,15 @@ unsigned int intern getkey()
 }
 
 
-int intern checkkey()
-/*******************/
+int intern checkkey( void )
+/*************************/
 {
     return( HaveKey );
 }
 
 
-void intern flushkey()
-/********************/
+void intern flushkey( void )
+/**************************/
 {
     while( checkkey() ) {
         getkey();
@@ -332,8 +332,8 @@ void intern flushkey()
 }
 
 
-unsigned char intern checkshift()
-/*******************************/
+unsigned char intern checkshift( void )
+/*************************************/
 {
     return( ShiftState );
 }
@@ -357,22 +357,22 @@ void HookOutQueue( void )
 
 extern void far pascal SetEventHook( LPVOID );
 
-bool intern initkeyboard()
-/************************/
+bool intern initkeyboard( void )
+/******************************/
 {
     SetEventHook( &HookRtn );
     return( FALSE );
 }
 
-void intern finikeyboard()
-/************************/
+void intern finikeyboard( void )
+/******************************/
 {
     SetEventHook( NULL );
 }
 
 
-EVENT intern keyboardevent()
-/**************************/
+EVENT intern keyboardevent( void )
+/********************************/
 {
     register    unsigned int            key;
     register    unsigned int            scan;
@@ -433,8 +433,8 @@ EVENT intern keyboardevent()
     return( ev );
 }
 
-unsigned char global uicheckshift()
-/*******************************/
+unsigned char global uicheckshift( void )
+/***************************************/
 {
     return( ShiftState );
 }

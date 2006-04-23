@@ -242,13 +242,15 @@ static const event_shift_map ShiftMap[] = {
     FUNC_MAP( 12 ),
 };
 
-void intern clear_shift()
+extern void    tm_saveevent( void );
+
+void intern clear_shift( void )
 {
     ShftState = 0;
 }
 
-void intern ck_arm()
-/******************/
+void intern ck_arm( void )
+/************************/
 {
 }
 
@@ -300,8 +302,8 @@ int find_entry( const void *pkey, const void *pbase )
     return( *evp - entry->normal );
 }
 
-EVENT ck_keyboardevent()
-/**********************/
+EVENT ck_keyboardevent( void )
+/****************************/
 {
     EVENT                       ev;
     EVENT                       search_ev;
@@ -415,9 +417,8 @@ EVENT ck_keyboardevent()
     return( ev );
 }
 
-EVENT tk_keyboardevent()
+EVENT tk_keyboardevent( void )
 {
-    extern      void    tm_saveevent();
     EVENT       ev;
 
     ev = ck_keyboardevent();
@@ -428,8 +429,8 @@ EVENT tk_keyboardevent()
 }
 
 
-int init_trie()
-/*************/
+int init_trie( void )
+/*******************/
 {
     char        *str;
     char        buff[2];

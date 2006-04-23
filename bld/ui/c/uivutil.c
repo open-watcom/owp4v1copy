@@ -40,10 +40,8 @@
 #endif
 
 
-bool intern isdialogue( vptr )
-/****************************/
-
-register        VSCREEN*                vptr;
+bool intern isdialogue( VSCREEN *vptr )
+/*************************************/
 {
     return( ( vptr != NULL ) && ( ( vptr->flags & V_DIALOGUE ) != 0 ) );
 }
@@ -66,10 +64,8 @@ bool intern isscreen( BUFFER * bptr )
 }
 
 
-void global uisetsnow( snow )
-/***************************/
-
-register        bool                    snow;
+void global uisetsnow( bool snow )
+/********************************/
 {
     UIData->no_snow = ~snow;
 }

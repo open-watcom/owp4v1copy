@@ -203,7 +203,7 @@ unsigned char UiNECChar[] = {
     'X',        /* UI_CHECK_MARK        */
 };
 
-void intern DBCSCharacterMap()
+void intern DBCSCharacterMap( void )
 {
     if ( uiisdbcs() ) {
         if( uionnec() ) {

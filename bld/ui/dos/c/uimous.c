@@ -36,9 +36,9 @@
 #include "biosui.h"
 #include "charmap.h"
 
-extern  void    (intern *DrawCursor)(void);
+extern  void    (intern *DrawCursor)( void );
         unsigned short  Points;                 /* Number of lines / char  */
-extern int uimousealign();
+extern int uimousealign( void );
 
 struct mouse_data {
     unsigned short    bx,cx,dx;
@@ -86,13 +86,9 @@ extern          unsigned long           MouseTime       = 0L;
 extern          unsigned short          MouseStatus;
 extern          bool                    MouseInstalled;
 
-void intern checkmouse( status, row, col, time )
-/**********************************************/
-
-register        unsigned short*         status;
-register        MOUSEORD*               row;
-register        MOUSEORD*               col;
-register        unsigned long*          time;
+void intern checkmouse( unsigned short *status, MOUSEORD *row,
+                          MOUSEORD *col, unsigned long *time )
+/************************************************************/
 {
     struct  mouse_data state;
     char    change;
@@ -187,10 +183,8 @@ void intern setupmouse( void )
     uimousespeed( UIData->mouse_speed );
 }
 
-bool global initmouse( install )
-/******************************/
-
-register        int                     install;
+bool global initmouse( int install )
+/**********************************/
 {
     MouseInstalled = FALSE;
     if( install > 0 && installed( BIOS_MOUSE ) ) {
@@ -209,8 +203,8 @@ register        int                     install;
 }
 
 
-void global finimouse()
-/*********************/
+void global finimouse( void )
+/***************************/
 {
     if( MouseInstalled ) {
         uioffmouse();

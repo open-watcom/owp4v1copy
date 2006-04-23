@@ -50,7 +50,7 @@ typedef struct {
     long            real_edx;
 } PHARLAP_block;
 
-void intern DBCSCharacterMap();
+void intern DBCSCharacterMap( void );
 
 static          MONITOR                 ui_data         =       {
                 25,
@@ -89,8 +89,8 @@ void intern setvideomode( unsigned mode )
 }
 
 
-bool global uiset80col()
-/**********************/
+bool global uiset80col( void )
+/****************************/
 
 {
     register    bool            status;
@@ -221,7 +221,7 @@ dbcs_pair far * intern dbcs_vector_table( void )
 static dbcs_pair        Pairs[5];       // safe enough for now
 static int              Init;
 
-void intern initdbcs()
+void intern initdbcs( void )
 {
     dbcs_pair           *p;
     dbcs_pair           far *s;
@@ -239,13 +239,13 @@ void intern initdbcs()
     Init = TRUE;
 }
 
-int global uiisdbcs()
+int global uiisdbcs( void )
 {
     if( !Init ) initdbcs();
     return( Pairs[0].start_range != 0 );
 }
 
-int global uionnec()
+int global uionnec( void )
 {
     return( FALSE );
 }
@@ -335,8 +335,8 @@ int IsTextMode( void )
     return( text_mode );
 }
 
-bool intern initmonitor()
-/***********************/
+bool intern initmonitor( void )
+/*****************************/
 {
     register    bool                    ega;
     register    unsigned char           mode;
@@ -380,8 +380,8 @@ bool intern initmonitor()
 }
 
 
-int intern initbios()
-/*******************/
+int intern initbios( void )
+/*************************/
 {
     int                                 initialized;
     unsigned short far                  *poffset;
@@ -436,8 +436,8 @@ unsigned global uiclockdelay( unsigned milli )
 }
 
 
-void intern finibios()
-/********************/
+void intern finibios( void )
+/**************************/
 {
     uifinicursor();
 }

@@ -97,7 +97,7 @@ extern          void            uisetmenudesc( void );
 extern          VBARMENU*       uimenubar( VBARMENU * );
 extern          void            uimenuindicators( int );
 extern          void            uimenus( MENUITEM *, MENUITEM **, EVENT );
-extern          int             uimenuson();
+extern          int             uimenuson( void );
 extern          void            uimenudisable( int );
 extern          int             uimenuisdisabled( void );
 extern          int             uimenugetaltpressed ( void );

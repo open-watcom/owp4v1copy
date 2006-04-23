@@ -33,8 +33,8 @@
 #include "uidef.h"
 
 
-void intern dividearea( area, centre, areas )
-/*******************************************/
+void intern dividearea( SAREA area, SAREA centre, SAREA areas[ 5 ] )
+/******************************************************************/
 /*
         This diagram shows the general case for the overlap of two
         areas. If there is only a partial overlap, areas 1 to 4 may
@@ -56,9 +56,6 @@ void intern dividearea( area, centre, areas )
           ooooooooooooooooooooooooooooooooo
 */
 
-register        SAREA                   area;
-register        SAREA                   centre;
-register        SAREA                   areas[ 5 ];
 {
     register    char                    i;
     register    int                     row = 0;    // GCC thinks this might be uninited

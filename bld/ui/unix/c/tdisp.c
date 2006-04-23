@@ -117,7 +117,8 @@
 #endif
 #define __putc( c )     {fputc( c, UIConFile );}
 
-extern char     *GetTermType(void);
+extern char     *GetTermType( void );
+extern EVENT    tk_keyboardevent( void );
 
 bool    UserForcedTermRefresh= FALSE;
 
@@ -146,8 +147,8 @@ static int _con_putchar( int ch )
 
 #endif
 
-bool TInfCheck()
-/***************/
+bool TInfCheck( void )
+/********************/
 {
     extern unsigned     UIDisableShiftChanges;
 
@@ -813,8 +814,8 @@ static void size_handler(int signo)
 }
 
 
-static EVENT td_sizeevent()
-/*************************/
+static EVENT td_sizeevent( void )
+/*******************************/
 {
     SAREA           area;
 
@@ -861,8 +862,8 @@ static bool intern ti_initconsole( void )
     return( TRUE );
 }
 
-int intern initmonitor()
-/**********************/
+int intern initmonitor( void )
+/****************************/
 {
     struct sigaction sa;
 
@@ -936,8 +937,8 @@ static int new_attr(int nattr, int oattr)
 
 static int ti_refresh( int must );
 
-static int ti_init()
-/******************/
+static int ti_init( void )
+/************************/
 {
     int         rows, cols;
     char        *tmp;
@@ -994,8 +995,8 @@ static int ti_init()
     return( TRUE );
 }
 
-static int ti_fini()
-/******************/
+static int ti_fini( void )
+/************************/
 {
     TI_RESTORE_ATTR();
     TI_HOME();
@@ -1050,8 +1051,8 @@ static int td_update(SAREA *area)
     return 0;
 }
 
-static int ti_hwcursor()
-/**********************/
+static int ti_hwcursor( void )
+/****************************/
 {
     // Set cursor to correct visibility
     switch( UIData->cursor_type ){
@@ -1420,9 +1421,8 @@ static int td_setcur( ORD row, ORD col, int typ, int attr )
 }
 
 
-EVENT td_event()
+EVENT td_event( void )
 {
-    extern      EVENT tk_keyboardevent();
     EVENT       ev;
 
     ev = td_sizeevent();

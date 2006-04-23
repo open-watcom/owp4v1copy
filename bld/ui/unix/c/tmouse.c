@@ -89,8 +89,8 @@ int UIMouseHandle = -1;
 #define XT_INIT "\033[?1000h"
 #define XT_FINI "\033[?1000l"
 
-static  void tm_error()
-/*********************/
+static  void tm_error( void )
+/***************************/
 {
 }
 
@@ -104,8 +104,8 @@ static  void tm_error()
 static int last_row, last_col, last_status;
 
 /* Parse an xterm mouse event. */
-static void XT_parse()
-/********************/
+static void XT_parse( void )
+/**************************/
 {
     last_col = buf[1] - 0x21;
     last_row = buf[2] - 0x21;
@@ -150,8 +150,8 @@ static int tm_check( unsigned short *status, unsigned short *row,
     return 0;
 }
 
-static int tm_stop()
-/*********************/
+static int tm_stop( void )
+/************************/
 {
     return 0;
 }
@@ -331,8 +331,8 @@ static int tm_init( bool install )
 #endif
 }
 
-static int tm_fini()
-/*********************/
+static int tm_fini( void )
+/************************/
 {
     switch( MouseType ) {
         case M_XT:
@@ -363,8 +363,8 @@ static int tm_set_speed( unsigned speed )
     return 0;
 }
 
-void tm_saveevent()
-/*****************/
+void tm_saveevent( void )
+/***********************/
 {
     int i;
     int c;

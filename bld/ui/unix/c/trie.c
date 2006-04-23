@@ -228,7 +228,7 @@ static int child_comp( const int *pkey, const eNode *pbase )
     #define __alloca( x ) alloca( (x) )
 #endif
 
-EVENT TrieRead()
+EVENT TrieRead( void )
 {
     eTrie       *trie;
     char        *buf;

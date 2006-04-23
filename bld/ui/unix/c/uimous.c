@@ -55,8 +55,8 @@ void intern checkmouse( unsigned short *status, unsigned short *row,
     _checkmouse(status, row, col, time);
 }
 
-void intern stopmouse()
-/*********************/
+void intern stopmouse( void )
+/***************************/
 {
     _stopmouse();
 }
@@ -67,8 +67,8 @@ bool global initmouse( bool install )
     return _initmouse(install);
 }
 
-void global finimouse()
-/*********************/
+void global finimouse( void )
+/***************************/
 {
     _finimouse();
 }

@@ -35,11 +35,15 @@
 
 typedef void            a_tab_field;
 
+typedef struct vfield {
+        SAREA           area;
+} VTABAREA;
+
 typedef struct vtab {
-        unsigned          (*tab)();     /* is field in tab sequence ? */
-        a_tab_field     * (*next)();    /* get next VFIELD */
+        unsigned          (*tab)( VTABAREA *, void * );     /* is field in tab sequence ? */
+        a_tab_field     * (*next)( VTABAREA *, void * );    /* get next VFIELD */
         void            * parm;         /* parm for functions */
-        void            * (*mousepos)();/* mouse position function */
+        void            * (*mousepos)( void *, ORD *, ORD * );/* mouse position function */
         void            * mouseparm;    /* parm for mousepos function */
         a_tab_field     * other;        /* prev VFIELD or moused but no tab */
         a_tab_field     * curr;         /* current VFIELD */

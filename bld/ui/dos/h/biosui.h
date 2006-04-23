@@ -131,7 +131,7 @@ struct ega_info {
     unsigned char   adapter_bits;
 };
 
-extern struct ega_info BIOSEGAInfo();
+extern struct ega_info BIOSEGAInfo( void );
 #ifdef __386__
 /* note : first 5 lines work but the the corresponding assembler code
           doesn't work so the comments must not match the code */
@@ -160,7 +160,7 @@ _INT_10                                                         \
         parm modify [ cx bx ];
 #endif
 
-extern unsigned char BIOSSumming(char);
+extern unsigned char BIOSSumming( char );
 #pragma aux BIOSSumming =                                 \
 0X55            /* push   bp                            */      \
 0XB4 0X12       /* mov    ah,12                         */      \

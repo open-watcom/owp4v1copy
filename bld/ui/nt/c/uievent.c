@@ -144,7 +144,7 @@ bool intern initkeyboard( void )
     return( TRUE );
 }
 
-void intern finikeyboard()
+void intern finikeyboard( void )
 {
 //    if( InputHandle != NULL ) {
 //      CloseHandle( InputHandle );
@@ -339,9 +339,8 @@ void intern waitforevent( void )
 
 } /* waitforevent */
 
-unsigned char global uicheckshift()
-/**********************************/
-
+unsigned char global uicheckshift( void )
+/***************************************/
 {
     return( ShftState );
 }

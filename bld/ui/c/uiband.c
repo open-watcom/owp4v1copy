@@ -73,7 +73,7 @@ void global uibandmove( SAREA new )
 }
 
 
-void global uibandfini()
+void global uibandfini( void )
 {
     uidirty( BandArea );
     closewindow( &BandWnd );

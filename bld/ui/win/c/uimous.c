@@ -72,13 +72,9 @@ extern          unsigned long           MouseTime       = 0L;
 extern          unsigned                MouseStatus;
 extern          bool                    MouseInstalled;
 
-void intern checkmouse( status, row, col, time )
-/**********************************************/
-
-register        unsigned short*         status;
-register        MOUSEORD*               row;
-register        MOUSEORD*               col;
-register        unsigned long*          time;
+void intern checkmouse( unsigned short *status, MOUSEORD *row,
+                          MOUSEORD *col, unsigned long *time )
+/************************************************************/
 {
     struct  mouse_data state;
 
@@ -92,10 +88,8 @@ register        unsigned long*          time;
 
 
 
-bool global initmouse( install )
-/******************************/
-
-register        int                     install;
+bool global initmouse( int install )
+/**********************************/
 {
     int         cx,dx;
     unsigned short  tmp;
@@ -130,10 +124,9 @@ register        int                     install;
 }
 
 
-void extern finimouse()
-/*********************/
+void extern finimouse( void )
+/***************************/
 {
-
     if( MouseInstalled ) {
         uioffmouse();
     }

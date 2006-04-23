@@ -41,8 +41,8 @@ int global uicharlen( int ch )
     return( 1 );
 }
 
-int global uiisdbcs()
-/*******************/
+int global uiisdbcs( void )
+/*************************/
 {
     return( FALSE );
 }
@@ -57,8 +57,8 @@ int global uicharlen( int ch )
     return( _mbislead( ch ) ? 2 : 1 );
 }
 
-int global uiisdbcs()
-/*******************/
+int global uiisdbcs( void )
+/*************************/
 {
     return( __IsDBCS );
 }
@@ -66,14 +66,14 @@ int global uiisdbcs()
 #endif
 
 #if defined( __AXP__ ) || defined( __UNIX__ )
-    int global uionnec()
+    int global uionnec( void )
     {
         return( 0 );
     }
 #else
     extern int __NonIBM;
 
-    int global uionnec()
+    int global uionnec( void )
     {
         return( __NonIBM );
     }
@@ -88,13 +88,13 @@ int global uicharlen( int ch )
     return( 1 ); // this is the stub version.  Real verion in system directories
 }
 
-int global uiisdbcs()
-/*******************/
+int global uiisdbcs( void )
+/*************************/
 {
     return( 0 );
 }
 
-int global uionnec()
+int global uionnec( void )
 {
     return( 0 );
 }

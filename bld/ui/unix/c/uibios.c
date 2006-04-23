@@ -52,7 +52,7 @@
 extern PossibleDisplay DisplayList[];
 char    *UITermType;    /* global so that the debugger can get at it */
 
-bool global uiset80col()
+bool global uiset80col( void )
 {
     return( TRUE );
 }
@@ -64,7 +64,7 @@ unsigned global uiclockdelay( unsigned milli )
     return( milli );
 }
 
-char *GetTermType()
+char *GetTermType( void )
 {
     if( UITermType == NULL ) {
         UITermType = getenv( "TERM" );
@@ -75,7 +75,7 @@ char *GetTermType()
     return( UITermType );
 }
 
-int intern initbios()
+int intern initbios( void )
 {
     PossibleDisplay             *curr;
     int                         error;
@@ -111,7 +111,7 @@ int intern initbios()
     return( _uibiosinit() );
 }
 
-void intern finibios()
+void intern finibios( void )
 {
     _uibiosfini();
     del_curterm( cur_term );

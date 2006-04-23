@@ -104,19 +104,19 @@ static          unsigned short          Status;
 
 
 
-void intern mousespawnstart()
-/***************************/
+void intern mousespawnstart( void )
+/*********************************/
 {
     uihidemouse();
 }
 
-void intern mousespawnend()
-/*************************/
+void intern mousespawnend( void )
+/*******************************/
 {
 }
 
-static void GetMouseInfo()
-/************************/
+static void GetMouseInfo( void )
+/******************************/
 {
     struct      _MOUEVENTINFO   mouinfo;
     USHORT                      readtype = 0;
@@ -138,13 +138,9 @@ static void GetMouseInfo()
     Col  = mouinfo.col;
 }
 
-void intern checkmouse( pstatus, prow, pcol, ptime )
-/**************************************************/
-
-register        unsigned short*         pstatus;
-register        MOUSEORD*               prow;
-register        MOUSEORD*               pcol;
-register        unsigned long*          ptime;
+void intern checkmouse( unsigned short *pstatus, MOUSEORD *prow,
+                          MOUSEORD *pcol, unsigned long *ptime )
+/**************************************************************/
 {
     if( _osmode == DOS_MODE ) {
         struct  mouse_data state;
@@ -182,7 +178,7 @@ void uimousespeed( unsigned speed )
 
 #define         IRET                    (char) 0xcf
 
-static bool mouse_installed()
+static bool mouse_installed( void )
 {
     unsigned short far          *vector;
     char far                    *intrtn;
@@ -276,11 +272,8 @@ static void OS2_initmouse( bool install )
 }
 
 
-bool global initmouse( install )
-/******************************/
-
-bool                    install;
-
+bool global initmouse( bool install )
+/***********************************/
 {
     MouseInstalled = FALSE;
     if( _osmode == DOS_MODE ) {
@@ -292,8 +285,8 @@ bool                    install;
 }
 
 
-void extern finimouse()
-/*********************/
+void extern finimouse( void )
+/***************************/
 {
     if( MouseInstalled ) {
         uioffmouse();
