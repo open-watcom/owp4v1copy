@@ -59,7 +59,7 @@ static long resSeek( int handle, off_t position, int where )
 
 WResSetRtns( open, close, read, write, resSeek, tell, malloc, free );
 
-extern int MsgInit()
+extern int MsgInit( void )
 {
     int         error;
     char        name[_MAX_PATH];
@@ -101,7 +101,7 @@ extern int MsgGet( int resourceid, char *buffer )
     return( 1 );
 }
 
-extern void MsgFini()
+extern void MsgFini( void )
 {
     if( hInstance.handle != NIL_HANDLE ) {
         CloseResFile( &hInstance );
