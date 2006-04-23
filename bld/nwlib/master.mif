@@ -187,6 +187,13 @@ extra_rc_flags_qnx = -D__UNIX__
 extra_rc_flags_linux = -D__UNIX__
 extra_rc_flags = $(extra_rc_flags_$(host_os))
 
+# systems where version resources must be added to .DLL
+build_rc_nt_386 = nt
+
+!ifdef build_rc_$(host_os)_$(host_cpu)
+res_objs = version.res
+!endif
+
 !ifeq bootstrap 1
 
 inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h
@@ -238,8 +245,11 @@ wlib.exe: msg.gh $(depends_exe) wlib.res exe.lnk
 
 !endif
 
-wlibd.dll: msg.gh $(depends_dll) wlib.res dll.lnk
+wlibd.dll: msg.gh $(depends_dll) wlib.res $(res_objs) dll.lnk
     $(linker) name $@ @dll.lnk
+!ifdef build_rc_$(host_os)_$(host_cpu)
+    $(rc) -k version.res $^@
+!endif
     wstrip -q -a -r $@ . wlib.res
 
 wlibd.lib: wlibd.dll
@@ -276,3 +286,16 @@ msg.gh : ./mkstr.exe
 
 wlib.res : ../wlib.rc ../wlib.msg msg.gh
     $(rc_aui) $(extra_rc_flags) $[@ -fo=$@
+
+version.res: version.rc
+    $(rc) $(rc_flags) -r $(inc_path) $[@ -fo=$^@
+
+./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
+    $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
+
+!ifndef patch_level
+patch_level=0
+!endif
+
+version.rc : ./genverrc.exe ../h/version.rc $(fe_misc_dir)/c/genverrc.c
+    $[@ ../h/version.rc version.rc $$ wlibd.dll $(patch_level)
