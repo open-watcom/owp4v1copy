@@ -1383,8 +1383,8 @@ int showhelp( char *helptopic, EVENT (*rtn)( EVENT ), HelpLangType lang )
     currentColour = C_PLAIN;
     currentAttr = AT( ATTR_NORMAL );
     /* initialize the tab filter */
-    tabFilter.tab = help_in_tab;
-    tabFilter.next = help_next_field;
+    tabFilter.tab = (unsigned (*)(void *,void *))help_in_tab;
+    tabFilter.next = (a_tab_field *(*)(void *,void *))help_next_field;
     tabFilter.parm = helpTab;
     tabFilter.mousepos = (void *(*)())uivmousepos;
     tabFilter.mouseparm = &helpScreen;
