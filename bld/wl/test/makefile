@@ -3,6 +3,8 @@ host_cpu = i86
 
 proj_name = testovl
 
+testovl_debugfmt = watcom
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -14,12 +16,11 @@ OBJS = ovl1.obj ovl2.obj ovl3.obj
 main.exe : main.obj $(OBJS) $(__MAKEFILES__)
     %create tmp.lnk
     %append tmp.lnk $(lflags)
-    %append tmp.lnk option map,verbose
-    %append tmp.lnk sort global
+    %append tmp.lnk option map
     %append tmp.lnk option dynamic, area=0
     %append tmp.lnk file main.obj
     %append tmp.lnk begin autosection
     @for %i in ($(OBJS)) do %append tmp.lnk file %i
     %append tmp.lnk end
-    %append tmp.lnk library ..\ovlldr\wovl.lib
+    %append tmp.lnk libpath ..\ovlldr
     $(linker) @tmp.lnk
