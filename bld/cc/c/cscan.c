@@ -1661,7 +1661,7 @@ int ReScanToken( void )
 {
     int         saved_currchar;
     char        *saved_ScanCharPtr;
-    int         (*saved_nextchar)();
+    int         (*saved_nextchar)( void );
 
     saved_currchar = CurrChar;
     saved_nextchar = NextChar;

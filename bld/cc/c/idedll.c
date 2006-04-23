@@ -50,7 +50,7 @@ static   IDEInitInfo   Info;
 
 #pragma  aux xref "*"
 #pragma  aux (xref) __DLLstart_;
-extern void  __DLLstart_();
+extern void  __DLLstart_( void );
 void * Dll = &__DLLstart_;
 
 

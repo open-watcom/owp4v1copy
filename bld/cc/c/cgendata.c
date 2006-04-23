@@ -62,7 +62,7 @@ void AlignIt( TYPEPTR typ )
 }
 
 
-void EmitDataQuads()
+void EmitDataQuads( void )
 {
     DATA_QUAD   *dq;
 

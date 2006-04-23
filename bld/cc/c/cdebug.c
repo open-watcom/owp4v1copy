@@ -39,8 +39,8 @@
 #include "feprotos.h"
 
 
-static dbug_type DBTypeStruct();
-static dbug_type DBTypeEnum();
+static dbug_type DBTypeStruct( TYPEPTR typ );
+static dbug_type DBTypeEnum( TYPEPTR typ );
 static void InitDBType( void );
 
 //void RevTypeList();
@@ -82,7 +82,7 @@ static void InitDBType( void )
 }
 
 #if 0
-static void RevTypeList()
+static void RevTypeList( void )
 {
     TYPEPTR     previous, current, following;
 
@@ -126,7 +126,7 @@ static void EmitADBType( TYPEPTR typ )
     }
 }
 
-void EmitDBType()
+void EmitDBType( void )
 {
 //    RevTypeList();
     InitDBType();

@@ -270,7 +270,7 @@ static void Define_Extensions( void )
 }
 
 
-void MiscMacroDefs()
+void MiscMacroDefs( void )
 {
     if( CompFlags.inline_functions ) {
         Define_Macro( "__INLINE_FUNCTIONS__" );

@@ -69,7 +69,7 @@ typedef struct nested_macros {
 
 static NESTED_MACRO *NestedMacros;
 static MACRO_TOKEN  *TokenList;
-static MACRO_TOKEN  *MacroExpansion();
+static MACRO_TOKEN  *MacroExpansion( int );
 static MACRO_TOKEN  *NestedMacroExpansion( int );
 
 static int MacroBeingExpanded( MEPTR mentry );

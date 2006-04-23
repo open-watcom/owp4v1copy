@@ -809,7 +809,7 @@ static void AddIncList( char *str )
 
 #define INC_VAR "INCLUDE"
 
-void MergeInclude()
+void MergeInclude( void )
 {
     /* must be called after GenCOptions to get req'd HFileList */
     char        *env_var;
@@ -1127,7 +1127,7 @@ static void Set_FR( void )
 
 #if _CPU == 8086 || _CPU == 386
 static void SetCodeClass( void )    { CodeClassName = CopyOfParm(); }
-static void SetDataSegName()
+static void SetDataSegName( void )
 {
     SwData.nd_used = 1;
     DataSegName = CopyOfParm();

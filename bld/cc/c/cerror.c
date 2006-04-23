@@ -298,10 +298,10 @@ void OpenErrFile( void )
 }
 
 
-void CSuicide()
+void CSuicide( void )
 {
     if( Environment ) {
-        longjmp( Environment, 1 );
+        longjmp( *Environment, 1 );
     }
     MyExit(1);
 }

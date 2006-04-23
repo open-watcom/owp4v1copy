@@ -35,7 +35,7 @@
 #include <limits.h>
 #include "i64.h"
 
-void EnumInit()
+void EnumInit( void )
 {
     int i;
 
@@ -317,7 +317,7 @@ int EnumLookup( int hash_value, char *name, struct enum_info *eip )
 }
 
 
-void FreeEnums()
+void FreeEnums( void )
 {
     ENUMPTR     esym;
     int         i;
@@ -332,7 +332,7 @@ void FreeEnums()
 
 #ifndef NDEBUG
 
-void DumpEnumTable()
+void DumpEnumTable( void )
 {
     ENUMPTR     esym;
     int         i;

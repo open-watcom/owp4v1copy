@@ -49,7 +49,7 @@ char CompilerID[] = { "__WATCOMC__=" BANSTR( _BANVER ) };
 #endif
 
 
-void CBanner()
+void CBanner( void )
 {
     if( CompFlags.banner_printed ) return;              /* 13-mar-90 */
     if( CompFlags.quiet_mode )     return;

@@ -1422,7 +1422,7 @@ static void NoCodeGenDLL( void )
 
 void DoCompile( void )
 {
-    unsigned int    *old_env;
+    jmp_buf         *old_env;
     jmp_buf         env;
     cg_init_info    cgi_info;
 

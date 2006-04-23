@@ -41,7 +41,7 @@
 #define BY_CLI
 #include "feprotos.h"
 
-void ResetHandlers()
+void ResetHandlers( void )
 {
     CloseFiles();                       /* 09-may-89 */
 }
@@ -166,14 +166,14 @@ extern char *FEGetEnv( char const *name ){
 extern void FESetCurInc( void ){
 }
 
-extern void MyExit( rc )
+extern void MyExit( int rc )
 {
         exit( rc );
 } /* myexit */
 
 #if 0
 
-void FECompile()
+void FECompile( void )
 {
     DoCompile();
 }

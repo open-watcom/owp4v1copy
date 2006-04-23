@@ -229,7 +229,7 @@ global  struct  global_comp_flags      GlobalCompFlags;
 global  int     SegmentNum;     /* next PRIVATE segment number to use */
 global  int     FarStringSegment;
 
-global  void    *Environment;   /* var for Suicide() */
+global  jmp_buf *Environment;   /* var for Suicide() */
 
 #define MAX_LEVEL       1024
 
@@ -828,7 +828,6 @@ extern  void    InitBuildPreCompiledHeader( void );
 extern  void    BuildPreCompiledHeader( char * );
 extern  void    FreePreCompiledHeader( void );
 
-extern  unsigned char     _dos_switch_char( void );     /* swchar */
 extern  void    CBanner( void );                        /* watcom */
 extern  void    MyExit( int ret );                      /* cintmain */
 

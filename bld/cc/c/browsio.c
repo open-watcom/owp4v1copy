@@ -59,7 +59,7 @@ static void DWSectInit( void  )
 
 #define C_DWARF_BUFSIZE 4096
 
-extern  FILE    *OpenBrowseFile();              /* ccmain */
+extern  FILE    *OpenBrowseFile( void );        /* ccmain */
 
 // -- code to generate ELF output ------------------------------------------
 //
@@ -438,7 +438,7 @@ dw_client DwarfInit( void )
     info.language = DWLANG_C;
     info.compiler_options = DW_CM_BROWSER;
     info.producer_name = "WATCOM C V10";
-    memcpy( info.exception_handler, Environment, sizeof( jmp_buf ) );
+    memcpy( &info.exception_handler, Environment, sizeof( jmp_buf ) );
     info.funcs = cli_funcs;
 
     relocValues[ DW_W_LOW_PC ] = 0x0;

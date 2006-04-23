@@ -348,10 +348,6 @@ TREEPTR SymLeaf( void )
     TREEPTR     tree;
     SYM_ENTRY   sym;
     struct enum_info ei;
-    extern       SYM_HANDLE SymLook();
-    extern       SYM_HANDLE Sym0Look();
-    extern       void SymCreate();
-    extern       SYM_HANDLE SymAdd(), SymAddL0();
 
     if( CurToken == T_SAVED_ID ) {
         CurToken = LAToken;
