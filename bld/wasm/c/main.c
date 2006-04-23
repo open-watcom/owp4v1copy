@@ -54,13 +54,13 @@
 
 extern void             Fatal( unsigned msg, ... );
 extern void             ObjRecInit( void );
-extern void             DelErrFile();
-extern void             PrintStats();
+extern void             DelErrFile( void );
+extern void             PrintStats( void );
 extern void             PrintfUsage( int first_ln );
 extern void             MsgPrintf1( int resourceid, char *token );
 extern void             InputQueueLine( char * );
 extern int              InputQueueFile( char * );
-extern void             PushLineQueue(void);
+extern void             PushLineQueue( void );
 extern void             AddStringToIncludePath( char * );
 
 extern const char       *FingerMsg[];
@@ -568,8 +568,8 @@ int main( int argc, char **argv )
 
 #else
 
-int main()
-/********************************/
+int main( void )
+/**************/
 {
     char       *argv[2];
     int        len;
@@ -802,8 +802,8 @@ static char *CollectEnvOrFileName( char *str )
     return( str );
 }
 
-static char *ReadIndirectFile()
-/*******************************************/
+static char *ReadIndirectFile( void )
+/***********************************/
 {
     char        *env;
     char        *str;

@@ -195,8 +195,8 @@ input_queue *PushLineQueue( void )
     return( new );
 }
 
-bool PopLineQueue()
-/*****************/
+bool PopLineQueue( void )
+/***********************/
 /* remove a line queue from the top of the stack & throw it away */
 {
     input_queue *tmp;
@@ -211,6 +211,7 @@ bool PopLineQueue()
 }
 
 bool GetQueueMacroHidden( void )
+/******************************/
 {
     if(( file_stack != NULL ) && !file_stack->is_a_file ) {
         return( file_stack->hidden );
@@ -527,7 +528,8 @@ void AsmDataByte( unsigned char byte )
     AsmByte( byte );
 }
 
-static bool CheckHaveSeg()
+static bool CheckHaveSeg( void )
+/******************************/
 {
     if( CurrSeg != NULL )
         return( TRUE );
@@ -567,8 +569,7 @@ void AsmByte( unsigned char byte )
 #endif
 }
 
-#if defined( _STANDALONE_ )
-#ifdef DEBUG_OUT
+#if defined( _STANDALONE_ ) && defined( DEBUG_OUT )
 static void dbg_output( void )
 /************************/
 /* For debugging use only; print out a simplied version of the source line
@@ -652,7 +653,6 @@ static void dbg_output( void )
     } /* if Options.debug */
     return;
 }
-#endif
 #endif
 
 void AsmLine( char *string )

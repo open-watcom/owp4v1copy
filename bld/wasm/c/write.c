@@ -62,8 +62,8 @@
 
 extern char             *ScanLine( char *, int );
 extern void             FreeIncludePath( void );
-extern void             CheckForOpenConditionals();
-extern bool             PopLineQueue();
+extern void             CheckForOpenConditionals( void );
+extern bool             PopLineQueue( void );
 extern void             set_cpu_parameters( void );
 extern void             set_fpu_parameters( void );
 extern void             CheckProcOpen( void );
@@ -894,8 +894,8 @@ static void put_public_procs_in_public_table( void )
     }
 }
 
-static void write_alias()
-/***********************/
+static void write_alias( void )
+/*****************************/
 {
     obj_rec             *objr;
     char                *alias;
@@ -930,8 +930,8 @@ static void write_alias()
     }
 }
 
-static int write_pub()
-/*********************/
+static int write_pub( void )
+/**************************/
 /* note that procedures with public or export visibility are written out here */
 {
     obj_rec             *objr;

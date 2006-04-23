@@ -149,8 +149,8 @@ static void jumpExtend( int far_flag )
     return;
 }
 
-static void FarCallToNear()
-/**************************/
+static void FarCallToNear( void )
+/*******************************/
 {
     unsigned i;
     char buffer[MAX_LINE_LEN];

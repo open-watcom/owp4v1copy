@@ -399,7 +399,7 @@ int conditional_assembly_directive( int i )
     return( NOT_ERROR );
 }
 
-void CheckForOpenConditionals()
+void CheckForOpenConditionals( void )
 {
     if( NestLevel > 0 ) {
         AsmErr( UNCLOSED_CONDITIONALS, NestLevel );

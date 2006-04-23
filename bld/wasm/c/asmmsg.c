@@ -188,13 +188,15 @@ void PrtMsg( int msgnum, ... )
     fflush( errout );
 }
 
-void DelErrFile() {
+void DelErrFile( void )
+/*********************/
+{
     // fixme if( CompFlags.errout_redirected ) return;
     remove( AsmFiles.fname[ERR] );
 }
 
-void OpenErrFile()
-/****************/
+void OpenErrFile( void )
+/**********************/
 {
 //    if( !isatty( fileno( errout ) ) ) return;
     if( AsmFiles.fname[ERR] != NULL ) {
@@ -225,13 +227,14 @@ static void PutMsg( FILE *fp, char *prefix, int msgnum, va_list args )
     }
 }
 
-static void AsmSuicide()
+static void AsmSuicide( void )
+/****************************/
 {
     exit(1);
 }
 
-void PrintStats()
-/***************/
+void PrintStats( void )
+/*********************/
 {
     __printf( "%s: ", AsmFiles.fname[ASM] );
     __printf( "%u lines, ", LineNumber );

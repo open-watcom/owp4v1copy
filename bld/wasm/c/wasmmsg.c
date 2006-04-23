@@ -94,7 +94,7 @@ static long res_seek( int handle, off_t position, int where )
 
 WResSetRtns( open, close, read, write, res_seek, tell, malloc, free );
 
-int MsgInit()
+int MsgInit( void )
 {
     int         initerror;
     char        name[_MAX_PATH];
@@ -160,7 +160,7 @@ void MsgPrintf1( int resourceid, char *token )
 }
 
 #ifndef __UNIX__
-static void Wait_for_return()
+static void Wait_for_return( void )
 {
     if( isatty( fileno(stdout) ) ) {
         con_output( PressReturn );
@@ -196,7 +196,7 @@ void PrintfUsage( int first_ln )
     }
 }
 
-void MsgFini()
+void MsgFini( void )
 {
     if( hInstance.handle != NIL_HANDLE ) {
         CloseResFile( &hInstance );

@@ -302,8 +302,8 @@ struct asm_sym *AsmGetSymbol( char *name )
 }
 #endif
 
-void AsmSymFini()
-/***************/
+void AsmSymFini( void )
+/*********************/
 {
     struct asm_sym      *sym;
 #if defined( _STANDALONE_ )

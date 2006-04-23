@@ -37,7 +37,7 @@
 #include "womputil.h"
 #include "fatal.h"
 
-typedef void (*err_act)();
+typedef void (*err_act)( void );
 
 typedef struct {
     int       num;            // index

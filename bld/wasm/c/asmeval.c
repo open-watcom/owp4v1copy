@@ -42,7 +42,7 @@
 #define myassert(x)
 #endif
 
-extern void             DefFlatGroup();
+extern void             DefFlatGroup( void );
 
 static int              TakeOut[ MAX_TOKEN ];
 static int              TokCnt;
