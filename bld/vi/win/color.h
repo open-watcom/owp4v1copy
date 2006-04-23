@@ -33,8 +33,8 @@
 extern long ColorRGB( int );
 extern HBRUSH ColorBrush( int );
 extern HPEN ColorPen( int );
-extern void InitColors();
-extern void FiniColors();
+extern void InitColors( void );
+extern void FiniColors( void );
 extern int SetAColor( char * );
 extern void PickColor( int, HWND );
 extern void NewColor( int, long );

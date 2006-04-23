@@ -207,7 +207,7 @@ void InitColors( void )
 
 } /* InitColors */
 
-void ResetColors()
+void ResetColors( void )
 {
     int i;
 

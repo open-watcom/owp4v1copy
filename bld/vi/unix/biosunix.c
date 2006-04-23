@@ -37,8 +37,8 @@
 
 void BIOSGetColorPalette( void *a ) {}
 long BIOSGetColorRegister( short a ) { return( 0 ); }
-void BIOSSetNoBlinkAttr() {}
-void BIOSSetBlinkAttr() {}
+void BIOSSetNoBlinkAttr( void ) {}
+void BIOSSetBlinkAttr( void ) {}
 void BIOSSetColorRegister( short reg, char r, char g, char b ) {}
 
 void BIOSSetCursor( char page, char row, char col )

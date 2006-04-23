@@ -80,7 +80,7 @@ void CloseToolBar( void );
 BOOL AddIconToToolBar( char * );
 int AddBitmapToToolBar( char * );
 int DeleteFromToolBar( char * );
-UINT NextMenuId();
+UINT NextMenuId( void );
 int HandleToolCommand( UINT );
 void Draw3DBox( window_id, RECT *, RECT * );
 void ResetExtraRects( void );

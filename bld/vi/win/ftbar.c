@@ -252,7 +252,7 @@ static void fillInfoBoxes( HWND hwnd )
     }
 }
 
-static void setDefaultTypeface()
+static void setDefaultTypeface( void )
 {
     int     i;
     LPSTR   typeName;
@@ -267,7 +267,7 @@ static void setDefaultTypeface()
     }
 }
 
-static void setDefaultSizeStyle()
+static void setDefaultSizeStyle( void )
 {
     char    buf[ 20 ];
     int     i;

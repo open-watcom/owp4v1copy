@@ -115,8 +115,8 @@ extern COORD    BSize;
 #pragma off (unreferenced);
 void BIOSGetColorPalette( void far *a ) {}
 long BIOSGetColorRegister( short a ) { return( 0 ); }
-void BIOSSetNoBlinkAttr() {}
-void BIOSSetBlinkAttr() {}
+void BIOSSetNoBlinkAttr( void ) {}
+void BIOSSetBlinkAttr( void ) {}
 void BIOSSetColorRegister( short reg, char r, char g, char b ) {}
 #pragma on (unreferenced);
 

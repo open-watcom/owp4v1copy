@@ -111,12 +111,12 @@ static void setIntensity( int value )
     VioSetState( &vio_int, 0 );
 }
 
-void BIOSSetNoBlinkAttr()
+void BIOSSetNoBlinkAttr( void )
 {
     setIntensity( 0 );
 }
 
-void BIOSSetBlinkAttr()
+void BIOSSetBlinkAttr( void )
 {
     setIntensity( 1 );
 }

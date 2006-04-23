@@ -45,6 +45,8 @@ window *Windows[] = {
 
 #define NUM_WINDOWS ( sizeof( Windows ) / sizeof( window  * ) )
 
+extern void FiniInstance( void );
+
 extern HWND hColorbar, hFontbar, hSSbar;
 
 /*
@@ -325,8 +327,6 @@ int MinimizeCurrentWindow( void )
 
 void FinishWindows( void )
 {
-    extern void FiniInstance();
-
     if( IsWindow( hColorbar ) ) {
         SendMessage( hColorbar, WM_CLOSE, 0, 0L );
     }

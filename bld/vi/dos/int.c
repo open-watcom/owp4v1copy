@@ -46,10 +46,10 @@
 #include "pragmas.h"
 
 #if !defined( __386__ ) || defined( __4G__ )
-static void (interrupt _FAR_ *oldInt1c)();
-static void (interrupt _FAR_ *oldInt1b)();
-static void (interrupt _FAR_ *oldInt23)();
-static void (interrupt _FAR_ *oldInt24)();
+static void (interrupt _FAR_ *oldInt1c)( void );
+static void (interrupt _FAR_ *oldInt1b)( void );
+static void (interrupt _FAR_ *oldInt23)( void );
+static void (interrupt _FAR_ *oldInt24)( void );
 #else
 typedef struct {
     void far    *prot;

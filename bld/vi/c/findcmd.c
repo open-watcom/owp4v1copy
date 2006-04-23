@@ -51,7 +51,7 @@ static linenum  lastLine=0,cLineNumber=0;
 static int      lastCol=0,cColumn=0;
 
 static int setLineCol( char *, linenum *, int *, int );
-static int processFind( range *, char *, int (*)() );
+static int processFind( range *, char *, int (*)( char *, long *, int *, int * ) );
 
 void FindCmdFini( void ){
     MemFree( lastFind );
@@ -355,7 +355,7 @@ int DoNextFindBackwardsMisc( void )
 /*
  * processFind - set up and do forward find
  */
-static int processFind( range *r, char *st, int (*rtn)() )
+static int processFind( range *r, char *st, int (*rtn)( char *, long *, int *, int * ) )
 {
     int         rc,col,len;
     linenum     lineno;

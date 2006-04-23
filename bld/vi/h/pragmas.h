@@ -42,8 +42,8 @@ extern void Out61( char );
 extern void Out43( char );
 extern void Out42( char );
 extern U_INT DosMaxAlloc( void );
-extern void (interrupt _FAR *DosGetVect( char ))();
-extern void DosSetVect( char, void (interrupt _FAR *)());
+extern void (interrupt _FAR *DosGetVect( char ))( void );
+extern void DosSetVect( char, void (interrupt _FAR *)( void ));
 #endif
 
 extern long DosGetFullPath( char *, char * );
@@ -238,7 +238,7 @@ extern char IsWindows( void );
         0xcd 0x21       /* int    21h */ \
         value [ebx] modify [eax];
 
-extern void DosSetVect( char, void (interrupt _FAR *)() );
+extern void DosSetVect( char, void (interrupt _FAR *)( void ) );
 #pragma aux DosSetVect = \
         0x1e            /* push ds */ \
         0x0f 0xa0       /* push fs */ \

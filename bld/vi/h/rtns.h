@@ -373,7 +373,6 @@ void ResetLastFind( void );
 int FindForwardWithString( char * );
 int GetFind( char *, linenum *, int *, int *, int );
 int FindBackwardsWithString( char * );
-int GetFindString( range *, char *, int ( *)() );
 void SaveFindRowColumn( void );
 int ColorFind( char *, int );
 void FindCmdFini( void );
@@ -704,7 +703,7 @@ void FiniSavebufs( void );
 
 /* select.c */
 int SelectItem( selectitem *si );
-int SelectItemAndValue( window_info *, char *, char **, int , int (*)(), int, char **, int );
+int SelectItemAndValue( window_info *, char *, char **, int , int (*)(char *, char *, int * ), int, char **, int );
 
 /* selrgn.c */
 void UpdateDrag( window_id, int, int );
