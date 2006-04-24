@@ -100,7 +100,7 @@ $(name).dll: wmsgfile.gh $(object) $(name).res $(xlibs) $(res_objs)
         $(rc) -k $(name).res $^@
 !endif
 
-.rc.res: .AUTODEPEND
+$(name).res: ../h/$(name).rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $(inc_path) $[@ -fo=$^@
 
 version.res: version.rc
