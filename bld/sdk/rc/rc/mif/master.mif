@@ -173,7 +173,7 @@ keyword.obj : keyword.c keywords.gh weights.gh .AUTODEPEND
 keyword2.obj : keyword2.c keyword2.gh weights2.gh .AUTODEPEND
 
 version.res: version.rc
-        $(rc) $(rc_flags) -r $[@ -fo=$^@
+        $(rc) $(rc_flags) $(inc_path) -r $[@ -fo=$^@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)

@@ -152,7 +152,7 @@ $(name).res: ../h/wr.rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $(inc_path) -DWR_COMPILED $[@ -fo=$^@
 
 version.res: version.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad $(inc_path) $[@ -fo=$^@
 
 ./genverrc.exe : $(fe_misc_dir)/c/genverrc.c
         $(bld_cl) $[@ $(wcl_util_opts) -D_VERSION=$(bld_ver)
