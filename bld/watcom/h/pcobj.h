@@ -305,8 +305,11 @@ enum {
  * Comment Class Subtype
  */
 enum {
-    DLL_IMPDEF      = 0x01, /* Subtype IMPDEF of comment class DLL  */
-    DLL_EXPDEF      = 0x02, /* Subtype EXPDEF of comment class DLL  */
+    DLL_IMPDEF      = 0x01, /* Subtype IMPDEF of OMF extension class    */
+    DLL_EXPDEF      = 0x02, /* Subtype EXPDEF of OMF extension class    */
+    DLL_INCDEF      = 0x03, /* Subtype INCDEF of OMF extension class    */
+    DLL_PROTLIB     = 0x04, /* Protected Memory Library (OMF extension) */
+    DLL_LNKDIR      = 0x05, /* Subtype LNKDIR of OMF extension class    */
 };
 
 #define EASY_OMF_SIGNATURE  "80386"

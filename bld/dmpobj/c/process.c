@@ -354,6 +354,71 @@ static int doMSOmf( void )
     return( 1 );
 }
 
+static void doDLLImport( void )
+{
+    byte            ord_flag;
+    unsigned_16     ordinal;
+
+    ord_flag = GetByte();
+    if( ord_flag ) {
+        Output( INDENT "DLL Import by Ordinal" CRLF );
+    } else {
+        Output( INDENT "DLL Import by Name" CRLF );
+    }
+    GetName();
+    Output( INDENT "%N." );
+    GetName();
+    Output( "%N ");
+    if( ord_flag ) {
+        ordinal = GetUInt();
+        Output( "@%u", ordinal );
+    } else {
+        if( GetName() > 0)
+            Output( "Imported Name: %N" CRLF );
+    }
+    Output( CRLF );
+}
+
+static void doDLLExport( void )
+{
+    byte            exp_flag;
+    unsigned_16     ordinal;
+
+    exp_flag = GetByte();
+    if( exp_flag & 0x80 ) {
+        Output( INDENT "DLL Export by Ordinal" CRLF );
+    } else {
+        Output( INDENT "DLL Export by Name" CRLF );
+    }
+    GetName();
+    Output( INDENT "Exported Name: %N " );
+    if( GetName() > 0 )
+        Output( "Internal Name: %N" );
+    if( exp_flag & 0x80 ) {
+        ordinal = GetUInt();
+        Output( "@%u", ordinal );
+    }
+    Output( CRLF );
+}
+
+static int doOMFExt( void )
+{
+    byte    subtype;
+
+    subtype = GetByte();
+    switch( subtype ) {
+    case DLL_IMPDEF:
+        doDLLImport();
+        return( 1 );
+    case DLL_EXPDEF:
+        doDLLExport();
+        return( 1 );
+    default:
+        Output( INDENT "Unknown OMF extension (subtype %x)" CRLF, subtype );
+    }
+    return( 0 );
+}
+
 void ProcComent( void )
 /*********************/
 {
@@ -403,7 +468,8 @@ void ProcComent( void )
             dont_print = 1;
             break;
         case CMT_DLL_ENTRY:
-            Output( INDENT "DLL Entry" CRLF );
+            Output( INDENT "OMF Extension" CRLF );
+            dont_print = doOMFExt();
             break;
         case CMT_MS_OMF:
             dont_print = doMSOmf();
