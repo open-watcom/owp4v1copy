@@ -1685,7 +1685,7 @@ typedef struct _QSLREC {
     UCHAR     FAR *pName;
 } QSLREC;
 
-typedef struct _QSEXLREC {
+typedef _Packed struct _QSEXLREC {
     struct    _QSEXLREC *next;
     USHORT    hndmod;
     USHORT    pid;
@@ -1700,15 +1700,15 @@ typedef struct _QSEXLREC {
 } QSEXLREC;
 
 typedef struct _QSSFT {
-    USHORT    sfn;
-    USHORT    refcnt;
-    USHORT    flags;
-    USHORT    flags2;
-    USHORT    mode;
-    USHORT    mode2;
-    ULONG     size;
-    USHORT    hVPB;
-    USHORT    attr;
+    USHORT sfn;
+    USHORT refcnt;
+    USHORT flags;
+    USHORT flags2;
+    USHORT mode;
+    USHORT mode2;
+    ULONG  size;
+    USHORT hVPB;
+    USHORT attr;
     PADSHORT;
 } QSSFT;
 
