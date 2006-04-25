@@ -153,8 +153,8 @@ static void OffsetPoint( POINT * point )
     point->y += offset.y;
   }
 
-static void CutObjects()
-/**********************/
+static void CutObjects( void )
+/****************************/
 
 /* Cut the current objects */
 
@@ -181,8 +181,8 @@ static void CutObjects()
     }
   }
 
-static void CopyObjects()
-/***********************/
+static void CopyObjects( void )
+/*****************************/
 
 /* Copy the current objects */
 

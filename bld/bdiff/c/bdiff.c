@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for binary diff utility.
 *
 ****************************************************************************/
 
@@ -34,11 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if defined( __QNX__ )
-    #include <unistd.h>
-#else
-    #include <io.h>
-#endif
+#include <unistd.h>
 #include <fcntl.h>
 
 #include "bdiff.h"
@@ -490,7 +485,7 @@ int AreasAreSimilar( foff_diff adjust, foff_diff backup_amt )
 }
 
 
-static void CheckSyncPoint()
+static void CheckSyncPoint( void )
 {
     if( SyncOld == (foff)-1 ) return;
     if( SaveOld >= OldFile+SyncOld && OldCurr < OldFile+SyncOld ||
@@ -563,7 +558,7 @@ int TryBackingUp( int backup )
 }
 
 
-void FindRegions()
+void FindRegions( void )
 {
     /*
      * classify the differences between the two files into regions;
@@ -1169,8 +1164,8 @@ int FOffCompare(const void *_h1, const void *_h2)
 
 #define RUN_SIZE 5
 
-long HolesToDiffs() {
-
+long HolesToDiffs( void )
+{
     /* Find runs of holes which would be cheaper to represent as differences */
 
     region      *curr;
@@ -1344,8 +1339,8 @@ void ProcessHoleArray( int write_holes )
     }
 }
 
-void WriteSimilars() {
-
+void WriteSimilars( void )
+{
     /* write similar regions out to the patch file */
 
     region      *curr;
@@ -1362,8 +1357,8 @@ void WriteSimilars() {
     }
 }
 
-void WriteDiffs() {
-
+void WriteDiffs( void )
+{
     /* write difference regions out to the patch file */
 
     region      *curr;
@@ -1397,9 +1392,9 @@ void AddLevel( char *name )
 }
 
 
-void WriteLevel()
+void WriteLevel( void )
 {
-    char *buff;
+    char        *buff;
     int         size;
 
     OutPatch( CMD_DIFFS, patch_cmd );
@@ -1414,7 +1409,7 @@ void WriteLevel()
     }
 }
 
-foff Sum()
+foff Sum( void )
 {
     foff        sum;
     foff        i;
@@ -1430,7 +1425,7 @@ foff Sum()
 }
 
 
-void CopyComment()
+void CopyComment( void )
 {
     int         fd;
     foff        size;
@@ -1528,13 +1523,13 @@ void MakeHoleArray(void)
     HoleRegions = reg;
 }
 
-void SortHoleArray()
+void SortHoleArray( void )
 {
     qsort( HoleArray, NumHoles, sizeof( region ), HoleCompare );
 }
 
 
-void FreeHoleArray()
+void FreeHoleArray( void )
 {
     if( NumHoles != 0 ) {
         _free( HoleArray );
@@ -1621,7 +1616,7 @@ foff FindSyncString( byte *file, foff end )
     return( -1 );
 }
 
-void ScanSyncString()
+void ScanSyncString( void )
 {
     if( SyncString == NULL ) return;
     SyncOld = FindSyncString( OldFile, EndOld );
@@ -1710,7 +1705,7 @@ void main( int argc, char **argv )
  * For debugging purposes only (In debugger issue "CALL DUMP" command)
  */
 
-void dump(void)
+void dump( void )
 {
     region *reg;
 

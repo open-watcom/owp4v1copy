@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File table interface.
 *
 ****************************************************************************/
 
@@ -114,17 +113,17 @@ struct sym_entry_struct {
 extern void InitFileTab( void );
 extern void FiniFileTab( void );
 extern void ResetFileTab( void );
-extern void CleanFileTab(void);
+extern void CleanFileTab( void );
 extern void ListContents( void );
 extern void AddObjectSymbols( arch_header *arch, libfile io, long offset );
 extern bool RemoveObjectSymbols( char *name );
-extern void SymCalcNewOffsets();
-extern void WriteFileTable();
+extern void SymCalcNewOffsets( void );
+extern void WriteFileTable( void );
 extern void AddSym( char *name, symbol_strength strength, unsigned char info );
 
 #ifdef __DEBUG__
-extern void DumpFileTable(void);
-extern void DumpHashTable(void);
+extern void DumpFileTable( void );
+extern void DumpHashTable( void );
 #endif
 
 #define RoundWord( x ) ( ( (x) + 1 ) & ~1 )

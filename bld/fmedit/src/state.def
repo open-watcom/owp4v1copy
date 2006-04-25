@@ -14,7 +14,7 @@ typedef enum {
 ,   SIZING
 ,   CREATING
 ,   ALIGNING
-,   PASTE_PENDING 
+,   PASTE_PENDING
 ,   PASTEING
 ,   SELECTING
 ,   MOVE_PENDING
@@ -30,55 +30,55 @@ typedef enum {
 extern void       SetState( STATE_ID );
 extern STATE_ID   GetState( void );
 extern void       SetDefState( void );
-extern void       NewState();
+extern void       NewState( void );
 extern void       SetStateWnd( HWND );
-extern void       FreeState();
+extern void       FreeState( void );
 extern void       SetBaseState( STATE_ID );
 
 extern void       SetSize( RESIZE_ID );
 extern BOOL       Sizing( char );
-extern void       ResetSize( void ); 
+extern void       ResetSize( void );
 
 extern void       SetPrevMouse( POINT );
 extern POINT      GetPrevMouse( void );
-  
-extern HANDLE     GetAppWnd();
-extern HANDLE     GetInst();
+
+extern HANDLE     GetAppWnd( void );
+extern HANDLE     GetInst( void );
 extern void       SetInst( HANDLE );
-extern HANDLE     GetClientWnd();
+extern HANDLE     GetClientWnd( void );
 extern void       SetClientWnd( HANDLE );
 
-extern void       CreateMainObject();
-extern void       DestroyMainObject();
+extern void       CreateMainObject( void );
+extern void       DestroyMainObject( void );
 
-extern OBJPTR     GetCurrObj();
-extern void       CreateCurrObject();
-extern void       DestroyCurrObject();
-  
-extern void       RestorePrevObject();
-extern void       SaveObject();
+extern OBJPTR     GetCurrObj( void );
+extern void       CreateCurrObject( void );
+extern void       DestroyCurrObject( void );
+
+extern void       RestorePrevObject( void );
+extern void       SaveObject( void );
 
 extern void       SetObjects( void * );
-extern void *     GetObjects();
+extern void *     GetObjects( void );
 
 extern void       SetErr( char * );
-extern char *     GetErr();
-extern unsigned char GetSizing();
+extern char *     GetErr( void );
+extern unsigned char GetSizing( void );
 
 extern void       SetOffset( POINT );
 extern void       SetScrollRect( RECT );
-extern RECT       GetScrollRect();
+extern RECT       GetScrollRect( void );
 extern void       SetScrollConfig( SCR_CONFIG );
-extern SCR_CONFIG GetScrollConfig();
+extern SCR_CONFIG GetScrollConfig( void );
 
-extern OBJPTR     GetSelectEatom();
+extern OBJPTR     GetSelectEatom( void );
 extern void       SetSelectEatom( OBJPTR );
 
-extern BOOL       GetShift();
-extern BOOL       GetControl();
+extern BOOL       GetShift( void );
+extern BOOL       GetControl( void );
 extern void       SetKeyState( WORD );
 
-extern void       ReportPending();
+extern void       ReportPending( void );
 
 extern void       LoadAccel( int );
 extern HWND       InheritState( HWND );
@@ -86,6 +86,6 @@ extern void       MouseAction( RECT * );
 extern void       SetResizeGrid( unsigned, unsigned );
 extern unsigned   GetResizeVInc( void );
 extern unsigned   GetResizeHInc( void );
-extern BOOL	  GetShowEatoms( void );
-extern void	  SetShowEatoms( BOOL show );
+extern BOOL   GetShowEatoms( void );
+extern void   SetShowEatoms( BOOL show );
 #endif

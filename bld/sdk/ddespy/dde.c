@@ -38,7 +38,8 @@
  * FirstInstInit - register classes and do other initializiation that
  *                 is only done by the first instance of the spy
  */
-static BOOL FirstInstInit() {
+static BOOL FirstInstInit( void )
+{
     WNDCLASS    wc;
 
     /* main window */
@@ -73,8 +74,8 @@ static BOOL FirstInstInit() {
 /*
  * EveryInstInit - do initialization required by every instance of the spy
  */
-static BOOL EveryInstInit( int cmdshow ) {
-
+static BOOL EveryInstInit( int cmdshow )
+{
     MemStart();
     JDialogInit();
     ReadConfig();
@@ -106,7 +107,7 @@ static BOOL EveryInstInit( int cmdshow ) {
     return( TRUE );
 }
 
-int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
+int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow )
 {
     MSG         msg;
 

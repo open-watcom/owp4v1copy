@@ -24,32 +24,33 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Internal wlib I/O interface.
 *
 ****************************************************************************/
 
 
 typedef unsigned_32     file_offset;
-#define READ_FILE_BUFFER_SIZE 2048
-#define WRITE_FILE_BUFFER_SIZE 32768
+
+#define READ_FILE_BUFFER_SIZE   2048
+#define WRITE_FILE_BUFFER_SIZE  32768
+
 typedef struct io_struct *libfile;
 struct io_struct {
-    char *name;
-    libfile next;
-    libfile prev;
-    int io;
-    unsigned_16 access;
-    unsigned_16 buf_size;
-    unsigned_16 buf_pos;
-    char buffer[1];
+    char            *name;
+    libfile         next;
+    libfile         prev;
+    int             io;
+    unsigned_16     access;
+    unsigned_16     buf_size;
+    unsigned_16     buf_pos;
+    char            buffer[1];
 };
 
-#define LIBOPEN_BINARY_READ ( O_BINARY | O_RDONLY )
-#define LIBOPEN_BINARY_WRITE ( O_BINARY | O_WRONLY | O_CREAT)
+#define LIBOPEN_BINARY_READ     ( O_BINARY | O_RDONLY )
+#define LIBOPEN_BINARY_WRITE    ( O_BINARY | O_WRONLY | O_CREAT )
 
-extern void InitLibIo();
-extern void ResetLibIo();
+extern void InitLibIo( void  );
+extern void ResetLibIo( void );
 extern libfile LibOpen( char *name, int access );
 extern file_offset LibRead( libfile io, void *buff, file_offset len );
 extern void LibWrite( libfile io, void *buff, file_offset len );

@@ -138,8 +138,8 @@ extern void OpenOvlFile( outfilelist *thefile )
     PrintIOError( FTL+MSG_CANT_OPEN, "12", thefile->fname );
 }
 
-static unsigned long WriteDOSData()
-/*********************************/
+static unsigned long WriteDOSData( void )
+/***************************************/
 /* copy code from extra memory to loadfile */
 {
     group_entry         *group;

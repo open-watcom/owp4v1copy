@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Librarian OMF symbol processing.
 *
 ****************************************************************************/
 
@@ -231,8 +230,8 @@ static void AddOMFSymbol( sym_type type )
     }
 }
 
-static unsigned short GetIndex(void)
-/******************************/
+static unsigned short GetIndex( void )
+/************************************/
 {
     unsigned short index;
 
@@ -245,8 +244,8 @@ static unsigned short GetIndex(void)
 }
 
 
-static void GetOffset(void)
-/*********************/
+static void GetOffset( void )
+/***************************/
 {
     RecPtr += 2;
     if( Rec32Bit ) { /* if 386, must skip over 4 bytes */
@@ -257,8 +256,8 @@ static void GetOffset(void)
 /*
  * throw away a group and segment number and possibly frame number
  */
-static void GetIdx()
-/******************/
+static void GetIdx( void )
+/************************/
 {
     register unsigned short         grp;
 
@@ -269,8 +268,8 @@ static void GetIdx()
     }
 }
 
-static int IsCommonRef(void)       /* dedicated routine for FORTRAN 77 common block */
-/***************/
+static int IsCommonRef( void )      /* dedicated routine for FORTRAN 77 common block */
+/****************************/
 {
     common_blk * tmpblk = CurrCommonBlk;
 
@@ -283,8 +282,8 @@ static int IsCommonRef(void)       /* dedicated routine for FORTRAN 77 common bl
     return( FALSE );
 }
 
-static void FreeCommonBlk(void) /* dedicated routine for FORTRAN 77 common block */
-/******************/
+static void FreeCommonBlk( void )   /* dedicated routine for FORTRAN 77 common block */
+/*******************************/
 {
     common_blk *    tmpblk;
 
@@ -295,8 +294,8 @@ static void FreeCommonBlk(void) /* dedicated routine for FORTRAN 77 common block
     }
 }
 
-static void procsegdef(void)  /* dedicated routine for FORTRAN 77 common block */
-/***********************/
+static void procsegdef( void )      /* dedicated routine for FORTRAN 77 common block */
+/****************************/
 {
     common_blk   *      cmn;
     common_blk  **      owner;
@@ -324,11 +323,11 @@ static void procsegdef(void)  /* dedicated routine for FORTRAN 77 common block *
 /*
  * from infl, get a intel name: length and name
  */
-void GetName(void)
+void GetName( void )
 {
     int        num_char;
 
-    num_char = (int) *RecPtr++;
+    num_char = (int)*RecPtr++;
     memcpy( NameBuff, RecPtr, num_char );
     RecPtr += num_char;
     NameBuff[ num_char ] = '\0';
@@ -336,7 +335,7 @@ void GetName(void)
 /*
  * loop over the publics in the record
  */
-static void getpubdef()
+static void getpubdef( void )
 {
     GetIdx();
     while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
@@ -370,7 +369,7 @@ static void GetComent( sym_file *sfile )
     }
 }
 
-static void GetComLen(void)
+static void GetComLen( void )
 {
     switch( *RecPtr++ ) {
     case COMDEF_LEAF_4:
@@ -390,7 +389,7 @@ static void GetComLen(void)
 /*
  * process a COMDEF record
  */
-static void getcomdef(void)
+static void getcomdef( void )
 {
     while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
         GetName();
@@ -410,7 +409,7 @@ static void getcomdef(void)
 /*
  * process a COMDAT record
  */
-static void getcomdat(void)
+static void getcomdat( void )
 {
     unsigned            alloc;
     unsigned            idx;
@@ -453,7 +452,7 @@ static void     getlname( int local )
     }
 }
 
-static void FreeLNames(void)
+static void FreeLNames( void )
 {
     struct lname        *next;
 

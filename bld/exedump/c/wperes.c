@@ -91,8 +91,8 @@ static void dmp_type_offset( unsigned_32 bsize )
 /*
  * Dump the Fixup Table.
  */
-void Dmp_fixups( void  )
-/**********************/
+void Dmp_fixups( void )
+/*********************/
 {
     pe_fixup_header         pe_fixup;
     unsigned_32             offset;
@@ -273,8 +273,8 @@ static void dmp_res_dir( void )
 /*
  * Dump the Resource Data.
  */
-static void dmp_res_data( )
-/*************************/
+static void dmp_res_data( void )
+/******************************/
 {
     resource_entry          res_data;
     unsigned_16             i;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Win32 trap file loading.
 *
 ****************************************************************************/
 
@@ -55,7 +54,7 @@ void TellHWND( HWND hwnd )
     }
 }
 
-void KillTrap()
+void KillTrap( void )
 {
     ReqFunc = NULL;
     if( FiniFunc != NULL ) FiniFunc();

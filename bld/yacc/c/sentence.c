@@ -46,7 +46,7 @@ struct traceback {
 
 static void pushTrace( traceback **h, a_state *state, a_sym *sym )
 {
-    traceback *token;
+    traceback   *token;
 
     token = MALLOC( 1, traceback );
     token->next = *h;
@@ -57,7 +57,7 @@ static void pushTrace( traceback **h, a_state *state, a_sym *sym )
 
 static void popTrace( traceback **h )
 {
-    traceback *token;
+    traceback   *token;
 
     token = *h;
     if( token != NULL ) {
@@ -68,11 +68,11 @@ static void popTrace( traceback **h )
 
 static a_state *findNewShiftState( a_state *state, a_sym *sym )
 {
-    a_shift_action *saction;
-    a_sym *shift_sym;
+    a_shift_action  *saction;
+    a_sym           *shift_sym;
 
     saction = state->trans;
-    for(;;) {
+    for( ;; ) {
         shift_sym = saction->sym;
         if( shift_sym == NULL ) break;
         if( shift_sym == sym ) {
@@ -85,7 +85,7 @@ static a_state *findNewShiftState( a_state *state, a_sym *sym )
 
 static void performShift( traceback **h, a_sym *sym )
 {
-    a_state *state;
+    a_state     *state;
 
     state = findNewShiftState( (*h)->state, sym );
     pushTrace( h, state, sym );
@@ -93,7 +93,7 @@ static void performShift( traceback **h, a_sym *sym )
 
 static void performReduce( traceback **h, a_pro *pro )
 {
-    an_item *p;
+    an_item     *p;
 
     for( p = pro->item; p->p.sym != NULL; ++p ) {
         popTrace( h );
@@ -104,17 +104,17 @@ static void performReduce( traceback **h, a_pro *pro )
 
 a_sym *terminalInKernel( an_item *p )
 {
-    a_sym *sym_after_dot;
-    a_sym *post_sym;
-    an_item *q;
-    a_pro *pro;
+    a_sym       *sym_after_dot;
+    a_sym       *post_sym;
+    an_item     *q;
+    a_pro       *pro;
 
     for( q = p; q->p.sym; ++q );
     pro = q[1].p.pro;
     q = pro->item;
     sym_after_dot = NULL;
     post_sym = NULL;
-    for(;;) {
+    for( ;; ) {
         if( q->p.sym == NULL ) break;
         post_sym = q->p.sym;
         if( q == p ) {
@@ -130,7 +130,7 @@ a_sym *terminalInKernel( an_item *p )
 
 static bool notInTraceback( traceback **h, a_sym *sym )
 {
-    traceback *t;
+    traceback   *t;
 
     for( t = *h; t != NULL; t = t->next ) {
         if( t->sym == sym ) {
@@ -142,9 +142,9 @@ static bool notInTraceback( traceback **h, a_sym *sym )
 
 static a_sym *findNewShiftSym( a_state *state, traceback **h )
 {
-    a_shift_action *saction;
-    a_sym *shift_sym;
-    a_name name;
+    a_shift_action  *saction;
+    a_sym           *shift_sym;
+    a_name          name;
 
     if( state->trans[0].sym != NULL && state->trans[1].sym == NULL ) {
         shift_sym = state->trans[0].sym;
@@ -163,7 +163,7 @@ static a_sym *findNewShiftSym( a_state *state, traceback **h )
         }
     }
     saction = state->trans;
-    for(;;) {
+    for( ;; ) {
         shift_sym = saction->sym;
         if( shift_sym == NULL ) break;
         if( notInTraceback( h, shift_sym ) ) {
@@ -183,13 +183,13 @@ static void flushStack( traceback **h )
 
 static void doRunUntilShift( traceback **h, a_sym *sym, traceback **ht, unsigned count )
 {
-    index_t sidx;
-    a_sym *chk_sym;
-    a_state *state;
-    a_state *top;
-    a_reduce_action *raction;
+    index_t             sidx;
+    a_sym               *chk_sym;
+    a_state             *state;
+    a_state             *top;
+    a_reduce_action     *raction;
 
-    for(;;) {
+    for( ;; ) {
         if( *h == NULL ) break;
         top = (*h)->state;
         if( top == NULL ) {
@@ -203,7 +203,7 @@ static void doRunUntilShift( traceback **h, a_sym *sym, traceback **ht, unsigned
             if( sym == eofsym ) {
                 break;
             }
-            for(;;) {
+            for( ;; ) {
                 if( *h == NULL ) break;
                 top = (*h)->state;
                 if( top->redun->pro == NULL ) break;
@@ -252,8 +252,8 @@ static void runUntilShift( traceback **h, a_sym *sym, traceback **ht )
 
 static traceback *reverseStack( traceback *s )
 {
-    traceback *h;
-    traceback *n;
+    traceback   *h;
+    traceback   *n;
 
     h = NULL;
     while( s != NULL ) {
@@ -267,11 +267,11 @@ static traceback *reverseStack( traceback *s )
 
 static void printAndFreeStack( traceback *top )
 {
-    unsigned column;
-    unsigned len;
-    a_sym *sym;
-    char *min;
-    traceback *token;
+    unsigned    column;
+    unsigned    len;
+    a_sym       *sym;
+    char        *min;
+    traceback   *token;
 
     column = 0;
     while( top ) {
@@ -294,8 +294,8 @@ static void printAndFreeStack( traceback *top )
 
 static traceback *makeReversedCopy( traceback *top )
 {
-    traceback *parse_stack;
-    traceback *curr;
+    traceback   *parse_stack;
+    traceback   *curr;
 
     parse_stack = NULL;
     for( curr = top; curr != NULL; curr = curr->next ) {
@@ -307,14 +307,14 @@ static traceback *makeReversedCopy( traceback *top )
 
 static traceback *getStatePrefix( a_state *s, a_state *initial_parent )
 {
-    traceback *list;
-    a_parent *parent;
-    a_state *min;
-    a_state *min_check;
-    a_shift_action *t;
+    traceback       *list;
+    a_parent        *parent;
+    a_state         *min;
+    a_state         *min_check;
+    a_shift_action  *t;
 
     list = NULL;
-    for(;;) {
+    for( ;; ) {
         parent = s->parents;
         if( parent == NULL ) break;
         if( initial_parent != NULL ) {
@@ -343,10 +343,10 @@ static traceback *getStatePrefix( a_state *s, a_state *initial_parent )
 void ShowSentence( a_state *s, a_sym *sym, a_pro *pro, a_state *to_state )
 /************************************************************************/
 {
-    traceback *list;
-    traceback *parse_stack;
-    traceback *token_stack;
-    a_parent *parent;
+    traceback   *list;
+    traceback   *parse_stack;
+    traceback   *token_stack;
+    a_parent    *parent;
 
     for( parent = s->parents; parent; parent = parent->next ) {
         if( to_state != NULL ) {
@@ -386,7 +386,7 @@ void ShowSentence( a_state *s, a_sym *sym, a_pro *pro, a_state *to_state )
 
 char *stpcpy( char *d, char const *s )
 {
-    size_t len;
+    size_t  len;
 
     len = strlen( s );
     memcpy( d, s, len + 1 );
@@ -395,9 +395,9 @@ char *stpcpy( char *d, char const *s )
 
 static unsigned symHasMinLen( a_sym *sym, a_pro *pro, a_sym *disallow_error )
 {
-    unsigned len;
-    char *check_min;
-    an_item *p;
+    unsigned    len;
+    char        *check_min;
+    an_item     *p;
 
     for( p = pro->item; p->p.sym != NULL; ++p ) {
         if( p->p.sym == disallow_error ) {
@@ -419,10 +419,10 @@ static unsigned symHasMinLen( a_sym *sym, a_pro *pro, a_sym *disallow_error )
 
 static a_sym *symHasMin( a_sym *sym, a_pro *pro, a_sym *disallow_error )
 {
-    unsigned len;
-    an_item *p;
-    char *min;
-    char *cat;
+    unsigned    len;
+    an_item     *p;
+    char        *min;
+    char        *cat;
 
     len = symHasMinLen( sym, pro, disallow_error );
     if( len == 0 ) {
@@ -445,9 +445,9 @@ static a_sym *symHasMin( a_sym *sym, a_pro *pro, a_sym *disallow_error )
 
 static void setMinToName( a_sym *sym )
 {
-    unsigned len;
-    char *min;
-    char *cat;
+    unsigned    len;
+    char        *min;
+    char        *cat;
 
     len = strlen( sym->name );
     len += 2;
@@ -463,13 +463,13 @@ static void setMinToName( a_sym *sym )
 
 static void propagateMin( a_sym *disallow_error )
 {
-    a_sym *last;
-    a_sym *sym;
-    a_sym *has_min;
-    a_pro *pro;
-    unsigned i;
-    unsigned min_len;
-    unsigned len;
+    a_sym       *last;
+    a_sym       *sym;
+    a_sym       *has_min;
+    a_pro       *pro;
+    unsigned    i;
+    unsigned    min_len;
+    unsigned    len;
 
     do {
         last = NULL;
@@ -498,10 +498,10 @@ static void propagateMin( a_sym *disallow_error )
     } while( last != NULL );
 }
 
-static void seedWithSimpleMin()
+static void seedWithSimpleMin( void )
 {
-    a_sym *sym;
-    unsigned i;
+    a_sym       *sym;
+    unsigned    i;
 
     // set terminals to their name and set nullable syms
     for( i = 0; i < nsym; ++i ) {
@@ -516,10 +516,10 @@ static void seedWithSimpleMin()
     }
 }
 
-static void verifyAllHaveMin()
+static void verifyAllHaveMin( void )
 {
-    a_sym *sym;
-    unsigned i;
+    a_sym       *sym;
+    unsigned    i;
 
     for( i = 0; i < nsym; ++i ) {
         sym = symtab[i];

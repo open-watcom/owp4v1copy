@@ -122,8 +122,8 @@ static processor_reg VarReg( processor_reg reg )
     return( reg );
 }
 
-static uint_8 InsOffset()
-/***********************/
+static uint_8 InsOffset( void )
+/*****************************/
 
 {
     return( GetOffset() - InsAddr );
@@ -131,8 +131,8 @@ static uint_8 InsOffset()
 
 
 #if !defined( O2A )
-static int  LookFor87Emulation()
-/******************************/
+static int  LookFor87Emulation( void )
+/************************************/
 
 {
     char        second_byte;
@@ -292,7 +292,7 @@ void  DoCode( instruction *curr, char use_32 )
         }
     }
     if( IsWtk( &CurrIns ) ) {
-        DoWtk( &CurrIns );
+        DoWtk( /*&CurrIns*/ );
     }
     CurrIns.ins_size = InsOffset();
     *curr = CurrIns;

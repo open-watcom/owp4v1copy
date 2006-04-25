@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File logging functions.
 *
 ****************************************************************************/
 
@@ -94,8 +93,8 @@ BOOL CALLBACK LogSaveHook( HWND hwnd, int msg, UINT wparam, LONG lparam )
  * getLogName - get a filename for the log and check if the file already
  *              exists
  */
-static BOOL getLogName( char *buf, HWND hwnd ) {
-
+static BOOL getLogName( char *buf, HWND hwnd )
+{
     OPENFILENAME        of;
     int                 rc;
     static char         fname[LOG_MAX_FNAME];
@@ -135,8 +134,8 @@ static BOOL getLogName( char *buf, HWND hwnd ) {
 /*
  * flushLog - write out everything in the log buffer
  */
-static void flushLog( BOOL free ) {
-
+static void flushLog( BOOL free )
+{
     WORD        i;
     int         f;
 
@@ -267,8 +266,8 @@ BOOL __export FAR PASCAL ConfigLogDlgProc( HWND hwnd, WORD msg,
 /*
  * LogConfigure - display a dialog to let the user configure log features
  */
-void LogConfigure() {
-
+void LogConfigure( void )
+{
     FARPROC     fp;
 
     if( !LogCurInfo.init ) SetLogDef();
@@ -284,8 +283,8 @@ void LogConfigure() {
  * SetLogDef - set the log configuration to the defaults
  */
 
-void SetLogDef() {
-
+void SetLogDef( void )
+{
     strcpy( LogCurInfo.config.name, "dflt.log" );
     LogCurInfo.config.type = LOG_TYPE_CONTINUOUS;
     LogCurInfo.config.def_action = LOG_ACTION_QUERY;
@@ -296,7 +295,8 @@ void SetLogDef() {
 /*
  * GetLogConfig - copy the current log configuration information to config
  */
-void GetLogConfig( LogConfig *config ) {
+void GetLogConfig( LogConfig *config )
+{
     if( !LogCurInfo.init ) SetLogDef();
     *config = LogCurInfo.config;
 }
@@ -304,7 +304,8 @@ void GetLogConfig( LogConfig *config ) {
 /*
  * SetLogConfig - set current log configuration
  */
-void SetLogConfig( LogConfig *config ) {
+void SetLogConfig( LogConfig *config )
+{
     LogCurInfo.config = *config;
     LogCurInfo.init = TRUE;
 }
@@ -318,8 +319,8 @@ void SetLogConfig( LogConfig *config ) {
  * SaveLogConfig - save the current log configuration
  */
 
-void SaveLogConfig( char *fname, char *section ) {
-
+void SaveLogConfig( char *fname, char *section )
+{
     char        buf[10];
 
     if( !LogCurInfo.init ) SetLogDef();
@@ -341,8 +342,8 @@ void SaveLogConfig( char *fname, char *section ) {
  * LoadLogConfig - read log configuration information from the .ini file
  */
 
-void LoadLogConfig( char *fname, char *section ) {
-
+void LoadLogConfig( char *fname, char *section )
+{
     SetLogDef();
     LogCurInfo.config.type = GetPrivateProfileInt( section,
                         LOG_TYPE, LogCurInfo.config.type, fname );
@@ -380,7 +381,7 @@ void SpyLogOut( char *res )
 /*
  * SpyLogOpen - open the log file
  */
-BOOL SpyLogOpen()
+BOOL SpyLogOpen( void )
 {
     int         f;
     WORD        flags;
@@ -465,7 +466,8 @@ BOOL SpyLogPauseToggle( void )
 /*
  * LogToggle - toggle between logging and not logging modes
  */
-BOOL LogToggle( void ) {
+BOOL LogToggle( void )
+{
     if( !LogCurInfo.init ) SetLogDef();
     if( !LogCurInfo.config.logging ) {
         return( SpyLogOpen() );
@@ -485,7 +487,8 @@ BOOL LogToggle( void ) {
  *              header is desired
  */
 
-void LogInit( HWND hwnd, HANDLE inst, void(*writefn)( int ) ) {
+void LogInit( HWND hwnd, HANDLE inst, void(*writefn)( int ) )
+{
     LogCurInfo.hwnd = hwnd;
     LogCurInfo.instance = inst;
     LogCurInfo.writefn = writefn;

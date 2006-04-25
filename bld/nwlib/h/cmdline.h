@@ -24,17 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Library manager command line processing.
 *
 ****************************************************************************/
 
 
-extern void InitCmdLine();
+extern void InitCmdLine( void );
 extern void ProcessCmdLine( char *argv[] );
-extern void ResetCmdLine();
+extern void ResetCmdLine( void );
 extern void AddCommand( operation ops, char *name );
 
-extern lib_cmd *CmdList;
-extern options_def Options;
+extern lib_cmd      *CmdList;
+extern options_def  Options;
 

@@ -250,8 +250,8 @@ char WATCOMPATH[256];
 int  LineCount = 0;
 FILE *TechOutFile;
 
-void Usage()
-/**********/
+void Usage( void )
+/****************/
 {
     printf( BANNER "\n" );
 #if defined( __OS2__ )
@@ -288,8 +288,8 @@ void techoutput( char *format, ... )
     }
 }
 
-void do_company_header()
-/**********************/
+void do_company_header( void )
+/****************************/
 {
     time_t              time_of_day;
 
@@ -360,8 +360,8 @@ void patch_tool( char *tool, char **dirs )
 }
 
 
-void get_compiler_patch()
-/***********************/
+void get_compiler_patch( void )
+/*****************************/
 {
 /***************************************************************************/
 /*   This function first dumps out all relevant WATCOM environment vars    */
@@ -387,8 +387,8 @@ void get_compiler_patch()
     }
 }
 
-void get_wsql_patch()
-/*******************/
+void get_wsql_patch( void )
+/*************************/
 {
 /***************************************************************************/
 /*   This function first dumps out all relevant WATCOM environment vars    */
@@ -417,8 +417,8 @@ void get_wsql_patch()
     }
 }
 
-void get_mem_info()
-/*****************/
+void get_mem_info( void )
+/***********************/
 {
 #ifdef __OS2__
     ULONG       mem;
@@ -481,8 +481,8 @@ void dump_files( char drive_name )
 }
 
 
-void get_config_files()
-/*********************/
+void get_config_files( void )
+/***************************/
 {
     int                 drive_name;
 #ifdef __OS2__
@@ -579,8 +579,8 @@ void machine_type( int print )
 }
 
 #ifndef __OS2__
-void check_dos_comm()
-/*******************/
+void check_dos_comm( void )
+/*************************/
 {
     /*   Check for the share and append utilities    */
     union REGS          regs;

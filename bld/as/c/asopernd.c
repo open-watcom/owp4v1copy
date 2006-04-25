@@ -31,32 +31,32 @@
 
 #include "as.h"
 
-static void setConstant( ins_operand *op, signed_32 c ) {
-//*******************************************************
-
+static void setConstant( ins_operand *op, signed_32 c )
+//*****************************************************
+{
     op->constant = c;
     op->flags |= CONSTANT;
 }
 
-static void setUnnamedReloc( ins_operand *op, int_32 num, asm_reloc_type rtype ) {
-//********************************************************************************
-
+static void setUnnamedReloc( ins_operand *op, int_32 num, asm_reloc_type rtype )
+//******************************************************************************
+{
     op->reloc.target.label = num;
     op->reloc.type = rtype;
     op->flags |= UNNAMED_RELOC;
 }
 
-static void setReloc( ins_operand *op, sym_handle reloc, asm_reloc_type rtype ) {
-//*******************************************************************************
-
+static void setReloc( ins_operand *op, sym_handle reloc, asm_reloc_type rtype )
+//*****************************************************************************
+{
     op->reloc.target.ptr = reloc;
     op->reloc.type = rtype;
     op->flags |= RELOC;
 }
 
-static ins_operand *initOp() {
-//****************************
-
+static ins_operand *initOp( void )
+//********************************
+{
     ins_operand *op;
 
     op = MemAlloc( sizeof( ins_operand ) );
@@ -69,11 +69,11 @@ static ins_operand *initOp() {
 
 #define _Munge( a, b )          ((((int)(a)&0x0f)<<8)|((int)(b)&0x0f))
 
-static void opConstant( ins_operand *op, expr_tree *expr ) {
-//**********************************************************
+static void opConstant( ins_operand *op, expr_tree *expr )
+//********************************************************
 // If we can't create a valid operand from this expression
 // tree, we use a constant of 0 and emit an error message.
-
+{
     expr_tree   *l;
     expr_tree   *r;
 
@@ -134,9 +134,9 @@ static void opConstant( ins_operand *op, expr_tree *expr ) {
     ETFree( expr );
 }
 
-extern ins_operand *OpImmed( expr_tree *expr ) {
-//**********************************************
-
+extern ins_operand *OpImmed( expr_tree *expr )
+//********************************************
+{
     ins_operand *op;
 
     assert( expr != NULL );
@@ -153,17 +153,17 @@ static op_type RegClassOpTypes[] = {
     0
 };
 
-static void atRegCheck( reg r ) {
-//*******************************
-
+static void atRegCheck( reg r )
+//*****************************
+{
     if( r == AT_REG && _DirIsSet( AT ) ) {
         Warning( AT_REG_USED_WITHOUT_REQ );
     }
 }
 
-extern ins_operand *OpRegister( reg r ) {
-//***************************************
-
+extern ins_operand *OpRegister( reg r )
+//*************************************
+{
     ins_operand *op;
 
     assert( RegClass( r ) >= 0 && RegClass( r ) < RC_LAST );
@@ -174,9 +174,9 @@ extern ins_operand *OpRegister( reg r ) {
     return( op );
 }
 
-extern ins_operand *OpRegIndirect( reg r, expr_tree *expr ) {
-//***********************************************************
-
+extern ins_operand *OpRegIndirect( reg r, expr_tree *expr )
+//*********************************************************
+{
     ins_operand *op;
 
     assert( RegClass( r ) >= 0 && RegClass( r ) < RC_LAST );
@@ -191,11 +191,11 @@ extern ins_operand *OpRegIndirect( reg r, expr_tree *expr ) {
 }
 
 #ifdef AS_PPC
-extern ins_operand *OpBI( uint_32 cr, uint_32 bit_offset ) {
-//**********************************************************
+extern ins_operand *OpBI( uint_32 cr, uint_32 bit_offset )
+//********************************************************
 // This operand type specifies which of the 32 bits in the CR
 // represents the condition to test. (PPC specific)
-
+{
     ins_operand *op;
 
     assert( bit_offset <= BI_LAST );
@@ -218,9 +218,9 @@ static char *reloc_modifier[] = {
     "b^"
 };
 
-extern void DumpOperand( ins_operand *op ) {
-//******************************************
-
+extern void DumpOperand( ins_operand *op )
+//****************************************
+{
     switch( op->type ) {
     case OP_IMMED:
     case OP_REG_INDIRECT:

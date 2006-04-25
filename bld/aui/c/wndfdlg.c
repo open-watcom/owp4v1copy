@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS MODULE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File open dialog.
 *
 ****************************************************************************/
 
@@ -37,7 +36,7 @@
 #include <clibext.h>
 #endif
 
-extern gui_window *DlgGetParent();
+extern gui_window *DlgGetParent( void );
 
 extern int DlgGetFileName( open_file_name *ofn )
 {

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Screen zoom utility.
 *
 ****************************************************************************/
 
@@ -43,7 +42,7 @@
  * FirstInstInit - register classes and do other initializiation that
  *                 is only done by the first instance of the spy
  */
-static BOOL FirstInstInit()
+static BOOL FirstInstInit( void )
 {
     WNDCLASS    wc;
 
@@ -66,8 +65,8 @@ static BOOL FirstInstInit()
 /*
  * EveryInstInit - do initialization required by every instance of the spy
  */
-static BOOL EveryInstInit( int cmdshow ) {
-
+static BOOL EveryInstInit( int cmdshow )
+{
     MainWndInfo         *info;
 
 #ifndef NOUSE3D

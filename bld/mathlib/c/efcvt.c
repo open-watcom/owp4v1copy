@@ -38,7 +38,7 @@
 #include <math.h>
 #include "xfloat.h"
 
-extern  CHAR_TYPE *__CVTBuffer();
+extern  CHAR_TYPE *__CVTBuffer( void );
 extern  char *__cvt( double, int, int *, int *, int, char * );
 
 #define MAX_PRECISION __FPCVT_BUFFERLEN

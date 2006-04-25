@@ -457,10 +457,9 @@ static void new_list(
     Curr_list->compact = LIST_SPACE_STANDARD;
 }
 
-static void pop_list(
-/*******************/
-
-) {
+static void pop_list( void )
+/**************************/
+{
     Curr_indent = Curr_list->prev_indent;
     --List_level;
     Curr_list = &Lists[List_level];
@@ -523,11 +522,9 @@ static int tab_align(
     return( len );
 }
 
-void ib_topic_init(
-/*****************/
-
-    void
-) {
+void ib_topic_init( void )
+/************************/
+{
 }
 
 int ib_trans_line(
@@ -1237,11 +1234,9 @@ static void output_ctx_sections(
     }
 }
 
-void ib_output_file(
-/*******************/
-
-    void
-) {
+void ib_output_file( void )
+/*************************/
+{
     ctx_def                     *ctx;
 
     if( IB_def_topic != NULL ) {

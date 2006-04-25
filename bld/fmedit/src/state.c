@@ -56,8 +56,8 @@ extern void SetInst( HANDLE inst )
   }
 
 
-extern void NewState()
-/********************/
+extern void NewState( void )
+/**************************/
 
 /* initialize state info */
 
@@ -107,8 +107,8 @@ extern void SetStateWnd( HWND wnd )
   }
 
 
-extern void FreeState()
-/*********************/
+extern void FreeState( void )
+/***************************/
 
   {
     STATE * s;
@@ -172,8 +172,8 @@ extern void SetState( STATE_ID state )
   }
 
 
-extern STATE_ID GetState()
-/************************/
+extern STATE_ID GetState( void )
+/******************************/
 
 /* return the current state */
 
@@ -192,8 +192,8 @@ extern void SetBaseState( STATE_ID st )
   }
 
 
-extern void SetDefState()
-/***********************/
+extern void SetDefState( void )
+/*****************************/
 
 /* reset to base state */
 
@@ -213,8 +213,8 @@ extern void SetSize( RESIZE_ID  id )
   }
 
 
-extern void ResetSize()
-/*********************/
+extern void ResetSize( void )
+/***************************/
 
 /* reset the sizing state info */
 
@@ -223,8 +223,8 @@ extern void ResetSize()
   }
 
 
-extern char GetSizing()
-/**********************/
+extern char GetSizing( void )
+/***************************/
 
 /* return the sizing info */
 
@@ -253,8 +253,8 @@ extern void SetPrevMouse( POINT pt )
   }
 
 
-extern POINT GetPrevMouse()
-/*************************/
+extern POINT GetPrevMouse( void )
+/*******************************/
 
 /* Return the last significant the mouse position. */
 
@@ -263,8 +263,8 @@ extern POINT GetPrevMouse()
   }
 
 
-extern HANDLE GetAppWnd()
-/***********************/
+extern HANDLE GetAppWnd( void )
+/*****************************/
 
 /* save the application window handle */
 
@@ -273,8 +273,8 @@ extern HANDLE GetAppWnd()
   }
 
 
-extern HANDLE GetInst()
-/*********************/
+extern HANDLE GetInst( void )
+/***************************/
 
 /* save the instance handle */
 
@@ -283,8 +283,8 @@ extern HANDLE GetInst()
   }
 
 
-extern void CreateMainObject()
-/****************************/
+extern void CreateMainObject( void )
+/**********************************/
 
 /* create the main object */
 
@@ -292,8 +292,8 @@ extern void CreateMainObject()
     State->mainobject = Create( USER_OBJ, NULL, NULL, NULL );
   }
 
-extern void DestroyMainObject()
-/*****************************/
+extern void DestroyMainObject( void )
+/***********************************/
 
 /* destroy the main object */
 
@@ -305,8 +305,8 @@ extern void DestroyMainObject()
     State->mainobject = NULL;
   }
 
-extern void CreateCurrObject()
-/****************************/
+extern void CreateCurrObject( void )
+/**********************************/
 
 /* Create the current object */
 
@@ -314,8 +314,8 @@ extern void CreateCurrObject()
     State->currobj = Create( O_CURROBJ, NULL, NULL, NULL );
   }
 
-extern void DestroyCurrObject()
-/*****************************/
+extern void DestroyCurrObject( void )
+/***********************************/
 
 /* Destroy the current object */
 
@@ -323,8 +323,8 @@ extern void DestroyCurrObject()
     Destroy( State->currobj, FALSE );
   }
 
-OBJPTR WINEXP GetMainObject()
-/***************************/
+OBJPTR WINEXP GetMainObject( void )
+/*********************************/
 
 /* create the main object */
 
@@ -343,8 +343,8 @@ void WINEXP SetBaseObjType( OBJ_ID id )
   }
 
 
-OBJ_ID WINEXP GetBaseObjType()
-/****************************/
+OBJ_ID WINEXP GetBaseObjType( void )
+/**********************************/
 
 /* return the type of object to build */
 
@@ -353,8 +353,8 @@ OBJ_ID WINEXP GetBaseObjType()
   }
 
 
-unsigned WINEXP GetVerticalInc()
-/******************************/
+unsigned WINEXP GetVerticalInc( void )
+/************************************/
 
 /* return the vertical grid increment value */
 
@@ -373,8 +373,8 @@ void WINEXP SetVerticalInc( unsigned inc )
   }
 
 
-unsigned WINEXP GetHorizontalInc()
-/********************************/
+unsigned WINEXP GetHorizontalInc( void )
+/**************************************/
 
 /* return the vertical grid increment value */
 
@@ -403,8 +403,8 @@ extern void SetObjects( void * objs )
   }
 
 
-extern void * GetObjects()
-/************************/
+extern void * GetObjects( void )
+/******************************/
 
 /* get the object table pointer */
 
@@ -412,8 +412,8 @@ extern void * GetObjects()
     return( State->objects );
   }
 
-extern void SaveObject()
-/**********************/
+extern void SaveObject( void )
+/****************************/
 
 /* remember the previous object */
 
@@ -427,8 +427,8 @@ extern void SaveObject()
   }
 
 
-extern void RestorePrevObject()
-/*****************************/
+extern void RestorePrevObject( void )
+/***********************************/
 
 /* reset the currobject from the previous object */
 
@@ -437,8 +437,8 @@ extern void RestorePrevObject()
   }
 
 
-extern OBJPTR GetCurrObj()
-/************************/
+extern OBJPTR GetCurrObj( void )
+/******************************/
 /* get the current object */
 {
     if( State == NULL ) {
@@ -466,8 +466,8 @@ extern void SetOffset( POINT point )
     State->offset = point;
   }
 
-extern RECT GetScrollRect()
-/*************************/
+extern RECT GetScrollRect( void )
+/*******************************/
 
 /* return the scroll rect */
 
@@ -493,8 +493,8 @@ extern void SetScrollConfig( SCR_CONFIG flag )
     State->scrollconfig = flag;
   }
 
-extern SCR_CONFIG GetScrollConfig()
-/*********************************/
+extern SCR_CONFIG GetScrollConfig( void )
+/***************************************/
 
 /* Get the scroll configuration */
 
@@ -502,8 +502,8 @@ extern SCR_CONFIG GetScrollConfig()
     return( State->scrollconfig );
   }
 
-extern OBJPTR GetSelectEatom()
-/****************************/
+extern OBJPTR GetSelectEatom( void )
+/**********************************/
 
 /* return the banded select eatom */
 
@@ -576,16 +576,16 @@ extern void LoadAccel( int bitmap )
     }
   }
 
-extern BOOL GetShift()
-/********************/
+extern BOOL GetShift( void )
+/**************************/
 
   {
     return( State->keystate & MK_SHIFT );
   }
 
 
-extern BOOL GetControl()
-/**********************/
+extern BOOL GetControl( void )
+/****************************/
 
   {
     return( State->keystate & MK_CONTROL );
@@ -615,8 +615,8 @@ void WINEXP DisplayError( char * msg )
     }
   }
 
-extern void ReportPending()
-/**************************/
+extern void ReportPending( void )
+/*******************************/
 
   {
       if( ShowError() && ( State->error != NULL ) ) {
@@ -627,8 +627,8 @@ extern void ReportPending()
       }
   }
 
-void WINEXP ClearError()
-/**********************/
+void WINEXP ClearError( void )
+/****************************/
 
   {
     if( State->error != NULL ) {
@@ -638,8 +638,8 @@ void WINEXP ClearError()
   }
 
 
-extern BOOL ShowError()
-/*********************/
+extern BOOL ShowError( void )
+/***************************/
 
   {
     return( State->showerror );
@@ -693,16 +693,16 @@ extern void SetResizeGrid( unsigned horz, unsigned vert )
   }
 
 
-extern unsigned GetResizeHInc()
-/*****************************/
+extern unsigned GetResizeHInc( void )
+/***********************************/
 
   {
     return( State->hresizegrid );
   }
 
 
-extern unsigned GetResizeVInc()
-/*****************************/
+extern unsigned GetResizeVInc( void )
+/***********************************/
 
   {
     return( State->vresizegrid );

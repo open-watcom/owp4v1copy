@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Binary patch utility internals.
 *
 ****************************************************************************/
 
@@ -96,8 +95,8 @@
 /* Function prototypes */
 
 /* From msg.c */
-int MsgInit();
-void MsgFini();
+int MsgInit( void );
+void MsgFini( void );
 
 /* From myio.c */
 void Input( MY_FILE *file, void *tmp, foff off, size_t len );

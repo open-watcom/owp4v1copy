@@ -603,8 +603,8 @@ long WINIEXP CurrItemWndProc( HWND wnd, unsigned message,
     return( 0L );
   }
 
-extern void InitCurrItem()
-/************************/
+extern void InitCurrItem( void )
+/******************************/
 
 /* Initialization for CURRITEM objects - register the CurrItemClass */
 

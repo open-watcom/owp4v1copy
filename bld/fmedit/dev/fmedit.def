@@ -84,26 +84,26 @@ extern void   FM_EXPORT NewOffset( POINT );
 
 /* state.def exports */
 
-extern OBJ_ID     FM_EXPORT GetBaseObjType();
+extern OBJ_ID     FM_EXPORT GetBaseObjType( void );
 extern void       FM_EXPORT SetBaseObjType( OBJ_ID );
 extern BOOL       FM_EXPORT InitState( HWND );
-extern OBJPTR     FM_EXPORT GetMainObject();
-extern OBJPTR     FM_EXPORT GetCurrObject();
-extern LIST *     FM_EXPORT GetCurrObjectList();
+extern OBJPTR     FM_EXPORT GetMainObject( void );
+extern OBJPTR     FM_EXPORT GetCurrObject( void );
+extern LIST *     FM_EXPORT GetCurrObjectList( void );
 extern void       FM_EXPORT GetOffset( POINT * );
 extern void       FM_EXPORT SetHorizontalInc( unsigned );
 extern void       FM_EXPORT SetVerticalInc( unsigned );
-extern unsigned   FM_EXPORT GetHorizontalInc();
-extern unsigned   FM_EXPORT GetVerticalInc();
+extern unsigned   FM_EXPORT GetHorizontalInc( void );
+extern unsigned   FM_EXPORT GetVerticalInc( void );
 extern BOOL       FM_EXPORT FMClipObjExists( OBJPTR );
 extern void       FM_EXPORT FMAddClipboard( OBJPTR, OBJPTR );
-extern BOOL       FM_EXPORT FMPasteValid();
-extern void       FM_EXPORT FMResetClipboard();
-extern void       FM_EXPORT FMNewClipboard();
+extern BOOL       FM_EXPORT FMPasteValid( void );
+extern void       FM_EXPORT FMResetClipboard( void );
+extern void       FM_EXPORT FMNewClipboard( void );
 extern void       FM_EXPORT DisplayError( char * );
 extern BOOL       FM_EXPORT IsEditting( HWND );
 extern void       FM_EXPORT SetShowError( BOOL );
-extern void       FM_EXPORT ClearError();
+extern void       FM_EXPORT ClearError( void );
 extern void       FM_EXPORT SetMouseRtn( HWND, void (FM_EXPORT *)( HWND, RECT * ));
 extern STATE_HDL  FM_EXPORT GetCurrFormID( void );
 extern BOOL       FM_EXPORT InitStateFormID( STATE_HDL );

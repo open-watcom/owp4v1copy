@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File logging function prototypes.
 *
 ****************************************************************************/
 
@@ -91,14 +90,14 @@ typedef struct loginfo {
 #define LOG_CFG_BROWSE              216
 
 void LogInit( HWND hwnd, HANDLE inst, void(*writefn)( int ) );
-BOOL SpyLogOpen( void (*writefn)( int ) );
+BOOL SpyLogOpen( void );
 void SpyLogOut( char *res );
-void SetLogDef();
+void SetLogDef( void );
 void GetLogConfig( LogConfig *config );
 void SetLogConfig( LogConfig *config );
 void SpyLogClose( void );
 BOOL SpyLogPauseToggle( void );
 BOOL LogToggle( void );
-void LogConfigure();
+void LogConfigure( void );
 void LoadLogConfig( char *fname, char *section );
 void SaveLogConfig( char *fname, char *section );

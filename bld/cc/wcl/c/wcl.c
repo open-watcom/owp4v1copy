@@ -122,7 +122,7 @@ static int     Parse( char *Cmd );
 #elif defined( __OS2__ ) || defined( __NT__ )
     #define _dos_switch_char() '/'
 #else
-    extern  int     _dos_switch_char();
+    extern  int     _dos_switch_char( void );
 #endif
 
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Main loop for extended DOS debugger.
 *
 ****************************************************************************/
 
@@ -45,7 +44,7 @@ extern void                     DebugMain( void );
 extern void                     DebugFini( void );
 extern void                     StartupErr( char * );
 extern void                     SaveOrigVectors( void );
-extern void                     RestoreOrigVectors(void);
+extern void                     RestoreOrigVectors( void );
 
 static memptr                   OldInt1b;
 static memptr                   OldInt23;
@@ -122,7 +121,7 @@ void RestoreHandlers( void )
     }
 }
 
-static void Cleanup()
+static void Cleanup( void )
 {
     RestoreOrigVectors();
     if( RMData.s.pm != 0 ) {
@@ -187,11 +186,11 @@ void GUISysFini( void  )
     Cleanup();
 }
 
-void WndCleanUp()
+void WndCleanUp( void )
 {
 }
 
-bool SysGUI()
+bool SysGUI( void )
 {
     return( FALSE );
 }

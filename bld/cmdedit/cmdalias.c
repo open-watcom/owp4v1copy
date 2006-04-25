@@ -34,20 +34,20 @@
 
 extern int      WordSep( char ch );
 extern void     PutChar( char ch );
-extern void     PutNL();
-extern void     RestoreLine();
+extern void     PutNL( void );
+extern void     RestoreLine( void );
 extern char     *EatWhite( char *word );
 extern void     PutString( char far * str );
 extern void     RestorePrompt( char PASPTR *line );
-extern void     SaveLine();
+extern void     SaveLine( void );
 extern void     SavePrompt( char PASPTR *line );
 extern char     far *GetEnv( char far *name, int len );
-extern int      PutMore();
+extern int      PutMore( void );
 extern int      Equal( char far * str1, char far * str2, int len );
 
-void ListAliases() {
-/******************/
-
+void ListAliases( void )
+/**********************/
+{
     int i;
     char far *alias;
     char        prompt[ 80 ];
@@ -76,9 +76,9 @@ void ListAliases() {
 }
 
 
-char far *InitAlias( char far * inname ) {
-/****************************************/
-
+char far *InitAlias( char far * inname )
+/**************************************/
+{
     int hdl,read;
     static char b[80];
     char *bp;
@@ -139,9 +139,9 @@ char far *InitAlias( char far * inname ) {
     return( endname );
 }
 
-char far * FindAlias( char * word, char * endword, char far * far *start ) {
-/**************************************************************************/
-
+char far * FindAlias( char * word, char * endword, char far * far *start )
+/************************************************************************/
+{
     char far *alias;
     char            ch;
     int             len;
@@ -180,9 +180,9 @@ char far * FindAlias( char * word, char * endword, char far * far *start ) {
     return( alias );
 }
 
-char *LocateParm( char *parmlist, int parm ) {
-/********************************************/
-
+char *LocateParm( char *parmlist, int parm )
+/******************************************/
+{
     for( ;; ) {
         while( _white( *parmlist ) ) {
             ++parmlist;
@@ -197,9 +197,9 @@ char *LocateParm( char *parmlist, int parm ) {
 }
 
 int SubstParms( char far *oldptr, char far *newptr,
-                      char *endword, int len ) {
+                      char *endword, int len )
 /**********************************************/
-
+{
     char        ch;
     int         parm;
     char        *parmptr;
@@ -274,9 +274,9 @@ int SubstParms( char far *oldptr, char far *newptr,
 }
 
 
-int ReplaceAlias( char far * alias, char * word, char * endword ) {
-/******************************************************************/
-
+int ReplaceAlias( char far * alias, char * word, char * endword )
+/***************************************************************/
+{
     char far * endalias;
     int insert,i;
     char newalias[LINE_WIDTH];
@@ -315,18 +315,18 @@ int ReplaceAlias( char far * alias, char * word, char * endword ) {
     return( insert );
 }
 
-char *EndOfWord( char *word ) {
-/*****************************/
-
+char *EndOfWord( char *word )
+/***************************/
+{
     while( !WordSep( *word ) ) {
         ++word;
     }
     return( word );
 }
 
-void LookForAlias() {
-/*******************/
-
+void LookForAlias( void )
+/***********************/
+{
     char *word, *endword, far *alias, far *start;
 
     for( ;; ) {
@@ -346,9 +346,9 @@ void LookForAlias() {
     }
 }
 
-void PFKey() {
-/************/
-
+void PFKey( void )
+/****************/
+{
     static char buff[14];
     int     i;
     char    far *start;
@@ -363,9 +363,9 @@ void PFKey() {
     }
 }
 
-int FormName( char * name, char scan ) {
-/**************************************/
-
+int FormName( char * name, char scan )
+/************************************/
+{
     name[ 0 ] = '<';
     name[ 1 ] = 'F';
     if( scan <= F9 ) {

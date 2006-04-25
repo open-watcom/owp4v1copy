@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DBCS character support (character length).
 *
 ****************************************************************************/
 
@@ -42,8 +41,9 @@ char __CharLenTable[256];
 static bool Init;
 static bool IsDBCS;
 
-static void MBInit()
-/***********/
+
+static void MBInit( void )
+/************************/
 {
 #if defined( __NT__ ) && !defined( UNIX )
     int                 countRange, countVal;
@@ -118,7 +118,7 @@ int GUICharLen( int ch )
     return( __CharLenTable[ch] );
 }
 
-bool GUIIsDBCS()
+bool GUIIsDBCS( void )
 {
     if( !Init ) {
         MBInit();

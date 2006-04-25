@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Handle cut/copy/paste clipboard actions.
 *
 ****************************************************************************/
 
-
-/* CLIP.C - handle CUT/COPY/PASTE actions to the clipboard */
 
 #include <string.h>
 #include <stdio.h>
@@ -54,16 +51,16 @@ static CLIP_INFO     ClipBoard;
 #define GET_CURRENT_TASK GetCurrentTask
 #endif
 
-extern void InitClipboard()
-/*************************/
+extern void InitClipboard( void )
+/*******************************/
 
   {
     memset( &ClipBoard, 0, sizeof( CLIP_INFO ) );
   }
 
 
-static void FreeClipboard()
-/*************************/
+static void FreeClipboard( void )
+/*******************************/
 
   {
     DLIST *     objlist;
@@ -80,8 +77,8 @@ static void FreeClipboard()
   }
 
 
-void WINEXP FMResetClipboard()
-/****************************/
+void WINEXP FMResetClipboard( void )
+/**********************************/
 
 /* Reset the list of copy objects */
 
@@ -92,8 +89,8 @@ void WINEXP FMResetClipboard()
     }
   }
 
-void WINEXP FMNewClipboard()
-/**************************/
+void WINEXP FMNewClipboard( void )
+/********************************/
 
   {
     FreeClipboard();
@@ -101,8 +98,8 @@ void WINEXP FMNewClipboard()
   }
 
 
-extern void * GetClipList()
-/*************************/
+extern void * GetClipList( void )
+/*******************************/
 
   {
     return( ClipBoard.objs );
@@ -197,8 +194,8 @@ BOOL WINEXP FMClipObjExists( OBJPTR obj )
   }
 
 
-BOOL WINEXP FMPasteValid()
-/************************/
+BOOL WINEXP FMPasteValid( void )
+/******************************/
 
   {
     return( ClipBoard.task == GET_CURRENT_TASK() );

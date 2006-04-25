@@ -52,7 +52,7 @@
 
 /* OPTIONS end here */
 
-char far * FindAlias();
+char far * FindAlias( char * word, char * endword, char far * far *start );
 
 typedef struct {
         int     input;
@@ -142,27 +142,27 @@ typedef struct _WIN32_FIND_DATA {
     #define DosQCurDisk( n, m ) DDosQCurDisk( n )
     #define DosChDir( b, z ) DDosChDir( b )
     #define DosAllocSeg( a,b,f ) DDosAllocSeg( a,b )
-    extern int DosFreeEnv();
+    extern int DosFreeEnv( void );
     pasrtn     DosRead( int, char far *, int, int PASPTR *);
     pasrtn     DosWrite( int, char far *, int, int PASPTR *);
     extern int DDosAllocSeg( unsigned, int PASPTR * );
     pasrtn     DosGetEnv( unsigned PASPTR *, unsigned PASPTR * );
-    extern int DVioReadCellStr();
-    extern int DDosOpen();
-    extern int DVioWrtCharStr();
-    extern int DVioSetCurType();
-    extern int DVioSetCurPos();
-    extern int DVioGetCurPos();
-    extern int DosClose();
-    extern int DKbdCharIn();
-    extern int DVioGetCurType();
-    extern int DDosFindFirst();
-    extern int DVioReadCharStr();
-    extern int DVioWrtNChar();
-    extern int DosChgFilePtr();
-    extern int DDosFindNext();
-    extern int DVioWrtCellStr();
-    extern int DKbdGetStatus();
+    extern int DVioReadCellStr( char PASPTR *, int PASPTR *, int, int );
+    extern int DDosOpen( char PASPTR *, int PASPTR * );
+    extern int DVioWrtCharStr( char PASPTR *, int, int, int );
+    extern int DVioSetCurType( CURSOR PASPTR * );
+    extern int DVioSetCurPos( int, int );
+    extern int DVioGetCurPos( int PASPTR *, int PASPTR * );
+    extern int DosClose( int );
+    extern int DKbdCharIn( KBDCHAR PASPTR * );
+    extern int DVioGetCurType( CURSOR PASPTR * );
+    extern int DDosFindFirst( char PASPTR *, int, char PASPTR * );
+    extern int DVioReadCharStr( char PASPTR *, int PASPTR *, int, int );
+    extern int DVioWrtNChar( char PASPTR *, int, int, int );
+    extern int DosChgFilePtr( int, long, int, unsigned long PASPTR * );
+    extern int DDosFindNext( char PASPTR * );
+    extern int DVioWrtCellStr( char PASPTR *, int, int, int );
+    extern int DKbdGetStatus( KBDDESC PASPTR * );
     extern pasrtn DDosChDir( char PASPTR *);
     extern pasrtn DosQCurDir( int, char PASPTR *, int PASPTR * );
     extern pasrtn DosSelectDisk( int );

@@ -40,8 +40,8 @@ static sym_entry        **SortedSymbols;
 
 static int Hash( char *string, unsigned *plen );
 
-void InitFileTab()
-/***************/
+void InitFileTab( void )
+/**********************/
 {
     FileTable.first = NULL;
     FileTable.add_to = &FileTable.first;
@@ -51,6 +51,7 @@ void InitFileTab()
 }
 
 void FiniSymFile( sym_file *file )
+/********************************/
 {
     sym_entry           *sym, *next_sym;
     elf_import_sym      *temp;
@@ -86,8 +87,8 @@ void FiniSymFile( sym_file *file )
 }
 
 
-void CleanFileTab(void)
-/*********************/
+void CleanFileTab( void )
+/***********************/
 {
     sym_file *last = NULL;
     sym_file *curr;
@@ -124,6 +125,7 @@ void CleanFileTab(void)
 
 
 void ResetFileTab( void )
+/***********************/
 {
     sym_file            *file, *next_file;
 
@@ -145,8 +147,8 @@ void FiniFileTab( void )
 }
 
 
-void RemoveFromHashTable(sym_entry *sym)
-/**************************************/
+void RemoveFromHashTable( sym_entry *sym )
+/****************************************/
 {
     sym_entry *hash;
     sym_entry *prev;
@@ -174,7 +176,7 @@ void RemoveFromHashTable(sym_entry *sym)
 
 
 static void NewSymFile( arch_header *arch )
-/************************************/
+/*****************************************/
 {
     sym_file    *file;
 
@@ -218,6 +220,7 @@ static void WriteFileHeader( arch_header *arch )
 }
 
 static void WritePad( file_offset size )
+/**************************************/
 {
     if( NeedsRounding( size ) ) {
         WriteNew( AR_FILE_PADDING_STRING, 1 );
@@ -230,7 +233,8 @@ static file_offset      TotalNameLength;
 static file_offset      TotalFFNameLength;
 static file_offset      TotalSymbolLength;
 
-static void SortSymbols()
+static void SortSymbols( void )
+/*****************************/
 {
     sym_file *  file;
     sym_entry * sym;
@@ -317,9 +321,10 @@ static void SortSymbols()
     }
 }
 
-static void WriteOmfFileTable()
+static void WriteOmfFileTable( void )
+/***********************************/
 {
-    sym_file *  file;
+    sym_file    *file;
     unsigned    num_blocks;
     unsigned    dict_offset;
 
@@ -339,12 +344,12 @@ static void WriteOmfFileTable()
     FiniOmfUtil();
 }
 
-static void WriteArMlibFileTable()
-/******************/
+static void WriteArMlibFileTable( void )
+/**************************************/
 {
     arch_header arch;
-    sym_file *  file;
-    sym_entry * sym;
+    sym_file    *file;
+    sym_entry   *sym;
     file_offset dict1_size = 0;
     file_offset dict2_size = 0;
     file_offset header_size = 0;
@@ -354,7 +359,7 @@ static void WriteArMlibFileTable()
     int         index;
     libfile     io;
     char        buff[20];
-    char *      stringpad = NULL;
+    char        *stringpad = NULL;
     int         stringpadlen = 0;
 
 
@@ -542,7 +547,8 @@ static void WriteArMlibFileTable()
     }
 }
 
-void WriteFileTable()
+void WriteFileTable( void )
+/*************************/
 {
     if( Options.libtype == 0 && Options.omf_found ) {
         if( Options.coff_found ) {
@@ -565,6 +571,7 @@ void WriteFileTable()
 }
 
 static int Hash( char *string, unsigned *plen )
+/*********************************************/
 {
     unsigned long       g;
     unsigned long       h;
@@ -584,6 +591,7 @@ static int Hash( char *string, unsigned *plen )
 }
 
 void AddSym( char *name, symbol_strength strength, unsigned char info )
+/*********************************************************************/
 {
     sym_entry   *sym,**owner;
     int         hash;
@@ -628,15 +636,15 @@ void AddSym( char *name, symbol_strength strength, unsigned char info )
 
 
 #ifdef __DEBUG__
-void DumpFileTable(void)
+void DumpFileTable( void )
 {
-    sym_file  *file;
-    sym_entry *entry;
-    sym_entry *hash;
-    unsigned   len;
-    int        hval;
-    long       files    = 0L;
-    long       symbols  = 0L;
+    sym_file    *file;
+    sym_entry   *entry;
+    sym_entry   *hash;
+    unsigned    len;
+    int         hval;
+    long        files    = 0L;
+    long        symbols  = 0L;
 
     printf("----------------------------------------------------------\n");
     printf("File Table Dump\n");
@@ -666,11 +674,11 @@ void DumpFileTable(void)
 } /* DumpFileTable() */
 
 
-void DumpHashTable(void)
+void DumpHashTable( void )
 {
-    sym_entry *hash;
-    int        i;
-    int        length;
+    sym_entry   *hash;
+    int         i;
+    int         length;
 
     printf("----------------------------------------------------------\n");
     printf("Hash Table Dump\n");
@@ -693,6 +701,7 @@ void DumpHashTable(void)
 
 
 bool RemoveObjectSymbols( char *name )
+/************************************/
 {
     sym_file    *file;
     sym_file    *prev;
@@ -729,6 +738,7 @@ bool RemoveObjectSymbols( char *name )
     return FALSE;
 }
 void AddObjectSymbols( arch_header *arch, libfile io, long offset )
+/*****************************************************************/
 {
     obj_file            *file;
 
@@ -967,7 +977,7 @@ static void printVerboseTableEntry( arch_header *arch )
 
 
 extern void ListContents( void )
-/****************************/
+/******************************/
 {
     sym_file    *file;
     lib_cmd     *cmd;

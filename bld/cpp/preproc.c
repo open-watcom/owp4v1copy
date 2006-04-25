@@ -156,9 +156,9 @@ char *PP_FindInclude( char *filename, char *path, char *buffer )
     char        c;
 
     if( path != NULL ) {
-        for(;;) {
+        for( ;; ) {
             len = 0;
-            for(;;) {
+            for( ;; ) {
                 c = *path++;
                 if( c == ';' ) break;
 #ifdef __UNIX__
@@ -242,7 +242,7 @@ int PP_OpenInclude( char *filename, char *delim )
     }
 }
 
-static void PP_GenLine()
+static void PP_GenLine( void )
 {
     char        *p;
     char        *fname;
@@ -274,7 +274,7 @@ static void PP_GenError( char *msg )
     sprintf( PPCharPtr, "%cerror %s\n", PreProcChar, msg );
 }
 
-static void PP_TimeInit()
+static void PP_TimeInit( void )
 {
     struct tm *tod;
     auto time_t time_of_day;
@@ -355,7 +355,7 @@ int PP_Init2( char *filename, unsigned flags, char *include_path,
 void PP_Dependency_List( void (*callback)(char *,char *,char *) )
 {
     PP_CallBack = callback;
-    for(;;) {
+    for( ;; ) {
         if( PP_Char() == EOF ) break;
         PPTokenPtr = "";        // quickly skip over token
     }
@@ -379,7 +379,7 @@ void PP_Fini()
     MACRO_ENTRY *me;
 
     for( hash = 0; hash < HASH_SIZE; hash++ ) {
-        for(;;) {
+        for( ;; ) {
             me = PPHashTable[hash];
             if( me == NULL ) break;
             PPHashTable[hash] = me->next;
@@ -391,7 +391,7 @@ void PP_Fini()
     PP_CloseAllFiles();
 }
 
-int PP_ReadBuf()
+int PP_ReadBuf( void )
 {
     int         len;
     FILELIST    *this_file;
@@ -419,9 +419,9 @@ int PP_ReadLine( char *line_generated )
     PPLineBuf[0] = '\0';
     *line_generated = 0;
     len = 1;
-    for(;;) {
-        for(;;) {
-            for(;;) {
+    for( ;; ) {
+        for( ;; ) {
+            for( ;; ) {
                 c = *PPBufPtr;
                 if( c == DOS_EOF_CHAR ) {               // 17-oct-94
                     c = '\n';
@@ -548,7 +548,7 @@ void PP_RCInclude( char *ptr )
             ptr++;
     }
     else
-        for(;;) {
+        for( ;; ) {
             if( *ptr == ' ' ) break;
             if( *ptr == '\t' ) break;
             if( *ptr == '\r' ) break;
@@ -612,7 +612,7 @@ char *PP_SkipComment( char *p, char *comment )
             while( *p != '\0' ) ++p;
         } else {
             p += 2;
-            for(;;) {
+            for( ;; ) {
                 if( *p == '\0' ) {
                     PPFlags |= PPFLAG_SKIP_COMMENT; // continued on next line
                     break;
@@ -642,7 +642,7 @@ char *PP_SkipWhiteSpace( char *p, char *white_space )
     char        *p2;
 
     p2 = p;
-    for(;;) {
+    for( ;; ) {
         while( *p == ' ' || *p == '\t' || *p == '\r' || *p == '\n' )  ++p;
         p = PP_SkipComment( p, white_space );
         if( *white_space == 0 ) break;
@@ -678,7 +678,7 @@ void PP_Define( char *ptr )
         if( c == '(' ) {
             me->parmcount = 1;
             ptr++;
-            for(;;) {
+            for( ;; ) {
                 ptr = PP_SkipWhiteSpace( ptr, &white_space );
                 if( *ptr == '\0' ) break;
                 if( *ptr == ')'  ) break;
@@ -699,7 +699,7 @@ void PP_Define( char *ptr )
             }
         }
         ptr = PP_SkipWhiteSpace( ptr, &white_space );
-        for(;;) {
+        for( ;; ) {
             if( *ptr == '\0' ) break;
             if( *ptr == '\n' ) break;
             p2 = PP_ScanToken( ptr, &token );
@@ -843,7 +843,7 @@ void PP_Elif( char *ptr )
     }
 }
 
-void PP_Else()
+void PP_Else( void )
 {
     if( PPStack != NULL ) {
         if( PPStack->cpp_type == PP_ELSE ) {
@@ -864,7 +864,7 @@ void PP_Else()
     }
 }
 
-void PP_Endif()
+void PP_Endif( void )
 {
     CPP_INFO    *cpp;
 
@@ -955,19 +955,19 @@ static void RCInclude( char *ptr )
 }
 
 
-int PP_Read()
+int PP_Read( void )
 {
     char        *p;
     char        line_generated;
     char        comment;
 
-    for(;;) {
+    for( ;; ) {
         if( PP_ReadLine( &line_generated ) == 0 )  return( 0 );
         if( ! line_generated ) {
             //  &&  ! (PPFlags & PPFLAG_SKIP_COMMENT) ) {
             p = PPCharPtr;
 #if 0
-            for(;;) {
+            for( ;; ) {
                 while( *p == ' '  ||  *p == '\t' ) ++p;
                 if( p[0] != '/' ) break;
                 if( p[1] != '*' ) break;
@@ -1001,7 +1001,7 @@ char *PPScanLiteral( char *p )
     char        quote_char;
 
     quote_char = *p++;
-    for(;;) {
+    for( ;; ) {
         if( DBChar[(unsigned char)*p] )  {
             p += 2;             /* 07-jul-93 */
             continue;           /* 09-jul-93 */
@@ -1039,7 +1039,7 @@ char *PPScanHexNumber( char *p )
     char        c;
 
     p += 2;                             // skip over the "0x"
-    for(;;) {
+    for( ;; ) {
         p = PPScanDigits( p );
         c = tolower( *p );
         if( c < 'a'  ||  c > 'f' ) break;
@@ -1068,7 +1068,7 @@ char *PPScanNumber( char *p )
 
 char *PPScanOther( char *p )
 {
-    for(;;) {
+    for( ;; ) {
         if( *p == '\0' ) break;
         if( *p == '\'' ) break;
         if( *p == '\"' ) break;
@@ -1096,7 +1096,7 @@ char *PP_ScanToken( char *p, char *token )
 
     if( PPFlags & PPFLAG_SKIP_COMMENT ) {
         *token = PPT_COMMENT;
-        for(;;) {
+        for( ;; ) {
             if( *p == '\0' ) break;
             if( *p == '*'  &&  p[1] == '/' ) {
                 p += 2;
@@ -1203,14 +1203,14 @@ int PP_ScanNextToken( char *token )
     return( 0 );
 }
 
-int PP_Char()
+int PP_Char( void )
 {
     MACRO_TOKEN *mtok;
     MACRO_ENTRY *me;
     char        token;
 
     if( *PPTokenPtr == '\0' ) {
-        for(;;) {
+        for( ;; ) {
             mtok = PPTokenList;
             if( mtok == NULL ) break;
             PPTokenList = mtok->next;
@@ -1224,8 +1224,8 @@ int PP_Char()
             PPTokenPtr = mtok->data;
             return( *PPTokenPtr++ );
         }
-        for(;;) {
-            for(;;) {
+        for( ;; ) {
+            for( ;; ) {
                 if( PP_ScanNextToken( &token ) == EOF )  return( EOF );
                 if( token != PPT_COMMENT )  break;
                 if( PPFlags & PPFLAG_KEEP_COMMENTS )  break;

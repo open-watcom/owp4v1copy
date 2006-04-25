@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Perform binary patching.
 *
 ****************************************************************************/
 
@@ -84,7 +83,7 @@ void SeekCheck( long pos, char *name )
     save_hole   *HoleArray = NULL;
     int         HoleArraySize;
 
-    PATCH_RET_CODE InitHoles()
+    PATCH_RET_CODE InitHoles( void )
     {
         NumHoles = 0;
         HoleArraySize = (64*1024L) / sizeof( save_hole ) - 1;
@@ -128,7 +127,7 @@ void SeekCheck( long pos, char *name )
         return( 0 );
     }
 
-    void FlushHoles()
+    void FlushHoles( void )
     {
         extern MY_FILE          NewFile;
         extern void Input( MY_FILE *file, void *tmp, foff off, size_t len );
@@ -197,11 +196,11 @@ void SeekCheck( long pos, char *name )
     #define InPatch( type )             ( InputPatch( tmp, sizeof( type ) ), \
                                           *(type*)tmp )
 
-    extern PATCH_RET_CODE OpenPatch();
+    extern PATCH_RET_CODE OpenPatch( void );
     extern PATCH_RET_CODE InputPatch( void *tmp, size_t len );
     extern PATCH_RET_CODE OpenOld( foff len, int prompt, foff newsize, foff newsum );
     extern PATCH_RET_CODE CloseOld( int havenew, int dobackup );
-    extern void ClosePatch();
+    extern void ClosePatch( void );
     extern char *FindOld( char * );
     extern char *SetOld( char * );
     extern byte InOld( foff );
@@ -277,7 +276,7 @@ PATCH_RET_CODE Execute( byte *dest )
 
 #else
 
-PATCH_RET_CODE Execute()
+PATCH_RET_CODE Execute( void )
 {
     char        tmp[4];
 

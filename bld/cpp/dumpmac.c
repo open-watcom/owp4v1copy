@@ -35,36 +35,7 @@
 #include <malloc.h>
 
 
-int main( int argc, char *argv[] )
-{
-    int         c;
-
-    dumpheap();
-    if( argc < 2 ) {
-        printf( "Usage: dumpmac filename\r\n" );
-        exit( 1 );
-    }
-    if( argv[2] != NULL ) {
-        PreProcChar = argv[2][0];
-    }
-    if( PP_Init( argv[1], 0, NULL ) != 0 ) {
-        printf( "Unable to open '%s'\r\n", argv[1] );
-        exit( 1 );
-    }
-    for( ;; ) {
-        c = PP_Char();
-        if( c == EOF )
-            break;
-//      putchar( c );
-    }
-    PP_Dump_Macros();
-    dumpheap();
-    PP_Fini();
-    dumpheap();
-    return( 0 );
-}
-
-void dumpheap()
+void dumpheap( void )
 {
 #if 0
     struct _heapinfo h;
@@ -99,7 +70,7 @@ void dumpheap()
 #endif
 }
 
-void PP_Dump_Macros()
+void PP_Dump_Macros( void )
 {
     int         hash;
     char        *endptr;
@@ -123,4 +94,33 @@ void PP_Dump_Macros()
             }
         }
     }
+}
+
+int main( int argc, char *argv[] )
+{
+    int         c;
+
+    dumpheap();
+    if( argc < 2 ) {
+        printf( "Usage: dumpmac filename\r\n" );
+        exit( 1 );
+    }
+    if( argv[2] != NULL ) {
+        PreProcChar = argv[2][0];
+    }
+    if( PP_Init( argv[1], 0, NULL ) != 0 ) {
+        printf( "Unable to open '%s'\r\n", argv[1] );
+        exit( 1 );
+    }
+    for( ;; ) {
+        c = PP_Char();
+        if( c == EOF )
+            break;
+//      putchar( c );
+    }
+    PP_Dump_Macros();
+    dumpheap();
+    PP_Fini();
+    dumpheap();
+    return( 0 );
 }

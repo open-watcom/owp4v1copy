@@ -531,7 +531,7 @@ static int StringMatch( unsigned idx, string_list *curr )
     }
 }
 
-static void BuildStringTable()
+static void BuildStringTable( void )
 {
     string_list *curr;
     string_list *fix;

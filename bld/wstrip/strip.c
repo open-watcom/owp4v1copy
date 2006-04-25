@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Executable strip utility.
 *
 ****************************************************************************/
 
@@ -110,10 +109,10 @@ static void StripInfo( void );
 
 void    Fatal( int, char * );
 int     Msg_Get( int resourceid, char *buffer );
-int     Msg_Init();
-int     Msg_Fini();
+int     Msg_Init( void );
+int     Msg_Fini( void );
 void    Usage( void );
-void    Banner(void);
+void    Banner( void );
 
 
 static char *Buffer;

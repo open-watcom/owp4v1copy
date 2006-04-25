@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Lexical scanner for C++ compiler.
 *
 ****************************************************************************/
 
@@ -158,7 +157,7 @@ void ReScanInit( char *ptr )
     ReScanPtr = ptr;
 }
 
-static int rescanBuffer()
+static int rescanBuffer( void )
 {
     CurrChar = *ReScanPtr++;
     if( CurrChar == '\0' ) {
@@ -1054,7 +1053,7 @@ static int scanNum( int expanding )
                 ConstType = TYP_ULONG64;
             } else {
                 ConstType = TYP_SLONG64;
-            }                   
+            }
         } else if( ! U64IsI32( Constant64 ) ) { // Constant > 0x7FFFFFFFul
             ConstType = TYP_ULONG;
         }
@@ -1126,7 +1125,7 @@ static int scanNum( int expanding )
                 ConstType = TYP_ULONG64;
             } else {
                 ConstType = TYP_ULONG;
-            }                   
+            }
             break;
         default:
             ConstType = TYP_UINT;
@@ -1505,7 +1504,7 @@ static int scanFloat( int expanding )
     return( doScanFloat() );
 }
 
-static int scanPPNumber()
+static int scanPPNumber( void )
 {
     int c;
     int prevc;

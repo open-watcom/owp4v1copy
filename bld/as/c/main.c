@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Assembler mainline.
 *
 ****************************************************************************/
 
@@ -37,8 +36,8 @@
 extern bool     OptionsInit( int argc, char *argv[] );
 extern void     OptionsFini( void );
 extern void     OptionsPPDefine( void );
-extern int      asyyparse();
-extern void     AsLexerFini();
+extern int      asyyparse( void );
+extern void     AsLexerFini( void );
 
 extern bool     DoReport;
 extern int      CurrLineno;
@@ -52,9 +51,9 @@ int             ExitStatus = EXIT_SUCCESS;
 char **_argv;
 #endif
 
-void main( int argc, char **argv ) {
-//**********************************
-
+void main( int argc, char **argv )
+//********************************
+{
     static char *fname;
 
 #ifndef __WATCOMC__

@@ -68,7 +68,7 @@ const static trap_callbacks TrapCallbacks = {
     signal,
 };
 
-void KillTrap()
+void KillTrap( void )
 {
     ReqFunc = NULL;
     if( FiniFunc != NULL ) FiniFunc();

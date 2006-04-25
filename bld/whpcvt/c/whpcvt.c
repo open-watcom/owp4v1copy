@@ -295,11 +295,9 @@ static ctx_def **Ctx_list_end=NULL;
 static keyword_def *Keyword_list=NULL;
 static int Keyword_id = 1;
 
-static void print_help(
-/*********************/
-
-    void
-) {
+static void print_help( void )
+/****************************/
+{
     const char                **p;
 
     for( p = Help_info; *p != NULL; ++p ) {
@@ -307,11 +305,9 @@ static void print_help(
     }
 }
 
-void error_quit(
-/**************/
-
-    void
-) {
+void error_quit( void )
+/*********************/
+{
     longjmp( Jmp_buf, 1 );
 }
 
@@ -856,11 +852,9 @@ char *skip_blank(
     return( ptr );
 }
 
-bool read_line(
-/*************/
-
-    void
-) {
+bool read_line( void )
+/********************/
+{
     int                 ch;
     char                *buf;
     int                 len;
@@ -1149,11 +1143,9 @@ static int trans_line(
     return( 0 );
 }
 
-static void topic_init(
-/**********************/
-
-    void
-) {
+static void topic_init( void )
+/****************************/
+{
     switch( Output_type ) {
     case OUT_RTF:
         rtf_topic_init();
@@ -1405,11 +1397,9 @@ static ctx_def *init_ctx(
     return( ctx );
 }
 
-static ctx_def *define_ctx(
-/*************************/
-
-    void
-) {
+static ctx_def *define_ctx( void )
+/********************************/
+{
     char                *title;
     char                *keywords;
     char                *browse_name;
@@ -1487,19 +1477,15 @@ static ctx_def *define_ctx(
     return( ctx );
 }
 
-static bool read_ctx_def(
-/***********************/
-
-    void
-) {
+static bool read_ctx_def( void )
+/******************************/
+{
     return( read_topic_text( define_ctx(), TRUE, 0 ) );
 }
 
-static bool read_ctx_topic(
-/*************************/
-
-    void
-) {
+static bool read_ctx_topic( void )
+/********************************/
+{
     char                *ctx_name;
     ctx_def             *ctx;
     char                *order_str;
@@ -1523,11 +1509,9 @@ static bool read_ctx_topic(
     }
 }
 
-static bool read_topic(
-/*********************/
-
-    void
-) {
+static bool read_topic( void )
+/****************************/
+{
     switch( Line_buf[0] ) {
 
     case CH_CTX_DEF:
@@ -1553,11 +1537,9 @@ static bool read_topic(
     return( FALSE );
 }
 
-static void read_whp_file(
-/************************/
-
-    void
-) {
+static void read_whp_file( void )
+/*******************************/
+{
     if( !read_line() ) {
         return;
     }
@@ -1568,11 +1550,9 @@ static void read_whp_file(
     }
 }
 
-static void set_browse_numbers(
-/*****************************/
-
-    void
-) {
+static void set_browse_numbers( void )
+/************************************/
+{
     browse_def                  *browse;
     browse_ctx                  *b_ctx;
     int                         order;
@@ -1585,11 +1565,10 @@ static void set_browse_numbers(
         }
     }
 }
-static void sort_ctx_list(
-/************************/
 
-    void
-) {
+static void sort_ctx_list( void )
+/*******************************/
+{
     ctx_def                     *ctx;
     ctx_def                     *sort_list;
     ctx_def                     **sort_spot;
@@ -1638,11 +1617,9 @@ bool is_special_topic(
     return( res );
 }
 
-static void output_idx_file(
-/**************************/
-
-    void
-) {
+static void output_idx_file( void )
+/*********************************/
+{
     char                        ch;
     ctx_def                     *ctx;
     char                        *sort_title;
@@ -1749,11 +1726,9 @@ static void compress_kw(
     }
 }
 
-static void output_kw_file(
-/*************************/
-
-    void
-) {
+static void output_kw_file( void )
+/********************************/
+{
     keyword_def                 *temp_kw;   // used for grabbing keywords
     keyword_def                 **kw;       // array of *keyword_def's
     ctx_def                     **ctx;      // array of *ctx_def's
@@ -1863,11 +1838,9 @@ static void output_kw_file(
     whp_fprintf( KW_file, ":pb.%c\n", CH_SLIST_END );
 }
 
-static void output_blist_file(
-/****************************/
-
-    void
-) {
+static void output_blist_file( void )
+/***********************************/
+{
     browse_def                  *browse;
     browse_ctx                  *b_ctx;
     browse_ctx                  *b_ctx_next;
@@ -1920,11 +1893,9 @@ static void output_blist_file(
     whp_fprintf( Blist_file, ":pb.%c\n\n", CH_DLIST_END );
 }
 
-static void output_contents_file(
-/*******************************/
-
-    void
-) {
+static void output_contents_file( void )
+/**************************************/
+{
     ctx_def                     *ctx;
     int                         level;
     int                         i;
@@ -1972,11 +1943,9 @@ static void output_contents_file(
 }
 
 
-static void output_def_file(
-/**************************/
-
-    void
-) {
+static void output_def_file( void )
+/*********************************/
+{
     ctx_def                     *ctx;
     char                        *buf;
     int                         len;
@@ -2007,11 +1976,9 @@ static void output_def_file(
     free( buf );
 }
 
-static void output_hdef_file(
-/***************************/
-
-    void
-) {
+static void output_hdef_file( void )
+/**********************************/
+{
     ctx_def                     *ctx;
 
     whp_fprintf( Hdef_file, "\/* This file was created by WHPCVT.EXE. "
@@ -2025,11 +1992,9 @@ static void output_hdef_file(
     }
 }
 
-static void read_ctx_ids(
-/***********************/
-
-    void
-) {
+static void read_ctx_ids( void )
+/******************************/
+{
     ctx_def                     *ctx;
     char                        *ptr;
 
@@ -2059,11 +2024,9 @@ static void read_ctx_ids(
     }
 }
 
-static void set_ctx_ids(
-/**********************/
-
-    void
-) {
+static void set_ctx_ids( void )
+/*****************************/
+{
     ctx_def                     *ctx;
     int                         ctx_id;
 
@@ -2082,10 +2045,9 @@ static void set_ctx_ids(
     }
 }
 
-static void check_links(
-/**********************/
-
-) {
+static void check_links( void )
+/*****************************/
+{
     ctx_def             *ctx;
     link_def            *link;
     bool                err;

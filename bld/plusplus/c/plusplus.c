@@ -94,7 +94,7 @@ static struct {                     // flags:
 };
 
 
-static void CloseFiles()
+static void CloseFiles( void )
 {
     if( CppFile != NULL ) {
         fflush( CppFile );
@@ -107,7 +107,7 @@ static void CloseFiles()
 }
 
 
-static void resetHandlers()
+static void resetHandlers( void )
 {
     CloseFiles();
 }
@@ -504,7 +504,7 @@ static int compilePrimaryCmd(   // COMPILE PRIMARY CMD LINE
 #define ZAP_NUM 20
 #define ZAP_SIZE 1024
 #define ZAP_CHAR 0xA7
-static void stackZap()          // ZAP 20K OF STACK TO 0xA7
+static void stackZap( void )        // ZAP 20K OF STACK TO 0xA7
 {
     int i;
     char *stack;

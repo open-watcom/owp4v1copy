@@ -122,8 +122,8 @@ void ProcRHeadr( void )
     OutputData( (unsigned_32)RecOffset(), 0L );
 }
 
-static void doProcModel( void ) {
-
+static void doProcModel( void )
+{
     byte        tmp;
 
     if( EndRec() ) return;
@@ -176,8 +176,8 @@ static void doWeakLazyExtern( void )
     }
 }
 
-static void doDependency( void ) {
-
+static void doDependency( void )
+{
     byte        len;
     DOSDATE_T   dos_date;
     DOSDATE_T   dos_time;
@@ -206,8 +206,8 @@ static void doDependency( void ) {
     Output( p );        // has embedded '\n'
 }
 
-static int doDisasmDirective( void ) {
-
+static int doDisasmDirective( void )
+{
     byte        ddir;
     unsigned_32 off1;
     unsigned_32 off2;
@@ -257,8 +257,8 @@ static void doVirtualConditional( void )
     }
 }
 
-static int doLinkerDirective( void ) {
-
+static int doLinkerDirective( void )
+{
     byte        ldir;
     byte        major;
     byte        minor;
@@ -312,8 +312,8 @@ static int doLinkerDirective( void ) {
     return( 0 );
 }
 
-static int doEasyOmf( byte c_bits ) {
-
+static int doEasyOmf( byte c_bits )
+{
     if( c_bits == 0x80 && memcmp( RecPtr, EASY_OMF_SIGNATURE, 5 ) == 0 ) {
         Output( INDENT "---- PharLap 80386 object deck ----" CRLF );
         IsPharLap = TRUE;
@@ -323,8 +323,8 @@ static int doEasyOmf( byte c_bits ) {
     return( 0 );
 }
 
-static int doMSOmf( void ) {
-
+static int doMSOmf( void )
+{
     if( RecLen < 5 ) {
         Output( INDENT "Assuming CodeView style debugging information" CRLF );
         DbgStyle = DBG_CODEVIEW;
@@ -457,8 +457,9 @@ void ProcExtNames( void )
 }
 
 
-void ProcComExtDef() {
-/********************/
+void ProcComExtDef( void )
+/************************/
+{
     unsigned    name;
     unsigned    typ;
 
@@ -660,8 +661,8 @@ void ProcComDef( void )
 }
 
 
-static void DoLinNumsMS()
-/**********************/
+static void DoLinNumsMS( void )
+/*****************************/
 {
     unsigned_16 line_num;
     unsigned_32 offset;
@@ -694,8 +695,8 @@ static void DoLinNumsMS()
     }
 }
 
-static void DoLinNumsHLL()
-/************************/
+static void DoLinNumsHLL( void )
+/******************************/
 {
     unsigned_16         line_num;
     unsigned_16         file_num;
@@ -802,8 +803,8 @@ void ProcLinNums( void )
 }
 
 
-void ProcLineSym()
-/****************/
+void ProcLineSym( void )
+/**********************/
 {
     unsigned    flag;
     unsigned    sym;
@@ -867,8 +868,8 @@ static unsigned_32 begData( void )
 }
 
 
-static void DoLidata()
-/********************/
+static void DoLidata( void )
+/**************************/
 {
     unsigned_16 first_block_offset;
 
@@ -1110,8 +1111,8 @@ void ProcGrpDef( void )
 static unsigned_32 libDictOffs;
 static unsigned_16 libDictSize;
 
-void ProcLibHeader( void ) {
-
+void ProcLibHeader( void )
+{
     byte                flags;
 
     Output( INDENT "Page size        : %u" CRLF, RecLen + 4 );
@@ -1125,7 +1126,8 @@ void ProcLibHeader( void ) {
     OutputData( 0, 0 );
 }
 
-static void doBucket( int bucket ) {
+static void doBucket( int bucket )
+{
     byte                bucket_value;
 
     bucket_value = GetByte();
@@ -1136,8 +1138,8 @@ static void doBucket( int bucket ) {
     }
 }
 
-void ProcLibTrailer( FILE *fp ) {
-
+void ProcLibTrailer( FILE *fp )
+{
     unsigned_16         dict_block;
     int                 i;
     int                 free;
@@ -1178,8 +1180,9 @@ void ProcLibTrailer( FILE *fp ) {
 }
 
 
-static char *PatchType() {
-/************************/
+static char *PatchType( void )
+/****************************/
+{
     char                *fix;
 
     switch( GetByte() ) {
@@ -1192,8 +1195,9 @@ static char *PatchType() {
 }
 
 
-static void DoBackPat() {
-/***********************/
+static void DoBackPat( void )
+/***************************/
+{
     unsigned_32         off;
     unsigned_32         val;
 
@@ -1205,8 +1209,9 @@ static void DoBackPat() {
 }
 
 
-void ProcBackPat() {
-/******************/
+void ProcBackPat( void )
+/**********************/
+{
     unsigned            seg;
     char                *fix;
 
@@ -1217,8 +1222,9 @@ void ProcBackPat() {
 }
 
 
-void ProcNameBackPat() {
-/**********************/
+void ProcNameBackPat( void )
+/**************************/
+{
     unsigned            sym;
     char                *fix;
 
@@ -1229,8 +1235,9 @@ void ProcNameBackPat() {
 }
 
 
-void ProcComDat() {
-/*****************/
+void ProcComDat( void )
+/*********************/
+{
     unsigned    flag;
     unsigned    attr;
     unsigned    sel;
@@ -1286,9 +1293,9 @@ void ProcComDat() {
 }
 
 
-void ProcAlias() {
-/****************/
-
+void ProcAlias( void )
+/********************/
+{
     GetName();
     Output( INDENT "alias = <%N> "  );
     GetName();
@@ -1296,17 +1303,17 @@ void ProcAlias() {
 }
 
 
-void ProcVerNum() {
-/*****************/
-
+void ProcVerNum( void )
+/*********************/
+{
     GetName();
     Output( INDENT "***** TIS compliant OMF *****" CRLF );
     Output( INDENT INDENT "Version <%N>" CRLF );
 }
 
 
-void ProcVendExt() {
-/******************/
-
+void ProcVendExt( void )
+/**********************/
+{
     OutputData( 0L, 0L );
 }

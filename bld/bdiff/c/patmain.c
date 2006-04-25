@@ -36,7 +36,8 @@ extern  int             GetMsg( char *, int );
 extern  void            Message( int, ... );
 extern  void            MsgPrintf( int resourceid, va_list arglist );
 
-static void PrintBanner()
+
+static void PrintBanner( void )
 {
     static int  banner_printed = 0;
 

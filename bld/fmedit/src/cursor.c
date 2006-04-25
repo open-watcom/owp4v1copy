@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Change cursor shape according to state.
 *
 ****************************************************************************/
 
@@ -69,8 +68,8 @@ static unsigned char SizeCursor[] = {
 };
 
 
-extern void InitCursors()
-/***********************/
+extern void InitCursors( void )
+/*****************************/
 
 /* set up the various mouse cursors needed */
 

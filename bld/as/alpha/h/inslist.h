@@ -133,12 +133,12 @@ typedef struct instruction {
     ins_operand *operands[MAX_OPERANDS];
 } instruction;
 
-extern void             AsInsInit();
+extern void             AsInsInit( void );
 extern instruction      *AsInsCreate( sym_handle );
 extern void             AsInsAddOperand( instruction *, ins_operand * );
 extern void             AsInsEmit( instruction * );
 extern void             AsInsDestroy( instruction * );
-extern void             AsInsFini();
+extern void             AsInsFini( void );
 
 extern ins_operand      *AsOpImmed( expr_tree * );
 extern ins_operand      *AsOpRegister( reg );

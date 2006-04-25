@@ -218,10 +218,9 @@ static void new_list(
     Curr_list->compact = LIST_SPACE_STANDARD;
 }
 
-static void pop_list(
-/*******************/
-
-) {
+static void pop_list( void )
+/**************************/
+{
     Curr_indent = Curr_list->prev_indent;
     --List_level;
     Curr_list = &Lists[List_level];
@@ -253,11 +252,9 @@ static void add_tabxmp(
     trans_add_char( '\n', section, alloc_size );
 }
 
-void rtf_topic_init(
-/******************/
-
-    void
-) {
+void rtf_topic_init( void )
+/*************************/
+{
     Line_prefix = LPREFIX_NONE;
 }
 
@@ -643,10 +640,9 @@ int rtf_trans_line(
     return( alloc_size );
 }
 
-static void print_tab_stops(
-/**************************/
-
-) {
+static void print_tab_stops( void )
+/*********************************/
+{
     int                 tab;
 
     for( tab = 1; tab <= NUM_TAB_STOPS; ++tab ) {
@@ -654,11 +650,9 @@ static void print_tab_stops(
     }
 }
 
-static void output_hdr(
-/*********************/
-
-    void
-) {
+static void output_hdr( void )
+/****************************/
+{
     /* the header is printed inline so that the -zc compiler option
        will place these strings into the code segment.
 
@@ -746,11 +740,9 @@ static void output_ctx_hdr(
     }
 }
 
-static void output_end(
-/*********************/
-
-    void
-) {
+static void output_end( void )
+/****************************/
+{
     whp_fprintf( Out_file, "\\par }\n" );
 }
 
@@ -770,11 +762,9 @@ static void output_ctx_sections(
     }
 }
 
-void rtf_output_file(
-/*******************/
-
-    void
-) {
+void rtf_output_file( void )
+/**************************/
+{
     ctx_def                     *ctx;
 
     output_hdr();
@@ -786,4 +776,3 @@ void rtf_output_file(
     }
     output_end();
 }
-

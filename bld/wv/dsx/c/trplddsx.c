@@ -186,7 +186,7 @@ void call_prep (void);
         "mov edx, _D32NullPtrCheck"
 #endif
 
-P1616 __cdecl find_entry (void)
+P1616 __cdecl find_entry( void )
         {
         P1616 retval = 0;
 
@@ -201,7 +201,7 @@ P1616 __cdecl find_entry (void)
 /*      Returns 16:16 pointer to MONITOR array, describing state of hardware
         breakpoints.  You shouldn't care about the return value during your init.
 */
-int __cdecl D32NullPtrCheck (unsigned short on)
+int __cdecl D32NullPtrCheck( unsigned short on )
         {
         static int      old_state;
         int             old;
@@ -311,7 +311,7 @@ static uint_16 EnvAreaSize( char __far *envarea )
     return( envptr - envarea + 1 );
 }
 
-static char *CopyEnv()
+static char *CopyEnv( void )
 {
     char                __far *envarea;
     uint_16             envsize;
@@ -333,7 +333,7 @@ static char *CopyEnv()
     return( NULL );
 }
 
-static char *SetTrapHandler()
+static char *SetTrapHandler( void )
 {
     char                dummy;
     long                result;

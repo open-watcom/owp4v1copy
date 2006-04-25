@@ -95,7 +95,7 @@ typedef enum {
 } asm_reloc_type;
 
 
-extern void             AsSymInit();
+extern void             AsSymInit( void );
 extern sym_handle       AsSymLookup( const char *sym );
 extern sym_handle       AsSymAdd( const char *sym, sym_class class );
 #ifndef _STANDALONE_
@@ -121,11 +121,11 @@ extern sym_reloc        AsSymGetReloc( bool is_high, sym_handle *get_hdl );
 extern bool             AsSymRelocIsClean( bool is_clean );
 #endif
 extern sym_obj_hdl      AsSymObjHandle( sym_handle );
-extern void             AsSymFini();
+extern void             AsSymFini( void );
 
 #ifdef _STANDALONE_
 #ifndef NDEBUG
-extern void             DumpSymbolTable();
+extern void             DumpSymbolTable( void );
 #endif
 #endif
 

@@ -649,8 +649,8 @@ long WINIEXP EAtomWndProc( HWND wnd, unsigned message,
     return( 0L );
   }
 
-extern void InitEAtom()
-/*********************/
+extern void InitEAtom( void )
+/***************************/
 
 /* Initialization for EATOM objects - register the EAtomClass */
 

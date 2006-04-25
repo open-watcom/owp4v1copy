@@ -88,7 +88,7 @@ typedef struct wmcreate_info {
 WPI_MRESULT CALLBACK GUIWindowProc( HWND, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lparam );
 
 /* include from the app */
-extern void GUImain();
+extern void GUImain( void );
 extern bool GUIFirstCrack( void );
 
 /* Changes added to enable use of the system tray */
@@ -229,7 +229,7 @@ static bool DoRegisterClass( WPI_INST hinst, char *class_name,
  * SetupClass - Register the GUIClass class
  */
 
-static bool SetupClass()
+static bool SetupClass( void )
 
 {
     if( DoRegisterClass( GUIMainHInst, GUIClass, (WPI_CLASSPROC)GUIWindowProc,
@@ -726,7 +726,7 @@ void GUIResizeBackground( gui_window *wnd, bool force_msg )
     }
 }
 
-bool SetFocusToParent()
+bool SetFocusToParent( void )
 {
     HWND        curr_hwnd;
 

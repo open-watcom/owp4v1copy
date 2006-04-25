@@ -24,13 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Prototypes for externally callable functions.
 *
 ****************************************************************************/
 
 
 extern char *ImageName;
-int InitSubSystems( );
+int InitSubSystems( void );
 int WlibMainLine( char *argv[] );
-void FiniSubSystems();
+void FiniSubSystems( void );

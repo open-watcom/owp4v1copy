@@ -145,7 +145,7 @@ extern void TemplateClassDeclaration( PTREE, SCOPE, char * );
 extern boolean TemplateClassDefinition( PTREE, SCOPE, char * );
 extern DECL_SPEC *TemplateClassInstantiation( PTREE, PTREE, tc_instantiate );
 extern void TemplateHandleClassMember( DECL_INFO * );
-extern void TemplateProcessInstantiations();
+extern void TemplateProcessInstantiations( void );
 extern boolean TemplateMemberCanBeIgnored( void );
 extern boolean TemplateVerifyDecl( SYMBOL );
 extern void TemplateSpecificDefnStart( PTREE, PTREE );

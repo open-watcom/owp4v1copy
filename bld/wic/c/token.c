@@ -355,7 +355,7 @@ static WicErrors scanCPlusPlusComment(pTokData tokData)
     }
 }
 
-static char scanESCChar() {
+static char scanESCChar(void) {
     int i;
     char n;
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Memory allocation client routines for preprocessor.
 *
 ****************************************************************************/
 
@@ -38,6 +37,7 @@
 #include "wdemem.h"
 #include "wdestken.h"
 #include "wdedebug.h"
+
 
 void *PP_Malloc( unsigned size )
 {
@@ -57,7 +57,7 @@ void PP_Free( void *p )
 
 
 static jmp_buf Env;
-void PP_OutOfMemory()
+void PP_OutOfMemory( void )
 {
     if( WdePopEnv( &Env ) ) {
         longjmp( Env, 1 );
@@ -66,4 +66,3 @@ void PP_OutOfMemory()
         exit( -1 );
     }
 }
-

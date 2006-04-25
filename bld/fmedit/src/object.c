@@ -438,8 +438,8 @@ OBJPTR WINEXP FindOneObjPt( POINT pt )
     }
 } /* FindOneObjPt */
 
-OBJPTR WINEXP GetCurrObject()
-/***************************/
+OBJPTR WINEXP GetCurrObject( void )
+/*********************************/
 
 /* return pointer to the current object */
 
@@ -455,8 +455,8 @@ OBJPTR WINEXP GetCurrObject()
     return( userobj );
   }
 
-LIST * WINEXP GetCurrObjectList()
-/*******************************/
+LIST * WINEXP GetCurrObjectList( void )
+/*************************************/
 
 /* return pointer to the current object */
 
@@ -478,8 +478,8 @@ LIST * WINEXP GetCurrObjectList()
   }
 
 
-extern CURROBJPTR GetECurrObject()
-/********************************/
+extern CURROBJPTR GetECurrObject( void )
+/**************************************/
 
 /* return pointer to the current object */
 
@@ -575,8 +575,8 @@ extern void DeleteCurrObjptr( OBJPTR obj )
     }
   }
 
-extern CURROBJPTR GetPrimaryObject()
-/**********************************/
+extern CURROBJPTR GetPrimaryObject( void )
+/****************************************/
 
 /* return a pointer to the primary object */
 
@@ -759,8 +759,8 @@ void WINEXP ResetCurrObject( BOOL draw )
     }
   }
 
-extern void MarkCurrObject()
-/**************************/
+extern void MarkCurrObject( void )
+/********************************/
 
 /* mark the current object */
 

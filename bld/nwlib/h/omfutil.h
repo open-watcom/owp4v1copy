@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMF utility routines.
 *
 ****************************************************************************/
 
@@ -59,14 +58,16 @@ typedef struct {
 } OmfTimeStamp;
 
 typedef union {
-        OmfBasic        basic;
-        OmfTimeStamp    time;
-        OmfLibHeader    lib_header;
-        unsigned_8      chkcalc[1];
-}OmfRecord;
+    OmfBasic        basic;
+    OmfTimeStamp    time;
+    OmfLibHeader    lib_header;
+    unsigned_8      chkcalc[1];
+} OmfRecord;
+
 #define INIT_OMF_REC_SIZE 1024
 #define NUM_BUCKETS 37
 #define BLOCK_NAME_LEN ( DIC_REC_SIZE - NUM_BUCKETS - 1 )
+
 typedef struct{
     unsigned_8  htab[NUM_BUCKETS];
     unsigned_8  fflag;
@@ -74,10 +75,10 @@ typedef struct{
 } OmfLibBlock;
 #pragma pack()
 
-void InitOmfUtil();
+void InitOmfUtil( void );
 void PadOmf( bool force );
 void WriteOmfLibHeader( unsigned_32 dict_offset, unsigned_16 dict_size );
 unsigned WriteOmfDict( sym_file *first );
 void WriteOmfFile( sym_file *file );
-void WriteOmfLibTrailer();
-void FiniOmfUtil();
+void WriteOmfLibTrailer( void );
+void FiniOmfUtil( void );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Preprocessor expression evaluator.
 *
 ****************************************************************************/
 
@@ -33,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "preproc.h"
+
 
 void PP_ConstExpr( PPVALUE *val );
 void PP_Expr1( PPVALUE *val );
@@ -46,9 +46,9 @@ void PP_Expr8( PPVALUE *val );
 void PP_Expr9( PPVALUE *val );
 void PP_Expr10( PPVALUE *val );
 void PP_Expr11( PPVALUE *val );
-void PP_AdvanceToken();
+void PP_AdvanceToken( void );
 void PP_Identifier( PPVALUE *val );
-long int PP_HexNumber();
+long int PP_HexNumber( void );
 void PP_CharConst( PPVALUE *val );
 void PP_Constant( PPVALUE *val );
 void PP_Constant( PPVALUE *val );
@@ -175,7 +175,7 @@ void PP_Expr6( PPVALUE *val )
     PPVALUE     val2;
 
     PP_Expr7( val );
-    for(;;) {
+    for( ;; ) {
         if( PPTokenPtr[0] == '='  &&  PPTokenPtr[1] == '=' ) {
             PPTokenPtr += 2;
             PP_Expr7( &val2 );
@@ -198,7 +198,7 @@ void PP_Expr7( PPVALUE *val )
     PPVALUE     val2;
 
     PP_Expr8( val );
-    for(;;) {
+    for( ;; ) {
         if( PPTokenPtr[0] == '<' ) {
             ++PPTokenPtr;
             PP_Expr8( &val2 );
@@ -239,7 +239,7 @@ void PP_Expr8( PPVALUE *val )
     PPVALUE     val2;
 
     PP_Expr9( val );
-    for(;;) {
+    for( ;; ) {
         if( PPTokenPtr[0] == '>'  &&  PPTokenPtr[1] == '>' ) {
             PPTokenPtr += 2;
             PP_Expr9( &val2 );
@@ -266,7 +266,7 @@ void PP_Expr9( PPVALUE *val )
     PPVALUE     val2;
 
     PP_Expr10( val );
-    for(;;) {
+    for( ;; ) {
         if( PPTokenPtr[0] == '+' ) {
             ++PPTokenPtr;
             PP_Expr10( &val2 );
@@ -374,11 +374,11 @@ rescan:
     PP_AdvanceToken();
 }
 
-void PP_AdvanceToken()
+void PP_AdvanceToken( void )
 {
     char        white_space;
 
-    for(;;) {
+    for( ;; ) {
         PPTokenPtr = PP_SkipWhiteSpace( PPTokenPtr, &white_space );
         if( PPTokenPtr[0] != '\0' ) break;
         if( PPCurToken != NULL ) {
@@ -395,13 +395,13 @@ void PP_AdvanceToken()
     }
 }
 
-long int PP_HexNumber()
+long int PP_HexNumber( void )
 {
     long int    value;
     char        c;
 
     value = 0;
-    for(;;) {
+    for( ;; ) {
         c = PPTokenPtr[0];
         if( c >= '0' && c <= '9' ) {
             c -= '0';

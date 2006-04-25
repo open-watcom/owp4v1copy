@@ -963,8 +963,8 @@ static void SetMiscTableEntries( pe_header *hdr )
     }
 }
 
-static unsigned FindNumObjects()
-/******************************/
+static unsigned FindNumObjects( void )
+/************************************/
 {
     unsigned            num_objects;
 

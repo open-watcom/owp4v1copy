@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Utility routines for OMF libraries.
 *
 ****************************************************************************/
 
@@ -109,7 +108,7 @@ static bool ReadOmfRecord( libfile io )
     return( TRUE );
 }
 
-static void WriteOmfRecord( )
+static void WriteOmfRecord( void )
 {
     WriteNew( omfRec, omfRec->basic.len + 3 );
 }
@@ -135,7 +134,7 @@ static void WriteTimeStamp( sym_file *file )
     WriteNew( &rec, sizeof( rec.time ) );
 }
 
-void WriteOmfLibTrailer()
+void WriteOmfLibTrailer( void )
 {
     unsigned    size;
 
@@ -362,7 +361,7 @@ unsigned WriteOmfDict( sym_file *first )
     return( num_blocks );
 }
 
-static void trimOmfHeader()
+static void trimOmfHeader( void )
 {
     char *new_name;
     unsigned_8  sum;
@@ -456,10 +455,10 @@ void WriteOmfFile( sym_file *file )
             LibClose( io );
         }
     } else {
-        unsigned_8 sum;
-        unsigned sym_len;
-        unsigned file_len;
-        unsigned i;
+        unsigned_8  sum;
+        unsigned    sym_len;
+        unsigned    file_len;
+        unsigned    i;
 
         omfRec->basic.type = CMD_THEADR;
         sym_len = strlen( file->import->symName );

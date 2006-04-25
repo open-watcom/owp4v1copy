@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  GUI library message loop.
 *
 ****************************************************************************/
 
@@ -94,12 +93,12 @@ EVENT GUIWndGetEvent( VSCREEN * screen )
     return( ev );
 }
 
-void uistartevent()
+void uistartevent( void )
 {
     GUIStartEventProcessing();
 }
 
-void uidoneevent()
+void uidoneevent( void )
 {
     GUIDoneEventProcessing();
 }
@@ -148,7 +147,7 @@ void GUICleanup( void )
     GUISysFini();
 }
 
-static bool LoadStrings()
+static bool LoadStrings( void )
 {
     char *      resource_name;
     char        fname[_MAX_PATH];

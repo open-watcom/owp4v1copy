@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Heap walker internal prototypes.
 *
 ****************************************************************************/
 
@@ -281,9 +280,9 @@ extern HeapConfigInfo   Config;
 void CreateListBox( HWND parent, ListBoxInfo *info, WORD type  );
 void ResizeListBox( WORD width, WORD height, ListBoxInfo *info );
 void MoveListBox( WORD xpos, WORD ypos, ListBoxInfo *info );
-void PaintAllWindows();
-void InitPaintProc();
-void FiniPaintProc();
+void PaintAllWindows( void );
+void InitPaintProc( void );
+void FiniPaintProc( void );
 void PositionListBox( ListBoxInfo *info, HWND parent );
 
 /* hwlist.c */

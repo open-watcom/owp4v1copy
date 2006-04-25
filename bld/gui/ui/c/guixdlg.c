@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dialog box low level routines.
 *
 ****************************************************************************/
 
@@ -89,7 +88,7 @@ static a_field_type ui_types[GUI_NUM_CONTROL_CLASSES] = {
 
 static  dialog_node     *MyDialog       = NULL;
 
-void GUISetJapanese()
+void GUISetJapanese( void )
 {
 }
 
@@ -223,12 +222,12 @@ VFIELD *GUIGetField( gui_window *wnd, unsigned id )
 
 /************************** end of dialog box functions *********************/
 
-void GUIPushControlEvents()
+void GUIPushControlEvents( void )
 {
     uipushlist( ControlEvents );
 }
 
-void GUIPopControlEvents()
+void GUIPopControlEvents( void )
 {
     uipoplist( /* ControlEvents */ );
 }

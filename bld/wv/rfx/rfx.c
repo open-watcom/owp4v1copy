@@ -91,15 +91,15 @@ typedef struct copyspec {
         int             dst_loc;
 } COPYSPEC, *COPYPTR;
 
-extern  void    SysFileInit();
-extern  void    PathInit();
-extern  bool    InitTrap(char *);
-extern  bool    InitFileSupp(void);
-extern  bool    InitRFXSupp(void);
-extern  void    FiniTrap();
-extern  void    InitInt();
-extern  void    FiniInt();
-extern  int     CtrlCHit();
+extern  void    SysFileInit( void );
+extern  void    PathInit( void );
+extern  bool    InitTrap( char * );
+extern  bool    InitFileSupp( void );
+extern  bool    InitRFXSupp( void );
+extern  void    FiniTrap( void );
+extern  void    InitInt( void );
+extern  void    FiniInt( void );
+extern  int     CtrlCHit( void );
 extern  char    *RealFName( char *, open_access * );
 extern  sys_error       GetSystemErrCode( unsigned );
 extern  unsigned        RemoteWriteConsole( void *, unsigned );
@@ -237,13 +237,13 @@ static char * Day[] = {
 /* UTILITIES                                                              */
 /**************************************************************************/
 
-static void Help()
+static void Help( void )
 {
     WriteStream( STD_ERR, HelpText, sizeof( HelpText )-1 );
 }
 
 
-static void WhatDidYouSay()
+static void WhatDidYouSay( void )
 {
 #define whadjasay "Not understood: Type '?' for help"
     WriteText( STD_ERR, whadjasay, sizeof( whadjasay )-1 );
@@ -256,7 +256,7 @@ static void Error( char *err )
 }
 
 
-static void Usage()
+static void Usage( void )
 {
     Error( "Usage: rfx trap_file[;trap_parm] [rfx_command]" );
 }
@@ -308,20 +308,20 @@ void StartupErr( char *err )
     exit( 2 );
 }
 
-void RestoreHandlers()
+void RestoreHandlers( void )
 {
 }
 
-void GrabHandlers()
+void GrabHandlers( void )
 {
 }
 
-void WriteNL()
+void WriteNL( void )
 {
    WriteStream( STD_ERR, NL, sizeof( NL ) - 1 );
 }
 
-void CheckError()
+void CheckError( void )
 {
     char    *p;
     char    buff[ 256 ];
@@ -345,7 +345,7 @@ void DbgFree( void * chunk )
     free( chunk );
 }
 
-void FreeRing()
+void FreeRing( void )
 {
 }
 
@@ -585,14 +585,15 @@ void SameDate( handle src, int src_loc, handle dst, int dst_loc )
 /* MAIN LINEISH                                                           */
 /**************************************************************************/
 
-static void OutName() {
+static void OutName( void )
+{
     static char Name[] = { "[RFX] " };
 
     WriteStream( STD_ERR, Name, sizeof( Name ) - 1 );
 }
 
-void Prompt() {
-
+void Prompt( void )
+{
     char        *prompt;
     char        drv;
     int         hour, min, sec, hundredths;
@@ -673,7 +674,7 @@ void Prompt() {
 }
 
 
-static void Interactive()
+static void Interactive( void )
 {
     char *p;
     int interactive;
@@ -737,8 +738,8 @@ int main( int argc, char **argv )
     return( 0 );
 }
 
-int Option( char * str, char opt ) {
-
+int Option( char * str, char opt )
+{
     if( *str == '/' || *str == '-' ) {
         if( tolower( str[1] ) == opt ) {
             return( 1 );
@@ -751,8 +752,8 @@ int Option( char * str, char opt ) {
 /* PROCESS COMMANDS                                                       */
 /**************************************************************************/
 
-void CopyCmd( char * src, char * dst ) {
-
+void CopyCmd( char * src, char * dst )
+{
     for( ;; ) {
         if( *src == '/' ) {
             *dst++ = ' ';
@@ -825,8 +826,8 @@ int ProcessArgv( int argc, char **argv, char *cmd ) {
 /* RENAME                                                                 */
 /**************************************************************************/
 
-extern  int  Renamef( char *fn1, int f1loc, char *fn2, int f2loc ) {
-
+extern  int  Renamef( char *fn1, int f1loc, char *fn2, int f2loc )
+{
     long        retc;
     int         err;
     char        *endpath;
@@ -885,8 +886,8 @@ extern  int  Renamef( char *fn1, int f1loc, char *fn2, int f2loc ) {
     return( retc );
 }
 
-void ProcRename( int argc, char **argv ) {
-
+void ProcRename( int argc, char **argv )
+{
     int         src_loc, dst_loc;
     char        *src, *dst;
     int         i;
@@ -918,8 +919,8 @@ void ProcRename( int argc, char **argv ) {
 /* COPY                                                                   */
 /**************************************************************************/
 
-void AddCopySpec( char * src, char *dst, int src_loc, int dst_loc ) {
-
+void AddCopySpec( char * src, char *dst, int src_loc, int dst_loc )
+{
     COPYPTR     new;
 
     new = DbgAlloc( sizeof( COPYSPEC ) );
@@ -931,8 +932,8 @@ void AddCopySpec( char * src, char *dst, int src_loc, int dst_loc ) {
     new->dst_loc = dst_loc;
 }
 
-void FreeCopySpec( COPYPTR junk ) {
-
+void FreeCopySpec( COPYPTR junk )
+{
     COPYPTR     *owner;
 
     owner = &CopySpecs;
@@ -1000,8 +1001,8 @@ void WrtCopy( char *src, char *dst, int src_loc, int dst_loc )
 }
 
 void FiniCopy( handle in, char *src_name, int src_loc,
-               handle out, char *dst_name, int dst_loc ) {
-
+               handle out, char *dst_name, int dst_loc )
+{
     SameDate( in, src_loc, out, dst_loc );
     FileClose( in );
     FileClose( out );
@@ -1055,8 +1056,8 @@ int DoCopy( char *src, char *dst, int src_loc, int dst_loc )
     return( StashErrCode( IO_OK, OP_LOCAL ) );
 }
 
-extern  void    RRecurse( char *f1, char *f2, int f1loc, int f2loc ) {
-
+extern  void    RRecurse( char *f1, char *f2, int f1loc, int f2loc )
+{
     long        retc;
     char        *endptr;
     char        *endpath;
@@ -1103,8 +1104,8 @@ extern  void    RRecurse( char *f1, char *f2, int f1loc, int f2loc ) {
     }
 }
 
-extern  int     CopyASpec( char *f1, char *f2, int f1loc, int f2loc ) {
-
+extern  int     CopyASpec( char *f1, char *f2, int f1loc, int f2loc )
+{
     long        retc;
     char        *endptr;
     char        *endpath;
@@ -1197,8 +1198,8 @@ static void WildCopy( int recursive )
     }
 }
 
-void ProcCopy( int argc, char **argv ) {
-
+void ProcCopy( int argc, char **argv )
+{
     int         recursive;
     int         src_loc, dst_loc;
     char        *src, *dst;
@@ -1271,8 +1272,8 @@ void ProcCopy( int argc, char **argv ) {
 /* TYPE                                                                   */
 /**************************************************************************/
 
-void ProcType( int argc, char **argv ) {
-
+void ProcType( int argc, char **argv )
+{
     int         src_loc;
     char        *src;
 
@@ -1297,8 +1298,8 @@ static  void    DirClosef( dir_handle *h )
     DbgFree( h );
 }
 
-extern  dir_handle      *DirOpenf( char *fspec, int fnloc ) {
-
+extern  dir_handle      *DirOpenf( char *fspec, int fnloc )
+{
     dir_handle  *h;
     long        retc;
     char        *append;
@@ -1357,8 +1358,8 @@ extern  dir_handle      *DirOpenf( char *fspec, int fnloc ) {
 }
 
 
-extern  void    DirReadf( dir_handle *h, char *buff, bool wide ) {
-
+extern  void    DirReadf( dir_handle *h, char *buff, bool wide )
+{
     if( h->status == EOF ) {
         *buff = '\0';
     } else {
@@ -1369,8 +1370,8 @@ extern  void    DirReadf( dir_handle *h, char *buff, bool wide ) {
     }
 }
 
-extern  void    Format( char *buff, trap_dta *dir, bool wide ) {
-
+extern  void    Format( char *buff, trap_dta *dir, bool wide )
+{
     char                *b;
     char                *d;
     long                s;
@@ -1428,8 +1429,8 @@ extern  void    Format( char *buff, trap_dta *dir, bool wide ) {
     ItoD( ( time >> 5 ) & 0x003F, buff + 36 );
 }
 
-extern  int     GetFreeSpace( dir_handle *h, int loc ) {
-
+extern  int     GetFreeSpace( dir_handle *h, int loc )
+{
     char                *path;
     char                drive;
     extern  long        FreeSpace();
@@ -1444,8 +1445,8 @@ extern  int     GetFreeSpace( dir_handle *h, int loc ) {
     return( 1 );
 }
 
-void ProcDir( int argc, char **argv ) {
-
+void ProcDir( int argc, char **argv )
+{
     int         wide;
     int         pause;
     int         src_loc;
@@ -1526,8 +1527,8 @@ void ProcDir( int argc, char **argv ) {
 /* CD                                                                     */
 /**************************************************************************/
 
-void ProcCD( int argc, char **argv, int crlf ) {
-
+void ProcCD( int argc, char **argv, int crlf )
+{
     int         src_loc;
     char        *src;
 
@@ -1576,8 +1577,8 @@ void ProcCD( int argc, char **argv, int crlf ) {
 /* MKDIR                                                                  */
 /**************************************************************************/
 
-void ProcMakeDir( int argc, char **argv ) {
-
+void ProcMakeDir( int argc, char **argv )
+{
     int         src_loc;
     char        *src;
 
@@ -1593,8 +1594,8 @@ void ProcMakeDir( int argc, char **argv ) {
 /* ERASE/DELETE                                                           */
 /**************************************************************************/
 
-extern  long    Scratchf( char *fn, int fnloc ) {
-
+extern  long    Scratchf( char *fn, int fnloc )
+{
     long        retc;
     char        *endptr;
 
@@ -1623,8 +1624,8 @@ extern  long    Scratchf( char *fn, int fnloc ) {
     return( retc );
 }
 
-void BuildDFSList() {
-
+void BuildDFSList( void )
+{
     COPYPTR next_last, last, curr;
 
     for( next_last = NULL; next_last != CopySpecs; ) {
@@ -1637,8 +1638,8 @@ void BuildDFSList() {
     }
 }
 
-void ProcErase( int argc, char **argv ) {
-
+void ProcErase( int argc, char **argv )
+{
     int         src_loc;
     char        *src;
     int         recursive;
@@ -1683,8 +1684,8 @@ void ProcErase( int argc, char **argv ) {
 /* RMDIR                                                                  */
 /**************************************************************************/
 
-void ProcDelDir( int argc, char **argv ) {
-
+void ProcDelDir( int argc, char **argv )
+{
     int         src_loc;
     char        *src;
     int         recursive;
@@ -1756,8 +1757,8 @@ int ProcDrive( int argc, char **argv )
 /* FILE NAME PARSING                                                      */
 /**************************************************************************/
 
-extern  char    *CopyMax( char *src, char *dst, unsigned int len, unsigned int max_len ) {
-
+extern  char    *CopyMax( char *src, char *dst, unsigned int len, unsigned int max_len )
+{
     char        *endstring;
 
     while( len > 0 && max_len > 0 ) {
@@ -1768,8 +1769,8 @@ extern  char    *CopyMax( char *src, char *dst, unsigned int len, unsigned int m
     return( endstring );
 }
 
-extern  char    *_FileParse( char *name, file_parse *file ) {
-
+extern  char    *_FileParse( char *name, file_parse *file )
+{
     char        *curr;
     char        *dosname;
     char        *p;
@@ -1838,8 +1839,8 @@ extern  char    *_FileParse( char *name, file_parse *file ) {
     return( dosname );
 }
 
-extern  void    CopyStrMax( char *src, char *dst, unsigned int max_len ) {
-
+extern  void    CopyStrMax( char *src, char *dst, unsigned int max_len )
+{
     unsigned int        len;
 
     len = strlen( src );
@@ -1851,8 +1852,8 @@ extern  void    CopyStrMax( char *src, char *dst, unsigned int max_len ) {
     }
 }
 
-extern  void    Replace( char *frum, char *to, char *into ) {
-
+extern  void    Replace( char *frum, char *to, char *into )
+{
     while( *to != '\0' ) {
         switch( *to ) {
         case '?':
@@ -1880,8 +1881,8 @@ extern  void    Replace( char *frum, char *to, char *into ) {
     *into = '\0';
 }
 
-extern  void    FinishName( char *fn, file_parse *parse, int loc, int addext ) {
-
+extern  void    FinishName( char *fn, file_parse *parse, int loc, int addext )
+{
     char        *endptr;
     long        rc;
 
@@ -1922,8 +1923,8 @@ extern  void    FinishName( char *fn, file_parse *parse, int loc, int addext ) {
     }
 }
 
-extern  char    *Squish( file_parse *parse, char *into ) {
-
+extern  char    *Squish( file_parse *parse, char *into )
+{
     char        *endptr;
     char        *endpath;
 

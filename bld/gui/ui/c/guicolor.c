@@ -67,9 +67,9 @@ static gui_colour_set NECDialColours[] = {
     { GUI_CYAN, GUI_NORMAL },           // GUI_DLG_BUTTON_ACTIVE_STANDOUT
 };
 
-extern int uionnec();
+extern int uionnec( void );
 
-static gui_colour_set *GetDialColours()
+static gui_colour_set *GetDialColours( void )
 {
     return( uionnec() ? NECDialColours : IBMDialColours );
 }

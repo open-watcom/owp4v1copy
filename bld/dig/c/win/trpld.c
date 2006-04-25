@@ -57,7 +57,7 @@ int HardModeRequired;
 
 HINSTANCE toolhelp;
 
-void KillTrap()
+void KillTrap( void )
 {
     ReqFunc = NULL;
     HookFunc = NULL;
@@ -151,7 +151,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     return( NULL );
 }
 
-void DoHardModeCheck()
+void DoHardModeCheck( void )
 {
     HardModeRequired = HardModeCheck();
 }

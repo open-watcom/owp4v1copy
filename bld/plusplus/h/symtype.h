@@ -1244,7 +1244,7 @@ extern SCOPE ScopeEnclosingId( SCOPE, scope_type_t );
 extern SCOPE ScopeNearestNonClass( SCOPE );
 extern SCOPE ScopeNearestFile( SCOPE );
 extern SCOPE ScopeNearestFileOrClass( SCOPE );
-extern SCOPE ScopeFunctionScopeInProgress();
+extern SCOPE ScopeFunctionScopeInProgress( void );
 extern SYMBOL ScopeFunctionScope( SCOPE );
 extern void ScopeMemberModuleFunction( SCOPE, SCOPE );
 extern void ScopeRestoreModuleFunction( SCOPE );

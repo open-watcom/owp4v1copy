@@ -1305,7 +1305,7 @@ int paramListNotVoid(pDeclList list) {
     return 1;
 }
 
-static int _findMinOUnit() {
+static int _findMinOUnit(void) {
     int minPrintType = 0;
     int i;
 

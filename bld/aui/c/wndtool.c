@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS MODULE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  AUI toolbar window.
 *
 ****************************************************************************/
 
@@ -48,22 +47,22 @@ void    WndCreateToolBar( gui_ord height, bool fixed,
     WndSetToolBar( fixed ? GUI_TOOLBAR_FIXED : GUI_TOOLBAR_FLOATING );
 }
 
-bool WndHaveToolBar()
+bool WndHaveToolBar( void )
 {
     return( GUIHasToolBar( WndMain->gui ) );
 }
 
-void    WndCloseToolBar()
+void    WndCloseToolBar( void )
 {
     if( WndHaveToolBar() ) GUICloseToolBar( WndMain->gui );
 }
 
-gui_ord WndToolHeight()
+gui_ord WndToolHeight( void )
 {
     return( ToolHeight );
 }
 
-bool WndToolFixed()
+bool WndToolFixed( void )
 {
     return( ToolEvent == GUI_TOOLBAR_FIXED );
 }

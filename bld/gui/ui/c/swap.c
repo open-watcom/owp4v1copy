@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Save/restore screen.
 *
 ****************************************************************************/
 
@@ -58,12 +57,12 @@ static HDC              screenMemDC;
 static int              oldCursorCount;
 static POINT            oldCursorPos;
 
-extern int              SwapScrnLines();
+extern int              SwapScrnLines( void );
 
 static void doAnInt10( void )
 {
-        rmRegs.ss = rmRegs.sp = 0;
-        DPMISimulateRealModeInterrupt( 0x10,0,0, &rmRegs );
+    rmRegs.ss = rmRegs.sp = 0;
+    DPMISimulateRealModeInterrupt( 0x10,0,0, &rmRegs );
 }
 
 

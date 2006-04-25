@@ -24,19 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Process librarian commands.
 *
 ****************************************************************************/
 
 
 #include <wlib.h>
 
-extern void OMFLibWalk( libfile io, char *name, void (*rtn)( arch_header *arch, libfile io ) );
-extern void OMFSkipThisObject(arch_header *, libfile);
 
-static void ExtractObj(libfile io, char *name, file_offset size,
-                       arch_header *arch, char *newname )
+extern void OMFLibWalk( libfile io, char *name, void (*rtn)( arch_header *arch, libfile io ) );
+extern void OMFSkipThisObject( arch_header *, libfile );
+
+
+static void ExtractObj( libfile io, char *name, file_offset size,
+                        arch_header *arch, char *newname )
 {
     file_offset  pos;
     libfile      out;
@@ -187,12 +188,12 @@ static void ProcessLibOrObj( char *name, objproc obj, void (*process)( arch_head
     }
 }
 
-static void WalkInputLib()
+static void WalkInputLib( void )
 {
     ProcessLibOrObj( Options.input_name, OBJ_ERROR, ProcessOneObject );
 }
 
-static void AddModules()
+static void AddModules( void )
 {
     lib_cmd     *cmd;
     char        buff[MAX_IMPORT_STRING];
@@ -218,7 +219,7 @@ static void AddModules()
 }
 
 
-static void DelModules()
+static void DelModules( void )
 {
     lib_cmd     *cmd;
     char        buff[MAX_IMPORT_STRING];
@@ -239,7 +240,7 @@ static void DelModules()
     }
 }
 
-void EmitWarnings()
+void EmitWarnings( void )
 {
     lib_cmd     *cmd;
 
@@ -257,7 +258,7 @@ void EmitWarnings()
 }
 
 
-void ProcessCommands()
+void ProcessCommands( void )
 {
     if( !Options.new_library ) {
         WalkInputLib();

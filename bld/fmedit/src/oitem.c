@@ -394,8 +394,8 @@ static BOOL OItemFindObjectPt( OBJPTR _oitem, void * _pt, void * _list )
     }
 } /* OItemFindObjectPt */
 
-extern void InitOItem()
-/*********************/
+extern void InitOItem( void )
+/***************************/
 
 /*  set up the dispatch routine address for the OITEM since this may
  *  be called from the application

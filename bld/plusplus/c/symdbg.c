@@ -77,10 +77,10 @@ static dbg_loc symbolicDebugSetSegment( dbg_loc dl, SYMBOL sym );
 static dbg_loc symbolicDebugSetCodeSegment( dbg_loc dl );
 static dbg_type symbolicDebugClassType( TYPE type );
 static void doSymbolicDebugFundamentalType( TYPE type, void *data );
-static void symbolicDebugFundamentalType();
+static void symbolicDebugFundamentalType( void );
 static void doSymbolicDebugNamedType( TYPE type, void *data );
-static void symbolicDebugNamedType();
-static void symbolicDebugSymbol();
+static void symbolicDebugNamedType( void );
+static void symbolicDebugSymbol( void );
 
 void SymbolicDebugInit( void )
 /****************************/
@@ -1008,8 +1008,9 @@ static void doSymbolicDebugFundamentalType( TYPE type, void *data )
     }
 }
 
-static void symbolicDebugSegmentType( void ){
-/*************************************/
+static void symbolicDebugSegmentType( void )
+/******************************************/
+{
     TYPE        type;
     dbg_type    dt;
 
@@ -1020,7 +1021,7 @@ static void symbolicDebugSegmentType( void ){
 }
 
 static void symbolicDebugFundamentalType( void )
-/****************************************/
+/**********************************************/
 {
     type_id     id;
     dbg_type    data;
@@ -1072,8 +1073,8 @@ static void doSymbolicDebugNamedType( TYPE type, void *data )
     }
 }
 
-static void symbolicDebugNamedType()
-/**********************************/
+static void symbolicDebugNamedType( void )
+/****************************************/
 {
     int    data;
 
@@ -1107,8 +1108,8 @@ void SymbolicDebugGenSymbol( SYMBOL sym, boolean scoped, boolean by_ref )
     DBLocFini( dl );
 }
 
-static void symbolicDebugSymbol()
-/*******************************/
+static void symbolicDebugSymbol( void )
+/*************************************/
 {
     SYMBOL stop;
     SYMBOL curr;
@@ -1149,8 +1150,9 @@ void SymbolicDebugEmit( void )
     }
 }
 
-void SymbolicDebugMemberFunc( SYMBOL func, SYMBOL this_sym ){
-/***********************************************************/
+void SymbolicDebugMemberFunc( SYMBOL func, SYMBOL this_sym )
+/**********************************************************/
+{
     TYPE    sym_type;
     dbg_loc dl;
 

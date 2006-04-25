@@ -185,8 +185,8 @@ static void DrawCurr( STATE_ID st, RECT * rect, HDC * hdc )
   }
 
 
-extern BOOL DoPainting()
-/**********************/
+extern BOOL DoPainting( void )
+/****************************/
 
 /* repaint the areas of the screen which require updating */
 

@@ -34,19 +34,19 @@
 #include <ctype.h>
 #include "cmdedit.h"
 
-extern void     PutNL();
+extern void     PutNL( void );
 extern void     PutPad( char far * str, int len );
 extern void     RestorePrompt( char PASPTR *line );
-extern int      ExpandDirCommand();
+extern int      ExpandDirCommand( void );
 extern int      ReplaceAlias( char far * alias, char * word, char * endword );
 extern void     ZapLower( char far *str );
 extern void     SavePrompt( char PASPTR *line );
 extern char     far *GetEnv( char far *name, int len );
 extern int      Equal( char far * str1, char far * str2, int len );
 
-void MatchACommand( int (*advance)(char *), int (*retreat)(char *) ) {
-/********************************************************************/
-
+void MatchACommand( int (*advance)(char *), int (*retreat)(char *) )
+/******************************************************************/
+{
     int advanced;
 
     SaveLine();
@@ -71,18 +71,18 @@ void MatchACommand( int (*advance)(char *), int (*retreat)(char *) ) {
 }
 
 
-void FiniFile() {
-/*************/
-
+void FiniFile( void )
+/*******************/
+{
     HaveDirent = FALSE;
     NextFileCalls = 0;
     PathCurr = 0;
 }
 
 
-void PrevFile() {
-/***************/
-
+void PrevFile( void )
+/*******************/
+{
     int         nexts;
 
     if( NextFileCalls ) {
@@ -96,9 +96,9 @@ void PrevFile() {
     }
 }
 
-void SaveLine() {
-/***************/
-
+void SaveLine( void )
+/*******************/
+{
     LineSaved = TRUE;
     memcpy( OldLine, Line, LINE_WIDTH );
     OldMaxCursor = MaxCursor;
@@ -106,9 +106,9 @@ void SaveLine() {
 }
 
 
-void RestoreLine() {
-/*****************/
-
+void RestoreLine( void )
+/**********************/
+{
     memcpy( Line, OldLine, LINE_WIDTH );
     Cursor = OldCursor;
     MaxCursor = OldMaxCursor;
@@ -116,9 +116,9 @@ void RestoreLine() {
 }
 
 
-int     NonFileChar( char ch ) {
-/******************************/
-
+int     NonFileChar( char ch )
+/****************************/
+{
     switch( ch ) {
     case '<':
     case '>':
@@ -135,9 +135,9 @@ int     NonFileChar( char ch ) {
 }
 
 
-int FileIgnore( DIRINFO *dir, int attr ) {
-/****************************************/
-
+int FileIgnore( DIRINFO *dir, int attr )
+/**************************************/
+{
     int         ignore_matches;
     char        *p;
     int         len;
@@ -194,9 +194,9 @@ int FileIgnore( DIRINFO *dir, int attr ) {
 }
 
 
-int FindNext( DIRINFO *dir, int attr ) {
-/**************************************/
-
+int FindNext( DIRINFO *dir, int attr )
+/************************************/
+{
     int tmp;
     int cnt;
 
@@ -210,9 +210,9 @@ int FindNext( DIRINFO *dir, int attr ) {
 }
 
 
-void NextFile() {
-/***************/
-
+void NextFile( void )
+/*******************/
+{
 #ifdef DOS
     int                 dot;
 #endif

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  GUI lib color handling.
 *
 ****************************************************************************/
 
@@ -85,7 +84,7 @@ WPI_COLOUR GUIColours[] = {
 
 #define NUM_COLOURS ( sizeof( GUIColours ) / sizeof( WPI_COLOUR ) )
 
-void InitSystemRGB()
+void InitSystemRGB( void )
 {
 #ifdef __NT__
     /* Overwrite static default colors above, with system colors */

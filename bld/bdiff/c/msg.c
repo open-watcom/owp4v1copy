@@ -24,18 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Binary patch message output.
 *
 ****************************************************************************/
 
 
-/*
-  Modified:     By:             Reason:
-  ---------     ---             -------
-  23-sep-92     S.B.Feyler      Initial Implementation
-  13-oct-92     S.B.Feyler      fixes to resource file support
-*/
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,7 +70,7 @@ static long res_seek( int handle, long position, int where )
 
 WResSetRtns( open, close, read, write, res_seek, tell, malloc, free );
 
-int MsgInit()
+int MsgInit( void )
 {
     int         initerror;
     char        name[_MAX_PATH];
@@ -159,7 +152,7 @@ void MsgPrintf( int resourceid, va_list arglist )
     printf( msgbuf, argbuf[order[0]], argbuf[order[1]], argbuf[order[2]] );
 }
 
-void MsgFini()
+void MsgFini( void )
 {
     if( hInstance.handle != NIL_HANDLE ) {
         CloseResFile( &hInstance );

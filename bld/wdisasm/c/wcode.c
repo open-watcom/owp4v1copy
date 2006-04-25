@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Weitek coprocessor disassembly.
 *
 ****************************************************************************/
 
@@ -150,8 +149,8 @@ char * GetWtkInsName( uint_16 wopcode )
 }
 
 
-void DoWtk()
-//==========
+void DoWtk( void )
+//================
 {
     uint_16     instr;
     char        instr_type;
@@ -289,8 +288,8 @@ void DoWtk()
     }
 }
 
-int HaveWtk()
-/***********/
+int HaveWtk( void )
+/*****************/
 {
     return( didAnyWtk );
 }
