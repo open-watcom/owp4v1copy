@@ -290,14 +290,14 @@ void _outp( int port, char x )
     #define dbgrtn(x)
 #endif
 
-extern int              NumPrinters(void);
-extern unsigned         PrnAddress(int);
-extern unsigned         AccessPorts(unsigned,unsigned);
-extern void             FreePorts(unsigned,unsigned);
-extern void             NothingToDo(void);
-extern unsigned long    Ticks();
-extern char             *InitSys();
-extern void             FiniSys();
+extern int              NumPrinters( void );
+extern unsigned         PrnAddress( int );
+extern unsigned         AccessPorts( unsigned, unsigned );
+extern void             FreePorts( unsigned, unsigned );
+extern void             NothingToDo( void );
+extern unsigned long    Ticks( void );
+extern char             *InitSys( void );
+extern void             FiniSys( void );
 
 static unsigned DataPort;
 static unsigned CtlPort1;
@@ -638,8 +638,8 @@ unsigned RemotePut( char *snd, unsigned len )
  * Synch - see if server and client are ready
  */
 
-static bool Synch() {
-
+static bool Synch( void )
+{
     dbgrtn( "\r\n-Synch-" );
     switch( CableType ) {
     case WATCOM_VAL:
@@ -661,8 +661,8 @@ static bool Synch() {
 
 
 
-static bool CountTwidle() {
-
+static bool CountTwidle( void )
+{
     char                type;
 
     dbgrtn( "\r\n-CountTwidle-" );
@@ -740,15 +740,14 @@ static bool Twidle( bool check ) {
         }
     }
     return( FALSE );
-
 }
 
 /*
  * LineTest - make sure that all lines are working
  */
 
-static bool LineTest() {
-
+static bool LineTest( void )
+{
     unsigned            send;
     unsigned long       time;
 #ifdef SERVER

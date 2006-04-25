@@ -271,7 +271,7 @@ void TRAPENTRY SetHardMode( char force )
 /*
  * UnLockInput - unlock input from the debugger
  */
-void TRAPENTRY UnLockInput()
+void TRAPENTRY UnLockInput( void )
 {
     if( DebuggerWindow != NULL && InputLocked ) {
         Out((OUT_SOFT,"Unlocking input from debugger"));

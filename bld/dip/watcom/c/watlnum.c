@@ -177,7 +177,7 @@ static unsigned SpecCueFile( imp_image_handle *ii, imp_cue_handle *ic,
  * GetLineInfo -- get the line number infomation for a module
  */
 
-static void UnlockLine()
+static void UnlockLine( void )
 {
     if( LinStart != NULL ) {
         InfoSpecUnlock( LinStart );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS NetWare IPX link core.
 *
 ****************************************************************************/
 
@@ -194,7 +193,7 @@ ESRAddr         SAPBroadESRAddr;
 ESRAddr         SAPWaitESRAddr;
 ESRAddr         ServRespESRAddr;
 
-static void IpxWait()
+static void IpxWait( void )
 {
     //*******************************************************************
     // NOTE:  This call is absolutely necessary.  The DOS call some
@@ -317,7 +316,7 @@ unsigned RemotePut( char *snd, unsigned len )
     return( len );
 }
 
-static void PostListens()
+static void PostListens( void )
 {
     unsigned    i;
 
@@ -333,28 +332,28 @@ static void PostListens()
 char RemoteConnect( void )
 {
     PostListens();
-    #ifdef SERVER
-        if( !Listening ) {
-            _INITSPXECB( Conn, 1, 0, 0 );
-            _SPXListenForConnection( 0, 0, &ConnECB );
-            Listening = 1;
-        } else if( ConnECB.inUseFlag == 0 ) {
-            if( ConnECB.completionCode == 0 ) {
-                Connection = ConnECB.SPXConnectionID;
-                return( 1 );
-            }
+#ifdef SERVER
+    if( !Listening ) {
+        _INITSPXECB( Conn, 1, 0, 0 );
+        _SPXListenForConnection( 0, 0, &ConnECB );
+        Listening = 1;
+    } else if( ConnECB.inUseFlag == 0 ) {
+        if( ConnECB.completionCode == 0 ) {
+            Connection = ConnECB.SPXConnectionID;
+            return( 1 );
         }
-        _IPXRelinquishControl();
-    #else
-        _INITECB( SendECB, SendHead, 1, SPX );
-        if( _SPXEstablishConnection( 0, 0, &Connection, &SendECB ) == 0 ) {
-            if( WaitTimeout( &SendECB, MAX_CONNECT_WAIT, 0 ) ) {
-                return( 1 );
-            } else {
-                _SPXAbortConnection( Connection );
-            }
+    }
+    _IPXRelinquishControl();
+#else
+    _INITECB( SendECB, SendHead, 1, SPX );
+    if( _SPXEstablishConnection( 0, 0, &Connection, &SendECB ) == 0 ) {
+        if( WaitTimeout( &SendECB, MAX_CONNECT_WAIT, 0 ) ) {
+            return( 1 );
+        } else {
+            _SPXAbortConnection( Connection );
         }
-    #endif
+    }
+#endif
     return( 0 );
 }
 
@@ -368,9 +367,9 @@ void RemoteDisco( void )
     Listening = 0;
     _INITSPXECB( Conn, 1, 0, 0 );
     _SPXTerminateConnection( Connection, &ConnECB );
-    #ifdef SERVER
-        _IPXCancelEvent( &ConnECB );
-    #endif
+#ifdef SERVER
+    _IPXCancelEvent( &ConnECB );
+#endif
     for( i = NUM_REC_BUFFS-1; i >= 0; --i ) {
         if( RecECB[i].inUseFlag ) {
             _IPXCancelEvent( &RecECB[i] );
@@ -588,21 +587,21 @@ char *RemoteLink( char *name, char server )
     _INITIPXECB( Resp );
     RespECB.fragmentCount = 2;
     RespECB.fragmentDescriptor[1].size = sizeof( WORD ); /* for SPXSocket */
-    #ifdef SERVER
-        if( FindPartner() ) {
-            RemoteUnLink();
-            return( TRP_ERR_server_name_already_in_use );
-        }
-        if( !InitServer() ) {
-            RemoteUnLink();
-            return( TRP_ERR_can_not_initialize_server );
-        }
-    #else
-        if( FindPartner() == 0 ) {
-            RemoteUnLink();
-            return( TRP_ERR_no_such_server );
-        }
-    #endif
+#ifdef SERVER
+    if( FindPartner() ) {
+        RemoteUnLink();
+        return( TRP_ERR_server_name_already_in_use );
+    }
+    if( !InitServer() ) {
+        RemoteUnLink();
+        return( TRP_ERR_can_not_initialize_server );
+    }
+#else
+    if( FindPartner() == 0 ) {
+        RemoteUnLink();
+        return( TRP_ERR_no_such_server );
+    }
+#endif
     return( NULL );
 }
 
@@ -611,18 +610,18 @@ void RemoteUnLink( void )
 {
     _IPXCloseSocket( SPXSocket );
     _IPXCloseSocket( IPXSocket );
-    #ifdef SERVER
-        _IPXCancelEvent( &ServECB );
-        _IPXCancelEvent( &RespECB );
-        if( SAPECB.inUseFlag != 0 ) _IPXCancelEvent( &SAPECB );
-        /* shutdown notification */
-        SAPHead.intermediateNetworks = _SWAPINT( 0x10 );
-        SAPECB.ESRAddress = NULL;
-        _IPXSendPacket( &SAPECB );
-        WaitOn( SAPECB );
-    #endif
+#ifdef SERVER
+    _IPXCancelEvent( &ServECB );
+    _IPXCancelEvent( &RespECB );
+    if( SAPECB.inUseFlag != 0 ) _IPXCancelEvent( &SAPECB );
+    /* shutdown notification */
+    SAPHead.intermediateNetworks = _SWAPINT( 0x10 );
+    SAPECB.ESRAddress = NULL;
+    _IPXSendPacket( &SAPECB );
+    WaitOn( SAPECB );
+#endif
     IPXSPXDeinit();
-    #ifdef __WINDOWS__
-        GlobalPageUnlock( (HGLOBAL)FP_SEG( &SAPECB ) );
-    #endif
+#ifdef __WINDOWS__
+    GlobalPageUnlock( (HGLOBAL)FP_SEG( &SAPECB ) );
+#endif
 }

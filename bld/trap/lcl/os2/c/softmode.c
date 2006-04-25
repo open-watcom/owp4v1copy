@@ -113,7 +113,7 @@ void APIENTRY SoftModeThread( thread_data *thread )
     WinPostMsg( HwndDebugger, WM_QUIT, 0, 0 ); // tell debugger we're done
 }
 
-static void BeginThreadHelper()
+static void BeginThreadHelper( void )
 {
     thread_data *_arg;
 
@@ -149,12 +149,12 @@ char SetHardMode( char hard )
     return( old );
 }
 
-BOOL IsPMDebugger()
+BOOL IsPMDebugger( void )
 {
     return( HabDebugger != NULL );
 }
 
-void CreateDummyWindow()
+void CreateDummyWindow( void )
 {
     ULONG flCreate;
     HWND        frame;
@@ -253,14 +253,14 @@ void ExitSoftMode( PID pid )
 //    if( WinIsWindow( HabDebugger, AppActiveWnd ) ) WinSetActiveWindow( HWND_DESKTOP, AppActiveWnd );
 }
 
-void EnterHardMode()
+void EnterHardMode( void )
 {
     if( InHardMode ) return;
     WinLockInput( 0, TRUE );
     InHardMode = TRUE;
 }
 
-void ExitHardMode()
+void ExitHardMode( void )
 {
     if( !InHardMode ) return;
     WinLockInput( 0, FALSE );

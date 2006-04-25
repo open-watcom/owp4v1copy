@@ -29,13 +29,13 @@
 ****************************************************************************/
 
 
-extern byte EnhancedWinCheck(void);
+extern byte EnhancedWinCheck( void );
 #pragma aux EnhancedWinCheck =     \
         "mov    ax, 1600H"         \
         "int    2fH"               \
         value [al];
 
-extern unsigned DPMIVersion();
+extern unsigned DPMIVersion( void );
 #pragma aux DPMIVersion =          \
         "       mov     ax,1687h"  \
         "       int     2fh"       \
@@ -47,7 +47,7 @@ extern unsigned DPMIVersion();
 
 const char DOSEMUString[] = "$DOSEMU$";
 
-extern int DOSEMUCheck(void);
+extern int DOSEMUCheck( void );
 #pragma aux DOSEMUCheck =          \
         "       push   ds"         \
         "       mov    ax, 0f000h" \

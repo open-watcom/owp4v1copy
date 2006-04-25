@@ -40,7 +40,7 @@
 #include "tcerr.h"
 
 trap_version     TrapVersion;
-extern void NothingToDo();
+extern void NothingToDo( void );
 
 char    RWBuff[ 0x400 ];
 
@@ -58,7 +58,7 @@ static void AccTrap( bool want_return )
     }
 }
 
-static bool AccConnect()
+static bool AccConnect( void )
 {
     connect_req         *acc;
     char                *data;
@@ -89,7 +89,7 @@ static bool AccConnect()
 }
 
 
-static void AccLoadProg()
+static void AccLoadProg( void )
 {
     char            *data;
 
@@ -97,7 +97,7 @@ static void AccLoadProg()
     AccTrap( TRUE );
 }
 
-bool Session()
+bool Session( void )
 {
     unsigned    req;
     bool        want_return;
@@ -105,9 +105,9 @@ bool Session()
     Out[0].len = sizeof( RWBuff );
     Out[0].ptr = RWBuff;
     for( ;; ) {
-        #ifdef __WINDOWS__
-            NothingToDo();
-        #endif
+#ifdef __WINDOWS__
+        NothingToDo();
+#endif
         In[0].len = GetPacket();
         In[0].ptr = GetPacketBuffPtr();
         In_Mx_Ptr = &In[0];

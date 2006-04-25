@@ -82,10 +82,10 @@ static void AccTrap( bool want_return )
 }
 
 
-static bool Session()
+static bool Session( void )
 {
     unsigned    req;
-    bool    want_return;
+    bool        want_return;
 
     for( ;; ) {
         In[0].len = GetPacket();
@@ -172,8 +172,8 @@ int main( void )
     _DBG(("Calling RemoteUnLink\n"));
     RemoteUnLink();
     _DBG(("After calling RemoteUnLink\n"));
-    #ifdef ACAD
-        LetACADDie();
-    #endif
+#ifdef ACAD
+    LetACADDie();
+#endif
     return( 0 );
 }

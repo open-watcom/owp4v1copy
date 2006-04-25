@@ -37,8 +37,8 @@
 
 extern char RWBuff[];
 
-extern int KeyPress_pragma();
-extern int KeyGet_pragma();
+extern int KeyPress_pragma( void );
+extern int KeyGet_pragma( void );
 
 #pragma aux KeyPress_pragma =   \
     "mov    ah,1"               \
@@ -73,12 +73,12 @@ void SayGNiteGracey( int return_code )
     TinyTerminateProcess( return_code );
 }
 
-int KeyPress()
+int KeyPress( void )
 {
     return( KeyPress_pragma() );
 }
 
-int KeyGet()
+int KeyGet( void )
 {
     return( KeyGet_pragma() );
 }

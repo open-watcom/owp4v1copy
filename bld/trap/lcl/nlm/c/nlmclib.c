@@ -87,10 +87,10 @@
 #endif
 
 #if defined ( __NW40__ )
-int ImportCLIBSymbols()
+int ImportCLIBSymbols( void )
 {
     unsigned int handle;
-    if( SymbolsImported ) 
+    if( SymbolsImported )
         return TRUE;
 
     handle = GetNLMHandle();

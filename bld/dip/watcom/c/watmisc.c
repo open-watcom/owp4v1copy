@@ -38,9 +38,9 @@
 #endif
 
 
-extern void             InfoUnlock();
-extern dip_status       InfoRelease();
-extern void             FiniDemand();
+extern void             InfoUnlock( void );
+extern dip_status       InfoRelease( void );
+extern void             FiniDemand( void );
 extern search_result    LookupLclAddr( imp_image_handle *, address, imp_sym_handle * );
 extern search_result    LookupGblAddr( imp_image_handle *, address, imp_sym_handle * );
 extern unsigned         SymHdl2CstName( imp_image_handle *, imp_sym_handle *, char *, unsigned );
@@ -97,12 +97,12 @@ dip_status DIPENTRY DIPImpStartup( void )
     return( DS_OK );
 }
 
-void DIPENTRY DIPImpShutdown()
+void DIPENTRY DIPImpShutdown( void )
 {
     FiniDemand();
 }
 
-void DIPENTRY DIPImpCancel()
+void DIPENTRY DIPImpCancel( void )
 {
     KillLclLoadStack();
     KillTypeLoadStack();

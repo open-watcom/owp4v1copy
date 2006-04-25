@@ -37,12 +37,12 @@
 #include "trpimp.h"
 
 extern bool             CheckPointMem( unsigned, char * );
-extern void             CheckPointRestore();
+extern void             CheckPointRestore( void );
 extern long             Fork(char *, unsigned);
 extern char             *DOSEnvFind( char * );
 extern char             *GetExeExtensions(void);
 
-unsigned ReqFile_get_config()
+unsigned ReqFile_get_config( void )
 {
     file_get_config_ret *ret;
 
@@ -57,7 +57,7 @@ unsigned ReqFile_get_config()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_open()
+unsigned ReqFile_open( void )
 {
     tiny_ret_t      rc;
     int             mode;
@@ -81,7 +81,7 @@ unsigned ReqFile_open()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_seek()
+unsigned ReqFile_seek( void )
 {
     tiny_ret_t      rc;
     file_seek_req   *acc;
@@ -96,7 +96,7 @@ unsigned ReqFile_seek()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_read()
+unsigned ReqFile_read( void )
 {
     tiny_ret_t      rc;
     file_read_req   *acc;
@@ -118,7 +118,7 @@ unsigned ReqFile_read()
     return( sizeof( *ret ) + len );
 }
 
-unsigned ReqFile_write()
+unsigned ReqFile_write( void )
 {
     tiny_ret_t      rc;
     file_write_req  *acc;
@@ -133,7 +133,7 @@ unsigned ReqFile_write()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_write_console()
+unsigned ReqFile_write_console( void )
 {
     tiny_ret_t              rc;
     file_write_console_ret  *ret;
@@ -146,7 +146,7 @@ unsigned ReqFile_write_console()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_close()
+unsigned ReqFile_close( void )
 {
     tiny_ret_t      rc;
     file_close_req  *acc;
@@ -159,7 +159,7 @@ unsigned ReqFile_close()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_erase()
+unsigned ReqFile_erase( void )
 {
     tiny_ret_t      rc;
     file_erase_ret  *ret;
@@ -250,7 +250,7 @@ tiny_ret_t FindFilePath( char *pgm, char *buffer, char *ext_list )
 }
 
 
-unsigned ReqFile_string_to_fullpath()
+unsigned ReqFile_string_to_fullpath( void )
 {
     char                        *name;
     char                        *fullname;
@@ -278,7 +278,7 @@ unsigned ReqFile_string_to_fullpath()
     return( sizeof( *ret ) + 1 + strlen( fullname ) );
 }
 
-unsigned ReqFile_run_cmd()
+unsigned ReqFile_run_cmd( void )
 {
     file_run_cmd_ret    *ret;
 #if defined(__WINDOWS__)

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  NLM serial link core.
 *
 ****************************************************************************/
 
@@ -60,7 +59,7 @@ static void Tick( LONG dummy )
 }
 
 
-static void SetupTimerData()
+static void SetupTimerData( void )
 {
     TimerData.TCallBackProcedure = Tick;
     TimerData.TCallBackEBXParameter = 0;
@@ -69,19 +68,19 @@ static void SetupTimerData()
 }
 
 
-void ZeroWaitCount()
+void ZeroWaitCount( void )
 {
     Ticks = 0;
 }
 
 
-unsigned WaitCount()
+unsigned WaitCount( void )
 {
     return( Ticks );
 }
 
 
-void ClearCom()
+void ClearCom( void )
 {
     AIOFlushBuffers( ComPortHandle,
                       AIO_FLUSH_READ_BUFFER+AIO_FLUSH_WRITE_BUFFER );
@@ -115,15 +114,15 @@ void SendByte( int value )
 }
 
 
-void StartBlockTrans()
+void StartBlockTrans( void )
 {
 }
 
-void StopBlockTrans()
+void StopBlockTrans( void )
 {
 }
 
-int GetByte()
+int GetByte( void )
 {
     int         data;
     LONG        count;
@@ -249,7 +248,7 @@ char *ParsePortSpec( char * *spec )
 }
 
 
-void DonePort()
+void DonePort( void )
 {
     if( PortNumber != -1 ) {
         AIOReleasePort( ComPortHandle );
@@ -257,11 +256,11 @@ void DonePort()
     }
 }
 
-bool CheckPendingError()
+bool CheckPendingError( void )
 {
     return( FALSE );                    // NYI -- waiting for Rich Jeske
 }
 
-void ClearLastChar()
+void ClearLastChar( void )
 {
 }

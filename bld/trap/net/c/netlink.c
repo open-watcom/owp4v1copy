@@ -91,7 +91,7 @@ unsigned RemotePut( char *rec, unsigned len )
     return( NetCtlBlk.length );
 }
 
-static char PostListen()
+static char PostListen( void )
 {
     NetCtlBlk.cmd = NET_LISTEN | NET_NOWAIT;
     return( NetBIOS( &NetCtlBlk ) == 0 );

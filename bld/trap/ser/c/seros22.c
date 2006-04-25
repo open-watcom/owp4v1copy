@@ -79,13 +79,13 @@ extern int                              MaxBaud;
 #define INPUT           0x0001
 #define OUTPUT          0x0002
 
-void ZeroWaitCount()
+void ZeroWaitCount( void )
 {
     DosQuerySysInfo( QSV_MS_COUNT, QSV_MS_COUNT, &MSecsAtZero, sizeof( MSecsAtZero ) );
 }
 
 
-unsigned WaitCount()
+unsigned WaitCount( void )
 {
     ULONG  ulMsecs;
 
@@ -95,7 +95,7 @@ unsigned WaitCount()
 }
 
 
-void ClearCom()
+void ClearCom( void )
 {
     BYTE        command;
     ULONG       ulParmLen;
@@ -116,7 +116,7 @@ void ClearCom()
         &data,  sizeof( data ), &ulDataLen );
 }
 
-static void WaitTransmit()
+static void WaitTransmit( void )
 {
     USHORT      event;
     ULONG       ulDataLen;
@@ -138,12 +138,12 @@ void SendByte( int value )
         WaitTransmit();
 }
 
-void StartBlockTrans()
+void StartBlockTrans( void )
 {
     BlockTransmission = TRUE;
 }
 
-void StopBlockTrans()
+void StopBlockTrans( void )
 {
     if( BlockTransmission ) {
         BlockTransmission = FALSE;
@@ -197,7 +197,7 @@ int WaitByte( unsigned ticks )
 }
 
 
-int GetByte()
+int GetByte( void )
 {
     return( WaitByte( 0 ) );
 }
@@ -280,7 +280,7 @@ char *ParsePortSpec( char * *spec )
 }
 
 
-void DonePort()
+void DonePort( void )
 {
     if( ComPort != 0 ) {
 //      DosClose( ComPort ); // Can't do this ... OS/2 blocks us forever
@@ -289,7 +289,7 @@ void DonePort()
 }
 
 
-bool CheckPendingError()
+bool CheckPendingError( void )
 {
     bool        over_run;
     USHORT      event;
@@ -306,7 +306,7 @@ bool CheckPendingError()
 }
 
 
-void ClearLastChar()
+void ClearLastChar( void )
 {
 }
 

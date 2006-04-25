@@ -73,7 +73,7 @@ static int PipeOpen( char *name )
 
 
 
-static char *OpenRequest()
+static char *OpenRequest( void )
 {
     unsigned short      bytes;
 

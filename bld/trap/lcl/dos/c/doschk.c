@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Check DOS memory blocks for consistency.
 *
 ****************************************************************************/
 
@@ -49,7 +48,7 @@ typedef _Packed struct {
 
 static      char *ChkFile;
 
-static void Cleanup()
+static void Cleanup( void )
 {
     TinyDelete( ChkFile );
 }
@@ -138,7 +137,7 @@ bool CheckPointMem( unsigned max, char *f_buff )
     return( TRUE );
 }
 
-void CheckPointRestore()
+void CheckPointRestore( void )
 {
     dos_mem_block   *chk;
     tiny_ret_t      ret;

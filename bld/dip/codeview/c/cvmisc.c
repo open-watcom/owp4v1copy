@@ -235,7 +235,7 @@ dip_status DoIndirection( imp_image_handle *ii, type_info *ti,
     return( DS_OK );
 }
 
-void NYI()
+void NYI( void )
 {
     volatile int a = 0;
     volatile int b = 0;
@@ -243,7 +243,7 @@ void NYI()
     a /= b; /* cause a fault */
 }
 
-void Confused()
+void Confused( void )
 {
     /* don't know what's happening */
     NYI();

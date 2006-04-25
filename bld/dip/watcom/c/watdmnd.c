@@ -172,7 +172,7 @@ dip_status InitDemand( imp_image_handle *ii )
     return( DS_OK );
 }
 
-void FiniDemand()
+void FiniDemand( void )
 {
     DCFree( LastDemand );
     LastDemand = NULL;
@@ -213,7 +213,7 @@ void InfoClear( imp_image_handle *ii )
  * InfoUnlock -- arbitrarily set all demand section lock counts to zero
  */
 
-void InfoUnlock()
+void InfoUnlock( void )
 {
     demand_ctrl *section;
 
@@ -322,7 +322,7 @@ void InfoSpecUnlock( void *p )
  * InfoRelease -- release the least recently used section
  */
 
-static dip_status ReleaseFromList()
+static dip_status ReleaseFromList( void )
 {
     demand_ctrl *release;
     demand_ctrl *curr;
@@ -341,7 +341,7 @@ static dip_status ReleaseFromList()
     return( DS_OK );
 }
 
-dip_status InfoRelease()
+dip_status InfoRelease( void )
 {
     if( ReleaseFromList() == DS_OK ) return( DS_OK );
     if( LastDemand != NULL && LastDemand->locks == 0 && LastDemand->clear != NULL ) {

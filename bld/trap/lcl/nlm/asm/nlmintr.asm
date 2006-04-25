@@ -24,27 +24,10 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Long jump helper routine for NLMs.
 ;*
 ;*****************************************************************************
 
-
-COMMENT ~
-
-        Copyright (C) 1989 by WATCOM Systems Inc. All rights
-        reserved. No part of this software may be reproduced in any
-        form or by any means - graphic, electronic or mechanical,
-        including photocopying, recording, taping or information
-        storage and retrieval systems - except with the written
-        permission of WATCOM Systems Inc.
-
-
-        Date            By              Reason
-        ====            ==              ======
-        90-01-25        John Dahms      created
-
-~
 
 .386p
 

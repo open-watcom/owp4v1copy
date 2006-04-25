@@ -105,8 +105,8 @@ struct TimerDataStructure       Timer;
 AdvertisingStruct               SAPStruct;
 int                             Tick;
 
-extern void                     IpxGetInternetworkAddress();
-extern void                     IpxGetLocalTarget();
+extern void                     IpxGetInternetworkAddress( void );
+extern void                     IpxGetLocalTarget( void );
 
 static void MyDelay( unsigned amount )
 {
@@ -194,7 +194,7 @@ _DBG_IPX(("Posting RecECB[%d]\r\n", i));
     CSPXListenForSequencedPacket( &RecECB[i] );
 }
 
-static void PostListens()
+static void PostListens( void )
 {
     int         i;
 

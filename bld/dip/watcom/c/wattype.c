@@ -71,7 +71,7 @@ static void PushLoad( typeinfo *new )
     Type = new;
 }
 
-static void FreeLoad()
+static void FreeLoad( void )
 {
     if( Type->start != NULL ) {
         InfoSpecUnlock( Type->start );
@@ -79,13 +79,13 @@ static void FreeLoad()
     }
 }
 
-static void PopLoad()
+static void PopLoad( void )
 {
     FreeLoad();
     Type = Type->prev;
 }
 
-void KillTypeLoadStack()
+void KillTypeLoadStack( void )
 {
     Type = NULL;
 }

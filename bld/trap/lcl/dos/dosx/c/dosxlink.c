@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS protected mode "remote link" to real mode.
 *
 ****************************************************************************/
 
@@ -85,11 +84,10 @@
     short               OldPSP;
     char                BeenToProtMode;
 
-    extern short        DbgPSP();
-    extern short        GetPSP();
+    extern short        DbgPSP( void );
+    extern short        GetPSP( void );
     extern void         SetPSP( short );
     extern int          _fork(char *,char *);
-    extern short        DbgPSP();
 
 #endif
 
@@ -157,7 +155,7 @@ unsigned RemotePut( char *snd, unsigned len )
 }
 
 #ifndef SERVER
-void BackToProtMode()
+void BackToProtMode( void )
 {
     if( setjmp( RealModeState ) == 0 ) {
         _DBG_Writeln( "ENTERING PROTECTED MODE" );
@@ -167,7 +165,7 @@ void BackToProtMode()
 }
 
 
-void far BackFromProtMode()
+void far BackFromProtMode( void )
 {
     BeenToProtMode = 1;
     if( setjmp( ProtModeState ) == 0 ) {
@@ -393,9 +391,9 @@ exp:
 
 #ifdef SERVER
 #if defined(ACAD)
-void InitMeg1()
+void InitMeg1( void )
 {
-    extern short GetCS();
+    extern short GetCS( void );
     if( Meg1 == 0 ) {
         if( GetCS() & 3 ) {
             Meg1 = 0x37;

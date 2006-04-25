@@ -161,9 +161,9 @@ DWORD GetDR6( void );
 BOOL CheckWatchPoints( void );
 
 /* asyhook.c */
-extern void InitASynchHook();
-extern void FiniASynchHook();
-extern void HandleAsynch();
+extern void InitASynchHook( void );
+extern void FiniASynchHook( void );
+extern void HandleAsynch( void );
 
 /* accmap.c */
 void AddModuleLoaded( HANDLE mod, BOOL );
@@ -215,7 +215,7 @@ extern short _CopyMemory( WORD, DWORD, WORD, DWORD );
 
 /* notify.c */
 BOOL FAR PASCAL NotifyHandler( WORD id, DWORD data );
-void FAR PASCAL UnLockInput();
+void FAR PASCAL UnLockInput( void );
 
 /* wgod.c */
 short CopyMemory( WORD dseg, DWORD doff, WORD sseg, DWORD soff, short size );

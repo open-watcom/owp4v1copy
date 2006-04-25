@@ -213,7 +213,7 @@ unsigned RemotePut( char *rec, unsigned len )
     return( len );
 }
 
-static void nodelay()
+static void nodelay( void )
 {
     struct protoent     *proto;
     int                 delayoff;

@@ -591,7 +591,7 @@ static USHORT ReadBuffer( char *data, USHORT segv, ULONG offv, USHORT size )
 }
 
 
-unsigned ReqGet_sys_config()
+unsigned ReqGet_sys_config( void )
 {
     ULONG               version[2];
     uDB_t               buff;
@@ -693,7 +693,7 @@ unsigned ReqAddr_info( void )
     return( sizeof( *ret ) );
 }
 
-unsigned ReqMachine_data()
+unsigned ReqMachine_data( void )
 {
     machine_data_req    *acc;
     machine_data_ret    *ret;
@@ -1049,13 +1049,13 @@ static BOOL ExecuteUntilLinearAddressHit( ULONG lin )
     return( rc );
 }
 
-void AppSession()
+void AppSession( void )
 {
     if( !IsPMDebugger() )
         DosSelectSession( SID );
 }
 
-void DebugSession()
+void DebugSession( void )
 {
     if( !IsPMDebugger() )
         DosSelectSession( 0 );
@@ -1369,7 +1369,7 @@ unsigned ReqClear_watch( void )
 
 static volatile bool     BrkPending;
 
-void SetBrkPending()
+void SetBrkPending( void )
 {
     BrkPending = TRUE;
 }
@@ -1574,7 +1574,7 @@ unsigned ReqProg_step( void )
     return( rc );
 }
 
-unsigned ReqFile_write_console()
+unsigned ReqFile_write_console( void )
 {
     ULONG        len;
     ULONG        written_len;
@@ -1723,7 +1723,7 @@ unsigned ReqThread_thaw( void )
     return( DoThread( DBG_C_Resume ) );
 }
 
-unsigned ReqGet_message_text()
+unsigned ReqGet_message_text( void )
 {
     get_message_text_ret        *ret;
     char                        *err_txt;
@@ -1740,7 +1740,7 @@ unsigned ReqGet_message_text()
     return( sizeof( *ret ) + strlen( err_txt ) + 1 );
 }
 
-unsigned ReqGet_next_alias()
+unsigned ReqGet_next_alias( void )
 {
     get_next_alias_req  *acc;
     get_next_alias_ret  *ret;

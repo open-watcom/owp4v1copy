@@ -180,12 +180,12 @@ char SetHardMode( char hard )
     return old;
 }
 
-BOOL IsPMDebugger()
+BOOL IsPMDebugger( void )
 {
     return( HabDebugger != NULL );
 }
 
-static void CreateDummyWindow()
+static void CreateDummyWindow( void )
 {
     ULONG     flCreate;
     HWND      frame;
@@ -288,7 +288,7 @@ static void ExitSoftMode( PID pid )
 //    if (WinIsWindow(HabDebugger, AppActiveWnd)) WinSetActiveWindow(HWND_DESKTOP, AppActiveWnd);
 }
 
-static void EnterHardMode()
+static void EnterHardMode( void )
 {
     if( InHardMode )
         return;
@@ -296,7 +296,7 @@ static void EnterHardMode()
     InHardMode = TRUE;
 }
 
-static void ExitHardMode()
+static void ExitHardMode( void )
 {
     if( !InHardMode )
         return;

@@ -32,7 +32,7 @@
 #include <i86.h>
 #include "trpimp.h"
 
-extern int GtKey();
+extern int GtKey( void );
 extern unsigned KeyWaiting( void );
 
 #pragma aux GtKey =             \
@@ -48,7 +48,7 @@ extern unsigned KeyWaiting( void );
     parm caller [ax];
 
 
-unsigned ReqRead_user_keyboard()
+unsigned ReqRead_user_keyboard( void )
 {
     read_user_keyboard_req      *acc;
     read_user_keyboard_ret      *ret;
@@ -74,12 +74,12 @@ unsigned ReqRead_user_keyboard()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqSet_user_screen()
+unsigned ReqSet_user_screen( void )
 {
     return( 0 );
 }
 
-unsigned ReqSet_debug_screen()
+unsigned ReqSet_debug_screen( void )
 {
     return( 0 );
 }

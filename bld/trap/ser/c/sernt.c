@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Win32 Serial handling routines
+* Description:  Win32 Serial handling routines.
 *
 ****************************************************************************/
 
@@ -63,24 +63,24 @@ static DWORD readCacheLevel;
 
 void Trace(const char* fmt, ...)
 {
-    va_list va;
-    static char traceBuffer[1000];
-    
-    va_start(va, fmt);
+    va_list         va;
+    static char     traceBuffer[1000];
 
-    vsprintf(traceBuffer, fmt, va);
-    OutputDebugString(traceBuffer);
+    va_start( va, fmt );
 
-    va_end(va);
+    vsprintf( traceBuffer, fmt, va );
+    OutputDebugString( traceBuffer );
+
+    va_end( va );
 }
 
-void ZeroWaitCount()
+void ZeroWaitCount( void )
 {
     lastTickReset = GetTickCount();
 }
 
 
-unsigned WaitCount()
+unsigned WaitCount( void )
 {
     return( (GetTickCount() - lastTickReset) / 55 );
 }
@@ -88,38 +88,36 @@ unsigned WaitCount()
 
 char *InitSys( void )
 {
-    DCB devCon;
-    char deviceFileName[20];
-    COMMTIMEOUTS timeouts = { MAXDWORD, MAXDWORD, 1, 0, 0 };
+    DCB             devCon;
+    char            deviceFileName[20];
+    COMMTIMEOUTS    timeouts = { MAXDWORD, MAXDWORD, 1, 0, 0 };
 
-    sprintf(deviceFileName, "\\\\.\\COM%d", comPortNumber);
+    sprintf( deviceFileName, "\\\\.\\COM%d", comPortNumber );
 
-    Trace("InitSys: '%s'\n", deviceFileName);
+    Trace( "InitSys: '%s'\n", deviceFileName );
 
     currentBaudRateIndex = -1;
 
     ZeroWaitCount();
 
-    hSerial = CreateFile(deviceFileName,
+    hSerial = CreateFile( deviceFileName,
         GENERIC_READ | GENERIC_WRITE,
         0,
         NULL,
         OPEN_EXISTING,
         0L,
-        NULL);
+        NULL );
 
-    if(INVALID_HANDLE_VALUE == hSerial)
-    {
-        Trace("InitSys: CreateFile failed '%s'\n", deviceFileName);
+    if( INVALID_HANDLE_VALUE == hSerial ) {
+        Trace( "InitSys: CreateFile failed '%s'\n", deviceFileName );
         return NULL;
     }
 
     // Set up a big RX buffer
-    if(!SetupComm(hSerial, 1000, 1000))
-    {
+    if( !SetupComm( hSerial, 1000, 1000 ) ) {
         // This odd circumstance seems to occur if the port has been assigned to a printer
-        Trace("InitSys: Setupcom failed '%s'\n", deviceFileName);
-        CloseHandle(hSerial);
+        Trace( "InitSys: Setupcom failed '%s'\n", deviceFileName );
+        CloseHandle( hSerial );
         hSerial = INVALID_HANDLE_VALUE;
         return NULL;
     }
@@ -153,9 +151,8 @@ char *InitSys( void )
 
 void ResetSys( void )
 {
-    if(hSerial != INVALID_HANDLE_VALUE)
-    {
-        CloseHandle(hSerial);
+    if(hSerial != INVALID_HANDLE_VALUE) {
+        CloseHandle( hSerial );
         hSerial = INVALID_HANDLE_VALUE;
     }
 }
@@ -166,20 +163,18 @@ bool Terminate( void )
     return( TRUE );
 }
 
-static void FlushWriteCache()
+static void FlushWriteCache( void )
 {
-    if(writeCacheLevel > 0)
-    {
+    if( writeCacheLevel > 0 ) {
         DWORD nBytesWritten;
-        WriteFile(hSerial, writeCache, writeCacheLevel, &nBytesWritten, NULL);
+        WriteFile( hSerial, writeCache, writeCacheLevel, &nBytesWritten, NULL );
         writeCacheLevel = 0;
     }
 }
 
-static void InsertWriteCacheByte(BYTE newByte)
+static void InsertWriteCacheByte( BYTE newByte )
 {
-    if(writeCacheLevel >= sizeof(writeCache))
-    {
+    if( writeCacheLevel >= sizeof( writeCache) ) {
         FlushWriteCache();
     }
     writeCache[writeCacheLevel++] = newByte;
@@ -188,40 +183,34 @@ static void InsertWriteCacheByte(BYTE newByte)
 void SendByte( int value )
 {
     InsertWriteCacheByte(value);
-    if(!bBlockWriteMode)
-    {
+    if( !bBlockWriteMode ) {
         FlushWriteCache();
     }
 
     //  Trace("Ser: Wrote 0x%x\n", outByte);
 }
 
-void StartBlockTrans()
+void StartBlockTrans( void )
 {
     bBlockWriteMode = TRUE;
 }
 
-void StopBlockTrans()
+void StopBlockTrans( void )
 {
     bBlockWriteMode = FALSE;
     FlushWriteCache();
 }
 
 
-int GetByte()
+int GetByte( void )
 {
-    if(readCacheIndex < readCacheLevel)
-    {
+    if( readCacheIndex < readCacheLevel ) {
         return readCache[readCacheIndex++];
-    }
-    else
-    {
+    } else {
         // Cache is empty
         readCacheIndex = readCacheLevel = 0;
-        if(ReadFile(hSerial, readCache, sizeof(readCache), &readCacheLevel, NULL))
-        {
-            if(readCacheLevel > 0)
-            {
+        if( ReadFile( hSerial, readCache, sizeof( readCache ), &readCacheLevel, NULL ) ) {
+            if( readCacheLevel > 0) {
                 return readCache[readCacheIndex++];
             }
         }
@@ -230,7 +219,7 @@ int GetByte()
 }
 
 
-void ClearCom()
+void ClearCom( void )
 {
     writeCacheLevel = 0;
 }
@@ -238,19 +227,18 @@ void ClearCom()
 
 void SendABreak( void )
 {
-    EscapeCommFunction(hSerial, SETBREAK);
-    Sleep(BREAK_TIME * 55);
-    EscapeCommFunction(hSerial, CLRBREAK);
+    EscapeCommFunction( hSerial, SETBREAK );
+    Sleep( BREAK_TIME * 55 );
+    EscapeCommFunction( hSerial, CLRBREAK );
 }
 
 bool TestForBreak( void )
 {
-    DWORD errors;
-    COMSTAT comStat;
-    if(ClearCommError(hSerial, &errors, &comStat))
-    {
-        if(errors & CE_BREAK)
-        {
+    DWORD       errors;
+    COMSTAT     comStat;
+
+    if( ClearCommError( hSerial, &errors, &comStat ) ) {
+        if( errors & CE_BREAK ) {
             return TRUE;
         }
     }
@@ -266,13 +254,12 @@ bool Baud( int index )
 
     ErrorFlag = 0;
     BreakFlag = 0;
-    if( index == MIN_BAUD )
-    {
+    if( index == MIN_BAUD ) {
         Trace("Ser: Modem flag set\n");
         return( TRUE );
     }
 
-    if(index == currentBaudRateIndex) return( TRUE );
+    if( index == currentBaudRateIndex ) return( TRUE );
 
     GetCommState(hSerial, &devCon);
     devCon.BaudRate = 115200 / Divisor[index];
@@ -284,15 +271,13 @@ bool Baud( int index )
     return( TRUE );
 }
 
-char *ParsePortSpec( char * *spec )
+char *ParsePortSpec( char **spec )
 {
     comPortNumber = 1;
-    if( spec != NULL )
-    {
+    if( spec != NULL ) {
         char ch = **spec;
 
-        if( ch >= '1' && ch <= '9' )
-        {
+        if( ch >= '1' && ch <= '9' ) {
             comPortNumber = ch - '0';
             ch = *++*spec;
         }
@@ -303,12 +288,12 @@ char *ParsePortSpec( char * *spec )
 }
 
 
-void DonePort(void)
+void DonePort( void )
 {
 }
 
 
-bool CheckPendingError()
+bool CheckPendingError( void )
 {
     int old_error;
 
@@ -318,23 +303,20 @@ bool CheckPendingError()
 }
 
 
-void ClearLastChar()
+void ClearLastChar( void )
 {
     // Wait for the output buffer to empty
     FlushWriteCache();
-    for(;;)
-    {
-        DWORD errors;
-        COMSTAT comStat;
-        if(!ClearCommError(hSerial, &errors, &comStat))
-        {
+    for( ;; ) {
+        DWORD       errors;
+        COMSTAT     comStat;
+
+        if( !ClearCommError( hSerial, &errors, &comStat ) ) {
             break;
         }
-        if(comStat.cbOutQue == 0)
-        {
+        if( comStat.cbOutQue == 0 ) {
             break;
         }
-        Sleep(0);
+        Sleep( 0 );
     }
 }
-

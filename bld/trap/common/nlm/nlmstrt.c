@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  NetWare trap file startup.
 *
 ****************************************************************************/
 
@@ -239,7 +238,7 @@ int toupper( int c )
 
 static char *args[] = { "", 0 };
 
-static void CloseAllScreens()
+static void CloseAllScreens( void )
 {
     if( screenID ) CloseScreen( screenID );
     screenID = 0;
@@ -265,7 +264,7 @@ int _Check( void )
 }
 
 
-void    MainHelper()
+void    MainHelper( void )
 {
     if( OpenScreen( TRP_The_WATCOM_Debugger, ScreenTag, &screenID ) != 0 ) {
         screenID = 0;

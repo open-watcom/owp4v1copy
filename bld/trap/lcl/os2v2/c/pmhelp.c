@@ -108,7 +108,7 @@ VOID AbortLocker(HWND hwndFrame, HWND hwndClient)
 
 /* This bit is very, very tricky. If we lock the PM and the user switches  */
 /* to PM, there's a good chance he/she will be stranded with no way back!  */
-void UnLockIt()
+void UnLockIt( void )
 {
     if (Locked) {
         WinThreadAssocQueue(Hab, Hmq);
@@ -118,13 +118,13 @@ void UnLockIt()
     }
 }
 
-VOID APIENTRY CleanUp()
+VOID APIENTRY CleanUp( void )
 {
     UnLockIt();
     DosExitList(EXLST_EXIT, (PFNEXITLIST)CleanUp);
 }
 
-void LockIt()
+void LockIt( void )
 {
     if (!Locked) {
         WinThreadAssocQueue(Hab, Hmq);
@@ -134,7 +134,7 @@ void LockIt()
     }
 }
 
-static void SwitchBack()
+static void SwitchBack( void )
 {
     ULONG       written;
     static      pmhelp_packet data;
@@ -275,7 +275,7 @@ MRESULT EXPENTRY MyWindowProc(HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2)
 
 #define STACK_SIZE 16384
 
-INT main(int argc, char **argv)
+INT main( int argc, char **argv )
 {
     QMSG    qmsg;                       /* Message from message queue   */
     ULONG   flCreate;                   /* Window creation control flags*/

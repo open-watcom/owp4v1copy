@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  DOS standard debugger access functions.
+* Description:  DOS real mode debugger access functions.
 *
 ****************************************************************************/
+
 
 //#define DEBUG_ME
 
@@ -72,7 +73,7 @@ typedef enum {
        " pop ax "     \
     value [ax];
 
-extern void MoveBytes();
+extern void MoveBytes( short, short, short, short, short );
 extern unsigned short MyCS( void );
 extern unsigned short MyFlags( void );
 
@@ -126,7 +127,7 @@ extern long             DOSLoadProg(char far *, pblock far *);
 extern addr_seg         DOSTaskPSP(void);
 extern void             EndUser(void);
 extern unsigned_8       RunProg(trap_cpu_regs *, trap_cpu_regs *);
-extern void             SetWatch386();
+extern void             SetWatch386( unsigned, watch far * );
 extern void             SetWatchPnt(unsigned, watch far *);
 extern void             SetSingleStep(void);
 extern void             SetSingle386(void);
@@ -225,7 +226,7 @@ char * hex( unsigned long num )
     #define hex( n )
 #endif
 
-unsigned ReqGet_sys_config()
+unsigned ReqGet_sys_config( void )
 {
     get_sys_config_ret  *ret;
 
@@ -251,7 +252,7 @@ unsigned ReqGet_sys_config()
 }
 
 
-unsigned ReqMap_addr()
+unsigned ReqMap_addr( void )
 {
     word            seg;
     int             count;
@@ -287,7 +288,7 @@ unsigned ReqMap_addr()
 }
 
 //OBSOLETE - use ReqMachine_data
-unsigned ReqAddr_info()
+unsigned ReqAddr_info( void )
 {
     addr_info_ret       *ret;
 
@@ -296,7 +297,7 @@ unsigned ReqAddr_info()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqMachine_data()
+unsigned ReqMachine_data( void )
 {
     machine_data_ret    *ret;
     unsigned_8          *data;
@@ -309,7 +310,7 @@ unsigned ReqMachine_data()
     return( sizeof( *ret ) + sizeof( *data ) );
 }
 
-unsigned ReqChecksum_mem()
+unsigned ReqChecksum_mem( void )
 {
     unsigned_8          far *ptr;
     unsigned long       sum = 0;
@@ -338,7 +339,7 @@ static bool IsInterrupt( addr48_ptr addr, unsigned length )
 }
 
 
-unsigned ReqRead_mem()
+unsigned ReqRead_mem( void )
 {
     bool          int_tbl;
     read_mem_req  *acc;
@@ -363,7 +364,7 @@ unsigned ReqRead_mem()
 }
 
 
-unsigned ReqWrite_mem()
+unsigned ReqWrite_mem( void )
 {
     bool          int_tbl;
     write_mem_req *acc;
@@ -392,7 +393,7 @@ unsigned ReqWrite_mem()
 }
 
 
-unsigned ReqRead_io()
+unsigned ReqRead_io( void )
 {
     read_io_req *acc;
     void        *data;
@@ -416,7 +417,7 @@ unsigned ReqRead_io()
 }
 
 
-unsigned ReqWrite_io()
+unsigned ReqWrite_io( void )
 {
     write_io_req        *acc;
     write_io_ret        *ret;
@@ -443,7 +444,7 @@ unsigned ReqWrite_io()
 }
 
 //OBSOLETE - use ReqRead_regs
-unsigned ReqRead_cpu()
+unsigned ReqRead_cpu( void )
 {
     void          *regs;
     read_cpu_ret  *ret;
@@ -455,7 +456,7 @@ unsigned ReqRead_cpu()
 }
 
 //OBSOLETE - use ReqRead_regs
-unsigned ReqRead_fpu()
+unsigned ReqRead_fpu( void )
 {
     void    far *regs;
 
@@ -471,7 +472,7 @@ unsigned ReqRead_fpu()
 }
 
 //OBSOLETE - use ReqWrite_regs
-unsigned ReqWrite_cpu()
+unsigned ReqWrite_cpu( void )
 {
     trap_cpu_regs *regs;
 
@@ -481,7 +482,7 @@ unsigned ReqWrite_cpu()
 }
 
 //OBSOLETE - use ReqWrite_regs
-unsigned ReqWrite_fpu()
+unsigned ReqWrite_fpu( void )
 {
     void    far *regs;
 
@@ -588,7 +589,7 @@ static EXE_TYPE CheckEXEType( char *name )
 
 static char DosExtList[] = { ".com\0.exe\0" };
 
-unsigned ReqProg_load()
+unsigned ReqProg_load( void )
 {
     addr_seg        psp;
     pblock          parmblock;
@@ -707,7 +708,7 @@ unsigned ReqProg_load()
 }
 
 
-unsigned ReqProg_kill()
+unsigned ReqProg_kill( void )
 {
     prog_kill_ret       *ret;
 
@@ -729,7 +730,7 @@ out( "done AccKillProg\r\n" );
 }
 
 
-unsigned ReqSet_watch()
+unsigned ReqSet_watch( void )
 {
     watch               *curr;
     set_watch_req       *wp;
@@ -765,13 +766,13 @@ unsigned ReqSet_watch()
     return( sizeof( *wr ) );
 }
 
-unsigned ReqClear_watch()
+unsigned ReqClear_watch( void )
 {
     WatchCount = 0;
     return( 0 );
 }
 
-unsigned ReqSet_break()
+unsigned ReqSet_break( void )
 {
     char            far *loc;
     set_break_req   *acc;
@@ -791,7 +792,7 @@ unsigned ReqSet_break()
 }
 
 
-unsigned ReqClear_break()
+unsigned ReqClear_break( void )
 {
     clear_break_req     *bp;
 
@@ -851,7 +852,7 @@ static int ClearDebugRegs( int trap )
 }
 
 
-static bool SetDebugRegs()
+static bool SetDebugRegs( void )
 {
     int                 needed;
     int                 i;
@@ -970,17 +971,17 @@ static unsigned ProgRun( bool step )
     return( sizeof( *ret ) );
 }
 
-unsigned ReqProg_go()
+unsigned ReqProg_go( void )
 {
     return( ProgRun( FALSE ) );
 }
 
-unsigned ReqProg_step()
+unsigned ReqProg_step( void )
 {
     return( ProgRun( TRUE ) );
 }
 
-unsigned ReqGet_next_alias()
+unsigned ReqGet_next_alias( void )
 {
     get_next_alias_ret  *ret;
 
@@ -990,7 +991,7 @@ unsigned ReqGet_next_alias()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqGet_lib_name()
+unsigned ReqGet_lib_name( void )
 {
     char                *ch;
     get_lib_name_ret    *ret;
@@ -1002,7 +1003,7 @@ unsigned ReqGet_lib_name()
     return( sizeof( *ret ) + 1 );
 }
 
-unsigned ReqGet_err_text()
+unsigned ReqGet_err_text( void )
 {
     static const char *const DosErrMsgs[] = {
 #include "dosmsgs.h"
@@ -1020,7 +1021,7 @@ unsigned ReqGet_err_text()
     return( strlen( err_txt ) + 1 );
 }
 
-unsigned ReqGet_message_text()
+unsigned ReqGet_message_text( void )
 {
     get_message_text_ret        *ret;
     char                        *err_txt;
@@ -1037,7 +1038,7 @@ unsigned ReqGet_message_text()
     return( sizeof( *ret ) + strlen( err_txt ) + 1 );
 }
 
-char *GetExeExtensions()
+char *GetExeExtensions( void )
 {
     return( DosExtList );
 }
@@ -1096,7 +1097,7 @@ out( "done TrapInit\r\n" );
     return( ver );
 }
 
-void TRAPENTRY TrapFini()
+void TRAPENTRY TrapFini( void )
 {
 out( "in TrapFini\r\n" );
     FiniVectors();

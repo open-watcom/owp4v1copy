@@ -84,7 +84,7 @@ TID             TidDebugee;
     #define Say( x )
 #endif
 
-void UnLockIt()
+void UnLockIt( void )
 {
     if( Locked ) {
         WinThreadAssocQueue( Hab, Hmq );
@@ -94,13 +94,13 @@ void UnLockIt()
     }
 }
 
-VOID APIENTRY CleanUp()
+VOID APIENTRY CleanUp( void )
 {
     UnLockIt();
     DosExitList( EXLST_EXIT, (PFNEXITLIST)CleanUp );
 }
 
-void LockIt()
+void LockIt( void )
 {
     if( !Locked ) {
         WinThreadAssocQueue( Hab, Hmq );
@@ -110,7 +110,7 @@ void LockIt()
     }
 }
 
-static void SwitchBack()
+static void SwitchBack( void )
 {
     USHORT      written;
 
@@ -274,7 +274,7 @@ INT main( int argc, char **argv )
     AbortIf( ( hwndFrame = WinCreateStdWindow( HWND_DESKTOP, 0L,
                &flCreate, "MyWindow", "", 0L,
                NULL, ID_WINDOW, &hwndClient ) ) == 0L );
-    WinSetWindowText(hwndFrame, TRP_The_WATCOM_Debugger );
+    WinSetWindowText( hwndFrame, TRP_The_WATCOM_Debugger );
 
     width = WinQuerySysValue( HWND_DESKTOP, SV_CXSCREEN );
     AbortIf( !WinSetWindowPos( hwndFrame, HWND_TOP, 0,

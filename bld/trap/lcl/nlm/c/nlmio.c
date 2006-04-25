@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Novell NetWare NLM trap file I/O.
 *
 ****************************************************************************/
 
@@ -62,13 +61,13 @@ extern LONG ConvertPathString(
 
 #define FIRST_HANDLE    5
 
-#define		FILE_ATTRIB_MASK	(_A_NORMAL | _A_HIDDEN | _A_RDONLY)
-/* 
-//	RWPRIVS | DENYW - 
-//	as 0x0B is 1011 I don't know which one is which or has two bits
-//	though I would hazard a guess as RWPRIVS
+#define     FILE_ATTRIB_MASK    (_A_NORMAL | _A_HIDDEN | _A_RDONLY)
+/*
+//  RWPRIVS | DENYW -
+//  as 0x0B is 1011 I don't know which one is which or has two bits
+//  though I would hazard a guess as RWPRIVS
 */
-#define		FILE_OPEN_PRIVS	0x0B
+#define     FILE_OPEN_PRIVS 0x0B
 
 /* From NLMCLIB.C */
 
@@ -169,13 +168,13 @@ static long OpenServer( LONG (*routine)(), BYTE *name,
 }
 
 
-static int ErrorCode()
+static int ErrorCode( void )
 {
     return( 0xFFFF0000 | ccode );
 }
 
 
-static my_file *FindFile()
+static my_file *FindFile( void )
 {
     int i;
     my_file     *p;
@@ -298,7 +297,7 @@ int IOOpen( char *openname, int openmode )
     return( ccode ? ErrorCode() : ( p->handlenum + FIRST_HANDLE ) );
 }
 
-static void BadFile()
+static void BadFile( void )
 {
     Abend( "Debug server detected an invalid file (Close)\r\n" );
 }
