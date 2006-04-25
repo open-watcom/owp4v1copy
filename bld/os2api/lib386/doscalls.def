@@ -291,7 +291,11 @@ EXPORTS
     DosQueryModFromEIP                          @360
     DosTmrQueryFreq                             @362
     DosTmrQueryTime                             @363
+    DosAliasPerfCtrs                            @364
+    DosConfigurePerf                            @365
+    DosDeconPerf                                @366
     DosRegisterPerfCtrs                         @367
+    DosQuerySysState                            @368
     DosQueryABIOSSupport                        @371
     DosEnumAttribute                            @372
     DosQueryDOSProperty                         @373
