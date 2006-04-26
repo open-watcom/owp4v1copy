@@ -26,8 +26,8 @@ static void DrawBitmap( HDC, HBITMAP, int, int );
 POINT RandPoint( RECT, POINT );
 void _EXPORT FAR PASCAL DrawBolt( int, int, LPSTR );
 static void ShootBolt( HWND );
-static void BoomSound();
-static void BoltSound();
+static void BoomSound( void );
+static void BoltSound( void );
 
 /*
  * WinMain - initialization, message loop
@@ -1071,8 +1071,8 @@ static void ShootBolt( HWND window_handle )
  * this function is called after each time BoltSound is called
  * Sound is not implemented for the NT version
  */
-static void BoomSound()
-/*********************/
+static void BoomSound( void )
+/***************************/
 {
 #ifndef __NT__
     short i;
@@ -1102,8 +1102,8 @@ static void BoomSound()
  * create a tone that goes from high-pitched to low-pitched
  * Sound is not implemented for the NT version
  */
-static void BoltSound()
-/*********************/
+static void BoltSound( void )
+/***************************/
 {
 #ifndef __NT__
     short i;

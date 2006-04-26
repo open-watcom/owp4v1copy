@@ -24,8 +24,8 @@ static char  *WideTitle =       { "Sun Mon Tue Wed Thu Fri Sat" };
 static char  *NarrowTitle =     { "Su Mo Tu We Th Fr Sa" };
 
 
-int main()
-/********/
+int main( void )
+/**************/
 
 {
     time_t                      curr_time;
@@ -183,8 +183,8 @@ void PosCursor( row, col )
 }
 
 
-void ClearScreen()
-/****************/
+void ClearScreen( void )
+/**********************/
 
 {
 #ifdef __OS2__

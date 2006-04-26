@@ -176,8 +176,8 @@ BOOL _EXPORT FAR PASCAL About( HWND win_handle, unsigned msg,
 }
 
 
-static void TransferClockToAlarm()
-/*********************************
+static void TransferClockToAlarm( void )
+/***************************************
 
     Transfer the digits from the Clock array to the Alarm array.
 */
@@ -189,8 +189,8 @@ static void TransferClockToAlarm()
     }
 }
 
-static void TransferAlarmToClock()
-/*********************************
+static void TransferAlarmToClock( void )
+/***************************************
 
     Transfer digits from the Alarm array to the Clock array
 */
@@ -218,8 +218,8 @@ static void RePaintTheClock( HWND win_handle )
 }
 
 
-static void CheckAlarm()
-/***********************
+static void CheckAlarm( void )
+/*****************************
 
     See if the alarm has gone off, and pop up a message box if it has.
 */
@@ -262,8 +262,8 @@ static void SetNumberOfDigits( digit_index num )
 }
 
 
-static void SetAlarm()
-/*********************
+static void SetAlarm( void )
+/***************************
 
     Put the clock into alarm setting mode.
 */
@@ -281,8 +281,8 @@ static void SetAlarm()
     TransferAlarmToClock();
 }
 
-static void RunTheClock()
-/************************
+static void RunTheClock( void )
+/******************************
 
     Put the clock into running mode.
 */
@@ -918,8 +918,8 @@ static void SetColonPos( colon_index i )
 }
 
 
-static void InitializeTheClock()
-/*******************************
+static void InitializeTheClock( void )
+/*************************************
 
     Initialize each digit of the clock. Calculate the screen position
     of each segment of each digit of the clock, as well as the
@@ -1018,8 +1018,8 @@ static void ReSize( pixels width, pixels height, WORD type )
     InitializeTheClock();
 }
 
-void CreateSupplies()
-/********************
+void CreateSupplies( void )
+/**************************
 
     Create the art supplies we need
 */
@@ -1029,8 +1029,8 @@ void CreateSupplies()
 }
 
 
-void DeleteSupplies()
-/********************
+void DeleteSupplies( void )
+/**************************
 
     Delete our art supplies
 */

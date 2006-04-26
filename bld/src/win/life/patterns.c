@@ -71,8 +71,8 @@ extern BOOL ReadAPatternFile( char *name, int i )
 }
 
 
-extern BOOL ReadPatterns()
-/*************************
+extern BOOL ReadPatterns( void )
+/*******************************
 
     Read in all the pattern files from disk.
     (*.LIF in the same directory LIFE.EXE)
@@ -109,8 +109,8 @@ extern BOOL ReadPatterns()
 }
 
 
-extern void FreePatterns()
-/*************************
+extern void FreePatterns( void )
+/*******************************
 
     Free up the patterns array, and corresponding bit maps
 */
@@ -191,8 +191,8 @@ extern void TransformPatterns( void (*rtn)(char *) )
 }
 
 
-static void LoadPatternFile()
-/****************************
+static void LoadPatternFile( void )
+/**********************************
 
     Load the pattern file named in "Buffer" into our pattern menu.
 */
@@ -204,8 +204,8 @@ static void LoadPatternFile()
 }
 
 
-extern void WritePatternFile()
-/*****************************
+extern void WritePatternFile( void )
+/***********************************
 
     Write the selected region to a pattern file (Prompt for name)
 */
@@ -246,8 +246,8 @@ extern void WritePatternFile()
 }
 
 
-extern void LoadNewPattern()
-/***************************
+extern void LoadNewPattern( void )
+/*********************************
 
     Load a new pattern file into the menu (Prompt for name)
 */
@@ -310,8 +310,8 @@ static HBITMAP CreateAMenuBitMap( char *pattern, pixels *total_height )
 
 
 
-extern void CreatePatternMenu()
-/****************************
+extern void CreatePatternMenu( void )
+/************************************
 
     Create the "&Pattern" menu, based upon MenuPatterns[]
 */

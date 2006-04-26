@@ -24,23 +24,22 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS interrupt thunks for Win386 extender.
 *
 ****************************************************************************/
 
 
 #include <dos.h>
 
-int      _fintdos(union REGS far *, union REGS far *);
-int      _fintdosx(union REGS far *, union REGS far *, struct SREGS far *);
+int     _fintdos( union REGS far *, union REGS far * );
+int     _fintdosx( union REGS far *, union REGS far *, struct SREGS far * );
 int     _fint86( int, union REGS far *, union REGS far * );
 int     _fint86x( int, union REGS far *, union REGS far *, struct SREGS far * );
 void    _fintr( int, union REGPACK far * );
 
-extern  int                     BDDoDosCall();
-extern  int                     BDDoDosxCall();
-extern  int                     _dosretax();
+extern  int                     BDDoDosCall( union REGS far *, union REGS far * );
+extern  int                     BDDoDosxCall( union REGS far *, union REGS far *, struct SREGS far * );
+extern  int                     _dosretax( int, int );
 
 #pragma aux               BDDoDosCall =                         \
         0x1e           /* push ds */                            \
@@ -128,60 +127,58 @@ void _fintr( int intno, union REGPACK far *regs )
 }
 
 int _fintdos( union REGS far *inregs, union REGS far *outregs )
-    {
-        int             status;
+{
+    int             status;
 
-        status = BDDoDosCall( inregs, outregs );
-        outregs->x.cflag = status;
-        _dosretax( outregs->x.ax, status );
-        return( outregs->x.ax );
-    }
+    status = BDDoDosCall( inregs, outregs );
+    outregs->x.cflag = status;
+    _dosretax( outregs->x.ax, status );
+    return( outregs->x.ax );
+}
 
-int _fintdosx( union REGS far *inregs, union REGS far *outregs,
-                struct SREGS far *segregs )
-    {
-        int             status;
+int _fintdosx( union REGS far *inregs, union REGS far *outregs, struct SREGS far *segregs )
+{
+    int             status;
 
-        status = BDDoDosxCall( inregs, outregs, segregs );
-        outregs->x.cflag = status;
-        _dosretax( outregs->x.ax, status );
-        return( outregs->x.ax );
-    }
+    status = BDDoDosxCall( inregs, outregs, segregs );
+    outregs->x.cflag = status;
+    _dosretax( outregs->x.ax, status );
+    return( outregs->x.ax );
+}
 
-int _fint86x( int intno, union REGS far *inr, union REGS far *outr,
-        struct SREGS far *sr )
-    {
-        union REGPACK r;
+int _fint86x( int intno, union REGS far *inr, union REGS far *outr, struct SREGS far *sr )
+{
+    union REGPACK r;
 
-        r.x.ax = inr->x.ax;
-        r.x.bx = inr->x.bx;
-        r.x.cx = inr->x.cx;
-        r.x.dx = inr->x.dx;
-        r.x.si = inr->x.si;
-        r.x.di = inr->x.di;
-        r.x.ds = sr->ds;
-        r.x.es = sr->es;
-        _fintr( intno, (union REGPACK far *) &r );
-        outr->x.ax = r.x.ax;
-        outr->x.bx = r.x.bx;
-        outr->x.cx = r.x.cx;
-        outr->x.dx = r.x.dx;
-        outr->x.si = r.x.si;
-        outr->x.di = r.x.di;
-        outr->x.cflag = r.x.flags & INTR_CF;
-        sr->ds = r.x.ds;
-        sr->es = r.x.es;
-        return( r.x.ax );
-    }
+    r.x.ax = inr->x.ax;
+    r.x.bx = inr->x.bx;
+    r.x.cx = inr->x.cx;
+    r.x.dx = inr->x.dx;
+    r.x.si = inr->x.si;
+    r.x.di = inr->x.di;
+    r.x.ds = sr->ds;
+    r.x.es = sr->es;
+    _fintr( intno, (union REGPACK far *) &r );
+    outr->x.ax = r.x.ax;
+    outr->x.bx = r.x.bx;
+    outr->x.cx = r.x.cx;
+    outr->x.dx = r.x.dx;
+    outr->x.si = r.x.si;
+    outr->x.di = r.x.di;
+    outr->x.cflag = r.x.flags & INTR_CF;
+    sr->ds = r.x.ds;
+    sr->es = r.x.es;
+    return( r.x.ax );
+}
 
 int _fint86( int intno, union REGS far *inr, union REGS far *outr )
-    {
+{
 #ifdef DLL32
-        static struct SREGS sr;
+    static struct SREGS sr;
 #else
-        struct SREGS sr;
+    struct SREGS        sr;
 #endif
 
-        segread( &sr );
-        return( _fint86x( intno, inr, outr, (struct SREGS far *) &sr ) );
-    }
+    segread( &sr );
+    return( _fint86x( intno, inr, outr, (struct SREGS far *) &sr ) );
+}

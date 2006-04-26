@@ -47,7 +47,7 @@ static void calc_time( TIMESTAMP *difference,
     difference->nanosecs = nano_secs;
 }
 
-static void init()
+static void init( void )
 {
     ULONG     rc;
     ULONG     action;

@@ -17,8 +17,8 @@ extern void Error( char *str )
 }
 
 
-extern BOOL NoMemory()
-/********************/
+extern BOOL NoMemory( void )
+/**************************/
 {
     Error( "Out of memory" );
     return( FALSE );
@@ -237,8 +237,8 @@ BOOL _EXPORT FAR PASCAL Rules( HWND win_handle, unsigned msg,
 
 
 
-extern void FlushMouse()
-/***********************
+extern void FlushMouse( void )
+/*****************************
 
     Flush out any pending mouse events.
 */
@@ -263,12 +263,12 @@ static void DisplayDialog( char *name, BOOL _EXPORT FAR PASCAL rtn() )
 }
 
 
-static void ToPauseMode()
+static void ToPauseMode( void )
 {
     Mode = MENU_PAUSE;
 }
 
-static void ToResumeMode()
+static void ToResumeMode( void )
 {
     Mode = MENU_RESUME;
     SelectOff();
@@ -276,20 +276,20 @@ static void ToResumeMode()
 }
 
 
-static void ToSelectMode()
+static void ToSelectMode( void )
 {
     MouseMode = MENU_SELECT;
     Mode = MENU_PAUSE;
 }
 
-static void ToPatternFlipMode()
+static void ToPatternFlipMode( void )
 {
     SelectOff();
     MouseMode = MENU_FLIP_PATTERNS;
 }
 
 
-static void ToSingleStepMode()
+static void ToSingleStepMode( void )
 {
     SelectOff();
     MouseMode = Mode = MENU_SINGLE_STEP;
@@ -417,8 +417,8 @@ static void InitMenu( HMENU mh )
     }
 }
 
-static BOOL SingleStep()
-/***********************
+static BOOL SingleStep( void )
+/*****************************
 
     Process a single step request
 */
@@ -429,8 +429,8 @@ static BOOL SingleStep()
 }
 
 
-extern void SetCaption()
-/***********************
+extern void SetCaption( void )
+/*****************************
 
     Set the caption to indicate generation number, etc.
 */
@@ -451,8 +451,8 @@ extern void SetCaption()
 }
 
 
-static void Cleanup()
-/********************
+static void Cleanup( void )
+/**************************
 
     Free up all our memory, etc
 */
@@ -579,8 +579,8 @@ extern BOOL TurnOffCell( HDC dc, cell_ptr cell, pixels x, pixels y )
 }
 
 
-static void RePaint()
-/********************
+static void RePaint( void )
+/**************************
 
     Re-draw the entire screen. It's been trashed.
 */
