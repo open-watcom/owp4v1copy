@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Compile and run a line drawing function.
 *
 ****************************************************************************/
 
@@ -36,13 +35,10 @@
 #include "gbios.h"
 
 
-/*  Use PASCAL pragma to define our convention for
-    calling the 'compiled' line drawing routine.    */
-
-#define LINE_FUNC   pascal
+/*  Specify convention for calling the 'compiled' line drawing routine.    */
 
 #if defined( __386__ )
-    #pragma aux pascal "*" parm caller [es edi] [eax] [ebx] [ecx] [edx] [esi];
+    #pragma aux LINE_FUNC "*" parm caller [es edi] [eax] [ebx] [ecx] [edx] [esi];
     #define MAXLEN      25
     #if defined( __QNX__ )
       #define LINERET     0xCB  // QNX uses a segmented 32 bit model
@@ -50,20 +46,21 @@
       #define LINERET     0xC3
     #endif
 #else
-    #pragma aux pascal "*" far parm caller [es di] [ax] [bx] [cx] [dx] [si];
+    #pragma aux LINE_FUNC "*" far parm caller [es di] [ax] [bx] [cx] [dx] [si];
     #define MAXLEN      20
     #define LINERET     0xCB
 #endif
-
 
 #if defined( __QNX__ )
     #define COMP_FAR    _far            // compile into another segment
     #define FUNC_FAR    _far            // code segment is always far for QNX
 #else
     #define COMP_FAR                    // compile onto the stack
-    #define FUNC_FAR    _WCI86FAR               // near for 32-bit/far for 16-bit
+    #define FUNC_FAR    _WCI86FAR       // near for 32-bit/far for 16-bit
 #endif
 
+typedef void (FUNC_FAR line_fn)( char far *, int, int, int, int, int );
+#pragma aux (LINE_FUNC) line_fn;
 
 #define OutByte( p )    *stack++ = p;
 #define OutInt( p )     *( (unsigned int COMP_FAR *)stack ) = p; \
@@ -99,8 +96,7 @@ void _L0DrawLine( char far *screen_ptr, short color, short style,
     char                major_len;
     char COMP_FAR       *stack;
     char COMP_FAR       *start;
-    void LINE_FUNC      (FUNC_FAR * line)( char far *, short, short,
-                                            short, short, short );
+    line_fn             *line;
 
     plot_len = *( (char FUNC_FAR *)plot - 1 );
     minor_len = *( (char FUNC_FAR *)minorfn - 1 );
@@ -118,7 +114,7 @@ void _L0DrawLine( char far *screen_ptr, short color, short style,
         return;         /* not enough memory to proceed */
     }
     #if defined( __386__ )
-        line = (void LINE_FUNC *) stack;
+        line = (line_fn *)stack;
     #else
         line = MK_FP( _StackSeg, FP_OFF( stack ) );
     #endif

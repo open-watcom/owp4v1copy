@@ -62,9 +62,8 @@ void _L1PutPic( short px, short py, short line_len,
 #endif
     char                *tmp;
     gr_device _FARD     *dev_ptr;       /* pointer to _CurrState->deviceptr */
-    char _WCI86HUGE *        pic;            /* buffer to store image            */
-    void PIC_FUNC       (near *copy)(char far *, char far *, short,
-                                         int, int ); /* pointer to copy routine          */
+    char _WCI86HUGE     *pic;           /* buffer to store image            */
+    pic_fn near         *copy;          /* pointer to copy routine          */
 
     x1 = px;                            /* new rectangle for restoring image*/
     y1 = py;

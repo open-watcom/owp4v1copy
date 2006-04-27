@@ -105,8 +105,8 @@ int main( void )
 }
 
 
-static void Do_Demo1()
-/*==================*/
+static void Do_Demo1( void )
+/*========================*/
 {
     int                 width, y;
 
@@ -134,8 +134,8 @@ static void Do_Demo1()
 }
 
 
-static void Press_any_key()
-/*=======================*/
+static void Press_any_key( void )
+/*=============================*/
 
 /*  wait for keyboard input */
 {

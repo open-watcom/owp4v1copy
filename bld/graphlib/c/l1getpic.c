@@ -63,10 +63,8 @@ void _L1GetPic( short x1, short y1, short x2, short y2,
   #endif
     char                *tmp;
     gr_device _FARD     *dev_ptr;       /* pointer to _CurrState->deviceptr */
-    char _WCI86HUGE *        pic;            /* buffer to store image            */
-     /* pointer to copy routine          */
-    void PIC_FUNC       (near *copy)( char far *, char far *,
-                                       short, short, short );
+    char _WCI86HUGE     *pic;           /* buffer to store image            */
+    pic_fn near         *copy;          /* pointer to copy routine          */
 #endif
 
     if( x1 > x2 ) {         // ensure x1 < x2

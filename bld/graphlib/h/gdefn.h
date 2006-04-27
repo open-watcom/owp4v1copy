@@ -206,7 +206,7 @@ extern short                _L0BlockClip( short *, short *, short *, short * );
 extern void                 _L0DrawLine( char far *, short, short, short,
                                          short, short, void (near *)(),
                                          void (near *)(), void (near *)() );
-extern void                 _L0Ellipse( short, short, short, short, void (*)() );
+extern void                 _L0Ellipse( short, short, short, short, void (*)( short, short, short ) );
 extern short                _L0LineClip( short *, short *, short *, short * );
 
 extern void                 _L1Arc( short, short, short, short, short,

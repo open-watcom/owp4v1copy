@@ -168,7 +168,7 @@ static short            _YVecDir = 0;
 #if !defined( _DEFAULT_WINDOWS )
 
 static void _WCI86FAR *Alloc( unsigned short size )
-//============================================
+//=================================================
 
 {
 #if defined( __QNX__ )
@@ -1099,7 +1099,7 @@ static void _outdot( short x, short y )
 
 {
     gr_device _FARD     *dev_ptr;
-    void DOT_FUNC       ( near *putdot )( char far *, short, short );
+    put_dot_fn near     *putdot;
 
     if( _L1OutCode( x, y ) == 0 ) {             /* check if inside viewport */
         dev_ptr = _CurrState->deviceptr;

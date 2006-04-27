@@ -359,7 +359,7 @@ static short PaintLeft( short x, short y, short stop_color, short border_flag )
 {
     short               xleft;
     /* pointer to scan function */
-    short SCAN_FUNC     (near *scan)( char far *, short, short, short, char, short );         
+    short SCAN_FUNC     (near *scan)( char far *, int, int, int, int, int );
     gr_device _FARD     *dev_ptr;
     short               len;
 
@@ -395,7 +395,7 @@ static short PaintRight( short x, short y, short stop_color, short border_flag )
 {
     short               xright;
     /* pointer to scan function */
-    short SCAN_FUNC     (near *scan)( char far *, short, short, short, char, short );
+    short SCAN_FUNC     (near *scan)( char far *, int, int, int, int, int );
     gr_device _FARD     *dev_ptr;
     short               len;
 
