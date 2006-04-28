@@ -58,6 +58,7 @@ static void dmp_exe( void )
     Data_count = 0;
     Sizeleft = 0;
     Num_buff = -1;
+    Byte_swap = FALSE;
     if( Options_dmp & EXE_INFO ) {
         dos_dmp = Dmp_dos_head();
         if( dos_dmp == 2 ) {

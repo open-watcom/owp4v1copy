@@ -119,3 +119,45 @@ void Putdecbz( unsigned_16 num, unsigned_16 len )
         DecBZRecurse( num, len );
     }
 }
+
+/* 16/32-bit byte swapping routines */
+
+uint_32 get_u32( uint_32 *src )
+/*****************************/
+{
+    if( Byte_swap ) {
+        return( SWAPNC_32( *src ) );
+    } else {
+        return( *src );
+    }
+}
+
+int_32 get_s32( int_32 *src )
+/***************************/
+{
+    if( Byte_swap ) {
+        return( SWAPNC_32( *src ) );
+    } else {
+        return( *src );
+    }
+}
+
+uint_16 get_u16( uint_16 *src )
+/*****************************/
+{
+    if( Byte_swap ) {
+        return( SWAPNC_16( *src ) );
+    } else {
+        return( *src );
+    }
+}
+
+int_16 get_s16( int_16 *src )
+/***************************/
+{
+    if( Byte_swap ) {
+        return( SWAPNC_16( *src ) );
+    } else {
+        return( *src );
+    }
+}

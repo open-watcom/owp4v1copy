@@ -150,6 +150,10 @@ extern void Putdecs( signed_16 );
 extern void Putdecl( unsigned_16, unsigned_16 );
 extern void Putdecbz( unsigned_16, unsigned_16);
 extern void Parse_option( void );
+extern uint_32 get_u32( uint_32 *src );
+extern int_32  get_s32( int_32 *src );
+extern uint_16 get_u16( uint_16 *src );
+extern int_16  get_s16( int_16 *src );
 
 /*
  * dosexe.c

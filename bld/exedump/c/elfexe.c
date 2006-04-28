@@ -38,6 +38,12 @@
 #include "wdfunc.h"
 
 
+#ifdef __BIG_ENDIAN__
+    #define NATIVE_ENDIAN   2
+#else
+    #define NATIVE_ENDIAN   1
+#endif
+
 static  char    *elf_exe_msg[] = {
     "2file type (i.e. object, executable file)    = ",
     "2required architecture                       = ",
@@ -253,52 +259,91 @@ static void dmp_sec_type( unsigned_32 type )
  */
 static void dmp_prog_flgs( unsigned_32 flags )
 /********************************************/
-    {
-        char    name[128];
+{
+    char    name[128];
 
-        name[0] = 0;
-        if( flags & PF_X ) {
-            strcat( name, " EXECUTABLE |" );
-        }
-        if( flags & PF_W ) {
-            strcat( name, " WRITABLE |" );
-        }
-        if( flags & PF_R ) {
-            strcat( name, " READABLE |" );
-        }
-        if( name[strlen(name)-1] == '|' ) {
-            name[strlen(name)-1] = 0;
-        }
-        Wdputs( "flags = " );
-        Wdputs( name );
-        Wdputslc( "\n" );
+    name[0] = 0;
+    if( flags & PF_X ) {
+        strcat( name, " EXECUTABLE |" );
     }
+    if( flags & PF_W ) {
+        strcat( name, " WRITABLE |" );
+    }
+    if( flags & PF_R ) {
+        strcat( name, " READABLE |" );
+    }
+    if( name[strlen(name)-1] == '|' ) {
+        name[strlen(name)-1] = 0;
+    }
+    Wdputs( "flags = " );
+    Wdputs( name );
+    Wdputslc( "\n" );
+}
 
 /*
  * dump the section flag word
  */
 static void dmp_sec_flgs( unsigned_32 flags )
 /*******************************************/
-    {
-        char    name[128];
+{
+    char    name[128];
 
-        name[0] = 0;
-        if( flags & SHF_WRITE ) {
-            strcat( name, " WRITABLE |" );
-        }
-        if( flags & SHF_ALLOC ) {
-            strcat( name, " ALLOC_SPACE |" );
-        }
-        if( flags & SHF_EXECINSTR ) {
-            strcat( name, " EXEC_INSTR |" );
-        }
-        if( name[strlen(name)-1] == '|' ) {
-            name[strlen(name)-1] = 0;
-        }
-        Wdputs( "flags = " );
-        Wdputs( name );
-        Wdputslc( "\n" );
+    name[0] = 0;
+    if( flags & SHF_WRITE ) {
+        strcat( name, " WRITABLE |" );
     }
+    if( flags & SHF_ALLOC ) {
+        strcat( name, " ALLOC_SPACE |" );
+    }
+    if( flags & SHF_EXECINSTR ) {
+        strcat( name, " EXEC_INSTR |" );
+    }
+    if( name[strlen(name)-1] == '|' ) {
+        name[strlen(name)-1] = 0;
+    }
+    Wdputs( "flags = " );
+    Wdputs( name );
+    Wdputslc( "\n" );
+}
+
+/*
+ * byte swap ELF section header
+ */
+static void swap_shdr( Elf32_Shdr *elf_sec )
+/******************************************/
+{
+    if( Byte_swap ) {
+        SWAP_32( elf_sec->sh_name );
+        SWAP_32( elf_sec->sh_type );
+        SWAP_32( elf_sec->sh_flags );
+        SWAP_32( elf_sec->sh_addr );
+        SWAP_32( elf_sec->sh_offset );
+        SWAP_32( elf_sec->sh_size );
+        SWAP_32( elf_sec->sh_link );
+        SWAP_32( elf_sec->sh_info );
+        SWAP_32( elf_sec->sh_addralign );
+        SWAP_32( elf_sec->sh_entsize );
+    }
+}
+
+/*
+ * byte swap ELF program header
+ */
+static void swap_phdr( Elf32_Phdr *elf_prog )
+/*******************************************/
+{
+    if( Byte_swap ) {
+        /* Byte swap program header */
+        SWAP_32( elf_prog->p_type );
+        SWAP_32( elf_prog->p_offset );
+        SWAP_32( elf_prog->p_vaddr );
+        SWAP_32( elf_prog->p_paddr );
+        SWAP_32( elf_prog->p_filesz );
+        SWAP_32( elf_prog->p_memsz );
+        SWAP_32( elf_prog->p_flags );
+        SWAP_32( elf_prog->p_align );
+    }
+}
 
 static void set_dwarf( unsigned_32 start )
 /****************************************/
@@ -318,18 +363,20 @@ static void set_dwarf( unsigned_32 start )
     if( Elf_head.e_shnum == 0 ) {
         return; // no sections no dwarf
     }
-    memset( sections, 0, DR_DEBUG_NUM_SECTS * sizeof(unsigned_32) );
-    memset( sectsizes, 0, DR_DEBUG_NUM_SECTS * sizeof(unsigned_32) );
+    memset( sections, 0, DR_DEBUG_NUM_SECTS * sizeof( unsigned_32 ) );
+    memset( sectsizes, 0, DR_DEBUG_NUM_SECTS * sizeof( unsigned_32 ) );
     offset = Elf_head.e_shoff
            + Elf_head.e_shstrndx * Elf_head.e_shentsize+start;
     Wlseek( offset );
     Wread( &elf_sec, sizeof( Elf32_Shdr ) );
+    swap_shdr( &elf_sec );
     string_table = Wmalloc( elf_sec.sh_size );
     Wlseek( elf_sec.sh_offset + start );
     Wread( string_table, elf_sec.sh_size );
     for( i = 0; i < Elf_head.e_shnum; i++ ) {
         Wlseek( Elf_head.e_shoff + i * Elf_head.e_shentsize + start );
         Wread( &elf_sec, sizeof( Elf32_Shdr ) );
+        swap_shdr( &elf_sec );
         if( elf_sec.sh_type == SHT_PROGBITS ){
             sect = Lookup_section_name( &string_table[elf_sec.sh_name] );
             if ( sect < DW_DEBUG_MAX ){
@@ -348,7 +395,7 @@ static void set_dwarf( unsigned_32 start )
             Sections[i].data = Wmalloc( sectsizes[i] );
             if( Sections[i].data == NULL ) {
                 Wdputslc( "Not enough memory\n" );
-                exit(1);
+                exit( 1 );
             }
             Wread( Sections[i].data, sectsizes[i] );
         }
@@ -429,6 +476,7 @@ static void dmp_prog_sec( unsigned_32 start )
                + Elf_head.e_shstrndx * Elf_head.e_shentsize+start;
         Wlseek( offset );
         Wread( &elf_sec, sizeof( Elf32_Shdr ) );
+        swap_shdr( &elf_sec );
         string_table = Wmalloc( elf_sec.sh_size );
         Wlseek( elf_sec.sh_offset + start );
         Wread( string_table, elf_sec.sh_size );
@@ -437,10 +485,10 @@ static void dmp_prog_sec( unsigned_32 start )
     }
     if( Elf_head.e_phnum ) {
         Banner( "ELF Program Header" );
-        offset = Elf_head.e_phoff+start;
+        offset = Elf_head.e_phoff + start;
         for( i = 0; i < Elf_head.e_phnum; i++ ) {
             Wdputs( "                Program Header #" );
-            Putdec( i+1 );
+            Putdec( i + 1 );
             Wdputslc( "\n" );
             if( start != 0 ){
                 Wdputs("File Offset:");
@@ -449,6 +497,7 @@ static void dmp_prog_sec( unsigned_32 start )
             }
             Wlseek( offset );
             Wread( &elf_prog, sizeof( Elf32_Phdr ) );
+            swap_phdr( &elf_prog );
 //          elf_prog.p_offset += start; //Relocate file pos
             offset += sizeof( Elf32_Phdr );
             Data_count++;
@@ -469,6 +518,7 @@ static void dmp_prog_sec( unsigned_32 start )
         for( i = 0; i < Elf_head.e_shnum; i++ ) {
             Wlseek( offset );
             Wread( &elf_sec, sizeof( Elf32_Shdr ) );
+            swap_shdr( &elf_sec );
 //          elf_sec.sh_offset += start;  // relocate file pos
             Wdputs( "             Section Header #" );
             Putdec( i );
@@ -497,6 +547,7 @@ static void dmp_prog_sec( unsigned_32 start )
                     Wlseek( Elf_head.e_shoff + start +
                             Elf_head.e_shentsize * elf_sec.sh_info );
                     Wread( &rel_sec, sizeof( Elf32_Shdr ) );
+                    swap_shdr( &rel_sec );
                     if( string_table ) {
                         Wdputs( " \"" );
                         Wdputs( &string_table[rel_sec.sh_name] );
@@ -578,7 +629,7 @@ bool Dmp_lib_head( void )
     filesize = WFileSize();
     Elf_off = LIBMAG_LEN + LIB_CLASS_LEN + LIB_DATA_LEN;
     Wlseek( Elf_off );
-    for(;;) {
+    for( ;; ) {
         if( Elf_off + LIB_HEADER_SIZE >= filesize ) break;
         Wread( &hdr, LIB_HEADER_SIZE );
         Elf_off += LIB_HEADER_SIZE;
@@ -610,7 +661,7 @@ bool Dmp_lib_head( void )
  * Dump the ELF header, if any.
  */
 bool Dmp_elf_header( unsigned_32 start )
-/********************/
+/**************************************/
 {
     Wread( &Elf_head, sizeof( Elf32_Ehdr ) );
     if( memcmp( Elf_head.e_ident, ELF_SIGNATURE, ELF_SIGNATURE_LEN ) ) {
@@ -633,6 +684,24 @@ bool Dmp_elf_header( unsigned_32 start )
     Wdputslc( "H\nABI version (0==unspecified)                =       " );
     Puthex( Elf_head.e_ident[EI_ABIVERSION], 2 );
     Wdputslc( "H\n" );
+    if( Elf_head.e_ident[EI_DATA] != NATIVE_ENDIAN ) {
+        Byte_swap = TRUE;
+
+        /* Byte swap ELF header */
+        SWAP_16( Elf_head.e_type );
+        SWAP_16( Elf_head.e_machine );
+        SWAP_32( Elf_head.e_version );
+        SWAP_32( Elf_head.e_entry );
+        SWAP_32( Elf_head.e_phoff );
+        SWAP_32( Elf_head.e_shoff );
+        SWAP_32( Elf_head.e_flags );
+        SWAP_16( Elf_head.e_ehsize );
+        SWAP_16( Elf_head.e_phentsize );
+        SWAP_16( Elf_head.e_phnum );
+        SWAP_16( Elf_head.e_shentsize );
+        SWAP_16( Elf_head.e_shnum );
+        SWAP_16( Elf_head.e_shstrndx );
+    }
     dmp_hdr_type( Elf_head.e_type );
     Dump_header( (char *)&Elf_head.e_type, elf_exe_msg );
     Wdputslc( "\n" );
@@ -644,8 +713,8 @@ bool Dmp_elf_header( unsigned_32 start )
 /*
  * Dump the ELF header, if any.
  */
-bool Dmp_elf_head( )
-/******************/
+bool Dmp_elf_head( void )
+/***********************/
 {
     Wlseek( 0 );
     return( Dmp_elf_header( 0 ) );

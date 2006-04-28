@@ -91,8 +91,9 @@ static char *sectionNames[] = {
 static int compare_table( const void *pa, const void *pb )
 /********************************************************/
 {
-    readable_name *a = (readable_name *)pa;
-    readable_name *b = (readable_name *)pb;
+    const readable_name *a = pa;
+    const readable_name *b = pb;
+
     if( a->value > b->value ) {
         return( 1 );
     } else if( a->value == b->value ) {
@@ -153,8 +154,8 @@ static void getTAG( uint_32 value )
 static void getFORM( uint_32 value )
 /**********************************/
 {
-    char *                      result;
-    int                         i;
+    char        *result;
+    int         i;
 
     result = Getname( value, readableFORMs, NUM_FORMS );
     if( result == NULL ) {
@@ -173,8 +174,8 @@ static void getFORM( uint_32 value )
 static void getAT( uint_32 value )
 /********************************/
 {
-    char *                      result;
-    int                         i;
+    char        *result;
+    int         i;
 
     result = Getname( value, readableATs, NUM_ATS );
     if( result == NULL ) {
@@ -202,11 +203,11 @@ static void dump_hex( const char *input, uint length )
     int         ch;
 
     offset = 0;
-    for(;;) {
+    for( ;; ) {
         i = 0;
         p = hex;
         old_offset = offset;
-        for(;;) {
+        for( ;; ) {
             if( offset == length ) break;
             if( i > 0xf ) break;
             if( i == 0x8 ) {
@@ -242,7 +243,7 @@ uint_8 *DecodeULEB128( const uint_8 *input, uint_32 *value )
 
     result = 0;
     shift = 0;
-    for(;;) {
+    for( ;; ) {
         byte = *input++;
         result |= ( byte & 0x7f ) << shift;
         if( ( byte & 0x80 ) == 0 ) break;
@@ -261,7 +262,7 @@ uint_8 *DecodeLEB128( const uint_8 *input, int_32 *value )
 
     result = 0;
     shift = 0;
-    for(;;) {
+    for( ;; ) {
         byte = *input++;
         result |= ( byte & 0x7f ) << shift;
         shift += 7;
@@ -275,7 +276,7 @@ uint_8 *DecodeLEB128( const uint_8 *input, int_32 *value )
 }
 
 uint_8 *find_abbrev( uint_32 start, uint_32 code )
-/*********************************/
+/************************************************/
 {
     uint_8      *p;
     uint_8      *stop;
@@ -285,7 +286,7 @@ uint_8 *find_abbrev( uint_32 start, uint_32 code )
     p = Sections[ DW_DEBUG_ABBREV ].data;
     p += start;
     stop = p + Sections[ DW_DEBUG_ABBREV ].max_offset;
-    for(;;) {
+    for( ;; ) {
         if( p >= stop ) return( NULL );
         p = DecodeULEB128( p, &tmp );
         if( tmp == code ) return( p );
@@ -293,7 +294,7 @@ uint_8 *find_abbrev( uint_32 start, uint_32 code )
         p = DecodeULEB128( p, &tmp );
         if( p >= stop ) return( NULL );
         p++;
-        for(;;) {
+        for( ;; ) {
             p = DecodeULEB128( p, &attr );
             if( p >= stop ) return( NULL );
             p = DecodeULEB128( p, &tmp );
@@ -328,10 +329,10 @@ static char const *GetInt( char const *p, uint_32 *ret, int size )
         *ret = *(uint_8 *)p;
         break;
     case 2:
-        *ret = *(uint_16 *)p;
+        *ret = get_u16( (uint_16 *)p );
         break;
     case 4:
-        *ret = *(uint_32 *)p;
+        *ret = get_u32( (uint_32 *)p );
         break;
     default:
         *ret = 0xffffffff;
@@ -340,6 +341,7 @@ static char const *GetInt( char const *p, uint_32 *ret, int size )
     p += size;
     return( p );
 }
+
 static void DmpLoc( char const *p, uint length, uint addr_size )
 /**************************************************************/
 {
@@ -355,7 +357,7 @@ static void DmpLoc( char const *p, uint length, uint addr_size )
     end = &p[length];
 
     Wdputslc( "\n            Loc expr: " );
-    if( p == end ){
+    if( p == end ) {
       Wdputslc( "<NULL>\n" );
     }
     while( p  < end ) {
@@ -392,23 +394,23 @@ static void DmpLoc( char const *p, uint length, uint addr_size )
             Putdec( op1s );
             break;
         case DW_LOP_OPU2:
-            op1u = *(uint_16 *)p;
-            p += sizeof(uint_16 );
+            op1u = get_u16( (uint_16 *)p );
+            p += sizeof( uint_16 );
             Putdec( op1u );
             break;
         case DW_LOP_OPS2:
-            op1s = *(int_16 *)p;
-            p += sizeof(int_16);
+            op1s = get_s16( (int_16 *)p );
+            p += sizeof( int_16 );
             Putdec( op1s );
             break;
         case DW_LOP_OPU4:
-            op1u = *(uint_32 *)p;
-            p += sizeof(uint_32);
+            op1u = get_u32( (uint_32 *)p );
+            p += sizeof( uint_32 );
             Putdec( op1u );
             break;
         case DW_LOP_OPS4:
-            op1s = *(int_32 *)p;
-            p += sizeof(int_32);
+            op1s = get_s32( (int_32 *)p );
+            p += sizeof( int_32 );
             Putdec( op1s );
             break;
         case DW_LOP_U128:
@@ -477,20 +479,20 @@ static void DmpLocList( uint_32 start, uint addr_size )
 
     p = Sections[ DW_DEBUG_LOC ].data;
     stop = p + Sections[ DW_DEBUG_LOC ].max_offset;
-    if( p == NULL ){
-        Wdputslc( "Error :No location list section\n" );
+    if( p == NULL ) {
+        Wdputslc( "Error: No location list section\n" );
         return;
     }
     p += start;
     while( p < stop ) {
         p = GetInt( p, &low, addr_size );
         p = GetInt( p, &high, addr_size );
-        if( low == high && low == 0 ){
+        if( low == high && low == 0 ) {
             Wdputslc( "        <end>\n" );
             return;
         }
-        len = *(uint_16 *)(p);
-        p+= sizeof(uint_16);
+        len = get_u16( (uint_16 *)p );
+        p+= sizeof( uint_16 );
         Wdputslc( "\n         Range: " );
         Puthex( low, addr_size * 2 );
         Wdputs( ":" );
@@ -513,6 +515,7 @@ static bool dump_tag( info_state *info )
 {
     uint_8      *abbrev;
     uint_32     attr;
+    uint_32     offset;
     uint_32     form;
     uint_32     len;
     uint_32     tmp;
@@ -522,7 +525,7 @@ static bool dump_tag( info_state *info )
 
     p = info->p;
     abbrev = info->abbrev;
-    for(;;) {
+    for( ;; ) {
         abbrev = DecodeULEB128( abbrev, &attr );
         abbrev = DecodeULEB128( abbrev, &form );
         if( attr == 0 ) break;
@@ -546,9 +549,9 @@ decode_form:
         switch( form ) {
         case DW_FORM_addr:
             if( info->addr_size == 4 ) {
-                tmp = *(uint_32 *)p;
+                tmp = get_u32( (uint_32 *)p );
             } else if( info->addr_size == 2 ) {
-                tmp = *(uint_16 *)p;
+                tmp = get_u16( (uint_16 *)p );
             } else if( info->addr_size == 1 ) {
                 tmp = *(uint_8 *)p;
             } else {
@@ -580,7 +583,7 @@ decode_form:
             p += len;
             break;
         case DW_FORM_block2:
-            len = *(uint_16 *)p;
+            len = get_u16( (uint_16 *)p );
             p += sizeof( uint_16 );
             if( is_loc ) {
                 DmpLoc( p, len, info->addr_size );
@@ -591,7 +594,7 @@ decode_form:
             p += len;
             break;
         case DW_FORM_block4:
-            len = *(uint_32 *)p;
+            len = get_u32( (uint_32 *)p );
             p += sizeof( uint_32 );
             if( is_loc ) {
                 DmpLoc( p, len, info->addr_size );
@@ -610,26 +613,26 @@ decode_form:
             Wdputslc( "\n" );
             break;
         case DW_FORM_data2:
-            Puthex( *(uint_16 *)p, 4 );
+            Puthex( get_u16( (uint_16 *)p ), 4 );
             Wdputslc( "\n" );
             p += sizeof( uint_16 );
             break;
         case DW_FORM_ref2:
-            Puthex( info->cu_header + *(uint_16 *)p, 4 );
+            Puthex( info->cu_header + get_u16( (uint_16 *)p ), 4 );
             Wdputslc( "\n" );
             p += sizeof( uint_16 );
             break;
         case DW_FORM_data4:
-            if( is_loc ){
-                DmpLocList( *(uint_32 *)p, info->addr_size );
-            }else{
-                Puthex( *(uint_32 *)p, 8 );
+            if( is_loc ) {
+                DmpLocList( get_u32( (uint_32 *)p ), info->addr_size );
+            } else {
+                Puthex( get_u32( (uint_32 *)p ), 8 );
                 Wdputslc( "\n" );
             }
-            p += sizeof(uint_32);
+            p += sizeof( uint_32 );
             break;
         case DW_FORM_ref4:
-            Puthex( info->cu_header + *(uint_32 *)p, 8 );
+            Puthex( info->cu_header + get_u32( (uint_32 *)p ), 8 );
             Wdputslc( "\n" );
             p += sizeof( uint_32 );
             break;
@@ -655,7 +658,14 @@ decode_form:
             p += strlen( p ) + 1;
             break;
         case DW_FORM_strp:
-            abort();
+            offset = get_u32( (uint_32 *)p );
+            if( offset > Sections[ DW_DEBUG_STR ].max_offset ) {
+                Wdputslc( "Error: strp - invalid offset\n" );
+            } else {
+                Wdputs( Sections[ DW_DEBUG_STR ].data + offset );
+                Wdputslc( "\n" );
+            }
+            p += sizeof( uint_32 );
             break;
         case DW_FORM_udata:
             p = DecodeULEB128( p, &tmp );
@@ -669,12 +679,12 @@ decode_form:
             break;
         case DW_FORM_ref_addr:
             if( is_loc ) { // history
-                DmpLocList( *(uint_32 *)p, info->addr_size );
+                DmpLocList( get_u32( (uint_32 *)p ), info->addr_size );
             } else {
-                Puthex( *(uint_32 *)p, 8 );
+                Puthex( get_u32( (uint_32 *)p ), 8 );
                 Wdputslc( "\n" );
             }
-            p += sizeof(uint_32);
+            p += sizeof( uint_32 );
             break;
         default:
             Wdputslc( "unknown form\n" );
@@ -703,17 +713,17 @@ static void dump_info( const uint_8 *input, uint length )
     state.addr_size = 0;
     while( p - input < length ) {
         state.cu_header = p-input;
-        unit_length = *(uint_32 *)p;
+        unit_length = get_u32( (uint_32 *)p );
         unit_base = p + sizeof( uint_32 );
 
         Wdputs( "Offset: " );
-        Puthex(  p - input, 8 );
+        Puthex( p - input, 8 );
         Wdputs( "  Length: " );
         Puthex( unit_length, 8 );
         Wdputslc( "\nVersion: " );
-        Puthex( *(uint_16 *)(p+4), 4 );
+        Puthex( get_u16( (uint_16 *)(p+4) ), 4 );
         Wdputs( " Abbrev: " );
-        abbrev_offset =  *(uint_32 *)(p+6);
+        abbrev_offset =  get_u32( (uint_32 *)(p+6) );
         Puthex( abbrev_offset, 8 );
         state.addr_size = *(p+10);
         Wdputs( " Address Size " );
@@ -722,7 +732,7 @@ static void dump_info( const uint_8 *input, uint length )
         p += 11;
         while( p - unit_base < unit_length ) {
             Wdputs( "Offset: " );
-            Puthex(  p - input, 8 );
+            Puthex( p - input, 8 );
             p = DecodeULEB128( p, &abbrev_code );
             Wdputs( "  Code: " );
             Puthex( abbrev_code, 8 );
@@ -753,18 +763,18 @@ static void dump_info( const uint_8 *input, uint length )
 static bool skip_tag( info_state *info )
 /*****************************************************/
 {
-    uint_8     *abbrev;
+    uint_8      *abbrev;
     uint_32     attr;
     uint_32     form;
     uint_32     len;
     uint_32     tmp;
     int_32      stmp;
     bool        is_loc;
-    char const *p;
+    char const  *p;
 
     p = info->p;
     abbrev = info->abbrev;
-    for(;;) {
+    for( ;; ) {
         abbrev = DecodeULEB128( abbrev, &attr );
         abbrev = DecodeULEB128( abbrev, &form );
         if( attr == 0 ) break;
@@ -775,21 +785,21 @@ static bool skip_tag( info_state *info )
          || attr == DW_AT_static_link
          || attr == DW_AT_data_member_location
          || attr == DW_AT_string_length
-         || attr == DW_AT_use_location ){
+         || attr == DW_AT_use_location ) {
             is_loc = TRUE;
-       }else{
+       } else {
             is_loc = FALSE;
        }
 decode_form:
         switch( form ) {
         case DW_FORM_addr:
-            if( info->addr_size == 4 ){
-                tmp = *(uint_32 *)p;
-            }else if( info->addr_size == 2 ){
-                tmp = *(uint_16 *)p;
-            }else if( info->addr_size == 1 ){
+            if( info->addr_size == 4 ) {
+                tmp = get_u32( (uint_32 *)p );
+            } else if( info->addr_size == 2 ) {
+                tmp = get_u16( (uint_16 *)p );
+            } else if( info->addr_size == 1 ) {
                 tmp = *(uint_8 *)p;
-            }else{
+            } else {
                 tmp = info->addr_size;
                 Wdputs( "?addr:" );
             }
@@ -804,12 +814,12 @@ decode_form:
             p += len;
             break;
         case DW_FORM_block2:
-            len = *(uint_16 *)p;
+            len = get_u16( (uint_16 *)p );
             p += sizeof( uint_16 );
             p += len;
             break;
         case DW_FORM_block4:
-            len = *(uint_32 *)p;
+            len = get_u32( (uint_32 *)p );
             p += sizeof( uint_32 );
             p += len;
             break;
@@ -826,7 +836,7 @@ decode_form:
             p += sizeof( uint_16 );
             break;
         case DW_FORM_data4:
-            p += sizeof(uint_32);
+            p += sizeof( uint_32 );
             break;
         case DW_FORM_ref4:
             p += sizeof( uint_32 );
@@ -853,7 +863,7 @@ decode_form:
             p = DecodeULEB128( p, &tmp );
             break;
         case DW_FORM_ref_addr:
-            p += sizeof(uint_32);
+            p += sizeof( uint_32 );
             break;
         default:
             Wdputslc( "unknown form\n" );
@@ -864,8 +874,9 @@ decode_form:
     info->p = p;
     return( TRUE );
 }
+
 static void dump_info_headers( const char *input, uint length )
-/*****************************************************/
+/*************************************************************/
 {
     const uint_8 *p;
     uint_32     abbrev_code;
@@ -883,14 +894,14 @@ static void dump_info_headers( const char *input, uint length )
     found = FALSE;
     while( p - input < length ) {
         state.cu_header = p-input;
-        unit_length = *(uint_32 *)p;
+        unit_length = get_u32( (uint_32 *)p );
         unit_base = p + sizeof( uint_32 );
         Wdputs( "Length: " );
         Puthex( unit_length, 8 );
         Wdputslc( "\nVersion: " );
-        Puthex( *(uint_16 *)(p+4), 4 );
+        Puthex( get_u16( (uint_16 *)(p+4) ), 4 );
         Wdputslc( "\nAbbrev: " );
-        abbrev_offset =  *(uint_32 *)(p+6);
+        abbrev_offset =  get_u32( (uint_32 *)(p+6) );
         Puthex( abbrev_offset, 8 );
         state.addr_size = *(p+10);
         Wdputslc( "\nAddress Size " );
@@ -913,10 +924,10 @@ static void dump_info_headers( const char *input, uint length )
             abbrev++;
             state.abbrev = abbrev;
             state.p = p;
-            if( tag_offset == 0x59a125 ){
+            if( tag_offset == 0x59a125 ) {
                 found = TRUE;
             }
-            if( found ){
+            if( found ) {
                 Wdputs( "Offset: " );
                 Puthex(  tag_offset, 8 );
                 Wdputs( "  Code: " );
@@ -926,7 +937,7 @@ static void dump_info_headers( const char *input, uint length )
                 getTAG( tag );
                 Wdputslc( "\n" );
                if( !dump_tag( &state ) )break;
-            }else{
+            } else {
                 skip_tag( &state );
             }
             p = state.p;
@@ -951,9 +962,9 @@ extern void dump_abbrevs( const uint_8 *input, uint length )
     }
     p = input;
     start = TRUE;
-    for(;;) {
+    for( ;; ) {
         if( p > input + length ) break;
-        if( start ){
+        if( start ) {
             tmp = p-input;
             Wdputs( "Offset:" );
             Puthex( tmp, 8 );
@@ -961,7 +972,7 @@ extern void dump_abbrevs( const uint_8 *input, uint length )
             start = FALSE;
         }
         p = DecodeULEB128( p, &tmp );
-        if( tmp == 0 ){
+        if( tmp == 0 ) {
             Wdputslc( "End_CU\n" );
             start = TRUE;
             continue; /* compile unit separator */
@@ -981,12 +992,12 @@ extern void dump_abbrevs( const uint_8 *input, uint length )
             Wdputslc( "childless\n" );
         }
         p++;
-        for(;;) {
+        for( ;; ) {
             if( p > input + length ) break;
             p = DecodeULEB128( p, &attr );
             if( p > input + length ) break;
             p = DecodeULEB128( p, &tmp );
-            if( attr == 0 && tmp == 0 ){
+            if( attr == 0 && tmp == 0 ) {
                 Wdputslc( "        End_form\n" );
                 break;
             }
@@ -1096,11 +1107,11 @@ static void dump_ref( const uint_8 *input, uint length )
     p = input;
 
     while( p - input < length ) {
-        unit_length = *(uint_32 *)p;
+        unit_length = get_u32( (uint_32 *)p );
         p += sizeof( uint_32 );
         unit_base = p;
         Wdputs( "total_length: " );
-        Puthex( *p, 8 );
+        Puthex( get_u32( (uint_32 *)p ), 8 );
         Wdputslc( "\n" );
 
         while( p - unit_base < unit_length ) {
@@ -1109,8 +1120,8 @@ static void dump_ref( const uint_8 *input, uint length )
                 get_reference_op( op_code );
                 switch( op_code ) {
                 case REF_BEGIN_SCOPE:
-                    Puthex( *(uint_32 *)p, 8 );
-                    ScopePush( &registers.scope, *(uint_32 *)p );
+                    Puthex( get_u32( (uint_32 *)p ), 8 );
+                    ScopePush( &registers.scope, get_u32( (uint_32 *)p ) );
                     p += sizeof( uint_32 );
                     break;
                 case REF_END_SCOPE:
@@ -1158,8 +1169,8 @@ static void dump_ref( const uint_8 *input, uint length )
                 registers.column += op_code % REF_COLUMN_RANGE;
 
                 Wdputs( ", " );
-                Puthex( *(uint_32 *)p, 8 );
-                registers.dependent = *(uint_32 *)p;
+                Puthex( get_u32( (uint_32 *)p ), 8 );
+                registers.dependent = get_u32( (uint_32 *)p );
 
                 Wdputs( "    " );
                 PutRefRegisters( &registers );
@@ -1188,14 +1199,14 @@ static void dump_aranges( const char *p, uint length )
     end = &p[length];
     addr_size = 0;
     while( p  < end ) {
-        unit_length = *(uint_32 *)p;
-        unit_end = &p[unit_length+sizeof(uint_32)];
+        unit_length = get_u32( (uint_32 *)p );
+        unit_end = &p[unit_length + sizeof( uint_32 )];
         Wdputs( "Length: " );
         Puthex( unit_length, 8 );
         Wdputslc( "\nVersion: " );
-        Puthex( *(uint_16 *)(p+4), 4 );
+        Puthex( get_u16( (uint_16 *)(p+4) ), 4 );
         Wdputslc( "\nDbg Info: " );
-        dbg_offset =  *(uint_32 *)(p+6);
+        dbg_offset = get_u32( (uint_32 *)(p+6) );
         Puthex( dbg_offset, 8 );
         addr_size = *(p+10);
         Wdputslc( "\nAddress Size " );
@@ -1206,17 +1217,17 @@ static void dump_aranges( const char *p, uint length )
         Wdputslc( "\n" );
         p += 12;
         Wdputslc( "    Address       Length\n" );
-        while( p < unit_end ){
+        while( p < unit_end ) {
             p = GetInt( p, &addr, addr_size );
             p = GetInt( p, &seg, seg_size );
             p = GetInt( p, &len, addr_size );
             if( addr == 0 && len == 0 )break;
             Wdputs( "    " );
-            if( seg_size != 0 ){
+            if( seg_size != 0 ) {
                 Puthex( seg, seg_size*2 );
                 Wdputs( ":" );
                 Puthex( addr, addr_size * 2 );
-            }else{
+            } else {
                 Puthex( addr, addr_size * 2 );
                 Wdputs( "     " );
             }
@@ -1241,27 +1252,27 @@ static void dump_pubnames( const char *p, uint length )
 
     end = &p[length];
     while( p  < end ) {
-        unit_length = *(uint_32 *)p;
-        unit_end = &p[unit_length+sizeof(uint_32)];
+        unit_length = get_u32( (uint_32 *)p );
+        unit_end = &p[unit_length + sizeof( uint_32 )];
         Wdputs( "Length: " );
         Puthex( unit_length, 8 );
         Wdputslc( "\nVersion: " );
-        Puthex( *(uint_16*)(p+4), 2 );
+        Puthex( get_u16( (uint_16*)(p+4) ), 2 );
         Wdputslc( "\nDbg Info: " );
-        dbg_offset =  *(uint_32 *)(p+6);
+        dbg_offset =  get_u32( (uint_32 *)(p+6) );
         Puthex( dbg_offset, 8 );
         Wdputslc( "\nDbg Length: " );
-        dbg_length =  *(uint_32 *)(p+10);
+        dbg_length =  get_u32( (uint_32 *)(p+10) );
         Puthex( dbg_length, 8 );
         Wdputslc( "\n" );
         p += 14;
         Wdputslc( "    Offset       Name\n" );
-        while( p < unit_end ){
-            offset = *(uint_32 *)p;
-            if( offset == 0 ){
+        while( p < unit_end ) {
+            offset = get_u32( (uint_32 *)p );
+            if( offset == 0 ) {
                 break;
             }
-            p+= sizeof( uint_32 );
+            p += sizeof( uint_32 );
             Wdputs( "    " );
             Puthex( offset, 8 );
             Wdputs( "     " );
@@ -1272,6 +1283,7 @@ static void dump_pubnames( const char *p, uint length )
         p = unit_end;
     }
 }
+
 void Dump_specific_section( uint sect, const char *data, uint len )
 /*****************************************************************/
 {

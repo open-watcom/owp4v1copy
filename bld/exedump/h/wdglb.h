@@ -120,6 +120,7 @@ extern unsigned_32              Load_len;       /* start of debugging info */
 extern unsigned_32              Resrc_end;      /* end of resrc table      */
 extern jmp_buf                  Se_env;         /* for the setjmp          */
 extern int                      Form;
+extern bool                     Byte_swap;      /* endianness flag         */
 
 enum {
     FORM_NE,
@@ -182,6 +183,7 @@ enum {
     DW_DEBUG_LOC,
     DW_DEBUG_ABBREV,
     DW_DEBUG_MACINFO,
+    DW_DEBUG_STR,
     DW_DEBUG_REF,
     DW_DEBUG_MAX
 };

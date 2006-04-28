@@ -83,7 +83,7 @@ static void dump_state( state_info *state )
     Wdputs( "-- file " );
     Putdec( state->file );
     Wdputs( " addr  " );
-    if( state->segment != 0 ){
+    if( state->segment != 0 ) {
         Puthex( state->segment, 4 );
         Wdputs( ":" );
     }
@@ -153,7 +153,7 @@ void Dump_lines( const uint_8 *input, uint length )
     p = input;
     while( p - input < length ) {
 
-        unit_length = *(uint_32 *)p;
+        unit_length = get_u32( (uint_32 *)p );
         p += sizeof( uint_32 );
         unit_base = p;
 
@@ -161,13 +161,13 @@ void Dump_lines( const uint_8 *input, uint length )
         Puthex( unit_length, 8 );
 
         Wdputslc( "\nversion: " );
-        Puthex( *(uint_16 *)p, 4 );
+        Puthex( get_u16( (uint_16 *)p ), 4 );
         p += sizeof( uint_16 );
 
         Wdputslc( "\nprologue_length: " );
-        Puthex( *(uint_32 *)p, 8 );
+        Puthex( get_u32( (uint_32 *)p ), 8 );
         stmt_start = p;
-        stmt_start += *(uint_32 *)p;
+        stmt_start += get_u32( (uint_32 *)p );
         p += sizeof( uint_32 );
         stmt_start += sizeof( uint_32 );
         min_instr = *p;
@@ -252,7 +252,7 @@ void Dump_lines( const uint_8 *input, uint length )
         init_state( &state, default_is_stmt );
         Wdputs( "-- current_offset = " );
         Puthex( p - input, 8 );
-        if( p != stmt_start ){
+        if( p != stmt_start ) {
             Wdputs( ":***Prologue length off***" );
         }
         Wdputslc( "\n" );
@@ -278,11 +278,11 @@ void Dump_lines( const uint_8 *input, uint length )
                     break;
                 case DW_LNE_set_address:
                     Wdputs( "SET_ADDRESS " );
-                    if( op_len == 4 ){
-                        tmp = *(uint_32 *)p;
-                    }else if( op_len == 2 ){
-                        tmp = *(uint_16 *)p;
-                    }else{
+                    if( op_len == 4 ) {
+                        tmp = get_u32( (uint_32 *)p );
+                    } else if( op_len == 2 ) {
+                        tmp = get_u16( (uint_16 *)p );
+                    } else {
                         tmp = 0xffffffff;
                     }
                     state.address = tmp;
@@ -292,11 +292,11 @@ void Dump_lines( const uint_8 *input, uint length )
                     break;
                 case DW_LNE_set_segment:
                     Wdputs( "SET_SEGMENT " );
-                    if( op_len == 4 ){
-                        tmp = *(uint_32 *)p;
-                    }else if( op_len == 2 ){
-                        tmp = *(uint_16 *)p;
-                    }else{
+                    if( op_len == 4 ) {
+                        tmp = get_u32( (uint_32 *)p );
+                    } else if( op_len == 2 ) {
+                        tmp = get_u16( (uint_16 *)p );
+                    } else {
                         tmp = 0xffffffff;
                     }
                     state.segment = tmp;
@@ -366,7 +366,7 @@ void Dump_lines( const uint_8 *input, uint length )
                     state.address += ( ( 255 - opcode_base ) / line_range ) * min_instr;
                     break;
                 case DW_LNS_fixed_advance_pc:
-                    tmp = *(uint_16 *)p;
+                    tmp = get_u16( (uint_16 *)p );
                     p += sizeof( uint_16 );
                     Puthex( tmp, 4 );
                     state.address += tmp;
