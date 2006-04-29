@@ -325,7 +325,7 @@ extern name_list * AddNameTable( char *name, unsigned len, bool is_mod,
 /*************************************************************************/
 {
     name_list * imp;
-    unsigned_16 off;
+    unsigned_32 off;
     unsigned_16 index;
 
     index = 1;

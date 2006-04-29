@@ -466,7 +466,7 @@ typedef struct node {
 typedef struct name_list {
     struct name_list *  next;
     unsigned            len;
-    unsigned            num;
+    unsigned_32         num;
     char *              name;           // NYI: make this vbl length again.
 } name_list;
 
