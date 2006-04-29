@@ -351,6 +351,7 @@ STATIC RET_T perform( TARGET *targ, DEPEND *dep, time_t max_time )
                 return( RET_SUCCESS );
             }
             if( targ->attr.symb != FALSE ) {    /* 13-Dec-90 DJG */
+                targ->cmds_done = TRUE;
                 return( RET_SUCCESS );
             }
             if( targ->allow_nocmd ) {
