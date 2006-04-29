@@ -33,11 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#if defined( __UNIX__ )
-    #include <utime.h>
-#else
-    #include <sys/utime.h>
-#endif
+#include <utime.h>
 
 #include "make.h"
 #include "macros.h"
@@ -459,8 +455,8 @@ STATIC BOOLEAN autoOutOfDate( TARGET *targ, time_t *max_time )
 }
 
 
-STATIC RET_T IsOutOfDate (TARGET *targ, TARGET *deptarg, BOOLEAN *outofdate)
-/***************************************************************************
+STATIC RET_T isOutOfDate( TARGET *targ, TARGET *deptarg, BOOLEAN *outofdate )
+/****************************************************************************
  * Checks if the current target is out of date
  */
 {
@@ -485,7 +481,7 @@ STATIC RET_T IsOutOfDate (TARGET *targ, TARGET *deptarg, BOOLEAN *outofdate)
         */
         return( RET_ERROR );
     }
-    if( ( !deptarg->attr.recheck && deptarg->cmds_done ) || deptarg->backdated) {
+    if( (!deptarg->attr.recheck && deptarg->cmds_done) || deptarg->backdated ) {
         *outofdate = TRUE;
     }
     return( RET_SUCCESS );
@@ -517,7 +513,7 @@ STATIC RET_T implyMaybePerform( TARGET *targ, TARGET *imptarg,
         must = TRUE;
     }
 
-    if( IsOutOfDate( targ, imptarg, &must ) == RET_ERROR ) {
+    if( isOutOfDate( targ, imptarg, &must ) == RET_ERROR ) {
         return( RET_ERROR );
     }
 
@@ -760,8 +756,8 @@ STATIC RET_T tryImply( TARGET *targ, BOOLEAN must )
 }
 
 
-STATIC void ExpandWildCards ( TARGET* targ, DEPEND *depend )
-/***********************************************************
+STATIC void ExpandWildCards( TARGET *targ, DEPEND *depend )
+/**********************************************************
  * Expand the wild cards now
  * also deMacroSpecial macros
  */
@@ -862,7 +858,7 @@ STATIC RET_T resolve( TARGET *targ, DEPEND *depend )
         curtarg = tlist->target;
         tlist = tlist->next;    /* advance the tlist */
 
-        if( IsOutOfDate( targ, curtarg, &outofdate ) == RET_ERROR ) {
+        if( isOutOfDate( targ, curtarg, &outofdate ) == RET_ERROR ) {
             return( RET_ERROR );
         }
     }
