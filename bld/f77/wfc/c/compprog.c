@@ -42,11 +42,11 @@
 #include "comio.h"
 #include "inout.h"
 
-extern  void            BIInit();
-extern  void            BIEnd();
-extern  void            BIStartSubProg();
-extern  void            BIResolveUndefTypes();
-extern  void            BIEndSubProg();
+extern  void            BIInit(void);
+extern  void            BIEnd(void);
+extern  void            BIStartSubProg(void);
+extern  void            BIResolveUndefTypes(void);
+extern  void            BIEndSubProg(void);
 extern  void            TrapInit(void);
 extern  void            TrapFini(void);
 extern  void            CompStatement(void);
@@ -72,7 +72,7 @@ extern  bool            TBreak(void);
 extern  void            GEndBlockData(void);
 
 
-static  bool    CompSProg( ) {
+static  bool    CompSProg(void) {
 //============================
 
     bool        fini_subprog;
@@ -118,7 +118,7 @@ static  bool    CompSProg( ) {
 }
 
 
-static  bool    CompFile() {
+static  bool    CompFile(void) {
 //==========================
 
     bool        tbreak;
@@ -133,7 +133,7 @@ static  bool    CompFile() {
 }
 
 
-static  void    InitProgram() {
+static  void    InitProgram(void) {
 //=============================
 
     ExtnSw = 0;
@@ -152,7 +152,7 @@ static  void    InitProgram() {
 }
 
 
-static  void    FiniProgram() {
+static  void    FiniProgram(void) {
 //=============================
 
     TrapFini();
@@ -164,7 +164,7 @@ static  void    FiniProgram() {
 
 
 
-void    CompProg() {
+void    CompProg(void) {
 //==================
 
     bool        tbreak;
@@ -178,7 +178,7 @@ void    CompProg() {
 }
 
 
-void    InitSubProg() {
+void    InitSubProg(void) {
 //=====================
 
     ProgSw &= ~( PS_END_OF_SUBPROG | PS_IN_SUBPROGRAM | PS_BLOCK_DATA );
@@ -196,7 +196,7 @@ void    InitSubProg() {
 }
 
 
-void    FiniSubProg() {
+void    FiniSubProg(void) {
 //=====================
 
     FrlFini( &ITPool );

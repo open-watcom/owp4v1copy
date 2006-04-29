@@ -90,7 +90,7 @@ static  void    NumOrLit( FCODE routine ) {
 }
 
 
-void    CpStop() {
+void    CpStop(void) {
 //================
 
     NumOrLit( RT_STOP );
@@ -99,14 +99,14 @@ void    CpStop() {
 }
 
 
-void    CpPause() {
+void    CpPause(void) {
 //=================
 
     NumOrLit( RT_PAUSE );
 }
 
 
-void    CpFormat() {
+void    CpFormat(void) {
 //==================
 
     cs_label    fmt;
@@ -116,7 +116,7 @@ void    CpFormat() {
 }
 
 
-void    CpEnd() {
+void    CpEnd(void) {
 //===============
 
     LFSkip();

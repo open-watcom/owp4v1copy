@@ -44,7 +44,7 @@
 extern  unsigned_8      CGFlags;
 
 
-void    SendBlip() {
+void    SendBlip(void) {
 //==================
 
 // Send a blip to console.
@@ -57,7 +57,7 @@ void    SendBlip() {
 }
 
 
-void    CheckBlips() {
+void    CheckBlips(void) {
 //====================
 
 // If "blips" have been displayed, display a CR.

@@ -47,7 +47,7 @@ extern  void            GBranch(label_id);
 extern  label_id        NextLabel(void);
 
 
-void    CpCycle() {
+void    CpCycle(void) {
 //=================
 
 // Compile the CYCLE statement.

@@ -46,7 +46,7 @@ extern  itnode          *GetBlockLabel(void);
 extern  void            GBranch(label_id);
 
 
-void    CpExit() {
+void    CpExit(void) {
 //================
 
 // Compile the EXIT statement.

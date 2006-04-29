@@ -52,7 +52,7 @@ extern  com_eq          *STComEq(void);
 extern  void            ArrayDecl(sym_id);
 
 
-void    CpCommon() {
+void    CpCommon(void) {
 //==================
 
 // Compile COMMON statement:

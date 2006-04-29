@@ -93,7 +93,7 @@ static  void    ChkEntryType( sym_id sym, sym_id entry ) {
 }
 
 
-void    DumpEntries() {
+void    DumpEntries(void) {
 //=====================
 
 // Dump argument lists.
@@ -170,7 +170,7 @@ void    DumpEntries() {
 }
 
 
-void    EnPurge() {
+void    EnPurge(void) {
 //=================
 
 // Free up all the entry list information.

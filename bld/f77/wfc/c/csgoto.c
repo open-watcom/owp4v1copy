@@ -71,7 +71,7 @@ extern  void            GEndBrTab(void);
 extern  void            BIOutSymbol(sym_id);
 
 
-void    CpGoto() {
+void    CpGoto(void) {
 //================
 
 // Process a GOTO statement.
@@ -90,7 +90,7 @@ void    CpGoto() {
 }
 
 
-static  void    UnCondGoto() {
+static  void    UnCondGoto(void) {
 //============================
 
 // Process an unconditional GOTO statement.
@@ -100,7 +100,7 @@ static  void    UnCondGoto() {
 }
 
 
-static  void    CompGoto() {
+static  void    CompGoto(void) {
 //==========================
 
 // Process a computed GOTO statement.
@@ -149,7 +149,7 @@ static  void    CompGoto() {
 }
 
 
-static  void    AsgnGoto() {
+static  void    AsgnGoto(void) {
 //==========================
 
 // Process an assigned GOTO statement.
@@ -182,7 +182,7 @@ static  void    AsgnGoto() {
 }
 
 
-void    CkVarRef() {
+void    CkVarRef(void) {
 //==================
 
     BIOutSymbol( CITNode->sym_ptr );
@@ -191,7 +191,7 @@ void    CkVarRef() {
 }
 
 
-void    CpArithIf() {
+void    CpArithIf(void) {
 //===================
 
 // Process an arithmetic IF.
@@ -229,7 +229,7 @@ void    CpArithIf() {
 }
 
 
-void    CpAssign() {
+void    CpAssign(void) {
 //==================
 
 // Process an ASSIGN statement ( eg. ASSIGN 10 TO I ).

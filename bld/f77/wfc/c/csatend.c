@@ -57,7 +57,7 @@ extern  void            GCheckEOF(label_id);
 extern  void            FreeLabel(label_id);
 
 
-void    CpAtEnd() {
+void    CpAtEnd(void) {
 //=================
 
 // Process an ATEND statement.
@@ -94,7 +94,7 @@ void    CpAtEnd() {
 }
 
 
-void    CpEndAtEnd() {
+void    CpEndAtEnd(void) {
 //====================
 
 // Process an ENDATEND statement.

@@ -81,7 +81,7 @@ char            BrowseExtn[] = { "mbr" };
 #endif
 
 
-void    SDInitIO() {
+void    SDInitIO(void) {
 //==================
 
     InitStd();
@@ -89,7 +89,7 @@ void    SDInitIO() {
 }
 
 
-void    SDInitAttr() {
+void    SDInitAttr(void) {
 //====================
 
     CurrAttrs = REC_TEXT;

@@ -78,7 +78,7 @@ extern  void            BIStartSubroutine( void );
 extern  void            GSetSrcLine(void);
 
 
-void    CpProgram() {
+void    CpProgram(void) {
 //===================
 
     CkSubEnd();
@@ -93,7 +93,7 @@ void    CpProgram() {
 }
 
 
-void    DefProg() {
+void    DefProg(void) {
 //=================
 
 // Define the program unit since no PROGRAM, SUBROUTINE, FUNCTION or
@@ -104,7 +104,7 @@ void    DefProg() {
 }
 
 
-static  void    StartProg() {
+static  void    StartProg(void) {
 //===========================
 
     ProgSw &= ~PS_IN_SUBPROGRAM;
@@ -185,7 +185,7 @@ static  entry_pt        *SubProgName( TYPE typ, unsigned_16 flags,
 }
 
 
-void    CpSubroutine() {
+void    CpSubroutine(void) {
 //======================
 
     entry_pt    *entry;
@@ -249,14 +249,14 @@ void    Function( TYPE typ, uint size, bool len_spec ) {
 }
 
 
-void    CpFunction() {
+void    CpFunction(void) {
 //====================
 
     Function( TY_NO_TYPE, -1, FALSE );
 }
 
 
-void    CpEntry() {
+void    CpEntry(void) {
 //=================
 
     entry_pt    *entry;
@@ -305,7 +305,7 @@ void    CpEntry() {
 }
 
 
-void    CpReturn() {
+void    CpReturn(void) {
 //==================
 
     if( !(ProgSw & PS_IN_SUBPROGRAM) ) {
@@ -334,7 +334,7 @@ void    CpReturn() {
 }
 
 
-static  void    CkRemBlock() {
+static  void    CkRemBlock(void) {
 //============================
 
     csnode      *csptr;
@@ -349,7 +349,7 @@ static  void    CkRemBlock() {
 }
 
 
-static  void    CkSubEnd() {
+static  void    CkSubEnd(void) {
 //==========================
 
 // Check if we had an END statement.
@@ -423,7 +423,7 @@ static  parameter       *NameParm( entry_pt *entry ) {
 }
 
 
-static  parameter       *StarParm() {
+static  parameter       *StarParm(void) {
 //===================================
 
 // Process an asterisk dummy argument.
@@ -472,7 +472,7 @@ static  void    ParmList( bool star_ok, entry_pt *entry ) {
 
 
 
-void    Prologue() {
+void    Prologue(void) {
 //==================
 
 // Generate a FUNCTION/SUBROUTINE/ENTRY prologue starting with ArgList.
@@ -497,14 +497,14 @@ void    Prologue() {
 }
 
 
-static  void    InitParms() {
+static  void    InitParms(void) {
 //===========================
 
     DoWarps();
 }
 
 
-static  void    DoWarps() {
+static  void    DoWarps(void) {
 //=========================
 
 // Generate calls to warp code.
@@ -523,7 +523,7 @@ static  void    DoWarps() {
 }
 
 
-void    Epilogue() {
+void    Epilogue(void) {
 //==================
 
 // Generate an epilogue.
@@ -537,7 +537,7 @@ void    Epilogue() {
 }
 
 
-void    CpBlockData() {
+void    CpBlockData(void) {
 //=====================
 
     sym_id  sym_ptr;

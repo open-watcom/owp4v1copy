@@ -44,7 +44,7 @@
 #include "utility.h"
 
 
-void    ScanExpr() {
+void    ScanExpr(void) {
 //==================
 
 // Advance CITNode to the end of the current expression.
@@ -75,7 +75,7 @@ void    ScanExpr() {
 // fields from BkLink back to the start symbol of the expression point
 // backward
 
-void    MoveDown() {
+void    MoveDown(void) {
 //==================
 
 // Move down the itlist, reverse the link field to point
@@ -90,7 +90,7 @@ void    MoveDown() {
 }
 
 
-void    BackTrack() {
+void    BackTrack(void) {
 //===================
 
 // Move up the itlist, restoring the link field to point forward and
@@ -117,7 +117,7 @@ void    AdvError( int code ) {
 }
 
 
-void    KillOpnOpr() {
+void    KillOpnOpr(void) {
 //====================
 
 // jnneeded opn followed by unneeded opr in consecutive nodes so

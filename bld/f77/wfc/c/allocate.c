@@ -67,7 +67,7 @@ static  char            *StatKW = { "STAT" };
 static  char            *LocKW = { "LOCATION" };
 
 
-void    CpAllocate() {
+void    CpAllocate(void) {
 //====================
 
 // Process ALLOCATE statement.
@@ -130,14 +130,14 @@ void    CpAllocate() {
 }
 
 
-static  void    AllocStat() {
+static  void    AllocStat(void) {
 //===========================
 
     ChkStat();
 }
 
 
-static  void    AllocLoc() {
+static  void    AllocLoc(void) {
 //==========================
 
     ChkLoc();
@@ -209,7 +209,7 @@ void    LoadSCB( sym_id sym ) {
 }
 
 
-void    CpDeAllocate() {
+void    CpDeAllocate(void) {
 //======================
 
 // Process DEALLOCATE statement.
@@ -256,14 +256,14 @@ void    CpDeAllocate() {
 }
 
 
-static  void    DeallocStat() {
+static  void    DeallocStat(void) {
 //=============================
 
     ChkStat();
 }
 
 
-static  void    ChkStat() {
+static  void    ChkStat(void) {
 //=========================
 
     AdvanceITPtr();
@@ -277,7 +277,7 @@ static  void    ChkStat() {
 }
 
 
-static  void    ChkLoc() {
+static  void    ChkLoc(void) {
 //========================
 
     AdvanceITPtr();

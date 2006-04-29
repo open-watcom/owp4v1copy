@@ -76,7 +76,7 @@ extern  void                    (* const __FAR ProcTable[])();
 extern  const unsigned_16       __FAR CFTable[];
 
 
-static  void    ChkStatementSequence() {
+static  void    ChkStatementSequence(void) {
 //======================================
 
     SetCtrlFlgs();
@@ -207,7 +207,7 @@ void    CompStatement( void ) {
 }
 
 
-void    CkDefStmtNo() {
+void    CkDefStmtNo(void) {
 //=====================
 
     if( StmtNo != 0 ) {
@@ -216,7 +216,7 @@ void    CkDefStmtNo() {
 }
 
 
-void    Recurse() {
+void    Recurse(void) {
 //=================
 
 // Compile a statement after a logical IF or AT END.
@@ -248,7 +248,7 @@ void    Recurse() {
 }
 
 
-static  void    InitStatement() {
+static  void    InitStatement(void) {
 //===============================
 
     TDStmtInit();
@@ -261,7 +261,7 @@ static  void    InitStatement() {
 }
 
 
-static  bool    CharSubStrung( ) {
+static  bool    CharSubStrung(void) {
 //================================
 
     bool        substrung;
@@ -275,7 +275,7 @@ static  bool    CharSubStrung( ) {
 }
 
 
-static  void    GetStmtType() {
+static  void    GetStmtType(void) {
 //=============================
 
     char        *curr_opnd;
@@ -325,14 +325,14 @@ static  void    GetStmtType() {
 }
 
 
-static  void    SetCtrlFlgs() {
+static  void    SetCtrlFlgs(void) {
 //=============================
 
     CtrlFlgs = CFTable[ StmtProc ];
 }
 
 
-static  void    DefStmtType() {
+static  void    DefStmtType(void) {
 //=============================
 
     StmtProc = RecStmtKW();      // look up keyword, strip off if found
@@ -342,7 +342,7 @@ static  void    DefStmtType() {
 }
 
 
-static  void    RemCheck() {
+static  void    RemCheck(void) {
 //==========================
 
 // Check for errors or warnings concerning the dependencies
@@ -368,7 +368,7 @@ static  void    RemCheck() {
 }
 
 
-void    ClearRem() {
+void    ClearRem(void) {
 //==================
 
 // Clear the Remember flags for a new statement.
@@ -382,7 +382,7 @@ void    ClearRem() {
 }
 
 
-static  void    CheckOrder() {
+static  void    CheckOrder(void) {
 //============================
 
     AError = FALSE;
@@ -422,7 +422,7 @@ static  void    CheckOrder() {
 }
 
 
-void    BadStmt() {
+void    BadStmt(void) {
 //=================
 
     // consider:
@@ -442,7 +442,7 @@ void    BadStmt() {
 }
 
 
-static  void    CheckDoEnd() {
+static  void    CheckDoEnd(void) {
 //============================
 
     csnode      *cs_node;
@@ -473,7 +473,7 @@ static  void    CheckDoEnd() {
 }
 
 
-static  void    FiniDo() {
+static  void    FiniDo(void) {
 //========================
 
     if( ( StmtProc != 0 ) && CtrlFlgOn( CF_BAD_DO_ENDING ) ) {
@@ -542,7 +542,7 @@ void    RemKeyword( itnode *itptr, int remove_len ) {
 }
 
 
-static  void    FiniStatement() {
+static  void    FiniStatement(void) {
 //===============================
 
     FreeITNodes( ITHead );

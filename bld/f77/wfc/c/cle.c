@@ -66,7 +66,7 @@ extern  void            SDRewind(file_handle);
 unsigned_32     CompTime;
 
 
-void            CLE() {
+void            CLE(void) {
 //=====================
 
     time_t      start;
@@ -87,7 +87,7 @@ void            CLE() {
 }
 
 
-static  void    StartCompile() {
+static  void    StartCompile(void) {
 //==============================
 
     OpenLst();
@@ -96,7 +96,7 @@ static  void    StartCompile() {
 
 
 
-static  void    Compile() {
+static  void    Compile(void) {
 //=========================
 
     InitGlobalSegs();
@@ -118,7 +118,7 @@ static  void    Compile() {
 }
 
 
-void            InvokeCompile() {
+void            InvokeCompile(void) {
 //===============================
 
     InitMacros();
@@ -132,7 +132,7 @@ void            InvokeCompile() {
 }
 
 
-static  void    FiniCompile() {
+static  void    FiniCompile(void) {
 //=============================
 
     SetLst( TRUE ); // listing file on for statistics
@@ -141,7 +141,7 @@ static  void    FiniCompile() {
 }
 
 
-static  void    Conclusion() {
+static  void    Conclusion(void) {
 //============================
 
     StatProg();
@@ -152,7 +152,7 @@ static  void    Conclusion() {
 }
 
 
-void            PurgeAll() {
+void            PurgeAll(void) {
 //==========================
 
     STPurge();
@@ -166,7 +166,7 @@ void            PurgeAll() {
 }
 
 
-static  void    InitPurge() {
+static  void    InitPurge(void) {
 //===========================
 
 // Initialize variables for purge routines in case the purge routines

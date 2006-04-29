@@ -51,7 +51,7 @@ extern  void            SFPrologue(void);
 #define SF_MASK (SY_SUB_PARM|SY_IN_EC|SY_DATA_INIT|SY_SAVED)
 
 
-static  void    Arith() {
+static  void    Arith(void) {
 //=======================
 
 // The expression handler.
@@ -61,7 +61,7 @@ static  void    Arith() {
 }
 
 
-void    EatExpr() {
+void    EatExpr(void) {
 //=================
 
 // Scan ahead, get an expression, and send it to expression handler.
@@ -82,7 +82,7 @@ void    EatExpr() {
 }
 
 
-void    CpAsgnmt() {
+void    CpAsgnmt(void) {
 //==================
 
     ASType = AST_EOK;                          // equal sign ok
@@ -90,7 +90,7 @@ void    CpAsgnmt() {
 }
 
 
-void    CpStmtFunc() {
+void    CpStmtFunc(void) {
 //====================
 
     unsigned_16 flags;
@@ -107,7 +107,7 @@ void    CpStmtFunc() {
 }
 
 
-void    CpCall() {
+void    CpCall(void) {
 //================
 
     itnode      *next;
@@ -159,7 +159,7 @@ void    CpCall() {
 }
 
 
-static  void    ArithNewSubr() {
+static  void    ArithNewSubr(void) {
 //==============================
 
     if( CITNode->flags & SY_TYPE ) {

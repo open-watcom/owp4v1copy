@@ -57,7 +57,7 @@ extern  bool            CompileDebugStmts(void);
 extern  character_set   CharSetInfo;
 
 
-void    ComRead() {
+void    ComRead(void) {
 //=================
 
     char        *cursor;
@@ -185,7 +185,7 @@ void    ComRead() {
 }
 
 
-void    ProcInclude() {
+void    ProcInclude(void) {
 //=====================
 
     int old_srcrecnum;
@@ -201,7 +201,7 @@ void    ProcInclude() {
 }
 
 
-void    LinePrint() {
+void    LinePrint(void) {
 //===================
 
     char        buffer[8];
@@ -213,7 +213,7 @@ void    LinePrint() {
 }
 
 
-void    ComPrint() {
+void    ComPrint(void) {
 //==================
 
     char        buffer[8];
@@ -248,7 +248,7 @@ void    FmtInteger( char *buff, int num, int width ) {
 }
 
 
-static  void    Comment() {
+static  void    Comment(void) {
 //=========================
 
 // Process a comment for possible compiler directives.
