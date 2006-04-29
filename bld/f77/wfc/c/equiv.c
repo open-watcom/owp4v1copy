@@ -74,7 +74,7 @@ static  bool    SubStr2( intstar4 *subscripts ) {
 }
 
 
-void    CpEquivalence() {
+void    CpEquivalence(void) {
 //=======================
 
 // Compile EQUIVALENCE statement.
@@ -224,7 +224,7 @@ void    CpEquivalence() {
 }
 
 
-void    EqPurge() {
+void    EqPurge(void) {
 //=================
 
 // Free up all of the equivalence information

@@ -94,7 +94,7 @@ static  bool    BlockName( unsigned_16 rb_defined ) {
 }
 
 
-void    CpRemBlock() {
+void    CpRemBlock(void) {
 //====================
 
     sym_id      rb;
@@ -123,7 +123,7 @@ void    CpRemBlock() {
 }
 
 
-void    CpEndBlock() {
+void    CpEndBlock(void) {
 //====================
 
     CheckCSList( CS_REMOTEBLOCK );
@@ -148,7 +148,7 @@ void    CpEndBlock() {
 }
 
 
-void    CpExecute() {
+void    CpExecute(void) {
 //===================
 
     sym_id      rb;
@@ -171,7 +171,7 @@ void    CpExecute() {
 }
 
 
-static  void    CkRemBlkRec() {
+static  void    CkRemBlkRec(void) {
 //=============================
 
     csnode      *node;

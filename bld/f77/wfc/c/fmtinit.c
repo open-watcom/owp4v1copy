@@ -79,7 +79,7 @@ static  void    FInit( int fmt_length, char *fmt_string ) {
 }
 
 
-static  void    FFinish() {
+static  void    FFinish(void) {
 //=========================
 
     if( StmtProc == PR_FMT ) {

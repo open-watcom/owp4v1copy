@@ -57,7 +57,7 @@ extern  sym_id          FindShadow(sym_id);
 extern  sym_id          FindStruct(char *,int);
 
 
-bool    SubStrung() {
+bool    SubStrung(void) {
 //===================
 
 // Determine whether name is substrung or not.
@@ -74,7 +74,7 @@ bool    SubStrung() {
 }
 
 
-void    DSName() {
+void    DSName(void) {
 //================
 
 // Downscan a name.
@@ -239,7 +239,7 @@ void    DSName() {
 }
 
 
-static  void    ChkStructName() {
+static  void    ChkStructName(void) {
 //===============================
 
     if( CITNode->typ == TY_STRUCTURE ) {
@@ -261,7 +261,7 @@ static  void    ChkStructName() {
 }
 
 
-void    GetFunctionShadow() {
+void    GetFunctionShadow(void) {
 //===========================
 
     sym_id      fn_shadow;
@@ -280,7 +280,7 @@ void    GetFunctionShadow() {
 }
 
 
-static  void    SubProg() {
+static  void    SubProg(void) {
 //=========================
 
 // Make sure subprograms are used correctly.
@@ -344,7 +344,7 @@ static  void    SubProg() {
 }
 
 
-static  void    Function() {
+static  void    Function(void) {
 //==========================
 
 // Must be scanning a function.
@@ -363,7 +363,7 @@ static  void    Function() {
 }
 
 
-static  void    CkIntrinsic() {
+static  void    CkIntrinsic(void) {
 //=============================
 
 // Check for intrinsic functions.
@@ -405,7 +405,7 @@ static  void    CkIntrinsic() {
 }
 
 
-static  void    CkNameNoList() {
+static  void    CkNameNoList(void) {
 //==============================
 
 // Check that array/subprogram with no list is alright.
@@ -423,7 +423,7 @@ static  void    CkNameNoList() {
 }
 
 
-static  void    CkFieldNoList() {
+static  void    CkFieldNoList(void) {
 //===============================
 
 // Check that array field with no list is alright.
@@ -461,7 +461,7 @@ static  void    SetTypeUsage( unsigned_16 type_usage) {
 }
 
 
-void    CkTypeDeclared() {
+void    CkTypeDeclared(void) {
 //========================
 
 // Make sure type has been explicitly declared.

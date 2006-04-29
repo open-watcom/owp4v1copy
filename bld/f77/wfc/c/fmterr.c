@@ -43,7 +43,7 @@
 #include "ferror.h"
 
 
-static  unsigned_16     SetCaret() {
+static  unsigned_16     SetCaret(void) {
 //==================================
 
 // Set position of caret in format string.

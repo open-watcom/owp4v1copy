@@ -75,7 +75,7 @@ static  void    InitLoop( int loop_type ) {
 }
 
 
-static  void    FiniLoop() {
+static  void    FiniLoop(void) {
 //==========================
 
     GBranch( CSHead->branch );
@@ -86,7 +86,7 @@ static  void    FiniLoop() {
 }
 
 
-void    CpLoop() {
+void    CpLoop(void) {
 //================
 
 // Compile a LOOP statement.
@@ -97,7 +97,7 @@ void    CpLoop() {
 }
 
 
-void    CpEndLoop() {
+void    CpEndLoop(void) {
 //===================
 
 // Compile an ENDLOOP statment.
@@ -113,7 +113,7 @@ void    CpEndLoop() {
 }
 
 
-void    CpWhile() {
+void    CpWhile(void) {
 //=================
 
 // Compile a WHILE statement.
@@ -139,7 +139,7 @@ void    CpWhile() {
 }
 
 
-void    CpEndWhile() {
+void    CpEndWhile(void) {
 //====================
 
 // Compile an ENDWHILE statement.
@@ -155,7 +155,7 @@ void    CpEndWhile() {
 }
 
 
-void    CpUntil() {
+void    CpUntil(void) {
 //=================
 
 // Compile an UNTIL statement.
@@ -175,7 +175,7 @@ void    CpUntil() {
 }
 
 
-static  unsigned_32     DoLabel() {
+static  unsigned_32     DoLabel(void) {
 //=================================
 
     unsigned_32 term;
@@ -193,7 +193,7 @@ static  unsigned_32     DoLabel() {
 }
 
 
-void    CpDo() {
+void    CpDo(void) {
 //==============
 
 // Compile a DO statement.
@@ -210,7 +210,7 @@ void    CpDo() {
 }
 
 
-void    CpDoWhile() {
+void    CpDoWhile(void) {
 //===================
 
 // Compile a DO WHILE statement.
@@ -230,7 +230,7 @@ void    CpDoWhile() {
 }
 
 
-void    CpEndDo() {
+void    CpEndDo(void) {
 //=================
 
 // Compile an ENDDO statement.
@@ -254,7 +254,7 @@ void    CpEndDo() {
 }
 
 
-static  void    BadDoEnd() {
+static  void    BadDoEnd(void) {
 //==========================
 
     Error( DO_BAD_ENDDO );
@@ -308,7 +308,7 @@ void    InitDo( signed_32 term ) {
 }
 
 
-void    ImpDo() {
+void    ImpDo(void) {
 //===============
 
     AddCSNode( CS_DO );
@@ -316,7 +316,7 @@ void    ImpDo() {
 }
 
 
-void    TermDo() {
+void    TermDo(void) {
 //================
 
 // Terminate a DO or an implied DO.
@@ -353,7 +353,7 @@ void    TermDo() {
 }
 
 
-void            TermDoWhile() {
+void            TermDoWhile(void) {
 //=============================
 
     GLabel( CSHead->cycle );
@@ -362,7 +362,7 @@ void            TermDoWhile() {
 }
 
 
-void    CpContinue() {
+void    CpContinue(void) {
 //====================
 
 // Compile a CONTINUE statement.

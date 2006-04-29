@@ -46,7 +46,7 @@
 #include "utility.h"
 
 
-void    CpInclude() {
+void    CpInclude(void) {
 //===================
 
 // Process INCLUDE statement.

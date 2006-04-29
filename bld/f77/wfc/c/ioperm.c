@@ -44,7 +44,7 @@
 #define NO      0
 #define YES     1
 
-extern  uint            IOIndex();
+extern  uint            IOIndex(void);
 
 extern  char            *IOKeywords[];
 

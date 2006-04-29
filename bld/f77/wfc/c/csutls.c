@@ -88,7 +88,7 @@ csnode  *NewCSNode( int label_len ) {
 }
 
 
-void    InitCSList() {
+void    InitCSList(void) {
 //====================
 
     BlockNum = 0;
@@ -96,7 +96,7 @@ void    InitCSList() {
 }
 
 
-void    CSPurge() {
+void    CSPurge(void) {
 //=================
 
     if( CSHead != NULL ) {
@@ -109,7 +109,7 @@ void    CSPurge() {
 }
 
 
-itnode  *GetBlockLabel() {
+itnode  *GetBlockLabel(void) {
 //========================
 
     itnode      *citnode;
@@ -150,7 +150,7 @@ void    AddCSNode( byte typ ) {
 }
 
 
-void    DelCSNode() {
+void    DelCSNode(void) {
 //===================
 
     csnode      *old;
@@ -183,7 +183,7 @@ void    DelCSNode() {
 }
 
 
-void    CSNoMore() {
+void    CSNoMore(void) {
 //==================
 
     if( RecNOpn() ) {
@@ -193,7 +193,7 @@ void    CSNoMore() {
 }
 
 
-void    BlockLabel() {
+void    BlockLabel(void) {
 //====================
 
     if( RecNOpn() ) {
@@ -205,7 +205,7 @@ void    BlockLabel() {
 }
 
 
-void    ColonLabel() {
+void    ColonLabel(void) {
 //====================
 
     if( RecColon() ) {
@@ -218,7 +218,7 @@ void    ColonLabel() {
 }
 
 
-void    Match() {
+void    Match(void) {
 //===============
 
     if( CSHead->typ == CS_EMPTY_LIST ) {
@@ -229,7 +229,7 @@ void    Match() {
 }
 
 
-void    CSExtn() {
+void    CSExtn(void) {
 //================
 
     StmtExtension( SP_STRUCTURED_EXT );
@@ -252,7 +252,7 @@ bool    CheckCSList( byte typ ) {
 }
 
 
-bool    EmptyCSList( ) {
+bool    EmptyCSList(void) {
 //======================
 
     return( CSHead->typ == CS_EMPTY_LIST );

@@ -56,7 +56,7 @@ extern  int             FmtS2I(char *,int,bool,intstar4 *,bool,int *);
 extern  int             FmtS2F(char *,int,int,bool,int,int,reallong *,bool,int *,bool);
 
 
-static  void    LitC() {
+static  void    LitC(void) {
 //======================
 
     CITNode->value.cstring.strptr = CITNode->opnd;
@@ -67,7 +67,7 @@ static  void    LitC() {
 }
 
 
-static  void    LogC() {
+static  void    LogC(void) {
 //======================
 
     CITNode->value.logstar1 = *CITNode->opnd == 'T';
@@ -77,7 +77,7 @@ static  void    LogC() {
 }
 
 
-static  void    IntC() {
+static  void    IntC(void) {
 //======================
 
     if( FmtS2I( CITNode->opnd, CITNode->opnd_size, FALSE, &CITNode->value.intstar4, FALSE, NULL ) != INT_OK ) {
@@ -111,7 +111,7 @@ static  bool    CnvFloat( itnode *cit, int prec ) {
 }
 
 
-static  void    RealC() {
+static  void    RealC(void) {
 //=======================
 
     if( CnvFloat( CITNode, PRECISION_SINGLE ) ) {
@@ -123,7 +123,7 @@ static  void    RealC() {
 }
 
 
-static  void    DoubleC() {
+static  void    DoubleC(void) {
 //=========================
 
     if( CnvFloat( CITNode, PRECISION_DOUBLE ) ) {
@@ -135,7 +135,7 @@ static  void    DoubleC() {
 }
 
 
-static  void    ExtendedC() {
+static  void    ExtendedC(void) {
 //===========================
 
     CnvFloat( CITNode, PRECISION_EXTENDED );
@@ -145,7 +145,7 @@ static  void    ExtendedC() {
 }
 
 
-static  void    OctalC() {
+static  void    OctalC(void) {
 //========================
 
     ConstBase( 8 );
@@ -153,7 +153,7 @@ static  void    OctalC() {
 }
 
 
-static  void    HexC() {
+static  void    HexC(void) {
 //======================
 
     ConstBase( 16 );
@@ -189,7 +189,7 @@ static  void    ConstBase( uint base ) {
 }
 
 
-static  bool    Number() {
+static  bool    Number(void) {
 //========================
 
     if( CITNode->opn.ds == DSOPN_PHI ) {
@@ -202,7 +202,7 @@ static  bool    Number() {
 }
 
 
-static  bool    Complex() {
+static  bool    Complex(void) {
 //=========================
 
     if( Number() && RecComma() && Number() && RecCloseParen() ) {
@@ -245,7 +245,7 @@ static  itnode  *CollectNumber( itnode *itptr, int *sign ) {
 }
 
 
-static  void    Phi() {
+static  void    Phi(void) {
 //=====================
 
 // Processing a null operand in an expression.
@@ -348,7 +348,7 @@ static  void    BuildCplx( int real_sign, int imag_sign ) {
 }
 
 
-static  void    AltReturn() {
+static  void    AltReturn(void) {
 //===========================
 
     itnode      *itptr;
@@ -364,7 +364,7 @@ static  void    AltReturn() {
 }
 
 
-static  void    OprEqu() {
+static  void    OprEqu(void) {
 //========================
 
     if( ( ASType & AST_EOK ) == 0 ) {
@@ -395,7 +395,7 @@ static void (* const __FAR DSTable[])() = {
 };
 
 
-void    GetConst() {
+void    GetConst(void) {
 //==================
 
 // Constant converting without downscan-upscan process.
@@ -407,7 +407,7 @@ void    GetConst() {
 }
 
 
-void    GetIntConst() {
+void    GetIntConst(void) {
 //=====================
 
     GetConst();
@@ -417,7 +417,7 @@ void    GetIntConst() {
 }
 
 
-void    DownScan() {
+void    DownScan(void) {
 //==================
 
     AError = FALSE;

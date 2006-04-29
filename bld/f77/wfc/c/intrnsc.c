@@ -50,7 +50,7 @@ extern  sym_id          LkSym(void);
 #define ERR_MASK        (SY_IN_EC | SY_SUB_PARM)
 
 
-void    CpIntrinsic() {
+void    CpIntrinsic(void) {
 //=====================
 
 // Compile INTRINSIC statement.

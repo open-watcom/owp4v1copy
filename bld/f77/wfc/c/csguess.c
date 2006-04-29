@@ -50,7 +50,7 @@ extern  label_id        NextLabel(void);
 extern  void            FreeLabel(label_id);
 
 
-void    CpGuess() {
+void    CpGuess(void) {
 //=================
 
 // Process a GUESS statement.
@@ -63,7 +63,7 @@ void    CpGuess() {
 }
 
 
-void    CpAdmit() {
+void    CpAdmit(void) {
 //=================
 
 // Process an ADMIT statement.
@@ -82,7 +82,7 @@ void    CpAdmit() {
 }
 
 
-void    CpEndGuess() {
+void    CpEndGuess(void) {
 //====================
 
 // Process an ENDGUESS statement.

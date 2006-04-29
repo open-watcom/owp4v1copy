@@ -272,7 +272,7 @@ void    FormatIdd( void ) {
 }
 
 
-void    Unit( ) {
+void    Unit(void) {
 //===============
 
     if( RecNOpn() && RecNextOpr( OPR_MUL ) ) {

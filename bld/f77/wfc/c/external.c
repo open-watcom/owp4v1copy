@@ -47,7 +47,7 @@
 extern  sym_id          LkSym(void);
 
 
-void    CpExternal() {
+void    CpExternal(void) {
 //====================
 
 // Compile EXTERNAL statement.

@@ -47,7 +47,7 @@
 extern  bool            OptimalChSize(uint);
 
 
-static  bool    CheckColon() {
+static  bool    CheckColon(void) {
 //============================
 
     if( RecNextOpr( OPR_COL ) ) {
@@ -58,7 +58,7 @@ static  bool    CheckColon() {
 }
 
 
-void    SetDefinedStatus() {
+void    SetDefinedStatus(void) {
 //==========================
 
     switch( CITNode->opn.us & USOPN_WHAT ) {
@@ -73,7 +73,7 @@ void    SetDefinedStatus() {
 }
 
 
-void    DetCallList() {
+void    DetCallList(void) {
 //=====================
 
     itnode      *cit;
@@ -104,7 +104,7 @@ void    DetCallList() {
 }
 
 
-void    DetSubList() {
+void    DetSubList(void) {
 //====================
 
     itnode      *cit;
@@ -160,7 +160,7 @@ void    DetSubList() {
 }
 
 
-void    DetSStr() {
+void    DetSStr(void) {
 //=================
 
     itnode      *cit;
@@ -194,7 +194,7 @@ static  void    SubStrArgs( itnode *cit ) {
 }
 
 
-static  void    CkScrStr() {
+static  void    CkScrStr(void) {
 //==========================
 
     USOPN        opn;

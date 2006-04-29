@@ -57,7 +57,7 @@ extern  label_id        NextLabel(void);
 extern  void            FreeLabel(label_id);
 
 
-void    CpLogIf() {
+void    CpLogIf(void) {
 //=================
 
 // Process a logical IF statement.
@@ -82,7 +82,7 @@ void    CpLogIf() {
 }
 
 
-void    CpElseIf() {
+void    CpElseIf(void) {
 //==================
 
 // Process an ELSEIF statement.
@@ -109,7 +109,7 @@ void    CpElseIf() {
 }
 
 
-void    CpElse() {
+void    CpElse(void) {
 //================
 
 // Process an ELSE statement.
@@ -129,7 +129,7 @@ void    CpElse() {
 }
 
 
-void    CpEndif() {
+void    CpEndif(void) {
 //=================
 
 // Process an ENDIF statement.

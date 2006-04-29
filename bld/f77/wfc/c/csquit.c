@@ -45,7 +45,7 @@ extern  void            CSExtn(void);
 extern  itnode          *GetBlockLabel(void);
 extern  void            GBranch(label_id);
 
-void    CpQuit() {
+void    CpQuit(void) {
 //================
 
 // Compile a QUIT statement.

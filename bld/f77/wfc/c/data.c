@@ -67,7 +67,7 @@ extern  int             HSToB(char *,uint,char *);
 extern  bool            CalcStructSize(sym_id);
 
 
-void    CpData() {
+void    CpData(void) {
 //================
 
 // Compile DATA statement.
@@ -145,7 +145,7 @@ static  void    Free2CIT( itnode *node ) {
 }
 
 
-static  void    DoData() {
+static  void    DoData(void) {
 //========================
 
 // Process one vlist/dlist/ pair.
@@ -195,7 +195,7 @@ static  OPR    FindSlash( itnode **itptr_ptr ) {
 }
 
 
-static  void    VarList() {
+static  void    VarList(void) {
 //=========================
 
 // Process one variable list in a DATA statement.
@@ -248,7 +248,7 @@ static  void    VarList() {
 }
 
 
-static  bool    HexConst() {
+static  bool    HexConst(void) {
 //==========================
 
 // Check for a hexadecimal constant specifier.
@@ -281,7 +281,7 @@ static  bool    HexConst() {
 }
 
 
-static  void    ConList() {
+static  void    ConList(void) {
 //=========================
 
 // Collect constants for data initialization.
@@ -348,7 +348,7 @@ static  void    DumpDataSets( int num, itnode *node ) {
 }
 
 
-static  void    GetSConst() {
+static  void    GetSConst(void) {
 //===========================
 
 // Signed constant converting without downscan-upscan process.
@@ -403,7 +403,7 @@ int             MkHexConst( char *hex_data, char *dst, int hex_len ) {
 }
 
 
-static  void    CkFlags() {
+static  void    CkFlags(void) {
 //=========================
 
     if( ( InitVar->ns.flags & SY_CLASS ) != SY_VARIABLE ) {

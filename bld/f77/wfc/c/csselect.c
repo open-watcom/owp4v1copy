@@ -55,7 +55,7 @@ extern  void            GBranch(label_id);
 extern  void            FreeLabel(label_id);
 
 
-case_entry      *NewCase() {
+case_entry      *NewCase(void) {
 //==========================
 
     case_entry  *ptr;
@@ -70,7 +70,7 @@ case_entry      *NewCase() {
 }
 
 
-void    CpSelect() {
+void    CpSelect(void) {
 //==================
 
 // Compile a SELECT statement.
@@ -105,7 +105,7 @@ void    CpSelect() {
 }
 
 
-void    CpCase() {
+void    CpCase(void) {
 //================
 
 // Compile a CASE statement.
@@ -154,7 +154,7 @@ static  intstar4        MaxCaseValue( TYPE typ ) {
 }
 
 
-static  intstar4        CaseValue() {
+static  intstar4        CaseValue(void) {
 //===================================
 
 // Get a value for case expression.
@@ -169,7 +169,7 @@ static  intstar4        CaseValue() {
 }
 
 
-static  void    CaseHandler() {
+static  void    CaseHandler(void) {
 //=============================
 
     label_id    label;
@@ -262,7 +262,7 @@ static  void    CaseHandler() {
 }
 
 
-void    CpOtherwise() {
+void    CpOtherwise(void) {
 //=====================
 
 // Compile an OTHERWISE statement.
@@ -283,7 +283,7 @@ void    CpOtherwise() {
 }
 
 
-void    CpEndSelect() {
+void    CpEndSelect(void) {
 //=====================
 
 // Compile an ENDSELECT statement.

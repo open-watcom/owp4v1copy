@@ -56,7 +56,7 @@ extern  bool            Already(uint);
 extern  bool            NotFormatted(void);
 
 
-void    IOList() {
+void    IOList(void) {
 //================
 
 // Process the input/output list.
@@ -103,7 +103,7 @@ static  void    ChkStructIO( sym_id sym ) {
 }
 
 
-bool    StartImpDo() {
+bool    StartImpDo(void) {
 //====================
 
 // This procedure scans the i/o list to recognize an implied do.
@@ -156,7 +156,7 @@ bool    StartImpDo() {
 }
 
 
-void    ProcessList() {
+void    ProcessList(void) {
 //=====================
 
 // This procedure will process one 'thing' from the i/o list. A 'thing' is:
@@ -179,7 +179,7 @@ void    ProcessList() {
 }
 
 
-void    ListItem() {
+void    ListItem(void) {
 //==================
 
 // Process one list item.
@@ -255,7 +255,7 @@ void    InitImpDo( itnode *lastcomma ) {
 }
 
 
-void    FinishImpDo() {
+void    FinishImpDo(void) {
 //=====================
 
 // Finish the implied DO.
