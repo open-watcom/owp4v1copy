@@ -840,7 +840,7 @@ and the cursor will still be on the 't'.
 .np
 &edvi comes with a default set of menus that have the following items
 .millust begin
-Control  File  Edit  Position  Help
+File  Edit  Position  Window  Options  Help
 .millust end
 The first letter of each word is highlighted, indicating that that
 key is the hot key to activate the menu.
