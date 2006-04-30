@@ -55,7 +55,7 @@ extern  cg_name         GetTypedValue(void);
 extern  void            XPush(cg_name);
 
 
-void    FCEqv() {
+void    FCEqv( void ) {
 //===============
 
 // Logical .EQV. F-Code processor.
@@ -64,7 +64,7 @@ void    FCEqv() {
 }
 
 
-void    FCNEqv() {
+void    FCNEqv( void ) {
 //================
 
 // Logical .NEQV. F-Code processor.
@@ -100,7 +100,7 @@ static  void    Equivalent( cg_op op_code ) {
 }
 
 
-void    FCOr() {
+void    FCOr( void ) {
 //==============
 
 // Logical .OR. F-Code processor.
@@ -109,7 +109,7 @@ void    FCOr() {
 }
 
 
-void    FCAnd() {
+void    FCAnd( void ) {
 //===============
 
 // Logical .AND. F-Code processor.
@@ -138,7 +138,7 @@ static  void    XLogic( int op_code ) {
 }
 
 
-void    FCNot() {
+void    FCNot( void ) {
 //===============
 
 // Logical .NOT. F-Code processor.

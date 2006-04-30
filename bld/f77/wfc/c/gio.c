@@ -54,7 +54,7 @@ extern  void            GStmtAddr(sym_id);
 extern  bool            Already(int);
 
 
-void    GSetIOCB() {
+void    GSetIOCB( void ) {
 //==================
 
 // Generate a call to set the IOCB.
@@ -63,7 +63,7 @@ void    GSetIOCB() {
 }
 
 
-void    GStartIO() {
+void    GStartIO( void ) {
 //==================
 
 // Generate code to invoke the run-time routine.
@@ -111,7 +111,7 @@ static  void    GIORoutine( TYPE typ, uint size ) {
 }
 
 
-void    GIOItem() {
+void    GIOItem( void ) {
 //=================
 
 // Generate code to process an i/o list item.
@@ -121,7 +121,7 @@ void    GIOItem() {
 }
 
 
-void    GIOArray() {
+void    GIOArray( void ) {
 //==================
 
 // Generate code to do array i/o.
@@ -140,7 +140,7 @@ void    GIOArray() {
 }
 
 
-void    GIOStructArray() {
+void    GIOStructArray( void ) {
 //========================
 
 // Generate code to do structured array i/o.
@@ -154,7 +154,7 @@ void    GIOStructArray() {
 }
 
 
-void    GStopIO() {
+void    GStopIO( void ) {
 //=================
 
 // Generate code to return a null i/o item to run-time i/o.
@@ -225,7 +225,7 @@ void    GPassLabel( label_id label, RTCODE routine ) {
 }
 
 
-void    GFmtVarSet() {
+void    GFmtVarSet( void ) {
 //====================
 
 // Called when using
@@ -238,7 +238,7 @@ void    GFmtVarSet() {
 }
 
 
-static  void    ChkExtendFmt() {
+static  void    ChkExtendFmt( void ) {
 //==============================
 
     if( Options & OPT_EXTEND_FORMAT ) {
@@ -249,7 +249,7 @@ static  void    ChkExtendFmt() {
 }
 
 
-void    GFmtArrSet() {
+void    GFmtArrSet( void ) {
 //====================
 
 // Called when using
@@ -261,7 +261,7 @@ void    GFmtArrSet() {
 }
 
 
-void    GFmtExprSet() {
+void    GFmtExprSet( void ) {
 //=====================
 
 // Pass the label identifying encoded format string.
@@ -274,7 +274,7 @@ void    GFmtExprSet() {
 }
 
 
-void    GArrIntlSet() {
+void    GArrIntlSet( void ) {
 //=====================
 
 // Set internal file pointer to array.
@@ -285,7 +285,7 @@ void    GArrIntlSet() {
 }
 
 
-void    GIntlSet() {
+void    GIntlSet( void ) {
 //==================
 
 // Set internal file pointer to character variable.
@@ -310,7 +310,7 @@ void    GCheckEOF( label_id label ) {
 }
 
 
-void    GNullEofStmt() {
+void    GNullEofStmt( void ) {
 //======================
 
 // Emit the "null" F-Code.

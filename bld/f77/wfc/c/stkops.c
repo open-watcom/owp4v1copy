@@ -122,7 +122,7 @@ void    PushConst( intstar4 val ) {
 }
 
 
-void    GParenExpr() {
+void    GParenExpr( void ) {
 //====================
 
     EmitOp( FC_DONE_PAREN_EXPR );

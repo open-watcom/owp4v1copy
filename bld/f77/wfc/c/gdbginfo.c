@@ -40,7 +40,7 @@
 #include "emitobj.h"
 
 
-void    GSetDbugLine() {
+void    GSetDbugLine( void ) {
 //======================
 
 // Generate line # information (for all statements).
@@ -50,7 +50,7 @@ void    GSetDbugLine() {
 }
 
 
-void    GSetSrcLine() {
+void    GSetSrcLine( void ) {
 //=====================
 
 // Generate line # information (for executable statements).

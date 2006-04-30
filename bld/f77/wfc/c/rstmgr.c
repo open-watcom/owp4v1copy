@@ -58,7 +58,7 @@ static  void    InitHashTable( hash_entry *hash_table, int size ) {
 }
 
 
-void    OpenSymTab() {
+void    OpenSymTab( void ) {
 //====================
 
 // Initialize the symbol table.
@@ -69,13 +69,13 @@ void    OpenSymTab() {
 }
 
 
-void    CloseSymTab() {
+void    CloseSymTab( void ) {
 //=====================
 
 }
 
 
-void    VSTInit() {
+void    VSTInit( void ) {
 //=================
 
 // Initialize symbol table.

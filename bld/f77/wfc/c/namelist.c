@@ -47,7 +47,7 @@ extern  sym_id          LkNameList(void);
 extern  grp_entry       *STGroupEntry(void);
 
 
-void    CpNameList() {
+void    CpNameList( void ) {
 //====================
 
 // Process NAMELIST statement.

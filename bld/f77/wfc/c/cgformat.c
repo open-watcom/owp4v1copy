@@ -69,7 +69,7 @@ void    StartFmt( cs_label fmt_label ) {
 }
 
 
-void    EndFmt() {
+void    EndFmt( void ) {
 //================
 
 // Finish format processing.
@@ -84,7 +84,7 @@ void    EndFmt() {
 }
 
 
-void    InitFormatList() {
+void    InitFormatList( void ) {
 //========================
 
 // Initialize format list.
@@ -93,7 +93,7 @@ void    InitFormatList() {
 }
 
 
-void    FiniFormatList() {
+void    FiniFormatList( void ) {
 //========================
 
 // Finish format list.

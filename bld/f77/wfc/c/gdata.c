@@ -44,7 +44,7 @@
 extern  sym_id          STConst(void *,TYPE,uint);
 
 
-label_id        GDataProlog() {
+label_id        GDataProlog( void ) {
 //=============================
 
 // Start off data statement code.
@@ -65,7 +65,7 @@ void    GDataEpilog( label_id label ) {
 }
 
 
-void    GBegDList() {
+void    GBegDList( void ) {
 //===================
 
 // Start list of data.
@@ -104,7 +104,7 @@ void    GDataItem( itnode *rpt ) {
 }
 
 
-void    GEndDSet() {
+void    GEndDSet( void ) {
 //==================
 
 // Terminate set of constants (i.e. Data i,j,k/1,2,3/,m/3/ - 1,2,3 is a set
@@ -114,7 +114,7 @@ void    GEndDSet() {
 }
 
 
-void    GEndDList() {
+void    GEndDList( void ) {
 //===================
 
 // Terminate list of data.
@@ -122,7 +122,7 @@ void    GEndDList() {
 }
 
 
-void    GEndVarSet() {
+void    GEndVarSet( void ) {
 //====================
 
 // Terminate set of variables (i.e. Data i,j,k/1,2,3/,m/3/ - i,j,k is a set

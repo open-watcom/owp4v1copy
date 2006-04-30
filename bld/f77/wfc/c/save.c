@@ -53,7 +53,7 @@ extern  sym_id                  LkSym(void);
                          SY_DATA_INIT | SY_SAVED | SY_IN_EQUIV | SY_REFERENCED)
 
 
-void    CpSave() {
+void    CpSave( void ) {
 //================
 
 // Compile SAVE statement :    SAVE A1 {,A2 ... }

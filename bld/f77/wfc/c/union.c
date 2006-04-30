@@ -49,7 +49,7 @@ extern  void            CSExtn(void);
 extern  char            *StmtKeywords[];
 
 
-void    CpUnion() {
+void    CpUnion( void ) {
 //=================
 
 // Process UNION statement.
@@ -62,7 +62,7 @@ void    CpUnion() {
 }
 
 
-void    CpEndUnion() {
+void    CpEndUnion( void ) {
 //====================
 
 // Process ENDUNION statement.
@@ -77,7 +77,7 @@ void    CpEndUnion() {
 }
 
 
-void    CpMap() {
+void    CpMap( void ) {
 //===============
 
 // Process MAP statement.
@@ -90,7 +90,7 @@ void    CpMap() {
 }
 
 
-void    CpEndMap() {
+void    CpEndMap( void ) {
 //====================
 
 // Process ENDMAP statement.
@@ -105,7 +105,7 @@ void    CpEndMap() {
 }
 
 
-void    EndOfStatement() {
+void    EndOfStatement( void ) {
 //========================
 
     ReqNOpn();

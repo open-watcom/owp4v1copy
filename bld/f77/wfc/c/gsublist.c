@@ -54,7 +54,7 @@ void            GWarp( sym_id sym ) {
 }
 
 
-warp_label              GBegSList() {
+warp_label              GBegSList( void ) {
 //===================================
 
 // Generate code to start ADV initialization.

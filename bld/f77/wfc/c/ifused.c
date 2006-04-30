@@ -44,7 +44,7 @@
 #include <string.h>
 
 
-void    IFInit() {
+void    IFInit(void) {
 //================
 
 // Initialize IFUsed flags.

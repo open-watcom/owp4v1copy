@@ -544,7 +544,7 @@ static  unsigned_32     DumpVariable( sym_id sym, unsigned_32 g_offset ) {
 }
 
 
-static  void    SetConstDataSeg() {
+static  void    SetConstDataSeg( void ) {
 //=================================
 #if _CPU == 8086 || _CPU == 386
     if( ( CGOpts & CGOPT_CONST_CODE ) && ( _BigDataModel( CGOpts ) ) ) {
@@ -558,7 +558,7 @@ static  void    SetConstDataSeg() {
 }
 
 
-void    GenLocalSyms() {
+void    GenLocalSyms( void ) {
 //======================
 
 // Generate local symbols for a subprogram.
@@ -707,7 +707,7 @@ void    GenLocalSyms() {
 }
 
 
-static  void    DumpNameLists() {
+static  void    DumpNameLists( void ) {
 //===============================
 
 // Dump NAMELIST information.
@@ -750,7 +750,7 @@ static  void    DumpNameLists() {
 }
 
 
-void    GenLocalDbgInfo() {
+void    GenLocalDbgInfo( void ) {
 //=========================
 
 // Generate local symbols for a subprogram.
@@ -808,7 +808,7 @@ void    GenLocalDbgInfo() {
 }
 
 
-static  void    MergeCommonInfo() {
+static  void    MergeCommonInfo( void ) {
 //=================================
 
 // Merge information from global common block to local common block.
@@ -1168,7 +1168,7 @@ static  void    DumpStaticAdv( sym_id sym, bool dmp_nam_ptr ) {
 }
 
 
-static  void    DumpBrTable() {
+static  void    DumpBrTable( void ) {
 //=============================
 
 // Dump the branch table ( for wild goto's ).
@@ -1198,7 +1198,7 @@ static  void    DumpBrTable() {
 }
 
 
-static  void    DumpLitSCBs() {
+static  void    DumpLitSCBs( void ) {
 //=============================
 
 // Dump string control blocks for constant literals.
@@ -1353,7 +1353,7 @@ void    FreeUsedBacks( bool nuke ) {
 }
 
 
-void    FreeGlobalData() {
+void    FreeGlobalData( void ) {
 //========================
 
     if( Options & OPT_TRACE ) {
@@ -1364,7 +1364,7 @@ void    FreeGlobalData() {
 }
 
 
-void    FreeGlobalBacks() {
+void    FreeGlobalBacks( void ) {
 //=========================
 
 // Free back handles for global symbols in local symbol table.
@@ -1434,7 +1434,7 @@ void    DefineEntryPoint( entry_pt *ep ) {
 }
 
 
-static  void    DefineCommonEntry() {
+static  void    DefineCommonEntry( void ) {
 //===================================
 
     entry_pt    *ep;

@@ -46,7 +46,7 @@ static  char            SpcSeq[] = { LF,          // for single spacing
 static  bool    __lf_with_ff = { FALSE };
 
 
-void    __LineFeedWithFormFeed() {
+void    __LineFeedWithFormFeed( void ) {
 //================================
 
     __lf_with_ff = TRUE;

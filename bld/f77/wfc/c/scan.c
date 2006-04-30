@@ -85,7 +85,7 @@ static  TOKCLASS        TokenDBL;
 static  TOKCLASS        TokenEXT;
 
 
-void    InitScan() {
+void    InitScan( void ) {
 //==================
 
 // Initialize the scanner.
@@ -123,7 +123,7 @@ void    InitScan() {
 }
 
 
-void    Scan() {
+void    Scan( void ) {
 //==============
 
 // Collect a token.
@@ -486,7 +486,7 @@ token:  LexToken.stop  = TkCrsr;
 }
 
 
-static  void    ScanNum() {
+static  void    ScanNum( void ) {
 //=========================
 
     if( StmtType != STMT_CONT ) {
@@ -512,7 +512,7 @@ static  void    ScanNum() {
 }
 
 
-static  void    LkUpLog() {
+static  void    LkUpLog( void ) {
 //=========================
 
     int         index;

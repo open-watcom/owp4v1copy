@@ -40,7 +40,7 @@
 #include "emitobj.h"
 
 
-void    EmExprDone() {
+void    EmExprDone( void ) {
 //====================
 
 // Finish expression processing.

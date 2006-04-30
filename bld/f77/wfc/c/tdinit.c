@@ -60,7 +60,7 @@ extern  void            SubAuxFini(void);
 extern  unsigned_8      CGFlags;
 
 
-void            TDProgInit() {
+void            TDProgInit( void ) {
 //============================
 
 // Initialize for compilation of file.
@@ -72,7 +72,7 @@ void            TDProgInit() {
 }
 
 
-void            TDProgFini() {
+void            TDProgFini( void ) {
 //============================
 
 // Finish off compilation of file.
@@ -91,7 +91,7 @@ void            TDProgFini() {
 }
 
 
-void            TDSubInit() {
+void            TDSubInit( void ) {
 //===========================
 
 // Initialize compilation of a subprogram.
@@ -113,7 +113,7 @@ void            TDSubInit() {
 }
 
 
-void            TDSubFini() {
+void            TDSubFini( void ) {
 //===========================
 
 // Finish off compilation of a subprogram.
@@ -129,7 +129,7 @@ void            TDSubFini() {
 }
 
 
-void            TDStmtInit() {
+void            TDStmtInit( void ) {
 //============================
 
 // Target dependent statement initialization.
@@ -137,7 +137,7 @@ void            TDStmtInit() {
 }
 
 
-void            TDStmtFini() {
+void            TDStmtFini( void ) {
 //============================
 
 // Target dependent statement finalization.
@@ -156,7 +156,7 @@ void            TDStmtFini() {
 }
 
 
-void            TDPurge() {
+void            TDPurge( void ) {
 //=========================
 
 // Free all allocated structures.

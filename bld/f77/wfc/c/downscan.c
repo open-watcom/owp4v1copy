@@ -390,7 +390,7 @@ static  void    OprEqu(void) {
 #endif
 #define pick(tok_id,dsopn_id,opn_proc) opn_proc,
 
-static void (* const __FAR DSTable[])() = {
+static void (* const __FAR DSTable[])(void) = {
 #include "tokdsopn.h"
 };
 

@@ -109,7 +109,7 @@ static  void    PrCallList( itnode *subpgm_node ) {
 }
 
 
-static  void    PrSFList() {
+static  void    PrSFList( void ) {
 //==========================
 
     int         num_parms;

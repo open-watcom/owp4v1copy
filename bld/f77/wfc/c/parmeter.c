@@ -50,7 +50,7 @@ extern  void            CnvTo(itnode *,TYPE,uint);
 extern  void            CkSymDeclared(sym_id);
 
 
-void    CpParameter() {
+void    CpParameter( void ) {
 //=====================
 
 // Compile PARAMETER statement.

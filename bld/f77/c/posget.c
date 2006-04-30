@@ -361,7 +361,7 @@ uint    GetRec( char *b, uint len ) {
 }
 
 
-char    GetStdChar() {
+char    GetStdChar( void ) {
 //====================
 
 // Get a character from standard input.

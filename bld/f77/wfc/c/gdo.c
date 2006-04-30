@@ -253,7 +253,7 @@ static  void    DataDo( TYPE do_type ) {
 }
 
 
-static  void    DoExpr() {
+static  void    DoExpr( void ) {
 //========================
 
 // Evaluate a DO expression (e1, e2 or e3 ).
@@ -264,7 +264,7 @@ static  void    DoExpr() {
 }
 
 
-void    GDoEnd() {
+void    GDoEnd( void ) {
 //================
 
 // Terminate a DO or an implied-DO.
@@ -277,7 +277,7 @@ void    GDoEnd() {
 }
 
 
-static  void    DoLoopEnd() {
+static  void    DoLoopEnd( void ) {
 //===========================
 
 // Generate code for end of DO-loops or implied-DO.
@@ -297,7 +297,7 @@ static  void    DoLoopEnd() {
 }
 
 
-static  void    DataDoEnd() {
+static  void    DataDoEnd( void ) {
 //===========================
 
 // Process end of implied-DO for DATA statement.

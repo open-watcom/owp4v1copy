@@ -64,21 +64,21 @@ extern  cg_name         SCBPointer(cg_name);
 extern  bool            IntType(PTYPE);
 
 
-void    FCCharLen() {
+void    FCCharLen( void ) {
 //===================
 
     XPush( SCBLength( XPop() ) );
 }
 
 
-void    FCMax() {
+void    FCMax( void ) {
 //===============
 
     MinMax( O_GT );
 }
 
 
-void    FCMin() {
+void    FCMin( void ) {
 //===============
 
     MinMax( O_LT );
@@ -108,7 +108,7 @@ static  void    MinMax( cg_op cmp ) {
 }
 
 
-void    FCDProd() {
+void    FCDProd( void ) {
 //=================
 
     cg_name     op1;
@@ -119,7 +119,7 @@ void    FCDProd() {
     XPush( CGBinary( O_TIMES, op1, op2, T_DOUBLE ) );
 }
 
-void    FCXProd() {
+void    FCXProd( void ) {
 //=================
 
     cg_name     op1;
@@ -132,14 +132,14 @@ void    FCXProd() {
 
 
 
-void            FCMod() {
+void            FCMod( void ) {
 //=======================
 
     GBinaryMath( O_FMOD );
 }
 
 
-void            FCAbs() {
+void            FCAbs( void ) {
 //=======================
 
     unsigned_16 typ_info;
@@ -163,98 +163,98 @@ void            FCAbs() {
 }
 
 
-void            FCASin() {
+void            FCASin( void ) {
 //========================
 
     GUnaryMath( O_ASIN );
 }
 
 
-void            FCACos() {
+void            FCACos( void ) {
 //========================
 
     GUnaryMath( O_ACOS );
 }
 
 
-void            FCATan() {
+void            FCATan( void ) {
 //========================
 
     GUnaryMath( O_ATAN );
 }
 
 
-void            FCATan2() {
+void            FCATan2( void ) {
 //=========================
 
     GBinaryMath( O_ATAN2 );
 }
 
 
-void            FCLog() {
+void            FCLog( void ) {
 //=======================
 
     GUnaryMath( O_LOG );
 }
 
 
-void            FCLog10() {
+void            FCLog10( void ) {
 //=========================
 
     GUnaryMath( O_LOG10 );
 }
 
 
-void            FCCos() {
+void            FCCos( void ) {
 //=======================
 
     GUnaryMath( O_COS );
 }
 
 
-void            FCSin() {
+void            FCSin( void ) {
 //=======================
 
     GUnaryMath( O_SIN );
 }
 
 
-void            FCTan() {
+void            FCTan( void ) {
 //=======================
 
     GUnaryMath( O_TAN );
 }
 
 
-void            FCSinh() {
+void            FCSinh( void ) {
 //========================
 
     GUnaryMath( O_SINH );
 }
 
 
-void            FCCosh() {
+void            FCCosh( void ) {
 //========================
 
     GUnaryMath( O_COSH );
 }
 
 
-void            FCTanh() {
+void            FCTanh( void ) {
 //========================
 
     GUnaryMath( O_TANH );
 }
 
 
-void            FCSqrt() {
+void            FCSqrt( void ) {
 //========================
 
     GUnaryMath( O_SQRT );
 }
 
 
-void            FCExp() {
+void            FCExp( void ) {
 //=======================
 
     GUnaryMath( O_EXP );
@@ -283,7 +283,7 @@ static  void    GBinaryMath( uint ifn ) {
 }
 
 
-void            FCLoc() {
+void            FCLoc( void ) {
 //=======================
 
     PTYPE       typ_info;
@@ -307,7 +307,7 @@ void            FCLoc() {
 }
 
 
-void            FCVolatile() {
+void            FCVolatile( void ) {
 //============================
 
     cg_name     arg;

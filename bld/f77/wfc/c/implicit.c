@@ -56,7 +56,7 @@ extern  int             FmtS2I(char *,int,bool,intstar4 *,bool,int *);
 extern  character_set   CharSetInfo;
 
 
-static  bool    ReqChar() {
+static  bool    ReqChar( void ) {
 //=========================
 
 // Recognize one character operand.
@@ -216,7 +216,7 @@ static  TYPE    RecTypeKW( void ) {
 }
 
 
-void    CpImplicit() {
+void    CpImplicit( void ) {
 //====================
 
 // Process the IMPLICIT statement.

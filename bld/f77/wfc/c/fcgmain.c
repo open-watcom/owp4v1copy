@@ -83,7 +83,7 @@ extern  void            (* __FAR FCJmpTab[])(void);
 unsigned_8              CGFlags = { 0 };
 
 
-static  void    CGProgFini() {
+static  void    CGProgFini( void ) {
 //============================
 
 // Finalize code generator.
@@ -97,7 +97,7 @@ static  void    CGProgFini() {
 }
 
 
-void    CGGenSub() {
+void    CGGenSub( void ) {
 //==================
 
 // Finalize code generator after compiling a subprogram.
@@ -139,7 +139,7 @@ void    CGGenSub() {
   #error no target specified
 #endif
 
-static  void    CGStart() {
+static  void    CGStart( void ) {
 //=========================
 
 // Initialize code generator.
@@ -391,7 +391,7 @@ static  void    CGStart() {
 }
 
 
-static  void    InitCG() {
+static  void    InitCG( void ) {
 //========================
 
 // Initialize code generator.
@@ -404,7 +404,7 @@ static  void    InitCG() {
 }
 
 
-void    FCodeSequence() {
+void    FCodeSequence( void ) {
 //=======================
 
 // Interpret an F-Code sequence.
@@ -420,7 +420,7 @@ void    FCodeSequence() {
 }
 
 
-void    CGPurge() {
+void    CGPurge( void ) {
 //=================
 
 // Free up unallocated memory if code generator gave a fatal error.

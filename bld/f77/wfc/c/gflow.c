@@ -116,7 +116,7 @@ void    G3WayBranch( sym_id lt, sym_id eq, sym_id gt ) {
 }
 
 
-void    InitSelect() {
+void    InitSelect( void ) {
 //====================
 
 // Initialize SELECT statement.
@@ -152,7 +152,7 @@ void    InitSelect() {
 }
 
 
-void    FiniSelect() {
+void    FiniSelect( void ) {
 //====================
 
 // Terminate SELECT statement.
@@ -225,7 +225,7 @@ void    GStmtAddr( sym_id stmtno ) {
 }
 
 
-void    GEndBrTab() {
+void    GEndBrTab( void ) {
 //===================
 
 // Mark the end of the statement table.
@@ -260,7 +260,7 @@ void    GBreak( FCODE routine ) {
 }
 
 
-void    GStartSF() {
+void    GStartSF( void ) {
 //==================
 
 // Start a statement function.
@@ -277,7 +277,7 @@ void    GStartSF() {
 }
 
 
-void    GEndSF() {
+void    GEndSF( void ) {
 //================
 
 // Terminate a statement function.
@@ -301,7 +301,7 @@ void    GEndSF() {
 }
 
 
-void    GStartBlock() {
+void    GStartBlock( void ) {
 //=====================
 
 // Start a REMOTE BLOCK.
@@ -311,7 +311,7 @@ void    GStartBlock() {
 }
 
 
-void    GExecute() {
+void    GExecute( void ) {
 //==================
 
 // Execute a REMOTE BLOCK.
@@ -321,7 +321,7 @@ void    GExecute() {
 }
 
 
-void    GEndBlock() {
+void    GEndBlock( void ) {
 //===================
 
 // Terminate a REMOTE-block.
@@ -330,7 +330,7 @@ void    GEndBlock() {
 }
 
 
-void    GPgmLabel() {
+void    GPgmLabel( void ) {
 //===================
 
 // Generate a program label.
@@ -340,7 +340,7 @@ void    GPgmLabel() {
 }
 
 
-void    GSegLabel() {
+void    GSegLabel( void ) {
 //===================
 
 // Generate a subprogram label.
@@ -350,7 +350,7 @@ void    GSegLabel() {
 }
 
 
-void    GBlockLabel() {
+void    GBlockLabel( void ) {
 //=====================
 
 // Generate a block data subprogram label.

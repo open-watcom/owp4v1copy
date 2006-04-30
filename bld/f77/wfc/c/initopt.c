@@ -56,7 +56,7 @@ extern  void            __UseEnglishCharSet(void);
 #endif
 
 
-void    SetDefaultOpts() {
+void    SetDefaultOpts( void ) {
 //========================
 
 // Initialize options.
@@ -72,7 +72,7 @@ void    SetDefaultOpts() {
 }
 
 
-void    InitOptions() {
+void    InitOptions( void ) {
 //=====================
 
 // Gets called after command line options have been processed

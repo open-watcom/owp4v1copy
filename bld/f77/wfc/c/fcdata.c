@@ -74,8 +74,8 @@ extern  char            *STFieldName(sym_id,char *);
 extern  void            DtStartSequence(void);
 extern  void            DtFiniSequence(void);
 
-extern  void            (* __FAR FCJmpTab[])();
-extern  void            (* __FAR DataJmpTab[])();
+extern  void            (* __FAR FCJmpTab[])( void );
+extern  void            (* __FAR DataJmpTab[])( void );
 extern  char            *StmtKeywords[];
 
 static  void            InitStructArr( sym_id fd, act_dim_list *dim );
@@ -955,7 +955,7 @@ static  void    AsnVal( PTYPE var_type ) {
 }
 
 
-void    FCStartDataStmt() {
+void    FCStartDataStmt( void ) {
 //=========================
 
 // Start DATA statement processing.
@@ -969,7 +969,7 @@ void    FCStartDataStmt() {
 }
 
 
-void    DtEndDataStmt() {
+void    DtEndDataStmt( void ) {
 //=======================
 
 // End DATA statement processing.
@@ -980,7 +980,7 @@ void    DtEndDataStmt() {
 }
 
 
-void    DtEndVarSet() {
+void    DtEndVarSet( void ) {
 //=====================
 
 // End of DATA variable set.
@@ -995,7 +995,7 @@ void    DtEndVarSet() {
 }
 
 
-void    DtDataDoLoop() {
+void    DtDataDoLoop( void ) {
 //======================
 
 // Process implied-DO for DATA statement.
@@ -1023,7 +1023,7 @@ void    DtDataDoLoop() {
 }
 
 
-void    DtInpLOG1() {
+void    DtInpLOG1( void ) {
 //===================
 
 // Data initialize a LOGICAL*1 item.
@@ -1032,7 +1032,7 @@ void    DtInpLOG1() {
 }
 
 
-void    DtInpLOG4() {
+void    DtInpLOG4( void ) {
 //===================
 
 // Data initialize a LOGICAL*4 item.
@@ -1041,7 +1041,7 @@ void    DtInpLOG4() {
 }
 
 
-void    DtInpINT1() {
+void    DtInpINT1( void ) {
 //===================
 
 // Data initialize a INTEGER*1 item.
@@ -1050,7 +1050,7 @@ void    DtInpINT1() {
 }
 
 
-void    DtInpINT2() {
+void    DtInpINT2( void ) {
 //===================
 
 // Data initialize a INTEGER*2 item.
@@ -1059,7 +1059,7 @@ void    DtInpINT2() {
 }
 
 
-void    DtInpINT4() {
+void    DtInpINT4( void ) {
 //===================
 
 // Data initialize a INTEGER*4 item.
@@ -1068,7 +1068,7 @@ void    DtInpINT4() {
 }
 
 
-void    DtInpREAL() {
+void    DtInpREAL( void ) {
 //===================
 
 // Data initialize a REAL*4 item.
@@ -1077,7 +1077,7 @@ void    DtInpREAL() {
 }
 
 
-void    DtInpDBLE() {
+void    DtInpDBLE( void ) {
 //===================
 
 // Data initialize a REAL*8 item.
@@ -1086,7 +1086,7 @@ void    DtInpDBLE() {
 }
 
 
-void    DtInpXTND() {
+void    DtInpXTND( void ) {
 //===================
 
 // Data initialize a REAL*10 item.
@@ -1095,7 +1095,7 @@ void    DtInpXTND() {
 }
 
 
-void    DtInpCPLX() {
+void    DtInpCPLX( void ) {
 //===================
 
 // Data initialize a COMPLEX*8 item.
@@ -1104,7 +1104,7 @@ void    DtInpCPLX() {
 }
 
 
-void    DtInpDBCX() {
+void    DtInpDBCX( void ) {
 //===================
 
 // Data initialize a COMPLEX*16 item.
@@ -1113,7 +1113,7 @@ void    DtInpDBCX() {
 }
 
 
-void    DtInpXTCX() {
+void    DtInpXTCX( void ) {
 //===================
 
 // Data initialize a COMPLEX*20 item.
@@ -1122,7 +1122,7 @@ void    DtInpXTCX() {
 }
 
 
-void    DtInpCHAR() {
+void    DtInpCHAR( void ) {
 //===================
 
 // Data initialize a CHARACTER item.
@@ -1140,7 +1140,7 @@ static  intstar4        IntegerValue( sym_id sym ) {
 }
 
 
-void    DtPushConst() {
+void    DtPushConst( void ) {
 //=====================
 
 // Push constant.
@@ -1149,7 +1149,7 @@ void    DtPushConst() {
 }
 
 
-void    DtPushSCBLen() {
+void    DtPushSCBLen( void ) {
 //======================
 
 // Indicate that the high bound of a substring operation was not specified.
@@ -1158,7 +1158,7 @@ void    DtPushSCBLen() {
 }
 
 
-void    DtPush() {
+void    DtPush( void ) {
 //================
 
 // Push value of symbol.
@@ -1178,7 +1178,7 @@ void    DtPush() {
 }
 
 
-void    DtAdd() {
+void    DtAdd( void ) {
 //===============
 
 // Add constants.
@@ -1193,7 +1193,7 @@ void    DtAdd() {
 }
 
 
-void    DtMul() {
+void    DtMul( void ) {
 //===============
 
 // Multiply constants.
@@ -1208,7 +1208,7 @@ void    DtMul() {
 }
 
 
-void    DtUnaryMul() {
+void    DtUnaryMul( void ) {
 //====================
 
 // Multiply constants.
@@ -1221,7 +1221,7 @@ void    DtUnaryMul() {
 }
 
 
-void    DtSub() {
+void    DtSub( void ) {
 //===============
 
 // Subtract constants.
@@ -1236,7 +1236,7 @@ void    DtSub() {
 }
 
 
-void    DtDiv() {
+void    DtDiv( void ) {
 //===============
 
 // Divide constants.
@@ -1251,7 +1251,7 @@ void    DtDiv() {
 }
 
 
-void    DtExp() {
+void    DtExp( void ) {
 //===============
 
 // Exponentiate constants.
@@ -1281,7 +1281,7 @@ void    DtExp() {
 }
 
 
-void    DtUMinus() {
+void    DtUMinus( void ) {
 //==================
 
 // Negate constant.
@@ -1291,7 +1291,7 @@ void    DtUMinus() {
 }
 
 
-void    DtFlip() {
+void    DtFlip( void ) {
 //================
 
 // Flip values on stack.
@@ -1324,7 +1324,7 @@ static  bool    Subscript( act_dim_list *dim, intstar4 *offset ) {
 }
 
 
-void    DtSubscript() {
+void    DtSubscript( void ) {
 //=====================
 
 // Data initialize an array element.
@@ -1342,7 +1342,7 @@ void    DtSubscript() {
 }
 
 
-void    DtSubstring() {
+void    DtSubstring( void ) {
 //=====================
 
 // Data initialize a character substring.
@@ -1372,7 +1372,7 @@ void    DtSubstring() {
 }
 
 
-void    DtFieldSubscript() {
+void    DtFieldSubscript( void ) {
 //==========================
 
 // Data initialize an array element within a structure.
@@ -1398,7 +1398,7 @@ void    DtFieldSubscript() {
 }
 
 
-void    DtFieldSubstring() {
+void    DtFieldSubstring( void ) {
 //==========================
 
 // Data initialize a substring character item within a structure.
@@ -1446,7 +1446,7 @@ static  void    InitArr( act_dim_list *dim, TYPE typ, uint size ) {
 }
 
 
-void    DtInpArray() {
+void    DtInpArray( void ) {
 //====================
 
 // Data initialize an array.
@@ -1466,7 +1466,7 @@ void    DtInpArray() {
 }
 
 
-void    DtInpStructArray() {
+void    DtInpStructArray( void ) {
 //==========================
 
 // Data initialize an array of structures.
@@ -1492,7 +1492,7 @@ static  void    InitStructArr( sym_id fd, act_dim_list *dim ) {
 }
 
 
-void    DtFieldOp() {
+void    DtFieldOp( void ) {
 //===================
 
 // Field selection.
@@ -1513,7 +1513,7 @@ void    DtFieldOp() {
 }
 
 
-void    DtInpStruct() {
+void    DtInpStruct( void ) {
 //=====================
 
 // Initialize a struct.
@@ -1557,7 +1557,7 @@ static  void    StructInitItem( sym_id fd ) {
 }
 
 
-static  void    GetDataConst() {
+static  void    GetDataConst( void ) {
 //==============================
 
 // Get a constant for data initialization.
@@ -1583,7 +1583,7 @@ static  void    GetDataConst() {
 }
 
 
-static  void    FlushConsts() {
+static  void    FlushConsts( void ) {
 //=============================
 
 // Flush constant list.

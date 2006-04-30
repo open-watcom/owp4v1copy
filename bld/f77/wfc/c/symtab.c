@@ -60,7 +60,7 @@ char    BlkData[ BLKDAT_LEN+1 ] = { '@','B','L','O','C','K','D','A','T','A',
 char    CBlank[ CBLANK_LEN+1 ] = { '@','B','L','A','N','K',NULLCHAR };
 
 
-void    STInit() {
+void    STInit( void ) {
 //================
 
 // Initialize symbol table manager.
@@ -86,7 +86,7 @@ sym_id  SymLookup( char *name, int length ) {
 }
 
 
-sym_id  LkSym() {
+sym_id  LkSym( void ) {
 //===============
 
 // Look up symbol in symbol table and set flag bits.
@@ -107,7 +107,7 @@ sym_id  LkSym() {
 }
 
 
-sym_id  LkProgram() {
+sym_id  LkProgram( void ) {
 //===================
 
 // Look up default program name in symbol table. Don't set any flag bits.
@@ -121,7 +121,7 @@ sym_id  LkProgram() {
 }
 
 
-sym_id  LkBlkData() {
+sym_id  LkBlkData( void ) {
 //===================
 
 // Look up default block data name in symbol table.
@@ -160,7 +160,7 @@ static  sym_id  ComLookup( char *name, int length ) {
 }
 
 
-sym_id  LkBCommon() {
+sym_id  LkBCommon( void ) {
 //===================
 
 // Look up blank common in the symbol table.
@@ -173,7 +173,7 @@ sym_id  LkBCommon() {
 }
 
 
-sym_id  LkCommon() {
+sym_id  LkCommon( void ) {
 //==================
 
 // Look up common name in the symbol table.
@@ -208,14 +208,14 @@ sym_id  LkField( sym_id sd ) {
 }
 
 
-sym_id  LkNameList() {
+sym_id  LkNameList( void ) {
 //====================
 
     return( STNameList( CITNode->opnd, CITNode->opnd_size ) );
 }
 
 
-sym_id  NameListFind() {
+sym_id  NameListFind( void ) {
 //======================
 
 // Determine if a symbol exists in the name list symbol table.

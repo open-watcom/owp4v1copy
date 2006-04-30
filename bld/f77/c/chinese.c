@@ -201,7 +201,7 @@ static  bool    IsForeign( char ch ) {
 }
 
 
-void    __UseChineseCharSet() {
+void    __UseChineseCharSet( void ) {
 //=============================
 
     CharSetInfo.extract_text = &ExtractText;

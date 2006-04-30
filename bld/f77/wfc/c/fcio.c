@@ -91,7 +91,7 @@ static  void            StructIOItem( sym_id fd );
 
 static  sym_id          EndEqStmt;
 static  sym_id          ErrEqStmt;
-static  void            (**IORtnTable)();
+static  void            (**IORtnTable)(void);
 static  tmp_handle      TmpStructPtr;
 static  bool            IOStatSpecified;
 static  label_handle    IOSLabel;
@@ -259,7 +259,7 @@ static  void    Input( RTCODE rtn ) {
 }
 
 
-void    FCSetIOCB() {
+void    FCSetIOCB( void ) {
 //===================
 
 // Call runtime routine to set i/o statement in IOCB.
@@ -274,7 +274,7 @@ void    FCSetIOCB() {
 }
 
 
-void    FCSetUnit() {
+void    FCSetUnit( void ) {
 //===================
 
 // Call runtime routine to set unit number in IOCB.
@@ -283,7 +283,7 @@ void    FCSetUnit() {
 }
 
 
-void    FCExRead() {
+void    FCExRead( void ) {
 //==================
 
 // Call runtime routine to set start READ operation.
@@ -292,7 +292,7 @@ void    FCExRead() {
 }
 
 
-void    FCExWrite() {
+void    FCExWrite( void ) {
 //===================
 
 // Call runtime routine to set start WRITE operation.
@@ -301,7 +301,7 @@ void    FCExWrite() {
 }
 
 
-void    FCExOpen() {
+void    FCExOpen( void ) {
 //==================
 
 // Call runtime routine to set start OPEN operation.
@@ -310,7 +310,7 @@ void    FCExOpen() {
 }
 
 
-void    FCExClose() {
+void    FCExClose( void ) {
 //===================
 
 // Call runtime routine to set start CLOSE operation.
@@ -319,7 +319,7 @@ void    FCExClose() {
 }
 
 
-void    FCExBack() {
+void    FCExBack( void ) {
 //==================
 
 // Call runtime routine to set start BACKSPACE operation.
@@ -328,7 +328,7 @@ void    FCExBack() {
 }
 
 
-void    FCExEndf() {
+void    FCExEndf( void ) {
 //==================
 
 // Call runtime routine to set start ENDFILE operation.
@@ -337,7 +337,7 @@ void    FCExEndf() {
 }
 
 
-void    FCExRew() {
+void    FCExRew( void ) {
 //=================
 
 // Call runtime routine to set start REWIND operation.
@@ -346,7 +346,7 @@ void    FCExRew() {
 }
 
 
-void    FCExInq() {
+void    FCExInq( void ) {
 //=================
 
 // Call runtime routine to set start INQUIRE operation.
@@ -355,7 +355,7 @@ void    FCExInq() {
 }
 
 
-void    FCOutLOG1() {
+void    FCOutLOG1( void ) {
 //===================
 
 // Call runtime routine to output LOGICAL*1 value.
@@ -364,7 +364,7 @@ void    FCOutLOG1() {
 }
 
 
-void    FCOutLOG4() {
+void    FCOutLOG4( void ) {
 //===================
 
 // Call runtime routine to output LOGICAL*4 value.
@@ -373,7 +373,7 @@ void    FCOutLOG4() {
 }
 
 
-void    FCOutINT1() {
+void    FCOutINT1( void ) {
 //===================
 
 // Call runtime routine to output INTEGER*1 value.
@@ -382,7 +382,7 @@ void    FCOutINT1() {
 }
 
 
-void    FCOutINT2() {
+void    FCOutINT2( void ) {
 //===================
 
 // Call runtime routine to output INTEGER*2 value.
@@ -391,7 +391,7 @@ void    FCOutINT2() {
 }
 
 
-void    FCOutINT4() {
+void    FCOutINT4( void ) {
 //===================
 
 // Call runtime routine to output INTEGER*4 value.
@@ -400,7 +400,7 @@ void    FCOutINT4() {
 }
 
 
-void    FCOutREAL() {
+void    FCOutREAL( void ) {
 //===================
 
 // Call runtime routine to output REAL*4 value.
@@ -409,7 +409,7 @@ void    FCOutREAL() {
 }
 
 
-void    FCOutDBLE() {
+void    FCOutDBLE( void ) {
 //===================
 
 // Call runtime routine to output REAL*8 value.
@@ -418,7 +418,7 @@ void    FCOutDBLE() {
 }
 
 
-void    FCOutXTND() {
+void    FCOutXTND( void ) {
 //===================
 
 // Call runtime routine to output REAL*10 value.
@@ -444,7 +444,7 @@ static  void    OutCplx( RTCODE rtn, cg_type typ ) {
 }
 
 
-void    FCOutCPLX() {
+void    FCOutCPLX( void ) {
 //===================
 
 // Call runtime routine to output COMPLEX*8 value.
@@ -453,7 +453,7 @@ void    FCOutCPLX() {
 }
 
 
-void    FCOutDBCX() {
+void    FCOutDBCX( void ) {
 //===================
 
 // Call runtime routine to output COMPLEX*16 value.
@@ -462,7 +462,7 @@ void    FCOutDBCX() {
 }
 
 
-void    FCOutXTCX() {
+void    FCOutXTCX( void ) {
 //===================
 
 // Call runtime routine to output COMPLEX*20 value.
@@ -471,7 +471,7 @@ void    FCOutXTCX() {
 }
 
 
-void    FCOutCHAR() {
+void    FCOutCHAR( void ) {
 //===================
 
 // Call runtime routine to output CHARACTER*n value.
@@ -496,7 +496,7 @@ static  void    IOString( RTCODE rtn ) {
 }
 
 
-static  void    OutString() {
+static  void    OutString( void ) {
 //===========================
 
 // Call runtime routine to output CHARACTER*n value.
@@ -507,7 +507,7 @@ static  void    OutString() {
 }
 
 
-void    FCInpLOG1() {
+void    FCInpLOG1( void ) {
 //===================
 
 // Call runtime routine to input LOGICAL*1 value.
@@ -516,7 +516,7 @@ void    FCInpLOG1() {
 }
 
 
-void    FCInpLOG4() {
+void    FCInpLOG4( void ) {
 //===================
 
 // Call runtime routine to input LOGICAL*4 value.
@@ -525,7 +525,7 @@ void    FCInpLOG4() {
 }
 
 
-void    FCInpINT1() {
+void    FCInpINT1( void ) {
 //===================
 
 // Call runtime routine to input INTEGER*1 value.
@@ -534,7 +534,7 @@ void    FCInpINT1() {
 }
 
 
-void    FCInpINT2() {
+void    FCInpINT2( void ) {
 //===================
 
 // Call runtime routine to input INTEGER*2 value.
@@ -543,7 +543,7 @@ void    FCInpINT2() {
 }
 
 
-void    FCInpINT4() {
+void    FCInpINT4( void ) {
 //===================
 
 // Call runtime routine to input INTEGER*4 value.
@@ -552,7 +552,7 @@ void    FCInpINT4() {
 }
 
 
-void    FCInpREAL() {
+void    FCInpREAL( void ) {
 //===================
 
 // Call runtime routine to input REAL*4 value.
@@ -561,7 +561,7 @@ void    FCInpREAL() {
 }
 
 
-void    FCInpDBLE() {
+void    FCInpDBLE( void ) {
 //===================
 
 // Call runtime routine to input REAL*8 value.
@@ -570,7 +570,7 @@ void    FCInpDBLE() {
 }
 
 
-void    FCInpXTND() {
+void    FCInpXTND( void ) {
 //===================
 
 // Call runtime routine to input REAL*10 value.
@@ -579,7 +579,7 @@ void    FCInpXTND() {
 }
 
 
-void    FCInpCPLX() {
+void    FCInpCPLX( void ) {
 //===================
 
 // Call runtime routine to input COMPLEX*8 value.
@@ -588,7 +588,7 @@ void    FCInpCPLX() {
 }
 
 
-void    FCInpDBCX() {
+void    FCInpDBCX( void ) {
 //===================
 
 // Call runtime routine to input COMPLEX*16 value.
@@ -597,7 +597,7 @@ void    FCInpDBCX() {
 }
 
 
-void    FCInpXTCX() {
+void    FCInpXTCX( void ) {
 //===================
 
 // Call runtime routine to input COMPLEX*20 value.
@@ -606,7 +606,7 @@ void    FCInpXTCX() {
 }
 
 
-void    FCInpCHAR() {
+void    FCInpCHAR( void ) {
 //===================
 
 // Call runtime routine to input CHARACTER*n value.
@@ -615,7 +615,7 @@ void    FCInpCHAR() {
 }
 
 
-static  void    InpString() {
+static  void    InpString( void ) {
 //===========================
 
 // Call runtime routine to input CHARACTER*n value.
@@ -626,7 +626,7 @@ static  void    InpString() {
 }
 
 
-void    FCEndIO() {
+void    FCEndIO( void ) {
 //=================
 
 // Call runtime routine to terminate i/o processing.
@@ -640,7 +640,7 @@ void    FCEndIO() {
 }
 
 
-static  void            (*OutRtn[])() = {
+static  void            (*OutRtn[])(void) = {
         NULL,
         &FCOutLOG1,
         &FCOutLOG4,
@@ -656,7 +656,7 @@ static  void            (*OutRtn[])() = {
         &OutString
 };
 
-static  void            (*InpRtn[])() = {
+static  void            (*InpRtn[])(void) = {
         NULL,
         &FCInpLOG1,
         &FCInpLOG4,
@@ -673,7 +673,7 @@ static  void            (*InpRtn[])() = {
 };
 
 
-void    FCOutStruct() {
+void    FCOutStruct( void ) {
 //=====================
 
 // Output a structure.
@@ -766,7 +766,7 @@ static  void    StructIOItem( sym_id fd ) {
 }
 
 
-static  void    StructArrayIO() {
+static  void    StructArrayIO( void ) {
 //===============================
 
 // Perform structure array i/o.
@@ -781,7 +781,7 @@ static  void    StructArrayIO() {
 }
 
 
-void    FCPrtStructArray() {
+void    FCPrtStructArray( void ) {
 //==========================
 
     IORtnTable = OutRtn;
@@ -789,7 +789,7 @@ void    FCPrtStructArray() {
 }
 
 
-void    FCInpStructArray() {
+void    FCInpStructArray( void ) {
 //==========================
 
     IORtnTable = InpRtn;
@@ -797,7 +797,7 @@ void    FCInpStructArray() {
 }
 
 
-void    FCInpStruct() {
+void    FCInpStruct( void ) {
 //=====================
 
 // Input a structure.
@@ -808,7 +808,7 @@ void    FCInpStruct() {
 }
 
 
-void    FCChkIOStmtLabel() {
+void    FCChkIOStmtLabel( void ) {
 //==========================
 
     if( EndEqStmt != NULL ) {
@@ -820,7 +820,7 @@ void    FCChkIOStmtLabel() {
 }
 
 
-void    FCSetNml() {
+void    FCSetNml( void ) {
 //==================
 
 // Set NAMELIST format.
@@ -844,7 +844,7 @@ void    FCSetNml() {
 }
 
 
-void    FCSetFmt() {
+void    FCSetFmt( void ) {
 //==================
 
 // Set format string from FORMAT statement.
@@ -858,7 +858,7 @@ void    FCSetFmt() {
 }
 
 
-void    FCPassLabel() {
+void    FCPassLabel( void ) {
 //=====================
 
 // Pass label to run-time routine.
@@ -872,7 +872,7 @@ void    FCPassLabel() {
 }
 
 
-void    FCFmtAssign() {
+void    FCFmtAssign( void ) {
 //=====================
 
 // Set FORMAT string for:
@@ -926,7 +926,7 @@ void    ArrayIO( RTCODE num_array, RTCODE chr_array ) {
 }
 
 
-void    FCPrtArray() {
+void    FCPrtArray( void ) {
 //====================
 
 // Output an array.
@@ -935,7 +935,7 @@ void    FCPrtArray() {
 }
 
 
-void    FCInpArray() {
+void    FCInpArray( void ) {
 //====================
 
 // Input an array.
@@ -944,7 +944,7 @@ void    FCInpArray() {
 }
 
 
-void    FCFmtScan() {
+void    FCFmtScan( void ) {
 //===================
 
 // Call runtime routine to scan a format specification from a character
@@ -959,7 +959,7 @@ void    FCFmtScan() {
 }
 
 
-void    FCFmtArrScan() {
+void    FCFmtArrScan( void ) {
 //======================
 
 // Call runtime routine to scan a format specification from a character
@@ -978,7 +978,7 @@ void    FCFmtArrScan() {
 }
 
 
-void    FCIntlArrSet() {
+void    FCIntlArrSet( void ) {
 //======================
 
 // Call runtime routine to set internal file to character array.
@@ -1000,7 +1000,7 @@ void    FCIntlArrSet() {
 }
 
 
-void    FCSetIntl() {
+void    FCSetIntl( void ) {
 //===================
 
 // Call runtime routine to set internal file to character item (not array).
@@ -1014,7 +1014,7 @@ void    FCSetIntl() {
 }
 
 
-void    FCSetFile() {
+void    FCSetFile( void ) {
 //===================
 
 // Set FILE=.
@@ -1023,7 +1023,7 @@ void    FCSetFile() {
 }
 
 
-void    FCSetCCtrl() {
+void    FCSetCCtrl( void ) {
 //====================
 
 // Set CARRIAGECONTROL=.
@@ -1032,7 +1032,7 @@ void    FCSetCCtrl() {
 }
 
 
-void    FCSetShare() {
+void    FCSetShare( void ) {
 //====================
 
 // Set SHARE=.
@@ -1041,7 +1041,7 @@ void    FCSetShare() {
 }
 
 
-void    FCSetRecType() {
+void    FCSetRecType( void ) {
 //======================
 
 // Set RECORDTYPE=.
@@ -1050,7 +1050,7 @@ void    FCSetRecType() {
 }
 
 
-void    FCSetAction() {
+void    FCSetAction( void ) {
 //=====================
 
 // Set ACTION=.
@@ -1059,7 +1059,7 @@ void    FCSetAction() {
 }
 
 
-void    FCSetErr() {
+void    FCSetErr( void ) {
 //==================
 
 // Set ERROR=.
@@ -1077,7 +1077,7 @@ void    FCSetErr() {
 }
 
 
-void    FCSetEnd() {
+void    FCSetEnd( void ) {
 //==================
 
 // Set END=.
@@ -1095,7 +1095,7 @@ void    FCSetEnd() {
 }
 
 
-void    FCSetAtEnd() {
+void    FCSetAtEnd( void ) {
 //====================
 
 // Set END= for ATEND statement.
@@ -1105,7 +1105,7 @@ void    FCSetAtEnd() {
 }
 
 
-void    FCSetRec() {
+void    FCSetRec( void ) {
 //==================
 
 // Set REC=.
@@ -1114,7 +1114,7 @@ void    FCSetRec() {
 }
 
 
-void    FCSetIOS() {
+void    FCSetIOS( void ) {
 //==================
 
 // Set IOSTAT=.
@@ -1124,7 +1124,7 @@ void    FCSetIOS() {
 }
 
 
-void    FCSetAcc() {
+void    FCSetAcc( void ) {
 //==================
 
 // Set ACCESS=.
@@ -1133,7 +1133,7 @@ void    FCSetAcc() {
 }
 
 
-void    FCSetBlnk() {
+void    FCSetBlnk( void ) {
 //===================
 
 // Set BLANK=.
@@ -1142,7 +1142,7 @@ void    FCSetBlnk() {
 }
 
 
-void    FCSetForm() {
+void    FCSetForm( void ) {
 //===================
 
 // Set FORM=.
@@ -1151,7 +1151,7 @@ void    FCSetForm() {
 }
 
 
-void    FCInqBlockSize() {
+void    FCInqBlockSize( void ) {
 //========================
 
 // Set BLOCKSIZE= for INQUIRE statement.
@@ -1160,7 +1160,7 @@ void    FCInqBlockSize() {
 }
 
 
-void    FCSetLen() {
+void    FCSetLen( void ) {
 //==================
 
 // Set RECL= for INQUIRE statement.
@@ -1169,7 +1169,7 @@ void    FCSetLen() {
 }
 
 
-void    FCSetStat() {
+void    FCSetStat( void ) {
 //===================
 
 // Set STATUS=.
@@ -1178,7 +1178,7 @@ void    FCSetStat() {
 }
 
 
-void    FCSetDir() {
+void    FCSetDir( void ) {
 //==================
 
 // Set DIRECT=.
@@ -1187,7 +1187,7 @@ void    FCSetDir() {
 }
 
 
-void    FCSetFmtd() {
+void    FCSetFmtd( void ) {
 //===================
 
 // Set FORMATTED=.
@@ -1196,7 +1196,7 @@ void    FCSetFmtd() {
 }
 
 
-void    FCSetName() {
+void    FCSetName( void ) {
 //===================
 
 // Set NAME=.
@@ -1205,7 +1205,7 @@ void    FCSetName() {
 }
 
 
-void    FCSetSeq() {
+void    FCSetSeq( void ) {
 //==================
 
 // Set SEQUENTIAL=.
@@ -1214,7 +1214,7 @@ void    FCSetSeq() {
 }
 
 
-void    FCSetUFmtd() {
+void    FCSetUFmtd( void ) {
 //====================
 
 // Set UNFORMATTED=.
@@ -1223,7 +1223,7 @@ void    FCSetUFmtd() {
 }
 
 
-void    FCSetExst() {
+void    FCSetExst( void ) {
 //===================
 
 // Set EXIST=.
@@ -1232,7 +1232,7 @@ void    FCSetExst() {
 }
 
 
-void    FCSetNmd() {
+void    FCSetNmd( void ) {
 //==================
 
 // Set NAMED=.
@@ -1241,7 +1241,7 @@ void    FCSetNmd() {
 }
 
 
-void    FCSetNRec() {
+void    FCSetNRec( void ) {
 //===================
 
 // Set NEXTREC=.
@@ -1250,7 +1250,7 @@ void    FCSetNRec() {
 }
 
 
-void    FCSetNumb() {
+void    FCSetNumb( void ) {
 //===================
 
 // Set NUMBER=.
@@ -1259,7 +1259,7 @@ void    FCSetNumb() {
 }
 
 
-void    FCSetOpen() {
+void    FCSetOpen( void ) {
 //===================
 
 // Set OPENED=.
@@ -1268,7 +1268,7 @@ void    FCSetOpen() {
 }
 
 
-void    FCSetBlockSize() {
+void    FCSetBlockSize( void ) {
 //========================
 
 // Set BLOCKSIZE= for OPEN statement.
@@ -1277,7 +1277,7 @@ void    FCSetBlockSize() {
 }
 
 
-void    FCSetRecl() {
+void    FCSetRecl( void ) {
 //===================
 
 // Set RECL= for OPEN statement.
@@ -1286,7 +1286,7 @@ void    FCSetRecl() {
 }
 
 
-void    FCSetNoFmt() {
+void    FCSetNoFmt( void ) {
 //====================
 
 // Set "not formatted i/o".

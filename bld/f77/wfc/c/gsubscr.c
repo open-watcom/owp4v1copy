@@ -53,7 +53,7 @@ void    GBegSubScr( itnode *array_node ) {
 }
 
 
-void    GSubScr() {
+void    GSubScr( void ) {
 //=================
 
 // Generate one subscript.

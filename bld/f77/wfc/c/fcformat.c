@@ -50,7 +50,7 @@ extern  void            DGIBytes(unsigned long, byte);
 extern  back_handle     GetFmtLabel(label_id);
 
 
-void    DumpFormats() {
+void    DumpFormats( void ) {
 //=====================
 
 // Dump format statements.

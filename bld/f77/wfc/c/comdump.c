@@ -52,7 +52,7 @@ extern  void            BIEndComBlock( void );
 #define CT_NOT_CHAR     2
 
 
-void    STComDump() {
+void    STComDump( void ) {
 //===================
 
 // Resolve common block offsets and check for errors.

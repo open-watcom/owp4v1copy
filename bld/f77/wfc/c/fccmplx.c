@@ -274,7 +274,7 @@ void    XMulDivMix( int op, bool cmplx_scalar, unsigned_16 typ_info ) {
 }
 
 
-void    FCCmplxFlip() {
+void    FCCmplxFlip( void ) {
 //=====================
 
 // Flip 2 complex operands.
@@ -303,7 +303,7 @@ void    FCCmplxFlip() {
 }
 
 
-void    FCCXFlip() {
+void    FCCXFlip( void ) {
 //==================
 
 // Flip complex and scalar operands.
@@ -325,7 +325,7 @@ void    FCCXFlip() {
 }
 
 
-void    FCXCFlip() {
+void    FCXCFlip( void ) {
 //==================
 
 // Flip scalar and complex operands.
@@ -347,7 +347,7 @@ void    FCXCFlip() {
 }
 
 
-void    FCUMinusCmplx() {
+void    FCUMinusCmplx( void ) {
 //=======================
 
 // Unary minus (-) F-Code processor for complex numbers.
@@ -363,7 +363,7 @@ void    FCUMinusCmplx() {
 }
 
 
-void    FCAddCmplx() {
+void    FCAddCmplx( void ) {
 //====================
 
 // Add one complex number to another.
@@ -372,7 +372,7 @@ void    FCAddCmplx() {
 }
 
 
-void    FCSubCmplx() {
+void    FCSubCmplx( void ) {
 //====================
 
 // Subtract one complex number from another.
@@ -381,7 +381,7 @@ void    FCSubCmplx() {
 }
 
 
-void    FCAddMixCX() {
+void    FCAddMixCX( void ) {
 //====================
 
 // Add a complex to a scalar.
@@ -390,7 +390,7 @@ void    FCAddMixCX() {
 }
 
 
-void    FCAddMixXC() {
+void    FCAddMixXC( void ) {
 //====================
 
 // Add a scalar to a complex.
@@ -399,7 +399,7 @@ void    FCAddMixXC() {
 }
 
 
-void    FCSubMixCX() {
+void    FCSubMixCX( void ) {
 //====================
 
 // Subtract a scalar from a complex.
@@ -408,7 +408,7 @@ void    FCSubMixCX() {
 }
 
 
-void    FCSubMixXC() {
+void    FCSubMixXC( void ) {
 //====================
 
 // Subtract a scalar from a complex.
@@ -417,7 +417,7 @@ void    FCSubMixXC() {
 }
 
 
-void    FCMulMixCX() {
+void    FCMulMixCX( void ) {
 //====================
 
 // Multiply a complex by a scalar.
@@ -426,7 +426,7 @@ void    FCMulMixCX() {
 }
 
 
-void    FCMulMixXC() {
+void    FCMulMixXC( void ) {
 //====================
 
 // Multiply a scalar by a complex.
@@ -435,7 +435,7 @@ void    FCMulMixXC() {
 }
 
 
-void    FCDivMixCX() {
+void    FCDivMixCX( void ) {
 //====================
 
 // Divide a complex by a scalar.
@@ -444,7 +444,7 @@ void    FCDivMixCX() {
 }
 
 
-void    FCDivMixXC() {
+void    FCDivMixXC( void ) {
 //====================
 
 // Divide a scalar by a complex.
@@ -453,7 +453,7 @@ void    FCDivMixXC() {
 }
 
 
-void    FCMulCmplx() {
+void    FCMulCmplx( void ) {
 //====================
 
 // Multiply one complex number by another.
@@ -513,7 +513,7 @@ void    InLineMulCC( unsigned_16 typ_info ) {
 }
 
 
-void    FCDivCmplx() {
+void    FCDivCmplx( void ) {
 //====================
 
 // Binary division for complex numbers.
@@ -522,7 +522,7 @@ void    FCDivCmplx() {
 }
 
 
-void    FCExpCmplx() {
+void    FCExpCmplx( void ) {
 //====================
 
 // Binary exponentiation for complex numbers.
@@ -531,7 +531,7 @@ void    FCExpCmplx() {
 }
 
 
-void    FCExpMixCX() {
+void    FCExpMixCX( void ) {
 //====================
 
 // Binary exponentiation for complex**non-complex.
@@ -540,7 +540,7 @@ void    FCExpMixCX() {
 }
 
 
-void    FCExpMixXC() {
+void    FCExpMixXC( void ) {
 //====================
 
 // Binary exponentiation for non-complex**complex.
@@ -699,7 +699,7 @@ static  void    CXCompare( int op ) {
 }
 
 
-void    FCCCCmpEQ() {
+void    FCCCCmpEQ( void ) {
 //===================
 
 // Complex/Complex compare for equality.
@@ -708,7 +708,7 @@ void    FCCCCmpEQ() {
 }
 
 
-void    FCCCCmpNE() {
+void    FCCCCmpNE( void ) {
 //===================
 
 // Complex/Complex compare for non-equality.
@@ -717,7 +717,7 @@ void    FCCCCmpNE() {
 }
 
 
-void    FCXCCmpEQ() {
+void    FCXCCmpEQ( void ) {
 //===================
 
 // Scalar/Complex compare for equality.
@@ -726,7 +726,7 @@ void    FCXCCmpEQ() {
 }
 
 
-void    FCXCCmpNE() {
+void    FCXCCmpNE( void ) {
 //===================
 
 // Scalar/Complex compare for non-equality.
@@ -735,7 +735,7 @@ void    FCXCCmpNE() {
 }
 
 
-void    FCCXCmpEQ() {
+void    FCCXCmpEQ( void ) {
 //===================
 
 // Complex/Scalar compare for equality.
@@ -744,7 +744,7 @@ void    FCCXCmpEQ() {
 }
 
 
-void    FCCXCmpNE() {
+void    FCCXCmpNE( void ) {
 //===================
 
 // Complex/Scalar compare for non-equality.
@@ -887,7 +887,7 @@ cg_name         CmplxAddr( cg_name real, cg_name imag ) {
 }
 
 
-void            Cmplx2Scalar() {
+void            Cmplx2Scalar( void ) {
 //==============================
 
 // Convert complex to scalar.
@@ -902,7 +902,7 @@ void            Cmplx2Scalar() {
 }
 
 
-void    FCImag() {
+void    FCImag( void ) {
 //================
 
     cg_name     opn;
@@ -918,7 +918,7 @@ void    FCImag() {
 }
 
 
-void    FCConjg() {
+void    FCConjg( void ) {
 //=================
 
     cg_cmplx    z;

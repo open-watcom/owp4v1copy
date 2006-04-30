@@ -49,14 +49,14 @@
 #include <time.h>
 
 extern  void            CompProg(void);
-extern  int             Spawn(void (*)());
+extern  int             Spawn(void (*)(void));
 extern  void            MsgBuffer(uint,char *,...);
 extern  uint            MakeName(char *,char *,char *);
 
 extern  unsigned_32     CompTime;
 
 
-void    DoCompile() {
+void    DoCompile( void ) {
 //===================
 
     Spawn( &CompProg );
@@ -86,7 +86,7 @@ static  void    FmtU32( char *buff, unsigned_32 num, uint len ) {
 
 #define COLUMN_WIDTH    39
 
-void    StatProg() {
+void    StatProg( void ) {
 //==================
 
     char        stats[LIST_BUFF_SIZE];

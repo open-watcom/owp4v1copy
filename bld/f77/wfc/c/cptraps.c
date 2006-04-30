@@ -70,7 +70,7 @@ static  void    FPEHandler( int sig_num, int fpe_type ) {
 #endif
 
 
-void    TrapInit() {
+void    TrapInit( void ) {
 //==================
 
     __XcptFlags = 0;
@@ -82,7 +82,7 @@ void    TrapInit() {
 }
 
 
-void    TrapFini() {
+void    TrapFini( void ) {
 //==================
 
 }

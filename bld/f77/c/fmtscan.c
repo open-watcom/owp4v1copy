@@ -55,7 +55,7 @@ typedef struct f_procs {
 } f_procs;
 
 
-void    R_FDoSpec() {
+void    R_FDoSpec( void ) {
 //===================
 
 // Process a complete format specification.
@@ -72,7 +72,7 @@ void    R_FDoSpec() {
 }
 
 
-static  bool    R_FRecEos() {
+static  bool    R_FRecEos( void ) {
 //===========================
 
 // Attempt to recognize the end of a format string.
@@ -98,7 +98,7 @@ static  bool    R_FR_Char( char test_char ) {
 }
 
 
-static  void    R_FSpec() {
+static  void    R_FSpec( void ) {
 //=========================
 
 // Process a format specification.
@@ -117,7 +117,7 @@ static  void    R_FSpec() {
 }
 
 
-static  int     R_FRPConst() {
+static  int     R_FRPConst( void ) {
 //============================
 
 // Get a required positive constant in a format string.
@@ -132,7 +132,7 @@ static  int     R_FRPConst() {
 }
 
 
-static  int     R_FConst() {
+static  int     R_FConst( void ) {
 //==========================
 
 // Scan a non-negative constant in a format string.
@@ -183,7 +183,7 @@ static  bool    R_FReqChar( char test_string, int err_code ) {
 }
 
 
-static  void    FSkipSpaces() {
+static  void    FSkipSpaces( void ) {
 //=============================
 
 // Skip spaces between format codes.
@@ -196,7 +196,7 @@ static  void    FSkipSpaces() {
 }
 
 
-static  void    GetRepSpec() {
+static  void    GetRepSpec( void ) {
 //============================
 
 // Get a possible repeat specification.
@@ -228,7 +228,7 @@ static  void    GetRepSpec() {
 }
 
 
-static  bool    FNoRep() {
+static  bool    FNoRep( void ) {
 //========================
 
 // Make sure that no repeat specification was given.
@@ -240,7 +240,7 @@ static  bool    FNoRep() {
 }
 
 
-static  void    R_FLiteral() {
+static  void    R_FLiteral( void ) {
 //============================
 
 // Process a literal format code.
@@ -280,7 +280,7 @@ static  void    R_FLiteral() {
 }
 
 
-static  void    R_FH() {
+static  void    R_FH( void ) {
 //======================
 
 // Process an H format code.
@@ -302,7 +302,7 @@ static  void    R_FH() {
 }
 
 
-static  void    R_FComma() {
+static  void    R_FComma( void ) {
 //==========================
 
 // Process a comma format delimiter/code.
@@ -318,7 +318,7 @@ static  void    R_FComma() {
 }
 
 
-static  bool    FRep() {
+static  bool    FRep( void ) {
 //======================
 
 // Validate and emit the repeat specification.
@@ -335,7 +335,7 @@ static  bool    FRep() {
 }
 
 
-static  void    R_FSlash() {
+static  void    R_FSlash( void ) {
 //==========================
 
 // Process a slash format delimeter/code.
@@ -353,7 +353,7 @@ static  void    R_FSlash() {
 }
 
 
-static  void    R_FX() {
+static  void    R_FX( void ) {
 //======================
 
 // Process an X format code.
@@ -372,7 +372,7 @@ static  void    R_FX() {
 }
 
 
-static  void    R_FI() {
+static  void    R_FI( void ) {
 //======================
 
 // Process an I format code.
@@ -400,7 +400,7 @@ static  void    R_FI() {
 }
 
 
-static  void    R_FColon() {
+static  void    R_FColon( void ) {
 //==========================
 
 // Process a colon.
@@ -411,7 +411,7 @@ static  void    R_FColon() {
 }
 
 
-static  void    R_FA() {
+static  void    R_FA( void ) {
 //======================
 
 // Process an A format code.
@@ -434,7 +434,7 @@ static  void    R_FA() {
 }
 
 
-static  void    R_FT() {
+static  void    R_FT( void ) {
 //======================
 
 // Process a T, TL or TR format specifier.
@@ -458,7 +458,7 @@ static  void    R_FT() {
 }
 
 
-static  void    R_FS() {
+static  void    R_FS( void ) {
 //======================
 
 // Process an S, SP or SS format specifier.
@@ -476,7 +476,7 @@ static  void    R_FS() {
 }
 
 
-static  void    R_FB() {
+static  void    R_FB( void ) {
 //======================
 
 // Process a BN or BZ format specifier.
@@ -493,7 +493,7 @@ static  void    R_FB() {
 }
 
 
-static  void    R_FL() {
+static  void    R_FL( void ) {
 //======================
 
 // Process an L format code.
@@ -511,7 +511,7 @@ static  void    R_FL() {
 }
 
 
-static  void    R_FD() {
+static  void    R_FD( void ) {
 //======================
 
 // Process a D format code.
@@ -520,7 +520,7 @@ static  void    R_FD() {
 }
 
 
-static  void    R_FQ() {
+static  void    R_FQ( void ) {
 //======================
 
 // Process a Q format code.
@@ -530,7 +530,7 @@ static  void    R_FQ() {
 }
 
 
-static  void    R_FF() {
+static  void    R_FF( void ) {
 //======================
 
 // Process an F format code.
@@ -539,7 +539,7 @@ static  void    R_FF() {
 }
 
 
-static  void    R_FE() {
+static  void    R_FE( void ) {
 //======================
 
 // Process an E format code.
@@ -548,7 +548,7 @@ static  void    R_FE() {
 }
 
 
-static  void    R_FG() {
+static  void    R_FG( void ) {
 //======================
 
 // Process a G format code.
@@ -613,7 +613,7 @@ static  void    FReal( byte format_code ) {
 }
 
 
-static  void    R_FP() {
+static  void    R_FP( void ) {
 //======================
 
 // Process a P format delimiter/code.
@@ -626,7 +626,7 @@ static  void    R_FP() {
 }
 
 
-static  void    R_FLParen() {
+static  void    R_FLParen( void ) {
 //===========================
 
 // Process a left parenthesis.
@@ -655,7 +655,7 @@ static  void    R_FLParen() {
 }
 
 
-static  void    R_FZ() {
+static  void    R_FZ( void ) {
 //======================
 
 // Process a z format code (extension).
@@ -679,7 +679,7 @@ static  void    R_FZ() {
 }
 
 
-static  void    R_FM() {
+static  void    R_FM( void ) {
 //======================
 
 // Process a $ format code (extension).
@@ -691,7 +691,7 @@ static  void    R_FM() {
 }
 
 
-static  void    FChkDelimiter() {
+static  void    FChkDelimiter( void ) {
 //===============================
 
 // Make sure that an element has been delimited.
@@ -731,7 +731,7 @@ static  const f_procs __FAR FP_Cod[] = {
 };
 
 
-static  void    FCode() {
+static  void    FCode( void ) {
 //=======================
 
 // Process a format code.

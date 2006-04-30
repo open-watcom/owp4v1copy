@@ -33,17 +33,17 @@
 #ifndef _F77_BROWSE_INFO_GENERATOR_
 #define _F77_BROWSE_INFO_GENERATOR_
 
-extern void     BIInit();
-extern void     BIEnd();
-extern void     BIStartSubProg();
-extern void     BIEndSubProg();
-extern void     BIResolveUndefTypes();
+extern void     BIInit( void );
+extern void     BIEnd( void );
+extern void     BIStartSubProg( void );
+extern void     BIEndSubProg( void );
+extern void     BIResolveUndefTypes( void );
 extern void     BIOutSymbol( sym_id ste_ptr );
 extern void     BIOutComSymbol( sym_id ste_ptr );
-extern void     BIOutSrcLine();
-extern void     BISetSrcFile();
-extern void     BIStartSubroutine();
-extern void     BIFiniStartOfSubroutine();
+extern void     BIOutSrcLine( void );
+extern void     BISetSrcFile( void );
+extern void     BIStartSubroutine( void );
+extern void     BIFiniStartOfSubroutine( void );
 extern void     BIEndSF( sym_id ste_ptr );
 extern void     BIStartRBorEP( sym_id ste_ptr );
 extern void     BIEndRBorEP( void );

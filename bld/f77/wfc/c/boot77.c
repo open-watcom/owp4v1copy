@@ -55,7 +55,7 @@ extern  void            ShowOptions(char *);
 extern  char            *UsageLines[];
 
 
-void    InitCompMain() {
+void    InitCompMain( void ) {
 //======================
 
     FMemInit();
@@ -67,7 +67,7 @@ void    InitCompMain() {
 }
 
 
-void    FiniCompMain() {
+void    FiniCompMain( void ) {
 //======================
 
     FiniMacroProcessor();
@@ -139,7 +139,7 @@ void    Compile( char *buffer ) {
 #endif
 
 
-void    ShowUsage() {
+void    ShowUsage( void ) {
 //===================
 
     char        buff[LIST_BUFF_SIZE+1];
@@ -170,7 +170,7 @@ char    *SkipBlanks( char *ptr ) {
 }
 
 
-static  void    InitComVars() {
+static  void    InitComVars( void ) {
 //=============================
 
     ProgSw    = PS_DONT_GENERATE; // so we get command line errors
@@ -181,7 +181,7 @@ static  void    InitComVars() {
 }
 
 
-void    InitCompile() {
+void    InitCompile( void ) {
 //=====================
 
 // Initialize compiler i/o before we process the command line so we can
@@ -194,14 +194,14 @@ void    InitCompile() {
 }
 
 
-void    FiniCompile() {
+void    FiniCompile( void ) {
 //=====================
 
     ProgSw &= ~PS_FIRST_COMPILE;
 }
 
 
-static  int     ProcName() {
+static  int     ProcName( void ) {
 //==========================
 
     int code;

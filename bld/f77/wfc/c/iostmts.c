@@ -57,7 +57,7 @@ extern  void            GStartIO(void);
 extern  void            GNullEofStmt(void);
 
 
-void    CpBackSp() {
+void    CpBackSp(void) {
 //==================
 
 // Compile BACKSPACE statement.
@@ -66,7 +66,7 @@ void    CpBackSp() {
 }
 
 
-void    CpClose() {
+void    CpClose(void) {
 //=================
 
 // Compile CLOSE statement.
@@ -75,7 +75,7 @@ void    CpClose() {
 }
 
 
-void    CpEndfile() {
+void    CpEndfile(void) {
 //===================
 
 // Compile ENDFILE statement.
@@ -84,7 +84,7 @@ void    CpEndfile() {
 }
 
 
-void    CpInquire() {
+void    CpInquire(void) {
 //===================
 
 // Compile INQUIRE statement.
@@ -93,7 +93,7 @@ void    CpInquire() {
 }
 
 
-void    CpOpen() {
+void    CpOpen(void) {
 //================
 
 // Compile OPEN statement.
@@ -102,7 +102,7 @@ void    CpOpen() {
 }
 
 
-void    CpPrint() {
+void    CpPrint(void) {
 //=================
 
 // Compile PRINT statement.
@@ -129,7 +129,7 @@ void    CpPrint() {
 }
 
 
-static  bool    Scan4ListOprs() {
+static  bool    Scan4ListOprs(void) {
 //===============================
 
     itnode      *cit;
@@ -155,7 +155,7 @@ static  bool    Scan4ListOprs() {
 }
 
 
-static  bool            ReadKWList() {
+static  bool            ReadKWList(void) {
 //====================================
 
     OPR         opr;
@@ -183,7 +183,7 @@ static  bool            ReadKWList() {
 }
 
 
-void    CpRead() {
+void    CpRead(void) {
 //================
 
 // Compile READ statement.
@@ -213,7 +213,7 @@ void    CpRead() {
 }
 
 
-void    CpRewind() {
+void    CpRewind(void) {
 //==================
 
 // Compile REWIND statement.
@@ -222,7 +222,7 @@ void    CpRewind() {
 }
 
 
-void    CpWrite() {
+void    CpWrite(void) {
 //=================
 
 // Compile WRITE statement.
@@ -241,7 +241,7 @@ void    CpWrite() {
 }
 
 
-static  void    UnitOrList() {
+static  void    UnitOrList(void) {
 //============================
 
 // The io statement can have a unit id by itself or have a keyword list
@@ -262,7 +262,7 @@ static  void    UnitOrList() {
 }
 
 
-static  void    JustList() {
+static  void    JustList(void) {
 //==========================
 
 // The io statement must have a keyword list in brackets.
@@ -280,7 +280,7 @@ static  void    JustList() {
 }
 
 
-static  void    DoKWList() {
+static  void    DoKWList(void) {
 //==========================
 
 // Call KeywordList() and check for closing parenthesis.
@@ -295,7 +295,7 @@ static  void    DoKWList() {
 }
 
 
-static  void    Form() {
+static  void    Form(void) {
 //======================
 
     Permission( IO_FMT );                  // remember FMT=

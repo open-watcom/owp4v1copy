@@ -50,18 +50,18 @@ static  global_seg      *CurrGSeg;
 #endif
 
 
-void    InitGlobalSegs() {
+void    InitGlobalSegs( void ) {
 //========================
 
 // Initialize global segment processing.
 
-    GlobalSeg = NULL;
-    CurrGSeg = NULL;
+    GlobalSeg  = NULL;
+    CurrGSeg   = NULL;
     MaxSegSize = MAX_SEG_SIZE;
 }
 
 
-void    FreeGlobalSegs() {
+void    FreeGlobalSegs( void ) {
 //========================
 
 // Free global segment list.
@@ -69,7 +69,7 @@ void    FreeGlobalSegs() {
     global_seg  *curr_seg;
 
     while( GlobalSeg != NULL ) {
-        curr_seg = GlobalSeg;
+        curr_seg  = GlobalSeg;
         GlobalSeg = curr_seg->link;
         FMemFree( curr_seg );
     }
@@ -134,7 +134,7 @@ segment_id      AllocGlobal( unsigned_32 g_size, bool init ) {
 }
 
 
-static  void    NewGlobalSeg() {
+static  void    NewGlobalSeg( void ) {
 //==============================
 
 // Allocate a new global segment.

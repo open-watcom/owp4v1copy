@@ -156,7 +156,7 @@ cg_name Concat( uint num_args, cg_name dest ) {
 }
 
 
-void    FCCat() {
+void    FCCat( void ) {
 //===============
 
 // Do concatenation operation.
@@ -165,7 +165,7 @@ void    FCCat() {
 }
 
 
-void    FCChar1Move() {
+void    FCChar1Move( void ) {
 //=====================
 
 // Perform single character assignment.
@@ -186,7 +186,7 @@ void    FCChar1Move() {
  #define TAIL_SHIFT     2
 #endif
 
-void    FCCharNMove() {
+void    FCCharNMove( void ) {
 //=====================
 
 // Perform N character assignment of non optimal lengths.
@@ -259,7 +259,7 @@ cg_name CharItemLen( sym_id sym ) {
 }
 
 
-void    FCSubString() {
+void    FCSubString( void ) {
 //=====================
 
 // Do substring operation.
@@ -336,7 +336,7 @@ void    FCSubString() {
 }
 
 
-void    FCPushSCBLen() {
+void    FCPushSCBLen( void ) {
 //======================
 
 // NULL "last" means we need the length from the SCB in the character*(*) case.
@@ -346,7 +346,7 @@ void    FCPushSCBLen() {
 }
 
 
-void    FCMakeSCB() {
+void    FCMakeSCB( void ) {
 //===================
 
     cg_name     len;
@@ -359,7 +359,7 @@ void    FCMakeSCB() {
 }
 
 
-void    FCSetSCBLen() {
+void    FCSetSCBLen( void ) {
 //=====================
 
 // Fill scb length

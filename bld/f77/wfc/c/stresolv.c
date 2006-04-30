@@ -44,7 +44,7 @@ extern  void            StructResolve(void);
 extern  void            BIFiniStartOfSubroutine( void );
 
 
-void    STResolve() {
+void    STResolve( void ) {
 //===================
 
 // Resolve equivalence relations and dump common blocks.
@@ -128,7 +128,7 @@ static  intstar4        CheckSubStr( act_eq_entry *eqv_entry ) {
 }
 
 
-void    EquivResolve() {
+void    EquivResolve( void ) {
 //======================
 
 // Resolve equivalence relations.

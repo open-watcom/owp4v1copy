@@ -100,7 +100,7 @@ static cg_name  getFlags( sym_id sym ) {
 }
 
 
-void            FCAllocate() {
+void            FCAllocate( void ) {
 //============================
 
     call_handle         handle;
@@ -177,7 +177,7 @@ void            FCAllocate() {
 }
 
 
-void            FCDeAllocate() {
+void            FCDeAllocate( void ) {
 //==============================
 
     call_handle         handle;
@@ -204,7 +204,7 @@ void            FCDeAllocate() {
 }
 
 
-void    FCAllocated() {
+void    FCAllocated( void ) {
 //=====================
 
 // Generate code for ALLOCATED intrinsic function.

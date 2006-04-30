@@ -53,7 +53,7 @@
 #include <string.h>
 #include <time.h>
 
-extern  void            BISetSrcFile();
+extern  void            BISetSrcFile( void );
 extern  void            Suicide(void);
 extern  void            PrtOptions(void);
 extern  lib_handle      IncSearch(char *);
@@ -136,7 +136,7 @@ static int            TermCursor;     // offset into "TermBuff"
 //========================================================================
 
 
-void    InitComIO() {
+void    InitComIO( void ) {
 //===================
 
     TermCursor = 0;
@@ -158,7 +158,7 @@ void    InitComIO() {
 }
 
 
-void    InitMemIO() {
+void    InitMemIO( void ) {
 //===================
 
     // We've initialized memory - now we can allocate file buffers.
@@ -175,7 +175,7 @@ void    InitMemIO() {
 }
 
 
-void    FiniComIO() {
+void    FiniComIO( void ) {
 //===================
 
     if( TermBuff != &TokenBuff ) {
@@ -191,7 +191,7 @@ void    FiniComIO() {
 //========================================================================
 
 
-void    OpenSrc() {
+void    OpenSrc( void ) {
 //=================
 
     file_handle fp;
@@ -242,7 +242,7 @@ void    OpenSrc() {
 }
 
 
-void    IOPurge() {
+void    IOPurge( void ) {
 //=================
 
 // make sure all the input files are closed
@@ -253,7 +253,7 @@ void    IOPurge() {
 }
 
 
-static  uint    SrcRead() {
+static  uint    SrcRead( void ) {
 //=========================
 
     uint        len;
@@ -282,7 +282,7 @@ static  uint    SrcRead() {
 }
 
 
-void    ReadSrc() {
+void    ReadSrc( void ) {
 //=================
 
     uint        len;
@@ -425,7 +425,7 @@ void    SrcInclude( char *name ) {
 }
 
 
-void    Conclude() {
+void    Conclude( void ) {
 //==================
 
     source_t    *old;
@@ -477,7 +477,7 @@ static  file_handle Open( char *fn, char *extn, int mode ) {
 }
 
 
-void    OpenErr() {
+void    OpenErr( void ) {
 //=================
 
     if( ( Options & OPT_ERRFILE ) &&
@@ -514,7 +514,7 @@ void    PrintErr( char *string ) {
 }
 
 
-static  bool    ErrToTerm() {
+static  bool    ErrToTerm( void ) {
 //===========================
 
     if( ( Options & OPT_TERM ) == 0 ) return( FALSE );
@@ -524,7 +524,7 @@ static  bool    ErrToTerm() {
 }
 
 
-void    PrtErrNL() {
+void    PrtErrNL( void ) {
 //==================
 
     if( ErrToTerm() ) {
@@ -545,7 +545,7 @@ void    JustErr( char *string ) {
 }
 
 
-static  void    ErrNL() {
+static  void    ErrNL( void ) {
 //=======================
 
     if( ErrFile != NULL ) {
@@ -556,7 +556,7 @@ static  void    ErrNL() {
 }
 
 
-static  void    ChkErrErr() {
+static  void    ChkErrErr( void ) {
 //===========================
 
     char        msg[81];
@@ -592,7 +592,7 @@ static  void    ErrOut( char *string ) {
 }
 
 
-void    CloseErr() {
+void    CloseErr( void ) {
 //==================
 
     if( ErrFile == NULL ) return;
@@ -611,7 +611,7 @@ void    CloseErr() {
 //========================================================================
 
 
-static  void    ChkTermErr() {
+static  void    ChkTermErr( void ) {
 //============================
 
 }
@@ -677,21 +677,21 @@ static  void    OpenListingFile( bool reopen ) {
 }
 
 
-void    OpenLst() {
+void    OpenLst( void ) {
 //=================
 
     OpenListingFile( FALSE );
 }
 
 
-void    ReOpenLst() {
+void    ReOpenLst( void ) {
 //===================
 
     OpenListingFile( TRUE );
 }
 
 
-void    ChkPntLst() {
+void    ChkPntLst( void ) {
 //===================
 
     if( ListFlag & LF_QUIET ) {
@@ -702,7 +702,7 @@ void    ChkPntLst() {
 }
 
 
-bool    WasStmtListed() {
+bool    WasStmtListed( void ) {
 //=======================
 
     return( ( ListFlag & LF_STMT_LISTED ) != 0 );
@@ -746,7 +746,7 @@ void    GetMoreInfo( char *buff ) {
 }
 
 
-void    PrtBanner() {
+void    PrtBanner( void ) {
 //===================
 
     char        banner[LIST_BUFF_SIZE+1];
@@ -816,7 +816,7 @@ void    PrtLst( char *string ) {
 }
 
 
-void    CloseLst() {
+void    CloseLst( void ) {
 //==================
 
     if( ListFile == NULL ) return;
@@ -828,7 +828,7 @@ void    CloseLst() {
 }
 
 
-void    LFEndSrc() {
+void    LFEndSrc( void ) {
 //==================
 
     if( ListFile == NULL ) return;
@@ -839,14 +839,14 @@ void    LFEndSrc() {
 }
 
 
-void    LFNewPage() {
+void    LFNewPage( void ) {
 //===================
 
     ListFlag |= LF_PAGE_FLAG;
 }
 
 
-void    LFSkip() {
+void    LFSkip( void ) {
 //================
 
     ListFlag |= LF_SKIP_FLAG;
@@ -882,7 +882,7 @@ static  void    PutLst( char *string ) {
 }
 
 
-static  void    SetCtrlSeq() {
+static  void    SetCtrlSeq( void ) {
 //============================
 
     char        *ctrlseq;
@@ -907,7 +907,7 @@ static  void    SetCtrlSeq() {
 }
 
 
-static  void    SendRec() {
+static  void    SendRec( void ) {
 //=========================
 
     if( ListFile != NULL ) {
@@ -919,7 +919,7 @@ static  void    SendRec() {
 }
 
 
-static  void    ChkLstErr() {
+static  void    ChkLstErr( void ) {
 //===========================
 
     char        msg[81];
@@ -946,7 +946,7 @@ static  void    Erase( char *extn ) {
 
 
 static  void    SendBuff( char *str, char *buff, int buff_size, int *cursor,
-                          file_handle fp, void (*err_rtn)() ) {
+                          file_handle fp, void (*err_rtn)( void ) ) {
 //==========================================================================
 
     int         len;

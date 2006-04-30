@@ -279,7 +279,7 @@ static  bool    IsForeign( char ch ) {
 }
 
 
-void    __UseEnglishCharSet() {
+void    __UseEnglishCharSet( void ) {
 //=============================
 
     CharSetInfo.extract_text = &ExtractText;

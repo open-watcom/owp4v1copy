@@ -64,7 +64,7 @@ static  int             IOBufferSize = { IO_BUFFER };
 #define PERMS   (S_IROTH | S_IWOTH | S_IRGRP | S_IWGRP | S_IRUSR | S_IWUSR)
 
 
-void    InitStd() {
+void    InitStd( void ) {
 //=================
 
 // Initialize standard i/o.

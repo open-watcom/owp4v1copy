@@ -43,7 +43,7 @@ extern  void            *FreeLink(void *);
 extern  void            FreeRList( sym_id sym );
 
 
-grp_entry       *STGroupEntry() {
+grp_entry       *STGroupEntry( void ) {
 //===============================
 
 // Allocate a group entry extension.
@@ -56,7 +56,7 @@ grp_entry       *STGroupEntry() {
 }
 
 
-com_eq  *STComEq() {
+com_eq  *STComEq( void ) {
 //==================
 
 // Allocate a common/equivalence extension.
@@ -90,7 +90,7 @@ act_dim_list    *STSubsList( act_dim_list *subs_ptr ) {
 }
 
 
-void    STPurge() {
+void    STPurge( void ) {
 //=================
 
 // Free up the entire symbol table.
@@ -105,7 +105,7 @@ void    STPurge() {
 }
 
 
-void    FreeLocalLists() {
+void    FreeLocalLists( void ) {
 //========================
 
 // Free symbol tables associated with subprograms (local).

@@ -74,7 +74,7 @@ extern  int             FmtS2I(char *,int,bool,intstar4 *,bool,int *);
 //
 
 
-intstar4        GetStmtNo() {
+intstar4        GetStmtNo( void ) {
 //===========================
 
 // Create statement number from operand field of CITNode must be before
@@ -123,7 +123,7 @@ void    Err( int errcod, sym_id sym_ptr ) {
 }
 
 
-sym_id  LkUpStmtNo() {
+sym_id  LkUpStmtNo( void ) {
 //====================
 
 // Return the branch label of a statement number.
@@ -182,7 +182,7 @@ sym_id  LkUpStmtNo() {
 }
 
 
-sym_id  LkUpFormat() {
+sym_id  LkUpFormat( void ) {
 //====================
 
 // Return the label of a format statement number.
@@ -203,7 +203,7 @@ sym_id  LkUpFormat() {
 }
 
 
-sym_id  FmtPointer() {
+sym_id  FmtPointer( void ) {
 //====================
 
 // Return the label of the current statement number.
@@ -218,7 +218,7 @@ sym_id  FmtPointer() {
 }
 
 
-sym_id  LkUpAssign() {
+sym_id  LkUpAssign( void ) {
 //====================
 
 // Return label for ASSIGN 10 TO I.
@@ -240,7 +240,7 @@ sym_id  LkUpAssign() {
 }
 
 
-unsigned_32     LkUpDoTerm() {
+unsigned_32     LkUpDoTerm( void ) {
 //============================
 
 // Look up a statement numbers for a do terminator.
@@ -358,7 +358,7 @@ void    Update( unsigned_32 num ) {
 }
 
 
-void    InitStNumbers() {
+void    InitStNumbers( void ) {
 //=======================
 
 // Intitialize statement number processing.

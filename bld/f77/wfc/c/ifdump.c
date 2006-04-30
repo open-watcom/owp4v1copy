@@ -81,7 +81,7 @@ static  void    GBitFunction( FCODE fn ) {
 }
 
 
-void    GMakeCplx() {
+void    GMakeCplx( void ) {
 //===================
 
 // Convert 2 arguments (       a1  ,       a2   )
@@ -92,7 +92,7 @@ void    GMakeCplx() {
 }
 
 
-void    GMakeDCplx() {
+void    GMakeDCplx( void ) {
 //====================
 
 // Convert 2 arguments (       a1  ,       a2   )
@@ -103,7 +103,7 @@ void    GMakeDCplx() {
 }
 
 
-void    GMakeXCplx() {
+void    GMakeXCplx( void ) {
 //====================
 
 // Convert 2 arguments (       a1  ,       a2   )
@@ -114,21 +114,21 @@ void    GMakeXCplx() {
 }
 
 
-void    GModulus() {
+void    GModulus( void ) {
 //==================
 
     G2Math( FC_MODULUS );
 }
 
 
-void    GSign() {
+void    GSign( void ) {
 //===============
 
     G2Math( FC_SIGN );
 }
 
 
-void    GCharLen() {
+void    GCharLen( void ) {
 //==================
 
     EmitOp( FC_CHAR_LEN );
@@ -136,21 +136,21 @@ void    GCharLen() {
 }
 
 
-void    GImag() {
+void    GImag( void ) {
 //===============
 
     GMath( FC_IMAG );
 }
 
 
-void    GConjg() {
+void    GConjg( void ) {
 //================
 
     GMath( FC_CONJG );
 }
 
 
-void    GDProd() {
+void    GDProd( void ) {
 //================
 
     EmitOp( FC_DPROD );
@@ -158,7 +158,7 @@ void    GDProd() {
 }
 
 
-void    GXProd() {
+void    GXProd( void ) {
 //================
 
     EmitOp( FC_XPROD );
@@ -186,42 +186,42 @@ void    GMax( TYPE func_type ) {
 }
 
 
-void    GBitTest() {
+void    GBitTest( void ) {
 //==================
 
     GBitFunction( FC_BIT_TEST );
 }
 
 
-void    GBitSet() {
+void    GBitSet( void ) {
 //=================
 
     GBitFunction( FC_BIT_SET );
 }
 
 
-void    GBitClear() {
+void    GBitClear( void ) {
 //===================
 
     GBitFunction( FC_BIT_CLEAR );
 }
 
 
-void    GBitOr() {
+void    GBitOr( void ) {
 //================
 
     GBitFunction( FC_BIT_OR );
 }
 
 
-void    GBitAnd() {
+void    GBitAnd( void ) {
 //=================
 
     GBitFunction( FC_BIT_AND );
 }
 
 
-void    GBitNot() {
+void    GBitNot( void ) {
 //=================
 
     EmitOp( FC_BIT_NOT );
@@ -230,147 +230,147 @@ void    GBitNot() {
 }
 
 
-void    GBitExclOr() {
+void    GBitExclOr( void ) {
 //====================
 
     GBitFunction( FC_BIT_EXCL_OR );
 }
 
 
-void    GBitChange() {
+void    GBitChange( void ) {
 //====================
 
     GBitFunction( FC_BIT_CHANGE );
 }
 
 
-void    GBitLShift() {
+void    GBitLShift( void ) {
 //====================
 
     GBitFunction( FC_LEFT_SHIFT );
 }
 
 
-void    GBitRShift() {
+void    GBitRShift( void ) {
 //====================
 
     GBitFunction( FC_RIGHT_SHIFT );
 }
 
 
-void            GMod() {
+void            GMod( void ) {
 //======================
 
     GMath( FC_MATH_MOD );
 }
 
 
-void            GAbs() {
+void            GAbs( void ) {
 //======================
 
     GMath( FC_MATH_ABS );
 }
 
 
-void            GASin() {
+void            GASin( void ) {
 //=======================
 
     GMath( FC_MATH_ASIN );
 }
 
 
-void            GACos() {
+void            GACos( void ) {
 //=======================
 
     GMath( FC_MATH_ACOS );
 }
 
 
-void            GATan() {
+void            GATan( void ) {
 //=======================
 
     GMath( FC_MATH_ATAN );
 }
 
 
-void            GATan2() {
+void            GATan2( void ) {
 //========================
 
     GMath( FC_MATH_ATAN2 );
 }
 
 
-void            GLog() {
+void            GLog( void ) {
 //======================
 
     GMath( FC_MATH_LOG );
 }
 
 
-void            GLog10() {
+void            GLog10( void ) {
 //========================
 
     GMath( FC_MATH_LOG10 );
 }
 
 
-void            GCos() {
+void            GCos( void ) {
 //======================
 
     GMath( FC_MATH_COS );
 }
 
 
-void            GSin() {
+void            GSin( void ) {
 //======================
 
     GMath( FC_MATH_SIN );
 }
 
 
-void            GTan() {
+void            GTan( void ) {
 //======================
 
     GMath( FC_MATH_TAN );
 }
 
 
-void            GSinh() {
+void            GSinh( void ) {
 //=======================
 
     GMath( FC_MATH_SINH );
 }
 
 
-void            GCosh() {
+void            GCosh( void ) {
 //=======================
 
     GMath( FC_MATH_COSH );
 }
 
 
-void            GTanh() {
+void            GTanh( void ) {
 //=======================
 
     GMath( FC_MATH_TANH );
 }
 
 
-void            GSqrt() {
+void            GSqrt( void ) {
 //=======================
 
     GMath( FC_MATH_SQRT );
 }
 
 
-void            GExp() {
+void            GExp( void ) {
 //======================
 
     GMath( FC_MATH_EXP );
 }
 
 
-void    GLoc() {
+void    GLoc( void ) {
 //==============
 
     PushOpn( CITNode );
@@ -380,7 +380,7 @@ void    GLoc() {
 }
 
 
-void    GVolatile() {
+void    GVolatile( void ) {
 //===================
 
     PushOpn( CITNode );

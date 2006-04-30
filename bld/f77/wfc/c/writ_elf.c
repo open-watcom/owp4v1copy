@@ -46,7 +46,7 @@
 
 #include <unistd.h>
 
-extern  void            Suicide();
+extern  void            Suicide( void );
 extern  void            SDWrite(file_handle,byte *,int);
 extern  bool            SDError(file_handle,char *);
 

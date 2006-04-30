@@ -39,7 +39,7 @@
 #include "utility.h"
 
 
-void    GBoolExpr() {
+void    GBoolExpr( void ) {
 //===================
 
 // Process a control structure condition (e.g. WHILE( cond )DO).

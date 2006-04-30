@@ -206,7 +206,7 @@ static  bool    IsForeign( char ch ) {
 }
 
 
-void    __UseJapaneseCharSet() {
+void    __UseJapaneseCharSet( void ) {
 //==============================
 
     CharSetInfo.extract_text = &ExtractText;

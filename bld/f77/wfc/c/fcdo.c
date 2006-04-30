@@ -61,7 +61,7 @@ extern  cg_name         SymAddr(sym_id);
 extern  label_handle    GetLabel(label_id);
 
 
-void    FCDoBegin() {
+void    FCDoBegin( void ) {
 //===================
 
 // Initialize DO loop processing.
@@ -128,7 +128,7 @@ void    FCDoBegin() {
 }
 
 
-void    FCDoEnd() {
+void    FCDoEnd( void ) {
 //=================
 
 // Terminal DO loop processing.

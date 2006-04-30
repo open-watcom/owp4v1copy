@@ -85,7 +85,7 @@ static  void    XBinary( int op_code ) {
 }
 
 
-void            FCFlip() {
+void            FCFlip( void ) {
 //========================
 
 // Flip cg-names.
@@ -100,7 +100,7 @@ void            FCFlip() {
 }
 
 
-void    FCAdd() {
+void    FCAdd( void ) {
 //===============
 
 // Binary addition (+) F-Code processor.
@@ -109,7 +109,7 @@ void    FCAdd() {
 }
 
 
-void    FCSub() {
+void    FCSub( void ) {
 //===============
 
 // Binary subtraction (-) F-Code processor.
@@ -118,7 +118,7 @@ void    FCSub() {
 }
 
 
-void    FCMul() {
+void    FCMul( void ) {
 //===============
 
 // Binary multiplication (*) F-Code processor.
@@ -127,7 +127,7 @@ void    FCMul() {
 }
 
 
-void    FCDiv() {
+void    FCDiv( void ) {
 //===============
 
 // Binary divide (/) F-Code processor.
@@ -136,7 +136,7 @@ void    FCDiv() {
 }
 
 
-void    FCModulus() {
+void    FCModulus( void ) {
 //===================
 
 // Binary mod F-Code processor.
@@ -145,7 +145,7 @@ void    FCModulus() {
 }
 
 
-void    FCSign() {
+void    FCSign( void ) {
 //================
 
 // SIGN F-Code processor.
@@ -178,7 +178,7 @@ void    FCSign() {
 }
 
 
-void    FCUnaryMul() {
+void    FCUnaryMul( void ) {
 //====================
 
 // Unary multiplication (x * x );
@@ -208,7 +208,7 @@ void    FCUnaryMul() {
 }
 
 
-void    FCUMinus() {
+void    FCUMinus( void ) {
 //==================
 
 // Unary minus (-) F-Code processor.
@@ -220,7 +220,7 @@ void    FCUMinus() {
 }
 
 
-void    FCPow() {
+void    FCPow( void ) {
 //===============
 
 // Exponentiation.
@@ -244,7 +244,7 @@ void    FCPow() {
 }
 
 
-void    FCDoneParenExpr() {
+void    FCDoneParenExpr( void ) {
 //=========================
 
     PTYPE       typ_info;

@@ -62,7 +62,7 @@ void    GILCnvTo( TYPE typ, uint size ) {
 }
 
 
-void    GIChar() {
+void    GIChar( void ) {
 //================
 
     EmitOp( FC_ICHAR );

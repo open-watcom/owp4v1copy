@@ -39,8 +39,8 @@ enum {
 
 extern void     CLIInit( dw_funcs *cfuncs, int is_type );
 extern void     CLIDump( char *filename );
-extern void     CLIClear();
-extern void     CLIEnd();
-extern void     CLIRewind();
-extern void     CLILock();
+extern void     CLIClear( void );
+extern void     CLIEnd( void );
+extern void     CLIRewind( void );
+extern void     CLILock( void );
 extern int      CLIRead( char *buf, int size, int sec );

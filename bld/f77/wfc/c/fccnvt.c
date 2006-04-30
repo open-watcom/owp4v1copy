@@ -55,7 +55,7 @@ extern  cg_name         SCBPointer(cg_name);
 extern  cg_name         XPop(void);
 
 
-void    FCIChar() {
+void    FCIChar( void ) {
 //=================
 
     XPush( CGUnary( O_CONVERT,
@@ -64,7 +64,7 @@ void    FCIChar() {
 }
 
 
-void    FCConvert() {
+void    FCConvert( void ) {
 //===================
 
 // Perform type conversion.
@@ -148,7 +148,7 @@ void    FCConvert() {
 }
 
 
-void            FCMakeComplex() {
+void            FCMakeComplex( void ) {
 //===============================
 
 // Make a COMPLEX number from 2 scalars.
@@ -157,7 +157,7 @@ void            FCMakeComplex() {
 }
 
 
-void            FCMakeDComplex() {
+void            FCMakeDComplex( void ) {
 //================================
 
 // Make a DCOMPLEX number from 2 scalars.
@@ -166,7 +166,7 @@ void            FCMakeDComplex() {
 }
 
 
-void            FCMakeXComplex() {
+void            FCMakeXComplex( void ) {
 //================================
 
 // Make a XCOMPLEX number from 2 scalars.

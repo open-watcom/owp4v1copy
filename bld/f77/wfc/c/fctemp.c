@@ -46,7 +46,7 @@ extern  void            FreeChain(void **);
 static  tmp_handle      TmpList;
 
 
-void    InitTmps() {
+void    InitTmps( void ) {
 //==================
 
 // Initialize temporary management.
@@ -55,7 +55,7 @@ void    InitTmps() {
 }
 
 
-void    FiniTmps() {
+void    FiniTmps( void ) {
 //==================
 
 // Finalize temporary management.
@@ -88,7 +88,7 @@ tmp_handle      AllocTmp( cg_type typ ) {
 }
 
 
-void    FreeTmps() {
+void    FreeTmps( void ) {
 //==================
 
 // Free all temporaries after compiling a statement.

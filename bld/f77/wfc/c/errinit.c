@@ -43,7 +43,7 @@ static  char            ForceError[] = { "__init_error" };
 static  char            ForceResource[] = { "__init_resource" };
 
 
-char    *ErrorInitializer() {
+char    *ErrorInitializer( void ) {
 //===========================
 
     if( Options & OPT_RESOURCES ) {

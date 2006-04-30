@@ -59,7 +59,7 @@ extern  int             KwLookUp(char **,int,char *,int,int);
 extern  int             MkHexConst(char *,char *,int);
 extern  void            Suicide(void);
 extern  char            *SkipBlanks(char *);
-extern  int             Spawn(void (*)());
+extern  int             Spawn(void (*)(void));
 extern  aux_info        *AuxLookupName(char *,int);
 extern  sym_id          SymFind(char *,uint);
 extern  void            FreeChain(void **);
@@ -237,7 +237,7 @@ aux_info                ProgramInfo;
 dep_info                *DependencyInfo;
 
 
-void            InitAuxInfo() {
+void            InitAuxInfo( void ) {
 //=============================
 
 #if ( _CPU == 8086 || _CPU == 386 )
@@ -366,7 +366,7 @@ void            InitAuxInfo() {
 }
 
 
-void            FiniAuxInfo() {
+void            FiniAuxInfo( void ) {
 //=============================
 
     void        *next;
@@ -388,7 +388,7 @@ void            FiniAuxInfo() {
 }
 
 
-void    SubAuxInit() {
+void    SubAuxInit( void ) {
 //====================
 
 #if ( _CPU == 8086 || _CPU == 386 )
@@ -399,7 +399,7 @@ void    SubAuxInit() {
 }
 
 
-void    SubAuxFini() {
+void    SubAuxFini( void ) {
 //====================
 
 #if ( _CPU == 8086 || _CPU == 386 )
@@ -503,7 +503,7 @@ static  void    AddDefaultLib( char *lib_ptr, int lib_len, char priority ) {
 }
 
 
-void    DefaultLibInfo() {
+void    DefaultLibInfo( void ) {
 //========================
 
 #if _CPU == 386
@@ -683,7 +683,7 @@ static  bool    RecFnToken( char *tok ) {
 
 
 
-void            Pragma() {
+void            Pragma( void ) {
 //========================
 
 // Process a pragma.
@@ -844,7 +844,7 @@ void    ProcPragma( char *ptr ) {
 }
 
 
-static  void    ScanToken() {
+static  void    ScanToken( void ) {
 //===========================
 
     char    *ptr;
@@ -916,7 +916,7 @@ static  void    ScanToken() {
     TokEnd = ptr;
 }
 
-static  void    ScanFnToken() {
+static  void    ScanFnToken( void ) {
 //===========================
 
     char    *ptr;
@@ -957,7 +957,7 @@ static  void    ScanFnToken() {
 }
 
 #if (( _CPU == 8086 || _CPU == 386))
-static  void    TokUpper() {
+static  void    TokUpper( void ) {
 //==========================
 
     char        *ptr;
@@ -983,7 +983,7 @@ static  void    ReqToken( char *tok ) {
 }
 
 
-static  void            AliasName() {
+static  void            AliasName( void ) {
 //===================================
 
     aux_info    *alias;
@@ -997,7 +997,7 @@ static  void            AliasName() {
 }
 
 
-static  void            SymbolName() {
+static  void            SymbolName( void ) {
 //====================================
 
     if( RecToken( "DEFAULT" ) ) {
@@ -1014,7 +1014,7 @@ static  void            SymbolName() {
 }
 
 
-static  void            ProcessAlias() {
+static  void            ProcessAlias( void ) {
 //======================================
 
     if( SymLen == 0 ) { // "DEFAULT"
@@ -1151,7 +1151,7 @@ static  void    DupArgInfo( aux_info *dst, aux_info *src ) {
 }
 
 
-static  void            SymbolId() {
+static  void            SymbolId( void ) {
 //==================================
 
     char        *ptr;
@@ -1173,7 +1173,7 @@ static  void            SymbolId() {
 }
 
 
-static  void            ObjectName() {
+static  void            ObjectName( void ) {
 //====================================
 
     int         obj_len;
@@ -1437,7 +1437,7 @@ static  void    GetByteSeq( void ) {
 
 
 #if ( _CPU == 8086 || _CPU == 386 )
-static  hw_reg_set      RegSet() {
+static  hw_reg_set      RegSet( void ) {
 //================================
 
     hw_reg_set  reg_set;
@@ -1457,7 +1457,7 @@ static  hw_reg_set      RegSet() {
 }
 
 
-static  hw_reg_set      *RegSets() {
+static  hw_reg_set      *RegSets( void ) {
 //==================================
 
     hw_reg_set  reg_sets[MAX_REG_SETS];
@@ -1480,7 +1480,7 @@ static  hw_reg_set      *RegSets() {
 #endif
 
 
-static  void            GetParmInfo() {
+static  void            GetParmInfo( void ) {
 //=====================================
 
 // Collect argument information.
@@ -1539,7 +1539,7 @@ static  void            GetParmInfo() {
 }
 
 
-static  void    GetArgList() {
+static  void    GetArgList( void ) {
 //============================
 
     pass_by     *arg;
@@ -1631,7 +1631,7 @@ static  void    GetArgList() {
 
 
 #if ( _CPU == 8086 || _CPU == 386 )
-static  void            GetRetInfo() {
+static  void            GetRetInfo( void ) {
 //====================================
 
     struct {
@@ -1665,7 +1665,7 @@ static  void            GetRetInfo() {
 }
 
 
-static  void    GetSTRetInfo() {
+static  void    GetSTRetInfo( void ) {
 //==============================
 
     struct {
@@ -1703,7 +1703,7 @@ static  void    GetSTRetInfo() {
 }
 
 
-static  void            GetSaveInfo() {
+static  void            GetSaveInfo( void ) {
 //=====================================
 
     hw_reg_set  modlist;

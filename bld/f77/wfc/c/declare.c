@@ -76,7 +76,7 @@ extern  char            *StmtKeywords[];
 #define SSB_ERROR               2    // lo/hi subscript bound error
 
 
-bool    IsFunctionDefn() {
+bool    IsFunctionDefn( void ) {
 //========================
 
 // Check to see if type declaration is a function definition.
@@ -148,7 +148,7 @@ sym_id  VarDecl( TYPE typ ) {
 }
 
 
-sym_id  FieldDecl() {
+sym_id  FieldDecl( void ) {
 //===================
 
 // Define a field in a structure.
@@ -276,7 +276,7 @@ static  void    TypeDecl( TYPE typ ) {
 }
 
 
-void    CpCharVar() {
+void    CpCharVar( void ) {
 //===================
 
 // Process CHARACTER variable declaration statement.
@@ -285,7 +285,7 @@ void    CpCharVar() {
 }
 
 
-void    CpIntVar() {
+void    CpIntVar( void ) {
 //==================
 
 // Process INTEGER variable declaration statement.
@@ -294,7 +294,7 @@ void    CpIntVar() {
 }
 
 
-void    CpRealVar() {
+void    CpRealVar( void ) {
 //===================
 
 // Process REAL variable declaration statement.
@@ -303,7 +303,7 @@ void    CpRealVar() {
 }
 
 
-void    CpDbleVar() {
+void    CpDbleVar( void ) {
 //===================
 
 // Process DOUBLE PRECISION variable declaration statement.
@@ -312,7 +312,7 @@ void    CpDbleVar() {
 }
 
 
-void    CpXDbleVar() {
+void    CpXDbleVar( void ) {
 //====================
 
 // Process EXTENDED PRECISION variable declaration statement.
@@ -321,7 +321,7 @@ void    CpXDbleVar() {
 }
 
 
-void    CpCmplxVar() {
+void    CpCmplxVar( void ) {
 //====================
 
 // Process COMPLEX variable declaration statement.
@@ -330,7 +330,7 @@ void    CpCmplxVar() {
 }
 
 
-void    CpDCmplxVar() {
+void    CpDCmplxVar( void ) {
 //=====================
 
 // Process DOUBLE COMPLEX variable declaration statement.
@@ -339,7 +339,7 @@ void    CpDCmplxVar() {
 }
 
 
-void    CpXCmplxVar() {
+void    CpXCmplxVar( void ) {
 //=====================
 
 // Process EXTENDED COMPLEX variable declaration statement.
@@ -348,7 +348,7 @@ void    CpXCmplxVar() {
 }
 
 
-void    CpLogVar() {
+void    CpLogVar( void ) {
 //==================
 
 // Process LOGICAL variable declaration statement.
@@ -357,7 +357,7 @@ void    CpLogVar() {
 }
 
 
-void    MustBeTypeDecl() {
+void    MustBeTypeDecl( void ) {
 //========================
 
 // Called when type declaration is not a function definition.
@@ -371,7 +371,7 @@ void    MustBeTypeDecl() {
 }
 
 
-void    CpDimension() {
+void    CpDimension( void ) {
 //=====================
 
 // Process the DIMENSION statement.

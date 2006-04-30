@@ -50,7 +50,7 @@ extern  void            GetIntConst(void);
 extern  void            EatExpr(void);
 
 
-void    AdvanceITPtr() {
+void    AdvanceITPtr( void ) {
 //======================
 
     if( CITNode->link != NULL ) {
@@ -80,7 +80,7 @@ void    FreeITNodes( itnode *head ) {
 }
 
 
-void    ITPurge() {
+void    ITPurge( void ) {
 //=================
 
 // Release all the internal text node structures.
@@ -139,7 +139,7 @@ bool    CmpNode2Str( itnode *itptr, char *str ) {
 }
 
 
-void    ProcExpr() {
+void    ProcExpr( void ) {
 //==================
 
 // Process an expression.
@@ -199,7 +199,7 @@ void    ChkType( TYPE typ ) {
 }
 
 
-void    DimExpr() {
+void    DimExpr( void ) {
 //=================
 
 // Process a dimension expression.
@@ -210,7 +210,7 @@ void    DimExpr() {
 }
 
 
-void    ProcSubExpr() {
+void    ProcSubExpr( void ) {
 //=====================
 
 // Process a subexpression.
@@ -220,7 +220,7 @@ void    ProcSubExpr() {
 }
 
 
-void    ProcDataExpr() {
+void    ProcDataExpr( void ) {
 //======================
 
 // Process an expression to be initialized in a DATA statement.
@@ -230,7 +230,7 @@ void    ProcDataExpr() {
 }
 
 
-void    ProcDataRepExpr() {
+void    ProcDataRepExpr( void ) {
 //=========================
 
 // Process an expression used as a repeat specifier in a DATA statement.
@@ -240,7 +240,7 @@ void    ProcDataRepExpr() {
 }
 
 
-void    ProcDataIExpr() {
+void    ProcDataIExpr( void ) {
 //=======================
 
 // Process an expression used to initialize data in a DATA statement.
@@ -250,7 +250,7 @@ void    ProcDataIExpr() {
 }
 
 
-void    ProcIOExpr() {
+void    ProcIOExpr( void ) {
 //====================
 
 // Process an expression from an i/o list.
@@ -260,7 +260,7 @@ void    ProcIOExpr() {
 }
 
 
-bool    CLogicExpr() {
+bool    CLogicExpr( void ) {
 //====================
 
 // Process a constant logical expression.
@@ -269,7 +269,7 @@ bool    CLogicExpr() {
 }
 
 
-bool    CCharExpr() {
+bool    CCharExpr( void ) {
 //===================
 
 // Process a constant character expression.
@@ -278,7 +278,7 @@ bool    CCharExpr() {
 }
 
 
-bool    CIntExpr() {
+bool    CIntExpr( void ) {
 //==================
 
 // Process a constant integer expression.
@@ -287,7 +287,7 @@ bool    CIntExpr() {
 }
 
 
-void    CArithExpr() {
+void    CArithExpr( void ) {
 //====================
 
     if( ConstExpr( TY_NO_TYPE ) &&
@@ -297,7 +297,7 @@ void    CArithExpr() {
 }
 
 
-void    BoolExpr() {
+void    BoolExpr( void ) {
 //==================
 
 // Process an expression and check that it is boolean.
@@ -312,7 +312,7 @@ void    BoolExpr() {
 }
 
 
-void    BoolSubExpr() {
+void    BoolSubExpr( void ) {
 //=====================
 
 // Process a subexpression and check that it is boolean.
@@ -323,7 +323,7 @@ void    BoolSubExpr() {
 }
 
 
-void    SelectExpr() {
+void    SelectExpr( void ) {
 //====================
 
 // Process an expression and check that it is LOGICAL, INTEGER or CHARACTER.
@@ -338,7 +338,7 @@ void    SelectExpr() {
 }
 
 
-void    IntegerExpr() {
+void    IntegerExpr( void ) {
 //=====================
 
 // Process an expression and check that it is integer.
@@ -348,7 +348,7 @@ void    IntegerExpr() {
 }
 
 
-void    IntSubExpr() {
+void    IntSubExpr( void ) {
 //====================
 
 // Process a subexpression and check that it is integer.
@@ -370,7 +370,7 @@ static  void    EatNumb( int ast ) {
 }
 
 
-void    EatDoParm() {
+void    EatDoParm( void ) {
 //===================
 
 // Process an expression and check that it is integer, real, or
@@ -380,7 +380,7 @@ void    EatDoParm() {
 }
 
 
-void    IfExpr() {
+void    IfExpr( void ) {
 //================
 
 // Process an expression and check that it is integer, real, or double precision
@@ -390,7 +390,7 @@ void    IfExpr() {
 }
 
 
-void    CharSubExpr() {
+void    CharSubExpr( void ) {
 //=====================
 
 // Process a character subexpression.
@@ -439,7 +439,7 @@ bool    ClassIs( unsigned_16 class ) {
 }
 
 
-bool    Subscripted() {
+bool    Subscripted( void ) {
 //=====================
 
 // Return TRUE if current itnode is a subscripted variable.

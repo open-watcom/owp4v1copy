@@ -48,7 +48,7 @@ extern  void            STUnShadow(sym_id);
 extern  void            CkTypeDeclared(void);
 
 
-void    SFPrologue() {
+void    SFPrologue( void ) {
 //====================
 
 // Generate code for statement function prologue.
@@ -116,7 +116,7 @@ void    SFPrologue() {
 }
 
 
-void    SFEpilogue() {
+void    SFEpilogue( void ) {
 //====================
 
 // Generate code for statement function epilogue.

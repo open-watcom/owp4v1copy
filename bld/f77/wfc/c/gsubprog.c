@@ -143,7 +143,7 @@ void    GEndCall( itnode *itptr, int num_stmts ) {
 }
 
 
-void    GArg() {
+void    GArg( void ) {
 //==============
 
 // Generate an argument for subprogram, subscript, or substring.
@@ -242,7 +242,7 @@ static  int     DumpArgInfo( itnode *node ) {
 }
 
 
-void    GSPProlog() {
+void    GSPProlog( void ) {
 //===================
 
 // Generate a subprogram prologue.
@@ -254,7 +254,7 @@ void    GSPProlog() {
 }
 
 
-void    GEPProlog() {
+void    GEPProlog( void ) {
 //===================
 
 // Generate an entry point prologue.
@@ -293,7 +293,7 @@ void    GEPProlog() {
 }
 
 
-static  void    SetArgAddrs() {
+static  void    SetArgAddrs( void ) {
 //=============================
 
 // Assign addresses to dummy argument arguments.
@@ -313,7 +313,7 @@ static  void    SetArgAddrs() {
 }
 
 
-void    GEpilog() {
+void    GEpilog( void ) {
 //=================
 
 // Generate a subprogram epilogue.
@@ -330,7 +330,7 @@ void    GEpilog() {
 }
 
 
-void    GReturn() {
+void    GReturn( void ) {
 //=================
 
 // Generate a return from the program.
@@ -339,7 +339,7 @@ void    GReturn() {
 }
 
 
-void    GEndBlockData() {
+void    GEndBlockData( void ) {
 //=======================
 
 // Terminate a block data subprogram.
@@ -349,7 +349,7 @@ void    GEndBlockData() {
 }
 
 
-void    GGotoEpilog() {
+void    GGotoEpilog( void ) {
 //=====================
 
 // Generate a branch to the epilogue.
@@ -361,7 +361,7 @@ void    GGotoEpilog() {
 }
 
 
-void    GRetIdx() {
+void    GRetIdx( void ) {
 //=================
 
 // Generate an alternate return.
@@ -372,7 +372,7 @@ void    GRetIdx() {
 }
 
 
-void    GNullRetIdx() {
+void    GNullRetIdx( void ) {
 //=====================
 
 // No alternate return.
@@ -383,7 +383,7 @@ void    GNullRetIdx() {
 }
 
 
-void    GCallNoArgs() {
+void    GCallNoArgs( void ) {
 //=====================
 
 // Generate a CALL with no arguments.
@@ -394,7 +394,7 @@ void    GCallNoArgs() {
 }
 
 
-void    GCallWithArgs() {
+void    GCallWithArgs( void ) {
 //=======================
 
 // Generate a CALL with arguments.

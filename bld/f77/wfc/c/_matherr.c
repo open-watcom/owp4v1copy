@@ -37,7 +37,7 @@
 #include "ftnstd.h"
 
 
-void    _matherr() {
+void    _matherr( void ) {
 //==================
 
 }

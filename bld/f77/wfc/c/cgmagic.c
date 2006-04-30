@@ -35,7 +35,7 @@
 #include "fmemmgr.h"
 
 
-label_id        NextLabel() {
+label_id        NextLabel( void ) {
 //===========================
 
 // Return next label.

@@ -89,7 +89,7 @@ static  itnode  *NewITNode( void ) {
 }
 
 
-void    MakeITList() {
+void    MakeITList( void ) {
 //====================
 
 // Make up the internal text list.
@@ -159,7 +159,7 @@ void    MakeITList() {
 }
 
 
-static  void            FlushStatement() {
+static  void            FlushStatement( void ) {
 //========================================
 
     for(;;) {
@@ -171,7 +171,7 @@ static  void            FlushStatement() {
 }
 
 
-static  void    SetSwitch() {
+static  void    SetSwitch( void ) {
 //===========================
 
 // Set statement switches according to operators.
@@ -208,7 +208,7 @@ static  void    SetSwitch() {
 }
 
 
-static  OPR    LkUpOpr() {
+static  OPR    LkUpOpr( void ) {
 //=========================
 
     switch( *LexToken.start ) {
@@ -229,7 +229,7 @@ static  OPR    LkUpOpr() {
 }
 
 
-static  void    GetOpr() {
+static  void    GetOpr( void ) {
 //========================
 
 // Collect an operator.
@@ -267,7 +267,7 @@ static  void    GetOpr() {
 }
 
 
-static  void    GetOpnd() {
+static  void    GetOpnd( void ) {
 //=========================
 
 // Scan off an operand.

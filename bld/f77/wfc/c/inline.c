@@ -425,7 +425,7 @@ call_handle     InitInlineCall( int rtn_id ) {
 }
 
 
-void    InitInlinePragmas() {
+void    InitInlinePragmas( void ) {
 //===========================
 
 #if _CPU == 386 || _CPU == 8086
@@ -466,7 +466,7 @@ void    InitInlinePragmas() {
 }
 
 
-void    FreeInlinePragmas() {
+void    FreeInlinePragmas( void ) {
 //===========================
 
 // Free symbol table entries for run-time routines.

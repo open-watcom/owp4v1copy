@@ -60,7 +60,7 @@ extern  sym_id          ReturnValue;
 extern  sym_id          EPValue;
 
 
-void    STDump() {
+void    STDump( void ) {
 //================
 
 // Dump symbol table.
@@ -219,7 +219,7 @@ static  bool    DumpVariable( sym_id sym ) {
 }
 
 
-static  void    DumpLocalVars() {
+static  void    DumpLocalVars( void ) {
 //===============================
 
 // Dump local variables.
@@ -357,7 +357,7 @@ bool    StmtNoRef( sym_id sn ) {
 }
 
 
-static  void    DumpStmtNos() {
+static  void    DumpStmtNos( void ) {
 //=============================
 
 // Check that statement numbers are all defined.
@@ -384,7 +384,7 @@ static  void    DumpStmtNos() {
 
 
 
-static  void    DumpConsts() {
+static  void    DumpConsts( void ) {
 //============================
 
 // Dump constants from the symbol table.
@@ -396,7 +396,7 @@ static  void    DumpConsts() {
 }
 
 
-static  void    DumpStrings() {
+static  void    DumpStrings( void ) {
 //=============================
 
 // Dump constant literals and space for static temporaries.
@@ -416,7 +416,7 @@ static  void    DumpStrings() {
 }
 
 
-static  void    DumpNameLists() {
+static  void    DumpNameLists( void ) {
 //===============================
 
 // Dump NAMELIST information.

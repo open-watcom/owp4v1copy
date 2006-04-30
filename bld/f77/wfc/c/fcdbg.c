@@ -54,7 +54,7 @@ extern  void            CGAddParm(call_handle,cg_name,cg_type);
 extern  call_handle     InitCall(RTCODE);
 
 
-void    FCDbgLine() {
+void    FCDbgLine( void ) {
 //====================
 
 // Generate line # information.
@@ -67,7 +67,7 @@ void    FCDbgLine() {
 }
 
 
-void    FCSetLine() {
+void    FCSetLine( void ) {
 //===================
 
 // Generate run-time call to ISN routine.

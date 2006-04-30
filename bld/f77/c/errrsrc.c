@@ -102,7 +102,7 @@ static  void    ErrorInit( char *pgm_name ) {
 }
 
 
-static  void    ErrorFini() {
+static  void    ErrorFini( void ) {
 //===========================
 
     if( ResFlags & RF_OPENED ) {
@@ -111,7 +111,7 @@ static  void    ErrorFini() {
 }
 
 
-void    __InitResource() {
+void    __InitResource( void ) {
 //========================
 
     __ErrorInit = &ErrorInit;

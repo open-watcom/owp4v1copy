@@ -118,7 +118,7 @@ static  bool            BrInitialized;
 #define _isFundamentalType( typ ) \
                         (((int)typ >= FIRST_BASE_TYPE) && ((int)typ <= LAST_BASE_TYPE))
 
-void    BIInit() {
+void    BIInit( void ) {
 //================
 
     dw_init_info        init_dwl;
@@ -151,7 +151,7 @@ void    BIInit() {
     BIInitBaseTypes();
 }
 
-void    BIEnd() {
+void    BIEnd( void ) {
 //===============
 
     char        fn[MAX_FILE+1];
@@ -165,11 +165,11 @@ void    BIEnd() {
     CLIClear();
 }
 
-void    BIStartSubProg() {
+void    BIStartSubProg( void ) {
 //========================
 }
 
-void    BIStartSubroutine() {
+void    BIStartSubroutine( void ) {
 //===========================
 
     if( _GenerateBrInfo() ) {
@@ -181,7 +181,7 @@ void    BIStartSubroutine() {
     }
 }
 
-void    BIFiniStartOfSubroutine() {
+void    BIFiniStartOfSubroutine( void ) {
 //=================================
 
     if( _GenerateBrInfo() && (currState & BI_STATE_IN_SCOPE) ) {
@@ -198,7 +198,7 @@ void    BIFiniStartOfSubroutine() {
     }
 }
 
-void    BIEndSubProg() {
+void    BIEndSubProg( void ) {
 //======================
 
     if( _GenerateBrInfo() ) {
@@ -212,7 +212,7 @@ void    BIEndSubProg() {
     }
 }
 
-void BIResolveUndefTypes() {
+void BIResolveUndefTypes( void ) {
 //==========================
 
     if( _GenerateBrInfo() ) {
@@ -419,7 +419,7 @@ void    BIOutSymbol( sym_id ste_ptr ) {
 
 }
 
-void BISetSrcFile() {
+void BISetSrcFile( void ) {
 //===================
 
 // Set Current Source Line
@@ -437,7 +437,7 @@ void BISetSrcFile() {
     }
 }
 
-void BIOutSrcLine() {
+void BIOutSrcLine( void ) {
 //===================
 
 // Set Current Source Line

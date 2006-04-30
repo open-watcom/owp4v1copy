@@ -77,7 +77,7 @@ static  void    BitOperation( cg_op bit_op ) {
 }
 
 
-void    FCBitTest() {
+void    FCBitTest( void ) {
 //===================
 
     cg_name     op;
@@ -92,21 +92,21 @@ void    FCBitTest() {
 }
 
 
-void    FCBitSet() {
+void    FCBitSet( void ) {
 //==================
 
     BitOperation( O_OR );
 }
 
 
-void    FCBitChange() {
+void    FCBitChange( void ) {
 //=====================
 
     BitOperation( O_XOR );
 }
 
 
-void    FCBitClear() {
+void    FCBitClear( void ) {
 //====================
 
     cg_name     op;
@@ -122,7 +122,7 @@ void    FCBitClear() {
 }
 
 
-void    FCBitNot() {
+void    FCBitNot( void ) {
 //==================
 
     cg_type     typ;
@@ -150,28 +150,28 @@ static  cg_type BitWise( cg_op op ) {
 }
 
 
-void    FCBitOr() {
+void    FCBitOr( void ) {
 //=================
 
     BitWise( O_OR );
 }
 
 
-void    FCBitAnd() {
+void    FCBitAnd( void ) {
 //==================
 
     BitWise( O_AND );
 }
 
 
-void    FCBitExclOr() {
+void    FCBitExclOr( void ) {
 //=====================
 
     BitWise( O_XOR );
 }
 
 
-void    FCBitEquiv() {
+void    FCBitEquiv( void ) {
 //====================
 
     cg_type     typ;
@@ -181,14 +181,14 @@ void    FCBitEquiv() {
 }
 
 
-void FCBitLShift() {
+void FCBitLShift( void ) {
 //==================
 
     BitWise( O_LSHIFT );
 }
 
 
-void FCBitRShift() {
+void FCBitRShift( void ) {
 //==================
 
     BitWise( O_RSHIFT );

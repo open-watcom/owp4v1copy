@@ -81,7 +81,7 @@ static  void    XCompare( cg_op op_code ) {
 }
 
 
-void    FCCmpEQ() {
+void    FCCmpEQ( void ) {
 //=================
 
 // Arithmetic '==' ( equals ) F-Code processor
@@ -90,7 +90,7 @@ void    FCCmpEQ() {
 }
 
 
-void    FCCmpLE() {
+void    FCCmpLE( void ) {
 //=================
 
 // Arithmetic '<=' ( less than or equal ) F-Code processor
@@ -99,7 +99,7 @@ void    FCCmpLE() {
 }
 
 
-void    FCCmpLT() {
+void    FCCmpLT( void ) {
 //=================
 
 // Arithmetic '<' ( less than ) F-Code processor
@@ -108,7 +108,7 @@ void    FCCmpLT() {
 }
 
 
-void    FCCmpNE() {
+void    FCCmpNE( void ) {
 //=================
 
 // Arithmetic '!=' ( not equal to ) F-Code processor
@@ -117,7 +117,7 @@ void    FCCmpNE() {
 }
 
 
-void    FCCmpGT() {
+void    FCCmpGT( void ) {
 //=================
 
 // Arithmetic '>' ( greater than ) F-Code processor
@@ -126,7 +126,7 @@ void    FCCmpGT() {
 }
 
 
-void    FCCmpGE() {
+void    FCCmpGE( void ) {
 //=================
 
 // Arithmetic '>=' ( greater than or equal to ) F-Code processor
@@ -154,7 +154,7 @@ static  void    XCharCompare( cg_op op ) {
 }
 
 
-void    FCCharCmpEQ() {
+void    FCCharCmpEQ( void ) {
 //=====================
 
 // Character '==' ( equals ) F-Code processor.
@@ -163,7 +163,7 @@ void    FCCharCmpEQ() {
 }
 
 
-void    FCCharCmpLE() {
+void    FCCharCmpLE( void ) {
 //=====================
 
 // Character '<=' ( less than or equal ) F-Code processor
@@ -172,7 +172,7 @@ void    FCCharCmpLE() {
 }
 
 
-void    FCCharCmpLT() {
+void    FCCharCmpLT( void ) {
 //=====================
 
 // Character '<' ( less than ) F-Code processor
@@ -181,7 +181,7 @@ void    FCCharCmpLT() {
 }
 
 
-void    FCCharCmpNE() {
+void    FCCharCmpNE( void ) {
 //=====================
 
 // Character '!=' ( not equal to ) F-Code processor
@@ -190,7 +190,7 @@ void    FCCharCmpNE() {
 }
 
 
-void    FCCharCmpGT() {
+void    FCCharCmpGT( void ) {
 //=====================
 
 // Character '>' ( greater than ) F-Code processor
@@ -199,7 +199,7 @@ void    FCCharCmpGT() {
 }
 
 
-void    FCCharCmpGE() {
+void    FCCharCmpGE( void ) {
 //=====================
 
 // Character '>=' ( greater than or equal to ) F-Code processor
@@ -208,7 +208,7 @@ void    FCCharCmpGE() {
 }
 
 
-void    FCChar1CmpEQ() {
+void    FCChar1CmpEQ( void ) {
 //======================
 
 // Compare single characters.
@@ -217,7 +217,7 @@ void    FCChar1CmpEQ() {
 }
 
 
-void    FCChar1CmpLE() {
+void    FCChar1CmpLE( void ) {
 //======================
 
 // Compare single characters.
@@ -226,7 +226,7 @@ void    FCChar1CmpLE() {
 }
 
 
-void    FCChar1CmpLT() {
+void    FCChar1CmpLT( void ) {
 //======================
 
 // Compare single characters.
@@ -235,7 +235,7 @@ void    FCChar1CmpLT() {
 }
 
 
-void    FCChar1CmpNE() {
+void    FCChar1CmpNE( void ) {
 //======================
 
 // Compare single characters.
@@ -244,7 +244,7 @@ void    FCChar1CmpNE() {
 }
 
 
-void    FCChar1CmpGE() {
+void    FCChar1CmpGE( void ) {
 //======================
 
 // Compare single characters.
@@ -253,7 +253,7 @@ void    FCChar1CmpGE() {
 }
 
 
-void    FCChar1CmpGT() {
+void    FCChar1CmpGT( void ) {
 //======================
 
 // Compare single characters.

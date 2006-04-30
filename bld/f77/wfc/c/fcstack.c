@@ -68,7 +68,7 @@ extern  cg_name         SCBPointer(cg_name);
 extern  void            CmplxAssign(sym_id,cg_type,cg_type);
 extern  void            PushCmplxConst(sym_id);
 extern  void            PushComplex(sym_id);
-extern  void            Cmplx2Scalar();
+extern  void            Cmplx2Scalar( void );
 extern  cg_type         CmplxBaseType(cg_type);
 extern  cg_name         VarAltSCB(sym_id);
 extern  cg_name         SubAltSCB(sym_id);
@@ -78,7 +78,7 @@ extern  sym_id          FindArgShadow(sym_id);
 extern  bool            ForceStatic(unsigned_16);
 
 
-void    InitStack() {
+void    InitStack( void ) {
 //===================
 
 // Initialize stack.
@@ -388,7 +388,7 @@ cg_name SymAddr( sym_id sym ) {
 }
 
 
-void    FCPush() {
+void    FCPush( void ) {
 //================
 
 // Process PUSH F-Code.
@@ -453,7 +453,7 @@ void    SymPush( sym_id val ) {
 }
 
 
-cg_name XPop() {
+cg_name XPop( void ) {
 //==============
 
 // Pop a CG-name from the stack.
@@ -478,7 +478,7 @@ cg_name XPopValue( cg_type typ ) {
 }
 
 
-void    FCPop() {
+void    FCPop( void ) {
 //===============
 
 // Process POP F-Code.
@@ -545,7 +545,7 @@ void    FCPop() {
 }
 
 
-cg_name GetTypedValue() {
+cg_name GetTypedValue( void ) {
 //=======================
 
 // Pop a CG-name from the stack (its value).
@@ -580,7 +580,7 @@ void            PopStkElements( int num ) {
 }
 
 
-intstar4        DXPop() {
+intstar4        DXPop( void ) {
 //=======================
 
 // Pop a constant from the stack for DATA statement expressions.
@@ -590,7 +590,7 @@ intstar4        DXPop() {
 }
 
 
-sym_id          SymPop() {
+sym_id          SymPop( void ) {
 //========================
 
 // Pop a symbol table entry from the stack.
@@ -613,7 +613,7 @@ cg_name IntegerConstant( ftn_type *value, uint size ) {
 }
 
 
-void    FCPushConst() {
+void    FCPushConst( void ) {
 //=====================
 
 // Process PUSH_CONST F-Code.
@@ -657,7 +657,7 @@ void    FCPushConst() {
 }
 
 
-void    FCPushLit() {
+void    FCPushLit( void ) {
 //===================
 
 // Process PUSH_LIT F-Code.

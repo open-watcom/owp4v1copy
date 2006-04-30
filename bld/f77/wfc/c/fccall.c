@@ -60,7 +60,7 @@ extern  call_handle     CGInitCall(cg_name,cg_type,sym_handle);
 extern  void            CGAddParm(call_handle,cg_name,cg_type);
 extern  cg_name         CGCall(call_handle);
 extern  cg_name         CGEval(cg_name);
-extern  sel_handle      CGSelInit();
+extern  sel_handle      CGSelInit( void );
 extern  void            CGSelCase(sel_handle,label_handle,signed_32);
 extern  void            CGSelOther(sel_handle,label_handle);
 extern  void            CGControl(cg_op,cg_name,label_handle);
@@ -137,7 +137,7 @@ cg_type SPType( sym_id sym ) {
 }
 
 
-static  cg_type    CommonEntryType() {
+static  cg_type    CommonEntryType( void ) {
 //====================================
 
 // Generate return value for common entry point.
@@ -146,7 +146,7 @@ static  cg_type    CommonEntryType() {
 }
 
 
-void    FCPrologue() {
+void    FCPrologue( void ) {
 //====================
 
 // Start a subprogram.
@@ -208,7 +208,7 @@ void    FCPrologue() {
 }
 
 
-static  void    GenTraceback() {
+static  void    GenTraceback( void ) {
 //==============================
 
     call_handle         handle;
@@ -221,7 +221,7 @@ static  void    GenTraceback() {
 }
 
 
-void    FCEpilogue() {
+void    FCEpilogue( void ) {
 //====================
 
 // End a subprogram.
@@ -272,7 +272,7 @@ bool    ChkForAltRets( entry_pt *ep ) {
 }
 
 
-bool    EntryWithAltRets() {
+bool    EntryWithAltRets( void ) {
 //==========================
 
 // Check to see if there's at least one entry with an alternate return.
@@ -311,7 +311,7 @@ static  void    GenReturnValue( sym_id sym ) {
 }
 
 
-static  void    GenCommonReturnValue() {
+static  void    GenCommonReturnValue( void ) {
 //======================================
 
 // Generate return value for common entry point.
@@ -325,7 +325,7 @@ static  void    GenCommonReturnValue() {
 }
 
 
-static  void    DefineEntries() {
+static  void    DefineEntries( void ) {
 //===============================
 
 // Define entry points into subprogram.
@@ -546,7 +546,7 @@ static  cg_name MkSCB16( cg_name src ) {
 #endif
 
 
-void    FCCall() {
+void    FCCall( void ) {
 //================
 
 // Process CALL F-Code.
@@ -802,7 +802,7 @@ void    FCCall() {
 }
 
 
-void        FCEvalArg() {
+void        FCEvalArg( void ) {
 //=======================
 
 // Force evaluation of an argument.
@@ -851,7 +851,7 @@ cg_name SubAltSCB( sym_id sym ) {
 }
 
 
-void    FCDArgInit() {
+void    FCDArgInit( void ) {
 //====================
 
 // Initialize dummy arguments.
@@ -915,7 +915,7 @@ void    FCDArgInit() {
 }
 
 
-void    FCPassFieldCharArray() {
+void    FCPassFieldCharArray( void ) {
 //==============================
 
 // Pass character array, array element, or substrung array element to
@@ -930,7 +930,7 @@ void    FCPassFieldCharArray() {
 }
 
 
-void    FCPassCharArray() {
+void    FCPassCharArray( void ) {
 //=========================
 
 // Pass character array, array element, or substrung array element to
@@ -945,7 +945,7 @@ void    FCPassCharArray() {
 }
 
 
-void    FCAltReturn() {
+void    FCAltReturn( void ) {
 //=====================
 
 // Process alternate return.
@@ -981,7 +981,7 @@ void    FCAltReturn() {
 }
 
 
-void    FCAssignAltRet() {
+void    FCAssignAltRet( void ) {
 //========================
 
 // Assign alternate return value to result of subroutine.

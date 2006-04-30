@@ -43,7 +43,7 @@ extern  void            GSetIOCB(void);
 extern  bool            Already(int);
 
 
-void    InitIO() {
+void    InitIO(void) {
 //================
 
     IOData = 0;
@@ -51,13 +51,13 @@ void    InitIO() {
 }
 
 
-void    FiniIO() {
+void    FiniIO(void) {
 //================
 
 }
 
 
-uint    IOIndex() {
+uint    IOIndex(void) {
 //=================
 
     switch( StmtProc ) {
@@ -74,7 +74,7 @@ uint    IOIndex() {
 }
 
 
-uint    AuxIOStmt() {
+uint    AuxIOStmt(void) {
 //===================
 
     switch( StmtProc ) {
@@ -87,7 +87,7 @@ uint    AuxIOStmt() {
 }
 
 
-bool    NotFormatted() {
+bool    NotFormatted(void) {
 //======================
 
     return( !Already( IO_FMT ) );

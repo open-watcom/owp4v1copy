@@ -49,7 +49,7 @@ extern  sym_id          LkSym(void);
                      SY_DATA_INIT | SY_SAVED | SY_IN_EC | SY_REFERENCED)
 
 
-void    CpVolatile() {
+void    CpVolatile( void ) {
 //====================
 
 // Compile VOLATILE statement.

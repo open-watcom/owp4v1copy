@@ -59,7 +59,7 @@ static  unsigned_8      MacroFlags;
 static  char            DebugMacro[] = { "__debug__" };
 
 
-void    InitMacroProcessor() {
+void    InitMacroProcessor( void ) {
 //============================
 
 // Initialize macro processor in case macros defined on command line.
@@ -68,7 +68,7 @@ void    InitMacroProcessor() {
 }
 
 
-void    FiniMacroProcessor() {
+void    FiniMacroProcessor( void ) {
 //============================
 
 // Finalize macro processor.
@@ -77,7 +77,7 @@ void    FiniMacroProcessor() {
 }
 
 
-void    InitPredefinedMacros() {
+void    InitPredefinedMacros( void ) {
 //==============================
 
 #if _CPU == 386
@@ -106,7 +106,7 @@ void    InitPredefinedMacros() {
 }
 
 
-void    InitMacros() {
+void    InitMacros( void ) {
 //====================
 
 // Initialize macro processor for a compilation.
@@ -117,7 +117,7 @@ void    InitMacros() {
 }
 
 
-void    FiniMacros() {
+void    FiniMacros( void ) {
 //====================
 
 // Finalize macro processor for a compilation.
@@ -160,7 +160,7 @@ static  macro_entry     *FindMacroEntry( char *macro, uint macro_len ) {
 }
 
 
-bool    CompileDebugStmts() {
+bool    CompileDebugStmts( void ) {
 //===========================
 
 // Determine if debug statements should be compiled.
@@ -208,7 +208,7 @@ void    MacroUNDEFINE( char *macro, uint macro_len ) {
 }
 
 
-static  void    SetSkipStatus() {
+static  void    SetSkipStatus( void ) {
 //===============================
 
 // Determine whether source is to be skipped.
@@ -313,7 +313,7 @@ void    MacroELIFNDEF( char *macro, uint macro_len ) {
 }
 
 
-void    MacroELSE() {
+void    MacroELSE( void ) {
 //===================
 
 // Process ELSE directive.
@@ -334,7 +334,7 @@ void    MacroELSE() {
 }
 
 
-void    MacroENDIF() {
+void    MacroENDIF( void ) {
 //====================
 
 // Process ENDIF directive.

@@ -125,7 +125,7 @@ call_handle     InitCall( RTCODE rtn_id ) {
 }
 
 
-void    InitRtRtns() {
+void    InitRtRtns( void ) {
 //====================
 
 // Initialize symbol table entries for run-time routines.
@@ -140,7 +140,7 @@ void    InitRtRtns() {
 }
 
 
-void    FreeRtRtns() {
+void    FreeRtRtns( void ) {
 //====================
 
 // Free symbol table entries for run-time routines.

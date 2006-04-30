@@ -106,7 +106,7 @@ cg_name ArrayEltSize( sym_id arr ) {
 }
 
 
-void    FCSubscript() {
+void    FCSubscript( void ) {
 //=====================
 
 // Do a subscript operation.
@@ -360,7 +360,7 @@ static  void    DbSubscript( sym_id arr ) {
 }
 
 
-void    FCAdvFillLo() {
+void    FCAdvFillLo( void ) {
 //=====================
 
 // Fill lo bound of a dimension.
@@ -380,7 +380,7 @@ void    FCAdvFillLo() {
 }
 
 
-void    FCAdvFillHi() {
+void    FCAdvFillHi( void ) {
 //=====================
 
 // Fill hi bound of a dimension (actually computes # of elements in dimension).
@@ -430,7 +430,7 @@ void    FCAdvFillHi() {
 }
 
 
-void    FCAdvFillHiLo1() {
+void    FCAdvFillHiLo1( void ) {
 //========================
 
 // Fill hi and lo=1 bound of a dimension.

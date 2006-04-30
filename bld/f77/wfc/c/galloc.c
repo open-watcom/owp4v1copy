@@ -47,7 +47,7 @@ static  unsigned_16     allocFlags;
 static  obj_ptr         flagsLabel;
 
 
-void    GBegAllocate() {
+void    GBegAllocate( void ) {
 //======================
 
     allocFlags = ALLOC_NONE;
@@ -94,7 +94,7 @@ void    GEndAllocate( void ) {
 }
 
 
-void    GBegDeAllocate() {
+void    GBegDeAllocate( void ) {
 //========================
 
     allocFlags = ALLOC_NONE;
@@ -131,7 +131,7 @@ static void GAllocOpts( void ) {
 }
 
 
-void    GAllocLoc() {
+void    GAllocLoc( void ) {
 //===================
 
     allocFlags &= ~ALLOC_NONE;
@@ -140,7 +140,7 @@ void    GAllocLoc() {
 }
 
 
-void    GAllocStat() {
+void    GAllocStat( void ) {
 //====================
 
     allocFlags &= ~ALLOC_NONE;
@@ -149,7 +149,7 @@ void    GAllocStat() {
 }
 
 
-void    GAllocated() {
+void    GAllocated( void ) {
 //====================
 
 // Generate code for ALLOCATED intrinsic function.

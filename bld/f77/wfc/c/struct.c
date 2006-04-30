@@ -54,7 +54,7 @@ extern  sym_id          STField(char *,uint);
 extern  char            *StmtKeywords[];
 
 
-static  sym_id  StructName() {
+static  sym_id  StructName( void ) {
 //============================
 
 // Get structure name.
@@ -76,7 +76,7 @@ static  sym_id  StructName() {
 }
 
 
-void    CpStructure() {
+void    CpStructure( void ) {
 //=====================
 
 // Process STRUCTURE statement.
@@ -103,7 +103,7 @@ void    CpStructure() {
 }
 
 
-void    CpEndStructure() {
+void    CpEndStructure( void ) {
 //========================
 
 // Process ENDSTRUCTURE statement.
@@ -132,7 +132,7 @@ void    CpEndStructure() {
 }
 
 
-void    CpRecord() {
+void    CpRecord( void ) {
 //==================
 
 // Process RECORD statement.
@@ -179,7 +179,7 @@ void    CpRecord() {
 }
 
 
-void    StructResolve() {
+void    StructResolve( void ) {
 //=======================
 
 // Make sure all structures have been defined.

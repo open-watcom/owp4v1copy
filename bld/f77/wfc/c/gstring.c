@@ -143,7 +143,7 @@ static  uint    TargChar( itnode *op ) {
 }
 
 
-void    AsgnChar() {
+void    AsgnChar( void ) {
 //==================
 
 // Perform character assignment.

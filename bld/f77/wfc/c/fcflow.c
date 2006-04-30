@@ -98,7 +98,7 @@ extern  unsigned_8      CGFlags;
 static  obj_ptr         WarpReturn;
 
 
-void    InitLabels() {
+void    InitLabels( void ) {
 //====================
 
 // Initialize label processing.
@@ -177,7 +177,7 @@ label_handle    GetLabel( label_id label ) {
 }
 
 
-void    FCJmpFalse() {
+void    FCJmpFalse( void ) {
 //====================
 
     unsigned_16 typ_info;
@@ -196,7 +196,7 @@ void    FCJmpFalse() {
 }
 
 
-void    FCJmpAlways() {
+void    FCJmpAlways( void ) {
 //=====================
 
     CGControl( O_GOTO, NULL, GetLabel( GetU16() ) );
@@ -212,7 +212,7 @@ label_handle    GetStmtLabel( sym_id sn ) {
 }
 
 
-void    FCStmtJmpAlways() {
+void    FCStmtJmpAlways( void ) {
 //=========================
 
     sym_id      sn;
@@ -223,14 +223,14 @@ void    FCStmtJmpAlways() {
 }
 
 
-void    FCDefineLabel() {
+void    FCDefineLabel( void ) {
 //=======================
 
     CGControl( O_LABEL, NULL, GetLabel( GetU16() ) );
 }
 
 
-void    FCStmtDefineLabel() {
+void    FCStmtDefineLabel( void ) {
 //===========================
 
     sym_id      sn;
@@ -257,7 +257,7 @@ back_handle     GetFmtLabel( label_id label ) {
 }
 
 
-void    FCAssign() {
+void    FCAssign( void ) {
 //==================
 
 // Process ASSIGN statement.
@@ -279,7 +279,7 @@ void    FCAssign() {
 }
 
 
-void    FCIfArith() {
+void    FCIfArith( void ) {
 //===================
 
 // Set up control structure for arithmetic if.
@@ -320,7 +320,7 @@ void    FCIfArith() {
 }
 
 
-void    FCAssignedGOTOList() {
+void    FCAssignedGOTOList( void ) {
 //============================
 
 // Perform assigned GOTO with list.
@@ -358,7 +358,7 @@ void    FCAssignedGOTOList() {
 }
 
 
-void    FCComputedGOTO() {
+void    FCComputedGOTO( void ) {
 //========================
 
 // Perform computed GOTO.
@@ -367,7 +367,7 @@ void    FCComputedGOTO() {
 }
 
 
-void    FCStartRB() {
+void    FCStartRB( void ) {
 //===================
 
 // Start a REMOTE BLOCK.
@@ -380,7 +380,7 @@ void    FCStartRB() {
 }
 
 
-void    FCWarp() {
+void    FCWarp( void ) {
 //================
 
 // Process WARP F-Code.
@@ -394,7 +394,7 @@ void    FCWarp() {
 }
 
 
-void    FCWarpReturn() {
+void    FCWarpReturn( void ) {
 //======================
 
 // Return from a warp (array initialization).
@@ -403,7 +403,7 @@ void    FCWarpReturn() {
 }
 
 
-void    FCExecute() {
+void    FCExecute( void ) {
 //===================
 
 // Process EXECUTE F-Code (call remote block).
@@ -428,7 +428,7 @@ static  void    RBReferenced( sym_id rb ) {
 }
 
 
-void    FCEndRB() {
+void    FCEndRB( void ) {
 //=================
 
 // Terminate a REMOTE BLOCK.
@@ -437,7 +437,7 @@ void    FCEndRB() {
 }
 
 
-void    FCSFCall() {
+void    FCSFCall( void ) {
 //==================
 
 // Call a statement function.
@@ -529,7 +529,7 @@ void    FCSFCall() {
 }
 
 
-void            FCStartSF() {
+void            FCStartSF( void ) {
 //===========================
 
 // Start definition of a statement function.
@@ -548,7 +548,7 @@ void            FCStartSF() {
 }
 
 
-void            FCEndSF() {
+void            FCEndSF( void ) {
 //=========================
 
 // End definition of a statement function.
@@ -565,7 +565,7 @@ void            FCEndSF() {
 }
 
 
-void            FCSFReferenced() {
+void            FCSFReferenced( void ) {
 //================================
 
 // Statement function has been referenced; check if its label can be freed.
@@ -615,7 +615,7 @@ void    DoneLabel( label_id label ) {
 }
 
 
-void    FCFreeLabel() {
+void    FCFreeLabel( void ) {
 //=====================
 
 // Free specified label since it will no longer be referenced.

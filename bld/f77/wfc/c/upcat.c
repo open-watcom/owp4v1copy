@@ -55,7 +55,7 @@ extern  void            MoveDown(void);
 extern  void            KillOpnOpr(void);
 
 
-void            CatOpn() {
+void            CatOpn( void ) {
 //========================
 
 // Process a concatenation operand.
@@ -65,7 +65,7 @@ void            CatOpn() {
 }
 
 
-static  void    GenCatOpn() {
+static  void    GenCatOpn( void ) {
 //===========================
 
     if( CITNode->opn.us != USOPN_CON ) {
@@ -123,7 +123,7 @@ static  void    ChkConstCatOpn( itnode *cat_opn ) {
 }
 
 
-static  void    FoldCat() {
+static  void    FoldCat( void ) {
 //=========================
 
     GenCatOpn();
@@ -131,7 +131,7 @@ static  void    FoldCat() {
 }
 
 
-void            FiniCat() {
+void            FiniCat( void ) {
 //=========================
 
 // Finish concatenation.
@@ -159,7 +159,7 @@ void            FiniCat() {
 }
 
 
-int             AsgnCat() {
+int             AsgnCat( void ) {
 //=========================
 
 // Get character operand to assign.
@@ -205,7 +205,7 @@ static  int     ScanCat( int *size_ptr ) {
 }
 
 
-void            CatBack() {
+void            CatBack( void ) {
 //=========================
 
 // Scan back on = // sequence if RHS is a char expression.
@@ -231,7 +231,7 @@ void            CatBack() {
 }
 
 
-void            CatAxeParens() {
+void            CatAxeParens( void ) {
 //==============================
 
 // Remove LBR on ( // sequence.
@@ -301,7 +301,7 @@ static  itnode  *findMatch( bool *ok_to_axe, bool *all_const_opns ) {
 }
 
 
-void            ParenCat() {
+void            ParenCat( void ) {
 //==========================
 
 // Check if ) matches ( as opposed to [.
@@ -332,7 +332,7 @@ void            ParenCat() {
 }
 
 
-void            CatParen() {
+void            CatParen( void ) {
 //==========================
 
 // Check if ) matches ( as opposed to [.
@@ -358,7 +358,7 @@ void            CatParen() {
 }
 
 
-void            ChkCatOpn() {
+void            ChkCatOpn( void ) {
 //===========================
 
 // Check if ) is the start of a concatenation operand.

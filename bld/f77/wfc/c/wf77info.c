@@ -216,7 +216,7 @@ static  unsigned        MangleCommonBlockName( sym_id sym, char *buffer,
 }
 
 
-static  segment_id      AllocSegId() {
+static  segment_id      AllocSegId( void ) {
 //====================================
 
     segment_id  seg;
@@ -227,14 +227,14 @@ static  segment_id      AllocSegId() {
 }
 
 
-void    InitSubSegs() {
+void    InitSubSegs( void ) {
 //=====================
 
     CurrImpSegId = -1;
 }
 
 
-segment_id      AllocImpSegId() {
+segment_id      AllocImpSegId( void ) {
 //===============================
 
     segment_id  seg;
@@ -245,7 +245,7 @@ segment_id      AllocImpSegId() {
 }
 
 
-void    InitSegs() {
+void    InitSegs( void ) {
 //==================
 
 // Define segments.
@@ -265,7 +265,7 @@ void    InitSegs() {
 }
 
 
-void    FiniSegs() {
+void    FiniSegs( void ) {
 //==================
 
 // Finish segment processing.
@@ -279,7 +279,7 @@ void    FiniSegs() {
 }
 
 
-void    AllocSegs() {
+void    AllocSegs( void ) {
 //===================
 
 // Allocate segments.
@@ -289,7 +289,7 @@ void    AllocSegs() {
 }
 
 
-void    SubCodeSeg() {
+void    SubCodeSeg( void ) {
 //====================
 
 // Define a code segment for a subprogram.
@@ -300,7 +300,7 @@ void    SubCodeSeg() {
 
 
 #if _CPU == 8086 || _CPU == 386
-static  byte_seq        *AlignmentSeq() {
+static  byte_seq        *AlignmentSeq( void ) {
 //=======================================
 
     if( OZOpts & OZOPT_O_TIME ) {
@@ -311,7 +311,7 @@ static  byte_seq        *AlignmentSeq() {
 }
 
 
-static  void    DefCodeSeg() {
+static  void    DefCodeSeg( void ) {
 //============================
 
 // Define a code segment.
@@ -350,7 +350,7 @@ static  void    BldCSName( char *buff ) {
 #endif
 
 
-static  void    DefineCommonSegs() {
+static  void    DefineCommonSegs( void ) {
 //==================================
 
 // Define segments for a common blocks.
@@ -409,7 +409,7 @@ static  void    DefineCommonSegs() {
 }
 
 
-static  void    AllocCommonSegs() {
+static  void    AllocCommonSegs( void ) {
 //=================================
 
 // Allocate segments for a common blocks.
@@ -497,7 +497,7 @@ static  void            DefineGlobalSeg( global_seg *seg ) {
 }
 
 
-static  void    DefineGlobalSegs() {
+static  void    DefineGlobalSegs( void ) {
 //==================================
 
 // Define global segments.
@@ -512,7 +512,7 @@ static  void    DefineGlobalSegs() {
 }
 
 
-static  void    AllocGlobalSegs() {
+static  void    AllocGlobalSegs( void ) {
 //=================================
 
 // Allocate global segments.
@@ -608,7 +608,7 @@ static  void    UndefBytes( unsigned long size, byte *data ) {
 }
 
 
-static  void    FlushCurrDt() {
+static  void    FlushCurrDt( void ) {
 //=============================
 
     if( CurrDt.seg != WF77_NULLSEGID ) {
@@ -619,7 +619,7 @@ static  void    FlushCurrDt() {
 }
 
 
-static  void    InitCurrDt() {
+static  void    InitCurrDt( void ) {
 //============================
 
     CurrDt.seg = WF77_NULLSEGID;
@@ -712,14 +712,14 @@ void    DtBytes( byte *data, int size ) {
 }
 
 
-void    DtStartSequence() {
+void    DtStartSequence( void ) {
 //=========================
 
     InitCurrDt();
 }
 
 
-void    DtFiniSequence() {
+void    DtFiniSequence( void ) {
 //========================
 
     FlushCurrDt();
@@ -876,7 +876,7 @@ segment_id  GetGlobalSeg( unsigned_32 g_offset ) {
 }
 
 
-void    DefTypes() {
+void    DefTypes( void ) {
 //==================
 
 // Define FORTRAN 77 data types.
@@ -952,7 +952,7 @@ void    DefTypes() {
 }
 
 
-void    DefStructs() {
+void    DefStructs( void ) {
 //====================
 
 // Define user-defined data types.
@@ -1006,7 +1006,7 @@ void    DefStructs() {
 }
 
 
-char    *FEModuleName() {
+char    *FEModuleName( void ) {
 //=======================
 
 // Return pointer to module name (no file extension).
@@ -1015,7 +1015,7 @@ char    *FEModuleName() {
 }
 
 
-int     FETrue() {
+int     FETrue( void ) {
 //================
 
 // Return the value for "true".
@@ -1718,7 +1718,7 @@ static  dbg_type        DefCommonStruct( sym_id sym ) {
 }
 
 
-static  void    InitDBGTypes() {
+static  void    InitDBGTypes( void ) {
 //==============================
 
     int         typ;

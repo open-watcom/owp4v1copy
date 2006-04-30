@@ -201,7 +201,7 @@ static  bool    IsForeign( char ch ) {
 }
 
 
-void    __UseKoreanCharSet() {
+void    __UseKoreanCharSet( void ) {
 //============================
 
     CharSetInfo.extract_text = &ExtractText;

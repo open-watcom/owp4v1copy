@@ -328,7 +328,7 @@ void CLIDump( char *filename ) {
     SDClose( fp );
 }
 
-void CLIClear() {
+void CLIClear( void ) {
 /****************/
 
     int         x = 0;

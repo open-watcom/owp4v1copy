@@ -44,7 +44,7 @@
 extern  sym_id          GTempString(uint);
 
 
-void    GBegSSStr() {
+void    GBegSSStr( void ) {
 //===================
 
 // Start a substring operation on an array element.

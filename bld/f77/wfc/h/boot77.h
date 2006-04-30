@@ -28,12 +28,12 @@
 *
 ****************************************************************************/
 
-extern  void    InitCompMain();
-extern  void    FiniCompMain();
+extern  void    InitCompMain( void );
+extern  void    FiniCompMain( void );
 extern  int     CompMain( char *parm );
 extern  void    Compile( char *buffer );
-extern  void    ShowUsage();
+extern  void    ShowUsage( void );
 extern  char    *SkipBlanks( char *ptr );
-extern  void    InitCompile();
-extern  void    FiniCompile();
+extern  void    InitCompile( void );
+extern  void    FiniCompile( void );
 extern  void    ProcOpts( char **opt_array );

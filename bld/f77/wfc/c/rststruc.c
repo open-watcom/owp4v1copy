@@ -333,7 +333,7 @@ bool    CalcStructSize( sym_id sd ) {
 }
 
 
-void    STUnion() {
+void    STUnion( void ) {
 //=================
 
 // Start a union definition.
@@ -363,7 +363,7 @@ void    STUnion() {
 }
 
 
-void    STMap() {
+void    STMap( void ) {
 //===============
 
 // Start a map definition.

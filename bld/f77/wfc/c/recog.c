@@ -49,7 +49,7 @@ extern  void            GetFunctionShadow(void);
 //   generating an error message if not found
 
 
-bool    RecEquSign() {
+bool    RecEquSign( void ) {
 //====================
 
     return( OPR_EQU == CITNode->opr );
@@ -66,146 +66,146 @@ bool    ReqOperator( OPR operator, int error ) {
 }
 
 
-bool    ReqEquSign() {
+bool    ReqEquSign( void ) {
 //====================
 
     return( ReqOperator( OPR_EQU, EQ_NO_EQUALS ) );
 }
 
 
-bool    RecColon() {
+bool    RecColon( void ) {
 //==================
 
     return( OPR_COL == CITNode->opr );
 }
 
 
-bool    RecComma() {
+bool    RecComma( void ) {
 //==================
 
     return( OPR_COM == CITNode->opr );
 }
 
 
-bool    ReqComma() {
+bool    ReqComma( void ) {
 //==================
 
     return( ReqOperator( OPR_COM, SX_MISSING_COMMA ) );
 }
 
 
-bool    ReqColon() {
+bool    ReqColon( void ) {
 //==================
 
     return( ReqOperator( OPR_COL, SX_NO_COLON ) );
 }
 
 
-bool    RecCloseParen() {
+bool    RecCloseParen( void ) {
 //=======================
 
     return( OPR_RBR == CITNode->opr );
 }
 
 
-bool    ReqCloseParen() {
+bool    ReqCloseParen( void ) {
 //=======================
 
     return( ReqOperator( OPR_RBR, PC_NO_CLOSEPAREN ) );
 }
 
 
-bool    RecOpenParen() {
+bool    RecOpenParen( void ) {
 //======================
 
     return( OPR_LBR == CITNode->opr );
 }
 
 
-bool    ReqOpenParen() {
+bool    ReqOpenParen( void ) {
 //======================
 
     return( ReqOperator( OPR_LBR, PC_NO_OPENPAREN ) );
 }
 
-bool    RecMul() {
+bool    RecMul( void ) {
 //================
 
     return( OPR_MUL == CITNode->opr );
 }
 
 
-bool    ReqMul() {
+bool    ReqMul( void ) {
 //================
 
     return( ReqOperator( OPR_MUL, SX_NO_ASTERISK ) );
 }
 
 
-bool    RecDiv() {
+bool    RecDiv( void ) {
 //================
 
     return( OPR_DIV == CITNode->opr );
 }
 
 
-bool    ReqDiv() {
+bool    ReqDiv( void ) {
 //================
 
     return( ReqOperator( OPR_DIV, SX_NO_SLASH ) );
 }
 
 
-bool    RecPlus() {
+bool    RecPlus( void ) {
 //=================
 
     return( OPR_PLS == CITNode->opr );
 }
 
 
-bool    RecMin() {
+bool    RecMin( void ) {
 //================
 
     return( OPR_MIN == CITNode->opr );
 }
 
 
-bool    RecCat() {
+bool    RecCat( void ) {
 //================
 
     return( OPR_CAT == CITNode->opr );
 }
 
 
-bool    RecNOpr() {
+bool    RecNOpr( void ) {
 //=================
 
     return( OPR_PHI == CITNode->opr );
 }
 
 
-bool    RecFBr() {
+bool    RecFBr( void ) {
 //================
 
     return( OPR_FBR == CITNode->opr );
 }
 
 
-bool    RecTrmOpr() {
+bool    RecTrmOpr( void ) {
 //===================
 
     return( OPR_TRM == CITNode->opr );
 }
 
 
-bool    RecEOS() {
+bool    RecEOS( void ) {
 //================
 
     return( ( OPR_TRM == CITNode->opr ) && ( CITNode->oprpos == 9999 ) );
 }
 
 
-bool    ReqEOS() {
+bool    ReqEOS( void ) {
 //================
 
     if( RecEOS() )
@@ -215,14 +215,14 @@ bool    ReqEOS() {
 }
 
 
-bool    RecNOpn() {
+bool    RecNOpn( void ) {
 //=================
 
     return( CITNode->opn.ds == DSOPN_PHI );
 }
 
 
-bool    ReqNOpn() {
+bool    ReqNOpn( void ) {
 //=================
 
     if( RecNOpn() )
@@ -241,7 +241,7 @@ bool    RecKeyWord( char *key ) {
 }
 
 
-bool    RecName() {
+bool    RecName( void ) {
 //=================
 
     return( CITNode->opn.ds == DSOPN_NAM );
@@ -258,21 +258,21 @@ bool    ReqName( int index ) {
 }
 
 
-bool    RecNWL() {
+bool    RecNWL( void ) {
 //================
 
     return( CITNode->opn.us == USOPN_NWL );
 }
 
 
-bool    RecNumber() {
+bool    RecNumber( void ) {
 //===================
 
     return( CITNode->opn.ds == DSOPN_INT );
 }
 
 
-bool    RecLiteral() {
+bool    RecLiteral( void ) {
 //====================
 
     return( CITNode->opn.ds == DSOPN_LIT );
@@ -296,7 +296,7 @@ bool    ReqNextOpr( OPR operator, int error ) {
 }
 
 
-static  bool    IsVariable() {
+static  bool    IsVariable( void ) {
 //============================
 
     unsigned_16 flags;
@@ -322,7 +322,7 @@ static  bool    IsVariable() {
 }
 
 
-bool    RecIntVar() {
+bool    RecIntVar( void ) {
 //===================
 
     if( !IsVariable() )
@@ -331,7 +331,7 @@ bool    RecIntVar() {
 }
 
 
-bool    ReqIntVar() {
+bool    ReqIntVar( void ) {
 //===================
 
     if( RecIntVar() )
@@ -341,7 +341,7 @@ bool    ReqIntVar() {
 }
 
 
-bool    ReqDoVar() {
+bool    ReqDoVar( void ) {
 //==================
 
     if( IsVariable() ) {
@@ -355,7 +355,7 @@ bool    ReqDoVar() {
 }
 
 
-bool    RecArrName() {
+bool    RecArrName( void ) {
 //====================
 
     return( ( CITNode->opn.us & USOPN_WHAT ) == USOPN_ARR );
