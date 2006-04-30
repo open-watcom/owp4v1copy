@@ -30,6 +30,7 @@
 .* ----         --              ------
 .* 10-aug-92    Craig Eisler    initial draft
 .* 28-sep-05    L. Haynes       reformatted, figures, gadget menu invocation
+.* 30-apr-06    F. Beythien     some minor corrections
 .*
 .****************************************************************************/
 .chap *refid=basic 'Basic Usage'
@@ -101,7 +102,7 @@ line.
 If the same letter 'D' (is pressed while in &tinsmode,
 the letter 'D' appears in your text (much as you would expect).
 .np
-It is easy to tell what mode you are in while using &edvi.. 
+It is easy to tell what mode you are in while using &edvi..
 When you are in &cmdmode, the cursor is a thin line.  When
 you are in &tinsmode, the cursor is much thicker: if you are inserting
 text, the cursor is one half of a full block, and if you are overstriking
@@ -350,7 +351,7 @@ inputting text.  The basic set of keys is:
 :DL compact.
 
 :DT.a
-:DD.Starts appending (inserting) text after the current character. 
+:DD.Starts appending (inserting) text after the current character.
 
 :DT.A
 :DD.Starts appending (inserting) text after the last character on the
@@ -1002,7 +1003,7 @@ display all files in the current directory on that drive.
 :DT.Read file
 :DD.Displays a list of all files and directories in the current directory,
 along with all drives that are available.  If you pick a file, that file
-will be read into the current edit buffer, after the current drive.
+will be read into the current edit buffer, after the current line.
 If you pick a directory, &edvi will
 display all the files in that directory.  If you pick a drive, &edvi will
 display all files in the current directory on that drive.

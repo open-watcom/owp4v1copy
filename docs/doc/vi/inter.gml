@@ -30,6 +30,7 @@
 .* ----         --              ------
 .* 10-aug-92    Craig Eisler    initial draft
 .* 28-sep-05    L. Haynes       reformatted, figures
+.* 30-apr-06    F. Beythien     minor updates, typing errors
 .*
 .****************************************************************************/
 .chap *refid=inter 'Intermediate Usage'
@@ -54,7 +55,7 @@ in two ways:
 :LI.Select the
 .keyword Enter command
 item under the
-.keyword Control
+.keyword File
 menu.
 
 :LI.Press the colon (':') key when in &cmdmode
@@ -157,7 +158,7 @@ you will go directly to that line.
 :OL.
 
 :LI.Start up &edvi, and try selecting the
-.keyword Control
+.keyword File
 menu, and then selecting the
 .keyword Enter command
 item.  Notice how the window pops up.  Try typing and cursoring around.
@@ -206,7 +207,7 @@ The general way to edit a new file is to use the &cmdline command
 To enter this command, make sure that you are in &cmdmode and press
 the colon (':') key.  Once the command prompt is displayed, then
 simply type
-:keyref edit
+.keyref edit
 (optionally followed by a file name or a list of files), and then press
 .param ENTER
 :period.
@@ -216,7 +217,7 @@ If you do not specify a file, then a directory listing is displayed.
 .np
 You may also specify one or more files after the
 .keyref edit
-command. 
+command.
 If a file you specify is the same as one already being edited,
 then control is simply transferred to the window with that file.
 .*
@@ -528,10 +529,10 @@ in the file.
 
 :LI.Try using 'l' and 'h' to cursor left and right in the file.
 
-:LI.Press the 'H' key.  The cursor will move to the top line 
+:LI.Press the 'H' key.  The cursor will move to the top line
 in the edit window.
 
-:LI.Press the 'L' key.  The cursor will move to the bottom line 
+:LI.Press the 'L' key.  The cursor will move to the bottom line
 in the edit window.
 
 :LI.Try typing some numbers before pressing the 'H' and 'L' keys.  For
@@ -1347,7 +1348,7 @@ around the current line when you paste.
 .np
 The put (paste) &cmdline commands accept a &copybuffer as the buffer
 to paste out of.  The default is the active &copybuffer, but any
-buffer can be specified. Once again, 
+buffer can be specified. Once again,
 .param &lt."?&gt.
 indicates a &copybuffer:
 .millust begin
@@ -1576,7 +1577,7 @@ redo them after you modify the file.
 .np
 The &cmdline command for undoing changes has the following syntax:
 .millust begin
-undo 
+undo
 .millust end
 If you specify an exclamation point ('!') after the
 .keyref undo
