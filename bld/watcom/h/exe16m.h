@@ -24,15 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS/16M executable format structures and constants.
 *
 ****************************************************************************/
 
 
 #ifndef _EXE16M_H
-
-#pragma pack(push,1);
 
 typedef struct gdt_info {
     unsigned_16     gdtlen;
@@ -61,16 +58,14 @@ enum {
 // memory strategy constants
 #define MPreferExt 0    /* prefer, but not force, extended */
 #define MPreferLow 1    /* prefer, but not force, conventional memory */
-#define MForceExt 2             /* force extended */
-#define MForceLow 3             /* force conventional */
-#define MNoStrategy 0       // no strategy specified.
+#define MForceExt 2     /* force extended */
+#define MForceLow 3     /* force conventional */
+#define MNoStrategy 0   /* no strategy specified */
 
 #define acc_code 0x9A   /* present, priv 0, code, read, accessed */
 #define acc_data 0x92   /* present, priv 0, data, write, accessed */
 
 #define user_sel 0x80   /* first user selecter (user_gdt << 3) */
-
-#pragma pack(push,1);
 
 #define _EXE16M_H
 #endif
