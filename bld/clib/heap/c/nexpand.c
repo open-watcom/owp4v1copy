@@ -48,13 +48,7 @@ _WCRTLINK void *_expand( void *stg, size_t amount )
 
 #endif
 
-#if defined(__AXP__) || defined(__PPC__)
-    #define _SEGMENT int
-#else
-    #define _SEGMENT __segment
-#endif
-
-int __HeapManager_expand( _SEGMENT seg,
+int __HeapManager_expand( __segment seg,
                           unsigned offset,
                           size_t req_size,
                           size_t *growth_size )

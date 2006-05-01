@@ -102,7 +102,7 @@ extern      void            (*__FPE_handler_exit)( void );
 #if !defined (_NETWARE_LIBC)
 extern      unsigned        _STACKTOP;
 #endif
-#if !defined(__QNX__) && !defined(__LINUX__)
+#if !defined(__QNX__) && !defined(__LINUX__) && defined(_M_IX86)
     extern void         (*__Save8087)(_87state *);/* Ptr to FP state save rtn (spawn) */
     extern void         (*__Rest8087)(_87state *);/* Ptr to FP state restore rtn (spawn) */
 #endif

@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Windows NT 32-bit window startup code.
+;* Description:  Win32 windowed startup code.
 ;*
 ;*****************************************************************************
 
@@ -56,8 +56,9 @@ WinMainCRTStartup:
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
 _wstart_ endp
 
 _TEXT   ends

@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ QNX 16-bit console startup code.
+;* Description:  QNX 16-bit startup code.
 ;*
 ;*****************************************************************************
 
@@ -149,8 +149,9 @@ STACK   ends
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++16 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1989-2002."
+include msgrt16.inc
+include msgcpyrt.inc
+
 ;
 ; miscellaneous code-segment messages
 ;

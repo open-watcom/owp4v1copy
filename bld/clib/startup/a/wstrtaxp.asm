@@ -24,15 +24,12 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Alpha AXP NT 32-bit window startup code.
+;* Description:  Alpha AXP NT 32-bit windowed startup code.
 ;*
 ;*****************************************************************************
 
 
-//
-// startup code for WATCOM C/C++32 under Alpha AXP
-//
-//      This must be assembled using one of the following commands:
+//      This must be assembled using the following command:
 //              wasaxp wstrtaxp
 //
 .globl          _wstart_

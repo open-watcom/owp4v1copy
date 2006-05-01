@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ OS/2 16-bit console and DLL startup code.
+;* Description:  OS/2 16-bit executable and DLL startup code.
 ;*
 ;*****************************************************************************
 
@@ -38,7 +38,7 @@
 ;
 ; NOTE: This code must NEVER NEVER NEVER NEVER define any variable or routines
 ;       which are needed by the C Library. It should also be MINIMAL.
-;       This is so we can make CLIB DLL's.
+;       This is so we can make CLIB DLLs.
 ;
 include mdef.inc
 
@@ -141,8 +141,9 @@ __DLLstart_:
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++16 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt16.inc
+include msgcpyrt.inc
+
 ife _MODEL and _BIG_CODE
         dw      ___begtext      ; make sure dead code elimination
                                 ; doesn't kill BEGTEXT
@@ -181,4 +182,3 @@ _cstart_ endp
 _TEXT   ends
 
         end     _cstart_
-

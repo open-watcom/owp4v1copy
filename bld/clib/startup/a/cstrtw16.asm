@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Windows 16-bit console and window startup code.
+;* Description:  Windows 16-bit (Win16, Windows 3.x) startup code.
 ;*
 ;*****************************************************************************
 
@@ -210,8 +210,8 @@ STACK   ends
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++16 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt16.inc
+include msgcpyrt.inc
 
 ife _MODEL and _BIG_CODE
 if _MODEL NE _TINY

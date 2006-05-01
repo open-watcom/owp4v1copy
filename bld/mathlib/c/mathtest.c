@@ -266,7 +266,7 @@ void test_fp_and_80x87_math( void )
 
 void test_fp_classification( void )
 {
-#if __STDC_VERSION__ >= 199901L
+#if __STDC_VERSION__ >= 199901L && !defined( __WINDOWS__ )
     printf( "Testing C99 floating-point classification functions...\n" );
 
     VERIFY( fpclassify( 0.0 ) == FP_ZERO );

@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ DOS 32-bit AutoCAD ADS console startup code.
+;* Description:  DOS 32-bit AutoCAD ADS startup code.
 ;*
 ;*****************************************************************************
 
@@ -246,8 +246,9 @@ _cstart_ proc near
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
 ;
 ; miscellaneous code-segment messages
 ;

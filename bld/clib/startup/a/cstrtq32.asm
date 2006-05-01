@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ QNX 32-bit console startup code.
+;* Description:  QNX 32-bit startup code.
 ;*
 ;*****************************************************************************
 
@@ -176,8 +176,9 @@ endif
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1989-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
         dd      ___begtext      ; make sure dead code elimination
                                 ; doesn't kill BEGTEXT segment
 

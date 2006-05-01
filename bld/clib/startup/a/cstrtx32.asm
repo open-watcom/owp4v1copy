@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Open Watcom C/C++32 FlashTek DOS extender startup code.
+;* Description:  FlashTek 32-bit DOS extender startup code.
 ;*
 ;*****************************************************************************
 
@@ -175,10 +175,8 @@ __x386_zero_base_selector       dw      ?       ;writable segment, base = 0
 __x32_zero_base_ptr             label dword
 __x386_zero_base_ptr            dd      0f0000000h
 
-__GDAptr   dd 0                 ; IGC and Intel Code Builder GDA address
 __D16Infoseg   dw       0020h   ; DOS/4G kernel segment
 
-        public  __GDAptr
         public  __D16Infoseg
 
         extrn   "C",_LpPgmName          : dword
@@ -223,8 +221,9 @@ STACK   ends
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1989-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
 ;
 ; miscellaneous code-segment messages
 ;
@@ -523,4 +522,3 @@ __Int21_ endp
 _TEXT   ends
 
         end     _cstart_
-

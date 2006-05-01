@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Windows NT 32-bit DLL and widechar DLL startup code.
-;*               C/C++ OS/2 32-bit DLL and widechar DLL startup code.
+;* Description:  Win32 and OS/2 DLL startup code.
 ;*
 ;*****************************************************************************
 
@@ -66,8 +65,9 @@ endif
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
 __DLLstart_ endp
 
 _TEXT   ends

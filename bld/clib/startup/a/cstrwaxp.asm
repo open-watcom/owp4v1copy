@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Alpha AXP NT 32-bit widechar console startup code.
+;* Description:  Alpha AXP NT 32-bit widechar console startup code.
 ;*
 ;*****************************************************************************
 

@@ -32,28 +32,27 @@
 #include "variety.h"
 #include <wctype.h>
 
-_WCRTLINK unsigned int   _dynend;       // top of dynamic data area
-_WCRTLINK unsigned int   _curbrk;       // top of usable memory
-_WCRTLINK char *         _LpCmdLine;    // pointer to raw command line
-_WCRTLINK char *         _LpPgmName;    // pointer to program name (for argv[0])
-_WCRTLINK char *         _LpDllName;    // pointer to dll name (for OS/2,WIN32)
-_WCRTLINK wchar_t *      _LpwCmdLine;   // pointer to wide raw command line
-_WCRTLINK wchar_t *      _LpwPgmName;   // pointer to wide program name (for argv[0])
-_WCRTLINK wchar_t *      _LpwDllName;   // pointer to wide dll name (for OS/2,WIN32)
-_WCRTLINK unsigned int   _STACKLOW;     // lowest address in stack
-_WCRTLINK unsigned int   _STACKTOP;     // highest address in stack
-_WCRTLINK void *         __ASTACKSIZ;   // alternate stack size
-_WCRTLINK void *         __ASTACKPTR;   // alternate stack pointer
-_WCRTLINK unsigned int   _cbyte;        // used by getch, getche
-_WCRTLINK unsigned int   _cbyte2;       // used by getch, getche
-_WCRTLINK unsigned int   _child;        // non-zero => a spawned process is running
-_WCRTLINK char *         _Envptr;       // offset part of environment pointer
-_WCRTLINK unsigned short _Envseg;       // segment containing environment strings
-_WCRTLINK unsigned char  _osmajor;      // major OS version number
-_WCRTLINK unsigned char  _osminor;      // minor OS version number
-_WCRTLINK unsigned short _osbuild;      // operating system build number
-_WCRTLINK unsigned int   _osver;        // operating system build number
-_WCRTLINK unsigned int   _winmajor;     // operating system major version number
-_WCRTLINK unsigned int   _winminor;     // operating system minor version number
-_WCRTLINK unsigned int   _winver;       // operating system version number
-_WCRTLINK void (*__FPE_handler)( int ); // f-p exception handler
+_WCRTLINKD unsigned int   _dynend;      // top of dynamic data area
+_WCRTLINKD unsigned int   _curbrk;      // top of usable memory
+_WCRTLINKD char *         _LpCmdLine;   // pointer to raw command line
+_WCRTLINKD char *         _LpPgmName;   // pointer to program name (for argv[0])
+_WCRTLINKD char *         _LpDllName;   // pointer to dll name (for OS/2,WIN32)
+_WCRTLINKD wchar_t *      _LpwCmdLine;  // pointer to wide raw command line
+_WCRTLINKD wchar_t *      _LpwPgmName;  // pointer to wide program name (for argv[0])
+_WCRTLINKD wchar_t *      _LpwDllName;  // pointer to wide dll name (for OS/2,WIN32)
+_WCRTLINKD unsigned int   _STACKLOW;    // lowest address in stack
+_WCRTLINKD unsigned int   _STACKTOP;    // highest address in stack
+_WCRTLINKD void *         __ASTACKSIZ;  // alternate stack size
+_WCRTLINKD void *         __ASTACKPTR;  // alternate stack pointer
+_WCRTLINKD unsigned int   _cbyte;       // used by getch, getche
+_WCRTLINKD unsigned int   _cbyte2;      // used by getch, getche
+_WCRTLINKD char *         _Envptr;      // offset part of environment pointer
+_WCRTLINKD unsigned short _Envseg;      // segment containing environment strings
+_WCRTLINKD unsigned char  _osmajor;     // major OS version number
+_WCRTLINKD unsigned char  _osminor;     // minor OS version number
+_WCRTLINKD unsigned short _osbuild;     // operating system build number
+_WCRTLINKD unsigned int   _osver;       // operating system build number
+_WCRTLINKD unsigned int   _winmajor;    // operating system major version number
+_WCRTLINKD unsigned int   _winminor;    // operating system minor version number
+_WCRTLINKD unsigned int   _winver;    	// operating system version number
+_WCRTLINKD void (*__FPE_handler)( int );// f-p exception handler

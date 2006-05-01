@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Open Watcom C/C++16 DOS/16M startup code.
+;* Description:  DOS/16M 16-bit protected mode startup code.
 ;*
 ;*****************************************************************************
 
@@ -297,8 +297,9 @@ _cstart_:
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++16 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt16.inc
+include msgcpyrt.inc
+
 ;
 ; miscellaneous code-segment messages
 ;

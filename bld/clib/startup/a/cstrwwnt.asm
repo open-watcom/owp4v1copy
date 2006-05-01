@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Windows NT 32-bit widechar console startup code.
+;* Description:  Win32 widechar console startup code.
 ;*
 ;*****************************************************************************
 
@@ -54,8 +54,9 @@ wmainCRTStartup:
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
 _cstartw_ endp
 
 _TEXT   ends

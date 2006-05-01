@@ -24,34 +24,9 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  OS information structure for 16-bit QNX.
+;* Description:  Copyright message - 16-bit x86 runtime.
 ;*
 ;*****************************************************************************
 
 
-include mdef.inc
-
-        xref    "C",__DetOSInfo
-
-        name    osinf
-
-_BSS   segment word public 'BSS'
-        public  "C",__87
-        public  "C",__r87
-        public  "C",_osmajor
-        public  "C",_osminor
-        public  __HShift
-
-__87            db      ?
-__r87           db      ?
-_osmajor        db      ?
-_osminor        db      ?
-__HShift        db      ?
-_BSS   ends
-
-include xinit.inc
-
-        ; Has to get run *before* 80(x)87 initialization
-        xinit   __DetOSInfo,1
-
-        end
+        db      "Open Watcom C/C++16 Run-Time system. "

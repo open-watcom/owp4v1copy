@@ -37,7 +37,6 @@
         extrn   __CMain                 : near
         extrn   __InitRtns              : near
         extrn   __FiniRtns              : near
-        extrn   __DOSseg__              : near
         extrn   "C",_heapwalk           : near
         extrn   "C",_heapshrink         : near
         extrn   "C",free                : near
@@ -52,7 +51,6 @@
         extrn   "C",_osminor            : byte
         extrn   "C",_STACKLOW           : dword
         extrn   "C",_STACKTOP           : dword
-        extrn   "C",_child              : dword
         extrn   __no87                  : word
         extrn   "C",_Extender           : byte
         extrn   "C",_ExtenderSubtype    : byte
@@ -146,11 +144,9 @@ YIE     ends
 
 _DATA    segment dword public 'DATA'
 
-        public  __GDAptr
         public  __D16Infoseg
         public  __x386_zero_base_selector
 
-__GDAptr                    dd  0       ; IGC and Intel Code Builder GDA address
 __D16Infoseg                dw  0020h   ; DOS/4G kernel segment
 __x386_zero_base_selector   dw  0       ; base 0 selector for X-32VM
 
@@ -170,9 +166,8 @@ _BSS          ends
 
 STACK_SIZE      equ     1000h
 
-; STACK segment can not be used in DLL
-; because WLINK set length to 0 for DLL
-; stack space for init/exit DLL routines
+; STACK segment can not be used in DLLs because linker sets stack length
+; to zero for DLLs (as it should). Stack space for init/exit DLL routines
 ; is added to the end of BSS class
 
 PRIVATE_STACK  segment word public 'BSS'

@@ -47,7 +47,6 @@ _DATA segment dword public 'DATA'
     extrn   __X32VM         : byte
     extrn   __D16Infoseg    : word
     extrn   __x386_zero_base_selector : word
-    extrn   __GDAptr        : dword
 sysregs dd  14 dup(0)       ; only need 12, but just in case
 oldidt  dd  0,0
 old7off dd  0
@@ -69,8 +68,6 @@ assume   cs:_TEXT,ds:DGROUP
 MP  equ 02h
 EM  equ 04h
 ET  equ 10h
-
-GDA_SERV equ    48  ; offset into GDA to extender service routine addr
 
 ;   ebp is not 0 if NO87 environment variable is present
 
@@ -119,34 +116,7 @@ hook_in_emulator proc near
       mov   es:[ebx],edx                ; - set int 7
       mov   es:4[ebx],ecx               ; - ...
       call  _set_EM_MP_bits             ; - set EM and MP bits
-    _admit                              ; guess: Ergo (OS/386)
-      cmp   byte ptr _Extender,X_ERGO   ; - quit if not Ergo
-      _quif ne                          ; - ...
-      mov   ax,2507h                    ; - hook int7
-      push  ds                          ; - ...
-      mov   cx,cs                       ; - ...
-      mov   ds,cx                       ; - ...
-      lea   edx,__int7                  ; - ...
-      int   21h                         ; - ...
-      pop   ds                          ; - restore ds
-      mov   al,EM                       ; - ...
-      mov   ah,0f3H                     ; - set EM bit in cr0 (turn off MP)
-      int   21h                         ; - ...
-    _admit                              ; guess: Intel Code Builder
-      cmp   byte ptr _Extender,X_INTEL  ; - quit if not Intel
-      _quif ne                          ; - ...
-      call  create_IDT_entry            ; - create entry for IDT
-      mov   [ebx],edx                   ; - fill in entry
-      mov   4[ebx],ecx                  ; - ...
-;     mov   ecx,cr0                     ; - get cr0
-;     or    ecx,EM                      ; - flip on the EM bit
-;     and   ecx,not MP                  ; - don't want WAIT instructions
-;     mov   cr0,ecx                     ; - store it back
-      mov   eax,00000E02h               ; - "set cr0" function
-      mov   ebx,EM                      ; - want EM bit turned on
-      mov   ecx,__GDAptr                ; - get address of GDA
-      call  GDA_SERV[ecx]               ; - call extender service routine
-    _admit                              ; guess: Rational DOS/4G
+    _admit                              ; guess: DOS/4G or compatible
       cmp   byte ptr _Extender,X_RATIONAL   ; - quit if not DOS/4G
       _quif ne                          ; - ...
       mov   dx,__D16Infoseg             ; - get segment address of _d16info
@@ -257,25 +227,7 @@ __sys_fini_387_emulator proc near
       cmp   byte ptr __X32VM,0          ; - quit if not X-32VM
       _quif e                           ; - ...
       call  _reset_EM_MP_bits           ; - reset EM and MP bits
-    _admit                              ; guess: Intel Code Builder
-      cmp   al,X_INTEL                  ; - quit if not Intel
-      _quif ne                          ; - ...
-;     mov   ecx,cr0                     ; - get cr0
-;     and   ecx,not (EM or MP)          ; - turn off EM and MP bits
-;     mov   dx,msw                      ; - restore to old values
-;     or    cx,dx                       ; - ...
-;     mov   cr0,ecx                     ; - store it back
-      mov   eax,00000E02h               ; - "set cr0" function
-      mov   ebx,0                       ; - want EM bit turned off
-      mov   ecx,__GDAptr                ; - get address of GDA
-      call  GDA_SERV[ecx]               ; - call extender service routine
-    _admit                              ; guess: Ergo DOS extender (OS/386)
-      cmp   al,X_ERGO                   ; - quit if not OS/386
-      _quif ne                          ; - ...
-      mov   ax,msw                      ; - get old EM and MP bits
-      mov   ah,0f3h                     ; - reset EM/MP request
-      int   21h                         ; - ...
-    _admit                              ; guess: Rational DOS/4G
+    _admit                              ; guess: DOS/4G or compatible
       cmp   al,X_RATIONAL               ; - quit if not DOS/4G
       _quif ne                          ; - ...
       mov   dx,__D16Infoseg             ; - get segment address of _d16info

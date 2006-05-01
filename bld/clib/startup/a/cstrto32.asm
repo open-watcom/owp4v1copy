@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ OS/2 32-bit console startup code.
+;* Description:  OS/2 32-bit executable startup code.
 ;*
 ;*****************************************************************************
 
@@ -52,8 +52,9 @@ _cstart_ proc near
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
 _cstart_ endp
 
 _TEXT   ends

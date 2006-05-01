@@ -24,14 +24,14 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Windows NT 32-bit widechar window startup code.
+;* Description:  Win32 widechar windowed startup code.
 ;*
 ;*****************************************************************************
 
 
 ;       This must be assembled using one of the following commands:
-;               wasm cstrwwwt -bt=NT -ms -3r
-;               wasm cstrwwwt -bt=NT -ms -3s
+;               wasm wstrwwnt -bt=NT -ms -3r
+;               wasm wstrwwnt -bt=NT -ms -3s
 ;
         name    cstrwwwt
 .386p
@@ -54,8 +54,9 @@ wWinMainCRTStartup:
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
 _wstartw_ endp
 
 _TEXT   ends

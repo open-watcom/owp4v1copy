@@ -24,14 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Windows 16-bit DLL startup code.
+;* Description:  Windows 16-bit (Win16, Windows 3.x) DLL startup code.
 ;*
 ;*****************************************************************************
 
 
-;
-; startup code for WATCOM C DLLs under Microsoft Windows
-;
 ;       This must be assembled using one of the following commands:
 ;               wasm libentry.asm -bt=WINDOWS -ms -0r
 ;               wasm libentry.asm -bt=WINDOWS -mm -0r

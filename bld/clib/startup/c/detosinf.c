@@ -43,7 +43,7 @@
 extern unsigned char    __87;
 extern unsigned char    __r87;
 
-void __DetOSInfo()
+void __DetOSInfo( void )
 {
     struct _osinfo osdata;
 

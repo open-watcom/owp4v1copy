@@ -24,9 +24,10 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ DOS 32-bit console startup code.
+;* Description:  DOS 32-bit startup code.
 ;*
 ;*****************************************************************************
+
 
 ; Note: This module must contain the string 'WATCOM' (all caps) for DOS/4GW
 ;       to recognize a 'Watcom' executable.
@@ -35,12 +36,8 @@
 ;               wasm cstrt386 -bt=DOS -ms -3r
 ;               wasm cstrt386 -bt=DOS -ms -3s
 ;
-;       To create startup code for Ergo's DPMI DOS extender
-;               wasm cstrt386 -bt=DOS -ms -3r -dERGO_DPMI
-;               wasm cstrt386 -bt=DOS -ms -3s -dERGO_DPMI
-;
-;   NOTE: All C library data should be defined in CRWDATA.ASM -- That way
-;         it's also available to ADS applications (who use ADSTART.ASM).
+;   NOTE: All C library data should be defined in crwdata.asm -- That way
+;         it's also available to ADS applications (who use adstart.asm).
 ;
         name    cstart
 
@@ -52,9 +49,6 @@
         extrn   __InitRtns              : near
         extrn   __FiniRtns              : near
         extrn   __DOSseg__              : near
-ifdef ERGO_DPMI
-        extrn   _InitAPIExtensions : near
-endif
 
         extrn   _edata                  : byte  ; end of DATA (start of BSS)
         extrn   _end                    : byte  ; end of BSS (start of STACK)
@@ -145,29 +139,23 @@ YIE     ends
 
 
 _DATA    segment dword public 'DATA'
-X_ERGO                  equ     0
-X_RATIONAL              equ     1
-X_PHARLAP_V2            equ     2
+X_ERGO                  equ     0       ; Ergo OS/386 (unsupported)
+X_RATIONAL              equ     1       ; DOS/4G(W) or compatible
+X_PHARLAP_V2            equ     2       ; PharLap 386|DOS
 X_PHARLAP_V3            equ     3
 X_PHARLAP_V4            equ     4
 X_PHARLAP_V5            equ     5
-X_PHARLAP_V6            equ     6
-X_INTEL                 equ     9
-X_WIN386                equ     10
+X_PHARLAP_V6            equ     6       ; PharLap TNT
+X_INTEL                 equ     9       ; Intel CodeBuilder (unsupported)
+X_WIN386                equ     10      ; Watcom Win386
 XS_NONE                 equ     0
 XS_RATIONAL_ZEROBASE    equ     0
 XS_RATIONAL_NONZEROBASE equ     1
-__GDAptr   dd 0                 ; IGC and Intel Code Builder GDA address
 __D16Infoseg   dw       0020h   ; DOS/4G kernel segment
 __x386_zero_base_selector dw 0  ; base 0 selector for X-32VM
 
-        public  __GDAptr
         public  __D16Infoseg
         public  __x386_zero_base_selector
-ifdef ERGO_DPMI
-__MEMHandle     dd      0       ; handle for linear base of image
-        public  __MEMHandle
-endif
 _DATA    ends
 
 
@@ -193,10 +181,11 @@ _cstart_ proc near
         jmp     short around
 
 ;
-; copyright message
+; copyright message (special - see comment at top)
 ;
         db      "Open WATCOM C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgcpyrt.inc
+
         align   4
         dd      ___begtext      ; make sure dead code elimination
                                 ; doesn't kill BEGTEXT
@@ -216,19 +205,8 @@ ENV_SEG equ     2ch
         mov     ebx,esp                 ; get sp
         mov     _STACKTOP,ebx           ; set stack top
         mov     _curbrk,ebx             ; set first available memory location
-ifdef ERGO_DPMI
-        mov     ax,es                   ; get segment address of PSP
-        mov     _psp,ax         ; save segment address of PSP
-        mov     __MEMHandle,esi         ;
-        call    _InitAPIExtensions      ;
-        mov     al,X_ERGO               ; indicate Ergo DOS Extender
-        mov     bx,ds                   ; force bx = DGROUP
-        sub     esi,esi                 ; offset 0 for environment strings
-        mov     cx,es:[02Ch]            ; get segment for environment strings
-        mov     edi,81H                 ; DOS command buffer _psp:edi
-else
         mov     ax,PSP_SEG              ; get segment address of PSP
-        mov     _psp,ax         ; save segment address of PSP
+        mov     _psp,ax                 ; save segment address of PSP
 ;
 ;       get DOS & Extender version number
 ;
@@ -249,7 +227,7 @@ else
         mov     al,bl                   ; - (was in ascii)
         mov     ah,XS_NONE              ; - extender subtype
         push    eax                     ; - save version number
-        mov     es,_psp         ; - point to PSP
+        mov     es,_psp                 ; - point to PSP
         mov     ebx,es:[5Ch]            ; - get highest addr used
         add     ebx,000000FFFh          ; - round up to 4K boundary
         and     ebx,0FFFFF000h          ; - ...
@@ -262,36 +240,8 @@ else
         pop     eax                     ; - restore version number
         mov     bx,ds                   ; - get value of Phar Lap data segment
         mov     cx,ENV_SEG              ; - PharLap environment segment
-        jmp     short know_ext1         ; else
-not_pharlap:                            ; - see if Intel Code Builder
-        cmp     ax,'BC'                 ; - if Intel Code Builder
-        jne     not_Intel               ; - ... then
-GDA_PSPA equ    16                      ; - offset into GDA to PSP address
-GDA_LDPT equ    28                      ; - offset into GDA to load address
-        mov     __GDAptr,edx            ; - save address of GDA
-        mov     esi,edx                 ; - get address of GDA
-        mov     edx,GDA_LDPT[esi]       ; - get application load point address
-        mov     ebx,esp                 ; - calc amount of memory to keep
-        sub     ebx,edx                 ; - ...
-        mov     ah,4Ah                  ; - resize to minimum memory
-        int     21h                     ; - ...
-        mov     bx,ds                   ; - just use ds (FLAT model)
-        mov     _psp,ds         ; - save segment address of PSP
-        mov     eax,GDA_PSPA[esi]       ; - get address of PSP
-        add     edi,eax                 ; - add address of PSP
-        sub     esi,esi                 ; - zero esi
-        mov     si,02ch[eax]            ; - get environment segment into si
-        shl     esi,4                   ; - convert to flat address
-        mov     cx,ds                   ; - segment to access environment area
-        mov     al,X_INTEL              ; - indicate Intel Code Builder
-        mov     ah,XS_NONE              ; - extender subtype
-know_ext1:jmp   short know_extender     ; else
-not_Intel:                              ; -
-        mov     dx,78h                  ; - see if Rational DOS/4G
-        mov     ax,0FF00h               ; - ...
-        int     21h                     ; - ...
-        cmp     al,0                    ; - ...
-        je      short not_DOS4G         ; - quit if not Rational DOS/4G
+        jmp     short know_extender     ; else
+not_pharlap:                            ; - assume DOS/4G or compatible 
         mov     ax,gs                   ; - get segment address of kernel
         cmp     ax,0                    ; - if not zero
         je      short rat9              ; - then
@@ -304,22 +254,11 @@ rat9:                                   ; - endif
         mov     ah,XS_RATIONAL_ZEROBASE ; - extender subtype
         or      dx,cx                   ; - if base is non-zero
         jz      rat10                   ; - then
-        mov     ah,XS_RATIONAL_NONZEROBASE; - Rational non-zero based data
+        mov     ah,XS_RATIONAL_NONZEROBASE; - DOS/4G non-zero based data
 rat10:                                  ; - endif
-        mov     _psp,es         ; - save segment address of PSP
+        mov     _psp,es                 ; - save segment address of PSP
         mov     cx,es:[02ch]            ; - get environment segment into cx
-        jmp     short know_extender     ; else
-not_DOS4G:                              ; -
-        mov     dx,ds                   ; - save ds
-        mov     cx,PSP_SEG              ; - get PSP segment descriptor
-        mov     ds,cx                   ; - ... into ds
-        mov     cx,[02ch]               ; - get environment segment into cx
-        mov     ds,dx                   ; - restore ds
-        mov     bx,17h                  ; - get writeable code segment for Ergo
-        mov     al,X_ERGO               ; - indicate Ergo OS/386
-        mov     ah,XS_NONE              ; - extender subtype
 know_extender:                          ; endif
-endif
         mov     _Extender,al            ; record extender type
         mov     _ExtenderSubtype,ah     ; record extender subtype
         mov     es,bx                   ; get access to code segment
@@ -330,7 +269,7 @@ endif
 ;
 ;       copy command line into bottom of stack
 ;
-        mov     es,_psp         ; point to PSP
+        mov     es,_psp                 ; point to PSP
         mov     edx,offset DGROUP:_end
         add     edx,0FH
         and     dl,0F0H
@@ -469,7 +408,7 @@ public "C",__GETDSStart_
 __GETDSStart_ label byte
         mov     ds,cs:__saved_DS        ; load saved DS value
         ret                             ; return
-__saved_DS  dw  0               ; save area for DS for interrupt routines
+__saved_DS  dw  0                       ; DS save area for interrupt routines
 public "C",__GETDSEnd_
 __GETDSEnd_ label byte
 __GETDS endp

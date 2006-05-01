@@ -88,7 +88,7 @@ link_opts = NAME $^* OPTION quiet
 
 dosexes = &
     dos_s.exe dos_c.exe dos_m.exe dos_l.exe dos_h.exe &
-#   pls_3s.exe pls_3r.exe &
+    pls_3s.exe pls_3r.exe &
     rsi_3s.exe rsi_3r.exe &
 #   x32_3s.exe x32_3r.exe
 

@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Windows 386 console, window and DLL startup code (32-bit).
+;* Description:  Win386 executable and DLL startup code (32-bit).
 ;*
 ;*****************************************************************************
 
@@ -328,8 +328,9 @@ not_dll2:                               ; endif
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
         dd      ___begtext              ; make sure dead code elimination
                                         ; doesn't kill BEGTEXT segment
 _cstart_ endp

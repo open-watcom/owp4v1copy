@@ -24,9 +24,10 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Linux MIPS 32-bit console startup code.
+;* Description:  Linux MIPS 32-bit startup code.
 ;*
 ;*****************************************************************************
+
 
 ;       This must be assembled using the following command:
 ;               wasmps cstrtlmp

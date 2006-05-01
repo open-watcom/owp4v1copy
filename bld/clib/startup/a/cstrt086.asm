@@ -24,13 +24,13 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ DOS 16-bit console startup code.
+;* Description:  DOS 16-bit startup code.
 ;*
 ;*****************************************************************************
 
 
 ;       This must be assembled using one of the following commands:
-;               wasm cstrt086 -bt=DOS -ms -0r -d__TINY__
+;               wasm cstrt086 -bt=DOS -ms -0r -D__TINY__
 ;               wasm cstrt086 -bt=DOS -ms -0r
 ;               wasm cstrt086 -bt=DOS -mm -0r
 ;               wasm cstrt086 -bt=DOS -mc -0r
@@ -202,8 +202,9 @@ endif
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++16 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt16.inc
+include msgcpyrt.inc
+
 ;
 ; miscellaneous code-segment messages
 ;

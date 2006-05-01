@@ -24,9 +24,10 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Linux 32-bit console startup code.
+;* Description:  Linux i386 32-bit startup code.
 ;*
 ;*****************************************************************************
+
 
 ;       This must be assembled using one of the following commands:
 ;               wasm cstrtl32 -bt=LINUX -ms -3r
@@ -82,11 +83,11 @@ _start proc near
 ;
 ; copyright message
 ;
-        db      "Open Watcom C/C++32 Run-Time system. "
-        db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
+include msgrt32.inc
+include msgcpyrt.inc
+
 _start endp
 
 _TEXT   ends
 
         end     _start
-
