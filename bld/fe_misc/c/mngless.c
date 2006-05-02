@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Check meaningless compare (type range problems).
 *
 ****************************************************************************/
 
@@ -49,43 +48,44 @@ static char const Meaningless[REL_SIZE][CASE_SIZE] = {
     { CMP_FALSE, CMP_VOID , CMP_TRUE , CMP_TRUE },  // x <= c
 };
 
-#define NumBits( a )   ((a)&0x7f)
+#define NumBits( a )   ((a) & 0x7f)
 
 #ifdef FE_I64_MEANINGLESS
-#define LOW_VAL         (0x8000000000000000I64)
-#define HIGH_VAL        (0xffffffffffffffffUI64)
+    #define LOW_VAL         (0x8000000000000000LL)
+    #define HIGH_VAL        (0xffffffffffffffffull)
 #else
-#define LOW_VAL         (0x80000000)
-#define HIGH_VAL        (0xfffffffful)
+    #define LOW_VAL         (0x80000000)
+    #define HIGH_VAL        (0xfffffffful)
 #endif
 
-#define MAXSIZE        (sizeof( LARGEST_TYPE )*8)
+#define MAXSIZE             (sizeof( LARGEST_TYPE ) * 8)
+
 
 cmp_result CheckMeaninglessCompare( rel_op rel, int op1_size, int result_size,
-/**************************************************************************/
-LARGEST_TYPE val, LARGEST_TYPE *low, LARGEST_TYPE *high )
+                       LARGEST_TYPE val, LARGEST_TYPE *low, LARGEST_TYPE *high )
+/******************************************************************************/
 // we're checking 'op1 cgop val' where val is a constant expression
 {
     enum case_range     range;
     cmp_result          ret;
 
-    if( NumSign(op1_size ) && NumSign(op1_size ) != NumSign(result_size) ) {
-        if( NumBits( op1_size) < NumBits( result_size ) ) {
-         // signed promoted to bigger unsigned num gets signed extended
-        //  could have two ranges unsigned
+    if( NumSign( op1_size ) && NumSign( op1_size ) != NumSign( result_size ) ) {
+        if( NumBits( op1_size ) < NumBits( result_size ) ) {
+            // signed promoted to bigger unsigned num gets signed extended
+            // could have two ranges unsigned
             return( CMP_VOID ); // early return //TODO: could check == & !=
         } else if( NumBits( op1_size) == NumBits( result_size ) ) {
-          // signed promoted to unsigned use unsigned range
-          op1_size &= 0x7f;
+            // signed promoted to unsigned use unsigned range
+            op1_size = NumBits( op1_size );
         }
     }
-    if( NumSign( result_size ) == 0 && NumBits( result_size ) == 16 ){
+    if( NumSign( result_size ) == 0 && NumBits( result_size ) == 16 ) {
         val &= 0xffff; // num is truncated when compared
     }
-    if( NumSign( op1_size ) ){
+    if( NumSign( op1_size ) ) {
         *low = (LARGEST_TYPE)(LOW_VAL) >> MAXSIZE-NumBits( op1_size );
         *high = ~(*low);
-    }else{
+    } else {
         *low = 0;
         *high = HIGH_VAL >> MAXSIZE-NumBits( op1_size );
     }
@@ -94,7 +94,7 @@ LARGEST_TYPE val, LARGEST_TYPE *low, LARGEST_TYPE *high )
     } else if( val == *high ) {
         range = CASE_HIGH_EQ;
     } else if( NumBits( op1_size ) < MAXSIZE ) { // can't be outside range and
-        if( val < *low ) {                     // don't have to do unsigned compare
+        if( val < *low ) {                       // don't have to do unsigned compare
             range = CASE_LOW;
         } else if( val > *high ) {
             range = CASE_HIGH;

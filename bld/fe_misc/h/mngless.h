@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface to meaningless comparison analysis routine.
 *
 ****************************************************************************/
 
@@ -38,14 +37,14 @@ extern "C" {
 #endif
 
 #define SIGN_BIT        (0x80)
-#define NumSign( a )   ((a)& SIGN_BIT )
+#define NumSign( a )    ((a) & SIGN_BIT)
 
 #ifdef fe_cfg
 #    include "fe_cfg.h"
 #endif
 
 #ifdef FE_I64_MEANINGLESS
-#define LARGEST_TYPE    __int64
+#define LARGEST_TYPE    long long
 #else
 #define LARGEST_TYPE    long
 #endif
@@ -73,7 +72,7 @@ cmp_result CheckMeaninglessCompare(
 );
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif // __ANALMEAN_H_

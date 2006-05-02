@@ -75,7 +75,7 @@ void VbufReqd(                  // ENSURE BUFFER IS OF SUFFICIENT SIZE
     VBUF *vbuf,                 // - VBUF structure
     size_t reqd )               // - required size
 {
-    char *old_buffer;           // - old buffer
+    char    *old_buffer;        // - old buffer
 
     if( reqd > vbuf->len ) {
         reqd = ( reqd + ( MIN_VBUF_INC - 1 ) ) & ( - MIN_VBUF_INC );
@@ -118,8 +118,8 @@ void VStrConcStr(               // CONCATENATE STRING TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure
     char const *string )        // - string to be concatenated
 {
-    size_t new_size;            // - size of concatenated strings
-    size_t conc_size;           // - size of concatenation string
+    size_t  new_size;           // - size of concatenated strings
+    size_t  conc_size;          // - size of concatenation string
 
     conc_size = strlen( string );
     new_size = vbuf->used + conc_size;
@@ -133,7 +133,7 @@ void VStrConcDecimal(           // CONCATENATE DECIMAL # TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure
     unsigned value )            // - value to be concatenated
 {
-    char buffer[16];            // - temp buffer
+    char    buffer[16];         // - temp buffer
 
     stdcpy( buffer, value );
     VStrConcStr( vbuf, buffer );
@@ -144,7 +144,7 @@ void VStrConcInteger(           // CONCATENATE INTEGER # TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure
     int value )                 // - value to be concatenated
 {
-    char buffer[16];            // - temp buffer
+    char    buffer[16];         // - temp buffer
 
     sticpy( buffer, value );
     VStrConcStr( vbuf, buffer );
@@ -153,9 +153,9 @@ void VStrConcInteger(           // CONCATENATE INTEGER # TO vbuf->buf
 #ifdef FE_I64_MEANINGLESS
 void VStrConcI64(               // CONCATENATE I64 # TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure
-    __int64 value )             // - value to be concatenated
+    long long value )           // - value to be concatenated
 {
-    char buffer[16];            // - temp buffer
+    char    buffer[16];         // - temp buffer
 
     sti64cpy( buffer, value );
     VStrConcStr( vbuf, buffer );
@@ -167,14 +167,14 @@ void VStrConcChr(               // CONCATENATE CHAR TO vbuf->buf
     char chr )                  // - char to be concatenated
 {
 #if 0
-    char buffer[ 2 ];           // buffer passed to VStrConcStr
+    char    buffer[ 2 ];        // buffer passed to VStrConcStr
 
     buffer[ 0 ] = chr;
     buffer[ 1 ] = '\0';
     VStrConcStr( vbuf, buffer );
 #else
-    char* tgt;                  // - target location
-    size_t reqd;                // - size afterwards
+    char    *tgt;               // - target location
+    size_t  reqd;               // - size afterwards
 
     reqd = vbuf->used + 1;
     if( reqd > vbuf->len ) {
@@ -194,8 +194,8 @@ void VStrConcStrRev(            // CONCATENATE STRING BACKWARDS TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure
     char const *string )        // - string to be concatenated backwards
 {
-    size_t new_size;            // - size of concatenated strings
-    size_t conc_size;           // - size of concatenation string
+    size_t  new_size;           // - size of concatenated strings
+    size_t  conc_size;          // - size of concatenation string
 
     conc_size = strlen( string );
     new_size = vbuf->used + conc_size;
@@ -216,7 +216,7 @@ void VStrTruncWhite(            // TRUNCATE TRAILING WHITESPACE FROM vbuf->buf
     VBUF *vbuf )                // - VBUF structure
 {
     char    *ptr;
-    size_t size;
+    size_t  size;
 
     size = vbuf->used;
     if( size > 1 ) {
@@ -232,9 +232,9 @@ void VStrPrepStr(               // PREPEND STRING TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure
     char const *string )        // - string to be prepended
 {
-    size_t prep_size;
-    size_t new_size;
-    VBUF   temp;
+    size_t  prep_size;
+    size_t  new_size;
+    VBUF    temp;
 
     prep_size = strlen( string );
     new_size = prep_size + vbuf->used;
@@ -252,7 +252,7 @@ void VStrPrepChr(               // PREPEND CHAR TO vbuf->buf
     VBUF *vbuf,                 // - VBUF structure
     char chr )                  // - char to be prepended
 {
-    char buffer[ 2 ];           // buffer passed to VStrPrepStr
+    char    buffer[ 2 ];        // buffer passed to VStrPrepStr
 
     buffer[ 0 ] = chr;
     buffer[ 1 ] = '\0';

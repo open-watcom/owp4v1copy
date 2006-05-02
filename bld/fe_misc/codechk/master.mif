@@ -4,7 +4,7 @@ proj_name = codechk
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = ..
+inc_dirs = -I..
 
 .cpp: ..
 
