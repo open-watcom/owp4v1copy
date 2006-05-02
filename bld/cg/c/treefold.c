@@ -71,12 +71,12 @@ extern  tn              TGDuplicate( tn node );
 #define _HasBigConst( t )       ( ( (t)->attr & TYPE_FLOAT ) || (t)->length == 8 )
 
 static cg_op RevOpcode[] = {
-        O_EQ,    /* O_EQ*/
-        O_NE,    /* O_NE*/
-        O_LT,    /* O_GT*/
-        O_GE,    /* O_LE*/
-        O_GT,    /* O_LT*/
-        O_LE     /* O_GE*/
+    O_EQ,    /* O_EQ*/
+    O_NE,    /* O_NE*/
+    O_LT,    /* O_GT*/
+    O_GE,    /* O_LE*/
+    O_GT,    /* O_LT*/
+    O_LE     /* O_GE*/
 };
 
 static signed_32 CFConvertByType( cfloat *cf, type_def *tipe )
@@ -120,9 +120,9 @@ static signed_64 CFGetInteger64Value( cfloat *cf )
     return( value );
 }
 
-static  cfloat  *IntToCF( signed_64 value, type_def *tipe ) {
+static  cfloat  *IntToCF( signed_64 value, type_def *tipe )
 /*********************************************************/
-
+{
     signed_8    s8;
     unsigned_8  u8;
     signed_16   s16;
@@ -169,9 +169,9 @@ static  cfloat  *IntToCF( signed_64 value, type_def *tipe ) {
     }
 }
 
-static  tn      IntToType( signed_32 value, type_def *tipe ) {
-/************************************************************/
-
+static  tn      IntToType( signed_32 value, type_def *tipe )
+/**********************************************************/
+{
     signed_64   temp;
 
     I32ToI64( value, &temp );
@@ -186,9 +186,9 @@ static  tn      Int64ToType( signed_64 value, type_def *tipe )
 }
 
 
-static  tn      CFToType( cfloat *cf, type_def *tipe ) {
-/******************************************************/
-
+static  tn      CFToType( cfloat *cf, type_def *tipe )
+/****************************************************/
+{
     tn          result;
 
     if( ( tipe->attr & TYPE_FLOAT ) == EMPTY ) {
@@ -202,16 +202,16 @@ static  tn      CFToType( cfloat *cf, type_def *tipe ) {
 
 
 
-extern  int     GetLog2( unsigned_32 value ) {
-/*****************************************/
-
-    unsigned_32 count;
-    int         log;
+extern  int     GetLog2( unsigned_32 value )
+/******************************************/
+{
+    unsigned_32     count;
+    int             log;
 
     if( _IsPowerOfTwo( value ) && value != 0 ) {
         log = 0;
         count = 1;
-        for(;;) {
+        for( ;; ) {
             if( count == value ) return( log );
             count += count;
             ++log;
@@ -221,9 +221,9 @@ extern  int     GetLog2( unsigned_32 value ) {
 }
 
 
-extern  tn      FoldTimes( tn left, tn rite, type_def *tipe ) {
-/*************************************************************/
-
+extern  tn      FoldTimes( tn left, tn rite, type_def *tipe )
+/***********************************************************/
+{
     tn          temp;
     tn          fold;
     int         test;
@@ -310,12 +310,11 @@ extern  tn      FoldTimes( tn left, tn rite, type_def *tipe ) {
 }
 
 
-extern  cfloat  *OkToNegate( cfloat *value, type_def *tipe ) {
-/***********************************************************/
-
-/* make sure we don't negate an unsigned and get out of range*/
-/* for example -MAX_LONG is no longer an integer type*/
-
+extern  cfloat  *OkToNegate( cfloat *value, type_def *tipe )
+/**********************************************************/
+/* make sure we don't negate an unsigned and get out of range */
+/* for example -MAX_LONG is no longer an integer type */
+{
     cfloat      *neg;
 
     if( _HasBigConst( tipe ) && ( tipe->attr & TYPE_FLOAT ) == 0 ) return( NULL );
@@ -328,9 +327,9 @@ extern  cfloat  *OkToNegate( cfloat *value, type_def *tipe ) {
     return( NULL );
 }
 
-extern  tn      FoldMinus( tn left, tn rite, type_def *tipe ) {
-/*************************************************************/
-
+extern  tn      FoldMinus( tn left, tn rite, type_def *tipe )
+/***********************************************************/
+{
     tn          fold;
     cfloat      *lv;
     cfloat      *rv;
@@ -384,9 +383,9 @@ static type_def *FixAddType( tn left, tn rite, type_def *tipe )
 }
 
 
-extern  tn      FoldPlus( tn left, tn rite, type_def *tipe ) {
-/************************************************************/
-
+extern  tn      FoldPlus( tn left, tn rite, type_def *tipe )
+/**********************************************************/
+{
     tn          fold;
     tn          temp;
     cfloat      *lv;
@@ -454,21 +453,21 @@ extern  tn      FoldPlus( tn left, tn rite, type_def *tipe ) {
 }
 
 
-static  tn      Halve( tn left, type_def *tipe ) {
-/************************************************/
-
+static  tn      Halve( tn left, type_def *tipe )
+/**********************************************/
+{
 #define ONE_HALF "0.5"
     char        *value;
 
     value = ONE_HALF;
     return( TGBinary( OP_MUL, left,
-                      TGConst( CFCnvSF( value, value+sizeof(ONE_HALF)-1 ), tipe ),
+                      TGConst( CFCnvSF( value, value + sizeof( ONE_HALF ) - 1 ), tipe ),
                       tipe ) );
 }
 
-extern  tn      FoldPow( tn left, tn rite, type_def *tipe ) {
-/************************************************************/
-
+extern  tn      FoldPow( tn left, tn rite, type_def *tipe )
+/*********************************************************/
+{
     tn          fold;
 
     fold = NULL;
@@ -488,9 +487,9 @@ extern  tn      FoldPow( tn left, tn rite, type_def *tipe ) {
 }
 
 
-extern  tn      FoldAnd( tn left, tn rite, type_def *tipe ) {
-/***********************************************************/
-
+extern  tn      FoldAnd( tn left, tn rite, type_def *tipe )
+/*********************************************************/
+{
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
@@ -540,9 +539,9 @@ extern  tn      FoldAnd( tn left, tn rite, type_def *tipe ) {
 }
 
 
-extern  tn      FoldOr( tn left, tn rite, type_def *tipe ) {
-/**********************************************************/
-
+extern  tn      FoldOr( tn left, tn rite, type_def *tipe )
+/********************************************************/
+{
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
@@ -592,9 +591,9 @@ extern  tn      FoldOr( tn left, tn rite, type_def *tipe ) {
 }
 
 
-extern  tn      FoldXor( tn left, tn rite, type_def *tipe ) {
-/***********************************************************/
-
+extern  tn      FoldXor( tn left, tn rite, type_def *tipe )
+/*********************************************************/
+{
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
@@ -646,9 +645,9 @@ extern  tn      FoldXor( tn left, tn rite, type_def *tipe ) {
 }
 
 
-extern  tn      FoldRShift( tn left, tn rite, type_def *tipe ) {
-/**************************************************************/
-
+extern  tn      FoldRShift( tn left, tn rite, type_def *tipe )
+/************************************************************/
+{
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
@@ -699,9 +698,9 @@ extern  tn      FoldRShift( tn left, tn rite, type_def *tipe ) {
 }
 
 
-extern  tn      FoldLShift( tn left, tn rite, type_def *tipe ) {
-/**************************************************************/
-
+extern  tn      FoldLShift( tn left, tn rite, type_def *tipe )
+/************************************************************/
+{
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
@@ -750,10 +749,9 @@ extern  tn      FoldLShift( tn left, tn rite, type_def *tipe ) {
 }
 
 
-extern  tn      FoldDiv( tn left, tn rite, type_def *tipe ) {
-/***********************************************************/
-
-
+extern  tn      FoldDiv( tn left, tn rite, type_def *tipe )
+/*********************************************************/
+{
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
@@ -825,10 +823,9 @@ extern  tn      FoldDiv( tn left, tn rite, type_def *tipe ) {
 }
 
 
-extern  tn      FoldMod( tn left, tn rite, type_def *tipe ) {
-/***********************************************************/
-
-
+extern  tn      FoldMod( tn left, tn rite, type_def *tipe )
+/*********************************************************/
+{
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
@@ -912,9 +909,9 @@ extern  tn      FoldMod( tn left, tn rite, type_def *tipe ) {
 }
 
 
-extern  tn      Fold1sComp( tn left, type_def *tipe ) {
-/*****************************************************/
-
+extern  tn      Fold1sComp( tn left, type_def *tipe )
+/***************************************************/
+{
     tn          new;
     cfloat      *lv;
 
@@ -930,9 +927,9 @@ extern  tn      Fold1sComp( tn left, type_def *tipe ) {
 }
 
 
-extern  tn      FoldUMinus( tn left, type_def *tipe ) {
-/*****************************************************/
-
+extern  tn      FoldUMinus( tn left, type_def *tipe )
+/***************************************************/
+{
     tn          new;
     cfloat      *lv;
 
@@ -952,9 +949,9 @@ extern  tn      FoldUMinus( tn left, type_def *tipe ) {
 }
 
 
-extern  tn      FoldSqrt( tn left, type_def *tipe ) {
-/***************************************************/
-
+extern  tn      FoldSqrt( tn left, type_def *tipe )
+/*************************************************/
+{
     tn          fold;
 
     fold = NULL;
@@ -969,9 +966,9 @@ extern  tn      FoldSqrt( tn left, type_def *tipe ) {
 }
 
 
-extern  tn      FoldLog( cg_op op, tn left, type_def *tipe ) {
-/************************************************************/
-
+extern  tn      FoldLog( cg_op op, tn left, type_def *tipe )
+/**********************************************************/
+{
     tn          fold;
 
     fold = NULL;
@@ -991,9 +988,9 @@ extern  tn      FoldLog( cg_op op, tn left, type_def *tipe ) {
 }
 
 
-extern  tn      FoldFlAnd( tn left, tn rite ) {
-/*********************************************/
-
+extern  tn      FoldFlAnd( tn left, tn rite )
+/*******************************************/
+{
     tn  fold;
 
     fold = NULL;
@@ -1031,9 +1028,9 @@ extern  tn      FoldFlAnd( tn left, tn rite ) {
 }
 
 
-extern  tn      FoldFlOr( tn left, tn rite ) {
-/********************************************/
-
+extern  tn      FoldFlOr( tn left, tn rite )
+/******************************************/
+{
     tn  fold;
 
     fold = NULL;
@@ -1063,9 +1060,9 @@ extern  tn      FoldFlOr( tn left, tn rite ) {
 }
 
 
-extern  tn      FoldFlNot( tn left ) {
-/************************************/
-
+extern  tn      FoldFlNot( tn left )
+/**********************************/
+{
     tn          fold;
     int         result;
 
@@ -1083,12 +1080,12 @@ extern  tn      FoldFlNot( tn left ) {
     return( fold );
 }
 
-extern  tn      FoldBitCompare( opcode_defs op, tn_btn left, tn rite ) {
-/*******************************************************************/
-
-    tn          fold;
-    unsigned_32 new_cons;
-    unsigned_32 mask;
+extern  tn      FoldBitCompare( opcode_defs op, tn_btn left, tn rite )
+/********************************************************************/
+{
+    tn              fold;
+    unsigned_32     new_cons;
+    unsigned_32     mask;
 
     if( left.t->class == TN_CONS ) {
         fold = left.t;
@@ -1119,10 +1116,9 @@ extern  tn      FoldBitCompare( opcode_defs op, tn_btn left, tn rite ) {
 }
 
 
-extern  cfloat *CnvCFToType( cfloat *cf, type_def *tipe ) {
-/*********************************************************/
-
-
+extern  cfloat *CnvCFToType( cfloat *cf, type_def *tipe )
+/*******************************************************/
+{
     if( ( tipe->attr & TYPE_FLOAT ) == EMPTY ) {
         cf = IntToCF( CFGetInteger64Value( cf ), tipe );
     } else {
@@ -1131,13 +1127,13 @@ extern  cfloat *CnvCFToType( cfloat *cf, type_def *tipe ) {
     return( cf );
 }
 
-static  tn      FindBase( tn tree, bool op_eq ) {
-/***********************************************/
-
+static  tn      FindBase( tn tree, bool op_eq )
+/*********************************************/
+{
     type_attr           child_attr;
     type_attr           this_attr;
 
-    for(;;) {
+    for( ;; ) {
         if( tree->class != TN_UNARY ) break;
         if( tree->op != O_CONVERT ) break;
         if( tree->u.left->tipe->length > tree->tipe->length ) break;
@@ -1154,9 +1150,9 @@ static  tn      FindBase( tn tree, bool op_eq ) {
     return( tree );
 }
 
-static  void    BurnToBase( tn root, tn base ) {
-/**********************************************/
-
+static  void    BurnToBase( tn root, tn base )
+/********************************************/
+{
     tn          next;
     tn          curr;
 
@@ -1169,9 +1165,9 @@ static  void    BurnToBase( tn root, tn base ) {
 }
 
 extern  tn      FoldCompare( opcode_defs op, tn left,
-                             tn rite, type_def *tipe ) {
-/*****************************************************/
-
+                             tn rite, type_def *tipe )
+/****************************************************/
+{
     int         compare;
     tn          temp;
     int         result;
@@ -1290,9 +1286,9 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
     return( NULL );
 }
 
-static  bool    SimpleLeaf( tn tree ) {
-/*************************************/
-
+static  bool    SimpleLeaf( tn tree )
+/***********************************/
+{
     if( tree->class == TN_UNARY && tree->op == O_POINTS ) {
         tree = tree->u.left;
     }
@@ -1300,9 +1296,9 @@ static  bool    SimpleLeaf( tn tree ) {
 }
 
 
-extern  tn      FoldPostGetsCompare( opcode_defs op, tn left, tn rite, type_def *tipe ) {
-/***************************************************************************************/
-
+extern  tn      FoldPostGetsCompare( opcode_defs op, tn left, tn rite, type_def *tipe )
+/*************************************************************************************/
+{
     tn          compare;
     tn          temp;
     signed_32   ri;
@@ -1359,12 +1355,12 @@ extern  tn      FoldPostGetsCompare( opcode_defs op, tn left, tn rite, type_def 
 }
 
 
-/* routines above here are called while building the tree*/
-/* routines below here are called while tearing the tree apart*/
+/* routines above here are called while building the tree */
+/* routines below here are called while tearing the tree apart */
 
-static  an Flip( an name, bool op_false, bool op_true ) {
-/************************************************************/
-
+static  an Flip( an name, bool op_false, bool op_true )
+/*****************************************************/
+{
     label_handle        temp;
 
     if( op_false ) {
@@ -1390,9 +1386,9 @@ static  an Flip( an name, bool op_false, bool op_true ) {
 
 
 extern  an FoldConsCompare( opcode_defs op, tn left,
-                                 tn rite, type_def *tipe ) {
-/**********************************************************/
-
+                                 tn rite, type_def *tipe )
+/********************************************************/
+{
     tn          temp;
     an          fold;
     int         compare;
@@ -1460,9 +1456,9 @@ extern  an FoldConsCompare( opcode_defs op, tn left,
 }
 
 
-extern  bool    FoldIfTrue( tn left, label_handle lbl ) {
-/*******************************************************/
-
+extern  bool    FoldIfTrue( tn left, label_handle lbl )
+/*****************************************************/
+{
     bool        folded;
 
     folded = FALSE;
@@ -1477,9 +1473,9 @@ extern  bool    FoldIfTrue( tn left, label_handle lbl ) {
 }
 
 
-extern  bool    FoldIfFalse( tn left, label_handle lbl ) {
-/********************************************************/
-
+extern  bool    FoldIfFalse( tn left, label_handle lbl )
+/******************************************************/
+{
     bool        folded;
 
     folded = FALSE;
