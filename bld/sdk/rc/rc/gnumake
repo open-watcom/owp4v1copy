@@ -1,6 +1,6 @@
 include $(DEVDIR)/build/mif/master.mk
 
-SRCDIRS = ./c $(CPP_DIR)
+SRCDIRS = ./c $(CPP_DIR) $(WATCOM_DIR)/c
 
 vpath %.c $(SRCDIRS)
 
