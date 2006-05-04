@@ -116,12 +116,13 @@ void main( int argc, char *argv[] )
     // filename[1] is now read-only
     VERIFY( access( filename[1], W_OK ) == -1 );
     EXPECT( errno == EACCES );
-#ifndef __UNIX__    // remove would succeed 
+#ifndef __UNIX__    // remove would succeed
     VERIFY( remove( filename[1] ) != 0 );
     EXPECT( errno == EACCES );
 #endif
     VERIFY( chmod( filename[1], S_IRWXU | S_IRWXG ) == 0 );
     VERIFY( stat( filename[1], &info ) == 0 );
+    VERIFY( stat( "NSF", &info ) == -1 );       // No Such File
 #ifndef __UNIX__
     EXPECT( 0 <= info.st_dev && info.st_dev < 26 );
 #endif

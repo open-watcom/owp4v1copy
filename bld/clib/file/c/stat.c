@@ -143,7 +143,7 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
                                 _A_NORMAL | _A_RDONLY | _A_HIDDEN |
                                 _A_SYSTEM | _A_SUBDIR | _A_ARCH );
         #endif
-        if( rc < 0 ) {  // Try getting information another way.
+        if( rc != 0 ) { // Try getting information another way.
             int         handle;
             int         canread = 0;
             int         canwrite = 0;
