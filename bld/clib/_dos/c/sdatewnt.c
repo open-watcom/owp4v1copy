@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Set current date (Win32 version).
 *
 ****************************************************************************/
 
@@ -35,6 +34,7 @@
 #include <windows.h>
 #include "osver.h"
 #include "seterrno.h"
+
 
 _WCRTLINK unsigned _dos_setdate( struct dosdate_t *date )
 {

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS system call (interrupt 21h).
 *
 ****************************************************************************/
 
@@ -33,19 +32,20 @@
 #include "variety.h"
 #include <dos.h>
 
-extern  int                     DoBDosCall( unsigned ax, unsigned dx );
+
+extern  int     DoBDosCall( unsigned ax, unsigned dx );
 #if defined(__386__)
-#pragma aux                     DoBDosCall = \
-        0xcd 0x21       /* int 021h     */ \
-        parm caller     [eax] [edx] \
-        value           [eax] \
-        modify          [ebx ecx edx esi edi];
+    #pragma aux DoBDosCall =    \
+        "int 21h"               \
+        parm caller [eax] [edx] \
+        value       [eax]       \
+        modify      [ebx ecx edx esi edi];
 #else
-#pragma aux                     DoBDosCall = \
-        0xcd 0x21       /* int 021h     */ \
-        parm caller     [ax] [dx] \
-        value           [ax] \
-        modify          [bx cx dx si di];
+    #pragma aux DoBDosCall =    \
+        "int 21h"               \
+        parm caller [ax] [dx]   \
+        value       [ax]        \
+        modify      [bx cx dx si di];
 #endif
 
 

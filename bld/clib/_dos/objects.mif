@@ -4,8 +4,7 @@
 !inject allocwnt.obj                     nt nta ntp
 !inject attr086.obj  d16     dpm                                            w16
 !inject attr386.obj      d32                                                    w32 osi
-!inject bdos086.obj  d16     dpm                                            w16
-!inject bdos386.obj      d32                                                    w32 osi
+!inject bdos.obj     d16 d32 dpm                                            w16 w32 osi
 !inject break.obj    d16 d32                                                w16 w32 osi
 !inject creat086.obj d16     dpm                                            w16
 !inject creat386.obj     d32                                                    w32 osi
@@ -19,7 +18,6 @@
 !inject ddisk086.obj d16     dpm                                            w16
 !inject ddisk386.obj     d32                                                    w32 osi
 !inject dosexter.obj d16 d32 dpm                                            w16 w32 osi
-#inject dosfind.obj                                                             w32
 !inject dosgdf.obj                       nt nta ntp         o16 o32
 !inject dosret.obj   d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject drive086.obj d16     dpm                                            w16
