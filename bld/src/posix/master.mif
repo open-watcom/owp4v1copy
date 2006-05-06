@@ -1,0 +1,33 @@
+proj_name = posix
+posix_autodepends = .autodepend
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = -I"../h"
+
+.c: ../c
+
+util_lib = ../lib/$(host_os)$(host_cpu)/util.lib
+
+all : cmp.exe      &
+      false.exe    &
+      tee.exe      &
+      true.exe     &
+      which.exe
+
+cmp.exe : cmp.obj $(util_lib)
+        $(cl) $(clflags) $<
+
+true.exe : true.obj
+        $(cl) $(clflags) $<
+
+false.exe : false.obj
+        $(cl) $(clflags) $<
+
+tee.exe : tee.obj $(util_lib)
+        $(cl) $(clflags) $<
+
+which.exe : which.obj $(util_lib)
+        $(cl) $(clflags) $<
