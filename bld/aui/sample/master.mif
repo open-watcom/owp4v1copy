@@ -13,7 +13,7 @@ gui_type = ui
 !include wres.mif
 
 inc_dirs = -I"$(auidir)/h" -I"$(guidir)/h" -I"$(uidir)/h" -I"../h"
-inc_dirs_os2 = -I"$(auidir)\os2$(host_cpu).pm" 
+inc_dirs_os2 = -I"$(auidir)/os2$(host_cpu).pm" 
 
 auilib = $(auidir)/$(host_os)$(host_cpu)/aui.lib
 guilib = $(guidir)/$(gui_type)/$(host_os)$(host_cpu)/gui.lib
@@ -57,10 +57,8 @@ app.exe : $(aui_prereq) $(objs) $(auilib) $(guilib) $(uilib) $(wres_lib) $(resfi
         $(linker) $(lflags) name $^@ op map,un file { $(objs) } lib $(auilib),$(guilib),$(uilib),$(wres_lib)
 !ifneq sys_windowed 1
         wstrip -q -a -r $^@ . $(resfile)
-!else ifneq host_os os2
-        $(rc) $(rc_flags) $(inc_path) -k $(resfile) $^@
 !else
-        rc $(resfile) -fo$^@
+        $(rc) $(rc_flags) $(inc_path) -k $(resfile) $^@
 !endif
 
 app.res : ../h/app.rc $(rcfiles)
@@ -70,20 +68,13 @@ appj.res : ../h/app.rc $(rcfiles)
         $(rc) $(rc_flags) -r -DJAPANESE_MESSAGES $[@ -fo=$@
 
 appui.res : ../h/appui.rc ../h/app.rc $(rcfiles)
-        $(rc_aui) $(inc_path) $[@ -fo=$@
+        $(rc_aui) $(inc_path) $(inc_dirs_sys_win) $[@ -fo=$@
 
 appuij.res : ../h/appui.rc ../h/app.rc $(rcfiles)
         $(rc_aui) $(inc_path) -DJAPANESE_MESSAGES $[@ -fo=$@
 
 apppm.res apppmj.res : ../h/apppm.rc ../h/app.rc $(rcfiles)
-        wpp -p -fo=apppm.i $(inc_path) ..\h\apppm.rc
-#        wpp -dJAPANESE_MESSAGES -p -fo=apppmj.i ..\h\apppm.rc
-        $(rc) $(rc_flags) $(inc_path) -r ..\app2.rc -fo=app2.res
-        rm -f apppm.i
-        cp app2.res apppm.res
-#        rename apppmj.i apppm.i
-#        rc -r ..\app2.rc
-#        cp ..\app2.res apppmj.res
+        $(rc) -bt=os2 -r $(inc_dirs_os2) $(inc_path) $[@ -fo=$@
 
 .c: ../c
 
