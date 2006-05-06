@@ -234,7 +234,9 @@ static void warnBoolConstVal(   // WARN: FOR A CONSTANT VALUE
             PTreeWarnExpr( expr, WARN_WHILE_FALSE );
             break;
           case CS_DO :
-            PTreeWarnExpr( expr, WARN_WHILE_FALSE );
+            if( ! parsed_int_const ) {
+                PTreeWarnExpr( expr, WARN_WHILE_FALSE );
+            }
             break;
           case CS_SWITCH :
             PTreeWarnExpr( expr, WARN_SWITCH_ALWAYS_CONSTANT );
