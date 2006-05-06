@@ -43,9 +43,9 @@ static const char *usage_text[] = {
     "\t\t      the standard input.",
     "\tOptions:",
     "\t\t -? : print this list",
-    "\t\t -l : Display all differences (in octal)",
-    "\t\t -s : Say nothing, return an error status",
-    "\t\t -x : Display all differences (in hex)",
+    "\t\t -l : display all differences (in octal)",
+    "\t\t -s : say nothing, return an error status",
+    "\t\t -x : display all differences (in hex)",
     NULL
 };
 
@@ -188,7 +188,7 @@ int main( int argc, char **argv )
             offs[1] = strtol( argv[4], NULL, 0 );
         }
     }
-    ++argv;             // don't care about argv[0]
+    ++argv;             /* Skip argv[0] */
     for( i = 0; i < 2; ++i ) {
         if( argv[i][0] == '-' && argv[i][1] == 0 ) {
             if( i == 1 && fh[0] == STDIN_FILENO ) {

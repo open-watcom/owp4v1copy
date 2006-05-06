@@ -12,12 +12,16 @@ inc_dirs = -I"../h"
 util_lib = ../lib/$(host_os)$(host_cpu)/util.lib
 
 all : cmp.exe      &
+      compress.exe &
       false.exe    &
       tee.exe      &
       true.exe     &
       which.exe
 
 cmp.exe : cmp.obj $(util_lib)
+        $(cl) $(clflags) $<
+
+compress.exe : compress.obj $(util_lib)
         $(cl) $(clflags) $<
 
 true.exe : true.obj

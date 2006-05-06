@@ -31,8 +31,10 @@
 
 #ifdef __UNIX__
     #define PATH_SEP_CHAR   ':'
+    #define DIR_SEP_CHAR    '/'
 #else
     #define PATH_SEP_CHAR   ';'
+    #define DIR_SEP_CHAR    '\\'
 #endif
 
 extern void util_die( const char *str, ... );
