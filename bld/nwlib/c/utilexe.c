@@ -30,10 +30,17 @@
 
 
 #include <wlib.h>
+#include <banner.h>
+
+#if defined(__DEBUG__) && defined(_BANEXTRA)
+#undef  _BANEXTRA
+#define _BANEXTRA _BANEXSHORT
+#endif
+
 
 int main( int argc, char *argv[] )
 {
-    int retcode;
+    int     retcode;
     char    *cmd_line;
     int     cmd_len;
 

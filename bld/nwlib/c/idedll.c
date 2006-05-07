@@ -34,6 +34,12 @@
 #ifdef __WATCOMC__
     #include <malloc.h> // for _heapshrink()
 #endif
+#include <banner.h>
+
+#if defined(__DEBUG__) && defined(_BANEXTRA)
+#undef  _BANEXTRA
+#define _BANEXTRA _BANEXSHORT
+#endif
 
 static IDECBHdl   ideHdl;
 static IDECallBacks  *ideCb;

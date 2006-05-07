@@ -83,7 +83,6 @@
 #include "coff.h"
 #include "coffwrt.h"
 #include "pcobj.h"
-#include "banner.h"
 #include "omfutil.h"
 #include "exedos.h"
 #include "exeos2.h"
