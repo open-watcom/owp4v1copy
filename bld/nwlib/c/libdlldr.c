@@ -30,18 +30,19 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 #ifdef __WATCOMC__
 #include <process.h>
 #endif
 #ifdef IDE_PGM
 #include <stdlib.h>
-#include <string.h>
 #include <limits.h>
 char *ImageName;
 #endif
 #include "idedrv.h"
 
 #define DLL_NAME "wlibd.dll"
+#define AR_MODE_ENV "WLIB$AR"
 
 static IDEDRV info =
 {   DLL_NAME
@@ -79,6 +80,10 @@ int main                        // MAIN-LINE FOR DLL DRIVER
     len = _bgetcmd( NULL, 0 ) + 1;
     cmd_line = malloc( len );
     _bgetcmd( cmd_line, len );
+    /* Turn on 'ar' mode by setting WLIB$AR env var */
+    if( stricmp( strrchr( args[0], '\\' ) + 1, "ar.exe" ) == 0 ) {
+        putenv( AR_MODE_ENV "=ON" );
+    }
     retcode = IdeDrvExecDLL( &info, cmd_line );
     free( cmd_line );
 #else

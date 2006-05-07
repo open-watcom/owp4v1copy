@@ -31,6 +31,8 @@
 
 #include <wlib.h>
 
+#define AR_MODE_ENV "WLIB$AR"
+
 #define eatwhite( c ) while( *(c) && isspace( *(c) ) ) ++(c);
 #define notwhite( c ) ( (c) != '\0' && !isspace( c ) )
 
@@ -623,7 +625,7 @@ void ProcessCmdLine( char *argv[] )
     char        *env;
     lib_cmd     *cmd;
 
-    if( FNCMP( MakeFName( ImageName ), "ar" ) == 0 ) {
+    if( FNCMP( MakeFName( ImageName ), "ar" ) == 0 || WlibGetEnv( AR_MODE_ENV ) != NULL ) {
         Options.ar = TRUE;
     }
     if( Options.ar ) {
