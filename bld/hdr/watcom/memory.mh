@@ -122,10 +122,10 @@ namespace std {
 
     pointer allocate( size_type n, allocator< void >::const_pointer = 0 )
       { return( reinterpret_cast< Type * >(
-                  new unsigned char[ n * sizeof( Type ) ] ) ); }
+                  ::operator new( n * sizeof( Type ) ) ) ); }
 
     void deallocate( pointer p, size_type )
-      { delete [] reinterpret_cast< unsigned char * >( p ); }
+      { ::operator delete( reinterpret_cast< unsigned char * >( p ) ); }
 
     size_type max_size( ) const
       { return 0; }  // FIX ME
