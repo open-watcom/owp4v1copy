@@ -74,6 +74,7 @@ common = &
         _comdef.h &
         _rbtree.h &
         _strdef.h &
+	alloca.h &
         assert.h &
         complex.h &
         conio.h &

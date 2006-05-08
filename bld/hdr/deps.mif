@@ -121,6 +121,7 @@ vector       : $(vector_deps)
 _comdef.h       : ../watcom/_comdef.mh ../readonly.sp ../crwat.sp
 _rbtree.h       : ../watcom/_rbtree.mh ../readonly.sp ../crwatcnt.sp
 _strdef.h       : ../watcom/_strdef.mh ../readonly.sp ../crwatcnt.sp
+alloca.h        : ../watcom/alloca.mh ../readonly.sp $(cplus) ../crwat.sp ../null.sp ../alloca.sp
 assert.h        : $(assert_deps)
 bios.h          : ../watcom/bios.mh ../readonly.sp $(cplus) ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
 bios98.h        : ../watcom/bios98.mh ../readonly.sp $(cplus) ../crwat.sp ../poppack.sp ../pshpackl.sp

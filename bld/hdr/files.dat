@@ -34,6 +34,7 @@ usr="wctype.h"
 # Miscellaneous Watcom headers for C
 #
 usr="_comdef.h"
+usr="alloca.h"
 usr="bios.h"
 usr="conio.h"
 usr="crtdbg.h"
@@ -217,6 +218,7 @@ usr="wctype.h"
 # Miscellaneous Watcom headers for C
 #
 usr="_comdef.h"
+usr="alloca.h"
 usr="conio.h"
 usr="crtdbg.h"
 usr="dirent.h"
