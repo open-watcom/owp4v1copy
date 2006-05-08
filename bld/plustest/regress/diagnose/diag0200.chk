@@ -1545,7 +1545,6 @@ File: source\diag0229.c
 (112,9): Warning! W013: unreachable code
 (135,1): Error! E003: missing return value
 (163,1): Error! E003: missing return value
-(179,14): Warning! W555: expression for 'while' is always false
 File: source\diag0230.c
 (10,5): Error! E226: function 'X1::f' is not distinct
   definition: 'int X1::f( int )'
