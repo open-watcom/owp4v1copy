@@ -29,7 +29,11 @@
 ****************************************************************************/
 
 
+#ifdef __UNIX__
+#include <sys/stat.h>
+#else
 #include "direct.h"
+#endif
 #include "malloc.h"
 #include "stdarg.h"
 #include "stdio.h"
@@ -217,6 +221,31 @@ static int processSwitch        // PROCESS SWITCH
 }
 
 
+#ifdef __UNIX__
+static int processFilePattern   // PROCESS FILE PATTERN
+    ( Text* tp                  // - file pattern
+    , void* data )              // - not used
+{
+    char const * pat;           // - file pattern
+    int retn;                   // - return code
+    struct stat st;             // - directory stuff
+
+    data = data;
+    pat = tp->text;
+    if( stat( pat, &st ) ) {
+        retn = errMsg( "opening file:", pat, NULL );
+    } else {
+        Text* tp;           // - current entry
+        retn = textAlloc( strlen( pat ), &tp );
+        if( retn == 0 ) {
+            textInsert( tp, &files );
+            strcpy( files->text, pat );
+            files->time = st.st_mtime;
+        }
+    }
+    return retn;
+}
+#else
 static int processFilePattern   // PROCESS FILE PATTERN
     ( Text* tp                  // - file pattern
     , void* data )              // - not used
@@ -258,6 +287,7 @@ static int processFilePattern   // PROCESS FILE PATTERN
     }
     return retn;
 }
+#endif
 
 
 static void emitHdr             // EMIT HDR LINE
