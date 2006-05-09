@@ -49,7 +49,7 @@ extern  void            IOSysInit(void);
 extern  void            RTSysInit(void);
 
 
-void            SetIOCB() {
+void            SetIOCB(void) {
 //=========================
 
     RTSysInit();

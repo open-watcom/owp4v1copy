@@ -59,7 +59,7 @@ extern  void            R_FIFloat(void);
 extern  void            ArrayIOType(void);
 
 
-static  void   R_FEH() {
+static  void   R_FEH( uint dummy1 , char dummy2 ) {
 //======================
 
     ftnfile     *fcb;
@@ -83,7 +83,7 @@ static  void   R_FEH() {
 }
 
 
-static  void    R_FESlash( uint rep_spec ) {
+static  void    R_FESlash( uint rep_spec, char dummy2 ) {
 //==========================================
 
     for(;;) {
@@ -94,7 +94,7 @@ static  void    R_FESlash( uint rep_spec ) {
 }
 
 
-static  void    R_FEX() {
+static  void    R_FEX( uint dummy1 , char dummy2 ) {
 //=======================
 
     ftnfile     *fcb;
@@ -105,7 +105,7 @@ static  void    R_FEX() {
 }
 
 
-static  void    R_FEI( uint rep ) {
+static  void    R_FEI( uint rep, char dummy2 ) {
 //=================================
 
     for(;;) {
@@ -129,7 +129,7 @@ static  void    R_FEI( uint rep ) {
 }
 
 
-static  void    R_FEColon() {
+static  void    R_FEColon( uint dummy1 , char dummy2 ) {
 //===========================
 
     if( IOCB->typ == PT_NOTYPE ) {
@@ -139,7 +139,7 @@ static  void    R_FEColon() {
 }
 
 
-static  void    R_FEA( uint rep ) {
+static  void    R_FEA( uint rep , char dummy2) {
 //=================================
 
     for(;;) {
@@ -161,7 +161,7 @@ static  void    R_FEA( uint rep ) {
 }
 
 
-static  void    R_FET() {
+static  void    R_FET( uint dummy1 , char dummy2 ) {
 //=======================
 
     ftnfile     *fcb;
@@ -172,7 +172,7 @@ static  void    R_FET() {
 }
 
 
-static  void    R_FETL() {
+static  void    R_FETL( uint dummy1 , char dummy2 ) {
 //========================
 
     ftnfile     *fcb;
@@ -189,7 +189,7 @@ static  void    R_FETL() {
 }
 
 
-static  void    R_FETR() {
+static  void    R_FETR( uint dummy1 , char dummy2 ) {
 //========================
 
     ftnfile     *fcb;
@@ -200,7 +200,7 @@ static  void    R_FETR() {
 }
 
 
-static  void    R_FES() {
+static  void    R_FES( uint dummy1 , char dummy2 ) {
 //=======================
 
     IOCB->flags &= ~IOF_PLUS;
@@ -208,7 +208,7 @@ static  void    R_FES() {
 }
 
 
-static  void    R_FESP() {
+static  void    R_FESP( uint dummy1 , char dummy2 ) {
 //========================
 
     IOCB->flags |= IOF_PLUS;
@@ -216,7 +216,7 @@ static  void    R_FESP() {
 }
 
 
-static  void    R_FESS() {
+static  void    R_FESS( uint dummy1 , char dummy2 ) {
 //========================
 
     IOCB->flags &= ~IOF_PLUS;
@@ -224,7 +224,7 @@ static  void    R_FESS() {
 }
 
 
-static  void    R_FEBN() {
+static  void    R_FEBN( uint dummy1 , char dummy2 ) {
 //========================
 
     IOCB->fileinfo->blanks = BLANK_NULL;
@@ -232,7 +232,7 @@ static  void    R_FEBN() {
 }
 
 
-static  void    R_FEBZ() {
+static  void    R_FEBZ( uint dummy1 , char dummy2 ) {
 //========================
 
     IOCB->fileinfo->blanks = BLANK_ZERO;
@@ -240,7 +240,7 @@ static  void    R_FEBZ() {
 }
 
 
-static  void    R_FEL( uint rep ) {
+static  void    R_FEL( uint rep, char dummy2 ) {
 //=================================
 
     for(;;) {
@@ -264,7 +264,7 @@ static  void    R_FEL( uint rep ) {
 }
 
 
-static  void    R_FEF( uint rep ) {
+static  void    R_FEF( uint rep, char dummy2 ) {
 //=================================
 
     for(;;) {
@@ -288,7 +288,7 @@ static  void    R_FEF( uint rep ) {
 }
 
 
-static  void    R_FED( uint rep ) {
+static  void    R_FED( uint rep, char dummy2 ) {
 //=================================
 
     for(;;) {
@@ -360,7 +360,7 @@ static  void    R_FEE( uint rep, char ch ) {
 }
 
 
-static  void    R_FEG( uint rep ) {
+static  void    R_FEG( uint rep, char dummy2 ) {
 //=================================
 
     for(;;) {
@@ -384,7 +384,7 @@ static  void    R_FEG( uint rep ) {
 }
 
 
-static  void    R_FEP() {
+static  void    R_FEP( uint dummy1 , char dummy2 ) {
 //=======================
 
     IOCB->scale = IOCB->fmtptr->fmt4.fld1;
@@ -392,7 +392,7 @@ static  void    R_FEP() {
 }
 
 
-static  void    R_FELParen( uint rep_spec ) {
+static  void    R_FELParen( uint rep_spec, char dummy2 ) {
 //===========================================
 
     fmt_desc PGM *revert;
@@ -413,14 +413,14 @@ static  void    R_FELParen( uint rep_spec ) {
 }
 
 
-static  void    R_FERParen() {
+static  void    R_FERParen( uint dummy1 , char dummy2 ) {
 //============================
 
     IOCB->fmtptr = (fmt_desc PGM *)((fmt PGM *)IOCB->fmtptr + 1);
 }
 
 
-static  void    R_FEnd() {
+static  void    R_FEnd( uint dummy1 , char dummy2 ) {
 //========================
 
     int         revert;
@@ -440,7 +440,7 @@ static  void    R_FEnd() {
 }
 
 
-static  void    R_FEZ( uint rep ) {
+static  void    R_FEZ( uint rep, char dummy2 ) {
 //=================================
 
     for(;;) {
@@ -463,7 +463,7 @@ static  void    R_FEZ( uint rep ) {
 }
 
 
-static  void    R_FEM() {
+static  void    R_FEM( uint dummy1 , char dummy2 ) {
 //=======================
 
     if( IOCB->flags & IOF_OUTPT ) {
@@ -473,7 +473,7 @@ static  void    R_FEM() {
 }
 
 
-static  void    FmtPrepOp() {
+static  void    FmtPrepOp( void ) {
 //===========================
 
     ftnfile     *fcb;
@@ -487,7 +487,7 @@ static  void    FmtPrepOp() {
 }
 
 
-static  void    FmtIOType() {
+static  void    FmtIOType( void ) {
 //===========================
 
     if( IOCB->flags & IOF_FMTREALPART ) {
@@ -501,7 +501,7 @@ static  void    FmtIOType() {
 }
 
 
-static  const void (* const __FAR FmtExec[])() = {
+static  const void (* const __FAR FmtExec[])( uint , char ) = {
         &R_FEA,
         &R_FEBN,
         &R_FEBZ,
@@ -534,7 +534,7 @@ static  const void (* const __FAR FmtExec[])() = {
 };
 
 
-static  void    ExecInit() {
+static  void    ExecInit( void ) {
 //==========================
 
     ftnfile     *fcb;
@@ -552,7 +552,7 @@ static  void    ExecInit() {
 }
 
 
-static  void    ExecCode() {
+static  void    ExecCode( void ) {
 //==========================
 
     byte        code;
@@ -582,7 +582,7 @@ static  void    ExecCode() {
 }
 
 
-void    R_FExec() {
+void    R_FExec( void ) {
 //=================
 
     ExecInit();

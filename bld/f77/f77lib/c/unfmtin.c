@@ -50,7 +50,7 @@ extern  bool                    CheckLogicalRecord(ftnfile *);
 extern  const byte __FAR        SizeVars[];
 
 
-void    UnFmtIn() {
+void    UnFmtIn( void ) {
 //=================
 
     if( _NoRecordOrganization( IOCB->fileinfo ) ) {
@@ -61,7 +61,7 @@ void    UnFmtIn() {
 }
 
 
-void    NextUnFmtRec() {
+void    NextUnFmtRec( void ) {
 //======================
 
     if( _LogicalRecordOrganization( IOCB->fileinfo ) ) {
@@ -124,7 +124,7 @@ static  void    UnFmtItem( void *s ) {
 }
 
 
-static  void    RecordUnFmtIn() {
+static  void    RecordUnFmtIn( void ) {
 //===============================
 
     ftnfile     *fcb;
@@ -176,7 +176,7 @@ static  void    IUnStream( char HPGM *dst, unsigned long len ) {
 }
 
 
-static  void    StreamUnFmtIn() {
+static  void    StreamUnFmtIn( void ) {
 //===============================
 
     ftnfile     *fcb;
@@ -238,7 +238,7 @@ static  void    IUnBytes( char HPGM *dst, unsigned long len ) {
 }
 
 
-static  void    IUnArray() {
+static  void    IUnArray( void ) {
 //==========================
 
     uint        elmt_size;
@@ -252,7 +252,7 @@ static  void    IUnArray() {
 }
 
 
-static  void    IUnString() {
+static  void    IUnString( void ) {
 //===========================
 
     IUnBytes( IORslt.string.strptr, IORslt.string.len );

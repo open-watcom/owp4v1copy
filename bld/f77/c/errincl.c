@@ -132,13 +132,13 @@ static  void    ErrorInit( char *unused ) {
 }
 
 
-static  void    ErrorFini() {
+static  void    ErrorFini( void ) {
 //===========================
 
 }
 
 
-void    __InitError() {
+void    __InitError( void ) {
 //=====================
 
     __ErrorInit = &ErrorInit;

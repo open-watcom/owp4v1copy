@@ -51,7 +51,7 @@ extern  void            NextIFBuff(char *,int,unsigned_32,string PGM *);
 extern  void            UpdateRecNum(ftnfile *);
 
 
-void    NextRec() {
+void    NextRec( void ) {
 //=================
 
     ftnfile     *fcb;

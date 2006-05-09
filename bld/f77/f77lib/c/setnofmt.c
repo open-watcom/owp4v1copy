@@ -39,7 +39,7 @@
 #include "rtenv.h"
 
 
-void            SetNoFmt() {
+void            SetNoFmt( void ) {
 //==========================
 
     _SetIOCB();

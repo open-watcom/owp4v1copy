@@ -45,7 +45,7 @@ extern  void            CloseFile(ftnfile *);
 extern  void            CloseDeleteFile(ftnfile *);
 extern  int             FindKWord(char **,int,int,string PGM *);
 extern  void            DiscoFile(ftnfile *);
-extern  int             IOMain(void (*)());
+extern  int             IOMain(void (*)( void ));
 
 //
 // ClStatTab - close status table
@@ -58,7 +58,7 @@ static  char    *ClStatTab[] = {
         NULL };
 
 
-static  void    ExClose() {
+static  void    ExClose( void ) {
 //=========================
 
     byte        cl_stat;
@@ -92,7 +92,7 @@ static  void    ExClose() {
 }
 
 
-int     IOClose() {
+int     IOClose( void ) {
 //=================
 
     IOCB->iostmt = IO_CLOSE;

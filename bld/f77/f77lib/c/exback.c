@@ -48,10 +48,10 @@ extern  void            ChkRecordStructure(void);
 extern  void            ClrBuff(void);
 extern  void            BackSpacef(ftnfile *);
 extern  void            ChkIOErr(ftnfile *);
-extern  int             IOMain(void (*)());
+extern  int             IOMain(void (*)( void ));
 
 
-static  void    ExBkSpace() {
+static  void    ExBkSpace( void ) {
 //===========================
 
     ftnfile     *fcb;
@@ -78,7 +78,7 @@ static  void    ExBkSpace() {
 }
 
 
-int     IOBack() {
+int     IOBack( void ) {
 //================
 
     IOCB->iostmt = IO_BKSP;

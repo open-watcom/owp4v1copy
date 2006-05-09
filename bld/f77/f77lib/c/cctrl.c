@@ -44,7 +44,7 @@ extern  bool                    IsCarriage(void);
 extern  char                    NormalCtrlSeq[];
 
 
-void            CheckCCtrl() {
+void            CheckCCtrl( void ) {
 //============================
 
     if( ( IOCB->fileinfo->col == 0 ) && IsCarriage() ) {

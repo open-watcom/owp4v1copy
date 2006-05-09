@@ -37,7 +37,7 @@
 
 #include "rtinit.h"
 
-extern void     __LineFeedWithFormFeed();
+extern void     __LineFeedWithFormFeed( void );
 
 AXI( __LineFeedWithFormFeed, INIT_PRIORITY_LIBRARY );
 

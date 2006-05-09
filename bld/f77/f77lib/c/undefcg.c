@@ -65,14 +65,14 @@ static  void    FmtFloat( char *buff, extended value, int digits, char ch ) {
 }
 
 
-void OutLogCG() {
+void OutLogCG( void ) {
 //===============
 
     R_FmtLog( INTEGER_IO_WINDOW );
 }
 
 
-void OutIntCG() {
+void OutIntCG( void ) {
 //===============
 
     ltoa( IORslt.intstar4, IOCB->buffer, 10 );
@@ -128,7 +128,7 @@ bool UndefExtendedCG( extended *value ) {
 }
 
 
-bool UndefLogCG() {
+bool UndefLogCG( void ) {
 //=================
 
     return( 0 );

@@ -59,8 +59,8 @@ extern  char            *_LpPgmName;
   char          __FAppType = { FAPP_CHARACTER_MODE };
 #endif
 
-void            (* _ExceptionInit)() = { &R_TrapInit };
-void            (* _ExceptionFini)() = { &R_TrapFini };
+void            (* _ExceptionInit)( void ) = { &R_TrapInit };
+void            (* _ExceptionFini)( void ) = { &R_TrapFini };
 
 static  char            RTSysInitialized = { 0 };
 
@@ -68,11 +68,11 @@ static  char            RTSysInitialized = { 0 };
 
 #include "fthread.h"
 
-static  void    __NullFIOAccess() {}
+static  void    __NullFIOAccess( void ) {}
 
-void            (*_AccessFIO)()         = &__NullFIOAccess;
-void            (*_ReleaseFIO)()        = &__NullFIOAccess;
-void            (*_PartialReleaseFIO)() = &__NullFIOAccess;
+void            (*_AccessFIO)( void )         = &__NullFIOAccess;
+void            (*_ReleaseFIO)( void )        = &__NullFIOAccess;
+void            (*_PartialReleaseFIO)( void ) = &__NullFIOAccess;
 unsigned        __FThreadDataOffset;
 
 
@@ -88,7 +88,7 @@ void    __InitFThreadData( fthread_data *td ) {
 #endif
 
 
-static  void    __InitRTData() {
+static  void    __InitRTData( void ) {
 //==============================
 
 // Must match __InitFThreadData().
@@ -98,7 +98,7 @@ static  void    __InitRTData() {
 }
 
 
-void    RTSysFini() {
+void    RTSysFini( void ) {
 //===================
 
     _ExceptionFini();
@@ -107,7 +107,7 @@ void    RTSysFini() {
 }
 
 
-unsigned        RTSysInit() {
+unsigned        RTSysInit( void ) {
 //===========================
 
     if( RTSysInitialized ) return( 0 );
@@ -132,7 +132,7 @@ unsigned        RTSysInit() {
     }
 #elif defined( __NT__ )
     {
-        extern unsigned (*_WindowsStdout)();
+        extern unsigned (*_WindowsStdout)( void );
 
         if( _WindowsStdout != 0 ) {
             __FAppType = FAPP_DEFAULT_GUI;
@@ -159,7 +159,7 @@ unsigned        RTSysInit() {
 
 #if defined( __MT__ )
 
-static  void    __InitThreadDataSize() {
+static  void    __InitThreadDataSize( void ) {
 //======================================
 
     __FThreadDataOffset = __RegisterThreadDataSize( sizeof( fthread_data ) );
@@ -175,7 +175,7 @@ XI( __fthread_data_size, __InitThreadDataSize, INIT_PRIORITY_THREAD )
 extern  unsigned        __ASTACKSIZ;    /* alternate stack size */
 #define F77_ALT_STACK_SIZE      8*1024
 
-static void     __InitAlternateStack() {
+static void     __InitAlternateStack( void ) {
 //======================================
 
         __ASTACKSIZ = F77_ALT_STACK_SIZE;

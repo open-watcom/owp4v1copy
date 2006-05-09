@@ -130,7 +130,7 @@ void    WriteErr( int errcode, va_list args ) {
 }
 
 
-void    FlushStdUnit() {
+void    FlushStdUnit( void ) {
 //======================
 
     ftnfile     *fcb;

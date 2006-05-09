@@ -57,14 +57,14 @@ extern  void            CheckEor(void);
 extern  void            Blanks(void);
 extern  void            BumpComma(void);
 extern  void            IOErr(uint,...);
-extern  int             Spawn(void (*)());
+extern  int             Spawn(void (*)( void ));
 extern  void            Suicide(void);
 extern  bool            DoSubscript(act_dim_list *,intstar4 *,intstar4 *);
 extern  bool            DoSubstring(intstar4,intstar4,uint);
 extern  intstar4        GetNum(void);
 extern  char            *JmpBlanks(char *);
 
-extern  void            (* const __FAR OutRtn[])();
+extern  void            (* const __FAR OutRtn[])( void );
 extern  const byte __FAR        SizeVars[];
 
 static  unsigned_32     NmlInCount;
@@ -72,7 +72,7 @@ static  PTYPE           NmlInType;
 static  void            PGM *NmlInAddr;
 
 
-char            *Scanner() {
+char            *Scanner( void ) {
 //==========================
 
 // Point to where we are currently scanning.
@@ -97,7 +97,7 @@ bool            ScanChar( char chr ) {
 }
 
 
-bool            ScanEOL() {
+bool            ScanEOL( void ) {
 //=========================
 
 // Check for end-of-line.
@@ -218,7 +218,7 @@ static  bool    SubStr( string *scb ) {
 }
 
 
-void    NmlExec() {
+void    NmlExec( void ) {
 //=================
 
     if( IOCB->flags & IOF_OUTPT ) {
@@ -230,7 +230,7 @@ void    NmlExec() {
 }
 
 
-static  void    NmlOut() {
+static  void    NmlOut( void ) {
 //========================
 
     byte        PGM *nml;
@@ -384,7 +384,7 @@ static  byte PGM *FindNmlEntry( char *name, uint len ) {
 
 static  io_type_rtn     NmlIOType;
 
-static PTYPE    NmlIOType() {
+static PTYPE    NmlIOType( void ) {
 //===========================
 
 // Get the type of an input item.
@@ -448,7 +448,7 @@ static PTYPE    NmlIOType() {
 }
 
 
-static  void    NmlIn() {
+static  void    NmlIn( void ) {
 //=======================
 
     char PGM    *nml;

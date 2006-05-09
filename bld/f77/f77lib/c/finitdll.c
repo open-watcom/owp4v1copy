@@ -35,17 +35,17 @@
 
 extern  int             __InitFThreadProcessing(void);
 
-extern  void            (*_ExceptionInit)();
-extern  void            (*_ExceptionFini)();
+extern  void            (*_ExceptionInit)( void );
+extern  void            (*_ExceptionFini)( void );
 
 
-static void NullTrapRtn() {
+static void NullTrapRtn( void ) {
 //=========================
 
 }
 
 
-static void __InitExceptionVectors() {
+static void __InitExceptionVectors( void ) {
 //====================================
 
     _ExceptionInit = &NullTrapRtn;
@@ -53,7 +53,7 @@ static void __InitExceptionVectors() {
 }
 
 
-unsigned        __FInitDLL() {
+unsigned        __FInitDLL( void ) {
 //============================
 
     __InitExceptionVectors();

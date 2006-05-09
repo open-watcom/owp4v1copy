@@ -43,7 +43,7 @@
 extern  void                    NmlExec(void);
 extern  void                    NmlAddrs(va_list);
 
-extern  void                    (*FmtRoutine)();
+extern  void                    (*FmtRoutine)( void );
 
 
 void            SetNml( void PGM *nml, ... ) {

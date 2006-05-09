@@ -126,7 +126,7 @@ static  char            *Share[] = {
         };
 
 
-bool    FindFName() {
+bool    FindFName( void ) {
 //===================
 
     ftnfile     *fcb;
@@ -148,7 +148,7 @@ bool    FindFName() {
 }
 
 
-void    DfltInq() {
+void    DfltInq( void ) {
 //=================
 
     if( IOCB->flags & UNDCHK_IO ) {
@@ -215,7 +215,7 @@ void    DfltInq() {
 }
 
 
-void    InqExList() {
+void    InqExList( void ) {
 //===================
 
     ftnfile     *fcb;
@@ -242,7 +242,7 @@ void    InqExList() {
 }
 
 
-void    InqOdList() {
+void    InqOdList( void ) {
 //===================
 
     ftnfile     *fcb;

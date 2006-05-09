@@ -117,7 +117,7 @@ void    R_ChkType( PTYPE lower, PTYPE upper ) {
 }
 
 
-void    R_NewRec() {
+void    R_NewRec( void ) {
 //==================
 
     if( IOCB->flags & IOF_OUTPT ) {
@@ -131,7 +131,7 @@ void    R_NewRec() {
 }
 
 
-void    R_ChkIType() {
+void    R_ChkIType( void ) {
 //====================
 
 // Check if type can be formatted using I format.
@@ -145,7 +145,7 @@ void    R_ChkIType() {
 }
 
 
-void    R_ChkFType() {
+void    R_ChkFType( void ) {
 //====================
 
 // Check if type can be formatted using F, E, or D format.
@@ -159,7 +159,7 @@ void    R_ChkFType() {
 }
 
 
-void    R_ChkRecLen() {
+void    R_ChkRecLen( void ) {
 //=====================
 
     ftnfile     *fcb;
@@ -171,14 +171,14 @@ void    R_ChkRecLen() {
 }
 
 
-void    R_FOStr() {
+void    R_FOStr( void ) {
 //=================
 
     FOString( IOCB->fmtptr->fmt4.fld1 );
 }
 
 
-uint    GetLen() {
+uint    GetLen( void ) {
 //================
 
     uint        len;
@@ -222,7 +222,7 @@ void    FOString( uint width ) {
 }
 
 
-void    R_FIStr() {
+void    R_FIStr( void ) {
 //=================
 
     uint        width;
@@ -257,7 +257,7 @@ void    R_FIStr() {
 }
 
 
-void    R_FOLog() {
+void    R_FOLog( void ) {
 //=================
 
     if( UndefLogRtn() ) return;
@@ -276,7 +276,7 @@ static  void    SetLogValue( logstar4 value ) {
 }
 
 
-void    R_FILog() {
+void    R_FILog( void ) {
 //=================
 
     ftnfile     *fcb;
@@ -322,7 +322,7 @@ void    R_FILog() {
 }
 
 
-void    R_FIFloat() {
+void    R_FIFloat( void ) {
 //===================
 
 // Input an real or complex variable in D, E, F, G format.
@@ -446,7 +446,7 @@ bool    GetReal( extended *value ) {
 }
 
 
-void    R_FOF() {
+void    R_FOF( void ) {
 //===============
 
     ftnfile     *fcb;
@@ -588,7 +588,7 @@ bool    FmtH2B( char *src, uint width, char PGM *dst, int len, PTYPE typ ) {
 }
 
 
-void    R_FIHex() {
+void    R_FIHex( void ) {
 //=================
 
     uint        width;
@@ -627,7 +627,7 @@ void    R_FIHex() {
 }
 
 
-void    R_FOHex() {
+void    R_FOHex( void ) {
 //=================
 
     FOHex( IOCB->fmtptr->fmt1.fld1 );
@@ -730,7 +730,7 @@ static  void    HexFlip( char *src, int len ) {
 }
 
 
-void    R_FIInt() {
+void    R_FIInt( void ) {
 //=================
 
     intstar4    value;
@@ -772,7 +772,7 @@ void    R_FIInt() {
 }
 
 
-void    R_FOInt() {
+void    R_FOInt( void ) {
 //=================
 
     OutInt( IOCB->fmtptr->fmt2.fld1, IOCB->fmtptr->fmt2.fld2 );
@@ -895,7 +895,7 @@ static  int     Div10X( extended val ) {
 }
 
 
-void    R_FOG() {
+void    R_FOG( void ) {
 //===============
 
     int         width;

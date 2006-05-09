@@ -606,7 +606,7 @@ void    ReportEOF( ftnfile *fcb ) {
 }
 
 
-void    WaitForEnter() {
+void    WaitForEnter( void ) {
 //======================
 
     while( GetStdChar() != '\n' ) {

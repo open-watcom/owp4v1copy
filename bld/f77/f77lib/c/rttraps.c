@@ -118,7 +118,7 @@ typedef void            (*fsig_func)(intstar4);
 
 #else
 
-static  void    ProcessBreak() {
+static  void    ProcessBreak( void ) {
 //==============================
 
     __XcptFlags &= ~XF_ERR_MASK;
@@ -166,13 +166,13 @@ static  void    _handler BreakHandler() {
 
 #elif defined( __DOS__ ) || defined( __WINDOWS__ ) || defined( __OS2__ ) || defined( __NT__ )
 
-static  void    ProcessIDivZ() {
+static  void    ProcessIDivZ( void ) {
 //==============================
 
     RTErr( KO_IDIV_ZERO );
 }
 
-static  void    ProcessIOvFl() {
+static  void    ProcessIOvFl( void ) {
 //==============================
 
     // Set flag so that we report an overflow when we read an integer
@@ -243,7 +243,7 @@ static  void    _handler IOvFlHandler() {
 }
 #endif
 
-static  void    AbnormalTerm() {
+static  void    AbnormalTerm( int dummy ) {
 //==============================
 
     RTErr( CP_TERMINATE );
@@ -259,7 +259,7 @@ int     __EnableF77RTExceptionHandling( void ) {
 #endif
 }
 
-void    R_TrapInit() {
+void    R_TrapInit( void ) {
 //====================
 
     int enable_excpt;
@@ -311,7 +311,7 @@ void    R_TrapInit() {
     FPTrapInit();
 }
 
-void    R_TrapFini() {
+void    R_TrapFini( void ) {
 //====================
 
 #if defined( __DOS__ )
@@ -335,10 +335,10 @@ void    R_TrapFini() {
     FPTrapFini();
 }
 
-extern void             (*_ExceptionInit)();
-extern void             (*_ExceptionFini)();
+extern void             (*_ExceptionInit)( void );
+extern void             (*_ExceptionFini)( void );
 
-void    __InitExceptionVectors() {
+void    __InitExceptionVectors( void ) {
 //================================
 
     _ExceptionInit = &R_TrapInit;

@@ -38,7 +38,7 @@
 #endif
 
 
-unsigned        __fdll_initialize() {
+unsigned        __fdll_initialize( void ) {
 //===================================
 
     return( 1 );

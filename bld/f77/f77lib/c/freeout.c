@@ -52,7 +52,7 @@ extern  void            IOItemResult(char PGM *,PTYPE);
 extern  const byte      __FAR SizeVars[];
 
 
-static  void    OutReal() {
+static  void    OutReal( void ) {
 //=========================
 
     FmtRealRtn( IOCB->buffer, &IORslt.single );
@@ -60,7 +60,7 @@ static  void    OutReal() {
 }
 
 
-static  void    OutDble() {
+static  void    OutDble( void ) {
 //=========================
 
     FmtDoubleRtn( IOCB->buffer, &IORslt.dble );
@@ -68,7 +68,7 @@ static  void    OutDble() {
 }
 
 
-static  void    OutXtnd() {
+static  void    OutXtnd( void ) {
 //=========================
 
     FmtExtendedRtn( IOCB->buffer, &IORslt.extended );
@@ -76,7 +76,7 @@ static  void    OutXtnd() {
 }
 
 
-static  void    OutCplx() {
+static  void    OutCplx( void ) {
 //=========================
 
     char        *buff;
@@ -94,7 +94,7 @@ static  void    OutCplx() {
 }
 
 
-static  void    OutDbcx() {
+static  void    OutDbcx( void ) {
 //=========================
 
     char        *buff;
@@ -112,7 +112,7 @@ static  void    OutDbcx() {
 }
 
 
-static  void    OutXtcx() {
+static  void    OutXtcx( void ) {
 //=========================
 
     char        *buff;
@@ -130,7 +130,7 @@ static  void    OutXtcx() {
 }
 
 
-static  void    OutString() {
+static  void    OutString( void ) {
 //===========================
 
     if( IOCB->flags & NML_DIRECTED ) {
@@ -143,7 +143,7 @@ static  void    OutString() {
 }
 
 
-void    (* __FAR OutRtn[])() = {        // this is not const anymore
+void    (* __FAR OutRtn[])( void ) = {        // this is not const anymore
         NULL,
         &OutLogCG,                      // these CG rtns might be modified
         &OutLogCG,
@@ -160,7 +160,7 @@ void    (* __FAR OutRtn[])() = {        // this is not const anymore
 };
 
 
-void    FreeOut() {
+void    FreeOut( void ) {
 //=================
 
     PTYPE       typ;

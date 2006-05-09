@@ -49,7 +49,7 @@ extern  void            RTSysInit(void);
 
 // this is used by the load and go debugger in _SA_LIBRARY
 
-static void noHook() {}
+static void noHook( void ) {}
 void (*PAUSE_HOOK)(void) = noHook;
 
 

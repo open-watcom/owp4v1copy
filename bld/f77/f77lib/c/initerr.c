@@ -36,7 +36,7 @@
 
 #include "rtinit.h"
 
-extern void     __InitError();
+extern void     __InitError( void );
 
 AXI( __InitError, INIT_PRIORITY_LIBRARY );
 

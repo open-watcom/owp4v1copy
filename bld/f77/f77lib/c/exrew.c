@@ -46,7 +46,7 @@ extern  void            ChkSequential(int);
 extern  void            Rewindf(ftnfile *);
 extern  void            ChkIOErr(ftnfile *);
 extern  void            ClrBuff(void);
-extern  int             IOMain(void (*)());
+extern  int             IOMain(void (*)( void ));
 
 
 static  void    RewindFile( ftnfile *fcb ) {
@@ -58,7 +58,7 @@ static  void    RewindFile( ftnfile *fcb ) {
 }
 
 
-static  void    ExRewind() {
+static  void    ExRewind( void ) {
 //==========================
 
     ftnfile     *fcb;
@@ -82,7 +82,7 @@ static  void    ExRewind() {
 }
 
 
-int     IORew() {
+int     IORew( void ) {
 //===============
 
     IOCB->iostmt = IO_REW;

@@ -38,7 +38,7 @@
 #endif
 
 
-unsigned        __fdll_terminate() {
+unsigned        __fdll_terminate( void ) {
 //==================================
 
     return( 1 );

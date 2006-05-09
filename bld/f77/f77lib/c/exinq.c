@@ -46,10 +46,10 @@ extern  void            DfltInq(void);
 extern  void            InqExList(void);
 extern  void            InqOdList(void);
 extern  void            DiscoFile(ftnfile *);
-extern  int             IOMain(void (*)());
+extern  int             IOMain(void (*)( void ));
 
 
-static  void    ExInquire() {
+static  void    ExInquire( void ) {
 //===========================
 
     bool        exist;
@@ -102,7 +102,7 @@ static  void    ExInquire() {
 }
 
 
-int     IOInq() {
+int     IOInq( void ) {
 //===============
 
     IOCB->iostmt = IO_INQ;

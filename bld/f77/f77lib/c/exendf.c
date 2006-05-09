@@ -50,10 +50,10 @@ extern  bool            NoEOF(ftnfile *);
 extern  void            EndFilef(ftnfile *);
 extern  void            ChkIOErr(ftnfile *);
 extern  void            SetEOF(void);
-extern  int             IOMain(void (*)());
+extern  int             IOMain(void (*)( void ));
 
 
-static  void    ExEndFile() {
+static  void    ExEndFile( void ) {
 //===========================
 
     ftnfile     *fcb;
@@ -81,7 +81,7 @@ static  void    ExEndFile() {
 }
 
 
-int     IOEndf() {
+int     IOEndf( void ) {
 //================
 
     IOCB->iostmt = IO_EFILE;

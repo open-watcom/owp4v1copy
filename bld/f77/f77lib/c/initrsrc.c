@@ -35,7 +35,7 @@
 //
 #include "rtinit.h"
 
-extern void     __InitResource();
+extern void     __InitResource( void );
 
 AXI( __InitResource, INIT_PRIORITY_LIBRARY );
 

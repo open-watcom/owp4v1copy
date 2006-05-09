@@ -45,7 +45,7 @@
 extern  void            *LocUnit(int);
 extern  void            GetSysIOInfo(ftnfile *);
 extern  void            *RChkAlloc(uint);
-extern  bool            __DevicesCC();
+extern  bool            __DevicesCC( void );
 
 extern  char            SDTermOut[];
 extern  char            SDTermIn[];
@@ -93,14 +93,14 @@ ftnfile *_SetStd( int unit, int mode, char *term_name, file_handle fp ) {
 }
 
 
-ftnfile *_InitStandardInput() {
+ftnfile *_InitStandardInput( void ) {
 //=============================
 
     return( _SetStd( STANDARD_INPUT, ACTION_READ, SDTermIn, FStdIn ) );
 }
 
 
-ftnfile *_InitStandardOutput() {
+ftnfile *_InitStandardOutput( void ) {
 //==============================
 
     return( _SetStd( STANDARD_OUTPUT, ACTION_WRITE, SDTermOut, FStdOut ) );

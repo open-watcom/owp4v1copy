@@ -83,7 +83,7 @@ int     FindKWord( char **table, int id, int def_id, string PGM *kw ) {
 }
 
 
-void    ClrBuff() {
+void    ClrBuff( void ) {
 //=================
 
     IOCB->fileinfo->col = 0;

@@ -160,7 +160,7 @@ void    Drop( char ch ) {
 }
 
 
-void    SendEOR() {
+void    SendEOR( void ) {
 //=================
 
     ftnfile     *fcb;

@@ -36,7 +36,7 @@
 
 #include "rtinit.h"
 
-extern void     __UseJapaneseCharSet();
+extern void     __UseJapaneseCharSet( void );
 
 AXI( __UseJapaneseCharSet, INIT_PRIORITY_LIBRARY );
 

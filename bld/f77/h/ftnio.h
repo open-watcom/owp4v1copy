@@ -31,9 +31,9 @@
 
 
 #ifdef __MT__
-    extern      void    (*_AccessFIO)();
-    extern      void    (*_ReleaseFIO)();
-    extern      void    (*_PartialReleaseFIO)();
+    extern      void    (*_AccessFIO)(void);
+    extern      void    (*_ReleaseFIO)(void);
+    extern      void    (*_PartialReleaseFIO)(void);
 #else
     #define     _AccessFIO()
     #define     _ReleaseFIO()
@@ -58,7 +58,7 @@
   #endif
 #endif
 
-extern  void            SetIOCB();
+extern  void            SetIOCB(void);
 #define _SetIOCB()    SetIOCB();
 
 // UNCOMMENT_TOKEN

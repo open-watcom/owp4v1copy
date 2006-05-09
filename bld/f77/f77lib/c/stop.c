@@ -47,12 +47,12 @@ extern  void            StdWrite(char *,int);
 extern  void            FlushStdUnit(void);
 extern  void            StdBuffer(void);
 extern  void            StdFlush(void);
-extern  bool            __DevicesCC();
+extern  bool            __DevicesCC( void );
 extern  void            RTSysInit(void);
 
 // this is used by the load and go debugger in _SA_LIBRARY
 
-static void noHook() {}
+static void noHook( void ) {}
 void (*STOP_HOOK)(void) = noHook;
 
 

@@ -36,7 +36,7 @@
 
 #include "rtinit.h"
 
-extern void     __InitAllowCommaSeparator();
+extern void     __InitAllowCommaSeparator( void );
 
 AXI( __InitAllowCommaSeparator, INIT_PRIORITY_LIBRARY );
 

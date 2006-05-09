@@ -39,7 +39,7 @@
 
 #include <string.h>
 
-extern  int             Spawn(void (*)());
+extern  int             Spawn(void (*)( void ));
 extern  void            Suicide(void);
 extern  void            RTErr(int,...);
 extern  void            IOErr(int,...);
@@ -54,8 +54,8 @@ extern  pointer         LocFile(char *);
 extern  void            ExtractInfo(char *,ftnfile *);
 extern  void            TrimStr(string PGM *src,string *res);
 extern  void            GetStr(string *str,char *res);
-extern  ftnfile         *_InitStandardOutput();
-extern  ftnfile         *_InitStandardInput();
+extern  ftnfile         *_InitStandardOutput( void );
+extern  ftnfile         *_InitStandardInput( void );
 
 extern  char            DefFName[];
 
@@ -77,7 +77,7 @@ static ftnfile *SearchFtnFile( int unit ) {
 }
 
 
-bool    FindFtnFile() {
+bool    FindFtnFile( void ) {
 //=====================
 
     ftnfile     *ffile;
@@ -134,7 +134,7 @@ void    *RChkAlloc( uint size ) {
 }
 
 
-void    F_Connect() {
+void    F_Connect( void ) {
 //===================
 
     ftnfile     *filecb;
@@ -151,7 +151,7 @@ void    F_Connect() {
 }
 
 
-void    ConnectFile() {
+void    ConnectFile( void ) {
 //=====================
 
     F_Connect();
@@ -159,7 +159,7 @@ void    ConnectFile() {
 }
 
 
-void    GetFileInfo() {
+void    GetFileInfo( void ) {
 //=====================
 
     char        *fname;
@@ -192,14 +192,14 @@ void    GetFileInfo() {
 }
 
 
-static  void    SysFileInfo() {
+static  void    SysFileInfo( void ) {
 //=============================
 
     GetSysFileInfo( IOCB->fileinfo );
 }
 
 
-void    ChkFileName() {
+void    ChkFileName( void ) {
 //=====================
 
     ChkLogFile();
@@ -210,7 +210,7 @@ void    ChkFileName() {
 }
 
 
-void    ChkLogFile() {
+void    ChkLogFile( void ) {
 //====================
 
     pointer     handle;
@@ -283,7 +283,7 @@ void    ChkIOErr( ftnfile *fcb ) {
 }
 
 
-void    ChkUnitId() {
+void    ChkUnitId( void ) {
 //===================
 
     if( IOCB->flags & BAD_UNIT ) {
@@ -294,7 +294,7 @@ void    ChkUnitId() {
 }
 
 
-void    ChkConnected() {
+void    ChkConnected( void ) {
 //======================
 
     if( IOCB->fileinfo == NULL ) {
@@ -303,7 +303,7 @@ void    ChkConnected() {
 }
 
 
-void    SetEOF() {
+void    SetEOF( void ) {
 //================
 
     IOCB->fileinfo->flags |= FTN_EOF;
@@ -312,7 +312,7 @@ void    SetEOF() {
 }
 
 
-void    ClearEOF() {
+void    ClearEOF( void ) {
 //==================
 
     ftnfile     *fcb;
@@ -327,7 +327,7 @@ void    ClearEOF() {
 }
 
 
-void    SysEOF() {
+void    SysEOF( void ) {
 //================
 
     SetEOF();
@@ -339,21 +339,21 @@ void    SysEOF() {
 }
 
 
-bool    IsFixed() {
+bool    IsFixed( void ) {
 //=================
 
     return( IOCB->fileinfo->accmode == ACCM_DIRECT );
 }
 
 
-bool    IsCarriage() {
+bool    IsCarriage( void ) {
 //====================
 
     return( IOCB->fileinfo->cctrl == CC_YES );
 }
 
 
-void    ChkRecordStructure() {
+void    ChkRecordStructure( void ) {
 //============================
 
     if( _NoRecordOrganization( IOCB->fileinfo ) ) {
@@ -371,7 +371,7 @@ void    ChkSequential( int errmsg ) {
 }
 
 
-void    ChkExist() {
+void    ChkExist( void ) {
 //==================
 
     if( !( IOCB->fileinfo->flags & FTN_FSEXIST ) ) {

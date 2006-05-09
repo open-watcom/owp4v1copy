@@ -44,13 +44,13 @@ extern  void            UnFmtIn(void);
 extern  void            FreeIn(void);
 extern  void            R_FExec(void);
 extern  void            DiscoFile(ftnfile *);
-extern  int             IOMain(void (*)());
+extern  int             IOMain(void (*)( void ));
 extern  void            SkipLogicalRecord(ftnfile *);
 
-extern  void            (*FmtRoutine)();
+extern  void            (*FmtRoutine)( void );
 
 
-static  void    ExRead() {
+static  void    ExRead( void ) {
 //========================
 
     IOCB->flags &= ~IOF_OUTPT;
@@ -75,7 +75,7 @@ static  void    ExRead() {
 }
 
 
-int     DoRead() {
+int     DoRead( void ) {
 //================
 
     IOCB->iostmt = IO_READ;

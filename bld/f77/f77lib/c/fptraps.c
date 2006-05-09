@@ -73,7 +73,7 @@ static void     FPEHandler( int sig_num, int xcpt ) {
 }
 
 
-void    __MaskDefaultFPE() {
+void    __MaskDefaultFPE( void ) {
 //==========================
 #if defined( _M_IX86 )
     // By default we don't report the following exceptions;
@@ -87,7 +87,7 @@ void    __MaskDefaultFPE() {
 #endif
 
 
-void    FPTrapInit() {
+void    FPTrapInit( void ) {
 //====================
 
 #ifndef __NETWARE__     /* FP Exceptions can't be trapped under Netware */
@@ -105,7 +105,7 @@ void    FPTrapInit() {
 }
 
 
-void    FPTrapFini() {
+void    FPTrapFini( void ) {
 //====================
 
 }

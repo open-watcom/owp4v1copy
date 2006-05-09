@@ -72,7 +72,7 @@ static  char    *GetDelim( char *start, char *buff_end ) {
 }
 
 
-signed_32       GetNum( ) {
+signed_32       GetNum( void ) {
 //=========================
 
     ftnfile     *fcb;
@@ -103,7 +103,7 @@ signed_32       GetNum( ) {
 }
 
 
-static  void    FreeIOType() {
+static  void    FreeIOType( void ) {
 //============================
 
     if( !(IOCB->flags & NML_DIRECTED) ) {
@@ -114,7 +114,7 @@ static  void    FreeIOType() {
 }
 
 
-void    FreeIn() {
+void    FreeIn( void ) {
 //================
 
     NextRec();
@@ -122,7 +122,7 @@ void    FreeIn() {
 }
 
 
-void    DoFreeIn() {
+void    DoFreeIn( void ) {
 //==================
 
     ftnfile     *fcb;
@@ -201,7 +201,7 @@ void    DoFreeIn() {
 }
 
 
-void    BumpComma() {
+void    BumpComma( void ) {
 //===================
 
     ftnfile     *fcb;
@@ -214,7 +214,7 @@ void    BumpComma() {
 }
 
 
-void    Blanks() {
+void    Blanks( void ) {
 //================
 
     ftnfile     *fcb;
@@ -226,7 +226,7 @@ void    Blanks() {
 }
 
 
-void    CheckEor() {
+void    CheckEor( void ) {
 //==================
 
     ftnfile     *fcb;
@@ -241,7 +241,7 @@ void    CheckEor() {
 }
 
 
-static  void    RptNum() {
+static  void    RptNum( void ) {
 //========================
 
     ftnfile     *fcb;
@@ -265,7 +265,7 @@ static  void    RptNum() {
 }
 
 
-static  void    InNumber() {
+static  void    InNumber( void ) {
 //==========================
 
     extended    value;
@@ -314,7 +314,7 @@ static  void    InNumber() {
 }
 
 
-static  void    InLog() {
+static  void    InLog( void ) {
 //=======================
 
     ftnfile     *fcb;
@@ -359,7 +359,7 @@ big_break:
 }
 
 
-static  void    InCplx() {
+static  void    InCplx( void ) {
 //========================
 
     ftnfile     *fcb;
@@ -409,7 +409,7 @@ static  void    InCplx() {
 }
 
 
-static  void    InString( ) {
+static  void    InString( void ) {
 //===========================
 
     int         save_col;
@@ -435,7 +435,7 @@ static  void    InString( ) {
 }
 
 
-static  void    GetString() {
+static  void    GetString( void ) {
 //===========================
 
     ftnfile     *fcb;

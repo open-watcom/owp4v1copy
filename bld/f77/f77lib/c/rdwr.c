@@ -68,7 +68,7 @@ void    _AllocBuffer( ftnfile *fcb ) {
 }
 
 
-void    IOPrologue() {
+void    IOPrologue( void ) {
 //====================
 
     ftnfile     *fcb;
@@ -168,7 +168,7 @@ void    IOPrologue() {
 }
 
 
-void    DoOpen() {
+void    DoOpen( void ) {
 //================
 
 // Do the actual open of a file.

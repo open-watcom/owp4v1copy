@@ -39,7 +39,7 @@
 #include "rtenv.h"
 
 
-void            SetErr() {
+void            SetErr( void ) {
 //========================
 
     _SetIOCB();

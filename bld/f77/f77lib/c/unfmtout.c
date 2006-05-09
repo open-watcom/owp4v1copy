@@ -122,7 +122,7 @@ static  void    OutChkRecBuff( ftnfile *fcb, uint len ) {
 }
 
 
-void    UnFmtOut() {
+void    UnFmtOut( void ) {
 //==================
 
     uint        len;
@@ -219,7 +219,7 @@ static  void    OUnBytes( char HPGM *src, unsigned long len, PTYPE item_typ ) {
 }
 
 
-static  void    OUnArray() {
+static  void    OUnArray( void ) {
 //==========================
 
     uint        elmt_size;
@@ -234,7 +234,7 @@ static  void    OUnArray() {
 }
 
 
-static  void    OUnString() {
+static  void    OUnString( void ) {
 //===========================
 
     OUnBytes( IORslt.string.strptr, IORslt.string.len, PT_CHAR );

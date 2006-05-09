@@ -65,7 +65,7 @@ static  __jmp_buf       *SpawnStack = { NULL };
 #endif
 
 
-int     Spawn( void (*fn)() ) {
+int     Spawn( void (*fn)( void ) ) {
 //=============================
 
     __jmp_buf   *save_env;
@@ -83,7 +83,7 @@ int     Spawn( void (*fn)() ) {
 }
 
 
-void    Suicide() {
+void    Suicide( void ) {
 //=================
 
     if( __SpawnStack == NULL ) exit( -1 );

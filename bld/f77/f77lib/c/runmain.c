@@ -40,7 +40,7 @@
 
 #include <string.h>
 
-extern  int             Spawn(void (*)());
+extern  int             Spawn(void (*)( void ));
 extern  void            DiscoFile(ftnfile *);
 extern  bool            Scrtched(ftnfile *);
 extern  void            CloseFile(ftnfile *);
@@ -51,35 +51,35 @@ static  bool    __IsUnit6CC = { FALSE };
 static  bool    __AllowCommaSeparator = { FALSE };
 
 
-void    __InitUnit6CC() {
+void    __InitUnit6CC( void ) {
 //=======================
 
     __IsUnit6CC = TRUE;
 }
 
 
-bool    __DevicesCC() {
+bool    __DevicesCC( void ) {
 //=====================
 
     return( __IsUnit6CC );
 }
 
 
-void    __InitAllowCommaSeparator() {
+void    __InitAllowCommaSeparator( void ) {
 //===================================
 
     __AllowCommaSeparator = TRUE;
 }
 
 
-bool    __AllowCommaSep() {
+bool    __AllowCommaSep( void ) {
 //=========================
 
     return( __AllowCommaSeparator );
 }
 
 
-int    _InitIO() {
+int    _InitIO( void ) {
 //================
 
     InitStd();
@@ -96,14 +96,14 @@ int    _InitIO() {
 }
 
 
-static  void    DoCloseFile() {
+static  void    DoCloseFile( void ) {
 //=============================
 
     CloseFile( Files );
 }
 
 
-void    CloseAllFiles() {
+void    CloseAllFiles( void ) {
 //=======================
 
     while( Files != NULL ) {
@@ -119,7 +119,7 @@ void    CloseAllFiles() {
 }
 
 
-void    _FiniEx() {
+void    _FiniEx( void ) {
 //=================
 
     CloseAllFiles();
@@ -132,16 +132,16 @@ void    _FiniEx() {
 }
 
 
-bool    RunEntry() {
+bool    RunEntry( void ) {
 //==================
 
     IOTypeRtn = &IOType;
-    Spawn( (void(*)())_InitIO );
+    Spawn( (void(*)( void ))_InitIO );
     return( ( __XcptFlags & XF_FATAL_ERROR ) == 0 );
 }
 
 
-void    RunExit() {
+void    RunExit( void ) {
 //=================
 
     _FiniEx();

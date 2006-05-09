@@ -46,7 +46,7 @@ extern  void            R_FEmInit(void);
 extern  void            R_FEmEnd(void);
 extern  void            R_FDoSpec(void);
 
-extern  void            (* const __FAR RFmtTab[])();
+extern  void            (* const __FAR RFmtTab[])( void );
 
 
 void    FmtAScan( char PGM *array, long int num_elts, int elt_size,
@@ -92,7 +92,7 @@ static  void    FInit( string *fmt ) {
 }
 
 
-static  void    FFinish() {
+static  void    FFinish( void ) {
 //=========================
 
     R_FEmEnd();

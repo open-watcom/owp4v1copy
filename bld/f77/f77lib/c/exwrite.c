@@ -44,12 +44,12 @@ extern  void            UnFmtOut(void);
 extern  void            FreeOut(void);
 extern  void            R_FExec(void);
 extern  void            DiscoFile(ftnfile *);
-extern  int             IOMain(void (*)());
+extern  int             IOMain(void (*)( void ));
 
-extern  void            (*FmtRoutine)();
+extern  void            (*FmtRoutine)( void );
 
 
-static  void    ExWrite() {
+static  void    ExWrite( void ) {
 //=========================
 
     IOCB->flags |= IOF_OUTPT;
@@ -72,7 +72,7 @@ static  void    ExWrite() {
 }
 
 
-int     DoWrite() {
+int     DoWrite( void ) {
 //=================
 
     IOCB->iostmt = IO_WRITE;

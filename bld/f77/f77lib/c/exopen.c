@@ -51,7 +51,7 @@ extern  bool            Scrtched(ftnfile *);
 extern  void            CloseFile(ftnfile *);
 extern  void            SysCreateFile(ftnfile *);
 extern  int             FindKWord(char **,int,int,string PGM *);
-extern  int             IOMain(void (*)());
+extern  int             IOMain(void (*)( void ));
 extern  bool            IsDevice(ftnfile *);
 extern  bool            __DevicesCC(void);
 
@@ -138,7 +138,7 @@ char    *ShareTab[] = {
 extern  char    *SpecId[];
 
 
-static  void    ExOpen() {
+static  void    ExOpen( void ) {
 //========================
 
     ftnfile     *fcb;
@@ -384,7 +384,7 @@ static  void    ExOpen() {
 }
 
 
-int     IOOpen() {
+int     IOOpen( void ) {
 //================
 
     IOCB->iostmt = IO_OPEN;

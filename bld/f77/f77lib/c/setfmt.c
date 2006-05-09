@@ -40,7 +40,7 @@
 
 extern  void            R_FExec(void);
 
-extern  void            (*FmtRoutine)();
+extern  void            (*FmtRoutine)( void );
 
 
 void            SetFmt( void PGM *ptr ) {

@@ -41,14 +41,14 @@
 #include "errcod.h"
 
 extern  void            RTErr(int,...);
-extern  int             Spawn(void (*)());
+extern  int             Spawn(void (*)( void ));
 extern  void            Suicide(void);
 extern  void            ClearEOF(void);
 extern  void            DiscoFile(ftnfile *);
 extern  void            SkipLogicalRecord(ftnfile *);
 
 
-void            __ReleaseIOSys() {
+void            __ReleaseIOSys( void ) {
 //================================
 
     IOCB->flags &= ~IOF_ACTIVE;
@@ -57,7 +57,7 @@ void            __ReleaseIOSys() {
 }
 
 
-int     IOMain( void (*io_rtn)() ) {
+int     IOMain( void (*io_rtn)( void ) ) {
 //==================================
 
     int         io_stmt;

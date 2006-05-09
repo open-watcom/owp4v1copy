@@ -39,7 +39,7 @@
 #include "rtenv.h"
 
 
-void            SetEnd() {
+void            SetEnd( void ) {
 //========================
 
     _SetIOCB();

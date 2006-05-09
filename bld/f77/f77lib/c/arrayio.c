@@ -43,7 +43,7 @@ extern  void            IOItemResult(char PGM *,PTYPE);
 extern  const byte      __FAR SizeVars[];
 
 
-static  void    NextArrayItem() {
+static  void    NextArrayItem(void) {
 //===============================
 
     if( IOCB->flags & IOF_OUTPT ) {
@@ -69,7 +69,7 @@ static  void    NextArrayItem() {
 }
 
 
-void    ArrayIOType() {
+void    ArrayIOType(void) {
 //=====================
 
     if( IOCB->flags & IOF_ARRAY_IO ) {

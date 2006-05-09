@@ -44,13 +44,13 @@
 extern  void            RTErr(int,...);
 
 
-void    R_FEmInit() {
+void    R_FEmInit( void ) {
 //===================
 
 }
 
 
-void    R_FEmEnd() {
+void    R_FEmEnd( void ) {
 //==================
 
     R_FEmCode( END_FORMAT );

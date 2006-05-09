@@ -58,7 +58,7 @@ static  char            NLSequence[] = { "\r\n" };
 #endif
 
 
-void    StdBuffer() {
+void    StdBuffer( void ) {
 //===================
 
 // Start buffering lines of output.
@@ -71,7 +71,7 @@ void    StdBuffer() {
 }
 
 
-void    StdFlush() {
+void    StdFlush( void ) {
 //==================
 
 // Flush buffered lines of output.

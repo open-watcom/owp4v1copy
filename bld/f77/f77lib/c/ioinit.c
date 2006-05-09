@@ -46,7 +46,7 @@ extern  void            Suicide(void);
 static  char            IOSysInitialized = { 0 };
 
 
-static  void            IOSysFini() {
+static  void            IOSysFini( void ) {
 //===================================
 
 // Finalize I/O system.
@@ -55,7 +55,7 @@ static  void            IOSysFini() {
 }
 
 
-void            IOSysInit() {
+void            IOSysInit( void ) {
 //===========================
 
 // Initialize I/O system.
