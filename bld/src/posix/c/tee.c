@@ -35,6 +35,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <malloc.h>
 #include "util.h"
 

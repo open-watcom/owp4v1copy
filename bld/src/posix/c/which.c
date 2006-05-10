@@ -30,7 +30,11 @@
 ****************************************************************************/
 
 
-#include <direct.h>
+#ifdef __UNIX__
+#include <dirent.h>
+#else
+#include <direct.h>  // FIXME: provide dirent.h for non-UNIX platforms
+#endif
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
