@@ -36,7 +36,7 @@
 #include "rtenv.h"
 #include "ferror.h"
 
-extern  void            (* const __FAR GenOprTable[])();
+extern  void            (* const __FAR GenOprTable[])(TYPE, TYPE, OPTR);
 
 extern  void            AddConst(itnode *);
 extern  int             LexStrCmp(char PGM *,int,char PGM *,int);
@@ -227,11 +227,13 @@ void    MulC( ftn_type *_x, ftn_type *_y ) {
 }
 
 
-void    DivC( complex *x, complex *y ) {
+void    DivC( ftn_type *_x, ftn_type *_y ) {
 //======================================
 
     single      bottom;
     complex     result;
+    complex     *x = &_x->complex;
+    complex     *y = &_y->complex;
 
     bottom = y->realpart * y->realpart + y->imagpart * y->imagpart;
     result.realpart = x->realpart * y->realpart + x->imagpart * y->imagpart;
@@ -280,11 +282,13 @@ void    MulQ( ftn_type *_x, ftn_type *_y ) {
 }
 
 
-void    DivQ( dcomplex *x, dcomplex *y ) {
+void    DivQ( ftn_type *_x, ftn_type *_y ) {
 //========================================
 
     single      bottom;
     dcomplex    result;
+    dcomplex    *x = &_x->dcomplex;
+    dcomplex    *y = &_y->dcomplex;
 
     bottom = y->realpart * y->realpart + y->imagpart * y->imagpart;
     result.realpart = x->realpart * y->realpart + x->imagpart * y->imagpart;
@@ -333,11 +337,13 @@ void    MulX( ftn_type *_x, ftn_type *_y ) {
 }
 
 
-void    DivX( xcomplex *x, xcomplex *y ) {
+void    DivX( ftn_type *_x, ftn_type *_y ) {
 //========================================
 
     single      bottom;
     xcomplex    result;
+    xcomplex    *x = &_x->xcomplex;
+    xcomplex    *y = &_y->xcomplex;
 
     bottom = y->realpart * y->realpart + y->imagpart * y->imagpart;
     result.realpart = x->realpart * y->realpart + x->imagpart * y->imagpart;
@@ -727,7 +733,7 @@ static  void            (* const __FAR Mul[])( ftn_type *, ftn_type * ) =
                                     { &MulIOFlow, &MulIOFlow, &MulIOFlow,
                                       &MulR, &MulD, &MulE,
                                       &MulC, &MulQ, &MulX };
-static  void            (* const __FAR Div[])() =
+static  void            (* const __FAR Div[])( ftn_type *_x, ftn_type *_y ) =
                                     { &DivI, &DivI, &DivI,
                                       &DivR, &DivD, &DivE,
                                       &DivC, &DivQ, &DivX };
