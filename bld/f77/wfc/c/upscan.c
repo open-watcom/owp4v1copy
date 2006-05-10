@@ -115,8 +115,8 @@ extern  void            GAllocated(void);
 extern  sym_id          FindStruct(char *,int);
 extern  void            SetDefinedStatus(void);
 
-extern  void            (* const __FAR GenOprTable[])();
-extern  void            (* const __FAR ConstTable[])();
+extern  void            (* const __FAR GenOprTable[])(TYPE, TYPE, OPTR);
+extern  void            (* const __FAR ConstTable[])(TYPE, TYPE, OPTR);
 
 #ifdef pick
 #undef pick
@@ -1346,7 +1346,7 @@ static  void    InlineCnvt( void ) {
 #undef pick
 #define pick(id,proc) proc,
 
-static  const void (* const __FAR RtnTable[])() = {
+static  const void (* const __FAR RtnTable[])(void) = {
 #include "rtntable.h"
 };
 
