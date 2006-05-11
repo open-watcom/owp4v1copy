@@ -59,9 +59,9 @@ echo Bootstrapping compiler using GNU tools...
 #        SDK must be done after DISASM?
 [ INCLUDE <DEVDIR>/sdk/lang.ctl ]
 #        Librariess for different program are next
-[ INCLUDE <DEVDIR>/aui/lang.ctl ]
 #        WPI must be done before SDK and UI libs
 [ INCLUDE <DEVDIR>/gui/lang.ctl ]
+[ INCLUDE <DEVDIR>/aui/lang.ctl ]
 [ INCLUDE <DEVDIR>/wclass/lang.ctl ]
 [ INCLUDE <DEVDIR>/ncurses/lang.ctl ]
 #        UI can be deferred until VI is to be built. W.Briscoe 2004-11-25
