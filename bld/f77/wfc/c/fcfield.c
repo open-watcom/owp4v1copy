@@ -57,7 +57,7 @@ extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
 extern  cg_type         SymPtrType(sym_id);
 
 
-void            FCFieldOp() {
+void            FCFieldOp( void ) {
 //===========================
 
 // Perform field selection.
@@ -97,7 +97,7 @@ cg_name FieldArrayEltSize( sym_id fd ) {
 }
 
 
-void    FCFieldSubscript() {
+void    FCFieldSubscript( void ) {
 //==========================
 
     sym_id      fd;
@@ -114,7 +114,7 @@ void    FCFieldSubscript() {
 }
 
 
-void    FCFieldSubstring() {
+void    FCFieldSubstring( void ) {
 //==========================
 
     cg_name     base;

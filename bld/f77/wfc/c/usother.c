@@ -46,7 +46,7 @@ extern  void            AddConst(itnode *);
 extern  void            EmExprDone(void);
 
 
-void    EndExpr() {
+void    EndExpr( void ) {
 //=================
 
     // If we get an error during UPSCAN process, the argument list may

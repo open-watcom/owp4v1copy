@@ -178,7 +178,7 @@ static  void    PrintMsg( uint msg, ... ) {
 }
 
 
-static  void    PrtBanner() {
+static  void    PrtBanner( void ) {
 //===========================
 
     puts( banner1w( _NAME_ "Compile and Link Utility", _WFL_VERSION_ ) );
