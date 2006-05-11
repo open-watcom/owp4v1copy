@@ -19,6 +19,10 @@
   #include <cstdlib>
 #endif
 
+#ifndef _FUNCTIONAL_INCLUDED
+  #include <functional>
+#endif
+
 #ifndef _ITERATOR_INCLUDED
   #include <iterator>
 #endif
@@ -641,23 +645,16 @@ namespace std {
       RandomAccess last,
       DifferenceType index)
     {
-      typedef typename iterator_traits< RandomAccess >::difference_type Int;
       using std::swap;
+      typedef typename iterator_traits< RandomAccess >::difference_type Int;
 
       Int size = last - first;
       Int L    = heap_left( index );   // Index of left child.
       Int R    = heap_right( index );  // Index of right child.
       Int largest = index;             // Index of largest child.
 
-      // Compare the left child (if there is one) with the item at index.
-      if( L < size && first[largest] < first[L] )
-        largest = L;
-
-      // Compare the right child (if there is one) with the largest from above.
-      if( R < size && first[largest] < first[R] )
-        largest = R;
-
-      // If the largest was a child, swap it and then process that child.
+      if( L < size && first[largest] < first[L] ) largest = L;
+      if( R < size && first[largest] < first[R] ) largest = R;
       if( largest != index ) {
         swap( first[index], first[largest] );
         heapify( first, last, largest );
@@ -675,11 +672,9 @@ namespace std {
     using std::swap;
     using _ow::heap_parent;
 
-    // If there is no heap, calling this function is illogical.
     if( first == last )
       throw std::domain_error( "heap underflow" );
 
-    // Walk up the heap, swapping the index node with its parent as necessary.
     Int index = (last - first) - 1;
     while( index > 0 && first[heap_parent( index )] < first[index] ) {
       swap( first[heap_parent( index )], first[index] );
@@ -694,11 +689,9 @@ namespace std {
   {
     using std::swap;
 
-    // If there is no heap, calling this function is illogical.
     if( first == last )
       throw std::domain_error( "heap underflow" );
 
-    // Back last up so that it is on the sequence. Swap max item with last.
     --last;
     if( first != last ) {
       swap( *first, *last );
@@ -716,10 +709,7 @@ namespace std {
     Int size = last - first;
     Int index;
 
-    // Handle a sequence of one item (or zero items) as a special case.
     if( size <= 1 ) return;
-
-    // Only half the items need to be heapified. The rest are leaves.
     for( index = size/2 - 1; index >= 0; --index ) {
       _ow::heapify( first, last, index );
     }
@@ -736,9 +726,7 @@ namespace std {
     Int size = last - first;
     Int index;
 
-    // Handle a sequence of one item (or zero items) as a special case.
     if( size <= 1 ) return;
-
     for( index = size - 1; index > 0; --index ) {
       swap( first[0], first[index] );
       --last;
@@ -746,14 +734,125 @@ namespace std {
     }
   }
 
+  namespace _ow {
+
+    // Used for small subsequences when doing a QuickSort.
+    template< class Bidirectional, class Compare>
+    void insertion_sort(
+      Bidirectional first, Bidirectional last, Compare comp)
+    {
+      if( first == last ) return;
+
+      Bidirectional current = first;
+      ++current;
+      while( current != last ) {
+        typename std::iterator_traits< Bidirectional >::value_type
+          temp = *current;
+        Bidirectional p1 = current;
+        Bidirectional p2 = current;
+        --p2;
+
+        while( comp( temp, *p2 ) ) {
+          *p1 = *p2;
+          if( p2 == first ) {
+            --p1;
+            break;
+          }
+          --p1; --p2;
+        }
+        *p1 = temp;
+        ++current;
+      }
+    }
+
+#ifdef _NEVER
+    template< class RandomAccess, class Compare >
+    RandomAccess
+      med3( RandomAccess seq,
+        typename std::iterator_traits< RandomAccess >::difference_type left,
+        typename std::iterator_traits< RandomAccess >::difference_type right,
+            Compare comp)
+#endif
+    template< class RandomAccess, class Compare, class DifferenceType >
+    RandomAccess
+      med3( RandomAccess seq,
+            DifferenceType left,
+            DifferenceType right,
+            Compare comp)
+    {
+      using std::swap;
+      typename std::iterator_traits< RandomAccess >::difference_type middle;
+
+      middle = (left + right) / 2;
+      if( comp( seq[middle], seq[left]   ) ) swap( seq[left],   seq[middle] );
+      if( comp( seq[right],  seq[left]   ) ) swap( seq[left],   seq[right]  );
+      if( comp( seq[right],  seq[middle] ) ) swap( seq[middle], seq[right]  );
+
+      swap( seq[middle], seq[right - 1] );
+      return seq + (right - 1);
+    }
+
+#ifdef _NEVER
+    template< class RandomAccess, class Compare >
+    void quick_sort( RandomAccess seq,
+      typename std::iterator_traits< RandomAccess >::difference_type left,
+      typename std::iterator_traits< RandomAccess >::difference_type right,
+                     Compare comp)
+#endif
+    // Based on the QuickSort algorithm in Mark Allen Weiss's "Data
+    // Structures and Algorithm Analysis in C++" third edition; Addison
+    // Wesley; ISBN=0-321-44146-X.
+    //
+    template< class RandomAccess, class Compare, class DifferenceType >
+    void quick_sort( RandomAccess seq,
+                     DifferenceType left,
+                     DifferenceType right,
+                     Compare comp)
+    {
+      using std::swap;
+
+      if( right - left < 10 )
+        insertion_sort( seq + left, seq + right + 1, comp );
+      else {
+        typename std::iterator_traits< RandomAccess >::value_type
+          pivot = *med3( seq, left, right, comp );
+
+        DifferenceType i = left;
+        DifferenceType j = right - 1;
+        for( ; ; ) {
+          while( comp( seq[++i], pivot ) ) ;
+          while( comp( pivot, seq[--j] ) ) ;
+          if( i >= j ) break;
+          swap( seq[i], seq[j] );
+        }
+
+        swap( seq[i], seq[right-1] );
+        quick_sort( seq, left, i - 1, comp );
+        quick_sort( seq, i + 1, right, comp );
+      }
+    }
+
+  } // namespace _ow
+
+
+  // sort( RandomAccess, RandomAccess, Compare )
+  // *******************************************
+  template< class RandomAccess, class Compare >
+  void sort( RandomAccess first, RandomAccess last, Compare comp )
+  {
+    if( first == last ) return;
+    _ow::quick_sort( first, 0, (last - first) - 1, comp );
+  }
+
   // sort( RandomAccess, RandomAccess )
   // **********************************
   template< class RandomAccess >
   void sort( RandomAccess first, RandomAccess last )
   {
-    make_heap( first, last );
-    sort_heap( first, last );
-  }
+    if( first == last ) return;
+    _ow::quick_sort( first, 0, (last - first) - 1,
+      std::less< typename std::iterator_traits< RandomAccess >::value_type >( ) );
+  }    
 
   // min( const Type &, const Type & )
   // *********************************
