@@ -10,7 +10,14 @@ cflags_watcom = -zq -d0 -xs -oabehkmrt -ol+ -oi+ -ei -s -zp8 -6s -fpi87 -fp6
 extra_m_opts = -GX
 extra_cflags = -I$(bench_dir)\owstl -I$(bench_dir)\support
 
-exe_files = strcopyl.exe strcopys.exe strpass.exe mapins.exe mapfind.exe
+exe_files = &
+          contain.exe  &
+          strcopyl.exe &
+          strcopys.exe &
+          strpass.exe  &
+          mapins.exe   &
+          mapfind.exe  &
+          sort.exe
 
 run: $(exe_files) .SYMBOLIC
     @echo Compilation complete. Run test programs individually.
