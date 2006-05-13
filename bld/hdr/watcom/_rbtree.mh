@@ -19,7 +19,7 @@
 #error The header _rbtree.h requires C++
 #endif
 
-//#line 23 "_rbtree.mh"
+#line 22 "_rbtree.mh"
 
 #ifndef _UTILITY_INCLUDED
     #include <utility>
@@ -73,13 +73,48 @@ public:
 
 protected:
     struct Node{
+        enum Chroma{ red = 0, black = 1 };
         value_type value;
-        Node* parent;
         Node* left;
         Node* right;
-        enum chroma{red,black} colour;
-        Node(const value_type& v, Node* const p = 0, chroma c = red) : 
-            value(v), parent(p), left(0), right(0), colour(c){} 
+    private:
+        Node* parent;
+    #if 0
+        // simple implementation
+        Chroma colour;
+    public:
+        void   setParent( Node* const p )   { parent = p; }
+        Node*  getParent()                  { return( parent ); }
+        void   setRed()                     { colour = red; }
+        void   setBlack()                   { colour = black; }
+        Chroma getColour()                  { return( colour ); }
+        void   setColour( Chroma c )        { colour = c; }
+        bool   isRed()                      { return( colour == red ); }
+        bool   isBlack()                    { return( colour == black ); }
+    #else
+        // colour hidden in parent
+    public:
+        void   setParent( Node* const p )
+                { // debug assert parent really has lsb clear ?
+                  parent = (Node*)( (long)p | ((long)parent & 1) ); }
+        Node*  getParent()
+                { return( (Node*)( (long)parent & -2 ) ); }
+        void   setRed()
+                { parent = (Node*)( (long)parent & -2 ) ; }
+        void   setBlack()
+                { parent = (Node*)( (long)parent | 1 ) ; }
+        Chroma getColour()
+                { return( (Chroma)( (long)parent & 1 ) ); }
+        void   setColour( Chroma c )
+                { parent = (Node*)( (long)parent & -2 );
+                  parent = (Node*)( (long)parent | c ); }
+        bool   isRed()
+                  { return( !( (long)parent & 1 ) ); }
+        bool   isBlack()
+                  { return( (bool)( (long)parent & 1 ) ); }
+    #endif
+        Node(const value_type& v, Node* const p = 0, Chroma c = red ) : 
+            value(v), left(0), right(0) { setParent(p); setColour(c); }
     };
     Allocator::rebind< Node >::other mem;       // !!! moved up here until compiler bug fixed !!!
 public:
@@ -364,7 +399,8 @@ RedBlackTree< Key,Compare, Allocator, ValueWrapper >::RedBlackTree(
     }
     mRoot = mem.allocate( 1 );
     try{
-        mem.construct( mRoot, Node(that.mRoot->value,0,that.mRoot->colour) );
+        mem.construct( mRoot,
+            Node( that.mRoot->value, 0, that.mRoot->getColour() ) );
     }catch(...){
         mem.deallocate( mRoot, 1 );
         mRoot = 0;
@@ -391,9 +427,10 @@ RedBlackTree< Key,Compare, Allocator, ValueWrapper >::RedBlackTree(
             try{
                 n->left = mem.allocate( 1 );
                 try{
-                    mem.construct( n->left, Node( o->value, n, o->colour ) );
+                    mem.construct( n->left,
+                        Node( o->value, n, o->getColour() ) );
                 }catch(...){
-                    mem.deallocate( n->left, 1);
+                    mem.deallocate( n->left, 1 );
                     throw;
                 }
             }catch(...){
@@ -408,9 +445,10 @@ RedBlackTree< Key,Compare, Allocator, ValueWrapper >::RedBlackTree(
             try{
                 n->right = mem.allocate( 1 );
                 try{
-                    mem.construct( n->right, Node( o->value, n, o->colour ) );
+                    mem.construct( n->right,
+                        Node( o->value, n, o->getColour() ) );
                 }catch(...){
-                    mem.deallocate( n->right, 1);
+                    mem.deallocate( n->right, 1 );
                     throw;
                 }
             }catch(...){
@@ -419,10 +457,10 @@ RedBlackTree< Key,Compare, Allocator, ValueWrapper >::RedBlackTree(
                 throw;
             }
             n = n->right;
-        }else if( o->parent ){
+        }else if( o->getParent() ){
             //no children nodes left to copy, move back up
-            o = o->parent;
-            n = n->parent;
+            o = o->getParent();
+            n = n->getParent();
         }else{
             //no children nodes left to copy and we are root
             //therefore finished
@@ -466,7 +504,7 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::clear( )
         else if( n->right ) n = n->right;
         else{
             //delete it when all children gone
-            if( !n->parent ){ 
+            if( !n->getParent() ){ 
                 //if no parent then root, therefore finished
                 mem.destroy( n );
                 mem.deallocate( n, 1 );
@@ -476,10 +514,10 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::clear( )
                 mLast = 0;
                 return; 
             }
-            if( n == n->parent->left ) n->parent->left = 0;
-            else n->parent->right = 0;
+            if( n == n->getParent()->left ) n->getParent()->left = 0;
+            else n->getParent()->right = 0;
             Node* delme = n;
-            n = n->parent;
+            n = n->getParent();
             mem.destroy( delme );
             mem.deallocate( delme, 1 );
         }
@@ -497,7 +535,7 @@ RedBlackTree< Key, Compare, Allocator, ValueWrapper >::find(Key const& findMe)
     Node* notLT=0;
     
     while( n ){
-        if( cmp(findMe, keyGetter(n->value) ) ) n=n->left;
+        if( cmp(findMe, keyGetter(n->value) ) ) n = n->left;
         else{
             notLT=n;
             n=n->right;
@@ -582,10 +620,12 @@ RedBlackTree< Key, Compare, Allocator, ValueWrapper >::walkRight(Node* n) const
 {
     if( n->right){
         n = n->right;
-        while(n->left) n = n->left;
+        while( n->left ) n = n->left;
     }else{
-        while(n->parent && (n == n->parent->right) ) n = n->parent;
-        n = n->parent;
+        while( n->getParent() && (n == n->getParent()->right) ){
+            n = n->getParent();
+        }
+        n = n->getParent();
     }
     return n;
 }
@@ -597,12 +637,14 @@ template< class Key, class Compare, class Allocator, class ValueWrapper >
 RedBlackTree< Key, Compare, Allocator, ValueWrapper >::Node*
 RedBlackTree< Key, Compare, Allocator, ValueWrapper >::walkLeft(Node* n) const
 {
-    if( n->left){
+    if( n->left ){
         n = n->left;
-        while(n->right) n = n->right;
+        while( n->right ) n = n->right;
     }else{
-        while(n->parent && (n == n->parent->left) ) n = n->parent;
-        n = n->parent;
+        while( n->getParent() && (n == n->getParent()->left) ){
+            n = n->getParent();
+        }
+        n = n->getParent();
     }
     return n;
 }
@@ -616,8 +658,8 @@ int RedBlackTree< Key, Compare, Allocator, ValueWrapper >::blackHeight(iterator 
     Node* n = i.getNodePtr();
     int c = 0;
     while(n){
-        if( n->colour==Node::black ) c++;
-        n = n->parent;
+        if( n->isBlack() ) c++;
+        n = n->getParent();
     }
     return c;
 }
@@ -632,7 +674,7 @@ int RedBlackTree< Key, Compare, Allocator, ValueWrapper >::height(iterator i)
     int c = 0;
     while(n){
         c++;
-        n = n->parent;
+        n = n->getParent();
     }
     return c;
 }
@@ -669,35 +711,35 @@ void RedBlackTree<Key, Compare, Allocator, ValueWrapper>::insBalTransform(Node* 
      * 2. our parent is the root (therefore must be black)
      * 3. our parent is black (no red-red problem any more)
      */
-        if( inserted->parent == 0 ||
-            inserted->parent->parent == 0 ||
-            inserted->parent->colour == Node::black )
+        if( inserted->getParent() == 0 ||
+            inserted->getParent()->getParent() == 0 ||
+            inserted->getParent()->isBlack() )
             return;
 
     /* so at this point parent must also be red, and grandparent must be black
      * therefore our sibling must be black (our children are black by definition)
      * leaving two main cases : our uncle can black or red
      */
-        Node* parent = inserted->parent;
-        Node* grandparent = inserted->parent->parent;
+        Node* parent = inserted->getParent();
+        Node* grandparent = inserted->getParent()->getParent();
         Node* uncle;
         //find uncle
         if( parent == grandparent->left ) uncle = grandparent->right;
         else uncle = grandparent->left;
 
-        if( uncle && (uncle->colour == Node::red) ){    // main case a: red uncle
+        if( uncle && (uncle->isRed()) ){    // main case a: red uncle
             // now we propergate grandparents blackness between parent and uncle
             // (without need to rotate)
-            grandparent->colour = Node::red;
-            parent->colour = Node::black;
-            uncle->colour = Node::black;
-            mRoot->colour = Node::black;    //just in case grandparent was root
-            inserted = grandparent;         //prepare to propergate red-red up tree
-            //the execusion flow now jumps back to the for loop instead
-            //of recursive insBalTransform( inserted );
-        }else{ //main case b:  black uncle
+            grandparent->setRed();
+            parent->setBlack();
+            uncle->setBlack();
+            mRoot->setBlack();      // just in case grandparent was root
+            inserted = grandparent; // prepare to propergate red-red up tree
+            // the execusion flow now jumps back to the for loop instead
+            // of recursive insBalTransform( inserted );
+        }else{ // main case b:  black uncle
             Node *x,*y,*z,*b,*c;
-            //case 1
+            // case 1
             if( (inserted == parent->left) && (parent == grandparent->left) ){
                 x = inserted;
                 y = parent;
@@ -733,33 +775,33 @@ void RedBlackTree<Key, Compare, Allocator, ValueWrapper>::insBalTransform(Node* 
             //recolour - can use this order becase all leafs a,b,c,d must
             //be black (uncle is black)
             //this will stop red-red violation from propergating
-            y->colour = Node::black;
-            x->colour = Node::red;
-            z->colour = Node::red;
+            y->setBlack();
+            x->setRed();
+            z->setRed();
             
             //transform to balanced structure
-            if( grandparent==mRoot ){
+            if( grandparent == mRoot ){
                 mRoot = y;
-                y->parent = 0;
+                y->setParent( 0 );
             }else{
-                if (grandparent->parent->left == grandparent){
-                    grandparent->parent->left = y;
+                if (grandparent->getParent()->left == grandparent){
+                    grandparent->getParent()->left = y;
                 }else{ //grandparent is righty
-                    grandparent->parent->right = y;
+                    grandparent->getParent()->right = y;
                 }
-                y->parent = grandparent->parent;
+                y->setParent( grandparent->getParent() );
             }
             
             y->left = x;
             y->right = z;
-            x->parent = y;
-            z->parent = y;
+            x->setParent( y );
+            z->setParent( y );
             x->right = b;
             z->left = c;
-            if(b) b->parent = x;
-            if(c) c->parent = z;
-            //a and d are always already linked to the right parent
-            //in this case we have fixed the red-red violation so finish
+            if( b ) b->setParent( x );
+            if( c ) c->setParent( z );
+            // a and d are always already linked to the right parent
+            // in this case we have fixed the red-red violation so finish
             return;
         }//end main case uncle black
     }//end for( ever )
@@ -797,7 +839,7 @@ bool RedBlackTree< Key, Compare, Allocator, ValueWrapper >::_Sane()
         mError = 20;
         return false;
     }
-    if( mRoot->colour != Node::black ){
+    if( mRoot->isRed() ){
         mError = 25;
         return false;           //root should always be black
     }
@@ -813,19 +855,19 @@ bool RedBlackTree< Key, Compare, Allocator, ValueWrapper >::_Sane()
             mError = 40;                //circular links:
             return false;               //iterating didn't advance
         }
-        if( (n->colour == Node::red) &&
-            (n->parent) &&
-            (n->parent->colour == Node::red) ){
+        if( n->isRed() &&
+            n->getParent() &&
+            n->getParent()->isRed() ){
             mError = 50;
             return false;               //red-red error
         }
-        if( (n->parent) &&
-            (n->parent->left != n) &&
-            (n->parent->right != n) ){
+        if( n->getParent() &&
+            (n->getParent()->left != n) &&
+            (n->getParent()->right != n) ){
             mError = 60;
             return false;               //links broken
         }
-        if( (!n->parent) && (mRoot !=n) ){
+        if( !n->getParent() && (mRoot != n) ){
             mError = 70;
             return false;              //links broken
         }
@@ -835,7 +877,7 @@ bool RedBlackTree< Key, Compare, Allocator, ValueWrapper >::_Sane()
             //? not sure this works as iterating will get stuck before
             //detection ?
         }
-        if( !n->parent && n!=mRoot){
+        if( !n->getParent() && n!=mRoot){
             mError = 90;
             return false;               //no parent but not root
         }
@@ -903,7 +945,7 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::erase(iterator it)
     Node* child;    //(re)moved endnode child
     Node* parent;   // parent of (re)moved endnode 
     bool lefty;     //true if (re)moved endnode was left child
-    Node::chroma colour;    //(re)moved endnode colour
+    Node::Chroma colour;    //(re)moved endnode colour
     
     mSize--;
     
@@ -919,44 +961,44 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::erase(iterator it)
     //if not end node swap for predecessor
     if( delme->left && delme->right){
         Node* predecessor = walkLeft(delme);
-        colour = predecessor->colour;
+        colour = predecessor->getColour();
         child = predecessor->left;  //predecessor can't have a right child
-        if( predecessor == predecessor->parent->left ) lefty = true;
+        if( predecessor == predecessor->getParent()->left ) lefty = true;
         else lefty = false;
         //fix up parent's link 
         if( delme == mRoot )
             mRoot = predecessor;
-        else if( delme == delme->parent->left ){
-            delme->parent->left = predecessor;
+        else if( delme == delme->getParent()->left ){
+            delme->getParent()->left = predecessor;
         }else{
-            delme->parent->right = predecessor;
+            delme->getParent()->right = predecessor;
         }
         //if delme is one level above predecessor we have to be
         //careful linking left as it could create a circular link
         //and a link to the deleted item
         if(predecessor != delme->left){
             //fix up chidren's link
-            delme->left->parent = predecessor;
+            delme->left->setParent( predecessor );
             //fix predecessors link
             predecessor->left = delme->left;
-            parent = predecessor->parent;
+            parent = predecessor->getParent();
         }else{ //predecessor is erased node's child
             parent = predecessor;
             //leave old left child links intact
         }
         //common bits
         //fix childrens links
-        delme->right->parent = predecessor;
+        delme->right->setParent( predecessor );
         //fix predecessor's links
-        predecessor->colour = delme->colour;
-        predecessor->parent = delme->parent;
+        predecessor->setColour( delme->getColour() );
+        predecessor->setParent( delme->getParent() );
         predecessor->right = delme->right;
     }
     else{ //end node
         if( delme->left ) child = delme->left;
         else child = delme->right;
-        parent = delme->parent;
-        colour = delme->colour;
+        parent = delme->getParent();
+        colour = delme->getColour();
         if( parent && (delme == parent->left) ) lefty = true;
         else lefty = false;
     }
@@ -969,8 +1011,8 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::erase(iterator it)
         //root with up to 1 child
         if( child ){
             mRoot = child;
-            mRoot->parent = 0;
-            mRoot->colour = Node::black;
+            mRoot->setParent( 0 );
+            mRoot->setBlack();
         }else{
             mRoot = 0;
         }
@@ -985,19 +1027,18 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::erase(iterator it)
         //it has to be red and we can fix up the black height easily
         if( lefty ){
             parent->left = child;
-            child->parent = parent;
         }else{ //righty
             parent->right = child;
-            child->parent = parent;
         }
-        child->colour = Node::black;
+        child->setParent( parent );
+        child->setBlack();
     }else{
         //black node with no children, 
         if( lefty ) parent->left = 0;
         else parent->right = 0;
         //(re)moving this will cause black height problem
         //do some operations to keep rb tree valid
-        doubleBlackTransform(parent,lefty);
+        doubleBlackTransform( parent,lefty );
     }
     
     return;
@@ -1025,9 +1066,9 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform
             sibling = parent->left;
         }
         
-        if( sibling->colour == Node::black ){
-            if( ( sibling->right && (sibling->right->colour == Node::red) ) ||
-                ( sibling->left && (sibling->left->colour == Node::red) ) ){
+        if( sibling->isBlack() ){
+            if( ( sibling->right && sibling->right->isRed() ) ||
+                ( sibling->left && sibling->left->isRed() ) ){
         //main case 1 sibling black, at least one nephew red
         //we can fix this case
         /*
@@ -1050,7 +1091,7 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform
          * where double black goes black & new root takes old root colour
          * note nodes a,b,c may be null (leafs)
          */
-                if( sibling->right && (sibling->right->colour == Node::red) ){
+                if( sibling->right && sibling->right->isRed() ){
                     if( lefty ){        // case 1 c
                         x = parent;
                         y = sibling;
@@ -1080,27 +1121,27 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform
                     }
                 }
                 // finish off case 1 by relinking to correct sturcture
-                y->parent = parent->parent;
+                y->setParent( parent->getParent() );
                 if( parent == mRoot ) mRoot = y;
                 else{    //link grandparent back to y;
-                    if( parent == parent->parent->left ) 
-                        parent->parent->left = y;
-                    else parent->parent->right = y;
+                    if( parent == parent->getParent()->left ) 
+                        parent->getParent()->left = y;
+                    else parent->getParent()->right = y;
                 }
-                y->colour = parent->colour;
+                y->setColour( parent->getColour() );
                 y->left = x;
                 y->right = z;
-                x->parent = y;
-                x->colour = Node::black;
+                x->setParent( y );
+                x->setBlack();
                 x->right = b;       // x->left is unchanged as a
-                if( b ) b->parent = x;
-                z->parent = y;
-                z->colour = Node::black;
+                if( b ) b->setParent( x );
+                z->setParent( y );
+                z->setBlack();
                 z->left = c;        // z->right is unchanged as d
-                if( c ) c->parent = z;
+                if( c ) c->setParent( z );
                 return;
             }else{  //nephews both black
-                if( parent->colour == Node::red){
+                if( parent->isRed() ){
         //main case 2: sibling black, two black nephews, parent red
         //we can fix this case
         /*
@@ -1119,8 +1160,8 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform
          *  a(b) b(b)                b(b)   d(b)
          *
          */
-                    parent->colour = Node::black;
-                    sibling->colour = Node::red;
+                    parent->setBlack();
+                    sibling->setRed();
                     return;
                 }else{ //parent black
         //main case 3: sibling black, two black nephews, parent black
@@ -1146,12 +1187,12 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform
          * (higher order special cases may be possible eg node a has two 
          * red children but probably not worth the extra code to check?)
          */
-                    sibling->colour = Node::red;
+                    sibling->setRed();
                     if( parent == mRoot ){
-                        parent->colour = Node::black;
+                        parent->setBlack();
                         return;
                     }
-                    Node* grandparent = parent->parent;
+                    Node* grandparent = parent->getParent();
                     if( parent == grandparent->left) lefty = true;
                     else lefty = false;
                     //loop to top of doubleBlackTransform with new parent
@@ -1186,16 +1227,16 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform
             //common bits
             if( parent == mRoot ){
                 mRoot = sibling;
-                sibling->parent = 0;
-            }else if ( parent == parent->parent->left ){
-                parent->parent->left = sibling;
-                sibling->parent = parent->parent;
+                sibling->setParent( 0 );
+            }else if ( parent == parent->getParent()->left ){
+                parent->getParent()->left = sibling;
+                sibling->setParent( parent->getParent() );
             }else{//parent is a righty
-                parent->parent->right = sibling;
-                sibling->parent = parent->parent;
+                parent->getParent()->right = sibling;
+                sibling->setParent( parent->getParent() );
             }
-            parent->colour = Node::red;
-            sibling->colour = Node::black;
+            parent->setRed();
+            sibling->setBlack();
             
             if( lefty ){
                 //case b
@@ -1203,8 +1244,8 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform
                 c = sibling->left;
                 z = sibling;
                 x->right = c;      
-                c->parent = x;
-                x->parent = z;
+                c->setParent( x );
+                x->setParent( z );
                 z->left = x;
                 //a & d stay linked to the same nodes
             }else{  //righty
@@ -1213,8 +1254,8 @@ void RedBlackTree< Key, Compare, Allocator, ValueWrapper >::doubleBlackTransform
                 b = sibling->right;
                 x = sibling;
                 z->left = b;
-                b->parent = z;
-                z->parent = x;
+                b->setParent( z );
+                z->setParent( x );
                 x->right = z;
                 //a & d stay linked to the same nodes
             }
