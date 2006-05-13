@@ -1320,7 +1320,8 @@ local void CheckBitfieldType( TYPEPTR typ )
     switch( typ->decl_type ) {
     case TYPE_INT:
     case TYPE_UINT:
-        /* ANSI C only allows int and unsigned [int] */
+    case TYPE_BOOL:
+        /* ANSI C only allows int and unsigned [int]; C99 adds _Bool */
         return;
     case TYPE_CHAR:
     case TYPE_UCHAR:
@@ -1334,11 +1335,6 @@ local void CheckBitfieldType( TYPEPTR typ )
             return;
         }
         break;
-    case TYPE_BOOL:
-        if( CompFlags.c99_extensions ) {
-	    return;
-	}
-	break;
     default:
         break;
     }
