@@ -28,6 +28,8 @@ opt_init21  = -za99
 opt_init22  = -za99
 opt_opt09 = -za
 opt_opt41 = -ot -ol+
+opt_opt45 = -za99
+opt_opt46 = -za99
 opt_pack04 = -wx
 opt_pch01 = -fhq
 opt_pch02 = -fhq
@@ -173,6 +175,8 @@ positive_tests = &
     opt42.$(exe) &
     opt43.$(exe) &
     opt44.$(exe) &
+    opt45.$(exe) &
+    opt46.$(exe) &
     pack01.$(exe) &
     pack02.$(exe) &
     pack03.$(exe) &

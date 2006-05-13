@@ -1334,6 +1334,11 @@ local void CheckBitfieldType( TYPEPTR typ )
             return;
         }
         break;
+    case TYPE_BOOL:
+        if( CompFlags.c99_extensions ) {
+	    return;
+	}
+	break;
     default:
         break;
     }

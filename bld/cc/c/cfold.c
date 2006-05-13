@@ -32,6 +32,7 @@
 #include "cvars.h"
 #include "i64.h"
 
+static bool IsConstantZero( TREEPTR tree );
 
 uint_32 DoOp32( uint_32 left, opr_code opr, uint_32 right, bool sign )
 {
@@ -818,13 +819,7 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
         val64 = LongValue64( leaf );
         leaf->op.ulong64_value = val64;
     } else if( newtyp == TYPE_BOOL ) {
-        if( oldtyp == TYPE_LONG64 || oldtyp == TYPE_ULONG64 ) {
-            val64 = LongValue64( leaf );
-            leaf->op.ulong_value = U64Test( &val64 );
-        } else {
-            val32 = LongValue( leaf );
-            leaf->op.ulong_value = val32 ? 1 : 0;
-        }
+	leaf->op.ulong_value = IsConstantZero( leaf ) ? 0 : 1;
         newtyp = TYPE_UCHAR;
     } else {
         val32 = LongValue( leaf );
@@ -925,7 +920,7 @@ static void FoldQuestionTree( TREEPTR tree )
           tree->op.opr = OPR_PUSHSYM;
           ops &= ~OPFLAG_RVALUE;
         }
-    tree->op.flags = ops;
+	tree->op.flags = ops;
     }
 }
 
@@ -995,9 +990,25 @@ static bool FoldableTree( TREEPTR tree )
         break;
     case OPR_QUESTION:
         opnd = tree->left;
+	if( opnd->op.opr == OPR_ADDROF
+	    && ( opnd->right->op.opr == OPR_PUSHADDR
+	         || opnd->right->op.opr == OPR_PUSHSYM ) ) {
+	    SYM_ENTRY sym;
+
+	    SymGet( &sym, opnd->right->op.sym_handle );
+	    if ( sym.stg_class != SC_AUTO && sym.stg_class != SC_REGISTER ) {
+		/* &(static object) is known to be non-zero */
+		/* replace it by a 1 */
+		FreeExprNode( opnd->right );
+		FreeExprNode( opnd );
+		tree->left = UIntLeaf( 1 );
+		opnd = tree->left;
+	    }
+	}
         if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
             FoldQuestionTree( tree );
         }
+
         break;
     case OPR_ADDROF:                    // look for offsetof() pattern
         offset = 0;
