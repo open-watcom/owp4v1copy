@@ -24,7 +24,7 @@
 
 :: C++ programs should use the built in bool type.
 #ifndef __cplusplus
-#define bool  char /* Should really be _Bool. Not currently implemented. */
+#define bool _Bool
 #define true  1
 #define false 0
 #endif

@@ -22,7 +22,7 @@ notes on the estimated effort required to bring them to C99 conformance:
     setjmp.h    - Needs review, no changes expected
     signal.h    - Needs review, no changes expected
     stdarg.h    - Needs review, C99 va_copy added, likely conforming.
-    stdbool.h   - Currently uses char for bool. Update when _Bool available
+    stdbool.h   - C99 conforming
     stddef.h    - Needs review, no changes expected
     stdint.h    - C99 conforming
     stdio.h     - Needs thorough review, but significant changes not expected
