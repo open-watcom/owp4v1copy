@@ -11,12 +11,18 @@ inc_dirs = -I"../h"
 
 util_lib = ../lib/$(host_os)$(host_cpu)/util.lib
 
-all : cmp.exe      &
+all : cat.exe      &
+      cmp.exe      &
       compress.exe &
       false.exe    &
+      sleep.exe    &
       tee.exe      &
       true.exe     &
+      wc.exe       &
       which.exe
+
+cat.exe : cat.obj $(util_lib)
+        $(cl) $(clflags) $<
 
 cmp.exe : cmp.obj $(util_lib)
         $(cl) $(clflags) $<
@@ -30,7 +36,13 @@ true.exe : true.obj
 false.exe : false.obj
         $(cl) $(clflags) $<
 
+sleep.exe : sleep.obj $(util_lib)
+        $(cl) $(clflags) $<
+
 tee.exe : tee.obj $(util_lib)
+        $(cl) $(clflags) $<
+
+wc.exe : wc.obj $(util_lib)
         $(cl) $(clflags) $<
 
 which.exe : which.obj $(util_lib)
