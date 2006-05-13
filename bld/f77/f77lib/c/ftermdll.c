@@ -36,8 +36,8 @@
 extern  void            __FiniFThreadProcessing(void);
 
 
-void            __FTermDLL() {
-//============================
+void            __FTermDLL( void ) {
+//==================================
 
 #if defined( __NT__ )
     {

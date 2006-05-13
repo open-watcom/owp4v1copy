@@ -39,6 +39,7 @@
 #include "fthread.h"
 #include "rtinit.h"
 #include "errrtns.h"
+#include "_defwin.h"    /* for _WindowsStdout() declaration */
 
 #include <stdlib.h>
 
@@ -116,8 +117,6 @@ unsigned        RTSysInit( void ) {
         #define INCL_DOSPROCESS
         #include <os2.h>
 
-        extern unsigned (*_WindowsStdout)();
-
         TIB     *ptib;
         PIB     *ppib;
 
@@ -132,8 +131,6 @@ unsigned        RTSysInit( void ) {
     }
 #elif defined( __NT__ )
     {
-        extern unsigned (*_WindowsStdout)( void );
-
         if( _WindowsStdout != 0 ) {
             __FAppType = FAPP_DEFAULT_GUI;
         }

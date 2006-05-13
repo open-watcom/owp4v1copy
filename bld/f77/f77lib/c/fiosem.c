@@ -86,8 +86,8 @@ static  _FTID           __fio_owner = { 0 };
 static  int             __fio_count = { 0 };
 
 
-void    __AccessFIO() {
-//=====================
+void    __AccessFIO( void ) {
+//===========================
 
     _FTID       tid;
 
@@ -100,8 +100,8 @@ void    __AccessFIO() {
 }
 
 
-void    __ReleaseFIO() {
-//======================
+void    __ReleaseFIO( void ) {
+//============================
 
     --__fio_count;
     if( __fio_count == 0 ) {
@@ -111,8 +111,8 @@ void    __ReleaseFIO() {
 }
 
 
-void    __PartialReleaseFIO() {
-//=============================
+void    __PartialReleaseFIO( void ) {
+//===================================
 
     --__fio_count;
 }

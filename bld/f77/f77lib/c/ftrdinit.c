@@ -38,8 +38,8 @@
 #endif
 
 
-unsigned        __fthrd_initialize() {
-//====================================
+unsigned        __fthrd_initialize( void ) {
+//==========================================
 
     return( 1 );
 }

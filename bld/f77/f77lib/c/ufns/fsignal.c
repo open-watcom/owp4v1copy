@@ -45,8 +45,9 @@
 
 extern  void                    __MaskDefaultFPE(void);
 
+typedef void (*fsig_func)( intstar4 );
 
-void    (* fsignal( intstar4 xcpt, void (* handler)() ) )() {
+fsig_func   fsignal( intstar4 xcpt, fsig_func handler ) {
 //===========================================================
 
 #if defined( __DOS__ )
@@ -55,9 +56,9 @@ void    (* fsignal( intstar4 xcpt, void (* handler)() ) )() {
 
     if( xcpt == SIGBREAK ) {
         {
-            extern      void (* __UserBreakHandler)();
+            extern      fsig_func __UserBreakHandler;
 
-            void        (* prev_Break)();
+            fsig_func        prev_Break;
 
             prev_Break = __UserBreakHandler;
             __UserBreakHandler = handler;
@@ -71,9 +72,9 @@ void    (* fsignal( intstar4 xcpt, void (* handler)() ) )() {
 #elif defined( __DOS__ ) || defined( __WINDOWS__ )
     if( xcpt == SIGIOVFL ) {
         {
-            extern      void (* __UserIOvFlHandler)();
+            extern      fsig_func __UserIOvFlHandler;
 
-            void        (* prev_IOvFl)();
+            fsig_func   prev_IOvFl;
 
             prev_IOvFl = __UserIOvFlHandler;
             __UserIOvFlHandler = handler;
@@ -82,9 +83,9 @@ void    (* fsignal( intstar4 xcpt, void (* handler)() ) )() {
     }
     if( xcpt == SIGIDIVZ ) {
         {
-            extern      void (* __UserIDivZHandler)();
+            extern      fsig_func __UserIDivZHandler;
 
-            void        (* prev_IDivZ)();
+            fsig_func   prev_IDivZ;
 
             prev_IDivZ = __UserIDivZHandler;
             __UserIDivZHandler = handler;
@@ -94,12 +95,12 @@ void    (* fsignal( intstar4 xcpt, void (* handler)() ) )() {
 #endif
 
     if( xcpt == SIGFPE ) {
-        if( handler == SIG_IGN ) {
+        if( handler == (fsig_func) SIG_IGN ) {
             _control87( ~0, MCW_EM );
-        } else if( handler == SIG_DFL ) {
+        } else if( handler == (fsig_func) SIG_DFL ) {
             __MaskDefaultFPE();
         }
     }
-    handler = signal( xcpt, handler );
+    handler = (fsig_func) signal( xcpt, (__sig_func) handler );
     return( handler );
 }

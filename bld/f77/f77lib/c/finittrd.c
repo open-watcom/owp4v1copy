@@ -37,8 +37,8 @@
 #include "ftnstd.h"
 
 
-unsigned        __FInitThrd() {
-//=============================
+unsigned        __FInitThrd( void ) {
+//===================================
 
     return( 1 );
 }

@@ -42,8 +42,8 @@ extern  int             ___Argc;        // argument count
 extern  char            **___Argv;      // argument vector
 
 
-intstar4        fortran IARGC() {
-//===============================
+intstar4        fortran IARGC( void ) {
+//=====================================
 
     return( ___Argc );
 }

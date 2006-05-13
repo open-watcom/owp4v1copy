@@ -36,8 +36,8 @@
 
 #include "rtinit.h"
 
-extern void     __InitBeginThread();
-extern void     __FiniBeginThread();
+extern void     __InitBeginThread(void);
+extern void     __FiniBeginThread(void);
 
 AXI( __InitBeginThread, INIT_PRIORITY_THREAD );
 AYI( __FiniBeginThread, INIT_PRIORITY_LIBRARY );

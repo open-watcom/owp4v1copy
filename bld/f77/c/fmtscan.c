@@ -51,7 +51,7 @@ extern  void            FEmNum(int);
 
 typedef struct f_procs {
     byte        code;
-    void        (*routine)();
+    void        (*routine)(void);
 } f_procs;
 
 

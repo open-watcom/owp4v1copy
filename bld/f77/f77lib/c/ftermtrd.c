@@ -37,7 +37,7 @@
 #include "ftnstd.h"
 
 
-void            __FTermThrd() {
-//=============================
+void            __FTermThrd( void ) {
+//===================================
 
 }

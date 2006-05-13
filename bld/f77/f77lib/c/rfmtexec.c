@@ -312,8 +312,8 @@ static  void    R_FED( uint rep, char dummy2 ) {
 }
 
 
-static  void    R_FEQ( uint rep ) {
-//=================================
+static  void    R_FEQ( uint rep, char dummy2 ) {
+//==============================================
 
     for(;;) {
         if( IOCB->typ == PT_NOTYPE ) {

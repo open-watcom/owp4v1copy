@@ -56,8 +56,8 @@ static bool             Init = FALSE;   // have we initialized it to ASTACKLOW
 
 
 // Do not switch stacks unless we have to.
-static  void    __NullSwitchStackLow() {}
-void            (*__SwitchStkLow)() = &__NullSwitchStackLow;
+static  void    __NullSwitchStackLow(void) {}
+void            (*__SwitchStkLow)(void) = &__NullSwitchStackLow;
 
 
 static void     SwitchThreadStackLow( void ) {

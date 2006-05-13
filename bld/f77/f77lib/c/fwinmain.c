@@ -43,8 +43,8 @@
 
 #include <stdlib.h>
 
-extern  int             Spawn(void (*)());
-extern  void            RTSysInit(void);        // see comments in RTMAIN.C
+extern  int             Spawn(void (*)( void ));
+extern  void            RTSysInit( void );        // see comments in RTMAIN.C
 
 
 #ifdef __WINDOWS__
@@ -67,7 +67,7 @@ static  int             CmdShow;
 static  HANDLE          PgmHandle;
 
 
-static  void    CallFWINMAIN() {
+static  void    CallFWINMAIN( void ) {
 //==============================
 
     RetCode = FWINMAIN( PgmHandle, PrevHandle, CmdLine, CmdShow );

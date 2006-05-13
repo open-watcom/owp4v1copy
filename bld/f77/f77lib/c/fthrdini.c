@@ -70,8 +70,8 @@ extern  void            __PartialReleaseFIO(void);
 extern  void            __InitMultiThreadIO(void);
 
 
-unsigned        __InitFThreadProcessing() {
-//=========================================
+unsigned        __InitFThreadProcessing( void ) {
+//===============================================
 
 // Setup for multiple threads.
 
@@ -92,8 +92,8 @@ unsigned        __InitFThreadProcessing() {
 }
 
 
-void            __FiniFThreadProcessing() {
-//=========================================
+void            __FiniFThreadProcessing( void ) {
+//===============================================
 
 #if defined( __OS2__ )
     DosCloseMutexSem( __fio_sem );
