@@ -284,12 +284,16 @@ typedef unsigned_32     comp_options;
 
 #define MAX_OPTIONS     64
 
+
+struct opt_entry;
+
 typedef struct opt_entry {
     char        *option;        // pointer to option name
     uint        description;    // description id
     unsigned_8  flags;          // option flags
 #if !defined( __WFL__ )
     unsigned_32 value;          // value of option
-    void        (*proc_rtn)();  // option processing routine
+    void        (*proc_rtnstr)(struct opt_entry *, char *);  // option processing for strin options
+    void        (*proc_rtnbool)(struct opt_entry *, bool);   // for negatable options
 #endif
 } opt_entry;

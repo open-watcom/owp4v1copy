@@ -413,7 +413,7 @@ static  void    KorOption( opt_entry *optn, bool negated ) {
 }
 
 
-#define opt( name, bit, flags, action, desc ) name, desc, flags, bit, action
+#define opt( name, bit, flags, actionstr, actionneg, desc ) name, desc, flags, bit, actionstr, actionneg
 
 #include "optinfo.h"
 
@@ -488,16 +488,16 @@ void    CmdOption( char *buff ) {
                 Warning( CO_BAD_NO, optn->option );
             }
             if( GetValue( optn, SkipOpt( buff ), &value ) ) {
-                optn->proc_rtn( optn, value );
+                optn->proc_rtnstr( optn, value );
             }
         } else {
-            optn->proc_rtn( optn, negated );
+            optn->proc_rtnbool( optn, negated );
         }
     }
 }
 
 
-void    SrcOption() {
+void    SrcOption( void ) {
 //===================
 
 // Process an option that can appear only in the source input stream.
@@ -604,9 +604,9 @@ static  void    ScanOpts( char *buff ) {
                 }
                 if( !GetValue( optn, buff, &value ) ) continue;
                 buff = SkipToken( value );
-                optn->proc_rtn( optn, value );
+                optn->proc_rtnstr( optn, value );
             } else {
-                optn->proc_rtn( optn, negated );
+                optn->proc_rtnbool( optn, negated );
             }
         }
     }
@@ -649,7 +649,7 @@ static  char    *GetOptName( char *buffer, char *opt_name ) {
 }
 
 
-void    PrtOptions() {
+void    PrtOptions( void ) {
 //====================
 
 // Display current options in listing file.

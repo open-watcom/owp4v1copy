@@ -842,7 +842,7 @@ void    TOut( char *msg ) {
 }
 
 
-#define opt( name, bit, flags, action, desc ) name, desc, flags
+#define opt( name, bit, flags, actionstr, actionneg, desc ) name, desc, flags
 
 #include "cpopt.h"
 #include "optinfo.h"
