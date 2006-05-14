@@ -55,8 +55,10 @@ void    GFEmEnd() {
 }
 
 
-void    GFEmCode( byte code ) {
+void    GFEmCode( int int_code ) {
 //=============================
+
+    byte code = int_code;           // needed to match signature
 
     if( ( code & REV_CODE ) == REV_CODE ) {
         code &= ~REV_CODE;

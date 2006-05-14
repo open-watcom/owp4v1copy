@@ -40,7 +40,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-extern  int             Spawn(void (*)());
+extern  int             Spawn(void (*)(void));
 extern  void            Suicide(void);
 extern  void            R_TrapInit(void);
 extern  void            R_TrapFini(void);
@@ -50,17 +50,17 @@ extern  unsigned        __InitFThreadProcessing(void);
 extern  void            __FiniFThreadProcessing(void);
 
 typedef struct {
-    void        (*rtn)();
+    void        (*rtn)(void *);
     void        *arglist;
 } thread_info;
 
-static  int             (*__BeginThread)();
-static  void            (*__EndThread)();
-static  int             (*__InitDataThread)();
+static  beginner        *__BeginThread;
+static  void            (*__EndThread)(void);
+static  int             (*__InitDataThread)(void *);
 static  bool            ThreadsInitialized;
 
 
-static  unsigned  InitFThreads() {
+static  unsigned  InitFThreads( void ) {
 //================================
 
     if( ThreadsInitialized ) return( 0 );
@@ -71,7 +71,7 @@ static  unsigned  InitFThreads() {
 }
 
 
-static  void    FiniFThreads() {
+static  void    FiniFThreads( void ) {
 //==============================
 
     if( ThreadsInitialized ) {
@@ -80,29 +80,30 @@ static  void    FiniFThreads() {
 }
 
 
-static void     FThreadInit() {
+static void     FThreadInit( void ) {
 //=============================
 
     R_TrapInit();
 }
 
 
-static void     FThreadFini() {
+static void     FThreadFini( void ) {
 //=============================
 
     R_TrapFini();
 }
 
 
-static  void    ThreadStarter() {
+static  void    ThreadStarter( void ) {
 //===============================
 
     __FTHREADDATAPTR->__rtn( __FTHREADDATAPTR->__arglist );
 }
 
 
-static  void    ThreadHelper( thread_info *ti ) {
+static  void    ThreadHelper( void *arg_ti ) {
 //===============================================
+    thread_info *ti = arg_ti;
 
     FThreadInit();
     __FTHREADDATAPTR->__rtn = ti->rtn;
@@ -114,18 +115,8 @@ static  void    ThreadHelper( thread_info *ti ) {
 }
 
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
-  #ifdef __NT__
-int FBeginThread( void (*rtn)(void *), unsigned stk_size, void *arglist ) {
-//=========================================================================
-  #else
 int FBeginThread( void (*rtn)(void *), void *stack, unsigned stk_size, void *arglist ) {
 //======================================================================================
-  #endif
-#else
-int FBeginThread( void (*rtn)(void *), void *stack, unsigned stk_size, void *arglist ) {
-//======================================================================================
-#endif
 
     thread_info *ti;
 
@@ -135,19 +126,11 @@ int FBeginThread( void (*rtn)(void *), void *stack, unsigned stk_size, void *arg
     ti->rtn = rtn;
     ti->arglist = arglist;
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
-  #ifdef __NT__
-    return( __BeginThread( ThreadHelper, stk_size, ti ) );
-  #else
     return( __BeginThread( ThreadHelper, stack, stk_size, ti ) );
-  #endif
-#else
-    return( __BeginThread( ThreadHelper, stack, stk_size, ti ) );
-#endif
 }
 
 
-void    FEndThread() {
+void    FEndThread( void ) {
 //====================
 
     Suicide();
@@ -181,14 +164,14 @@ int     fortran BEGINTHREAD( void (*rtn)(void *), unsigned long *stk_size ) {
 }
 
 
-void    fortran ENDTHREAD() {
+void    fortran ENDTHREAD( void ) {
 //===========================
 
     _endthread();
 }
 
 
-unsigned        fortran THREADID() {
+unsigned        fortran THREADID( void ) {
 //==================================
 
     return( *__threadid() );
@@ -199,14 +182,14 @@ unsigned        fortran THREADID() {
 // --------------------------------------------
 
 
-void    __FiniBeginThread() {
+void    __FiniBeginThread( void ) {
 //===========================
 
     FiniFThreads();
 }
 
 #pragma off (check_stack)
-void    __InitBeginThread() {
+void    __InitBeginThread( void ) {
 //===========================
 
     __BeginThread = &FBeginThread;

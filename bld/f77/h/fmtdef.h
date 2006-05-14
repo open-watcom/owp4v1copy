@@ -29,6 +29,8 @@
 *
 ****************************************************************************/
 
+#ifndef __FMTDEF_H_INCLUDED
+#define __FMTDEF_H_INCLUDED
 
 //
 // Format code structure definitions -- used at runtime
@@ -89,3 +91,4 @@ typedef union fmt_ptr {
     obj_ptr             cp;     // compile-time pointer
     char PGM            *rt;    // run-time pointer
 } fmt_ptr;
+#endif /* __FMTDEF_H_INCLUDED */

@@ -29,19 +29,16 @@
 *
 ****************************************************************************/
 
-#include "fmtdef.h"
-#include "fmttab.h"     /* For struct FmtElements */
+#ifndef __FMTTAB_H_INCLUDED
+#define __FMTTAB_H_INCLUDED
 
-gbl_defn char           PGM *Fmt_start;   // pointer to start of format string
-gbl_defn char           PGM *Fmt_charptr; // pointer to current format character
-gbl_defn char           PGM *Fmt_end;     // pointer to end of format string
-gbl_defn int            Fmt_paren_level;  // parenthesis count
-gbl_defn fmt_ptr        Fmt_revert;       // position to revert to if required
-gbl_defn int            Fmt_rep_spec;     // repeat specification count
+typedef struct {
+        void ( __FAR *FEMcode )(int);
+        void ( __FAR *FEMchar )(char *);
+        void ( __FAR *FEMnum )(int);
+        void ( __FAR *FEMbyte )(int);
+        void ( __FAR *FError )(int);
+        void ( __FAR *FExtension )(int);
+} FmtElements;
 
-gbl_defn const FmtElements * FmtEmStruct;
-                                          // pointer to run-time or compile-time
-                                          // struct of format code generation
-                                          // routines
-
-gbl_defn byte           Fmt_delimited;    // has format code been delimite
+#endif /* __FMTTAB_H_INCLUDED */

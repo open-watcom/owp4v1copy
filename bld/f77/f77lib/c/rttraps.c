@@ -80,14 +80,14 @@ typedef void            (*fsig_func)(intstar4);
          void           (* __UserIOvFlHandler)(intstar4) = { (fsig_func)SIG_DFL };
   extern byte           IntDivBy0;
          void           (* __UserIDivZHandler)(intstar4) = { (fsig_func)SIG_DFL };
-  static void           (_handler *ISave)();
-  static void           (_handler *ZSave)();
+  static void           (_handler *ISave)(void);
+  static void           (_handler *ZSave)(void);
 #endif
 
 #if defined( __DOS__ )
   extern byte           BreakVector;
          void           (* __UserBreakHandler)(intstar4) = { (fsig_func)SIG_DFL };
-  static void           (_handler *CBSave)();
+  static void           (_handler *CBSave)(void);
  #if defined( __386__ )
   static unsigned long  CBRealSave;
  #endif
@@ -110,7 +110,7 @@ typedef void            (*fsig_func)(intstar4);
 
   extern unsigned long _dos_getrealvect(int);
   extern void          _dos_setrealvect(int,unsigned long);
-  extern void          _dos_setvectp(int,void (interrupt far *)());
+  extern void          _dos_setvectp(int,void (interrupt far *)(void));
 #endif
 
 
@@ -146,8 +146,8 @@ static  void    BreakSignal( int sig ) {
 #endif
 
 #if defined( __DOS__ )
-static  void    _handler BreakHandler() {
-//=======================================
+static  void    _handler BreakHandler( void ) {
+//=============================================
 
     _enable();
     if( __UserBreakHandler != (fsig_func)SIG_DFL ) {
@@ -204,8 +204,8 @@ static  void    IOvFlSignal( int sig ) {
 
 #elif defined( __DOS__ ) || defined( __WINDOWS__ ) || defined( __OS2_286__ )
 
-static  void    _handler IDivZHandler() {
-//=======================================
+static  void    _handler IDivZHandler( void ) {
+//=============================================
 
  #if defined( __DOS__ ) || defined( __WINDOWS__ )
     _enable();
@@ -226,8 +226,8 @@ static  void    _handler IDivZHandler() {
     }
 }
 
-static  void    _handler IOvFlHandler() {
-//=======================================
+static  void    _handler IOvFlHandler( void ) {
+//=============================================
 
  #if defined( __DOS__ ) || defined( __WINDOWS__ )
     _enable();

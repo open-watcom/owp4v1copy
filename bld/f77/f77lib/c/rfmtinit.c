@@ -40,13 +40,14 @@
 #include "fmtdef.h"
 #include "fmtdat.h"
 #include "rtenv.h"
+#include "fmttab.h"
 
 extern  void            SetFmt(char PGM *);
 extern  void            R_FEmInit(void);
 extern  void            R_FEmEnd(void);
 extern  void            R_FDoSpec(void);
 
-extern  void            (* const __FAR RFmtTab[])( void );
+extern const FmtElements RFmtStruct;
 
 
 void    FmtAScan( char PGM *array, long int num_elts, int elt_size,
@@ -80,7 +81,7 @@ void    FmtScan( string *fmt, uint extend_format ) {
 static  void    FInit( string *fmt ) {
 //====================================
 
-    FmtEmTab = RFmtTab;
+    FmtEmStruct = &RFmtStruct;
     SetFmt( &FmtBuff[ 0 ] );
     IOCB->fmtlen = SCAN_STORAGE_SIZE;
     Fmt_charptr = fmt->strptr;

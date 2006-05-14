@@ -55,7 +55,7 @@ extern  void            RTSysInit(void);
 #include <win386.h>
 
 extern  int     PASCAL  DefaultWinMain(HINSTANCE,HINSTANCE,LPSTR,int,int(*)(int,char**));
-extern  void            FMAIN();
+extern  void            FMAIN(void);
 extern  int             main(int,char **);
 
 extern  char            __FAppType;

@@ -40,6 +40,7 @@
 #include "fmtdat.h"
 #include "format.h"
 #include "global.h"
+#include "fmttab.h"
 
 extern  void            GFEmEnd(void);
 extern  void            GFEmNum(int);
@@ -49,7 +50,7 @@ extern  void            R_FDoSpec(void);
 extern  void            StartFmt(cs_label);
 extern  void            EndFmt(void);
 
-extern  void            (* const __FAR CFmtTab[])();
+extern  const FmtElements CFmtStruct;
 
 
 void    FScan( int fmt_length, char *fmt_string, cs_label fmt_label ) {
@@ -75,7 +76,7 @@ static  void    FInit( int fmt_length, char *fmt_string ) {
     Fmt_paren_level = 0;
     Fmt_charptr = fmt_string;
     Fmt_delimited = NO_DELIM;
-    FmtEmTab = CFmtTab;
+    FmtEmStruct = &CFmtStruct;
 }
 
 

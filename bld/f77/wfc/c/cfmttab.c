@@ -35,6 +35,7 @@
 //
 
 #include "ftnstd.h"
+#include "fmttab.h"
 
 extern  void            GFEmCode(byte);
 extern  void            GFEmChar(char PGM *);
@@ -43,11 +44,12 @@ extern  void            GFEmByte(int);
 extern  void            FmtError(int);
 extern  void            FmtExtension(int);
 
-const void      (* const __FAR CFmtTab[])() = {
-        &GFEmCode,
+const FmtElements       CFmtStruct = {
+        (void (*)(int)) GFEmCode,           // FIXME!
         &GFEmChar,
         &GFEmNum,
         &GFEmByte,
         &FmtError,
         &FmtExtension
 };
+

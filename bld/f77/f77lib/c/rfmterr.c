@@ -47,7 +47,7 @@ void    _R_FError( int err_code ) {
 }
 
 
-void    _R_FExtension( void ) {
+void    _R_FExtension( int dummy ) {
 //=======================
 
 }

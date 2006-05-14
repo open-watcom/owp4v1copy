@@ -38,22 +38,13 @@
 #include "fmtdef.h"
 #include "fmtdat.h"
 
-enum {
-    FEMCODE,
-    FEMCHAR,
-    FEMNUM,
-    FEMBYTE,
-    FERROR,
-    FEXTEN
-};
-
 
 void    FEmCode( int code ) {
 //===========================
 
 // Emit a format code.
 
-    FmtEmTab[ FEMCODE ]( code );
+    FmtEmStruct->FEMcode( code );
 }
 
 
@@ -62,7 +53,7 @@ void    FEmChar( char PGM *ch ) {
 
 // Emit a character.
 
-    FmtEmTab[ FEMCHAR ]( ch );
+    FmtEmStruct->FEMchar( ch );
 }
 
 
@@ -71,7 +62,7 @@ void    FEmNum( int num ) {
 
 // Emit a specification number.
 
-    FmtEmTab[ FEMNUM ]( num );
+    FmtEmStruct->FEMnum( num );
 }
 
 
@@ -80,7 +71,7 @@ void    FEmByte( int num ) {
 
 // Emit a byte of information.
 
-    FmtEmTab[ FEMBYTE ]( num );
+    FmtEmStruct->FEMbyte( num );
 }
 
 
@@ -89,7 +80,7 @@ void    R_FError( int code ) {
 
 // Process a format error.
 
-    FmtEmTab[ FERROR ]( code );
+    FmtEmStruct->FError( code );
 }
 
 
@@ -98,5 +89,5 @@ void    R_FExtension( int code ) {
 
 // Process a format extension.
 
-    FmtEmTab[ FEXTEN ]( code );
+    FmtEmStruct->FExtension( code );
 }

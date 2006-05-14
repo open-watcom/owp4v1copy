@@ -35,19 +35,20 @@
 //
 
 #include "ftnstd.h"
+#include "fmttab.h"
 
 extern  void            R_FEmCode(int);
 extern  void            R_FEmChar(char PGM *);
 extern  void            R_FEmNum(int);
-extern  void            R_FEmByte(uint);
+extern  void            R_FEmByte(int);
 extern  void            _R_FError(int);
-extern  void            _R_FExtension(void);
+extern  void            _R_FExtension(int);
 
-void    (* const __FAR RFmtTab[])() = {
+const FmtElements       RFmtStruct = {
         &R_FEmCode,
         &R_FEmChar,
         &R_FEmNum,
         &R_FEmByte,
         &_R_FError,
         &_R_FExtension
-    };
+};

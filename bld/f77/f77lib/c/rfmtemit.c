@@ -92,8 +92,10 @@ void    R_FEmNum( int num ) {
 }
 
 
-void    R_FEmByte( uint num ) {
+void    R_FEmByte( int signed_num ) {
 //=============================
+
+    uint num = signed_num;	// needed to match signature
 
     CheckHole( sizeof( byte ) );
     if( num > 256 ) {
