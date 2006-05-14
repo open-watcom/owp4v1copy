@@ -125,7 +125,7 @@ _WCRTLINK extern int      bdos( int __dosfn, unsigned int __dx,
 :: extra 'register' is used to prevent C++ compiler from entering a parser
 :: disambiguation stage (i.e., it has a use, so don't delete it) AFS
 _WCRTLINK extern void     _chain_intr( register void
-                                      (_WCINTERRUPT _DOSFAR *__handler)() );
+                                      (_WCINTERRUPT _DOSFAR *__handler)(void) );
 #if defined(__NT__) || ( defined(__OS2__) && (defined(__386__)||defined(__PPC__)) )
 _WCRTLINK extern unsigned _dos_allocmem( unsigned __size, void **__storage );
 #else
@@ -160,7 +160,7 @@ _WCRTLINK extern unsigned _dos_getfileattr( const char *__path,
 _WCRTLINK extern unsigned _dos_getftime( int __handle, unsigned short *__date,
                                          unsigned short *__time );
 _WCRTLINK extern void     _dos_gettime( struct dostime_t *__time );
-_WCRTLINK extern void     (_WCINTERRUPT _DOSFAR *_dos_getvect( int __intnum ))();
+_WCRTLINK extern void     (_WCINTERRUPT _DOSFAR *_dos_getvect( int __intnum ))(void);
 _WCRTLINK extern void     _dos_keep( unsigned __retcode, unsigned __memsize );
 
 _WCRTLINK extern unsigned _dos_open( const char *__path, unsigned __mode,
@@ -178,7 +178,7 @@ _WCRTLINK extern unsigned _dos_setftime( int __handle, unsigned short __date,
                                          unsigned short __time );
 _WCRTLINK extern unsigned _dos_settime( struct dostime_t *__time );
 _WCRTLINK extern void     _dos_setvect( int __intnum, void
-                                       (_WCINTERRUPT _DOSFAR *__handler)() );
+                                       (_WCINTERRUPT _DOSFAR *__handler)(void) );
 _WCRTLINK extern unsigned _dos_write( int __handle, void const _DOSFAR *__buf,
                                       unsigned __count, unsigned *__bytes );
 _WCRTLINK extern int      dosexterr( struct _DOSERROR * );
