@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Optimize segment register usage and merge memory accesses.
 *
 ****************************************************************************/
 
@@ -40,6 +39,7 @@
 #include "funits.h"
 #include "model.h"
 
+
 extern  void            DoNothing(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  name            *DeAlias(name*);
@@ -51,16 +51,17 @@ extern  type_length     TypeClassSize[];
 
 static opcode_entry LDSES = { 0, 0, G_LDSES, 0, FU_NO };
 
-static  bool    AdjacentMem( name *s, name *r, type_class_def tipe ) {
-/********************************************************************/
 
+static  bool    AdjacentMem( name *s, name *r, type_class_def tipe )
+/******************************************************************/
+{
     name        *base_s;
     name        *base_r;
     int         locn_s;
     int         locn_r;
     int         stride;
 
-    stride = TypeClassSize[ tipe ];
+    stride = TypeClassSize[tipe];
     if( s->n.class != r->n.class ) return( FALSE );
     if( s->n.class == N_MEMORY ) {
         if( s->v.symbol != r->v.symbol ) return( FALSE );
@@ -85,9 +86,10 @@ static  bool    AdjacentMem( name *s, name *r, type_class_def tipe ) {
     return( FALSE );
 }
 
-static bool     MemMove( instruction *ins ) {
-/*******************************************/
 
+static bool     MemMove( instruction *ins )
+/*****************************************/
+{
     if( ins->head.opcode == OP_MOV ) {
         switch( ins->result->n.class ) {
         case N_TEMP:
@@ -101,9 +103,10 @@ static bool     MemMove( instruction *ins ) {
     return( FALSE );
 }
 
-static bool     OptMemMove( instruction *ins, instruction *next ) {
-/*****************************************************************/
 
+static bool     OptMemMove( instruction *ins, instruction *next )
+/***************************************************************/
+{
     unsigned_32         shift;
     unsigned_32         lo;
     unsigned_32         hi;
@@ -113,11 +116,11 @@ static bool     OptMemMove( instruction *ins, instruction *next ) {
 
     assert( MemMove( ins ) && MemMove( next ) );
     if( ins->type_class == next->type_class ) {
-        if(  ins->operands[ 0 ]->n.class == N_CONSTANT &&
-             ins->operands[ 0 ]->c.const_type == CONS_ABSOLUTE &&
-            next->operands[ 0 ]->n.class == N_CONSTANT &&
-            next->operands[ 0 ]->c.const_type == CONS_ABSOLUTE ) {
-            switch( TypeClassSize[ ins->type_class ] ) {
+        if(  ins->operands[0]->n.class == N_CONSTANT &&
+             ins->operands[0]->c.const_type == CONS_ABSOLUTE &&
+            next->operands[0]->n.class == N_CONSTANT &&
+            next->operands[0]->c.const_type == CONS_ABSOLUTE ) {
+            switch( TypeClassSize[ins->type_class] ) {
             case 1:
                 shift = 8;
                 result_type = U2;
@@ -140,12 +143,12 @@ static bool     OptMemMove( instruction *ins, instruction *next ) {
             if( shift ) {
                 result = NULL;
                 if( AdjacentMem( ins->result, next->result, ins->type_class ) ) {
-                    hi =  ins->operands[ 0 ]->c.int_value;
-                    lo = next->operands[ 0 ]->c.int_value;
+                    hi =  ins->operands[0]->c.int_value;
+                    lo = next->operands[0]->c.int_value;
                     result = next->result;
                 } else if( AdjacentMem( next->result, ins->result, ins->type_class ) ) {
-                    lo =  ins->operands[ 0 ]->c.int_value;
-                    hi = next->operands[ 0 ]->c.int_value;
+                    lo =  ins->operands[0]->c.int_value;
+                    hi = next->operands[0]->c.int_value;
                     result = ins->result;
                 } else {
                     return( FALSE );
@@ -153,7 +156,7 @@ static bool     OptMemMove( instruction *ins, instruction *next ) {
                 lo &= ( ( 1 << shift ) - 1 );
                 hi &= ( ( 1 << shift ) - 1 );
                 result_const = lo | ( hi << shift );
-                ins->operands[ 0 ] = AllocS32Const( result_const );
+                ins->operands[0] = AllocS32Const( result_const );
                 ins->type_class = result_type;
                 ins->result = result;
                 DoNothing( next );
@@ -166,9 +169,9 @@ static bool     OptMemMove( instruction *ins, instruction *next ) {
 
 #if _TARGET & _TARG_IAPX86
 
-static bool isPushX2( instruction *ins ) {
-/****************************************/
-
+static bool isPushX2( instruction *ins )
+/**************************************/
+{
     if( ins->head.opcode == OP_PUSH ) {
         switch( ins->type_class ) {
         case U2:
@@ -181,9 +184,10 @@ static bool isPushX2( instruction *ins ) {
     return( FALSE );
 }
 
-static bool isOpConstant( name *op ) {
-/************************************/
 
+static bool isOpConstant( name *op )
+/**********************************/
+{
     if( op->n.class == N_CONSTANT ) {
         if( op->c.const_type == CONS_ABSOLUTE ) {
             return( TRUE );
@@ -192,11 +196,12 @@ static bool isOpConstant( name *op ) {
     return( FALSE );
 }
 
-static bool OptPushDWORDConstant( instruction *ins, instruction *next ) {
-/***********************************************************************/
 
-    name *opi;
-    name *opn;
+static bool OptPushDWORDConstant( instruction *ins, instruction *next )
+/*********************************************************************/
+{
+    name    *opi;
+    name    *opn;
 
     assert( isPushX2( ins ) && isPushX2( next ) );
     opi = ins->operands[0];
@@ -224,11 +229,12 @@ static bool OptPushDWORDConstant( instruction *ins, instruction *next ) {
     return( TRUE );
 }
 
-static bool OptPushDWORDMemory( instruction *ins, instruction *next ) {
-/*********************************************************************/
 
+static bool OptPushDWORDMemory( instruction *ins, instruction *next )
+/*******************************************************************/
+{
     assert( isPushX2( ins ) && isPushX2( next ) );
-    if( AdjacentMem( ins->operands[ 0 ], next->operands[ 0 ], U2 ) ) {
+    if( AdjacentMem( ins->operands[0], next->operands[0], U2 ) ) {
         DoNothing( ins );
         next->type_class = I4;
         return( TRUE );
@@ -237,18 +243,19 @@ static bool OptPushDWORDMemory( instruction *ins, instruction *next ) {
 }
 #endif
 
-static  bool    NotByteMove( instruction *ins ) {
-/***********************************************/
 
+static  bool    NotByteMove( instruction *ins )
+/*********************************************/
+{
     if( ins->head.opcode != OP_MOV ) return( FALSE );
     if( ins->type_class == U1 || ins->type_class == I1 ) return( FALSE );
     return( TRUE );
 }
 
 
-static  bool    IsLESDS( instruction *ins, instruction *next ) {
-/**************************************************************/
-
+static  bool    IsLESDS( instruction *ins, instruction *next )
+/************************************************************/
+{
     if( ins->u.gen_table->generate != G_RM1
         && ins->u.gen_table->generate != G_MOVAM ) return( FALSE );
     if( ins->type_class != WD && ins->type_class != SW ) return( FALSE );
@@ -258,20 +265,20 @@ static  bool    IsLESDS( instruction *ins, instruction *next ) {
 
 
 static  void    CheckLDSES( instruction *seg, instruction *reg,
-                            bool seg_first ) {
-/********************************************/
-
+                            bool seg_first )
+/*************************************************************/
+{
     hw_reg_set  tmp;
 
     if( !HW_COvlap( seg->result->r.reg, HW_DS_ES_FS_GS ) ) return;
-    if( !AdjacentMem( seg->operands[ 0 ], reg->operands[ 0 ], U2 ) ) return;
-    if( seg->operands[ 0 ]->n.class == N_INDEXED ) {
+    if( !AdjacentMem( seg->operands[0], reg->operands[0], U2 ) ) return;
+    if( seg->operands[0]->n.class == N_INDEXED ) {
         // special case of using result of seg
         if( seg_first ) {
             // don't think we can get here - using one of DS|ES|FS|GS as index reg?!?
-            if( HW_Ovlap( reg->operands[ 0 ]->i.index->r.reg, seg->result->r.reg ) ) return;
+            if( HW_Ovlap( reg->operands[0]->i.index->r.reg, seg->result->r.reg ) ) return;
         } else {
-            if( HW_Ovlap( seg->operands[ 0 ]->i.index->r.reg, reg->result->r.reg ) ) return;
+            if( HW_Ovlap( seg->operands[0]->i.index->r.reg, reg->result->r.reg ) ) return;
         }
     }
     reg->u.gen_table = &LDSES;
@@ -282,9 +289,9 @@ static  void    CheckLDSES( instruction *seg, instruction *reg,
 }
 
 
-extern  void    OptSegs( void ) {
-/*************************/
-
+extern  void    OptSegs( void )
+/*****************************/
+{
     block       *blk;
     instruction *ins;
     instruction *next;
