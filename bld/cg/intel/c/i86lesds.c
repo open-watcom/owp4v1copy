@@ -45,6 +45,7 @@ extern  name            *AllocRegName(hw_reg_set);
 extern  name            *DeAlias(name*);
 extern  name            *AllocS32Const(signed_32);
 extern  void            FreeIns(instruction*);
+extern  bool            VolatileIns(instruction *);
 
 extern  block           *HeadBlock;
 extern  type_length     TypeClassSize[];
@@ -312,7 +313,8 @@ extern  void    OptSegs( void )
                         CheckLDSES( ins, next, TRUE );
                     }
                 }
-                if( MemMove( ins ) && MemMove( next ) ) {
+                if( MemMove( ins )  && !VolatileIns( ins )
+                 && MemMove( next ) && !VolatileIns( next ) ) {
                     // look for adjacent byte/word moves and combine them
                     if( OptMemMove( ins, next ) ) {
                         // tell ourselves to go around again in case
