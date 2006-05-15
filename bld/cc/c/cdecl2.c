@@ -522,7 +522,7 @@ new_var:
 local void AdjSymTypeNode( SYMPTR sym, type_modifiers decl_mod )
 {
     TYPEPTR     typ;
-    
+
     if( decl_mod ) {
         typ = sym->sym_type;
         if( typ->decl_type == TYPE_FUNCTION ) {
@@ -542,7 +542,7 @@ local void AdjSymTypeNode( SYMPTR sym, type_modifiers decl_mod )
             }
         } else {
             TYPEPTR     *xtyp;
-            
+
             xtyp = &sym->sym_type;
             while( ( typ->object != NULL ) && ( typ->decl_type == TYPE_POINTER ) ) {
                 xtyp = &typ->object;
@@ -1345,8 +1345,14 @@ static TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod )
         }
     } else {
         NextToken();    /* skip over ')' */
-        /* Non-prototype declarators are obsolescent too */
-        CWarn1( WARN_OBSOLETE_FUNC_DECL, ERR_OBSOLETE_FUNC_DECL );
+        /* Non-prototype declarators are obsolescent too; however, __interrupt
+         * functions have a special exemption due to messy historical usage,
+         * with variants both with and without arguments in use. Note that
+         * __interrupt functions are unlikely to be called directly.
+         */
+        if( !(mod & FLAG_INTERRUPT) ) {
+            CWarn1( WARN_OBSOLETE_FUNC_DECL, ERR_OBSOLETE_FUNC_DECL );
+        }
     }
     if( typ != NULL ) {                                 /* 09-apr-90 */
         TYPEPTR     typ2;
