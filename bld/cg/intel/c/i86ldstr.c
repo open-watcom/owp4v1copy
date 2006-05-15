@@ -72,6 +72,8 @@ extern  int             NumOperands(instruction*);
 
 extern  type_length     TypeClassSize[];
 
+static  bool            PreferSize;
+
 static  name    **Enregister( instruction *ins )
 /***********************************************
 
@@ -145,6 +147,7 @@ static hw_reg_set       *FindRegister( instruction *ins )
 {
     hw_reg_set  except;
     hw_reg_set  *regs;
+    hw_reg_set  *curregs;
     hw_reg_set  *start;
     hw_reg_set  *first;
     hw_reg_set  **rover_ptr;
@@ -180,18 +183,31 @@ static hw_reg_set       *FindRegister( instruction *ins )
         regs = start;
         *rover_ptr = start;
     }
+    /* 2006-04-25 RomanT
+       When optimizing for size, disable rover pointers and
+       reuse registers to decrease number of push'es in function prologue
+    */
+    if( PreferSize ) {
+        regs = start;
+    }
     first = regs;
     /* NOTE: assumes at least one register in the set */
+    /* 2006-04-25 RomanT
+       Code rewriten because first and best reg in list (_AX) was used last
+    */
     for(;;) {
+        curregs = regs;
         ++regs;
         if( HW_CEqual( *regs, HW_EMPTY ) ) {
             regs = start;
         }
-        if( !HW_Ovlap( *regs, except ) ) break;
+        if( !HW_Ovlap( *curregs, except ) ) {
+            *rover_ptr = regs;  /* next run will use next register */
+            break;
+        }
         if( regs == first ) return( NULL );
     }
-    *rover_ptr = regs;
-    return( regs );
+    return( curregs );
 }
 
 
@@ -393,6 +409,10 @@ extern  bool    LdStAlloc( void )
     into RISC style load/store instructions. This helps on the 486 and
     up because of instruction scheduling. Return a boolean saying whether
     anything got twiddled so the register scoreboarder can be run again.
+
+    This routine also required for optimization of assignment
+    of one copy of same constant to multiple memory locations using
+    temporary register.
 */
 {
     block       *blk;
@@ -403,8 +423,18 @@ extern  bool    LdStAlloc( void )
     RoverByte = NULL;
     RoverWord = NULL;
     RoverDouble = NULL;
-    if( OptForSize > 50 ) return( FALSE );
-    if( !_CPULevel( CPU_486 ) ) return( FALSE );
+
+    /* 2006-04-25 RomanT:
+       Run RISCifier for all modes, but sometimes (depending on CPU and
+       optimization) prefer shorter non-RISC version of instructions.
+    */
+    PreferSize = FALSE;
+    if( OptForSize > 50 ) {
+        PreferSize = TRUE;
+    }
+    if( !_CPULevel( CPU_486 ) ) {
+        PreferSize = TRUE;
+    }
 
     changed = FALSE;
     for( blk = HeadBlock; blk != NULL; blk = blk->next_block ) {
@@ -441,6 +471,8 @@ static void     CompressIns( instruction *ins )
     switch( ins->head.opcode ) {
     case OP_PUSH:
     case OP_POP:
+        /* If size preferable then push must be compacted */
+        if( PreferSize ) break;
         /* It's better to use a register for PUSH/POP on a 486 */
         if( _CPULevel( CPU_486 ) ) return;
     default:
@@ -530,8 +562,7 @@ extern  void    LdStCompress( void )
     block       *blk;
     instruction *ins;
 
-    if( OptForSize > 50 ) return;
-    if( !_CPULevel( CPU_486 ) ) return;
+    /* Note: LdStAlloc() must be called first to set PreferSize variable */
 
     CompressMem16Moves();
     for( blk = HeadBlock; blk != NULL; blk = blk->next_block ) {
