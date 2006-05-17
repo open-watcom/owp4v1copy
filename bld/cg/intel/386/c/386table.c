@@ -163,7 +163,7 @@ static  opcode_entry    AddExt[] = {
 /**********************************/
 /*       op1   op2   res  eq      verify          gen           reg fu*/
 
-_BinSC( R,    C,    R,    EQ_R1 ),V_NO,           G_AC,         RG_DBL_ACC,FU_ALU1,
+_BinSC( R,    C,    R,    EQ_R1 ),V_AC_BETTER,    G_AC,         RG_DBL_ACC,FU_ALU1,
 _BinSC( R,    C,    R,    EQ_R1 ),V_NO,           G_RC,         RG_DBL,FU_ALU1,
 _BinSC( M,    C,    M,    EQ_R1 ),V_NO,           G_MC,         RG_,FU_ALU1,
 _BinSC( R,    R,    R,    EQ_R1 ),V_NO,           G_RR2,        RG_DBL,FU_ALU1,
@@ -311,7 +311,7 @@ static  opcode_entry    SubExt[] = {
 /*       consider SBB AX,DX when AX==0,DX==FFFF,CF==1 -> leaves carry set and a JB*/
 /*       will take the jump!!!*/
 
-_BinSC( R,    C,    R,    EQ_R1 ),V_NO,           G_AC,         RG_DBL_ACC,FU_ALU1,
+_BinSC( R,    C,    R,    EQ_R1 ),V_AC_BETTER,    G_AC,         RG_DBL_ACC,FU_ALU1,
 _BinSC( R,    C,    R,    EQ_R1 ),V_NO,           G_RC,         RG_DBL,FU_ALU1,
 _BinSC( M,    C,    M,    EQ_R1 ),V_NO,           G_MC,         RG_,FU_ALU1,
 _BinSC( R,    R,    R,    EQ_R1 ),V_NO,           G_RR2,        RG_DBL,FU_ALU1,

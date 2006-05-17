@@ -166,6 +166,9 @@ extern  instruction     *rSPLITOP( instruction *ins ) {
         } else if( ins->head.opcode == OP_SUB ) {
             ins->head.opcode = OP_EXT_SUB;
         }
+/* Assign fake reduce table (from OP_EXT) to new_ins; default reduce table
+   can generate INC and DEC which'll not set condition codes
+ */
         ins->table = CodeTable( ins );
         new_ins->table = ins->table;
 
