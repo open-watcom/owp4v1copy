@@ -1886,6 +1886,8 @@ HLOCAL	WINAPI	LocalFree(HLOCAL);
 BOOL	WINAPI	LocalUnlock(HLOCAL);
 UINT	WINAPI	LocalSize(HLOCAL);
 UINT	WINAPI	LocalCompact(UINT);
+HGLOBAL WINAPI  LockSegment(UINT);
+void    WINAPI  UnlockSegment(UINT);
 UINT	WINAPI	_lread(HFILE,void _huge*,UINT);
 UINT	WINAPI	_lwrite(HFILE,const void _huge*,UINT);
 HFILE	WINAPI	_lopen(LPCSTR,int);
