@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  i86 machine type conversion routines.
 *
 ****************************************************************************/
 
@@ -163,8 +162,8 @@ EXT1,  S_EXT1,OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   CU4,   CU4
 EXT1,  S_EXT1,OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   CI4,   CI4,  CI4,     /* I2*/
 CU2,   CI2,   EXT2,  S_EXT2,OK,    OK,    C8TO4, C8TO4, OK,    OK,    C_S_U, C_D_U,C_D_U,   /* U4*/
 CU2,   CI2,   EXT2,  S_EXT2,OK,    OK,    C8TO4, C8TO4, OK,    OK,    C_S_4, C_D_4,C_D_4,   /* I4*/
-CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    OK,    OK,    C_S_U8,C_D_U8,C_D_U8, /* U8*/
-CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    OK,    OK,    C_S_I8,C_D_I8,C_D_I8, /* I8*/
+CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    EXT4,  EXT4,  C_S_U8,C_D_U8,C_D_U8, /* U8*/
+CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    EXT4,  EXT4,  C_S_I8,C_D_I8,C_D_I8, /* I8*/
 CU4,   CI4,   EXT_PT,CI4,   OK,    OK,    OK,    OK,    OK,    OK,    BAD,   BAD,  BAD,     /* CP*/
 CU4,   CI4,   EXT_PT,CI4,   OK,    OK,    OK,    OK,    OK,    OK,    BAD,   BAD,  BAD,     /* PT*/
 CU4,   CI4,   CU4,   CI4,   C_U4_S,C_I4_S,C_U8_S,C_I8_S,BAD,   BAD,   OK,    C_D_S,C_D_S,   /* FS*/
@@ -181,8 +180,8 @@ EXT1,  S_EXT1,OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   CI4,   CI4
 EXT1,  S_EXT1,OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   FPOK,  FPOK,  FPOK,    /* I2*/
 CU2,   CI2,   EXT2,  S_EXT2,OK,    OK,    C8TO4, C8TO4, OK,    OK,    FPOK,  FPOK,  FPOK,    /* U4*/
 CU2,   CI2,   EXT2,  S_EXT2,OK,    OK,    C8TO4, C8TO4, OK,    OK,    FPOK,  FPOK,  FPOK,    /* I4*/
-CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    OK,    OK,    C7S_U8,C7D_U8,C7D_U8,  /* U8*/
-CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    OK,    OK,    FPOK,  FPOK,  FPOK,    /* I8*/
+CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    EXT4,  EXT4,  C7S_U8,C7D_U8,C7D_U8,  /* U8*/
+CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    EXT4,  EXT4,  FPOK,  FPOK,  FPOK,    /* I8*/
 CU4,   CI4,   EXT_PT,CI4,   OK,    OK,    OK,    OK,    OK,    OK,    BAD,   BAD,   BAD,     /* CP*/
 CU4,   CI4,   EXT_PT,CI4,   OK,    OK,    OK,    OK,    OK,    OK,    BAD,   BAD,   PT,      /* PT*/
 CI2,   CI2,   CI4,   FPOK,  FPOK,  FPOK,  C7U8_S,FPOK,  BAD,   BAD,   FPOK,  FPOK,  FPOK,    /* FS*/

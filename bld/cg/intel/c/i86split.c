@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Intel i86/386 instruction spliting reductions.
 *
 ****************************************************************************/
 
@@ -195,6 +194,8 @@ extern  instruction             *rSPLIT8TST( instruction * );
 extern  instruction             *rSPLIT8CMP( instruction * );
 extern  instruction             *rMOVE8LOW( instruction * );
 extern  instruction             *rCMPCP( instruction * );
+extern  instruction             *rMOVPTI8( instruction * );
+extern  instruction             *rMOVI8PT( instruction * );
 
 /* forward declaration */
 extern  void                    CnvOpToInt( instruction * ins, int op );
@@ -848,6 +849,37 @@ extern instruction      *rCHPPT( instruction *ins ) {
     ChangeType( ins, WD );
     ins->operands[ 0 ] = OffsetPart( ins->operands[ 0 ] );
     return( ins );
+}
+
+
+/* NB: The following two routines are intended for 386 only */
+
+extern instruction      *rMOVPTI8( instruction *ins )
+/***************************************************/
+{
+    instruction         *new_ins;
+    instruction         *ins2;
+
+    new_ins = MakeMove( OffsetPart( ins->operands[0] ), LowPart( ins->result, U4 ), U4 );
+    ins2    = MakeConvert( SegmentPart( ins->operands[0] ), HighPart( ins->result, U4 ), U4, U2 );
+    DupSegRes( ins, ins2 );
+    SuffixIns( ins, ins2 );
+    ReplIns( ins, new_ins );
+    return( new_ins );
+}
+
+extern instruction      *rMOVI8PT( instruction *ins )
+/***************************************************/
+{
+    instruction         *new_ins;
+    instruction         *ins2;
+
+    new_ins = MakeMove( LowPart( ins->operands[0], U4 ), OffsetPart( ins->result ), U4 );
+    ins2    = MakeMove( HighPart( ins->operands[0], U2 ), SegmentPart( ins->result ), U2 );
+    DupSegRes( ins, ins2 );
+    SuffixIns( ins, ins2 );
+    ReplIns( ins, new_ins );
+    return( new_ins );
 }
 
 

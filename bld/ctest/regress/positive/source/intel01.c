@@ -20,15 +20,38 @@ void set_vec( void ( __interrupt *p )( void ) )
     if( sizeof( &int2 ) != sizeof( FAR_INT ) ) fail(__LINE__);
 }
 
+void __far *Ptr;
+
+// verify that far pointer <-> long long conversions can generate code
+void ptr_cvt( void )
+{
+    void __far  *ptr;
+    long long   tmp;
+
+    ptr = Ptr;
+    tmp = (long long)ptr;
+    ++tmp;
+    ptr = (void __far *)tmp;
+    Ptr = ptr;
+    if( Ptr != (void __far *)1 ) fail(__LINE__);
+}
+
 #else
 
-void set_vec( int i ) {
+void set_vec( int i )
+{
     i = i;
+}
+
+void ptr_cvt( void )
+{
 }
 
 #endif
 
-int main() {
+int main( void )
+{
     set_vec( 0 );
+    ptr_cvt();
     _PASS;
 }
