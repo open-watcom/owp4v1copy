@@ -1,5 +1,5 @@
-#sw_c_common = -we-w4-zl-d__RT__
-sw_c_common = -wx-w4 -wce=307 -wce=308 -wce=309 -zl-d__RT__
+sw_c_common = -we-w4-zl-d__RT__
+#sw_c_common = -wx-w4 -wce=307 -wce=308 -wce=309 -zl-d__RT__
 sw_a_common = -we
 !ifdef __UNIX__
 sw_c_common += -fo=.obj
