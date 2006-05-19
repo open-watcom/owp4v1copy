@@ -58,7 +58,6 @@ static  opcode_entry    Add1[] = {
 
 _Bin(   ANY,  C,    ANY,  NONE ), NVI(V_OP2ZERO), R_MAKEMOVE,   RG_BYTE,FU_NO,
 _Bin(   ANY,  C,    ANY,  NONE ), NVI(V_OP2NEG),  R_MAKESUB,    RG_BYTE,FU_NO,
-_Bin(   R,    C,    R,    EQ_R1 ),NVI(V_OP2TWO_SIZE),R_DOUBLEHALF, RG_BYTE,FU_NO,
 _Bin(   R,    U,    R,    NONE ), V_CONSTTEMP,    R_TEMP2CONST, RG_BYTE,FU_NO,
 
 /* instructions that we can generate*/
@@ -204,7 +203,6 @@ static  opcode_entry    Sub1[] = {
 
 _Bin(   C,    ANY,  ANY,  NONE ), NVI(V_OP1ZERO), R_MAKENEG,    RG_BYTE,FU_NO,
 _Bin(   ANY,  C,    ANY,  NONE ), NVI(V_OP2ZERO), R_MAKEMOVE,   RG_BYTE,FU_NO,
-_Bin(   R,    C,    R,    EQ_R1 ),NVI(V_OP2TWO_SIZE),R_DOUBLEHALF, RG_BYTE,FU_NO,
 _Bin(   ANY,  C,    ANY,  NONE ), NVI(V_OP2NEG),  R_MAKEADD,    RG_BYTE,FU_NO,
 _Bin(   R,    U,    R,    NONE ), V_CONSTTEMP,    R_TEMP2CONST, RG_BYTE,FU_NO,
 
