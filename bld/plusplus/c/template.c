@@ -2633,14 +2633,19 @@ static void processFunctionTemplateDefns( void )
 {
     SYMBOL fn_sym;
     FN_TEMPLATE_DEFN *curr_defn;
-
-    RingIterBeg( allFunctionTemplates, curr_defn ) {
-        RingIterBeg( curr_defn->sym->name->name_syms, fn_sym ) {
-            if( ! SymIsFunctionTemplateModel( fn_sym ) ) {
-                processSymDefn( fn_sym, curr_defn );
-            }
-        } RingIterEnd( fn_sym )
-    } RingIterEnd( curr_defn )
+    boolean keep_going;
+    do{
+        keep_going = FALSE;
+        RingIterBeg( allFunctionTemplates, curr_defn ) {
+            RingIterBeg( curr_defn->sym->name->name_syms, fn_sym ) {
+                if( ! SymIsFunctionTemplateModel( fn_sym ) ) {
+                    // if we process a definition check the list again in case a new 
+                    // member function is created
+                    if( processSymDefn( fn_sym, curr_defn ) ) keep_going = TRUE;
+                }
+            } RingIterEnd( fn_sym )
+        } RingIterEnd( curr_defn )
+    }while( keep_going );
 }
 
 static void processNewFileSyms( NAME_SPACE *ns, SYMBOL old_last, SYMBOL curr_last )
