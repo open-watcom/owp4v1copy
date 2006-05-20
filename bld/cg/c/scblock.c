@@ -36,31 +36,13 @@
 #include "zerobits.h"
 #include "hostsys.h"
 
-extern  bool            ScoreLookup(score*,score_info*);
-extern  bool            ScoreSegments(score*);
-extern  void            ScZeroCheck(score*,instruction*);
-extern  bool            ScConvert(instruction*);
-extern  void            RegKill(score*,hw_reg_set);
-extern  void            ScoreKillInfo(score*,name*,score_info*,hw_reg_set);
-extern  void            ScoreInfo(score_info*,name*);
-extern  bool            ScoreMove(score*,instruction*);
-extern  bool            ScoreLA(score*,instruction*);
-extern  bool            ScoreEqual(score*,int,score_info*);
-extern  bool            FindRegOpnd(score*,instruction*);
-extern  void            MemChanged(score*,bool);
 extern  bool            UnChangeable(instruction*);
-extern  bool            ScoreZero(pointer,instruction**);
-extern  bool            RegThrash(block*);
-extern  bool            RegsEqual(score*,int,int);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  void            SCBlip(void);
 extern  void            FreeIns(instruction*);
 extern  bool            SideEffect(instruction*);
 extern  bool            DoesSomething(instruction*);
 extern  void            DoNothing(instruction*);
-
-extern  score_reg       **ScoreList;
-extern  score_info      *ScZero;
 
 extern  void    FreeJunk( block *blk )
 /*************************************

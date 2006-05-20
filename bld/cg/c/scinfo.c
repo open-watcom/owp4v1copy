@@ -36,13 +36,8 @@
 #include "zoiks.h"
 #include "model.h"
 
-extern  void            FreeScListEntry(score_list*);
-extern  void            RegAdd(score*,int,int);
-extern  score_list      *NewScListEntry(void);
 extern  pointer         Copy(pointer,pointer,uint);
 
-extern  int     ScoreCount;
-extern  score_reg       **ScoreList;
 extern  proc_def        *CurrProc;
 
 static  pointer SegConstSymbol;/*no other pointer points to here*/

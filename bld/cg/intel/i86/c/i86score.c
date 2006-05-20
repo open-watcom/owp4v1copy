@@ -39,11 +39,7 @@
 #include "vergen.h"
 #include "opcodes.h"
 
-extern  void            RegInsert(score*,int,int);
-extern  bool            RegsEqual(score*,int,int);
 extern  name            *AllocRegName(hw_reg_set);
-extern  void            ScoreAssign(score*,int,score_info*);
-extern  void            ScoreInfo(score_info*,name*);
 extern  name            *NearSegment(void);
 extern  hw_reg_set      HighReg(hw_reg_set);
 extern  hw_reg_set      LowReg(hw_reg_set);

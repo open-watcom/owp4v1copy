@@ -39,8 +39,6 @@
 #include "vergen.h"
 #include "opcodes.h"
 
-extern  void            RegInsert(score*,int,int);
-extern  bool            RegsEqual(score*,int,int);
 extern  name            *AllocRegName(hw_reg_set);
 
 extern  proc_def        *CurrProc;
@@ -72,7 +70,7 @@ extern  void    ScInitRegs( score *sc ) {
 }
 
 
-extern  void    AddRegs() {
+extern  void    AddRegs( void ) {
 /**************************
     Add some registers to the N_REGISTER list, so that we can do
     scoreboarding on them

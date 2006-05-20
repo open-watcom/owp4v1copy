@@ -37,28 +37,17 @@
 #include "pattern.h"
 #include "typedef.h"
 
-extern  void            ScoreKillInfo(score*,name*,score_info*,hw_reg_set);
-extern  void            ScoreAssign(score*,int,score_info*);
-extern  void            RegAdd(score*,int,int);
-extern  void            RegKill(score*,hw_reg_set);
 extern  void            FreeIns(instruction*);
-extern  bool            RegsEqual(score*,int,int);
 extern  int             NumOperands(instruction*);
 extern  opcode_entry    *FindGenEntry(instruction*,bool*);
 extern  bool            IndexOkay(instruction*,name*);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
-extern  bool            ScoreEqual(score*,int,score_info*);
-extern  bool            ScoreLAInfo(score_info*,name*);
-extern  void            ScoreInfo(score_info*,name*);
 extern  bool            CanReplace(instruction*);
 extern  instruction     *rSWAPOPS(instruction*);
 extern  instruction     *rSWAPCMP(instruction*);
 extern  bool            IsStackReg(name*);
 extern  bool            FPIsConvert(instruction*);
 
-extern  score_info      *ScZero;
-extern  int             ScoreCount;
-extern  score_reg       **ScoreList;
 extern  type_length     TypeClassSize[];
 
 extern  opcode_entry    *ResetGenEntry( instruction *ins ) {

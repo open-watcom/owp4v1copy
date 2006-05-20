@@ -36,16 +36,11 @@
 #include "memcheck.h"
 #include "freelist.h"
 
-extern  void            AddRegs(void);
 extern  hw_reg_set      LowOffsetReg(hw_reg_set);
 extern  name            *AllocRegName(hw_reg_set);
 extern  hw_reg_set      HighOffsetReg(hw_reg_set);
-extern  bool            ScRealRegister(name*);
 
-extern  int             ScoreCount;
-extern  score_reg       **ScoreList;
 extern  name            *Names[];
-extern  pointer         ScListFrl;
 
 
 extern  pointer ScAlloc( int size )

@@ -34,13 +34,6 @@
 #include "coderep.h"
 #include "score.h"
 
-extern  void            FreeScListEntry(score_list*);
-extern  void            ScoreFreeList(score*);
-extern  bool            ScAddOk(hw_reg_set,hw_reg_set);
-
-extern  int             ScoreCount;
-extern  score_reg       **ScoreList;
-
 static  void    RegDelete( score *sc, int index ) {
 /*************************************************/
 

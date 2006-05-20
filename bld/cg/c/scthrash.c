@@ -47,7 +47,6 @@ extern  void            SuffixIns(instruction*,instruction*);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            FreeIns(instruction*);
-extern  bool            ChangeIns(instruction*,name*,name**,change_type);
 extern  bool            UnChangeable(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  hw_reg_set      HighReg(hw_reg_set);

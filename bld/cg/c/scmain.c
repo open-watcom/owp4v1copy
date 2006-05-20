@@ -40,35 +40,12 @@
 #include "opcodes.h"
 
 extern  byte            *Copy(void*,void*,uint);
-extern  score_list      *NewScListEntry(void);
-extern  void            RegAdd(score*,int,int);
-extern  void            RegDelete(score*,int);
-extern  bool            RegsEqual(score*,int,int);
-extern  void            FreeScListEntry(score_list*);
-extern  bool            ScoreLookup(score*,score_info*);
-extern  void            ScoreInsert(score*,int,score_info*);
-extern  void            ScoreFreeList(score*);
-extern  void            ScInitRegs(score*);
-extern  hw_reg_set      AllCacheRegs(void);
-extern  void            ScFree(pointer,int);
-extern  void            FreeScoreBoard(score*);
-extern  bool            DoScore(block*);
 extern  void            MakeLiveInfo(void);
-extern  void            ScoreClear(score*);
-extern  pointer         ScAlloc(int);
-extern  void            FreeJunk(block*);
-extern  void            ScoreCalcList(void);
 extern  void            ProcMessage(msg_class);
-extern  sym_handle      AskForLblSym(label_handle);
 extern  mem_out_action  SetMemOut(mem_out_action);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  pointer         SafeRecurse( pointer (* rtn)(), pointer arg );
-extern  void            ScoreMakeEqual(score*,name*,name*);
 
-extern  pointer         ScListFrl;
-extern  score_info      *ScZero;
-extern  int             ScoreCount;
-extern  score_reg       **ScoreList;
 extern  proc_def        *CurrProc;
 extern  block           *HeadBlock;
 extern  bool            BlockByBlock;
