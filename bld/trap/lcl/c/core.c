@@ -122,7 +122,7 @@ unsigned ReqDisconnect( void )
     RemoteDisco();
 #elif defined(WIN16)
     FinishDebugging();
-    SetEventHook( NULL );
+    if( HookRtn != NULL ) SetEventHook( NULL );
     HookRtn = NULL;
 #endif
     return( 0 );
