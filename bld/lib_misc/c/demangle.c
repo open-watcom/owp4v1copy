@@ -1426,7 +1426,7 @@ static int sym_name( output_desc *data, state_desc *state )
     }
 }
 
-static int scope( output_desc *data, state_desc *state )
+static int scope( output_desc *data, state_desc *state, size_t *symbol_length )
 {
     char c;
 
@@ -1444,23 +1444,30 @@ static int scope( output_desc *data, state_desc *state )
         auto state_desc new_state;
         advanceChar( data );
         new_state = *state;
-        new_state.suffix = data->count - state->prefix;
+        new_state.suffix = data->count - state->prefix - *symbol_length;
         return( template_name( data, &new_state ) );
     } else {
-        return( sym_name( data, state ) );
+        int rc = sym_name( data, state );
+        *symbol_length = data->index - state->prefix - 1;
+        return( rc );
     }
     return( FALSE );
 }
 
 static int scoped_name( output_desc *data, state_desc *state )
 {
+    size_t symbol_length;
+
     _output1( DM_SCOPED_NAME );
     if( sym_name( data, state ) ) {
+        symbol_length = data->index - state->prefix - 1;
         while( nextChar( data ) == SCOPE_PREFIX ) {
             _output2( DM_SET_INDEX, state->prefix );
-            _output1( DM_SCOPE_SEPARATOR );
+            if( *(data->input + 1) != TEMPLATE_PREFIX ) {
+                _output1( DM_SCOPE_SEPARATOR );
+            }
             advanceChar( data );
-            if( !scope( data, state ) ) {
+            if( !scope( data, state, &symbol_length ) ) {
                 return( FALSE );
             }
             _output1( DM_ZAP_SPACE );
@@ -2101,17 +2108,33 @@ test_stream testVector[] = {
         "_trmem_open",
         "_trmem_open",
     "W?s$n$Stack$::1ni0az?ok$n()v$",
-        "<int near,10,void near ok()>::Stack near s",
+        "Stack<int near,10,void near ok()> near s",
         "s",
         "s",
     "W?dummy$:Stack$::1ni0az?ok$n()vn()v",
-        "void near <int near,10,void near ok()>::Stack::dummy()",
+        "void near Stack<int near,10,void near ok()>::dummy()",
         "dummy",
         "dummy",
     "W?$CT:Stack$::1ni0ay?ok$n()vn()_",
-        "near <int near,-10,void near ok()>::Stack::Stack()",
+        "near Stack<int near,-10,void near ok()>::Stack()",
         "$CT",
         "Stack",
+    "W?s$n$Inner$:Stack$::1ni0az?ok$n()v:xyz$$",
+        "xyz::Stack<int near,10,void near ok()>::Inner near s",
+        "s",
+        "s",
+    "W?s$n$Inner$:Stack$::1ni0az1n$xyz$::1ni$:abc$$",
+        "abc::Stack<int near,10,xyz<int near > near >::Inner near s",
+        "s",
+        "s",
+    "W?dummy$:Stack$::1ni0az?ok$n()v:xyz$n()v",
+        "void near xyz::Stack<int near,10,void near ok()>::dummy()",
+        "dummy",
+        "dummy",
+    "W?dummy$:Stack$::1ni0az?ok$n()v:xyz$::1nin()v",
+        "void near xyz<int near >::Stack<int near,10,void near ok()>::dummy()",
+        "dummy",
+        "dummy",
     "W?a$:.1$:?foo$n()vn[]i",
         "int near void near foo()::.1::a[]",
         "a",
@@ -2465,11 +2488,11 @@ void main( int argc )
 
 #if 0 || defined(UTIL)
 
-#define BUF_SIZE 1024
+#define BUF_SIZE 4096
 
 void main( int argc, char **argv )
 {
-    char    buffer[1024];
+    char    buffer[BUF_SIZE];
 
     if( argc < 2) {
         printf( "Usage: demangle <mangled name>\n" );
