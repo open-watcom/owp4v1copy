@@ -226,7 +226,13 @@ mad_status      MADRegister( mad_handle mh, const char *file, const char *desc )
             }
             Active = old;
             if( curr == Active ) Active = &Dummy;
-            MADUnload( curr->mh );
+            /* MADUnload( curr->mh );  Did not work from here. */
+            /* Removed call, and moved fixed functionality here */
+                if( curr->rtns != NULL ) {
+                    curr->rtns->MIFini();
+                    curr->rtns = NULL;
+                }
+                if( curr->sh != 0 ) MADSysUnload( curr->sh );
             DIGCliFree( curr );
             break;
         }
