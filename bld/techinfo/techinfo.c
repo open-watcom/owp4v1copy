@@ -525,7 +525,7 @@ int NDPEquip( void )
     union REGS          regs;
 
     int86( 0x11, &regs, &regs );
-    return( (regs.x.ax > 1) & 0x0001 );
+    return( (regs.x.ax >> 1) & 0x0001 );
 }
 #endif
 
