@@ -123,6 +123,10 @@ static BOOL     round_corners = FALSE;    // Platform has rounded buttons?
 #endif
 
 MRESULT CALLBACK ToolBarWndProc( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
+#if defined(__NT__) || defined(__WINDOWS__)
+void WPTB_TransparentBlt (HDC hDC,   UINT x, UINT y, UINT width, UINT height,
+                          HDC hDCIn, COLORREF cr);
+#endif
 
 static void toolbardestroywindow( HWND hwnd )
 {
@@ -297,8 +301,10 @@ toolbar *ToolBarInit( HWND parent )
     clr_btnhighlight = GetSysColor( COLOR_BTNHIGHLIGHT );
     btnColour = GetSysColor( COLOR_BTNFACE );
     clr_btnface = btnColour;
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
     clr_black = GetSysColor(COLOR_BTNTEXT);
+#endif
+#if defined(__NT__)
     {
         OSVERSIONINFO os;
         
@@ -544,7 +550,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     height = _wpi_getheightrect( (disp->area) );
 
 #ifndef __OS2_PM__
-#if defined (__NT__)
+#if defined(__NT__)
     if ( LOBYTE(LOWORD(GetVersion())) >= 4 && (bar->is_fixed) ) {
         CreateWindow( className, NULL, WS_CHILD, //( disp->style ),
             disp->area.left, disp->area.top, width, height,
@@ -823,7 +829,7 @@ static void toolBarDrawBitmap( WPI_PRES pres, WPI_POINT dst_size,
     src_org.y = 0;
     DPtoLP( pres, &src_org, 1 );
 
-    #ifdef __NT__
+    #if defined(__NT__) || defined(__WINDOWS__)
         SetStretchBltMode( pres, COLORONCOLOR );
     #else
         SetStretchBltMode( pres, STRETCH_DELETESCANS );
@@ -871,7 +877,7 @@ static void drawButton( HWND hwnd, tool *tool, BOOL down,
     TOOLBR_DIM  bottom;
     BOOL        delete_pres;
     BOOL        delete_mempres;
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
     HBITMAP     bitmap2, oldbmp2 , bmptmp;
     HDC         mem2;
     COLORREF    cr;
@@ -908,7 +914,7 @@ static void drawButton( HWND hwnd, tool *tool, BOOL down,
     bitmap = _wpi_createcompatiblebitmap( pres, bar->button_size.x,
                                             bar->button_size.y );
     oldbmp = _wpi_selectbitmap( mempres, bitmap );
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
     mem2 = CreateCompatibleDC( pres );
     bitmap2 = CreateCompatibleBitmap( pres,
                 bar->button_size.x, bar->button_size.y );
@@ -941,7 +947,7 @@ static void drawButton( HWND hwnd, tool *tool, BOOL down,
     }
     toolBarDrawBitmap( mempres, dst_size, dst_org, used_bmp );
 
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
     /* New, on WIN32 platforms, use WPTB_TransparentBlt() */
     /* Get background color of button bitmap */
     bmptmp = SelectObject(mem2, used_bmp);
@@ -1184,7 +1190,7 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
             }
         }
         break;
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
     case WM_SYSCOLORCHANGE: {
         COLORREF    clr_btnface;
         COLORREF    clr_btnshadow;
@@ -1272,7 +1278,7 @@ void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP newbmp )
 
 /********** Below - new inserted 2003.10.31 ********************/
 
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
 
 /*
  * WPTB_TransparentBlt
@@ -1296,8 +1302,8 @@ void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP newbmp )
 
 #define ROP_DSPDxax  0x00E20746
 
-void WPTB_TransparentBlt (HDC hDC, UINT x, UINT y, UINT width, UINT height,
-                     HDC hDCIn, COLORREF cr)
+void WPTB_TransparentBlt (HDC hDC,   UINT x, UINT y, UINT width, UINT height,
+                          HDC hDCIn, COLORREF cr)
 {
    HDC hDCMid, hMemDC;
    HBITMAP hBmpMono, hBmpT;

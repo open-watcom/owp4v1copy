@@ -109,7 +109,7 @@ static BOOL             mouse_captured = FALSE;
 static BOOL             ignore_mousemove = FALSE; // release_capture generates
                                                   // a WM_MOUSEMOVE msg
 
-#if defined(__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
 void TB_TransparentBlt(HDC, UINT, UINT, UINT, UINT, HDC, COLORREF);
 #endif
 
@@ -451,7 +451,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     bar->is_fixed = disp->is_fixed;
     width = disp->area.right - disp->area.left;
     height = disp->area.bottom - disp->area.top;
-#if defined (__NT__)
+#if defined(__NT__)
     if ( LOBYTE(LOWORD(GetVersion())) >= 4 &&
          (disp->style & TOOLBAR_FLOAT_STYLE) == TOOLBAR_FLOAT_STYLE ) {
         CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
@@ -631,7 +631,7 @@ static void toolBarDrawBitmap( HDC hdc, POINT dst_size, POINT dst_org,
     src_org.y = 0;
     DPtoLP( hdc, &src_org, 1 );
 
-    #ifdef __NT__
+    #if defined(__NT__) || defined(__WINDOWS__)
         SetStretchBltMode( hdc, COLORONCOLOR );
     #else
         SetStretchBltMode( hdc, STRETCH_DELETESCANS );
@@ -679,7 +679,7 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
     HBITMAP     used_bmp;
     HBITMAP     bitmap, oldbmp;
     HDC         mem;
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
     HBITMAP     bitmap2, oldbmp2, bmptmp;
     HDC         mem2;
     RECT        fill;
@@ -713,7 +713,7 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
     bitmap = CreateCompatibleBitmap( hdc,
                 bar->button_size.x, bar->button_size.y );
     oldbmp = SelectObject( mem, bitmap );
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
     mem2 = CreateCompatibleDC( hdc );
     bitmap2 = CreateCompatibleBitmap( hdc,
                 bar->button_size.x, bar->button_size.y );
@@ -741,7 +741,7 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
     }
     toolBarDrawBitmap( mem, dst_size, dst_org, used_bmp );
     
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
     /* New, on WIN32 platforms, use TB_TransparentBlt() */
     /* Get background color of button bitmap */
     bmptmp = SelectObject(mem2, used_bmp);
@@ -989,13 +989,13 @@ LONG WINEXP ToolBarWndProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
             }
         }
         break;
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
     case WM_SYSCOLORCHANGE:
         ToolBarChangeSysColors((COLORREF)0L, (COLORREF)0L, (COLORREF)0L);
     break;
 #endif
     case WM_PAINT:
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
         if(crButtonFace != GetSysColor( COLOR_BTNFACE )) {
             /* WM_SYSCOLORCHANGED: sometimes not received by window.
                Have to fake it...  */
@@ -1038,7 +1038,7 @@ void ChangeToolButtonBitmap( toolbar *bar, int id, HBITMAP newbmp )
 
 /********** Below - new inserted 2003.10.22 ********************/
 
-#if defined (__NT__)
+#if defined(__NT__) || defined(__WINDOWS__)
 
 /*
  * TB_TransparentBlt
