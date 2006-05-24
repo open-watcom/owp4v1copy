@@ -1,22 +1,23 @@
-#include "windows.h"
+#include <windows.h>
 #include "genwin.h"
 
 GenericIcon ICON generic.ico
 GenericMenu MENU
 BEGIN
-    POPUP "&Info"
-    BEGIN
-        MENUITEM "&Command line specified...", MENU_CMDSTR
-        MENUITEM "&About Generic...", MENU_ABOUT
-    END
+ POPUP "&Info"
+   BEGIN
+     MENUITEM "&Command line specified...", MENU_CMDSTR
+     MENUITEM "&About Generic...", MENU_ABOUT
+   END
 END
 
 AboutBox DIALOG 22, 17, 144, 75
-        STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
-        CAPTION "About Open Watcom Generic App"
-        BEGIN
-            CTEXT "Open Watcom Generic Program for Windows", -1, 0,  5, 144, 20
-            CTEXT "Version 1.0", -1, 0, 24, 144, 8
-            DEFPUSHBUTTON "OK", IDOK, 53, 59, 32, 14, WS_GROUP
-            ICON "GenericIcon", -1, 15,15,40,40
-        END
+STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
+CAPTION "About Open Watcom Generic App"
+BEGIN
+  CTEXT "Open Watcom Generic Program for Windows", -1, 0, 5, 144, 20
+  CTEXT "Version 1.0", -1, 0, 24, 144, 8
+  DEFPUSHBUTTON "OK", IDOK, 44, 56, 50, 14, WS_GROUP
+  ICON "GenericIcon", -1, 15, 15, 40, 40
+END
+
