@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "genwin.h"
+#include "generic.h"
 
 GenericIcon ICON generic.ico
 
@@ -15,9 +15,9 @@ BEGIN
    END
 END
 
-AboutBox DIALOG 22, 17, 144, 75
+AboutBox DIALOG 20, 10, 144, 75
 STYLE DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
-CAPTION "About Open Watcom Generic App"
+CAPTION "About Generic"
 FONT 8, "Helv"
 BEGIN
   ICON  "GenericIcon",     -1,  6,  6, 40, 40

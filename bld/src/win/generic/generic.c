@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <malloc.h>
-#include "genwin.h"
+#include "generic.h"
 
 HINSTANCE       MyInstance;
 static char     GenericClass[32]="GenericClass";
@@ -81,12 +81,12 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow, LPSTR cmdline )
      */
     hwnd = CreateWindow(
         GenericClass,           /* class */
-        "Open Watcom Generic Kind Of Application",   /* caption */
+        "Open Watcom Generic",  /* caption */
         WS_OVERLAPPEDWINDOW,    /* style */
         CW_USEDEFAULT,          /* init. x pos */
         CW_USEDEFAULT,          /* init. y pos */
-        CW_USEDEFAULT,          /* init. x size */
-        CW_USEDEFAULT,          /* init. y size */
+        320,                    /* init. x size */
+        240,                    /* init. y size */
         NULL,                   /* parent window */
         NULL,                   /* menu handle */
         this_inst,              /* program handle */
@@ -178,3 +178,4 @@ LONG _EXPORT FAR PASCAL WindowProc( HWND hwnd, unsigned msg,
     return( 0L );
 
 } /* WindowProc */
+
