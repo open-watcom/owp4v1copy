@@ -106,7 +106,7 @@ void WRCtl3DDLLFini( void )
 static int WRCtl3DDLLInit( void )
 {
     #ifndef __NT__
-        wrDLLLib = LoadLibrary("CTL3D.DLL");
+        wrDLLLib = LoadLibrary("CTL3DV2.DLL");
     #else
         wrDLLLib = LoadLibrary("CTL3D32.DLL");
     #endif

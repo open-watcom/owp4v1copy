@@ -47,7 +47,7 @@
 #ifndef NOUSE3D
 #include "ctl3d.h"
 #if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("ctl3d.lib")
+#pragma library("ctl3dv2.lib")
 #endif
 #endif
 #include "ldstr.h"

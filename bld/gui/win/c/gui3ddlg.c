@@ -36,7 +36,7 @@
 #ifdef __WINDOWS__
     #include "ctl3d.h"
     #ifndef __WINDOWS_386__
-        #pragma library( "ctl3d.lib" )
+        #pragma library( "ctl3dv2.lib" )
     #endif
 #endif
 #ifdef __NT__
