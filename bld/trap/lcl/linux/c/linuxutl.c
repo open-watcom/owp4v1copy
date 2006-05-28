@@ -28,7 +28,9 @@
 *
 ****************************************************************************/
 
+#define _LARGEFILE64_SOURCE
 
+#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -69,6 +71,7 @@ unsigned WriteMem( pid_t pid, void *ptr, addr_off offv, unsigned size )
      * Linux does not have an extended ptrace call to read and write
      * blocks of data from the debuggee process, but this is what we
      * need to do for now.
+     * ... but reads can be done from /proc/pid/mem: see below.
      */
     for( count = size; count >= 4; count -= 4 ) {
         if( ptrace( PTRACE_POKETEXT, pid, (void *)offv, (void *)(*(unsigned_32*)data) ) != 0 )
@@ -117,6 +120,28 @@ unsigned ReadMem( pid_t pid, void *ptr, addr_off offv, unsigned size )
 {
     char    *data = ptr;
     int     count;
+
+    if( size > 16 ) {
+        char    procpidmem[6+20+4+1];
+        int     fd;
+        loff_t  res;
+
+        snprintf( procpidmem, sizeof( procpidmem ), "/proc/%d/mem", pid );
+        fd = open( procpidmem, O_RDONLY );
+        if( fd != -1 ) {
+#ifdef __WATCOMC__
+            _llseek( fd, 0, offv, &res, SEEK_SET );
+#else
+            res = lseek64( fd, offv, SEEK_SET );
+#endif
+            count = -1;
+            if( res != -1 )
+                count = read( fd, data, size );
+            close( fd );
+            if( count != -1 )
+                return( count );
+        }
+    }
 
     /* Read the process memory 32-bits at a time */
     for( count = size; count >= 4; count -= 4 ) {
