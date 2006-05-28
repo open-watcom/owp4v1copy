@@ -59,20 +59,22 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     if( IsWinNT ) {
         dll = LoadLibrary( "VDMDBG.DLL" );
         if( dll != NULL ) {
-            pVDMSetThreadContext    = (LPVOID)GetProcAddress( dll,
+            pVDMSetThreadContext        = (LPVOID)GetProcAddress( dll,
                                           "VDMSetThreadContext" );
-            pVDMModuleFirst         = (LPVOID)GetProcAddress( dll,
+            pVDMModuleFirst             = (LPVOID)GetProcAddress( dll,
                                           "VDMModuleFirst" );
-            pVDMModuleNext          = (LPVOID)GetProcAddress( dll,
+            pVDMModuleNext              = (LPVOID)GetProcAddress( dll,
                                           "VDMModuleNext" );
-            pVDMEnumProcessWOW      = (LPVOID)GetProcAddress( dll,
+            pVDMEnumProcessWOW          = (LPVOID)GetProcAddress( dll,
                                           "VDMEnumProcessWOW" );
-            pVDMProcessException    = (LPVOID)GetProcAddress( dll,
+            pVDMProcessException        = (LPVOID)GetProcAddress( dll,
                                           "VDMProcessException" );
-            pVDMGetModuleSelector   = (LPVOID)GetProcAddress( dll,
+            pVDMGetModuleSelector       = (LPVOID)GetProcAddress( dll,
                                           "VDMGetModuleSelector" );
-            pVDMGetThreadContext    = (LPVOID)GetProcAddress( dll,
+            pVDMGetThreadContext        = (LPVOID)GetProcAddress( dll,
                                           "VDMGetThreadContext" );
+            pVDMGetThreadSelectorEntry  = (LPVOID)GetProcAddress( dll,
+                                          "VDMGetThreadSelectorEntry" );
         }
     }
     dll = LoadLibrary( "KERNEL32.DLL" );

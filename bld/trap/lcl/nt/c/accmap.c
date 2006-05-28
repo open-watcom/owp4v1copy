@@ -438,7 +438,8 @@ unsigned ReqMap_addr( void )
         ti = FindThread( DebugeeTid );
         pVDMGetModuleSelector( ProcessInfo.process_handle,
                         ti->thread_handle, seg, lli->modname, &sel );
-        GetThreadSelectorEntry( ti->thread_handle, sel, &ldt );
+        pVDMGetThreadSelectorEntry( ProcessInfo.process_handle,
+                        ti->thread_handle, sel, &ldt );
         if( !ldt.HighWord.Bits.Pres ) {
             /*
              * if the segment is not present, then we make the app load it

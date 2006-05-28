@@ -133,5 +133,14 @@ BOOL
     LPDEBUG_EVENT   lpDebugEvent,
     LPVDMCONTEXT    lpVDMContext
 );
+
+TRPGLOBAL
+BOOL
+(WINAPI*pVDMGetThreadSelectorEntry)(
+    HANDLE          hProcess,
+    HANDLE          hThread,
+    WORD            wSelector,
+    LPVDMLDT_ENTRY  lpSelectorEntry
+);
 #undef TRPGLOBAL
 #undef TRPGLOBINIT
