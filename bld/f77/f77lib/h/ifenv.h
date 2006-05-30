@@ -41,7 +41,7 @@
     #pragma aux if_rtn "IF@*" parm routine [EAX EBX ECX EDX 8087];
     #pragma aux if_va  "IF@*" parm caller [];
     #pragma aux xf_rtn "IF@*";
-    #if defined( __3S__ )
+    #if defined( __SW_3S )
       #if defined( __FLAT__ )
         #pragma aux (if_rtn) if_rtn modify [8087 gs];
         #pragma aux (if_va)  if_va  modify [8087 gs];

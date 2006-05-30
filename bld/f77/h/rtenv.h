@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Special calling conventions for F77 runtime routines.
 *
 ****************************************************************************/
 
@@ -40,7 +39,7 @@
     #pragma aux rt_rtn "RT@*" parm routine [eax ebx ecx edx 8087];
     #pragma aux co_rtn "RT@*" parm routine [eax ebx ecx edx 8087];
     #pragma aux va_rtn "RT@*" parm caller [];
-    #if defined( __3S__ )
+    #if defined( __SW_3S )
       #if defined( __FLAT__ )
         #pragma aux (rt_rtn) rt_rtn modify [8087 gs];
         #pragma aux (co_rtn) co_rtn modify [8087 gs];
