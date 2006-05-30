@@ -385,6 +385,19 @@ extern  void    ReplIns( instruction *ins, instruction *new ) {
 
 /*      move the first/last pointers of any relevant conflict nodes */
 
+/*
+ * !!! BUG BUG !!!
+ * Moving/changing egde of conflict with CONFLICT_ON_HOLD flag set
+ * to non-conflicting instruction can cause famous bug 352. If new instruction
+ * should be also replaced, codegen will not notice that it's a part of
+ * any conflict and will not update egde. Event worse, if replaced instruction
+ * is replaced again, this case will be completely missed by conflict manager.
+ * At least, compiler can Zoiks now.
+ *
+ * This problem may also exist in other instruction modification functions.
+ * It must be fixed in more correct way if somebody ever understand
+ * how all this stuff works.
+ */
         MakeConflictInfo( ins, new );
         for( info = ConflictInfo; info->conf != NULL; ++info ) {
             if( info->flags & CB_FOR_INS1 ) {

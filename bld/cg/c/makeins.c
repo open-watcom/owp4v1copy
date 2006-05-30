@@ -38,6 +38,7 @@
 #include "regset.h"
 #include "zoiks.h"
 #include "freelist.h"
+#include "conflict.h"
 
 
 extern  void            DoNothing(instruction*);
@@ -45,6 +46,7 @@ extern  name            *AllocRegName(hw_reg_set);
 
 static    pointer       InsFrl;
 
+extern  conflict_node   *ConfList;
 
 extern  void    InitIns() {
 /**************************
@@ -70,6 +72,16 @@ extern  void    FreeIns( instruction *ins ) {
     Free an instruction "ins"
 */
     instruction         *next;
+
+#if 0  /* Debugging code for integrity of conflict edges */
+    conflict_node       *conf;
+
+    for (conf = ConfList; conf; conf = conf->next_conflict) {
+        if (conf->ins_range.first == ins || conf->ins_range.last == ins) {
+            Zoiks(ZOIKS_050);
+        }
+    }
+#endif
 
     next = ins->head.next;
     if( next->head.opcode != OP_BLOCK && next->head.line_num == 0 ) {

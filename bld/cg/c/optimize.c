@@ -34,6 +34,7 @@
 #include "conflict.h"
 #include "opcodes.h"
 #include "cgdefs.h"
+#include "zoiks.h"
 
 extern    block         *HeadBlock;
 extern    conflict_node *ConfList;
@@ -342,11 +343,11 @@ static  bool    IsDeadIns( block *blk, instruction *ins, instruction *next ) {
     conflict_node       *conf;
     name                *op;
 
-    if( SideEffect( ins ) ) return( FALSE );
     op = ins->result;
     if( op == NULL ) return( FALSE );
 //  if( op->n.class != N_TEMP ) return( FALSE );
     if( op->v.usage & USE_ADDRESS ) return( FALSE );
+    if( SideEffect( ins ) ) return( FALSE );
     conf = FindConflictNode( op, blk, ins );
     if( conf == NULL ) return( FALSE );
     if( _LBitEmpty( conf->id.within_block )
@@ -377,9 +378,14 @@ extern  void    AxeDeadCode() {
     block               *blk;
     instruction         *ins;
     instruction         *next;
+    instruction         *kill;
     bool                change;
 
+/* Reuse field, it's useless for killed instruction */
+#define _INS_KILL_LINK( ins )  ( ins )->u2.cse_link
+
     for(;;) {
+        kill = NULL;
         change = FALSE;
         blk = HeadBlock;
         while( blk != NULL ) {
@@ -390,7 +396,13 @@ extern  void    AxeDeadCode() {
                     ins->result = NULL;
                     change = TRUE;
                     if( _IsntIns( ins, SIDE_EFFECT ) ) {
-                        FreeIns( ins );
+                       /*
+                        * 2005-05-18 RomanT
+                        * Do not free instruction immediately, or conflict
+                        * edges will point to nowhere. Add them to kill list.
+                        */
+                        _INS_KILL_LINK( ins ) = kill;
+                        kill = ins;
                     } else if( _OpIsCondition( ins->head.opcode ) ) {
                         _SetBlockIndex( ins, NO_JUMP, NO_JUMP );
                     }
@@ -401,6 +413,12 @@ extern  void    AxeDeadCode() {
         }
         if( change == FALSE ) break;
         FreeConflicts();
+        /* Now it's safe to free instructions without problems with edges */
+        while ( kill ) {
+            next = _INS_KILL_LINK( kill );
+            FreeIns( kill );
+            kill = next;
+        }
         NullConflicts(EMPTY);
         FindReferences();
         MakeConflicts();
