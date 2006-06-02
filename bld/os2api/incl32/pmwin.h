@@ -2165,8 +2165,8 @@ BOOL   APIENTRY WinPopupMenu(HWND,HWND,HWND,LONG,LONG,LONG,ULONG);
 
 typedef struct _POINTERINFO {
     ULONG   fPointer;
-    LONG    xHotSpot;
-    LONG    yHotSpot;
+    LONG    xHotspot;
+    LONG    yHotspot;
     HBITMAP hbmPointer;
     HBITMAP hbmColor;
     HBITMAP hbmMiniPointer;
