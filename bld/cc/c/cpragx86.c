@@ -147,16 +147,13 @@ static void CopyAuxInfo( void )
     hw_reg_set      flt_n_seg;
 
     if( CurrEntry == NULL ) {
-        // it is re-definition for built-in calling convention
-    } else if( AuxInfo.code != NULL ) {
-        // if pragma aux contains byte/assembly code then
-        // __watcall calling convention is used
-        CurrInfo = (struct aux_info *)CMemAlloc( sizeof( struct aux_info ) );
-        *CurrInfo = WatcallInfo;
-        CurrInfo->code = AuxInfo.code;
+        // Redefining a built-in calling convention
     } else {
         CurrInfo = (struct aux_info *)CMemAlloc( sizeof( struct aux_info ) );
         *CurrInfo = *CurrAlias;
+    }
+    if( AuxInfo.code != NULL ) {
+        CurrInfo->code = AuxInfo.code;
     }
     if( AuxInfoFlg.f_near ) {
         CurrInfo->cclass &= ~FAR;

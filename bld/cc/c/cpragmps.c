@@ -209,8 +209,8 @@ static void InitAuxInfo( void )
     CurrAlias   = NULL;
     CurrInfo    = NULL;
     CurrEntry   = NULL;
-    
-    memset( &AuxInfo, 0, sizeof( AuxInfo ) );    
+
+    memset( &AuxInfo, 0, sizeof( AuxInfo ) );
 
     AuxInfoFlg.f_returns    = 0;
 //    AuxInfoFlg.f_streturn   = 0;
@@ -226,16 +226,13 @@ static void AdvanceToken( void )
 static void CopyAuxInfo( void )
 {
     if( CurrEntry == NULL ) {
-        // it is re-definition for built-in calling convention
-    } else if( AuxInfo.code != NULL ) {
-        // if pragma aux contains byte/assembly code then
-        // __watcall calling convention is used
-        CurrInfo = (struct aux_info *)CMemAlloc( sizeof( struct aux_info ) );
-        *CurrInfo = WatcallInfo;
-        CurrInfo->code = AuxInfo.code;
+        // Redefining a built-in calling convention
     } else {
         CurrInfo = (struct aux_info *)CMemAlloc( sizeof( struct aux_info ) );
         *CurrInfo = *CurrAlias;
+    }
+    if( AuxInfo.code != NULL ) {
+        CurrInfo->code = AuxInfo.code;
     }
     CurrInfo->cclass |= AuxInfo.cclass;
     if( AuxInfo.objname != NULL )

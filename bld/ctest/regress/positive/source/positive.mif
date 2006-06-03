@@ -83,6 +83,7 @@ positive_tests = &
     asm06.$(exe) &
     asm07.$(exe) &
     asm08.$(exe) &
+    asm09.$(exe) &
     based01.$(exe) &
     based02.$(exe) &
     based03.$(exe) &
