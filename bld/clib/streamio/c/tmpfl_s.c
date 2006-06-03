@@ -35,7 +35,7 @@
 #include <stdlib.h>
 
 
-_WCRTLINK errno_t tmpfile_s( FILE * __restrict * __restrict * streamptr )
+_WCRTLINK errno_t tmpfile_s( FILE * __restrict * __restrict streamptr )
 /***********************************************************************/
 {
     errno_t     rc = -1;

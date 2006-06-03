@@ -7,7 +7,7 @@ void main()
     FILE    *fp;
     errno_t rc;
 
-    rc = tmpnam( filename, sizeof( filename ) );
+    rc = tmpnam_s( filename, sizeof( filename ) );
     if( rc == 0 ) {
         fp = fopen( filename, "w+b" );
         /* . */
