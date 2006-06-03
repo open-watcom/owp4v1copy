@@ -66,6 +66,7 @@
 !inject setefg.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject setvbuf.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject tmpfl.obj    d16 d32             nt nta ntp nvc     nvl     o16 o32         w16 w32 osi
+!inject tmpfl_s.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32         w16 w32 osi
 !inject tmputil.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32         w16 w32 osi
 !inject tmpflunx.obj                                                q16 q32                     l32 lpc lmp
 !inject ufdopen.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32 lpc lmp
@@ -114,17 +115,17 @@
 !inject vprintf.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject vprntf_s.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject vscanf_s.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
-
+ 
 !include ../../../../objlist.mif
-
+ 
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 #==========================================================================================================
 !inject dsetefg.obj                      nt nta ntp                     o32                         lpc lmp
-
+ 
 objsuffix=files
 !include ../../../../objlist.mif
 objsuffix=
-
+ 
 comtflag_opts    =-I"$(clib_dir)/startup/h"
 ufgetc_postopts  =-os
 ufgetcha_postopts=-os
