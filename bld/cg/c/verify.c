@@ -182,23 +182,41 @@ extern  bool    OtherVerify( vertype kind, instruction *ins,
     case V_CMPFALSE:
         if( ins->result != NULL ) return ( FALSE );
         if( NextCmp( ins ) ) return( FALSE );
-        if( ins->head.opcode == OP_CMP_LESS ) {
-            return( IsMin( op2, ins->type_class ) );
-        } else if( ins->head.opcode == OP_CMP_GREATER ) {
-            return( IsMax( op2, ins->type_class ) );
-        } else if( ins->head.opcode == OP_BIT_TEST_TRUE ) {
-            return( OtherVerify( V_OP2ZERO, ins, op1, op2, result ) );
+        if( op1 == op2 ) {
+            if( ins->head.opcode == OP_CMP_NOT_EQUAL
+             || ins->head.opcode == OP_CMP_GREATER
+             || ins->head.opcode == OP_CMP_LESS ) {
+                return( TRUE );
+            }
+        }
+        if( op2->n.class == N_CONSTANT ) {
+            if( ins->head.opcode == OP_CMP_LESS ) {
+                return( IsMin( op2, ins->type_class ) );
+            } else if( ins->head.opcode == OP_CMP_GREATER ) {
+                return( IsMax( op2, ins->type_class ) );
+            } else if( ins->head.opcode == OP_BIT_TEST_TRUE ) {
+                return( OtherVerify( V_OP2ZERO, ins, op1, op2, result ) );
+            }
         }
         break;
     case V_CMPTRUE:
         if( ins->result != NULL ) return ( FALSE );
         if( NextCmp( ins ) ) return( FALSE );
-        if( ins->head.opcode == OP_CMP_GREATER_EQUAL ) {
-            return( IsMin( op2, ins->type_class ) );
-        } else if( ins->head.opcode == OP_CMP_LESS_EQUAL ) {
-            return( IsMax( op2, ins->type_class ) );
-        } else if( ins->head.opcode == OP_BIT_TEST_FALSE ) {
-            return( OtherVerify( V_OP2ZERO, ins, op1, op2, result ) );
+        if( op1 == op2 ) {
+            if( ins->head.opcode == OP_CMP_EQUAL
+             || ins->head.opcode == OP_CMP_GREATER_EQUAL
+             || ins->head.opcode == OP_CMP_LESS_EQUAL ) {
+                return( TRUE );
+            }
+        }
+        if( op2->n.class == N_CONSTANT ) {
+            if( ins->head.opcode == OP_CMP_GREATER_EQUAL ) {
+                return( IsMin( op2, ins->type_class ) );
+            } else if( ins->head.opcode == OP_CMP_LESS_EQUAL ) {
+                return( IsMax( op2, ins->type_class ) );
+            } else if( ins->head.opcode == OP_BIT_TEST_FALSE ) {
+                return( OtherVerify( V_OP2ZERO, ins, op1, op2, result ) );
+            }
         }
         break;
     case V_OFFSETZERO:

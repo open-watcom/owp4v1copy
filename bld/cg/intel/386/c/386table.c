@@ -829,8 +829,8 @@ static  opcode_entry    TestOrCmp1[] = {
 
 _Side(  R,    U ),      V_CONSTTEMP,    R_TEMP2CONST,   RG_BYTE,FU_NO,
 _Side(  U,    R ),      V_CONSTTEMP,    R_TEMP2CONST,   RG_BYTE,FU_NO,
-_Side(  ANY,  C ),      V_CMPTRUE,      R_CMPTRUE,      RG_,FU_NO,
-_Side(  ANY,  C ),      V_CMPFALSE,     R_CMPFALSE,     RG_,FU_NO,
+_Side(  ANY,  ANY ),    NVI(V_CMPTRUE), R_CMPTRUE,      RG_,FU_NO,
+_Side(  ANY,  ANY ),    NVI(V_CMPFALSE),R_CMPFALSE,     RG_,FU_NO,
 
 /* instructions we can generate*/
 
@@ -933,11 +933,11 @@ static  opcode_entry    Cmp2[] = {
 
 _Side(  R,    U ),      V_CONSTTEMP,    R_TEMP2CONST,   RG_WORD,FU_NO,
 _Side(  U,    R ),      V_CONSTTEMP,    R_TEMP2CONST,   RG_WORD,FU_NO,
+_Side(  ANY,  ANY ),    NVI(V_CMPTRUE), R_CMPTRUE,      RG_,FU_NO,
+_Side(  ANY,  ANY ),    NVI(V_CMPFALSE),R_CMPFALSE,     RG_,FU_NO,
 
 /* instructions we can generate*/
 
-_Side(  ANY,  C ),      V_CMPTRUE,      R_CMPTRUE,      RG_,FU_NO,
-_Side(  ANY,  C ),      V_CMPFALSE,     R_CMPFALSE,     RG_,FU_NO,
 _SidCC( R,    C ),      V_OP2ZERO,      G_TEST,         RG_WORD,FU_ALUX,
 _SidCC( R,    R ),      V_NO,           G_RR2,          RG_WORD,FU_ALUX,
 _SidCC( R,    M ),      V_NO,           G_RM2,          RG_WORD,FU_ALUX,
@@ -967,11 +967,11 @@ static  opcode_entry    Cmp4[] = {
 
 _Side(  R,    U ),      V_CONSTTEMP,    R_TEMP2CONST,   RG_DBL,FU_NO,
 _Side(  U,    R ),      V_CONSTTEMP,    R_TEMP2CONST,   RG_DBL,FU_NO,
+_Side(  ANY,  ANY ),    NVI(V_CMPTRUE), R_CMPTRUE,      RG_,FU_NO,
+_Side(  ANY,  ANY ),    NVI(V_CMPFALSE),R_CMPFALSE,     RG_,FU_NO,
 
 /* instructions we can generate*/
 
-_Side(  ANY,  C ),      V_CMPTRUE,      R_CMPTRUE,      RG_,FU_NO,
-_Side(  ANY,  C ),      V_CMPFALSE,     R_CMPFALSE,     RG_,FU_NO,
 _SidCC( R,    C ),      V_OP2ZERO,      G_TEST,         RG_DBL,FU_ALUX,
 _SidCC( R,    R ),      V_NO,           G_RR2,          RG_DBL,FU_ALUX,
 _SidCC( R,    M ),      V_NO,           G_RM2,          RG_DBL,FU_ALUX,
@@ -994,8 +994,11 @@ _Side(  ANY,  ANY ),    V_NO,           G_UNKNOWN,      RG_DBL_NEED,FU_NO,
 static  opcode_entry    Cmp8[] = {
 /********************************/
 /*       op1   op2       verify          gen             reg fu*/
-_Side(  ANY,  C ),      V_CMPTRUE,      R_CMPTRUE,      RG_,FU_NO,
-_Side(  ANY,  C ),      V_CMPFALSE,     R_CMPFALSE,     RG_,FU_NO,
+// 2006-06-04 RomanT: Unsplit operands will stuck in conditions
+// _Side(  ANY,  C ),      V_CMPTRUE,      R_CMPTRUE,      RG_,FU_NO,
+// _Side(  ANY,  C ),      V_CMPFALSE,     R_CMPFALSE,     RG_,FU_NO,
+
+// [Todo:] Adapt V_U_TEST and R_U_TEST for 32-bit
 // _Side(       ANY,  C   ),    V_U_TEST,       R_U_TEST,       RG_8,FU_NO,
 _Side(  C,    R|M|U ),  V_NO,           R_SWAPCMP,      RG_8,FU_NO,
 _Side(  ANY,  ANY ),    V_NO,           R_SPLITCMP,     RG_8,FU_NO,
