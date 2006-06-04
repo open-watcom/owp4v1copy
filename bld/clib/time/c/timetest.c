@@ -190,6 +190,53 @@ int main( int argc, char * const argv[] )
     VERIFY( tm2.tm_mon  == gmt->tm_mon );
     VERIFY( tm2.tm_year == gmt->tm_year );
 #endif
+    /* test strftime format codes */
+    tm1.tm_sec   = 57;
+    tm1.tm_min   = 19;
+    tm1.tm_hour  = 14;
+    tm1.tm_mday  = 04;
+    tm1.tm_mon   = 5;
+    tm1.tm_year  = 106;
+    tm1.tm_isdst = -1;
+    tt1 = mktime( &tm1 );
+
+    strftime(buf, sizeof (buf), "%a %A %b %B %c %C", &tm1);
+    VERIFY( 0 == strcmp(buf,"Sun Sunday Jun June Sun Jun 04 14:19:57 2006 20") );
+
+    strftime(buf, sizeof (buf), "%d %D %e %E %f %F", &tm1);
+    VERIFY( 0 == strcmp(buf,"04 06/04/06  4  f 2006-06-04") );
+
+    strftime(buf, sizeof (buf), "%g %G %h %H %i %I", &tm1);
+    VERIFY( 0 == strcmp(buf,"06 2006 Jun 14 i 02") );
+
+    strftime(buf, sizeof (buf), "%j %J %k %K %l %L", &tm1);
+    VERIFY( 0 == strcmp(buf,"155 J k K l L") );
+
+    strftime(buf, sizeof (buf), "%m %M %n %N %o %O", &tm1);
+    VERIFY( 0 == strcmp(buf,"06 19 \n N o ") );
+
+    strftime(buf, sizeof (buf), "%p %P %q %Q %r %R", &tm1);
+    VERIFY( 0 == strcmp(buf,"PM P q Q 02:19:57 PM 14:19") );
+
+    strftime(buf, sizeof (buf), "%s %S %t %T %u %U", &tm1);
+    VERIFY( 0 == strcmp(buf,"s 57 \t 14:19:57 7 23") );
+
+    strftime(buf, sizeof (buf), "%v %V %w %W %x %X", &tm1);
+    VERIFY( 0 == strcmp(buf,"v 22 0 22 Sun Jun 04, 2006 14:19:57") );
+
+/*  %z %Z timezone dependant codes omitted */
+    strftime(buf, sizeof (buf), "%y %Y %%", &tm1);
+    VERIFY( 0 == strcmp(buf,"06 2006 %") );
+
+    strftime(buf, sizeof (buf), "%Ec %Ex %EY", &tm1);
+    VERIFY( 0 == strcmp(buf,"Sun Jun 04 14:19:57 2006 Sun Jun 04, 2006 2006") );
+
+    strftime(buf, sizeof (buf), "%Od %Oe %OH %OI %OM %OS", &tm1);
+    VERIFY( 0 == strcmp(buf,"04  4 14 02 19 57") );
+
+    strftime(buf, sizeof (buf), "%Ou %OU %OV %Ow %OW %Oy", &tm1);
+    VERIFY( 0 == strcmp(buf,"7 23 22 0 22 06") );
+
 
     /*** Print a pass/fail message and quit ***/
     if( NumErrors != 0 ) {
