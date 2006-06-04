@@ -173,9 +173,8 @@ FN_DQN32 = int386.exe &
 int386x.exe &
 intr.exe
  
-#Win32 only
-FN_WIN32 = mktemp.exe &
-mempty.exe &
+# MMX required
+FN_MMX = mempty.exe &
 mfromint.exe &
 mpaddb.exe &
 mpaddd.exe &
@@ -307,7 +306,6 @@ strinc.exe
  
 # Math functions (available everywhere)
 FN_MATH = _clear87.exe &
-_control.exe &
 _disable.exe &
 _enable.exe &
 _setmath.exe &
@@ -414,6 +412,7 @@ open.exe &
 opendir.exe &
 mkdir.exe &
 mkstemp.exe &
+mktemp.exe &
 printf.exe &
 putc.exe &
 putch.exe &
