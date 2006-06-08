@@ -380,6 +380,7 @@ static void ReturnStmt( SYM_HANDLE func_result, struct return_info *info )
         TYPEPTR     func_type;
 
         func_type = CurFunc->sym_type->object;
+        SKIP_TYPEDEFS( func_type );
         tree = RValue( Expr() );
         ChkRetType( tree );
         tree = BaseConv( func_type, tree );
