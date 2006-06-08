@@ -97,7 +97,7 @@ day of the month as a decimal number ( 1-31), a single digit is preceded by a bl
 .note %F
 is equivalent to '%Y-%m-%d' (the ISO 8601 date format)
 .note %g
-is replaced by the last 2 digits if the week-based year as a decimal number (00-99)
+is replaced by the last 2 digits of the week-based year as a decimal number (00-99)
 .note %G
 is replaced by the week-based year as a decimal number (e.g. 2006)
 .note %h
@@ -131,7 +131,7 @@ is replaced by the ISO 8601 weekday as a decimal number (1-7), where Monday is 1
 week number of the year as a decimal number (00-52) where Sunday
 is the first day of the week
 .note %V
-is replaced by the ISO 8601 weeknumber as a decimalnumber (01-53)
+is replaced by the ISO 8601 week number as a decimal number (01-53)
 .note %w
 weekday as a decimal number (0-6) where 0 is Sunday
 .note %W
