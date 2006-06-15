@@ -525,6 +525,7 @@ extern  void    CSuicide(void);
 extern  void    OpenErrFile(void);
 extern  void    FmtCMsg( char *buff, cmsg_info *info );
 extern  void    SetDiagSymbol(SYMPTR sym, SYM_HANDLE handle);
+extern  void    SetDiagType1(TYPEPTR typ_source);
 extern  void    SetDiagType2(TYPEPTR typ_source, TYPEPTR typ_target);
 extern  void    SetDiagPop(void);
 

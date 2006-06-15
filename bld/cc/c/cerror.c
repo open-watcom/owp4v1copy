@@ -419,6 +419,11 @@ void SetDiagSymbol( SYMPTR sym, SYM_HANDLE handle )
     np->sym_line = sym->d.defn_line;
 }
 
+void SetDiagType1( TYPEPTR typ_source )
+{
+    SetDiagType2( typ_source, NULL );
+}
+
 void SetDiagType2( TYPEPTR typ_source, TYPEPTR typ_target )
 {
     struct ErrPostList  *np;
@@ -442,6 +447,8 @@ void SetDiagPop( void )
 static void PrintType( int msg, TYPEPTR typ )
 {
     char    *text;
+
+    if( typ == NULL ) return;
 
     text = DiagGetTypeName( typ );
     CInfoMsg( msg, text );

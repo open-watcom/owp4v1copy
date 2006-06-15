@@ -576,7 +576,9 @@ local TREEPTR TakeRValue( TREEPTR tree, int void_ok )
         tree = ExprNode( NULL, OPR_ADDROF, tree );
         tree->expr_type = PtrNode( typ, decl_flags, 0 );
     } else if( TypeSize( typ ) == 0 ) {
+        SetDiagType1( typ );
         CErr1( ERR_INCOMPLETE_EXPR_TYPE );
+        SetDiagPop();
         return( ErrorNode( tree ) );
     } else {
         if( SizeOfCount == 0 ) {                        /* 05-jan-89 */
@@ -2650,7 +2652,14 @@ local TREEPTR SizeofOp( TYPEPTR typ )
     }
     size = SizeOfArg( typ );
     if( size == 0 ) {
-        CErr1( ERR_INCOMPLETE_EXPR_TYPE );
+        SKIP_TYPEDEFS( typ );
+        if( typ->decl_type == TYPE_VOID ) {
+            CErr1( ERR_EXPR_HAS_VOID_TYPE );
+        } else {
+            SetDiagType1( typ );
+            CErr1( ERR_INCOMPLETE_EXPR_TYPE );
+            SetDiagPop();
+        }
     }
 #if TARGET_INT < TARGET_LONG
     if( size > TARGET_UINT_MAX ) {                      /* 30-jul-93 */
