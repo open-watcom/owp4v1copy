@@ -157,7 +157,7 @@ functions. These problems were discovered thanks to a more stringent testing
 procedure and had never been reported by users.
 .bull
 The strtod function has been enhanced to follow C99 specification. It will
-now parse infinity and NaN, as well as exadecimal floating-point numbers.
+now parse infinity and NaN, as well as hexadecimal floating-point numbers.
 See the C Library Reference for details.
 .bull
 The math library has been fixed to perform binary to decimal floating-point
