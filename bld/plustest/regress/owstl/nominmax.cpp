@@ -72,7 +72,7 @@ bool some_test( )
 {
     bool rc = true;
 
-// The macro FAIL is not used because it uses cout.
+// The macro FAIL is not used because it uses cout. See below.
 
 #if defined( min ) || defined( max )
     rc = false;
@@ -103,7 +103,7 @@ int main( ) {
             rc = 1;
         }
 
-// heap_ok uses cout to output the parameter.
+// heap_ok uses cout to output the parameter. See below.
 
         if( !heap_ok( "Possible heap problem!\n" ) ) rc = 1;
     }
@@ -118,12 +118,22 @@ int main( ) {
 // some_test() so that my test's failure report will not producing a 
 // bogus error report here.
 
+// Since the approach shown here really won't scale well with multiple tests,
+// it might be better to restructure main() so that this test is only done
+// if all the other tests are passed. This would avoid the bogus report
+// caused by using cout, allow FAIL to be used as intended, and still test
+// the heap when this test would actually find an error.
+
+// It might be desireable to modify FAIL to report the module as well as
+// the line number of the error.
+
     if( heap_count( ) != original_count ) {
         error_msg = "Possible memory leak!\n";
         rc = 1;
     }
 
-// Emit the error_msg, if there is one.
+// Emit the error_msg, if there is one. This would entirely disappear if
+// the above note is followed and main() is restructured.
 
     if( error_msg != NULL ) {
         std::cout << error_msg;
