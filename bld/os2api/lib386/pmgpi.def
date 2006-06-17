@@ -274,3 +274,22 @@ EXPORTS
     GpiSetTextAlignment                         @649
     GpiPolygons                                 @650
     GpiQueryFullFontFileDescs                   @657
+    GpiQueryTabbedTextExtent                    @658
+    GpiTabbedCharStringAt                       @659
+    GpiQueryRasterizerCaps                      @660
+    GpiCreateRoundRectRegion                    @661
+    GpiCreateEllipticRegion                     @662
+    GpiCreatePolygonRegion                      @663
+    GpiResizePalette                            @666
+    GpiQueryNearestPaletteIndex                 @667
+    GpiSetFontMappingFlags                      @668
+    GpiQueryFontMappingFlags                    @669
+    GpiBeginInkPath                             @670
+    GpiEndInkPath                               @671
+    GpiStrokeInkPath                            @672
+    GpiAbortPath                                @722
+    GpiQueryMitreLimit                          @724
+    GpiQueryPath                                @725
+    GpiSetMitreLimit                            @727
+    DevPostEscape                               @729
+    GpiOval                                     @730

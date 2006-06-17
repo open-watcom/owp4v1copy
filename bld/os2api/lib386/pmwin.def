@@ -256,3 +256,5 @@ EXPORTS
     WinSetSysPointerData                        @1002
     WinQuerySysPointerData                      @1003
     WinMessageBox2                              @1015
+    WinSetClipRegion                            @1043
+    WinQueryClipRegion                          @1044

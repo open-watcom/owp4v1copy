@@ -41,3 +41,4 @@ EXPORTS
     DrgQueryDraginfoPtrFromDragitem             @72
     DrgQueryDragStatus                          @73
     DrgReallocDraginfo                          @74
+    DrgQueryFormat                              @75

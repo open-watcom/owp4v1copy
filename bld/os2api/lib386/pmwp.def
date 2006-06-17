@@ -116,6 +116,8 @@ EXPORTS
     _WPMetClassData                             @95
     WPMetNewClass                               @96
     WinShutdownSystem                           @149
+    WinShutdownAndReboot                        @152
+    WinShutdown                                 @153
     WinRegisterObjectClass                      @200
     WinDeregisterObjectClass                    @201
     OldWinCreateObject                          @202
@@ -314,3 +316,15 @@ EXPORTS
     M_WPLaunchPadClassData                      @471
     M_WPLaunchPadNewClass                       @472
     WinIsSOMDDReady                             @480
+    WPImageFileCClassData                       @491
+    _WPImageFileCClassData                      @491
+    WPImageFileClassData                        @492
+    _WPImageFileClassData                       @492
+    WPImageFileNewClass                         @493
+    M_WPImageFileCClassData                     @494
+    _M_WPImageFileCClassData                    @494
+    M_WPImageFileClassData                      @495
+    _M_WPImageFileClassData                     @495
+    M_WPImageFileNewClass                       @496
+    WinNotebookButtonFromID                     @511
+    WinWaitForShell                             @512
