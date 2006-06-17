@@ -1996,7 +1996,8 @@ is symbol name converted to uppercase
 is symbol name converted to lowercase
 .note #
 is a placeholder for "@nnn", where nnn is size of all function parameters
-on the stack.
+on the stack; it is ignored for functions with variable argument lists, or
+for symbols that are not functions
 .note \
 next character is treated as literal
 .esynote

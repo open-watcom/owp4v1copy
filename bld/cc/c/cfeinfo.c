@@ -654,6 +654,9 @@ static VOIDPTR NextLibrary( int index, aux_class request )
     return( (char *)index );
 }
 
+/* Return the size of function parameters or -1 if size could
+ * not be determined (symbol isn't a function or is variadic)
+ */
 static int GetParmsSize( CGSYM_HANDLE sym_handle )
 {
     int         total_parm_size = 0;
@@ -666,23 +669,27 @@ static int GetParmsSize( CGSYM_HANDLE sym_handle )
     SymGet( &sym, sym_handle );
     fn_typ = sym.sym_type;
     SKIP_TYPEDEFS( fn_typ );
-    parm = fn_typ->u.fn.parms;
-    if( parm != NULL ) {
-        for( ; (typ = *parm); ++parm ) {
-            if( typ->decl_type == TYPE_DOT_DOT_DOT ) {
-                total_parm_size = -1;
-                break;
+    if( fn_typ->decl_type == TYPE_FUNCTION ) {
+        parm = fn_typ->u.fn.parms;
+        if( parm != NULL ) {
+            for( ; (typ = *parm); ++parm ) {
+                if( typ->decl_type == TYPE_DOT_DOT_DOT ) {
+                    total_parm_size = -1;
+                    break;
+                }
+
+                SKIP_TYPEDEFS( typ );
+                if( typ->decl_type == TYPE_VOID )
+                    break;
+
+                parm_size = TypeSize( typ );
+                parm_size = (parm_size + sizeof( target_int ) - 1)
+                            & -sizeof( target_int );
+                total_parm_size += parm_size;
             }
-
-            SKIP_TYPEDEFS( typ );
-            if( typ->decl_type == TYPE_VOID )
-                break;
-
-            parm_size = TypeSize( typ );
-            parm_size = (parm_size + sizeof( target_int ) - 1)  &
-                            - sizeof( target_int );
-            total_parm_size += parm_size;
         }
+    } else {
+        total_parm_size = -1;
     }
     return( total_parm_size );
 }

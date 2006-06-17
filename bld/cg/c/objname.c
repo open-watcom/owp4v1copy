@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  decorate/truncate object file symbol names
+* Description:  Decorate and/or truncate object file symbol names.
 *
 ****************************************************************************/
 
@@ -218,11 +218,12 @@ static int GetExtName( sym_handle sym, char *buffer, int max_len )
     p = dst;
     for( src = sufix; *src != '\0'; ++src ) {
         if( *src == '#' ) {
-            int size;
+            int     size = (int)FEExtName( sym, EXTN_PRMSIZE );
 
-            *(p++) = '@';
-            size = (int)FEExtName( sym, EXTN_PRMSIZE );
-            p = xtoa( p, size );
+            if( !(size < 0) ) {
+                *(p++) = '@';
+                p = xtoa( p, size );
+            }
         } else {
             if( *src == '\\' )
                 ++src;
