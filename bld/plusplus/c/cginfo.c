@@ -624,7 +624,11 @@ static target_size_t GetParmsSize( SYMBOL sym )
 
     size = 0;
     fn_type = FunctionDeclarationType( sym->sym_type );
-    TypeParmSize( fn_type, &size );
+    if( fn_type == NULL ) {
+        size = -1;
+    } else {
+        TypeParmSize( fn_type, &size );
+    }
     return( size );
 }
 
