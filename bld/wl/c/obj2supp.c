@@ -343,7 +343,6 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
     fix.type = save->flags;
     fix.loc_addr = CurrRec.addr;
     fix.loc_addr.off += save->off;
-    fix.ffix = GET_FFIX_VALUE( targ->u.sym );
 
     if( targ->type == FIX_FRAME_EXT ) {
         if( targ->u.sym->info & SYM_TRACE ) {
@@ -353,6 +352,7 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
             ProcUndefined( targ->u.sym );
             return;
         }
+        fix.ffix = GET_FFIX_VALUE( targ->u.sym );
         if( IS_SYM_IMPORTED( targ->u.sym ) ) {
             if( ( frame->type < FIX_FRAME_LOC )
                 && ( targ->u.sym != frame->u.sym ) ) {
