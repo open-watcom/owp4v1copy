@@ -7,130 +7,53 @@ the standard.
 
 :H2.Status
 :P.
-:AUTHOR date='14 Jan 2006'.P Chapin, D Cletheroe
+:AUTHOR date='20 Jun 2006'.P Chapin, D Cletheroe
 :P.
 Reviewer: Not reviewed
 :P.
-The algorithms library was mainly written by Peter.
-:P.
-Missing members:
-:UL.
-:LI.adjacent_find( ForwardIterator, ForwardIterator )
-:LI.adjacent_find( ForwardIterator, ForwardIterator, BinaryPredicate )
-:LI.mismatch( InputIt1, InputIt1, InputIt2, BinaryPredicate )
-:LI.search( FwdIterator1, FwdIterator1, FwdIterator2, FwdIterator2 )
-:LI.search( FwdIt1, FwdIt1, FwdIt2, FwdIt2, BinaryPredicate )
-:LI.search_n( FwdIterator, FwdIterator, Size, const T& )
-:LI.search_n( FwdIt, FwdIt, Size, const T&, BinaryPredicate )
-:LI.unique( ForwardIterator, ForwardIterator )
-:LI.unique( ForwardIterator, ForwardIterator, BinaryPredicate pred )
-:LI.unique_copy( InputIterator, InputIterator, OutputIterator )
-:LI.unique_copy( InputIt, InputIt, OutputIt, BinaryPredicate )
-:LI.rotate( ForwardIterator, ForwardIterator, ForwardIterator )
-:LI.rotate_copy( FwdIterator, FwdIterator, FwdIterator, OutputIt )
-:LI.partition( BidirectionalIterator, BidirectionalIterator, Predicate )
-:LI.stable_partition( BidirectionalIterator, BidirectionalIterator, Predicate )
-:LI.sort( RandomAccessIterator, RandomAccessIterator, Compare )
-:LI.stable_sort( RandomAccessIterator, RandomAccessIterator )
-:LI.stable_sort( RandomAccessIterator, RandomAccessIterator, Compare )
-:LI.partial_sort( RAIterator, RAIterator, RAIterator )
-:LI.partial_sort( RAIterator, RAIterator, RAIterator, Compare )
-:LI.partial_sort_copy( InIterator, InIterator, RAIterator, RAIterator )
-:LI.partial_sort_copy( InIt, InIt, RAIt, RAIt, Compare )
-:LI.nth_element( RAIterator, RAIterator, RAIterator )
-:LI.nth_element( RAIterator, RAIterator, RAIterator, Compare )
-:LI.lower_bound( ForwardIterator, ForwardIterator, const T& )
-:LI.lower_bound( ForwardIterator, ForwardIterator, const T&, Compare )
-:LI.upper_bound( ForwardIterator, ForwardIterator, const T& )
-:LI.upper_bound( ForwardIterator, ForwardIterator, const T& , Compare )
-:LI.equal_range( ForwardIterator, ForwardIterator, const T& )
-:LI.equal_range( ForwardIterator, ForwardIterator, const T&, Compare )
-:LI.binary_search( ForwardIterator, ForwardIterator, const T& )
-:LI.binary_search( ForwardIterator, ForwardIterator, const T&, Compare )
-:LI.merge( InputIt1, InputIt1, InputIt2, InputIt2, OutputIt result )
-:LI.merge( InputIt1, InputIt1, InputIt2, InputIt2, OutputIt result, Compare )
-:LI.inplace_merge( BidirectionalIt, BidirectionalIt, BidirectionalIt )
-:LI.inplace_merge( BidirectionalIt, BidirectionalIt, BidirectionalIt, Compare )
-:LI.includes( InputIt1, InputIt1, InputIt2, InputIt )
-:LI.includes( InputIt1, InputIt1, InputIt2, InputIt2, Compare )
-:LI.set_union( InputIt1, InputIt1, InputIt2, InputIt2, OutputIt )
-:LI.set_union( InputIt1, InputIt1, InputIt2, InputIt2, OutputIt, Compare )
-:LI.set_intersection( InputIt1, InputIt1, InputIt2, InputIt2, OutputIt )
-:LI.set_intersection( InputIt1, InputIt1, InputIt2, InputIt2, OutIt, Compare )
-:LI.set_difference( InputIt1, InputIt1, InputIt2, InputIt2, OutputIt )
-:LI.set_difference( InputIt1, InputIt1, InputIt2, InputIt2, OutIt, Compare )
-:LI.set_symmetric_difference( InputIt1, InputIt1, InputIt2, InputIt2, OutIt )
-:LI.set_symmetric_difference( InIt1, InIt1, InIt2, InIt2, OutIt, Compare )
-:LI.lexicographical_compare( InputIt1, InputIt1, InputIt2, InputIt2 )
-:LI.lexicographical_compare( InputIt1, InputIt1, InputIt2, InputIt2, Compare )
-:LI.next_permutation( BidirectionalIterator, BidirectionalIterator )
-:LI.next_permutation( BidirectionalIterator, BidirectionalIterator, Compare )
-:LI.prev_permutation( BidirectionalIterator, BidirectionalIterator )
-:LI.prev_permutation( BidirectionalIterator, BidirectionalIterator, Compare )
-:eUL.
-
-Completed members:
-:UL.
-:LI.for_each( InputIterator, InputIterator, Function )
-:LI.find( InputIterator, InputIterator, const Type & )
-:LI.find_if( InputIterator, InputIterator, Predicate )
-:LI.find_end(FwdIterator1, FwdIterator1, FwdIterator2 , FwdIterator2 )
-:LI.find_end(FwdIt1, FwdIt1, FwdIt2 , FwdIt2, BinaryPredicate )
-:LI.find_first_of(FwdIterator1, FwdIterator1, FwdIterator2 , FwdIterator2 )
-:LI.find_first_of(FwdIt1, FwdIt1, FwdIt2 , FwdIt2, BinaryPredicate )
-:LI.equal( InputIterator1, InputIterator1, InputIterator2 )
-:LI.equal( InputIterator1, InputIterator1, InputIterator2, BinaryPredicate )
-:LI.copy( InputIterator, InputIterator, OutputIterator )
-:LI.copy_backward( Bidirectional1, Bidirectional1, Bidirectional2 )
-:LI.swap( Type &, Type & )
-:LI.swap_ranges( ForwardIterator1, ForwardIterator1, ForwardIterator2 )
-:LI.iter_swap( ForwardIterator1, ForwardIterator2 )
-:LI.transform( InputIterator, InputIterator, OutputIterator, UnaryOperation )
-:LI.transform( Input1, Input1, Input2, Output, BinaryOperation )
-:LI.replace( ForwardIterator, ForwardIterator, const Type &, const Type & )
-:LI.replace_if( ForwardIterator, ForwardIterator, Predicate, const Type & )
-:LI.replace_copy( Input, Input, Output, const Type &, const Type & )
-:LI.replace_copy_if( Input, Input, Output, Predicate, const Type & )
-:LI.fill( ForwardIterator, ForwardIterator, const Type & )
-:LI.fill_n( OutputIterator, Size, const Type & )
-:LI.generate( ForwardIterator, ForwardIterator, Generator )
-:LI.generate_n( OutputIterator, Size, Generator )
-:LI.remove_copy( FwdIterator, FwdIterator, OutputIterator, Type const & )
-:LI.remove_copy_if( FwdIterator, FwdIterator, OutputIterator, Predictate )
-:LI.remove( ForwardIterator, ForwardIterator, Type const & )
-:LI.remove_if( ForwardIterator, ForwardIterator, Predictate )
-:LI.reverse( Bidirectional, Bidirectional )
-:LI.reverse_copy( Bidirectional, Bidirectional, OutputIterator )
-:LI.random_shuffle( RandomAccessIterator, RandomAccessIterator )
-:LI.random_shuffle( RAIterator, RAIterator, RandomNumberGenerator& rand )
-:LI.push_heap( RAIterator, RAIterator )
-:LI.pop_heap( RAIterator, RAIterator )
-:LI.make_heap( RAIterator, RAIterator )
-:LI.sort_heap( RAIterator, RAIterator )
-:LI.sort( RandomAccessIterator, RandomAccessIterator )
-:LI.min( const Type &, const Type & )
-:LI.max( const Type &, const Type & )
-:LI.min( const Type &, const Type &, Compare )
-:LI.max( const Type &, const Type &, Compare )
-:LI.min_element( ForwardIterator, ForwardIterator )
-:LI.min_element( ForwardIterator, ForwardIterator, Compare )
-:LI.max_element( ForwardIterator, ForwardIterator )
-:LI.max_element( ForwardIterator, ForwardIterator, Compare )
-:eUL.
-
-Written but not activated/finished:
-:UL.
-:LI.count( InputIterator, InputIterator, const Type & )
-:LI.count_if( InputIterator, InputIterator, Predicate )
-:eUL.
+About two thirds of the required algorithms have been implemented. For a
+list of those remaining, see the Wiki web site.
 
 :H1.Design Details
 :P.
 Most of the standard algorithms are template functions that operate on
-iterators to perform some common task. Each funtion template is quickly
+iterators to perform some common task. Each function template is quickly
 addressed in the sections that follow. They are generally quite simple
 and looking directly at the source may be the simplest form of
 information.
+
+:P.
+A number of the algorithms come in both a form that uses
+:CODE.operator<
+or
+:CODE.operator==
+(as appropriate) and in a form that uses a predicate. The predicate form is
+more general. The non-predicate form can be implemented in terms of the
+predicate form by using the function objects in
+:PATH.functional.
+In theory implementing the non-predicate forms in terms of the predicate
+forms should not entail any abstraction penalty because the compiler should
+be able to optimize away any overhead due to the function objects. Some
+investigation was done using Open Watcom v1.5 to find out if that was true.
+In fact, the compiler was able to produce essentially identical code for
+the non-predicate functions that were implemented directly as for
+non-predicate functions that were implemented in terms of the predicate
+functions. However, at the call site, there was some abstraction penalty:
+the compiler issued a few extra instructions to manipulate the (zero sized)
+function objects.
+
+:P.
+These experiments led us to conclude that the non-predicate functions
+should be implemented directly for short, simple algorithms where the extra
+overhead might be an issue. For the more complex algorithms, the
+non-predicate forms should be implemented in terms of the corresponding
+predicate forms. The extra overhead of doing so should be insignificant in
+such cases and the savings in source code (as well as the improved ease of
+maintanence) would make such an approach desirable.
+
+:P.
+If the compiler's ability to optimize away the function objects improves,
+this matter should be revisited.
 
 :H2.*_heap
 :P.
@@ -180,9 +103,32 @@ versions and perform a check for this condition.
 :H2.remove_copy remove_copy_if
 :P.
 This makes a copy of the elements that don't compare equal, or when the
-predictate is false, starting at the location given by OutputIterator.
+predictate is false, starting at the location given by Output.
 It is a simple while loop over the input iterator first to last, either
 just skipping the element or copying it to the output.
+
+:H2.unique
+:P.
+
+For C++98 and C++2003 there is an open library issue regarding the behavior
+of
+:CODE.unique
+when non-equivalence relations are used. The standard says that the
+predicate should be applied in the opposite order of one's intuition. In
+particular:
+:CODE.pred(*i, *(i-1)).
+This means the predicate compares an item with its previous item.
+
+:P.
+The resolution of the open issue suggests that non-equivalence relations
+should not be premitted. In any case, the standard should apply the
+predicate between an item and the next item:
+:CODE.pred(*(i-1), *i).
+
+:P.
+The Open Watcom implementation follows the proposed resolution and thus
+deliberately violates the standard. Most (all?) other implementations do
+the same.
 
 :H2.find_first_of
 :P.
@@ -239,15 +185,16 @@ been done?)
 :P.
 The
 :CODE.sort
-template is implemented in terms of the standard heap support functions.
-As a result the sorting algorithm being used is Heap-Sort. This
-algorithm provides the required running time (even in the worst case)
-but may have more overhead than the more traditional Quick-Sort.
-Modifying the implementation of
-:CODE.sort
-at some future time to Quick-Sort might be worthwhile (be sure to
-measure the performance before and after to verify that an improvement
-actually occcurs).
+template is implemented using a QuickSort algorithm. This was shown to be
+significantly faster (over twice as fast) as using a HeapSort based on the
+heap functions in this library. This implementation of QuickSort is
+recursive. Since each recursive call has private state, it is unclear if a
+non-recursive version would be any faster (at the time of this writing, no
+performance comparisons between recursive and non-recursive versions have
+been made). Stack consumption of the recursive implementation should be
+O(log(n)) on the average, which is not excessive. However, the stack
+consumption would be O(n) in the worst case, which would be undesirable for
+large n.
 
 :H2.add quick descriptions of other algorithms here...
 :P.

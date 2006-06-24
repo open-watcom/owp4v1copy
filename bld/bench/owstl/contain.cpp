@@ -78,7 +78,7 @@ void array_test(element_t* first, element_t* last, int)
   element_t* array = new element_t[last - first];
   copy(first, last, array);
   sort(array, array + (last - first));
-  // unique(array, array + (last - first));
+  unique(array, array + (last - first));
   delete [] array;  
 }
 
@@ -89,7 +89,7 @@ void vector_pointer_test(element_t* first, element_t* last, int)
   copy(first, last, back_inserter(container));
   element_t *p = &*container.begin();
   sort(p, p + (last - first));
-  // unique(p, p + (last-first));
+  unique(p, p + (last-first));
 }
 
 void vector_iterator_test(element_t* first, element_t* last, int)
@@ -98,7 +98,7 @@ void vector_iterator_test(element_t* first, element_t* last, int)
   vector<element_t> container;
   copy(first, last, back_inserter(container));
   sort(container.begin(), container.end());
-  // unique(container.begin(), container.end());
+  unique(container.begin(), container.end());
 }
 
 #ifdef NEVER
@@ -109,7 +109,7 @@ void deque_test(element_t* first, element_t* last, int)
   copy(first, last, back_inserter(container));
   copy(first, last, container.begin());
   sort(container.begin(), container.end());
-  // unique(container.begin(), container.end());
+  unique(container.begin(), container.end());
 }
 #endif
 

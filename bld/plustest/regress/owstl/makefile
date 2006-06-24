@@ -37,6 +37,7 @@ stack_axp=opt stack=16k
 
 # to update add test names here:
 template = &
+        aaa$(ext)       &
         alg01$(ext)     &
         alg02$(ext)     &
         bitset01$(ext)  &
