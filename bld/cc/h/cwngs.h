@@ -83,3 +83,5 @@ warn( WARN_NO_EOL_BEFORE_EOF,                   1 )
 warn( WARN_OBSOLETE_FUNC_DECL,                  3 )
 warn( WARN_NONPROTO_FUNC_CALLED,                3 )
 warn( WARN_NONPROTO_FUNC_CALLED_INDIRECT,       3 )
+warn( WARN_MISSING_QUOTE,                       1 )
+

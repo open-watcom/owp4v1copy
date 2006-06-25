@@ -1207,10 +1207,14 @@ to
 .np
 The specified variable has already been statically initialized.
 :MSGSYM. ERR_MISSING_QUOTE
-:MSGTXT. Ending \" missing for string literal
+:MSGTXT. String literal not terminated before end of line
 :MSGJTXT. 文字列定数の最後の\"がありません
 .np
-The compiler did not find a second double quote to end the string literal.
+A string literal is enclosed by double quote " characters.
+.np
+The compiler did not find a closing double quote " or line
+continuation character \ before the end of a line or before
+the end of the source file.
 :MSGSYM. ERR_NEED_BRACES
 :MSGTXT. Data for aggregate type must be enclosed in curly braces
 :MSGJTXT. 集合体型のデータは，波括弧に入れられなければなりません
@@ -2029,6 +2033,7 @@ You have two pointers that point to types that have different sign specifiers.
 .np
 You have two pointers that point to types that have different sign specifiers.
 :MSGSYM. ERR_MISSING_LINE_CONTINUE
+:cmt This message not currently used.  25-June-2006
 :MSGTXT. Missing \\ for string literal
 :MSGJTXT. 文字列定数に対して \\ がありません
 .np
