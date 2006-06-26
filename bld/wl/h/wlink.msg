@@ -240,17 +240,19 @@ pick(    MSG_GENERAL_HELP_31,   "dboption  ::= \"LInes\" | \"Types\" | \"LOcals\
                                 "dboption  ::= \"LInes\" | \"Types\" | \"LOcals\" | \"All\"")
 pick(    MSG_GENERAL_HELP_32,   "option    ::= \"ARTificial\" | \"[NO]CAChe\" | \"[NO]Caseexact\" | \"CVPack\"",
                 "option    ::= \"ARTificial\" | \"[NO]CAChe\" | \"[NO]Caseexact\" | \"CVPack\"" )
-pick(    MSG_GENERAL_HELP_33,   "            | \"Dosseg\" | \"ELiminate\" | \"INCremental[=file_name]\"",
-                "            | \"Dosseg\" | \"ELiminate\" | \"INCremental[=ファイル名]\"")
-pick(    MSG_GENERAL_HELP_34,   "            | \"MANGlednames\" | \"Map\"[\"=\"map_file] | \"MAXErrors=\"n | \"NAMELen=\"n",
-                "            | \"MANGlednames\" | \"Map\"[\"=\"マップファイル] | \"MAXErrors=\"n | \"NAMELen=\"n" )
-pick(    MSG_GENERAL_HELP_35,   "            | \"NODefaultlibs\" | \"NOEXTension\" | \"OSName=\"string | \"Quiet\"",
+pick(    MSG_GENERAL_HELP_33,   "            | \"Dosseg\" | \"ELiminate\" | \"[NO]FARcalls\"",
+                "            | \"Dosseg\" | \"ELiminate\" | \"[NO]FARcalls\"")
+pick(    MSG_GENERAL_HELP_34,   "            | \"INCremental[=file_name]\" | \"MANGlednames\"",
+                "            | \"INCremental[=ファイル名]\" | \"MANGlednames\"")
+pick(    MSG_GENERAL_HELP_35,   "            | \"Map\"[\"=\"map_file] | \"MAXErrors=\"n | \"NAMELen=\"n",
+                "            | \"Map\"[\"=\"マップファイル] | \"MAXErrors=\"n | \"NAMELen=\"n" )
+pick(    MSG_GENERAL_HELP_36,   "            | \"NODefaultlibs\" | \"NOEXTension\" | \"OSName=\"string | \"Quiet\"",
                 "            | \"NODefaultlibs\" | \"NOEXTension\" | \"OSName=\"文字列 | \"Quiet\"" )
-pick(    MSG_GENERAL_HELP_36,   "            | \"[NO]REDefsok\" | \"STack\"=n | \"START=\"symbol_name | \"STATics\"",
+pick(    MSG_GENERAL_HELP_37,   "            | \"[NO]REDefsok\" | \"STack\"=n | \"START=\"symbol_name | \"STATics\"",
                 "            | \"[NO]REDefsok\" | \"STack\"=n | \"START=\"シンボル名 | \"STATics\"" )
-pick(    MSG_GENERAL_HELP_37,   "            | \"SYMFile\"[\"=\"symbol_file], | \"[NO]Undefsok\" | \"Verbose\"",
+pick(    MSG_GENERAL_HELP_38,   "            | \"SYMFile\"[\"=\"symbol_file], | \"[NO]Undefsok\" | \"Verbose\"",
                 "            | \"SYMFile\"[\"=\"シンボルファイル], | \"[NO]Undefsok\" | \"Verbose\"" )
-pick(    MSG_GENERAL_HELP_38,   "            | \"VFRemoval\"" ,
+pick(    MSG_GENERAL_HELP_39,   "            | \"VFRemoval\"" ,
                 "            | \"VFRemoval\"" )
                 
 /*
