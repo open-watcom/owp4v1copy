@@ -66,6 +66,12 @@ d:\
     d:\tools;
     d:\bld\build\binnt
 
+  WARNING: Some platforms (notably Windows 9x) require DOS style line endings
+  in batch files. If source files were moved from a UNIX platform. as is the
+  case with ow_daily.tar.bz2, you must make sure that line endings are
+  properly converted. Loading the batch files in an editor such as EDIT and
+  saving them is one way to do this.
+  
 ------------------------------
 3) Priming the pump:
 
