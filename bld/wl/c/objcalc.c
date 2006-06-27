@@ -124,17 +124,17 @@ enum class_orders {
 
 static void ReOrderClasses( section *sec )
 /****************************************/
-// rebuild the class list using the microsoft DOS segment ordering.
+// rebuild the class list using the Microsoft DOS segment ordering.
 // This builds various classes into separate rings, and then joins them
 // together.
 {
-    class_entry *       rings[ORD_LAST+1];
-    class_entry *       nextcl;
-    class_entry *       currcl;
-    class_entry **      owner;
-    seg_leader *        currseg;
-    seg_leader *        prevseg;
-    char *              name;
+    class_entry         *rings[ORD_LAST+1];
+    class_entry         *nextcl;
+    class_entry         *currcl;
+    class_entry         **owner;
+    seg_leader          *currseg;
+    seg_leader          *prevseg;
+    char                *name;
     int                 i;
     int                 ord;
 
@@ -244,18 +244,18 @@ static void SortClasses( section *sec )
 // to the class and segment structures.  Sort segments in a class if
 // information is provided.
 {
-    class_entry *       DefaultRing;   // Where to put classes that don't match anything
-    class_entry *       nextcl;
-    class_entry *       currcl;
-    class_entry **      NewRing;
-    class_entry **      owner;
-    seg_leader *        currseg;
-    seg_leader *        prevseg;
-    ORDER_CLASS *       MatchClass;
-    ORDER_SEGMENT *     MatchSeg;
+    class_entry         *DefaultRing;   // Where to put classes that don't match anything
+    class_entry         *nextcl;
+    class_entry         *currcl;
+    class_entry         **NewRing;
+    class_entry         **owner;
+    seg_leader          *currseg;
+    seg_leader          *prevseg;
+    ORDER_CLASS         *MatchClass;
+    ORDER_SEGMENT       *MatchSeg;
 
     DefaultRing = NULL;
-    
+
     while( sec != NULL ) {
         currcl = sec->classlist;
         while( currcl != NULL ) {
@@ -273,7 +273,7 @@ static void SortClasses( section *sec )
                     }
                     if( MatchClass->NoEmit ) {
                         currcl->flags |= CLASS_NOEMIT;
-                    }               
+                    }
                     break;
                 }
             }
@@ -297,7 +297,7 @@ static void SortClasses( section *sec )
                     if( prevseg == NULL )
                         break;
                     currseg = prevseg->next_seg;
-                
+
                     for( ;; ) {
                         if( stricmp( currseg->segname, MatchSeg->Name ) == 0 ) {
                             if( MatchSeg->FixedAddr) {     // and copy any flags or address from it
@@ -306,7 +306,7 @@ static void SortClasses( section *sec )
                             }
                             if( MatchSeg->NoEmit ) {
                                 currseg->segflags |= SEG_NOEMIT;
-                            }               
+                            }
                             RingPromote( &currcl->segs, currseg, prevseg );
                             break;
                         }
@@ -337,15 +337,15 @@ static void SortClasses( section *sec )
         for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
              if( MatchClass->Copy && MatchClass->Ring != NULL ) {   // If this is a duplicate destination, find the source
                  for( currcl = sec->classlist; currcl != NULL; currcl = currcl->next_class ) {
-                    if( stricmp( MatchClass->SrcName, currcl->name ) == 0 ) { 
+                    if( stricmp( MatchClass->SrcName, currcl->name ) == 0 ) {
                         MatchClass->Ring->DupClass = currcl;
                         MatchClass->Ring->flags |= CLASS_COPY;
                         break;
                     }
                 }
             }
-        }           
-      
+        }
+
         SortAreas( sec->areas ); // Not tested, not sure if needed
         sec = sec->next_sect;
     }
@@ -354,7 +354,7 @@ static void SortClasses( section *sec )
 static bool CheckLxdataSeen( void *_seg, void *dummy )
 /****************************************************/
 {
-    seg_leader *seg = _seg;
+    seg_leader  *seg = _seg;
 
     dummy = dummy;
     if( seg->info & SEG_LXDATA_SEEN ) {
@@ -385,12 +385,12 @@ static void SortSegments( void )
 /******************************/
 // reorder segments based on COFF name grouping
 {
-    class_entry *       currcl;
-    seg_leader *        prev;
-    seg_leader *        curr;
-    seg_leader *        comp;
-    seg_leader *        newlist;
-    char *              dollarpos;
+    class_entry         *currcl;
+    seg_leader          *prev;
+    seg_leader          *curr;
+    seg_leader          *comp;
+    seg_leader          *newlist;
+    char                *dollarpos;
     size_t              currlen;
     size_t              complen;
     bool                foundgroup;     // so we don't search for OMF only.
@@ -476,8 +476,8 @@ extern bool IsStackClass( char *name, unsigned namelen )
 static void AddUpSegData( void *_sdata )
 /**************************************/
 {
-    segdata    *sdata = _sdata;
-    seg_leader *leader;
+    segdata     *sdata = _sdata;
+    seg_leader  *leader;
     offset      align_size;
 
     if( sdata->isdead )
@@ -506,8 +506,8 @@ extern void CalcSegSizes( void )
 static bool SetGroupInitSize( void *_sdata, void *_delta )
 /********************************************************/
 {
-    segdata    *sdata = _sdata;
-    offset     *delta = _delta;
+    segdata     *sdata = _sdata;
+    offset      *delta = _delta;
 
     if( !sdata->isuninit && ( sdata->length > 0 ) && !sdata->isdead ) {
         sdata->u.leader->group->size = *delta + sdata->a.delta + sdata->length;
@@ -530,9 +530,9 @@ extern void CalcAddresses( void )
 /*******************************/
 /* Calculate the starting address in the file of each segment. */
 {
-    offset      size;
-    group_entry *grp;
-    offset      flat;
+    offset          size;
+    group_entry     *grp;
+    offset          flat;
 
     DEBUG(( DBG_OLD, "CalcAddresses()" ));
     if( FmtData.base == NO_BASE_SPEC ) {
@@ -591,7 +591,7 @@ extern void CalcAddresses( void )
         }
         CalcGrpAddr( Groups );
         CalcGrpAddr( AbsGroups );
-    } else if ( FmtData.type & ( MK_PE | MK_OS2_FLAT | MK_QNX_FLAT | MK_ELF ) ) {
+    } else if( FmtData.type & ( MK_PE | MK_OS2_FLAT | MK_QNX_FLAT | MK_ELF ) ) {
         if( FmtData.output_raw || FmtData.output_hex ) {
             flat = 0;
         } else if( FmtData.type & MK_PE ) {
@@ -659,7 +659,7 @@ static void AllocFileSegs( void )
 static void SetLeaderSeg( void *_seg )
 /*****************************************/
 {
-    seg_leader *        seg = _seg;
+    seg_leader      *seg = _seg;
 
     if( !( seg->info & SEG_ABSOLUTE ) ) {
         seg->seg_addr.seg = seg->group->grp_addr.seg;
@@ -673,8 +673,8 @@ static void ReallocFileSegs( void )
  * segment numbers so there aren't any "gaps" where the 0 size physical
  * segments (groups) are. */
 {
-    group_entry *       currgrp;
-    class_entry *       class;
+    group_entry         *currgrp;
+    class_entry         *class;
     unsigned            seg_num;
 
     seg_num = 1;
@@ -701,7 +701,7 @@ static void FindUninitDataStart( void )
 /* for some formats we have to split the uninitialized data off of the rest of
  * DGROUP. So - this finds the start of the uninitialized portion of DGROUP */
 {
-    class_entry *       class;
+    class_entry         *class;
     bool                setnext;
 
     setnext = TRUE;
@@ -800,7 +800,7 @@ static bool FindCopyGroups( void *_seg, void *_info )
 {
     // This is called by the outer level iteration looking for classes
     //  that have more than one group in them
-    seg_leader * seg = _seg;
+    seg_leader  *seg = _seg;
     grpaddrinfo *info = _info;
 
     if( info->lastgrp != seg->group ) {   // Only interate new groups
@@ -817,9 +817,9 @@ static void CalcGrpAddr( group_entry *currgrp )
  * not useful for OS/2 16-bit mode. */
 {
     grpaddrinfo     info;
-    seg_leader  *   seg;
-    class_entry *   class;
-    unsigned long addr;
+    seg_leader      *seg;
+    class_entry     *class;
+    unsigned long   addr;
     targ_addr       save;
 
     while( currgrp != NULL ) {
@@ -843,10 +843,10 @@ static void CalcGrpAddr( group_entry *currgrp )
             CurrLoc.seg = addr >> FmtData.SegShift;
             CurrLoc.off = addr & FmtData.SegMask;
             while( (class = class->next_class) != NULL ) {
-                if( class->flags & CLASS_FIXED) {
-                    save = class->BaseAddr;   // If class is fixed, can stop
-                    ChkLocated(&save, TRUE ); //   after making sure address 
-                    break;                   //   isn't already past here
+                if( class->flags & CLASS_FIXED ) {
+                    save = class->BaseAddr;     // If class is fixed, can stop
+                    ChkLocated( &save, TRUE );  //   after making sure address
+                    break;                      //   isn't already past here
                 }
                 if( !(class->flags & CLASS_DEBUG_INFO) ) { // skip Debug classes, they've already been done
                     RingWalk( class->segs, AllocSeg );
@@ -855,8 +855,8 @@ static void CalcGrpAddr( group_entry *currgrp )
         }
         else {
             Ring2Lookup( seg, FindEndAddr, &info );
-            if( ( FmtData.type & MK_REAL_MODE )
-                && ( info.end_addr - info.grp_addr > 64 * 1024L ) ) {
+            if( (FmtData.type & MK_REAL_MODE)
+                && (info.end_addr - info.grp_addr > 64 * 1024L) ) {
                 LnkMsg( ERR+MSG_GROUP_TOO_BIG, "sl", currgrp->sym->name,
                         info.end_addr - info.grp_addr - 64 * 1024L );
                 info.grp_addr = info.end_addr - 64 * 1024L - 1;
@@ -889,15 +889,14 @@ extern void AllocClasses( class_entry *class )
         } else {
             if( FmtData.type & (MK_PE | MK_QNX_FLAT | MK_OS2_FLAT | MK_ELF) ) {
                 // flat addresses
-                if (class->flags & CLASS_FIXED) {
+                if( class->flags & CLASS_FIXED ) {
                     class->segs->group->grp_addr.off = class->BaseAddr.off;
                     // Group inherits fixed address from class (only useful if it is first thing in group)
                 }
-            }
-            else {
+            } else {
                 // segmented
                 save = class->BaseAddr;
-                ChkLocated(&save, class->flags & CLASS_FIXED ); // Process fixed locations if any
+                ChkLocated( &save, class->flags & CLASS_FIXED );    // Process fixed locations if any
             }
             RingWalk( class->segs, AllocSeg );
         }
@@ -910,7 +909,7 @@ static void AllocSeg( void *_seg )
 /********************************/
 /* Allocate a segment (process all segments in a given class) */
 {
-    seg_leader *seg = _seg;
+    seg_leader  *seg = _seg;
 
     if( !( seg->info & SEG_ABSOLUTE ) ) {
         if( IS_DBG_DWARF( seg ) ) {
@@ -990,8 +989,8 @@ extern void ProcPubs( mod_entry *head, section *sect )
 static int SymAddrCompare( const void *a, const void *b )
 /*******************************************************/
 {
-    symbol * left;
-    symbol * right;
+    symbol  *left;
+    symbol  *right;
 
     left = *((symbol **)a);
     right = *((symbol **)b);
@@ -1018,9 +1017,9 @@ extern void StartMapSort( void )
 extern void FinishMapSort( void )
 /*******************************/
 {
-    symbol **   symarray;
-    symbol **   currsym;
-    symbol *    sym;
+    symbol      **symarray;
+    symbol      **currsym;
+    symbol      *sym;
     bool        ok;
 
     if( ( MapFlags & MAP_GLOBAL ) && ( NumMapSyms > 0 ) ) {
@@ -1066,7 +1065,7 @@ static void WriteSymArray( symbol ** symarray, unsigned num )
 }
 
 typedef struct {
-    symbol **   symarray;
+    symbol      **symarray;
     unsigned    num;
     section     *sect;
     unsigned    first : 1;
@@ -1075,10 +1074,10 @@ typedef struct {
 static bool DefPubSym( void *_pub, void *_info )
 /**********************************************/
 {
-    symbol *    pub = _pub;
-    pubdefinfo *info = _info;
+    symbol      *pub = _pub;
+    pubdefinfo  *info = _info;
     segdata *   seg;
-    seg_leader *leader;
+    seg_leader  *leader;
     offset      off;
     unsigned_16 frame;
     signed_32   temp;
@@ -1159,7 +1158,7 @@ extern void DoPubs( section *sect )
 static void SetReadOnly( void *_seg )
 /***********************************/
 {
-    seg_leader *    seg = _seg;
+    seg_leader      *seg = _seg;
 
     if( seg->class->flags & CLASS_READ_ONLY ) {
         seg->segflags |= SEG_READ_ONLY;
@@ -1169,10 +1168,10 @@ static void SetReadOnly( void *_seg )
 extern void SetSegFlags( seg_flags * flag_list )
 /**********************************************/
 {
-    seg_flags *     next_one;
-    seg_leader *    leader;
-    seg_flags *     start;
-    class_entry *   class;
+    seg_flags       *next_one;
+    seg_leader      *leader;
+    seg_flags       *start;
+    class_entry     *class;
 
     class = Root->classlist;
     while( class != NULL ) {
@@ -1220,7 +1219,7 @@ static bool SegNameCmp( void *seg, void *seg_name )
 static seg_leader * FindASeg( class_entry *class, char *seg_name )
 /****************************************************************/
 {
-    seg_leader *seg;
+    seg_leader      *seg;
 
     while( class != NULL ) {
         seg = RingLookup( class->segs, SegNameCmp, seg_name );
@@ -1241,7 +1240,7 @@ static bool SetClassFlag( void *seg, void *flags )
 static void FillClassFlags( char *name, unsigned_16 flags )
 /*********************************************************/
 {
-    class_entry *   class;
+    class_entry     *class;
 
     class = Root->classlist;
     while( class != NULL ) {
@@ -1258,8 +1257,8 @@ static void FillClassFlags( char *name, unsigned_16 flags )
 static void FillTypeFlags( unsigned_16 flags, segflag_type type )
 /***************************************************************/
 {
-    class_entry *class;
-    class_status clflags;
+    class_entry     *class;
+    class_status    clflags;
 
     clflags = 0;
     if( type == SEGFLAG_CODE ) {
@@ -1279,7 +1278,7 @@ static void FindFloatSyms( void )
 // this finds the floating point fixup symbols and marks them.
 {
     int         index;
-    symbol *    sym;
+    symbol      *sym;
 
     ClearFloatBits();
     for( index = 0; index < ( sizeof( FloatNames ) / sizeof( FloatNames[0] ) );
@@ -1290,4 +1289,3 @@ static void FindFloatSyms( void )
         }
     }
 }
-
