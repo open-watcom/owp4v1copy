@@ -468,7 +468,7 @@ extern bool IsStackClass( char *name, unsigned namelen )
 /******************************************************/
 {
     return( ( namelen >= STACKCL_SIZE )
-        && ( memicmp( name + namelen - STACKCL_SIZE, StackClassName, STACKCL_SIZE ) == 0 ) );
+        && ( stricmp( name, StackClassName ) == 0 ) );
 }
 
 /* -----------------------Allocating Segments-------------------------------- */
