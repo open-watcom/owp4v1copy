@@ -39,7 +39,7 @@
 #include "mstate.hpp"
 
 #define MITEM_OWNER_IDE         0
-#define MITEM_OWNER_WINMAKER    1
+//#define MITEM_OWNER_WINMAKER    1 Blue Sky support removed 1-Jul-2006
 
 WCLASS MComponent;
 WCLASS MAction;

@@ -101,9 +101,6 @@ int WEXPORT MCommand::expand( WString& command, WFileName* target, MTool* tool, 
     } else if( strnicmp( &cmd[i], "!Browse ", 8 ) == 0 ) {
         i += 8;
         location = EXECUTE_BROWSE;
-    } else if( strnicmp( &cmd[i], "!VP ", 4 ) == 0 ) {
-        i += 4;
-        location = EXECUTE_WINMAKER;
     } else if( strnicmp( &cmd[i], "!RemakeAll", 10 ) == 0 ) {
         i += 10;
         location = EXECUTE_TOUCH_ALL;

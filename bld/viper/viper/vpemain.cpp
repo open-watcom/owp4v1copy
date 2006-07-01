@@ -151,7 +151,6 @@ WEXPORT VpeMain::VpeMain()
     , _rcsClient( this )
     , _refuseFileLists( FALSE )
     , _autoRefresh( TRUE )
-    , _ddeServer( "WAT_IDE", "project", this, (sbc)&VpeMain::DdeCallback )
 {
     /* check and fix env vars if needed; this should perhaps be done in
      * the GUI library and not here.
@@ -162,45 +161,6 @@ WEXPORT VpeMain::VpeMain()
         "WATCOM environment variable not set.\n"
         "IDE will not function correctly" );
     }
-
-    #if defined( __WINDOWS__ ) || defined( __NT__ )
-    /* stuff to set up the BLUESKY env. var */
-    {
-        char drive[_MAX_DRIVE];
-        char path[_MAX_PATH];
-        char name[_MAX_FNAME];
-        char buff[_MAX_PATH];
-        #define ARB_CONST 128
-        int     len;
-
-        #ifdef __NT__
-            GetPrivateProfileString( "Blue Sky SWC32", "WVP", "", buff, ARB_CONST, "win.ini" );
-            len = strlen( buff );
-            if( len == 0 ) {
-                GetPrivateProfileString( "Blue Sky SWC", "WVP", "", buff, ARB_CONST, "win.ini" );
-            }
-            len = strlen( buff );
-        #else
-            GetPrivateProfileString( "Blue Sky SWC", "WVP", "", buff, ARB_CONST, "win.ini" );
-            len = strlen( buff );
-            if( len == 0 ) {
-                GetPrivateProfileString( "Blue Sky SWC32", "WVP", "", buff, ARB_CONST, "win.ini" );
-            }
-            len = strlen( buff );
-        #endif
-        if( len != 0 ) {
-            _splitpath( buff, drive, path, name, NULL );
-            _makepath( buff, drive, path, name, "exe" );
-            len = strlen( buff );
-            if( len != 0 && buff[len-1] == '\\' ) {
-                buff[len-1] = '\0';
-            }
-            strcpy( path, "bluesky=" );
-            strcat( path, buff );
-            putenv( strdup( path ) );
-        }
-    }
-    #endif
 
     hookF1Key( TRUE );
 #if defined( __OS2__ )

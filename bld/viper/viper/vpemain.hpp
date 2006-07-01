@@ -45,7 +45,6 @@
 #include "vtoolitm.hpp"
 #include "whotspot.hpp"
 #include "veditdll.hpp"
-#include "vwmclien.hpp"
 #include "vrcscli.hpp"
 #include "inifile.hpp"  //added lwh
 
@@ -93,12 +92,10 @@ WCLASS VpeMain : public WMdiWindow, public WView
         bool createDirectory( const WFileName& f );
         void deleteMsglog();
         bool attachTgtFile( WFileName& fn );
-        WString* DdeCallback( const char* c );
         bool appActivate( bool activated );
         virtual bool contextHelp( bool );
     private:
         void cForPBProject( WFileName &pj, bool nt );
-        void remoteFileOp( const char *cmd );
         void readIdeInit();
         void buildMenuBar();
         bool addComponent( WMenuItem* =NULL );
@@ -223,7 +220,6 @@ WCLASS VpeMain : public WMdiWindow, public WView
         const char* toolName( char tag );
 //      WServer*        _server;
         WString* serverNotify( const char* msg );
-        VWinMakerClient _winMakerClient;
         bool            _refuseFileLists;
         VRcsClient      _rcsClient;
         WClient*        _editorClient;
@@ -265,7 +261,6 @@ WCLASS VpeMain : public WMdiWindow, public WView
 
         IniFile         _ini;
         WVList          _oldProjects;
-        WServer         _ddeServer;
         bool            _autoRefresh;
         void addOldProject( const WFileName& );
         bool okToReplace( WFileName& fn );

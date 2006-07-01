@@ -12,13 +12,12 @@ OBJECTS = &
         vpemain2.obj &
         vsetup.obj &
         vtoolitm.obj &
-        vwmclien.obj &
         whotlist.obj &
         whotpbox.obj &
         batcli.obj &
         objautod.obj &
         vrcscli.obj &
-	autoenv.obj
+        autoenv.obj
 
 !ifneq host_os os2
 OBJECTS += vfilelst.obj resautod.obj

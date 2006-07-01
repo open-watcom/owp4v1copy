@@ -48,7 +48,6 @@ cdsay .
     <CPCMD> viper/win/idex.cfg   <RELROOT>/rel2/binw/idex.cfg
     <CPCMD> viper/win/wsrv.pif   <RELROOT>/rel2/binw/wsrv.pif
     <CPCMD> viper/win/wd.pif     <RELROOT>/rel2/binw/wd.pif
-    <CPCMD> vpdll/wini86/vpdll.dll <RELROOT>/rel2/binw/vpdll.dll
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> viper/os2386/ide.exe <RELROOT>/rel2/binp/ide.exe
@@ -57,7 +56,6 @@ cdsay .
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> viper/nt386/ide.exe  <RELROOT>/rel2/binnt/ide.exe
     <CPCMD> viper/nt/idex.cfg    <RELROOT>/rel2/binnt/idex.cfg
-    <CPCMD> vpdll/nt386/vpdll.dll  <RELROOT>/rel2/binnt/vpdll.dll
 
   [ IFDEF (cpu_axp) <2*> ] 
     <CPCMD> viper/ntaxp/ide.exe  <RELROOT>/rel2/axpnt/ide.exe
