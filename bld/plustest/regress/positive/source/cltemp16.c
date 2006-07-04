@@ -53,6 +53,19 @@ struct C {
     }
 };
 
+struct D {
+    template< class T >
+    T fna( T t ){ return fnx( t ); }
+    
+    template< class T >
+    T fnx( T t ){ return t/2; }
+};
+
+int dfn( void )
+{
+    D d;
+    return d.fnx( 2 );
+}
 
 int main() {
     A::B<int> b1;
@@ -76,6 +89,8 @@ int main() {
     C<int> c;
     if( c.f( 2 ) != 5 ) fail( __LINE__ );
 
+    D d;
+    if( dfn() + d.fnx( 4 ) +d.fna( 8 ) != 7 ) fail( __LINE__ );
 
     _PASS;
 }

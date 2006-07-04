@@ -757,7 +757,9 @@ static SYMBOL combineFunctions( SYMBOL prev_fn, SYMBOL curr_fn )
         }
     }
     if( SymIsClassMember( curr_fn ) &&
-        SymScope( curr_fn ) == ScopeNearestFileOrClass( GetCurrScope() ) ) {
+        SymScope( curr_fn ) == ScopeNearestFileOrClass( GetCurrScope() ) &&
+        // allow template member function to be instatiated by more than one member
+        SymScope( curr_fn ) != ScopeNearestFileOrClass( ScopeFunctionScopeInProgress() ) ) {
         // see C++98 9.3 (2)
         CErr2p( ERR_CANNOT_REDECLARE_MEMBER_FUNCTION, prev_fn );
     }
