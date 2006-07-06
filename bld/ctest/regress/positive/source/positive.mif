@@ -135,6 +135,7 @@ positive_tests = &
     init20.$(exe) &
     init21.$(exe) &
     init22.$(exe) &
+    init23.$(exe) &
     inline01.$(exe) &
     inline04.$(exe) &
     intel01.$(exe) &

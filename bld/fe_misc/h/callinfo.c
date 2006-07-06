@@ -354,17 +354,17 @@ void SetAuxStackConventions( void )
 int IsAuxParmsBuiltIn( hw_reg_set *parms )
 /***************************************/
 {
-    if( parms == &DefaultParms ) {
+    if( parms == DefaultParms ) {
         return( TRUE );
 #if _INTEL_CPU
-    } else if( parms == &StackParms ) {
+    } else if( parms == StackParms ) {
         return( TRUE );
-    } else if( parms == &FastcallParms ) {
+    } else if( parms == FastcallParms ) {
         return( TRUE );
 #if _CPU == 386
-    } else if( parms == &OptlinkParms ) {
+    } else if( parms == OptlinkParms ) {
         return( TRUE );
-    } else if( parms == &metaWareParms ) {
+    } else if( parms == metaWareParms ) {
         return( TRUE );
 #endif
 #endif
