@@ -25,9 +25,9 @@ typedef struct {
 C c1 = { 0 };
 
 int main( void ) {
-    if( sizeof( B ) != sizeof( int ) ) fail( __LINE__ );
-    if( sizeof( b1 ) != 7 * sizeof( int ) ) fail( __LINE__ );
-    if( sizeof( b2 ) != 3 * sizeof( int ) ) fail( __LINE__ );
+    if( sizeof( B ) != sizeof( long ) ) fail( __LINE__ );
+    if( sizeof( b1 ) != sizeof( long ) + 6 * sizeof( int ) ) fail( __LINE__ );
+    if( sizeof( b2 ) != sizeof( long ) + 2 * sizeof( int ) ) fail( __LINE__ );
     if( offsetof( B, a ) != sizeof( long ) ) fail( __LINE__ );
     _PASS;
 }
