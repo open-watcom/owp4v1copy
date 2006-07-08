@@ -1,3 +1,4 @@
+
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -201,7 +202,7 @@ static void WriteAbsSeg( void *_leader )
 /**************************************/
 {
     seg_leader *leader = _leader;
-    
+
     if( leader->info & SEG_ABSOLUTE ) {
         WriteFormat( 0, leader->segname );
         WriteFormat( 24, leader->class->name );
@@ -231,7 +232,7 @@ static void WriteNonAbsSeg( void *_seg )
 /**************************************/
 {
     seg_leader *seg = _seg;
-    
+
     if( !( seg->info & SEG_ABSOLUTE ) ) {
         WriteFormat( 0, seg->segname );
         WriteFormat( 23, seg->class->name );
@@ -251,9 +252,9 @@ extern void WriteSegs( class_entry *firstcl )
 /* write segment info into mapfile */
 {
     class_entry         *cl;
-    bool                abs;
+/*  bool                abs;
 
-    abs = FALSE;
+    abs = FALSE;          */
     cl = firstcl;
     if( cl != NULL ) {
         WriteBox( MSG_MAP_BOX_SEGMENTS );
@@ -404,7 +405,7 @@ static bool CheckSymRecList( void *_info, void *sym )
 /***************************************************/
 {
     symrecinfo *info = _info;
-    
+
     return( ( sym == info->sym ) && ( CurrMod == info->mod ) );
 }
 
@@ -456,7 +457,7 @@ static void PrintSymTrace( void *_info )
 /**************************************/
 {
     symrecinfo * info = _info;
-    
+
     LnkMsg( MAP+MSG_MOD_TRACE, "Ss", info->sym, info->mod->name );
 }
 
