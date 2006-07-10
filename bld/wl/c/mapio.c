@@ -252,9 +252,7 @@ extern void WriteSegs( class_entry *firstcl )
 /* write segment info into mapfile */
 {
     class_entry         *cl;
-/*  bool                abs;
 
-    abs = FALSE;          */
     cl = firstcl;
     if( cl != NULL ) {
         WriteBox( MSG_MAP_BOX_SEGMENTS );
