@@ -8354,7 +8354,7 @@ static unsigned typesBind_ptree( type_bind_info *data )
             PstkPush( &(data->with_generic), PTreeType( u_unmod_type->of ) );
             break;
         default:
-            if( ! TypeCompareExclude( b_unmod_type, t_unmod_type,
+            if( ! TypeCompareExclude( b_unmod_type, u_unmod_type,
                                       TC1_NOT_ENUM_CHAR ) ) {
                 return( TB_NULL );
             }

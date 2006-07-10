@@ -99,3 +99,8 @@ File: source\diag0308.c
   candidate defined at: (10,8)
 (40,13): Warning! W014: no reference to symbol 'a'
   definition: 'A<1,1> a' in 'int main( void )'
+File: source\diag0309.c
+(15,2): Error! E181: class template 'X' is already defined
+  definition: '<class template> X'
+(20,2): Error! E181: class template 'X' is already defined
+  definition: '<class template> X'

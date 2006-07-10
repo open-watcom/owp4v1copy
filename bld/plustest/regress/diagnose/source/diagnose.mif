@@ -400,7 +400,7 @@ diags_0399_defn = &
     diag0306$(err_sin) &
     diag0307$(err_sin) &
     diag0308$(err_sin) &
-    
+    diag0309$(err_sin) &
     
 err_sin = .err
 err_sys = .ser

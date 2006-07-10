@@ -949,6 +949,7 @@ static TEMPLATE_SPECIALIZATION *mergeClassTemplates( TEMPLATE_DATA *data,
             CErr2p( ERR_CANT_REDEFINE_CLASS_TEMPLATES, old_sym );
             RewriteFree( defn );
             data->defn = NULL;
+            return( NULL );
         } else {
             RewriteFree( tspec->defn );
             tspec->defn = defn;
@@ -1175,9 +1176,9 @@ void TemplateDeclFini( void )
         if( sym != NULL ) {
             if( tspec == NULL ) {
                 tspec = RingFirst( sym->u.tinfo->specializations );
+            } else {
+                tspec->corrupted = TRUE;
             }
-
-            tspec->corrupted = TRUE;
         }
     } else {
         if( data->defn_added && ( tspec != NULL ) ) {
@@ -2647,7 +2648,7 @@ static void processFunctionTemplateDefns( void )
             } RingIterEnd( fn_sym )
         } RingIterEnd( curr_defn )
         // each time around the loop means another template instantiated by a
-        // template, incrementint this will cause trip in verifyOKToProceed
+        // template, incrementing this will cause trip in verifyOKToProceed
         // when processing definition
         templateData.curr_depth++; 
     }while( keep_going );
