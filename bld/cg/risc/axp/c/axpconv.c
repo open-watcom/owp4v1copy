@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Alpha AXP type conversions.
 *
 ****************************************************************************/
 
@@ -183,7 +182,7 @@ _Un(    M,      ANY,    NONE ),         V_NO,           R_MOVOP1TEMP,   RG_QD, F
 _Un(    ANY,    ANY,    NONE ),         V_NO,           G_UNKNOWN,      RG_QD_NEED, FU_ALU,
 };
 
-static instruction *cC8TO4( instruction *ins ) { ins->table = &ctable_C8TO4; return( ins ); }
+static instruction *cC8TO4( instruction *ins ) { ins->table = ctable_C8TO4; return( ins ); }
 
 static opcode_entry ctable_S4TO8[] = {
 /************************************/
@@ -195,7 +194,7 @@ _Un(    M,      ANY,    NONE ),         V_NO,           R_MOVOP1TEMP,   RG_DQ, F
 _Un(    ANY,    ANY,    NONE ),         V_NO,           G_UNKNOWN,      RG_DQ_NEED, FU_ALU,
 };
 
-static instruction *cS4TO8( instruction *ins ) { ins->table = &ctable_S4TO8; return( ins ); }
+static instruction *cS4TO8( instruction *ins ) { ins->table = ctable_S4TO8; return( ins ); }
 
 static convert_rtn ConvertRoutines[] = {
     #define _C_( a )    c##a,

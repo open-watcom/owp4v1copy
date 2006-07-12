@@ -588,7 +588,7 @@ extern char             WndBackgroundChar;
 #define WndSetPopUpMenu( wnd, x, num ) { \
     __WND_FIELD( wnd, num_popups ) = num; \
     __WND_FIELD( wnd, popupmenu ) = x; }
-#define DefPopUp( x ) ArraySize( x ), &x
+#define DefPopUp( x ) ArraySize( x ), x
 #define NoPopUp       0, NULL
 
 #define WndMenuSize( x ) ArraySize( x )

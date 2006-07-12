@@ -196,7 +196,7 @@ static opcode_entry ctable_C8TO4[] = {
 _Un(    ANY,    ANY,    NONE ),         V_NO,           R_MOVELOW,      RG_,      FU_NO,
 };
 
-static instruction *cC8TO4( instruction *ins ) { ins->table = &ctable_C8TO4; return( ins ); }
+static instruction *cC8TO4( instruction *ins ) { ins->table = ctable_C8TO4; return( ins ); }
 
 static opcode_entry ctable_S4TO8[] = {
 /************************************/
@@ -204,7 +204,7 @@ static opcode_entry ctable_S4TO8[] = {
 _Un(    ANY,    ANY,    NONE ),         V_NO,           R_SEX_4TO8,     RG_,      FU_NO,
 };
 
-static instruction *cS4TO8( instruction *ins ) { ins->table = &ctable_S4TO8; return( ins ); }
+static instruction *cS4TO8( instruction *ins ) { ins->table = ctable_S4TO8; return( ins ); }
 
 static opcode_entry ctable_Z4TO8[] = {
 /************************************/
@@ -212,7 +212,7 @@ static opcode_entry ctable_Z4TO8[] = {
 _Un(    ANY,    ANY,    NONE ),         V_NO,           R_CLRHI_4,      RG_,      FU_NO,
 };
 
-static instruction *cZ4TO8( instruction *ins ) { ins->table = &ctable_Z4TO8; return( ins ); }
+static instruction *cZ4TO8( instruction *ins ) { ins->table = ctable_Z4TO8; return( ins ); }
 
 static convert_rtn ConvertRoutines[] = {
     #define _C_( a )    c##a,

@@ -571,7 +571,7 @@ extern  hw_reg_set      Low64Reg( hw_reg_set regs )
 
     if( HW_CEqual( regs, HW_EMPTY ) )
         return( HW_EMPTY );
-    order = &Reg64Order;
+    order = Reg64Order;
     for( ;; ) {
         if( HW_Ovlap( *order, regs ) )
             break;

@@ -451,7 +451,7 @@ static bool RegEventProc( a_window * wnd, gui_event gui_ev, void *parm )
         reg->info = NULL;
         reg->indents = NULL;
         RegResize( wnd );
-        reg->popup = WndAppendToggles( MADRegSetDisplayToggleList( reg->data ), &reg->num_toggles, &RegMenu, ArraySize( RegMenu ), MENU_REGISTER_TOGGLES );
+        reg->popup = WndAppendToggles( MADRegSetDisplayToggleList( reg->data ), &reg->num_toggles, RegMenu, ArraySize( RegMenu ), MENU_REGISTER_TOGGLES );
         WndSetPopUpMenu( wnd, reg->popup, ArraySize( RegMenu ) + reg->num_toggles );
         return( TRUE );
     case GUI_DESTROY :

@@ -207,10 +207,10 @@ static gui_menu_struct sampleMenu[] = {
                             "Gather small samples together" },
     { "&Bar Graph", MENU_SAMP_BAR, GUI_ENABLED,
                              "Make adjustments to the bar graph",
-                             ArraySize( graphBarMenu ), &graphBarMenu },
+                             ArraySize( graphBarMenu ), graphBarMenu },
     { "&Sort", MENU_SAMP_SORT, GUI_ENABLED,
                              "Sort the values",
-                             ArraySize( sortMenu ), &sortMenu },
+                             ArraySize( sortMenu ), sortMenu },
 };
 
 static char *       nameBuff = NULL;

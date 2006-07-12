@@ -69,7 +69,7 @@ void    FiniToolBar( void )
 void    WndToolOpen( gui_ord height, bool fixed )
 {
     if( SysGUI() ) {
-        WndCreateToolBar( height, fixed, ArraySize(ToolBar), &ToolBar );
+        WndCreateToolBar( height, fixed, ArraySize(ToolBar), ToolBar );
     }
 }
 

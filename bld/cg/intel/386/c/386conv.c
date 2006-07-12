@@ -230,27 +230,27 @@ _Un( ANY,  ANY,  NONE ),     V_NO,           R_MAKECALL,     RG_,   FU_NO,
 };
 
 static opcode_entry     *CvtAddr[] = {
-        &C2to1,
-        &C4to1,
-        &C4to2,
-        &C8to4,
-        &C8to4,
-        &S1to2,
-        &S1to4,
-        &S1to8,
-        &S2to4,
-        &S2to8,
-        &S4to8,
-        &Z1to2,
-        &Z1to4,
-        &Z1to8,
-        &Z2to4,
-        &Z2to8,
-        &Z4to8,
-        &ExtPT,
-        &ChpPT,
-        &PTtoI8,
-        &I8toPT,
+        C2to1,
+        C4to1,
+        C4to2,
+        C8to4,
+        C8to4,
+        S1to2,
+        S1to4,
+        S1to8,
+        S2to4,
+        S2to8,
+        S4to8,
+        Z1to2,
+        Z1to4,
+        Z1to8,
+        Z2to4,
+        Z2to8,
+        Z4to8,
+        ExtPT,
+        ChpPT,
+        PTtoI8,
+        I8toPT,
         };
 
 static  rt_class         CvtTable[] = {
@@ -369,7 +369,7 @@ extern  instruction     *rDOCVT( instruction *ins ) {
         ins->table = CvtAddr[  how - ( OK + 1 )  ];
         new_ins = ins;
     } else {
-        ins->table = &CRtn;
+        ins->table = CRtn;
         RoutineNum = how - BEG_RTNS;
         new_ins = ins;
     }

@@ -1003,7 +1003,7 @@ static bool AsmEventProc( a_window * wnd, gui_event gui_ev, void *parm )
         AsmInit( wnd );
         AsmNewIP( wnd );
         DbgUpdate( UP_OPEN_CHANGE );
-        asm->popup = WndAppendToggles( MADDisasmToggleList(), &asm->num_toggles, &AsmMenu, ArraySize( AsmMenu ), MENU_ASM_TOGGLES );
+        asm->popup = WndAppendToggles( MADDisasmToggleList(), &asm->num_toggles, AsmMenu, ArraySize( AsmMenu ), MENU_ASM_TOGGLES );
         WndSetPopUpMenu( wnd, asm->popup, ArraySize( AsmMenu ) + asm->num_toggles );
         return( TRUE );
     case GUI_DESTROY :

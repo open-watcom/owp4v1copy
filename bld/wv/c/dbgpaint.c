@@ -326,7 +326,7 @@ void ProcPaint( void )
     ReqEOC();
     if( class == WND_NO_CLASS ) {
         if( dialog ) {
-            GUIGetDialogColours( &WndDlgColours );
+            GUIGetDialogColours( WndDlgColours );
             WndDlgColours[ dlg_attr ].fore = fore;
             WndDlgColours[ dlg_attr ].back = back;
             if( dlg_attr == GUI_DLG_NORMAL ) {
@@ -335,7 +335,7 @@ void ProcPaint( void )
                 WndDlgColours[ GUI_DLG_SCROLL_BAR ].fore = fore;
                 WndDlgColours[ GUI_DLG_SCROLL_BAR ].back = back;
             }
-            GUISetDialogColours( &WndDlgColours );
+            GUISetDialogColours( WndDlgColours );
         } else {
             WndStatusColour.fore = fore;
             WndStatusColour.back = back;
@@ -410,7 +410,7 @@ void FiniPaint( void )
 
 extern gui_colour_set *GetWndColours( wnd_class class )
 {
-    if( class == WND_NO_CLASS ) return( &WndColours );
+    if( class == WND_NO_CLASS ) return( WndColours );
     if( WndClassColour[ class ] != NULL ) return( WndClassColour[ class ] );
     if( WndClassColour[ WND_ALL ] != NULL ) return( WndClassColour[ WND_ALL ] );
     return( WndColours );
@@ -489,7 +489,7 @@ static void PrintDialogColours( void )
     char        back[20];
     char        attr[30];
 
-    GUIGetDialogColours( &WndDlgColours );
+    GUIGetDialogColours( WndDlgColours );
     for( i = 0; i < ArraySize( DlgAttrMap ); ++i ) {
         if( i == GUI_DLG_SCROLL_ICON ) continue;
         if( i == GUI_DLG_SCROLL_BAR ) continue;

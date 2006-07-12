@@ -779,7 +779,7 @@ extern  type_class_def  RegClass( hw_reg_set regs ) {
 
     if( HW_COvlap( regs, HW_FLTS ) ) {
         if( HW_CEqual( regs, HW_ST0 ) ) return( FD );
-        possible = &STIReg;
+        possible = STIReg;
         while( !HW_CEqual( *possible, HW_EMPTY ) ) {
             if( HW_Equal( regs, *possible ) ) return( FD );
             ++possible;
@@ -934,7 +934,7 @@ extern  hw_reg_set      Low64Reg( hw_reg_set regs ) {
     hw_reg_set  *order;
 
     if( HW_CEqual( regs, HW_EMPTY ) ) return( HW_EMPTY );
-    order = &Reg64Order;
+    order = Reg64Order;
     for(;;) {
         if( HW_Ovlap( *order, regs ) ) break;
         ++order;

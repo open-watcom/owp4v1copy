@@ -295,7 +295,7 @@ void GUIFreePopupList( gui_window *wnd )
 
 void GUISetGUIHint( gui_window *wnd )
 {
-    GUIInitHint( wnd, NUM_GUI_HINT, &GUIHint, GUI_HINT );
+    GUIInitHint( wnd, NUM_GUI_HINT, GUIHint, GUI_HINT );
 }
 
 HMENU   GUIHFloatingPopup       = NULLHANDLE;
