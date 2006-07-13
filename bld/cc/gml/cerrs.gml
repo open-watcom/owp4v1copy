@@ -368,7 +368,7 @@ and it is hoped will provide information to
 solve a preprocessing directive problem.
 :MSGSYM. ERR_LOSE_PRECISION
 :MSGTXT. Possible loss of precision
-:MSGJTXT. Possible loss of precision
+:MSGJTXT. 精度が落ちている可能性があります。
 :WARNING. 1
 .np
 This warning indicates that you may be converting a argument
@@ -390,7 +390,7 @@ be used, but this will cause problems if the assumed prototype does
 not match actual function definition.
 :MSGSYM. ERR_NO_STG_OR_TYPE
 :MSGTXT. No storage class or type specified
-:MSGJTXT.
+:MSGJTXT. 記憶クラスまたは型が指定されていません
 :WARNING. 1
 .np
 When declaring a data object, either storage class or data type must be
@@ -414,7 +414,7 @@ i;
 is not a correctly formed declaration.
 :MSGSYM. ERR_SYMBOL_NAME_TOO_LONG
 :MSGTXT. Symbol name truncated for '%s'
-:MSGJTXT.
+:MSGJTXT. シンボル名が'%s'に切捨てられました
 :WARNING. 1
 .np
 Symbol is longer than the object file format allows and has been truncated
@@ -422,7 +422,7 @@ to fit. Maximum length is 255 characters for OMF and 1024 characters for
 COFF or ELF object files.
 :MSGSYM. ERR_SHIFT_AMOUNT_NEGATIVE
 :MSGTXT. Shift amount negative
-:MSGJTXT.
+:MSGJTXT. シフト量が負です
 :WARNING. 1
 .np
 The right operand of a left or right shift operator is a negative value.
@@ -433,7 +433,7 @@ int a = 1 << -2;
 The value of 'a' in the above example is undefined.
 :MSGSYM. ERR_SHIFT_AMOUNT_TOO_BIG
 :MSGTXT. Shift amount too large
-:MSGJTXT.
+:MSGJTXT. シフト量が大き過ぎます
 :WARNING. 1
 .np
 The right operand of a left or right shift operator is a value greater than
@@ -453,7 +453,7 @@ testing for == 0.
 Check to see if the expression should be signed instead of unsigned.
 :MSGSYM. ERR_FUNCTION_STG_CLASS_REDECLARED
 :MSGTXT. Extern function '%s' redeclared as static
-:MSGJTXT.
+:MSGJTXT. 外部関数'%s'はstaticとして再宣言されました
 :WARNING. 1
 .np
 The specified function was either explicitly or implicitly declared as
@@ -477,7 +477,7 @@ static int bar( void )
 :eerrbad.
 :MSGSYM. ERR_NO_EOL_BEFORE_EOF
 :MSGTXT. No newline at end of file
-:MSGJTXT.
+:MSGJTXT. ファイルの最後に改行文字がありません
 :WARNING. 1
 ISO C requires that a non-empty source file must include a newline character
 at the end of the last line. If no newline was found, it will be automatically
@@ -579,7 +579,7 @@ or option "-wce=303". It can be disabled later by using
 .us #pragma disable_message(303).
 :MSGSYM. ERR_NO_RET_TYPE_GIVEN
 :MSGTXT. Return type 'int' assumed for function '%s'
-:MSGJTXT.
+:MSGJTXT. 関数'%s'の戻り型はintとみなします
 :WARNING. 3
 .np
 If a function is declared without specifying return type, such as
@@ -591,7 +591,7 @@ then its return type will be assumed to be
 .
 :MSGSYM. ERR_NO_DATA_TYPE_GIVEN
 :MSGTXT. Type 'int' assumed in declaration of '%s'
-:MSGJTXT.
+:MSGJTXT. '%s'の宣言における型はintとみなします
 :WARNING. 3
 .np
 If an object is declared without specifying its type, such as
@@ -603,14 +603,14 @@ then its type will be assumed to be
 .
 :MSGSYM. ERR_ASSEMBLER_WARNING
 :MSGTXT. Assembler warning: '%s'
-:MSGJTXT.
+:MSGJTXT. アセンブラ警告: '%s'
 :WARNING. 3
 .np
 A problem has been detected by the in-line assembler.
 The message indicates the problem detected.
 :MSGSYM. ERR_OBSOLETE_FUNC_DECL
 :MSGTXT. Obsolete non-prototype declarator
-:MSGJTXT.
+:MSGJTXT. 廃止された非プロトタイプ宣言子です
 :WARNING. 3
 .np
 Function parameter declarations containing only empty parentheses,
@@ -621,7 +621,7 @@ int func();
 .eerrbad
 :MSGSYM. ERR_NONPROTO_FUNC_CALLED
 :MSGTXT. Unprototyped function '%s' called
-:MSGJTXT.
+:MSGJTXT. 非プロトタイプの関数'%s'が呼ばれました
 :WARNING. 3
 .np
 A call to an unprototyped function was made, preventing the compiler
@@ -637,7 +637,7 @@ void bar( void )
 .eerrbad
 :MSGSYM. ERR_NONPROTO_FUNC_CALLED_INDIRECT
 :MSGTXT. Unprototyped function indirectly called
-:MSGJTXT.
+:MSGJTXT. 非プロトタイプの関数が間接的に呼ばれました
 :WARNING. 3
 .np
 An indirect call to an unprototyped function was made, preventing the
@@ -1208,7 +1208,7 @@ to
 The specified variable has already been statically initialized.
 :MSGSYM. ERR_MISSING_QUOTE
 :MSGTXT. String literal not terminated before end of line
-:MSGJTXT. 文字列定数の最後の\"がありません
+:MSGJTXT. 文字列定数の最後が見つかりません
 .np
 A string literal is enclosed by double quote " characters.
 .np
@@ -1681,7 +1681,7 @@ If the first parameter in a function definition or prototype is defined
 with a type, then all of the parameters must have a type specified.
 :MSGSYM. ERR_ENUM_CONSTANT_OUT_OF_RANGE
 :MSGTXT. Enum constant is out of range %s
-:MSGJTXT.
+:MSGJTXT. enum定数が%sの範囲外です
 .np
 All of the constants must fit into appropriate value range.
 :MSGSYM. ERR_TYPE_DOES_NOT_AGREE
@@ -2040,25 +2040,25 @@ You have two pointers that point to types that have different sign specifiers.
 You need a '\' to continue a string literal across a line.
 :MSGSYM. ERR_EXPECTING_AFTER_BUT_FOUND
 :MSGTXT. Expecting '%s' after '%s' but found '%s'
-:MSGJTXT. Expecting '%s' after '%s' but found '%s'
+:MSGJTXT. '%s'が'%s'の後にあるはずですが，'%s'があります
 .np
 A syntax error has been detected.
 The tokens displayed in the message should help you to determine the problem.
 :MSGSYM. ERR_EXPECTING_AFTER_BUT_FOUND_END_OF_FILE
 :MSGTXT. Expecting '%s' after '%s' but found end of file
-:MSGJTXT. Expecting '%s' after '%s' but found end of file
+:MSGJTXT. '%s'が'%s'の後にあるはずですが，ファイルが終了してしまいました
 .np
 A syntax error has been detected.
 The compiler is still expecting more input when it reached the
 end of the source program.
 :MSGSYM. ERR_BAD_REGISTER_NAME
 :MSGTXT. Invalid register name '%s' in #pragma
-:MSGJTXT. Invalid register name '%s' in #pragma
+:MSGJTXT. #pragmaの中に無効なレジスタ名'%s'があります
 .np
 The register name is invalid/unknown.
 :MSGSYM. ERR_INVALID_STG_CLASS_FOR_LOOP_DECL
 :MSGTXT. Storage class of 'for' statement declaration not register or auto
-:MSGJTXT.
+:MSGJTXT. 'for'ステートメント記憶クラスがレジスタまたはautoでありません
 .np
 The only storage class allowed for the optional declaration part of a
 .kw for
@@ -2068,7 +2068,7 @@ or
 .kw register.
 :MSGSYM. ERR_NO_TYPE_IN_DECL
 :MSGTXT. No type specified in declaration
-:MSGJTXT.
+:MSGJTXT. 宣言内で型が指定されていません
 .np
 A declaration specifier must include a type specifier.
 .errbad
@@ -2076,7 +2076,7 @@ auto i;
 .eerrbad
 :MSGSYM. ERR_DECL_IN_LOOP_NOT_OBJECT
 :MSGTXT. Symbol '%s' declared in 'for' statement must be object
-:MSGJTXT.
+:MSGJTXT. 'for'ステートメント内で宣言されたシンボル'%s'はオブジェクトでなければなりません
 .np
 Any identifier declared in the optional declaration part of a
 .kw for
@@ -2089,7 +2089,7 @@ for( int i = 0, j( void ); i < 5; ++i ) {
 .eerrbad
 :MSGSYM. ERR_UNEXPECTED_DECLARATION
 :MSGTXT. Unexpected declaration
-:MSGJTXT.
+:MSGJTXT. 予期しない宣言です
 .np
 Within a function body, in C99 mode a declaration is only allowed in
 a compound statement and in the opening clause of a
@@ -2181,7 +2181,7 @@ This informational message indicates the target type of the conversion,
 for the preceding conversion diagnostic.
 :MSGSYM. INFO_INCLUDING_FILE
 :MSGTXT. Including file '%s'
-:MSGJTXT.
+:MSGJTXT. ファイル'%s'をインクルードします
 :INFO.
 This informational message indicates that the specified file was opened
 as a result of
