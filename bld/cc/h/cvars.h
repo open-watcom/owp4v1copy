@@ -52,10 +52,10 @@
     #define __SEH__
 #endif
 
-typedef char    *MACADDR_T;     /* contains actual pointer to block of memory */
-typedef char    *SEGADDR_T;     /* contains actual pointer to block of memory */
-typedef char    *MPTR_T;        /* first parm to MacroCopy */
-typedef void    *VOIDPTR;
+typedef char        *MACADDR_T; /* contains actual pointer to block of memory */
+typedef char        *SEGADDR_T; /* contains actual pointer to block of memory */
+typedef const char  *MPTR_T;    /* first parm to MacroCopy */
+typedef void        *VOIDPTR;
 
 #include "macro.h"
 #include "dw.h"

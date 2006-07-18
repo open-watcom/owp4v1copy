@@ -61,18 +61,11 @@ typedef struct  macro_entry {
         struct  macro_entry     *next_macro;
         int                     macro_index;    /* for pre-compiled header */
     };
-#if defined(__386__)
-    unsigned short macro_defn;/* offset to defn, 0 ==>special macro name*/
-    unsigned short macro_len;/* length of macro definition */
-    char    parm_count;     /* special macro indicator if defn == 0 */
-    char    macro_flags;    /* flags */
-#else
-    unsigned macro_defn;    /* offset to defn, 0 ==>special macro name*/
-    unsigned macro_len;     /* length of macro definition */
-    unsigned parm_count;    /* special macro indicator if defn == 0 */
-    unsigned macro_flags;   /* flags */
-#endif
-    char    macro_name[1];  /* name,parms, and macro definition */
+    unsigned    macro_defn;     /* offset to defn, 0 ==>special macro name*/
+    unsigned    macro_len;      /* length of macro definition */
+    unsigned    parm_count;     /* special macro indicator if defn == 0 */
+    unsigned    macro_flags;    /* flags */
+    char        macro_name[1];  /* name,parms, and macro definition */
 } MEDEFN, *MEPTR;
 
 typedef struct  macro_stack {

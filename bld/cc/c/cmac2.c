@@ -51,7 +51,7 @@ static void    CIdent( void );
 static void    CUnknown( void );
 
 local void Flush2EOL( void );
-local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, int defn_offset );
+local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, const char *mac_name );
 local void IncLevel( int value );
 local int  FormalParm( struct macro_parm *formal_parms );
 local void ChkEOL( void );
@@ -278,8 +278,8 @@ local void CDefine( void )
 {
     struct macro_parm *mp, *prev_mp, *formal_parms;
     int         parm_cnt, parm_end = 0;
-    int         i, j;
     int         ppscan_mode;
+    char        *token_buf;
 
     PPNextToken();
     if( CurToken != T_ID ) {
@@ -290,10 +290,7 @@ local void CDefine( void )
         CErr1( ERR_CANT_DEFINE_DEFINED );
         return;
     }
-    i = 0;
-    while( (TokenBuf[i] = Buffer[i]) )
-        ++i;
-    ++i;
+    token_buf = CStrSave( Buffer );
     formal_parms = NULL;
     parm_cnt = -1;              /* -1 ==> no () following */
     if( CurrChar == '(' ) {     /* parms present */
@@ -331,9 +328,6 @@ local void CDefine( void )
             else
                 mp->parm = CStrSave( Buffer );
             prev_mp = mp;
-            j = 0;
-            while( (TokenBuf[i++] = Buffer[j++]) )
-                ;   /* empty */
             PPNextToken();
             if( CurToken == T_RIGHT_PAREN ) break;
             if( CurToken == T_NULL ) {
@@ -353,17 +347,18 @@ local void CDefine( void )
     }
     /* grab replacement tokens */
     ppscan_mode = InitPPScan();         // enable T_PPNUMBER tokens
-    GrabTokens( parm_end ? -(parm_cnt + 1) : (parm_cnt + 1), formal_parms, i );
+    GrabTokens( parm_end ? -(parm_cnt + 1) : (parm_cnt + 1), formal_parms, token_buf );
     FiniPPScan( ppscan_mode );          // disable T_PPNUMBER tokens
     for( ; mp = formal_parms; ) {
         formal_parms = mp->next_macro_parm;
         CMemFree( mp->parm );
         CMemFree( mp );
     }
+    CMemFree( token_buf );
 }
 
 
-local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, int defn_offset )
+local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, const char *mac_name )
 {
     MEPTR       mentry;
     int         i;
@@ -373,20 +368,18 @@ local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, int defn_o
     unsigned    mlen;
     int         has_var_args = 0;
 
-    i = defn_offset;
-    j = strlen( TokenBuf );
+    j = strlen( mac_name ) + 1;
     mentry = (MEPTR)CMemAlloc( sizeof( MEDEFN ) + j );
     if( parm_cnt < 0 ) {
         has_var_args = 1;
         parm_cnt = -parm_cnt;
     }
     mentry->parm_count = parm_cnt;
-    strcpy( mentry->macro_name, TokenBuf );
-    mlen = offsetof( MEDEFN, macro_name ) + i;
+    strcpy( mentry->macro_name, mac_name );
+    mlen = offsetof( MEDEFN, macro_name ) + j;
     mentry->macro_defn = mlen;
     MacroOverflow( mlen, 0 );
-    MacroCopy( (char *)mentry, MacroOffset, offsetof( MEDEFN, macro_name ) );
-    MacroCopy( TokenBuf, MacroOffset + offsetof( MEDEFN, macro_name ), i );
+    MacroCopy( (const char *)mentry, MacroOffset, mlen );
     prev_token = T_NULL;
     prev_non_ws_token = T_NULL;
     if( CurToken != T_NULL ) {
