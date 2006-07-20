@@ -934,7 +934,7 @@
 
 :option. ri
 :target. i86 386
-:usage. promote to int all function arguments and returns
+:usage. return chars and shorts as ints
 :jusage. ‘S‚Ä‚ÌŠÖ”‚Ìˆø”‚Æ–ß‚è’l‚ğintŒ^‚É•ÏŠ·‚µ‚Ü‚·
 
 :option. rod
