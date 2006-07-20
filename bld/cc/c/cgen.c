@@ -256,6 +256,14 @@ static void RelLocalVars( struct local_vars *local_var_list ) /* 12-mar-92 */
     }
 }
 
+static cg_type ReturnType( cg_type type )
+{
+    if( CompFlags.returns_promoted && (InLineDepth == 0) ) {
+        type = FEParmType( NULL, NULL, type );
+    }
+    return( type );
+}
+
 static void EndFunction( OPNODE *node )
 {
     int         i;
@@ -284,10 +292,7 @@ static void EndFunction( OPNODE *node )
         dtype = CGenType( sym.sym_type );
         name = CGTempName( sym.info.return_var, dtype );
         name = CGUnary( O_POINTS, name, dtype );
-        if( CompFlags.returns_promoted ) {
-            dtype = FEParmType( NULL, NULL, dtype );
-        }
-        CGReturn( name, dtype );
+        CGReturn( name, ReturnType( dtype ) );
     }
     FreeLocalVars( CurFunc->u.func.parms );
     FreeLocalVars( CurFunc->u.func.locals );
@@ -1598,10 +1603,7 @@ local int DoFuncDefn( SYM_HANDLE funcsym_handle )
         }
     }
 #endif
-    ret_type = CGenType( CurFunc->sym_type->object );
-    if( CompFlags.returns_promoted ) {
-        ret_type = FEParmType( NULL, NULL, ret_type );
-    }
+    ret_type = ReturnType( CGenType( CurFunc->sym_type->object ) );
     CGProcDecl( funcsym_handle, ret_type );
 #if _CPU == 386
     if( TargetSwitches & P5_PROFILING ) {
