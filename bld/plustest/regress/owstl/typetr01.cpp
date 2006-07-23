@@ -61,7 +61,7 @@ bool the_test( )
     static_assert( is_fundamental<double volatile>::value == true, "fail" );
     static_assert( is_fundamental<char const>::value == true, "fail" );
     static_assert( is_fundamental<void *>::value == false, "fail" );
-    //static_assert( is_fundamental<wchar_t>::value == true, "fail" );
+    static_assert( is_fundamental<wchar_t>::value == true, "fail" ); 
     
     static_assert( is_integral<void>::value == false, "fail" );
     static_assert( is_integral<void const>::value == false, "fail" );
@@ -69,8 +69,7 @@ bool the_test( )
     static_assert( is_integral<short>::value == true, "fail" );
     static_assert( is_integral<const int>::value == true, "fail" );
     static_assert( is_integral<unsigned int>::value == true, "fail" );
-    //the next line isn't working yet due to compiler bug
-    //static_assert( is_integral<signed int>::value == true,  "fail" );
+    static_assert( is_integral<signed int>::value == true,  "fail" );
     static_assert( is_integral<int volatile>::value == true, "fail" );
 
     static_assert( is_pointer<void>::value == false, "fail" );
@@ -89,12 +88,20 @@ bool the_test( )
     static_assert( is_volatile<int * volatile>::value == true, "fail" );
     static_assert( is_volatile<float volatile const>::value == true, "fail" );
     
+    static_assert( is_same<int, int>::value == true, "fail" );
+    static_assert( is_same<int const, int>::value == false, "fail" );
+    static_assert( is_same<char, int>::value == false, "fail" );
+    static_assert( is_same<double, float>::value == false, "fail" );
+    static_assert( is_same<char *, char>::value == false, "fail" );
+    static_assert( is_same<long &, long>::value == false, "fail" );
+    static_assert( is_same<signed int, int>::value == true, "fail" );
+    static_assert( is_same<unsigned long, long>::value == false, "fail" );
+    
     // test remove_*
-    static_assert( is_const<remove_const<int>>::value == false, "fail" );
-    static_assert( is_const<remove_const<int const>>::value == false, "fail" );
-    static_assert( is_const<remove_const<int const volatile>>::value == false, "fail" );
-    //compiler bug removes volatile and const???
-    //static_assert( is_volatile<remove_const<int const volatile>>::value == true, "fail" );
+    static_assert( is_const<remove_const<int>::type>::value == false, "fail" );
+    static_assert( is_const<remove_const<int const>::type>::value == false, "fail" );
+    static_assert( is_const<remove_const<int const volatile>::type>::value == false, "fail" );
+    static_assert( is_volatile<remove_const<int const volatile>::type>::value == true, "fail" );
     
     static_assert( is_pointer<remove_pointer<int *>::type>::value == false, "fail" );
     static_assert( is_pointer<remove_pointer<int>::type>::value == false, "fail" );
@@ -105,10 +112,10 @@ bool the_test( )
     static_assert( is_reference<remove_reference<int>::type>::value == false, "fail" );
     static_assert( is_reference<remove_reference<int & const>::type>::value == false, "fail" );
     
-    static_assert( is_volatile<remove_volatile<int>>::value == false, "fail" );
-    static_assert( is_volatile<remove_volatile<int volatile>>::value == false, "fail" );
-    static_assert( is_volatile<remove_volatile<int const volatile>>::value == false, "fail" );
-    //static_assert( is_const<remove_volatile<int const volatile>>::value == true, "fail" );
+    static_assert( is_volatile<remove_volatile<int>::type>::value == false, "fail" );
+    static_assert( is_volatile<remove_volatile<int volatile>::type>::value == false, "fail" );
+    static_assert( is_volatile<remove_volatile<int const volatile>::type>::value == false, "fail" );
+    static_assert( is_const<remove_volatile<int const volatile>::type>::value == true, "fail" );
     
     // test add_*
     static_assert( is_const<add_const<int>::type>::value == true, "fail" );

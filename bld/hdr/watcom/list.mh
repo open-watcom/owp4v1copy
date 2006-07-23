@@ -24,6 +24,12 @@
     #include <memory>
 #endif
 
+#ifndef _TYPE_TRAITS_INCLUDED
+    #include <type_traits>
+#endif
+
+//#line 32 "list.mh"
+
 namespace std {
 
 /* ==================================================================
@@ -57,19 +63,35 @@ private:
     
 public:
     explicit list( Allocator const & a = Allocator( ) )
-      : mSize(0), mMem(a), dlMem(a)
+        : mSize(0), mMem(a), dlMem(a)
     {
         sentinel = dlMem.allocate( 1 );
         sentinel->fwd = sentinel->bwd = sentinel;
     }
-
+    explicit list( size_type, Type const &, Allocator const & = Allocator() );
+    // note compiler feature missing 
+    // function templates can't have default params
+    // also has to be inline as doesn't understand syntax otherwise
+    template< class InputIt >
+    list( InputIt f, InputIt l, Allocator const & a )// = Allocator() )
+        : mSize(0), mMem(a), dlMem(a)
+    {
+        sentinel = dlMem.allocate( 1 );
+        sentinel->fwd = sentinel->bwd = sentinel;
+        helper_assign( f, l, tr1::is_integral<InputIt>::type() );
+    }
+    
     list( list const& );
    ~list( );
     list &operator=( list const & );
-    #ifdef _NEVER
+    
     template< class InputIterator >
-        void assign( InputIterator, InputIterator );
-    #endif
+    void assign( InputIterator f, InputIterator l )
+    {
+        clear();
+        helper_assign( f, l, tr1::is_integral<InputIterator>::type() );
+    }
+
     void assign( size_type, value_type const & );
 
     allocator_type get_allocator() const 
@@ -185,6 +207,13 @@ public:
         { pop( static_cast< Node* >( sentinel->bwd ) ); }
 
     iterator insert( iterator, value_type const & );
+    void insert( iterator, size_type, value_type const & );
+    template< class InputIt >
+    void insert( iterator p, InputIt f, InputIt l )
+    {
+        helper_insert( p, f, l, tr1::is_integral<InputIt>::type() );
+    }
+    
     iterator erase( iterator it );
     iterator erase( iterator first, iterator last );
     void swap( list & );
@@ -205,11 +234,75 @@ private:
     inline void  pop( Node* );
     inline Node* push( Node*, value_type const & );
 
+    /* --------------------------------------------------------------
+     * these ones are called when InputIt isn't an integer type
+     */
+    template< class InputIt >
+    void helper_assign( InputIt f, InputIt l, tr1::true_type )
+    {
+        for( int i = 0; i < static_cast< size_type >( f ); i++ ){
+            push_back( static_cast< value_type >( l ) );
+        }
+    }
+    template< class InputIt >
+    void helper_insert( iterator i, InputIt f, InputIt l, tr1::true_type )
+    { 
+        for( size_type n = static_cast< size_type >(f); n > 0; n-- ){
+            push( static_cast< Node* >( i.self ),
+                  static_cast< value_type >(l) );
+        }
+    }
+    /* --------------------------------------------------------------
+     * these ones are called when InputIt is not an integer type 
+     */
+    template< class InputIt >
+    void helper_assign( InputIt f, InputIt l, tr1::false_type )
+    {
+        for( ; f != l; ++f ) push_back( *f );
+    }
+    template< class InputIt >
+    void helper_insert( iterator p, InputIt f, InputIt l, tr1::false_type )
+    {
+        // this could probably be optimised to remove
+        // unnecessary link rewriting when inserting lots of things
+        for( ; f != l; ++f, ++p ) p = insert( p, *f );
+    }
+
+    
     //Allocator::rebind< Node >::other mMem;
         //moved above constructors for the time being
         //as this seems to stop compiler crashing.
     size_type mSize;
 };
+
+/* ------------------------------------------------------------------
+ * ctor( Allocator )
+ * construct empty list
+ */
+/*err, this only seems to work inlined, whats going on?
+template< class Type, class Allocator >
+explicit list< Type, Allocator >::list( Allocator const & a )
+    : mSize(0), mMem(a), dlMem(a)
+{
+    sentinel = dlMem.allocate( 1 );
+    sentinel->fwd = sentinel->bwd = sentinel;
+}
+*/
+/* ------------------------------------------------------------------
+ * ctor( size_type, Type, Allocator )
+ * construct with n copies of t
+ */
+template< class Type, class Allocator > 
+explicit list< Type, Allocator >::list( size_type n, Type const & t,
+                                        Allocator const & a )
+    : mSize(0), mMem(a), dlMem(a)
+{
+    sentinel = dlMem.allocate( 1 );
+    sentinel->fwd = sentinel->bwd = sentinel;
+    for( int i = 0; i < n; i++ ){
+        push_back( t );
+    }
+}
 
 /* ------------------------------------------------------------------
  * copy ctor
@@ -284,6 +377,7 @@ list< Type, Allocator >::operator=( list const & other )
 }
 
 #ifdef _NEVER
+// has to be inline as compiler doesn't understand this syntax yet
 /* ------------------------------------------------------------------
  * assign( first, last )
  * assigns items in range [first, last) to this list
@@ -325,6 +419,21 @@ list< Type, Allocator >::insert( iterator it, Type const & x )
 {
     Node* n = push( static_cast< Node* >( it.self ), x );
     return iterator( n );
+}
+
+
+/* ------------------------------------------------------------------
+ * insert( iterator i, size_type n, x )
+ * insert type x n times in list just before element identified by iterator i
+ */
+template< class Type, class Allocator >
+void list< Type, Allocator >::insert( iterator i, size_type n,
+                    value_type const & x )
+{
+    while( n > 0 ){
+        push( static_cast< Node* >( i.self ), x );
+        n--;
+    }
 }
 
 /* ------------------------------------------------------------------

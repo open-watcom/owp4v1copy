@@ -70,13 +70,19 @@ public:
     //ctors
     explicit map( const Compare& comp = Compare(),
                   const Allocator& = Allocator() );
+
+    template< class InputIterator >
+    map( InputIterator first,
+         InputIterator last,
+         Compare const & c, //= Compare(),
+         Allocator const & a )// = Allocator() )
+            : Implementation( first, last, c, a )
+            { }
+            
     map( map const & x ) : Implementation( x ) { };
-    /*
-    template<class InputIterator>
-        map(InputIterator first, InputIterator last,
-            const Compare& comp = Compare(), const Allocator& = Allocator());
-    */
+    
     ~map(){}
+    
     map& operator=( map const & x ){Implementation::operator=( x ); return( *this );}
     
     //element access (not in common with set)

@@ -49,7 +49,7 @@
  */
 bool construct_test( )
 {
-    bool pass = true;
+    int i;
     typedef std::map< int, int > mapii_t;
     mapii_t m1;
     std::map< char, char const * > m2;
@@ -62,7 +62,20 @@ bool construct_test( )
     if( INSANE(*m4) || m4->size() || !m4->empty() ) FAIL
     delete m4;
     
-    return( pass );
+    // test template constructor, note: no default args yet
+    typedef mapii_t::value_type v_t;
+    v_t init[] = { v_t(0,0), v_t(1,1), v_t(2,4), v_t(3,9) };
+    int initsize = sizeof(init)/sizeof(v_t);
+    
+    mapii_t m5( init, init + initsize, mapii_t::key_compare(), 
+                mapii_t::allocator_type() );
+    
+    if( INSANE(m5) || m5.size() != initsize ) FAIL
+    for( i = 0; i< m5.size(); i++ ){
+        if( i*i != m5[i] ) FAIL
+    }
+    
+    return( true );
 }
 
 /* ------------------------------------------------------------------
@@ -137,6 +150,18 @@ bool access_test( )
     for( int i = 0; i < totsize; i++){
         std::map< int, int >::iterator it = m1.find( i );
         if( INSANE( m1 ) || m1.size() || !m1.empty() || it != m1.end() ) FAIL
+    }
+    //--------------------------------
+    //test the templated insert method
+    //first put a couple of values in to make sure they doesn't get messed up
+    typedef std::map<int,int>::value_type v_t;
+    m1.insert( v_t(2,4) ); //this one is in the init vector as well
+    m1.insert( v_t(4,16) );
+    v_t init[] = { v_t(0,0), v_t(1,1), v_t(2,4), v_t(3,9), v_t(5,25) };
+    int initsize = sizeof(init)/sizeof(v_t);
+    m1.insert( init, init+initsize );
+    for( int i = 0; i < m1.size(); i++ ){
+        if( INSANE( m1 ) || m1.size()!= 6 || m1.empty() || m1[i] != i*i ) FAIL
     }
     
     return( true );

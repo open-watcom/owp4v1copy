@@ -19,7 +19,7 @@
 #error The header _rbtree.h requires C++
 #endif
 
-#line 22 "_rbtree.mh"
+//#line 22 "_rbtree.mh"
 
 #ifndef _UTILITY_INCLUDED
     #include <utility>
@@ -118,9 +118,18 @@ protected:
     };
     Allocator::rebind< Node >::other mem;       // !!! moved up here until compiler bug fixed !!!
 public:
+    class iterator;
     //ctors and dtor
-    RedBlackTree( Compare c, Allocator a ) : mRoot(0), mFirst(0), mLast(0),
+    explicit RedBlackTree( Compare c, Allocator a ) : mRoot(0), mFirst(0), mLast(0),
         mSize(0), mError(0), cmp(c), mem(a) {}
+    template< class InputIterator >
+    RedBlackTree( InputIterator f, InputIterator l,
+        Compare const & c, Allocator const & a ) : mRoot(0), mFirst(0), mLast(0),
+        mSize(0), mError(0), cmp(c), mem(a)
+            {   // presume init data sorted, hint ignored when tree empty
+                iterator hint;
+                for( ; f != l ; ++f ) hint = insert( hint, *f ).first; 
+            }
     RedBlackTree( RedBlackTree const & );
     RedBlackTree& operator=( RedBlackTree const & );
     ~RedBlackTree();
@@ -159,7 +168,6 @@ public:
         iterator& operator--()     {return( (iterator&)iterator_base::operator--( ) );} 
         iterator operator--( int ) {iterator i = *this; operator--(); return i;}
     };
-    
     class const_iterator : public iterator_base{
     public:
         const_iterator( iterator const & i ) : iterator_base( i ) {}
@@ -185,13 +193,20 @@ public:
     const_iterator  begin() const {return const_iterator( this, mFirst );}
     
     //pair< iterator, bool > insert( value_type const & );
+    template< class InputIterator > // compiler only understands inline syntax
+    void insert( InputIterator f, InputIterator l )
+        {   // presume data sorted; use last insert point as hint
+            iterator hint;
+            if( f != l ) hint = insert( *f ).first;
+            for( ++f ; f != l ; ++f ) hint = insert( hint, *f ).first; 
+        }
     void            erase( iterator );
     size_type       erase( key_type const & );
     //void erase(iterator first, iterator last);
     void            clear();
     iterator        find( key_type const & );
-    bool            empty() const {return mSize==0;}
-    size_type       size() const {return mSize;}
+    bool            empty() const { return( mSize == 0 ); }
+    size_type       size() const  { return( mSize ); }
     size_type       max_size() const;
     iterator        upper_bound( key_type const & );
     const_iterator  upper_bound( key_type const & x) const;

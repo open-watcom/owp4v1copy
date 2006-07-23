@@ -52,8 +52,8 @@ template = &
         map01$(ext)     &
         map02$(ext)     &
         mem01$(ext)     &
-	mmwin16$(ext)	&
-	mmwindef$(ext)  &
+        mmwin16$(ext)   &
+        mmwindef$(ext)  &
         numer01$(ext)   &
         stack01$(ext)   &
         set01$(ext)     &

@@ -37,7 +37,7 @@
 
 bool construct_test( )
 {
-    bool pass = true;
+    int i;
     typedef std::set< int > seti_t;
     seti_t s1;
     std::set< char > s2;                // to do: construct with different alloc/comp
@@ -50,7 +50,19 @@ bool construct_test( )
     if( INSANE(*s4) || s4->size() || !s4->empty() ) FAIL
     delete s4;
     
-    return( pass );
+    // test template constructor, note: no default args yet
+    int init[] = { 1, 2, 3, 4 };
+    int initsize = sizeof(init)/sizeof(int);
+    
+    seti_t s5( init, init + initsize, seti_t::key_compare(), 
+               seti_t::allocator_type() );
+    
+    if( INSANE(s5) || s5.size() != initsize ) FAIL
+    for( i = 0; i < s5.size(); i++ ){
+        if( s5.find( init[i] ) == s5.end() ) FAIL
+    }
+    
+    return( true );
 }
 
 bool access_test( )
@@ -118,6 +130,18 @@ bool access_test( )
     for( int i = 0; i < totsize; i++){
         std::set< int >::iterator it = s1.find( i );
         if( INSANE( s1 ) || s1.size() || !s1.empty() || it != s1.end() ) FAIL
+    }
+    //--------------------------------
+    //test the templated insert method
+    //first put a couple of values in to make sure they doesn't get messed up
+    s1.insert( 4 );         //this one is in the init vector as well
+    s1.insert( 29 );
+    int init[] = { 1, 2, 4, 7, 11, 16, 22 };
+    s1.insert( init, init+7 );
+    for( int j = 1, i = 1; i < s1.size()+1; i++ ){
+        std::set< int >::iterator it = s1.find( j );
+        if( INSANE( s1 ) || s1.size()!= 8 || s1.empty() || it == s1.end() || *it != j ) FAIL
+        j += i;
     }
     
     return( true );

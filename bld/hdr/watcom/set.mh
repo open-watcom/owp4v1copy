@@ -54,15 +54,22 @@ public:
     typedef typename Allocator::const_pointer       const_pointer;
 
     explicit set(const Compare& comp = Compare(), const Allocator& = Allocator());
-    /*
-    template<class InputIterator>
-        set(InputIterator first, InputIterator last,
-            const Compare& comp = Compare(), const Allocator& = Allocator());
-    */
-    set(const set& x) : Implementation( x ){};
+    
+    template< class InputIterator >
+    set( InputIterator first,
+         InputIterator last,
+         Compare const & c, //= Compare(),
+         Allocator const & a )// = Allocator() )
+            : Implementation( first, last, c, a )
+            { }
+
+    set( const set& x ) : Implementation( x ) {}
+
     ~set(){}
-    set& operator=( set const & x){Implementation::operator=( x ); return( *this );}
-   
+
+    set& operator=( set const & x )
+        { Implementation::operator=( x ); return( *this ); }
+
 }; //template class set
 
 

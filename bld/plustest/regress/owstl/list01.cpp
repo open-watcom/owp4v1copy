@@ -35,13 +35,58 @@
 #include "allocxtr.hpp"
 
 /* ------------------------------------------------------------------
+ * construct_test()
+ * test different constructors
+ */
+bool construct_test( )
+{
+    using namespace std;
+    // test ctor( size_t, value )
+    list< char > lst1( 99, 'd' );
+    int i;
+    
+    if( INSANE(lst1) || lst1.size() != 99 || lst1.empty() ) FAIL
+    for( i = 0; i < 99; i++ ){
+        if( lst1.back() != 'd' ) FAIL
+        lst1.pop_back();
+    }
+    if( INSANE(lst1) || lst1.size() || !lst1.empty() ) FAIL
+    
+    // test type dependent ctor
+    // first when it template param is iterator
+    int x[] = { 1,2,3,4,5,6 };
+    list< int > lst2( x, x+6, allocator< int >() );
+    if( INSANE(lst2) || lst2.size() != 6 || lst2.empty() ) FAIL
+    for( i = 0; i < 6; i++ ){
+        if( lst2.front() != i+1 ) FAIL
+        lst2.pop_front();
+    }
+    if( INSANE(lst2) || lst2.size() || !lst2.empty() ) FAIL
+    
+    // now when template param is integer
+    // hmmm, need to think of example when this version of template constructor
+    // will get called, currently just converts params and calls explicit ctor
+    // is this right? do we not need int version of templated ctor?
+    list< int > lst3( 77L, 88L, allocator< int >() );
+    if( INSANE(lst3) || lst3.size() != 77 || lst3.empty() ) FAIL
+    for( i = 0; i < 77; i++ ){
+        if( lst3.front() != 88 ) FAIL
+        lst3.pop_front();
+    }
+    if( INSANE(lst3) || lst1.size() || !lst3.empty() ) FAIL
+    
+    return( true );
+}
+
+/* ------------------------------------------------------------------
  * access_test
  * test insert, push_front, push_back, erase, pop_front, pop_back 
  */
 bool access_test( )
 {
-    std::list< int > lst;
-    std::list< int >::iterator it;
+    typedef std::list< int > list_t;
+    list_t lst;
+    list_t::iterator it;
     int i;
     //test insert
     for( i = 0; i < 10 ; i++ ){
@@ -86,7 +131,7 @@ bool access_test( )
     for( i = -10; i < 4; i+=2 ){
         if( lst.back() != i ) FAIL
         lst.pop_back( );
-    }//now contains evens 8...4
+    }//now contains 8,6,4
     for( it = lst.begin(), i = 8; i >= 4; i-=2, ++it ){
         if( INSANE(lst) || *it != i ) FAIL
     }
@@ -95,6 +140,30 @@ bool access_test( )
     for( it = lst.begin(), i = 5; i <= 7; ++i, ++it ){
         if( INSANE(lst) || *it != i ) FAIL
     }
+    // insert( it, size_type, value )
+    lst.clear();
+    lst.insert( lst.begin(), (list_t::size_type)4, (list_t::value_type)9 );
+    for( it = lst.begin(), i = 0; it != lst.end(); ++it ){
+        if( INSANE(lst) || *it != 9 ) FAIL
+        i++;
+    }
+    if( INSANE(lst) || i != 4 ) FAIL
+    // template insert, int params
+    lst.insert( lst.begin(), 5, 8 ); // now contains 4 9s and 5 8s
+    for( it = lst.begin(), i = 0; it != lst.end(); ++it ){
+        i += *it;
+    }
+    if( INSANE(lst) || i != 4*9+5*8 ) FAIL
+    
+    // template insert, iterator params
+    int v[] = { 0,1,4,9,16 };
+    lst.clear();
+    lst.insert( lst.begin(), v, v+sizeof(v)/sizeof(v[0]) );
+    if( INSANE(lst) || lst.size() != 5 ) FAIL
+    for( it = lst.begin(), i = 0; it != lst.end(); ++it, ++i ){
+        if( INSANE(lst) || *it != i*i ) FAIL
+    }
+    
     return( true );
 }
 
@@ -105,10 +174,11 @@ bool access_test( )
 bool assign_test( )
 {
     std::list< int > lst1, lst2;
+    
+    // check operator=
     for( int i =  1; i <= 10; ++i ) lst1.push_back( i );
     for( int i = 11; i <= 15; ++i ) lst2.push_back( i );
     lst1 = lst2;
-    //check it
     if( INSANE( lst1 ) || INSANE( lst2 ) ) FAIL
     if( lst1.size( ) != 5 || lst2.size( ) != 5 ) FAIL
     int i = 11;
@@ -117,13 +187,33 @@ bool assign_test( )
         if( *it != i ) FAIL
         ++i; ++it;
     }
-    //try a different way
-    lst1.assign( 10, -1 );
-    //check it
+
+    // check assign method (cast types so matches fn, not template fn)
+    lst1.assign( (std::list<int>::size_type)10, -1 );
     if( INSANE( lst1 ) || lst1.size( ) != 10 ) FAIL
     for( it = lst1.begin( ); it != lst1.end( ); ++it ) {
         if( *it != -1 ) FAIL
     }
+    
+    // template assign, non integer types
+    int x[] = { 50,51,52,53,54 };
+    lst2.assign( x, x+5 );
+    if( INSANE(lst2) || lst2.size() != 5 ) FAIL
+    for( i = 0; i < 5; i++){
+        if( lst2.front() != i+50 ) FAIL
+        lst2.pop_front();
+    }
+    if( INSANE(lst2) || !lst2.empty() ) FAIL
+    
+    // template assign, integer types
+    lst2.assign( 20, 50 );
+    if( INSANE(lst2) || lst2.size() != 20 ) FAIL
+    for( i = 0; i < 20; i++){
+        if( lst2.front() != 50 ) FAIL
+        lst2.pop_front();
+    }
+    if( INSANE(lst2) || !lst2.empty() ) FAIL
+    
     return( true );
 }
 
@@ -580,7 +670,7 @@ int main( )
     //heap_dump();
 
     try {
-        //if( !construct_test( )        || !heap_ok( "t01" ) ) rc = 1;
+        if( !construct_test( )        || !heap_ok( "t01" ) ) rc = 1;
         if( !access_test( )           || !heap_ok( "t02" ) ) rc = 1;
         //if( !string_test( )           || !heap_ok( "t03" ) ) rc = 1;
         //if( !torture_test( )          || !heap_ok( "t04" ) ) rc = 1;

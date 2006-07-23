@@ -45,11 +45,8 @@ typedef integral_constant< bool, false > false_type;
     __MAKE_TYPE_TRAIT_MOD( name, mod volatile, base ) \
     __MAKE_TYPE_TRAIT_MOD( name, mod const volatile, base )
 #define __MAKE_TYPE_TRAITS_CV_SUS( name, type, base ) \
-    __MAKE_TYPE_TRAITS_CV( name, type, base ) \
     __MAKE_TYPE_TRAITS_CV( name, unsigned type, base ) \
-//    __MAKE_TYPE_TRAITS_CV( name, signed type, base )
-// compiler crashes when both signed int and int specialisations
-// but doesn't match signed int to the int specialisation ether?!
+    __MAKE_TYPE_TRAITS_CV( name, signed type, base )
 
 // ==================================================================
 // 4.5.1 primary type categories
@@ -71,7 +68,8 @@ __MAKE_TYPE_TRAITS_CV( is_integral, bool, true_type )
 __MAKE_TYPE_TRAITS_CV( is_integral, signed char, true_type )
 __MAKE_TYPE_TRAITS_CV( is_integral, unsigned char, true_type )
 __MAKE_TYPE_TRAITS_CV( is_integral, char, true_type )
-//__MAKE_TYPE_TRAITS_CV( is_integral, wchar_t, true_type )  // causes fatal error in compiler
+__MAKE_TYPE_TRAITS_CV( is_integral, wchar_t, true_type )
+
 
 /* ------------------------------------------------------------------
  * is_floating_point
@@ -179,9 +177,8 @@ template <class T, unsigned I = 0> struct extent;
 /* ------------------------------------------------------------------
  * is_same
  */
-//crashes compiler :o(
-//template < class T, class U > struct is_same : public false_type {};
-//template < class T > struct is_same< T, T > : public true_type {};
+template < class T, class U > struct is_same : public false_type {};
+template < class T > struct is_same< T, T > : public true_type {};
 /*
 template <class Base, class Derived> struct is_base_of;
 template <class From, class To> struct is_convertible;
