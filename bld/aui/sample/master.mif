@@ -20,16 +20,16 @@ guilib = $(guidir)/$(gui_type)/$(host_os)$(host_cpu)/gui.lib
 uilib  = $(uidir)/$(host_os)/$(host_os)$(host_cpu)/ui.lib
 
 rcfiles = &
-    $(guidir)\h\gui.rc &
-    $(auidir)\h\aui.rc &
-    $(auidir)\sample\h\appcomm.rc &
-    $(auidir)\sample\h\dlgoptn.h &
-    $(auidir)\sample\h\dlgoptn.dlg &
-    ..\one.bmp &
-    ..\two.bmp &
-    ..\three.bmp &
-    ..\four.bmp &
-    ..\five.bmp
+    $(guidir)/h/gui.rc &
+    $(auidir)/h/aui.rc &
+    $(auidir)/sample/h/appcomm.rc &
+    $(auidir)/sample/h/dlgoptn.h &
+    $(auidir)/sample/h/dlgoptn.dlg &
+    ../one.bmp &
+    ../two.bmp &
+    ../three.bmp &
+    ../four.bmp &
+    ../five.bmp
 
 objs = app.obj util.obj window1.obj window2.obj window3.obj &
        window4.obj window5.obj window6.obj window7.obj window8.obj &
