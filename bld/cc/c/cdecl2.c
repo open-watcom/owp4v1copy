@@ -557,7 +557,11 @@ local void AdjSymTypeNode( SYMPTR sym, type_modifiers decl_mod )
                     }
                 }
             } else {
-                CErr1( ERR_INVALID_DECLSPEC );
+                if( sym->attrib & FLAG_LANGUAGES ) {
+                    CErr1( ERR_INVALID_DECLSPEC );
+                } else {
+                    sym->attrib |= decl_mod;
+                }
             }
         }
     }
