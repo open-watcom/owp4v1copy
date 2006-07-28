@@ -432,6 +432,12 @@ int IsAuxInfoBuiltIn( struct aux_info *inf )
     return( FALSE );
 }
 
+/* Variables need name mangling different from functions in many cases
+ * (__pascal, __stdcall, etc.). Note that _System and _Optlink do not
+ * decorate variable names. This is required for OS/2 SOM support to work
+ * and useful for interoperability with IBM compilers.
+ * NB: WatcallInfo.objname value depends on the -3r/3s switch.
+ */
 char *VarNamePattern( struct aux_info *inf )
 /******************************************/
 {
@@ -439,19 +445,11 @@ char *VarNamePattern( struct aux_info *inf )
         inf = DftCallConv;
     if( inf == &WatcallInfo )
         return( WatcallInfo.objname );
-    if( inf == &CdeclInfo )
-        return( WatcallInfo.objname );
-    if( inf == &PascalInfo )
-        return( WatcallInfo.objname );
-    if( inf == &FortranInfo )
-        return( WatcallInfo.objname );
-    if( inf == &SyscallInfo )
-        return( WatcallInfo.objname );
-    if( inf == &StdcallInfo )
-        return( WatcallInfo.objname );
-    if( inf == &FastcallInfo )
-        return( WatcallInfo.objname );
-    if( inf == &OptlinkInfo )
-        return( WatcallInfo.objname );
+    if( inf == &CdeclInfo || inf == &StdcallInfo || inf == &FastcallInfo )
+        return( "_*" );
+    if( inf == &PascalInfo  || inf == &FortranInfo )
+        return( "^" );
+    if( inf == &SyscallInfo || inf == &OptlinkInfo )
+        return( "*" );
     return( inf->objname );
 }
