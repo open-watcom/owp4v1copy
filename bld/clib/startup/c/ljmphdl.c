@@ -40,4 +40,4 @@ static void default_handler( void _WCFAR *p )
     #pragma aux (__arg_convention) default_handler;
 #endif
 
-_WCRTLINKD pfun __longjmp_handler = &default_handler;
+_WCRTDATA pfun  __longjmp_handler = &default_handler;

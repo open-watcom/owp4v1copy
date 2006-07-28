@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  FPU interupt handling suppor.
 *
 ****************************************************************************/
 
@@ -108,12 +107,12 @@
  */
 
 
-_WCRTLINKD extern char __FPE_int = 0;    /* Used for Rational Systems and Intel */
+_WCRTDATA extern char __FPE_int = 0;    /* Used for Rational Systems and Intel */
 #if defined(__386__)
-_WCRTLINKD extern char __IRQ_num = 0;    /* Used for PharLap DOS Extender */
-_WCRTLINKD extern char __IRQ_int = 0;    /* Used for Ergo DOS Extender */
-_WCRTLINKD extern char __MST_pic = 0;    /* Master PIC port number */
-_WCRTLINKD extern char __SLV_pic = 0;    /* Slave PIC port number */
+_WCRTDATA extern char __IRQ_num = 0;    /* Used for PharLap DOS Extender */
+_WCRTDATA extern char __IRQ_int = 0;    /* Used for Ergo DOS Extender */
+_WCRTDATA extern char __MST_pic = 0;    /* Master PIC port number */
+_WCRTDATA extern char __SLV_pic = 0;    /* Slave PIC port number */
 #endif
 
 

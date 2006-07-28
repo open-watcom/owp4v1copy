@@ -38,5 +38,5 @@
  * The spawn code checks this variable.  If it's non-zero, information
  * regarding open POSIX-level file handles is passed to the child process.
  */
- 
-_WCRTLINKD int          _fileinfo = 0;
+
+_WCRTDATA int           _fileinfo = 0;

@@ -33,7 +33,7 @@
 #include "exitwmsg.h"
 #include "enterdb.h"
 
-_WCRTLINKD char volatile __WD_Present = 0;
+_WCRTDATA char volatile __WD_Present = 0;
 
 _WCRTLINK int __EnterWVIDEO( char _WCFAR *string ) // this really needs to be far
 {

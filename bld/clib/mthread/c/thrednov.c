@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  NetWare specific threading support routines.
 *
 ****************************************************************************/
 
@@ -60,7 +59,7 @@ extern  void            _endthread( void );
 extern  unsigned        __MaxThreads;
 extern  void            **__ThreadIDs;
 
-_WCRTLINKD thread_data  *(*__GetThreadPtr)( void ) = &__SingleThread;
+_WCRTDATA thread_data   *(*__GetThreadPtr)( void ) = &__SingleThread;
 thread_data             *__FirstThreadData;
 
 

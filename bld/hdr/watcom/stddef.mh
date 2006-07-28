@@ -82,7 +82,7 @@ using std::ptrdiff_t;
   _WCRTLINK extern unsigned long __threadhandle( void );
  #endif
 #else
- _WCRTLINKD extern int _WCFAR *_threadid;        /* pointer to thread id */
+ _WCRTDATA extern int _WCFAR *_threadid;        /* pointer to thread id */
 #endif
 #endif
 :endsegment

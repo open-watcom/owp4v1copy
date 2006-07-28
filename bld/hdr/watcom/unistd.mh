@@ -96,10 +96,10 @@
 
 :include posix.sp
 
-_WCRTLINKD extern int   optind;        /*  index of current option being scanned */
-_WCRTLINKD extern char *optarg;        /*  points to optional argument */
-_WCRTLINKD extern int   opterr;        /*  print|don't print error message */
-_WCRTLINKD extern int   optopt;        /*  offending letter when error detected */
+_WCRTDATA extern int    optind;     /*  index of current option being scanned */
+_WCRTDATA extern char   *optarg;    /*  points to optional argument */
+_WCRTDATA extern int    opterr;     /*  print|don't print error message */
+_WCRTDATA extern int    optopt;     /*  offending letter when error detected */
 
 /* Symbolic constants for confstr */
 
@@ -248,8 +248,11 @@ _WCRTLINK extern off_t  ltrunc( int __fildes, off_t __offset, int __origin );
 _WCRTLINK extern int    putenv( const char *__estring );
 
 /* Globals used and set by getopt() */
-_WCRTLINKD extern char   *optarg;
-_WCRTLINKD extern int    optind, opterr, optopt;
+_WCRTDATA extern char   *optarg;
+:: split into three separate lines because of a bug in stupid C++ compiler
+_WCRTDATA extern int    optind;
+_WCRTDATA extern int    opterr;
+_WCRTDATA extern int    optopt;
 #endif
 
 :endsegment
@@ -279,8 +282,11 @@ _WCRTLINK extern int    getopt( int __argc, char * const __argv[], const char *_
 _WCRTLINK extern unsigned int sleep( unsigned int __seconds );
 
 /* Globals used and set by getopt() */
-_WCRTLINKD extern char   *optarg;
-_WCRTLINKD extern int    optind, opterr, optopt;
+_WCRTDATA extern char   *optarg;
+:: split into three separate lines because of a bug in stupid C++ compiler
+_WCRTDATA extern int    optind;
+_WCRTDATA extern int    opterr;
+_WCRTDATA extern int    optopt;
 :endsegment
 
 :include cplusepi.sp

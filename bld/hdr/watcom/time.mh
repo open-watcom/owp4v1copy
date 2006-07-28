@@ -297,7 +297,7 @@ _WCRTLINK extern char   **__get_tzname_ptr( void );
 #elif defined(__SW_BR) || defined(_RTDLL)
  #define tzname  tzname_br
 #endif
-_WCRTLINKD extern char  *tzname[2];             /*  time zone names */
+_WCRTDATA extern char   *tzname[2];             /*  time zone names */
 
 :segment QNX | LINUX
 :include ext.sp
@@ -311,8 +311,8 @@ _WCRTLINK extern int    *__get_daylight_ptr( void );
  #define timezone       timezone_br
  #define daylight       daylight_br
 #endif
-_WCRTLINKD extern long  timezone;               /* # of seconds from GMT */
-_WCRTLINKD extern int   daylight;               /* d.s.t. indicator */
+_WCRTDATA extern long   timezone;               /* # of seconds from GMT */
+_WCRTDATA extern int    daylight;               /* d.s.t. indicator */
 :segment QNX | LINUX
 #endif
 :endsegment

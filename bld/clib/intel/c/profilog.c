@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Pentium RDTSC-based profiling support.
 *
 ****************************************************************************/
 
@@ -47,7 +46,7 @@
 
 char                    _data_ProfEnable;
 __int64                 _data_P5_overhead;
-_WCRTLINKD extern pfun  __longjmp_handler;
+_WCRTDATA extern pfun   __longjmp_handler;
 pfun                    __prof_old_longjmp_handler;
 
 #ifdef __NT__

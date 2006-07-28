@@ -33,5 +33,5 @@
 #include "widechar.h"
 #include "initarg.h"
 
-_WCRTLINKD int          __F_NAME(___Argc,___wArgc); /* argument count */
-_WCRTLINKD CHAR_TYPE**  __F_NAME(___Argv,___wArgv); /* argument vector */
+_WCRTDATA int           __F_NAME(___Argc,___wArgc); /* argument count */
+_WCRTDATA CHAR_TYPE**   __F_NAME(___Argv,___wArgv); /* argument vector */

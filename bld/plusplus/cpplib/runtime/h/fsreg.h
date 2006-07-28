@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Exception handler registration using FS register.
 *
 ****************************************************************************/
 
@@ -35,7 +34,6 @@
 
 #include "variety.h"
 
-// FSREG.H -- registration using fs register
 //
 // 94/10/11 -- J.W.Welch            -- defined
 //
@@ -116,7 +114,7 @@ struct FsExcRec;
     #define FS_REGISTRATION
     #define FS_REGISTRATION_NT
 
-    #define FSREGAPI _WPRTLINKD __declspec(__cdecl)
+    #define FSREGAPI _WPRTDATA __declspec(__cdecl)
 
     #define RW_REGISTRATION
 
@@ -161,7 +159,7 @@ struct FsExcRec;
     #define FS_REGISTRATION
     #define FS_REGISTRATION_OS2
 
-    #define FSREGAPI _WPRTLINKD __declspec(__syscall)
+    #define FSREGAPI _WPRTDATA __declspec(__syscall)
 
     #define RW_REGISTRATION
 
@@ -195,7 +193,7 @@ struct FsExcRec;
 
     #define FS_REGISTRATION_SYSIND
 
-    #define FSREGAPI _WPRTLINKD _WRTLCALL
+    #define FSREGAPI _WPRTDATA __declspec(__watcall)
 
     #define RW_REGISTRATION
 
@@ -317,7 +315,7 @@ struct FsExcRec;
     #define PD_REGISTRATION
     #define PD_REGISTRATION_RW
 
-    #define FSREGAPI _WPRTLINKD _WRTLCALL
+    #define FSREGAPI _WPRTDATA __declspec(__watcall)
 
 #else
 

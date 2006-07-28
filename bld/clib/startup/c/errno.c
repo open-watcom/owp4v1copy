@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  errno related functions.
+* Description:  Accessors to errno variable.
 *
 ****************************************************************************/
 
@@ -54,7 +54,7 @@ _WCRTLINK int *__get_errno_ptr( void )
 #include "errorno.h"
 
 #if !defined( __SW_BM )
-    _WCRTLINKD int              errno;
+    _WCRTDATA int               errno;
 #endif
 
 _WCRTLINK int *__get_errno_ptr( void )
@@ -67,8 +67,8 @@ _WCRTLINK int *__get_errno_ptr( void )
 #include "errorno.h"
 
 #if !defined( __SW_BM )
-    _WCRTLINKD int              errno;
-    _WCRTLINKD int              _doserrno;
+    _WCRTDATA int               errno;
+    _WCRTDATA int               _doserrno;
 #endif
 
 _WCRTLINK int *__get_errno_ptr( void )

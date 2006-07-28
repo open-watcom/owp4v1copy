@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Internal per-thread data registration interface.
 *
 ****************************************************************************/
 
@@ -61,8 +60,8 @@ extern "C" {
                                                  initializer **init );
 
     _WCRTLINK extern unsigned   __RegisterThreadDataSize( unsigned size );
-    _WCRTLINKD extern struct thread_data *(*__GetThreadPtr)( void );
-    _WCRTLINKD extern unsigned  __ThreadDataSize;
+    _WCRTDATA extern struct thread_data *(*__GetThreadPtr)( void );
+    _WCRTDATA extern unsigned   __ThreadDataSize;
 
 #ifdef __cplusplus
 }

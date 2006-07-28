@@ -440,7 +440,7 @@ _WCRTLINK char     ***__get_environ_ptr( void );
  #define environ   environ_br
 :endsegment
 #endif
-_WCRTLINKD extern char **_WCNEAR environ;        /*  pointer to environment table */
+_WCRTDATA extern char **_WCNEAR environ;    /* pointer to environment table */
 
 :segment !QNX & !LINUX
 #if defined(__NT__)
@@ -450,7 +450,7 @@ _WCRTLINKD extern char **_WCNEAR environ;        /*  pointer to environment tabl
  #elif defined(__SW_BR) || defined(_RTDLL)
   #define _fileinfo _fileinfo_br
  #endif
- _WCRTLINKD extern int _fileinfo;        /* for inheriting POSIX handles */
+ _WCRTDATA extern int _fileinfo;        /* for inheriting POSIX handles */
 #endif
 :endsegment
 :segment !QNX & !NO_WIDECHAR
@@ -462,10 +462,10 @@ _WCRTLINK wchar_t  ***__get_wenviron_ptr( void );
  #define _wenviron _wenviron_br
 #endif
 #ifdef __NETWARE__
- _WCRTLINKD extern wchar_t **_WCDATA _wenviron;   /* pointer to wide environment */
+ _WCRTDATA extern wchar_t **_WCDATA _wenviron;   /* pointer to wide environment */
 #else
 :endsegment
- _WCRTLINKD extern wchar_t **_WCNEAR _wenviron;   /*  pointer to wide environment */
+ _WCRTDATA extern wchar_t **_WCNEAR _wenviron;   /*  pointer to wide environment */
 :segment !LINUX
 #endif
 :endsegment
@@ -508,14 +508,14 @@ _WCRTLINK unsigned long      *__get_win_realloc_flags_ptr( void );
  #define __win_alloc_flags   __win_alloc_flags_br
  #define __win_realloc_flags __win_realloc_flags_br
 #endif
-_WCRTLINKD extern unsigned _WCDATA    _psp;      /* Program Segment Prefix */
-_WCRTLINKD extern unsigned char _WCNEAR _osmode; /* DOS_MODE or OS2_MODE */
-_WCRTLINKD extern int _WCNEAR        _fmode;     /* default file translation mode */
-_WCRTLINKD extern char               *_sys_errlist[];/* strerror error message table */
-_WCRTLINKD extern int _WCNEAR        _sys_nerr;  /* # of entries in _sys_errlist array */
-_WCRTLINKD extern unsigned _WCDATA   __minreal;  /* DOS4GW var for WLINK MINREAL option*/
-_WCRTLINKD extern unsigned long _WCDATA __win_alloc_flags; /* Windows allocation flags */
-_WCRTLINKD extern unsigned long _WCDATA __win_realloc_flags;/* Windows reallocation flags */
+_WCRTDATA extern unsigned _WCDATA    _psp;      /* Program Segment Prefix */
+_WCRTDATA extern unsigned char _WCNEAR _osmode; /* DOS_MODE or OS2_MODE */
+_WCRTDATA extern int _WCNEAR        _fmode;     /* default file translation mode */
+_WCRTDATA extern char               *_sys_errlist[];/* strerror error message table */
+_WCRTDATA extern int _WCNEAR        _sys_nerr;  /* # of entries in _sys_errlist array */
+_WCRTDATA extern unsigned _WCDATA   __minreal;  /* DOS4GW var for WLINK MINREAL option*/
+_WCRTDATA extern unsigned long _WCDATA __win_alloc_flags; /* Windows allocation flags */
+_WCRTDATA extern unsigned long _WCDATA __win_realloc_flags;/* Windows reallocation flags */
 #define DOS_MODE 0                              /* Real Address Mode */
 #define OS2_MODE 1                              /* Protected Address Mode */
 
@@ -532,9 +532,9 @@ _WCRTLINK unsigned char *__get_osminor_ptr( void );
  #define _osmajor       _osmajor_br
  #define _osminor       _osminor_br
 #endif
-_WCRTLINKD extern unsigned _WCNEAR       _amblksiz;   /*  mallocs done in multiples of    */
-_WCRTLINKD extern unsigned char _WCNEAR  _osmajor;    /*  O/S major version # */
-_WCRTLINKD extern unsigned char _WCNEAR  _osminor;    /*  O/S minor version # */
+_WCRTDATA extern unsigned _WCNEAR       _amblksiz;   /*  mallocs done in multiples of    */
+_WCRTDATA extern unsigned char _WCNEAR  _osmajor;    /*  O/S major version # */
+_WCRTDATA extern unsigned char _WCNEAR  _osminor;    /*  O/S minor version # */
 
 :segment !QNX & !LINUX
 #if defined(__NT__)
@@ -556,11 +556,11 @@ _WCRTLINKD extern unsigned char _WCNEAR  _osminor;    /*  O/S minor version # */
   #define _winminor         _winminor_br
   #define _winver           _winver_br
  #endif
- _WCRTLINKD extern unsigned short _WCDATA _osbuild;  /*  O/S build revision  */
- _WCRTLINKD extern unsigned int _WCDATA _osver;      /*  O/S build revision  */
- _WCRTLINKD extern unsigned int _WCDATA _winmajor;   /*  O/S major version # */
- _WCRTLINKD extern unsigned int _WCDATA _winminor;   /*  O/S minor version # */
- _WCRTLINKD extern unsigned int _WCDATA _winver;     /*  O/S version #       */
+ _WCRTDATA extern unsigned short _WCDATA _osbuild;  /*  O/S build revision  */
+ _WCRTDATA extern unsigned int _WCDATA _osver;      /*  O/S build revision  */
+ _WCRTDATA extern unsigned int _WCDATA _winmajor;   /*  O/S major version # */
+ _WCRTDATA extern unsigned int _WCDATA _winminor;   /*  O/S minor version # */
+ _WCRTDATA extern unsigned int _WCDATA _winver;     /*  O/S version #       */
 #endif
 :endsegment
 extern  int       __argc;       /* number of cmd line args */

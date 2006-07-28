@@ -36,7 +36,7 @@
 #include "exitwmsg.h"
 #include "rtinit.h"
 
-_WCRTLINKD unsigned short  _ExtenderRealModeSelector;
+unsigned short  _ExtenderRealModeSelector;
 
 #ifndef __WINDOWS_386__
 

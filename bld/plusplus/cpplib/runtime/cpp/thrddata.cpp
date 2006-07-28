@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C++ runtime multi-threaded support initialization.
 *
 ****************************************************************************/
 
@@ -35,7 +34,6 @@
 #include "rtinit.h"
 
 extern "C"
-_WPRTLINKD
 void CPPLIB(multi_thread_init)( // MULTI-THREAD INITIALIZATION
     void )
 {

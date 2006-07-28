@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  NetWare LibC threading support routines.
 *
 ****************************************************************************/
 
@@ -53,7 +52,7 @@
 extern  void            __InitMultipleThread( void );
 
 static thread_data      *__SingleThread( void );
-_WCRTLINKD thread_data  *(*__GetThreadPtr)( void ) = &__SingleThread;
+_WCRTDATA thread_data   *(*__GetThreadPtr)( void ) = &__SingleThread;
 thread_data             *__FirstThreadData;
 
 
@@ -90,7 +89,7 @@ BOOL __LibCThreadInit( void )
     int err = 0;
     if( __NXSlotID == NO_INDEX )
     {
-    	err = NXKeyCreate(__LibCKeyValueDestructor, (void *) NULL, &__NXSlotID);
+        err = NXKeyCreate(__LibCKeyValueDestructor, (void *) NULL, &__NXSlotID);
     }
     if((0 != err) || ( __NXSlotID == NO_INDEX ))
     {

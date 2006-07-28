@@ -218,7 +218,7 @@ _WCRTLINK extern FILE       *__get_iob_ptr( void );
 
 #if !defined(__OBSCURE_STREAM_INTERNALS)
 :segment CNAME
-_WCRTLINKD extern std::FILE _WCNEAR __iob[];
+_WCRTDATA extern std::FILE _WCNEAR __iob[];
 /*
  *  Define macros to access the three default file pointer (and descriptors)
  *  provided to each process by default. They will always occupy the
@@ -228,7 +228,7 @@ _WCRTLINKD extern std::FILE _WCNEAR __iob[];
 #define stdout  ((std::FILE *)&__iob[1])     /* standard output file */
 #define stderr  ((std::FILE *)&__iob[2])     /* standard error file  */
 :elsesegment
-_WCRTLINKD extern FILE _WCNEAR __iob[];
+_WCRTDATA extern FILE _WCNEAR __iob[];
 /*
  *  Define macros to access the three default file pointer (and descriptors)
  *  provided to each process by default. They will always occupy the

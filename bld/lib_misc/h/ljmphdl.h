@@ -45,6 +45,6 @@ typedef void (*pfun)( void _WCFAR * );
     #pragma aux (__arg_convention) pfun;
 #endif
 
-_WCRTLINKD extern pfun __longjmp_handler;
+_WCRTDATA extern pfun __longjmp_handler;
 
 #endif

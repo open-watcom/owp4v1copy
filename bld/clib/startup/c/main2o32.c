@@ -44,7 +44,7 @@
 #include "initarg.h"
 
 #ifdef __SW_BR
-    _WCRTLINKD extern   unsigned    __hmodule;
+    _WCRTDATA extern    unsigned    __hmodule;
     _WCRTLINK extern    void        (*__process_fini)( unsigned, unsigned );
     _WCRTLINK extern    void        (*__sig_init_rtn)( void );
 

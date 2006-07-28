@@ -94,13 +94,13 @@ extern "C" {
 #define DEBUG_BREAK_ON_CATCH_STR "__WD_Break_On_Catch"
 #define DEBUG_BREAK_ON_THROW_STR "__WD_Break_On_Throw"
 
-#ifndef _WCRTLINKD
-# define _WCRTLINKD /* nothing */
+#ifndef _WCRTDATA
+# define _WCRTDATA /* nothing */
 #endif
 
-_WCRTLINKD extern char volatile DEBUG_PRESENT_NAME;
-_WCRTLINKD extern char volatile DEBUG_BREAK_ON_THROW_NAME;
-_WCRTLINKD extern char volatile DEBUG_BREAK_ON_CATCH_NAME;
+_WCRTDATA extern char volatile DEBUG_PRESENT_NAME;
+_WCRTDATA extern char volatile DEBUG_BREAK_ON_THROW_NAME;
+_WCRTDATA extern char volatile DEBUG_BREAK_ON_CATCH_NAME;
 
 #if defined( __WATCOMC__ )  &&  (defined(__386__) || defined(M_I86))
 

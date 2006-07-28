@@ -35,10 +35,10 @@
 #include <ctype.h>
 #include <unistd.h>
 
-_WCRTLINKD char     *optarg;            // pointer to option argument
-_WCRTLINKD int      optind = 1;         // current argv[] index
-_WCRTLINKD int      optopt;             // currently processed chracter
-_WCRTLINKD int      opterr = 1;         // error output control flag
+_WCRTDATA char      *optarg;            // pointer to option argument
+_WCRTDATA int       optind = 1;         // current argv[] index
+_WCRTDATA int       optopt;             // currently processed chracter
+_WCRTDATA int       opterr = 1;         // error output control flag
 
 #ifdef __UNIX__
 char                __altoptchar = '-';
@@ -54,6 +54,7 @@ static int          opt_offset = 0;     // position in currently parsed argument
 #define BAD_OPT_MSG     "%s: illegal option -- %c\n"
 
 _WCRTLINK int getopt( int argc, char * const argv[], const char *optstring )
+/**************************************************************************/
 {
     char        *ptr;
     char        *curr_arg;

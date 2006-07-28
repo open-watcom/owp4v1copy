@@ -91,8 +91,8 @@ _WCRTLINK extern int    _ismbdxdigit( unsigned int __ch );
  #define __MBCSIsTable __MBCSIsTable_br
  #define __IsDBCS      __IsDBCS_br
 #endif
-_WCRTLINKD extern unsigned char __MBCSIsTable[257];
-_WCRTLINKD extern int           __IsDBCS;
+_WCRTDATA extern unsigned char __MBCSIsTable[257];
+_WCRTDATA extern int           __IsDBCS;
 
 
 /* Flag used in __MBCSIsTable table */

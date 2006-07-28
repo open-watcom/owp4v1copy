@@ -46,7 +46,7 @@
 extern  int         __historical_splitparms;
 extern  void        _Not_Enough_Memory( void );             /* 25-jul-89 */
 static  unsigned    _SplitParms(int, CHAR_TYPE *, CHAR_TYPE **, CHAR_TYPE ** );
-_WCRTLINKD static CHAR_TYPE  *__F_NAME(__CmdLine,__wCmdLine);       /* cmdline buffer */
+_WCRTDATA static CHAR_TYPE  *__F_NAME(__CmdLine,__wCmdLine);    /* cmdline buffer */
 
 _WCRTLINK void *__F_NAME( _getargv, _wgetargv )(
         int historical, CHAR_TYPE *exe, CHAR_TYPE *cmd,

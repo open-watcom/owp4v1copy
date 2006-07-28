@@ -78,9 +78,9 @@ extern  void            __FiniThreadProcessing( void );
 
 #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ ) || defined( __MIPS__ )
     void static nullSema4Rtn( semaphore_object *p ) { p = p; }
-    _WCRTLINKD void (*__AccessSema4)( semaphore_object *) = &nullSema4Rtn;
-    _WCRTLINKD void (*__ReleaseSema4)( semaphore_object *) = &nullSema4Rtn;
-    _WCRTLINKD void (*__CloseSema4)( semaphore_object *) = &nullSema4Rtn;
+    _WCRTDATA void (*__AccessSema4)( semaphore_object *) = &nullSema4Rtn;
+    _WCRTDATA void (*__ReleaseSema4)( semaphore_object *) = &nullSema4Rtn;
+    _WCRTDATA void (*__CloseSema4)( semaphore_object *) = &nullSema4Rtn;
     #if !defined( __NETWARE__ )
         static void __NullAccHeapRtn( void ) {}
     #endif

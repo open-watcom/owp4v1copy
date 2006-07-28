@@ -61,7 +61,7 @@
         __InitMultipleThread();
     }
 
-    _WCRTLINKD XI( __imthread, __imthread_fn, INIT_PRIORITY_RUNTIME + 1 )
+    _WCRTDATA XI( __imthread, __imthread_fn, INIT_PRIORITY_RUNTIME + 1 )
 #endif
 
 #if defined(_M_IX86)

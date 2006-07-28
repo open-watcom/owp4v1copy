@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Detect non-IBM (ie. NEC-PC98) systems.
 *
 ****************************************************************************/
 
@@ -107,7 +106,7 @@ int __is_nonIBM( void )
 ***** which will initialize the __NonIBM global variable.
 ****/
 
-_WCRTLINKD int          __NonIBM = -1;  // start at -1 for debugging purposes
+_WCRTDATA int           __NonIBM = -1;  // start at -1 for debugging purposes
                                         // (-1 ==> not yet initialized)
 
 static void init_on_startup( void )

@@ -56,16 +56,16 @@ typedef union {
     long double         x;
 } long_double_t;
 
-_WMRTLINKD const float_t     __f_infinity  = { 0x7f800000 };
-_WMRTLINKD const float_t     __f_posqnan   = { 0x7fc00000 };
+_WMRTDATA const float_t     __f_infinity  = { 0x7f800000 };
+_WMRTDATA const float_t     __f_posqnan   = { 0x7fc00000 };
 
-_WMRTLINKD const double_t    __d_infinity  = { 0x7ff0000000000000 };
-_WMRTLINKD const double_t    __d_posqnan   = { 0x7ff8000000000000 };
+_WMRTDATA const double_t    __d_infinity  = { 0x7ff0000000000000 };
+_WMRTDATA const double_t    __d_posqnan   = { 0x7ff8000000000000 };
 
 #ifdef _LONG_DOUBLE_
   #ifdef __X86__
-    _WMRTLINKD const long_double __ld_infinity = { 0x00000000, 0x80000000, 0x7fff };
-    _WMRTLINKD const long_double __ld_posqnan  = { 0x00000000, 0xc0000000, 0x7fff };
+    _WMRTDATA const long_double __ld_infinity = { 0x00000000, 0x80000000, 0x7fff };
+    _WMRTDATA const long_double __ld_posqnan  = { 0x00000000, 0xc0000000, 0x7fff };
   #else
     #error unknown long double format
   #endif
@@ -74,7 +74,7 @@ _WMRTLINKD const double_t    __d_posqnan   = { 0x7ff8000000000000 };
   #ifdef __BIG_ENDIAN__
     #error big endian needs fixing
   #else
-    _WMRTLINKD const double_t    __ld_infinity = { 0x7ff0000000000000 };
-    _WMRTLINKD const double_t    __ld_posqnan  = { 0x7ff8000000000000 };
+    _WMRTDATA const double_t    __ld_infinity = { 0x7ff0000000000000 };
+    _WMRTDATA const double_t    __ld_posqnan  = { 0x7ff8000000000000 };
   #endif
 #endif

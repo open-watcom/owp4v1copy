@@ -39,9 +39,9 @@
 #include "variety.h"
 #ifdef _WPRTLINK_RESIDENT
   #undef _WPRTLINK
-  #define _WPRTLINK
-  #undef _WPRTLINKD
-  #define _WPRTLINKD
+  #define _WPRTLINK __declspec(__watcall)
+  #undef _WPRTDATA
+  #define _WPRTDATA __declspec(__watcall)
 #endif
 
 struct  ACTIVE_EXC;

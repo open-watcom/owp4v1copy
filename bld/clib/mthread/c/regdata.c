@@ -37,19 +37,19 @@
 extern void     (*_AccessTDList)(void);
 extern void     (*_ReleaseTDList)(void);
 
-_WCRTLINKD extern unsigned __ThreadDataSize;
+_WCRTDATA extern unsigned   __ThreadDataSize;
 
 _WCRTLINK unsigned __RegisterThreadDataSize( unsigned size )
-/*********************************************************/
+/**********************************************************/
 {
     unsigned    offset;
 
     _AccessTDList();
     offset = __ThreadDataSize;
     __ThreadDataSize += size;
-    #if !defined(__UNIX__) && !defined(_NETWARE_CLIB)
-        __ResizeThreadDataList();
-    #endif
+#if !defined(__UNIX__) && !defined(_NETWARE_CLIB)
+    __ResizeThreadDataList();
+#endif
     _ReleaseTDList();
     return( offset );
 }

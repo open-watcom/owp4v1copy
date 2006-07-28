@@ -3,6 +3,28 @@
  *
 :include crwat.sp
  */
+
+::
+:: IMPORTANT: The _W?RTLINK and _W?RTDATA macros are currently identical.
+:: Older versions used _W?RTLINK for both data and functions. However, it is
+:: thought that keeping data and functions separate is useful in case some
+:: target environment does, in fact, require different handling of public
+:: functions and data exported by the runtime. Same logic applies to separate
+:: _WCRT*/_WMRT*/_WPRT* (ie. C/math/C++) macros, which also currently expand
+:: to the same thing (in this header, but not C++ runtime internal headers).
+::
+
+::
+:: NB: When C compiler is uptodate, the _WRTLFCONV/_WRTLDCONV macros could
+:: be removed and replaced directly by __declspec. Note that it is possible
+:: to write __declspec(dllimport __watcall). On the other hand it might be
+:: useful to have _WRTLCONV and _WRTLEXIM macros to have access
+:: to calling conventions and export/import separately, for a few rare cases
+:: where special calling conventions are used.
+::
+
+:: NB: bld/lib_misc/h/variety.h needs to be kept in sync with this file
+
 #ifndef _COMDEF_H_INCLUDED
 #define _COMDEF_H_INCLUDED
 :include readonly.sp
@@ -33,10 +55,12 @@
   #ifdef _WCUNALIGNED
     #error The macro _WCUNALIGNED is reserved for use by the runtime library.
   #endif
-  #if __WATCOMC__ > 1240
-    #define _WRTLCALL __declspec(__watcall)
+  #if __WATCOMC__ > 1250
+    #define _WRTLFCONV __declspec(__watcall)
+    #define _WRTLDCONV __declspec(__watcall)
   #else
-    #define _WRTLCALL
+    #define _WRTLFCONV
+    #define _WRTLDCONV
   #endif
   #if defined(_M_IX86)
     #define _WCNEAR __near
@@ -89,61 +113,54 @@
     #define _WCDATA _WCNEAR
   #endif
 :segment QNX | LINUX
-  #define _WCRTLINK _WRTLCALL
-  #define _WCRTLINKD
-  #define _WMRTLINK _WRTLCALL
-  #define _WMRTLINKD
-  #define _WPRTLINK _WRTLCALL
-  #define _WPRTLINKD
+  #define _WCRTLINK _WRTLFCONV
+  #define _WCRTDATA _WRTLDCONV
+  #define _WMRTLINK _WRTLFCONV
+  #define _WMRTDATA _WRTLDCONV
+  #define _WPRTLINK _WRTLFCONV
+  #define _WPRTDATA _WRTLDCONV
 :elsesegment
   #if defined(__SW_BR)
     #if defined(__NT__)
-      #define _WCRTLINK __declspec(dllimport) _WRTLCALL
-      #define _WCRTLINKD __declspec(dllimport)
-      #define _WMRTLINK __declspec(dllimport) _WRTLCALL
-      #define _WMRTLINKD __declspec(dllimport)
-      #define _WPRTLINK __declspec(dllimport) _WRTLCALL
-      #define _WPRTLINKD __declspec(dllimport)
-    #elif defined(__OS2__) && (defined(__386__) || defined(__PPC__))
-      #define _WCRTLINK _WRTLCALL
-      #define _WCRTLINKD
-      #define _WMRTLINK _WRTLCALL
-      #define _WMRTLINKD
-      #define _WPRTLINK _WRTLCALL
-      #define _WPRTLINKD
+      #define _WCRTLINK __declspec(dllimport) _WRTLFCONV
+      #define _WCRTDATA __declspec(dllimport) _WRTLDCONV
+      #define _WMRTLINK __declspec(dllimport) _WRTLFCONV
+      #define _WMRTDATA __declspec(dllimport) _WRTLDCONV
+      #define _WPRTLINK __declspec(dllimport) _WRTLFCONV
+      #define _WPRTDATA __declspec(dllimport) _WRTLDCONV
     #else
-      #define _WCRTLINK _WRTLCALL
-      #define _WCRTLINKD
-      #define _WMRTLINK _WRTLCALL
-      #define _WMRTLINKD
-      #define _WPRTLINK _WRTLCALL
-      #define _WPRTLINKD
+      #define _WCRTLINK _WRTLFCONV
+      #define _WCRTDATA _WRTLDCONV
+      #define _WMRTLINK _WRTLFCONV
+      #define _WMRTDATA _WRTLDCONV
+      #define _WPRTLINK _WRTLFCONV
+      #define _WPRTDATA _WRTLDCONV
     #endif
   #else
     #ifndef _WCRTLINK
-      #define _WCRTLINK _WRTLCALL
+      #define _WCRTLINK _WRTLFCONV
     #endif
-    #ifndef _WCRTLINKD
-      #define _WCRTLINKD
+    #ifndef _WCRTDATA
+      #define _WCRTDATA _WRTLDCONV
     #endif
     #ifndef _WMRTLINK
-      #define _WMRTLINK _WRTLCALL
+      #define _WMRTLINK _WRTLFCONV
     #endif
-    #ifndef _WMRTLINKD
-      #define _WMRTLINKD
+    #ifndef _WMRTDATA
+      #define _WMRTDATA _WRTLDCONV
     #endif
     #ifndef _WPRTLINK
-      #define _WPRTLINK _WRTLCALL
+      #define _WPRTLINK _WRTLFCONV
     #endif
-    #ifndef _WPRTLINKD
-      #define _WPRTLINKD
+    #ifndef _WPRTDATA
+      #define _WPRTDATA _WRTLDCONV
     #endif
   #endif
 :endsegment
   /* control import modifier on intrinsic functions */
   #ifndef _WCIRTLINK
     #if defined(__INLINE_FUNCTIONS__)
-      #define _WCIRTLINK _WRTLCALL
+      #define _WCIRTLINK _WRTLFCONV
     #else
       #define _WCIRTLINK _WCRTLINK
     #endif
@@ -152,7 +169,7 @@
     #if defined(__NO_MATH_OPS) || defined(__AXP__) || defined(__PPC__)
       #define _WMIRTLINK _WMRTLINK
     #else
-      #define _WMIRTLINK _WRTLCALL
+      #define _WMIRTLINK _WRTLFCONV
     #endif
   #endif
   #ifndef _WPIRTLINK

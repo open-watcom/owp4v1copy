@@ -55,12 +55,12 @@
  * The following is abstracted from initargv.c
  */
 extern  int         __historical_splitparms;
-_WCRTLINKD extern CHAR_TYPE  *__F_NAME( _LpPgmName, _LpwPgmName );
-_WCRTLINKD extern CHAR_TYPE  *__F_NAME( _LpCmdLine, _LpwCmdLine );
-extern  int         __F_NAME( _argc, _wargc );             /* argument count  */
-_WCRTLINKD extern int        __F_NAME( ___Argc, ___wArgc ); /* argument count */
-extern  CHAR_TYPE **__F_NAME( _argv, _wargv );             /* argument vector */
-_WCRTLINKD extern CHAR_TYPE**__F_NAME( ___Argv, ___wArgv ); /* argument vector */
+_WCRTDATA extern CHAR_TYPE  *__F_NAME( _LpPgmName, _LpwPgmName );
+_WCRTDATA extern CHAR_TYPE  *__F_NAME( _LpCmdLine, _LpwCmdLine );
+extern  int         __F_NAME( _argc, _wargc );              /* argument count  */
+_WCRTDATA extern int        __F_NAME( ___Argc, ___wArgc );  /* argument count */
+extern  CHAR_TYPE **__F_NAME( _argv, _wargv );              /* argument vector */
+_WCRTDATA extern CHAR_TYPE**__F_NAME( ___Argv, ___wArgv );  /* argument vector */
 
 void __F_NAME( __Init_Argv, __wInit_Argv )( void );
 void __F_NAME( __Fini_Argv, __wFini_Argv )( void );

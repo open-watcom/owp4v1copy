@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  prototypes for arguments processing variables 
+* Description:  Prototypes for command-line argument processing variables.
 *
 ****************************************************************************/
 
@@ -38,16 +38,16 @@ extern CHAR_TYPE **__F_NAME(_argv,_wargv);    /* argument vector */
 extern void __F_NAME(__Init_Argv,__wInit_Argv)( void );
 extern void __F_NAME(__Fini_Argv,__wFini_Argv)( void );
 
-_WCRTLINKD extern int        __F_NAME(___Argc,___wArgc); /* argument count */
-_WCRTLINKD extern CHAR_TYPE**__F_NAME(___Argv,___wArgv); /* argument vector */
+_WCRTDATA extern int        __F_NAME(___Argc,___wArgc); /* argument count */
+_WCRTDATA extern CHAR_TYPE**__F_NAME(___Argv,___wArgv); /* argument vector */
 
-_WCRTLINKD extern char   *_LpCmdLine;    /* pointer to command line */
-_WCRTLINKD extern char   *_LpPgmName;    /* pointer to program name */
-           extern char   *_LpDllName;    /* pointer to dll name */
+_WCRTDATA extern char   *_LpCmdLine;    /* pointer to command line */
+_WCRTDATA extern char   *_LpPgmName;    /* pointer to program name */
+          extern char   *_LpDllName;    /* pointer to dll name */
 
-_WCRTLINKD extern wchar_t *_LpwCmdLine;  /* pointer to wide command line */
-_WCRTLINKD extern wchar_t *_LpwPgmName;  /* pointer to wide program name */
-           extern wchar_t *_LpwDllName;  /* pointer to wide dll name */
+_WCRTDATA extern wchar_t *_LpwCmdLine;  /* pointer to wide command line */
+_WCRTDATA extern wchar_t *_LpwPgmName;  /* pointer to wide program name */
+          extern wchar_t *_LpwDllName;  /* pointer to wide dll name */
 
 #if defined(__WINDOWS_386__)
 extern char     __Is_DLL;

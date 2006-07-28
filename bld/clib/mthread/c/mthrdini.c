@@ -45,7 +45,7 @@
 #include "rtinit.h"
 #include "exitwmsg.h"
 
-_WCRTLINKD unsigned __ThreadDataSize = sizeof( thread_data );
+_WCRTDATA unsigned  __ThreadDataSize = sizeof( thread_data );
 
 void __InitThreadData( thread_data *tdata )
 /*****************************************/

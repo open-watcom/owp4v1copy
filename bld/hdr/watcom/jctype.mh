@@ -50,7 +50,7 @@ _WCRTLINK extern int    iskanji2(int);
 #if defined(__SW_BR) || defined(_RTDLL)
  #define _IsKTable _IsKTable_br
 #endif
-_WCRTLINKD extern const char _WCDATA _IsKTable[257];
+_WCRTDATA extern const char _WCDATA _IsKTable[257];
 :include cplusepi.sp
 
 #if !defined(__FUNCTION_DATA_ACCESS)

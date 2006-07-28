@@ -175,97 +175,97 @@
     #if defined(__MAKE_DLL_CLIB)
         #undef _WCRTLINK
         #undef _WCIRTLINK
-        #undef _WCRTLINKD
+        #undef _WCRTDATA
         #undef _WMRTLINK
         #undef _WMIRTLINK
-        #undef _WMRTLINKD
+        #undef _WMRTDATA
         #undef _WPRTLINK
         #undef _WPIRTLINK
-        #undef _WPRTLINKD
+        #undef _WPRTDATA
         #if defined(__NT__)
-            #define _WCRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WCIRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WCRTLINKD __declspec(dllexport)
-            #define _WMRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WMIRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WMRTLINKD __declspec(dllimport)
-            #define _WPRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WPIRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WPRTLINKD __declspec(dllimport)
+            #define _WCRTLINK  __declspec(dllexport) _WRTLFCONV
+            #define _WCIRTLINK __declspec(dllexport) _WRTLFCONV
+            #define _WCRTDATA  __declspec(dllexport) _WRTLDCONV
+            #define _WMRTLINK  __declspec(dllimport) _WRTLFCONV
+            #define _WMIRTLINK __declspec(dllimport) _WRTLFCONV
+            #define _WMRTDATA  __declspec(dllimport) _WRTLDCONV
+            #define _WPRTLINK  __declspec(dllimport) _WRTLFCONV
+            #define _WPIRTLINK __declspec(dllimport) _WRTLFCONV
+            #define _WPRTDATA  __declspec(dllimport) _WRTLDCONV
         #elif defined(__WARP__)
-            #define _WCRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WCIRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WCRTLINKD __declspec(dllexport)
-            #define _WMRTLINK _WRTLCALL
-            #define _WMIRTLINK _WRTLCALL
-            #define _WMRTLINKD
-            #define _WPRTLINK _WRTLCALL
-            #define _WPIRTLINK _WRTLCALL
-            #define _WPRTLINKD
+            #define _WCRTLINK  __declspec(dllexport) _WRTLFCONV
+            #define _WCIRTLINK __declspec(dllexport) _WRTLFCONV
+            #define _WCRTDATA  __declspec(dllexport) _WRTLDCONV
+            #define _WMRTLINK  _WRTLFCONV
+            #define _WMIRTLINK _WRTLFCONV
+            #define _WMRTDATA  _WRTLDCONV
+            #define _WPRTLINK  _WRTLFCONV
+            #define _WPIRTLINK _WRTLFCONV
+            #define _WPRTDATA  _WRTLDCONV
         #endif
     #elif defined(__MAKE_DLL_MATHLIB)
         #define _RTDLL
         #undef _WCRTLINK
         #undef _WCIRTLINK
-        #undef _WCRTLINKD
+        #undef _WCRTDATA
         #undef _WMRTLINK
         #undef _WMIRTLINK
-        #undef _WMRTLINKD
+        #undef _WMRTDATA
         #undef _WPRTLINK
         #undef _WPIRTLINK
-        #undef _WPRTLINKD
+        #undef _WPRTDATA
         #if defined(__NT__)
-            #define _WCRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WCIRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WCRTLINKD __declspec(dllimport)
-            #define _WMRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WMIRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WMRTLINKD __declspec(dllexport)
-            #define _WPRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WPIRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WPRTLINKD __declspec(dllimport)
+            #define _WCRTLINK  __declspec(dllimport) _WRTLFCONV
+            #define _WCIRTLINK __declspec(dllimport) _WRTLFCONV
+            #define _WCRTDATA  __declspec(dllimport) _WRTLDCONV
+            #define _WMRTLINK  __declspec(dllexport) _WRTLFCONV
+            #define _WMIRTLINK __declspec(dllexport) _WRTLFCONV
+            #define _WMRTDATA  __declspec(dllexport) _WRTLDCONV
+            #define _WPRTLINK  __declspec(dllimport) _WRTLFCONV
+            #define _WPIRTLINK __declspec(dllimport) _WRTLFCONV
+            #define _WPRTDATA  __declspec(dllimport) _WRTLDCONV
         #elif defined(__WARP__)
-            #define _WCRTLINK _WRTLCALL
-            #define _WCIRTLINK _WRTLCALL
-            #define _WCRTLINKD
-            #define _WMRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WMIRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WMRTLINKD __declspec(dllexport)
-            #define _WPRTLINK _WRTLCALL
-            #define _WPIRTLINK _WRTLCALL
-            #define _WPRTLINKD
+            #define _WCRTLINK  _WRTLFCONV
+            #define _WCIRTLINK _WRTLFCONV
+            #define _WCRTDATA  _WRTLDCONV
+            #define _WMRTLINK  __declspec(dllexport) _WRTLFCONV
+            #define _WMIRTLINK __declspec(dllexport) _WRTLFCONV
+            #define _WMRTDATA  __declspec(dllexport) _WRTLDCONV
+            #define _WPRTLINK  _WRTLFCONV
+            #define _WPIRTLINK _WRTLFCONV
+            #define _WPRTDATA  _WRTLDCONV
         #endif
     #elif defined(__MAKE_DLL_CPPLIB)
         #define _RTDLL
         #undef _WCRTLINK
         #undef _WCIRTLINK
-        #undef _WCRTLINKD
+        #undef _WCRTDATA
         #undef _WMRTLINK
         #undef _WMIRTLINK
-        #undef _WMRTLINKD
+        #undef _WMRTDATA
         #undef _WPRTLINK
         #undef _WPIRTLINK
-        #undef _WPRTLINKD
+        #undef _WPRTDATA
         #if defined(__NT__)
-            #define _WCRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WCIRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WCRTLINKD __declspec(dllimport)
-            #define _WMRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WMIRTLINK __declspec(dllimport) _WRTLCALL
-            #define _WMRTLINKD __declspec(dllimport)
-            #define _WPRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WPIRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WPRTLINKD __declspec(dllexport)
+            #define _WCRTLINK  __declspec(dllimport) _WRTLFCONV
+            #define _WCIRTLINK __declspec(dllimport) _WRTLFCONV
+            #define _WCRTDATA  __declspec(dllimport) _WRTLDCONV
+            #define _WMRTLINK  __declspec(dllimport) _WRTLFCONV
+            #define _WMIRTLINK __declspec(dllimport) _WRTLFCONV
+            #define _WMRTDATA  __declspec(dllimport) _WRTLDCONV
+            #define _WPRTLINK  __declspec(dllexport) _WRTLFCONV
+            #define _WPIRTLINK __declspec(dllexport) _WRTLFCONV
+            #define _WPRTDATA  __declspec(dllexport) _WRTLDCONV
         #elif defined(__WARP__)
-            #define _WCRTLINK _WRTLCALL
-            #define _WCIRTLINK _WRTLCALL
-            #define _WCRTLINKD
-            #define _WMRTLINK _WRTLCALL
-            #define _WMIRTLINK _WRTLCALL
-            #define _WMRTLINKD
-            #define _WPRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WPIRTLINK __declspec(dllexport) _WRTLCALL
-            #define _WPRTLINKD __declspec(dllexport)
+            #define _WCRTLINK  _WRTLFCONV
+            #define _WCIRTLINK _WRTLFCONV
+            #define _WCRTDATA  _WRTLDCONV
+            #define _WMRTLINK  _WRTLFCONV
+            #define _WMIRTLINK _WRTLFCONV
+            #define _WMRTDATA  _WRTLDCONV
+            #define _WPRTLINK  __declspec(dllexport) _WRTLFCONV
+            #define _WPIRTLINK __declspec(dllexport) _WRTLFCONV
+            #define _WPRTDATA  __declspec(dllexport) _WRTLDCONV
         #endif
     #endif
 #endif
