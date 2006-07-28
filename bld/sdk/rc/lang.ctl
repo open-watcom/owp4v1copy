@@ -46,7 +46,7 @@ cdsay .
     <CPCMD> <PROJDIR>/rc/ntaxp/wrce.exe         <RELROOT>/rel2/axpnt/wrc.exe
     <CPCMD> <PROJDIR>/mkcdpg/ntaxp/mkcdpg.exe   <RELROOT>/rel2/axpnt/mkcdpg.exe
 
-  [ IFDEF (os_linux) <2*> ]
+  [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <PROJDIR>/rc/linux386/wrce.exe      <RELROOT>/rel2/binl/wrc
     <CPCMD> <PROJDIR>/rc/linux386/wrce.sym      <RELROOT>/rel2/binl/wrc.sym
 
