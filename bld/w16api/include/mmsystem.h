@@ -1,7 +1,7 @@
-#ifndef	__MMSYSTEM_H
-#define	__MMSYSTEM_H
+#ifndef	_INC_MMSYSTEM
+#define	_INC_MMSYSTEM
 
-#ifndef	__WINDOWS_H
+#ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 

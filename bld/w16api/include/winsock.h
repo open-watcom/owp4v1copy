@@ -9,11 +9,11 @@
 
 */
 
-#ifndef	__WINSOCK_H
-#define	__WINSOCK_H
+#ifndef	_INC_WINSOCK
+#define	_INC_WINSOCK
 
-#ifndef	__WINDOWS_H
-#include	<windows.h>
+#ifndef	_INC_WINDOWS
+#include <windows.h>
 #endif
 
 #ifdef	__cplusplus

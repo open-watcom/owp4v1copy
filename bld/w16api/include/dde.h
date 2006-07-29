@@ -1,7 +1,7 @@
-#ifndef	__DDE_H
-#define	__DDE_H
+#ifndef	_INC_DDE
+#define	_INC_DDE
 
-#ifndef	__WINDOWS_H
+#ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 

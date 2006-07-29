@@ -1,5 +1,5 @@
-#ifndef __COMMDLG_H
-#define __COMMDLG_H
+#ifndef _INC_COMMDLG
+#define _INC_COMMDLG
 
 #ifdef __cplusplus
 extern "C" {

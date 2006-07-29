@@ -1,5 +1,5 @@
-#ifndef	__DLGS_H
-#define	__DLGS_H
+#ifndef	_INC_DLGS
+#define	_INC_DLGS
 
 #ifdef	__cplusplus
 extern	"C" {

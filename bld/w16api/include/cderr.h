@@ -1,5 +1,5 @@
-#ifndef	__CDERR_H
-#define	__CDERR_H
+#ifndef	_INC_CDERR
+#define	_INC_CDERR
 
 #define	CDERR_DIALOGFAILURE	0xFFFF
 

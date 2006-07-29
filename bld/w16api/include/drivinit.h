@@ -1,7 +1,7 @@
-#ifndef	__DRIVINIT_H
-#define	__DRIVINIT_H
+#ifndef	_INC_DRIVINIT
+#define	_INC_DRIVINIT
 
-#ifndef	__WINDOWS_H
+#ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 

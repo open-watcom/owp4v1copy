@@ -1,7 +1,7 @@
-#ifndef	__TOOLHELP_H
-#define	__TOOLHELP_H
+#ifndef	_INC_TOOLHELP
+#define	_INC_TOOLHELP
 
-#ifndef	__WINDOWS_H
+#ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 

@@ -1,7 +1,7 @@
-#ifndef	__CUSTCNTL_H
-#define	__CUSTCNTL_H
+#ifndef	_INC_CUSTCNTL
+#define	_INC_CUSTCNTL
 
-#ifndef	__WINDOWS_H
+#ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 

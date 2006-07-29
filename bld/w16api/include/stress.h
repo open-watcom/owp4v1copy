@@ -1,7 +1,7 @@
-#ifndef	__STRESS_H
-#define	__STRESS_H
+#ifndef	_INC_STRESS
+#define	_INC_STRESS
 
-#ifndef	__WINDOWS_H
+#ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 

@@ -1,7 +1,7 @@
-#ifndef	__SHELLAPI_H
-#define	__SHELLAPI_H
+#ifndef	_INC_SHELLAPI
+#define	_INC_SHELLAPI
 
-#ifndef	__WINDOWS_H
+#ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 
