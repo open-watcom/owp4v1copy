@@ -24,57 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  Display a cursor resource. 
+* Description:  Definitions for GET_NUM_DLG dialog.
 *
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <dos.h>
-#include <windows.h>
-#include "restest.h"
-#include "resname.h"
-
-static char cursorName[256];
-
-BOOL CALLBACK GetCursorNameDlgProc( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
-{
-    lparam = lparam;
-    switch( msg ) {
-    case WM_COMMAND:
-        if( LOWORD( wparam ) == IDOK ) {
-            GetDlgItemText( hwnd, INPUT_FIELD, cursorName, sizeof( cursorName ) );
-            EndDialog( hwnd, 0 );
-        }
-        break;
-    default:
-        return( FALSE );
-        break;
-    }
-    return( TRUE );
-}
-
-void DisplayCursor( HWND hwnd )
-{
-    FARPROC     fp;
-    HCURSOR     oldcur;
-    HCURSOR     newcur;
-    char        buf[256];
-
-    fp = MakeProcInstance( (FARPROC)GetCursorNameDlgProc, Instance );
-    DialogBox( Instance, "GET_RES_NAME_DLG" , NULL, (DLGPROC)fp );
-    FreeProcInstance( fp );
-    newcur = LoadCursor( Instance, cursorName );
-    if( newcur == NULL ) {
-        sprintf( buf, "Can't Load Cursor %s", cursorName );
-        Error( "cursor", buf );
-        return;
-    }
-    MessageBox( NULL, "The new cursor will be displayed for\n5 seconds after you hit OK", "", MB_OK );
-    oldcur = SetCursor( newcur );
-    SetCapture( hwnd );
-    sleep( 5 );
-    oldcur = SetCursor( oldcur );
-    ReleaseCapture();
-    DestroyCursor( newcur );
-}
+#define GET_NUM_PROMPT              201
