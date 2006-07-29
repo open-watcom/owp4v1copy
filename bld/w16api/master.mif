@@ -17,6 +17,7 @@ libs =               &
         shell.lib    &
         stress.lib   &
         toolhelp.lib &
+	ver.lib      &
         windows.lib  &
         winsock.lib
 
