@@ -40,7 +40,7 @@ set WIN95HC=hcrtf
 set OS2HC=ipfc
 
 REM Set up default path information variable
-if %DEFPATH%. == . set DEFPATH=%PATH%
+if "%DEFPATH%" == "" set DEFPATH=%PATH%
 
 REM Subdirectory to be used for bootstrapping
 set OBJDIR=bootstrp
@@ -77,6 +77,3 @@ REM setup right COMSPEC for non-standard COMSPEC setting on NT based systems
 if '%OS%' == 'Windows_NT' set COMSPEC=%windir%\system32\cmd.exe
 
 set COPYCMD=/y
-
-REM Clear the DEFPATH variable to avoid problems if this batch file is invoked twice.
-set DEFPATH=
