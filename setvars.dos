@@ -40,7 +40,7 @@ set WIN95HC=hcrtf
 set OS2HC=ipfc
 
 REM Set up default path information variable
-if %DEFPATH%. == . set DEFPATH=%PATH%
+if "%DEFPATH%" == "" set DEFPATH=%PATH%
 
 REM Subdirectory to be used for bootstrapping
 set OBJDIR=bootstrp
