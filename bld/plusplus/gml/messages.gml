@@ -11800,7 +11800,7 @@ struct D {
 
 :MSGSYM. ERR_MUST_BE_CONST_STATIC_INTEGRAL
 :MSGTXT. in-class initialization is only allowed for const static integral members
-:MSGJTXT.
+:MSGJTXT. クラス定義時に初期化できるのは，static constの整数型メンバー変数に限られます
 :errbad.
 struct A {
     static int i = 0;
@@ -11809,7 +11809,7 @@ struct A {
 
 :MSGSYM. ERR_IMPLICIT_CAST_ILLEGAL
 :MSGTXT. cannot convert expression to target type
-:MSGJTXT.
+:MSGJTXT. 指定した型に変換することができません
 The implicit cast is trying to convert an expression to a completely
 unrelated type.  There is no way the compiler can provide any meaning
 for the intended cast.
@@ -11825,7 +11825,7 @@ void fn()
 
 :MSGSYM. ERR_UNKNOWN_TEMPLATE_SPECIALIZATION
 :MSGTXT. unknown template specialization of '%S'
-:MSGJTXT.
+:MSGJTXT. '%S'のテンプレート特殊化は未知です
 :errbad.
 template<class T>
 struct A { };
@@ -11837,7 +11837,7 @@ void A<T *>::f() {
 
 :MSGSYM. ERR_WRONG_NR_TEMPLATE_ARGUMENTS
 :MSGTXT. wrong number of template arguments for '%S'
-:MSGJTXT.
+:MSGJTXT. '%S'に対するテンプレート引数の数が間違っています
 :errbad.
 template<class T>
 struct A { };
@@ -11849,7 +11849,7 @@ struct A<T, U> { };
 
 :MSGSYM. ERR_CANNOT_EXPLICITLY_SPECIALIZE_MEMBER
 :MSGTXT. cannot explicitly specialize member of '%S'
-:MSGJTXT.
+:MSGJTXT. メンバー'%S'を明示的に特殊化することができません
 :errbad.
 template<class T>
 struct A { };
@@ -11877,7 +11877,7 @@ struct A<T> { };
 
 :MSGSYM. ERR_TEMPLATE_SPECIALIZATION_AMBIGUOUS
 :MSGTXT. partial template specialization for '%S' ambiguous
-:MSGJTXT.
+:MSGJTXT. '%S'に対する部分的テンプレート特殊化が不明確です
 :errbad.
 template<class T, class U>
 struct A { };
@@ -11893,14 +11893,14 @@ A<int *, int *> a;
 
 :MSGSYM. ERR_STATIC_ASSERTION_FAILURE
 :MSGTXT. static assertion failed '%s'
-:MSGJTXT.
+:MSGJTXT. 静的アサート'%s'が失敗しました
 :errbad.
 static_assert( false, "false" );
 :eerrbad.
 
 :MSGSYM. WARN_UNSUPPORTED_TEMPLATE_EXPORT
 :MSGTXT. Exported templates are not supported by Open Watcom C++
-:MSGJTXT.
+:MSGJTXT. エクスポートされたテンプレートはOpen Watcom C++ではサポートされていません
 :WARNING. 1
 :errbad.
 export template< class T >
@@ -11910,7 +11910,7 @@ struct A {
 
 :MSGSYM. ERR_CANNOT_REDECLARE_MEMBER_FUNCTION
 :MSGTXT. redeclaration of member function '%S' not allowed
-:MSGJTXT.
+:MSGJTXT. メンバー関数'%S'の再宣言は認められません
 :errbad.
 struct A {
     void f();
@@ -11920,17 +11920,17 @@ struct A {
 
 :MSGSYM. INF_CANDIATE_DEFINITION
 :MSGTXT. candidate defined %L
-:MSGJTXT.
+:MSGJTXT. candidateは%Lを定義しました
 :INFO.
 
 :MSGSYM. ERR_BAD_REGISTER_NAME
 :MSGTXT. Invalid register name '%s' in #pragma
-:MSGJTXT.
+:MSGJTXT. #pragmaの中に無効なレジスタ名'%s'があります
 The register name is invalid/unknown.
 
 :MSGSYM. WARN_MISSING_KEYWORD_IN_EXPLICT_INSTANTIATION
-:MSGTXT. Archaic syntax: class/struct missing in explicit template instatiation
-:MSGJTXT.
+:MSGTXT. Archaic syntax: class/struct missing in explicit template instantiation
+:MSGJTXT. 旧式な構文：explicitなテンプレートのインスタンス化にclass/structがありません
 :WARNING. 1
 Archaic syntax has been used.  The standard requires a 
 .kw class
