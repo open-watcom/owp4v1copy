@@ -14,10 +14,10 @@
 #include "hello.ih"
 
 /*
- * This method outputs the string "Hello, World!".
+ * This method outputs a hello world string.
  */
 
-SOM_Scope void  SOMLINK sayHello(Hello somSelf,  Environment *ev)
+SOM_Scope void  SOMLINK sayHello( Hello *somSelf,  Environment *ev )
 {
     /* HelloData *somThis = HelloGetData(somSelf); */
     HelloMethodDebug("Hello","sayHello");

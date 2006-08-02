@@ -1,10 +1,11 @@
  SOM (System Object Model) Programming Examples
  ----------------------------------------------
 
- The SOM programming examples require the IBM SOMobject Developer Toolkit.
+ The SOM programming examples require the IBM SOMobjects Developer Toolkit.
 This toolkit is not distributed with Open Watcom; it is part of the IBM OS/2
 Developer's Toolkit. These examples are intended to be used in conjunction
-with version 4.5 of the IBM OS/2 Developer's Toolkit.
+with version 4.5 of the IBM OS/2 Developer's Toolkit, or with version 2.1 of
+the standalone IBM SOMobjects Developer Toolkit.
 
  Makefiles are provided for the examples. However, the makefiles assume that
 the environment is properly set up to enable use of the SOMobjects Toolkit.
@@ -21,8 +22,10 @@ to be set.
 C and C++ compilers to develop SOM classes. For information on SOM programming
 concepts and details of the SOMobjects compiler usage, please refer to
 "System Object Model Programming Guide" and "System Object Model Programming
-Reference", both distributed with the IBM OS/2 Developer's Toolkit.
+Reference", both included with the IBM SOMobjects Developer Toolkit.
 
- Note: Building the C sample programs may produce compiler warnings (W100 or
-W104, inconsitent levels of indirection). The IBM VisualAge C++ compiler
-produces analogous warnings.
+ Note: Building the C sample program (helloc) assumes that SOM header files
+have the C++ or OIDL-compatible form, generated with 'somstars' (as opposed
+to 'somcorba'). The makefile explicitly specifies the -maddstar option to
+the SOM compiler (sc), which is equivalent to having the SMADDSTAR
+environment variable set.

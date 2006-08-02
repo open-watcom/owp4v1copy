@@ -10,7 +10,7 @@ main.obj : main.c hello.h
     wcc386 $(CFLAGS) $[@
 
 hello.ih hello.h : hello.idl
-    sc -s"ih;h" $<
+    sc -s"ih;h" -maddstar $<
 
 clean : .symbolic
     rm -f *.obj *.exe *.h *.ih *.err
