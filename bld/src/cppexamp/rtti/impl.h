@@ -8,7 +8,7 @@ protected:
     int     hourRate;
 public:
     employee( char *n, int hr );
-    ~employee();
+    virtual ~employee();
 
     char *name() { return( Name ); }
     virtual int salary() = 0;
