@@ -11,6 +11,12 @@ usr="dlltest.c"
 [ DEFAULT type="s" cond="samples" where="c ac" dir="samples/os2/som" ]
 usr="readme.txt"
 
+[ DEFAULT type="s" cond="samples" where="c ac" dir="samples/os2/som/animals" ]
+usr="animals.c"
+usr="animals.idl"
+usr="main.c"
+usr="makefile"
+
 [ DEFAULT type="s" cond="samples" where="c ac" dir="samples/os2/som/classes" ]
 usr="course.c"
 usr="course.csc"

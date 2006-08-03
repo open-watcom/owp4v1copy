@@ -66,6 +66,7 @@ cdsay .
     <CPCMD> <DEVDIR>/src/os2/dll/*.*                    <RELROOT>/rel2/samples/os2/dll/
     <CPCMD> <DEVDIR>/src/os2/pdd/*.*                    <RELROOT>/rel2/samples/os2/pdd/
     <CPCMD> <DEVDIR>/src/os2/som/*.*                    <RELROOT>/rel2/samples/os2/som/
+    <CPCMD> <DEVDIR>/src/os2/som/animals/*.*            <RELROOT>/rel2/samples/os2/som/animals/
     <CPCMD> <DEVDIR>/src/os2/som/classes/*.*            <RELROOT>/rel2/samples/os2/som/classes/
     <CPCMD> <DEVDIR>/src/os2/som/helloc/*.*             <RELROOT>/rel2/samples/os2/som/helloc/
     <CPCMD> <DEVDIR>/src/os2/som/hellocpp/*.*           <RELROOT>/rel2/samples/os2/som/hellocpp/

@@ -24,8 +24,8 @@ concepts and details of the SOMobjects compiler usage, please refer to
 "System Object Model Programming Guide" and "System Object Model Programming
 Reference", both included with the IBM SOMobjects Developer Toolkit.
 
- Note: Building the C sample program (helloc) assumes that SOM header files
-have the C++ or OIDL-compatible form, generated with 'somstars' (as opposed
-to 'somcorba'). The makefile explicitly specifies the -maddstar option to
-the SOM compiler (sc), which is equivalent to having the SMADDSTAR
+ Note: Building the C sample programs (helloc and animals ) assumes that SOM
+header files have the C++ or OIDL-compatible form, generated with 'somstars'
+(as opposed to 'somcorba'). The makefile explicitly specifies the -maddstar
+option to the SOM compiler (sc), which is equivalent to having the SMADDSTAR
 environment variable set.
