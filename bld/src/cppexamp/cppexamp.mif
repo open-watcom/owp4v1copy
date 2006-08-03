@@ -57,3 +57,4 @@ clean: .SYMBOLIC
     @if exist *.lnk del *.lnk
     @if exist *.obj del *.obj
     @if exist *.map del *.map
+    @if exist *.err del *.err
