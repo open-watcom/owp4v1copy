@@ -26,6 +26,12 @@ wlink_nosymfile = 1
 
 !include ../wlobjs.mif
 
+!ifdef no_orl
+# do not link against ORL
+common_objs += orlstubs.obj
+orl_lib = 
+!endif
+
 comp_objs_exe = $(common_objs) $(exe_objs)
 comp_objs_dll = $(common_objs) $(dll_objs)
 
@@ -59,6 +65,7 @@ extra_c_flags_ntio       = -I"$(wres_dir)/h"
 extra_c_flags_posixio    = -I"$(wres_dir)/h"
 extra_c_flags_linkio     = -I"$(wres_dir)/h"
 extra_c_flags_objorl     = -I"$(orl_dir)/h"
+extra_c_flags_orlstubs   = -I"$(orl_dir)/h"
 extra_c_flags_dbgdwarf   = -I"$(dwarf_dir)/dw/h"
 !ifdef wlink_trmem
 extra_c_flags_debug      = -DTRMEM
