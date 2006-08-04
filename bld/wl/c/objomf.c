@@ -752,7 +752,6 @@ static void DefineGroup( void )
         ++ObjBuff;
         seg = (segnode *)FindNode( SegNodes, GetIdx() );
         AddToGroup( group, seg->entry->u.leader );
-        --num_segs;
     }
 }
 
