@@ -10,9 +10,77 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2006/04/11
+:cmt. Reflects main Perforce branch as of 2006/08/05
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
+.*
+.*
+.section Differences from Open Watcom Version 1.5
+.*
+.np
+Following is a list of changes made in &product 1.6:
+.begbull
+.bull
+The C compiler has been modified to use the underlying bit-field type and
+not signed/unsigned int as the type of operand which is a bit-field. This
+is consistent with the C++ compiler and fixes some problems when bit-fields
+larger than int are used.
+.bull
+Processing of #pragma aux has been corrected in the C compiler. This fixes
+problems when using the mmintrin.h header, among others.
+.bull
+The C compiler now accepts __declspec modifiers specifying calling conventions
+applied to variables, not just functions. The new behavior is consistent with
+the C++ compiler, and also with the fact that ordinary calling convention
+type modifiers can be used with variables.
+.bull
+The C and C++ compilers have been fixed to properly declrate variable names
+based on calling convention specifiers. This fixes problems with building
+code using IBM SOM. Note that the current behavior is the same as in Open
+Watcom 1.3 and earlier.
+.bull
+The C compiler's preprocessor has been modified to allow use of macros with
+large number of arguments (255 or more).
+.bull
+The C compiler no longer generates internal errors when options -ri and -oe
+are specified at the same time.
+.bull
+The code generator no longer merges memory accesses when volatile variables
+are involved.
+.bull
+The code generator now properly converts between far pointers and 64-bit
+integers. Attempts to convert a 48-bit far pointer to 64-bit integer no
+longer cause a crash.
+.bull
+The code generator has been modified to slightly decrease code size when
+optimizing for size (-os).
+.bull
+The non-standard alloca.h header has been added for compatibility with other
+compilers.
+.bull
+The strftime() library function has been extended to support date formats
+introduced in C99.
+.bull
+The assembler (wasm) now supports external absolute symbols. The SIZE, SIZEOF,
+LENGTH, and LENGTHOF operators have been corrected for structures.
+.bull
+The linker has been changed to only recognize segments of class 'STACK'
+as stack segment. Previously, any segment with class name ending with 'STACK'
+(eg. 'FSTACK') was recognized.
+.bull
+The RUNTIME linker directive has been extended to allow ELF ABI type and
+version specification. This functionality is similar to the brandelf utility.
+See the Linker Guide for details.
+.bull
+The wmake utility has been modified such that in native wmake mode, a
+symbolic target with no command list is always considered to have had its
+command list executed. That will cause any targets that are dependent on this
+symbolic target to be considered out of date.
+.bull
+The Win16 debugger trap file (std.dll) has been modified to allow 16-bit wdw
+to run on Windows NT platforms without reporting a spurious error message on
+exit.
+.endbull
 .*
 .*
 .section Differences from Open Watcom Version 1.4

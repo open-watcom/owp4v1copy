@@ -33,7 +33,7 @@ QNX is a registered trademark of QNX Software Systems Ltd.
 .dm tmarkqnx end
 
 :set symbol="ver"       value="1".
-:set symbol="rev"       value="5".
+:set symbol="rev"       value="6".
 :set symbol="pver"      value="10".
 :set symbol="prev"      value="6".
 :set symbol="version"   value="160".
