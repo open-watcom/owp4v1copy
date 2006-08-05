@@ -826,7 +826,7 @@ static void CaseStmt( void )
 
     NextToken();
     if( SwitchStack ) {
-        if( ConstExprAndType( &val ) ){
+        if( ConstExprAndType( &val ) ) {
             if( ( val.type == TYPE_ULONG64 ) && !U64IsU32( val.value ) ) {
                 CErr1( ERR_CONSTANT_TOO_BIG );
             } else if( ( val.type == TYPE_LONG64 ) && !I64IsI32( val.value ) ) {
@@ -1417,9 +1417,12 @@ void Statement( void )
             NextToken();
         }
     }
+    /* C99 has special semantics for return value of main() */
     if( CompFlags.c99_extensions && !strcmp( CurFunc->name, "main" ) ) {
-        FixupC99MainReturn( func_result, &return_info );
-        return_at_outer_level = TRUE;
+        if( !return_at_outer_level ) {
+            FixupC99MainReturn( func_result, &return_info );
+            return_at_outer_level = TRUE;
+        }
     }
     if( !return_info.with_expr ) {   /* no return values present */
         if( !CurFunc->naked ) {
