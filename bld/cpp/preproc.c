@@ -961,24 +961,13 @@ int PP_Read( void )
 {
     char        *p;
     char        line_generated;
-    char        comment;
+    char        white_space;
 
     for( ;; ) {
         if( PP_ReadLine( &line_generated ) == 0 )  return( 0 );
-        if( ! line_generated ) {
-            //  &&  ! (PPFlags & PPFLAG_SKIP_COMMENT) ) {
-            p = PPCharPtr;
-#if 0
-            for( ;; ) {
-                while( *p == ' '  ||  *p == '\t' ) ++p;
-                if( p[0] != '/' ) break;
-                if( p[1] != '*' ) break;
-                p = PP_SkipComment( p, &comment );      /* 29-oct-93 */
-            }
-#else
-            comment = 0;
-            while( *p == ' '  ||  *p == '\t' ) ++p;
-#endif
+        // don't look for preprocessor directives inside multi-line comments
+        if( !line_generated && !(PPFlags & PPFLAG_SKIP_COMMENT) ) {
+            p = PP_SkipSpace( PPCharPtr, &white_space );
             if( *p == PreProcChar ) {
                 if( PP_Sharp( p + 1 ) ) {       // if recognized
                     PPCharPtr = &PPLineBuf[1];
@@ -1234,6 +1223,10 @@ int PP_Char( void )
                 if( PPSavedChar == '\0' ) {
                     PPTokenPtr = PPCharPtr;
                     return( '\n' );
+                } else {
+                    // replace comment with a space
+                    PPTokenPtr = PPCharPtr;
+                    return( ' ' );
                 }
             }
             if( token != PPT_ID )  break;
