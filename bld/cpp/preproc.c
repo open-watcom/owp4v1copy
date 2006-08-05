@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,41 +54,42 @@
 #define DOS_EOF_CHAR    0x1A
 
 typedef struct cpp_info {
-        struct cpp_info *prev_cpp;
-        unsigned char   cpp_type;
-        unsigned char   processing;
+    struct cpp_info *prev_cpp;
+    unsigned char   cpp_type;
+    unsigned char   processing;
 } CPP_INFO;
 
 enum cpp_types {
-        PP_IF,
-        PP_ELIF,
-        PP_ELSE
+    PP_IF,
+    PP_ELIF,
+    PP_ELSE
 };
 
-FILELIST *PP_File;
-CPP_INFO *PPStack;
-int     NestLevel;
-int     SkipLevel;
-unsigned PPLineNumber;                  // current line number
-unsigned PPFlags;                       // pre-processor flags
-char    PP__DATE__[] = "\"Dec 31 2005\"";// value for __DATE__ macro
-char    PP__TIME__[] = "\"12:00:00\"";  // value for __TIME__ macro
-char    *PPBufPtr;                      // block buffer pointer
-char    *PPCharPtr;                     // character pointer
-char    *PPTokenPtr;                    // pointer to next char in token
-char    *PPIncludePath;                 // include path
-MACRO_TOKEN     *PPTokenList;           // pointer to list of tokens
-MACRO_TOKEN     *PPCurToken;            // pointer to current token
-char    PPSavedChar;                    // saved char at end of token
-char    PPLineBuf[4096+2];              // line buffer
+FILELIST    *PP_File;
+CPP_INFO    *PPStack;
+int         NestLevel;
+int         SkipLevel;
+unsigned    PPLineNumber;                   // current line number
+unsigned    PPFlags;                        // pre-processor flags
+char        PP__DATE__[] = "\"Dec 31 2005\"";// value for __DATE__ macro
+char        PP__TIME__[] = "\"12:00:00\"";  // value for __TIME__ macro
+char        *PPBufPtr;                      // block buffer pointer
+char        *PPCharPtr;                     // character pointer
+char        *PPTokenPtr;                    // pointer to next char in token
+char        *PPIncludePath;                 // include path
+MACRO_TOKEN *PPTokenList;                   // pointer to list of tokens
+MACRO_TOKEN *PPCurToken;                    // pointer to current token
+char        PPSavedChar;                    // saved char at end of token
+char        PPLineBuf[4096+2];              // line buffer
 MACRO_ENTRY *PPHashTable[HASH_SIZE];
-char    PreProcChar = '#';              // preprocessor line intro
-void (*PP_CallBack)(char *,char *,char *);// mkmk dependency callback function
+char        PreProcChar = '#';              // preprocessor line intro
+
+void (*PP_CallBack)(char *,char *,char *);  // mkmk dependency callback function
 
 
 static char *Months[] = {
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 };
 
 static char DBChar[256];        // double byte character indicator table
@@ -131,7 +133,7 @@ int PP_Open( char *filename )
     handle = open( filename, O_RDONLY | O_BINARY, 0 );
     if( handle != -1 ) {
         prev_file = PP_File;
-        PP_File = (FILELIST *)PP_Malloc( sizeof(FILELIST) );
+        PP_File = (FILELIST *)PP_Malloc( sizeof( FILELIST ) );
         if( PP_File == NULL ) {
             PP_OutOfMemory();
             close( handle );
@@ -199,7 +201,7 @@ char *PP_FindInclude( char *filename, char *path, char *buffer )
 int PP_OpenInclude( char *filename, char *delim )
 {
     char        *path;
-    auto char   buffer[258];
+    char        buffer[258];
     char        pathbuf[ _MAX_PATH ];
     char        drivebuf[ _MAX_DRIVE ];
     char        dirbuf[ _MAX_DIR ];
@@ -276,8 +278,8 @@ static void PP_GenError( char *msg )
 
 static void PP_TimeInit( void )
 {
-    struct tm *tod;
-    auto time_t time_of_day;
+    struct tm   *tod;
+    time_t      time_of_day;
 
     time_of_day = time( &time_of_day );
     tod = localtime( &time_of_day );
@@ -300,7 +302,7 @@ void PP_SetLeadBytes( const char *bytes )
 {
     unsigned    i;
 
-    for( i=0; i < 256; i++ ) {
+    for( i = 0; i < 256; i++ ) {
         if( bytes[i] == 0 ) {
             DBChar[i] = 0;
         } else {
@@ -361,7 +363,8 @@ void PP_Dependency_List( void (*callback)(char *,char *,char *) )
     }
 }
 
-static void PP_CloseAllFiles( void ) {
+static void PP_CloseAllFiles( void )
+{
     FILELIST    *tmp;
 
     while( PP_File != NULL ) {
@@ -373,7 +376,7 @@ static void PP_CloseAllFiles( void ) {
     }
 }
 
-void PP_Fini()
+void PP_Fini( void )
 {
     int         hash;
     MACRO_ENTRY *me;
@@ -407,7 +410,7 @@ int PP_ReadBuf( void )
 
 int PP_ReadLine( char *line_generated )
 {
-    FILELIST    *this_file;
+    FILELIST            *this_file;
     int                 len;
     unsigned char       c;
 
@@ -520,8 +523,7 @@ void PP_Include( char *ptr )
     if( PP_OpenInclude( filename, delim ) == -1 ) {
         filename = doStrDup( filename );        // want to reuse buffer
         PPCharPtr = &PPLineBuf[1];
-        sprintf( PPCharPtr, "%cerror Unable to open '%s'\n", PreProcChar,
-                                filename );
+        sprintf( PPCharPtr, "%cerror Unable to open '%s'\n", PreProcChar, filename );
         PP_Free( filename );
     } else {
         PP_GenLine();
@@ -572,11 +574,11 @@ void PP_RCInclude( char *ptr )
 
 MACRO_ENTRY *PP_AddMacro( char *macro_name )
 {
-    MACRO_ENTRY *me;
-    unsigned int        hash;
-    unsigned int        size;
+    MACRO_ENTRY     *me;
+    unsigned int    hash;
+    unsigned int    size;
 
-    size = sizeof(MACRO_ENTRY) + strlen( macro_name );
+    size = sizeof( MACRO_ENTRY ) + strlen( macro_name );
     me = (MACRO_ENTRY *)PP_Malloc( size );
     if( me != NULL ) {
         hash = PP_Hash( macro_name );
@@ -751,7 +753,7 @@ MACRO_ENTRY *PP_ScanMacroLookup( char *ptr )
 
 static void IncLevel( int value )
 {
-    CPP_INFO *cpp;
+    CPP_INFO    *cpp;
 
     cpp = (CPP_INFO *)PP_Malloc( sizeof( CPP_INFO ) );
     cpp->prev_cpp = PPStack;
@@ -1258,7 +1260,7 @@ extern void PreprocVarInit( void )
     PP_File = NULL;
     PPStack = NULL;
     PPLineNumber = 0;
-    strcpy( PP__DATE__, "\"Dec 31 1992\"" );
+    strcpy( PP__DATE__, "\"Dec 31 2005\"" );
     strcpy( PP__TIME__, "\"12:00:00\"" );
     PPBufPtr = NULL;
     PPCharPtr = NULL;
