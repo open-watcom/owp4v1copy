@@ -1,21 +1,17 @@
 //
-// This module contains member function definitions. It is provided
-// by a library vendor and customers do not have access to its source code.
+// This module contains member function definitions. It is provided by a
+// library vendor and customers do not have access to its source code.
 //
 
-#include <new.h>
-#include <string.h>
 #include "impl.h"
 
-employee::employee( char *n, int hr ) : hourRate( hr )
+employee::employee( const char *n, int hr ) : hourRate( hr ), Name( n )
 {
-    Name = new char[strlen( n ) + 1];
-    strcpy( Name, n );
 }
 
 employee::~employee()
 {
-    delete[] Name;
+    // Placeholder.
 }
 
 int manager::salary()

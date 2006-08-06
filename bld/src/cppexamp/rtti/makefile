@@ -5,6 +5,6 @@ test: .SYMBOLIC test.exe
 
 objects = main.obj user.obj impl.obj
 
-cpp_options = -zq -xr -d1
+cpp_options = -zq -w4 -xr -xs -d1
 
 !include ../cppexamp.mif

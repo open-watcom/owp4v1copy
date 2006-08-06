@@ -15,6 +15,10 @@ sub-directories follows:
                 
     membfun     Demonstrates how to call a C++ member function from a function
                 compiled with the C compiler.
+
+    rtti        Demonstrates how to use run time type identification to
+                invoke class-specific member functions on objects in a
+                heterogeneous collection.
                 
 
 How to use the examples
