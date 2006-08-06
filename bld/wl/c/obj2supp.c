@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include <string.h>
 #include "linkstd.h"
 #include "reloc.h"
@@ -384,7 +383,17 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
     if( !fix.imported ) {
         if( ( (save->flags & FIX_OFFSET_MASK) > FIX_OFFSET_16 )
             || ( fix.ffix != FFIX_NOT_A_FLOAT ) ) {
+
+            /***************************************************************/
+            /*  fix bug #630 fixup is applied to non first segment of grp  */
+            /*  recalculate offset from start of group                     */
+            /***************************************************************/
+
+            if( faddr.seg < fix.tgt_addr.seg ) {
+                ConvertToFrame( &fix.tgt_addr, faddr.seg );
+            }
             fix.tgt_addr.seg = faddr.seg;
+
         } else {
             ConvertToFrame( &fix.tgt_addr, faddr.seg );
         }
