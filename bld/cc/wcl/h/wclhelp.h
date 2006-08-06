@@ -98,12 +98,12 @@
 "-ecc set calling conv. to __cdecl",
 "-ecd set calling conv. to __stdcall",
 "-ecf set calling conv. to __fastcall",
-#if 0
+#if 0 // not officially supported
 "-eco set calling conv. to _Optlink",
 #endif
 "-ecp set calling conv. to __pascal",
 "-ecr set calling conv. to __fortran",
-"-ecs set calling conv. to _Syscall",
+"-ecs set calling conv. to __syscall",
 "-ecw set calling conv. to __watcall",
 #endif
 "-ee call epilogue hook routine",

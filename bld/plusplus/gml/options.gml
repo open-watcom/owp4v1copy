@@ -321,7 +321,7 @@
 :option. ecs
 :target. i86 386
 :enumerate. intel_call_conv
-:usage. set default calling convention to _Syscall
+:usage. set default calling convention to __syscall
 :jusage.
 
 :option. ecw

@@ -633,7 +633,7 @@ set default calling convention to __fortran
 .do end
 .if &e'&$SWecs eq 1 .do begin
 .note ecs
-set default calling convention to _Syscall
+set default calling convention to __syscall
 :optref refid='SWecs'.
 .do end
 .if &e'&$SWecw eq 1 .do begin
@@ -3354,7 +3354,7 @@ set default calling convention to __fortran
 .if &e'&$SWecs eq 1 .do begin
 :OPT refid='SWecs' name='ecs'.
 .ix 'options' 'ecs'
-set default calling convention to _Syscall
+set default calling convention to __syscall
 .do end
 .*
 .if &e'&$SWecw eq 1 .do begin

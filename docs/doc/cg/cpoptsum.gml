@@ -288,7 +288,7 @@ set default calling convention to __fortran
 .*
 .note ecs
 :CMT. .ix 'options' 'ecs'
-set default calling convention to _Syscall
+set default calling convention to __syscall
 :optref refid='SWecs'.
 .*
 .note ecw

@@ -76,7 +76,7 @@ Options:
 :endsegment
 -ecp          set default calling convention to __pascal
 -ecr          set default calling convention to __fortran
--ecs          set default calling convention to _Syscall
+-ecs          set default calling convention to __syscall
 -ecw          set default calling convention to __watcall (default)
 -ee           call epilogue hook routine
 -ef           use full pathnames in error and warning messages
