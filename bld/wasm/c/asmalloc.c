@@ -128,6 +128,21 @@ void *MemAlloc( size_t size )
     return( ptr );
 }
 
+void *MemRealloc( void *ptr, size_t size )
+{
+    void *new;
+
+#ifdef TRACK
+    new = _trmem_realloc( ptr, size, _trmem_guess_who(), memHandle );
+#else
+    new = realloc( ptr, size );
+#endif
+    if( new == NULL && size != 0 ) {
+        Fatal( MSG_OUT_OF_MEMORY );
+    }
+    return( new );
+}
+
 void MemFree( void *ptr )
 {
     if( ptr != NULL ) {
