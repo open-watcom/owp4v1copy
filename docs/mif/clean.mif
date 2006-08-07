@@ -2,7 +2,7 @@ clean : .SYMBOLIC
  @if exist *.pdf rm -f *.pdf
  @if exist *.ps rm -f *.ps
  @if exist *.ihp rm -f *.ihp
- @if exist *.htm rm -f *.htm
+ @if exist *.html rm -f *.html
  @if exist *.bmp rm -f *.bmp
  @if exist *.hlp rm -f *.hlp
  @if exist *.cnt rm -f *.cnt

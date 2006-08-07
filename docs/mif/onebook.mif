@@ -69,7 +69,7 @@ dep_os2 = $(guitools_dir)/os2/$(hbook).h
 dep_os2 = $(guitools_dir)/os2/$(hbook).h $(hbook).inf $(hbook).hlp
 !endif
 dep_dos = $(guitools_dir)/ib/$(hbook).h $(hbook).ihp
-dep_html = $(hbook).htm
+dep_html = $(hbook).html
 dep_ps = $(hbook).ps
 dep_pdf = $(hbook).pdf
 
@@ -210,9 +210,9 @@ $(guitools_dir)/ib/$(hbook).h: $(hbook).h
 ####################################################
 !else ifeq dotarget html
 
-.EXTENSIONS: .htm
+.EXTENSIONS: .html
 
-$(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
+$(hbook).html $(hbook).h : $(book_objs) $(proj_objs)
 !ifdef book_bmroot
     $(CPYCMD) $(book_bmroot)$(SL)*.bmp $^: > $(nulldevice)
 !endif
