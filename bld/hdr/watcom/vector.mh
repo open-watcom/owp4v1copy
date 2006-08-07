@@ -35,9 +35,9 @@
 
 namespace std {
 
-  template<class Type, class Allocator = allocator< Type > >
-  class vector {
-  public:
+template<class Type, class Allocator = allocator< Type > >
+class vector {
+public:
     typedef typename Allocator::reference       reference;
     typedef typename Allocator::const_reference const_reference;
     typedef typename Allocator::size_type       size_type;
@@ -95,7 +95,7 @@ namespace std {
 
     bool     _Sane( ) const;  // Check invariants.
 
-  private:
+private:
     // 1. buffer has size buf_length.
     // 2. buffer never shrinks (except in ...).
     // 3. buf_length >= vec_length.
@@ -109,18 +109,18 @@ namespace std {
 
     // This method encapsulates the memory allocation policy.
     pointer alloc( size_type required, size_type &found );
-  };
+};
 
-  // ==========================
-  // Member functions of vector
-  // ==========================
+// ==========================
+// Member functions of vector
+// ==========================
 
-  template< class Type, class Allocator >
-  vector< Type, Allocator >::pointer
+template< class Type, class Allocator >
+vector< Type, Allocator >::pointer
     vector< Type, Allocator >::alloc(
-      size_type required,
-      size_type &found )
-  {
+        size_type required,
+        size_type &found )
+{
     pointer   result;
     size_type length = 16;
 
@@ -131,73 +131,73 @@ namespace std {
     // Update outputs only if allocation successful.
     found = length;
     return( result );
-  }
+}
 
-  // vector( const Allocator & )
-  // ***************************
-  template< class Type, class Allocator >
-  vector< Type, Allocator >::vector( const Allocator &a ) : mem( a )
-  {
+// vector( const Allocator & )
+// ***************************
+template< class Type, class Allocator >
+vector< Type, Allocator >::vector( const Allocator &a ) : mem( a )
+{
     buffer = alloc(1, buf_length );
     vec_length = 0;
-  }
+}
 
-  // vector( size_type, const Type &, const Allocator & )
-  //*****************************************************
-  template< class Type, class Allocator >
-  vector< Type, Allocator >::vector(
+// vector( size_type, const Type &, const Allocator & )
+//*****************************************************
+template< class Type, class Allocator >
+vector< Type, Allocator >::vector(
     size_type n,
     const Type &value,
     const Allocator &a ) : mem( a )
-  {
+{
     buffer = alloc( n, buf_length );
     try {
-      uninitialized_fill_n( buffer, n, value );
+        uninitialized_fill_n( buffer, n, value );
     }
     catch( ... ) {
-      mem.deallocate( buffer, buf_length );
-      throw;
+        mem.deallocate( buffer, buf_length );
+        throw;
     }
     vec_length = n;
-  }
+}
 
-  // vector( const vector & )
-  // ************************
-  template< class Type, class Allocator >
-  vector< Type, Allocator >::vector( const vector &other )
+// vector( const vector & )
+// ************************
+template< class Type, class Allocator >
+vector< Type, Allocator >::vector( const vector &other )
     : mem( other.mem )
-  {
+{
     buffer = alloc( other.vec_length, buf_length );
     try {
-      uninitialized_copy( other.buffer,
-                          other.buffer + other.vec_length,
-                          buffer );
+        uninitialized_copy( other.buffer,
+                            other.buffer + other.vec_length,
+                            buffer );
     }
     catch( ... ) {
-      mem.deallocate( buffer, buf_length );
-      throw;
+        mem.deallocate( buffer, buf_length );
+        throw;
     }
     vec_length = other.vec_length;
-  }
+}
 
-  // ~vector( )
-  // **********
-  template< class Type, class Allocator >
-  vector< Type, Allocator >::~vector( )
-  {
+// ~vector( )
+// **********
+template< class Type, class Allocator >
+vector< Type, Allocator >::~vector( )
+{
     // Delete objects actually in use and deallocate the buffer.
     for( size_type i = 0; i < vec_length; ++i ) {
-      mem.destroy( &buffer[i] );
+        mem.destroy( &buffer[i] );
     }
     mem.deallocate( buffer, buf_length );
-  }
+}
 
-  // operator=( const vector & )
-  // ***************************
-  template< class Type, class Allocator >
-  vector< Type, Allocator > &vector< Type, Allocator >::operator=(
+// operator=( const vector & )
+// ***************************
+template< class Type, class Allocator >
+vector< Type, Allocator > &vector< Type, Allocator >::operator=(
     const vector &other )
-  {
+{
     if( this == &other ) return( *this );
 
     // Don't overwrite our allocator just yet.
@@ -206,18 +206,18 @@ namespace std {
     // Allocate buffer space for copy and try to make the copy.
     pointer temp_buffer = temp_allocator.allocate( other.buf_length );
     try {
-      uninitialized_copy( other.buffer,
-                          other.buffer + other.vec_length,
-                          temp_buffer );
+        uninitialized_copy( other.buffer,
+                            other.buffer + other.vec_length,
+                            temp_buffer );
     }
     catch( ... ) {
-      temp_allocator.deallocate( temp_buffer, other.buf_length );
-      throw;
+        temp_allocator.deallocate( temp_buffer, other.buf_length );
+        throw;
     }
 
     // New allocation successful.
     for( size_type i = 0; i < vec_length; ++i ) {
-      mem.destroy( &buffer[i] );
+        mem.destroy( &buffer[i] );
     }
     mem.deallocate( buffer, buf_length );
 
@@ -227,332 +227,332 @@ namespace std {
     vec_length = other.vec_length;
 
     return( *this );
-  }
+}
 
-  // assign( size_type, const Type & )
-  // *********************************
-  template< class Type, class Allocator >
-  void vector< Type, Allocator >::assign( size_type n, const Type &value )
-  {
+// assign( size_type, const Type & )
+// *********************************
+template< class Type, class Allocator >
+void vector< Type, Allocator >::assign( size_type n, const Type &value )
+{
     // Prepare new buffer space.
     size_type temp_length;
     pointer temp_buffer = alloc( n, temp_length );
     try {
-      uninitialized_fill_n( temp_buffer, n, value );
+        uninitialized_fill_n( temp_buffer, n, value );
     }
     catch( ... ) {
-      mem.deallocate( temp_buffer, temp_length );
-      throw;
+        mem.deallocate( temp_buffer, temp_length );
+        throw;
     }
 
     // New allocation successful.
     for( size_type i = 0; i < vec_length; ++i ) {
-      mem.destroy( &buffer[i] );
+        mem.destroy( &buffer[i] );
     }
     mem.deallocate( buffer, buf_length );
 
     buffer     = temp_buffer;
     buf_length = temp_length;
     vec_length = n;
-  }
+}
 
-  // get_allocator( ) const
-  // **********************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::allocator_type
+// get_allocator( ) const
+// **********************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::allocator_type
     vector<Type, Allocator>::get_allocator( ) const
-  {
+{
     return( mem );
-  }
+}
 
-  // begin( )
-  // ********
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::iterator
+// begin( )
+// ********
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::iterator
     vector<Type, Allocator>::begin( )
-  {
+{
     return( buffer );
-  }
+}
 
-  // begin( ) const
-  // **************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::const_iterator
+// begin( ) const
+// **************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::const_iterator
     vector<Type, Allocator>::begin( ) const
-  {
+{
     return( buffer );
-  }
+}
 
-  // end( )
-  // ******
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::iterator
+// end( )
+// ******
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::iterator
     vector< Type, Allocator >::end( )
-  {
+{
     return( buffer + vec_length );
-  }
+}
 
-  // end( ) const
-  // ************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::const_iterator
+// end( ) const
+// ************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::const_iterator
     vector< Type, Allocator >::end( ) const
-  {
+{
     return( buffer + vec_length );
-  }
+}
 
-  // rbegin( )
-  // *********
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::reverse_iterator
+// rbegin( )
+// *********
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::reverse_iterator
     vector< Type, Allocator >::rbegin( )
-  {
+{
     return( reverse_iterator( buffer + vec_length ) );
-  }
+}
 
-  // rbegin( ) const
-  // ***************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::const_reverse_iterator
+// rbegin( ) const
+// ***************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::const_reverse_iterator
     vector< Type, Allocator >::rbegin( ) const
-  {
+{
     return( const_reverse_iterator( buffer + vec_length ) );
-  }
+}
 
-  // rend( )
-  // *******
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::reverse_iterator
+// rend( )
+// *******
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::reverse_iterator
     vector< Type, Allocator >::rend( )
-  {
+{
     return( reverse_iterator( buffer ) );
-  }
+}
 
-  // rend( ) const
-  // *************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::const_reverse_iterator
+// rend( ) const
+// *************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::const_reverse_iterator
     vector< Type, Allocator >::rend( ) const
-  {
+{
     return( const_reverse_iterator( buffer ) );
-  }
+}
 
-  // size( ) const
-  // *************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::size_type
+// size( ) const
+// *************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::size_type
     vector< Type, Allocator >::size( ) const
-  {
+{
     return( vec_length );
-  }
+}
 
-  // max_size( ) const
-  // *****************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator>::size_type
+// max_size( ) const
+// *****************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator>::size_type
     vector< Type, Allocator >::max_size( ) const
-  {
+{
     return( std::numeric_limits< size_type >::max( ) / sizeof( Type ) );
-  }
+}
 
-  // resize( size_type, Type )
-  // *************************
-  template< class Type, class Allocator >
-  void vector< Type, Allocator >::resize( size_type n, Type c )
-  {
+// resize( size_type, Type )
+// *************************
+template< class Type, class Allocator >
+void vector< Type, Allocator >::resize( size_type n, Type c )
+{
     if( n > vec_length )
-      insert( end( ), n - vec_length, c );
+        insert( end( ), n - vec_length, c );
     else if ( n < vec_length )
-      erase( begin( ) + n, end( ) );
-  }
+        erase( begin( ) + n, end( ) );
+}
 
-  // capacity( ) const
-  // *****************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::size_type
+// capacity( ) const
+// *****************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::size_type
     vector< Type, Allocator >::capacity( ) const
-  {
+{
     return( buf_length );
-  }
+}
 
-  // empty( ) const
-  // **************
-  template< class Type, class Allocator >
-  inline
-  bool vector< Type, Allocator >::empty( ) const
-  {
+// empty( ) const
+// **************
+template< class Type, class Allocator >
+inline
+bool vector< Type, Allocator >::empty( ) const
+{
     return( vec_length == 0 );
-  }
+}
 
-  // reserve( size_type )
-  // ********************
-  template< class Type, class Allocator >
-  void vector< Type, Allocator>::reserve( size_type new_capacity )
-  {
+// reserve( size_type )
+// ********************
+template< class Type, class Allocator >
+void vector< Type, Allocator>::reserve( size_type new_capacity )
+{
     if( new_capacity <= buf_length ) return;
     if( new_capacity > max_size( ) )
-      throw length_error( "vector::reserve" );
+        throw length_error( "vector::reserve" );
 
     size_type temp_length;
     pointer temp_buffer = alloc( new_capacity, temp_length );
     try {
-      uninitialized_copy( buffer, buffer + vec_length, temp_buffer );
+        uninitialized_copy( buffer, buffer + vec_length, temp_buffer );
     }
     catch( ... ) {
-      mem.deallocate( temp_buffer, temp_length );
-      throw;
+        mem.deallocate( temp_buffer, temp_length );
+        throw;
     }
 
     // New allocation successful.
     for( size_type i = 0; i < vec_length; ++i ) {
-      mem.destroy( &buffer[i] );
+        mem.destroy( &buffer[i] );
     }
     mem.deallocate( buffer, buf_length );
 
     buffer     = temp_buffer;
     buf_length = temp_length;
-  }
+}
 
-  // operator[]( size_type )
-  // ***********************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::reference
+// operator[]( size_type )
+// ***********************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::reference
     vector< Type, Allocator >::operator[]( size_type n )
-  {
+{
     return( buffer[n] );
-  }
+}
 
-  // operator[]( size_type ) const
-  // *****************************
-  template< class Type, class Allocator >
-  inline typename vector< Type, Allocator >::const_reference
+// operator[]( size_type ) const
+// *****************************
+template< class Type, class Allocator >
+inline typename vector< Type, Allocator >::const_reference
     vector< Type, Allocator >::operator[]( size_type n ) const
-  {
+{
     return( buffer[n] );
-  }
+}
 
-  // at( size_type )
-  // ***************
-  template< class Type, class Allocator >
-  typename vector< Type, Allocator >::reference
+// at( size_type )
+// ***************
+template< class Type, class Allocator >
+typename vector< Type, Allocator >::reference
     vector< Type, Allocator >::at( size_type n )
-  {
+{
     if( n >= vec_length )
-      throw out_of_range( "vector::at" );
+        throw out_of_range( "vector::at" );
     return( buffer[n] );
-  }
+}
 
-  // at( size_type ) const
-  // *********************
-  template< class Type, class Allocator >
-  typename vector< Type, Allocator >::const_reference
+// at( size_type ) const
+// *********************
+template< class Type, class Allocator >
+typename vector< Type, Allocator >::const_reference
     vector< Type, Allocator >::at( size_type n ) const
-  {
+{
     if( n >= vec_length )
-      throw out_of_range( "vector::at" );
+        throw out_of_range( "vector::at" );
     return( buffer[n] );
-  }
+}
 
-  // front( )
-  // ********
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::reference
+// front( )
+// ********
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::reference
     vector< Type, Allocator >::front( )
-  {
+{
     return( buffer[0] );
-  }
+}
 
-  // front( ) const
-  // **************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::const_reference
+// front( ) const
+// **************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::const_reference
     vector< Type, Allocator >::front( ) const
-  {
+{
     return( buffer[0] );
-  }
+}
 
-  // back( )
-  // *******
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::reference
+// back( )
+// *******
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::reference
     vector< Type, Allocator >::back( )
-  {
+{
     return( buffer[vec_length - 1] );
-  }
+}
 
-  // back( ) const
-  // *************
-  template< class Type, class Allocator >
-  inline
-  typename vector< Type, Allocator >::const_reference
+// back( ) const
+// *************
+template< class Type, class Allocator >
+inline
+typename vector< Type, Allocator >::const_reference
     vector< Type, Allocator >::back( ) const
-  {
+{
     return( buffer[vec_length - 1] );
-  }
+}
 
-  // push_back( const Type & )
-  // *************************
-  template< class Type, class Allocator >
-  void vector< Type, Allocator >::push_back( const Type &item )
-  {
+// push_back( const Type & )
+// *************************
+template< class Type, class Allocator >
+void vector< Type, Allocator >::push_back( const Type &item )
+{
     if( vec_length + 1 > buf_length ) {
-      reserve( buf_length + 1 );
+        reserve( buf_length + 1 );
     }
     new ( static_cast<void *>( buffer + vec_length ) ) Type( item );
     ++vec_length;
-  }
+}
 
-  // pop_back( )
-  // ***********
-  template< class Type, class Allocator >
-  inline
-  void vector< Type, Allocator >::pop_back( )
-  {
+// pop_back( )
+// ***********
+template< class Type, class Allocator >
+inline
+void vector< Type, Allocator >::pop_back( )
+{
     mem.destroy( &buffer[vec_length - 1] );
     --vec_length;
-  }
+}
 
-  // insert( iterator const Type & )
-  // *******************************
-  template< class Type, class Allocator >
-  vector< Type, Allocator >::iterator
+// insert( iterator const Type & )
+// *******************************
+template< class Type, class Allocator >
+vector< Type, Allocator >::iterator
     vector< Type, Allocator >::insert( iterator position, const Type &x )
-  {
+{
     size_type iposition = static_cast< size_type >( position - buffer );
     size_type tail_count = vec_length - iposition;
 
     // Deal with zero length vector as a special case.
     if( vec_length == 0 ) {
-      mem.construct( &buffer[0], x );
-      vec_length++;
-      return( buffer );
+        mem.construct( &buffer[0], x );
+        vec_length++;
+        return( buffer );
     }
 
     // Handle case were reallocation isn't necessary.
     if( vec_length + 1 <= buf_length ) {
-      mem.construct( &buffer[vec_length], buffer[vec_length - 1] );
-      vec_length++;
-      for( size_type i = 2; i <= tail_count; ++i ) {
-        buffer[vec_length - i] = buffer[vec_length - 1 - i];
-      }
-      *position = x;
-      return( position );
+        mem.construct( &buffer[vec_length], buffer[vec_length - 1] );
+        vec_length++;
+        for( size_type i = 2; i <= tail_count; ++i ) {
+            buffer[vec_length - i] = buffer[vec_length - 1 - i];
+        }
+        *position = x;
+        return( position );
     }
 
     // Handle case where reallocation is necessary.
@@ -563,90 +563,90 @@ namespace std {
     pointer   src_iterator = buffer;
     pointer   dst_iterator = temp_buffer;
     try {
-      while( src_iterator != position ) {
-        mem.construct( dst_iterator, *src_iterator );
-        ++copy_count; ++src_iterator; ++dst_iterator;
-      }
-      mem.construct( dst_iterator, x );
-      ++copy_count; ++dst_iterator;
-      while( src_iterator != buffer + vec_length ) {
-        mem.construct( dst_iterator, *src_iterator );
-        ++copy_count; ++src_iterator; ++dst_iterator;
-      }
+        while( src_iterator != position ) {
+            mem.construct( dst_iterator, *src_iterator );
+            ++copy_count; ++src_iterator; ++dst_iterator;
+        }
+        mem.construct( dst_iterator, x );
+        ++copy_count; ++dst_iterator;
+        while( src_iterator != buffer + vec_length ) {
+            mem.construct( dst_iterator, *src_iterator );
+            ++copy_count; ++src_iterator; ++dst_iterator;
+        }
     }
     catch( ... ) {
-      for( size_type i = 0; i < copy_count; ++i ) {
-        mem.destroy( &temp_buffer[i] );
-      }
-      mem.deallocate( temp_buffer, temp_length );
-      throw;
+        for( size_type i = 0; i < copy_count; ++i ) {
+            mem.destroy( &temp_buffer[i] );
+        }
+        mem.deallocate( temp_buffer, temp_length );
+        throw;
     }
 
     // It worked. Commit the new value.
     for( size_type i = 0; i < vec_length; ++i ) {
-      mem.destroy( &buffer[i] );
+        mem.destroy( &buffer[i] );
     }
     mem.deallocate( buffer, buf_length );
     buffer     = temp_buffer;
     buf_length = temp_length;
     vec_length++;
     return( buffer + iposition );
-  }
+}
 
-  // insert( iterator, size_type, const Type & )
-  // *******************************************
-  template< class Type, class Allocator >
-  void vector< Type, Allocator >::insert(
+// insert( iterator, size_type, const Type & )
+// *******************************************
+template< class Type, class Allocator >
+void vector< Type, Allocator >::insert(
     iterator position, size_type n, const Type &x
-  )
-  {
+)
+{
     size_type iposition = static_cast< size_type >( position - buffer );
     if( n == 0 ) return;
 
     // Handle the case where reallocation isn't necessary.
     if( vec_length + n <= buf_length ) {
 
-      // FIX ME: This code isn't exception safe.
+        // FIX ME: This code isn't exception safe.
 
-      // Open a gap of size n.
-      size_type copya;  // Number of objects needing assignment.
-      size_type copyc;  // Number of objects needing copy construction.
+        // Open a gap of size n.
+        size_type copya;  // Number of objects needing assignment.
+        size_type copyc;  // Number of objects needing copy construction.
 
-      copya = ( iposition + n < vec_length ) ? vec_length - iposition - n : 0;
-      copyc = vec_length - iposition - copya;
+        copya = ( iposition + n < vec_length ) ? vec_length - iposition - n : 0;
+        copyc = vec_length - iposition - copya;
 
-      // Copy construct tail of vector into fresh memory.
-      uninitialized_copy( position + copya,
-                          position + copya + copyc,
-                          position + copya + n );
+        // Copy construct tail of vector into fresh memory.
+        uninitialized_copy( position + copya,
+                            position + copya + copyc,
+                            position + copya + n );
 
-      // Assign remaining elements in reverse order.
-      iterator src_iterator( position + copya - 1);
-      iterator dst_iterator( buffer + vec_length - 1 );
-      for( size_type i = 0; i < copya; ++i ) {
-        *dst_iterator = *src_iterator;
-        --src_iterator; --dst_iterator;
-      }
+        // Assign remaining elements in reverse order.
+        iterator src_iterator( position + copya - 1);
+        iterator dst_iterator( buffer + vec_length - 1 );
+        for( size_type i = 0; i < copya; ++i ) {
+            *dst_iterator = *src_iterator;
+            --src_iterator; --dst_iterator;
+        }
 
-      // Fill the gap.
-      size_type filla;  // Number of objects needing assignment.
-      size_type fillc;  // Number of objects needing copy construction.
+        // Fill the gap.
+        size_type filla;  // Number of objects needing assignment.
+        size_type fillc;  // Number of objects needing copy construction.
 
-      filla = ( n >= vec_length - iposition ) ? vec_length - iposition : n;
-      fillc = n - filla;
+        filla = ( n >= vec_length - iposition ) ? vec_length - iposition : n;
+        fillc = n - filla;
 
-      // Copy construct new objects (if any).
-      uninitialized_fill_n( buffer + vec_length, fillc, x );
+        // Copy construct new objects (if any).
+        uninitialized_fill_n( buffer + vec_length, fillc, x );
 
-      // Assign remaining elements.
-      dst_iterator = position;
-      for( size_type i = 0; i < filla; ++i ) {
-        *dst_iterator = x;
-        ++dst_iterator;
-      }
+        // Assign remaining elements.
+        dst_iterator = position;
+        for( size_type i = 0; i < filla; ++i ) {
+            *dst_iterator = x;
+          ++dst_iterator;
+        }
 
-      vec_length += copyc + fillc;
-      return;
+        vec_length += copyc + fillc;
+        return;
     }
 
     // Handle case where reallocation is necessary.
@@ -657,36 +657,36 @@ namespace std {
     pointer   src_iterator = buffer;
     pointer   dst_iterator = temp_buffer;
     try {
-      while( src_iterator != position ) {
-        mem.construct( dst_iterator, *src_iterator );
-        ++copy_count; ++src_iterator; ++dst_iterator;
-      }
-      for( size_type i = 0; i < n; ++i ) {
-        mem.construct( dst_iterator, x );
-        ++copy_count; ++dst_iterator;
-      }
-      while( src_iterator != buffer + vec_length ) {
-        mem.construct( dst_iterator, *src_iterator );
-        ++copy_count; ++src_iterator; ++dst_iterator;
-      }
+        while( src_iterator != position ) {
+            mem.construct( dst_iterator, *src_iterator );
+            ++copy_count; ++src_iterator; ++dst_iterator;
+        }
+        for( size_type i = 0; i < n; ++i ) {
+            mem.construct( dst_iterator, x );
+            ++copy_count; ++dst_iterator;
+        }
+        while( src_iterator != buffer + vec_length ) {
+            mem.construct( dst_iterator, *src_iterator );
+            ++copy_count; ++src_iterator; ++dst_iterator;
+        }
     }
     catch( ... ) {
-      for( size_type i = 0; i < copy_count; ++i ) {
-        mem.destroy( &temp_buffer[i] );
-      }
-      mem.deallocate( temp_buffer, temp_length );
-      throw;
+        for( size_type i = 0; i < copy_count; ++i ) {
+            mem.destroy( &temp_buffer[i] );
+        }
+        mem.deallocate( temp_buffer, temp_length );
+        throw;
     }
 
     // It worked. Commit the new value.
     for( size_type i = 0; i < vec_length; ++i ) {
-      mem.destroy( &buffer[i] );
+        mem.destroy( &buffer[i] );
     }
     mem.deallocate( buffer, buf_length );
     buffer     = temp_buffer;
     buf_length = temp_length;
     vec_length = vec_length + n;
-  }
+}
 
   // erase( iterator )
   // *****************
@@ -705,32 +705,32 @@ namespace std {
     return( return_value );
   }
 
-  // erase( iterator, iterator )
-  // ***************************
-  template< class Type, class Allocator >
-  typename vector< Type, Allocator >::iterator
+// erase( iterator, iterator )
+// ***************************
+template< class Type, class Allocator >
+typename vector< Type, Allocator >::iterator
     vector< Type, Allocator >::erase( iterator first, iterator last )
-  {
+{
     iterator        return_value( first );
     difference_type removed( last - first );
 
     while( last != buffer + vec_length ) {
-      *first = *last;
-      ++first; ++last;
+        *first = *last;
+        ++first; ++last;
     }
     while( first != buffer + vec_length ) {
-      mem.destroy( first );
-      ++first;
+        mem.destroy( first );
+        ++first;
     }
     vec_length -= removed;
     return( return_value );
-  }
+}
 
-  // swap( )
-  // *******
-  template< class Type, class Allocator >
-  void vector< Type, Allocator >::swap( vector &vec )
-  {
+// swap( )
+// *******
+template< class Type, class Allocator >
+void vector< Type, Allocator >::swap( vector &vec )
+{
     typename Allocator::pointer ptemp;
     typename Allocator::size_type stemp;
     Allocator atemp;
@@ -750,131 +750,131 @@ namespace std {
     atemp          = mem;
     mem            = vec.mem;
     vec.mem        = atemp;
-  }
+}
 
-  // clear( )
-  // ********
-  template< class Type, class Allocator >
-  void vector< Type, Allocator >::clear( )
-  {
+// clear( )
+// ********
+template< class Type, class Allocator >
+void vector< Type, Allocator >::clear( )
+{
     // Delete objects actually in use.
     for( size_type i = 0; i < vec_length; ++i ) {
-      mem.destroy( &buffer[i] );
+        mem.destroy( &buffer[i] );
     }
     vec_length = 0;
-  }
+}
 
-  // _Sane( ) const
-  // **************
-  template< class Type, class Allocator >
-  bool vector< Type, Allocator >::_Sane( ) const
-  {
+// _Sane( ) const
+// **************
+template< class Type, class Allocator >
+bool vector< Type, Allocator >::_Sane( ) const
+{
     if( buf_length == 0 ) return( false );
     if( buf_length < vec_length ) return( false );
 
     // Is buf_length a power of 2?
     size_type temp = buf_length;
     while( temp != 1 ) {
-      if( temp & 0x1 ) return( false );
-      temp >>= 1; 
+        if( temp & 0x1 ) return( false );
+        temp >>= 1; 
     }
     return( true );
-  }
+}
 
-  // ===============================
-  // Ordinary functions using vector
-  // ===============================
+// ===============================
+// Ordinary functions using vector
+// ===============================
 
-  // operator==( const vector &, const vector & )
-  // ********************************************
-  template< class Type, class Allocator >
-  bool operator==(
+// operator==( const vector &, const vector & )
+// ********************************************
+template< class Type, class Allocator >
+bool operator==(
     const vector< Type, Allocator > &x,
     const vector< Type, Allocator > &y )
-  {
+{
     if( x.size( ) != y.size( ) ) return( false );
 
     vector< Type, Allocator>::size_type index = 0;
     while( index < x.size( ) ) {
-      if( x[index] != y[index] ) return( false );
-      ++index;
+        if( x[index] != y[index] ) return( false );
+        ++index;
     }
     return( true );
-  }
+}
 
-  // operator!=( const vector &, const vector & )
-  // ********************************************
-  template< class Type, class Allocator >
-  inline
-  bool operator!=(
+// operator!=( const vector &, const vector & )
+// ********************************************
+template< class Type, class Allocator >
+inline
+bool operator!=(
     const vector< Type, Allocator > &x,
     const vector< Type, Allocator > &y )
-  {
+{
     return( !(x == y) );
-  }
+}
 
-  // operator<( const vector &, const vector & )
-  // *******************************************
-  template< class Type, class Allocator >
-  bool operator<(
+// operator<( const vector &, const vector & )
+// *******************************************
+template< class Type, class Allocator >
+bool operator<(
     const vector< Type, Allocator > &x,
     const vector< Type, Allocator > &y )
-  {
+ {
     vector< Type, Allocator>::size_type index = 0;
     while( index != x.size( ) && index != y.size( ) ) {
-      if( x[index] < y[index] ) return( true );
-      if( y[index] < x[index] ) return( false );
-      ++index;
+        if( x[index] < y[index] ) return( true );
+        if( y[index] < x[index] ) return( false );
+        ++index;
     }
     return( index == x.size( ) && index != y.size( ) );
-  }
+}
 
-  // operator<=( const vector &, const vector & )
-  // ********************************************
-  template< class Type, class Allocator >
-  inline
-  bool operator<=(
+// operator<=( const vector &, const vector & )
+// ********************************************
+template< class Type, class Allocator >
+inline
+bool operator<=(
     const vector< Type, Allocator > &x,
     const vector< Type, Allocator > &y )
-  {
+{
     return( !( x > y) );
-  }
+}
 
-  // operator>( const vector &, const vector & )
-  // *******************************************
-  template< class Type, class Allocator >
-  inline
-  bool operator>(
+// operator>( const vector &, const vector & )
+// *******************************************
+template< class Type, class Allocator >
+inline
+bool operator>(
     const vector< Type, Allocator > &x,
     const vector< Type, Allocator > &y )
-  {
+{
     return( y < x);
-  }
+}
 
-  // operator>=( const vector &, const vector & )
-  // ********************************************
-  template< class Type, class Allocator >
-  inline
-  bool operator>=(
+// operator>=( const vector &, const vector & )
+// ********************************************
+template< class Type, class Allocator >
+inline
+bool operator>=(
     const vector< Type, Allocator > &x,
     const vector< Type, Allocator > &y )
-  {
+{
     return( !(x < y) );
-  }
+}
 
 :: Vector swap ambiguous if general swap (in algorithm) visible.
 :: Need partial ordering of function templates for this to work.
-  #ifdef __NEVER
-  // swap( vector &, vector & )
-  // **************************
-  template< class Type, class Allocator >
-  inline
-  void swap( vector< Type, Allocator > &x, vector< Type, Allocator > &y )
-  {
+#ifdef __NEVER
+// swap( vector &, vector & )
+// **************************
+template< class Type, class Allocator >
+inline
+void swap( vector< Type, Allocator > &x, vector< Type, Allocator > &y )
+{
     x.swap( y );
-  }
-  #endif
+}
+#endif
 
-} // End of namespace std.
+} // namespace std
 
 #endif
