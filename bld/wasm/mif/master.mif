@@ -23,11 +23,13 @@ libs = -L$(clib_dir)/$(%OBJDIR) -lwatcom -L$(wres_dir)/$(%OBJDIR) -lwres
 
 #cflags stuff
 #########
-extra_c_flags = -D_STANDALONE_ -DMSG_WOMP_RC_BASE=200
+extra_c_flags =-D_STANDALONE_
 !ifeq release 0
 extra_c_flags += -DDEBUG_OUT
 !endif
 
+extra_c_flags_genmsomf = -DMSG_WOMP_RC_BASE=200
+extra_c_flags_fixup = -DMSG_WOMP_RC_BASE=200
 extra_c_flags_asmalloc = $(trmem_cover_cflags)
 extra_c_flags_trmem = $(trmem_cflags)
 
@@ -82,18 +84,7 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     autodept.obj        &
     queues.obj          &
     finger.obj          &
-    swchar.obj          &
-    can2ms0.obj         &
-    genmscmt.obj        &
-    canmisc.obj         &
-    can2ms1.obj         &
-    can2ms2.obj         &
-    cantype.obj         &
-    array.obj           &
-    canaddr.obj         &
-    cansymb.obj         &
-    segment.obj         &
-    objprs.obj
+    swchar.obj
 
 proj_obj += $(trmem_objs)
 

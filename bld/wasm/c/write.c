@@ -979,16 +979,6 @@ const char *NameGet( uint_16 hdl )
     return( NameArray[hdl] );
 }
 
-extern name_handle NameAdd( const char *name, size_t len )
-/********************************************************/
-{
-    /* This is a dummy function that exists to prevent linker errors when
-     * objprs.c in womp is linked with wasm.  If you want to call NameAdd
-     * from wasm of from a part of womp that is called by wasm, then it will
-     * be necessary to implement NameAdd here.
-     */
-    return 0;
-}
 
 void FlushCurrSeg( void )
 /***************************/
