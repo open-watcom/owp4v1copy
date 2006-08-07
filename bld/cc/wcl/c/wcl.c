@@ -813,9 +813,6 @@ static  int  CompLink( void )
     }
 
     fputs( DebugOptions[ DebugFlag ], Fp );
-#if defined( WCL386 ) || defined( WCLI86 )
-    Fputnl( "option dosseg", Fp );
-#endif
     if( StackSize != NULL ) {
         fputs( "option stack=", Fp );
         Fputnl( StackSize, Fp );

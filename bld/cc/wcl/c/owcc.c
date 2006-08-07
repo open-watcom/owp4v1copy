@@ -34,7 +34,6 @@
  *  unrecognized options should warn, possibly error 
  *  should owcc output a warning message if -b names unknown target?
  *  -S should remove .o files
- *  -? leaves behind a __wcl__.lnk corpse
  */
 
 #include <sys/types.h>
@@ -889,7 +888,6 @@ static  int  CompLink( void )
     }
 
     fputs( DebugOptions[ DebugFlag ], Fp );
-    Fputnl( "option dosseg", Fp );
     if( StackSize != NULL ) {
         fputs( "option stack=", Fp );
         Fputnl( StackSize, Fp );
