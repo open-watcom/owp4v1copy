@@ -440,12 +440,15 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
     flt_flags           flags;
     CHAR_TYPE           buffer[MAX_SIG_DIG];
     char                *tmpbuf;
-    int                 rc;
+    int                 rc, neg = 0;
 
     cur_ptr = bufptr;
     flags   = subject_seq( bufptr, &cur_ptr );
     bufptr  = cur_ptr;
 
+    if( flags & NEGATIVE_NUMBER ) {
+        neg = _NEGATIVE;
+    }
     if( flags & (INFINITY_FOUND | NAN_FOUND) ) {
 #ifdef _LONG_DOUBLE_
         pld->exponent  = 0x7FFF;
@@ -472,11 +475,10 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
 #else
             pld->word[I64HI32] |= 0x80000000;
 #endif
-            rc |= _NEGATIVE;
         }
         if( endptr != NULL )
             *endptr = (CHAR_TYPE *)cur_ptr;
-        return( rc );
+        return( rc | neg );
     }
 
     if( flags & HEX_FOUND )
@@ -497,11 +499,7 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
         pld->word[I64LO32] = 0;
         pld->word[I64HI32] = 0;
 #endif
-        if( flags & NEGATIVE_NUMBER ) {
-            return( _ZERO | _NEGATIVE );
-        } else {
-            return( _ZERO );        /* indicate zero */
-        }
+        return( _ZERO | neg );      /* indicate zero */
     } else {
 #ifdef __WIDECHAR__
         char    tmp[MAX_SIG_DIG];
@@ -535,17 +533,17 @@ _WMRTLINK int __F_NAME(__Strtold,__wStrtold)( const CHAR_TYPE *bufptr,
     pld->high_word = ld.high_word;
     pld->low_word  = ld.low_word;
     if(( exponent + sigdigits - 1 ) > 4932 ) {          /* overflow */
-        return( _OVERFLOW );
+        return( _OVERFLOW | neg );
     } else if(( exponent + sigdigits - 1 ) < -4932 ) {  /* underflow */
-        return( _UNDERFLOW );
+        return( _UNDERFLOW | neg );
     }
 #else
     pld->word[0] = ld.word[0];
     pld->word[1] = ld.word[1];
     if(( exponent + sigdigits - 1 ) > 308 ) {          /* overflow */
-        return( _OVERFLOW );
+        return( _OVERFLOW | neg );
     } else if(( exponent + sigdigits - 1 ) < -308 ) {  /* underflow */
-        return( _UNDERFLOW );
+        return( _UNDERFLOW | neg );
     }
 #endif
     return( _NONZERO );                 // indicate number is non-zero

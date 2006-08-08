@@ -173,6 +173,12 @@ int Test_string_to_float( void )
     x = strtod( "-INF", NULL );
     VERIFY( isinf( x ) && signbit( x ) );
 
+    x = strtod( "1.0e99999", NULL );
+    VERIFY( isinf( x ) && !signbit( x ) );
+
+    x = strtod( "-1.0e99999", NULL );
+    VERIFY( isinf( x ) && signbit( x ) );
+
     return( 1 );
 }
 
