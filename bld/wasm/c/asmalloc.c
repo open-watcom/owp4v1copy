@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  memory manipulation routines
+* Description:  Memory manipulation routines.
 *
 ****************************************************************************/
 
@@ -47,8 +47,8 @@
 static _trmem_hdl   memHandle;
 static int          memFile;     /* file handle we'll write() to */
 
-static void memLine( int *fh, const char *buf, unsigned size ) {
-
+static void memLine( int *fh, const char *buf, unsigned size )
+{
     write( 2, "***", 3 );
     write( 2, buf, size );
     if( *fh != -1 ) {
@@ -57,10 +57,10 @@ static void memLine( int *fh, const char *buf, unsigned size ) {
 }
 #endif
 
-void MemInit( void ) {
-
+void MemInit( void )
+{
 #ifdef TRMEM
-    memFile = open( "mem.trk", O_WRONLY | O_CREAT | O_TRUNC, 0 );
+    memFile = open( "mem.trk", O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR );
     memHandle = _trmem_open( malloc, free, realloc, _expand, &memFile, memLine,
         _TRMEM_ALLOC_SIZE_0 |
         _TRMEM_FREE_NULL |
@@ -73,8 +73,8 @@ void MemInit( void ) {
 #endif
 }
 
-void MemFini( void ) {
-
+void MemFini( void )
+{
 #ifdef TRMEM
     if( memHandle != NULL ) {
         _trmem_prt_list( memHandle );
