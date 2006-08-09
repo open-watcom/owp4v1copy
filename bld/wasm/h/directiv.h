@@ -219,11 +219,17 @@ typedef struct asmlines {
     char                parmcount;
 } asmlines;
 
+typedef struct  fname_list {
+        struct  fname_list *next;
+        time_t  mtime;
+        char    *name;
+        char    *fullname;
+} FNAME;
+
 typedef struct {
     parm_list           *parmlist;  // list of parameters
     asmlines            *data;      // the guts of the macro - LL of strings
-    char                *filename;
-    unsigned int        start_line;
+    const FNAME         *srcfile;
     char                hidden;     // if TRUE don't print error messages
 } macro_info;
 
@@ -259,7 +265,7 @@ union entry {
 typedef struct dir_node {
     struct asm_sym      sym;
     union entry         e;
-    uint_16             line;   // line number of the directive in source file
+    unsigned long       line_num;     // line number of the directive in source file
     struct dir_node     *next, *prev; // linked list of this type of symbol
 } dir_node;         // List of grpdef, segdef, pubdef, externdef, included lib
                     // and symbolic integer constants.
@@ -295,6 +301,7 @@ typedef struct {
     unsigned            mseg:1;          // mixed segments (16/32-bit)
     unsigned            flat_idx;        // index of FLAT group
     char                name[_MAX_FNAME];// name of module
+    const FNAME         *srcfile;
 } module_info;                           // Information about the module
 
 enum assume_reg {
@@ -319,7 +326,7 @@ extern seg_list         *CurrSeg;       // points to stack of opened segments
 
 /*---------------------------------------------------------------------------*/
 
-extern dir_node         *dir_insert( char *, int );
+extern dir_node         *dir_insert( const char *, int );
 extern void             dir_change( dir_node *, int );
 
 extern void             IdxInit( void );
@@ -413,12 +420,18 @@ extern int              SetUse32Def( bool );
  *---------------------------------------------------------------------------*/
 
 extern dir_node         *CurrProc;      // current procedure
-extern uint             LineNumber;
+extern unsigned long    LineNumber;
 extern int_8            PhaseError;
 
 extern void             FlushCurrSeg( void );
-extern void             AddFlist( char const *filename );
+extern const FNAME      *AddFlist( char const *filename );
 extern void             OutSelect( bool );
 extern void             WriteObjModule( void );
+
+/*---------------------------------------------------------------------------
+ *   included from asmline.c
+ *---------------------------------------------------------------------------*/
+
+extern const FNAME      *get_curr_srcfile( void );
 
 #endif

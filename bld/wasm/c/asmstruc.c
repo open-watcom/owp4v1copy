@@ -37,11 +37,10 @@
 #include "asmins.h"
 #include "directiv.h"
 #include "asmdefs.h"
+#include "asminput.h"
 
 a_definition_struct Definition = { 0, NULL, NULL };
 
-extern void             InputQueueLine( char * );
-extern void             PushLineQueue(void);
 
 int StructDef( int i )
 /********************/

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  CALL/JMP processing
 *
 ****************************************************************************/
 
@@ -39,6 +38,7 @@
 
 #if defined( _STANDALONE_ )
   #include "directiv.h"
+  #include "asminput.h"
 #endif
 
 /* prototypes */
@@ -47,7 +47,6 @@ int jmp( expr_list *opndx );
 
 #if defined( _STANDALONE_ )
 
-extern void             InputQueueLine( char * );
 extern void             GetInsString( enum asm_token, char *, int );
 extern int              SymIs32( struct asm_sym *sym );
 extern void             check_assume( struct asm_sym *sym, enum prefix_reg default_reg );
@@ -244,10 +243,10 @@ int jmp( expr_list *opndx )
     case SYM_PROC:
 #endif
         if(  ( Code->mem_type == MT_EMPTY || Code->mem_type == MT_SHORT
-                || Code->mem_type == MT_NEAR ) 
+                || Code->mem_type == MT_NEAR )
             && sym->mem_type != MT_WORD
             && sym->mem_type != MT_DWORD
-            && sym->mem_type != MT_FWORD 
+            && sym->mem_type != MT_FWORD
             && !IS_JMPCALLF( Code->info.token ) ) {
 #if defined( _STANDALONE_ )
             if( ( Code->info.token == T_CALL )
@@ -664,7 +663,7 @@ int ptr_operator( memtype mem_type, uint_8 fix_mem_type )
             // if we are in use32 mode, we have to add OPSIZ prefix for
             // most of the 386 instructions ( except MOVSX and MOVZX )
             // when we find WORD PTR
-            
+
             if( !IS_BRANCH( Code->info.token ) ) {
                 if( Code->info.opnd_type[OPND1] == OP_MMX ) {
                 /* JBS 2001/02/19
@@ -682,9 +681,9 @@ int ptr_operator( memtype mem_type, uint_8 fix_mem_type )
                     }
                 }
             }
-            
+
         } else if( !Code->use32 && MEM_TYPE( Code->mem_type, DWORD ) ) {
-            
+
             /* if we are not in use32 mode, we have to add OPSIZ
              * when we find DWORD PTR
              * unless we have a LXS ins.
@@ -694,7 +693,7 @@ int ptr_operator( memtype mem_type, uint_8 fix_mem_type )
              *      opsize bytes when necessary ?
              */
             if( !IS_BRANCH( Code->info.token ) ) {
-                
+
                 if( Code->info.opnd_type[OPND1] == OP_MMX ) {
                     /* JBS 2001/02/19
                        no WORD operands for MMX instructions, only 64-bit or 128-bit

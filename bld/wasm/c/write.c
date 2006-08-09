@@ -51,6 +51,7 @@
 #include "queues.h"
 #include "womputil.h"
 #include "asmlabel.h"
+#include "asminput.h"
 
 #include "myassert.h"
 
@@ -60,13 +61,12 @@
 // it is for better compatibility with MASM
 #define SEPARATE_FIXUPP_16_32 1
 
-extern char             *ScanLine( char *, int );
-extern void             FreeIncludePath( void );
 extern void             CheckForOpenConditionals( void );
-extern bool             PopLineQueue( void );
 extern void             set_cpu_parameters( void );
 extern void             set_fpu_parameters( void );
 extern void             CheckProcOpen( void );
+extern void             CmdlParamsInit( void );
+extern void             PrintStats( void );
 
 extern symbol_queue     Tables[];       // tables of definitions
 extern struct fixup     *FixupListHead; // head of list of fixups ( from WOMP )
@@ -80,7 +80,7 @@ extern int              in_prologue;
 int                     MacroLocalVarCounter = 0; // counter for temp. var names
 char                    Parse_Pass;     // phase of parsing
 char                    write_to_file;  // write if there is no error
-uint                    LineNumber;
+unsigned long           LineNumber;
 char                    Modend;         // end of module is reached
 int_8                   DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
@@ -95,41 +95,36 @@ extern uint             extdefidx;      // Number of Extern definition
 
 static char             **NameArray;
 
-typedef struct  fname_list {
-        struct  fname_list *next;
-        time_t  mtime;
-        char    *name;
-} FNAME, *FNAMEPTR;
-
 global_vars     Globals = { 0, 0, 0, 0, 0, 0, 0 };
 
-static FNAMEPTR FNames = NULL;
-static uint     lastLineNumber;
+static FNAME            *FNames = NULL;
+static unsigned long    lastLineNumber;
 
-void AddFlist( char const *filename )
-/***********************************/
+const FNAME *AddFlist( char const *name )
+/***************************************/
 {
-    FNAMEPTR    flist;
-    FNAMEPTR    last;
-    int         index;
-    char        *fname;
-    char        buff[2*_MAX_PATH];
-        
-    if( !Options.emit_dependencies )
-        return;
+    FNAME   *flist;
+    FNAME   *last;
+    int     index;
+    char    *fname;
+    char    buff[2*_MAX_PATH];
 
     index = 0;
+    fname = _getFilenameFullPath( buff, name, sizeof( buff ) );
     last = FNames;
     for( flist = last; flist != NULL; flist = flist->next ) {
-        if( strcmp( filename, flist->name ) == 0 )
-            return;
+        if( strcmp( name, flist->name ) == 0 )
+            return( flist );
+        if( strcmp( fname, flist->fullname ) == 0 )
+            return( flist );
         index++;
         last = flist;
     }
-    fname = _getFilenameFullPath( buff, filename, sizeof(buff) );
-    flist = (FNAMEPTR)AsmAlloc( sizeof( FNAME ) );
-    flist->name = (char *)AsmAlloc( strlen( fname ) + 1 );
-    strcpy( flist->name, fname );
+    flist = (FNAME *)AsmAlloc( sizeof( FNAME ) );
+    flist->name = (char *)AsmAlloc( strlen( name ) + 1 );
+    strcpy( flist->name, name );
+    flist->fullname = (char *)AsmAlloc( strlen( fname ) + 1 );
+    strcpy( flist->fullname, fname );
     flist->mtime = _getFilenameTimeStamp( fname );
     flist->next = NULL;
     if( FNames == NULL ) {
@@ -137,23 +132,21 @@ void AddFlist( char const *filename )
     } else {
         last->next = flist;
     }
-    return;
+    return( flist );
 }
 
 static void FreeFlist( void )
 /***************************/
 {
-    FNAMEPTR      curr;
-    FNAMEPTR      last;
-
-    if( !Options.emit_dependencies )
-        return;
+    const FNAME   *curr;
+    const FNAME   *last;
 
     for( curr = FNames; curr != NULL; ) {
-        AsmFree(curr->name);
+        AsmFree( curr->fullname );
+        AsmFree( curr->name );
         last = curr;
         curr = curr->next;
-        AsmFree(last);
+        AsmFree( (void *)last );
     }
     FNames = NULL;
     return;
@@ -162,13 +155,13 @@ static void FreeFlist( void )
 static void write_init( void )
 /****************************/
 {
-    BufSize     = 0;
+    BufSize       = 0;
     FixupListHead = NULL;
     FixupListTail = NULL;
-    ModendRec   = NULL;
-    CurrProc    = NULL;
-    DefineProc  = FALSE;
-    Use32       = FALSE;
+    ModendRec     = NULL;
+    CurrProc      = NULL;
+    DefineProc    = FALSE;
+    Use32         = FALSE;
     write_to_file = TRUE;
 
     IdxInit();
@@ -182,6 +175,7 @@ static void write_fini( void )
 /****************************/
 {
     FixFini();
+    FreeFlist();
 }
 
 void OutSelect( bool starts )
@@ -191,7 +185,7 @@ void OutSelect( bool starts )
     unsigned long       curr;
 
     if( starts ) {
-        if( !Options.output_comment_data_in_code_records || Globals.data_in_code 
+        if( !Options.output_comment_data_in_code_records || Globals.data_in_code
             || !Globals.code_seg )
             return;
         Globals.sel_start = GetCurrAddr();
@@ -309,15 +303,15 @@ static void write_export( void )
 static void write_grp( void )
 /***************************/
 {
-    dir_node    *curr;
-    dir_node    *segminfo;
-    seg_list    *seg;
-    obj_rec     *grp;
-    uint        line;
-    char        writeseg;
-    unsigned    i = 1;
+    dir_node        *curr;
+    dir_node        *segminfo;
+    seg_list        *seg;
+    obj_rec         *grp;
+    unsigned long   line_num;
+    char            writeseg;
+    unsigned        i = 1;
 
-    line = LineNumber;
+    line_num = LineNumber;
 
     for( curr = Tables[TAB_GRP].head; curr; curr = curr->next, i++ ) {
 
@@ -335,10 +329,10 @@ static void write_grp( void )
             writeseg = TRUE;
             segminfo = (dir_node *)(seg->seg);
             if( ( segminfo->sym.state != SYM_SEG ) || ( segminfo->sym.segment == NULL ) ) {
-                LineNumber = curr->line;
+                LineNumber = curr->line_num;
                 AsmErr( SEG_NOT_DEFINED, segminfo->sym.name );
                 write_to_file = FALSE;
-                LineNumber = line;
+                LineNumber = line_num;
             } else {
                 ObjPut8( grp, GRP_SEGIDX );
                 ObjPutIndex( grp, segminfo->e.seginfo->segrec->d.segdef.idx);
@@ -362,7 +356,7 @@ static void write_seg( void )
     uint        total_segs = 0;
 
     for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
-        if( ( curr->sym.segment == NULL ) 
+        if( ( curr->sym.segment == NULL )
           && ( curr->e.seginfo->group == NULL ) )
             AsmErr( SEG_NOT_DEFINED, curr->sym.name );
         total_segs++;
@@ -636,13 +630,12 @@ static void write_header( void )
     obj_rec     *objr;
     unsigned    len;
     char        *name;
-    char        full_name[_MAX_PATH];
 
     objr = ObjNewRec( CMD_THEADR );
     if( Options.module_name != NULL ) {
         name = Options.module_name;
     } else {
-        name = _getFilenameFullPath( full_name, AsmFiles.fname[ASM], sizeof( full_name ) );
+        name = ModuleInfo.srcfile->fullname;
     }
     len = strlen( name );
     ObjAllocData( objr, len + 1 );
@@ -665,19 +658,15 @@ static int write_modend( void )
 static int write_autodep( void )
 /******************************/
 {
-    obj_rec       *objr;
-    char          buff[2*PATH_MAX + 5];
-    unsigned int len;
-    FNAMEPTR      curr;
-    FNAMEPTR      last;
+    obj_rec         *objr;
+    char            buff[2*PATH_MAX + 5];
+    unsigned int    len;
+    const FNAME     *curr;
 
     if( !Options.emit_dependencies )
         return NOT_ERROR;
 
-    // add source file to autodependency list
-    AddFlist( AsmFiles.fname[ASM] );
-
-    for( curr = FNames; curr != NULL; ) {
+    for( curr = FNames; curr != NULL; curr = curr->next ) {
         objr = ObjNewRec( CMD_COMENT );
         objr->d.coment.attr = 0x80;
         objr->d.coment.class = CMT_DEPENDENCY;
@@ -691,13 +680,7 @@ static int write_autodep( void )
         ObjAttachData( objr, buff, len );
 
         write_record( objr, TRUE );
-
-        AsmFree(curr->name);
-        last = curr;
-        curr = curr->next;
-        AsmFree(last);
     }
-    FNames = NULL;
     // one NULL dependency record must be on the end
     objr = ObjNewRec( CMD_COMENT );
     objr->d.coment.attr = 0x80;
@@ -711,22 +694,23 @@ void AddLinnumDataRef( void )
 /***************************/
 /* store a reference for the current line at the current address */
 {
-    struct linnum_data  *curr;
-    uint                line_number;
+    struct line_num_info    *curr;
+    unsigned long           line_num;
 
     if( in_prologue ) {
-        line_number = CurrProc->line;
+        line_num = CurrProc->line_num;
     } else {
-        line_number = LineNumber;
+        line_num = LineNumber;
     }
-    if( line_number < 0x8000 )  {
-        if( lastLineNumber != line_number ) {
-            curr = AsmAlloc( sizeof( struct linnum_data ) );
-            curr->number = line_number;
+    if( line_num < 0x8000 )  {
+        if( lastLineNumber != line_num ) {
+            curr = AsmAlloc( sizeof( struct line_num_info ) );
+            curr->number = line_num;
             curr->offset = AsmCodeAddress;
+            curr->srcfile = get_curr_srcfile();
 
             AddLinnumData( curr );
-            lastLineNumber = line_number;
+            lastLineNumber = line_num;
         }
     }
 }
@@ -1068,8 +1052,7 @@ static void writepass1stuff( void )
 static unsigned long OnePass( char *string )
 /******************************************/
 {
-    set_cpu_parameters();
-    set_fpu_parameters();
+    CmdlParamsInit();
 
     AssumeInit();
 
@@ -1170,10 +1153,10 @@ void WriteObjModule( void )
     }
     if( write_to_file && Options.error_count == 0 )
         write_modend();
+    if( !Options.quiet )
+        PrintStats();
 
-    FreeFlist();
     AsmSymFini();
     FreeIncludePath();
     write_fini();
 }
-

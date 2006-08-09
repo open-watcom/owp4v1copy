@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  diagnostics related functions (error/warning/note messages)
 *
 ****************************************************************************/
 
@@ -38,13 +37,11 @@
 #include "asmdefs.h"
 #include "asmsym.h"
 #include "directiv.h"
-
-extern char             *curr_src_line;
+#include "asminput.h"
 
 extern void             MsgPrintf( int resourceid ); // don't use this
 extern int              MsgGet( int resourceid, char *buffer );
 extern int              trademark( void );
-extern char             *get_curr_filename( void );
 
 void                    OpenErrFile( void );
 void                    print_include_file_nesting_structure( void );
@@ -63,7 +60,6 @@ void                    print_include_file_nesting_structure( void );
 #define ErrCount Options.error_count
 #define WngCount Options.warning_count
 #define WngLevel Options.warning_level
-#define ErrLine LineNumber
 #define __fprintf fprintf
 #define __vfprintf vfprintf
 #define __printf printf
@@ -114,7 +110,7 @@ void AsmErr( int msgnum, ... )
     va_list args1, args2;
 
 #ifdef DEBUG_OUT
-    printf( "%s\n", curr_src_line );
+    DebugCurrLine();
 #endif
     va_start( args1, msgnum );
     va_start( args2, msgnum );
@@ -137,7 +133,7 @@ void AsmWarn( int level, int msgnum, ... )
 
     if( level <= WngLevel ) {
 #ifdef DEBUG_OUT
-        printf( "%s\n", curr_src_line );
+        DebugCurrLine();
 #endif
         va_start( args1, msgnum );
         va_start( args2, msgnum );
@@ -155,7 +151,7 @@ void AsmWarn( int level, int msgnum, ... )
 
 static void PrtMsg1( register char *prefix, register int msgnum,
                    va_list args1, va_list args2 )
-/**************************/
+/**************************************************************/
 // print messages from WOMP !!!
 {
     if( !Options.banner_printed ) {
@@ -207,16 +203,14 @@ void OpenErrFile( void )
 static void PutMsg( FILE *fp, char *prefix, int msgnum, va_list args )
 /********************************************************************/
 {
-    char *fname;
-    unsigned line_num;
-    char msgbuf[MAX_LINE_LEN];
-
+    const FNAME     *fname;
+    char            msgbuf[MAX_LINE_LEN];
+   
     if( fp != NULL ) {
-        fname = get_curr_filename();
-        line_num = LineNumber;
-        if( line_num != 0 ) {
+        fname = get_curr_srcfile();
+        if( LineNumber != 0 ) {
             if( fname != NULL ) {
-                __fprintf( fp, "%s(%u): ", fname, line_num );
+                __fprintf( fp, "%s(%lu): ", fname->name, LineNumber );
             }
         }
         __fprintf( fp, "%s %c%03d: ", prefix, *prefix, msgnum );
@@ -236,8 +230,8 @@ static void AsmSuicide( void )
 void PrintStats( void )
 /*********************/
 {
-    __printf( "%s: ", AsmFiles.fname[ASM] );
-    __printf( "%u lines, ", LineNumber );
+    __printf( "%s: ", ModuleInfo.srcfile->name );
+    __printf( "%lu lines, ", LineNumber );
     __printf( "%u warnings, ", WngCount );
     __printf( "%u errors\n", ErrCount );
 #ifdef DEBUG_OUT

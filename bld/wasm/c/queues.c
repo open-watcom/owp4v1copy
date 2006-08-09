@@ -44,11 +44,11 @@ typedef struct queuenode {
     void *data;
 } queuenode;
 
-static qdesc   *LnameQueue = NULL;  // queue of LNAME structs
-static qdesc   *PubQueue = NULL;    // queue of pubdefs
-static qdesc   *GlobalQueue = NULL; // queue of global / externdefs
-static qdesc   *AliasQueue = NULL;  // queue of aliases
-static qdesc   *LinnumQueue = NULL; // queue of linnum_data structs
+static qdesc   *LnameQueue  = NULL;   // queue of LNAME structs
+static qdesc   *PubQueue    = NULL;   // queue of pubdefs
+static qdesc   *GlobalQueue = NULL;   // queue of global / externdefs
+static qdesc   *AliasQueue  = NULL;   // queue of aliases
+static qdesc   *LinnumQueue = NULL;   // queue of linnum_data structs
 
 static void QAddQItem( qdesc **queue, queuenode *node )
 /*****************************************************/
@@ -105,7 +105,7 @@ uint GetPublicData(
     struct pubdef_data **data,
     bool *need32,
     bool first )
-/**************/
+/****************************/
 {
     static struct queuenode    *start;
     struct queuenode           *curr;
@@ -165,18 +165,18 @@ uint GetPublicData(
     for( i = 0; i < count; i++ ) {
         (*NameArray)[i] = NULL;
     }
-    
+
     *data = d = AsmAlloc( count * sizeof( struct pubdef_data ) );
-    
+
     for( curr = start, i = 0; i < count; i++, curr = curr->next ) {
         sym = (asm_sym *)curr->data;
         if( sym->segment != curr_seg )
             break;
         if( sym->offset > 0xffffUL )
             *need32 = TRUE;
-        
+
         (*NameArray)[i] = Mangle( sym, NULL );
-        
+
         d[i].name = i;
         /* No namecheck is needed by name manager */
         if( sym->state != SYM_CONST ) {
@@ -252,7 +252,7 @@ void AddLnameData( dir_node *dir )
 }
 
 direct_idx FindLnameIdx( char *name )
-/************************************/
+/***********************************/
 {
     queuenode           *node;
     dir_node            *dir;
@@ -311,7 +311,7 @@ unsigned GetLnameData( char **data )
 
     if( total_size > 0 ) {
         int     i = 0;
-        
+
         lname = AsmAlloc( total_size * sizeof( char ) + 1 );
         for( curr = LnameQueue->head; curr != NULL ; curr = curr->next ) {
             dir = (dir_node *)(curr->data);
@@ -356,13 +356,14 @@ void AddGlobalData( dir_node *dir )
 }
 
 void GetGlobalData( void )
-/*************************/
+/************************/
 /* turn the globals into either externs or publics as appropriate */
 {
     queuenode           *curr;
     struct asm_sym      *sym;
 
-    if( GlobalQueue == NULL ) return;
+    if( GlobalQueue == NULL )
+        return;
     for( ; ; ) {
         curr = (queuenode *)QDequeue( GlobalQueue );
         if( curr == NULL )
@@ -381,18 +382,18 @@ void GetGlobalData( void )
     GlobalQueue = NULL;
 }
 
-void AddLinnumData( struct linnum_data *data )
-/********************************************/
+void AddLinnumData( struct line_num_info *data )
+/**********************************************/
 {
     QAddItem( &LinnumQueue, data );
 }
 
 int GetLinnumData( struct linnum_data **ldata, bool *need32 )
-/****************************************************/
+/***********************************************************/
 {
-    queuenode           *node;
-    struct linnum_data  *next;
-    int                 count, i;
+    queuenode               *node;
+    struct line_num_info    *next;
+    int                     count, i;
 
     count = QCount( LinnumQueue );
     if( count == 0 )
@@ -401,7 +402,7 @@ int GetLinnumData( struct linnum_data **ldata, bool *need32 )
     *ldata = AsmAlloc( count * sizeof( struct linnum_data ) );
     for( i = 0; i < count; i++ ) {
         node = QDequeue( LinnumQueue );
-        next = (struct linnum_data *)(node->data);
+        next = (struct line_num_info *)(node->data);
         if( *ldata != NULL ) {
             (*ldata)[i].number = next->number;
             (*ldata)[i].offset = next->offset;
@@ -418,6 +419,7 @@ int GetLinnumData( struct linnum_data **ldata, bool *need32 )
 }
 
 void FreeAllQueues( void )
+/************************/
 {
     FreePubQueue();
     FreeAliasQueue();

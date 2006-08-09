@@ -100,7 +100,7 @@ static int cmp_u96_max( u96 *x )
 /**********************************************
     compare u96 with maximum value before u96
     overflow after multiply by 10
-*/    
+*/
 {
     if( x->m32[2] > 0x19999999UL ) {
         return 1;
@@ -123,11 +123,11 @@ static int add_check_u96_overflow( u96 *x, unsigned int c)
 /**********************************************
     test u96 overflow after multiply by 10
     add one decimal digit to u96
-*/    
+*/
 {
     u64 cy;
     int i;
-    
+
     if( cmp_u96_max(x) > 0 ) {
         return 1;
     } else {
@@ -144,10 +144,10 @@ static int add_check_u96_overflow( u96 *x, unsigned int c)
 static int bitsize32(u32 x)
 /**********************************************
     calculate bitsize for u32
-*/    
+*/
 {
     int i;
-    
+
     for( i = 32; i > 0 ; i-- ) {
         if( x & 0x80000000U ) break;
         x <<= 1;
@@ -158,10 +158,10 @@ static int bitsize32(u32 x)
 static int bitsize64(u64 x)
 /**********************************************
     calculate bitsize for u64
-*/    
+*/
 {
     int i;
-    
+
     for( i = 64; i > 0 ; i-- ) {
         if( x & 0x8000000000000000ULL ) break;
         x <<= 1;
@@ -172,7 +172,7 @@ static int bitsize64(u64 x)
 static int U96LD(u96 *op, ELD *res)
 /**************************************************
     convert u96 into internal extended long double
-*/    
+*/
 {
     int bs;
     int shft;
@@ -212,7 +212,7 @@ static int normalize(u192 *res)
 /**************************************************
     normalize internal extended long double u192
     return exponent shift
-*/    
+*/
 {
     int shft;
     int bs;
@@ -249,7 +249,7 @@ static int normalize(u192 *res)
 static int add192(u192 *res, u64 x, int pos)
 /**************************************************
     add u64 to u192 on u32 position
-*/    
+*/
 {
     u64 cy;
     int i;
@@ -273,7 +273,7 @@ static int multiply(ELD *op1, ELD *op2, ELD *res)
 /**************************************************
     multiply u96 by u96 into u96
     normalize and round result
-*/    
+*/
 {
     u64 x1;
     u192 r1;
@@ -319,7 +319,7 @@ static int TB_create(u96 *value, long exponent, TB_LD *ld)
 /**************************************************
     create tbyte/long double from u96 value and
     decimal exponent, round result
-*/    
+*/
 {
     ELD *tabExp;
     int i;
@@ -360,7 +360,7 @@ TB_LD * strtotb(char *p, TB_LD * ld, char negative)
 /**************************************************
     convert string into tbyte/long double
     set result sign
-*/    
+*/
 {
     int              sign = +1;
     int              exp_sign = +1;
@@ -429,7 +429,7 @@ TB_LD * strtotb(char *p, TB_LD * ld, char negative)
     exp_value   = 0;
     if ( (*p | 0x20) == 'e' ) {
         switch (*++p) {
-        case '-': 
+        case '-':
             exp_sign = -1;
         case '+': p++;
             break;
@@ -444,7 +444,7 @@ TB_LD * strtotb(char *p, TB_LD * ld, char negative)
         case '8':
         case '9':
             break;
-        default : 
+        default :
             ld->m = 0;
             ld->e = 0;
             SET_SIGN(ld, sign);

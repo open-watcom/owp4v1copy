@@ -29,8 +29,8 @@
 *
 ****************************************************************************/
 
-#ifndef _ASMDEFS_H_
-#define _ASMDEFS_H_
+#ifndef _ASMDEFS_H_INCLUDED
+#define _ASMDEFS_H_INCLUDED
 
 #include "asmopnds.h"
 
@@ -114,8 +114,8 @@ extern char             Modend;         // end of module is reached
 extern int_8            Use32;          // if 32-bit code is use
 extern int              Token_Count;    // number of tokens on line
 
-struct asm_sym;
 extern void             AsmByte( unsigned char );
+extern int              AsmScan( char * );
 
 #if defined( _STANDALONE_ )
 

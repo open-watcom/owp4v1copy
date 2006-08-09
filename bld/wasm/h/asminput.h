@@ -24,27 +24,26 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  prototypes for input queueing/processing procedures
 *
 ****************************************************************************/
 
 
-#define HASH_TABLE_SIZE 211
-/* use the same hash fcn */
-static unsigned int hashpjw( const char *s )
-/******************************************/
-{
-    unsigned h;
-    unsigned g;
+#ifndef _ASMINPUT_H_INCLUDED
+#define _ASMINPUT_H_INCLUDED
 
-    for( h = 0; *s; ++s ) {
-        /* ( h & ~0x0fff ) == 0 is always true here */
-        h = (h << 4) + (*s | ' ');
-        g = h & ~0x0fff;
-        h ^= g;
-        h ^= g >> 12;
-    }
-    return( h % HASH_TABLE_SIZE );
-}
+#include "bool.h"
 
+extern void     PushLineQueue( void );
+extern bool     PopLineQueue( void );
+extern void     InputQueueLine( char *line );
+extern int      InputQueueFile( char *path );
+extern char     *ReadTextLine( char *string );
+extern void     PushMacro( const char *name, bool hidden );
+extern char     *ScanLine( char *line, int len );
+extern void     AddStringToIncludePath( char *string );
+extern void     FreeIncludePath( void );
+
+extern char     *CurrString;    // Current Input Line
+
+#endif

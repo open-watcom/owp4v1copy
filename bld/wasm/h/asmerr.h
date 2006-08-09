@@ -29,8 +29,12 @@
 *
 ****************************************************************************/
 
-#ifndef _ASMERR_H_
-#define _ASMERR_H_
+#ifndef _ASMERR_H_INCLUDED
+#define _ASMERR_H_INCLUDED
+
+#if defined( _STANDALONE_ )
+    #include "asminput.h"
+#endif
 
 #ifdef M_I86
     #define ASMFAR far
@@ -40,9 +44,9 @@
 
 #ifdef DEBUG_OUT
     extern void DoDebugMsg( const char *format, ... );
-#   define DebugMsg( x ) DoDebugMsg x
+    #define DebugMsg( x ) DoDebugMsg x
 #else
-#   define DebugMsg( x )
+    #define DebugMsg( x )
 #endif
 // use DebugMsg((....)) to call it
 
@@ -53,14 +57,15 @@ extern void             AsmErr( int msgnum, ... );
 extern void             AsmWarn( int level, int msgnum, ... );
 extern void             AsmNote( int msgnum, ... );
 
-extern char             *curr_src_line;
-
 #if !defined( _STANDALONE_ )
-#define AsmIntErr( x )
+    #define DebugCurrLine()
+    #define AsmIntErr( x )
 #elif DEBUG_OUT
-#define AsmIntErr( x ) printf( "%s\n", curr_src_line );printf( "Internal error = %d\n", x )
+    #define DebugCurrLine() printf( "%s\n", CurrString );
+    #define AsmIntErr( x ) DebugCurrLine(); printf( "Internal error = %d\n", x )
 #else
-#define AsmIntErr( x ) printf( "Internal error = %d\n", x )
+    #define DebugCurrLine()
+    #define AsmIntErr( x ) printf( "Internal error = %d\n", x )
 #endif
 
 #if defined( _STANDALONE_ )
@@ -100,12 +105,12 @@ extern char             *curr_src_line;
     #undef pick
     #define pick(code,msg,japanese_msg)   asmerr(code,msg),
 
-    #ifndef asmerr
-     #define asmerr(code,msg)   code
-     enum    asmerr_codes {
-    #else
-     static char const ASMFAR * const ASMFAR AsmErrMsgs[] = {
-    #endif
+  #ifndef asmerr
+    #define asmerr(code,msg)   code
+    enum    asmerr_codes {
+  #else
+    static char const ASMFAR * const ASMFAR AsmErrMsgs[] = {
+  #endif
         #include "asmshare.msg"
     };
     #undef pick

@@ -69,8 +69,8 @@ static unsigned short CvtTable[] = {
 
 #endif
 
-static char *InitAsmSym( struct asm_sym *sym, char *name )
-/************************************************/
+static char *InitAsmSym( struct asm_sym *sym, const char *name )
+/**************************************************************/
 {
     sym->name = AsmAlloc( strlen( name ) + 1 );
     if( sym->name != NULL ) {
@@ -103,8 +103,8 @@ static char *InitAsmSym( struct asm_sym *sym, char *name )
     return( sym->name );
 }
 
-static struct asm_sym *AllocASym( char *name )
-/************************************************/
+static struct asm_sym *AllocASym( const char *name )
+/**************************************************/
 {
     struct asm_sym      *sym;
 
@@ -121,15 +121,15 @@ static struct asm_sym *AllocASym( char *name )
 #if defined( _STANDALONE_ )
         ((dir_node *)sym)->next = NULL;
         ((dir_node *)sym)->prev = NULL;
-        ((dir_node *)sym)->line = 0;
+        ((dir_node *)sym)->line_num = 0;
         ((dir_node *)sym)->e.seginfo = NULL;
 #endif
     }
     return sym;
 }
 
-static struct asm_sym **AsmFind( char *name )
-/***********************************/
+static struct asm_sym **AsmFind( const char *name )
+/*************************************************/
 /* find a symbol in the symbol table, return NULL if not found */
 {
     struct asm_sym      **sym;
@@ -147,8 +147,8 @@ static struct asm_sym **AsmFind( char *name )
     return( sym );
 }
 
-struct asm_sym *AsmLookup( char *name )
-/*************************************/
+struct asm_sym *AsmLookup( const char *name )
+/*******************************************/
 {
     struct asm_sym      **sym_ptr;
     struct asm_sym      *sym;
@@ -210,8 +210,8 @@ static void FreeASym( struct asm_sym *sym )
 
 #if defined( _STANDALONE_ )
 
-int AsmChangeName( char *old, char *new )
-/***************************************/
+int AsmChangeName( const char *old, const char *new )
+/***************************************************/
 {
     struct asm_sym      **sym_ptr;
     struct asm_sym      *sym;
@@ -234,8 +234,8 @@ int AsmChangeName( char *old, char *new )
     return( NOT_ERROR );
 }
 
-void AsmTakeOut( char *name )
-/***************************/
+void AsmTakeOut( const char *name )
+/*********************************/
 {
     struct asm_sym      *sym;
     struct asm_sym      **sym_ptr;
@@ -269,8 +269,8 @@ static struct asm_sym *AsmAdd( struct asm_sym *sym )
     return( sym );
 }
 
-struct asm_sym *AllocDSym( char *name, int add_symbol )
-/*****************************************************/
+struct asm_sym *AllocDSym( const char *name, int add_symbol )
+/***********************************************************/
 /* Create directive symbol and insert it into the symbol table */
 {
     struct asm_sym      *new;
@@ -288,8 +288,8 @@ struct asm_sym *AllocDSym( char *name, int add_symbol )
     }
 }
 
-struct asm_sym *AsmGetSymbol( char *name )
-/****************************************/
+struct asm_sym *AsmGetSymbol( const char *name )
+/**********************************************/
 {
     struct asm_sym  **sym_ptr;
 
@@ -412,7 +412,6 @@ static void DumpSymbol( struct asm_sym *sym )
 //        dir->e.macroinfo->parmlist = NULL;
 //        dir->e.macroinfo->data = NULL;
 //        dir->e.macroinfo->filename = NULL;
-//        dir->e.macroinfo->start_line = LineNumber;
         break;
     case SYM_CLASS_LNAME:
         type = "CLASS";

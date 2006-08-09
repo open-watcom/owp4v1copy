@@ -46,21 +46,15 @@
 #define min(x,y) (((x) < (y)) ? (x) : (y))
 #endif
 
-extern unsigned char    More_Array_Element;
-extern unsigned char    Last_Element_Size;
-
 /* structure stuff from asmstruct */
 extern int              InitializeStructure( asm_sym *, asm_sym *, int );
 extern int              AddFieldToStruct( int );
 extern int              GetStructSize( asm_sym * );
 
-extern int              dup_array( asm_sym *, asm_sym *, char, char );
-
 #if defined( _STANDALONE_ )
 
 extern int              ChangeCurrentLocation( bool, int_32, bool );
 extern int              SymIs32( struct asm_sym *sym );
-extern void             find_frame( struct asm_sym *sym );
 
 /* static globals */
 /* is this data element a field in a structure definition? */
@@ -70,10 +64,15 @@ static bool             first;
 
 #endif
 
+static int dup_array( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsigned no_of_bytes );
+
+static bool             More_Array_Element = FALSE;
+static unsigned         Last_Element_Size;
+
 /* data initialization stuff */
 
-static void little_endian( char *string, char no_of_bytes )
-/********************************************************/
+static void little_endian( char *string, unsigned no_of_bytes )
+/*************************************************************/
 /* convert a string into little endian format - ( LSB 1st, LSW 1st ... etc ) */
 {
     if( no_of_bytes >= 2 ) {
@@ -82,8 +81,8 @@ static void little_endian( char *string, char no_of_bytes )
     return;
 }
 
-static void output_float( char index, char no_of_bytes, char negative )
-/*********************************************************************/
+static void output_float( char index, unsigned no_of_bytes, char negative )
+/*************************************************************************/
 {
     double              double_value;
     float               float_value;
@@ -124,8 +123,8 @@ static void output_float( char index, char no_of_bytes, char negative )
     return;
 }
 
-static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, char no_of_bytes )
-/*********************************************************************************************/
+static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsigned no_of_bytes )
+/************************************************************************************************/
 /*
 - parse an array and initialize the number;
 - call by dup_array() only;
@@ -135,18 +134,18 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
     char                count;
     char                *char_ptr;
     char                negative = FALSE;
-    
+
 #if defined( _STANDALONE_ )
     asm_sym             *the_struct;
     int                 tmp;
-    
+
     the_struct = (asm_sym*)Definition.curr_struct;
 
     if( sym != NULL ) {
         sym->count++;
     }
 #endif
-    
+
     for( cur_pos = start_pos;
         ( cur_pos < Token_Count ) && ( AsmBuffer[cur_pos]->token != T_FINAL );
         cur_pos++ ) {
@@ -171,7 +170,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
             }
 #if defined( _STANDALONE_ )
             if( !struct_field ) {
-                ChangeCurrentLocation( TRUE, no_of_bytes, 
+                ChangeCurrentLocation( TRUE, no_of_bytes,
                       ( ( CurrSeg != NULL ) && SEGISCODE( CurrSeg ) ) );
             } else {
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
@@ -180,7 +179,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
                 the_struct->first_size+=no_of_bytes;
                 the_struct->first_length++;
             }
-            
+
             if( sym && Parse_Pass == PASS_1 ) {
                 sym->total_size+=no_of_bytes;
                 if( first ) {
@@ -221,7 +220,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
                     return( ERROR );
                 break;
             }
-                
+
             if( cur_pos != start_pos ) {
                 switch( AsmBuffer[cur_pos - 1]->token ) {
                 case T_COMMA:
@@ -311,7 +310,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
             }
             count = 0;
             char_ptr = AsmBuffer[cur_pos]->string_ptr;
-                
+
             /* anything bigger than a byte must be stored in little-endian
             * format -- LSB first */
             little_endian( char_ptr, no_of_bytes );
@@ -368,7 +367,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
             }
             i--;
             cur_pos = i;
-                    
+
             switch( ExpandSymbol( i, FALSE ) ) {
             case ERROR:
                 return( ERROR );
@@ -376,12 +375,12 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
                 continue;
             }
 #endif
-                    
+
             init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
-                    
+
             if( init_sym == NULL )
                 return( ERROR );
-                    
+
 #if defined( _STANDALONE_ )
             switch( init_sym->state ) {
             case SYM_STRUCT_FIELD:
@@ -420,14 +419,14 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
 #if defined( _STANDALONE_ )
                 /* switch( init_sym->state ) from above */
             }
-            find_frame( init_sym );        
+            find_frame( init_sym );
 #endif
             fixup = AddFixup( init_sym, fixup_type, OPTJ_NONE );
             //          if( fixup == NULL ) return( ERROR );
             // fixme
             InsFixups[OPND1] = fixup;
             data += fixup->offset;
-                    
+
             for( cur_pos++;
                 ( cur_pos < Token_Count ) && ( AsmBuffer[cur_pos]->token != T_FINAL )
                     && ( AsmBuffer[cur_pos]->token != T_COMMA )
@@ -455,7 +454,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
                     data += AsmBuffer[cur_pos]->value;
                 }
             }
-                    
+
 #if defined( _STANDALONE_ )
             if( store_fixup( 0 ) == ERROR )
                 return( ERROR );
@@ -505,7 +504,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
             char *ptr;
             long data = 0;
             struct asmfixup     *fixup;
-                
+
             if( AsmBuffer[cur_pos]->value == T_OFFSET ||
                 AsmBuffer[cur_pos]->value == T_SEG ) {
                 // see asmins.h about T_SEG
@@ -535,7 +534,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
                     init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
                     if( init_sym == NULL )
                         return( ERROR );
-                        
+
                     if( AsmBuffer[seg_off_operator_loc]->value == T_OFFSET ) {
                         if( init_sym->state == SYM_STACK ) {
                             AsmError( CANNOT_OFFSET_AUTO );
@@ -571,7 +570,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
                         }
                         fixup_type = FIX_SEG;
                     }
-                        
+
                     switch( AsmBuffer[seg_off_operator_loc]->value ) {
                     case T_OFFSET:
 #if defined( _STANDALONE_ )
@@ -582,7 +581,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
 #endif
                     case T_SEG:
 #if defined( _STANDALONE_ )
-                        find_frame( init_sym );        
+                        find_frame( init_sym );
 #endif
                         fixup = AddFixup( init_sym, fixup_type, OPTJ_NONE );
                         InsFixups[OPND1] = fixup;
@@ -612,7 +611,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
                         AsmError( SYNTAX_ERROR );
                         return( ERROR );
                     }
-                    for( cur_pos++; 
+                    for( cur_pos++;
                         ( cur_pos < Token_Count ) && ( AsmBuffer[cur_pos]->token != T_FINAL)
                         && ( AsmBuffer[cur_pos]->token != T_COMMA );
                         cur_pos++ ) {
@@ -638,7 +637,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
                             data += AsmBuffer[cur_pos]->value;
                         }
                     }
-                    
+
                     /* now actually output the data */
                     ptr = (char *)&data;
 #if defined( _STANDALONE_ )
@@ -689,8 +688,8 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, char start_pos, cha
     return( cur_pos );
 }
 
-int dup_array( asm_sym *sym, asm_sym *struct_sym, char start_pos, char no_of_bytes )
-/**********************************************************************************/
+static int dup_array( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsigned no_of_bytes )
+/********************************************************************************************/
 /*
   parse array with DUP operator;
 */
@@ -761,7 +760,7 @@ int data_init( int sym_loc, int initializer_loc )
   parse data initialization assembly line;
 */
 {
-    char                no_of_bytes;
+    unsigned            no_of_bytes;
     memtype             mem_type;
     struct asm_sym      *sym = NULL;
     struct asm_sym      *struct_sym = NULL;
@@ -913,4 +912,14 @@ int data_init( int sym_loc, int initializer_loc )
         return( ERROR );
     }
     return( NOT_ERROR );
+}
+
+int NextArrayElement( void )
+{
+    if( More_Array_Element ) {
+        More_Array_Element = FALSE;
+        return( dup_array( NULL, NULL, 0, Last_Element_Size ) );
+    } else {
+        return( EMPTY );
+    }
 }

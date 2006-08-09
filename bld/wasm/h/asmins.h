@@ -164,13 +164,21 @@ struct asm_code {
    OP_I ( without extension ) should follow OP_Ix  */
 
 extern const struct asm_ins ASMFAR AsmOpTable[];
-extern struct AsmCodeName AsmOpcode[];
-extern char AsmChars[];
+extern struct AsmCodeName          AsmOpcode[];
+extern char                        AsmChars[];
 
-int check_override( int *i );
-int OperandSize( OPNDTYPE opnd );
-int InRange( unsigned long val, unsigned bytes );
-int cpu_directive( int i );
-int AsmParse( void );
+#if defined( _STANDALONE_ )
+
+extern void     find_frame( struct asm_sym *sym );
+
+#endif
+
+extern int      check_override( int *i );
+extern int      OperandSize( OPNDTYPE opnd );
+extern int      InRange( unsigned long val, unsigned bytes );
+extern int      cpu_directive( int i );
+extern int      AsmParse( void );
+extern int      NextArrayElement( void );
+extern int      data_init( int, int );
 
 #endif

@@ -314,7 +314,7 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
                 return( ERROR );
             }
 #if 0
-// FIXME !!!!! 
+// FIXME !!!!!
 // problem with aliases and equ directive
             if( ( new->sym == NULL ) || ( new->sym->state == SYM_UNDEFINED ) ) {
                 if( error_msg )
@@ -673,13 +673,13 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 token_1->indirect |= token_2->indirect;
             }
             fix_struct_value( token_1 );
-                
+
         } else if( check_same( token_1, token_2, EXPR_REG ) ) {
 
             index_connect( token_1, token_2 );
             token_1->indirect |= token_2->indirect;
             token_1->type = EXPR_ADDR;
-                
+
         } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_REG ) ) {
 
             if( token_2->type == EXPR_REG ) {
@@ -1283,7 +1283,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
     return( NOT_ERROR );
 }
 
-static int evaluate( 
+static int evaluate(
     expr_list *operand1,
     int *i,
     int end,
@@ -1511,7 +1511,7 @@ static int evaluate(
         }
 
     } while ( ( next_operator == TRUE )
-        || ( ( proc_flag == PROC_BRACKET ) 
+        || ( ( proc_flag == PROC_BRACKET )
             && !cmp_token( *i, T_CL_BRACKET )
             && !cmp_token( *i, T_CL_SQ_BRACKET )
             && ( *i < end ) ) );

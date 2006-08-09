@@ -31,11 +31,17 @@
 #ifndef _QUEUES_H_
 #define _QUEUES_H_
 
+typedef struct line_num_info {
+    unsigned_16 number;
+    unsigned_32 offset;
+    const FNAME *srcfile;
+} line_num_info;
+
 extern void     AddPublicData( dir_node *data );
 extern void     AddLnameData( dir_node *data );
 extern void     AddGlobalData( dir_node *data );
 extern void     AddAliasData( char *data );
-extern void     AddLinnumData( struct linnum_data *data );
+extern void     AddLinnumData( struct line_num_info *data );
 
 extern direct_idx FindLnameIdx( char * );
 extern char     *GetLname( direct_idx );

@@ -87,15 +87,15 @@ typedef struct asm_sym {
         struct asmfixup *fixup;
 } asm_sym;
 
-extern struct asm_sym *AsmLookup( char *name );
-extern struct asm_sym *AsmGetSymbol( char *name );
+extern  struct asm_sym  *AsmLookup( const char *name );
+extern  struct asm_sym  *AsmGetSymbol( const char *name );
 
 #if defined( _STANDALONE_ )
 
-extern void AsmTakeOut( char *name );
-extern int AsmChangeName( char *old, char *new );
+extern  void            AsmTakeOut( const char *name );
+extern  int             AsmChangeName( const char *old, const char *new );
 
-extern struct asm_sym *AllocDSym( char *, int );
+extern  struct asm_sym  *AllocDSym( const char *, int );
 
 #define IS_SYM_COUNTER( x ) ( ( x[0] == '$' ) && ( x[1] == 0 ) )
 

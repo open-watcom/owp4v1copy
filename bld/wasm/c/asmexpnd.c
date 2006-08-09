@@ -41,14 +41,12 @@
 #include "asmsym.h"
 #include "directiv.h"
 #include "asmlabel.h"
+#include "asminput.h"
 
 #include "myassert.h"
 
 #define    MAX_EQU_NESTING      20
 
-extern void             InputQueueLine( char * );
-extern void             PushLineQueue(void);
-extern int              AsmScan( char * );
 extern void             GetInsString( enum asm_token , char *, int );
 
 static int              createconstant( char *, bool, int, bool, bool );
@@ -285,7 +283,7 @@ static void FreeConstData( const_info *constinfo )
     if( constinfo->data != NULL ) {
 
         int i;
-        
+
         for( i=0; i < constinfo->count; i++ ) {
 #ifdef DEBUG_OUT
             if( constinfo->data[i].token == T_NUM ) {
@@ -355,7 +353,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
         return( ERROR );
 
     for( counta = 0, i = start; AsmBuffer[i]->token != T_FINAL; i++ ) {
-        if( ( AsmBuffer[i]->token != T_STRING ) 
+        if( ( AsmBuffer[i]->token != T_STRING )
             || ( AsmBuffer[i]->value != 0 ) ) {
             counta++;
         }

@@ -37,11 +37,9 @@
 #include "asmins.h"
 #include "directiv.h"
 #include "asmexpnd.h"
+#include "asminput.h"
 
-extern void             PushLineQueue(void);
 extern void             AddTokens( struct asm_tok **, int, int );
-extern void             InputQueueLine( char * );
-extern void             PushMacro( char *, bool );
 
 static const char macroname[] = "__STATIC_IRP_MACRO_";
 
@@ -92,7 +90,7 @@ int ForDirective( int i, enum irp_type type )
         parmstring = AsmTmpAlloc( strlen( AsmBuffer[i]->string_ptr ) + 1 );
         strcpy( parmstring, AsmBuffer[i]->string_ptr );
         AsmBuffer[i]->token = T_FINAL;
-        
+
         AddTokens( AsmBuffer, arg_loc, 1 );
     }
     /* now make a macro */
@@ -119,7 +117,7 @@ int ForDirective( int i, enum irp_type type )
         for( ptr = parmstring; ptr < end_of_parms; ) {
             sprintf( buffer, "%s%d", macroname, Globals.for_counter );
             strcat( buffer, " " );
-            
+
             if( type == IRP_CHAR ) {
                 len = strlen( buffer );
                 buffer[len] = *ptr;
@@ -140,4 +138,3 @@ int ForDirective( int i, enum irp_type type )
     PushMacro( buffer, TRUE );
     return( NOT_ERROR );
 }
-

@@ -272,11 +272,11 @@ pick( FORCED_IDN,
                                 "forced error: strings equal : <%s> : <%s> " ,
                                 "強制エラー: 文字列が等しい: <%s> : <%s>" )
 pick( NOTE_INCLUDED_BY,
-                                "included by file %s(%d)" ,
-                                "ファイル %s(%d) に含まれます" )
+                                "included by file %s(%lu)" ,
+                                "ファイル %s(%lu) に含まれます" )
 pick( NOTE_MACRO_CALLED_FROM,
-                                "macro called from file %s(%d)" ,
-                                "ファイル %s(%d) から呼ばれるマクロです" )
+                                "macro called from file %s(%lu)" ,
+                                "ファイル %s(%lu) から呼ばれるマクロです" )
 pick( SYMBOL_S_NOT_DEFINED,
                                 "Symbol %s is not defined" ,
                                 "シンボルが定義されていません ( %s )" ) /* fixme */
@@ -305,10 +305,10 @@ pick( UNCLOSED_CONDITIONALS,
                                 "%u unclosed conditional directive(s) detected" ,
                                 "%u 閉じていない条件擬似命令を検出しました" )
 pick( WRONG_CPU_FOR_32BIT_SEGMENT,
-                                "Wrong CPU type for 32-bit segment" , 
+                                "Wrong CPU type for 32-bit segment" ,
                                 "Wrong CPU type for 32-bit segment")
 pick( PROC_IS_NOT_CLOSED,
-                                "Procedure %s is not closed" , 
+                                "Procedure %s is not closed" ,
                                 "Procedure %s is not closed")
 pick( CALL_FAR_TO_NEAR,
                                 "Far call is converted to near call." ,

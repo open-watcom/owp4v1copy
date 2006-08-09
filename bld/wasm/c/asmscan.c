@@ -100,10 +100,12 @@ static int get_float( struct asm_tok *buf, char **input, char **output )
                 case '+':
                 case '-':
                     ptr++;
+                    /* fall through */
                 default:
                     continue;
                 }
             }
+            /* fall through */
         default:
             goto done_scanning_float;
 //            return( get_string( buf, input, output ) );
@@ -354,7 +356,9 @@ done_scan:
             || *ptr == '_'
             || *ptr == '$'
             || *ptr == '@'
-            || *ptr == '?' ) ++ptr;
+            || *ptr == '?' ) {
+            ++ptr;
+        }
         buf->token = T_BAD_NUM;
         break;
     }
@@ -456,10 +460,11 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
             if( AsmOpTable[count].rm_byte & OP_REGISTER ) {
                 buf->token = T_REG;
             } else if( AsmOpTable[count].rm_byte & OP_RES_ID ) {
-                if( buf->value == T_PWORD )
+                if( buf->value == T_PWORD ) {
                     buf->value = T_FWORD;
-                else if( buf->value == T_DP )
+                } else if( buf->value == T_DP ) {
                     buf->value = T_DF;
+                }
                 buf->token = T_RES_ID;
             } else if( AsmOpTable[count].rm_byte & OP_UNARY_OPERATOR ) {
                 buf->token = T_UNARY_OPERATOR;
@@ -546,6 +551,7 @@ static int get_special_symbol( struct asm_tok *buf,
     case '<' :
     case '{' :
         /* string delimiters */
+        /* fall through */
     default:
         /* anything we don't recognise we will consider a string,
          * delimited by space characters, commas, newlines or nulls
@@ -566,7 +572,8 @@ static int get_inc_path( unsigned int *buf_index, char **input, char **output )
     AsmBuffer[*buf_index]->value = 0;
     AsmBuffer[*buf_index]->string_ptr = *output;
 
-    while( isspace( **input ) ) (*input)++;
+    while( isspace( **input ) )
+        (*input)++;
 
     symbol = **input;
 
@@ -604,9 +611,10 @@ int AsmScan( char *string )
     // stringbuf - buffer in which to store strings
     static char                 stringbuf[MAX_LINE_LEN];
 
+    CurrString = string;
     output_ptr = stringbuf;
 
-    for( CurrString = ptr = string; ; ) {
+    for( ptr = string; ; ) {
         AsmBuffer[buf_index]->string_ptr = output_ptr;
 
         while( isspace( *ptr ) ) {
@@ -629,7 +637,7 @@ int AsmScan( char *string )
             // this mess allows include directives with undelimited file names
             if( AsmBuffer[buf_index]->token == T_DIRECTIVE &&
                 ( AsmBuffer[buf_index]->value == T_INCLUDE ||
-                  AsmBuffer[buf_index]->value == T_INCLUDELIB ) ) {
+                AsmBuffer[buf_index]->value == T_INCLUDELIB ) ) {
                 buf_index++;
                 get_inc_path( &buf_index, &ptr, &output_ptr );
             }
@@ -651,8 +659,7 @@ int AsmScan( char *string )
                 return( ERROR );
             }
         } else {
-             if( get_special_symbol( AsmBuffer[buf_index],&ptr,&output_ptr )
-                 == ERROR ) {
+            if( get_special_symbol( AsmBuffer[buf_index],&ptr,&output_ptr ) == ERROR ) {
                 return( ERROR );
             }
         }

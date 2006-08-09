@@ -29,13 +29,14 @@
 ****************************************************************************/
 
 
-#ifndef _ASMGLOB_H_
-#define _ASMGLOB_H_
+#ifndef _ASMGLOB_H_INCLUDED
+#define _ASMGLOB_H_INCLUDED
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <time.h>
 #include "watcom.h"
 #include "bool.h"
 #include "asmerr.h"
@@ -169,9 +170,9 @@ typedef struct global_options {
     char        *text_seg;
     char        *module_name;
 
-    #ifdef DEBUG_OUT
+  #ifdef DEBUG_OUT
     char        debug;
-    #endif
+  #endif
     char *      default_name_mangler;
     bool        allow_c_octals;
     bool        emit_dependencies;
