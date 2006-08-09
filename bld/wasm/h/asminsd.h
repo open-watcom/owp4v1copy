@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Assembler instructions and directives.
 *
 ****************************************************************************/
+
 
 #ifndef _ASMINSD_H_
 #define _ASMINSD_H_
@@ -165,8 +165,8 @@ ins (T_ANDNPD,          OP_XMM,      F_660F, OP_XMM|OP_M,   OP3_NONE,1,  no_WDS,
 ins (T_ANDNPS,          OP_XMM,      F_0F,   OP_XMM|OP_M,   OP3_NONE,1,  no_WDS, 0x55,     0x00,                     P_686|P_SSE, 0)
 ins (T_ANDPD,           OP_XMM,      F_660F, OP_XMM|OP_M,   OP3_NONE,1,  no_WDS, 0x54,     0x00,                     P_686|P_SSE2,0)
 ins (T_ANDPS,           OP_XMM,      F_0F,   OP_XMM|OP_M,   OP3_NONE,1,  no_WDS, 0x54,     0x00,                     P_686|P_SSE, 0)
-ins (T_ARPL,            OP_R16,      0,      OP_R16,        OP3_NONE,0,  no_WDS, 0x63,     0x00,                     P_286p,      0)
-ins (T_ARPL,            OP_M16,      0,      OP_R16,        OP3_NONE,0,  no_WDS, 0x63,     0x00,                     P_286p,      0)
+ins (T_ARPL,            OP_R16,      0,      OP_R16,        OP3_NONE,0,  no_WDS, 0x63,     0x00,                     P_286,       0)
+ins (T_ARPL,            OP_M16,      0,      OP_R16,        OP3_NONE,0,  no_WDS, 0x63,     0x00,                     P_286,       0)
 insa(T_ASSUME,          OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_DIRECTIVE,             0,           0)
 //insa(T_AT,            OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_RES_ID,                0,           0)
 ins (T_AX,              OP_SPECIAL,  0,      OP_AX,         0,       0,  0,      0,        OP_REGISTER,              P_86,        0)
@@ -222,7 +222,7 @@ ins (T_CLC,             OP_NONE,     0,      OP_NONE,       OP3_NONE,0,  no_RM, 
 ins (T_CLD,             OP_NONE,     0,      OP_NONE,       OP3_NONE,0,  no_RM,  0xFC,     0x00,                     P_86,        0)
 ins (T_CLFLUSH,         OP_M,        F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0xAE,     0x38,                     P_686|P_SSE2,0)
 ins (T_CLI,             OP_NONE,     0,      OP_NONE,       OP3_NONE,0,  no_RM,  0xFA,     0x00,                     P_86,        0)
-ins (T_CLTS,            OP_NONE,     0,      OP_NONE,       OP3_NONE,0,  0,      0x0F,     0x06,                     P_286,       0)
+ins (T_CLTS,            OP_NONE,     0,      OP_NONE,       OP3_NONE,0,  0,      0x0F,     0x06,                     P_286p,      0)
 ins (T_CMC,             OP_NONE,     0,      OP_NONE,       OP3_NONE,0,  no_RM,  0xF5,     0x00,                     P_86,        0)
 
 #define cmov( cond, code )      \
@@ -743,8 +743,8 @@ ins (T_JZ,              OP_I8,       0,      OP_NONE,       OP3_NONE,0,  no_RM, 
 ins (T_JZ,              OP_I,        F_0F,   OP_NONE,       OP3_NONE,0,  no_RM,  0x84,     0x00,                     P_386,       0)
 insa(T_LABEL,           OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_DIRECTIVE,             0,           0)
 ins (T_LAHF,            OP_NONE,     0,      OP_NONE,       OP3_NONE,0,  no_RM,  0x9F,     0x00,                     P_86,        0)
-ins (T_LAR,             OP_R1632,    F_0F,   OP_R1632,      OP3_NONE,1,  no_WDS, 0x02,     0x00,                     P_286p,      0)
-ins (T_LAR,             OP_R1632,    F_0F,   OP_M,          OP3_NONE,1,  no_WDS, 0x02,     0x00,                     P_286p,      0)
+ins (T_LAR,             OP_R1632,    F_0F,   OP_R1632,      OP3_NONE,1,  no_WDS, 0x02,     0x00,                     P_286,       0)
+ins (T_LAR,             OP_R1632,    F_0F,   OP_M,          OP3_NONE,1,  no_WDS, 0x02,     0x00,                     P_286,       0)
 insa(T_LARGE,           OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_RES_ID,                0,           0)
 ins (T_LDDQU,           OP_XMM,      F_F20F, OP_M,          OP3_NONE,1,  no_WDS, 0xF0,     0x00,                     P_686|P_SSE3,0)
 ins (T_LDMXCSR,         OP_M32,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0xAE,     0x10,                     P_686|P_SSE, 0)
@@ -788,8 +788,8 @@ ins (T_LOOPZW,          OP_I8,       F_16,   OP_NONE,       OP3_NONE,0,  no_RM, 
 insa(T_LOW,             OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_DIRECTIVE,             0,           0)
 insa(T_LOWWORD,         OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_DIRECTIVE,             0,           0)
 insa(T_LROFFSET,        OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_DIRECTIVE,             0,           0)
-ins (T_LSL,             OP_R1632,    F_0F,   OP_R1632,      OP3_NONE,1,  no_WDS, 0x03,     0x00,                     P_286p,      0)
-ins (T_LSL,             OP_R1632,    F_0F,   OP_M,          OP3_NONE,1,  no_WDS, 0x03,     0x00,                     P_286p,      0)
+ins (T_LSL,             OP_R1632,    F_0F,   OP_R1632,      OP3_NONE,1,  no_WDS, 0x03,     0x00,                     P_286,       0)
+ins (T_LSL,             OP_R1632,    F_0F,   OP_M,          OP3_NONE,1,  no_WDS, 0x03,     0x00,                     P_286,       0)
 ins (T_LSS,             OP_R1632,    F_0F,   OP_M,          OP3_NONE,1,  no_WDS, 0xB2,     0x00,                     P_386,       0)
 insa(T_LT,              OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_ARITHOP,               P_86,        0)
 ins (T_LTR,             OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x18,                     P_286p,      0)
@@ -1299,7 +1299,7 @@ ins (T_SETPO,           OP_M8_R8,    F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS,
 ins (T_SETS,            OP_M8_R8,    F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x98,     0x00,                     P_386,       0)
 ins (T_SETZ,            OP_M8_R8,    F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x94,     0x00,                     P_386,       0)
 ins (T_SFENCE,          OP_NONE,     F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0xAE,     0xF8,                     P_686|P_SSE, 0)
-ins (T_SGDT,            OP_M,        F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x01,     0x00,                     P_286p,      0)
+ins (T_SGDT,            OP_M,        F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x01,     0x00,                     P_286,       0)
 ins (T_SHL,             OP_R,        0,      OP_CL,         OP3_NONE,0,  0,      0xD2,     0x20,                     P_86,        0)
 ins (T_SHL,             OP_R,        0,      OP_I_1,        OP3_NONE,0,  0,      0xD0,     0x20,                     P_86,        0)
 ins (T_SHL,             OP_R,        0,      OP_I8_U,       OP3_NONE,0,  0,      0xC0,     0x20,                     P_186,       0)
@@ -1336,14 +1336,14 @@ ins (T_SHRD,            OP_M,        F_0F,   OP_I8,         OP3_NONE,0,  no_WDS,
 ins (T_SHUFPD,          OP_XMM,      F_660F, OP_XMM|OP_M,   OP3_I8_U,1,  no_WDS, 0xC6,     0x00,                     P_686|P_SSE2,0)
 ins (T_SHUFPS,          OP_XMM,      F_0F,   OP_XMM|OP_M,   OP3_I8_U,1,  no_WDS, 0xC6,     0x00,                     P_686|P_SSE, 0)
 ins (T_SI,              OP_SPECIAL,  0,      OP_R16,        0,       0,  0,      6,        OP_REGISTER,              P_86,        IREG)
-ins (T_SIDT,            OP_M,        F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x01,     0x08,                     P_286p,      0)
+ins (T_SIDT,            OP_M,        F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x01,     0x08,                     P_286,       0)
 insa(T_SIZE,            OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_UNARY_OPERATOR,        0,           0)
 insa(T_SIZEOF,          OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_UNARY_OPERATOR,        0,           0)
-ins (T_SLDT,            OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x00,                     P_286p,      0)
-ins (T_SLDT,            OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x00,                     P_286p,      0)
+ins (T_SLDT,            OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x00,                     P_286,       0)
+ins (T_SLDT,            OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x00,                     P_286,       0)
 insa(T_SMALL,           OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_RES_ID,                0,           0)
-ins (T_SMSW,            OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x01,     0x20,                     P_286p,      0)
-ins (T_SMSW,            OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x01,     0x20,                     P_286p,      0)
+ins (T_SMSW,            OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x01,     0x20,                     P_286,       0)
+ins (T_SMSW,            OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x01,     0x20,                     P_286,       0)
 ins (T_SP,              OP_SPECIAL,  0,      OP_R16,        0,       0,  0,      4,        OP_REGISTER,              P_86,        0)
 ins (T_SQRTPD,          OP_XMM,      F_660F, OP_XMM|OP_M,   OP3_NONE,1,  no_WDS, 0x51,     0x00,                     P_686|P_SSE2,0)
 ins (T_SQRTPS,          OP_XMM,      F_0F,   OP_XMM|OP_M,   OP3_NONE,1,  no_WDS, 0x51,     0x00,                     P_686|P_SSE, 0)
@@ -1360,8 +1360,8 @@ ins (T_STOS,            OP_M,        0,      OP_NONE,       OP3_NONE,0,  no_RM, 
 ins (T_STOSB,           OP_NONE,     0,      OP_NONE,       OP3_NONE,0,  no_RM,  0xAA,     0x00,                     P_86,        REP)
 ins (T_STOSD,           OP_NONE,     F_32,   OP_NONE,       OP3_NONE,0,  no_RM,  0xAB,     0x00,                     P_386,       REP)
 ins (T_STOSW,           OP_NONE,     F_16,   OP_NONE,       OP3_NONE,0,  no_RM,  0xAB,     0x00,                     P_86,        REP)
-ins (T_STR,             OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x08,                     P_286p,      0)
-ins (T_STR,             OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x08,                     P_286p,      0)
+ins (T_STR,             OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x08,                     P_286,       0)
+ins (T_STR,             OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x08,                     P_286,       0)
 insa(T_STRUC,           OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_DIRECTIVE,             0,           0)
 insa(T_STRUCT,          OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_DIRECTIVE,             0,           0)
 ins (T_SUB,             OP_R1632,    0,      OP_I8,         OP3_NONE,0,  no_WDS, 0x83,     0x28,                     P_86,        0)
@@ -1411,10 +1411,10 @@ insa(T_USE16,           OP_SPECIAL,  0,      0,             0,       0,  0,     
 insa(T_USE32,           OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_RES_ID,                0,           0)
 insa(T_USES,            OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_RES_ID,                0,           0)
 insa(T_VARARG,          OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_RES_ID,                0,           0)
-ins (T_VERR,            OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x20,                     P_286p,      0)
-ins (T_VERR,            OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x20,                     P_286p,      0)
-ins (T_VERW,            OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x28,                     P_286p,      0)
-ins (T_VERW,            OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x28,                     P_286p,      0)
+ins (T_VERR,            OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x20,                     P_286,       0)
+ins (T_VERR,            OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x20,                     P_286,       0)
+ins (T_VERW,            OP_R16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x28,                     P_286,       0)
+ins (T_VERW,            OP_M16,      F_0F,   OP_NONE,       OP3_NONE,0,  no_WDS, 0x00,     0x28,                     P_286,       0)
 ins (T_WAIT,            OP_NONE,     0,      OP_NONE,       OP3_NONE,0,  no_RM,  0x9B,     0x00,                     P_86,        0)
 insa(T_WATCOM_C,        OP_SPECIAL,  0,      0,             0,       0,  0,      0,        OP_RES_ID,                0,           0)
 ins (T_WBINVD,          OP_NONE,     F_0F,   OP_NONE,       OP3_NONE,0,  no_RM,  0x09,     0x00,                     P_486,       0)
