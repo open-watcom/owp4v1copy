@@ -104,6 +104,7 @@ xx
 dev_objs = &
 
 asm_flags_x = -c
+asm_flags_loader2 = -c
 asm_flags_diag01 = -4s
 asm_flags_diag02 = -3
 asm_flags_diag03 = -wx
