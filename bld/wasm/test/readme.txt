@@ -1,41 +1,44 @@
-How to use tests for OW assembler.
-----------------------------------
+How to use tests for the Open Watcom x86 assembler
+--------------------------------------------------
 
-There are two test types.
-First one is for inline assembler in C and C++ compilers and
-second one is for standalone WASM assembler.
-Test results details are writen to testcomp.log or testasm.log.
+There are two kinds of tests. One is for inline assembler built into the
+C and C++ compilers; the other is for standalone wasm assembler. Test results
+are logged in testcomp.log and testasm.log, respectively.
 
 1. Inline assembler tests
 --------------------------
-They are in inline subdirectory.
-Test must be started in this subdirectory.
-By example, for test 16-bit C compiler inline assembler run
+These tests are located in 'inline' subdirectory. The tests must be run in
+that directory. For example to test the 16-bit C compiler, run
 
-wmake testcomp=wcc (first C compiler on the path, if no testcomp 
-is defined then default wcc386 is used)
+wmake testcomp=wcc
 
-or by
+(uses first C compiler on the path, if testcomp macro is not defined, wcc386
+is the default compiler)
+
+or
 
 wmake testcomp=..\..\..\cc\nt386.i86\wcci86e.exe
-( exact C or C++ compiler )
+
+(specifies exact C compiler)
 
 
-2. Standallone (WASM) assembler tests
---------------------------------------
-There are tree subdirectories, test1, test2 and test3.
-Test must be started in appropriate subdirectory.
+2. Standalone assembler (wasm) tests
+------------------------------------
+These tests are located in three subdirectories named 'test1', 'test2' and
+'test3'. The tests must be run in the appropriate subdirectory.
 
-For test standalone assembler run
+To test the standalone assembler, run
 
-wmake (first WASM assembler on the path)
+wmake 
 
-or by
+(uses the first wasm executable on the path)
+
+or
 
 wmake testasm=..\..\nt386\wasm.exe
-( exact WASM assembler )
+
+(uses specified wasm executable)
 
 Note:
-Tests require standard building environment and they are using 
-following OW tools - wmake, wdis, diff and dmpobj.
-
+The tests require standard Open Watcom build environment and use the following
+tools: wmake, wdis, diff, dmpobj.
