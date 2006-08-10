@@ -12,7 +12,6 @@ bar &
 beep &
 bigext &
 bug &
-#bunk &
 c &
 cmps &
 comm &
@@ -50,7 +49,6 @@ jmpext &
 jmpfword &
 jmpsize &
 jmptst &
-#kyb &
 l2 &
 l3 &
 labelbug &
