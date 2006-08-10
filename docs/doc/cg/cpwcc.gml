@@ -1995,7 +1995,7 @@ Use the "i64" suffix for a signed 64-bit integer constant.
 12345I64
 .exam end
 .note unsigned __int64
-Use the "ui64" suffix for a signed 64-bit integer constant.
+Use the "ui64" suffix for an unsigned 64-bit integer constant.
 .exam begin
 12345Ui64
 12345uI64
