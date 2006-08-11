@@ -765,4 +765,10 @@ file using the -bt=os2 switch
 Make sure the correct file is specified.
 .endbull
 .*
+.keep
+.errnote 101 <value> is not a valid resource type.
+.np
+This message is issued when a numeric type has been specified
+for a resource but the value is outside the allowable range.
+.*
 .eerrsect

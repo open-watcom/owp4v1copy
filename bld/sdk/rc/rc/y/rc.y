@@ -357,7 +357,14 @@ type-id
     | string-constant
         { $$ = WResIDFromStr( $1.string ); RcMemFree( $1.string ); }
     | constant-expression
-        { $$ = WResIDFromNum( $1.Value ); }
+        {
+            $$ = WResIDFromNum( $1.Value );
+            if( $$ == NULL ) {
+                $$ = WResIDFromNum( 0 );
+                RcError( ERR_BAD_RES_TYPE, $1.Value );
+                ErrorHasOccured = TRUE;
+            }
+        }
     ;
 
 includeres-statement

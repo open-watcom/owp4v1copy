@@ -303,3 +303,6 @@ pick(   ERR_RCVARIABLE_RECURSIVE,
 pick(   ERR_NONOS2_RES_TO_OS2_EXE,
         "Trying to add a Win16 or Win32 RES file \"%s\" to an OS/2 executable \"%s\".",
         "Win32用 RESファイル \"%s\" をウィンドウズ実行ファイル \"%s\" に追加しようとしています." )
+pick(   ERR_BAD_RES_TYPE,
+       "%ld is not a valid type id.",
+       "%ld は正しいリソースIDではありません." )
