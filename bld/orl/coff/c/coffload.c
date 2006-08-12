@@ -485,7 +485,6 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     buf_size -= coff_file_hnd->initial_size;
     coff_file_hnd->rest_of_file_buffer = _ClientRead( coff_file_hnd, buf_size );
     if( !(coff_file_hnd->rest_of_file_buffer ) ) {
-        free_coff_sec_handles( coff_file_hnd, coff_file_hnd->num_sections );
         return( ORL_ERROR );
     }
     loop_limit = coff_file_hnd->num_sections;
@@ -510,7 +509,6 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
                         sizeof( coff_sec_size );
             }
             if( !(last_sec_hnd->contents ) ) {
-                free_coff_sec_handles( coff_file_hnd, coff_file_hnd->num_sections );
                 return( ORL_ERROR );
             }
         } else {
