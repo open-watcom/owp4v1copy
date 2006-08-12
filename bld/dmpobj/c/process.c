@@ -264,6 +264,7 @@ static int doLinkerDirective( void )
     byte        minor;
     unsigned    e1;
     unsigned    s1;
+    Segdeflist  *sd;
 
     ldir = GetByte();
     switch( ldir ) {
@@ -279,7 +280,14 @@ static int doLinkerDirective( void )
             major );
         return( 1 );
     case LDIR_OPT_FAR_CALLS:
-        Output( INDENT "Optimize Far Calls: SI(%u)" CRLF, GetIndex() );
+        s1 = GetIndex();
+        if( TranslateIndex ) {
+            sd = GetSegdef( s1 );
+            Output( INDENT "Optimize Far Calls: SI(%u) - '%s'" CRLF,
+                s1, GetLname( sd->segind ) );
+        } else {
+            Output( INDENT "Optimize Far Calls: SI(%u)" CRLF, s1 );
+        }
         return( 1 );
     case LDIR_OPT_UNSAFE:
         Output( INDENT "Far Call Optimization Unsafe (Last FIXUPP)"
@@ -504,6 +512,16 @@ void ProcComent( void )
     }
 }
 
+void ProcLNames( unsigned_16 *index )
+/***********************************/
+{
+    while( ! EndRec() ) {
+       GetName();
+       AddLname();
+       Output( INDENT "%u - %N" CRLF, ++(*index) );
+    }
+}
+
 void ProcNames( unsigned_16 *index )
 /**********************************/
 {
@@ -585,6 +603,8 @@ void ProcSegDefs( void )
     unsigned_16 class;
     unsigned_16 ovl;
     int         use32;
+    char        *segname;
+    char        *classname;
 
     ++Segindex;
     acbp = GetByte();
@@ -617,7 +637,9 @@ void ProcSegDefs( void )
     }
     if( !IsIntel || align != ALIGN_UNABS ) {
         seg = GetIndex();
+        segname = GetLname( seg );
         class = GetIndex();
+        classname = GetLname( class );
         ovl = GetIndex();
     }
     phar_access = NULL;
@@ -645,6 +667,11 @@ void ProcSegDefs( void )
             ( phar_access != NULL ) ? phar_access : "",
             length
         );
+        if( TranslateIndex ) {
+            Output( INDENT "   Seg:%u - '%s'  Class:%u - '%s'" CRLF,
+                seg, segname, class, classname);
+            AddSegdef( seg );
+        }
     } else {
         Output( INDENT "%u: Unnamed Absolute %s %s USE16 Length %X" CRLF,
             Segindex, oldAlign[ ALIGN_UNABS ], segComb[ comb ], length );
@@ -1133,17 +1160,47 @@ void ProcGrpDef( void )
 /*********************/
 {
     byte        grptype;
+    char        *grpname;
+    char        *segname;
+    char        *classname;
+    unsigned_16 grpidx;
+    unsigned_16 idx;
+    unsigned_16 idxidx;
+    unsigned_16 idxidx2;
 
-    Output( INDENT "name: %u" CRLF, GetIndex() );
+    grpidx = GetIndex();
+    if( TranslateIndex ) {
+        grpname = GetLname( grpidx );
+        AddGrpdef( grpidx, 0 ); /* start new grpdef */
+        Output( INDENT "name: %u - '%s'" CRLF, grpidx, grpname );
+    } else {
+        Output( INDENT "name: %u" CRLF, grpidx );
+    }
     while( !EndRec() ) {
         grptype = GetByte();
         Output( INDENT "member: " );
         switch( grptype ) {
             case GRP_SEGIDX:
-                Output( "seg %u", GetIndex() );
+                idx = GetIndex();
+                if( TranslateIndex ) {
+                    AddGrpdef( grpidx, idx );
+                    idxidx = GetGrpseg( idx );
+                    segname = GetLname( idxidx );
+                    Output( "seg %u - %u - '%s'", idx, idxidx, segname );
+                } else {
+                    Output( "seg %u", idx );
+                }
                 break;
             case GRP_EXTIDX:
-                Output( "ext %u", GetIndex() );
+                idx = GetIndex();
+                if( TranslateIndex ) {
+                    AddGrpdef( grpidx, idx );
+                    idxidx = GetGrpseg( idx );
+                    segname = GetLname( idxidx );
+                    Output( "ext %u - %u - '%s'", idx, idxidx, segname );
+                } else {
+                    Output( "ext %u", idx );
+                }
                 break;
             case GRP_FULLNAME:
                 {
@@ -1154,7 +1211,17 @@ void ProcGrpDef( void )
                     seg = GetIndex();
                     class = GetIndex();
                     ovl = GetIndex();
-                    Output( "seg %u, class %u, ovl %u", seg, class, ovl );
+                    if( TranslateIndex ) {
+                        AddGrpdef( grpidx, idx );
+                        idxidx = GetGrpseg( seg );
+                        segname = GetLname( idxidx );
+                        idxidx2 = GetGrpseg( class );
+                        classname = GetLname( idxidx2 );
+                        Output( "seg %u - %u - '%s', class %u - %u - '%s', ovl %u",
+                            seg, idxidx, segname, class, idxidx2, classname, ovl );
+                    } else {
+                        Output( "seg %u, class %u, ovl %u", seg, class, ovl );
+                    }
                 }
                 break;
             case GRP_LTLDATA:

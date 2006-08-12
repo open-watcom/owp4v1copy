@@ -39,6 +39,7 @@
 bool Descriptions;
 bool InterpretComent;
 bool quiet;
+bool TranslateIndex;
 
 void leave( int rc )
 {
@@ -65,6 +66,7 @@ static void usage( void )
     Output( "Options:" CRLF );
     Output( "-l\t\tProduce listing file" CRLF );
     Output( "-d\t\tPrint descriptive titles for some output" CRLF );
+    Output( "-t\t\tPrint names for some index values" CRLF );
     Output( "-c\t\tDump COMENT records without interpretation" CRLF );
     Output( "-i\t\tOriginal Intel OMF-86 format" CRLF );
     Output( "-q\t\tQuiet, don't show product info" CRLF );
@@ -94,6 +96,7 @@ int main( int argc, char **argv )
 
     Descriptions = FALSE;
     InterpretComent = TRUE;
+    TranslateIndex = FALSE;
     list_file = FALSE;
     is_intel = FALSE;
     quiet = FALSE;
@@ -130,6 +133,9 @@ int main( int argc, char **argv )
                 break;
             case 'q':
                 quiet = TRUE;
+                break;
+            case 't':
+                TranslateIndex = TRUE;
                 break;
             default:
                 usage();
