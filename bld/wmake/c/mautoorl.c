@@ -101,7 +101,7 @@ static void *orlRead( void *file_handle, size_t bytes )
             return( NULL );
         }
     }
-    if( orlFilePosition < orlFileSize ) {
+    if( (orlFilePosition + bytes) <= orlFileSize ) {
         old_pos = orlFilePosition;
         orlFilePosition += bytes;
         return( &orlBuffer[old_pos] );
