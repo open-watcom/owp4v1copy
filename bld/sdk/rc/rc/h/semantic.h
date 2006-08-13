@@ -63,6 +63,8 @@ typedef struct ResLocation {
 typedef struct IntMask {
     uint_32     Mask;
     uint_32     Value;
+    uint_8      longVal         : 1;
+    uint_8      unsgVal         : 1;
 } IntMask;
 
 

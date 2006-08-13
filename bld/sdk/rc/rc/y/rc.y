@@ -640,10 +640,10 @@ raw-data-item
             $$.TmpStr = TRUE;
             $$.StrLen = $1.length;
             $$.Item.String = $1.string;
-            $$.LongString = $1.lstring;
+            $$.LongItem = $1.lstring;
         }
     | constant-expression
-        { $$.IsString = FALSE; $$.Item.Num = $1.Value; }
+        { $$.IsString = FALSE; $$.Item.Num = $1.Value; $$.LongItem = $1.longVal; }
     ;
 
 rcdata-resource
@@ -2005,7 +2005,11 @@ unary-exp
 
 primary-exp
     : Y_INTEGER
-        { $$.Mask = $1.val; $$.Value = $1.val; }
+        {
+            $$.Mask = $1.val; $$.Value = $1.val;
+            $$.longVal = ($1.type & SCAN_INT_TYPE_LONG) != 0;
+            $$.unsgVal = ($1.type & SCAN_INT_TYPE_UNSIGNED) != 0;
+        }
     | Y_LPAREN constant-expression Y_RPAREN
         { $$ = $2; }
     ;

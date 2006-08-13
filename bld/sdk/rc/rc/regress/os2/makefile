@@ -10,6 +10,7 @@ RCFLAGS = -q -zm -r -bt=os2 -I$(%WATCOM)/h/os2
 RESFILES = &
     def.res &
     help.res &
+    rcdata.res &
     restyp.res &
     t1.res &
     t2.res &
@@ -21,6 +22,7 @@ RESFILES = &
     cmp $@ $*.rez
 
 test : $(RESFILES) .symbolic
+    @echo Test passed
 
 clean : .symbolic
     rm -f *.res

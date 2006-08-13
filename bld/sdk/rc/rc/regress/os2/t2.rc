@@ -18,9 +18,9 @@ BEGIN
       , BS_AUTO3STATE | WS_TABSTOP | WS_VISIBLE
 
         PUSHBUTTON     "~OK1", 1, 173, 64, 32, 16
-        PRESPARAMS PP_FONTNAMESIZE, "foo", "bar" 3 "baz" 4
-//        CTLDATA 1, 2, 3, "BooHoo" 4 5 "Wah!"
+        CTLDATA 1, 2L, 3, "BooHoo" 4 0X5L "Wah!"
         PUSHBUTTON     "~OK2", 1, 173, 64, 32, 16
+        PRESPARAMS PP_FONTNAMESIZE, "foo", "bar" 3 "baz" 4
         DIALOG  "Mutons", 100, 32, 1, 224, 96
             BEGIN
                 PUSHBUTTON     "~OK3", 1, 173, 64, 32, 16

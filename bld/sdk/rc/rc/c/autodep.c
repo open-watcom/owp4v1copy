@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Output autodependency information in resource file.
 *
 ****************************************************************************/
 
@@ -51,8 +50,8 @@ typedef struct DepNode {
 
 static DepNode          *depList;
 
-int AddDependency( char *fname ) {
-
+int AddDependency( char *fname )
+{
     char                *name;
     DepNode             *new;
     DepNode             **cur;
@@ -89,12 +88,13 @@ int AddDependency( char *fname ) {
     return( FALSE );
 }
 
-static void writeOneNode( DepInfo *cur ) {
-
+static void writeOneNode( DepInfo *cur )
+{
     RawDataItem         item;
 
     item.IsString = FALSE;
-    item.TmpStr = FALSE;
+    item.TmpStr   = FALSE;
+    item.LongItem = FALSE;
 
     /* write out time */
 #ifdef __BIG_ENDIAN__
@@ -115,21 +115,21 @@ static void writeOneNode( DepInfo *cur ) {
 
     /* write out file name */
     item.IsString = TRUE;
-    item.LongString = FALSE;
     item.Item.String = cur->name;
     item.StrLen = strlen( cur->name ) + 1;
     SemWriteRawDataItem( item );
 }
 
-static void writeDepListEOF( void ) {
-
+static void writeDepListEOF( void )
+{
     DepInfo     eof;
 
     memset( &eof, 0, sizeof( DepInfo ) );
     writeOneNode( &eof );
 }
 
-static void freeDepList( void ) {
+static void freeDepList( void )
+{
     DepNode     *cur;
     DepNode     *todel;
 
@@ -141,8 +141,8 @@ static void freeDepList( void ) {
     }
 }
 
-RcStatus WriteDependencyRes( void ) {
-
+RcStatus WriteDependencyRes( void )
+{
     DepNode             *cur;
     ResLocation         loc;
     WResID              *nameid;
@@ -178,4 +178,3 @@ extern void AutoDepInitStatics( void )
 {
     depList = NULL;
 }
-

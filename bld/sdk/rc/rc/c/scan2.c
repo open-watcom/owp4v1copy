@@ -184,13 +184,14 @@ static int scanDFA( ScanValue *value )
 /************************************/
 {
     long                newint;     /* these are used to accumulate parts of */
-    VarString           *newstring;  /* a new value */
+    VarString           *newstring; /* a new value */
     int                 token;
 #ifdef SCANDEBUG
     char                debugstring[10];
 #endif
     char                *stringFromFile;
 
+    value->intinfo.type  = SCAN_INT_TYPE_DEFAULT;
     value->string.string = NULL;
     longString = FALSE;
 
@@ -607,7 +608,9 @@ static int scanDFA( ScanValue *value )
 
     state(S_LONGSUFFIX):
         VarStringAddChar( newstring, LookAhead );
+        value->intinfo.type |= SCAN_INT_TYPE_LONG;
         if( toupper(LookAhead) == 'U' ) {
+            value->intinfo.type |= SCAN_INT_TYPE_UNSIGNED;
             do_transition( S_ENDINT );
         } else if( isalpha( LookAhead ) || LookAhead == '.'
                    || LookAhead == '\\' || LookAhead == '_' ) {
@@ -621,7 +624,9 @@ static int scanDFA( ScanValue *value )
 
     state(S_UNSIGNEDSUFFIX):
         VarStringAddChar( newstring, LookAhead );
+        value->intinfo.type |= SCAN_INT_TYPE_UNSIGNED;
         if( toupper(LookAhead) == 'L' ) {
+            value->intinfo.type |= SCAN_INT_TYPE_LONG;
             do_transition( S_ENDINT );
         } else if( isalpha( LookAhead ) || LookAhead == '.'
                    || LookAhead == '\\' || LookAhead == '_' ) {

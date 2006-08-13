@@ -231,11 +231,16 @@
 %type <strtable>        string-section
 %type <rawitem>         raw-data-item
 %type <rawitem>         raw-numeric-data-item
+%type <rawitem>         rc-data-item
 %type <resloc>          user-defined-data
+%type <resloc>          rc-data
 %type <token>           resource-type
+%type <dataelem>        control-data-section
 %type <dataelem>        raw-data-section
 %type <dataelem>        raw-data-items
 %type <dataelem>        raw-numeric-data-items
+%type <dataelem>        rc-data-items
+%type <dataelem>        rc-data-section
 %type <integral>        menu-id
 %type <integral>        menuitem-style
 %type <integral>        menuitem-attrib
@@ -542,7 +547,7 @@ user-defined-resource
     : Y_RESOURCE type-id comma-opt name-id user-defined-data
         {
             SemAddResourceFree( $4, $2,
-                    MEMFLAG_PURE | MEMFLAG_MOVEABLE, $5 );
+                    MEMFLAG_DISCARDABLE | MEMFLAG_PURE | MEMFLAG_MOVEABLE, $5 );
         }
     | Y_RESOURCE type-id comma-opt name-id resource-options user-defined-data
         {
@@ -560,6 +565,13 @@ user-defined-data
     ;
 
 raw-data-section
+    : Y_BEGIN raw-data-items Y_END
+        { $$ = $2; }
+    | Y_LBRACE raw-data-items Y_RBRACE
+        { $$ = $2; }
+    ;
+
+control-data-section
     : Y_CTLDATA raw-data-items
        { $$ = $2; }
     ;
@@ -576,14 +588,15 @@ raw-data-items
 raw-data-item
     : string-constant
         {
-            $$.IsString = TRUE;
-            $$.TmpStr = TRUE;
-            $$.StrLen = $1.length;
+            $$.IsString    = TRUE;
+            $$.LongItem    = $1.lstring;
+            $$.StrLen      = $1.length;
+            $$.TmpStr      = TRUE;
+            $$.WriteNull   = FALSE;
             $$.Item.String = $1.string;
-            $$.LongString = $1.lstring;
         }
     | constant-expression
-        { $$.IsString = FALSE; $$.Item.Num = $1.Value; }
+        { $$.IsString = FALSE; $$.Item.Num = $1.Value; $$.LongItem = $1.longVal; }
     ;
 
 raw-numeric-data-items
@@ -597,20 +610,55 @@ raw-numeric-data-items
 
 raw-numeric-data-item
     : constant-expression
-        { $$.IsString = FALSE; $$.Item.Num = $1.Value; }
+        { $$.IsString = FALSE; $$.Item.Num = $1.Value; $$.LongItem = FALSE; }
+    ;
+
+rc-data-items
+    : rc-data-item
+        { $$ = SemNewDataElemList( $1 ); }
+    | rc-data-items rc-data-item
+        { $$ = SemAppendDataElem( $1, $2 ); }
+    | rc-data-items Y_COMMA
+        { $$ = $1; }
+    ;
+
+rc-data-item
+    : string-constant
+        {
+            $$.IsString    = TRUE;
+            $$.LongItem    = $1.lstring;
+            $$.StrLen      = $1.length;
+            $$.TmpStr      = TRUE;
+            $$.WriteNull   = TRUE;
+            $$.Item.String = $1.string;
+        }
+    | constant-expression
+        { $$.IsString = FALSE; $$.Item.Num = $1.Value; $$.LongItem = $1.longVal; }
+    ;
+
+rc-data-section
+    : Y_BEGIN rc-data-items Y_END
+        { $$ = $2; }
+    | Y_LBRACE rc-data-items Y_RBRACE
+        { $$ = $2; }
+    ;
+
+rc-data
+    : rc-data-section
+        { $$ = SemFlushDataElemList( $1, TRUE ); }
     ;
 
 rcdata-resource
-    : Y_RCDATA name-id user-defined-data
+    : Y_RCDATA name-id rc-data
         {
-            SemAddResourceFree( $2, WResIDFromNum( RT_RCDATA ),
-                    MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE, $3 );
+            SemAddResourceFree( $2, WResIDFromNum( OS2_RT_RCDATA ),
+                    MEMFLAG_PURE | MEMFLAG_MOVEABLE, $3 );
         }
-    | Y_RCDATA name-id resource-options user-defined-data
+    | Y_RCDATA name-id resource-options rc-data
         {
             SemOS2CheckResFlags( &($3), 0, MEMFLAG_DISCARDABLE | MEMFLAG_MOVEABLE,
                     MEMFLAG_PURE );
-            SemAddResourceFree( $2, WResIDFromNum( RT_RCDATA ), $3.flags, $4 );
+            SemAddResourceFree( $2, WResIDFromNum( OS2_RT_RCDATA ), $3.flags, $4 );
         }
     ;
 
@@ -1107,7 +1155,7 @@ diag-control-section
     ;
 
 diag-data-elements
-    : raw-data-section
+    : control-data-section
     | /* Nothing */
       { $$ = NULL; }
     ;
@@ -1481,7 +1529,11 @@ unary-exp
 
 primary-exp
     : Y_INTEGER
-        { $$.Mask = $1.val; $$.Value = $1.val; }
+        {
+            $$.Mask = $1.val; $$.Value = $1.val;
+            $$.longVal = ($1.type & SCAN_INT_TYPE_LONG) != 0;
+            $$.unsgVal = ($1.type & SCAN_INT_TYPE_UNSIGNED) != 0;
+        }
     | Y_LPAREN constant-expression Y_RPAREN
         { $$ = $2; }
     ;
