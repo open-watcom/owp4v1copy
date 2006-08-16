@@ -172,7 +172,11 @@ static void doWeakLazyExtern( void )
         if( EndRec() ) break;
         extern_idx = GetIndex();
         default_resolution = GetIndex();
-        Output( INDENT INDENT "EI(%u) default: EI(%u)\n", extern_idx, default_resolution );
+         Output( INDENT INDENT "EI(%u) default: EI(%u)\n", extern_idx, default_resolution );
+        if( TranslateIndex ) {
+            Output( INDENT INDENT "  - '%s'   -'%s'\n", GetXname( extern_idx ),
+                    GetXname( default_resolution ) );
+        }
     }
 }
 
@@ -213,6 +217,7 @@ static int doDisasmDirective( void )
     unsigned_32 off2;
     unsigned_16 idx;
     unsigned_16 nidx;
+    Segdeflist  *sd;
 
     ddir = GetByte();
     switch( ddir ) {
@@ -233,6 +238,12 @@ static int doDisasmDirective( void )
         Output( INDENT "Scan Table: " );
         if( idx != 0 ) {
             Output( "SI(%u)", idx );
+            if( TranslateIndex ) {
+                sd = GetSegdef( idx );
+                if( sd != NULL ) {
+                    Output( " - '%s'", GetLname( sd->segind ) );
+                }
+            }
         } else {
             Output( "COMDAT(%u)", nidx );
         }
@@ -251,6 +262,10 @@ static void doVirtualConditional( void )
     idx = GetIndex();
     def_idx = GetIndex();
     Output( INDENT "EI(%u) default: EI(%u)\n", idx, def_idx );
+    if( TranslateIndex ) {
+        Output( INDENT "  - '%s'   -'%s'\n", GetXname( idx ),
+                GetXname( def_idx ) );
+    }
     while( ! EndRec() ) {
         idx = GetIndex();
         Output( INDENT INDENT "conditional: LI(%u)\n", idx );
@@ -536,10 +551,12 @@ void ProcExtNames( void )
 {
     while( ! EndRec() ) {
        GetName();
+       if( TranslateIndex ) {
+           AddXname();
+       }
        Output( INDENT "%u - %N Type:%u" CRLF, ++Importindex, GetIndex() );
     }
 }
-
 
 void ProcComExtDef( void )
 /************************/
@@ -551,6 +568,9 @@ void ProcComExtDef( void )
         name = GetIndex();
         typ = GetIndex();
         Output(INDENT "%u - LNAME:%u Type:%u" CRLF, ++Importindex, name, typ);
+        if( TranslateIndex ) {
+            Output( INDENT "           - '%s'\n", GetXname( name ) );
+        }
     }
 }
 
@@ -603,8 +623,6 @@ void ProcSegDefs( void )
     unsigned_16 class;
     unsigned_16 ovl;
     int         use32;
-    char        *segname;
-    char        *classname;
 
     ++Segindex;
     acbp = GetByte();
@@ -637,9 +655,7 @@ void ProcSegDefs( void )
     }
     if( !IsIntel || align != ALIGN_UNABS ) {
         seg = GetIndex();
-        segname = GetLname( seg );
         class = GetIndex();
-        classname = GetLname( class );
         ovl = GetIndex();
     }
     phar_access = NULL;
@@ -668,8 +684,8 @@ void ProcSegDefs( void )
             length
         );
         if( TranslateIndex ) {
-            Output( INDENT "   Seg:%u - '%s'  Class:%u - '%s'" CRLF,
-                seg, segname, class, classname);
+            Output( INDENT "   Seg: '%s'  Class: '%s'" CRLF,
+                GetLname( seg ), GetLname( class ) );
             AddSegdef( seg );
         }
     } else {
@@ -689,6 +705,10 @@ static void getBase( int indent )
 {
     unsigned_16 group;
     unsigned_16 seg;
+    Grpdeflist  *gd;
+    Segdeflist  *sd;
+    char        *grpname;
+    char        *segname;
 
     group = GetIndex();
     seg = GetIndex();
@@ -696,7 +716,24 @@ static void getBase( int indent )
     if( group == 0 && seg == 0 ) {
         Output( "Frame: %x", GetUInt() );
     } else {
-        Output( "Group: %u, Seg: %u", group, seg );
+        if( TranslateIndex ) {
+            gd = GetGrpdef( group );
+            if( gd != NULL ) {
+               grpname = GetLname( gd->grpind );
+            } else {
+               grpname = "";
+            }
+            sd = GetSegdef( seg );
+            if( sd != NULL ) {
+               segname = GetLname( sd->segind );
+            } else {
+               segname = "";
+            }
+            Output( "Group: %u - '%s', Seg: %u - '%s'",
+                    group, grpname, seg, segname );
+        } else {
+            Output( "Group: %u, Seg: %u", group, seg );
+        }
     }
     if( indent ) Output( CRLF );
 }
@@ -953,10 +990,23 @@ static unsigned_32 begData( void )
 {
     unsigned_16 seg;
     unsigned_32 offset;
+    Segdeflist  *sd;
+    char        *segname;
 
     seg = GetIndex();
     offset = GetEither();
-    Output( INDENT "Seg index:%u offset:%X" CRLF, seg, offset );
+    if( TranslateIndex ) {
+        sd = GetSegdef( seg );
+        if( sd != NULL ) {
+           segname = GetLname( sd->segind );
+        } else {
+           segname = "";
+        }
+        Output( INDENT "Seg index:%u - '%s' offset:%X" CRLF,
+            seg, segname, offset );
+    } else {
+        Output( INDENT "Seg index:%u offset:%X" CRLF, seg, offset );
+    }
     return( offset );
 }
 
@@ -1015,6 +1065,95 @@ static void doTarget( byte target )
     }
 }
 
+static bool doFrameTranslateIndex( byte frame )
+{
+    Segdeflist  *sd;
+    Grpdeflist  *gd;
+    unsigned_16 idx;
+    bool        needcrlf = FALSE;
+
+    switch( frame ) {
+    case FRAME_SEG:
+        idx = GetIndex();
+        sd = GetSegdef( idx );
+        if( sd != NULL ) {
+            Output( "%<- '%s'", 40u, GetLname( sd->segind ) );
+            needcrlf = TRUE;
+        }
+        break;
+    case FRAME_GRP:
+        idx = GetIndex();
+        gd = GetGrpdef( idx );
+        if( gd != NULL ) {
+            Output( "%<- '%s'", 40u, GetLname( gd->grpind ) );
+            needcrlf = TRUE;
+        }
+        break;
+
+    case FRAME_EXT:
+        idx = GetIndex();
+        if( TranslateIndex ) {
+            Output( "     - '%s'", GetXname( idx ) );
+            needcrlf = TRUE;
+        }
+        break;
+    case FRAME_ABS:
+        GetUInt();
+//        Output( "%x%<", GetUInt(), 8 );
+        break;
+
+#if 0
+    case FRAME_LOC:     Output( "LOCATION" );                    break;
+    case FRAME_TARG:    Output( "TARGET  " );                    break;
+    case FRAME_NONE:    Output( "NONE    " );                    break;
+    default:
+        Output( BAILOUT "Unknown frame(%b)" CRLF, frame );
+        longjmp( BailOutJmp, 1 );
+#endif
+
+    }
+    return( needcrlf );
+}
+
+static bool doTargetTranslateIndex( byte target )
+{
+    Segdeflist  *sd;
+    Grpdeflist  *gd;
+    unsigned_16 idx;
+    bool        needcrlf = FALSE;
+
+    switch( target & 0x03 ) {
+    case TARGET_SEGWD:
+        idx = GetIndex();
+        sd = GetSegdef( idx );
+        if( sd != NULL ) {
+            Output( "%<- '%s'", 10u, GetLname( sd->segind ) );
+            needcrlf = TRUE;
+        }
+        break;
+    case TARGET_GRPWD:
+        idx = GetIndex();
+        gd = GetGrpdef( idx );
+        if( gd != NULL ) {
+            Output( "%<- '%s'", 10u, GetLname( gd->grpind ) );
+            needcrlf = TRUE;
+        }
+        break;
+    case TARGET_EXTWD:
+        idx = GetIndex();
+        if( TranslateIndex ) {
+            Output( "     - '%s'", GetXname( idx ) );
+            needcrlf = TRUE;
+        }
+        break;
+    case TARGET_ABSWD:
+        GetUInt();
+//        Output( "%x", GetUInt() );
+        break;
+    }
+    return( needcrlf );
+}
+
 static void threadFixup( byte typ )
 {
     byte    num;
@@ -1037,6 +1176,9 @@ static void explicitFixup( byte typ )
     byte        loc;
     unsigned_16 offset;
     byte        frame;
+    data_ptr    RecPtrsave;
+    data_ptr    RecPtrsave1;
+    bool        needcrlf = FALSE;
 
     offset = ( ( typ & 0x03 ) << 8 ) + GetByte();
     Output( INDENT "%x %s", offset, ( typ & FIXDAT_MBIT ) ? "Seg " : "Self" );
@@ -1070,6 +1212,9 @@ static void explicitFixup( byte typ )
         longjmp( BailOutJmp, 1 );
     }
     typ = GetByte();
+    if( TranslateIndex ) {
+        RecPtrsave = RecPtr;
+    }
     frame = ( typ >> 4 ) & 0x07;
     Output( "  Frame: " );
     if( typ & FIXDAT_FTHREAD ) {
@@ -1080,7 +1225,7 @@ static void explicitFixup( byte typ )
     loc = typ & 0x03;
     Output( "  Target: " );
     if( typ & FIXDAT_TTHREAD ) {
-        Output( "THREAD %u", loc & 0x03 );
+        Output( "THREAD %u", loc );
     } else {
         doTarget( loc );
     }
@@ -1088,6 +1233,20 @@ static void explicitFixup( byte typ )
         Output( CRLF );
     } else {
         Output( ",%X" CRLF, GetEither() );
+    }
+    if( TranslateIndex ) {
+        RecPtrsave1 = RecPtr;
+        RecPtr = RecPtrsave;
+        if( ! (typ & FIXDAT_FTHREAD) ) {
+            needcrlf |= doFrameTranslateIndex( frame );
+        }
+        if( ! (typ & FIXDAT_TTHREAD) ) {
+            needcrlf |= doTargetTranslateIndex( loc );
+        }
+        if( needcrlf ) {
+            Output( CRLF );
+        }
+        RecPtr = RecPtrsave1;
     }
 }
 
@@ -1166,7 +1325,6 @@ void ProcGrpDef( void )
     unsigned_16 grpidx;
     unsigned_16 idx;
     unsigned_16 idxidx;
-    unsigned_16 idxidx2;
 
     grpidx = GetIndex();
     if( TranslateIndex ) {
@@ -1195,9 +1353,8 @@ void ProcGrpDef( void )
                 idx = GetIndex();
                 if( TranslateIndex ) {
                     AddGrpdef( grpidx, idx );
-                    idxidx = GetGrpseg( idx );
-                    segname = GetLname( idxidx );
-                    Output( "ext %u - %u - '%s'", idx, idxidx, segname );
+                    segname = GetXname( idx );
+                    Output( "ext %u - '%s'", idx, segname );
                 } else {
                     Output( "ext %u", idx );
                 }
@@ -1215,10 +1372,9 @@ void ProcGrpDef( void )
                         AddGrpdef( grpidx, idx );
                         idxidx = GetGrpseg( seg );
                         segname = GetLname( idxidx );
-                        idxidx2 = GetGrpseg( class );
-                        classname = GetLname( idxidx2 );
-                        Output( "seg %u - %u - '%s', class %u - %u - '%s', ovl %u",
-                            seg, idxidx, segname, class, idxidx2, classname, ovl );
+                        classname = GetLname( class );
+                        Output( "seg %u - %u - '%s', class %u - '%s', ovl %u",
+                            seg, idxidx, segname, class, classname, ovl );
                     } else {
                         Output( "seg %u, class %u, ovl %u", seg, class, ovl );
                     }

@@ -54,6 +54,8 @@ byte        rec_type[10] = { 0 };
 int         rec_count = 0;
 Lnamelist   *Lnames;
 Lnamelist   *lastLname;
+Lnamelist   *Xnames;
+Lnamelist   *lastXname;
 Grpdeflist  *Grpdefs;
 Segdeflist  *Segdefs;
 
@@ -480,6 +482,111 @@ static void FreeLnames( void ) {
 
 }
 
+static void PrintNames( void ) {
+/***********************/
+    Lnamelist   *entry;
+    unsigned_16 k;
+
+    if( Lnames != NULL ) {
+        k = 0;
+        Output( CRLF INDENT INDENT "List of Lnames:" CRLF );
+        entry = Lnames;
+        for( ;; ) {
+           if( entry == NULL ) {
+               break;
+           }
+           k++;
+           Output( "%u - '%s'%<", k, &(entry->Lname), 39u );
+           if( ! (k & 1) ) {
+               Output( CRLF );
+           }
+           entry = entry->next;
+       }
+       if( (k & 1) ) {
+           Output( CRLF );
+       }
+    }
+
+    if( Xnames != NULL ) {
+        k = 0;
+        Output( CRLF INDENT INDENT "List of Xnames:" CRLF );
+        entry = Xnames;
+        for( ;; ) {
+           if( entry == NULL ) {
+               break;
+           }
+           k++;
+           Output( "%u - '%s'%<", k, &(entry->Lname), 39u );
+           if( ! (k & 1) ) {
+               Output( CRLF );
+           }
+           entry = entry->next;
+       }
+       if( (k & 1) ) {
+           Output( CRLF );
+       }
+    }
+}
+
+void AddXname( void ) {
+/*********************/
+    Lnamelist   *entry;
+
+    entry = malloc( sizeof(Lnamelist) + NameLen );
+    if( entry == NULL ) {
+        OutputSetFH( stdout );
+        Output( CRLF "**FATAL** Out of memory!" CRLF );
+        leave( 21 );
+    }
+    if( Xnames == NULL ) {
+        Xnames = entry;
+    } else {
+        lastXname->next = entry;
+    }
+    entry->next = NULL;
+    entry->LnameLen = NameLen;
+    memcpy( &(entry->Lname), NamePtr, NameLen );
+    *(&(entry->Lname) + NameLen) = '\0';
+    lastXname = entry;
+}
+
+char *GetXname( unsigned_16 idx ) {
+/*********************************/
+    Lnamelist   *entry;
+    char        *name;
+    int         k;
+
+    if( (Xnames == NULL) || (idx == 0) ) {
+        return( "" );
+    }
+    entry = Xnames;
+    for( k = 1; k < idx; ++k) {
+        entry = entry->next;
+        if( entry == NULL ) {
+            return( "" ); /* not found */
+        }
+    }
+    name = &(entry->Lname);
+    return( name );
+}
+
+static void FreeXnames( void ) {
+/*******************************/
+    Lnamelist   *entry;
+
+    entry = Xnames;
+    for( ;; ) {
+        if( entry == NULL ) {
+           break;
+        }
+        Xnames = entry->next;
+        free( entry );
+        entry = Xnames;
+    }
+    Xnames = NULL;
+
+}
+
 void AddSegdef( unsigned_16 idx ) {
 /*********************************/
     Segdeflist  *entry;
@@ -598,6 +705,24 @@ void AddGrpdef( unsigned_16 grpidx, unsigned_16 segidx ) {
     }
 }
 
+Grpdeflist *GetGrpdef( unsigned_16 idx ) {
+/****************************************/
+    Grpdeflist  *entry;
+    int         k;
+
+    if( (Grpdefs == NULL) || (idx == 0) ) {
+        return( NULL );
+    }
+    entry = Grpdefs;
+    for( k = 1; k < idx; ++k) {
+        entry = entry->next;
+        if( entry == NULL ) {
+            return( NULL ); /* not found */
+        }
+    }
+    return( entry );
+}
+
 unsigned_16 GetGrpseg( unsigned_16 idx ) {
 /****************************************/
     Segdeflist  *entry;
@@ -651,6 +776,7 @@ void ProcFile( FILE *fp, bool is_intel )
     RecMaxLen = 0;
     total_padding = 0;
     Lnames = NULL;
+    Xnames = NULL;
     Segdefs = NULL;
     Grpdefs = NULL;
     for(;;) {
@@ -823,8 +949,12 @@ void ProcFile( FILE *fp, bool is_intel )
     if( total_padding > 0 ) {
         Output( CRLF "total padding=%X" CRLF, total_padding );
     }
+    if( TranslateIndex) {
+        PrintNames();
+    }
     FreeGrpdefs();
     FreeSegdefs();
     FreeLnames();
+    FreeXnames();
     free( RecBuff );
 }

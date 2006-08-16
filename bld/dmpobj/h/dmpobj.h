@@ -127,7 +127,10 @@ extern  char            *GetLname( unsigned_16 idx );
 extern  void            AddSegdef( unsigned_16 idx );
 extern  Segdeflist      *GetSegdef( unsigned_16 idx );
 extern  void            AddGrpdef( unsigned_16 grpidx, unsigned_16 segidx );
+extern  Grpdeflist      *GetGrpdef( unsigned_16 idx );
 extern  unsigned_16     GetGrpseg( unsigned_16 idx );
+extern  void            AddXname( void );
+extern  char            *GetXname( unsigned_16 idx );
 /*
     Record processing routines
 */
