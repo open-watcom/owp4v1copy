@@ -726,7 +726,7 @@ _cwMain ends
 ;
 ;Default stack used during startup and exit.
 ;
-_cwStack        segment para stack 'main stack' use16
+_cwStack        segment para stack 'stack' use16
         db 2048 dup (0)
 _cwStackEnd     label byte
 _cwStack        ends
