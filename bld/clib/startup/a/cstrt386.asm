@@ -241,7 +241,12 @@ ENV_SEG equ     2ch
         mov     bx,ds                   ; - get value of Phar Lap data segment
         mov     cx,ENV_SEG              ; - PharLap environment segment
         jmp     short know_extender     ; else
-not_pharlap:                            ; - assume DOS/4G or compatible 
+not_pharlap:                            ; - assume DOS/4G or compatible
+        mov     dx,78h                  ; - see if Rational DOS/4G
+        mov     ax,0FF00h               ; - ...
+        int     21h                     ; - ...
+        cmp     al,0                    ; - ...
+        je      short know_extender     ; - quit if not Rational DOS/4G
         mov     ax,gs                   ; - get segment address of kernel
         cmp     ax,0                    ; - if not zero
         je      short rat9              ; - then
@@ -258,6 +263,7 @@ rat9:                                   ; - endif
 rat10:                                  ; - endif
         mov     _psp,es                 ; - save segment address of PSP
         mov     cx,es:[02ch]            ; - get environment segment into cx
+        jmp     short know_extender     ; else
 know_extender:                          ; endif
         mov     _Extender,al            ; record extender type
         mov     _ExtenderSubtype,ah     ; record extender subtype
