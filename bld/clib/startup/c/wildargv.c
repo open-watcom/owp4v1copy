@@ -36,25 +36,27 @@
 #include <direct.h>
 #include <malloc.h>
 #include <tchar.h>
-#include "widechar.h"
-#include "initarg.h"
 
 #ifdef _UNICODE
-    #define CMDLINE _LpwCmdLine
-    #define PGMNAME _LpwPgmName
-    #define _ARGC _wargc
-    #define _ARGV _wargv
-    #define ___ARGC ___wArgc
-    #define ___ARGV ___wArgv
+    #define __F_NAME(n1,n2) n2
+    #define CHAR_TYPE   wchar_t
+    #define CMDLINE     _LpwCmdLine
+    #define PGMNAME     _LpwPgmName
+    #define _ARGC       _wargc
+    #define _ARGV       _wargv
+    #define ___ARGC     ___wArgc
+    #define ___ARGV     ___wArgv
     #define __INIT_ARGV __wInit_Argv
     #define __FINI_ARGV __wFini_Argv
 #else
-    #define CMDLINE _LpCmdLine
-    #define PGMNAME _LpPgmName
-    #define _ARGC _argc
-    #define _ARGV _argv
-    #define ___ARGC ___Argc
-    #define ___ARGV ___Argv
+    #define __F_NAME(n1,n2) n1
+    #define CHAR_TYPE   char
+    #define CMDLINE     _LpCmdLine
+    #define PGMNAME     _LpPgmName
+    #define _ARGC       _argc
+    #define _ARGV       _argv
+    #define ___ARGC     ___Argc
+    #define ___ARGV     ___Argv
     #define __INIT_ARGV __Init_Argv
     #define __FINI_ARGV __Fini_Argv
 #endif
@@ -62,6 +64,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "initarg.h"
 
 extern  int     __historical_splitparms;
 extern  void    _Not_Enough_Memory( void );
@@ -208,8 +212,7 @@ static int _make_argv( TCHAR *p, TCHAR ***argv )
                     if( *argv == NULL ) {
                         _Not_Enough_Memory();
                     }
-                    new_arg = (TCHAR *)
-                        _allocate( (_tcslen( pathin ) + 1) * sizeof( TCHAR ) );
+                    new_arg = (TCHAR *)_allocate( (_tcslen( pathin ) + 1) * sizeof( TCHAR ) );
                     _tcscpy( new_arg, pathin );
                     (*argv)[argc++] = new_arg;
                 }
@@ -231,9 +234,9 @@ void __INIT_ARGV( void )
 {
     TCHAR *cln;
 
-    _ARGV = (TCHAR **) _allocate( 2 * sizeof( TCHAR * ) );
+    _ARGV = (TCHAR **)_allocate( 2 * sizeof( TCHAR * ) );
     _ARGV[0] = PGMNAME;     /* fill in program name */
-    cln = _allocate( (_tcslen( CMDLINE ) + 1) * sizeof( TCHAR ) );
+    cln = (TCHAR *)_allocate( (_tcslen( CMDLINE ) + 1) * sizeof( TCHAR ) );
     _tcscpy( cln, CMDLINE );
     _ARGC = _make_argv( cln, &_ARGV );
     _ARGV[_ARGC] = NULL;

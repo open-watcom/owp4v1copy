@@ -21,6 +21,7 @@ cdsay .
     <CPCMD> <DEVDIR>/clib/startup/a/cstrtx32.asm        <RELROOT>/rel2/src/startup/386/cstrtx32.asm
     <CPCMD> <DEVDIR>/clib/startup/c/cmain386.c          <RELROOT>/rel2/src/startup/386/cmain386.c
     <CPCMD> <DEVDIR>/clib/startup/c/wildargv.c          <RELROOT>/rel2/src/startup/wildargv.c
+    <CPCMD> <DEVDIR>/clib/h/initarg.h                   <RELROOT>/rel2/src/startup/initarg.h
     <CPCMD> <DEVDIR>/clib/startup/a/cstrt086.asm        <RELROOT>/rel2/src/startup/dos/cstrt086.asm
     <CPCMD> <DEVDIR>/clib/startup/a/dos16m.asm          <RELROOT>/rel2/src/startup/dos/dos16m.asm
     <CPCMD> <DEVDIR>/clib/startup/a/dstrt386.asm        <RELROOT>/rel2/src/startup/386/dstrt386.asm

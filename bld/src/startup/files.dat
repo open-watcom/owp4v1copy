@@ -1,4 +1,5 @@
 [ DEFAULT type="s" cond="rtsource" where="c f77 ac" desc="src/startup" ]
+dir="src/startup"	usr="initarg.h"
 dir="src/startup"	usr="wildargv.c"
 dir="src/startup"	usr="8087cw.c"
 dir="src/startup"	usr="mdef.inc"
