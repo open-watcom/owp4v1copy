@@ -103,6 +103,11 @@ static int __ReturnMemToSystem( mheapptr mhp )
                 __LargestSizeB4MiniHeapRover = 0;
             }
         }
+        // Re-test rover; if we freed the only mini-heap, we might end up
+        // pointing back to it
+        if( __MiniHeapRover == mhp ) {
+            __MiniHeapRover = 0;
+        }
         if( __MiniHeapFreeRover == mhp ) {
             __MiniHeapFreeRover = 0;
         }
