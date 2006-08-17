@@ -10,14 +10,11 @@ commands, called control files.
 If no -c command line options are specified, BUILDER looks for an environment
 variable called "BUILDER_CTL". The value of that environment variable is
 used as name of the default control file. If the variable is not defined, the
-file called "BUILDER.CTL" is used. It first checks the current directory, if
+file called "builder.ctl" is used. It first checks the current directory, if
 the file is not present it will check the parent directories, up to the root
-of the current drive. If BUILDER.CTL has not yet been found, the PATH
-environment variable is checked. This means that you can put the BUILDER.CTL
-in the root directory of a project, and a "BUILDER" command will find it
-no matter what project directory you're located in. Originally the environment
-variable "BUILDER.CTL" was used. That is not a valid name in Linux;
-"BUILDER_CTL" is not a valid MS-DOS filename.
+of the current drive. This means that you can put your builder.ctl file
+in the root directory of a project, and a "builder" command will find it
+no matter what project directory you're located in.
 
 
         Macro Substitution
@@ -203,6 +200,10 @@ The following command line options are recognized:
                 Determine the default number of backup copies of a log file
                 that are to be kept.
 
+        -s
+                Stop on errors. If any command delivers non-zero return code,
+                do not attempt to execute any further commands and abort.
+
         -v
                 Verbose. Commands that are about to be executed are written
                 to the screen and any log file(s) unless the command is
@@ -237,7 +238,7 @@ sign is found, the ordinal position of the parameter is used as the
 environment variable name and the whole of the parameter contents are used
 as the value. E.g.:
 
-        BUILDER HI_HO FOO=BAR GOODBYE
+        builder HI_HO FOO=BAR GOODBYE
 
 will set the following environment variables:
 

@@ -60,14 +60,14 @@ unsigned SysRunCommand( const char *cmd )
     close( my_std_error );
     if( rc == -1 ) {
         if( readpipe != -1 )
-	    close( readpipe );
+        close( readpipe );
         return( rc );
     }
     if( readpipe != -1 ) {
         for( ;; ) {
             bytes_read = read( readpipe, buff, sizeof( buff ) - 1 );
             if( bytes_read == 0 )
-	        break;
+            break;
             buff[bytes_read] = '\0';
             Log( Quiet, "%s", buff );
         }
@@ -76,5 +76,5 @@ unsigned SysRunCommand( const char *cmd )
     /* free up the zombie (if there is one) */
     while( wait( &rc ) == -1 && errno == EINTR )
         ;
-    return( 0 );
+    return( rc );
 }

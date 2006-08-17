@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -39,7 +40,7 @@
 #include "watcom.h"
 #include "builder.h"
 
-#define DEFCTLNAME      "BUILDER.CTL"
+#define DEFCTLNAME      "builder.ctl"
 #define DEFCTLENV       "BUILDER_CTL"
 
 #define DEF_BACKUP      1
@@ -55,10 +56,10 @@ char            ProcLine[MAX_LINE];
 unsigned        VerbLevel;
 bool            UndefWarn;
 bool            Quiet;
+bool            StopOnError;
 unsigned        ParmCount;
 unsigned        LogBackup;
 
-int MatchFound( char *p );
 
 static void PutNumber( char *src, char *dst, unsigned num )
 {
@@ -141,7 +142,7 @@ static char **getvalue( char **argv, char *buff )
 
 static void Usage( void )
 {
-    printf( "Usage: builder [-c <ctl_file>]* [-l <log_file>] [-b <backup>] [-v] [-u] [-q] [--] <parm>*\n" );
+    printf( "Usage: builder [-c <ctl>] [-l <log>] [-b <bak>] [-s] [-v] [-u] [-q] [--] <parm>\n" );
     printf( "    See builder.doc for more information\n" );
     exit( 0 );
 }
@@ -174,6 +175,9 @@ static void ProcessOptions( char *argv[] )
                 if( LogBackup > MAX_BACKUP ) {
                     Fatal( "-b value is exceeds maximum of %d\n", MAX_BACKUP );
                 }
+                break;
+            case 's':
+                StopOnError = TRUE;
                 break;
             case 'v':
                 ++VerbLevel;
@@ -404,6 +408,64 @@ static char *NextWord( char *p )
 }
 
 
+/****************************************************************************
+*
+* MatchFound. Examines a string of space separated words. If the first word or
+* words (between parentheses) matches any of the words following it, returns 1.
+* If not, returns 0. String is terminated by 0 or ']'.
+* If there isn't at least one word in the string, terminates program.
+*
+***************************************************************************/
+static int MatchFound( char *p )
+{
+    char    *Match[20];                     // 20 is enough for builder
+    int     MatchWords = 0;
+    int     i;
+    int     EmptyOk = FALSE;
+    int     WordsExamined = 0;
+
+    p = NextWord( p );
+    if( p == NULL )
+        Fatal( "Missing match word\n" );
+
+    if( *p == '(' ) { // Multiple match words, store them
+        p = NextWord( p );
+        for( ; MatchWords < 20; ) {
+            if( p == NULL )
+                Fatal( "Missing match word\n" );
+            if( stricmp( p, "\"\"" ) == 0 ) // 'No parameter' indicator
+                EmptyOk = TRUE;
+            else
+                Match[MatchWords++] = p;
+            p = NextWord( p );
+            if( strcmp( p, ")" ) == 0 ) {
+                p = NextWord( p );
+                break;
+            }
+        }
+    } else {
+        Match[MatchWords++] = p;
+        p = NextWord( p );
+    }
+
+    // At this point, p must point to the first word after the (last) match word
+
+    for( ;; ) {
+        if( p == NULL || strcmp( p, "]" ) == 0 ) { // End of string
+            if( WordsExamined == 0 && EmptyOk )
+                return 1;
+            else
+                return 0;
+        }
+        WordsExamined++;
+        for( i = 0; i < MatchWords; i++ )
+            if( stricmp( Match[i], p ) == 0 )
+                return 1;
+        p = NextWord( p );
+    }
+}
+
+
 static void ProcessCtlFile( const char *name )
 {
     char        *p;
@@ -479,6 +541,9 @@ static void ProcessCtlFile( const char *name )
                         Log( FALSE, "<%s> => ", Line );
                     }
                     Log( FALSE, "non-zero return: %d\n", res );
+                    if( StopOnError ) {
+                        Fatal( "Build failed\n" );
+                    }
                 }
                 LogFlush();
             } else if( logit && ( VerbLevel > 1 ) ) {
@@ -532,7 +597,7 @@ static bool SearchUpDirs( const char *name, char *result )
 int main( int argc, char *argv[] )
 {
     ctl_file    *next;
-    char        *p;
+    const char  *p;
 
     SysInit( argc, argv );
     ProcessOptions( argv + 1 );
@@ -541,14 +606,7 @@ int main( int argc, char *argv[] )
         if( p == NULL )
             p = DEFCTLNAME;
         if( !SearchUpDirs( p, Line ) ) {
-#ifdef __WATCOMC__
-            _searchenv( p, "PATH", Line );
-#else
-            Line[0] = '\0';
-#endif
-            if( Line[0] == '\0' ) {
-                Fatal( "Can not find '%s'\n", p );
-            }
+            Fatal( "Can not find '%s'\n", p );
         }
         AddCtlFile( Line );
     }
@@ -561,61 +619,3 @@ int main( int argc, char *argv[] )
     CloseLog();
     return( 0 );
 }
-
-/****************************************************************************
-*
-* MatchFound. Examines a string of space separated words. If the first word or
-* words (between parentheses) matches any of the words following it, returns 1.
-* If not, returns 0. String is terminated by 0 or ']'.
-* If there isn't at least one word in the string, terminates program.
-*
-***************************************************************************/
-int MatchFound( char *p )
-{
-    char   *Match[20];                     // 20 is enough for builder
-    int     MatchWords = 0;
-    int     i;
-    int     EmptyOk = FALSE;
-    int     WordsExamined = 0;
-
-    p = NextWord( p );
-    if( p == NULL )
-        Fatal( "Missing match word\n" );
-
-    if( *p == '(' ) { // Multiple match words, store them
-        p = NextWord( p );
-        for( ; MatchWords < 20; ) {
-            if( p == NULL )
-                Fatal( "Missing match word\n" );
-            if( stricmp( p, "\"\"" ) == 0 ) // 'No parameter' indicator
-                EmptyOk = TRUE;
-            else
-                Match[MatchWords++] = p;
-            p = NextWord( p );
-            if( strcmp( p, ")" ) == 0 ) {
-                p = NextWord( p );
-                break;
-            }
-        }
-    } else {
-        Match[MatchWords++] = p;
-        p = NextWord( p );
-    }
-
-    // At this point, p must point to the first word after the (last) match word
-
-    for( ;; ) {
-        if( p == NULL || strcmp( p, "]" ) == 0 ) { // End of string
-            if( WordsExamined == 0 && EmptyOk )
-                return 1;
-            else
-                return 0;
-        }
-        WordsExamined++;
-        for( i = 0; i < MatchWords; i++ )
-            if( stricmp( Match[i], p ) == 0 )
-                return 1;
-        p = NextWord( p );
-    }
-}
-
