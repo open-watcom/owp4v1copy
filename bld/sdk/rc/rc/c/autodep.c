@@ -90,11 +90,7 @@ int AddDependency( char *fname )
 
 static void writeOneNode( DepInfo *cur )
 {
-    RawDataItem         item;
-
-    item.IsString = FALSE;
-    item.TmpStr   = FALSE;
-    item.LongItem = FALSE;
+    RawDataItem         item = { 0 };
 
     /* write out time */
 #ifdef __BIG_ENDIAN__
