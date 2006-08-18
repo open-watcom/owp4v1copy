@@ -1065,19 +1065,27 @@ static void doTarget( byte target )
     }
 }
 
-static bool doFrameTranslateIndex( byte frame )
+static bool doFrameTranslateIndex( byte frame, size_t *printpos )
 {
     Segdeflist  *sd;
     Grpdeflist  *gd;
     unsigned_16 idx;
     bool        needcrlf = FALSE;
+    size_t      deltacol;
 
+#define         FRAMECOL     39u
+
+    if( FRAMECOL > *printpos ) {
+        deltacol = FRAMECOL - *printpos;
+    } else {
+        deltacol = 0;
+    }
     switch( frame ) {
     case FRAME_SEG:
         idx = GetIndex();
         sd = GetSegdef( idx );
         if( sd != NULL ) {
-            Output( "%<- '%s'", 40u, GetLname( sd->segind ) );
+            *printpos = Output( "%<- '%s'", deltacol, GetLname( sd->segind ) );
             needcrlf = TRUE;
         }
         break;
@@ -1085,7 +1093,7 @@ static bool doFrameTranslateIndex( byte frame )
         idx = GetIndex();
         gd = GetGrpdef( idx );
         if( gd != NULL ) {
-            Output( "%<- '%s'", 40u, GetLname( gd->grpind ) );
+            *printpos = Output( "%<- '%s'", deltacol, GetLname( gd->grpind ) );
             needcrlf = TRUE;
         }
         break;
@@ -1093,7 +1101,7 @@ static bool doFrameTranslateIndex( byte frame )
     case FRAME_EXT:
         idx = GetIndex();
         if( TranslateIndex ) {
-            Output( "     - '%s'", GetXname( idx ) );
+            *printpos = Output( "%<- '%s'", deltacol, GetXname( idx ) );
             needcrlf = TRUE;
         }
         break;
@@ -1115,19 +1123,27 @@ static bool doFrameTranslateIndex( byte frame )
     return( needcrlf );
 }
 
-static bool doTargetTranslateIndex( byte target )
+static bool doTargetTranslateIndex( byte target, size_t *printpos )
 {
     Segdeflist  *sd;
     Grpdeflist  *gd;
     unsigned_16 idx;
     bool        needcrlf = FALSE;
+    size_t      deltacol;
 
+#define         TARGETCOL     58u
+
+    if( TARGETCOL > *printpos ) {
+        deltacol = TARGETCOL - *printpos;
+    } else {
+        deltacol = 0;
+    }
     switch( target & 0x03 ) {
     case TARGET_SEGWD:
         idx = GetIndex();
         sd = GetSegdef( idx );
         if( sd != NULL ) {
-            Output( "%<- '%s'", 10u, GetLname( sd->segind ) );
+            *printpos = Output( "%<- '%s'", deltacol, GetLname( sd->segind ) );
             needcrlf = TRUE;
         }
         break;
@@ -1135,14 +1151,14 @@ static bool doTargetTranslateIndex( byte target )
         idx = GetIndex();
         gd = GetGrpdef( idx );
         if( gd != NULL ) {
-            Output( "%<- '%s'", 10u, GetLname( gd->grpind ) );
+            *printpos = Output( "%<- '%s'", deltacol, GetLname( gd->grpind ) );
             needcrlf = TRUE;
         }
         break;
     case TARGET_EXTWD:
         idx = GetIndex();
         if( TranslateIndex ) {
-            Output( "     - '%s'", GetXname( idx ) );
+            *printpos = Output( "%<- '%s'", deltacol, GetXname( idx ) );
             needcrlf = TRUE;
         }
         break;
@@ -1179,6 +1195,7 @@ static void explicitFixup( byte typ )
     data_ptr    RecPtrsave;
     data_ptr    RecPtrsave1;
     bool        needcrlf = FALSE;
+    size_t      printpos;
 
     offset = ( ( typ & 0x03 ) << 8 ) + GetByte();
     Output( INDENT "%x %s", offset, ( typ & FIXDAT_MBIT ) ? "Seg " : "Self" );
@@ -1237,11 +1254,12 @@ static void explicitFixup( byte typ )
     if( TranslateIndex ) {
         RecPtrsave1 = RecPtr;
         RecPtr = RecPtrsave;
+        printpos = 0;
         if( ! (typ & FIXDAT_FTHREAD) ) {
-            needcrlf |= doFrameTranslateIndex( frame );
+            needcrlf |= doFrameTranslateIndex( frame, &printpos );
         }
         if( ! (typ & FIXDAT_TTHREAD) ) {
-            needcrlf |= doTargetTranslateIndex( loc );
+            needcrlf |= doTargetTranslateIndex( loc, &printpos );
         }
         if( needcrlf ) {
             Output( CRLF );

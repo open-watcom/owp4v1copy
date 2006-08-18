@@ -58,7 +58,7 @@ typedef enum {FALSE, TRUE}  bool;
 extern  void            OutputInit( void );
 extern  void            OutputFini( void );
 extern  void            OutputSetFH( FILE * );
-extern  void            Output( const char *fmt, ... );
+extern  size_t          Output( const char *fmt, ... );
 extern  void            OutputData( unsigned_32 off, unsigned_32 len );
 
 extern  int             no_disp;

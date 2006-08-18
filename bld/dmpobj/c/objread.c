@@ -496,7 +496,7 @@ static void PrintNames( void ) {
                break;
            }
            k++;
-           Output( "%u - '%s'%<", k, &(entry->Lname), 39u );
+           Output( "%u - '%s' %<", k, &(entry->Lname), 39u );
            if( ! (k & 1) ) {
                Output( CRLF );
            }
@@ -516,7 +516,7 @@ static void PrintNames( void ) {
                break;
            }
            k++;
-           Output( "%u - '%s'%<", k, &(entry->Lname), 39u );
+           Output( "%u - '%s' %<", k, &(entry->Lname), 39u );
            if( ! (k & 1) ) {
                Output( CRLF );
            }

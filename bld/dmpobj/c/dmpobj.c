@@ -66,7 +66,7 @@ static void usage( void )
     Output( "Options:" CRLF );
     Output( "-l\t\tProduce listing file" CRLF );
     Output( "-d\t\tPrint descriptive titles for some output" CRLF );
-    Output( "-t\t\tPrint names for some index values" CRLF );
+    Output( "-t\t\tPrint names for some index values and list at end" CRLF );
     Output( "-c\t\tDump COMENT records without interpretation" CRLF );
     Output( "-i\t\tOriginal Intel OMF-86 format" CRLF );
     Output( "-q\t\tQuiet, don't show product info" CRLF );

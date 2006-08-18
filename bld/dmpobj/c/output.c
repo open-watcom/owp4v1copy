@@ -46,6 +46,7 @@ int     no_disp = FALSE;
 static  char            outBuff[ OUT_BUFF_SIZE ];
 static  char            *outBuffPtr;
 static  FILE            *outputFH;
+static  size_t          col;
 
 static  const char hexStr[] = "0123456789abcdef";
 
@@ -183,16 +184,17 @@ static char *to5Dec16( char *dest, unsigned_16 num )
     Output makes the assumption that % is not followed by the null-
     terminator.
 */
-void Output( const char *fmt, ... )
+size_t  Output( const char *fmt, ... )
 {
     va_list     args;
     char        *p;
     const char  *probe;
     const char  *str;
     size_t      len;
+    char        *pcrlf;
 
     if( no_disp )
-        return;
+        return( 0 );
     va_start( args, fmt );
     p = outBuffPtr;
     for(;;) {
@@ -280,7 +282,15 @@ void Output( const char *fmt, ... )
     va_end( args );
     outBuffPtr = p;
     len = p - outBuff;
+    *p = '\0';                        /* for following str.. function */
+    pcrlf = strrchr( outBuff, '\n' ); /* need CRLF as char not string */
+    if( pcrlf != NULL ) {
+        col = p - pcrlf;
+    } else {
+        col += len;
+    }
     if( len > OUT_BUFF_WRITE ) flush();
+    return( col );
 }
 
 void OutputInit( void )
@@ -288,6 +298,7 @@ void OutputInit( void )
 {
     outBuffPtr = outBuff;
     outputFH = stdout;
+    col = 0;
 }
 
 void OutputSetFH( FILE *fh )
