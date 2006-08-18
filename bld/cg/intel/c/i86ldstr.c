@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  RISCify complex instructions into load/store model.
 *
 ****************************************************************************/
 
@@ -68,7 +67,8 @@ extern  hw_reg_set      FullReg( hw_reg_set );
 extern  bool            ReDefinedBy( instruction *, name * );
 extern  void            MoveSegRes( instruction *, instruction * );
 extern  void            MoveSegOp( instruction *, instruction *, int );
-extern  int             NumOperands(instruction*);
+extern  int             NumOperands( instruction * );
+extern  bool            InsOrderDependant( instruction *, instruction * );
 
 extern  type_length     TypeClassSize[];
 
@@ -195,7 +195,7 @@ static hw_reg_set       *FindRegister( instruction *ins )
     /* 2006-04-25 RomanT
        Code rewriten because first and best reg in list (_AX) was used last
     */
-    for(;;) {
+    for( ;; ) {
         curregs = regs;
         ++regs;
         if( HW_CEqual( *regs, HW_EMPTY ) ) {
@@ -478,14 +478,27 @@ static void     CompressIns( instruction *ins )
     default:
         break;
     }
+    /* When compressing instructions, look two instructions back and forward. This
+     * helps in cases where scheduler rearranged things but RISCification itself
+     * was not beneficial.
+     */
     next = ins->head.next;
-    if( next->head.opcode!=OP_MOV || next->operands[0]->n.class!=N_REGISTER ) {
-        next = NULL;
+    if( next->head.opcode != OP_MOV || next->operands[0]->n.class != N_REGISTER ) {
+        next = next->head.next;
+        if( next->head.opcode != OP_MOV || next->operands[0]->n.class != N_REGISTER
+         || InsOrderDependant( ins->head.next, next ) ) {
+            next = NULL;
+        }
     }
     prev = ins->head.prev;
-    if( prev->head.opcode!=OP_MOV || prev->result->n.class!=N_REGISTER ) {
-        prev = NULL;
+    if( prev->head.opcode != OP_MOV || prev->result->n.class != N_REGISTER ) {
+        prev = prev->head.prev;
+        if( prev->head.opcode != OP_MOV || prev->result->n.class != N_REGISTER
+         || InsOrderDependant( ins->head.prev, prev ) ) {
+            prev = NULL;
+        }
     }
+
     presult = NULL;
     popnd = NULL;
     if( next != NULL && ins->result == next->operands[0] ) {
