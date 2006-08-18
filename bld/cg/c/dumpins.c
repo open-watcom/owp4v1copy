@@ -328,6 +328,11 @@ extern  void DoDumpIInfo( instruction *ins, bool fp ) {
     } else {
         DumpLiteral( " " );
     }
+    if( ins->ins_flags & INS_RISCIFIED ) {
+        DumpLiteral( "r" );
+    } else {
+        DumpLiteral( " " );
+    }
     if( _OpIsIFunc( ins->head.opcode ) || _OpIsCall( ins->head.opcode ) || fp ) {
         DumpByte( ins->sequence );
         DumpChar( ' ' );
