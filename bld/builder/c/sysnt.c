@@ -74,11 +74,19 @@ void SysSetTitle( char *title )
     SetConsoleTitle( Title );
 }
 
+static  PROCESS_INFORMATION pinfo;
+static  STARTUPINFO         sinfo;
+
+// BartoszP - 18.08.2006
+// CreateProcessA does not return process id as result
+// but fills pinfo on success
+// return value
+//    == 0 means that child process was not created
+//    != 0 means success
+// save pinfo for closing child
+
 int RunChildProcessCmdl( const char *cmdl )
 {
-
-    PROCESS_INFORMATION pinfo;
-    STARTUPINFO         sinfo;
 
     memset( &sinfo, 0, sizeof( sinfo ) );
     sinfo.cb = sizeof( sinfo );
@@ -131,4 +139,22 @@ unsigned SysChdir( char *dir )
     SysSetTitle( Title );
 
     return( retval );
+}
+
+int wait( int *status )
+{
+    // BartoszP - 18.08.2006
+    // *status != 0 means that process was created successfully
+    if( *status ) {
+        // Wait until child process exits.
+        WaitForSingleObject( pinfo.hProcess, INFINITE );
+        // Close process and thread handles. 
+        CloseHandle( pinfo.hProcess );
+        CloseHandle( pinfo.hThread );
+        // set *status to 0 to make pmake happy
+        *status = 0;
+    } else {
+        fprintf( stderr, "error\n" );
+    }
+    return 0;
 }
