@@ -189,8 +189,8 @@ so when debugging locally.
 .note /LOcalinfo=local_file
 .ix 'options' 'LOcalinfo'
 .ix 'LOcalinfo option'
-is used primarily in conjunction with the remote debugging
-capabilities of the debugger. It causes the debugger to use one or
+is used primarily, but not exclusively, in conjunction with the remote
+debugging capabilities of the debugger. It causes the debugger to use one or
 more local files as sources of debugging information if the right
 conditions are met. When the debugger observes that an executable file
 or Dynamic Link Library (DLL) is being loaded with the same name
