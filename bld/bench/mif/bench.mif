@@ -22,7 +22,7 @@ msvc_root=$(%MSVCDir)
 !endif
 
 !ifndef cflags_watcom
-cflags_watcom   = -otexan -d1 -zq -w3 -zm -fpi87 -fp5 -5s $(extra_w_opts)
+cflags_watcom   = -otexan -d1 -zq -w3 -zm -fpi87 -fp5 -6r $(extra_w_opts)
 # cflags_watcom = -obmilertan -s -d1 -zq -w3 $(extra_w_opts)
 !endif
 !ifndef cflags_msvc
