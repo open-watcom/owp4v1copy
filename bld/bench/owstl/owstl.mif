@@ -3,9 +3,7 @@
 .cpp: $(bench_dir)\owstl
 .h: $(bench_dir)\owstl
 
-cflags_watcom = -zq -d0 -xs -oabehkmrt -ol+ -oi+ -ei -s -zp8 -6s -fpi87 -fp6
-#cflags_watcom = -5s -zq -d2 -xs -ox
-#cflags_watcom = -5s -zq -d0 -xs -ox
+cflags_watcom = -zq -xs
 #extra_w_opts = -xs -d2
 extra_m_opts = -GX
 extra_cflags = -I$(bench_dir)\owstl -I$(bench_dir)\support
