@@ -153,8 +153,6 @@ int wait( int *status )
         CloseHandle( pinfo.hThread );
         // set *status to 0 to make pmake happy
         *status = 0;
-    } else {
-        fprintf( stderr, "error\n" );
-    }
+    } // else - there was no child process
     return 0;
 }
