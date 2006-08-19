@@ -478,25 +478,13 @@ static void     CompressIns( instruction *ins )
     default:
         break;
     }
-    /* When compressing instructions, look two instructions back and forward. This
-     * helps in cases where scheduler rearranged things but RISCification itself
-     * was not beneficial.
-     */
     next = ins->head.next;
     if( next->head.opcode != OP_MOV || next->operands[0]->n.class != N_REGISTER ) {
-        next = next->head.next;
-        if( next->head.opcode != OP_MOV || next->operands[0]->n.class != N_REGISTER
-         || InsOrderDependant( ins->head.next, next ) ) {
-            next = NULL;
-        }
+        next = NULL;
     }
     prev = ins->head.prev;
     if( prev->head.opcode != OP_MOV || prev->result->n.class != N_REGISTER ) {
-        prev = prev->head.prev;
-        if( prev->head.opcode != OP_MOV || prev->result->n.class != N_REGISTER
-         || InsOrderDependant( ins->head.prev, prev ) ) {
-            prev = NULL;
-        }
+        prev = NULL;
     }
 
     presult = NULL;
