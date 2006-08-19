@@ -110,6 +110,8 @@ static  name    **Enregister( instruction *ins )
     default:
         break;
     }
+    /* only RISCify CMPs, TESTs, and MOVs when optimizing for size */
+    if( PreferSize && !_OpIsCondition( ins->head.opcode ) ) return( FALSE );
     for( i = ins->num_operands-1; i >= 0; --i ) {
         switch( ins->operands[i]->n.class ) {
         case N_INDEXED:
@@ -206,6 +208,8 @@ static hw_reg_set       *FindRegister( instruction *ins )
             break;
         }
         if( regs == first ) return( NULL );
+        /* only use _AX when optimizing for size */
+        if( PreferSize ) return ( NULL );
     }
     return( curregs );
 }
