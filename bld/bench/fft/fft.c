@@ -4,10 +4,12 @@
 #include "timer.h"
 #include "report.h"
 
+#define FFT_SIZE (131072*2)
+
 #define REAL double
 
- REAL real[262145];
- REAL imag[262145];
+ REAL real[FFT_SIZE * 2];
+ REAL imag[FFT_SIZE * 2];
 
 void realifft( int n, double *real );
 void fft( int n, double *real, double *imag );
@@ -26,9 +28,9 @@ char **argv;
  double runtime;
 
  if (argc > 1) num = atoi(argv[1]);
- if (num == 0) num = 131072;
+ if (num == 0) num = FFT_SIZE;
 
- if (num > 131072)
+ if (num > FFT_SIZE)
    {
    printf("\n");
    printf("Error:\n");

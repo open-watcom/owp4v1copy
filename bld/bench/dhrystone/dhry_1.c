@@ -129,7 +129,7 @@ void main ()
     printf ("Program compiled without 'register' attribute\n");
     printf ("\n");
   }
-  Number_Of_Runs = 1000000;
+  Number_Of_Runs = 5000000;
   printf ("\n");
 
   printf ("Execution starts, %d runs through Dhrystone\n", Number_Of_Runs);
