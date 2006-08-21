@@ -4,6 +4,14 @@
 #include <stdlib.h>
 #include <limits.h>
 
+void useless( int i )
+{
+    if( i <= 2 )
+        i = 2;
+    else if( i != 5 )
+        i = 3;
+}
+
 void use( int i )
 {
 }

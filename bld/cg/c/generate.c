@@ -52,7 +52,8 @@ extern  void            AssgnMoreTemps( block_num );
 extern  void            FixEdges( void );
 extern  bool            CommonSex( bool );
 extern  bool            SetOnCondition( void );
-extern  void            BlockTrim( void );
+extern  bool            BlockTrim( void );
+extern  bool            DeadBlocks( void );
 extern  void            MakeFlowGraph( void );
 extern  void            InitRegTbl( void );
 extern  bool            LoopInvariant( void );
@@ -775,6 +776,16 @@ extern  void    Generate( bool routine_done )
     MakeLiveInfo();
     HaveLiveInfo = TRUE;
     AxeDeadCode();
+    /* AxeDeadCode() may have emptied some blocks. Run BlockTrim() to get rid
+     * of useless conditionals, then redo conflicts etc. if any blocks died.
+     */
+    if( BlockTrim() ) {
+        FreeConflicts();
+        NullConflicts( EMPTY );
+        FindReferences();
+        MakeConflicts();
+        MakeLiveInfo();
+    }
     FixIndex();
     FixSegments();
     FPRegAlloc();

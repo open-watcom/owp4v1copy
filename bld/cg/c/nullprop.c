@@ -43,7 +43,7 @@ extern  name            *AllocS32Const( signed_32 );
 extern void             KillCondBlk( block *blk, instruction *ins, int dest );
 extern  bool            SideEffect( instruction * );
 extern  pointer         SafeRecurse( pointer (* rtn)( pointer ), pointer arg );
-extern  void            BlockTrim( void );
+extern  bool            BlockTrim( void );
 
 extern  block           *HeadBlock;
 

@@ -41,18 +41,18 @@ extern    bool          BlocksUnTrimmed;
 extern    proc_def      *CurrProc;
 
 
-extern  void            TellScrapLabel(label_handle);
-extern  void            FreeIns(instruction*);
-extern  void            FreeABlock(block*);
-extern  instruction_id  Renumber(void);
+extern  void            TellScrapLabel( label_handle );
+extern  void            FreeIns( instruction * );
+extern  void            FreeABlock( block * );
+extern  instruction_id  Renumber( void );
 extern  void            RemoveEdge( block_edge * );
 
 /* forward declarations */
 extern  void    RemoveInputEdge( block_edge *edge );
-extern  void    BlockTrim( void );
+extern  bool    BlockTrim( void );
 
 static  instruction     *FindOneCond( block *blk )
-/**************************************************/
+/************************************************/
 {
     instruction *ins;
     instruction *cond;
@@ -378,7 +378,7 @@ static  bool    SameTarget( block *blk )
 }
 
 
-static  void    DoBlockTrim( void )
+static  bool    DoBlockTrim( void )
 /*********************************/
 {
     block       *blk;
@@ -386,8 +386,9 @@ static  void    DoBlockTrim( void )
     block       *target;
     instruction *ins;
     bool        change;
+    bool        any_change = FALSE;
 
-    for(;;) {
+    for( ;; ) {
         change = FALSE;
         MarkReachableBlocks();
         blk = HeadBlock->next_block;
@@ -430,17 +431,19 @@ static  void    DoBlockTrim( void )
         UnMarkBlocks();
         if( change == FALSE ) break;
         BlocksUnTrimmed = FALSE;
+        any_change = TRUE;
     }
     if( HeadBlock != NULL ) {
         HeadBlock->id = 1;
         blk = HeadBlock;
-        for(;;) {
+        for( ;; ) {
             next = blk->next_block;
             if( next == NULL ) break;
             next->id = blk->id + 1;
             blk = next;
         }
     }
+    return( any_change );
 }
 
 extern void KillCondBlk( block *blk, instruction *ins, int dest )
@@ -496,11 +499,14 @@ extern  bool    DeadBlocks( void )
 }
 
 
-extern  void    BlockTrim( void )
+extern  bool    BlockTrim( void )
 /*******************************/
 {
+    bool    change = FALSE;
+
     if( ( CurrProc->state.attr & ROUTINE_WANTS_DEBUGGING ) == 0 ) {
-        DoBlockTrim();
+        change = DoBlockTrim();
         Renumber();
     }
+    return( change );
 }
