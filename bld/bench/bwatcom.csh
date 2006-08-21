@@ -1,3 +1,4 @@
-bone $dev_dir\bench\w3r.results -3r-fpi
-bone $dev_dir\bench\w4r.results -4r-fpi
-bone $dev_dir\bench\w5r.results -5r-fp5
+bone $dev_dir\bench\watcom.0 -3r-fpi
+bone $dev_dir\bench\watcom.1 -4r-fpi
+bone $dev_dir\bench\watcom.2 -5r-fp5
+bone $dev_dir\bench\watcom.3 -6r-fp6

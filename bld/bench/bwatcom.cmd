@@ -1,4 +1,5 @@
 @echo %verbose% off
-call bone.cmd %devdir%\bench\w3r.results -3r-fpi
-call bone.cmd %devdir%\bench\w4r.results -4r-fpi
-call bone.cmd %devdir%\bench\w5r.results -5r-fp5
+call bone.cmd %devdir%\bench\watcom.0 -3r-fp3
+call bone.cmd %devdir%\bench\watcom.1 -4r-fp3
+call bone.cmd %devdir%\bench\watcom.2 -5r-fp5
+call bone.cmd %devdir%\bench\watcom.3 -6r-fp6
