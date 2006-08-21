@@ -64,9 +64,9 @@ extern long     time();
 #endif
 
 long            Begin_Time,
-                End_Time,
-                User_Time;
-float           Microseconds,
+                End_Time;
+double          User_Time,
+                Microseconds,
                 Dhrystones_Per_Second;
 
 /* end of variables for time measurement */
@@ -129,7 +129,7 @@ void main ()
     printf ("Program compiled without 'register' attribute\n");
     printf ("\n");
   }
-  Number_Of_Runs = 5000000;
+  Number_Of_Runs = 2000000;
   printf ("\n");
 
   printf ("Execution starts, %d runs through Dhrystone\n", Number_Of_Runs);
@@ -266,11 +266,11 @@ void main ()
 
   User_Time = TimerElapsed();
 
-  Microseconds = (float) User_Time * Mic_secs_Per_Second 
-		/ (float) Number_Of_Runs;
-  Dhrystones_Per_Second = (float) Number_Of_Runs / (float) User_Time;
+  Microseconds = (double) User_Time * Mic_secs_Per_Second 
+		/ (double) Number_Of_Runs;
+  Dhrystones_Per_Second = (double) Number_Of_Runs / (double) User_Time;
   printf ("Microseconds for one run through Dhrystone: ");
-  printf ("%6.1f \n", Microseconds);
+  printf ("%6.3f \n", Microseconds);
   printf ("Dhrystones per Second:                      ");
   printf ("%6.1f \n", Dhrystones_Per_Second);
   printf ("\n");

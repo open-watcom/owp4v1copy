@@ -14,7 +14,8 @@ p5_time ReadP5Timer( void );
     ".586" \
     "rdtsc" \
     value [eax edx];
-
+#else
+extern p5_time ReadP5Timer( void );
 #endif
 
 void UserTimerOn( user_timer *t )

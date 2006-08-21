@@ -21,16 +21,29 @@ host_cpu = 386
 msvc_root=$(%MSVCDir)
 !endif
 
+!ifeq compiler ibmc
+! ifndef %CXXMAIN
+!  error IBM VisualAge C++ environment not set
+! endif
+ibmc_root=$(%CXXMAIN)
+!endif
+
 !ifndef cflags_watcom
-cflags_watcom   = -otexan -d1 -zq -w3 -zm -fpi87 -fp5 -6r $(extra_w_opts)
+# Note: most optimization flags should be supplied via extra_w_opts
+cflags_watcom   = -ot -s -d1 -zq -w3 -fpi87 $(extra_w_opts)
+# cflags_watcom = -otexan -d1 -zq -w3 -zm -fpi87 -fp5 -6r $(extra_w_opts)
 # cflags_watcom = -obmilertan -s -d1 -zq -w3 $(extra_w_opts)
 !endif
 !ifndef cflags_msvc
 cflags_msvc     = -c -O2 -Ox -nologo $(extra_m_opts)
 !endif
+!ifndef cflags_ibmc
+cflags_ibmc     = -c -O+ -G5 -Q -Wpro- -Wcnd-
+!endif
 
 lflags_watcom   = debug all op quiet op map
 lflags_msvc     = -nologo
+lflags_ibmc     = -nologo
 
 !ifeq compiler watcom
 cc  = wcc386
@@ -47,8 +60,7 @@ cpp = wpp386
 
 deflink = wlink $(lflags_watcom) name $^. file { $< } lib $(bench_dir)\support\watcom\support.lib
 
-!else
-!ifeq compiler msvc
+!else ifeq compiler msvc
 .before:
         @set include=$(msvc_root)\include
 
@@ -59,9 +71,19 @@ deflink = wlink $(lflags_watcom) name $^. file { $< } lib $(bench_dir)\support\w
         $(msvc_root)\bin\cl $(cflags_msvc) $(extra_cflags) $(extra_defines) $[@
 
 deflink = $(msvc_root)\bin\link $(lflags_msvc) /out:$^. $(bench_dir)\support\msvc\support.lib $<
+!else ifeq compiler ibmc
+.c.obj:
+        $(ibmc_root)\bin\icc $(cflags_ibmc) $(extra_cflags) $(extra_defines) $[@
+
+.cpp.obj:
+        $(ibmc_root)\bin\icc $(cflags_ibmc) $(extra_cflags) $(extra_defines) $[@
+
+.asm.obj:
+        wasm -q $[@
+
+deflink = $(ibmc_root)\bin\ilink $(lflags_ibmc) /out:$^. $(bench_dir)\support\ibmc\support.lib $<
 !else
-# !error unknown compiler
-!endif
+!error unknown compiler
 !endif
 
 clean: .SYMBOLIC .EXPLICIT

@@ -14,7 +14,7 @@ void Report( char *bench_name, double elapsed_time )
     if( out_file == NULL ) {
 	out_file = "bench.out";
     }
-    fp = fopen( out_file, "at" );
+    fp = fopen( out_file, "a" );
     if( fp == NULL ) {
 	fprintf( stderr, "unable to open output file '%s' - %s\n",
 	    out_file, strerror( errno ) );
