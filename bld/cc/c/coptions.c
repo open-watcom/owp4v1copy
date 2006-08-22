@@ -424,7 +424,7 @@ static void SetGenSwitches( void )
 {
 #if _CPU == 8086 || _CPU == 386
     #if _CPU == 386
-        if( SwData.cpu == SW_CPU_DEF ) SwData.cpu = SW_CPU5;
+        if( SwData.cpu == SW_CPU_DEF ) SwData.cpu = SW_CPU6;
         if( SwData.fpu == SW_FPU_DEF ) SwData.fpu = SW_FPU3;
         if( SwData.mem == SW_M_DEF   ) SwData.mem = SW_MF;
         TargetSwitches |= USE_32;

@@ -49,7 +49,7 @@ extern  void            __UseEnglishCharSet(void);
 #elif _CPU == 386
   #define INIT_CG_OPTS  (CGOPT_M_FLAT | CGOPT_GS_FLOATS | CGOPT_ALIGN| \
                          CGOPT_DI_DWARF)
-  #define INIT_CPU_OPTS (CPUOPT_80586 | CPUOPT_FPI | CPUOPT_FP387)
+  #define INIT_CPU_OPTS (CPUOPT_80686 | CPUOPT_FPI | CPUOPT_FP387)
 #else
   #define INIT_CG_OPTS  (CGOPT_ALIGN| CGOPT_DI_DWARF|CGOPT_MANGLE)
   #define INIT_CPU_OPTS 0

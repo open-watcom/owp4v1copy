@@ -67,7 +67,7 @@ typedef enum {                  // flags to control memory model settings
 #else
     #define DEF_TARGET_SWITCHES CHEAP_POINTER|USE_32|FLAT_MODEL
     #define DEF_SWITCHES 0
-    #define DEFAULT_CPU CPU_586
+    #define DEFAULT_CPU CPU_686
     #define DEFAULT_FPU FPU_387
 #endif
 
