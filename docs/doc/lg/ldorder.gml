@@ -7,17 +7,17 @@ The "ORDER" directive is used to specify the order in which classes are
 placed into the output image, and the order in which segments are linked
 within a class. The directive can optionally also specify the starting
 address of a class or segment, control whether the segment appears in the
-output image, and facilitate copying of data from one segment to another. 
+output image, and facilitate copying of data from one segment to another.
 The "ORDER" Directive is primarily intended for embedded (ROMable) targets
 that do not run under an operating system, or for other special purpose
 applications. The format of the "ORDER" directive (short form "ORD")
-is as follows. 
+is as follows.
 .mbigbox
-    ORDER {CLNAME class_name [class_options]}+ 
+    ORDER {CLNAME class_name [class_options]}+
 ~b
-    class_options ::= [SEGADDR=n][OFFSET=n][copy_option][NOEMIT]{seglist} 
+    class_options ::= [SEGADDR=n][OFFSET=n][copy_option][NOEMIT]{seglist}
     copy_option ::= [COPY source_class_name]
-    seglist := {SEGMENT seg_name [SEGADDR=n][OFFSET=n][NOEMIT]}+ 
+    seglist := {SEGMENT seg_name [SEGADDR=n][OFFSET=n][NOEMIT]}+
 .embigbox
 .synote
 .*
@@ -56,7 +56,7 @@ simply skipped. If the location counter is already beyond the specified
 location, an error message is generated. This would likely be the result of
 having specified classes or segments in incorrect order, or not providing
 enough room for preceding ones. Without the "SEGADDR" and "OFFSET" options,
-classes and segment are placed in the the executable consecutively, possibly
+classes and segment are placed in the executable consecutively, possibly
 with a small gap in between if required by the alignment specified for the
 class.
 .*
@@ -107,28 +107,28 @@ required. The upper portion of memory is FLASH ROM. Code starts at address
 code.
 .*
 .millust begin
-order clname BEGDATA NOEMIT segaddr=0x80 segment _NULL segment _AFTERNULL 
-      clname DATA NOEMIT segment _DATA 
-      clname BSS 
+order clname BEGDATA NOEMIT segaddr=0x80 segment _NULL segment _AFTERNULL
+      clname DATA NOEMIT segment _DATA
+      clname BSS
       clname STACK
-      clname START segaddr=0xD000 
-      clname CODE segment BEGTEXT segment _TEXT 
+      clname START segaddr=0xD000
+      clname CODE segment BEGTEXT segment _TEXT
       clname ROMDATA COPY BEGDATA
       clname ROMDATAE
 .millust end
 .*
-DGROUP consists of classes "BEGDATA", "DATA", "BSS", "BSS2" and "STACK". 
+DGROUP consists of classes "BEGDATA", "DATA", "BSS", "BSS2" and "STACK".
 Note that these are marked "NOEMIT" (except for the BSS classes and STACK
 which are not initialized,
 and therefore have no data in them anyway) to prevent data from being
 placed in the loadfile at 0x80:0. The first class of DGROUP is given the
-fixed starting segment address of 0x80 (offset is assumed to be 0). 
+fixed starting segment address of 0x80 (offset is assumed to be 0).
 The segments "_NULL", "_AFTERNULL" and "_DATA" will be allocated consecutively
 in that order, and because they are part of DGROUP, will all share the same
 segment portio of the address, with offsets adjusted accordingly.
 .np
 The code section consists of classes "START" and "CODE". These are placed
-beginning at 0xD000:0. "START" contains only one segment, which will be 
+beginning at 0xD000:0. "START" contains only one segment, which will be
 first. It will have a CS value of 0xD000. Code has two segments, "BEGTEXT"
 and "_TEXT" which will be placed after "START", in that order, and packed into
 a single CS value of their own (perhaps 0xD001 in this example), unless they

@@ -51,7 +51,7 @@ If "trig.lib" does not exist in the current working directory, the
 If "trig.lib" does not exist in the "&pc.newmath" directory, the
 "&pc.math" directory will be searched.
 .np
-If the name of a library file appearing in a "LIBRARY" directive or the
+If the name of a library file appearing in a "LIBRARY" directive or
 the name of an object file appearing in a "LIBFILE" directive contains
 a path specification, only the specified path will be searched.
 .np
