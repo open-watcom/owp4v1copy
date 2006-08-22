@@ -69,7 +69,7 @@ static BOOL executeUntilStart( BOOL was_running )
             ( LPDWORD )&bytes );
     } else {
         // a trick to make app execute long enough to hit a breakpoint
-        PostMessage( HWND_TOPMOST, WM_TIMECHANGE, 0, 0 );
+        PostMessage( HWND_TOPMOST, WM_NULL, 0, 0 );
     }
 
     for( ;; ) {
