@@ -483,48 +483,45 @@ static void FreeLnames( void ) {
 }
 
 static void PrintNames( void ) {
-/***********************/
+/******************************/
     Lnamelist   *entry;
     unsigned_16 k;
+    size_t      col;
 
     if( Lnames != NULL ) {
         k = 0;
-        Output( CRLF INDENT INDENT "List of Lnames:" CRLF );
+        col = Output( CRLF INDENT INDENT "List of Lnames:" CRLF );
         entry = Lnames;
         for( ;; ) {
            if( entry == NULL ) {
                break;
            }
-           k++;
-           Output( "%u - '%s' %<", k, &(entry->Lname), 39u );
-           if( ! (k & 1) ) {
-               Output( CRLF );
+           if( ( col > 40 ) || (entry->LnameLen > 40 ) ) {
+               col = Output( CRLF );
            }
+           k++;
+           col = Output( "%u - '%s' %<", k, &(entry->Lname), 39u );
            entry = entry->next;
        }
-       if( (k & 1) ) {
-           Output( CRLF );
-       }
+       Output( CRLF );
     }
 
     if( Xnames != NULL ) {
         k = 0;
-        Output( CRLF INDENT INDENT "List of Xnames:" CRLF );
+        col = Output( CRLF INDENT INDENT "List of Xnames:" CRLF );
         entry = Xnames;
         for( ;; ) {
            if( entry == NULL ) {
                break;
            }
-           k++;
-           Output( "%u - '%s' %<", k, &(entry->Lname), 39u );
-           if( ! (k & 1) ) {
-               Output( CRLF );
+           if( ( col > 40 ) || (entry->LnameLen > 40 ) ) {
+               col = Output( CRLF );
            }
+           k++;
+           col = Output( "%u - '%s' %<", k, &(entry->Lname), 39u );
            entry = entry->next;
        }
-       if( (k & 1) ) {
-           Output( CRLF );
-       }
+       Output( CRLF );
     }
 }
 
