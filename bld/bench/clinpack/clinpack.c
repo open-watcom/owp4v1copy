@@ -62,7 +62,7 @@ PLEASE NOTE: You can also just 'uncomment' one of the options below.
 #define PREC "Double "
 #endif
 
-#define NTIMES 100
+#define NTIMES 500
 
 #ifdef ROLL
 #define ROLLING "Rolled "
