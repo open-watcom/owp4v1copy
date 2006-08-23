@@ -24,11 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description: Standard open/close dialog support.
 *
 ****************************************************************************/
 
+/* TODO: This file is mostly specific to MS Windows.  We need to make a
+ * platform neutral version and move the contents to the correct platform
+ * specific directories.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
