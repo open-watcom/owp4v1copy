@@ -188,7 +188,7 @@ void main()
    printf("   FLOPS C Program (Double Precision), V2.0 18 Dec 1992\n\n");
 
 			 /****************************/
-   loops = 15625;      /* Initial number of loops. */
+   loops = 15625;        /* Initial number of loops. */
 			 /*     DO NOT CHANGE!       */
 			 /****************************/
 
@@ -197,19 +197,19 @@ void main()
 /* T[1] references all timing results relative to   */
 /* one million loops.                               */
 /*                                                  */
-/* The program will execute from 31250 to 512000000 */
+/* The program will execute from 31250 to 128000000 */
 /* loops based on a runtime of Module 1 of at least */
-/* TLimit = 15.0 seconds. That is, a runtime of 15  */
+/* TLimit = 3.0 seconds. That is, a runtime of 3    */
 /* seconds for Module 1 is used to determine the    */
 /* number of loops to execute.                      */
 /*                                                  */
-/* No more than NLimit = 512000000 loops are allowed*/
+/* No more than NLimit = 128000000 loops are allowed*/
 /****************************************************/
 
    T[1] = 1.0E+06/(double)loops;
 
-   TLimit = 15.0;
-   NLimit = 512000000;
+   TLimit = 3.0;
+   NLimit = 128000000;
 
    piref = 3.14159265358979324;
    one   = 1.0;
