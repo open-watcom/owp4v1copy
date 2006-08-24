@@ -823,6 +823,7 @@ static  void    UpdateLoopLiveInfo( instruction *ins )
     for( ; ins->head.opcode != OP_BLOCK; ins = ins->head.next ) {
         HW_TurnOn( ins->head.live.regs, reg );
     }
+    HW_TurnOn( ins->head.live.regs, reg );
     for( blk = Loop; blk != NULL; blk = blk->u.loop ) {
         ins = (instruction *)&blk->ins;
         do {
