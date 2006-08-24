@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Insert FWAIT instructions as necessary.
 *
 ****************************************************************************/
 
@@ -120,6 +119,11 @@ extern  void    Wait8087( void ) {
     name        *last_fpres = NULL;
     bool        past_jump;
 
+    /* Prior to 386, FWAITs are always needed. On 386 and up, only when
+     * user explicitly asked for them.
+     */
+    if( _CPULevel( CPU_386 ) && _IsntTargetModel( GEN_FWAIT_386 ) ) return;
+
     blk = HeadBlock;
     while( blk != NULL ) {
         ins = blk->ins.hd.next;
@@ -184,5 +188,3 @@ extern  void    Wait8087( void ) {
         blk = blk->next_block;
     }
 }
-
-

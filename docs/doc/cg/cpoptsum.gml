@@ -857,6 +857,11 @@ allow FS register to be used (default for all but flat memory model)
 or not be used (default for flat memory model)
 :optref refid='SWzffp'.
 .*
+.note zfw
+:CMT. .ix 'options' 'zfw'
+generate FWAIT instructions on 386 and later
+:optref refid='SWzfw'.
+.*
 .note zg
 :CMT. .ix 'options' 'zg'
 output function declarations to .def (without typedef names)

@@ -1162,6 +1162,16 @@
 :usage. scope of for loop initializer extends beyond loop
 :jusage. FIX ME
 
+:option. zfw
+:target. i86
+:usage. generate FWAIT instructions on 386 and later
+:jusage.
+
+:option. zfw
+:target. 386
+:usage. generate FWAIT instructions
+:jusage.
+
 :option. zff
 :target. i86 386
 :enumerate. fs_peg

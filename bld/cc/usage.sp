@@ -241,6 +241,12 @@ Options:
 :endsegment
 -ze           enable extensions (i.e., near, far, export, etc.)
 -zev          enable arithmetic on void derived types
+:segment T386
+-zfw          generate FWAIT instructions
+:endsegment
+:segment Ti86
+-zfw          generate FWAIT instructions on 386 and later
+:endsegment
 :segment T386 | Ti86
 -zff          FS floats i.e. not fixed to a segment
 -zfp          FS is pegged to a segment

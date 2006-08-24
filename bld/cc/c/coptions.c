@@ -590,6 +590,9 @@ static void MacroDefs( void )
     if( TargetSwitches & NEED_STACK_FRAME ) {
         Define_Macro( "__SW_OF" );
     }
+    if( TargetSwitches & GEN_FWAIT_386 ) {
+        Define_Macro( "__SW_ZFW" );
+    }
 #endif
 #if _CPU == _AXP || _CPU == _PPC || _CPU == _MIPS
     if( GenSwitches & OBJ_ENDIAN_BIG ) {
@@ -1319,6 +1322,11 @@ static void Set_ZS( void )          { CompFlags.check_syntax = 1; }
 #if _CPU == 8086 || _CPU == 386
 static void Set_EQ( void )          { CompFlags.no_conmsg  = 1; }
 
+static void Set_ZFW( void )
+{
+    TargetSwitches |= GEN_FWAIT_386;
+}
+
 static void Set_ZU( void )
 {
     CompFlags.zu_switch_used = 1;
@@ -1702,6 +1710,9 @@ static struct option const CFE_Options[] = {
     { "zgp",    0,              Set_ZGP },
 #endif
     { "ze",     0,              Set_ZE },
+#if _CPU == 8086 || _CPU == 386
+    { "zfw",    0,              Set_ZFW },
+#endif
     { "zg",     0,              Set_ZG },
     { "zi",     0,              Set_ZI },
     { "zk0u",   0,              Set_ZK0U },
