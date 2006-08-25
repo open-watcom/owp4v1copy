@@ -8,7 +8,7 @@ SYNOPSIS
 
 DESCRIPTION
    Sed copies the named files (standard input default) to the standard
-output, edited according to a script of commands. 
+output, edited according to a script of commands.
    An -e option supplies a single edit command from the next argument;
 if there are several of these they are executed in the order in  which
 they appear. If there is just one -e option and no -f 's, the -e  flag
@@ -55,7 +55,7 @@ is a `/regular expression/', in the style of ed (1) modified thus:
     next input buffer  that matches the second. (If the second address
     is a number less than or equal to the line number first  selected,
     only one line is selected.) Once the second address is matched sed
-    starts looking for the first one again; thus,  any number of these 
+    starts looking for the first one again; thus,  any number of these
     ranges will be matched.
 
    The negation operator '!' can prefix a command to apply it to every
@@ -231,7 +231,7 @@ The following are completely new features:
    In addition,  sed's error messages have been made more specific and
 informative.
 
-   The implementation is also  significantly  smaller and  faster than 
+   The implementation is also  significantly  smaller and  faster than
 BSD 4.1 sed. It uses only the standard I/O library and exit.
 
 
@@ -246,4 +246,4 @@ altered or deleted.
 
 SEE ALSO
    ed(1), grep(1), awk(1), lex(1), regexp(5)
-
+
