@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Window class prototype
 *
 ****************************************************************************/
-
 
 #ifndef wwindow_class
 #define wwindow_class
@@ -156,7 +154,7 @@ WCLASS WWindow : public WObject {
         virtual bool contextHelp( bool ) { return( FALSE ); }
         void hookF1Key( bool );
 
-        /* mouse handling */
+        // mouse handling
         virtual bool WEXPORT mouseMove( int, int, WMouseKeyFlags );
         virtual bool WEXPORT leftBttnDn( int, int, WMouseKeyFlags ) { return( FALSE ); };
         virtual bool WEXPORT leftBttnUp( int, int, WMouseKeyFlags ) { return( FALSE ); };
