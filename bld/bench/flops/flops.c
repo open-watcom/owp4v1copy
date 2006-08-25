@@ -311,7 +311,7 @@ void main()
    }
    TimerOff();
    T[5] = T[1] * TimerElapsed();
-   Report( "flops(1)", T[5] );
+   Report( "flops(1)", TimerElapsed() );
    if ( T[5] < 0.0 ) T[5] = 0.0;
 
    sc   = (double)m;
@@ -333,7 +333,7 @@ void main()
    }
    TimerOff();
    T[6] = T[1] * TimerElapsed();
-   Report( "flops(2)", T[6] );
+   Report( "flops(2)", TimerElapsed() );
 
    T[7] = ( T[6] - T[5] ) / 7.0;                   /*********************/
    m  = (long)( sa * x  / sc );                    /*  PI Results       */
@@ -372,7 +372,7 @@ void main()
    }
    TimerOff();
    T[9]  = T[1] * TimerElapsed() - nulltime;
-   Report( "flops(3)", T[9] );
+   Report( "flops(3)", TimerElapsed() );
 
    u  = piref / three;
    w  = u * u;
@@ -412,7 +412,7 @@ void main()
    }
    TimerOff();
    T[12]  = T[1] * TimerElapsed() - nulltime;
-   Report( "flops(4)", T[12] );
+   Report( "flops(4)", TimerElapsed() );
 
    u  = piref / three;
    w  = u * u;
@@ -454,7 +454,7 @@ void main()
    }
    TimerOff();
    T[15]  = T[1] * TimerElapsed() - nulltime;
-   Report( "flops(5)", T[15] );
+   Report( "flops(5)", TimerElapsed() );
 
    u  = piref / three;
    w  = u * u;
@@ -496,7 +496,7 @@ void main()
    }
    TimerOff();
    T[18]  = T[1] * TimerElapsed() - nulltime;
-   Report( "flops(6)", T[18] );
+   Report( "flops(6)", TimerElapsed() );
 
    u  = piref / four;
    w  = u * u;
@@ -541,7 +541,7 @@ void main()
    }
    TimerOff();
    T[21] = T[1] * TimerElapsed() - nulltime;
-   Report( "flops(7)", T[21] );
+   Report( "flops(7)", TimerElapsed() );
 						   /*********************/
 						   /* Module 7 Results  */
 						   /*********************/
@@ -586,7 +586,7 @@ void main()
    }
    TimerOff();
    T[24]  = T[1] * TimerElapsed() - nulltime;
-   Report( "flops(8)", T[24] );
+   Report( "flops(8)", TimerElapsed() );
 
    u  = piref / three;
    w  = u * u;
