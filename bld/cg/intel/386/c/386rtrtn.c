@@ -153,7 +153,7 @@ rtn_info RTInfo[RT_NOP-BEG_RTNS+1] = {
 "__PON",  OP_CALL,       0,     RL_,            RL_,            RL_,
 "__POFF", OP_CALL,       0,     RL_,            RL_,            RL_,
 
-"__FlatToFar16",  OP_PTR_TO_FORIEGN,   U4,    RL_EAX,  RL_,     RL_EAX,
+"__FlatToFar16",  OP_PTR_TO_FOREIGN,   U4,    RL_EAX,  RL_,     RL_EAX,
 "__Far16ToFlat",  OP_PTR_TO_NATIVE,    U4,    RL_EAX,  RL_,     RL_EAX,
 "__Far16Func2",   OP_CALL,             U4,    RL_EAX,  RL_,     RL_EAX,
 "__Far16Cdecl2",  OP_CALL,             U4,    RL_EAX,  RL_,     RL_EAX,

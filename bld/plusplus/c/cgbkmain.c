@@ -1732,7 +1732,7 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
                           , T_POINTER );
                 break;
               case CO_POINTER_TO_FAR16:
-                CgExprPush( CGUnary( O_PTR_TO_FORIEGN, op1, T_POINTER )
+                CgExprPush( CGUnary( O_PTR_TO_FOREIGN, op1, T_POINTER )
                           , T_POINTER );
                 break;
               case CO_VOLATILE_TOP:

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Reduce memory references to one per instruction.
 *
 ****************************************************************************/
 
@@ -88,7 +87,7 @@ static byte NumTab[LAST_OP-FIRST_OP+1] = {
         1,                                      /* OP_SINH */
         1,                                      /* OP_TANH */
         1,                                      /* OP_PTR_TO_NATIVE */
-        1,                                      /* OP_PTR_TO_FORIEGN */
+        1,                                      /* OP_PTR_TO_FOREIGN */
         0,                                      /* OP_SLACK_19 */
         1,                                      /* OP_CONVERT*/
         1,                                      /* OP_LA*/

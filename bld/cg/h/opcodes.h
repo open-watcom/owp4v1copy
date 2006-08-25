@@ -90,9 +90,8 @@ FIRST_CSE_OP = FIRST_ARITH_OP,
             LAST_UNARY_IFUNC = OP_TANH,
             LAST_IFUNC = LAST_UNARY_IFUNC,
             OP_PTR_TO_NATIVE,
-            OP_PTR_TO_FORIEGN,
-            OP_PTR_TO_FOREIGN = OP_PTR_TO_FORIEGN,      // I hate spelling mistakes - BBB
-        LAST_UNARY_OP = OP_PTR_TO_FORIEGN,
+            OP_PTR_TO_FOREIGN,
+        LAST_UNARY_OP = OP_PTR_TO_FOREIGN,
     LAST_ARITH_OP = LAST_UNARY_OP,
 
     OP_SLACK_19,

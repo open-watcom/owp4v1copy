@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Turn expression tree into pseudo-assembly instructions.
 *
 ****************************************************************************/
 
@@ -564,7 +563,7 @@ extern  an      BGUnary( cg_op op, an left, type_def *tipe ) {
         break;
 #endif
 #if 0
-    case O_PTR_TO_FORIEGN:
+    case O_PTR_TO_FOREIGN:
     case O_PTR_TO_NATIVE:
         // no large model runtime libraries
         if( left->tipe->length != WORD_SIZE ) {

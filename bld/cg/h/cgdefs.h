@@ -79,8 +79,7 @@ typedef enum {
         O_TANH,
 
         O_PTR_TO_NATIVE, // oh! ouch! the 386 really hurts my head!
-        O_PTR_TO_FORIEGN,
-        O_PTR_TO_FOREIGN = O_PTR_TO_FORIEGN,
+        O_PTR_TO_FOREIGN,
         O_PARENTHESIS,  /* optimization control - NOP for now */
 
         O_CONVERT,

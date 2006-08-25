@@ -133,7 +133,7 @@ cg_op UnaryOps[  ] = {
     O_SINH,
     O_TANH,
     O_PARENTHESIS,
-    O_PTR_TO_FORIEGN,
+    O_PTR_TO_FOREIGN,
     O_PTR_TO_NATIVE,
     O_NOP
 };

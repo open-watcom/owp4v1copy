@@ -834,7 +834,7 @@ extern  tn  TGUnary( cg_op op, tn left, type_def *tipe )
         new = left;
         break;
     case O_PTR_TO_NATIVE:
-    case O_PTR_TO_FORIEGN:
+    case O_PTR_TO_FOREIGN:
         break;
     case O_STACK_ALLOC:
         break;
@@ -1477,7 +1477,7 @@ static  pointer  TNFindBase( pointer nod )
         if( !( node->tipe->attr & TYPE_POINTER ) ) return( NULL );
         switch( node->op ) {
         case O_PTR_TO_NATIVE:
-        case O_PTR_TO_FORIEGN:
+        case O_PTR_TO_FOREIGN:
         case O_CONVERT:
             return( SafeRecurse( TNFindBase, node->u.left ) );
         default:

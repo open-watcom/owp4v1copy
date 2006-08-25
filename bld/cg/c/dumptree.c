@@ -85,7 +85,7 @@ static char * Ops[] = {
         "<O_SINH>",
         "<O_TANH>",
         "<O_PTR_TO_NATIVE>",
-        "<O_PTR_TO_FORIEGN>",
+        "<O_PTR_TO_FOREIGN>",
         "<O_SLACK_19>",
         "<O_CONVERT>",
         "<O_INTERNAL_05>",

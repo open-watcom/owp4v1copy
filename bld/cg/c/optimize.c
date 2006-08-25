@@ -102,7 +102,7 @@ static  opcode_attr OpAttrs[LAST_OP-FIRST_OP+1] = {
         MOVEABLE +      SWAPABLE,       /* OP_SINH */
         MOVEABLE +      SWAPABLE,       /* OP_TANH */
         MOVEABLE +      SWAPABLE,       /* OP_PTR_TO_NATIVE  */
-        MOVEABLE +      SWAPABLE,       /* OP_PTR_TO_FORIEGN  */
+        MOVEABLE +      SWAPABLE,       /* OP_PTR_TO_FOREIGN  */
         FALSE,                          /* OP_SLACK */
 
         MOVEABLE +      SWAPABLE,       /* OP_CONVERT,*/

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Table of instruction opcodes/types.
+* Description:  Instruction opcode/type matrix to select generate tables.
 *
 ****************************************************************************/
 
@@ -78,7 +78,7 @@ _NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,UFUNS,UFUND,UFUNL,_N
 _NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,UFUNS,UFUND,UFUNL,_NYI_,/*OP_SINH */
 _NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,UFUNS,UFUND,UFUNL,_NYI_,/*OP_TANH*/
 _NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,/*OP_PTR_TO_NATIVE */
-_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,/*OP_PTR_TO_FORIEGN */
+_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,/*OP_PTR_TO_FOREIGN */
 _NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,_NYI_,/*OP_SLACK*/
 CONV ,CONV ,CONV ,CONV ,CONV ,CONV ,CONV ,CONV ,CONV ,CONV ,FCONV,FCONV,FCONV,FCONV,/*OP_CONVERT*/
 _NYI_,_NYI_,LA2  ,LA2  ,LA4  ,LA4  ,LA8  ,LA8  ,LA4  ,LA4  ,_NYI_,_NYI_,_NYI_,_NYI_,/*OP_LA*/

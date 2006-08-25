@@ -296,7 +296,7 @@ void EchoAPI              // EchoAPI ROUTINE
                       case_str( O_SINH )
                       case_str( O_TANH )
                       case_str( O_PTR_TO_NATIVE )
-                      case_str( O_PTR_TO_FORIEGN )
+                      case_str( O_PTR_TO_FOREIGN )
                       case_str( O_PARENTHESIS )
                       case_prt( O_CONVERT, <c= )
                       case_str( O_ROUND )
