@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include <ctype.h>
 
 #include "wwindow.hpp"
@@ -43,35 +42,38 @@
 #include "wbaritem.hpp"
 #include "wmetrics.hpp"
 
+/***************************************************************************/
+
 WObjectMap      WWindow::_idMap;
 WObjectMap      WWindow::_toolBarIdMap;
 WObjectMap      WWindow::_popupIdMap;
 unsigned        WWindow::_idMaster = 1;
 
+/***************************************************************************/
+
 WCLASS AccelKey : public WObject {
-    public:
-        AccelKey( WKeyCode key, WObject* client, bcbk callback );
-        ~AccelKey() {}
-        bool callClient( WKeyCode kc ) { return( (_client->*_callback)( kc ) ); }
+public:
+    AccelKey( WKeyCode key, WObject* client, bcbk callback );
+    ~AccelKey( void ) {}
 
-        WKeyCode        _key;
-        WObject*        _client;
-        bcbk            _callback;
+    bool callClient( WKeyCode kc ) { return( (_client->*_callback)( kc ) ); }
+
+    WKeyCode _key;
+    WObject  *_client;
+    bcbk     _callback;
 };
-
 
 AccelKey::AccelKey( WKeyCode key, WObject* client, bcbk callback )
     : _key( key )
     , _client( client )
-    , _callback( callback ) {
-/***************************/
-
+    , _callback( callback )
+{
 }
 
+/***************************************************************************/
 
-bool WEXPORT WWindow::processMsg( gui_event msg, void *parm ) {
-/*************************************************************/
-
+bool WEXPORT WWindow::processMsg( gui_event msg, void *parm )
+{
     gui_point           point;
     gui_coord           size;
     unsigned            control_id;
