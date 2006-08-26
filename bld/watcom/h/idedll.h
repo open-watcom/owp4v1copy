@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface for DLLs pluggable into the Watcom IDE (and wmake).
 *
 ****************************************************************************/
 
@@ -57,8 +56,8 @@ extern "C" {
 #define IDE_CUR_INFO_VER        6
 
 typedef unsigned short  IDEBool;
-typedef unsigned long   IDEDllHdl;
-typedef unsigned long   IDECBHdl;
+typedef void            *IDEDllHdl;
+typedef void            *IDECBHdl;
 
 struct IDEMsgInfo;
 typedef void (*BatchFilter)( void *cookie, const char *msg );
@@ -124,17 +123,17 @@ typedef struct IDEMsgInfo {             // IDE MESSAGE INFORMATION
                                         // Message Information Present
     unsigned long        flags;
                                         // Help Iinformation
-    char const          *helpfile;      // - name of help file
+    char const           *helpfile;     // - name of help file
     unsigned long        helpid;        // - help identifier
                                         // Message Information
-    const char          *msg;           // - message
-    char const          *src_symbol;    // - symbol
-    char const          *src_file;      // - source/link-file name
+    const char           *msg;          // - message
+    char const           *src_symbol;   // - symbol
+    char const           *src_file;     // - source/link-file name
     unsigned long        src_line;      // - source-file line
     unsigned long        src_col;       // - source-file column
     unsigned long        msg_no;        // - message number
     char                 msg_group[8];  // - message group
-}IDEMsgInfo;
+} IDEMsgInfo;
 
 #define __IdeMsgClass          \
   _IdeMsgClass( LINE_COL     ) \
@@ -186,9 +185,9 @@ typedef struct IDEMsgInfo2 {
     const char          *msg;
 
     const char          *helpfile;
-    unsigned long        helpid;        /* only used if helpfile is non NULL */
+    unsigned long       helpid;         /* only used if helpfile is non NULL */
 
-    IDEMsgClass          type;
+    IDEMsgClass         type;
     union {
         LineColErr      line_col;
         LineErr         line;
@@ -196,7 +195,7 @@ typedef struct IDEMsgInfo2 {
         SymbolFileErr   sym_file;
         SymbolErr       symbol;
     };
-}IDEMsgInfo2;
+} IDEMsgInfo2;
 
 
 typedef struct {
@@ -206,7 +205,7 @@ typedef struct {
     unsigned char       console_output;         //VERSION 3
     unsigned char       progress_messages;      //VERSION 4
     unsigned char       progress_index;         //VERSION 5
-}IDEInitInfo;
+} IDEInitInfo;
 
 typedef void IDEDataInfo;
 
@@ -254,13 +253,13 @@ typedef time_t  __stdcall (*IDEGetTimeStamp)( IDECBHdl hdl, IDEDataInfo *info );
 typedef IDEBool __stdcall (*IDEIsReadOnly)( IDECBHdl hdl, IDEDataInfo *info );
 typedef int     __stdcall (*IDEReadData)( IDECBHdl hdl, IDEDataInfo *info, char *buffer, int max_len );
 typedef IDEBool __stdcall (*IDEClose)( IDECBHdl hdl, IDEDataInfo *info );
-typedef size_t __stdcall (*IDEReceiveOutput)( IDECBHdl hdl, IDEDataInfo *info, void const *buffer, size_t len );
-typedef void __stdcall (*IDEReceiveIndex)( IDECBHdl hdl, unsigned index /* 0-99 */ );
+typedef size_t  __stdcall (*IDEReceiveOutput)( IDECBHdl hdl, IDEDataInfo *info, void const *buffer, size_t len );
+typedef void    __stdcall (*IDEReceiveIndex)( IDECBHdl hdl, unsigned index /* 0-99 */ );
 
 typedef IDEBool __stdcall (*IDEJavaSrcDepBegin)( IDECBHdl hdl );
 //the values passed in the code parameter of the IDEJavaSrcDepFile are
 //defined as the macros IDE_DEP_FILETYPE_...
-typedef IDEBool __stdcall (*IDEJavaSrcDepFile)( IDECBHdl hdl, char code, char const* filename );
+typedef IDEBool __stdcall (*IDEJavaSrcDepFile)( IDECBHdl hdl, char code, char const *filename );
 typedef IDEBool __stdcall (*IDEJavaSrcDepEnd)( IDECBHdl hdl );
 
 // structure used by version 1 DLL's
@@ -323,44 +322,44 @@ void IDEDLL_EXPORT IDEFreeHeap( void );
  * information structure
  **********************************************************/
 void IdeMsgInit                 // INITIALIZE MSG STRUCTURE
-    ( IDEMsgInfo* info          // - message information
+    ( IDEMsgInfo *info          // - message information
     , IDEMsgSeverity severity   // - message severity
-    , char const * msg )        // - the message
+    , char const *msg )         // - the message
 ;
 void IdeMsgSetHelp              // SET HELP INFORMATION
-    ( IDEMsgInfo* info          // - message information
-    , char const * file         // - help file
+    ( IDEMsgInfo *info          // - message information
+    , char const *file          // - help file
     , unsigned long id )        // - help id
 ;
 void IdeMsgSetLnkFile           // SET LINK FILE
-    ( IDEMsgInfo* info          // - message information
-    , char const * file )       // - file name
+    ( IDEMsgInfo *info          // - message information
+    , char const *file )        // - file name
 ;
 void IdeMsgSetLnkSymbol         // SET LINK SYMBOL
-    ( IDEMsgInfo* info          // - message information
-    , char const * sym )        // - symbol
+    ( IDEMsgInfo *info          // - message information
+    , char const *sym )         // - symbol
 ;
 void IdeMsgSetMsgGroup          // SET MESSAGE GROUP
-    ( IDEMsgInfo* info          // - message information
+    ( IDEMsgInfo *info          // - message information
     , char const *group )       // - group name
 ;
 void IdeMsgSetMsgNo             // SET MESSAGE NUMBER
-    ( IDEMsgInfo* info          // - message information
+    ( IDEMsgInfo *info          // - message information
     , unsigned msg_no )         // - message number
 ;
 void IdeMsgSetReadable          // MARK MSG AS "READABLE"
-    ( IDEMsgInfo* info )        // - message information
+    ( IDEMsgInfo *info )        // - message information
 ;
 void IdeMsgSetSrcColumn         // SET SOURCE COLUMN
-    ( IDEMsgInfo* info          // - message information
+    ( IDEMsgInfo *info          // - message information
     , unsigned col )            // - column number
 ;
 void IdeMsgSetSrcFile           // SET SOURCE FILE
-    ( IDEMsgInfo* info          // - message information
-    , char const * file )       // - file name
+    ( IDEMsgInfo *info          // - message information
+    , char const *file )        // - file name
 ;
 void IdeMsgSetSrcLine           // SET SOURCE LINE
-    ( IDEMsgInfo* info          // - message information
+    ( IDEMsgInfo *info          // - message information
     , unsigned line )           // - line number
 ;
 
@@ -371,8 +370,8 @@ void IdeMsgSetSrcLine           // SET SOURCE LINE
  *****************************************************/
 void IdeMsgFormat               // FORMAT A MESSAGE
     ( IDECBHdl handle           // - handle for requestor
-    , IDEMsgInfo const * info   // - message information
-    , char * buffer             // - buffer
+    , IDEMsgInfo const *info    // - message information
+    , char *buffer              // - buffer
     , unsigned bsize            // - buffer size
     , IDEMsgInfoFn displayer )  // - display function
 ;
@@ -383,7 +382,7 @@ void IdeMsgStartDll             // START OF FORMATING FOR A DLL (EACH TIME)
 #pragma pack()
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif
