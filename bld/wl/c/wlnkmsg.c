@@ -24,20 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linker message output.
 *
 ****************************************************************************/
 
 
-/*
- * MSG : linker message output
- *
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/types.h>
 #ifdef __WATCOMC__
 #include <process.h>
 #endif
