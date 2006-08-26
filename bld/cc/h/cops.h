@@ -75,7 +75,7 @@ typedef enum ops {
         OPR_PUSHSEG,    // push seg of sym_handle
         OPR_DUPE,       // dupe value
         OPR_CONVERT_PTR,// convert pointer
-	OPR_CONVERT_SEG,// convert pointer to segment value
+    OPR_CONVERT_SEG,// convert pointer to segment value
         OPR_NOP,        // no operation
         OPR_DOT,        // sym.field
         OPR_ARROW,      // sym->field
@@ -177,6 +177,8 @@ typedef enum    pointer_class{
     PTR_FUNC_INTERRUPT,
     PTR_NOT,
 }pointer_class;
+
+#define FAR16_PTRCLASS(cls)     ((cls == PTR_FAR16) || (cls == PTR_FUNC_FAR16))
 
 #define MAX_INLINE_DEPTH  3         // how deep to inline
 typedef enum{

@@ -410,7 +410,6 @@ TREEPTR SymLeaf( void )
     /* if( SizeOfCount == 0 ) */ /* causes defined but not referenced */
     /* always turning it on can cause referenced but not assigned */
     /* for the case:  int i;  j = sizeof(i);  */
-/*      sym.flags |= SYM_REFERENCED;            07-jun-89 */
     sym.flags |= SYM_REFERENCED;
     if( sym_handle == 0 ) {
         if( CurToken == T_LEFT_PAREN ) {
@@ -1900,7 +1899,7 @@ local TREEPTR GenNextParm( TREEPTR tree, TYPEPTR **plistptr )
                     if( tree->op.opr == OPR_PUSHINT ) {
                         if( tree->op.long_value == 0 ) { /* 22-sep-89 */
                             typ = parm_typ;
-                            tree = ParmAss( tree, typ );
+                            tree = FixupAss( tree, typ );
                         }
                     }
                 } else if( typ->decl_type != TYPE_POINTER ||/* 26-may-89 */
@@ -1911,7 +1910,7 @@ local TREEPTR GenNextParm( TREEPTR tree, TYPEPTR **plistptr )
                     case TYPE_UNION:
                         break;
                     default:
-                        tree = ParmAss( tree, typ );
+                        tree = FixupAss( tree, typ );
                         break;
                     }
                 }
@@ -1921,7 +1920,7 @@ local TREEPTR GenNextParm( TREEPTR tree, TYPEPTR **plistptr )
     } else {
         if( typ->decl_type == TYPE_FLOAT ) { // default conversions
             typ = GetType( TYPE_DOUBLE );
-            tree = ParmAss( tree, typ );
+            tree = FixupAss( tree, typ );
         } else if( typ->decl_type == TYPE_POINTER ) {   /* 17-nov-88 */
             typ2 = typ->object;
             SKIP_TYPEDEFS( typ );
@@ -1929,7 +1928,7 @@ local TREEPTR GenNextParm( TREEPTR tree, TYPEPTR **plistptr )
                 if( typ->u.p.decl_flags & FLAG_NEAR ) {
                     if( DataPtrSize == TARGET_FAR_POINTER ) {
                         typ = PtrNode( typ2, FLAG_NONE, SEG_DATA );
-                        tree = ParmAss( tree, typ );
+                        tree = FixupAss( tree, typ );
                     }
                 }
             }

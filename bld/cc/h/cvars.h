@@ -660,7 +660,7 @@ extern  TREEPTR UComplement(TREEPTR);
 extern  TREEPTR UMinus(TREEPTR);
 extern  DATA_TYPE DataTypeOf(TYPEPTR);
 extern  int     FuncPtr(TYPEPTR);
-extern  TREEPTR ParmAss( TREEPTR opnd, TYPEPTR newtyp );
+extern  TREEPTR FixupAss( TREEPTR opnd, TYPEPTR newtyp );
 extern  pointer_class   ExprTypeClass( TYPEPTR typ );
 extern  TREEPTR LCastAdj(  TREEPTR tree );
 

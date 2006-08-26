@@ -383,8 +383,8 @@ static void ReturnStmt( SYM_HANDLE func_result, struct return_info *info )
         SKIP_TYPEDEFS( func_type );
         tree = RValue( Expr() );
         ChkRetType( tree );
-        tree = BaseConv( func_type, tree );
         tree = BoolConv( func_type, tree );
+        tree = FixupAss( tree, func_type );
         tree = ExprNode( 0, OPR_RETURN, tree );
         tree->expr_type = func_type;
         tree->op.sym_handle = func_result;

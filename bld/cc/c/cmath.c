@@ -1427,7 +1427,7 @@ TREEPTR AsgnOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         op1_class = ExprTypeClass( typ );
         op2_class = ExprTypeClass( op2->expr_type );
         if( op1_class != op2_class ) {
-            if( op1_class == PTR_FAR16 || op2_class == PTR_FAR16 ) {  // if far16 pointer
+            if( FAR16_PTRCLASS( op1_class ) || FAR16_PTRCLASS( op2_class ) ) {  // if far16 pointer
                 op2 = ExprNode( NULL, OPR_CONVERT_PTR, op2 );
                 op2->op.oldptr_class = op2_class;
                 op2->op.newptr_class = op1_class;
@@ -1674,7 +1674,7 @@ convert:                                /* moved here 30-aug-89 */
                     new_class = ExprTypeClass( newtyp );
                     old_class = ExprTypeClass( typ );
                     if( new_class != old_class &&
-                    (new_class == PTR_FAR16  ||  old_class == PTR_FAR16) ) {    // foreign pointers
+                    (FAR16_PTRCLASS( new_class ) || FAR16_PTRCLASS( old_class )) ) { // foreign pointers
                         opnd = ExprNode( NULL, OPR_CONVERT_PTR, opnd );
                         opnd->op.oldptr_class = old_class;
                         opnd->op.newptr_class = new_class;
@@ -1707,8 +1707,10 @@ convert:                                /* moved here 30-aug-89 */
     return( opnd );
 }
 
-
-TREEPTR ParmAss( TREEPTR opnd, TYPEPTR newtyp )
+/* Fix up assignments - used for passing function arguments and also
+ * return values. Fixes up based pointers and other x86 weirdnesses.
+ */
+TREEPTR FixupAss( TREEPTR opnd, TYPEPTR newtyp )
 {
 //TODO check out base ptrs
     TYPEPTR             typ;
