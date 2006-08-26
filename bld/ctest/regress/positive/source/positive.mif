@@ -102,6 +102,7 @@ positive_tests = &
     enum04.$(exe) &
     expr01.$(exe) &
     expr02.$(exe) &
+    far1601.$(exe) &
     float01.$(exe) &
     float03.$(exe) &
     float04.$(exe) &
