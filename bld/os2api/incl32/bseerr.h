@@ -4,9 +4,11 @@
 
 #ifdef INCL_ERRORS
     #define INCL_DOSERRORS
+    #define INCL_ERROR_H
+    #define INCL_ERROR2_H
 #endif
 
-#ifdef INCL_DOSERRORS
+#if defined(INCL_DOSERRORS) || defined(INCL_ERROR_H)
 
 #define NO_ERROR                        0
 #define ERROR_INVALID_FUNCTION          1
@@ -46,10 +48,36 @@
 #define ERROR_WRONG_DISK                34
 #define ERROR_FCB_UNAVAILABLE           35
 #define ERROR_SHARING_BUFFER_EXCEEDED   36
+#define ERROR_CODE_PAGE_MISMATCHED      37
+#define ERROR_HANDLE_EOF                38
+#define ERROR_HANDLE_DISK_FULL          39
 
 #define ERROR_NOT_SUPPORTED             50
-
+#define ERROR_REM_NOT_LIST              51
+#define ERROR_DUP_NAME                  52
+#define ERROR_BAD_NETPATH               53
+#define ERROR_NETWORK_BUSY              54
+#define ERROR_DEV_NOT_EXIST             55
+#define ERROR_TOO_MANY_CMDS             56
+#define ERROR_ADAP_HDW_ERR              57
+#define ERROR_BAD_NET_RESP              58
+#define ERROR_UNEXP_NET_ERR             59
+#define ERROR_BAD_REM_ADAP              60
+#define ERROR_PRINTQ_FULL               61
+#define ERROR_NO_SPOOL_SPACE            62
+#define ERROR_PRINT_CANCELLED           63
+#define ERROR_NETNAME_DELETED           64
 #define ERROR_NETWORK_ACCESS_DENIED     65
+#define ERROR_BAD_DEV_TYPE              66
+#define ERROR_BAD_NET_NAME              67
+#define ERROR_TOO_MANY_NAMES            68
+#define ERROR_TOO_MANY_SESS             69
+#define ERROR_SHARING_PAUSED            70
+#define ERROR_REQ_NOT_ACCEP             71
+#define ERROR_REDIR_PAUSED              72
+#define ERROR_SBCS_ATT_WRITE_PROT       73
+#define ERROR_SBCS_GENERAL_FAILURE      74
+#define ERROR_XGA_OUT_MEMORY            75
 
 #define ERROR_FILE_EXISTS               80
 #define ERROR_DUP_FCB                   81
@@ -140,6 +168,11 @@
 #define ERROR_SWAPIO_FAILED             168
 #define ERROR_SWAPIN_FAILED             169
 #define ERROR_BUSY                      170
+
+#define ERROR_CANCEL_VIOLATION          173
+#define ERROR_ATOMIC_LOCK_NOT_SUPPORTED 174
+#define ERROR_READ_LOCKS_NOT_SUPPORTED  175
+
 #define ERROR_INVALID_SEGMENT_NUMBER    180
 #define ERROR_INVALID_CALLGATE          181
 #define ERROR_INVALID_ORDINAL           182
@@ -183,6 +216,8 @@
 #define ERROR_GETBUF_FAILED             220
 #define ERROR_FLUSHBUF_FAILED           221
 #define ERROR_TRANSFER_TOO_LONG         222
+#define ERROR_FORCENOSWAP_FAILED        223
+#define ERROR_SMG_NO_TARGET_WINDOW      224
 
 #define ERROR_NO_CHILDREN               228
 #define ERROR_INVALID_SCREEN_GROUP      229
@@ -246,6 +281,84 @@
 #define ERROR_ALREADY_POSTED            299
 #define ERROR_ALREADY_RESET             300
 #define ERROR_SEM_BUSY                  301
+
+#define ERROR_USER_DEFINED_BASE         0xFF00
+
+#define ERROR_I24_WRITE_PROTECT         0
+#define ERROR_I24_BAD_UNIT              1
+#define ERROR_I24_NOT_READY             2
+#define ERROR_I24_BAD_COMMAND           3
+#define ERROR_I24_CRC                   4
+#define ERROR_I24_BAD_LENGTH            5
+#define ERROR_I24_SEEK                  6
+#define ERROR_I24_NOT_DOS_DISK          7
+#define ERROR_I24_SECTOR_NOT_FOUND      8
+#define ERROR_I24_OUT_OF_PAPER          9
+#define ERROR_I24_WRITE_FAULT           10
+#define ERROR_I24_READ_FAULT            11
+#define ERROR_I24_GEN_FAILURE           12
+#define ERROR_I24_DISK_CHANGE           13
+#define ERROR_I24_WRONG_DISK            15
+#define ERROR_I24_UNCERTAIN_MEDIA       16
+#define ERROR_I24_CHAR_CALL_INTERRUPTED 17
+#define ERROR_I24_NO_MONITOR_SUPPORT    18
+#define ERROR_I24_INVALID_PARAMETER     19
+#define ERROR_I24_DEVICE_IN_USE         20
+#define ERROR_I24_QUIET_INIT_FAIL       21
+
+#define ALLOWED_FAIL        0x0001
+#define ALLOWED_ABORT       0x0002
+#define ALLOWED_RETRY       0x0004
+#define ALLOWED_IGNORE      0x0008
+#define ALLOWED_ACKNOWLEDGE 0x0010
+#define ALLOWED_DISPATCH    0x8000
+#define ALLOWED_REGDUMP     0x0020
+#define ALLOWED_DETACHED    ALLOWED_DISPATCH
+#define ALLOWED_RESERVED    ~(ALLOWED_FAIL|ALLOWED_ABORT|ALLOWED_RETRY|ALLOWED_IGNORE|ALLOWED_ACKNOWLEDGE)
+
+#define I24_OPERATION 0x01
+#define I24_AREA      0x06
+#define I24_CLASS     0x80
+
+#define ERRCLASS_OUTRES  1
+#define ERRCLASS_TEMPSIT 2
+#define ERRCLASS_AUTH    3
+#define ERRCLASS_INTRN   4
+#define ERRCLASS_HRDFAIL 5
+#define ERRCLASS_SYSFAIL 6
+#define ERRCLASS_APPERR  7
+#define ERRCLASS_NOTFND  8
+#define ERRCLASS_BADFMT  9
+#define ERRCLASS_LOCKED  10
+#define ERRCLASS_MEDIA   11
+#define ERRCLASS_ALREADY 12
+#define ERRCLASS_UNK     13
+#define ERRCLASS_CANT    14
+#define ERRCLASS_TIME    15
+
+#define ERRACT_RETRY  1
+#define ERRACT_DLYRET 2
+#define ERRACT_USER   3
+#define ERRACT_ABORT  4
+#define ERRACT_PANIC  5
+#define ERRACT_IGNORE 6
+#define ERRACT_INTRET 7
+
+#define ERRLOC_UNK    1
+#define ERRLOC_DISK   2
+#define ERRLOC_NET    3
+#define ERRLOC_SERDEV 4
+#define ERRLOC_MEM    5
+
+#define TC_NORMAL  0
+#define TC_HARDERR 1
+#define TC_GP_TRAP 2
+#define TC_SIGNAL  3
+#define TC_XCPT    4
+
+#endif
+
+#if defined(INCL_DOSERRORS) || defined(INCL_ERROR2_H)
 
 #define ERROR_INVALID_PROCID            303
 #define ERROR_INVALID_PDELTA            304
@@ -537,5 +650,70 @@
 #define ERROR_LF_RESUME_SUCCESS        2058
 #define ERROR_LF_REDIRECT_SUCCESS      2059
 #define ERROR_LF_REDIRECT_FAILURE      2060
+
+#define ERROR_SWAPPER_NOT_ACTIVE        32768
+#define ERROR_INVALID_SWAPID            32769
+#define ERROR_IOERR_SWAP_FILE           32770
+#define ERROR_SWAP_TABLE_FULL           32771
+#define ERROR_SWAP_FILE_FULL            32772
+#define ERROR_CANT_INIT_SWAPPER         32773
+#define ERROR_SWAPPER_ALREADY_INIT      32774
+#define ERROR_PMM_INSUFFICIENT_MEMORY   32775
+#define ERROR_PMM_INVALID_FLAGS         32776
+#define ERROR_PMM_INVALID_ADDRESS       32777
+#define ERROR_PMM_LOCK_FAILED           32778
+#define ERROR_PMM_UNLOCK_FAILED         32779
+#define ERROR_PMM_MOVE_INCOMPLETE       32780
+#define ERROR_UCOM_DRIVE_RENAMED        32781
+#define ERROR_UCOM_FILENAME_TRUNCATED   32782
+#define ERROR_UCOM_BUFFER_LENGTH        32783
+#define ERROR_MON_CHAIN_HANDLE          32784
+#define ERROR_MON_NOT_REGISTERED        32785
+#define ERROR_SMG_ALREADY_TOP           32786
+#define ERROR_PMM_ARENA_MODIFIED        32787
+#define ERROR_SMG_PRINTER_OPEN          32788
+#define ERROR_PMM_SET_FLAGS_FAILED      32789
+#define ERROR_INVALID_DOS_DD            32790
+#define ERROR_BLOCKED                   32791
+#define ERROR_NOBLOCK                   32792
+#define ERROR_INSTANCE_SHARED           32793
+#define ERROR_NO_OBJECT                 32794
+#define ERROR_PARTIAL_ATTACH            32795
+#define ERROR_INCACHE                   32796
+#define ERROR_SWAP_IO_PROBLEMS          32797
+#define ERROR_CROSSES_OBJECT_BOUNDARY   32798
+#define ERROR_LONGLOCK                  32799
+#define ERROR_SHORTLOCK                 32800
+#define ERROR_UVIRTLOCK                 32801
+#define ERROR_ALIASLOCK                 32802
+#define ERROR_ALIAS                     32803
+#define ERROR_NO_MORE_HANDLES           32804
+#define ERROR_SCAN_TERMINATED           32805
+#define ERROR_TERMINATOR_NOT_FOUND      32806
+#define ERROR_NOT_DIRECT_CHILD          32807
+#define ERROR_DELAY_FREE                32808
+#define ERROR_GUARDPAGE                 32809
+#define ERROR_SWAPERROR                 32900
+#define ERROR_LDRERROR                  32901
+#define ERROR_NOMEMORY                  32902
+#define ERROR_NOACCESS                  32903
+#define ERROR_NO_DLL_TERM               32904
+#define ERROR_CPSIO_CODE_PAGE_INVALID   65026
+#define ERROR_CPSIO_NO_SPOOLER          65027
+#define ERROR_CPSIO_FONT_ID_INVALID     65028
+#define ERROR_CPSIO_INTERNAL_ERROR      65033
+#define ERROR_CPSIO_INVALID_PTR_NAME    65034
+#define ERROR_CPSIO_NOT_ACTIVE          65037
+#define ERROR_CPSIO_PID_FULL            65039
+#define ERROR_CPSIO_PID_NOT_FOUND       65040
+#define ERROR_CPSIO_READ_CTL_SEQ        65043
+#define ERROR_CPSIO_READ_FNT_DEF        65045
+#define ERROR_CPSIO_WRITE_ERROR         65047
+#define ERROR_CPSIO_WRITE_FULL_ERROR    65048
+#define ERROR_CPSIO_WRITE_HANDLE_BAD    65049
+#define ERROR_CPSIO_SWIT_LOAD           65074
+#define ERROR_CPSIO_INV_COMMAND         65077
+#define ERROR_CPSIO_NO_FONT_SWIT        65078
+#define ERROR_ENTRY_IS_CALLGATE         65079
 
 #endif
