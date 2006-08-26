@@ -773,12 +773,13 @@ extern  bool    Hoistable( instruction *ins, block *blk )
     case OP_ROUND:
         if( ins->operands[0]->n.class != N_INDEXED ) return( FALSE );
         break;
+#if _TARGET & _TARG_RISC
+        // on RISC architectures, we want to hoist OP_LAs as they will
+        // usually turn into expensive lha, la style pairs in the encoder
+    case OP_LA:
+        break;
+#endif
     default:
-    #if _TARGET & _TARG_AXP
-        // for the Alpha, we want to hoist OP_LA as they will turn
-        // into expensive lha, la pairs in the encoder
-        if( ins->head.opcode == OP_LA ) break;
-    #endif
         if( ins->num_operands != 2 ) return( FALSE );
         if( ins->result == NULL ) return( FALSE );
         break;
@@ -799,6 +800,10 @@ static  bool    InvariantExpr( instruction *ins, block *blk )
     int         i;
 
     if( Hoistable( ins, blk ) == FALSE ) return( FALSE );
+    // For OP_LA, operand need not be invariant, only its address.
+    if( (ins->head.opcode == OP_LA) && (ins->operands[0]->n.class == N_MEMORY) ) {
+        return( TRUE );
+    }
     i = ins->num_operands;
     while( --i >= 0 ) {
         if( !InvariantOp( ins->operands[ i ] ) ) return( FALSE );
