@@ -128,7 +128,7 @@ cdsay .
     <CCCMD> startup/library/winnt.axp/_s/commode.obj        <RELROOT>/rel2/libaxp/nt/commode.obj
 
     <CCCMD> library/osi.386/ms_r/clib3r.lib                 <RELROOT>/rel2/lib386/osi/clib3r.lib
- 
+
     <CCCMD> library/linux.mps/_s/clib.lib                   <RELROOT>/rel2/libmps/linux/clib.lib
 
 [ BLOCK <1> clibqa ]
@@ -143,7 +143,7 @@ cdsay .
     cdsay ../..
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
 
-[ BLOCK ... ]
+[ BLOCK . . ]
 #==================
 
 cdsay <PROJDIR>
