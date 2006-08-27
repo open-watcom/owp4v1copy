@@ -16,12 +16,7 @@
 :INCLUDE cmanmac
 :INCLUDE libmacs
 :INCLUDE libfuns
-.if &version le 106 .do begin
-:INCLUDE liblist6
-.do end
-.el .do begin
 :INCLUDE liblist7
-.do end
 .*
 :GDOC.
 .*

@@ -4,6 +4,7 @@ int _bgetcmd( char *cmd_line, int len );
 .ixfunc2 '&Process' &func
 .ixfunc2 '&Direct' &func
 .funcend
+.*
 .desc begin
 The &func function causes the command line information, with the program
 name removed, to be copied to
@@ -27,26 +28,16 @@ unchanged (with the white space intact).
 This information can also be obtained by examining the vector of program
 parameters passed to the main function in the program.
 .desc end
+.*
 .return begin
-.if &version ge 106 .do begin
 The number of bytes required to store the entire command line,
 excluding the terminating null character, is returned.
-.do end
-.el .do begin
-If
-.arg cmd_line
-is
-.mono NULL
-then the number of bytes required to store the command line, excluding
-the terminating null character, is returned; otherwise the number of
-bytes stored in
-.arg cmd_line,
-excluding the terminating null character, is returned.
-.do end
 .return end
+.*
 .see begin
 .im seeproc &function.
 .see end
+.*
 .exmp begin
 .blktext begin
 Suppose a program were invoked with the command line
@@ -60,18 +51,18 @@ where that program contains
 #include <stdlib.h>
 #include <process.h>
 
-void main()
-  {
-    char *cmdline;
+void main( void )
+{
+    char  *cmdline;
     int   cmdlen;
 .exmp break
     cmdlen = _bgetcmd( NULL, 0 ) + 1;
     cmdline = malloc( cmdlen );
     if( cmdline != NULL ) {
-      cmdlen = _bgetcmd( cmdline, cmdlen );
-      printf( "%s\n", cmdline );
+        cmdlen = _bgetcmd( cmdline, cmdlen );
+        printf( "%s\n", cmdline );
     }
-  }
+}
 .blkcode end
 .exmp output
 .if '&machsys' eq 'QNX' .do begin
@@ -81,5 +72,7 @@ arg-1 ( my stuff ) here
   arg-1 ( my   stuff ) here
 .do end
 .exmp end
+.*
 .class WATCOM
+.*
 .system
