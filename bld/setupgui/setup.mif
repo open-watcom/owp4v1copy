@@ -6,7 +6,7 @@ setupgui_autodepends = .AUTODEPEND
 
 .ERROR:
 
-additional_cleanup = *.i
+additional_cleanup = *.i setup.inf
 
 !include cproj.mif
 !include defrule.mif
