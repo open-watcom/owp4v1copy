@@ -7,5 +7,6 @@ linkage    = dynamic
 mthreaded  = 1
 cpplib_release = 0
 subdir     = mf_rmtd.dll
+additional_cleanup  = export*.def
 define_library_include = $(cpplib_dir)/plib.mif
 !include $(cpplib_dir)/mrglib.mif
