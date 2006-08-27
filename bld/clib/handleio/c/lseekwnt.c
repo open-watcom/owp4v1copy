@@ -23,7 +23,7 @@
 *    governing rights and limitations under the License.*
 *  ========================================================================
 *
-* Description:  low level lseek without file extend for Windows NT
+* Description:  Low level lseek() without file extend for Win32.
 *
 ****************************************************************************/
 

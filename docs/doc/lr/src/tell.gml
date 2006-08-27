@@ -1,10 +1,11 @@
 .func tell
 #include <&iohdr>
-long tell( int &fd );
+&off_t tell( int &fd );
 .ixfunc2 '&OsIo' &func
 __int64 _telli64( int &fd );
 .ixfunc2 '&OsIo' _telli64
 .funcend
+.*
 .desc begin
 The &func function reports the current file position at the operating
 system level.
@@ -24,6 +25,7 @@ This value may be used in conjunction with the
 .kw _lseeki64
 function to reset the current file position.
 .desc end
+.*
 .return begin
 If an error occurs in &func, (&minus.1L) is returned.
 .np
@@ -35,9 +37,11 @@ Otherwise, the current file position is returned in a system-dependent
 manner.
 A value of 0 indicates the start of the file.
 .return end
+.*
 .see begin
 .im seeioos tell
 .see end
+.*
 .exmp begin
 #include <stdio.h>
 #include <sys&pc.stat.h>
@@ -47,18 +51,15 @@ A value of 0 indicates the start of the file.
 char buffer[]
         = { "A text record to be written" };
 .exmp break
-void main()
-  {
+void main( void )
+{
     int &fd;
     int size_written;
 
     /* open a file for output             */
     /* replace existing file if it exists */
     &fd = open( "file",
-.if '&machsys' eq 'PP' .do begin
-                O_WRONLY | O_CREAT | O_TRUNC,
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
                 O_WRONLY | O_CREAT | O_TRUNC,
 .do end
 .el .do begin
@@ -68,23 +69,25 @@ void main()
 .exmp break
     if( &fd != -1 ) {
 
-      /* print file position */
-      printf( "%ld\n", tell( &fd ) );
+        /* print file position */
+        printf( "%ld\n", tell( &fd ) );
 
-      /* write the text */
-      size_written = write( &fd, buffer,
-                            sizeof( buffer ) );
+        /* write the text */
+        size_written = write( &fd, buffer,
+                              sizeof( buffer ) );
 
-      /* print file position */
-      printf( "%ld\n", tell( &fd ) );
+        /* print file position */
+        printf( "%ld\n", tell( &fd ) );
 
-      /* close the file */
-      close( &fd );
+        /* close the file */
+        close( &fd );
     }
-  }
+}
 .exmp output
 0
 28
 .exmp end
+.*
 .class WATCOM
+.*
 .system

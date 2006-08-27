@@ -12,6 +12,10 @@
  #include <_comdef.h>
 #endif
 
+#ifndef __TYPES_H_INCLUDED
+ #include <sys/types.h>
+#endif
+
 :include pshpackl.sp
 
 :include timet.sp
@@ -116,8 +120,8 @@ _WCRTLINK extern int  _hdopen(int __handle,int __mode);
 _WCRTLINK extern int  isatty(int __handle);
 _WCRTLINK extern int  lock(int __handle,unsigned long __offset,
                            unsigned long __nbytes);
-_WCRTLINK extern long lseek(int __handle,long __offset,int __origin);
-_WCRTLINK extern long _lseek(int __handle,long __offset,int __origin);
+_WCRTLINK extern off_t lseek(int __handle,off_t __offset,int __origin);
+_WCRTLINK extern off_t _lseek(int __handle,off_t __offset,int __origin);
 _WCRTLINK extern int  open(const char *__path,int __oflag,...);
 _WCRTLINK extern int  _open(const char *__path,int __oflag,...);
 _WCRTLINK extern int  _open_osfhandle( long __osfhandle, int __flags );
@@ -127,7 +131,7 @@ _WCRTLINK extern int  read(int __handle,void *__buf,unsigned int __len);
 _WCRTLINK extern int  setmode(int __handle,int __mode);
 _WCRTLINK extern int  _setmode(int __handle,int __mode);
 _WCRTLINK extern int  sopen(const char *__path,int __oflag,int __shflag,...);
-_WCRTLINK extern long tell(int __handle);
+_WCRTLINK extern off_t tell(int __handle);
 _WCRTLINK extern int  umask(int __permission);
 _WCRTLINK extern int  unlink(const char *__path);
 _WCRTLINK extern int  unlock(int __handle,unsigned long __offset,

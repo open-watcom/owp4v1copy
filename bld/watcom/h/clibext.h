@@ -80,7 +80,7 @@ char *strlwr( char *string );
 char *strupr( char *string );
 char *strrev( char *string );
 int memicmp(const void *, const void *, size_t);
-long tell( int handle );
+off_t tell( int handle );
 long filelength(int handle);
 int eof( int fildes );
 char *getcmd( char *buffer );

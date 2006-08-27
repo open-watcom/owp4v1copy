@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of tell() for OS/2.
 *
 ****************************************************************************/
 
@@ -38,7 +37,7 @@
 #include <unistd.h>
 
 
-_WCRTLINK long int tell( int handle )
+_WCRTLINK off_t tell( int handle )
 {
     APIRET  rc;
     ULONG   fileptr;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of tell() for Win32.
 *
 ****************************************************************************/
 
@@ -55,7 +54,7 @@
 #ifdef __INT64__
  _WCRTLINK __int64 _telli64( int hid )
 #else
- _WCRTLINK long int tell( int hid )
+ _WCRTLINK off_t tell( int hid )
 #endif
 {
     DWORD               pos;

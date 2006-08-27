@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  low level lseek without file extend for OS/2
+* Description:  Low level lseek() without file extend for OS/2.
 *
 ****************************************************************************/
 

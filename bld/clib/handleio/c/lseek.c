@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  lseek wrapper with positive -> extend file check
+* Description:  Wrapper for lseek() positive -> extend file check.
 *
 ****************************************************************************/
 
@@ -40,7 +40,7 @@
 #include "seterrno.h"
 #include "lseek.h"
 
-_WCRTLINK long lseek( int handle, long offset, int origin )
+_WCRTLINK off_t lseek( int handle, off_t offset, int origin )
 {
     unsigned            iomode_flags;
 

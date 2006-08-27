@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  low level lseek without file extend for DOS and Windows
+* Description:  Low level lseek() without file extend for DOS and Windows.
 *
 ****************************************************************************/
 

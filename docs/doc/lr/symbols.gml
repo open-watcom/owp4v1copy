@@ -1,4 +1,5 @@
 .*
+
 .dm sf1 begin
 :SF font=1.&*.
 .dm sf1 end
@@ -28,7 +29,7 @@
 .*
 :set symbol="lang"      value="C".
 .*
-.* O/S specific definitions (DOS, OS/2, QNX, PenPoint etc.)
+.* O/S specific definitions (DOS, OS/2, QNX, etc.)
 .*
 .* define default values
 .*
@@ -49,22 +50,7 @@
 :set symbol="dirhdr"    value="direct.h".
 :set symbol="handle"    value="handle".
 :set symbol="fd"        value="handle".
-:set symbol="off_t"     value="long int".
-.*
-.if '&machsys' eq 'PP' .do begin
-:set symbol="target"    value="PP".
-:set symbol="hdrdir"    value="\penpoint\sdk\inc".
-:set symbol="hdrdirup"  value="\PENPOINT\SDK\INC".
-:set symbol="hdrsys"    value="\penpoint\sdk\inc\sys".
-:set symbol="iohdr"     value="unistd.h".
-:set symbol="doshdr"    value="i86.h".
-:set symbol="dirhdr"    value="dirent.h".
-:set symbol="handle"    value="descriptor".
-:set symbol="fd"        value="fildes".
 :set symbol="off_t"     value="off_t".
-:set symbol="farfnc"    value="0".
-:set symbol="unifnc"    value="1".
-.do end
 .*
 .if '&machsys' eq 'QNX' .do begin
 :set symbol="target"    value="QNX".
