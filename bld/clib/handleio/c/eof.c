@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of eof().
 *
 ****************************************************************************/
 
@@ -35,13 +34,10 @@
 #include <unistd.h>
 #include "rtcheck.h"
 
-extern  long    filelength(int);
-extern  long    tell(int);
-
 
 _WCRTLINK int eof( int handle )         /* determine if at EOF */
 {
-    long current_posn, file_len;
+    off_t   current_posn, file_len;
 
     __handle_check( handle, -1 );
     file_len = filelength( handle );
