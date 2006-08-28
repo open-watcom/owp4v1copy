@@ -1,31 +1,27 @@
 proj_name = plusplus
-
+ 
 plusplus_autodepends = .autodepend
-
+ 
 # Important! The C++ compiler modifies string literals
 suppress_zc = 1
-
+ 
 plusplus_nosymfile = 1
-
+ 
 # Extra files to delete on clean
-!ifdef refcomp
-additional_cleanup = *.u *.int y.out ytab.c ../bin/$(ref_name).exe
-!else
-additional_cleanup = *.u *.int y.out ytab.c
-!endif
-
+additional_cleanup = *.u *.int y.out ytab.c ../bin/$(ref_name).exe ../bin/$(ref_name).sym
+ 
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
-
+ 
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
 !include $(dwarf_dir)/dw/client.mif
-
+ 
 !include trmem.mif
-
+ 
 !include ../ppobjs.mif
-
+ 
 pre_obj_deps = &
     errmsgs1.gh &
     ic_mask.gh &
@@ -35,15 +31,15 @@ pre_obj_deps = &
     cmdlnpr1.gh &
     $(asminline_deps) &
     code$(target_cpu).gh
-
+ 
 # international data files
 pre_obj_deps += wpp$(target_cpu)01.int
-
+ 
 # QNX executables
 !ifeq host_os qnx
 pre_obj_deps += usage.u
 !endif
-
+ 
 inc_dirs = -I.
 #!ifeq plusplus_trmem 1
 #inc_dirs += -I$(trmem_dir)
@@ -56,7 +52,7 @@ inc_dirs += -I"$(cc_dir)/h"
 inc_dirs += -I"$(comp_cfg_dir)/h"
 inc_dirs += -I"$(fe_misc_dir)/h"
 inc_dirs += -I"$(brinfo_dir)/h"
-
+ 
 # final executable names
 ref_name = rpp$(target_cpu)
 !ifeq release 0
@@ -66,10 +62,10 @@ dll_name = wppd$(target_cpu)d
 exe_name = wcpp$(target_cpu)
 dll_name = wppd$(target_cpu)
 !endif
-
+ 
 comp_objs_exe = $(common_objs) $(exe_objs)
 comp_objs_dll = $(common_objs) $(dll_objs)
-
+ 
 !ifdef __LINUX__
 fesupp_hdr   = \"fesupp.h\"
 carvecpp_hdr = \"carvecpp.h\"
@@ -77,11 +73,11 @@ carvecpp_hdr = \"carvecpp.h\"
 fesupp_hdr   = "fesupp.h"
 carvecpp_hdr = "carvecpp.h"
 !endif
-
+ 
 !ifeq release 0
 extra_c_flags_axp = -si
 !endif
-
+ 
 extra_c_flags_osi   = -DIDE_PGM -D__OS2__
 extra_c_flags_dos   = -DIDE_PGM
 extra_c_flags_qnx   = -DIDE_PGM
@@ -90,7 +86,7 @@ extra_c_flags_linux = -DIDE_PGM
 extra_c_flags_os2   = -DIDE_PGM
 extra_c_flags_nt    = -DIDE_PGM
 !endif
-
+ 
 extra_c_flags_carve    = -Dheader=$(fesupp_hdr) -Dheader2=$(carvecpp_hdr)
 !ifneq host_os linux
 # Using -os generates ENTER/LEAVE and Linux is too brain damaged
@@ -124,18 +120,18 @@ extra_c_flags_srcfile  = $(extra_c_flags_srcfile_$(host_cpu))
 extra_c_flags_vbuf     = -Dheader=$(fesupp_hdr)
 extra_c_flags_vstk     = -Dheader=$(fesupp_hdr)
 extra_c_flags_wppdlldd = -DDLL_NAME=$(dll_name)
-
+ 
 #
 # wlink .EXE options
 #
 extra_l_flags     = OPTION map, symfile
-
+ 
 extra_l_flags_osi = OPTION stack=64k
 extra_l_flags_dos = OPTION stack=64k
 extra_l_flags_os2 = OPTION stack=128k
 extra_l_flags_qnx = OPTION stack=64k, offset=72k, priv=3, resource=usage.u
 extra_l_flags_nt  = OPTION stack=0x10000k COMMIT stack=32k
-
+ 
 #
 # wlink .DLL options
 #
@@ -146,10 +142,10 @@ extra_l_flags_dll     = OPTION map
 !else
 extra_l_flags_dll     = OPTION map, symfile
 !endif
-
+ 
 extra_l_flags_dll_nt  = initinstance terminstance OPTION offset=0x69000000
 extra_l_flags_dll_os2 = initinstance terminstance OPTION manyautodata
-
+ 
 # optencod options and targets for various hosts
 optencod_opt_qnx = -u usage.u
 optencod_targ_qnx = qnx
@@ -157,16 +153,16 @@ optencod_targ_linux = linux
 !ifeq release 0
 optencod_targ_dbg = dbg
 !endif
-
+ 
 # source search path
-
+ 
 .c: ../c;$(asminline_c);$(watcom_dir)/c;$(fe_misc_dir)/c;$(brinfo_dir)/c
-
+ 
 #
 # External libraries
 #
 xlibs = $(dwarf_dw_lib) $(asminline_lib)
-
+ 
 #
 # External dependencies
 #
@@ -179,29 +175,29 @@ external_dependencies += $(cg_debug_deps)
 !ifeq host_os osi
 external_dependencies += $(os2ldr)
 !endif
-
+ 
 #
 # Common dependencies
 #
-
+ 
 depends_exe = $(pre_obj_deps) $(comp_objs_exe) $(external_dependencies)
 depends_dll = $(pre_obj_deps) $(comp_objs_dll) $(external_dependencies)
 depends_drv = $(pre_obj_deps) $(drv_objs)
-
+ 
 # systems where version resources must be added to .DLL
 build_rc_nt_386 = nt
-
+ 
 !ifdef build_rc_$(host_os)_$(host_cpu)
 rc_objs = plusplus.rc
 !endif
-
-
+ 
+ 
 #
 # create standard compiler
 #
 target : .symbolic $(exe_name).exe
     @%null
-
+ 
 #
 # create reference compiler
 #
@@ -213,20 +209,20 @@ reference : .symbolic $(ref_name).exe
 !endif
     cp $(ref_name).sym ../bin/$(ref_name).sym
     rm -f $(ref_name).*
-
+ 
 #
 # output executables build rules
 #
 $(ref_name).exe : $(depends_exe) exe.lnk
     $(linker) name $@ @exe.lnk
-
+ 
 !ifdef plusplus_dll
-
+ 
 $(exe_name).exe : $(depends_drv) $(dll_name).lib drv.lnk
     $(linker) name $@ @drv.lnk
-
+ 
 !else
-
+ 
 $(exe_name).exe : $(depends_exe) exe.lnk
 !ifeq host_os osi
     $(linker) name $^&.rex @exe.lnk
@@ -240,18 +236,18 @@ $(exe_name).exe : $(depends_exe) exe.lnk
 !endif
 !endif
 !endif
-
+ 
 !endif
-
+ 
 $(dll_name).dll : $(rc_objs) $(depends_dll) dll.lnk
     $(linker) name $@ @dll.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)
     $(rc) $(rc_flags) $(inc_dirs_sys) plusplus.rc $@
 !endif
-
+ 
 $(dll_name).lib : $(dll_name).dll
     $(librarian) $(libflags) $@ +$[@
-
+ 
 # conventions:
 #
 # <xxx>.lnk
@@ -260,7 +256,7 @@ $(dll_name).lib : $(dll_name).dll
 #       drv = stub executable DLL driver
 #       dll = compiler DLL
 #
-
+ 
 #
 # compiler standalone executable
 #
@@ -276,7 +272,7 @@ exe.lnk : $(__MAKEFILES__)
 !else
     @%append $@ $(cg_libs)
 !endif
-
+ 
 #
 # compiler .DLL driver
 #
@@ -284,7 +280,7 @@ drv.lnk : $(__MAKEFILES__)
     @%write $@ $(lflags)
     @for %i in ($(drv_objs)) do @%append $@ file %i
     @%append $@ lib $(dll_name).lib
-
+ 
 #
 # .DLL version of compiler
 #
@@ -301,44 +297,44 @@ dll.lnk : $(__MAKEFILES__)
 !else
     @%append $@ $(cg_libs)
 !endif
-
+ 
 #
 # miscellaneous build rules
 #
 ./intlbin.exe: $(fe_misc_dir)/c/intlbin.c
     $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
-
+ 
 wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
     $[@ wpp$(target_cpu)
-
+ 
 #!ifeq release 1
 #msgencod_opts = -w
 #!endif
-
+ 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
     $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
-
+ 
 errmsgs1.gh errmsgs2.gh errlevel.gh errors01.int : ./msgencod.exe ../gml/messages.gml
     $[@ $(msgencod_opts) -i -q ../gml/messages.gml errmsgs1.gh errmsgs2.gh errlevel.gh
-
+ 
 ./findhash.exe: $(fe_misc_dir)/c/findhash.c
     $(bld_cl) $[@ $(wcl_util_opts)
-
+ 
 keywords.gh weights.gh : ./findhash.exe ../hash/plusplus.key ../hash/pc.key
     $[@ -q ../hash/plusplus.key ../hash/pc.key
-
+ 
 ./umktable.exe: ../c/umktable.c xlat.gh
     $(bld_cl) $[@ $(wcl_util_opts)
-
+ 
 yylex.gh : ./umktable.exe
     $[@ $@
-
+ 
 ./mktrans.exe: ../c/mktrans.c
     $(bld_cl) $[@ $(wcl_util_opts)
-
+ 
 xlat.gh : ./mktrans.exe ../h/ctokens.h keywords.gh ytab.gh
     $[@ $]@ $@
-
+ 
 ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
 !ifneq release 0
     $(byacc) -b -d -f -t -u $[@ $]@ >y.out
@@ -357,64 +353,64 @@ ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
     rm -f ytab.gh
     cp ytab.h ytab.gh
     rm -f ytab.h
-
+ 
 ./optencod.exe: $(fe_misc_dir)/c/optencod.c
     $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
-
+ 
 cmdlnpr1.gh cmdlnpr2.gh cmdlnusg.gh usage.u usage01.int : ./optencod.exe ../gml/options.gml
     $[@ -i -q $(optencod_opt_$(host_os)) $]@ cmdlnpr1.gh cmdlnpr2.gh cmdlnusg.gh $(target_cpu) $(optencod_targ_dbg) $(optencod_targ_$(host_os))
-
+ 
 ./icmask.exe: ../c/icmask.c
     $(bld_cl) $< $(wcl_util_opts)
-
+ 
 ic_mask.gh : ./icmask.exe ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
     $[@ ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
-
+ 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
     $(bld_cl) $[@ $(wcl_util_opts)
-
+ 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
     $[@ $(wasm_dir)/inlnops.tok $@
-
+ 
 ./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
     $(bld_cl) -D_VERSION=$(bld_ver) $[@ $(wcl_util_opts)
-
+ 
 !ifndef patch_level
 patch_level=0
 !endif
-
+ 
 plusplus.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
     $[@ $]@ $@ $$ $(dll_name).dll $(patch_level)
-
+ 
 !ifeq target_cpu axp
-
+ 
 codeaxp.gh :
         echo // Dummy file > $@
-
+ 
 !else ifeq target_cpu ppc
-
+ 
 codeppc.gh :
         echo // Dummy file > $@
-
+ 
 !else ifeq target_cpu mps
-
+ 
 codemps.gh :
         echo // Dummy file > $@
-
+ 
 !else  # Intel i86 or 386
-
+ 
 code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
         $]@ $[@ $@
 !endif
-
+ 
 target_as_axp = wasmaxp -zq -w4
 target_as_i86 = bwasm -zq -w4
 target_as_386 = bwasm -zq -3 -w4
 target_as_ppc = wasmppc -zq -w4
-
+ 
 xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
     $(target_as_$(target_cpu)) -fo=.obj -I$(watcom_h) $[@
     $(linker) format dos com op nodefault file code$(target_cpu).obj name $@ disable 1023,1080
-
+ 
 ./mkcode.exe: $(cc_dir)/a/mkcode.c
     $(bld_cl) $[@ $(wcl_util_opts)
