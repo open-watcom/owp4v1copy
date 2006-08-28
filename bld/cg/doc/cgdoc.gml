@@ -17,7 +17,8 @@
 .*
 :BODY.
 .*
-.if &e'&dohelp eq 1 .do begin
+:cmt. index is disabled
+.if &e'&dohelp eq 2 .do begin
 :exhelp
 :include file='&book..idx'
 :include file='&book..tbl'
@@ -167,7 +168,28 @@ The first instructions will be :HP2.INC BP:eHP2. if the routine uses a
 far return instruction, followed by :HP2.PUSH BP:eHP2. and :HP2.MOV
 BP,SP:eHP2..
 (ESP and EBP for 386 targets).
+:DT.LOAD_DS_DIRECTLY
+:DD.Generate code to load DS directly. By default, a call to __GETDS routine
+is generated.
+:DT.GEN_FWAIT_386
+:DD.Generate FWAIT instructions on 386 and later CPUs. The 386 never needs
+FWAIT for data synchronization, but FWAIT may still be needed for accurate
+exception reporting.
 :eDL.
+:DL tsize='2i'.
+:DTHD.RISC Switch
+:DDHD.Definition
+:DT.ASM_OUTPUT
+:DD.Print final pseudo-assembly on the console. Debug builds only.
+:DT.OWL_LOGGING
+:DD.Log calls to the Object Writer Library
+:DT.STACK_INIT
+:DD.Pre-initialize stack variables to a known bit pattern.
+:DT.EXCEPT_FILTER_USED
+:DD.Set when SEH (Structured Exception Handling) is used.
+:eDL
+:cmt. S/370 not maintained
+.if 0 eq 1 .do begin
 :DL tsize='2i'.
 :DTHD.370 Switch
 :DDHD.Definition
@@ -202,8 +224,9 @@ BP,SP:eHP2..
 :DT.I_MATH_INLINE
 :DD.???
 :eDL.
+.do end
 :I1.options
-:P.The supported proc_revion CPU values are:
+:P.The supported proc_revision CPU values are:
 :SL.
 :LI.CPU_86
 :LI.CPU_186
@@ -212,7 +235,7 @@ BP,SP:eHP2..
 :LI.CPU_486
 :LI.CPU_586
 :eSL.
-:P.The supported proc_revion FPU values are:
+:P.The supported proc_revision FPU values are:
 :SL.
 :LI.FPU_NONE
 :LI.FPU_87
@@ -223,7 +246,7 @@ BP,SP:eHP2..
 :LI.FPU_E387
 :LI.FPU_E586
 :eSL.
-:P.The supported proc_revion WEITEK values are:
+:P.The supported proc_revision WEITEK values are:
 :SL.
 :LI.WTK_NONE
 :LI.WTK_1167
@@ -255,7 +278,10 @@ enum {
   II_TARG_80386,
   II_TARG_STUB,
   II_TARG_CHECK,
-  II_TARG_370
+  II_TARG_370,
+  II_TARG_AXP,
+  II_TARG_PPC,
+  II_TARG_MIPS
 };
 :eXMP.
 .section void BEStart()
@@ -2252,6 +2278,8 @@ If the pointer is NULL or the hw_reg_set is EMPTY, the code generator
 uses the cg_switches to determine if a segment register is pointing at
 the segment or if it will have to load one.
 :eDL.
+:cmt. S/370 support not maintained
+.if 0 eq 1 .do begin
 :DL tsize='2i' break.
 :DTHD.370 Parameters
 :DDHD.Return value
@@ -2268,6 +2296,7 @@ the segment or if it will have to load one.
 :DT.CSECT_NAME
 :DD.???
 :eDL.
+.do end
 :DL tsize='2i' break.
 :DTHD.Call Class
 :DDHD.Meaning
@@ -2338,6 +2367,8 @@ figuring out whether a page reference is in the stack or not.
 This attribute forces the first reference to the stack (after a routine
 prologue has grown it) to be through the SS register.
 :eDL.
+:cmt. S/370 support not maintained
+.if 0 eq 1 .do begin
 :DL tsize='2i' break.
 :DTHD.370 Call Class
 :DDHD.Meaning
@@ -2350,6 +2381,7 @@ prologue has grown it) to be through the SS register.
 :DT.LINKAGE_CLINK
 :DD.WSL linkage.
 :eDL.
+.do end
 .chap Debugging Information
 These routines generate information about types, symbols, etc.
 .section extern void DBLineNum( uint no )
@@ -3067,6 +3099,35 @@ segment.
 :LI.HW_ESP
 :LI.HW_EBP
 :eSL.
+:P.The following registers are defined for the Alpha AXP target.
+:SL.
+:LI.HW_R0-HW_R31
+:LI.HW_D0-HW_D31
+:LI.HW_W0-HW_W31
+:LI.HW_B0-HW_B31
+:LI.HW_F0-HW_F31
+:eSL.
+:P.The following registers are defined for the PowerPC target.
+:SL.
+:LI.HW_R0-HW_R31
+:LI.HW_Q3-HW_Q29
+:LI.HW_D0-HW_D31
+:LI.HW_W0-HW_W31
+:LI.HW_B0-HW_B31
+:LI.HW_F0-HW_F31
+:eSL.
+:P.The following registers are defined for the MIPS32 target.
+:SL.
+:LI.HW_R0-HW_R31
+:LI.HW_Q2-HW_Q24
+:LI.HW_D0-HW_D31
+:LI.HW_W0-HW_W31
+:LI.HW_B0-HW_B31
+:LI.HW_F0-HW_F31
+:LI.HW_FD0-HW_FD30
+:eSL.
+:cmt. S/370 support not maintained
+.if 0 eq 1 .do begin
 :P.The following registers are defined for the 370 target.
 :SL.
 :LI.HW_G0
@@ -3096,6 +3157,7 @@ segment.
 :LI.HW_E0
 :LI.HW_E4
 :eSL.
+.do end
 .*
 .if &e'&dohelp eq 0 .do begin
 :BACKM.

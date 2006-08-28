@@ -563,7 +563,7 @@ book_src=guitool
 
 !else ifeq hbook cgdoc
 # cgdoc
-book_title=$(company) Code generator
+book_title=$(company) Code Generator
 book_objs=$(objs_cgdoc)
 book_incs=$(incs_cgdoc)
 book_src=cgdoc
