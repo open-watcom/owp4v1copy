@@ -132,8 +132,9 @@ cdsay .
     <CPCMD> <PROJDIR>/linux/arch/mips/*.h       <RELROOT>/rel2/lh/arch/mips/
     <CPCMD> <PROJDIR>/linux/arch/mips/sys/*.h   <RELROOT>/rel2/lh/arch/mips/sys/
 
-#    <CPCMD> <PROJDIR>/qnx/*.h*           <RELROOT>/rel2/qh/
-#    <CPCMD> <PROJDIR>/qnx/sys/*.h        <RELROOT>/rel2/qh/sys/
+[ IFDEF (os_qnx) <2*> ]
+    <CPCMD> <PROJDIR>/qnx/*.h*           <RELROOT>/rel2/qh/
+    <CPCMD> <PROJDIR>/qnx/sys/*.h        <RELROOT>/rel2/qh/sys/
 
 [ BLOCK <1> clean ]
 #==================

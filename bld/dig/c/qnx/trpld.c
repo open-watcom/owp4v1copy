@@ -24,13 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Trap module loader for QNX.
 *
 ****************************************************************************/
 
 
 #include <string.h>
+#include <stdio.h>      // only for sprintf()
 #include <stdlib.h>
 #include <stddef.h>
 #include <unistd.h>
@@ -112,7 +112,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
 }
 
 
-void KillTrap()
+void KillTrap( void )
 {
     TrapFuncs->fini_func();
     ReqFunc = NULL;

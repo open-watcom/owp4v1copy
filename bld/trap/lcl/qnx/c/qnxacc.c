@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Trap file for QNX interactive debugging.
 *
 ****************************************************************************/
 
@@ -60,7 +59,7 @@
 #include "trpimp.h"
 #include "trperr.h"
 #include "qnxcomm.h"
-#include "squish87.h"
+#include "misc7086.h"
 #include "mad.h"
 #include "madregs.h"
 
