@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Asynchronous debugging supplementary trap requests.
 *
 ****************************************************************************/
 
@@ -36,7 +35,7 @@
 #include "trptypes.h"
 #include <time.h>
 
-#pragma pack(push,1);
+#pragma pack( push, 1 )
 
 #define ASYNC_SUPP_NAME "Asynch"
 
@@ -111,6 +110,6 @@ typedef struct {
     unsigned_8          running;
 } _WCUNALIGNED async_poll_ret;
 
-#pragma pack(pop);
+#pragma pack( pop )
 
 #endif

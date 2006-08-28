@@ -145,7 +145,11 @@
     #undef      WANT_OVL
     #define     WANT_THREAD
     #undef      WANT_RFX
-    #define     TRAPENTRY TRAPFAR __saveregs
+    #ifdef __WATCOMC__
+        #define     TRAPENTRY TRAPFAR __saveregs
+    #else
+        #define     TRAPENTRY TRAPFAR
+    #endif
 #elif defined(__LINUX__)
     #undef      WANT_FILE_INFO  // TODO: Want this later for Linux!
     #undef      WANT_ENV        // TODO: Want this later for Linux!
