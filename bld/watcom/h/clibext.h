@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <sys/types.h>  // for off_t
 
 #define O_BINARY 0
 #define O_TEXT 0
