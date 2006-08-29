@@ -15,7 +15,7 @@ src = $(lib_misc_dir)/c/aliasgen.c
 !endif
 
 clean : .symbolic
-    -rm -f aliasgen.exe *.?bj *.err ../a/*.asm ../objs.mif
+    -rm -f aliasgen.exe *.?bj *.err ../a/*.asm
 
 realclean : .symbolic clean
     rm -f ../objs.mif ../a/*.asm
