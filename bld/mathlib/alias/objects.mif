@@ -1,4 +1,7 @@
 #                    d16c d16i d32c d32i n32c n32i wnc wni axp ntp op
 #====================================================================
-!include ../../../objs.mif
+# during 'clean' processing objs.mif does not exist
+!ifndef %aliasgen_clean
+!   include ../../../objs.mif
+!endif
 !include ../../../../objlist.mif
