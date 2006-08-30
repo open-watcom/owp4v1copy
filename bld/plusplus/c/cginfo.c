@@ -589,6 +589,10 @@ static AUX_INFO *getLangInfo(   // GET LANGUAGE INFO. FOR SYMBOL
         if( unmod_type->id == TYP_FUNCTION ) {
             if( unmod_type->u.f.pragma != NULL ) {
                 inf = unmod_type->u.f.pragma;
+                if( unmod_type->flag & TF1_INTRINSIC &&
+                    sym->name != NULL ) {
+                        inf = IntrinsicAuxLookup( sym );
+                }
             } else if( unmod_type->flag & TF1_INTRINSIC ) {
                 if( sym->name != NULL ) {
                     inf = IntrinsicAuxLookup( sym );
