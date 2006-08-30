@@ -36,7 +36,8 @@
 #if defined( __WATCOMC__ )
 #include <_comdef.h>
 #endif
-#pragma pack( push, 1 )
+
+#include "digpck.h"
 
 enum {
     REQ_CONNECT,                        /* 00 */
@@ -487,7 +488,7 @@ typedef struct {
     /* followed by whatever machine specific data is being returned */
 } machine_data_ret;
 
-#pragma pack( pop )
+#include "digunpck.h"
 
 #define TRPCORE_H
 
