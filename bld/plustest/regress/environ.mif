@@ -2,6 +2,7 @@
 # Test stream environment
 #
 
+# use plustest_* environment vars to override from command line
 #
 # configuration flags (default: flag symbol not defined)
 #
@@ -130,11 +131,15 @@
 # architectures -- 386, i86, axp
 #
 !ifndef arch
-!   ifdef __NTAXP__
-!       define arch axp
-!   else
-!       define arch 386
-!   endif
+!  ifdef %plustest_arch
+!      define arch $+$(%plustest_arch)$-
+!  else
+!      ifdef __NTAXP__
+!          define arch axp
+!      else
+!          define arch 386
+!     endif
+!  endif
 !endif
 
 #
