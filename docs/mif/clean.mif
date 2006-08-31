@@ -10,7 +10,7 @@ clean : .SYMBOLIC
  @if exist *.ipf rm -f *.ipf
  @if exist *.inf rm -f *.inf
  @if exist *.tmp rm -f *.tmp
-
+ 
  @if exist *.ib rm -f *.ib
  @if exist *.blt rm -f *.blt
  @if exist *.rtf rm -f *.rtf
@@ -29,8 +29,14 @@ clean : .SYMBOLIC
  @if exist *.lay rm -f *.lay
  @if exist *.tim rm -f *.tim
  @if exist *.dat rm -f *.dat
-
+ 
 # useful to delete all windows .gid
  @if exist *.gid @attrib -h *.gid
  @if exist *.gid rm -f *.gid
-
+ 
+# delete generated headers for online help
+ @if exist $(guitools_dir)\ib\*.h  rm $(guitools_dir)\ib\*.h 
+ @if exist $(guitools_dir)\os2\*.h rm $(guitools_dir)\os2\*.h 
+ @if exist $(guitools_dir)\win\*.h rm $(guitools_dir)\win\*.h  
+ @if exist $(guitools_dir)\win95\*.h rm $(guitools_dir)\win95\*.h 
+ 
