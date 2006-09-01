@@ -44,8 +44,8 @@ char *OptEnvVar = "tr";
 static const char *usageTxt[] = {
     "Usage: tr [-?bcds] string1 [string2]",
     "\tstring1     : characters to translate",
-    "\tstring2     : chars from string1 are translated into the corresponding"
-    "\t\t\t      char from string2",
+    "\tstring2     : chars from string1 are translated into the corresponding",
+    "\t\t      char from string2",
     "\tOptions: -? : print this list",
     "\t\t -b : treat input stream as binary",
     "\t\t -c : complement string1 w.r.t the universe of ascii chars",
