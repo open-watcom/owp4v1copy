@@ -22,9 +22,9 @@ test_cflags_386 = -d2-br-xs
 test_cflags_i86 = -d2-xs
 test_cflags_axp = -d2-xs
 !else
-test_cflags_386 = -os-d1-xst
-test_cflags_i86 = -os-d1-xst
-test_cflags_axp = -os-d1-xst
+test_cflags_386 = -os-d2-xst
+test_cflags_i86 = -os-d2-xst
+test_cflags_axp = -os-d2-xst
 !endif
 
 test_cflags_386 += -zq-wx-wcd433-fpi87-fp5-mf

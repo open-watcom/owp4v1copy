@@ -34,6 +34,7 @@
 #include <string>
 #include <vector>
 
+#include "itcat.h"
 #include "sanity.cpp"
 
 bool construction_test( )
@@ -95,28 +96,65 @@ bool assign_test( )
     std::vector< int > v2( 5, 2);
     std::vector< int > v3(15, 3);
 
+    // Make destination smaller.
     v1 = v2;
     if( v1.size( ) != 5  || INSANE( v1 ) ) FAIL;
     for( std::vector< int >::size_type i = 0; i < v1.size( ); ++i ) {
         if( v1.at( i ) != 2 ) FAIL;
     }
 
+    // Make destination bigger.
     v1 = v3;
     if( v1.size( ) != 15 || INSANE( v1 ) ) FAIL;
     for( std::vector< int >::size_type i = 0; i < v1.size( ); ++i ) {
         if( v1.at( i ) != 3 ) FAIL;
     }
 
+    // Make destination smaller.
     v1.assign( 10, 4 );
     if( v1.size( ) != 10 || INSANE( v1 ) ) FAIL;
     for( std::vector< int >::size_type i = 0; i < v1.size( ); ++i ) {
         if( v1.at( i ) != 4 ) FAIL;
     }
 
+    // Make destination bigger.
     v1.assign( 20, 5 );
     if( v1.size( ) != 20 || INSANE( v1 ) ) FAIL;
     for( std::vector< int >::size_type i = 0; i < v1.size( ); ++i ) {
         if( v1.at( i ) != 5 ) FAIL;
+    }
+
+    // Avoid using the template assign member.
+    std::vector< std::string > s1(10, "Hello");
+
+    // Make destination smaller.
+    s1.assign( 10, "There" );
+    if( s1.size( ) != 10 || INSANE( s1 ) ) FAIL;
+    for( std::vector< int >::size_type i = 0; i < s1.size( ); ++i ) {
+        if( s1.at( i ) != "There" ) FAIL;
+    }
+
+    // Make destination bigger.
+    s1.assign( 20, "World" );
+    if( s1.size( ) != 20 || INSANE( s1 ) ) FAIL;
+    for( std::vector< int >::size_type i = 0; i < s1.size( ); ++i ) {
+        if( s1.at( i ) != "World" ) FAIL;
+    }
+
+    // Try the template assign member in the "natural" way.
+    int array[4] = { 0, 1, 2, 3 };
+    v1.assign(InpIt<int>(array), InpIt<int>(array + 4));
+    if( v1.size( ) != 4 || INSANE( v1 ) ) FAIL;
+    for( std::vector< int >::size_type i = 0; i < v1.size( ); ++i ) {
+        if( v1.at( i ) != i ) FAIL;
+    }
+
+    // Make sure this does the right thing.
+    std::vector< double > d1(10, 3.14);
+    d1.assign( 5, 2.718 );
+    if( d1.size( ) != 5 || INSANE( s1 ) ) FAIL;
+    for( std::vector< int >::size_type i = 0; i < d1.size( ); ++i ) {
+        if( d1.at( i ) != 2.718 ) FAIL;
     }
 
     return( true );
@@ -301,6 +339,21 @@ bool insert_multiple_test( )
     return( true );
 }
 
+bool insert_range_test( )
+{
+    typedef std::vector< int >::size_type size_type;
+    typedef std::vector< int >::iterator iterator;
+
+    int array[4] = { 1, 2, 3, 4 };
+    std::vector< int > v1;
+    v1.insert( v1.begin( ), array, array + 4 );
+    if( v1.size( ) != 4 || INSANE( v1 ) ) FAIL;
+    for( size_type i = 0; i < v1.size( ); ++i ) {
+        if( v1[i] != i + 1 ) FAIL;
+    }
+    return( true );
+}
+
 bool erase_test( )
 {
     std::vector< int > v1;
@@ -446,10 +499,11 @@ int main( )
         if( !iterator_test( )        || !heap_ok( "t06" ) ) rc = 1;
         if( !insert_single_test( )   || !heap_ok( "t07" ) ) rc = 1;
         if( !insert_multiple_test( ) || !heap_ok( "t08" ) ) rc = 1;
-        if( !erase_test( )           || !heap_ok( "t09" ) ) rc = 1;
-        if( !relational_test( )      || !heap_ok( "t10" ) ) rc = 1;
-        if( !swap_test( )            || !heap_ok( "t11" ) ) rc = 1;
-        if( !clear_test( )           || !heap_ok( "t12" ) ) rc = 1;
+        if( !insert_range_test( )    || !heap_ok( "t09" ) ) rc = 1;
+        if( !erase_test( )           || !heap_ok( "t10" ) ) rc = 1;
+        if( !relational_test( )      || !heap_ok( "t11" ) ) rc = 1;
+        if( !swap_test( )            || !heap_ok( "t12" ) ) rc = 1;
+        if( !clear_test( )           || !heap_ok( "t13" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

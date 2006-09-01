@@ -33,6 +33,10 @@
   #include <stdexcept>
 #endif
 
+#ifndef _TYPE_TRAITS_INCLUDED
+  #include <type_traits>
+#endif
+
 namespace std {
 
 template<class Type, class Allocator = allocator< Type > >
@@ -94,6 +98,74 @@ public:
     void     clear( );
 
     bool     _Sane( ) const;  // Check invariants.
+
+:: Template Members
+:: ----------------
+:: These must be inline because the compiler does not currently support
+:: the syntax of non-inline template member declarations.
+
+    template< class InputIterator >
+    void assign( InputIterator first, InputIterator last )
+    {
+        helper_assign( first, last, tr1::is_integral<InputIterator>::type() );
+    }
+
+    template< class Integral >
+    void helper_assign( Integral count,
+                        Integral value,
+                        tr1::true_type )
+    {
+        vector temp;
+        for( Integral i = 0; i < count; ++i )
+            temp.push_back( value );
+        swap( temp );
+    }
+
+    template< class InputIterator >
+    void helper_assign( InputIterator first,
+                        InputIterator last,
+                        tr1::false_type )
+    {
+        vector temp;
+        while( first != last ) {
+            temp.push_back( *first );
+            ++first;
+        }
+        swap( temp );
+    }
+    
+    template< class InputIterator >
+    void insert(iterator position, InputIterator first, InputIterator last )
+    {
+        helper_insert( position,
+                       first,
+                       last,
+                       tr1::is_integral<InputIterator>::type( ) );
+    }
+    
+    template< class Integral >
+    void helper_insert( iterator position,
+                        Integral count,
+                        Integral value,
+                        tr1::true_type )
+    {
+        insert( position,
+                static_cast<size_type>( count ),
+                static_cast<const Type &>( value ) );
+    }
+    
+    template< class InputIterator >
+    void helper_insert( iterator position,
+                        InputIterator first,
+                        InputIterator last,
+                        tr1::false_type )
+    {
+        while( first != last ) {
+            insert( position, *first );
+            ++position;
+            ++first;
+        }
+    }
 
 private:
     // 1. buffer has size buf_length.
@@ -372,7 +444,9 @@ template< class Type, class Allocator >
 void vector< Type, Allocator >::resize( size_type n, Type c )
 {
     if( n > vec_length )
-        insert( end( ), n - vec_length, c );
+        insert( end( ),
+                static_cast<size_type>(n - vec_length),
+                static_cast<const Type &>( c ) );
     else if ( n < vec_length )
         erase( begin( ) + n, end( ) );
 }
@@ -528,8 +602,8 @@ void vector< Type, Allocator >::pop_back( )
     --vec_length;
 }
 
-// insert( iterator const Type & )
-// *******************************
+// insert( iterator, const Type & )
+// ********************************
 template< class Type, class Allocator >
 vector< Type, Allocator >::iterator
     vector< Type, Allocator >::insert( iterator position, const Type &x )
