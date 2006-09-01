@@ -112,3 +112,46 @@ cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a -ldl
 
 !endif
 !endif
+
+#common definitions for targeting QNX Neutrino
+!ifeq host_os nto
+!ifdef bootstrap
+
+cc = qcc
+cpp = qcc
+cl = $(cc)
+!ifdef __QNX__
+bld_incs = $(bld_extra_incs) -I$(watcom_dir)/h
+bld_cl = $(cc) $(bld_incs)
+bld_cc = $(cc) $(bld_incs)
+bld_link = $(cc)
+!endif
+librarian += -fa
+
+cppflags_386  = -D_M_IX86 -D__386__
+cppflags_ppc  = -D__PPC__
+cppflags_mips = -D__MIPS__ -Umips
+
+# $(inc_dirs_lang_$(host_os)) must be defined to override default OW headers
+inc_dirs_lang_nto =
+inc_dirs_lang_osi =
+
+# Warning flags: all enabled except the ones that have no use besides annoy people
+cflags_wng = -Wall -Wno-switch
+
+cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__QNX__ &
+-D__SMALL__ -DUNIX -D__FLAT__ $(cppflags_$(host_cpu)) &
+-D_WCUNALIGNED="__attribute__((packed))"
+cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -funsigned-char -fno-asm -pipe -O -o $@
+
+!ifdef __QNX__
+# options for single source utility compilations
+wcl_util_opts = -funsigned-char $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
+!endif
+
+# options for linking via cc
+clflags = -o $@
+cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a -ldl 
+
+!endif
+!endif

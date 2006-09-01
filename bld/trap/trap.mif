@@ -22,6 +22,7 @@ targ_x86_linux = $(name)cli.exe
 targ_x86_win   = $(name)cliw.exe
 targ_x86_dos   = $(name)cli.exe
 targ_x86_nt    = $(name)cli.exe
+targ_x86_nto   = $(name)cli.exe
 
 targ_axp_nt    = $(name)cli.exe
 
@@ -115,6 +116,11 @@ targ_x86_linux  = $(name).trp
 targ_x86_win    = $(name).dll
 targ_x86_dos    = $(name).trp
 targ_x86_nt     = $(name).dll
+!ifdef bootstrap
+targ_x86_nto    = $(name).so
+!else
+targ_x86_nto    = $(name).trp
+!endif
 
 targ_axp_nt     = $(name).dll
 

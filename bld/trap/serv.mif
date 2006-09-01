@@ -81,6 +81,7 @@ targ_x86_nt     = msjhlp.dll
 targ_x86_nt     = $(name).exe
 !endif
 targ_x86_nlm    = $(name).nlm
+targ_x86_nto    = $(name).elf
 
 targ_axp_nt     = $(name).exe
 

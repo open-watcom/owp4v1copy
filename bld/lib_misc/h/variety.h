@@ -37,6 +37,11 @@
 //       included before any of the runtime header files.
 //
 
+#ifndef __WATCOMC__
+    // when building with other tools, only include clibext.h
+    #include "clibext.h"
+#else
+
 #ifndef _COMDEF_H_INCLUDED
      #include <_comdef.h>
 #endif
@@ -288,6 +293,8 @@
 #else
     #define __ALIGN_SIZE( __x ) __ROUND_UP_SIZE( __x, 8 )
 //    #define __ALIGN_PTR( __x )  __ROUND_UP_PTR( __x, 8 )
+#endif
+
 #endif
 
 #endif

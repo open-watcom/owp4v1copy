@@ -210,7 +210,7 @@ def_fpu_flags_nov_386   = -fpc
   ######
   # should be compatible with all 386 platforms
   # I ignore Novell seting
-  # I thing Novell doesn't use any OSI objects
+  # I think Novell doesn't use any OSI objects
 def_fpu_flags_osi_386   = -fpi
   ######
 
@@ -357,11 +357,13 @@ inc_dirs_sys_dos   =
 inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
+inc_dirs_sys_nto   =
 
 inc_dirs_lang_osi     = -I$(hdr_dir)/dos
 inc_dirs_lang_qnx     = -I$(hdr_dir)/qnx
 inc_dirs_lang_linux   = -I$(hdr_dir)/linux
 inc_dirs_lang_netware = -I$(ow_nwoss_root)/common/h
+inc_dirs_lang_nto     = -I$(hdr_dir)/nto
 
 !ifdef inc_dirs_lang_$(host_os)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
@@ -380,10 +382,12 @@ inc_dirs_sys_dos   =
 inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
+inc_dirs_sys_nto   =
 
 inc_dirs_lang_qnx     = -I$(lang_root)/qh
 inc_dirs_lang_linux   = -I$(lang_root)/lh
 inc_dirs_lang_netware = -I$(ow_nwoss_root)/common/h
+inc_dirs_lang_nto     = -I$(lang_root)/nto
 
 !ifdef inc_dirs_lang_$(host_os)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
@@ -407,10 +411,12 @@ inc_dirs_sys_dos   =
 inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
+inc_dirs_sys_nto   =
 
 inc_dirs_lang_qnx     = -I$(lang_root)\qh
 inc_dirs_lang_linux   = -I$(lang_root)\lh
 inc_dirs_lang_netware = -I$(ow_nwoss_root)\common\h
+inc_dirs_lang_nto     = -I$(lang_root)\nto
 
 !ifdef inc_dirs_lang_$(host_os)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_os))

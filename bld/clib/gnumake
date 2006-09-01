@@ -15,7 +15,7 @@ OBJECTS := $(foreach i,$(OBJECTS),$(OBJDIR)/$i)
 
 LIBNAME=watcom
 
-DEFS += -D_COMDEF_H_INCLUDED -D__WATCOM_INT64__ -D__int64="long long" -D_RWD_errno=errno -include ../watcom/h/clibext.h
+DEFS += -D_COMDEF_H_INCLUDED -D__WATCOM_INT64__ -D__int64="long long" -D_RWD_errno=errno
 INCDIRS = h $(WATCOMH) $(LIB_MISC_DIR)/h
 
 $(OBJDIR)/lib$(LIBNAME).a: $(OBJDIR) $(OBJECTS)

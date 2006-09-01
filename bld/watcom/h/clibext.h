@@ -6,10 +6,14 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <stdarg.h>
-#include <sys/types.h>  // for off_t
+#include <sys/types.h>  /* for off_t */
 
+#ifndef O_BINARY
 #define O_BINARY 0
+#endif
+#ifndef O_TEXT
 #define O_TEXT 0
+#endif
 #define stricmp strcasecmp
 #define strcmpi strcasecmp
 #define strnicmp strncasecmp
@@ -20,7 +24,10 @@
 #define __near
 #define near
 #define __based(x)
+#ifndef __alloca
+/* TODO: this should probably be removed! */
 #define __alloca(x) alloca(x)
+#endif
 #define _snprintf snprintf
 #define _vsnprintf vsnprintf
 #define  __va_list  va_list
