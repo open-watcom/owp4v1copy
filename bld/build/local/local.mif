@@ -108,7 +108,7 @@ wcl_util_opts = -funsigned-char $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags)
 
 # options for linking via cc
 clflags = -o $@
-cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a -ldl 
+cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a 
 
 !endif
 !endif
@@ -151,7 +151,7 @@ wcl_util_opts = -funsigned-char $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags)
 
 # options for linking via cc
 clflags = -o $@
-cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a -ldl 
+cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a 
 
 !endif
 !endif
