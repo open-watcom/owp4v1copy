@@ -29,5 +29,6 @@
 ****************************************************************************/
 
 
-const char __based(__segname("_CONST")) __Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+#include "variety.h"
 
+const char __based(__segname("_CONST")) __Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
