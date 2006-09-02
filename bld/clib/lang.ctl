@@ -138,9 +138,9 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-# aliasgen_clean takes care of no longer trying to !include the not existing
-# file objs.mif in projects  clib/alias and mathlib/alias
-    set aliasgen_clean=1
+# ALIASGEN_CLEAN takes care of no longer trying to !include the not existing
+# file objs.mif in projects clib/alias and mathlib/alias
+    set ALIASGEN_CLEAN=1
 
     cdsay alias
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
