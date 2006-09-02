@@ -24,10 +24,6 @@
 #define __near
 #define near
 #define __based(x)
-#ifndef __alloca
-/* TODO: this should probably be removed! */
-#define __alloca(x) alloca(x)
-#endif
 #define _snprintf snprintf
 #define _vsnprintf vsnprintf
 #define  __va_list  va_list
