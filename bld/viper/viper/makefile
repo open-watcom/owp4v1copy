@@ -28,4 +28,4 @@ nt/pbide.cfg : ide.mfg
 clean: .SYMBOLIC
         rm -f win/*.cfg
         rm -f nt/*.cfg
-        rm    ide.cfg
+        rm -f ide.cfg
