@@ -1,5 +1,17 @@
 proj_name = docs
 
+!ifdef __UNIX__
+SL=/
+CPYCMD=cp
+RENCMD=mv
+LOWERC=echo
+!else
+SL=\
+CPYCMD=copy
+RENCMD=ren
+LOWERC=ren
+!endif
+
 !include cproj.mif
 
 # location of documentation sources
