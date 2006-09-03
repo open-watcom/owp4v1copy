@@ -1,7 +1,7 @@
 @echo %verbose% off
-:: test.bat
+:: test.cmd
 ::
-:: test Open Watcom rm command
+:: test Open Watcom rm command   on Winxx and OS/2
 ::
 
 set PROG=%devdir%\posix\src\rm\rm.exe
@@ -19,10 +19,10 @@ if not errorlevel 1 for %%C in (echo goto:failure) do %%C rmtest: %PROG% without
 %PROG% -? 2>nul
 if not errorlevel 1 for %%C in (echo goto:failure) do %%C rmtest: %PROG% -? should fail
 
-%PROG% -f -i -r -s -v -X 2>nul
+%PROG% -f -i -r -R -s -v -X 2>nul
 if not errorlevel 1 for %%C in (echo goto:failure) do %%C rmtest: %PROG% without files should fail
 
-copy NUL %FILENAME% > NUL
+echo NUL >%FILENAME%
 if not exist %FILENAME% for %%C in (echo goto:failure) do %%C rmtest: failed to create scratch file: "%FILENAME%"
 
 %PROG% /q %FILENAME% 2>nul
@@ -34,14 +34,24 @@ if exist %FILENAME% for %%C in (echo goto:failure) do %%C rmtest: failure of %PR
 
 :: Test -r option
 mkdir %FILENAME%
-copy NUL %FILENAME%\%FILENAME% > NUL
+echo NUL >%FILENAME%\%FILENAME%
 if not exist %FILENAME%\%FILENAME% for %%C in (echo goto:failure) do %%C rmtest: failed to create scratch file: "%FILENAME%\%FILENAME%"
 
 attrib +r %FILENAME%\%FILENAME%
 %PROG% -r %FILENAME%
 if not exist %FILENAME% for %%C in (echo goto:failure) do %%C rmtest: unforced -r ignored readonly attribute on "%FILENAME%\%FILENAME%"
+
+%PROG% -R %FILENAME%
+if not exist %FILENAME% for %%C in (echo goto:failure) do %%C rmtest: unforced -R ignored readonly attribute on "%FILENAME%\%FILENAME%"
+
 %PROG% -rf %FILENAME%
 if exist %FILENAME% for %%C in (echo goto:failure) do %%C rmtest: forced -r failed to delete "%FILENAME%"
+
+%PROG% -f %FILENAME%
+if errorlevel 1 for %%C in (echo goto:failure) do %%C rmtest: forced removing non existent file should not fail
+
+%PROG%  %FILENAME%
+if not errorlevel 1 for %%C in (echo goto:failure) do %%C rmtest: removing non existent file should fail
 
 %PROG% -r %FILENAME%
 if not errorlevel 1 for %%C in (echo goto:failure) do %%C rmtest: removing non existent directory should fail

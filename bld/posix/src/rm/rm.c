@@ -46,12 +46,14 @@
 char                    *OptEnvVar = "rm";
 
 static const char       *usageMsg[] = {
-    "Usage: rm [-?firsvX] [files]",
+    "Usage: rm [-?firRsvX] [files]",
     "\tfiles       : files/directories to delete",
     "\tOptions: -? : print this list",
     "\t\t -f : force deletion of read-only files",
+    "\t\t      and don't complain about non existant files / dirs",
     "\t\t -i : inquire about each deletion",
     "\t\t -r : recursively delete all directories",
+    "\t\t -R : recursively delete all directories",
     "\t\t -s : silent operation (default)",
     "\t\t -v : verbose operation",
     "\t\t -X : match files by regular expressions",
@@ -63,6 +65,7 @@ int                     iflag = FALSE;
 int                     fflag = FALSE;
 int                     sflag = TRUE;
 int                     rxflag = FALSE;
+int                     error_occured = 0;
 
 typedef struct dd {
   struct dd     *next;
@@ -81,10 +84,11 @@ int main( int argc, char *argv[] )
     DIR *d;
 
     /* process options */
-    while( ( ch = GetOpt( &argc, argv, "firsvX", usageMsg ) ) != -1 ) {
+    while( ( ch = GetOpt( &argc, argv, "firRsvX", usageMsg ) ) != -1 ) {
         switch( ch ) {
-        case 'f': fflag  = TRUE;  break;
-        case 'i': iflag  = TRUE;  break;
+        case 'f': fflag  = TRUE;  iflag = FALSE; break;
+        case 'i': iflag  = TRUE;  fflag = FALSE; break;
+        case 'R':
         case 'r': rflag  = TRUE;  break;
         case 's': sflag  = TRUE;  break;
         case 'v': sflag  = FALSE; break;
@@ -114,8 +118,10 @@ int main( int argc, char *argv[] )
                         closedir( d );
                         RecursiveRM( argv[i] );
                     }
-                } else if( !fflag )
+                } else if( !fflag ) {
                     PrintALineThenDrop( "Directory %s not found.", argv[i] );
+                    error_occured = 1;
+                }
             }
         }
     } else {
@@ -124,7 +130,7 @@ int main( int argc, char *argv[] )
             DoRM( argv[i] );
     }
     DropALine();
-    return( 0 );
+    return( error_occured );
 }
 
 /* DoRM - perform RM on a specified file */
@@ -166,6 +172,9 @@ void DoRM( const char *f )
     d = OpenDirAll( (char*)f, wild );
     if( d == NULL ) {
         PrintALineThenDrop( "File (%s) not found.", f );
+        if( !fflag ) {
+            error_occured = 1;
+        }
         return;
     }
 
@@ -206,13 +215,16 @@ void DoRM( const char *f )
                         dtail->next = tmp;
                     dtail = tmp;
                     memcpy( tmp->name, tmppath, len + 1 );
-                } else
+                } else {
                     PrintALineThenDrop( "%s is a directory, use -r", tmppath );
+                    error_occured = 1;
+                }
             }
 
-        } else if( ( nd->d_attr & _A_RDONLY ) && !fflag )
+        } else if( ( nd->d_attr & _A_RDONLY ) && !fflag ) {
             PrintALineThenDrop( "%s is read-only, use -f", tmppath );
-        else {
+            error_occured = 1;
+        } else {
             /* build file list */
             len = strlen( tmppath );
             tmp = MemAlloc( sizeof( iolist ) + len );
@@ -231,8 +243,10 @@ void DoRM( const char *f )
 
     /* process any files found */
     tmp = fhead;
-    if( tmp == NULL && !sflag )
+    if( tmp == NULL && !fflag ) {
         PrintALineThenDrop( "File (%s) not found.", f );
+        error_occured = 1;
+    }
     while( tmp != NULL ) {
         if( tmp->attr & _A_RDONLY )
             chmod( tmp->name, S_IWRITE | S_IREAD );
@@ -278,13 +292,16 @@ void DoRMdir( const char *dir )
             if( fflag ) {
                 _dos_setfileattr( dir, _A_NORMAL );
                 rc = rmdir( dir );
-            } else
+            } else {
                 PrintALineThenDrop( "Directory %s is read-only, use -f", dir );
+                error_occured = 1;
+            }
         }
     }
-    if( rc == -1 )
+    if( rc == -1 ) {
         PrintALineThenDrop( "Unable to delete directory %s", dir );
-    else if( !sflag )
+        error_occured = 1;
+    } else if( !sflag )
         PrintALine( "Deleting directory %s", dir );
 }
 
