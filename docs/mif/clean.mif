@@ -35,8 +35,5 @@ clean : .SYMBOLIC
  @if exist *.gid rm -f *.gid
  
 # delete generated headers for online help
- @if exist $(guitools_dir)\ib\*.h  rm $(guitools_dir)\ib\*.h 
- @if exist $(guitools_dir)\os2\*.h rm $(guitools_dir)\os2\*.h 
- @if exist $(guitools_dir)\win\*.h rm $(guitools_dir)\win\*.h  
- @if exist $(guitools_dir)\win95\*.h rm $(guitools_dir)\win95\*.h 
+ @if exist $(guitools_dir_$(dotarget))\*.h  rm $(guitools_dir_$(dotarget))\*.h 
  

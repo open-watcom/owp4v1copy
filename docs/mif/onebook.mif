@@ -1,17 +1,5 @@
 proj_name = docs
 
-!ifdef __UNIX__
-SL=/
-CPYCMD=cp
-RENCMD=mv
-LOWERC=echo
-!else
-SL=\
-CPYCMD=copy
-RENCMD=ren
-LOWERC=ren
-!endif
-
 !include cproj.mif
 
 # location of documentation sources
@@ -53,22 +41,23 @@ hc_dos = hcdos
 # define what should be build
 # header file / documentation / nothing
 #
+
 !ifeq header 1
-dep_nt = $(guitools_dir)/win95/$(hbook).h
+dep_nt = $(guitools_dir_nt)/$(hbook).h
 !else ifneq hc_nt
-dep_nt = $(guitools_dir)/win95/$(hbook).h $(hbook).hlp $(hbook).cnt
+dep_nt = $(guitools_dir_nt)/$(hbook).h $(hbook).hlp $(hbook).cnt
 !endif
 !ifeq header 1
-dep_win = $(guitools_dir)/win/$(hbook).h
+dep_win = $(guitools_dir_win)/$(hbook).h
 !else ifneq hc_win
-dep_win = $(guitools_dir)/win/$(hbook).h $(hbook).hlp
+dep_win = $(guitools_dir_win)/$(hbook).h $(hbook).hlp
 !endif
 !ifeq header 1
-dep_os2 = $(guitools_dir)/os2/$(hbook).h
+dep_os2 = $(guitools_dir_os2)/$(hbook).h
 !else ifneq hc_os2
-dep_os2 = $(guitools_dir)/os2/$(hbook).h $(hbook).inf $(hbook).hlp
+dep_os2 = $(guitools_dir_os2)/$(hbook).h $(hbook).inf $(hbook).hlp
 !endif
-dep_dos = $(guitools_dir)/ib/$(hbook).h $(hbook).ihp
+dep_dos = $(guitools_dir_dos)/$(hbook).h $(hbook).ihp
 dep_html = $(hbook).html
 dep_ps = $(hbook).ps
 dep_pdf = $(hbook).pdf
@@ -158,10 +147,6 @@ $(hbook).cnt : $(hbook).cn1
 $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
 
-$(guitools_dir)/win95/$(hbook).h: $(hbook).h
-    $(CPYCMD) $(hbook).h $(guitools_dir)$(SL)win95 > $(nulldevice)
-
-
 ####################################################
 #
 # make WIN help files
@@ -180,10 +165,6 @@ $(hbook).hpj : $(proj_objs)
 $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
 
-$(guitools_dir)/win/$(hbook).h: $(hbook).h
-    $(CPYCMD) $(hbook).h $(guitools_dir)$(SL)win > $(nulldevice)
-
-
 ####################################################
 #
 # make DOS help files
@@ -198,9 +179,6 @@ $(hbook).ihp : $(hbook).ib $(hbook).h
 
 $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
-
-$(guitools_dir)/ib/$(hbook).h: $(hbook).h
-    $(CPYCMD) $(hbook).h $(guitools_dir)$(SL)ib > $(nulldevice)
 
 
 ####################################################
@@ -287,11 +265,15 @@ $(hbook).hlp : .symbolic
 $(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
 
-$(guitools_dir)/os2/$(hbook).h: $(hbook).h
-    $(CPYCMD) $(hbook).h $(guitools_dir)$(SL)os2 > $(nulldevice)
-
 !endif
 
+####################################################
+#
+# generate online help header file
+#
+####################################################
+$(guitools_dir_$(dotarget))$(SL)$(hbook).h: $(hbook).h
+    $(CPYCMD) $(hbook).h $@ > $(nulldevice)
 
 ####################################################
 #

@@ -1,5 +1,25 @@
 !include ../mif/books.mif
 
+!ifdef __UNIX__
+SL=/
+CPYCMD=cp
+RENCMD=mv
+LOWERC=echo
+!else
+SL=\
+CPYCMD=copy
+RENCMD=ren
+LOWERC=ren
+!endif
+
+#
+# output directories for online help header files:
+#
+guitools_dir_nt = $(guitools_dir)$(SL)win95
+guitools_dir_win = $(guitools_dir)$(SL)win
+guitools_dir_os2 = $(guitools_dir)$(SL)os2
+guitools_dir_dos = $(guitools_dir)$(SL)ib
+
 all: .SYMBOLIC $(books)
     @%null
 
