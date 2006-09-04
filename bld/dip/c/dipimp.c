@@ -30,6 +30,7 @@
 
 
 #include <stddef.h>
+#include <string.h>
 #include "dipimp.h"
 
 address                 NilAddr;
@@ -230,6 +231,15 @@ void *DCAlloc( unsigned amount )
     return( Client->alloc( amount ) );
 }
 
+void *DCAllocZ( unsigned amount )
+{
+    void *p = Client->alloc( amount );
+    if( p ) {
+        memset( p, 0, amount );
+    }
+    return( p );
+}
+
 void *DCRealloc( void *p, unsigned amount )
 {
     return( Client->realloc( p, amount ) );
@@ -285,6 +295,17 @@ unsigned long DCSeek( dig_fhandle h, unsigned long p, dig_seek w )
 unsigned DCRead( dig_fhandle h, void *b, unsigned s )
 {
     return( Client->read( h, b, s ) );
+}
+
+dip_status DCReadAt( dig_fhandle h, void *b, unsigned s, unsigned long p )
+{
+    if( Client->seek( h, p, DIG_ORG ) != p ) {
+        return( DS_ERR | DS_FSEEK_FAILED );
+    }
+    if( Client->read( h, b, s ) != s ) {
+        return( DS_ERR | DS_FREAD_FAILED );
+    }
+    return( DS_OK );
 }
 
 unsigned DCWrite( dig_fhandle h, void *b, unsigned s )

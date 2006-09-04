@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface functions exported and imported by DIPs.
 *
 ****************************************************************************/
 
@@ -230,6 +229,7 @@ typedef struct dip_client_routines {
 } dip_client_routines;
 
 void            *DCAlloc( unsigned amount );
+void            *DCAllocZ( unsigned amount );
 void            *DCRealloc( void *p, unsigned amount );
 void            DCFree( void *p );
 
@@ -243,6 +243,7 @@ void            DCAddrSection( address * );
 dig_fhandle     DCOpen( char *path, dig_open flags );
 unsigned long   DCSeek( dig_fhandle h, unsigned long p, dig_seek w );
 unsigned        DCRead( dig_fhandle h, void *b, unsigned s );
+dip_status      DCReadAt( dig_fhandle h, void *b, unsigned s, unsigned long p );
 unsigned        DCWrite( dig_fhandle h, void *b, unsigned s );
 void            DCClose( dig_fhandle h );
 void            DCRemove( char *path, dig_open flags );
