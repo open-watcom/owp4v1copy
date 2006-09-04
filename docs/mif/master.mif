@@ -12,6 +12,8 @@ RENCMD=ren
 LOWERC=ren
 !endif
 
+!include cproj.mif
+
 #
 # output directories for online help header files:
 #
