@@ -6,7 +6,10 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <stdarg.h>
-#include <sys/types.h>  /* for off_t */
+#include <sys/types.h>      /* for off_t */
+#ifdef __QNX__
+    #include <strings.h>    /* for str*case* functions */
+#endif
 
 #ifndef O_BINARY
 #define O_BINARY 0

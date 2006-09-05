@@ -760,46 +760,6 @@ unsigned ReqProg_kill( void )
 }
 
 
-static void print_map_entries( void )
-{
-    procfs_mapinfo      *maps, *map;
-    procfs_debuginfo    *dbg_info;
-    int                 num, num_maps, i;
-    char                buf[_POSIX_PATH_MAX + sizeof( procfs_debuginfo )];
-
-    /* Query number of map entries */
-    if( devctl( ProcInfo.procfd, DCMD_PROC_MAPINFO, NULL, 0, &num ) != EOK ) {
-        dbg_print(("failed to get number of map entries\n"));
-        return;
-    }
-    maps = malloc( num * sizeof( procfs_mapinfo ) );
-
-    num_maps = num;
-
-    /* Query data for map entries */
-    if( devctl( ProcInfo.procfd, DCMD_PROC_MAPINFO, maps, num * sizeof( procfs_mapinfo ), &num ) != EOK ) {
-        dbg_print(("failed to get map entries\n"));
-        free( maps );
-        return;
-    }
-
-    num = min( num, num_maps );
-    /* Loop over map list */
-    for( i = 0, map = maps; i < num; ++i, ++map ) {
-        printf( "vaddr: %08llx, size: %08llx, flags: %08x\n", map->vaddr, map->size, map->flags );
-        /* Query module name */
-        dbg_info = (procfs_debuginfo *)buf;
-        dbg_info->vaddr = map->vaddr;
-        if( devctl( ProcInfo.procfd, DCMD_PROC_MAPDEBUG, dbg_info, sizeof( buf ), 0 ) != EOK ) {
-            dbg_print(("failed to get map name\n"));
-            strcpy( dbg_info->path, "unknown" );
-        }
-        printf( "%08x/%08x, '%s'\n", (unsigned)map->vaddr, (unsigned)dbg_info->vaddr, dbg_info->path );
-    }
-    free( maps );
-}
-
-
 unsigned ReqSet_break( void )
 {
     set_break_req       *acc;

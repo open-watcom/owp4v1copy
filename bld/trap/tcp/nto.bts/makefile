@@ -13,7 +13,7 @@ which = SERVER
 extra_srcs = $(trap_dir)/lcl/nto/c;$(trap_dir)/lcl/c;$(clib_dir)/environ/c
 inc_dirs   = -I"$(trap_dir)/lcl/nto/h" -I"$(trap_dir)/lcl/h" -I"$(lib_misc_dir)/h"
 
-extra_cflags = -DBUILTIN_TRAP_FILE -DDEBUG_OUT
+extra_cflags = -DBUILTIN_TRAP_FILE #-DDEBUG_OUT
 
 extra_objs = $(remote_objs) &
              gtcmdunx.obj &
