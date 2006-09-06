@@ -56,12 +56,6 @@ extern void OutNum( unsigned long i );
 typedef int     pid_handle;
 
 /* Internal trap file data structures */
-typedef struct {
-    pthread_t   tid;
-    unsigned    frozen      : 1;
-    unsigned    fork        : 1;
-    unsigned    dying       : 1;
-} thread_info;
 
 typedef struct {
     unsigned    at_end          : 1;
@@ -83,8 +77,6 @@ typedef struct {
     long        fpu;
     int         save_in;
     int         save_out;
-    unsigned    max_threads;
-    thread_info *thread;
     addr_off    rdebug_va;
     addr_off    ld_bp_va;
     addr_off    dynsec_va;

@@ -56,8 +56,6 @@ static struct {
     unsigned long       err;
 }                       StdPos;
 
-#define THREAD_GROW     10
-
 process_info        ProcInfo;
 
 //#define MAX_WP  32
@@ -77,65 +75,6 @@ unsigned nto_node( void )
         Out( "QNX node lost!\n" );
     }
     return( node );
-}
-
-
-static thread_info *find_thread( pid_t tid )
-{
-    thread_info *thread;
-    unsigned    new_count;
-
-    for( thread = ProcInfo.thread; thread < &ProcInfo.thread[ProcInfo.max_threads]; thread++ ) {
-        if( thread->tid == tid ) {
-            if( tid == 0 ) {
-                thread->dying = FALSE;
-            }
-            return( thread );
-        }
-    }
-    if( tid == 0 ) {
-        /* need to expand the array */
-        new_count = ProcInfo.max_threads + THREAD_GROW;
-        thread = realloc( ProcInfo.thread, new_count * sizeof( *thread ) );
-        if( thread != NULL ) {
-            ProcInfo.thread = thread;
-            thread = &thread[ProcInfo.max_threads];
-            ProcInfo.max_threads = new_count;
-            memset( thread, 0, THREAD_GROW * sizeof( *thread ) );
-            return( thread );
-        }
-    }
-    return( NULL );
-}
-
-#define THREAD_ALL      (-1)
-#define NO_TID          (INT_MAX)
-
-static pid_t next_thread( pid_t last, int state )
-{
-    thread_info         *thread;
-    pid_t               tid = NO_TID;
-    pid_t               curr;
-
-    for( thread = ProcInfo.thread; thread < &ProcInfo.thread[ProcInfo.max_threads]; thread++ ) {
-        if( thread->dying ) continue;
-        curr = thread->tid;
-        switch( state ) {
-        case THREAD_ALL:
-            break;
-        case THREAD_THAWED:
-           if( thread->frozen && (ProcInfo.pid != curr) ) continue;
-           break;
-        case THREAD_FROZEN:
-           if( !thread->frozen ) continue;
-           break;
-        }
-        if( curr > last && curr < tid ) {
-            tid = curr;
-        }
-    }
-    if( tid == NO_TID ) return( 0 );
-    return( tid );
 }
 
 
@@ -160,38 +99,6 @@ unsigned ReqGet_sys_config( void )
     ret->sys.mad = MAD_X86;
     return( sizeof( *ret ) );
 }
-
-
-#if 0
-unsigned ReqMap_addr( void )
-{
-    map_addr_req        *acc;
-    map_addr_ret        *ret;
-    unsigned            seg;
-
-    acc = GetInPtr( 0 );
-    CONV_LE_32( acc->in_addr.offset );
-    CONV_LE_16( acc->in_addr.segment );
-    CONV_LE_32( acc->handle );
-    ret = GetOutPtr( 0 );
-    ret->lo_bound = 0;
-    ret->hi_bound = ~(addr48_off)0;
-    ret->out_addr.offset = acc->in_addr.offset;
-    seg = acc->in_addr.segment;
-    if( ProcInfo.pid != 0 ) {
-        dbg_print(("mapping address %04x:%08x\n", acc->in_addr.segment, 
-                   (unsigned)acc->in_addr.offset));
-        // TODO: perform real mapping
-        ret->out_addr.segment = acc->in_addr.segment;
-//        ret->out_addr.offset  = 0;
-    }
-    CONV_LE_32( ret->out_addr.offset );
-    CONV_LE_16( ret->out_addr.segment );
-    CONV_LE_32( ret->lo_bound );
-    CONV_LE_32( ret->hi_bound );
-    return( sizeof( *ret ) );
-}
-#endif
 
 
 unsigned ReqChecksum_mem( void )
@@ -600,13 +507,13 @@ unsigned ReqProg_load( void )
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
 
-    ProcInfo.sig  = -1;
+    ProcInfo.sig    = -1;
+    ProcInfo.tid    = -1;
     ProcInfo.at_end = FALSE;
     ProcInfo.fork   = FALSE;
     ProcInfo.have_rdebug = FALSE;
     ProcInfo.rdebug_va = 0;
     ProcInfo.dynsec_va = 0;
-    memset( ProcInfo.thread, 0, sizeof( ProcInfo.thread[0] ) * ProcInfo.max_threads );
     parms = (char *)GetInPtr( sizeof( *acc ) );
     parm_start = parms;
     len = GetTotalSize() - sizeof( *acc );
@@ -715,7 +622,6 @@ unsigned ReqProg_load( void )
             ret->flags |= LD_FLAG_IS_STARTED;
         }
         ret->task_id = ProcInfo.pid;
-        ProcInfo.thread[0].tid = ProcInfo.pid;
         ProcInfo.dynsec_va = GetDynSection( exe_name );
         AddProcess( exe_name );
         if( ProcInfo.dynsec_va ) {
@@ -904,9 +810,6 @@ static int RunIt( unsigned step )
 {
     void                (*old)();
     int                 ret;
-//    thread_info         *thread;
-//    thread_info         *new;
-//    unsigned            i;
     sigset_t            sig_set;
     siginfo_t           info;
     procfs_status       status;
@@ -932,7 +835,7 @@ static int RunIt( unsigned step )
     /* See if current thread changed */
     if( status.tid != ProcInfo.tid ) {
         ProcInfo.tid = status.tid;
-//        ret |= COND_THREAD;
+        ret |= COND_THREAD;
     }
 
     if( status.flags & _DEBUG_FLAG_SSTEP ) {
@@ -1187,15 +1090,17 @@ unsigned ReqThread_get_next( void )
 {
     thread_get_next_req *req;
     thread_get_next_ret *ret;
-    pid_t               pid;
+    procfs_status       status;
 
     req = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    if( ( pid = next_thread( req->thread, THREAD_ALL ) ) ) {
-        ret->thread = pid;
-        ret->state = find_thread( pid )->frozen ? THREAD_FROZEN : THREAD_THAWED;
-    } else {
+
+    status.tid = ret->thread + 1;
+    if( devctl( ProcInfo.procfd, DCMD_PROC_TIDSTATUS, &status, sizeof( status ), 0 ) != EOK ) {
         ret->thread = 0;
+    } else {
+        ret->thread = status.tid;
+        ret->state  = status.tid_flags & _NTO_TF_FROZEN ? THREAD_FROZEN : THREAD_THAWED;
     }
     return( sizeof( *ret ) );
 }
@@ -1205,23 +1110,19 @@ unsigned ReqThread_set( void )
 {
     thread_set_req      *req;
     thread_set_ret      *ret;
-    pid_t               pid;
-    thread_info         *thread;
+    pthread_t           tid;
 
     req = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    if( ( pid = req->thread ) ) {
-        if( ( thread = find_thread( pid ) ) && !thread->fork ) {
-            ret->err = 0;
-            ret->old_thread = ProcInfo.pid;
-            ProcInfo.pid = pid;
-        } else {
+    ret->err = 0;
+    ret->old_thread = ProcInfo.tid;
+    if( ( tid = req->thread ) ) {
+        if( devctl( ProcInfo.procfd, DCMD_PROC_CURTHREAD, &tid, sizeof( tid ), 0 ) != EOK ) {
+            dbg_print(( "failed to set current thread to %d\n", tid ));
             ret->err = EINVAL;
-            ret->old_thread = ProcInfo.pid;
+        } else {
+            ProcInfo.tid = tid;
         }
-    } else {
-        ret->err = 0;
-        ret->old_thread = ProcInfo.pid;
     }
     return( sizeof( *ret ) );
 }
@@ -1231,13 +1132,17 @@ unsigned ReqThread_freeze( void )
 {
     thread_freeze_req   *req;
     thread_freeze_ret   *ret;
-    thread_info         *thread;
+    pthread_t           tid;
 
     req = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    if( ( thread = find_thread( req->thread ) ) ) {
-        thread->frozen = TRUE;
-        ret->err = 0;
+    tid = req->thread;
+    ret->err = 0;
+    if( tid ) {
+        if( devctl( ProcInfo.procfd, DCMD_PROC_FREEZETHREAD, &tid, sizeof( tid ), 0 ) != EOK ) {
+            dbg_print(( "failed to freeze thread %d\n", tid ));
+            ret->err = EINVAL;
+        }
     } else {
         ret->err = EINVAL;
     }
@@ -1249,13 +1154,17 @@ unsigned ReqThread_thaw( void )
 {
     thread_thaw_req     *req;
     thread_thaw_ret     *ret;
-    thread_info         *thread;
+    pthread_t           tid;
 
     req = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    if( ( thread = find_thread( req->thread ) ) ) {
-        thread->frozen = FALSE;
-        ret->err = 0;
+    tid = req->thread;
+    ret->err = 0;
+    if( tid ) {
+        if( devctl( ProcInfo.procfd, DCMD_PROC_THAWTHREAD, &tid, sizeof( tid ), 0 ) != EOK ) {
+            dbg_print(( "failed to thaw thread %d\n", tid ));
+            ret->err = EINVAL;
+        }
     } else {
         ret->err = EINVAL;
     }
@@ -1263,26 +1172,54 @@ unsigned ReqThread_thaw( void )
 }
 
 
+/* see <sys/state.h> */
+static char     *tstate_desc[STATE_MAX] = {
+    "DEAD",
+    "RUNNING",
+    "READY",
+    "STOPPED",
+    "SEND",
+    "RECEIVE",
+    "REPLY",
+    "STACK",
+    "WAITTHREAD",
+    "WAITPAGE",
+    "SIGSUSPEND",
+    "SIGWAITINFO",
+    "NANOSLEEP",
+    "MUTEX",
+    "CONDVAR",
+    "JOIN",
+    "INTR",
+    "SEM",
+    "WAITCTX",
+    "NET_SEND",
+    "NET_REPLY"
+};
+
 unsigned ReqThread_get_extra( void )
 {
     thread_get_extra_req    *req;
     char                    *ret;
-    thread_info             *thread;
+    procfs_status           status;
 
     req = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     ret[0] = '\0';
     if( req->thread ) {
-        if( ( thread = find_thread( req->thread ) ) ) {
-            if( thread->fork ) {
-                strcpy( ret, "Forked Process" );
+        status.tid = req->thread;
+        if( devctl( ProcInfo.procfd, DCMD_PROC_TIDSTATUS, &status, sizeof( status ), 0 ) != EOK ) {
+            dbg_print(( "failed to get extra for thread %ld\n", req->thread ));
+            strcpy( ret, "error" );
+        } else {
+            if( tstate_desc[status.state] ) {
+                strcpy( ret, tstate_desc[status.state] );
             } else {
-                // TODO: get process name
                 strcpy( ret, "unknown" );
             }
         }
     } else {
-        strcpy( ret, "Thread Name" );
+        strcpy( ret, "Neutrino State" );
     }
     return( strlen( ret ) + 1 );
 }
@@ -1303,11 +1240,8 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 
     ProcInfo.save_in = -1;
     ProcInfo.save_out = -1;
-    ProcInfo.thread = NULL;
-    ProcInfo.max_threads = 0;
     ProcInfo.node = ND_LOCAL_NODE;
     strcpy( ProcInfo.procfs_path, "/proc" );
-    find_thread( 0 );   /* allocate initial thread array */
     err[0] = '\0';      /* all ok */
     StdPos.in  = lseek( 0, 0, SEEK_CUR );
     StdPos.out = lseek( 1, 0, SEEK_CUR );
