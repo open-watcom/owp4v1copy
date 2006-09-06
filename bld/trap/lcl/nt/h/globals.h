@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Global definitions for Win32 trap file.
 *
 ****************************************************************************/
 
@@ -73,6 +72,44 @@ TRPGLOBAL
 HANDLE
 (WINAPI*pOpenThread)(
     DWORD
+);
+
+TRPGLOBAL
+DWORD
+(WINAPI *pQueryDosDevice)(
+    LPCTSTR         lpDeviceName,
+    LPTSTR          lpTargetPath,
+    DWORD           ucchMax
+);
+
+TRPGLOBAL
+DWORD 
+(WINAPI *pGetMappedFileName)(
+    HANDLE          hProcess,
+    LPVOID          lpv,
+    LPTSTR          lpFilename,
+    DWORD           nSize
+);
+
+TRPGLOBAL
+HANDLE 
+(WINAPI *pCreateToolhelp32Snapshot)(
+    DWORD           dwFlags,
+    DWORD           th32ProcessID
+);
+
+TRPGLOBAL
+BOOL 
+(WINAPI *pModule32First)(
+    HANDLE          hSnapshot,
+    LPMODULEENTRY32 lpme
+);
+
+TRPGLOBAL
+BOOL 
+(WINAPI *pModule32Next)(
+    HANDLE          hSnapshot,
+    LPMODULEENTRY32 lpme
 );
 
 TRPGLOBAL

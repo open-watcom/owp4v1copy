@@ -24,15 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Win32 trap file startup and shutdown.
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "stdnt.h"
+
 
 trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 {
@@ -76,11 +77,24 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
             pVDMGetThreadSelectorEntry  = (LPVOID)GetProcAddress( dll,
                                           "VDMGetThreadSelectorEntry" );
         }
+        dll = LoadLibrary( "PSAPI.DLL" );
+        if( dll != NULL ) {
+            pGetMappedFileName          = (LPVOID)GetProcAddress( dll,
+                                          "GetMappedFileNameA" );
+        }
     }
     dll = LoadLibrary( "KERNEL32.DLL" );
     if( dll != NULL ) {
         pOpenThread                 = (LPVOID)GetProcAddress( dll,
                                           "OpenThread" );
+        pQueryDosDevice             = (LPVOID)GetProcAddress( dll,
+                                          "QueryDosDeviceA" );
+        pCreateToolhelp32Snapshot   = (LPVOID)GetProcAddress( dll,
+                                          "CreateToolhelp32Snapshot" );
+        pModule32First              = (LPVOID)GetProcAddress( dll,
+                                          "Module32First" );
+        pModule32Next               = (LPVOID)GetProcAddress( dll,
+                                          "Module32Next" );
     }
     //say( "base address=%8.8x", ((char*)&GetInPtr)-0x2f );
     DLLPath = LocalAlloc( LMEM_FIXED | LMEM_ZEROINIT, strlen( err ) + 1 );

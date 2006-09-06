@@ -24,15 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Routines to keep track of loaded modules and address maps.
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "stdnt.h"
+
 
 typedef struct lli {
     HANDLE      file_handle;
@@ -278,6 +279,134 @@ void AddProcess( header_info *hi )
 }
 
 /*
+ * NameFromProcess - get fully qualified filename for last DLL
+ * that was loaded in process. Intended for Win9x.
+ */
+BOOL NameFromProcess( lib_load_info *lli, DWORD dwPID, char *name )
+{
+    HANDLE          hModuleSnap = INVALID_HANDLE_VALUE;
+    MODULEENTRY32   me32;
+    BOOL            bSuccess = FALSE;
+
+    // Check if we have the KERNEL32 entrypoints.
+    if( !pCreateToolhelp32Snapshot || !pModule32First || !pModule32Next )
+        goto error_exit;
+
+    // Take a snapshot of all modules in the specified process.
+    hModuleSnap = pCreateToolhelp32Snapshot( TH32CS_SNAPMODULE, dwPID );
+    if( hModuleSnap == INVALID_HANDLE_VALUE )
+        goto error_exit;
+
+    // Set the size of the structure before using it.
+    me32.dwSize = sizeof( MODULEENTRY32 );
+
+    // Attempt to retrieve information about the first module.
+    if( !pModule32First( hModuleSnap, &me32 ) )
+        goto error_exit;
+
+    // Look for freshly loaded module. Not tested on Win9x.
+    // Unfortunately in WinXP not all newly loaded modules are in the list.
+    // This should not be relevant as all NT versions will use the PSAPI method anyway.
+    // The PSAPI method works reliably but is not available on Win9x.
+    do {
+        if( me32.modBaseAddr == lli->base ) {
+            strcpy( name, me32.szExePath );
+            bSuccess = TRUE;
+            break;
+        }
+    } while( pModule32Next( hModuleSnap, &me32 ) );
+
+error_exit:
+    if( hModuleSnap != INVALID_HANDLE_VALUE )
+        CloseHandle( hModuleSnap );
+
+    return( bSuccess );
+}
+
+/*
+ * NameFromHandle - get fully qualified filename from file handle.
+ * Intended for Windows NT.
+ */
+BOOL NameFromHandle( HANDLE hFile, char *name )
+{
+#define BUFSIZE 512
+    BOOL        bSuccess = FALSE;
+    char        pszFilename[MAX_PATH + 1];
+    HANDLE      hFileMap = NULL;
+    void        *pMem = NULL;
+    char        szTemp[BUFSIZE];
+    DWORD       dwFileSizeHi;
+    DWORD       dwFileSizeLo;
+
+    name[0] = 0;
+
+    // Check if we have the required entrypoints (results depend on OS version).
+    if( !hFile || !pGetMappedFileName || !pQueryDosDevice )
+        goto error_exit;
+
+    // Get the file size.
+    dwFileSizeLo = GetFileSize( hFile, &dwFileSizeHi );
+    if( dwFileSizeLo == 0 && dwFileSizeHi == 0 )
+        goto error_exit;
+
+    // Create a file mapping object and map the file.
+    if( !(hFileMap = CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, 1, NULL ))
+     || !(pMem = MapViewOfFile( hFileMap, FILE_MAP_READ, 0, 0, 1 ))
+     || !pGetMappedFileName( GetCurrentProcess(), pMem, pszFilename, MAX_PATH ) ) {
+        goto error_exit;
+    }
+
+    // Translate path with device name to drive letters.
+    szTemp[0] = '\0';
+
+    if( GetLogicalDriveStrings( BUFSIZE - 1, szTemp ) ) {
+        char    szName[MAX_PATH];
+        char    szDrive[3] = " :";
+        BOOL    bFound = FALSE;
+        char    *p = szTemp;
+
+        do {
+            // Copy the drive letter to the template string
+            *szDrive = *p;
+
+            // Look up each device name
+            if( pQueryDosDevice( szDrive, szName, BUFSIZE ) ) {
+                UINT    uNameLen = strlen( szName );
+
+                if( uNameLen < MAX_PATH ) {
+                    bFound = strnicmp( pszFilename, szName, uNameLen ) == 0;
+
+                    if( bFound ) {
+                        // Reconstruct pszFilename using szTemp
+                        // Replace device path with DOS path
+                        char    szTempFile[MAX_PATH];
+
+                        sprintf( szTempFile, "%s%s", szDrive, pszFilename + uNameLen );
+                        strlcpy( name, szTempFile, MAX_PATH );
+                        bSuccess = TRUE;
+                    }
+                }
+            }
+
+            // Go to the next NULL character.
+            while( *p++ )
+                ;
+        } while( !bFound && *p ); // end of string
+    }
+
+error_exit:
+    if( pMem )
+        UnmapViewOfFile( pMem );
+    if( hFileMap )
+        CloseHandle( hFileMap );
+    return( bSuccess );
+#undef BUFSIZE
+}
+
+
+
+
+/*
  * AddLib - a new library has loaded
  */
 void AddLib( BOOL is_16, IMAGE_NOTE *im )
@@ -317,7 +446,11 @@ void AddLib( BOOL is_16, IMAGE_NOTE *im )
         lli->file_handle = DebugEvent.u.LoadDll.hFile;
         lli->base = DebugEvent.u.LoadDll.lpBaseOfDll;
         lli->modname[0] = 0;
-        if( !GetModuleName( lli->file_handle, lli->filename ) ) {
+        if ( NameFromHandle( lli->file_handle, lli->filename) ) {
+            lli->has_real_filename = TRUE;
+        } else if( NameFromProcess( lli, DebugeePid, lli->filename ) ) {
+            lli->has_real_filename = TRUE;
+        } else if( !GetModuleName( lli->file_handle, lli->filename ) ) {
             lastLib++;
             strcpy( lli->filename, libPrefix );
             ultoa( lastLib, &lli->filename[sizeof( libPrefix ) - 1], 16 );
