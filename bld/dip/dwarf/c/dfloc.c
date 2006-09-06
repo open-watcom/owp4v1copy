@@ -38,8 +38,6 @@
 #include "dfsym.h"
 #include "dftype.h"
 
-/* taken from WATLOC.C */
-
 
 dip_status SafeDCItemLocation( location_context *lc, context_item ci, location_list *ll ){
     dr_dbg_handle   old_handle;
@@ -158,6 +156,8 @@ typedef struct {
     unsigned    len     : 7;
 } reg_entry;
 
+/* WARNING: Must be kept in sync with dwreginf.h included above */
+
 static reg_entry const CLRegX86[DW_X86_MAX] = {
     { CI_EAX, 0, 32 },       //eax
     { CI_ECX, 0, 32 },       //ecx
@@ -165,8 +165,8 @@ static reg_entry const CLRegX86[DW_X86_MAX] = {
     { CI_EBX, 0, 32 },       //ebx
     { CI_ESP, 0, 32 },       //esp
     { CI_EBP, 0, 32 },       //ebp
-    { CI_EDI, 0, 32 },       //edi
     { CI_ESI, 0, 32 },       //esi
+    { CI_EDI, 0, 32 },       //edi
     { CI_EIP, 0, 32 },       //eip
     { CI_EFL, 0, 32 },       //eflags
     { 0     , 0, 0 },        //trapno
@@ -208,6 +208,8 @@ typedef enum {
     DW_REG( MAX )
     #undef DW_REG
 }dw_axp_regs;
+
+/* WARNING: Must be kept in sync with dwregaxp.h included above */
 
 static uint_16 const CLRegAXP[DW_AXP_MAX] = {
         /* Alpha architecture */
@@ -290,6 +292,8 @@ typedef struct {
     unsigned    len     : 8;
 } ppcreg_entry;
 
+/* WARNING: Must be kept in sync with dwregppc.h included above */
+
 static ppcreg_entry const CLRegPPC[DW_PPC_MAX] = {
     /* PowerPC architecture */
     { CI_PPC_r0,  0, 32 },  //DW_PPC_r0
@@ -370,6 +374,8 @@ typedef struct {
     unsigned    start   : 8;
     unsigned    len     : 8;
 } mipsreg_entry;
+
+/* WARNING: Must be kept in sync with dwregmips.h included above */
 
 static mipsreg_entry const CLRegMIPS[DW_MIPS_MAX] = {
     /* MIPS architecture */

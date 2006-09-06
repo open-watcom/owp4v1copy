@@ -29,14 +29,16 @@
 ****************************************************************************/
 
 
+/* WARNING: Must be kept in sync with bld/dip/dwarf/c/dfloc.c */
+
     DW_REG( eax )
     DW_REG( ecx )
     DW_REG( edx )
     DW_REG( ebx )
     DW_REG( esp )
     DW_REG( ebp )
-    DW_REG( edi )
     DW_REG( esi )
+    DW_REG( edi )
     DW_REG( eip )
     DW_REG( eflags )
     DW_REG( trapno )
