@@ -43,9 +43,9 @@ typedef struct lli {
     addr_off    base;
     addr_off    offset;
     addr_off    dbg_dyn_sect;
-    addr_off    code_size;
-    char        newly_unloaded : 1;
-    char        newly_loaded : 1;
+    addr_off    code_size;          
+    char        newly_loaded : 1;   /* Library loaded but debugger not yet told */
+    char        newly_unloaded : 1; /* Library unloaded but debugger not yet told */
     char        filename[257]; // TODO: These should really be dynamic!
 } lib_load_info;
 
@@ -84,7 +84,7 @@ addr_off FindLibInLinkMap( pid_handle pid, addr_off first_lmap, addr_off dyn_bas
 /*
  * AddProcess - a new process has been created
  */
-void AddProcess( const char *exe_name )
+void AddProcess( const char *exe_name, addr_off dynsection )
 {
     lib_load_info       *lli;
 
@@ -95,7 +95,10 @@ void AddProcess( const char *exe_name )
     lli = &moduleInfo[0];
 
     lli->offset = 0;    /* Assume that main executable was not relocated */
+    lli->dbg_dyn_sect = dynsection;
     strcpy( lli->filename, exe_name );
+    dbg_print(( "Added process: ofs/dyn = %08x/%08x '%s'\n",
+                (unsigned)lli->offset, (unsigned)lli->dbg_dyn_sect, lli->filename ));    
 }
 
 /*
@@ -142,6 +145,7 @@ void DelLib( addr_off dynsection )
         if( moduleInfo[i].dbg_dyn_sect == dynsection ) {
             dbg_print(( "Deleting library '%s'\n", moduleInfo[i].filename ));
             moduleInfo[i].newly_unloaded = TRUE;
+            moduleInfo[i].newly_loaded   = FALSE;
             moduleInfo[i].offset = 0;
             moduleInfo[i].dbg_dyn_sect = 0;
             moduleInfo[i].code_size = 0;
@@ -163,32 +167,11 @@ void DelProcess( void )
 
 
 /*
- * AddInitialLibs - called the first time we can get information
- * about loaded shared libs.
+ * AddLibs - called when dynamic linker is adding a library, or after loading
+ * or attaching to a process. We zip through the list and add whichever libs 
+ * we don't know about yet.
  */
-int AddInitialLibs( pid_handle pid, addr_off first_lmap )
-{
-    struct link_map     lmap;
-    addr_off            dbg_lmap;
-    int                 count = 0;
-
-    dbg_lmap = first_lmap;
-    while( dbg_lmap ) {
-        if( !GetLinkMap( pid, dbg_lmap, &lmap ) ) break;
-        Out( "AddLib from AddInitialLibs\n" );
-        AddLib( pid, &lmap );
-        ++count;
-        dbg_lmap = (addr_off)lmap.l_next;
-    }
-    return( count );
-}
-
-/*
- * AddOneLib - called when dynamic linker is adding a library. Unfortunately
- * we don't get told which library, so we just have to zip through the list
- * until we find one we don't know about yet.
- */
-int AddOneLib( pid_handle pid, addr_off first_lmap )
+int AddLibs( pid_handle pid, addr_off first_lmap )
 {
     struct link_map     lmap;
     addr_off            dbg_lmap;
@@ -209,11 +192,11 @@ int AddOneLib( pid_handle pid, addr_off first_lmap )
 }
 
 /*
- * DelOneLib - called when dynamic linker is deleting a library. Unfortunately
+ * DelLibs - called when dynamic linker is deleting a library. Unfortunately
  * we don't get told which library, so we just have to zip through our list
- * until we find out which one is suddenly missing.
+ * and remove whichever lib is suddenly missing.
  */
-int DelOneLib( pid_handle pid, addr_off first_lmap )
+int DelLibs( pid_handle pid, addr_off first_lmap )
 {
     int                 count = 0;
     int                 i;
@@ -255,7 +238,7 @@ void ProcessLdBreakpoint( pid_handle pid, addr_off rdebug_va )
     case RT_ADD:
         dbg_print(( "RT_ADD\n" ));
         ld_state = RT_ADD;
-        AddOneLib( pid, (addr_off)rdebug.r_map );
+        AddLibs( pid, (addr_off)rdebug.r_map );
         break;
     case RT_DELETE:
         dbg_print(( "RT_DELETE\n" ));
@@ -265,11 +248,11 @@ void ProcessLdBreakpoint( pid_handle pid, addr_off rdebug_va )
         dbg_print(( "RT_CONSISTENT\n" ));
 #if 1
         // QNX bug? We never seem to get RT_ADD or RT_DELETE
-        AddOneLib( pid, (addr_off)rdebug.r_map );
-        DelOneLib( pid, (addr_off)rdebug.r_map );
+        AddLibs( pid, (addr_off)rdebug.r_map );
+        DelLibs( pid, (addr_off)rdebug.r_map );
 #else
         if( ld_state == RT_DELETE )
-            DelOneLib( pid, (addr_off)rdebug.r_map );
+            DelLibs( pid, (addr_off)rdebug.r_map );
 #endif
         ld_state = RT_CONSISTENT;
         break;
@@ -279,7 +262,6 @@ void ProcessLdBreakpoint( pid_handle pid, addr_off rdebug_va )
     }
 }
 
-#if 1
 /*
  * Map address in image from link-time virtual address to actual linear address as 
  * loaded in memory. For executables, this will in effect return the address unchanged
@@ -290,7 +272,6 @@ unsigned ReqMap_addr( void )
 {
     map_addr_req    *acc;
     map_addr_ret    *ret;
-//    unsigned long   val;
     lib_load_info   *lli;
 
     acc = GetInPtr( 0 );
@@ -318,7 +299,6 @@ unsigned ReqMap_addr( void )
     CONV_LE_32( ret->hi_bound );
     return( sizeof( *ret ) );
 }
-#endif
 
 
 /*
@@ -337,24 +317,27 @@ unsigned ReqGet_lib_name( void )
     ret  = GetOutPtr( 0 );
     name = GetOutPtr( sizeof( *ret ) );
 
-    ret->handle = 0;
-    name[0] = '\0';
+    ret->handle = 0;    /* debugger won't look for more if handle is zero */
 
-    for( i = 0; i < ModuleTop; ++i ) {
+    *name = '\0';
+
+    /* The first slot is reserved for the main executable; also, we always
+     * look for the next module, not the one whose handle the debugger
+     * passed in (because the debugger passes in the handle we returned
+     * in the previous call).
+     */
+    for( i = acc->handle + 1; i < ModuleTop; ++i ) {
         if( moduleInfo[i].newly_unloaded ) {
-            dbg_print(( "(newly unloaded) " ));
-            ret->handle = i;
-            name[0] = '\0';
+            /* Indicate that lib is gone */
+            dbg_print(( "(lib unloaded, '%s')\n", moduleInfo[i].filename ));
             moduleInfo[i].newly_unloaded = FALSE;
-            ret_len = sizeof( *ret );
-            break;
-        } else if( moduleInfo[i].newly_loaded ) {
             ret->handle = i;
+        } else if( moduleInfo[i].newly_loaded ) {
             strcpy( name, moduleInfo[i].filename );
+            ret_len += strlen( name ) + 1;
+            dbg_print(( "(lib loaded, '%s')\n", name ));
             moduleInfo[i].newly_loaded = FALSE;
-            ret_len = sizeof( *ret ) + strlen( name ) + 1;
-            dbg_print(( "(newly loaded) '%s'\n", name ));
-            break;
+            ret->handle = i;
         }
     }
     dbg_print(( "ReqGet_lib_name: in handle %ld, out handle %ld\n",

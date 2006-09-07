@@ -34,9 +34,11 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <spawn.h>
+#include <confname.h>
 #include <sys/stat.h>
 #include <sys/netmgr.h>
 #include <sys/neutrino.h>
+#include <sys/resource.h>
 #include "trpimp.h"
 #include "trperr.h"
 #include "mad.h"
@@ -78,6 +80,25 @@ unsigned nto_node( void )
 }
 
 
+static bool get_nto_version( unsigned_8 *major, unsigned_8 *minor )
+{
+    char    buf[32];
+
+    *major = *minor = 0;
+	if( confstr( _CS_RELEASE, buf, sizeof( buf ) ) ) {
+        char    *s = buf;
+
+        *major = atoi( s );
+        s = strchr( s, '.' );
+        if( s ) {
+            *minor = atoi( ++s );
+            return( TRUE );
+        }
+    }
+    return( FALSE );
+}
+
+
 unsigned ReqGet_sys_config( void )
 {
     get_sys_config_ret  *ret;
@@ -85,9 +106,7 @@ unsigned ReqGet_sys_config( void )
     ret = GetOutPtr( 0 );
     ret->sys.os = OS_QNX;
 
-// TODO: figure out equivalent of qnx_osinfo()
-    ret->sys.osmajor = 6;
-    ret->sys.osminor = 0;
+    get_nto_version( &ret->sys.osmajor, &ret->sys.osminor );
 
     ret->sys.cpu = X86CPUType();
     if( HAVE_EMU ) {
@@ -470,7 +489,7 @@ static bool setup_rdebug( void )
         dbg_print(( "rdebug at %08x, ld breakpoint at %08x\n", 
                     (unsigned)ProcInfo.rdebug_va, (unsigned)ProcInfo.ld_bp_va ));
         ReadMem( ProcInfo.procfd, &rdebug, ProcInfo.rdebug_va, sizeof( rdebug ) );
-        AddInitialLibs( ProcInfo.procfd, (addr_off)rdebug.r_map );
+        AddLibs( ProcInfo.procfd, (addr_off)rdebug.r_map );
         ProcInfo.have_rdebug = TRUE;
 
         /* Set a breakpoint in dynamic linker. That way we can be
@@ -613,7 +632,7 @@ unsigned ReqProg_load( void )
             dbg_info = (procfs_debuginfo *)buf;
             buf[0] = exe_name[0] = '\0';
             devctl( ProcInfo.procfd, DCMD_PROC_MAPDEBUG_BASE, dbg_info, sizeof( buf ), 0 );
-            if( strcmp( dbg_info->path, "./" ) && (*dbg_info->path != '/') ) {
+            if( strncmp( dbg_info->path, "./", 2 ) && (*dbg_info->path != '/') ) {
                 // Bug in QNX? Initial '/' seems to be missing sometimes.
                 strcpy( exe_name, "/" );
             }
@@ -623,7 +642,7 @@ unsigned ReqProg_load( void )
         }
         ret->task_id = ProcInfo.pid;
         ProcInfo.dynsec_va = GetDynSection( exe_name );
-        AddProcess( exe_name );
+        AddProcess( exe_name, ProcInfo.dynsec_va );
         if( ProcInfo.dynsec_va ) {
             setup_rdebug();
         }
@@ -739,6 +758,8 @@ unsigned ReqSet_watch( void )
         ret->err = 0;
         ret->multiplier |= USING_DEBUG_REG;
     }
+    CONV_LE_32( ret->err );
+    CONV_LE_32( ret->multiplier );
     return( sizeof( *ret ) );
 }
 
@@ -755,10 +776,23 @@ unsigned ReqClear_watch( void )
 }
 
 
+/* Run if user hit Ctrl-C twice */
+static void KillRunHandler( int sig )
+{
+    signal( sig, KillRunHandler );
+    dbg_print(( "sending SIGKILL to debuggee\n" ));
+    /* Be brutal */
+    kill( ProcInfo.pid, SIGKILL );
+}
+
+
+/* Run if user hit Ctrl-C once */
 static void RunHandler( int sig )
 {
-    sig = sig;
-    ProcInfo.stopped = TRUE;
+    /* If this doesn't work, try more severe methods */
+    signal( sig, KillRunHandler );
+    dbg_print(( "sending SIGINT to debuggee\n" ));
+    kill( ProcInfo.pid, SIGINT );
 }
 
 
@@ -814,7 +848,6 @@ static int RunIt( unsigned step )
     siginfo_t           info;
     procfs_status       status;
 
-    ProcInfo.stopped = TRUE;
     ret = 0;
 
     Resume( step );
@@ -824,18 +857,20 @@ static int RunIt( unsigned step )
 
     devctl( ProcInfo.procfd, DCMD_PROC_STATUS, &status, sizeof( status ), 0 );
     while( !(status.flags & _DEBUG_FLAG_ISTOP) ) {
-        dbg_print(("nothing interesting yet: flags = %x\n", status.flags));
+        dbg_print(( "nothing interesting yet: flags = %x\n", status.flags) );
         old = signal( SIGINT, RunHandler );
         sigwaitinfo( &sig_set, &info );
         signal( SIGINT, old );
         devctl( ProcInfo.procfd, DCMD_PROC_STATUS, &status, sizeof( status ), 0 );
     }
-    dbg_print(("interesting: flags = %x, why = %x, tid=%d\n", status.flags, status.why, status.tid));
+    dbg_print(( "interesting: flags = %x, why = %x, tid=%d\n", status.flags, status.why, status.tid ));
 
-    /* See if current thread changed */
-    if( status.tid != ProcInfo.tid ) {
+    /* It is unclear how to detect that thread state changed (threads added, deleted, etc.).
+     * We'll just report thread change every time we stop, unless we're single stepping.
+     */
+    if( (status.tid != ProcInfo.tid) || !(status.flags & _DEBUG_FLAG_SSTEP) ) {
         ProcInfo.tid = status.tid;
-        ret |= COND_THREAD;
+        ret |= COND_THREAD | COND_THREAD_EXTRA;
     }
 
     if( status.flags & _DEBUG_FLAG_SSTEP ) {
@@ -849,7 +884,7 @@ static int RunIt( unsigned step )
         case _DEBUG_WHY_SIGNALLED:
         case _DEBUG_WHY_FAULTED:
         case _DEBUG_WHY_JOBCONTROL:
-            dbg_print(("stopped on signal: %d\n", status.info.si_signo));
+            dbg_print(( "stopped on signal: %d\n", status.info.si_signo ));
             if( status.info.si_signo == SIGINT ) {
                 ret |= COND_USER;
             } else {
@@ -948,6 +983,7 @@ unsigned ReqRedirect_stdin( void  )
     // TODO: implement if possible
     ret = GetOutPtr( 0 );
     ret->err = 1;
+    CONV_LE_32( ret->err );
     return( sizeof( *ret ) );
 }
 
@@ -959,6 +995,7 @@ unsigned ReqRedirect_stdout( void  )
     // TODO: implement if possible
     ret = GetOutPtr( 0 );
     ret->err = 1;
+    CONV_LE_32( ret->err );
     return( sizeof( *ret ) );
 }
 
@@ -1233,7 +1270,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     parm = parm;
     remote = remote;
 
-    /* SIGUSR1 is used to gain control after blocking wait for a process. */
+    /* We use SIGUSR1 to gain control after blocking wait for a process. */
     sigemptyset( &sig_set );
     sigaddset( &sig_set, SIGUSR1 );
     sigprocmask( SIG_BLOCK, &sig_set, NULL );

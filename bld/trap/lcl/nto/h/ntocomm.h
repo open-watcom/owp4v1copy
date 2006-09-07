@@ -60,7 +60,6 @@ typedef int     pid_handle;
 typedef struct {
     unsigned    at_end          : 1;
     unsigned    loaded_proc     : 1;
-    unsigned    stopped         : 1;
     unsigned    fork            : 1;
     unsigned    have_rdebug     : 1;
     procfs_run  run;
@@ -99,6 +98,6 @@ extern addr_off     GetDynSection( const char *exe_name );
 extern int          MapAddrToLinkVA( pid_handle pid, addr_off addr, addr_off *map_addr );
 extern char         *dbg_strcpy( pid_handle pid, char *, const char * );
 
-extern void         AddProcess( const char *exe_name );
-extern int          AddInitialLibs( pid_handle pid, addr_off first_lmap );
+extern void         AddProcess( const char *exe_name, addr_off dynsection );
+extern int          AddLibs( pid_handle pid, addr_off first_lmap );
 extern void         ProcessLdBreakpoint( pid_handle pid, addr_off rdebug_va );
