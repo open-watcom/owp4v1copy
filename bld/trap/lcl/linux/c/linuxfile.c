@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -36,7 +37,8 @@
 #include <sys/wait.h>
 #include "trpimp.h"
 
-unsigned ReqFile_get_config()
+
+unsigned ReqFile_get_config( void )
 {
     file_get_config_ret *ret;
 
@@ -50,7 +52,7 @@ unsigned ReqFile_get_config()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_open()
+unsigned ReqFile_open( void )
 {
     file_open_req       *acc;
     file_open_ret       *ret;
@@ -58,9 +60,11 @@ unsigned ReqFile_open()
     static const int    MapAcc[] = { O_RDONLY, O_WRONLY, O_RDWR };
     int                 mode;
     int                 access;
+    const char          *name;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
+    name = GetInPtr( sizeof( *acc ) );
     mode = MapAcc[ (acc->mode & (TF_READ|TF_WRITE)) - 1];
     access = S_IRUSR|S_IWUSR | S_IRGRP|S_IWGRP | S_IROTH|S_IWOTH;
     if( acc->mode & TF_CREATE ) {
@@ -68,8 +72,7 @@ unsigned ReqFile_open()
         if( acc->mode & TF_EXEC )
             access |= S_IXUSR | S_IXGRP | S_IXOTH;
     }
-    handle = open( (char *)GetInPtr( sizeof( *acc ) ), mode,
-                    access );
+    handle = open( name, mode, access );
     if( handle != -1 ) {
         fcntl( handle, F_SETFD, (int)FD_CLOEXEC );
         errno = 0;
@@ -84,7 +87,7 @@ unsigned ReqFile_open()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_seek()
+unsigned ReqFile_seek( void )
 {
     file_seek_req       *acc;
     file_seek_ret       *ret;
@@ -105,13 +108,13 @@ unsigned ReqFile_seek()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_read()
+unsigned ReqFile_read( void )
 {
-    unsigned     total;
-    unsigned     len;
-    char         *ptr;
-    unsigned     curr;
-    int          rv;
+    unsigned            total;
+    unsigned            len;
+    char                *ptr;
+    size_t              curr;
+    ssize_t             rv;
     file_read_req       *acc;
     file_read_ret       *ret;
 
@@ -174,7 +177,7 @@ static unsigned DoWrite( int hdl, unsigned_8 *ptr, unsigned len )
     return( total );
 }
 
-unsigned ReqFile_write()
+unsigned ReqFile_write( void )
 {
     file_write_req      *acc;
     file_write_ret      *ret;
@@ -190,7 +193,7 @@ unsigned ReqFile_write()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_write_console()
+unsigned ReqFile_write_console( void )
 {
     file_write_console_ret      *ret;
 
@@ -203,7 +206,7 @@ unsigned ReqFile_write_console()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_close()
+unsigned ReqFile_close( void )
 {
     file_close_req      *acc;
     file_close_ret      *ret;
@@ -221,7 +224,7 @@ unsigned ReqFile_close()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_erase()
+unsigned ReqFile_erase( void )
 {
     file_erase_ret      *ret;
 
@@ -236,15 +239,15 @@ unsigned ReqFile_erase()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqFile_run_cmd()
+unsigned ReqFile_run_cmd( void )
 {
-    char         buff[256];
-    char         *argv[4];
-    char         *shell;
-    pid_t        pid;
-    int          status;
+    char                buff[256];
+    char                *argv[4];
+    char                *shell;
+    pid_t               pid;
+    int                 status;
     file_run_cmd_ret    *ret;
-    int          len;
+    int                 len;
 
 
     shell = getenv( "SHELL" );
@@ -262,7 +265,7 @@ unsigned ReqFile_run_cmd()
         argv[1] = NULL;
     }
     if ( (pid = fork()) == 0 ) { /* child */
-        pid_t pgrp;
+        pid_t   pgrp;
     
         setpgid( 0, 0 );
         pgrp = getpgrp();
