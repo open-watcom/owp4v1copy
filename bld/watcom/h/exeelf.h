@@ -520,12 +520,18 @@ typedef struct {
 // note entry format
 
 typedef struct {
-    unsigned_32 namesz;         // size of name
-    unsigned_32 descsz;         // size of descriptor
-    unsigned_32 type;           // user defined "type" of the note
-    char        name[1];        // variable length name.
-    //unsigned_32 desc[];       // descriptors go here
-} elf_note;
+    unsigned_32     n_namesz;   // length of name
+    unsigned_32     n_descsz;   // length of descriptor
+    unsigned_32     n_type;     // user defined "type" of the note
+    //char            name[];   // variable length name
+    //unsigned_32     desc[];   // descriptors go here
+} Elf_Note;
+
+// note types (used in core files)
+
+#define NT_PRSTATUS     1       // process status
+#define NT_FPREGSET     2       // floating point registers
+#define NT_PRPSINFO     3       // process state info
 
 // dynamic segment entry information.
 
