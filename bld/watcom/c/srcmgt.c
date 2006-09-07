@@ -75,7 +75,7 @@ static browser *FInitSource( sm_file_handle fp, sm_mod_handle mod, sm_cue_file_i
     hndl->cur_line = 1;
     hndl->file_ptr = fp;
     hndl->bias = SMSeekStart( fp );
-    hndl->eof_off = ULONG_MAX;
+    hndl->eof_off = SMSeekEnd( fp );
     hndl->open_name = NULL;
     hndl->use = 1;
     hndl->mod = mod;
