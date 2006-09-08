@@ -333,12 +333,14 @@ unsigned ReqGet_lib_name( void )
             moduleInfo[i].newly_unloaded = FALSE;
             ret->handle = i;
             ret_len += 1;
+            break;
         } else if( moduleInfo[i].newly_loaded ) {
             strcpy( name, moduleInfo[i].filename );
             dbg_print(( "(lib loaded, '%s')\n", name ));
             moduleInfo[i].newly_loaded = FALSE;
             ret->handle = i;
             ret_len += strlen( name ) + 1;
+            break;
         }
     }
     dbg_print(( "ReqGet_lib_name: in handle %ld, out handle %ld, name '%s'\n",

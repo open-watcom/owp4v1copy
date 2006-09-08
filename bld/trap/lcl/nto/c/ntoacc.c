@@ -392,7 +392,7 @@ static pid_t proc_attach( pid_t pid, int *pfd, pthread_t *ptid )
     char                path[PATH_MAX];
     int                 ctl_fd;
 
-    snprintf( path, PATH_MAX - 1, "%s/%d/as", ProcInfo.procfs_path, pid );
+    snprintf( path, sizeof( path ) - 1, "%s/%d/as", ProcInfo.procfs_path, pid );
     dbg_print(( "attaching to pid %d, procfs path '%s'\n", pid, path ));
     ctl_fd = open( path, O_RDWR );
     if( ctl_fd == -1 ) {
@@ -512,6 +512,33 @@ static bool setup_rdebug( void )
 }
 
 
+/* Translate pid to the corresponding executable's pathname. */
+static size_t pid_to_name( pid_t pid, char *exe_name, size_t len )
+{
+    int                 procfd;
+    char                buf[PATH_MAX];
+    procfs_debuginfo    *dbg_info;
+
+    *exe_name = '\0';
+    snprintf( buf, sizeof( buf ) - 1, "%s/%d/as", ProcInfo.procfs_path, pid );
+    procfd = open( buf, O_RDONLY );
+    if( procfd != -1 ) {
+        dbg_info = (procfs_debuginfo *)buf;
+        dbg_info->path[0] = '\0';
+    
+        if( devctl( procfd, DCMD_PROC_MAPDEBUG_BASE, dbg_info, sizeof( buf ), 0 ) == EOK ) {
+            if( strncmp( dbg_info->path, "./", 2 ) && (*dbg_info->path != '/') ) {
+                // Bug in QNX? Initial '/' seems to be missing sometimes.
+                strcpy( exe_name, "/" );
+            }
+            strncat( exe_name, dbg_info->path, len - 16 );
+        }
+        close( procfd );
+    }
+    return( strlen( exe_name ) + 1 );
+}
+
+
 unsigned ReqProg_load( void )
 {
     char                    **args;
@@ -628,20 +655,7 @@ unsigned ReqProg_load( void )
             goto fail;
         }
         if( !ProcInfo.loaded_proc ) {
-            char                buf[PATH_MAX];
-            procfs_debuginfo    *dbg_info;
-
-            /* When attaching to a running process, figure out the
-             * executable's pathname.
-             */
-            dbg_info = (procfs_debuginfo *)buf;
-            buf[0] = exe_name[0] = '\0';
-            devctl( ProcInfo.procfd, DCMD_PROC_MAPDEBUG_BASE, dbg_info, sizeof( buf ), 0 );
-            if( strncmp( dbg_info->path, "./", 2 ) && (*dbg_info->path != '/') ) {
-                // Bug in QNX? Initial '/' seems to be missing sometimes.
-                strcpy( exe_name, "/" );
-            }
-            strcat( exe_name, dbg_info->path );
+            pid_to_name( ProcInfo.pid, exe_name, sizeof( exe_name ) );
             dbg_print(( "attached to '%s'\n", exe_name ));
             ret->flags |= LD_FLAG_IS_STARTED;
         }
@@ -1039,7 +1053,9 @@ unsigned ReqFile_string_to_fullpath( void )
         pid = RunningProc( name, &name );
     }
     if( pid != 0 ) {
-        len = 0; //StrCopy( proc.un.proc.name, fullname ) - fullname;
+        /* We aren't told how big the output buffer is! */
+        len = pid_to_name( pid, fullname, 512 );
+        dbg_print(( "pid %d -> name '%s'\n", pid, name ));
     } else {
         len = FindFilePath( exe, name, fullname );
     }
