@@ -52,11 +52,6 @@ typedef unsigned short  USHORT;
 typedef unsigned long   ULONG;
 
 static pid_t            OrigPGrp;
-static struct {
-    unsigned long       in;
-    unsigned long       out;
-    unsigned long       err;
-}                       StdPos;
 
 process_info        ProcInfo;
 
@@ -74,7 +69,7 @@ unsigned nto_node( void )
     }
     node = netmgr_strtond( ProcInfo.procfs_path, 0 );
     if( node == -1 ) {
-        Out( "QNX node lost!\n" );
+        dbg_print(( "QNX node lost!\n" ));
     }
     return( node );
 }
@@ -134,8 +129,10 @@ unsigned ReqChecksum_mem( void )
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
+    dbg_print(( "mem checksum at %08x, %d bytes\n", 
+                (unsigned)acc->in_addr.offset, acc->len ));
     sum = 0;
-    if( ProcInfo.pid != 0 ) {
+    if( ProcInfo.pid && !ProcInfo.at_end ) {
         length = acc->len;
         offv = acc->in_addr.offset;
         for( ;; ) {
@@ -158,13 +155,18 @@ unsigned ReqChecksum_mem( void )
 unsigned ReqRead_mem( void )
 {
     read_mem_req    *acc;
-    unsigned        len;
+    unsigned        len = 0;
 
     acc = GetInPtr( 0 );
     CONV_LE_32( acc->mem_addr.offset );
     CONV_LE_16( acc->mem_addr.segment );
     CONV_LE_16( acc->len );
-    len = ReadMem( ProcInfo.procfd, GetOutPtr( 0 ), acc->mem_addr.offset, acc->len );
+    if( ProcInfo.pid && !ProcInfo.at_end ) {
+#ifdef DEBUG_MEM
+        dbg_print(( "mem read at %08x, %d bytes\n", (unsigned)acc->mem_addr.offset, acc->len ));
+#endif
+        len = ReadMem( ProcInfo.procfd, GetOutPtr( 0 ), acc->mem_addr.offset, acc->len );
+    }
     return( len );
 }
 
@@ -180,7 +182,13 @@ unsigned ReqWrite_mem( void )
     CONV_LE_16( acc->mem_addr.segment );
     ret = GetOutPtr( 0 );
     len = GetTotalSize() - sizeof( *acc );
-    ret->len = WriteMem( ProcInfo.procfd, GetInPtr( sizeof( *acc ) ), acc->mem_addr.offset, len );
+    ret->len = 0;
+    if( ProcInfo.pid && !ProcInfo.at_end ) {
+#ifdef DEBUG_MEM
+        dbg_print(( "mem write at %08x, %d bytes\n", (unsigned)acc->mem_addr.offset, len ));
+#endif
+        ret->len = WriteMem( ProcInfo.procfd, GetInPtr( sizeof( *acc ) ), acc->mem_addr.offset, len );
+    }
     CONV_LE_16( ret->len );
     return( sizeof( *ret ) );}
 
@@ -377,15 +385,15 @@ done:
     return( i );
 }
 
-static pid_t proc_attach( pid_t pid, int *pfd )
+static pid_t proc_attach( pid_t pid, int *pfd, pthread_t *ptid )
 {
     procfs_status       status;
     struct sigevent     event;
     char                path[PATH_MAX];
     int                 ctl_fd;
 
-    dbg_print(("attaching to pid %d\n", pid ));
     snprintf( path, PATH_MAX - 1, "%s/%d/as", ProcInfo.procfs_path, pid );
+    dbg_print(( "attaching to pid %d, procfs path '%s'\n", pid, path ));
     ctl_fd = open( path, O_RDWR );
     if( ctl_fd == -1 ) {
         dbg_print(("failed to open proc file '%s'\n", path));
@@ -410,10 +418,11 @@ static pid_t proc_attach( pid_t pid, int *pfd )
     
     if( devctl( ctl_fd, DCMD_PROC_STATUS, &status, sizeof( status ), 0 ) == EOK
       && status.flags & _DEBUG_FLAG_STOPPED ) {
-        dbg_print(( "debuggee stopped - sending SIGCONT\n" ));
+        dbg_print(( "debuggee stopped - sending SIGCONT to pid %d\n", pid ));
         SignalKill( nto_node(), pid, 0, SIGCONT, 0, 0 );
     }
     *pfd = ctl_fd;
+    *ptid = status.tid;
     return( pid );
 }
 
@@ -421,7 +430,7 @@ static void proc_detach( char *args )
 {
     int     sig = 0;
 
-    dbg_print(( "detaching from current process\n" ));
+    dbg_print(( "detaching from current process (pid %d)\n", ProcInfo.pid ));
     if( args ) {
         sig = atoi( args );
     }
@@ -472,7 +481,7 @@ static int nto_breakpoint( addr_off addr, int type, int size )
     brk.addr = addr;
     brk.size = size;
     if( devctl( ProcInfo.procfd, DCMD_PROC_BREAK, &brk, sizeof( brk ), 0 ) != EOK ) {
-        Out( "failed to manipulate breakpoint!\n" );
+        dbg_print(( "failed to manipulate breakpoint!\n" ));
         return( 1 );
     }
     else {
@@ -518,10 +527,6 @@ unsigned ReqProg_load( void )
     unsigned                len;
     int                     fds[3];
     struct inheritance      inherit;
-
-    lseek( 0, StdPos.in , SEEK_SET );
-    lseek( 1, StdPos.out, SEEK_SET );
-    lseek( 2, StdPos.err, SEEK_SET );
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -615,7 +620,7 @@ unsigned ReqProg_load( void )
     if( ProcInfo.pid != -1 ) {
         // Tell debugger to ignore segment values when comparing pointers
         ret->flags |= LD_FLAG_IS_32 | LD_FLAG_IGNORE_SEGMENTS;
-        ProcInfo.pid = proc_attach( ProcInfo.pid, &ProcInfo.procfd );
+        ProcInfo.pid = proc_attach( ProcInfo.pid, &ProcInfo.procfd, &ProcInfo.tid );
         if( ProcInfo.pid == 0 ) {
             if( ProcInfo.loaded_proc ) {
                 SignalKill( nto_node(), ProcInfo.pid, 0, SIGKILL, 0, 0 );
@@ -652,7 +657,6 @@ fail:
     ret->err = errno;
     if( ret->err != 0 ) {
         proc_detach( NULL );
-        ProcInfo.pid = 0;
     }
     // It might be better to use handle 1 for the debuggee
     ret->mod_handle = 0;
@@ -668,12 +672,12 @@ unsigned ReqProg_kill( void )
     prog_kill_ret       *ret;
 
     ret = GetOutPtr( 0 );
+    dbg_print(( "killing current process (pid %d)\n", ProcInfo.pid ));
     if( ProcInfo.pid ) {
         if( ProcInfo.loaded_proc && !ProcInfo.at_end ) {
             SignalKill( nto_node(), ProcInfo.pid, 0, SIGKILL, 0, 0 );
         }
         proc_detach( NULL );
-        ProcInfo.pid = 0;
     }
     ProcInfo.sig      = -1;
     ProcInfo.at_end   = FALSE;
@@ -694,8 +698,8 @@ unsigned ReqSet_break( void )
     CONV_LE_32( acc->break_addr.offset );
     CONV_LE_16( acc->break_addr.segment );
     ret = GetOutPtr( 0 );
-    dbg_print(("setting breakpoint at %04x:%08x\n", acc->break_addr.segment, 
-               (unsigned)acc->break_addr.offset));
+    dbg_print(( "setting breakpoint at %04x:%08x\n", acc->break_addr.segment, 
+               (unsigned)acc->break_addr.offset ));
     nto_breakpoint( acc->break_addr.offset, _DEBUG_BREAK_EXEC, 0 );
     return( sizeof( *ret ) );
 }
@@ -708,8 +712,8 @@ unsigned ReqClear_break( void )
     acc = GetInPtr( 0 );
     CONV_LE_32( acc->break_addr.offset );
     CONV_LE_16( acc->break_addr.segment );
-    dbg_print(("clearing breakpoint at %04x:%08x\n", acc->break_addr.segment, 
-               (unsigned)acc->break_addr.offset));
+    dbg_print(( "clearing breakpoint at %04x:%08x\n", acc->break_addr.segment, 
+               (unsigned)acc->break_addr.offset ));
     nto_breakpoint( acc->break_addr.offset, _DEBUG_BREAK_EXEC, -1 );
     return( 0 );
 }
@@ -735,7 +739,7 @@ static int nto_watchpoint( int addr, int len, int type )
     brk.size = len;
     
     if( devctl( ProcInfo.procfd, DCMD_PROC_BREAK, &brk, sizeof( brk ), 0 ) != EOK ) {
-        Out( "Failed to manipulate hardware watchpoint\n" );
+        dbg_print(( "Failed to manipulate hardware watchpoint\n" ));
         return( -1 );
     }
     return( 0 );
@@ -753,6 +757,8 @@ unsigned ReqSet_watch( void )
     ret = GetOutPtr( 0 );
     ret->multiplier = 1000;
     ret->err = 1;
+    dbg_print(( "setting watchpoint %d bytes at %04x:%08x\n", acc->size,
+               acc->watch_addr.segment, (unsigned)acc->watch_addr.offset ));
     if( nto_watchpoint( acc->watch_addr.offset, acc->size, 1 ) == 0 ) {
         /* Succeeded */
         ret->err = 0;
@@ -769,8 +775,10 @@ unsigned ReqClear_watch( void )
     clear_watch_req *acc;
 
     acc = GetInPtr( 0 );
-    CONV_LE_32( acc->break_addr.offset );
-    CONV_LE_16( acc->break_addr.segment );
+    CONV_LE_32( acc->watch_addr.offset );
+    CONV_LE_16( acc->watch_addr.segment );
+    dbg_print(( "clearing watchkpoint at %04x:%08x\n", acc->watch_addr.segment, 
+               (unsigned)acc->watch_addr.offset ));
     nto_watchpoint( acc->watch_addr.offset, -1, 1 );
     return( 0 );
 }
@@ -780,9 +788,9 @@ unsigned ReqClear_watch( void )
 static void KillRunHandler( int sig )
 {
     signal( sig, KillRunHandler );
-    dbg_print(( "sending SIGKILL to debuggee\n" ));
+    dbg_print(( "sending SIGKILL to debuggee (pid %d)\n", ProcInfo.pid ));
     /* Be brutal */
-    kill( ProcInfo.pid, SIGKILL );
+    SignalKill( nto_node(), ProcInfo.pid, 0, SIGKILL, 0, 0 );
 }
 
 
@@ -791,8 +799,8 @@ static void RunHandler( int sig )
 {
     /* If this doesn't work, try more severe methods */
     signal( sig, KillRunHandler );
-    dbg_print(( "sending SIGINT to debuggee\n" ));
-    kill( ProcInfo.pid, SIGINT );
+    dbg_print(( "sending SIGINT to debuggee (pid %d)\n", ProcInfo.pid ));
+    SignalKill( nto_node(), ProcInfo.pid, 0, SIGINT, 0, 0 );
 }
 
 
@@ -835,7 +843,7 @@ static void Resume( int step )
     ProcInfo.run.flags |= _DEBUG_RUN_CLRSIG | _DEBUG_RUN_CLRFLT;
 
     if( devctl( ProcInfo.procfd, DCMD_PROC_RUN, &ProcInfo.run, sizeof( ProcInfo.run ), 0 ) != EOK ) {
-        Out( "failed to run debuggee!\n" );
+        dbg_print(( "failed to run debuggee!\n" ));
     }
 }
 
@@ -869,8 +877,11 @@ static int RunIt( unsigned step )
      * We'll just report thread change every time we stop, unless we're single stepping.
      */
     if( (status.tid != ProcInfo.tid) || !(status.flags & _DEBUG_FLAG_SSTEP) ) {
-        ProcInfo.tid = status.tid;
-        ret |= COND_THREAD | COND_THREAD_EXTRA;
+        // If current tid is zero, the process ended. We're not interested.
+        if( status.tid ) {
+            ProcInfo.tid = status.tid;
+            ret |= COND_THREAD | COND_THREAD_EXTRA;
+        }
     }
 
     if( status.flags & _DEBUG_FLAG_SSTEP ) {
@@ -896,6 +907,8 @@ static int RunIt( unsigned step )
             int     wait_val = 0;
 
             waitpid( ProcInfo.pid, &wait_val, WNOHANG );
+            dbg_print(( "debuggee terminated (pid %d), status collected (%d)\n", 
+                        ProcInfo.pid, wait_val ));
             ProcInfo.at_end = TRUE;
             ret |= COND_TERMINATE;
             break;
@@ -923,13 +936,15 @@ static unsigned ProgRun( bool step )
     int                 regsize;
 
     ret = GetOutPtr( 0 );
+    memset( ret, 0, sizeof( *ret ) );
     if( ProcInfo.at_end ) {
+        dbg_print(( "process terminated - nothing to do\n" ));
         ret->conditions = COND_TERMINATE;
     } else if( step ) {
-        Out( "about to step\n" );
+        dbg_print(( "about to step\n" ));
         ret->conditions = RunIt( 1 );
     } else {
-        Out( "about to run\n" );
+        dbg_print(( "about to run\n" ));
         ret->conditions = RunIt( 0 );
     }
     if( !(ret->conditions & COND_TERMINATE) ) {
@@ -939,19 +954,20 @@ static unsigned ProgRun( bool step )
         ret->program_counter.segment = regs.x86.cs;
         ret->stack_pointer.offset  = regs.x86.esp;
         ret->stack_pointer.segment = regs.x86.ss;
-        dbg_print(( "stopped at %04x:%08x because of %x\n", ret->program_counter.segment, 
-                   (unsigned)ret->program_counter.offset, ret->conditions ));
-    }
 
-    /* If debuggee has dynamic section, try getting the r_debug struct
-     * every time the debuggee stops. The r_debug data may not be available
-     * immediately after the debuggee process loads.
-     */
-    if( !ProcInfo.have_rdebug && ProcInfo.dynsec_va ) {
-        if( setup_rdebug() ) {
-            ret->conditions |= COND_LIBRARIES;
+        /* If debuggee has dynamic section, try getting the r_debug struct
+         * every time the debuggee stops. The r_debug data may not be available
+         * immediately after the debuggee process loads.
+         */
+        if( !ProcInfo.have_rdebug && ProcInfo.dynsec_va ) {
+            if( setup_rdebug() ) {
+                ret->conditions |= COND_LIBRARIES;
+            }
         }
     }
+    dbg_print(( "stopped at %04x:%08x because of %x\n", ret->program_counter.segment, 
+               (unsigned)ret->program_counter.offset, ret->conditions ));
+
     // Note: Some trap files always set COND_CONFIG here. This should only be
     // necessary if we were switching between 32-bit and 16-bit code and the like.
     // It should not be needed for QNX Neutrino.
@@ -1130,15 +1146,25 @@ unsigned ReqThread_get_next( void )
     procfs_status       status;
 
     req = GetInPtr( 0 );
+    CONV_LE_32( req->thread );
     ret = GetOutPtr( 0 );
 
-    status.tid = ret->thread + 1;
-    if( devctl( ProcInfo.procfd, DCMD_PROC_TIDSTATUS, &status, sizeof( status ), 0 ) != EOK ) {
-        ret->thread = 0;
+    status.tid = req->thread + 1;
+    ret->state = 0;
+    if( ProcInfo.pid && !ProcInfo.at_end ) {
+        if( devctl( ProcInfo.procfd, DCMD_PROC_TIDSTATUS, &status, sizeof( status ), 0 ) != EOK ) {
+            dbg_print(( "failed to get thread status (tid %ld)\n", req->thread + 1 ));
+            ret->thread = 0;
+        } else {
+            ret->thread = status.tid;
+            ret->state  = status.tid_flags & _NTO_TF_FROZEN ? THREAD_FROZEN : THREAD_THAWED;
+        }
     } else {
-        ret->thread = status.tid;
-        ret->state  = status.tid_flags & _NTO_TF_FROZEN ? THREAD_FROZEN : THREAD_THAWED;
+        /* If the debuggee isn't running, pretend there is one thread */
+        ret->thread = req->thread ? 0 : 1;
     }
+    dbg_print(( "next thread %ld (in %ld), state %d\n", ret->thread, req->thread, ret->state ));
+    CONV_LE_32( ret->thread );
     return( sizeof( *ret ) );
 }
 
@@ -1150,10 +1176,13 @@ unsigned ReqThread_set( void )
     pthread_t           tid;
 
     req = GetInPtr( 0 );
+    CONV_LE_32( req->thread );
     ret = GetOutPtr( 0 );
+    tid = req->thread;
     ret->err = 0;
     ret->old_thread = ProcInfo.tid;
-    if( ( tid = req->thread ) ) {
+    dbg_print(( "setting thread %d (currently %d)\n", tid, ProcInfo.tid ));
+    if( tid ) {
         if( devctl( ProcInfo.procfd, DCMD_PROC_CURTHREAD, &tid, sizeof( tid ), 0 ) != EOK ) {
             dbg_print(( "failed to set current thread to %d\n", tid ));
             ret->err = EINVAL;
@@ -1161,6 +1190,8 @@ unsigned ReqThread_set( void )
             ProcInfo.tid = tid;
         }
     }
+    CONV_LE_32( ret->old_thread );
+    CONV_LE_32( ret->err );
     return( sizeof( *ret ) );
 }
 
@@ -1172,17 +1203,23 @@ unsigned ReqThread_freeze( void )
     pthread_t           tid;
 
     req = GetInPtr( 0 );
+    CONV_LE_32( req->thread );
     ret = GetOutPtr( 0 );
     tid = req->thread;
     ret->err = 0;
+    dbg_print(( "freezing thread %d\n", tid ));
     if( tid ) {
-        if( devctl( ProcInfo.procfd, DCMD_PROC_FREEZETHREAD, &tid, sizeof( tid ), 0 ) != EOK ) {
-            dbg_print(( "failed to freeze thread %d\n", tid ));
-            ret->err = EINVAL;
+        /* If debuggee isn't running, do nothing but pretend it worked */
+        if( ProcInfo.pid && !ProcInfo.at_end ) {
+            if( devctl( ProcInfo.procfd, DCMD_PROC_FREEZETHREAD, &tid, sizeof( tid ), 0 ) != EOK ) {
+                dbg_print(( "failed to freeze thread %d\n", tid ));
+                ret->err = EINVAL;
+            }
         }
     } else {
         ret->err = EINVAL;
     }
+    CONV_LE_32( ret->err );
     return( sizeof( *ret ) );
 }
 
@@ -1194,17 +1231,23 @@ unsigned ReqThread_thaw( void )
     pthread_t           tid;
 
     req = GetInPtr( 0 );
+    CONV_LE_32( req->thread );
     ret = GetOutPtr( 0 );
     tid = req->thread;
     ret->err = 0;
+    dbg_print(( "thawing thread %d\n", tid ));
     if( tid ) {
-        if( devctl( ProcInfo.procfd, DCMD_PROC_THAWTHREAD, &tid, sizeof( tid ), 0 ) != EOK ) {
-            dbg_print(( "failed to thaw thread %d\n", tid ));
-            ret->err = EINVAL;
+        /* If debuggee isn't running, do nothing but pretend it worked */
+        if( ProcInfo.pid && !ProcInfo.at_end ) {
+            if( devctl( ProcInfo.procfd, DCMD_PROC_THAWTHREAD, &tid, sizeof( tid ), 0 ) != EOK ) {
+                dbg_print(( "failed to thaw thread %d\n", tid ));
+                ret->err = EINVAL;
+            }
         }
     } else {
         ret->err = EINVAL;
     }
+    CONV_LE_32( ret->err );
     return( sizeof( *ret ) );
 }
 
@@ -1256,7 +1299,7 @@ unsigned ReqThread_get_extra( void )
             }
         }
     } else {
-        strcpy( ret, "Neutrino State" );
+        strcpy( ret, "QNX Thread State" );
     }
     return( strlen( ret ) + 1 );
 }
@@ -1280,9 +1323,6 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     ProcInfo.node = ND_LOCAL_NODE;
     strcpy( ProcInfo.procfs_path, "/proc" );
     err[0] = '\0';      /* all ok */
-    StdPos.in  = lseek( 0, 0, SEEK_CUR );
-    StdPos.out = lseek( 1, 0, SEEK_CUR );
-    StdPos.err = lseek( 2, 0, SEEK_CUR );
     ver.major = TRAP_MAJOR_VERSION;
     ver.minor = TRAP_MINOR_VERSION;
     ver.remote = FALSE;

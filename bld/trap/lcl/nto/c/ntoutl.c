@@ -73,6 +73,7 @@ unsigned ReadMem( pid_handle procfs_fd, void *ptr, addr_off offv, unsigned size 
     if( lseek( procfs_fd, (off_t)offv, SEEK_SET ) == (off_t)offv ) {
         length = read( procfs_fd, ptr, size );
         if( length < 0 ) {
+            dbg_print(( "ReadMem failed\n" ));
             length = 0;
         }
     }
@@ -87,6 +88,7 @@ unsigned WriteMem( pid_handle procfs_fd, void *ptr, addr_off offv, unsigned size
     if( lseek( procfs_fd, (off_t)offv, SEEK_SET ) == (off_t)offv ) {
         length = write( procfs_fd, ptr, size );
         if( length < 0 ) {
+            dbg_print(( "WriteMem failed\n" ));
             length = 0;
         }
     }
@@ -155,7 +157,7 @@ int GetLdInfo( pid_handle pid, addr_off dynsec_off, addr_off *rdebug_off, addr_o
     while( loc_dyn.d_tag != DT_NULL ) {
         if( loc_dyn.d_tag == DT_DEBUG ) {
             rdebug_ptr = loc_dyn.d_un.d_ptr;
-            dbg_print(( "GetLdInfo: DT_DEBUG entry found\n" ));
+            dbg_print(( "GetLdInfo: DT_DEBUG entry found (%08lx)\n", rdebug_ptr ));
             break;
         }
         dynsec_off += sizeof( Elf32_Dyn );

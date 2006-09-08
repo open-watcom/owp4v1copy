@@ -332,16 +332,17 @@ unsigned ReqGet_lib_name( void )
             dbg_print(( "(lib unloaded, '%s')\n", moduleInfo[i].filename ));
             moduleInfo[i].newly_unloaded = FALSE;
             ret->handle = i;
+            ret_len += 1;
         } else if( moduleInfo[i].newly_loaded ) {
             strcpy( name, moduleInfo[i].filename );
-            ret_len += strlen( name ) + 1;
             dbg_print(( "(lib loaded, '%s')\n", name ));
             moduleInfo[i].newly_loaded = FALSE;
             ret->handle = i;
+            ret_len += strlen( name ) + 1;
         }
     }
-    dbg_print(( "ReqGet_lib_name: in handle %ld, out handle %ld\n",
-               acc->handle, ret->handle ));
+    dbg_print(( "ReqGet_lib_name: in handle %ld, out handle %ld, name '%s'\n",
+               acc->handle, ret->handle, name ));
     CONV_LE_32( ret->handle );
     return( ret_len );
 }
