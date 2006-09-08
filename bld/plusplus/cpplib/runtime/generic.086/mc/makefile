@@ -1,4 +1,4 @@
-#pmake: build compact cpu_i86 os_osi
+#pmake: build compact cpu_i86 os_osi os_os2
 #
 # plibc -- 16-bit compact memory-model PLIB
 #

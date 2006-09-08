@@ -1,4 +1,4 @@
-#pmake: build compact cpu_i86 os_osi
+#pmake: build compact cpu_i86 os_osi os_os2
 #
 # strgc.lib -- compact memory-model STRING library
 #

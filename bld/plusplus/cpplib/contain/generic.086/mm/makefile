@@ -1,4 +1,4 @@
-#pmake: build medium cpu_i86 os_osi
+#pmake: build medium cpu_i86 os_osi os_os2
 #
 # contm.lib -- medium memory-model CONTAINER library
 #

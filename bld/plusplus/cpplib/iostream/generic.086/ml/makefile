@@ -1,4 +1,4 @@
-#pmake: build large cpu_i86 os_osi
+#pmake: build large cpu_i86 os_osi os_os2
 #
 # iostl.lib -- large memory-model IOSTREAM library
 #

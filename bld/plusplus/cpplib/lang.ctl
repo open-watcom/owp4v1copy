@@ -73,6 +73,16 @@ set destdir=<RELROOT>/rel2
     <CPCMD> os2.286/ml_mt/plibmtl.lib            <destdir>/lib286/os2/
     <CPCMD> os2.286/ml_mt/plbxmtl.lib            <destdir>/lib286/os2/
 
+  [ IFDEF (os_os2) <2*> ]
+    <CPCMD> complex/generic.087/mm/cplx7m.lib    <destdir>/lib286/
+    <CPCMD> generic.086/mc/plbxc.lib             <destdir>/lib286/
+    <CPCMD> generic.086/mc/plibc.lib             <destdir>/lib286/
+    <CPCMD> generic.086/ml/plbxl.lib             <destdir>/lib286/
+    <CPCMD> generic.086/ml/plibl.lib             <destdir>/lib286/
+    <CPCMD> generic.086/mm/plbxm.lib             <destdir>/lib286/
+    <CPCMD> generic.086/mm/plibm.lib             <destdir>/lib286/
+    <CPCMD> generic.086/ms/plbxs.lib             <destdir>/lib286/
+    <CPCMD> generic.086/ms/plibs.lib             <destdir>/lib286/
 
 [ BLOCK <1> rel2 cprel2 acprel2 cpu_386 ]
 #========================================
