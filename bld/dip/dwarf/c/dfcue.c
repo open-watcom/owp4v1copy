@@ -30,6 +30,7 @@
 
 
 #include <string.h>
+#include <ctype.h>
 #include "dfdip.h"
 #include "dfld.h"
 #include "dfaddr.h"
@@ -161,8 +162,15 @@ static int ACueDir( void *_info, dr_line_dir *curr )
 static int IsRelPathname( const char *name )
 /******************************************/
 {
-    /* Figure out if a pathname is relative - could be fancier */
-    return( (name[0] != '/') && (name[0] != '\\') );
+    /* Detect UNIX or DOS style relative pathnames */
+    if( (name[0] == '/') || (name[0] == '\\') ) {
+        return( FALSE );
+    }
+    if( isalpha( name[0] ) && (name[1] == ':') 
+      && ((name[2] == '/') || (name[2] == '\\')) ) {
+        return( FALSE );
+    }
+    return( TRUE );
 }
 
 
