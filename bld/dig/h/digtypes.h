@@ -391,7 +391,8 @@ enum ostypes {                  //NYI: redo these for PIL
         OS_NT,
         OS_AUTOCAD,
         OS_NEUTRINO,
-        OS_LINUX
+        OS_LINUX,
+        OS_FREEBSD
 };
 
 typedef struct {                //NYI: redo this for PIL

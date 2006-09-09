@@ -80,7 +80,7 @@
     #define         WANT_RFX
     #define         TRAPENTRY TRAPFAR __saveregs
 #elif defined(__OS2V2__) || defined(__OS2__) && !defined(__I86__)
-    #if defined(LINUXCORE)
+    #if defined(ELFCORE)
         #undef      WANT_FILE_INFO
         #undef      WANT_ENV
         #undef      WANT_ASYNC
@@ -116,6 +116,15 @@
         #define WANT_FILE
         #undef  WANT_OVL
         #define WANT_THREAD
+        #undef  WANT_RFX
+        #define TRAPENTRY TRAPFAR
+    #elif defined(ELFCORE)
+        #undef  WANT_FILE_INFO
+        #undef  WANT_ENV
+        #undef  WANT_ASYNC
+        #define WANT_FILE
+        #undef  WANT_OVL
+        #undef  WANT_THREAD
         #undef  WANT_RFX
         #define TRAPENTRY TRAPFAR
     #else
