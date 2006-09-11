@@ -45,7 +45,6 @@
 #include "search.h"
 
 #define MAX_HELPFILES   100
-#define FILE_CNT        sizeof( FileDescs ) / sizeof( FileDesc )
 #define DEF_EXT         ".ihp"
 
 typedef struct {
@@ -59,32 +58,6 @@ typedef struct {
     FileInfo    *items[1];      /* dynamic array */
 } FileList;
 
-typedef struct {
-    char        *helpfname;
-    char        *descrip;
-} FileDesc;
-
-static FileDesc         FileDescs[] = {
-    "CGUIDE",   "",
-    "CLIB",     "",
-    "CPPLIB",   "",
-    "LGUIDE",   "",
-    "PGUIDE",   "",
-    "RESCOMP",  "",
-    "TOOLS",    "",
-    "WCCERRS",  "",
-    "WD",       "",
-    "WPPERRS",  "",
-    "WPROF",    ""
-};
-
-#if 0
-static int fn_comp( char *p1, FileDesc *p2 )
-{
-    return( strcmp( p1, p2->helpfname ) );
-}
-#endif
-
 static void freeFileList( FileList *list )
 {
     unsigned            i;
@@ -97,42 +70,32 @@ static void freeFileList( FileList *list )
     HelpMemFree( list );
 }
 
-static void printDescrip( FileInfo *info, unsigned cnt )
+static void printDescrip( FileInfo *info)
 {
     char        *buf;
     HelpFp      fp;
     char        tmp[ _MAX_PATH ];
-    FileDesc    *key;
     HelpHdl     hdl;
 
-    cnt = cnt;
-    strupr( info->fname );
-//    key  = bsearch( info->fname, FileDescs, cnt, sizeof( FileDesc ), fn_comp);
-//    disabled default text
-    key = NULL;
-    if( key != NULL ) {
-        printf( "%s\n", key->descrip );
-    } else {
-        strcpy( tmp, info->fpath );
+    strcpy( tmp, info->fpath );
 #ifdef __UNIX__
-        strcat( tmp, "/" );
+    strcat( tmp, "/" );
 #else
-        strcat( tmp, "\\" );
+    strcat( tmp, "\\" );
 #endif
-        strcat( tmp, info->fname );
-        strcat( tmp, DEF_EXT );
-        fp = HelpOpen( tmp, HELP_OPEN_RDONLY | HELP_OPEN_BINARY );
-        if( fp != -1 ) {
-            hdl = InitHelpSearch( fp );
-            buf = GetDescrip( hdl );
-            if( buf != NULL ) {
-                printf( "%s", buf );
-            }
-            FiniHelpSearch( hdl );
+    strcat( tmp, info->fname );
+    strcat( tmp, DEF_EXT );
+    fp = HelpOpen( tmp, HELP_OPEN_RDONLY | HELP_OPEN_BINARY );
+    if( fp != -1 ) {
+        hdl = InitHelpSearch( fp );
+        buf = GetDescrip( hdl );
+        if( buf != NULL ) {
+            printf( "%s", buf );
         }
-        printf( "\n" );
-        HelpClose( fp );
+        FiniHelpSearch( hdl );
     }
+    printf( "\n" );
+    HelpClose( fp );
 }
 
 static void printFileList( FileList *list )
@@ -141,12 +104,12 @@ static void printFileList( FileList *list )
 
     if( list->used > 0 ) {
         printf( "%-8s     ", list->items[0]->fname );
-        printDescrip( list->items[0], FILE_CNT );
+        printDescrip( list->items[0]);
         for( i = 1; i < list->used; i++ ) {
             /* eliminate duplicates */
             if( strcmp( list->items[i-1]->fname, list->items[i]->fname ) ) {
                 printf( "%-8s     ", list->items[i]->fname );
-                printDescrip( list->items[i], FILE_CNT );
+                printDescrip( list->items[i]);
             }
         }
     }
