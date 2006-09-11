@@ -89,7 +89,7 @@ static char errBuffer[512];
 
 void Usage( void )
 {
-    fprintf( stderr, "%Fs", UsageText );
+    fprintf( stderr, "%Ws", UsageText );
     exit( -1 );
 }
 
