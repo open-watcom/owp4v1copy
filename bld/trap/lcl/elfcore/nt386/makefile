@@ -10,6 +10,7 @@ srv     = lcl
 cpu     = x86
 name    = elf
 which   = TRAP
+reg_dll = 1
 
 extra_cflags = -DELFCORE
 

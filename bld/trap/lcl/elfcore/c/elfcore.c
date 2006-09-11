@@ -535,7 +535,7 @@ unsigned ReqProg_load( void )
     }
     Core.err_no = 0;
     Core.fd = load_elf_header( argv, Core.c_ehdr, &Core.c_phdr );
-    if( !init_platform_driver( Core.fd, Core.c_ehdr, Core.c_phdr ) ) {
+    if( (Core.fd == NO_FILE) || !init_platform_driver( Core.fd, Core.c_ehdr, Core.c_phdr ) ) {
         ret->err = ENOENT;
         return( sizeof( *ret ) );
     }
