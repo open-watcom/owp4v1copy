@@ -172,6 +172,24 @@ USHORT APIENTRY DosSuspendThread(TID);
 #define FHB_CHRDEVREMOTE 0x8000
 #define FHB_PIPEREMOTE   0x8000
 
+#define FEA_NEEDEA  0x80
+
+#define EAT_BINARY       0xFFFE
+#define EAT_ASCII        0xFFFD
+#define EAT_BITMAP       0xFFFB
+#define EAT_METAFILE     0xFFFA
+#define EAT_ICON         0xFFF9
+#define EAT_EA           0xFFEE
+
+#define EAT_MVMT         0xFFDF
+#define EAT_MVST         0xFFDE
+#define EAT_ASN1         0xFFDD
+
+#define HANDTYPE_FILE       0x0000
+#define HANDTYPE_DEVICE     0x0001
+#define HANDTYPE_PIPE       0x0002
+#define HANDTYPE_NETWORK    0x8000
+
 typedef SHANDLE     HDIR;
 typedef HDIR FAR    *PHDIR;
 
