@@ -279,6 +279,7 @@ static int doLinkerDirective( void )
     byte        minor;
     unsigned    e1;
     unsigned    s1;
+    unsigned_32 stamp;
     Segdeflist  *sd;
 
     ldir = GetByte();
@@ -329,6 +330,11 @@ static int doLinkerDirective( void )
             Output( INDENT "Virtual Function Reference EI(%u) SI(%u)"
                 CRLF, e1, s1 );
         }
+        return( 1 );
+    case LDIR_OBJ_TIMESTAMP:
+        stamp = GetLInt();
+        Output( INDENT "Library Timestamp: %s" CRLF,
+            ctime( (time_t *)&stamp ) );
         return( 1 );
     }
     BackupByte();
