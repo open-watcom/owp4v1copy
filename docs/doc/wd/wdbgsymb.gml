@@ -461,8 +461,8 @@ OS/2
 NetWare 386 from Novell, Inc.
 .note 6
 .ix 'QNX'
-.ix 'QNX Software Systems Ltd.'
-QNX from QNX Software Systems Ltd.
+.ix 'QNX Software Systems'
+QNX from QNX Software Systems.
 .note 7
 .ix 'DOS extenders' 'DOS/4GW'
 .ix 'DOS/4GW'

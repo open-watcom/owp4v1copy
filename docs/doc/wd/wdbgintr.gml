@@ -34,7 +34,9 @@ Windows 9x
 .bull
 GNU/Linux
 .bull
-QNX
+QNX 4
+.bull
+QNX 6 (Neutrino)
 .bull
 Novell NetWare
 .endbull
@@ -56,7 +58,7 @@ you should know about.
 The debugger's user interface has been redesigned. There are GUI
 versions of the debugger that run under Windows 3.x, Windows NT/2000/XP,
 Windows 9x, and 32-bit OS/2. There are also character mode versions
-that run under DOS, Windows 3.x, OS/2, Linux and QNX. All versions share a
+that run under DOS, Windows 3.x, OS/2, Linux and QNX 4. All versions share a
 common user interface incorporating powerful features like context
 sensitive menus, eliminating the need for command oriented debugging.
 .*

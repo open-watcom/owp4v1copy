@@ -41,8 +41,7 @@ This is the OS/2 character-mode debugger.
 .note binp&pc.&dbgcmd.w.exe
 This is the OS/2 windowed (GUI) debugger.
 .note wd
-This is the name of the debugger included with QNX, as well as the
-name of the Linux version.
+This is the name of the debugger used on UNIX platforms.
 .endnote
 .np
 See the sections entitled

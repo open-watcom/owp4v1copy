@@ -583,7 +583,7 @@ the name of a command file and automatically try to invoke it. If this
 option is off, you must use the invoke command to invoke a command
 file.
 .np
-Under Linux and QNX, a conflict is possible when Invoke is on. A path specified
+Under UNIX, a conflict is possible when Invoke is on. A path specified
 for a command file name is confused with the short form of the DO
 command (/). A similar problem occurs under DOS, OS/2, Windows 3.x,
 Windows NT, or Windows 95 when a drive specifier forms part of the

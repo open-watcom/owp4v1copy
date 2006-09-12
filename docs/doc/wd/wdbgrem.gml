@@ -234,12 +234,12 @@ Supported under DOS, OS/2, Windows 3.x, and NetWare.
 This link supports communication using the parallel or printer port.
 Several different cable configurations are supported.
 .refalso vidwire
-Supported under DOS, OS/2, Windows 3.x, Windows 9x, Windows NT/2000/XP, NetWare, Linux and QNX.
+Supported under DOS, OS/2, Windows 3.x, Windows 9x, Windows NT/2000/XP, NetWare, Linux and QNX 4.
 .note SER
 This link uses a serial port to communicate. Rates of up to 115K
 BAUD are supported.
 .refalso vidwire
-Supported under DOS, OS/2, Windows 9x, Windows NT/2000/XP and QNX.
+Supported under DOS, OS/2, Windows 9x, Windows NT/2000/XP and QNX 4.
 .note WIN
 This link will communicate between two Windows DOS boxes.
 Supported under Windows 3.x and Windows 9x (for DOS applications
@@ -507,8 +507,8 @@ A>serserv 2.9600
 B>&dbgcmd. /tr=ser;2.9600 app
 .millust end
 .begnote
-.note QNX Note:
-Under QNX, a node id may be specified followed by a comma if the
+.note QNX 4 Note:
+Under QNX 4, a node id may be specified followed by a comma if the
 serial port is not located on the current node.
 The command "serserv 3,1.9600" would use the device //3/dev/ser1 at a
 BAUD rate of 9600.
