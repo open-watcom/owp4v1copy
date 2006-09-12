@@ -236,7 +236,7 @@ int main( int argc, char **argv )
         return( -1 );
     }
 
-    fout = open( argv[2], O_WRONLY | O_CREAT | O_TRUNC | O_TEXT,
+    fout = open( argv[2], O_WRONLY | O_CREAT | O_TRUNC | O_BINARY,
              S_IRWXU | S_IRWXG | S_IRWXO );
     if( fout == -1 ) {
         PrintError( "Unable to open '%s' for output\n", argv[2] );
@@ -630,7 +630,7 @@ bool pass2( FILE *fin, int fout, char **helpstr )
         if( Width ) {
             h->maxcol = Width;
         }
-        sprintf( buffer, "::::\"%s\" %d %d %d %d %d\n",
+        sprintf( buffer, "::::\"%s\" %d %d %d %d %d\r\n",
                  h->name, h->maxrow, h->maxcol, h->row, h->col, h->lines );
         if( GenIndex ) {
             h->fpos = tell( fout );
