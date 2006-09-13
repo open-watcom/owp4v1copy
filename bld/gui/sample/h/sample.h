@@ -184,7 +184,6 @@ extern  gui_create_info         Child2;
 extern  gui_create_info         Child3;
 extern  gui_create_info         Child4;
 extern  gui_create_info         DialogWndControl;
-extern  gui_create_info         DialogControl;
 extern  gui_toolbar_struct      ToolBar[];
 extern  gui_menu_struct         PopupMenu[];
 extern  gui_resource            HotSpots[];
