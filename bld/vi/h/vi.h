@@ -53,7 +53,7 @@ void *_inline_memset( void *__s, int __c, unsigned int __n );
 #ifdef __UNIX__
   #define FSYS_CASE_SENSITIVE         1
   #ifdef __QNX__
-    extern FileSysNeedsCR( int handle );
+    extern int FileSysNeedsCR( int handle );
   #else
     #define FileSysNeedsCR( x )       0
   #endif
