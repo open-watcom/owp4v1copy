@@ -56,6 +56,13 @@ WPI_MRESULT CALLBACK GUIEditFunc( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
 WPI_MRESULT CALLBACK GUIGroupBoxFunc( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
 #endif
 
+#ifdef __WINDOWS_386__
+// See guicontr.h
+#define CBC     (void *)
+#else
+#define CBC     
+#endif
+
 controls_struct GUIControls[GUI_NUM_CONTROL_CLASSES] = {
     /* classname           style              call_back         gui_control_classs  */
     { WC_BUTTON,        PUSH_STYLE,             NULL             }, /* GUI_PUSH_BUTTON    */
@@ -63,13 +70,13 @@ controls_struct GUIControls[GUI_NUM_CONTROL_CLASSES] = {
     { WC_BUTTON,        RADIO_STYLE,            NULL             }, /* GUI_RADIO_BUTTON   */
     { WC_BUTTON,        CHECK_STYLE,            NULL             }, /* GUI_CHECK_BOX      */
     { WC_COMBOBOX,      COMBOBOX_STYLE,         NULL             }, /* GUI_COMBOBOX       */
-    { WC_ENTRYFIELD,    EDIT_STYLE,             &GUIEditFunc     }, /* GUI_EDIT           */
+    { WC_ENTRYFIELD,    EDIT_STYLE,             CBC &GUIEditFunc }, /* GUI_EDIT           */
     { WC_LISTBOX,       LISTBOX_STYLE,          NULL             }, /* GUI_LISTBOX        */
     { WC_SCROLLBAR,     SCROLLBAR_STYLE,        NULL             }, /* GUI_SCROLLBAR      */
     { WC_STATIC,        STATIC_STYLE,           NULL             }, /* GUI_STATIC         */
-    { WC_GROUPBOX,      GROUPBOX_STYLE,         &GUIGroupBoxFunc }, /* GUI_GROUPBOX       */
+    { WC_GROUPBOX,      GROUPBOX_STYLE,         CBC &GUIGroupBoxFunc }, /* GUI_GROUPBOX   */
     { WC_COMBOBOX,      EDIT_COMBOBOX_STYLE,    NULL             }, /* GUI_EDIT_COMBOBOX  */
-    { WC_MLE,           EDIT_MLE_STYLE,         &GUIEditFunc     }  /* GUI_MLE            */
+    { WC_MLE,           EDIT_MLE_STYLE,         CBC &GUIEditFunc }  /* GUI_MLE            */
 };
 
 typedef struct dialog_node {
