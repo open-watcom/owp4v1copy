@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  most of directive routines
+* Description:  Processing of assembly directives.
 *
 ****************************************************************************/
 
@@ -43,6 +43,7 @@
 #include "mangle.h"
 #include "asmlabel.h"
 #include "asminput.h"
+#include "asmeval.h"
 
 #include "myassert.h"
 
@@ -3396,6 +3397,7 @@ int Ret( int i, int count, int flag_iret )
 {
     char        buffer[20];
     proc_info   *info;
+    expr_list   opndx;
 
     info = CurrProc->e.procinfo;
 
@@ -3420,15 +3422,16 @@ int Ret( int i, int count, int flag_iret )
             if( ( info->langtype >= LANG_BASIC ) && ( info->langtype <= LANG_PASCAL )
                 || ( info->langtype == LANG_STDCALL ) && !info->is_vararg ) {
                 if( info->parasize != 0 ) {
-                    sprintf( buffer + strlen(buffer), "%d", info->parasize );
+                    sprintf( buffer + strlen( buffer ), "%d", info->parasize );
                 }
             }
         } else {
-            if( AsmBuffer[i+1]->token != T_NUM ) {
+            ++i;
+            if( (EvalOperand( &i, count, &opndx, TRUE ) == ERROR) || (opndx.type != EXPR_CONST) ) {
                 AsmError( CONSTANT_EXPECTED );
                 return( ERROR );
             }
-            sprintf( buffer + strlen(buffer), "%d", AsmBuffer[i+1]->value );
+            sprintf( buffer + strlen( buffer ), "%d", opndx.value );
         }
     }
 
