@@ -16,7 +16,6 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/*.h*           <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/*.cnv          <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/sys/*.h        <RELROOT>/rel2/h/sys/
-    <CPCMD> <PROJDIR>/dos/win/*.h        <RELROOT>/rel2/h/win/
     <CPCMD> <PROJDIR>/dos/algorith       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/bitset         <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/cassert        <RELROOT>/rel2/h/

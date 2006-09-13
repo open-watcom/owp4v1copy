@@ -1,3 +1,7 @@
+/*
+    Include file for Windows 3.x development.
+*/
+
 #ifndef _INC_WINDOWS
 #define _INC_WINDOWS
 
@@ -9,7 +13,6 @@
 extern "C" {
 #endif
 
-/* Default to version 3.1 */
 #ifndef WINVER
 #define WINVER  0x030a
 #endif
@@ -41,9 +44,9 @@ extern "C" {
 #endif
 #endif
 
-#define VOID        void
 #define FAR         __far
 #define NEAR        __near
+#define VOID        void
 #define PASCAL      __pascal
 #define CDECL       __cdecl
 #define WINAPI      __far __pascal
@@ -85,8 +88,6 @@ typedef LONG LRESULT;
 #define MAKELPARAM(low, high)   ((LPARAM)MAKELONG(low, high))
 #define MAKELRESULT(low, high)  ((LRESULT)MAKELONG(low, high))
 
-/****** Common pointer types ************************************************/
-
 #ifndef NULL
 #if defined(__SMALL__) || defined(__MEDIUM__) || defined(__386__)
 #define NULL    0
@@ -118,7 +119,8 @@ typedef const char FAR  *LPCSTR;
 
 #define FIELDOFFSET(type, field)    ((int)(&((type NEAR*)1)->field)-1)
 
-#ifdef STRICT
+/* For __WINDOWS_386__, sizeof(void*) is not same as sizeof(UINT)! */
+#if defined(STRICT) && !defined(__WINDOWS_386__)
 typedef const void NEAR*        HANDLE;
 #define DECLARE_HANDLE(name)    struct name##__ { int unused; }; \
                                 typedef const struct name##__ NEAR* name
@@ -154,7 +156,7 @@ typedef HINSTANCE   HMODULE;
 
 #ifndef NOKERNEL
 
-#ifdef STRICT
+#if defined(STRICT) && !defined(__WINDOWS_386__)
 int PASCAL WinMain(HINSTANCE,HINSTANCE,LPSTR,int);
 #endif
 
@@ -518,9 +520,13 @@ UINT    WINAPI LocalShrink(HLOCAL, UINT);
 
 #ifdef STRICT
 void NEAR * WINAPI LocalLock(HLOCAL);
-HLOCAL      WINAPI LocalHandle(void NEAR*);
 #else
 char NEAR * WINAPI LocalLock(HLOCAL);
+#endif
+
+#if defined(STRICT) && !defined(__WINDOWS_386__)
+HLOCAL      WINAPI LocalHandle(void NEAR*);
+#else
 HLOCAL      WINAPI LocalHandle(UINT);
 #endif
 
@@ -802,7 +808,7 @@ DECLARE_HANDLE(HDC);
 
 #ifndef NOGDI
 
-#ifdef STRICT
+#if defined(STRICT) && !defined(__WINDOWS_386__)
 typedef const void NEAR *HGDIOBJ;
 #else
 DECLARE_HANDLE(HGDIOBJ);

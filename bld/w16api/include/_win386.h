@@ -1,14 +1,17 @@
 /*
-:include crwat.sp
+    Special include for 32-bit Windows 3.x development.
+*/
 
-   Special include for 32-bit Windows 3.x
-
- */
 #ifndef ___WIN386_INCLUDED__
 #define ___WIN386_INCLUDED__
 
-:include readonly.sp
-:include cpluspro.sp
+#if !defined(_ENABLE_AUTODEPEND)
+  #pragma read_only_file;
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 #ifndef RC_INVOKED
 #include <stddef.h>
@@ -25,6 +28,16 @@ typedef void __far *REALFARPROC;
 #define __export
 #define NOMINMAX
 #include <win16.h>
+
+#ifdef STRICT
+//int     PASCAL  WinMain(HINSTANCE,HINSTANCE,LPSTR,int);
+int     CALLBACK        LibMain(HINSTANCE,WORD,WORD,LPSTR);
+#else
+//int     PASCAL  WinMain(HANDLE,HANDLE,LPSTR,int);
+int     CALLBACK        LibMain(HANDLE,WORD,WORD,LPSTR);
+#endif
+int     CALLBACK        WEP(int);
+
 #ifndef NOCOVERSENDS
 #define SendMessage _Cover_SendMessage
 #define SendDlgItemMessage _Cover_SendDlgItemMessage
@@ -628,7 +641,7 @@ typedef void * CALLBACKPTR;
 typedef void * HINDIR;
 
 /*
- * prototypes for special WIN386 library functions
+ * prototypes for special Win386 library functions
  */
 #define GETPROC_CALLBACK 0
 #define GETPROC_SETTIMER 0
@@ -777,16 +790,7 @@ extern WORD __F000;
 extern WORD LocalPtr;
 #pragma aux LocalPtr "_*";
 
-#pragma library (win386);
-
-#if     defined(STRICT)
-int     PASCAL  WinMain(HINSTANCE,HINSTANCE,LPSTR,int);
-int     CALLBACK        LibMain(HINSTANCE,WORD,WORD,LPSTR);
-#else
-int     PASCAL  WinMain(HANDLE,HANDLE,LPSTR,int);
-int     CALLBACK        LibMain(HANDLE,WORD,WORD,LPSTR);
-#endif
-int     CALLBACK        WEP(int);
+#pragma library(win386);
 
 #else /* __WINDOWS_386__ */
 
@@ -1094,6 +1098,8 @@ typedef void * HINDIR;
 
 #endif /* __WINDOWS_386__ */
 
-:include cplusepi.sp
+#ifdef __cplusplus
+} /* End of extern "C" */
+#endif
 
 #endif /* ___WIN386_INCLUDED__ */

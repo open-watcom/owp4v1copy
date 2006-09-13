@@ -178,10 +178,6 @@ DOS_files = &
         setjmpex.h &
         sys/utime.h &
         wdefwin.h &
-        win/_win386.h &
-        win/win16.h &
-        win/windows.h &
-        win/win386.h &
         unistd.h &
         utime.h
 
