@@ -60,6 +60,7 @@ cdsay .
     <CPCMD> <DEVDIR>/src/cppexamp/*.*                   <RELROOT>/rel2/samples/cppexamp/
     <CPCMD> <DEVDIR>/src/cppexamp/excarea/*.*           <RELROOT>/rel2/samples/cppexamp/excarea/
     <CPCMD> <DEVDIR>/src/cppexamp/membfun/*.*           <RELROOT>/rel2/samples/cppexamp/membfun/
+    <CPCMD> <DEVDIR>/src/cppexamp/rtti/*.*              <RELROOT>/rel2/samples/cppexamp/rtti/
 
     <CPCMD> <DEVDIR>/src/dll/*.*                        <RELROOT>/rel2/samples/dll/
     <CPCMD> <DEVDIR>/src/goodies/*.*                    <RELROOT>/rel2/samples/goodies/
