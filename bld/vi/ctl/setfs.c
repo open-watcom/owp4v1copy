@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File specific settings dialog.
 *
 ****************************************************************************/
 
@@ -38,6 +37,7 @@
 #include "ctltype.h"
 #include "dyntpl.h"
 #include "fts.h"
+#include "lang.h"
 
 #define TAGFILENAMEWIDTH        129
 #define GREPDEFAULTWIDTH        20
@@ -129,7 +129,7 @@ static BOOL dynIsLanguageButton( UINT wParam, LONG lParam, HWND hwndDlg )
 
 static void globalTodlg_data( dlg_data *data, info *envInfo )
 {
-    if( envInfo ){
+    if( envInfo ) {
         data->Language = envInfo->Language;
         data->LanguageBool = ( envInfo->Language > 0 ) ? TRUE : FALSE;
         data->PPKeywordOnly = EditFlags.PPKeywordOnly;
@@ -310,7 +310,7 @@ void writeSettings( HWND hwndDlg )
         FTSEnd();
         MemFree( template );
     }
-    if( CurrentFile ){
+    if( CurrentFile ) {
         FTSRunCmds( CurrentFile->name );
     }
 }
@@ -418,7 +418,7 @@ BOOL WINEXP EnumChildProc( HWND hwndChild, DWORD lParam )
 
 static void cancelSettings( void )
 {
-    CurrentInfo->Language       = cancelData.Language;
+    LangInit( cancelData.Language );
     EditFlags.PPKeywordOnly     = cancelData.PPKeywordOnly;
     EditFlags.CMode             = cancelData.CMode;
     EditFlags.ReadEntireFile    = cancelData.ReadEntireFile;
@@ -501,7 +501,7 @@ BOOL WINEXP SetFSProc( HWND hwndDlg, unsigned msg,
             EditFlags.Quiet = FALSE;
             return( TRUE );
         case IDCANCEL:
-            if( CurrentInfo ){
+            if( CurrentInfo ) {
                 cancelSettings();
             }
             EndDialog( hwndDlg, TRUE );
