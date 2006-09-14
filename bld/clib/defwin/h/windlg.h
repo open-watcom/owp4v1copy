@@ -38,6 +38,7 @@
 #define ROUND_CLASSLEN( a )     (((a)+1) & ~1)
 #define _FARmemcpy              memcpy
 #define MK_FP32( a )            a
+#define _ISFAR
 #define SLEN( a )               (strlen((a))*2+2)
 typedef WORD INFOTYPE;
 
@@ -47,6 +48,7 @@ typedef WORD INFOTYPE;
 #define ADJUST_ITEMLEN( a )
 #define ADJUST_BLOCKLEN( a )
 #define ROUND_CLASSLEN( a )     a
+#define _ISFAR                  __far
 #define _FARmemcpy              _fmemcpy
 typedef BYTE INFOTYPE;
 
@@ -54,6 +56,8 @@ typedef BYTE INFOTYPE;
 
 #ifdef __NT__
     #include <pshpack2.h>
+#else
+    #pragma pack( push, 1 )
 #endif
 
 typedef struct {
@@ -63,15 +67,14 @@ typedef struct {
     WORD    dtItemCount;
 #else
     BYTE    dtItemCount;
-    BYTE    filler;
 #endif
     WORD    dtX;
     WORD    dtY;
     WORD    dtCX;
     WORD    dtCY;
-//  char  dtMenuName[];
-//  char  dtClassName[];
-//  char  dtCaptionText[];
+//  char    dtMenuName[];
+//  char    dtClassName[];
+//  char    dtCaptionText[];
 } _DLGTEMPLATE;
 
 typedef struct {
@@ -89,23 +92,21 @@ typedef struct {
     WORD    dtilCX;
     WORD    dtilCY;
     WORD    dtilID;
-#ifndef __NT__
-#if !defined(_M_IX86)
-    WORD    filler;
-#endif
-    DWORD   dtilStyle;
-#endif
 #ifdef __NT__
     WORD    crap;
+#else
+    DWORD   dtilStyle;
 #endif
-//  char  dtilClass[];
-//  char  dtilText[];
-//  BYTE  dtilInfo;
-//  BYTE  dtilData;
+//  char    dtilClass[];
+//  char    dtilText[];
+//  BYTE    dtilInfo;
+//  BYTE    dtilData;
 } _DLGITEMTEMPLATE;
 
 #ifdef __NT__
     #include <poppack.h>
+#else
+    #pragma pack( pop )
 #endif
 
 extern GLOBALHANDLE _DialogTemplate( LONG dtStyle, int dtx, int dty, int dtcx,
