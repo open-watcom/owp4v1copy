@@ -106,19 +106,21 @@ static int add_path( const char *var_name, const char *new_dirs )
 #define INCL_DOSMODULEMGR
 #define INCL_DOSERRORS
 #define INCL_ORDINALS
-#include <os2.h>
+#include <wos2.h>
 
 #define HAVE_SETUP_OS_ENV
 
 static int setup_os_env( const char *watcom )
 {
     char        *buf;
+#ifdef __OS220__
     char        old_blpath[1024] = "";
     int         old_blpath_len;
     HMODULE     hmod;
     APIRET      rc;
     APIRET      (APIENTRY *fnDosQueryExtLIBPATH)( PSZ, ULONG );
     APIRET      (APIENTRY *fnDosSetExtLIBPATH)( PSZ, ULONG );
+#endif
 
     /* Set up the HELP and BOOKSHELF env vars for online help; note that
      * this may not have much effect since we aren't really updating the
@@ -137,6 +139,7 @@ static int setup_os_env( const char *watcom )
     }
     free( buf );
 
+#ifdef __OS220__
     /* Older versions of OS/2 did not support BEGIN/ENDLIBPATH. Dynamically
      * query the API entrypoints to prevent load failures.
      */
@@ -186,6 +189,9 @@ static int setup_os_env( const char *watcom )
         free( buf );
         return( -8 );
     }
+#else
+    return( 0 );
+#endif
 }
 
 #endif
