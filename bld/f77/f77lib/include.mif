@@ -13,7 +13,7 @@ include_c_os2_ppc  = -I"$(%WATCOM)/h/os2ppc"
 include_c_os2      = -I"$(hdr_dir)/dos" $(include_c_os2_$(processor))
 include_c_qnx      = -I"$(hdr_dir)/qnx"
 include_c_linux    = -I"$(hdr_dir)/linux"
-include_c_windows  = -I"$(hdr_dir)/dos/win" $(inc_dirs_sys_win)  -I"$(hdr_dir)/dos"
+include_c_windows  = $(inc_dirs_sys_win)  -I"$(hdr_dir)/dos"
 include_c_winnt    = $(inc_dirs_sys_nt) -I"$(hdr_dir)/dos"
 !else
 include_c_msdos    = -I"$(%WATCOM)/h"
