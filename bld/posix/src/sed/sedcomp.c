@@ -16,14 +16,13 @@ resolves references at the end.
 
 #include <assert.h>
 #include <ctype.h>                      /* isdigit(), isspace() */
-//#include <io.h>                         /* isatty() */
-#include <unistd.h>                         /* isatty() */
+#include <unistd.h>                     /* isatty() */
 #include <stdio.h>                      /* uses getc, fprintf, fopen, fclose */
 #include <stdlib.h>                     /* uses exit */
 #include <string.h>                     /* imported string functions */
 #include "sed.h"                        /* command type struct & name defines */
 
-#define MAXCMDS         200             /* max number of compiled commands */
+#define MAXCMDS         400             /* max number of compiled commands */
 #define MAXLINES        256             /* max number of numeric addresses */
 
                                         /* main data areas */
