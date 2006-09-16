@@ -13,6 +13,18 @@
 /^w32bind /d
 /^d:\\bld\\build\\binnt\\w32bind /d
 /^..\\bind\\edbind /d
+/^bwasm /d
+/^cc /d
+/^cl /d
+/^c\+\+ /d
+/^clib_as /d
+/^clib_cc /d
+/^mlib_as /d
+/^mlib_cc /d
+/^flib_as /d
+/^flib_cc /d
+/^ref\+\+ /d
+/^xref\+\+ /d
 /^wasmp /d
 /^wpp /d
 /^wpp386 /d
@@ -64,6 +76,7 @@
 /pkzip -a -es objfiles/d
 /^truncfil /d
 /^wbind /d
+/^bwrc /d
 /^wrcp /d
 /^wrc101 /d
 /^serialize /d
@@ -87,6 +100,7 @@
 /Constructing symbol table from .EXE debugger information./d
 /^objsize /d
 /^ren/d
+/^bvi /d
 /^vi /d
 /^Small model /d
 /^Windows support /d
@@ -147,6 +161,7 @@
 /creating a/d
 /^386asm/d
 /^386\|ASM/d
+/^bwlib /d
 /^wlib/d
 /^set /d
 /^wcpp /d
@@ -158,6 +173,7 @@
 /^del /d
 /^cd /d
 /^tasm /d
+/^cp /d
 /^copy /d
 /^%append /d
 /^%write /d
@@ -182,6 +198,8 @@
 /File(s) copied/d
 /file(s) copied/d
 /^for /d
+/^objlist /d
+/^objchg /d
 /^objxref /d
 /^objxdef /d
 /^objfind /d
@@ -196,6 +214,7 @@
 /^if exist/d
 /^if errorlevel/d
 /^cmp /d
+/^egrep /d
 /^wgrep /d
 /^Extra help text:/d
 /^..\\utils\\mergehlp.exe/d
@@ -231,7 +250,7 @@
 /RCPP -E/d
 /^wfcopts\.rc/d
 /^Phar Lap program type/d
-/\\bin\\cat.exe /d
+/^cat /d
 /\\bin\\trunc.exe /d
 /^pass [0123]/d
 /Assigning selectors./d
