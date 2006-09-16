@@ -120,7 +120,6 @@
 /^mapsym32 /d
 /No entry point, assume/d
 /^rc /d
-/\|.\/.-.\\./d
 /Writing debugging information to/d
 / linenumbers from /d
 /Sorting.*symbols/d
