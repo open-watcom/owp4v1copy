@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Font selection dialog.
 *
 ****************************************************************************/
 
@@ -40,26 +39,16 @@
 #include "hotkey.h"
 #include "subclass.h"
 
-/* this struct taken from SDK 3.1 help - defined for EnumFontFamProc only
-*/
-typedef struct tagNEWLOGFONT {         /* nlf */
-    int   lfHeight;
-    int   lfWidth;
-    int   lfEscapement;
-    int   lfOrientation;
-    int   lfWeight;
-    BYTE  lfItalic;
-    BYTE  lfUnderline;
-    BYTE  lfStrikeOut;
-    BYTE  lfCharSet;
-    BYTE  lfOutPrecision;
-    BYTE  lfClipPrecision;
-    BYTE  lfQuality;
-    BYTE  lfPitchAndFamily;
-    BYTE  lfFaceName[LF_FACESIZE];
-    BYTE  lfFullName[2 * LF_FACESIZE]; /* TrueType only */
-    BYTE  lfStyle[LF_FACESIZE];        /* TrueType only */
-} NEWLOGFONT;
+
+/* NB: In Win386 mode, the FAR pointers passed to callback procs are
+ * really 0:32 near pointers!
+ */
+#ifdef __WINDOWS_386__
+    #define FARCBPARM
+#else
+    #define FARCBPARM   FAR
+#endif
+
 
 HWND    hwndTypeface, hwndStyle, hwndSize, hwndPick, hwndSizeEdit;
 LOGFONT CurLogfont;
@@ -84,26 +73,40 @@ int     NStyles, NSizes;
 int     YPIXELS_PER_INCH = 96;
 
 
-int CALLBACK EnumFamTypefaces( NEWLOGFONT FAR *lf, TEXTMETRIC FAR *tm,
+int CALLBACK EnumFamTypefaces( LPLOGFONT lf, LPTEXTMETRIC tm,
                                int FontType, LONG lparam )
 {
+#ifdef __WINDOWS_386__
+    char            faceName[LF_FACESIZE];
+    LOGFONT __FAR__ *lgf = MAKEPTR( lf );
+#endif
+
     lparam = lparam;
     tm = tm;
     FontType = FontType;
 
+#ifdef __WINDOWS_386__
+    /* On Win386, we need to pass a near 32-bit pointer with LB_ADDSTRING,
+     * but we get a far pointer from Windows. Hence the shenanigans with
+     * a temp buffer in the flat address space.
+     */
+    _fstrcpy( faceName, lgf->lfFaceName );
+    SendMessage( hwndTypeface, LB_ADDSTRING, 0, (LONG)faceName );
+#else
     SendMessage( hwndTypeface, LB_ADDSTRING, 0, (LONG)(lf->lfFaceName) );
+#endif
 
     return( TRUE );
 }
 
-int CALLBACK EnumFamInfo( NEWLOGFONT FAR *lf, TEXTMETRIC FAR *tm,
-                          int FontType, LONG *isTrueType )
+int CALLBACK EnumFamInfo( LPLOGFONT _lf, LPTEXTMETRIC tm,
+                          int FontType, LPLONG isTrueType )
 {
-    char    sbuf[ 40 ];
-    int     height;
+    LOGFONT __FAR__     *lf = MAKEPTR( _lf );
+    char                sbuf[ 40 ];
+    int                 height;
 
     tm = tm;
-    lf = lf;
 
     if( FontType == TRUETYPE_FONTTYPE ) {
         /* truetype creates the style string for us
@@ -115,7 +118,7 @@ int CALLBACK EnumFamInfo( NEWLOGFONT FAR *lf, TEXTMETRIC FAR *tm,
            TrueType style strings are are just specifying the 4 basic ones
            damNit.
         */
-        *( isTrueType ) = 1;
+        *isTrueType = 1;
     } else {
         /* add size to list
         */
@@ -128,9 +131,11 @@ int CALLBACK EnumFamInfo( NEWLOGFONT FAR *lf, TEXTMETRIC FAR *tm,
     return( 1 );
 }
 
-int CALLBACK SetupFontData( NEWLOGFONT FAR *lf, TEXTMETRIC FAR *tm,
+int CALLBACK SetupFontData( LPLOGFONT *_lf, LPTEXTMETRIC *tm,
                           int FontType, LONG lparam )
 {
+    LOGFONT __FAR__ *lf = MAKEPTR( _lf );
+
     tm = tm;
     FontType = FontType;
     lparam = lparam;
@@ -478,4 +483,3 @@ void RefreshFontbar( void )
     }
     UpdateStatusWindow();
 } /* RefreshFontbar */
-

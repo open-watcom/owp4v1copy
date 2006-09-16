@@ -647,11 +647,11 @@ and
 some of the messages may NOT require pointer conversion:
 .begbull
 .bull
-CB_ADDSTRING, CB_FINDSTRING, CB_INSERTSTRING
+CB_ADDSTRING, CB_FINDSTRING, CB_FINDSTRINGEXACT, CB_INSERTSTRING
 will not need a conversion if the combo box was created
 as owner-draw style without CBS_HASSTRINGS style.
 .bull
-LB_ADDSTRING, LB_FINDSTRING, LB_INSERTSTRING
+LB_ADDSTRING, LB_FINDSTRING, LB_FINDSTRINGEXACT, LB_INSERTSTRING
 will not need a conversion if the list box was created
 as owner-draw style without LBS_HASSTRINGS style.
 .endbull
