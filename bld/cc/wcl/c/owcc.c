@@ -31,7 +31,7 @@
 
 /* FIXME
  *  if linking is done, remove objects afterwards?
- *  unrecognized options should warn, possibly error 
+ *  unrecognized options should warn, possibly error
  *  should owcc output a warning message if -b names unknown target?
  *  -S should remove .o files
  */
@@ -120,8 +120,8 @@ static const char *EnglishHelp[] = {
 };
 
 typedef struct {
-    char *LongName;     /* if ending in ':', copy rest to OW option */
-    char *WatcomName;
+    char    *LongName;  /* if ending in ':', copy rest to OW option */
+    char    *WatcomName;
 } option_mapping;
 
 /* Map of options which don't need special treatment */
@@ -241,7 +241,7 @@ static char *xlate_fname( char *name )
 {
 #ifndef __UNIX__
     /* On non-POSIX hosts, pathnames must be translated to format
-     * expected buy other tools.
+     * expected by other tools.
      */
     char    *run = name;
 
@@ -317,13 +317,13 @@ static  void AddDirective( char *directive )
 }
 
 static  int  ConsultSpecsFile( const char *target )
-/***********************************************/
+/*************************************************/
 {
-    FILE *specs;
-    char line[MAX_CMD];
-    char start_line[MAX_CMD] = "system begin ";
-    int in_target = FALSE;
-    char *p, *blank;
+    FILE    *specs;
+    char    line[MAX_CMD];
+    char    start_line[MAX_CMD] = "system begin ";
+    int     in_target = FALSE;
+    char    *p, *blank;
 
     FindPath( "specs.owc", PathBuffer );
     specs = fopen( PathBuffer, "r" );
@@ -340,19 +340,19 @@ static  int  ConsultSpecsFile( const char *target )
         if( p ) {
             *p = '\0';
         }
-        if( ! stricmp( line, start_line ) ) {
+        if( !stricmp( line, start_line ) ) {
             in_target = TRUE;
-        } else if( ! stricmp( line, "end" ) ) {
+        } else if( !stricmp( line, "end" ) ) {
             in_target = FALSE;
         } else if( in_target ) {
-            for( p = line; isspace( (unsigned char) *p ); p++ )
+            for( p = line; isspace( (unsigned char)*p ); p++ )
                 ; /* do nothing else */
             if( strncmp ( p, "wcc", 3 ) ) {
                 /* wrong format --> don't use this line */
                 continue;
             }
             blank = strchr( p, ' ' );
-            if( ! blank ) {
+            if( !blank ) {
                 blank = strchr( p, '\t' );
             }
             if( blank ) {
@@ -419,9 +419,9 @@ static  int  Parse( int argc, char **argv )
         int     i;
         int     found_mapping = FALSE;
 
-        for (i = 0; i < sizeof( mappings ) / sizeof( mappings[0] ); i++) {
-            option_mapping *m    = mappings + i;
-            char           *tail = strchr( m->LongName, ':' );
+        for( i = 0; i < sizeof( mappings ) / sizeof( mappings[0] ); i++ ) {
+            option_mapping  *m    = mappings + i;
+            char            *tail = strchr( m->LongName, ':' );
 
             if( c != m->LongName[0] )
                 continue;
@@ -436,15 +436,15 @@ static  int  Parse( int argc, char **argv )
                 continue;
             }
             if( tail ) {
-                if( ! strncmp( OptArg, m->LongName + 1,
-                               tail - m->LongName - 1 ) ) {
+                if( !strncmp( OptArg, m->LongName + 1,
+                              tail - m->LongName - 1 ) ) {
                     strcat( CC_Opts, " -" );
                     strcat( CC_Opts, m->WatcomName );
                     strcat( CC_Opts, OptArg + ( tail - m->LongName - 1) );
                     found_mapping = TRUE;
                     break;
                 }
-            } else if( ! strcmp( OptArg, m->LongName + 1 ) ) {
+            } else if( !strcmp( OptArg, m->LongName + 1 ) ) {
                 strcat( CC_Opts, " -" );
                 strcat( CC_Opts, m->WatcomName );
                 found_mapping = TRUE;
@@ -463,13 +463,13 @@ static  int  Parse( int argc, char **argv )
 
         switch( c ) {
         case 'f':
-            if( ! strcmp( Word, "syntax-only" ) ) {
+            if( !strcmp( Word, "syntax-only" ) ) {
                 c = 'z';
                 strcpy( Word, "s" );
                 Flags.no_link = 1;
                 break;
             }
-            if( ! strncmp( Word, "cpp-wrap=", 9 ) ) {
+            if( !strncmp( Word, "cpp-wrap=", 9 ) ) {
                 if( cpp_linewrap )
                     free( cpp_linewrap );
                 Word[7] = 'w';
@@ -477,7 +477,7 @@ static  int  Parse( int argc, char **argv )
                 wcc_option = 0;
                 break;
             }
-            if( ! strcmp( Word, "mangle-cpp" ) ) {
+            if( !strcmp( Word, "mangle-cpp" ) ) {
                 cpp_encrypt_names = 1;
                 wcc_option = 0;
                 break;
@@ -540,7 +540,7 @@ static  int  Parse( int argc, char **argv )
             break;
 
         case 'm':
-            if( ( ! strncmp("cmodel=", Word, 7 ) )
+            if( ( !strncmp( "cmodel=", Word, 7 ) )
                 && ( Word[8] == '\0' ) ) {
                 if( Word[7] == 't' ) {      /* tiny model */
                     Word[0] = 's';              /* change to small */
@@ -551,7 +551,7 @@ static  int  Parse( int argc, char **argv )
                 Word[1] = '\0';
                 break;
             }
-            if( ! strncmp("regparm=", Word, 8 ) ) {
+            if( !strncmp("regparm=", Word, 8 ) ) {
                 if( !strcmp( Word + 8, "0" ) )
                     Conventions[0] =  's';
                 else
@@ -559,7 +559,7 @@ static  int  Parse( int argc, char **argv )
                 wcc_option = 0;
                 break;
             }
-            if( ! strncmp("tune=i", Word, 6 ) ) {
+            if( !strncmp("tune=i", Word, 6 ) ) {
                 switch( Word[6] ) {
                 case '0':
                 case '1':
@@ -583,7 +583,7 @@ static  int  Parse( int argc, char **argv )
             }
             wcc_option = 0;     /* dont' pass on unknown options */
             break;
-            
+
         case 'z':                   /* 12-jan-89 */
             switch( tolower( Word[0] ) ) {
             case 's':
@@ -777,7 +777,7 @@ static  int  Parse( int argc, char **argv )
 
     if( preprocess_only ) {
         Flags.no_link = TRUE;
-        if( ! O_Name ) {
+        if( !O_Name ) {
             free( Obj_Name );           /* preprocess to stdout by default */
             Obj_Name = NULL;
         }
@@ -805,16 +805,16 @@ static  int  Parse( int argc, char **argv )
         }
         O_Name = NULL;
     }
-    if ( Obj_Name ) {
+    if( Obj_Name ) {
         strcat( CC_Opts, " -fo=" );
         strcat( CC_Opts, Obj_Name );
     }
-    if ( ! Flags.want_errfile ) {
+    if( !Flags.want_errfile ) {
         strcat( CC_Opts, " -fr" );
     }
     for( i = 1; i < argc ; i++ ) {
         Word = argv[i];
-        if( ! Word || ! Word[0] )
+        if( !Word || !Word[0] )
             /* HBB 20060217: argument was used up */
             continue;
         if( FileExtension( Word, ".lib" ) || FileExtension( Word, ".a" ) ) {
@@ -979,14 +979,14 @@ static  int  CompLink( void )
                     sfile = Exe_Name;
                 else {
                     if( FileExtension( Word, OBJ_EXT ) ||
-                        FileExtension( Word, OBJ_EXT_SECONDARY) ) {
+                        FileExtension( Word, OBJ_EXT_SECONDARY ) ) {
                         p = strrchr( file, '.' );
                         if( p != NULL )  {
                             *p = NULLCHAR;
                         }
                         strcpy( Word, file );
                     } else {            /* wdis needs extension */
-                        strcat(ofile, Obj_Name);
+                        strcat( ofile, Obj_Name );
                     }
                     sfile = Word;
                     strcat( Word, ".s" );
@@ -1082,10 +1082,11 @@ static void ExitHandler( void )
 {
     if( Fp )
         fclose( Fp );
-    remove(Temp_Link + 1);
+    remove( Temp_Link + 1 );
 }
 
-int   main( int argc, char **argv )
+int main( int argc, char **argv )
+/*******************************/
 {
     int     rc;
 

@@ -8,8 +8,6 @@
 :elsesegment Pspecs
 # default specs.owc file
 # 
-# NOTE: the -bt= options in here are just what I thought
-#   they should be.  Somebdoy please double-check!
 # FIXME: should -bd and others also be passed?
 :endsegment
 system begin dos
@@ -97,8 +95,7 @@ system begin x32s
 end
 system begin x32sv
 :segment Pspecs
-    wcc386
-::  bt=dos????
+    wcc386 -bt=dos
 :elsesegment Pwlsystem
     option osname='FlashTek Virtual Memory (stack calling convention)'
     libpath %WATCOM%/lib386
@@ -155,7 +152,6 @@ end
 system begin windows
 :segment Pspecs
     wcc -bt=windows
-:: FIXME: -zw/-zW needed/useful?    
 :elsesegment Pwlsystem
     option osname='Windows 16-bit'
     libpath %WATCOM%/lib286
@@ -170,7 +166,6 @@ system begin windows_dll
 :segment Pspecs
     wcc -bt=windows -bd
 :: FIXME: need bd?
-:: FIXME: -zw/-zW needed/useful?    
 :elsesegment Pwlsystem
     option osname='Windows 16-bit'
     libpath %WATCOM%/lib286
@@ -404,8 +399,7 @@ system begin linuxmips
 end
 system begin nt
 :segment Pspecs
-    wcc386 -bt=nt -zw
-:: FIXME: -zw needed/useful?    
+    wcc386 -bt=nt 
 :elsesegment Pwlsystem
     option osname='Windows NT character-mode'
     libpath %WATCOM%/lib386
@@ -417,8 +411,7 @@ system begin nt
 end
 system begin nt_win
 :segment Pspecs
-    wcc386 -bt=nt -zw
-:: FIXME: -zw needed/useful?    
+    wcc386 -bt=nt
 :elsesegment Pwlsystem
     option osname='Windows NT windowed'
     libpath %WATCOM%/lib386
@@ -430,8 +423,7 @@ system begin nt_win
 end
 system begin nt_dll
 :segment Pspecs
-    wcc386 -bt=nt_dll -bd -zw
-:: FIXME: -zw needed/useful?    
+    wcc386 -bt=nt_dll -bd
 :elsesegment Pwlsystem
     option osname='Windows NT'
     libpath %WATCOM%/lib386
