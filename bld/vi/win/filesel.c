@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File selection dialog (open/save).
 *
 ****************************************************************************/
 
@@ -60,8 +59,8 @@ typedef UINT (WINEXP * OPENHOOKTYPE)( HWND, UINT, WPARAM, LPARAM );
 
 BOOL WINEXP OpenHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
 {
-    int len;
-    static OPENFILENAME *of;
+    int                         len;
+    static OPENFILENAME __FAR__ *of;
 
     wparam = wparam;
     lparam = lparam;
@@ -70,7 +69,7 @@ BOOL WINEXP OpenHook( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam )
     switch( msg ) {
     case WM_INITDIALOG:
         /* danger - not sure that lparam is guaranteed to be the of. struct */
-        of = (OPENFILENAME *)lparam;
+        of = (OPENFILENAME __FAR__ *)MAKEPTR( (LPVOID)lparam );
         // return( FALSE );
         return( TRUE );
     case WM_COMMAND:
@@ -96,7 +95,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
     BOOL                rc;
     static long         filemask = 1;
 
-    #ifdef __NT__
+#ifdef __NT__
     /* added to get around chicago crashing in the fileopen dlg */
     /* -------------------------------------------------------- */
     DWORD ver;
@@ -107,7 +106,7 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
         is_chicago = TRUE;
     }
     /* -------------------------------------------------------- */
-    #endif
+#endif
 
     mask = mask;
     want_all_dirs = want_all_dirs;
@@ -122,46 +121,46 @@ int SelectFileOpen( char *dir, char **result, char *mask, bool want_all_dirs  )
     of.nMaxFile = FILENAME_MAX;
     of.lpstrTitle = NULL;
     of.lpstrInitialDir = dir;
-    #ifdef __NT__
+#ifdef __NT__
     if( is_chicago ) {
         of.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY |
                    OFN_ALLOWMULTISELECT | OFN_EXPLORER;
     } else {
         of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK |
                    OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_EXPLORER;
-    #else
+#else
         of.Flags = OFN_PATHMUSTEXIST | OFN_ENABLEHOOK |
                    OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY;
-    #endif
+#endif
         of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (FARPROC) OpenHook,
                           InstanceHandle );
-    #ifdef __NT__
+#ifdef __NT__
     }
-    #endif
+#endif
     rc = GetOpenFileName( &of );
     filemask = of.nFilterIndex;
-    #ifdef __NT__
+#ifdef __NT__
     if( is_chicago ) {
-    #endif
-    #ifndef __NT__
+#endif
+#ifndef __NT__
         FreeProcInstance( (FARPROC) of.lpfnHook );
-    #endif
-    #ifdef __NT__
+#endif
+#ifdef __NT__
     }
-    #endif
+#endif
     if( rc == FALSE && CommDlgExtendedError() == FNERR_BUFFERTOOSMALL ) {
-        #ifdef __NT__
+#ifdef __NT__
         if( !is_chicago ) {
-        #endif
+#endif
             MemFree( (char*)(of.lpstrFile) );
             *result = FileNameList;
-        #ifdef __NT__
+#ifdef __NT__
         }
-        #endif
-        #if 0
+#endif
+#if 0
         MyBeep();
         Message1( "Please open files in smaller groups" );
-        #endif
+#endif
     }
     UpdateCurrentDirectory();
     return( ERR_NO_ERR );
@@ -204,9 +203,9 @@ int SelectFileSave( char *result )
     of.lpfnHook = (LPOFNHOOKPROC) MakeProcInstance( (FARPROC) OpenHook,
                       InstanceHandle );
     doit = GetSaveFileName( &of );
-    #ifndef __NT__
+#ifndef __NT__
     FreeProcInstance( (FARPROC) of.lpfnHook );
-    #endif
+#endif
 
     if( doit != 0 ) {
         UpdateCurrentDirectory();
