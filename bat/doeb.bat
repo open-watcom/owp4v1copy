@@ -1,1 +1,1 @@
-sed -f %TOOLDR%\bat\xb.sed <%1 >%2
+sed -f %OWROOT%\bat\xb.sed <%1 >%2
