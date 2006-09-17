@@ -63,9 +63,9 @@ static bool isSymFile( FILE *f )
     if( end_map.zero != 0 ) {
         return( FALSE );
     }
-    /* Check for .sym file versions 5.1 and 4.0; 6.0 apparently also exists */
-    if( ((end_map.major_ver != 5) || (end_map.minor_ver != 1))
-        && ((end_map.major_ver != 4) || (end_map.minor_ver != 0)) ) {
+    /* Check .sym file to make sure it's something reasonable */
+    if( (end_map.major_ver < 3) || (end_map.major_ver > 5)
+        || (end_map.minor_ver > 11) ) {
         return( FALSE );
     }
 

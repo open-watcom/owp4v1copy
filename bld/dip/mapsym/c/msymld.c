@@ -260,12 +260,13 @@ static dip_status CheckSymFile( dig_fhandle h )
         return( DS_FAIL );
     }
 
-    /* Check for .sym file versions 5.1 and 4.0; 6.0 apparently also exists.
-     * Versions 5.1 seems to be identical to 4.0 with added support for
+    /* Check .sym file version. The version number seems to correspond to
+     * the linker version. Versions 3.10, 4.0, 5.10, 5.11 have been seen.
+     * Version 5.1 seems to be identical to 4.0 with added support for
      * 32-bit symbols.
      */
-    if( ((end_map.major_ver != 5) || (end_map.minor_ver != 1))
-        && ((end_map.major_ver != 4) || (end_map.minor_ver != 0)) ) {
+    if( (end_map.major_ver < 3) || (end_map.major_ver > 5)
+        || (end_map.minor_ver > 11) ) {
         return( DS_FAIL );
     }
 
