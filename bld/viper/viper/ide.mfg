@@ -1162,6 +1162,7 @@ rem     RSwitch  0, x??d?, "DGROUP is shared", "op one", OFF
         RSwitch  0, ???d?, "DGROUP is shared", "op one", OFF
         RSwitch  0, ?????, "DGROUP is shared", "op one", OFF
         RSwitch  0, o?2d?, "DGROUP is not shared", "op many", ON
+        RSwitch  0, w??d?, "DGROUP is not shared", "op many", OFF
         RSwitch  0, ???d?, "DGROUP is not shared", "op many", ON
         RSwitch  0, ?????, "DGROUP is not shared", "op many", OFF
     RGroup "Runtime environment"
