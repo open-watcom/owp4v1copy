@@ -520,73 +520,36 @@ static unsigned GetDriveInfo( int drive, bool removable )
     }
 #else
     {
-        extern long diskette( int );
-        extern long remote( int );
-        extern long drivemap( int );
-        #ifdef __386__
-        #pragma aux diskette parm [ bl ] value [ eax ] modify [ edx ] = \
-            "mov ax,4408h" \
-            "int 21h" \
-            "sbb dx,dx" \
-            "rol eax,16" \
-            "mov ax,dx" \
-            "rol eax,16"
-
-        #pragma aux remote parm [ bl ] value [ eax ] modify [ edx ] = \
-            "mov ax,4409h" \
-            "int 21h" \
-            "sbb dx,dx" \
-            "shl eax,16" \
-            "mov ax,dx"
-
-        #pragma aux drivemap parm [ bl ] value [ eax ] modify [ edx ] = \
-            "mov ax,440eh" \
-            "int 21h" \
-            "sbb dx,dx" \
-            "rol eax,16" \
-            "mov ax,dx" \
-            "rol eax,16"
-
-        #else
-        #pragma aux diskette parm [ bl ] value [ dx ax ] = \
-            "mov ax,4408h" \
-            "int 21h" \
-            "sbb dx,dx"
-
-        #pragma aux remote parm [ bl ] value [ dx ax ] = \
-            "mov ax,4409h" \
-            "int 21h" \
-            "sbb ax,ax"
-
-        #pragma aux drivemap parm [ bl ] value [ dx ax ] = \
-            "mov ax,440eh" \
-            "int 21h" \
-            "sbb dx,dx"
-
-        #endif
-
         struct diskfree_t   FreeSpace;
-        long        rc;
+        union REGS          r;
 
         info->diskette = FALSE;
         info->fixed = FALSE;
         info->cluster_size = 0;
         info->free_space = -1;
-        rc = drivemap( drive );
-        if( rc >= 0 && ( rc & 0xFF ) != drive && ( rc & 0xFF ) != 0 ) {
-            return( drive ); // mapped drive not there!
+        r.w.ax = 0x440E;    // get logical drive
+        r.w.bx = drive;
+        intdos( &r, &r );
+        if( r.w.cflag || (r.h.al && (r.h.al != drive)) ) {
+            return( drive );
         }
         info->fixed = TRUE;
-        rc = remote( drive );
-        if( ( rc & 0xFFFF ) != 0 ) {
-            info->fixed = 0; // if remote returns error, it's a bad drive
+        r.w.ax = 0x4409;    // query device local/remote
+        r.w.bx = drive;
+        intdos( &r, &r );
+        if( !r.w.cflag && (r.w.dx & 0x1000) ) {
+            info->fixed = FALSE;
         }
-        rc = diskette( drive );
-        if( rc >= 0 ) {
-            info->diskette = ( rc & 0xFFFF ) == 0;
-            if( info->diskette ) info->fixed = 0;
+        r.w.ax = 0x4408;    // query device removable
+        r.w.bx = drive;
+        intdos( &r, &r );
+        if( !r.w.cflag ) {
+            info->diskette = r.w.ax ? FALSE : TRUE;
+            if( info->diskette ) {
+                info->fixed = FALSE;
+            }
         } else {
-            info->fixed = 0;
+            info->fixed = FALSE;
         }
         if( _dos_getdiskfree( drive, &FreeSpace ) == 0 ) {
             info->cluster_size = (unsigned long)FreeSpace.sectors_per_cluster
