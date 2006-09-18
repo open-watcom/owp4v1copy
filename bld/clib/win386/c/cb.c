@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Callback machinery for Win386 with thunk generation.
 *
 ****************************************************************************/
 
@@ -34,10 +33,11 @@
 #include <stdarg.h>
 #include "cover.h"
 
-#define MAX_CB_PARMS    50
+#define MAX_CB_PARMS            50
 #define MAX_CB_JUMPTABLE        512
 
-DWORD               _CBJumpTable[MAX_CB_JUMPTABLE];
+DWORD               _CBJumpTable[MAX_CB_JUMPTABLE]; /* Callback jump table */
+BYTE                _CBRefsTable[MAX_CB_JUMPTABLE]; /* Callback reference counts */
 extern  CALLBACKPTR __16BitCallBackAddr;
 extern  void        (far * far *__32BitCallBackAddr)( void );
 extern  void        far __32BitCallBack( void );
@@ -192,8 +192,8 @@ static int emitCode( int argcnt, int bytecnt, char *array,
 /*
  * DoEmitCode - build callback routine thunk
  */
-CALLBACKPTR DoEmitCode( int argcnt, int bytecnt, char *array,
-                        DWORD fn, int is_cdecl )
+static CALLBACKPTR DoEmitCode( int argcnt, int bytecnt, char *array,
+                               DWORD fn, int is_cdecl )
 {
     int codesize;
     int i;
@@ -224,8 +224,9 @@ CALLBACKPTR DoEmitCode( int argcnt, int bytecnt, char *array,
     /*
      * set up the callback jump table, and return the proper callback rtn
      */
-    _CBJumpTable[i] = (DWORD) emitWhere  - *_DataSelectorBaseAddr
+    _CBJumpTable[i] = (DWORD)emitWhere  - *_DataSelectorBaseAddr
                                         + *_CodeSelectorBaseAddr;
+    _CBRefsTable[i]++;  /* increase reference count */
     if( i > MaxCBIndex )  MaxCBIndex = i;
     *__32BitCallBackAddr = (void (far *)(void))&__32BitCallBack;
     return( (char *)__16BitCallBackAddr - (i+1) * CB_CODE_SIZE );
@@ -233,7 +234,7 @@ CALLBACKPTR DoEmitCode( int argcnt, int bytecnt, char *array,
 } /* DoEmitCode */
 
 
-CALLBACKPTR vGetCallbackRoutine( PROCPTR fn, va_list vl )
+static CALLBACKPTR vGetCallbackRoutine( PROCPTR fn, va_list vl )
 {
     int         type;
     int         bytecnt = 0;
@@ -276,9 +277,11 @@ void ReleaseCallbackRoutine( CALLBACKPTR cbp )
     i = ((char *)__16BitCallBackAddr - (char *)cbp) / CB_CODE_SIZE;
     --i;
     cb = _CBJumpTable[i] - *_CodeSelectorBaseAddr + *_DataSelectorBaseAddr;
-    free( (void *)cb );
-    _CBJumpTable[i] = 0L;
-
+    _CBRefsTable[i]--;  /* decrease reference count */
+    if( _CBRefsTable[i] == 0 ) {
+        free( (void *)cb );
+        _CBJumpTable[i] = 0L;
+    }
 } /* ReleaseCallbackRoutine */
 
 void *SetProc( FARPROC fp, int type )
@@ -289,8 +292,9 @@ void *SetProc( FARPROC fp, int type )
     if( fp == NULL )  return( NULL );
     for( i = 0; i <= MaxCBIndex; i++ ) {
         cbp = (char *)(_CBJumpTable[i] - *_CodeSelectorBaseAddr
-                                      + *_DataSelectorBaseAddr);
+                                       + *_DataSelectorBaseAddr);
         if( *(FARPROC *)(cbp+1) == fp ) {
+            _CBRefsTable[i]++;  /* increase reference count */
             return( (char *)__16BitCallBackAddr - (i+1) * CB_CODE_SIZE );
         }
     }
@@ -318,10 +322,13 @@ void PASCAL FreeProcInstance( FARPROC fp )
 
     for( i = 0; i <= MaxCBIndex  &&  _CBJumpTable[i] != 0L; i++ ) {
         cbp = (char *)(_CBJumpTable[i] - *_CodeSelectorBaseAddr
-                                      + *_DataSelectorBaseAddr);
+                                       + *_DataSelectorBaseAddr);
         if( *(FARPROC *)(cbp+1) == fp ) {
-            free( cbp );
-            _CBJumpTable[i] = 0L;
+            _CBRefsTable[i]--;  /* decrease reference count */
+            if( _CBRefsTable[i] == 0 ) {
+                free( cbp );
+                _CBJumpTable[i] = 0L;
+            }
         }
     }
 }
