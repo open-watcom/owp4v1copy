@@ -176,18 +176,20 @@ extern short GetBootDrive(void)
     drive = *(unsigned long *)DataBuf;
     return( (int)drive );
 }
-#elif defined( __UNIX__ )
-extern short GetBootDrive(void)
+#elif defined( __UNIX__ ) || defined( __NT__ )
+extern short GetBootDrive( void )
 {
-    return 0;
+    return( 0 );
 }
 #else
-extern short            GetBootDrive();
-#pragma aux             GetBootDrive =  \
-                        "mov  ax,3305h" \
-                        "sub  dx,dx"    \
-                        "int  21h"      \
-                        value [dx] modify [ax dx];
+extern short GetBootDrive( void )
+{
+    union REGS  r;
+
+    r.w.ax = 0x3305;
+    intdos( &r, &r );
+    return( r.h.dl );
+}
 #endif
 
 char                    OrigAutoExec[] = "?:\\AUTOEXEC.BAT";
