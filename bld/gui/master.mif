@@ -111,6 +111,7 @@ extra_c_flags_wmdisim += -fh=gui06.pch
 extra_c_flags_guifdlg += -fh=gui06.pch
 extra_c_flags_guihelp += -fh=gui07.pch
 extra_c_flags_guixmain += -fh=gui07.pch
+extra_c_flags_guidrain += -fh=gui07.pch
 !endif
 
 !ifeq sys_windowed 1

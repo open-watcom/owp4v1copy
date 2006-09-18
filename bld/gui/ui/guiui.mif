@@ -35,7 +35,7 @@ wv_sysobjs = &
           guistrin.obj &
           guitextm.obj &
           guixmain.obj &
-          guixsys.obj &
+          guixsys.obj  &
           guixloop.obj &
           guidirty.obj &
           guisstyl.obj &
@@ -74,10 +74,11 @@ wv_sysobjs = &
           guiuiev.obj  &
           guisicon.obj &
           guixbar.obj  &
-          guildstr.obj  &
+          guildstr.obj &
           guirdlg.obj  &
-          guirmenu.obj  &
-          guiclen.obj &
+          guirmenu.obj &
+          guiclen.obj  &
+	  guidrain.obj &
 
 help_objext=obj
 

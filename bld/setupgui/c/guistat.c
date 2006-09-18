@@ -233,37 +233,8 @@ extern void StatusAmount( long parts_complete, long parts_injob )
 extern bool StatusCancelled( void )
 /*********************************/
 {
-#ifndef _UI
-    {
-        WPI_QMSG                msg;
-        extern WPI_INST         GUIMainHInst;
-
-        // Let some other applications execute.
-        while( _wpi_peekmessage( GUIMainHInst, &msg, NULL, NULL, NULL, PM_REMOVE ) ) {
-            _wpi_translatemessage( &msg );
-            _wpi_dispatchmessage( GUIMainHInst, &msg );
-        }
-    }
-#else
-    {
-        extern EVENT GUIUIProcessEvent( EVENT );
-        extern char  GUIProcessEvent( EVENT );
-        extern EVENT GUIAllEvents[];
-        EVENT   ev;
-
-        UIData->busy_wait = TRUE;
-        uipushlist( GUIAllEvents );
-        for( ;; ) {
-            ev = uivgetevent( NULL );
-            if( ev == EV_SINK ) break;
-            ev = GUIUIProcessEvent( ev );
-            if( ev == EV_NO_EVENT ) break;
-            GUIProcessEvent( ev );
-        }
-        uipoplist();
-        UIData->busy_wait = FALSE;
-    }
-#endif
+    // update windows and let other apps execute
+    GUIDrainEvents();
     return( CancelSetup );
 }
 

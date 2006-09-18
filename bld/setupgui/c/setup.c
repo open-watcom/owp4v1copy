@@ -389,6 +389,7 @@ extern void GUImain( void )
 
     if( !GetDirParams( argc, argv, &inf_name, &tmp_path, &arc_name ) ) return;
     if( !SetupInit() ) return;
+    GUIDrainEvents();   // push things along
     FileInit( arc_name );
 #ifdef PATCH
     InitIO();

@@ -934,6 +934,7 @@ extern bool GUISetChecked( gui_window *wnd, unsigned id, unsigned check );
 
 extern void GUIGetKeyState( gui_keystate *state );
 extern void GUIFlushKeys( void );
+extern void GUIDrainEvents( void );
 extern void GUISetExtra( gui_window *wnd, void *extra );
 extern void *GUIGetExtra( gui_window *wnd );
 extern void GUIGetClientRect( gui_window *wnd, gui_rect *client );
