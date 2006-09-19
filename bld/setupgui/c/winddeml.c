@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+
+#define INCLUDE_DDEML_H
 #include <windows.h>
 #include <ddeml.h>
 
@@ -170,11 +172,11 @@ static bool UseDDE( bool uninstall )
             /* creating a new group */
             SimGetPMParms( i, t1 );
             if( t1[ 0 ] == '\0' ) {
-                #if defined( __NT__ )
-                    sprintf( buff, "[CreateGroup(%s,0)]", prog_desc );  // create a personal group
-                #else
-                    sprintf( buff, "[CreateGroup(%s)]", prog_desc );
-                #endif
+#if defined( __NT__ )
+                sprintf( buff, "[CreateGroup(%s,0)]", prog_desc );  // create a personal group
+#else
+                sprintf( buff, "[CreateGroup(%s)]", prog_desc );
+#endif
             } else {
                 sprintf( buff, "[CreateGroup(%s,%s)]", prog_desc, t1 );
             }
