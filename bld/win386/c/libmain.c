@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  C/C++ Windows 386 Supervisor LibMain startup code (16-bit).
+* Description:  Windows 386 Supervisor LibMain startup code (16-bit).
 *
 ****************************************************************************/
 
@@ -32,6 +32,7 @@
 #include <stddef.h>
 #include <windows.h>
 #include "winext.h"
+
 extern DWORD ReturnCode;
 extern int PASCAL StartDLL32( void );
 

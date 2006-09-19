@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Covers for commdlg.dll functions.
 *
 ****************************************************************************/
 
@@ -44,7 +43,7 @@ extern LPVOID FAR BackPatch_commdlg( char *str );
 static BOOL  (FAR PASCAL *commdlgChooseColor)(LPCHOOSECOLOR);
 static HWND  (FAR PASCAL *commdlgReplaceText)(LPFINDREPLACE);
 static HWND  (FAR PASCAL *commdlgFindText)(LPFINDREPLACE);
-static BOOL (FAR PASCAL *commdlgChooseFont)(LPCHOOSEFONT);
+static BOOL  (FAR PASCAL *commdlgChooseFont)(LPCHOOSEFONT);
 static BOOL  (FAR PASCAL *commdlgGetOpenFileName)(LPOPENFILENAME);
 static BOOL  (FAR PASCAL *commdlgGetSaveFileName)(LPOPENFILENAME);
 static BOOL  (FAR PASCAL *commdlgPrintDlg)(LPPRINTDLG);

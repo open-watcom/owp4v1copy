@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Windows 386 Supervisor init 32-bit DPMI mode startup code (16-bit)
+* Description:  Win386 Supervisor 32-bit DPMI mode startup code (16-bit).
 *
 ****************************************************************************/
 

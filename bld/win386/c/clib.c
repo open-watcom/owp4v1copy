@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Wrappers for miscellaneous C library functions.
 *
 ****************************************************************************/
 
@@ -41,8 +40,8 @@
 #include <string.h>
 #include <time.h>
 
-int      _fintdos(union REGS far *, union REGS far *);
-int      _fintdosx(union REGS far *, union REGS far *, struct SREGS far *);
+int     _fintdos(union REGS far *, union REGS far *);
+int     _fintdosx(union REGS far *, union REGS far *, struct SREGS far *);
 int     _fint86( int, union REGS far *, union REGS far * );
 int     _fint86x( int, union REGS far *, union REGS far *, struct SREGS far * );
 void    _fintr( int, union REGPACK far * );
@@ -115,7 +114,7 @@ unsigned far pascal _clib_dos_findfirst( char far *__path,unsigned __attr,
 
 } /* _clib_dos_findfirst */
 
-unsigned far pascal _clib_dos_findnext(  struct find_t far *__buf )
+unsigned far pascal _clib_dos_findnext( struct find_t far *__buf )
 {
 #if 1
     return 0;
@@ -132,7 +131,7 @@ unsigned far pascal _clib_dos_findnext(  struct find_t far *__buf )
 } /* _clib_dos_findnext */
 
 
-unsigned far pascal _clib_dos_read(  int __handle, void far *__buf, unsigned __count, unsigned long far *__bytes  )
+unsigned far pascal _clib_dos_read( int __handle, void far *__buf, unsigned __count, unsigned long far *__bytes  )
 {
     unsigned            rc;
     STATIC unsigned     bytes;
@@ -143,7 +142,7 @@ unsigned far pascal _clib_dos_read(  int __handle, void far *__buf, unsigned __c
 
 } /* _clib_dos_read */
 
-unsigned far pascal _clib_dos_write(  int __handle, void __far *__buf, unsigned __count, unsigned long far *__bytes  )
+unsigned far pascal _clib_dos_write( int __handle, void __far *__buf, unsigned __count, unsigned long far *__bytes  )
 {
     unsigned            rc;
     STATIC unsigned     bytes;
@@ -157,7 +156,7 @@ unsigned far pascal _clib_dos_write(  int __handle, void __far *__buf, unsigned 
 /*
  * BIOS functions here
  */
-unsigned short far pascal _clib_bios_disk(unsigned __cmd,struct diskinfo_t far *__diskinfo)
+unsigned short far pascal _clib_bios_disk( unsigned __cmd, struct diskinfo_t far *__diskinfo )
 {
     STATIC struct diskinfo_t    diskinfo;
     unsigned short              rc;
@@ -166,27 +165,33 @@ unsigned short far pascal _clib_bios_disk(unsigned __cmd,struct diskinfo_t far *
     _fmemcpy( __diskinfo, &diskinfo, sizeof( struct diskinfo_t ) );
     return( rc );
 }
+
 unsigned short far pascal _clib_bios_equiplist(void)
 {
         return( _bios_equiplist() );
 }
-unsigned short far pascal _clib_bios_keybrd(unsigned __cmd)
+
+unsigned short far pascal _clib_bios_keybrd( unsigned __cmd )
 {
     return( _bios_keybrd( __cmd ) );
 }
-unsigned short far pascal _clib_bios_memsize(void)
+
+unsigned short far pascal _clib_bios_memsize( void )
 {
     return( _bios_memsize() );
 }
-unsigned short far pascal _clib_bios_printer(unsigned __cmd,unsigned __port,unsigned __data)
+
+unsigned short far pascal _clib_bios_printer( unsigned __cmd, unsigned __port, unsigned __data )
 {
     return( _bios_printer( __cmd, __port, __data ) );
 }
-unsigned short far pascal _clib_bios_serialcom(unsigned __cmd,unsigned __port,unsigned __data)
+
+unsigned short far pascal _clib_bios_serialcom( unsigned __cmd, unsigned __port, unsigned __data )
 {
     return( _bios_serialcom( __cmd, __port, __data ) );
 }
-int far pascal _clib_bios_timeofday(int __cmd, long far *__timeval )
+
+int far pascal _clib_bios_timeofday( int __cmd, long far *__timeval )
 {
     STATIC long timeval;
     int         rc;

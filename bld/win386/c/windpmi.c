@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DPMI function wrappers for Win386.
 *
 ****************************************************************************/
 
@@ -456,7 +455,7 @@ WORD FAR PASCAL __DPMIFree( DWORD addr )
     return( -1 );                       // indicate error
 }
 
-void FreeDPMIMemBlocks()
+void FreeDPMIMemBlocks( void )
 {
     memblk      *p;
 
