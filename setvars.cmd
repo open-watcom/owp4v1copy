@@ -60,8 +60,7 @@ set DISTROOT=%OWROOT%\distrib
 set RELROOT=%OWROOT%
 set DWATCOM=%WATCOM%
 set DOC_ROOT=%OWROOT%\docs
-set INCLUDE=%WATCOM%\h;%WATCOM%\h\os2;%DEVDIR%\watcom\h
-set LIB=%OWROOT%\bld\watcom\lib
+set INCLUDE=%WATCOM%\h;%WATCOM%\h\os2
 set EDPATH=%WATCOM%\eddat
 set PATH=%OWROOT%\binp;%OWBINDIR%;%OWROOT%\bat;%WATCOM%\binp;%WATCOM%\binw;%DOC_ROOT%\cmds;%OS2TKROOT%\bin;%DEFPATH%
 

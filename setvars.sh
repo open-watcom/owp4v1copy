@@ -60,8 +60,7 @@ export DISTROOT=$OWROOT/distrib
 export RELROOT=$OWROOT
 export DWATCOM=$WATCOM
 export DOC_ROOT=$OWROOT/docs
-export INCLUDE=$WATCOM/lh:$DEVDIR/watcom/h
-export LIB=$OWROOT/bld/watcom/lib
+export INCLUDE=$WATCOM/lh
 export EDPATH=$WATCOM/eddat
 export PATH=$OWBINDIR:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH
 
