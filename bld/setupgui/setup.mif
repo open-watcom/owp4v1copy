@@ -2,11 +2,11 @@ proj_name = setupgui
 
 setupgui_autodepends = .AUTODEPEND
 
-.EXTENSIONS: .rc .ico
+.EXTENSIONS: .rc .ico .res
 
 .ERROR:
 
-additional_cleanup = *.i setup.inf
+additional_cleanup = *.i *.rex setup.inf
 
 !include cproj.mif
 !include defrule.mif
@@ -43,7 +43,11 @@ objs +=             &
 
 !ifeq host_os win
 objs += &
+!ifeq host_cpu 386
+    setupio.obj     &
+!else
     setupiod.obj    &
+!endif
     utils.obj       &
     winutil.obj     &
     winddeml.obj
@@ -97,12 +101,13 @@ $(wres_lib)
 
 !endif
 
-libs_os2   += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
-libs_nt    += ../zlib/osi$(host_cpu)/zlib.lib ../ziplib/osi$(host_cpu)/ziplib.lib
-libs_dos   += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
-libs_linux += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
+libs_os2    += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
+libs_nt     += ../zlib/osi$(host_cpu)/zlib.lib ../ziplib/osi$(host_cpu)/ziplib.lib
+libs_dos    += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
+libs_linux  += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
+libs_win386 += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
 
-libs = $(libs_$(host_os))
+libs = $(libs_$(host_os)) $(libs_$(host_os)$(host_cpu))
 
 gendeps = _guimsgs.gh $(objs) $(libs) setup.lnk
 
@@ -169,31 +174,23 @@ inc_dirs += -I"$(build_root)/bdiff/h" -I$(trmem_dir) -I"$(libzip_dir)/lib"
 # explicit rules
 ##################
 
-
 !ifeq host_os win
 
-all : setup.exe csetup.exe f77setup.exe .SYMBOLIC
-
-#setup.exe: wdvirgin.exe setup.res
-setup.exe: virgin.exe setup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-#wdvirgin.exe: virgin.exe
-#    $(linker) name $^@ op stub=virgin.exe @setup.lnk
+all : virgin.exe setup.exe csetup.exe f77setup.exe .SYMBOLIC
 
 virgin.exe: $(gendeps) dosstub.exe
+!ifeq host_cpu 386
+    $(linker) name virgin.rex @setup.lnk
+    wbind -q -n virgin.rex
+!else
     $(linker) name $^@ op stub=dosstub.exe @setup.lnk
+!endif
 
 !else ifeq host_os os2
 
 !ifeq sys_windowed 1
 
-all : setup.exe csetup.exe f77setup.exe .SYMBOLIC
-
-setup.exe: virgin.exe setup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
+all : virgin.exe setup.exe csetup.exe f77setup.exe .SYMBOLIC
 
 virgin.exe: $(gendeps)
     $(linker) name $^@ @setup.lnk
@@ -246,12 +243,16 @@ setup.lnk : makefile ../setup.mif
     @%append setup.lnk $(lflags)
     @%append setup.lnk option map, verbose
 !ifeq host_os win
+!ifeq host_cpu 386
+    @%append setup.lnk option stack=24K
+!else
     @%append setup.lnk option manyautodata, stack=20K, heap=10K
     # Segments must be NONDISCARDABLE so that Windows will not attempt
     # to load a segment after the user has swapped diskettes.
     @%append setup.lnk SEGMENT CLASS 'CODE' MOVEABLE PRELOAD
     @%append setup.lnk SEGMENT CLASS 'DATA' MOVEABLE PRELOAD
     @%append setup.lnk LIBRARY ddeml
+!endif
 !else ifeq host_os os2
     @%append setup.lnk option stack=30K
 !else ifeq host_os nt
@@ -302,38 +303,15 @@ setup.res : setup.rc $(dep_res1) ../res/generic.bmp
 dosstub.exe : dosstub.c
     wcl -zq -l=dos -os -d0 -bt=dos $[@
 
-csetup.exe: virgin.exe csetup.res
-    cp $[@ $^@ > $(nulldevice)
+.res.exe : virgin.exe
+!if "$(host_os)" == "win" && "$(host_cpu)" == "386"
+    cp virgin.rex $^*.rex
+    wbind -q $*.rex -R -q $]@
+    rm $^*.rex
+!else
+    cp virgin.exe $^@
     $(rc_out) $]@ $^@
-
-jcsetup.exe: virgin.exe jcsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-f77setup.exe: virgin.exe f77setup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-jfsetup.exe: virgin.exe jfsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-dbsetup.exe: virgin.exe dbsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-wdbsetup.exe : wdvirgin.exe dbsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-    wstrip -q -a -r $^@ . setupui.res
-
-jdbsetup.exe : virgin.exe jdbsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-sdbsetup.exe: virgin.exe sdbsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
+!endif
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
     $(bld_cl) -I"$(gui_dir)/h" $(wcl_util_opts) $[@
