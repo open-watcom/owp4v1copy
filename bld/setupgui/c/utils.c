@@ -884,9 +884,9 @@ static void catnum( char *buff, long long num )
         num /= KB;
         if( num > MB ) {
             num /= KB;
-            sprintf( num_buff, "%c%d,%3.3dMB", ch, (int)((num/1000)%1000), (int)(num%1000) );
+            sprintf( num_buff, "%c%d,%3.3dMB", ch, (int)(num/1000), (int)(num%1000) );
         } else if( num > KB ) {
-            sprintf( num_buff, "%c%d,%3.3dKB", ch, (int)((num/1000)%1000), (int)(num%1000) );
+            sprintf( num_buff, "%c%d,%3.3dKB", ch, (int)(num/1000), (int)(num%1000) );
         } else {
             sprintf( num_buff, "%c%dKB", ch, (int)num );
         }
@@ -907,9 +907,9 @@ static void ucatnum( char *buff, unsigned long long num )
         num /= KB;
         if( num > MB ) {
             num /= KB;
-            sprintf( num_buff, "%c%u,%3.3uMB", ch, (int)((num/1000)%1000), (int)(num%1000) );
+            sprintf( num_buff, "%c%u,%3.3uMB", ch, (int)(num/1000), (int)(num%1000) );
         } else if( num > KB ) {
-            sprintf( num_buff, "%c%u,%3.3uKB", ch, (int)((num/1000)%1000), (int)(num%1000) );
+            sprintf( num_buff, "%c%u,%3.3uKB", ch, (int)(num/1000), (int)(num%1000) );
         } else {
             sprintf( num_buff, "%c%uKB", ch, (int)num );
         }
