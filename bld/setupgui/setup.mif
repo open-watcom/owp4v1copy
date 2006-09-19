@@ -303,7 +303,7 @@ setup.res : setup.rc $(dep_res1) ../res/generic.bmp
 dosstub.exe : dosstub.c
     wcl -zq -l=dos -os -d0 -bt=dos $[@
 
-.res.exe : virgin.exe
+.res.exe :
 !if "$(host_os)" == "win" && "$(host_cpu)" == "386"
     cp virgin.rex $^*.rex
     wbind -q $*.rex -R -q $]@
@@ -318,3 +318,17 @@ dosstub.exe : dosstub.c
 
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
     $[@ $^@ $(gui_msg_id_modifier)
+
+
+# additional dependencies for implicit rules
+############################################
+
+csetup.exe   : virgin.exe
+
+f77setup.exe : virgin.exe
+
+jcsetup.exe  : virgin.exe
+
+jfsetup.exe  : virgin.exe
+
+dbsetup.exe  : virgin.exe
