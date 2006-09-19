@@ -167,7 +167,7 @@ system, weeks begin on a monday and week 1 of the year is the week that
 includes January 4th, which is also the week that includes the first Thursday
 of the year, and is also the first week that contains at least four days in
 the year. If the first Monday of January is the 2nd, 3rd, or 4th, the preceding
-days are part of the last week of the precedign year; thus, for Saturday
+days are part of the last week of the preceding year; thus, for Saturday
 2nd January 1999, %G is replaced by 1998 and %V is replaced by 53.
 If december 29th, 30th, or 31st is a Monday, it and any following days are
 part of week 1 of the following year. Thus, for Tuesday 30th December 1997,
