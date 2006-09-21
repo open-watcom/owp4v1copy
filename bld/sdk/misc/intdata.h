@@ -24,11 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Fault context structure for Windows 3.x.
 *
 ****************************************************************************/
 
+
+#pragma pack( __push, 1 )
 
 typedef struct {
     unsigned short      SS;
@@ -54,6 +55,8 @@ typedef struct {
     unsigned short      CS;
     unsigned short      FLAGS;
 } fault_frame;
+
+#pragma pack( __pop )
 
 enum {
     KILL_APP=0,
