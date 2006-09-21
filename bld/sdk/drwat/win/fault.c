@@ -62,7 +62,7 @@ BOOL __export FAR PASCAL IntDialog( HWND hwnd, UINT msg, WPARAM wparam,
         SetDlgCourierFont( hwnd, INT_CS_IP );
         SetDlgCourierFont( hwnd, INT_SOURCE_INFO );
         SetDlgCourierFont( hwnd, INT_SOURCE_INFO2 );
-        RCsprintf( buff, STR_FAULT_X_ENCOUNTERED, AppName,
+        RCsprintf( buff, STR_FAULT_X_ENCOUNTERED, AppName, 
                     IntData.InterruptNumber );
         SetWindowText( hwnd, buff );
         SetDlgItemText( hwnd, INT_TASK_NAME, DTTaskEntry.szModule );
@@ -202,12 +202,12 @@ WORD __cdecl FAR FaultHandler( fault_frame ff )
     faultid = GetFaultString( ff.intnumber, NULL );
     fault_str = AllocRCString( faultid );
     LBPrintf( ListBox, STR_FAULT_IN_TASK, fault_str,
-                DeadTask, DTModuleEntry.szModule );
+                (WORD)DeadTask, DTModuleEntry.szModule );
     FreeRCString( fault_str );
     if( IsWin32App ) {
         LBPrintf( ListBox, STR_ADDRESS_EQ_32, IntData.CS, IntData.EIP );
     } else {
-        LBPrintf( ListBox, STR_ADDRESS_EQ_16, (WORD) IntData.EIP );
+        LBPrintf( ListBox, STR_ADDRESS_EQ_16, IntData.CS, (WORD)IntData.EIP );
     }
 
     LoadDbgInfo( );
