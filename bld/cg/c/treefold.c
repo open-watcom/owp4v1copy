@@ -79,6 +79,137 @@ static cg_op RevOpcode[] = {
     O_LE     /* O_GE*/
 };
 
+/* CheckCmpRange is based on code stolen from CheckMeaninglessCompare(),
+ * used by the C++ front end. It is quite handy to be able to perform the
+ * folding inside the cg, especially since the C++ front end doesn't do it!
+ */
+
+#define SIGN_BIT        (0x8000)
+#define NumSign( a )    ((a) & SIGN_BIT)
+#define NumBits( a )    ((a) & 0x7fff)
+
+typedef enum {
+    CMP_VOID    = 0,    /* comparison can't be folded */
+    CMP_FALSE   = 1,
+    CMP_TRUE    = 2,
+} cmp_result;
+
+typedef enum {
+    REL_EQ,    // x == c
+    REL_LT,    // x < c
+    REL_LE,    // x <= c
+    REL_SIZE
+} rel_op;
+
+//  a <= x <=  b   i.e range of x is between a and b
+enum  case_range {
+    CASE_LOW,         // c < a
+    CASE_LOW_EQ,      // c == a
+    CASE_HIGH,        // c > b
+    CASE_HIGH_EQ,     // c == b
+    CASE_SIZE
+};
+
+static char const CmpResult[REL_SIZE][CASE_SIZE] = {
+//    c < a      c == a     c > b      c == b
+    { CMP_FALSE, CMP_VOID , CMP_FALSE, CMP_VOID },  // x == c
+    { CMP_FALSE, CMP_FALSE, CMP_TRUE , CMP_VOID },  // x < c
+    { CMP_FALSE, CMP_VOID , CMP_TRUE , CMP_TRUE },  // x <= c
+};
+
+#define LOW_VAL         (0x80000000)
+#define HIGH_VAL        (0xfffffffful)
+#define MAXSIZE         32
+
+static int CmpType( type_def *tipe )
+/**********************************/
+/* Convert cg type to a value used by CheckCmpRange */
+{
+    int     ret;
+
+    ret =  tipe->length * 8;
+    if( tipe->attr & TYPE_SIGNED )
+        ret |= SIGN_BIT;
+    return( ret );
+}
+
+static cmp_result CheckCmpRange( opcode_defs op, int op_type, cfloat *val )
+/*************************************************************************/
+/* Check if comparison 'op' of operand of type 'op_type' against constant
+ * 'val' can be folded, eg. '(unsigned char)x <= 255'. Integer only, can
+ * be used for bitfields (op_type contains number of bits).
+ */
+{
+    enum case_range     range;
+    cmp_result          ret;
+    signed_32           low;
+    signed_32           high;
+    signed_32           konst;
+    rel_op              rel;
+    bool                rev_ret = FALSE;
+
+    /* Map cg rel ops to equivalent cases */
+    switch( op ) {
+    case O_NE:
+        rev_ret = TRUE;
+    case O_EQ:
+        rel = REL_EQ;
+        break;
+    case O_GE:
+        rev_ret = TRUE;
+    case O_LT:
+        rel = REL_LT;
+        break;
+    case O_GT:
+        rev_ret = TRUE;
+    case O_LE:
+        rel = REL_LE;
+        break;
+    default:
+        _Zoiks( ZOIKS_112 );
+    }
+    /* Determine type range */
+    if( NumSign( op_type ) ) {
+        low = (signed_32)(LOW_VAL) >> MAXSIZE-NumBits( op_type );
+        high = ~low;
+    } else {
+        low = 0;
+        high = HIGH_VAL >> MAXSIZE-NumBits( op_type );
+    }
+    /* Determine how to compare */
+    konst = CFCnvF32( val );
+    if( konst == low ) {
+        range = CASE_LOW_EQ;
+    } else if( konst == high ) {
+        range = CASE_HIGH_EQ;
+    } else if( NumBits( op_type ) < MAXSIZE ) { /* Can't be outside range */
+        if( konst < low ) {                     /* Don't have to do unsigned compare */
+            range = CASE_LOW;
+        } else if( konst > high ) {
+            range = CASE_HIGH;
+        } else {
+            range = CASE_SIZE;
+        }
+    } else {
+        range = CASE_SIZE;
+    }
+    /* Figure out comparison result, if possible */
+    if( range != CASE_SIZE ) {
+        ret = CmpResult[rel][range];
+        if( rev_ret && (ret != CMP_VOID) ) {
+            /* Flip result */
+            if( ret == CMP_FALSE ) {
+                ret = CMP_TRUE;
+            } else {
+                ret = CMP_FALSE;
+            }
+        }
+    } else {
+        ret = CMP_VOID;
+    }
+    return( ret );
+}
+
 static signed_32 CFConvertByType( cfloat *cf, type_def *tipe )
 /************************************************************/
 {
@@ -1143,6 +1274,10 @@ static  tn      FindBase( tn tree, bool op_eq )
             // if we are doing a EQ/NE comparison we can ignore sign changes
             child_attr &= ~TYPE_SIGNED;
             this_attr  &= ~TYPE_SIGNED;
+        } else if( this_attr & TYPE_SIGNED && tree->u.left->tipe->length < tree->tipe->length ) {
+            // if we went from smaller unsigned to larger signed type,
+            // sign change isn't a problem either
+            child_attr |= TYPE_SIGNED;
         }
         if( child_attr != this_attr ) break;
         tree = tree->u.left;
@@ -1189,13 +1324,13 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
         op_eq = TRUE;
     }
     true_value = FETrue();
+    result = 0;
     if( left->class == TN_CONS ) {
         lv = CnvCFToType( left->u.name->c.value, tipe );
         rv = CnvCFToType( rite->u.name->c.value, tipe );
         compare = CFCompare( lv, rv );
         CFFree( lv );
         CFFree( rv );
-        result = 0;
         switch( op ) {
         case O_EQ:
             if( compare == 0 ) {
@@ -1234,10 +1369,23 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
     } else if( rite->class == TN_CONS ) {
         if( left->class != TN_BINARY ) {
             base_l = FindBase( left, op_eq );
-            if( base_l != left && ( ( op == O_NE ) || ( op == O_EQ ) ) ) {
-                // got rid of some lame converts
+            if( base_l != left ) {
+                // get rid of some lame converts the C++ compiler likes to emit
                 BurnToBase( left, base_l );
                 return( TGNode( TN_COMPARE, op, base_l, rite, TypeBoolean ) );
+            } else {
+                cmp_result  cmp;
+
+                cmp = CheckCmpRange( op, CmpType( tipe ), rite->u.name->c.value );
+                if( cmp != CMP_VOID ) {
+                    if( cmp == CMP_TRUE ) {
+                        result = true_value;
+                    }
+                    /* Throw away constant but keep non-const part */
+                    BurnTree( rite );
+                    left = TGTrash( left );
+                    return( TGBinary( O_COMMA, left, IntToType( result, TypeInteger ), TypeInteger ) );
+                }
             }
             return( NULL );
         }
