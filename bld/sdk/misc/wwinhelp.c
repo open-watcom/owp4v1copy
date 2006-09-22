@@ -24,22 +24,22 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Look for Japanese help files, fall back to English ones.
 *
 ****************************************************************************/
 
 
-#include "windows.h"
+#include <windows.h>
 #include <stdlib.h>
 #include <string.h>
 #include "mbstring.h"
 #include "wwinhelp.h"
 
+
 BOOL WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
 {
     char        buff[_MAX_PATH];
-    static char open=FALSE;
+    static char open = FALSE;
 
     if( fuCommand == HELP_QUIT && !open ) return( FALSE );
     open = TRUE;
@@ -52,7 +52,7 @@ BOOL WWinHelp( HWND hwnd, LPCSTR helpFile, UINT fuCommand, DWORD data )
             char        dir[_MAX_DIR];
             char        fname[_MAX_FNAME];
             char        ext[_MAX_EXT];
-            char    new_filename[_MAX_PATH];
+            char        new_filename[_MAX_PATH];
 
             _splitpath( helpFile, drive, dir, fname, ext );
             if( strlen( fname ) < 8 ) {

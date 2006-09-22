@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Toolbar window interface.
 *
 ****************************************************************************/
 
@@ -98,11 +97,11 @@ void WPTB_TransparentBlt(HDC, UINT, UINT, UINT, UINT, HDC, COLORREF);
 #endif
 
 #ifndef __OS2_PM__
-#define TOOLBAR_FIXED_STYLE     (WS_BORDER|WS_CHILDWINDOW)
-#define TOOLBAR_FLOAT_STYLE     (WS_CAPTION|WS_POPUP|WS_THICKFRAME|WS_SYSMENU)
-#define TOOLBAR_FLOATNOSIZE_STYLE       (WS_CAPTION|WS_POPUP|WS_SYSMENU)
+#define TOOLBAR_FIXED_STYLE         (WS_BORDER|WS_CHILDWINDOW)
+#define TOOLBAR_FLOAT_STYLE         (WS_CAPTION|WS_POPUP|WS_THICKFRAME|WS_SYSMENU)
+#define TOOLBAR_FLOATNOSIZE_STYLE   (WS_CAPTION|WS_POPUP|WS_SYSMENU)
 #else
-#define TOOLBAR_FIXED_STYLE     ( FCF_BORDER )
-#define TOOLBAR_FLOAT_STYLE     (FCF_TITLEBAR|FCF_SIZEBORDER|FCF_SYSMENU)
-#define TOOLBAR_FLOATNOSIZE_STYLE       ( FCF_TITLEBAR | FCF_BORDER | FCF_SYSMENU )
+#define TOOLBAR_FIXED_STYLE         (FCF_BORDER)
+#define TOOLBAR_FLOAT_STYLE         (FCF_TITLEBAR|FCF_SIZEBORDER|FCF_SYSMENU)
+#define TOOLBAR_FLOATNOSIZE_STYLE   (FCF_TITLEBAR | FCF_BORDER | FCF_SYSMENU)
 #endif

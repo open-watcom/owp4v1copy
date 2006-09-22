@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dynamic DBCS (Japanese) dialogs.
 *
 ****************************************************************************/
 
@@ -52,12 +51,12 @@
 #endif
 typedef struct {
     long        dtStyle;
-    #ifdef __NT__
-        DWORD   dtExtendedStyle;
-        WORD    dtItemCount;
-    #else
-        BYTE    dtItemCount;
-    #endif
+#ifdef __NT__
+    DWORD       dtExtendedStyle;
+    WORD        dtItemCount;
+#else
+    BYTE        dtItemCount;
+#endif
     short       dtX;
     short       dtY;
     short       dtCX;
@@ -74,6 +73,7 @@ typedef struct {
 
 static BYTE     *JFontInfo = NULL;
 static int      JFontInfoLen = 0;
+
 
 #if defined(__NT__)
 static BOOL mbcs2unicode( char *src, LPWSTR *dest, int *len )

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Display desktop background bitmap.
 *
 ****************************************************************************/
 
@@ -188,4 +187,3 @@ HWND DisplayDesktop( HWND hparent )
                   SWP_NOMOVE | SWP_NOSIZE );
     return( desktopwindow );
 } /* DisplayDesktop */
-

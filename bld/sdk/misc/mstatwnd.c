@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Multiple status window class.
 *
 ****************************************************************************/
 
@@ -156,7 +155,7 @@ LONG CB StatusWndCallback( HWND hwnd, UINT msg, UINT wparam, LONG lparam  )
     int          i;
     statwnd     *sw;
 
-    sw = (statwnd *) GetWindowLong ( hwnd, classWinExtra );
+    sw = (statwnd *) GetWindowLong( hwnd, classWinExtra );
 
     if( statusWndHookFunc != NULL ) {
         if( statusWndHookFunc( hwnd, msg, wparam, lparam ) ) {
@@ -187,7 +186,7 @@ LONG CB StatusWndCallback( HWND hwnd, UINT msg, UINT wparam, LONG lparam  )
                 SelectObject( ps.hdc, (HFONT)GetStockObject(SYSTEM_FONT) );
             }
 #endif
-            for( i=0;i<=sw->numSections;i++ ) {
+            for( i = 0; i <= sw->numSections; i++ ) {
                 if( sw->sectionData[i] != NULL ) {
                     getRect( sw, &r, i );
                     makeInsideRect( &r );
@@ -493,7 +492,7 @@ void StatusWndDestroy( statwnd *sw )
 {
     int i;
 
-    if ( sw ) {
+    if( sw ) {
         if ( sw->win != (HWND)NULL ) {
             DestroyWindow ( sw->win );
         }
@@ -517,4 +516,3 @@ void StatusWndFini( void )
     }
 
 } /* StatusWndFini */
-

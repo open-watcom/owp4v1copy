@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Disassembler interface.
 *
 ****************************************************************************/
 
@@ -52,5 +51,5 @@ typedef struct disasmrtns {
 } DisAsmRtns;
 
 void RegisterRtns( DisAsmRtns *rtns );
-void MiscDoCode(instruction *,char, DisAsmRtns * );
-void MiscFormatIns(char *,instruction *,form_option, DisAsmRtns * );
+void MiscDoCode( instruction *,char, DisAsmRtns * );
+void MiscFormatIns( char *, instruction *, form_option, DisAsmRtns * );

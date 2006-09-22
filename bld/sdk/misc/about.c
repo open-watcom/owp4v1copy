@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  About dialog box.
 *
 ****************************************************************************/
 
@@ -39,17 +38,17 @@
 #include "about.h"
 #include "aboutdlg.h"
 #include "win1632.h"
-#ifndef NOUSE3D
-#include "ctl3d.h"
-#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("ctl3dv2.lib")
-#endif
+    #ifndef NOUSE3D
+    #include "ctl3d.h"
+    #if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
+        #pragma library("ctl3dv2.lib")
+    #endif
 #endif
 #include "ldstr.h"
 #include "rcstr.gh"
 #if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("commdlg.lib")
-#pragma library("toolhelp.lib")
+    #pragma library("commdlg.lib")
+    #pragma library("toolhelp.lib")
 #endif
 
 /*
@@ -69,25 +68,25 @@ BOOL CALLBACK AboutProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             SetWindowText( hwnd, pai->title );
         }
         if( pai->name != NULL ) {
-            sprintf( buff, banner1p1("%s"), pai->name );
+            sprintf( buff, banner1p1( "%s" ), pai->name );
             SetDlgItemText( hwnd, ABOUT_NAME, buff );
         }
         if( pai->version != NULL ) {
             SetDlgItemText( hwnd, ABOUT_VERSION, pai->version );
         }
         if( pai->first_cr_year != NULL ) {
-        #if defined(__AXP__)
+#if defined(__AXP__)
             if( strcmp( pai->first_cr_year, CURR_YEAR ) ) {
-        #else
+#else
             if( _fstrcmp( pai->first_cr_year, CURR_YEAR ) ) {
-        #endif
-                sprintf( buff, banner2("%s"), pai->first_cr_year );
+#endif
+                sprintf( buff, banner2( "%s" ), pai->first_cr_year );
             } else {
                 strcpy( buff, banner2a() );
             }
             SetDlgItemText( hwnd, ABOUT_COPYRIGHT, buff );
         }
-        #if defined(__WINDOWS__) || defined(__WINDOWS_386__)
+#if defined(__WINDOWS__) || defined(__WINDOWS_386__)
         {
             DWORD       flags;
             DWORD       kfree;
@@ -154,7 +153,7 @@ BOOL CALLBACK AboutProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
             SetDlgItemText( hwnd, ABOUT_INFO3, buff );
 
         }
-        #endif
+#endif
         return( TRUE );
 #ifndef NOUSE3D
     case WM_SYSCOLORCHANGE:

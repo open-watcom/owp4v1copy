@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mark dialog.
 *
 ****************************************************************************/
 
@@ -35,10 +34,7 @@
 #include "mark.h"
 
 #ifndef NOUSE3D
-#include "ctl3d.h"
-#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("ctl3dv2.lib")
-#endif
+    #include "ctl3d.h"
 #endif
 
 static void             (*WriteFn)(char *);

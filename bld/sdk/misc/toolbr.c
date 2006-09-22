@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Toolbar class for Windows.
 *
 ****************************************************************************/
 
@@ -110,7 +109,7 @@ static BOOL             ignore_mousemove = FALSE; // release_capture generates
                                                   // a WM_MOUSEMOVE msg
 
 #if defined(__NT__) || defined(__WINDOWS__)
-void TB_TransparentBlt(HDC, UINT, UINT, UINT, UINT, HDC, COLORREF);
+void TB_TransparentBlt( HDC, UINT, UINT, UINT, UINT, HDC, COLORREF );
 #endif
 
 LONG WINEXP ToolBarWndProc( HWND, unsigned, UINT, LONG );
@@ -740,7 +739,7 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
         }
     }
     toolBarDrawBitmap( mem, dst_size, dst_org, used_bmp );
-    
+
 #if defined(__NT__) || defined(__WINDOWS__)
     /* New, on WIN32 platforms, use TB_TransparentBlt() */
     /* Get background color of button bitmap */
@@ -754,7 +753,7 @@ static void drawButton( HDC hdc, HWND hwnd, tool *tool, BOOL down )
     fill.left = 0;
     fill.right = bar->button_size.x;
     fill.bottom = bar->button_size.y;
-    FillRect(mem2, &fill, brush); 
+    FillRect(mem2, &fill, brush);
     TB_TransparentBlt( mem2, dst_org.x,  dst_org.y,
                              dst_size.x, dst_size.y,
                        mem,  cr);
@@ -1036,70 +1035,68 @@ void ChangeToolButtonBitmap( toolbar *bar, int id, HBITMAP newbmp )
 } /* ChangeToolButtonBitmap */
 
 
-/********** Below - new inserted 2003.10.22 ********************/
-
 #if defined(__NT__) || defined(__WINDOWS__)
 
 /*
  * TB_TransparentBlt
- * 
+ *
  * Purpose: Given two DC's and a color to assume as transparent in
  * the source, BitBlts the bitmap to the dest DC letting the existing
  * background show in place of the transparent color.
  * Adapted from an old MS SDK sample.
  *
  * NOTE: make sure BkColor is set in dest hDC.
- * 
- * Parameters: hDC      HDC      destination, on which to draw. 
- *             x, y     UINT     location at which to draw the bitmap 
+ *
+ * Parameters: hDC      HDC      destination, on which to draw.
+ *             x, y     UINT     location at which to draw the bitmap
  *             width    UINT     width to draw
  *             height   UINT     height to draw
  *             hDCIn    HDC      source, to draw from
  *             cr       COLORREF to consider as transparent in source.
- * 
+ *
  * Return Value: None
  */
 
 #define ROP_DSPDxax  0x00E20746
 
-void TB_TransparentBlt (HDC hDC, UINT x, UINT y, UINT width, UINT height,
-                     HDC hDCIn, COLORREF cr)
+void TB_TransparentBlt( HDC hDC, UINT x, UINT y, UINT width, UINT height,
+                        HDC hDCIn, COLORREF cr )
 {
-   HDC hDCMid, hMemDC;
-   HBITMAP hBmpMono, hBmpT;
-   HBRUSH hBr, hBrT;
-   COLORREF crBack, crText;
-   
-   if (NULL == hDCIn)
+   HDC          hDCMid, hMemDC;
+   HBITMAP      hBmpMono, hBmpT;
+   HBRUSH       hBr, hBrT;
+   COLORREF     crBack, crText;
+
+   if( NULL == hDCIn )
       return;
 
    /* Make two intermediate DC's */
-   hDCMid = CreateCompatibleDC (hDC);
-   hMemDC = CreateCompatibleDC (hDC);
+   hDCMid = CreateCompatibleDC( hDC );
+   hMemDC = CreateCompatibleDC( hDC );
 
    /* Create a monochrome bitmap for masking */
-   hBmpMono = CreateCompatibleBitmap (hDCMid, x + width, y + height);
-   SelectObject (hDCMid, hBmpMono);
+   hBmpMono = CreateCompatibleBitmap( hDCMid, x + width, y + height );
+   SelectObject( hDCMid, hBmpMono );
 
    /* Create a mid-stage bitmap */
-   hBmpT = CreateCompatibleBitmap (hDC, x + width, y + height);
-   SelectObject (hMemDC, hBmpT);
+   hBmpT = CreateCompatibleBitmap( hDC, x + width, y + height );
+   SelectObject( hMemDC, hBmpT );
 
    /* Create a monochrome mask where we have 0's in the image, 1's elsewhere. */
-   crBack = SetBkColor (hDCIn, cr);
-   BitBlt (hDCMid, x, y, width, height, hDCIn, x, y, SRCCOPY);
-   SetBkColor (hDCIn, crBack);
+   crBack = SetBkColor( hDCIn, cr );
+   BitBlt( hDCMid, x, y, width, height, hDCIn, x, y, SRCCOPY );
+   SetBkColor( hDCIn, crBack );
 
    /* Put the unmodified image in the temporary bitmap */
-   BitBlt (hMemDC, x, y, width, height, hDCIn, x, y, SRCCOPY);
+   BitBlt( hMemDC, x, y, width, height, hDCIn, x, y, SRCCOPY );
 
    /* Create an select a brush of the background color */
-   hBr = CreateSolidBrush (GetBkColor (hDC));
-   hBrT = SelectObject (hMemDC, hBr);
+   hBr = CreateSolidBrush( GetBkColor( hDC ) );
+   hBrT = SelectObject( hMemDC, hBr );
 
    /* Force conversion of the monochrome to stay black and white. */
-   crText = SetTextColor (hMemDC, 0L);
-   crBack = SetBkColor (hMemDC, RGB (255, 255, 255));
+   crText = SetTextColor( hMemDC, 0L );
+   crBack = SetBkColor( hMemDC, RGB( 255, 255, 255 ) );
 
    /*
     * Where the monochrome mask is 1, Blt the brush; where the mono
@@ -1108,21 +1105,20 @@ void TB_TransparentBlt (HDC hDC, UINT x, UINT y, UINT width, UINT height,
     * first in the temporary bitmap, then put the whole thing to the
     * screen (avoids flicker).
     */
-   BitBlt (hMemDC, x, y, width, height, hDCMid, x, y, ROP_DSPDxax);
-   BitBlt (hDC, x, y, width, height, hMemDC, x, y, SRCCOPY);
+   BitBlt( hMemDC, x, y, width, height, hDCMid, x, y, ROP_DSPDxax );
+   BitBlt( hDC, x, y, width, height, hMemDC, x, y, SRCCOPY );
 
-   SetTextColor (hMemDC, crText);
-   SetBkColor (hMemDC, crBack);
+   SetTextColor( hMemDC, crText );
+   SetBkColor( hMemDC, crBack );
 
-   SelectObject (hMemDC, hBrT);
-   DeleteObject (hBr);
+   SelectObject( hMemDC, hBrT );
+   DeleteObject( hBr );
 
-   DeleteDC (hMemDC);
-   DeleteDC (hDCMid);
-   DeleteObject (hBmpT);
-   DeleteObject (hBmpMono);
+   DeleteDC( hMemDC );
+   DeleteDC( hDCMid );
+   DeleteObject( hBmpT );
+   DeleteObject( hBmpMono );
 
 }  /* TansparentBlt () */
 
 #endif
-

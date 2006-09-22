@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WORD/DWORD static and edit fields.
 *
 ****************************************************************************/
 
@@ -45,7 +44,7 @@ void SetDWORDStaticField( HWND hwnd, int id, DWORD reg )
 {
     char        buff[32];
 
-    sprintf( buff,"%08lx", reg );
+    sprintf( buff, "%08lx", reg );
     SetDlgMonoFont( hwnd, id );
     SetDlgItemText( hwnd, id, buff );
 
@@ -58,7 +57,7 @@ void SetWORDStaticField( HWND hwnd, int id, WORD reg )
 {
     char        buff[32];
 
-    sprintf( buff,"%04x", reg );
+    sprintf( buff, "%04x", reg );
     SetDlgMonoFont( hwnd, id );
     SetDlgItemText( hwnd, id, buff );
 
@@ -71,7 +70,7 @@ void SetDWORDEditField( HWND hwnd, int id, DWORD reg )
 {
     char        buff[32];
 
-    sprintf( buff,"%08lx", reg );
+    sprintf( buff, "%08lx", reg );
     SetDlgMonoFont( hwnd, id );
     SetDlgItemText( hwnd, id, buff );
 
@@ -84,7 +83,7 @@ void SetWORDEditField( HWND hwnd, int id, WORD reg )
 {
     char        buff[32];
 
-    sprintf( buff,"%04x", reg );
+    sprintf( buff, "%04x", reg );
     SetDlgMonoFont( hwnd, id );
     SetDlgItemText( hwnd, id, buff );
 
@@ -110,6 +109,6 @@ void GetWORDEditField( HWND hwnd, int id, WORD *reg )
     char        buff[32];
 
     GetDlgItemText( hwnd, id, (LPSTR) buff, 32 );
-    *reg = (WORD) strtoul( buff, NULL, 16 );
+    *reg = (WORD)strtoul( buff, NULL, 16 );
 
 } /* GetWORDEditFiled */

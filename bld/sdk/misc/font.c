@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Font selection dialog for Windows.
 *
 ****************************************************************************/
 
@@ -175,12 +174,12 @@ void InitMonoFont( char *app, char *inifile, int default_font, HANDLE inst )
     getCourierFont( inst );
     if( need_stock ) {
 #if defined (__NT__)
-        fixedFont = courierFont; 
-#endif  
+        fixedFont = courierFont;
+#endif
         if (fixedFont == (HFONT)0) {
 #if defined (__NT__)
-            fixedFont = GetStockObject(ANSI_FIXED_FONT); 
-#endif  
+            fixedFont = GetStockObject(ANSI_FIXED_FONT);
+#endif
             fixedFont = GetStockObject( default_font );
             GetObject( fixedFont, sizeof( LOGFONT ), &logFont );
             fixedFont = CreateFontIndirect( &logFont );

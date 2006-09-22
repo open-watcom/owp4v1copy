@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Display information about a memory segment.
 *
 ****************************************************************************/
 
@@ -50,6 +49,7 @@ static int      isDPMI;
 static DWORD    memLimit;
 #define BYTES_LINE      8
 #define MAXRANGE        8192
+
 /*
  * DisplayMemLines - display all assembler lines
  */
@@ -64,10 +64,10 @@ void DisplayMemLines( HWND hwnd, ADDRESS *addr, int idlo, int idhi, int sbid )
     HWND        hscrl;
 
     maddr = *addr;
-    for( i=idlo;i<=idhi;i++ ) {
+    for( i = idlo; i <= idhi; i++ ) {
         ReadMem( maddr.seg, maddr.offset, bytes, BYTES_LINE );
         sprintf( buff,"%08lx: ", maddr.offset );
-        for( j=0;j<BYTES_LINE;j++ ) {
+        for( j = 0; j < BYTES_LINE; j++ ) {
             data[j] = '.';
             if( maddr.offset + j < memLimit ) {
                 sprintf( tbuff, "%02x ", (unsigned) bytes[j] );
@@ -175,7 +175,7 @@ BOOL __export FAR PASCAL SegInfoDialog( HWND hwnd, WORD msg, WORD wparam,
         }
         sprintf( buff,"Selector %04x", (WORD) siAddr.seg );
         SetWindowText( hwnd, buff );
-        for( i=SEGINFO_LINE1;i<=SEGINFO_LINE7;i++ ) {
+        for( i = SEGINFO_LINE1; i <= SEGINFO_LINE7; i++ ) {
             SetFont( hwnd, i );
         }
         DisplayMemLines( hwnd, &siAddr, SEGINFO_LINE1, SEGINFO_LINE7, NULL );

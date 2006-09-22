@@ -24,11 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  LOGFONT <-> string conversions.
 *
 ****************************************************************************/
 
 
-int GetLogFontFromString( LOGFONT *l, char *data );
+int  GetLogFontFromString( LOGFONT *l, char *data );
 void GetFontFormatString( LOGFONT *lf, char *str );

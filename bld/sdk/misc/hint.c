@@ -24,13 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Hint toolbar window.
 *
 ****************************************************************************/
 
 
-#include "windows.h"
+#include <windows.h>
 #include "hint.h"
 #include "rcstr.gh"
 #include "mem.h"
@@ -47,7 +46,8 @@ typedef struct {
 
 static WORD     winExtra;
 
-static WORD getItemMsg( statwnd *wnd, WORD menuid ) {
+static WORD getItemMsg( statwnd *wnd, WORD menuid )
+{
     WORD                i;
     HWND                hint;
     HintWndInfo         *info;
@@ -64,7 +64,8 @@ static WORD getItemMsg( statwnd *wnd, WORD menuid ) {
     return( HINT_EMPTY );
 }
 
-static void updateHintText( statwnd *wnd, WORD msgid ) {
+static void updateHintText( statwnd *wnd, WORD msgid )
+{
     HDC         dc;
     HFONT       font;
     char        *str;
@@ -83,8 +84,8 @@ static void updateHintText( statwnd *wnd, WORD msgid ) {
     info->curmsg = msgid;
 }
 
-void HintToolBar( statwnd *wnd, UINT menuid, BOOL select ) {
-
+void HintToolBar( statwnd *wnd, UINT menuid, BOOL select )
+{
     WORD        msgid;
 
     if( select ) {
@@ -95,8 +96,8 @@ void HintToolBar( statwnd *wnd, UINT menuid, BOOL select ) {
     updateHintText( wnd, msgid );
 }
 
-WORD SizeHintBar( statwnd *wnd ) {
-
+WORD SizeHintBar( statwnd *wnd )
+{
     HintWndInfo *info;
     HFONT       font;
     HFONT       oldfont;
@@ -144,8 +145,8 @@ void HintMenuSelect( statwnd *wnd, HWND hwnd, WPARAM wparam, LPARAM lparam )
     }
 }
 
-MenuItemHint *SetHintText( statwnd *wnd, MenuItemHint *hints, WORD cnt ) {
-
+MenuItemHint *SetHintText( statwnd *wnd, MenuItemHint *hints, WORD cnt )
+{
     HintWndInfo         *info;
     MenuItemHint        *ret;
     HWND                hint;
@@ -158,8 +159,7 @@ MenuItemHint *SetHintText( statwnd *wnd, MenuItemHint *hints, WORD cnt ) {
     return( ret );
 }
 
-statwnd *HintWndCreate( HWND parent, RECT *size,
-                          HINSTANCE hinstance, LPVOID lpvParam )
+statwnd *HintWndCreate( HWND parent, RECT *size, HINSTANCE hinstance, LPVOID lpvParam )
 {
     statwnd             *wnd;
     HintWndInfo         *info;
@@ -175,8 +175,8 @@ statwnd *HintWndCreate( HWND parent, RECT *size,
     return( wnd );
 }
 
-void HintWndDestroy( statwnd *wnd ) {
-
+void HintWndDestroy( statwnd *wnd )
+{
     HintWndInfo         *info;
     HWND                hint;
 
@@ -186,16 +186,18 @@ void HintWndDestroy( statwnd *wnd ) {
     StatusWndDestroy( wnd );
 }
 
-int HintWndInit( HINSTANCE hinstance, statushook hook, int extra ) {
-
+int HintWndInit( HINSTANCE hinstance, statushook hook, int extra )
+{
     winExtra = extra;
     return( StatusWndInit( hinstance, hook, extra + sizeof( void * ) ) );
 }
 
-void HintFini( void ) {
+void HintFini( void )
+{
     StatusWndFini();
 }
 
-HWND GetHintHwnd( statwnd *wnd ) {
+HWND GetHintHwnd( statwnd *wnd )
+{
     return( wnd->win );
 }

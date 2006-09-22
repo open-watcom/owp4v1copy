@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Intel x86 descriptor prototype.
 *
 ****************************************************************************/
 
@@ -34,21 +33,21 @@
 #define __DESCRIPT_INCLUDED__
 
 typedef struct {
-unsigned short limit_15_0;
-unsigned short base_15_0;
-char base_23_16;
-char available:1;
-char writeable_or_readable:1;
-char expanddown_or_conforming:1;
-char type:2;
-char dpl:2;
-char present:1;
-char limit_19_16:4;
-char avl:1;
-char reserved:1;
-char big_or_default:1;
-char granularity:1;
-char base_31_24;
+    unsigned short  limit_15_0;
+    unsigned short  base_15_0;
+    char            base_23_16;
+    char            available:1;
+    char            writeable_or_readable:1;
+    char            expanddown_or_conforming:1;
+    char            type:2;
+    char            dpl:2;
+    char            present:1;
+    char            limit_19_16:4;
+    char            avl:1;
+    char            reserved:1;
+    char            big_or_default:1;
+    char            granularity:1;
+    char            base_31_24;
 } descriptor;
 
 #define GET_DESC_BASE( desc ) ((DWORD) (desc).base_15_0 + \

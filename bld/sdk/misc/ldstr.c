@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Helper functions for using strings loaded from resources.
 *
 ****************************************************************************/
 
@@ -54,14 +53,14 @@ static HANDLE   curInst;
  *              NB the pointer is only valid until the next call to
  *              GetString
  */
-char *GetRCString( DWORD msgid ) {
-
+char *GetRCString( DWORD msgid )
+{
     LoadString( curInst, msgid, getStringBuffer, LDSTR_MAX_STR_LEN );
     return( getStringBuffer );
 }
 
-char *AllocRCString( DWORD id ) {
-
+char *AllocRCString( DWORD id )
+{
     char        *ret;
     int         len;
 
@@ -73,24 +72,27 @@ char *AllocRCString( DWORD id ) {
     return( ret );
 }
 
-DWORD CopyRCString( DWORD id, char *buf, DWORD bufsize ) {
+DWORD CopyRCString( DWORD id, char *buf, DWORD bufsize )
+{
     DWORD       len;
 
     len = LoadString( curInst, id, buf, bufsize );
     return( len );
 }
 
-void FreeRCString( char *str ) {
+void FreeRCString( char *str )
+{
     MemFree( str );
 }
 
-void SetInstance( HANDLE inst ) {
+void SetInstance( HANDLE inst )
+{
     curInst = inst;
 }
 #endif
 
-int RCsprintf( char *buf, DWORD fmtid, ... ) {
-
+int RCsprintf( char *buf, DWORD fmtid, ... )
+{
     va_list     al;
     char        *fmtstr;
     int         ret;
@@ -107,8 +109,8 @@ int RCsprintf( char *buf, DWORD fmtid, ... ) {
 /*
  * RCfprintf
  */
-void RCfprintf( FILE *fp, DWORD strid, ...  ) {
-
+void RCfprintf( FILE *fp, DWORD strid, ... )
+{
     va_list     al;
     char        *str;
 
@@ -123,8 +125,8 @@ void RCfprintf( FILE *fp, DWORD strid, ...  ) {
 /*
  * RCvfprintf
  */
-void RCvfprintf( FILE *fp, DWORD strid, va_list al  ) {
-
+void RCvfprintf( FILE *fp, DWORD strid, va_list al )
+{
     char        *str;
 
     str = ALLOC_STRING( strid );
@@ -135,8 +137,8 @@ void RCvfprintf( FILE *fp, DWORD strid, va_list al  ) {
 /*
  *MyMessageBox-
  */
-int RCMessageBox( HWND hwnd , DWORD msgid, char *title, UINT type ) {
-
+int RCMessageBox( HWND hwnd , DWORD msgid, char *title, UINT type )
+{
     char        *msg;
     int         ret;
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Wrapper around Windows file open/save dialog.
 *
 ****************************************************************************/
 
@@ -39,16 +38,10 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <commdlg.h>
-#if defined( __WINDOWS__ )
-#pragma library("commdlg.lib")
-#endif
 #include "savelbox.h"
 #include "win1632.h"
 #ifndef NOUSE3D
-#include "ctl3d.h"
-#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("ctl3dv2.lib")
-#endif
+    #include "ctl3d.h"
 #endif
 #include "ldstr.h"
 #include "rcstr.gh"
@@ -56,7 +49,7 @@
 /*
  * writeListBoxContents
  */
-static BOOL writeListBoxContents( void (*writefn)(FILE *),char *fname, HWND listbox )
+static BOOL writeListBoxContents( void (*writefn)(FILE *), char *fname, HWND listbox )
 {
     WORD        i;
     LRESULT     count;
@@ -75,7 +68,7 @@ static BOOL writeListBoxContents( void (*writefn)(FILE *),char *fname, HWND list
         fclose( f );
         return( FALSE );
     }
-    for( i=0;i<count;i++ ) {
+    for( i = 0; i < count; i++ ) {
         SendMessage( listbox, LB_GETTEXT, i, (LONG) (LPVOID) str );
         fprintf( f,"%s\n", str );
     }
@@ -130,15 +123,15 @@ BOOL GetSaveFName( HWND mainhwnd, char *fname )
     of.nMaxFile = _MAX_PATH;
     of.lpstrTitle = NULL;
     of.Flags = OFN_HIDEREADONLY;
-    #ifndef NOUSE3D
-        of.Flags |= OFN_ENABLEHOOK;
-        of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) LBSaveHook,
-                        GET_HINSTANCE( mainhwnd ) );
-    #endif
+#ifndef NOUSE3D
+    of.Flags |= OFN_ENABLEHOOK;
+    of.lpfnHook = (LPVOID) MakeProcInstance( (LPVOID) LBSaveHook,
+                    GET_HINSTANCE( mainhwnd ) );
+#endif
     rc = GetSaveFileName( &of );
-    #ifndef NOUSE3D
-        FreeProcInstance( (LPVOID) of.lpfnHook );
-    #endif
+#ifndef NOUSE3D
+    FreeProcInstance( (LPVOID) of.lpfnHook );
+#endif
     return( rc );
 
 } /* GetSaveFName */

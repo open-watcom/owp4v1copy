@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Toolbar window class for Windows and OS/2.
 *
 ****************************************************************************/
 
@@ -291,7 +290,7 @@ toolbar *ToolBarInit( HWND parent )
         wc.hInstance = instance;
         wc.hIcon = HNULL;
         wc.hCursor = LoadCursor( (HANDLE) HNULL, IDC_ARROW );
-        wc.hbrBackground = (HBRUSH) 0; // (COLOR_BTNFACE + 1); 
+        wc.hbrBackground = (HBRUSH) 0; // (COLOR_BTNFACE + 1);
         wc.lpszMenuName = NULL;
         wc.lpszClassName = className;
         RegisterClass( &wc );
@@ -307,13 +306,13 @@ toolbar *ToolBarInit( HWND parent )
 #if defined(__NT__)
     {
         OSVERSIONINFO os;
-        
+
         GetVersionEx(&os);
         if ( os.dwMajorVersion == 4 || (os.dwMajorVersion == 5 && os.dwMinorVersion == 0)) {
             // round_corners = FALSE;
             // Later, when drawing code is adapted
         }
-    }    
+    }
 #else
     clr_black = RGB(0, 0, 0);
 #endif
@@ -579,7 +578,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
      */
     MoveWindow( bar->hwnd, disp->area.left, disp->area.top,
                 width, height, TRUE );
-                
+
 #else  // It is __OS2_PM__
     {
         HWND    frame;
@@ -1196,7 +1195,7 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         COLORREF    clr_btnshadow;
         COLORREF    clr_btnhighlight;
         COLORREF    clr_black;
-        
+
         if( gdiObjectsCreated ) {
             _wpi_deleteobject( blackPen );
             _wpi_deleteobject( btnShadowPen );
@@ -1282,21 +1281,21 @@ void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP newbmp )
 
 /*
  * WPTB_TransparentBlt
- * 
+ *
  * Purpose: Given two DC's and a color to assume as transparent in
  * the source, BitBlts the bitmap to the dest DC letting the existing
  * background show in place of the transparent color.
  * Adapted from an old MS SDK sample.
  *
  * NOTE: make sure BkColor is set in dest hDC.
- * 
- * Parameters: hDC      HDC      destination, on which to draw. 
- *             x, y     UINT     location at which to draw the bitmap 
+ *
+ * Parameters: hDC      HDC      destination, on which to draw.
+ *             x, y     UINT     location at which to draw the bitmap
  *             width    UINT     width to draw
  *             height   UINT     height to draw
  *             hDCIn    HDC      source, to copy from
  *             cr       COLORREF to consider as transparent in source.
- * 
+ *
  * Return Value: None
  */
 
@@ -1309,7 +1308,7 @@ void WPTB_TransparentBlt (HDC hDC,   UINT x, UINT y, UINT width, UINT height,
    HBITMAP hBmpMono, hBmpT;
    HBRUSH hBr, hBrT;
    COLORREF crBack, crText;
-   
+
    if (NULL == hDCIn)
       return;
 
@@ -1365,4 +1364,3 @@ void WPTB_TransparentBlt (HDC hDC,   UINT x, UINT y, UINT width, UINT height,
 }  /* TansparentBlt () */
 
 #endif
-

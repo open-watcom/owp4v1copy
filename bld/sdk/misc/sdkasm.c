@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface to x86 disassembler engine.
 *
 ****************************************************************************/
 
@@ -40,7 +39,8 @@ static DisAsmRtns       *CurRtns;
  *              must be called for each DisAsmRtns structure before it is
  *              used
  */
-void RegisterRtns( DisAsmRtns *rtns ) {
+void RegisterRtns( DisAsmRtns *rtns )
+{
     rtns = rtns;
 }
 
@@ -48,8 +48,8 @@ void RegisterRtns( DisAsmRtns *rtns ) {
  * MiscDoCode - cover function for the DoCode function of the disassembler
  */
 
-void MiscDoCode( instruction *ins ,char is32, DisAsmRtns *rtns ) {
-
+void MiscDoCode( instruction *ins, char is32, DisAsmRtns *rtns )
+{
     if( CurRtns != NULL ) {
         MessageBox( NULL, "Disassembly Error!!", "", MB_OK );
         return;
@@ -64,8 +64,8 @@ void MiscDoCode( instruction *ins ,char is32, DisAsmRtns *rtns ) {
  *                 disassembler
  */
 
-void MiscFormatIns(char *buf, instruction *ins, form_option optn,
-                        DisAsmRtns *rtns ) {
+void MiscFormatIns( char *buf, instruction *ins, form_option optn, DisAsmRtns *rtns )
+{
     if( CurRtns != NULL ) {
         MessageBox( NULL, "Disassembly Error!!", "", MB_OK );
         return;
@@ -79,60 +79,72 @@ void MiscFormatIns(char *buf, instruction *ins, form_option optn,
  * Cover Functions for disassebler interface routines
  */
 
-int_16 GetDataByte() {
+int_16 GetDataByte( void )
+{
     return( CurRtns->GetDataByte() );
 } /* GetDataByte */
 
-int_16 GetDataWord() {
+int_16 GetDataWord( void )
+{
     return( CurRtns->GetDataWord() );
 } /* GetDataWord */
 
-int_16 GetNextByte() {
+int_16 GetNextByte( void )
+{
     return( CurRtns->GetNextByte() );
 } /* GetNextByte */
 
-long GetDataLong() {
+long GetDataLong( void )
+{
     return( CurRtns->GetDataLong() );
 }
 
-char EndOfSegment() {
+char EndOfSegment( void )
+{
     return( CurRtns->EndOfSegment() );
 }
 
-DWORD GetOffset() {
+DWORD GetOffset( void )
+{
     return( CurRtns->GetOffset() );
 }
 
-char *ToStr( unsigned long value, uint_16 len, DWORD addr ) {
+char *ToStr( unsigned long value, uint_16 len, DWORD addr )
+{
     return( CurRtns->ToStr( value, len, addr ) );
 }
 
-char *JmpLabel( unsigned long addr, DWORD off ) {
+char *JmpLabel( unsigned long addr, DWORD off )
+{
     return( CurRtns->JmpLabel( addr, off ) );
 }
 
-char *ToBrStr( unsigned long value, DWORD addr ) {
+char *ToBrStr( unsigned long value, DWORD addr )
+{
     return( CurRtns->ToBrStr( value, addr ) );
 }
 
-char *ToIndex( unsigned long value, unsigned long addr ) {
+char *ToIndex( unsigned long value, unsigned long addr )
+{
     return( CurRtns->ToIndex( value, addr ) );
 }
 
-char *ToSegStr( DWORD value, WORD seg, DWORD addr ) {
+char *ToSegStr( DWORD value, WORD seg, DWORD addr )
+{
     return( CurRtns->ToSegStr( value, seg, addr ) );
 }
 
-char *GetWtkInsName( unsigned ins ) {
+char *GetWtkInsName( unsigned ins )
+{
     return( CurRtns->GetWtkInsName( ins ) );
 }
 
-void DoWtk(void)
+void DoWtk( void )
 {
     CurRtns->DoWtk();
 }
 
-int IsWtk() {
+int IsWtk( void )
+{
     return( CurRtns->IsWtk() );
 }
-

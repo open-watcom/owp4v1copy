@@ -24,14 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Prototypes for resource strings helper routines.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
 #include <stdarg.h>
+
+
 /************************************************************************
  * SetInstance - must be called before any other routine in this file
  *
@@ -50,7 +51,7 @@ DWORD CopyRCString( DWORD id, char *buf, DWORD bufsize );
  * FreeRCString
  */
 
-int RCMessageBox( HWND hwnd , DWORD msgid, char *title, UINT type );
+int  RCMessageBox( HWND hwnd , DWORD msgid, char *title, UINT type );
 void RCfprintf( FILE *fp, DWORD strid, ...  );
-int RCsprintf( char *buf, DWORD fmtid, ... );
+int  RCsprintf( char *buf, DWORD fmtid, ... );
 void RCvfprintf( FILE *fp, DWORD strid, va_list al  );

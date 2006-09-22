@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Watcom status window class for Windows and OS/2.
 *
 ****************************************************************************/
 
@@ -43,6 +42,7 @@
 #include <windows.h>
 
 #endif
+
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -73,7 +73,7 @@ static WPI_INST                 classHandle;
 static int                      wndHeight;
 
 #if defined( __UNIX__ )
-#define CB    LONG
+#define CB      LONG
 #elif defined(__WINDOWS_386__)
 #define CB      LONG FAR PASCAL
 #elif defined(__WINDOWS__)
@@ -115,7 +115,7 @@ static void getRect( WPI_RECT *r, int i )
         } else {
             pos = sectionDesc[i-1].width;
         }
-        r_left = pos+sectionDesc[i-1].separator_width;
+        r_left = pos + sectionDesc[i-1].separator_width;
     }
     if( i == numSections ) {
         pos = right;
@@ -458,7 +458,7 @@ void StatusWndDraw3DBox( WPI_PRES pres )
     int         i;
     WPI_RECT    r;
 
-    for( i=0;i<=numSections;i++ ) {
+    for( i = 0; i <= numSections; i++ ) {
         getRect( &r, i );
         outlineRect( pres, &r );
         makeInsideRect( &r );
@@ -470,8 +470,7 @@ void StatusWndDraw3DBox( WPI_PRES pres )
 /*
  * outputText - output a text string
  */
-void outputText( WPI_PRES pres, char *buff, WPI_RECT *r, UINT flags,
-                                                            int curr_block )
+void outputText( WPI_PRES pres, char *buff, WPI_RECT *r, UINT flags, int curr_block )
 {
     WPI_RECT    ir;
     WPI_RECT    draw_rect;
@@ -626,7 +625,7 @@ void StatusWndSetSeparators( int num_items, status_block_desc *list )
     if( num_items > MAX_SECTIONS ) {
         num_items = MAX_SECTIONS;
     }
-    for( i=0;i<num_items;i++ ) {
+    for( i = 0; i < num_items; i++ ) {
         sectionDesc[i] = list[i];
     }
     numSections = num_items;
@@ -646,7 +645,7 @@ void StatusWndFini( void )
         _wpi_deleteobject( brushButtonFace );
         hasGDIObjects = FALSE;
     }
-    for( i=0;i<=numSections;i++ ) {
+    for( i = 0; i <= numSections; i++ ) {
         MemFree( sectionData[i] );
         sectionData[i] = NULL;
     }
@@ -656,4 +655,3 @@ void StatusWndFini( void )
         classRegistered = FALSE;
     }
 } /* StatusWndFini */
-

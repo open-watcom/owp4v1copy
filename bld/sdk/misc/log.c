@@ -41,16 +41,10 @@
 #include "log.h"
 #include "mem.h"
 #ifndef NOUSE3D
-#include "ctl3d.h"
-#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("ctl3dv2.lib")
-#endif
+    #include "ctl3d.h"
 #endif
 #include "ldstr.h"
 #include "rcstr.gh"
-#ifdef __WINDOWS__
-#pragma library("commdlg.lib")
-#endif
 
 static LogInfo          LogCurInfo;
 static char             *BufLines[ NO_BUF_LINES ];

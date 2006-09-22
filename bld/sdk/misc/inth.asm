@@ -24,17 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Handle interrupts for Protected Mode Windows debugger.
 ;*
 ;*****************************************************************************
 
 
-;****************************************************************************
-;***                                                                      ***
-;*** INT.ASM - handles interrupts for P.M. debugger                       ***
-;***                                                                      ***
-;****************************************************************************
 .386p
 
 ;** Set up values for cMacros

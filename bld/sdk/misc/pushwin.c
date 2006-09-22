@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Push window class.
 *
 ****************************************************************************/
 
@@ -78,13 +77,13 @@ BOOL RegPushWin( HANDLE instance ) {
     WNDCLASS    wc;
 
     wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = (LPVOID) PushWinProc;
+    wc.lpfnWndProc = (LPVOID)PushWinProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 4;
     wc.hInstance = instance;
     wc.hIcon = NULL;
     wc.hCursor = LoadCursor( NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wc.lpszMenuName = NULL;
     wc.lpszClassName = "PushWin";
     if( !RegisterClass( &wc ) ) return( FALSE );

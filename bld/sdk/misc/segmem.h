@@ -24,15 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Segmented memory access.
 *
 ****************************************************************************/
 
 
-DWORD far GetASelectorLimit( WORD );
-WORD far IsValidSelector( WORD );
-void GetADescriptor( WORD seg, void *desc );
-int IsSeg32( WORD seg );
-DWORD ReadMem( WORD sel, DWORD off, LPVOID buff, DWORD size );
-DWORD WriteMem( WORD sel, DWORD off, LPVOID buff, DWORD size );
+DWORD far   GetASelectorLimit( WORD );
+WORD  far   IsValidSelector( WORD );
+void        GetADescriptor( WORD seg, void *desc );
+int         IsSeg32( WORD seg );
+DWORD       ReadMem( WORD sel, DWORD off, LPVOID buff, DWORD size );
+DWORD       WriteMem( WORD sel, DWORD off, LPVOID buff, DWORD size );

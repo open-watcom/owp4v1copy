@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  About dialog interface.
 *
 ****************************************************************************/
 
@@ -38,7 +37,6 @@ typedef struct {
     LPSTR       title;
     LPSTR       name;
     LPSTR       version;
-//    LPSTR     copyright;  replaced by first_cr_year
     LPSTR       first_cr_year;
 } about_info;
 

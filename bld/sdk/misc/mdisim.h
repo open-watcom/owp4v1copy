@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface to MDI window implementation.
 *
 ****************************************************************************/
 
@@ -46,18 +45,18 @@ typedef struct {
 
 void MDIInit( mdi_info * );
 void MDIInitMenu( void );
-int MDINewWindow( HWND hwnd );
+int  MDINewWindow( HWND hwnd );
 void MDISetMainWindowTitle( char *fname );
 void MDIClearMaximizedMenuConfig( void );
-int MDIIsMaximized( void );
-int MDIIsWndMaximized( HWND );
-int MDIUpdatedMenu( void );
+int  MDIIsMaximized( void );
+int  MDIIsWndMaximized( HWND );
+int  MDIUpdatedMenu( void );
 void MDISetMaximized( int setting );
 void MDITile( int is_horz );
 void MDICascade( void );
-int MDIChildHandleMessage( HWND hwnd, UINT msg, UINT wparam, LONG lparam, LONG *lrc );
-int MDIHitClose( HWND hwnd, UINT msg, UINT wparam, LONG lparam );
-int MDIIsSysCommand( HWND hwnd, UINT msg, UINT wparam, LONG lparam );
+int  MDIChildHandleMessage( HWND hwnd, UINT msg, UINT wparam, LONG lparam, LONG *lrc );
+int  MDIHitClose( HWND hwnd, UINT msg, UINT wparam, LONG lparam );
+int  MDIIsSysCommand( HWND hwnd, UINT msg, UINT wparam, LONG lparam );
 void MDIResizeContainer( void );
 void MDIContainerResized( void );
 void MDISetOrigSize( HWND hwnd, RECT *rect );

@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Helper routines for memory aliases.
 *
 ****************************************************************************/
+
 
 #include <windows.h>
 #include <string.h>
@@ -37,10 +37,7 @@
 #include "mem.h"
 #include "alias.h"
 #ifndef NOUSE3D
-#include "ctl3d.h"
-#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("ctl3dv2.lib")
-#endif
+    #include "ctl3d.h"
 #endif
 #include "win1632.h"
 #include "ldstr.h"
@@ -308,4 +305,3 @@ void EnumAliases( AliasHdl hdl, void (*enumfn)(), void *userdata ) {
     }
     enumfn( (DWORD)-1, userdata );
 }
-

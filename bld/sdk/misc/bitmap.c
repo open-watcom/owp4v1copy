@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Helpers for .BMP file loading.
 *
 ****************************************************************************/
 
@@ -38,9 +37,6 @@
 #include "palette.h"
 #include "bitmap.h"
 
-#if 0
-    #include "_comdef.h"
-#endif
 #ifndef _WCI86HUGE
     #if !defined(__386__) && defined(_M_IX86)
         #define _WCI86HUGE __huge
@@ -83,7 +79,7 @@ static BITMAPINFO *readDIBInfo( FILE *fp )
         fread( bm, bitmap_size, 1, fp );
     }
     else return( (BITMAPINFO*) header );
-     
+
     return( bm );
 }
 

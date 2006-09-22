@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Search a list of messages for given message.
 *
 ****************************************************************************/
 
@@ -42,8 +41,8 @@
  *           otherwise a pointer to dflt is returned
  */
 
-char *SrchMsg( unsigned msgno, msglist *tbl, char *dflt ) {
-
+char *SrchMsg( unsigned msgno, msglist *tbl, char *dflt )
+{
     msglist             *curmsg;
 
     curmsg = tbl;

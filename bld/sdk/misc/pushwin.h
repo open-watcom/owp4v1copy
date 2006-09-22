@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Push window interface.
 *
 ****************************************************************************/
 
@@ -35,7 +34,7 @@ typedef struct {
     HFONT               font;
     HWND                parent;
     char                str[1];         /* dynamic array */
-}PushWinInfo;
+} PushWinInfo;
 
 BOOL RegPushWin( HANDLE instance );
-HWND CreatePushWin( HWND parent, char *txt, WORD id, HFONT font, HANDLE inst);
+HWND CreatePushWin( HWND parent, char *txt, WORD id, HFONT font, HANDLE inst );
