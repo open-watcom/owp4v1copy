@@ -216,12 +216,9 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
                     old_sym.defn_file_index = sym->defn_file_index;
                 }
             }
-            if( (sym->attrib & FLAG_LANGUAGES) != (old_sym.attrib & FLAG_LANGUAGES) ) {
-                // just inherit old lang flags
-                // if new != 0 then it's possible someone saw a different prototype
-                if( (sym->attrib & FLAG_LANGUAGES) != 0 ) {
-                    CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
-                }
+            // check lang flags to make sure no one saw an incompatible prototype
+            if( !ChkCompatibleLanguage( sym->attrib, old_sym.attrib ) ) {
+                CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
             }
             if( (sym->attrib & FLAG_INLINE) != (old_sym.attrib & FLAG_INLINE) ) {
                 old_sym.attrib |= FLAG_INLINE; //either is inline
