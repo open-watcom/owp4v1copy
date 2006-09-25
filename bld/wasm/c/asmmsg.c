@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  diagnostics related functions (error/warning/note messages)
+* Description:  Diagnostics routines (errors/warnings/notes, listings)
 *
 ****************************************************************************/
 
@@ -60,17 +60,13 @@ void                    print_include_file_nesting_structure( void );
 #define ErrCount Options.error_count
 #define WngCount Options.warning_count
 #define WngLevel Options.warning_level
-#define __fprintf fprintf
-#define __vfprintf vfprintf
-#define __printf printf
 
 static int              Errfile_Written = FALSE;
 static FILE             *ErrFile = NULL;
 
 static void             AsmSuicide( void );
 static void             PutMsg( FILE *fp, char *prefix, int msgnum, va_list args );
-static void             PrtMsg1( register char *prefix, register int msgnum,
-                                              va_list args1, va_list args2 );
+static void             PrtMsg1( char *prefix, int msgnum, va_list args1, va_list args2 );
 
 void AsmError( int msgnum )
 /*************************/
@@ -149,9 +145,8 @@ void AsmWarn( int level, int msgnum, ... )
     }
 }
 
-static void PrtMsg1( register char *prefix, register int msgnum,
-                   va_list args1, va_list args2 )
-/**************************************************************/
+static void PrtMsg1( char *prefix, int msgnum, va_list args1, va_list args2 )
+/***************************************************************************/
 // print messages from WOMP !!!
 {
     if( !Options.banner_printed ) {
@@ -200,42 +195,62 @@ void OpenErrFile( void )
     }
 }
 
+void LstMsg( const char *format, ... )
+/************************************/
+{
+    va_list     args;
+
+    if( AsmFiles.file[LST] ) {
+        va_start( args, format );
+        vfprintf( AsmFiles.file[LST], format, args );
+        va_end( args );
+    }
+}
+
+void OpenLstFile( void )
+/**********************/
+{
+    if( AsmFiles.fname[LST] != NULL && Options.write_listing ) {
+        AsmFiles.file[LST] = fopen( AsmFiles.fname[LST], "w" );
+    }
+}
+
 static void PutMsg( FILE *fp, char *prefix, int msgnum, va_list args )
 /********************************************************************/
 {
     const FNAME     *fname;
     char            msgbuf[MAX_LINE_LEN];
-   
+
     if( fp != NULL ) {
         fname = get_curr_srcfile();
         if( LineNumber != 0 ) {
             if( fname != NULL ) {
-                __fprintf( fp, "%s(%lu): ", fname->name, LineNumber );
+                fprintf( fp, "%s(%lu): ", fname->name, LineNumber );
             }
         }
-        __fprintf( fp, "%s %c%03d: ", prefix, *prefix, msgnum );
+        fprintf( fp, "%s %c%03d: ", prefix, *prefix, msgnum );
         // CGetMsg( msgbuf, msgnum );
         MsgGet( msgnum, msgbuf );
-        __vfprintf( fp, msgbuf, args );
-        __fprintf( fp, "\n" );
+        vfprintf( fp, msgbuf, args );
+        fprintf( fp, "\n" );
     }
 }
 
 static void AsmSuicide( void )
 /****************************/
 {
-    exit(1);
+    exit( 1 );
 }
 
 void PrintStats( void )
 /*********************/
 {
-    __printf( "%s: ", ModuleInfo.srcfile->name );
-    __printf( "%lu lines, ", LineNumber );
-    __printf( "%u warnings, ", WngCount );
-    __printf( "%u errors\n", ErrCount );
+    printf( "%s: ", ModuleInfo.srcfile->name );
+    printf( "%lu lines, ", LineNumber );
+    printf( "%u warnings, ", WngCount );
+    printf( "%u errors\n", ErrCount );
 #ifdef DEBUG_OUT
-    __printf( "%u passes\n", Parse_Pass + 1 );
+    printf( "%u passes\n", Parse_Pass + 1 );
 #endif
     fflush( stdout );                   /* 27-feb-90 for QNX */
 }

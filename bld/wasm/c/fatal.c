@@ -76,6 +76,7 @@ void AsmShutDown( void )
     }
     AsmFree( AsmFiles.fname[ASM] );
     AsmFree( AsmFiles.fname[ERR] );
+    AsmFree( AsmFiles.fname[LST] );
     AsmFree( AsmFiles.fname[OBJ] );
     MemFini();
 }

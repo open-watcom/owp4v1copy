@@ -452,8 +452,24 @@ static void get_fname( char *token, int type )
         AsmFiles.fname[ERR] = AsmAlloc( strlen( name ) + 1 );
         strcpy( AsmFiles.fname[ERR], name );
 
+        if( AsmFiles.fname[LST] == NULL ) {
+            ext = LST_EXT;
+            _makepath( name, NULL, NULL, fname, ext );
+        } else {
+            _splitpath2( AsmFiles.fname[LST], buffer2, &def_drive,
+                         &def_dir, &def_fname, &def_ext );
+            if( *def_fname == NULLC )
+                def_fname = fname;
+            if( *def_ext == NULLC )
+                def_ext = LST_EXT;
+            _makepath( name, def_drive, def_dir, def_fname, def_ext );
+            AsmFree( AsmFiles.fname[LST] );
+        }
+        AsmFiles.fname[LST] = AsmAlloc( strlen( name ) + 1 );
+        strcpy( AsmFiles.fname[LST], name );
+
     } else {
-        /* get filename for object file */
+        /* get filename for object, error, or listing file */
         _splitpath2( token, buffer, &drive, &dir, &fname, &ext );
         if( AsmFiles.fname[ASM] != NULL ) {
             _splitpath2( AsmFiles.fname[ASM], buffer2, &def_drive,
@@ -463,7 +479,11 @@ static void get_fname( char *token, int type )
             }
         }
         if( *ext == NULLC ) {
-            ext = type == ERR ? ERR_EXT : OBJ_EXT;
+            switch( type ) {
+            case ERR:   ext = ERR_EXT;  break;
+            case LST:   ext = LST_EXT;  break;
+            case OBJ:   ext = OBJ_EXT;  break;
+            }
         }
         _makepath( name, drive, dir, fname, ext );
         if( AsmFiles.fname[type] != NULL ) {
@@ -530,6 +550,8 @@ static void Set_FR( void ) { get_fname( GetAFileName(), ERR ); }
 
 static void Set_FI( void ) { ForceInclude = GetAFileName(); }
 
+static void Set_FL( void ) { get_fname( GetAFileName(), LST ); Options.write_listing = TRUE; }
+
 static void Set_FO( void ) { get_fname( GetAFileName(), OBJ ); }
 
 static void SetInclude( void ) { AddStringToIncludePath( GetAFileName() ); }
@@ -591,6 +613,7 @@ static struct option const cmdl_options[] = {
     { "e=#",    0,        SetErrorLimit },
     { "fe=@",   0,        Set_FR },
     { "fi=@",   0,        Set_FI },
+    { "fl=@",   0,        Set_FL },
     { "fo=@",   0,        Set_FO },
     { "fp0",    0,        SetFPU },
     { "fp2",    2,        SetFPU },
@@ -1237,13 +1260,13 @@ void set_fpu_parameters( void )
 {
     switch( Options.floating_point ) {
     case DO_FP_EMULATION:
-        add_constant("__FPI__");
+        add_constant( "__FPI__" );
         break;
     case NO_FP_EMULATION:
-        add_constant("__FPI87__");
+        add_constant( "__FPI87__" );
         break;
     case NO_FP_ALLOWED:
-        add_constant("__FPC__");
+        add_constant( "__FPC__" );
         cpu_directive( T_DOT_NO87 );
         return;
     }

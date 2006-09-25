@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Assembler message output interface.
 *
 ****************************************************************************/
+
 
 #ifndef _ASMERR_H_INCLUDED
 #define _ASMERR_H_INCLUDED
@@ -93,6 +93,8 @@ extern void             AsmNote( int msgnum, ... );
     extern void MsgFini( void );
     extern void MsgSubStr( char *, char *, char );
     extern void MsgChgeSpec( char *strptr, char specifier );
+    extern void LstMsg( const char *format, ... );
+    extern void OpenLstFile( void );
 
 #elif defined( _USE_RESOURCES_ )
 

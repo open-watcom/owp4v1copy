@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Write translated object module.
 *
 ****************************************************************************/
 
@@ -1155,6 +1154,10 @@ void WriteObjModule( void )
         write_modend();
     if( !Options.quiet )
         PrintStats();
+
+    /* Write a symbol listing file (if requested) */
+    OpenLstFile();
+    WriteListing();
 
     AsmSymFini();
     FreeIncludePath();

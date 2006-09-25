@@ -107,9 +107,10 @@ enum {
 enum {
     ASM,
     ERR,
-    OBJ
+    OBJ,
+    LST
 };
-#define FILE_TYPES 3
+#define FILE_TYPES      4
 
 typedef struct {
     FILE        *file[FILE_TYPES];      // ASM, ERR and OBJ
@@ -120,6 +121,7 @@ extern File_Info        AsmFiles;   // files information
 
 #define ASM_EXT "asm"
 #define ERR_EXT "err"
+#define LST_EXT "lst"
 
 #ifdef __UNIX__
 #define OBJ_EXT "o"
@@ -179,6 +181,7 @@ typedef struct global_options {
     bool        watcom_c_mangler;
     bool        use_stdcall_at_number;
     bool        mangle_stdcall;
+    bool        write_listing;
 } global_options;
 
 extern global_options Options;
