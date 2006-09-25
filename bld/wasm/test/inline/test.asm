@@ -7,9 +7,9 @@ test edx,0f0f0f0fH
 test byte ptr x,0fH
 test word ptr x,7ffH
 test dword ptr x,0f0f0f0fH
-test dl,bl
-test dx,bx
-test eax,ebx
+test bl,bl
+test dx,dx
+test eax,eax
 test byte ptr x,bl
 test word ptr x,bx
 test dword ptr x,ebx
