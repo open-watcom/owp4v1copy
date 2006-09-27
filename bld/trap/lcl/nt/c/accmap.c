@@ -471,6 +471,10 @@ void DelLib( void )
             moduleInfo[i].newly_unloaded = TRUE;
             moduleInfo[i].base = NULL;
             moduleInfo[i].code_size = 0;
+            if( moduleInfo[i].file_handle ) {
+                CloseHandle( moduleInfo[i].file_handle );
+                moduleInfo[i].file_handle = NULL;
+            }
             break;
         }
     }
