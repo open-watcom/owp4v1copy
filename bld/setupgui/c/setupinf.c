@@ -176,7 +176,6 @@ typedef struct a_file_info {
     unsigned            in_old_dir : 1;
     unsigned            in_new_dir : 1;
     unsigned            read_only : 1;
-    unsigned            is_nlm : 1;
 } a_file_info;
 
 typedef enum {
@@ -1862,11 +1861,6 @@ static bool ProcLine( char *line, pass_type pass )
             line = next; next = NextToken( line, ',' );
             p = NextToken( line, '!' );
             GUIStrDup( line, &file->name );
-            {
-                char    fext[_MAX_EXT];
-                _splitpath( file->name, NULL, NULL, NULL, fext );
-                file->is_nlm = stricmp( fext, ".nlm" ) == 0;
-            }
             line = p; p = NextToken( line, '!' );
             file->size = get36( line ) * 512UL;
             if( p != NULL && p[0] != '\0' && p[0] != '!' ) {
@@ -3391,13 +3385,7 @@ extern void SimCalcAddRemove()
 
             if( add ) {
                 TargetInfo[ targ_index ].space_needed += RoundUp( file->size, cs );
-#if 0   // I don't think this logic is right...
-                if( !file->is_nlm ) {
-                    TargetInfo[ targ_index ].space_needed -= RoundUp( file->disk_size, cs );
-                }
-#else
                 TargetInfo[ targ_index ].space_needed -= RoundUp( file->disk_size, cs );
-#endif
                 TargetInfo[ targ_index ].needs_update = TRUE;
             } else if( remove ) {
                 TargetInfo[ targ_index ].space_needed -= RoundUp( FileInfo[ i ].files[k].disk_size, cs );

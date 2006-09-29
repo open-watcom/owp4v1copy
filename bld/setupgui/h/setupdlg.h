@@ -61,8 +61,3 @@
 #define ID_FILE_DESC                113
 #define ID_DST_DIR                  114
 #define ID_EXIST_DIR                115
-
-#define DLG_NLM_WELCOME             200
-#define ID_NLM_DESTPATH             201
-#define RADIO_NLM_311               202
-#define RADIO_NLM_40                203

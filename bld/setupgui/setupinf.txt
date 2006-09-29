@@ -305,15 +305,14 @@ Sections
   tools.ini!1!e6w01s!!s
 
    Detailed description of the file specification follows. The first field
-   (string) is the file name (note - if the extension is '.nlm' the file is
-   flagged internally). The second field is the base-36 file size in 512 byte
-   blocks (ie. disk sectors). The third (optional) field is the base-36 file
-   'last modified' date (time_t value as returned by stat()'s st_mtime); if
-   this field is empty, the date from the .inf file is used. The fourth
-   (optional) value (string) is a variable name which will be created if
-   needed and associated with the file. The fifth (optional) value (character)
-   is an additional indicator, a single letter: If 's', it is supplemental; 
-   if 'k', it is a core component.
+   (string) is the file name. The second field is the base-36 file size in 
+   512 byte blocks (ie. disk sectors). The third (optional) field is the 
+   base-36 file 'last modified' date (time_t value as returned by stat()'s 
+   st_mtime); if this field is empty, the date from the .inf file is used. 
+   The fourth (optional) value (string) is a variable name which will be 
+   created if needed and associated with the file. The fifth (optional) 
+   value (character) is an additional indicator, a single letter: If 's', 
+   it is supplemental; if 'k', it is a core component.
 
    Following is the trailing part of an archive entry. Example:
 
