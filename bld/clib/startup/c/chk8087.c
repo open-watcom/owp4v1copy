@@ -91,10 +91,12 @@ extern void __frstor( _87state * );
 #if defined( __386__ )
 
 #pragma aux __fsave =   \
+    ".387"              \
     "fsave [eax]"       \
     parm routine [eax];
 
 #pragma aux __frstor =  \
+    ".387"              \
     "frstor [eax]"      \
     parm routine [eax];
 
