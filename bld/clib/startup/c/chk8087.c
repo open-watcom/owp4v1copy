@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  __chk8087 and other FPU related functions.
+* Description:  Implementation of __chk8087 and other FPU.
 *
 ****************************************************************************/
 
@@ -60,21 +60,22 @@ extern unsigned short __dos87emucall;
 
 extern void __init_80x87( void );
 #if defined( __DOS_086__ )
-#pragma aux __init_80x87 "*" = \
-        ".8087" \
-        "cmp    __dos87real,0" \
-        "jz     l1" \
-        "finit" \
-        "fldcw  __8087cw" \
-"l1:     cmp    __dos87emucall,0" \
-        "jz     l2" \
-        "mov    ax,1" \
-        "call   __dos87emucall" \
+#pragma aux __init_80x87 "*" =      \
+        ".8087"                     \
+        "cmp    __dos87real,0"      \
+        "jz     l1"                 \
+        "finit"                     \
+        "fldcw  __8087cw"           \
+"l1:     cmp    __dos87emucall,0"   \
+        "jz     l2"                 \
+        "mov    ax,1"               \
+        "call   __dos87emucall"     \
 "l2:" ;
 #else
-#pragma aux __init_80x87 "*" = \
-        ".8087" \
-        "finit" \
+#pragma aux __init_80x87 "*" =      \
+        ".8087"                     \
+        "fninit"                    \
+        "fwait"                     \
         "fldcw  __8087cw" ;
 #endif
 
@@ -89,14 +90,12 @@ extern void __frstor( _87state * );
 
 #if defined( __386__ )
 
-    #pragma aux __fsave =                                           \
-    0x9b 0xdd 0x30  /* fsave    [eax]   ; save the 8087 state */    \
-    0x9b            /* wait                                   */    \
+#pragma aux __fsave =   \
+    "fsave [eax]"       \
     parm routine [eax];
 
-    #pragma aux __frstor =                                          \
-    0xdd 0x20       /* frstor   [eax]   ; restore the 8087 */       \
-    0x9b            /* wait             ; wait             */       \
+#pragma aux __frstor =  \
+    "frstor [eax]"      \
     parm routine [eax];
 
 #else   /* __286__ */

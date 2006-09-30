@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of _control87().
 *
 ****************************************************************************/
 
@@ -74,7 +73,7 @@ void _WCI86NEAR __dos_emu_fldcw( unsigned short * );
         "mov    ax,3" \
         "call   __dos87emucall" \
         parm [bx];
-        
+
 void _WCI86NEAR __dos_emu_fstcw( unsigned short * );
 #pragma aux __dos_emu_fstcw "*" = \
         "mov    ax,4" \
@@ -84,31 +83,30 @@ void _WCI86NEAR __dos_emu_fstcw( unsigned short * );
 #endif
 
 #if defined(__386__)
-#pragma aux __fstcw = \
-        "fstcw ss:[edi]" \
-        "fwait"          \
-        parm caller [edi];
-#pragma aux __fldcw = \
-        "fldcw ss:[edi]" \
-        parm caller [edi];
+#pragma aux __fstcw =       \
+        "fstcw ss:[ecx]"    \
+        parm caller [ecx];
+#pragma aux __fldcw =       \
+        "fldcw ss:[ecx]"    \
+        parm caller [ecx];
 #else
-#pragma aux __fstcw = \
-        "xchg ax,bp"           \
-        "fstcw [bp]" \
-        "fwait"                \
-        "xchg ax,bp"           \
+#pragma aux __fstcw =   \
+        "xchg ax,bp"    \
+        "fstcw [bp]"    \
+        "fwait"         \
+        "xchg ax,bp"    \
         parm caller [ax];
-#pragma aux __fldcw = \
-        "xchg ax,bp"           \
-        "fldcw [bp]" \
-        "xchg ax,bp"           \
+#pragma aux __fldcw =   \
+        "xchg ax,bp"    \
+        "fldcw [bp]"    \
+        "xchg ax,bp"    \
         parm caller [ax];
 #endif
 
 _WCRTLINK unsigned _control87( unsigned new, unsigned mask )
 /**********************************************************/
 {
-    auto short unsigned int control_word;
+    unsigned short  control_word;
 
     control_word = 0;
     if( _RWD_8087 ) {
@@ -118,7 +116,6 @@ _WCRTLINK unsigned _control87( unsigned new, unsigned mask )
         if( mask != 0 ) {
             control_word = (control_word & ~mask) | (new & mask);
             __fldcw( (cwp)&control_word );
-            __fstcw( (cwp)&control_word );               /* 17-sep-91 */
             __win87em_fldcw(control_word);
         }
 #elif defined( __DOS_086__ )
@@ -127,7 +124,6 @@ _WCRTLINK unsigned _control87( unsigned new, unsigned mask )
             if( mask != 0 ) {
                 control_word = (control_word & ~mask) | (new & mask);
                 __fldcw( (cwp)&control_word );
-                __fstcw( (cwp)&control_word );
             }
         }
         if( __dos87emucall ) {
@@ -135,7 +131,6 @@ _WCRTLINK unsigned _control87( unsigned new, unsigned mask )
             if( mask != 0 ) {
                 control_word = (control_word & ~mask) | (new & mask);
                 __dos_emu_fldcw( (cwp)&control_word );
-                __dos_emu_fstcw( (cwp)&control_word );
             }
         }
 #else
@@ -143,7 +138,6 @@ _WCRTLINK unsigned _control87( unsigned new, unsigned mask )
         if( mask != 0 ) {
             control_word = (control_word & ~mask) | (new & mask);
             __fldcw( (cwp)&control_word );
-            __fstcw( (cwp)&control_word );               /* 17-sep-91 */
         }
 #endif
     }
