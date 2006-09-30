@@ -901,6 +901,8 @@ static bool CheckPendingFiles()
         next = curr->next;
         if( curr->is_dll ) {
             ret = CheckInstallDLL( curr->name, curr->var_handle );
+        } else {
+            ret = CheckInstallNLM( curr->name, curr->var_handle );
         }
         if( ret == GUI_RET_CANCEL ) return( FALSE );
         GUIMemFree( curr->name );
@@ -1595,7 +1597,11 @@ int UnPackHook( char *name )
     char        ext[_MAX_EXT];
 
     _splitpath( name, drive, dir, fname, ext );
-    if( stricmp( ext, ".DLL" ) == 0 ) {
+    if( stricmp( ext, ".NLM" ) == 0 ) {
+        NewFileToCheck( name, FALSE );
+        _makepath( name, drive, dir, fname, "._N_" );
+        return( 1 );
+    } else if( stricmp( ext, ".DLL" ) == 0 ) {
         NewFileToCheck( name, TRUE );
 #ifdef EXTRA_CAUTIOUS_FOR_DLLS
         _makepath( name, drive, dir, fname, "._D_" );

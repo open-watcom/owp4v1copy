@@ -30,39 +30,37 @@
 ****************************************************************************/
 
 
-#define DLG_WELCOME                 10
-#define DLG_INSERTDISK              11
-#define DLG_STATUS                  12
-#define DLG_MODIFYTYPE              13
-#define DLG_INSTALLDLL              14
 
-#define DLG_FIRST                   DLG_WELCOME
-#define DLG_LAST                    DLG_INSTALLDLL
+#ifndef RVERHDR
+#define RVERHDR
 
-#define ICN_SETUP                   20
-#define ICN_DISK                    21
+#define MAX_DESCRIPTION_LENGTH  127
+#define ESUCCESS    0
+#define EFAILURE    -1
+#define TRUE        1
+#define FALSE       0
+#define READ_SIZE   512
+#define MAX_SCREEN_NAME_LENGTH 71
+#define OLD_THREAD_NAME_LENGTH 5
+#define MAX_THREAD_NAME_LENGTH 17
 
-#define ICN_FIRST                   ICN_SETUP
-#define ICN_LAST                    ICN_DISK
+typedef struct _NLMHDR
+{
+        BYTE    signature[24];
+        LONG    version;
+        BYTE    moduleName[14];
+        LONG    reserved[22];
+        BYTE    descriptionLength;
+        BYTE    descriptionText[ MAX_DESCRIPTION_LENGTH + 1 ];/* variable length  */
+        LONG    reserved2[2];                                 /* for use by C Lib */
+        BYTE    oldThreadName[OLD_THREAD_NAME_LENGTH];        /* for use by C Lib */
+        BYTE    screenNameLength;
+        BYTE    screenName[ MAX_SCREEN_NAME_LENGTH + 1 ];     /* variable length  */
+        BYTE    threadNameLength;
+        BYTE    threadName[ MAX_THREAD_NAME_LENGTH + 1 ];     /* variable length  */
+        BYTE    otherData[400];
+} NLMHDR;
 
-#define ID_METER                    100
-#define ID_DESTPATH                 101
-#define ID_DISKNAME                 102
-#define ID_STATLINE1                103
-#define ID_STATLINE2                104
-#define ID_SRCPATH                  105
-#define ID_MOD_IN_PLACE             106
-#define ID_MOD_LATER                107
-#define ID_DELETE_OLD               108
-#define ID_KEEP_BOTH                109
-#define ID_REPLACE_OLD              110
-#define ID_DONT_INSTALL             111
-#define ID_ABORT_INSTALL            112
-#define ID_FILE_DESC                113
-#define ID_DST_DIR                  114
-#define ID_EXIST_DIR                115
+int     ReturnNLMVersionInfoFromFile(BYTE *,LONG *,LONG *,LONG *,LONG *,LONG *,LONG *,BYTE *,BYTE *);
 
-#define DLG_NLM_WELCOME             200
-#define ID_NLM_DESTPATH             201
-#define RADIO_NLM_311               202
-#define RADIO_NLM_40                203
+#endif

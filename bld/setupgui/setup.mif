@@ -28,7 +28,8 @@ objs = &
     genvbl.obj      &
     dynarray.obj    &
     gendlg.obj      &
-    hash.obj
+    hash.obj        &
+    nlmver.obj
 
 !ifdef patch
 objs +=             &

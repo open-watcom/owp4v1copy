@@ -115,6 +115,8 @@ extern void             StatusLines( int, char * );
 extern void             StatusAmount( long, long );
 extern bool             StatusCancelled( void );
 extern gui_message_return CheckInstallDLL( char*, vhandle );
+extern gui_message_return CheckInstallNLM( char*, vhandle );
+extern bool             IsNLMNewerThanExistingNLM(char *name);
 extern bool             CreatePMInfo( bool );
 extern bool             ModifyConfiguration( void );
 extern bool             ModifyAutoExec( void );
