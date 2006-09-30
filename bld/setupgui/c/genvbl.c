@@ -315,7 +315,6 @@ extern void SetDefaultGlobalVarList( void )
     // create global variables for each default system
     SetVariableByName( "true", "1" );
     SetVariableByName( "false", "0" );
-    SetVariableByName( "IsNEC", "0" );
 #if defined( __DOS__ )
     SetVariableByName( "IsDos", "1" );
     SetVariableByName( "IsOS2DosBox", _osmajor >= 10 ? "1" : "0" );
@@ -361,11 +360,7 @@ extern void SetDefaultGlobalVarList( void )
 #if defined( __WINDOWS__ ) || defined( __NT__ )
     GetSystemDirectory( szBuf, sizeof( szBuf ) );
 #else
-    if( GetVariableIntVal( "IsNEC" ) == 1 ) {
-        strcpy( szBuf, "A:\\WINDOWS\\SYSTEM" );
-    } else {
-        strcpy( szBuf, "C:\\WINDOWS\\SYSTEM" );
-    }
+    strcpy( szBuf, "C:\\WINDOWS\\SYSTEM" );
 #endif
     SetVariableByName( "WinSystemDir", szBuf );
 #if defined( __NT__ )
@@ -376,11 +371,7 @@ extern void SetDefaultGlobalVarList( void )
 #if defined( __WINDOWS__ ) || defined( __NT__ )
     GetWindowsDirectory( szBuf, sizeof( szBuf ) );
 #else
-    if( GetVariableIntVal( "IsNEC" ) == 1 ) {
-        strcpy( szBuf, "A:\\WINDOWS" );
-    } else {
-        strcpy( szBuf, "C:\\WINDOWS" );
-    }
+    strcpy( szBuf, "C:\\WINDOWS" );
 #endif
     SetVariableByName( "WinDir", szBuf );
 

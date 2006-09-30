@@ -327,8 +327,7 @@ x( FullCDInstall, y ) \
 x( UnInstall, y ) \
 x( MinimalInstall, y ) \
 x( SelectiveInstall, y ) \
-x( PreviousInstall, y ) \
-x( IsNEC, y )
+x( PreviousInstall, y )
 
 #define NONMAGICVARS( x, y ) \
 x( IsDos, y ) \

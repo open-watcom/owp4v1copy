@@ -31,8 +31,6 @@ autoset=winhost=IsWin
 autoset=wnthost=IsWin32
 autoset=wintarg=IsWin
 autoset=wnttarg=IsWin32
-autoset=nechost=IsNEC
-autoset=nectarg=IsNEC
 autoset=tools16=IsDos IsOS2 IsWin | |
 autoset=samples=true
 autoset=helpfiles=true
@@ -94,7 +92,7 @@ cfg=RUN=%DstDir%\BINP\NMPBIND.EXE,              IsOS2 IsOS2DosBox | ?%DstDir%\bi
 cfg=FILES=20,                                   IsDOS IsWin |
 auto=+PATH=%DstDir%\BINNT,                      IsWin95
 auto=+PATH=%CDDir%\BINNT,                       IsWin95 MinimalInstall
-auto=+DOS16M=1,                                 IsDOS nechost IsNEC
+auto=+DOS16M=1,                                 IsDOS
 auto=+PATH=%DstDir%\BINW,                       IsDOS IsWin IsWin95 | |
 auto=+PATH=%CDDir%\BINW,                        IsDOS IsWin IsWin95 | | MinimalInstall
 auto=+PATH=%DstDir%\BIN,                        false

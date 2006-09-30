@@ -33,7 +33,6 @@ Variables
    MinimalInstall      If set, make all file variables false
    SelectiveInstall
    PreviousInstall
-   IsNEC
 
   Nonmagic variables
    0
