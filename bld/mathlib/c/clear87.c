@@ -34,53 +34,54 @@
 #include <float.h>
 #include "rtdata.h"
 
-extern  void    __fclex( void );
-extern  void    __fstsw( unsigned short * );
+extern  void        __fclex( void );
+extern  unsigned    __fstsw( void );
 
 #if defined(__386__)
-#pragma aux __fclex = \
-                ".387" \
-                "fclex";
-#pragma aux __fstsw = \
-                ".387" \
-                "fstsw ss:[edi]" \
-                "fwait" \
-                parm caller [edi];
+#pragma aux __fclex =               \
+                ".387"              \
+                "fnclex";
+#pragma aux __fstsw =               \
+                ".387"              \
+                "xor eax,eax"       \
+                "fnstsw ax"         \
+                value [eax];
 #else
-#pragma aux __fclex = \
-                ".8087" \
+#pragma aux __fclex =               \
+                ".8087"             \
                 float "fclex";
-#pragma aux __fstsw = \
-                ".8087" \
-                "xchg ax,bp" \
-                float "fstsw 0[bp]" \
-                float "fnop" \
-                "xchg ax,bp" \
-                parm caller [ax];
+/* On the 287, we could use the more sensible fnstsw ax variant. */
+/* On the 8087, do it the hard way */
+#pragma aux __fstsw =               \
+                ".8087"             \
+                "push bx"           \
+                "mov bx,sp"         \
+                float "fstsw [bx]"  \
+                float "fnop"        \
+                "pop bx"            \
+                value [bx];
 #endif
 
 
 _WMRTLINK unsigned _status87( void )
 /**********************************/
 {
-    unsigned short  status;
-
-    status = 0;
     if( _RWD_8087 ) {
-        __fstsw( &status );
+        return( __fstsw() );
+    } else {
+        return( 0 );
     }
-    return( status );
 }
 
 
 _WMRTLINK unsigned _clear87( void )
 /*********************************/
 {
-    int status;
+    unsigned    status;
 
     status = 0;
     if( _RWD_8087 ) {
-        status = _status87();
+        status = __fstsw();
         __fclex();
     }
     return( status );
