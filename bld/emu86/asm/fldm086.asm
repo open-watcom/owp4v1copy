@@ -259,7 +259,8 @@ endif
         _guess                  ; guess: overflow
           add   AX,DX           ; - determine exponent of result
           sub   AX,3FFEh        ; - remove extra bias
-          _quif s               ; - quit if exponent is negative
+          cmp   AX,-3FFEh       ; - quit if exponent is negative
+          _quif ae              ; - . . .
           cmp   AX,7FFFh        ; - quit if not overflow
           _quif b               ; - . . .
           jmp   mul_oflow       ; - handle overflow
