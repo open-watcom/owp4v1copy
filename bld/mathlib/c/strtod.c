@@ -294,7 +294,7 @@ static flt_flags parse_decimal( const CHAR_TYPE *input, CHAR_TYPE *buffer,
             for( ;; ) {
                 chr = *s;                   /* don't increment s yet */
                 if( !isdigit( chr ) ) break;
-                if( exponent < 10000 ) {
+                if( exponent < 2000 ) {
                     exponent = exponent * 10 + chr - '0';
                 }
                 flags |= DIGITS_PRESENT;
