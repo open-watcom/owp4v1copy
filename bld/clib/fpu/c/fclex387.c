@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  _ClearFPE() routine (fnclex) used by Win32 exception handler. 
 *
 ****************************************************************************/
 
@@ -34,10 +33,11 @@
 #include "variety.h"
 #include "clearfpe.h"
 
-extern void __ClearFPE(void);
+extern void __ClearFPE( void );
 #pragma aux __ClearFPE = "fnclex"
 
 void _ClearFPE( void )
+/********************/
 {
     __ClearFPE();
-} /* _ClearFPE() */
+}
