@@ -86,6 +86,7 @@ extern  void            DeadTemps( void );
 extern  void            AxeDeadCode( void );
 extern  bool            InsDead( void );
 extern  void            OptSegs( void );
+extern  void            OptCloseMoves( void );
 extern  void            Conditions( void );
 extern  void            MakeConflicts( void );
 extern  void            MakeLiveInfo( void );
@@ -315,10 +316,24 @@ static  void            PostOptimize( void )
     }
     MergeIndex();
     if( _IsntModel( NO_OPTIMIZATION ) ) {
+    #if !(_TARGET & _TARG_RISC)
+        // Get rid of unused conditions on variables level
+        // to decrease number of referenced vars in LdStAlloc() and Score()
+        if( _IsntTargetModel( STATEMENT_COUNTING ) ) {
+            Conditions();
+            DeadInstructions(); // cleanup junk after Conditions()
+        }
+    #endif
+        // OptCloseMoves();  // todo: merge constant moves before riscifier
         LdStAlloc();
         Score();
+        DeadInstructions(); // cleanup junk after Score()
+        // deRISCify before LoopRegInvariant() or Shedule() are run:
+        // they're moving RISCified pair.
+        LdStCompress();
         if( !BlockByBlock ) LoopRegInvariant();
     #if !(_TARGET & _TARG_RISC)
+        // Get rid of remaining unused conditions on register level.
         if( _IsntTargetModel( STATEMENT_COUNTING ) ) {
             Conditions();
         }
@@ -326,14 +341,14 @@ static  void            PostOptimize( void )
     }
     FPExpand();
     if( _IsntModel( NO_OPTIMIZATION ) ) {
-        DeadInstructions();
+        DeadInstructions();   // cleanup junk after Conditions()
+        // Run scheduler last, when all instructions are stable
         if( _IsModel( INS_SCHEDULING ) ) {
             HaveLiveInfo = FALSE;
             Schedule(); /* NOTE: Schedule messes up live information */
             LiveInfoUpdate();
             HaveLiveInfo = TRUE;
         }
-        LdStCompress();
         // run this again in case Scheduler messed around with indices
         if( PeepOpt( HeadBlock, NextBlock, NULL, TRUE ) ) {
             LiveInfoUpdate();
