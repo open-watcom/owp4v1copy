@@ -440,6 +440,10 @@ extern  bool    LdStAlloc( void )
         PreferSize = TRUE;
     }
 
+#if 0  /* You can optionally disable riscifer when optimizing for size */
+    if (PreferSize) return FALSE;
+#endif
+
     changed = FALSE;
     for( blk = HeadBlock; blk != NULL; blk = blk->next_block ) {
         for( ins=blk->ins.hd.next; ins->head.opcode!=OP_BLOCK; ins=next ) {
@@ -454,6 +458,33 @@ extern  bool    LdStAlloc( void )
     return( changed );
 }
 
+static bool     CanCompressResult( instruction *ins,
+                                   instruction *prev, instruction *next,
+                                   name **presult,    name **popnd )
+{
+    int         i;
+
+    if( presult == NULL ) {
+        return FALSE;
+    }
+    if( HW_Ovlap( (*presult)->r.reg, next->head.next->head.live.regs ) ) {
+        return FALSE;
+    }
+    if( popnd != NULL ) {
+        if( *popnd != *presult ) return FALSE;
+        if( next->result != prev->operands[0] ) return FALSE;
+    } else {
+        for( i = 0; i < ins->num_operands; ++i ) {
+            if( ins->operands[i]->n.class != N_REGISTER ) {
+                continue;
+            }
+            if( HW_Ovlap( ins->operands[i]->r.reg, ins->result->r.reg ) ) {
+                return FALSE;
+            }
+        }
+    }
+    return TRUE;
+}
 
 static void     CompressIns( instruction *ins )
 /**************************************************
@@ -508,26 +539,13 @@ static void     CompressIns( instruction *ins )
             }
         }
     }
-    if( presult != NULL ) {
-        if( HW_Ovlap( (*presult)->r.reg, next->head.next->head.live.regs ) ) {
-            return;
-        }
-        if( popnd != NULL ) {
-            if( *popnd != *presult ) return;
-            if( next->result != prev->operands[0] ) return;
-        } else {
-            for( i = 0; i < ins->num_operands; ++i ) {
-                if( ins->operands[i]->n.class != N_REGISTER ) {
-                    continue;
-                }
-                if( HW_Ovlap( ins->operands[i]->r.reg, ins->result->r.reg ) ) {
-                    return;
-                }
-            }
-        }
+    // 2006-05-19 RomanT
+    // Even if compression of result failed, we must try to compress operands
+    if( CanCompressResult( ins, prev, next, presult, popnd ) ) {
         replacement = next->result;
         preplace = presult;
     } else {
+        presult = NULL; // Forget about result (don't free ins below!)
         if( popnd == NULL ) return;
         // make sure that the REG is not used in any operands besides
         // the one which we are thinking of replacing BBB - Dec 4, 1993
