@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Service thread for local debugging with GUI debugger.
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,6 +36,7 @@
 #include "srvcdbg.h"
 #include "stdnt.h"
 #include "trperr.h"
+
 
 typedef enum {
     CTL_START,
@@ -52,6 +53,7 @@ static struct {
     HANDLE      hThread;
     BOOL        on_control_thread;
     BOOL        control_thread_running;
+    BOOL        req_done;
 
     // CTL_*
     BOOL        rc;
@@ -67,13 +69,6 @@ static struct {
 
 }               Shared;
 
-#if 0
-#define MAX_PAINTS      100
-struct {
-    RECT        rect;
-    HWND        hwnd;
-}       paints[MAX_PAINTS];
-#endif
 
 static void CantDoIt( void )
 {
@@ -132,22 +127,8 @@ static bool DoOneControlRequest( void )
 static HWND InvalidHWNDs[MAX_HWNDS];
 static int  NumInvalid = 0;
 
-static void RecordPaint( HWND hwnd )
-{
-    int i;
 
-    for( i = 0; i < NumInvalid; ++i ) {
-        if( InvalidHWNDs[i] == hwnd ) {
-            return;
-        }
-    }
-    if( NumInvalid == MAX_HWNDS ) {
-        return;
-    }
-    InvalidHWNDs[NumInvalid] = hwnd;
-    ++NumInvalid;
-}
-
+// NB: ProcessQueuedRepains() currently doesn't do anything useful
 void ProcessQueuedRepaints( void )
 {
     int     i;
@@ -179,7 +160,9 @@ static void ControlReq( ctl_request req )
     if( DebuggerWindow == NULL ) {
         WaitForSingleObject( Shared.requestdonesem, INFINITE );
     } else {
-        while( GetMessage( &msg, NULL, 0, 0 ) ) {
+        while( !Shared.req_done ) { 
+            if ( !GetMessage( &msg, NULL, 0, 0 ) )
+            	  break;    // break on WM_QUIT, when Windows requests this. (If ever)
             hwnd = msg.hwnd;
             is_dbg_wnd = FALSE;
             while( hwnd ) {
@@ -191,9 +174,6 @@ static void ControlReq( ctl_request req )
             }
             GetClassName( msg.hwnd, buff, sizeof( buff ) - 1 );
             if( !is_dbg_wnd || strcmp( buff, "WTool" ) == 0 ) {
-                if( msg.hwnd == NULL && msg.message == WM_QUIT ) {
-                    break;
-                }
                 TranslateMessage( &msg );
                 DispatchMessage( &msg );
             } else {
@@ -203,18 +183,14 @@ static void ControlReq( ctl_request req )
                         InterruptProgram();
                     }
                     break;
+                case WM_SYSKEYDOWN: // Do not activate menu on F10 single step in GUI debugger
+                	  if( msg.wParam == VK_F10 && !strcmp( buff, "GUIClass" ) ) {
+                	  	  break;
+                      }
+                      // fall through!
                 case WM_COMMAND:
                     CantDoIt();
                     break;
-                case WM_PAINT:
-                    {
-                        PAINTSTRUCT ps;
-
-                        RecordPaint( msg.hwnd );
-                        BeginPaint( msg.hwnd, &ps );
-                        EndPaint( msg.hwnd, &ps );
-                        break;
-                    }
                 case WM_LBUTTONDOWN:
                 case WM_RBUTTONDOWN:
                 case WM_MBUTTONDOWN:
@@ -228,7 +204,7 @@ static void ControlReq( ctl_request req )
                 }
             }
         }
-        ProcessQueuedRepaints();
+        Shared.req_done = FALSE;    // Reset  
         ReleaseSemaphore( Shared.requestdonesem, 1, NULL );
     }
 }
@@ -245,7 +221,9 @@ static void RequestDone( void )
     if( DebuggerWindow == NULL ) {
         ReleaseSemaphore( Shared.requestdonesem, 1, NULL );
     } else {
-        PostMessage( DebuggerWindow, WM_QUIT, 0, 0 );
+        Shared.req_done = TRUE; 
+        // Notify that something has happened, avoid delay
+        PostMessage( DebuggerWindow, WM_NULL, 0, 0 ); 
         WaitForSingleObject( Shared.requestdonesem, INFINITE );
     }
 }
