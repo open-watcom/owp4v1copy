@@ -267,7 +267,7 @@ void AddProcess( header_info *hi )
         lli->is_16 = FALSE;
         lli->file_handle = DebugEvent.u.CreateProcessInfo.hFile;
         // kludge - NT doesn't give us a handle sometimes
-        if( lli->file_handle == 0 ) {
+        if( lli->file_handle == INVALID_HANDLE_VALUE ) {
             lli->file_handle = CreateFile( ( LPTSTR )CurrEXEName, GENERIC_READ,
                 FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, 0 );
         }
@@ -341,7 +341,7 @@ BOOL NameFromHandle( HANDLE hFile, char *name )
     name[0] = 0;
 
     // Check if we have the required entrypoints (results depend on OS version).
-    if( !hFile || !pGetMappedFileName || !pQueryDosDevice )
+    if( (hFile == INVALID_HANDLE_VALUE) || !pGetMappedFileName || !pQueryDosDevice )
         goto error_exit;
 
     // Get the file size.
@@ -471,9 +471,9 @@ void DelLib( void )
             moduleInfo[i].newly_unloaded = TRUE;
             moduleInfo[i].base = NULL;
             moduleInfo[i].code_size = 0;
-            if( moduleInfo[i].file_handle ) {
+            if( moduleInfo[i].file_handle != INVALID_HANDLE_VALUE ) {
                 CloseHandle( moduleInfo[i].file_handle );
-                moduleInfo[i].file_handle = NULL;
+                moduleInfo[i].file_handle = INVALID_HANDLE_VALUE;
             }
             break;
         }
@@ -487,7 +487,7 @@ void DelProcess( BOOL closeHandles )
     for( i = 0; i < ModuleTop; ++i ) {
         if( closeHandles ) {
             CloseHandle( moduleInfo[i].file_handle );
-            moduleInfo[i].file_handle = NULL;
+            moduleInfo[i].file_handle = INVALID_HANDLE_VALUE;
         }
         moduleInfo[i].base = NULL;
         moduleInfo[i].code_size = 0;
