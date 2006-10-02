@@ -30,11 +30,11 @@
 #endif
 
 #ifndef _STDEXCEPT_INCLUDED
-  #include <stdexcept>
+  #include <stdexcep>
 #endif
 
 #ifndef _TYPE_TRAITS_INCLUDED
-  #include <type_traits>
+  #include <type_tra>
 #endif
 
 namespace std {

@@ -30,7 +30,7 @@
   #include <iterator>
 #endif
 #ifndef _FUNCTIONAL_INCLUDED
-  #include <functional>
+  #include <function>
 #endif
 
 namespace std{

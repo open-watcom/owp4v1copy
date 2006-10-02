@@ -446,7 +446,7 @@ _WCRTLINK extern size_t  strnlen_s( const char *__s, size_t __maxsize );
 
 :: The header <_strdef.h> is indirectly included below.
 #ifndef _STDEXCEPT_INCLUDED
-  #include <stdexcept>
+  #include <stdexcep>
 #endif
 
 namespace _watcom {
