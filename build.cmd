@@ -8,7 +8,8 @@ REM combined OS/2 and Windows version
 REM
 REM If first argument is "self", uses tools in rel2 to build,
 REM requiring customized devvars.cmd. Otherwise, customized
-REM myvars.cmd is needed.
+REM myvars.cmd is needed. If the appropriate file does not exist,
+REM owconfig.bat will be invoked to automatically generate it.
 REM 
 REM Call without parms for "builder rel2" operation -> build
 REM Call with clean for "builder clean"  operation  -> build clean
@@ -25,11 +26,7 @@ if [%1] == [self] goto self
 :DONESELF
 
 if exist %myow%.cmd goto cont1
-   echo Customized %myow%.cmd not found, cannot continue
-   echo must be in the same dir as build.cmd
-   echo copy setvars.cmd/bat to %myow%.cmd and customize
-   pause
-   goto eof
+   call owconfig.bat %myow%.cmd
 
 :CONT1
    call %myow%.cmd
