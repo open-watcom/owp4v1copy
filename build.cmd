@@ -10,7 +10,8 @@ REM If first argument is "self", uses tools in rel2 to build,
 REM requiring customized devvars.cmd. Otherwise, customized
 REM myvars.cmd is needed. If the appropriate file does not exist,
 REM owconfig.bat will be invoked to automatically generate it.
-REM 
+REM If running on OS/2, it has to be created manually.
+REM
 REM Call without parms for "builder rel2" operation -> build
 REM Call with clean for "builder clean"  operation  -> build clean
 REM --> requires a customized setvars.bat/cmd named myvars.cmd
@@ -25,11 +26,6 @@ if [%1] == [self] goto self
    set myow=devvars
 :DONESELF
 
-if exist %myow%.cmd goto cont1
-   call owconfig.bat %myow%.cmd
-
-:CONT1
-   call %myow%.cmd
    set target=%1
    if [%target%] == [] set target=rel2
 rem the makefiles dont know a target rel2, so only pass target if clean
@@ -43,6 +39,10 @@ rem NT/XP? or OS/2?
    goto eof
 
 :NOOS2
+   if exist %myow%.cmd goto cont2
+      call owconfig.bat %myow%.cmd
+
+:CONT2
 rem only works if system is on c:
    if [%Systemroot%] == [C:\WINNT] goto noXP
    set builderdir=nt386
@@ -53,9 +53,17 @@ rem only works if system is on c:
    goto bld1
 
 :NOWIN
+   if exist %myow%.cmd goto cont3
+       echo Customized %myow%.cmd not found, cannot continue
+       echo must be in the same dir as build.cmd
+       echo copy setvars.cmd to %myow%.cmd and customize
+       goto eof
+
+:CONT3
    set builderdir=os2386
 
 :BLD1
+   call %myow%.cmd
 rem start with the builder
    cd builder\%builderdir%
    wmake %makeclean%
