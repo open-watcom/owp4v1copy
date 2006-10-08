@@ -3,7 +3,7 @@
 
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-   
+
 [ BLOCK <1> rel2 cprel2 ]
 #========================
     <CPCMD> <DOC_ROOT>/dos/*.ihp    <RELROOT>/rel2/binw/
@@ -16,7 +16,8 @@
     <CPCMD> <DOC_ROOT>/freadme.txt  <RELROOT>/rel2/freadme.txt
     <CPCMD> <DOC_ROOT>/areadme.txt  <RELROOT>/rel2/areadme.txt
     <CPCMD> <DOC_ROOT>/instlic.txt  <RELROOT>/rel2/instlic.txt
-   
+    cdsay .
+
 [ BLOCK <1> clean ]
 #==================
     pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean
