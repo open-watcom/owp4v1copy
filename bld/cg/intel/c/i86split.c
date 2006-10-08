@@ -201,7 +201,7 @@ extern  instruction             *rMOVI8PT( instruction * );
 extern  void                    CnvOpToInt( instruction * ins, int op );
 
 extern  opcode_entry    String[];
-extern  opcode_entry    Move2[];
+extern  opcode_entry    *Move2;
 extern  opcode_entry    Move4[];
 extern  type_class_def  DoubleClass[];
 extern  bool            OptForSize;

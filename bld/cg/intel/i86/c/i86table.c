@@ -904,7 +904,6 @@ static  opcode_entry    Move1[] = {
 {_Un(    ANY,  ANY,  NONE ),     V_NO,           G_UNKNOWN,      RG_BYTE_NEED,FU_NO},
 };
 
-
 static  opcode_entry    Move2CC[] = {
 /***************************/
 /*       op    res   eq          verify          gen             reg fu*/
@@ -915,9 +914,9 @@ static  opcode_entry    Move2CC[] = {
 
 /* fall through into move2 table*/
 
-};
+/**** NB. Move2 points here ****/
+/* opcode_entry    Move2[]; */
 
-opcode_entry    Move2[] = {
 /*************************/
 /*       op    res   eq          verify          gen             reg fu*/
 
@@ -952,6 +951,8 @@ opcode_entry    Move2[] = {
 {_Un(    ANY,  ANY,  NONE ),     V_NO,           G_UNKNOWN,      RG_ANYWORD_NEED,FU_NO},
 };
 
+/* Point at where Move2 used to start */
+opcode_entry   *Move2 = &Move2CC[1];
 
 opcode_entry    Move4[] = {
 /*************************/
