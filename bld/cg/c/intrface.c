@@ -241,7 +241,7 @@ extern  cg_init_info _CGAPI     BEInitCg( cg_switches switches,
     if( !CGOpenf() ) {
         info.success = 0;
     } else {
-	info.success = 1;
+    info.success = 1;
         info.version.is_large = TRUE;
 #if _TARGET & _TARG_80386
         info.version.target = II_TARG_80386;
