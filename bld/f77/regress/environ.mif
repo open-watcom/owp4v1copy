@@ -30,7 +30,8 @@
 # arch = 386/axp (depends on current hardware)
 # linker = wlink
 # log_file = $(ftest_dir)/$(ftest_name).log
-
+# uncomment below if you want to see more 
+# !define noisy 1
 #
 # use ftest_* environment vars to set make variables
 #
