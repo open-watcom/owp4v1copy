@@ -4,8 +4,8 @@
 */
 
 
-#ifndef __PMSPL_H__
-#define __PMSPL_H__
+#ifndef PMSPL_INCLUDED
+#define PMSPL_INCLUDED
 
 #ifdef INCL_ERRORS
     #define INCL_SPLERRORS
@@ -14,6 +14,30 @@
 #ifdef INCL_SPLERRORS
   #include <pmerr.h>
 #endif
+
+#define DosPrintDestControl       SplControlDevice
+#define DosPrintDestGetInfo       SplQueryDevice
+#define DosPrintDestEnum          SplEnumDevice
+#define DosPrintJobContinue       SplReleaseJob
+#define DosPrintJobPause          SplHoldJob
+#define DosPrintJobDel            SplDeleteJob
+#define DosPrintJobGetInfo        SplQueryJob
+#define DosPrintJobSetInfo        SplSetJob
+#define DosPrintJobEnum           SplEnumJob
+#define DosPrintQAdd              SplCreateQueue
+#define DosPrintQPause            SplHoldQueue
+#define DosPrintQContinue         SplReleaseQueue
+#define DosPrintQDel              SplDeleteQueue
+#define DosPrintQGetInfo          SplQueryQueue
+#define DosPrintQSetInfo          SplSetQueue
+#define DosPrintQEnum             SplEnumQueue
+#define DosPrintDestAdd           SplCreateDevice
+#define DosPrintDestSetInfo       SplSetDevice
+#define DosPrintDestDel           SplDeleteDevice
+#define DosPrintQPurge            SplPurgeQueue
+#define DosPrintDriverEnum        SplEnumDriver
+#define DosPrintQProcessorEnum    SplEnumQueueProcessor
+#define DosPrintPortEnum          SplEnumPort
 
 #define SPL_INI_SPOOLER         "PM_SPOOLER"
 #define SPL_INI_QUEUE           "PM_SPOOLER_QUEUE"
@@ -88,14 +112,14 @@ typedef struct _SQPOPENDATA {
     USHORT    idJobId;
 } SQPOPENDATA, *PSQPOPENDATA;
 
-BOOL  APIENTRY SplQpClose(HPROC hproc);
-BOOL  APIENTRY SplQpControl(HPROC hproc, LONG cmdCode);
-BOOL  APIENTRY SplQpInstall(HWND hwnd);
-HPROC APIENTRY SplQpOpen(LONG cData, PQPOPENDATA pQPDataIn);
-BOOL  APIENTRY SplQpPrint(HPROC hproc, PSZ pszFileName);
-BOOL  APIENTRY SplQpPrintSeparator(HPROC hproc, PBYTE pBuf, ULONG cbBuf, ULONG ulFlags);
-BOOL  APIENTRY SplQpQueryDt(PLONG pcDataType, PSZ *paszDataTypes);
-BOOL  APIENTRY SplQpQueryFlags(PULONG pulFlags);
+BOOL  APIENTRY SplQpClose(HPROC);
+BOOL  APIENTRY SplQpControl(HPROC,LONG);
+BOOL  APIENTRY SplQpInstall(HWND);
+HPROC APIENTRY SplQpOpen(LONG,PQPOPENDATA);
+BOOL  APIENTRY SplQpPrint(HPROC,PSZ);
+BOOL  APIENTRY SplQpPrintSeparator(HPROC,PBYTE,ULONG,ULONG);
+BOOL  APIENTRY SplQpQueryDt(PLONG,PSZ*);
+BOOL  APIENTRY SplQpQueryFlags(PULONG);
 
 #if defined(INCL_SPLDOSPRINT)
 
@@ -237,7 +261,7 @@ typedef struct _PRJINFO {
     ULONG  ulSubmitted;
     ULONG  ulSize;
     PSZ    pszComment;
-} PRJINFO, *PPRJINFO;
+} PRJINFO, *PPRJINFO, *NPPRJINFO;
 
 typedef struct _PRJINFO2 {
     USHORT uJobId;
@@ -249,7 +273,7 @@ typedef struct _PRJINFO2 {
     ULONG  ulSize;
     PSZ    pszComment;
     PSZ    pszDocument;
-} PRJINFO2, *PPRJINFO2;
+} PRJINFO2, *PPRJINFO2, *NPPRJINFO2;
 
 typedef struct _PRJINFO3 {
     USHORT uJobId;
@@ -271,7 +295,7 @@ typedef struct _PRJINFO3 {
     PSZ    pszDriverName;
     PDRIVDATA pDriverData;
     PSZ    pszPrinterName;
-} PRJINFO3, *PPRJINFO3;
+} PRJINFO3, *PPRJINFO3, *NPPRJINFO3;
 
 typedef struct _PRJINFO4 {
     USHORT uJobId;
@@ -293,7 +317,7 @@ typedef struct _PRJINFO4 {
     ULONG  ulExtendJobStatus;
     ULONG  ulStartPage;
     ULONG  ulEndPage;
-} PRJINFO4, *PPRJINFO4;
+} PRJINFO4, *PPRJINFO4, *NPPRJINFO4;
 
 typedef struct _PRDINFO {
     CHAR   szName[PDLEN+1];
@@ -302,7 +326,7 @@ typedef struct _PRDINFO {
     USHORT fsStatus;
     PSZ    pszStatus;
     USHORT time;
-} PRDINFO, *PPRDINFO;
+} PRDINFO, *PPRDINFO, *NPPRDINFO;
 
 typedef struct _PRDINFO3 {
     PSZ    pszPrinterName;
@@ -315,7 +339,7 @@ typedef struct _PRDINFO3 {
     PSZ    pszDrivers;
     USHORT time;
     USHORT usTimeOut;
-} PRDINFO3, *PPRDINFO3;
+} PRDINFO3, *PPRDINFO3, *NPPRDINFO3;
 
 typedef struct _PRQINFO {
     CHAR   szName[QNLEN+1];
@@ -330,7 +354,7 @@ typedef struct _PRQINFO {
     PSZ    pszComment;
     USHORT fsStatus;
     USHORT cJobs;
-} PRQINFO, *PPRQINFO;
+} PRQINFO, *PPRQINFO, *NPPRQINFO;
 
 typedef struct _PRQINFO3 {
     PSZ    pszName;
@@ -347,7 +371,7 @@ typedef struct _PRQINFO3 {
     PSZ    pszPrinters;
     PSZ    pszDriverName;
     PDRIVDATA pDriverData;
-} PRQINFO3, *PPRQINFO3;
+} PRQINFO3, *PPRQINFO3, *NPPRQINFO3;
 
 typedef struct _PRQINFO6 {
     PSZ    pszName;
@@ -366,14 +390,14 @@ typedef struct _PRQINFO6 {
     PDRIVDATA pDriverData;
     PSZ    pszRemoteComputerName;
     PSZ    pszRemoteQueueName;
-} PRQINFO6, *PPRQINFO6;
+} PRQINFO6, *PPRQINFO6, *NPPRQINFO6;
 
 typedef struct _PRIDINFO {
     USHORT uJobId;
     CHAR   szComputerName[CNLEN+1];
     CHAR   szQueueName[QNLEN+1];
     CHAR   pad_1;
-} PRIDINFO, *PPRIDINFO;
+} PRIDINFO, *PPRIDINFO, *NPPRIDINFO;
 
 typedef struct _QMJOBINFO {
     ULONG ulJobID;
@@ -383,7 +407,7 @@ typedef struct _QMJOBINFO {
 
 typedef struct _PRDRIVINFO {
     CHAR szDrivName[DRIV_NAME_SIZE+1+DRIV_DEVICENAME_SIZE+1];
-} PRDRIVINFO, *PPRDRIVINFO;
+} PRDRIVINFO, *PPRDRIVINFO, *NPPRDRIVINFO;
 
 typedef struct _PRDRIVINFO2 {
     PSZ    pszPrinterName;
@@ -396,21 +420,21 @@ typedef struct _DRIVPROPS {
     PSZ   pszKeyName;
     ULONG cbBuf;
     PVOID pBuf;
-} DRIVPROPS, *PDRIVPROPS;
+} DRIVPROPS, *PDRIVPROPS, *NPDRIVPROPS;
 
 typedef struct _PRQPROCINFO {
     CHAR szQProcName[QNLEN+1];
-} PRQPROCINFO, *PPRQPROCINFO;
+} PRQPROCINFO, *PPRQPROCINFO, *NPPRQPROCINFO;
 
 typedef struct _PRPORTINFO {
     CHAR szPortName[PDLEN+1];
-} PRPORTINFO, *PPRPORTINFO;
+} PRPORTINFO, *PPRPORTINFO, *NPPRPORTINFO;
 
 typedef struct _PRPORTINFO1 {
     PSZ pszPortName ;
     PSZ pszPortDriverName ;
     PSZ pszPortDriverPathName ;
-} PRPORTINFO1, *PPRPORTINFO1;
+} PRPORTINFO1, *PPRPORTINFO1, *NPPRPORTINFO1;
 
 typedef struct _PRPORTINFO2 {
     PSZ   pszPortName;
@@ -436,79 +460,67 @@ typedef struct _PRINTERINFO {
 
 #endif
 
-ULONG  APIENTRY SplMessageBox(PCSZ pszLogAddr, ULONG fErrInfo, ULONG fErrData, PCSZ pszText,
-                   PCSZ pszCaption, ULONG idWindow, ULONG fStyle);
-BOOL   APIENTRY SplQmAbort(HSPL hspl);
-BOOL   APIENTRY SplQmAbortDoc(HSPL hspl);
-BOOL   APIENTRY SplQmClose(HSPL hspl);
-BOOL   APIENTRY SplQmEndDoc(HSPL hspl);
-ULONG  APIENTRY SplQmGetJobID(HSPL hspl, ULONG ulLevel, PVOID pBuf, ULONG cbBuf, PULONG pcbNeeded );
-BOOL   APIENTRY SplQmNewPage(HSPL hspl, ULONG ulPageNumber );
-HSPL   APIENTRY SplQmOpen(PCSZ pszToken, LONG lCount, PQMOPENDATA pqmdopData);
-BOOL   APIENTRY SplQmStartDoc(HSPL hspl, PCSZ pszDocName);
-BOOL   APIENTRY SplQmWrite(HSPL hspl, LONG lCount, PVOID pData);
+#ifdef INCL_SPLFSE
+ULONG  APIENTRY PrtOpen(PCSZ,PHFILE,PULONG,ULONG,ULONG,ULONG,ULONG,ULONG);
+ULONG  APIENTRY PrtClose(HFILE);
+ULONG  APIENTRY PrtWrite(HFILE,PVOID,ULONG,PULONG);
+ULONG  APIENTRY PrtDevIOCtl(PVOID,PVOID,ULONG,ULONG,HFILE);
+VOID   APIENTRY PrtAbort(HFILE);
+ULONG  APIENTRY PrtAbortDoc(HFILE,PVOID,ULONG,ULONG);
+ULONG  APIENTRY PrtResetAbort(HFILE);
+ULONG  APIENTRY PrtNewPage(HFILE,ULONG);
+#endif
 
-BOOL   APIENTRY SplStdClose(HDC hdc);
-BOOL   APIENTRY SplStdDelete(HSTD hMetaFile);
-BOOL   APIENTRY SplStdGetBits(HSTD hMetaFile, LONG offData, LONG cbData, PCH pchData);
-BOOL   APIENTRY SplStdOpen(HDC hdc);
-LONG   APIENTRY SplStdQueryLength(HSTD hMetaFile);
-BOOL   APIENTRY SplStdStart(HDC hdc);
-HSTD   APIENTRY SplStdStop(HDC hdc);
+ULONG  APIENTRY SplMessageBox(PCSZ,ULONG,ULONG,PCSZ,PCSZ,ULONG,ULONG);
+BOOL   APIENTRY SplQmAbort(HSPL);
+BOOL   APIENTRY SplQmAbortDoc(HSPL);
+BOOL   APIENTRY SplQmClose(HSPL);
+BOOL   APIENTRY SplQmEndDoc(HSPL);
+ULONG  APIENTRY SplQmGetJobID(HSPL,ULONG,PVOID,ULONG,PULONG);
+BOOL   APIENTRY SplQmNewPage(HSPL,ULONG);
+HSPL   APIENTRY SplQmOpen(PCSZ,LONG,PQMOPENDATA);
+BOOL   APIENTRY SplQmStartDoc(HSPL,PCSZ);
+BOOL   APIENTRY SplQmWrite(HSPL,LONG,PVOID);
 
-SPLERR APIENTRY SplControlDevice(PCSZ pszComputerName, PCSZ pszPortName, ULONG ulControl);
-SPLERR APIENTRY SplCopyJob(PCSZ pszSrcComputerName, PCSZ pszSrcQueueName, ULONG ulSrcJob,
-                   PCSZ pszTrgComputerName, PCSZ pszTrgQueueName, PULONG pulTrgJob);
-SPLERR APIENTRY SplCreateDevice(PCSZ pszComputerName, ULONG ulLevel, PVOID pBuf, ULONG cbBuf);
-SPLERR APIENTRY SplCreatePort(PCSZ pszComputerName, PCSZ pszPortName, PCSZ pszPortDriver,
-                   ULONG ulVersion, PVOID pBuf, ULONG cbBuf);
-SPLERR APIENTRY SplCreateQueue(PCSZ pszComputerName, ULONG ulLevel, PVOID pBuf, ULONG cbBuf);
-SPLERR APIENTRY SplDeleteDevice(PCSZ pszComputerName, PCSZ pszPrintDeviceName);
-SPLERR APIENTRY SplDeleteJob(PCSZ pszComputerName, PCSZ pszQueueName, ULONG ulJob);
-SPLERR APIENTRY SplDeletePort(PCSZ pszComputerName, PCSZ pszPortName);
-SPLERR APIENTRY SplDeleteQueue(PCSZ pszComputerName, PCSZ pszQueueName);
-SPLERR APIENTRY SplEnumDevice(PCSZ pszComputerName, ULONG ulLevel, PVOID pBuf, ULONG cbBuf,
-                   PULONG pcReturned, PULONG pcTotal, PULONG pcbNeeded, PVOID pReserved);
-SPLERR APIENTRY SplEnumDriver(PCSZ pszComputerName, ULONG ulLevel, PVOID pBuf, ULONG cbBuf,
-                   PULONG pcReturned, PULONG pcTotal, PULONG pcbNeeded, PVOID pReserved);
-SPLERR APIENTRY SplEnumJob(PCSZ pszComputerName, PCSZ pszQueueName, ULONG ulLevel, PVOID pBuf,
-                   ULONG cbBuf, PULONG pcReturned, PULONG pcTotal, PULONG pcbNeeded,
-                   PVOID pReserved);
-SPLERR APIENTRY SplEnumPort(PCSZ pszComputerName, ULONG ulLevel, PVOID pBuf, ULONG cbBuf,
-                   PULONG pcReturned, PULONG pcTotal, PULONG pcbNeeded, PVOID pReserved);
-SPLERR APIENTRY SplEnumPrinter(PCSZ pszComputerName, ULONG uLevel, ULONG flType,
-                   PVOID pBuf, ULONG cbbuf, PULONG pcReturned, PULONG pcTotal,
-                   PULONG pcbNeeded, PVOID pReserved);
-SPLERR APIENTRY SplEnumQueue(PCSZ pszComputerName, ULONG ulLevel, PVOID pBuf, ULONG cbBuf,
-                   PULONG pcReturned, PULONG pcTotal, PULONG pcbNeeded, PVOID pReserved);
-SPLERR APIENTRY SplEnumQueueProcessor(PCSZ pszComputerName, ULONG ulLevel, PVOID pBuf,
-                   ULONG cbBuf, PULONG pcReturned, PULONG pcTotal, PULONG pcbNeeded,
-                   PVOID  pReserved);
-SPLERR APIENTRY SplHoldJob(PCSZ pszComputerName, PCSZ pszQueueName, ULONG ulJob);
-SPLERR APIENTRY SplHoldQueue(PCSZ pszComputerName, PCSZ pszQueueName);
-SPLERR APIENTRY SplPurgeQueue(PCSZ pszComputerName, PCSZ pszQueueName);
-SPLERR APIENTRY SplQueryDevice(PCSZ pszComputerName, PCSZ pszPrintDeviceName, ULONG ulLevel,
-                   PVOID pBuf, ULONG  cbBuf, PULONG pcbNeeded);
-SPLERR APIENTRY SplQueryDriver(PCSZ pszComputerName, PCSZ pszDriverName, PCSZ pszPrinterName,
-                   ULONG ulLevel, PVOID pBuf, ULONG cbBuf, PULONG pcbNeeded);
-SPLERR APIENTRY SplQueryJob(PCSZ pszComputerName, PCSZ pszQueueName, ULONG ulJob, ULONG ulLevel,
-                   PVOID pBuf, ULONG cbBuf, PULONG pcbNeeded);
-SPLERR APIENTRY SplQueryPort(PCSZ pszComputerName, PCSZ pszPortName, ULONG ulLevel,
-                   PVOID pBuf, ULONG cbBuf, PULONG pcbNeeded);
-SPLERR APIENTRY SplQueryQueue(PCSZ pszComputerName, PCSZ pszQueueName, ULONG ulLevel,
-                   PVOID pBuf, ULONG cbBuf, PULONG pcbNeeded);
-SPLERR APIENTRY SplReleaseJob(PCSZ pszComputerName, PCSZ pszQueueName, ULONG ulJob);
-SPLERR APIENTRY SplReleaseQueue(PCSZ pszComputerName, PCSZ pszQueueName);
-SPLERR APIENTRY SplSetDevice(PCSZ pszComputerName, PCSZ pszPrintDeviceName, ULONG ulLevel,
-                   PVOID pBuf, ULONG cbBuf, ULONG ulParmNum);
-SPLERR APIENTRY SplSetDriver(PCSZ pszComputerName, PCSZ pszDriverName, PCSZ pszPrinterName,
-                   ULONG ulLevel, PVOID pBuf, ULONG cbBuf, ULONG ulParmNum);
-SPLERR APIENTRY SplSetJob(PCSZ pszComputerName, PCSZ pszQueueName, ULONG ulJob, ULONG ulLevel,
-                   PVOID pBuf, ULONG cbBuf, ULONG ulParmNum);
-SPLERR APIENTRY SplSetPort(PCSZ pszComputerName, PCSZ pszPortName, ULONG ulLevel,
-                   PVOID pBuf, ULONG cbBuf, ULONG ulParmNum);
-SPLERR APIENTRY SplSetQueue(PCSZ pszComputerName, PCSZ pszQueueName, ULONG ulLevel,
-                   PVOID pBuf, ULONG cbBuf, ULONG ulParmNum);
+BOOL   APIENTRY SplStdClose(HDC);
+BOOL   APIENTRY SplStdDelete(HSTD);
+BOOL   APIENTRY SplStdGetBits(HSTD,LONG,LONG,PCH);
+BOOL   APIENTRY SplStdOpen(HDC);
+LONG   APIENTRY SplStdQueryLength(HSTD);
+BOOL   APIENTRY SplStdStart(HDC);
+HSTD   APIENTRY SplStdStop(HDC);
+
+SPLERR APIENTRY SplControlDevice(PCSZ,PCSZ,ULONG);
+SPLERR APIENTRY SplCopyJob(PCSZ,PCSZ,ULONG,PCSZ,PCSZ,PULONG);
+SPLERR APIENTRY SplCreateDevice(PCSZ,ULONG,PVOID,ULONG);
+SPLERR APIENTRY SplCreatePort(PCSZ,PCSZ,PCSZ,ULONG,PVOID,ULONG);
+SPLERR APIENTRY SplCreateQueue(PCSZ,ULONG,PVOID,ULONG);
+SPLERR APIENTRY SplDeleteDevice(PCSZ,PCSZ);
+SPLERR APIENTRY SplDeleteJob(PCSZ,PCSZ,ULONG);
+SPLERR APIENTRY SplDeletePort(PCSZ,PCSZ);
+SPLERR APIENTRY SplDeleteQueue(PCSZ,PCSZ);
+SPLERR APIENTRY SplEnumDevice(PCSZ,ULONG,PVOID,ULONG,PULONG,PULONG,PULONG,PVOID);
+SPLERR APIENTRY SplEnumDriver(PCSZ,ULONG,PVOID,ULONG,PULONG,PULONG,PULONG,PVOID);
+SPLERR APIENTRY SplEnumJob(PCSZ,PCSZ,ULONG,PVOID,ULONG,PULONG,PULONG,PULONG,PVOID);
+SPLERR APIENTRY SplEnumPort(PCSZ,ULONG,PVOID,ULONG,PULONG,PULONG,PULONG,PVOID);
+SPLERR APIENTRY SplEnumPrinter(PCSZ,ULONG,ULONG,PVOID,ULONG,PULONG,PULONG,PULONG,PVOID);
+SPLERR APIENTRY SplEnumQueue(PCSZ,ULONG,PVOID,ULONG,PULONG,PULONG,PULONG,PVOID);
+SPLERR APIENTRY SplEnumQueueProcessor(PCSZ,ULONG,PVOID,ULONG,PULONG,PULONG,PULONG,PVOID);
+SPLERR APIENTRY SplHoldJob(PCSZ,PCSZ,ULONG);
+SPLERR APIENTRY SplHoldQueue(PCSZ,PCSZ);
+SPLERR APIENTRY SplPurgeQueue(PCSZ,PCSZ);
+SPLERR APIENTRY SplQueryDevice(PCSZ,PCSZ,ULONG,PVOID,ULONG,PULONG);
+SPLERR APIENTRY SplQueryDriver(PCSZ,PCSZ,PCSZ,ULONG,PVOID,ULONG,PULONG);
+SPLERR APIENTRY SplQueryJob(PCSZ,PCSZ,ULONG,ULONG,PVOID,ULONG,PULONG);
+SPLERR APIENTRY SplQueryPort(PCSZ,PCSZ,ULONG,PVOID,ULONG,PULONG);
+SPLERR APIENTRY SplQueryQueue(PCSZ,PCSZ,ULONG,PVOID,ULONG,PULONG);
+SPLERR APIENTRY SplReleaseJob(PCSZ,PCSZ,ULONG);
+SPLERR APIENTRY SplReleaseQueue(PCSZ,PCSZ);
+SPLERR APIENTRY SplSetDevice(PCSZ,PCSZ,ULONG,PVOID,ULONG,ULONG);
+SPLERR APIENTRY SplSetDriver(PCSZ,PCSZ,PCSZ,ULONG,PVOID,ULONG,ULONG);
+SPLERR APIENTRY SplSetJob(PCSZ,PCSZ,ULONG,ULONG,PVOID,ULONG,ULONG);
+SPLERR APIENTRY SplSetPort(PCSZ,PCSZ,ULONG,PVOID,ULONG,ULONG);
+SPLERR APIENTRY SplSetQueue(PCSZ,PCSZ,ULONG,PVOID,ULONG,ULONG);
 
 #endif
 
