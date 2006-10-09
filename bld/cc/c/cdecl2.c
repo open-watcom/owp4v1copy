@@ -216,8 +216,10 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class, decl_state *state 
                     old_sym.defn_file_index = sym->defn_file_index;
                 }
             }
-            // check lang flags to make sure no one saw an incompatible prototype
-            if( !ChkCompatibleLanguage( sym->attrib, old_sym.attrib ) ) {
+            // check lang flags to make sure no one saw an incompatible prototype; if
+            // previous prototype specified calling convention and later definition does
+            // not, propagate the convention from the prototype
+            if( (sym->attrib & FLAG_LANGUAGES) && !ChkCompatibleLanguage( sym->attrib, old_sym.attrib ) ) {
                 CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
             }
             if( (sym->attrib & FLAG_INLINE) != (old_sym.attrib & FLAG_INLINE) ) {
