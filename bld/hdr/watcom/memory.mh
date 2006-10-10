@@ -262,6 +262,8 @@ namespace std {
   // auto_ptr template
   // *****************
 
+  template< class Type > struct auto_ptr;
+
   template< class Type >
   struct auto_ptr_ref {
     auto_ptr< Type > &ref;
