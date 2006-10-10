@@ -146,6 +146,9 @@ public:
     }
 };
 
+
+RegExp *mkAlt(RegExp*, RegExp*);
+
 class AltOp: public RegExp {
 private:
     RegExp      *exp1, *exp2;
