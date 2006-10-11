@@ -11,11 +11,9 @@
  use the NB02 or NB04 signatures. Both 16-bit and 32-bit modules are supported.
 
  A more comprehensive description of the IBM HL03 debugging information format
- may be found in a separate document.
-
- Note that the type information described here is similar in concept to the
- later Microsoft CV4 style debugging information, but differs significantly
- in detail.
+ may be found in a separate document. Not all types used by HL03 format are
+ listed here. However, this is the only known document describing the format
+ of Microsoft CodeView version 3 (CV3) type record information.
 
  The following information is based on a document that is part of the publicly
  available IBM SD386 debugger source code archive.
@@ -439,10 +437,10 @@
                          |    |                                            |    |
     numeric leaf of the -      ---- 0x7C - unsigned   numeric leaf of the -      - numeric leaf of the
     size of the scalar              0x7D - signed     minimum value that           maximum value that
-    in bits. This will be:          0x6F - character  the scalar is
-    0x08 -  8 bits
+    in bits. This will be:          0x6F - character  the scalar is                the scalar is
+    0x08 -  8 bits                                    allowed to take.             allowed to take.
     0x10 - 16 bits
-    0x20 - 32 bits                                                                 to take.
+    0x20 - 32 bits
 
 
 

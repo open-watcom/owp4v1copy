@@ -30,12 +30,25 @@
 
 
 #include <string.h>
+/* FIXME: kick out these! */
+#include "cv4w.h"
+enum {
+#define _CVREG( name, num )     CV_X86_##name = num,
+#include "cv4intl.h"
+#undef _CVREG
+#define _CVREG( name, num )     CV_AXP_##name = num,
+#include "cv4axp.h"
+CV_LAST_REG
+};
 #include "hllinfo.h"
 
 
 const char      DIPImpName[] = "HLL/CV";
 
-unsigned        DIPENTRY DIPImpQueryHandleSize( handle_kind hk )
+/*
+ * Get the size of a handle.
+ */
+unsigned DIPENTRY DIPImpQueryHandleSize( handle_kind hk )
 {
     static unsigned_8 Sizes[] = {
         sizeof( imp_image_handle ),
@@ -47,50 +60,68 @@ unsigned        DIPENTRY DIPImpQueryHandleSize( handle_kind hk )
     return( Sizes[ hk ] );
 }
 
-dip_status      DIPENTRY DIPImpMoreMem( unsigned size )
+/*
+ * Free memory.
+ */
+dip_status DIPENTRY DIPImpMoreMem( unsigned size )
 {
     size = size;
     return( (VMShrink() != 0) ? DS_OK : DS_FAIL );
 }
 
-dip_status      DIPENTRY DIPImpStartup(void)
+/*
+ * Module startup.
+ */
+dip_status DIPENTRY DIPImpStartup(void)
 {
     return( DS_OK );
 }
 
-void            DIPENTRY DIPImpShutdown( void )
+/*
+ * Module shutdown.
+ */
+void DIPENTRY DIPImpShutdown( void )
 {
 }
 
-void            DIPENTRY DIPImpCancel( void )
+/*
+ * ?
+ */
+void DIPENTRY DIPImpCancel( void )
 {
 }
 
-unsigned NameCopy( char *dst, const char *src, unsigned max, unsigned len )
+/*
+ * Creates a zero terminated string.
+ */
+unsigned hllNameCopy( char *dst, const char *src, unsigned max, unsigned len )
 {
     if( max > 0 ) {
         --max;
-        if( max > len ) max = len;
+        if( max > len )
+            max = len;
         memcpy( dst, src, max );
         dst[ max ] = '\0';
     }
     return( len );
 }
 
-hll_debug_dir *FindDirEntry( imp_image_handle *ii, imp_mod_handle im,
-                             unsigned subsection_type )
+/*
+ * Finds a subsection directory entry for a specific module.
+ */
+hll_dir_entry *hllFindDirEntry( imp_image_handle *ii, imp_mod_handle im, hll_sst sst )
 {
     unsigned            i;
     unsigned            block;
     unsigned            full_blocks;
     unsigned            remainder;
-    hll_debug_dir       *p;
+    hll_dir_entry       *p;
 
     full_blocks = BLOCK_FACTOR( ii->dir_count, DIRECTORY_BLOCK_ENTRIES ) - 1;
     for( block = 0; block < full_blocks; ++block ) {
         for( i = 0; i < DIRECTORY_BLOCK_ENTRIES; ++i ) {
             p = &ii->directory[block][i];
-            if( p->subsection == subsection_type && p->iMod == im ) {
+            if( p->iMod == im && p->subsection == sst) {
                 return( p );
             }
         }
@@ -98,35 +129,49 @@ hll_debug_dir *FindDirEntry( imp_image_handle *ii, imp_mod_handle im,
     remainder = ii->dir_count - (full_blocks * DIRECTORY_BLOCK_ENTRIES);
     for( i = 0; i < remainder; ++i ) {
         p = &ii->directory[block][i];
-        if( p->subsection == subsection_type && p->iMod == im ) {
+        if( p->iMod == im && p->subsection == sst) {
             return( p );
         }
     }
     return( NULL );
 }
 
-walk_result WalkDirList( imp_image_handle *ii, DIR_WALKER *wk, void *d )
+/*
+ * Walks the subsection directory.
+ *
+ * Use 'sst' to limit the callbacks to one specific type. A 'sst' of 0
+ * means everything.
+ */
+walk_result hllWalkDirList( imp_image_handle *ii, hll_sst sst, DIR_WALKER *wk, void *d )
 {
     unsigned            i;
     unsigned            block;
     unsigned            full_blocks;
     unsigned            remainder;
     walk_result         wr;
-    hll_debug_dir       *p;
+    hll_dir_entry       *p;
 
     full_blocks = BLOCK_FACTOR( ii->dir_count, DIRECTORY_BLOCK_ENTRIES ) - 1;
     for( block = 0; block < full_blocks; ++block ) {
         for( i = 0; i < DIRECTORY_BLOCK_ENTRIES; ++i ) {
             p = &ii->directory[block][i];
-            wr = wk( ii, p, d );
-            if( wr != WR_CONTINUE ) return( wr );
+            if( p->subsection == sst || sst == 0) {
+                wr = wk( ii, p, d );
+                if( wr != WR_CONTINUE ) {
+                    return( wr );
+                }
+            }
         }
     }
     remainder = ii->dir_count - (full_blocks * DIRECTORY_BLOCK_ENTRIES);
     for( i = 0; i < remainder; ++i ) {
         p = &ii->directory[block][i];
-        wr = wk( ii, p, d );
-        if( wr != WR_CONTINUE ) return( wr );
+        if( p->subsection == sst || sst == 0) {
+            wr = wk( ii, p, d );
+            if( wr != WR_CONTINUE ) {
+                return( wr );
+            }
+        }
     }
     return( WR_CONTINUE );
 }
@@ -154,7 +199,7 @@ static const struct {
     { TK_STRING,        0 },
 };
 
-void *GetNumLeaf( void *p, numeric_leaf *v )
+void *hllGetNumLeaf( void *p, numeric_leaf *v )
 {
     unsigned            key;
 
@@ -192,8 +237,8 @@ void *GetNumLeaf( void *p, numeric_leaf *v )
 }
 
 
-dip_status DoIndirection( imp_image_handle *ii, type_info *ti,
-                        location_context *lc, location_list *ll )
+dip_status hllDoIndirection( imp_image_handle *ii, type_info *ti,
+                             location_context *lc, location_list *ll )
 {
     union {
         unsigned_8      u8;
@@ -208,7 +253,7 @@ dip_status DoIndirection( imp_image_handle *ii, type_info *ti,
     dip_status          ds;
 
     ii = ii;
-    LocationCreate( &dst, LT_INTERNAL, &tmp );
+    hllLocationCreate( &dst, LT_INTERNAL, &tmp );
     ds = DCAssignLocation( &dst, ll, ti->size );
     if( ds != DS_OK ) return( ds );
     ds = DCItemLocation( lc, CI_DEF_ADDR_SPACE, ll );
@@ -231,7 +276,10 @@ dip_status DoIndirection( imp_image_handle *ii, type_info *ti,
     return( DS_OK );
 }
 
-void NYI( void )
+/*
+ * Don't know what's happening.
+ */
+void hllConfused()
 {
     volatile int a = 0;
     volatile int b = 0;
@@ -239,8 +287,32 @@ void NYI( void )
     a /= b; /* cause a fault */
 }
 
-void Confused( void )
+#ifdef HLL_LOG_ENABLED
+# include <stdio.h>
+# include <stdarg.h>
+
+/*
+ * Debug logging.
+ */
+void hllLog(const char *fmt, ...)
 {
-    /* don't know what's happening */
-    NYI();
+    /*
+     * Open the file on the first call.
+     */
+    static FILE *file = NULL;
+    if( file == NULL ) {
+        file = fopen( "hllcv.log", "w" );
+    }
+
+    /*
+     * Write to the file if open succeeded.
+     */
+    if( file != NULL) {
+        va_list va;
+        va_start( va, fmt );
+        fprintf( file, fmt, va );
+        va_end( va );
+        fflush( file );
+    }
 }
+#endif

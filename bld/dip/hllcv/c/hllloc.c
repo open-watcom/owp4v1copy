@@ -30,12 +30,22 @@
 
 
 #include <string.h>
+/* FIXME: kick out these! They are all WRONG! */
+#include "cv4w.h"
+enum {
+#define _CVREG( name, num )     CV_X86_##name = num,
+#include "cv4intl.h"
+#undef _CVREG
+#define _CVREG( name, num )     CV_AXP_##name = num,
+#include "cv4axp.h"
+CV_LAST_REG
+};
 #include "hllinfo.h"
 
 
 extern address          NilAddr;
 
-void LocationCreate( location_list *ll, location_type lt, void *d )
+void hllLocationCreate( location_list *ll, location_type lt, void *d )
 {
     ll->num = 1;
     ll->flags = 0;
@@ -49,7 +59,7 @@ void LocationCreate( location_list *ll, location_type lt, void *d )
     }
 }
 
-void LocationAdd( location_list *ll, long sbits )
+void hllLocationAdd( location_list *ll, long sbits )
 {
     location_entry      *le;
     unsigned long       add;
@@ -91,7 +101,7 @@ void LocationAdd( location_list *ll, long sbits )
     }
 }
 
-void LocationTrunc( location_list *ll, unsigned bits )
+void hllLocationTrunc( location_list *ll, unsigned bits )
 {
     unsigned    i;
 
@@ -178,9 +188,9 @@ static const reg_entry AXP_RegTable[] = {
     #include "cv4axp.h"
 };
 
-dip_status LocationManyReg( imp_image_handle *ii,
-                            unsigned count, const unsigned_8 *reg_list,
-                            location_context *lc, location_list *ll )
+dip_status hllLocationManyReg( imp_image_handle *ii, unsigned count,
+                               const unsigned_8 *reg_list,
+                               location_context *lc, location_list *ll )
 {
     int                 i;
     int                 j;
@@ -233,11 +243,11 @@ dip_status LocationManyReg( imp_image_handle *ii,
     return( DS_OK );
 }
 
-dip_status LocationOneReg( imp_image_handle *ii, unsigned reg,
-                            location_context *lc, location_list *ll )
+dip_status hllLocationOneReg( imp_image_handle *ii, unsigned reg,
+                              location_context *lc, location_list *ll )
 {
     unsigned_8  reg_list;
 
     reg_list = reg;
-    return( LocationManyReg( ii, 1, &reg_list, lc, ll ) );
+    return( hllLocationManyReg( ii, 1, &reg_list, lc, ll ) );
 }

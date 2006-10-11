@@ -121,10 +121,10 @@ static const char *GetTypeKind(type_kind kind)
  */
 static const char *GetTypeModifier(type_modifier modifier, type_kind kind)
 {
-    if( modifier == TM_NONE) {
+    if( modifier == TM_NONE ) {
         return( "TM_NONE" );
     }
-    if( modifier == TM_NONE|TM_FLAG_DEREF) {
+    if( modifier == TM_NONE|TM_FLAG_DEREF ) {
         return( "TM_NONE|TM_FLAG_DEREF" );
     }
 
@@ -246,7 +246,7 @@ static walk_result Sym2Callback( sym_walk_info info, sym_handle *sym, void *_idx
         case SK_CONST:      printf( "CNST  " ); break;
         case SK_TYPE:       printf( "TYPE  " ); break;
         case SK_PROCEDURE:  printf( "PROC  " ); break;
-        case SK_NAMESPACE:  printf( "NMSP  " ); break;
+        case SK_NAMESPACE:  printf( "NSPC  " ); break;
         default:            printf( "kind=%#x!  ", sinfo.kind ); break;
         }
     } else {
@@ -273,14 +273,14 @@ static walk_result Sym2Callback( sym_walk_info info, sym_handle *sym, void *_idx
         memset( buf, 0, sizeof( buf ) );
         rc = SymValue( sym, NULL, &buf[0] );
         if( rc == DS_OK ) {
-            switch(sinfo.ret_modifier) {
+            switch( sinfo.ret_modifier ) {
             }
             printf( "               " );
         } else {
             printf( "SymValue rc=%#x ", rc );
         }
     } else if( sinfo.kind == SK_NONE || sinfo.kind == SK_TYPE
-            || sinfo.kind == SK_NAMESPACE  ) {
+            || sinfo.kind == SK_NAMESPACE ) {
         printf( "               " );
         ll.num = 0;
     } else {
@@ -409,7 +409,7 @@ static walk_result Type2Callback( type_handle *th, void *_idx )
         case TK_ARRAY: {
                 array_info ainfo;
                 rc = TypeArrayInfo( th, NULL, &ainfo, NULL );
-                if( rc == DS_OK) {
+                if( rc == DS_OK ) {
                     printf( "       "
                             "low_bound=%ld num_elts=%lu stride=%lu num_dims=%u column_major=%d\n",
                             ainfo.low_bound, ainfo.num_elts, ainfo.stride,
@@ -609,7 +609,7 @@ static walk_result Mod2Callback( mod_handle mh, void *_idx )
     /*
      * Types
      */
-    if( 1 && ModHasInfo( mh, HK_TYPE ) == DS_OK) {
+    if( 1 && ModHasInfo( mh, HK_TYPE ) == DS_OK ) {
         printf( " %03d Types\n"
                 "-----------\n"
                 "\n"
@@ -705,12 +705,12 @@ static walk_result SymCallback( sym_walk_info info, sym_handle *sym, void *_idx 
     /* finally, the name. */
     /* try get the name */
     buf[0] = '\0';
-    len = SymName(sym, NULL, SN_DEMANGLED, buf, sizeof( buf ) );
+    len = SymName( sym, NULL, SN_DEMANGLED, buf, sizeof( buf ) );
     if( !len ) {
-        len = SymName(sym, NULL, SN_OBJECT, buf, sizeof( buf ) );
+        len = SymName( sym, NULL, SN_OBJECT, buf, sizeof( buf ) );
     }
     if( !len ) {
-        len = SymName(sym, NULL, SN_SOURCE, buf, sizeof( buf ) );
+        len = SymName( sym, NULL, SN_SOURCE, buf, sizeof( buf ) );
     }
     if( len > 0 ) {
         printf( "%s\n", buf );
@@ -796,13 +796,13 @@ static int DumpIt( const char *file, mod_handle mh, process_info *proc )
             "\n"
             "name        = %s\n",
             file);
-    if( !stat(file, &s) ) {
+    if( !stat( file, &s ) ) {
         struct tm   *ts;
         char        buf[80];
 
-        ts = gmtime(&s.st_mtime);
-        strftime(buf, sizeof( buf ), "%Y-%m-%d %H:%M:%S UCT", ts);
-        printf( "timestamp   = %s\n", buf);
+        ts = gmtime( &s.st_mtime );
+        strftime( buf, sizeof( buf ), "%Y-%m-%d %H:%M:%S UCT", ts );
+        printf( "timestamp   = %s\n", buf );
     }
     printf( "DIP         = %s\n", ImageDIP( mh ) );
 
@@ -859,8 +859,8 @@ static int DumpIt( const char *file, mod_handle mh, process_info *proc )
         printf( " Global Symbols\n"
                 "================\n"
                 "\n"
-                "index   seg:offset    info  lang  name\n"
-                "---------------------------------------\n");
+                "index  kind   seg:offset    info  lng name\n"
+                "------------------------------------------\n");
         i = 0;
         walkres = WalkSymList( SS_MODULE, &mh, SymCallback, &i );
         printf( "\n"

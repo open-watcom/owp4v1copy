@@ -31,6 +31,7 @@
 
 #include <string.h>
 #include <limits.h>
+#include "bool.h"
 #include "hllinfo.h"
 
 
@@ -43,15 +44,24 @@
 #define GET_PAGE( v )   (((v) >> PAGE_BITS) & (DIR_SIZE-1))
 #define GET_OFFSET( v ) ((v) & (PAGE_SIZE-1))
 
+typedef struct vm_dtor {
+    struct vm_dtor      *next;
+    void                *user;
+    void                ( *dtor )( imp_image_handle *, void * );
+} vm_dtor;
+
 typedef struct {
+    vm_dtor             *first_dtor;
     unsigned_16         time_stamp;
-    unsigned_16         len;
+    //unsigned_16         len;
+    unsigned_32         len;
     unsigned_8          data[1];        /* variable sized */
 } loaded_block;
 
 typedef struct virt_page {
     loaded_block        *block;
-    unsigned_16         offset;
+    unsigned_32         offset;
+    //unsigned_16         offset;
 } virt_page;
 
 
@@ -60,12 +70,11 @@ static unsigned         TimeStamp;
 dip_status VMInit( imp_image_handle *ii, unsigned long size )
 {
     ii->vm_dir_num = BLOCK_FACTOR( size, DIR_SIZE*PAGE_SIZE );
-    ii->virt = DCAlloc( ii->vm_dir_num * sizeof( ii->virt ) );
+    ii->virt = DCAllocZ( ii->vm_dir_num * sizeof( ii->virt ) );
     if( ii->virt == NULL ) {
         DCStatus( DS_ERR|DS_NO_MEM );
         return( DS_ERR|DS_NO_MEM );
     }
-    memset( ii->virt, 0, ii->vm_dir_num * sizeof( ii->virt ) );
     return( DS_OK );
 }
 
@@ -92,6 +101,56 @@ void VMFini( imp_image_handle *ii )
     }
 }
 
+/*
+ * Adds a destructor to a block.
+ */
+dip_status VMAddDtor( imp_image_handle *ii, virt_mem start,
+                      void ( *dtor )( imp_image_handle *ii, void *user ),
+                      void *user )
+{
+    unsigned            dir_idx;
+    unsigned            pg_idx;
+    virt_page           *pg;
+
+    /* locate the block. */
+    dir_idx = GET_DIR( start );
+    if( ii->virt[dir_idx] != NULL ) {
+        pg_idx = GET_PAGE( start );
+        pg = ii->virt[dir_idx][pg_idx];
+        if( pg != NULL ) {
+            /* create a new dtor node and link it in */
+            vm_dtor *node = DCAlloc( sizeof( *node ) );
+            if( node != NULL ) {
+                node->user = user;
+                node->dtor = dtor;
+                node->next = pg->block->first_dtor;
+                pg->block->first_dtor = node;
+                return( DS_OK );
+            }
+            return( DS_ERR | DS_NO_MEM );
+        }
+    }
+
+    return( DS_ERR | DS_FAIL );
+}
+
+/*
+ * Check for destructors and free the block.
+ */
+static void vmFreeBlock( imp_image_handle *ii, virt_page *pg )
+{
+    /* check for destructors */
+    while ( pg->block->first_dtor ) {
+        struct vm_dtor *cur = pg->block->first_dtor;
+        pg->block->first_dtor = cur->next;
+        cur->dtor( ii, cur->user );
+        DCFree( cur );
+    }
+
+    /* free */
+    DCFree( pg );
+}
+
 static unsigned KillPages( imp_image_handle *ii, unsigned i, unsigned j )
 {
     unsigned            idx;
@@ -108,19 +167,18 @@ static unsigned KillPages( imp_image_handle *ii, unsigned i, unsigned j )
         ii->virt[i][j] = NULL;
         ++j;
     }
-    DCFree( pg );
+    vmFreeBlock( ii, pg );
     return( num_pages * PAGE_SIZE );
 }
 
-static int InitPageDir( imp_image_handle *ii, unsigned dir_idx )
+static bool InitPageDir( imp_image_handle *ii, unsigned dir_idx )
 {
-    ii->virt[dir_idx] = DCAlloc( sizeof( virt_page * ) * DIR_SIZE );
+    ii->virt[dir_idx] = DCAllocZ( sizeof( virt_page * ) * DIR_SIZE );
     if( ii->virt[dir_idx] == NULL ) {
         DCStatus( DS_ERR | DS_NO_MEM );
-        return( 0 );
+        return( FALSE );
     }
-    memset( ii->virt[dir_idx], 0, sizeof( virt_page * ) * DIR_SIZE );
-    return( 1 );
+    return( TRUE );
 }
 
 void *VMBlock( imp_image_handle *ii, virt_mem start, unsigned len )
@@ -160,7 +218,7 @@ void *VMBlock( imp_image_handle *ii, virt_mem start, unsigned len )
                 --i;
                 --pg;
             }
-            DCFree( pg );
+            vmFreeBlock( ii, pg );
         }
         num_pages = BLOCK_FACTOR( len, PAGE_SIZE );
         pg = DCAlloc( num_pages * (sizeof( *pg ) + PAGE_SIZE)
@@ -208,6 +266,7 @@ void *VMBlock( imp_image_handle *ii, virt_mem start, unsigned len )
         /* read in new block */
         len = num_pages * PAGE_SIZE;
         block->len = len;
+        block->first_dtor = NULL;
         pg_start += ii->bias;
         if( DCSeek( ii->sym_file, pg_start, DIG_ORG ) != pg_start ) {
             DCStatus( DS_ERR | DS_FSEEK_FAILED );
@@ -243,16 +302,165 @@ void *VMBlock( imp_image_handle *ii, virt_mem start, unsigned len )
     return( &pg->block->data[ (start & (PAGE_SIZE - 1)) + pg->offset ] );
 }
 
-void *VMRecord( imp_image_handle *ii, virt_mem rec )
+/*
+ * Get a 8-bit value.
+ */
+bool VMGetU8( imp_image_handle *ii, virt_mem start, unsigned_8 *valp )
 {
-    s_common    *p;
+    unsigned_8 *ptr = VMBlock( ii, start, sizeof(*valp) );
+    if( ptr ) {
+        *valp = *ptr;
+        return( TRUE );
+    }
+    return( FALSE );
+}
 
-    p = VMBlock( ii, rec, sizeof( *p ) );
+/*
+ * Get a 16-bit value.
+ */
+bool VMGetU16( imp_image_handle *ii, virt_mem start, unsigned_16 *valp )
+{
+    unsigned_16 *ptr = VMBlock( ii, start, sizeof(*valp) );
+    if( ptr ) {
+        *valp = *ptr;
+        return( TRUE );
+    }
+    return( FALSE );
+}
+
+/*
+ * Get a 32-bit value.
+ */
+bool VMGetU32( imp_image_handle *ii, virt_mem start, unsigned_32 *valp )
+{
+    unsigned_32 *ptr = VMBlock( ii, start, sizeof(*valp) );
+    if( ptr ) {
+        *valp = *ptr;
+        return( TRUE );
+    }
+    return( FALSE );
+}
+
+/*
+ * Gets a symbol scope table record.
+ * Returns pointer to a hll_ssr_common structure on success.
+ */
+void *VMRecord( imp_image_handle *ii, virt_mem rec_off, virt_mem *next_rec, unsigned_16 *sizep )
+{
+    unsigned_16 size = 0;
+    unsigned_8 *p;
+
+    p = VMBlock( ii, rec_off, 2 );
     if( p != NULL ) {
-        p = VMBlock( ii, rec, p->length + sizeof( p->length ) );
+        size = *p;
+        if( size & 0x80 ) {
+            size = (size & 0x7f) << 8;
+            size |= p[1];
+            rec_off++;
+        }
+        rec_off++;
+        p = VMBlock( ii, rec_off, size );
+    }
+    if( sizep ) {
+        *sizep = size;
+    }
+    if( next_rec ) {
+        *next_rec = rec_off + size;
     }
     return( p );
 }
+
+/*
+ * Get a block within a section.
+ */
+void *VMSsBlock( imp_image_handle *ii, hll_dir_entry *hde, unsigned_32 start, unsigned len )
+{
+    if(     start < hde->cb
+       &&   start + len <= hde->cb ) {
+        return( VMBlock( ii, hde->lfo + start, len ) );
+    }
+    return( NULL );
+}
+
+/*
+ * Get a 8-bit value.
+ */
+bool VMSsGetU8( imp_image_handle *ii, hll_dir_entry *hde, unsigned_32 start, unsigned_8 *valp )
+{
+    if( start < hde->cb ) {
+        unsigned_8 *ptr = VMBlock( ii, hde->lfo + start, sizeof(*valp) );
+        if( ptr ) {
+            *valp = *ptr;
+            return( TRUE );
+        }
+    }
+    return( FALSE );
+}
+
+/*
+ * Get a 16-bit value.
+ */
+bool VMSsGetU16( imp_image_handle *ii, hll_dir_entry *hde, unsigned_32 start, unsigned_16 *valp )
+{
+    if( start <= hde->cb - sizeof(*valp) ) {
+        unsigned_16 *ptr = VMBlock( ii, hde->lfo + start, sizeof(*valp) );
+        if( ptr ) {
+            *valp = *ptr;
+            return( TRUE );
+        }
+    }
+    return( FALSE );
+}
+
+/*
+ * Get a 32-bit value.
+ */
+bool VMSsGetU32( imp_image_handle *ii, hll_dir_entry *hde, unsigned_32 start, unsigned_32 *valp )
+{
+    if( start <= hde->cb - sizeof(*valp) ) {
+        unsigned_32 *ptr = VMBlock( ii, hde->lfo + start, sizeof(*valp) );
+        if( ptr ) {
+            *valp = *ptr;
+            return( TRUE );
+        }
+    }
+    return( FALSE );
+}
+
+/*
+ * Gets a symbol scope table record.
+ * Returns pointer to a hll_ssr_common structure on success.
+ */
+void *VMSsRecord( imp_image_handle *ii, hll_dir_entry *hde, unsigned_32 rec_off,
+                  unsigned_32 *next_rec, unsigned_16 *sizep )
+{
+    unsigned_16 size = 0;
+    unsigned_8 *p = NULL;
+
+    if( rec_off + 2 <= hde->cb) {
+        p = VMBlock( ii, hde->lfo + rec_off, 2 );
+        if( p != NULL ) {
+            size = *p;
+            if( size & 0x80 ) {
+                size = (size & 0x7f) << 8;
+                size |= p[1];
+                rec_off++;
+            }
+            rec_off++;
+            if( rec_off + size <= hde->cb ) {
+                p = VMBlock( ii, hde->lfo + rec_off, size );
+            }
+        }
+    }
+    if( sizep ) {
+        *sizep = size;
+    }
+    if( next_rec ) {
+        *next_rec = rec_off + size;
+    }
+    return( p );
+}
+
 
 unsigned VMShrink()
 {
@@ -288,3 +496,4 @@ unsigned VMShrink()
     if( kill_time == UINT_MAX ) return( 0 );
     return( KillPages( ii, kill_i, kill_j ) );
 }
+

@@ -291,6 +291,56 @@ static void dump_cv4_sstModule( unsigned_32 base, unsigned_32 offset )
     Wdputslc( "\n\n" );
 }
 
+/*
+ * dump_cv4_sstSegMap - dump CV4 sstSegInfo at 'offset' from
+ *                      'base' for 'size' bytes.
+ */
+static void dump_cv4_sstSegMap( unsigned_32 base, unsigned_32 offset,
+                                unsigned_32 size )
+/**********************************************************************/
+{
+    cv_sst_seg_map *seg_map;
+    unsigned_16     seg;
+
+    Wlseek( base + offset );
+    Wdputs( "==== sstSegMap at offset " );
+    Puthex( offset, 8 );
+    Wdputslc( "\n" );
+
+    seg_map = Wmalloc( size );
+    Wread( seg_map, size );
+
+    Wdputs( "    cSeg    = " );
+    Puthex( seg_map->cSeg, 4 );
+    Wdputslc( "\n" );
+
+    Wdputs( "    cSegLog = " );
+    Puthex( seg_map->cSegLog, 4 );
+    Wdputslc( "\n" );
+
+    Wdputslc( "    Idx   Offset    Size      Flags OVL   Group Frame iClassName\n" );
+    for( seg = 0; seg < seg_map->cSegLog; ++seg ) {
+        Wdputs( "    " );
+        Puthex( seg, 4 );
+        Wdputs( "  " );
+        Puthex( seg_map->segdesc[seg].offset, 8 );
+        Wdputs( "  " );
+        Puthex( seg_map->segdesc[seg].cbseg, 8 );
+        Wdputs( "  " );
+        Puthex( seg_map->segdesc[seg].u.flags, 4 );
+        Wdputs( "  " );
+        Puthex( seg_map->segdesc[seg].ovl, 4 );
+        Wdputs( "  " );
+        Puthex( seg_map->segdesc[seg].group, 4 );
+        Wdputs( "  " );
+        Puthex( seg_map->segdesc[seg].frame, 4 );
+        Wdputs( "  " );
+        Puthex( seg_map->segdesc[seg].iClassName, 4 );
+        Wdputs( "\n" );
+    }
+    Wdputslc( "\n" );
+}
+
 
 typedef struct {
     unsigned_16     line;
@@ -361,6 +411,10 @@ static void dump_cv4_subsection( unsigned_32 base, cv_directory_entry *dir )
             dump_cv4_sstFileIndex( base, dir->lfo, dir->cb );
         }
         break;
+    case sstSegMap:
+        if( Debug_options & MODULE_INFO ) {
+            dump_cv4_sstSegMap( base, dir->lfo, dir->cb );
+        }
     }
 }
 
