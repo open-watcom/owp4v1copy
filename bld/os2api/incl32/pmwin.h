@@ -670,6 +670,10 @@ HWND    APIENTRY WinWindowFromID(HWND,ULONG);
 
 #ifdef INCL_WINWINDOWMGR
 
+#define WM_QUERYCONVERTPOS  0x00b0
+#define QCP_CONVERT         0x0001
+#define QCP_NOCONVERT       0x0000
+
 #define QCRGN_ERROR          0
 #define QCRGN_OK             1
 #define QCRGN_NO_CLIP_REGION 2
@@ -1156,6 +1160,27 @@ BOOL    APIENTRY WinSetDlgItemText(HWND,ULONG,PCSZ);
 #endif
 
 #ifdef INCL_WINDIALOGS
+
+#define DLGC_ENTRYFIELD     0x0001
+#define DLGC_BUTTON         0x0002
+#define DLGC_RADIOBUTTON    0x0004
+#define DLGC_STATIC         0x0008
+#define DLGC_DEFAULT        0x0010
+#define DLGC_PUSHBUTTON     0x0020
+#define DLGC_CHECKBOX       0x0040
+#define DLGC_SCROLLBAR      0x0080
+#define DLGC_MENU           0x0100
+#define DLGC_TABONCLICK     0x0200
+#define DLGC_MLE            0x0400
+
+#define EDI_FIRSTTABITEM    0
+#define EDI_LASTTABITEM     1
+#define EDI_NEXTTABITEM     2
+#define EDI_PREVTABITEM     3
+#define EDI_FIRSTGROUPITEM  4
+#define EDI_LASTGROUPITEM   5
+#define EDI_NEXTGROUPITEM   6
+#define EDI_PREVGROUPITEM   7
 
 #pragma pack(2)
 
