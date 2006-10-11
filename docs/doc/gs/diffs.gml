@@ -10,7 +10,7 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2006/08/05
+:cmt. Reflects main Perforce branch as of 2006/10/10
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
 .*
@@ -34,7 +34,7 @@ applied to variables, not just functions. The new behavior is consistent with
 the C++ compiler, and also with the fact that ordinary calling convention
 type modifiers can be used with variables.
 .bull
-The C and C++ compilers have been fixed to properly declrate variable names
+The C and C++ compilers have been fixed to properly declare variable names
 based on calling convention specifiers. This fixes problems with building
 code using IBM SOM. Note that the current behavior is the same as in Open
 Watcom 1.3 and earlier.
@@ -44,6 +44,24 @@ large number of arguments (255 or more).
 .bull
 The C compiler no longer generates internal errors when options -ri and -oe
 are specified at the same time.
+.bull
+The 386 compilers have been changed to default to tuning code for P6
+architecture instead of Pentium. Optimizing for P6 typically results in
+slightly more compact and faster code.
+.bull
+The 386 C compiler has been fixed to properly convert between flat and
+__far16 pointers, especially pointers to functions. Its behavior should
+now be compatible with the C++ compiler. The problem was most likely affecting
+OS/2 users who wrote mixed 16-bit and 32-bit code.
+.bull
+The C compiler has been changed to allow redeclaration of functions in rare
+cases where initial declaration did not specify a calling convention and
+the subsequent declaration specified a calling convention which matched the
+default.
+.bull
+A new -zwf switch has been added to the C and C++ compilers. This switch is
+off by default and enables generation of FWAIT instructions on 386 and later
+CPUs. It is only needed in unusual situations.
 .bull
 The code generator no longer merges memory accesses when volatile variables
 are involved.
@@ -61,12 +79,41 @@ compilers.
 The strftime() library function has been extended to support date formats
 introduced in C99.
 .bull
+The file pointer type used with lseek() and tell() has been changed to off_t
+(from long) for compatibility with POSIX.
+.bull
+The 386 versions of _clear87() and _status87() functions have been modified
+to use the no-wait form of FPU control instructions. This allows these
+functions to be used in exception handlers when there are pending unmasked
+floating-point exceptions.
+.bull
+The 16-bit 8087 emulator has been fixed to correctly evaluate multiplies as
+infinity instead of zero in rare overflow situations.
+.bull
+The resource compiler (wrc) has been fixed to store long integer constants as
+32-bit quantities in RCDATA or user data resource statements. This behavior
+applies to Win16, Win32, and OS/2 targets. Integers without the 'L' suffix
+are stored as 16-bit and potentially truncated.
+.bull
+The OS/2 specific part of the resource compiler has been corrected to process
+RCDATA statements properly.
+.bull
 The assembler (wasm) now supports external absolute symbols. The SIZE, SIZEOF,
 LENGTH, and LENGTHOF operators have been corrected for structures.
+.bull
+Classification of privileged instructions in the assembler has been
+updated to match MASM.
+.bull
+The assembler now evaluates expressions in return instructions correctly.
+Previously, code such as 'ret 28+4' would be sometimes erroneously assembled
+as 'ret 28' instead of 'ret 32'.
 .bull
 The linker has been changed to only recognize segments of class 'STACK'
 as stack segment. Previously, any segment with class name ending with 'STACK'
 (eg. 'FSTACK') was recognized.
+.bull
+Several minor problems related to creating DOS executables have been fixed
+in the linker.
 .bull
 The RUNTIME linker directive has been extended to allow ELF ABI type and
 version specification. This functionality is similar to the brandelf utility.
@@ -77,9 +124,19 @@ symbolic target with no command list is always considered to have had its
 command list executed. That will cause any targets that are dependent on this
 symbolic target to be considered out of date.
 .bull
+The Win32 trap file is now able to determine the full pathname of debuggee's
+loaded DLLs. This may ease debugging in some cases as the debugger will be
+more likely to find debugging information for DLLs.
+.bull
 The Win16 debugger trap file (std.dll) has been modified to allow 16-bit wdw
 to run on Windows NT platforms without reporting a spurious error message on
 exit.
+.bull
+Numerous problems with the Win386 extender support have been fixed so that
+Win386 now works again.
+.bull
+The dmpobj utility has been ehnanced to support additional OMF records, and
+new command line options have been added.
 .endbull
 .*
 .*
