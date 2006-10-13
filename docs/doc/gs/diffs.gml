@@ -45,6 +45,8 @@ large number of arguments (255 or more).
 The C compiler no longer generates internal errors when options -ri and -oe
 are specified at the same time.
 .bull
+The C++ compiler has been fixed to inline intrinsic functions.
+.bull
 The 386 compilers have been changed to default to tuning code for P6
 architecture instead of Pentium. Optimizing for P6 typically results in
 slightly more compact and faster code.
