@@ -52,6 +52,7 @@ extern  instruction     *PostExpandIns(instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  name            *AllocRegName(hw_reg_set);
+extern  name            *AllocIntConst(int);
 extern  void            UpdateLive(instruction*,instruction*);
 extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  void            DupSeg(instruction*,instruction*);
@@ -459,8 +460,8 @@ extern  bool    LdStAlloc( void )
 }
 
 static bool     CanCompressResult( instruction *ins,
-                                   instruction *prev, instruction *next,
-                                   name **presult,    name **popnd )
+                                   name *prev_op0, instruction *next,
+                                   name **presult, name **popnd )
 {
     int         i;
 
@@ -472,7 +473,7 @@ static bool     CanCompressResult( instruction *ins,
     }
     if( popnd != NULL ) {
         if( *popnd != *presult ) return FALSE;
-        if( next->result != prev->operands[0] ) return FALSE;
+        if( next->result != prev_op0 ) return FALSE;
     } else {
         for( i = 0; i < ins->num_operands; ++i ) {
             if( ins->operands[i]->n.class != N_REGISTER ) {
@@ -495,6 +496,7 @@ static void     CompressIns( instruction *ins )
 {
     instruction *next;
     instruction *prev;
+    name        *prev_op0;
     name        **presult;
     name        **popnd;
     name        **preplace;
@@ -518,8 +520,28 @@ static void     CompressIns( instruction *ins )
         next = NULL;
     }
     prev = ins->head.prev;
+    prev_op0 = prev->operands[0];
     if( prev->head.opcode != OP_MOV || prev->result->n.class != N_REGISTER ) {
-        prev = NULL;
+        /* 2006-10-14 RomanT
+         * Special case: "MOV REG, 0" usually reduced to "XOR REG, REG",
+         * changing opcode and confusing deriscifier. XOR is shorter then
+         * non-optimized 16- or 32-bit MOV, but worse for 8-bit moves
+         * (same size, two commands, extra register occupied).
+         *
+         * Handling these XOR's everywhere is boring. It must be rewriten
+         * in some other way. May be we shall instroduce G_SMARTMOV which must
+         * be resolved to XOR/AND 0/OR -1/XOR+INC only during generation
+         * of machine code.
+         */
+        if ( prev->head.opcode == OP_XOR            &&
+             prev_op0 == prev->operands[1]          &&
+             TypeClassSize[ prev->type_class ] == 1
+           ) {
+            prev_op0 = AllocIntConst( 0 );  /* fake "MOV RESULT, 0" */
+        }
+        else {
+            prev = NULL;
+        }
     }
 
     presult = NULL;
@@ -541,7 +563,7 @@ static void     CompressIns( instruction *ins )
     }
     // 2006-05-19 RomanT
     // Even if compression of result failed, we must try to compress operands
-    if( CanCompressResult( ins, prev, next, presult, popnd ) ) {
+    if( CanCompressResult( ins, prev_op0, next, presult, popnd ) ) {
         replacement = next->result;
         preplace = presult;
     } else {
@@ -559,7 +581,7 @@ static void     CompressIns( instruction *ins )
         if( HW_Ovlap( (*popnd)->r.reg, ins->head.next->head.live.regs ) ) {
             return;
         }
-        replacement = prev->operands[0];
+        replacement = prev_op0;
         preplace = popnd;
     }
     if( !ChangeIns( ins, replacement, preplace, CHANGE_GEN | CHANGE_ALL ) ) return;
