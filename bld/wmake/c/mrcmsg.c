@@ -56,7 +56,6 @@ static  TABLE_TYPE  PARA_TABLE[] = {
 
 static  HANDLE_INFO hInstance = { 0 };
 static  unsigned    MsgShift;
-extern  long        FileShift;  // Defined in %devdir%\sdk\rc\wres\c\loadstr.c
 
 #define NO_RES_MESSAGE "Error: could not open message resource file.\r\n"
 #define NO_RES_SIZE (sizeof(NO_RES_MESSAGE)-1)
@@ -79,7 +78,7 @@ static long resSeek( int handle, off_t position, int where )
 WResSetRtns( open, close, read, write, resSeek, tell, malloc, free );
 
 
-extern int MsgInit( void )
+int MsgInit( void )
 /************************/
 {
     int         initerror;
@@ -113,7 +112,7 @@ extern int MsgInit( void )
 }
 
 
-extern int MsgGet( int resourceid, char *buffer )
+int MsgGet( int resourceid, char *buffer )
 /***********************************************/
 {
     if( LoadString( &hInstance, resourceid + MsgShift, (LPSTR)buffer,
@@ -124,7 +123,7 @@ extern int MsgGet( int resourceid, char *buffer )
     return( 1 );
 }
 
-extern void MsgGetTail( int resourceid, char *buffer )
+void MsgGetTail( int resourceid, char *buffer )
 /****************************************************/
 {
     char        msg[MAX_RESOURCE_SIZE];
@@ -139,7 +138,7 @@ extern void MsgGetTail( int resourceid, char *buffer )
 }
 
 
-extern void MsgFini( void )
+void MsgFini( void )
 /*************************/
 {
     if( hInstance.handle != NIL_HANDLE ) {
@@ -166,7 +165,7 @@ static char *msgInTable( int resourceid )
 }
 
 
-extern int MsgReOrder( int resourceid, char *buff, char **paratype )
+int MsgReOrder( int resourceid, char *buff, char **paratype )
 /******************************************************************/
 {
     int rvalue = 0;

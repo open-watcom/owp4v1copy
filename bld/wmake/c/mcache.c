@@ -414,7 +414,7 @@ STATIC enum cacheRet maybeCache( const char *fullpath, CENTRYPTR *pc )
  * cache routines stubbed out for non ms-dos support
  */
 
-extern void CacheInit( void )
+void CacheInit( void )
 /****************************
  * Called at the beginning of the program
  */
@@ -422,7 +422,7 @@ extern void CacheInit( void )
 }
 
 
-extern void CacheRelease( void )
+void CacheRelease( void )
 /*******************************
  * Called at any time we want to invalidate the cache
  */
@@ -442,7 +442,7 @@ extern void CacheRelease( void )
 }
 
 
-extern void CacheFini( void )
+void CacheFini( void )
 /****************************
  * Called while the program is exiting
  */
@@ -458,7 +458,7 @@ extern void CacheFini( void )
 }
 
 
-extern RET_T CacheTime( const char *fullpath, time_t *ptime )
+RET_T CacheTime( const char *fullpath, time_t *ptime )
 /************************************************************
  * Given a full path to a file, get the st_mtime for that file.  If there
  * are no errors, return 0, otherwise 1.  If the file is in directory not
@@ -501,7 +501,7 @@ extern RET_T CacheTime( const char *fullpath, time_t *ptime )
 }
 
 
-extern BOOLEAN CacheExists( const char *fullpath )
+BOOLEAN CacheExists( const char *fullpath )
 /*************************************************
  * return TRUE if the file in fullpath exists, FALSE otherwise
  */

@@ -37,13 +37,13 @@
 #include "mpathgrp.h"
 
 
-extern void DropPGroup( PGROUP *pg )
+void DropPGroup( PGROUP *pg )
 /**********************************/
 {
     FreeSafe( pg );
 }
 
-extern PGROUP *SplitPath( const char *path )
+PGROUP *SplitPath( const char *path )
 /******************************************/
 {
     PGROUP      *pg;

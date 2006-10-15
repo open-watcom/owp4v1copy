@@ -233,7 +233,7 @@ STATIC BOOLEAN fillBuffer( void )
 #ifdef __WATCOMC__
 #pragma on (check_stack);
 #endif
-extern RET_T InsFile( const char *name, BOOLEAN envsearch )
+RET_T InsFile( const char *name, BOOLEAN envsearch )
 /**********************************************************
  * Open file named name, and push it into stream.  If can't find name, it
  * tries an implicit suffix search (possibly using the env variable PATH)
@@ -274,7 +274,7 @@ extern RET_T InsFile( const char *name, BOOLEAN envsearch )
 #pragma off(check_stack);
 #endif
 
-extern void InsOpenFile( int fh )
+void InsOpenFile( int fh )
 /********************************
  * Push an already open file into the stream (ie: stdin)
  */
@@ -291,7 +291,7 @@ extern void InsOpenFile( int fh )
 }
 
 
-extern void InsString( const char *str, BOOLEAN weFree )
+void InsString( const char *str, BOOLEAN weFree )
 /*******************************************************
  * Push a string into the stream.  Assumes that contents of string remain
  * static while it is in the stream.  (ie: it doesn't make its own copy).
@@ -309,7 +309,7 @@ extern void InsString( const char *str, BOOLEAN weFree )
 }
 
 
-extern void UnGetCH( STRM_T c )
+void UnGetCH( STRM_T c )
 /******************************
  * Push back a single character
  */
@@ -324,7 +324,7 @@ extern void UnGetCH( STRM_T c )
 }
 
 
-extern STRM_T GetCHR( void )
+STRM_T GetCHR( void )
 /**************************
  * Get single next character of input
  */
@@ -410,7 +410,7 @@ STATIC RET_T streamScarce( void )
 }
 #endif
 
-extern void StreamFini( void )
+void StreamFini( void )
 /****************************/
 {
     while( headSent != NULL ) {
@@ -419,7 +419,7 @@ extern void StreamFini( void )
 }
 
 
-extern void StreamInit( void )
+void StreamInit( void )
 /****************************/
 {
     int     count;
@@ -440,7 +440,7 @@ extern void StreamInit( void )
 }
 
 
-extern RET_T GetFileLine( const char **pname, UINT16 *pline )
+RET_T GetFileLine( const char **pname, UINT16 *pline )
 /************************************************************
  * get filename, and line number of file closest to top of stack
  * FALSE - no files in stack; TRUE - returned data from top file
@@ -480,14 +480,14 @@ extern RET_T GetFileLine( const char **pname, UINT16 *pline )
 }
 
 
-extern int IsStreamEOF( void )
+int IsStreamEOF( void )
 {
     return( flagEOF );
 }
 
 
 #ifdef DEVELOPMENT      /* code to dump the stack of SENTs */
-extern void dispSENT( void )
+void dispSENT( void )
 /**************************/
 {
     char    buf[256];

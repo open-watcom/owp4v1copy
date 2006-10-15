@@ -141,7 +141,7 @@ STATIC void MemCheck( void )
 #endif  /* TRACK */
 
 #ifdef USE_SCARCE
-extern void IfMemScarce( RET_T (*func)( void ) )
+void IfMemScarce( RET_T (*func)( void ) )
 /***********************************************
  * post:    function registered in scarce list
  * remarks: The function *func must return SUCCESS if it manages to deallocate
@@ -181,7 +181,7 @@ STATIC RET_T tryScarce( void )
 }
 #endif
 
-extern void MemFini( void )
+void MemFini( void )
 /**************************
  * post:    As much memory as possible is freed.
  */
@@ -250,7 +250,7 @@ STATIC void memGrow( void )
 }
 
 
-extern void MemInit( void )
+void MemInit( void )
 /*************************/
 {
     memGrow();
@@ -306,7 +306,7 @@ STATIC void *doAlloc( size_t size )
 }
 
 
-extern void *MallocUnSafe( size_t size )
+void *MallocUnSafe( size_t size )
 /**************************************/
 {
     void *ptr;
@@ -319,7 +319,7 @@ extern void *MallocUnSafe( size_t size )
 }
 
 
-extern void *MallocSafe( size_t size )
+void *MallocSafe( size_t size )
 /*************************************
  * post:    A scarce routine may be called
  * returns: A pointer to a block of memory of size size.
@@ -340,7 +340,7 @@ extern void *MallocSafe( size_t size )
 }
 
 
-extern void *CallocSafe( size_t size )
+void *CallocSafe( size_t size )
 /*************************************
  * post:    A scarce routine may be called
  * returns: A pointer to a block of memory of size size
@@ -365,7 +365,7 @@ extern void *CallocSafe( size_t size )
 }
 
 
-extern void FreeSafe( void *ptr )
+void FreeSafe( void *ptr )
 /********************************
  * post:    The block pointed to by ptr is freed if it was allocated by
  *          MallocSafe.
@@ -380,7 +380,7 @@ extern void FreeSafe( void *ptr )
 }
 
 
-extern char *StrDupSafe( const char *str )
+char *StrDupSafe( const char *str )
 /*****************************************
  * returns: Pointer to a duplicate of str in a new block of memory.
  * aborts:  If not enough memory to make a duplicate.
@@ -405,7 +405,7 @@ extern char *StrDupSafe( const char *str )
 }
 
 
-extern void MemShrink( void )
+void MemShrink( void )
 /***************************/
 {
 #ifdef USE_FAR
@@ -418,7 +418,7 @@ extern void MemShrink( void )
 }
 
 
-extern void MemDecreaseSize( void *ptr, size_t new_size )
+void MemDecreaseSize( void *ptr, size_t new_size )
 /*******************************************************/
 {
 #ifdef TRACK
@@ -431,7 +431,7 @@ extern void MemDecreaseSize( void *ptr, size_t new_size )
 
 #ifdef USE_FAR
 
-extern void FAR *FarMaybeMalloc( size_t size )
+void FAR *FarMaybeMalloc( size_t size )
 /********************************************/
 {
     if( !largeNearSeg ) {
@@ -441,7 +441,7 @@ extern void FAR *FarMaybeMalloc( size_t size )
 }
 
 
-extern void FAR *FarMalloc( size_t size )
+void FAR *FarMalloc( size_t size )
 /***************************************/
 {
     void FAR *p;
@@ -455,7 +455,7 @@ extern void FAR *FarMalloc( size_t size )
 }
 
 
-extern void FarFree( void FAR *p )
+void FarFree( void FAR *p )
 /********************************/
 {
     _ffree( p );

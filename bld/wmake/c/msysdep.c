@@ -71,7 +71,8 @@ void InitHardErr( void )
 #endif
 
 #if defined( __DOS__ )
-extern char             DOSSwitchChar(void);
+//extern char             DOSSwitchChar(void);
+char             DOSSwitchChar(void);
 #pragma aux             DOSSwitchChar = \
         "mov ax,3700h"  \
         "int 21h"       \
@@ -80,7 +81,7 @@ extern char             DOSSwitchChar(void);
         modify          [ax dx];
 #endif
 
-extern int SwitchChar( void )
+int SwitchChar( void )
 /***************************/
 {
 #if defined( __DOS__ )
@@ -96,7 +97,8 @@ extern int SwitchChar( void )
 #if defined( __DOS__ ) && !defined ( __386__ )
 /* see page 90-91 of "Undocumented DOS" */
 
-extern void far *       _DOS_list_of_lists( void );
+//extern void far *       _DOS_list_of_lists( void );
+void far *       _DOS_list_of_lists( void );
 #pragma aux             _DOS_list_of_lists = \
         "mov ax,5200h"  \
         "int 21h"       \
@@ -104,7 +106,7 @@ extern void far *       _DOS_list_of_lists( void );
         value           [es bx] \
         modify          [ax es bx];
 
-extern int OSCorrupted( void )
+int OSCorrupted( void )
 /****************************/
 {
     _Packed struct mcb {
@@ -139,7 +141,7 @@ extern int OSCorrupted( void )
     return( 0 );
 }
 #else
-extern int OSCorrupted( void )
+int OSCorrupted( void )
 /****************************/
 {
     return( 0 );
@@ -147,7 +149,7 @@ extern int OSCorrupted( void )
 #endif
 
 #if defined( __DOS__ )
-extern RET_T TouchFile( const char *name )
+RET_T TouchFile( const char *name )
 /****************************************/
 {
     tiny_date_t     dt;
@@ -190,7 +192,7 @@ extern RET_T TouchFile( const char *name )
     #include <sys/utime.h>
 #endif
 
-extern RET_T TouchFile( const char *name )
+RET_T TouchFile( const char *name )
 /****************************************/
 {
     int     fh;
@@ -329,7 +331,7 @@ STATIC void cleanDLLCmd( void )
 
 
 #ifndef NDEBUG
-extern void DLLFini( void )
+void DLLFini( void )
 {
     cleanDLLCmd();
 }
@@ -365,7 +367,7 @@ static void breakHandler( int sig_number )
     passOnBreak();
 }
 
-extern void InitSignals( void ) {
+void InitSignals( void ) {
     sig_count = 0;
     DoingUpdate = FALSE;
 #ifndef __UNIX__

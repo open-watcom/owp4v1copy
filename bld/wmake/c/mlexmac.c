@@ -77,7 +77,7 @@ STATIC TOKEN_T lexFormQualifier( TOKEN_T tok )
 }
 
 
-extern void GetModifier( void )
+void GetModifier( void )
 /*****************************/
 {
     STRM_T  t;
@@ -145,7 +145,7 @@ STATIC char *CatModifier( char *inString, BOOLEAN destroy )
     }
 }
 
-extern TOKEN_T LexMSDollar( STRM_T t )
+TOKEN_T LexMSDollar( STRM_T t )
 /*************************************
  *  If it is PartDeMacro then we have to put back the tokens as if it were a
  *  MAC_NAME so that it can be DeMacroed fully later
@@ -307,7 +307,7 @@ STATIC TOKEN_T lexSubString( TOKEN_T t )
 #endif
 
 
-extern TOKEN_T LexMacSubst( TOKEN_T t )
+TOKEN_T LexMacSubst( TOKEN_T t )
 /**************************************
  * returns: next macro substitution type token of input
  */
@@ -331,7 +331,7 @@ extern TOKEN_T LexMacSubst( TOKEN_T t )
 #ifdef __WATCOMC__
 #pragma on (check_stack);
 #endif
-extern TOKEN_T LexMacDef( TOKEN_T t )
+TOKEN_T LexMacDef( TOKEN_T t )
 /************************************
  * returns: MAC_TEXT, or MAC_WS up to EOL or $+
  */

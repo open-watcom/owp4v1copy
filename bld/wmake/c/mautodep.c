@@ -37,9 +37,9 @@
 #include "mupdate.h"
 #include "mautodep.h"
 
-extern auto_dep_info const OMFAutoDepInfo;
-extern auto_dep_info const ORLAutoDepInfo;
-extern auto_dep_info const RESAutoDepInfo;
+#include "mautoomf.h"
+#include "mautoorl.h"
+#include "mautores.h"
 
 static auto_dep_info const *AutoDepTypes[] = {
     &OMFAutoDepInfo,

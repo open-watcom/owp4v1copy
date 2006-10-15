@@ -33,7 +33,7 @@
 #include "mrcmsg.h"
 #include "msg.h"
 
-extern int MyAssert( const char *expr, const char *file, int line )
+int MyAssert( const char *expr, const char *file, int line )
 /*****************************************************************/
 {
     PrtMsg( FTL | ASSERTION_FAILED, expr, file, line );

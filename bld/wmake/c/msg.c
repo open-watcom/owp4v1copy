@@ -384,7 +384,7 @@ STATIC size_t doFmtStr( char *buff, const char FAR *src, va_list args )
 }
 
 
-extern size_t FmtStr( char *buff, const char *fmt, ... )
+size_t FmtStr( char *buff, const char *fmt, ... )
 /*******************************************************
  * quick sprintf routine... see doFmtStr
  */
@@ -410,7 +410,7 @@ STATIC void logWrite( const char *buff, size_t len )
 #ifdef __WATCOMC__
 #pragma on (check_stack);
 #endif
-extern void PrtMsg( enum MsgClass num, ... )
+void PrtMsg( enum MsgClass num, ... )
 /*******************************************
  * report a message with various format options
  */
@@ -532,7 +532,7 @@ extern void PrtMsg( enum MsgClass num, ... )
 #endif
 
 
-extern void Usage( void )
+void Usage( void )
 /***********************/
 {
     char        msgbuff[MAX_RESOURCE_SIZE];
@@ -552,7 +552,7 @@ extern void Usage( void )
 #ifdef __WATCOMC__
 #pragma on (check_stack);
 #endif
-extern BOOLEAN GetYes( enum MsgClass querymsg )
+BOOLEAN GetYes( enum MsgClass querymsg )
 /**********************************************
  * ask question, and return true if user responds 'y', else false
  * You should phrase the question such that the default action is the least
@@ -574,7 +574,7 @@ extern BOOLEAN GetYes( enum MsgClass querymsg )
 #endif
 
 
-extern void LogInit( const char *name )
+void LogInit( const char *name )
 /**************************************
  * assumes name points to static memory
  */
@@ -589,7 +589,7 @@ extern void LogInit( const char *name )
 }
 
 
-extern void LogFini( void )
+void LogFini( void )
 /*************************/
 {
     if( logFH != -1 ) {
