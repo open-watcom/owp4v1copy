@@ -46,13 +46,6 @@
 #include "wlink.h"
 #include "wlnkmsg.h"
 
-#if 0
-extern void FiniSubSystems( void );
-extern void InitSubSystems( void );
-extern void CheckBreak( void );
-extern void LinkMainLine( char * );
-#endif
-
 #if IDE_GET_TARGET_FILE != EXTRA_NAME_DIR
   || IDE_GET_OBJ_FILE != EXTRA_OBJ_FILE
   || IDE_GET_LIB_FILE != EXTRA_LIB_FILE
