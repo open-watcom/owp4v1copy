@@ -53,8 +53,9 @@ static  HANDLE_INFO     hInstance = { 0 };
 static  unsigned        MsgShift;
 static  int             Res_Flag;
 
-/* Declared in $(CLIB)\h\initarg.h. Not sure how to remove this one yet. Will find on next pass */
-extern char *   _LpDllName;
+#include "widechar.h"
+#include "initarg.h"
+
 int WLinkItself;   // file handle
 
 #define NO_RES_MESSAGE "could not open message resource file"

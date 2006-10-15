@@ -82,6 +82,7 @@ extra_c_flags_sharedio   = -DINSIDE_WLINK -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"
 extra_c_flags_stidedrv   = -DSTATIC_LINKAGE -I"$(watcom_dir)/c"
 extra_c_flags_trmem      = $(trmem_cflags)
 extra_c_flags_mem        = $(trmem_cover_cflags)
+extra_c_flags_wlnkmsg    =  -I"$(lib_misc_dir)/h" -I"$(clib_dir)/h"
 
 #####################
 # linker .EXE options
