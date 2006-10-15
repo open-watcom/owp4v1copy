@@ -317,12 +317,21 @@ static  void            PostOptimize( void )
     MergeIndex();
     if( _IsntModel( NO_OPTIMIZATION ) ) {
     #if !(_TARGET & _TARG_RISC)
+        //
+        // Calling Conditions() at this point has nice optimization effect,
+        // but doesn't working correctly right now. It optimizes conditions
+        // making them dependent from previous conditions codes, but riscifier
+        // generates XOR's which will trash cond. codes. Either Conditions()
+        // either riscifier must be fixed to handle this situation.
+        //
+    #if 0
         // Get rid of unused conditions on variables level
         // to decrease number of referenced vars in LdStAlloc() and Score()
         if( _IsntTargetModel( STATEMENT_COUNTING ) ) {
             Conditions();
             DeadInstructions(); // cleanup junk after Conditions()
         }
+    #endif
     #endif
         // OptCloseMoves();  // todo: merge constant moves before riscifier
         LdStAlloc();
@@ -331,6 +340,9 @@ static  void            PostOptimize( void )
         // deRISCify before LoopRegInvariant() or Shedule() are run:
         // they're moving RISCified pair.
         LdStCompress();
+        // Reuse registers freed by deriscifier
+        // Score();
+        // DeadInstructions(); // cleanup junk after Score()
         if( !BlockByBlock ) LoopRegInvariant();
     #if !(_TARGET & _TARG_RISC)
         // Get rid of remaining unused conditions on register level.
