@@ -115,6 +115,7 @@ extern void     NovDBIGenGlobal( symbol * );
 extern void     FiniNovellLoadFile( void );
 extern void     AddNovImpReloc( symbol *, unsigned_32, bool, bool );
 extern void     FindExportedSyms( void );
+extern void     ResetLoadNov( void );
 
 #pragma pack(pop)
 

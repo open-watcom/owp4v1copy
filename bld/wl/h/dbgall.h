@@ -58,3 +58,4 @@ extern void     DBIFini( section * );
 extern void     DBISectCleanup( section * );
 extern void     DBICleanup( void );
 extern void     WriteDBI( void );
+extern void     ResetDBI( void );

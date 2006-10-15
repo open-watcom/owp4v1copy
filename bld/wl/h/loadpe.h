@@ -41,6 +41,7 @@ extern void             AllocPETransferTable( void );
 extern void             GenPEToc( void );
 extern void             ChkPEData( void );
 extern unsigned long    GetPEHeaderSize( void );
+extern void             ResetLoadPE( void );
 
 struct import_name {
     struct import_name *next;

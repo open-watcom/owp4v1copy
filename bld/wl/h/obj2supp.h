@@ -122,3 +122,4 @@ extern unsigned IncSaveRelocs( void * );
 extern unsigned RelocMarkSyms( void * );
 extern void     RelocStartMod( void );
 extern void     StoreFixup(offset, fix_type, frame_spec *, frame_spec *,offset);
+extern void     ResetObj2Supp( void );

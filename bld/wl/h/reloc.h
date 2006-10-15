@@ -224,6 +224,7 @@ extern unsigned_32      DumpMaxRelocList( RELOC_INFO **, unsigned_32 );
 extern bool             DumpRelocList( RELOC_INFO * );
 extern void             SetRelocSize( void );
 extern bool             SwapOutRelocs( void );
+extern void             ResetReloc( void );
 
 extern unsigned         FmtRelocSize;
 extern RELOC_INFO *     FloatFixups;

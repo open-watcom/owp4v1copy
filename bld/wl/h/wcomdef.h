@@ -34,3 +34,4 @@ extern void     ProcComdef( bool );
 extern void     ProcLinsym( void );
 extern void     ResolveComdats( void );
 extern void     ProcComdat( void );
+extern void     ResetComdef( void );

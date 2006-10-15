@@ -134,5 +134,6 @@ extern bool     ProcOrdSegSegAdr( void );
 extern bool     ProcOrdSegOfsAdr( void );
 extern bool     ProcOrdSegCopy( void );
 extern bool     ProcOrdSegNoEmit( void );
+extern void     ResetCmdAll( void );
 
 extern sysblock *       FindSysBlock( char * );

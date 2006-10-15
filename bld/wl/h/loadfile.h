@@ -90,3 +90,4 @@ extern void             WriteGroupLoad( group_entry * );
 extern unsigned_32      CopyToLoad( f_handle, char * );
 extern unsigned long    NullAlign( unsigned );
 extern unsigned long    OffsetAlign( unsigned long, unsigned long );
+extern void             ResetLoadFile( void );

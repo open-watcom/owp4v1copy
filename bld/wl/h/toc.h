@@ -44,6 +44,7 @@ extern void             WriteToc( virt_mem );
 extern void             SetTocAddr( offset , group_entry * );
 extern void             CheckIfTocSym( symbol * );
 extern bool             IsTocSym( symbol * );
+extern void             ResetToc( void );
 
 extern offset TocSize;
 extern offset TocShift;

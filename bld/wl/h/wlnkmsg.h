@@ -60,3 +60,4 @@ extern void     Msg_Put_Args( char rc_buff[], MSG_ARG_LIST *, char *, va_list *)
 extern void     Msg_Write_Map( int resourceid, ... );
 extern int      FiniMsg( void );
 
+extern int WLinkItself;

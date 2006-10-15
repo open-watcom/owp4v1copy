@@ -52,4 +52,4 @@ extern void     DoWriteMap( char *, va_list * );
 extern void     WriteMap( char *, ... );
 extern void     WriteFormat( int, char *, ... );
 extern void     BufWrite( char *, int );
-
+extern void     ResetMapIO( void );
