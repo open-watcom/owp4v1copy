@@ -32,6 +32,7 @@
 
 #include <os2.h>
 char *ImageName;
+/* Declared in $(CLIB)\h\initarg.h. Not sure how to remove this one yet. Will find on next pass */
 extern char * _LpDllName;
 unsigned __dll_initialize()
 {

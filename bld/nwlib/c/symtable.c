@@ -976,7 +976,7 @@ static void printVerboseTableEntry( arch_header *arch )
 }
 
 
-extern void ListContents( void )
+void ListContents( void )
 /******************************/
 {
     sym_file    *file;
