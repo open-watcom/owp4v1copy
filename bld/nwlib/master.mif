@@ -150,8 +150,8 @@ depends_drv = $(drv_objs)
 extra_c_flags += -D__DEBUG__
 !endif
 
-extra_c_flags_ntdll    = -bd
-extra_c_flags_os2dll   = -bd
+extra_c_flags_ntdll    = -bd -I"$(lib_misc_dir)/h" -I"$(clib_dir)/h"
+extra_c_flags_os2dll   = -bd -I"$(lib_misc_dir)/h" -I"$(clib_dir)/h"
 extra_c_flags_trmem    = $(trmem_cflags)
 extra_c_flags_trmemcvr = $(trmem_cover_cflags)
 extra_c_flags_memfuncs = $(trmem_cover_cflags)
