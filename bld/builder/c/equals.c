@@ -24,78 +24,41 @@
 *
 *  ========================================================================
 *
-* Description:  CDSAY command used in the build process.
+* Description:  common utility functions.
 *
 ****************************************************************************/
 
 #include <string.h>
-#include <ctype.h>
-#ifdef __UNIX__
-#include <unistd.h>
-#else
-#include <direct.h>
-#include <dos.h>
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
+#include <time.h>
 #include "builder.h"
 
-#ifndef _MAX_PATH
-#define _MAX_PATH PATH_MAX
-#endif
+#define BSIZE   256
+#define SCREEN  79
 
-void LogDir( char *dir )
+static const char Equals[] = "========================================"\
+                             "========================================";
+
+static char        logdirbuff[BSIZE];
+
+const char *LogDirEquals( char *dir )
 {
-    printf( "%s", LogDirEquals( dir ) );
-}
+    char        tbuff[BSIZE];
+    int         equals;
+    int         bufflen;
+    const char  *eq;
+    struct tm   *tm;
+    time_t      ttime;
 
-static unsigned ChgDir( char *dir )
-{
-    char        *end;
-    unsigned    len;
-#ifndef __UNIX__
-    unsigned    total;
-#endif
-
-    if( dir[0] == '\0' )
-        return( 0 );
-    len = strlen( dir );
-    end = &dir[len - 1];
-    switch( *end ) {
-    case '\\':
-    case '/':
-        if( end > dir && end[ -1] != ':' ) {
-            *end = '\0';
-            --len;
-        }
-        break;
+    ttime = time( NULL );
+    tm = localtime( &ttime );
+    strftime( tbuff, BSIZE, "%H:%M:%S", tm );
+    strcat( tbuff, " " );
+    strcat( tbuff, dir );
+    equals = ( SCREEN - ( bufflen = strlen( tbuff ) ) ) / 2 - 2;
+    if( equals < 1 ) {
+        equals = 1;
     }
-#ifndef __UNIX__
-    if( len > 2 && dir[1] == ':' ) {
-        _dos_setdrive( toupper( dir[0] ) - 'A' + 1, &total );
-    }
-#endif
-    return( chdir( dir ) );
-}
-
-int main( int argc, char **argv )
-{
-    int    res = 0;
-    char   cwd[_MAX_PATH];
-
-    if( argc > 1 ) {
-        res = ChgDir( argv[1] );
-    }
-    if( res == 0 ) {
-        getcwd( cwd, sizeof( cwd ) );
-#ifdef __UNIX__
-        LogDir( cwd );
-#else
-        LogDir( strupr( cwd ) );
-#endif
-    } else {
-        printf( "Error! CDSAY: invalid directory\n" );
-    }
-    return res;
+    eq = &Equals[ ( sizeof( Equals ) - 1 ) - equals];
+    sprintf( logdirbuff, "%s %s %s%s\n", eq, tbuff, eq, ( bufflen & 1 ) ? "" : "=" );
+    return logdirbuff;
 }

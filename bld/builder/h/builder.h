@@ -59,14 +59,16 @@ struct ctl_file {
 
 #define         MAX_LINE        4096
 
+extern bool     Quiet;
+
 extern include  *IncludeStk;
 extern FILE     *LogFile;
 
 void            LogFlush( void );
 void            Log( bool quiet, const char *, ... );
-void            LogStream( bool quiet, const char *str, size_t len );
 void            OpenLog( const char * );
 void            CloseLog( void );
+const char      *LogDirEquals( char *dir );
 void            Fatal( const char *, ... );
 void            *Alloc( unsigned );
 char            *SkipBlanks( const char * );

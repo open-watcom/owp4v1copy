@@ -47,13 +47,6 @@
 #include "builder.h"
 #include "pmake.h"
 
-#define BSIZE   256
-#define SCREEN  79
-const char      Equals[] =      "========================================"\
-                                "========================================";
-
-extern bool     Quiet;
-
 #ifdef __UNIX__
 
 int __fnmatch( const char *pattern, const char *string )
@@ -93,23 +86,7 @@ int __fnmatch( const char *pattern, const char *string )
 
 static void LogDir( char *dir )
 {
-    char        tbuff[BSIZE];
-    int         equals;
-    int         bufflen;
-    const char  *eq;
-    struct tm   *tm;
-    time_t      ttime;
-
-    ttime = time( NULL );
-    tm = localtime( &ttime );
-    strftime( tbuff, BSIZE, "%H:%M:%S", tm );
-    strcat( tbuff, " " );
-    strcat( tbuff, dir );
-    equals = ( SCREEN - ( bufflen = strlen( tbuff ) ) ) / 2 - 2;
-    if( equals < 0 )
-        equals = 0;
-    eq = &Equals[ ( sizeof( Equals ) - 1 ) - equals];
-    Log( FALSE, "%s %s %s%s\n", eq, tbuff, eq, ( bufflen & 1 ) ? "" : "=" );
+    Log( FALSE, "%s", LogDirEquals( dir ) );
 }
 
 static unsigned ProcSet( char *cmd )

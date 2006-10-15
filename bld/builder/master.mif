@@ -45,7 +45,8 @@ runasdos.exe: runasdos.obj
         cp   $^. $(%OWBINDIR)/parsedlg
         cp   $^. $(%OWBINDIR)/wgml
 
-builder.exe : builder.obj utils.obj $(sys_$(host_os)) runit.obj pmake.obj
+cdsay.exe : cdsay.obj equals.obj
+builder.exe : builder.obj utils.obj $(sys_$(host_os)) runit.obj pmake.obj equals.obj
 langdat.exe : langdat.obj utils.obj $(sys_$(host_os))
 rm.exe: rm.obj getopt.obj quit.obj lineprt.obj alloc.obj filerx.obj &
         regexp.obj fnlower.obj die.obj isdotdot.obj

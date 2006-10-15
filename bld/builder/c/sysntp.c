@@ -44,8 +44,6 @@ char            *CmdProc;
 #define TITLESIZE 256
 char            Title[TITLESIZE];
 
-extern bool     Quiet;
-
 void SysInitTitle( int argc, char *argv[] )
 {
     int         i;
@@ -93,6 +91,17 @@ void SysInit( int argc, char *argv[] )
     CmdProc = getenv( "ComSpec" );
     if( CmdProc == NULL ) {
         Fatal( "Can not find command processor" );
+    }
+}
+
+
+static void LogStream( bool quiet, const char *str, size_t len )
+{
+    if( !quiet ) {
+        fwrite( str, 1, len, stderr );
+    }
+    if( LogFile != NULL ) {
+        fwrite( str, 1, len, LogFile );
     }
 }
 
