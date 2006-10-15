@@ -24,14 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  builder & langdat definitions
+*               
 *
 ****************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "bool.h"
+#include <bool.h>
 
 typedef struct copy_entry       copy_entry;
 struct copy_entry {
@@ -59,23 +59,23 @@ struct ctl_file {
 
 #define         MAX_LINE        4096
 
-extern bool     Quiet;
+extern bool            Quiet;
 
-extern include  *IncludeStk;
-extern FILE     *LogFile;
+extern include         *IncludeStk;
+extern FILE            *LogFile;
 
-void            LogFlush( void );
-void            Log( bool quiet, const char *, ... );
-void            OpenLog( const char * );
-void            CloseLog( void );
-const char      *LogDirEquals( char *dir );
-void            Fatal( const char *, ... );
-void            *Alloc( unsigned );
-char            *SkipBlanks( const char * );
-unsigned        RunIt( char * );
-void            ResetArchives( copy_entry * );
-void            SysInit( int argc, char *argv[] );
-unsigned        SysRunCommand( const char * );
-unsigned        SysRunCommandPipe( const char *, int *readpipe );
-unsigned        SysChdir( char * );
-unsigned        SysDosChdir( char * );
+extern void            LogFlush( void );
+extern void            Log( bool quiet, const char *, ... );
+extern void            OpenLog( const char * );
+extern void            CloseLog( void );
+extern const char      *LogDirEquals( char *dir );
+extern void            Fatal( const char *, ... );
+extern void            *Alloc( unsigned );
+extern char            *SkipBlanks( const char * );
+extern unsigned        RunIt( char * );
+extern void            ResetArchives( copy_entry * );
+extern void            SysInit( int argc, char *argv[] );
+extern unsigned        SysRunCommand( const char * );
+extern unsigned        SysRunCommandPipe( const char *, int *readpipe );
+extern unsigned        SysChdir( char * );
+extern unsigned        SysDosChdir( char * );
