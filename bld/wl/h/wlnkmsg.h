@@ -52,8 +52,6 @@ typedef struct msg_arg_list {
 
 #include <stdarg.h>
 
-extern unsigned long FileShift;
-
 extern int      InitMsg( void );
 extern void     ResetMsg( void );
 extern int      Msg_Get( int resourceid, char buffer[] );

@@ -64,6 +64,9 @@ typedef PHANDLE_INFO HINSTANCE;
 extern "C" {
 #endif
 
+/* This is a global variable exported by function FindResources */
+extern long FileShift;
+
 struct WResDirHead;
 int OpenResFile( PHANDLE_INFO hInstance );
 int FindResources( PHANDLE_INFO hInstance );
