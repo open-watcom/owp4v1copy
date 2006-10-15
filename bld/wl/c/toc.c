@@ -75,7 +75,7 @@ typedef struct {
 } TocEntry;
 
 
-extern void ResetToc( void )
+void ResetToc( void )
 /**************************/
 {
     Toc = NULL;
@@ -84,7 +84,7 @@ extern void ResetToc( void )
     TocSym = NULL;
 }
 
-extern void CleanToc( void )
+void CleanToc( void )
 /**************************/
 {
     ZapHTable(Toc, LFree);
@@ -105,7 +105,7 @@ static int TocEntryCmp( const void *_e1, const void *_e2 )
     return memcmp(&e1->e, &e2->e, sizeof e1->e);
 }
 
-extern void InitToc(void)
+void InitToc(void)
 /***********************/
 {
     Toc = CreateHTable( 1024, TocEntryHashFunc, TocEntryCmp, ChkLAlloc, LFree );
@@ -120,7 +120,7 @@ extern void InitToc(void)
     }
 }
 
-extern void CheckIfTocSym( symbol *sym )
+void CheckIfTocSym( symbol *sym )
 /**************************************/
 {
     if( TocName != NULL && TocSym == NULL ) {
@@ -130,7 +130,7 @@ extern void CheckIfTocSym( symbol *sym )
     }
 }
 
-extern bool IsTocSym( symbol *sym )
+bool IsTocSym( symbol *sym )
 /*********************************/
 {
     return TocSym == sym;
@@ -153,7 +153,7 @@ static void AddToToc( TocEntryId *e )
     }
 }
 
-extern void AddSymToToc( symbol *sym )
+void AddSymToToc( symbol *sym )
 /************************************/
 {
     TocEntryId e;
@@ -163,7 +163,7 @@ extern void AddSymToToc( symbol *sym )
     AddToToc(&e);
 }
 
-extern void AddSdataOffToToc( segdata *sdata, offset off )
+void AddSdataOffToToc( segdata *sdata, offset off )
 /********************************************************/
 {
     TocEntryId e;
@@ -215,7 +215,7 @@ static void AdjustGotEntry( TocEntry *e, offset *middle) {
 }
 #endif
 
-extern void PrepareToc( void )
+void PrepareToc( void )
 /****************************/
 {
     if( Toc == NULL ) return;
@@ -239,7 +239,7 @@ extern void PrepareToc( void )
     }
 }
 
-extern void SetTocAddr( offset off, group_entry *group )
+void SetTocAddr( offset off, group_entry *group )
 /******************************************************/
 {
     if( Toc == NULL || TocSym == NULL ) return;
@@ -258,7 +258,7 @@ static signed_32 OffFromToc( offset off )
     return toff;
 }
 
-extern signed_32 FindEntryPosInToc( TocEntryId *e )
+signed_32 FindEntryPosInToc( TocEntryId *e )
 /*************************************************/
 {
     TocEntry    searchEntry;
@@ -274,7 +274,7 @@ extern signed_32 FindEntryPosInToc( TocEntryId *e )
 
 }
 
-extern signed_32 FindSdataOffPosInToc( segdata *sdata, offset off )
+signed_32 FindSdataOffPosInToc( segdata *sdata, offset off )
 /*****************************************************************/
 {
     TocEntryId e;
@@ -285,7 +285,7 @@ extern signed_32 FindSdataOffPosInToc( segdata *sdata, offset off )
     return FindEntryPosInToc(&e);
 }
 
-extern signed_32 FindSymPosInToc( symbol * sym )
+signed_32 FindSymPosInToc( symbol * sym )
 /**********************************************/
 {
     TocEntryId e;
@@ -316,7 +316,7 @@ static void WriteOutTokElem( void *_elem, void *buf )
     PutInfo((*((virt_mem *)buf)) + elem->pos, &(addr), sizeof addr);
 }
 
-extern void WriteToc( virt_mem buf )
+void WriteToc( virt_mem buf )
 /**********************************/
 {
     if( Toc == NULL ) return;

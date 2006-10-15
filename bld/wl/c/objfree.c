@@ -56,7 +56,7 @@ static void FreeClasses( class_entry * list );
 static void FreeFiles( file_list *list );
 static void FreeMods( mod_entry *head );
 
-extern void FiniLinkStruct( void )
+void FiniLinkStruct( void )
 /********************************/
 /* Free object processing data structures. */
 {
@@ -137,7 +137,7 @@ static void FreeClasses( class_entry * list )
     }
 }
 
-extern void FreeAMod( mod_entry *mod )
+void FreeAMod( mod_entry *mod )
 /************************************/
 {
     FreeObjCache( mod->f.source );
@@ -173,7 +173,7 @@ static void FreeFiles( file_list *list )
 }
 
 
-extern void CleanLinkStruct( void )
+void CleanLinkStruct( void )
 /*********************************/
 /* free all structures */
 {
@@ -209,7 +209,7 @@ extern void CleanLinkStruct( void )
 }
 
 #if defined(_OS2) || defined( _QNXLOAD )
-extern void FreeSegFlags( seg_flags * curr )
+void FreeSegFlags( seg_flags * curr )
 /******************************************/
 {
     seg_flags * next;
@@ -223,7 +223,7 @@ extern void FreeSegFlags( seg_flags * curr )
 }
 #endif
 
-extern void FreeObjInfo( void )
+void FreeObjInfo( void )
 /*****************************/
 {
     FreeNodes( ExtNodes );
@@ -238,7 +238,7 @@ static void FreeAGroup( group_entry *group )
     CarveFree( CarveGroup, group );
 }
 
-extern void FreeGroups( group_entry *head )
+void FreeGroups( group_entry *head )
 /*****************************************/
 {
     group_entry *next;

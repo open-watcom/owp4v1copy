@@ -37,11 +37,21 @@
 #include <fcntl.h>
 #include "idedll.h"
 #include "idedrv.h"
+#include "dllentry.h"
+/*
+ *  Just a note. ntio.h is included for CheckBreak(). This function is also 
+ *  defined as static in posixio and non-static in linkio
+ */
+#include "ntio.h"
+#include "wlink.h"
+#include "wlnkmsg.h"
 
+#if 0
 extern void FiniSubSystems( void );
 extern void InitSubSystems( void );
 extern void CheckBreak( void );
 extern void LinkMainLine( char * );
+#endif
 
 #if IDE_GET_TARGET_FILE != EXTRA_NAME_DIR
   || IDE_GET_OBJ_FILE != EXTRA_OBJ_FILE
@@ -55,8 +65,8 @@ static IDECBHdl         IdeHdl;
 static IDEInitInfo      InitInfo;
 
 #if defined( __OS2__ )
-extern int InitMsg( void );
-extern int FiniMsg( void );
+//extern int InitMsg( void );
+//extern int FiniMsg( void );
 
 static bool     RunOnce;
 #endif
@@ -70,7 +80,7 @@ static IDEMsgSeverity SeverityMap[] = {
 
 /* routines which are called by the linker core */
 
-extern void WriteStdOut( char *str )
+void WriteStdOut( char *str )
 /**********************************/
 {
     CheckBreak();
@@ -80,7 +90,7 @@ extern void WriteStdOut( char *str )
     IdeCB->PrintWithCRLF( IdeHdl, str );
 }
 
-extern void WriteNLStdOut( void )
+void WriteNLStdOut( void )
 /*******************************/
 {
     /* IdeCB->PrintWithCRLF( IdeHdl, "\n", 0 ); */
@@ -89,7 +99,7 @@ extern void WriteNLStdOut( void )
     IdeCB->PrintWithCRLF( IdeHdl, "\n" );
 }
 
-extern void WriteInfoStdOut( char *str, unsigned level, char *symbol )
+void WriteInfoStdOut( char *str, unsigned level, char *symbol )
 /********************************************************************/
 {
     IDEMsgInfo  info;
@@ -108,7 +118,7 @@ extern void WriteInfoStdOut( char *str, unsigned level, char *symbol )
     IdeCB->PrintWithInfo( IdeHdl, &info );
 }
 
-extern char * GetEnvString( char *envname )
+char * GetEnvString( char *envname )
 /*****************************************/
 {
     char *retval;
@@ -119,13 +129,13 @@ extern char * GetEnvString( char *envname )
     return retval;
 }
 
-extern bool IsStdOutConsole( void )
+bool IsStdOutConsole( void )
 /*********************************/
 {
     return InitInfo.console_output;
 }
 
-extern bool GetAddtlCommand( unsigned cmd, char *buf )
+bool GetAddtlCommand( unsigned cmd, char *buf )
 /****************************************************/
 {
     cmd = cmd;
@@ -144,7 +154,7 @@ typedef IDEBool __stdcall (*IDEGetInfoFn)( IDECBHdl hdl, IDEInfoType type,
 
 /* routines which are called by the DLL driver */
 
-extern IDEBool IDEDLL_EXPORT IDEPassInitInfo( IDEDllHdl hdl, IDEInitInfo *info )
+IDEBool IDEDLL_EXPORT IDEPassInitInfo( IDEDllHdl hdl, IDEInitInfo *info )
 /******************************************************************************/
 {
     hdl = hdl;
@@ -153,25 +163,25 @@ extern IDEBool IDEDLL_EXPORT IDEPassInitInfo( IDEDllHdl hdl, IDEInitInfo *info )
     return FALSE;
 }
 
-extern unsigned IDEDLL_EXPORT IDEGetVersion( void )
+unsigned IDEDLL_EXPORT IDEGetVersion( void )
 /*************************************************/
 {
     return IDE_CUR_DLL_VER;
 }
 
-extern void IDEDLL_EXPORT IDEStopRunning( void )
+void IDEDLL_EXPORT IDEStopRunning( void )
 /**********************************************/
 {
     LinkState |= STOP_WORKING|LINK_ERROR;
 }
 
-extern void IDEDLL_EXPORT IDEFreeHeap( void )
+void IDEDLL_EXPORT IDEFreeHeap( void )
 /*******************************************/
 {
     _heapshrink();
 }
 
-extern IDEBool IDEDLL_EXPORT IDEInitDLL( IDECBHdl hdl, IDECallBacks *cb,
+IDEBool IDEDLL_EXPORT IDEInitDLL( IDECBHdl hdl, IDECallBacks *cb,
                                          IDEDllHdl *info )
 /**********************************************************************/
 {
@@ -185,14 +195,14 @@ extern IDEBool IDEDLL_EXPORT IDEInitDLL( IDECBHdl hdl, IDECallBacks *cb,
     return FALSE;
 }
 
-extern void IDEDLL_EXPORT IDEFiniDLL( IDEDllHdl hdl )
+void IDEDLL_EXPORT IDEFiniDLL( IDEDllHdl hdl )
 /***************************************************/
 {
     hdl = hdl;
     FiniSubSystems();
 }
 
-extern IDEBool IDEDLL_EXPORT IDERunYourSelf( IDEDllHdl hdl, const char * opts,
+IDEBool IDEDLL_EXPORT IDERunYourSelf( IDEDllHdl hdl, const char * opts,
                                              IDEBool *fatalerr )
 /****************************************************************************/
 {
@@ -222,7 +232,7 @@ extern IDEBool IDEDLL_EXPORT IDERunYourSelf( IDEDllHdl hdl, const char * opts,
     return *fatalerr;
 }
 
-extern bool ExecWlibDLL( char *cmdline )
+bool ExecWlibDLL( char *cmdline )
 /**************************************/
 // return TRUE if an error
 {

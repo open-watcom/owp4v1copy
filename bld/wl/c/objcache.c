@@ -44,7 +44,7 @@
 #include "objio.h"
 #include "objcache.h"
 
-extern bool CacheOpen( file_list *list )
+bool CacheOpen( file_list *list )
 /**************************************/
 {
     infilelist *file;
@@ -77,7 +77,7 @@ extern bool CacheOpen( file_list *list )
     return TRUE;
 }
 
-extern void CacheClose( file_list *list, unsigned pass )
+void CacheClose( file_list *list, unsigned pass )
 /******************************************************/
 {
     infilelist *file;
@@ -106,13 +106,13 @@ extern void CacheClose( file_list *list, unsigned pass )
     }
 }
 
-extern void * CachePermRead( file_list * list, unsigned long pos, unsigned len )
+void * CachePermRead( file_list * list, unsigned long pos, unsigned len )
 /******************************************************************************/
 {
     return CacheRead( list, pos, len );
 }
 
-extern void * CacheRead( file_list * list, unsigned long pos, unsigned len )
+void * CacheRead( file_list * list, unsigned long pos, unsigned len )
 /**************************************************************************/
 /* read len bytes out of the cache. */
 // NYI: will need to make this more sophisticated for libraries
@@ -121,31 +121,31 @@ extern void * CacheRead( file_list * list, unsigned long pos, unsigned len )
     return (char *)list->file->cache + pos;
 }
 
-extern bool CacheEnd( file_list * list, unsigned long pos )
+bool CacheEnd( file_list * list, unsigned long pos )
 /*********************************************************/
 {
     return pos >= list->file->len;
 }
 
-extern void CacheFini( void )
+void CacheFini( void )
 /***************************/
 {
 }
 
-extern void CacheFree( file_list * list, void * blk )
+void CacheFree( file_list * list, void * blk )
 /***************************************************/
 {
     list = list;
     blk = blk;
 }
 
-extern void FreeObjCache( file_list *list )
+void FreeObjCache( file_list *list )
 /*****************************************/
 {
     list = list;
 }
 
-extern bool DumpObjCache( void )
+bool DumpObjCache( void )
 /******************************/
 {
     return FALSE;

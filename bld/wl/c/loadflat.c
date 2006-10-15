@@ -413,7 +413,7 @@ void SetHeaderVxDInfo(os2_flat_header *exe_head)
 
 }
 
-extern void FiniOS2FlatLoadFile( void )
+void FiniOS2FlatLoadFile( void )
 /*************************************/
 /* make an OS/2 flat model executable file */
 {
@@ -546,7 +546,7 @@ extern void FiniOS2FlatLoadFile( void )
     WriteLoad( &exe_head, sizeof(os2_flat_header) );
 }
 
-extern bool FindOS2ExportSym( symbol *sym, dll_sym_info ** dllhandle )
+bool FindOS2ExportSym( symbol *sym, dll_sym_info ** dllhandle )
 /********************************************************************/
 {
     dll_sym_info *      dll;

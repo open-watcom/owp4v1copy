@@ -62,7 +62,7 @@ static void ScanArcs( mod_entry *mod );
 #define INITIAL_ARC_ALLOC 32
 #define MAX_NUM_MODULES   (8 * 1024)
 
-extern void ResetDistrib( void )
+void ResetDistrib( void )
 /******************************/
 {
     ArcBuffer = NULL;
@@ -70,7 +70,7 @@ extern void ResetDistrib( void )
     SectOvlTab = NULL;
 }
 
-extern void InitModTable( void )
+void InitModTable( void )
 /******************************/
 {
     CurrModThere = INITIAL_MOD_ALLOC;
@@ -82,7 +82,7 @@ extern void InitModTable( void )
     MakePass1Blocks();
 }
 
-extern void AddModTable( mod_entry * lp, unsigned_16 libspot )
+void AddModTable( mod_entry * lp, unsigned_16 libspot )
 /************************************************************/
 /* add this module to the table, and make the arclist field point to a
  * scratch buffer */
@@ -112,7 +112,7 @@ extern void AddModTable( mod_entry * lp, unsigned_16 libspot )
     }
 }
 
-extern void InitArcBuffer( mod_entry * mod )
+void InitArcBuffer( mod_entry * mod )
 /******************************************/
 /* set up the mod_entry arcdata field for dead code elimination */
 {
@@ -179,7 +179,7 @@ static void DefineOvlSegments( mod_entry *mod )
     Ring2Walk( mod->publist, KillUnrefedSyms );
 }
 
-extern void SetSegments( void )
+void SetSegments( void )
 /*****************************/
 // now that we know where everything is, do all the processing that has been
 // postponed until now.
@@ -232,7 +232,7 @@ extern void SetSegments( void )
     ReleasePass1();
 }
 
-extern void FreeDistStuff( void )
+void FreeDistStuff( void )
 /*******************************/
 {
     unsigned    index;
@@ -246,7 +246,7 @@ extern void FreeDistStuff( void )
     ReleasePass1();
 }
 
-extern void ProcDistMods( void )
+void ProcDistMods( void )
 /******************************/
 {
     unsigned_16 index;
@@ -261,7 +261,7 @@ extern void ProcDistMods( void )
 
 #define SECT_VISITED 0x8000
 
-extern unsigned_16 LowestAncestor( unsigned_16 ovl1, section * sect )
+unsigned_16 LowestAncestor( unsigned_16 ovl1, section * sect )
 /*******************************************************************/
 /* find the lowest common ancestor of the two overlay values by marking all of
  * the ancestors of the first overlay, and then looking for marked ancestors
@@ -285,7 +285,7 @@ extern unsigned_16 LowestAncestor( unsigned_16 ovl1, section * sect )
     return( list->ovl_num );
 }
 
-extern void DefDistribSym( symbol * sym )
+void DefDistribSym( symbol * sym )
 /***************************************/
 /* move current module based on where this symbol has been referenced from,
  * and make the symbol point to the current module. All symbols which get
@@ -355,7 +355,7 @@ static bool NotAnArc( dist_arc arc )
     return( TRUE );
 }
 
-extern void RefDistribSym( symbol * sym )
+void RefDistribSym( symbol * sym )
 /***************************************/
 /* add an arc to the reference graph if it is not already in the graph */
 {
@@ -514,7 +514,7 @@ static void ScanArcs( mod_entry *mod )
     mod->modinfo &= ~MOD_VISITED;
 }
 
-extern void FinishArcs( mod_entry *mod )
+void FinishArcs( mod_entry *mod )
 /**************************************/
 /* check the position of the modules referenced by mod, and then make a
  * more permanent copy of the arclist for this module. */
@@ -533,7 +533,7 @@ extern void FinishArcs( mod_entry *mod )
     mod->x.arclist = newarcs;
 }
 
-extern void DistIndCall( symbol *sym )
+void DistIndCall( symbol *sym )
 /************************************/
 // handle indirect calls and their effect on distributed libs.
 {

@@ -95,7 +95,7 @@ static unsigned_32 ElfHash( unsigned char *name )
     return h;
 }
 
-extern ElfSymTable *CreateElfSymTable( int maxElems, stringtable *strtab )
+ElfSymTable *CreateElfSymTable( int maxElems, stringtable *strtab )
 /************************************************************************/
 {
     ElfSymTable *tab;
@@ -117,7 +117,7 @@ extern ElfSymTable *CreateElfSymTable( int maxElems, stringtable *strtab )
     return tab;
 }
 
-extern void AddSymElfSymTable( ElfSymTable *tab, symbol *sym )
+void AddSymElfSymTable( ElfSymTable *tab, symbol *sym )
 /************************************************************/
 {
     unsigned_32 hash;
@@ -130,7 +130,7 @@ extern void AddSymElfSymTable( ElfSymTable *tab, symbol *sym )
     tab->numElems++;
 }
 
-extern int FindSymIdxElfSymTable( ElfSymTable *tab, symbol *sym )
+int FindSymIdxElfSymTable( ElfSymTable *tab, symbol *sym )
 /***************************************************************/
 {
     unsigned_32 hash;
@@ -197,7 +197,7 @@ static void SetElfSym( ElfHdr *hdr, Elf32_Sym *elfsym, symbol *sym )
 
 }
 
-extern void WriteElfSymTable( ElfSymTable *tab, ElfHdr *hdr, int hashidx,
+void WriteElfSymTable( ElfSymTable *tab, ElfHdr *hdr, int hashidx,
                                 int symtabidx, int strtabidx )
 /***********************************************************************/
 {
@@ -257,7 +257,7 @@ extern void WriteElfSymTable( ElfSymTable *tab, ElfHdr *hdr, int hashidx,
     AddSecName(hdr, hashSH, ".hash");
 }
 
-extern void ZapElfSymTable( ElfSymTable *tab )
+void ZapElfSymTable( ElfSymTable *tab )
 /********************************************/
 {
     _LnkFree( tab->table );

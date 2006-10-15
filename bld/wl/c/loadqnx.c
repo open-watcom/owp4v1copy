@@ -274,7 +274,7 @@ static void WriteQNXRelocs( void *head, unsigned lmf_type, unsigned_16 seg )
     SeekLoad( pos );
 }
 
-extern void SetQNXSegFlags( void )
+void SetQNXSegFlags( void )
 /********************************/
 {
     SetSegFlags( (seg_flags *) FmtData.u.qnx.seg_flags );
@@ -328,7 +328,7 @@ static void WriteQNXResource( void )
     }
 }
 
-extern void FiniQNXLoadFile( void )
+void FiniQNXLoadFile( void )
 /*********************************/
 {
     unsigned_32 *   segments;
@@ -400,13 +400,13 @@ extern void FiniQNXLoadFile( void )
     WriteLoad( segments, nbytes );
 }
 
-extern unsigned_16 ToQNXSel( unsigned_16 seg )
+unsigned_16 ToQNXSel( unsigned_16 seg )
 /********************************************/
 {
     return( QNX_SELECTOR( seg - 1 ) );
 }
 
-extern unsigned_16 ToQNXIndex( unsigned_16 sel )
+unsigned_16 ToQNXIndex( unsigned_16 sel )
 /**********************************************/
 {
     return( QNX_SEL_NUM( sel ) );

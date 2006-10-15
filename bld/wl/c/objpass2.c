@@ -49,7 +49,7 @@
 
 lobject_data            CurrRec;
 
-extern void ObjPass2( void )
+void ObjPass2( void )
 /**************************/
 /* Pass 2 of 8086 linker. */
 {
@@ -72,7 +72,7 @@ extern void ObjPass2( void )
     ProcAllSects( DBIFini );
 }
 
-extern void PModList( mod_entry *head )
+void PModList( mod_entry *head )
 /*************************************/
 {
     mod_entry           *obj;
@@ -82,7 +82,7 @@ extern void PModList( mod_entry *head )
     }
 }
 
-extern void PModule( mod_entry *obj )
+void PModule( mod_entry *obj )
 /***********************************/
 {
     if( !( obj->modinfo & MOD_NEED_PASS_2 ) )
@@ -94,7 +94,7 @@ extern void PModule( mod_entry *obj )
     CheckStop();
 }
 
-extern bool LoadObj( segdata *seg )
+bool LoadObj( segdata *seg )
 /*********************************/
 {
     seg_leader *leader;

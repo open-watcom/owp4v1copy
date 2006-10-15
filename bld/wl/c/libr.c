@@ -242,7 +242,7 @@ static int ARComp( const void *index1, const void *index2 )
                    ARDict->fnametab[ *(unsigned_16 *)index2 ] );
 }
 
-extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
+int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
 /******************************************************************************/
 {
     lib_header *        omf_hdr;
@@ -363,7 +363,7 @@ extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
     return reclength;
 }
 
-extern mod_entry * SearchLib( file_list *lib, char *name )
+mod_entry * SearchLib( file_list *lib, char *name )
 /********************************************************/
 /* Search the specified library file for the specified name & make a module */
 {
@@ -576,7 +576,7 @@ static void ** AllocDict( unsigned_16 num_buckets, unsigned_16 residue )
 }
 
 
-extern bool DiscardDicts( void )
+bool DiscardDicts( void )
 /******************************/
 /* called when dictionaries forced out of dict memory */
 {
@@ -597,7 +597,7 @@ extern bool DiscardDicts( void )
 }
 
 
-extern void BurnLibs( void )
+void BurnLibs( void )
 /**************************/
 /* let dict memory know it's no longer needed */
 {
@@ -694,7 +694,7 @@ static bool ARSearchExtLib( file_list *lib, char *name, unsigned long *off )
     return FALSE;
 }
 
-extern char *GetARName( ar_header *header, file_list *list )
+char *GetARName( ar_header *header, file_list *list )
 /**********************************************************/
 {
     char *              buf;
@@ -723,7 +723,7 @@ extern char *GetARName( ar_header *header, file_list *list )
     return( name );
 }
 
-extern unsigned long GetARValue( char *str, int max )
+unsigned long GetARValue( char *str, int max )
 /***************************************************/
 // get a numeric value from an ar_header
 {

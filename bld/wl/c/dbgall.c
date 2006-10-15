@@ -58,14 +58,14 @@ group_entry *   DBIGroups;
 static void     DBIGenLocal( void * );
 static void     DBIGenLines( mod_entry *mod );
 
-extern void ResetDBI( void )
+void ResetDBI( void )
 /**************************/
 {
     SymFileName = NULL;
     DBIGroups = NULL;
 }
 
-extern void DBIInit( void )
+void DBIInit( void )
 /*************************/
 // called just after command file parsing
 {
@@ -78,7 +78,7 @@ extern void DBIInit( void )
     }
 }
 
-extern void DBISectInit( section *sect )
+void DBISectInit( section *sect )
 /**************************************/
 // called when a section created in command file parsing
 {
@@ -87,7 +87,7 @@ extern void DBISectInit( section *sect )
     }
 }
 
-extern void DBIInitModule( mod_entry *obj )
+void DBIInitModule( mod_entry *obj )
 /*****************************************/
 // called before pass 1 is done on the module
 {
@@ -100,7 +100,7 @@ extern void DBIInitModule( mod_entry *obj )
     }
 }
 
-extern void DBIP1Source( byte *buff, byte *endbuff )
+void DBIP1Source( byte *buff, byte *endbuff )
 /**************************************************/
 {
     int         len;
@@ -120,7 +120,7 @@ extern void DBIP1Source( byte *buff, byte *endbuff )
     }
 }
 
-extern section * DBIGetSect( char *clname )
+section * DBIGetSect( char *clname )
 /*****************************************/
 {
     if( ( stricmp( clname, _MSTypeClass ) == 0 )
@@ -132,7 +132,7 @@ extern section * DBIGetSect( char *clname )
     return( NULL );
 }
 
-extern void DBIColClass( class_entry *class )
+void DBIColClass( class_entry *class )
 /*******************************************/
 {
     bool        isdbi;
@@ -149,7 +149,7 @@ extern void DBIColClass( class_entry *class )
     }
 }
 
-extern unsigned_16 DBIColSeg( class_entry *class )
+unsigned_16 DBIColSeg( class_entry *class )
 /************************************************/
 {
     switch( class->flags & CLASS_DEBUG_INFO ) {
@@ -166,7 +166,7 @@ extern unsigned_16 DBIColSeg( class_entry *class )
     return( NOT_DEBUGGING_INFO );
 }
 
-extern void DBIP1ModuleScanned( void )
+void DBIP1ModuleScanned( void )
 /************************************/
 // called in pass 1 when finished looking at a module
 // if some segdefs have been delayed due to distributing libraries, this
@@ -197,7 +197,7 @@ static bool MSSkip( void )
     }
 }
 
-extern bool DBISkip( unsigned_16 info )
+bool DBISkip( unsigned_16 info )
 /*************************************/
 // returns TRUE we should skip processing this segment because we are
 // ignoring debugging information
@@ -214,7 +214,7 @@ extern bool DBISkip( unsigned_16 info )
     }
 }
 
-extern bool DBINoReloc( unsigned_16 info )
+bool DBINoReloc( unsigned_16 info )
 /****************************************/
 // called to see if we should handle a relocation specially.
 {
@@ -229,7 +229,7 @@ static void AddNovGlobals( mod_entry *mod )
 #endif
 }
 
-extern void DBIPreAddrCalc( void )
+void DBIPreAddrCalc( void )
 /********************************/
 {
     void (*modptr)( mod_entry * );
@@ -257,7 +257,7 @@ extern void DBIPreAddrCalc( void )
     }
 }
 
-extern void DBIAddrInfoScan( seg_leader *seg,
+void DBIAddrInfoScan( seg_leader *seg,
                          void (*initfn)( segdata *, void * ),
                          void (*addfn)( segdata *, offset, offset, void *, bool ),
                          void * cookie )
@@ -300,12 +300,12 @@ extern void DBIAddrInfoScan( seg_leader *seg,
     addfn( prev, 0, size, cookie, size != 0 );
 }
 
-extern void DBIComment( void )
+void DBIComment( void )
 /****************************/
 {
 }
 
-extern void DBIAddModule( mod_entry *obj, section *sect )
+void DBIAddModule( mod_entry *obj, section *sect )
 /*******************************************************/
 // called just before publics have been assigned addresses between p1 & p2
 {
@@ -318,7 +318,7 @@ extern void DBIAddModule( mod_entry *obj, section *sect )
     }
 }
 
-extern void DBIGenModule( void )
+void DBIGenModule( void )
 /******************************/
 // called at the end of pass2 for a module
 {
@@ -337,7 +337,7 @@ extern void DBIGenModule( void )
     }
 }
 
-extern void DBIDefClass( class_entry *cl, unsigned_32 size )
+void DBIDefClass( class_entry *cl, unsigned_32 size )
 /**********************************************************/
 // called during address calculation
 {
@@ -350,7 +350,7 @@ extern void DBIDefClass( class_entry *cl, unsigned_32 size )
     }
 }
 
-extern void DBIAddLocal( unsigned_16 info, offset length )
+void DBIAddLocal( unsigned_16 info, offset length )
 /********************************************************/
 // called during pass 1 final segment processing.
 {
@@ -370,7 +370,7 @@ static void DBIGenLocal( void *sdata )
     }
 }
 
-extern void DBIModGlobal( void *_sym )
+void DBIModGlobal( void *_sym )
 /************************************/
 {
     symbol *sym = _sym;
@@ -385,7 +385,7 @@ extern void DBIModGlobal( void *_sym )
     }
 }
 
-extern void DBIAddGlobal( symbol *sym )
+void DBIAddGlobal( symbol *sym )
 /*************************************/
 // called during pass 1 symbol definition
 {
@@ -398,7 +398,7 @@ extern void DBIAddGlobal( symbol *sym )
     }
 }
 
-extern void DBIGenGlobal( symbol * sym, section *sect )
+void DBIGenGlobal( symbol * sym, section *sect )
 /*****************************************************/
 // called during symbol address calculation (between pass 1 & pass 2)
 // also called by loadpe between passes
@@ -418,7 +418,7 @@ extern void DBIGenGlobal( symbol * sym, section *sect )
 #endif
 }
 
-extern void DBIAddLines( segdata *seg, void *line, unsigned size, bool is32bit )
+void DBIAddLines( segdata *seg, void *line, unsigned size, bool is32bit )
 /******************************************************************************/
 // called during pass 1 linnum processing
 {
@@ -433,7 +433,7 @@ extern void DBIAddLines( segdata *seg, void *line, unsigned size, bool is32bit )
     RingAppend( &CurrMod->lines, info );
 }
 
-extern unsigned CalcLineQty( unsigned size, bool is32bit )
+unsigned CalcLineQty( unsigned size, bool is32bit )
 /********************************************************/
 {
     if( is32bit ) {
@@ -460,7 +460,7 @@ static bool DoLineWalk( void *_info, void *_cbfn )
     return( FALSE );
 }
 
-extern void DBILineWalk( void *lines,
+void DBILineWalk( void *lines,
                          void (*cbfn)( segdata *, void *, unsigned, bool ) )
 /**************************************************************************/
 {
@@ -483,7 +483,7 @@ static void DBIGenLines( mod_entry *mod )
     DBILineWalk( mod->lines, fn );
 }
 
-extern virt_mem DBIAlloc( unsigned long size )
+virt_mem DBIAlloc( unsigned long size )
 /********************************************/
 // handy virtual memory allocation routine used inside the debug info generators
 {
@@ -492,7 +492,7 @@ extern virt_mem DBIAlloc( unsigned long size )
     return( AllocStg( size ) );
 }
 
-extern void DBIAddrStart( void )
+void DBIAddrStart( void )
 /******************************/
 // called after address calculation is done.
 {
@@ -507,7 +507,7 @@ extern void DBIAddrStart( void )
     ProcAllSects( DBIAddrSectStart );
 }
 
-extern void DBIAddrSectStart( section * sect )
+void DBIAddrSectStart( section * sect )
 /********************************************/
 // called for each section after address calculation is done.
 {
@@ -518,7 +518,7 @@ extern void DBIAddrSectStart( section * sect )
     }
 }
 
-extern void DBIP2Start( section *sect )
+void DBIP2Start( section *sect )
 /*************************************/
 // called for each section just before pass 2 starts
 {
@@ -531,7 +531,7 @@ extern void DBIP2Start( section *sect )
     }
 }
 
-extern void DBIFini( section *sect )
+void DBIFini( section *sect )
 /**********************************/
 // called after pass 2 is finished, but before load file generation
 {
@@ -542,7 +542,7 @@ extern void DBIFini( section *sect )
     }
 }
 
-extern void DBISectCleanup( section *sect )
+void DBISectCleanup( section *sect )
 /*****************************************/
 // called when burning down the house
 {
@@ -551,14 +551,14 @@ extern void DBISectCleanup( section *sect )
     }
 }
 
-extern void DBICleanup( void )
+void DBICleanup( void )
 /****************************/
 // called when burning down the house
 {
     FreeGroups( DBIGroups );
 }
 
-extern void WriteDBI( void )
+void WriteDBI( void )
 /**************************/
 // called during load file generation.  It is assumed that the loadfile is
 // positioned to the right spot.

@@ -60,7 +60,7 @@ typedef struct {
 infilelist *    CachedLibFiles;
 infilelist *    CachedFiles;
 
-extern void ResetObjIO( void )
+void ResetObjIO( void )
 /****************************/
 {
     CachedFiles = NULL;
@@ -83,7 +83,7 @@ static infilelist * AllocEntry( char *name, path_entry *path )
     return entry;
 }
 
-extern infilelist * AllocFileEntry( char *name, path_entry * path )
+infilelist * AllocFileEntry( char *name, path_entry * path )
 /*****************************************************************/
 {
     infilelist *        entry;
@@ -94,7 +94,7 @@ extern infilelist * AllocFileEntry( char *name, path_entry * path )
     return entry;
 }
 
-extern infilelist * AllocUniqueFileEntry( char *name, path_entry *path )
+infilelist * AllocUniqueFileEntry( char *name, path_entry *path )
 /**********************************************************************/
 {
     infilelist *        entry;
@@ -114,7 +114,7 @@ extern infilelist * AllocUniqueFileEntry( char *name, path_entry *path )
     return entry;
 }
 
-extern bool CleanCachedHandles( void )
+bool CleanCachedHandles( void )
 /************************************/
 {
     infilelist *list;
@@ -158,7 +158,7 @@ static f_handle TrySearchingLib( char *name, char *new_name, infilelist *list )
     return fp;
 }
 
-extern bool DoObjOpen( infilelist *list )
+bool DoObjOpen( infilelist *list )
 /***************************************/
 {
     char *      name;
@@ -218,7 +218,7 @@ extern bool DoObjOpen( infilelist *list )
     return FALSE;
 }
 
-extern unsigned_16 CalcAlign( unsigned_32 pos, unsigned_16 align )
+unsigned_16 CalcAlign( unsigned_32 pos, unsigned_16 align )
 /****************************************************************/
 /* align file */
 {
@@ -231,14 +231,14 @@ extern unsigned_16 CalcAlign( unsigned_32 pos, unsigned_16 align )
     return( modulus );
 }
 
-extern void InitTokBuff( void )
+void InitTokBuff( void )
 /*****************************/
 {
     TokSize = MAX_HEADROOM;
     _ChkAlloc( TokBuff, MAX_HEADROOM );
 }
 
-extern void FreeTokBuffs( void )
+void FreeTokBuffs( void )
 /******************************/
 {
     if( TokBuff != NULL ) {
@@ -247,14 +247,14 @@ extern void FreeTokBuffs( void )
     }
 }
 
-extern void BadObject( void )
+void BadObject( void )
 /***************************/
 {
     CurrMod->f.source->file->flags |= INSTAT_IOERR;
     LnkMsg( LOC+ERR+MSG_OBJ_FILE_ATTR, NULL );
 }
 
-extern void EarlyEOF( void )
+void EarlyEOF( void )
 /**************************/
 {
     CurrMod->f.source->file->flags |= INSTAT_IOERR;

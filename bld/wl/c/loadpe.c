@@ -174,7 +174,7 @@ static offset CalcIDataSize( void )
     return( IData.total_size );
 }
 
-extern void ResetLoadPE( void )
+void ResetLoadPE( void )
 /*****************************/
 {
     PEImpList = NULL;
@@ -237,7 +237,7 @@ static void * GetTransferGlueCode( int lnk_state )
     }
 }
 
-extern offset FindIATSymAbsOff( symbol * sym )
+offset FindIATSymAbsOff( symbol * sym )
 /********************************************/
 {
     dll_sym_info *      dll;
@@ -247,7 +247,7 @@ extern offset FindIATSymAbsOff( symbol * sym )
     return( dll->iatsym->addr.off );
 }
 
-extern signed_32 FindSymPosInTocv( symbol * sym )
+signed_32 FindSymPosInTocv( symbol * sym )
 /***********************************************/
 {
     offset off = FindIATSymAbsOff(sym) - IDataGroup->linear - FmtData.base;
@@ -791,7 +791,7 @@ RcStatus CopyExeData( int inhandle, int outhandle, uint_32 length )
     return( RS_OK );
 }
 
-extern void DoAddResource( char *name )
+void DoAddResource( char *name )
 /*************************************/
 {
     list_of_names *     info;
@@ -994,7 +994,7 @@ static unsigned long CalcPEChecksum( unsigned long dwInitialCount, unsigned shor
     return( __wCrc & 0x0000FFFF );
 }
 
-extern void FiniPELoadFile( void )
+void FiniPELoadFile( void )
 /********************************/
 /* make a PE executable file */
 {
@@ -1197,7 +1197,7 @@ extern void FiniPELoadFile( void )
     _LnkFree( object );
 }
 
-extern unsigned long GetPEHeaderSize( void )
+unsigned long GetPEHeaderSize( void )
 /******************************************/
 {
     unsigned long       size;
@@ -1235,7 +1235,7 @@ static void ReadExports( unsigned_32 namestart, unsigned_32 nameend,
     _LnkFree( ordbuf );
 }
 
-extern void ReadPEExportTable( f_handle file, pe_hdr_table_entry * base )
+void ReadPEExportTable( f_handle file, pe_hdr_table_entry * base )
 /***********************************************************************/
 /* read a PE export table, and set ordinal values accordingly. */
 {
@@ -1304,7 +1304,7 @@ static void CreateIDataSection( void )
     }
 }
 
-extern void ChkPEData( void )
+void ChkPEData( void )
 /***************************/
 {
     symbol *    sym;
@@ -1403,7 +1403,7 @@ static void RegisterImport( dll_sym_info *sym )
     ++NumImports;
 }
 
-extern void AllocPETransferTable( void )
+void AllocPETransferTable( void )
 /**************************************/
 {
     symbol *            sym;

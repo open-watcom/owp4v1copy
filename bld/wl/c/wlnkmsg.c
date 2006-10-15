@@ -53,6 +53,7 @@ static  HANDLE_INFO     hInstance = { 0 };
 static  unsigned        MsgShift;
 static  int             Res_Flag;
 
+/* Declared in $(CLIB)\h\initarg.h. Not sure how to remove this one yet. Will find on next pass */
 extern char *   _LpDllName;
 int WLinkItself;   // file handle
 
@@ -60,7 +61,7 @@ int WLinkItself;   // file handle
 
 static void Msg_Add_Arg( MSG_ARG *arginfo, char typech, va_list *args );
 
-extern int InitMsg( void )
+int InitMsg( void )
 {
     char        buff[_MAX_PATH];
     int         initerror;
@@ -102,7 +103,7 @@ extern int InitMsg( void )
     return Res_Flag;
 }
 
-extern int Msg_Get( int resourceid, char *buffer )
+int Msg_Get( int resourceid, char *buffer )
 {
     if( Res_Flag != EXIT_SUCCESS || LoadString( &hInstance, resourceid + MsgShift,
                 (LPSTR) buffer, RESOURCE_MAX_SIZE ) != 0 ) {
@@ -112,7 +113,7 @@ extern int Msg_Get( int resourceid, char *buffer )
     return( 1 );
 }
 
-extern void Msg_Do_Put_Args( char rc_buff[], MSG_ARG_LIST *arg_info,
+void Msg_Do_Put_Args( char rc_buff[], MSG_ARG_LIST *arg_info,
                         char *types, ... )
 {
     va_list     args;
@@ -123,7 +124,7 @@ extern void Msg_Do_Put_Args( char rc_buff[], MSG_ARG_LIST *arg_info,
 }
 
 // Write arguments to put into a message and make it printf-like
-extern void Msg_Put_Args(
+void Msg_Put_Args(
     char                message[],      // Contains %s, etc. or %digit specifiers
     MSG_ARG_LIST        *arg_info,      // Arguments found
     char                *types,         // message conversion specifier types
@@ -183,7 +184,7 @@ static void Msg_Add_Arg( MSG_ARG *arginfo, char typech, va_list *args )
     }
 }
 
-extern void Msg_Write_Map( int resourceid, ... )
+void Msg_Write_Map( int resourceid, ... )
 {
     char        msg_buff[RESOURCE_MAX_SIZE];
     va_list     arglist;
@@ -194,7 +195,7 @@ extern void Msg_Write_Map( int resourceid, ... )
     va_end( arglist );
 }
 
-extern int FiniMsg()
+int FiniMsg()
 {
     int     retcode = EXIT_SUCCESS;
 

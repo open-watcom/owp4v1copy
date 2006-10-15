@@ -84,7 +84,7 @@ static bool WriteBinSegGroup( group_entry *group )
 }
 
 
-extern void BinOutput( void )
+void BinOutput( void )
 /***************************/
 {
     outfilelist         *fnode;
@@ -305,7 +305,7 @@ static bool WriteHexCopyGroups( void *_seg, void *_info )
 }
 
 
-extern void HexOutput( void )
+void HexOutput( void )
 /***************************/
 {
     outfilelist         *fnode;

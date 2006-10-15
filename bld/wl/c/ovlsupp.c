@@ -51,6 +51,7 @@
 #include "overlays.h"
 #include "ring.h"
 #include "specials.h"
+#include "ovlsupp.h"
 
 static segdata      *OvlSegData;
 static symbol       *OverlayTable;   /* symbol entry for overlay table */
@@ -69,7 +70,7 @@ static void         PutOvlInfo( unsigned off, void *src, unsigned len );
 
 static unsigned     EmitOvlAreaEntry( unsigned off, OVL_AREA *area );
 
-extern void ResetOvlSupp( void )
+void ResetOvlSupp( void )
 /******************************/
 {
     AreaSize = 0xFFFF;
@@ -85,7 +86,7 @@ static void ParmWalkSections( section *sect, void (*rtn)( section *, void * ),
     }
 }
 
-extern void ParmWalkAreas( OVL_AREA *ovl, void (*rtn)( section *, void * ),
+void ParmWalkAreas( OVL_AREA *ovl, void (*rtn)( section *, void * ),
                            void *parm )
 /**********************************************************************/
 {
@@ -103,7 +104,7 @@ static void WalkSections( section *sect, void (*rtn)( section * ) )
     }
 }
 
-extern void WalkAreas( OVL_AREA *ovl, void (*rtn)( section * ) )
+void WalkAreas( OVL_AREA *ovl, void (*rtn)( section * ) )
 /************************************************************/
 {
     for( ; ovl != NULL; ovl = ovl->next_area ) {
@@ -153,7 +154,7 @@ static void DoSecPubs( section *sec )
     FinishMapSort();
 }
 
-extern void ProcOvlSectPubs( section *sec )
+void ProcOvlSectPubs( section *sec )
 /*****************************************/
 {
     mod_entry * next;
@@ -166,14 +167,14 @@ extern void ProcOvlSectPubs( section *sec )
     }
 }
 
-extern void ProcOvlPubs( void )
+void ProcOvlPubs( void )
 /*****************************/
 {
     WriteVectors();
     ProcAllOvl( DoSecPubs );
 }
 
-extern void FillOutPtr( section *sec )
+void FillOutPtr( section *sec )
 /************************************/
 {
     if( sec->outfile == NULL ) {
@@ -263,7 +264,7 @@ static void AllocAreas( OVL_AREA *area )
     }
 }
 
-extern void CalcOvl( void )
+void CalcOvl( void )
 /*************************/
 {
     unsigned        temp;
@@ -327,7 +328,7 @@ extern void CalcOvl( void )
     RingAppend( &OvlSegData->u.leader->pieces, OvlSegData );
 }
 
-extern void FreeOvlStruct( void )
+void FreeOvlStruct( void )
 /*******************************/
 {
     OvlClasses = NULL;
@@ -354,7 +355,7 @@ static bool IsAncestor( int elder, section *ceorl )
 #define NO_VECTOR( sym ) ( ( IS_SYM_COMMUNAL( sym ) ) \
                             || ( (sym)->u.d.ovlstate & OVL_FORCE ) )
 
-extern void OvlDefVector( symbol * sym )
+void OvlDefVector( symbol * sym )
 /**************************************/
 {
     segdata *   sdata;
@@ -384,7 +385,7 @@ extern void OvlDefVector( symbol * sym )
     }
 }
 
-extern void Vectorize( symbol * sym )
+void Vectorize( symbol * sym )
 /***********************************/
 /* allocate an overlay vector for a symbol */
 {
@@ -428,7 +429,7 @@ static void OvlRefVector( symbol * sym )
     }
 }
 
-extern void TryRefVector( symbol * sym )
+void TryRefVector( symbol * sym )
 /**************************************/
 {
     if( !( FmtData.type & MK_OVERLAYS ) )
@@ -440,7 +441,7 @@ extern void TryRefVector( symbol * sym )
     }
 }
 
-extern void OvlUseVector( symbol * sym, extnode *newnode )
+void OvlUseVector( symbol * sym, extnode *newnode )
 /********************************************************/
 {
     if( !( FmtData.type & MK_OVERLAYS ) )
@@ -456,7 +457,7 @@ extern void OvlUseVector( symbol * sym, extnode *newnode )
     newnode->ovlref = sym->u.d.ovlref;
 }
 
-extern void IndirectCall( symbol *sym )
+void IndirectCall( symbol *sym )
 /*************************************/
 {
     unsigned_16 ovl_num;
@@ -481,7 +482,7 @@ extern void IndirectCall( symbol *sym )
     }
 }
 
-extern void GetVecAddr( int vecnum, targ_addr *addr )
+void GetVecAddr( int vecnum, targ_addr *addr )
 /***************************************************/
 /* return address of overlay vector in canonical form */
 {
@@ -495,7 +496,7 @@ extern void GetVecAddr( int vecnum, targ_addr *addr )
     }
 }
 
-extern bool CheckOvlClass( char *clname, bool *isovlclass )
+bool CheckOvlClass( char *clname, bool *isovlclass )
 /*********************************************************/
 /* check if among overlay classes, and return TRUE if it is code. */
 {
@@ -520,7 +521,7 @@ extern bool CheckOvlClass( char *clname, bool *isovlclass )
     return( FALSE );
 }
 
-extern section * CheckOvlSect( char *clname )
+section * CheckOvlSect( char *clname )
 /*******************************************/
 {
     section *   sect;
@@ -537,7 +538,7 @@ extern section * CheckOvlSect( char *clname )
     return( sect );
 }
 
-extern void EmitOvlVectors( void )
+void EmitOvlVectors( void )
 /********************************/
 {
     symbol *    symptr;
@@ -658,7 +659,7 @@ static void LongVectors( symbol *loadsym )
 }
 
 
-extern void SetOvlStartAddr( void )
+void SetOvlStartAddr( void )
 /*********************************/
 {
     symbol *    sym;
@@ -680,7 +681,7 @@ extern void SetOvlStartAddr( void )
     }
 }
 
-extern void OvlPass1( void )
+void OvlPass1( void )
 /**************************/
 {
     symbol *    sym;
@@ -756,7 +757,7 @@ static unsigned EmitOvlAreaEntry( unsigned off, OVL_AREA *area )
     return( off );
 }
 
-extern void EmitOvlTable( void )
+void EmitOvlTable( void )
 /******************************/
 /* generate overlay table */
 {
@@ -807,7 +808,7 @@ extern void EmitOvlTable( void )
     }
 }
 
-extern void PadOvlFiles( void )
+void PadOvlFiles( void )
 /*****************************/
 // The overlay files must contain a complete paragraph at the end of the file
 // for the overlay loader to be able to correctly read it.

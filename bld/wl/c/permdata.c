@@ -83,7 +83,7 @@ static void BufWritePermFile( perm_write_info *info, void *data, unsigned len );
 static void DoWritePermFile( perm_write_info *info, char *data, unsigned len,
                              bool isvmem );
 
-extern void ResetPermData( void )
+void ResetPermData( void )
 /******************************/
 {
     IncFileName = NULL;
@@ -413,7 +413,7 @@ static void DoWritePermFile( perm_write_info *info, char *data, unsigned len,
     }
 }
 
-extern void WritePermFile( perm_write_info *info, void *data, unsigned len )
+void WritePermFile( perm_write_info *info, void *data, unsigned len )
 /**************************************************************************/
 {
     QWrite( info->incfhdl, data, len, IncFileName );
@@ -543,7 +543,7 @@ static unsigned_32 WriteLibList( perm_write_info *info, bool douser )
     return numlibs;
 }
 
-extern void WritePermData( void )
+void WritePermData( void )
 /*******************************/
 {
     inc_file_header     hdr;
@@ -602,7 +602,7 @@ extern void WritePermData( void )
     QClose( info.incfhdl, IncFileName );
 }
 
-extern void ReadPermFile( perm_read_info *info, void *data, unsigned len )
+void ReadPermFile( perm_read_info *info, void *data, unsigned len )
 /************************************************************************/
 {
     QRead( info->incfhdl, data, len, IncFileName );
@@ -876,7 +876,7 @@ static void ReadStartInfo( inc_file_header *hdr )
     }
 }
 
-extern void ReadPermData( void )
+void ReadPermData( void )
 /******************************/
 {
     perm_read_info      info;
@@ -951,13 +951,13 @@ extern void ReadPermData( void )
     _LnkFree( info.buffer );
 }
 
-extern void PermSaveFixup( void *fix, unsigned size )
+void PermSaveFixup( void *fix, unsigned size )
 /***************************************************/
 {
     AddStringTable( &StoredRelocs, (char *) fix, size );
 }
 
-extern void IterateModRelocs( unsigned offset, unsigned sizeleft,
+ void IterateModRelocs( unsigned offset, unsigned sizeleft,
                               unsigned (*fn)(void *) )
 /***************************************************************/
 {
@@ -985,7 +985,7 @@ static void SaveRelocData( void *_curr, char *data, unsigned size )
     *curr += size;
 }
 
-extern void IncP2Start( void )
+void IncP2Start( void )
 /****************************/
 {
     char * spare;
@@ -1001,19 +1001,19 @@ extern void IncP2Start( void )
     FiniStringBlock( &StoredRelocs, &SizeRelocs, &spare, SaveRelocData );
 }
 
-extern void PermStartMod( mod_entry *mod )
+void PermStartMod( mod_entry *mod )
 /****************************************/
 {
     mod->relocs = GetStringTableSize( &StoredRelocs );
 }
 
-extern void PermEndMod( mod_entry *mod )
+void PermEndMod( mod_entry *mod )
 /**************************************/
 {
     mod->sizerelocs = GetStringTableSize( &StoredRelocs ) - mod->relocs;
 }
 
-extern void * GetSegContents( segdata *sdata, virt_mem off )
+void * GetSegContents( segdata *sdata, virt_mem off )
 /**********************************************************/
 {
     if( OldSymFile != NULL && sdata->u.leader->dbgtype != NOT_DEBUGGING_INFO ) {
@@ -1022,13 +1022,13 @@ extern void * GetSegContents( segdata *sdata, virt_mem off )
     return OldExe + off;
 }
 
-extern void * GetAltdefContents( segdata *sdata )
+void * GetAltdefContents( segdata *sdata )
 /***********************************************/
 {
     return (char *)AltDefData + sdata->data;
 }
 
-extern void FreeSavedRelocs( void )
+void FreeSavedRelocs( void )
 /*********************************/
 {
     if( !(LinkFlags & INC_LINK_FLAG) ) {
@@ -1037,7 +1037,7 @@ extern void FreeSavedRelocs( void )
     }
 }
 
-extern void CleanPermData( void )
+void CleanPermData( void )
 /*******************************/
 {
 #ifndef NDEBUG

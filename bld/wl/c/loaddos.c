@@ -107,7 +107,7 @@ static void AssignFileLocs( section *sect )
             sect->ovl_num, sect->u.file_loc, sect->outfile->fname ));
 }
 
-extern void OpenOvlFile( outfilelist *thefile )
+void OpenOvlFile( outfilelist *thefile )
 /*********************************************/
 {
     outfilelist *   fnode;
@@ -319,7 +319,7 @@ static void WriteCOMFile( void )
     WriteDBI();
 }
 
-extern void FiniDOSLoadFile( void )
+void FiniDOSLoadFile( void )
 /*********************************/
 /* terminate writing of load file */
 {

@@ -86,9 +86,9 @@ void LPrint( char *str, ... ) {
 
 //---------------------------------------------------------------
 
-extern int Debug;
+//extern int Debug;
 
-extern void _Debug( unsigned int mask, char *str, ... )
+void _Debug( unsigned int mask, char *str, ... )
 {
     va_list     arglist;
     char        buff[128];

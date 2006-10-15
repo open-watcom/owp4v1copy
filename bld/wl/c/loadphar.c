@@ -51,7 +51,7 @@ static unsigned_32  WritePharRelocs( void );
 static void         WritePharSimple( unsigned_32 start );
 static void         WritePharExtended( unsigned_32 start );
 
-extern void FiniPharLapLoadFile( void )
+void FiniPharLapLoadFile( void )
 /*************************************/
 {
     unsigned_32 start;

@@ -74,7 +74,7 @@ void PrintLine( int * bogus, const char *buff, unsigned len )
 }
 #endif
 
-extern void LnkMemInit( void )
+void LnkMemInit( void )
 /****************************/
 {
 #if defined( __QNX__ )
@@ -93,7 +93,7 @@ extern void LnkMemInit( void )
 }
 
 
-extern void LnkMemFini( void )
+void LnkMemFini( void )
 /****************************/
 {
 #ifdef _INT_DEBUG
@@ -108,10 +108,10 @@ extern void LnkMemFini( void )
 }
 
 #ifdef TRMEM
-extern void *LAlloc( unsigned size )
+ void *LAlloc( unsigned size )
 /**********************************/
 {
-    extern void *DoLAlloc( unsigned, void (*)() );
+//    extern void *DoLAlloc( unsigned, void (*)() );
     void        (*ra)();
 
     ra = _trmem_guess_who();
@@ -144,7 +144,7 @@ void *LAlloc( unsigned size )
     return( p );
 }
 
-extern void * ChkLAlloc( unsigned size )
+void * ChkLAlloc( unsigned size )
 /**************************************/
 {
     void                *ptr;
@@ -164,7 +164,7 @@ extern void * ChkLAlloc( unsigned size )
 }
 
 
-extern void LFree( void *p )
+void LFree( void *p )
 /**************************/
 {
     if( p == NULL ) return;
@@ -178,7 +178,7 @@ extern void LFree( void *p )
 #endif
 }
 
-extern void * LnkExpand( void *src, unsigned size )
+void * LnkExpand( void *src, unsigned size )
 /*************************************************/
 // try to expand a block of memory
 {
@@ -189,7 +189,7 @@ extern void * LnkExpand( void *src, unsigned size )
 #endif
 }
 
-extern void * LnkReAlloc( void *src, unsigned size )
+void * LnkReAlloc( void *src, unsigned size )
 /**************************************************/
 // reallocate a block of memory.
 {
@@ -218,13 +218,13 @@ extern void * LnkReAlloc( void *src, unsigned size )
 */
 
 #ifdef TRMEM
-extern int ValidateMem( void )
+int ValidateMem( void )
 /*****************************/
 {
     return _trmem_validate_all( TrHdl );
 }
 
-extern void PrintAllMem( void )
+void PrintAllMem( void )
 /*****************************/
 {
     if( _trmem_prt_list( TrHdl ) == 0 ) {
@@ -234,13 +234,13 @@ extern void PrintAllMem( void )
 #endif
 
 #ifndef NDEBUG
-extern void DbgZapAlloc( void *tgt, unsigned size )
+void DbgZapAlloc( void *tgt, unsigned size )
 /*************************************************/
 {
     memset( tgt, 0xA5, size );
 }
 
-extern void DbgZapFreed( void *tgt, unsigned size )
+void DbgZapFreed( void *tgt, unsigned size )
 /*************************************************/
 {
     memset( tgt, 0xBD, size );
@@ -259,7 +259,7 @@ static bool CacheRelease( void )
     return( freed );
 }
 
-extern bool FreeUpMemory( void )
+bool FreeUpMemory( void )
 /******************************/
 // make sure LnkReAlloc is kept up to date with what is put in here.
 {
@@ -278,7 +278,7 @@ extern bool FreeUpMemory( void )
     return PermShrink() || CacheRelease() || SwapOutVirt() || SwapOutRelocs();
 }
 
-extern int __nmemneed( size_t amount )
+int __nmemneed( size_t amount )
 /************************************/
 {
     amount = amount;
@@ -286,7 +286,7 @@ extern int __nmemneed( size_t amount )
 }
 
 #ifdef M_I86
-extern int __fmemneed( size_t amount )
+int __fmemneed( size_t amount )
 /************************************/
 {
     amount = amount;

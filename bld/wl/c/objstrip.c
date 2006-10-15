@@ -117,7 +117,7 @@ static void PruneNonSymEdges( symbol * sym )
     }
 }
 
-extern void RefSeg( segdata * seg )
+void RefSeg( segdata * seg )
 /*********************************/
 /* mark a segment as being referenced, and chase through the segments that it
  * points to make sure they are also marked */
@@ -141,7 +141,7 @@ extern void RefSeg( segdata * seg )
     seg->visited = FALSE;
 }
 
-extern void DataRef( symbol * sym )
+void DataRef( symbol * sym )
 /*********************************/
 /* symbol referenced from data, so make sure it is included */
 {
@@ -159,7 +159,7 @@ extern void DataRef( symbol * sym )
     sym->info |= SYM_DCE_REF;
 }
 
-extern void AddEdge( segdata * seg, symbol * sym )
+void AddEdge( segdata * seg, symbol * sym )
 /************************************************/
 /* reference from a segment to a symbol */
 {
@@ -192,7 +192,7 @@ extern void AddEdge( segdata * seg, symbol * sym )
     }
 }
 
-extern void AddSymEdge( symbol * srcsym, symbol * targsym )
+void AddSymEdge( symbol * srcsym, symbol * targsym )
 /*********************************************************/
 /* make a reference from one symbol to another */
 {
@@ -209,7 +209,7 @@ extern void AddSymEdge( symbol * srcsym, symbol * targsym )
     }
 }
 
-extern void AddSymSegEdge( symbol *srcsym, segdata *targsdata )
+void AddSymSegEdge( symbol *srcsym, segdata *targsdata )
 /*********************************************************/
 /* make a reference from symbol to segment */
 {
@@ -231,7 +231,7 @@ extern void AddSymSegEdge( symbol *srcsym, segdata *targsdata )
     }
 }
 
-extern void DefStripSym( symbol * sym, segdata * seg )
+void DefStripSym( symbol * sym, segdata * seg )
 /****************************************************/
 /* Handle the effects of this symbol on the function call graph */
 /* remember - the symbol contains a list of references to it's defining segment
@@ -280,7 +280,7 @@ extern void DefStripSym( symbol * sym, segdata * seg )
     sym->p.seg = seg;
 }
 
-extern void DefStripImpSym( symbol * sym )
+void DefStripImpSym( symbol * sym )
 /****************************************/
 /* Imported symbols can now reference just like normal symbols, except that
  (at the time of this writing) they don't have a segment like normal
@@ -310,7 +310,7 @@ extern void DefStripImpSym( symbol * sym )
     sym->p.edges = NULL;
 }
 
-extern void CleanStripInfo( symbol * sym )
+void CleanStripInfo( symbol * sym )
 /****************************************/
 /* remove any stripping information from a symbol which does not need it */
 {

@@ -50,7 +50,7 @@ void ResetSymTrace( void )
 
 static void CheckFileTrace( section * );
 
-extern void CheckTraces( void )
+void CheckTraces( void )
 /*****************************/
 // first check for .obj files being traced, then check libraries
 {
@@ -103,7 +103,7 @@ static void CheckFileTrace( section * sect )
     }
 }
 
-extern void CheckLibTrace( file_list * lib )
+void CheckLibTrace( file_list * lib )
 /******************************************/
 {
     trace_info *    info;
@@ -120,7 +120,7 @@ extern void CheckLibTrace( file_list * lib )
     }
 }
 
-extern bool FindLibTrace( mod_entry *mod )
+bool FindLibTrace( mod_entry *mod )
 /****************************************/
 {
     trace_info **   prev;
@@ -141,7 +141,7 @@ extern bool FindLibTrace( mod_entry *mod )
     return( FALSE );
 }
 
-extern void PrintBadTraces( void )
+void PrintBadTraces( void )
 /********************************/
 {
     trace_info *    info;
@@ -158,7 +158,7 @@ extern void PrintBadTraces( void )
     CleanTraces();
 }
 
-extern void CleanTraces( void )
+void CleanTraces( void )
 /*****************************/
 {
     trace_info *next;

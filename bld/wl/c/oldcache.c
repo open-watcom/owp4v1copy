@@ -64,7 +64,7 @@ static unsigned NumCacheBlocks( unsigned long len )
     return numblocks;
 }
 
-extern bool CacheOpen( file_list *list )
+bool CacheOpen( file_list *list )
 /**************************************/
 {
     infilelist *file;
@@ -100,7 +100,7 @@ extern bool CacheOpen( file_list *list )
     return TRUE;
 }
 
-extern void CacheClose( file_list *list, unsigned pass )
+void CacheClose( file_list *list, unsigned pass )
 /******************************************************/
 {
     infilelist *file;
@@ -131,7 +131,7 @@ extern void CacheClose( file_list *list, unsigned pass )
     }
 }
 
-extern void * CachePermRead( file_list *list, unsigned long pos, unsigned len )
+void * CachePermRead( file_list *list, unsigned long pos, unsigned len )
 /*****************************************************************************/
 {
     char *      buf;
@@ -148,7 +148,7 @@ extern void * CachePermRead( file_list *list, unsigned long pos, unsigned len )
     return result;
 }
 
-extern void * CacheRead( file_list * list, unsigned long pos, unsigned len )
+void * CacheRead( file_list * list, unsigned long pos, unsigned len )
 /**************************************************************************/
 /* read len bytes out of the cache. */
 {
@@ -210,13 +210,13 @@ extern void * CacheRead( file_list * list, unsigned long pos, unsigned len )
     return result;
 }
 
-extern bool CacheEnd( file_list * list, unsigned long pos )
+bool CacheEnd( file_list * list, unsigned long pos )
 /*********************************************************/
 {
     return pos >= list->file->len;
 }
 
-extern void CacheFree( file_list *list, void *mem )
+void CacheFree( file_list *list, void *mem )
 /*************************************************/
 // used for disposing things allocated by CachePermRead
 {
@@ -254,7 +254,7 @@ static bool DumpFileCache( infilelist *file, bool nuke )
     return blockfreed;
 }
 
-extern void FreeObjCache( file_list *list )
+void FreeObjCache( file_list *list )
 /*****************************************/
 {
     if( list == NULL ) return;
@@ -262,7 +262,7 @@ extern void FreeObjCache( file_list *list )
     list->file->cache = NULL;
 }
 
-extern bool DumpObjCache( void )
+bool DumpObjCache( void )
 /******************************/
 // find and dump an object file cache.
 {
@@ -279,7 +279,7 @@ extern bool DumpObjCache( void )
     return FALSE;
 }
 
-extern void CacheFini( void )
+void CacheFini( void )
 /***************************/
 {
 }

@@ -65,35 +65,19 @@
 #if defined( _DLLHOST )
     #include <malloc.h>
 #endif
-
-extern void     ResetAddr( void );
-extern void     ResetMsg( void );
-extern void     ResetSym( void );
-extern void     ResetDBI( void );
-extern void     ResetMapIO( void );
-extern void     ResetCmdAll( void );
-extern void     ResetOvlSupp( void );
-extern void     ResetComdef( void );
-extern void     ResetDistrib( void );
-extern void     ResetLoadNov( void );
-extern void     ResetLoadPE( void );
-extern void     ResetObj2Supp( void );
-extern void     ResetObjIO( void );
-extern void     ResetObjOMF( void );
-extern void     ResetObjPass1( void );
-extern void     ResetObjStrip( void );
-extern void     ResetOMFReloc( void );
-extern void     ResetReloc( void );
-extern void     ResetSymTrace( void );
-extern void     ResetLoadFile( void );
-extern void     ResetToc( void );
-
-extern void     InitSubSystems( void );
-extern void     LinkMainLine( char *cmds );
-extern void     FiniSubSystems( void );
-extern void     ResetSubSystems( void );
-extern void     CleanSubSystems( void );
-extern void     DoLink( char * cmdline );
+#include "dbgall.h"
+#include "objpass1.h"
+#include "obj2supp.h"
+#include "cmdall.h"
+#include "reloc.h"
+#include "salloc.h"
+#include "objstrip.h"
+#include "symtab.h"
+#include "omfreloc.h"
+#include "ovlsupp.h"
+#include "wcomdef.h"
+#include "objomf.h"
+#include "wlink.h"
 
 static void     PreAddrCalcFormatSpec( void );
 static void     PostAddrCalcFormatSpec( void );
@@ -101,8 +85,8 @@ static void     DoDefaultSystem( void );
 static void     FindLibPaths( void );
 static void     ResetMisc( void );
 
-extern int              __nheapblk;
-extern commandflag      CmdFlags;
+// Not sure what this is for - doesn't seem to be referenced
+//extern int              __nheapblk;
 
 #if !defined( _DLLHOST )           // it's the standalone linker
 
@@ -110,7 +94,7 @@ extern commandflag      CmdFlags;
 char **_argv;
 #endif
 
-extern int main( int argc, char ** argv )
+int main( int argc, char ** argv )
 /***************************************/
 {
     argc = argc;        /* to avoid a warning */
@@ -127,6 +111,10 @@ extern int main( int argc, char ** argv )
 #endif
 
 #ifdef _INT_DEBUG
+/*
+ *  I have temporarily left these as extern as they are internal data. On the final pass, either find
+ *  a library header that defines these or create one!
+ */
 extern char *   _edata;
 extern char *   _end;
 #endif
@@ -140,7 +128,7 @@ static void LinkMeBaby( void )
     DoLink( ArgSave );
 }
 
-extern void LinkMainLine( char *cmds )
+void LinkMainLine( char *cmds )
 /************************************/
 {
     for(;;) {
@@ -155,7 +143,7 @@ extern void LinkMainLine( char *cmds )
 #endif
 }
 
-extern void InitSubSystems( void )
+void InitSubSystems( void )
 /********************************/
 {
 #ifdef _INT_DEBUG
@@ -172,7 +160,7 @@ extern void InitSubSystems( void )
     InitCmdFile();
 }
 
-extern void ResetSubSystems( void )
+void ResetSubSystems( void )
 /*********************************/
 {
     ResetPermData();
@@ -202,7 +190,7 @@ extern void ResetSubSystems( void )
     ResetToc();
 }
 
-extern void CleanSubSystems( void )
+void CleanSubSystems( void )
 /*********************************/
 {
     if( MapFile != NIL_HANDLE ) {
@@ -227,7 +215,7 @@ extern void CleanSubSystems( void )
     CleanPermData();
 }
 
-extern void FiniSubSystems( void )
+void FiniSubSystems( void )
 /********************************/
 {
     FiniLinkStruct();
@@ -236,7 +224,7 @@ extern void FiniSubSystems( void )
     LnkMemFini();
 }
 
-extern void DoLink( char * cmdline )
+void DoLink( char * cmdline )
 /**********************************/
 // cmdline is only used when we are running under watfor.
 {

@@ -49,7 +49,7 @@
 static char *           TFileName;
 static unsigned long    TmpFSize;
 
-extern void InitSpillFile( void )
+void InitSpillFile( void )
 /*******************************/
 {
     TempFile = NIL_HANDLE;
@@ -68,7 +68,7 @@ static char * MakeTempName( char *name )
     return( name + sizeof(TEMPFNAME) - 2 );         // pointer to "a"
 }
 
-extern f_handle OpenTempFile( char **fname )
+f_handle OpenTempFile( char **fname )
 /******************************************/
 {
     char *      ptr;
@@ -110,7 +110,7 @@ extern f_handle OpenTempFile( char **fname )
     return QOpenRW( *fname );
 }
 
-extern unsigned long SpillAlloc( unsigned amt )
+unsigned long SpillAlloc( unsigned amt )
 /*********************************************/
 {
     unsigned long           stg;
@@ -127,14 +127,14 @@ extern unsigned long SpillAlloc( unsigned amt )
     return( stg + 1 );  /* add 1 to prevent a NULL handle */
 }
 
-extern void SpillNull( unsigned long base, unsigned off, unsigned size )
+void SpillNull( unsigned long base, unsigned off, unsigned size )
 /**********************************************************************/
 {
     QSeek( TempFile, base + off - 1, TFileName );
     WriteNulls( TempFile, size, TFileName );
 }
 
-extern void SpillWrite( unsigned long base, unsigned off, void *mem,
+void SpillWrite( unsigned long base, unsigned off, void *mem,
                                                           unsigned size )
 /***********************************************************************/
 {
@@ -142,7 +142,7 @@ extern void SpillWrite( unsigned long base, unsigned off, void *mem,
     QWrite( TempFile, mem, size, TFileName );
 }
 
-extern void SpillRead( unsigned long base, unsigned off, void *mem,
+void SpillRead( unsigned long base, unsigned off, void *mem,
                                                          unsigned size )
 /**********************************************************************/
 {
@@ -150,7 +150,7 @@ extern void SpillRead( unsigned long base, unsigned off, void *mem,
     QRead( TempFile, mem, size, TFileName );
 }
 
-extern void CloseSpillFile( void )
+void CloseSpillFile( void )
 /********************************/
 /*  Close temporary file.  */
 {

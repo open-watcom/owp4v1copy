@@ -411,7 +411,7 @@ void CarveWalkAll( carve_t cv, void (*rtn)( void *, void * ), void *data )
     }
 }
 
-extern void CarveRestart( carve_t cv, unsigned num )
+void CarveRestart( carve_t cv, unsigned num )
 /**************************************************/
 {
     unsigned    numblks;
@@ -444,7 +444,7 @@ static void CarveZapBlock( carve_t cv, void *blk, void *dummy )
     MakeFreeList( cv, blk, 0 );
 }
 
-extern void CarvePurge( carve_t cv )
+void CarvePurge( carve_t cv )
 /**********************************/
 /* clean out a carve block that had been prepared for incremental linking */
 {

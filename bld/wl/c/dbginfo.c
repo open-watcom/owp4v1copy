@@ -110,7 +110,7 @@ struct {
 } TraceInfo;
 #endif
 
-extern void ODBIInit( section *sect )
+void ODBIInit( section *sect )
 /***********************************/
 {
     DBISize = sizeof( dbgheader );
@@ -128,7 +128,7 @@ extern void ODBIInit( section *sect )
 #endif
 }
 
-extern void ODBIInitModule( mod_entry *mod )
+void ODBIInitModule( mod_entry *mod )
 /******************************************/
 {
     if( CurrSect->dbg_info == NULL )
@@ -176,7 +176,7 @@ static snamelist * LangAlloc( byte len, void *buff )
     return( node );
 }
 
-extern void ODBIP1Source( byte major, byte minor, char *name, int len )
+void ODBIP1Source( byte major, byte minor, char *name, int len )
 /*********************************************************************/
 {
     snamelist * node;
@@ -210,7 +210,7 @@ static void DoAddLocal( dbi_section * dbi, offset length )
 #endif
 }
 
-extern void ODBIAddLocal( unsigned_16 info, offset length )
+void ODBIAddLocal( unsigned_16 info, offset length )
 /*********************************************************/
 {
     debug_info          *dinfo;
@@ -227,7 +227,7 @@ extern void ODBIAddLocal( unsigned_16 info, offset length )
     }
 }
 
-extern void ODBIP1ModuleScanned( void )
+void ODBIP1ModuleScanned( void )
 /*************************************/
 {
     debug_info          *dinfo;
@@ -264,7 +264,7 @@ static void DoGenLocal( dbi_section *dsect, dbi_section * dlink,
 #endif
 }
 
-extern void ODBIGenLocal( segdata *sdata )
+void ODBIGenLocal( segdata *sdata )
 /****************************************/
 {
     debug_info          *dinfo;
@@ -304,7 +304,7 @@ static void ODBIAddLines( segdata * seg, void *lines, unsigned size,
     DoAddLocal( &dinfo->linelinks, linesize );
 }
 
-extern void ODBIP1ModuleFinished( mod_entry *obj )
+void ODBIP1ModuleFinished( mod_entry *obj )
 /************************************************/
 {
     debug_info          *dinfo;
@@ -323,7 +323,7 @@ extern void ODBIP1ModuleFinished( mod_entry *obj )
     dinfo->linelinks.size = 0;
 }
 
-extern void ODBIDefClass( class_entry *cl, unsigned_32 size )
+void ODBIDefClass( class_entry *cl, unsigned_32 size )
 /***********************************************************/
 {
     debug_info *dinfo;
@@ -347,7 +347,7 @@ static int ODBISymIsForGlobalDebugging( symbol *sym, mod_entry *currMod )
         && ( ( CurrMod->modinfo & DBI_STATICS ) || !( sym->info & SYM_STATIC ) ) );
 }
 
-extern void ODBIAddGlobal( symbol *sym )
+void ODBIAddGlobal( symbol *sym )
 /**************************************/
 {
     debug_info      *dinfo;
@@ -366,7 +366,7 @@ extern void ODBIAddGlobal( symbol *sym )
     }
 }
 
-extern void ODBIAddrSectStart( section *sect )
+void ODBIAddrSectStart( section *sect )
 /********************************************/
 {
     debug_info      *dptr;
@@ -450,7 +450,7 @@ static void AllocDBIClasses( class_entry *class )
     }
 }
 
-extern void ODBIGenGlobal( symbol * sym, section *sect )
+void ODBIGenGlobal( symbol * sym, section *sect )
 /******************************************************/
 {
     int         len;
@@ -490,7 +490,7 @@ extern void ODBIGenGlobal( symbol * sym, section *sect )
     }
 }
 
-extern void ODBIAddModule( mod_entry *obj, section *sect )
+void ODBIAddModule( mod_entry *obj, section *sect )
 /********************************************************/
 {
     debug_info          *dptr;
@@ -509,7 +509,7 @@ static void DoName( char *cname, char *intelname, int len )
     memcpy( &intelname[ 1 ], cname, len );
 }
 
-extern void ODBIP2Start( section * sect )
+void ODBIP2Start( section * sect )
 /***************************************/
 /* initialize pointers for pass 2 processing */
 
@@ -554,7 +554,7 @@ static bool CheckFirst( void *_seg, void *_firstseg )
     return( FALSE );
 }
 
-extern void ODBIGenLines( segdata * seg, void *lines, unsigned size,
+void ODBIGenLines( segdata * seg, void *lines, unsigned size,
                           bool is32bit )
 /******************************************************************/
 {
@@ -652,7 +652,7 @@ static void ODBIAddAddrAdd( segdata *sdata, offset delta, offset size,
     sdata->u.leader->num++;
 }
 
-extern void ODBIAddAddrInfo( seg_leader *seg )
+void ODBIAddAddrInfo( seg_leader *seg )
 /********************************************/
 {
     debug_info *dptr;
@@ -727,7 +727,7 @@ static void ODBIGenAddrInfo( seg_leader *seg )
     DBIAddrInfoScan( seg, ODBIGenAddrInit, ODBIGenAddrAdd, dptr );
 }
 
-extern void ODBIFini( section *sect )
+void ODBIFini( section *sect )
 /***********************************/
 // write out the final links in the link tables.
 {
@@ -749,7 +749,7 @@ extern void ODBIFini( section *sect )
     }
 }
 
-extern void ODBIGenModule( void )
+void ODBIGenModule( void )
 /*******************************/
 {
     odbimodinfo         *rec;
@@ -778,7 +778,7 @@ extern void ODBIGenModule( void )
     dptr->modnum++;
 }
 
-extern void ODBISectCleanup( section *sect )
+void ODBISectCleanup( section *sect )
 /******************************************/
 {
     sect = sect;
@@ -833,7 +833,7 @@ static unsigned_16 WriteSegValues( void )
     }
 }
 
-extern void OWriteDBI( void )
+void OWriteDBI( void )
 /***************************/
 /* copy debugging info from extra memory to loadfile */
 {
@@ -864,7 +864,7 @@ extern void OWriteDBI( void )
 #endif
 }
 
-extern void WriteDBISecs( section *sec )
+void WriteDBISecs( section *sec )
 /**************************************/
 {
     debug_info      *dptr;

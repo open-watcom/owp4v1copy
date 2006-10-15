@@ -186,7 +186,7 @@ static char FlatStandardAbbrevs[] = {
 
 static void DwarfAddLines( segdata *, void *, unsigned, bool );
 
-extern void DwarfInit( void )
+void DwarfInit( void )
 /***************************/
 {
     int index;
@@ -199,19 +199,19 @@ extern void DwarfInit( void )
     }
 }
 
-extern void DwarfInitModule( mod_entry *mod )
+void DwarfInitModule( mod_entry *mod )
 /*******************************************/
 {
     _PermAlloc( mod->d.d, sizeof( dwarfmodinfo ) );
     memset( mod->d.d, 0, sizeof( dwarfmodinfo ) );
 }
 
-extern void DwarfP1ModuleScanned( void )
+void DwarfP1ModuleScanned( void )
 /**************************************/
 {
 }
 
-extern void DwarfP1ModuleFinished( mod_entry *mod )
+void DwarfP1ModuleFinished( mod_entry *mod )
 /*************************************************/
 {
     if( MOD_NOT_DEBUGGABLE( mod ) )
@@ -238,7 +238,7 @@ extern void DwarfP1ModuleFinished( mod_entry *mod )
     SectionTable[SECT_DEBUG_INFO].size += mod->d.d->pubsym.size;
 }
 
-extern void DwarfStoreAddrInfo( mod_entry *mod )
+void DwarfStoreAddrInfo( mod_entry *mod )
 /**********************************************/
 {
     if( !( mod->modinfo & MOD_DBI_SEEN ) ) {
@@ -255,7 +255,7 @@ extern void DwarfStoreAddrInfo( mod_entry *mod )
     }
 }
 
-extern void DwarfAddModule( mod_entry *mod, section *sect )
+void DwarfAddModule( mod_entry *mod, section *sect )
 /*********************************************************/
 // this generates the headers needed in the individual sections
 {
@@ -347,7 +347,7 @@ extern void DwarfAddModule( mod_entry *mod, section *sect )
     }
 }
 
-extern void DwarfGenModule( void )
+void DwarfGenModule( void )
 /********************************/
 // write out the addr info, and write out the null die at the end of .debug_info
 {
@@ -389,7 +389,7 @@ static void DefAClass( void *_seg )
     }
 }
 
-extern void DwarfDefClass( class_entry *cl, unsigned_32 size )
+void DwarfDefClass( class_entry *cl, unsigned_32 size )
 /************************************************************/
 // go through the list of dwarf segments, and make sure VM is allocated for
 // all of them.
@@ -401,7 +401,7 @@ extern void DwarfDefClass( class_entry *cl, unsigned_32 size )
     RingWalk( cl->segs, DefAClass );
 }
 
-extern void DwarfAddGlobal( symbol *sym )
+void DwarfAddGlobal( symbol *sym )
 /***************************************/
 {
     sym = sym;
@@ -431,7 +431,7 @@ static offset GetLinearGroupOffset( group_entry *group )
     return( off );
 }
 
-extern void DwarfGenGlobal( symbol *sym, section *sect )
+void DwarfGenGlobal( symbol *sym, section *sect )
 /******************************************************/
 {
     symbol_die  die;
@@ -510,7 +510,7 @@ static void DwarfAddLines( segdata *seg, void * lines, unsigned size,
     CurrMod->d.d->dasi.size += dwsize;
 }
 
-extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
+void DwarfGenLines( segdata *seg, void *lines, unsigned size,
                            bool is32bit )
 /******************************************************************/
 {
@@ -605,7 +605,7 @@ static void DwarfAddAddrAdd( segdata *sdata, offset delta, offset size,
     }
 }
 
-extern void DwarfAddAddrInfo( seg_leader *seg )
+void DwarfAddAddrInfo( seg_leader *seg )
 /*********************************************/
 {
     DBIAddrInfoScan( seg, DwarfAddAddrInit, DwarfAddAddrAdd, NULL );
@@ -671,7 +671,7 @@ static void DwarfGenAddrAdd( segdata *sdata, offset delta, offset size,
     }
 }
 
-extern void DwarfGenAddrInfo( seg_leader *seg )
+void DwarfGenAddrInfo( seg_leader *seg )
 /*********************************************/
 {
     arange_tuple tuple;
@@ -679,7 +679,7 @@ extern void DwarfGenAddrInfo( seg_leader *seg )
     DBIAddrInfoScan( seg, DwarfGenAddrInit, DwarfGenAddrAdd, &tuple );
 }
 
-extern void DwarfAddrSectStart( section *sect )
+void DwarfAddrSectStart( section *sect )
 /*********************************************/
 // This allocates space for the dwarf information
 {
@@ -776,7 +776,7 @@ static bool CheckDBISeg( void *seg, void *num )
     return( FALSE );
 }
 
-extern int DwarfCountDebugSections( void )
+int DwarfCountDebugSections( void )
 /****************************************/
 {
     int num;
@@ -797,7 +797,7 @@ extern int DwarfCountDebugSections( void )
     return( num );
 }
 
-extern offset DwarfWriteTrailer( offset curr_off )
+offset DwarfWriteTrailer( offset curr_off )
 /************************************************/
 {
     TISTrailer  trailer;
@@ -811,7 +811,7 @@ extern offset DwarfWriteTrailer( offset curr_off )
     return( sizeof( TISTrailer ) );
 }
 
-extern offset DwarfElfWriteDBI( offset curr_off, stringtable *strtab,
+offset DwarfElfWriteDBI( offset curr_off, stringtable *strtab,
                                 Elf32_Shdr *dbgsecbegin )
 /*******************************************************************/
 {
@@ -819,7 +819,7 @@ extern offset DwarfElfWriteDBI( offset curr_off, stringtable *strtab,
     return( curr_off );
 }
 
-extern void DwarfWriteDBI( void )
+void DwarfWriteDBI( void )
 /*******************************/
 {
     Elf32_Ehdr          elf_header;

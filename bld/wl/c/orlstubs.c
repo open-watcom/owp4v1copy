@@ -31,26 +31,26 @@
 
 #include <orl.h>
 
-extern orl_handle ORLInit( orl_funcs *funcs )
+orl_handle ORLInit( orl_funcs *funcs )
 {
     funcs = funcs;
     return( NULL );
 }
 
-extern orl_return ORLFini( orl_handle hdl )
+orl_return ORLFini( orl_handle hdl )
 {
     hdl = hdl;
     return( ORL_OKAY );
 }
 
-extern orl_file_format ORLFileIdentify( orl_handle hdl, void *data )
+orl_file_format ORLFileIdentify( orl_handle hdl, void *data )
 {
     hdl = hdl;
     data = data;
     return( ORL_UNRECOGNIZED_FORMAT );
 }
 
-extern orl_file_handle ORLFileInit( orl_handle a, void *b, orl_file_format c )
+orl_file_handle ORLFileInit( orl_handle a, void *b, orl_file_format c )
 {
     a = a;
     b = b;
@@ -58,13 +58,13 @@ extern orl_file_handle ORLFileInit( orl_handle a, void *b, orl_file_format c )
     return( NULL );
 }
 
-extern orl_return ORLFileFini( orl_file_handle a )
+orl_return ORLFileFini( orl_file_handle a )
 {
     a = a;
     return( ORL_ERROR );
 }
 
-extern orl_return ORLFileScan( orl_file_handle a, char *b,
+orl_return ORLFileScan( orl_file_handle a, char *b,
                                orl_sec_return_func c )
 {
     a = a;
@@ -73,100 +73,100 @@ extern orl_return ORLFileScan( orl_file_handle a, char *b,
     return( ORL_ERROR );
 }
 
-extern orl_machine_type ORLFileGetMachineType( orl_file_handle a )
+orl_machine_type ORLFileGetMachineType( orl_file_handle a )
 {
     a = a;
     return( ORL_MACHINE_TYPE_NONE );
 }
 
-extern orl_file_flags ORLFileGetFlags( orl_file_handle a )
+orl_file_flags ORLFileGetFlags( orl_file_handle a )
 {
     a = a;
     return( 0 );
 }
 
-extern orl_file_type ORLFileGetType( orl_file_handle a )
+orl_file_type ORLFileGetType( orl_file_handle a )
 {
     a = a;
     return( ORL_FILE_TYPE_NONE );
 }
 
-extern char *ORLSecGetName( orl_sec_handle a )
+char *ORLSecGetName( orl_sec_handle a )
 {
     a = a;
     return( NULL );
 }
 
-extern orl_sec_size ORLSecGetSize( orl_sec_handle a )
+orl_sec_size ORLSecGetSize( orl_sec_handle a )
 {
     a = a;
     return( 0 );
 }
 
-extern orl_sec_type ORLSecGetType( orl_sec_handle a )
+orl_sec_type ORLSecGetType( orl_sec_handle a )
 {
     a = a;
     return( ORL_SEC_TYPE_NONE );
 }
 
-extern orl_sec_flags ORLSecGetFlags( orl_sec_handle a )
+orl_sec_flags ORLSecGetFlags( orl_sec_handle a )
 {
     a = a;
     return( 0 );
 }
 
-extern orl_sec_alignment ORLSecGetAlignment( orl_sec_handle a )
+orl_sec_alignment ORLSecGetAlignment( orl_sec_handle a )
 {
     a = a;
     return( 0 );
 }
 
-extern orl_return ORLSecGetContents( orl_sec_handle a, char **b )
+orl_return ORLSecGetContents( orl_sec_handle a, char **b )
 {
     a = a;
     b = b;
     return( ORL_ERROR );
 }
 
-extern orl_return ORLRelocSecScan( orl_sec_handle a, orl_reloc_return_func b )
+orl_return ORLRelocSecScan( orl_sec_handle a, orl_reloc_return_func b )
 {
     a = a;
     b = b;
     return( ORL_ERROR );
 }
 
-extern orl_return ORLSymbolSecScan( orl_sec_handle a, orl_symbol_return_func b )
+orl_return ORLSymbolSecScan( orl_sec_handle a, orl_symbol_return_func b )
 {
     a = a;
     b = b;
     return( ORL_ERROR );
 }
 
-extern char *ORLSymbolGetName( orl_symbol_handle a )
+char *ORLSymbolGetName( orl_symbol_handle a )
 {
     a = a;
     return( NULL );
 }
 
-extern orl_symbol_value ORLSymbolGetValue( orl_symbol_handle a )
+orl_symbol_value ORLSymbolGetValue( orl_symbol_handle a )
 {
     a = a;
     return( 0 );
 }
 
-extern orl_symbol_binding ORLSymbolGetBinding( orl_symbol_handle a )
+orl_symbol_binding ORLSymbolGetBinding( orl_symbol_handle a )
 {
     a = a;
     return( ORL_SYM_BINDING_NONE );
 }
 
-extern orl_symbol_type ORLSymbolGetType( orl_symbol_handle a )
+orl_symbol_type ORLSymbolGetType( orl_symbol_handle a )
 {
     a = a;
     return( ORL_SYM_TYPE_NONE );
 }
 
-extern orl_sec_handle ORLSymbolGetSecHandle( orl_symbol_handle a )
+orl_sec_handle ORLSymbolGetSecHandle( orl_symbol_handle a )
 {
     a = a;
     return( NULL );
