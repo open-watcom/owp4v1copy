@@ -1,0 +1,19 @@
+#
+# This is a sample configuration file for the build server.
+#
+
+# The folder where the build system lives. Must be outside the OW source tree.
+HOME=C:\OWBUILD
+
+# The folder where the OW source tree is located.
+OW=C:\OW
+
+# The location of your installed compiler (for doing the build).
+WATCOM=C:\WATCOM
+
+# File holding the baseline build results. Relative to HOME.
+BLDBASE=bldbase.txt
+
+# File holding the most recent build results. Relative to HOME.
+BLDLAST=bldlast.txt
+
