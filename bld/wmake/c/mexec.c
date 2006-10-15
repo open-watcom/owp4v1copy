@@ -631,12 +631,7 @@ STATIC RET_T percentMake( char *arg )
  * do a recursive make of the target in arg
  */
 {
-    // BartoszP - 13.10.2006
-    // static applied to *finish avoids problem when wmake
-    // compiled with OW 1.6alpha falls into endless loop for
-    // some targets.
-    // cg is suspected to overoptimize for( ;; )
-    static char  *finish;
+    char         *finish;
     TARGET       *calltarg;
     RET_T        ret;
     char         *buf;
