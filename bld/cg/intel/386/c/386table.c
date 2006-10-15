@@ -1033,7 +1033,7 @@ static  opcode_entry    Move1[] = {
 _UnPP(  ANY,  ANY,  EQ_R1 ),    NVI(V_NO),      G_NO,           RG_,FU_NO,
 _UnPP(  M,    M,    NONE  ),    V_SAME_LOCN,    G_NO,           RG_,FU_NO,
 
-/* insturctions we can generate*/
+/* instructions we can generate*/
 
 _Un(    C,    R,    NONE ),     V_OP1ZERO,      R_MAKEXORRR,    RG_BYTE,FU_NO,
 _UnPP(  C,    R,    NONE ),     V_NO,           G_MOVRC,        RG_BYTE,FU_ALUX,
@@ -1063,7 +1063,6 @@ _Un(    C,    R,    NONE ),     V_OP1ZERO,      R_MAKEXORRR,    RG_WORD,FU_NO,
 /* fall through into move2 table*/
 /**** NB. Move2 points here ****/
 /* opcode_entry    Move2[]; */
-
 /*************************/
 /*       op    res   eq          verify          gen             reg fu*/
 
@@ -1072,7 +1071,7 @@ _Un(    C,    R,    NONE ),     V_OP1ZERO,      R_MAKEXORRR,    RG_WORD,FU_NO,
 _UnPP(  ANY,  ANY,  EQ_R1 ),    NVI(V_NO),      G_NO,           RG_,FU_NO,
 _UnPP(  M,    M,    NONE  ),    V_SAME_LOCN,    G_NO,          RG_,FU_NO,
 
-/* insturctions we can generate*/
+/* instructions we can generate*/
 
 _UnPP(  C,    R,    NONE ),     V_NO,           G_MOVRC,        RG_WORD,FU_ALUX,
 _UnPP(  C,    M,    NONE ),     V_NO,           G_MOVMC,        RG_,FU_ALUX,
@@ -1099,7 +1098,8 @@ _Un(    ANY,  ANY,  NONE ),     V_NO,           G_UNKNOWN,      RG_ANYWORD_NEED,
 };
 
 /* Point at where Move2 used to start */
-opcode_entry   *Move2 = &Move2CC[1];
+/*************************/
+opcode_entry   *Move2 = &Move2CC[1]; /* used from intel/c/i86split.c */
 
 static  opcode_entry    MoveFS[] = {
 /**************************/
@@ -1110,10 +1110,8 @@ static  opcode_entry    MoveFS[] = {
 _Un(    C,    ANY,  NONE ),     V_NO,           R_MAKEU4CONS,   RG_DBL,FU_NO,
 
 /* fall through into move4 table*/
-
-};
-
-static  opcode_entry    Move4CC[] = {
+/**** NB. Move4CC points here ****/
+/* static  opcode_entry    Move4CC[] */
 /***************************/
 /*       op    res   eq          verify          gen             reg fu*/
 
@@ -1122,10 +1120,8 @@ static  opcode_entry    Move4CC[] = {
 _Un(    C,    R,    NONE ),     V_OP1ZERO,      R_MAKEXORRR,    RG_DBL,FU_NO,
 
 /* fall through into move4 table*/
-
-};
-
-opcode_entry    Move4[] = {
+/**** NB. Move4 points here ****/
+/* opcode_entry    Move4[] = { */
 /*************************/
 /*       op    res   eq          verify          gen             reg fu*/
 
@@ -1134,7 +1130,7 @@ opcode_entry    Move4[] = {
 _UnPP(  ANY,  ANY,  EQ_R1 ),    NVI(V_NO),      G_NO,           RG_,FU_NO,
 _UnPP(  M,    M,    NONE  ),    V_SAME_LOCN,    G_NO,           RG_,FU_NO,
 
-/* insturctions we can generate*/
+/* instructions we can generate*/
 
 _UnPP(  C,    R,    NONE ),     V_NO,           G_MOVRC,        RG_DBL,FU_ALUX,
 _UnPP(  C,    M,    NONE ),     V_NO,           G_MOVMC,        RG_,FU_ALUX,
@@ -1152,6 +1148,10 @@ _Un(    R,    ANY,  NONE ),     V_NO,           G_UNKNOWN,      RG_DBL,FU_NO,
 _Un(    ANY,  ANY,  NONE ),     V_NO,           G_UNKNOWN,      RG_DBL_NEED,FU_NO,
 };
 
+/* Point Move4CC and Move4 to where they used to be */
+/*************************/
+#define Move4CC &MoveFS[1]
+opcode_entry   *Move4 = &MoveFS[2]; /* used from intel/c/i86split.c */
 
 static  opcode_entry    MoveCP[] = {
 /*************************/

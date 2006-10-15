@@ -103,11 +103,10 @@ static  opcode_entry    Add2[] = {
 {_BinSC( R,    C,    R,    EQ_R1 ),V_NO,           G_RC,         RG_WORD,FU_ALU1},
 {_BinPP( R,    C,    R,    NONE ), V_LEA,          G_LEA,        RG_LEA,FU_ALU1},
 {_BinSC( M,    C,    M,    EQ_R1 ),V_OP2ONE,       G_M1,         RG_,FU_ALU1},
-};
 
-/*       Fall into AddExt table*/
-
-opcode_entry    AddExt[] = {
+/* Fall into AddExt table*/
+/**** NB. AddExt points here ****/
+/* opcode_entry    AddExt[] = { */
 /**************************/
 /*       op1   op2   res   eq      verify          gen*/
 
@@ -131,6 +130,9 @@ opcode_entry    AddExt[] = {
 {_Bin(   ANY,  ANY,  ANY,  NONE ), V_NO,           G_UNKNOWN,    RG_WORD_NEED,FU_NO},
 };
 
+/* Point at where AddExt used to start */
+/*************************/
+#define AddExt &Add2[11]
 
 static  opcode_entry    Add4[] = {
 /************************/
@@ -460,16 +462,18 @@ static  opcode_entry    Rtn4C[] = {
 /*       op1   op2   res   eq      verify          gen           reg fu*/
 {_Bin(   R,    R,    R,    BOTH_EQ ),V_NO,         R_MAKECALL,   RG_4CRTN,FU_NO},
 {_Bin(   ANY,  R,    R,    EQ_R2 ),V_NO,           R_SWAPOPS,    RG_4CRTN,FU_NO},
-};
 
-/*       Fall into Rtn4 table*/
-
-static  opcode_entry    Rtn4[] = {
+/* Fall into Rtn4 table*/
+/**** NB. Rtn4 points here ****/
+/* static  opcode_entry    Rtn4[] = { */
 /************************/
 /*       op1   op2   res   eq      verify          gen*/
 {_Bin(   ANY,  ANY,  ANY,  NONE ), V_NO,           R_MAKECALL,   RG_,FU_NO},
 };
 
+/* Point at where Rtn4 used to start */
+/*************************/
+#define Rtn4 &Rtn4C[2]
 
 static  opcode_entry    Mul1[] = {
 /************************/
@@ -885,7 +889,7 @@ static  opcode_entry    Move1[] = {
 {_UnPP(  ANY,  ANY,  EQ_R1 ),    NVI(V_NO),      G_NO,           RG_,FU_NO},
 {_UnPP(  M,    M,    NONE  ),    V_SAME_LOCN,    G_NO,           RG_,FU_NO},
 
-/* insturctions we can generate*/
+/* instructions we can generate*/
 
 {_Un(    C,    R,    NONE ),     V_OP1ZERO,      R_MAKEXORRR,    RG_BYTE,FU_NO},
 {_UnPP(  C,    R,    NONE ),     V_NO,           G_MOVRC,        RG_BYTE,FU_ALU1},
@@ -913,10 +917,8 @@ static  opcode_entry    Move2CC[] = {
 {_Un(    C,    R,    NONE ),     V_OP1ZERO,      R_MAKEXORRR,    RG_WORD,FU_NO},
 
 /* fall through into move2 table*/
-
 /**** NB. Move2 points here ****/
 /* opcode_entry    Move2[]; */
-
 /*************************/
 /*       op    res   eq          verify          gen             reg fu*/
 
@@ -925,7 +927,7 @@ static  opcode_entry    Move2CC[] = {
 {_UnPP(  ANY,  ANY,  EQ_R1 ),    NVI(V_NO),      G_NO,           RG_,FU_NO},
 {_UnPP(  M,    M,    NONE  ),    V_SAME_LOCN,    G_NO,           RG_,FU_NO},
 
-/* insturctions we can generate*/
+/* instructions we can generate*/
 
 {_UnPP(  C,    R,    NONE ),     V_NO,           G_MOVRC,        RG_WORD,FU_ALU1},
 {_UnPP(  C,    M,    NONE ),     V_NO,           G_MOVMC,        RG_,FU_ALU1},
@@ -952,15 +954,19 @@ static  opcode_entry    Move2CC[] = {
 };
 
 /* Point at where Move2 used to start */
-opcode_entry   *Move2 = &Move2CC[1];
+/*************************/
+opcode_entry   *Move2 = &Move2CC[1]; /* used from intel/c/i86split.c */
 
-opcode_entry    Move4[] = {
+static opcode_entry    Move4op[] = {
 /*************************/
 /*       op    res   eq          verify          gen             reg fu*/
 /*Un(    C,    ANY,  NONE ),    NVI(V_HIGHEQLOW),R_HIGHLOWMOVE,RG_DOUBLE,FU_NO,*/
 {_Un(    ANY,  ANY,  NONE ),     V_NO,           R_SPLITMOVE,    RG_DOUBLE,FU_NO},
 };
 
+/* Pointer to Move4 table (required for symmetry with 386table.c) */
+/*************************/
+opcode_entry    *Move4 = Move4op; /* used from intel/c/i86split.c */
 
 static  opcode_entry    Move8[] = {
 /*************************/
@@ -1356,7 +1362,7 @@ static  opcode_entry    *OpcodeList[] = {
         CmpXX,          /* CMPX */
         Move1,          /* MOV1 */
         Move2CC,        /* MOV2 */
-        Move4,          /* MOV4 */
+        Move4op,        /* MOV4 */
         Move8,          /* MOV8 */
         MoveXX,         /* MOVX */
         LoadA4,         /* LA4 */
@@ -1388,7 +1394,7 @@ static  opcode_entry    *OpcodeList[] = {
         Rtn8,           /* RTN10 */
         DoNop,          /* DONOTHING */
         PushXX,         /* PUSHX */
-        Move4,          /* MOVFS */
+        Move4op,        /* MOVFS */
         Move8,          /* MOVFD */
         Move8,          /* MOVFL */
         Push4,          /* PSHFS */
@@ -1457,7 +1463,7 @@ static  opcode_entry    *FPOpcodeList[] = {
         CmpXX,          /* CMPX */
         Move1,          /* MOV1 */
         Move2CC,        /* MOV2 */
-        Move4,          /* MOV4 */
+        Move4op,        /* MOV4 */
         Move8,          /* MOV8 */
         MoveXX,         /* MOVX */
         LoadA4,         /* LA4 */
