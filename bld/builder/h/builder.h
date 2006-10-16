@@ -25,12 +25,13 @@
 *  ========================================================================
 *
 * Description:  builder & langdat definitions
-*               
 *
 ****************************************************************************/
 
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <watcom.h>
 #include <bool.h>
 
 typedef struct copy_entry       copy_entry;
