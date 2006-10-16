@@ -12,7 +12,7 @@ export P4CLIENT=YOURCLIENT
 export P4PASSWD=YourPassword
 
 # root of source tree
-export OWROOT=`cd \`dirname $0\` && pwd`
+export OWROOT=`cd \`dirname -- $0\` && pwd`
 
 # Change this to point to an existing Watcom compiler (if applicable)
 export WATCOM=$OWROOT/rel2
