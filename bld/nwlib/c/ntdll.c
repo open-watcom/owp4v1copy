@@ -31,9 +31,8 @@
 
 
 #include <windows.h>
-#include "widechar.h"
-#include "initarg.h"
-
+/* Declared in $(CLIB)\h\initarg.h. Not sure how to remove this one yet. Will find on next pass */
+extern char *_LpDllName;
 char *ImageName;
 
 BOOL __export __stdcall LibMain( HINSTANCE hinst, DWORD dw, LPVOID *ptr )
