@@ -1,3 +1,4 @@
+
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -24,19 +25,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Things that are stolen from CLIB. Previously were just
+*               referenced as extern in the source file
 *
 ****************************************************************************/
 
+#ifndef _CLIBINT_H_E9806518_31C7_4441_BCA4_93A19CDE39C4
+#define _CLIBINT_H_E9806518_31C7_4441_BCA4_93A19CDE39C4
 
-#include <windows.h>
-#include "clibint.h"
+/*
+ * From $(CLIB)/h/initarg.h
+ */
+extern char   *_LpDllName;    /* pointer to dll name */
 
-char *ImageName;
-
-BOOL __export __stdcall LibMain( HINSTANCE hinst, DWORD dw, LPVOID *ptr )
-{
-    ImageName = _LpDllName;
-    return( TRUE );
-}
+#endif /* _CLIBINT_H_E9806518_31C7_4441_BCA4_93A19CDE39C4 */
