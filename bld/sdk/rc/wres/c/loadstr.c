@@ -256,7 +256,7 @@ typedef struct dbgheader {
 #define LEVEL           "Open Watcom patch level .xxx"
 #define LEVEL_HEAD_SIZE (sizeof(LEVEL)-5)       /* w/o ".xxx\0" */
 
-long                    FileShift;
+long                    FileShift = 0;
 
 extern int FindResources( PHANDLE_INFO hInstance )
 /* look for the resource information in a debugger record at the end of file */
