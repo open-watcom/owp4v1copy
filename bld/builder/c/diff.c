@@ -140,14 +140,31 @@ char            *cmdusage =
 ;
 
 /* forward declarations */
-SLONG   subseq( void );
-SLONG   search( ULONG, ULONG, SLONG );
-USHORT  hash( char * );
-char    *myalloc( ULONG, char * );
-char    *compact( char *, ULONG, char * );
-char    *fgetss( char *, SLONG, FILE * );
-void    cant( char *, char *, SLONG );
-void    input( SLONG );
+static SLONG   subseq( void );
+static SLONG   search( ULONG, ULONG, SLONG );
+static USHORT  hash( char * );
+static char    *myalloc( ULONG, char * );
+static char    *compact( char *, ULONG, char * );
+static char    *fgetss( char *, SLONG, FILE * );
+static void    cant( char *, char *, SLONG );
+static void    input( SLONG );
+static void    squish( void );
+static void    myfree( void *what );
+static void    noroom( char *why );
+static void    fputss( char *s, FILE *iop );
+static INT     streq( char *s1, char *s2 );
+static void    fatal( char *format, ... );
+static void    equiv( void );
+static void    unsort( void );
+static void    unravel( SLONG k );
+static void    sort( LINE *vector, SLONG vecsize );
+static void    error( char *format, ... );
+static INT     check( char *fileAname, char *fileBname );
+static void    output( char *fileAname, char *fileBname );
+static INT     getline( FILE *fd, char *buffer );
+static void    fetch( long *seekvec, SLONG start, SLONG end, SLONG trueend, FILE *fd, char *pfx );
+
+
 
 /*
  * Diff main program
