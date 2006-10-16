@@ -81,20 +81,9 @@ while (($record = read_record(NEWFILE)) ne "EOF") {
 close(NEWFILE);
 
 # Now compare the summaries. This runs in O(n^2) where n is the # of records.
-print "Records Removed\n";
-print "---------------\n\n";
-foreach $record (@old_records) {
-    $found = "no";
-    foreach $candidate (@new_records) {
-        if ($record eq $candidate) { $found = "yes"; }
-    }
-    if ($found eq "no") {
-        print_record($record);
-    }
-}
-
 print "Records Added\n";
 print "-------------\n\n";
+$something_added = "no";
 foreach $record (@new_records) {
     $found = "no";
     foreach $candidate (@old_records) {
@@ -102,5 +91,25 @@ foreach $record (@new_records) {
     }
     if ($found eq "no") {
         print_record($record);
+	$something_added = "yes";
     }
 }
+
+# If there are new errors, don't bother computing removed messages. Some
+# messages might appear to vanish because certain compilations failed to
+# finish. Only trust the removal list if there are no additional errors.
+#
+if ($something_added eq "no") {
+    print "Records Removed\n";
+    print "---------------\n\n";
+    foreach $record (@old_records) {
+        $found = "no";
+        foreach $candidate (@new_records) {
+            if ($record eq $candidate) { $found = "yes"; }
+        }
+        if ($found eq "no") {
+            print_record($record);
+        }
+    }
+}
+

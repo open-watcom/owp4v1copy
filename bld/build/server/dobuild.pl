@@ -53,11 +53,13 @@ sub make_batch()
     
     # Add additional commands to do the build.
     print BATCH "\n";
+    print BATCH "cd $OW\n";
+    print BATCH "rm -rf rel2\n";
     print BATCH "cd $OW\\bld\n";
     print BATCH "builder clean\n";
     print BATCH "cd $OW\\bld\\builder\\nt386\n";
     print BATCH "wmake\n";
-    print BATCH "cd $OW\\contrib\\wattcp\\source\n";
+    print BATCH "cd $OW\\contrib\\wattcp\\src\n";
     print BATCH "wmake -ms\n";
     print BATCH "cd $OW\\bld\n";
     print BATCH "builder rel2\n";
@@ -97,11 +99,17 @@ while (<HOSTFILE>) {
 close(HOSTFILE);
 
 # Build a fresh version of the system from scratch.
-system("p4 sync");
+if (system("p4 sync") != 0) {
+    print REPORT "p4 failed!\n";
+    exit 1;
+}
 $datetime_stamp = get_datetime();
 make_batch();
 print REPORT "CLEAN+BUILD STARTED: $datetime_stamp\n";
-system($batch_name);
+if (system($batch_name) != 0) {
+    print REPORT "build failed!\n";
+    exit 1;
+}
 $datetime_stamp = get_datetime();
 print REPORT "CLEAN+BUILD COMPLETED: $datetime_stamp\n\n";
 
