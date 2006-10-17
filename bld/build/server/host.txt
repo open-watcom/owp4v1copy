@@ -1,5 +1,0 @@
-This is a placeholder file.
-Use a text editor to customize this file.
-It should contain a description of your build machine's hardware.
-This file is merged into reports so it should be brief.
-

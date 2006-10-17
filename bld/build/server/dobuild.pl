@@ -35,6 +35,7 @@ use Common;
 $home    = $Common::config{"HOME"};
 $OW      = $Common::config{"OW"};
 $WATCOM  = $Common::config{"WATCOM"};
+$report_archive = $Common::config{"REPORTS"};
 $bldbase = "$home\\$Common::config{'BLDBASE'}";
 $bldlast = "$home\\$Common::config{'BLDLAST'}";
 
@@ -86,17 +87,11 @@ if ($home eq $OW) {
 }
 
 $date_stamp = get_date();
-$report_name = "$home\\$date_stamp-report.txt";
+$report_name = "$report_archive\\$date_stamp-report.txt";
 
 open(REPORT, ">$report_name") || die "Unable to open report file.";
 print REPORT "Open Watcom Build Report\n";
 print REPORT "========================\n\n";
-
-open(HOSTFILE, "$home\\host.txt");
-while (<HOSTFILE>) {
-    print REPORT;
-}
-close(HOSTFILE);
 
 # Build a fresh version of the system from scratch.
 if (system("p4 sync") != 0) {
@@ -107,7 +102,7 @@ $datetime_stamp = get_datetime();
 make_batch();
 print REPORT "CLEAN+BUILD STARTED: $datetime_stamp\n";
 if (system($batch_name) != 0) {
-    print REPORT "build failed!\n";
+    print REPORT "clean+build failed!\n";
     exit 1;
 }
 $datetime_stamp = get_datetime();
@@ -126,3 +121,4 @@ close(CHANGES);
 #: Finalize report, store in report archive, send to appropriate parties.
 
 close(REPORT);
+

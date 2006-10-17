@@ -5,6 +5,9 @@
 # The folder where the build system lives. Must be outside the OW source tree.
 HOME=C:\OWBUILD
 
+# The folder where reports are archived.
+REPORTS=C:\www\reports
+
 # The folder where the OW source tree is located.
 OW=C:\OW
 
