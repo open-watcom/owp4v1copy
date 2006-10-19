@@ -267,7 +267,7 @@ extern  void    CFClean( cfloat *f ) {
     }
     if( headindex > 0 ) {
         tailindex -= headindex;
-        memcpy( f->mant, head, tailindex + 1 );
+        memmove( f->mant, head, tailindex + 1 );
         f->exp -= headindex;
     }
     if( tailindex > CF_MAX_PREC ) {
