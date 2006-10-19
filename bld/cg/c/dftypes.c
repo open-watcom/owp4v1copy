@@ -489,6 +489,7 @@ static  dw_loc_id   DoLocCnv( dbg_loc loc, loc_state *state ) {
                 size = 4;
             }
             if( state->addr_seg ){
+                dref_op =  DW_LOC_xderef_size;
                 DWLocOp0( Client, locid, DW_LOC_pick );  /* dup seg */
                 DWLocOp0( Client, locid, DW_LOC_pick );  /* dup offset */
                 DWLocOp( Client, locid, DW_LOC_plus_uconst, size ); /* seg offset*/

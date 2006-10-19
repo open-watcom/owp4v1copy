@@ -432,9 +432,10 @@ extern  void    AddCallIns( instruction *ins, cn call ) {
     type_class_def      addr_type;
     name                *temp;
     instruction         *new_ins;
+#if _TARGET & (_TARG_80386|_TARG_IAPX86)
     call_class          class;
+#endif
 
-    class = class;
     PreCall( call );
     if( ins->head.opcode == OP_CALL ) {
         call_name = call->name->u.name;

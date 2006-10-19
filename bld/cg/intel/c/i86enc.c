@@ -672,12 +672,12 @@ static  void    DoP5MemoryDivide( instruction *ins ) {
     label_handle        lbl_2;
     name                *high;
     name                *low;
+#if !(_TARGET & _TARG_80386)
     name                *h;
     name                *l;
+#endif
     name                *seg;
 
-    h = h;
-    l = l;
     lbl = AskForNewLabel();
     lbl_2 = AskForNewLabel();
 

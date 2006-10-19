@@ -201,7 +201,7 @@ static  block   *DupLoop( block *tail, loop_abstract *loop )
 
     URBlip();
 
-    prev = NULL;
+    prev = copy = NULL;
     ClearCopyPtrs( tail );
 
     // make a copy of each of the blocks in the original loop
@@ -220,8 +220,9 @@ static  block   *DupLoop( block *tail, loop_abstract *loop )
         prev = copy;
     }
     loop->head = copy;
-    copy->u.loop = NULL; // terminate the list held in blk->u.loop
-
+    if( copy != NULL ) {
+        copy->u.loop = NULL; // terminate the list held in blk->u.loop
+    }
 
     // now link the blocks together - for each edge, we point the
     // edge in the corresponding block to the same block if it is in the

@@ -432,9 +432,6 @@ extern  void    InitDbgInfo() {
     char        *fname;
     uint        fno;
 
-    idx = idx;
-    fname = fname;
-    fno = fno;
     SrcFileNoInit();
     DBNested( FALSE ); /* set nesting */
     SourceCueInit( &LineInfo );

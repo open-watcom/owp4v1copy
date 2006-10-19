@@ -470,14 +470,15 @@ static  signed_32     CountRegMoves( conflict_node *conf,
     int                 half;
     name                *reg_name;
     name                *op1;
+#if _TARGET & (_TARG_80386|_TARG_IAPX86|_TARG_370)
     name                *op2;
+#endif
     name                *res;
     bool                idx;
     conflict_node       *other_conf;
     name                *other_opnd;
 
-    op2 = op2;
-    levels = levels; other_conf = other_conf;
+    levels = levels;
     if( tree == NULL ) return( 0 );
     reg_name = AllocRegName( reg );
     count = 0;
