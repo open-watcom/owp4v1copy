@@ -512,7 +512,7 @@ void GetCallClass( SYM_HANDLE sym_handle )
     CallClass &= ~ REVERSE_PARMS;               /* 28-may-89 */
 #endif
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
-    if( sym.flags & SYM_FUNC_NEEDS_THUNK ) {
+    if( sym_handle != 0 && sym.flags & SYM_FUNC_NEEDS_THUNK ) {
         CallClass |= THUNK_PROLOG;
     }
 #endif
