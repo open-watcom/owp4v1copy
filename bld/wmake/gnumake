@@ -32,9 +32,9 @@ $(OBJDIR)/isarray.gh : $(OBJDIR)/cretype
 $(OBJDIR)/wmake.res : h/wmake.rc h/mrcmsg.h $(OBJDIR)/usage.rc $(OBJDIR)/usagej.rc
 	wrc -i$(OBJDIR) -q -bt=windows -ih -i../watcom/h -zk0 -q -r -fo=$@ $<
 
-INCDIRS = $(OBJDIR) h $(WATCOMH) $(RC_DIR)/h $(LIB_MISC_DIR)/h $(ORL_DIR)/h
-LIBDIRS = $(ORL_DIR)/$(OBJDIR) $(WRES_DIR)/$(OBJDIR) $(WCLIB_DIR)/$(OBJDIR)
-LIBS += -lorl -lwres -lwatcom
+INCDIRS = $(OBJDIR) h $(WATCOMH) $(RC_DIR)/h $(LIB_MISC_DIR)/h
+LIBDIRS = $(WRES_DIR)/$(OBJDIR) $(WCLIB_DIR)/$(OBJDIR)
+LIBS += -lwres -lwatcom
 
 $(OBJDIR)/wmake: $(OBJDIR)/usageend.gh $(OBJDIR)/isarray.gh $(OBJS) $(OBJDIR)/wmake.res
 	$(CC) -g -o wmake $(OBJS) $(LIBS) -o $@

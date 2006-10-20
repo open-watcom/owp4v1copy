@@ -35,6 +35,10 @@ orl_objs  = orlentry.obj &
             $(coff_objs)
 
 orl.lib : $(orl_objs)
+!ifeq bootstrap 1
+        ar crs $^@ $(orl_objs)
+!else
         @%create $^&.lbc
         @for %i in ($(orl_objs)) do @%append $^&.lbc +%i
         $(librarian) $(libflags) $^@ @$^&.lbc
+!endif
