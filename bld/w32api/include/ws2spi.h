@@ -1,7 +1,7 @@
 /*
  * ws2spi.h
  *
- * Winsock 2 Service Provider interface.
+ * Winsock 2 Service Provider Interface.
  *
  *
  * THIS SOFTWARE IS NOT COPYRIGHTED
@@ -17,6 +17,9 @@
  */
 #ifndef _WS2SPI_H
 #define _WS2SPI_H
+#if __GNUC__ >= 3
+#pragma GCC system_header
+#endif
 
 #include <winsock2.h>
 
@@ -196,5 +199,4 @@ INT WSPAPI WSCWriteProviderOrder(LPDWORD,DWORD);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* _WS2SPI_H */
+#endif

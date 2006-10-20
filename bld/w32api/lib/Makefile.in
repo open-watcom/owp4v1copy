@@ -21,6 +21,7 @@ subdirs := ddk directx
 host_alias = @host@
 build_alias = @build@
 target_alias = @target@
+with_cross_host = @with_cross_host@
 prefix = @prefix@
 includedir:=@includedir@
 
@@ -43,8 +44,13 @@ ifneq (,$(findstring cygwin,$(target_alias)))
 inst_includedir:=$(tooldir)/include/w32api
 inst_libdir:=$(tooldir)/lib/w32api
 else
+ifneq (,$(with_cross_host))
+inst_includedir:=$(tooldir)/include/w32api
+inst_libdir:=$(tooldir)/lib
+else
 inst_includedir:=$(includedir)
 inst_libdir:=$(libdir)
+endif
 endif
 
 INSTALL = @INSTALL@
@@ -115,10 +121,20 @@ IMPLIBS = $(addprefix lib,$(subst .def,.a,$(DEF_FILES)))
 MIMPLIBS = $(addprefix lib,$(subst .mri,.a,$(MRI_FILES)))
 EXTRA_LIBS=libuuid.a libscrnsave.a libscrnsavw.a liblargeint.a
 LIBS = $(IMPLIBS) $(MIMPLIBS) $(EXTRA_LIBS)
-UUID_OBJS = uuid.o mshtml-uuid.o msxml-uuid.o
+UUID_OBJS = mshtml-uuid.o msxml-uuid.o unknwn-uuid.o \
+			servprov-uuid.o oleidl-uuid.o oleacc-uuid.o ocidl-uuid.o \
+			objsafe-uuid.o oaidl-uuid.o docobj-uuid.o comcat-uuid.o \
+			exdisp-uuid.o mlang-uuid.o objidl-uuid.o cguid-uuid.o \
+			olectlid-uuid.o ativscp-uuid.o urlmon-uuid.o hlink-uuid.o \
+			hlguids-uuid.o extras-uuid.o devguid.o
 EXTRA_OBJS = shell32.o scrnsave.o scrnsavw.o largeint.o \
 	$(UUID_OBJS) kernel32.o ws2_32.o
-UUID_SOURCES = uuid.c mshtml-uuid.c msxml-uuid.c
+UUID_SOURCES = mshtml-uuid.c msxml-uuid.c unknwn-uuid.c \
+			   servprov-uuid.c oleidl-uuid.c oleacc-uuid.c ocidl-uuid.c \
+			   objsafe-uuid.c oaidl-uuid.c docobj-uuid.c comcat-uuid.c \
+			   exdisp-uuid.c mlang-uuid.c objidl-uuid.c cguid-uuid.c \
+			   olectlid-uuid.c ativscp-uuid.c urlmon-uuid.c hlink-uuid.c \
+			   hlguids-uuid.c extras-uuid.c devguid.c
 SOURCES = scrnsave.c shell32.c  largeint.c $(UUID_SOURCES)\
 res.rc test.c kernel32.c ws2_32.c
 

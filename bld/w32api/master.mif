@@ -30,6 +30,7 @@ base_libs =        &
         glu32.lib &
         glut.lib &
         glut32.lib &
+        icmui.lib &
         igmpagnt.lib &
         imagehlp.lib &
         imm32.lib &
@@ -41,8 +42,10 @@ base_libs =        &
         mfcuia32.lib &
         mgmtapi.lib &
         mpr.lib &
+        mprapi.lib &
         mqrt.lib &
         msacm32.lib &
+        mscms.lib &
         msimg32.lib &
         msvcp60.lib &
         mswsock.lib &
@@ -63,12 +66,15 @@ base_libs =        &
         pkpd32.lib &
         powrprof.lib &
         psapi.lib &
+        quartz.lib &
         rapi.lib &
         rasapi32.lib &
         rasdlg.lib &
         rpcdce4.lib &
         rpcns4.lib &
         rpcrt4.lib &
+        rtm.lib &
+        rtutils.lib &
         scrnsave.lib &
         secur32.lib &
         setupapi.lib &
@@ -126,8 +132,7 @@ directx_libs = &
         dxguid.lib &
         ksproxy.lib &
         ksuser.lib &
-        msdmo.lib &
-        quartz.lib
+        msdmo.lib
 
 vfw32_libs = &
         msvfw32.lbc &
@@ -219,10 +224,17 @@ vfw32.lbc: $(vfw32_libs)
         @%create $@
         @for %i in ($(vfw32_libs)) do @%append $@ @ %i
 
-uuid.lib: uuid.obj mshtml-u.obj msxml-uuid.obj
+uuid_objs = mshtml-u.obj msxml-uuid.obj unknwn-uuid.obj &
+        servprov-uuid.obj oleidl-uuid.obj oleacc-uuid.obj ocidl-uuid.obj &
+        objsafe-uuid.obj oaidl-uuid.obj docobj-uuid.obj comcat-uuid.obj &
+        exdisp-uuid.obj mlang-uuid.obj objidl-uuid.obj cguid-uuid.obj &
+        olectlid-uuid.obj ativscp-uuid.obj urlmon-uuid.obj hlink-uuid.obj &
+        hlguids-uuid.obj extras-uuid.obj devguid.obj
 
-mshtml-u.obj: mshtml-u.c .autodepend
-        $(cc) $(cflags) $(inc_path) $<
+uuid.lib: $(uuid_objs)
+        @%create tmp.lbc
+        @for %i in ($(uuid_objs)) do @%append tmp.lbc +%i
+        $(librarian) $(libflags) $@ @tmp.lbc
 
-msxml-uuid.obj: msxml-uuid.c .autodepend
+.c.obj: .autodepend
         $(cc) $(cflags) $(inc_path) $<

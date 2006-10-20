@@ -17,6 +17,7 @@ VPATH = @srcdir@
 host_alias = @host@
 build_alias = @build@
 target_alias = @target@
+with_cross_host = @with_cross_host@
 prefix = @prefix@
 includedir:=@includedir@
 
@@ -39,8 +40,13 @@ ifneq (,$(findstring cygwin,$(target_alias)))
 inst_includedir:=$(tooldir)/include/w32api
 inst_libdir:=$(tooldir)/lib/w32api
 else
+ifneq (,$(with_cross_host))
+inst_includedir:=$(tooldir)/include/w32api
+inst_libdir:=$(tooldir)/lib
+else
 inst_includedir:=$(includedir)
 inst_libdir:=$(libdir)
+endif
 endif
 
 INSTALL = @INSTALL@
@@ -96,7 +102,7 @@ LIBS = libd3d8.a libd3d9.a libd3dim.a libd3drm.a libd3dx8d.a libd3dx9d.a \
        libd3dxof.a libddraw.a libdinput.a libdinput8.a libdmoguids.a \
        libdplayx.a libdpnaddr.a libdpnet.a libdpnlobby.a libdpvoice.a \
        libdsetup.a libdsound.a libdxerr8.a libdxerr9.a libdxguid.a \
-       libksproxy.a libksuser.a libmsdmo.a libquartz.a libstrmiids.a
+       libksproxy.a libksuser.a libmsdmo.a libstrmiids.a
 DINPUT_OBJS = dinput_joy.o dinput_joy2.o dinput_kbd.o dinput_mouse.o \
        dinput_mouse2.o
 

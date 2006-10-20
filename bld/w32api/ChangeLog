@@ -1,3 +1,1288 @@
+2006-10-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winuser.h (LR_DEFAULTSIZE, LR_VGACOLOR): Define.
+
+2006-10-05  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winreg.h (RegDeleteKeyEx{A|W}): Add prototype and UNICODE
+	mappings.
+	(KEY_WOW64_32KEY, KEY_WOW64_64KEY): Define. 
+	* lib/advapi.def (RegDeleteKeyEx{A|W}): Export.
+
+2006-10-04  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/rpc.h: Add whitespace.
+	* include/winnt.h (C_ASSERT): Define.
+
+2006-10-04  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	[mingw-Bugs-1568067]
+	* include/winuser.h: (DISP_CHANGE_BADDUALVIEW): Define.
+	* include/wingdi.h: (DM_POSITION): Define.
+
+2006-10-03  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/rpcrt4.def: Remove "_imp__"-prefixed export symbols.
+	* lib/user32.def: Likewise.
+
+2006-09-11  Chris Sutcliffe  <ir0n3h4d@users.sourceforge.net>
+
+	* lib/Makefile.in: fix typo.
+	* lib/ddk/Makefile.in: fix typo.
+	* lib/directx/Makefile.in: fix typo.
+
+	Thanks to Keith Marshall (keithmarshall at users dot sourceforge dot net)
+	for pointing it out.
+
+2006-09-10  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* Makefile.in: Remove files from lib directory with distclean target
+
+2006-09-10  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* include/winuser.h (CS_DROPSHADOW): Define.
+
+2006-09-08  Michael Gerdau  <mgdde@users.sourceforge.net>
+
+	* include/uxtheme.h: (TMT_GRADIENTCOLOR4, TMT_GRADIENTCOLOR5,
+	TMT_SHADOWCOLOR, TMT_GLOWCOLOR, TMT_TEXTBORDERCOLOR,
+	TMT_TEXTSHADOWCOLOR, TMT_GLYPHTEXTCOLOR, TMT_GLYPHTRANSPARENTCOLOR,
+	TMT_FILLCOLORHINT, TMT_BORDERCOLORHINT, TMT_ACCENTCOLORHINT):
+
+	Increase each constant by 1.
+
+2006-09-07  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	[mingw-Bugs-1553275]
+	* include/wingdi.h (SetLayout): Add prototype.
+	(GetLayout): Likewise.
+
+2006-09-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	[mingw-Bugs-1550139]
+	* include/oleauto.h (GetRecordInfoFromTypeInfo): Add prototype.
+	Tanks to:  Samit Basu <samitbasu at sf dot net>
+	(GetRecordInfoFromGuids): Add prototype.
+
+2006-09-01  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h: Add comment about 'missing' SEM flag.
+
+2006-08-30  Corinna Vinschen  <corinna@vinschen.de>
+
+	* configure.in: Substitute with_cross_host in depending files.
+	* configure: Regenerate.
+	* lib/Makefile.in: Add with_cross_host to allow more granular checks.
+	Set installation directories accordingly.
+	* lib/ddk/Makefile.in: Ditto.
+	* lib/directx/Makefile.in: Ditto.
+
+2006-08-10  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/wtsapi32.def (WTSGetActiveConsoleSessionId). Move from here...
+	* lib/kernel32.def (WTSGetActiveConsoleSessionId). ...to here.
+	Bug reported by: <macleone at users dot sf dot net> 
+
+2006-07-29  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	Update some more IMAGE relocation type indicators
+	to PECOFF v8 (May, 2006) specs.
+
+	* include/winnt.h (IMAGE_REL_SH3_ABSOLUTE,
+	IMAGE_REL_SH3_DIRECT16, IMAGE_REL_SH3_DIRECT32,
+	IMAGE_REL_SH3_DIRECT8, IMAGE_REL_SH3_DIRECT8_WORD,
+	IMAGE_REL_SH3_DIRECT8_LONG, IMAGE_REL_SH3_DIRECT4,
+	IMAGE_REL_SH3_DIRECT4_WORD, IMAGE_REL_SH3_DIRECT4_LONG,
+	IMAGE_REL_SH3_PCREL8_WORD, IMAGE_REL_SH3_PCREL8_LONG,
+	IMAGE_REL_SH3_PCREL12_WORD, IMAGE_REL_SH3_STARTOF_SECTION,
+	IMAGE_REL_SH3_SIZEOF_SECTION, IMAGE_REL_SH3_SECTION,
+	IMAGE_REL_SH3_SECREL, IMAGE_REL_SH3_DIRECT32_NB,
+	IMAGE_REL_SH3_GPREL4_LONG, IMAGE_REL_SH3_TOKEN,
+	IMAGE_REL_SHM_PCRELPT, IMAGE_REL_SHM_REFLO,
+	IMAGE_REL_SHM_REFHALF, IMAGE_REL_SHM_RELLO,
+	IMAGE_REL_SHM_RELHALF, IMAGE_REL_SHM_PAIR,
+	IMAGE_REL_SHM_NOMODE): Add defines.
+
+	(IMAGE_REL_M32R_ABSOLUTE, IMAGE_REL_M32R_ADDR32,
+	IMAGE_REL_M32R_ADDR32NB, IMAGE_REL_M32R_ADDR24,
+	IMAGE_REL_M32R_GPREL16, IMAGE_REL_M32R_PCREL24,
+	IMAGE_REL_M32R_PCREL16, IMAGE_REL_M32R_PCREL8,
+	IMAGE_REL_M32R_REFHALF, IMAGE_REL_M32R_REFHI,
+	IMAGE_REL_M32R_REFLO, IMAGE_REL_M32R_PAIR,
+	IMAGE_REL_M32R_SECTION, IMAGE_REL_M32R_SECREL,
+	IMAGE_REL_M32R_TOKEN): Add defines.
+	
+	(IMAGE_REL_MIPS_JMPADDR16): Add define.
+
+2006-07-27  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	Update some IMAGE flags to PECOFF v8 (May, 2006) specs.
+	* include/winnt.h (IMAGE_FILE_MACHINE_AM33,
+	IMAGE_FILE_MACHINE_ARM, IMAGE_FILE_MACHINE_EBC,
+	IMAGE_FILE_MACHINE_M32R, IMAGE_FILE_MACHINE_MIPS16,
+	IMAGE_FILE_MACHINE_MIPSFPU, IMAGE_FILE_MACHINE_MIPSFPU16,
+	IMAGE_FILE_MACHINE_POWERPCFP, IMAGE_FILE_MACHINE_R4000,
+	IMAGE_FILE_MACHINE_SH3, IMAGE_FILE_MACHINE_SH3DSP,
+	IMAGE_FILE_MACHINE_SH4, IMAGE_FILE_MACHINE_SH5,
+	IMAGE_FILE_MACHINE_THUMB, IMAGE_FILE_MACHINE_WCEMIPSV2):
+	Add defines.
+	
+	(IMAGE_SUBSYSTEM_EFI_APPLICATION,
+	IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER,
+	IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER, IMAGE_SUBSYSTEM_EFI_ROM):
+	Add defines.
+
+	(IMAGE_SYM_CLASS_CLR_TOKEN): Add define.
+
+	(IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE,
+	IMAGE_DLL_CHARACTERISTICS_FORCE_INTEGRITY,
+	IMAGE_DLL_CHARACTERISTICS_NX_COMPAT,
+	IMAGE_DLLCHARACTERISTICS_NO_ISOLATION, IMAGE_DLLCHARACTERISTICS_NO_SEH,
+	IMAGE_DLLCHARACTERISTICS_NO_BIND,
+	IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE): Add defines.
+
+	(IMAGE_REL_I386_TOKEN, IMAGE_REL_I386_SECREL7): Add defines.	
+
+	(IMAGE_REL_AMD64_ABSOLUTE, IMAGE_REL_AMD64_ADDR64,
+	IMAGE_REL_AMD64_ADDR32, IMAGE_REL_AMD64_ADDR32NB, IMAGE_REL_AMD64_REL32,
+	IMAGE_REL_AMD64_REL32_1, IMAGE_REL_AMD64_REL32_2,
+	IMAGE_REL_AMD64_REL32_3, IMAGE_REL_AMD64_REL32_4,
+	IMAGE_REL_AMD64_REL32_5, IMAGE_REL_AMD64_SECTION,
+	IMAGE_REL_AMD64_SECREL, IMAGE_REL_AMD64_SECREL7, IMAGE_REL_AMD64_TOKEN,
+	IMAGE_REL_AMD64_SREL32, IMAGE_REL_AMD64_PAIR, IMAGE_REL_AMD64_SSPAN32):
+	Add defines.
+	
+	(IMAGE_REL_IA64_ABSOLUTE, IMAGE_REL_IA64_IMM14, IMAGE_REL_IA64_IMM22,
+	IMAGE_REL_IA64_IMM64, IMAGE_REL_IA64_DIR32, IMAGE_REL_IA64_DIR64,
+	IMAGE_REL_IA64_PCREL21B, IMAGE_REL_IA64_PCREL21M,
+	IMAGE_REL_IA64_PCREL21F, IMAGE_REL_IA64_GPREL22, IMAGE_REL_IA64_LTOFF22,
+	IMAGE_REL_IA64_SECTION, IMAGE_REL_IA64_SECREL22,
+	IMAGE_REL_IA64_SECREL64I, IMAGE_REL_IA64_SECREL32,
+	IMAGE_REL_IA64_DIR32NB, IMAGE_REL_IA64_SREL14, IMAGE_REL_IA64_SREL22,
+	IMAGE_REL_IA64_SREL32, IMAGE_REL_IA64_UREL32, IMAGE_REL_IA64_PCREL60X,
+	IMAGE_REL_IA64_PCREL60B, IMAGE_REL_IA64_PCREL60F,
+	IMAGE_REL_IA64_PCREL60I, IMAGE_REL_IA64_PCREL60M,
+	IMAGE_REL_IA64_IMMGPREL64, IMAGE_REL_IA64_TOKEN, IMAGE_REL_IA64_GPREL32,
+	IMAGE_REL_IA64_ADDEND): Add defines.
+	
+	(IMAGE_SCN_GPREL): Add define.
+
+2006-07-25  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/aclui.h: Replace __OBJC__ guard with _OBJC_NO_COM.
+	* include/basetyps.h:  Likewise.
+ 	(_COM_interface): New define.
+	(interface): Define to _COM_interface, conditional on !__OBJC__.
+	Replace 'interface' with '_COM_interface', throughout.
+  	* include/comcat.h: Replace 'interface' with '_COM_interface', throughout.
+	* include/commdlg.h: Replace __OBJC__ guard with _OBJC_NO_COM.
+	* include/docobj.h: Replace 'interface' with '_COM_interface', throughout.
+	* include/mshtml.h: Likewise.
+	* include/oaidl.h: Likewise.
+	* include/objfwd.h: Likewise.
+	* include/objidl.h: Likewise.
+	* include/ocidl.h: Likwise.
+	* include/olectl.h: Likewise.
+	* include/oleidl.h: Likewise.
+	* include/shlobj.h: Likewise.
+	* include/shlwapi.h: Replace __OBJC__ guard with _OBJC_NO_COM.
+	* include/vfw.h: Likewise.
+	* include/windows.h. Likewise. Add comment.
+	* include/directx/d3d9.h: Replace 'interface' with '_COM_interface',
+	throughout.
+
+	* lib/test.c: Replace __OBJC__ guard with _OBJC_NO_COM.
+	Add test for conflict with '@interface'
+ 
+2006-07-22  ipsoner  <ipsoner@users.sourceforge.net>
+
+	* include/wincrypt.h (szOID_RSA, szOID_PKCS, szOID_RSA_HASH,
+	szOID_RSA_ENCRYPT, szOID_PKCS_1, szOID_PKCS_2, szOID_PKCS_3,
+	szOID_PKCS_4, szOID_PKCS_5, szOID_PKCS_6, szOID_PKCS_7,
+	szOID_PKCS_8, szOID_PKCS_9, szOID_PKCS_10, szOID_PKCS_12,
+	szOID_RSA_MD2, szOID_RSA_MD4, szOID_RSA_MD5, szOID_RSA_RSA,
+	szOID_RSA_MD2RSA, szOID_RSA_MD4RSA, szOID_RSA_MD5RSA,
+	szOID_RSA_SHA1RSA, szOID_RSA_SETOAEP_RSA, szOID_RSA_DH,
+	szOID_RSA_data, szOID_RSA_signedData, szOID_RSA_envelopedData,
+	szOID_RSA_signEnvData, szOID_RSA_digestedData, szOID_RSA_hashedData,
+	szOID_RSA_encryptedData, szOID_RSA_emailAddr, szOID_RSA_unstructName,
+	szOID_RSA_contentType, szOID_RSA_messageDigest, szOID_RSA_signingTime,
+	szOID_RSA_counterSign, szOID_RSA_challengePwd, szOID_RSA_unstructAddr,
+	szOID_RSA_extCertAttrs, szOID_RSA_SMIMECapabilities,
+	szOID_RSA_preferSignedData, szOID_RSA_RC2CBC, szOID_RSA_RC4,
+	szOID_RSA_DES_EDE3_CBC, szOID_RSA_RC5_CBCPad, szOID_ANSI_x942,
+	szOID_ANSI_x942_DH, szOID_X957, szOID_X957_DSA, szOID_DATA STRUCTURE,
+	szOID_DS, szOID_DSALG, szOID_DSALG_CRPT, szOID_DSALG_HASH,
+	szOID_DSALG_SIGN, szOID_DSALG_RSA, szOID_OIW, szOID_OIWSEC,
+	szOID_OIWSEC_md4RSA, szOID_OIWSEC_md5RSA, szOID_OIWSEC_md4RSA2,
+	szOID_OIWSEC_desECB, szOID_OIWSEC_desCBC, szOID_OIWSEC_desOFB,
+	szOID_OIWSEC_desCFB, szOID_OIWSEC_desMAC, szOID_OIWSEC_rsaSign,
+	szOID_OIWSEC_dsa, szOID_OIWSEC_shaDSA, szOID_OIWSEC_mdc2RSA,
+	szOID_OIWSEC_shaRSA, szOID_OIWSEC_dhCommMod, szOID_OIWSEC_desEDE,
+	szOID_OIWSEC_sha, szOID_OIWSEC_mdc2, szOID_OIWSEC_dsaComm,
+	szOID_OIWSEC_dsaCommSHA, szOID_OIWSEC_rsaXchg, szOID_OIWSEC_keyHashSeal,
+	szOID_OIWSEC_md2RSASign, szOID_OIWSEC_md5RSASign, szOID_OIWSEC_sha1,
+	szOID_OIWSEC_dsaSHA1, szOID_OIWSEC_dsaCommSHA1, szOID_OIWSEC_sha1RSASign,
+	szOID_OIWDIR, szOID_OIWDIR_CRPT, szOID_OIWDIR_HASH, szOID_OIWDIR_SIGN,
+	szOID_OIWDIR_md2, szOID_OIWDIR_md2RSA, szOID_INFOSEC,
+	szOID_INFOSEC_sdnsSignature, szOID_INFOSEC_mosaicSignature,
+	szOID_INFOSEC_sdnsConfidentiality, szOID_INFOSEC_mosaicConfidentiality,
+	szOID_INFOSEC_sdnsIntegrity, szOID_INFOSEC_mosaicIntegrity,
+	szOID_INFOSEC_sdnsTokenProtection, szOID_INFOSEC_mosaicTokenProtection,
+	szOID_INFOSEC_sdnsKeyManagement, szOID_INFOSEC_mosaicKeyManagement,
+	szOID_INFOSEC_sdnsKMandSig, szOID_INFOSEC_mosaicKMandSig,
+	szOID_INFOSEC_SuiteASignature, szOID_INFOSEC_SuiteAConfidentiality,
+	szOID_INFOSEC_SuiteAIntegrity, szOID_INFOSEC_SuiteATokenProtection,
+	szOID_INFOSEC_SuiteAKeyManagement, szOID_INFOSEC_SuiteAKMandSig,
+	szOID_INFOSEC_mosaicUpdatedSig, szOID_INFOSEC_mosaicKMandUpdSig,
+	szOID_INFOSEC_mosaicUpdatedInteg, szOID_PKIX_NO_SIGNATURE,
+	szOID_COMMON_NAME, szOID_COUNTRY_NAME, szOID_DEVICE_SERIAL_NUMBER,
+	szOID_DOMAIN_COMPONENT, szOID_RSA_emailAddr, szOID_GIVEN_NAME,
+	szOID_INITIALS, szOID_LOCALITY_NAME, szOID_ORGANIZATION_NAME,
+	szOID_ORGANIZATIONAL_UNIT_NAME, szOID_STATE_OR_PROVINCE_NAME,
+	szOID_STREET_ADDRESS, szOID_SUR_NAME, szOID_TITLE, szOID_RSA_unstructAddr,
+	szOID_RSA_unstructName, szOID_BASIC_CONSTRAINTS2,
+	CERT_BASIC_CONSTRAINTS2_INFO, CRYPT_ENCODE_PARA,CertDuplicateStore,
+	CertEnumCertificatesInStore, CertDuplicateCertificateContext,
+	CertGetNameStringA, CertGetNameStringW, CertGetNameString, PFXIsPFXBlob,
+	CertFindExtension, CryptDecodeObject, CertAddCertificateContextToStore,
+	CertCompareCertificate, PFXVerifyPassword, PFXImportCertStore,
+	CertDeleteCertificateFromStore): Define.
+	* lib/crypt32.def (CertDuplicateStore, CertEnumCertificatesInStore,
+	CertDuplicateCertificateContext, CertGetNameStringA, CertGetNameStringW,
+	CertGetNameString, PFXIsPFXBlob, CertFindExtension, CryptDecodeObject,
+	CertAddCertificateContextToStore, CertCompareCertificate,
+	PFXVerifyPassword, PFXImportCertStore, CertDeleteCertificateFromStore):
+	Define.
+
+2006-07-22  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/uuid.c: Remove.
+
+2006-07-20  Elias Naur  <elias_naur@users.sourceforge.net>
+
+	* include/devguid.h: Add new file with missing GUID_DEVCLASS_*
+	declarations. They were extracted from the registry with a script.
+	* lib/devguid.c: Add new file with the implementation of the
+	missing GUIDs.
+	* lib/Makefile.in: Add devguid.c to UUID_SOURCES and UUID_OBJS.
+
+2006-07-19  Elias Naur  <elias_naur@users.sourceforge.net>
+
+	* include/winuser.h (WM_INPUT): Add missing Raw	Input
+	notification define.
+	(RID_DEVICE_INFO_MOUSE, RID_DEVICE_INFO_KEYBOARD,
+	RID_DEVICE_INFO_HID, RID_DEVICE_INFO): Define Raw Input structs
+
+2006-07-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	[mingw-Bugs-1525021]
+	* iptypes.h (IP_ADAPTER_ANYCAST_ADDRESS): Fix NONAMELESSUNION warnings.
+	(IP_ADAPTER_MULTICAST_ADDRESS): Likewise.	
+	(IP_ADAPTER_UNICAST_ADDRESS): Likewise.
+	(IP_ADAPTER_DNS_SERVER_ADDRESS): Likewise.
+	(IP_ADAPTER_ADAPTER_PREFIX): Likewise.
+	(IP_ADAPTER_ADDRESSES): Likewise.
+
+2006-06-13  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/uuid.c (CLSID_FileProtocol, CLSID_FtpProtocol, CLSID_GopherProtocol,
+	CLSID_HttpProtocol, CLSID_HttpSProtocol, CLSID_MkProtocol,
+	CLSID_PSUrlMonProxy, CLSID_StdURLMoniker): Remove.  Moved to
+	extras-uuid.c.
+	* lib/extras-uuid.c (CLSID_FileProtocol, CLSID_FtpProtocol, CLSID_GopherProtocol,
+	CLSID_HttpProtocol, CLSID_HttpSProtocol, CLSID_MkProtocol,
+	CLSID_PSUrlMonProxy, CLSID_StdURLMoniker): Added.
+	* lib/hlguids-uuid.c: State source of CLSIDs.
+
+2006-06-13  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/Makefile.in: Added extras-uuid as an object and source.
+	* lib/uuid.c (IID_IClientSiteHandler, IID_IContinue, IID_IHttpNegotiate,
+	IID_IPersistMoniker, IID_IServerHandler, IID_ITargetEmbedding,
+	IID_ITargetFrame, IID_ITypeComp, IID_IUrlHistoryStg, IID_IWinInetHttpInfo,
+	IID_IWinInetInfo, IID_IEnumSTATPROPSETSTG, IID_IEnumSTATPROPSTG,
+	IID_IEnumSTATURL): Remove.  Moved to extras-uuid.c.
+	* lib/extras-uuid.c: New file.
+	Thank you to Julien Lecomte (julienlecomte at users dot sourceforge dot
+	net).
+
+2006-06-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	[mingw-Bugs-1424461]
+	*include/imagehlp.h: Comment out IN, OUT and OPTIONAL,
+	throughout.
+	*include/rpcdce.h: Don't define IN, OUT or OPTIONAL if
+	_NO_W32_PSEUDO_MODIFIERS.
+	*include/rpcnsi.h: Comment out IN, OUT and OPTIONAL,
+	throughout.
+	*include/rpcnsip.h: Likewise.
+	*include/windef.h: Don't define IN, OUT or OPTIONAL
+	if _NO_W32_PSEUDO_MODIFIERS.
+	*include/ddk/batclass.h: Comment out IN, OUT and OPTIONAL,
+	throughout.
+	*include/ddk/cfgmgr32.h: Likewise.
+	*include/ddk/ddkmapi.h: Likewise.
+	*include/ddk/hidclass.h: Likewise.
+	*include/ddk/hidpi.h: Likewise.
+	*include/ddk/kbdmou.h: Likewise.
+	*include/ddk/mcd.h: Likewise.
+	*include/ddk/miniport.h: Likewise.
+	*include/ddk/minitape.h: Likewise.
+	*include/ddk/ndis.h: Likewise.
+	*include/ddk/ndistapi.h: Likewise.
+	*include/ddk/ndiswan.h: Likewise.
+	*include/ddk/ntapi.h: Likewise.
+	*include/ddk/ntdd8042.h: Likewise.
+	*include/ddk/ntddpcm.h: Likewise.
+	*include/ddk/ntifs.h: Likewise.
+	*include/ddk/ntpoapi.h: Likewise.
+	*include/ddk/parallel.h: Likewise.
+	*include/ddk/pfhook.h: Likewise.
+	*include/ddk/scsiwmi.h: Likewise.
+	*include/ddk/smbus.h: Likewise.
+	*include/ddk/srb.h: Likewise.
+	*include/ddk/storport.h: Likewise.
+	*include/ddk/tdikrnl.h: Likewise.
+	*include/ddk/upssvc.h: Likewise.
+	*include/ddk/usbcamdi.h: Likewise.
+	*include/ddk/usbscan.h: Likewise.
+	*include/ddk/video.h: Likewise.
+	*include/ddk/videoagp.h: Likewise.
+	*include/ddk/win2k.h: Likewise.
+	*include/ddk/winddi.h: Likewise.
+	*include/ddk/winddk.h: Don't define IN, OUT or OPTIONAL
+	if _NO_W32_PSEUDO_MODIFIERS.
+	Comment out IN, OUT and OPTIONAL, throughout.
+	*include/ddk/winnt4.h: Comment out IN, OUT and OPTIONAL,
+	throughout.
+	*include/ddk/ws2san.h: Likewise.
+
+2006-06-10  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/Makefile.in:  Added hlguids-uuid as source and object.
+
+2006-06-10  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/uuid.c (CLSID_StaticDib, CLSID_StaticMetafile, CLSID_StdHlink,
+	CLSID_StdHlinkBrowseContext): Remove.  Moved to relevant files.
+	* lib/cguid-uuid.c (CLSID_StaticDib, CLSID_StaticMetafile): Added.
+	* lib/hlguids-uuid.c: New file.
+	Thank you to Julien Lecomte (julienlecomte at users dot sourceforge dot
+	net).
+
+2006-06-10  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/Makefile.in: Added urlmon-uuid and hlink-uuid as sources and
+	objects.
+	* lib/uuid.c (IID_IAuthenticate, IID_IBindHost, IID_IBindProtocol,
+	IID_IBindStatusCallback, IID_IBindStatusCallbackMsg, IID_IBinding,
+	IID_IHlink, IID_IHlinkBrowseContext, IID_IHlinkFrame, IID_IHlinkSite,
+	IID_IHlinkTarget): Remove.  Moved to new files.
+	* lib/urlmon-uuid.c: New file.
+	* lib/hlink-uuid.c: New file.
+
+2006-06-10  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/Makefile.in: Added ativscp-uuid as source and object.
+	* lib/uuid.c (IID_IActiveScript, IID_IActiveScriptError,
+	IID_IActiveScriptParse, IID_IActiveScriptSite,
+	IID_IActiveScriptSiteWindow): Remove.  Moved to ativscp-uuid.c.
+	* lib/ativscp-uuid.c: New file.
+
+2006-06-09  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/uuid.c (IID_IClientSecurity, IID_IMallocSpy, IID_IServerSecurity):
+	Remove.  Moved to objidl-uuid.c
+	* lib/objidl-uuid.c (IID_IClientSecurity, IID_IMallocSpy,
+	IID_IServerSecurity): Defined.
+
+2006-06-09  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/Makefile.in: Add cguid-uuid and olectlid-uuid as sources and
+	objects.
+	* lib/uuid.c (CLSID_CColorPropPage, CLSID_CFontPropPage,
+	CLSID_CPicturePropPage, CLSID_Picture_Dib, CLSID_Picture_Metafile,
+	CLSID_StdFont, CLSID_StdPicture, GUID_NULL, IID_ICreateTypeInfo,
+	IID_ICreateTypeInfo2, IID_ICreateTypeLib, IID_ICreateTypeLib2, IID_IDebug,
+	IID_IDebugStream, IID_IDispatch, IID_IEnumFORMATETC,IID_IEnumMoniker,
+	IID_IEnumOLEVERB, IID_IEnumSTATDATA, IID_IEnumSTATSTG, IID_IEnumString,
+	IID_IEnumUnknown, IID_IEnumVARIANT, IID_IOleLink, IID_IPSFactory,
+	IID_IRpcChannel, IID_IRpcProxy, IID_IRpcStub, IID_ITypeInfo,
+	IID_ITypeInfo2, IID_ITypeLib, IID_ITypeLib2): Remove.  Moved to relevant
+	files.
+	* lib/oaidl-uuid.c (IID_ICreateTypeInfo, IID_ICreateTypeInfo2,
+	IID_ICreateTypeLib, IID_ICreateTypeLib2, IID_ITypeInfo, IID_ITypeInfo2,
+	IID_ITypeLib, IID_ITypeLib2, IID_IEnumVARIANT): Define.
+	* lib/cguid-uuid.c: New file.
+	* lib/olectlid-uuid.c: New file.
+
+2006-06-08  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/Makefile.in: Add objsafe-uuid oaidl-uuid docobj-uuid comcat-uuid
+	exdisp-uuid mlang-uuid objidl-uuid as sources and objects.
+	* lib/uuid.c (CATID_Control, CATID_DocObject, CATID_Insertable,
+	CATID_PersistsToPropertyBag, CATID_PersistsToStorage, CATID_PersistsToStream,
+	CATID_PersistsToStreamInit, CATID_Printable, CATID_Programmable,
+	CLSID_CMultiLanguage, CLSID_StdComponentCategoriesMgr, CLSID_WebBrowser,
+	DIID_DWebBrowserEvents, DIID_DWebBrowserEvents2, IID_IAdviseSink,
+	IID_IAdviseSink2, IID_IBindCtx, IID_ICatInformation, IID_ICatRegister,
+	IID_IClassActivator, IID_IContinueCallback, IID_ICreateErrorInfo,
+	IID_IDataAdviseHolder, IID_IDataObject, IID_IEnumCATEGORYINFO,
+	IID_IEnumGUID, IID_IEnumOleDocumentViews, IID_IErrorInfo,
+	IID_IExternalConnection, IID_IFillLockBytes, IID_ILockBytes, IID_IMalloc,
+	IID_IMarshal, IID_IMessageFilter, IID_IMoniker, IID_IObjectSafety,
+	IID_IOleCommandTarget, IID_IOleDocument, IID_IOleDocumentSite,
+	IID_IOleDocumentView, IID_IPSFactoryBuffer, IID_IPersist,
+	IID_IPersistFile, IID_IPersistStorage, IID_IPersistStream, IID_IPrint,
+	IID_IProgressNotify, IID_IPropertySetStorage, IID_IPropertyStorage,
+	IID_IROTData, IID_IRootStorage, IID_IRpcChannelBuffer,
+	IID_IRpcProxyBuffer, IID_IRpcStubBuffer, IID_IRunnableObject,
+	IID_IRunningObjectTable, IID_ISequentialStream, IID_IStdMarshalInfo,
+	IID_IStorage, IID_IStream, IID_ISupportErrorInfo, IID_IWebBrowser,
+	IID_IWebBrowser2, IID_IWebBrowserApp): Remove. Moved to new files.
+	* lib/comcat-uuid.c: New file.
+	* lib/docobj-uuid.c: New File.
+	* lib/exdisp-uuid.c: New file.
+	* lib/mlang-uuid.c: New file.
+	* lib/oaidl-uuid.c: New file.
+	* lib/objidl-uuid.c: New file.
+	* lib/objsafe-uuid.c: New file.
+
+2006-06-07  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/Makefile.in: Add oleacc-uuid oleidl-uuid ocidl-uuid as sources and
+	objects.
+	* lib/uuid.c (IID_IOleCache, IID_IOleCache2, IID_IOleCacheControl, IID_IViewObject,
+	IID_IViewObject2, IID_IDropSource, IID_IDropTarget, IID_IOleAdviseHolder,
+	IID_IOleInPlaceUIWindow, IID_IOleInPlaceObject, IID_IOleInPlaceActiveObject,
+	IID_IOleInPlaceFrame, IID_IOleInPlaceSite, IID_IOleContainer, IID_IOleItemContainer,
+	IID_IOleClientSite, IID_IOleObject, IID_IOleWindow, IID_IParseDisplayName,
+	IID_IAccessible, LIBID_Accessibility, IID_IQuickActivate, IID_IOleUndoManager,
+	IID_IOleParentUndoUnit, IID_IOleUndoUnit, IID_IEnumOleUndoUnits, IID_IPointerInactive,
+	IID_IAdviseSinkEx, IID_IOleInPlaceSiteEx, IID_IOleControl, IID_IOleControlSite,
+	IID_IPersistPropertyBag, IID_IPersistPropertyBag2, IID_IPersistStreamInit,
+	IID_IPersistMemory, IID_IPropertyBag, IID_IPropertyBag2, IID_IPropertyNotifySink,
+	IID_IPropertyPage, IID_IPropertyPage2, IID_IPropertyPageSite, IID_IFont, IID_IFontDisp,
+	IID_IPicture, IID_IPictureDisp, IID_IProvideClassInfo, IID_IProvideClassInfo2,
+	IID_IEnumConnectionPoints, IID_IEnumConnections, IID_IConnectionPoint,
+	IID_IConnectionPointContainer, IID_IClassFactory2, IID_IErrorLog,
+	IID_IObjectWithSite, IID_IPerPropertyBrowsing, IID_ISimpleFrameSite,
+	IID_ISpecifyPropertyPages): Remove. Moved to new files.
+	* lib/oleidl-uuid.c: New file.
+	* lib/oleacc-uuid.c: New file.
+	* lib/ocidl-uuid.c: New file.
+
+2006-06-04  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
+
+	* lib/Makefile.in: Add unknwn-uuid and servprov-uuid as sources and
+	objects.
+	* lib/uuid.c (IID_IUnknown, IID_IClassFactory, IID_IServiceProvider):
+	Remove.  Moved to unknwn-uuid and servprov-uuid.
+	* lib/unknwn-uuid.c: New file.
+	* lib/servprov-uuid.c: New file.
+
+2006-06-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/strmif.h (VMRDeinterlaceTech): Correct typedef for DeinterlaceTech_*
+	enum.
+
+2006-06-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/strmif.h (enum tagAnalogVideoStandard): Add missing ','.
+
+2006-06-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winuser.h (DM_BITSPERPEL, DM_PELSWIDTH, DM_PELSHEIGHT,
+	DM_DISPLAYFLAGS, DM_DISPLAYFREQUENCY): Remove.  Duplicates of
+	wingdi.h defines.
+
+2006-06-02  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/winuser.h ((SPI_GETMOUSETRAILS,SPI_SETMOUSETRAILS): Remove
+	duplicate defines.
+
+	* include/winnt.h (SUBLANG_ARABIC_SAUDI_ARABIA): Revert accidental
+	removal.
+	(SUBLANG_MARATHI_INDIA): Remove duplicate define.
+
+2006-05-24  Christopher Faylor  <cgf@timesys.com>
+
+	* configure.in: Update to newer autoconf.
+	(thanks to Steve Ellcey)
+	* configure: Regenerate.
+	* aclocal.m4: New file.
+
+2006-05-21  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/uuid.c (IID_IRpcProxyBuffer34): Remove definition. 
+
+2006-05-12  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/rtutils.h (TraceDumpA,TraceDumpW,TracePutsA,TracePutsW)
+	(TraceRegisterA,TraceRegisterW,TraceVprintfA,TraceVprintfW): Define
+	as macros.
+	Thanks to:    Bruce M Simpson <bms_spc at sf dot net>
+
+2006-05-12  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/mprapi.h (MprAdminMIBBufferFree,MprAdminMIBEntryCreate)
+	(MprAdminMIBEntryDelete,MprAdminMIBEntryGet,MprAdminMIBEntryGetFirst)
+	(MprAdminMIBEntryGetNext,MprAdminMIBEntrySet,MprAdminMIBGetTrapInfo)
+	(MprAdminMIBServerConnect,MprAdminMIBServerDisconnect)
+	(MprAdminMIBSetTrapInfo): Declare functions.
+	Note: MprAdminMIBSetTrapInfo is missing from mprapi.def.
+	(MIB_SERVER_HANDLE): New typedef.
+	(MprConfigTransportSetInfo): Declare function.
+	* lib/mprapi.def (MprSetupIpInIpInterfaceFriendlyNameEnum)
+	(MprSetupIpInIpInterfaceFriendlyNameFree): Fix size.
+
+2006-05-12  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* lib/rtutils.def: New file. Generated on Windows XP.
+	(TracePrintf{AW},TracePrintfEx{AW}): Left out for now.
+	* include/rtutils.h: New file.
+	(TraceDump{AW},TracePuts{AW},TraceRegister{AW},TraceVprintf{AW}):
+	Commented out, they're missing from rtutils.def.
+
+2006-05-12  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/mprapi.h (MprInfoBlockAdd,MprInfoBlockFind)
+	(MprInfoBlockQuerySize,MprInfoBlockRemove,MprInfoBlockSet)
+	(MprInfoCreate,MprInfoDelete,MprInfoDuplicate)
+	(MprInfoRemoveAll): Declare functions.
+
+2006-05-12  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/mprapi.h (MprConfigBufferFree,MprConfigGetFriendlyName)
+	(MprConfigGetGuidName,MprConfigInterfaceCreate)
+	(MprConfigInterfaceDelete,MprConfigInterfaceEnum)
+	(MprConfigInterfaceGetHandle,MprConfigInterfaceGetInfo)
+	(MprConfigInterfaceSetInfo,MprConfigInterfaceTransportAdd)
+	(MprConfigInterfaceTransportEnum,MprConfigInterfaceTransportGetHandle)
+	(MprConfigInterfaceTransportGetInfo,MprConfigInterfaceTransportRemove)
+	(MprConfigInterfaceTransportSetInfo,MprConfigServerBackup)
+	(MprConfigServerConnect,MprConfigServerDisconnect)
+	(MprConfigServerGetInfo,MprConfigServerInstall)
+	(MprConfigServerRestore,MprConfigTransportCreate)
+	(MprConfigTransportDelete,MprConfigTransportEnum)
+	(MprConfigTransportGetHandle,MprConfigTransportGetInfo)
+	(MprConfigTransportSetInfo): Declare functions.
+
+2006-05-12  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/mprapi.h (MprAdminBufferFree)
+	(MprAdminDeregisterConnectionNotification,MprAdminGetErrorString)
+	(MprAdminInterfaceConnect,MprAdminInterfaceCreate)
+	(MprAdminInterfaceDelete,MprAdminInterfaceDeviceGetInfo)
+	(MprAdminInterfaceDeviceSetInfo,MprAdminInterfaceDisconnect)
+	(MprAdminInterfaceEnum,MprAdminInterfaceGetCredentials)
+	(MprAdminInterfaceGetCredentialsEx,MprAdminInterfaceGetHandle)
+	(MprAdminInterfaceGetInfo,MprAdminInterfaceQueryUpdateResult)
+	(MprAdminInterfaceSetCredentials,MprAdminInterfaceSetCredentialsEx)
+	(MprAdminInterfaceSetInfo,MprAdminInterfaceTransportAdd)
+	(MprAdminInterfaceTransportGetInfo,MprAdminInterfaceTransportRemove)
+	(MprAdminInterfaceTransportSetInfo)
+	(MprAdminInterfaceUpdatePhonebookInfo,MprAdminInterfaceUpdateRoutes)
+	(MprAdminIsServiceRunning,MprAdminRegisterConnectionNotification)
+	(MprAdminServerConnect,MprAdminServerDisconnect)
+	(MprAdminServerGetCredentials,MprAdminServerGetInfo)
+	(MprAdminServerSetCredentials,MprAdminTransportCreate)
+	(MprAdminTransportGetInfo,MprAdminTransportSetInfo): Declare functions.
+
+2006-05-12  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/ipxtfflt.h: New file.
+
+2006-05-12  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/mprapi.h: Fix header guard. Cleanup.
+	(MprAdminAcceptNewConnection,MprAdminAcceptNewConnection2)
+	(MprAdminAcceptNewLink,MprAdminAcceptReauthentication)
+	(MprAdminConnectionHangupNotification)
+	(MprAdminConnectionHangupNotification2)
+	(MprAdminGetIpAddressForUser,MprAdminInitializeDll)
+	(MprAdminTerminateDll,MprAdminLinkHangupNotification)
+	(MprAdminReleaseIpAddress): Declare functions.
+	* lib/mprapi.def: Regenerate on Windows XP.
+
+2006-05-12  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/ipifcons.h: Cleanup.
+	* include/ipxconst.h: Fix header guard.
+	* include/ipxrtdef.h: include <ipxconst.h>.
+
+2006-05-11  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/ipxrtdef.h: Cleanup.
+	(IPX_INTERFACE_INFO_TYPE,IPX_STATIC_ROUTE_INFO_TYPE)
+	(IPX_STATIC_SERVICE_INFO_TYPE,IPX_SERVICE_FILTER_INFO_TYPE)
+	(IPX_ROUTE_FILTER_INFO_TYPE,IPX_IN_TRAFFIC_FILTER_INFO_TYPE)
+	(IPX_ADAPTER_INFO_TYPE,IPXWAN_INTERFACE_INFO_TYPE,IPX_GLOBAL_INFO_TYPE)
+	(IPX_STATIC_NETBIOS_NAME_INFO_TYPE)
+	(IPX_IN_TRAFFIC_FILTER_GLOBAL_INFO_TYPE)
+	(IPX_OUT_TRAFFIC_FILTER_INFO_TYPE)
+	(IPX_OUT_TRAFFIC_FILTER_GLOBAL_INFO_TYPE): Define.
+	* include/routprot.h: Cleanup.
+	(PROTO_IP_OTHER,PROTO_IP_LOCAL,PROTO_IP_NETMGMT,PROTO_IP_ICMP)
+	(PROTO_IP_EGP,PROTO_IP_GGP,PROTO_IP_HELLO,PROTO_IP_RIP,PROTO_IP_IS_IS)
+	(PROTO_IP_ES_IS,PROTO_IP_CISCO,PROTO_IP_BBN,PROTO_IP_OSPF,PROTO_IP_BGP)
+	(PROTO_IP_BOOTP,PROTO_IP_NT_AUTOSTATIC,PROTO_IP_NT_STATIC)
+	(PROTO_IP_NT_STATIC_NON_DOD,IPRTRMGR_PID,IPX_PROTOCOL_BASE)
+	(IPX_PROTOCOL_RIP,IPX_PROTOCOL_SAP,IPX_PROTOCOL_NLSP): Define.
+	* include/fltdefs.h: New file.
+	* include/ipinfoid.h: New file.
+
+2006-05-11  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/strmif.h (IAMAnalogVideoDecoder,IAMAudioInputMixer)
+	(IAMAudioRendererStats,IAMBufferNegotiation,IAMCameraControl)
+	(IAMCertifiedOutputProtection): Add interfaces.
+	* include/adsprop.h: New file.
+	* include/cmnquery.h: New file.
+	* include/dsadmin.h: New file.
+	* include/dsclient.h: New file.
+	* include/dsgetdc.h: New file.
+	* include/dsquery.h: New file.
+	* include/dsrole.h: New file.
+	* include/ntdsapi.h: New file.
+	* include/ntdsbcli.h: New file.
+	* include/objsel.h: New file.
+
+2006-05-10  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/qedit.h (DEXTER_PARAM,DEXTER_VALUE,SCompFmt0): Add structures.
+	(DEXTERF_TRACK_SEARCH_FLAGS,TIMELINE_MAJOR_TYPE): Add enums.
+	(CONNECTF_DYNAMIC_NONE,CONNECTF_DYNAMIC_SOURCES)
+	(CONNECTF_DYNAMIC_EFFECTS,SFN_VALIDATEF_CHECK,SFN_VALIDATEF_POPUP)
+	(SFN_VALIDATEF_TELLME,SFN_VALIDATEF_REPLACE,SFN_VALIDATEF_USELOCAL)
+	(SFN_VALIDATEF_NOFIND,SFN_VALIDATEF_IGNOREMUTED,RESIZEF_STRETCH)
+	(RESIZEF_CROP,RESIZEF_PRESERVEASPECTRATIO)
+	(RESIZEF_PRESERVEASPECTRATIO_NOLETTERBOX): Define.
+
+2006-05-10  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/qedit.h: New file.
+	* include/errors.h: Cleanup.
+
+2006-05-10  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/amvideo.h (BIT_MASKS_MATCH): Don't use memcmp to
+	avoid dependency on <string.h>.
+	There's no Win32 equivalent for memcmp:
+	http://support.microsoft.com/default.aspx?scid=kb;EN-US;q99456
+
+2006-05-10  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/amvideo.h (RESET_MASKS,RESET_PALETTE): Use ZeroMemory
+	instead of memset to avoid dependency on <string.h>.
+	* include/dshow.h (AM_ASPECT_RATIO_MODE,AM_WST_DRAWBGMODE,AM_WST_LEVEL)
+	(AMExtendedSeekingCapabilities,AM_WST_SERVICE,AM_WST_STATE)
+	(AM_WST_STYLE): Add enums.
+	(AM_WST_PAGE,AMVABeginFrameInfo,AMVACompBufferInfo,AMVAEndFrameInfo,
+	AMVAInternalMemInfo,AMVAUncompBufferInfo,AMVAUncompDataInfo): New
+	structures.
+	* include/errors.h (VFW_E_DVD_CMD_CANCELLED)
+	(VFW_E_DVD_STATE_WRONG_VERSION,VFW_E_DVD_STATE_CORRUPT)
+	(VFW_E_DVD_STATE_WRONG_DISC,VFW_E_DVD_INCOMPATIBLE_REGION)
+	(VFW_E_DVD_NO_ATTRIBUTES,VFW_E_DVD_NO_GOUP_PGC)
+	(VFW_E_DVD_LOW_PARENTAL_LEVEL,VFW_E_DVD_NOT_IN_KARAOKE_MODE)
+	(VFW_E_FRAME_STEP_UNSUPPORTED,VFW_E_DVD_STREAM_DISABLED)
+	(VFW_E_DVD_TITLE_UNKNOWN,VFW_E_DVD_INVALID_DISC)
+	(VFW_E_DVD_NO_RESUME_INFORMATION)
+	(VFW_E_PIN_ALREADY_BLOCKED_ON_THIS_THREAD,VFW_E_PIN_ALREADY_BLOCKED)
+	(VFW_E_CERTIFICATION_FAILURE,VFW_E_VMR_NOT_IN_MIXER_MODE)
+	(VFW_E_VMR_NO_AP_SUPPLIED,VFW_E_VMR_NO_DEINTERLACE_HW)
+	(VFW_E_VMR_NO_PROCAMP_HW,VFW_E_DVD_VMR9_INCOMPATIBLEDEC)
+	(VFW_E_NO_COPP_HW,VFW_E_BAD_KEY): Define.
+	* include/evcode.h (AM_WMT_EVENT_DATA): New structure.
+	* include/mmsystem.h (WAVE_FORMAT_EXTENSIBLE): Define.
+	* include/edevdefs.h (ED_FORMAT_SMPTE_30,ED_FORMAT_SMPTE_30DROP)
+	(ED_FORMAT_SMPTE_25,ED_FORMAT_SMPTE_24): Move from here...
+	* include/strmif.h: ... to here. New file.
+	* include/aviriff.h: New file.
+	* include/bdatypes.h: New file.
+	* include/control.h: New file.
+	* include/dvdmedia.h: New file.
+	* include/il21dec.h: New file.
+	* include/ks.h: New file.
+	* include/ksmedia.h: New file.
+	* include/mmreg.h: New file.
+	* include/mpegtype.h: New file.
+	* include/vidcap.h: New file.
+	* include/vmr9.h: New file.
+	* include/vptype.h: New file.
+	* include/xprtdefs.h: New file.
+
+2006-05-10  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/winnls.h [WINVER >= 0x0500] (LOCALE_IDEFAULTEBCDICCODEPAGE):
+	Documented as defined on Windows 2000 or later.
+	[WINVER >= 0x0600] (LOCALE_SDURATION,LOCALE_SIETFLANGUAGE)
+	(LOCALE_SISO3166CTRYNAME2,LOCALE_SISO639LANGNAME2)
+	(LOCALE_SKEYBOARDSTOINSTALL,LOCALE_SNAME,LOCALE_SNAN)
+	(LOCALE_SNEGINFINITY,LOCALE_SPOSINFINITY,LOCALE_SSCRIPTS): Documented
+	but values unknown, Windows Vista or later.
+	(CAL_UMALQURA): Cleanup.
+	(CAL_SSHORTESTDAYNAME_1,CAL_SSHORTESTDAYNAME_2,CAL_SSHORTESTDAYNAME_3)
+	(CAL_SSHORTESTDAYNAME_4,CAL_SSHORTESTDAYNAME_5,CAL_SSHORTESTDAYNAME_6)
+	(CAL_SSHORTESTDAYNAME7): Cleanup.
+	[WINVER >= 0x0410] (CAL_SYEARMONTH,CAL_ITWODIGITYEARMAX)
+	(CAL_NOUSEROVERRIDE,CAL_RETURN_NUMBER,CAL_USE_CP_ACP): Cleanup.
+
+2006-05-10  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/wingdi.h [WINVER >= 0x0500] (DC_PERSONALITY,DC_PRINTRATE)
+	(DC_PRINTRATEUNIT,DC_PRINTERMEM,DC_MEDIAREADY,DC_STAPLE)
+	(DC_PRINTRATEPPM,DC_COLORDEVICE,DC_NUP,DC_MEDIATYPENAMES)
+	(DC_MEDIATYPES,DMPAPER_DBL_JAPANESE_POSTCARD,DMPAPER_A6)
+	(DMPAPER_JENV_KAKU2,DMPAPER_JENV_KAKU3,DMPAPER_JENV_CHOU3)
+	(DMPAPER_JENV_CHOU4,DMPAPER_LETTER_ROTATED)
+	(DMPAPER_A3_ROTATED,DMPAPER_A4_ROTATED,DMPAPER_A5_ROTATED)
+	(DMPAPER_B4_JIS_ROTATED,DMPAPER_B5_JIS_ROTATED)
+	(DMPAPER_JAPANESE_POSTCARD_ROTATED)
+	(DMPAPER_DBL_JAPANESE_POSTCARD_ROTATED)
+	(DMPAPER_A6_ROTATED,DMPAPER_JENV_KAKU2_ROTATED)
+	(DMPAPER_JENV_KAKU3_ROTATED,DMPAPER_JENV_CHOU3_ROTATED)
+	(DMPAPER_JENV_CHOU4_ROTATED,DMPAPER_B6_JIS)
+	(DMPAPER_B6_JIS_ROTATED,DMPAPER_12X11,DMPAPER_JENV_YOU4)
+	(DMPAPER_JENV_YOU4_ROTATED,DMPAPER_P16K,DMPAPER_P32K)
+	(DMPAPER_P32KBIG,DMPAPER_PENV_1,DMPAPER_PENV_2)
+	(DMPAPER_PENV_3,DMPAPER_PENV_4,DMPAPER_PENV_5)
+	(DMPAPER_PENV_6,DMPAPER_PENV_7,DMPAPER_PENV_8)
+	(DMPAPER_PENV_9,DMPAPER_PENV_10,DMPAPER_P16K_ROTATED)
+	(DMPAPER_P32K_ROTATED,DMPAPER_P32KBIG_ROTATED)
+	(DMPAPER_PENV_1_ROTATED,DMPAPER_PENV_2_ROTATED)
+	(DMPAPER_PENV_3_ROTATED,DMPAPER_PENV_4_ROTATED)
+	(DMPAPER_PENV_5_ROTATED,DMPAPER_PENV_6_ROTATED)
+	(DMPAPER_PENV_7_ROTATED,DMPAPER_PENV_8_ROTATED)
+	(DMPAPER_PENV_9_ROTATED,DMPAPER_PENV_10_ROTATED): Define.
+	(DMPAPER_LAST): Value depends on DMPAPER_* variables actually defined.
+	(DM_PANNINGWIDTH,DM_PANNINGHEIGHT,DM_DISPLAYFIXEDOUTPUT)
+	(DMDO_DEFAULT,DMDO_90,DMDO_180,DMDO_270,DMDFO_DEFAULT,DMDFO_STRETCH)
+	(DMDFO_CENTER): Define.
+	(GetDCBrushColor,GetDCPenColor): Declare.
+	* lib/msimg32.def (GetDCBrushColor,GetDCPenColor): Add stubs.
+
+2006-05-10  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/winnt.h (LANG_PERSIAN,LANG_LOWER_SORBIAN,LANG_UPPER_SORBIAN)
+	(LANG_TSWANA,LANG_XHOSA,LANG_ZULU,LANG_MALTESE,LANG_SAMI,LANG_IRISH)
+	(LANG_TIBETAN,LANG_WELSH,LANG_KHMER,LANG_LAO,LANG_SINHALESE)
+	(LANG_INUKTITUT,LANG_AMHARIC,LANG_TAMAZIGHT,LANG_FRISIAN)
+	(LANG_PASHTO,LANG_FILIPINO,LANG_HAUSA,LANG_YORUBA,LANG_QUECHUA)
+	(LANG_SOTHO,LANG_BASHKIR,LANG_LUXEMBOURGISH,LANG_GREENLANDIC)
+	(LANG_IGBO,LANG_TIGRIGNA,LANG_YI,LANG_MAPUDUNGUN,LANG_MOHAWK)
+	(LANG_BRETON,LANG_UIGHUR,LANG_MAORI,LANG_OCCITAN,LANG_CORSICAN)
+	(LANG_ALSATIAN,LANG_YAKUT,LANG_KICHE,LANG_KINYARWANDA,LANG_WOLOF)
+	(LANG_DARI,LANG_MALAGASY)
+	(SUBLANG_CUSTOM_DEFAULT,SUBLANG_CUSTOM_UNSPECIFIED)
+	(SUBLANG_UI_CUSTOM_DEFAULT,SUBLANG_AFRIKAANS_SOUTH_AFRICA)
+	(SUBLANG_ALBANIAN_ALBANIA,SUBLANG_ALSATIAN_FRANCE)
+	(SUBLANG_AMHARIC_ETHIOPIA,SUBLANG_ARMENIAN_ARMENIA)
+	(SUBLANG_ASSAMESE_INDIA,SUBLANG_BASHKIR_RUSSIA,SUBLANG_BASQUE_BASQUE)
+	(SUBLANG_BELARUSIAN_BELARUS,SUBLANG_BENGALI_INDIA)
+	(SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_LATIN)
+	(SUBLANG_BOSNIAN_BOSNIA_HERZEGOVINA_CYRILLIC)
+	(SUBLANG_BRETON_FRANCE,SUBLANG_BULGARIAN_BULGARIA)
+	(SUBLANG_CATALAN_CATALAN,SUBLANG_CORSICAN_FRANCE)
+	(SUBLANG_CZECH_CZECH_REPUBLIC,SUBLANG_CROATIAN_CROATIA)
+	(SUBLANG_CROATIAN_BOSNIA_HERZEGOVINA_LATIN,SUBLANG_DANISH_DENMARK)
+	(SUBLANG_DIVEHI_MALDIVES,SUBLANG_ENGLISH_IRELAND)
+	(SUBLANG_ENGLISH_INDIA,SUBLANG_ENGLISH_MALAYSIA)
+	(SUBLANG_ENGLISH_SINGAPORE,SUBLANG_ESTONIAN_ESTONIA)
+	(SUBLANG_FAEROESE_FAROE_ISLANDS,SUBLANG_FILIPINO_PHILIPPINES)
+	(SUBLANG_FINNISH_FINLAND,SUBLANG_FRISIAN_NETHERLANDS)
+	(SUBLANG_GALICIAN_GALICIAN,SUBLANG_GEORGIAN_GEORGIA)
+	(SUBLANG_GREEK_GREECE,SUBLANG_GREENLANDIC_GREENLAND)
+	(SUBLANG_GUJARATI_INDIA,SUBLANG_HAUSA_NIGERIA,SUBLANG_HEBREW_ISRAEL)
+	(SUBLANG_HINDI_INDIA,SUBLANG_HUNGARIAN_HUNGARY)
+	(SUBLANG_ICELANDIC_ICELAND,SUBLANG_IGBO_NIGERIA)
+	(SUBLANG_INDONESIAN_INDONESIA,SUBLANG_INUKTITUT_CANADA)
+	(SUBLANG_INUKTITUT_CANADA_LATIN,SUBLANG_IRISH_IRELAND)
+	(SUBLANG_JAPANESE_JAPAN,SUBLANG_KAZAK_KAZAKHSTAN)
+	(SUBLANG_KHMER_CAMBODIA,SUBLANG_KICHE_GUATEMALA)
+	(SUBLANG_KINYARWANDA_RWANDA,SUBLANG_KONKANI_INDIA)
+	(SUBLANG_KYRGYZ_KYRGYZSTAN,SUBLANG_LAO_LAO_PDR)
+	(SUBLANG_LATVIAN_LATVIA,SUBLANG_LITHUANIAN_LITHUANIA)
+	(SUBLANG_LOWER_SORBIAN_GERMANY,SUBLANG_LUXEMBOURGISH_LUXEMBOURG)
+	(SUBLANG_MACEDONIAN_MACEDONIA,SUBLANG_MALAYALAM_INDIA)
+	(SUBLANG_MALTESE_MALTA,SUBLANG_MAORI_NEW_ZEALAND)
+	(SUBLANG_MAPUDUNGUN_CHILE,SUBLANG_MARATHI_INDIA,SUBLANG_MOHAWK_MOHAWK)
+	(SUBLANG_MONGOLIAN_CYRILLIC_MONGOLIA,SUBLANG_MONGOLIAN_PRC)
+	(SUBLANG_NEPALI_NEPAL,SUBLANG_OCCITAN_FRANCE,SUBLANG_ORIYA_INDIA)
+	(SUBLANG_PASHTO_AFGHANISTAN,SUBLANG_PERSIAN_IRAN)
+	(SUBLANG_POLISH_POLAND,SUBLANG_PORTUGUESE_PORTUGAL)
+	(SUBLANG_PUNJABI_INDIA,SUBLANG_QUECHUA_BOLIVIA,SUBLANG_QUECHUA_ECUADOR)
+	(SUBLANG_QUECHUA_PERU,SUBLANG_ROMANIAN_ROMANIA)
+	(SUBLANG_ROMANSH_SWITZERLAND,SUBLANG_RUSSIAN_RUSSIA)
+	(SUBLANG_SAMI_NORTHERN_NORWAY,SUBLANG_SAMI_NORTHERN_SWEDEN)
+	(SUBLANG_SAMI_NORTHERN_FINLAND,SUBLANG_SAMI_LULE_NORWAY)
+	(SUBLANG_SAMI_LULE_SWEDEN,SUBLANG_SAMI_SOUTHERN_NORWAY)
+	(SUBLANG_SAMI_SOUTHERN_SWEDEN,SUBLANG_SAMI_SKOLT_FINLAND)
+	(SUBLANG_SAMI_INARI_FINLAND,SUBLANG_SANSKRIT_INDIA)
+	(SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_LATIN)
+	(SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_CYRILLIC)
+	(SUBLANG_SINDHI_AFGHANISTAN,SUBLANG_SINHALESE_SRI_LANKA)
+	(SUBLANG_SOTHO_NORTHERN_SOUTH_AFRICA,SUBLANG_SLOVAK_SLOVAKIA)
+	(SUBLANG_SLOVENIAN_SLOVENIA,SUBLANG_SPANISH_US,SUBLANG_SWEDISH_SWEDEN)
+	(SUBLANG_SYRIAC,SUBLANG_TAJIK_TAJIKISTAN)
+	(SUBLANG_TAMAZIGHT_ALGERIA_LATIN,SUBLANG_TAMIL_INDIA)
+	(SUBLANG_TATAR_RUSSIA,SUBLANG_TELUGU_INDIA,SUBLANG_THAI_THAILAND)
+	(SUBLANG_TIBETAN_PRC,SUBLANG_TIBETAN_BHUTAN,SUBLANG_TIGRIGNA_ERITREA)
+	(SUBLANG_TSWANA_SOUTH_AFRICA,SUBLANG_TURKISH_TURKEY)
+	(SUBLANG_TURKMEN_TURKMENISTAN,SUBLANG_UIGHUR_PRC)
+	(SUBLANG_UKRAINIAN_UKRAINE,SUBLANG_UPPER_SORBIAN_GERMANY)
+	(SUBLANG_VIETNAMESE_VIETNAM,SUBLANG_WELSH_UNITED_KINGDOM)
+	(SUBLANG_WOLOF_SENEGAL,SUBLANG_YORUBA_NIGERIA)
+	(SUBLANG_XHOSA_SOUTH_AFRICA,SUBLANG_YAKUT_RUSSIA,SUBLANG_YI_PRC)
+	(SUBLANG_ZULU_SOUTH_AFRICA): Define.
+	(SUBLANG_ARABIC_SAUDI_ARABIA): Removed by error.
+	(SUBLANG_MARATHI_INDIA): Defined twice by error.
+
+2006-05-05  Chris Sutcliffe <ir0nh34d@users.sf.net>
+
+	* lib/directx/Makefile.in: Remove reference to libquartz.a since
+	it was moved.
+
+2006-05-05  Earnie Boyd  <earnie@users.sf.net>
+
+	* lib/scrnsave.c: Correct misspelled SPI_SCREENSAVERUNNING to
+	SPI_SETSCREENSAVERUNNING.
+	* include winuser.h (SPI_SCREENSAVERRUNNING): Remove again.
+
+2006-05-04  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/winuser.h (SPI_SCREENSAVERRUNNING): Define.
+	It had been removed because it's no documented, but Cygwin needs it.
+
+2006-05-04  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/amvideo.h (IFullScreenVideo): Define.
+	(BIT_MASKS_MATCH,PALETTISED,PALETTE_ENTRIES,RESET_MASKS,RESET_PALETTE,
+	SIZE_EGA_PALETTE,SIZE_MASKS,SIZE_PALETTE): Added Macros.
+
+2006-05-04  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/winnls.h (CAL_SYEARMONTH,CAL_ITWODIGITYEARMAX,
+	CAL_NOUSEROVERRIDE,CAL_RETURN_NUMBER,CAL_USE_CP_ACP): Documented
+	as available on Windows 98 and better.
+	(CAL_SSHORTESTDAYNAME_1,CAL_SSHORTESTDAYNAME_2,CAL_SSHORTESTDAYNAME_3)
+	(CAL_SSHORTESTDAYNAME_4,CAL_SSHORTESTDAYNAME_5,CAL_SSHORTESTDAYNAME_6)
+	(CAL_SSHORTESTDAYNAME7,CAL_UMALQURA): Define, Windows Vista and better.
+
+2006-05-04  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/amvideo.h: New file.
+	* include/dshow.h: Include <amvideo.h>.
+
+2006-05-04  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/winuser.h (MOUSEEVENTF_XDOWN,MOUSEEVENTF_XUP): Define.
+	(MOUSEEVENTF_MOVE,MOUSEEVENTF_LEFTDOWN,MOUSEEVENTF_LEFTUP)
+	(MOUSEEVENTF_RIGHTDOWN,MOUSEEVENTF_RIGHTUP,MOUSEEVENTF_MIDDLEDOWN)
+	(MOUSEEVENTF_MIDDLEUP,MOUSEEVENTF_ABSOLUTE,MOUSEEVENTF_WHEEL): Cleanup.
+	(HWND_BROADCAST): Cleanup.
+	(HWND_MESSAGE): Windows 2000 only.
+	(SMTO_ABORTIFHUNG,SMTO_BLOCK,SMTO_NORMAL): Cleanup.
+	(SMTO_NOTIMEOUTIFNOTHUNG): Define.
+	(SIF_DISABLENOSCROLL,SIF_PAGE,SIF_POS,SIF_RANGE,SIF_TRACKPOS)
+	(SIF_ALL): Cleanup.
+	(SWP_DRAWFRAME,SWP_FRAMECHANGED,SWP_HIDEWINDOW,SWP_NOACTIVATE)
+	(SWP_NOCOPYBITS,SWP_NOMOVE,SWP_NOSIZE,SWP_NOREDRAW,SWP_NOZORDER)
+	(SWP_SHOWWINDOW,SWP_NOOWNERZORDER,SWP_NOREPOSITION,SWP_NOSENDCHANGING)
+	(SWP_DEFERERASE,SWP_ASYNCWINDOWPOS): Cleanup.
+	(HSHELL_ENDTASK,HSHELL_ACCESSIBILITYSTATE,HSHELL_APPCOMMAND): Define.
+	(SPI_GETBLOCKSENDINPUTRESETS,SPI_GETCARETWIDTH,SPI_GETDROPSHADOW)
+	(SPI_GETFILTERKEYS,SPI_GETFLATMENU,SPI_GETFOCUSBORDERHEIGHT)
+	(SPI_GETFOCUSBORDERWIDTH,SPI_GETFONTSMOOTHINGCONTRAST)
+	(SPI_GETFONTSMOOTHINGTYPE,SPI_GETFOREGROUNDFLASHCOUNT)
+	(SPI_GETMENUSHOWDELAY,SPI_GETMOUSECLICKLOCK,SPI_GETMOUSECLICKLOCKTIME)
+	(SPI_GETMOUSEHOVERHEIGHT,SPI_GETMOUSEHOVERTIME,SPI_GETMOUSEHOVERWIDTH)
+	(SPI_GETMOUSESONAR,SPI_GETMOUSEVANISH,SPI_GETNONCLIENTMETRICS)
+	(SPI_GETPOWEROFFACTIVE,SPI_GETPOWEROFFTIMEOUT,SPI_GETSCREENREADER)
+	(SPI_GETSCREENSAVEACTIVE,SPI_GETSCREENSAVERRUNNING)
+	(SPI_GETSCREENSAVETIMEOUT,SPI_GETMOUSEVANISH,SPI_GETNONCLIENTMETRICS)
+	(SPI_GETPOWEROFFACTIVE,SPI_GETPOWEROFFTIMEOUT,SPI_GETSCREENREADER)
+	(SPI_GETSCREENSAVEACTIVE,SPI_GETSCREENSAVERRUNNING)
+	(SPI_GETSCREENSAVETIMEOUT,SPI_GETSNAPTODEFBUTTON,SPI_GETUIEFFECTS)
+	(SPI_SETBLOCKSENDINPUTRESETS,SPI_SETCARETWIDTH,SPI_SETCURSORS)
+	(SPI_SETDROPSHADOW,SPI_SETFILTERKEYS,SPI_SETFLATMENU)
+	(SPI_SETFOCUSBORDERHEIGHT,SPI_SETFOCUSBORDERWIDTH)
+	(SPI_SETFONTSMOOTHINGCONTRAST,SPI_SETFONTSMOOTHINGTYPE)
+	(SPI_SETFOREGROUNDFLASHCOUNT,SPI_SETICONS,SPI_SETMENUSHOWDELAY)
+	(SPI_SETMOUSECLICKLOCK,SPI_SETMOUSECLICKLOCKTIME)
+	(SPI_SETMOUSEHOVERHEIGHT,SPI_SETMOUSEHOVERTIME)
+	(SPI_SETMOUSEHOVERWIDTH,SPI_SETMOUSESONAR,SPI_SETMOUSEVANISH)
+	(SPI_SETNONCLIENTMETRICS,SPI_SETPENWINDOWS,SPI_SETPOWEROFFACTIVE)
+	(SPI_SETPOWEROFFTIMEOUT,SPI_SETSCREENREADER,SPI_SETSCREENSAVEACTIVE)
+	(SPI_SETSCREENSAVERRUNNING,SPI_SETSCREENSAVETIMEOUT,SPI_SETSHOWIMEUI)
+	(SPI_SETSNAPTODEFBUTTON,SPI_SETUIEFFECTS): Define.
+	(SPI_GETACCESSTIMEOUT,SPI_GETANIMATION,SPI_GETBEEP)
+	(SPI_GETDEFAULTINPUTLANG,SPI_GETDESKWALLPAPER,SPI_GETDRAGFULLWINDOWS)
+	(SPI_GETFASTTASKSWITCH,SPI_GETFONTSMOOTHING,SPI_GETGRIDGRANULARITY)
+	(SPI_GETHIGHCONTRAST,SPI_GETICONMETRICS,SPI_GETICONTITLELOGFONT)
+	(SPI_GETICONTITLEWRAP,SPI_GETKEYBOARDDELAY,SPI_GETKEYBOARDPREF)
+	(SPI_GETKEYBOARDSPEED,SPI_GETLOWPOWERACTIVE,SPI_GETLOWPOWERTIMEOUT)
+	(SPI_GETMENUDROPALIGNMENT,SPI_GETMENUUNDERLINES,SPI_GETMINIMIZEDMETRICS)
+	(SPI_GETMOUSE,SPI_GETMOUSEKEYS,SPI_GETMOUSESPEED,SPI_GETMOUSETRAILS)
+	(SPI_GETSERIALKEYS,SPI_GETSHOWIMEUI,SPI_GETSHOWSOUNDS)
+	(SPI_GETSOUNDSENTRY,SPI_GETSTICKYKEYS,SPI_GETTOGGLEKEYS)
+	(SPI_GETWHEELSCROLLLINES,SPI_GETWINDOWSEXTENSION,SPI_GETWORKAREA)
+	(SPI_ICONHORIZONTALSPACING,SPI_ICONVERTICALSPACING)
+	(SPI_SETACCESSTIMEOUT,SPI_SETANIMATION,SPI_SETBEEP,SPI_SETBORDER)
+	(SPI_SETDEFAULTINPUTLANG,SPI_SETDESKPATTERN,SPI_SETDESKWALLPAPER)
+	(SPI_SETDOUBLECLICKTIME,SPI_SETDOUBLECLKHEIGHT,SPI_SETDOUBLECLKWIDTH)
+	(SPI_SETDRAGFULLWINDOWS,SPI_SETDRAGHEIGHT,SPI_SETDRAGWIDTH)
+	(SPI_SETFASTTASKSWITCH,SPI_SETFONTSMOOTHING,SPI_SETGRIDGRANULARITY)
+	(SPI_SETHANDHELD,SPI_SETHIGHCONTRAST,SPI_SETICONMETRICS)
+	(SPI_SETICONTITLELOGFONT,SPI_SETICONTITLEWRAP,SPI_SETKEYBOARDDELAY)
+	(SPI_SETKEYBOARDPREF,SPI_SETKEYBOARDSPEED,SPI_SETLANGTOGGLE)
+	(SPI_SETLOWPOWERACTIVE,SPI_SETLOWPOWERTIMEOUT,SPI_SETMENUDROPALIGNMENT)
+	(SPI_SETMENUUNDERLINES,SPI_SETMINIMIZEDMETRICS,SPI_SETMOUSE)
+	(SPI_SETMOUSEBUTTONSWAP,SPI_SETMOUSEKEYS,SPI_SETMOUSESPEED)
+	(SPI_SETMOUSETRAILS,SPI_SETSERIALKEYS,SPI_SETSHOWSOUNDS)
+	(SPI_SETSOUNDSENTRY,SPI_SETSTICKYKEYS,SPI_SETTOGGLEKEYS)
+	(SPI_SETWHEELSCROLLLINES,SPI_SETWORKAREA): Cleanup.
+	(SPI_GETMOUSETRAILS,SPI_SETMOUSETRAILS): Defined twice by error.
+	(SPI_SCREENSAVERRUNNING): Removed.
+	(SPIF_UPDATEINIFILE,SPIF_SENDCHANGE,SPIF_SENDWININICHANGE): Cleanup.
+	* include/wingdi.h (ETO_NUMERICSLATIN,ETO_NUMERICSLOCAL)
+	(ETO_IGNORELANGUAGE,ETO_PDY): Define.
+	(ETO_CLIPPED,ETO_GLYPH_INDEX,ETO_OPAQUE,ETO_RTLREADING): Cleanup.
+
+2006-05-03  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/mprapi.h (MPR_SERVER_HANDLE): Add typedef.
+	(MprAdminGetPDCServer): Add prototype.
+	(MprAdminSendUserMessage): Add prototype.
+	(MprAdminUserGetInfo): Add prototype.
+	(MprAdminUserSetInfo): Add prototype.
+	* lib/mprapi.def: Add stubs for above functions.
+
+2006-05-03  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* lib/directx/quartz.def: Move from here...
+	* lib/quartz.def: ... to here.
+
+2006-05-03  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/amaudio.h: New file.
+	* include/dshow.h: Include <amaudio.h>.
+
+2006-05-03  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/errors.h: New file.
+	* include/dshow.h: Include <errors.h>.
+
+2006-05-03  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/dshow.h: New file.
+	* include/evcode.h: New file.
+	* include/audevcod.h: New file.
+	* include/dvdevcod.h: New file.
+
+2006-05-02  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/mprapi.h (RAS_SERVER_HANDLE): Add typedef.
+	(MprAdminConnectionClearStats): Add prototype.
+	(MprAdminConnectionEnum): Add  prototype.
+	(MprAdminConnectionGetInfo): Add prototype.
+	(MprAdminConnectionRemoveQuarantine): Add prototype.
+	(MprAdminPortClearStats): Add prototype.
+	(MprAdminPortDisconnect): Add prototype.
+	(MprAdminPortEnum): Add prototype.
+	(MprAdminPortGetInfo): Add prototype.
+	(MprAdminPortReset): Add prototype.
+	* lib/mprapi.def: New file.
+
+2006-05-02  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	*  include/mprapi.h: #include <lmcons.h>
+	(MAX_DEVICETYPE_NAME): Add define.
+	(MAX_PHONE_NUMBER_LEN): Add define.
+	(ATADDRESSLEN): Add define.
+	(IPADDRESSLEN): Add define.
+	(IPXADDRESSLEN): Add define.
+	(MPR_ENABLE_RAS_ON_DEVICE): Add define.
+	(MPR_ENABLE_ROUTING_ON_DEVICE): Add define.
+	(RAS_FLAGS_PPP_CONNECTION): Add define.
+	(RAS_FLAGS_MESSENGER_PRESENT): Add define.
+	(RAS_FLAGS_RAS_CONNECTION): Add define.
+	(RAS_FLAGS_QUARANTINE_PRESENT): Add define.
+	(RASCCPCA_STAC): Add define.
+	(RASCCPCA_MPPC): Add define.
+	(PPP_CCP_COMPRESSION): Add define.
+	(PPP_CCP_ENCRYPTION40BITOLD): Add define.
+	(PPP_CCP_ENCRYPTION40BIT): Add define.
+	(PPP_CCP_ENCRYPTION128BIT): Add define.
+	(PPP_CCP_ENCRYPTION56BIT): Add define.
+	(PPP_CCP_HISTORYLESS): Add define.
+	(RASPRIV_NoCallback): Add define.
+	(RASPRIV_AdminSetCallback): Add define.
+	(RASPRIV_CallerSetCallback): Add define.
+	(RASPRIV_DialinPrivilege): Add define.
+	(RASPRIV_CallbackType): Add define.
+	(RASPRIV2_DialinPolicy): Add define.
+	(PPP_LCP_PAP): Add define.
+	(PPP_LCP_SPAP): Add define.
+	(PPP_LCP_CHAP): Add define.
+	(PPP_LCP_EAP): Add define.
+	(PPP_LCP_CHAP_MD5): Add define.
+	(PPP_LCP_CHAP_MS): Add define.
+	(PPP_LCP_CHAP_MSV2): Add define.
+	(PPP_LCP_MULTILINK_FRAMING): Add define.
+ 	(enum _RAS_HARDWARE_CONDITION): Add.
+	(enum _RAS_PORT_CONDITION): Add.
+	(struct _PPP_ATCP_INFO): Add.
+	(struct _PPP_ATCP_INFO): Add.
+	(struct _PPP_IPCP_INFO): Add.
+	(struct _PPP_IPCP_INFO2): Add.
+	(struct _PPP_IPXCP_INFO): Add.
+	(struct _PPP_LCP_INFO): Add.
+	(struct _PPP_NBFCP_INFO): Add.
+	(struct _PPP_INFO): Add.
+	(struct _PPP_INFO_2): Add.
+	(struct _RAS_CONNECTION_0): Add.
+	(struct RAS_CONNECTION_1): Add.
+	(struct _RAS_CONNECTION_2): Add.
+	(struct RAS_PORT_0): Add.
+	(struct _RAS_PORT_1): Add.
+	(struct _RAS_USER_0): Add.
+	(struct _RAS_USER_1): Add.
+
+2006-05-02  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/mprapi.h: New file.
+	* include/routprot.h: New file.
+	* include/ipxrtdef.h: New file.
+	* include/ipxconst.h: New file.
+	* include/stm.h: New file.
+
+2006-04-28  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/ddk/winddk.h (KAFFINITY): Fix typo.
+	Thanks to:    Oliver Stoeneberg <kidkat at sf dot net>
+
+2006-04-28  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/winbase.h (ENUMRESLANGPROC,ENUMRESLANGPROCA,ENUMRESLANGPROCW)
+	(ENUMRESNAMEPROC,ENUMRESNAMEPROCA,ENUMRESNAMEPROCW)
+	(ENUMRESTYPEPROC,ENUMRESTYPEPROCA,ENUMRESTYPEPROCW): ANSI and Unicode
+	versions.
+	Thanks to:    Oliver Stoeneberg <kidkat at sf dot net>
+
+2006-04-28  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/ntsecapi.h (POLICY_DNS_DOMAIN_INFO): Fix typo.
+	Thanks to:    Oliver Stoeneberg <kidkat at sf dot net>
+
+2006-04-28  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/wingdi.h (BITMAPV5HEADER): New structure definition.
+
+2006-04-28  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/basetyps.h (REFFMTID): Define properly.
+
+2006-04-28  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/winnt.h (WT_SET_MAX_THREADPOOL_THREADS): Define.
+	Thanks to:    Bruce M Simpson <bms_spc at sf dot net>
+
+2006-04-28  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/ipifcons.h (MIN_IF_TYPE,IF_TYPE_OTHER,IF_TYPE_REGULAR_1822)
+	(IF_TYPE_HDH_1822,IF_TYPE_DDN_X25,IF_TYPE_RFC877_X25)
+	(IF_TYPE_ETHERNET_CSMACD,IF_TYPE_IS088023_CSMACD)
+	(IF_TYPE_ISO88024_TOKENBUS,IF_TYPE_ISO88025_TOKENRING)
+	(IF_TYPE_ISO88026_MAN,IF_TYPE_STARLAN,IF_TYPE_PROTEON_10MBIT)
+	(IF_TYPE_PROTEON_80MBIT,IF_TYPE_HYPERCHANNEL,IF_TYPE_FDDI)
+	(IF_TYPE_LAP_B,IF_TYPE_SDLC,IF_TYPE_DS1,IF_TYPE_E1,IF_TYPE_BASIC_ISDN)
+	(IF_TYPE_PRIMARY_ISDN,IF_TYPE_PROP_POINT2POINT_SERIAL,IF_TYPE_PPP)
+	(IF_TYPE_SOFTWARE_LOOPBACK,IF_TYPE_EON,IF_TYPE_ETHERNET_3MBIT)
+	(IF_TYPE_NSIP,IF_TYPE_SLIP,IF_TYPE_ULTRA,IF_TYPE_DS3,IF_TYPE_SIP)
+	(IF_TYPE_FRAMERELAY,IF_TYPE_RS232,IF_TYPE_PARA,IF_TYPE_ARCNET)
+	(IF_TYPE_ARCNET_PLUS,IF_TYPE_ATM,IF_TYPE_MIO_X25,IF_TYPE_SONET)
+	(IF_TYPE_X25_PLE,IF_TYPE_ISO88022_LLC,IF_TYPE_LOCALTALK)
+	(IF_TYPE_SMDS_DXI,IF_TYPE_FRAMERELAY_SERVICE,IF_TYPE_V35,IF_TYPE_HSSI)
+	(IF_TYPE_HIPPI,IF_TYPE_MODEM,IF_TYPE_AAL5,IF_TYPE_SONET_PATH)
+	(IF_TYPE_SONET_VT,IF_TYPE_SMDS_ICIP,IF_TYPE_PROP_VIRTUAL)
+	(IF_TYPE_PROP_MULTIPLEXOR,IF_TYPE_IEEE80212,IF_TYPE_FIBRECHANNEL)
+	(IF_TYPE_HIPPIINTERFACE,IF_TYPE_FRAMERELAY_INTERCONNECT)
+	(IF_TYPE_AFLANE_8023,IF_TYPE_AFLANE_8025,IF_TYPE_CCTEMUL)
+	(IF_TYPE_FASTETHER,IF_TYPE_ISDN,IF_TYPE_V11,IF_TYPE_V36)
+	(IF_TYPE_G703_64K,IF_TYPE_G703_2MB,IF_TYPE_QLLC,IF_TYPE_FASTETHER_FX)
+	(IF_TYPE_CHANNEL,IF_TYPE_IEEE80211,,IF_TYPE_IBM370PARCHAN)
+	(IF_TYPE_ESCON,IF_TYPE_DLSW,IF_TYPE_ISDN_S,IF_TYPE_ISDN_U)
+	(IF_TYPE_LAP_D,IF_TYPE_IPSWITCH,IF_TYPE_RSRB,IF_TYPE_ATM_LOGICAL)
+	(IF_TYPE_DS0,IF_TYPE_DS0_BUNDLE,IF_TYPE_BSC,IF_TYPE_ASYNC,IF_TYPE_CNR)
+	(IF_TYPE_ISO88025R_DTR,IF_TYPE_EPLRS,IF_TYPE_ARAP,IF_TYPE_PROP_CNLS)
+	(IF_TYPE_HOSTPAD,IF_TYPE_TERMPAD,IF_TYPE_FRAMERELAY_MPI,IF_TYPE_X213)
+	(IF_TYPE_ADSL,IF_TYPE_RADSL,IF_TYPE_SDSL,IF_TYPE_VDSL)
+	(IF_TYPE_ISO88025_CRFPRINT,IF_TYPE_MYRINET,IF_TYPE_VOICE_EM)
+	(IF_TYPE_VOICE_FXO,IF_TYPE_VOICE_FXS,IF_TYPE_VOICE_ENCAP)
+	(IF_TYPE_VOICE_OVERIP,IF_TYPE_ATM_DXI,IF_TYPE_ATM_FUNI,IF_TYPE_ATM_IMA)
+	(IF_TYPE_PPPMULTILINKBUNDLE,IF_TYPE_IPOVER_CDLC,IF_TYPE_IPOVER_CLAW)
+	(IF_TYPE_STACKTOSTACK,IF_TYPE_VIRTUALIPADDRESS,IF_TYPE_MPC
+	(IF_TYPE_IPOVER_ATM,IF_TYPE_ISO88025_FIBER,IF_TYPE_TDLC
+	(IF_TYPE_GIGABITETHERNET,IF_TYPE_HDLC,IF_TYPE_LAP_F,IF_TYPE_V37)
+	(IF_TYPE_X25_MLP,IF_TYPE_X25_HUNTGROUP,IF_TYPE_TRANSPHDLC)
+	(IF_TYPE_INTERLEAVE,IF_TYPE_FAST,IF_TYPE_IP,IF_TYPE_DOCSCABLE_MACLAYER)
+	(IF_TYPE_DOCSCABLE_DOWNSTREAM,IF_TYPE_DOCSCABLE_UPSTREAM)
+	(IF_TYPE_A12MPPSWITCH,IF_TYPE_TUNNEL,IF_TYPE_COFFEE,IF_TYPE_CES)
+	(IF_TYPE_ATM_SUBINTERFACE,IF_TYPE_L2_VLAN,IF_TYPE_L3_IPVLAN)
+	(IF_TYPE_L3_IPXVLAN,IF_TYPE_DIGITALPOWERLINE,IF_TYPE_MEDIAMAILOVERIP)
+	(IF_TYPE_DTM,IF_TYPE_DCN,IF_TYPE_IPFORWARD,IF_TYPE_MSDSL)
+	(IF_TYPE_IEEE1394,IF_TYPE_RECEIVE_ONLY,MAX_IF_TYPE,IF_ACCESS_LOOPBACK)
+	(IF_ACCESS_BROADCAST,IF_ACCESS_POINTTOPOINT)
+	(IF_ACCESS_POINTTOMULTIPOINT,IF_CHECK_NONE,IF_CHECK_MCAST)
+	(IF_CHECK_SEND,IF_CONNECTION_DEDICATED,IF_CONNECTION_PASSIVE)
+	(IF_CONNECTION_DEMAND,IF_ADMIN_STATUS_UP,IF_ADMIN_STATUS_DOWN)
+	(IF_ADMIN_STATUS_TESTING,IF_OPER_STATUS_NON_OPERATIONAL)
+	(IF_OPER_STATUS_UNREACHABLE,IF_OPER_STATUS_DISCONNECTED)
+	(IF_OPER_STATUS_CONNECTING,IF_OPER_STATUS_CONNECTED)
+	(IF_OPER_STATUS_OPERATIONAL): Define.
+	* include/winbase.h (CancelWaitableTimer,UnregisterWait):
+	Add function declaration.
+	* include/mgm.h: New file.
+	* lib/rtm.def: New file.
+	Thanks to:    Bruce M Simpson <bms_spc at sf dot net>
+
+2006-04-24  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/ws2tcpip.h (gai_strerror): Remove thread-safety comment.
+	This function cannot be made thread-safe, the API would have to be
+	changed for that, just like strerror() -> strerror_r() and similar
+	ISO C or POSIX functions...
+
+2006-04-19  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/edevdefs.h: New file.
+
+2006-04-19  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/mmsystem.h (_LPCWAVEFORMATEX_DEFINED): Define.
+	Use as guard for the WAVEFORMATEX structure instead of
+	_WAVEFORMATEX_ to avoid clashes with DirectSound. Keep
+	_WAVEFORMATEX_ for compatibility.
+	Thanks to:    Andrew Jones <guln at sf dot net>
+
+2006-04-19  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/winuser.h (CharNextEx,CharNextExW,CharPrevEx,CharPrevExW):
+	Delete. Only CharNextExA and CharPrevExA are documented in MSDN.
+	Thanks to:    David Golub <david_golub at sf dot net>
+
+2006-04-18  Eric House  <ehouse@eehouse.org>
+
+	PocketPC support.
+	* include/aygshell.h: New file [_WIN32_WCE]. Declare most common
+	functions for using aygshell on PocketPC:
+	SHCreateMenuBar, SHFindMenuBar, SHCreateNewItem, SHFullScreen,
+	SHSipInfo, SHHandleWMActivate, SHHandleWMSettingChange
+
+	* include/commctrl.h [_WIN32_WCE] Add function prototypes for
+	command bar API on PocketPC:
+	CommandBar_Create, CommandBar_Show, CommandBar_AddBitmap,
+	CommandBar_InsertComboBox, CommandBar_InsertMenubar,
+	CommandBar_InsertMenubarEx, CommandBar_DrawMenuBar,
+	CommandBar_GetMenu, CommandBar_AddAdornments, CommandBar_Height,
+	CommandBar_InsertButton, CommandBar_Destroy.
+
+	* include/winbase.h [_WIN32_WCE] (WIN32_FIND_DATA{A|W}): Remove
+	fields not present on PocketPC.
+	(GetCurrentThreadId): Conditionally declare as extern function
+	without dllimport attribute on PocketPC.
+ 	(ResetEvent): Likwise.
+	(SetEvent): Likewise.
+
+	* include/wingdi.h [_WIN32_WCE]  (GetTextExtentPoint32{A|W}):
+	Conditionally declare as extern function without dllimport
+	 attribute on PocketPC.
+	* winuser.h  [_WIN32_WCE] (DialogBoxParam{A|W}): Conditionally
+	declare as extern function without dllimport attribute on PocketPC.
+
+2006-04-18  Thorsten Dahlheimer <dahlheim@users.sf.net>
+
+	* lib/test.c: Include icm.h.
+
+2006-04-18  Thorsten Dahlheimer <dahlheim@users.sf.net>
+
+	* include/wingdi.h (ColorCorrectPalette): Add declaration.
+	(CreateColorSpace): Add UNICODE mappings.
+	* lib/gdi32.def (ColorCorrectPalette): Add stub.
+	* include/icm.h: New file.
+	* lib/mscms.def: New file.
+	* lib/icmui.def: New file.
+
+2006-04-18  Thorsten Dahlheimer <dahlheim@users.sf.net>
+
+	* include/winnt.h (IMAGE_FILE_MACHINE_IA64): New define.
+	(IMAGE_FILE_MACHINE_AMD64): New define.
+	(IMAGE_NT_OPTIONAL_HDR32_MAGIC,IMAGE_NT_OPTIONAL_HDR64_MAGIC):
+	New defines.
+	(IMAGE_NT_OPTIONAL_HDR_MAGIC): Map to one of the above.
+	(IMAGE_SUBSYSTEM_NATIVE_WINDOWS): New define.
+	(IMAGE_SUBSYSTEM_WINDOWS_CE_GUI): New define.
+	(IMAGE_DLLCHARACTERISTICS_WDM_DRIVER): New define.
+	(IMAGE_DIRECTORY_ENTRY_ARCHITECTURE,IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT)
+	(IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR): New defines.
+	(IMAGE_SCN_TYPE_REG,IMAGE_SCN_TYPE_DSECT,IMAGE_SCN_TYPE_NOLOAD)
+	(IMAGE_SCN_TYPE_GROUP,IMAGE_SCN_TYPE_COPY,IMAGE_SCN_TYPE_OVER):
+	New defines.
+	(IMAGE_SCN_ALIGN_128BYTES,IMAGE_SCN_ALIGN_256BYTES)
+	(IMAGE_SCN_ALIGN_512BYTES,IMAGE_SCN_ALIGN_1024BYTES)
+	(IMAGE_SCN_ALIGN_2048BYTES,IMAGE_SCN_ALIGN_4096BYTES)
+	(IMAGE_SCN_ALIGN_8192BYTES): New defines.
+	(IMAGE_DEBUG_TYPE_BORLAND): New define.
+	(IMAGE_OPTIONAL_HEADER32,PIMAGE_OPTIONAL_HEADER32)
+	(IMAGE_OPTIONAL_HEADER64,PIMAGE_OPTIONAL_HEADER64): New structure
+	definitions and typedefs.
+	(IMAGE_OPTIONAL_HEADER,PIMAGE_OPTIONAL_HEADER): Map to the above.
+	(IMAGE_NT_HEADERS32,PIMAGE_NT_HEADERS32,IMAGE_NT_HEADERS64)
+	(PIMAGE_NT_HEADERS64): New structure definitions and typedefs.
+	(IMAGE_NT_HEADERS,PIMAGE_NT_HEADERS): Map to the above.
+	(IMAGE_LOAD_CONFIG_DIRECTORY64,PIMAGE_LOAD_CONFIG_DIRECTORY64):
+	New structure definition and typedefs.
+	(IMAGE_CE_RUNTIME_FUNCTION_ENTRY,PIMAGE_CE_RUNTIME_FUNCTION_ENTRY):
+	Likewise.
+	(IMAGE_FUNCTION_ENTRY64,PIMAGE_FUNCTION_ENTRY64): Likewise.
+
+2006-04-18  Bart Oldeman  <bartoldeman@users.sf.net>
+
+	* lib/test.c: Fix typo in #inlcude.
+	* include/aclui.h: INTERFACE should not remain
+	defined at the end of the header.
+	* include/servprov.h: Ditto.
+
+2006-04-16  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ws2tcpip.h (gai_strerror): Add thread-safety comment.
+
+2006-04-14  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/ws2tcpip.h (gai_strerrorA,gai_strerrorW): Implement inline.
+
+2006-04-14  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/wsahelp.h (system_header): Add pragma.
+	* include/ws2spi.h (system_header): Add pragma.
+	* include/rasdlg.h (system_header): Add pragma.
+	* include/rasdlg.h (_RASDLG_H): Define.
+	Define instead of _RASDLG_H_, this is the w32api standard.
+	* include/mlang.h (_MLANG_H): Define.
+	Define instead of _MLANG_H_, this is the w32api standard.
+	* include/setupapi.h (_SETUPAPI_H): Define.
+	Define instead of _SETUPAPI_H_, this is the w32api standard.
+
+2006-04-14  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/rpcndr.h (boolean): Add typedef.
+	Thanks to:    James du Russel <ephelon at users dot sf dot net>
+	* include/rpcndr.h (_RPCNDR_H): Define.
+	Define in addition to __RPCNDR_H__, this is the w32api standard.
+
 2006-04-14  Chris Sutcliffe  <ir0nh34d@users.sf.net>
 
 	* include/w32api.h: Increment version to 3.7.
@@ -5,8 +1290,10 @@
 
 2006-04-13  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
 
-	* include/winbase.h (GET_MODULE_HANDLE_EX_FLAG_*): Define.
-	Thanks to:	Brandon Sneed <brandon at redf dot net>
+	* include/winbase.h (GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+	GET_MODULE_HANDLE_EX_FLAG_PIN,
+	GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT): Define.
+	Thanks to:    Brandon Sneed <brandon at redf dot net>
 
 2006-04-08  Danny Smith  <dannysmith@users.sourceforge.net>
 
@@ -34,11 +1321,12 @@
 	* include/shlobj.h: Ditto.
 	* include/unknwn.h: Ditto.
 	* include/vfw.h: Ditto.
-	Thanks to:  Brandon Sneed <brandon at redf dot net>
+	Thanks to:    Brandon Sneed <brandon at redf dot net>
 
 2006-04-11  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
 
-	* include/commdlg.h (PD_*): Define.
+	* include/commdlg.h [_WIN32_WINNT >= 0x0500] (PD_CURRENTPAGE)
+	(PD_NOCURRENTPAGE,PD_EXCLUSIONFLAGS,PD_USELARGETEMPLATE): Define.
 	Thanks to:    Wolfgang Glas <softadm at users dot sf dot net>
 
 2006-04-08  Danny Smith  <dannysmith@users.sourceforge.net>
@@ -55,8 +1343,8 @@
 
 2006-04-07  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
 
-	* include/commdlg.h [WINVER >= 0x0500]
-	(PD_RESULT_*,START_PAGE_GENERAL): Define.
+	* include/commdlg.h [_WIN32_WINNT >= 0x0500] (START_PAGE_GENERAL)
+	(PD_RESULT_PRINT,PD_RESULT_APPLY): Define.
 	Thanks to:    Wolfgang Glas <softadm at users dot sf dot net>
 
 2006-04-07  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
@@ -68,14 +1356,16 @@
 2006-04-07  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
 
 	* include/wingdi.h (CAPTUREBLT,NOMIRRORBITMAP): Define.
-	* include/commctrl.h (WC_LINK{AW},LIF_*,LIM_*,LM_*,
-	MAX_LINKID_TEXT,L_MAX_URL_LENGTH): Define.
+	* include/commctrl.h (WC_LINKA,WC_LINKW,LIF_ITEMINDEX,LIF_STATE)
+	(LIF_ITEMID,LIF_URL,LIS_FOCUSED,LIS_ENABLED,LIS_VISITED,LM_HITTEST)
+	(LM_GETIDEALHEIGHT,LM_SETITEM,LM_GETITEM,MAX_LINKID_TEXT)
+	(L_MAX_URL_LENGTH): Define.
 	(LITEM,LHITTESTINFO,NMLINK): Add structures.
 	Thanks to:    Brandon Sneed <brandon at redf dot net>
 
 2006-04-06  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
 
-	* include/w32api.h (IE*): Define for recent versions of IE.
+	* include/w32api.h (IE601,IE602,IE7): Define for recent versions of IE.
 
 2006-04-06  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
 
@@ -567,7 +1857,7 @@
 
 	* lib/shell32.c (CLSID_RecycleBin, CLSID_ControlPanel,
 	CLSID_MyComputer,CLSID_Internet, CLSID_NetworkPlaces,
-	CLSID_MyDocuments, CLSID_FolderShortcut): Add GUIDs. 
+	CLSID_MyDocuments, CLSID_FolderShortcut): Add GUIDs.
 
 005-08-17  Martin Fuchs <martin-fuchs@gmx.net>
 
@@ -616,7 +1906,7 @@
 
 	* include/richedit.h (SETTEXTEX): Define structure and
 	associated constants.
-	(GT_SELECTION): Define GETTEXTEX flag constant. 
+	(GT_SELECTION): Define GETTEXTEX flag constant.
 
 2005-07-19  Danny Smith  <dannysmith@users.sourceforge.net>
 
@@ -724,7 +2014,7 @@
 
 2005-03-16  Danny Smith  <dannysmith@users.sourceforge.net>
 
-	* include/winnt.h (_LUID): Add structure. Correct LUID typedef. 
+	* include/winnt.h (_LUID): Add structure. Correct LUID typedef.
 	Thanks to:
 	Paul-Christiaan Spruijtenburg <wakarimasu at users dot sf dot net>
 
@@ -761,7 +2051,7 @@
 
 2005-01-26  Danny Smith  <dannysmith@users.sourceforge.net>
 
-	* include/winuser.h (SW_SMOOTHSCROLL): Add define. 
+	* include/winuser.h (SW_SMOOTHSCROLL): Add define.
 	Reported by: Christian Ehrlicher  <chehrlic@users.sf.net>
 
 2005-01-21  Chris Sutcliffe  <ir0nh34d@users.sourceforge.net>
@@ -1025,7 +2315,7 @@
 	ExInterlockedInsertTailList, ExInterlockedRemoveHeadList,
 	ExInterlockedPopEntryList, ExInterlockedPushEntryList): 
 	Add prototypes for DDKFASTAPI versions.
-	Thanks to Vadim Yegor0v <zg at bmg dot lv> for report. 
+	Thanks to Vadim Yegor0v <zg at bmg dot lv> for report.
 	* lib/ntoskrnl.def (ExInterlockedAddUlong,
 	ExInterlockedInsertHeadList, ExInterlockedInsertTailList,
 	ExInterlockedRemoveHeadList, ExInterlockedPopEntryList,
@@ -1448,7 +2738,7 @@
 2004-03-29  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* lib/Makefile.in: Add directx to .PHONY target.
-	* lib/directx/dxerr.c: Remove dependence on mingw runtime. 
+	* lib/directx/dxerr.c: Remove dependence on mingw runtime.
 	Don't include stdio.h or tchar.h.
 	Replace _T() macro with TEXT() macro, throughout.
 	Replace _stprintf with wsprintf, throughout.
@@ -1850,10 +3140,10 @@
 	(SHCOLSTATE): Add enum.
 	(IColumnProvider): Add COM interface.
 	(IQueryInfo): Likewise.
-	(IShellIconOverlayIdentifier): Likewise. 
+	(IShellIconOverlayIdentifier): Likewise.
   	* include/shlguid.h (IID_IColumnProvider) Declare.
 	(IID_IQueryInfo): Likweise.
-	(IID_IShellIconOverlayIdentifier): Likwise. 
+	(IID_IShellIconOverlayIdentifier): Likwise.
 	* lib/shell32.c (IID_IColumnProvider) Define.
 	(IID_IQueryInfo): Likweise.
 	(IID_IShellIconOverlayIdentifier): Likwise.
@@ -2843,7 +4133,7 @@
 
 2003-08-22   Danny Smith <dannysmith@users.sourceforge.net>
 
-        * include/winnt.h (IMAGE_SUBSYSTEM_XBOX): Add define. 
+        * include/winnt.h (IMAGE_SUBSYSTEM_XBOX): Add define.
 
 2003-08-22  Mihai Preda <mihai_preda@users.sourceforge.net>
 
@@ -2866,7 +4156,7 @@
 
 2003-08-18  Danny Smith <dannysmith@users.sourceforge.net>
 
-	* include/commctrl.h (TB_*) Group defines together. 
+	* include/commctrl.h (TB_*) Group defines together.
 
 2003-08-18  Martin Fuchs  <Martin-Fuchs@gmx.net>
 
@@ -2958,7 +4248,7 @@
 2003-07-31  Martin Fuchs  <Martin-Fuchs@gmx.net>
 
 	* include/shlobj.h (SFGAO_COMPRESSED): Add define.
-	(SFGAOF, SHGDNF): Add typedef's. 
+	(SFGAOF, SHGDNF): Add typedef's.
 	(SHCONTF): Extend enum.
 
 2003-07-31  Danny Smith <dannysmith@users.sourceforge.net>
@@ -3007,10 +4297,10 @@
 	* include/winnt.h (COMPRESSION_*, ACCESS_*, SYSTEM_*): Sync with 
 	ddk/ntifs.h defines.
 	(FILE_*): Likewise.
-	(MEM_IMAGE, SEC_*): Likewise. 
+	(MEM_IMAGE, SEC_*): Likewise.
 	(DUPLICATE_CLOSE_SOURCE, DUPLICATE_SAME_ACCESS, 
 	DUPLICATE_SAME_ATTRIBUTES): Sync with ddk/winddk.h defines.
-	(TOKEN_*): Sync with ddk/ntifs.h defines. 
+	(TOKEN_*): Sync with ddk/ntifs.h defines.
 	* include/ddk/ntapi.h: Add comments noting definitions in
 	winbase.h.
 	* include/ddk/ntifs.h: Add comments noting definitions in
@@ -3549,14 +4839,14 @@
 	*lib/ndis.def (NdisAllocateMemory): Correct stdcall suffix.
 	Thanks to: Vladimir Michl <michlv@users.sourceforge.net>
 	(NdisUpdateSharedMemory): Likewise.
-	(NdisMFreeSharedMemory: Likewise. 
+	(NdisMFreeSharedMemory: Likewise.
 	(NdisMMapIoSpace: Likewise.
 
 2003-03-18  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* include/lmaccess.h (UF_LOCKOUT): Correct name from UF_LOCK.
 	Thanks to: Fabricio D. Rossi  <gurusoda@users.sourceforge.net>
- 	(UF_SETTABLE_BITS): Correct UF_LOCKOUT here too. 
+ 	(UF_SETTABLE_BITS): Correct UF_LOCKOUT here too.
 
 2003-03-17  Bang Jun-Young  <junyoung@netbsd.org>
 
@@ -3762,7 +5052,7 @@
 	* include/winbase.h (CreateFiber): Change first parameter
 	to SIZE_T.
 	(CreateJobObject[AW], CreateHardLink[AW]):Guard with
-	if (_WIN32_WINNT >= 0x0500). 
+	if (_WIN32_WINNT >= 0x0500).
 
 2003-01-31  Bang Jun-Young  <junyoung@netbsd.org>
 
@@ -4122,7 +5412,7 @@
 	(ASFW_ANY, LSFW_LOCK, LSFW_UNLOCK) Add defines.
 	Thanks to:  Pat Thoyts  <patthoyts@users.sourceforge.net>
 	* lib/winuser.def (AllowSetForegroundWindow,
-	LockSetForegroundWindow): Add stubs. 
+	LockSetForegroundWindow): Add stubs.
 
 2002-12-06  Ken Fitlike  <kenfitlike@users.sourceforge.net>
 
@@ -5214,7 +6504,7 @@
 
 2002-03-02  Danny Smith  <dannysmith@users.sourceforge.net>
 
-	* ChangeLog: Fix typo in last entry. 
+	* ChangeLog: Fix typo in last entry.
 	* include/winsock2.h (IPPROTO_*): Add IPv6 defines.
 	* include/ws2tcpip.h: (IP_*): Add new defines.
 	(INET_ADDRSTRLEN, INET6_ADDRSTRLEN): Add defines.
@@ -5406,7 +6696,7 @@
 
 2002-01-11  Danny Smith  <dannysmith@users.sourceforge.net>
 
-	* ChangeLog: correct date in last entry. 
+	* ChangeLog: correct date in last entry.
 
 2002-01-11  Timothy J. Wood  <tjw@omnigroup.com>
 
@@ -5584,7 +6874,7 @@
 	* include/winuser.h (tagALTTABINFO, tagCOMBOBOXINFO, 
 	tagCURSORINFO, tagMENUBARINFO, tagMENUINFO, tagMONITORINFO
 	tagSCROLLBARINFO, tagTITLEBARINFO. tagWINDOWINFO,
-	tagLASTINPUTINFO ): Define new structures. 
+	tagLASTINPUTINFO ): Define new structures.
 	(EndMenu, GetAltTabInfo[AW],GetComboBoxInfo,GetCursorInfo,
 	GetLastInputInfo, GetListBoxInfo, GetMenuBarInfo,
 	GetMonitorInfo[AW], GetScrollBarInfo, GetTitleBarInfo,
@@ -5629,7 +6919,7 @@
 2001-11-05  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* include/commdlg.h: Include <unknwn.h> rather than local
-	definition of LPUKNOWN. 
+	definition of LPUKNOWN.
 	* include/rpcproxy.h: Don't include if ndef CINTERFACE.
 	Emit warning.
 
@@ -5686,7 +6976,7 @@
 2001-11-01  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* include/basetyps.h (DECLARE_INTERFACE): Don't add
-	__attribute__((com_interface)) for __GNUC__ >= 3. 
+	__attribute__((com_interface)) for __GNUC__ >= 3.
 
 2001-11-01  Danny Smith  <dannysmith@users.sourceforge.net>
 
@@ -5716,7 +7006,7 @@
 	* include/oleidl.h (enum tagDROPEFFECT): Mark as __extension__
 	(enum not limited to range of int).
 	* include/oaidl.h (struct tagVARIANT): Mark as __extension__
-	(struct with no named members), ifndef NONAMELESSUNION. 
+	(struct with no named members), ifndef NONAMELESSUNION.
 
 2001-10-30  Danny Smith  <dannysmith@users.sourceforge.net>
 
@@ -5793,12 +7083,12 @@
 
 2001-09-05  Danny Smith  <dannysmith@users.sourceforge.net>
 
-	* include/wininet.h (InternetAutodial): Add prototype. 
+	* include/wininet.h (InternetAutodial): Add prototype.
 	(InternetAutodialHangup): Ditto.
 	(InternetDial): Ditto.
 	(InternetGetConnectedState): Ditto.
 	(InternetGoOnline): Ditto.
-	(InternetHangUp): Ditto. 
+	(InternetHangUp): Ditto.
 	(InternetSetDialState): Ditto.
 	Add associated INTERNET_* auto dial flags.
 	Guard typedefs and prototypes with #ifndef RC_INVOKED.
@@ -5816,7 +7106,7 @@ Tue Sep  4 14:15:59 2001  Christopher Faylor <cgf@cygnus.com>
 2001-09-01  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* include/shlobj.h (CFSTR_* ): Add new defines.
-	Thanks to: "Ron" <ron@debian.org> . 
+	Thanks to: "Ron" <ron@debian.org> .
 	Unicode them.
 
 Sat Sep  1 10:40:37 2001  Christopher Faylor <cgf@cygnus.com>
@@ -5907,7 +7197,7 @@ Thu Aug 30 09:35:51 2001  Christopher Faylor <cgf@cygnus.com>
 	* include/winsock2.h (#include <wtypes.h): Don't.
 	(_BLOB): Define instead, if not already done.
 	(__BLOB_T_DEFINED: New define for guarding _BLOB.
-	* include/wtypes.h (_BLOB): Guard against prior definition. 
+	* include/wtypes.h (_BLOB): Guard against prior definition.
 
 2001-08-15  Danny Smith  <dannysmith@users.sourceforge.net>
 
@@ -5919,7 +7209,7 @@ Thu Aug 30 09:35:51 2001  Christopher Faylor <cgf@cygnus.com>
 	(_wireSAFEARR_HAVEIID): Ditto.
 	(_wireSAFEARRAY_UNION.u): Add fields SAFEARR_BRECORD RecordStr,
 	SAFEARR_HAVEIID HaveIidStr.
-	(tagVariant): Add fields _VARIANT_BOOL bool,*pbool. 
+	(tagVariant): Add fields _VARIANT_BOOL bool,*pbool.
 	(_wireVARIANT): Change field parray to type wirePSAFEARRAY,
 	pparray to wirePSAFEARRAY*.
 	(_wireVARIANT): Add field wireBRECORD brecVal.
@@ -6028,7 +7318,7 @@ Thu Aug 30 09:35:51 2001  Christopher Faylor <cgf@cygnus.com>
 2001-06-19  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* lib/kernel32.def: Add LanguageGroup and UILanguage symbols.
-	Thanks to Kevin Chase <kevincha99@hotmail.com>. 
+	Thanks to Kevin Chase <kevincha99@hotmail.com>.
 
 2001.06.11  TAMURA Kent  <tkent@users.sourceforge.net>
 
@@ -6037,9 +7327,9 @@ Thu Aug 30 09:35:51 2001  Christopher Faylor <cgf@cygnus.com>
 
 2001-06-11  Danny Smith <dannysmith@users.sourceforge.net>
 
-	* include/shlobj.h (REGSTR_PATH_EXPLORER): Unicode it. 
+	* include/shlobj.h (REGSTR_PATH_EXPLORER): Unicode it.
 	(REGSTR_PATH_SPECIAL_FOLDERS): Ditto.
-	* include/regstr.h (REGSTR_PATH_EXPLORER): Add #ifndef guard. 
+	* include/regstr.h (REGSTR_PATH_EXPLORER): Add #ifndef guard.
 
 2001-06-11  Mattia Barbon  <mbarbon@dsi.unive.it>
 
@@ -6055,7 +7345,7 @@ Thu Aug 30 09:35:51 2001  Christopher Faylor <cgf@cygnus.com>
 2001.06.06  Earnie Boyd  <earnie@users.sourceforge.net>
 
 	* Makefile.in (bindist): Reassign value of exec_prefix on make command
-	line. 
+	line.
 
 Tue May 22 18:58:27 2001  Christopher Faylor <cgf@cygnus.com>
 
@@ -6224,7 +7514,7 @@ Sun Apr  8 20:48:01 2001  Christopher Faylor <cgf@cygnus.com>
 	* include/wingdi.h (struct _DOCINFO[AW]): UNICODE it.
 	(StartDoc[AW]): Use UNICODE'd LPDOCINFO[AW] 
 	* include/winuser.h (struct tagMOUSEKEYS): Define new structure.
-	* include/winerror.h (NTE_*): Add CryptoAPI error codes. 
+	* include/winerror.h (NTE_*): Add CryptoAPI error codes.
 
 2001-02-21  Danny Smith <dannysmith@users.sourceforge.net>
 
@@ -7654,7 +8944,7 @@ Fri Jan 26 15:59:31  2001  Earnie Boyd  <earnie@users.sourceforge.net
 	* Apply Danny Smith patch 102275
 	2000-11-05  Danny Smith  <danny_r_smith_2001@yahoo.co.nz>
 	* include/objbase.h: (COM_RIGHTS): Add definition.
-	(tagSTDMSHLFLAGS): add enumeration. 
+	(tagSTDMSHLFLAGS): add enumeration.
 	(CoInitializeEx): Add prototypes.
 	(CoGetStdMarshalEx): ditto.
 	(CoCreateInstanceEx): ditto.
@@ -7723,25 +9013,25 @@ Mon Dec 11 13:11:36 2000  Christopher Faylor <cgf@cygnus.com>
 
 2000-12-04  Danny Smith  <danny_r_smith_2001@yahoo.co.nz>
 
-	* include/winnls.h: NORM_IGNORE* remove duplicate defines. 
-	SORT_STRINGSORT: ditto. 
-	CMAP*: ditto. 
-	CTRY_*: add new defines. 
-	LGRPID_*: ditto. 
-	LCMAP*: change defines to hex notation. 
-	CALID: change from ULONG to DWORD. 
-	CALTYPE: ditto. 
-	_cpinfoex[AW]: add structure. 
-	FoldString: correct Unicode mappings. 
-	GetCPInfoEx[AW]: add prototypes. 
-	EnumCalendarInfoEx[AW]: ditto. 
-	EnumDateFormatsEx[AW]: ditto. 
-	EnumSystemLanguageGroups[AW]: ditto. 
-	EnumLanguageGroupLocales[AW]: ditto. 
-	EnumUILanguages[AW]: ditto. 
-	GetSystemDefaultUILanguage[AW]: ditto. 
-	GetUserDefaultUILanguage[AW]: ditto. 
-	IsValidLanguageGroup[AW]: ditto. 
+	* include/winnls.h: NORM_IGNORE* remove duplicate defines.
+	SORT_STRINGSORT: ditto.
+	CMAP*: ditto.
+	CTRY_*: add new defines.
+	LGRPID_*: ditto.
+	LCMAP*: change defines to hex notation.
+	CALID: change from ULONG to DWORD.
+	CALTYPE: ditto.
+	_cpinfoex[AW]: add structure.
+	FoldString: correct Unicode mappings.
+	GetCPInfoEx[AW]: add prototypes.
+	EnumCalendarInfoEx[AW]: ditto.
+	EnumDateFormatsEx[AW]: ditto.
+	EnumSystemLanguageGroups[AW]: ditto.
+	EnumLanguageGroupLocales[AW]: ditto.
+	EnumUILanguages[AW]: ditto.
+	GetSystemDefaultUILanguage[AW]: ditto.
+	GetUserDefaultUILanguage[AW]: ditto.
+	IsValidLanguageGroup[AW]: ditto.
 	CALINFO_ENUMPROCEX[AW]: add function pointer typedef 
 	LANGUAGEGROUP_ENUMPROC[AW]: ditto 
 	LANGGROUPLOCALE_ENUMPROC[AW]: ditto 
@@ -7761,7 +9051,7 @@ Mon Oct  9 11:49:00 2000  Corinna Vinschen <corinna@vinschen.de>
 
 2000-11-06  Earnie Boyd  <earnie_boyd@yahoo.com>
 
-	* Makefile.in: increment VERSION.  
+	* Makefile.in: increment VERSION.
 	(dist:) Rename to srcdist.  Create new dist target to call
 	srcdist and bindist targets.
 	(srcdist:) New target.
@@ -7824,7 +9114,7 @@ Mon Oct 19 13:55:00 2000  Earnie Boyd <earnie_boyd@yahoo.com>
 	* configure: ditto.
 	* lib/Makefile.in: Change the name of the targets install,
 	install-headers and install-libraries to xinstall, xinstall-headers
-	and xinstall-libraries for system target specified installation.  
+	and xinstall-libraries for system target specified installation.
 	Recreate targets install, install-headers and install-libraries for
 	exec-prefix specified installation.  Ditto for the uninstall targets of
 	the same name.
