@@ -21,6 +21,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
+  [ IFDEF (os_os2 "") <2*> ]
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
@@ -30,6 +31,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
+  [ IFDEF (os_os2 "") <2*> ]
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
@@ -39,6 +41,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
+  [ IFDEF (os_os2 "") <2*> ]
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
@@ -48,6 +51,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
+  [ IFDEF (os_os2 "") <2*> ]
     mkdir <PROJDIR>/<PREOBJDIR>
     cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
