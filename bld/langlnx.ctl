@@ -7,9 +7,9 @@ set PROJDIR=<CWD>
 
 set OWLINUXBUILD=bootstrap
 # compiled using GNU make + gcc + ar
+[ INCLUDE <DEVDIR>/wmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/clib/prereq.ctl ]
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
-[ INCLUDE <DEVDIR>/wmake/prereq.ctl ]
 
 # compiled using wmake + gcc + ar/wlib
 [ INCLUDE <DEVDIR>/pmake/prereq.ctl ]

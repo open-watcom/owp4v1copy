@@ -8,11 +8,15 @@ proj_name = builder
 rm_exe = rm.exe
 !endif
 
+!ifdef bootstrap
+all : cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
+!else
 all : langdat.exe mksetup.exe cdsay.exe sweep.exe wsplice.exe diff.exe &
 !ifdef __UNIX__
         runasdos.exe &
 !endif
         comstrip.exe $(rm_exe) builder.exe wgrep.exe
+!endif
 
 inc_dirs = -I"../../pmake" -I"../../posix/h"
 
@@ -24,6 +28,16 @@ sys_nt    = sys.obj sysnt.obj  sysdoscd.obj
 sys_linux = sys.obj sysposix.obj
 
 extra_c_flags = -D__OS_$(host_os)__ -DSTANDALONE_RX
+
+!ifdef bootstrap
+inc_dirs += -I../h -I$(lib_misc_dir)/h -I$(clib_dir)/h
+extra_c_flags += -D_SETERNO_H_INCLUDED -D"__set_errno(x)=errno=x"
+.c : $(clib_dir)/misc/c
+builder.exe : split2.obj makepath.obj fullpath.obj
+sweep.exe : sweep.obj $(clib_dir)/$(%OBJDIR)/libwatcom.a
+wsplice.exe : wsplice.obj $(clib_dir)/$(%OBJDIR)/libwatcom.a
+diff.exe : diff.obj $(clib_dir)/$(%OBJDIR)/libwatcom.a
+!endif
 
 !ifdef __MSDOS__
 __DOS__=1

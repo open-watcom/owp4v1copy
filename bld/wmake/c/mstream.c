@@ -281,7 +281,9 @@ void InsOpenFile( int fh )
 {
     SENT    *tmp;
 
+#ifndef BOOTSTRAP
     assert( eof( fh ) == 0 );   /* not at eof, and proper fh */
+#endif
 
     tmp = getSENT( SENT_FILE );
     tmp->free = FALSE;

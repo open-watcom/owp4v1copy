@@ -1,23 +1,26 @@
 include $(DEVDIR)/build/mif/master.mk
 
-vpath %.c c ../watcom/c
+vpath %.c c ../watcom/c $(WCLIB_DIR)/misc/c ../builder/c
 
 all: $(OBJDIR) $(OBJDIR)/wmake
 
 CFILES=macros.c main.c massert.c mautodep.c mautoomf.c mautoorl.c mautores.c \
  mcache.c memory.c mexec.c mglob.c mhash.c misc.c mlex.c mlexmac.c mlexprs.c \
  mparse.c mpathgrp.c mpreproc.c mrcmsg.c msg.c mstream.c msuffix.c msysdep.c \
- mtarget.c mupdate.c mvecstr.c autodept.c
+ mtarget.c mupdate.c mvecstr.c autodept.c makepath.c split2.c
 
 OBJS=$(CFILES:.c=.o)
 OBJS:=$(foreach i,$(OBJS),$(OBJDIR)/$i)
 
-$(OBJDIR)/usage.gh : h/usage.sp
-	wsplice -kIS_RC -kENGLISH -f '{%+(MSG_USE_E_BASE+%#-1), "%s"},' $< $@
+$(OBJDIR)/wsplice: wsplice.o split2.o makepath.o
+	$(CC) -g $^ -o $@
 
-$(OBJDIR)/usageend.gh: $(OBJDIR)/usage.gh
-	wsplice $< -o "%n%n%n%n" $(OBJDIR)/usage.rcp
-	wsplice -f "%+" $(OBJDIR)/usage.rcp -o "#define USAGE_LAST (USAGE_BASE+%#)%n" $@
+$(OBJDIR)/usage.gh : h/usage.sp $(OBJDIR)/wsplice
+	$(OBJDIR)/wsplice -kIS_RC -kENGLISH -f '{%+(MSG_USE_E_BASE+%#-1), "%s"},' $< $@
+
+$(OBJDIR)/usageend.gh: $(OBJDIR)/usage.gh $(OBJDIR)/wsplice
+	$(OBJDIR)/wsplice $< -o "%n%n%n%n" $(OBJDIR)/usage.rcp
+	$(OBJDIR)/wsplice -f "%+" $(OBJDIR)/usage.rcp -o "#define USAGE_LAST (USAGE_BASE+%#)%n" $@
 	rm -f $(OBJDIR)/usage.rcp
 
 $(OBJDIR)/cretype : cretype.c
@@ -26,12 +29,12 @@ $(OBJDIR)/cretype : cretype.c
 $(OBJDIR)/isarray.gh : $(OBJDIR)/cretype
 	$< > $@
 
-INCDIRS = $(OBJDIR) h $(WATCOMH)
-LIBDIRS = $(WCLIB_DIR)/$(OBJDIR)
-LIBS += -lwatcom
+DEFS += -DWMAKE
+
+INCDIRS = $(OBJDIR) h $(WATCOMH) ../lib_misc/h
 
 $(OBJDIR)/wmake: $(OBJDIR)/usageend.gh $(OBJDIR)/isarray.gh $(OBJS)
-	$(CC) -g -o wmake $(OBJS) $(LIBS) -o $@
+	$(CC) -g $(OBJS) -o $@
 
 $(OBJDIR):
 	mkdir $(OBJDIR)

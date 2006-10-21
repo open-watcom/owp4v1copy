@@ -37,8 +37,9 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
-    cdsay <PROJDIR>
-    <MAKE> -f gnumake
+    mkdir <PROJDIR>/<OBJDIR>
+    cdsay <PROJDIR>/<OBJDIR>
+    wmake -h -f ../linux386/makefile bootstrap=1
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================

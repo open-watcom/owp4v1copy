@@ -523,7 +523,7 @@ unsigned RunIt( char *cmd )
     unsigned    res;
 
     #define BUILTIN( b )        \
-        (memicmp( cmd, b, sizeof( b ) - 1 ) == 0 && cmd[sizeof(b)-1] == ' ')
+        (strnicmp( cmd, b, sizeof( b ) - 1 ) == 0 && cmd[sizeof(b)-1] == ' ')
     res = 0;
     if( BUILTIN( "CD" ) ) {
         res = SysChdir( SkipBlanks( cmd + sizeof( "CD" ) ) );
