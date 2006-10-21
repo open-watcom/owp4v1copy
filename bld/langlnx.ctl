@@ -35,6 +35,7 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/cfloat/lang.ctl ]
 [ INCLUDE <DEVDIR>/owl/lang.ctl ]
 [ INCLUDE <DEVDIR>/dwarf/lang.ctl ]
+[ INCLUDE <DEVDIR>/as/lang.ctl ]
 [ INCLUDE <DEVDIR>/cg/lang.ctl ]
 [ INCLUDE <DEVDIR>/cc/lang.ctl ]
 [ INCLUDE <DEVDIR>/plusplus/lang.ctl ]
