@@ -36,6 +36,8 @@
 #include "mautodep.h"
 #include "autodep.h"
 
+#ifndef BOOTSTRAP
+
 #include "wresset2.h"
 
 typedef struct res_info {
@@ -116,3 +118,5 @@ const auto_dep_info RESAutoDepInfo = {
     RESFiniFile,
     NULL
 };
+
+#endif

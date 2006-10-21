@@ -12,13 +12,10 @@ CFILES=macros.c main.c massert.c mautodep.c mautoomf.c mautoorl.c mautores.c \
 OBJS=$(CFILES:.c=.o)
 OBJS:=$(foreach i,$(OBJS),$(OBJDIR)/$i)
 
-$(OBJDIR)/usage.rc : h/usage.sp
-	wsplice -kIS_RC -kENGLISH -f '%+(MSG_USE_E_BASE+%#-1), "%s"' $< $@
+$(OBJDIR)/usage.gh : h/usage.sp
+	wsplice -kIS_RC -kENGLISH -f '{%+(MSG_USE_E_BASE+%#-1), "%s"},' $< $@
 
-$(OBJDIR)/usagej.rc : h/usage.sp
-	wsplice -kIS_RC -kJAPANESE -f '%+(MSG_USE_J_BASE+%#-1), "%s"' $< $@
-
-$(OBJDIR)/usageend.gh: $(OBJDIR)/usage.rc $(OBJDIR)/usagej.rc
+$(OBJDIR)/usageend.gh: $(OBJDIR)/usage.gh
 	wsplice $< -o "%n%n%n%n" $(OBJDIR)/usage.rcp
 	wsplice -f "%+" $(OBJDIR)/usage.rcp -o "#define USAGE_LAST (USAGE_BASE+%#)%n" $@
 	rm -f $(OBJDIR)/usage.rcp
@@ -29,16 +26,12 @@ $(OBJDIR)/cretype : cretype.c
 $(OBJDIR)/isarray.gh : $(OBJDIR)/cretype
 	$< > $@
 
-$(OBJDIR)/wmake.res : h/wmake.rc h/mrcmsg.h $(OBJDIR)/usage.rc $(OBJDIR)/usagej.rc
-	wrc -i$(OBJDIR) -q -bt=windows -ih -i../watcom/h -zk0 -q -r -fo=$@ $<
+INCDIRS = $(OBJDIR) h $(WATCOMH)
+LIBDIRS = $(WCLIB_DIR)/$(OBJDIR)
+LIBS += -lwatcom
 
-INCDIRS = $(OBJDIR) h $(WATCOMH) $(RC_DIR)/h $(LIB_MISC_DIR)/h
-LIBDIRS = $(WRES_DIR)/$(OBJDIR) $(WCLIB_DIR)/$(OBJDIR)
-LIBS += -lwres -lwatcom
-
-$(OBJDIR)/wmake: $(OBJDIR)/usageend.gh $(OBJDIR)/isarray.gh $(OBJS) $(OBJDIR)/wmake.res
+$(OBJDIR)/wmake: $(OBJDIR)/usageend.gh $(OBJDIR)/isarray.gh $(OBJS)
 	$(CC) -g -o wmake $(OBJS) $(LIBS) -o $@
-	wstrip -q -r -a $@ . $(OBJDIR)/wmake.res
 
 $(OBJDIR):
 	mkdir $(OBJDIR)

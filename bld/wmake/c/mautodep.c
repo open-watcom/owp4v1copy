@@ -46,7 +46,9 @@ static auto_dep_info const *AutoDepTypes[] = {
 #if !defined( M_I86 ) && !defined( BOOTSTRAP )
     &ORLAutoDepInfo,
 #endif
+#ifndef BOOTSTRAP
     &RESAutoDepInfo,
+#endif
     NULL
 };
 
