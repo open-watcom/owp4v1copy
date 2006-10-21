@@ -31,7 +31,7 @@
 
 #include "wres.h"
 
-#if defined( __UNIX__ )
+#if defined( __UNIX__ ) && !defined( BOOTSTRAP )
 #include "wreslang.h"
 
 res_language_enumeration _WResLanguage(void)

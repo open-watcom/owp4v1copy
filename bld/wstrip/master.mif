@@ -8,7 +8,11 @@ proj_name = strip
 
 .EXTENSIONS: .gh .rc .msg .sp
 
-inc_dirs = -I$(wstrip_dir) -I"$(dip_dir)/watcom/h"
+inc_dirs = -I"$(dip_dir)/watcom/h"
+
+!ifdef bootstrap
+inc_dirs += -I.
+!endif
 
 .c .rc .msg .sp: ..
 
@@ -25,11 +29,21 @@ objs =               &
 dependants = msg.gh $(objs) $(res_$(host_os)) $(wres_lib)
 
 $(proj_name).exe : $(dependants)
+!ifdef bootstrap
+        $(cc) $(objs) -o $@ $(wres_lib) -L$(clib_dir)/$(%OBJDIR) -lwatcom
+        ./$@ -q -a -r $^@ strip2.exe $(res_$(host_os)) > /dev/null; true
+        mv strip2.exe $@
+!else
         $(linker) option quiet $(lflags) name $^. file { $(objs) } lib $(wres_lib)
         wstrip -q -a -r $^@ . $(res_$(host_os))
+!endif
 
 msg.gh : ../wstrip.msg
+!ifdef bootstrap
+        perl $(sdk_dir)/misc/msgtoh.pl < $< > $@
+!else
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+!endif
 
 owstrip.res : wstrip.rc wstrip.msg msg.gh ousage.rc ousagej.rc
         $(rc_aui) -DDOS $[@ -fo=$^@

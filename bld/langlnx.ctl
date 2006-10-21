@@ -9,13 +9,13 @@ set OWLINUXBUILD=bootstrap
 # compiled using GNU make + gcc + ar
 [ INCLUDE <DEVDIR>/clib/prereq.ctl ]
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
+[ INCLUDE <DEVDIR>/wmake/prereq.ctl ]
+
+# compiled using wmake + gcc + ar/wlib
 [ INCLUDE <DEVDIR>/pmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstrip/prereq.ctl ]
-[ INCLUDE <DEVDIR>/wmake/prereq.ctl ]
-
-# compiled using wmake + gcc + wlib
 [ INCLUDE <DEVDIR>/orl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/nwlib/prereq.ctl ]
 [ INCLUDE <DEVDIR>/cfloat/prereq.ctl ]

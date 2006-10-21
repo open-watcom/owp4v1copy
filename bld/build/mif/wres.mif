@@ -46,7 +46,7 @@ name_ppc = $(wres_dir)/$(host_os)ppc/_s/wres.lib
 name_mps = $(wres_dir)/$(host_os)mps/_s/wres.lib
 
 !ifdef bootstrap
-wres_lib = $(wres_dir)/$(%OBJDIR)/libwres.a
+wres_lib = $(wres_dir)/$(%OBJDIR)/wres.lib
 !else ifdef prebuild
 wres_lib = $(wres_dir)/$(%PREOBJDIR)/wres.lib
 !else
@@ -93,7 +93,7 @@ name_ppc = $(wres_dir)\$(host_os)ppc\_s\wres.lib
 name_mps = $(wres_dir)\$(host_os)mps\_s\wres.lib
 
 !ifdef bootstrap
-wres_lib = $(wres_dir)\$(%OBJDIR)\libwres.a
+wres_lib = $(wres_dir)\$(%OBJDIR)\wres.lib
 !else ifdef prebuild
 wres_lib = $(wres_dir)\$(%PREOBJDIR)\wres.lib
 !else

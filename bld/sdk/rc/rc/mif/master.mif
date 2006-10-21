@@ -107,7 +107,12 @@ inc_dirs = -I. -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(fe_misc_dir)/h" -I"$(cpp_
 $(name).lib: $(name)e.dll $(__MAKEFILES__)
         $(librarian) $(libflags) $@ +$[@
 
-!else	
+!else ifdef bootstrap
+
+$(name)e.exe : usage.h rcmsg.gh $(objs) $(wres_lib)
+        $(cc) $(objs) -o $@ $(wres_lib) -L$(clib_dir)/$(%OBJDIR) -lwatcom
+
+!else
 
 $(name)e.exe : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
 !ifeq host_os osi
@@ -160,13 +165,22 @@ $(name).res : ../rc.rc .AUTODEPEND
         $(rc_aui) -ad $[@ -fo=$^@
 
 rcmsg.gh : ../h/rc.msg
+!ifdef bootstrap
+        perl $(sdk_dir)/misc/msgtoh.pl < $< > $@
+!else
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+!endif
 
 usage.rc : $(wrc_dir)/usage.sp
         wsplice -kENGLISH -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc
 
 usagej.rc : $(wrc_dir)/usage.sp
         wsplice -kJAPANESE -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
+
+!ifdef bootstrap
+usage.h: $(wrc_dir)/usage.sp
+        tr -d "\015" <$< | sed 's/\(.*\)/"\1",/' | sed 's;/;-;' >$@
+!endif
 
 keyword.obj : keyword.c keywords.gh weights.gh .AUTODEPEND
 

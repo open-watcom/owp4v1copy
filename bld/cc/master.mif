@@ -136,8 +136,8 @@ rc_objs = cc.rc
 
 !ifdef bootstrap
 
-ldflags = -L$(clib_dir)/$(%OBJDIR) -L$(wres_dir)/$(%OBJDIR)
-libs = -lwatcom -lwres
+ldflags = -L$(clib_dir)/$(%OBJDIR)
+libs = -lwatcom
 
 !endif
 

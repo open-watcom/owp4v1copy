@@ -77,11 +77,13 @@ set ODIR=<PREOBJDIR>
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
     echo Building the wres library and the resource compiler
-    cdsay <PROJDIR>/wres
-    <MAKE> -f gnumake
-    cdsay <PROJDIR>/rc
-    <MAKE> -f gnumake
-    <CPCMD> <OBJDIR>/rc <OWBINDIR>/wrc
+    mkdir <PROJDIR>/wres/<OBJDIR>
+    cdsay <PROJDIR>/wres/<OBJDIR>
+    wmake -h -f ../linux386/mf_r/makefile bootstrap=1
+    mkdir <PROJDIR>/rc/<OBJDIR>
+    cdsay <PROJDIR>/rc/<OBJDIR>
+    wmake -h -f ../linux386/makefile bootstrap=1
+    <CPCMD> wrce.exe <OWBINDIR>/wrc
 
 [ BLOCK . . ]
 #============

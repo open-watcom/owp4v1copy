@@ -19,7 +19,7 @@ wasm_trmem = 1
 
 inc_dirs  = -I. -I"$(proj_path)/h" -I"$(womp_dir)/h"
 
-libs = -L$(clib_dir)/$(%OBJDIR) -lwatcom -L$(wres_dir)/$(%OBJDIR) -lwres
+libs = -L$(clib_dir)/$(%OBJDIR) -lwatcom $(wres_dir)/$(%OBJDIR)/wres.lib
 
 #cflags stuff
 #########

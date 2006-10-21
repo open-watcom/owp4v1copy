@@ -74,6 +74,10 @@ inc_dirs = -I"$(wres_dir)/h"
 # explicit rules
 
 wres.lib : $(objs) $(__MAKEFILES__) .PRECIOUS
+!ifdef bootstrap
+    ar crs $@ $(objs)
+!else
     %create $^&.lbc
     @for %i in ($(objs)) do @%append $^&.lbc +%i
     $(librarian) $(libflags) $@ @$^&.lbc
+!endif

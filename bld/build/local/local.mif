@@ -99,7 +99,7 @@ inc_dirs_lang_osi =
 cflags_wng = -Wall -Wno-switch
 
 cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__LINUX__ &
--D__SMALL__ -DUNIX -DLINUX -D__FLAT__ $(cppflags_$(host_cpu)) &
+-D__SMALL__ -DUNIX -DLINUX -D__FLAT__ -DBOOTSTRAP $(cppflags_$(host_cpu)) &
 -D_WCUNALIGNED="__attribute__((packed))"
 cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -funsigned-char -fno-asm -pipe -O -o $@
 
