@@ -31,6 +31,7 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "idedll.h"
 
@@ -104,26 +105,24 @@ static void concatBlank         // CONCATENATE BLANK, IF NOT AT START
 }
 
 
-static void concat3DigitNumber  // CONCATENTATE 3 DIGIT NUMBER
+static void concat3DigitNumber  // CONCATENATE 3 DIGIT NUMBER
     ( CONSTRUCTION* ct          // - construction info
     , unsigned number )         // - the number
 {
     char buf[32];
 
-    utoa( number + ( number > 999 ? 10000 : 1000 )
-        , buf
-        , 10 );
+    sprintf( buf, "%u", number + ( number > 999 ? 10000 : 1000 ) );
     concatText( ct, buf + 1 );
 }
 
 
-static void concatNumber        // CONCATENTATE NUMBER
+static void concatNumber        // CONCATENATE NUMBER
     ( CONSTRUCTION* ct          // - construction info
     , unsigned number )         // - the number
 {
     char buf[32];
 
-    utoa( number, buf, 10 );
+    sprintf( buf, "%u", number );
     concatText( ct, buf );
 }
 
