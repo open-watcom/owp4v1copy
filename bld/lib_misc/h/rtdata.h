@@ -110,7 +110,7 @@ extern unsigned short       _8087cw;    /* control word initializer */
 extern unsigned char        _no87;      /* NO87 environment var defined */
 extern unsigned char        _8087;      /* type of 8087/emulator present */
 extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
-#if defined(_M_IX86)
+#if defined(_M_IX86) && defined(__WATCOMC__)
     #pragma aux             _8087cw "_*";
     #pragma aux             _no87 "_*";
     #pragma aux             _8087 "_*";
@@ -211,7 +211,7 @@ extern unsigned char        _real87;    /* 8087 coprocessor hardware present */
     that the __exit... routines never return.
 */
 _WCRTLINK   extern  void    __exit( unsigned );
-#if defined(_M_IX86)
+#if defined(_M_IX86) && defined(__WATCOMC__)
     #pragma aux     __exit aborts;
 #endif
 
