@@ -48,7 +48,7 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
     cd src
-    <CPCMD> *.* <RELROOT>/rel2/samples/ide/
+    <CPCMD> ./*.* <RELROOT>/rel2/samples/ide/
     <CPCMD> fortran/*.* <RELROOT>/rel2/samples/ide/fortran/
     <CPCMD> fortran/win32/*.* <RELROOT>/rel2/samples/ide/fortran/win32/
     <CPCMD> fortran/os2/*.* <RELROOT>/rel2/samples/ide/fortran/os2/

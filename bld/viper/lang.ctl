@@ -31,7 +31,7 @@ cdsay .
     <CPCMD> viper/ideaxp.cfg     <RELROOT>/rel2/binw/ideaxp.cfg
     <CPCMD> viper/idelnx.cfg     <RELROOT>/rel2/binw/idelnx.cfg
 
-    <CPCMD> viper/ide.cfg        <RELROOT>/rel2/binl/ide.cfg
+    <CPCMD> viper/ideunix.cfg    <RELROOT>/rel2/binl/ide.cfg
     <CPCMD> viper/idedos.cfg     <RELROOT>/rel2/binl/idedos.cfg
     <CPCMD> viper/idedos32.cfg   <RELROOT>/rel2/binl/idedos32.cfg
     <CPCMD> viper/idewin.cfg     <RELROOT>/rel2/binl/idewin.cfg
