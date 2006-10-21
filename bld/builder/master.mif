@@ -43,6 +43,15 @@ diff.exe : diff.obj $(clib_dir)/$(%OBJDIR)/libwatcom.a
 __DOS__=1
 !endif
 
+!ifndef bootstrap
+builder.exe : builder.obj
+        $(cl) $(clflags) $<
+!ifndef __$(host_os)__                  # Don't copy unless host_os=build_os
+!else ifndef __UNIX__                   # Avoid "text file busy".
+        copy $^. $(%OWBINDIR)\ > nul    # MS-influenced command noisy
+!endif
+!endif
+
 .obj.exe :
         $(cl) $(clflags) $<
 !ifndef __$(host_os)__                  # Don't copy unless host_os=build_os
