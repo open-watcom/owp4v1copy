@@ -143,8 +143,8 @@ int LookupKeyword( ScanString newstring )
 /***************************************/
 {
     int     hash;
-
-    hash = keyword_hash( newstring.string, Weights, newstring.length );
+    const unsigned char * str = (const unsigned char *)newstring.string;
+    hash = keyword_hash( str, Weights, newstring.length );
     if( HashTable[ hash ].token == TC_UNKNOWN ) {
         return( Y_NAME );
     } else if (! stricmp( newstring.string, HashTable[ hash ].keyword) ) {

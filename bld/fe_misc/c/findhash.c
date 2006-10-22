@@ -735,7 +735,7 @@ void try_for_hash( void )
 /***********************/
 {
     boolean     works;
-    char        c;
+    letter_t    c;
     keyword_t   search;
 
     c = most_used_character;

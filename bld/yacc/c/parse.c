@@ -152,6 +152,7 @@ void defs( void )
     }
     scan( 0 );
     prec.prec = 0;
+    prec.assoc = NON_ASSOC;
     for(;;) {
         switch( token ) {
         case MARK:

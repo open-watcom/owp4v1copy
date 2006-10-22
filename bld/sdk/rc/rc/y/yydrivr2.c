@@ -382,7 +382,7 @@ static p_action doParse( parse_stack * resource_state )
     p_action    what;
     int         error_state;
     YYCHKTYPE   token;
-    int         token_count;
+    int         token_count = 0;
 
     error_state = FALSE;
 
