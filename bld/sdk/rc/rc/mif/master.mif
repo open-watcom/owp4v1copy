@@ -162,7 +162,7 @@ weights2.gh keyword2.gh : ./findhash.exe ../hash/rcos2.key
         @rm -f weights.gh
 
 $(name).res : ../rc.rc .AUTODEPEND
-        $(rc_aui) -ad $[@ -fo=$^@
+        $(rc_aui) -ad -I../h $[@ -fo=$^@
 
 rcmsg.gh : ../h/rc.msg
 !ifdef bootstrap
