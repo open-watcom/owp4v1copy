@@ -108,7 +108,8 @@ wcl_util_opts = -funsigned-char $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags)
 
 # options for linking via cc
 clflags = -o $@
-cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a 
+cl_objs = clibext.obj
+.c : $(watcom_dir)/c
 
 !endif
 !endif
@@ -151,7 +152,8 @@ wcl_util_opts = -funsigned-char $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags)
 
 # options for linking via cc
 clflags = -o $@
-cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a 
+cl_objs = clibext.obj
+.c : $(watcom_dir)/c
 
 !endif
 !endif

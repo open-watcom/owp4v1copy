@@ -26,11 +26,15 @@ objs =               &
         strip.obj    &
         output.obj
 
+!ifdef bootstrap
+objs += clibext.obj
+!endif
+
 dependants = msg.gh $(objs) $(res_$(host_os)) $(wres_lib)
 
 $(proj_name).exe : $(dependants)
 !ifdef bootstrap
-        $(cc) $(objs) -o $@ $(wres_lib) -L$(clib_dir)/$(%OBJDIR) -lwatcom
+        $(cc) $(objs) -o $@ $(wres_lib)
         ./$@ -q -a -r $^@ strip2.exe $(res_$(host_os)) > /dev/null; true
         mv strip2.exe $@
 !else

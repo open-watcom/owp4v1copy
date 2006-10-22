@@ -19,7 +19,7 @@ wasm_trmem = 1
 
 inc_dirs  = -I. -I"$(proj_path)/h" -I"$(womp_dir)/h"
 
-libs = -L$(clib_dir)/$(%OBJDIR) -lwatcom $(wres_dir)/$(%OBJDIR)/wres.lib
+libs = $(wres_dir)/$(%OBJDIR)/wres.lib
 
 #cflags stuff
 #########
@@ -87,6 +87,10 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     swchar.obj
 
 proj_obj += $(trmem_objs)
+
+!ifdef bootstrap
+proj_obj += clibext.obj
+!endif
 
 #explicit rules
 ######
@@ -168,5 +172,5 @@ wmpmsg.gh : $(proj_path)/h/womp.msg
 fullops.gh: $(proj_path)/fullops.tok $(proj_path)/inlnops.tok ./mkopcode.exe
         $]@ $(proj_path)/fullops.tok $(proj_path)/inlnops.tok $^@
 
-./mkopcode.exe: $(proj_path)/mkopcode.c
-        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts) $(cl_libs) # order is important for gcc (linux bootstrap)
+./mkopcode.exe: $(proj_path)/mkopcode.c $(cl_objs)
+        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts) $(cl_objs) $(cl_libs) # order is important for gcc (linux bootstrap)

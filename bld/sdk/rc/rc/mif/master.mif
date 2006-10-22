@@ -109,8 +109,8 @@ $(name).lib: $(name)e.dll $(__MAKEFILES__)
 
 !else ifdef bootstrap
 
-$(name)e.exe : usage.h rcmsg.gh $(objs) $(wres_lib)
-        $(cc) $(objs) -o $@ $(wres_lib) -L$(clib_dir)/$(%OBJDIR) -lwatcom
+$(name)e.exe : usage.h rcmsg.gh $(objs) clibext.obj $(wres_lib)
+        $(cc) $(objs) clibext.obj -o $@ $(wres_lib)
 
 !else
 

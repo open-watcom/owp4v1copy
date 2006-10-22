@@ -30,13 +30,12 @@ sys_linux = sys.obj sysposix.obj
 extra_c_flags = -D__OS_$(host_os)__ -DSTANDALONE_RX
 
 !ifdef bootstrap
-inc_dirs += -I../h -I$(lib_misc_dir)/h -I$(clib_dir)/h
-extra_c_flags += -D_SETERNO_H_INCLUDED -D"__set_errno(x)=errno=x"
-.c : $(clib_dir)/misc/c
-builder.exe : split2.obj makepath.obj fullpath.obj
-sweep.exe : sweep.obj $(clib_dir)/$(%OBJDIR)/libwatcom.a
-wsplice.exe : wsplice.obj $(clib_dir)/$(%OBJDIR)/libwatcom.a
-diff.exe : diff.obj $(clib_dir)/$(%OBJDIR)/libwatcom.a
+inc_dirs += -I../h
+.c : $(watcom_dir)/c
+builder.exe : clibext.obj
+sweep.exe : sweep.obj clibext.obj
+wsplice.exe : wsplice.obj clibext.obj
+diff.exe : diff.obj clibext.obj
 !endif
 
 !ifdef __MSDOS__

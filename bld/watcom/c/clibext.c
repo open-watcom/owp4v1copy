@@ -56,8 +56,11 @@
 #endif
 
 #include "clibext.h"
+#include "wreslang.h"
 
 #define __set_errno( err ) errno = (err)
+
+char **_argv;
 
 static const char __Alphabet[];
 
@@ -1238,8 +1241,6 @@ int eof( int handle )         /* determine if at EOF */
 *
 ****************************************************************************/
 
-extern char **_argv;    /* argument vector */
-
 /* NOTE: This file isn't used for QNX. It's got its own version. */
 
 #ifdef __APPLE__
@@ -1291,8 +1292,6 @@ char *_cmdname( char *name )
 * Description:  Implementation of getcmd() and _bgetcmd() for Unix.
 *
 ****************************************************************************/
-
-extern  char    **_argv;                /* argument vector */
 
 int (_bgetcmd)( char *buffer, int len )
 {
@@ -1441,4 +1440,15 @@ void _searchenv( const char *name, const char *env_var, char *buffer )
         }
     }
     buffer[0] = '\0';
+}
+
+/****************************************************************************
+*
+* Description:  Determine resource language from system environment.
+*
+****************************************************************************/
+
+res_language_enumeration _WResLanguage(void)
+{
+    return( RLE_ENGLISH );
 }

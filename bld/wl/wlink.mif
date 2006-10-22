@@ -45,6 +45,7 @@ inc_dirs = -I. -I"../h"
 force_include = -fi
 !ifeq bootstrap 1
 force_include = -include
+comp_objs_exe += clibext.obj
 !endif
 
 !ifeq bootstrap 1
@@ -102,11 +103,7 @@ extra_l_flags_dll_nt = initinstance terminstance op modname='wlink.dll'
 extra_l_flags_dll_nt += reference __DLLstart_ op offset=0x69c00000
 extra_l_flags_dll_os2 = initinstance terminstance op modname='wlink'
 
-!ifeq bootstrap 1
-xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib) $(clib_dir)/$(%OBJDIR)/libwatcom.a
-!else
 xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)
-!endif
 
 ###########
 # rc stuff

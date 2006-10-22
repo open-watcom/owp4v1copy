@@ -59,6 +59,7 @@ common_objs = &
     loadphar.obj &
     loadqnx.obj &
     loadraw.obj &
+    lsymtab.obj &
     mapio.obj &
     mem.obj &
     mixcache.obj &
@@ -85,7 +86,6 @@ common_objs = &
     spillio.obj &
     strtab.obj &
     symmem.obj &
-    symtab.obj &
     symtrace.obj &
     toc.obj &
     wlink.obj &

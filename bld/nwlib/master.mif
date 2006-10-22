@@ -200,6 +200,7 @@ inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h
 .c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
 .h: ../h;$(watcom_dir)/h
 defines = -DIDE_PGM -D__stdcall=
+comp_objs_exe += clibext.obj
 
 !else ifdef prebuild
 
@@ -216,9 +217,7 @@ inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h"
 
 !endif
 
-!ifeq bootstrap 1
-xlibs = $(orl_lib) $(wres_lib) $(clib_dir)/$(%OBJDIR)/libwatcom.a
-!else ifdef prebuild
+!ifdef prebuild
 xlibs = 
 !else
 xlibs = $(orl_lib) $(wres_lib)

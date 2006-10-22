@@ -620,9 +620,6 @@ int ExitSafe( int rc )
     return( rc );
 }
 
-#ifndef __WATCOMC__
-char **_argv;
-#endif
 int main( int argc, char * const *argv )
 /*********************************************/
 {

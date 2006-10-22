@@ -96,7 +96,7 @@ cg_objs = &
     scthrash.obj &
     scutil.obj &
     sczero.obj &
-    sortlist.obj &
+    cgsrtlst.obj &
     spawn.obj &
     split.obj &
     splitvar.obj &
