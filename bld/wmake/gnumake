@@ -33,6 +33,9 @@ DEFS += -DWMAKE
 
 INCDIRS = $(OBJDIR) h $(WATCOMH) ../lib_misc/h
 
+$(OWBINDIR)/wmake: $(OBJDIR)/wmake
+	cp $< $@
+
 $(OBJDIR)/wmake: $(OBJDIR)/usageend.gh $(OBJDIR)/isarray.gh $(OBJS)
 	$(CC) -g $(OBJS) -o $@
 
