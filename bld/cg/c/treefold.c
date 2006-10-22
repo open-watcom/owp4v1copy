@@ -68,7 +68,7 @@ extern  tn              TGNode( tn_class, cg_op, tn, tn, type_def * );
 extern  bool            TGCanDuplicate( tn node );
 extern  tn              TGDuplicate( tn node );
 
-#define _HasBigConst( t )       ( ( (t)->attr & TYPE_FLOAT ) || (t)->length == 8 )
+#define HasBigConst( t )       ( ( (t)->attr & TYPE_FLOAT ) || (t)->length == 8 )
 
 static cg_op RevOpcode[] = {
     O_EQ,    /* O_EQ*/
@@ -371,7 +371,7 @@ extern  tn      FoldTimes( tn left, tn rite, type_def *tipe )
     }
     if( rite->class != TN_CONS ) return( NULL );
     if( left->class == TN_BINARY && left->op == O_TIMES &&
-        tipe == left->tipe && !_HasBigConst( tipe ) ) {
+        tipe == left->tipe && !HasBigConst( tipe ) ) {
         if( left->u.left->class == TN_CONS ) {
             left->u.left = FoldTimes( left->u.left, rite, tipe );
             return( left );
@@ -382,7 +382,7 @@ extern  tn      FoldTimes( tn left, tn rite, type_def *tipe )
         }
     }
     if( left->class==TN_BINARY && left->op==O_LSHIFT && tipe==left->tipe ) {
-        if( !_HasBigConst( tipe ) && left->rite->class == TN_CONS ) {
+        if( !HasBigConst( tipe ) && left->rite->class == TN_CONS ) {
             log = left->rite->u.name->c.int_value;
             li = 1;
             while( --log >= 0 ) {
@@ -398,7 +398,7 @@ extern  tn      FoldTimes( tn left, tn rite, type_def *tipe )
     rv = rite->u.name->c.value;
     if( left->class == TN_CONS ) {
         lv = left->u.name->c.value;
-        if( !_HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
+        if( !HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
             li = CFConvertByType( lv, tipe );
             ri = CFConvertByType( rv, tipe );
             ri = li * ri;
@@ -410,7 +410,7 @@ extern  tn      FoldTimes( tn left, tn rite, type_def *tipe )
         BurnTree( rite );
         return( fold );
     }
-    if( !_HasBigConst( tipe ) && rite->u.name->c.int_value == 1 ) {
+    if( !HasBigConst( tipe ) && rite->u.name->c.int_value == 1 ) {
         BurnTree( rite );
         return( left );
     }
@@ -418,7 +418,7 @@ extern  tn      FoldTimes( tn left, tn rite, type_def *tipe )
     if( test == 0 ) {
         return( TGBinary( O_COMMA, TGTrash( left ), rite, tipe ) );
     }
-    if( _HasBigConst( tipe ) ) return( NULL );
+    if( HasBigConst( tipe ) ) return( NULL );
     if( test < 0 ) {
         CFNegate( rv );
     }
@@ -448,10 +448,10 @@ extern  cfloat  *OkToNegate( cfloat *value, type_def *tipe )
 {
     cfloat      *neg;
 
-    if( _HasBigConst( tipe ) && ( tipe->attr & TYPE_FLOAT ) == 0 ) return( NULL );
+    if( HasBigConst( tipe ) && ( tipe->attr & TYPE_FLOAT ) == 0 ) return( NULL );
     neg = CFCopy( value );
     CFNegate( neg );
-    if( _HasBigConst( tipe ) ) return( neg );
+    if( HasBigConst( tipe ) ) return( neg );
     if( tipe->attr & TYPE_SIGNED ) return( neg );
     if( CFIsSize( neg,   tipe->length ) ) return( neg );
     CFFree( neg );
@@ -472,7 +472,7 @@ extern  tn      FoldMinus( tn left, tn rite, type_def *tipe )
         lv = left->u.name->c.value;
         if( rite->class == TN_CONS ) {
             rv = rite->u.name->c.value;
-            if( !_HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
+            if( !HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
                 li = CFConvertByType( lv, tipe );
                 ri = CFConvertByType( rv, tipe );
                 ri = li - ri;
@@ -534,7 +534,7 @@ extern  tn      FoldPlus( tn left, tn rite, type_def *tipe )
         lv = left->u.name->c.value;
         if( rite->class == TN_CONS ) {
             rv = rite->u.name->c.value;
-            if( !_HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
+            if( !HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
                 li = CFConvertByType( lv, tipe );
                 ri = CFConvertByType( rv, tipe );
                 ri = li + ri;
@@ -554,7 +554,7 @@ extern  tn      FoldPlus( tn left, tn rite, type_def *tipe )
             fold = TGConvert( left, tipe );
             BurnTree( rite );
         } else if( left->class == TN_BINARY && left->op == O_PLUS &&
-                   tipe == left->tipe && !_HasBigConst( tipe ) ) {
+                   tipe == left->tipe && !HasBigConst( tipe ) ) {
             if( left->u.left->class == TN_CONS ) {
                 tipe = FixAddType( left->u.left, rite, tipe );
                 if( left->u.left->tipe == tipe ) {
@@ -661,7 +661,7 @@ extern  tn      FoldAnd( tn left, tn rite, type_def *tipe )
             left = TGTrash( left );
             fold = TGBinary( O_COMMA, left, IntToType( 0, tipe ), tipe );
             BurnTree( rite );
-        } else if( !_HasBigConst( tipe ) && rite->u.name->c.int_value == -1 ) {
+        } else if( !HasBigConst( tipe ) && rite->u.name->c.int_value == -1 ) {
             fold = TGConvert( left, tipe );
             BurnTree( rite );
         }
@@ -712,7 +712,7 @@ extern  tn      FoldOr( tn left, tn rite, type_def *tipe )
         if( CFTest( rv ) == 0 ) {
             fold = TGConvert( left, tipe );
             BurnTree( rite );
-        } else if( !_HasBigConst( tipe ) && rite->u.name->c.int_value == -1 ) {
+        } else if( !HasBigConst( tipe ) && rite->u.name->c.int_value == -1 ) {
             left = TGTrash( left );
             fold = TGBinary( O_COMMA, left, IntToType( -1, tipe ), tipe );
             BurnTree( rite );
@@ -767,7 +767,7 @@ extern  tn      FoldXor( tn left, tn rite, type_def *tipe )
         if( CFTest( rv ) == 0 ) {
             fold = TGConvert( left, tipe );
             BurnTree( rite );
-        } else if( !_HasBigConst( tipe ) && rite->u.name->c.int_value == -1 ) {
+        } else if( !HasBigConst( tipe ) && rite->u.name->c.int_value == -1 ) {
             fold = TGUnary( O_COMPLEMENT, left, tipe );
             BurnTree( rite );
         }
@@ -794,7 +794,7 @@ extern  tn      FoldRShift( tn left, tn rite, type_def *tipe )
             bool    done = FALSE;
 
             if( ri >= (tipe->length * 8) ) {
-                if (tipe->attr & TYPE_SIGNED) {
+                if( tipe->attr & TYPE_SIGNED ) {
                     // For signed shifts, reduce the shift amount and
                     // then do the math
                     ri = (tipe->length * 8) - 1;
@@ -803,7 +803,7 @@ extern  tn      FoldRShift( tn left, tn rite, type_def *tipe )
                     done = TRUE;
                 }
             }
-            if (!done) {
+            if( !done ) {
                 lv = left->u.name->c.value;
                 if( CFIs32( lv ) && CFIs32( rv ) ) {
                     li = CFConvertByType( lv, tipe );
@@ -851,7 +851,7 @@ extern  tn      FoldLShift( tn left, tn rite, type_def *tipe )
                 fold = IntToType( 0, tipe );
             } else {
                 lv = left->u.name->c.value;
-                if( !_HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
+                if( !HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
                     signed_32       li;
 
                     li = CFConvertByType( lv, tipe );
@@ -894,7 +894,7 @@ extern  tn      FoldDiv( tn left, tn rite, type_def *tipe )
     fold = NULL;
     if( rite->class == TN_CONS ) {
         rv = rite->u.name->c.value;
-        if( _HasBigConst( tipe ) ) {
+        if( HasBigConst( tipe ) ) {
             if( CFTest( rv ) != 0 && left->class == TN_CONS ) {
                 fold = CFToType( CFDiv( left->u.name->c.value, rv ), tipe );
                 BurnTree( left );
@@ -933,7 +933,7 @@ extern  tn      FoldDiv( tn left, tn rite, type_def *tipe )
         } else if( rite->u.name->c.int_value == 1 ) {
             fold = TGConvert( left, tipe );
             BurnTree( rite );
-        } else if( !_HasBigConst( tipe )
+        } else if( !HasBigConst( tipe )
               && ( left->tipe->attr & TYPE_SIGNED ) == 0 ) {
             if( CFIsU32( rv ) ) {
                 log = GetLog2( rite->u.name->c.int_value );
@@ -968,7 +968,7 @@ extern  tn      FoldMod( tn left, tn rite, type_def *tipe )
     if( rite->class == TN_CONS ) {
         rv = rite->u.name->c.value;
         if( CFTest( rv ) != 0
-         && left->class == TN_CONS && !_HasBigConst( tipe ) ) {
+         && left->class == TN_CONS && !HasBigConst( tipe ) ) {
             lv = left->u.name->c.value;
             if( tipe->attr & TYPE_SIGNED ) {
                 if( CFIsI32( lv ) && CFIsI32( rv ) ) {
@@ -988,11 +988,11 @@ extern  tn      FoldMod( tn left, tn rite, type_def *tipe )
                     BurnTree( rite );
                 }
             }
-        } else if( !_HasBigConst( tipe ) && rite->u.name->c.int_value == 1 ) {
+        } else if( !HasBigConst( tipe ) && rite->u.name->c.int_value == 1 ) {
             fold = CFToType( CFCnvIF( 0 ), tipe );
             fold = TGBinary( O_COMMA, left, fold, tipe );
             BurnTree( rite );
-        } else if( !_HasBigConst( tipe ) ) {
+        } else if( !HasBigConst( tipe ) ) {
             if( ( left->tipe->attr & TYPE_SIGNED ) == 0 ) {
                 if( CFIsU32( rv ) ) {
                     ri = CFConvertByType( rv, tipe );
@@ -1047,7 +1047,7 @@ extern  tn      Fold1sComp( tn left, type_def *tipe )
     cfloat      *lv;
 
     new = NULL;
-    if( !_HasBigConst( tipe ) && left->class == TN_CONS ) {
+    if( !HasBigConst( tipe ) && left->class == TN_CONS ) {
         lv = left->u.name->c.value;
         if( CFIs32( lv ) ) {
             new = IntToType( ~CFConvertByType( lv, tipe ), tipe );
@@ -1228,7 +1228,7 @@ extern  tn      FoldBitCompare( opcode_defs op, tn_btn left, tn rite )
     if( rite->class == TN_CONS
      && left.t->class == TN_BIT_RVALUE
      && !(left.b->is_signed)
-     && !_HasBigConst( left.b->tipe ) ) {
+     && !HasBigConst( left.b->tipe ) ) {
         new_cons = rite->u.name->c.int_value;
         new_cons <<= left.b->start;
         mask = Mask( left.b );
@@ -1401,7 +1401,7 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
         }
         if( left->rite->class == TN_CONS
          && left->rite->u.left == rite->u.left
-         && !_HasBigConst( tipe )
+         && !HasBigConst( tipe )
          && GetLog2( rite->u.name->c.int_value ) != -1 ) {
             rite->u.name = AllocIntConst( 0 );
             if( op == O_EQ ) {
@@ -1485,7 +1485,7 @@ extern  tn      FoldPostGetsCompare( opcode_defs op, tn left, tn rite, type_def 
             if( tipe == left->tipe ) {
                 rv = rite->u.name->c.value;
                 lv = left->rite->u.name->c.value;
-                if( !_HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
+                if( !HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
                     li = CFConvertByType( lv, tipe );
                     ri = CFConvertByType( rv, tipe );
                     value = ( left->op == OP_SUB ) ? ( ri - li ) : ( ri + li );
@@ -1583,13 +1583,13 @@ extern  an FoldConsCompare( opcode_defs op, tn left,
                 fold = Flip( fold, compare <= 0, compare_true <= 0 );
                 break;
             case OP_BIT_TEST_TRUE:
-                if( !_HasBigConst( tipe ) ) {
+                if( !HasBigConst( tipe ) ) {
                     fold = Flip( fold, FALSE,
                             ( rite->u.name->c.int_value & FETrue() ) != 0 );
                 }
                 break;
             case OP_BIT_TEST_FALSE:
-                if( !_HasBigConst( tipe ) ) {
+                if( !HasBigConst( tipe ) ) {
                     fold = Flip( fold, TRUE,
                             ( rite->u.name->c.int_value & FETrue() ) == 0 );
                 }
