@@ -59,6 +59,13 @@ set ODIR=<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
     <CPCMD> re2c.exe <OWBINDIR>/re2c
 
+[ BLOCK <BUILD_PLATFORM> linux386boot ]
+#===============================
+    mkdir <PROJDIR>/<OBJDIR>
+    cdsay <PROJDIR>/<OBJDIR>
+    wmake -h -f ../linux386/makefile prebuild=1 bootstrap=1
+    <CPCMD> re2c.exe <OWBINDIR>/re2c
+
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>

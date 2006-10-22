@@ -38,7 +38,7 @@ additional_cleanup = *.dh *.ch
 .dyn : $(vi_dir)/ctl
 
 !ifdef prebuild
-extra_c_flags +=-DPREBUILD
+extra_c_flags += -DPREBUILD
 !endif
 
 !ifdef bind
@@ -53,7 +53,7 @@ bindextra = -d$(vi_dir)\dat\winbind.dat
 !endif
 
 !ifdef bootstrap
-$(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj
+$(name) : $(special) $(objs) $(cl_objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj
         $(cl) $(clflags) $< $(cl_libs)
 !else
 $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj

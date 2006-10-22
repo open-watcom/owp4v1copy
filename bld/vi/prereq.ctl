@@ -102,6 +102,14 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     wmake -h -f ../linux386/makefile prebuild=1
     <CPCMD> vi.exe <OWBINDIR>/bvi
 
+[ BLOCK <BUILD_PLATFORM> linux386boot ]
+#======================================
+    echo Building bvi for scripting
+    mkdir <PROJDIR>/<OBJDIR>
+    cdsay <PROJDIR>/<OBJDIR>
+    wmake -h -f ../linux386/makefile bootstrap=1 prebuild=1
+    <CPCMD> vi.exe <OWBINDIR>/bvi
+
 [ BLOCK . . ]
 #============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>

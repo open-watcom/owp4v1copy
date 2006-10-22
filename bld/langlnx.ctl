@@ -13,6 +13,7 @@ set OWLINUXBUILD=bootstrap
 # compiled using wmake + gcc + ar/wlib
 [ INCLUDE <DEVDIR>/pmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
+[ INCLUDE <DEVDIR>/vi/prereq.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstrip/prereq.ctl ]
 [ INCLUDE <DEVDIR>/orl/prereq.ctl ]
@@ -34,6 +35,7 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/cfloat/lang.ctl ]
 [ INCLUDE <DEVDIR>/owl/lang.ctl ]
 [ INCLUDE <DEVDIR>/dwarf/lang.ctl ]
+[ INCLUDE <DEVDIR>/re2c/prereq.ctl ]
 [ INCLUDE <DEVDIR>/as/lang.ctl ]
 [ INCLUDE <DEVDIR>/cg/lang.ctl ]
 [ INCLUDE <DEVDIR>/cc/lang.ctl ]
@@ -53,7 +55,6 @@ set OWLINUXBUILD=normal
 
 # create full-featured wmake...
 
-[ INCLUDE <DEVDIR>/vi/prereq.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/orl/lang.ctl ]
 [ INCLUDE <DEVDIR>/wmake/prereq.ctl ]
@@ -65,6 +66,7 @@ set OWLINUXBUILD=normal
     rm -rf <DEVDIR>/builder/<OBJDIR>
     rm -rf <DEVDIR>/pmake/<OBJDIR>
     rm -rf <DEVDIR>/yacc/<OBJDIR>
+    rm -rf <DEVDIR>/vi/<OBJDIR>
     rm -rf <DEVDIR>/sdk/rc/wres/<OBJDIR>
     rm -rf <DEVDIR>/sdk/rc/rc/<OBJDIR>
     rm -rf <DEVDIR>/wstrip/<OBJDIR>
@@ -88,4 +90,8 @@ set OWLINUXBUILD=normal
     rm -f <OWBINDIR>/wpp386
     rm -f <OWBINDIR>/wpp
     rm -f <OWBINDIR>/wmake
+    rm -f <OWBINDIR>/wgml
+    rm -f <OWBINDIR>/parsedlg
+    rm -f <OWBINDIR>/diff
+    rm -f <OWBINDIR>/builder
     
