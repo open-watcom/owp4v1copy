@@ -113,7 +113,7 @@ WVList
 28
 MItem
 14
-..\..\BACK.BMP
+../../back.bmp
 29
 WString
 3
@@ -131,7 +131,7 @@ WVList
 32
 MItem
 18
-..\..\BRIGHTER.BMP
+../../brighter.bmp
 33
 WString
 3
@@ -149,7 +149,7 @@ WVList
 36
 MItem
 16
-..\..\DARKER.BMP
+../../darker.bmp
 37
 WString
 3
@@ -167,7 +167,7 @@ WVList
 40
 MItem
 14
-..\..\DOWN.BMP
+../../down.bmp
 41
 WString
 3
@@ -185,7 +185,7 @@ WVList
 44
 MItem
 17
-..\..\FORWARD.BMP
+../../forward.bmp
 45
 WString
 3
@@ -203,7 +203,7 @@ WVList
 48
 MItem
 14
-..\..\LEFT.BMP
+../../left.bmp
 49
 WString
 3
@@ -221,7 +221,7 @@ WVList
 52
 MItem
 15
-..\..\RIGHT.BMP
+../../right.bmp
 53
 WString
 3
@@ -239,7 +239,7 @@ WVList
 56
 MItem
 12
-..\..\UP.BMP
+../../up.bmp
 57
 WString
 3
@@ -314,8 +314,8 @@ o????Path for include files:
 1
 74
 WString
-53
-..\;$(%watcom)\src\fortran\os2;$(%watcom)\src\fortran
+55
+"../;$(%watcom)/src/fortran/os2;$(%watcom)/src/fortran"
 0
 75
 MCState
@@ -363,7 +363,7 @@ WVList
 85
 MItem
 14
-..\drawos2.for
+../drawos2.for
 86
 WString
 6
@@ -511,7 +511,7 @@ WString
 119
 WString
 35
-..\.. $(%watcom)\h $(%watcom)\h\os2
+../.. $(%watcom)/h $(%watcom)/h/os2
 0
 120
 WVList
@@ -523,7 +523,7 @@ WVList
 121
 MItem
 13
-..\drawos2.rc
+../drawos2.rc
 122
 WString
 5

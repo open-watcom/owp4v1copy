@@ -88,7 +88,7 @@ WVList
 21
 MItem
 14
-..\..\BACK.BMP
+../../back.bmp
 22
 WString
 3
@@ -106,7 +106,7 @@ WVList
 25
 MItem
 18
-..\..\BRIGHTER.BMP
+../../brighter.bmp
 26
 WString
 3
@@ -124,7 +124,7 @@ WVList
 29
 MItem
 16
-..\..\DARKER.BMP
+../../darker.bmp
 30
 WString
 3
@@ -142,7 +142,7 @@ WVList
 33
 MItem
 14
-..\..\DOWN.BMP
+../../down.bmp
 34
 WString
 3
@@ -160,7 +160,7 @@ WVList
 37
 MItem
 17
-..\..\FORWARD.BMP
+../../forward.bmp
 38
 WString
 3
@@ -178,7 +178,7 @@ WVList
 41
 MItem
 14
-..\..\LEFT.BMP
+../../left.bmp
 42
 WString
 3
@@ -196,7 +196,7 @@ WVList
 45
 MItem
 15
-..\..\RIGHT.BMP
+../../right.bmp
 46
 WString
 3
@@ -214,7 +214,7 @@ WVList
 49
 MItem
 12
-..\..\UP.BMP
+../../up.bmp
 50
 WString
 3
@@ -290,7 +290,7 @@ WString
 67
 WString
 3
-..\
+"../"
 0
 68
 MCState
@@ -338,7 +338,7 @@ WVList
 78
 MItem
 13
-..\drawnt.for
+../drawnt.for
 79
 WString
 6
@@ -482,7 +482,7 @@ WVList
 110
 MItem
 13
-..\..\draw.rc
+../../draw.rc
 111
 WString
 5

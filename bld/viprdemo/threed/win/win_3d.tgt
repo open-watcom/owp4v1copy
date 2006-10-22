@@ -46,8 +46,8 @@ WString
 0
 12
 WString
-68
-$(watcom_dir)\lib;$(%relroot)\rel2\lib386\nt;$(%relroot)\rel2\lib386
+70
+"$(watcom_dir)/lib;$(%relroot)/rel2/lib386/nt;$(%relroot)/rel2/lib386"
 0
 13
 WVList
@@ -83,8 +83,8 @@ w????Include directories:
 0
 21
 WString
-59
-$(%watcom)\h;$(%watcom)\h\win;$(watcom_dir)\h;$(wpi_dir)\h;
+61
+"$(%watcom)/h;$(%watcom)/h/win;$(watcom_dir)/h;$(wpi_dir)/h;"
 0
 22
 MRState
@@ -120,7 +120,7 @@ WVList
 29
 MItem
 24
-..\..\..\wpi\c\wpi_win.c
+../../../wpi/c/wpi_win.c
 30
 WString
 4
@@ -138,7 +138,7 @@ WVList
 33
 MItem
 11
-..\dbgmem.c
+../dbgmem.c
 34
 WString
 4
@@ -156,7 +156,7 @@ WVList
 37
 MItem
 8
-..\dll.c
+../dll.c
 38
 WString
 4
@@ -174,7 +174,7 @@ WVList
 41
 MItem
 11
-..\gblmem.c
+../gblmem.c
 42
 WString
 4
@@ -192,7 +192,7 @@ WVList
 45
 MItem
 11
-..\global.c
+../global.c
 46
 WString
 4
@@ -210,7 +210,7 @@ WVList
 49
 MItem
 11
-..\locmem.c
+../locmem.c
 50
 WString
 4
@@ -228,7 +228,7 @@ WVList
 53
 MItem
 10
-..\pipe1.c
+../pipe1.c
 54
 WString
 4
@@ -246,7 +246,7 @@ WVList
 57
 MItem
 10
-..\pipe2.c
+../pipe2.c
 58
 WString
 4
@@ -264,7 +264,7 @@ WVList
 61
 MItem
 12
-..\pipemem.c
+../pipemem.c
 62
 WString
 4
@@ -282,7 +282,7 @@ WVList
 65
 MItem
 12
-..\pipeobj.c
+../pipeobj.c
 66
 WString
 4
@@ -300,7 +300,7 @@ WVList
 69
 MItem
 13
-..\pipeutil.c
+../pipeutil.c
 70
 WString
 4
@@ -318,7 +318,7 @@ WVList
 73
 MItem
 11
-..\region.c
+../region.c
 74
 WString
 4
@@ -336,7 +336,7 @@ WVList
 77
 MItem
 11
-..\threed.c
+../threed.c
 78
 WString
 4
@@ -354,7 +354,7 @@ WVList
 81
 MItem
 10
-..\trmem.c
+../trmem.c
 82
 WString
 4
@@ -372,7 +372,7 @@ WVList
 85
 MItem
 11
-..\window.c
+../window.c
 86
 WString
 4
@@ -390,7 +390,7 @@ WVList
 89
 MItem
 11
-..\world3.c
+../world3.c
 90
 WString
 4
@@ -408,7 +408,7 @@ WVList
 93
 MItem
 11
-..\wpimem.c
+../wpimem.c
 94
 WString
 4

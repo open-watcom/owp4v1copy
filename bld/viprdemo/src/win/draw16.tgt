@@ -433,8 +433,8 @@ w????Include directories:
 1
 99
 WString
-32
-..;$(%watcom)/h;$(%watcom)/h/win
+34
+"..;$(%watcom)/h;$(%watcom)/h/win"
 0
 100
 WVList

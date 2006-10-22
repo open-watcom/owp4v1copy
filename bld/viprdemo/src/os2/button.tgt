@@ -64,7 +64,7 @@ WVList
 15
 MItem
 11
-..\btnos2.c
+../btnos2.c
 16
 WString
 4

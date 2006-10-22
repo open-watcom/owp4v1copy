@@ -394,8 +394,8 @@ w????Include directories:
 1
 91
 WString
-32
-..;$(%watcom)/h;$(%watcom)/h/win
+34
+"..;$(%watcom)/h;$(%watcom)/h/win"
 0
 92
 WVList

@@ -67,8 +67,8 @@ WString
 1
 17
 WString
-3
-..\
+5
+"../"
 0
 18
 MCState
@@ -116,7 +116,7 @@ WVList
 28
 MItem
 12
-..\btnnt.for
+../btnnt.for
 29
 WString
 6
