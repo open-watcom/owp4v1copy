@@ -2,7 +2,7 @@ include $(DEVDIR)/build/mif/master.mk
 
 vpath %.c c ../watcom/c $(WCLIB_DIR)/misc/c ../builder/c
 
-all: $(OBJDIR) $(OBJDIR)/wmake
+all: $(OBJDIR) $(OBJDIR)/wmake $(OWBINDIR)/wmake
 
 CFILES=macros.c main.c massert.c mautodep.c mautoomf.c mautoorl.c mautores.c \
  mcache.c memory.c mexec.c mglob.c mhash.c misc.c mlex.c mlexmac.c mlexprs.c \
