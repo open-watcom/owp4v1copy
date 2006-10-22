@@ -782,9 +782,7 @@ extern  tn      FoldRShift( tn left, tn rite, type_def *tipe )
     tn          fold;
     cfloat      *rv;
     cfloat      *lv;
-    signed_32   li;
     signed_32   ri;
-    unsigned_32 shft;
 
     fold = NULL;
     if( rite->class == TN_CONS ) {
@@ -805,7 +803,10 @@ extern  tn      FoldRShift( tn left, tn rite, type_def *tipe )
             }
             if( !done ) {
                 lv = left->u.name->c.value;
-                if( CFIs32( lv ) && CFIs32( rv ) ) {
+                if( !HasBigConst( tipe ) && CFIs32( lv ) && CFIs32( rv ) ) {
+                    signed_32       li;
+                    unsigned_32     shft;
+
                     li = CFConvertByType( lv, tipe );
                     if( tipe->attr & TYPE_SIGNED ) {
                         shft = li >> ri;
@@ -813,6 +814,14 @@ extern  tn      FoldRShift( tn left, tn rite, type_def *tipe )
                         shft = (unsigned_32)li >> (unsigned_32)ri;
                     }
                     fold = IntToType( shft, tipe );
+                } else if( CFIs64( lv ) && CFIs64( rv ) ) {
+                    signed_64       rsh;
+                    signed_64       li;
+
+                    li = CFGetInteger64Value( lv );
+
+                    U64ShiftR( &li, ri, &rsh );
+                    fold = Int64ToType( rsh, tipe );
                 }
             }
             BurnTree( left );
