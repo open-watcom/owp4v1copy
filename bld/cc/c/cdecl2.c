@@ -1061,7 +1061,7 @@ local TYPEPTR Pointer( TYPEPTR ptr_typ, struct mod_info *info )
             ptr_typ = BPtrNode( ptr_typ, flags, info->segment, sym_handle, info->based_kind );
             sym_handle = 0;
             info->segment = 0;  // start over
-            info->modifier = TypeQualifier();  // .. * const
+            info->modifier = (flags & FLAG_INLINE) | TypeQualifier();  // .. * const
             info->based_kind = BASED_NONE;
         } else {
             break;

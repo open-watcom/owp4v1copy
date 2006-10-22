@@ -304,9 +304,8 @@ int WSAAPI getnameinfo(const struct sockaddr*,socklen_t,char*,DWORD,
 /* FIXME: Need WS protocol-independent API helpers.  */
 #endif
 
-#ifdef __WATCOMC__
+#if defined(__WATCOMC__) && (__WATCOMC__ < 1260)
 #pragma disable_message(202)
-/* Watcom should not warn about this, but it does... to be fixed */
 #endif
 static __inline char*
 gai_strerrorA(int ecode)
