@@ -29,5 +29,5 @@ test_objs       =   test$(obj) &
 test_objs       +=  trmem$(obj)
 !endif
 
-objread$(exe) : $(test_objs) $(orl_lib)
-        $(cl) $(clflags) $(test_objs) $(orl_lib) $(cl_libs)
+objread$(exe) : $(test_objs) $(cl_objs) $(orl_lib)
+        $(cl) $(clflags) $(test_objs) $(cl_objs) $(orl_lib) $(cl_libs)

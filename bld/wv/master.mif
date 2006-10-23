@@ -364,8 +364,8 @@ resname=$+$(resname)$-dll
 resfile = $(resname).res
 
 !ifdef bootstrap
-$(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs)
-        $(cl) $(clflags) fingmsg.obj $(objs) $(sysobjs) $(libs) $(cl_libs)
+$(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(cl_objs) $(libs)
+        $(cl) $(clflags) fingmsg.obj $(objs) $(sysobjs) $(cl_objs) $(libs) $(cl_libs) -ldl
         wstrip -q -a -r $^@ . $(resfile)
 !else
 $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)

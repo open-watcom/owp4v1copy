@@ -14,5 +14,5 @@ objs =                  &
         output.obj      &
         process.obj
 
-$(proj_name).exe : $(objs)
+$(proj_name).exe : $(objs) $(cl_objs)
         $(cl) $(clflags) $< $(cl_libs)

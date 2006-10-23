@@ -1452,3 +1452,79 @@ res_language_enumeration _WResLanguage(void)
 {
     return( RLE_ENGLISH );
 }
+
+#ifdef __GLIBC__
+/****************************************************************************
+*
+* Description:  Implementation of BSD style strlcpy().
+*
+****************************************************************************/
+
+size_t strlcpy( char *dst, const char *src, size_t len )
+{
+    const char     *s;
+    size_t              count;
+
+    count = len;
+    if( len ) {
+        --len;                  // leave space for terminating null
+        for( ; len; --len ) {
+            if( *src == '\0' ) {
+                break;
+            }
+            *dst++ = *src++;
+        }
+        *dst = '\0';            // terminate 'dst'
+    } else {
+        ++count;                // account for not decrementing 'len'
+    }
+
+    if( !len ) {                // source string was truncated
+        s = src;
+        while( *s != '\0' ) {
+            ++s;
+        }
+        count += s - src;       // find out how long 'src' really is
+    }
+    return( count - len - 1 );  // final null doesn't count
+}
+
+/****************************************************************************
+*
+* Description:  Implementation of BSD style strlcat().
+*
+****************************************************************************/
+
+size_t strlcat( char *dst, const char *t, size_t n )
+{
+    char   *s;
+    size_t      len;
+
+    s = dst;
+    // Find end of string in destination buffer but don't overrun
+    for( len = n; len; --len ) {
+        if( *s == '\0' ) break;
+        ++s;
+    }
+    // If no null char was found in dst, the buffer is messed up; don't
+    // touch it
+    if( *s == '\0' ) {
+        --len;      // Decrement len to leave space for terminating null
+        while( len != 0 ) {
+            *s = *t;
+            if( *s == '\0' ) {
+                return( n - len - 1 );
+            }
+            ++s;
+            ++t;
+            --len;
+        }
+        // Buffer not large enough. Terminate and figure out desired length
+        *s = '\0';
+        while( *t++ != '\0' )
+            ++n;
+        --n;
+    }
+    return( n );
+}
+#endif

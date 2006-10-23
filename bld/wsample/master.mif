@@ -226,8 +226,8 @@ $(xname).exp : $(objects) $(xname).res $(libs) $(__MAKEFILES__)
 !else
 
 !ifdef bootstrap
-$(xname).exe : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
-    $(cl) $(clflags) $(objects) $(cl_libs) $(wres_lib)
+$(xname).exe : $(objects) $(cl_objs) $(xname).res $(wres_lib) $(__MAKEFILES__)
+    $(cl) $(clflags) $(objects) $(cl_objs) $(cl_libs) $(wres_lib)
     wstrip -q -a -r $^@ . $(xname).res
 !else
 $(xname).exe : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)

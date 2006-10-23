@@ -94,12 +94,12 @@ static bool dirFuncAlign ( directive_t *dir, dir_table_enum parm )
 
 
 #ifdef _STANDALONE_
+static bool dirFuncSwitchSection( directive_t *, dir_table_enum );
+static bool dirFuncStorageAlloc( directive_t *, dir_table_enum );
+
 static bool dirFuncBSS( directive_t *dir, dir_table_enum parm )
 //*************************************************************
 {
-    static bool dirFuncSwitchSection( directive_t *, dir_table_enum );
-    static bool dirFuncStorageAlloc( directive_t *, dir_table_enum );
-
     if( !dirHasOperand( dir ) ) return( dirFuncSwitchSection( dir, parm ) );
     return( dirFuncStorageAlloc( dir, parm ) ); // ".bss tag, bytes"
 }

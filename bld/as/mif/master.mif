@@ -160,8 +160,8 @@ asi_lib_j   = $(asi_dir)/asinlinj.lib
 !ifdef test_inline_as
 asi_test_name = asinline
 
-$(asi_test_name).exe : $(asi_test_objs) $(asi_lib)
-        $(cl) $(clflags)  $(asi_test_objs) $(asi_lib) $(cl_libs)
+$(asi_test_name).exe : $(asi_test_objs) $(cl_objs) $(asi_lib)
+        $(cl) $(clflags)  $(asi_test_objs) $(cl_objs) $(asi_lib) $(cl_libs)
 
 $(asi_lib) :
 curr_dir=$+$(%cwd)$-
@@ -182,8 +182,8 @@ $(asi_lib_j) : $(asi_lib) asmsgj.obj
         $(librarian) $(libflags) $^@ +$[@ -asmsg.obj +asmsgj.obj
 !endif
 
-$(name).exe : msg.gh $(as_objs) $(libs) $(owl_lib) $(name).res
-        $(cl) $(clflags) $(as_objs) $(libs) $(owl_lib) $(cl_libs)
+$(name).exe : msg.gh $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(name).res
+        $(cl) $(clflags) $(as_objs) $(cl_objs) $(libs) $(owl_lib) $(cl_libs)
 !ifeq host_os osi
         $(w32bind) $^&.rex $^@ $(os2ldr)
         @rm -f $^&.rex

@@ -70,10 +70,10 @@ inc_dirs = -I"../h" -I"$(wsample_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(
 # explicit rules
 #################
 !ifdef bootstrap
-$(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
+$(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(cl_objs) $(wprof_libs) $(sys_libs) $(resfile)
     @rm -f finger.obj
     @%make finger.obj
-    $(cl) $(clflags) $(objs) $(sys_objs) $(dip_objs) $(mad_objs) finger.obj $(wprof_libs) $(sys_libs) $(cl_libs) $(wres_lib)
+    $(cl) $(clflags) $(objs) $(sys_objs) $(dip_objs) $(mad_objs) finger.obj $(cl_objs) $(wprof_libs) $(sys_libs) $(cl_libs) $(wres_lib) -ldl
     wstrip -q -a -r  $^@ . $(resfile)
 !else
 $(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
