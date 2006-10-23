@@ -1,8 +1,6 @@
-TARG_CPU = __386__
-
 CPPFLAGS = -I$(OBJDIR) -Ih -I../watcom/h -I../lib_misc/h $(DEFS)
 CFLAGS = -funsigned-char -g -O2 -Wall -Wno-switch
-DEFS = -D$(TARG_CPU) -D__LINUX__ -D__UNIX__= -DUNIX -Uunix -DBOOTSTRAP -DWMAKE
+DEFS = -D__LINUX__ -D__UNIX__= -DUNIX -Uunix -DBOOTSTRAP -DWMAKE
 
 $(OBJDIR)/%.o : %.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -I$(OBJDIR) -o $@ $<

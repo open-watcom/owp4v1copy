@@ -25,7 +25,7 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/builder/boot.ctl ]
 [ INCLUDE <DEVDIR>/pmake/boot.ctl ]
 [ INCLUDE <DEVDIR>/yacc/boot.ctl ]
-[ INCLUDE <DEVDIR>/vi/prereq.ctl ]
+[ INCLUDE <DEVDIR>/vi/prereqb.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/boot.ctl ]
 [ INCLUDE <DEVDIR>/orl/boot.ctl ]
 [ INCLUDE <DEVDIR>/wstrip/boot.ctl ]
