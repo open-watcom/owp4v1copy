@@ -187,9 +187,5 @@ wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerro
         $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$@
 
 rcmsg.gh : $(wrc_dir)/h/rc.msg
-!ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed 's/0$$/800/' > rcmsg.gh
-!else
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"rcmsg.gh" $[@
         $(vi) -s ../h/rcrebase.vi rcmsg.gh
-!endif

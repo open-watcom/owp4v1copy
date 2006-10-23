@@ -43,11 +43,7 @@ $(proj_name).exe : $(dependants)
 !endif
 
 msg.gh : ../wstrip.msg
-!ifdef bootstrap
-        perl $(sdk_dir)/misc/msgtoh.pl < $< > $@
-!else
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
-!endif
 
 owstrip.res : wstrip.rc wstrip.msg msg.gh ousage.rc ousagej.rc
         $(rc_aui) -DDOS $[@ -fo=$^@
