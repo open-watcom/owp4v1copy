@@ -81,8 +81,13 @@ while (($record = read_record(NEWFILE)) ne "EOF") {
 close(NEWFILE);
 
 # Now compare the summaries. This runs in O(n^2) where n is the # of records.
-print "Records Added\n";
-print "-------------\n\n";
+#############################################################################
+
+$something_added   = "no";
+$something_removed = "no";
+$first_added       = "yes";
+$first_removed     = "yes";
+
 $something_added = "no";
 foreach $record (@new_records) {
     $found = "no";
@@ -90,8 +95,13 @@ foreach $record (@new_records) {
         if ($record eq $candidate) { $found = "yes"; }
     }
     if ($found eq "no") {
+        if ($first_added eq "yes") {
+            print "Messages Added\n";
+            print "--------------\n\n";
+            $first_added = "no";
+        }   
         print_record($record);
-	$something_added = "yes";
+        $something_added = "yes";
     }
 }
 
@@ -100,16 +110,25 @@ foreach $record (@new_records) {
 # finish. Only trust the removal list if there are no additional errors.
 #
 if ($something_added eq "no") {
-    print "Records Removed\n";
-    print "---------------\n\n";
     foreach $record (@old_records) {
         $found = "no";
         foreach $candidate (@new_records) {
             if ($record eq $candidate) { $found = "yes"; }
         }
         if ($found eq "no") {
+            if ($first_removed eq "yes") {
+                print "Messages Removed\n";
+                print "----------------\n\n";
+                $first_removed = "no";
+            }   
             print_record($record);
+            $something_removed = "yes";
         }
     }
+}
+
+# This is what we like to see.
+if ($something_added eq "no" && $something_removed eq "no") {
+    print "Build Successful\n\n";
 }
 

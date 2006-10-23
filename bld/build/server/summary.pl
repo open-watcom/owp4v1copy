@@ -52,7 +52,7 @@ while (<INFILE>) {
         $current_project =~ /$source_location\\(.*)/i;
         $current_project = $1;
     }
-    if (/Warning!|Error!|Note!|Can not|ERROR|WARNING/) {
+    if (/Warning|Error|Can not|ERROR|WARNING/) {
         print OUTFILE "\nPROJECT $current_project\n";
         print OUTFILE "$_\n";
     }

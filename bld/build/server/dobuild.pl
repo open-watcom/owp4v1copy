@@ -76,7 +76,7 @@ sub get_date
 sub get_datetime
 {
     my(@now) = gmtime time;
-    return sprintf "%04d-%02d-%02dT%02d:%02d",
+    return sprintf "%04d-%02d-%02d, %02d:%02d UTC",
         $now[5] + 1900, $now[4] + 1, $now[3], $now[2], $now[1];
 }
 
@@ -100,7 +100,7 @@ if (system("p4 sync") != 0) {
 }
 $datetime_stamp = get_datetime();
 make_batch();
-print REPORT "CLEAN+BUILD STARTED: $datetime_stamp\n";
+print REPORT "CLEAN+BUILD STARTED  : $datetime_stamp\n";
 if (system($batch_name) != 0) {
     print REPORT "clean+build failed!\n";
     exit 1;
