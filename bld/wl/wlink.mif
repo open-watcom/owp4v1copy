@@ -188,9 +188,7 @@ wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerro
 
 rcmsg.gh : $(wrc_dir)/h/rc.msg
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"rcmsg.gh" $[@
-!ifdef bootstrap
-        sed 's/0$$/800/' < rcmsg.gh > tmp
-        mv -f tmp rcmsg.gh
-!else
-        $(vi) -s ../h/rcrebase.vi rcmsg.gh
+!ifdef __UNIX__
+        chmod +w rcmsg.gh
 !endif
+        $(vi) -s ../h/rcrebase.vi rcmsg.gh
