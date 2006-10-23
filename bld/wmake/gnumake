@@ -1,4 +1,11 @@
-include $(DEVDIR)/build/mif/master.mk
+TARG_CPU = __386__
+
+CPPFLAGS = -I$(OBJDIR) -Ih -I../watcom/h -I../lib_misc/h $(DEFS)
+CFLAGS = -funsigned-char -g -O2 -Wall -Wno-switch
+DEFS = -D$(TARG_CPU) -D__LINUX__ -D__UNIX__= -DUNIX -Uunix -DBOOTSTRAP -DWMAKE
+
+$(OBJDIR)/%.o : %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -I$(OBJDIR) -o $@ $<
 
 vpath %.c c ../watcom/c ../builder/c
 
@@ -12,7 +19,7 @@ CFILES=macros.c main.c massert.c mautodep.c mautoomf.c mautoorl.c mautores.c \
 OBJS=$(CFILES:.c=.o)
 OBJS:=$(foreach i,$(OBJS),$(OBJDIR)/$i)
 
-$(OBJDIR)/wsplice: wsplice.o split2.o makepath.o
+$(OBJDIR)/wsplice: $(OBJDIR)/wsplice.o $(OBJDIR)/clibext.o
 	$(CC) -g $^ -o $@
 
 $(OBJDIR)/usage.gh : h/usage.sp $(OBJDIR)/wsplice
@@ -28,10 +35,6 @@ $(OBJDIR)/cretype : cretype.c
 
 $(OBJDIR)/isarray.gh : $(OBJDIR)/cretype
 	$< > $@
-
-DEFS += -DWMAKE
-
-INCDIRS = $(OBJDIR) h $(WATCOMH) ../lib_misc/h
 
 $(OWBINDIR)/wmake: $(OBJDIR)/wmake
 	cp $< $@

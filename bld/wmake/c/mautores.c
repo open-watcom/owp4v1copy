@@ -34,9 +34,9 @@
 #include "mcache.h"
 #include "msysdep.h"
 #include "mautodep.h"
-#include "autodep.h"
 
 #ifndef BOOTSTRAP
+#include "autodep.h"
 
 #include "wresset2.h"
 
