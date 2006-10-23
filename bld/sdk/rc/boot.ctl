@@ -13,9 +13,11 @@ set PROJDIR=<CWD>
 [ BLOCK <1> boot ]
 #=================
     echo Building the resource compiler bootstrap
-    cdsay <PROJDIR>/wres
-    <MAKE> -f gnumake
-    cdsay ../rc
-    <MAKE> -f gnumake
-    <CPCMD> <OBJDIR>/rc <OWROOT>/bld/build/bin/wrc
+    mkdir <PROJDIR>/wres/<OBJDIR>
+    cdsay <PROJDIR>/wres/<OBJDIR>
+    wmake -h -f ../bootmake
+    mkdir ../../rc/<OBJDIR>
+    cdsay ../../rc/<OBJDIR>
+    wmake -h -f ../bootmake
+    <CPCMD> wrce.exe <OWROOT>/bld/build/bin/wrc
     cdsay <PROJDIR>

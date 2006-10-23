@@ -15,6 +15,7 @@ set PROJDIR=<CWD>
 #=================
     echo Building the pmake bootstrap
     mkdir <PROJDIR>/<OBJDIR>
-    <MAKE> -f gnumake
-    <CPCMD> <OBJDIR>/pmake <DEVDIR>/build/bin/pmake
+    cdsay <PROJDIR>/<OBJDIR>
+    wmake -h -f ../bootmake
+    <CPCMD> pmake.exe <DEVDIR>/build/bin/pmake
     cdsay <PROJDIR>

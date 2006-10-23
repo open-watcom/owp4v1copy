@@ -11,6 +11,7 @@ set PROJDIR=<CWD>
 [ BLOCK <1> boot ]
 #=================
     echo Building the object reading library bootstrap
-    cdsay <PROJDIR>
-    <MAKE> -f gnumake
+    mkdir <PROJDIR>/<OBJDIR>
+    cdsay <PROJDIR>/<OBJDIR>
+    wmake -h -f ../bootmake
     cdsay <PROJDIR>

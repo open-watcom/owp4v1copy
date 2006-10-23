@@ -11,6 +11,7 @@ set PROJDIR=<CWD>
 [ BLOCK <1> boot ]
 #=================
     echo Building the build utils bootstrap
-    cdsay <PROJDIR>
-    <MAKE> -f gnumake BOOT=1
+    mkdir <PROJDIR>/<OBJDIR>
+    cdsay <PROJDIR>/<OBJDIR>
+    wmake -h -f ../bootmake
     cdsay <PROJDIR>
