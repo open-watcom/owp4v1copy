@@ -6,6 +6,7 @@
 #ifndef _EXCPT_H_INCLUDED
 #define _EXCPT_H_INCLUDED
 #define _INC_EXCPT
+:include readonly.sp
 :include cpluspro.sp
 
 #if defined(__OS2__)
