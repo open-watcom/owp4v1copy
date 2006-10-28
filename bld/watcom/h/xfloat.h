@@ -132,6 +132,10 @@ extern  void    __iFSLD(float _WCNEAR *,long_double _WCNEAR *);
 extern  long    __LDI4(long_double _WCNEAR *);
 extern  void    __I4LD(long,long_double _WCNEAR *);
 extern  void    __U4LD(unsigned long,long_double _WCNEAR *);
+//The 64bit types change depending on what's being built.
+//(u)int64* (un)signed_64* don't seem suitable, and we use void* instead.
+extern  void    __I8LD(void _WCNEAR *, long_double _WCNEAR *);
+extern  void    __U8LD(void _WCNEAR *, long_double _WCNEAR *);
 extern void __FLDA(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNEAR *);
 extern void __FLDS(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNEAR *);
 extern void __FLDM(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNEAR *);
@@ -227,6 +231,24 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
                 "pop   eax"\
         float   "fstp tbyte ptr [edx]"\
                 parm caller [eax] [edx];
+  #pragma aux   __I8LD = \
+        float   "fild  qword ptr [eax]"\
+        float   "fstp  tbyte ptr [edx]"\
+                parm caller [eax] [edx];
+  #pragma aux   __U8LD = \
+                "push  [eax]"\
+                "push  [eax+4]"\
+                "and   [esp+4],0x7fffffff"\
+        float   "fild  qword ptr [esp]"\
+                "push  [eax+4]"\
+                "and   [esp],0x80000000"\
+                "push  0"\
+        float   "fild  qword ptr [esp]"\
+        float   "fchs"\
+        float   "faddp st(1),st"\
+        float   "fstp  qword ptr [edx]"\
+                "lea   esp,[esp+16]"\
+                parm caller [eax] [edx];
   #pragma aux   __iFDLD = \
         float   "fld  qword ptr [eax]"\
         float   "fstp tbyte ptr [edx]"\
@@ -251,6 +273,8 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
   #pragma aux   __LDI4  "*"  parm caller [eax] value [eax];
   #pragma aux   __I4LD  "*"  parm caller [eax] [edx];
   #pragma aux   __U4LD  "*"  parm caller [eax] [edx];
+  #pragma aux   __I8LD  "*"  parm caller [eax] [edx];
+  #pragma aux   __U8LD  "*"  parm caller [eax] [edx];
   #pragma aux   __iFDLD "*"  parm caller [eax] [edx];
   #pragma aux   __iFSLD "*"  parm caller [eax] [edx];
   #pragma aux   __iLDFD "*"  parm caller [eax] [edx];
@@ -400,6 +424,41 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
         float   "fstp  tbyte ptr [bp]"\
                 "pop   bp"\
                 parm caller [dx ax] [bx];
+  #pragma aux   __I8LD = \
+        float   "fild  qword ptr [si]"\
+        float   "fstp  tbyte ptr [di]"\
+                parm caller [si] [di];
+  #pragma aux   __U8LD = \
+                "push  bp"\
+                "push  14[si]"\
+                "push  12[si]"\
+                "push  10[si]"\
+                "push  8[si]"\
+                "push  6[si]"\
+                "push  4[si]"\
+                "push  2[si]"\
+                "push  [si]"\
+                "mov   bp,sp"\
+                "and   [bp+7],0x7f"\
+        float   "fild  qword ptr [bp]"\
+                "mov   bp,0"\
+                "push  14[si]"\
+                "push  bp"\
+                "push  bp"\
+                "push  bp"\
+                "push  bp"\
+                "push  bp"\
+                "push  bp"\
+                "push  bp"\
+                "mov   bp,sp"\
+                "and   [bp+7],0x80"\
+        float   "fild  qword ptr [bp]"\
+        float   "fchs"\
+        float   "faddp st(1),st"\
+        float   "fstp  qword ptr [di]"\
+                "add   sp,32"\
+                "pop   bp"\
+                parm caller [si] [di];
   #pragma aux   __iFDLD = \
                 "push  bp"\
                 "mov   bp,ax"\
@@ -440,6 +499,8 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
   #pragma aux   __LDI4  "*"  parm caller [ax] value [dx ax];
   #pragma aux   __I4LD  "*"  parm caller [dx ax] [bx];
   #pragma aux   __U4LD  "*"  parm caller [dx ax] [bx];
+  #pragma aux   __I8LD  "*"  parm caller [si] [di];
+  #pragma aux   __U8LD  "*"  parm caller [si] [di];
   #pragma aux   __iFDLD "*"  parm caller [ax] [dx];
   #pragma aux   __iFSLD "*"  parm caller [ax] [dx];
   #pragma aux   __iLDFD "*"  parm caller [ax] [dx];

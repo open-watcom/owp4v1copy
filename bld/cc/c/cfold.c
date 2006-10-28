@@ -527,6 +527,7 @@ void CastFloatValue( TREEPTR leaf, DATA_TYPE newtype )
         }
     } else {    // integer
         switch( leaf->op.const_type ) {
+        //signed types
         case TYPE_CHAR:
         case TYPE_SHORT:
         case TYPE_INT:
@@ -537,12 +538,36 @@ void CastFloatValue( TREEPTR leaf, DATA_TYPE newtype )
             ld.value = (double)leaf->op.long_value;
 #endif
             break;
-        default:
+        case TYPE_LONG64:
 #ifdef _LONG_DOUBLE_
-            __U4LD( leaf->op.long_value, (long_double near *)&ld );
+            __I8LD( &leaf->op.long64_value, (long_double near *)&ld );
 #else
-            ld.value = (double)leaf->op.ulong_value;
+            #if defined(__WATCOM_INT64__) || defined(__GNUC__)
+            ld.value = (double)leaf->op.ulong64_value.i._64[0];
+            #else
+            ld.value = 0;//not implemented, issue a warning
+            #endif
 #endif
+            break;
+        default:
+        //unsigned types
+            if (leaf->op.const_type == TYPE_ULONG64) {
+#ifdef _LONG_DOUBLE_
+                __U8LD( &leaf->op.ulong64_value, (long_double near *)&ld );
+#else
+                #if defined(__WATCOM_INT64__) || defined(__GNUC__)
+                ld.value = (double)leaf->op.ulong64_value.i._64[0];
+                #else
+                ld.value = 0;//not implemented, issue a warning
+                #endif
+#endif
+            } else {
+#ifdef _LONG_DOUBLE_
+                __U4LD( leaf->op.long_value, (long_double near *)&ld );
+#else
+                ld.value = (double)leaf->op.ulong_value;
+#endif
+            }
             break;
         }
         flt = CMemAlloc( sizeof(FLOATVAL) );
@@ -819,7 +844,7 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
         val64 = LongValue64( leaf );
         leaf->op.ulong64_value = val64;
     } else if( newtyp == TYPE_BOOL ) {
-	leaf->op.ulong_value = IsConstantZero( leaf ) ? 0 : 1;
+    leaf->op.ulong_value = IsConstantZero( leaf ) ? 0 : 1;
         newtyp = TYPE_UCHAR;
     } else {
         val32 = LongValue( leaf );
@@ -920,7 +945,7 @@ static void FoldQuestionTree( TREEPTR tree )
           tree->op.opr = OPR_PUSHSYM;
           ops &= ~OPFLAG_RVALUE;
         }
-	tree->op.flags = ops;
+    tree->op.flags = ops;
     }
 }
 
@@ -990,21 +1015,21 @@ static bool FoldableTree( TREEPTR tree )
         break;
     case OPR_QUESTION:
         opnd = tree->left;
-	if( opnd->op.opr == OPR_ADDROF
-	    && ( opnd->right->op.opr == OPR_PUSHADDR
-	         || opnd->right->op.opr == OPR_PUSHSYM ) ) {
-	    SYM_ENTRY sym;
+    if( opnd->op.opr == OPR_ADDROF
+        && ( opnd->right->op.opr == OPR_PUSHADDR
+             || opnd->right->op.opr == OPR_PUSHSYM ) ) {
+        SYM_ENTRY sym;
 
-	    SymGet( &sym, opnd->right->op.sym_handle );
-	    if ( sym.stg_class != SC_AUTO && sym.stg_class != SC_REGISTER ) {
-		/* &(static object) is known to be non-zero */
-		/* replace it by a 1 */
-		FreeExprNode( opnd->right );
-		FreeExprNode( opnd );
-		tree->left = UIntLeaf( 1 );
-		opnd = tree->left;
-	    }
-	}
+        SymGet( &sym, opnd->right->op.sym_handle );
+        if ( sym.stg_class != SC_AUTO && sym.stg_class != SC_REGISTER ) {
+        /* &(static object) is known to be non-zero */
+        /* replace it by a 1 */
+        FreeExprNode( opnd->right );
+        FreeExprNode( opnd );
+        tree->left = UIntLeaf( 1 );
+        opnd = tree->left;
+        }
+    }
         if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
             FoldQuestionTree( tree );
         }
