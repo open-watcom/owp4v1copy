@@ -543,7 +543,7 @@ void CastFloatValue( TREEPTR leaf, DATA_TYPE newtype )
             __I8LD( &leaf->op.long64_value, (long_double near *)&ld );
 #else
             #if defined(__WATCOM_INT64__) || defined(__GNUC__)
-            ld.value = (double)leaf->op.ulong64_value.i._64[0];
+            ld.value = (double)leaf->op.ulong64_value.u._64[0];
             #else
             ld.value = 0;//not implemented, issue a warning
             #endif
@@ -556,7 +556,7 @@ void CastFloatValue( TREEPTR leaf, DATA_TYPE newtype )
                 __U8LD( &leaf->op.ulong64_value, (long_double near *)&ld );
 #else
                 #if defined(__WATCOM_INT64__) || defined(__GNUC__)
-                ld.value = (double)leaf->op.ulong64_value.i._64[0];
+                ld.value = (double)leaf->op.ulong64_value.u._64[0];
                 #else
                 ld.value = 0;//not implemented, issue a warning
                 #endif
