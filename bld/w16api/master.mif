@@ -5,9 +5,29 @@ w16api_distrib_lib = 1
 
 !include cproj.mif
 !include defrule.mif
-!include deftarg.mif
 
-.EXTENSIONS : .lbc .def
+splice = wsplice -i$(hdr_dir) $[@ $^@
+
+.EXTENSIONS : .lbc .def .mh
+
+headers =            &
+        _win386.h    &
+        cderr.h      &
+        commdlg.h    &
+        custcntl.h   &
+        dde.h        &
+        ddeml.h      &
+        dlgs.h       &
+        drivinit.h   &
+        mmsystem.h   &
+        shellapi.h   &
+        stress.h     &
+        toolhelp.h   &
+        ver.h        &
+        win16.h      &
+        win386.h     &
+        windows.h    &
+        winsock.h
 
 libs =               &
         commdlg.lib  &
@@ -32,14 +52,20 @@ winlibs =            &
 
 extra_lib_flags = -io -ii -p=16
 
+all : $(headers) $(libs) .SYMBOLIC
+
 .def: ../lib
 .asm: ../asm
+.mh: ../include
 
 .def.lbc:
         $(vi) -s ../def16lbc.vi -p"$*" ../lib/$[.
 
 .lbc.lib:
         $(librarian) $(libflags) $@ @$<
+
+.mh.h:
+	$(splice)
 
 $(libs):
 
@@ -49,3 +75,9 @@ windows.lbc : $(winlibs)
 
 windows.lib: windows.lbc profc.obj
         $(librarian) $(libflags) $@ @$<
+
+clean : .SYMBOLIC
+	rm -f *.h
+	rm -f *.lbc
+	rm -f *.lib
+	rm -f *.obj

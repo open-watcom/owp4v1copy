@@ -1,9 +1,14 @@
+/*
+ *  dlgs.h      Dialog box control identifiers
+ *
+:include crwatcnt.sp
+ */
+
 #ifndef	_INC_DLGS
 #define	_INC_DLGS
 
-#ifdef	__cplusplus
-extern	"C" {
-#endif
+:include readonly.sp
+:include cpluspro.sp
 
 #define	FILEOPENORD	1536
 #define	MULTIFILEOPENORD	1537
@@ -170,8 +175,6 @@ extern	"C" {
 #define	scr7	0x496
 #define	scr8	0x497
 
-#ifdef	__cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #endif

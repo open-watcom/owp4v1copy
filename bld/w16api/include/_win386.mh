@@ -1,17 +1,14 @@
 /*
-    Special include for 32-bit Windows 3.x development.
-*/
+ *  _win386.h   Special include for 32-bit Windows 3.x development.
+ *
+:include crwatcnt.sp
+ */
 
 #ifndef ___WIN386_INCLUDED__
 #define ___WIN386_INCLUDED__
 
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+:include readonly.sp
+:include cpluspro.sp
 
 #ifndef RC_INVOKED
 #include <stddef.h>
@@ -1098,8 +1095,6 @@ typedef void * HINDIR;
 
 #endif /* __WINDOWS_386__ */
 
-#ifdef __cplusplus
-} /* End of extern "C" */
-#endif
+:include cplusepi.sp
 
 #endif /* ___WIN386_INCLUDED__ */

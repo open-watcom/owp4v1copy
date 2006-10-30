@@ -1,13 +1,18 @@
+/*
+ *  toolhelp.h  Tool help functions
+ *
+:include crwatcnt.sp
+ */
+
 #ifndef	_INC_TOOLHELP
 #define	_INC_TOOLHELP
 
+:include readonly.sp
 #ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 
-#ifdef	__cplusplus
-extern	"C" {
-#endif
+:include cpluspro.sp
 
 #pragma pack(push,1)
 
@@ -296,8 +301,6 @@ BOOL	WINAPI TimerCount(LPTIMERINFO);
 
 #pragma pack(pop)
 
-#ifdef	__cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #endif

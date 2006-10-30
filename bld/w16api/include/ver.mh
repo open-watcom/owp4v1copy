@@ -1,9 +1,14 @@
+/*
+ *  ver.h       Version information functions
+ *
+:include crwatcnt.sp
+ */
+
 #ifndef _INC_VER
 #define _INC_VER
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+:include readonly.sp
+:include cpluspro.sp
 
 #ifdef LIB
 
@@ -173,8 +178,6 @@ BOOL  WINAPI VerQueryValue(const void FAR*,LPCSTR,void FAR* FAR*,UINT FAR*);
 
 #endif
 
-#ifdef __cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #endif

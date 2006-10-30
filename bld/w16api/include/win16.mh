@@ -1,17 +1,18 @@
 /*
-    Include file for Windows 3.x development.
-*/
+ *  win16.h     Include file for Windows 3.x development.
+ *
+:include crwatcnt.sp
+ */
 
 #ifndef _INC_WINDOWS
 #define _INC_WINDOWS
 
+:include readonly.sp
 #ifndef RC_INVOKED
 #pragma pack(push,1)
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+:include cpluspro.sp
 
 #ifndef WINVER
 #define WINVER  0x030a
@@ -4301,8 +4302,6 @@ BOOL    WINAPI GetDriverInfo(HDRVR,DRIVERINFOSTRUCT FAR*);
 #pragma pack(pop)
 #endif
 
-#ifdef __cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #endif

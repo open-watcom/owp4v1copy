@@ -1,15 +1,19 @@
+/*
+ *  custcntl.h  Custom control definitions
+ *
+:include crwatcnt.sp
+ */
 #ifndef	_INC_CUSTCNTL
 #define	_INC_CUSTCNTL
 
+:include readonly.sp
 #ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 
 #pragma	pack(push,1)
 
-#ifdef	__cplusplus
-extern	"C" {
-#endif
+:include cpluspro.sp
 
 #define	CCINFOORD	2
 #define	CCSTYLEORD	3
@@ -52,9 +56,7 @@ typedef	DWORD (CALLBACK *LPFNSTRTOID)(LPSTR);
 #endif
 typedef	UINT (CALLBACK *LPFNIDTOSTR)(UINT,LPSTR,UINT);
 
-#ifdef	__cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #pragma	pack(pop)
 

@@ -1,13 +1,18 @@
+/*
+ *  dde.h       Dynamic Data Exchange (DDE) definitions
+ *
+:include crwatcnt.sp
+ */
+
 #ifndef	_INC_DDE
 #define	_INC_DDE
 
+:include readonly.sp
 #ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 
-#ifdef	__cplusplus
-extern	"C" {
-#endif
+:include cpluspro.sp
 
 #pragma pack(push,1)
 
@@ -54,8 +59,6 @@ typedef	struct tagDDEUP {
 
 #pragma pack(pop)
 
-#ifdef	__cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #endif

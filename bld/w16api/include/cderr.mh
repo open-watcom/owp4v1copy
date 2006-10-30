@@ -1,5 +1,14 @@
+/*
+ *  cderr.h     Common dialog error codes
+ *
+:include crwatcnt.sp
+ */
+
 #ifndef	_INC_CDERR
 #define	_INC_CDERR
+
+:include readonly.sp
+:include cpluspro.sp
 
 #define	CDERR_DIALOGFAILURE	0xFFFF
 
@@ -44,5 +53,7 @@
 #define	FRERR_BUFFERLENGTHZERO	0x4001
 
 #define	CCERR_CHOOSECOLORCODES	0x5000
+
+:include cplusepi.sp
 
 #endif

@@ -1,13 +1,18 @@
+/*
+ *  shellapi.h  Shell functions
+ *
+:include crwatcnt.sp
+ */
+
 #ifndef	_INC_SHELLAPI
 #define	_INC_SHELLAPI
 
+:include readonly.sp
 #ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 
-#ifdef	__cplusplus
-extern	"C"	{
-#endif
+:include cpluspro.sp
 
 #pragma pack(push,1)
 
@@ -52,8 +57,6 @@ HINSTANCE	WINAPI FindExecutable(LPCSTR,LPCSTR,LPSTR);
 
 #pragma pack(pop)
 
-#ifdef	__cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #endif

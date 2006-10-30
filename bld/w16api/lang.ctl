@@ -17,7 +17,7 @@ cdsay .
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> wini86/*.lib               <RELROOT>/rel2/lib286/win/
   [ ENDIF ]
-    <CPCMD> include/*.h                <RELROOT>/rel2/h/win/
+    <CPCMD> wini86/*.h                <RELROOT>/rel2/h/win/
     <CPCMD> <DEVDIR>/sdk/misc/ctl3d.h  <RELROOT>/rel2/h/win/
 
 [ BLOCK <1> clean ]

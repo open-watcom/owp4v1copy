@@ -1,9 +1,14 @@
+/*
+ *  commdlg.h   Common dialog functions
+ *
+:include crwatcnt.sp
+ */
+
 #ifndef _INC_COMMDLG
 #define _INC_COMMDLG
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+:include readonly.sp
+:include cpluspro.sp
 
 #pragma pack(push,1)
 
@@ -229,8 +234,6 @@ DWORD WINAPI CommDlgExtendedError(void);
 
 #pragma pack(pop)
 
-#ifdef __cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #endif

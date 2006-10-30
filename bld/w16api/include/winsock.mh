@@ -1,4 +1,10 @@
 /*
+ *  winsock.h   Windows Sockets functions
+ *
+:include crwatcnt.sp
+ */
+
+/*
 
  Definitions for winsock 1.1
  
@@ -12,13 +18,12 @@
 #ifndef	_INC_WINSOCK
 #define	_INC_WINSOCK
 
+:include readonly.sp
 #ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 
-#ifdef	__cplusplus
-extern	"C" {
-#endif
+:include cpluspro.sp
 
 typedef	unsigned char	u_char;
 typedef	unsigned short	u_short;
@@ -434,8 +439,6 @@ typedef	struct timeval TIMEVAL,*PTIMEVAL,FAR *LPTIMEVAL;
 #define	WSAGETSELECTEVENT(lParam)	LOWORD(lParam)
 #define	WSAGETSELECTERROR(lParam)	HIWORD(lParam)
 
-#ifdef	__cplusplus
-extern	}
-#endif
+:include cplusepi.sp
 
 #endif

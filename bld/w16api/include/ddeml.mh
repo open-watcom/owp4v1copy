@@ -1,13 +1,18 @@
+/*
+ *  ddeml.h     Dynamic Data Exchange Managament Library (DDEML) functions
+ *
+:include crwatcnt.sp
+ */
+
 #ifndef	_INC_DDEML
 #define	_INC_DDEML
 
+:include readonly.sp
 #ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 
-#ifdef	__cplusplus
-extern	"C" {
-#endif
+:include cpluspro.sp
 
 #pragma pack(push,1)
 
@@ -285,8 +290,6 @@ int	WINAPI	DdeCmpStringHandles(HSZ,HSZ);
 
 #pragma pack(pop)
 
-#ifdef	__cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #endif

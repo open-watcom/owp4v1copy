@@ -1,13 +1,18 @@
+/*
+ *  drivinit.h  Printer driver definitions
+ *
+:include crwatcnt.sp
+ */
+
 #ifndef	_INC_DRIVINIT
 #define	_INC_DRIVINIT
 
+:include readonly.sp
 #ifndef	_INC_WINDOWS
 #include <windows.h>
 #endif
 
-#ifdef	__cplusplus
-extern	"C"	{
-#endif
+:include cpluspro.sp
 
 #pragma pack(push,1)
 
@@ -51,9 +56,7 @@ typedef struct tagDEVMODE
 
 #pragma pack(pop)
 
-#ifdef	__cplusplus
-}
-#endif
+:include cplusepi.sp
 
 #endif
 
