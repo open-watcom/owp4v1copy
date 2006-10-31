@@ -10,7 +10,7 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2006/10/10
+:cmt. Reflects main Perforce branch as of 2006/10/31
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
 .*
@@ -65,8 +65,13 @@ A new -zwf switch has been added to the C and C++ compilers. This switch is
 off by default and enables generation of FWAIT instructions on 386 and later
 CPUs. It is only needed in unusual situations.
 .bull
+The C compiler now correctly converts 64-bit integer constants to
+floating-point constants.
+.bull
 The code generator no longer merges memory accesses when volatile variables
 are involved.
+.bull
+The code generator now correctly const folds 64-bit right shifts.
 .bull
 The code generator now properly converts between far pointers and 64-bit
 integers. Attempts to convert a 48-bit far pointer to 64-bit integer no
