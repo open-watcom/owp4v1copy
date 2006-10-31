@@ -204,10 +204,11 @@ bool divide_test( )
   return( rc );
 }
 
+using std::abs;
+
 bool abs_test( )
 {
-  using std::abs;
-
+  // using std::abs;
   bool rc = true;
 
   double result = abs( complex( 1.0, 1.0 ) );
@@ -228,9 +229,11 @@ bool abs_test( )
   return( rc );
 }
 
+using std::arg;
+
 bool arg_test( )
 {
-  using std::arg;
+  // using std::arg;
   bool rc = true;
 
   double result = arg( complex( 1.0, 1.0 ) );
@@ -255,9 +258,11 @@ bool arg_test( )
   return( rc );
 }
 
+using std::polar;
+
 bool polar_test( )
 {
-  using std::polar;
+  // using std::polar;
   bool rc = true;
 
   complex z = polar( 1.0, 1.0 );
@@ -292,9 +297,11 @@ bool polar_test( )
   return( rc );
 }
 
+using std::cos;
+
 bool cos_test( )
 {
-  using std::cos;
+  // using std::cos;
   bool rc = true;
 
   complex i_values[] = {
@@ -313,9 +320,11 @@ bool cos_test( )
   return( rc );
 }
 
+using std::cosh;
+
 bool cosh_test( )
 {
-  using std::cosh;
+  // using std::cosh;
   bool rc = true;
 
   complex i_values[] = {
@@ -334,9 +343,11 @@ bool cosh_test( )
   return( rc );
 }
 
+using std::exp;
+
 bool exp_test( )
 {
-  using std::exp;
+  // using std::exp;
   bool rc = true;
 
   complex i_values[] = {
@@ -355,9 +366,11 @@ bool exp_test( )
   return( rc );
 }
 
+using std::log;
+
 bool log_test( )
 {
-  using std::log;
+  // using std::log;
   bool rc = true;
 
   complex i_values[] = {
@@ -380,9 +393,11 @@ bool log_test( )
   return( rc );
 }
 
+using std::log10;
+
 bool log10_test( )
 {
-  using std::log10;
+  // using std::log10;
   bool rc = true;
 
   complex i_values[] = {
@@ -405,9 +420,11 @@ bool log10_test( )
   return( rc );
 }
 
+using std::pow;
+
 bool pow_test( )
 {
-  using std::pow;
+  // using std::pow;
   bool rc = true;
 
   // This testing is minimal. At least it instantiates all three templates.
@@ -434,9 +451,11 @@ bool pow_test( )
   return( rc );
 }
 
+using std::sin;
+
 bool sin_test( )
 {
-  using std::sin;
+  // using std::sin;
   bool rc = true;
 
   complex i_values[] = {
@@ -455,9 +474,11 @@ bool sin_test( )
   return( rc );
 }
 
+using std::sinh;
+
 bool sinh_test( )
 {
-  using std::sinh;
+  // using std::sinh;
   bool rc = true;
 
   complex i_values[] = {
@@ -476,9 +497,11 @@ bool sinh_test( )
   return( rc );
 }
 
+using std::sqrt;
+
 bool sqrt_test( )
 {
-  using std::sqrt;
+  // using std::sqrt;
   bool rc = true;
 
   complex i_values[] = {
@@ -497,9 +520,11 @@ bool sqrt_test( )
   return( rc );
 }
 
+using std::tan;
+
 bool tan_test( )
 {
-  using std::tan;
+  // using std::tan;
   bool rc = true;
 
   complex i_values[] = {
@@ -518,9 +543,11 @@ bool tan_test( )
   return( rc );
 }
 
+using std::tanh;
+
 bool tanh_test( )
 {
-  using std::tanh;
+  // using std::tanh;
   bool rc = true;
 
   complex i_values[] = {
