@@ -551,7 +551,7 @@ void CastFloatValue( TREEPTR leaf, DATA_TYPE newtype )
             break;
         default:
         //unsigned types
-            if (leaf->op.const_type == TYPE_ULONG64) {
+            if( leaf->op.const_type == TYPE_ULONG64 ) {
 #ifdef _LONG_DOUBLE_
                 __U8LD( &leaf->op.ulong64_value, (long_double near *)&ld );
 #else
@@ -844,7 +844,7 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
         val64 = LongValue64( leaf );
         leaf->op.ulong64_value = val64;
     } else if( newtyp == TYPE_BOOL ) {
-    leaf->op.ulong_value = IsConstantZero( leaf ) ? 0 : 1;
+        leaf->op.ulong_value = IsConstantZero( leaf ) ? 0 : 1;
         newtyp = TYPE_UCHAR;
     } else {
         val32 = LongValue( leaf );
@@ -1015,25 +1015,23 @@ static bool FoldableTree( TREEPTR tree )
         break;
     case OPR_QUESTION:
         opnd = tree->left;
-    if( opnd->op.opr == OPR_ADDROF
-        && ( opnd->right->op.opr == OPR_PUSHADDR
-             || opnd->right->op.opr == OPR_PUSHSYM ) ) {
-        SYM_ENTRY sym;
+        if( opnd->op.opr == OPR_ADDROF
+          && (opnd->right->op.opr == OPR_PUSHADDR || opnd->right->op.opr == OPR_PUSHSYM) ) {
+            SYM_ENTRY   sym;
 
-        SymGet( &sym, opnd->right->op.sym_handle );
-        if ( sym.stg_class != SC_AUTO && sym.stg_class != SC_REGISTER ) {
-        /* &(static object) is known to be non-zero */
-        /* replace it by a 1 */
-        FreeExprNode( opnd->right );
-        FreeExprNode( opnd );
-        tree->left = UIntLeaf( 1 );
-        opnd = tree->left;
+            SymGet( &sym, opnd->right->op.sym_handle );
+            if( sym.stg_class != SC_AUTO && sym.stg_class != SC_REGISTER ) {
+                /* &(static object) is known to be non-zero */
+                /* replace it by a 1 */
+                FreeExprNode( opnd->right );
+                FreeExprNode( opnd );
+                tree->left = UIntLeaf( 1 );
+                opnd = tree->left;
+            }
         }
-    }
         if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
             FoldQuestionTree( tree );
         }
-
         break;
     case OPR_ADDROF:                    // look for offsetof() pattern
         offset = 0;
