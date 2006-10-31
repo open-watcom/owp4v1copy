@@ -39,11 +39,12 @@ $report_archive = $Common::config{"REPORTS"};
 $bldbase = "$home\\$Common::config{'BLDBASE'}";
 $bldlast = "$home\\$Common::config{'BLDLAST'}";
 
-$batch_name = "$home\\buildtmp.bat";
+$build_batch_name = "$home\\buildtmp.bat";
+$test_batch_name  = "$home\\testtmp.bat";
 
-sub make_batch()
+sub make_build_batch()
 {
-    open(BATCH, ">$batch_name") || die "Unable to open temporary batch file.";
+    open(BATCH, ">$build_batch_name") || die "Unable to open temporary build batch file.";
     open(INPUT, "$OW\\setvars.bat") || die "Unable to open setvars.bat";
     while (<INPUT>) {
         if    (/set OWROOT/i) { print BATCH "set OWROOT=" . $OW . "\n"; }
@@ -67,6 +68,81 @@ sub make_batch()
     close(BATCH);
 }
 
+sub make_test_batch()
+{
+    open(BATCH, ">$test_batch_name") || die "Unable to open temporary test batch file.";
+    open(INPUT, "$OW\\setvars.bat") || die "Unable to open setvars.bat";
+    while (<INPUT>) {
+        if    (/set OWROOT/i) { print BATCH "set OWROOT=" . $OW . "\n"; }
+        elsif (/set WATCOM/i) { print BATCH "set WATCOM=" . "$OW\\rel2" . "\n"; }
+        else                  { print BATCH; }
+    }
+    close(INPUT);
+    
+    # Add additional commands to do the testing.
+    print BATCH "\n";
+    print BATCH "cd $OW\\bld\\f77\\regress\n";
+    print BATCH "del *.log\n";
+    print BATCH "cd $OW\\bld\\f77\\regress\\nist\n";
+    print BATCH "call testrun\n";
+    print BATCH "cd $OW\\bld\\ctest\n";
+    print BATCH "del *.log\n";
+    print BATCH "cd $OW\\bld\\ctest\\regress\n";
+    print BATCH "call testrun\n";
+    print BATCH "cd $OW\\bld\\plustest\n";
+    print BATCH "del *.log\n";
+    print BATCH "cd $OW\\bld\\plustest\\regress\n";
+    print BATCH "call testrun\n";
+    close(BATCH);
+}
+
+sub process_log
+{
+    my($result)        = "success";
+    my($project_name)  = "none";
+    my($first_message) = "yes";
+    
+    open(LOGFILE, $_[0]) || die "Can't open $_[0]";
+    while (<LOGFILE>) {
+        if (/^=====/) {
+            if ($project_name ne "none") {
+                if ($first_message eq "yes") {
+                    print REPORT "Failed!\n";
+                    $first_message = "no";
+                }
+                print REPORT "\t\t$project_name\n";
+                $result = "fail";
+            }
+            @fields = split;
+            $source_location = $OW;
+            $source_location =~ s/\\/\\\\/;
+            $fields[2] =~ /$source_location\\(.*)/i; 
+            $project_name = $1;
+        }
+        else {
+            if (/^PASS/) {
+                $project_name = "none";
+            }
+        }
+    }
+    close(LOGFILE);
+
+    # Handle the case where the failed test is the last one.
+    if ($project_name ne "none") {
+        if ($first_message eq "yes") {
+            print REPORT "Failed!\n";
+            $first_message = "no";
+        }
+        print REPORT "\t\t$project_name\n";
+        $result = "fail";
+    }
+
+    # This is what we want to see.
+    if ($result eq "success") {
+        print REPORT "Succeeded.\n";
+    }
+}
+
 sub get_date
 {
     my(@now) = gmtime time;
@@ -79,6 +155,10 @@ sub get_datetime
     return sprintf "%04d-%02d-%02d, %02d:%02d UTC",
         $now[5] + 1900, $now[4] + 1, $now[3], $now[2], $now[1];
 }
+
+#######################
+#      Main Script
+#######################
 
 # This test should be enhanced to deal properly with subfolders, etc.
 if ($home eq $OW) {
@@ -93,32 +173,87 @@ open(REPORT, ">$report_name") || die "Unable to open report file.";
 print REPORT "Open Watcom Build Report\n";
 print REPORT "========================\n\n";
 
-# Build a fresh version of the system from scratch.
-if (system("p4 sync") != 0) {
+# Do a p4 sync to get the latest changes.
+#########################################
+
+open(SYNC, "p4 sync|");
+while (<SYNC>) {
+    @fields = split;
+    $source_location = $OW;
+    $source_location =~ s/\\/\\\\/;
+    $fields[-1] =~ /$source_location\\(.*)/i;
+    $fields[-1] = $1;    
+    push(@p4_messages, sprintf("%-8s %s", $fields[2], $fields[-1]));    
+}
+if (!close(SYNC)) {
     print REPORT "p4 failed!\n";
+    close(REPORT);
     exit 1;
 }
+print REPORT "'p4 sync' Successful (messages below).\n";
+open(LEVEL, "p4 counters|");
+while (<LEVEL>) {
+    if (/^change = (.*)/) {
+        print REPORT "\tBuilding through change: $1\n";
+    }
+}
+close(LEVEL);
+print REPORT "\n";
+
+# Build a fresh version of the system from scratch.
+####################################################
+
+make_build_batch();
 $datetime_stamp = get_datetime();
-make_batch();
 print REPORT "CLEAN+BUILD STARTED  : $datetime_stamp\n";
-if (system($batch_name) != 0) {
+if (system($build_batch_name) != 0) {
     print REPORT "clean+build failed!\n";
+    close(REPORT);
     exit 1;
 }
 $datetime_stamp = get_datetime();
 print REPORT "CLEAN+BUILD COMPLETED: $datetime_stamp\n\n";
 
 # Analyze build result.
+#######################
+
 system("summary $OW\\bld\\build.log $bldlast");
 open(CHANGES, "compare $bldbase $bldlast|");
 while (<CHANGES>) {
     print REPORT;
 }
-close(CHANGES);
+# If 'compare' fails, end now. Don't test if there was a build failure.
+if (!close(CHANGES)) {
+    close(REPORT);
+    exit 1;
+}
 
-#: Run regression tests and analyze result.
+# Run regression tests for the Fortran, C, and C++ compilers.
+##############################################################
+make_test_batch();
+$datetime_stamp = get_datetime();
+print REPORT "REGRESSION TESTS STARTED  : $datetime_stamp\n";
+system("$test_batch_name");
+$datetime_stamp = get_datetime();
+print REPORT "REGRESSION TESTS COMPLETED: $datetime_stamp\n\n";
 
-#: Finalize report, store in report archive, send to appropriate parties.
+print REPORT "\tFortran Compiler: ";
+process_log("$OW\\bld\\f77\\regress\\positive.log");
+print REPORT "\tC Compiler      : ";
+process_log("$OW\\bld\\ctest\\result.log");
+print REPORT "\tC++ Compiler    : ";
+process_log("$OW\\bld\\plustest\\result.log");
+print REPORT "\n";
+
+# Display p4 sync messages for reference.
+##########################################
+
+print REPORT "p4 Messages\n";
+print REPORT "-----------\n\n";
+
+foreach $message (@p4_messages) {
+    print REPORT "$message\n";
+}
 
 close(REPORT);
 

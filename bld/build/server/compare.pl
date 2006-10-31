@@ -127,8 +127,13 @@ if ($something_added eq "no") {
     }
 }
 
+$exit_status = 1;  # Assume failure.
+
 # This is what we like to see.
 if ($something_added eq "no" && $something_removed eq "no") {
     print "Build Successful\n\n";
+    $exit_status = 0;
 }
+
+exit $exit_status
 
