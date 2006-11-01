@@ -256,7 +256,7 @@ static int getFileInfoString( char *st, int is_small )
             }
         #endif
         MySprintf(st+strlen(st)," line %l of %l",
-            CurrentLineNumber, CurrentFile->fcb_tail->end_line, pc );
+            CurrentLineNumber, CurrentFile->fcb_tail->end_line );
         if( EditFlags.ColumnInFileStatus ) {
             MySprintf( st+strlen(st)," (col %d)", VirtualCursorPosition() );
         }
