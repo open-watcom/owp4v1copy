@@ -198,6 +198,11 @@ static void ControlReq( ctl_request req )
                     break;
                 case WM_MOUSEMOVE:
                     break;
+                case WM_PAINT:
+                    // WM_PAINT must be sent to the target window in order
+                    // to remove it from the queue 
+                    DefWindowProc( msg.hwnd, msg.message, msg.wParam, msg.lParam );
+                    break;
                 default:
                     DefWindowProc( DebuggerWindow, msg.message, msg.wParam,
                         msg.lParam );
