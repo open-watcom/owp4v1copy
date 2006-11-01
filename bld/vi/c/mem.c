@@ -222,34 +222,6 @@ void MemFree( void *ptr )
 } /* MemFree */
 
 /*
- * MemFreeList - free up memory
- */
-void MemFreeList( int hi, void **ptr )
-{
-    int i;
-
-    if( ptr == NULL ) {
-        return;
-    }
-    for( i=0;i<hi;i++ ) {
-        MemFree( ptr[i] );
-    }
-    MemFree( ptr );
-
-} /* MemFreeList */
-
-/*
- * MemFree2 - free up memory, setting ptr to null
- */
-void MemFree2( void **ptr )
-{
-
-    MemFree( *ptr );
-    *ptr = NULL;
-
-} /* MemFree2 */
-
-/*
  * doMemReallocUnsafe - reallocate a block, return NULL if it fails
  */
 void *doMemReAllocUnsafe( void *ptr, unsigned size, _trmem_who who )

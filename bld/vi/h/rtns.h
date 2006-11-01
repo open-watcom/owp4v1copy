@@ -589,8 +589,6 @@ void MatchFini( void );
 void *MemAlloc( unsigned );
 void *MemAllocUnsafe( unsigned );
 void MemFree( void * );
-void MemFreeList( int, void ** );
-void MemFree2( void ** );
 void *MemReAlloc( void *, unsigned );
 void *MemReAllocUnsafe( void *ptr, unsigned size );
 void *StaticAlloc( void );
@@ -603,6 +601,18 @@ int DumpMemory( void );
     void InitTRMEM( void );
     void DumpTRMEM( void );
 #endif
+
+#define MemFree2(pp) do { MemFree (*(pp)); *(pp) = NULL; } while (0)
+#define MemFreeList(s, pp)                                              \
+do {                                                                    \
+    if (pp) {                                                           \
+        size_t memFreeList_i;                                           \
+        for( memFreeList_i = 0; memFreeList_i < s; memFreeList_i++ ) {  \
+            MemFree( pp[memFreeList_i] );                               \
+        }                                                               \
+        MemFree( pp );                                                  \
+    }                                                                   \
+} while (0)
 
 /* misc.c */
 int ExecCmd( char *, char *, char * );
