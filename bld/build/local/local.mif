@@ -98,9 +98,11 @@ inc_dirs_lang_osi =
 # Warning flags: all enabled except the ones that have no use besides annoy people
 cflags_wng = -Wall -Wno-switch
 
-cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__LINUX__ &
--D__SMALL__ -DUNIX -DLINUX -D__FLAT__ -DBOOTSTRAP $(cppflags_$(host_cpu)) &
--D_WCUNALIGNED="__attribute__((packed))"
+cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__SMALL__ -DUNIX -D__FLAT__ -DBOOTSTRAP &
+$(cppflags_$(host_cpu)) -D_WCUNALIGNED="__attribute__((packed))"
+
+#cppflages += -D__LINUX__ -DLINUX
+
 cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -funsigned-char -fno-asm -pipe -O -o $@
 
 # options for single source utility compilations

@@ -18,6 +18,8 @@ inc_dirs += -I.
 
 res_qnx = qwstrip.res
 res_linux = qwstrip.res
+res_bsd = qwstrip.res
+res_osx = qwstrip.res
 res_dos = owstrip.res
 res_os2 = owstrip.res
 res_nt  = owstrip.res
