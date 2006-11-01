@@ -257,7 +257,7 @@ FILE *SearchForTags(void)
             *eop = 0x00;
         }
     } else {
-        GetCWD2(&path, FILENAME_MAX);
+        GetCWD2(path, FILENAME_MAX);
     }
 
     eop = &path[strlen(path) - 1];
