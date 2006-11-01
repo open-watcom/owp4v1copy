@@ -113,7 +113,7 @@ int NextFileDammit( void )
 
     if( cinfo == NULL ) {
         if( EditFlags.QuitAtLastFileExit || !dont_exit_this_time ) {
-            CurrentWindow = NULL;
+            CurrentWindow = (window_id) 0;
             // EditFlags.Quiet = TRUE;
             if( CommandBuffer ) MemFree( CommandBuffer );
             QuitEditor( 0 );
