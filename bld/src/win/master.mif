@@ -70,10 +70,6 @@ $(LNK) : $(lnk_dependencies)
         $(CC) $(CFLAGS) $[*
 
 clean: .symbolic
-    @if exist *.obj erase *.obj
-    @if exist *.err erase *.err
-    @if exist *.exe erase *.exe
-    @if exist *.lnk erase *.lnk
-    @if exist *.res erase *.res
-    @if exist *.rex erase *.rex
-    @if exist *.lib erase *.lib
+    rm -f *.obj *.err *.exe *.lnk *.res *.rex *.lib *.sym *.map
+    rm -f *.lk1 *.mk1 *.mk
+
