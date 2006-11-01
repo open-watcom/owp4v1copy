@@ -212,13 +212,11 @@ int DisplayExtraInfo( window_info *wi, window_id *wn, char _NEAR * _NEAR * data,
 bool ColumnInWindow( int col, int *diff )
 {
     int text_cols;
-    int xcol;
 
     if( col < 1 ) {
         *diff = col - 1;
         return( FALSE );
     }
-    xcol = xcol;
     text_cols = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_COLS );
     if( col > text_cols ) {
         *diff = col - text_cols;
