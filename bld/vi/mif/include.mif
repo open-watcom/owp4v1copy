@@ -10,10 +10,14 @@ inc_dirs_dos = -I"$(curses_dir)/h"
 !endif
 
 !ifdef prebuild
-inc_dirs_linux = -I"$(ui_dir)/h" -I"$(ui_dir)/unix/h"
+inc_dirs_unix = -I"$(ui_dir)/h" -I"$(ui_dir)/unix/h"
 !else
-inc_dirs_linux = -I"$(ncurses_dir)/h" -I"$(ui_dir)/h" -I"$(ui_dir)/unix/h"
+inc_dirs_unix = -I"$(ncurses_dir)/h" -I"$(ui_dir)/h" -I"$(ui_dir)/unix/h"
 !endif
+
+inc_dirs_linux = $(inc_dirs_unix)
+inc_dirs_bsd   = $(inc_dirs_unix)
+inc_dirs_osx   = $(inc_dirs_unix)
 
 winstuff = -I"$(sdk_dir)/misc" -I"$(wpi_dir)/h" -I"$(datactl_dir)"
 

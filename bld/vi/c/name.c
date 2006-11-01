@@ -50,6 +50,8 @@ char TITLE[] = "vi/386";
 char TITLE[] = "vi/qnx";
 #elif defined( __LINUX__ )
 char TITLE[] = "vi/linux";
+#elif defined( __UNIX__ )
+char TITLE[] = "vi/unix";
 #elif defined( __286__ )
 char TITLE[] = "vi/286";
 #else

@@ -118,23 +118,24 @@ static int getDir( char *dname, bool want_all_dirs )
             break;
         }
         is_subdir = FALSE;
-        #if defined( __LINUX__ )
-            {
-                struct stat st;
-                stat(nd->d_name, &st);
-                if( st.st_mode & S_IFDIR ) {
-                    is_subdir = TRUE;
-                }
-            }
-        #elif defined(__QNX__)
-            if( nd->d_stat.st_mode & S_IFDIR ) {
+#if defined( __QNX__ )
+        if( nd->d_stat.st_mode & S_IFDIR ) {
+            is_subdir = TRUE;
+        }
+#elif defined( __UNIX__ )
+        {
+            struct stat st;
+
+            stat( nd->d_name, &st );
+            if( st.st_mode & S_IFDIR ) {
                 is_subdir = TRUE;
             }
-        #else
-            if( nd->d_attr & _A_SUBDIR ) {
-                is_subdir = TRUE;
-            }
-        #endif
+        }
+#else
+        if( nd->d_attr & _A_SUBDIR ) {
+            is_subdir = TRUE;
+        }
+#endif
         if( !(want_all_dirs && is_subdir) ) {
             if( !FileMatch( nd->d_name ) ) {
                 continue;

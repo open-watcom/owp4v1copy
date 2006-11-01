@@ -44,8 +44,8 @@ char_info WindowNormalAttribute = { ' ',0 };
 char_info WindowNormalAttribute = { ' ',7 };
 #endif
 wind *Windows[ MAX_WINDS ];
-#ifndef __LINUX__
-/* for Linux these are defined in biosunix.c */
+#ifndef __UNIX__
+/* for UNIX these are defined in biosunix.c */
 char WindowBordersNG[] = { 'Ú','¿','À','Ù','³','Ä','´','Ã','','','³','Û'};
 char WindowBordersG[] =  { 'ð','¿','À','','³','Ä','´','Ã','','','°','Û'};
 #endif

@@ -62,7 +62,7 @@ objsize = xmem.obj fcbswap.obj clset.obj hist.obj samefile.obj &
 !include $(vi_dir)/win/win.mif
 !endif
 !else
-!ifeq host_os linux
+!if "$(host_os)" == "linux" || "$(host_os)" == "bsd" || "$(host_os)" == "osx" 
 !include $(vi_dir)/unix/unix.mif
 !else
 !include $(vi_dir)/$(host_os)/$(host_os).mif
