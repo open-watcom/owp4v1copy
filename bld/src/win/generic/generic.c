@@ -1,5 +1,7 @@
 #include <windows.h>
-#include <commctrl.h>
+#ifdef __NT__
+#include <commctrl.h>   // for InitCommonControls()
+#endif
 #include <stdio.h>
 #include <malloc.h>
 #include "generic.h"
