@@ -909,6 +909,7 @@ static  int  CompLink( void )
                     tmp_env = makeTmpEnv( CC_Opts );
                 if( !Flags.be_quiet )
                     PrintMsg( "       %s %s %s\n", cc_name, Word, CC_Opts );
+                fflush( NULL );
                 rc = spawnlp( P_WAIT, CC_Path, cc_name, Word, CC_Opts, NULL );
                 if( tmp_env )
                     killTmpEnv( tmp_env );
@@ -942,6 +943,7 @@ static  int  CompLink( void )
         if( !Flags.be_quiet ) {
             PrintMsg( "       %s %s\n", LINK, Temp_Link );
         }
+        fflush( NULL );
         rc = spawnlp( P_WAIT, PathBuffer, LINK, Temp_Link, NULL );
         if( rc != 0 ) {
             if( (rc == -1) || (rc == 255) ) {
@@ -956,6 +958,7 @@ static  int  CompLink( void )
             if( !Flags.be_quiet ) {
                 PrintMsg( "       %s %s\n", "cvpack", Exe_Name );
             }
+            fflush( NULL );
             rc = spawnlp( P_WAIT, PathBuffer, "cvpack", Exe_Name, NULL );
             if( rc != 0 ) {
                 if( (rc == -1) || (rc == 255) ) {

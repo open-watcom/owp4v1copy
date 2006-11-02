@@ -949,8 +949,8 @@ static  int  CompLink( void )
                 !FileExtension( Word, OBJ_EXT_SECONDARY ) ) {
                 if( !Flags.be_quiet ) {
                     PrintMsg( "       %s %s %s\n", cc_name, Word, CC_Opts );
-                    fflush( stdout );
                 }
+                fflush( NULL );
                 rc = spawnlp( P_WAIT, CC_Path, cc_name, Word, CC_Opts, NULL );
                 if( rc != 0 ) {
                     if( rc == -1  ||  rc == 255 ) {
@@ -997,8 +997,8 @@ static  int  CompLink( void )
                 sfile[2] = '=';
                 if( !Flags.be_quiet ) {
                     PrintMsg( "       %s -s -a %s %s\n", DIS, ofile, sfile );
-                    fflush( stdout );
                 }
+                fflush( NULL );
                 rc = spawnlp( P_WAIT, DIS, "-s", "-a", ofile, sfile, NULL );
                 if( rc != 0 ) {
                     if( rc == -1  ||  rc == 255 ) {
@@ -1037,7 +1037,7 @@ static  int  CompLink( void )
         if( !Flags.be_quiet ) {
             puts( "" );
         }
-        fflush( stdout );
+        fflush( NULL );
         rc = spawnlp( P_WAIT, PathBuffer, LINK, Temp_Link, NULL );
         if( rc != 0 ) {
             if( rc == -1  ||  rc == 255 ) {
@@ -1050,6 +1050,7 @@ static  int  CompLink( void )
         }
         if( Flags.do_cvpack ) {
             FindPath( "cvpack" EXE_EXT, PathBuffer );
+            fflush( NULL );
             rc = spawnlp( P_WAIT, PathBuffer, "cvpack", Exe_Name, NULL );
             if( rc != 0 ) {
                 if( rc == -1  ||  rc == 255 ) {
