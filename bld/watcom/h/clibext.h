@@ -98,6 +98,5 @@ char *strnset( char *string, int c, size_t len );
 size_t strlcpy( char *dst, const char *src, size_t len );
 size_t strlcat( char *dst, const char *t, size_t n );
 #endif
-#define __alloca alloca
 
 extern char **_argv;    /* argument vector */

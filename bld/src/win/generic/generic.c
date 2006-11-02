@@ -11,8 +11,6 @@ static BOOL AnyInstance( HINSTANCE, int, LPSTR );
 
 long _EXPORT FAR PASCAL WindowProc( HWND, unsigned, UINT, LONG );
 
-typedef VOID (WINAPI* PFNICC)( VOID );
-
 /*
  * WinMain - initialization, message loop
  */
@@ -20,17 +18,17 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
                     int cmdshow )
 {
 #ifdef __NT__
+    typedef VOID (WINAPI *PFNICC)( VOID );
     HINSTANCE   commctrl_inst;
     PFNICC      icc;
 #endif
     MSG         msg;
 
 #ifdef __NT__
-    commctrl_inst = LoadLibrary("COMCTL32.DLL");
+    commctrl_inst = LoadLibrary( "comctl32.dll" );
     if( commctrl_inst != NULL ) {
-        icc = (PFNICC)GetProcAddress(commctrl_inst, "InitCommonControls");
-        if( icc != NULL )
-        {
+        icc = (PFNICC)GetProcAddress( commctrl_inst, "InitCommonControls" );
+        if( icc != NULL ) {
             icc();
         }
     }
@@ -54,8 +52,7 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
     }
 
 #ifdef __NT__
-    if(commctrl_inst != NULL)
-    {
+    if( commctrl_inst != NULL ) {
         FreeLibrary( commctrl_inst );
     }
 #endif
