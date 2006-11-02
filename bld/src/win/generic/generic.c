@@ -1,7 +1,4 @@
 #include <windows.h>
-#ifdef __NT__
-#include <commctrl.h>   // for InitCommonControls()
-#endif
 #include <stdio.h>
 #include <malloc.h>
 #include "generic.h"
@@ -14,13 +11,30 @@ static BOOL AnyInstance( HINSTANCE, int, LPSTR );
 
 long _EXPORT FAR PASCAL WindowProc( HWND, unsigned, UINT, LONG );
 
+typedef VOID (WINAPI* PFNICC)( VOID );
+
 /*
  * WinMain - initialization, message loop
  */
 int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
                     int cmdshow )
 {
+#ifdef __NT__
+    HINSTANCE   commctrl_inst;
+    PFNICC      icc;
+#endif
     MSG         msg;
+
+#ifdef __NT__
+    commctrl_inst = LoadLibrary("COMCTL32.DLL");
+    if( commctrl_inst != NULL ) {
+        icc = (PFNICC)GetProcAddress(commctrl_inst, "InitCommonControls");
+        if( icc != NULL )
+        {
+            icc();
+        }
+    }
+#endif
 
     MyInstance = this_inst;
 #ifdef __WINDOWS_386__
@@ -39,6 +53,13 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
 
     }
 
+#ifdef __NT__
+    if(commctrl_inst != NULL)
+    {
+        FreeLibrary( commctrl_inst );
+    }
+#endif
+
     return( msg.wParam );
 
 } /* WinMain */
@@ -52,9 +73,6 @@ static BOOL FirstInstance( HINSTANCE this_inst )
     WNDCLASS    wc;
     BOOL        rc;
 
-#ifdef __NT__
-    InitCommonControls();
-#endif
     /*
      * set up and register window class
      */
