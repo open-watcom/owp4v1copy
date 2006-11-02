@@ -1257,7 +1257,7 @@ char *_cmdname( char *name )
     return( name );
 }
 
-#elif defined __LINUX__
+#elif defined __UNIX__
 
 char *_cmdname( char *name )
 {
