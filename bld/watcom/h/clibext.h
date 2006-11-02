@@ -11,6 +11,13 @@
     #include <strings.h>    /* for str*case* functions */
 #endif
 
+#if defined(__linux__) && !defined(__LINUX__)
+#define __LINUX__
+#endif
+#if defined(__unix__) && !defined(__UNIX__)
+#define __UNIX__
+#endif
+
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
