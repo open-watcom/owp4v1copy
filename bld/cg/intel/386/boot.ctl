@@ -1,5 +1,5 @@
-# wasm Builder Control file
-# =========================
+# 386 cg Builder Control file
+# ===========================
 
 set PROJDIR=<CWD>
 
@@ -13,10 +13,8 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> boot ]
 #=================
-    echo Building the wasm bootstrap
+    echo Building the Intel 386 cg bootstrap
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../bootmake
-    <CPCMD> wasm.exe <DEVDIR>/build/bin/wasm
-    <CPCMD> wasm.exe <DEVDIR>/build/bin/bwasm
     cdsay <PROJDIR>

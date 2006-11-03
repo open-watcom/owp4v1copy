@@ -100,14 +100,15 @@ inc_dirs_lang_osi =
 cflags_wng = -Wall -Wno-switch
 
 cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__SMALL__ -DUNIX -D__FLAT__ -DBOOTSTRAP &
-$(cppflags_$(host_cpu)) -D_WCUNALIGNED="__attribute__((packed))"
+$(cppflags_$(host_cpu)) -D_WCUNALIGNED="__attribute__((packed))" &
+-funsigned-char -fno-asm -fno-common
 
 #cppflages += -D__LINUX__ -DLINUX
 
-cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -funsigned-char -fno-asm -pipe -O -o $@
+cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -pipe -O -o $@
 
 # options for single source utility compilations
-wcl_util_opts = -funsigned-char $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
+wcl_util_opts = $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
 
 # options for linking via cc
 clflags = -o $@
@@ -145,12 +146,12 @@ cflags_wng = -Wall -Wno-switch
 
 cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__QNX__ &
 -D__SMALL__ -DUNIX -D__FLAT__ $(cppflags_$(host_cpu)) &
--D_WCUNALIGNED="__attribute__((packed))"
-cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -funsigned-char -fno-asm -pipe -O -o $@
+-D_WCUNALIGNED="__attribute__((packed))" -funsigned-char -fno-asm -fno-common
+cflags = $(extra_c_flags) $(cppflags) -g -c $(cflags_wng) -pipe -O -o $@
 
 !ifdef __QNX__
 # options for single source utility compilations
-wcl_util_opts = -funsigned-char $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
+wcl_util_opts = $(cflags_wng) $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
 !endif
 
 # options for linking via cc

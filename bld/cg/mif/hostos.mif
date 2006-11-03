@@ -37,7 +37,7 @@ dos_objs = &
     timer.obj &
     stack.obj
 
-qnx_objs = &
+unix_objs = &
     posixio.obj &
     memlimit.obj &
     envvar.obj &
@@ -48,16 +48,10 @@ qnx_objs = &
     doblips.obj &
     stack.obj
 
-linux_objs = &
-    posixio.obj &
-    memlimit.obj &
-    envvar.obj &
-    onexit.obj &
-    qtimer.obj &
-    qblip.obj &
-    memmgr.obj &
-    doblips.obj &
-    stack.obj
+linux_objs = $(unix_objs)
+qnx_objs   = $(unix_objs)
+bsd_objs   = $(unix_objs)
+osx_objs   = $(unix_objs)
 
 !ifeq cg_trmem 1
 mem_include = -I$(trmem_dir)

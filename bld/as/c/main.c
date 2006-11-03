@@ -47,9 +47,6 @@ extern char     *AsIncPath;
 jmp_buf         AsmParse;
 int             ExitStatus = EXIT_SUCCESS;
 
-#ifndef __WATCOMC__
-char **_argv;
-#endif
 
 void main( int argc, char **argv )
 //********************************

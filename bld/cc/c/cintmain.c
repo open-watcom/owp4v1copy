@@ -46,10 +46,6 @@ void ResetHandlers( void )
     CloseFiles();                       /* 09-may-89 */
 }
 
-#ifndef __WATCOMC__
-char **_argv;
-#endif
-
 #if defined( __DOS__ ) || defined( __OS2__ ) || defined( __OSI__ ) || defined( __NT__ )
 int main( void )
     {

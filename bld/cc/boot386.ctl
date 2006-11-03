@@ -1,5 +1,5 @@
-# wasm Builder Control file
-# =========================
+# wcc386 Builder Control file
+# ===========================
 
 set PROJDIR=<CWD>
 
@@ -13,10 +13,10 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> boot ]
 #=================
-    echo Building the wasm bootstrap
+    echo Building the wcc386 bootstrap
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
-    wmake -h -f ../bootmake
-    <CPCMD> wasm.exe <DEVDIR>/build/bin/wasm
-    <CPCMD> wasm.exe <DEVDIR>/build/bin/bwasm
+    cp -f ../linux386.386/target.h .
+    wmake -h -f ../make386
+    <CPCMD> wcc386c.exe <DEVDIR>/build/bin/wcc386
     cdsay <PROJDIR>

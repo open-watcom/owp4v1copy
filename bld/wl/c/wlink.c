@@ -90,10 +90,6 @@ static void     ResetMisc( void );
 
 #if !defined( _DLLHOST )           // it's the standalone linker
 
-#ifndef __WATCOMC__
-char **_argv;
-#endif
-
 int main( int argc, char ** argv )
 /***************************************/
 {

@@ -435,10 +435,7 @@ int GetNumber( int default_num )
 
 
 #ifndef __WATCOMC__
-char **_argv;
-
 int main( int argc, char **argv ) {
-
     _argv = argv;
 #else
 int main( void ) {

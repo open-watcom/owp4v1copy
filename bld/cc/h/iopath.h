@@ -24,12 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Host file system conventions configuration.
 *
 ****************************************************************************/
 
-#if defined(__QNX__) || defined(__LINUX__)
+#if defined(__QNX__) || defined(__UNIX__)
  #define C_PATH         "../c"
  #define H_PATH         "../h"
  #define PATH_SEP       "/"

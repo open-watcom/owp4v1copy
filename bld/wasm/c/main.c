@@ -1164,10 +1164,6 @@ static void do_init_stuff( char **cmdline )
     AsmLookup( "$" );    // create "$" symbol for current segment counter
 }
 
-#ifndef __WATCOMC__
-char **_argv;
-#endif
-
 #ifdef __UNIX__
 
 int main( int argc, char **argv )

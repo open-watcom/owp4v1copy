@@ -149,7 +149,6 @@ unsigned bufsize;
 #ifndef __WATCOMC__
 #undef sopen
 #define sopen(w,x,y,z) open(w,x,z)
-char **_argv;
 #endif
 
 int main( int argc, char *argv[] )

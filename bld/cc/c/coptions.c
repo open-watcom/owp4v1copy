@@ -277,6 +277,8 @@ local void SetTargSystem( void )                            /* 07-aug-90 */
                 _SetConstTarg( "qnx" );
             #elif defined( __LINUX__ )
                 _SetConstTarg( "linux" );
+            #elif defined( __OSX__ ) || defined( __APPLE__ )
+                _SetConstTarg( "osx" );
             #elif defined( __OS2__ )
                 _SetConstTarg( "os2" );
             #elif defined( __NT__ )
