@@ -24,9 +24,7 @@ owl_objs = owl.obj &
         log.obj
 
 owl.lib : $(owl_objs)
-        rm -f $^&.lbc
-        @for %i in ($<) do @%append $^&.lbc +%i
-        $(librarian) $(libflags) $^@ @$^&.lbc
+        $(librarian) $(libflags) $^@ $<
 
 
 bufftest.exe : bufftest.obj $(owl_objs)

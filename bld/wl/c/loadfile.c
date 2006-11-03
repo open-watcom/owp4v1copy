@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include "walloca.h"
 #include "linkstd.h"
-#if !defined( __LINUX__ ) || defined(__WATCOMC__)
+#if !defined( __UNIX__ ) || defined(__WATCOMC__)
 #include <process.h>
 #endif
 #include "ring.h"
@@ -162,10 +162,10 @@ void FiniLoadFile( void )
     DoCVPack();
 }
 
-#if defined( __LINUX__ ) && !defined(__WATCOMC__)
+#if defined( __UNIX__ ) && !defined(__WATCOMC__)
 static void DoCVPack( void ) {}
 #else
-#if defined( __LINUX__ )
+#if defined( __UNIX__ )
 #define CVPACK_EXE "cvpack"
 #else
 #define CVPACK_EXE "cvpack.exe"
@@ -724,7 +724,7 @@ static void ExecWlib( void )
     }
     _LnkFree( cmdline );
 }
-#elif defined( __LINUX__ )
+#elif defined( __UNIX__ )
 static void ExecWlib( void ) {}
 #else
 static void ExecWlib( void )

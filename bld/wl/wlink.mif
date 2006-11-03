@@ -110,6 +110,8 @@ xlibs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib)
 
 extra_rc_flags_qnx = -D_UNIX
 extra_rc_flags_linux = -D_UNIX
+extra_rc_flags_osx = -D_UNIX
+extra_rc_flags_bsd = -D_UNIX
 extra_rc_flags = $(extra_rc_flags_$(host_os))
 
 # systems where version resources must be added to .DLL

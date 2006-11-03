@@ -108,6 +108,8 @@ common_objs += virtpage.obj
 wlink_objs_dos   = linkio.obj
 wlink_objs_qnx   = posixio.obj
 wlink_objs_linux = posixio.obj
+wlink_objs_osx   = posixio.obj
+wlink_objs_bsd   = posixio.obj
 wlink_objs_nt    = ntio.obj
 wlink_objs_os2   = ntio.obj
 

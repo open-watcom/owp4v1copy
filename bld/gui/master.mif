@@ -125,12 +125,7 @@ inc_dirs = -I. -I"../h" -I"../../h" -I"$(help_dir)/h" -I"$(ui_dir)/h"
 .msg:   ../../h
 
 $(name).lib : _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__MAKEFILES__) $(wpi_lib)
-        @%create tmp.lbc
-        @for %i in ($(objs)) do @%append tmp.lbc +%i
-        @for %i in ($(extra_objs)) do @%append tmp.lbc +%i
-        @for %i in ($(sysobjs)) do @%append tmp.lbc +%i
-        @for %i in ($(wpi_lib)) do @%append tmp.lbc +%i
-        $(librarian) $(libflags) $^@ @tmp.lbc
+        $(librarian) $(libflags) $^@ $(objs) $(extra_objs) $(sysobjs) $(wpi_lib)
 
 ./mkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
         $(bld_cl) -I"$(gui_dir)/h" $(wcl_util_opts) $[@

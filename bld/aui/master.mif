@@ -38,11 +38,6 @@ dlgs = dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg &
 !endif
 
 all : auistr.gh aui.lib $(dlgs) .SYMBOLIC
-        @%null
-
-eraseall.obj : $(aui_dir)/compile.gbl
-        rm -f *.obj
-        wtouch eraseall.obj
 
 objs =  guimain.obj &
         wndgadgt.obj &
@@ -104,9 +99,7 @@ objs =  guimain.obj &
         wndimain.obj
 
 aui.lib : $(objs) $(__makefiles__) $(aui_dir)/h/aui.rc
-        @%create $^&.lbc
-        @for %i in ($(objs)) do @%append $^&.lbc +%i
-        $(librarian) $(libflags) $@ @$^&.lbc
+        $(librarian) $(libflags) $@ $(objs)
 
 .rc: ../h
 !ifdef pm

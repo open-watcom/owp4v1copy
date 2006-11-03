@@ -43,7 +43,7 @@
 #include "linkstd.h"
 #include "msg.h"
 #include "alloc.h"
-#if !defined( __LINUX__ )
+#if defined( __QNX__ )
 #include <sys/proc_msg.h>
 #endif
 #include "wlnkmsg.h"
