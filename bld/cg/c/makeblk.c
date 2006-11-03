@@ -94,7 +94,6 @@ extern  block   *MakeBlock( label_handle label, block_num edges )
     blk->ins.hd.next = (instruction *)&blk->ins;
     blk->ins.hd.prev = (instruction *)&blk->ins;
     blk->ins.hd.opcode = OP_BLOCK;
-    blk->ins.hd.state = INS_NEEDS_WORK;
     HW_CAsgn( blk->ins.hd.live.regs, HW_EMPTY );
     _LBitInit( blk->ins.hd.live.within_block, EMPTY );
     _GBitInit( blk->ins.hd.live.out_of_block, EMPTY );

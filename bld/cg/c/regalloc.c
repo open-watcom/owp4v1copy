@@ -1102,7 +1102,8 @@ static  void    PutInMemory( conflict_node *conf ) {
     ins = conf->ins_range.first;
     if( blk != NULL ) {
         for(;;) {
-            if( ins->head.state == OPERANDS_NEED_WORK ) {
+            if( ins->head.opcode != OP_BLOCK &&
+                ins->head.state == OPERANDS_NEED_WORK ) {
                 ins->head.state = INS_NEEDS_WORK;
             }
             if( ins->id == conf->ins_range.last->id ) break;
