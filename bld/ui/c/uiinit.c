@@ -31,7 +31,7 @@
 
 
 #include "uidef.h"
-#ifdef UNIX
+#ifdef __UNIX__
 #include "uivirt.h"
 #endif
 #include "uiforce.h"
@@ -65,7 +65,7 @@ bool global uiinit( int mouse )
     initialized = uistart();
 
     if( initialized ) {
-#ifdef UNIX
+#ifdef __UNIX__
         _initmouse( mouse );
 #else
         initmouse( mouse );
@@ -84,7 +84,7 @@ void global uistop( void )
 void global uifini( void )
 /************************/
 {
-#ifdef UNIX
+#ifdef __UNIX__
     _finimouse();
 #else
     finimouse();

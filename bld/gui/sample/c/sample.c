@@ -1668,7 +1668,7 @@ void GUImain( void )
 #ifdef __OS2_PM__
     //help_file = "d:\\toolkt21\\os2help\\dlgedit.hlp";
     help_file = "r:\\dlang\\binp\\help\\wfcopts.hlp";
-#elif defined( UNIX )
+#elif defined( __UNIX__ )
     help_file = "/usr/watcom/hlp/sample.hlp";
 #else
     //help_file = "d:\\windev\\bin\\win31wh.hlp";

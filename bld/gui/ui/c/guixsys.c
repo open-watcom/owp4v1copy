@@ -49,10 +49,7 @@
 #include "guistr.h"
 #include "guiextnm.h"
 #include <string.h>
-#ifdef UNIX
-    #include "clibext.h"
-//    #include "restrack.h"
-#else
+#ifdef __WATCOMC__
     #include <process.h>
 #endif
 #include <stdlib.h>

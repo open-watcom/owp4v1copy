@@ -35,7 +35,7 @@
 
 extern  WPI_INST                GUIMainHInst;
 WPI_INST                        GUIResHInst;
-#if defined( UNIX )
+#if defined( __UNIX__ )
 extern  long    GUIDialogFunc( HWND hwnd, WPI_MSG message,
                                                WPI_PARAM1 wparam,
                                                WPI_PARAM2 lparam );
@@ -189,7 +189,7 @@ gui_control_styles GUIGetControlStylesFromHWND( HWND cntl,
     return( styles );
 }
 
-#if defined( UNIX )
+#if defined( __UNIX__ )
 int InsertResDlgCntlFunc( HWND hwnd, LONG lparam )
 #else
 BOOL CALLBACK InsertResDlgCntlFunc( HWND hwnd, LONG lparam )

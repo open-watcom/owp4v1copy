@@ -46,8 +46,8 @@
 #include "wpack.h"
 //#include "rsr.h"
 #include "txttable.h"
-#ifdef UNIX
-#include <clibext.h>
+#ifndef __WATCOMC__
+#include "libext.h"
 #endif
 
 // external declarations

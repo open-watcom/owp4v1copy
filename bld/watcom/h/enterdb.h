@@ -134,7 +134,7 @@ _WCRTDATA extern char volatile DEBUG_BREAK_ON_CATCH_NAME;
     #define EnterDebuggerWithMessage( s )       EnterDebugger()
     #endif
 
-#elif defined(__PPC__) || defined( UNIX ) || defined( MAC )
+#elif defined(__PPC__) || !defined( __WATCOMC__ ) || defined( MAC )
     /*
         This should be replaced when we have in-line assembly support
         in the compiler.

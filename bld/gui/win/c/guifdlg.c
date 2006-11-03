@@ -36,13 +36,13 @@
 #include <ctype.h>
 #include <sys/stat.h>
 
-#if defined(UNIX) || defined(__QNX__)
+#if defined( __UNIX__ ) || defined( __QNX__ )
 #undef HAVE_DRIVES
 #else
 #define HAVE_DRIVES
 #endif
 
-#if !defined( UNIX )
+#if !defined( __UNIX__ )
 #include <direct.h>
 #include <dos.h>
 #else
@@ -115,7 +115,7 @@ char *GetStrFromEdit( HWND hDlg, int id )
 #ifndef __OS2_PM__
 #define PATH_STATIC_CONTROL 1088
 
-#if defined( UNIX )
+#if defined( __UNIX__ )
 uint OpenHook( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 #else
 UINT CALLBACK OpenHook( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lparam )

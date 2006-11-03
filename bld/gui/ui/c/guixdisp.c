@@ -35,9 +35,6 @@
 #include "guistr.h"
 #include <stdlib.h>
 #include <string.h>
-#ifdef UNIX
-    #include "clibext.h"
-#endif
 
 /* buttons and icons that can be in the dialog */
 typedef enum {

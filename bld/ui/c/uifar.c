@@ -30,7 +30,7 @@
 
 
 #include <stdlib.h>
-#if defined( UNIX )
+#ifndef __WATCOMC__
     #include "clibext.h"
 #else
     #if defined(__386__) || defined(M_I86)
@@ -152,7 +152,7 @@ intern void cdecl farcopy( LPPIXEL src, LPPIXEL dst, int len, int snow )
 #if defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
     _unused( snow );
     memmove( dst, src, len*sizeof(PIXEL) );
-#elif defined( __386__ ) || defined( UNIX )
+#elif defined( __386__ ) || defined( __UNIX__ )
     _unused( snow );
     #if defined( __UNIX__ )
         memmove( dst, src, len*sizeof(PIXEL) );

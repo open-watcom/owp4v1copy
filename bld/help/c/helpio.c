@@ -48,7 +48,7 @@
     #define X_OK    1       /*  Test for execute permission */
     #define F_OK    0       /*  Test for existence of file  */
 #endif
-#if !defined(__UNIX__) && !defined(UNIX)
+#if !defined(__UNIX__)
     #include <direct.h>
 #endif
 
@@ -99,7 +99,7 @@ HELPIO HelpFp HelpOpen( char *path, unsigned long mode )
     if( mode & HELP_OPEN_TRUNC ) {
         access |= O_TRUNC;
     }
-#if !defined(UNIX)
+#ifndef __UNIX__
     if( mode & HELP_OPEN_BINARY ) {
         access |= O_BINARY;
     }

@@ -36,9 +36,6 @@
 #include "guistr.h"
 #include "guihook.h"
 #include "guixmdi.h"
-#ifdef UNIX
-    #include "clibext.h"
-#endif
 
 #define MAX_LENGTH      80
 

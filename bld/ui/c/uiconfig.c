@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#ifdef UNIX
+#ifndef __WATCOMC__
     #include "clibext.h"
 #endif
 #include <stdio.h>

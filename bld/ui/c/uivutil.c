@@ -32,7 +32,7 @@
 
 #include <stdlib.h>
 #include "uidef.h"
-#ifndef UNIX
+#ifndef __UNIX__
 #include <conio.h>
 #if defined(HAVE_FAR)
 #include <i86.h>
@@ -50,7 +50,7 @@ bool intern isdialogue( VSCREEN *vptr )
 bool intern isscreen( BUFFER * bptr )
 /***********************************/
 {
-#if defined( HAVE_FAR ) && !defined( UNIX )
+#if defined( HAVE_FAR ) && !defined( __UNIX__ )
     // Short cut when using far pointers. Just check segment:
 
     return( FP_SEG( bptr->origin ) == FP_SEG( UIData->screen.origin ) );

@@ -36,7 +36,7 @@
 
 #include <string.h>
 
-#if !defined(__UNIX__) && !defined(UNIX)
+#ifndef __UNIX__
     #include <direct.h>
 #endif
 

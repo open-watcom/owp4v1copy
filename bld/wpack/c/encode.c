@@ -34,8 +34,8 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include "wpack.h"
-#ifdef UNIX
-#include <clibext.h>
+#ifndef __WATCOMC__
+#include "clibext.h"
 #endif
 
 // external function declarations

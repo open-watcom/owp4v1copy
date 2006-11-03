@@ -44,7 +44,7 @@ typedef struct {
     WPI_PROC    old;
 } enum_info;
 
-#if defined( UNIX )
+#if defined( __UNIX__ )
 BOOL GUIEnumFunc( HWND hwnd, LONG lparam )
 #else
 BOOL CALLBACK GUIEnumFunc( HWND hwnd, LONG lparam )

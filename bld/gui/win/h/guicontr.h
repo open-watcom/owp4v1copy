@@ -52,7 +52,7 @@ typedef struct {
     char                *classname;
     DWORD               style;
 //    BOOL CALLBACK     (*call_back)( HWND, unsigned, UINT, LONG );
-#if defined( UNIX )
+#if defined( __UNIX__ )
     long (*call_back)( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
 #elif defined( __WINDOWS_386__ )
     // Can't use definition below on this platform due to bug in 10.6 compiler

@@ -32,8 +32,8 @@
 #include "auipvt.h"
 #include <stdlib.h>
 #include <string.h>
-#ifdef UNIX
-#include <clibext.h>
+#ifndef __WATCOMC__
+#include "clibext.h"
 #endif
 
 extern gui_window *DlgGetParent( void );

@@ -43,10 +43,10 @@
  */
 static char _ISFAR *copyString( char _ISFAR *mem, char _ISFAR *str, int len )
 {
-#if defined(__NT__) && !defined( UNIX ) //&& !defined(__DEC__)
+#if defined(__NT__) && !defined( __UNIX__ )
     // convert ANSI or DBCS string to Unicode properly - rnk 3/1/96
     MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, str, -1, (LPWSTR)mem, len );
-    return mem+len;
+    return( mem + len );
 #if 0 // old non-Kanji safe version - rnk
     int i;
 
