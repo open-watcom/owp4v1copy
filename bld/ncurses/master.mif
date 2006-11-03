@@ -27,6 +27,10 @@ ncurses_objs = &
 
 
 ncurses.lib : $(ncurses_objs)
+!ifdef bootstrap
+    ar crs $@ $<
+!else
     rm -f $^&.lbc
     @for %i in ($<) do @%append $^&.lbc +%i
     $(librarian) $(libflags) $^. @$^&.lbc
+!endif
