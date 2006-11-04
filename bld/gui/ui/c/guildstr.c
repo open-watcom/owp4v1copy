@@ -66,7 +66,7 @@ static  HANDLE_INFO     hInstance = { 0 };
 static  bool            GUIMsgInitFlag = FALSE;
 extern  long            FileShift;
 
-static long GUIResSeek( int handle, long position, int where )
+static off_t GUIResSeek( int handle, off_t position, int where )
 /* fool the resource compiler into thinking that the resource information
  * starts at offset 0 */
 {
