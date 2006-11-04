@@ -348,6 +348,7 @@ functions.
 .do end
 .*------------------------------
 .df fenv.h
+.ix 'Floating Point Environment'
 This ISO C99 header file defines several types and declares several
 functions that give access to the floating point environment. These
 functions can be used to control status flags and control modes in the

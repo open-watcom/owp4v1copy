@@ -280,8 +280,21 @@
 .fnc _fdopen                    fdopen.gml      DOS QNX W WIN32
 .fnw _wfdopen                   fdopen.gml      DOS QNX W WIN32
 .fnu _ufdopen                   fdopen.gml      DOS       WIN32
+.fnc feclearexcept              fecleare.gml    DOS QNX W WIN32
+.fnc __fedisableexcept          _fedisab.gml    DOS QNX W WIN32
+.fnc __feenableexcept           _feenabl.gml    DOS QNX W WIN32
+.fnc fegetenv                   fegetenv.gml    DOS QNX W WIN32
+.fnc fegetexceptflag            fegetexc.gml    DOS QNX W WIN32
+.fnc fegetround                 fegetrnd.gml    DOS QNX W WIN32
+.fnc feholdexcept               feholdex.gml    DOS QNX W WIN32
 .fnc feof                       feof.gml        DOS QNX W WIN32
+.fnc feraiseexcept              feraise.gml     DOS QNX W WIN32
 .fnc ferror                     ferror.gml      DOS QNX W WIN32
+.fnc fesetenv                   fesetenv.gml    DOS QNX W WIN32
+.fnc fesetexceptflag            fesetexc.gml    DOS QNX W WIN32
+.fnc fesetround                 fesetrnd.gml    DOS QNX W WIN32
+.fnc fetestexcept               fetestex.gml    DOS QNX W WIN32
+.fnc feupdateenv                feupdenv.gml    DOS QNX W WIN32
 .fnc fflush                     fflush.gml      DOS QNX W WIN32
 .fnc ffs                        ffs.gml         DOS QNX W WIN32
 .fnc fgetc                      fgetc.gml       DOS QNX W WIN32
