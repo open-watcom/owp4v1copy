@@ -24,74 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  Mainline for applications using GUI library.
+* Description:  DIP module loader.
 *
 ****************************************************************************/
 
 
-#include "guiwind.h"
-#include "guix.h"
-#include "guiscale.h"
-#include "guixloop.h"
-#include "guixutil.h"
-#include "guicolor.h"
-#include "guixmain.h"
-#include "guisysfi.h"
-#include "guimenu.h"
-#include "guiwhole.h"
-#include "guiwnclr.h"
-#include "guihook.h"
-#include "guiutil.h"
-#include "guigadgt.h"
-#include "guizlist.h"
-#include "guideath.h"
-#include "guidead.h"
-#ifdef __UNIX__
-    #include <termios.h>
-#endif
+#ifdef __WATCOMC__
 
-extern int GUIXMain( int argc, char * argv[] );
+/* At this point OS X is sharing the DIP loader with 32-bit DOS. This is
+ * not the final solution (should be real dylib).
+ */
+#include "../dsx/dipld.c"
 
-// This makes sure that the main routine is actually linked in
-bool GUIMainTouched = FALSE;
-
-#ifdef __WINDOWS__
-#include "swap.h"
-#include <windows.h>
-#include "win1632.h"
-#include <dos.h>
-
-int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                    LPSTR lpCmdLine, int nShowCmd )
-{
-    extern char **_argv;
-    extern int  _argc;
-
-    hInstance = hInstance;
-    hPrevInstance = hPrevInstance;
-    lpCmdLine = lpCmdLine;
-    nShowCmd = nShowCmd;
-
-    return( GUIXMain( _argc, _argv ) );
-}
 #else
-#ifdef __UNIX__
-#ifdef __WATCOMC__ /* else _argv defined in clibext */
-    char **             _argv;
-#endif
-    int                 _argc;
 
-    bool                In_raw_mode = FALSE;
-    struct termios      Saved_terminal_configuration;
-#endif
+/* Use real shared libs when building with GCC */
+#include "../linux/dipld_so.c"
 
-int main( int argc, char *argv[] )
-{
-#ifdef __UNIX__
-    _argv = argv;
-    _argc = argc;
 #endif
-    return( GUIXMain( argc, argv ) );
-}
-#endif
-

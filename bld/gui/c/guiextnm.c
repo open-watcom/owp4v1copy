@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Get/set resource file name.
 *
 ****************************************************************************/
 
@@ -42,7 +41,7 @@ static char   GUIExtName[_MAX_PATH] = "";
 extern char * GUIGetExtName( void )
 {
     if( GUIExtName[0] == '\0' ) {
-#if !defined( WINDU ) && defined( __UNIX__ ) && !defined( __LINUX__ )
+#if !defined( WINDU ) && defined( __UNIX__ ) && !defined( __LINUX__ ) && !(defined( __APPLE__ ) || defined( __OSX__ ))
         _cmdname( GUIExtName );
         strcat( GUIExtName, ".res" );
         return( GUIExtName );

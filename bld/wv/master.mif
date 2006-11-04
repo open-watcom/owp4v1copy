@@ -280,7 +280,7 @@ inc_dirs = -I. -I"$(wv_dir)/h" -I"$(dig_dir)/h" -I"$(syshdir)" -I"$(hdir)"
 inc_dirs += -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(ui_dir)/h" -I"$(posix_dir)/h"
 inc_dirs += -I"$(posix_dir)/h" -I"$(gui_dir)/ui/h" -I"$(help_dir)/h"
 !endif
-!ifeq host_os linux
+!if "$(host_os)" == "linux" || "$(host_os)" == "bsd" || "$(host_os)" == "osx"
 inc_dirs += -I"$(ncurses_dir)/h"
 dig_srcs +=;$(dig_dir)/c/dsx
 !else ifeq host_os dos

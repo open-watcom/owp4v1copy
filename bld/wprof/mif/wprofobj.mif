@@ -4,6 +4,8 @@ dig_os_os2      = os2v2
 dig_os_qnx      = qnx
 dig_os_win      = win
 dig_os_linux    = linux
+dig_os_bsd      = bsd
+dig_os_osx      = osx
 
 dig_os          = $(dig_os_$(host_os))
 

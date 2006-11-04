@@ -168,6 +168,15 @@
     #undef      WANT_THREAD     // TODO: Want this later for Linux!
     #undef      WANT_RFX        // TODO: Want this later for Linux!
     #define     TRAPENTRY TRAPFAR
+#elif defined(__UNIX__)
+    #undef      WANT_FILE_INFO
+    #undef      WANT_ENV
+    #undef      WANT_ASYNC
+    #define     WANT_FILE
+    #undef      WANT_OVL
+    #undef      WANT_THREAD
+    #undef      WANT_RFX
+    #define     TRAPENTRY TRAPFAR
 #elif defined(__NETWARE__)
     #undef      WANT_FILE_INFO
     #undef      WANT_ENV
