@@ -465,7 +465,11 @@ _nc_read_entry
     char ttn[MAX_ALIAS + 3];
 
     /* truncate the terminal name to prevent dangerous buffer airline */
+#if defined( __OSX__ ) || defined( __APPLE__ )
+    (void) sprintf(ttn, "%02x/%.*s", *tn, (int) sizeof(ttn) - 4, tn);
+#else
     (void) sprintf(ttn, "%c/%.*s", *tn, MAX_ALIAS, tn);
+#endif
 
     /* This is System V behavior, in conjunction with our requirements for
      * writing terminfo entries.
