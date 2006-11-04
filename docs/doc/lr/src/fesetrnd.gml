@@ -11,9 +11,8 @@ the rounding direction is not changed.
 .desc end
 .*
 .return begin
-The &func function returns a zero value if and only if the argument is equal to a
-rounding direction macro (that is, if and only if the requested rounding direction was
-established).
+The &func function returns a zero value if and only if the requested rounding direction was
+established.
 .return end
 .*
 .see begin

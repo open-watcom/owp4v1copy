@@ -1,16 +1,17 @@
 .func feclearexcept
 #include <fenv.h>
-void  feclearexcept( int __excepts );
+int feclearexcept( int __excepts );
 .ixfunc2 'Floating Point Environment' &func
 .funcend
 .*
 .desc begin
-The &func function clears the supported floating-point exceptions
+The &func function attempts to clear the supported floating-point exceptions
 represented by its argument.
 .desc end
 .*
 .return begin
-No value is returned.
+The &func function returns zero if the excepts argument is zero or if all
+the specified exceptions were successfully cleared. Otherwise, it returns a nonzero value.
 .return end
 .*
 .see begin

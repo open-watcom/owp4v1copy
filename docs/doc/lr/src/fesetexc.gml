@@ -1,11 +1,11 @@
 .func fesetexceptflag
 #include <fenv.h>
-void fesetexceptflag( const fexcept_t *__flagp, int __excepts );
+int fesetexceptflag( const fexcept_t *__flagp, int __excepts );
 .ixfunc2 'Floating Point Environment' &func
 .funcend
 .*
 .desc begin
-The &func function sets the floating-point status flags indicated by the
+The &func function attempts to set the floating-point status flags indicated by the
 argument excepts to the states stored in the object pointed to by flagp. The value of
 *flagp shall have been set by a previous call to
 .kw fegetexceptflag
@@ -15,7 +15,9 @@ of the flags.
 .desc end
 .*
 .return begin
-No value is returned.
+The &func function returns zero if the excepts argument is zero or if
+all the specified flags were successfully set to the appropriate state. Otherwise, it returns
+a nonzero value.
 .return end
 .*
 .see begin

@@ -1,11 +1,11 @@
 .func fesetenv
 #include <fenv.h>
-void fesetenv( const fenv_t *__envp );
+int fesetenv( const fenv_t *__envp );
 .ixfunc2 'Floating Point Environment' &func
 .funcend
 .*
 .desc begin
-The &func function establishes the floating-point environment represented by the
+The &func function attempts to establishe the floating-point environment represented by the
 object pointed to by envp. The argument envp shall point to an object set by a call to
 .kw fegetenv
 or
@@ -17,7 +17,8 @@ its argument, and does not raise these floating-point exceptions.
 .desc end
 .*
 .return begin
-No value is returned.
+The &func function returns zero if the environment was successfully established.
+Otherwise, it returns a nonzero value.
 .return end
 .*
 .see begin

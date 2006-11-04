@@ -9,7 +9,9 @@ The &func function gets the current rounding direction.
 .desc end
 .*
 .return begin
-The &func function returns the current rounding direction.
+The &func function returns the value of the rounding direction macro
+representing the current rounding direction or a negative value if there is no such
+rounding direction macro or the current rounding direction is not determinable.
 .np
 Valid rounding modes are
 .kw FE_TONEAREST

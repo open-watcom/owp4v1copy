@@ -1,11 +1,11 @@
 .func fegetexceptflag
 #include <fenv.h>
-void fegetexceptflag( fexcept_t *__flagp, int __excepts );
+int fegetexceptflag( fexcept_t *__flagp, int __excepts );
 .ixfunc2 'Floating Point Environment' &func
 .funcend
 .*
 .desc begin
-The &func function stores a representation of the states of the
+The &func function attempts to store a representation of the states of the
 floating-point status flags indicated by the argument excepts in the
 object pointed to by the argument flagp.
 .np
@@ -19,15 +19,16 @@ Valid exceptions are
 .np
 The value
 .kw FE_ALL_EXCEPT
-is the logical or of these values.
+is the logical OR of these values.
 .desc end
 .*
 .return begin
-No value is returned.
+The &func function returns zero if the representation was successfully
+stored. Otherwise, it returns a nonzero value.
 .return end
 .*
 .see begin
-.seelist &function. __fdisableexcept
+.seelist &function. feclearexcept feraiseexcept fesetexceptflag fetestexcept
 .see end
 .*
 .exmp begin

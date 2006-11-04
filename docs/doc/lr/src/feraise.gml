@@ -1,16 +1,17 @@
 .func feraiseexcept
 #include <fenv.h>
-void feraiseexcept( int __excepts );
+int feraiseexcept( int __excepts );
 .ixfunc2 'Floating Point Environment' &func
 .funcend
 .*
 .desc begin
-The &func function raises the supported floating-point exceptions
+The &func function attempts to raise the supported floating-point exceptions
 represented by its argument.
 .desc end
 .*
 .return begin
-No value is returned.
+The &func function returns zero if the excepts argument is zero or if all
+the specified exceptions were successfully raised. Otherwise, it returns a nonzero value.
 .return end
 .*
 .see begin
