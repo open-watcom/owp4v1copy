@@ -156,7 +156,7 @@ extern void fwait( void );
 The feclearexcept function clears the supported floating-point exceptions
 represented by its argument.
 */
-_WCRTLINK int feclearexcept( int excepts )
+_WCRTLINK void feclearexcept( int excepts )
 /****************************************/
 {
     fenv_t      env;
@@ -164,7 +164,6 @@ _WCRTLINK int feclearexcept( int excepts )
     fenv_store( &env );
     env.status_word &= ~excepts;
     fenv_load( &env );
-    return( 0 );
 }
 
 /*
@@ -173,14 +172,13 @@ representation of the states of the floating-point status flags
 indicated by the argument excepts in the object pointed to by
 the argument flagp.
 */
-_WCRTLINK int fegetexceptflag( fexcept_t *flagp, int excepts )
+_WCRTLINK void fegetexceptflag( fexcept_t *flagp, int excepts )
 /************************************************************/
 {
     uint16_t    status;
 
     fpsw_store( &status );
     *flagp = excepts & status & FE_ALL_EXCEPT;
-    return( 0 );
 }
 
 /*
@@ -191,7 +189,7 @@ as stated in F.7.6. Whether the feraiseexcept function additionally
 raises the inexact floating-point exception whenever it raises the
 overflow or underflow floating-point exception is implementation-defined.
 */
-_WCRTLINK int feraiseexcept( int excepts )
+_WCRTLINK void feraiseexcept( int excepts )
 /****************************************/
 {
     fenv_t      env;
@@ -200,7 +198,6 @@ _WCRTLINK int feraiseexcept( int excepts )
     env.status_word |= excepts & FE_ALL_EXCEPT;
     fenv_load( &env );
     fwait();    /* Make sure exception gets triggered now */
-    return( 0 );
 }
 
 /*
@@ -240,7 +237,7 @@ at least those floating-point exceptions represented by the argument
 excepts. This function does not raise floating-point exceptions,
 but only sets the state of the flags.
 */
-_WCRTLINK int fesetexceptflag( const fexcept_t *flagp, int excepts )
+_WCRTLINK void fesetexceptflag( const fexcept_t *flagp, int excepts )
 /******************************************************************/
 {
     fenv_t      env;
@@ -249,7 +246,6 @@ _WCRTLINK int fesetexceptflag( const fexcept_t *flagp, int excepts )
     env.status_word &= ~FE_ALL_EXCEPT;
     env.status_word |= excepts & *flagp & FE_ALL_EXCEPT;
     fenv_load( &env );
-    return( 0 );
 }
 
 /*
@@ -316,11 +312,10 @@ _WCRTLINK int fesetround( int round )
 The fegetenv function stores the current floating-point environment
 in the object pointed to by envp.
 */
-_WCRTLINK int fegetenv( fenv_t *envp )
+_WCRTLINK void fegetenv( fenv_t *envp )
 /************************************/
 {
     fenv_store( envp );
-    return( 0 );
 }
 
 /*
@@ -350,11 +345,10 @@ environment macro. Note that fesetenv merely installs the state of the
 floating-point status flags represented through its argument, and does not
 raise these floating-point exceptions.
 */
-_WCRTLINK int fesetenv( const fenv_t *envp )
+_WCRTLINK void fesetenv( const fenv_t *envp )
 /******************************************/
 {
     fenv_load( envp );
-    return( 0 );
 }
 
 /*
@@ -364,7 +358,7 @@ by the object pointed to by envp, and then raises the saved floating-point
 exceptions. The argument envp shall point to an object set by a call to
 feholdexcept or fegetenv, or equal a floating-point environment macro.
 */
-_WCRTLINK int feupdateenv( const fenv_t *envp )
+_WCRTLINK void feupdateenv( const fenv_t *envp )
 /*********************************************/
 {
     uint16_t    status;
@@ -372,5 +366,4 @@ _WCRTLINK int feupdateenv( const fenv_t *envp )
     fpsw_store( &status );
     fenv_load( envp );
     feraiseexcept( status & FE_ALL_EXCEPT );
-    return( 0 );
 }
