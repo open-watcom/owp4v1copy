@@ -3,22 +3,22 @@
 /* part of bug 514 - compiler wasn't matching int and signed int */
 template < class T >
 struct X{
-    static const v = 1;
+    static int const v = 1;
 };
 
 template <>
 struct X< int >{
-    static const v = 2;
+    static int const v = 2;
 };
 
 template <>
 struct X< unsigned long >{
-    static const v = 3;
+    static int const v = 3;
 };
 
 template <>
 struct X< signed long >{
-    static const v = 4;
+    static int const v = 4;
 };
 
 int main( void )

@@ -20,11 +20,19 @@ struct B<S, A<T> > {
 };
 
 struct C{
-  typedef typename B<bool, A<bool> >::K L;
-  typedef typename B<int, A<bool> >::K M;
+  typedef B<bool, A<bool> >::K L;
+  typedef B<int, A<bool> >::K M;
 };
+
+template< class X >
+struct D{
+  typedef B<bool, A<bool> >::K L;
+  typedef B<int, A<bool> >::K M;
+};
+
 
 int main() {
     C c;
+    D< int > d;
     _PASS;
 }

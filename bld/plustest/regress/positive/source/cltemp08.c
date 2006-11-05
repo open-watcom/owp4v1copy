@@ -2,19 +2,19 @@
 
 template<class T> struct S;
 
-// template<>
+template<>
 struct S<char> {
     friend struct S<int>;
 };
 
-// template<>
+template<>
 struct S<int> {
 };
 
-// template<>
+template<>
 struct S<short>;
 
-// template<>
+template<>
 struct S<short> {
 };
 

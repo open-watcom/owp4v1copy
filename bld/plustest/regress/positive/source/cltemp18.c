@@ -9,7 +9,7 @@ template< class T >
 class B{
 };
 
-template< class T >
+template<>
 class B< A<bool> >{
 };
 
