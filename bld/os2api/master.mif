@@ -4,9 +4,154 @@ os2api_distrib_lib = 1
 
 !include cproj.mif
 !include defrule.mif
-!include deftarg.mif
 
-.EXTENSIONS : .lbc .def
+splice = wsplice -i$(hdr_dir) $[@ $^@
+
+.EXTENSIONS : .lbc .def .mh
+
+headers286 =         &
+        bse.h        &
+        bsedev.h     &
+        bsedos.h     &
+        bsesub.h     &
+        os2.h        &
+        os2def.h     &
+        pm.h         &
+        pmbitmap.h   &
+        pmdev.h      &
+        pmerr.h      &
+        pmgpi.h      &
+        pmhelp.h     &
+        pmmle.h      &
+        pmshl.h      &
+        pmwin.h
+
+headers386 =                 &
+        acb.h                &
+        basemid.h            &
+        bdcalls.h            &
+        bse.h                &
+        bsedev.h             &
+        bsedos.h             &
+        bseerr.h             &
+        bseord.h             &
+        bsesub.h             &
+        bsexcpt.h            &
+	callconv.h           &
+        codec.h              &
+        dive.h               &
+        driver.h             &
+        evcb.h               &
+        exe.h                &
+        exe386.h             &
+        fourcc.h             &
+        ftpapi.h             &
+        genio.h              &
+        mciapi.h             &
+        mcios2.h             &
+        meerror.h            &
+        mididll.h            &
+        midios2.h            &
+        mmdrvos2.h           &
+        mmioos2.h            &
+        nerrno.h             &
+        netdb.h              &
+        newexe.h             &
+        os2.h                &
+        os2def.h             &
+        os2me.h              &
+        os2medef.h           &
+        pm.h                 &
+        pmavio.h             &
+        pmdev.h              &
+        pmerr.h              &
+        pmgpi.h              &
+        pmhelp.h             &
+        pmsei.h              &
+        pmspl.h              &
+        pmstddlg.h           &
+        pmtypes.h            &
+        pmwin.h              &
+        pmwp.h               &
+        rexxsaa.h            &
+        ssm.h                &
+        sw.h                 &
+        tcpustd.h            &
+        types.h              &
+        uconv.h              &
+        ulserrno.h           &
+        ulsitem.h            &
+        unidef.h             &
+        upm.h                &
+        utils.h              &
+        arpa/inet.h          &
+        GL/gl.h              &
+        GL/glaux.h           &
+        GL/glu.h             &
+        GL/glut.h            &
+        GL/pgl.h             &
+        GL/tk.h              &
+        machine/ansi.h       &
+        machine/endian.h     &
+        machine/types.h      &
+        net/if.h             &
+	net/if_arp.h         &
+        net/if_dl.h          &
+        net/route.h          &
+        netinet/icmp_var.h   &
+        netinet/if_ether.h   &
+        netinet/in.h         &
+        netinet/ip_icmp.h    &
+        netinet/ip_var.h     &
+        netinet/tcp.h        &
+        netinet/tcp_var.h    &
+        netinet/udp.h        &
+        netinet/udp_var.h    &
+        protocol/routed.h    &
+        protocol/rwhod.h     &
+        protocol/talkd.h     &
+        protocol/timed.h     &
+        sys/cdefs.h          &
+        sys/filio.h          &
+        sys/ioccom.h         &
+        sys/ioctl.h          &
+        sys/ioctlos2.h       &
+        sys/lipcpar.h        &
+        sys/param.h          &
+        sys/select.h         &
+        sys/socket.h         &
+        sys/sockio.h         &
+        sys/sysctl.h         &
+        sys/time.h           &
+        sys/uio.h            &
+        sys/un.h
+
+dirs386 =            &
+        arpa         &
+        GL           &
+        machine      &
+        net          &
+        netinet      &
+        protocol     &
+        sys
+
+libs286 =            &
+        os2.lib
+
+libs386 =            &
+        os2386.lib   &
+        rexx.lib     &
+        tcpip32.lib  &
+        ftpapi.lib   &
+        opengl.lib   &
+        glut.lib     &
+        libtk.lib    &
+        libaux.lib   &
+        mmpm2.lib    &
+        rtmidi.lib   &
+        upm32.lib    &
+        libuls.lib   &
+        libconv.lib
 
 components286 =      &
         ansicall.lbc &
@@ -59,18 +204,58 @@ componentsmmpm2 =    &
         mmio.lbc     &
         sw.lbc
 
+!ifeq host_cpu i86
+headers = $(headers286)
+libs = $(libs286)
+incldir = incl16
+libdir = lib286
+!else
+headers = $(headers386)
+libs = $(libs386)
+dirs = $(dirs386)
+incldir = incl32
+libdir = lib386
+!endif
+
 extra_lib_flags = -io -ii -p=32
 
-.def .asm : ../$(srcdir)
+all : $(dirs) $(headers) $(libs) .SYMBOLIC
+
+.def .asm: ../$(libdir)
+.mh: ../$(incldir)
 
 .def.lbc:
-        $(vi) -s ../def2lbc.vi -p"$*" ../$(srcdir)/$[.
+        $(vi) -s ../def2lbc.vi -p"$*" ../$(libdir)/$[.
 
 .lbc.lib:
         $(librarian) $(libflags) $@ @$<
 
 .obj.lib:
         $(librarian) $(libflags) $@ $<
+
+.mh.h:
+        $(splice)
+
+{arpa}.mh{arpa}.h:
+        $(splice)
+
+{GL}.mh{GL}.h:
+        $(splice)
+
+{machine}.mh{machine}.h:
+        $(splice)
+
+{net}.mh{net}.h:
+        $(splice)
+
+{netinet}.mh{netinet}.h:
+        $(splice)
+
+{protocol}.mh{protocol}.h:
+        $(splice)
+
+{sys}.mh{sys}.h:
+        $(splice)
 
 os2.lib: lib286.lbc msgseg.obj
         $(librarian) $(libflags) $@ @$[@ +$]@
@@ -101,3 +286,29 @@ libuls.lib: libuni.lbc
 
 libconv.lib: uconv.lbc
         $(librarian) $(libflags) $@ @$<
+
+!ifeq host_cpu 386
+$(dirs386):
+        if not exist $@ mkdir $@
+!endif
+
+clean : .SYMBOLIC
+        rm -f *.h
+	rm -f *.lbc
+        rm -f *.lib
+        rm -f *.obj
+        rm -f arpa/*.h
+        rm -f GL/*.h
+        rm -f machine/*.h
+        rm -f net/*.h
+        rm -f netinet/*.h
+        rm -f protocol/*.h
+        rm -f sys/*.h
+        if exist arpa rmdir arpa
+        if exist GL rmdir GL
+        if exist machine rmdir machine
+        if exist net rmdir net
+        if exist netinet rmdir netinet
+        if exist protocol rmdir protocol
+        if exist sys rmdir sys
+
