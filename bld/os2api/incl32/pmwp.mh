@@ -9,7 +9,7 @@
 #define PMWP_INCLUDED
 
 :include readonly.sp
-:include crwatcnt.sp
+:include cpluspro.sp
 
 #define INCL_WPERRORS
 #include <pmerr.h>
