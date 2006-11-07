@@ -5,7 +5,7 @@
  */
 
 :include readonly.sp
-:include cplusepi.sp
+:include cpluspro.sp
 
 #ifdef INCL_ERRORS
     #define INCL_DOSERRORS
