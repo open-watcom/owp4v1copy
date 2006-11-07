@@ -13,6 +13,7 @@ headers286 =         &
         bse.h        &
         bsedev.h     &
         bsedos.h     &
+        bseerr.h     &
         bsesub.h     &
         os2.h        &
         os2def.h     &
