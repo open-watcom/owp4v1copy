@@ -19,7 +19,7 @@ struct S {
     ~S() { fail(__LINE__); }
 };
 
-void main()
+int main()
 {
     S x;    // dtor should not be called!
     if( ctor != 1 ) fail(__LINE__);
