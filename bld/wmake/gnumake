@@ -44,4 +44,4 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 clean:
-	rm -f *.o *.gh
+	rm -f $(OBJDIR)/*.o $(OBJDIR)/*.gh
