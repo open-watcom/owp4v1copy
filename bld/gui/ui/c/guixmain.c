@@ -76,10 +76,10 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 #else
 #ifdef __UNIX__
-#ifdef __WATCOMC__ /* else _argv defined in clibext */
+#ifndef __WATCOMC__ /* else _argv defined in clibext */
     char **             _argv;
-#endif
     int                 _argc;
+#endif
 
     bool                In_raw_mode = FALSE;
     struct termios      Saved_terminal_configuration;
@@ -88,8 +88,10 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 int main( int argc, char *argv[] )
 {
 #ifdef __UNIX__
+#ifndef __WATCOMC__
     _argv = argv;
     _argc = argc;
+#endif
 #endif
     return( GUIXMain( argc, argv ) );
 }
