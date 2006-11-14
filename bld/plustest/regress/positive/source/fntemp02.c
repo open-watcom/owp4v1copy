@@ -7,7 +7,6 @@ template <class T>
 struct OV {
     operator void *()
     {
-        fail(__LINE__);
         return 0;
     }
 };
@@ -15,6 +14,7 @@ struct OV {
 template <class T>
 int operator ==( OV<T> const &x, OV<T> const &y )
 {
+    fail(__LINE__);
     return 0;
 }
 
