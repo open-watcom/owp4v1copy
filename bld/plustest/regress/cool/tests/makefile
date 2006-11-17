@@ -12,17 +12,13 @@ tests = &
     test_com.$(exe) &
     test_dt.$(exe) &
     test_gs.$(exe) &
-    test_han.$(exe) &
     test_has.$(exe) &
-    test_ite.$(exe) &
     test_lis.$(exe) &
-    test_m_v.$(exe) &
     test_mat.$(exe) &
     test_nod.$(exe) &
     test_nt.$(exe) &
     test_pai.$(exe) &
     test_pro.$(exe) &
-    test_qua.$(exe) &
     test_que.$(exe) &
     test_ran.$(exe) &
     test_rat.$(exe) &
@@ -33,7 +29,13 @@ tests = &
     test_str.$(exe) &
     test_tim.$(exe) &
     test_val.$(exe) &
-    test_vec.$(exe)
+    test_vec.$(exe) &
+!ifneq arch i86       # Eager template instantiation causes problems for i86.
+    test_han.$(exe) &
+    test_ite.$(exe) &
+    test_m_v.$(exe) &
+    test_qua.$(exe) &
+!endif
 
 !ifdef test1
 test_cflags = -op-d2
@@ -81,16 +83,10 @@ test : .symbolic ex.lnk $(tests)
     $(run) test_dt.$(exe) >>test.out
     %append test.out test_gs.$(exe)
     $(run) test_gs.$(exe) >>test.out
-    %append test.out test_han.$(exe)
-    $(run) test_han.$(exe) >>test.out
     %append test.out test_has.$(exe)
     $(run) test_has.$(exe) >>test.out
-    %append test.out test_ite.$(exe)
-    $(run) test_ite.$(exe) >>test.out
     %append test.out test_lis.$(exe)
     $(run) test_lis.$(exe) >>test.out
-    %append test.out test_m_v.$(exe)
-    $(run) test_m_v.$(exe) >>test.out
     %append test.out test_mat.$(exe)
     $(run) test_mat.$(exe) >>test.out
     %append test.out test_nod.$(exe)
@@ -101,8 +97,6 @@ test : .symbolic ex.lnk $(tests)
     $(run) test_pai.$(exe) >>test.out
     %append test.out test_pro.$(exe)
     $(run) test_pro.$(exe) >>test.out
-    %append test.out test_qua.$(exe)
-    $(run) test_qua.$(exe) >>test.out
     %append test.out test_que.$(exe)
     $(run) test_que.$(exe) >>test.out
     %append test.out test_ran.$(exe)
@@ -125,7 +119,21 @@ test : .symbolic ex.lnk $(tests)
     $(run) test_val.$(exe) >>test.out
     %append test.out test_vec.$(exe)
     $(run) test_vec.$(exe) >>test.out
+!ifneq arch i86
+    %append test.out test_han.$(exe)
+    $(run) test_han.$(exe) >>test.out
+    %append test.out test_ite.$(exe)
+    $(run) test_ite.$(exe) >>test.out
+    %append test.out test_m_v.$(exe)
+    $(run) test_m_v.$(exe) >>test.out
+    %append test.out test_qua.$(exe)
+    $(run) test_qua.$(exe) >>test.out
+!endif
+!ifneq arch i86
     diff test.out test.chk
+!else
+    diff test.out testi86.chk
+!endif
     %make global
     %append $(log_file) PASS $(%__CWD__)
     
