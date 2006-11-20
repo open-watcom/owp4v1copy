@@ -8,6 +8,20 @@ diagnose_dir = source
 diagnose_opts += -ew -we -wx -e1000 -zq -eq
 archdep_opts = -dARCH=$(arch) -fr=.ser
 
+# The check files for x86 are a bit different.
+!ifeq arch i86
+diagchk0 = di860000.chk
+diagchk1 = di860100.chk
+diagchk2 = di860200.chk
+diagchk3 = di860300.chk
+!else
+diagchk0 = diag0000.chk
+diagchk1 = diag0100.chk
+diagchk2 = diag0200.chk
+diagchk3 = diag0300.chk
+dosystest = testsys
+!endif
+
 .c: $(diagnose_dir)
 .c.err:
     -$(wpp_$(arch)) $[@ @diag $(opt_$^&)
@@ -16,7 +30,7 @@ archdep_opts = -dARCH=$(arch) -fr=.ser
     -$(wpp_$(arch)) $[@ @diag $(opt_$^&) $(archdep_opts)
     @if not exist $^&.ser echo I did not generate errors for $^& > $^&.ser
 
-test : .symbolic initopts test0000 test0100 test0200 test0300 testsys test_special
+test : .symbolic initopts test0000 test0100 test0200 test0300 $(dosystest) test_special
     %make global
     %append $(log_file) PASS $(%__CWD__)
 
@@ -24,22 +38,22 @@ initopts : .symbolic
     set diag=$(diagnose_opts)
 
 test0000 : .symbolic diag0000.out
-    -diff -b diag0000.out diag0000.chk >diff0000.out
+    -diff -b diag0000.out $(diagchk0) >diff0000.out
     diff -b diff0000.out diff0000.chk
     @rm diff0000.out
 
 test0100 : .symbolic diag0100.out
-    -diff -b diag0100.out diag0100.chk >diff0100.out
+    -diff -b diag0100.out $(diagchk1) >diff0100.out
     diff -b diff0100.out diff0100.chk
     @rm diff0100.out
 
 test0200 : .symbolic diag0200.out
-    -diff -b diag0200.out diag0200.chk >diff0200.out
+    -diff -b diag0200.out $(diagchk2) >diff0200.out
     diff -b diff0200.out diff0200.chk
     @rm diff0200.out
 
 test0300 : .symbolic diag0300.out
-    -diff -b diag0300.out diag0300.chk >diff0300.out
+    -diff -b diag0300.out $(diagchk3) >diff0300.out
     diff -b diff0300.out diff0300.chk
     @rm diff0300.out
 

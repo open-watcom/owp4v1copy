@@ -1,0 +1,102 @@
+File: source\diag0300.c
+(6,2): Error! E080: one error
+File: source\diag0301.c
+(4,18): Warning! W895: ignoring whitespace after line splice
+(9,10): Warning! W896: empty member declaration
+(10,11): Warning! W896: empty member declaration
+(15,36): Error! E417: only virtual functions may be declared pure
+(16,36): Error! E417: only virtual functions may be declared pure
+(17,46): Error! E376: virtual function must be a non-static member function
+(17,46): Error! E417: only virtual functions may be declared pure
+(18,46): Error! E376: virtual function must be a non-static member function
+(18,46): Error! E417: only virtual functions may be declared pure
+(19,16): Error! E417: only virtual functions may be declared pure
+(21,10): Error! E417: only virtual functions may be declared pure
+File: source\diag0302.c
+(5,22): Error! E499: object (or object pointer) required to access non-static member function
+  definition: 'void ABC::meth2( void )'
+(8,5): Warning! W014: no reference to symbol 'b'
+  definition: 'B b' in 'ABC::ABC( void )'
+(16,10): Warning! W894: unexpected character (22) in source file
+(16,10): Error! E121: syntax error
+File: source\diag0303.c
+(1,35): Error! E244: missing default arguments
+(5,37): Error! E244: missing default arguments
+(9,40): Error! E029: symbol 'i4' has not been declared
+(13,115): Error! E121: syntax error
+(17,21): Error! E498: syntax error before 'test'; probable cause: incorrectly spelled type name
+(28,1): Warning! W014: no reference to symbol 'c'
+  definition: '<error> c' in 'int main( void )'
+(28,1): Warning! W014: no reference to symbol 'd'
+  definition: '<error> d' in 'int main( void )'
+(28,1): Warning! W014: no reference to symbol 'e'
+  definition: '<error> e' in 'int main( void )'
+File: source\diag0304.c
+(2,18): Error! E898: in-class initialization is only allowed for const static integral members
+(3,19): Error! E898: in-class initialization is only allowed for const static integral members
+(7,25): Error! E498: syntax error before 'i3'; probable cause: incorrectly spelled type name
+(8,23): Error! E357: virtual function may only be declared in a class
+(8,25): Error! E330: function cannot be initialized
+(9,23): Error! E357: virtual function may only be declared in a class
+(9,25): Error! E330: function cannot be initialized
+(10,2): Error! E121: syntax error
+Code generation for: test
+  definition: 'void test( void )'
+Warning! W433: mangled name for 'xa1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901' has been truncated
+  definition: 'V123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890<short> xa1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901'
+Code optimization
+Warning! W433: mangled name for 'xa1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901' has been truncated
+  definition: 'V123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890<short> xa1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901'
+Warning! W433: mangled name for '__CPR305___Y_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1Z' has been truncated
+  definition: 'void __CPR305___Y_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1Z( void )'
+Warning! W433: mangled name for '__CPR305___M_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1ZZ3ZZ4ZbN27_i_' has been truncated
+  definition: 'void __CPR305___M_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1ZZ3ZZ4ZbN27_i_( void )'
+Warning! W433: mangled name for '__CPR305___N_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1ZZ3ZZ4ZbN27_i_' has been truncated
+  definition: 'void (__declspec(dllimport) __CPR305___N_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1ZZ3ZZ4ZbN27_i_)( void )'
+Warning! W433: mangled name for '__CPR305___Q_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1ZZ3ZZ4ZbN27_i_' has been truncated
+  definition: 'void stdcall (__declspec(dllimport) __CPR305___Q_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1ZZ3ZZ4ZbN27_i_)( void )'
+Warning! W433: mangled name for '__CPR305___O_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1ZZ3ZZ4ZbN27_i_' has been truncated
+  definition: 'void fastcall (__declspec(dllimport) __CPR305___O_read_buffered__tm__180_cQ2_3std20char_traits__tm__2_cQ2_3std75binder2nd__tm__58_Q2_3std48_Eq_traits__tm__30_Q2_3stdJ34JQ2_3std56_Scan_for_char_val__tm__J108J__3stdFPQ2_3std27basic_istream__tm__7_Z1ZZ2ZPQ2_3std29basic_streambuf__tm__J241JiPZ1ZZ3ZZ4ZbN27_i_)( void )'
+Warning! W433: mangled name for 'y01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123' has been truncated
+  definition: 'void y01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123( void )'
+Warning! W433: mangled name for 'p012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' has been truncated
+  definition: 'void p012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890( void )'
+Warning! W433: mangled name for 's012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' has been truncated
+  definition: 'void (__declspec(dllimport) s012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890)( void )'
+Warning! W433: mangled name for 'q012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' has been truncated
+  definition: 'void stdcall (__declspec(dllimport) q012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890)( void )'
+Warning! W433: mangled name for 'r012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890' has been truncated
+  definition: 'void fastcall (__declspec(dllimport) r012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890)( void )'
+Warning! W433: mangled name for 'ya1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345' has been truncated
+  definition: 'V123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890<short> __declspec(dllimport) ya1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345'
+File: source\diag0306.c
+(8,36): Error! E905: static assertion failed 'message 2'
+(11,45): Error! E905: static assertion failed 'message 3'
+(15,40): Error! E905: static assertion failed 'message 4'
+(19,66): Error! E905: static assertion failed 'message 5'
+(5,56): Error! E905: static assertion failed 'message 1'
+  template class instantiation for 'A<int>' was at: (20,5)
+(23,1): Warning! W014: no reference to symbol 'a'
+  definition: '<error> a' in 'int main( void )'
+File: source\diag0307.c
+(2,13): Error! E121: syntax error
+(3,1): Error! E028: expecting ';' but found '}'
+(4,0): Error! E199: premature end-of-file encountered during compilation
+File: source\diag0308.c
+(20,2): Error! E174: class template 'B' cannot be overloaded
+  definition: '<class template> B'
+(23,9): Error! E006: syntax error; probable cause: missing ';'
+(27,9): Error! E006: syntax error; probable cause: missing ';'
+(36,2): Error! E903: specialization arguments for 'E' match primary template
+  definition: '<class template> E'
+(40,13): Error! E904: partial template specialization for 'A' ambiguous
+  definition: '<class template> A'
+  candidate defined at: (6,8)
+  candidate defined at: (10,8)
+(40,13): Warning! W014: no reference to symbol 'a'
+  definition: 'A<1,1> a' in 'int main( void )'
+File: source\diag0309.c
+(15,2): Error! E181: class template 'X' is already defined
+  definition: '<class template> X'
+(20,2): Error! E181: class template 'X' is already defined
+  definition: '<class template> X'
