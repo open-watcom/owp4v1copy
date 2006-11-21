@@ -65,6 +65,7 @@ common_no_ext = &
         strstrea &
         typeinfo &
         type_tra &
+        unordere &
         utility &
         valarray &
         vector
@@ -72,6 +73,7 @@ common_no_ext = &
 common = &
         $(common_no_ext) &
         _comdef.h &
+        _hash.h &
         _rbtree.h &
         _strdef.h &
 	alloca.h &

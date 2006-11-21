@@ -61,6 +61,7 @@ template = &
         string01$(ext)  &
         string02$(ext)  &
         typetr01$(ext)  &
+        unoset01$(ext)  &
         util01$(ext)    &
         vector01$(ext)  
 

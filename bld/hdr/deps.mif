@@ -87,6 +87,7 @@ stack_deps = ../watcom/stack.mh ../readonly.sp ../crwatcnt.sp
 stdexcept_deps = ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp ../throws.sp
 typeinfo_deps = ../watcom/typeinfo.mh ../readonly.sp ../crwat.sp
 type_tra_deps = ../watcom/type_tra.mh ../readonly.sp ../crwat.sp
+unordere_deps = ../watcom/unordere.mh ../readonly.sp ../crwatcnt.sp
 utility_deps = ../watcom/utility.mh ../readonly.sp ../crwatcnt.sp
 valarray_deps = ../watcom/valarray.mh ../readonly.sp ../crwatcnt.sp
 vector_deps = ../watcom/vector.mh ../readonly.sp ../crwatcnt.sp
@@ -112,6 +113,7 @@ stdexcep     : $(stdexcept_deps)
 string       : $(string_deps)
 typeinfo     : $(typeinfo_deps)
 type_tra     : $(type_tra_deps)
+unordere     : $(unordere_deps)
 utility      : $(utility_deps)
 valarray     : $(valarray_deps)
 vector       : $(vector_deps)
@@ -119,6 +121,7 @@ vector       : $(vector_deps)
 # The follow describe the dependences for the various *.h files.
 
 _comdef.h       : ../watcom/_comdef.mh ../readonly.sp ../crwat.sp
+_hash.h         : ../watcom/_hash.mh ../readonly.sp ../crwatcnt.sp
 _rbtree.h       : ../watcom/_rbtree.mh ../readonly.sp ../crwatcnt.sp
 _strdef.h       : ../watcom/_strdef.mh ../readonly.sp ../crwatcnt.sp
 alloca.h        : ../watcom/alloca.mh ../readonly.sp $(cplus) ../crwat.sp ../null.sp ../alloca.sp
