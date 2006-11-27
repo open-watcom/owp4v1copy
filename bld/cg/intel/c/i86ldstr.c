@@ -526,6 +526,7 @@ static void     CompressIns( instruction *ins )
          * Special case: "MOV REG, 0" usually reduced to "XOR REG, REG",
          * changing opcode and confusing deriscifier. XOR is shorter then
          * non-optimized 16- or 32-bit MOV, but worse for 8-bit moves
+         * (all kinds) and 16-bit moves to temp var (via ebp/esp)
          * (same size, two commands, extra register occupied).
          *
          * Handling these XOR's everywhere is boring. It must be rewriten
@@ -535,7 +536,11 @@ static void     CompressIns( instruction *ins )
          */
         if ( prev->head.opcode == OP_XOR            &&
              prev_op0 == prev->operands[1]          &&
-             TypeClassSize[ prev->type_class ] == 1
+             ( TypeClassSize[ prev->type_class ] == 1
+#if _TARGET & _TARG_IAPX86  /* Does not work right on 386 - temps becomes 32-bit much later. Todo. */
+               || ( TypeClassSize[ prev->type_class ] == 2 && ins->result->n.class == N_TEMP )
+#endif
+             )
            ) {
             prev_op0 = AllocIntConst( 0 );  /* fake "MOV RESULT, 0" */
         }
