@@ -341,8 +341,8 @@ static  void            PostOptimize( void )
         // they're moving RISCified pair.
         LdStCompress();
         // Reuse registers freed by deriscifier
-        // Score();
-        // DeadInstructions(); // cleanup junk after Score()
+        Score();
+        DeadInstructions(); // cleanup junk after Score()
         if( !BlockByBlock ) LoopRegInvariant();
     #if !(_TARGET & _TARG_RISC)
         // Get rid of remaining unused conditions on register level.
