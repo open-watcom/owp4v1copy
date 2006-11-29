@@ -538,7 +538,7 @@ static void     CompressIns( instruction *ins )
              prev_op0 == prev->operands[1]          &&
              ( TypeClassSize[ prev->type_class ] == 1
 #if _TARGET & _TARG_IAPX86  /* Does not work right on 386 - temps becomes 32-bit much later. Todo. */
-               || ( TypeClassSize[ prev->type_class ] == 2 && ins->result->n.class == N_TEMP )
+               || ( TypeClassSize[ prev->type_class ] == 2 && ins->result && ins->result->n.class == N_TEMP )
 #endif
              )
            ) {
