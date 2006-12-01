@@ -143,6 +143,12 @@ sub process_log
     }
 }
 
+sub get_shortdate
+{
+    my(@now) = gmtime time;
+    return sprintf "%04d-%02d", $now[5] + 1900, $now[4] + 1;
+}
+
 sub get_date
 {
     my(@now) = gmtime time;
@@ -156,6 +162,16 @@ sub get_datetime
         $now[5] + 1900, $now[4] + 1, $now[3], $now[2], $now[1];
 }
 
+sub display_p4_messages
+{
+    print REPORT "p4 Messages\n";
+    print REPORT "-----------\n\n";
+
+    foreach $message (@p4_messages) {
+        print REPORT "$message\n";
+    }
+}
+
 #######################
 #      Main Script
 #######################
@@ -166,8 +182,13 @@ if ($home eq $OW) {
     exit 1;
 }
 
+$shortdate_stamp = get_shortdate();
 $date_stamp = get_date();
-$report_name = "$report_archive\\$date_stamp-report.txt";
+$report_directory = "$report_archive\\$shortdate_stamp";
+if (!stat($report_directory)) {
+    mkdir($report_directory);
+}
+$report_name = "$report_directory\\$date_stamp-report.txt";
 
 open(REPORT, ">$report_name") || die "Unable to open report file.";
 print REPORT "Open Watcom Build Report\n";
@@ -208,6 +229,7 @@ $datetime_stamp = get_datetime();
 print REPORT "CLEAN+BUILD STARTED  : $datetime_stamp\n";
 if (system($build_batch_name) != 0) {
     print REPORT "clean+build failed!\n";
+    display_p4_messages();
     close(REPORT);
     exit 1;
 }
@@ -224,6 +246,7 @@ while (<CHANGES>) {
 }
 # If 'compare' fails, end now. Don't test if there was a build failure.
 if (!close(CHANGES)) {
+    display_p4_messages();
     close(REPORT);
     exit 1;
 }
@@ -248,12 +271,7 @@ print REPORT "\n";
 # Display p4 sync messages for reference.
 ##########################################
 
-print REPORT "p4 Messages\n";
-print REPORT "-----------\n\n";
-
-foreach $message (@p4_messages) {
-    print REPORT "$message\n";
-}
+display_p4_messages();
 
 close(REPORT);
 
