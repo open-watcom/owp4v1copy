@@ -151,6 +151,14 @@ static bool get_asmline( char *ptr, unsigned max, FILE *fp )
             skip = TRUE;
             break;
         case '\n':
+            /* Paul Edwards */
+            /* if continuation character found, pass over newline */
+            if( (got_something == TRUE) && (*(ptr - 1) == '\\') ) {
+                ptr--;
+                max++;
+                LineNumber++;
+                continue; /* don't store character in string */
+            }
             *ptr = '\0';
             // fall through
         case '\0':
