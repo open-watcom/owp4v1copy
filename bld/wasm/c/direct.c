@@ -2035,6 +2035,7 @@ static void module_prologue( int type )
 {
     int         bit;
     char        buffer[ MAX_LINE_LEN ];
+    int         modelnum;
 
     bit = ( ModuleInfo.defUse32 ) ? BIT32 : BIT16;
 
@@ -2065,6 +2066,68 @@ static void module_prologue( int type )
         break;
     }
     ModelAssumeInit();
+
+    /* Fix up PTR size */
+    switch( type ) {
+    case MOD_COMPACT:
+    case MOD_LARGE:
+    case MOD_HUGE:
+        TypeInfo[TOK_EXT_PTR].value = MT_DWORD;
+        break;
+    }
+    /* Set @CodeSize equate */
+    switch( type ) {
+    case MOD_MEDIUM:
+    case MOD_LARGE:
+    case MOD_HUGE:
+        InputQueueLine( "@CodeSize equ 1" );
+        break;
+    default:
+        InputQueueLine( "@CodeSize equ 0" );
+        break;
+    }
+    /* Set @DataSize equate */
+    switch( type ) {
+    case MOD_COMPACT:
+    case MOD_LARGE:
+        InputQueueLine( "@DataSize equ 1" );
+        break;
+    case MOD_HUGE:
+        InputQueueLine( "@DataSize equ 2" );
+        break;
+    default:
+        InputQueueLine( "@DataSize equ 0" );
+        break;
+    }
+    /* Set @Model equate */
+    switch( type ) {
+    case MOD_TINY:
+        modelnum = 1;
+        break;
+    case MOD_SMALL:
+        modelnum = 2;
+        break;
+    case MOD_COMPACT:
+        modelnum = 3;
+        break;
+    case MOD_MEDIUM:
+        modelnum = 4;
+        break;
+    case MOD_LARGE:
+        modelnum = 5;
+        break;
+    case MOD_HUGE:
+        modelnum = 6;
+        break;
+    case MOD_FLAT:
+        modelnum = 7;
+        break;
+    default:
+        modelnum = 0;
+        break;
+    }
+    sprintf( buffer, "@Model equ %d", modelnum );
+    InputQueueLine( buffer );
 }
 
 void ModuleInit( void )
@@ -2681,6 +2744,14 @@ static int find_size( int type )
     case TOK_PROC_VARARG:
         return( 0 );
     default:
+        if ( type == TOK_EXT_PTR ) {
+            if( ( ModuleInfo.model == MOD_COMPACT )
+                || ( ModuleInfo.model == MOD_LARGE )
+                || ( ModuleInfo.model == MOD_HUGE ) ) {
+                return (4);
+            }
+            else return ( 2 );
+        }
         return( ERROR );
     }
 }

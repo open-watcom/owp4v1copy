@@ -40,6 +40,9 @@
 typedef int     direct_idx;     // directive index, such as segment index,
                                 // group index or lname index, etc.
 
+/* Paul Edwards
+   Note that there is code that is dependent on the ordering
+   of these model types. */
 typedef enum {
     MOD_NONE,
     MOD_TINY,
