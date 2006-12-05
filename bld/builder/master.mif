@@ -47,7 +47,7 @@ builder.exe : builder.obj
         $(cl) $(clflags) $<
 !ifndef __$(host_os)__                  # Don't copy unless host_os=build_os
 !else ifndef __UNIX__                   # Avoid "text file busy".
-        copy $^. $(%OWBINDIR)\ > nul    # MS-influenced command noisy
+        copy $^. $(%OWBINDIR) > nul     # MS-influenced command noisy
 !endif
 !endif
 
@@ -57,7 +57,7 @@ builder.exe : builder.obj
 !else ifdef __UNIX__
         cp   $^. $(%OWBINDIR)/$^&       # Remove .exe from working name
 !else
-        copy $^. $(%OWBINDIR)\ > nul    # MS-influenced command noisy
+        copy $^. $(%OWBINDIR) > nul     # MS-influenced command noisy
 !endif
 
 # runasdos will run itself under dosemu. Copy once for each program that still
