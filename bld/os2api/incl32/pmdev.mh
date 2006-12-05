@@ -128,15 +128,6 @@
 #define DEV_ITEM_BUF_TOO_SMALL    5
 #define DEV_INV_INP_JOBPROPERTIES 6
 
-#define DRIVER_NAME    1
-#define DRIVER_DATA    2
-#define DATA_TYPE      3
-#define COMMENT        4
-#define PROC_NAME      5
-#define PROC_PARAMS    6
-#define SPL_PARAMS     7
-#define NETWORK_PARAMS 8
-
 #define OD_SCREEN           0
 #define OD_QUEUED           2
 #define OD_DIRECT           5
@@ -149,8 +140,6 @@
 
 #define HCAPS_CURRENT                   1
 #define HCAPS_SELECTABLE                2
-
-typedef PSZ *PDEVOPENDATA;
 
 typedef struct _DRIVDATA {
     LONG cb;
