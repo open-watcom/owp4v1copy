@@ -44,6 +44,7 @@ sse2 &
 sse3 &
 struct1 &
 structdd &
+support &
 tbyte &
 testequ &
 tst1
@@ -57,5 +58,6 @@ asm_flags_callcnv4 = -3s
 asm_flags_callcnv5 = -zcm
 asm_flags_jmpshrt = -zcm
 asm_flags_retiret = -zcm
+asm_flags_support = -zcm -Dmemodel=large
 
 !include ../test.mif

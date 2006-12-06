@@ -614,7 +614,13 @@ int AsmScan( char *string )
     CurrString = string;
     output_ptr = stringbuf;
 
-    for( ptr = string; ; ) {
+    ptr = string;
+    /* skip initial spaces and expansion codes */
+    while( isspace( *ptr ) || (*ptr == '%') ) {
+        ptr++;
+    }
+
+    for( ;; ) {
         AsmBuffer[buf_index]->string_ptr = output_ptr;
 
         while( isspace( *ptr ) ) {
