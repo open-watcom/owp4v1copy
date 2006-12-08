@@ -88,6 +88,7 @@ shell &
 size &
 sizebug &
 sizebug2 &
+sizlen &
 stos &
 strmang &
 struct &
