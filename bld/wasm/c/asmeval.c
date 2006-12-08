@@ -1246,7 +1246,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 } else if( sym->mem_type == MT_EMPTY ) {
                     token_1->value = 0;
                 } else {
-                    token_1->value = sym->first_length;
+                    token_1->value = sym->first_length ? sym->first_length : 1;
                 }
                 break;
             case T_LENGTHOF:

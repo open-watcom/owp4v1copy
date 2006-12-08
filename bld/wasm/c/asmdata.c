@@ -123,6 +123,17 @@ static void output_float( char index, unsigned no_of_bytes, char negative )
     return;
 }
 
+static void update_sizes( asm_sym *sym, bool first, unsigned no_of_bytes )
+/************************************************************************/
+{
+    sym->total_length++;
+    sym->total_size += no_of_bytes;
+    if( first ) {
+        sym->first_length++;
+        sym->first_size += no_of_bytes;
+    }
+}
+
 static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsigned no_of_bytes )
 /************************************************************************************************/
 /*
@@ -181,10 +192,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             }
 
             if( sym && Parse_Pass == PASS_1 ) {
-                sym->total_size += no_of_bytes;
-                if( first ) {
-                    sym->first_size += no_of_bytes;
-                }
+                update_sizes( sym, first, no_of_bytes );
             }
 #else
             count = 0;
@@ -245,12 +253,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             char_ptr = AsmBuffer[cur_pos]->bytes;
 #if defined( _STANDALONE_ )
             if( sym && Parse_Pass == PASS_1 ) {
-                sym->total_length++;
-                sym->total_size += no_of_bytes;
-                if( first ) {
-                    sym->first_length++;
-                    sym->first_size += no_of_bytes;
-                }
+                update_sizes( sym, first, no_of_bytes );
             }
             if( !struct_field ) {
 #endif
@@ -263,12 +266,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                 if( the_struct == NULL )
                     break;
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size += no_of_bytes;
-                the_struct->total_length++;
-                if( first ) {
-                    the_struct->first_size += no_of_bytes;
-                    the_struct->first_length++;
-                }
+                update_sizes( the_struct, first, no_of_bytes );
             }
 #endif
             break;
@@ -319,12 +317,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                 no_of_bytes = AsmBuffer[cur_pos]->value;
             }
             if( sym && Parse_Pass == PASS_1 ) {
-                sym->total_length++;
-                sym->total_size += no_of_bytes;
-                if( first ) {
-                    sym->first_length++;
-                    sym->first_size += no_of_bytes;
-                }
+                update_sizes( sym, first, no_of_bytes );
             }
             if( !struct_field ) {
 #endif
@@ -343,12 +336,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                 if( the_struct == NULL )
                     break;
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size += no_of_bytes;
-                the_struct->total_length++;
-                if( first ) {
-                    the_struct->first_size += no_of_bytes;
-                    the_struct->first_length++;
-                }
+                update_sizes( the_struct, first, no_of_bytes );
             }
 #endif
             break;
@@ -463,12 +451,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             ptr = (char *)&data;
 #if defined( _STANDALONE_ )
             if( sym && Parse_Pass == PASS_1 ) {
-                sym->total_length++;
-                sym->total_size += no_of_bytes;
-                if( first ) {
-                    sym->first_length++;
-                    sym->first_size += no_of_bytes;
-                }
+                update_sizes( sym, first, no_of_bytes );
             }
             if( !struct_field ) {
 #endif
@@ -484,12 +467,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
 #if defined( _STANDALONE_ )
             } else if( the_struct != NULL ) {
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size += no_of_bytes;
-                the_struct->total_length++;
-                if( first ) {
-                    the_struct->first_size += no_of_bytes;
-                    the_struct->first_length++;
-                }
+                update_sizes( the_struct, first, no_of_bytes );
             }
 #endif
             // set position back to main loop worked correctly
@@ -642,12 +620,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                     ptr = (char *)&data;
 #if defined( _STANDALONE_ )
                     if( sym && Parse_Pass == PASS_1 ) {
-                        sym->total_length++;
-                        sym->total_size += no_of_bytes;
-                        if( first ) {
-                            sym->first_length++;
-                            sym->first_size += no_of_bytes;
-                        }
+                        update_sizes( sym, first, no_of_bytes );
                     }
                     if( !struct_field ) {
 #endif
@@ -660,12 +633,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                         if( the_struct == NULL )
                             break;
                         Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                        the_struct->total_size += no_of_bytes;
-                        the_struct->total_length++;
-                        if( first ) {
-                            the_struct->first_size += no_of_bytes;
-                            the_struct->first_length++;
-                        }
+                        update_sizes( the_struct, first, no_of_bytes );
                     }
 #endif
                 } else {
