@@ -123,6 +123,7 @@ static void output_float( char index, unsigned no_of_bytes, char negative )
     return;
 }
 
+#if defined( _STANDALONE_ )
 static void update_sizes( asm_sym *sym, bool first, unsigned no_of_bytes )
 /************************************************************************/
 {
@@ -133,6 +134,7 @@ static void update_sizes( asm_sym *sym, bool first, unsigned no_of_bytes )
         sym->first_size += no_of_bytes;
     }
 }
+#endif
 
 static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsigned no_of_bytes )
 /************************************************************************************************/
