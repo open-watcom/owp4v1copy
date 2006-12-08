@@ -2072,6 +2072,7 @@ static void module_prologue( int type )
         case MOD_COMPACT:
         case MOD_LARGE:
         case MOD_HUGE:
+        case MOD_FLAT:
             TypeInfo[TOK_EXT_PTR].value = MT_DWORD;
             break;
         }
@@ -2727,6 +2728,8 @@ int ModuleEnd( int count )
 static int find_size( int type )
 /******************************/
 {
+    int         ptr_size;
+
     switch( type ) {
     case TOK_EXT_BYTE:
     case TOK_EXT_SBYTE:
@@ -2747,13 +2750,18 @@ static int find_size( int type )
     case TOK_EXT_OWORD:
         return( 16 );
     case TOK_EXT_PTR:
+        /* first determine offset size */
+        if( (Code->info.cpu&P_CPU_MASK) >= P_386 ) {
+            ptr_size = 4;
+        } else {
+            ptr_size = 2;
+        }
         if( (ModuleInfo.model == MOD_COMPACT)
          || (ModuleInfo.model == MOD_LARGE)
          || (ModuleInfo.model == MOD_HUGE) ) {
-            return( 4 );
-        } else {
-            return( 2 );
+            ptr_size += 2;      /* add segment for far data pointers */
         }
+        return( ptr_size );
     case TOK_PROC_VARARG:
         return( 0 );
     default:
