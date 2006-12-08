@@ -174,16 +174,16 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                       ( ( CurrSeg != NULL ) && SEGISCODE( CurrSeg ) ) );
             } else {
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size+=no_of_bytes;
+                the_struct->total_size += no_of_bytes;
                 the_struct->total_length++;
-                the_struct->first_size+=no_of_bytes;
+                the_struct->first_size += no_of_bytes;
                 the_struct->first_length++;
             }
 
             if( sym && Parse_Pass == PASS_1 ) {
-                sym->total_size+=no_of_bytes;
+                sym->total_size += no_of_bytes;
                 if( first ) {
-                    sym->first_size+=no_of_bytes;
+                    sym->first_size += no_of_bytes;
                 }
             }
 #else
@@ -263,10 +263,10 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                 if( the_struct == NULL )
                     break;
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size+=no_of_bytes;
+                the_struct->total_size += no_of_bytes;
                 the_struct->total_length++;
                 if( first ) {
-                    the_struct->first_size+=no_of_bytes;
+                    the_struct->first_size += no_of_bytes;
                     the_struct->first_length++;
                 }
             }
@@ -343,10 +343,10 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                 if( the_struct == NULL )
                     break;
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size+=no_of_bytes;
+                the_struct->total_size += no_of_bytes;
                 the_struct->total_length++;
                 if( first ) {
-                    the_struct->first_size+=no_of_bytes;
+                    the_struct->first_size += no_of_bytes;
                     the_struct->first_length++;
                 }
             }
@@ -484,10 +484,10 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
 #if defined( _STANDALONE_ )
             } else if( the_struct != NULL ) {
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size+=no_of_bytes;
+                the_struct->total_size += no_of_bytes;
                 the_struct->total_length++;
                 if( first ) {
-                    the_struct->first_size+=no_of_bytes;
+                    the_struct->first_size += no_of_bytes;
                     the_struct->first_length++;
                 }
             }
