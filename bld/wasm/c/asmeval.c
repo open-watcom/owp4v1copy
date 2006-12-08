@@ -1233,8 +1233,12 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             sym = token_2->sym;
             if( token_2->mbr != NULL )
                 sym = token_2->mbr;
-            if( sym == NULL )
+            if( sym == NULL ) {
+                if( error_msg ) {
+                    AsmError( INVALID_USE_OF_LENGTH_SIZE_OPERATOR );
+                }
                 return( ERROR );
+            }
             switch( AsmBuffer[index]->value ) {
             case T_LENGTH:
                 if( sym->mem_type == MT_STRUCT ) {

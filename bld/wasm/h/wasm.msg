@@ -325,3 +325,6 @@ pick( LABEL_OUTSIDE_SEGMENT,
 pick( DATA_LABEL_IS_EXPECTED,
                                 "Data label is expected" ,
                                 "Data label is expected" )
+pick( INVALID_USE_OF_LENGTH_SIZE_OPERATOR,
+                                "Invalid use of LENGTH/LENGTHOF/SIZE/SIZEOF operator" ,
+                                "Invalid use of LENGTH/LENGTHOF/SIZE/SIZEOF operator" )
