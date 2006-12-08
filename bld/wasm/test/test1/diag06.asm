@@ -6,7 +6,7 @@ foo struc
     z dd 0,2
 foo ends
 
-_TEXT16 segment 'CODE' USE16
+_TEXT16 segment USE16 'CODE'
 bar16:
     mov ax, size bar16
     mov ax, sizeof bar16
@@ -16,7 +16,7 @@ bar16:
     mov cx, lengthof foo
 _TEXT16 ends
 
-_TEXT32 segment 'CODE' USE32
+_TEXT32 segment USE32 'CODE'
 bar32:
     mov ax, size bar32
     mov ax, sizeof bar32
