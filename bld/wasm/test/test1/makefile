@@ -44,7 +44,6 @@ ifs &
 include &
 ins &
 irp &
-jmp &
 jmpext &
 jmpfword &
 jmpsize &
@@ -92,7 +91,6 @@ sizlen &
 stos &
 strmang &
 struct &
-structjn &
 t2 &
 test &
 tmp &
@@ -101,8 +99,6 @@ wincall &
 word &
 x &
 xx
-
-dev_objs = &
 
 asm_flags_x = -c
 asm_flags_loader2 = -c

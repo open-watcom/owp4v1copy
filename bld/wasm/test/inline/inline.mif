@@ -106,8 +106,6 @@ asmbug11 &
 asmbug12 &
 asmbug13
 
-dev_objs = &
-
 init_3dnow = K3D
 init_mmx = MMX
 init_sse = XMM
@@ -135,7 +133,7 @@ log_file=testcomp.log
 .BEFORE
 #    @%create $(log_file)
 
-all : clean $(objs) $(dev_objs) .SYMBOLIC
+all : clean $(objs) .SYMBOLIC
 
 !ifdef objs
 !ifneq objs
@@ -153,22 +151,5 @@ $(objs) : .SYMBOLIC
 !endif
 !endif
 
-!ifdef dev_objs
-!ifneq dev_objs
-$(dev_objs) : .SYMBOLIC
-    @echo .
-    @echo ==============================================================
-    @echo DEVELOPMENT - $(testcomp) $^@.asm
-    @echo ==============================================================
-    @rm -f $@.c
-    @%append $(log_file) === $(testcomp) $^@ ===
-    @vi -d -q -k ":so createc.vi $@ $(init_$^@)\n"
-    @$(testcomp) $@.c -s -os -zq -wx -fo=.obj >$(nulldevice)
-    @wdis -a -l $@.obj >$(nulldevice)
-    @vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
-    @wmake -h -f ../checki.mif name=$@ log_file=$(log_file)
-!endif
-!endif
-
 clean : .SYMBOLIC
-    @rm -f *.obj *.lst *.c *.err mem.trk
+    @rm -f *.obj *.lst *.c *.err mem.trk *.log

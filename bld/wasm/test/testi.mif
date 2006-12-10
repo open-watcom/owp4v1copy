@@ -19,7 +19,7 @@ log_file=testcomp.log
 .BEFORE
 #    @%create $(log_file)
 
-all : clean $(objs) $(dev_objs) .SYMBOLIC
+all : clean $(objs) .SYMBOLIC
 
 !ifneq objs
 $(objs) : .SYMBOLIC
@@ -31,17 +31,5 @@ $(objs) : .SYMBOLIC
     @wmake -h -f ../check.mif name=$@ log_file=$(log_file) fix_wdis_lst=1
 !endif
 
-!ifneq dev_objs
-$(dev_objs) : .SYMBOLIC
-    @echo .
-    @echo ==============================================================
-    @echo DEVELOPMENT - $(testcomp) $^@.asm 
-    @echo ==============================================================
-    @%append $(log_file) === $(testcomp) $^@ ===
-    @$(testcomp) $@.c -s -os -zq -fo=.obj $(c_flags_$^@) >$(nulldevice)
-    @wmake -h -f ../check.mif name=$@ log_file=$(log_file) fix_wdis_lst=1
-    @echo .
-!endif
-
 clean : .SYMBOLIC
-    @rm -f *.obj *.err *.dis *.lst *.tmp mem.trk
+    @rm -f *.obj *.err *.out *.dis *.lst *.tmp mem.trk *.log

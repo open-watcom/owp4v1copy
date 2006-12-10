@@ -79,8 +79,4 @@ test &
 timer &
 tmp
 
-dev_objs = &
-set386 &
-setjmp
-
 !include ../test.mif
