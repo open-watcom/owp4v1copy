@@ -233,8 +233,48 @@ enum regsize {
     A_DWORD,
 };
 
+static struct asm_tok const_CodeSize = { T_NUM, NULL, 0 };
+static struct asm_tok const_DataSize = { T_NUM, NULL, 0 };
+static struct asm_tok const_Model = { T_NUM, NULL, 0 };
+static struct asm_tok const_Interface = { T_NUM, NULL, 0 };
+
+static const_info info_CodeSize = { TRUE, 0, 0, TRUE, &const_CodeSize };
+static const_info info_DataSize = { TRUE, 0, 0, TRUE, &const_DataSize };
+static const_info info_Model = { TRUE, 0, 0, TRUE, &const_Model };
+static const_info info_Interface = { TRUE, 0, 0, TRUE, &const_Interface };
+   
 
 #define ROUND_UP( i, r ) (((i)+((r)-1)) & ~((r)-1))
+
+int AddPredefinedConstant( char *name, const_info *info )
+/*******************************************************/
+{
+    struct asm_sym      *sym;
+    dir_node            *dir;
+
+    sym = AsmGetSymbol( name );
+    if( sym == NULL ) {
+        dir = dir_insert( name, TAB_CONST );
+        if( dir == NULL ) {
+            return( ERROR );
+        }
+    } else {
+        /* check if it can be redefined */
+        dir = (dir_node *)sym;
+        if( sym->state == SYM_UNDEFINED ) {
+            dir_change( dir, TAB_CONST );
+        } else if( sym->state != SYM_CONST ) {
+            /* error */
+            AsmError( LABEL_ALREADY_DEFINED );
+            return( ERROR );
+        }
+    }
+    if( !dir->e.constinfo->predef ) {
+        FreeInfo( dir );
+        dir->e.constinfo = info;
+    }
+    return( NOT_ERROR );
+}
 
 static int get_watcom_argument_string( char *buffer, uint_8 size, uint_8 *parm_number )
 /*************************************************************************************/
@@ -508,6 +548,7 @@ static void dir_init( dir_node *dir, int tab )
         dir->e.constinfo = AsmAlloc( sizeof( const_info ) );
         dir->e.constinfo->data = NULL;
         dir->e.constinfo->count = 0;
+        dir->e.constinfo->predef = FALSE;
         return;
     case TAB_PROC:
         sym->state = SYM_PROC;
@@ -651,27 +692,29 @@ void FreeInfo( dir_node *dir )
         AsmFree( dir->e.lnameinfo );
         break;
     case SYM_CONST:
+        if( !dir->e.constinfo->predef ) {
 #ifdef DEBUG_OUT
-        if( ( dir->e.constinfo->count > 0 )
-            && ( dir->e.constinfo->data[0].token != T_NUM ) ) {
-            DebugMsg( ( "freeing const(String): %s = ", dir->sym.name ) );
-        } else {
-            DebugMsg( ( "freeing const(Number): %s = ", dir->sym.name ) );
-        }
+			if( ( dir->e.constinfo->count > 0 )
+				&& ( dir->e.constinfo->data[0].token != T_NUM ) ) {
+				DebugMsg( ( "freeing const(String): %s = ", dir->sym.name ) );
+			} else {
+				DebugMsg( ( "freeing const(Number): %s = ", dir->sym.name ) );
+			}
 #endif
-        for( i=0; i < dir->e.constinfo->count; i++ ) {
+	        for( i=0; i < dir->e.constinfo->count; i++ ) {
 #ifdef DEBUG_OUT
-            if( dir->e.constinfo->data[i].token == T_NUM ) {
-                DebugMsg(( "%d ", dir->e.constinfo->data[i].value ));
-            } else {
-                DebugMsg(( "%s ", dir->e.constinfo->data[i].string_ptr ));
-            }
+				if( dir->e.constinfo->data[i].token == T_NUM ) {
+					DebugMsg(( "%d ", dir->e.constinfo->data[i].value ));
+				} else {
+					DebugMsg(( "%s ", dir->e.constinfo->data[i].string_ptr ));
+				}
 #endif
-            AsmFree( dir->e.constinfo->data[i].string_ptr );
-        }
-        DebugMsg(( "\n" ));
-        AsmFree( dir->e.constinfo->data );
-        AsmFree( dir->e.constinfo );
+				AsmFree( dir->e.constinfo->data[i].string_ptr );
+			}
+			DebugMsg(( "\n" ));
+			AsmFree( dir->e.constinfo->data );
+			AsmFree( dir->e.constinfo );
+		}
         break;
     case SYM_PROC:
         {
@@ -1352,7 +1395,7 @@ int SetUse32Def( bool flag )
 /**************************/
 {
     if( ( CurrSeg == NULL )               // outside any segments
-        && ( !ModuleInfo.init             // model not defined
+        && ( ModuleInfo.model == MOD_NONE             // model not defined
             || ModuleInfo.cmdline ) ) {   // model defined on cmdline by -m?
         ModuleInfo.defUse32 = flag;
     }
@@ -1414,7 +1457,7 @@ static seg_type ClassNameType( char *name )
 
     if( name == NULL )
         return( SEGTYPE_UNDEF );
-    if( ModuleInfo.init ) {
+    if( ModuleInfo.model != MOD_NONE ) {
         if( stricmp( name, Options.code_class ) == 0 ) {
             return( SEGTYPE_ISCODE );
         }
@@ -1845,7 +1888,7 @@ int Startup( int i )
     int         count;
     char        buffer[ MAX_LINE_LEN ];
 
-    if( !ModuleInfo.init ) {
+    if( ModuleInfo.model == MOD_NONE ) {
         AsmError( MODEL_IS_NOT_DECLARED );
         return( ERROR );
     }
@@ -1927,7 +1970,7 @@ int SimSeg( int i )
     int         type;
     int         seg;
 
-    if( !ModuleInfo.init ) {
+    if( ModuleInfo.model == MOD_NONE ) {
         AsmError( MODEL_IS_NOT_DECLARED );
         return( ERROR );
     }
@@ -2052,94 +2095,67 @@ static void module_prologue( int type )
     InputQueueLine( SimCodeBegin[bit][SIM_DATA] );
     InputQueueLine( SimCodeEnd[SIM_DATA] );
 
-    /* Generates codes for grouping */
-    strcpy( buffer, "DGROUP GROUP " );
+    if( type != MOD_FLAT ) {
+        /* Generates codes for grouping */
+        strcpy( buffer, "DGROUP GROUP " );
+        if( type == MOD_TINY ) {
+            strcat( buffer, Options.text_seg );
+            strcat( buffer, "," );
+        }
+        strcat( buffer, Options.data_seg );
+        InputQueueLine( buffer );
+    }
+
+    ModelAssumeInit();
+
+// FIXME !! 
+// it is temporary fix for PROC parameters
+// but PTR operator should be resolved globaly
+    /* Fix up PTR size */
     switch( type ) {
-    case MOD_TINY:
-        strcat( buffer, Options.text_seg );
-        strcat( buffer, ", ");
-        /* fall through */
-    case MOD_SMALL:
     case MOD_COMPACT:
+    case MOD_LARGE:
+    case MOD_HUGE:
+    case MOD_FLAT:
+        TypeInfo[TOK_EXT_PTR].value = MT_DWORD;
+        break;
+    }
+
+    /* Set @CodeSize */
+    switch( type ) {
     case MOD_MEDIUM:
     case MOD_LARGE:
     case MOD_HUGE:
-        strcat( buffer, Options.data_seg );
-        InputQueueLine( buffer );
+        const_CodeSize.value = 1;
+        break;
+    default:
+        const_CodeSize.value = 0;
         break;
     }
-    ModelAssumeInit();
+    AddPredefinedConstant( "@CodeSize", &info_CodeSize );
 
-    if( ModuleInfo.init == FALSE ) {
-        int         modelnum = -1;
-
-        /* Fix up PTR size */
-        switch( type ) {
-        case MOD_COMPACT:
-        case MOD_LARGE:
-        case MOD_HUGE:
-        case MOD_FLAT:
-            TypeInfo[TOK_EXT_PTR].value = MT_DWORD;
-            break;
-        }
-        /* Set @CodeSize equate */
-        switch( type ) {
-        case MOD_MEDIUM:
-        case MOD_LARGE:
-        case MOD_HUGE:
-            InputQueueLine( "@CodeSize equ 1" );
-            break;
-        default:
-            InputQueueLine( "@CodeSize equ 0" );
-            break;
-        }
-
-        /* Set @DataSize equate */
-        switch( type ) {
-        case MOD_COMPACT:
-        case MOD_LARGE:
-            InputQueueLine( "@DataSize equ 1" );
-            break;
-        case MOD_HUGE:
-            InputQueueLine( "@DataSize equ 2" );
-            break;
-        default:
-            InputQueueLine( "@DataSize equ 0" );
-            break;
-        }
-
-        /* Set @Model equate */
-        switch( type ) {
-        case MOD_TINY:
-            modelnum = 1;
-            break;
-        case MOD_SMALL:
-            modelnum = 2;
-            break;
-        case MOD_COMPACT:
-            modelnum = 3;
-            break;
-        case MOD_MEDIUM:
-            modelnum = 4;
-            break;
-        case MOD_LARGE:
-            modelnum = 5;
-            break;
-        case MOD_HUGE:
-            modelnum = 6;
-            break;
-        case MOD_FLAT:
-            modelnum = 7;
-            break;
-        default:
-            modelnum = 0;
-            break;
-        }
-        if( modelnum > 0 ) {
-            sprintf( buffer, "@Model equ %d", modelnum );
-            InputQueueLine( buffer );
-        }
+    /* Set @DataSize */
+    switch( type ) {
+    case MOD_COMPACT:
+    case MOD_LARGE:
+        const_DataSize.value = 1;
+        break;
+    case MOD_HUGE:
+        const_DataSize.value = 2;
+        break;
+    default:
+        const_DataSize.value = 0;
+        break;
     }
+    AddPredefinedConstant( "@DataSize", &info_DataSize );
+
+    /* Set @Model */
+    const_Model.value = ModuleInfo.model;
+    AddPredefinedConstant( "@Model", &info_Model );
+
+    /* Set @Interface */
+    const_Interface.value = ModuleInfo.langtype;
+    AddPredefinedConstant( "@Interface", &info_Interface );
 }
 
 void ModuleInit( void )
@@ -2151,7 +2167,6 @@ void ModuleInit( void )
     ModuleInfo.ostype = OPSYS_DOS;
     ModuleInfo.use32 = FALSE;
     ModuleInfo.defUse32 = FALSE;
-    ModuleInfo.init = FALSE;
     ModuleInfo.cmdline = FALSE;
     ModuleInfo.mseg = FALSE;
     ModuleInfo.flat_idx = 0;
@@ -2193,19 +2208,24 @@ static void set_def_seg_name( void )
     }
     /* set Options.text_seg based on module name */
     if( Options.text_seg == NULL ) {
-        if( ModuleInfo.model >= MOD_MEDIUM ) {
+        switch( ModuleInfo.model ) {
+        case MOD_MEDIUM:
+        case MOD_LARGE:
+        case MOD_HUGE:
             len = strlen( ModuleInfo.name ) + sizeof( DEFAULT_CODE_NAME ) + 1;
             Options.text_seg = AsmAlloc( len );
             strcpy( Options.text_seg, ModuleInfo.name );
             strcat( Options.text_seg, DEFAULT_CODE_NAME );
-        } else {
-            Options.text_seg = AsmAlloc( sizeof( DEFAULT_DATA_NAME ) + 1 );
+            break;
+        default:
+            Options.text_seg = AsmAlloc( sizeof( DEFAULT_CODE_NAME ) + 1 );
             strcpy( Options.text_seg, DEFAULT_CODE_NAME );
+            break;
         }
     }
     /* set Options.data_seg */
     if( Options.data_seg == NULL ) {
-        Options.data_seg = AsmAlloc( 5 + 1 );
+        Options.data_seg = AsmAlloc( sizeof( DEFAULT_DATA_NAME ) + 1 );
         strcpy( Options.data_seg, DEFAULT_DATA_NAME );
     }
     return;
@@ -2236,7 +2256,7 @@ int Model( int i )
         return( NOT_ERROR );
     }
 
-    if( ModuleInfo.init && !ModuleInfo.cmdline ) {
+    if( ModuleInfo.model != MOD_NONE && !ModuleInfo.cmdline ) {
         AsmError( MODEL_DECLARED_ALREADY );
         return( ERROR );
     }
@@ -2283,7 +2303,6 @@ int Model( int i )
         case TOK_HUGE:
             ModuleInfo.model = TypeInfo[type].value;
             set_def_seg_name();
-            module_prologue( ModuleInfo.model );
             break;
         case TOK_NEARSTACK:
         case TOK_FARSTACK:
@@ -2317,9 +2336,9 @@ int Model( int i )
         return( ERROR );
     }
 
+    module_prologue( ModuleInfo.model );
     lastseg.seg = SIM_NONE;
     lastseg.stack_size = 0;
-    ModuleInfo.init = TRUE;
     ModuleInfo.cmdline = (LineNumber == 0);
     return(NOT_ERROR);
 }
@@ -2342,24 +2361,23 @@ static void ModelAssumeInit( void )
     char        buffer[ MAX_LINE_LEN ];
 
     /* Generates codes for assume */
-    if( ModuleInfo.model == MOD_FLAT ) {
+    switch( ModuleInfo.model ) {
+    case MOD_FLAT:
         InputQueueLine( "ASSUME CS:FLAT,DS:FLAT,SS:FLAT,ES:FLAT,FS:ERROR,GS:ERROR");
-    } else {
-        switch( ModuleInfo.model ) {
-        case MOD_TINY:
-            InputQueueLine( "ASSUME CS:DGROUP, DS:DGROUP, ES:DGROUP, SS:DGROUP" );
-            break;
-        case MOD_SMALL:
-        case MOD_COMPACT:
-        case MOD_MEDIUM:
-        case MOD_LARGE:
-        case MOD_HUGE:
-            strcpy( buffer, "ASSUME CS:" );
-            strcat( buffer, Options.text_seg );
-            strcat( buffer, ", DS:DGROUP, SS:DGROUP" );
-            InputQueueLine( buffer );
-            break;
-        }
+        break;
+    case MOD_TINY:
+        InputQueueLine( "ASSUME CS:DGROUP, DS:DGROUP, ES:DGROUP, SS:DGROUP" );
+        break;
+    case MOD_SMALL:
+    case MOD_COMPACT:
+    case MOD_MEDIUM:
+    case MOD_LARGE:
+    case MOD_HUGE:
+        strcpy( buffer, "ASSUME CS:" );
+        strcat( buffer, Options.text_seg );
+        strcat( buffer, ", DS:DGROUP, SS:DGROUP" );
+        InputQueueLine( buffer );
+        break;
     }
 }
 

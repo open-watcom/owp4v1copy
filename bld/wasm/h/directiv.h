@@ -44,14 +44,14 @@ typedef int     direct_idx;     // directive index, such as segment index,
    Note that there is code that is dependent on the ordering
    of these model types. */
 typedef enum {
-    MOD_NONE,
-    MOD_TINY,
-    MOD_SMALL,
-    MOD_COMPACT,
-    MOD_FLAT,
-    MOD_MEDIUM,
-    MOD_LARGE,
-    MOD_HUGE,
+    MOD_NONE    = 0,
+    MOD_TINY    = 1,
+    MOD_SMALL   = 2,
+    MOD_COMPACT = 3,
+    MOD_MEDIUM  = 4,
+    MOD_LARGE   = 5,
+    MOD_HUGE    = 6,
+    MOD_FLAT    = 7,
 } mod_type;             // Memory model type
 
 typedef enum {
@@ -160,7 +160,7 @@ typedef struct {
 } comm_info;
 
 typedef struct {
-//    char              *string;        // string assigned to the symbol
+    unsigned            predef:1;       // whether it is predefined symbol
     unsigned            redefine:1;     // whether it is redefinable or not
     unsigned            expand_early:1; // if TRUE expand before parsing
     int                 count;          // number of tokens
@@ -286,7 +286,6 @@ typedef struct {
     lang_type           langtype;        // language;
     os_type             ostype;          // operating system;
     unsigned            use32:1;         // If 32-bit segment is used
-    unsigned            init:1;
     unsigned            cmdline:1;
     unsigned            defUse32:1;      // default segment size 32-bit
     unsigned            mseg:1;          // mixed segments (16/32-bit)
@@ -311,7 +310,7 @@ enum assume_reg {
 
 extern module_info      ModuleInfo;
 
-#define IS_PROC_FAR()   ( ModuleInfo.model > MOD_FLAT )
+#define IS_PROC_FAR()   ( ModuleInfo.model == MOD_MEDIUM || ModuleInfo.model == MOD_LARGE || ModuleInfo.model == MOD_HUGE )
 
 extern seg_list         *CurrSeg;       // points to stack of opened segments
 
