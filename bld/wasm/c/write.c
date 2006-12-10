@@ -55,10 +55,14 @@
 #include "myassert.h"
 
 
-// use separate fixupp and fixupp32 records
-// fixupp32 record is used only for FIX_OFFSET386 and FIX_POINTER386 fixup
+// MASM doesn't mix 16 and 32-bit fixupp into one record, but WASM does
+// use following macro to separate 16 and 32-bit fixupp into two fixupp records
 // it is for better compatibility with MASM
-#define SEPARATE_FIXUPP_16_32 1
+#define SEPARATE_FIXUPP_16_32
+
+// MASM doesn't put private PROC symbol into object module, but WASM does
+// if you want exactly same behaviour as MASM then undefine following macro
+#define PRIVATE_PROC_INFO
 
 extern void             CheckForOpenConditionals( void );
 extern void             set_cpu_parameters( void );
@@ -270,7 +274,7 @@ static void write_one_export( dir_node *dir )
     proc_info   *info;
 
     info = dir->e.procinfo;
-    if( info->visibility == VIS_EXPORT ) {
+    if( info->export ) {
         objr = ObjNewRec( CMD_COMENT );
         objr->d.coment.attr = 0x00;
         objr->d.coment.class = CMT_DLL_ENTRY;
@@ -862,16 +866,14 @@ static void write_ledata( void )
     }
 }
 
-static void put_public_procs_in_public_table( void )
+static void put_private_proc_in_public_table( void )
 /**************************************************/
 {
     dir_node            *proc;
 
+    /* put private PROC into the pub table */
     for( proc = Tables[TAB_PROC].head; proc != NULL; proc = proc->next ) {
-
-        /* put it into the pub table */
         if( !proc->sym.public ) {
-            proc->sym.public = TRUE;
             AddPublicData( proc );
         }
     }
@@ -926,8 +928,6 @@ static int write_pub( void )
     char                cmd;
     bool                first = TRUE;
     bool                need32 = FALSE;
-
-    put_public_procs_in_public_table();
 
     while( ( count = GetPublicData( &seg, &grp, &cmd, &NameArray, &data, &need32, first) ) > 0 ) {
 
@@ -1114,6 +1114,13 @@ void WriteObjModule( void )
     while( PopLineQueue() ) {
     }
     CheckForOpenConditionals();
+#ifdef PRIVATE_PROC_INFO    
+    put_private_proc_in_public_table();
+#else
+    if( Options.debug_flag ) {
+        put_private_proc_in_public_table();
+    }
+#endif
     for( ;; ) {
         if( !write_to_file || Options.error_count > 0 )
             break;

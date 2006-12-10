@@ -186,7 +186,6 @@ typedef struct label_list {
 
 typedef struct {
     regs_list           *regslist;      // list of registers to be saved
-    vis_type            visibility;     // PUBLIC, PRIVATE or EXPORT
     label_list          *paralist;      // list of parameters
     label_list          *locallist;     // list of local variables
     int                 parasize;       // total no. of bytes used by parameters
@@ -194,6 +193,7 @@ typedef struct {
     memtype             mem_type;       // distance of procedure: near or far
     unsigned            is_vararg:1;    // if it has a vararg
     unsigned            pe_type:1;      // prolog/epilog code type 0:8086/186 1:286 and above
+    unsigned            export:1;       // EXPORT procedure
 } proc_info;
 
 typedef struct parm_list {

@@ -146,7 +146,7 @@ uint GetPublicData(
         if( sym->segment != curr_seg )
             break;
         if( sym->state == SYM_PROC ) {
-            if( ((dir_node *)sym)->e.procinfo->visibility == VIS_PRIVATE ) {
+            if( !sym->public ) {
                 if( *cmd == CMD_PUBDEF ) {
                     if( curr != start )
                         break;

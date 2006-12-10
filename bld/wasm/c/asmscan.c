@@ -615,6 +615,7 @@ int AsmScan( char *string )
     output_ptr = stringbuf;
 
     ptr = string;
+// FIXME !!
     /* skip initial spaces and expansion codes */
     while( isspace( *ptr ) || (*ptr == '%') ) {
         ptr++;
