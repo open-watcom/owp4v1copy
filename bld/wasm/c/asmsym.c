@@ -86,7 +86,7 @@ static char *InitAsmSym( struct asm_sym *sym, const char *name )
         sym->segment = NULL;
         sym->offset = 0;
         sym->public = FALSE;
-        sym->langtype = ModuleInfo.langtype;
+        sym->langtype = LANG_NONE;
         sym->first_size = 0;
         sym->first_length = 0;
         sym->total_size = 0;

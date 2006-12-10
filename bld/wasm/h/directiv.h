@@ -68,17 +68,6 @@ typedef enum {
 } vis_type;             // Type of visibility for procedure
 
 typedef enum {
-    LANG_NONE,
-    LANG_BASIC,
-    LANG_FORTRAN,
-    LANG_PASCAL,
-    LANG_C,
-    LANG_WATCOM_C,
-    LANG_STDCALL,
-    LANG_SYSCALL
-} lang_type;            // Type of language specified in procedure defn
-
-typedef enum {
     OPSYS_DOS,
     OPSYS_OS2
 } os_type;              // Type of operating system
@@ -198,7 +187,6 @@ typedef struct label_list {
 typedef struct {
     regs_list           *regslist;      // list of registers to be saved
     vis_type            visibility;     // PUBLIC, PRIVATE or EXPORT
-    lang_type           langtype;       // language type
     label_list          *paralist;      // list of parameters
     label_list          *locallist;     // list of local variables
     int                 parasize;       // total no. of bytes used by parameters

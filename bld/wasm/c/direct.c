@@ -982,29 +982,31 @@ uint_32 GetCurrSegStart( void )
     return( CurrSeg->seg->e.seginfo->start_loc );
 }
 
-static int GetLangType( int i )
-/*****************************/
+static int GetLangType( int *i )
+/******************************/
 {
-    if( AsmBuffer[i]->token != T_RES_ID)
-        return( LANG_NONE );
-    switch( AsmBuffer[i]->value ) {
-    case T_C:
-        return( LANG_C );
-    case T_BASIC:
-        return( LANG_BASIC );
-    case T_FORTRAN:
-        return( LANG_FORTRAN );
-    case T_PASCAL:
-        return( LANG_PASCAL );
-    case T_WATCOM_C:
-        return( LANG_WATCOM_C );
-    case T_STDCALL:
-        return( LANG_STDCALL );
-    case T_SYSCALL:
-        return( LANG_SYSCALL );
-    default:
-        return( LANG_NONE );
+    if( AsmBuffer[*i]->token == T_RES_ID) {
+		switch( AsmBuffer[(*i)++]->value ) {
+		case T_C:
+			return( LANG_C );
+		case T_BASIC:
+			return( LANG_BASIC );
+		case T_FORTRAN:
+			return( LANG_FORTRAN );
+		case T_PASCAL:
+			return( LANG_PASCAL );
+		case T_WATCOM_C:
+			return( LANG_WATCOM_C );
+		case T_STDCALL:
+			return( LANG_STDCALL );
+		case T_SYSCALL:
+			return( LANG_SYSCALL );
+		default:
+			(*i)--;
+			break;
+		}
     }
+    return( ModuleInfo.langtype );
 }
 
 int GlobalDef( int i )
@@ -1020,9 +1022,10 @@ int GlobalDef( int i )
 
     mangle_type = Check4Mangler( &i );
     for( ; i < Token_Count; i++ ) {
-        lang_type = GetLangType( i );
-        if( lang_type != LANG_NONE )
-            i++;
+
+        /* get the symbol language type if present */
+        lang_type = GetLangType( &i );
+
         /* get the symbol name */
         token = AsmBuffer[i++]->string_ptr;
 
@@ -1109,9 +1112,10 @@ int ExtDef( int i )
 
     mangle_type = Check4Mangler( &i );
     for( ; i < Token_Count; i++ ) {
-        lang_type = GetLangType( i );
-        if( lang_type != LANG_NONE )
-            i++;
+
+        /* get the symbol language type if present */
+        lang_type = GetLangType( &i );
+
         /* get the symbol name */
         token = AsmBuffer[i++]->string_ptr;
 
@@ -1186,12 +1190,14 @@ int PubDef( int i )
 
     mangle_type = Check4Mangler( &i );
     for( ; i < Token_Count; i+=2 ) {
-        lang_type = GetLangType( i );
-        if( lang_type != LANG_NONE )
-            i++;
-        token = AsmBuffer[i]->string_ptr;
-        /* Add the public name */
 
+        /* get the symbol language type if present */
+        lang_type = GetLangType( &i );
+
+        /* get the symbol name */
+        token = AsmBuffer[i]->string_ptr;
+
+        /* Add the public name */
         if( checkword( &token ) == ERROR ) {
             AsmError( EXPECTING_COMMA );
             return( ERROR );
@@ -2918,50 +2924,46 @@ int LocalDef( int i )
     return( NOT_ERROR );
 }
 
-static memtype proc_exam( int i )
-/*******************************/
+static memtype proc_exam( dir_node *proc, int i )
+/***********************************************/
 {
-    char        *name;
-    char        *token;
-    char        *typetoken;
-    int_8       minimum;        // Minimum value of the type of token to be read
-    int_8       finish;
-    dir_node    *dir;
-    proc_info   *info;
-    regs_list   *regist;
-    regs_list   *temp_regist;
-    label_list  *paranode;
-    label_list  *paracurr;
-    int         type;
-    int         vis;
-    struct asm_sym      *sym;
+    char			*token;
+    char			*typetoken;
+    int_8			minimum;        // Minimum value of the type of token to be read
+    int_8			finish;
+    proc_info		*info;
+    regs_list		*regist;
+    regs_list		*temp_regist;
+    label_list		*paranode;
+    label_list		*paracurr;
+    int				type;
+    int             vis;
+    struct asm_sym  *param;
 
-    name = AsmBuffer[i++]->string_ptr;
-    dir = (dir_node *)AsmGetSymbol( name );
-    info = dir->e.procinfo;
+    info = proc->e.procinfo;
 
     minimum = TOK_PROC_FAR;
     finish = FALSE;
-    info->langtype = ModuleInfo.langtype;
+    proc->sym.langtype = ModuleInfo.langtype;
 
     // fixme ... we need error checking here --- for nested procs
 
     /* Obtain all the default value */
 
     info->mem_type = IS_PROC_FAR() ? MT_FAR : MT_NEAR;
-    info->visibility = dir->sym.public ? VIS_PUBLIC : VIS_PRIVATE;
+    info->visibility = proc->sym.public ? VIS_PUBLIC : VIS_PRIVATE;
     info->parasize = 0;
     info->localsize = 0;
     info->is_vararg = FALSE;
     info->pe_type = ( ( Code->info.cpu & P_CPU_MASK ) == P_286 ) || ( ( Code->info.cpu & P_CPU_MASK ) == P_386 );
-    SetMangler( &dir->sym, NULL, LANG_NONE );
+    SetMangler( &proc->sym, NULL, LANG_NONE );
 
     /* Parse the definition line, except the parameters */
     for( i++; i < Token_Count && AsmBuffer[i]->token != T_COMMA; i++ ) {
         token = AsmBuffer[i]->string_ptr;
         if( AsmBuffer[i]->token == T_STRING ) {
             /* name mangling */
-            SetMangler( &dir->sym, token, LANG_NONE );
+            SetMangler( &proc->sym, token, LANG_NONE );
             continue;
         }
 
@@ -2985,8 +2987,7 @@ static memtype proc_exam( int i )
         case TOK_PROC_WATCOM_C:
         case TOK_PROC_STDCALL:
         case TOK_PROC_SYSCALL:
-            info->langtype = TypeInfo[type].value;
-            ((asm_sym *)dir)->langtype = info->langtype;
+            proc->sym.langtype = TypeInfo[type].value;
             minimum = TOK_PROC_PRIVATE;
             break;
         case TOK_PROC_PRIVATE:
@@ -3026,12 +3027,12 @@ static memtype proc_exam( int i )
     }
 
 parms:
-    CurrProc = dir;
+    CurrProc = proc;
     DefineProc = TRUE;
 
     if( i >= Token_Count ) {
         return( info->mem_type );
-    } else if( info->langtype == LANG_NONE ) {
+    } else if( proc->sym.langtype == LANG_NONE ) {
         AsmError( LANG_MUST_BE_SPECIFIED );
         return( MT_ERROR );
     } else if( AsmBuffer[i]->token == T_COMMA ) {
@@ -3062,23 +3063,29 @@ parms:
                 AsmError( INVALID_QUALIFIED_TYPE );
                 return( MT_ERROR );
             } else {
-                if( info->langtype <= LANG_PASCAL ) {
+				switch( proc->sym.langtype ) {
+				case LANG_NONE:
+				case LANG_BASIC:
+				case LANG_FORTRAN:
+				case LANG_PASCAL:
                     AsmError( VARARG_REQUIRES_C_CALLING_CONVENTION );
                     return( MT_ERROR );
+				default:
+					break;
                 }
             }
         }
 
-        sym = AsmLookup( token );
-        if( sym == NULL )
+        param = AsmLookup( token );
+        if( param == NULL )
             return( MT_ERROR );
 
-        if( sym->state != SYM_UNDEFINED ) {
-            AsmErr( SYMBOL_PREVIOUSLY_DEFINED, sym->name );
+        if( param->state != SYM_UNDEFINED ) {
+            AsmErr( SYMBOL_PREVIOUSLY_DEFINED, param->name );
             return( MT_ERROR );
         } else {
-            sym->state = SYM_INTERNAL;
-            sym->mem_type = TypeInfo[type].value;
+            param->state = SYM_INTERNAL;
+            param->mem_type = TypeInfo[type].value;
         }
 
         paranode = AsmAlloc( sizeof( label_list ) );
@@ -3095,14 +3102,15 @@ parms:
         }
         info->is_vararg |= paranode->is_vararg;
 
-        if( ( info->langtype >= LANG_BASIC ) && ( info->langtype <= LANG_PASCAL ) ) {
-
+		switch( proc->sym.langtype ) {
+		case LANG_BASIC:
+		case LANG_FORTRAN:
+		case LANG_PASCAL:
             /* Parameters are stored in reverse order */
             paranode->next = info->paralist;
             info->paralist = paranode;
-
-        } else {
-
+			break;
+		default:
             paranode->next = NULL;
             if( info->paralist == NULL ) {
                 info->paralist = paranode;
@@ -3114,6 +3122,7 @@ parms:
                 }
                 paracurr->next = paranode;
             }
+			break;
         }
         /* go past comma */
         i++;
@@ -3142,7 +3151,7 @@ int ProcDef( int i )
             AsmError( PROC_MUST_HAVE_A_NAME );
             return( ERROR );
         }
-        name = AsmBuffer[i]->string_ptr;
+        name = AsmBuffer[i++]->string_ptr;
         sym = AsmGetSymbol( name );
 
         if( sym != NULL ) {
@@ -3161,7 +3170,7 @@ int ProcDef( int i )
             dir_change( dir, TAB_PROC );
         }
         GetSymInfo( sym );
-        sym->mem_type = proc_exam( i );
+        sym->mem_type = proc_exam( dir, i );
         if( sym->mem_type == MT_ERROR ) {
             return( ERROR );
         }
@@ -3274,13 +3283,13 @@ int WritePrologue( void )
             offset *= 2;
 
         for( curr = info->paralist; curr; curr = curr->next, parm_count++ ) {
-            if( info->langtype == LANG_WATCOM_C ) {
+            if( CurrProc->sym.langtype == LANG_WATCOM_C ) {
                 retcode = get_watcom_argument_string( buffer, curr->size, &parm_count );
                 if( retcode == ERROR ) {
                     return( ERROR );
                 }
             }
-            if( ( info->langtype != LANG_WATCOM_C ) || ( retcode == FALSE ) ) {
+            if( ( CurrProc->sym.langtype != LANG_WATCOM_C ) || ( retcode == FALSE ) ) {
                 size_override( buffer, curr->size );
                 if( Use32 ) {
                     strcat( buffer, ARGUMENT_STRING_32 );
@@ -3503,11 +3512,21 @@ int Ret( int i, int count, int flag_iret )
 
     if( !flag_iret ) {
         if( count == i + 1 ) {
-            if( ( info->langtype >= LANG_BASIC ) && ( info->langtype <= LANG_PASCAL )
-                || ( info->langtype == LANG_STDCALL ) && !info->is_vararg ) {
-                if( info->parasize != 0 ) {
+            switch( CurrProc->sym.langtype ) {
+            case LANG_BASIC:
+            case LANG_FORTRAN:
+            case LANG_PASCAL:
+				if( info->parasize != 0 ) {
+					sprintf( buffer + strlen( buffer ), "%d", info->parasize );
+				}
+                break;
+            case LANG_STDCALL:
+                if( !info->is_vararg && info->parasize != 0 ) {
                     sprintf( buffer + strlen( buffer ), "%d", info->parasize );
                 }
+                break;
+			default:
+                break;
             }
         } else {
             ++i;
@@ -3658,8 +3677,8 @@ int CommDef( int i )
     mangle_type = Check4Mangler( &i );
     for( ; i < Token_Count; i++ ) {
         count = 1;
-        /* get the distance ( near or far ) */
 
+        /* get the distance ( near or far ) */
         typetoken = AsmBuffer[i]->string_ptr;
         distance = token_cmp( &typetoken, TOK_EXT_NEAR, TOK_EXT_FAR );
 
@@ -3670,9 +3689,8 @@ int CommDef( int i )
             distance = TOK_EXT_NEAR;
         }
 
-        lang_type = GetLangType( i );
-        if( lang_type != LANG_NONE )
-            i++;
+        /* get the symbol language type if present */
+        lang_type = GetLangType( &i );
 
         /* get the symbol name */
         token = AsmBuffer[i++]->string_ptr;
