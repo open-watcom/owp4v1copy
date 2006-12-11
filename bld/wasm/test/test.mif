@@ -27,7 +27,7 @@ $(objs) : .SYMBOLIC
     @echo ==============================================================
     @%append $(nulldevice) $^@
     @%append $(log_file) === $(testasm) $^@ ===
-    @$(testasm) -q -zld -wx -nm=$^@.asm $(asm_flags_$^@) $^@.asm -fr=$^@.out >>$(nulldevice)
+    @$(testasm) -q -zld -wx -nm=$^@.asm $(asm_flags_$^@) $^@.asm -fr=$^@.out -fo=$^@.obj > $(nulldevice)
     @wmake -h -f ../check.mif name=$^@ log_file=$(log_file)
 !endif
 !endif
