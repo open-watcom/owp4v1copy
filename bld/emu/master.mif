@@ -12,7 +12,7 @@ emu_distrib_lib = 1
 INCS = &
  flda386.asm fldc386.asm fldm386.asm fldd386.asm ldi4386.asm &
  ldfs386.asm fdld386.asm i4ld386.asm ldfd386.asm fsld386.asm &
- i8ld386.asm &
+ ldi8386.asm i8ld386.asm &
  sqrt386.asm 386fprem.inc 386log.inc 386poly.inc &
  386trig.inc 386sind.inc 386atan.inc &
  386f2xm1.inc 386fpemu.inc 386fxam.inc 386round.inc &

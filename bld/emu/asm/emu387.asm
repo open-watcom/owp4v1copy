@@ -106,7 +106,9 @@ include fldc386.asm
 include fldd386.asm
 include fldm386.asm
 include ldi4386.asm
+include ldi8386.asm
 include i4ld386.asm
+include i8ld386.asm
 include fdld386.asm
 include ldfs386.asm
 include ldfd386.asm

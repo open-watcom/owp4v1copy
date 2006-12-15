@@ -134,6 +134,7 @@ extern  void    __I4LD(long,long_double _WCNEAR *);
 extern  void    __U4LD(unsigned long,long_double _WCNEAR *);
 //The 64bit types change depending on what's being built.
 //(u)int64* (un)signed_64* don't seem suitable, and we use void* instead.
+extern  void    __LDI8(long_double _WCNEAR *, void _WCNEAR *);
 extern  void    __I8LD(void _WCNEAR *, long_double _WCNEAR *);
 extern  void    __U8LD(void _WCNEAR *, long_double _WCNEAR *);
 extern void __FLDA(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNEAR *);
@@ -231,14 +232,31 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
                 "pop   eax"\
         float   "fstp tbyte ptr [edx]"\
                 parm caller [eax] [edx];
+  #pragma aux   __LDI8 = \
+        float   "fld tbyte ptr [eax]"\
+                "push  eax"\
+                "push  eax"\
+        float   "fstcw [esp]"\
+        float   "fwait"\
+                "pop eax"\
+                "push eax"\
+                "or ah,0x0c"\
+                "push eax"\
+        float   "fldcw [esp]"\
+                "pop eax"\
+        float   "fistp qword ptr [edx]"\
+        float   "fldcw [esp]"\
+                "pop   eax"\
+                "pop   eax"\
+                parm caller [eax] [edx];
   #pragma aux   __I8LD = \
         float   "fild  qword ptr [eax]"\
         float   "fstp  tbyte ptr [edx]"\
                 parm caller [eax] [edx];
   #pragma aux   __U8LD = \
-                "push  [eax]"\
                 "push  [eax+4]"\
-                "and   [esp+4],0x7fffffff"\
+                "and   [esp],0x7fffffff"\
+                "push  [eax]"\
         float   "fild  qword ptr [esp]"\
                 "push  [eax+4]"\
                 "and   [esp],0x80000000"\
@@ -246,7 +264,7 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
         float   "fild  qword ptr [esp]"\
         float   "fchs"\
         float   "faddp st(1),st"\
-        float   "fstp  qword ptr [edx]"\
+        float   "fstp  tbyte ptr [edx]"\
                 "lea   esp,[esp+16]"\
                 parm caller [eax] [edx];
   #pragma aux   __iFDLD = \
@@ -273,6 +291,7 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
   #pragma aux   __LDI4  "*"  parm caller [eax] value [eax];
   #pragma aux   __I4LD  "*"  parm caller [eax] [edx];
   #pragma aux   __U4LD  "*"  parm caller [eax] [edx];
+  #pragma aux   __LDI8  "*"  parm caller [eax] [edx];
   #pragma aux   __I8LD  "*"  parm caller [eax] [edx];
   #pragma aux   __U8LD  "*"  parm caller [eax] [edx];
   #pragma aux   __iFDLD "*"  parm caller [eax] [edx];
@@ -372,19 +391,19 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
                 "pop  bp"\
                 parm caller [ax] [dx] value [dx];
   #pragma aux   __LDI4 = \
-                "push bp"\
-                "mov  bp,ax"\
-        float   "fld  tbyte ptr [bp]"\
-                "push dx"\
-                "push ax"\
-                "push ax"\
-                "mov  bp,sp"\
+                "push  bp"\
+                "mov   bp,ax"\
+        float   "fld   tbyte ptr [bp]"\
+                "push  dx"\
+                "push  ax"\
+                "push  ax"\
+                "mov   bp,sp"\
         float   "fstcw [bp]"\
         float   "fwait"\
-                "pop  ax"\
-                "push ax"\
-                "or   ah,0x0c"\
-                "mov  2[bp],ax"\
+                "pop   ax"\
+                "push  ax"\
+                "or    ah,0x0c"\
+                "mov   2[bp],ax"\
         float   "fldcw 2[bp]"\
         float   "fistp dword ptr 2[bp]"\
         float   "fldcw [bp]"\
@@ -415,50 +434,70 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
                 "sub   ax,ax"\
                 "mov   4[bp],ax"\
                 "mov   6[bp],ax"\
-        float   "fild  qword ptr 2[bp]"\
+        float   "fild  qword ptr [bp]"\
                 "pop   ax"\
                 "pop   dx"\
-                "pop   ax"\
-                "pop   ax"\
+                "pop   bp"\
+                "pop   bp"\
                 "mov   bp,bx"\
         float   "fstp  tbyte ptr [bp]"\
                 "pop   bp"\
                 parm caller [dx ax] [bx];
+  #pragma aux   __LDI8 = \
+                "push  bp"\
+                "mov   bp,ax"\
+        float   "fld   tbyte ptr [bp]"\
+                "push  ax"\
+                "push  ax"\
+                "mov   bp,sp"\
+        float   "fstcw [bp]"\
+        float   "fwait"\
+                "pop   ax"\
+                "push  ax"\
+                "or    ah,0x0c"\
+                "push  ax"\
+        float   "fldcw [bp-2]"\
+                "pop   ax"\
+                "mov   bp,dx"\
+        float   "fistp qword ptr [bp]"\
+                "mov   bp,sp"\
+        float   "fldcw [bp]"\
+                "pop   ax"\
+                "pop   ax"\
+                "pop   bp"\
+                parm caller [ax] [dx];
   #pragma aux   __I8LD = \
-        float   "fild  qword ptr [si]"\
-        float   "fstp  tbyte ptr [di]"\
-                parm caller [si] [di];
+                "push  bp"\
+                "mov   bp,ax"\
+        float   "fild  qword ptr [bp]"\
+                "mov   bp,dx"\
+        float   "fstp  tbyte ptr [bp]"\
+                "pop   bp"\
+                parm caller [ax] [dx];
   #pragma aux   __U8LD = \
                 "push  bp"\
-                "push  14[si]"\
-                "push  12[si]"\
-                "push  10[si]"\
-                "push  8[si]"\
-                "push  6[si]"\
-                "push  4[si]"\
-                "push  2[si]"\
-                "push  [si]"\
-                "mov   bp,sp"\
-                "and   [bp+7],0x7f"\
-        float   "fild  qword ptr [bp]"\
+                "mov   bp,ax"\
+                "push  6[bp]"\
+                "push  4[bp]"\
+                "push  2[bp]"\
+                "push  [bp]"\
+                "push  6[bp]"\
                 "mov   bp,0"\
-                "push  14[si]"\
-                "push  bp"\
-                "push  bp"\
-                "push  bp"\
-                "push  bp"\
                 "push  bp"\
                 "push  bp"\
                 "push  bp"\
                 "mov   bp,sp"\
-                "and   [bp+7],0x80"\
+                "and   byte ptr [bp+8+7],0x7f"\
+        float   "fild  qword ptr [bp+8]"\
+                "and   word ptr [bp+6],0x8000"\
         float   "fild  qword ptr [bp]"\
         float   "fchs"\
         float   "faddp st(1),st"\
-        float   "fstp  qword ptr [di]"\
-                "add   sp,32"\
+                "mov   bp,dx"\
+        float   "fstp  tbyte ptr [bp]"\
+                "add   sp,16"\
                 "pop   bp"\
-                parm caller [si] [di];
+                parm caller [ax] [dx];
   #pragma aux   __iFDLD = \
                 "push  bp"\
                 "mov   bp,ax"\
@@ -499,8 +538,9 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
   #pragma aux   __LDI4  "*"  parm caller [ax] value [dx ax];
   #pragma aux   __I4LD  "*"  parm caller [dx ax] [bx];
   #pragma aux   __U4LD  "*"  parm caller [dx ax] [bx];
-  #pragma aux   __I8LD  "*"  parm caller [si] [di];
-  #pragma aux   __U8LD  "*"  parm caller [si] [di];
+  #pragma aux   __LDI8  "*"  parm caller [ax] [dx];
+  #pragma aux   __I8LD  "*"  parm caller [ax] [dx];
+  #pragma aux   __U8LD  "*"  parm caller [ax] [dx];
   #pragma aux   __iFDLD "*"  parm caller [ax] [dx];
   #pragma aux   __iFSLD "*"  parm caller [ax] [dx];
   #pragma aux   __iLDFD "*"  parm caller [ax] [dx];

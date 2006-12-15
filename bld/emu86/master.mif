@@ -25,9 +25,9 @@ fpu_flags_qnx_386 = -fpc
 INCS = &
  fsld086.asm ldfs086.asm ldfd086.asm fdld086.asm &
  i4ld086.asm ldi4086.asm flda086.asm fldc086.asm &
- i8ld086.asm &
+ i8ld086.asm ldi8086.asm &
  fldm086.asm fldd086.asm sqrt086.asm &
- e86ldi8.inc e86i8ld.inc fpe86.inc e86fprem.inc &
+ fpe86.inc e86fprem.inc &
  e86poly.inc e86log.inc e86round.inc e86atan.inc &
  sindata.inc e86sin.inc e86f2xm1.inc &
  memops.inc stkops.inc tentab.inc tagtab.inc &

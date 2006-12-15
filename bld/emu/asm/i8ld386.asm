@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  convert long long into long double  __I8LD, __U8LD
+;* Description:  convert 8-byte integer into long double
 ;*
 ;*****************************************************************************
 
@@ -39,37 +39,81 @@ include xception.inc
 
 endif
 
+;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+;<>
+;<> __I8LD, __U8LD - convert 8-byte integer to long double
+;<>
+;<>   ifdef _BUILDING_MATHLIB
+;<>     input:  EAX - pointer to 8-byte integer
+;<>             EDX - pointer to long double operand 
+;<>   else
+;<>     input:  EDX:EAX - 8-byte integer
+;<>             EBX - pointer to long double operand
+;<>   endif
+;<>
+;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
         xdefp   __I8LD
         xdefp   __U8LD
 
-;       __I8LD - convert long long into long double
-;       __U8LD - convert unsigned long long into long double
-; input:
-;       EAX - pointer to long long
-;       EDX - pointer to long double
+;       __I8LD - convert signed 8-byte integer into long double
+;       __U8LD - convert unsigned 8-byte integer into long double
 
-__I8LD  proc    near
-        push    eax
-        mov     eax,0
-        mov     [edx],eax
-        mov     4[edx],eax
-        mov     8[edx],ax
-        pop     eax
-        ret
-__I8LD  endp
+        defp    __U8LD
+        push    ECX              ; save DI
+        mov     CL,1            ; unsigned value
+        jmp     short cont1
 
-; input:
-;       EAX - pointer to unsigned long long
-;       EDX - pointer to long double
-__U8LD: proc    near
-        push    eax
-        mov     eax,0
-        mov     [edx],eax
-        mov     4[edx],eax
-        mov     8[edx],ax
-        pop     eax
-        ret
+        defp    __I8LD
+        push    ECX             ; save ECX
+        mov     CL,0            ; signed value
+cont1:
+ifdef _BUILDING_MATHLIB
+        push    EBX
+        mov     EBX,EDX
+        mov     EDX,4[EAX]      ; get 8-byte integer
+        mov     EAX,[EAX]       ; ...
+endif
+        _guess
+          or    CL,CL           ; if unsigned input
+          mov   CX,403Eh        ; get exponent and sign
+          _quif nz              ; then
+          or    EDX,EDX         ; if number is negative
+          _if s                 ; then
+            neg EDX             ; - negate the value
+            neg EAX             ; - ...
+            sbb EDX,0           ; - ...
+            or  CX,8000h        ; - turn on sign bit
+          _endif                ; endif
+        _endguess
+        _guess
+          or    EDX,EDX         ; if high order word is 0
+          _quif ne
+          sub   CL,32           ; - adjust exponent
+          or    EDX,EAX         ; - shift operand left 32 bits
+          mov   EAX,0           ; - ...
+          _quif ne              ; - if last word was also 0
+          mov   CX,AX           ; - set exponent to 0
+        _admit
+          _if ns                ; if not already normalized
+            _loop               ; - loop (normalize result)
+              dec   CX          ; - - decrement exponent
+              shld  EDX,EAX,1   ; - - shift left 1 bit
+              shl   EAX,1       ; - - ...
+            _until s            ; - until normalized
+          _endif                ; endif
+        _endguess
+        mov     8[EBX],CX        ; store exponent
+        mov     4[EBX],EDX       ; fraction
+        mov     [EBX],EAX        ; ...
+ifdef _BUILDING_MATHLIB
+        pop     EBX
+endif
+        pop     ECX             ; restore ECX
+        ret                     ; return
 __I8LD  endp
+__U8LD  endp
+
 
 ifdef _BUILDING_MATHLIB
 

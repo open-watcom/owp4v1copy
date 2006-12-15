@@ -1058,9 +1058,9 @@ dosib:  mov     bl,[esi]                ; get sib byte in bl           ssiiibbb
         xref    __FLDD
         xref    __FLDC
         xref    __I4LD
-        xref    __U4LD
+        xref    __I8LD
         xref    __LDI4
-        xref    __LDU4
+        xref    __LDI8
         xref    __EmuFSLD
         xref    __EmuLDFS
         xref    __EmuFDLD
@@ -1443,12 +1443,14 @@ load    macro  where,what                       ; load up hi:lo
         ELSE                                    ; else if double long (8 bytes)
         IFIDN      <what>,<dlong>               ; - then
       ifdef SEGMENTED
-        mov     eax,es:[esi]                    ; - load up unsigned long
+        mov     eax,es:[esi]                    ; - load up long long
+        mov     edx,es:4[esi]                   ; - ...
       else
-        mov     eax,   [esi]                    ; - load up unsigned long
+        mov     eax,   [esi]                    ; - load up long long
+        mov     edx,   4[esi]                   ; - ...
       endif
-        _lea    edx,where                       ; - ...
-        call    __U4LD                          ; - convert to tbyte
+        _lea    ebx,where                       ; - ...
+        call    __I8LD                          ; - convert to tbyte
         ELSE                                    ; else if float
         IFIDN      <what>,<float>               ; - then
       ifdef SEGMENTED
@@ -1542,11 +1544,13 @@ store   macro   what                            ; store st somewhere
         ELSE                                    ; else if double long (8 bytes)
         IFIDN   <what>,<dlong>                  ; - then
         _lea    eax,st                          ; - point to top of stack
-        call    __LDU4                          ; - convert to unsigned long
+        call    __LDI8                          ; - convert to long long
       ifdef SEGMENTED
         mov     es:[esi],eax                    ; - store it
+        mov     es:4[esi],edx                   ; - ...
       else
         mov        [esi],eax                    ; - store it
+        mov        4[esi],edx                   ; - ...
       endif
         ELSE                                    ; else if st(i)
         IFIDN   <what>,<st(i)>                  ; - then

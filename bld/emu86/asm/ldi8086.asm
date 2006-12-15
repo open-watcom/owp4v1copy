@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  convert long double into 4-byte integer
+;* Description:  convert long double into 8-byte integer
 ;*
 ;*****************************************************************************
 
@@ -35,37 +35,37 @@ include mdef.inc
 include struct.inc
 include xception.inc
 
-        modstart    ldi4086, word
+        modstart    ldi8086, word
 
 endif
 
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
-;<> __LDI4 - convert long double into 4-byte integer
+;<> __LDI8 - convert long double into 8-byte integer with truncation
 ;<>          it is assumed that the long double has already been rounded
 ;<>          to an integer by calling __frndint.
 ;<>
 ;<>   ifdef _BUILDING_MATHLIB
-;<>     input:  SS:AX - pointer to operand
-;<>     output: DX:AX - 4-byte integer
+;<>     input:  SS:AX - pointer to long double operand 
+;<>             SS:DX - pointer to 8-byte integer
 ;<>   else
-;<>     input:  DS:BX - pointer to operand
-;<>     output: DX:AX - 4-byte integer
+;<>     input:  DS:BX - pointer to long double operand
+;<>     output: CX:BX:DX:AX - 8-byte integer
 ;<>   endif
 ;<>
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
-        xdefp   __LDI4
-        xdefp   __LDU4
+        xdefp   __LDI8
 
-        defp    __LDI4
-        defp    __LDU4
+        defp    __LDI8
 ifdef _BUILDING_MATHLIB
-        push    DS              ; save DS
+        push    SI
         push    BX              ; save BX
+        push    DS              ; save DS
         push    SS              ; fpc code assumes parms are relative to SS
         pop     DS              ; ...
         mov     BX,AX           ; setup parm
+        push    DX
 endif
         _guess
           mov   AX,8[BX]        ; get exponent
@@ -74,59 +74,82 @@ endif
           _quif ae              ; then
           sub   AX,AX           ; - result is 0
           cwd                   ; - ...
-        _admit                  ; endif
-          cmp   AX,401Eh        ; if number too large
+          mov   BX,AX           ; - ...
+          mov   CX,AX           ; - ...
+        _admit
+          cmp   AX,403Eh        ; if number too large
           _quif b               ; then
-          mov   DX,8000h        ; - return largest number
+          mov   CX,8000h        ; - return largest number
           sub   AX,AX           ; - ...
-        _admit                  ; endif
-          push  CX              ; save CX
-          sub   AX,401Eh        ; calculate # of bits to shift
+          mov   BX,AX           ; - ...
+          mov   DX,AX           ; - ...
+        _admit
+          push  8[BX]           ; get sign of the value
+          sub   AX,403Eh        ; calculate # of bits to shift
           neg   AX              ; ...
-          mov   CL,AL           ; get shift count
-          mov   DX,6[BX]        ; get fraction
-          mov   AX,4[BX]        ; ...
-          _loop                   ; loop
-            cmp CL,16           ; - quit if < 16 bits to shift
-            _quif l               ; - ...
+          mov   SI,AX           ; get shift count
+          mov   CX,6[BX]        ; get fraction
+          mov   DX,2[BX]        ; ...
+          mov   AX,[BX]         ; get fraction
+          mov   BX,4[BX]        ; ...
+          _loop                 ; loop
+            cmp SI,16           ; - quit if < 16 bits to shift
+            _quif l             ; - ...
             mov AX,DX           ; - shift right 16
-            sub DX,DX           ; - zero high word
-            sub CL,16           ; - adjust shift count
-          _endloop                ; endloop
-          cmp   CL,8            ; if >= 8 bits to shift
-          _if   ge              ; then
+            mov DX,BX           ; - ...
+            mov BX,CX           ; - ...
+            sub CX,CX           ; - ...
+            sub SI,16           ; - adjust shift count
+          _endloop              ; endloop
+          cmp   SI,8            ; if >= 8 bits to shift
+          _if ge                ; then
             mov AL,AH           ; - shift right 8 bits
             mov AH,DL           ; - ...
             mov DL,DH           ; - ...
-            mov DH,0            ; - ...
-            sub CL,8            ; - adjust shift count
-          _endif                  ; endif
-          cmp   CL,0            ; if some bits to shift
-          _if   ne              ; then
-            _loop                 ; - loop (bit shift)
-              shr  DX,1          ; - - shift right 1 bit
-              rcr  AX,1          ; - - ...
-              dec  CL            ; - - decrement shift count
-            _until e             ; - until done
-          _endif                  ; endif
+            mov DH,BL           ; - ...
+            mov BL,BH           ; - ...
+            mov BH,CL           ; - ...
+            mov CL,CH           ; - ...
+            mov CH,0            ; - ...
+            sub SI,8            ; - adjust shift count
+          _endif                ; endif
+          cmp   SI,0            ; if some bits to shift
+          _if ne                ; then
+            _loop               ; - loop (bit shift)
+              shr  CX,1         ; - - shift right 1 bit
+              rcr  BX,1         ; - - ...
+              rcr  DX,1         ; - - ...
+              rcr  AX,1         ; - - ...
+              dec  SI           ; - - decrement shift count
+            _until e            ; - until done
+          _endif                ; endif
 ;
-          mov   CX,8[BX]        ; get sign of the value
-          or    CX,CX           ; if negative
-          _if   s               ; then
-            not DX              ; - negate the value
+          pop   SI              ; get sign of the value
+          or    SI,SI           ; if negative
+          _if s                 ; then
+            not CX              ; - negate the value
+            not BX              ; - ...
+            not DX              ; - ...
             neg AX              ; - ...
             sbb DX,-1           ; - ...
-          _endif                  ; endif
-          pop   CX              ; restore CX
+            sbb BX,-1           ; - ...
+            sbb CX,-1           ; - ...
+          _endif                ; endif
         _endguess
 ifdef _BUILDING_MATHLIB
+        mov     SI,BX
+        pop     BX
+        mov     6[BX],CX
+        mov     4[BX],SI
+        mov     2[BX],DX
+        mov     [BX],AX
         pop     BX              ; restore BX
         pop     DS              ; restore DS
+        pop     SI
 endif
         ret                     ; return to caller
 
-        endproc __LDU4
-        endproc __LDI4
+        endproc __LDI8
 
 
 ifdef _BUILDING_MATHLIB

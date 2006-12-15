@@ -1,3 +1,33 @@
+;*****************************************************************************
+;*
+;*                            Open Watcom Project
+;*
+;*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+;*
+;*  ========================================================================
+;*
+;*    This file contains Original Code and/or Modifications of Original
+;*    Code as defined in and that are subject to the Sybase Open Watcom
+;*    Public License version 1.0 (the 'License'). You may not use this file
+;*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+;*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+;*    provided with the Original Code and Modifications, and is also
+;*    available at www.sybase.com/developer/opensource.
+;*
+;*    The Original Code and all software distributed under the License are
+;*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+;*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+;*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+;*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+;*    NON-INFRINGEMENT. Please see the License for the specific language
+;*    governing rights and limitations under the License.
+;*
+;*  ========================================================================
+;*
+;* Description:  convert 4-byte integer into long double
+;*
+;*****************************************************************************
+
 
 ifdef _BUILDING_MATHLIB
 
@@ -7,29 +37,29 @@ include xception.inc
 
         modstart    i4ld086, word
 
-
 endif
 
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
-;<> __I4LD - convert 32-bit integer to long double
+;<> __I4LD, __U4LD - convert 4-byte integer into long double
+;<>
+;<>   ifdef _BUILDING_MATHLIB
+;<>     input:  DX:AX - long
+;<>             SS:BX - pointer to long double operand 
+;<>   else
+;<>     input:  DX:AX - long
+;<>             DS:BX - pointer to long double operand
+;<>   endif
 ;<>
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+;       __I4LD - convert long into long double
+;       __U4LD - convert unsigned long into long double
 
         xdefp   __I4LD
         xdefp   __U4LD
 
-;       __I4LD - convert long into long double
-;       __U4LD - convert unsigned long into long double
-; input:
-;       DX:AX - long
-;       DS:BX - pointer to long double
-;
-ifdef _BUILDING_MATHLIB
-__I4LD  proc
-else
-__I4LD  proc    near
-endif
+        defp    __I4LD
         or      DX,DX           ; if number is negative
         _if     s               ; then
           not   DX              ; - negate the value
@@ -38,7 +68,8 @@ endif
           push  CX              ; - save CX
           mov   CX,0C01Eh       ; - set exponent
         _else                   ; else
-__U4LD:                         ; - convert unsigned long to long double
+
+        defp    __U4LD          ; - convert unsigned long to long double
           push  CX              ; - save CX
           mov   CX,0401Eh       ; - set exponent
         _endif                  ; endif
@@ -83,6 +114,7 @@ ifdef _BUILDING_MATHLIB
 endif
         pop     CX              ; restore CX
         ret                     ; return
+__U4LD  endp
 __I4LD  endp
 
 
