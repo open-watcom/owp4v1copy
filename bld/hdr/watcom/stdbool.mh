@@ -24,7 +24,11 @@
 
 :: C++ programs should use the built in bool type.
 #ifndef __cplusplus
-#define bool _Bool
+#if __STDC_VERSION__ >= 199901L
+ #define bool _Bool
+#else
+ #define bool char
+#endif
 #define true  1
 #define false 0
 #endif
