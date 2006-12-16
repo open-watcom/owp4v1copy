@@ -49,7 +49,7 @@ endif
 ;<>     input:  SS:AX - pointer to long double operand 
 ;<>             SS:DX - pointer to 8-byte integer
 ;<>   else
-;<>     input:  DS:BX - pointer to long double operand
+;<>     input:  DS:AX - pointer to long double operand
 ;<>     output: CX:BX:DX:AX - 8-byte integer
 ;<>   endif
 ;<>
@@ -58,15 +58,15 @@ endif
         xdefp   __LDI8
 
         defp    __LDI8
-ifdef _BUILDING_MATHLIB
         push    SI
+ifdef _BUILDING_MATHLIB
         push    BX              ; save BX
         push    DS              ; save DS
         push    SS              ; fpc code assumes parms are relative to SS
         pop     DS              ; ...
-        mov     BX,AX           ; setup parm
         push    DX
 endif
+        mov     BX,AX           ; setup parm
         _guess
           mov   AX,8[BX]        ; get exponent
           and   AX,7FFFh        ; isolate exponent
@@ -145,8 +145,8 @@ ifdef _BUILDING_MATHLIB
         mov     [BX],AX
         pop     BX              ; restore BX
         pop     DS              ; restore DS
-        pop     SI
 endif
+        pop     SI
         ret                     ; return to caller
 
         endproc __LDI8
