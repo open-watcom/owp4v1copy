@@ -50,8 +50,8 @@ set PREOBJDIR=prebuild
 
 REM Stuff for the Open Watcom build environment
 set BUILD_PLATFORM=os2386
-set BLD_VER=16
-set BLD_VER_STR=1.6
+set BLD_VER=17
+set BLD_VER_STR=1.7
 set BUILDER_CTL=lang.ctl
 set DEVDIR=%OWROOT%\bld
 REM Subdirectory to be used for bootstrapping/prebuild binaries
