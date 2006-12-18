@@ -244,7 +244,7 @@ void main( int argc, char *argv[] )
 
     if( argc < 2 ) {
         printf( "Usage:  dwdump <file>\n" );
-        printf( "Where <file> is a COFF or ELF object file\n" );
+        printf( "Where <file> is a COFF, ELF or OMF object file\n" );
         printf( "dwdump reads and dumps DWARF debugging information\n" );
         return;
     }
@@ -268,10 +268,13 @@ void main( int argc, char *argv[] )
     }
     type = ORLFileIdentify( o_hnd, (void *)file );
     if( type == ORL_UNRECOGNIZED_FORMAT ) {
-        printf( "The object file is not in either ELF or COFF format." );
+        printf( "The object file is not in either ELF, COFF or OMF format." );
         return;
     }
     switch( type ) {
+    case ORL_OMF:
+        printf( "OMF" );
+        break;
     case ORL_ELF:
         printf( "ELF" );
         break;
