@@ -808,16 +808,26 @@ static void dumpLines(
                     initState( &state, default_is_stmt );
                     break;
                 case DW_LNE_set_address:
-                    tmp = getU32( (uint_32 *)p );
-                    p += sizeof( uint_32 );
-                    #if 0   /* Why did they choose 6 byte here?  */
+                    if( op_len == 3 ) {
+                        tmp = getU16( (uint_16 *)p );
+                        p += sizeof( uint_16 );
+                    } else {
+                        tmp = getU32( (uint_32 *)p );
+                        p += sizeof( uint_32 );
+                    }
+#if 0   /* Why did they choose 6 byte here?  */
                     tmp_seg = getU16( (uint_16 *)p );
                     p += sizeof( uint_16 );
                     printf( "SET_ADDRESS %04x:%08lx\n", tmp_seg, tmp );
-                    #else
+#else
                     tmp_seg = 0;    /* stop warning */
                     printf( "SET_ADDRESS %08lx\n", tmp );
-                    #endif
+#endif
+                    break;
+                case DW_LNE_set_segment:
+                    tmp_seg = getU16( (uint_16 *)p );
+                    p += sizeof( uint_16 );
+                    printf( "SET_ADDRESS_SEG %04x\n", tmp_seg );
                     break;
                 case DW_LNE_define_file:
                     ++file_index;
