@@ -106,7 +106,7 @@ Else
     OutFile.WriteLine "set PREOBJDIR=prebuild"
     OutFile.WriteLine
     OutFile.WriteLine "REM Set the version numbers"
-    OutFile.WriteLine "call version.bat"
+    OutFile.WriteLine "call %OWROOT%\version.bat"
     OutFile.WriteLine
     OutFile.WriteLine "REM Stuff for the Open Watcom build environment"
     OutFile.WriteLine "set BUILD_PLATFORM=nt386"

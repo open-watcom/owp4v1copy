@@ -49,7 +49,7 @@ REM Subdirectory to be used for building prerequisite utilities
 set PREOBJDIR=prebuild
 
 REM Set the version numbers
-call version.bat
+call %OWROOT%\version.bat
 
 REM Stuff for the Open Watcom build environment
 set BUILD_PLATFORM=nt386

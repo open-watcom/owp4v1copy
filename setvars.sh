@@ -50,8 +50,6 @@ export PREOBJDIR=prebuild
 
 # Stuff for the Open Watcom build environment
 export BUILD_PLATFORM=linux386
-export BLD_VER=17
-export BLD_VER_STR=1.7
 export BUILDER_CTL=lang.ctl
 export DEVDIR=$OWROOT/bld
 
@@ -59,9 +57,9 @@ export DEVDIR=$OWROOT/bld
 # the batch file to a shell script and then run it.  Immediately delete the shell
 # script to prevent anyone from getting confused and changing the version number
 # in it instead of in the batch file.
-sed -e 's/@echo off//' -e 's/set/export/' -e 's/REM/#/' version.bat >version.sh
+sed -e 's/@echo off//' -e 's/set/export/' -e 's/REM/#/' $OWROOT/version.bat >version.sh
 chmod 777 version.sh
-./version.sh
+source ./version.sh
 rm version.sh
 
 # Subdirectory to be used for bootstrapping/prebuild binaries
