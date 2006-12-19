@@ -1,4 +1,4 @@
-set +v
+#set +v 
 # *****************************************************************
 # setvars - Linux version
 # *****************************************************************
@@ -54,6 +54,16 @@ export BLD_VER=17
 export BLD_VER_STR=1.7
 export BUILDER_CTL=lang.ctl
 export DEVDIR=$OWROOT/bld
+
+# Set the version numbers, which are stored in a batch file.  Use sed to convert
+# the batch file to a shell script and then run it.  Immediately delete the shell
+# script to prevent anyone from getting confused and changing the version number
+# in it instead of in the batch file.
+sed -e 's/@echo off//' -e 's/set/export/' -e 's/REM/#/' version.bat >version.sh
+chmod 777 version.sh
+./version.sh
+rm version.sh
+
 # Subdirectory to be used for bootstrapping/prebuild binaries
 export OWBINDIR=$DEVDIR/build/binl
 export DISTROOT=$OWROOT/distrib

@@ -105,10 +105,11 @@ Else
     OutFile.WriteLine "REM Subdirectory to be used for building prerequisite utilities"
     OutFile.WriteLine "set PREOBJDIR=prebuild"
     OutFile.WriteLine
+    OutFile.WriteLine "REM Set the version numbers"
+    OutFile.WriteLine "call version.bat"
+    OutFile.WriteLine
     OutFile.WriteLine "REM Stuff for the Open Watcom build environment"
     OutFile.WriteLine "set BUILD_PLATFORM=nt386"
-    OutFile.WriteLine "set BLD_VER=17"
-    OutFile.WriteLine "set BLD_VER_STR=1.7"
     OutFile.WriteLine "set BUILDER_CTL=lang.ctl"
     OutFile.WriteLine "set DEVDIR=%OWROOT%\bld"
     OutFile.WriteLine "set OWBINDIR=%DEVDIR%\build\binnt"
