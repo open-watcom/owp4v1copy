@@ -44,7 +44,6 @@ extern void     ODBIGenLocal( segdata * );
 extern void     ODBIAddGlobal( symbol * );
 extern void     ODBIGenGlobal( symbol *, section * );
 extern void     ODBIGenLines( segdata *, void *, unsigned, bool );
-extern void     ODBIGenLines( segdata *, void *, unsigned, bool );
 extern void     ODBIAddAddrInfo( seg_leader * );
 extern void     ODBIAddrSectStart( section * );
 extern void     ODBIP2Start( section * );
