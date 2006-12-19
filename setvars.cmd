@@ -48,8 +48,14 @@ set OBJDIR=bootstrp
 REM Subdirectory to be used for building prerequisite utilities
 set PREOBJDIR=prebuild
 
-REM Set the version numbers
-call %OWROOT%\version.bat
+REM Set the version numbers, which are stored in a batch file.  Convert it to a .cmd
+REM file so that it won't run in a separate DOS session, causing the environment
+REM variables it sets to be ignored.  Immediately delete the .cmd file to prevent
+REM anyone from getting confused and changing the version number in it instead of
+REM in the batch file.
+copy %OWROOT%\version.bat version.cmd
+call version.cmd
+del version.cmd
 
 REM Stuff for the Open Watcom build environment
 set BUILD_PLATFORM=os2386
