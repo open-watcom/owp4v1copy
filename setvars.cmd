@@ -23,8 +23,6 @@ set OS2TKROOT=c:\Toolkit
 REM Change this to the install location of GhostScript for PDF creation (optional)
 set GHOSTSCRIPT=c:\gs\gs7.04
 
-REM Modifications beyond this point should not be necessary
-
 REM Set this variable to 1 to get debug build
 set DEBUG_BUILD=0
 
@@ -39,46 +37,12 @@ REM set appropriate variables to blank for help compilers which you haven't inst
 set WIN95HC=
 set OS2HC=ipfc
 
-REM Set up default path information variable
-if "%DEFPATH%" == "" set DEFPATH=%PATH%
-
 REM Subdirectory to be used for bootstrapping
 set OBJDIR=bootstrp
 
 REM Subdirectory to be used for building prerequisite utilities
 set PREOBJDIR=prebuild
 
-REM Set the version numbers, which are stored in a batch file.  Convert it to a .cmd
-REM file so that it won't run in a separate DOS session, causing the environment
-REM variables it sets to be ignored.  Immediately delete the .cmd file to prevent
-REM anyone from getting confused and changing the version number in it instead of
-REM in the batch file.
-copy %OWROOT%\version.bat version.cmd
-call version.cmd
-del version.cmd
+REM Invoke the script for the common environment
+call %OWROOT%\cmnvars.cmd
 
-REM Stuff for the Open Watcom build environment
-set BUILD_PLATFORM=os2386
-set BUILDER_CTL=lang.ctl
-set DEVDIR=%OWROOT%\bld
-REM Subdirectory to be used for bootstrapping/prebuild binaries
-set OWBINDIR=%DEVDIR%\build\binp
-set DISTROOT=%OWROOT%\distrib
-set RELROOT=%OWROOT%
-set DWATCOM=%WATCOM%
-set DOC_ROOT=%OWROOT%\docs
-set INCLUDE=%WATCOM%\h;%WATCOM%\h\os2
-set EDPATH=%WATCOM%\eddat
-set PATH=%OWROOT%\binp;%OWBINDIR%;%OWROOT%\bat;%WATCOM%\binp;%WATCOM%\binw;%DOC_ROOT%\cmds;%OS2TKROOT%\bin;%DEFPATH%
-
-echo Open Watcom compiler build environment
-
-REM OS specifics
-
-cd %DEVDIR%
-
-REM Ensure COMSPEC points to CMD.EXE
-set COMSPEC=CMD.EXE
-
-set IPFC=%OS2TKROOT%\ipfc
-set BEGINLIBPATH=%WATCOM%\binp\dll

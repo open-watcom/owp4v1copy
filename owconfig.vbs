@@ -96,41 +96,14 @@ Else
     OutFile.WriteLine "set WIN95HC=" + HcrtfPath
     OutFile.WriteLine "set OS2HC=" + IpfcPath
     OutFile.WriteLine
-    OutFile.WriteLine "REM Set up default path information variable"
-    OutFile.WriteLine "if ""%DEFPATH%"" == """" set DEFPATH=%PATH%"
-    OutFile.WriteLine
     OutFile.WriteLine "REM Subdirectory to be used for bootstrapping"
     OutFile.WriteLine "set OBJDIR=bootstrp"
     OutFile.WriteLine
     OutFile.WriteLine "REM Subdirectory to be used for building prerequisite utilities"
     OutFile.WriteLine "set PREOBJDIR=prebuild"
     OutFile.WriteLine
-    OutFile.WriteLine "REM Set the version numbers"
-    OutFile.WriteLine "call %OWROOT%\version.bat"
-    OutFile.WriteLine
-    OutFile.WriteLine "REM Stuff for the Open Watcom build environment"
-    OutFile.WriteLine "set BUILD_PLATFORM=nt386"
-    OutFile.WriteLine "set BUILDER_CTL=lang.ctl"
-    OutFile.WriteLine "set DEVDIR=%OWROOT%\bld"
-    OutFile.WriteLine "set OWBINDIR=%DEVDIR%\build\binnt"
-    OutFile.WriteLine "set DISTROOT=%OWROOT%\distrib"
-    OutFile.WriteLine "set RELROOT=%OWROOT%"
-    OutFile.WriteLine "set DWATCOM=%WATCOM%"
-    OutFile.WriteLine "set DOC_ROOT=%OWROOT%\docs"
-    OutFile.WriteLine "set INCLUDE=%WATCOM%\h;%WATCOM%\h\nt;%DEVDIR%\watcom\h"
-    OutFile.WriteLine "set LIB=%OWROOT%\bld\watcom\lib"
-    OutFile.WriteLine "set EDPATH=%WATCOM%\eddat"
-    OutFile.WriteLine "set PATH=%OWROOT%\bin;%OWBINDIR%;%OWROOT%\bat;%WATCOM%\binnt;%WATCOM%\binw;%WATCOM%\binp;%DOC_ROOT%\cmds;%DEFPATH%"
-    OutFile.WriteLine
-    OutFile.WriteLine "echo Open Watcom Compiler Build Environment"
-    OutFile.WriteLine
-    OutFile.WriteLine "REM OS specifics"
-    OutFile.WriteLine "cd %DEVDIR%"
-    OutFile.WriteLine "set DOS4G=quiet"
-    OutFile.WriteLine
-    OutFile.WriteLine "REM Set up right COMSPEC for non-standard COMSPEC setting on NT-based systems"
-    OutFile.WriteLine "if ""%OS%"" == ""Windows_NT"" set COMSPEC=%WINDIR%\system32\cmd.exe"
-    OutFile.WriteLine "set COPYCMD=/y"
+    OutFile.WriteLine "REM Invoke the batch file for the common environment"
+    OutFile.WriteLine "call %OWROOT%\cmnvars.bat"
     OutFile.Close
 End If
 
