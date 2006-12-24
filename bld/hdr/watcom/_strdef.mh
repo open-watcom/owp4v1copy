@@ -383,6 +383,9 @@ namespace std {
 
       // This method replaces current text with other text.
       void replace_buffer( const_pointer other_buf, size_type other_length );
+
+      // Returns an iterator to the freshly inserted material.
+      iterator insert_helper( iterator p, size_type n, CharT c );
   };
 
 

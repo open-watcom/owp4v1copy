@@ -894,24 +894,14 @@ namespace std {
     return( insert( pos, basic_string( n, c ) ) );
   }
 
-  // insert( iterator, CharT )
-  // *************************
+  // insert_helper( iterator, size_type, CharT )
+  // *******************************************
   template< class CharT, class Traits, class Allocator >
-  inline
-  basic_string< CharT, Traits, Allocator >::iterator
-    basic_string< CharT, Traits, Allocator >::insert( iterator p, CharT c )
-  {
-    insert( p, 1, c );
-    return( p );
-  }
-
-  // insert( iterator, size_type, CharT )
-  // ************************************
-  template< class CharT, class Traits, class Allocator >
-  void basic_string< CharT, Traits, Allocator >::insert(
-    iterator p,
-    size_type n,
-    CharT c )
+  typename basic_string< CharT, Traits, Allocator >::iterator
+    basic_string< CharT, Traits, Allocator >::insert_helper(
+      iterator p,
+      size_type n,
+      CharT c )
   {
     size_type insert_length = n;
     size_type pos = p - buffer;
@@ -940,7 +930,31 @@ namespace std {
       buffer = new_buffer;
       buf_length = new_length;
       str_length = result_length;
+      p = buffer + pos;
     }
+    return( p );
+  }
+
+  // insert( iterator, CharT )
+  // *************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  basic_string< CharT, Traits, Allocator >::iterator
+    basic_string< CharT, Traits, Allocator >::insert( iterator p, CharT c )
+  {
+    return( insert_helper( p, 1, c ) );
+  }
+
+  // insert( iterator, size_type, CharT )
+  // ************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  void basic_string< CharT, Traits, Allocator >::insert(
+    iterator p,
+    size_type n,
+    CharT c )
+  {
+    insert_helper( p, n, c );
   }
 
   // erase( size_type, size_type )

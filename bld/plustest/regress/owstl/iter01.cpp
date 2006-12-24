@@ -32,28 +32,30 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <list>
 #include <string>
 
+#include "itcat.h"
 #include "sanity.cpp"
 
 // Use a namespace to exercise that ability.
 namespace xyz {
-  int X, Y;
+    int X, Y;
 
-  // Simple structured iterator gives random access to X or Y.
-  class RandomToggleIterator :
-    public std::iterator< std::random_access_iterator_tag, int, int > {
+    // Simple structured iterator gives random access to X or Y.
+    class RandomToggleIterator :
+        public std::iterator< std::random_access_iterator_tag, int, int > {
 
-  public:
-    RandomToggleIterator( bool first_flag )
-      { if( first_flag ) isX = true; else isX = false; }
+    public:
+        RandomToggleIterator( bool first_flag )
+            { if( first_flag ) isX = true; else isX = false; }
 
-    int &operator*( )
-      { if( isX ) return X; else return Y; }
+        int &operator*( )
+            { if( isX ) return X; else return Y; }
 
-  private:
-    bool isX;
-  };
+    private:
+        bool isX;
+    };
 }
 
 char raw_array[] = { 'a', 'b', 'c', 'd' };
@@ -62,135 +64,182 @@ const char const_raw_array[] = { 'w', 'x', 'y', 'z' };
 template< class Iterator >
 void exchange( Iterator x, Iterator y )
 {
-  // Check operation of iterator_traits.
-  typename std::iterator_traits< Iterator >::value_type temp;
-  temp = *x;
-  *x   = *y;
-  *y   = temp;
+    // Check operation of iterator_traits.
+    typename std::iterator_traits< Iterator >::value_type temp;
+    temp = *x;
+    *x   = *y;
+    *y   = temp;
 }
 
 template< class Iterator >
 bool read_element( Iterator first )
 {
-  // Used for exercising partial specialization for pointers to const.
-  typename std::iterator_traits< Iterator >::value_type temp( *first );
-  if( temp != 'w' ) FAIL
-  return true;
+    // Used for exercising partial specialization for pointers to const.
+    typename std::iterator_traits< Iterator >::value_type temp( *first );
+    if( temp != 'w' ) FAIL
+        return true;
 }
 
 bool traits_test( )
 {
-  bool rc = true;
-  xyz::RandomToggleIterator p1( true );
-  xyz::RandomToggleIterator p2( false );
+    xyz::RandomToggleIterator p1( true );
+    xyz::RandomToggleIterator p2( false );
 
-  xyz::X = 1;
-  xyz::Y = 2;
-  exchange( p1, p2 );
-  if( xyz::X != 2 || xyz::Y != 1 ) FAIL
+    xyz::X = 1;
+    xyz::Y = 2;
+    exchange( p1, p2 );
+    if( xyz::X != 2 || xyz::Y != 1 ) FAIL;
+    exchange( p1, p2 );
+    if( xyz::X != 1 || xyz::Y != 2 ) FAIL;
 
-  exchange( raw_array, raw_array + 3 );
-  if( raw_array[0] != 'd' || raw_array[3] != 'a' ) FAIL
-
-  if( !read_element( const_raw_array ) ) rc = false;
-  return( rc );
+    exchange( raw_array, raw_array + 3 );
+    if( raw_array[0] != 'd' || raw_array[3] != 'a' ) FAIL;
+    exchange( raw_array, raw_array + 3 );
+    if( raw_array[0] != 'a' || raw_array[3] != 'd' ) FAIL;
+    read_element( const_raw_array );
+    return( true );
 }
 
 bool advance_test( )
 {
-  bool rc = true;
-
-  char *p = raw_array;
-  std::advance( p, 2 );
-  if( *p != 'c' ) FAIL
-
-  return( rc );
+    char raw_array[] = { 'a', 'b', 'c', 'd', 'e' };
+    
+    // Does it make sense to also check output iterators?
+    InpIt< char > inp_it( raw_array );
+    FwdIt< char > fwd_it( raw_array );
+    BidIt< char > bid_it( raw_array );
+    char         *rnd_it( raw_array );
+    
+    std::advance( inp_it, 1 );
+    std::advance( fwd_it, 2 );
+    std::advance( bid_it, 3 );
+    std::advance( rnd_it, 4 );
+    
+    if( *inp_it != 'b' ) FAIL;
+    if( *fwd_it != 'c' ) FAIL;
+    if( *bid_it != 'd' ) FAIL;
+    if( *rnd_it != 'e' ) FAIL;
+    
+    return( true );
 }
 
 #ifdef NEVER
 bool distance_test( )
 {
-  bool rc = true;
-
-  std::ptrdiff_t d =  std::distance( raw_array, raw_array + 2 );
-  if( d != 2 ) FAIL
-
-  return( rc );
+    // Also need to check each of the iterator catagories.
+    std::ptrdiff_t d =  std::distance( raw_array, raw_array + 2 );
+    if( d != 2 ) FAIL;
+    return( true );
 }
 #endif
 
-char reverse_array[] = { 'a', 'b', 'c', 'd' };
 
 bool reverse_test( )
 {
-  bool rc = true;
+    int reverse_array[] = { 0, 1, 2, 3 };
+    std::reverse_iterator< int * > p1( reverse_array + 4 );
+    std::reverse_iterator< int * > p2( reverse_array );
+    
+    int value = 3;
+    while( p1 != p2 ) {
+        if( p1 == p2 ) FAIL;
+        if( *p1 != value ) FAIL;
+        --value;
+        ++p1;
+    }
+    if( value != -1 ) FAIL;
+    if( !( p1 == p2 ) ) FAIL;
+    
+    // Now try it with a more interesting container.
+    std::list< int > my_list;
+    my_list.push_back( 0 );
+    my_list.push_back( 1 );
+    my_list.push_back( 2 );
+    my_list.push_back( 3 );
+    
+    std::list< int >::reverse_iterator q1;  // Check default construction.
+    std::list< int >::reverse_iterator q2;
+    
+    q1 = my_list.rbegin( );
+    q2 = my_list.rend( );
+    
+    value = 3;
+    while( q1 != q2 ) {
+        if( q1 == q2 ) FAIL;
+        if( *q1 != value ) FAIL;
+        --value;
+        ++q1;
+    }
+    if( value != -1 ) FAIL;
+    if( !( q1 == q2 ) ) FAIL;
 
-  std::reverse_iterator< char * > p1( reverse_array + 2 );
-  std::reverse_iterator< char * > p2( reverse_array );
-  if( *p1 != 'b' ) FAIL
-
-  ++p1;
-  if( *p1 != 'a' ) FAIL
-
-  ++p1;
-  if( p1 != p2 ) FAIL
-  return( rc );
+    return( true );
 }
 
 bool back_inserter_test( )
 {
-  bool rc = true;
-  char raw[] = { 'a', 'b', 'c', 'd' };
+    char raw[] = { 'a', 'b', 'c', 'd' };
 
-  std::string s1( "xyz" );
-  std::copy( raw, raw + 4, std::back_inserter( s1 ) );
-  if( s1 != "xyzabcd" ) FAIL
-
-  return( rc );
+    std::string s1( "xyz" );
+    std::copy( raw, raw + 4, std::back_inserter( s1 ) );
+    if( s1 != "xyzabcd" ) FAIL;
+    return( true );
 }
 
 bool front_inserter_test( )
 {
-  bool rc = true;
-
-  // Finish me once we have a container with pop_front().
-  return( rc );
+    int raw [] = { 1, 2, 3, 4 };
+    
+    std::list< int > my_list;
+    std::copy( raw, raw + 4, std::front_inserter( my_list ) );
+    if( my_list.size( ) != 4 ) FAIL;
+    int value = 4;
+    std::list< int >::iterator p = my_list.begin( );
+    while( p != my_list.end( ) ) {
+        if( *p != value ) FAIL;
+        --value;
+        ++p;
+    }
+    return( true );
 }
 
 bool inserter_test( )
 {
-  bool rc = true;
-  char raw[] = { 'a', 'b', 'c', 'd' };
+    char raw[] = { 'a', 'b', 'c', 'd' };
 
-  std::string s1( "xyz" );
-  std::copy( raw, raw + 4, std::inserter( s1, s1.begin( ) + 1 ) );
-  if( s1 != "xabcdyz" ) FAIL
-
-  return( rc );
+    std::string s1( "xyz" );
+    std::copy( raw, raw + 4, std::inserter( s1, s1.begin( ) + 1 ) );
+    if( s1 != "xabcdyz" ) FAIL;
+    std::copy( raw, raw + 4, std::inserter( s1, s1.begin( ) ) );
+    if( s1 != "abcdxabcdyz" ) FAIL;
+    std::copy( raw, raw + 4, std::inserter( s1, s1.end( ) ) );
+    if( s1 != "abcdxabcdyzabcd" ) FAIL;
+    return( true );
 }
 
 int main( )
 {
-  int rc = 0;
-  int original_count = heap_count( );
+    int rc = 0;
+    int original_count = heap_count( );
 
-  try {
-    if( !traits_test( )         || !heap_ok( "t01" )  ) rc = 1;
-    if( !advance_test( )        || !heap_ok( "t02" )  ) rc = 1;
-    // if( !distance_test( )       || !heap_ok( "t03" )  ) rc = 1;
-    if( !reverse_test( )        || !heap_ok( "t04" )  ) rc = 1;
-    if( !back_inserter_test( )  || !heap_ok( "t05" )  ) rc = 1;
-    if( !front_inserter_test( ) || !heap_ok( "t06" )  ) rc = 1;
-    if( !inserter_test( )       || !heap_ok( "t07" )  ) rc = 1;
-  }
-  catch( ... ) {
-    std::cout << "Unexpected exception of unexpected type.\n";
-    rc = 1;
-  }
+    try {
+        if( !traits_test( )         || !heap_ok( "t01" )  ) rc = 1;
+        if( !advance_test( )        || !heap_ok( "t02" )  ) rc = 1;
+        // if( !distance_test( )       || !heap_ok( "t03" )  ) rc = 1;
+        if( !reverse_test( )        || !heap_ok( "t04" )  ) rc = 1;
+        if( !back_inserter_test( )  || !heap_ok( "t05" )  ) rc = 1;
+        if( !front_inserter_test( ) || !heap_ok( "t06" )  ) rc = 1;
+        if( !inserter_test( )       || !heap_ok( "t07" )  ) rc = 1;
+    }
+    catch( ... ) {
+        std::cout << "Unexpected exception of unexpected type.\n";
+        rc = 1;
+    }
 
-  if( heap_count( ) != original_count ) {
-    std::cout << "Possible memory leak!\n";
-    rc = 1;
-  }
-  return( rc );
+    if( heap_count( ) != original_count ) {
+        std::cout << "Possible memory leak!\n";
+        rc = 1;
+    }
+    return( rc );
 }
+

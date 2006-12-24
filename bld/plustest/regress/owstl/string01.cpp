@@ -403,11 +403,18 @@ bool insert_test( )
     FAIL
   }
 
-  std::string s6( "Hello, World!" );
-  s6.insert( s6.begin( ), 'x' );
-  if( s6 != "xHello, World!" || s6.size( ) != 14 || INSANE( s6 ) ) {
-    FAIL
+  // Do multiple insertions to verify reallocations.
+  // This should probably also be done for the other insert methods as well.
+  std::string s6( "Hello" );
+  char input = 'a';
+  for( int i = 0; i < 10; ++i ) {
+      std::string::iterator p = s6.insert( s6.begin( ), input );
+      if( *p != input ) FAIL;
+      if( s6.size( ) != 6 + i ) FAIL;
+      if( INSANE( s6 ) ) FAIL;
+      ++input;
   }
+  if( s6 != "jihgfedcbaHello" ) FAIL;
 
   std::string s7( "Hello, World!" );
   s7.insert( s7.end( ), 3, 'z' );
