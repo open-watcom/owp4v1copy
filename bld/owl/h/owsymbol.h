@@ -58,7 +58,7 @@ typedef struct owl_func_info {
     owl_line_num        last_line;              // last line of function source
     owl_offset          linenum_offset;         // offset within section linenum buffer of first linenum record
     owl_line_num        num_lines;              // num lines for function start
-    owl_func_file      *head;                   // list of file thins
+    owl_func_file      *head;                   // list of file things
     owl_func_file      **lnk;                   // last link
 };
 

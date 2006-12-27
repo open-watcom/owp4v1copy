@@ -91,7 +91,7 @@ void OWLENTRY OWLDebugFuncFile( owl_func_handle func, char const *name  ) {
     info = func->x.func;
     _Log((func->section->file, "OWLDebugFuncFile( %x, %s )\n", func, name ));
     size = strlen( name );
-    new = _ClientAlloc( func->section->file, sizeof( owl_func_info )+size );
+    new = _ClientAlloc( func->section->file, sizeof( owl_func_file )+size );
     strcpy( new->name, name );
     new->num_lines = info->num_lines; // save prev
     info->num_lines = 0;
