@@ -47,7 +47,11 @@ lflags_ibmc     = -nologo
 
 !ifeq compiler watcom
 cc  = wcc386
+!ifdef %bench_wpp_386
+cpp = $(%bench_wpp_386)
+!else
 cpp = wpp386
+!endif
 
 #.before:
 #        @set include=$(lang_root)\h;$(lang_root)\h\nt

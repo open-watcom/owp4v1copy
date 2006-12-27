@@ -3,10 +3,10 @@
 .cpp: $(bench_dir)\owstl
 .h: $(bench_dir)\owstl
 
-cflags_watcom = -zq -xs
+#cflags_watcom = -zq -xs
 #extra_w_opts = -xs -d2
 extra_m_opts = -GX
-extra_cflags = -I$(bench_dir)\owstl -I$(bench_dir)\support
+extra_cflags = -I$(bench_dir)\owstl -I$(bench_dir)\support -zq -xs
 
 exe_files = &
           contain.exe  &
@@ -15,7 +15,9 @@ exe_files = &
           strpass.exe  &
           mapins.exe   &
           mapfind.exe  &
-          sort.exe
+          sort.exe &
+          random.exe
+          
 
 run: $(exe_files) .SYMBOLIC
     @echo Compilation complete. Run test programs individually.
