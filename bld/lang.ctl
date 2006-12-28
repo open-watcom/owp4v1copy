@@ -24,6 +24,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/w32loadr/prereq.ctl ]
 [ INCLUDE <DEVDIR>/yacc/prereq.ctl ]
 [ INCLUDE <DEVDIR>/re2c/prereq.ctl ]
+# [ INCLUDE <DEVDIR>/wgml/prereq.ctl ]
 [ INCLUDE <DEVDIR>/whpcvt/prereq.ctl ]
 [ INCLUDE <DEVDIR>/helpcomp/prereq.ctl ]
 [ INCLUDE <DEVDIR>/hcdos/prereq.ctl ]
@@ -168,6 +169,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/cvpack/lang.ctl ]
 [ INCLUDE <DEVDIR>/wic/lang.ctl ]
 [ INCLUDE <DEVDIR>/redist/lang.ctl ]
+[ INCLUDE <DEVDIR>/wgml/lang.ctl ]
 [ INCLUDE <DOC_ROOT>/lang.ctl ]
 #
 #        Do CDSAY to see end time
