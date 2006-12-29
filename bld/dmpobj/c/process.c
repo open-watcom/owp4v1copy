@@ -96,13 +96,15 @@ void ProcEndRec( void )
     }
 }
 
-void ProcTHeadr( void )
-/*********************/
+void ProcTHeadr( int first )
+/**************************/
 {
-    Segindex    = 0;
-    Nameindex   = 0;
-    Importindex = 0;
-    Libindex    = 0;
+    if( first ) {
+        Segindex    = 0;
+        Nameindex   = 0;
+        Importindex = 0;
+        Libindex    = 0;
+    }
     GetName();
     Output( INDENT "%N" CRLF );
 }

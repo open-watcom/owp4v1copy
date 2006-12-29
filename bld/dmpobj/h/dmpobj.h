@@ -135,7 +135,7 @@ extern  char            *GetXname( unsigned_16 idx );
     Record processing routines
 */
 extern  void            ProcEndRec( void );
-extern  void            ProcTHeadr( void );
+extern  void            ProcTHeadr( int );
 extern  void            ProcLHeadr( void );
 extern  void            ProcRHeadr( void );
 extern  void            ProcComent( void );
