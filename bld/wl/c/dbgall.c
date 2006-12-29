@@ -42,6 +42,8 @@
 #include "objcalc.h"
 #include "loadfile.h"
 #include "objio.h"
+#include "dbgcomm.h"
+#include "dbgall.h"
 #include "dbgcv.h"
 #include "objfree.h"
 #include "overlays.h"
@@ -49,8 +51,6 @@
 #include "dbgwat.h"
 #include "ring.h"
 #include "loadnov.h"
-#include "dbgcomm.h"
-#include "dbgall.h"
 
 char *          SymFileName;
 group_entry *   DBIGroups;
@@ -433,10 +433,13 @@ void DBIAddLines( segdata *seg, void *line, unsigned size, bool is32bit )
     RingAppend( &CurrMod->lines, info );
 }
 
-unsigned CalcLineQty( unsigned size, bool is32bit )
-/********************************************************/
+unsigned CalcLineQty( lineinfo *info )
+/************************************/
 {
-    if( is32bit ) {
+    unsigned    size;
+
+    size = info->size & ~LINE_IS_32BIT;
+    if( info->size & LINE_IS_32BIT ) {
         size /= sizeof( ln_off_386 );
     } else {
         size /= sizeof( ln_off_286 );
@@ -444,43 +447,32 @@ unsigned CalcLineQty( unsigned size, bool is32bit )
     return( size );
 }
 
-static bool DoLineWalk( void *_info, void *_cbfn )
-/************************************************/
+static bool DoLineWalk( lineinfo *info, void (*cbfn)( lineinfo * ) )
+/******************************************************************/
 {
-    void        (*cbfn)( segdata *, void *, unsigned, bool ) = _cbfn;
-    lineinfo    *info = _info;
-    unsigned    size;
-    bool        is32bit;
-
     if( !info->seg->isdead ) {
-        size = info->size & ~LINE_IS_32BIT;
-        is32bit = ( ( info->size & LINE_IS_32BIT ) != 0 );
-        cbfn( info->seg, info->data, size, is32bit );
+        cbfn( info );
     }
     return( FALSE );
 }
 
-void DBILineWalk( void *lines,
-                         void (*cbfn)( segdata *, void *, unsigned, bool ) )
-/**************************************************************************/
+void DBILineWalk( lineinfo *lines, void (*cbfn)( lineinfo * ) )
+/*************************************************************/
 {
-    RingLookup( lines, DoLineWalk, cbfn );
+    RingLookup( lines, (int(*)(void *,void *))DoLineWalk, cbfn );
 }
 
 static void DBIGenLines( mod_entry *mod )
 /***************************************/
 // called during pass 2 linnum processing
 {
-    void (*fn)( segdata *, void *, unsigned, bool );
-
     if( LinkFlags & OLD_DBI_FLAG ) {
-        fn = ODBIGenLines;
+        DBILineWalk( mod->lines, ODBIGenLines );
     } else if( LinkFlags & DWARF_DBI_FLAG ) {
-        fn = DwarfGenLines;
+        DBILineWalk( mod->lines, DwarfGenLines );
     } else if( LinkFlags & CV_DBI_FLAG ) {
-        fn = CVGenLines;
+        DBILineWalk( mod->lines, CVGenLines );
     }
-    DBILineWalk( mod->lines, fn );
 }
 
 virt_mem DBIAlloc( unsigned long size )

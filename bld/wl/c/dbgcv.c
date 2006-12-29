@@ -215,13 +215,11 @@ void CVP1ModuleScanned( void )
 {
 }
 
-static void CVAddLines( segdata * seg, void *line, unsigned size, bool is32bit )
-/******************************************************************************/
+static void CVAddLines( lineinfo *info )
+/**************************************/
 // called during pass 1 linnum processing
 {
-    seg = seg;
-    line = line;
-    CurrMod->d.cv->numlines += CalcLineQty( size, is32bit );
+    CurrMod->d.cv->numlines += CalcLineQty( info );
 }
 
 void CVP1ModuleFinished( mod_entry *obj )
@@ -471,8 +469,8 @@ static void GenSrcModHeader( void )
     memset( &LineInfo, 0, sizeof( LineInfo ) );
 }
 
-void CVGenLines( segdata * seg, void *lines, unsigned size, bool is32bit )
-/*******************************************************************************/
+void CVGenLines( lineinfo *info )
+/*******************************/
 // called during pass 2 linnum processing
 {
     ln_off_pair UNALIGN *pair;
@@ -480,6 +478,11 @@ void CVGenLines( segdata * seg, void *lines, unsigned size, bool is32bit )
     unsigned_16         temp_num;
     offset              adjust;
     unsigned long       cvsize;
+    unsigned            size;
+    segdata             *seg;
+
+    seg = info->seg;
+    size = info->size & ~LINE_IS_32BIT;
 
     if( !( CurrMod->modinfo & DBI_LINE ) )
         return;
@@ -506,8 +509,8 @@ void CVGenLines( segdata * seg, void *lines, unsigned size, bool is32bit )
             LineInfo.range.end = adjust + seg->length;
         }
     }
-    pair = lines;
-    if( is32bit ) {
+    pair = (ln_off_pair *)info->data;
+    if( info->size & LINE_IS_32BIT ) {
         while( size > 0 ) {
             pair->_386.off += adjust;
             if( pair->_386.off < LineInfo.prevaddr ) {

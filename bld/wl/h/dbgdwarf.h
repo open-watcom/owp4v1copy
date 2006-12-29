@@ -41,7 +41,7 @@ extern void     DwarfGenModule( void );
 extern void     DwarfDefClass( class_entry *, unsigned_32 );
 extern void     DwarfAddGlobal( symbol * );
 extern void     DwarfGenGlobal( symbol *, section * );
-extern void     DwarfGenLines( segdata *, void *, unsigned, bool );
+extern void     DwarfGenLines( lineinfo * );
 extern void     DwarfAddAddrInfo( seg_leader * );
 extern void     DwarfStoreAddrInfo( mod_entry * );
 extern void     DwarfGenAddrInfo( seg_leader * );

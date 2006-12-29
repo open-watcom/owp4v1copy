@@ -32,6 +32,7 @@
 #include "linkstd.h"
 #include "alloc.h"
 #include "newmem.h"
+#include "dbgcomm.h"
 #include "dbgall.h"
 #include "dbgwat.h"
 #include "objpass2.h"

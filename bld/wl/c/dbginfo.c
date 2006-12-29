@@ -47,8 +47,8 @@
 #include "overlays.h"
 #include "specials.h"
 #include "ring.h"
-#include "dbgwat.h"
 #include "dbgcomm.h"
+#include "dbgwat.h"
 
 #define EXE_MAJOR_VERSION   3
 #define EXE_MINOR_VERSION   0
@@ -287,18 +287,15 @@ void ODBIGenLocal( segdata *sdata )
     }
 }
 
-static void ODBIAddLines( segdata * seg, void *lines, unsigned size,
-                          bool is32bit )
-/******************************************************************/
+static void ODBIAddLines( lineinfo *info )
+/****************************************/
 {
     unsigned            lineqty;
     unsigned_32         linesize;
     debug_info          *dinfo;
 
-    lines = lines;
-    seg = seg;
     dinfo = CurrSect->dbg_info;
-    lineqty = CalcLineQty( size, is32bit );
+    lineqty = CalcLineQty( info );
     linesize = lineqty * sizeof( ln_off_386 ) + sizeof( lineseg );
     dinfo->line.curr += linesize;
     DoAddLocal( &dinfo->linelinks, linesize );
@@ -554,9 +551,8 @@ static bool CheckFirst( void *_seg, void *_firstseg )
     return( FALSE );
 }
 
-void ODBIGenLines( segdata * seg, void *lines, unsigned size,
-                          bool is32bit )
-/******************************************************************/
+void ODBIGenLines( lineinfo *info )
+/*********************************/
 {
     unsigned            linelen;
     ln_off_pair UNALIGN *pair;
@@ -569,12 +565,17 @@ void ODBIGenLines( segdata * seg, void *lines, unsigned size,
     unsigned_32         prevoff;
     offset              adjust;
     bool                needsort;
+    unsigned            size;
+    segdata             *seg;
+
+    seg = info->seg;
+    size = info->size & ~LINE_IS_32BIT;
 
     dinfo = CurrSect->dbg_info;
     if( ( dinfo == NULL ) || !( CurrMod->modinfo & DBI_LINE ) )
         return;
     linelen = size;
-    lineqty = CalcLineQty( size, is32bit );
+    lineqty = CalcLineQty( info );
     DoGenLocal( &dinfo->line, &dinfo->linelinks, &CurrMod->d.o->lines,
                 lineqty * sizeof( ln_off_386 ) + sizeof( lineseg ) );
     lseg.segment = seg->addrinfo;
@@ -589,10 +590,10 @@ void ODBIGenLines( segdata * seg, void *lines, unsigned size,
     firstseg = Ring2Step( CurrMod->segs, NULL );
     Ring2Lookup( CurrMod->segs, CheckFirst, &firstseg );
     adjust = seg->a.delta - firstseg->a.delta;
-    pair = (ln_off_pair *) lines;
+    pair = (ln_off_pair *)info->data;
     prevoff = 0;
     needsort = FALSE;
-    if( is32bit ) {
+    if( info->size & LINE_IS_32BIT ) {
         while( size > 0 ) {
             pair->_386.off += adjust;
             if( prevoff > pair->_386.off ) {
@@ -603,9 +604,9 @@ void ODBIGenLines( segdata * seg, void *lines, unsigned size,
             size -= sizeof( ln_off_386 );
         }
         if( needsort ) {
-            qsort( lines, lineqty, sizeof( ln_off_386 ), CmpLn386 );
+            qsort( info->data, lineqty, sizeof( ln_off_386 ), CmpLn386 );
         }
-        DumpInfo( dinfo, lines, linelen );
+        DumpInfo( dinfo, info->data, linelen );
     } else {
         while( size > 0 ) {
             _TargU16toHost( pair->_286.off, temp );
@@ -617,9 +618,9 @@ void ODBIGenLines( segdata * seg, void *lines, unsigned size,
             size -= sizeof( ln_off_286 );
         }
         if( needsort ) {
-            qsort( lines, lineqty, sizeof( ln_off_286 ), CmpLn286 );
+            qsort( info->data, lineqty, sizeof( ln_off_286 ), CmpLn286 );
         }
-        pair = lines;
+        pair = (ln_off_pair *)info->data;
         size = linelen;
         while( size > 0 ) {
             _TargU16toHost( pair->_286.off, temp );

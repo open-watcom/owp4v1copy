@@ -73,6 +73,7 @@ String table for sections
 #include "msg.h"
 #include "virtmem.h"
 #include "fileio.h"
+#include "dbgcomm.h"
 #include "dbgall.h"
 #include "dbgdwarf.h"
 #include "objcalc.h"

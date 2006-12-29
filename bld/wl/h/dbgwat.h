@@ -43,7 +43,7 @@ extern void     ODBIAddLocal( unsigned_16, offset );
 extern void     ODBIGenLocal( segdata * );
 extern void     ODBIAddGlobal( symbol * );
 extern void     ODBIGenGlobal( symbol *, section * );
-extern void     ODBIGenLines( segdata *, void *, unsigned, bool );
+extern void     ODBIGenLines( lineinfo * );
 extern void     ODBIAddAddrInfo( seg_leader * );
 extern void     ODBIAddrSectStart( section * );
 extern void     ODBIP2Start( section * );

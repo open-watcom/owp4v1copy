@@ -332,6 +332,19 @@ void OMFSkipObj( file_list *list, unsigned long *loc )
 static void ProcTHEADR( void )
 /****************************/
 {
+    char    name[256];
+    char    *sym_name;
+    int     sym_len;
+
+    if( CurrMod->omfdbg == OMF_DBG_CODEVIEW ) {
+        sym_name = ( (obj_name UNALIGN *) ObjBuff )->name;
+        sym_len = ( (obj_name UNALIGN *) ObjBuff )->len;
+        if( sym_len == 0 ) {
+            BadObject();
+        }
+        memcpy( name, sym_name, sym_len );
+        name[sym_len] = '\0';
+    }
 }
 
 static void LinkDirective( void )

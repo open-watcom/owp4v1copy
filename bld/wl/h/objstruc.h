@@ -218,6 +218,13 @@ typedef struct arcdata {
 
 #define DIST_ONLY_SIZE (2*sizeof(unsigned_16)+sizeof(dist_arc))
 
+typedef struct name_list {
+    struct name_list *  next;
+    unsigned            len;
+    unsigned_32         num;
+    char *              name;           // NYI: make this vbl length again.
+} name_list;
+
 typedef struct odbimodinfo      ODBIMODINFO;    // defd in dbg information hdrs
 typedef struct dwarfmodinfo     DWARFMODINFO;
 typedef struct cvmodinfo        CVMODINFO;
@@ -462,13 +469,6 @@ typedef struct node {
     void *      next;
     void *      entry;
 } node;
-
-typedef struct name_list {
-    struct name_list *  next;
-    unsigned            len;
-    unsigned_32         num;
-    char *              name;           // NYI: make this vbl length again.
-} name_list;
 
 typedef struct dll_sym_info {
     union {

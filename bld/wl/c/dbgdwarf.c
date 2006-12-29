@@ -184,7 +184,7 @@ static char FlatStandardAbbrevs[] = {
 };
 #pragma pack()
 
-static void DwarfAddLines( segdata *, void *, unsigned, bool );
+static void DwarfAddLines( lineinfo * );
 
 void DwarfInit( void )
 /***************************/
@@ -211,6 +211,16 @@ void DwarfP1ModuleScanned( void )
 {
 }
 
+static int GetStmtHeaderSize( mod_entry *mod )
+/********************************************/
+{
+    int         len;
+
+    len = sizeof( stmt_prologue );  // fixed size
+    len += 1 + strlen( mod->name ) + 1 + 3 + 1;
+    return( len );
+}
+
 void DwarfP1ModuleFinished( mod_entry *mod )
 /*************************************************/
 {
@@ -228,7 +238,7 @@ void DwarfP1ModuleFinished( mod_entry *mod )
     }
     if( mod->d.d->dasi.size > 0 ) {
         mod->d.d->dasi.addr = SectionTable[SECT_DEBUG_LINE].size;
-        mod->d.d->dasi.size += strlen( mod->name ) + sizeof( stmt_prologue ) + 6;
+        mod->d.d->dasi.size += GetStmtHeaderSize( mod );
         SectionTable[SECT_DEBUG_LINE].size += mod->d.d->dasi.size;
         mod->d.d->pubsym.size += sizeof( unsigned_32 ); // DW_AT_STMT_LIST
     }
@@ -256,7 +266,7 @@ void DwarfStoreAddrInfo( mod_entry *mod )
 }
 
 void DwarfAddModule( mod_entry *mod, section *sect )
-/*********************************************************/
+/**************************************************/
 // this generates the headers needed in the individual sections
 {
     arange_prologue     arange_hdr;
@@ -266,10 +276,10 @@ void DwarfAddModule( mod_entry *mod, section *sect )
     size_t              namelen;
     char *              buff;
     unsigned_32         stmt_list;
+    int                 zero;
 
     sect = sect;
     if( !( mod->modinfo & MOD_DBI_SEEN ) ) {
-        namelen = strlen( mod->name );
         if( mod->d.d->arange.size > 0 ) {
             mod->d.d->arange.addr += SectionTable[SECT_DEBUG_ARANGE].addr;
             arange_hdr.length = mod->d.d->arange.size - sizeof( unsigned_32 );
@@ -308,15 +318,15 @@ void DwarfAddModule( mod_entry *mod, section *sect )
             PutInfo( mod->d.d->pubsym.addr, &stmt_list, sizeof( unsigned_32 ) );
             mod->d.d->pubsym.addr += sizeof( unsigned_32 );
         }
-        PutInfo( mod->d.d->pubsym.addr, mod->name, namelen + 1 );
-        mod->d.d->pubsym.addr += namelen + 1;
+        namelen = strlen( mod->name ) + 1;
+        PutInfo( mod->d.d->pubsym.addr, mod->name, namelen );
+        mod->d.d->pubsym.addr += namelen;
         if( mod->d.d->dasi.size > 0 ) {
             mod->d.d->dasi.addr += SectionTable[SECT_DEBUG_LINE].addr;
             stmt_hdr.total_length = mod->d.d->dasi.size - sizeof( unsigned_32 );
             stmt_hdr.version = 2;
-            stmt_hdr.prologue_length = sizeof( stmt_prologue )
-                        - offsetof( stmt_prologue, minimum_instruction_length )
-                        + namelen + 6;
+            stmt_hdr.prologue_length = GetStmtHeaderSize( mod )
+                        - offsetof( stmt_prologue, minimum_instruction_length );
             stmt_hdr.minimum_instruction_length = DW_MIN_INSTR_LENGTH;
             stmt_hdr.default_is_stmt = 1;
             stmt_hdr.line_base = DWLINE_BASE;
@@ -331,18 +341,21 @@ void DwarfAddModule( mod_entry *mod, section *sect )
             stmt_hdr.standard_opcode_lengths[6] = 0;
             stmt_hdr.standard_opcode_lengths[7] = 0;
             stmt_hdr.standard_opcode_lengths[8] = 0;
-            PutInfo( mod->d.d->dasi.addr, (void *) &stmt_hdr,
-                                          sizeof( stmt_prologue ) );
+            PutInfo( mod->d.d->dasi.addr, (void *) &stmt_hdr, sizeof( stmt_prologue ) );
             mod->d.d->dasi.addr += sizeof( stmt_prologue );
-            buff = alloca( namelen + 6 );
-            buff[0] = 0;        // no include directories;
-            memcpy( &buff[1], mod->name, namelen + 1 );
-            buff[namelen + 2] = 0;      // no directory index
-            buff[namelen + 3] = 0;      // no time
-            buff[namelen + 4] = 0;      // no length
-            buff[namelen + 5] = 0;      // no more strings
-            PutInfo( mod->d.d->dasi.addr, buff, namelen + 6 );
-            mod->d.d->dasi.addr += namelen + 6;
+            zero = 0;                       // no include directories;
+            PutInfo( mod->d.d->dasi.addr, &zero, 1 );
+            mod->d.d->dasi.addr += 1;
+            buff = alloca( namelen + 3 );
+            memcpy( &buff[0], mod->name, namelen );
+            buff[namelen + 1] = 0;          // no directory index
+            buff[namelen + 2] = 0;          // no time
+            buff[namelen + 3] = 0;          // no length
+            PutInfo( mod->d.d->dasi.addr, buff, namelen + 3 );
+            mod->d.d->dasi.addr += namelen + 3;
+            zero = 0;                       // no more file names
+            PutInfo( mod->d.d->dasi.addr, &zero, 1 );
+            mod->d.d->dasi.addr += 1;
         }
     }
 }
@@ -467,9 +480,8 @@ void DwarfGenGlobal( symbol *sym, section *sect )
     }
 }
 
-static void DwarfAddLines( segdata *seg, void * lines, unsigned size,
-                           bool is32bit )
-/*******************************************************************/
+static void DwarfAddLines( lineinfo *info )
+/*****************************************/
 // calculate the amount of space needed to hold all of the line # info.
 {
     ln_off_pair UNALIGN *lineptr;
@@ -478,9 +490,8 @@ static void DwarfAddLines( segdata *seg, void * lines, unsigned size,
     dw_linenum_delta    linedelta;
     dw_addr_delta       addrdelta;
     ln_off_386          prevline;
+    unsigned            size;
 
-    seg = seg;
-    lineptr = lines;
     prevline.off = 0;
     prevline.linnum = 1;
     if( FmtData.type & MK_286 ) {
@@ -491,8 +502,10 @@ static void DwarfAddLines( segdata *seg, void * lines, unsigned size,
     if( !( FmtData.type & MK_SEGMENTED ) ) {
         dwsize -= 5;    // size of LNE_segment burst
     }
+    lineptr = (ln_off_pair *)info->data;
+    size = info->size & ~LINE_IS_32BIT;
     while( size > 0 ) {
-        if( is32bit ) {
+        if( info->size & LINE_IS_32BIT ) {
             linedelta = (signed_32) lineptr->_386.linnum - prevline.linnum;
             addrdelta = lineptr->_386.off - prevline.off;
             lineptr++;
@@ -510,9 +523,8 @@ static void DwarfAddLines( segdata *seg, void * lines, unsigned size,
     CurrMod->d.d->dasi.size += dwsize;
 }
 
-void DwarfGenLines( segdata *seg, void *lines, unsigned size,
-                           bool is32bit )
-/******************************************************************/
+void DwarfGenLines( lineinfo *info )
+/**********************************/
 {
     ln_off_pair UNALIGN *lineptr;
     unsigned            dwsize;
@@ -522,10 +534,13 @@ void DwarfGenLines( segdata *seg, void *lines, unsigned size,
     ln_off_386          prevline;
     offset              off;
     char                buff[ 3 + 2 * MAX_LEB128 ];
+    unsigned            size;
+    segdata             *seg;
 
-    seg = seg;
     if( CurrMod->modinfo & MOD_DBI_SEEN )
         return;
+
+    seg = info->seg;
     prevline.off = 0;
     prevline.linnum = 1;
     vmem_addr = CurrMod->d.d->dasi.addr;
@@ -556,9 +571,10 @@ void DwarfGenLines( segdata *seg, void *lines, unsigned size,
         PutInfo( vmem_addr, buff, 5 );
         vmem_addr += 5;
     }
-    lineptr = (ln_off_pair *) lines;
+    size = info->size & ~LINE_IS_32BIT;
+    lineptr = (ln_off_pair *)info->data;
     while( size > 0 ) {
-        if( is32bit ) {
+        if( info->size & LINE_IS_32BIT ) {
             linedelta = (signed_32) lineptr->_386.linnum - prevline.linnum;
             addrdelta = lineptr->_386.off - prevline.off;
             lineptr++;

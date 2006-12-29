@@ -66,8 +66,8 @@ extern void     DBIAddrInfoScan( seg_leader *,
                       void (*)(segdata *, void *),
                       void (*)(segdata *, offset, offset, void *, bool),
                       void * );
-extern void     DBILineWalk( void *, void (*)(segdata *,void*,unsigned,bool) );
-extern unsigned CalcLineQty( unsigned, bool );
+extern void     DBILineWalk( lineinfo *, void (*)(lineinfo *) );
+extern unsigned CalcLineQty( lineinfo * );
 
 #define MOD_NOT_DEBUGGABLE(mod) ( !((mod)->modinfo & MOD_NEED_PASS_2) || \
                                     (mod)->modinfo & MOD_IMPORT_LIB      )
