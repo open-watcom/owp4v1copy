@@ -86,7 +86,7 @@ void LPrint( char *str, ... ) {
 
 //---------------------------------------------------------------
 
-//extern int Debug;
+extern int Debug;
 
 void _Debug( unsigned int mask, char *str, ... )
 {
