@@ -251,31 +251,6 @@ static int __fnmatch( char *pattern, char *string )
     }
 }
 
-extern PGROUP *SplitPath( const char *path )
-/******************************************/
-{
-    PGROUP      *pg;
-    size_t      len;
-
-    assert( path != NULL );
-
-    pg = malloc( sizeof( PGROUP ) );
-    _splitpath2( path, pg->buffer, &pg->drive, &pg->dir, &pg->fname, &pg->ext );
-    /*
-     *  I don't really want to make the assumption that _splitpath2 will
-     *  fill in the buffer like so:
-     *
-     *      drive \0 dir \0 fname \0 ext \0
-     *
-     *  but it would be incredibly slow to assume otherwise.
-     *
-     */
-    len = ( pg->ext + strlen( pg->ext ) + 1 ) - pg->buffer;
-    len += sizeof( PGROUP ) - _MAX_PATH2;
-    realloc( pg, len );
-    return( pg );
-}
-
 /*
  * THIS FUNCTION IS NOT RE-ENTRANT!
  *
@@ -304,7 +279,7 @@ static char *pattern = NULL;
 extern char *DoWildCard( char *base )
 /***********************************************/
 {
-    PGROUP          *pg;
+    PGROUP          pg;
     struct dirent   *entry;
 
     if( base != NULL ) {
@@ -329,11 +304,11 @@ extern char *DoWildCard( char *base )
         pattern = malloc( _MAX_PATH );
         strcpy( path, base );
         FixName( path );
-        pg = SplitPath( path );
-        _makepath( path, pg->drive, pg->dir, ".", NULL );
+
+        _splitpath2( path, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+        _makepath( path, pg.drive, pg.dir, ".", NULL );
         // create file name pattern
-        _makepath( pattern, NULL, NULL, pg->fname, pg->ext );
-        free( pg );
+        _makepath( pattern, NULL, NULL, pg.fname, pg.ext );
 
         parent = opendir( path );
         if( parent == NULL ) {
@@ -374,9 +349,8 @@ extern char *DoWildCard( char *base )
         return( base );
     }
 
-    pg = SplitPath( path );
-    _makepath( path, pg->drive, pg->dir, entry->d_name, NULL );
-    free( pg );
+    _splitpath2( path, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+    _makepath( path, pg.drive, pg.dir, entry->d_name, NULL );
 
     return( path );
 }
