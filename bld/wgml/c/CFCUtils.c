@@ -112,7 +112,10 @@ int check_directory( void )
         /* Process the file */
 
         retval = CFHeader( current_file );
-        if(retval != FAILURE) {
+        if(retval == FAILURE) {
+            cprintf( "%s: not a valid .COP file\n", dir_entry->d_name );
+        }
+        else {            
             switch( retval ) {
             case( 2 ): 
                 v3directoryfile++;
