@@ -498,6 +498,11 @@ MENU_STR( XSource,
 	"j&Source",
 	"Show the source code associated with the selected line",
 	"jShow the source code associated with the selected line" )
+MENU_STR( XNoSource,
+	"&No Source",
+	"j&No Source",
+	"Do not show the source code associated with the assembly code",
+	"jDo not show the source code associated with the assembly code" )
 MENU_STR( XTyped_Symbols,
 	"&Typed Symbols",
 	"j&Typed Symbols",

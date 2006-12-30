@@ -475,6 +475,7 @@ static void     AsmMenuItem( a_window *wnd, unsigned id, int row, int piece )
         WndMenuEnable( wnd, MENU_ASM_SHOW_MODULE, TRUE );
         WndMenuEnable( wnd, MENU_ASM_SHOW, TRUE );
         WndMenuEnable( wnd, MENU_ASM_SOURCE, HasLineInfo( addr ) );
+        WndMenuCheck( wnd, MENU_ASM_NOSOURCE, !asm->source );
         WndMenuEnable( wnd, MENU_ASM_FUNCTIONS, asm->mod != NO_MOD );
         WndMenuCheck( wnd, MENU_ASM_HEX, asm->hex );
         has_popitem = ( *WndPopItem( wnd ) != '\0' );
@@ -521,6 +522,12 @@ static void     AsmMenuItem( a_window *wnd, unsigned id, int row, int piece )
         break;
     case MENU_ASM_SOURCE:
         SrcWndFind( asm->src, addr, asm->track );
+        break;
+    case MENU_ASM_NOSOURCE:
+        asm->source = !asm->source;
+        NewCurrRadix( old );
+        AsmResize( wnd );
+        WndZapped( wnd );
         break;
     case MENU_ASM_BREAK:
         StrCopy( WndPopItem( wnd ), buff );
