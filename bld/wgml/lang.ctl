@@ -8,9 +8,9 @@ set PROJDIR=<CWD>
 
 cdsay .
 
-[ BLOCK <1> build rel2 wgml ]
+[ BLOCK <1> build rel2 ]
 #=======================
-    pmake -d wgml <2> <3> <4> <5> <6> <7> <8> <9> -h
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
