@@ -184,7 +184,6 @@ static char FlatStandardAbbrevs[] = {
 };
 #pragma pack()
 
-static void DwarfAddLines( lineinfo * );
 
 void DwarfInit( void )
 /***************************/
@@ -219,6 +218,49 @@ static int GetStmtHeaderSize( mod_entry *mod )
     len = sizeof( stmt_prologue );  // fixed size
     len += 1 + strlen( mod->name ) + 1 + 3 + 1;
     return( len );
+}
+
+static void DwarfAddLines( lineinfo *info )
+/*****************************************/
+// calculate the amount of space needed to hold all of the line # info.
+{
+    ln_off_pair UNALIGN *lineptr;
+    unsigned_32         dwsize;
+    char                buff[ 3 + 2 * MAX_LEB128 ];
+    dw_linenum_delta    linedelta;
+    dw_addr_delta       addrdelta;
+    ln_off_386          prevline;
+    unsigned            size;
+
+    prevline.off = 0;
+    prevline.linnum = 1;
+    if( FmtData.type & MK_286 ) {
+        dwsize = 13;    // start and end sequence with 16-bit offset
+    } else {
+        dwsize = 15;    // start and end sequence with 32-bit offset
+    }
+    if( !( FmtData.type & MK_SEGMENTED ) ) {
+        dwsize -= 5;    // size of LNE_segment burst
+    }
+    lineptr = (ln_off_pair *)info->data;
+    size = info->size & ~LINE_IS_32BIT;
+    while( size > 0 ) {
+        if( info->size & LINE_IS_32BIT ) {
+            linedelta = (signed_32) lineptr->_386.linnum - prevline.linnum;
+            addrdelta = lineptr->_386.off - prevline.off;
+            lineptr++;
+            size -= sizeof( ln_off_386 );
+        } else {
+            linedelta = (signed_32) lineptr->_286.linnum - prevline.linnum;
+            addrdelta = lineptr->_286.off - prevline.off;
+            lineptr = (void *)( (char *)lineptr + sizeof( ln_off_286 ) );
+            size -= sizeof( ln_off_286 );
+        }
+        prevline.linnum += linedelta;
+        prevline.off += addrdelta;
+        dwsize += DWLineGen( linedelta, addrdelta, buff );
+    }
+    CurrMod->d.d->dasi.size += dwsize;
 }
 
 void DwarfP1ModuleFinished( mod_entry *mod )
@@ -478,49 +520,6 @@ void DwarfGenGlobal( symbol *sym, section *sect )
         PutInfo( vmem_addr, sym->name, len );
         CurrMod->d.d->pubsym.addr = vmem_addr + len;
     }
-}
-
-static void DwarfAddLines( lineinfo *info )
-/*****************************************/
-// calculate the amount of space needed to hold all of the line # info.
-{
-    ln_off_pair UNALIGN *lineptr;
-    unsigned_32         dwsize;
-    char                buff[ 3 + 2 * MAX_LEB128 ];
-    dw_linenum_delta    linedelta;
-    dw_addr_delta       addrdelta;
-    ln_off_386          prevline;
-    unsigned            size;
-
-    prevline.off = 0;
-    prevline.linnum = 1;
-    if( FmtData.type & MK_286 ) {
-        dwsize = 13;    // start and end sequence with 16-bit offset
-    } else {
-        dwsize = 15;    // start and end sequence with 32-bit offset
-    }
-    if( !( FmtData.type & MK_SEGMENTED ) ) {
-        dwsize -= 5;    // size of LNE_segment burst
-    }
-    lineptr = (ln_off_pair *)info->data;
-    size = info->size & ~LINE_IS_32BIT;
-    while( size > 0 ) {
-        if( info->size & LINE_IS_32BIT ) {
-            linedelta = (signed_32) lineptr->_386.linnum - prevline.linnum;
-            addrdelta = lineptr->_386.off - prevline.off;
-            lineptr++;
-            size -= sizeof( ln_off_386 );
-        } else {
-            linedelta = (signed_32) lineptr->_286.linnum - prevline.linnum;
-            addrdelta = lineptr->_286.off - prevline.off;
-            lineptr = (void *)( (char *)lineptr + sizeof( ln_off_286 ) );
-            size -= sizeof( ln_off_286 );
-        }
-        prevline.linnum += linedelta;
-        prevline.off += addrdelta;
-        dwsize += DWLineGen( linedelta, addrdelta, buff );
-    }
-    CurrMod->d.d->dasi.size += dwsize;
 }
 
 void DwarfGenLines( lineinfo *info )
@@ -827,16 +826,16 @@ offset DwarfWriteTrailer( offset curr_off )
     return( sizeof( TISTrailer ) );
 }
 
-offset DwarfElfWriteDBI( offset curr_off, stringtable *strtab,
+offset DwarfWriteElf( offset curr_off, stringtable *strtab,
                                 Elf32_Shdr *dbgsecbegin )
-/*******************************************************************/
+/*********************************************************/
 {
     curr_off = WriteELFSections( curr_off, curr_off, dbgsecbegin, strtab );
     return( curr_off );
 }
 
-void DwarfWriteDBI( void )
-/*******************************/
+void DwarfWrite( void )
+/*********************/
 {
     Elf32_Ehdr          elf_header;
     Elf32_Shdr *        sect_header;

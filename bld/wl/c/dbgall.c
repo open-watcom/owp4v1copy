@@ -55,9 +55,6 @@
 char *          SymFileName;
 group_entry *   DBIGroups;
 
-static void     DBIGenLocal( void * );
-static void     DBIGenLines( mod_entry *mod );
-
 void ResetDBI( void )
 /**************************/
 {
@@ -318,6 +315,28 @@ void DBIAddModule( mod_entry *obj, section *sect )
     }
 }
 
+static void DBIGenLocal( void *sdata )
+/************************************/
+// called during pass 2 segment processing
+{
+    if( LinkFlags & OLD_DBI_FLAG ) {
+        ODBIGenLocal( sdata );
+    }
+}
+
+static void DBIGenLines( mod_entry *mod )
+/***************************************/
+// called during pass 2 linnum processing
+{
+    if( LinkFlags & OLD_DBI_FLAG ) {
+        DBILineWalk( mod->lines, ODBIGenLines );
+    } else if( LinkFlags & DWARF_DBI_FLAG ) {
+        DBILineWalk( mod->lines, DwarfGenLines );
+    } else if( LinkFlags & CV_DBI_FLAG ) {
+        DBILineWalk( mod->lines, CVGenLines );
+    }
+}
+
 void DBIGenModule( void )
 /******************************/
 // called at the end of pass2 for a module
@@ -358,15 +377,6 @@ void DBIAddLocal( unsigned_16 info, offset length )
         ODBIAddLocal( info, length );
     } else if( LinkFlags & CV_DBI_FLAG ) {
         CVAddLocal( info, length );
-    }
-}
-
-static void DBIGenLocal( void *sdata )
-/************************************/
-// called during pass 2 segment processing
-{
-    if( LinkFlags & OLD_DBI_FLAG ) {
-        ODBIGenLocal( sdata );
     }
 }
 
@@ -433,8 +443,8 @@ void DBIAddLines( segdata *seg, void *line, unsigned size, bool is32bit )
     RingAppend( &CurrMod->lines, info );
 }
 
-unsigned CalcLineQty( lineinfo *info )
-/************************************/
+unsigned DBICalcLineQty( lineinfo *info )
+/***************************************/
 {
     unsigned    size;
 
@@ -460,19 +470,6 @@ void DBILineWalk( lineinfo *lines, void (*cbfn)( lineinfo * ) )
 /*************************************************************/
 {
     RingLookup( lines, (int(*)(void *,void *))DoLineWalk, cbfn );
-}
-
-static void DBIGenLines( mod_entry *mod )
-/***************************************/
-// called during pass 2 linnum processing
-{
-    if( LinkFlags & OLD_DBI_FLAG ) {
-        DBILineWalk( mod->lines, ODBIGenLines );
-    } else if( LinkFlags & DWARF_DBI_FLAG ) {
-        DBILineWalk( mod->lines, DwarfGenLines );
-    } else if( LinkFlags & CV_DBI_FLAG ) {
-        DBILineWalk( mod->lines, CVGenLines );
-    }
 }
 
 virt_mem DBIAlloc( unsigned long size )
@@ -550,7 +547,7 @@ void DBICleanup( void )
     FreeGroups( DBIGroups );
 }
 
-void WriteDBI( void )
+void DBIWrite( void )
 /**************************/
 // called during load file generation.  It is assumed that the loadfile is
 // positioned to the right spot.
@@ -567,11 +564,11 @@ void WriteDBI( void )
         Root->outfile = &symfile;
     }
     if( LinkFlags & OLD_DBI_FLAG ) {
-        OWriteDBI();
+        ODBIWrite();
     } else if( LinkFlags & DWARF_DBI_FLAG ) {
-        DwarfWriteDBI();
+        DwarfWrite();
     } else if( LinkFlags & CV_DBI_FLAG ) {
-        CVWriteDBI();
+        CVWrite();
     }
     if( SymFileName != NULL ) {
         CloseBuffFile( &symfile );

@@ -49,5 +49,4 @@ extern void     ODBIAddrSectStart( section * );
 extern void     ODBIP2Start( section * );
 extern void     ODBISectCleanup( section * );
 extern void     ODBIFini( section * );
-extern void     OWriteDBI( void );
-extern void     WriteDBISecs( section * );
+extern void     ODBIWrite( void );

@@ -51,8 +51,6 @@ static bool             InVerifySegment;
 static lmf_rw_end       RWEndRec;
 static group_entry *    CurrGroup;
 
-static void WriteQNXRelocs( void *head, unsigned lmf_type, unsigned_16 seg );
-static void SetQNXGroupFlags( void );
 
 #define QNX_MAX_DATA_SIZE (QNX_MAX_REC_SIZE - sizeof(lmf_data))
 #define VERIFY_END (VERIFY_OFFSET + sizeof(RWEndRec.verify))
@@ -203,6 +201,37 @@ static void WriteQNXGroup( group_entry *grp, unsigned_32 *segments )
     Ring2Walk( grp->leaders, DoGroupLeader );
 }
 
+static void WriteQNXRelocs( void *head, unsigned lmf_type, unsigned_16 seg )
+/**************************************************************************/
+{
+    lmf_record          record;
+    unsigned_32         pos;
+    unsigned_32         size;
+    bool                islinear;
+    unsigned            adjust;
+
+    adjust = 0;
+    record.reserved = record.spare = 0;
+    record.rec_type = lmf_type;
+    islinear = (lmf_type == LMF_LINEAR_FIXUP_REC);
+    if( islinear ) {
+        adjust = 2;
+    }
+    pos = PosLoad();    /* get current position */
+    while( head != NULL ) {
+        SeekLoad( pos + sizeof(lmf_record) );
+        if( islinear ) {
+            WriteLoad( &seg, sizeof(unsigned_16) );
+        }
+        size = DumpMaxRelocList( &head, QNX_MAX_FIXUPS - adjust ) + adjust;
+        SeekLoad( pos );
+        record.data_nbytes = size;
+        WriteLoad( &record, sizeof( lmf_record ) );
+        pos += size + sizeof( lmf_record );
+    }
+    SeekLoad( pos );
+}
+
 static void WriteQNXData( unsigned_32 * segments )
 /************************************************/
 {
@@ -243,35 +272,49 @@ static void WriteQNXData( unsigned_32 * segments )
 }
 
 
-static void WriteQNXRelocs( void *head, unsigned lmf_type, unsigned_16 seg )
-/**************************************************************************/
+static bool CheckQNXGrpFlag( void *_seg, void *_grp )
+/**************************************************************/
 {
-    lmf_record          record;
-    unsigned_32         pos;
-    unsigned_32         size;
-    bool                islinear;
-    unsigned            adjust;
+    seg_leader     *seg = _seg;
+    group_entry    *grp = _grp;
+    unsigned_16     sflags;
 
-    adjust = 0;
-    record.reserved = record.spare = 0;
-    record.rec_type = lmf_type;
-    islinear = (lmf_type == LMF_LINEAR_FIXUP_REC);
-    if( islinear ) {
-        adjust = 2;
-    }
-    pos = PosLoad();    /* get current position */
-    while( head != NULL ) {
-        SeekLoad( pos + sizeof(lmf_record) );
-        if( islinear ) {
-            WriteLoad( &seg, sizeof(unsigned_16) );
+    sflags = seg->segflags;
+
+// the default value for segflags is set to SEG_LEVEL_3 (0xC00) for OS/2
+// and SEG_MOVABLE (0x10) for windows. Since the highest value that can be
+// specified for a QNX seg flag is 4, if sflags >= 0x10, there was no QNX value
+// specified.
+
+    if( sflags < 0x10 ) {
+        if( !(sflags & 1) ) {     // if can read/write or exec/read
+            grp->u.qnxflags &= ~1;       // can for all segments.
+            return TRUE;                // no need to check others
         }
-        size = DumpMaxRelocList( &head, QNX_MAX_FIXUPS - adjust ) + adjust;
-        SeekLoad( pos );
-        record.data_nbytes = size;
-        WriteLoad( &record, sizeof( lmf_record ) );
-        pos += size + sizeof( lmf_record );
+    } else {
+// make segments read/write or exec/read unless every segment is specifically
+// set otherwise.
+        grp->u.qnxflags &= ~1;
+        return TRUE;
     }
-    SeekLoad( pos );
+    return FALSE;
+}
+
+static void SetQNXGroupFlags( void )
+/**********************************/
+// This goes through the groups, setting the flag word to be compatible with
+// the flag words that are specified in the segments.
+{
+    group_entry *   group;
+
+    for( group = Groups; group != NULL; group = group->next_group ) {
+        if( group->segflags & SEG_DATA ) {
+            group->u.qnxflags = QNX_READ_ONLY;      // 1
+        } else {
+            group->u.qnxflags = QNX_EXEC_ONLY;     // 3
+        }
+        Ring2Lookup( group->leaders, CheckQNXGrpFlag, group );
+    }
 }
 
 void SetQNXSegFlags( void )
@@ -357,7 +400,7 @@ void FiniQNXLoadFile( void )
     WriteLoad( &record, sizeof( lmf_record ) );
     memset( &trailer, 0, sizeof( trailer ) );
     WriteLoad( &trailer, sizeof( trailer ) );
-    WriteDBI();
+    DBIWrite();
 
     SeekLoad( 0 );
     record.rec_type = LMF_HEADER_REC;
@@ -410,49 +453,4 @@ unsigned_16 ToQNXIndex( unsigned_16 sel )
 /**********************************************/
 {
     return( QNX_SEL_NUM( sel ) );
-}
-
-static bool CheckQNXGrpFlag( void *_seg, void *_grp )
-/**************************************************************/
-{
-    seg_leader     *seg = _seg;
-    group_entry    *grp = _grp;
-    unsigned_16     sflags;
-
-    sflags = seg->segflags;
-
-// the default value for segflags is set to SEG_LEVEL_3 (0xC00) for OS/2
-// and SEG_MOVABLE (0x10) for windows. Since the highest value that can be
-// specified for a QNX seg flag is 4, if sflags >= 0x10, there was no QNX value
-// specified.
-
-    if( sflags < 0x10 ) {
-        if( !(sflags & 1) ) {     // if can read/write or exec/read
-            grp->u.qnxflags &= ~1;       // can for all segments.
-            return TRUE;                // no need to check others
-        }
-    } else {
-// make segments read/write or exec/read unless every segment is specifically
-// set otherwise.
-        grp->u.qnxflags &= ~1;
-        return TRUE;
-    }
-    return FALSE;
-}
-
-static void SetQNXGroupFlags( void )
-/**********************************/
-// This goes through the groups, setting the flag word to be compatible with
-// the flag words that are specified in the segments.
-{
-    group_entry *   group;
-
-    for( group = Groups; group != NULL; group = group->next_group ) {
-        if( group->segflags & SEG_DATA ) {
-            group->u.qnxflags = QNX_READ_ONLY;      // 1
-        } else {
-            group->u.qnxflags = QNX_EXEC_ONLY;     // 3
-        }
-        Ring2Lookup( group->leaders, CheckQNXGrpFlag, group );
-    }
 }

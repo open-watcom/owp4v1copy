@@ -123,7 +123,6 @@ static module_import *  PEImpList;
 static unsigned         NumMods;
 static segdata *        XFerSegData;
 
-static void             RegisterImport( dll_sym_info *sym );
 
 static struct {
     offset      ilt_off;
@@ -1143,7 +1142,7 @@ void FiniPELoadFile( void )
     }
     NullAlign( exe_head.file_align ); /* pad out last page */
     exe_head.header_size = object->physical_offset;
-    WriteDBI();
+    DBIWrite();
     SeekLoad( stub_len );
 
     if( FmtData.u.pe.checksumfile ) {
@@ -1305,49 +1304,6 @@ static void CreateIDataSection( void )
     }
 }
 
-void ChkPEData( void )
-/***************************/
-{
-    symbol *    sym;
-    class_entry *class;
-    class_entry *code = NULL;
-    segdata *   sdata;
-    int         glue_size;
-    offset      size;
-
-    ChkOS2Data();
-    /* find the last code class in the program */
-    for( class = Root->classlist; class != NULL; class = class->next_class ) {
-        if( class->flags & CLASS_CODE ) code = class;
-    }
-    if( code == NULL ) { // No code -- no need to do transfer stuff
-        return;
-    }
-    CurrMod = FakeModule;
-    size = 0;
-    glue_size = GetTransferGlueSize(LinkState);
-    WALK_IMPORT_SYMBOLS(sym) {
-        size += glue_size;
-        RegisterImport( sym->p.import );
-        DBIAddGlobal( sym );
-    }
-    if( size != 0 ) {
-        code->flags |= CLASS_TRANSFER;
-        sdata = AllocSegData();
-        sdata->length = size;
-        sdata->u.name = TRANSFER_SEGNAME;
-        sdata->align = 2;
-        sdata->combine = COMBINE_ADD;
-        sdata->is32bit = TRUE;
-        sdata->isabs = FALSE;
-        AddSegment( sdata, code );
-        sdata->data = AllocStg( sdata->length );
-        XFerSegData = sdata;
-    }
-    CreateIDataSection();
-    CurrMod = NULL;
-}
-
 static void RegisterImport( dll_sym_info *sym )
 /*********************************************/
 {
@@ -1402,6 +1358,49 @@ static void RegisterImport( dll_sym_info *sym )
     imp->next = chk;
     *owner = imp;
     ++NumImports;
+}
+
+void ChkPEData( void )
+/***************************/
+{
+    symbol *    sym;
+    class_entry *class;
+    class_entry *code = NULL;
+    segdata *   sdata;
+    int         glue_size;
+    offset      size;
+
+    ChkOS2Data();
+    /* find the last code class in the program */
+    for( class = Root->classlist; class != NULL; class = class->next_class ) {
+        if( class->flags & CLASS_CODE ) code = class;
+    }
+    if( code == NULL ) { // No code -- no need to do transfer stuff
+        return;
+    }
+    CurrMod = FakeModule;
+    size = 0;
+    glue_size = GetTransferGlueSize(LinkState);
+    WALK_IMPORT_SYMBOLS(sym) {
+        size += glue_size;
+        RegisterImport( sym->p.import );
+        DBIAddGlobal( sym );
+    }
+    if( size != 0 ) {
+        code->flags |= CLASS_TRANSFER;
+        sdata = AllocSegData();
+        sdata->length = size;
+        sdata->u.name = TRANSFER_SEGNAME;
+        sdata->align = 2;
+        sdata->combine = COMBINE_ADD;
+        sdata->is32bit = TRUE;
+        sdata->isabs = FALSE;
+        AddSegment( sdata, code );
+        sdata->data = AllocStg( sdata->length );
+        XFerSegData = sdata;
+    }
+    CreateIDataSection();
+    CurrMod = NULL;
 }
 
 void AllocPETransferTable( void )

@@ -464,7 +464,7 @@ void FiniOS2FlatLoadFile( void )
     exe_head.nonres_size = ResNonResNameTable( FALSE );  // FALSE = do non-res.
     if( exe_head.nonres_size == 0 ) exe_head.nonres_off = 0;
     curr_loc = NullAlign( 1 );
-    WriteDBI();
+    DBIWrite();
 /* If debug info was written, we want to mark it in the header so that
  * RC doesn't throw it away! */
     SeekEndLoad(0);

@@ -90,7 +90,6 @@ typedef struct ResTable {
     StringBlock Str;
 } ResTable;
 
-static  void             SetGroupFlags( void );
 
 static  char            DosStub[] = {
         0x4D, 0x5A, 0x80, 0x00, 0x01, 0x00, 0x00, 0x00,
@@ -634,6 +633,46 @@ void ChkOS2Data()
     FmtData.u.os2.os2_seg_flags = NULL;
 }
 
+#define DEF_SEG_ON (SEG_PURE|SEG_READ_ONLY|SEG_CONFORMING|SEG_MOVABLE|SEG_DISCARD|SEG_RESIDENT|SEG_CONTIGUOUS|SEG_NOPAGE)
+#define DEF_SEG_OFF (SEG_PRELOAD|SEG_INVALID)
+
+static void CheckGrpFlags( void *_leader )
+/****************************************/
+{
+    seg_leader     *leader = _leader;
+    unsigned_16     sflags;
+
+    sflags = leader->segflags;
+// if any of these flags are on, turn it on for the entire group.
+    leader->group->segflags |= sflags & DEF_SEG_OFF;
+// if any of these flags off, make sure they are off in the group.
+    leader->group->segflags &= sflags & DEF_SEG_ON | ~DEF_SEG_ON;
+    if( (sflags & SEG_LEVEL_MASK) == SEG_LEVEL_2 ) {
+        /* if any are level 2 then all have to be. */
+        leader->group->segflags &= ~SEG_LEVEL_MASK;
+        leader->group->segflags |= SEG_LEVEL_2;
+    }
+}
+
+static void SetGroupFlags( void )
+/*******************************/
+// This goes through the groups, setting the flag word to be compatible with
+// the flag words that are specified in the segments.
+{
+    group_entry *   group;
+
+    for( group = Groups; group != NULL; group = group->next_group ) {
+        if( group->totalsize == 0 ) continue;   // DANGER DANGER DANGER <--!!!
+        group->segflags |= DEF_SEG_ON;
+        Ring2Walk( group->leaders, CheckGrpFlags );
+        /* for some insane reason, level 2 segments must be marked as
+            movable */
+        if( (group->segflags & SEG_LEVEL_MASK) == SEG_LEVEL_2 ) {
+            group->segflags |= SEG_MOVABLE;
+        }
+    }
+}
+
 void ChkOS2Exports( void )
 /*******************************/
 // NOTE: there is a continue in this loop!
@@ -867,7 +906,7 @@ void FiniOS2LoadFile()
     }
     SeekEndLoad( 0 );
     FiniNEResources( resHandle, inRes, &outRes );
-    WriteDBI();
+    DBIWrite();
     exe_head.signature = OS2_SIGNATURE_WORD;
     exe_head.version = 0x0105;          /* version 5.1 */
     exe_head.chk_sum = 0L;
@@ -977,46 +1016,6 @@ void FreeImpNameTab( void )
 {
     FmtData.u.os2.mod_ref_list = NULL;  /* these are permalloc'd */
     FmtData.u.os2.imp_tab_list = NULL;
-}
-
-#define DEF_SEG_ON (SEG_PURE|SEG_READ_ONLY|SEG_CONFORMING|SEG_MOVABLE|SEG_DISCARD|SEG_RESIDENT|SEG_CONTIGUOUS|SEG_NOPAGE)
-#define DEF_SEG_OFF (SEG_PRELOAD|SEG_INVALID)
-
-static void CheckGrpFlags( void *_leader )
-/****************************************/
-{
-    seg_leader     *leader = _leader;
-    unsigned_16     sflags;
-
-    sflags = leader->segflags;
-// if any of these flags are on, turn it on for the entire group.
-    leader->group->segflags |= sflags & DEF_SEG_OFF;
-// if any of these flags off, make sure they are off in the group.
-    leader->group->segflags &= sflags & DEF_SEG_ON | ~DEF_SEG_ON;
-    if( (sflags & SEG_LEVEL_MASK) == SEG_LEVEL_2 ) {
-        /* if any are level 2 then all have to be. */
-        leader->group->segflags &= ~SEG_LEVEL_MASK;
-        leader->group->segflags |= SEG_LEVEL_2;
-    }
-}
-
-static void SetGroupFlags( void )
-/*******************************/
-// This goes through the groups, setting the flag word to be compatible with
-// the flag words that are specified in the segments.
-{
-    group_entry *   group;
-
-    for( group = Groups; group != NULL; group = group->next_group ) {
-        if( group->totalsize == 0 ) continue;   // DANGER DANGER DANGER <--!!!
-        group->segflags |= DEF_SEG_ON;
-        Ring2Walk( group->leaders, CheckGrpFlags );
-        /* for some insane reason, level 2 segments must be marked as
-            movable */
-        if( (group->segflags & SEG_LEVEL_MASK) == SEG_LEVEL_2 ) {
-            group->segflags |= SEG_MOVABLE;
-        }
-    }
 }
 
 static unsigned DoExeName( void )

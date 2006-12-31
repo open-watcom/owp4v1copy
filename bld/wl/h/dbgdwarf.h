@@ -46,8 +46,8 @@ extern void     DwarfAddAddrInfo( seg_leader * );
 extern void     DwarfStoreAddrInfo( mod_entry * );
 extern void     DwarfGenAddrInfo( seg_leader * );
 extern void     DwarfAddrSectStart( section * );
-extern void     DwarfWriteDBI( void );
+extern void     DwarfWrite( void );
 extern int      DwarfCountDebugSections( void );
-extern offset   DwarfElfWriteDBI( offset curr_off, stringtable *strtab,
+extern offset   DwarfWriteElf( offset curr_off, stringtable *strtab,
                                 Elf32_Shdr *dbgsecbegin );
 extern offset   DwarfWriteTrailer(offset);

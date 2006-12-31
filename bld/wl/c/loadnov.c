@@ -45,8 +45,6 @@
 #include "loadfile.h"
 #include "loadnov.h"
 
-static unsigned_32 WriteNovData( unsigned_32, fixed_header * );
-static unsigned_32 WriteNovImage( unsigned_32, bool );
 
 #define DUMMY_THREAD_NAME " LONG"
 
@@ -412,32 +410,6 @@ static void GetProcOffsets( fixed_header *header )
     }
 }
 
-static unsigned_32 WriteNovData( unsigned_32 file_pos, fixed_header * header )
-/****************************************************************************/
-// write both the code image and the data image.
-{
-    unsigned_32     codesize;
-
-    DEBUG(( DBG_BASE, "Writing data" ));
-    OrderGroups( CompareProtSegments );
-    CurrSect = Root;        // needed for WriteInfo.
-    Root->outfile->file_loc = file_pos;
-    Root->u.file_loc = file_pos;
-    Root->sect_addr.off = Groups->grp_addr.off;
-    Root->sect_addr.seg = CODE_SEGMENT;
-    codesize = WriteNovImage( file_pos, TRUE );       // TRUE = do code.
-    header->codeImageSize = codesize;
-    file_pos += codesize;
-    header->dataImageOffset = file_pos;
-    Root->outfile->file_loc = file_pos;
-    Root->u.file_loc = file_pos;
-    Root->sect_addr.off = Groups->grp_addr.off;
-    Root->sect_addr.seg = DATA_SEGMENT;
-    header->dataImageSize = WriteNovImage( file_pos, FALSE );  // do data.
-    return( codesize + header->dataImageSize );
-}
-
-
 static unsigned_32 WriteNovImage( unsigned_32 file_pos, bool docode )
 /*******************************************************************/
 // Write a Novell image
@@ -466,6 +438,32 @@ static unsigned_32 WriteNovImage( unsigned_32 file_pos, bool docode )
     }
     return( fnode->file_loc - file_pos );
 }
+
+static unsigned_32 WriteNovData( unsigned_32 file_pos, fixed_header * header )
+/****************************************************************************/
+// write both the code image and the data image.
+{
+    unsigned_32     codesize;
+
+    DEBUG(( DBG_BASE, "Writing data" ));
+    OrderGroups( CompareProtSegments );
+    CurrSect = Root;        // needed for WriteInfo.
+    Root->outfile->file_loc = file_pos;
+    Root->u.file_loc = file_pos;
+    Root->sect_addr.off = Groups->grp_addr.off;
+    Root->sect_addr.seg = CODE_SEGMENT;
+    codesize = WriteNovImage( file_pos, TRUE );       // TRUE = do code.
+    header->codeImageSize = codesize;
+    file_pos += codesize;
+    header->dataImageOffset = file_pos;
+    Root->outfile->file_loc = file_pos;
+    Root->u.file_loc = file_pos;
+    Root->sect_addr.off = Groups->grp_addr.off;
+    Root->sect_addr.seg = DATA_SEGMENT;
+    header->dataImageSize = WriteNovImage( file_pos, FALSE );  // do data.
+    return( codesize + header->dataImageSize );
+}
+
 
 static void NovNameWrite( char *name )
 /************************************/
@@ -599,7 +597,7 @@ void FiniNovellLoadFile( void )
     file_size += WriteSharedNLM( &ext_header, file_size );
     nov_header.debugInfoOffset = file_size;
     file_size += WriteNovDBI( &nov_header );
-    WriteDBI();
+    DBIWrite();
     memcpy( nov_header.signature, NLM_SIGNATURE, sizeof( NLM_SIGNATURE ) );
     nov_header.version = NLM_VERSION;
     nov_header.moduleName[0] = len;

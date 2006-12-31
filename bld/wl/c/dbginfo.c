@@ -96,19 +96,24 @@ static dbgheader    Master;            // rest depend on .obj files.
 
 static snamelist *  DBISourceLang;     // list of source languages
 
-static void             ReadSegInfo( section *, void ** );
-static snamelist *      LangAlloc( byte len, void *buff );
-static void             ODBIGenAddrInfo( seg_leader * );
-static void             AllocDBIClasses( class_entry *class );
-static void             NewArea( section *sect );
-static void             DoName( char *cname, char *intelname, int len );
-
 #ifdef _INT_DEBUG
 struct {
     offset   sizeadded;
     offset   sizegenned;
 } TraceInfo;
 #endif
+
+static snamelist * LangAlloc( byte len, void *buff )
+/**************************************************/
+{
+    snamelist *node;
+
+    _PermAlloc( node, sizeof( snamelist ) + len );
+    node->len = len;
+    memcpy( node->name, buff, len );
+    node->name[len] = '\0';
+    return( node );
+}
 
 void ODBIInit( section *sect )
 /***********************************/
@@ -140,8 +145,8 @@ void ODBIInitModule( mod_entry *mod )
 static void DumpInfo( debug_info *dinfo, void *data, unsigned len )
 /*****************************************************************/
 {
-    PutInfo( dinfo->DBIWrite, data, len );
-    dinfo->DBIWrite += len;
+    PutInfo( dinfo->dump_addr, data, len );
+    dinfo->dump_addr += len;
 }
 
 static bool FindMatch( byte len, void *buff, unsigned *offset )
@@ -162,18 +167,6 @@ static bool FindMatch( byte len, void *buff, unsigned *offset )
         node = node->next;
     }
     return( FALSE );
-}
-
-static snamelist * LangAlloc( byte len, void *buff )
-/**************************************************/
-{
-    snamelist *node;
-
-    _PermAlloc( node, sizeof( snamelist ) + len );
-    node->len = len;
-    memcpy( node->name, buff, len );
-    node->name[len] = '\0';
-    return( node );
 }
 
 void ODBIP1Source( byte major, byte minor, char *name, int len )
@@ -295,7 +288,7 @@ static void ODBIAddLines( lineinfo *info )
     debug_info          *dinfo;
 
     dinfo = CurrSect->dbg_info;
-    lineqty = CalcLineQty( info );
+    lineqty = DBICalcLineQty( info );
     linesize = lineqty * sizeof( ln_off_386 ) + sizeof( lineseg );
     dinfo->line.curr += linesize;
     DoAddLocal( &dinfo->linelinks, linesize );
@@ -363,6 +356,29 @@ void ODBIAddGlobal( symbol *sym )
     }
 }
 
+static bool AllocASeg( void *leader, void *group )
+/************************************************/
+{
+    ((seg_leader *)leader)->group = group;
+    return( FALSE );
+}
+
+static void AllocDBIClasses( class_entry *class )
+/***********************************************/
+/* Allocate all classes in the list */
+{
+    group_entry *group;
+
+    while( class != NULL ) {
+        if( class->flags & CLASS_DEBUG_INFO ) {
+            group = AllocGroup( AutoGrpName, &DBIGroups );
+            group->grp_addr.seg = 0;
+            RingLookup( class->segs, AllocASeg, group );
+        }
+        class = class->next_class;
+    }
+}
+
 void ODBIAddrSectStart( section *sect )
 /********************************************/
 {
@@ -418,33 +434,17 @@ void ODBIAddrSectStart( section *sect )
     dptr->addr.curr = DBIAlloc( dptr->addr.size );
     dptr->addr.init = dptr->addr.curr;
 
-    dptr->DBIWrite = dptr->global.curr;
+    dptr->dump_addr = dptr->global.curr;
     dptr->modnum = -1;
 
     AllocDBIClasses( sect->classlist );
 }
 
-static bool AllocASeg( void *leader, void *group )
-/************************************************/
+static void DoName( char *cname, char *intelname, int len )
+/*********************************************************/
 {
-    ((seg_leader *)leader)->group = group;
-    return( FALSE );
-}
-
-static void AllocDBIClasses( class_entry *class )
-/***********************************************/
-/* Allocate all classes in the list */
-{
-    group_entry *group;
-
-    while( class != NULL ) {
-        if( class->flags & CLASS_DEBUG_INFO ) {
-            group = AllocGroup( AutoGrpName, &DBIGroups );
-            group->grp_addr.seg = 0;
-            RingLookup( class->segs, AllocASeg, group );
-        }
-        class = class->next_class;
-    }
+    intelname[ 0 ] = len;
+    memcpy( &intelname[ 1 ], cname, len );
 }
 
 void ODBIGenGlobal( symbol * sym, section *sect )
@@ -499,11 +499,61 @@ void ODBIAddModule( mod_entry *obj, section *sect )
     obj->d.o->modnum = dptr->modnum;
 }
 
-static void DoName( char *cname, char *intelname, int len )
-/*********************************************************/
+static void ODBIGenAddrInit( segdata *sdata, void *_dinfo )
+/********************************************************/
 {
-    intelname[ 0 ] = len;
-    memcpy( &intelname[ 1 ], cname, len );
+    segheader   seghdr;
+    seg_leader  *seg;
+    debug_info  *dptr = _dinfo;
+
+    seg = sdata->u.leader;
+    if( seg->group == NULL ) {
+        seghdr.off = seg->seg_addr.off;
+        seghdr.seg = seg->seg_addr.seg;
+    } else {
+        seghdr.off = seg->group->grp_addr.off
+                     + SUB_ADDR( seg->seg_addr, seg->group->grp_addr );
+        seghdr.seg = seg->group->grp_addr.seg;
+    }
+    seghdr.num = seg->num;
+    if( CurrSect == NonSect )
+        seghdr.num |= NON_SECT_INFO;
+    DumpInfo( dptr, &seghdr, sizeof( segheader ) );
+    dptr->addr.curr += sizeof( segheader );
+}
+
+static void ODBIGenAddrAdd( segdata *sdata, offset delta, offset size,
+                            void *_dinfo, bool isnewmod )
+/********************************************************************/
+{
+    addrinfo    addr;
+    debug_info  *dptr = _dinfo;
+
+    delta = delta;
+    if( isnewmod ) {
+        addr.size = size;
+        addr.mod_idx = sdata->o.mod->d.o->modnum;
+        DumpInfo( dptr, &addr, sizeof( addrinfo ) );
+        sdata->addrinfo = dptr->addr.curr - dptr->addr.init;
+        dptr->addr.curr += sizeof( addrinfo );
+    } else {
+        sdata->addrinfo = dptr->addr.curr - dptr->addr.init;
+    }
+}
+
+static void ODBIGenAddrInfo( seg_leader *seg )
+/********************************************/
+{
+    debug_info  *dptr;
+
+    if( CurrSect == NonSect ) {
+        dptr = Root->dbg_info;
+    } else {
+        dptr = CurrSect->dbg_info;
+    }
+    if( ( dptr == NULL ) || ( seg->num == 0 ) )
+        return;
+    DBIAddrInfoScan( seg, ODBIGenAddrInit, ODBIGenAddrAdd, dptr );
 }
 
 void ODBIP2Start( section * sect )
@@ -519,9 +569,9 @@ void ODBIP2Start( section * sect )
         dptr = sect->dbg_info;
     }
     if( dptr != NULL ) {
-        dptr->DBIWrite = dptr->addr.curr;
+        dptr->dump_addr = dptr->addr.curr;
         SectWalkClass( sect, ODBIGenAddrInfo );
-        dptr->DBIWrite = dptr->line.curr;
+        dptr->dump_addr = dptr->line.curr;
         dptr->modnum = 0;
     }
 }
@@ -575,7 +625,7 @@ void ODBIGenLines( lineinfo *info )
     if( ( dinfo == NULL ) || !( CurrMod->modinfo & DBI_LINE ) )
         return;
     linelen = size;
-    lineqty = CalcLineQty( info );
+    lineqty = DBICalcLineQty( info );
     DoGenLocal( &dinfo->line, &dinfo->linelinks, &CurrMod->d.o->lines,
                 lineqty * sizeof( ln_off_386 ) + sizeof( lineseg ) );
     lseg.segment = seg->addrinfo;
@@ -669,63 +719,6 @@ void ODBIAddAddrInfo( seg_leader *seg )
     if( seg->num > 0 ) {
         dptr->addr.size += sizeof( segheader );
     }
-}
-
-static void ODBIGenAddrInit( segdata *sdata, void *_dinfo )
-/********************************************************/
-{
-    segheader   seghdr;
-    seg_leader  *seg;
-    debug_info  *dptr = _dinfo;
-
-    seg = sdata->u.leader;
-    if( seg->group == NULL ) {
-        seghdr.off = seg->seg_addr.off;
-        seghdr.seg = seg->seg_addr.seg;
-    } else {
-        seghdr.off = seg->group->grp_addr.off
-                     + SUB_ADDR( seg->seg_addr, seg->group->grp_addr );
-        seghdr.seg = seg->group->grp_addr.seg;
-    }
-    seghdr.num = seg->num;
-    if( CurrSect == NonSect )
-        seghdr.num |= NON_SECT_INFO;
-    DumpInfo( dptr, &seghdr, sizeof( segheader ) );
-    dptr->addr.curr += sizeof( segheader );
-}
-
-static void ODBIGenAddrAdd( segdata *sdata, offset delta, offset size,
-                            void *_dinfo, bool isnewmod )
-/********************************************************************/
-{
-    addrinfo    addr;
-    debug_info  *dptr = _dinfo;
-
-    delta = delta;
-    if( isnewmod ) {
-        addr.size = size;
-        addr.mod_idx = sdata->o.mod->d.o->modnum;
-        DumpInfo( dptr, &addr, sizeof( addrinfo ) );
-        sdata->addrinfo = dptr->addr.curr - dptr->addr.init;
-        dptr->addr.curr += sizeof( addrinfo );
-    } else {
-        sdata->addrinfo = dptr->addr.curr - dptr->addr.init;
-    }
-}
-
-static void ODBIGenAddrInfo( seg_leader *seg )
-/********************************************/
-{
-    debug_info  *dptr;
-
-    if( CurrSect == NonSect ) {
-        dptr = Root->dbg_info;
-    } else {
-        dptr = CurrSect->dbg_info;
-    }
-    if( ( dptr == NULL ) || ( seg->num == 0 ) )
-        return;
-    DBIAddrInfoScan( seg, ODBIGenAddrInit, ODBIGenAddrAdd, dptr );
 }
 
 void ODBIFini( section *sect )
@@ -834,37 +827,6 @@ static unsigned_16 WriteSegValues( void )
     }
 }
 
-void OWriteDBI( void )
-/***************************/
-/* copy debugging info from extra memory to loadfile */
-{
-    snamelist * node;
-    snamelist * nextnode;
-
-    CurrSect = Root;
-    Master.lang_size = 0;
-    node = DBISourceLang;
-    while( node != NULL ) {
-        Master.lang_size += node->len + 1;
-        DBIWriteLocal( node->name, node->len + 1 );  // +1 for nullchar
-        nextnode = node->next;
-        _PermFree( node );
-        node = nextnode;
-    }
-    DBISourceLang = NULL;
-    Master.seg_size = WriteSegValues();
-    ProcAllSects( WriteDBISecs );
-    Master.debug_size = DBISize;
-    if( Master.obj_major_ver == 0 )
-        Master.obj_major_ver = 1;
-    WriteLoad( &Master, sizeof( dbgheader ) );
-#ifdef _INT_DEBUG
-    if( TraceInfo.sizeadded != TraceInfo.sizegenned ) {
-        LnkMsg( WRN+MSG_INTERNAL, "s", "size mismatch in watcom dbi" );
-    }
-#endif
-}
-
 void WriteDBISecs( section *sec )
 /**************************************/
 {
@@ -896,4 +858,35 @@ void WriteDBISecs( section *sec )
         DBIWriteInfo( dptr->global.init, dptr->global.size );
         DBIWriteInfo( dptr->addr.init, dptr->addr.size );
     }
+}
+
+void ODBIWrite( void )
+/***************************/
+/* copy debugging info from extra memory to loadfile */
+{
+    snamelist * node;
+    snamelist * nextnode;
+
+    CurrSect = Root;
+    Master.lang_size = 0;
+    node = DBISourceLang;
+    while( node != NULL ) {
+        Master.lang_size += node->len + 1;
+        DBIWriteLocal( node->name, node->len + 1 );  // +1 for nullchar
+        nextnode = node->next;
+        _PermFree( node );
+        node = nextnode;
+    }
+    DBISourceLang = NULL;
+    Master.seg_size = WriteSegValues();
+    ProcAllSects( WriteDBISecs );
+    Master.debug_size = DBISize;
+    if( Master.obj_major_ver == 0 )
+        Master.obj_major_ver = 1;
+    WriteLoad( &Master, sizeof( dbgheader ) );
+#ifdef _INT_DEBUG
+    if( TraceInfo.sizeadded != TraceInfo.sizegenned ) {
+        LnkMsg( WRN+MSG_INTERNAL, "s", "size mismatch in watcom dbi" );
+    }
+#endif
 }

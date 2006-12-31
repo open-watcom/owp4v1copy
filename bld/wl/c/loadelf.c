@@ -368,7 +368,7 @@ void FiniELFLoadFile( void )
     WriteELFGroups( &hdr ); // Write out all groups
     WriteRelocsSections( &hdr );        // Relocations
     if( INJECT_DEBUG ) {                // Debug info
-        hdr.curr_off = DwarfElfWriteDBI( hdr.curr_off, &hdr.secstrtab,
+        hdr.curr_off = DwarfWriteElf( hdr.curr_off, &hdr.secstrtab,
                                 hdr.sh+hdr.i.dbgbegin );
     }
     if( ElfSymTab != NULL ) {           // Symbol tables
@@ -384,7 +384,7 @@ void FiniELFLoadFile( void )
     WriteLoad( hdr.sh, hdr.sh_size );
     hdr.curr_off += hdr.sh_size;
     if( !INJECT_DEBUG ) {
-        WriteDBI();
+        DBIWrite();
     }
     SeekLoad( 0 );
     WriteLoad( &hdr.eh, sizeof(Elf32_Ehdr) );

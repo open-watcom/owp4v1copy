@@ -62,7 +62,7 @@ typedef struct debug_info {
     dbi_section     mod;
     dbi_section     global;
     dbi_section     addr;
-    virt_mem        DBIWrite;
+    virt_mem        dump_addr;
     signed_16       modnum;
     class_entry     *LocalClass;
     class_entry     *TypeClass;

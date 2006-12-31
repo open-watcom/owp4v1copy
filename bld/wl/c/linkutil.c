@@ -53,7 +53,6 @@
 #include "mapio.h"
 #include "wressetr.h"   // from wres project
 
-static void WalkList( node *list, void (*fn)( void * ) );
 
 static int ResWrite( int dummy, const void *buff, size_t size )
 /*************************************************************/
@@ -222,6 +221,15 @@ void * ChkMemDup( void * mem, unsigned len  )
     return( copy );
 }
 
+static void WalkList( node *list, void (*fn)( void * ) )
+/******************************************************/
+{
+    while( list != NULL ) {
+        fn( list );
+        list = list->next;
+    }
+}
+
 static void WalkModList( section *sect, void *rtn )
 /*************************************************/
 {
@@ -258,15 +266,6 @@ void WalkLeaders( void (*rtn)( seg_leader * ) )
 /****************************************************/
 {
     ParmWalkAllSects( SectWalkClass, rtn );
-}
-
-static void WalkList( node *list, void (*fn)( void * ) )
-/******************************************************/
-{
-    while( list != NULL ) {
-        fn( list );
-        list = list->next;
-    }
 }
 
 static bool CmpSegName( void *leader, void *name )

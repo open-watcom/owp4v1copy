@@ -135,7 +135,7 @@ void BinOutput( void )
             }
         }
     }
-    WriteDBI();
+    DBIWrite();
 }
 
 // The following routine generates Intel Hex records using data buffered in LineBuf.
@@ -391,5 +391,5 @@ void HexOutput( void )
        WriteStart();
     }
     WriteLoad( ":00000001ff\r\n", 13 );
-    WriteDBI();
+    DBIWrite();
 }

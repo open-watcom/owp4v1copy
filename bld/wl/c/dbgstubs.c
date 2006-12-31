@@ -247,7 +247,7 @@ void DBICleanup( void )
 {
 }
 
-void WriteDBI( void )
+void DBIWrite( void )
 /**************************/
 {
 }

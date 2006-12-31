@@ -57,5 +57,5 @@ extern void     DBIP2Start( section * );
 extern void     DBIFini( section * );
 extern void     DBISectCleanup( section * );
 extern void     DBICleanup( void );
-extern void     WriteDBI( void );
+extern void     DBIWrite( void );
 extern void     ResetDBI( void );

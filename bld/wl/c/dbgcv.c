@@ -124,8 +124,6 @@ static virt_mem         CVBase;
 static unsigned         TempIndex;
 static cvlineinfo       LineInfo;
 
-static bool     CVStoreLines( segdata *, mod_entry * );
-static void     GenSrcModHeader( void );
 
 void CVInit( void )
 /************************/
@@ -219,7 +217,7 @@ static void CVAddLines( lineinfo *info )
 /**************************************/
 // called during pass 1 linnum processing
 {
-    CurrMod->d.cv->numlines += CalcLineQty( info );
+    CurrMod->d.cv->numlines += DBICalcLineQty( info );
 }
 
 void CVP1ModuleFinished( mod_entry *obj )
@@ -334,6 +332,51 @@ static void SortRelocs( void )
                 SwapRelocs, RelocCompare );
 }
 
+static void GenSrcModHeader( void )
+/*********************************/
+// emit header for line number information now that we know where everything
+// is.
+{
+    cheesy_module_header        mod_hdr;
+    cheesy_file_table           file_tbl;
+    cheesy_mapping_table        map_tbl;
+    unsigned                    adjust;
+    unsigned_32                 buff;
+
+    if( LineInfo.linestart == 0 )
+        return;
+    memset( &mod_hdr, 0, sizeof( mod_hdr ) );
+    mod_hdr.cFile = 1;
+    mod_hdr.cSeg = 1;
+    mod_hdr.range[0] = LineInfo.range;
+    mod_hdr.baseSrcFile[0] = sizeof( mod_hdr );
+    mod_hdr.seg[0] = LineInfo.seg;
+    mod_hdr.pad = 0;
+    PutInfo( LineInfo.linestart, &mod_hdr, sizeof( mod_hdr ) );
+    LineInfo.linestart += sizeof( mod_hdr );
+    file_tbl.cSeg = 1;
+    file_tbl.pad = 0;
+    file_tbl.range[0] = LineInfo.range;
+    file_tbl.name[0] = strlen( CurrMod->name );
+    file_tbl.baseSrcLn[0] = sizeof( mod_hdr ) +
+                    ROUND_UP( sizeof( file_tbl ) + file_tbl.name[0], 4 );
+    PutInfo( LineInfo.linestart, &file_tbl, sizeof( file_tbl ) );
+    LineInfo.linestart += sizeof( file_tbl );
+    PutInfo( LineInfo.linestart, CurrMod->name, file_tbl.name[0] );
+    LineInfo.linestart += file_tbl.name[0];
+    adjust = file_tbl.baseSrcLn[0] - sizeof( mod_hdr ) - sizeof( file_tbl )
+                - file_tbl.name[0];
+    if( adjust != 0 ) {
+        buff = 0;
+        PutInfo( LineInfo.linestart, &buff, adjust );
+        LineInfo.linestart += adjust;
+    }
+    map_tbl.Seg = mod_hdr.seg[0];
+    map_tbl.cPair = CurrMod->d.cv->numlines;
+    PutInfo( LineInfo.linestart, &map_tbl, sizeof( map_tbl ) );
+    memset( &LineInfo, 0, sizeof( LineInfo ) );
+}
+
 void CVGenModule( void )
 /*****************************/
 // generate an sstSrcModule
@@ -422,51 +465,6 @@ void CVGenGlobal( symbol * sym, section *sect )
         buf = 0;
         DumpInfo( CVSECT_MISC, &buf, pad );
     }
-}
-
-static void GenSrcModHeader( void )
-/*********************************/
-// emit header for line number information now that we know where everything
-// is.
-{
-    cheesy_module_header        mod_hdr;
-    cheesy_file_table           file_tbl;
-    cheesy_mapping_table        map_tbl;
-    unsigned                    adjust;
-    unsigned_32                 buff;
-
-    if( LineInfo.linestart == 0 )
-        return;
-    memset( &mod_hdr, 0, sizeof( mod_hdr ) );
-    mod_hdr.cFile = 1;
-    mod_hdr.cSeg = 1;
-    mod_hdr.range[0] = LineInfo.range;
-    mod_hdr.baseSrcFile[0] = sizeof( mod_hdr );
-    mod_hdr.seg[0] = LineInfo.seg;
-    mod_hdr.pad = 0;
-    PutInfo( LineInfo.linestart, &mod_hdr, sizeof( mod_hdr ) );
-    LineInfo.linestart += sizeof( mod_hdr );
-    file_tbl.cSeg = 1;
-    file_tbl.pad = 0;
-    file_tbl.range[0] = LineInfo.range;
-    file_tbl.name[0] = strlen( CurrMod->name );
-    file_tbl.baseSrcLn[0] = sizeof( mod_hdr ) +
-                    ROUND_UP( sizeof( file_tbl ) + file_tbl.name[0], 4 );
-    PutInfo( LineInfo.linestart, &file_tbl, sizeof( file_tbl ) );
-    LineInfo.linestart += sizeof( file_tbl );
-    PutInfo( LineInfo.linestart, CurrMod->name, file_tbl.name[0] );
-    LineInfo.linestart += file_tbl.name[0];
-    adjust = file_tbl.baseSrcLn[0] - sizeof( mod_hdr ) - sizeof( file_tbl )
-                - file_tbl.name[0];
-    if( adjust != 0 ) {
-        buff = 0;
-        PutInfo( LineInfo.linestart, &buff, adjust );
-        LineInfo.linestart += adjust;
-    }
-    map_tbl.Seg = mod_hdr.seg[0];
-    map_tbl.cPair = CurrMod->d.cv->numlines;
-    PutInfo( LineInfo.linestart, &map_tbl, sizeof( map_tbl ) );
-    memset( &LineInfo, 0, sizeof( LineInfo ) );
 }
 
 void CVGenLines( lineinfo *info )
@@ -741,7 +739,7 @@ void CVFini( section *sect )
     }
 }
 
-void CVWriteDBI( void )
+void CVWrite( void )
 /****************************/
 // called during load file generation.  It is assumed that the loadfile is
 // positioned to the right spot.

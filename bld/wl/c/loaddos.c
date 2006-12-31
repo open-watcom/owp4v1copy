@@ -316,7 +316,7 @@ static void WriteCOMFile( void )
     if( root_size > (64 * 1024L - 0x200) ) {
         LnkMsg( ERR+MSG_COM_TOO_LARGE, NULL );
     }
-    WriteDBI();
+    DBIWrite();
 }
 
 void FiniDOSLoadFile( void )
@@ -341,7 +341,7 @@ void FiniDOSLoadFile( void )
     }
     // output debug info into root main output file
     CurrSect = Root;
-    WriteDBI();
+    DBIWrite();
     hdr_size = PARA_ALIGN( (unsigned long)Root->relocs * sizeof( dos_addr )
                                                                  + hdr_size );
     DEBUG((DBG_LOADDOS, "root size %l, hdr size %l", root_size, hdr_size ));
