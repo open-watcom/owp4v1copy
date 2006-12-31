@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  Implements the utility functions for CFCheck:
-*                   cfc_initialize_globals()
+*                   check_directory()
 *                   print_banner()
 *                   print_usage()
 *
@@ -36,30 +36,17 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 #include "banner.h"
-#include "CFHeader.h"
+#include "cfheader.h"
 #include "common.h"
-
-/* Global variables */
-
-#define global
-#include "CFCheck.h"
+#include "research.h"
 
 /* Local variables */
 /* Load the usage text array */
 
 static  char const *    usage_text[] = {
-#include "CFCUsage.h"
+#include "cfcusage.h"
 NULL
 };
-
-/*
- *  Initialize the global variable specific to CFCheck.
- */
-
-void cfc_initialize_globals( void )
-{
-    dirpath = NULL;
-}
 
 /*
  *  Perform the check of the directory provided to the program.
@@ -70,7 +57,7 @@ void cfc_initialize_globals( void )
  *  Any file types other than 0x02, 0x03 and 0x04 are displayed.
  *
  *  Global Used:
- *      dirpath contains the directory passed on the command line
+ *      tgtpath contains the directory passed on the command line
  *
  *  Returns:
  *      FAILURE if the directory provided cannot be opened
@@ -87,9 +74,9 @@ int check_directory( void )
     int     v4directoryfile = 0; /* counts files of type 04 */
     int     retval;
 
-    current_dir = opendir( dirpath );
+    current_dir = opendir( tgtpath );
     if( current_dir == NULL ) return( FAILURE );
-    chdir( dirpath );
+    chdir( tgtpath );
     for(;;) {
         dir_entry = readdir( current_dir );
         if( dir_entry == NULL ) break;
@@ -110,7 +97,7 @@ int check_directory( void )
 
         /* Process the file */
 
-        retval = CFHeader( current_file );
+        retval = parse_header( current_file );
         if(retval != FAILURE) {
             switch( retval ) {
             case( 2 ): 
@@ -146,7 +133,7 @@ int check_directory( void )
 
 void print_banner( void )
 {
-    puts( banner1w( "Script/GML Binary File Type Check Program", _CFCHECK_VERSION_ ) );
+    puts( banner1w( "Script/GML Binary File Type Check Program", _RESEARCH_VERSION_ ) );
     puts( banner2( "1983" ) );
     puts( banner3 );
     puts( banner3a );

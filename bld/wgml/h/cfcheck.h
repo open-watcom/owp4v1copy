@@ -24,43 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Declares items specific to CFCheck.
+* Description:  Declares function check_directory(), which performs the
+*               actual work for cfcheck.
 *
 ****************************************************************************/
 
 #ifndef CFCHECK_H_INCLUDED
 #define CFCHECK_H_INCLUDED
-
-/* In theory, this should go into banner.h */
-/* For gendev and wgml, the equivalent macros will */
-
-#define _CFCHECK_VERSION_ BAN_VER_STR
-
-/* Global variable declarations */
-
-/*
- * This allows the same declarations to function as definitions.
- * Just #define global before including this file.
- */
-
-#ifndef global
-    #define global  extern
-#endif
-
-/* Global variable declarations */
-
-/*
- * This allows the same declarations to function as definitions.
- * Just #define global before including this file.
- */
-
-#ifndef global
-    #define global  extern
-#endif
-
-global  char *  dirpath;    /* path of directory to be checked */
-
-#undef global   /* reset so can be reused with other headers */
 
 /* Function declarations */
 
@@ -68,7 +38,6 @@ global  char *  dirpath;    /* path of directory to be checked */
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
-void    cfc_initialize_globals( void );
 int     check_directory( void );
 
 #ifdef  __cplusplus

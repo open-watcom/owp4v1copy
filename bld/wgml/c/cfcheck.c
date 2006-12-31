@@ -30,8 +30,9 @@
 
 #include <process.h>
 #include <stdlib.h>
-#include "CFCheck.h"
+#include "cfcheck.h"
 #include "common.h"
+#include "research.h"
 
 /*
  *  Given a valid directory path, check all files in that directory
@@ -49,7 +50,7 @@ int main()
 {
     /* Declare automatic variables */
 
-    size_t  cmdlen = 0;
+    size_t  cmdlen  = 0;
     char *  cmdline = NULL;
     int     retval;
 
@@ -78,7 +79,7 @@ int main()
     /* Initialize the globals */
 
     initialize_globals();
-    cfc_initialize_globals();
+    res_initialize_globals();
     
     /* Parse the command line: allocates and sets dirpath */
 
@@ -97,10 +98,10 @@ int main()
 
     retval = check_directory();
 
-    /* Free the memory held by dirpath and reset it */
+    /* Free the memory held by tgtpath and reset it */
 
-    free( dirpath );
-    dirpath = NULL;
+    free( tgtpath );
+    tgtpath = NULL;
 
     /* Done */
 

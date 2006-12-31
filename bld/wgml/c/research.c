@@ -26,6 +26,7 @@
 *
 * Description:  Implements the functions common to the research programs:
 *                   parse_cmdline()
+*                   res_initialize_globals()
 *
 ****************************************************************************/
 
@@ -33,20 +34,24 @@
 #include <stdlib.h>
 #define __STDC_WANT_LIB_EXT1__  1 // Activates "Safe C" functions
 #include <string.h>
-#include "CFCheck.h"
 #include "cmdlhelp.h"
 #include "common.h"
 #include "wstd.h"
 
+/* Global variables */
+
+#define global
+#include "research.h"
+
 /*
- *  Extract the path entered by the user into dirpath. Doublequotes used
+ *  Extract the path entered by the user into tgtpath. Doublequotes used
  *  to allow embedded spaces are removed.
  *
  *  Parameter:
  *      cmdline contains the command line without the program name
  *
  *  Global Used:
- *      dirpath is loaded with the directory provided to the program, with any
+ *      tgtpath is loaded with the directory provided to the program, with any
  *          doublequotes removed
  *
  *  Returns:
@@ -96,21 +101,31 @@ int parse_cmdline( char * cmdline )
     /* Allocate memory for the global pointer dirpath */
         
     len++; /* To allow space for the final null character */
-    dirpath = malloc( len );
-    if( dirpath == NULL ) return( FAILURE );
+    tgtpath = malloc( len );
+    if( tgtpath == NULL ) return( FAILURE );
 
     /* Copy the parameter into dirpath */
 
-    strncpy_s( dirpath, len, cmdline, len-1 );
-    dirpath[ len ] = NULLCHAR;
+    strncpy_s( tgtpath, len, cmdline, len-1 );
+    tgtpath[ len ] = NULLCHAR;
 
     /* Remove doublequotes, if present */
 
-    if(opt == '\"') UnquoteFName( dirpath, len, dirpath );
+    if(opt == '\"') UnquoteFName( tgtpath, len, tgtpath );
 
     /* We are done */
 
     return( SUCCESS );
 
 }
+
+/*
+ *  Initialize the global variable common to the research functions.
+ */
+
+void res_initialize_globals( void )
+{
+    tgtpath = NULL;
+}
+
 

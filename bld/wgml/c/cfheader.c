@@ -24,20 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  Processes the header of an (alleged) .COP file.
+* Description:  Implements function parse_header(), which verifies the
+*               correctness of a .COP file header.
 *
 ****************************************************************************/
 
 /*
- * CFHeader is used to verify that a given file is, in fact, a valid .COP file
- * and, if it is, to return the file type.
+ *  Verifies that a given file is, in fact, a valid .COP file and, if it is,
+ *  returns the file type.
  *
- * Parameter:
- *   inFile -- the FILE to check
+ *  Parameter:
+ *      inFile -- the FILE to check
  *
- * Returns:
- *   FAILURE if the header is invalid
- *   The file type if the header is valid
+ *  Returns:
+ *      FAILURE if the header is invalid
+ *      The file type if the header is valid
  *   
 */
 
@@ -62,7 +63,7 @@
  *          file header and the file contains data following the header
  */
 
-int CFHeader( FILE * in_file )
+int parse_header( FILE * in_file )
 {
     char magic[4];
     int  type;

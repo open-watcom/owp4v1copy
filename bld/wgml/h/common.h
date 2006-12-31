@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Declares items common to all OWGML files.
+* Description:  Declares items common to all WGML files.
 *
 *               These functions must be implemented by each program
 *               (or group of programs) that wishes to use them:
@@ -73,7 +73,7 @@ int     parse_cmdline( char * );
 void    print_banner( void );
 void    print_usage( void );
 
-/* These functions are defined in OWCommon.c */
+/* These functions are defined in common.c */
 
 void    initialize_globals( void );
 char *  skip_spaces( char * );

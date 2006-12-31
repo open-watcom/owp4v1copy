@@ -24,22 +24,44 @@
 *
 *  ========================================================================
 *
-* Description:  Declares function parse_header().
+* Description:  Declares items specific to the research programs:
+*                   res_initialize_globals()
 *
 ****************************************************************************/
-#ifndef CFHEADER_H_INCLUDED
-#define CFHEADER_H_INCLUDED
 
-/* Function declaration */
+#ifndef RESEARCH_H_INCLUDED
+#define RESEARCH_H_INCLUDED
+
+/* In theory, this should go into banner.h */
+/* For gendev and wgml, the equivalent macros will */
+
+#define _RESEARCH_VERSION_ BAN_VER_STR
+
+/* Global variable declarations */
+
+/*
+ * This allows the same declarations to function as definitions.
+ * Just #define global before including this file.
+ */
+
+#ifndef global
+    #define global  extern
+#endif
+
+global  char *  tgtpath;    /* path of directory to be checked */
+
+#undef global   /* reset so can be reused with other headers */
+
+/* Function declarations */
 
 #ifdef  __cplusplus
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
-int parse_header( FILE * );
+void    res_initialize_globals( void );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++ */
 #endif
 
-#endif  /* CFHEADER_H_INCLUDED */
+#endif  /* RESEARCH_H_INCLUDED */

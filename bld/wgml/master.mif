@@ -15,9 +15,9 @@ inc_dirs = -I"$(wgml_dir)/h"
 .c: ../c;../../watcom/c
 
 objs =               &
-        CFCheck.obj  &
-        CFCUtils.obj &
-        CFHeader.obj &
+        cfcheck.obj  &
+        cfcutils.obj &
+        cfheader.obj &
         cmdlhelp.obj &
 	common.obj   &
         research.obj &
