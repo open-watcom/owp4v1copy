@@ -88,7 +88,7 @@ int check_directory( void )
         /* Check the file size */
 
         if( ((dir_entry->d_size) % 16) != 0) \
-        cprintf( "Size of file %s is not a multiple of 16\n", dir_entry->d_name );
+        printf_s( "Size of file %s is not a multiple of 16\n", dir_entry->d_name );
 
         /* Open the file */
 
@@ -110,7 +110,7 @@ int check_directory( void )
                 v4directoryfile++;
                 break;
             default:
-                cprintf( "%s: unknown file type: %i\n", dir_entry->d_name, retval );
+                printf_s( "%s: unknown file type: %i\n", dir_entry->d_name, retval );
             }
         }
         fclose( current_file );
@@ -120,9 +120,9 @@ int check_directory( void )
    
     /* Output counts */
 
-    cprintf( "Number of device/driver/font files:  %i\n", datafile );
-    cprintf( "Number of version 3 directory files: %i\n", v3directoryfile );
-    cprintf( "Number of version 4 directory files: %i\n", v4directoryfile );
+    printf_s( "Number of device/driver/font files:  %i\n", datafile );
+    printf_s( "Number of version 3 directory files: %i\n", v3directoryfile );
+    printf_s( "Number of version 4 directory files: %i\n", v4directoryfile );
 
     return( SUCCESS );
 }
