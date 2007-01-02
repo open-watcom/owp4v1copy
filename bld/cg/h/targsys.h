@@ -63,7 +63,7 @@
     #define WORD_SIZE           4
     #define REG_SIZE            4
     #define T_WORD              T_UINT_4
-    #define _PHAR_LAP
+    #define _OMF_32
 #elif _TARGET &  _TARG_IAPX86
     #define _TARG_CSET          _TARG_ASCII
     #define _TARG_INTEGER       16
@@ -74,7 +74,7 @@
     #define WORD_SIZE           2
     #define REG_SIZE            2
     #define T_WORD              T_UINT_2
-    #undef  _PHAR_LAP
+    #undef _OMF_32
 #elif _TARGET & _TARG_370
     #define _TARG_CSET          _TARG_EBCDIC
     #define _TARG_INTEGER       32
