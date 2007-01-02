@@ -33,7 +33,6 @@
 #include "coderep.h"
 #include "conflict.h"
 #include "regset.h"
-#include "sysmacro.h"
 #include "dump.h"
 
 extern  void            DumpNL();

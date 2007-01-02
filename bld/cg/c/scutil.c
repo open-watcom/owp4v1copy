@@ -32,7 +32,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "score.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "memcheck.h"
 #include "freelist.h"
 
@@ -48,7 +48,7 @@ extern  pointer ScAlloc( int size )
 {
     pointer     chunk;
 
-    _Alloc( chunk, size );
+    chunk = CGAlloc( size );
     return( chunk );
 }
 
@@ -56,7 +56,7 @@ extern  void    ScFree( pointer chunk, int size )
 /***********************************************/
 {
     if( chunk != NULL ) {
-        _Free( chunk, size );
+        CGFree( chunk );
     }
 }
 

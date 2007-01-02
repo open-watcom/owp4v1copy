@@ -37,7 +37,6 @@
 #include "model.h"
 #include "addrname.h"
 #include "procdef.h"
-#include "sysmacro.h"
 #include "zoiks.h"
 #include "freelist.h"
 #include "cfloat.h"

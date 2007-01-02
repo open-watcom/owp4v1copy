@@ -37,7 +37,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "standard.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "cg.h"
 #include "cgaux.h"
 #include "bckdef.h"
@@ -107,8 +107,8 @@ static struct buf *NewBuffer( void )
 {
     struct buf  *newbuf;
 
-    _Alloc( newbuf, sizeof(struct buf) );
-    _Alloc( newbuf->buf, IOBUFSIZE );
+    newbuf = CGAlloc( sizeof(struct buf) );
+    newbuf->buf = CGAlloc( IOBUFSIZE );
     newbuf->bufptr = newbuf->buf;
     newbuf->bytes_left = IOBUFSIZE;
     newbuf->bytes_written = 0;
@@ -447,8 +447,8 @@ static void FlushBuffers( handle h )
             FatalError( "Error writing object file" );
         }
         BufList = pbuf->nextbuf;
-        _Free( pbuf->buf, IOBUFSIZE );
-        _Free( pbuf, sizeof(struct buf) );
+        CGFree( pbuf->buf );
+        CGFree( pbuf );
     }
     CurBuf = NULL;
 }

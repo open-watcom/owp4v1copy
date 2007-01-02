@@ -35,7 +35,7 @@
 #include "pattern.h"
 #include "procdef.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "symdbg.h"
 #include "model.h"
 #include "ocentry.h"
@@ -328,7 +328,7 @@ static void *CLIAlloc( size_t size ) {
 
 static void CLIFree( void *p ) {
 
-    CGFreeSize( p, 0 );
+    CGFree( p );
 }
 
 static bck_info  *MakeLabel( void ){
@@ -683,10 +683,10 @@ extern pointer _CGAPI DFClient( void ) {
     return( Client );
 }
 //TODO: maybe this should be some sort of call back
-extern void DFDwarfLocal( dw_client client, dw_loc_id locid, sym_handle sym ){
-/*** add to location expr where local sym is *************************/
+extern void _CGAPI DFDwarfLocal( pointer client, pointer locid, sym_handle sym ){
+/*** add to location expr where local sym is ***********************************/
     name        *tmp;
-    type_length     offset;
+    type_length offset;
 
     tmp = DeAlias( AllocUserTemp( sym, XX ) );
     offset = NewBase( tmp );
@@ -934,7 +934,7 @@ static  void GenParmLoc( dbg_local   *parm,
         }
         dw_loc = DBGLoc2DF( alt->loc );
         DBLocFini( alt->loc );
-        _Free( alt, sizeof( dbg_local ) );
+        CGFree( alt );
     }else{
         dw_loc = DBGLoc2DF( NULL );
     }
@@ -1044,7 +1044,7 @@ extern  void    DFProEnd( dbg_rtn *rtn, offset lc ) {
         DBLocFini( parm->loc );
         junk = parm;
         parm = parm->link;
-        _Free( junk, sizeof( dbg_local ) );
+        CGFree( junk );
     }
     if( rtn->reeturn != NULL ){
         GenRetSym( rtn->reeturn, tipe );
@@ -1119,7 +1119,7 @@ static  void    DumpLocals( dbg_local *local ) {
         }
         junk = local;
         local = local->link;
-        _Free( junk, sizeof( dbg_local ) );
+        CGFree( junk );
     }
 }
 

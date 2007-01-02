@@ -35,7 +35,7 @@
 #include "opcodes.h"
 #include "procdef.h"
 #include "model.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "addrname.h"
 #include "cgdefs.h"
 #include "hostsys.h"
@@ -135,7 +135,7 @@ static  void    Far16Parms( cn call ) {
         parm->name->format = NF_ADDR;
         BGDone( parm->name );
         next = parm->next;
-        _Free( parm, sizeof( parm_node ) );
+        CGFree( parm );
     }
     eax = AllocRegName( HW_EAX );
     ecx = AllocRegName( HW_ECX );

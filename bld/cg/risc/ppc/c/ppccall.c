@@ -35,7 +35,6 @@
 #include "opcodes.h"
 #include "procdef.h"
 #include "model.h"
-#include "sysmacro.h"
 #include "addrname.h"
 #include "cgdefs.h"
 #include "cgaux.h"

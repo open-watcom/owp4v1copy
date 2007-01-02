@@ -33,7 +33,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "symdbg.h"
 #include "model.h"
 #include "typedef.h"
@@ -366,7 +366,7 @@ extern  dbg_type    WVEndArray( array_list *ar ){
 
         }
         ar->list = dim->entry.next;
-        _Free( dim, sizeof( field_entry )  );
+        CGFree( dim  );
     }
     return( ret );
 }
@@ -526,7 +526,7 @@ extern  dbg_type        WVEndStruct( struct_list  *st ) {
         }
         EndType( FALSE );
         st->list = field->entry.next;
-        _Free( field, sizeof( field_entry )  );
+        CGFree( field  );
     }
     return( TypeIdx );
 }
@@ -559,7 +559,7 @@ extern  dbg_type        WVEndEnum( enum_list *en ) {
         BuffString( cons->len, cons->name );
         EndType( FALSE );
         en->list = cons->next;
-        _Free( cons, sizeof( const_entry ) + cons->len );
+        CGFree( cons );
     }
     return( TypeIdx );
 }
@@ -590,7 +590,7 @@ extern  dbg_type        WVEndProc( proc_list  *pr ) {
         }
         BuffIndex( parm->tipe );
         pr->list = parm->next;
-        _Free( parm, sizeof( parm_entry ) );
+        CGFree( parm );
     }
     EndType( FALSE );
     return( proc_type );

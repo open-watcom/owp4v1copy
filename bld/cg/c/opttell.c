@@ -131,7 +131,7 @@ static  void    ReallyScrapLabel( code_lbl *lbl )
         owner = &(*owner)->lbl.link;
     }
     *owner = lbl->lbl.link;
-    _Free( lbl, sizeof( code_lbl ) );
+    CGFree( lbl );
   optend
 
 

@@ -33,7 +33,6 @@
 #include <string.h>
 #include "standard.h"
 #include "coderep.h"
-#include "sysmacro.h"
 #include "opcodes.h"
 #include "regset.h"
 #include "zoiks.h"

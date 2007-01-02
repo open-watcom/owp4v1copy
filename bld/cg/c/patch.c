@@ -36,7 +36,7 @@
 #include "cgdefs.h"
 #include "tree.h"
 #include "addrname.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 
 #include "addrfold.h"
 
@@ -63,7 +63,7 @@ extern  type_def        *TypeAddress(cg_type );
 extern  patch   *BGNewPatch() {
     patch               *p;
 
-    _Alloc( p, sizeof( patch ) );
+    p = CGAlloc( sizeof( patch ) );
     p->in_tree = FALSE;
     p->patched = FALSE;
 #ifndef NDEBUG
@@ -113,5 +113,5 @@ extern  void    BGPatchInteger( patch *hdl, signed_32 value ) {
 }
 
 extern  void    BGFiniPatch( patch *hdl ) {
-    _Free( hdl, sizeof( patch ) );
+    CGFree( hdl );
 }

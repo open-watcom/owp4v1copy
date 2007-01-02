@@ -36,7 +36,6 @@
 #include "pattern.h"
 #include "tables.h"
 #include "opcodes.h"
-#include "sysmacro.h"
 #include "regset.h"
 #include "model.h"
 #include "feprotos.h"

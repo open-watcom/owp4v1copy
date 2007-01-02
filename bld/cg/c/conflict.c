@@ -34,7 +34,6 @@
 #include "coderep.h"
 #include "conflict.h"
 #include "opcodes.h"
-#include "sysmacro.h"
 #include "regset.h"
 #include "model.h"
 #include "freelist.h"

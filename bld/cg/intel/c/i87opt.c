@@ -39,7 +39,7 @@
 #include "procdef.h"
 #include "addrname.h"
 #include "model.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "regset.h"
 #include "zoiks.h"
 #include "funits.h"
@@ -264,7 +264,7 @@ static bool PushDelayedIfStackOperand( instruction *ins, pn parm, call_state *st
     while( --i >= 0 ) {
         if( FPIsStack( ins->operands[ i ] ) ) {
             parm->ins = PushDelayed( ins, addr, state );
-            // _Free( parm, sizeof( parm_node ) );
+            // CGFree( parm );
             return( TRUE );
         }
     }
@@ -290,7 +290,7 @@ static bool PushDelayedIfRedefinition( instruction *ins, pn parm, call_state *st
             while( --i >= 0 ) {
                 if( ReDefinedBy( next, ins->operands[ i ] ) ) {
                     parm->ins = PushDelayed( ins, parm->name, state );
-                    // _Free( parm, sizeof( parm_node ) );
+                    // CGFree( parm );
                     return( TRUE );
                 }
             }

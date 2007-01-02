@@ -35,7 +35,6 @@
 #include "opcodes.h"
 #include "pattern.h"
 #include "procdef.h"
-#include "sysmacro.h"
 #include "zoiks.h"
 
 typedef enum {

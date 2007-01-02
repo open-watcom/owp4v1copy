@@ -32,7 +32,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 
 extern  block           *MakeBlock(label_handle,block_num);
 extern  void            SuffixIns(instruction *,instruction *);
@@ -145,7 +145,7 @@ extern  edge_stack      *EdgeStackInit( void )
 {
     edge_stack          *stk;
 
-    _Alloc( stk, sizeof( edge_stack ) );
+    stk = CGAlloc( sizeof( edge_stack ) );
     stk->top = NULL;
     return( stk );
 }
@@ -161,7 +161,7 @@ extern  void            EdgeStackPush( edge_stack *stk, block_edge *edge )
 {
     edge_entry          *new_entry;
 
-    _Alloc( new_entry, sizeof( edge_entry ) );
+    new_entry = CGAlloc( sizeof( edge_entry ) );
     new_entry->edge = edge;
     new_entry->next = stk->top;
     stk->top = new_entry;
@@ -177,7 +177,7 @@ extern  block_edge      *EdgeStackPop( edge_stack *stk )
         top = stk->top;
         edge = top->edge;
         stk->top = top->next;
-        _Free( top, sizeof( edge_entry ) );
+        CGFree( top );
         return( edge );
     }
     return( NULL );
@@ -189,5 +189,5 @@ extern  void            EdgeStackFini( edge_stack *stk )
     while( !EdgeStackEmpty( stk ) ) {
         EdgeStackPop( stk );
     }
-    _Free( stk, sizeof( edge_stack ) );
+    CGFree( stk );
 }

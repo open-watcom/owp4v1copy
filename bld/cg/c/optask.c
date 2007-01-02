@@ -30,9 +30,7 @@
 ****************************************************************************/
 
 
-#include "standard.h"
 #include "optwif.h"
-#include "cg.h"
 #include "targsys.h"
 #include "feprotos.h"
 
@@ -46,7 +44,7 @@ static  label_handle    DoAskForLabel( sym_handle sym )
     code_lbl    *new;
 
   optbegin
-    _Alloc( new, sizeof( code_lbl ) );
+    new = CGAlloc( sizeof( code_lbl ) );
     new->lbl.link    = Handles;
     Handles = new;
     new->lbl.sym     = sym;

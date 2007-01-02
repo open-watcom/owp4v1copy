@@ -34,7 +34,7 @@
 #include "coderep.h"
 #include "indvars.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "model.h"
 #include "spawn.h"
 #include "memout.h"
@@ -189,7 +189,7 @@ static void InitDag( void )
             }
             break;
         }
-        _Alloc( dag, sizeof( data_dag ) );
+        dag = CGAlloc( sizeof( data_dag ) );
         dag->ins = ins;
         dag->height = 0;
         dag->anc_count = 0;
@@ -945,7 +945,7 @@ static  void    FreeDataDag( void )
 
     for( dag = DataDag; dag != NULL; dag = prev ) {
         prev = dag->prev;
-        _Free( dag, sizeof( data_dag ) );
+        CGFree( dag );
     }
     DataDag = NULL;
     for( dep = CurrDepBlock; dep != NULL; dep = next ) {

@@ -43,7 +43,7 @@
 #include "seldef.h"
 #include "echoapi.h"
 #include "model.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "useinfo.h"
 #include "dump.h"
 #include "feprotos.h"
@@ -637,7 +637,7 @@ void CgEchoAPICbName                // REGISTER A CALL-BACK NAME
 {
     CB_NAME* cbn;
 
-    _Alloc( cbn, sizeof( CB_NAME ) ); // Free'd in DbgFini
+    cbn = CGAlloc( sizeof( CB_NAME ) ); // Free'd in DbgFini
     cbn->rtn = rtn;
     cbn->name = name;
     // insert
@@ -659,7 +659,7 @@ void EchoAPIFini( void )
 
     for( cbn = callback_names; cbn; cbn = next ) {
         next = cbn->next;
-        _Free( cbn, sizeof( CB_NAME ) );
+        CGFree( cbn );
     }
     callback_names = NULL;
     EchoAPIUnredirect();

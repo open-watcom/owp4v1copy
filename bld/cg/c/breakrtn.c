@@ -31,7 +31,7 @@
 
 #include "standard.h"
 #include "coderep.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "model.h"
 
 typedef struct  edge_list {
@@ -71,7 +71,7 @@ static  void            FreeBranchOuts( void )
     while( curr != NULL ) {
         junk = curr;
         curr = curr->next;
-        _Free( junk, sizeof( edge_list ) );
+        CGFree( junk );
     }
 }
 
@@ -189,7 +189,7 @@ extern  bool            CreateBreak( void )
         while( --targets >= 0 ) {
             if( !( edge->flags & DEST_IS_BLOCK )
                || edge->destination->gen_id >= break_blk->gen_id ) {
-                _Alloc( exit_edge, sizeof( edge_list ) );
+                exit_edge = CGAlloc( sizeof( edge_list ) );
                 exit_edge->edge = edge;
                 exit_edge->next = BranchOuts;
                 exit_edge->gen_id = blk->gen_id;

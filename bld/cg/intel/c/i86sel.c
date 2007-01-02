@@ -34,7 +34,7 @@
 #include "cgdefs.h"
 #include "coderep.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "addrname.h"
 #include "tree.h"
 #include "seldef.h"
@@ -217,7 +217,7 @@ extern  tbl_control     *MakeScanTab( select_list *list, signed_32 hi,
 
     cases = NumValues( list, hi );
     lo = list->low;
-    _Alloc( table, sizeof( tbl_control ) + (cases-1) * sizeof( label_handle ) );
+    table = CGAlloc( sizeof( tbl_control ) + (cases-1) * sizeof( label_handle ) );
     table->size = cases;
     old = SetOP( AskCodeSeg() );
     table->value_lbl = AskForNewLabel();
@@ -345,7 +345,7 @@ extern  tbl_control     *MakeJmpTab( select_list *list, signed_32 lo,
     seg_id              old;
 
     cases = hi - lo + 1;
-    _Alloc( table, sizeof( tbl_control ) + (cases-1) * sizeof( label_handle ) );
+    table = CGAlloc( sizeof( tbl_control ) + (cases-1) * sizeof( label_handle ) );
     old = SetOP( AskCodeSeg() );
     table->lbl = AskForNewLabel();
     table->value_lbl = NULL;

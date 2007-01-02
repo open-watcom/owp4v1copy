@@ -35,7 +35,6 @@
 #include "hostsys.h"
 #include "cgdefs.h"
 #include "model.h"
-#include "sysmacro.h"
 #include "cfloat.h"
 #include "cgaux.h"
 #include "cgdll.h"

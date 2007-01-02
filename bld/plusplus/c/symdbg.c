@@ -903,8 +903,7 @@ dbg_type SymbolicDebugType( TYPE type, SD_CONTROL control )
             prevFwdInfo = fwd_info;
             {
                 // from code generator
-                extern dbg_type SafeRecurse( dbg_type (*)( TYPE ), TYPE );
-                dt = SafeRecurse( &symbolicDebugClassType, type );
+                dt = (dbg_type)CGSafeRecurse( &symbolicDebugClassType, type );
             }
             if( fwd_info->dn != NULL ) {
                 dt = DBEndName( fwd_info->dn, dt );

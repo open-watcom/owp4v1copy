@@ -34,7 +34,6 @@
 #include "opcodes.h"
 #include "model.h"
 #include "procdef.h"
-#include "sysmacro.h"
 #include "cgaux.h"
 #include "zoiks.h"
 #include "feprotos.h"

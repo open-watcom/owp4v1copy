@@ -34,7 +34,6 @@
 #include "coderep.h"
 #include "procdef.h"
 #include "conflict.h"
-#include "sysmacro.h"
 #include "memcheck.h"
 #include "opcodes.h"
 #include "typedef.h"

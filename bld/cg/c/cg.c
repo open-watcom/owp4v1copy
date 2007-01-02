@@ -43,6 +43,7 @@
 #include "hostsys.h"
 #include "cgstub.h"
 #include "feprotos.h"
+#include "cgmem.h"
 
 #include "stubdata.h"
 
@@ -79,10 +80,6 @@ extern  void            CDefLabel(l *lb);
 extern  void            DRefLabel(l *lb);
 extern  void            DDefLabel(l *lb);
 extern  pointer         LkAddBack(sym_handle,pointer);
-extern  pointer         CGAlloc( unsigned size );
-extern  pointer         DoCGAlloc( unsigned size, pointer ra );
-extern  void            CGFree( pointer chunk );
-extern  void            CGFreeSize( pointer chunk, int size );
 extern  unsigned_32     BETypeLength( cg_type );
 
 /********************************************************************/

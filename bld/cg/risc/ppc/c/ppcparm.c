@@ -32,7 +32,6 @@
 #include "standard.h"
 #include "coderep.h"
 #include "opcodes.h"
-#include "sysmacro.h"
 #include "procdef.h"
 #include "cgdefs.h"
 #include "typedef.h"

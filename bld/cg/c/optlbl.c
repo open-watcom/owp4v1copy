@@ -246,7 +246,7 @@ static  void    ScrapCodeLabel( code_lbl *lbl ) {
     *owner = lbl->lbl.link;
     redir = lbl->redirect;
     code = _TstStatus( lbl, CODELABEL );
-    _Free( lbl, sizeof( code_lbl ) );
+    CGFree( lbl );
     if( !code ) optreturnvoid;
     if( redir == NULL ) optreturnvoid;
     _ClrStatus( redir, REDIRECTION );

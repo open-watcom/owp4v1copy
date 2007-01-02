@@ -34,7 +34,6 @@
 #include "coderep.h"
 #include "opcodes.h"
 #include "ocentry.h"
-#include "sysmacro.h"
 #include "system.h"
 #include "cgaux.h"
 #include "cgdefs.h"

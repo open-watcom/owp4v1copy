@@ -37,7 +37,7 @@
 #include "coderep.h"
 #include "indvars.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "cfloat.h"
 #include "model.h"
 #include "stackok.h"
@@ -513,7 +513,7 @@ static  block   *DoUnroll( block *tail, signed_32 reps, bool replace_vars )
     size = sizeof( loop_abstract ) * reps;
 
     // allocate an array of these abstract loop thingies
-    _Alloc( new_loops, size );
+    new_loops = CGAlloc( size );
     first = &new_loops[ 0 ];
     last = &new_loops[ reps - 1 ];
 
@@ -549,7 +549,7 @@ static  block   *DoUnroll( block *tail, signed_32 reps, bool replace_vars )
     first->head->u.loop = tail;
 
     next_block = last->tail;
-    _Free( new_loops, size );
+    CGFree( new_loops );
 
     // and return the tail of the new super-loop
     return( next_block );

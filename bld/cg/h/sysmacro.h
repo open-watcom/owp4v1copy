@@ -30,9 +30,8 @@
 ****************************************************************************/
 
 
-#define         _Alloc( stg, size )     stg = CGAlloc( size )
-#define         _Free( stg, size )      CGFreeSize( stg, size )
+//#define         _Alloc( stg, size )     stg = CGAlloc( size )
+//#define         _Free( stg )            CGFree( stg )
 
-extern pointer CGAlloc( unsigned size );
-extern void CGFreeSize( pointer, int );
-extern void CGFree( pointer );
+//extern pointer  CGAlloc( unsigned size );
+//extern void     CGFree( pointer );

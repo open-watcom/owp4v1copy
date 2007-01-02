@@ -32,7 +32,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "conflict.h"
 #include "hwreg.h"
 
@@ -470,7 +470,7 @@ extern  void    FindReferences( void )
     curr = HeadBlock;
     while( curr != NULL ) {
         if( curr->dataflow == NULL ) {
-            _Alloc( curr->dataflow, sizeof( data_flow_def ) );
+            curr->dataflow = CGAlloc( sizeof( data_flow_def ) );
         }
         _GBitInit( curr->dataflow->def         , EMPTY );
         _GBitInit( curr->dataflow->use         , EMPTY );

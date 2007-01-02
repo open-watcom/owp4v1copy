@@ -35,7 +35,7 @@
 #include "conflict.h"
 #include "pattern.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "regset.h"
 #include "model.h"
 #include "cgaux.h"
@@ -156,7 +156,7 @@ static void BaseTempAdd( name *idx, label_handle label ){
     }
     /* don't add same index twice */
     if( cur == NULL || idx != cur->idx ){
-        _Alloc( cur, sizeof( struct idx_list ) );
+        cur = CGAlloc( sizeof( struct idx_list ) );
         cur->idx = idx;
         cur->label = label;
         cur->next = *lnk;
@@ -199,7 +199,7 @@ static void BaseTempFini( instruction *start ){
         while( (list = *lnk ) != NULL ){
             if( list->idx->i.constant != 0 ){
                 *lnk = list->next;
-                _Free( list, sizeof( struct idx_list ) );
+                CGFree( list );
             }else{
                 list->idx = list->idx->i.index;
                 new_ins = MakeUnary( OP_LA, list->mem_loc,
@@ -289,7 +289,7 @@ void FixMemBases( void ){
         }
         old = list;
         list = list->next;
-        _Free( old, sizeof( struct idx_list ) );
+        CGFree( old );
     }
 }
 

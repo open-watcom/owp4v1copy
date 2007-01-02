@@ -34,7 +34,7 @@
 #include "coderep.h"
 #include "opcodes.h"
 #include "procdef.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "cgaux.h"
 #include "feprotos.h"
 #include "zoiks.h"
@@ -81,7 +81,7 @@ static  void    StackEntry( stack_temp *st_temp, name *temp )
 {
     stack_entry *new;
 
-    _Alloc( new, sizeof( stack_entry ) );
+    new = CGAlloc( sizeof( stack_entry ) );
     new->link = StackMap;
     new->size = temp->n.size;
     new->location = temp->t.location;
@@ -112,7 +112,7 @@ static  void    ReInitStackMap( void )
         while( stack->temp.others != NULL ) {
             other = stack->temp.others;
             stack->temp.others = stack->temp.others->others;
-            _Free( other, sizeof( stack_temp ) );
+            CGFree( other );
         }
         stack->temp.first = LAST_INS_ID;
         stack->temp.last = FIRST_INS_ID;
@@ -412,7 +412,7 @@ static  void    AllocNewLocal( name *temp )
             stack = ReUsableStack( &st_temp, temp );
             if( stack != NULL ) {
                 temp->t.location = stack->location;
-                _Alloc( new_st_temp, sizeof( stack_temp ) );
+                new_st_temp = CGAlloc( sizeof( stack_temp ) );
                 new_st_temp->first = st_temp.first;
                 new_st_temp->last = st_temp.last;
                 new_st_temp->others = stack->temp.others;
@@ -629,9 +629,9 @@ extern  void    FiniStackMap( void )
         while( junk1->temp.others != NULL ) {
             junk2 = junk1->temp.others;
             junk1->temp.others = junk1->temp.others->others;
-            _Free( junk2, sizeof( stack_temp ) );
+            CGFree( junk2 );
         }
-        _Free( junk1, sizeof( stack_entry ) );
+        CGFree( junk1 );
     }
     TellTempLocs();
 }

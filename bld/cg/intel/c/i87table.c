@@ -36,7 +36,6 @@
 #include "pattern.h"
 #include "regset.h"
 #include "vergen.h"
-#include "sysmacro.h"
 #include "funits.h"
 
 

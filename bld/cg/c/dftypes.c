@@ -33,7 +33,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "symdbg.h"
 #include "model.h"
 #include "typedef.h"
@@ -292,7 +292,7 @@ extern  dbg_type    DFEndArray( array_list *ar ){
 
         }
         ar->list = dim->entry.next;
-        _Free( dim, sizeof( field_entry )  );
+        CGFree( dim );
     }
     DWEndArray( Client );
     return( ret );
@@ -731,7 +731,7 @@ extern  dbg_type        DFEndStruct( struct_list  *st ) {
             break;
         }
         st->list = field->entry.next;
-        _Free( field, sizeof( field_entry ) );
+        CGFree( field );
     }
     DWEndStruct( Client );
     return( ret );
@@ -757,7 +757,7 @@ extern  dbg_type        DFEndEnum( enum_list *en ) {
             DWAddConstant( Client, val.u._32[I64LO32], cons->name );
         }
         en->list = cons->next;
-        _Free( cons, sizeof( const_entry ) + cons->len );
+        CGFree( cons );
     }
     DWEndEnumeration( Client );
     return( ret );
@@ -783,7 +783,7 @@ extern  dbg_type        DFEndProc( proc_list  *pr ) {
         if( parm == NULL ) break;
         DWAddParmToSubroutineType( Client, parm->tipe, NULL, NULL, NULL );
         pr->list = parm->next;
-        _Free( parm, sizeof( parm_entry ) );
+        CGFree( parm );
         parm = pr->list;
     }
     DWEndSubroutineType( Client );

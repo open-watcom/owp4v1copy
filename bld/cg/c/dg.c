@@ -38,7 +38,7 @@
 #include "cg.h"
 #include "bckdef.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "typclass.h"
 #include "typedef.h"
 #include "cfloat.h"
@@ -57,7 +57,6 @@ extern  type_def        *TypeAddress(cg_type);
 
 extern  char            *ACopyOf(char *);
 extern  void            VerTipe(cg_type ,cg_type *);
-extern  void            CGFree(pointer );
 extern  char            *Tipe(cg_type );
 extern  char            *FtnTipe(dbg_ftn_type );
 extern  char            *Label(l *);
@@ -468,7 +467,7 @@ static  void    DBSrcFileFini( void ){
     while( curr != NULL ){
         old = curr;
         curr = curr->next;
-        _Free( old, sizeof( *old ) );
+        CGFree( old );
     }
     SrcFiles = NULL;
 }
@@ -490,7 +489,7 @@ extern  uint    DBSrcFile( char *fname ){
        lnk = &curr->next;
     }
     len = strlen( fname );
-    _Alloc( curr, sizeof( *curr )+len );
+    curr = CGAlloc( sizeof( *curr )+len );
     curr->next = NULL;
     strcpy( curr->fname, fname );
     *lnk = curr;

@@ -35,7 +35,7 @@
 #include "procdef.h"
 #include "cfloat.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 
 #include "s37temps.def"
 
@@ -370,7 +370,7 @@ static  void    FixFarLocalRefs( type_length size ) {
 
     i = size / _4K;
     offset_size = (i+1) * sizeof( name** );
-    _Alloc( offsets, offset_size );
+    offsets = CGAlloc( offset_size );
     while( i >= 0 ) {
         offsets[ i ] = NULL;
         --i;
@@ -390,7 +390,7 @@ static  void    FixFarLocalRefs( type_length size ) {
         }
         blk = blk->next_block;
     }
-    _Free( offsets, offset_size );
+    CGFree( offsets );
 }
 
 

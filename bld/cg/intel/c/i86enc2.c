@@ -34,7 +34,7 @@
 #include "coderep.h"
 #include "opcodes.h"
 #include "ocentry.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "vergen.h"
 #include "system.h"
 #include "escape.h"
@@ -654,7 +654,7 @@ static  void    DoCodeBytes( byte *src, byte_seq_len len, oc_class class ) {
 
     oc_entry    *temp;
 
-    _Alloc( temp, sizeof( oc_header ) + MAX_OBJ_LEN );
+    temp = CGAlloc( sizeof( oc_header ) + MAX_OBJ_LEN );
     temp->class = class;
     temp->objlen = len;
     temp->reclen = sizeof( oc_header ) + len;
@@ -670,7 +670,7 @@ static  void    DoCodeBytes( byte *src, byte_seq_len len, oc_class class ) {
     temp->reclen = sizeof( oc_header ) + len;
     Copy( src, &temp->data[ 0 ], len );
     InputOC( (any_oc *)temp );
-    _Free( temp, sizeof( oc_header ) + MAX_OBJ_LEN );
+    CGFree( temp );
 }
 
 extern  void    CodeBytes( byte *src, byte_seq_len len ) {

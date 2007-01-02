@@ -33,7 +33,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "addrname.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "zoiks.h"
 #include "feprotos.h"
 
@@ -75,7 +75,7 @@ extern  void    BGStartInline( sym_handle proc_sym ) {
 
     inline_stack        *stk;
 
-    _Alloc( stk, sizeof( *stk ) );
+    stk = CGAlloc( sizeof( *stk ) );
     stk->parms = NULL;
     stk->tipe = NULL;
     stk->addr = NULL;
@@ -90,7 +90,7 @@ extern  void    BGAddInlineParm( an addr ) {
 
     inline_parm *parm;
 
-    _Alloc( parm, sizeof( *parm ) );
+    parm = CGAlloc( sizeof( *parm ) );
     parm->addr = addr;
     parm->next = InlineStack->parms;
     InlineStack->parms = parm;
@@ -119,7 +119,7 @@ extern  an      BGStopInline( cg_name handle, type_def *tipe ) {
     retv = InlineStack->addr;
     junk = InlineStack;
     InlineStack = InlineStack->next;
-    _Free( junk, sizeof( *junk ) );
+    CGFree( junk );
     return( retv );
 }
 
@@ -159,7 +159,7 @@ extern  void    BGParmInline( sym_handle sym, type_def *tipe ) {
     parm_value = GenIns( parm->addr );
     BGDone( parm->addr );
     AddIns( MakeMove( parm_value, temp, temp->n.name_class ) );
-    _Free( parm, sizeof( *parm ) );
+    CGFree( parm );
 }
 
 

@@ -34,7 +34,7 @@
 #include "coderep.h"
 #include "pattern.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "vergen.h"
 
 
@@ -394,7 +394,7 @@ extern  void    Conditions( void )
 
     blk = HeadBlock;
     while( blk != NULL ) {
-        _Alloc( cc, sizeof( cc_control ) );
+        cc = CGAlloc( sizeof( cc_control ) );
         cc->state = UNKNOWN_STATE;
         cc->left_op = NULL;
         cc->right_op = NULL;
@@ -408,7 +408,7 @@ extern  void    Conditions( void )
     FlowConditions();
     blk = HeadBlock;
     while( blk != NULL ) {
-        _Free( blk->cc, sizeof( cc_control ) );
+        CGFree( blk->cc );
         blk = blk->next_block;
     }
 }

@@ -34,7 +34,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "symdbg.h"
 #include "model.h"
 #include "typedef.h"
@@ -226,7 +226,7 @@ extern  name_entry * _CGAPI DBBegName( char *nm, dbg_type scope ) {
     EchoAPI( "DBBegName( %c, %i )", nm, scope );
 #endif
     len = strlen( nm );
-    _Alloc( name, sizeof( name_entry ) + len );
+    name = CGAlloc( sizeof( name_entry ) + len );
     strcpy( name->name, nm );
     name->len = len;
     name->scope = scope;
@@ -292,7 +292,7 @@ extern  dbg_type _CGAPI DBEndName( name_entry *name, dbg_type tipe ) {
         }
     }
     retv = name->refno;
-    _Free( name, sizeof( name_entry ) + name->len );
+    CGFree( name );
 #ifndef NDEBUG
     EchoAPI( " -> %i\n", retv );
 #endif
@@ -438,7 +438,7 @@ extern  array_list * _CGAPI DBBegArray(  dbg_type base, cg_type tipe, bool is_co
     EchoAPI( "DBBegArray( %i,%t,%i)", base, tipe, is_col_major );
 #endif
      tipe = tipe;
-    _Alloc( ar, sizeof( *ar ) );
+    ar = CGAlloc( sizeof( *ar ) );
     ar->num = 0;
 //  tipe_addr = TypeAddress( tipe );
 //  ar->size = tipe_addr->length;
@@ -476,7 +476,7 @@ extern  void _CGAPI DBDimCon( array_list *ar, dbg_type idx, signed_32 lo, signed
 #ifndef NDEBUG
     EchoAPI( "DBDimCon( %i, %i, %i, %i )\n", ar, idx, lo, hi );
 #endif
-    _Alloc( dim, sizeof( *dim ) );
+    dim = CGAlloc( sizeof( *dim ) );
     dim->entry.kind = DIM_CON;
     dim->lo = lo;
     dim->hi = hi;
@@ -495,7 +495,7 @@ extern  void _CGAPI DBDimVar( array_list *ar,
     EchoAPI( "DBDimVar(%i, %B, %i, %t, %t)\n", ar, dims, off, lo_bound_tipe,
              num_elts_tipe);
 #endif
-    _Alloc( dim, sizeof( *dim ) );
+    dim = CGAlloc( sizeof( *dim ) );
     dim->entry.kind = DIM_VAR;
     dim->dims = dims;
     dim->off = off;
@@ -524,7 +524,7 @@ extern  dbg_type _CGAPI DBEndArray( array_list  *ar ) {
         ret = 0;
 #endif
     }
-    _Free( ar, sizeof( array_list ) );
+    CGFree( ar );
 #ifndef NDEBUG
     EchoAPI( " -> %i\n", ret );
 #endif
@@ -714,7 +714,7 @@ extern  struct_list * _CGAPI DBBegNameStruct( char *nm, cg_type tipe, char is_st
     EchoAPI( "DBBegNameStruct( %c, %t, %i )", nm, tipe, is_struct );
 #endif
     n_len = Length( nm );
-    _Alloc( st, sizeof( struct_list ) + n_len );
+    st = CGAlloc( sizeof( struct_list ) + n_len );
     strcpy( st->name, nm );
     st->num = 0;
     st->list = NULL;
@@ -767,7 +767,7 @@ static  field_member     *CreateMember( char *nm, byte strt, byte len,
     field_member *field;
 
     n_len = Length( nm );
-    _Alloc( field, sizeof( field_member ) + n_len );
+    field = CGAlloc( sizeof( field_member ) + n_len );
     strcpy( field->name, nm );
     field->attr = attr;
     field->len = n_len;
@@ -847,7 +847,7 @@ extern  void _CGAPI DBAddStField( struct_list *st, dbg_loc loc, char *nm, uint a
     EchoAPI( "DBAddStField(%i,%i,%c,%i,%i)\n", st, loc, nm, attr, base );
 #endif
     n_len = Length( nm );
-    _Alloc( field, sizeof( field_stfield ) + n_len );
+    field = CGAlloc( sizeof( field_stfield ) + n_len );
     strcpy( field->name, nm );
     field->entry.field_type = FIELD_STFIELD;
     field->loc = LocDupl( loc );
@@ -868,7 +868,7 @@ extern  void _CGAPI DBAddMethod( struct_list *st, dbg_loc loc,
     EchoAPI( "DBAddMethod( %i,%i,%i,%i,%c,%i)\n", st, loc, attr, kind, nm, base );
 #endif
     n_len = Length( nm );
-    _Alloc( field, sizeof( field_method ) + n_len );
+    field = CGAlloc( sizeof( field_method ) + n_len );
     strcpy( field->name, nm );
     field->entry.field_type = FIELD_METHOD;
     field->u.loc = LocDupl( loc );
@@ -890,7 +890,7 @@ extern  void _CGAPI DBAddNestedType( struct_list *st, char *nm,
     EchoAPI( "DBAddNestedType( %i,%c,%i)\n", st, nm, base );
 #endif
     n_len = Length( nm );
-    _Alloc( field, sizeof( field_nested ) + n_len );
+    field = CGAlloc( sizeof( field_nested ) + n_len );
     strcpy( field->name, nm );
     field->entry.field_type = FIELD_NESTED;
     field->base = base;
@@ -907,7 +907,7 @@ extern  void _CGAPI DBAddInheritance( struct_list *st, dbg_type inherit,
 #ifndef NDEBUG
     EchoAPI( "DBAddInheritance(%i,%i,%i,%i,%i)\n", st, inherit, attr, kind, loc );
 #endif
-    _Alloc( field, sizeof( field_bclass ) );
+    field = CGAlloc( sizeof( field_bclass ) );
     field->entry.field_type = FIELD_INHERIT;
     field->attr = attr;
     field->base = inherit;
@@ -938,7 +938,7 @@ extern  void _CGAPI DBAddVFuncInfo( struct_list  *st, offset vfptr_off,
 #ifndef NDEBUG
     EchoAPI( "DBAddVFuncInfo( %i,%i,%i,%t )\n", st, vfptr_off, size, vft_cgtype );
 #endif
-    _Alloc( field, sizeof( field_vfunc ) );
+    field = CGAlloc( sizeof( field_vfunc ) );
     field->entry.field_type = FIELD_VFUNC;
     field->vfptr_off = vfptr_off;
     field->vft_cgtype = vft_cgtype;
@@ -967,7 +967,7 @@ extern  dbg_type _CGAPI DBEndStruct( struct_list  *st ) {
         ret = 0;
 #endif
     }
-    _Free( st, sizeof( struct_list ) );
+    CGFree( st );
 #ifndef NDEBUG
     EchoAPI( " -> %i\n", ret );
 #endif
@@ -991,7 +991,7 @@ extern  enum_list * _CGAPI DBBegEnum( cg_type  tipe ) {
 #ifndef NDEBUG
     EchoAPI( "DBBegEnum( %t )", tipe );
 #endif
-    _Alloc( en, sizeof( enum_list ) );
+    en = CGAlloc( sizeof( enum_list ) );
     en->num = 0;
     en->list = NULL;
     en->tipe = tipe;
@@ -1013,7 +1013,7 @@ extern  void _CGAPI DBAddConst( enum_list *en, char *nm, signed_32      val ) {
     EchoAPI( "DBAddConst( %i,%c,%i)\n", en, nm, val );
 #endif
     len = Length( nm );
-    _Alloc( cons, sizeof( const_entry ) + len );
+    cons = CGAlloc( sizeof( const_entry ) + len );
     strcpy( cons->name, nm );
     cons->len = len;
     I32ToI64( val, &cons->val );
@@ -1032,7 +1032,7 @@ extern  void _CGAPI DBAddConst64( enum_list *en, char *nm, signed_64  val ) {
     EchoAPI( "DBAddConst( %i,%c,%x %x )\n", en, nm, val.u._32[0],val.u._32[1] );
 #endif
     len = Length( nm );
-    _Alloc( cons, sizeof( const_entry ) + len );
+    cons = CGAlloc( sizeof( const_entry ) + len );
     strcpy( cons->name, nm );
     cons->len = len;
     cons->val = val;
@@ -1060,7 +1060,7 @@ extern  dbg_type _CGAPI DBEndEnum( enum_list *en ) {
         ret = 0;
 #endif
     }
-    _Free( en, sizeof( enum_list ) );
+    CGFree( en );
 #ifndef NDEBUG
     EchoAPI( " -> %i\n", ret );
 #endif
@@ -1076,7 +1076,7 @@ extern  proc_list * _CGAPI DBBegProc(  cg_type call_type,  dbg_type  ret ) {
 #ifndef NDEBUG
     EchoAPI( "DBBegProc( %t,%i)", call_type, ret );
 #endif
-    _Alloc( pr, sizeof( proc_list ) );
+    pr = CGAlloc( sizeof( proc_list ) );
     pr->num = 0;
     pr->list = NULL;
     pr->call = TypeAddress( call_type )->refno;
@@ -1108,7 +1108,7 @@ extern  void _CGAPI DBAddParm( proc_list *pr, dbg_type tipe ) {
 #ifndef NDEBUG
     EchoAPI( "DBAddParm( %i,%i )\n", pr, tipe );
 #endif
-    _Alloc( parm, sizeof( parm_entry ) );
+    parm = CGAlloc( sizeof( parm_entry ) );
     pr->num++;
     owner = &pr->list;
     while( *owner != NULL ) {
@@ -1140,7 +1140,7 @@ extern  dbg_type _CGAPI DBEndProc( proc_list  *pr ) {
         ret = 0;
 #endif
     }
-    _Free( pr, sizeof( proc_list ) );
+    CGFree( pr );
 #ifndef NDEBUG
     EchoAPI( " -> %i\n", ret );
 #endif

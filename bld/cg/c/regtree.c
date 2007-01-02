@@ -33,7 +33,6 @@
 #include "coderep.h"
 #include "conflict.h"
 #include "regset.h"
-#include "sysmacro.h"
 #include "freelist.h"
 
 extern  reg_set_index   RegIntersect(reg_set_index,reg_set_index);

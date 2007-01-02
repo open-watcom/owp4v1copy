@@ -32,7 +32,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "procdef.h"
 
 extern    block         *HeadBlock;
@@ -207,7 +207,7 @@ extern  void    RemoveBlock( block *blk )
     }
     TellScrapLabel( blk->label );
     if( blk->dataflow != NULL ) {
-        _Free( blk->dataflow, sizeof( data_flow_def ) );
+        CGFree( blk->dataflow );
     }
     FreeABlock( blk );
 }

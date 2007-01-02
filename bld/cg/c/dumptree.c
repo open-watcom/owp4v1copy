@@ -30,7 +30,6 @@
 
 
 #include "standard.h"
-#include "sysmacro.h"
 #include "coderep.h"
 #include "addrname.h"
 #include "model.h"

@@ -33,7 +33,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "model.h"
 #include "zoiks.h"
 #include "procdef.h"
@@ -262,7 +262,7 @@ static  bool    FindIntervals( void )
     blk = HeadBlock;
     for( ;; ) {
         ++ num;
-        _Alloc( curr, sizeof( interval_def ) );
+        curr = CGAlloc( sizeof( interval_def ) );
         curr->link = Intervals;
         Intervals = curr;
         curr->parent = NULL;
@@ -405,7 +405,7 @@ static  void    NewInterval( block *blk, int level )
     interval_def        *new;
 
     prev = IntervalNo( blk, level - 1 );
-    _Alloc( new, sizeof( interval_def ) );
+    new = CGAlloc( sizeof( interval_def ) );
     new->link = Intervals;
     Intervals = new;
     new->sub_int = prev;
@@ -505,7 +505,7 @@ static  void    KillIntervals( void )
     while( Intervals != NULL ) {
         junk = Intervals;
         Intervals = Intervals->link;
-        _Free( junk, sizeof( interval_def ) );
+        CGFree( junk );
     }
     blk = HeadBlock;
     while( blk != NULL ) {

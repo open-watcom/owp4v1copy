@@ -33,7 +33,7 @@
 #include "coderep.h"
 #include "indvars.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "cfloat.h"
 #include "model.h"
 #include "stackok.h"
@@ -865,7 +865,7 @@ static  pointer CopyInvariant( pointer invari )
     if( invar == NULL ) {
         new = NULL;
     } else {
-        _Alloc( new, sizeof( invariant ) );
+        new = CGAlloc( sizeof( invariant ) );
         new->name = invar->name;
         new->times = invar->times;
         new->id = invar->id;
@@ -894,7 +894,7 @@ static  invariant       *NewInvariant( name *op, int times )
 {
     invariant   *new;
 
-    _Alloc( new, sizeof( invariant ) );
+    new = CGAlloc( sizeof( invariant ) );
     new->name = op;
     new->times = times;
     new->next = NULL;
@@ -913,7 +913,7 @@ static  void    FreeInvariant( invariant *invar )
     while( invar != NULL ) {
         junk = invar;
         invar = invar->next;
-        _Free( junk, sizeof( invariant ) );
+        CGFree( junk );
     }
 }
 
@@ -1026,7 +1026,7 @@ static  induction       *AddIndVar( instruction *ins,
 
     new = FindIndVar( op );
     if( new == NULL ) {
-        _Alloc( new, sizeof( induction ) );
+        new = CGAlloc( sizeof( induction ) );
         new->name = op;
         new->state = EMPTY;
         if( prev == NULL ) {
@@ -1099,7 +1099,7 @@ static  void    FreeVar( induction *var ) {
 */
 
     FreeInvariant( var->invar );
-    _Free( var, sizeof( induction ) );
+    CGFree( var );
 }
 
 

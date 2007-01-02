@@ -36,7 +36,7 @@
 #include "pattern.h"
 #include "procdef.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "symdbg.h"
 #include "model.h"
 #include "ocentry.h"
@@ -615,12 +615,12 @@ static  void DumpParms( dbg_local *parm, dbg_local **locals )
                 }
             }
             DBLocFini( alt->loc );
-           _Free( alt, sizeof( dbg_local ) );
+           CGFree( alt );
         }
         DBLocFini( parm->loc );
         junk = parm;
         parm = parm->link;
-        _Free( junk, sizeof( dbg_local ) );
+        CGFree( junk );
     }
 //#if _TARGET & _TARG_AXP
 #if 0 // seems like it screws CVPACK on intel
@@ -702,7 +702,7 @@ extern  void    CVBlkBeg( dbg_block *blk, offset lc )
     char           *nm;
 
 
-    _Alloc( patch, sizeof( block_patch ) );
+    patch = CGAlloc( sizeof( block_patch ) );
     blk->patches = patch;
     NewBuff( out, CVSyms );
     ptr = StartSym(  out, SG_BLOCK );
@@ -746,7 +746,7 @@ extern  void    CVBlkEnd( dbg_block *blk, offset lc )
     StartSym(  out, SG_END );
     EndSym( out );
     BuffEnd( out );
-   _Free( blk->patches, sizeof( block_patch ) );
+   CGFree( blk->patches );
 }
 
 extern  void    CVEpiBeg( dbg_rtn *blk, offset lc )
@@ -817,7 +817,7 @@ static  void    DumpLocals( dbg_local *local )
         DBLocFini( local->loc );
         old = local;
         local = local->link;
-        _Free( old, sizeof( dbg_local ) );
+        CGFree( old );
     }
 
 }

@@ -33,7 +33,7 @@
 #include "string.h"
 #include "coderep.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "symdbg.h"
 #include "model.h"
 #include "typedef.h"
@@ -958,7 +958,7 @@ static  dbg_type    CVDimVarLU( array_list *ar )
         PutFld2( out, symref[0] );
         PutFld2( out, symref[1] );
         ar->list = dim->entry.next;
-        _Free( dim, sizeof( field_entry )  );
+        CGFree( dim  );
     }
     EndTypeString( out );
     return( ++TypeIdx );
@@ -989,7 +989,7 @@ static  dbg_type    CVDimConLU( array_list *ar )
 
         }
         ar->list = dim->entry.next;
-        _Free( dim, sizeof( field_entry )  );
+        CGFree( dim  );
     }
     EndTypeString( out );
     return( ++TypeIdx );
@@ -1635,7 +1635,7 @@ static int  MkFlist( struct_list *st )
     while( field != NULL ) {
         old = field;
         field  = field->entry.next;
-        _Free( old, sizeof( field_entry ) );
+        CGFree( old );
     }
     return( count );
 }
@@ -1840,7 +1840,7 @@ extern  dbg_type    CVEndEnum( enum_list *en )
     while( cons != NULL ) {
         old = cons;
         cons = cons->next;
-        _Free( old, sizeof( const_entry ) + old->len );
+        CGFree( old );
     }
     return( headi );
 }
@@ -1870,7 +1870,7 @@ extern  dbg_type    CVEndProc( proc_list  *pr )
         PutFld2( out, parm->tipe );
         old = parm;
         parm = parm->next;
-        _Free( old, sizeof( parm_entry ) );
+        CGFree( old );
     }
     EndTypeString( out );
 #if _TARGET &( _TARG_IAPX86 | _TARG_80386 )

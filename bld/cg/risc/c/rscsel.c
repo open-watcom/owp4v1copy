@@ -34,7 +34,6 @@
 #include "cgdefs.h"
 #include "coderep.h"
 #include "opcodes.h"
-#include "sysmacro.h"
 #include "addrname.h"
 #include "tree.h"
 #include "seldef.h"

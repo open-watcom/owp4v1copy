@@ -34,7 +34,7 @@
 #include "opcodes.h"
 #include "procdef.h"
 #include "model.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "addrname.h"
 #include "cgdefs.h"
 #include "cgaux.h"
@@ -62,7 +62,6 @@ extern  type_class_def  CallState(aux_handle,type_def*,call_state*);
 extern  hw_reg_set      ParmInLineReg(parm_state*);
 extern  void            AddIns(instruction*);
 extern  bool            CvtOk(type_class_def,type_class_def);
-extern  void            CGFree(pointer);
 extern  type_length     PushSize(type_length);
 extern  type_class_def  ReturnClass(type_def*,call_attributes);
 extern  type_class_def  InitCallState(type_def*);
@@ -137,8 +136,8 @@ extern  void    FreeCallNode( cn call )
 {
     BGDone( call->name );
     CGFree( call->state->parm.table );
-    _Free( call->state, sizeof( call_state ) );
-    _Free( call, sizeof( call_node ) );
+    CGFree( call->state );
+    CGFree( call );
 }
 
 
@@ -159,8 +158,8 @@ extern  cn      BGInitCall(an node,type_def *tipe,aux_handle aux) {
     if( tipe->refno == T_DEFAULT ) {
         tipe = TypeInteger;
     }
-    _Alloc( new, sizeof( call_node ) );
-    _Alloc( new->state, sizeof( call_state ) );
+    new = CGAlloc( sizeof( call_node ) );
+    new->state = CGAlloc( sizeof( call_state ) );
     new->name = node;
     new->tipe = tipe;
     new->parms = NULL;
@@ -194,7 +193,7 @@ extern  void    BGAddParm( cn call, an parm ) {
 
     pn          new;
 
-    _Alloc( new, sizeof( parm_node ) );
+    new = CGAlloc( sizeof( parm_node ) );
     new->name = AddrToIns( parm );
     new->name->flags |= ADDR_OK_ACROSS_BLOCKS; /* always taken care of by BGCall*/
     new->next = call->parms;
@@ -417,7 +416,7 @@ static  void    LinkParms( instruction *call_ins, pn *owner ) {
         // if( parm->ins == NULL ) _Zoiks( ZOIKS_XXX );
         TRAddParm( call_ins, parm->ins );
         next = parm->next;
-        _Free( parm, sizeof( parm_node ) );
+        CGFree( parm );
         parm = next;
     }
 }
@@ -759,7 +758,7 @@ static pn   BustUpStruct( pn parm, type_class_def from, type_class_def using ) {
     parm->name->u.ins->result = temp;
     while( offset >= 0 ) {
         // create a parm node for this part of the struct
-        _Alloc( curr, sizeof( parm_node ) );
+        curr = CGAlloc( sizeof( parm_node ) );
         ins = MakeMove( STempOffset( temp, offset, using, size ), NULL, using );
         AddIns( ins );
         curr->next = last;
@@ -814,7 +813,7 @@ static void SplitStructParms( pn *parm_list, call_state *state ) {
             *last_parm = BustUpStruct( parm, class, tipe );
             name->format = NF_ADDR;
             BGDone( name );
-            _Free( parm, sizeof( parm_node ) );
+            CGFree( parm );
             parm = *last_parm;
         }
         last_parm = &parm->next;

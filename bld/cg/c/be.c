@@ -46,6 +46,7 @@
 #include "hostsys.h"
 #include "cgstub.h"
 #include "feprotos.h"
+#include "cgmem.h"
 
 #include "stubdata.h"
 
@@ -58,7 +59,6 @@ extern  char            *Label(l *);
 extern  void            Action(char *,... );
 extern  void            Code(char *,... );
 extern  segment_id      SetFile(segment_id );
-extern  pointer         CGAlloc(unsigned );
 extern  void            CGError(char *,... );
 extern  void            VerBack(b *);
 extern  int             FCreate(char *);
@@ -75,7 +75,6 @@ extern  char            *CopyStr(char*,char*);
 extern  void            TypeInit();
 extern  type_def        *TypeAlias(cg_type,cg_type);
 extern  byte            *Copy(void*,void*,uint);
-extern  void            CGFree(pointer);
 extern  void            exit(int);
 extern  void            VDefLabel(l *);
 extern  void            InitDbgInfo();

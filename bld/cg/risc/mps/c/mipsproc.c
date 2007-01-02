@@ -36,7 +36,7 @@
 #include "symdbg.h"
 #include "offset.h"
 #include "pattern.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "model.h"
 #include "regset.h"
 #include "rttable.h"
@@ -56,8 +56,6 @@ extern  hw_reg_set      SaveRegs( void );
 extern  void            GenMEMINS( uint_8, uint_8, uint_8, signed_16 );
 extern  void            GenIType( uint_8, uint_8, uint_8, signed_16 );
 extern  void            GenRType( uint_8, uint_8, uint_8, uint_8, uint_8 );
-extern  pointer         CGAlloc( unsigned );
-extern  void            CGFree( pointer );
 extern  hw_reg_set      VarargsHomePtr( void );
 extern  void            GenRET( void );
 extern  sym_handle      AskForLblSym( label_handle );

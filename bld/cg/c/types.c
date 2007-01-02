@@ -33,7 +33,7 @@
 #include "cgdefs.h"
 #include "typclass.h"
 #include "typedef.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 
 typedef enum {
                 TYPE_DEFINITION,
@@ -195,7 +195,7 @@ extern  type_def        *TypeAlias( cg_type define, cg_type existing ) {
 
     t = TypeAddress( existing );
     if( t->refno == T_DEFAULT ) return( t );
-    _Alloc( list, sizeof( type_list ) );
+    list = CGAlloc( sizeof( type_list ) );
     list->link = TypeList;
     TypeList = list;
     list->format = TYPE_ALIAS;
@@ -214,7 +214,7 @@ extern  type_def        *TypeDef( cg_type refno, type_length length, type_length
     type_list   *list;
 
     align = align;
-    _Alloc( list, sizeof( type_list ) );
+    list = CGAlloc( sizeof( type_list ) );
     list->link = TypeList;
     TypeList = list;
     list->format = TYPE_DEFINITION;
@@ -240,6 +240,6 @@ extern  void    TypeFini() {
     while( next != NULL ) {
         junk = next;
         next = next->link;
-        _Free( junk, sizeof( type_list ) );
+        CGFree( junk );
     }
 }

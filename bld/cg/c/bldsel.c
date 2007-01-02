@@ -33,7 +33,7 @@
 #include "cgdefs.h"
 #include "coderep.h"
 #include "opcodes.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "addrname.h"
 #include "seldef.h"
 #include "tree.h"
@@ -77,7 +77,7 @@ static  select_list *NewCase( signed_32 lo, signed_32 hi, label_handle label ) {
 
     select_list         *new_entry;
 
-    _Alloc( new_entry, sizeof( select_list ) );
+    new_entry = CGAlloc( sizeof( select_list ) );
     new_entry->low = lo;
     new_entry->high = hi;
     new_entry->count = hi - lo + 1;
@@ -92,7 +92,7 @@ extern  select_node     *BGSelInit() {
 
     select_node         *s_node;
 
-    _Alloc( s_node, sizeof( select_node ) );
+    s_node = CGAlloc( sizeof( select_node ) );
     s_node->num_cases = 0;
     s_node->other_wise = NULL;
     s_node->list = NULL;
@@ -191,7 +191,7 @@ static  void    MergeListEntries( select_node *s_node ) {
         if( ( list->high + 1 == next->low ) && ( list->label == next->label ) ) {
             list->high = next->high;
             list->next = next->next;
-            _Free( next, sizeof( select_list ) );
+            CGFree( next );
         } else {
             list = list->next;
         }
@@ -493,7 +493,7 @@ static  void    SelectBlock( tbl_control *table, an node, label_handle other ) {
 extern  void    FreeTable( tbl_control *table ) {
 /***********************************************/
 
-    _Free( table, (table->size-1)*sizeof(label_handle) + sizeof(tbl_control) );
+    CGFree( table );
 }
 
 
@@ -507,9 +507,9 @@ static  void    FreeSelectNode( select_node *s_node ) {
     while( list != NULL ) {
         prev = list;
         list = list->next;
-        _Free( prev, sizeof( select_list ) );
+        CGFree( prev );
     }
-    _Free( s_node, sizeof( select_node ) );
+    CGFree( s_node );
 }
 
 

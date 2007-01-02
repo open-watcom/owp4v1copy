@@ -33,7 +33,7 @@
 #include "standard.h"
 #include "coderep.h"
 #include "conflict.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "opcodes.h"
 #include "cgdefs.h"
 #include "model.h"
@@ -94,7 +94,7 @@ static  edge_stack      *InitStack( void )
 {
     edge_stack          *stk;
 
-    _Alloc( stk, sizeof( edge_stack ) );
+    stk = CGAlloc( sizeof( edge_stack ) );
     stk->top = NULL;
     return( stk );
 }
@@ -110,7 +110,7 @@ static  void            Push( edge_stack *stk, block_edge *edge )
 {
     edge_entry          *new_entry;
 
-    _Alloc( new_entry, sizeof( edge_entry ) );
+    new_entry = CGAlloc( sizeof( edge_entry ) );
     new_entry->edge = edge;
     new_entry->next = stk->top;
     stk->top = new_entry;
@@ -126,7 +126,7 @@ static  block_edge      *Pop( edge_stack *stk )
         top = stk->top;
         edge = top->edge;
         stk->top = top->next;
-        _Free( top, sizeof( edge_entry ) );
+        CGFree( top );
         return( edge );
     }
     return( NULL );
@@ -138,7 +138,7 @@ static  void            FiniStack( edge_stack *stk )
     while( !Empty( stk ) ) {
         Pop( stk );
     }
-    _Free( stk, sizeof( edge_stack ) );
+    CGFree( stk );
 }
 
 static  bool            DereferencedBy( instruction *ins, name *ptr )

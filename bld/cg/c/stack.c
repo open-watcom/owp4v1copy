@@ -44,7 +44,7 @@ pointer SafeRecurse( pointer (* rtn)( pointer ), pointer arg )
 
 #include <malloc.h>
 #include "stackok.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "cypfunc.h"
 #include "memout.h"
 #include "cg.h"
@@ -64,7 +64,7 @@ pointer SafeRecurse( pointer (* rtn)( pointer ), pointer arg )
     if( stackavail() < 0x2000 ) { /* stack getting low! */
 /*      This code assumes NO parameters on the stack! */
         old_action = SetMemOut( MO_OK );
-        _Alloc( savearea, SAVE_SIZE );
+        savearea = CGAlloc( SAVE_SIZE );
         if( savearea == NULL ) {
             FatalError( "No memory to save stack" );
         }
@@ -78,7 +78,7 @@ pointer SafeRecurse( pointer (* rtn)( pointer ), pointer arg )
         CypCopy( sp() + SAVE_SIZE, sp(), bp() - sp() - SAVE_SIZE );
         setbp( bp() - SAVE_SIZE );
         CypCopy( savearea, bp(), SAVE_SIZE );
-        _Free( savearea, SAVE_SIZE );
+        CGFree( savearea );
         return( retval );
     } else {
         return( rtn( arg ) );

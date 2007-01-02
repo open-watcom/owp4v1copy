@@ -34,7 +34,6 @@
 #include "coderep.h"
 #include "opcodes.h"
 #include "stackok.h"
-#include "sysmacro.h"
 #include "conflict.h"
 #include "stackok.h"
 

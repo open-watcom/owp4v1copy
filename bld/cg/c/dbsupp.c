@@ -36,7 +36,7 @@
 #include "pattern.h"
 #include "procdef.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "symdbg.h"
 #include "model.h"
 #include "ocentry.h"
@@ -73,7 +73,7 @@ static  dbg_loc         LocCreate( dbg_loc loc, unsigned typ ) {
 
     dbg_loc     new;
 
-    _Alloc( new, sizeof( location ) );
+    new = CGAlloc( sizeof( location ) );
     new->next = loc;
     new->class = typ;
     new->use = 1;
@@ -322,7 +322,7 @@ extern  void _CGAPI DBLocFini( dbg_loc loc ) {
         curr->use--;
         if( curr->use == 0 ) {
             *owner = curr->next;
-            _Free( curr, sizeof( location ) );
+            CGFree( curr );
         } else {
             owner = &curr->next;
         }

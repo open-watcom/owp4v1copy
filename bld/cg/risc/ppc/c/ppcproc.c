@@ -36,7 +36,7 @@
 #include "symdbg.h"
 #include "offset.h"
 #include "pattern.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "model.h"
 #include "ppcenc.h"
 #include "ppcparm.h"
@@ -50,8 +50,6 @@ extern  void            CodeLabel( label_handle, unsigned );
 extern  hw_reg_set      *GPRegs( void );
 extern  hw_reg_set      *FPRegs( void );
 extern  hw_reg_set      SaveRegs( void );
-extern  pointer         CGAlloc( unsigned );
-extern  void            CGFree( pointer );
 extern  hw_reg_set      FrameBaseReg( void );
 extern  sym_handle      AskForLblSym( label_handle );
 extern  fe_attr         FEAttr( sym_handle );

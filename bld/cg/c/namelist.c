@@ -31,7 +31,6 @@
 
 #include "standard.h"
 #include "coderep.h"
-#include "sysmacro.h"
 #include "hwreg.h"
 #include "regset.h"
 #include "model.h"

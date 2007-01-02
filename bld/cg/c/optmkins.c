@@ -54,7 +54,7 @@ extern  ins_entry       *NewInstr( any_oc *oc )
     if( len <= INSTR_FRLSIZE ) {
         instr = AllocFrl( &InstrFrl, INSTR_FRLSIZE );
     } else {
-        _Alloc( instr, oc->oc_entry.reclen + sizeof( ins_link ) );
+        instr = CGAlloc( oc->oc_entry.reclen + sizeof( ins_link ) );
     }
     instr->ins.prev = NULL;
     instr->ins.next = NULL;
@@ -72,7 +72,7 @@ extern  void    FreeInstr( ins_entry *instr )
     if( len <= INSTR_FRLSIZE ) {
         FrlFreeSize( &InstrFrl, (pointer *)instr, INSTR_FRLSIZE );
     } else {
-        _Free( instr, len );
+        CGFree( instr );
     }
 }
 

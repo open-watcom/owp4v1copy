@@ -37,7 +37,7 @@
 #include "model.h"
 #include "seldef.h"
 #include "memcheck.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "tree.h"
 #include "addrname.h"
 #include "cfloat.h"
@@ -156,7 +156,7 @@ extern  void            BGFiniPatch( patch_handle );
 extern  bool            AskSegBlank( seg_id );
 extern  an              MakeConst( cfloat *, type_def * );
 extern  void            DataAlign( unsigned_32 );
-
+extern  pointer         SafeRecurse( pointer (* rtn)( pointer ), pointer arg );
 
 #ifdef QNX_FLAKEY
 unsigned long   OrigModel;
@@ -293,6 +293,17 @@ extern  void _CGAPI     BEAbort( void )
     AbortCG();
 }
 
+extern  pointer _CGAPI  BEMemAlloc( unsigned size )
+/*********************************************************/
+{
+    return( CGAlloc( size ) );
+}
+
+extern  void _CGAPI     BEMemFree( pointer ptr )
+/******************************************************/
+{
+    CGFree( ptr );
+}
 
 extern  void _CGAPI     BEMemFini( void )
 /***************************************/
@@ -307,7 +318,7 @@ static void FreeBckInfoCarveBlocks( void )
 
     for( ; carve_block = BckInfoCarveHead; ) {
         BckInfoCarveHead = carve_block->next;
-        _Free( carve_block, sizeof( bck_info_block ) );
+        CGFree( carve_block );
     }
     BckInfoHead = NULL;
 }
@@ -529,7 +540,7 @@ static void AllocMoreBckInfo( void )
     bck_info_block      *carve_block;
     int                 i;
 
-    _Alloc( carve_block, sizeof( bck_info_block ) );
+    carve_block = CGAlloc( sizeof( bck_info_block ) );
     if( carve_block != NULL ) {
         carve_block->next = BckInfoCarveHead;   // link into big list
         BckInfoCarveHead = carve_block;
@@ -563,7 +574,7 @@ extern  back_handle _CGAPI      BENewBack( sym_handle sym )
 #endif
         return( NewBackReturn );
     }
-//    _Alloc( bck, sizeof( bck_info ) );
+//    bck = CGAlloc( sizeof( bck_info ) );
     if( BckInfoHead == NULL ) {
         AllocMoreBckInfo();
     }
@@ -599,7 +610,7 @@ extern  void _CGAPI     BEFreeBack( bck_info *bck )
     EchoAPI( "BEFreeBack( %L )\n", bck );
 #endif
     if( REAL_BACK( bck ) ) {
-//      _Free( bck, sizeof( bck_info ) );
+//      CGFree( bck );
         uback_info      *p;
 
         p = (uback_info *)bck;
@@ -1922,6 +1933,12 @@ extern  void _CGAPI             BFFree( float_handle cf )
 /*******************************************************/
 {
     CFFree( (cfloat *)cf );
+}
+
+extern  pointer _CGAPI CGSafeRecurse( pointer rtn, pointer arg )
+/**************************************************************/
+{
+    return( SafeRecurse( (pointer(*)(pointer))rtn, arg ) );
 }
 
 extern  void _CGAPI     DBSrcCue( uint fno, uint line, uint col );

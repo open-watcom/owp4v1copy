@@ -35,7 +35,6 @@
 #include "standard.h"
 #include "coderep.h"
 #include "conflict.h"
-#include "sysmacro.h"
 #include "opcodes.h"
 #include "cgdefs.h"
 #include "model.h"

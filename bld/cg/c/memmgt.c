@@ -39,6 +39,7 @@
 #include "cg.h"
 #include "spawn.h"
 #include "memout.h"
+#include "cgmem.h"
 #if _HOST_MEMORY & _FULL_TRACKING
     #include "trmem.h"
 #endif
@@ -151,20 +152,6 @@ extern  pointer CGAlloc( unsigned size )
 extern  void    CGFree( pointer chunk )
 /*************************************/
 {
-    #if _HOST_MEMORY & _FULL_TRACKING
-        _trmem_free( chunk, _trmem_guess_who(), Handle );
-    #else
-        #if _HOST_MEMORY & _CHUNK_TRACKING
-            --Chunks;
-        #endif
-        _SysFree( chunk );
-    #endif
-}
-
-extern  void    CGFreeSize( pointer chunk, int size )
-/***************************************************/
-{
-    size = size;
     #if _HOST_MEMORY & _FULL_TRACKING
         _trmem_free( chunk, _trmem_guess_who(), Handle );
     #else

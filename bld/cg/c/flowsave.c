@@ -36,7 +36,7 @@
 #include "pattern.h"
 #include "zoiks.h"
 #include "procdef.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "model.h"
 
 extern  bool            HaveDominatorInfo;

@@ -36,7 +36,7 @@
 #include "pattern.h"
 #include "procdef.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "symdbg.h"
 #include "model.h"
 #include "ocentry.h"
@@ -261,7 +261,7 @@ extern  void    WVRtnEnd( dbg_rtn *rtn, offset lc ) {
         LocDump( parm->loc );
         junk = parm;
         parm = parm->link;
-        _Free( junk, sizeof( dbg_local ) );
+        CGFree( junk );
     }
     BuffWSLString( FEName( AskForLblSym( CurrProc->label ) ) );
     BuffEnd( DbgLocals );
@@ -285,7 +285,7 @@ static  void    DumpDbgBlkStart( dbg_block *blk, offset lc ) {
         SetLocation( patch->handle.offset );
         DataInt( off );
         SetLocation( off );
-        _Free( patch, sizeof( block_patch ) );
+        CGFree( patch );
     }
     SetOP( old );
     BuffOffset( blk->start - CodeOffset );
@@ -302,7 +302,7 @@ static  void    DumpParentPtr( dbg_block *blk ) {
     if( blk == NULL ) {
         BuffWord( 0 );
    } else {
-        _Alloc( patch, sizeof( block_patch ) );
+        patch = CGAlloc( sizeof( block_patch ) );
         patch->link = blk->patches;
         blk->patches = patch;
         BuffForward( &patch->handle );
@@ -333,6 +333,6 @@ static  void    DumpLocals( dbg_local *local ) {
         BuffEnd( DbgLocals );
         junk = local;
         local = local->link;
-        _Free( junk, sizeof( dbg_local ) );
+        CGFree( junk );
     }
 }

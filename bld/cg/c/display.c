@@ -37,7 +37,7 @@
 #include "opcodes.h"
 #include "objrep.h"
 #include "addrname.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 
 #include "addrfold.h"
 
@@ -140,7 +140,7 @@ extern  abspatch_handle *NextFramePatch( void )
 {
     frame_patch *temp;
 
-    _Alloc( temp, sizeof( frame_patch ) );
+    temp = CGAlloc( sizeof( frame_patch ) );
     temp->next = CurrProc->frame_index;
     CurrProc->frame_index = temp;
     return( &temp->patch );
@@ -158,7 +158,7 @@ extern  void    PatchBigLabels( offset lc ) {
         AbsPatch( temp->patch, lc );
         junk = temp;
         temp = temp->next;
-        _Free( junk, sizeof( frame_patch ) );
+        CGFree( junk );
     }
     CurrProc->frame_index = NULL;
 }

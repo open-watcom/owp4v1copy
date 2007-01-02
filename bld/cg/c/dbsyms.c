@@ -35,7 +35,7 @@
 #include "pattern.h"
 #include "procdef.h"
 #include "cgdefs.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "symdbg.h"
 #include "model.h"
 #include "ocentry.h"
@@ -135,7 +135,7 @@ static  void    DBSrcFileFini( void ){
     while( curr != NULL ){
         old = curr;
         curr = curr->next;
-        _Free( old, sizeof( *old ) );
+        CGFree( old );
     }
     DBFiles.lst = NULL;
 }
@@ -160,7 +160,7 @@ extern  uint    _CGAPI DBSrcFile( char *fname ) {
        lnk = &curr->next;
     }
     len = strlen( fname );
-    _Alloc( curr, sizeof( *curr )+len );
+    curr = CGAlloc( sizeof( *curr )+len );
     curr->len = len+1;
     curr->next = NULL;
     strcpy( curr->fname, fname );
@@ -197,7 +197,7 @@ static void  AddCueBlk( cue_ctl *ctl ){
 /**************************************/
     cue_blk *new;
 
-    new = _Alloc( new, sizeof( *new ) );
+    new = CGAlloc( sizeof( *new ) );
     new->next = NULL;
     *ctl->lnk = new;
     ctl->curr = new;
@@ -421,7 +421,7 @@ static void SourceCueFini( cue_ctl *ctl ){
     while( list != NULL ){
         old = list;
         list = list->next;
-        _Free( old, sizeof( *old ) );
+        CGFree( old );
     }
     ctl->head = NULL;
 }
@@ -538,7 +538,7 @@ extern  void _CGAPI DBGenSym( sym_handle sym, dbg_loc loc, int scoped ) {
         if( (attr & FE_IMPORT) == 0 ) {
             if( attr & FE_PROC ) {
                 CurrProc->state.attr |= ROUTINE_WANTS_DEBUGGING;
-                _Alloc( CurrProc->targ.debug, sizeof( dbg_rtn ) );
+                CurrProc->targ.debug = CGAlloc( sizeof( dbg_rtn ) );
                 CurrProc_debug->blk = NULL;
                 CurrProc_debug->parms = NULL;
                 CurrProc_debug->reeturn = LocDupl( loc );
@@ -547,7 +547,7 @@ extern  void _CGAPI DBGenSym( sym_handle sym, dbg_loc loc, int scoped ) {
                 MkBlock();
             } else if( scoped ) {
                 blk = CurrProc_debug->blk;
-                _Alloc( new, sizeof( dbg_local ) );
+                new = CGAlloc( sizeof( dbg_local ) );
                 new->sym = sym;
                 new->loc = LocDupl( loc );
                 new->kind = DBG_SYM_VAR;
@@ -670,7 +670,7 @@ extern  void    _CGAPI DBLocalType( sym_handle sym, char kind ) {
     if( _IsModel( DBG_LOCALS ) ) {
         if( _IsModel( DBG_CV | DBG_DF ) ) {
             blk = CurrProc_debug->blk;
-            _Alloc( new, sizeof( dbg_local ) );
+            new = CGAlloc( sizeof( dbg_local ) );
             new->sym = sym;
             new->loc = NULL;
             AddLocal( &blk->locals, new );
@@ -710,7 +710,7 @@ static  void    MkBlock( void ) {
 
     dbg_block   *new;
 
-    _Alloc( new, sizeof( dbg_block ) );
+    new = CGAlloc( sizeof( dbg_block ) );
     new->parent = CurrProc_debug->blk;
     CurrProc_debug->blk = new;
     new->locals = NULL;
@@ -785,7 +785,7 @@ extern  void    DbgParmLoc( name_def *parm, sym_handle sym ) {
             return;
         }
     }
-    _Alloc( new, sizeof( dbg_local ) );
+    new = CGAlloc( sizeof( dbg_local ) );
     loc = DBLocInit();
     loc = LocParm( loc, (name *) parm );
     new->loc = loc;
@@ -946,7 +946,7 @@ extern  void    DbgBlkEnd( dbg_block *blk, offset lc ) {
         WVBlkEnd( blk, lc );
 #endif
     }
-    _Free( blk, sizeof( dbg_block ) );
+    CGFree( blk );
 }
 
 
@@ -976,6 +976,6 @@ extern  void    DbgRtnEnd( dbg_rtn *rtn, offset lc ) {
         WVRtnEnd( rtn, lc );
 #endif
     }
-    _Free( rtn->blk, sizeof( dbg_block ) );
-    _Free( rtn, sizeof( dbg_rtn ) );
+    CGFree( rtn->blk );
+    CGFree( rtn );
 }

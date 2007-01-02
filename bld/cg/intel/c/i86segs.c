@@ -34,7 +34,6 @@
 #include "coderep.h"
 #include "procdef.h"
 #include "cgaux.h"
-#include "sysmacro.h"
 #include "model.h"
 #include "zoiks.h"
 #include "opcodes.h"

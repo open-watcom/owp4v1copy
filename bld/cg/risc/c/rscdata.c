@@ -36,7 +36,7 @@
 #include "typedef.h"
 #include "zoiks.h"
 #include "reloc.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "feprotos.h"
 #include <assert.h>
 #include <string.h>
@@ -112,10 +112,10 @@ extern  void    IterBytes( offset len, byte pat ) {
     if( len > MAX_HACK_LEN ) {
         char    *buff;
 
-        _Alloc( buff, len );
+        buff = CGAlloc( len );
         memset( buff, pat, len );
         ObjBytes( &buff[ 0 ], len );
-        _Free( buff, len );
+        CGFree( buff );
     } else {
         memset( Buffer, pat, len );
         ObjBytes( &Buffer[ 0 ], len );

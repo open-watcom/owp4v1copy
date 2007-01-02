@@ -64,10 +64,6 @@
 #define _typeHasPCHDwarfHandle( type ) \
 ( CompFlags.pch_debug_info_read && ((type)->dbgflag & TF2_DBG_IN_PCH ) != 0 )
 
-
-extern pointer DFClient( void );
-extern void DFDwarfLocal( dw_client client, dw_loc_id locid, cg_sym_handle sym  );
-
 typedef enum
 {   DC_RETURN           = 0x01,         // this is a return type
     DC_DEFINE           = 0x02,         // generate definition
@@ -885,7 +881,7 @@ static bool dwarfRefSymLoc( dw_loc_id locid, SYMBOL sym ){
 
     ret = FALSE;
     if( SymIsAutomatic( sym ) ){
-        DFDwarfLocal( Client, locid, (cg_sym_handle)sym );
+        DFDwarfLocal( Client, locid, sym );
     }else{
 #if _INTEL_CPU
         if(!( TargetSwitches & FLAT_MODEL )) { /* should check Client */

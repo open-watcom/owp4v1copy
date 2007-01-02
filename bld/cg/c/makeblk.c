@@ -34,7 +34,7 @@
 #include "model.h"
 #include "coderep.h"
 #include "procdef.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "opcodes.h"
 #include "addrname.h"
 #include "cgaux.h"
@@ -42,7 +42,6 @@
 #include "feprotos.h"
 #include <string.h>
 
-extern  void            CGFree(pointer);
 extern  void            FreeIns(instruction*);
 extern  void            TellBeginExecutions(void);
 extern  void            FreeNames(void);
@@ -86,7 +85,7 @@ extern  block   *MakeBlock( label_handle label, block_num edges )
     block_edge  *edge;
     block_num   i;
 
-    _Alloc( blk, sizeof( block ) + (edges-1)*sizeof( block_edge ) );
+    blk = CGAlloc( sizeof( block ) + (edges-1)*sizeof( block_edge ) );
     blk->next_block = NULL;
     blk->prev_block = NULL;
     blk->label = label;
@@ -136,9 +135,9 @@ extern  void    FreeABlock( block * blk )
 /***************************************/
 {
     if( blk->targets <= 1 ) {
-        _Free( blk, sizeof( block ) );
+        CGFree( blk );
     } else {
-        _Free( blk, sizeof( block ) + (blk->targets-1) * sizeof( block_edge ) );
+        CGFree( blk );
     }
 }
 
@@ -150,7 +149,7 @@ extern  void    FreeBlock( void )
         FreeIns( CurrBlock->ins.hd.next );
     }
     if( CurrBlock->dataflow != NULL ) {
-        _Free( CurrBlock->dataflow, sizeof( data_flow_def ) );
+        CGFree( CurrBlock->dataflow );
     }
     FreeABlock( CurrBlock );
 }
@@ -213,7 +212,7 @@ extern  void    GenBlock( int class, int targets )
     BlockList = CurrBlock;
     CurrBlock->next_block = NULL;
     if( targets > 1 ) {
-        _Alloc( new, sizeof( block ) + (targets-1) * sizeof( block_edge ) );
+        new = CGAlloc( sizeof( block ) + (targets-1) * sizeof( block_edge ) );
         Copy( CurrBlock, new, sizeof( block ) );
         if( CurrBlock->ins.hd.next == (instruction *)&CurrBlock->ins ) {
             new->ins.hd.next = (instruction *)&new->ins;
@@ -243,7 +242,7 @@ extern  void    GenBlock( int class, int targets )
             edge->destination = new;
             edge = edge->next_source;
         }
-        _Free( CurrBlock, sizeof( block ) );
+        CGFree( CurrBlock );
         CurrBlock = new;
     }
     CurrBlock->class &= BIG_LABEL;   /* the only one that sticks*/
@@ -262,7 +261,7 @@ extern  block   *ReGenBlock( block *blk, label_handle lbl )
     int         targets;
 
     targets = blk->targets + 1;
-    _Alloc( new, sizeof( block ) + (targets-1) * sizeof( block_edge ) );
+    new = CGAlloc( sizeof( block ) + (targets-1) * sizeof( block_edge ) );
     Copy( blk, new, sizeof( block ) + ( targets - 2 ) * sizeof( block_edge ) );
     new->edge[ targets-1 ].destination = lbl;
     new->edge[ targets-1 ].flags = 0;
@@ -544,7 +543,7 @@ extern  void    NewProc( int level )
     HeadBlock = NULL;
     BlockList = NULL;
     ReInitNames();
-    _Alloc( new, sizeof( proc_def ) );
+    new = CGAlloc( sizeof( proc_def ) );
     memset( new, 0, sizeof( proc_def ) );
     new->next_proc = CurrProc;
     CurrProc = new;
@@ -580,7 +579,7 @@ extern  void    FreeProc( void )
         if( oldproc->state.parm.table ) {
             CGFree( oldproc->state.parm.table );
         }
-        _Free( oldproc, sizeof( proc_def ) );
+        CGFree( oldproc );
         if( CurrProc != NULL ) {
             RestoreFromTargProc();
             InsId = CurrProc->ins_id;

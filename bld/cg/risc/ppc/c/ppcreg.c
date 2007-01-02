@@ -34,7 +34,7 @@
 #include "procdef.h"
 #include "model.h"
 #include "cgaux.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "typedef.h"
 
 
@@ -131,7 +131,7 @@ extern  type_class_def  CallState( aux_handle aux,
         i++;
     }
     i++;
-    _Alloc( state->parm.table, i*sizeof( hw_reg_set ) );
+    state->parm.table = CGAlloc( i*sizeof( hw_reg_set ) );
     Copy( parms, state->parm.table, i*sizeof( hw_reg_set ) );
     HW_CAsgn( state->parm.used, HW_EMPTY );
     state->parm.curr_entry = state->parm.table;

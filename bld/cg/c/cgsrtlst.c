@@ -31,7 +31,7 @@
 
 
 #include "standard.h"
-#include "sysmacro.h"
+#include "cgmem.h"
 #include "memout.h"
 
 extern  mem_out_action          SetMemOut(mem_out_action);
@@ -108,7 +108,7 @@ static  void            *DoSortList( void *list, unsigned next_offset,
     int         i;
 
     if( list == NULL ) return( NULL );
-    _Alloc( array, length * sizeof( void * ) );
+    array = CGAlloc( length * sizeof( void * ) );
     if( array == NULL ) {
         mid = length / 2;
         if( mid == 0 ) return( list ); /* FATAL ERROR! */
@@ -131,7 +131,7 @@ static  void            *DoSortList( void *list, unsigned next_offset,
         }
         ShellSort( array, length, before );
         list = BuildList( array, next_offset, length );
-        _Free( array, length * sizeof( void * ) );
+        CGFree( array );
     }
     return( list );
 }
