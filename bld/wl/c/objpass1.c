@@ -507,7 +507,7 @@ void AddSegment( segdata *sd, class_entry *class )
     sd->u.leader->dbgtype = dbiflags;
     if( sd->isabs ) {
         sd->u.leader->seg_addr.off = 0;
-        sd->u.leader->seg_addr.seg = sd->a.frame;
+        sd->u.leader->seg_addr.seg = sd->frame;
     } else if( !sd->isdead ) {
         DBIAddLocal( dbiflags, sd->length );
     }

@@ -432,14 +432,14 @@ typedef struct segdata {
     } u;
     union {
         void *      refs;       // P1dce: list of other seg's this references
-        unsigned_16 frame;      // the frame of an absolute segment.
         signed_32   delta;      // P2: for calc'ing segment & symbol addrs
     } a;
     union {
-        mod_entry *     mod;      // P2CV&DW: pointer to defining module.
-        char *          clname;   // INC: class name for segment
+        mod_entry *     mod;    // P2CV&DW: pointer to defining module.
+        char *          clname; // INC: class name for segment
     } o;
     unsigned_32     addrinfo;   // P2VIDEO: offset into addrinfo of seg.
+    unsigned_16     frame;      // the frame of an absolute segment.
     unsigned        align       : 5;
     unsigned        select      : 3; // comdat: selection type
 

@@ -680,7 +680,7 @@ static void ProcSegDef( void )
     }
     switch( acbp >> 5 ) {
     case ALIGN_ABS:
-        _TargU16toHost( _GetU16UN( ObjBuff ), sdata->a.frame );
+        _TargU16toHost( _GetU16UN( ObjBuff ), sdata->frame );
         sdata->isabs = TRUE;
         ObjBuff += sizeof( unsigned_16 );
         ObjBuff += sizeof( byte );
