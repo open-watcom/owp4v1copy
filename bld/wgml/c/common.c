@@ -44,9 +44,7 @@
 
 void    initialize_globals( void )
 {
-    switch_chars[0] = '-';
-    switch_chars[1] = _dos_switch_char();
-    switch_chars[2] = '\0';
+    switch_char = _dos_switch_char();
 }
 
 /*

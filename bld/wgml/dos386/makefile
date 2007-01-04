@@ -1,4 +1,4 @@
-#pmake: build os_dos cpu_386 wgml
+#pmake: os_dos cpu_386 wgml
 
 host_os         = dos
 host_cpu        = 386

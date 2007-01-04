@@ -79,7 +79,7 @@ int parse_cmdline( char * cmdline )
     /* Verify that parameter is not adorned */
  
     opt = *cmdline;
-    if( opt == '-'  ||  opt == switch_chars[1]  ||  opt == '@' ) {
+    if( opt == '-'  ||  opt == switch_char  ||  opt == '@' ) {
         print_usage();
         return( FAILURE );
     }

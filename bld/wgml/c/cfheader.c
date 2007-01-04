@@ -70,7 +70,7 @@ int parse_header( FILE * in_file )
 
     /* Get the "magic number" and the version length byte */
 
-    fread( &magic, 4, 1, in_file);
+    fread( &magic, 4, 1, in_file );
     if( ferror( in_file ) ) return( FAILURE );
 
     /* If neither a version 3 or a version 4 header, it is not a COP file */

@@ -57,7 +57,9 @@
     #define global  extern
 #endif
 
-global char switch_chars[3];    /* valid switch characters */
+/* This records, generally, whether '\' or '/' is used on the command line */ 
+
+global char switch_char;    
 
 #undef global   /* reset so can be reused with other headers */
 

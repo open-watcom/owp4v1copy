@@ -24,14 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Implements the utility functions for CFCheck:
+* Description:  Implements the utility functions for cfcheck:
 *                   check_directory()
 *                   print_banner()
 *                   print_usage()
 *
 ****************************************************************************/
 
-#include <conio.h>
 #include <direct.h>
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
@@ -52,7 +51,7 @@ NULL
  *  Perform the check of the directory provided to the program.
  *  Only files, not subdirectories, are checked.
  *  The length of all files is checked to see if it is a multiple of 16.
- *  Function CFHeader() is used to process the header of each file.
+ *  Function parse_header() is used to process the header of each file.
  *  The number of files of types 0x02, 0x03 and 0x04 is displayed.
  *  Any file types other than 0x02, 0x03 and 0x04 are displayed.
  *
@@ -98,20 +97,23 @@ int check_directory( void )
         /* Process the file */
 
         retval = parse_header( current_file );
-        if(retval != FAILURE) {
-            switch( retval ) {
-            case( 2 ): 
-                v3directoryfile++;
-                break;
-            case( 3 ):
-                datafile++;
-                break;
-            case( 4 ): 
-                v4directoryfile++;
-                break;
-            default:
-                printf_s( "%s: unknown file type: %i\n", dir_entry->d_name, retval );
-            }
+        if(retval == FAILURE)
+        {
+            printf_s( "%s is not a valid .COP file\n", dir_entry->d_name );
+            continue;
+        }
+        switch( retval ) {
+        case( 0x02 ): 
+            v3directoryfile++;
+            break;
+        case( 0x03 ):
+            datafile++;
+            break;
+        case( 0x04 ): 
+            v4directoryfile++;
+            break;
+        default:
+            printf_s( "%s: unknown file type: %i\n", dir_entry->d_name, retval );
         }
         fclose( current_file );
         current_file = NULL;
