@@ -56,6 +56,7 @@ typedef struct {
     unsigned_32         string_table_size;
     unsigned_32         max_string_table_size;
     char                *string_table;
+    coff_file_handle    coff_file_hnd;
 } coff_lib_file;
 
 typedef enum {
@@ -102,7 +103,7 @@ static char CoffImportX86Text[] = {
 
 static void InitCoffFile( coff_lib_file *c_file )
 {
-    c_file->string_table = malloc( INIT_MAX_SIZE_COFF_STRING_TABLE );
+    c_file->string_table = _ClientAlloc( c_file->coff_file_hnd, INIT_MAX_SIZE_COFF_STRING_TABLE );
     c_file->max_string_table_size = INIT_MAX_SIZE_COFF_STRING_TABLE;
 
 }
@@ -121,15 +122,22 @@ static void SetCoffFile( coff_lib_file *c_file, short processor,
 
 static void FiniCoffLibFile( coff_lib_file *c_file )
 {
-    free( c_file->string_table );
+    _ClientFree( c_file->coff_file_hnd, c_file->string_table );
 }
 
 static void AddCoffString( coff_lib_file  *c_file, char *name, int len )
 {
+    char    *x;
+
     len++;
     if( ( c_file->string_table_size + len ) >= c_file->max_string_table_size ) {
         c_file->max_string_table_size *= 2;
-        c_file->string_table = (char *)realloc( c_file->string_table, c_file->max_string_table_size );
+        x = _ClientAlloc( c_file->coff_file_hnd, c_file->max_string_table_size );
+        if( x == NULL )
+            return;
+        memcpy( x, c_file->string_table, c_file->string_table_size );
+        _ClientFree( c_file->coff_file_hnd, c_file->string_table );
+        c_file->string_table = x;
     }
     memcpy( c_file->string_table + c_file->string_table_size, name, len );
     c_file->string_table_size += len;
@@ -216,23 +224,31 @@ static int AddCoffSymSec( coff_lib_file *c_file, unsigned_8 selection, int sec )
 #define IMPLIB_POS      (*((long*)(coff_file_hnd->implib_data + sizeof(int))))
 #define IMPLIB_DATA     (coff_file_hnd->implib_data + sizeof(int) + sizeof(long))
 
-static int AddDataImpLib( coff_file_handle coff_file_hnd, void * buff, int len )
+static int DataImpLibInit( coff_file_handle coff_file_hnd )
 {
-    char * x;
-        
     if (coff_file_hnd->implib_data == NULL) {
-        coff_file_hnd->implib_data = _ClientAlloc(coff_file_hnd, sizeof(int) + sizeof(long) + len);
+        coff_file_hnd->implib_data = _ClientAlloc( coff_file_hnd, sizeof( int ) + sizeof( long ) );
+        if( coff_file_hnd->implib_data == NULL )
+            return( ORL_OUT_OF_MEMORY );
         IMPLIB_LEN = sizeof(int) + sizeof(long);
         IMPLIB_POS = 0;
-    } else {
-        x = _ClientAlloc(coff_file_hnd, IMPLIB_LEN + len);
-        memcpy(x, coff_file_hnd->implib_data, IMPLIB_LEN);
-        _ClientFree(coff_file_hnd, coff_file_hnd->implib_data);
-        coff_file_hnd->implib_data = x;
     }
-    memcpy(coff_file_hnd->implib_data + IMPLIB_LEN, buff, len);
+    return( ORL_OKAY );
+}
+
+static int AddDataImpLib( coff_file_handle coff_file_hnd, void * buff, int len )
+{
+    char    *x;
+        
+    x = _ClientAlloc( coff_file_hnd, IMPLIB_LEN + len );
+    if( x == NULL )
+        return( ORL_OUT_OF_MEMORY );
+    memcpy( x, coff_file_hnd->implib_data, IMPLIB_LEN );
+    memcpy( x + IMPLIB_LEN, buff, len);
+    _ClientFree( coff_file_hnd, coff_file_hnd->implib_data );
+    coff_file_hnd->implib_data = x;
     IMPLIB_LEN += len;
-    return ORL_OKAY;
+    return( ORL_OKAY );
 }
 
 static void * ImportLibRead(void * _coff_file_hnd, size_t len)
@@ -365,6 +381,7 @@ static int CoffCreateImport( coff_file_handle coff_file_hnd, import_sym * import
     int             dllsymbol_name_len;
     int             section_no;
 
+    c_file.coff_file_hnd = coff_file_hnd;
     InitCoffFile( &c_file );
     memset( bnull.b64, 0, sizeof(bnull.b64) );
 
@@ -534,25 +551,24 @@ static int CoffCreateImport( coff_file_handle coff_file_hnd, import_sym * import
 
 int convert_import_library(coff_file_handle coff_file_hnd)
 {
-    coff_import_object_header * i_hdr;
-    import_sym      sym;
+    coff_import_object_header   *i_hdr;
+    import_sym                  sym;
 
     // init import library data structure
-    if ( AddDataImpLib( coff_file_hnd, &sym, 0 ) != ORL_OKAY )
-        return ORL_OUT_OF_MEMORY;
+    if ( DataImpLibInit( coff_file_hnd ) != ORL_OKAY )
+        return( ORL_OUT_OF_MEMORY );
 
     i_hdr = (coff_import_object_header*)coff_file_hnd->f_hdr_buffer;
     sym.processor = i_hdr->machine;
     sym.exportedName = coff_file_hnd->coff_hnd->funcs->read( coff_file_hnd->file,
         i_hdr->size_of_data );
-    sym.DLLName = sym.exportedName + strlen(sym.exportedName) + 1;
+    sym.DLLName = sym.exportedName + strlen( sym.exportedName ) + 1;
     sym.time_date_stamp = i_hdr->time_date_stamp;
     sym.type = i_hdr->name_type;
     sym.ordinal = i_hdr->ordinal;
-    return CoffCreateImport( coff_file_hnd, &sym);
+    return( CoffCreateImport( coff_file_hnd, &sym ) );
 }
 
 #pragma pack ( pop )
 
 orl_funcs ImportLibData = {ImportLibRead, ImportLibSeek, NULL, NULL};
-
