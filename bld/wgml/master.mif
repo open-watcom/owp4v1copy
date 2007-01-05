@@ -20,7 +20,9 @@ objs =               &
         cfheader.obj &
         cmdlhelp.obj &
 	common.obj   &
+	dowlinux.obj &
         research.obj &
 	swchar.obj
 
 !include exetarg.mif
+

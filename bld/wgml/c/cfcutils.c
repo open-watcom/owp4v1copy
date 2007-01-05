@@ -31,12 +31,12 @@
 *
 ****************************************************************************/
 
-#include <direct.h>
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 #include "banner.h"
 #include "cfheader.h"
 #include "common.h"
+#include "dowlinux.h"
 #include "research.h"
 
 /* Local variables */
@@ -65,13 +65,13 @@ NULL
 
 int check_directory( void )
 {
-    DIR  *  current_dir     = NULL;
-    DIR  *  dir_entry       = NULL;
-    FILE *  current_file    = NULL;
-    int     datafile        = 0; /* counts files of type 03 */
-    int     v3directoryfile = 0; /* counts files of type 02 */
-    int     v4directoryfile = 0; /* counts files of type 04 */
-    int     retval;
+    DIR  *              current_dir     = NULL;
+    struct  dirent  *   dir_entry       = NULL;
+    FILE *              current_file    = NULL;
+    int                 datafile        = 0; /* counts files of type 03 */
+    int                 v3directoryfile = 0; /* counts files of type 02 */
+    int                 v4directoryfile = 0; /* counts files of type 04 */
+    int                 retval;
 
     current_dir = opendir( tgtpath );
     if( current_dir == NULL ) return( FAILURE );
@@ -80,15 +80,10 @@ int check_directory( void )
         dir_entry = readdir( current_dir );
         if( dir_entry == NULL ) break;
 
-        /* Screen out the directories */
-
-        if( dir_entry->d_attr & _A_SUBDIR ) continue;
-
         /* Check the file size */
 
-        if( ((dir_entry->d_size) % 16) != 0) \
+        if( (get_file_size( dir_entry ) % 16) != 0) \
         printf_s( "Size of file %s is not a multiple of 16\n", dir_entry->d_name );
-
         /* Open the file */
 
         fopen_s( &current_file, dir_entry->d_name, "rb" );

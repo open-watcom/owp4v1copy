@@ -87,6 +87,7 @@ wasm            - watcom assembler
 watcom          - shared source code
 wclass          - wclass C++ class library - used by IDE, browser
 wdisasm         - old disassembler - source code still used by debugger
+wgml            - reconstruct gendev/wgml source code 
 whpcvt          - convert WHP files (WATCOM Help) into OS dependent help files.
 wic             - watcom interface converter
 win386          - watcom 32-bit windows extender
