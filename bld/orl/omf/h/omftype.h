@@ -161,8 +161,6 @@ struct omf_file_handle_struct {
     unsigned char       *parsebuf;
     unsigned short      parselen;
     long                status;
-    int                 modnamelen;
-    char                modname[256];
 
     omf_sec_handle      lnames;
     omf_sec_handle      extdefs;

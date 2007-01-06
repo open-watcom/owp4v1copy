@@ -36,6 +36,7 @@
 #include "orllevel.h"
 #include "orlentry.h"
 #include "orlflhnd.h"
+#include "pcobj.h"
 
 orl_handle ORLENTRY ORLInit( orl_funcs * funcs )
 {
@@ -106,8 +107,7 @@ orl_file_format ORLFileIdentify( orl_handle orl_hnd, void * file )
     // See if this is the start of an OMF object file
     // the first record must be a THEADR record and we check that it is
     // valid, if it is then we assume that this is an OMF object file.
-    // record header is 0x80 see watcom\h\pcobj.h
-    if( magic[0] == 0x80 ) {
+    if( magic[0] == CMD_THEADR ) {
         len = magic[1] | ( magic[2] << 8 );
         len -= (unsigned char)(magic[3]);
         len -= 2;

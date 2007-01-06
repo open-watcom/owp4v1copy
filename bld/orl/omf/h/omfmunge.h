@@ -81,8 +81,7 @@ extern orl_return       OmfModEnd( omf_file_handle ofh );
 extern orl_return       OmfAddComment( omf_file_handle ofh, uint_8 class,
                                        uint_8 flags, omf_bytes buff, long len );
 
-extern orl_return       OmfAddLineNum( omf_file_handle ofh, omf_idx seg,
-                                       omf_idx name, unsigned_16 line,
+extern orl_return       OmfAddLineNum( omf_sec_handle sh, unsigned_16 line,
                                        unsigned_32 offset );
 
 extern omf_sec_handle   OmfFindSegOrComdat( omf_file_handle ofh, omf_idx seg,
@@ -93,5 +92,7 @@ extern int              OmfGetLName( omf_sec_handle lnames, omf_idx idx,
 extern char             *OmfGetPtrToLName( omf_file_handle ofh, omf_idx idx );
 
 extern orl_return       OmfExportSegmentContents( omf_sec_handle sh );
+
+extern orl_return       OmfTheadr( omf_file_handle ofh );
 
 #endif
