@@ -1382,7 +1382,7 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
                 // get rid of some lame converts the C++ compiler likes to emit
                 BurnToBase( left, base_l );
                 return( TGNode( TN_COMPARE, op, base_l, rite, TypeBoolean ) );
-            } else {
+            } else if( !(tipe->attr & TYPE_FLOAT) ) {
                 cmp_result  cmp;
 
                 cmp = CheckCmpRange( op, CmpType( tipe ), rite->u.name->c.value );
