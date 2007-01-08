@@ -147,6 +147,7 @@
 #define _NMAKE_CLONE_VERSION_   BAN_VER_STR
 #define _RC_CLONE_VERSION_      BAN_VER_STR
 #define _WIC_VERSION_           BAN_VER_STR
+#define _WGML_VERSION_          BAN_VER_STR
 
 /*
  * Java Tools
