@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  386-specific optimizations using the nifty SETcc instruction.
 *
 ****************************************************************************/
 
@@ -36,6 +35,7 @@
 #include "opcodes.h"
 #include "regset.h"
 #include "model.h"
+#include "i64.h"
 
 extern  void            SuffixIns(instruction*,instruction*);
 extern  void            RemoveInputEdge(block_edge *);
@@ -43,6 +43,7 @@ extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
 extern  void            FlipCond(instruction*);
 extern  name            *AllocTemp(type_class_def);
 extern  name            *AllocS32Const(signed_32);
+extern  name            *AllocS64Const( unsigned_32 low, unsigned_32 high );
 extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  void            RemoveBlock( block * );
@@ -50,7 +51,7 @@ extern  void            RemoveBlock( block * );
 extern  block           *HeadBlock;
 extern  type_length     TypeClassSize[];
 
-static  instruction     *SetToConst( block *blk, signed_32 *pcons ) {
+static  instruction     *SetToConst( block *blk, signed_64 *pcons ) {
 /*******************************************************************/
 
     instruction *ins;
@@ -72,15 +73,23 @@ static  instruction     *SetToConst( block *blk, signed_32 *pcons ) {
     if( op->n.class != N_CONSTANT || op->c.const_type != CONS_ABSOLUTE ) {
         return( NULL );
     }
-    *pcons = op->c.int_value;
+    U64Set( pcons, op->c.int_value, op->c.int_value_2 );
     return( ins );
 }
 
+/* Take advantage of the SETcc instruction in cases such as
+ * x = y ? 3 : 4;
+ * by adding a constant to the result of SETcc to directly obtain
+ * the result of the assignment.
+ */
 static  bool    FindFlowOut( block *blk ) {
 /*****************************************/
 
-    signed_32           false_cons;
-    signed_32           true_cons;
+    signed_64           false_cons;
+    signed_64           true_cons;
+    signed_64           one;
+    signed_64           neg_one;
+    signed_64           diff;
     instruction         *ins;
     instruction         *ins0;
     instruction         *ins1;
@@ -93,6 +102,7 @@ static  bool    FindFlowOut( block *blk ) {
     name                *u1temp;
     name                *temp;
     name                *result;
+    name                *konst;
     type_class_def      class;
 
     ins = blk->ins.hd.prev;
@@ -118,12 +128,15 @@ static  bool    FindFlowOut( block *blk ) {
     if( ins0 == NULL ) return( FALSE );
     ins1 = SetToConst( true, &true_cons );
     if( ins1 == NULL ) return( FALSE );
-    if( true_cons - false_cons == -1 ) {
-        true_cons = false_cons;
-        false_cons = true_cons - 1;
+
+    I32ToI64( 1, &one );
+    I32ToI64( -1, &neg_one );
+    U64Sub( &true_cons, &false_cons, &diff );
+    if( U64Cmp( &diff, &neg_one ) == 0 ) {
+	U64IncDec( &false_cons, -1 );
         reverse = TRUE;
     } else {
-        if( true_cons - false_cons != 1 ) return( FALSE );
+        if( U64Cmp( &diff, &one ) != 0 ) return( FALSE );
         reverse = FALSE;
     }
     result = ins0->result;
@@ -141,9 +154,9 @@ static  bool    FindFlowOut( block *blk ) {
     SuffixIns( ins, ins1 );
     ins = ins1;
 
-    if( false_cons != 0 ) {
-        ins1 = MakeBinary( OP_ADD, temp, AllocS32Const( false_cons ),
-                           result, class );
+    if( I64Test( &false_cons ) != 0 ) {
+        konst = AllocS64Const( false_cons.u._32[I64LO32], false_cons.u._32[I64HI32] );
+        ins1 = MakeBinary( OP_ADD, temp, konst, result, class );
     } else {
         ins1 = MakeMove( temp, result, class );
     }

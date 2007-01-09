@@ -163,6 +163,9 @@ int  U64Cnv16( unsigned_64 *res, char c );
 #   define I64Val( h, l ) { l, h }
 #endif
 
+// set U64 from low, high part
+#define U64Set( x, l, h )	((x)->u._32[I64LO32] = (l), (x)->u._32[I64HI32] = (h))
+
 // is the U64 a valid U32?
 #define U64IsU32( x )   ((x).u._32[I64HI32]==0)
 // is the U64 a positive I32?
