@@ -1,4 +1,4 @@
-#set +v 
+#set +v
 # *****************************************************************
 # setvars - Linux version
 # *****************************************************************
@@ -6,7 +6,7 @@
 #       modify it as necessary for your own use!!
 
 # Setup environment variables for Perforce
-export P4PORT=perforce.scitechsoft.com:3488
+export P4PORT=perforce.openwatcom.org:3488
 export P4USER=YourName
 export P4CLIENT=YOURCLIENT
 export P4PASSWD=YourPassword

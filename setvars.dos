@@ -6,7 +6,7 @@ REM NOTE: Do not use this batch file directly, but copy it and
 REM       modify it as necessary for your own use!!
 
 REM Setup environment variables for Perforce
-set P4PORT=perforce.scitechsoft.com:3488
+set P4PORT=perforce.openwatcom.org:3488
 set P4USER=YourName
 set P4CLIENT=YOURCLIENT
 set P4PASSWD=YourPassword
