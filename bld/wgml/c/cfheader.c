@@ -51,22 +51,25 @@
  *  start of a valid .COP file and, if it does, advance the stream to the
  *  first byte following the header.
  *
- *  Parameter:
- *      in_file contains the input stream
+ *  Parameters:
+ *      in_file points the input stream
+ *      type points to a char intended to hold the file type byte
+ *
+ *  Modified
+ *      type is set to the file type byte if SUCCESS is returned
+ *      type is set to EOF if FAILURE is returned
  *
  *  Returns:
  *      FAILURE if in_file does not point to the start of a valid .COP
  *          file header
  *      FAILURE on any file error, since a valid .COP file has data after
  *          the header
- *      the file type byte if in_file points to the start of a valid .COP
- *          file header and the file contains data following the header
+ *      SUCCESS otherwise
  */
 
-int parse_header( FILE * in_file )
+int parse_header( FILE * in_file, char * type )
 {
     char magic[4];
-    int  type;
 
     /* Get the "magic number" and the version length byte */
 
@@ -90,7 +93,7 @@ int parse_header( FILE * in_file )
 
     /* Get the file type byte */
 
-    type = fgetc( in_file );
+    *type = fgetc( in_file );
 
     /* If there is no more data, this is not a valid .COP file */
     
@@ -98,6 +101,6 @@ int parse_header( FILE * in_file )
 
     /* Valid header, more data exists, return the file type byte */
     
-    return( type );
+    return( SUCCESS );
 }
 

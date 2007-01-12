@@ -36,7 +36,7 @@
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
-int parse_header( FILE * );
+int parse_header( FILE *, char * );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++ */

@@ -72,6 +72,7 @@ int check_directory( void )
     int                 v3directoryfile = 0; /* counts files of type 02 */
     int                 v4directoryfile = 0; /* counts files of type 04 */
     int                 retval;
+    char                type;
 
     current_dir = opendir( tgtpath );
     if( current_dir == NULL ) return( FAILURE );
@@ -91,13 +92,13 @@ int check_directory( void )
 
         /* Process the file */
 
-        retval = parse_header( current_file );
+        retval = parse_header( current_file, &type );
         if(retval == FAILURE)
         {
             printf_s( "%s is not a valid .COP file\n", dir_entry->d_name );
             continue;
         }
-        switch( retval ) {
+        switch( type ) {
         case( 0x02 ): 
             v3directoryfile++;
             break;
@@ -108,7 +109,7 @@ int check_directory( void )
             v4directoryfile++;
             break;
         default:
-            printf_s( "%s: unknown file type: %i\n", dir_entry->d_name, retval );
+            printf_s( "%s: unknown file type: %i\n", dir_entry->d_name, type );
         }
         fclose( current_file );
         current_file = NULL;
