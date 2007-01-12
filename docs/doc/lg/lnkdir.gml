@@ -176,6 +176,7 @@
 .do end
 .dir norelocs           opnorelo.gml    qnx win32
 .dir nostdcall          opnostdc.gml    win32
+.dir nostub             opnostub.gml    os2 win16 win32
 .if '&overlay' eq 'yes' .do begin
 .dir novector           ldnovect.gml    dos
 .do end

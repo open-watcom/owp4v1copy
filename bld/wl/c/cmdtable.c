@@ -188,6 +188,7 @@ parse_entry     MainOptions[] = {
     "PACKData",     &ProcPackdata,      (MK_OS2_16BIT | MK_DOS | MK_QNX), 0,
     "Alignment",    &ProcAlignment,     MK_OS2_16BIT | MK_OS2_LX | MK_PE | MK_ELF, 0,
     "STUB",         &ProcStub,          MK_OS2 | MK_PE | MK_WIN_VXD | MK_PHAR_LAP, 0,
+    "NOSTUB",       &ProcNoStub,        MK_OS2 | MK_PE | MK_WIN_VXD, 0,
     "ONEautodata",  &ProcSingle,        MK_OS2, CF_AUTO_SEG_FLAG,
     "MANYautodata", &ProcMultiple,      MK_OS2, CF_AUTO_SEG_FLAG,
     "NOAutodata",   &ProcNone,          MK_OS2_16BIT, CF_AUTO_SEG_FLAG,

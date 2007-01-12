@@ -306,8 +306,8 @@ pick(    MSG_OS2_HELP_15,   "            | \"MODName=\"module_name | \"NEWFiles\
                 "            | \"MODName=\"モジュール名 | \"NEWFiles\" | \"OFFset=\"n" )
 pick(    MSG_OS2_HELP_16,   "            | \"OLDlibrary=\"dll_name | \"PACKCode=\"n | \"PACKData=\"n | \"PROTmode\"" ,
                                 "            | \"OLDlibrary=\"DLL名 | \"PACKCode=\"n | \"PACKData=\"n | \"PROTmode\"")
-pick(    MSG_OS2_HELP_17,   "            | \"RESource=\"res_file_name | \"STUB=\"stub_name" ,
-                                "            | \"RESource=\"リソースファイル名 | \"STUB=\"スタブ名")
+pick(    MSG_OS2_HELP_17,   "            | \"RESource=\"res_file_name | \"STUB=\"stub_name | \"NOSTUB\"" ,
+                                "            | \"RESource=\"リソースファイル名 | \"STUB=\"スタブ名 | \"NOSTUB\"")
 pick(    MSG_OS2_HELP_18,   "            | \"VERSion=\"major.[minor]" ,
                                 "            | \"VERSion=\"ﾒｼﾞｬｰﾊﾞｰｼﾞｮﾝ.[ﾏｲﾅｰﾊﾞｰｼﾞｮﾝ]")
 pick(    MSG_OS2_HELP_19,   "export    ::= entryname[\".\"ordinal][\"=\"internal][\"RESident\"][\"PRIVATE\"][iopl]" ,
@@ -357,8 +357,8 @@ pick(    MSG_WINDOWS_HELP_13,   "            | \"MODName=\"module_name | \"OLDli
                 "            | \"MODName=\"モジュール名 | \"OLDlibrary=\"DLL名 | \"PACKCode=\"n" )
 pick(    MSG_WINDOWS_HELP_14,   "            | \"PACKData=\"n | \"RESource=\"res_file_name | \"RWReloccheck\"" ,
                                 "            | \"PACKData=\"n | \"RESource=\"リソースファイル名 | \"RWReloccheck\"")
-pick(    MSG_WINDOWS_HELP_15,   "            | \"STUB=\"stub_name | \"VERSion=\"major.[minor]" ,
-                                "            | \"STUB=\"スタブ名 | \"VERSion=\"ﾒｼﾞｬｰﾊﾞｰｼﾞｮﾝ.[ﾏｲﾅｰﾊﾞｰｼﾞｮﾝ]")
+pick(    MSG_WINDOWS_HELP_15,   "            | \"STUB=\"stub_name | \"NOSTUB\" | \"VERSion=\"major.[minor]" ,
+                                "            | \"STUB=\"スタブ名 | \"NOSTUB\" | \"VERSion=\"ﾒｼﾞｬｰﾊﾞｰｼﾞｮﾝ.[ﾏｲﾅｰﾊﾞｰｼﾞｮﾝ]")
 pick(    MSG_WINDOWS_HELP_16,   "export    ::= entryname[\".\"ordinal][\"=\"internal][\"RESident\"][\"PRIVATE\"]" ,
                                 "export    ::= エントリ名[\".\"序数][\"=\"内部名][\"RESident\"][\"PRIVATE\"]" )
 pick(    MSG_WINDOWS_HELP_17,   "segmodel  ::= (\"PReload\" | \"LOadoncall\") | (\"SHared\" | \"NONShared\")" ,
@@ -404,8 +404,8 @@ pick(    MSG_NT_HELP_14,    "            | \"MODName=\"module_name | \"NOSTDCall
                 "            | \"MODName=\"モジュール名 | \"NOSTDCall\" | \"OBJAlign=\"n | \"OFFset=\"n" )
 pick(    MSG_NT_HELP_15,    "            | \"OLDlibrary=\"dll_name | \"RESource=\"res_file_name" ,
                                 "            | \"OLDlibrary=\"DLL名 | \"RESource=\"リソースファイル名")
-pick(    MSG_NT_HELP_16,    "            | \"STUB=\"stub_name | \"VERSion=\"major.[minor]" ,
-                                "            | \"STUB=\"スタブ名 | \"VERSion=\"ﾒｼﾞｬｰﾊﾞｰｼﾞｮﾝ.[ﾏｲﾅｰﾊﾞｰｼﾞｮﾝ]")
+pick(    MSG_NT_HELP_16,    "            | \"STUB=\"stub_name | \"NOSTUB\" | \"VERSion=\"major.[minor]" ,
+                                "            | \"STUB=\"スタブ名 | \"NOSTUB\" | \"VERSion=\"ﾒｼﾞｬｰﾊﾞｰｼﾞｮﾝ.[ﾏｲﾅｰﾊﾞｰｼﾞｮﾝ]")
 pick(    MSG_NT_HELP_17,    "export    ::= entryname[\".\"ordinal][\"=\"internal][\"PRIVATE\"]" ,
                 "export    ::= エントリ名[\".\"序数][\"=\"内部名][\"PRIVATE\"]" )
 pick(    MSG_NT_HELP_18,    "segmodel  ::= (\"SHared\" | \"NONShared\") | (\"PAGEable\" | \"NONPageable\")" ,
@@ -612,8 +612,8 @@ pick(    MSG_WIN_VXD_HELP_13,   "            | \"MODName=\"module_name | \"OLDli
                 "            | \"MODName=\"モジュール名 | \"OLDlibrary=\"DLL名 | \"PACKCode=\"n" )
 pick(    MSG_WIN_VXD_HELP_14,   "            | \"PACKData=\"n | \"RESource=\"res_file_name | \"RWReloccheck\"" ,
                                 "            | \"PACKData=\"n | \"RESource=\"リソースファイル名 | \"RWReloccheck\"")
-pick(    MSG_WIN_VXD_HELP_15,   "            | \"STUB=\"stub_name | \"VERSion=\"major.[minor]" ,
-                                "            | \"STUB=\"スタブ名 | \"VERSion=\"ﾒｼﾞｬｰﾊﾞｰｼﾞｮﾝ.[ﾏｲﾅｰﾊﾞｰｼﾞｮﾝ]")
+pick(    MSG_WIN_VXD_HELP_15,   "            | \"STUB=\"stub_name | \"NOSTUB\" | \"VERSion=\"major.[minor]" ,
+                                "            | \"STUB=\"スタブ名 | \"NOSTUB\" | \"VERSion=\"ﾒｼﾞｬｰﾊﾞｰｼﾞｮﾝ.[ﾏｲﾅｰﾊﾞｰｼﾞｮﾝ]")
 pick(    MSG_WIN_VXD_HELP_16,   "export    ::= entryname[\".\"ordinal][\"=\"internal][\"RESident\"][\"PRIVATE\"]" ,
                                 "export    ::= エントリ名[\".\"序数][\"=\"内部名][\"RESident\"][\"PRIVATE\"]" )
 pick(    MSG_WIN_VXD_HELP_17,   "segmodel  ::= (\"PReload\" | \"LOadoncall\") | (\"SHared\" | \"NONShared\")" ,

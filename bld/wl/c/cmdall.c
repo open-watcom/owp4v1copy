@@ -1127,6 +1127,13 @@ bool ProcStub( void )
     return( TRUE );
 }
 
+bool ProcNoStub( void )
+/*********************/
+{
+    FmtData.u.os2.no_stub = TRUE;
+    return( TRUE );
+}
+
 bool ProcVersion( void )
 /*****************************/
 {

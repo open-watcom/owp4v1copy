@@ -111,6 +111,7 @@ extern bool     ProcFarCalls( void );
 extern bool     ProcNoFarCalls( void );
 
 extern bool     ProcStub( void );
+extern bool     ProcNoStub( void );
 extern bool     ProcVersion( void );
 extern bool     ProcImplib( void );
 extern bool     ProcImpFile( void );

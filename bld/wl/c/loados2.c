@@ -1041,7 +1041,7 @@ unsigned_32 GetStubSize( void )
 /************************************/
 /* return the size of the stub file */
 {
-    unsigned_32     stub_len;
+    unsigned_32     stub_len = 0;
     f_handle        the_file;
     dos_exe_header  dosheader;
     unsigned_32     read_len;
@@ -1049,6 +1049,9 @@ unsigned_32 GetStubSize( void )
     unsigned_32     code_start;
     char *          name;
 
+    if( FmtData.u.os2.no_stub ) {
+        return( 0 );
+    }
     name = FmtData.u.os2.stub_file_name;
     stub_len = PARA_ALIGN( sizeof(DosStub) + DoExeName() );
     if( name != NULL && stricmp( name, Root->outfile->fname ) != 0 ) {
@@ -1108,7 +1111,9 @@ unsigned_32 Write_Stub_File( void )
     char *          name;
 
     name = FmtData.u.os2.stub_file_name;
-    if( name == NULL ) {
+    if( FmtData.u.os2.no_stub ) {
+        stub_len = 0;
+    } else if( name == NULL ) {
         stub_len = WriteDefStub();
     } else if( stricmp( name, Root->outfile->fname ) == 0 ) {
         LnkMsg( ERR+MSG_STUB_SAME_AS_LOAD, NULL );

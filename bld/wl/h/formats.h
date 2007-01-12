@@ -115,6 +115,7 @@ struct fmt_os2_data {
     unsigned            gen_int_relocs : 1;
     unsigned            gen_rel_relocs : 1;
     unsigned            is_private_dll : 1;
+    unsigned            no_stub        : 1;
 };
 
 // linker specific PE data
@@ -219,12 +220,12 @@ struct fmt_data {
     unsigned        minor;
     unsigned        def_seg_flags;
     unsigned        revision;
-    unsigned        Hshift;   // Corresponds to huge shift variable used by libr
+    unsigned        Hshift;     // Corresponds to huge shift variable used by libr
     unsigned        SegShift;   // 16 - HShift, used to convert a segment to an address
-    unsigned_32      SegMask;  // used to extract remainder for segment normalization
-    unsigned        HexSegShift; // shift to convert Intel Hex record segments to address
-    unsigned_32      output_offset;
-    char             FillChar;
+    unsigned_32     SegMask;  	// used to extract remainder for segment normalization
+    unsigned        HexSegShift;// shift to convert Intel Hex record segments to address
+    unsigned_32     output_offset;
+    char       	    FillChar;
     unsigned        dll          : 1;
     unsigned        ver_specified: 1;
     unsigned        make_implib  : 1;
@@ -234,5 +235,5 @@ struct fmt_data {
     unsigned        output_raw   : 1;
     unsigned        output_hex   : 1;
     unsigned        output_hshift : 1; // Hexout uses HexSegShift (else uses SegShift)
-    unsigned        output_start : 1;  // If Hexout should provide a start record
+    unsigned        output_start  : 1; // If Hexout should provide a start record
 };

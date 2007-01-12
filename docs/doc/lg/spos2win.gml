@@ -101,6 +101,9 @@ is any of the following:
 .if '&exeformat' eq 'win nt' .do begin
 .note NORELOCS
 .note NOSTDCALL
+.do end
+.note NOSTUB
+.if '&exeformat' eq 'win nt' .do begin
 .note OBJALIGN=n
 .do end
 .if '&exeformat' eq 'os2' or '&exeformat' eq 'win nt' .do begin
