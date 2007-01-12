@@ -579,6 +579,8 @@ bool ProcOS2DLL( void )
 bool ProcPhysDevice( void )
 /********************************/
 {
+    FmtData.dll = TRUE;
+    Extension = E_DLL;
     FmtData.u.os2.flags |= PHYS_DEVICE;
     return( TRUE );
 }
@@ -586,6 +588,8 @@ bool ProcPhysDevice( void )
 bool ProcVirtDevice( void )
 /********************************/
 {
+    FmtData.dll = TRUE;
+    Extension = E_DLL;
     FmtData.u.os2.flags |= VIRT_DEVICE;
     return( TRUE );
 }

@@ -503,7 +503,11 @@ void FiniOS2FlatLoadFile( void )
         }
 //        exe_head.heapsize  = FmtData.u.os2.heapsize;
     } else { // OS/2 flags settings
-        if( FmtData.dll ) {
+        if( FmtData.u.os2.flags & PHYS_DEVICE ) {
+            exe_head.flags |= OSF_PHYS_DEVICE;
+        } else if( FmtData.u.os2.flags & VIRT_DEVICE ) {
+            exe_head.flags |= OSF_VIRT_DEVICE;
+        } else if( FmtData.dll ) {
             exe_head.flags |= OSF_IS_DLL;
             // The OS/2 loader REALLY doesn't like to have these flags set if there
             // is no entrypoint!
@@ -515,19 +519,16 @@ void FiniOS2FlatLoadFile( void )
                     exe_head.flags |= OSF_TERM_INSTANCE;
                 }
             }
-        } else if( FmtData.u.os2.flags & PHYS_DEVICE ) {
-            exe_head.flags |= OSF_PHYS_DEVICE;
-        } else if( FmtData.u.os2.flags & VIRT_DEVICE ) {
-            exe_head.flags |= OSF_VIRT_DEVICE;
         } else {
+            // These are only relevant for EXEs
             exe_head.stacksize = StackSize;
-        }
-        if( FmtData.u.os2.flags & PM_NOT_COMPATIBLE ) {
-            exe_head.flags |= OSF_NOT_PM_COMPATIBLE;
-        } else if( FmtData.u.os2.flags & PM_APPLICATION ) {
-            exe_head.flags |= OSF_PM_APP;
-        } else {
-            exe_head.flags |= OSF_PM_COMPATIBLE;
+            if( FmtData.u.os2.flags & PM_NOT_COMPATIBLE ) {
+                exe_head.flags |= OSF_NOT_PM_COMPATIBLE;
+            } else if( FmtData.u.os2.flags & PM_APPLICATION ) {
+                exe_head.flags |= OSF_PM_APP;
+            } else {
+                exe_head.flags |= OSF_PM_COMPATIBLE;
+            }
         }
         if( LinkState & LINK_ERROR ) {
             exe_head.flags |= OSF_LINK_ERROR;
