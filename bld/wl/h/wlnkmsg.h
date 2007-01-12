@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Declararions for linker message output machinery.
 *
 ****************************************************************************/
 
@@ -37,17 +36,17 @@
 #define RESOURCE_MAX_SIZE       128
 
 typedef union msg_arg {
-        symbol          *symb;
-        char            *string;
-        char            c;
-        unsigned_16     int_16;
-        unsigned_32     int_32;
-        targ_addr *     address;
+    symbol          *symb;
+    char            *string;
+    char            c;
+    unsigned_16     int_16;
+    unsigned_32     int_32;
+    targ_addr       *address;
 } MSG_ARG;
 
 typedef struct msg_arg_list {
-        int             index;
-        MSG_ARG         arg[3];
+    int             index;
+    MSG_ARG         arg[5];
 } MSG_ARG_LIST;
 
 #include <stdarg.h>
