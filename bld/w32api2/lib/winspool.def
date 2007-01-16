@@ -1,0 +1,4 @@
+LIBRARY WINSPOOL.DRV
+EXPORTS
+DeviceCapabilitiesA
+DeviceCapabilitiesW

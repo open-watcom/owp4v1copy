@@ -1,0 +1,4 @@
+Open Watcom W32API Headers
+Original Code by David Golub
+
+This project is a complete rewrite of the w32api headers from stratch to eliminate the dependency of Open Watcom on MinGW.  It will contain more thorough coverage of the Win32 API, be consistent with OW style guidelines, and hopefully contain fewer bugs.  These headers are a work in progress and are now extremely incomplete.  Due to this fact, they are placed in a separate w32api2 folder temporarily to avoid breaking compatiblity while they are developed.  They are not included in the build process.  To build the headers, switch to the bld\w32api2\nt386 folder and run wmake.  Please note that currently no testing has been done other than checking that the headers compile.  If you find any errors, you may either fix them, post to the newsgroup, or send email to david.golub@yale.edu.

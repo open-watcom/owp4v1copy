@@ -1,0 +1,52 @@
+/*
+ *  windows.h   Win32 main header file
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _WINDOWS_H_INCLUDED
+#define _WINDOWS_H_INCLUDED
+
+:include readonly.sp
+/* Define default version numbers. */
+#ifndef WINVER
+    #define WINVER          0x0600
+#endif
+#ifndef _WIN32_WINNT
+    #define _WIN32_WINNT    0x0600
+#endif
+#ifndef _WIN32_IE
+    #define _WIN32_IE       0x0700
+#endif
+#ifndef NTDDI_VERSION
+    #define NTDDI_VERSION   0x06000000
+#endif
+
+#include <excpt.h>
+#include <stdarg.h>
+#include <windef.h>
+#include <winbase.h>
+#include <wingdi.h>
+#include <winuser.h>
+#include <winnls.h>
+#include <wincon.h>
+#include <winver.h>
+#include <winreg.h>
+#include <winnetwk.h>
+#ifndef WIN32_LEAN_AND_MEAN
+    #include <cderr.h>
+    #include <dde.h>
+    #include <ddeml.h>
+    #include <dlgs.h>
+    #include <lzexpand.h>
+    #include <mmsystem.h>
+    #include <nb30.h>
+    #include <rpc.h>
+    #include <shellapi.h>
+    #include <winperf.h>
+    #include <winsock.h>
+    #include <wincrypt.h>
+#endif
+
+#endif /* _WINDOWS_H_INCLUDED */
+

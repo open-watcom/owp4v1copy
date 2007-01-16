@@ -1,0 +1,63 @@
+proj_name = w32api
+
+!include cproj.mif
+
+splice = wsplice -i$(hdr_dir) -i../include $[@ $^@
+
+.EXTENSIONS
+.EXTENSIONS : .h .mh
+
+headers =            &
+        basetsd.h    &
+        bcrypt.h     &
+        cderr.h      &
+        dde.h        &
+        ddeml.h      &
+        dlgs.h       &
+        guiddef.h    &
+        inaddr.h     &
+        lzexpand.h   &
+        mmsystem.h   &
+        nb30.h       &
+        ncrypt.h     &
+        poppack.h    &
+        pshpack1.h   &
+        pshpack2.h   &
+        pshpack4.h   &
+        pshpack8.h   &
+        reason.h     &
+        rpc.h        &
+        rpcasync.h   &
+        rpcdce.h     &
+        rpcdcep.h    &
+        rpcnsi.h     &
+        rpcnterr.h   &
+        shellapi.h   &
+        tvout.h      &
+        winbase.h    &
+        wincon.h     &
+        wincrypt.h   &
+        windef.h     &
+        windows.h    &
+        winerror.h   &
+        wingdi.h     &
+        winnetwk.h   &
+        winnls.h     &
+        winnt.h      &
+        winperf.h    &
+        winreg.h     &
+        winsock.h    &
+        winuser.h    &
+        winver.h
+
+all : $(headers) .SYMBOLIC
+    @%null
+
+.mh: ../include
+
+.mh.h:
+    $(splice)
+
+clean: .SYMBOLIC
+    rm -f *.h
+

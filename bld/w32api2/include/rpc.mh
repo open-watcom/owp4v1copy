@@ -1,0 +1,38 @@
+/*
+ *  rpc.h       Main RPC header file
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _RPC_H_INCLUDED
+#define _RPC_H_INCLUDED
+
+:include readonly.sp
+:include cpluspro.sp
+
+/* RPC primitive data types */
+typedef void    *I_RPC_HANDLE;
+typedef long    RPC_STATUS;
+
+/* RPC calling conventions */
+#define __RPC_API   __stdcall
+#define __RPC_USER  __stdcall
+#define __RPC_STUB  __stdcall
+#define RPC_ENTRY   __stdcall
+
+/* RPC variable attributes */
+#define __RPC_FAR
+
+/* Macros to specify RPC functions */
+#define RPCRTAPI    DECLSPEC_IMPORT
+#define RPCNSAPI    DECLSPEC_IMPORT
+
+:include cplusepi.sp
+
+#include <rpcdce.h>
+#include <rpcnsi.h>
+#include <rpcnterr.h>
+#include <rpcasync.h>
+
+#endif /* _RPC_H_INCLUDED */
+
