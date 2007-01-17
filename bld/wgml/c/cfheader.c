@@ -29,19 +29,6 @@
 *
 ****************************************************************************/
 
-/*
- *  Verifies that a given file is, in fact, a valid .COP file and, if it is,
- *  returns the file type.
- *
- *  Parameter:
- *      inFile -- the FILE to check
- *
- *  Returns:
- *      FAILURE if the header is invalid
- *      The file type if the header is valid
- *   
-*/
-
 #include <stdio.h>
 #include <string.h>
 #include "common.h"
@@ -57,13 +44,14 @@
  *
  *  Modified
  *      type is set to the file type byte if SUCCESS is returned
- *      type is set to EOF if FAILURE is returned
+ *      type is either the same as on entry or is set to EOF if FAILURE
+ *          is returned (depending on where the return occurs)
  *
  *  Returns:
  *      FAILURE if in_file does not point to the start of a valid .COP
  *          file header
- *      FAILURE on any file error, since a valid .COP file has data after
- *          the header
+ *      FAILURE on any file error or on EOF, since a valid .COP file has
+ *          data after the header
  *      SUCCESS otherwise
  */
 
@@ -74,7 +62,7 @@ int parse_header( FILE * in_file, char * type )
     /* Get the "magic number" and the version length byte */
 
     fread( &magic, 4, 1, in_file );
-    if( ferror( in_file ) ) return( FAILURE );
+    if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* If neither a version 3 or a version 4 header, it is not a COP file */
     /* Check for a version 3 header */
@@ -89,7 +77,7 @@ int parse_header( FILE * in_file, char * type )
     /* Skip the version text */
     
     fseek( in_file, magic[3], SEEK_CUR );
-    if( ferror( in_file ) ) return( FAILURE );
+    if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* Get the file type byte */
 
@@ -97,7 +85,7 @@ int parse_header( FILE * in_file, char * type )
 
     /* If there is no more data, this is not a valid .COP file */
     
-    if( ferror( in_file ) ) return( FAILURE );
+    if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* Valid header, more data exists, return the file type byte */
     
