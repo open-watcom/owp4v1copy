@@ -178,7 +178,7 @@ void check_directory( FILE * in_file, uint32_t count)
         }
         switch( entry_type) {
         case 0x0000:
-            i--;
+            i--;    /* no actual entry found, reset counter */
             break;    
         case 0x0001:
             for( ;; ) { /* ensure loop is always exited at some point */
@@ -189,7 +189,7 @@ void check_directory( FILE * in_file, uint32_t count)
                 }
                 switch( entry_type) {
                 case 0x0000:
-                    i--;
+                    i--;    /* no actual entry found, reset counter */
                     break;    
                 case 0x0001: /* the only case where the loop is not exited */
                     continue;    
@@ -197,28 +197,28 @@ void check_directory( FILE * in_file, uint32_t count)
                     dev_file_count++;   /* entry is for a device file */
                     retval = get_extended_entry( in_file, &extended_entry );
                     if( retval == FAILURE ) \
-                        printf_s( "No data for device entry %i\n", i );
-                    printf_s( "Entry: %i Device Name: %s File Name: %s\n", i, extended_entry.item_name, extended_entry.file_name );
+                            printf_s( "No data for device entry %i of type %i\n", i+1, entry_type );
+                    printf_s( "Entry: %i Device Name: %s File Name: %s\n", i+1, extended_entry.item_name, extended_entry.file_name );
                     break;
                 case 0x0201:
                     drv_file_count++;   /* entry is for a driver file */
                     retval = get_extended_entry( in_file, &extended_entry );
                     if( retval == FAILURE ) \
-                        printf_s( "No data for device entry %i\n", i );
-                    printf_s( "Entry: %i Driver Name: %s File Name: %s\n", i, extended_entry.item_name, extended_entry.file_name );
+                            printf_s( "No data for device entry %i of type %i\n", i+1, entry_type );
+                    printf_s( "Entry: %i Driver Name: %s File Name: %s\n", i+1, extended_entry.item_name, extended_entry.file_name );
                     break;
                 case 0x0401:
                     fon_file_count++;   /* entry is for a font file */
                     retval = get_extended_entry( in_file, &extended_entry );
                     if( retval == FAILURE ) \
-                            printf_s( "No data for device entry %i\n", i );
-                    printf_s( "Entry: %i Font Name: %s File Name: %s\n", i, extended_entry.item_name, extended_entry.file_name );
+                            printf_s( "No data for device entry %i of type %i\n", i+1, entry_type );
+                    printf_s( "Entry: %i Font Name: %s File Name: %s\n", i+1, extended_entry.item_name, extended_entry.file_name );
                     break;
                 default:
                     retval = get_extended_entry( in_file, &extended_entry );
                     if( retval == FAILURE ) \
-                        printf_s( "No data for unknown entry %i of type: %i\n", i, entry_type);
-                    printf_s( "Entry: %i Unknown Item Type: %i Name: %s File Name: %s\n", i, entry_type, extended_entry.item_name, extended_entry.file_name );
+                        printf_s( "No data for unknown entry %i of type %i\n", i+1, entry_type);
+                    printf_s( "Entry: %i Unknown Item Type: %i Name: %20s File Name: %s\n", i+1, entry_type, extended_entry.item_name, extended_entry.file_name );
                 }
                 break; /* exits unless entry_type is 0x0001 */
             }
@@ -227,28 +227,28 @@ void check_directory( FILE * in_file, uint32_t count)
             dev_file_count++;   /* entry is for a device file */
             retval = get_compact_entry( in_file, &compact_entry );
             if( retval == FAILURE ) \
-                printf_s( "No data for entry type: %i\n", entry_type);
-            printf_s( "Entry: %i Device Name: %s File Name: %s\n", i, compact_entry.item_name, compact_entry.file_name );
+                printf_s( "No data for entry %i of type %i\n", i+1, entry_type);
+            printf_s( "Entry: %i Device Name: %s File Name: %s\n", i+1, compact_entry.item_name, compact_entry.file_name );
             break;
         case 0x0201:
             drv_file_count++;   /* entry is for a driver file */
             retval = get_compact_entry( in_file, &compact_entry );
             if( retval == FAILURE ) \
-                printf_s( "No data for entry type: %i\n", entry_type);
-            printf_s( "Entry: %i Driver Name: %s File Name: %s\n", i, compact_entry.item_name, compact_entry.file_name );
+                printf_s( "No data for entry %i of type %i\n", i+1, entry_type);
+            printf_s( "Entry: %i Driver Name: %s File Name: %s\n", i+1, compact_entry.item_name, compact_entry.file_name );
             break;
         case 0x0401:
             fon_file_count++;   /* entry is for a font file */
             retval = get_compact_entry( in_file, &compact_entry );
             if( retval == FAILURE ) \
-                printf_s( "No data for entry type: %i\n", entry_type);
-            printf_s( "Entry: %i Font Name: %s File Name: %s\n", i, compact_entry.item_name, compact_entry.file_name );
+                printf_s( "No data for entry %i of type %i\n", i+1, entry_type);
+            printf_s( "Entry: %i Font Name: %s File Name: %s\n", i+1, compact_entry.item_name, compact_entry.file_name );
             break;
         default:
             retval = get_compact_entry( in_file, &compact_entry );
             if( retval == FAILURE ) \
-                printf_s( "No data for unknown entry type: %i\n", entry_type);
-            printf_s( "Entry: %i Unknown Item Type: %i Name: %s File Name: %s\n", i, entry_type, compact_entry.item_name, compact_entry.file_name );
+                printf_s( "No data for unknown entry %i of type %i\n", i+1, entry_type);
+            printf_s( "Entry: %i Unknown Item Type: %i Name: %20s File Name: %s\n", i+1, entry_type, compact_entry.item_name, compact_entry.file_name );
       }
         if( retval == FAILURE ) {
             puts( "File error or EOF: entry counts may not match expected total");

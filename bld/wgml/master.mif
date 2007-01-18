@@ -44,6 +44,8 @@ objs = &
 nwgml : wgml.exe cfcheck.exe cfparse.exe .SYMBOLIC
 
 !include exetarg.mif
+!else
+nwgml : cfcheck.exe cfparse.exe .SYMBOLIC
 !endif
 
 cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)
