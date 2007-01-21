@@ -26,6 +26,11 @@ typedef void            *HCRYPTOIDFUNCADDR;
 typedef void            *HCRYPTMSG;
 typedef void            *HCERTSTORE;
 typedef void            *HCERTSTOREPROV;
+typedef void            *HCRYPTDEFAULTCONTEXT;
+typedef HANDLE          HCRYPTASYNC;
+typedef HANDLE          *PHCRYPTASYNC;
+typedef HANDLE          HCERTCHAINENGINE;
+typedef VOID            *HCERT_SERVER_OCSP_RESPONSE;
 
 #include <bcrypt.h>
 #include <ncrypt.h>
@@ -588,380 +593,387 @@ typedef void            *HCERTSTOREPROV;
 #endif
 
 /* Object identifiers */
-#define szOID_RSA                               "1.2.840.113549"
-#define szOID_PKCS                              "1.2.840.113549.1"
-#define szOID_RSA_HASH                          "1.2.840.113549.2"
-#define szOID_RSA_ENCRYPT                       "1.2.840.113549.3"
-#define szOID_PKCS_1                            "1.2.840.113549.1.1"
-#define szOID_PKCS_2                            "1.2.840.113549.1.2"
-#define szOID_PKCS_3                            "1.2.840.113549.1.3"
-#define szOID_PKCS_4                            "1.2.840.113549.1.4"
-#define szOID_PKCS_5                            "1.2.840.113549.1.5"
-#define szOID_PKCS_6                            "1.2.840.113549.1.6"
-#define szOID_PKCS_7                            "1.2.840.113549.1.7"
-#define szOID_PKCS_8                            "1.2.840.113549.1.8"
-#define szOID_PKCS_9                            "1.2.840.113549.1.9"
-#define szOID_PKCS_10                           "1.2.840.113549.1.10"
-#define szOID_PKCS_12                           "1.2.840.113549.1.12"
-#define szOID_RSA_RSA                           "1.2.840.113549.1.1.1"
-#define szOID_RSA_MD2RSA                        "1.2.840.113549.1.1.2"
-#define szOID_RSA_MD4RSA                        "1.2.840.113549.1.1.3"
-#define szOID_RSA_MD5RSA                        "1.2.840.113549.1.1.4"
-#define szOID_RSA_SHA1RSA                       "1.2.840.113549.1.1.5"
-#define szOID_RSA_SETOAEP_RSA                   "1.2.840.113549.1.1.6"
-#define szOID_RSAES_OAEP                        "1.2.840.113549.1.1.7"
-#define szOID_RSA_MGF1                          "1.2.840.113549.1.1.8"
-#define szOID_RSA_PSPECIFIED                    "1.2.840.113549.1.1.9"
-#define szOID_RSA_SSA_PSS                       "1.2.840.113549.1.1.10"
-#define szOID_RSA_SHA256RSA                     "1.2.840.113549.1.1.11"
-#define szOID_RSA_SHA384RSA                     "1.2.840.113549.1.1.12"
-#define szOID_RSA_SHA512RSA                     "1.2.840.113549.1.1.13"
-#define szOID_DH                                "1.2.840.113549.1.3.1"
-#define szOID_RSA_data                          "1.2.840.113549.1.7.1"
-#define szOID_RSA_signedData                    "1.2.840.113549.1.7.2"
-#define szOID_RSA_envelopedData                 "1.2.840.113549.1.7.3"
-#define szOID_RSA_signEnvData                   "1.2.840.113549.1.7.4"
-#define szOID_RSA_digestedData                  "1.2.840.113549.1.7.5"
-#define szOID_RSA_hashedData                    "1.2.840.113549.1.7.5"
-#define szOID_RSA_encryptedData                 "1.2.840.113549.1.7.6"
-#define szOID_RSA_emailAddr                     "1.2.840.113549.1.9.1"
-#define szOID_RSA_unstructName                  "1.2.840.113549.1.9.2"
-#define szOID_RSA_contentType                   "1.2.840.113549.1.9.3"
-#define szOID_RSA_messageDigest                 "1.2.840.113549.1.9.4"
-#define szOID_RSA_signingTime                   "1.2.840.113549.1.9.5"
-#define szOID_RSA_counterSign                   "1.2.840.113549.1.9.6"
-#define szOID_RSA_challengePwd                  "1.2.840.113549.1.9.7"
-#define szOID_RSA_unstructAddr                  "1.2.840.113549.1.9.8"
-#define szOID_RSA_extCertAttrs                  "1.2.840.113549.1.9.9"
-#define szOID_RSA_certExtensions                "1.2.840.113549.1.9.14"
-#define szOID_RSA_SMIMECapabilities             "1.2.840.113549.1.9.15"
-#define szOID_RSA_preferSignedData              "1.2.840.113549.1.9.15.1"
-#define szOID_RSA_SMIMEalg                      "1.2.840.113549.1.9.16.3"
-#define szOID_RSA_SMIMEalgESDH                  "1.2.840.113549.1.9.16.3.5"
-#define szOID_RSA_SMIMEalgCMS3DESwrap           "1.2.840.113549.1.9.16.3.6"
-#define szOID_RSA_SMIMEalgCMSRC2wrap            "1.2.840.113549.1.9.16.3.7"
-#define szOID_RSA_MD2                           "1.2.840.113549.2.2"
-#define szOID_RSA_MD4                           "1.2.840.113549.2.4"
-#define szOID_RSA_MD5                           "1.2.840.113549.2.5"
-#define szOID_RSA_RC2CBC                        "1.2.840.113549.3.2"
-#define szOID_RSA_RC4                           "1.2.840.113549.3.4"
-#define szOID_RSA_DES_EDE3_CBC                  "1.2.840.113549.3.7"
-#define szOID_RSA_RC5_CBCPad                    "1.2.840.113549.3.9"
-#define szOID_ANSI_X942                         "1.2.840.10046"
-#define szOID_ANSI_X942_DH                      "1.2.840.10046.2.1"
-#define szOID_X957                              "1.2.840.10040"
-#define szOID_X957_DSA                          "1.2.840.10040.4.1"
-#define szOID_X947_SHA1DSA                      "1.2.840.10040.4.3"
-#define szOID_ECC_PUBLIC_KEY                    "1.2.840.10045.2.1"
-#define szOID_ECC_CURVE_P256                    "1.2.840.10045.3.1.7"
-#define szOID_ECC_CURVE_P384                    "1.3.132.0.34"
-#define szOID_ECC_CURVE_P521                    "1.3.132.0.35"
-#define szOID_ECDSA_SHA1                        "1.2.840.10045.4.1"
-#define szOID_ECDSA_SPECIFIED                   "1.2.840.10045.4.3"
-#define szOID_ECDSA_SHA256                      "1.2.840.10045.4.3.2"
-#define szOID_ECDSA_SHA384                      "1.2.840.10045.4.3.3"
-#define szOID_ECDSA_SHA512                      "1.2.840.10045.4.3.4"
-#define szOID_NIST_AES128_CBC                   "2.16.840.1.101.3.4.1.2"
-#define szOID_NIST_AES192_CBC                   "2.16.840.1.101.3.4.1.22"
-#define szOID_NIST_AES256_CBC                   "2.16.840.1.101.3.4.1.42"
-#define szOID_NIST_AES128_WRAP                  "2.16.840.1.101.3.4.1.5"
-#define szOID_NIST_AES192_WRAP                  "2.16.840.1.101.3.4.1.25"
-#define szOID_NIST_AES256_WRAP                  "2.16.840.1.101.3.4.1.45"
-#define szOID_DH_SINGLE_PASS_STDDH_SHA1_KDF     "1.3.133.16.840.63.0.2"
-#define szOID_DS                                "2.5"
-#define szOID_DSALG                             "2.5.8"
-#define szOID_DSALG_CRPT                        "2.5.8.1"
-#define szOID_DSALG_HASH                        "2.5.8.2"
-#define szOID_DSALG_SIGN                        "2.5.8.3"
-#define szOID_DSALG_RSA                         "2.5.8.1.1"
-#define szOID_OIW                               "1.3.14"
-#define szOID_OIWSEC                            "1.3.14.3.2"
-#define szOID_OIWSEC_md4RSA                     "1.3.14.3.2.2"
-#define szOID_OIWSEC_md5RSA                     "1.3.14.3.2.3"
-#define szOID_OIWSEC_md4RSA2                    "1.3.14.3.2.4"
-#define szOID_OIWSEC_desECB                     "1.3.14.3.2.6"
-#define szOID_OIWSEC_desCBC                     "1.3.14.3.2.7"
-#define szOID_OIWSEC_desOFB                     "1.3.14.3.2.8"
-#define szOID_OIWSEC_desCFB                     "1.3.14.3.2.9"
-#define szOID_OIWSEC_desMAC                     "1.3.14.3.2.10"
-#define szOID_OIWSEC_rsaSign                    "1.3.14.3.2.11"
-#define szOID_OIWSEC_dsa                        "1.3.14.3.2.12"
-#define szOID_OIWSEC_shaDSA                     "1.3.14.3.2.13"
-#define szOID_OIWSEC_mdc2RSA                    "1.3.14.3.2.14"
-#define szOID_OIWSEC_shaRSA                     "1.3.14.3.2.15"
-#define szOID_OIWSEC_dhCommMod                  "1.3.14.3.2.16"
-#define szOID_OIWSEC_desEDE                     "1.3.14.3.2.17"
-#define szOID_OIWSEC_sha                        "1.3.14.3.2.18"
-#define szOID_OIWSEC_mdc2                       "1.3.14.3.2.19"
-#define szOID_OIWSEC_dsaComm                    "1.3.14.3.2.20"
-#define szOID_OIWSEC_dsaCommSHA                 "1.3.14.3.2.21"
-#define szOID_OIWSEC_rsaXchg                    "1.3.14.3.2.22"
-#define szOID_OIWSEC_keyHashSeal                "1.3.14.3.2.23"
-#define szOID_OIWSEC_md2RSASign                 "1.3.14.3.2.24"
-#define szOID_OIWSEC_md5RSASign                 "1.3.14.3.2.25"
-#define szOID_OIWSEC_sha1                       "1.3.14.3.2.26"
-#define szOID_OIWSEC_dsaSHA1                    "1.3.14.3.2.27"
-#define szOID_OIWSEC_dsaCommSHA1                "1.3.14.3.2.28"
-#define szOID_OIWSEC_sha1RSASign                "1.3.14.3.2.29"
-#define szOID_OIWDIR                            "1.3.14.7.2"
-#define szOID_OIWDIR_CRPT                       "1.3.14.7.2.1"
-#define szOID_OIWDIR_HASH                       "1.3.14.7.2.2"
-#define szOID_OIWDIR_SIGN                       "1.3.14.7.2.3"
-#define szOID_OIWDIR_md2                        "1.3.14.7.2.2.1"
-#define szOID_OIWDIR_md2RSA                     "1.3.14.7.2.3.1"
-#define szOID_INFOSEC                           "2.16.840.1.101.2.1"
-#define szOID_INFOSEC_sdnsSignature             "2.16.840.1.101.2.1.1.1"
-#define szOID_INFOSEC_mosaicSignature           "2.16.840.1.101.2.1.1.2"
-#define szOID_INFOSEC_sdnsConfidentiality       "2.16.840.1.101.2.1.1.3"
-#define szOID_INFOSEC_mosaicConfidentiality     "2.16.840.1.101.2.1.1.4"
-#define szOID_INFOSEC_sdnsIntegrity             "2.16.840.1.101.2.1.1.5"
-#define szOID_INFOSEC_mosaicIntegrity           "2.16.840.1.101.2.1.1.6"
-#define szOID_INFOSEC_sdnsTokenProtection       "2.16.840.1.101.2.1.1.7"
-#define szOID_INFOSEC_mosaicTokenProtection     "2.16.840.1.101.2.1.1.8"
-#define szOID_INFOSEC_sdnsKeyManagement         "2.16.840.1.101.2.1.1.9"
-#define szOID_INFOSEC_mosaicKeyManagement       "2.16.840.1.101.2.1.1.10"
-#define szOID_INFOSEC_sdnsKMandSig              "2.16.840.1.101.2.1.1.11"
-#define szOID_INFOSEC_mosaicKMandSig            "2.16.840.1.101.2.1.1.12"
-#define szOID_INFOSEC_SuiteASignature           "2.16.840.1.101.2.1.1.13"
-#define szOID_INFOSEC_SuiteAConfidentiality     "2.16.840.1.101.2.1.1.14"
-#define szOID_INFOSEC_SuiteAIntegrity           "2.16.840.1.101.2.1.1.15"
-#define szOID_INFOSEC_SuiteATokenProtection     "2.16.840.1.101.2.1.1.16"
-#define szOID_INFOSEC_SuiteAKeyManagement       "2.16.840.1.101.2.1.1.17"
-#define szOID_INFOSEC_SuiteAKMandSig            "2.16.840.1.101.2.1.1.18"
-#define szOID_INFOSEC_mosaicUpdatedSig          "2.16.840.1.101.2.1.1.19"
-#define szOID_INFOSEC_mosaicKMandUpdSig         "2.16.840.1.101.2.1.1.20"
-#define szOID_INFOSEC_mosaicUpdatedInteg        "2.16.840.1.101.2.1.1.21"
-#define szOID_NIST_sha256                       "2.16.840.1.101.3.4.2.1"
-#define szOID_NIST_sha384                       "2.16.840.1.101.3.4.2.2"
-#define szOID_NIST_sha512                       "2.16.840.1.101.3.4.2.3"
-#define szOID_COMMON_NAME                       "2.5.4.3"
-#define szOID_SUR_NAME                          "2.5.4.4"
-#define szOID_DEVICE_SERIAL_NUMBER              "2.5.4.5"
-#define szOID_COUNTRY_NAME                      "2.5.4.6"
-#define szOID_LOCALITY_NAME                     "2.5.4.7"
-#define szOID_STATE_OR_PROVINCE_NAME            "2.5.4.8"
-#define szOID_STREET_ADDRESS                    "2.5.4.9"
-#define szOID_ORGANIZATION_NAME                 "2.5.4.10"
-#define szOID_ORGANIZATIONAL_UNIT_NAME          "2.5.4.11"
-#define szOID_TITLE                             "2.5.4.12"
-#define szOID_DESCRIPTION                       "2.5.4.13"
-#define szOID_SEARCH_GUIDE                      "2.5.4.14"
-#define szOID_BUSINESS_CATEGORY                 "2.5.4.15"
-#define szOID_POSTAL_ADDRESS                    "2.5.4.16"
-#define szOID_POSTAL_CODE                       "2.5.4.17"
-#define szOID_POST_OFFICE_BOX                   "2.5.4.18"
-#define szOID_PHYSICAL_DELIVERY_OFFICE_NAME     "2.5.4.19"
-#define szOID_TELEPHONE_NUMBER                  "2.5.4.20"
-#define szOID_TELEX_NUMBER                      "2.5.4.21"
-#define szOID_TELETEXT_TERMINAL_IDENTIFIER      "2.5.4.22"
-#define szOID_FACSIMILE_TELEPHONE_NUMBER        "2.5.4.23"
-#define szOID_X21_ADDRESS                       "2.5.4.24"
-#define szOID_INTERNATIONAL_ISDN_NUMBER         "2.5.4.25"
-#define szOID_REGISTERED_ADDRESS                "2.5.4.26"
-#define szOID_DESTINATION_INDICATOR             "2.5.4.27"
-#define szOID_PREFERRED_DELIVERY_METHOD         "2.5.4.28"
-#define szOID_PRESENTATION_ADDRESS              "2.5.4.29"
-#define szOID_SUPPORTED_APPLICATION_CONTEXT     "2.5.4.30"
-#define szOID_MEMBER                            "2.5.4.31"
-#define szOID_OWNER                             "2.5.4.32"
-#define szOID_ROLE_OCCUPANT                     "2.5.4.33"
-#define szOID_SEE_ALSO                          "2.5.4.34"
-#define szOID_USER_PASSWORD                     "2.5.4.35"
-#define szOID_USER_CERTIFICATE                  "2.5.4.36"
-#define szOID_CA_CERTIFICATE                    "2.5.4.37"
-#define szOID_AUTHORITY_REVOCATION_LIST         "2.5.4.38"
-#define szOID_CERTIFICATE_REVOCATION_LIST       "2.5.4.39"
-#define szOID_CROSS_CERTIFICATE_PAIR            "2.5.4.40"
-#define szOID_GIVEN_NAME                        "2.5.4.42"
-#define szOID_INITIALS                          "2.5.4.43"
-#define szOID_DN_QUALIFIER                      "2.5.4.46"
-#define szOID_DOMAIN_COMPONENT                  "0.9.2342.19200300.100.1.25"
-#define szOID_PKCS_12_FRIENDLY_NAME_ATTR        "1.2.840.113549.1.9.20"
-#define szOID_PKCS_12_LOCAL_KEY_ID              "1.2.840.113549.1.9.21"
-#define szOID_PKCS_12_KEY_PROVIDER_NAME_ATTR    "1.3.6.1.4.1.311.17.1"
-#define szOID_LOCAL_MACHINE_KEYSET              "1.3.6.1.4.1.311.17.2"
-#define szOID_PKCS_12_EXTENDED_ATTRIBUTES       "1.3.6.1.4.1.311.17.3"
-#define szOID_KEYID_RDN                         "1.3.6.1.4.1.311.10.7.1"
-#define szOID_AUTHORITY_KEY_IDENTIFIER          "2.5.29.1"
-#define szOID_KEY_ATTRIBUTES                    "2.5.29.2"
-#define szOID_CERT_POLICIES_95                  "2.5.29.3"
-#define szOID_KEY_USAGE_RESTRICTION             "2.5.29.4"
-#define szOID_SUBJECT_ALT_NAME                  "2.5.29.7"
-#define szOID_ISSUER_ALT_NAME                   "2.5.29.8"
-#define szOID_BASIC_CONSTRAINTS                 "2.5.29.10"
-#define szOID_KEY_USAGE                         "2.5.29.15"
-#define szOID_PRIVATEKEY_USAGE_PERIOD           "2.5.29.16"
-#define szOID_BASIC_CONSTRAINTS2                "2.5.29.19"
-#define szOID_CERT_POLICIES                     "2.5.29.32"
-#define szOID_ANY_CERT_POLICY                   "2.5.29.32.0"
-#define szOID_INHIBIT_ANY_POLICY                "2.5.29.54"
-#define szOID_AUTHORITY_KEY_IDENTIFIER2         "2.5.29.35"
-#define szOID_SUBJECT_KEY_IDENTIFIER            "2.5.29.14"
-#define szOID_SUBJECT_ALT_NAME2                 "2.5.29.17"
-#define szOID_ISSUER_ALT_NAME2                  "2.5.29.18"
-#define szOID_CRL_REASON_CODE                   "2.5.29.21"
-#define szOID_REASON_CODE_HOLD                  "2.5.29.23"
-#define szOID_CRL_DIST_POINTS                   "2.5.29.31"
-#define szOID_ENHANCED_KEY_USAGE                "2.5.29.37"
-#define szOID_ANY_ENHANCED_KEY_USAGE            "2.5.29.37.0"
-#define szOID_CRL_NUMBER                        "2.5.29.20"
-#define szOID_DELTA_CRL_INDICATOR               "2.5.29.27"
-#define szOID_ISSUING_DIST_POINT                "2.5.29.28"
-#define szOID_FRESHEST_CRL                      "2.5.29.46"
-#define szOID_NAME_CONSTRAINTS                  "2.5.29.30"
-#define szOID_POLICY_MAPPINGS                   "2.5.29.33"
-#define szOID_LEGACY_POLICY_MAPPINGS            "2.5.29.5"
-#define szOID_POLICY_CONSTRAINTS                "2.5.29.36"
-#define szOID_RENEWAL_CERTIFICATE               "1.3.6.1.4.1.311.13.1"
-#define szOID_ENROLLMENT_NAME_VALUE_PAIR        "1.3.6.1.4.1.311.13.2.1"
-#define szOID_ENROLLMENT_CSP_PROVIDER           "1.3.6.1.4.1.311.13.2.2"
-#define szOID_OS_VERSION                        "1.3.6.1.4.1.311.13.2.3"
-#define szOID_ENROLLMENT_AGENT                  "1.3.6.1.4.1.311.20.2.1"
-#define szOID_PKIX                              "1.3.6.1.5.5.7"
-#define szOID_PKIX_PE                           "1.3.6.1.5.5.7.1"
-#define szOID_AUTHORITY_INFO_ACCESS             "1.3.6.1.5.5.7.1.1"
-#define szOID_SUBJECT_INFO_ACCESS               "1.3.6.1.5.5.7.1.11"
-#define szOID_BIOMETRIC_EXT                     "1.3.6.1.5.5.7.1.2"
-#define szOID_QC_STATEMENTS_EXT                 "1.3.6.1.5.5.7.1.3"
-#define szOID_LOGOTYPE_EXT                      "1.3.6.1.5.5.7.1.12"
-#define szOID_CERT_EXTENSIONS                   "1.3.6.1.4.1.311.2.1.14"
-#define szOID_NEXT_UPDATE_LOCATION              "1.3.6.1.4.1.311.10.2"
-#define szOID_REMOVE_CERTIFICATE                "1.3.6.1.4.1.311.10.8.1"
-#define szOID_CROSS_CERT_DIST_POINTS            "1.3.6.1.4.1.311.10.9.1"
-#define szOID_CTL                               "1.3.6.1.4.1.311.10.1"
-#define szOID_SORTED_CTL                        "1.3.6.1.4.1.311.10.1.1"
-#define szOID_SERIALIZED                        "1.3.6.1.4.1.311.10.3.3.1"
-#define szOID_NT_PRINCIPAL_NAME                 "1.3.6.1.4.1.311.20.2.3"
-#define szOID_PRODUCT_UPDATE                    "1.3.6.1.4.1.311.31.1"
-#define szOID_ANY_APPLICATION_POLICY            "1.3.6.1.4.1.311.10.12.1"
-#define szOID_AUTO_ENROLL_CTL_USAGE             "1.3.6.1.4.1.311.20.1"
-#define szOID_ENROLL_CERTTYPE_EXTENSION         "1.3.6.1.4.1.311.20.2"
-#define szOID_CERT_MANIFOLD                     "1.3.6.1.4.1.311.20.3"
-#define szOID_CERTSRV_CA_VERSION                "1.3.6.1.4.1.311.21.1"
-#define szOID_CERTSRV_PREVIOUS_CERT_HASH        "1.3.6.1.4.1.311.21.2"
-#define szOID_CRL_VIRTUAL_BASE                  "1.3.6.1.4.1.311.21.3"
-#define szOID_CRL_NEXT_PUBLISH                  "1.3.6.1.4.1.311.21.4"
-#define szOID_KP_CA_EXCHANGE                    "1.3.6.1.4.1.311.21.5"
-#define szOID_KP_KEY_RECOVERY_AGENT             "1.3.6.1.4.1.311.21.6"
-#define szOID_CERTIFICATION_TEMPLATE            "1.3.6.1.4.1.311.21.7"
-#define szOID_ENTERPRISE_OID_ROOT               "1.3.6.1.4.1.311.21.8"
-#define szOID_RDN_DUMMY_SIGNER                  "1.3.6.1.4.1.311.21.9"
-#define szOID_APPLICATION_CERT_POLICIES         "1.3.6.1.4.1.311.21.10"
-#define szOID_APPLICATION_POLICY_MAPPINGS       "1.3.6.1.4.1.311.21.11"
-#define szOID_APPLICATION_POLICY_CONSTRAINTS    "1.3.6.1.4.1.311.21.12"
-#define szOID_ARCHIVED_KEY_ATTR                 "1.3.6.1.4.1.311.21.13"
-#define szOID_CRL_SELF_CDP                      "1.3.6.1.4.1.311.21.14"
-#define szOID_REQUIRE_CERT_CHAIN_POLICY         "1.3.6.1.4.1.311.21.15"
-#define szOID_ARCHIVED_KEY_CERT_HASH            "1.3.6.1.4.1.311.21.16"
-#define szOID_ISSUED_CERT_HASH                  "1.3.6.1.4.1.311.21.17"
-#define szOID_DS_EMAIL_REPLICATION              "1.3.6.1.4.1.311.21.19"
-#define szOID_REQUEST_CLIENT_INFO               "1.3.6.1.4.1.311.21.20"
-#define szOID_ENCRYPTED_KEY_HASH                "1.3.6.1.4.1.311.21.21"
-#define szOID_CERTSRV_CROSSCA_VERSION           "1.3.6.1.4.1.311.21.22"
-#define szOID_NTDS_REPLICATION                  "1.3.6.1.4.1.311.25.1"
-#define szOID_SUBJECT_DIR_ATTRS                 "2.5.29.9"
-#define szOID_PKIX_KP                           "1.3.6.1.5.5.7.3"
-#define szOID_PKIX_KP_SERVER_AUTH               "1.3.6.1.5.5.7.3.1"
-#define szOID_PKIX_KP_CLIENT_AUTH               "1.3.6.1.5.5.7.3.2"
-#define szOID_PKIX_KP_CODE_SIGNING              "1.3.6.1.5.5.7.3.3"
-#define szOID_PKIX_KP_EMAIL_PROTECTION          "1.3.6.1.5.5.7.3.4"
-#define szOID_PKIX_KP_IPSEC_END_SYSTEM          "1.3.6.1.5.5.7.3.5"
-#define szOID_PKIX_KP_IPSEC_TUNNEL              "1.3.6.1.5.5.7.3.6"
-#define szOID_PKIX_KP_IPSEC_USER                "1.3.6.1.5.5.7.3.7"
-#define szOID_PKIX_KP_TIMESTAMP_SIGNING         "1.3.6.1.5.5.7.3.8"
-#define szOID_PKIX_KP_OCSP_SIGNING              "1.3.6.1.5.5.7.3.9"
-#define szOID_PKIX_OCSP_NOCHECK                 "1.3.6.1.5.5.7.48.1.5"
-#define szOID_PKIX_OCSP_NONCE                   "1.3.6.1.5.5.7.48.1.2"
-#define szOID_IPSEC_KP_IKE_INTERMEDIATE         "1.3.6.1.5.5.8.2.2"
-#define szOID_PKINIT_KP_KDC                     "1.3.6.1.5.2.3.5"
-#define szOID_KP_CTL_USAGE_SIGNING              "1.3.6.1.4.1.311.10.3.1"
-#define szOID_KP_TIME_STAMP_SIGNING             "1.3.6.1.4.1.311.10.3.2"
-#define szOID_SERVER_GATED_CRYPTO               "1.3.6.1.4.1.311.10.3.3"
-#define szOID_SGC_NETSCAPE                      "2.16.840.1.113730.4.1"
-#define szOID_KP_EFS                            "1.3.6.1.4.1.311.10.3.4"
-#define szOID_EFS_RECOVERY                      "1.3.6.1.4.1.311.10.3.4.1"
-#define szOID_WHQL_CRYPTO                       "1.3.6.1.4.1.311.10.3.5"
-#define szOID_NT5_CRYPTO                        "1.3.6.1.4.1.311.10.3.6"
-#define szOID_OEM_WHQL_CRYPTO                   "1.3.6.1.4.1.311.10.3.7"
-#define szOID_EMBEDDED_NT_CRYPTO                "1.3.6.1.4.1.311.10.3.8"
-#define szOID_ROOT_LIST_SIGNER                  "1.3.6.1.4.1.311.10.3.9"
-#define szOID_KP_QUALIFIED_SUBORDINATION        "1.3.6.1.4.1.311.10.3.10"
-#define szOID_KP_KEY_RECOVERY                   "1.3.6.1.4.1.311.10.3.11"
-#define szOID_KP_DOCUMENT_SIGNING               "1.3.6.1.4.1.311.10.3.12"
-#define szOID_KP_LIFETIME_SIGNING               "1.3.6.1.4.1.311.10.3.13"
-#define szOID_KP_MOBILE_DEVICE_SOFTWARE         "1.3.6.1.4.1.311.10.3.14"
-#define szOID_KP_SMART_DISPLAY                  "1.3.6.1.4.1.311.10.3.15"
-#define szOID_KP_CSP_SIGNATURE                  "1.3.6.1.4.1.311.10.3.16"
-#define szOID_DRM                               "1.3.6.1.4.1.311.10.5.1"
-#define szOID_DRM_INDIVIDUALIZATION             "1.3.6.1.4.1.311.10.5.2"
-#define szOID_LICENSES                          "1.3.6.1.4.1.311.10.6.1"
-#define szOID_LICENSE_SERVER                    "1.3.6.1.4.1.311.10.6.2"
-#define szOID_KP_SMARTCARD_LOGON                "1.3.6.1.4.1.311.20.2.2"
-#define szOID_KP_KERNEL_MODE_CODE_SIGNING       "1.3.6.1.4.1.311.61.1.1"
-#define szOID_YESNO_TRUST_ATTR                  "1.3.6.1.4.1.311.10.4.1"
-#define szOID_PKIX_POLICY_QUALIFIER_CPS         "1.3.6.1.5.5.7.2.1"
-#define szOID_PKIX_POLICY_QUALIFIER_USERNOTICE  "1.3.6.1.5.5.7.2.2"
-#define szOID_ROOT_PROGRAM_FLAGS                "1.3.6.1.4.1.311.60.1.1"
-#define szOID_CERT_POLICIES_95_QUALIFIER1       "2.16.840.1.113733.1.7.1.1"
-#define szOID_PKIX_ACC_DESCR                    "1.3.6.1.5.5.7.48"
-#define szOID_PKIX_OCSP                         "1.3.6.1.5.5.7.48.1"
-#define szOID_PKIX_CA_ISSUERS                   "1.3.6.1.5.5.7.48.2"
-#define szOID_PKIX_TIME_STAMPING                "1.3.6.1.5.5.7.48.3"
-#define szOID_PKIX_CA_REPOSITORY                "1.3.6.1.5.5.7.48.5"
-#define szOID_QC_EU_COMPLIANCE                  "0.4.0.1862.1.1"
-#define szOID_QC_SSCD                           "0.4.0.1862.1.4"
-#define szOID_VERSION_PRIVATE_6_9               "2.16.840.1.113733.1.6.9"
-#define szOID_VERSION_ONSITE_JURISDICTION_HASH  "2.16.840.1.113733.1.6.11"
-#define szOID_VERSION_BITSTRING_6_13            "2.16.840.1.113733.1.6.13"
-#define szOID_VERSION_ISS_STRONG_CRYPTO         "2.16.840.1.113733.1.8.1"
-#define szOID_NETSCAPE                          "2.16.840.1.113730"
-#define szOID_NETSCAPE_CERT_EXTENSION           "2.16.840.1.113730.1"
-#define szOID_NETSCAPE_CERT_TYPE                "2.16.840.1.113730.1.1"
-#define szOID_NETSCAPE_BASE_URL                 "2.16.840.1.113730.1.2"
-#define szOID_NETSCAPE_REVOCATION_URL           "2.16.840.1.113730.1.3"
-#define szOID_NETSCAPE_CA_REVOCATION_URL        "2.16.840.1.113730.1.4"
-#define szOID_NETSCAPE_CERT_RENEWAL_URL         "2.16.840.1.113730.1.7"
-#define szOID_NETSCAPE_CA_POLICY_URL            "2.16.840.1.113730.1.8"
-#define szOID_NETSCAPE_SSL_SERVER_NAME          "2.16.840.1.113730.1.12"
-#define szOID_NETSCAPE_COMMENT                  "2.16.840.1.113730.1.13"
-#define szOID_NETSCAPE_DATA_TYPE                "2.16.840.1.113730.2"
-#define szOID_NETSCAPE_CERT_SEQUENCE            "2.16.840.1.113730.2.5"
-#define szOID_CT_PKI_DATA                       "1.3.6.1.5.5.7.12.2"
-#define szOID_CT_PKI_RESPONSE                   "1.3.6.1.5.5.7.12.3"
-#define szOID_PKIX_NO_SIGNATURE                 "1.3.6.1.5.5.7.6.2"
-#define szOID_CMC                               "1.3.6.1.5.5.7.7"
-#define szOID_CMC_STATUS_INFO                   "1.3.6.1.5.5.7.7.1"
-#define szOID_CMC_IDENTIFICATION                "1.3.6.1.5.5.7.7.2"
-#define szOID_CMC_IDENTITY_PROOF                "1.3.6.1.5.5.7.7.3"
-#define szOID_CMC_DATA_RETURN                   "1.3.6.1.5.5.7.7.4"
-#define szOID_CMC_TRANSACTION_ID                "1.3.6.1.5.5.7.7.5"
-#define szOID_CMC_SENDER_NONCE                  "1.3.6.1.5.5.7.7.6"
-#define szOID_CMC_RECIPIENT_NONCE               "1.3.6.1.5.5.7.7.7"
-#define szOID_CMC_ADD_EXTENSIONS                "1.3.6.1.5.5.7.7.8"
-#define szOID_CMC_ENCRYPTED_POP                 "1.3.6.1.5.5.7.7.9"
-#define szOID_CMC_DECRYPTED_POP                 "1.3.6.1.5.5.7.7.10"
-#define szOID_CMC_LRA_POP_WITNESS               "1.3.6.1.5.5.7.7.11"
-#define szOID_CMC_GET_CERT                      "1.3.6.1.5.5.7.7.15"
-#define szOID_CMC_GET_CRL                       "1.3.6.1.5.5.7.7.16"
-#define szOID_CMC_REVOKE_REQUEST                "1.3.6.1.5.5.7.7.17"
-#define szOID_CMC_REG_INFO                      "1.3.6.1.5.5.7.7.18"
-#define szOID_CMC_RESPONSE_INFO                 "1.3.6.1.5.5.7.7.19"
-#define szOID_CMC_QUERY_PENDING                 "1.3.6.1.5.5.7.7.21"
-#define szOID_CMC_ID_POP_LINK_RANDOM            "1.3.6.1.5.5.7.7.22"
-#define szOID_CMC_ID_POP_LINK_WITNESS           "1.3.6.1.5.5.7.7.23"
-#define szOID_CMC_ID_CONFIRM_CERT_ACCEPTANCE    "1.3.6.1.5.5.7.7.24"
-#define szOID_CMC_ADD_ATTRIBUTES                "1.3.6.1.4.1.311.10.10.1"
-#define szOID_LOYALTY_OTHER_LOGOTYPE            "1.3.6.1.5.5.7.20.1"
-#define szOID_BACKGROUND_OTHER_LOGOTYPE         "1.3.6.1.5.5.7.20.2"
-#define szOID_PKIX_OCSP_BASIC_SIGNED_RESPONSE   "1.3.6.1.5.5.7.48.1.1"
-#define szOID_PKCS_7_DATA                       "1.2.840.113549.1.7.1"
-#define szOID_PKCS_7_SIGNED                     "1.2.840.113549.1.7.2"
-#define szOID_PKCS_7_ENVELOPED                  "1.2.840.113549.1.7.3"
-#define szOID_PKCS_7_SIGNEDANDENVELOPED         "1.2.840.113549.1.7.4"
-#define szOID_PKCS_7_DIGESTED                   "1.2.840.113549.1.7.5"
-#define szOID_PKCS_7_ENCRYPTED                  "1.2.840.113549.1.7.6"
-#define szOID_PKCS_9_CONTENT_TYPE               "1.2.840.113549.1.9.3"
-#define szOID_PKCS_9_MESSAGE_DIGEST             "1.2.840.113549.1.9.4"
+#define szOID_RSA                                   "1.2.840.113549"
+#define szOID_PKCS                                  "1.2.840.113549.1"
+#define szOID_RSA_HASH                              "1.2.840.113549.2"
+#define szOID_RSA_ENCRYPT                           "1.2.840.113549.3"
+#define szOID_PKCS_1                                "1.2.840.113549.1.1"
+#define szOID_PKCS_2                                "1.2.840.113549.1.2"
+#define szOID_PKCS_3                                "1.2.840.113549.1.3"
+#define szOID_PKCS_4                                "1.2.840.113549.1.4"
+#define szOID_PKCS_5                                "1.2.840.113549.1.5"
+#define szOID_PKCS_6                                "1.2.840.113549.1.6"
+#define szOID_PKCS_7                                "1.2.840.113549.1.7"
+#define szOID_PKCS_8                                "1.2.840.113549.1.8"
+#define szOID_PKCS_9                                "1.2.840.113549.1.9"
+#define szOID_PKCS_10                               "1.2.840.113549.1.10"
+#define szOID_PKCS_12                               "1.2.840.113549.1.12"
+#define szOID_RSA_RSA                               "1.2.840.113549.1.1.1"
+#define szOID_RSA_MD2RSA                            "1.2.840.113549.1.1.2"
+#define szOID_RSA_MD4RSA                            "1.2.840.113549.1.1.3"
+#define szOID_RSA_MD5RSA                            "1.2.840.113549.1.1.4"
+#define szOID_RSA_SHA1RSA                           "1.2.840.113549.1.1.5"
+#define szOID_RSA_SETOAEP_RSA                       "1.2.840.113549.1.1.6"
+#define szOID_RSAES_OAEP                            "1.2.840.113549.1.1.7"
+#define szOID_RSA_MGF1                              "1.2.840.113549.1.1.8"
+#define szOID_RSA_PSPECIFIED                        "1.2.840.113549.1.1.9"
+#define szOID_RSA_SSA_PSS                           "1.2.840.113549.1.1.10"
+#define szOID_RSA_SHA256RSA                         "1.2.840.113549.1.1.11"
+#define szOID_RSA_SHA384RSA                         "1.2.840.113549.1.1.12"
+#define szOID_RSA_SHA512RSA                         "1.2.840.113549.1.1.13"
+#define szOID_DH                                    "1.2.840.113549.1.3.1"
+#define szOID_RSA_data                              "1.2.840.113549.1.7.1"
+#define szOID_RSA_signedData                        "1.2.840.113549.1.7.2"
+#define szOID_RSA_envelopedData                     "1.2.840.113549.1.7.3"
+#define szOID_RSA_signEnvData                       "1.2.840.113549.1.7.4"
+#define szOID_RSA_digestedData                      "1.2.840.113549.1.7.5"
+#define szOID_RSA_hashedData                        "1.2.840.113549.1.7.5"
+#define szOID_RSA_encryptedData                     "1.2.840.113549.1.7.6"
+#define szOID_RSA_emailAddr                         "1.2.840.113549.1.9.1"
+#define szOID_RSA_unstructName                      "1.2.840.113549.1.9.2"
+#define szOID_RSA_contentType                       "1.2.840.113549.1.9.3"
+#define szOID_RSA_messageDigest                     "1.2.840.113549.1.9.4"
+#define szOID_RSA_signingTime                       "1.2.840.113549.1.9.5"
+#define szOID_RSA_counterSign                       "1.2.840.113549.1.9.6"
+#define szOID_RSA_challengePwd                      "1.2.840.113549.1.9.7"
+#define szOID_RSA_unstructAddr                      "1.2.840.113549.1.9.8"
+#define szOID_RSA_extCertAttrs                      "1.2.840.113549.1.9.9"
+#define szOID_RSA_certExtensions                    "1.2.840.113549.1.9.14"
+#define szOID_RSA_SMIMECapabilities                 "1.2.840.113549.1.9.15"
+#define szOID_RSA_preferSignedData                  "1.2.840.113549.1.9.15.1"
+#define szOID_RSA_SMIMEalg                          "1.2.840.113549.1.9.16.3"
+#define szOID_RSA_SMIMEalgESDH                      "1.2.840.113549.1.9.16.3.5"
+#define szOID_RSA_SMIMEalgCMS3DESwrap               "1.2.840.113549.1.9.16.3.6"
+#define szOID_RSA_SMIMEalgCMSRC2wrap                "1.2.840.113549.1.9.16.3.7"
+#define szOID_RSA_MD2                               "1.2.840.113549.2.2"
+#define szOID_RSA_MD4                               "1.2.840.113549.2.4"
+#define szOID_RSA_MD5                               "1.2.840.113549.2.5"
+#define szOID_RSA_RC2CBC                            "1.2.840.113549.3.2"
+#define szOID_RSA_RC4                               "1.2.840.113549.3.4"
+#define szOID_RSA_DES_EDE3_CBC                      "1.2.840.113549.3.7"
+#define szOID_RSA_RC5_CBCPad                        "1.2.840.113549.3.9"
+#define szOID_ANSI_X942                             "1.2.840.10046"
+#define szOID_ANSI_X942_DH                          "1.2.840.10046.2.1"
+#define szOID_X957                                  "1.2.840.10040"
+#define szOID_X957_DSA                              "1.2.840.10040.4.1"
+#define szOID_X947_SHA1DSA                          "1.2.840.10040.4.3"
+#define szOID_ECC_PUBLIC_KEY                        "1.2.840.10045.2.1"
+#define szOID_ECC_CURVE_P256                        "1.2.840.10045.3.1.7"
+#define szOID_ECC_CURVE_P384                        "1.3.132.0.34"
+#define szOID_ECC_CURVE_P521                        "1.3.132.0.35"
+#define szOID_ECDSA_SHA1                            "1.2.840.10045.4.1"
+#define szOID_ECDSA_SPECIFIED                       "1.2.840.10045.4.3"
+#define szOID_ECDSA_SHA256                          "1.2.840.10045.4.3.2"
+#define szOID_ECDSA_SHA384                          "1.2.840.10045.4.3.3"
+#define szOID_ECDSA_SHA512                          "1.2.840.10045.4.3.4"
+#define szOID_NIST_AES128_CBC                       "2.16.840.1.101.3.4.1.2"
+#define szOID_NIST_AES192_CBC                       "2.16.840.1.101.3.4.1.22"
+#define szOID_NIST_AES256_CBC                       "2.16.840.1.101.3.4.1.42"
+#define szOID_NIST_AES128_WRAP                      "2.16.840.1.101.3.4.1.5"
+#define szOID_NIST_AES192_WRAP                      "2.16.840.1.101.3.4.1.25"
+#define szOID_NIST_AES256_WRAP                      "2.16.840.1.101.3.4.1.45"
+#define szOID_DH_SINGLE_PASS_STDDH_SHA1_KDF         "1.3.133.16.840.63.0.2"
+#define szOID_DS                                    "2.5"
+#define szOID_DSALG                                 "2.5.8"
+#define szOID_DSALG_CRPT                            "2.5.8.1"
+#define szOID_DSALG_HASH                            "2.5.8.2"
+#define szOID_DSALG_SIGN                            "2.5.8.3"
+#define szOID_DSALG_RSA                             "2.5.8.1.1"
+#define szOID_OIW                                   "1.3.14"
+#define szOID_OIWSEC                                "1.3.14.3.2"
+#define szOID_OIWSEC_md4RSA                         "1.3.14.3.2.2"
+#define szOID_OIWSEC_md5RSA                         "1.3.14.3.2.3"
+#define szOID_OIWSEC_md4RSA2                        "1.3.14.3.2.4"
+#define szOID_OIWSEC_desECB                         "1.3.14.3.2.6"
+#define szOID_OIWSEC_desCBC                         "1.3.14.3.2.7"
+#define szOID_OIWSEC_desOFB                         "1.3.14.3.2.8"
+#define szOID_OIWSEC_desCFB                         "1.3.14.3.2.9"
+#define szOID_OIWSEC_desMAC                         "1.3.14.3.2.10"
+#define szOID_OIWSEC_rsaSign                        "1.3.14.3.2.11"
+#define szOID_OIWSEC_dsa                            "1.3.14.3.2.12"
+#define szOID_OIWSEC_shaDSA                         "1.3.14.3.2.13"
+#define szOID_OIWSEC_mdc2RSA                        "1.3.14.3.2.14"
+#define szOID_OIWSEC_shaRSA                         "1.3.14.3.2.15"
+#define szOID_OIWSEC_dhCommMod                      "1.3.14.3.2.16"
+#define szOID_OIWSEC_desEDE                         "1.3.14.3.2.17"
+#define szOID_OIWSEC_sha                            "1.3.14.3.2.18"
+#define szOID_OIWSEC_mdc2                           "1.3.14.3.2.19"
+#define szOID_OIWSEC_dsaComm                        "1.3.14.3.2.20"
+#define szOID_OIWSEC_dsaCommSHA                     "1.3.14.3.2.21"
+#define szOID_OIWSEC_rsaXchg                        "1.3.14.3.2.22"
+#define szOID_OIWSEC_keyHashSeal                    "1.3.14.3.2.23"
+#define szOID_OIWSEC_md2RSASign                     "1.3.14.3.2.24"
+#define szOID_OIWSEC_md5RSASign                     "1.3.14.3.2.25"
+#define szOID_OIWSEC_sha1                           "1.3.14.3.2.26"
+#define szOID_OIWSEC_dsaSHA1                        "1.3.14.3.2.27"
+#define szOID_OIWSEC_dsaCommSHA1                    "1.3.14.3.2.28"
+#define szOID_OIWSEC_sha1RSASign                    "1.3.14.3.2.29"
+#define szOID_OIWDIR                                "1.3.14.7.2"
+#define szOID_OIWDIR_CRPT                           "1.3.14.7.2.1"
+#define szOID_OIWDIR_HASH                           "1.3.14.7.2.2"
+#define szOID_OIWDIR_SIGN                           "1.3.14.7.2.3"
+#define szOID_OIWDIR_md2                            "1.3.14.7.2.2.1"
+#define szOID_OIWDIR_md2RSA                         "1.3.14.7.2.3.1"
+#define szOID_INFOSEC                               "2.16.840.1.101.2.1"
+#define szOID_INFOSEC_sdnsSignature                 "2.16.840.1.101.2.1.1.1"
+#define szOID_INFOSEC_mosaicSignature               "2.16.840.1.101.2.1.1.2"
+#define szOID_INFOSEC_sdnsConfidentiality           "2.16.840.1.101.2.1.1.3"
+#define szOID_INFOSEC_mosaicConfidentiality         "2.16.840.1.101.2.1.1.4"
+#define szOID_INFOSEC_sdnsIntegrity                 "2.16.840.1.101.2.1.1.5"
+#define szOID_INFOSEC_mosaicIntegrity               "2.16.840.1.101.2.1.1.6"
+#define szOID_INFOSEC_sdnsTokenProtection           "2.16.840.1.101.2.1.1.7"
+#define szOID_INFOSEC_mosaicTokenProtection         "2.16.840.1.101.2.1.1.8"
+#define szOID_INFOSEC_sdnsKeyManagement             "2.16.840.1.101.2.1.1.9"
+#define szOID_INFOSEC_mosaicKeyManagement           "2.16.840.1.101.2.1.1.10"
+#define szOID_INFOSEC_sdnsKMandSig                  "2.16.840.1.101.2.1.1.11"
+#define szOID_INFOSEC_mosaicKMandSig                "2.16.840.1.101.2.1.1.12"
+#define szOID_INFOSEC_SuiteASignature               "2.16.840.1.101.2.1.1.13"
+#define szOID_INFOSEC_SuiteAConfidentiality         "2.16.840.1.101.2.1.1.14"
+#define szOID_INFOSEC_SuiteAIntegrity               "2.16.840.1.101.2.1.1.15"
+#define szOID_INFOSEC_SuiteATokenProtection         "2.16.840.1.101.2.1.1.16"
+#define szOID_INFOSEC_SuiteAKeyManagement           "2.16.840.1.101.2.1.1.17"
+#define szOID_INFOSEC_SuiteAKMandSig                "2.16.840.1.101.2.1.1.18"
+#define szOID_INFOSEC_mosaicUpdatedSig              "2.16.840.1.101.2.1.1.19"
+#define szOID_INFOSEC_mosaicKMandUpdSig             "2.16.840.1.101.2.1.1.20"
+#define szOID_INFOSEC_mosaicUpdatedInteg            "2.16.840.1.101.2.1.1.21"
+#define szOID_NIST_sha256                           "2.16.840.1.101.3.4.2.1"
+#define szOID_NIST_sha384                           "2.16.840.1.101.3.4.2.2"
+#define szOID_NIST_sha512                           "2.16.840.1.101.3.4.2.3"
+#define szOID_COMMON_NAME                           "2.5.4.3"
+#define szOID_SUR_NAME                              "2.5.4.4"
+#define szOID_DEVICE_SERIAL_NUMBER                  "2.5.4.5"
+#define szOID_COUNTRY_NAME                          "2.5.4.6"
+#define szOID_LOCALITY_NAME                         "2.5.4.7"
+#define szOID_STATE_OR_PROVINCE_NAME                "2.5.4.8"
+#define szOID_STREET_ADDRESS                        "2.5.4.9"
+#define szOID_ORGANIZATION_NAME                     "2.5.4.10"
+#define szOID_ORGANIZATIONAL_UNIT_NAME              "2.5.4.11"
+#define szOID_TITLE                                 "2.5.4.12"
+#define szOID_DESCRIPTION                           "2.5.4.13"
+#define szOID_SEARCH_GUIDE                          "2.5.4.14"
+#define szOID_BUSINESS_CATEGORY                     "2.5.4.15"
+#define szOID_POSTAL_ADDRESS                        "2.5.4.16"
+#define szOID_POSTAL_CODE                           "2.5.4.17"
+#define szOID_POST_OFFICE_BOX                       "2.5.4.18"
+#define szOID_PHYSICAL_DELIVERY_OFFICE_NAME         "2.5.4.19"
+#define szOID_TELEPHONE_NUMBER                      "2.5.4.20"
+#define szOID_TELEX_NUMBER                          "2.5.4.21"
+#define szOID_TELETEXT_TERMINAL_IDENTIFIER          "2.5.4.22"
+#define szOID_FACSIMILE_TELEPHONE_NUMBER            "2.5.4.23"
+#define szOID_X21_ADDRESS                           "2.5.4.24"
+#define szOID_INTERNATIONAL_ISDN_NUMBER             "2.5.4.25"
+#define szOID_REGISTERED_ADDRESS                    "2.5.4.26"
+#define szOID_DESTINATION_INDICATOR                 "2.5.4.27"
+#define szOID_PREFERRED_DELIVERY_METHOD             "2.5.4.28"
+#define szOID_PRESENTATION_ADDRESS                  "2.5.4.29"
+#define szOID_SUPPORTED_APPLICATION_CONTEXT         "2.5.4.30"
+#define szOID_MEMBER                                "2.5.4.31"
+#define szOID_OWNER                                 "2.5.4.32"
+#define szOID_ROLE_OCCUPANT                         "2.5.4.33"
+#define szOID_SEE_ALSO                              "2.5.4.34"
+#define szOID_USER_PASSWORD                         "2.5.4.35"
+#define szOID_USER_CERTIFICATE                      "2.5.4.36"
+#define szOID_CA_CERTIFICATE                        "2.5.4.37"
+#define szOID_AUTHORITY_REVOCATION_LIST             "2.5.4.38"
+#define szOID_CERTIFICATE_REVOCATION_LIST           "2.5.4.39"
+#define szOID_CROSS_CERTIFICATE_PAIR                "2.5.4.40"
+#define szOID_GIVEN_NAME                            "2.5.4.42"
+#define szOID_INITIALS                              "2.5.4.43"
+#define szOID_DN_QUALIFIER                          "2.5.4.46"
+#define szOID_DOMAIN_COMPONENT                      "0.9.2342.19200300.100.1.25"
+#define szOID_PKCS_12_FRIENDLY_NAME_ATTR            "1.2.840.113549.1.9.20"
+#define szOID_PKCS_12_LOCAL_KEY_ID                  "1.2.840.113549.1.9.21"
+#define szOID_PKCS_12_KEY_PROVIDER_NAME_ATTR        "1.3.6.1.4.1.311.17.1"
+#define szOID_LOCAL_MACHINE_KEYSET                  "1.3.6.1.4.1.311.17.2"
+#define szOID_PKCS_12_EXTENDED_ATTRIBUTES           "1.3.6.1.4.1.311.17.3"
+#define szOID_KEYID_RDN                             "1.3.6.1.4.1.311.10.7.1"
+#define szOID_AUTHORITY_KEY_IDENTIFIER              "2.5.29.1"
+#define szOID_KEY_ATTRIBUTES                        "2.5.29.2"
+#define szOID_CERT_POLICIES_95                      "2.5.29.3"
+#define szOID_KEY_USAGE_RESTRICTION                 "2.5.29.4"
+#define szOID_SUBJECT_ALT_NAME                      "2.5.29.7"
+#define szOID_ISSUER_ALT_NAME                       "2.5.29.8"
+#define szOID_BASIC_CONSTRAINTS                     "2.5.29.10"
+#define szOID_KEY_USAGE                             "2.5.29.15"
+#define szOID_PRIVATEKEY_USAGE_PERIOD               "2.5.29.16"
+#define szOID_BASIC_CONSTRAINTS2                    "2.5.29.19"
+#define szOID_CERT_POLICIES                         "2.5.29.32"
+#define szOID_ANY_CERT_POLICY                       "2.5.29.32.0"
+#define szOID_INHIBIT_ANY_POLICY                    "2.5.29.54"
+#define szOID_AUTHORITY_KEY_IDENTIFIER2             "2.5.29.35"
+#define szOID_SUBJECT_KEY_IDENTIFIER                "2.5.29.14"
+#define szOID_SUBJECT_ALT_NAME2                     "2.5.29.17"
+#define szOID_ISSUER_ALT_NAME2                      "2.5.29.18"
+#define szOID_CRL_REASON_CODE                       "2.5.29.21"
+#define szOID_REASON_CODE_HOLD                      "2.5.29.23"
+#define szOID_CRL_DIST_POINTS                       "2.5.29.31"
+#define szOID_ENHANCED_KEY_USAGE                    "2.5.29.37"
+#define szOID_ANY_ENHANCED_KEY_USAGE                "2.5.29.37.0"
+#define szOID_CRL_NUMBER                            "2.5.29.20"
+#define szOID_DELTA_CRL_INDICATOR                   "2.5.29.27"
+#define szOID_ISSUING_DIST_POINT                    "2.5.29.28"
+#define szOID_FRESHEST_CRL                          "2.5.29.46"
+#define szOID_NAME_CONSTRAINTS                      "2.5.29.30"
+#define szOID_POLICY_MAPPINGS                       "2.5.29.33"
+#define szOID_LEGACY_POLICY_MAPPINGS                "2.5.29.5"
+#define szOID_POLICY_CONSTRAINTS                    "2.5.29.36"
+#define szOID_RENEWAL_CERTIFICATE                   "1.3.6.1.4.1.311.13.1"
+#define szOID_ENROLLMENT_NAME_VALUE_PAIR            "1.3.6.1.4.1.311.13.2.1"
+#define szOID_ENROLLMENT_CSP_PROVIDER               "1.3.6.1.4.1.311.13.2.2"
+#define szOID_OS_VERSION                            "1.3.6.1.4.1.311.13.2.3"
+#define szOID_ENROLLMENT_AGENT                      "1.3.6.1.4.1.311.20.2.1"
+#define szOID_PKIX                                  "1.3.6.1.5.5.7"
+#define szOID_PKIX_PE                               "1.3.6.1.5.5.7.1"
+#define szOID_AUTHORITY_INFO_ACCESS                 "1.3.6.1.5.5.7.1.1"
+#define szOID_SUBJECT_INFO_ACCESS                   "1.3.6.1.5.5.7.1.11"
+#define szOID_BIOMETRIC_EXT                         "1.3.6.1.5.5.7.1.2"
+#define szOID_QC_STATEMENTS_EXT                     "1.3.6.1.5.5.7.1.3"
+#define szOID_LOGOTYPE_EXT                          "1.3.6.1.5.5.7.1.12"
+#define szOID_CERT_EXTENSIONS                       "1.3.6.1.4.1.311.2.1.14"
+#define szOID_NEXT_UPDATE_LOCATION                  "1.3.6.1.4.1.311.10.2"
+#define szOID_REMOVE_CERTIFICATE                    "1.3.6.1.4.1.311.10.8.1"
+#define szOID_CROSS_CERT_DIST_POINTS                "1.3.6.1.4.1.311.10.9.1"
+#define szOID_CTL                                   "1.3.6.1.4.1.311.10.1"
+#define szOID_SORTED_CTL                            "1.3.6.1.4.1.311.10.1.1"
+#define szOID_SERIALIZED                            "1.3.6.1.4.1.311.10.3.3.1"
+#define szOID_NT_PRINCIPAL_NAME                     "1.3.6.1.4.1.311.20.2.3"
+#define szOID_PRODUCT_UPDATE                        "1.3.6.1.4.1.311.31.1"
+#define szOID_ANY_APPLICATION_POLICY                "1.3.6.1.4.1.311.10.12.1"
+#define szOID_AUTO_ENROLL_CTL_USAGE                 "1.3.6.1.4.1.311.20.1"
+#define szOID_ENROLL_CERTTYPE_EXTENSION             "1.3.6.1.4.1.311.20.2"
+#define szOID_CERT_MANIFOLD                         "1.3.6.1.4.1.311.20.3"
+#define szOID_CERTSRV_CA_VERSION                    "1.3.6.1.4.1.311.21.1"
+#define szOID_CERTSRV_PREVIOUS_CERT_HASH            "1.3.6.1.4.1.311.21.2"
+#define szOID_CRL_VIRTUAL_BASE                      "1.3.6.1.4.1.311.21.3"
+#define szOID_CRL_NEXT_PUBLISH                      "1.3.6.1.4.1.311.21.4"
+#define szOID_KP_CA_EXCHANGE                        "1.3.6.1.4.1.311.21.5"
+#define szOID_KP_KEY_RECOVERY_AGENT                 "1.3.6.1.4.1.311.21.6"
+#define szOID_CERTIFICATION_TEMPLATE                "1.3.6.1.4.1.311.21.7"
+#define szOID_ENTERPRISE_OID_ROOT                   "1.3.6.1.4.1.311.21.8"
+#define szOID_RDN_DUMMY_SIGNER                      "1.3.6.1.4.1.311.21.9"
+#define szOID_APPLICATION_CERT_POLICIES             "1.3.6.1.4.1.311.21.10"
+#define szOID_APPLICATION_POLICY_MAPPINGS           "1.3.6.1.4.1.311.21.11"
+#define szOID_APPLICATION_POLICY_CONSTRAINTS        "1.3.6.1.4.1.311.21.12"
+#define szOID_ARCHIVED_KEY_ATTR                     "1.3.6.1.4.1.311.21.13"
+#define szOID_CRL_SELF_CDP                          "1.3.6.1.4.1.311.21.14"
+#define szOID_REQUIRE_CERT_CHAIN_POLICY             "1.3.6.1.4.1.311.21.15"
+#define szOID_ARCHIVED_KEY_CERT_HASH                "1.3.6.1.4.1.311.21.16"
+#define szOID_ISSUED_CERT_HASH                      "1.3.6.1.4.1.311.21.17"
+#define szOID_DS_EMAIL_REPLICATION                  "1.3.6.1.4.1.311.21.19"
+#define szOID_REQUEST_CLIENT_INFO                   "1.3.6.1.4.1.311.21.20"
+#define szOID_ENCRYPTED_KEY_HASH                    "1.3.6.1.4.1.311.21.21"
+#define szOID_CERTSRV_CROSSCA_VERSION               "1.3.6.1.4.1.311.21.22"
+#define szOID_NTDS_REPLICATION                      "1.3.6.1.4.1.311.25.1"
+#define szOID_SUBJECT_DIR_ATTRS                     "2.5.29.9"
+#define szOID_PKIX_KP                               "1.3.6.1.5.5.7.3"
+#define szOID_PKIX_KP_SERVER_AUTH                   "1.3.6.1.5.5.7.3.1"
+#define szOID_PKIX_KP_CLIENT_AUTH                   "1.3.6.1.5.5.7.3.2"
+#define szOID_PKIX_KP_CODE_SIGNING                  "1.3.6.1.5.5.7.3.3"
+#define szOID_PKIX_KP_EMAIL_PROTECTION              "1.3.6.1.5.5.7.3.4"
+#define szOID_PKIX_KP_IPSEC_END_SYSTEM              "1.3.6.1.5.5.7.3.5"
+#define szOID_PKIX_KP_IPSEC_TUNNEL                  "1.3.6.1.5.5.7.3.6"
+#define szOID_PKIX_KP_IPSEC_USER                    "1.3.6.1.5.5.7.3.7"
+#define szOID_PKIX_KP_TIMESTAMP_SIGNING             "1.3.6.1.5.5.7.3.8"
+#define szOID_PKIX_KP_OCSP_SIGNING                  "1.3.6.1.5.5.7.3.9"
+#define szOID_PKIX_OCSP_NOCHECK                     "1.3.6.1.5.5.7.48.1.5"
+#define szOID_PKIX_OCSP_NONCE                       "1.3.6.1.5.5.7.48.1.2"
+#define szOID_IPSEC_KP_IKE_INTERMEDIATE             "1.3.6.1.5.5.8.2.2"
+#define szOID_PKINIT_KP_KDC                         "1.3.6.1.5.2.3.5"
+#define szOID_KP_CTL_USAGE_SIGNING                  "1.3.6.1.4.1.311.10.3.1"
+#define szOID_KP_TIME_STAMP_SIGNING                 "1.3.6.1.4.1.311.10.3.2"
+#define szOID_SERVER_GATED_CRYPTO                   "1.3.6.1.4.1.311.10.3.3"
+#define szOID_SGC_NETSCAPE                          "2.16.840.1.113730.4.1"
+#define szOID_KP_EFS                                "1.3.6.1.4.1.311.10.3.4"
+#define szOID_EFS_RECOVERY                          "1.3.6.1.4.1.311.10.3.4.1"
+#define szOID_WHQL_CRYPTO                           "1.3.6.1.4.1.311.10.3.5"
+#define szOID_NT5_CRYPTO                            "1.3.6.1.4.1.311.10.3.6"
+#define szOID_OEM_WHQL_CRYPTO                       "1.3.6.1.4.1.311.10.3.7"
+#define szOID_EMBEDDED_NT_CRYPTO                    "1.3.6.1.4.1.311.10.3.8"
+#define szOID_ROOT_LIST_SIGNER                      "1.3.6.1.4.1.311.10.3.9"
+#define szOID_KP_QUALIFIED_SUBORDINATION            "1.3.6.1.4.1.311.10.3.10"
+#define szOID_KP_KEY_RECOVERY                       "1.3.6.1.4.1.311.10.3.11"
+#define szOID_KP_DOCUMENT_SIGNING                   "1.3.6.1.4.1.311.10.3.12"
+#define szOID_KP_LIFETIME_SIGNING                   "1.3.6.1.4.1.311.10.3.13"
+#define szOID_KP_MOBILE_DEVICE_SOFTWARE             "1.3.6.1.4.1.311.10.3.14"
+#define szOID_KP_SMART_DISPLAY                      "1.3.6.1.4.1.311.10.3.15"
+#define szOID_KP_CSP_SIGNATURE                      "1.3.6.1.4.1.311.10.3.16"
+#define szOID_DRM                                   "1.3.6.1.4.1.311.10.5.1"
+#define szOID_DRM_INDIVIDUALIZATION                 "1.3.6.1.4.1.311.10.5.2"
+#define szOID_LICENSES                              "1.3.6.1.4.1.311.10.6.1"
+#define szOID_LICENSE_SERVER                        "1.3.6.1.4.1.311.10.6.2"
+#define szOID_KP_SMARTCARD_LOGON                    "1.3.6.1.4.1.311.20.2.2"
+#define szOID_KP_KERNEL_MODE_CODE_SIGNING           "1.3.6.1.4.1.311.61.1.1"
+#define szOID_YESNO_TRUST_ATTR                      "1.3.6.1.4.1.311.10.4.1"
+#define szOID_PKIX_POLICY_QUALIFIER_CPS             "1.3.6.1.5.5.7.2.1"
+#define szOID_PKIX_POLICY_QUALIFIER_USERNOTICE      "1.3.6.1.5.5.7.2.2"
+#define szOID_ROOT_PROGRAM_FLAGS                    "1.3.6.1.4.1.311.60.1.1"
+#define szOID_CERT_POLICIES_95_QUALIFIER1           "2.16.840.1.113733.1.7.1.1"
+#define szOID_PKIX_ACC_DESCR                        "1.3.6.1.5.5.7.48"
+#define szOID_PKIX_OCSP                             "1.3.6.1.5.5.7.48.1"
+#define szOID_PKIX_CA_ISSUERS                       "1.3.6.1.5.5.7.48.2"
+#define szOID_PKIX_TIME_STAMPING                    "1.3.6.1.5.5.7.48.3"
+#define szOID_PKIX_CA_REPOSITORY                    "1.3.6.1.5.5.7.48.5"
+#define szOID_QC_EU_COMPLIANCE                      "0.4.0.1862.1.1"
+#define szOID_QC_SSCD                               "0.4.0.1862.1.4"
+#define szOID_VERSION_PRIVATE_6_9                   "2.16.840.1.113733.1.6.9"
+#define szOID_VERSION_ONSITE_JURISDICTION_HASH      "2.16.840.1.113733.1.6.11"
+#define szOID_VERSION_BITSTRING_6_13                "2.16.840.1.113733.1.6.13"
+#define szOID_VERSION_ISS_STRONG_CRYPTO             "2.16.840.1.113733.1.8.1"
+#define szOID_NETSCAPE                              "2.16.840.1.113730"
+#define szOID_NETSCAPE_CERT_EXTENSION               "2.16.840.1.113730.1"
+#define szOID_NETSCAPE_CERT_TYPE                    "2.16.840.1.113730.1.1"
+#define szOID_NETSCAPE_BASE_URL                     "2.16.840.1.113730.1.2"
+#define szOID_NETSCAPE_REVOCATION_URL               "2.16.840.1.113730.1.3"
+#define szOID_NETSCAPE_CA_REVOCATION_URL            "2.16.840.1.113730.1.4"
+#define szOID_NETSCAPE_CERT_RENEWAL_URL             "2.16.840.1.113730.1.7"
+#define szOID_NETSCAPE_CA_POLICY_URL                "2.16.840.1.113730.1.8"
+#define szOID_NETSCAPE_SSL_SERVER_NAME              "2.16.840.1.113730.1.12"
+#define szOID_NETSCAPE_COMMENT                      "2.16.840.1.113730.1.13"
+#define szOID_NETSCAPE_DATA_TYPE                    "2.16.840.1.113730.2"
+#define szOID_NETSCAPE_CERT_SEQUENCE                "2.16.840.1.113730.2.5"
+#define szOID_CT_PKI_DATA                           "1.3.6.1.5.5.7.12.2"
+#define szOID_CT_PKI_RESPONSE                       "1.3.6.1.5.5.7.12.3"
+#define szOID_PKIX_NO_SIGNATURE                     "1.3.6.1.5.5.7.6.2"
+#define szOID_CMC                                   "1.3.6.1.5.5.7.7"
+#define szOID_CMC_STATUS_INFO                       "1.3.6.1.5.5.7.7.1"
+#define szOID_CMC_IDENTIFICATION                    "1.3.6.1.5.5.7.7.2"
+#define szOID_CMC_IDENTITY_PROOF                    "1.3.6.1.5.5.7.7.3"
+#define szOID_CMC_DATA_RETURN                       "1.3.6.1.5.5.7.7.4"
+#define szOID_CMC_TRANSACTION_ID                    "1.3.6.1.5.5.7.7.5"
+#define szOID_CMC_SENDER_NONCE                      "1.3.6.1.5.5.7.7.6"
+#define szOID_CMC_RECIPIENT_NONCE                   "1.3.6.1.5.5.7.7.7"
+#define szOID_CMC_ADD_EXTENSIONS                    "1.3.6.1.5.5.7.7.8"
+#define szOID_CMC_ENCRYPTED_POP                     "1.3.6.1.5.5.7.7.9"
+#define szOID_CMC_DECRYPTED_POP                     "1.3.6.1.5.5.7.7.10"
+#define szOID_CMC_LRA_POP_WITNESS                   "1.3.6.1.5.5.7.7.11"
+#define szOID_CMC_GET_CERT                          "1.3.6.1.5.5.7.7.15"
+#define szOID_CMC_GET_CRL                           "1.3.6.1.5.5.7.7.16"
+#define szOID_CMC_REVOKE_REQUEST                    "1.3.6.1.5.5.7.7.17"
+#define szOID_CMC_REG_INFO                          "1.3.6.1.5.5.7.7.18"
+#define szOID_CMC_RESPONSE_INFO                     "1.3.6.1.5.5.7.7.19"
+#define szOID_CMC_QUERY_PENDING                     "1.3.6.1.5.5.7.7.21"
+#define szOID_CMC_ID_POP_LINK_RANDOM                "1.3.6.1.5.5.7.7.22"
+#define szOID_CMC_ID_POP_LINK_WITNESS               "1.3.6.1.5.5.7.7.23"
+#define szOID_CMC_ID_CONFIRM_CERT_ACCEPTANCE        "1.3.6.1.5.5.7.7.24"
+#define szOID_CMC_ADD_ATTRIBUTES                    "1.3.6.1.4.1.311.10.10.1"
+#define szOID_LOYALTY_OTHER_LOGOTYPE                "1.3.6.1.5.5.7.20.1"
+#define szOID_BACKGROUND_OTHER_LOGOTYPE             "1.3.6.1.5.5.7.20.2"
+#define szOID_PKIX_OCSP_BASIC_SIGNED_RESPONSE       "1.3.6.1.5.5.7.48.1.1"
+#define szOID_PKCS_7_DATA                           "1.2.840.113549.1.7.1"
+#define szOID_PKCS_7_SIGNED                         "1.2.840.113549.1.7.2"
+#define szOID_PKCS_7_ENVELOPED                      "1.2.840.113549.1.7.3"
+#define szOID_PKCS_7_SIGNEDANDENVELOPED             "1.2.840.113549.1.7.4"
+#define szOID_PKCS_7_DIGESTED                       "1.2.840.113549.1.7.5"
+#define szOID_PKCS_7_ENCRYPTED                      "1.2.840.113549.1.7.6"
+#define szOID_PKCS_9_CONTENT_TYPE                   "1.2.840.113549.1.9.3"
+#define szOID_PKCS_9_MESSAGE_DIGEST                 "1.2.840.113549.1.9.4"
+#define szOID_PKCS_12_PbeIds                        "1.2.840.113549.1.12.1"
+#define szOID_PKCS_12_pbeWithSHA1And128BitRC4       "1.2.840.113549.1.12.1.1"
+#define szOID_PKCS_12_pbeWithSHA1And40BitRC4        "1.2.840.113549.1.12.1.2"
+#define szOID_PKCS_12_pbeWithSHA1And3KeyTripleDES   "1.2.840.113549.1.12.1.3"
+#define szOID_PKCS_12_pbeWithSHA1And2KeyTripleDES   "1.2.840.113549.1.12.1.4"
+#define szOID_PKCS_12_pbeWithSHA1And128BitRC2       "1.2.840.113549.1.12.1.5"
+#define szOID_PKCS_12_pbeWithSHA1And40BitRC2        "1.2.840.113549.1.12.1.6"
 
 /* Certificate Relative Distinguished Name (RDN) attribute value types */
 #define CERT_RDN_ANY_TYPE           0
@@ -2110,6 +2122,735 @@ typedef void            *HCERTSTOREPROV;
 #define CRL_FIND_ISSUED_BY  1L
 #define CRL_FIND_EXISTING   2L
 #define CRL_FIND_ISSUED_FOR 3L
+
+/* CertFindCRLInStore() flags */
+#define CRL_FIND_ISSUED_BY_AKI_FLAG         0x00000001L
+#define CRL_FIND_ISSUED_BY_SIGNATURE_FLAG   0x00000002L
+#define CRL_FIND_ISSUED_BY_DELTA_FLAG       0x00000004L
+#define CRL_FIND_ISSUED_BY_BASE_FLAG        0x00000008L
+
+/* Certificate store add types */
+#define CERT_STORE_ADD_NEW                                  1L
+#define CERT_STORE_ADD_USE_EXISTING                         2L
+#define CERT_STORE_ADD_REPLACE_EXISTING                     3L
+#define CERT_STORE_ADD_ALWAYS                               4L
+#define CERT_STORE_ADD_REPLACE_EXISTING_INHERIT_PROPERTIES  5L
+#define CERT_STORE_ADD_NEWER                                6L
+#define CERT_STORE_ADD_NEWER_INHERIT_PROPERTIES             7L
+
+/* Certificate store context types */
+#define CERT_STORE_CERTIFICATE_CONTEXT  1L
+#define CERT_STORE_CRL_CONTEXT          2L
+#define CERT_STORE_CTL_CONTEXT          3L
+
+/* Certificate store context type flags */
+#define CERT_STORE_ALL_CONTEXT_FLAG         0xFFFFFFFFL
+#define CERT_STORE_CERTIFICATE_CONTEXT_FLAG (1 << CERT_STORE_CERTIFICATE_CONTEXT)
+#define CERT_STORE_CRL_CONTEXT_FLAG         (1 << CERT_STORE_CRL_CONTEXT)
+#define CERT_STORE_CTL_CONTEXT_FLAG         (1 << CERT_STORE_CTL_CONTEXT)
+
+/* CTL subject types */
+#define CTL_ANY_SUBJECT_TYPE    1L
+#define CTL_CERT_SUBJECT_TYPE   2L
+
+/* CertFindCTLInStore() find types */
+#define CTL_FIND_ANY        0L
+#define CTL_FIND_SHA1_HASH  1L
+#define CTL_FIND_MD5_HASH   2L
+#define CTL_FIND_USAGE      3L
+#define CTL_FIND_SUBJECT    4L
+#define CTL_FIND_EXISTING   5L
+
+/* Constants used with CTL_FIND_USAGE_PARA */
+#define CTL_FIND_NO_LIST_ID_CBDATA  0xFFFFFFFFL
+#define CTL_FIND_NO_SIGNER_PTR      ((PCERT_INFO)-1)
+
+/* CertFindCTLInStore() flags */
+#define CTL_FIND_SAME_USAGE_FLAG    0x00000001L
+
+/* Certificate store control types */
+#define CERT_STORE_CTRL_RESYNC          1L
+#define CERT_STORE_CTRL_NOTIFY_CHANGE   2L
+#define CERT_STORE_CTRL_COMMIT          3L
+#define CERT_STORE_CTRL_AUTO_RESYNC     4L
+#define CERT_STORE_CTRL_CANCEL_NOTIFY   5L
+
+/* CertControlStore() flags */
+#define CERT_STORE_CTRL_INHIBIT_DUPLICATE_HANDLE_FLAG   0x00000001L
+
+/* Certificate store commit flags */
+#define CERT_STORE_CTRL_COMMIT_FORCE_FLAG   0x00000001L
+#define CERT_STORE_CTRL_COMMIT_CLEAR_FLAG   0x00000002L
+
+/* Certificate store property identifiers */
+#define CERT_STORE_LOCALIZED_NAME_PROP_ID   0x00001000L
+
+/* CertCreateContext() flags */
+#define CERT_CREATE_CONTEXT_NOCOPY_FLAG         0x00000001L
+#define CERT_CREATE_CONTEXT_SORTED_FLAG         0x00000002L
+#define CERT_CREATE_CONTEXT_NO_HCRYPTMSG_FLAG   0x00000004L
+#define CERT_CREATE_CONTEXT_NO_ENTRY_FLAG       0x00000008L
+
+/* Certificate physical store information flags */
+#define CERT_PHYSICAL_STORE_ADD_ENABLE_FLAG                     0x00000001L
+#define CERT_PHYSICAL_STORE_OPEN_DISABLE_FLAG                   0x00000002L
+#define CERT_PHYSICAL_STORE_REMOTE_OPEN_DISABLE_FLAG            0x00000004L
+#define CERT_PHYSICAL_STORE_INSERT_COMPUTER_NAME_ENABLE_FLAG    0x00000008L
+
+/* Certificate phyiscal store enumeration flags */
+#define CERT_PHYSICAL_STORE_PREDEFINED_ENUM_FLAG    0x00000001L
+
+/* Predefined physical stores */
+#define CERT_PHYSICAL_STORE_DEFAULT_NAME                    L".Default"
+#define CERT_PHYSICAL_STORE_GROUP_POLICY_NAME               L".GroupPolicy"
+#define CERT_PHYSICAL_STORE_LOCAL_MACHINE_NAME              L".LocalMachine"
+#define CERT_PHYSICAL_STORE_DS_USER_CERTIFICATE_NAME        L".UserCertificate"
+#define CERT_PHYSICAL_STORE_LOCAL_MACHINE_GROUP_POLICY_NAME L".LocalMachineGroupPolicy"
+#define CERT_PHYSICAL_STORE_ENTERPRISE_NAME                 L".Enterprise"
+#define CERT_PHYSICAL_STORE_AUTH_ROOT_NAME                  L".AuthRoot"
+#define CERT_PHYSICAL_STORE_SMART_CARD_NAME                 L".SmartCard"
+
+/* Certificate system store provider function names */
+#define CRYPT_OID_OPEN_SYSTEM_STORE_PROV_FUNC       "CertDllOpenSystemStoreProv"
+#define CRYPT_OID_REGISTER_SYSTEM_STORE_FUNC        "CertDllRegisterSystemStore"
+#define CRYPT_OID_UNREGISTER_SYSTEM_STORE_FUNC      "CertDllUnregisterSystemStore"
+#define CRYPT_OID_ENUM_SYSTEM_STORE_FUNC            "CertDllEnumSystemStore"
+#define CRYPT_OID_REGISTER_PHYSICAL_STORE_FUNC      "CertDllRegisterPhysicalStore"
+#define CRYPT_OID_UNREGISTER_PHYSICAL_STORE_FUNC    "CertDllUnregisterPhysicalStore"
+#define CRYPT_OID_ENUM_PHYSICAL_STORE_FUNC          "CertDllEnumPhysicalStore"
+
+/* Certificate system store location registry value name */
+#define CRYPT_OID_SYSTEM_STORE_LOCATION_VALUE_NAME  L"SystemStoreLocation"
+
+/* CryptMsgGetAndVerifySigner() flags */
+#define CMSG_TRUSTED_SIGNER_FLAG    0x00000001L
+#define CMSG_SIGNER_ONLY_FLAG       0x00000002L
+#define CMSG_USE_SIGNER_INDEX_FLAG  0x00000004L
+
+/* CryptMsgSignCTL() flags */
+#define CMSG_CMS_ENCAPSULATED_CTL_FLAG  0x00008000L
+
+/* CryptMsgEncodeAndSignCTL() flags */
+#define CMSG_ENCODE_SORTED_CTL_FLAG                 0x00000001L
+#define CMSG_ENCODE_HASHED_SUBJECT_IDENTIFIER_FLAG  0x00000002L
+
+/* CertVerifyCTLUsage() flags */
+#define CERT_VERIFY_INHIBIT_CTL_UPDATE_FLAG 0x00000001L
+#define CERT_VERIFY_TRUSTED_SIGNERS_FLAG    0x00000002L
+#define CERT_VERIFY_NO_TIME_CHECK_FLAG      0x00000004L
+#define CERT_VERIFY_ALLOW_MORE_USAGE_FLAG   0x00000008L
+#define CERT_VERIFY_UPDATED_CTL_FLAG        0x00000001L
+
+/* Certificate revocation types */
+#define CERT_CONTEXT_REVOCATION_TYPE    1L
+
+/* CertVerifyRevocation() flags */
+#define CERT_VERIFY_REV_CHAIN_FLAG              0x00000001L
+#define CERT_VERIFY_CACHE_ONLY_BASED_REVOCATION 0x00000002L
+#define CERT_VERIFY_REV_ACCUMULATE_TIMEOUT_FLAG 0x00000004L
+#define CERT_VERIFY_REV_SERVER_OCSP_FLAG        0x00000008L
+
+/* CertIsRDNAttrsInCertificateName() flags */
+#define CERT_UNICODE_IS_RDN_ATTRS_FLAG          0x00000001L
+#define CERT_CASE_INSENSITIVE_IS_RDN_ATTRS_FLAG 0x00000002L
+
+/* Certificate subject types */
+#define CRYPT_VERIFY_CERT_SIGN_SUBJECT_BLOB                         1L
+#define CRYPT_VERIFY_CERT_SIGN_SUBJECT_CERT                         2L
+#define CRYPT_VERIFY_CERT_SIGN_SUBJECT_CRL                          3L
+#define CRYPT_VERIFY_CERT_SIGN_SUBJECT_OCSP_BASIC_SIGNED_RESPONSE   4L
+
+/* Certificate issuer types */
+#define CRYPT_VERIFY_CERT_SIGN_ISSUER_PUBKEY    1L
+#define CRYPT_VERIFY_CERT_SIGN_ISSUER_CERT      2L
+#define CRYPT_VERIFY_CERT_SIGN_ISSUER_CHAIN     3L
+#define CRYPT_VERIFY_CERT_SIGN_ISSUER_NULL      4L
+
+/* Encoded signature function names */
+#define CRYPT_OID_EXTRACT_ENCODED_SIGNATURE_PARAMETERS_FUNC \
+    "CryptDllExtractEncodedSignatureParameters"
+#define CRYPT_OID_SIGN_AND_ENCODE_HASH_FUNC     "CryptDllSignAndEncodeHash"
+#define CRYPT_OID_VERIFY_ENCODED_SIGNATURE_FUNC "CryptDllVerifyEncodedSignature"
+
+/* CryptInstallDefaultContext() flags */
+#define CRYPT_DEFAULT_CONTEXT_AUTO_RELEASE_FLAG 0x00000001L
+#define CRYPT_DEFAULT_CONTEXT_PROCESS_FLAG      0x00000002L
+
+/* CryptInstallDefaultContext() default types */
+#define CRYPT_DEFAULT_CONTEXT_CERT_SIGN_OID         1L
+#define CRYPT_DEFAULT_CONTEXT_MULTI_CERT_SIGN_OID   2L
+
+/* Public key import/export function names */
+#define CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_FUNC       "CryptDllExportPublicKeyInfoEx"
+#define CRYPT_OID_EXPORT_PUBLIC_KEY_INFO_EX2_FUNC   "CryptDllExportPublicKeyInfoEx2"
+#define CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_FUNC       "CryptDllImportPublicKeyInfoEx"
+#define CRYPT_OID_IMPORT_PUBLIC_KEY_INFO_EX2_FUNC   "CryptDllImportPublicKeyInfoEx2"
+
+/* CryptAcquireCertificatePrivateKey() flags */
+#define CRYPT_ACQUIRE_CACHE_FLAG                0x00000001L
+#define CRYPT_ACQUIRE_USE_PROV_INFO_FLAG        0x00000002L
+#define CRYPT_ACQUIRE_COMPARE_KEY_FLAG          0x00000004L
+#define CRYPT_ACQUIRE_NO_HEALING                0x00000008L
+#define CRYPT_ACQUIRE_SILENT_FLAG               0x00000040L
+#define CRYPT_ACQUIRE_NCRYPT_KEY_FLAGS_MASK     0x00070000L
+#define CRYPT_ACQUIRE_ALLOW_NCRYPT_KEY_FLAG     0x00010000L
+#define CRYPT_ACQUIRE_PREFER_NCRYPT_KEY_FLAG    0x00020000L
+#define CRYPT_ACQUIRE_ONLY_NCRYPT_KEY_FLAG      0x00040000L
+
+/* CryptFindCertificateKeyProvInfo() flags */
+#define CRYPT_FIND_USER_KEYSET_FLAG     0x00000001L
+#define CRYPT_FIND_MACHINE_KEYSET_FLAG  0x00000002L
+#define CRYPT_FIND_SILENT_KEYSET_FLAG   0x00000040L
+
+/* Private key import/export function names */
+#define CRYPT_OID_IMPORT_PRIVATE_KEY_INFO_FUNC  "CryptDllImportPrivateKeyInfoEx"
+#define CRYPT_OID_EXPORT_PRIVATE_KEY_INFO_FUNC  "CryptDllExportPrivateKeyInfoEx"
+
+/* Private key export flags */
+#define CRYPT_DELETE_KEYSET 0x00000001L
+
+/* Certificate name string types */
+#define CERT_SIMPLE_NAME_STR    1L
+#define CERT_OID_NAME_STR       2L
+#define CERT_X500_NAME_STR      3L
+#define CERT_XML_NAME_STR       4L
+
+/* Certificate name string type flags */
+#define CERT_NAME_STR_SEMICOLON_FLAG            0x40000000L
+#define CERT_NAME_STR_NO_PLUS_FLAG              0x20000000L
+#define CERT_NAME_STR_NO_QUOTING_FLAG           0x10000000L
+#define CERT_NAME_STR_CRLF_FLAG                 0x08000000L
+#define CERT_NAME_STR_COMMA_FLAG                0x04000000L
+#define CERT_NAME_STR_REVERSE_FLAG              0x02000000L
+#define CERT_NAME_STR_FORWARD_FLAG              0x01000000L
+#define CERT_NAME_STR_DISABLE_IE4_UTF8_FLAG     0x00010000L
+#define CERT_NAME_STR_ENABLE_T61_UNICODE_FLAG   0x00020000L
+#define CERT_NAME_STR_ENABLE_UTF8_UNICODE_FLAG  0x00040000L
+#define CERT_NAME_STR_FORCE_UTF8_DIR_STR_FLAG   0x00080000L
+#define CERT_NAME_STR_DISABLE_UTF8_DIR_STR_FLAG 0x00100000L
+
+/* Certificate name types */
+#define CERT_NAME_EMAIL_TYPE            1L
+#define CERT_NAME_RDN_TYPE              2L
+#define CERT_NAME_ATTR_TYPE             3L
+#define CERT_NAME_SIMPLE_DISPLAY_TYPE   4L
+#define CERT_NAME_FRIENDLY_DISPLAY_TYPE 5L
+#define CERT_NAME_DNS_TYPE              6L
+#define CERT_NAME_URL_TYPE              7L
+#define CERT_NAME_UPN_TYPE              8L
+
+/* Certificate name flags */
+#define CERT_NAME_ISSUER_FLAG           0x00000001L
+#define CERT_NAME_DISABLE_IE4_UTF8_FLAG 0x00010000L
+
+/* Cryptographic message signing flags */
+#define CRYPT_MESSAGE_BARE_CONTENT_OUT_FLAG         0x00000001L
+#define CRYPT_MESSAGE_ENCAPSULATED_CONTENT_OUT_FLAG 0x00000002L
+#define CRYPT_MESSAGE_KEYID_SIGNER_FLAG             0x00000004L
+#define CRYPT_MESSAGE_SILENT_KEYSET_FLAG            0x00000040L
+
+/* Cryptographic message encryption flags */
+#define CRYPT_MESSAGE_KEYID_RECIPIENT_FLAG  0x00000004L
+
+/* CryptQueryObject() object types */
+#define CERT_QUERY_OBJECT_FILE  0x00000001L
+#define CERT_QUERY_OBJECT_BLOB  0x00000002L
+
+/* CryptQueryObject() content types */
+#define CERT_QUERY_CONTENT_CERT                 1L
+#define CERT_QUERY_CONTENT_CTL                  2L
+#define CERT_QUERY_CONTENT_CRL                  3L
+#define CERT_QUERY_CONTENT_SERIALIZED_STORE     4L
+#define CERT_QUERY_CONTENT_SERIALIZED_CERT      5L
+#define CERT_QUERY_CONTENT_SERIALIZED_CTL       6L
+#define CERT_QUERY_CONTENT_SERIALIZED_CRL       7L
+#define CERT_QUERY_CONTENT_PKCS7_SIGNED         8L
+#define CERT_QUERY_CONTENT_PKCS7_UNSIGNED       9L
+#define CERT_QUERY_CONTENT_PKCS7_SIGNED_EMBED   10L
+#define CERT_QUERY_CONTENT_PKCS10               11L
+#define CERT_QUERY_CONTENT_PFX                  12L
+#define CERT_QUERY_CONTENT_CERT_PAIR            13L
+#define CERT_QUERY_CONTENT_PFX_AND_LOAD         14L
+
+/* CryptQueryObject() expected content type flags */
+#define CERT_QUERY_CONTENT_FLAG_CERT            (1 << CERT_QUERY_CONTENT_CERT)
+#define CERT_QUERY_CONTENT_FLAG_CTL             (1 << CERT_QUERY_CONTENT_CTL)
+#define CERT_QUERY_CONTENT_FLAG_CRL             (1 << CERT_QUERY_CONTENT_CRL)
+#define CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE \
+    (1 << CERT_QUERY_CONTENT_SERIALIZED_STORE)
+#define CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT \
+    (1 << CERT_QUERY_CONTENT_SERIALIZED_CERT)
+#define CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL \
+    (1 << CERT_QUERY_CONTENT_SERIALIZED_CTL)
+#define CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL \
+    (1 << CERT_QUERY_CONTENT_SERIALIZED_CRL)
+#define CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED    (1 << CERT_QUERY_CONTENT_PKCS7_SIGNED)
+#define CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED  (1 << CERT_QUERY_CONTENT_PKCS7_UNSIGNED)
+#define CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED \
+    (1 << CERT_QUERY_CONTENT_PKCS7_SIGNED_EMBED)
+#define CERT_QUERY_CONTENT_FLAG_PKCS10          (1 << CERT_QUERY_CONTENT_PKCS10)
+#define CERT_QUERY_CONTENT_FLAG_PKX             (1 << CERT_QUERY_CONTENT_PFX)
+#define CERT_QUERY_CONTENT_FLAG_CERT_PAIR       (1 << CERT_QUERY_CONTENT_CERT_PAIR)
+#define CERT_QUERY_CONTENT_FLAG_PFX_AND_LOAD    (1 << CERT_QUERY_CONTENT_PFX_AND_LOAD)
+#define CERT_QUERY_CONTENT_FLAG_ALL \
+    (CERT_QUERY_CONTENT_FLAG_CERT | CERT_QUERY_CONTENT_FLAG_CTL | \
+    CERT_QUERY_CONTENT_FLAG_CRL | CERT_QUERY_CONTENT_FLAG_SERIALIZED_STORE | \
+    CERT_QUERY_CONTENT_FLAG_SERIALIZED_CERT | CERT_QUERY_CONTENT_FLAG_SERIALIZED_CTL | \
+    CERT_QUERY_CONTENT_FLAG_SERIALIZED_CRL | CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED | \
+    CERT_QUERY_CONTENT_FLAG_PKCS7_UNSIGNED | \
+    CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED | CERT_QUERY_CONTENT_FLAG_PFX | \
+    CERT_QUERY_CONTENT_FLAG_CERT_PAIR)
+
+/* CryptQueryObject() format types */
+#define CERT_QUERY_FORMAT_BINARY                1L
+#define CERT_QUERY_FORMAT_BASE64_ENCODED        2L
+#define CERT_QUERY_FORMAT_ASN_ASCII_HEX_ENCODED 3L
+
+/* CryptQueryObject() expected format type flags */
+#define CERT_QUERY_FORMAT_FLAG_BINARY           (1 << CERT_QUERY_FORMAT_BINARY)
+#define CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED   (1 << CERT_QUERY_FORMAT_BASE64_ENCODED)
+#define CERT_QUERY_FORMAT_FLAG_ASN_ASCII_HEX_ENCODED \
+    (1 << CERT_QUERY_FORMAT_ASN_ASCII_HEX_ENCODED)
+#define CERT_QUERY_FORMAT_FLAG_ALL \
+    (CERT_QUERY_FORMAT_FLAG_BINARY | CERT_QUERY_FORMAT_FLAG_BASE64_ENCODED | \
+    CERT_QUERY_FORMAT_FLAG_ASN_ASCII_HEX_ENCODED)
+
+/* Cryptographic credential object identifiers */
+#define CREDENTIAL_OID_PASSWORD_CREDENTIALS_A   ((LPCSTR)1)
+#define CREDENTIAL_OID_PASSWORD_CREDENTIALS_W   ((LPCSTR)2)
+#ifdef UNICODE
+    #define CREDENTIAL_OID_PASSWORD_CREDENTIALS CREDENTIAL_OID_PASSWORD_CREDENTIALS_W
+#else
+    #define CREDENTIAL_OID_PASSWORD_CREDENTIALS CREDENTIAL_OID_PASSWORD_CREDENTIALS_A
+#endif
+
+/* Scheme provider function names */
+#define SCHEME_OID_RETRIEVE_ENCODED_OBJECT_FUNC     "SchemeDllRetrieveEncodedObject"
+#define SCHEME_OID_RETRIEVE_ENCODED_OBJECTW_FUNC    "SchemeDllRetrieveEncodedObjectW"
+
+/* Context provider function names */
+#define CONTEXT_OID_CREATE_OBJECT_CONTEXT_FUNC  "ContextDllCreateObjectContext"
+
+/* Context object identifiers */
+#define CONTEXT_OID_CERTIFICATE ((LPCSTR)1)
+#define CONTEXT_OID_CRL         ((LPCSTR)2)
+#define CONTEXT_OID_CTL         ((LPCSTR)3)
+#define CONTEXT_OID_PKCS7       ((LPCSTR)4)
+#define CONTEXT_OID_CAPI2_ANY   ((LPCSTR)5)
+#define CONTEXT_OID_OCSP_RESP   ((LPCSTR)6)
+
+/* Remote object retrieval flags */
+#define CRYPT_RETRIEVE_MULTIPLE_OBJECTS         0x00000001L
+#define CRYPT_CACHE_ONLY_RETRIEVAL              0x00000002L
+#define CRYPT_WIRE_ONLY_RETRIEVAL               0x00000004L
+#define CRYPT_DONT_CACHE_RESULT                 0x00000008L
+#define CRYPT_ASYNC_RETRIEVAL                   0x00000010L
+#define CRYPT_STICKY_CACHE_RETRIEVAL            0x00001000L
+#define CRYPT_LDAP_SCOPE_BASE_ONLY_RETRIEVAL    0x00002000L
+#define CRYPT_OFFLINE_CHECK_RETRIEVAL           0x00004000L
+#define CRYPT_LDAP_INSERT_ENTRY_ATTRIBUTE       0x00008000L
+#define CRYPT_LDAP_SIGN_RETRIEVAL               0x00010000L
+#define CRYPT_NO_AUTH_RETRIEVAL                 0x00020000L
+#define CRYPT_LDAP_AREC_EXCLUSIVE_RETRIEVAL     0x00040000L
+#define CRYPT_AIA_RETRIEVAL                     0x00080000L
+#define CRYPT_HTTP_POST_RETRIEVAL               0x00100000L
+#define CRYPT_PROXY_CACHE_RETRIEVAL             0x00200000L
+#define CRYPT_NOT_MODIFIED_RETRIEVAL            0x00400000L
+#define CRYPT_VERIFY_CONTEXT_SIGNATURE          0x00000020L
+#define CRYPT_VERIFY_DATA_HASH                  0x00000040L
+#define CRYPT_KEEP_TIME_VALID                   0x00000080L
+#define CRYPT_DONT_VERIFY_SIGNATURE             0x00000100L
+#define CRYPT_DONT_CHECK_TIME_VALIDITY          0x00000200L
+#define CRYPT_CHECK_FRESHNESS_TIME_VALIDITY     0x00000400L
+#define CRYPT_ACCUMULATE_TIMEOUT                0x00000800L
+#define CRYPT_OCSP_ONLY_RETRIEVAL               0x01000000L
+
+/* Pre-fetch object types */
+#define CRYPTNET_URL_CACHE_PRE_FETCH_NONE           0L
+#define CRYPTNET_URL_CACHE_PRE_FETCH_BLOB           1L
+#define CRYPTNET_URL_CACHE_PRE_FETCH_CRL            2L
+#define CRYPTNET_URL_CACHE_PRE_FETCH_OCSP           3L
+#define CRYPTNET_URL_CACHE_PRE_FETCH_AUTOROOT_CAB   5L
+
+/* URL cache exempt seconds special values */
+#define CRYPTNET_URL_CACHE_DEFAULT_FLUSH    0x00000000L
+#define CRYPTNET_URL_CACHE_DISABLE_FLUSH    0xFFFFFFFFL
+
+/* URL cache response types */
+#define CRYPTNET_URL_CACHE_RESPONSE_NONE    0
+#define CRYPTNET_URL_CACHE_RESPONSE_HTTP    1
+
+/* URL cache response flags */
+#define CRYPTNET_URL_CACHE_RESPONSE_VALIDATED   0x8000
+
+/* Asynchronous handle special values */
+#define CRYPT_PARAM_ASYNC_RETRIEVAL_COMPLETION  ((LPCSTR)1)
+#define CRYPT_PARAM_CANCEL_ASYNC_RETRIEVAL      ((LPCSTR)2)
+
+/* Cryptographic URL flags */
+#define CRYPT_GET_URL_FROM_PROPERTY         0x00000001L
+#define CRYPT_GET_URL_FROM_EXTENSION        0x00000002L
+#define CRYPT_GET_URL_FROM_UNAUTH_ATTRIBUTE 0x00000004L
+#define CRYPT_GET_URL_FROM_AUTH_ATTRIBUTE   0x00000008L
+
+/* Cryptographic URL function names */
+#define URL_OID_GET_OBJECT_URL_FUNC "UrlDllGetObjectUrl"
+
+/* Cryptographic URL object identifiers */
+#define URL_OID_CERTIFICATE_ISSUER                  ((LPCSTR)1)
+#define URL_OID_CERTIFICATE_CRL_DIST_POINT          ((LPCSTR)2)
+#define URL_OID_CTL_ISSUER                          ((LPCSTR)3)
+#define URL_OID_CTL_NEXT_UPDATE                     ((LPCSTR)4)
+#define URL_OID_CRL_ISSUER                          ((LPCSTR)5)
+#define URL_OID_CERTIFICATE_FRESHEST_CRL            ((LPCSTR)6)
+#define URL_OID_CRL_FRESHEST_CRL                    ((LPCSTR)7)
+#define URL_OID_CROSS_CERT_DIST_POINT               ((LPCSTR)8)
+#define URL_OID_CERTIFICATE_OCSP                    ((LPCSTR)9)
+#define URL_OID_CERTIFICATE_OCSP_AND_CRL_DIST_POINT ((LPCSTR)10)
+#define URL_OID_CERTIFICATE_CRL_DIST_POINT_AND_OCSP ((LPCSTR)11)
+#define URL_OID_CROSS_CERT_SUBJECT_INFO_ACCESS      ((LPCSTR)12)
+
+/* Time valid object function names */
+#define TIME_VALID_OID_GET_OBJECT_FUNC      "TimeValidDllGetObject"
+#define TIME_VALID_OID_FLUSH_OBJECT_FUNC    "TimeValidDllFlushObject"
+
+/* Time valid object identifiers */
+#define TIME_VALID_OID_GET_CTL                      ((LPCSTR)1)
+#define TIME_VALID_OID_GET_CRL                      ((LPCSTR)2)
+#define TIME_VALID_OID_GET_CRL_FROM_CERT            ((LPCSTR)3)
+#define TIME_VALID_OID_GET_FRESHEST_CRL_FROM_CERT   ((LPCSTR)4)
+#define TIME_VALID_OID_GET_FRESHEST_CRL_FROM_CRL    ((LPCSTR)5)
+#define TIME_VALID_OID_FLUSH_CTL                    ((LPCSTR)1)
+#define TIME_VALID_OID_FLUSH_CRL                    ((LPCSTR)2)
+#define TIME_VALID_OID_FLUSH_CRL_FROM_CERT          ((LPCSTR)3)
+#define TIME_VALID_OID_FLUSH_FRESHEST_CRL_FROM_CERT ((LPCSTR)4)
+#define TIME_VALID_OID_FLUSH_FRESHEST_CRL_FORM_CRL  ((LPCSTR)5)
+
+/* Cryptographic protection default provider */
+#define CRYPTPROTECT_DEFAULT_PROVIDER   { 0xDF9D8CD0, 0x1501, 0x11D1, { 0x8C, 0x7A, 0x00, 0xC0, 0x4F, 0xC2, 0x97, 0xEB } }
+
+/* Cryptographic protection prompt flags */
+#define CRYPTPROTECT_PROMPT_ON_UNPROTECT    0x00000001L
+#define CRYPTPROTECT_PROMPT_ON_PROTECT      0x00000002L
+#define CRYPTPROTECT_PROMPT_RESERVED        0x00000004L
+#define CRYPTPROTECT_PROMPT_STRONG          0x00000008L
+#define CRYPTPROTECT_PROMPT_REQUIRE_STRONG  0x00000010L
+
+/* CryptProtectData() and CryptUnprotectData() flags */
+#define CRYPTPROTECT_UI_FORBIDDEN           0x00000001L
+#define CRYPTPROTECT_LOCAL_MACHINE          0x00000004L
+#define CRYPTPROTECT_CRED_SYNC              0x00000008L
+#define CRYPTPROTECT_AUDIT                  0x00000010L
+#define CRYPTPROTECT_NO_RECOVERY            0x00000020L
+#define CRYPTPROTECT_VERIFY_PROTECTION      0x00000040L
+#define CRYPTPROTECT_CRED_REGENERATE        0x00000080L
+#define CRYPTPROTECT_FIRST_RESERVED_FLAGVAL 0x0FFFFFFFL
+#define CRYPTPROTECT_LAST_RESERVED_FLAGVAL  0xFFFFFFFFL
+
+/* CryptProtectMemory() and CryptUnprotectMemory() buffer length */
+#define CRYPTPROTECTMEMORY_BLOCK_SIZE   16
+
+/* CryptProtectMemory() and CryptUnprotectMemory() flags */
+#define CRYPTPROTECTMEMORY_SAME_PROCESS     0x00000000L
+#define CRYPTPROTECTMEMORY_CROSS_PROCESS    0x00000001L
+#define CRYPTPROTECTMEMORY_SAME_LOGON       0x00000002L
+
+/* CertCreateSelfSignCertificate() flags */
+#define CERT_CREATE_SELFSIGN_NO_SIGN        0x00000001L
+#define CERT_CREATE_SELFSIGN_NO_KEY_INFO    0x00000002L
+
+/* CryptGetKeyIdentifierProperty() flags */
+#define CRYPT_KEYID_MACHINE_FLAG    0x00000020L
+#define CRYPT_KEYID_ALLOC_FLAG      0x00008000L
+
+/* CryptSetKeyIdentifierProperty() flags */
+#define CRYPT_KEYID_DELETE_FLAG     0x00000010L
+#define CRYPT_KEYID_SET_NEW_FLAG    0x00002000L
+
+/* Certificate chaining registry paths */
+#define CERT_CHAIN_CONFIG_REGPATH \
+    L"Software\\Microsoft\\Cryptography\\OID\\EncodingType 0\\CertDllCreateCertificateChainEngine\\Config"
+#define CERT_CHAIN_CACHE_RESYNC_FILETIME_VALUE_NAME         L"ChainCacheResyncFiletime"
+#define CERT_CHAIN_DISABLE_MANDATORY_BASIC_CONSTRAINTS_VALUE_NAME \
+    L"DisableMandatoryBasicConstraints"
+#define CERT_CHAIN_DISABLE_CA_NAME_CONSTRAINTS_VALUE_NAME   L"DisableCANameConstraints"
+#define CERT_CHAIN_DISABLE_UNSUPPORTED_CRITICAL_EXTENSIONS_VALUE_NAME \
+    L"DisableUnsupportedCriticalExtensions"
+#define CERT_CHAIN_MAX_AIA_URL_COUNT_IN_CERT_VALUE_NAME     L"MaxAIAUrlCountInCert"
+#define CERT_CHAIN_MAX_AIA_URL_COUNT_IN_CERT_DEFAULT        5L
+#define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_COUNT_PER_CHAIN_VALUE_NAME \
+    L"MaxAIAUrlRetrievalCountPerChain"
+#define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_COUNT_PER_CHAIN_DEFAULT    10L
+#define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_BYTE_COUNT_VALUE_NAME \
+    L"MaxAIAUrlRetrievalByteCount"
+#define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_BYTE_COUNT_DEFAULT 100000L
+#define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_CERT_COUNT_VALUE_NAME \
+    L"MaxAIAUrlRetrievalCertCount"
+#define CERT_CHAIN_MAX_AIA_URL_RETRIEVAL_CERT_COUNT_DEFAULT 10L
+#define CERT_CHAIN_OCSP_VALIDITY_SECONDS_VALUE_NAME         L"OcspValiditySeconds"
+#define CERT_CHAIN_OCSP_VALIDITY_SECONDS_DEFAULT            (12 * 60 * 60)
+#define CERT_SRV_OCSP_RESP_MIN_VALIDITY_SECONDS_VALUE_NAME \
+    L"SrvOcspRespMinValiditySeconds"
+#define CERT_SRV_OCSP_RESP_MIN_VALIDITY_SECONDS_DEFAULT     (10 * 60)
+#define CERT_SRV_OCSP_RESP_URL_RETRIEVAL_TIMEOUT_MILLISECONDS_VALUE_NAME \
+    L"SrvOcspRespUrlRetrievalTimeoutMilliseconds"
+#define CERT_SRV_OCSP_RESP_URL_RETRIEVAL_TIMEOUT_MILLISECONDS_DEFAULT   (15 * 1000)
+#define CERT_SRV_OCSP_RESP_MAX_BEFORE_NEXT_UPDATE_SECONDS_VALUE_NAME \
+    L"SrvOcspRespMaxBeforeNextUpdateSeconds"
+#define CERT_SRV_OCSP_RESP_MAX_BEFORE_NEXT_UPDATE_SECONDS_DEFAULT   (4 * 60 * 60)
+#define CERT_SRV_OCSP_RESP_MIN_BEFORE_NEXT_UPDATE_SECONDS_VALUE_NAME \
+    L"SrvOcspRespMinBeforeNextUpdateSeconds"
+#define CERT_SRV_OCSP_RESP_MIN_BEFORE_NEXT_UPDATE_SECONDS_DEFAULT   (2 * 60)
+#define CERT_SRV_OCSP_RESP_MIN_AFTER_NEXT_UPDATE_SECONDS_VALUE_NAME \
+    L"SrvOcspRespMinAfterNextUpdateSeconds"
+#define CERT_SRV_OCSP_RESP_MIN_AFTER_NEXT_UPDATE_SECONDS_DEFAULT    (1 * 60)
+#define CRYPTNET_MAX_CACHED_OCSP_PER_CRL_COUNT_VALUE_NAME \
+    L"CryptnetMaxCachedOcspPerCrlCount"
+#define CRYPTNET_MAX_CACHED_OCSP_PER_CRL_COUNT_DEFAULT      500L
+#define CRYPTNET_OCSP_AFTER_CRL_DISABLE                     0xFFFFFFFFL
+#define CRYPTNET_URL_CACHE_DEFAULT_FLUSH_EXEMPT_SECONDS_VALUE_NAME \
+    L"CryptnetDefaultFlushExemptSeconds"
+#define CRYPTNET_URL_CACHE_DEFAULT_FLUSH_EXEMPT_SECONDS_DEFAULT (28 * 24 * 60 * 60)
+#define CRYPTNET_PRE_FETCH_MIN_MAX_AGE_SECONDS_VALUE_NAME \
+    L"CryptnetPreFetchMinMaxAgeSeconds"
+#define CRYPTNET_PRE_FETCH_MIN_MAX_AGE_SECONDS_DEFAULT      (1 * 60 * 60)
+#define CRYPTNET_PRE_FETCH_MAX_MAX_AGE_SECONDS_VALUE_NAME \
+    L"CryptnetPreFetchMaxMaxAgeSeconds"
+#define CRYPTNET_PRE_FETCH_MAX_MAX_AGE_SECONDS_DEFAULT      (14 * 24 * 60 * 60)
+#define CRYPTNET_PRE_FETCH_AFTER_PUBLISH_PRE_FETCH_DIVISOR_VALUE_NAME \
+    L"CryptnetPreFetchAfterPublishPreFetchDivisor"
+#define CRYPTNET_PRE_FETCH_AFTER_PUBLISH_PRE_FETCH_DIVISOR_DEFAULT  10L
+#define CRYPTNET_PRE_FETCH_BEFORE_NEXT_UPDATE_PRE_FETCH_DIVISOR_VALUE_NAME \
+    L"CryptnetPreFetchBeforeNextUpdatePreFetchDivisor"
+#define CRYPTNET_PRE_FETCH_BEFORE_NEXT_UPDATE_PRE_FETCH_DIVISOR_DEFAULT 20L
+#define CRYPTNET_PRE_FETCH_MIN_BEFORE_NEXT_UPDATE_PRE_FETCH_PERIOD_SECONDS_VALUE_NAME \
+    L"CryptnetPreFetchMinBeforeNextUpdatePreFetchSeconds"
+#define CRYPTNET_PRE_FETCH_MIN_BEFORE_NEXT_UPDATE_PRE_FETCH_PERIOD_SECONDS_DEFAULT \
+    (1 * 60 * 60)
+#define CRYPTNET_PRE_FETCH_VALIDITY_PERIOD_AFTER_NEXT_UPDATE_PRE_FETCH_DIVISOR_VALUE_NAME \
+    L"CryptnetPreFetchValidityPeriodAfterNextUpdatePreFetchDivisor"
+#define CRYPTNET_PRE_FETCH_VALIDITY_PERIOD_AFTER_NEXT_UPDATE_PRE_FETCH_DIVISOR_DEFAULT \
+    10L
+#define CRYPTNET_PRE_FETCH_MAX_AFTER_NEXT_UPDATE_PRE_FETCH_PERIOD_SECONDS_VALUE_NAME \
+    L"CryptnetPreFetchMaxAfterNextUpdatePreFetchPeriodSeconds"
+#define CRYPTNET_PRE_FETCH_MAX_AFTER_NEXT_UPDATE_PRE_FETCH_PERIOD_SECONDS_DEFAULT \
+    (4 * 60 * 60)
+#define CRYPTNET_PRE_FETCH_MIN_AFTER_NEXT_UPDATE_PRE_FETCH_PERIOD_SECONDS_VALUE_NAME \
+    L"CryptnetPreFetchMinAfterNextUpdatePreFetchPeriodSeconds"
+#define CRYPTNET_PRE_FETCH_MIN_AFTER_NEXT_UPDATE_PRE_FETCH_PERIOD_SECONDS_DEFAULT \
+    (30 * 60)
+#define CRYPTNET_PRE_FETCH_AFTER_CURRENT_TIME_PRE_FETCH_PERIOD_SECONDS_VALUE_NAME \
+    L"CryptnetPreFetchAfterCurrentTimePreFetchPeriodSeconds"
+#define CRYPTNET_PRE_FETCH_AFTER_CURRENT_TIME_PRE_FETCH_PERIOD_SECONDS_DEFAULT \
+    (30 * 60)
+#define CRYPTNET_PRE_FETCH_TRIGGER_PERIOD_SECONDS_VALUE_NAME \
+    L"CryptnetPreFetchTriggerPeriodSeconds"
+#define CRYPTNET_PRE_FETCH_TRIGGER_PERIOD_SECONDS_DEFAULT   (10 * 60)
+#define CRYPTNET_PRE_FETCH_TRIGGER_DISABLE                  0xFFFFFFFFL
+#define CRYPTNET_PRE_FETCH_SCAN_AFTER_TRIGGER_DELAY_SECONDS_VALUE_NAME \
+    L"CryptnetPreFetchScanAfterTriggerDelaySeconds"
+#define CRYPTNET_PRE_FETCH_SCAN_AFTER_TRIGGER_DELAY_SECONDS_DEFAULT 30L
+#define CRYPTNET_PRE_FETCH_RETRIEVAL_TIMEOUT_SECONDS_VALUE_NAME \
+    L"CryptnetPreFetchRetrievalTimeoutSeconds"
+#define CRYPTNET_PRE_FETCH_RETRIEVAL_TIMEOUT_SECONDS_DEFAULT    (5 * 60)
+#define CERT_GROUP_POLICY_CHAIN_CONFIG_REGPATH \
+    CERT_GROUP_POLICY_SYSTEM_STORE_REGPATH L"\\ChainEngine\\Config"
+#define CERT_CHAIN_URL_RETRIEVAL_TIMEOUT_MILLISECONDS_VALUE_NAME \
+    L"ChainUrlRetrievalTimeoutMilliseconds"
+#define CERT_CHAIN_URL_RETRIEVAL_TIMEOUT_MILLISECONDS_DEFAULT   (15 * 1000)
+#define CERT_CHAIN_REV_ACCUMULATIVE_URL_RETRIEVAL_TIMEOUT_MILLISECONDS_VALUE_NAME \
+    L"ChainRevAccumulativeUrlRetrievalTimeoutMilliseconds"
+#define CERT_CHAIN_REV_ACCUMULATIVE_URL_RETRIEVAL_TIMEOUT_MILLISECONDS_DEFAULT \
+    (20 * 1000)
+#define CRYPTNET_CACHED_OCSP_SWITCH_TO_CRL_COUNT_VALUE_NAME \
+    L"CryptnetCachedOcspSwitchToCrlCount"
+#define CRYPTNET_CACHED_OCSP_SWITCH_TO_CRL_COUNT_DEFAULT    50L
+#define CRYPTNET_CRL_BEFORE_OCSP_ENABLE                     0xFFFFFFFFL
+#define CERT_CHAIN_DISABLE_AIA_URL_RETRIEVAL_VALUE_NAME     L"DisableAIAUrlRetrieval"
+#define CERT_CHAIN_OPTIONS_VALUE_NAME                       L"Options"
+#define CERT_CHAIN_DISABLE_AIA_URL_RETRIEVAL_               0x00000002L
+#define CERT_CHAIN_CROSS_CERT_DOWNLOAD_INTERVAL_HOURS_VALUE_NAME \
+    L"CrossCertDownloadIntervalHours"
+#define CERT_CHAIN_CROSS_CERT_DOWNLOAD_INTERVAL_HOURS_DEFAULT   (24 * 7)
+#define CERT_CHAIN_CRL_VALIDITY_EXT_PERIOD_HOURS_VALUE_NAME L"CRLValidityExtensionPeriod"
+#define CERT_CHAIN_CRL_VALIDITY_EXT_PERIOD_HOURS_DEFAULT    12L
+
+/* Certificate chain engine handle special values */
+#define HCCE_CURRENT_USER   ((HCERTCHAINENGINE)0x00000000L)
+#define HCCE_LOCAL_MACHINE  ((HCERTCHAINENGINE)0x00000001L)
+
+/* Certificate chain flags */
+#define CERT_CHAIN_CACHE_END_CERT           0x00000001L
+#define CERT_CHAIN_THREAD_STORE_SYNC        0x00000002L
+#define CERT_CHAIN_CACHE_ONLY_URL_RETRIEVAL 0x00000004L
+#define CERT_CHAIN_USE_LOCAL_MACHINE_STORE  0x00000008L
+#define CERT_CHAIN_ENABLE_CACHE_AUTO_UPDATE 0x00000010L
+#define CERT_CHAIN_ENABLE_SHARE_STORE       0x00000020L
+
+/* Certificate trust error status flags */
+#define CERT_TRUST_NO_ERROR                             0x00000000L
+#define CERT_TRUST_IS_NOT_TIME_VALID                    0x00000001L
+#define CERT_TRUST_IS_NOT_TIME_NESTED                   0x00000002L
+#define CERT_TRUST_IS_REVOKED                           0x00000004L
+#define CERT_TRUST_IS_NOT_SIGNATURE_VALID               0x00000008L
+#define CERT_TRUST_IS_NOT_VALID_FOR_USAGE               0x00000010L
+#define CERT_TRUST_IS_UNTRUSTED_ROOT                    0x00000020L
+#define CERT_TRUST_REVOCATION_STATUS_UNKNOWN            0x00000040L
+#define CERT_TRUST_IS_CYCLIC                            0x00000080L
+#define CERT_TRUST_INVALID_EXTENSION                    0x00000100L
+#define CERT_TRUST_INVALID_POLICY_CONSTRAINTS           0x00000200L
+#define CERT_TRUST_INVALID_BASIC_CONSTRAINTS            0x00000400L
+#define CERT_TRUST_INVALID_NAME_CONSTRAINTS             0x00000800L
+#define CERT_TRUST_HAS_NOT_SUPPORTED_NAME_CONSTRAINT    0x00001000L
+#define CERT_TRUST_HAS_NOT_DEFINED_NAME_CONSTRAINT      0x00002000L
+#define CERT_TRUST_HAS_NOT_PERMITTED_NAME_CONSTRAINT    0x00004000L
+#define CERT_TRUST_HAS_EXCLUDED_NAME_CONSTRAINT         0x00008000L
+#define CERT_TRUST_IS_OFFLINE_REVOCATION                0x01000000L
+#define CERT_TRUST_NO_ISSUANCE_CHAIN_POLICY             0x02000000L
+#define CERT_TRUST_IS_EXPLICIT_DISTRUST                 0x04000000L
+#define CERT_TRUST_HAS_NOT_SUPPORTED_CRITICAL_EXT       0x08000000L
+#define CERT_TRUST_IS_PARTIAL_CHAIN                     0x00010000L
+#define CERT_TRUST_CTL_IS_NOT_TIME_VALID                0x00020000L
+#define CERT_TRUST_CTL_IS_NOT_SIGNATURE_VALID           0x00040000L
+#define CERT_TRUST_CTL_IS_NOT_VALID_FOR_USAGE           0x00080000L
+
+/* Certificate trust information status flags */
+#define CERT_TRUST_HAS_EXACT_MATCH_ISSUER       0x00000001L
+#define CERT_TRUST_HAS_KEY_MATCH_ISSUER         0x00000002L
+#define CERT_TRUST_HAS_NAME_MATCH_ISSUER        0x00000004L
+#define CERT_TRUST_IS_SELF_SIGNED               0x00000008L
+#define CERT_TRUST_HAS_PREFERRED_ISSUER         0x00000100L
+#define CERT_TRUST_HAS_ISSUANCE_CHAIN_POLICY    0x00000200L
+#define CERT_TRUST_HAS_VALID_NAME_CONSTRAINTS   0x00000400L
+#define CERT_TRUST_IS_PEER_TRUSTED              0x00000800L
+#define CERT_TRUST_HAS_CRL_VALIDITY_EXTENDED    0x00001000L
+#define CERT_TRUST_IS_COMPLEX_CHAIN             0x00010000L
+
+/* Usage match types */
+#define USAGE_MATCH_TYPE_AND    0x00000000L
+#define USAGE_MATCH_TYPE_OR     0x00000001L
+
+/* Certificate chain flags */
+#define CERT_CHAIN_REVOCATION_CHECK_END_CERT            0x10000000L
+#define CERT_CHAIN_REVOCATION_CHECK_CHAIN               0x20000000L
+#define CERT_CHAIN_REVOCATION_CHECK_CHAIN_EXCLUDE_ROOT  0x40000000L
+#define CERT_CHAIN_REVOCATION_CHECK_CACHE_ONLY          0x80000000L
+#define CERT_CHAIN_REVOCATION_ACCUMULATIVE_TIMEOUT      0x08000000L
+#define CERT_CHAIN_DISABLE_PASS1_QUALITY_FILTERING      0x00000040L
+#define CERT_CHAIN_RETURN_LOWER_QUALITY_CONTEXTS        0x00000080L
+#define CERT_CHAIN_DISABLE_AUTH_ROOT_AUTO_UPDATE        0x00000100L
+#define CERT_CHAIN_TIMESTAMP_TIME                       0x00000200L
+#define CERT_CHAIN_ENABLE_PEER_TRUST                    0x00000400L
+#define CERT_CHAIN_DISABLE_MY_PEER_TRUST                0x00000800L
+
+/* CRL revocation object identifier */
+#define REVOCATION_OID_CRL_REVOCATION   ((LPCSTR)1)
+
+/* Certificate chain find types */
+#define CERT_CHAIN_FIND_BY_ISSUER   1L
+
+/* Certificate chain find by issuer flags */
+#define CERT_CHAIN_FIND_BY_ISSUER_COMPARE_KEY_FLAG      0x00000001L
+#define CERT_CHAIN_FIND_BY_ISSUER_COMPLEX_CHAIN_FLAG    0x00000002L
+#define CERT_CHAIN_FIND_BY_ISSUER_CACHE_ONLY_URL_FLAG   0x00000004L
+#define CERT_CHAIN_FIND_BY_ISSUER_LOCAL_MACHINE_FLAG    0x00000008L
+#define CERT_CHAIN_FIND_BY_ISSUER_NO_KEY_FLAG           0x00004000L
+#define CERT_CHAIN_FIND_BY_ISSUER_CACHE_ONLY_FLAG       0x00008000L
+
+/* Certificate chain policy flags */
+#define CERT_CHAIN_POLICY_IGNORE_NOT_TIME_VALID_FLAG                0x00000001L
+#define CERT_CHAIN_POLICY_IGNORE_CTL_NOT_TIME_VALID_FLAG            0x00000002L
+#define CERT_CHAIN_POLICY_IGNORE_NOT_TIME_NESTED_FLAG               0x00000004L
+#define CERT_CHAIN_POLICY_IGNORE_INVALID_BASIC_CONSTRAINTS_FLAG     0x00000008L
+#define CERT_CHAIN_POLICY_IGNORE_ALL_NOT_TIME_VALID_FLAGS \
+    (CERT_CHAIN_POLICY_IGNORE_NOT_TIME_VALID_FLAG | \
+    CERT_CHAIN_POLICY_IGNORE_CTL_NOT_TIME_VALID_FLAG | \
+    CERT_CHAIN_POLICY_IGNORE_NOT_TIME_NESTED_FLAG)
+#define CERT_CHAIN_POLICY_ALLOW_UNKNOWN_CA_FLAG                     0x00000010L
+#define CERT_CHAIN_POLICY_IGNORE_WRONG_USAGE_FLAG                   0x00000020L
+#define CERT_CHAIN_POLICY_IGNORE_INVALID_NAME_FLAG                  0x00000040L
+#define CERT_CHAIN_POLICY_IGNORE_INVALID_POLICY_FLAG                0x00000080L
+#define CERT_CHAIN_POLICY_IGNORE_END_REV_UNKNOWN_FLAG               0x00000100L
+#define CERT_CHAIN_POLICY_IGNORE_CTL_SIGNER_REV_UNKNOWN_FLAG        0x00000200L
+#define CERT_CHAIN_POLICY_IGNORE_CA_REV_UNKNOWN_FLAG                0x00000400L
+#define CERT_CHAIN_POLICY_IGNORE_ROOT_REV_UNKNOWN_FLAG              0x00000800L
+#define CERT_CHAIN_POLICY_IGNORE_ALL_REV_UNKNOWN_FLAGS \
+    (CERT_CHAIN_POLICY_IGNORE_END_REV_UNKNOWN_FLAG | \
+    CERT_CHAIN_POLICY_IGNORE_CTL_SIGNER_REV_UNKNOWN_FLAG | \
+    CERT_CHAIN_POLICY_IGNORE_CA_REV_UNKNOWN_FLAG | \
+    CERT_CHAIN_POLICY_IGNORE_ROOT_REV_UNKNOWN_FLAG)
+#define CERT_CHAIN_POLICY_ALLOW_TESTROOT_FLAG                       0x00008000L
+#define CERT_CHAIN_POLICY_TRUST_TESTROOT_FLAG                       0x00004000L
+#define CERT_CHAIN_POLICY_IGNORE_NOT_SUPPORTED_CRITICAL_EXT_FLAG    0x00002000L
+#define CERT_CHAIN_POLICY_IGNORE_PEER_TRUST_FLAG                    0x00001000L
+
+/* Certificate chain policy function names */
+#define CRYPT_OID_VERIFY_CERTIFICATE_CHAIN_POLICY_FUNC \
+    "CertDllVerifyCertificateChainPolicy"
+
+/* Predefined certificate chain policies */
+#define CERT_CHAIN_POLICY_BASE              ((LPCSTR)1)
+#define CERT_CHAIN_POLICY_AUTHENTICODE      ((LPCSTR)2)
+#define CERT_CHAIN_POLICY_AUTHENTICODE_TS   ((LPCSTR)3)
+#define CERT_CHAIN_POLICY_SSL               ((LPCSTR)4)
+#define CERT_CHAIN_POLICY_BASIC_CONSTRAINTS ((LPCSTR)5)
+#define CERT_CHAIN_POLICY_NT_AUTH           ((LPCSTR)6)
+#define CERT_CHAIN_POLICY_MICROSOFT_ROOT    ((LPCSTR)7)
+
+/* Authentication types */
+#define AUTHTYPE_CLIENT 1L
+#define AUTHTYPE_SERVER 2L
+
+/* Certificate chain basic constraints */
+#define BASIC_CONSTRAINTS_CERT_CHAIN_POLICY_CA_FLAG         0x80000000L
+#define BASIC_CONSTRAINTS_CERT_CHAIN_POLICY_END_ENTITY_FLAG 0x40000000L
+
+/* Microsoft root flags */
+#define MICROSOFT_ROOT_CERT_CHAIN_POLICY_ENABLE_TEST_ROOT_FLAG  0x00010000L
+
+/* Cryptographic string/binary conversion flags */
+#define CRYPT_STRING_BASE64HEADER           0x00000000L
+#define CRYPT_STRING_BASE64                 0x00000001L
+#define CRYPT_STRING_BINARY                 0x00000002L
+#define CRYPT_STRING_BASE64REQUESTHEADER    0x00000003L
+#define CRYPT_STRING_HEX                    0x00000004L
+#define CRYPT_STRING_HEXASCII               0x00000005L
+#define CRYPT_STRING_BASE64_ANY             0x00000006L
+#define CRYPT_STRING_ANY                    0x00000007L
+#define CRYPT_STRING_HEX_ANY                0x00000008L
+#define CRYPT_STRING_BASE64X509CRLHEADER    0x00000009L
+#define CRYPT_STRING_HEXADDR                0x0000000AL
+#define CRYPT_STRING_HEXASCIIADDR           0x0000000BL
+#define CRYPT_STRING_HEXRAW                 0x0000000CL
+#define CRYPT_STRING_NOCRLF                 0x40000000L
+#define CRYPT_STRING_NOCR                   0x80000000L
+
+/* PFXImportCertStore() flags */
+#define CRYPT_USER_KEYSET           0x00001000L
+#define PKCS12_PREFER_CNG_KSP       0x00000100L
+#define PKCS12_ALWAYS_CNG_KSP       0x00000200L
+#define PKCS12_ALLOW_OVERWRITE_KEY  0x00004000L
+#define PKCS12_NO_PERSIST_KEY       0x00008000L
+#define PKCS12_IMPORT_RESERVED_MASK 0xFFFF0000L
+
+/* PFXExportCertStoreEx() flags */
+#define REPORT_NO_PRIVATE_KEY                   0x00000001L
+#define REPORT_NOT_ABLE_TO_EXPORT_PRIVATE_KEY   0x00000002L
+#define EXPORT_PRIVATE_KEYS                     0x00000004L
+#define PKCS12_INCLUDE_EXTENDED_PROPERTIES      0x00000010L
+#define PKCS12_EXPORT_RESERVED_MASK             0xFFFF0000L
+
+/* Predefined logo types */
+#define CERT_RETRIEVE_ISSUER_LOGO       ((LPCSTR)1)
+#define CERT_RETRIEVE_SUBJECT_LOGO      ((LPCSTR)2)
+#define CERT_RETRIEVE_COMMUNITY_LOGO    ((LPCSTR)3)
+
+/* Predefined biometric types */
+#define CERT_RETRIEVE_BIOMETRIC_PREDEFINED_BASE_TYPE    ((LPCSTR)1000)
+#define CERT_RETRIEVE_BIOMETRIC_PICTURE_TYPE \
+    (CERT_RETRIEVE_BIOMETRIC_PREDEFINED_BASE_TYPE + CERT_BIOMETRIC_PICTURE_TYPE)
+#define CERT_RETRIEVE_BIOMETRIC_SIGNATURE_TYPE \
+    (CERT_RETRIEVE_BIOMETRIC_PREDEFINED_BASE_TYPE + CERT_BIOMETRIC_SIGNATURE_TYPE)
 
 /* Provider vtable */
 #if (NTDDI_VERSION < 0x05010000)
@@ -4033,6 +4774,618 @@ typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_FIND_CTL)( HCERTSTOREPROV, PCCERT_STOR
 typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_FREE_FIND_CTL)( HCERTSTOREPROV, PCCTL_CONTEXT, void *, DWORD );
 typedef BOOL (WINAPI *PFN_CERT_STORE_PROV_GET_CTL_PROPERTY)( HCERTSTOREPROV, PCCTL_CONTEXT, DWORD, DWORD, void *, DWORD * );
 
+/* CertFindCRLInStore() parameters used with CRL_FIND_ISSUED_FOR */
+typedef struct _CRL_FIND_ISSUED_FOR_PARA {
+    PCCERT_CONTEXT  pSubjectCert;
+    PCCERT_CONTEXT  pIssuerCert;
+} CRL_FIND_ISSUED_FOR_PARA;
+typedef CRL_FIND_ISSUED_FOR_PARA    *PCRL_FIND_ISSUED_FOR_PARA;
+
+/* CTL any subject information */
+typedef struct _CTL_ANY_SUBJECT_INFO {
+    CRYPT_ALGORITHM_IDENTIFIER  SubjectAlgorithm;
+    CRYPT_DATA_BLOB             SubjectIdentifier;
+} CTL_ANY_SUBJECT_INFO;
+typedef CTL_ANY_SUBJECT_INFO    *PCTL_ANY_SUBJECT_INFO;
+
+/* CertFindCTLInStore() parameters used with CTL_FIND_USAGE */
+typedef struct _CTL_FIND_USAGE_PARA {
+    DWORD           cbSize;
+    CTL_USAGE       SubjectUsage;
+    CRYPT_DATA_BLOB ListIdentifier;
+    PCERT_INFO      pSigner;
+} CTL_FIND_USAGE_PARA;
+typedef CTL_FIND_USAGE_PARA *PCTL_FIND_USAGE_PARA;
+
+/* CertFindCTLInStore() parameters ued with CTL_FIND_SUBJECT */
+typedef struct _CTL_FIND_SUBJECT_PARA {
+    DWORD                   cbSize;
+    PCTL_FIND_USAGE_PARA    pUsagePara;
+    DWORD                   dwSubjectType;
+    void                    *pvSubject;
+} CTL_FIND_SUBJECT_PARA;
+typedef CTL_FIND_SUBJECT_PARA   *PCTL_FIND_SUBJECT_PARA;
+
+/* Callback used with CertCreateContext() */
+typedef BOOL (WINAPI *PFN_CERT_CREATE_CONTEXT_SORT_FUNC)( DWORD, DWORD, DWORD, void * );
+
+/* CertCreateContext() parameters */
+typedef struct _CERT_CREATE_CONTEXT_PARA {
+    DWORD                               cbSize;
+    PFN_CRYPT_FREE                      pfnFree;
+    void                                *pvFree;
+    PFN_CERT_CREATE_CONTEXT_SORT_FUNC   pfnSort;
+    void                                *pvSort;
+} CERT_CREATE_CONTEXT_PARA;
+typedef CERT_CREATE_CONTEXT_PARA    *PCERT_CREATE_CONTEXT_PARA;
+
+/* Certificate system store information */
+typedef struct _CERT_SYSTEM_STORE_INFO {
+    DWORD   cbSize;
+} CERT_SYSTEM_STORE_INFO;
+typedef CERT_SYSTEM_STORE_INFO  *PCERT_SYSTEM_STORE_INFO;
+
+/* Certificate physical store information */
+typedef struct _CERT_PHYSICAL_STORE_INFO {
+    DWORD           cbSize;
+    LPSTR           pszOpenStorageProvider;
+    DWORD           dwOpenEncodingType;
+    DWORD           dwOpenFlags;
+    CRYPT_DATA_BLOB OpenParameters;
+    DWORD           dwFlags;
+    DWORD           dwPriority;
+} CERT_PHYSICAL_STORE_INFO;
+typedef CERT_PHYSICAL_STORE_INFO    *PCERT_PHYSICAL_STORE_INFO;
+
+/* System store enumeration callbacks */
+typedef BOOL (WINAPI *PFN_CERT_ENUM_SYSTEM_STORE_LOCATION)( LPCWSTR, DWORD, void *, void * );
+typedef BOOL (WINAPI *PFN_CERT_ENUM_SYSTEM_STORE)( const void *, DWORD, PCERT_SYSTEM_STORE_INFO, void *, void * );
+typedef BOOL (WINAPI *PFN_CERT_ENUM_PHYSICAL_STORE)( const void *, DWORD, LPCWSTR, PCERT_PHYSICAL_STORE_INFO, void *, void * );
+
+/* CertVerifyCTLUsage() parameters */
+typedef struct _CTL_VERIFY_USAGE_PARA {
+    DWORD           cbSize;
+    CRYPT_DER_BLOB  ListIdentifier;
+    DWORD           cCtlStore;
+    HCERTSTORE      *rghCtlStore;
+    DWORD           cSignerStore;
+    HCERTSTORE      *rghSignerStore;
+} CTL_VERIFY_USAGE_PARA;
+typedef CTL_VERIFY_USAGE_PARA   *PCTL_VERIFY_USAGE_PARA;
+
+/* CertVerifyCTLUsage() status */
+typedef struct _CTL_VERIFY_USAGE_STATUS {
+    DWORD           cbSize;
+    DWORD           dwError;
+    DWORD           dwFlags;
+    PCCTL_CONTEXT   *ppCtl;
+    DWORD           dwCtlEntryIndex;
+    PCCERT_CONTEXT  *ppSigner;
+    DWORD           dwSignerIndex;
+} CTL_VERIFY_USAGE_STATUS;
+typedef CTL_VERIFY_USAGE_STATUS *PCTL_VERIFY_USAGE_STATUS;
+
+/* Certificate revocation information */
+typedef struct _CERT_REVOCATION_CRL_INFO {
+    DWORD           cbSize;
+    PCCRL_CONTEXT   pBaseCrlContext;
+    PCCRL_CONTEXT   pDeltaCrlContext;
+    PCRL_ENTRY      pCrlEntry;
+    BOOL            fDeltaCrlEntry;
+} CERT_REVOCATION_CRL_INFO;
+typedef CERT_REVOCATION_CRL_INFO    *PCERT_REVOCATION_CRL_INFO;
+
+/* Certificate revocation parameters */
+typedef struct _CERT_REVOCATION_PARA {
+    DWORD                       cbSize;
+    PCCERT_CONTEXT              pIssuerCert;
+    DWORD                       cCertStore;
+    HCERTSTORE                  *rgCertStore;
+    HCERTSTORE                  hCrlStore;
+    LPFILETIME                  pftTimeToUse;
+#ifdef CERT_REVOCATION_PARA_HAS_EXTRA_FIELDS
+    DWORD                       dwUrlRetrievalTimeout;
+    BOOL                        fCheckFreshnessTime;
+    DWORD                       dwFreshnessTime;
+    LPFILETIME                  pftCurrentTime;
+    PCERT_REVOCATION_CRL_INFO   pCrlInfo;
+    LPFILETIME                  pftCacheResync;
+#endif
+} CERT_REVOCATION_PARA;
+typedef CERT_REVOCATION_PARA    *PCERT_REVOCATION_PARA;
+
+/* Certificate revocation status */
+typedef struct _CERT_REVOCATION_STATUS {
+    DWORD   cbSize;
+    DWORD   dwIndex;
+    DWORD   dwError;
+    DWORD   dwReason;
+    BOOL    fHasFreshnessTime;
+    DWORD   dwFreshnessTime;
+} CERT_REVOCATION_STATUS;
+typedef CERT_REVOCATION_STATUS  *PCERT_REVOCATION_STATUS;
+
+/* Encoded signature function templates */
+typedef BOOL (WINAPI *PFN_CRYPT_EXTRACT_ENCODED_SIGNATURE_PARAMETERS_FUNC)( DWORD, PCRYPT_ALGORITHM_IDENTIFIER, void **, LPWSTR * );
+typedef BOOL (WINAPI *PFN_CRYPT_SIGN_AND_ENCODE_HASH_FUNC)( NCRYPT_KEY_HANDLE, DWORD, PCRYPT_ALGORITHM_IDENTIFIER, void *, LPCWSTR, LPCWSTR, BYTE *, DWORD, BYTE *, DWORD * );
+typedef BOOL (WINAPI *PFN_CRYPT_VERIFY_ENCODED_SIGNATURE_FUNC)( DWORD, PCERT_PUBLIC_KEY_INFO, PCRYPT_ALGORITHM_IDENTIFIER, void *, LPCWSTR, LPCWSTR, BYTE *, DWORD, BYTE *, DWORD );
+
+/* Parameters for CRYPT_DEFAULT_CONTEXT_MULTI_CERT_SIGN_OID */
+typedef struct _CRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA {
+    DWORD   cOID;
+    LPSTR   *rgpszOID;
+} CRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA;
+typedef CRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA    *PCRYPT_DEFAULT_CONTEXT_MULTI_OID_PARA;
+
+/* Public key import/export function templates */
+typedef BOOL (WINAPI *PFN_CRYPT_EXPORT_PUBLIC_KEY_INFO_EX2_FUNC)( NCRYPT_KEY_HANDLE, DWORD, LPSTR, DWORD, void *, PCERT_PUBLIC_KEY_INFO, DWORD * );
+typedef BOOL (WINAPI *PFN_CRYPT_IMPORT_PUBLIC_KEY_INFO_EX2_FUNC)( DWORD, PCERT_PUBLIC_KEY_INFO, DWORD, void *, BCRYPT_KEY_HANDLE * );
+
+/* Private key import/export function templates */
+typedef BOOL (WINAPI *PFN_IMPORT_PRIV_KEY_FUNC)( HCRYPTPROV, CRYPT_PRIVATE_KEY_INFO *, DWORD, void * );
+typedef BOOL (WINAPI *PFN_EXPORT_PRIV_KEY_FUNC)( HCRYPTPROV, DWORD, LPSTR, DWORD, void *, CRYPT_PRIVATE_KEY_INFO *, DWORD * );
+
+/* Signer certificate callback */
+typedef PCCERT_CONTEXT (WINAPI *PFN_CRYPT_GET_SIGNER_CERTIFICATE)( void *, DWORD, PCERT_INFO, HCERTSTORE );
+
+/* Cryptographic message signing parameters */
+typedef struct _CRYPT_SIGN_MESSAGE_PARA {
+    DWORD                       cbSize;
+    DWORD                       dwMsgEncodingType;
+    PCCERT_CONTEXT              pSigningCert;
+    CRYPT_ALGORITHM_IDENTIFIER  HashAlgorithm;
+    void                        *pvHashAuxInfo;
+    DWORD                       cMsgCert;
+    PCCERT_CONTEXT              *rgpMsgCert;
+    DWORD                       cMsgCrl;
+    PCCRL_CONTEXT               *rgpMsgCrl;
+    DWORD                       cAuthAttr;
+    PCRYPT_ATTRIBUTE            rgAuthAttr;
+    DWORD                       cUnauthAttr;
+    PCRYPT_ATTRIBUTE            rgUnauthAttr;
+    DWORD                       dwFlags;
+    DWORD                       dwInnerContentType;
+#ifdef CRYPT_SIGN_MESSAGE_PARA_HAS_CMS_FIELDS
+    CRYPT_ALGORITHM_IDENTIFIER  HashEncryptionAlgorithm;
+    void                        *pvHashEncryptionAuxInfo;
+#endif
+} CRYPT_SIGN_MESSAGE_PARA;
+typedef CRYPT_SIGN_MESSAGE_PARA *PCRYPT_SIGN_MESSAGE_PARA;
+
+/* Cryptographic message verification parameters */
+typedef struct _CRYPT_VERIFY_MESSAGE_PARA {
+    DWORD                               cbSize;
+    DWORD                               dwMsgAndCertEncodingType;
+    HCRYPTPROV_LEGACY                   hCryptProv;
+    PFN_CRYPT_GET_SIGNER_CERTIFICATE    pfnGetSignerCertificate;
+    void                                *pvGetArg;
+} CRYPT_VERIFY_MESSAGE_PARA;
+typedef CRYPT_VERIFY_MESSAGE_PARA   *PCRYPT_VERIFY_MESSAGE_PARA;
+
+/* Cryptographic message encryption parameters */
+typedef struct _CRYPT_ENCRYPT_MESSAGE_PARA {
+    DWORD                       cbSize;
+    DWORD                       dwMsgEncodingType;
+    HCRYPTPROV_LEGACY           hCryptProv;
+    CRYPT_ALGORITHM_IDENTIFIER  ContentEncryptionAlgorithm;
+    void                        *pvEncryptionAuxInfo;
+    DWORD                       dwFlags;
+    DWORD                       dwInnerContentType;
+} CRYPT_ENCRYPT_MESSAGE_PARA;
+typedef CRYPT_ENCRYPT_MESSAGE_PARA  *PCRYPT_ENCRYPT_MESSAGE_PARA;
+
+/* Cryptographic message decryption parameters */
+typedef struct _CRYPT_DECRYPT_MESSAGE_PARA {
+    DWORD       cbSize;
+    DWORD       dwMsgAndCertEncodingType;
+    DWORD       cCertStore;
+    HCERTSTORE  *rghCertStore;
+#ifdef CRYPT_DECRYPT_MESSAGE_PARA_HAS_EXTRA_FIELDS
+    DWORD       dwFlags;
+#endif
+} CRYPT_DECRYPT_MESSAGE_PARA;
+typedef CRYPT_DECRYPT_MESSAGE_PARA  *PCRYPT_DECRYPT_MESSAGE_PARA;
+
+/* Cryptographic message hash parameters */
+typedef struct _CRYPT_HASH_MESSAGE_PARA {
+    DWORD                       cbSize;
+    DWORD                       dwMsgEncodingType;
+    HCRYPTPROV_LEGACY           hCryptProv;
+    CRYPT_ALGORITHM_IDENTIFIER  HashAlgorithm;
+    void                        *pvHashAuxInfo;
+} CRYPT_HASH_MESSAGE_PARA;
+typedef CRYPT_HASH_MESSAGE_PARA *PCRYPT_HASH_MESSAGE_PARA;
+
+/* Cryptographic message key signing parameters */
+typedef struct _CRYPT_KEY_SIGN_MESSAGE_PARA {
+    DWORD                       cbSize;
+    DWORD                       dwMsgAndCertEncodingType;
+    union {
+        HCRYPTPROV          hCryptProv;
+        NCRYPT_KEY_HANDLE   hNCryptKey;
+    };
+    DWORD                       dwKeySpec;
+    CRYPT_ALGORITHM_IDENTIFIER  HashAlgorithm;
+    void                        *pvHashAuxInfo;
+    CRYPT_ALGORITHM_IDENTIFIER  PubKeyAlgorithm;
+} CRYPT_KEY_SIGN_MESSAGE_PARA;
+typedef CRYPT_KEY_SIGN_MESSAGE_PARA *PCRYPT_KEY_SIGN_MESSAGE_PARA;
+
+/* Cryptographic message key verification parameters */
+typedef struct _CRYPT_KEY_VERIFY_MESSAGE_PARA {
+    DWORD               cbSize;
+    DWORD               dwMsgEncodingType;
+    HCRYPTPROV_LEGACY   hCryptProv;
+} CRYPT_KEY_VERIFY_MESSAGE_PARA;
+typedef CRYPT_KEY_VERIFY_MESSAGE_PARA   *PCRYPT_KEY_VERIFY_MESSAGE_PARA;
+
+/* Certificate chain */
+typedef struct _CERT_CHAIN {
+    DWORD               cCerts;
+    PCERT_BLOB          certs;
+    CRYPT_KEY_PROV_INFO keyLocatorInfo;
+} CERT_CHAIN;
+typedef CERT_CHAIN  *PCERT_CHAIN;
+
+/* Cryptographic asynchronous callback */
+typedef VOID (WINAPI *PFN_CRYPT_ASYNC_PARAM_FREE_FUNC)( LPSTR, LPVOID );
+
+/* Cryptographic blob array */
+typedef struct _CRYPT_BLOB_ARRAY {
+    DWORD               cBlob;
+    PCRYPT_DATA_BLOB    rgBlob;
+} CRYPT_BLOB_ARRAY;
+typedef CRYPT_BLOB_ARRAY    *PCRYPT_BLOB_ARRAY;
+
+/* Cryptographic credentials */
+typedef struct _CRYPT_CREDENTIALS {
+    DWORD   cbSize;
+    LPCSTR  pszCredentialsOid;
+    LPVOID  pvCredentials;
+} CRYPT_CREDENTIALS;
+typedef CRYPT_CREDENTIALS   *PCRYPT_CREDENTIALS;
+
+/* Cryptographic password credentials */
+typedef struct _CRYPT_PASSWORD_CREDENTIALSA {
+    DWORD   cbSize;
+    LPSTR   pszUsername;
+    LPSTR   pszPassword;
+} CRYPT_PASSWORD_CREDENTIALSA;
+typedef CRYPT_PASSWORD_CREDENTIALSA     *PCRYPT_PASSWORD_CREDENTIALSA;
+typedef struct _CRYPT_PASSWORD_CREDENTIALSW {
+    DWORD   cbSize;
+    LPWSTR  pszUsername;
+    LPWSTR  pszPassword;
+} CRYPT_PASSWORD_CREDENTIALSW;
+typedef CRYPT_PASSWORD_CREDENTIALSW     *PCRYPT_PASSWORD_CREDENTIALSW;
+#ifdef UNICODE
+typedef CRYPT_PASSWORD_CREDENTIALSW     CRYPT_PASSWORD_CREDENTIALS;
+typedef PCRYPT_PASSWORD_CREDENTIALSW    PCRYPT_PASSWORD_CREDENTIALS;
+#else
+typedef CRYPT_PASSWORD_CREDENTIALSA     CRYPT_PASSWORD_CREDENTIALS;
+typedef PCRYPT_PASSWORD_CREDENTIALSA    PCRYPT_PASSWORD_CREDENTIALS;
+#endif
+
+/* Scheme provider function templates */
+typedef VOID (WINAPI *PFN_FREE_ENCODED_OBJECT_FUNC)( LPCSTR, PCRYPT_BLOB_ARRAY, LPVOID );
+
+/* URL cache pre-fetch information */
+typedef struct _CRYPTNET_URL_CACHE_PRE_FETCH_INFO {
+    DWORD       cbSize;
+    DWORD       dwObjectType;
+    DWORD       dwError;
+    DWORD       dwReserved;
+    FILETIME    ThisUpdateTime;
+    FILETIME    NextUpdateTime;
+    FILETIME    PublishTime;
+} CRYPTNET_URL_CACHE_PRE_FETCH_INFO;
+typedef CRYPTNET_URL_CACHE_PRE_FETCH_INFO   *PCRYPTNET_URL_CACHE_PRE_FETCH_INFO;
+
+/* URL cache flush information */
+typedef struct _CRYPTNET_URL_CACHE_FLUSH_INFO {
+    DWORD       cbSize;
+    DWORD       dwExemptSeconds;
+    FILETIME    ExpireTime;
+} CRYPTNET_URL_CACHE_FLUSH_INFO;
+typedef CRYPTNET_URL_CACHE_FLUSH_INFO   *PCRYPTNET_URL_CACHE_FLUSH_INFO;
+
+/* URL cache response information */
+typedef struct _CRYPTNET_URL_CACHE_RESPONSE_INFO {
+    DWORD       cbSize;
+    WORD        wResponseType;
+    WORD        wResponseFlags;
+    FILETIME    LastModifiedTime;
+    DWORD       dwMaxAge;
+    LPCWSTR     pwszETag;
+    DWORD       dwProxyId;
+} CRYPTNET_URL_CACHE_RESPONSE_INFO;
+typedef CRYPTNET_URL_CACHE_RESPONSE_INFO    *PCRYPTNET_URL_CACHE_RESPONSE_INFO;
+
+/* CryptRetrieveObjectByUrl() auxiliary information */
+typedef struct _CRYPT_RETRIEVE_AUX_INFO {
+    DWORD                               cbSize;
+    FILETIME                            *pLastSyncTime;
+    DWORD                               dwMaxUrlRetrievalByteCount;
+    PCRYPTNET_URL_CACHE_PRE_FETCH_INFO  pPreFetchInfo;
+    PCRYPTNET_URL_CACHE_FLUSH_INFO      pFlushInfo;
+    PCRYPTNET_URL_CACHE_RESPONSE_INFO   *ppResponseInfo;
+    LPWSTR                              pwszCacheFileNamePrefix;
+    LPFILETIME                          pftCacheResync;
+    BOOL                                fProxyCacheRetrieval;
+    DWORD                               dwHttpStatusCode;
+} CRYPT_RETRIEVE_AUX_INFO;
+typedef CRYPT_RETRIEVE_AUX_INFO *PCRYPT_RETRIEVE_AUX_INFO;
+
+/* Object retrieval cancellation callback */
+typedef BOOL (WINAPI *PFN_CRYPT_CANCEL_RETRIEVAL)( DWORD, void * );
+
+/* Asynchronous retrieval callback functions */
+typedef VOID (WINAPI *PFN_CRYPT_ASYNC_RETRIEVAL_COMPLETION_FUNC)( LPVOID, DWORD, LPCSTR, LPSTR, LPVOID );
+typedef BOOL (WINAPI *PFN_CANCEL_ASYNC_RETRIEVAL_FUNC)( HCRYPTASYNC );
+
+/* Asynchronous retrieval completion information */
+typedef struct _CRYPT_ASYNC_RETRIEVAL_COMPLETION {
+    PFN_CRYPT_ASYNC_RETRIEVAL_COMPLETION_FUNC   pfnCompletion;
+    LPVOID                                      pvCompletion;
+} CRYPT_ASYNC_RETRIEVAL_COMPLETION;
+typedef CRYPT_ASYNC_RETRIEVAL_COMPLETION    *PCRYPT_ASYNC_RETRIEVAL_COMPLETION;
+
+/* Cryptographic URL array */
+typedef struct _CRYPT_URL_ARRAY {
+    DWORD   cUrl;
+    LPWSTR  *rgwszUrl;
+} CRYPT_URL_ARRAY;
+typedef CRYPT_URL_ARRAY *PCRYPT_URL_ARRAY;
+
+/* Cryptographic URL information */
+typedef struct _CRYPT_URL_INFO {
+    DWORD   cbSize;
+    DWORD   dwSyncDeltaTime;
+    DWORD   cGroup;
+    DWORD   *rgcGroupEntry;
+} CRYPT_URL_INFO;
+typedef CRYPT_URL_INFO  *PCRYPT_URL_INFO;
+
+/* Certificate/CRL context pair */
+typedef struct _CERT_CRL_CONTEXT_PAIR {
+    PCCERT_CONTEXT  pCertContext;
+    PCCRL_CONTEXT   pCrlContext;
+} CERT_CRL_CONTEXT_PAIR;
+typedef CERT_CRL_CONTEXT_PAIR       *PCERT_CRL_CONTEXT_PAIR;
+typedef const CERT_CRL_CONTEXT_PAIR *PCCERT_CRL_CONTEXT_PAIR;
+
+/* CryptGetTimeValidObject() extra information */
+typedef struct _CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO {
+    DWORD       cbSize;
+    int         iDeltaCrlIndicator;
+    LPFILETIME  pftCacheResync;
+    LPFILETIME  pLastSyncTime;
+    LPFILETIME  pMaxAgeTime;
+} CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO;
+typedef CRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO  *PCRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO;
+
+/* Cryptographic protection prompt structure */
+typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
+    DWORD   cbSize;
+    DWORD   dwPromptFlags;
+    HWND    hwndApp;
+    LPCWSTR szPrompt;
+} CRYPTPROTECT_PROMPTSTRUCT;
+typedef CRYPTPROTECT_PROMPTSTRUCT   *PCRYPTPROTECT_PROMPTSTRUCT;
+
+/* Key identifier property enumeration callback */
+typedef BOOL (WINAPI *PFN_CRYPT_ENUM_KEYID_PROP)( const CRYPT_HASH_BLOB *, DWORD, void *, void *, DWORD, DWORD *, void **, DWORD * );
+
+/* Certificate chain engine configuration */
+typedef struct _CERT_CHAIN_ENGINE_CONFIG {
+    DWORD       cbSize;
+    HCERTSTORE  hRestrictedRoot;
+    HCERTSTORE  hRestrictedTrust;
+    HCERTSTORE  hRestrictedOther;
+    DWORD       cAdditionalStore;
+    HCERTSTORE  *rghAdditionalStore;
+    DWORD       dwFlags;
+    DWORD       dwUrlRetrievalTimeout;
+    DWORD       MaximumCachedCertificates;
+    DWORD       CycleDetectionModulus;
+} CERT_CHAIN_ENGINE_CONFIG;
+typedef CERT_CHAIN_ENGINE_CONFIG    *PCERT_CHAIN_ENGINE_CONFIG;
+
+/* Certificate trust status */
+typedef struct _CERT_TRUST_STATUS {
+    DWORD   dwErrorStatus;
+    DWORD   dwInfoStatus;
+} CERT_TRUST_STATUS;
+typedef CERT_TRUST_STATUS   *PCERT_TRUST_STATUS;
+
+/* Certificate revocation information */
+typedef struct _CERT_REVOCATION_INFO {
+    DWORD                       cbSize;
+    DWORD                       dwRevocationResult;
+    LPCSTR                      pszRevocationOid;
+    LPVOID                      pvOidSpecificInfo;
+    BOOL                        fHasFreshnessTime;
+    DWORD                       dwFreshnessTime;
+    PCERT_REVOCATION_CRL_INFO   pCrlInfo;
+} CERT_REVOCATION_INFO;
+typedef CERT_REVOCATION_INFO    *PCERT_REVOCATION_INFO;
+
+/* Certificate trust list information */
+typedef struct _CERT_TRUST_LIST_INFO {
+    DWORD           cbSize;
+    PCTL_ENTRY      pCtlEntry;
+    PCCTL_CONTEXT   pCtlContext;
+} CERT_TRUST_LIST_INFO;
+typedef CERT_TRUST_LIST_INFO    *PCERT_TRUST_LIST_INFO;
+
+/* Certificate chain element */
+typedef struct _CERT_CHAIN_ELEMENT {
+    DWORD                   cbSize;
+    PCCERT_CONTEXT          pCertContext;
+    CERT_TRUST_STATUS       TrustStatus;
+    PCERT_REVOCATION_INFO   pRevocationInfo;
+    PCERT_ENHKEY_USAGE      pIssuanceUsage;
+    PCERT_ENHKEY_USAGE      pApplicationUsage;
+    LPCWSTR                 pwszExtendedErrorInfo;
+} CERT_CHAIN_ELEMENT;
+typedef CERT_CHAIN_ELEMENT  *PCERT_CHAIN_ELEMENT;
+
+/* Certificate simple chain */
+typedef struct _CERT_SIMPLE_CHAIN {
+    DWORD                   cbSize;
+    CERT_TRUST_STATUS       TrustStatus;
+    DWORD                   cElement;
+    PCERT_CHAIN_ELEMENT     *rgpElement;
+    PCERT_TRUST_LIST_INFO   pTrustListInfo;
+    BOOL                    fHasRevocationFreshnessTime;
+    DWORD                   dwRevocationFreshnessTime;
+} CERT_SIMPLE_CHAIN;
+typedef CERT_SIMPLE_CHAIN   *PCERT_SIMPLE_CHAIN;
+
+/* Certificate chain context */
+typedef struct _CERT_CHAIN_CONTEXT {
+    DWORD                           cbSize;
+    CERT_TRUST_STATUS               TrustStatus;
+    DWORD                           cChain;
+    PCERT_SIMPLE_CHAIN              *rgpChain;
+    DWORD                           cLowerQualityChainContext;
+    const struct CERT_CHAIN_CONTEXT *rgpLowerQualityChainContext;
+    BOOL                            fHasRevocationFreshnessTime;
+    DWORD                           dwRevocationFreshnessTime;
+    DWORD                           dwCreateFlags;
+    GUID                            ChainId;
+} CERT_CHAIN_CONTEXT;
+typedef CERT_CHAIN_CONTEXT          *PCERT_CHAIN_CONTEXT;
+typedef const CERT_CHAIN_CONTEXT    *PCCERT_CHAIN_CONTEXT;
+
+/* Certificate usage match */
+typedef struct _CERT_USAGE_MATCH {
+    DWORD               dwType;
+    CERT_ENHKEY_USAGE   Usage;
+} CERT_USAGE_MATCH;
+typedef CERT_USAGE_MATCH    *PCERT_USAGE_MATCH;
+
+/* CTL usage match */
+typedef struct _CTL_USAGE_MATCH {
+    DWORD       dwType;
+    CTL_USAGE   Usage;
+} CTL_USAGE_MATCH;
+typedef CTL_USAGE_MATCH *PCTL_USAGE_MATCH;
+
+/* Certificate chain parameters */
+typedef struct _CERT_CHAIN_PARA {
+    DWORD               cbSize;
+    CERT_USAGE_MATCH    RequestedUsage;
+#ifdef CERT_CHAIN_PARA_HAS_EXTRA_FIELDS
+    CERT_USAGE_MATCH    RequestedIssuancePolicy;
+    DWORD               dwUrlRetrievalTimeout;
+    BOOL                fCheckRevocationFreshnessTime;
+    DWORD               dwRevocationFreshnessTime;
+    LPFILETIME          pftCacheResync;
+#endif
+} CERT_CHAIN_PARA;
+typedef CERT_CHAIN_PARA *PCERT_CHAIN_PARA;
+
+/* CRL revocation information */
+typedef struct _CRL_REVOCATION_INFO {
+    PCRL_ENTRY              pCrlEntry;
+    PCCRL_CONTEXT           pCrlContext;
+    PCCERT_CHAIN_CONTEXT    pCrlIssuerChain;
+} CRL_REVOCATION_INFO;
+typedef CRL_REVOCATION_INFO *PCRL_REVOCATION_INFO;
+
+/* Certificate chain find callbacks */
+typedef BOOL (WINAPI *PFN_CERT_CHAIN_FIND_BY_ISSUER_CALLBACK)( PCCERT_CONTEXT, void * );
+
+/* Certificate chain find by issuer parameters */
+typedef struct _CERT_CHAIN_FIND_BY_ISSUER_PARA {
+    DWORD                                   cbSize;
+    LPCSTR                                  pszUsageIdentifier;
+    DWORD                                   dwKeySpec;
+    DWORD                                   dwAcquirePrivateKeyFlags;
+    DWORD                                   cIssuer;
+    CERT_NAME_BLOB                          *rgIssuer;
+    PFN_CERT_CHAIN_FIND_BY_ISSUER_CALLBACK  pfnFindCallback;
+    void                                    *pvFindArg;
+#ifdef CERT_CHAIN_FIND_BY_ISSUER_PARA_HAS_EXTRA_FIELDS
+    DWORD                                   *pdwIssuerChainIndex;
+    DWORD                                   *pdwIssuerElementIndex;
+#endif
+} CERT_CHAIN_FIND_ISSUER_PARA;
+typedef CERT_CHAIN_FIND_ISSUER_PARA *PCERT_CHAIN_FIND_ISSUER_PARA;
+typedef CERT_CHAIN_FIND_ISSUER_PARA CERT_CHAIN_FIND_BY_ISSUER_PARA;
+typedef CERT_CHAIN_FIND_ISSUER_PARA *PCERT_CHAIN_FIND_BY_ISSUER_PARA;
+
+/* Certificate chain policy parameters */
+typedef struct _CERT_CHAIN_POLICY_PARA {
+    DWORD   cbSize;
+    DWORD   dwFlags;
+    void    *pvExtraPolicyPara;
+} CERT_CHAIN_POLICY_PARA;
+typedef CERT_CHAIN_POLICY_PARA  *PCERT_CHAIN_POLICY_PARA;
+
+/* Certificate chain policy status */
+typedef struct _CERT_CHAIN_POLICY_STATUS {
+    DWORD   cbSize;
+    DWORD   dwError;
+    LONG    lChainIndex;
+    LONG    lElementIndex;
+    void    *pvExtraPolicyStatus;
+} CERT_CHAIN_POLICY_STATUS;
+typedef CERT_CHAIN_POLICY_STATUS    *PCERT_CHAIN_POLICY_STATUS;
+
+/* Authenticode extra certificate chain policy parameters */
+typedef struct _AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA {
+    DWORD               cbSize;
+    DWORD               dwRegPolicySettings;
+    PCMSG_SIGNER_INFO   pSignerInfo;
+} AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA;
+typedef AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA   *PAUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_PARA;
+
+/* Authenticode extra certificate chain policy status */
+typedef struct _AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS {
+    DWORD   cbSize;
+    BOOL    fCommercial;
+} AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS;
+typedef AUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS *PAUTHENTICODE_EXTRA_CERT_CHAIN_POLICY_STATUS;
+
+/* Authenticode TS extra certificate chain policy parameters */
+typedef struct _AUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA {
+    DWORD   cbSize;
+    DWORD   dwRegPolicySettings;
+    BOOL    fCommercial;
+} AUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA;
+typedef AUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA    *PAUTHENTICODE_TS_EXTRA_CERT_CHAIN_POLICY_PARA;
+
+/* HTTPS policy callback data */
+typedef struct _HTTPSPolicyCallbackData {
+    union {
+        DWORD   cbStruct;
+        DWORD   cbSize;
+    };
+    DWORD   dwAuthType;
+    DWORD   fdwChecks;
+    WCHAR   *pwszServerName;
+} HTTPSPolicyCallbackData;
+typedef HTTPSPolicyCallbackData *PHTTPSPolicyCallbackData;
+typedef HTTPSPolicyCallbackData SSL_EXTRA_CERT_CHAIN_POLICY_PARA;
+typedef HTTPSPolicyCallbackData *PSSL_EXTRA_CERT_CHAIN_POLICY_PARA;
+
+/* PKCS-12 PBE parameters */
+typedef struct _CRYPT_PKCS12_PBE_PARAMS {
+    int     iIterations;
+    ULONG   cbSalt;
+} CRYPT_PKCS12_PBE_PARAMS;
+
+/* Certificate server OCSP response context */
+typedef struct _CERT_SERVER_OCSP_RESPONSE_CONTEXT {
+    DWORD   cbSize;
+    BYTE    *pbEncodedOcspResponse;
+    DWORD   cbEncodedOcspResponse;
+} CERT_SERVER_OCSP_RESPONSE_CONTEXT;
+typedef CERT_SERVER_OCSP_RESPONSE_CONTEXT       *PCERT_SERVER_OCSP_RESPONSE_CONTEXT;
+typedef const CERT_SERVER_OCSP_RESPONSE_CONTEXT *PCCERT_SERVER_OCSP_RESPONSE_CONTEXT;
+
 /* Functions in ADVAPI32.DLL */
 WINADVAPI BOOL WINAPI   CryptAcquireContextA( HCRYPTPROV *, LPCSTR, LPCSTR, DWORD, DWORD );
 WINADVAPI BOOL WINAPI   CryptAcquireContextW( HCRYPTPROV *, LPCWSTR, LPCWSTR, DWORD, DWORD );
@@ -4083,81 +5436,272 @@ WINADVAPI BOOL WINAPI   CryptSetProvParam( HCRYPTPROV, DWORD, BYTE *, DWORD );
 #endif
 
 /* Functions in CRYPT32.DLL */
+WINCRYPT32API BOOL WINAPI           CertAddCRLContextToStore( HCERTSTORE, PCCRL_CONTEXT, DWORD, PCCRL_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertAddCRLLinkToStore( HCERTSTORE, PCCRL_CONTEXT, DWORD, PCCRL_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertAddCTLContextToStore( HCERTSTORE, PCCTL_CONTEXT, DWORD, PCCTL_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertAddCTLLinkToStore( HCERTSTORE, PCCTL_CONTEXT, DWORD, PCCTL_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertAddCertificateContextToStore( HCERTSTORE, PCCERT_CONTEXT, DWORD, PCCERT_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertAddCertificateLinkToStore( HCERTSTORE, PCCERT_CONTEXT, DWORD, PCCERT_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertAddEncodedCRLToStore( HCERTSTORE, DWORD, const BYTE *, DWORD, DWORD, PCCRL_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertAddEncodedCTLToStore( HCERTSTORE, DWORD, const BYTE *, DWORD, DWORD, PCCTL_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertAddEncodedCertificateToStore( HCERTSTORE, DWORD, const BYTE *, DWORD, DWORD, PCCERT_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CertAddEncodedCertificateToSystemStoreA( LPCSTR, const BYTE *, DWORD );
+WINCRYPT32API BOOL WINAPI           CertAddEncodedCertificateToSystemStoreW( LPCWSTR, const BYTE *, DWORD );
+WINCRYPT32API BOOL WINAPI           CertAddEnhancedKeyUsageIdentifier( PCCERT_CONTEXT, LPCSTR );
+WINCRYPT32API VOID WINAPI           CertAddRefServerOcspResponse( HCERT_SERVER_OCSP_RESPONSE );
+WINCRYPT32API VOID WINAPI           CertAddRefServerOcspResponseContext( PCCERT_SERVER_OCSP_RESPONSE_CONTEXT );
+WINCRYPT32API BOOL WINAPI           CertAddSerializedElementToStore( HCERTSTORE, const BYTE *, DWORD, DWORD, DWORD, DWORD, DWORD *, const void ** );
+WINCRYPT32API BOOL WINAPI           CertAddStoreToCollection( HCERTSTORE, HCERTSTORE, DWORD, DWORD );
+WINCRYPT32API LPCSTR WINAPI         CertAlgIdToOID( DWORD );
+WINCRYPT32API VOID WINAPI           CertCloseServerOcspResponse( HCERT_SERVER_OCSP_RESPONSE, DWORD );
 WINCRYPT32API BOOL WINAPI           CertCloseStore( HCERTSTORE, DWORD );
+WINCRYPT32API BOOL WINAPI           CertCompareCertificate( DWORD, PCERT_INFO, PCERT_INFO );
+WINCRYPT32API BOOL WINAPI           CertCompareCertificateName( DWORD, PCERT_NAME_BLOB, PCERT_NAME_BLOB );
+WINCRYPT32API BOOL WINAPI           CertCompareIntegerBlob( PCRYPT_INTEGER_BLOB, PCRYPT_INTEGER_BLOB );
+WINCRYPT32API BOOL WINAPI           CertComparePublicKeyInfo( DWORD, PCERT_PUBLIC_KEY_INFO, PCERT_PUBLIC_KEY_INFO );
+WINCRYPT32API BOOL WINAPI           CertControlStore( HCERTSTORE, DWORD, DWORD, void const * );
+WINCRYPT32API PCCRL_CONTEXT WINAPI  CertCreateCRLContext( DWORD, const BYTE *, DWORD );
+WINCRYPT32API PCCTL_CONTEXT WINAPI  CertCreateCTLContext( DWORD, const BYTE *, DWORD );
 WINCRYPT32API BOOL WINAPI           CertCreateCTLEntryFromCertificateContextProperties( PCCERT_CONTEXT, DWORD, PCRYPT_ATTRIBUTE, DWORD, void *, PCTL_ENTRY, DWORD * );
+WINCRYPT32API BOOL WINAPI           CertCreateCertificateChainEngine( PCERT_CHAIN_ENGINE_CONFIG, HCERTCHAINENGINE * );
 WINCRYPT32API PCCERT_CONTEXT WINAPI CertCreateCertificateContext( DWORD, const BYTE *, DWORD );
+WINCRYPT32API const void * WINAPI   CertCreateContext( DWORD, DWORD, const BYTE *, DWORD, DWORD, PCERT_CREATE_CONTEXT_PARA );
+WINCRYPT32API PCCERT_CONTEXT WINAPI CertCreateSelfSignCertificate( HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, PCERT_NAME_BLOB, DWORD, PCRYPT_KEY_PROV_INFO, PCRYPT_ALGORITHM_IDENTIFIER, PSYSTEMTIME, PSYSTEMTIME, PCERT_EXTENSIONS );
+WINCRYPT32API BOOL WINAPI           CertDeleteCRLFromStore( PCCRL_CONTEXT );
+WINCRYPT32API BOOL WINAPI           CertDeleteCTLFromStore( PCCTL_CONTEXT );
+WINCRYPT32API BOOL WINAPI           CertDeleteCertificateFromStore( PCCERT_CONTEXT );
+WINCRYPT32API PCCRL_CONTEXT WINAPI  CertDuplicateCRLContext( PCCRL_CONTEXT );
+WINCRYPT32API PCCTL_CONTEXT WINAPI  CertDuplicateCTLContext( PCCTL_CONTEXT );
+WINCRYPT32API PCCERT_CHAIN_CONTEXT WINAPI   CertDuplicateCertificateChain( PCCERT_CHAIN_CONTEXT );
 WINCRYPT32API PCCERT_CONTEXT WINAPI CertDuplicateCertificateContext( PCCERT_CONTEXT );
 WINCRYPT32API HCERTSTORE WINAPI     CertDuplicateStore( HCERTSTORE );
+WINCRYPT32API DWORD WINAPI          CertEnumCRLContextProperties( PCCRL_CONTEXT, DWORD );
 WINCRYPT32API PCCRL_CONTEXT WINAPI  CertEnumCRLsInStore( HCERTSTORE, PCCRL_CONTEXT );
+WINCRYPT32API DWORD WINAPI          CertEnumCTLContextProperties( PCCTL_CONTEXT, DWORD );
+WINCRYPT32API PCCTL_CONTEXT WINAPI  CertEnumCTLsInStore( HCERTSTORE, PCCTL_CONTEXT );
 WINCRYPT32API DWORD WINAPI          CertEnumCertificateContextProperties( PCCERT_CONTEXT, DWORD );
 WINCRYPT32API PCCERT_CONTEXT WINAPI CertEnumCertificatesInStore( HCERTSTORE, PCCERT_CONTEXT );
+WINCRYPT32API BOOL WINAPI           CertEnumPhysicalStore( const void *, DWORD, void *, PFN_CERT_ENUM_PHYSICAL_STORE );
+WINCRYPT32API BOOL WINAPI           CertEnumSubjectInSortedCTL( PCCTL_CONTEXT, void **, PCRYPT_DER_BLOB, PCRYPT_DER_BLOB );
+WINCRYPT32API BOOL WINAPI           CertEnumSystemStore( DWORD, void *, void *, PFN_CERT_ENUM_SYSTEM_STORE );
+WINCRYPT32API BOOL WINAPI           CertEnumSystemStoreLocation( DWORD, void *, PFN_CERT_ENUM_SYSTEM_STORE_LOCATION );
+WINCRYPT32API PCRYPT_ATTRIBUTE WINAPI   CertFindAttribute( LPCSTR, DWORD, CRYPT_ATTRIBUTE [] );
 WINCRYPT32API PCCRL_CONTEXT WINAPI  CertFindCRLInStore( HCERTSTORE, DWORD, DWORD, DWORD, const void *, PCCRL_CONTEXT );
+WINCRYPT32API PCCTL_CONTEXT WINAPI  CertFindCTLInStore( HCERTSTORE, DWORD, DWORD, DWORD, const void *, PCCTL_CONTEXT );
+WINCRYPT32API BOOL WINAPI           CertFindCertificateInCRL( PCCERT_CONTEXT, PCCRL_CONTEXT, DWORD, void *, PCRL_ENTRY * );
 WINCRYPT32API PCCERT_CONTEXT WINAPI CertFindCertificateInStore( HCERTSTORE, DWORD, DWORD, DWORD, const void *, PCCERT_CONTEXT );
+WINCRYPT32API PCCERT_CHAIN_CONTEXT WINAPI   CertFindChainInStore( HCERTSTORE, DWORD, DWORD, DWORD, const void *, PCCERT_CHAIN_CONTEXT );
+WINCRYPT32API PCERT_EXTENSION WINAPI    CertFindExtension( LPCSTR, DWORD, CERT_EXTENSION [] );
+WINCRYPT32API PCERT_RDN_ATTR WINAPI CertFindRDNAttr( LPCSTR, PCERT_NAME_INFO );
+WINCRYPT32API PCTL_ENTRY WINAPI     CertFindSubjectInCTL( DWORD, DWORD, void *,  PCCTL_CONTEXT, DWORD );
+WINCRYPT32API BOOL WINAPI           CertFindSubjectInSortedCTL( PCRYPT_DATA_BLOB, PCCTL_CONTEXT, DWORD, void *, PCRYPT_DER_BLOB );
+WINCRYPT32API BOOL WINAPI           CertFreeCRLContext( PCCRL_CONTEXT );
+WINCRYPT32API BOOL WINAPI           CertFreeCTLContext( PCCTL_CONTEXT );
+WINCRYPT32API VOID WINAPI           CertFreeCertificateChain( PCCERT_CHAIN_CONTEXT );
+WINCRYPT32API VOID WINAPI           CertFreeCertificateChainEngine( HCERTCHAINENGINE );
 WINCRYPT32API BOOL WINAPI           CertFreeCertificateContext( PCCERT_CONTEXT );
+WINCRYPT32API VOID WINAPI           CertFreeServerOcspResponseContext( PCCERT_SERVER_OCSP_RESPONSE_CONTEXT );
+WINCRYPT32API BOOL WINAPI           CertGetCRLContextProperty( PCCRL_CONTEXT, DWORD, void *, DWORD * );
 WINCRYPT32API PCCRL_CONTEXT WINAPI  CertGetCRLFromStore( HCERTSTORE, PCCERT_CONTEXT, PCCRL_CONTEXT, DWORD * );
+WINCRYPT32API BOOL WINAPI           CertGetCTLContextProperty( PCCTL_CONTEXT, DWORD, void *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CertGetCertificateChain( HCERTCHAINENGINE, PCCERT_CONTEXT, LPFILETIME, HCERTSTORE, PCERT_CHAIN_PARA, DWORD, LPVOID, PCCERT_CHAIN_CONTEXT * );
 WINCRYPT32API BOOL WINAPI           CertGetCertificateContextProperty( PCCERT_CONTEXT, DWORD, void *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CertGetEnhancedKeyUsage( PCCERT_CONTEXT, DWORD, PCERT_ENHKEY_USAGE, DWORD * );
+WINCRYPT32API BOOL WINAPI           CertGetIntendedKeyUsage( DWORD, PCERT_INFO, BYTE *, DWORD );
 WINCRYPT32API PCCERT_CONTEXT WINAPI CertGetIssuerCertificateFromStore( HCERTSTORE, PCCERT_CONTEXT, PCCERT_CONTEXT, DWORD * );
+WINCRYPT32API DWORD WINAPI          CertGetNameStringA( PCCERT_CONTEXT, DWORD, DWORD, void *, LPSTR, DWORD );
+WINCRYPT32API DWORD WINAPI          CertGetNameStringW( PCCERT_CONTEXT, DWORD, DWORD, void *, LPWSTR, DWORD );
+WINCRYPT32API DWORD WINAPI          CertGetPublicKeyLength( DWORD, PCERT_PUBLIC_KEY_INFO );
+WINCRYPT32API PCCERT_SERVER_OCSP_RESPONSE_CONTEXT WINAPI    CertGetServerOcspResponseContext( HCERT_SERVER_OCSP_RESPONSE, DWORD, LPVOID );
+WINCRYPT32API BOOL WINAPI           CertGetStoreProperty( HCERTSTORE, DWORD, void *, DWORD * );
 WINCRYPT32API PCCERT_CONTEXT WINAPI CertGetSubjectCertificateFromStore( HCERTSTORE, DWORD, PCERT_INFO );
+WINCRYPT32API BOOL WINAPI           CertGetValidUsages( DWORD, PCCERT_CONTEXT *, int *, LPSTR *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CertIsRDNAttrsInCertificateName( DWORD, DWORD, PCERT_NAME_BLOB, PCERT_RDN );
+WINCRYPT32API BOOL WINAPI           CertIsValidCRLForCertificate( PCCERT_CONTEXT, PCCRL_CONTEXT, DWORD, void * );
+WINCRYPT32API DWORD WINAPI          CertNameToStrA( DWORD, PCERT_NAME_BLOB, DWORD, LPSTR, DWORD );
+WINCRYPT32API DWORD WINAPI          CertNameToStrW( DWORD, PCERT_NAME_BLOB, DWORD, LPWSTR, DWORD );
+WINCRYPT32API DWORD WINAPI          CertOIDToAlgId( LPCSTR );
+WINCRYPT32API HCERT_SERVER_OCSP_RESPONSE WINAPI CertOpenServerOcspResponse( PCCERT_CHAIN_CONTEXT, DWORD, LPVOID );
 WINCRYPT32API HCERTSTORE WINAPI     CertOpenStore( LPCSTR, DWORD, HCRYPTPROV_LEGACY, DWORD, const void * );
+WINCRYPT32API HCERTSTORE WINAPI     CertOpenSystemStoreA( HCRYPTPROV_LEGACY, LPCSTR );
+WINCRYPT32API HCERTSTORE WINAPI     CertOpenSystemStoreW( HCRYPTPROV_LEGACY, LPCWSTR );
+WINCRYPT32API DWORD WINAPI          CertRDNValueToStrA( DWORD, PCERT_RDN_VALUE_BLOB, LPSTR, DWORD );
+WINCRYPT32API DWORD WINAPI          CertRDNValueToStrW( DWORD, PCERT_RDN_VALUE_BLOB, LPWSTR, DWORD );
+WINCRYPT32API BOOL WINAPI           CertRegisterPhysicalStore( const void *, DWORD, LPCWSTR, PCERT_PHYSICAL_STORE_INFO, void * );
+WINCRYPT32API BOOL WINAPI           CertRegisterSystemStore( const void *, DWORD, PCERT_SYSTEM_STORE_INFO, void * );
+WINCRYPT32API BOOL WINAPI           CertRemoveEnhancedKeyUsageIdentifier( PCCERT_CONTEXT, LPCSTR );
+WINCRYPT32API void WINAPI           CertRemoveStoreFromCollection( HCERTSTORE, HCERTSTORE );
+WINCRYPT32API BOOL WINAPI           CertResyncCertificateChainEngine( HCERTCHAINENGINE );
+WINCRYPT32API BOOL WINAPI           CertRetrieveLogoOrBiometricInfo( PCCERT_CONTEXT, LPCSTR, DWORD, DWORD, DWORD, void *, BYTE **, DWORD *, LPWSTR * );
 WINCRYPT32API BOOL WINAPI           CertSaveStore( HCERTSTORE, DWORD, DWORD, DWORD, void *, DWORD );
+WINCRYPT32API BOOL WINAPI           CertSerializeCRLStoreElement( PCCRL_CONTEXT, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CertSerializeCTLStoreElement( PCCTL_CONTEXT, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CertSerializeCertificateStoreElement( PCCERT_CONTEXT, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CertSetCRLContextProperty( PCCRL_CONTEXT, DWORD, DWORD, const void * );
+WINCRYPT32API BOOL WINAPI           CertSetCTLContextProperty( PCCTL_CONTEXT, DWORD, DWORD, const void * );
 WINCRYPT32API BOOL WINAPI           CertSetCertificateContextPropertiesFromCTLEntry( PCCERT_CONTEXT, PCTL_ENTRY, DWORD );
 WINCRYPT32API BOOL WINAPI           CertSetCertificateContextProperty( PCCERT_CONTEXT, DWORD, DWORD, const void * );
+WINCRYPT32API BOOL WINAPI           CertSetEnhancedKeyUsage( PCCERT_CONTEXT, PCERT_ENHKEY_USAGE );
+WINCRYPT32API BOOL WINAPI           CertSetStoreProperty( HCERTSTORE, DWORD, DWORD, const void * );
+WINCRYPT32API BOOL WINAPI           CertStrToNameA( DWORD, LPCSTR, DWORD, void *, BYTE *, DWORD *, LPCSTR * );
+WINCRYPT32API BOOL WINAPI           CertStrToNameW( DWORD, LPCWSTR, DWORD, void *, BYTE *, DWORD *, LPCWSTR * );
+WINCRYPT32API BOOL WINAPI           CertVerifyCRLRevocation( DWORD, PCERT_INFO, DWORD, PCRL_INFO [] );
+WINCRYPT32API LONG WINAPI           CertVerifyCRLTimeValidity( LPFILETIME, PCRL_INFO );
+WINCRYPT32API BOOL WINAPI           CertVerifyCTLUsage( DWORD, DWORD, void *, PCTL_USAGE, DWORD, PCTL_VERIFY_USAGE_PARA, PCTL_VERIFY_USAGE_STATUS );
+WINCRYPT32API BOOL WINAPI           CertVerifyCertificateChainPolicy( LPCSTR, PCCERT_CHAIN_CONTEXT, PCERT_CHAIN_POLICY_PARA, PCERT_CHAIN_POLICY_STATUS );
+WINCRYPT32API BOOL WINAPI           CertVerifyRevocation( DWORD, DWORD, DWORD, PVOID [], DWORD, PCERT_REVOCATION_PARA, PCERT_REVOCATION_STATUS );
 WINCRYPT32API BOOL WINAPI           CertVerifySubjectCertificateContext( PCCERT_CONTEXT, PCCERT_CONTEXT, DWORD * );
+WINCRYPT32API LONG WINAPI           CertVerifyTimeValidity( LPFILETIME, PCERT_INFO );
+WINCRYPT32API BOOL WINAPI           CertVerifyValidityNesting( PCERT_INFO, PCERT_INFO );
+WINCRYPT32API BOOL WINAPI           CryptAcquireCertificatePrivateKey( PCCERT_CONTEXT, DWORD, void *, HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, DWORD *, BOOL * );
+WINCRYPT32API BOOL WINAPI           CryptCancelAsyncRetrieval( HCRYPTASYNC );
+WINCRYPT32API BOOL WINAPI           CryptCloseAsyncHandle( HCRYPTASYNC );
+WINCRYPT32API BOOL WINAPI           CryptCreateAsyncHandle( DWORD, PHCRYPTASYNC );
+WINCRYPT32API BOOL WINAPI           CryptCreateKeyIdentifierFromCSP( DWORD, LPCSTR, const PUBLICKEYSTRUC *, DWORD, DWORD, void *, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptDecodeMessage( DWORD, PCRYPT_DECRYPT_MESSAGE_PARA, PCRYPT_VERIFY_MESSAGE_PARA, DWORD, const BYTE *, DWORD, DWORD, DWORD *, DWORD *, BYTE *, DWORD *, PCCERT_CONTEXT *, PCCERT_CONTEXT * );
 WINCRYPT32API BOOL WINAPI           CryptDecodeObject( DWORD, LPCSTR, const BYTE *, DWORD, DWORD, void *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptDecodeObjectEx( DWORD, LPCSTR, const BYTE *, DWORD, DWORD, PCRYPT_DECODE_PARA, void *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptDecryptAndVerifyMessageSignature( PCRYPT_DECRYPT_MESSAGE_PARA, PCRYPT_VERIFY_MESSAGE_PARA, DWORD, const BYTE *, DWORD, BYTE *, DWORD *, PCCERT_CONTEXT *, PCCERT_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CryptDecryptMessage( PCRYPT_DECRYPT_MESSAGE_PARA, const BYTE *, DWORD, BYTE *, DWORD *, PCCERT_CONTEXT * );
 WINCRYPT32API BOOL WINAPI           CryptEncodeObject( DWORD, LPCSTR, const void *, BYTE *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptEncodeObjectEx( DWORD, LPCSTR, const void *, DWORD, PCRYPT_ENCODE_PARA, void *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptEncryptMessage( PCRYPT_ENCRYPT_MESSAGE_PARA, DWORD, PCCERT_CONTEXT [], const BYTE *, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptEnumKeyIdentifierProperties( const CRYPT_HASH_BLOB *, DWORD, DWORD, LPCWSTR, void *, void *, PFN_CRYPT_ENUM_KEYID_PROP );
 WINCRYPT32API BOOL WINAPI           CryptEnumOIDFunction( DWORD, LPCSTR, LPCSTR, DWORD, void *, PFN_CRYPT_ENUM_OID_FUNC );
 WINCRYPT32API BOOL WINAPI           CryptEnumOIDInfo( DWORD, DWORD, void *, PFN_CRYPT_ENUM_OID_INFO );
+WINCRYPT32API BOOL WINAPI           CryptExportPKCS8( HCRYPTPROV, DWORD, LPSTR, DWORD, void *, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptExportPKCS8Ex( CRYPT_PKCS8_EXPORT_PARAMS *, DWORD, void *, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptExportPublicKeyInfo( HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, DWORD, DWORD, PCERT_PUBLIC_KEY_INFO, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptExportPublicKeyInfoEx( HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, DWORD, DWORD, LPSTR, DWORD, void *, PCERT_PUBLIC_KEY_INFO, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptFindCertificateKeyProvInfo( PCCERT_CONTEXT, DWORD, void * );
 WINCRYPT32API LPCWSTR WINAPI        CryptFindLocalizedName( LPCWSTR );
 WINCRYPT32API PCCRYPT_OID_INFO WINAPI   CryptFindOIDInfo( DWORD, void *, DWORD );
+WINCRYPT32API BOOL WINAPI           CryptFlushTimeValidObject( LPCSTR, LPVOID, PCCERT_CONTEXT, DWORD, LPVOID );
 WINCRYPT32API BOOL WINAPI           CryptFormatObject( DWORD, DWORD, DWORD, void *, LPCSTR, const BYTE *, DWORD, void *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptFreeOIDFunctionAddress( HCRYPTOIDFUNCADDR, DWORD );
+WINCRYPT32API BOOL WINAPI           CryptGetAsyncParam( HCRYPTASYNC, LPSTR, LPVOID *, PFN_CRYPT_ASYNC_PARAM_FREE_FUNC * );
 WINCRYPT32API BOOL WINAPI           CryptGetDefaultOIDDllList( HCRYPTOIDFUNCSET, DWORD, WCHAR *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptGetDefaultOIDFunctionAddress( HCRYPTOIDFUNCSET, DWORD, LPCWSTR, DWORD, void **, HCRYPTOIDFUNCADDR * );
+WINCRYPT32API BOOL WINAPI           CryptGetKeyIdentifier( const CRYPT_HASH_BLOB *, DWORD, DWORD, LPCWSTR, void *, void *, DWORD * );
+WINCRYPT32API HCERTSTORE WINAPI     CryptGetMessageCertificates( DWORD, HCRYPTPROV_LEGACY, DWORD, const BYTE *, DWORD );
+WINCRYPT32API LONG WINAPI           CryptGetMessageSignerCount( DWORD, const BYTE *, DWORD );
 WINCRYPT32API BOOL WINAPI           CryptGetOIDFunctionAddress( HCRYPTOIDFUNCSET, DWORD, LPCSTR, DWORD, void **, HCRYPTOIDFUNCADDR );
 WINCRYPT32API BOOL WINAPI           CryptGetOIDFunctionValue( DWORD, LPCSTR, LPCSTR, LPCWSTR, DWORD *, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptGetObjectUrl( LPCSTR, LPVOID, DWORD, PCRYPT_URL_ARRAY, DWORD *, PCRYPT_URL_INFO, DWORD *, LPVOID );
+WINCRYPT32API BOOL WINAPI           CryptGetTimeValidObject( LPCSTR, LPVOID, PCCERT_CONTEXT, LPFILETIME, DWORD, DWORD, LPVOID *, PCRYPT_CREDENTIALS, PCRYPT_GET_TIME_VALID_OBJECT_EXTRA_INFO );
+WINCRYPT32API BOOL WINAPI           CryptHashCertificate( HCRYPTPROV_LEGACY, ALG_ID, DWORD, const BYTE *, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptHashCertificate2( LPCWSTR, DWORD, void *, const BYTE *, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptHashMessage( PCRYPT_HASH_MESSAGE_PARA, BOOL, DWORD, const BYTE * [], DWORD [], BYTE *, DWORD *, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptHashPublicKeyInfo( HCRYPTPROV_LEGACY, ALG_ID, DWORD, DWORD, PCERT_PUBLIC_KEY_INFO, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptHashToBeSigned( HCRYPTPROV_LEGACY, DWORD, const BYTE *, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptImportPKCS8( CRYPT_PKCS8_IMPORT_PARAMS, DWORD, HCRYPTPROV *, void * );
+WINCRYPT32API BOOL WINAPI           CryptImportPublicKeyInfo( HCRYPTPROV, DWORD, PCERT_PUBLIC_KEY_INFO, HCRYPTKEY * );
+WINCRYPT32API BOOL WINAPI           CryptImportPublicKeyInfoEx( HCRYPTPROV, DWORD, PCERT_PUBLIC_KEY_INFO, ALG_ID, DWORD, void *, HCRYPTKEY * );
+WINCRYPT32API BOOL WINAPI           CryptImportPublicKeyInfoEx2( DWORD, PCERT_PUBLIC_KEY_INFO, DWORD, void *, BCRYPT_KEY_HANDLE * );
 WINCRYPT32API HCRYPTOIDFUNCSET WINAPI   CryptInitOIDFunctionSet( LPCSTR, DWORD );
+WINCRYPT32API BOOL WINAPI           CryptInstallCancelRetrieval( PFN_CRYPT_CANCEL_RETRIEVAL, const void *, DWORD, void * );
+WINCRYPT32API BOOL WINAPI           CryptInstallDefaultContext( HCRYPTPROV, DWORD, const void *, DWORD, void *, HCRYPTDEFAULTCONTEXT * );
 WINCRYPT32API BOOL WINAPI           CryptInstallOIDFunctionAddress( HMODULE, DWORD, LPCSTR, DWORD, const CRYPT_OID_FUNC_ENTRY [], DWORD );
+WINCRYPT32API LPVOID WINAPI         CryptMemAlloc( ULONG );
+WINCRYPT32API VOID WINAPI           CryptMemFree( LPVOID );
+WINCRYPT32API LPVOID WINAPI         CryptMemRealloc( LPVOID, ULONG );
 WINCRYPT32API DWORD WINAPI          CryptMsgCalculateEncodedLength( DWORD, DWORD, DWORD, void const *, LPSTR, DWORD );
 WINCRYPT32API BOOL WINAPI           CryptMsgClose( HCRYPTMSG );
 WINCRYPT32API BOOL WINAPI           CryptMsgControl( HCRYPTMSG, DWORD, DWORD, void const * );
 WINCRYPT32API BOOL WINAPI           CryptMsgCountersign( HCRYPTMSG, DWORD, DWORD, PCMSG_SIGNER_ENCODE_INFO );
 WINCRYPT32API BOOL WINAPI           CryptMsgCountersignEncoded( DWORD, PBYTE, DWORD, DWORD, PCMSG_SIGNER_ENCODE_INFO, PBYTE, PDWORD );
 WINCRYPT32API HCRYPTMSG WINAPI      CryptMsgDuplicate( HCRYPTMSG );
+WINCRYPT32API BOOL WINAPI           CryptMsgEncodeAndSignCTL( DWORD, PCTL_INFO, PCMSG_SIGNED_ENCODE_INFO, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptMsgGetAndVerifySigner( HCRYPTMSG, DWORD, HCERTSTORE *, DWORD, PCCERT_CONTEXT *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptMsgGetParam( HCRYPTMSG, DWORD, DWORD, void *, DWORD * );
 WINCRYPT32API HCRYPTMSG WINAPI      CryptMsgOpenToDecode( DWORD, DWORD, DWORD, HCRYPTPROV_LEGACY, PCERT_INFO, PCMSG_STREAM_INFO );
 WINCRYPT32API HCRYPTMSG WINAPI      CryptMsgOpenToEncode( DWORD, DWORD, DWORD, void const *, LPSTR, PCMSG_STREAM_INFO );
+WINCRYPT32API BOOL WINAPI           CryptMsgSignCTL( DWORD, BYTE *, DWORD, PCMSG_SIGNED_ENCODE_INFO, DWORD, BYTE *, DWORD * );
 WINCRYPT32API BOOL WINAPI           CryptMsgUpdate( HCRYPTMSG, const BYTE *, DWORD, BOOL );
 WINCRYPT32API BOOL WINAPI           CryptMsgVerifyCountersignatureEncoded( HCRYPTPROV_LEGACY, DWORD, PBYTE, DWORD, PBYTE, DWORD, PCERT_INFO );
 WINCRYPT32API BOOL WINAPI           CryptMsgVerifyCountersignatureEncodedEx( HCRYPTPROV_LEGACY, DWORD, PBYTE, DWORD, PBYTE, DWORD, DWORD, void *, DWORD, void * );
+WINCRYPT32API BOOL WINAPI           CryptProtectData( DATA_BLOB *, LPCWSTR, DATA_BLOB *, PVOID, CRYPTPROTECT_PROMPTSTRUCT *, DWORD, DATA_BLOB * );
+WINCRYPT32API BOOL WINAPI           CryptProtectMemory( LPVOID, DWORD, DWORD );
+WINCRYPT32API BOOL WINAPI           CryptQueryObject( DWORD, const void *, DWORD, DWORD, DWORD, DWORD *, DWORD *, DWORD *, HCERTSTORE *, HCRYPTMSG *, void ** );
 WINCRYPT32API BOOL WINAPI           CryptRegisterDefaultOIDFunction( DWORD, LPCSTR, DWORD, LPCWSTR );                                                        
 WINCRYPT32API BOOL WINAPI           CryptRegisterOIDFunction( DWORD, LPCSTR, LPCSTR, LPCWSTR, LPCSTR );
 WINCRYPT32API BOOL WINAPI           CryptRegisterOIDInfo( PCCRYPT_OID_INFO, DWORD );
+WINCRYPT32API BOOL WINAPI           CryptRetrieveObjectByUrlA( LPCSTR, LPCSTR, DWORD, DWORD, LPVOID *, HCRYPTASYNC, PCRYPT_CREDENTIALS, LPVOID, PCRYPT_RETRIEVE_AUX_INFO );
+WINCRYPT32API BOOL WINAPI           CryptRetrieveObjectByUrlW( LPCWSTR, LPCWSTR, DWORD, DWORD, LPVOID *, HCRYPTASYNC, PCRYPT_CREDENTIALS, LPVOID, PCRYPT_RETRIEVE_AUX_INFO );
+WINCRYPT32API BOOL WINAPI           CryptSetAsyncParam( HCRYPTASYNC, LPSTR, LPVOID, PFN_CRYPT_ASYNC_PARAM_FREE_FUNC );
+WINCRYPT32API BOOL WINAPI           CryptSetKeyIdentifierProperty( const CRYPT_HASH_BLOB *, DWORD, DWORD, LPCWSTR, void *, const void * );
 WINCRYPT32API BOOL WINAPI           CryptSetOIDFunctionValue( DWORD, LPCSTR, LPCSTR, LPCWSTR, DWORD, const BYTE *, DWORD );
+WINCRYPT32API BOOL WINAPI           CryptSignAndEncodeCertificate( HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, DWORD, DWORD, LPCSTR, const void *, PCRYPT_ALGORITHM_IDENTIFIER, const void *, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptSignAndEncryptMessage( PCRYPT_SIGN_MESSAGE_PARA, PCRYPT_ENCRYPT_MESSAGE_PARA, DWORD, PCCERT_CONTEXT [], const BYTE *, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptSignCertificate( HCRYPTPROV_OR_NCRYPT_KEY_HANDLE, DWORD, DWORD, const BYTE *, DWORD, PCRYPT_ALGORITHM_IDENTIFIER, const void *, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptSignMessage( PCRYPT_SIGN_MESSAGE_PARA, BOOL, DWORD, const BYTE * [], DWORD [], BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptSignMessageWithKey( PCRYPT_KEY_SIGN_MESSAGE_PARA, const BYTE *, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptUninstallCancelRetrieval( DWORD, void * );
+WINCRYPT32API BOOL WINAPI           CryptUninstallDefaultContext( HCRYPTDEFAULTCONTEXT, DWORD, void * );
+WINCRYPT32API BOOL WINAPI           CryptUnprotectData( DATA_BLOB *, LPWSTR *, DATA_BLOB *, PVOID, CRYPTPROTECT_PROMPTSTRUCT *, DWORD, DATA_BLOB * );
+WINCRYPT32API BOOL WINAPI           CryptUnprotectMemory( LPVOID, DWORD, DWORD );
 WINCRYPT32API BOOL WINAPI           CryptUnregisterDefaultOIDFunction( DWORD, LPCSTR, LPCWSTR );
 WINCRYPT32API BOOL WINAPI           CryptUnregisterOIDFunction( DWORD, LPCSTR, LPCSTR );
 WINCRYPT32API BOOL WINAPI           CryptUnregisterOIDInfo( PCCRYPT_OID_INFO );
+WINCRYPT32API BOOL WINAPI           CryptUnregisterPhysicalStore( const void *, DWORD, LPCWSTR );
+WINCRYPT32API BOOL WINAPI           CryptUnregisterSystemStore( const void *, DWORD );
+WINCRYPT32API BOOL WINAPI           CryptUpdateProtectedState( PSID, LPCWSTR, DWORD, DWORD *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptVerifyCertificateSignature( HCRYPTPROV_LEGACY, DWORD, const BYTE *, DWORD, PCERT_PUBLIC_KEY_INFO );
+WINCRYPT32API BOOL WINAPI           CryptVerifyCertificateSignatureEx( HCRYPTPROV_LEGACY, DWORD, DWORD, void *, DWORD, void *, DWORD, void * );
+WINCRYPT32API BOOL WINAPI           CryptVerifyDetachedMessageHash( PCRYPT_HASH_MESSAGE_PARA, BYTE *, DWORD, DWORD, const BYTE * [], DWORD [], BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptVerifyDetachedMessageSignature( PCRYPT_VERIFY_MESSAGE_PARA, DWORD, const BYTE *, DWORD, DWORD, const BYTE * [], DWORD [], PCCERT_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CryptVerifyMessageHash( PCRYPT_HASH_MESSAGE_PARA, BYTE *, DWORD, BYTE *, DWORD *, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           CryptVerifyMessageSignature( PCRYPT_VERIFY_MESSAGE_PARA, DWORD, const BYTE *, DWORD, BYTE *, DWORD *, PCCERT_CONTEXT * );
+WINCRYPT32API BOOL WINAPI           CryptVerifyMessageSignatureWithKey( PCRYPT_KEY_VERIFY_MESSAGE_PARA, PCERT_PUBLIC_KEY_INFO, const BYTE *, DWORD, BYTE *, DWORD * );
+WINCRYPT32API BOOL WINAPI           PFXExportCertStore( HCERTSTORE, CRYPT_DATA_BLOB *, LPCWSTR, DWORD );
+WINCRYPT32API BOOL WINAPI           PFXExportCertStoreEx( HCERTSTORE, CRYPT_DATA_BLOB *, LPCWSTR, void *, DWORD );
+WINCRYPT32API HCERTSTORE WINAPI     PFXImportCertStore( CRYPT_DATA_BLOB *, LPCWSTR, DWORD );
+WINCRYPT32API BOOL WINAPI           PFXIsPFXBlob( CRYPT_DATA_BLOB * );
+WINCRYPT32API BOOL WINAPI           PFXVerifyPassword( CRYPT_DATA_BLOB *, LPCWSTR, DWORD );
+
+/* Functions in CRYPT32.DLL for string/binary conversion */
+WINCRYPT32STRINGAPI BOOL WINAPI CryptBinaryToStringA( CONST BYTE *, DWORD, DWORD, LPSTR, DWORD * );
+WINCRYPT32STRINGAPI BOOL WINAPI CryptBinaryToStringW( CONST BYTE *, DWORD, DWORD, LPWSTR, DWORD * );
+WINCRYPT32STRINGAPI BOOL WINAPI CryptStringToBinaryA( LPCSTR, DWORD, DWORD, BYTE *, DWORD *, DWORD *, DWORD * );
+WINCRYPT32STRINGAPI BOOL WINAPI CryptStringToBinaryW( LPCWSTR, DWORD, DWORD, BYTE *, DWORD *, DWORD *, DWORD * );
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
 #ifdef UNICODE
-    #define CryptAcquireContext     CryptAcquireContextW
-    #define CryptEnumProviderTypes  CryptEnumProviderTypesW
-    #define CryptEnumProviders      CryptEnumProvidersW
-    #define CryptGetDefaultProvider CryptGetDefaultProviderW
-    #define CryptSetProvider        CryptSetProviderW
-    #define CryptSetProviderEx      CryptSetProviderExW
-    #define CryptSignHash           CryptSignHashW
-    #define CryptVerifySignature    CryptVerifySignatureW
+    #define CertAddEncodedCertificateToSystemStore  CertAddEncodedCertificateToSystemStoreW
+    #define CertGetNameString           CertGetNameStringW
+    #define CertNameToStr               CertNameToStrW
+    #define CertOpenSystemStore         CertOpenSystemStoreW
+    #define CertRDNValueToStr           CertRDNValueToStrW
+    #define CertStrToName               CertStrToNameW
+    #define CryptAcquireContext         CryptAcquireContextW
+    #define CryptBinaryToString         CryptBinaryToStringW
+    #define CryptEnumProviderTypes      CryptEnumProviderTypesW
+    #define CryptEnumProviders          CryptEnumProvidersW
+    #define CryptGetDefaultProvider     CryptGetDefaultProviderW
+    #define CryptRetrieveObjectByUrl    CryptRetrieveObjectByUrlW
+    #define CryptSetProvider            CryptSetProviderW
+    #define CryptSetProviderEx          CryptSetProviderExW
+    #define CryptSignHash               CryptSignHashW
+    #define CryptStringToBinary         CryptStringToBinaryW
+    #define CryptVerifySignature        CryptVerifySignatureW
 #else
-    #define CryptAcquireContext     CryptAcquireContextA
-    #define CryptEnumProviderTypes  CryptEnumProviderTypesA
-    #define CryptEnumProviders      CryptEnumProvidersA
-    #define CryptGetDefaultProvider CryptGetDefaultProviderA
-    #define CryptSetProvider        CryptSetProviderA
-    #define CryptSetProviderEx      CryptSetProviderExA
-    #define CryptSignHash           CryptSignHashA
-    #define CryptVerifySignature    CryptVerifySignatureA
+    #define CertAddEncodedCertificateToSystemStore  CertAddEncodedCertificateToSystemStoreA
+    #define CertGetNameString           CertGetNameStringA
+    #define CertNameToStr               CertNameToStrA
+    #define CertOpenSystemStore         CertOpenSystemStoreA
+    #define CertRDNValueToStr           CertRDNValueToStrA
+    #define CertStrToName               CertStrToNameA
+    #define CryptAcquireContext         CryptAcquireContextA
+    #define CryptBinaryToString         CryptBinaryToStringA
+    #define CryptEnumProviderTypes      CryptEnumProviderTypesA
+    #define CryptEnumProviders          CryptEnumProvidersA
+    #define CryptGetDefaultProvider     CryptGetDefaultProviderA
+    #define CryptRetrieveObjectByUrl    CryptRetrieveObjectByUrlA
+    #define CryptSetProvider            CryptSetProviderA
+    #define CryptSetProviderEx          CryptSetProviderExA
+    #define CryptSignHash               CryptSignHashA
+    #define CryptStringToBinary         CryptStringToBinaryA
+    #define CryptVerifySignature        CryptVerifySignatureA
 #endif
 
 :include cplusepi.sp
