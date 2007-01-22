@@ -14,8 +14,10 @@
 #define WINCRYPT32API       DECLSPEC_IMPORT
 #define WINCRYPT32STRINGAPI DECLSPEC_IMPORT
 
+/* Algorithm identifier data type */
+:include algid.sp
+
 /* Cryptographic primitive data types */
-typedef unsigned int    ALG_ID;
 typedef ULONG_PTR       HCRYPTHASH;
 typedef ULONG_PTR       HCRYPTKEY;
 typedef ULONG_PTR       HCRYPTPROV;

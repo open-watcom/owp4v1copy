@@ -39,6 +39,7 @@ headers =            &
         wincrypt.h   &
         windef.h     &
         windows.h    &
+        winefs.h     &
         winerror.h   &
         wingdi.h     &
         winnetwk.h   &

@@ -46,6 +46,7 @@
     #include <winperf.h>
     #include <winsock.h>
     #include <wincrypt.h>
+    #include <winefs.h>
 #endif
 
 #endif /* _WINDOWS_H_INCLUDED */
