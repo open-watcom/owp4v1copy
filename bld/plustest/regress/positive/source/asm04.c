@@ -7,7 +7,7 @@
 #pragma inline_depth(0)
 #endif
 
-#if ! defined(__386__) || ! defined(__I86__)
+#if defined(__386__) || defined(__I86__)
 
 inline int sub( int a, int b ) {
     return a - b;
