@@ -38,7 +38,6 @@
 #include "macros.h"
 #include "mmemory.h"
 #include "mlex.h"
-#include "mpathgrp.h"
 #include "mpreproc.h"
 #include "mupdate.h"
 #include "mrcmsg.h"

@@ -20,7 +20,6 @@ mlex.obj        &
 mlexmac.obj     &
 mlexprs.obj     &
 mparse.obj      &
-mpathgrp.obj    &
 mpreproc.obj    &
 mrcmsg.obj      &
 msg.obj         &

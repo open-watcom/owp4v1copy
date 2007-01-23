@@ -344,21 +344,19 @@ STATIC RET_T regStat( const char *filename, time_t *ptime )
 STATIC void splitFullPath( const char *fullpath, char *pathbuf, char *filebuf )
 /*****************************************************************************/
 {
-    PGROUP      *pg;
+    PGROUP      pg;
     char const  *ext;
 
     assert( fullpath != NULL && pathbuf != NULL && filebuf != NULL );
 
-    pg = SplitPath( fullpath );
+    _splitpath2( fullpath, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
 
-    _makepath( pathbuf, pg->drive, pg->dir, NULL, NULL );
-    ext = pg->ext;
+    _makepath( pathbuf, pg.drive, pg.dir, NULL, NULL );
+    ext = pg.ext;
     if( ext[0] == '.' && ext[1] == 0 ) {
         ext = NULL;
     }
-    _makepath( filebuf, NULL, NULL, pg->fname, ext );
-
-    DropPGroup( pg );
+    _makepath( filebuf, NULL, NULL, pg.fname, ext );
 }
 
 

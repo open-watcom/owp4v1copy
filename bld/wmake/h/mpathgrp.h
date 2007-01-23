@@ -24,28 +24,22 @@
 *
 *  ========================================================================
 *
-* Description:  mpathgrp.c interfaces
+* Description:  PathGroup structure declaration
 *
 ****************************************************************************/
 
 
 #ifndef _MPATHGRP_H
 #define _MPATHGRP_H     1
-#include <stdlib.h>
-#include <limits.h>
+
 #include <stdio.h>
 
-typedef struct PathGroup    PGROUP;
-
-struct PathGroup {
+typedef struct PathGroup {
     char    *drive;
     char    *dir;
     char    *fname;
     char    *ext;
     char    buffer[PATH_MAX + 4];
-};
-
-extern void     DropPGroup( PGROUP * );
-extern PGROUP   *SplitPath( const char *path );
+} PGROUP;
 
 #endif /* !_MPATHGRP_H */

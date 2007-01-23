@@ -379,22 +379,12 @@ static char *pattern = NULL;
 const char *DoWildCard( const char *base )
 /***********************************************/
 {
-    PGROUP          *pg;
+    PGROUP          pg;
     struct dirent   *entry;
 
     if( base != NULL ) {
-        if( path != NULL ) {        /* clean up from previous invocation */
-            FreeSafe( path );
-            path = NULL;            /* 1-jun-90 AFS */
-        }
-        if( pattern != NULL ) {
-            FreeSafe( pattern );
-            pattern = NULL;
-        }
-        if( parent != NULL ) {
-            closedir( parent );
-            parent = NULL;          /* 1-jun-90 AFS */
-        }
+        /* clean up from previous invocation */
+        DoWildCardClose();
 
         if( strpbrk( base, WILD_METAS ) == NULL ) {
             return( base );
@@ -404,18 +394,14 @@ const char *DoWildCard( const char *base )
         pattern = MallocSafe( _MAX_PATH );
         strcpy( path, base );
         FixName( path );
-        pg = SplitPath( path );
-        _makepath( path, pg->drive, pg->dir, ".", NULL );
+        _splitpath2( path, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+        _makepath( path, pg.drive, pg.dir, ".", NULL );
         // create file name pattern
-        _makepath( pattern, NULL, NULL, pg->fname, pg->ext );
-        DropPGroup( pg );
+        _makepath( pattern, NULL, NULL, pg.fname, pg.ext );
 
         parent = opendir( path );
         if( parent == NULL ) {
-            FreeSafe( path );
-            path = NULL;
-            FreeSafe( pattern );
-            pattern = NULL;
+            DoWildCardClose();
             return( base );
         }
     }
@@ -440,18 +426,12 @@ const char *DoWildCard( const char *base )
         entry = readdir( parent );
     }
     if( entry == NULL ) {
-        closedir( parent );
-        parent = NULL;
-        FreeSafe( path );
-        path = NULL;                    /* 1-jun-90 AFS */
-        FreeSafe( pattern );
-        pattern = NULL;
+        DoWildCardClose();
         return( base );
     }
 
-    pg = SplitPath( path );
-    _makepath( path, pg->drive, pg->dir, entry->d_name, NULL );
-    DropPGroup( pg );
+    _splitpath2( path, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+    _makepath( path, pg.drive, pg.dir, entry->d_name, NULL );
 
     return( path );
 }

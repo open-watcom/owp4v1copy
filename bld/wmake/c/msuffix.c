@@ -496,7 +496,7 @@ RET_T TrySufPath( char *buffer, const char *filename, TARGET **chktarg,
  * then buffer, and filename do not overlap
  */
 {
-    PGROUP      *pg;
+    PGROUP      pg;
     SUFFIX      *suffix;
     char        *env;
     PATHRING    *envpath;
@@ -515,15 +515,14 @@ RET_T TrySufPath( char *buffer, const char *filename, TARGET **chktarg,
     }
 
     /* split up filename */
-    pg = SplitPath( filename );
+    _splitpath2( filename, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
 
-    if( pg->drive[0] != NULLCHAR || isdirc( pg->dir[0] ) ) {
+    if( pg.drive[0] != NULLCHAR || isdirc( pg.dir[0] ) ) {
         /* is an absolute path name */
-        DropPGroup( pg );
         return( RET_ERROR );
     }
 
-    suffix = FindSuffix( pg->ext );
+    suffix = FindSuffix( pg.ext );
 
     ret = RET_ERROR;
 
@@ -545,18 +544,16 @@ RET_T TrySufPath( char *buffer, const char *filename, TARGET **chktarg,
             ringPath( &envpath, env );
 
             Glob.cachedir = FALSE;      /* never cache %path */
-            ret = tryPathRing( &envpath, buffer, pg->dir, pg->fname, pg->ext,
+            ret = tryPathRing( &envpath, buffer, pg.dir, pg.fname, pg.ext,
                 chktarg );
             Glob.cachedir = TRUE;
 
             freePathRing( envpath );
         }
     } else {
-        ret = tryPathRing( &suffix->pathring, buffer, pg->dir, pg->fname,
-            pg->ext, chktarg );
+        ret = tryPathRing( &suffix->pathring, buffer, pg.dir, pg.fname,
+            pg.ext, chktarg );
     }
-
-    DropPGroup( pg );
 
     return( ret );
 }

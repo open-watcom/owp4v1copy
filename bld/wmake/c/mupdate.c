@@ -740,18 +740,16 @@ STATIC RET_T imply( TARGET *targ, const char *drive, const char *dir,
 STATIC RET_T tryImply( TARGET *targ, BOOLEAN must )
 /*************************************************/
 {
-    PGROUP  *pg;
+    PGROUP  pg;
     RET_T   ret;
 
     if( Glob.block ) {
         return( RET_WARN );
     }
 
-    pg = SplitPath( targ->node.name );
+    _splitpath2( targ->node.name, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
 
-    ret = imply( targ, pg->drive,pg->dir,pg->fname, pg->ext, must );
-
-    DropPGroup( pg );
+    ret = imply( targ, pg.drive, pg.dir, pg.fname, pg.ext, must );
 
     return( ret );
 }

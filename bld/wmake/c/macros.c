@@ -137,7 +137,7 @@ const char *procPath( const char *fullpath )
  * returns: pointer to a static buffer
  */
 {
-    PGROUP  *pg;
+    PGROUP  pg;
     char    *current;
 
     if( fullpath == NULL ) {
@@ -146,27 +146,27 @@ const char *procPath( const char *fullpath )
 
     getDirBuf();
 
-    pg = SplitPath( fullpath );
+    _splitpath2( fullpath, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
 
     switch( CurAttr.num ) {
     case FORM_FULL:
-        _makepath( dirBuf, pg->drive, pg->dir, pg->fname, pg->ext );
+        _makepath( dirBuf, pg.drive, pg.dir, pg.fname, pg.ext );
         break;
 
     case FORM_NOEXT:
-        _makepath( dirBuf, pg->drive, pg->dir, pg->fname, NULL );
+        _makepath( dirBuf, pg.drive, pg.dir, pg.fname, NULL );
         break;
 
     case FORM_NOEXT_NOPATH:
-        _makepath( dirBuf, NULL, NULL, pg->fname, NULL );
+        _makepath( dirBuf, NULL, NULL, pg.fname, NULL );
         break;
 
     case FORM_NOPATH:
-        _makepath( dirBuf, NULL, NULL, pg->fname, pg->ext );
+        _makepath( dirBuf, NULL, NULL, pg.fname, pg.ext );
         break;
 
     case FORM_PATH:
-        _makepath( dirBuf, pg->drive, pg->dir, NULL, NULL );
+        _makepath( dirBuf, pg.drive, pg.dir, NULL, NULL );
         if( Glob.microsoft) {
             if( dirBuf[0] == NULLCHAR ) {
                 dirBuf[0] = '.';
@@ -184,13 +184,12 @@ const char *procPath( const char *fullpath )
         break;
 
     case FORM_EXT:
-        _makepath( dirBuf, NULL, NULL, NULL, pg->ext );
+        _makepath( dirBuf, NULL, NULL, NULL, pg.ext );
         break;
     default:
         dirBuf[0] = '\0';
     }
 
-    DropPGroup( pg );
     massageDollarOctothorpe( dirBuf );
     return( dirBuf );
 }
