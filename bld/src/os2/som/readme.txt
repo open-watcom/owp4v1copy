@@ -1,5 +1,5 @@
- SOM (System Object Model) Programming Examples
- ----------------------------------------------
+ SOM (System Object Model) and WPS (Worplace Shell) Programming Examples
+ -----------------------------------------------------------------------
 
  The SOM programming examples require the IBM SOMobjects Developer Toolkit.
 This toolkit is not distributed with Open Watcom; it is part of the IBM OS/2
@@ -19,10 +19,16 @@ In particular, the following environment variables must be set:
 to be set.
 
  The aim of these examples is demonstrating how to use the Open Watcom
-C and C++ compilers to develop SOM classes. For information on SOM programming
-concepts and details of the SOMobjects compiler usage, please refer to
-"System Object Model Programming Guide" and "System Object Model Programming
-Reference", both included with the IBM SOMobjects Developer Toolkit.
+C and C++ compilers to develop SOM and WPS classes. 
+
+ For information on SOM programming concepts and details of the SOMobjects
+compiler usage, please refer to "System Object Model Programming Guide" and
+"System Object Model Programming Reference", both included with the IBM
+SOMobjects Developer Toolkit.
+
+ For information on WPS programming concepts, please refer to the "Workplace
+Shell Programming Guide" and "Workplace Shell Programming Reference", both
+included in the IBM OS/2 Developer's Toolkit.
 
  Note: Building the C sample programs (helloc and animals ) assumes that SOM
 header files have the C++ or OIDL-compatible form, generated with 'somstars'

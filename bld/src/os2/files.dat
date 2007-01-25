@@ -35,6 +35,23 @@ usr="hello.idl"
 usr="main.c"
 usr="makefile"
 
+[ DEFAULT type="s" cond="samples" where="c ac" dir="samples/os2/som/wps" ]
+usr="helper.c"
+usr="helper.h"
+usr="makefile"
+usr="nbpage.c"
+usr="nbpage.h"
+usr="owobject.c"
+usr="owobject.dlg"
+usr="owobject.ico"
+usr="owobject.idl"
+usr="owobject.lnk"
+usr="owobject.rc"
+usr="owobjrc.h"
+usr="run.cmd"
+usr="setval.cmd"
+usr="welcome.txt"
+
 [ DEFAULT type="s" cond="samples" where="c ac" dir="samples/os2/som/hellocpp" ]
 usr="hello.cpp"
 usr="hello.idl"

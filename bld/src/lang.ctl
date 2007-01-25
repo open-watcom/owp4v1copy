@@ -72,6 +72,7 @@ cdsay .
     <CPCMD> <DEVDIR>/src/os2/som/classes/*.*            <RELROOT>/rel2/samples/os2/som/classes/
     <CPCMD> <DEVDIR>/src/os2/som/helloc/*.*             <RELROOT>/rel2/samples/os2/som/helloc/
     <CPCMD> <DEVDIR>/src/os2/som/hellocpp/*.*           <RELROOT>/rel2/samples/os2/som/hellocpp/
+    <CPCMD> <DEVDIR>/src/os2/som/wps/*.*                <RELROOT>/rel2/samples/os2/som/wps/
     <CPCMD> <DEVDIR>/src/win/*.*                        <RELROOT>/rel2/samples/win/
     <CPCMD> <DEVDIR>/src/clibexam/kanji/*.*             <RELROOT>/rel2/samples/clibexam/kanji/
     <CPCMD> <DEVDIR>/src/clibexam/test/*.*              <RELROOT>/rel2/samples/clibexam/test/
