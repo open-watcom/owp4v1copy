@@ -158,6 +158,7 @@
 .dir maxerrors          opmaxerr.gml    all
 .dir messages           opmessag.gml    netware
 .dir mindata            opmindat.gml    pharlap
+.dir mixed1632          opmixed.gml     os2
 .dir modname            opmodnam.gml    os2 win16 win32
 .dir modfile            ldmodfil.gml    all
 .dir modtrace           ldmodtrc.gml    all

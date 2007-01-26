@@ -302,8 +302,8 @@ pick(    MSG_OS2_HELP_13,   "            | \"IMPFile\"[=file_name] | \"IMPLib\"[
                 "            | \"IMPFile\"[=ファイル名] | \"IMPLib\"[=ファイル名]" )
 pick(    MSG_OS2_HELP_14,   "            | (\"MANYautodata\" | \"NOautodata\" | \"ONEAutodata\")" ,
                 "            | (\"MANYautodata\" | \"NOautodata\" | \"ONEAutodata\")" )
-pick(    MSG_OS2_HELP_15,   "            | \"MODName=\"module_name | \"NEWFiles\" | \"OFFset=\"n" ,
-                "            | \"MODName=\"モジュール名 | \"NEWFiles\" | \"OFFset=\"n" )
+pick(    MSG_OS2_HELP_15,   "            | \"MODName=\"module_name | \"MIXed1632\" | \"NEWFiles\" | \"OFFset=\"n" ,
+                "            | \"MODName=\"モジュール名 | \"MIXed1632\" | \"NEWFiles\" | \"OFFset=\"n" )
 pick(    MSG_OS2_HELP_16,   "            | \"OLDlibrary=\"dll_name | \"PACKCode=\"n | \"PACKData=\"n | \"PROTmode\"" ,
                                 "            | \"OLDlibrary=\"DLL名 | \"PACKCode=\"n | \"PACKData=\"n | \"PROTmode\"")
 pick(    MSG_OS2_HELP_17,   "            | \"RESource=\"res_file_name | \"STUB=\"stub_name | \"NOSTUB\"" ,

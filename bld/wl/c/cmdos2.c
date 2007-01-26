@@ -420,6 +420,16 @@ bool ProcToggleRelocsFlag( void )
     return( TRUE );
 }
 
+bool ProcMixed1632( void )
+/***************************************/
+// Sometimes it's useful to mix 16-bit and 32-bit code/data into one segment
+// specially for OS/2 Device Drivers
+{
+    LinkFlags &= ~FAR_CALLS_FLAG ; // must be turned off for mixed code
+    FmtData.u.os2.mixed1632 = TRUE;
+    return( TRUE );
+}
+
 bool ProcPENoRelocs( void )
 /*********************************/
 {

@@ -489,7 +489,8 @@ void AddSegment( segdata *sd, class_entry *class )
         char    *seg_name = sd->u.name;
 
         FindALeader( sd, class, info );
-        if( (sd->u.leader->info & USE_32) != (info & USE_32) ) {
+        if( ( (sd->u.leader->info & USE_32) != (info & USE_32) ) &&
+            !( (FmtData.type == MK_OS2_FLAT) && FmtData.u.os2.mixed1632 ) ) {
             char    *segname_16;
             char    *segname_32;
 
@@ -674,7 +675,10 @@ void AddToGroup( group_entry *group, seg_leader *seg )
                                    seg->group->sym->name, group->sym->name );
         return;
     }
-    if( (group->leaders != NULL) && ((group->leaders->info & USE_32) != (seg->info & USE_32)) ) {
+    if( (group->leaders != NULL) &&
+        ((group->leaders->info & USE_32) != (seg->info & USE_32)) &&
+        !((FmtData.type == MK_OS2_FLAT) && FmtData.u.os2.mixed1632) ) {
+
         char    *segname_16;
         char    *segname_32;
 

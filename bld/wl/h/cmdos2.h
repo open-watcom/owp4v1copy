@@ -46,6 +46,7 @@ extern bool     ProcInternalRelocs( void );
 extern bool     ProcToggleRelocsFlag( void );
 extern bool     ProcNoStdCall( void );
 extern bool     ProcResource( void );
+extern bool     ProcMixed1632( void );
 
 extern bool     ProcRunNative( void );
 extern bool     ProcRunWindows( void );

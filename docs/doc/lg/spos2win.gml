@@ -88,6 +88,9 @@ is any of the following:
 .do end
 .note MAP[=map_file]
 .note MAXERRORS=n
+.if '&exeformat' eq 'os2' .do begin
+.note MIXED1632
+.do end
 .note MODNAME=module_name
 .note NAMELEN=n
 .if '&exeformat' eq 'os2' .do begin

@@ -221,7 +221,7 @@ parse_entry     MainOptions[] = {
     "MESsages",     &ProcMessages,      MK_NOVELL, 0,
     "HElp",         &ProcHelp,          MK_NOVELL, 0,
     "XDCdata",      &ProcXDCData,       MK_NOVELL, 0,
-    "SHArelib",    &ProcSharelib,       MK_NOVELL, 0,
+    "SHArelib",     &ProcSharelib,      MK_NOVELL, 0,
     "OSDomain",     &ProcOSDomain,      MK_NOVELL, 0,
     "NLMFlags",     &ProcNLMFlags,      MK_NOVELL, 0,
     "VERSion",      &ProcVersion,       MK_NOVELL|MK_OS2_FLAT|MK_PE|MK_WINDOWS, 0,
@@ -238,6 +238,7 @@ parse_entry     MainOptions[] = {
     "CHECKSUM",     &ProcChecksum,      MK_PE,  0,
     "HSHIFT",       &ProcHshift,        (MK_DOS | MK_ALLOW_16),  0,
     "FILLchar",     &ProcFillchar,      MK_ALL,  0,
+    "MIXed1632",    &ProcMixed1632,     MK_OS2_FLAT, 0,
     NULL
 };
 
