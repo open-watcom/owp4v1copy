@@ -12,7 +12,7 @@ WRect
 MProject
 3
 MCommand
-677
+683
 ..\..\build\binnt\wsplice -kIS_RC -kENGLISH -knt -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../h/usage.sp usage.rc
 ..\..\build\binnt\wsplice -kIS_RC -kJAPANESE -knt -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../h/usage.sp usagej.rc
 vi -d -q -i -s ..\h\makemsg.vi -p"msg.gh MSG_SHARE_RC_BASE" ..\h\asmshare.msg
@@ -20,7 +20,7 @@ vi -d -q -i -s ..\h\makemsg.vi -p"wasmmsg.gh MSG_WASM_RC_BASE" ..\h\wasm.msg
 vi -d -q -i -s ..\h\makemsg.vi -p"wmpmsg.gh MSG_WOMP_RC_BASE" ..\h\womp.msg
 wcl386 ..\mkopcode.c -i$(%watcom)\h -i"..\..\watcom\h" -zq
 mkopcode ..\fullops.tok ..\inlnops.tok fullops.gh
-wrc -q /i=..\..\watcom\h /i=..\h;..\..\womp /bt=windows /d_WASM_ /r /zk0 /fo=wasm.res ..\h\wasm.rc
+wrc -q /i=..\..\watcom\h /i=..\h;..\..\womp /bt=windows /d_STANDALONE_ /r /zk0 /fo=wasm.res ..\h\wasm.rc
 
 4
 MCommand
@@ -49,6 +49,6 @@ WRect
 WFileName
 8
 wasm.tgt
-57
-64
+58
+71
 7
