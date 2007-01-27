@@ -98,7 +98,7 @@ typedef void (_WCI86NEAR * _WCI86NEAR npfn)(void);
                 "pop es" \
                 modify exact [es];
 #endif
-#elif defined(M_I86)
+#elif defined( _M_I86 )
     extern void save_dx( void );
     #pragma aux save_dx = modify exact [dx];
     extern void _WCI86NEAR __GETDS( void );
@@ -113,7 +113,7 @@ typedef void (_WCI86NEAR * _WCI86NEAR npfn)(void);
     #error unsupported platform
 #endif
 
-#if defined(M_I86)
+#if defined( _M_I86 )
 static void callit_near( npfn *f ) {
     // don't call a null pointer
     if( *f ) {
@@ -153,7 +153,7 @@ static void callit( pfn *f ) {
 ;       eax==15  -> run init routines whose priority is <= 15
 ;
 */
-#if defined(M_I86)
+#if defined( _M_I86 )
 void _WCI86FAR __FInitRtns( unsigned limit ) {
     __InitRtns( limit );
 }
@@ -198,7 +198,7 @@ void __InitRtns( unsigned limit ) {
                 break;
             }
         }
-#if defined(M_I86)
+#if defined( _M_I86 )
         if( pnext->rtn_type == PNEAR ) {
             callit_near( (npfn *)&pnext->rtn );
         } else {
@@ -221,7 +221,7 @@ void __InitRtns( unsigned limit ) {
 ;       eax==16, edx=255 -> run fini routines in range 16..255
 ;       eax==16, edx=40  -> run fini routines in range 16..40
 */
-#if defined(M_I86)
+#if defined( _M_I86 )
 void _WCI86FAR __FFiniRtns( unsigned min_limit, unsigned max_limit ) {
     __FiniRtns( min_limit, max_limit );
 }
@@ -269,7 +269,7 @@ void __FiniRtns( unsigned min_limit, unsigned max_limit ) {
             }
         }
         if( pnext->priority <= local_max_limit ) {
-#if defined(M_I86)
+#if defined( _M_I86 )
             if( pnext->rtn_type == PNEAR ) {
                 callit_near( (npfn *)&pnext->rtn );
             } else {

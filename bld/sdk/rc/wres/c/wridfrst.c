@@ -46,7 +46,7 @@ WResID * WResIDFromStr( const char * newstr )
 
     strsize = strlen( newstr );
     /* check the size of the string:  can it fit in two bytes? */
-#if defined(M_I86)
+#if defined( _M_I86 )
     /* allocate the new ID */
     // if strsize is non-zero then the memory allocated is larger
     // than required by 1 byte

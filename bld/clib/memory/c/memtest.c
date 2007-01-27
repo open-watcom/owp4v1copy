@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
     #include <i86.h>
 #endif
 #ifdef __SW_BW
@@ -92,7 +92,7 @@ int main( int argc, char *argv[] )
     TestOverlap();                              /* test overlapping copy */
     TestMisc();                                 /* other stuff */
 
-    #if defined(__386__) || defined(M_I86)
+    #if defined( _M_IX86 )
         TestCompareF();
         TestCopyF();
         TestOverlapF();
@@ -148,7 +148,7 @@ void TestCompare( void )
 }
 
 
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
 void TestCompareF( void )
 {
     char                buf[80];
@@ -190,7 +190,7 @@ void TestCopy( void )
 }
 
 
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
 void TestCopyF( void )
 {
     char __far          bufA[80], bufB[80];
@@ -233,7 +233,7 @@ void TestOverlap( void )
 }
 
 
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
 void TestOverlapF( void )
 {
     char                bufA[80], bufB[80];
@@ -269,7 +269,7 @@ void TestMisc( void )
     for( count=0; count<80; count++ )           /* ensure all zero bytes */
         VERIFY( bufA[count] == 0x00 );
 
-    #if defined(__386__) || defined(M_I86)
+    #if defined( _M_IX86 )
     {
         void __far *    addrFar;
         addrFar = _fmemset( bufB, 0x00, 80 );   /* zero out memory */

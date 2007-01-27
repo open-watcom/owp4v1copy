@@ -166,7 +166,7 @@ typedef unsigned_8      sbit;
 #define PR_SH4                  0
 #define PR_ARM                  0
 
-#if defined( M_I86 )
+#if defined( _M_I86 )
     #undef  PR_i86
     #define PR_i86              1
     #if defined( __SW_0 )
@@ -181,9 +181,9 @@ typedef unsigned_8      sbit;
     #else
         #undef  PR_8086
         #define PR_8086         1
-        // #error M_I86 defined, but no __SW_n macro defined.
+        // #error _M_I86 defined, but no __SW_n macro defined.
     #endif
-#elif defined( M_I386 )
+#elif defined( _M_I386 )
     #undef  PR_i86
     #define PR_i86              1
     #if defined( __SW_3 )
@@ -199,7 +199,7 @@ typedef unsigned_8      sbit;
         #undef  PR_PENTIUMPRO
         #define PR_PENTIUMPRO   1
     #else
-        #error M_I386 defined, but no __SW_n macro defined.
+        #error _M_I386 defined, but no __SW_n macro defined.
     #endif
 #elif defined( __386__ )
     #undef  PR_i86

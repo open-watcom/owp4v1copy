@@ -38,7 +38,7 @@ extern  unsigned long __lrotl( unsigned long, unsigned );
 
 #if defined(__386__)
 #pragma aux __lrotl = "rol eax,cl" parm [eax] [ecx] value [eax] modify [ecx];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
 #pragma aux __lrotl =   "    and cx,31"\
                         "    je  short L2"\
                         "L1: adc ax,ax"\
@@ -53,7 +53,7 @@ extern  unsigned long __lrotl( unsigned long, unsigned );
 
 _WCRTLINK unsigned long _lrotl( unsigned long value, unsigned int shift )
 {
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
     return( __lrotl( value, shift ) );
 #else
     unsigned long   tmp;

@@ -60,7 +60,7 @@ extern  bool    __Sub( intstar4 *arg1, intstar4 *arg2 );
                 "pop    ebx"       \
                 "seto   al"        \
                 parm [eax] [edx] value [al];
-#elif defined( M_I86 )  // 16-bit
+#elif defined( _M_I86 )  // 16-bit
  #if defined(__SMALL__) || defined(__MEDIUM__)
   #pragma aux   __Add = \
                 "mov    ax,[bx]"   \
@@ -155,7 +155,7 @@ bool    MulIOFlo( intstar4 *arg1, intstar4 *arg2 ) {
 // Multiply two integers and check for overflow.
 #if 0
     __XcptFlags &= ~XF_IOVERFLOW;
-  #ifdef M_I86
+  #ifdef _M_I86
     *arg1 = ChkI4Mul( *arg1, *arg2 );
   #else
     *arg1 *= *arg2;
@@ -163,7 +163,7 @@ bool    MulIOFlo( intstar4 *arg1, intstar4 *arg2 ) {
   #endif
     return( ( __XcptFlags & XF_IOVERFLOW ) != 0 );
 #else
-  #ifdef M_I86
+  #ifdef _M_I86
     return( ChkI4Mul( arg1, *arg2 ) );
   #else
     return( __Mul( arg1, arg2 ) );

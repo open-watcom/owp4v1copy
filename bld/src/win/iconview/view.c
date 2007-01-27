@@ -69,7 +69,7 @@ static void DoCmdLine( LPSTR cmdline )
     HWND        hwnd;
     FILE        *fp;
 
-#ifdef M_I86
+#ifdef _M_I86
     _fstrcpy( command, cmdline );
 #else
     strcpy( command, cmdline );

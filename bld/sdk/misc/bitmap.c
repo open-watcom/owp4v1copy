@@ -101,7 +101,7 @@ static BITMAPCOREINFO *readCoreInfo( FILE *fp )
     return( bm_core );
 }
 
-#if defined(M_I86)
+#if defined( _M_I86 )
 #define __halloc halloc
 #define __hfree hfree
 static void HugeMemCopy( char far *dst, char far *src, unsigned bytes )

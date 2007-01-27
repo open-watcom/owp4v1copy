@@ -117,7 +117,7 @@ void    ADVFillHi( adv_entry *adv, unsigned ss, intstar4 hi ) {
     intstar4    lo;
 
     lo = adv[ss-1].lo_bound;
-#if defined( M_I86 )
+#if defined( _M_I86 )
     if( hi - lo + 1 > 65535 ) {
         RTErr( SV_DIMENSION_LIMIT );
     }
@@ -132,7 +132,7 @@ void    ADVFillHi( adv_entry *adv, unsigned ss, intstar4 hi ) {
 void    ADVFillHiLo1( adv_entry *adv, unsigned ss, intstar4 hi ) {
 //================================================================
 
-#if defined( M_I86 )
+#if defined( _M_I86 )
     if( hi > 65535 ) {
         RTErr( SV_DIMENSION_LIMIT );
     }

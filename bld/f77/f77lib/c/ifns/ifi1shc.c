@@ -37,7 +37,7 @@
 #include "ftnstd.h"
 #include "ifenv.h"
 
-#if defined( __386__ ) || defined( M_I86 )
+#if defined( _M_IX86 )
 unsigned char           _crotl(unsigned char,char);
 #pragma aux _crotl =                                    \
         0xD2 0xC0               /*      rol al, cl   */ \

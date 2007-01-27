@@ -133,7 +133,7 @@ static  char    *GetSysName( ftnfile *fcb ) {
     char        buff[MAX_FILE];
     char        *p;
 
-#if defined( __DOS__ ) || defined( __WINDOWS__ ) || (defined( __OS2__ ) && defined( M_I86 ))
+#if defined( __DOS__ ) || defined( __WINDOWS__ ) || (defined( __OS2__ ) && defined( _M_I86 ))
     p = JmpBlanks( fcb->filename );
     if( IsDevice( fcb ) ) {
         strcpy( buff, p );

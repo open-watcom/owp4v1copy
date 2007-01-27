@@ -36,7 +36,7 @@
 #include "heap.h"
 
 
-#if defined(M_I86)
+#if defined( _M_I86 )
     extern unsigned setup_ds( unsigned );
     #pragma aux setup_ds = \
                 "push ax" \

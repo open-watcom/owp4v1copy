@@ -195,7 +195,7 @@ extern  void     __MemFree( unsigned __ptr, unsigned __seg, unsigned __off );
 #define END_TAG         (~0)
 
 #define TAG_SIZE        (sizeof(tag))
-#if defined(M_I86)
+#if defined( _M_I86 )
     #define ROUND_SIZE  (TAG_SIZE-1)
 #else
     #define ROUND_SIZE  (TAG_SIZE+TAG_SIZE-1)

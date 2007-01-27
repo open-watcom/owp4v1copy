@@ -53,7 +53,7 @@
 #   include "mupdate.h"
 #   include "mvecstr.h"
 #   include "msysdep.h"
-#if defined( M_I86 ) || defined( M_I386 )
+#if defined( _M_IX86 )
 #   include "tinyio.h"
 #endif
 #else

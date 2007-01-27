@@ -198,7 +198,7 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst,
 
     return( 0 );
 }
-#elif defined( M_I86 )
+#elif defined( _M_I86 )
 #pragma aux MADLOAD "*" loadds
 #else
 /* nothing to do for Alpha, PowerPC etc. */

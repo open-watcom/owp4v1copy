@@ -11,7 +11,7 @@
   #if defined(__386__)
     extern void __mark( char __far * );
     #pragma aux __mark = 0xcc __parm __nomemory [__dx __eax] __modify __exact __nomemory [];
-  #elif defined(M_I86)
+  #elif defined( _M_I86 )
     extern void __mark( char __far * );
     #pragma aux __mark = 0xcc __parm __nomemory [__dx __ax] __modify __exact __nomemory [];
   #else

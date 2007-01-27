@@ -40,7 +40,7 @@ extern void     __UseJapaneseCharSet( void );
 
 AXI( __UseJapaneseCharSet, INIT_PRIORITY_LIBRARY );
 
-#if defined( __386__ ) || defined( M_I86 )
+#if defined( _M_IX86 )
   #pragma aux   __init_japanese "*"
 #endif
 

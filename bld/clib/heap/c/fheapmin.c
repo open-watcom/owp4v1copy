@@ -38,7 +38,7 @@
 #include "heapacc.h"
 
 #if defined(__OS2__)
-    #if defined(M_I86)
+    #if defined( _M_I86 )
         #if defined(__BIG_DATA__)
             #define MODIFIES ds es
         #else

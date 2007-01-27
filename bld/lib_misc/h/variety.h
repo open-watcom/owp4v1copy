@@ -81,14 +81,14 @@
     #if defined(__386__)
         #define __PROTECT_MODE__
         #define __GENERIC_386__
-    #elif defined(M_I86)
+    #elif defined( _M_I86 )
         #define __REAL_MODE__
         #define __GENERIC_086__
     #else
         #error unrecognized processor for GENERIC
     #endif
 #elif defined(__OS2__)
-    #if defined(M_I86)
+    #if defined( _M_I86 )
         #define __REAL_MODE__
         #define __OS2_286__
     #elif defined(__386__)
@@ -120,7 +120,7 @@
     #define __PROTECT_MODE__
     #if defined(__386__)
         #define __WINDOWS__
-    #elif defined(M_I86)
+    #elif defined( _M_I86 )
         #define __WINDOWS_286__
     #else
         #error unrecognized processor for WINDOWS
@@ -129,7 +129,7 @@
     #if defined(__386__)
         #define __PROTECT_MODE__
         #define __DOS_386__
-    #elif defined(M_I86)
+    #elif defined( _M_I86 )
         #define __REAL_MODE__
         #define __DOS_086__
     #else
@@ -147,7 +147,7 @@
     #define __UNIX__
     #if defined(__386__)
         #define __QNX_386__
-    #elif defined(M_I86)
+    #elif defined( _M_I86 )
         #define __QNX_286__
     #else
         #error unrecognized processor for QNX
@@ -284,7 +284,7 @@
 /// This doesn't work for far pointer's
 ///
 ///#define __ROUND_UP_PTR( __x, __amt )  ((void *)__ROUND_UP_SIZE((unsigned)(__x),__amt))
-#if defined(M_I86)
+#if defined( _M_I86 )
     #define __ALIGN_SIZE( __x ) __ROUND_UP_SIZE( __x, 2 )
 //    #define __ALIGN_PTR( __x )  __ROUND_UP_PTR( __x, 2 )
 #elif defined(__386__)

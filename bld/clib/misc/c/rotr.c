@@ -38,13 +38,13 @@ extern unsigned int __rotr( unsigned int value, unsigned int shift );
 
 #if defined(__386__)
 #pragma aux __rotr = "ror eax,cl" parm [eax] [ecx] value [eax] modify [ecx];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
 #pragma aux __rotr = "ror ax,cl" parm [ax] [cx] value [ax] modify [cx];
 #endif
 
 _WCRTLINK unsigned int _rotr( unsigned int value, unsigned int shift )
 {
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
     return( __rotr( value, shift ) );
 #else
     unsigned int    tmp;

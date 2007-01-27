@@ -89,7 +89,7 @@ typedef int WORD;
         inline_swap( p, q, size );
     }
 
-#elif defined( M_I86 ) && defined( __BIG_DATA__ )
+#elif defined( _M_I86 ) && defined( __BIG_DATA__ )
     void inline_swap( char _WCFAR *p, char _WCFAR *q, size_t size );
     #pragma aux inline_swap = \
         0x1e                            /*      push ds             */ \
@@ -116,7 +116,7 @@ typedef int WORD;
         inline_swap( p, q, size );
     }
 
-#elif defined( M_I86 ) && defined( __SMALL_DATA__ )
+#elif defined( _M_I86 ) && defined( __SMALL_DATA__ )
     /* we'll ask for char __far *q to save us writing code to load es */
     void inline_swap( char *p, char _WCFAR *q, size_t size );
     #pragma aux inline_swap = \

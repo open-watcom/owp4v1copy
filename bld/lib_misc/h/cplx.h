@@ -140,7 +140,7 @@ _WMRTLINK extern dcomplex   _IF_CDSQRT( double r, double i );
   #else
     #pragma aux (rt_rtn) flt_rt_rtn;
   #endif
-#elif defined(M_I86)
+#elif defined( _M_I86 )
   #pragma aux rt_rtn parm [ax bx cx dx 8087];
   #pragma aux (rt_rtn) flt_rt_rtn;
 #endif

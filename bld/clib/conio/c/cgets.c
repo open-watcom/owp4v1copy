@@ -52,7 +52,7 @@ extern  void    _bd_dos_kb_input( unsigned short seg, unsigned off );
                                     0xcd 0x21   /* int 21h */\
                                     0x1f        /* pop ds */\
                         parm caller [ax] [edx];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
 #pragma aux     _dos_kb_input =     \
                                     0xb4 0x0a   /* select keyboard input */\
                                     0xcd 0x21   /* int 21h */\

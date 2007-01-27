@@ -33,7 +33,7 @@
 #include "variety.h"
 #include <string.h>
 
-#ifdef M_I86
+#ifdef _M_I86
 
 extern char _WCFAR *fast_strset( char _WCFAR *, char );
 
@@ -62,7 +62,7 @@ extern char _WCFAR *fast_strset( char _WCFAR *, char );
 
 _WCRTLINK char _WCFAR *_fstrset( char _WCFAR *s, int c )
     {
-//#ifdef M_I86
+//#ifdef _M_I86
         //return( fast_strset( s, c ) );
 //#else
         char _WCFAR *p;

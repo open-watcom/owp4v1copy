@@ -441,7 +441,7 @@ typedef         unsigned char           ATTR;
     typedef PIXEL *LPPIXEL;
     #define __FAR
     #undef HAVE_FAR
-#elif defined(__386__) || defined(M_I86)
+#elif defined( _M_IX86 )
     typedef struct pixel {
             char            ch;
             ATTR            attr;

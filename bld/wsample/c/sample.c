@@ -625,7 +625,7 @@ int sample_main( char far *win_cmd )
     Info.d.config.osminor       = 0;
     Info.d.config.os            = OS_IDUNNO;
     Info.d.config.huge_shift    = 12;
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
     Info.d.config.mad           = MAD_X86;
 #elif defined(__ALPHA__)
     Info.d.config.mad           = MAD_AXP;

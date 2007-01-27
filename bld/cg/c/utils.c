@@ -31,7 +31,7 @@
 
 #include "standard.h"
 
-#if (defined(__386__) || defined(M_I86)) && defined(__WATCOMC__)
+#if defined( _M_IX86 ) && defined(__WATCOMC__)
 
 #include "cypfunc.h"
 

@@ -67,7 +67,7 @@ extern  void    movefwd( char _WCFAR *dst, const char _WCFAR *src, unsigned len)
         modify exact [edi esi ecx eax];
 #endif
 
-#elif defined(M_I86)
+#elif defined( _M_I86 )
 #if defined(__SMALL_DATA__)
 extern  void    movebwd( char _WCFAR *dst, const char _WCFAR *src, unsigned len);
 #pragma aux     movebwd =  \

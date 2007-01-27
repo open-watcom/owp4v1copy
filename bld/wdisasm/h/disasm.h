@@ -54,6 +54,6 @@
 #undef NULL
 #define NULL ((void *)0)
 
-#if (defined O2A && (defined M_I86 || defined M_I386))
+#if defined( O2A ) && defined( _M_IX86 )
     #pragma aux Data "__*";          /* so we can disassemble & reassemble */
 #endif

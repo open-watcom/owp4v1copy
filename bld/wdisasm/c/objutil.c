@@ -155,7 +155,7 @@ void  IToHS( char *ptr, uint_32 value, int len )
 {
     static const char hex[] = "0123456789abcdef";
 
-#ifdef M_I86
+#ifdef _M_I86
     /*
      * Because 32-bit shifts are expensive on 16-bit chips, here's a fast way
      * of doing hex conversion.  The compiler thinks better in uint_16's; so

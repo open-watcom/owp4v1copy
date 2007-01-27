@@ -37,7 +37,7 @@
 
 #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
     #define FARstrcpy strcpy
-#elif defined(M_I86)
+#elif defined( _M_I86 )
     #define FARstrcpy _fstrcpy
 #endif
 

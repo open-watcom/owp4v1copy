@@ -278,14 +278,12 @@ void MemFini( void )
 #ifndef _OVERLAYED_
 
 extern unsigned long MemSize;
-#ifdef M_I86
+#if defined( _M_I86 )
 #define MAX_BLOCK (60U * 1024)
-#else
-#ifdef __DOS__
+#elif defined( __DOS__ )
 #define MAX_BLOCK (4U*1024*1024)
 #else
 #define MAX_BLOCK (1U*1024*1024)
-#endif
 #endif
 
 

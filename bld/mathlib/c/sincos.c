@@ -51,7 +51,7 @@ extern  void    __fprem( double, double, int *, double * );
 #pragma aux     _sin87  "_*" parm [edx eax] value [edx eax];
 #pragma aux     _tan87  "_*" parm [edx eax] value [edx eax];
 #pragma aux     __fprem "*_" parm [];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
 #pragma aux     _cos87  "_*" parm [ax bx cx dx] value [ax bx cx dx];
 #pragma aux     _sin87  "_*" parm [ax bx cx dx] value [ax bx cx dx];
 #pragma aux     _tan87  "_*" parm [ax bx cx dx] value [ax bx cx dx];

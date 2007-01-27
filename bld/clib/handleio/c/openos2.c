@@ -98,7 +98,7 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int share
         openflag = OPENFLAG_OPEN_IF_EXISTS;
     }
     rwmode = mode & OPENMODE_ACCESS_MASK;
-#if defined(M_I86)
+#if defined( _M_I86 )
     if( rwmode == OPENMODE_ACCESS_WRONLY && !_RWD_osmode ) {
         /* Can't open WRONLY file in bound application under DOS */
         rwmode = OPENMODE_ACCESS_RDWR;

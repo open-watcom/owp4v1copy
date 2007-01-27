@@ -81,7 +81,7 @@ struct rt_init // structure placed in XI/YI segment
 };
 #pragma pack()
 
-#if defined( M_I86 )
+#if defined( _M_I86 )
   #if defined( __LARGE_CODE__ ) /* segmented large code models */
     #define YIXI( seg, label, routine, priority )               \
         struct rt_init __based( __segname( seg ) ) label =      \

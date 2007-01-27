@@ -36,7 +36,7 @@
 #include <string.h>
 #include "riscstr.h"
 
-#if defined(M_I86) && !defined(__WIDECHAR__)
+#if defined( _M_I86 ) && !defined(__WIDECHAR__)
 
 extern int _fast_strncmp( const char *, const char _WCFAR *, size_t );
 
@@ -86,7 +86,7 @@ extern int _fast_strncmp( const char *, const char _WCFAR *, size_t );
  _WCRTLINK int __F_NAME(strncmp,wcsncmp)( const CHAR_TYPE *s, const CHAR_TYPE *t, size_t n )
 #endif
     {
-#if defined(M_I86) && !defined(__WIDECHAR__)
+#if defined( _M_I86 ) && !defined(__WIDECHAR__)
         if( n ) {
             return( _fast_strncmp( s, t, n ) );
         }

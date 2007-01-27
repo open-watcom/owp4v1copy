@@ -35,7 +35,7 @@
 #include <string.h>
 #include "riscstr.h"
 
-#if defined(M_I86) && !defined(__WIDECHAR__)
+#if defined( _M_I86 ) && !defined(__WIDECHAR__)
 
 extern  char * _scan1();
 

@@ -45,7 +45,7 @@ extern  double              _Scale10V( double, int );
 #if defined(__386__)
 #pragma aux     _Rnd2Int        "_*" parm routine [eax] [edx];
 #pragma aux     _CmpBigInt      "_*" parm caller [eax] [edx];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
 #pragma aux     _Rnd2Int        "_*" parm routine [ax] [dx];
 #pragma aux     _CmpBigInt      "_*" parm caller [ax] [dx];
 #endif

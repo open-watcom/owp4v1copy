@@ -32,7 +32,7 @@
 #include "hostsys.h"
 
 
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
 
 #if defined(__386__)
     #define __AX eax

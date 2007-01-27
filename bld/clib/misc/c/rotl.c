@@ -39,14 +39,14 @@ extern unsigned int __rotl( unsigned int value, unsigned int shift );
 
 #if defined(__386__)
 #pragma aux __rotl = "rol eax,cl" parm [eax] [ecx] value [eax] modify [ecx];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
 #pragma aux __rotl = "rol ax,cl" parm [ax] [cx] value [ax] modify [cx];
 #endif
 #endif /* __WATCOMC__ */
 
 _WCRTLINK unsigned int _rotl( unsigned int value, unsigned int shift )
 {
-#if ( defined(__386__) || defined(M_I86) ) && defined(__WATCOMC__)
+#if defined( _M_IX86 ) && defined(__WATCOMC__)
     return( __rotl( value, shift ) );
 #else
     unsigned int    tmp;

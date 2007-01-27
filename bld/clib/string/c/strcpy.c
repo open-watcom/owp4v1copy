@@ -53,7 +53,7 @@ extern CHAR_TYPE *__strcpy( CHAR_TYPE *dst, const CHAR_TYPE *src );
         "       jne     L1"       \
         "L2:    pop     eax"      \
         parm [eax] [edx] value [eax] modify exact [eax edx ecx];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
  #if defined(__SMALL_DATA__)
   #pragma aux __strcpy = \
         "       push    di"       \

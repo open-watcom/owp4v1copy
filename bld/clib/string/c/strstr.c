@@ -37,7 +37,7 @@
  #include <i86.h>
 #endif
 
-#if defined(M_I86) && !defined( __WIDECHAR__ )
+#if defined( _M_I86 ) && !defined( __WIDECHAR__ )
 
 extern  int     i86_memeq( const char *, const char _WCFAR *, int );
 

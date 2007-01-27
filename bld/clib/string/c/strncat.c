@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#if defined(M_I86) && !defined(__WIDECHAR__)
+#if defined( _M_I86 ) && !defined(__WIDECHAR__)
 
 extern char *_fast_strncat( char _WCFAR *, const char *, size_t );
 
@@ -90,7 +90,7 @@ extern char *_fast_strncat( char _WCFAR *, const char *, size_t );
 
 _WCRTLINK CHAR_TYPE *__F_NAME(strncat,wcsncat) ( CHAR_TYPE *dst, const CHAR_TYPE *t, size_t n )
     {
-#if defined(M_I86) && !defined(__WIDECHAR__)
+#if defined( _M_I86 ) && !defined(__WIDECHAR__)
         if( n ) {
             return( _fast_strncat( dst, t, n ) );
         }

@@ -51,11 +51,6 @@ union   RO_DTREG;
 struct  THREAD_CTL;
 struct  _EXC_PR;
 
-#if defined( M_I386 ) || defined( M_I86 )
-    #define M_PC_INTEL 1
-#endif
-
-
 #include <stddef.h>
 
 #define PointUsingOffset( type, base, offset ) \
@@ -138,11 +133,11 @@ extern "C" {
 #endif
 
 
-#if defined( M_ALPHA ) || defined( M_I386 )
+#if defined( __ALPHA__ ) || defined( __386__ )
     // pad to 4-byte boundary
     #define AlignPad1 char padding[3];
     #define AlignPad2 char padding[2];
-#elif defined( M_I86 )
+#elif defined( _M_I86 )
     // pad to 2-byte boundary
     #define AlignPad1 char padding[1];
     #define AlignPad2 ;

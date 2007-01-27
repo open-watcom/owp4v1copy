@@ -40,7 +40,7 @@ typedef void (*pfun)( void _WCFAR * );
 #if defined(__386__)
     #pragma aux __arg_convention parm caller [eax dx];
     #pragma aux (__arg_convention) pfun;
-#elif defined(M_I86)
+#elif defined( _M_I86 )
     #pragma aux __arg_convention parm caller [ax dx];
     #pragma aux (__arg_convention) pfun;
 #endif

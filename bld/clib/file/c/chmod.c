@@ -96,7 +96,7 @@ extern  unsigned long _BDchmode(const char *,unsigned);
                             "   ror eax,1"   \
                         parm caller [edx] [ebx] value [eax] modify [ecx];
 #endif
-#elif defined(M_I86)
+#elif defined( _M_I86 )
 #if defined(__WATCOM_LFN__)
 #pragma aux     _chmode   = "   mov ax,7143h"\
                             "   push bx"     \

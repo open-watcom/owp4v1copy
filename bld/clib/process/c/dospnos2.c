@@ -43,7 +43,7 @@
 #define INCL_DOSSESMGR
 #define INCL_DOSQUEUES
 #define INCL_DOSMEMMGR
-#if defined( M_I86 )
+#if defined( _M_I86 )
  #define INCL_DOSINFOSEG
  #include "liballoc.h"
 #endif
@@ -196,7 +196,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
             }
         }
     }
-#elif defined( M_I86 )
+#elif defined( _M_I86 )
     {
         USHORT          app_type;
         SEL             sglobal;

@@ -29,7 +29,8 @@
 ****************************************************************************/
 
 
-#if !defined( __I86__ ) && !defined( BOOTSTRAP )
+#if !defined( _M_I86 ) && !defined( BOOTSTRAP )
+
 #include "make.h"
 #include "mmemory.h"
 #include "mrcmsg.h"
@@ -277,4 +278,5 @@ const auto_dep_info ORLAutoDepInfo = {
     AutoORLFileFini,
     AutoORLFini,
 };
+
 #endif

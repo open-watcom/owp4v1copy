@@ -33,7 +33,7 @@
 #include "variety.h"
 #include <string.h>
 
-#ifdef M_I86
+#ifdef _M_I86
 
 extern char _WCFAR *fast_strncpy( char _WCFAR *, const char _WCFAR *, size_t );
 
@@ -60,7 +60,7 @@ extern char _WCFAR *fast_strncpy( char _WCFAR *, const char _WCFAR *, size_t );
 
 _WCRTLINK char _WCFAR *_fstrncpy( char _WCFAR *dst, const char _WCFAR *src, size_t len )
     {
-#ifdef M_I86
+#ifdef _M_I86
         if( len ) {
             return( fast_strncpy( dst, src, len ) );
         }

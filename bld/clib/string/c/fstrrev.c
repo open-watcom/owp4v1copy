@@ -34,7 +34,7 @@
 #include <ctype.h>
 #include <string.h>
 
-#ifdef M_I86
+#ifdef _M_I86
 
 /*
   explanation of algorithm:
@@ -97,7 +97,7 @@ extern void fast_rev( char _WCFAR * );
 
 _WCRTLINK char _WCFAR *_fstrrev( char _WCFAR *str )  /* reverse characters in string */
     {
-#if  defined(M_I86)
+#if  defined( _M_I86 )
         fast_rev( str );
         return( str );
 #else

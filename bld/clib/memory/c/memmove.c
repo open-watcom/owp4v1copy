@@ -66,7 +66,7 @@ extern  void    movebwd( char _WCFAR *dst, const char _WCNEAR *src, unsigned len
         modify exact [edi esi ecx];
 #define HAVE_MOVEFWBW
 
-#elif defined(M_I86) && defined(__SMALL_DATA__)
+#elif defined( _M_I86 ) && defined(__SMALL_DATA__)
 extern  void    movebwd( char _WCFAR *dst, const char _WCNEAR *src, unsigned len);
 #pragma aux     movebwd =  \
         0xfd            /* std */\
@@ -92,7 +92,7 @@ extern  void    movefwd( char _WCFAR *dst, const char _WCNEAR *src, unsigned len
         modify exact [di si cx];
 #define HAVE_MOVEFWBW
 
-#elif defined(M_I86) && defined(__BIG_DATA__)
+#elif defined( _M_I86 ) && defined(__BIG_DATA__)
 extern  void    movebwd( char _WCFAR *dst, const char _WCFAR *src, unsigned len);
 #pragma aux     movebwd =  \
         0x1e            /* push ds */ \

@@ -39,7 +39,7 @@ extern void     __InitResource( void );
 
 AXI( __InitResource, INIT_PRIORITY_LIBRARY );
 
-#if defined( __386__ ) || defined( M_I86 )
+#if defined( _M_IX86 )
   #pragma aux   __init_resource "*"
 #endif
 

@@ -33,7 +33,7 @@
 #include "variety.h"
 #include <string.h>
 
-#ifdef  M_I86
+#ifdef  _M_I86
 
 extern  char _WCFAR * _scan1( char _WCFAR *s, int c );
 
@@ -80,7 +80,7 @@ extern  char _WCFAR * _scan1( char _WCFAR *s, int c );
 
 _WCRTLINK char _WCFAR *_fstrchr( const char _WCFAR *s, int c )
     {
-//#if defined(M_I86)
+//#if defined( _M_I86 )
         //return( _scan1( (char _WCFAR *)s, c ) );
 //#else
         do {

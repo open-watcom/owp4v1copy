@@ -38,7 +38,7 @@ extern  unsigned long __lrotr( unsigned long, unsigned );
 
 #if defined(__386__)
 #pragma aux __lrotr = "ror eax,cl" parm [eax] [ecx] value [eax] modify [ecx];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
 #pragma aux __lrotr =   "   and cx,31"\
                         "   jcxz L2"\
                         "L1:ror dx,1"\
@@ -54,7 +54,7 @@ extern  unsigned long __lrotr( unsigned long, unsigned );
 
 _WCRTLINK unsigned long _lrotr( unsigned long value, unsigned int shift )
 {
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
     return( __lrotr( value, shift ) );
 #else
     unsigned long   tmp;

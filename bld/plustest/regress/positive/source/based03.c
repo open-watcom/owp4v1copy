@@ -1,6 +1,6 @@
 #include "fail.h"
 
-#if defined( M_I86 ) || defined( M_I386 )
+#if defined( _M_IX86 )
 
 struct S {
     int s;
@@ -25,7 +25,7 @@ int main()
     x.s = 0;
     set_to_one( &x );
     if( x.s != 1 ) fail(__LINE__);
-#ifdef M_I86
+#ifdef _M_I86
     // this only works in 16-bit mode
     if( get_seg( &x ) != ((unsigned long)((void __far *)&x) >> 16)) fail(__LINE__);
 #endif

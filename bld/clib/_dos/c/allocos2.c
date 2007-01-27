@@ -41,7 +41,7 @@
 
 #if defined(__386__) || defined(__PPC__)
   typedef void                  *mem_id;
-#elif defined(M_I86)
+#elif defined( _M_I86 )
   typedef unsigned short        mem_id;
   #if defined(__BIG_DATA__)
     #define MODIFIES ds es
@@ -65,7 +65,7 @@ _WCRTLINK unsigned _dos_allocmem( unsigned size, mem_id *p_mem )
     void        *mem;
 
     error = DosAllocMem( &mem, size << 4, PAG_COMMIT | PAG_READ | PAG_WRITE );
-#elif defined(M_I86)
+#elif defined( _M_I86 )
     SEL         mem;
     USHORT      number_segments, remaining_bytes;
 
@@ -83,7 +83,7 @@ _WCRTLINK unsigned _dos_allocmem( unsigned size, mem_id *p_mem )
     return( 0 );
 }
 
-#if defined(M_I86)
+#if defined( _M_I86 )
   extern unsigned __FreeSeg( mem_id );
   #pragma aux _dos_freemem modify [MODIFIES]
 #endif
@@ -97,7 +97,7 @@ _WCRTLINK unsigned _dos_freemem( mem_id mem )
         return( error );
     }
     return( 0 );
-#elif defined(M_I86)
+#elif defined( _M_I86 )
     // defined inside heap
     return( __FreeSeg( mem ) );
 #else

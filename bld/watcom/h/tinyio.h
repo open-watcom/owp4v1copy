@@ -849,7 +849,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
  #define _RST_DS_SREG
  #define _SREG
 
-#elif defined( M_I86 )
+#elif defined( _M_I86 )
 
  #if defined( M_I86SM ) || defined( M_I86MM ) || defined( ZDP ) || defined( __WINDOWS__ )
   #define _SET_DS_DGROUP
@@ -1836,7 +1836,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax] \
         modify          [edx edi];
 
-#elif defined( M_I86 )
+#elif defined( _M_I86 )
 
 /**************************
  * 8086 versions of pragmas

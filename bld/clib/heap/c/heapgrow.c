@@ -47,7 +47,7 @@
 #include "heap.h"
 #include "heapacc.h"
 
-#if defined(M_I86)
+#if defined( _M_I86 )
 
 _WCRTLINK void _fheapgrow( void )
 {

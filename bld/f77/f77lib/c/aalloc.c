@@ -56,7 +56,7 @@ extern  void            RTErr(uint,...);
 #define STAT_ALREADY_ALLOC      2
 #define STAT_NOT_ALLOCATED      3
 
-#if defined( M_I86 )
+#if defined( _M_I86 )
   #if defined( __MEDIUM__ )
     #define __extended_ptype __far
   #else
@@ -199,7 +199,7 @@ void    Alloc( unsigned_16 alloc_type, uint num, ... ) {
                     --dims;
                 }
             }
-#if defined( M_I86 )
+#if defined( _M_I86 )
   #if defined( __MEDIUM__ )
             if( alloc_flags & ALLOC_EXTENDED ) {
                 if( size * elt_size <= UINT_MAX ) {
@@ -257,7 +257,7 @@ void    DeAlloc( intstar4 PGM *stat, uint num, ... ) {
             istat = STAT_NOT_ALLOCATED;
         } else {
             if( !(alloc_flags & ALLOC_LOC) ) {
-#if defined( M_I86 )
+#if defined( _M_I86 )
   #if defined( __MEDIUM__ )
                 if( alloc_flags & ALLOC_EXTENDED ) {
                     _ffree( *(void __far **)item );
@@ -276,7 +276,7 @@ void    DeAlloc( intstar4 PGM *stat, uint num, ... ) {
 #endif
             }
             if( alloc_flags & ALLOC_EXTENDED ) {
-#if defined( M_I86 )
+#if defined( _M_I86 )
   #if defined( __MEDIUM__ )
                 (*(void __far **)item) = NULL;
   #else

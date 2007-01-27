@@ -39,7 +39,7 @@
 extern size_t wcslen( const CHAR_TYPE * );
 #endif
 
-#if defined(M_I86) && !defined(__WIDECHAR__)
+#if defined( _M_I86 ) && !defined(__WIDECHAR__)
 
 /*
   explanation of algorithm:
@@ -133,7 +133,7 @@ extern void fast_rev( char *, char _WCFAR * );
 
 
 _WCRTLINK CHAR_TYPE *__F_NAME(strrev,_wcsrev) ( CHAR_TYPE *str ) {  /* reverse characters in string */
-    #if  defined(M_I86) && !defined(__WIDECHAR__)
+    #if  defined( _M_I86 ) && !defined(__WIDECHAR__)
         fast_rev( str, (char _WCFAR *) str );
         return( str );
     #else

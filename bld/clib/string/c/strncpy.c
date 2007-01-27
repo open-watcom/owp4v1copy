@@ -35,7 +35,7 @@
 #include <string.h>
 #include "riscstr.h"
 
-#if defined(M_I86) & !defined(__WIDECHAR__)
+#if defined( _M_I86 ) & !defined(__WIDECHAR__)
 
 extern char *fast_strncpy( char _WCFAR *, const char *, size_t );
 
@@ -89,7 +89,7 @@ extern char *fast_strncpy( char _WCFAR *, const char *, size_t );
  _WCRTLINK CHAR_TYPE *__F_NAME(strncpy,wcsncpy)( CHAR_TYPE *dst, const CHAR_TYPE *src, size_t len )
 #endif
     {
-#if defined(M_I86) && !defined(__WIDECHAR__)
+#if defined( _M_I86 ) && !defined(__WIDECHAR__)
         if( len ) {
             return( fast_strncpy( dst, src, len ) );
         }

@@ -34,7 +34,7 @@
 
 #define TRPIMP_H
 
-#if defined(M_I86)
+#if defined( _M_I86 )
     #define TRAPFAR __far
 #else
     #define TRAPFAR

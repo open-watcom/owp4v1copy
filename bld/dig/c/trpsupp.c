@@ -200,7 +200,7 @@ unsigned TrapAccess( unsigned num_in_mx,  mx_entry *mx_in,
     if( len == REQUEST_FAILED ) Failure();
     Access();
 #if !defined(SERVER)
-#if defined(__WINDOWS__) && defined(M_I86)
+#if defined(__WINDOWS__) && defined( _M_I86 )
     DoHardModeCheck();
 #endif
 #endif

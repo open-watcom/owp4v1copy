@@ -138,7 +138,7 @@ void __setenvp( void )
         startp = MK_FP( (unsigned short)(tmp >> 16),
                         (unsigned long) (tmp & 0xFFFF ));
     }
-    #elif defined(M_I86)
+    #elif defined( _M_I86 )
         startp = MK_FP( *(unsigned short _WCI86FAR *)(MK_FP(_RWD_psp, 0x2c)), 0 );
     #else
         startp = _Envptr;                                   /* 13-mar-91 */

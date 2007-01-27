@@ -285,7 +285,7 @@ int __nmemneed( size_t amount )
     return FreeUpMemory();
 }
 
-#ifdef M_I86
+#ifdef _M_I86
 int __fmemneed( size_t amount )
 /************************************/
 {

@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#ifdef M_I86
+#ifdef _M_I86
 #include <i86.h>
 #endif
 #include "vi.h"

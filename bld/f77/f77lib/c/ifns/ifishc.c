@@ -37,7 +37,7 @@
 #include "ftnstd.h"
 #include "ifenv.h"
 
-#ifdef M_I86
+#ifdef _M_I86
 
 unsigned long           _lrotl(unsigned long,short);
 #pragma aux _lrotl =                                    \

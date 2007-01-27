@@ -33,7 +33,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#ifdef M_I86
+#ifdef _M_I86
 #if defined(__QNX__)
 #include <i86.h>
 #else

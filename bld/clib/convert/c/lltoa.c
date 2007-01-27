@@ -37,7 +37,7 @@
 
 extern const char __based(__segname("_CONST")) __Alphabet[];
 
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
 unsigned long long __ulldiv( unsigned long long, unsigned _WCNEAR *);
 #if defined(__386__)
     #pragma aux __ulldiv = \
@@ -53,7 +53,7 @@ unsigned long long __ulldiv( unsigned long long, unsigned _WCNEAR *);
         "div dword ptr[ebx]" /* calculate low part */ \
         "mov [ebx],edx"   /* store remainder */ \
         parm [eax edx] [ebx] value [eax ecx];
-#elif defined(M_I86)  && defined(__BIG_DATA__)
+#elif defined( _M_I86 )  && defined(__BIG_DATA__)
     #pragma aux __ulldiv = \
         "mov di,dx"        /* initial dividend = ax:bx:cx:dx(di); save dx */ \
         "test ax,ax"       /* less work to do if ax == 0 */ \
@@ -108,7 +108,7 @@ unsigned long long __ulldiv( unsigned long long, unsigned _WCNEAR *);
         "jmp div3"         /* do two divisions */ \
       "end_div:" \
         parm [ax bx cx dx] [si] modify [di] value [ax bx cx dx];
-#elif defined(M_I86) && defined(__SMALL_DATA__)
+#elif defined( _M_I86 ) && defined(__SMALL_DATA__)
     #pragma aux __ulldiv = \
         "mov di,dx"        /* initial dividend = ax:bx:cx:dx(di); save dx */ \
         "test ax,ax"       /* less work to do if ax == 0 */ \
@@ -179,7 +179,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(ulltoa,_ulltow)(
         buf[0] = '\0';
         q = &buf[1];
         do {
-#if defined(__386__) || defined(M_I86)
+#if defined( _M_IX86 )
             rem = radix;
             value = __ulldiv( value, (unsigned _WCNEAR *) &rem );
 #else

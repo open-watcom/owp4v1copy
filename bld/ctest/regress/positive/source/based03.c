@@ -1,6 +1,6 @@
 #include "fail.h"
 
-#ifdef M_I86    // 16-bit only!
+#ifdef _M_I86    // 16-bit only!
 
 #include <i86.h>
 

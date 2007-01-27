@@ -38,7 +38,7 @@
 #if defined(__386__)
     #define __PARMREG1      eax
     #define __PARMREG2      edx
-#elif defined(M_I86)
+#elif defined( _M_I86 )
     #define __PARMREG1      ax
     #define __PARMREG2      dx
 #else

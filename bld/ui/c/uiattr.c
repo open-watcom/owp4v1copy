@@ -33,7 +33,7 @@
 #include "uidef.h"
 #include "uiattrs.h"
 
-#if defined( __WATCOMC__ ) && (defined( __386__ ) || defined( M_I86 ))
+#if defined( __WATCOMC__ ) && defined( _M_IX86 )
    #define PROGRAM_VGA
 #endif
 

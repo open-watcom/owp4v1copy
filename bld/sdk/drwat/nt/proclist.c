@@ -139,7 +139,7 @@ void AddProcess( DWORD procid, HANDLE prochdl, DWORD threadid,
         }
     }
     if( process == NULL ) {
-#if (defined M_I86 || defined M_I386)
+#if defined( _M_IX86 )
         CONTEXT context;
 #endif
 
@@ -152,7 +152,7 @@ void AddProcess( DWORD procid, HANDLE prochdl, DWORD threadid,
         } else {
             strcpy( new->procname, stats.name );
         }
-#if (defined M_I86 || defined M_I386)
+#if defined( _M_IX86 )
         context.ContextFlags = CONTEXT_SEGMENTS | CONTEXT_CONTROL;
         GetThreadContext( threadhdl, &context );
         new->SegCs = context.SegCs;

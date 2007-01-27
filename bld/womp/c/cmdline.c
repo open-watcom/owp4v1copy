@@ -832,7 +832,7 @@ void ActionRename( cmdline_t *cmd, const char *in, const char *out,
         } else {
             char pbuf[ sizeof( size_t ) * 3 ];
             StrDec( pbuf, page_size );
-#ifdef M_I86
+#ifdef _M_I86
             _fheapshrink();
 #endif
             _nheapshrink();

@@ -45,7 +45,7 @@ unsigned __udiv( unsigned, unsigned _WCNEAR * );
         parm caller [eax] [ebx] \
         modify exact [eax edx] \
         value [edx];
-#elif defined(M_I86) && defined(__BIG_DATA__)
+#elif defined( _M_I86 ) && defined(__BIG_DATA__)
     #pragma aux __udiv = \
         "xor dx,dx" \
         "div word ptr ss:[bx]" \
@@ -53,7 +53,7 @@ unsigned __udiv( unsigned, unsigned _WCNEAR * );
         parm caller [ax] [bx] \
         modify exact [ax dx] \
         value [dx];
-#elif defined(M_I86) && defined(__SMALL_DATA__)
+#elif defined( _M_I86 ) && defined(__SMALL_DATA__)
     #pragma aux __udiv = \
         "xor dx,dx" \
         "div word ptr [bx]" \

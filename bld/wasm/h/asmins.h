@@ -32,7 +32,7 @@
 #ifndef ASMINS_H
 #define ASMINS_H
 
-#ifdef M_I86
+#ifdef _M_I86
 
 #define ASMFAR far
 

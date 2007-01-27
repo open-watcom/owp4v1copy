@@ -67,7 +67,7 @@ essentially no worst case performance scenario.
 #include "ptrint.h"
 #include "hostsys.h"
 #include "cg.h"
-#if defined( M_I86 ) || defined( M_I386 )
+#if defined( _M_IX86 )
     #include <i86.h>
 #endif
 #include <unistd.h>

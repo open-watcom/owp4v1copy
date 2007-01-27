@@ -67,7 +67,7 @@
   #define _FAR
 #endif
 
-#if defined( M_I86 )
+#if defined( _M_I86 )
   #define _NEAR near
 #else
   #define _NEAR

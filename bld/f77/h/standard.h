@@ -48,7 +48,7 @@ typedef double          reallong;
 #pragma aux Suicide aborts;
 #endif
 
-#ifdef M_I86
+#ifdef _M_I86
 #define __FAR far
 #else
 #define __FAR

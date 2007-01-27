@@ -101,7 +101,7 @@
                 "       mov     al,0"\
                 "       mov     [ebx],al"\
                 parm caller [eax] [ebx] value [ebx];
-#elif defined( M_I86 )
+#elif defined( _M_I86 )
  char _WCNEAR *Fmt8Digits( unsigned long value, char *p );
  #pragma aux    Fmt8Digits = \
                 "       push    cx"\

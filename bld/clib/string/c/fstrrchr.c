@@ -33,7 +33,7 @@
 #include "variety.h"
 #include <string.h>
 
-#ifdef  M_I86
+#ifdef  _M_I86
 
 extern  char _WCFAR *_fast_strrchr( const char _WCFAR *, char );
 
@@ -64,7 +64,7 @@ extern  char _WCFAR *_fast_strrchr( const char _WCFAR *, char );
 
 _WCRTLINK char _WCFAR *_fstrrchr( const char _WCFAR *s, int c )
     {
-#if defined(M_I86)
+#if defined( _M_I86 )
         return( _fast_strrchr( s, c ) );
 #else
         char _WCFAR *p;

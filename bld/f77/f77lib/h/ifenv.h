@@ -36,7 +36,7 @@
 // it calls modifies 80x87 registers. So the best we can do is specify
 // that functions do not modify CPU registers.
 
-#if defined( __386__ ) || defined( M_I86 )
+#if defined( _M_IX86 )
   #if defined( __386__ )
     #pragma aux if_rtn "IF@*" parm routine [EAX EBX ECX EDX 8087];
     #pragma aux if_va  "IF@*" parm caller [];

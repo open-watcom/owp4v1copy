@@ -31,7 +31,7 @@
 
 #include <stddef.h>
 #include <string.h>
-#if defined(M_I86)
+#if defined( _M_I86 )
 #include <i86.h>
 #endif
 #include "msym.h"

@@ -33,7 +33,7 @@
 #ifndef __WATCOMC__
     #include "clibext.h"
 #else
-    #if defined(__386__) || defined(M_I86)
+    #if defined( _M_IX86 )
         #include <i86.h>
     #endif
     #include <conio.h>
@@ -41,7 +41,7 @@
 #include <string.h>
 #include "uidef.h"
 
-#if defined( M_I86 )
+#if defined( _M_I86 )
 
 extern PIXEL far *_snowput( PIXEL far *, PIXEL );
 extern PIXEL _snowget( PIXEL far * );
@@ -128,7 +128,7 @@ intern void cdecl farfill( LPPIXEL start, PIXEL fill, int len, int snow )
 {
     int         i;
 
-#if defined(M_I86)
+#if defined( _M_I86 )
     if( snow ) {
         for( i = 0 ; i < len ; ++i ) {
             start = _snowput( start, fill );
@@ -164,7 +164,7 @@ intern void cdecl farcopy( LPPIXEL src, LPPIXEL dst, int len, int snow )
     #else
         _fmemmove( dst, src, len*sizeof(PIXEL) );
     #endif
-#elif defined(M_I86)
+#elif defined( _M_I86 )
     if( snow ) {
         if( FP_SEG(src) == FP_SEG(dst) && FP_OFF(src) < FP_OFF(dst) ) {
             src += len - 1;
@@ -189,7 +189,7 @@ intern void cdecl farstring( LPPIXEL start, int attr, int len,
     PIXEL       p;
 
     p.attr = attr;
-#if defined(M_I86)
+#if defined( _M_I86 )
     if( snow ) {
         for( i = 0 ; i < len ; ++i ) {
             p.ch = *str;
@@ -223,7 +223,7 @@ intern void cdecl farattrib( LPPIXEL start, int attr, int len, int snow )
     int         i;
     PIXEL       p;
 
-#if defined(M_I86)
+#if defined( _M_I86 )
     if( snow ) {
         for( i = 0 ; i < len ; ++i ) {
             p = _snowget( start );
@@ -249,7 +249,7 @@ intern void cdecl farattrflip( LPPIXEL start, int len, int snow )
     int         i;
     PIXEL       p;
 
-#if defined(M_I86)
+#if defined( _M_I86 )
     if( snow ) {
         for( i = 0 ; i < len ; ++i ) {
             p = _snowget( start );

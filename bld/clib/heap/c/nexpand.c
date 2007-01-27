@@ -53,7 +53,7 @@ int __HeapManager_expand( __segment seg,
                           size_t req_size,
                           size_t *growth_size )
 {
-    #if defined(M_I86)
+    #if defined( _M_I86 )
         typedef struct freelistp __based(seg) *fptr;
         typedef char __based(void) *cptr;
 
@@ -100,7 +100,7 @@ int __HeapManager_expand( __segment seg,
                             (fptr)((PTR)hblk+hblk->len) > (fptr)offset ) break;
                     }
                 }
-                #if defined(M_I86)
+                #if defined( _M_I86 )
                     else {      // Based heap
                         hblk = 0;
                     }
@@ -148,13 +148,13 @@ int __HeapManager_expand( __segment seg,
                         (fptr)((PTR)hblk+hblk->len) > (fptr)offset ) break;
                 }
             }
-            #if defined(M_I86)
+            #if defined( _M_I86 )
                 else    // Based heap
                     hblk = 0;
             #endif
             /* _bfree will decrement 'numalloc' 08-jul-91 */
             hblk->numalloc++;
-            #if defined(M_I86)
+            #if defined( _M_I86 )
                 _bfree( seg, (cptr)p1 + TAG_SIZE );
                 /* free the top portion */
             #else

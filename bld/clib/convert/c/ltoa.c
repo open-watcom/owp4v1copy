@@ -44,7 +44,7 @@ unsigned long __uldiv( unsigned long, unsigned _WCNEAR * );
         parm caller [eax] [ebx] \
         modify exact [eax edx] \
         value [eax];
-#elif defined(M_I86) && defined(__BIG_DATA__)
+#elif defined( _M_I86 ) && defined(__BIG_DATA__)
     #pragma aux __uldiv = \
         "xor cx,cx" \
         "cmp dx,ss:[bx]" \
@@ -60,7 +60,7 @@ unsigned long __uldiv( unsigned long, unsigned _WCNEAR * );
         parm caller [ax dx] [bx] \
         modify exact [ax cx dx] \
         value [ax dx];
-#elif defined(M_I86) && defined(__SMALL_DATA__)
+#elif defined( _M_I86 ) && defined(__SMALL_DATA__)
     #pragma aux __uldiv = \
         "xor cx,cx" \
         "cmp dx,[bx]" \

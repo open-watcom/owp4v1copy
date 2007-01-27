@@ -43,7 +43,7 @@
 #if defined(__386__)
     #define _EWM_PARM1  eax
     #define _EWM_PARM2  edx
-#elif defined(M_I86)
+#elif defined( _M_I86 )
     #define _EWM_PARM1  ax dx
     #define _EWM_PARM2  bx
 #else

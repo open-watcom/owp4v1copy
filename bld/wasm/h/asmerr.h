@@ -36,7 +36,7 @@
     #include "asminput.h"
 #endif
 
-#ifdef M_I86
+#ifdef _M_I86
     #define ASMFAR far
 #else
     #define ASMFAR

@@ -35,7 +35,7 @@
 extern  void    _ModF( double _WCNEAR *x, double _WCNEAR *ipart );
 #if defined(__386__)
   #pragma aux     _ModF "_*" parm caller [eax] [edx];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
   #pragma aux     _ModF "_*" parm caller [ax] [dx];
 #endif
 

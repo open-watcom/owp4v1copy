@@ -43,7 +43,7 @@
 extern "C" {
 #endif
 
-#if (defined(__386__) || defined(M_I86)) && defined(__WATCOMC__)
+#if defined( _M_IX86 ) && defined(__WATCOMC__)
  #define _LONG_DOUBLE_
 #endif
 
@@ -300,7 +300,7 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
   #pragma aux   __iLDFS "*"  parm caller [eax] [edx];
   #pragma aux   __FLDC  "*"  parm caller [eax] [edx] value [eax];
  #endif
-#elif defined(M_I86)            // 16-bit pragmas
+#elif defined( _M_I86 )            // 16-bit pragmas
  #pragma aux     __ZBuf2LD      "*"  parm caller [ax] [dx];
  #if defined(__FPI__)
   extern unsigned __Get87CW(void);

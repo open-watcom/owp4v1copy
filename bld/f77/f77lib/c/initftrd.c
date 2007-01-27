@@ -42,7 +42,7 @@ extern void     __FiniBeginThread(void);
 AXI( __InitBeginThread, INIT_PRIORITY_THREAD );
 AYI( __FiniBeginThread, INIT_PRIORITY_LIBRARY );
 
-#if defined( __386__ ) || defined( M_I86 )
+#if defined( _M_IX86 )
   #pragma aux   __fthread_init "*"
 #endif
 

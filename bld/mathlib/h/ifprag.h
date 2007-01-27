@@ -143,7 +143,7 @@ double __sincos( double x, int flag );
   #pragma aux __log2 "IF@DLOG2";
 #if defined(__386__)
   #pragma aux (if_rtn) _IF_ipow "IF@IPOW" value [EAX];
-#elif defined(M_I86)
+#elif defined( _M_I86 )
   #pragma aux (if_rtn) _IF_ipow "IF@IPOW";
 #endif
   #pragma aux (if_rtn) _IF_dpowi "IF@DPOWI";
