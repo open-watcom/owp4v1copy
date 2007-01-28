@@ -83,7 +83,7 @@ void    InitPredefinedMacros( void ) {
 #if _CPU == 386
     MacroDEFINE( "__386__", 7 );
 #elif _CPU == 8086
-    MacroDEFINE( "__i86__", 7 );
+    MacroDEFINE( "__I86__", 7 );
 #elif _CPU == _AXP
     MacroDEFINE( "__AXP__", 7 );
 #elif _CPU == _PPC
