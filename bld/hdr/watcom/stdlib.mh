@@ -153,7 +153,7 @@ _WCIRTLINK extern int    abs( int __j );
 #endif
 :: extra 'register' is used to prevent C++ compiler from entering a parser
 :: disambiguation stage (i.e., it has a use, so don't delete it) AFS (atexit)
-          extern int     atexit( register void ( *__func )( void ) );
+_WRTLFCONV extern int    atexit( void ( *__func )( void ) );
 _WMRTLINK extern double  atof( const char *__nptr );
 _WCRTLINK extern int     atoi( const char *__nptr );
 _WCRTLINK extern long int atol( const char *__nptr );

@@ -42,7 +42,7 @@
 static  void    (* _HUGEDATA _ExitList[EXIT_LIMIT])( void );
 static  int     _ExitCount;
 
-int atexit( void (*func)( void ) )
+_WRTLFCONV int atexit( void (*func)( void ) )
 {
     if( _ExitCount < EXIT_LIMIT ) {
         _ExitList[ _ExitCount++ ] = func;
