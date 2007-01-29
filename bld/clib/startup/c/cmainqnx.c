@@ -301,7 +301,7 @@ _CMain(int argc, char **argv, char **arge)
     tmp.s               = _cs();
     __setmagicvar( &tmp.s, _m_efgfmt_cs );
     __FPE_handler =     &__null_FPE_rtn;
-    __InitRtns( 1 );
+    __InitRtns( INIT_PRIORITY_THREAD );
     tdata = __alloca( __ThreadDataSize );
     memset( tdata, 0, __ThreadDataSize );
     // tdata->__allocated = 0;

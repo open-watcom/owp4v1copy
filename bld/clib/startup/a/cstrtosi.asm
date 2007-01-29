@@ -33,8 +33,12 @@
 ;       This must be assembled using the following command:
 ;               masm /mx /s cstrtosi
 ;
+
 .386p
+
 include struct.inc
+include xinit.inc
+
 
 DGROUP group CONST,_DATA,DATA,TIB,TI,TIE,XIB,XI,XIE,YIB,YI,YIE,_BSS,STACK
 
@@ -254,7 +258,7 @@ public __exit_
         push    eax                     ; save return value
         push    edx                     ; save edx
         mov     eax,00h                 ; run finalizers
-        mov     edx,0fh                 ; less than exit
+        mov     edx,FINI_PRIORITY_EXIT-1; less than exit
         call    __FiniRtns              ; call finalizer routines
         pop     edx                     ; restore edx
         pop     eax                     ; restore return value

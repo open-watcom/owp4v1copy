@@ -37,8 +37,12 @@
 ;               wasm cstrt086 -bt=DOS -ml -0r
 ;               wasm cstrt086 -bt=DOS -mh -0r
 ;
+
 include mdef.inc
+include xinit.inc
+
 .286p
+
         name    cstart
 
         assume  nothing
@@ -497,7 +501,7 @@ no_ovl:                                 ; endif
 endif
         push    ax                      ; save return code
         mov     ax,00h                  ; run finalizers
-        mov     dx,0fh                  ; less than exit
+        mov     dx,FINI_PRIORITY_EXIT-1 ; less than exit
         call    __FiniRtns              ; do finalization
         pop     ax                      ; restore return code
         mov     ah,04cH                 ; DOS call to exit with return code

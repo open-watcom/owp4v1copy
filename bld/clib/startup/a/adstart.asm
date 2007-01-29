@@ -47,6 +47,8 @@
 .387
 .386p
 
+include xinit.inc
+
 comment @
         Modified for AutoLISP and protect mode ADI
 
@@ -583,7 +585,7 @@ ok:
 
         push    eax                     ; save return code
         mov     eax,00h                 ; run finalizers
-        mov     edx,0fh                 ; less than exit
+        mov     edx,FINI_PRIORITY_EXIT-1; less than exit
         call    __FiniRtns              ; call finalizer routines
         pop     eax                     ; restore return code
 

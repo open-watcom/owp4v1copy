@@ -39,10 +39,14 @@
 ;   NOTE: All C library data should be defined in crwdata.asm -- That way
 ;         it's also available to ADS applications (who use adstart.asm).
 ;
+
         name    cstart
 
 .387
 .386p
+
+include xinit.inc
+
         assume  nothing
 
         extrn   __CMain                 : near
@@ -400,7 +404,7 @@ L4:     lodsb                           ; get char
 ok:
         push    eax                     ; save return code
         mov     eax,00H                 ; run finalizers
-        mov     edx,0FH                 ; less than exit
+        mov     edx,FINI_PRIORITY_EXIT-1; less than exit
         call    __FiniRtns              ; call finializer routines
         pop     eax                     ; restore return code
         mov     ah,04cH                 ; DOS call to exit with return code

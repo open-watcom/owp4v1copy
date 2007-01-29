@@ -163,7 +163,7 @@ void __OS2MainInit( EXCEPTIONREGISTRATIONRECORD *xcpt, void *ptr,
       initializers must be executed before signals initialized since
       __sig_init_rtn may get set by an initializer
     */
-    __InitRtns( 32 );
+    __InitRtns( INIT_PRIORITY_LIBRARY );
     __XCPTHANDLER = xcpt;
     __sig_init_rtn();
 #ifndef __SW_BM
@@ -221,10 +221,10 @@ _WCRTLINK void __exit( unsigned ret_code )
     __OS2Fini(); // must be done before following finalizers get called
     if( __Is_DLL ) {
         if( __process_fini != 0 ) {
-            (*__process_fini)( 0, FINI_PRIORITY_EXIT-1 );
+            (*__process_fini)( 0, FINI_PRIORITY_EXIT - 1 );
         }
     } else {
-        __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
+        __FiniRtns( 0, FINI_PRIORITY_EXIT - 1 );
         __shutdown_stack_checking();
     }
 

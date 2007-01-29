@@ -68,7 +68,7 @@ void __cdecl _LinuxMain( int argc, char **argv, char **arge )
 #if defined( __386__ )
     __FPE_handler =     &__null_FPE_rtn;
 #endif
-    __InitRtns( 1 );
+    __InitRtns( INIT_PRIORITY_THREAD );
 //    tdata = __alloca( __ThreadDataSize );
 //    memset( tdata, 0, __ThreadDataSize );
 //    tdata->__data_size = __ThreadDataSize;

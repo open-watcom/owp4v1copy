@@ -245,8 +245,8 @@ extern int __init_environment(void *  reserved)
     }
     else
     {
-        __InitRtns( 1 );
-        InitFiniLevel = 1;
+        __InitRtns( INIT_PRIORITY_THREAD );
+        InitFiniLevel = INIT_PRIORITY_THREAD;
         __InitMultipleThread();
 
         __InitRtns( 255 );
@@ -278,8 +278,8 @@ extern int _cstart_( void )
     if( __InitThreadProcessing() == NULL ) {
         retcode = -1;
     } else {
-        __InitRtns( 1 );
-        InitFiniLevel = 1;
+        __InitRtns( INIT_PRIORITY_THREAD );
+        InitFiniLevel = INIT_PRIORITY_THREAD;
         __InitMultipleThread();
         _RWD_stacktop = __SP();
         _RWD_stacklow = _RWD_stacktop - stackavail();

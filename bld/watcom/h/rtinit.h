@@ -111,10 +111,14 @@ struct rt_init // structure placed in XI/YI segment
 #define AXI( routine, priority ) static XI( ANON( __LINE__ ), routine, priority )
 #define AYI( routine, priority ) static YI( ANON( __LINE__ ), routine, priority )
 
+/*
+    ..._PRIORITY_... constant must correspond with definition in xinit.inc file
+*/
 enum {
     INIT_PRIORITY_THREAD    =  1, // priority for thread data init
     INIT_PRIORITY_FPU       =  2, // priority for FPU/EMU init
     INIT_PRIORITY_RUNTIME   = 10, // priority for run/time initialization
+    INIT_PRIORITY_EXIT      = 16,
     INIT_PRIORITY_IOSTREAM  = 20, // priority for IOSTREAM
     INIT_PRIORITY_LIBRARY   = 32, // default library-initialization priority
     INIT_PRIORITY_PROGRAM   = 64, // default program-initialization priority

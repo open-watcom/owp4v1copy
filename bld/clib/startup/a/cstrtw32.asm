@@ -33,8 +33,11 @@
 ;               wasm cstrtw32 -bt=WINDOWS -mf -3r
 ;               wasm cstrtw32 -bt=WINDOWS -mf -3s
 ;
+
 .387
 .386p
+
+include xinit.inc
 
 DGROUP group CONST,_DATA,DATA,XIB,XI,XIE,YIB,YI,YIE,_BSS,STACK
 
@@ -346,7 +349,7 @@ endif
         push    eax                     ; save return value
         push    edx                     ; save edx
         mov     eax,00h                 ; run finalizers
-        mov     edx,0fh                 ; less than exit
+        mov     edx,FINI_PRIORITY_EXIT-1; less than exit
         call    __FiniRtns              ; call finalizer routines
         pop     edx                     ; restore edx
         pop     eax                     ; restore return value

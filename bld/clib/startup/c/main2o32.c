@@ -98,7 +98,7 @@ void __F_NAME(__OS2Main,__wOS2Main)( unsigned hmod, unsigned reserved,
     {
         thread_data     *tdata;
 
-        __InitRtns( 1 );
+        __InitRtns( INIT_PRIORITY_THREAD );
 
         tdata = __alloca( __ThreadDataSize );
         memset( tdata, 0, __ThreadDataSize );

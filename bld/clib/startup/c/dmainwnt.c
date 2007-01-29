@@ -84,11 +84,11 @@ int APIENTRY _LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
         }
         #ifdef __SW_BR
             __Is_DLL = 1;
-            __InitRtns( 15 );
+            __InitRtns( INIT_PRIORITY_EXIT - 1 );
         #else
             // The following initializers are called: (in the CLIB run-time DLL):
             //      nothing is called
-            __InitRtns( 1 );
+            __InitRtns( INIT_PRIORITY_THREAD );
             // allocate some thread data storage and initialize run-time variables
             {
                 thread_data *tdata = __AllocInitThreadData( NULL );
@@ -108,13 +108,13 @@ int APIENTRY _LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
             //      __verify_pentium_fdiv_bug
             //      __Init_Argv
             //      __imthread_fn (which calls _NTThreadInit and __InitMultipleThread)
-            __InitRtns( 15 );
+            __InitRtns( INIT_PRIORITY_EXIT - 1 );
             // sets up semaphores and starts linked list of thread data storage
             __InitMultipleThread();     // now safe to call multiple times
         #endif
         if( _pRawDllMain != NULL ) {
             if( !_pRawDllMain( hdll, reason, reserved ) ) {
-                __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
+                __FiniRtns( 0, FINI_PRIORITY_EXIT - 1 );
                 rc = FALSE;
                 break;
             }
@@ -164,7 +164,7 @@ int APIENTRY _LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
         #ifndef __SW_BR
             __NTFini(); // must be done before following finalizers get called
         #endif
-        __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
+        __FiniRtns( 0, FINI_PRIORITY_EXIT - 1 );
         #ifndef __SW_BR
             __NTRemoveThread( TRUE );
             __FreeInitThreadData( __FirstThreadData );

@@ -227,8 +227,8 @@ int     __init_environment( void *  reserved )
     //  Call initialisation routines where priority is <= 1 and set the
     //  initialisation finish level to 1
     */
-    __InitRtns( 1 );
-    InitFiniLevel = 1;
+    __InitRtns( INIT_PRIORITY_THREAD );
+    InitFiniLevel = INIT_PRIORITY_THREAD;
     /*
     //  Initialise multiple thread support
     */

@@ -32,6 +32,9 @@
 
 .387
 .386p
+
+include xinit.inc
+
         assume  nothing
 
         extrn   __CMain                 : near
@@ -395,7 +398,7 @@ exit_code_eax:
 error_exit_code_eax:
         push    eax                     ; save return code
         mov     eax,00H                 ; run finalizers
-        mov     edx,0FH                 ; less than exit
+        mov     edx,FINI_PRIORITY_EXIT-1; less than exit
         call    __FiniRtns              ; call finializer routines
 
 L10:

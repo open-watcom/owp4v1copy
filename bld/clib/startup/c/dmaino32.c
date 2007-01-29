@@ -115,7 +115,7 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
             // calls to free memory have to be done before semaphores closed
             __FreeInitThreadData( __FirstThreadData );
             __OS2Fini(); // must be done before following finalizers get called
-            __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
+            __FiniRtns( 0, FINI_PRIORITY_EXIT - 1 );
         #endif
         #ifndef __SW_BR
             __shutdown_stack_checking();
@@ -167,13 +167,13 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
             _LpwPgmName = lib_malloc( (strlen( _LpPgmName ) + 1) * sizeof( wchar_t ) );
             _atouni( _LpwPgmName, _LpPgmName );
         }
-        __InitRtns( 1 );
+        __InitRtns( INIT_PRIORITY_THREAD );
         if( __InitThreadProcessing() == NULL ) return( 0 );
         __OS2Init( TRUE, __AllocInitThreadData( NULL ) );
         for( i = 2; i <= __MaxThreads; i++ ) {
             if( !__OS2AddThread( i, NULL ) ) return( 0 );
         }
-        __InitRtns( 15 );
+        __InitRtns( INIT_PRIORITY_EXIT - 1 );
         __InitMultipleThread();
         {
             static char fname[_MAX_PATH];

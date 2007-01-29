@@ -58,6 +58,8 @@ comment&
 
 .386p
 
+include xinit.inc
+
 public  __x386_zero_base_ptr
 public  __x386_zero_base_selector
 public  __data_bottom
@@ -405,7 +407,7 @@ ifndef __STACK__
         push    eax                     ; save return code
 endif
         mov     eax,00H                 ; run finalizers
-        mov     edx,0FH                 ; less than exit
+        mov     edx,FINI_PRIORITY_EXIT-1; less than exit
         call    __FiniRtns              ; call finializer routines
         pop     eax                     ; restore return code
         mov     ah,4cH                  ; DOS call to exit with return code

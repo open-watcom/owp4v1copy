@@ -76,7 +76,7 @@ void __F_NAME(__WinMain,__wWinMain)( void )
     {
         REGISTRATION_RECORD     rr;
         thread_data             *tdata;
-        __InitRtns( 1 );
+        __InitRtns( INIT_PRIORITY_THREAD );
         tdata = __alloca( __ThreadDataSize );
         memset( tdata, 0, __ThreadDataSize );
         // tdata->__allocated = 0;

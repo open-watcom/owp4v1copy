@@ -35,7 +35,9 @@
 ;               wasm cstrtw16 -bt=WINDOWS -mc -0r
 ;               wasm cstrtw16 -bt=WINDOWS -ml -0r
 ;
+
 include mdef.inc
+include xinit.inc
 
 public  pLocalHeap
 public  pAtomTable
@@ -305,7 +307,7 @@ __exit  proc near
 _error:
         push    ax                      ; save return code
         mov     ax,00h                  ; run finalizers
-        mov     dx,0fh                  ; less than exit
+        mov     dx,FINI_PRIORITY_EXIT-1 ; less than exit
         call    __FFiniRtns             ; call finalizer routines
         pop     ax                      ; restore return code
         mov     ah,04cH                 ; DOS call to exit with return code
