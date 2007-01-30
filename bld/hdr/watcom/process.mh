@@ -82,9 +82,7 @@ _WCRTLINK extern int execvpe( const char *__file, const char *const __argv[],
 
 :segment QNX | LINUX
 #if defined(__386__)
-:: extra 'register' is used to prevent C++ compiler from entering a parser
-:: disambiguation stage (i.e., it has a use, so don't delete it) AFS
-_WCRTLINK extern int  _beginthread( register void (*__start_address)(void *),
+_WCRTLINK extern int  _beginthread( void (*__start_address)(void *),
    void *__stack_bottom, unsigned __stack_size, void *__arglist );
 #pragma intrinsic(_beginthread);
 _WCRTLINK extern void _endthread( void );
@@ -92,24 +90,24 @@ _WCRTLINK extern void _endthread( void );
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
 #if defined(__NT__)
 _WCRTLINK extern unsigned long _beginthread(
-                register void (*__start_address)(void *),
+                void (*__start_address)(void *),
                 unsigned __stack_size, void *__arglist );
 _WCRTLINK extern unsigned long _beginthreadex( void *__security,
                 unsigned __stack_size,
-                register unsigned (__stdcall *__start_address)(void *),
+                unsigned (__stdcall *__start_address)(void *),
                 void *__arglist, unsigned __initflag, unsigned *__thrdaddr );
 #pragma intrinsic(_beginthread,_beginthreadex);
 _WCRTLINK extern void _endthreadex( unsigned __retval );
 _WCRTLINK extern unsigned long __threadhandle( void );
 #else
-_WCRTLINK extern int _beginthread( register void (*__start_address)(void *),
+_WCRTLINK extern int _beginthread( void (*__start_address)(void *),
    void *__stack_bottom, unsigned __stack_size, void *__arglist );
 #pragma intrinsic(_beginthread);
 #endif
 _WCRTLINK extern void _endthread( void );
 #else
 _WCRTLINK extern int _WCFAR  _beginthread(
-    register void (_WCFAR *__start_address)(void _WCFAR *),
+    void (_WCFAR *__start_address)(void _WCFAR *),
     void _WCFAR *__stack_bottom, unsigned __stack_size, void _WCFAR *__arglist );
 #pragma intrinsic(_beginthread);
 _WCRTLINK extern void _WCFAR _endthread( void );

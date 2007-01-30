@@ -292,7 +292,7 @@ WCbool WCValHashTable<Type>::find( const Type &search
 
 
 template <class Type>
-void WCValHashTable<Type>::forAll( register void (*user_fn)(Type, void*)
+void WCValHashTable<Type>::forAll( void (*user_fn)(Type, void*)
                                  , void *data ) const {
     WCIsvSListIter<BaseHashLink> iter;
     HashLink *link;
@@ -695,8 +695,8 @@ WCbool WCValHashDict<Key, Value>::findKeyAndValue( const Key &search
 
 
 template <class Key, class Value>
-void WCValHashDict<Key, Value>::forAll( register void (*user_fn)(Key, Value
-                                                                , void*)
+void WCValHashDict<Key, Value>::forAll( void (*user_fn)(Key, Value
+                                                        , void*)
                                       , void *data ) const {
     WCIsvSListIter<BaseHashLink> iter;
     HashLink *link;

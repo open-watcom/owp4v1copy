@@ -151,8 +151,6 @@ _WCIRTLINK extern int    abs( int __j );
 #if defined(_M_IX86) && 0
 #pragma aux abs     parm nomemory modify nomemory;
 #endif
-:: extra 'register' is used to prevent C++ compiler from entering a parser
-:: disambiguation stage (i.e., it has a use, so don't delete it) AFS (atexit)
 _WRTLFCONV extern int    atexit( void ( *__func )( void ) );
 _WMRTLINK extern double  atof( const char *__nptr );
 _WCRTLINK extern int     atoi( const char *__nptr );

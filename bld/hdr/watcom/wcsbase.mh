@@ -393,7 +393,7 @@ WCbool WCSkipListBase<Type>::base_val_find( const Type &search
 
 
 template<class Type>
-void WCSkipListBase<Type>::forAll( register void(*user_fn)( Type, void * )
+void WCSkipListBase<Type>::forAll( void(*user_fn)( Type, void * )
                                  , void * data) const {
     register node_ptr curr;
 

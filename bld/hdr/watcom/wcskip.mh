@@ -328,7 +328,7 @@ WCbool WCValSkipListDict<Key, Value>::findKeyAndValue( const Key &search
 
 template<class Key, class Value>
 void WCValSkipListDict<Key, Value>
-                ::forAll( register void(*user_fn)( Key, Value, void * )
+                ::forAll( void(*user_fn)( Key, Value, void * )
                         , void * data) const {
     register node_ptr curr;
 
