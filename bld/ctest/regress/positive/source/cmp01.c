@@ -200,6 +200,69 @@ int cmp_I4_hi_gt( signed long x )
     return( 0 );
 }
 
+int cmp_U8_lo_lt( unsigned long long x )
+{
+    if( x < 0 ) {
+        return( 1 );
+    }
+    return( 0 );
+}
+
+int cmp_U8_lo_ge( unsigned long long x )
+{
+    if( x >= 0 ) {
+        return( 0 );
+    }
+    return( 1 );
+}
+
+int cmp_U8_hi_le( unsigned long long x )
+{
+    if( x <= ULLONG_MAX ) {
+        return( 0 );
+    }
+    return( 1 );
+}
+
+int cmp_U8_hi_gt( unsigned long long x )
+{
+    if( x > ULLONG_MAX ) {
+        return( 1 );
+    }
+    return( 0 );
+}
+
+int cmp_I8_lo_lt( signed long long x )
+{
+    if( x < LLONG_MIN ) {
+        return( 1 );
+    }
+    return( 0 );
+}
+
+int cmp_I8_lo_ge( signed long long x )
+{
+    if( x >= LLONG_MIN ) {
+        return( 0 );
+    }
+    return( 1 );
+}
+
+int cmp_I8_hi_le( signed long long x )
+{
+    if( x <= LLONG_MAX ) {
+        return( 0 );
+    }
+    return( 1 );
+}
+
+int cmp_I8_hi_gt( signed long long x )
+{
+    if( x > LLONG_MAX ) {
+        return( 1 );
+    }
+    return( 0 );
+}
 int cmp_FS_lo_lt( float x )
 {
     if( x < LONG_MIN ) {
@@ -301,6 +364,14 @@ int main( void )
     if( cmp_I4_lo_ge( sl ) ) fail( __LINE__ );
     if( cmp_I4_hi_le( sl ) ) fail( __LINE__ );
     if( cmp_I4_hi_gt( sl ) ) fail( __LINE__ );
+    if( cmp_U8_lo_lt( ul ) ) fail( __LINE__ );
+    if( cmp_U8_lo_ge( ul ) ) fail( __LINE__ );
+    if( cmp_U8_hi_le( ul ) ) fail( __LINE__ );
+    if( cmp_U8_hi_gt( ul ) ) fail( __LINE__ );
+    if( cmp_I8_lo_lt( sl ) ) fail( __LINE__ );
+    if( cmp_I8_lo_ge( sl ) ) fail( __LINE__ );
+    if( cmp_I8_hi_le( sl ) ) fail( __LINE__ );
+    if( cmp_I8_hi_gt( sl ) ) fail( __LINE__ );
 
     if( !cmp_FS_lo_lt( fsn ) ) fail( __LINE__ );
     if( !cmp_FS_lo_ge( fsn ) ) fail( __LINE__ );

@@ -117,9 +117,7 @@ static char const CmpResult[REL_SIZE][CASE_SIZE] = {
     { CMP_FALSE, CMP_VOID , CMP_TRUE , CMP_TRUE },  // x <= c
 };
 
-#define LOW_VAL         (0x80000000)
-#define HIGH_VAL        (0xfffffffful)
-#define MAXSIZE         32
+#define MAXSIZE         64      /* Must not be greater! */
 
 static int CmpType( type_def *tipe )
 /**********************************/
@@ -142,9 +140,9 @@ static cmp_result CheckCmpRange( opcode_defs op, int op_type, cfloat *val )
 {
     enum case_range     range;
     cmp_result          ret;
-    signed_32           low;
-    signed_32           high;
-    signed_32           konst;
+    signed_64           low;
+    signed_64           high;
+    signed_64           konst;
     rel_op              rel;
     bool                rev_ret = FALSE;
 
@@ -170,22 +168,24 @@ static cmp_result CheckCmpRange( opcode_defs op, int op_type, cfloat *val )
     }
     /* Determine type range */
     if( NumSign( op_type ) ) {
-        low = (signed_32)(LOW_VAL) >> MAXSIZE-NumBits( op_type );
-        high = ~low;
+        U64Set( &low, 0, 0x80000000 );
+        I64ShiftR( &low, MAXSIZE - NumBits( op_type ), &low );
+        U64Not( &low, &high );
     } else {
-        low = 0;
-        high = HIGH_VAL >> MAXSIZE-NumBits( op_type );
+        U64Clear( low );
+        U64Not( &low, &high );
+        U64ShiftR( &high, MAXSIZE - NumBits( op_type ), &high );
     }
     /* Determine how to compare */
-    konst = CFCnvF32( val );
-    if( konst == low ) {
+    konst = CFCnvF64( val );
+    if( I64Cmp( &konst, &low ) == 0 ) {
         range = CASE_LOW_EQ;
-    } else if( konst == high ) {
+    } else if( I64Cmp( &konst, &high) == 0 ) {
         range = CASE_HIGH_EQ;
     } else if( NumBits( op_type ) < MAXSIZE ) { /* Can't be outside range */
-        if( konst < low ) {                     /* Don't have to do unsigned compare */
+        if( I64Cmp( &konst, &low ) < 0 ) {      /* Don't need unsigned compare */
             range = CASE_LOW;
-        } else if( konst > high ) {
+        } else if( I64Cmp( &konst, &high ) > 0 ) {
             range = CASE_HIGH;
         } else {
             range = CASE_SIZE;
