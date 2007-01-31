@@ -237,6 +237,19 @@ int Test_print_float( void )
     VERIFY( sprintf( buf, "%2.4g", 4.5 ) == 3 );
     VERIFY( !strcmp( buf, "4.5" ) );
 
+    /* Test rounding */
+    VERIFY( sprintf( buf, "%0.9e", 99999999.99 ) == 15 );
+    VERIFY( !strcmp( buf, "9.999999999e+07" ) );
+
+    VERIFY( sprintf( buf, "%0.9e", 999999999.99 ) == 15 );
+    VERIFY( !strcmp( buf, "1.000000000e+09" ) );
+
+    VERIFY( sprintf( buf, "%0.9e", 9999999999.99 ) == 15 );
+    VERIFY( !strcmp( buf, "1.000000000e+10" ) );
+
+    VERIFY( sprintf( buf, "%0.9e", 99999999999.99 ) == 15 );
+    VERIFY( !strcmp( buf, "1.000000000e+11" ) );
+
 #if defined( _NAN ) && defined( _INF )
     /* Test NaN/inf formatting */
     VERIFY( sprintf( buf, "%e", _INF ) == 3 );

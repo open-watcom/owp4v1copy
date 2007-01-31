@@ -635,7 +635,7 @@ nan_inf:
             n += cvt->scale;
         }
     } else {
-        n = cvt->ndigits + 3 + NDIG / 2;
+        n = cvt->ndigits + 4 + NDIG / 2;    // need at least this for rounding
     }
 
     maxsize = DBL_CVT_DIGITS;
