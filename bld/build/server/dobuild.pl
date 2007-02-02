@@ -39,8 +39,9 @@ $report_archive = $Common::config{"REPORTS"};
 $bldbase = "$home\\$Common::config{'BLDBASE'}";
 $bldlast = "$home\\$Common::config{'BLDLAST'}";
 
-$build_batch_name = "$home\\buildtmp.bat";
-$test_batch_name  = "$home\\testtmp.bat";
+$build_batch_name  = "$home\\buildtmp.bat";
+$test_batch_name   = "$home\\testtmp.bat";
+$rotate_batch_name = "$home\\rotate.bat";
 
 sub make_build_batch()
 {
@@ -141,6 +142,7 @@ sub process_log
     if ($result eq "success") {
         print REPORT "Succeeded.\n";
     }
+    return $result;
 }
 
 sub get_shortdate
@@ -261,11 +263,11 @@ $datetime_stamp = get_datetime();
 print REPORT "REGRESSION TESTS COMPLETED: $datetime_stamp\n\n";
 
 print REPORT "\tFortran Compiler: ";
-process_log("$OW\\bld\\f77\\regress\\positive.log");
+$f_compiler = process_log("$OW\\bld\\f77\\regress\\positive.log");
 print REPORT "\tC Compiler      : ";
-process_log("$OW\\bld\\ctest\\result.log");
+$c_compiler = process_log("$OW\\bld\\ctest\\result.log");
 print REPORT "\tC++ Compiler    : ";
-process_log("$OW\\bld\\plustest\\result.log");
+$cpp_compiler = process_log("$OW\\bld\\plustest\\result.log");
 print REPORT "\n";
 
 # Display p4 sync messages for reference.
@@ -274,4 +276,13 @@ print REPORT "\n";
 display_p4_messages();
 
 close(REPORT);
+
+# Rotate the freshly built system into position on the web site.
+################################################################
+if (($f_compiler   eq "success") &&
+    ($c_compiler   eq "success") &&
+    ($cpp_compiler eq "success")) {
+        
+    system("$rotate_batch_name");
+}
 
