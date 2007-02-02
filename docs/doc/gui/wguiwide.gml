@@ -60,7 +60,7 @@ In the following illustration, the main window is the project window
 for a project entitled
 .fi first.wpj.
 The sub-window represents the target for this project,
-.fi target.exe.
+.fi target1.exe.
 The source file for the target is listed within the target window. In
 this project, there is only a single target with a single source file.
 .figure *depth='3.8' *scale=60 *file='ide1' The &company &vip window displays project and target windows.
@@ -254,7 +254,7 @@ the Targets menu.
 .point Remote Debug
 :HBMP 'rdbgtarg.bmp' i
 .ix 'remote debug target'
-Debug the current target on a remote machine. This is equivalent to 
+Debug the current target on a remote machine. This is equivalent to
 the option Remote Debug in the Targets menu.
 .point Browse
 :HBMP 'browtarg.bmp' i
