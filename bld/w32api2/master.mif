@@ -42,11 +42,13 @@ headers =            &
         winefs.h     &
         winerror.h   &
         wingdi.h     &
+        winioctl.h   &
         winnetwk.h   &
         winnls.h     &
         winnt.h      &
         winperf.h    &
         winreg.h     &
+        winscard.h   &
         winsock.h    &
         winuser.h    &
         winver.h

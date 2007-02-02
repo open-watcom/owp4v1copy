@@ -1,0 +1,14 @@
+/*
+ *  winscard.h  Win32 SmartCard functions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _WINSCARD_H_INCLUDED
+#define _WINSCARD_H_INCLUDED
+
+:include readonly.sp
+#include <winioctl.h>
+
+#endif /* _WINSCARD_H_INCLUDED */
+
