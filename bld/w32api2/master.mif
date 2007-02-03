@@ -49,6 +49,7 @@ headers =            &
         winperf.h    &
         winreg.h     &
         winscard.h   &
+        winsmcrd.h   &
         winsock.h    &
         winuser.h    &
         winver.h
