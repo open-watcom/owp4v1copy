@@ -85,6 +85,7 @@ int check_directory( void )
 
         if( (get_file_size( dir_entry ) % 16) != 0) \
         printf_s( "Size of file %s is not a multiple of 16\n", dir_entry->d_name );
+
         /* Open the file */
 
         fopen_s( &current_file, dir_entry->d_name, "rb" );

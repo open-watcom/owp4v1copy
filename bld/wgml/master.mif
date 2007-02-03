@@ -15,7 +15,10 @@ inc_dirs = -I"../h"
 .c: ../c;../../watcom/c
 
 cf_common_objs = &
+	    cfdev.obj &
 	    cfdir.obj &
+	    cfdrv.obj &
+	    cffon.obj &
             cfheader.obj &
             cmdlhelp.obj &
             common.obj   &
