@@ -1,110 +1,120 @@
 .CONTINUE
 .IGNORE
 
-objs = &
-3dnow &
-486 &
-adc &
-add &
-admodes &
-admodes1 &
-admodes2 &
-admodes3 &
-admodes4 &
-admodes5 &
-admodes6 &
-amodes &
-amodes1 &
-amodes2 &
-amodes3 &
-amodes4 &
-amodes5 &
-amodes6 &
-and &
-bt &
-bug &
-calljmp &
-cc2 &
-cmp &
-cmpx &
-dec &
-div &
-disasm &
-dmodes1 &
-dmodes2 &
-dmodes3 &
-dmodes4 &
-dmodes5 &
-dmodes6 &
-enter &
-fadd &
-fcom &
-fdiv &
-fld &
-fmul &
-fp &
-fpmisc &
-fpmisc2 &
-fsub &
-fubar &
-fucom &
-idiv &
-imul &
-in &
-inc &
-lea &
-lod &
-lxs &
-misc &
-misc2 &
-mmx &
-modes &
-modes1 &
-modes2 &
-modes3 &
-modes4 &
-modes5 &
-modes6 &
-mov &
-mov2 &
-movs &
-movx &
-mul &
-neg &
-not &
-or &
-out &
-outs &
-pop &
-pword &
-rcl &
-sal &
-sbb &
-scas &
-setcc &
-shld &
-sse &
-sse2 &
-sse3 &
-sub &
-test &
-try &
-xadd &
-xchg &
-xor &
-asmbug1 &
-asmbug2 &
-asmbug3 &
-asmbug4 &
-asmbug5 &
-asmbug6 &
-asmbug7 &
-asmbug8 &
-asmbug9 &
-asmbug10 &
-asmbug11 &
-asmbug12 &
-asmbug13
+.extensions:
+.extensions: .exe .ls1 .lst .obj .err .gc .c .cc .cpp .asm .mif
+.mif: $(mif_path)
+
+asm_objs = &
+3dnow.ls1 &
+486.ls1 &
+adc.ls1 &
+add.ls1 &
+admodes.ls1 &
+admodes1.ls1 &
+admodes2.ls1 &
+admodes3.ls1 &
+admodes4.ls1 &
+admodes5.ls1 &
+admodes6.ls1 &
+amodes.ls1 &
+amodes1.ls1 &
+amodes2.ls1 &
+amodes3.ls1 &
+amodes4.ls1 &
+amodes5.ls1 &
+amodes6.ls1 &
+and.ls1 &
+bt.ls1 &
+bug.ls1 &
+calljmp.ls1 &
+cc2.ls1 &
+cmp.ls1 &
+cmpx.ls1 &
+dec.ls1 &
+div.ls1 &
+disasm.ls1 &
+dmodes1.ls1 &
+dmodes2.ls1 &
+dmodes3.ls1 &
+dmodes4.ls1 &
+dmodes5.ls1 &
+dmodes6.ls1 &
+enter.ls1 &
+fadd.ls1 &
+fcom.ls1 &
+fdiv.ls1 &
+fld.ls1 &
+fmul.ls1 &
+fp.ls1 &
+fpmisc.ls1 &
+fpmisc2.ls1 &
+fsub.ls1 &
+fubar.ls1 &
+fucom.ls1 &
+idiv.ls1 &
+imul.ls1 &
+in.ls1 &
+inc.ls1 &
+lea.ls1 &
+lod.ls1 &
+lxs.ls1 &
+misc.ls1 &
+misc2.ls1 &
+mmx.ls1 &
+modes.ls1 &
+modes1.ls1 &
+modes2.ls1 &
+modes3.ls1 &
+modes4.ls1 &
+modes5.ls1 &
+modes6.ls1 &
+mov.ls1 &
+mov2.ls1 &
+movs.ls1 &
+movx.ls1 &
+mul.ls1 &
+neg.ls1 &
+not.ls1 &
+or.ls1 &
+out.ls1 &
+outs.ls1 &
+pop.ls1 &
+pword.ls1 &
+rcl.ls1 &
+sal.ls1 &
+sbb.ls1 &
+scas.ls1 &
+setcc.ls1 &
+shld.ls1 &
+sse.ls1 &
+sse2.ls1 &
+sse3.ls1 &
+sub.ls1 &
+test1.ls1 &
+try.ls1 &
+xadd.ls1 &
+xchg.ls1 &
+xor.ls1 &
+asmbug1.ls1 &
+asmbug2.ls1 &
+asmbug3.ls1 &
+asmbug4.ls1 &
+asmbug5.ls1 &
+asmbug6.ls1 &
+asmbug7.ls1 &
+asmbug8.ls1 &
+asmbug9.ls1 &
+asmbug10.ls1 &
+asmbug11.ls1 &
+asmbug12.ls1 &
+asmbug13.ls1
+
+c_objs = &
+bug31.lst &
+extprocf.lst &
+extprocn.lst &
+tokens.lst
 
 init_3dnow = K3D
 init_mmx = MMX
@@ -112,44 +122,64 @@ init_sse = XMM
 init_sse2 = XMM2
 init_sse3 = XMM3
 
-.exe : ..
-.c : ..
+opt_extprocf = -ms
+opt_extprocn = -ml
 
 !ifndef testcomp
 testcomp=wcc386
 !endif 
 
-!ifdef nulldevice
-!else ifdef __UNIX__
-nulldevice=/dev/null
-!else
-nulldevice=nul
-!endif
+test_cflags=-wx -we -s -os -zq
+
+.error
+    @%append $(%error_file) $(%error_msg)
+
+.asm.gc:
+    @set SOURCE_FILE=$[@
+    @vi -d -q -k ":set norc\n" -s createc.vi -p "$@ $(init_$^&)" $[@
+
+.gc.obj:
+    @set error_msg=failure to compile $^&
+    @$(testcomp) $[@ $(test_cflags) $(opt_$^*) -fo=.obj
+    @echo PASS $(testcomp) compiling $^&
+
+.c.obj:
+    @set SOURCE_FILE=$[@
+    @set error_msg=failure to compile $^&
+    @$(testcomp) $[@ $(test_cflags) $(opt_$^*) -fo=.obj
+    @echo PASS $(testcomp) compiling $^&
+
+.obj.ls1:
+    @set error_msg=failure to decode $^&
+    @wdis -a -l=$@ $[@
+    -@vi -d -q -s fixlst1.vi -k "ZZ" $@
+    @set CHK_CHECK=diff -i -b $@ $^&.asm
+    @if exist $^&.chk @set CHK_CHECK=diff -i -b $@ $^&.chk
+    @$(%CHK_CHECK)
+    @echo PASS decoding $[@
+
+.obj.lst:
+    @set error_msg=failure to decode $^&
+    @set ESM_CHECK=%null
+    @if exist $^&.esm @set ESM_CHECK=diff -i -b $^&.dis $^&.esm
+    @wdis -l=$^&.dis -a $^&.obj
+    @vi -d -q -i -s fixlst2.vi -k "ZZ" $^&.dis
+    @$(%ESM_CHECK)
+    @set EMP_CHECK=%null
+    @if exist $^&.emp @set EMP_CHECK=diff -i -b $^&.lst $^&.emp
+    @dmpobj -q -l -rec=FIXUPP $^&.obj
+    @vi -d -q -s fixlst3.vi -k "ZZ" $^&.lst
+    @$(%EMP_CHECK)
+    @echo PASS decoding $[@
 
 !ifndef log_file
 log_file=testcomp.log
 !endif
 
 .BEFORE
-#    @%create $(log_file)
+    @%create $(log_file)
 
-all : clean $(objs) .SYMBOLIC
-
-!ifdef objs
-!ifneq objs
-$(objs) : .SYMBOLIC
-    @echo ==============================================================
-    @echo $(testcomp) $^@.asm
-    @echo ==============================================================
-    @rm -f $@.c
-    @%append $(log_file) === $(testcomp) $^@ ===
-    @vi -d -q -k ":so createc.vi $@ $(init_$^@)\n"
-    @$(testcomp) $@.c -s -os -zq -wx -fo=.obj >$(nulldevice)
-    @wdis -a -l $@.obj >$(nulldevice)
-    @vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
-    @wmake -h -f ../checki.mif name=$@ log_file=$(log_file)
-!endif
-!endif
+all : clean $(asm_objs) $(c_objs) .SYMBOLIC
 
 clean : .SYMBOLIC
-    @rm -f *.obj *.lst *.c *.err mem.trk *.log
+    @rm -f *.obj *.ls? *.dis *.gc *.err mem.trk *.log

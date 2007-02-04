@@ -1,0 +1,93 @@
+ctest_name = inline
+
+!include ../environ.mif
+!include inline.mif
+
+inline_dir = $(wasm_dir)/test/inline
+
+!ifdef test1
+test_cflags_386 =
+test_cflags_i86 =
+alt_error = 01
+!else
+test_cflags_386 =
+test_cflags_i86 =
+alt_error = 00
+!endif
+
+!ifdef __LINUX__
+exec_prefix = ./
+!else
+exec_prefix =
+!endif
+
+!ifndef noisy
+run_quietly = -zq
+!endif
+
+test_cflags_386 += -s -os -wx -we $(run_quietly)
+test_cflags_i86 += -s -os -wx -we $(run_quietly)
+
+.error
+    @%append $(%error_file) $(%error_msg)
+
+.c: $(inline_dir)
+.asm: $(inline_dir)
+
+.asm.gc:
+    @vi -d -q -k ":set norc\n" -s $(inline_dir)/createc.vi -p "$@ $(init_$^&)" $[@
+
+.gc.obj:
+    @set error_msg=failure to compile $^&
+    $(wcc_$(arch)) $[@ $(test_cflags_$(arch)) $(opt_$^*) -fo=.obj
+
+.c.obj:
+    @set error_msg=failure to compile $^&
+    $(wcc_$(arch)) $[@ $(test_cflags_$(arch)) $(opt_$^*) -fo=.obj
+
+.obj.ls1:
+    @set error_msg=failure to decode $[@
+    wdis -a -l=$@ $[@
+    -@vi -d -q -s $(inline_dir)/fixlst1.vi -k "ZZ" $@
+    @set CHK_CHECK=diff -i -b $@ $(inline_dir)/$^&.asm
+    @if exist $(inline_dir)/$^&.chk @set CHK_CHECK=diff -i -b $@ $(inline_dir)/$^&.chk
+    $(%CHK_CHECK)
+    @%append exec.out PASS decoding $[@
+
+.obj.lst:
+    @set error_msg=failure to decode $[@
+    @set ESM_CHECK=@%null
+    @if exist $(inline_dir)/$^&.esm @set ESM_CHECK=diff -i -b $^&.dis $(inline_dir)/$^&.esm
+    -wdis -l=$^&.dis -a $^&.obj
+    -@vi -d -q -i -s $(inline_dir)/fixlst2.vi -k "ZZ" $^&.dis
+    $(%ESM_CHECK)
+    @set EMP_CHECK=@%null
+    @if exist $(inline_dir)/$^&.emp @set EMP_CHECK=diff -i -b $^&.lst $(inline_dir)/$^&.emp
+    -dmpobj -q -l -rec=FIXUPP $^&.obj
+    -@vi -d -q -s $(inline_dir)/fixlst3.vi -k "ZZ" $^&.lst
+    $(%EMP_CHECK)
+    @%append exec.out PASS decoding $[@
+
+test : .symbolic actual_test
+    @set error_file=error.out
+    @set error_msg=failure to complete test stream
+    echo OK >error.out
+    $(bld_cl) -ox-d1 chk_exec.c
+    $(exec_prefix)chk_exec.exe exec.out >>error.out
+    diff -b error.out error.chk
+    %make global
+    %append $(log_file) PASS $(%__CWD__)
+
+actual_test : .symbolic start_test $(asm_objs) $(c_objs)
+    rm -f *.gc *.ls? *.obj *.dis
+
+start_test : .symbolic
+    %create exec.out
+    @set error_file=exec.out
+
+save : .symbolic
+    if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
+global : .symbolic
+    @if exist failure rm failure
+    @%make common_clean

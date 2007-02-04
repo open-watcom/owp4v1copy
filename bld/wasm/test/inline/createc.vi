@@ -1,8 +1,4 @@
 #
-#read asm source file
-#
-read %1.asm
-#
 # convert each asm source line to c pragma aux line
 #
 if ( %2 == "K3D" )
@@ -35,5 +31,5 @@ $ append
 >}
 >#endif
 .
-write! %1.c
+write! %1
 quit!

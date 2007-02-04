@@ -20,9 +20,6 @@ stack_axp=opt stack=16k
 .c.obj:
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
 
-.c.2bj:
-    $(wpp_i86) $[@ $(test_cflags_286)
-    
 objs = &
     code.obj &
     dfa.obj &

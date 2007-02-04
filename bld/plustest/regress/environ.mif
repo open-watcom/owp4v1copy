@@ -109,7 +109,7 @@
 !endif
 
 .extensions:
-.extensions: .exp .exe .obj .sbj .2bj .3bj .ser .err .c .cc .cpp .mif
+.extensions: .exp .exe .ls1 .lst .obj .ser .err .gc .c .cc .cpp .asm .mif
 .mif: ..;$(mif_path)
 
 !ifndef no_continue

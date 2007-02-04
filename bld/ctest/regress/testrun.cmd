@@ -21,6 +21,9 @@ cd ..
 cd callconv
 call testrun.cmd
 cd ..
+cd inline
+call testrun.cmd
+cd ..
 wmake -h clean
 wmake -h
 wmake -h clean

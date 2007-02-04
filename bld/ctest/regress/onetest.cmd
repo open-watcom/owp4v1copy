@@ -22,6 +22,9 @@ cd ..
 cd callconv
 call onetest.cmd
 cd ..
+cd inline
+call onetest.cmd
+cd ..
 wmake -h clean
 wmake -h
 wmake -h clean

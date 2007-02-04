@@ -70,6 +70,9 @@ cd ..
 cd gstring
 call onetest.cmd
 cd ..
+cd inline
+call onetest.cmd
+cd ..
 cd jam
 call onetest.cmd
 cd ..
