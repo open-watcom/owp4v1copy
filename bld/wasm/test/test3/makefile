@@ -9,7 +9,6 @@ callcnv2.dis &
 callcnv3.dis &
 callcnv4.dis &
 callcnv5.dis &
-callimpl.dis &
 commdef.dis &
 datamix1.dis &
 datamix2.dis &
@@ -19,9 +18,7 @@ dsxhdlr.dis &
 expr01.dis &
 extprocf.dis &
 extprocn.dis &
-float.dis &
 indirect.dis &
-jmpimpl.dis &
 jmpshrt.dis &
 lsxxx.dis &
 mmx.dis &
@@ -29,7 +26,6 @@ movx.dis &
 mseg.dis &
 opi8u.dis &
 plsintr.dis &
-proccall.dis &
 push.dis &
 retiret.dis &
 seg16.dis &
@@ -39,7 +35,6 @@ shift.dis &
 sse.dis &
 sse2.dis &
 sse3.dis &
-struct1.dis &
 structdd.dis &
 support.dis &
 tbyte.dis &
