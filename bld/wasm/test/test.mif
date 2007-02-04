@@ -1,5 +1,10 @@
+.extensions:
+.extensions: .exe .lst .dis .obj .err .out .c .cpp .asm .mif
+.mif: $(mif_path)
+
 .CONTINUE
-.IGNORE
+
+tmp_file=tmp.tmp
 
 !ifndef testasm
 testasm=wasm
@@ -16,21 +21,39 @@ log_file=testasm.log
 
 .BEFORE
     @%create $(log_file)
+    @set error_file=$(log_file)
 
-all : clean $(objs) .SYMBOLIC
+.error
+    @%append $(%error_file) $(%error_msg)
+    @echo $(%error_msg)
 
-!ifdef objs
-!ifneq objs
-$(objs) : .SYMBOLIC
-    @echo ==============================================================
-    @echo $(testasm) $^@.asm 
-    @echo ==============================================================
-    @%append $(nulldevice) $^@
-    @%append $(log_file) === $(testasm) $^@ ===
-    @$(testasm) -q -zld -wx -nm=$^@.asm $(asm_flags_$^@) $^@.asm -fr=$^@.out -fo=$^@.obj > $(nulldevice)
-    @wmake -h -f ../check.mif name=$^@ log_file=$(log_file)
-!endif
-!endif
+all : clean $(objs) $(dis_objs) .SYMBOLIC
+
+.obj.dis:
+    @set error_msg=failure to decode $[@
+    @wdis -l=$@ -a $[@
+    @set ESM_CHECK=%null
+    @if exist $^&.esm @set ESM_CHECK=diff -i -b $^&.dis $^&.esm
+    @$(%ESM_CHECK)
+    @dmpobj -q -l -rec=FIXUPP $[@
+    @vi -d -q -s ../fixlst1.vi -k "ZZ" $^&.lst
+    @set EMP_CHECK=@%null
+    @if exist $^&.emp @set EMP_CHECK=diff -i -b $^&.lst $^&.emp
+    @$(%EMP_CHECK)
+    @%append $(%error_file) PASS decoding $[@
+    @echo PASS decoding $[@
+
+.asm.obj:
+    @set error_msg=failure to compile $[@
+    -@$(testasm) -q -zld -wx -nm=$[@ $(asm_flags_$^&) $[@ -fr=$^&.out -fo=$@ > $(nulldevice)
+    @if not exist $^&.out @%create $^&.out
+    @if not exist $(tmp_file) @%create $(tmp_file)
+    @set CHK_CHECK=diff -i -b $^&.out $(tmp_file)
+    @if exist $^&.chk @set CHK_CHECK=diff -i -b $^&.out $^&.chk
+    @$(%CHK_CHECK)
+    @%append $(%error_file) PASS compiling $[@
+    @echo PASS compiling $[@
+    @if not exist $@ @%create $@
 
 clean : .SYMBOLIC
-    @rm -f *.obj *.err *.dis *.lst *.tmp *.out mem.trk *.log
+    @rm -f *.obj *.err *.dis *.lst *.out *.tmp mem.trk *.log

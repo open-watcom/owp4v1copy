@@ -1,5 +1,4 @@
 .CONTINUE
-.IGNORE
 
 .extensions:
 .extensions: .exe .ls1 .lst .obj .err .gc .c .cc .cpp .asm .mif
@@ -132,22 +131,23 @@ testcomp=wcc386
 test_cflags=-wx -we -s -os -zq
 
 .error
+    @echo $(%error_msg)
     @%append $(%error_file) $(%error_msg)
 
 .asm.gc:
-    @set SOURCE_FILE=$[@
     @vi -d -q -k ":set norc\n" -s createc.vi -p "$@ $(init_$^&)" $[@
 
 .gc.obj:
     @set error_msg=failure to compile $^&
     @$(testcomp) $[@ $(test_cflags) $(opt_$^*) -fo=.obj
     @echo PASS $(testcomp) compiling $^&
+    @%append $(%error_file) PASS $(testcomp) compiling $^&
 
 .c.obj:
-    @set SOURCE_FILE=$[@
     @set error_msg=failure to compile $^&
     @$(testcomp) $[@ $(test_cflags) $(opt_$^*) -fo=.obj
     @echo PASS $(testcomp) compiling $^&
+    @%append $(%error_file) PASS $(testcomp) compiling $^&
 
 .obj.ls1:
     @set error_msg=failure to decode $^&
@@ -157,6 +157,7 @@ test_cflags=-wx -we -s -os -zq
     @if exist $^&.chk @set CHK_CHECK=diff -i -b $@ $^&.chk
     @$(%CHK_CHECK)
     @echo PASS decoding $[@
+    @%append $(%error_file) PASS decoding $[@
 
 .obj.lst:
     @set error_msg=failure to decode $^&
@@ -171,6 +172,7 @@ test_cflags=-wx -we -s -os -zq
     @vi -d -q -s fixlst3.vi -k "ZZ" $^&.lst
     @$(%EMP_CHECK)
     @echo PASS decoding $[@
+    @%append $(%error_file) PASS decoding $[@
 
 !ifndef log_file
 log_file=testcomp.log
@@ -178,6 +180,7 @@ log_file=testcomp.log
 
 .BEFORE
     @%create $(log_file)
+    @set error_file=$(log_file)
 
 all : clean $(asm_objs) $(c_objs) .SYMBOLIC
 
