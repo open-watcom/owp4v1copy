@@ -32,6 +32,14 @@
 
 use Common;
 
+if( $#ARGV == -1 ) {
+    Common::filename( "config.txt" );
+} elsif( $#ARGV == 0 ) {
+    Common::filename( $ARGV[0] );
+} else {
+    print "Usage: dobuild [config_file]\n";
+    exit 1;
+}
 $home    = $Common::config{"HOME"};
 $OW      = $Common::config{"OW"};
 $WATCOM  = $Common::config{"WATCOM"};
@@ -116,7 +124,7 @@ sub process_log
             }
             @fields = split;
             $source_location = $OW;
-            $source_location =~ s/\\/\\\\/;
+            $source_location =~ s/\\/\\\\/g;
             $fields[2] =~ /$source_location\\(.*)/i; 
             $project_name = $1;
         }
@@ -199,14 +207,21 @@ print REPORT "========================\n\n";
 # Do a p4 sync to get the latest changes.
 #########################################
 
-open(SYNC, "p4 sync|");
+#force all files update to head
+#open(SYNC, "p4 sync -f $OW\...#head |");
+
+open(SYNC, "p4 sync $OW\... |");
 while (<SYNC>) {
     @fields = split;
     $source_location = $OW;
-    $source_location =~ s/\\/\\\\/;
+    $source_location =~ s/\\/\\\\/g;
     $fields[-1] =~ /$source_location\\(.*)/i;
-    $fields[-1] = $1;    
-    push(@p4_messages, sprintf("%-8s %s", $fields[2], $fields[-1]));    
+    if( defined( $1 ) ) {
+        $fields[-1] = $1;    
+        push(@p4_messages, sprintf("%-8s %s", $fields[2], $fields[-1]));    
+    } else {
+        push(@p4_messages, sprintf("%s", $_));    
+    }
 }
 if (!close(SYNC)) {
     print REPORT "p4 failed!\n";

@@ -29,20 +29,18 @@
 ###########################################################################
 
 package Common;
-use Exporter;
-@ISA    = qw(Exporter);
-@EXPORT = qw(config);
 
-# The following parameters can be customized.
-#############################################
-
-open(CONFIG_FILE, "config.txt");
-while (<CONFIG_FILE>) {
-    chomp;
-    s/#.*//;
-    if (/^\s*$/) { next; }
-    @fields = split /=/;
-    $config{$fields[0]} = $fields[1];
+sub filename {
+    my($filename) = $_[0];
+    open(CONFIG_FILE, $filename) || die "Unable to open configuration file."
+    while (<CONFIG_FILE>) {
+        chomp;
+        s/#.*//;
+        if (/^\s*$/) { next; }
+        @fields = split /=/;
+        $config{$fields[0]} = $fields[1];
+    }
+    close(CONFIG_FILE);
 }
 
 1;
