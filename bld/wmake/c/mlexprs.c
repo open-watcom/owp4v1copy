@@ -154,6 +154,10 @@ TOKEN_T LexPath( STRM_T t )
 
                 if( t == DOUBLEQUOTE ) {
                     path[pos++] = DOUBLEQUOTE;
+                } else if( t == EOL || t == STRM_END ) {
+                    // Handle special case when backslash is placed at end of
+                    // line or file
+                    path[pos++] = BACKSLASH;
                 } else {
                     path[pos++] = BACKSLASH;
 
