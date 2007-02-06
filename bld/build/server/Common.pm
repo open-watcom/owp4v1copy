@@ -30,9 +30,9 @@
 
 package Common;
 
-sub filename {
+sub read_config {
     my($filename) = $_[0];
-    open(CONFIG_FILE, $filename) || die "Unable to open configuration file."
+    open(CONFIG_FILE, $filename) || die "Unable to open configuration file.";
     while (<CONFIG_FILE>) {
         chomp;
         s/#.*//;

@@ -33,13 +33,14 @@
 use Common;
 
 if( $#ARGV == -1 ) {
-    Common::filename( "config.txt" );
+    Common::read_config( "config.txt" );
 } elsif( $#ARGV == 0 ) {
-    Common::filename( $ARGV[0] );
+    Common::read_config( $ARGV[0] );
 } else {
     print "Usage: dobuild [config_file]\n";
     exit 1;
 }
+
 $home    = $Common::config{"HOME"};
 $OW      = $Common::config{"OW"};
 $WATCOM  = $Common::config{"WATCOM"};
