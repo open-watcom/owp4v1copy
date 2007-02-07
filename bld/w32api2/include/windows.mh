@@ -48,6 +48,7 @@
     #include <wincrypt.h>
     #include <winefs.h>
     #include <winscard.h>
+    #include <winspool.h>
 #endif
 
 #endif /* _WINDOWS_H_INCLUDED */
