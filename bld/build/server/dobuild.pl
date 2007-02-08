@@ -214,9 +214,9 @@ print REPORT "========================\n\n";
 #########################################
 
 #force all files update to head
-#open(SYNC, "p4 sync -f $OW\...#head |");
+#open(SYNC, "p4 sync -f $OW\\...#head |");
 
-open(SYNC, "p4 sync $OW\... |");
+open(SYNC, "p4 sync $OW\\... |");
 while (<SYNC>) {
     my @fields = split;
     my $source_location = $OW;
