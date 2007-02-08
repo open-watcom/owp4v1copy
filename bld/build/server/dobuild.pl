@@ -32,6 +32,8 @@
 
 use Common;
 
+my(@p4_messages);
+
 if( $#ARGV == -1 ) {
     Common::read_config( "config.txt" );
 } elsif( $#ARGV == 0 ) {
@@ -41,16 +43,16 @@ if( $#ARGV == -1 ) {
     exit 1;
 }
 
-$home    = $Common::config{"HOME"};
-$OW      = $Common::config{"OW"};
-$WATCOM  = $Common::config{"WATCOM"};
-$report_archive = $Common::config{"REPORTS"};
-$bldbase = "$home\\$Common::config{'BLDBASE'}";
-$bldlast = "$home\\$Common::config{'BLDLAST'}";
+my $home    = $Common::config{"HOME"};
+my $OW      = $Common::config{"OW"};
+my $WATCOM  = $Common::config{"WATCOM"};
+my $report_archive = $Common::config{"REPORTS"};
+my $bldbase = "$home\\$Common::config{'BLDBASE'}";
+my $bldlast = "$home\\$Common::config{'BLDLAST'}";
 
-$build_batch_name  = "$home\\buildtmp.bat";
-$test_batch_name   = "$home\\testtmp.bat";
-$rotate_batch_name = "$home\\rotate.bat";
+my $build_batch_name  = "$home\\buildtmp.bat";
+my $test_batch_name   = "$home\\testtmp.bat";
+my $rotate_batch_name = "$home\\rotate.bat";
 
 sub make_build_batch()
 {
@@ -111,6 +113,7 @@ sub process_log
     my($result)        = "success";
     my($project_name)  = "none";
     my($first_message) = "yes";
+    my(@fields, $source_location);
     
     open(LOGFILE, $_[0]) || die "Can't open $_[0]";
     while (<LOGFILE>) {
@@ -175,6 +178,8 @@ sub get_datetime
 
 sub display_p4_messages
 {
+    my($message);
+
     print REPORT "p4 Messages\n";
     print REPORT "-----------\n\n";
 
@@ -193,13 +198,13 @@ if ($home eq $OW) {
     exit 1;
 }
 
-$shortdate_stamp = get_shortdate();
-$date_stamp = get_date();
-$report_directory = "$report_archive\\$shortdate_stamp";
+my $shortdate_stamp = get_shortdate();
+my $date_stamp = get_date();
+my $report_directory = "$report_archive\\$shortdate_stamp";
 if (!stat($report_directory)) {
     mkdir($report_directory);
 }
-$report_name = "$report_directory\\$date_stamp-report.txt";
+my $report_name = "$report_directory\\$date_stamp-report.txt";
 
 open(REPORT, ">$report_name") || die "Unable to open report file.";
 print REPORT "Open Watcom Build Report\n";
@@ -213,8 +218,8 @@ print REPORT "========================\n\n";
 
 open(SYNC, "p4 sync $OW\... |");
 while (<SYNC>) {
-    @fields = split;
-    $source_location = $OW;
+    my @fields = split;
+    my $source_location = $OW;
     $source_location =~ s/\\/\\\\/g;
     $fields[-1] =~ /$source_location\\(.*)/i;
     if( defined( $1 ) ) {
@@ -243,7 +248,7 @@ print REPORT "\n";
 ####################################################
 
 make_build_batch();
-$datetime_stamp = get_datetime();
+my $datetime_stamp = get_datetime();
 print REPORT "CLEAN+BUILD STARTED  : $datetime_stamp\n";
 if (system($build_batch_name) != 0) {
     print REPORT "clean+build failed!\n";
@@ -257,13 +262,9 @@ print REPORT "CLEAN+BUILD COMPLETED: $datetime_stamp\n\n";
 # Analyze build result.
 #######################
 
-system("summary $OW\\bld\\build.log $bldlast");
-open(CHANGES, "compare $bldbase $bldlast|");
-while (<CHANGES>) {
-    print REPORT;
-}
+Common::process_summary("$OW\\bld\\build.log", $bldlast);
 # If 'compare' fails, end now. Don't test if there was a build failure.
-if (!close(CHANGES)) {
+if (Common::process_compare($bldbase, $bldlast, \*REPORT)) {
     display_p4_messages();
     close(REPORT);
     exit 1;
@@ -279,11 +280,11 @@ $datetime_stamp = get_datetime();
 print REPORT "REGRESSION TESTS COMPLETED: $datetime_stamp\n\n";
 
 print REPORT "\tFortran Compiler: ";
-$f_compiler = process_log("$OW\\bld\\f77\\regress\\positive.log");
+my $f_compiler = process_log("$OW\\bld\\f77\\regress\\positive.log");
 print REPORT "\tC Compiler      : ";
-$c_compiler = process_log("$OW\\bld\\ctest\\result.log");
+my $c_compiler = process_log("$OW\\bld\\ctest\\result.log");
 print REPORT "\tC++ Compiler    : ";
-$cpp_compiler = process_log("$OW\\bld\\plustest\\result.log");
+my $cpp_compiler = process_log("$OW\\bld\\plustest\\result.log");
 print REPORT "\n";
 
 # Display p4 sync messages for reference.

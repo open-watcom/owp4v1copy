@@ -34,32 +34,11 @@
 use Common;
 
 if( $#ARGV == 1 ) {
-    Common::filename( "config.txt" );
+    Common::read_config( "config.txt" );
 } elsif( $#ARGV == 2 ) {
-    Common::filename( $ARGV[2] );
+    Common::read_config( $ARGV[2] );
 } else {
     print "Usage: summary build_log summary_result [config_file]\n";
     exit 1;
 }
-open(INFILE, "$ARGV[0]") || die "Unable to open input file: $ARGV[0]";
-open(OUTFILE, ">$ARGV[1]") || die "Unable to open output file: $ARGV[1]";
-
-# Read the build log file a line at a time and output the error summary.
-while (<INFILE>) {
-    chomp;
-    if (/^=====/) {
-        @header = split;
-        $current_project = $header[2];
-        $source_location = $Common::config{"OW"};
-        $source_location =~ s/\\/\\\\/g;
-        $current_project =~ /$source_location\\(.*)/i;
-        $current_project = $1;
-    }
-    if (/Warning|Error|Can not|ERROR|WARNING/) {
-        print OUTFILE "\nPROJECT $current_project\n";
-        print OUTFILE "$_\n";
-    }
-}
-
-close(OUTFILE);
-close(INFILE);
+Common::process_summary( $ARGV[0], $ARGV[1] );
