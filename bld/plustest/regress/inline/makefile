@@ -78,8 +78,13 @@ test : .symbolic actual_test
     %make global
     %append $(log_file) PASS $(%__CWD__)
 
-actual_test : .symbolic start_test $(asm_objs) $(c_objs)
+!ifdef $(arch)_inline_objs
+actual_test : .symbolic start_test $($(arch)_inline_objs)
     rm -f *.gc *.ls? *.obj *.dis
+!else
+actual_test : .symbolic start_test
+    @%append exec.out PASS decoding $(arch)
+!endif
 
 start_test : .symbolic
     %create exec.out
