@@ -21,6 +21,7 @@ headers =            &
         nb30.h       &
         ncrypt.h     &
         poppack.h    &
+        prsht.h      &
         pshpack1.h   &
         pshpack2.h   &
         pshpack4.h   &
@@ -51,6 +52,7 @@ headers =            &
         winscard.h   &
         winsmcrd.h   &
         winsock.h    &
+        winspool.h   &
         winuser.h    &
         winver.h
 

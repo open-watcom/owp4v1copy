@@ -8,6 +8,8 @@
 #define _WINSPOOL_H_INCLUDED
 
 :include readonly.sp
+#include <prsht.h>
+
 :include cpluspro.sp
 
 /* Printer actions */
