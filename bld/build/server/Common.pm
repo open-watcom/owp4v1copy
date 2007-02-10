@@ -57,7 +57,7 @@ sub process_summary {
     # Read the build log file a line at a time and output the error summary.
     while (<INFILE>) {
         chomp;
-        if (/^=====/) {
+        if (/^[=]+ /) {
             @header = split;
             $current_project = $header[2];
             $source_location = $Common::config{"OW"};
