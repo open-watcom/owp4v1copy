@@ -115,9 +115,11 @@ OS2_TK = dummy
     @echo GMLLIB=$(gml_lib);
 !endif
 !ifneq header 1
-    @echo **************************************************************
-    @echo $(dotarget) : $(hbook)/$(book_src) : $(book_title)
-    @echo **************************************************************
+!ifdef __UNIX__
+    @echo ===== $(dotarget) $+$(%cwd)$--$(hbook)/$(book_src) =====
+!else
+    @echo ===== $(dotarget) $+$(%cdrive):$(%cwd)$--$(hbook)/$(book_src) =====
+!endif
 !endif
 !endif
 
