@@ -1,0 +1,15 @@
+/*
+ *  objbase.h   Component Object Model (COM) base functions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _OBJBASE_H_INCLUDED
+#define _OBJBASE_H_INCLUDED
+
+:include readonly.sp
+#include <rpc.h>
+#include <rpcndr.h>
+
+#endif /* _OBJBASE_H_INCLUDED */
+

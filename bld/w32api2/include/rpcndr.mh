@@ -1,0 +1,14 @@
+/*
+ *  rpcndr.h    RPC helper functions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _RPCNDR_H_INCLUDED
+#define _RPCNDR_H_INCLUDED
+
+:include readonly.sp
+#include <rpcnsip.h>
+
+#endif /* _RPCNDR_H_INCLUDED */
+

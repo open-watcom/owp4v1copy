@@ -20,6 +20,8 @@ headers =            &
         mmsystem.h   &
         nb30.h       &
         ncrypt.h     &
+        objbase.h    &
+        ole2.h       &
         poppack.h    &
         prsht.h      &
         pshpack1.h   &
@@ -31,6 +33,8 @@ headers =            &
         rpcasync.h   &
         rpcdce.h     &
         rpcdcep.h    &
+        rpcndr.h     &
+        rpcnsip.h    &
         rpcnsi.h     &
         rpcnterr.h   &
         shellapi.h   &

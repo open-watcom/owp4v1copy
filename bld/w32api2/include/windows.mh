@@ -49,6 +49,7 @@
     #include <winefs.h>
     #include <winscard.h>
     #include <winspool.h>
+    #include <ole2.h>
 #endif
 
 #endif /* _WINDOWS_H_INCLUDED */

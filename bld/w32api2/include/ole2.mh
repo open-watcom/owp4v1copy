@@ -1,0 +1,14 @@
+/*
+ *  ole2.h      Object Linking and Embedding (OLE) 2.0 functions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _OLE2_H_INCLUDED
+#define _OLE2_H_INCLUDED
+
+:include readonly.sp
+#include <objbase.h>
+
+#endif /* _OLE2_H_INCLUDED */
+

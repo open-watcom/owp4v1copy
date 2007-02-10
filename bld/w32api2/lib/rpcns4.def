@@ -1,5 +1,12 @@
 LIBRARY RPCNS4.DLL
 EXPORTS
+I_RpcClientBindDone
+I_RpcClientBindSearch
+I_RpcServerBindSearch
+I_RpcNsGetBuffer
+I_RpcNsRaiseException
+I_RpcNsSendReceive
+I_RpcReBindBuffer
 RpcNsBindingExportA
 RpcNsBindingExportPnPA
 RpcNsBindingExportPnPW
