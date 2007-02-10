@@ -1,5 +1,5 @@
 .func putenv _putenv _wputenv
-#include <process.h>
+#include <stdlib.h>
 int putenv( const char *env_name );
 .ixfunc2 '&Process' &func
 .if &'length(&_func.) ne 0 .do begin
