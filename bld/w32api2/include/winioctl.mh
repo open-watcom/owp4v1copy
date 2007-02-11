@@ -941,19 +941,6 @@ typedef WORD    *PBAD_TRACK_NUMBER;
         CTL_CODE( IOCTL_VOLUME_BASE, 12, METHOD_BUFFERED, FILE_ANY_ACCESS )
 #endif
 
-/* In defining some of the structures in winioctl.h, Microsoft uses #pragma warning to
- * be able to declare zero-size arrays.  This breaks compatibility with other compilers,
- * including Open Watcom.  This class is used in C++ to fake a zero-size array.  In C,
- * there is no way to do so, so the zero-size array parameters are omitted.
- */
-#ifdef __cplusplus
-class __ZSA__ {
-public:
-    BYTE & operator[]( int x ) const
-        { return *(((BYTE *)this) + x); }
-};
-#endif
-
 /* Storage hotplug information */
 typedef struct _STORAGE_HOTPLUG_INFO {
     DWORD   Size;
@@ -1370,9 +1357,7 @@ typedef STORAGE_PRIORITY_HINT_SUPPORT   *PSTORAGE_PRIORITY_HINT_SUPPORT;
 typedef struct _STORAGE_MEDIA_SERIAL_NUMBER_DATA {
     WORD    Reserved;
     WORD    SerialNumberLength;
-#ifdef __cplusplus
-    __ZSA__ SerialNumber;
-#endif
+    BYTE    SerialNumber[];
 } STORAGE_MEDIA_SERIAL_NUMBER_DATA;
 typedef STORAGE_MEDIA_SERIAL_NUMBER_DATA    *PSTORAGE_MEDIA_SERIAL_NUMBER_DATA;
 
@@ -1444,9 +1429,7 @@ typedef struct _PERSISTENT_RESERVE_COMMAND {
             BYTE    Reserved1       : 3;
             BYTE    Type            : 4;
             BYTE    Scope           : 4;
-#ifdef __cplusplus
-            __ZSA__ ParameterList;
-#endif
+            BYTE    ParameterList[];
         } PR_OUT;
     };
 } PERSISTENT_RESERVE_COMMAND;
