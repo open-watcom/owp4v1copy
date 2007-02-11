@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#if defined( _M_IX86 )
+#if defined( _M_IX86 ) && defined (__WATCOMC__)
 #include <i86.h>
 #endif
 #include "vi.h"
