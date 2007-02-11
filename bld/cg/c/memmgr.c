@@ -67,7 +67,7 @@ essentially no worst case performance scenario.
 #include "ptrint.h"
 #include "hostsys.h"
 #include "cg.h"
-#if defined( _M_IX86 )
+#if defined( _M_IX86 ) && defined( __WATCOMC__ )
     #include <i86.h>
 #endif
 #include <unistd.h>
