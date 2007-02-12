@@ -30,8 +30,6 @@ echo Open Watcom compiler build environment
 
 REM OS specifics
 
-cd %DEVDIR%
-
 set DOS4G=quiet
 
 REM setup right COMSPEC for non-standard COMSPEC setting on NT based systems

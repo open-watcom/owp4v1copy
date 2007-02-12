@@ -30,8 +30,6 @@ echo Open Watcom compiler build environment
 
 REM OS specifics
 
-cd %DEVDIR%
-
 REM Ensure COMSPEC points to CMD.EXE
 set COMSPEC=CMD.EXE
 

@@ -46,3 +46,4 @@ set PREOBJDIR=prebuild
 REM Invoke the script for the common environment
 call %OWROOT%\cmnvars.cmd
 
+cd %DEVDIR%
