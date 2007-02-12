@@ -104,6 +104,8 @@ Else
     OutFile.WriteLine
     OutFile.WriteLine "REM Invoke the batch file for the common environment"
     OutFile.WriteLine "call %OWROOT%\cmnvars.bat"
+    OutFile.WriteLine
+    OutFile.WriteLine "cd %DEVDIR%"
     OutFile.Close
 End If
 
