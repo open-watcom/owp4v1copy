@@ -58,7 +58,8 @@ headers =            &
         winsock.h    &
         winspool.h   &
         winuser.h    &
-        winver.h
+        winver.h     &
+        wtypes.h
 
 all : $(headers) .SYMBOLIC
     @%null
