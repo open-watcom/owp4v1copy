@@ -1,0 +1,38 @@
+/*
+ *  unknwn.h    Definition of the IUnknown and IClassFactory interfaces
+ *
+:include crwatcnt.sp
+ */
+ 
+#ifndef _UNKNWN_H_INCLUDED
+#define _UNKNWN_H_INCLUDED
+
+:include readonly.sp
+:include cpluspro.sp
+
+/* GUIDs */
+EXTERN_C const IID  IID_IUnknown;
+EXTERN_C const IID  IID_IClassFactory;
+
+/* IUnknown interface */
+DECLARE_INTERFACE( IUnknown ) {
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** );
+    STDMETHOD_( ULONG, AddRef )( THIS );
+    STDMETHOD_( ULONG, Release )( THIS );
+};
+typedef IUnknown    *LPUNKNOWN;
+
+/* IClassFactory interface */
+DECLARE_INTERFACE_( IClassFactory, IUnknown ) {
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** );
+    STDMETHOD_( ULONG, AddRef )( THIS );
+    STDMETHOD_( ULONG, Release )( THIS );
+    STDMETHOD( CreateInstance )( THIS_ IUnknown *, REFIID, void ** );
+    STDMETHOD( LockServer )( THIS_ BOOL );
+};
+typedef IClassFactory   *LPCLASSFACTORY;
+
+:include cplusepi.sp
+
+#endif /* _UNKNWN_H_INCLUDED */
+

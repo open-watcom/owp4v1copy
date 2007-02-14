@@ -67,6 +67,7 @@
  * file.
  */
 #include <wtypes.h>
+#include <unknwn.h>
 
 #endif /* _OBJBASE_H_INCLUDED */
 

@@ -1,11 +1,12 @@
 proj_name = w32api
 
+.EXTENSIONS : .mh
+
 !include cproj.mif
+!include deftarg.mif
+!include defrule.mif
 
 splice = wsplice -i$(hdr_dir) -i../include $[@ $^@
-
-.EXTENSIONS
-.EXTENSIONS : .h .mh
 
 headers =            &
         basetsd.h    &
@@ -61,14 +62,22 @@ headers =            &
         winver.h     &
         wtypes.h
 
-all : $(headers) .SYMBOLIC
+libs =               &
+        uuid.lib
+
+additional_cleanup = *.h
+
+all : $(headers) $(libs) .SYMBOLIC
     @%null
 
 .mh: ../include
 
+.c: ../lib
+
 .mh.h:
     $(splice)
 
-clean: .SYMBOLIC
-    rm -f *.h
-
+uuid.lib: uuid.obj
+    %create $^&.lbc
+    @%append $^&.lbc +uuid.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
