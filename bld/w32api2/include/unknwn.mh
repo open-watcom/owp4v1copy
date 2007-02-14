@@ -15,6 +15,8 @@ EXTERN_C const IID  IID_IUnknown;
 EXTERN_C const IID  IID_IClassFactory;
 
 /* IUnknown interface */
+#undef INTERFACE
+#define INTERFACE   IUnknown
 DECLARE_INTERFACE( IUnknown ) {
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** );
     STDMETHOD_( ULONG, AddRef )( THIS );
@@ -23,6 +25,8 @@ DECLARE_INTERFACE( IUnknown ) {
 typedef IUnknown    *LPUNKNOWN;
 
 /* IClassFactory interface */
+#undef INTERFACE
+#define INTERFACE   IClassFactory
 DECLARE_INTERFACE_( IClassFactory, IUnknown ) {
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** );
     STDMETHOD_( ULONG, AddRef )( THIS );
@@ -31,6 +35,22 @@ DECLARE_INTERFACE_( IClassFactory, IUnknown ) {
     STDMETHOD( LockServer )( THIS_ BOOL );
 };
 typedef IClassFactory   *LPCLASSFACTORY;
+
+/* C object macros */
+#if (!defined( __cplusplus ) || defined( CINTERFACE )) && defined( COBJMACROS )
+    #define IUnknown_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IUnknown_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IUnknown_Release( x ) \
+        (x)->lpVtbl->Release( x )
+    #define IClassFactory_QueryInterface( x, p1, p2 ) \
+        (x)->lpVtbl->QueryInterface( x, p1, p2 )
+    #define IClassFactory_AddRef( x ) \
+        (x)->lpVtbl->AddRef( x )
+    #define IClassFactory_Release( x ) \
+        (x)->lpVtbl->Release( x )
+#endif
 
 :include cplusepi.sp
 

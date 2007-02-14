@@ -68,6 +68,7 @@
  */
 #include <wtypes.h>
 #include <unknwn.h>
+#include <objidl.h>
 
 #endif /* _OBJBASE_H_INCLUDED */
 
