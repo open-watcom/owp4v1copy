@@ -33,8 +33,8 @@ cdsay .
     <CPCMD> ntaxp/wlibd.sym  <RELROOT>/rel2/axpnt/
 
   [ IFDEF (os_qnx) <2*> ]
-    <CPCMD> qnx386/wlib.exe  <RELROOT>/rel2/qnx/wlib.
-    <CPCMD> qnx386/wlib.sym  <RELROOT>/rel2/qnx/wlib.sym
+    <CPCMD> qnx386/wlib.exe  <RELROOT>/rel2/qnx/binq/wlib
+    <CPCMD> qnx386/wlib.sym  <RELROOT>/rel2/qnx/sym/wlib.sym
 
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> linux386/wlib.exe  <RELROOT>/rel2/binl/wlib
