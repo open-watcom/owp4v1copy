@@ -111,8 +111,8 @@ endif
         mov     CX,AX           ; calc. sign of result
         xor     CX,DX           ; ...
         and     CX,8000h        ; ...
-        and     AX,7FFFh        ; isolate exponent
-        and     DX,7FFFh        ; ...
+        and     AH,7Fh          ; isolate exponent
+        and     DH,7Fh          ; ...
         _guess                  ; guess: overflow
           cmp   AX,7FFFh        ; - see if op1 was infinity     06-nov-92
           je    mul_oflow       ; - answer is infinity
@@ -190,13 +190,9 @@ endif
           _quif ne              ; - ...
           inc   BX              ; - op1 has at least 3 zeros
           or    CX,6[SI]        ; - ...
-
-;         if CX = 8000h, then op1 is a power of 2, just return op2 with
-;         appropriate sign and exponent
           cmp   CX,8000h        ; - if op1 is a power of 2
-          jne   l1
-pow2_hop: jmp   mul_by_pow2     ; - then do special calc.
-
+          jne   l1              ; - ...
+          or    BX,CX           ; - operand is power of 2
 l1:       or    CX,CX           ; - test high order word
           _quif ne              ; - quit if op1 is not 0
           _shl  AX,1            ; - place sign in carry
@@ -216,23 +212,18 @@ endif
           mov   CX,[DI]         ; - quit if op2 is not 0
           or    CX,CX           ; - ...
           _quif ne              ; - ...
-          dec   BX              ; - decrement counter
+          dec   BL              ; - decrement counter
           or    CX,2[DI]        ; - check the higher order words
           _quif ne              ; - ...
-          dec   BX              ; - decrement counter
+          dec   BL              ; - decrement counter
           or    CX,4[DI]        ; - ...
           _quif ne              ; - ...
-          dec   BX              ; - decrement counter
+          dec   BL              ; - decrement counter
           or    CX,6[DI]        ; - ...
-
-;         if CX = 8000h, then op2 is a power of 2, just return op1 with
-;         appropriate sign and exponent
-          xchg  SI,DI           ; - flip pointers
           cmp   CX,8000h        ; - if op2 is a power of 2
-          je    pow2_hop        ; - then do special calc.
-          xchg  SI,DI           ; - flip pointers back
-
-          or    CX,CX           ; - test high order word
+          jne   l2              ; - ...
+          or    BX,CX           ; - operand is power of 2
+l2:       or    CX,CX           ; - test high order word
           _quif ne              ; - quit if op2 is not 0
           test  DX,7FFFh        ; - quit if exponent is not 0
           _quif ne              ; - ...
@@ -245,9 +236,13 @@ ifdef _BUILDING_MATHLIB
 endif
           ret                   ; - return 0
         _endguess               ; endguess
-        or      BX,BX           ; if op2 has more lower word zeros than op1
+        or      BL,BL           ; if op2 has more lower word zeros than op1
         _if     s               ; then
           xchg  SI,DI           ; - flip the arguments to reduce # of multiplies
+        _endif                  ; endif
+        or      BH,BH           ; if one of operand is power of 2
+        _if     nz              ; ...
+          jmp   mul_by_pow2     ; then do special calc.
         _endif                  ; endif
 
         mov     CX,AX           ; calc. sign of result
@@ -255,7 +250,6 @@ endif
         and     CX,8000h        ; ...
         and     AH,7Fh          ; isolate exponent
         and     DH,7Fh          ; ...
-
         _guess                  ; guess: overflow
           add   AX,DX           ; - determine exponent of result
           sub   AX,3FFEh        ; - remove extra bias
