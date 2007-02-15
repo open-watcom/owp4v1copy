@@ -65,6 +65,7 @@ rem only works if system is on c:
 :BLD1
    call %myow%.cmd
 rem start with the builder
+   cd %devdir%
    cd builder\%builderdir%
    wmake %makeclean%
 
