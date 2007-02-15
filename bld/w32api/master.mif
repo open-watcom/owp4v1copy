@@ -170,11 +170,7 @@ extra_lib_flags_386 = -io -ii
 .c: ../../lib;../../lib/directx;../../lib/ddk;
 
 .def.lbc:
-!ifeq host_cpu 386
-        $(vi) -s ../../def2lbc.vi -p"$[@ $*"
-!else
-        $(vi) -s ../../def2lbcs.vi -p"$[@ $*"
-!endif
+        $(vi) -s ../../def2lbc.vi -p"$[@ $* $(host_cpu)"
 
 .lbc.lib:
         $(librarian) $(libflags) $@ @$<
