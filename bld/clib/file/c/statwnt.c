@@ -61,7 +61,7 @@
 #include "seterrno.h"
 #include "d2ttime.h"
 
-static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
+static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
 {
     DWORD               mode = 0L;
     CHAR_TYPE *         ext;
@@ -87,7 +87,7 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
     if( attr & attrmask ) {
         HANDLE          h;
         ULONG           type;
-        CHAR_TYPE *     tmp;
+        CHAR_TYPE const *tmp;
 
         /*
          * NT likes to refer to CON as CONIN$ or CONOUT$.
@@ -95,7 +95,7 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
         if( !__F_NAME(stricmp,_wcsicmp)( fname, __F_NAME("con",L"con") ) )
             tmp = __F_NAME("conin$",L"conin$");
         else
-            tmp = fname;
+            tmp = orig_path;  /* Need full name with path for CreateFile */
 
         #ifdef __WIDECHAR__
             h = __lib_CreateFileW( tmp, 0, 0, NULL, OPEN_EXISTING, 0, NULL );
@@ -241,7 +241,7 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
     #else
         buf->st_size = ffb.nFileSizeLow;
     #endif
-    buf->st_mode = at2mode( ffb.dwFileAttributes, ffb.cFileName );
+    buf->st_mode = at2mode( ffb.dwFileAttributes, ffb.cFileName, path );
     __MakeDOSDT( &ffb.ftLastWriteTime, &md, &mt );
     buf->st_mtime = _d2ttime( TODDATE( md ), TODTIME( mt ) );
     __MakeDOSDT( &ffb.ftCreationTime, &d, &t );
