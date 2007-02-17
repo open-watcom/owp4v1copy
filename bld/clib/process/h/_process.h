@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Internal prototypes for process management.
 *
 ****************************************************************************/
 
@@ -43,11 +42,13 @@ extern int  _wdospawn( int, wchar_t *, wchar_t *, wchar_t *, const wchar_t * con
 #else
 extern int  __cenvarg( const char* const *, const char* const *, char**, char**, unsigned*, size_t*, int );
 extern void __ccmdline( char *, const char * const *, char *, int );
-#if defined(__DOS__)
+#if defined( _M_I86 ) && defined( __DOS__ )
 extern int  _dospawn(int,char _WCI86NEAR *,char _WCI86NEAR *,unsigned, const char * const *);
-#pragma aux _dospawn "_*" parm caller [];
 #else
 extern int  _dospawn(int,char *,char *, char *, const char * const *);
+#endif
+#if defined( __DOS__ )
+#pragma aux _dospawn "_*" parm caller [];
 #endif
 #endif
 extern void __init_execve( void );

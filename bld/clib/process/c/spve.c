@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of spawnve() for DOS, OS/2, and Win32.
 *
 ****************************************************************************/
 
@@ -95,7 +94,7 @@ static int file_exists( const CHAR_TYPE *filename )                     /* 05-ap
 #define x_dospawn __F_NAME(_dospawn,_wdospawn)
 #else
 static int x_dospawn( int mode, CHAR_TYPE SPVE_NEAR *pgmname, CHAR_TYPE SPVE_NEAR *cmdline,
-  #if defined( __DOS__ )
+  #if defined( _M_I86 )
     unsigned env,
   #else
     CHAR_TYPE *env,
@@ -137,7 +136,7 @@ _WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
     CHAR_TYPE               *fname;
     CHAR_TYPE               *ext;
     
-#if defined(__DOS__)
+#if defined( __DOS__ ) && defined( _M_I86 )
  #define        ENVPARM envseg
 #else
  #define        ENVPARM envmem
