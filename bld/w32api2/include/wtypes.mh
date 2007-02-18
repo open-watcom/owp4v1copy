@@ -45,6 +45,9 @@ typedef unsigned short  VARTYPE;
 /* Property identifier data type */
 typedef ULONG   PROPID;
 
+/* Metafile picture handle */
+DECLARE_HANDLE( HMETAFILEPICT );
+
 /* IRunningObjectTable::Register() flags */
 #define ROTFLAGS_REGISTRATIONKEEPSALIVE 0x00000001L
 #define ROTFLAGS_ALLOWANYCLIENT         0x00000002L
