@@ -193,6 +193,7 @@ endif
           cmp   CX,8000h        ; - if op1 is a power of 2
           jne   l1              ; - ...
           or    BX,CX           ; - operand is power of 2
+          inc   BX              ; - ...
 l1:       or    CX,CX           ; - test high order word
           _quif ne              ; - quit if op1 is not 0
           _shl  AX,1            ; - place sign in carry
@@ -223,6 +224,7 @@ endif
           cmp   CX,8000h        ; - if op2 is a power of 2
           jne   l2              ; - ...
           or    BX,CX           ; - operand is power of 2
+          dec   BL              ; - decrement counter
 l2:       or    CX,CX           ; - test high order word
           _quif ne              ; - quit if op2 is not 0
           test  DX,7FFFh        ; - quit if exponent is not 0
