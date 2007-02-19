@@ -22,6 +22,7 @@ headers =            &
         nb30.h       &
         ncrypt.h     &
         objbase.h    &
+        objidl.h     &
         ole2.h       &
         poppack.h    &
         prsht.h      &
