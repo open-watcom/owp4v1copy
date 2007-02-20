@@ -1844,3 +1844,36 @@ void ClearAllModBreaks( mod_handle handle )
         }
     }
 }
+
+address GetRowAddrDirectly(mod_handle mod, cue_file_id file_id, int row, bool exact )
+{
+    DIPHDL( cue, ch );
+
+    if( mod == NO_MOD || row < 0 ) return( NilAddr );
+    switch( LineCue( mod, file_id, row+1, 0, ch ) ) {
+    case SR_NONE:
+        return( NilAddr );
+    case SR_CLOSEST:
+        if( exact ) return( NilAddr );
+        break;
+    }
+    return( CueAddr( ch ) );
+}
+
+brk *GetBPAt( int row )
+{
+    int     i = 0;
+    brk     *bp = NULL;
+
+    for( bp = BrkList , i = 0 ; bp != NULL; bp = bp->next , ++i ) {
+        if ( i == row ) {
+            return( bp );
+        }
+    }
+    return( bp );
+}
+
+int GetBPsCount( void )
+{
+    return( FindNextBPIndex() - 1 );
+}

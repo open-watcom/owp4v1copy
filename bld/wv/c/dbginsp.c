@@ -151,22 +151,6 @@ static mod_handle       FindFileMod( char *file )
     return( d.found ? d.mod : NO_MOD );
 }
 
-address ModFirstAddr( mod_handle mod )
-{
-    address     addr;
-    DIPHDL( cue, ch );
-
-    if( FindFirstCue( mod, ch ) ) {
-        addr = CueAddr( ch );
-    } else {
-        addr = NilAddr;
-    }
-    if( IS_NIL_ADDR( addr ) ) {
-        addr = ModAddr( mod );
-    }
-    return( addr );
-}
-
 extern void WndFileInspect( char *file, bool binary )
 {
     handle              filehndl;

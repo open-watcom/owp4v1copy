@@ -531,7 +531,7 @@ static char DoTrace( debug_level curr_level )
     return( KEEPGOING );
 }
 
-static void PerformTrace( void )
+void PerformTrace( void )
 {
     char        ret;
     char        level[20];

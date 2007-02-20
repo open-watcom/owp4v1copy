@@ -40,11 +40,13 @@
 #include <stdlib.h>
 
 extern char             *TxtBuff;
+extern address          NilAddr;
 
 extern char             *DupStr(char*);
 extern bool             IsInternalMod( mod_handle mod );
 extern image_entry      *ImagePrimary(void);
 extern image_entry      *ImageEntry( mod_handle );
+extern bool             FindFirstCue( mod_handle mod, cue_handle *ch );
 
 extern  bool            ModHasSourceInfo( mod_handle handle )
 {
@@ -168,4 +170,20 @@ void ModListName( module_list *list, int i, char *buff )
     buff[0] = '\0';
     if( list->sort == NULL || i >= list->numrows ) return;
     ModName( list->sort[i], buff, TXT_LEN );
+}
+
+address ModFirstAddr( mod_handle mod )
+{
+    address     addr;
+    DIPHDL( cue, ch );
+
+    if( FindFirstCue( mod, ch ) ) {
+        addr = CueAddr( ch );
+    } else {
+        addr = NilAddr;
+    }
+    if( IS_NIL_ADDR( addr ) ) {
+        addr = ModAddr( mod );
+    }
+    return( addr );
 }

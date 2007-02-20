@@ -263,3 +263,4 @@ extern var_node         *VarNextVisibleSibling( var_info *i, var_node *v );
 typedef void            VARDIRTRTN( void *, int );
 extern void             VarRefreshVisible( var_info *, int, int, VARDIRTRTN *, void * );
 extern void             VarBaseName( var_node *v );
+extern var_node *       VarGetDisplayPiece( var_info *i, int row, int piece, int *pdepth, int *pinherit );

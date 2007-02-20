@@ -1099,14 +1099,14 @@ static bool VarInheritOpen( var_node *v )
     return( !( v->display & VARDISP_INHERIT_CLOSED ) );
 }
 
-static var_node *VarExpandNode( var_node *v )
+var_node *VarExpandNode( var_node *v )
 /*******************************************/
 {
     if( v->node_type == NODE_INHERIT && !VarInheritOpen( v ) ) return( NULL );
     return( v->expand );
 }
 
-static var_node *VarFirstExpandNode( var_info *i, var_node *v )
+var_node *VarFirstExpandNode( var_info *i, var_node *v )
 /*
     Find the var's first expansion node.
 */
@@ -2591,4 +2591,58 @@ void VarDoAssign( var_info *i, var_node *v, char *value )
         _SwitchOff( SW_RECORD_LOCATION_ASSIGN );
     }
     CollapseMachState();
+}
+
+extern var_node *VarGetDisplayPiece( var_info *i, int row, int piece, int *pdepth, int *pinherit )
+{
+    var_node    *row_v;
+    var_node    *v;
+
+    if( piece >= VAR_PIECE_LAST ) return( NULL );
+    if( VarFirstNode( i ) == NULL ) return( NULL );
+    if( row >= VarRowTotal( i ) ) return( NULL );
+    row_v = VarFindRowNode( i, row );
+    if( !row_v->value_valid ) {
+        VarSetValue( row_v, LIT( Quest_Marks ) );
+        row_v->value_valid = FALSE;
+    }
+    if( !row_v->gadget_valid ) {
+        VarSetGadget( row_v, VARGADGET_NONE );
+        row_v->gadget_valid = FALSE;
+    }
+    v = row_v;
+    if( piece == VAR_PIECE_NAME ||
+        ( piece == VAR_PIECE_GADGET && row_v->gadget_valid ) ||
+        ( piece == VAR_PIECE_VALUE && row_v->value_valid ) ) {
+        VarError = FALSE;
+    } else if( !_IsOn( SW_TASK_RUNNING ) ) {
+        if( row == i->exprsp_cacherow && i->exprsp_cache != NULL ) {
+            VarError = FALSE;
+            v = i->exprsp_cache;
+        } else if( row == i->exprsp_cacherow && i->exprsp_cache_is_error ) {
+            VarError = TRUE;
+            v = NULL;
+        } else {
+            VarErrState();
+            v = VarFindRow( i, row );
+            VarOldErrState();
+            i->exprsp_cacherow = row;
+            i->exprsp_cache = v;
+            i->exprsp_cache_is_error = VarError;
+        }
+        if( v == NULL ) {
+            if( !VarError ) return( NULL );
+            v = row_v;
+        }
+        VarNodeInvalid( v );
+        VarErrState();
+        ExprValue( ExprSP );
+        VarSetGadget( v, VarGetGadget( v ) );
+        VarSetOnTop( v, VarGetOnTop( v ) );
+        VarSetValue( v, VarGetValue( i, v ) );
+        VarOldErrState();
+        VarDoneRow( i );
+    }
+    VarGetDepths( i, v, pdepth, pinherit );
+    return( v );
 }
