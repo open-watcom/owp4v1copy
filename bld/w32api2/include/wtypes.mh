@@ -397,6 +397,23 @@ typedef enum tagTYSPEC {
     TYSPEC_OBJECTID     = 6
 } TYSPEC;
 
+/* Class specifier */
+typedef union {
+    CLSID       clsid;
+    LPOLESTR    pFileExt;
+    LPOLESTR    pMimeType;
+    LPOLESTR    pProgId;
+    LPOLESTR    pFileName;
+    struct {
+        LPOLESTR    pPackageName;
+        GUID        PolicyId;
+    } ByName;
+    struct {
+        GUID    ObjectId;
+        GUID    PolicyId;
+    } ByObjectId;
+} uCLSSPEC;
+
 :include cplusepi.sp
 
 #endif /* _WTYPES_H_INCLUDED */
