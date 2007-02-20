@@ -11,17 +11,10 @@
 :include cpluspro.sp
 
 /* OLE string data types */
-#ifdef OLE2ANSI
-typedef char            OLECHAR;
-typedef LPSTR           LPOLESTR;
-typedef LPCSTR          LPCOLESTR;
-#define OLESTR( x )     x
-#else
 typedef WCHAR           OLECHAR;
 typedef OLECHAR         *LPOLESTR;
 typedef const OLECHAR   *LPCOLESTR;
 #define OLESTR( x )     L##x
-#endif
 
 /* Status code data type */
 typedef LONG    SCODE;
