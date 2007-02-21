@@ -136,7 +136,7 @@ _WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
     CHAR_TYPE SPVE_NEAR     *cmdline;
     CHAR_TYPE               switch_c[4];
     CHAR_TYPE               prot_mode286;
-#if defined( __X86__ )
+#if defined( __DOS__ )
     auto _87state           _87save;
 #endif
     CHAR_TYPE               *drive;
@@ -249,7 +249,7 @@ _WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
     }
     __F_NAME(_splitpath2,_wsplitpath2)( path, p + (len-_MAX_PATH2),
                                         &drive, &dir, &fname, &ext );
-#if defined( __X86__ )
+#if defined( __DOS__ )
     _RWD_Save8087( &_87save );
 #endif
 #if defined( __DOS__ ) && defined( _M_I86 )
@@ -370,7 +370,7 @@ cleanup:
         _dos_freemem( envseg );
     }
 #endif
-#if defined( __X86__ )
+#if defined( __DOS__ )
     _RWD_Rest8087( &_87save );
 #endif
     return( retval );
