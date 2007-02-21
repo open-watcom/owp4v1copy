@@ -107,3 +107,14 @@ extern  bool    Overlaps( name *result, name *op )
     if( result == op ) return( TRUE );
     return( OverlapTable[result->n.class][op->n.class]( result, op ) );
 }
+
+extern  bool    CondOverlaps( name *result, name *ccop )
+/*******************************************************
+    returns true if modifying "result" could cause "ccop"
+    to be modified as well.
+*/
+{
+    if( result == NULL || ccop == NULL ) return( TRUE );
+    if( result == ccop ) return( TRUE );
+    return( OverlapTable[result->n.class][ccop->n.class]( result, ccop ) );
+}
