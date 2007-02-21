@@ -1,0 +1,18 @@
+/*
+ *  urlmon.h    URL moniker interfaces and functions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _URLMON_H_INCLUDED
+#define _URLMON_H_INCLUDED
+
+:include readonly.sp
+#include <oleidl.h>
+
+:include cpluspro.sp
+
+:include cplusepi.sp
+
+#endif /* _URLMON_H_INCLUDED */
+

@@ -24,6 +24,7 @@ headers =            &
         objbase.h    &
         objidl.h     &
         ole2.h       &
+        oleidl.h     &
         poppack.h    &
         prsht.h      &
         pshpack1.h   &
@@ -42,6 +43,7 @@ headers =            &
         shellapi.h   &
         tvout.h      &
         unknwn.h     &
+        urlmon.h     &
         winbase.h    &
         wincon.h     &
         wincrypt.h   &
