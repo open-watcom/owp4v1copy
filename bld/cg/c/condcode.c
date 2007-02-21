@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Analyze and optimize conditionals.
 *
 ****************************************************************************/
 
@@ -38,9 +37,9 @@
 #include "vergen.h"
 
 
-extern  name            *AllocIntConst(int);
-extern  void            DoNothing(instruction*);
-extern  bool            VolatileIns(instruction*);
+extern  name            *AllocIntConst( int );
+extern  void            DoNothing( instruction * );
+extern  bool            VolatileIns( instruction * );
 extern  void            ClearBlockBits( block_class );
 
 extern    block         *HeadBlock;
@@ -100,7 +99,6 @@ static  bool    UselessCompare( instruction *ins, cc_control *cc, name *zero )
     return( FALSE );
 }
 
-
 static  bool    OverLap( name *result, name *ccop )
 /**************************************************
     returns true if modifying "result" could cause "ccop" to be modified
@@ -129,7 +127,6 @@ static  bool    OverLap( name *result, name *ccop )
     }
     return( overlap );
 }
-
 
 static void DoMarkUsedCC( block *blk )
 /************************************/
@@ -205,17 +202,17 @@ static  bool    Traverse( block *blk, name *zero )
         if( VolatileIns( ins ) || cc_affect == NO_CC ) {
             cc->state = UNKNOWN_STATE;
         } else if( cc_affect == SETS_SC ) { /* sets SIGNED conditions */
-            #if _TARGET & _TARG_370
-                /* SETS_SC means ok for ==, != on 370 */
+#if _TARGET & _TARG_370
+            /* SETS_SC means ok for ==, != on 370 */
+            cc->state = EQUALITY_CONDITIONS_SET;
+#else
+            if( !_OpIsBit( ins->head.opcode ) &&
+                ( ins->ins_flags & INS_DEMOTED ) ) {
                 cc->state = EQUALITY_CONDITIONS_SET;
-            #else
-                if( !_OpIsBit( ins->head.opcode ) &&
-                    ( ins->ins_flags & INS_DEMOTED ) ) {
-                    cc->state = EQUALITY_CONDITIONS_SET;
-                } else {
-                    cc->state = SIGNED_CONDITIONS_SET;
-                }
-            #endif
+            } else {
+                cc->state = SIGNED_CONDITIONS_SET;
+            }
+#endif
             cc->result_op = ins->result;
             cc->op_type = ins->type_class;
             if( ins->head.opcode == OP_SUB ) {
