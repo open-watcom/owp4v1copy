@@ -33,6 +33,9 @@
 #include "cpplib.h"
 #include "rtinit.h"
 
+/* This code may be called before stack checking is set up! */
+#pragma off( check_stack )
+
 extern "C"
 void CPPLIB(multi_thread_init)( // MULTI-THREAD INITIALIZATION
     void )
