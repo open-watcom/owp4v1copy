@@ -40,6 +40,7 @@ headers =            &
         rpcnsip.h    &
         rpcnsi.h     &
         rpcnterr.h   &
+        servprov.h   &
         shellapi.h   &
         tvout.h      &
         unknwn.h     &

@@ -9,6 +9,7 @@
 
 :include readonly.sp
 #include <oleidl.h>
+#include <servprov.h>
 
 :include cpluspro.sp
 
