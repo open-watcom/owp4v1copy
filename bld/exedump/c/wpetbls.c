@@ -185,35 +185,28 @@ static void dmp_imp_lookup( unsigned_32 offset )
     Wdputslc( "\n" );
     Wdputslc( "Import Lookup Table\n" );
     Wdputslc( "===================\n" );
+    Wdputslc( "       import       hint       name/ordinal\n" );
+    Wdputslc( "       ======       ====       ============\n" );
+
     addr_size = sizeof( unsigned_32 );
     Wread( &address, addr_size );
-    if( address & PE_IMPORT_BY_ORDINAL ) {
-        Wdputslc( "ordinals\n   " );
-        for( i = 0; address != NULL; i++ ) {
-            Putdecl( address, 8 );
-            if( (i+1) % 4 == 0 ) {
-                Wdputslc( "\n   " );
-            } else {
-                Wdputs( "     " );
-            }
-            Wread( &address, addr_size );
-        }
-    } else {
-        Wdputslc( "       address      hint       name\n" );
-        Wdputslc( "       =======      ====       ====\n" );
-        for( i = 0; address != NULL; i++ ) {
-            Wdputs( "       " );
-            Puthex( address, 8 );
+    for( i = 0; address != NULL; ++i ) {
+        Wdputs( "       " );
+        Puthex( address, 8 );
+        if( address & PE_IMPORT_BY_ORDINAL ) {
+            Wdputs( "          " );
+	    Putdecl( address & ~PE_IMPORT_BY_ORDINAL, 8 );
+        } else {
             Wlseek( address - Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );
             Wread( &hint_name, sizeof( pe_hint_name_ent ) );
             Putdecl( hint_name.hint, 8 );
             Wdputs( "        " );
             Wdputs( hint_name.name );
-            Wdputslc( "\n" );
-            offset += sizeof( unsigned_32 );
-            Wlseek( offset );
-            Wread( &address, addr_size );
         }
+        Wdputslc( "\n" );
+        offset += sizeof( unsigned_32 );
+        Wlseek( offset );
+        Wread( &address, addr_size );
     }
 }
 
