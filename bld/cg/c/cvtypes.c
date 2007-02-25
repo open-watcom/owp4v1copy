@@ -1604,7 +1604,7 @@ static int  MkFlist( struct_list *st )
             field_any       *curr;
 
             NewTypeString( out );
-            a_mlist = StartType( out, LFG_MLIST );
+            a_mlist = StartType( out, LFG_METHODLIST );
             for( ;; ) {
                 a_mlist->attr.s = 0; /* zero bits */
                 a_mlist->attr.f.access = WVCVAccess( field->method.attr );
