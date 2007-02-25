@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  CodeView DIP module management.
 *
 ****************************************************************************/
 
@@ -33,10 +32,6 @@
 #include <stddef.h>
 #include "cvinfo.h"
 
-
-/*
-        Stuff dealing with module handles
-*/
 
 struct find_mod {
     IMP_MOD_WKR         *wk;
@@ -148,7 +143,11 @@ char            *DIPENTRY DIPImpModSrcLang( imp_image_handle *ii, imp_mod_handle
 dip_status      DIPENTRY DIPImpModInfo( imp_image_handle *ii,
                                 imp_mod_handle im, handle_kind hk )
 {
-    static const unsigned DmndType[] = {0,0,sstSrcModule,sstAlignSym};
+    static const unsigned DmndType[] = {
+        0,
+        0, //sstGlobalTypes,
+        sstSrcModule,
+        sstAlignSym };
     unsigned            type;
     cv_directory_entry  *cde;
 

@@ -69,8 +69,8 @@ walk_result     DIPENTRY DIPImpWalkFileList( imp_image_handle *ii,
     file_off = __alloca( file_tab_size );
     memcpy( file_off, &hdr->baseSrcFile[0], file_tab_size );
     ic->im = im;
-    ic->pair = 0;
     for( i = 0; i < file_tab_count; ++i ) {
+        ic->pair = 0;
         ic->file = cde->lfo + file_off[i];
         fp = VMBlock( ii, ic->file, sizeof( *fp ) );
         if( fp == NULL ) return( WR_FAIL );
@@ -411,7 +411,11 @@ search_result SearchFile( imp_image_handle              *ii,
         if( DCSameAddrSpace( curr_addr, addr ) != DS_OK ) continue;
         if( (ranges[seg_idx].start != 0 || ranges[seg_idx].end != 0)
           && (addr.mach.offset < ranges[seg_idx].start + curr_addr.mach.offset
-          || addr.mach.offset > ranges[seg_idx].end + curr_addr.mach.offset) ) {
+          /* The next condition is commented out. Digital Mars tools are known to
+           * emit buggy CV4 data where the upper range does not cover all code,
+           * causing us to fail finding last addresses within a module.
+           */
+          /*|| addr.mach.offset > ranges[seg_idx].end + curr_addr.mach.offset */ ) ) {
             continue;
         }
         pair = SearchOffsets( ii, line_base +
@@ -458,7 +462,7 @@ search_result   DIPENTRY DIPImpAddrCue( imp_image_handle *ii,
     for( file_idx = 0; file_idx < num_files; ++file_idx ) {
         file_base = files[file_idx] + cde->lfo;
         rc = SearchFile( ii, addr, ic, file_base, cde, &best_offset );
-        if( rc != SR_FAIL ) return( rc );   /* see comment in SeachFile above */
+        if( rc != SR_FAIL ) return( rc );   /* see comment in SearchFile above */
     }
     if( best_offset == (addr_off)-1UL ) return( SR_NONE );
     return( SR_CLOSEST );
