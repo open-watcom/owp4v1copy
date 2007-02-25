@@ -1469,6 +1469,10 @@ dip_status ImpTypeInfo( imp_image_handle *ii,
     case LF_MFUNCTION:
         ti->kind = TK_FUNCTION;
         break;
+    case LF_VTSHAPE:
+    case LF_METHODLIST:
+    case LF_DERIVED:
+        break;
     case LF_COBOL0:
     case LF_COBOL1:
     case LF_BARRAY:

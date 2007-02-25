@@ -24,16 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definitions of type classes and other supporting classes
+*               for CV4 type packing.
 *
 ****************************************************************************/
 
-
-//
-// Definition of type classes and other supporting classes for cv4 type
-// packing.
-//
 
 //
 // Please note that the leaf structures are defined prior to
@@ -56,7 +51,7 @@ typedef unsigned_16 leaf_index;
 static const leaf_index NO_LEAF = 0;
 
 //
-// To indicate the optional vtab_offset field in LF_MLIST does not exists.
+// To indicate the optional vtab_offset field in LF_METHODLIST does not exist.
 //
 static const NO_VTAB_OFFSET     = -1;
 
