@@ -49,7 +49,6 @@ int stdiobuf::overflow( int c ) {
 
     int waiting;
     int written;
-    int result;
 
     __lock_it( __b_lock );
 
@@ -77,10 +76,6 @@ int stdiobuf::overflow( int c ) {
                                   , 1
                                   , __file_pointer );
                 if( written != sizeof( char ) ) {
-                    return( EOF );
-                }
-                result = ::fflush( __file_pointer );
-                if( result ) {
                     return( EOF );
                 }
             }
@@ -120,10 +115,6 @@ int stdiobuf::overflow( int c ) {
         } else {
             return( EOF );
         }
-    }
-    result = ::fflush( __file_pointer );
-    if( result ) {
-        return( EOF );
     }
     if( waiting ) {
         return( EOF );
