@@ -1,0 +1,18 @@
+/*
+ *  msxml.h     Extensible Markup Language (XML) interfaces
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _MSXML_H_INCLUDED
+#define _MSXML_H_INCLUDED
+
+:include readonly.sp
+#include <oaidl.h>
+
+:include cpluspro.sp
+
+:include cplusepi.sp
+
+#endif /* _MSXML_H_INCLUDED */
+

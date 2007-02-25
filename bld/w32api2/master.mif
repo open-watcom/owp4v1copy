@@ -19,8 +19,10 @@ headers =            &
         inaddr.h     &
         lzexpand.h   &
         mmsystem.h   &
+        msxml.h      &
         nb30.h       &
         ncrypt.h     &
+        oaidl.h      &
         objbase.h    &
         objidl.h     &
         ole2.h       &
