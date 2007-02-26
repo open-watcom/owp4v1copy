@@ -282,6 +282,12 @@ int Test_print_float( void )
     VERIFY( sprintf( buf, "%G", _NAN ) == 3 );
     VERIFY( !strcmp( buf, "NAN" ) );
 
+    VERIFY( sprintf( buf, "%5g", _INF ) == 5 );
+    VERIFY( !strcmp( buf, "  inf" ) );
+
+    VERIFY( sprintf( buf, "%05.2E", _NAN ) == 5 );
+    VERIFY( !strcmp( buf, "  NAN" ) );
+
     /* Currently %F is a far pointer modified in some libs, to
      * be changed later. Most libs are ISO C compliant in this regard.
      */

@@ -95,6 +95,9 @@ _WMRTLINK FAR_STRING _EFG_Format( char *buffer, my_va_list *args, SPECS __SLIB *
     specs->_nz1 = cvt.nz1;
     specs->_n2  = cvt.n2;
     specs->_nz2 = cvt.nz2;
+    if( cvt.flags & IS_INF_NAN ) {
+        specs->_pad_char = ' '; /* No zero padding for inf/nan! */
+    }
     if( cvt.sign < 0 ) {
         buffer[specs->_n0++] = '-';
     } else if( specs->_flags & SPF_FORCE_SIGN ) {

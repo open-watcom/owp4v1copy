@@ -563,6 +563,7 @@ nan_inf:
             text = (unsigned long *)buf;
             *text &= ~0x20202020;
         }
+        cvt->flags |= IS_INF_NAN;   /* may need special handling */
         cvt->n1 = 3;
         goto end_cvt;
     case __NONZERO:

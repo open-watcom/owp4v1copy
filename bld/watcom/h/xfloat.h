@@ -92,12 +92,13 @@ enum    ldcvt_flags {
     LONG_DOUBLE = 0x0020,       // number is true long double
     NO_TRUNC    = 0x0040,       // always provide ndigits in buffer
     IN_CAPS     = 0x0080,       // 'inf'/'nan' is uppercased
+    IS_INF_NAN  = 0x0100,       // number is inf/nan (output flag)
 };
 
 typedef struct cvt_info {
       int       ndigits;        // INPUT: number of digits
       int       scale;          // INPUT: FORTRAN scale factor
-      int       flags;          // INPUT: flags (see ldcvt_flags)
+      int       flags;          // INPUT/OUTPUT: flags (see ldcvt_flags)
       int       expchar;        // INPUT: exponent character to use
       int       expwidth;       // INPUT/OUTPUT: number of exponent digits
       int       sign;           // OUTPUT: 0 => +ve; otherwise -ve
