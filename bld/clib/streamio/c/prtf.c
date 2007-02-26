@@ -821,7 +821,6 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
     case 'e':
     case 'E':
         float_format( buffer, pargs, specs );
-        SetZeroPad( specs );
         arg++; // = &buffer[1];
         break;
 
@@ -981,9 +980,6 @@ processNumericTypes:
              */
             ++specs->_nz0;
         }
-        if( specs->_prec == -1 ) {
-            SetZeroPad( specs );
-        }
         break;
 
     case 'p':
@@ -1054,9 +1050,9 @@ processNumericTypes:
         } else {
             buffer[0] = va_arg( pargs->v, int );
         }
-        specs->_n0 = 1;
+        specs->_n1 = 1;
 #elif !defined( __WIDECHAR__ ) && defined( USE_MBCS_TRANSLATION )
-        specs->_n0 = 1;
+        specs->_n1 = 1;
         if( specs->_flags & SPF_LONG ) {
             char        mbBuf[MB_CUR_MAX];
             wchar_t     wc;
@@ -1073,7 +1069,7 @@ processNumericTypes:
             buffer[0] = va_arg( pargs->v, int );
         }
 #else
-        specs->_n0 = 1;
+        specs->_n1 = 1;
         buffer[0] = va_arg( pargs->v, int );
 #endif
         break;
@@ -1083,9 +1079,9 @@ processNumericTypes:
         bytes = wctomb( buffer, va_arg( pargs->v, int ) );
 //      if( bytes != -1  &&  bytes <= specs->_prec ) {
         if( bytes != -1 ) { /* Normative Addendum 4.5.3.3.1: no precision */
-            specs->_n0 = bytes;
+            specs->_n1 = bytes;
         } else {
-            specs->_n0 = 0;
+            specs->_n1 = 0;
         }
         break;
 #endif
@@ -1096,5 +1092,6 @@ processNumericTypes:
         specs->_n0 = 1;
         break;
     }
+    SetZeroPad( specs );
     return( arg );
 }
