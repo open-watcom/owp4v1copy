@@ -50,7 +50,7 @@ cdsay .
     <CCCMD> <DEVDIR>/mathlib/library/msdos.386/ms_s/math3s.lib <RELROOT>/rel2/lib386/netware/math3s.lib
     <CCCMD> <DEVDIR>/mathlib/library/msdos.387/ms_s/math387s.lib <RELROOT>/rel2/lib386/netware/math387s.lib
 
-    <CCCMD> <DEVDIR>/mathlib/library/winnt.axp/_s/math.lib <RELROOT>/rel2/libaxp/nt/math.lib
+    <CCCMD> <DEVDIR>/mathlib/library/winnt.axp/_s/mathaxp.lib <RELROOT>/rel2/libaxp/nt/math.lib
 
 [ BLOCK <1> clean ]
 #==================
