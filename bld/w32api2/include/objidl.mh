@@ -11,14 +11,14 @@
 :include cpluspro.sp
 
 /* Forward declarations */
-typedef interface IStream               IStream;
-typedef interface IStorage              IStorage;
-typedef interface IRunningObjectTable   IRunningObjectTable;
+typedef interface IAdviseSink           IAdviseSink;
+typedef interface IAsyncManager         IAsyncManager;
 typedef interface IEnumString           IEnumString;
 typedef interface IMoniker              IMoniker;
-typedef interface IAdviseSink           IAdviseSink;
+typedef interface IRunningObjectTable   IRunningObjectTable;
+typedef interface IStorage              IStorage;
+typedef interface IStream               IStream;
 typedef interface ISynchronize          ISynchronize;
-typedef interface IAsyncManager         IAsyncManager;
 
 /* String name block */
 typedef OLECHAR **SNB;
@@ -520,9 +520,12 @@ EXTERN_C const IID  IID_IInitializeSpy;
 #undef INTERFACE
 #define INTERFACE   IMarshal
 DECLARE_INTERFACE_( IMarshal, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IMarshal methods */
     STDMETHOD( GetUnmarshalClass )( THIS_ REFIID, void *, DWORD, void *, DWORD, CLSID * ) PURE;
     STDMETHOD( GetMarshalSizeMax )( THIS_ REFIID, void *, DWORD, void *, DWORD, DWORD * ) PURE;
     STDMETHOD( MarshalInterface )( THIS_ IStream *, REFIID, void *, DWORD, void *, DWORD ) PURE;
@@ -536,9 +539,12 @@ typedef IMarshal    *LPMARSHAL;
 #undef INTERFACE
 #define INTERFACE   IMarshal2
 DECLARE_INTERFACE_( IMarshal2, IMarshal ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IMarshal methods */
     STDMETHOD( GetUnmarshalClass )( THIS_ REFIID, void *, DWORD, void *, DWORD, CLSID * ) PURE;
     STDMETHOD( GetMarshalSizeMax )( THIS_ REFIID, void *, DWORD, void *, DWORD, DWORD * ) PURE;
     STDMETHOD( MarshalInterface )( THIS_ IStream *, REFIID, void *, DWORD, void *, DWORD ) PURE;
@@ -552,9 +558,12 @@ typedef IMarshal2   *LPMARSHAL2;
 #undef INTERFACE
 #define INTERFACE   IMalloc
 DECLARE_INTERFACE_( IMalloc, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IMalloc methods */
     STDMETHOD_( void *, Alloc)( THIS_ SIZE_T ) PURE;
     STDMETHOD_( void *, Realloc)( THIS_ void *, SIZE_T ) PURE;
     STDMETHOD_( void, Free)( THIS_ void * ) PURE;
@@ -568,9 +577,12 @@ typedef IMalloc *LPMALLOC;
 #undef INTERFACE
 #define INTERFACE   IMallocSpy
 DECLARE_INTERFACE_( IMallocSpy, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IMallocSpy methods */
     STDMETHOD_( SIZE_T, PreAlloc )( THIS_ SIZE_T ) PURE;
     STDMETHOD_( void *, PostAlloc )( THIS_ void * ) PURE;
     STDMETHOD_( void *, PreFree)( THIS_ void *, BOOL ) PURE;
@@ -590,9 +602,12 @@ typedef IMallocSpy  *LPMALLOCSPY;
 #undef INTERFACE
 #define INTERFACE   IStdMarshalInfo
 DECLARE_INTERFACE_( IStdMarshalInfo, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IStdMarshalInfo methods */
     STDMETHOD( GetClassForHandler)( THIS_ DWORD, void *, CLSID * ) PURE;
 };
 typedef IStdMarshalInfo *LPSTDMARSHALINFO;
@@ -601,9 +616,12 @@ typedef IStdMarshalInfo *LPSTDMARSHALINFO;
 #undef INTERFACE
 #define INTERFACE   IExternalConnection
 DECLARE_INTERFACE_( IExternalConnection, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IExternalConnection methods */
     STDMETHOD_( DWORD, AddConnection )( THIS_ DWORD, DWORD ) PURE;
     STDMETHOD_( DWORD, ReleaseConnection )( THIS_ DWORD, DWORD, BOOL ) PURE;
 };
@@ -613,9 +631,12 @@ typedef IExternalConnection *LPEXTERNALCONNECTION;
 #undef INTERFACE
 #define INTERFACE   IMultiQI
 DECLARE_INTERFACE_( IMultiQI, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IMultiQI methods */
     STDMETHOD( QueryMultipleInterfaces )( THIS_ ULONG, MULTI_QI * ) PURE;
 };
 typedef IMultiQI    *LPMULTIQI;
@@ -624,9 +645,12 @@ typedef IMultiQI    *LPMULTIQI;
 #undef INTERFACE
 #define INTERFACE   IInternalUnknown
 DECLARE_INTERFACE_( IInternalUnknown, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IInternalUnknown methods */
     STDMETHOD( QueryInternalInterface )( THIS_ REFIID, void ** ) PURE;
 };
 
@@ -634,9 +658,12 @@ DECLARE_INTERFACE_( IInternalUnknown, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IEnumUnknown
 DECLARE_INTERFACE_( IEnumUnknown, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IEnumUnknown methods */
     STDMETHOD( Next )( THIS_ ULONG, IUnknown **, ULONG * ) PURE;
     STDMETHOD( Skip )( THIS_ ULONG ) PURE;
     STDMETHOD( Reset )( THIS ) PURE;
@@ -648,9 +675,12 @@ typedef IEnumUnknown    *LPENUMUNKNOWN;
 #undef INTERFACE
 #define INTERFACE   IBindCtx
 DECLARE_INTERFACE_( IBindCtx, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IBindCtx methods */
     STDMETHOD( RegisterObjectBound )( THIS_ IUnknown * ) PURE;
     STDMETHOD( RevokeObjectBound )( THIS_ IUnknown * ) PURE;
     STDMETHOD( ReleaseBoundObjects )( THIS ) PURE;
@@ -669,9 +699,12 @@ typedef IBindCtx    *LPBINDCTX;
 #undef INTERFACE
 #define INTERFACE   IEnumMoniker
 DECLARE_INTERFACE_( IEnumMoniker, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IEnumMoniker methods */
     STDMETHOD( Next )( THIS_ ULONG, IMoniker **, ULONG * ) PURE;
     STDMETHOD( Skip )( THIS_ ULONG ) PURE;
     STDMETHOD( Reset )( THIS ) PURE;
@@ -683,9 +716,12 @@ typedef IEnumMoniker    *LPENUMMONIKER;
 #undef INTERFACE
 #define INTERFACE   IRunnableObject
 DECLARE_INTERFACE_( IRunnableObject, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRunnableObject methods */
     STDMETHOD( GetRunningClass )( THIS_ LPCLSID ) PURE;
     STDMETHOD( Run )( THIS_ LPBINDCTX ) PURE;
     STDMETHOD_( BOOL, IsRunning )( THIS ) PURE;
@@ -698,9 +734,12 @@ typedef IRunnableObject *LPRUNNABLEOBJECT;
 #undef INTERFACE
 #define INTERFACE   IRunningObjectTable
 DECLARE_INTERFACE_( IRunningObjectTable, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRunningObjectTable methods */
     STDMETHOD( Register )( THIS_ DWORD, IUnknown *, IMoniker *, DWORD * ) PURE;
     STDMETHOD( Revoke )( THIS_ DWORD ) PURE;
     STDMETHOD( IsRunning )( THIS_ IMoniker * ) PURE;
@@ -715,9 +754,12 @@ typedef IRunningObjectTable *LPRUNNINGOBJECTTABLE;
 #undef INTERFACE
 #define INTERFACE   IPersist
 DECLARE_INTERFACE_( IPersist, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPersist methods */
     STDMETHOD( GetClassID )( THIS_ CLSID * ) PURE;
 };
 typedef IPersist    *LPPERSIST;
@@ -726,10 +768,15 @@ typedef IPersist    *LPPERSIST;
 #undef INTERFACE
 #define INTERFACE   IPersistStream
 DECLARE_INTERFACE_( IPersistStream, IPersist ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPersist methods */
     STDMETHOD( GetClassID )( THIS_ CLSID * ) PURE;
+    
+    /* IPersistStream methods */
     STDMETHOD( IsDirty )( THIS ) PURE;
     STDMETHOD( Load )( THIS_ IStream * ) PURE;
     STDMETHOD( Save )( THIS_ IStream *, BOOL ) PURE;
@@ -741,14 +788,21 @@ typedef IPersistStream  *LPPERSISTSTREAM;
 #undef INTERFACE
 #define INTERFACE   IMoniker
 DECLARE_INTERFACE_( IMoniker, IPersistStream ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPersist methods */
     STDMETHOD( GetClassID )( THIS_ CLSID * ) PURE;
+    
+    /* IPersistStream methods */
     STDMETHOD( IsDirty )( THIS ) PURE;
     STDMETHOD( Load )( THIS_ IStream * ) PURE;
     STDMETHOD( Save )( THIS_ IStream *, BOOL ) PURE;
     STDMETHOD( GetSizeMax )( THIS_ ULARGE_INTEGER * ) PURE;
+    
+    /* IMoniker methods */
     STDMETHOD( BindToObject )( THIS_ IBindCtx *, IMoniker *, REFIID, void ** ) PURE;
     STDMETHOD( BindToStorage )( THIS_ IBindCtx *, IMoniker *, REFIID, void ** ) PURE;
     STDMETHOD( Reduce )( THIS_ IBindCtx *, DWORD, IMoniker **, IMoniker ** ) PURE;
@@ -771,9 +825,12 @@ typedef IMoniker    *LPMONIKER;
 #undef INTERFACE
 #define INTERFACE   IROTData
 DECLARE_INTERFACE_( IROTData, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IROTData methods */
     STDMETHOD( GetComparisonData )( THIS_ byte *, ULONG, ULONG * ) PURE;
 };
 
@@ -781,9 +838,12 @@ DECLARE_INTERFACE_( IROTData, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IEnumString
 DECLARE_INTERFACE_( IEnumString, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IEnumString methods */
     STDMETHOD( Next )( THIS_ ULONG, LPOLESTR *, ULONG * ) PURE;
     STDMETHOD( Skip )( THIS_ ULONG ) PURE;
     STDMETHOD( Reset )( THIS ) PURE;
@@ -795,9 +855,12 @@ typedef IEnumString *LPENUMSTRING;
 #undef INTERFACE
 #define INTERFACE   ISequentialStream
 DECLARE_INTERFACE_( ISequentialStream, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISequentialStream methods */
     STDMETHOD( Read )( THIS_ void *, ULONG, ULONG * ) PURE;
     STDMETHOD( Write )( THIS_ void const *, ULONG, ULONG * ) PURE;
 };
@@ -806,11 +869,16 @@ DECLARE_INTERFACE_( ISequentialStream, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IStream
 DECLARE_INTERFACE_( IStream, ISequentialStream ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISequentialStream methods */
     STDMETHOD( Read )( THIS_ void *, ULONG, ULONG * ) PURE;
     STDMETHOD( Write )( THIS_ void const *, ULONG, ULONG * ) PURE;
+    
+    /* IStream methods */
     STDMETHOD( Seek )( THIS_ LARGE_INTEGER, DWORD, ULARGE_INTEGER * ) PURE;
     STDMETHOD( SetSize )( THIS_ ULARGE_INTEGER ) PURE;
     STDMETHOD( CopyTo )( THIS_ IStream *, ULARGE_INTEGER, ULARGE_INTEGER *, ULARGE_INTEGER * ) PURE;
@@ -827,9 +895,12 @@ typedef IStream *LPSTREAM;
 #undef INTERFACE
 #define INTERFACE   IEnumSTATSTG
 DECLARE_INTERFACE_( IEnumSTATSTG, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IEnumSTATSTG methods */
     STDMETHOD( Next )( THIS_ ULONG, STATSTG *, ULONG * ) PURE;
     STDMETHOD( Skip )( THIS_ ULONG ) PURE;
     STDMETHOD( Reset )( THIS ) PURE;
@@ -841,9 +912,12 @@ typedef IEnumSTATSTG    *LPENUMSTATSTG;
 #undef INTERFACE
 #define INTERFACE   IStorage
 DECLARE_INTERFACE_( IStorage, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IStorage methods */
     STDMETHOD( CreateStream )( THIS_ const OLECHAR *, DWORD, DWORD, DWORD, IStream ** ) PURE;
     STDMETHOD( OpenStream )( THIS_ const OLECHAR *, void *, DWORD, DWORD, IStream ** ) PURE;
     STDMETHOD( CreateStorage )( THIS_ const OLECHAR *, DWORD, DWORD, DWORD, IStorage ** ) PURE;
@@ -866,10 +940,15 @@ typedef IStorage    *LPSTORAGE;
 #undef INTERFACE
 #define INTERFACE   IPersistFile
 DECLARE_INTERFACE_( IPersistFile, IPersist ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPersist methods */
     STDMETHOD( GetClassID )( THIS_ CLSID * ) PURE;
+    
+    /* IPersistFile methods */
     STDMETHOD( IsDirty )( THIS ) PURE;
     STDMETHOD( Load )( THIS_ LPCOLESTR, DWORD ) PURE;
     STDMETHOD( Save )( THIS_ LPCOLESTR, BOOL ) PURE;
@@ -882,10 +961,15 @@ typedef IPersistFile    *LPPERSISTFILE;
 #undef INTERFACE
 #define INTERFACE   IPersistStorage
 DECLARE_INTERFACE_( IPersistStorage, IPersist ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPersist methods */
     STDMETHOD( GetClassID )( THIS_ CLSID * ) PURE;
+    
+    /* IPersistStorage methods */
     STDMETHOD( IsDirty )( THIS ) PURE;
     STDMETHOD( InitNew )( THIS_ IStorage * ) PURE;
     STDMETHOD( Load )( THIS_ IStorage * ) PURE;
@@ -899,9 +983,12 @@ typedef IPersistStorage *LPPERSISTSTORAGE;
 #undef INTERFACE
 #define INTERFACE   ILockBytes
 DECLARE_INTERFACE_( ILockBytes, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ILockBytes methods */
     STDMETHOD( ReadAt )( THIS_ ULARGE_INTEGER, void *, ULONG, ULONG * ) PURE;
     STDMETHOD( WriteAt )( THIS_ ULARGE_INTEGER, void const *, ULONG, ULONG * ) PURE;
     STDMETHOD( Flush )( THIS ) PURE;
@@ -916,9 +1003,12 @@ typedef ILockBytes  *LPLOCKBYTES;
 #undef INTERFACE
 #define INTERFACE   IEnumFORMATETC
 DECLARE_INTERFACE_( IEnumFORMATETC, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IEnumFORMATETC methods */
     STDMETHOD( Next )( THIS_ ULONG, FORMATETC *, ULONG * ) PURE;
     STDMETHOD( Skip )( THIS_ ULONG ) PURE;
     STDMETHOD( Reset )( THIS ) PURE;
@@ -930,9 +1020,12 @@ typedef IEnumFORMATETC  *LPENUMFORMATETC;
 #undef INTERFACE
 #define INTERFACE   IEnumSTATDATA
 DECLARE_INTERFACE_( IEnumSTATDATA, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IEnumSTATDATA methods */
     STDMETHOD( Next )( THIS_ ULONG, STATDATA *, ULONG * ) PURE;
     STDMETHOD( Skip )( THIS_ ULONG ) PURE;
     STDMETHOD( Reset )( THIS ) PURE;
@@ -944,9 +1037,12 @@ typedef IEnumSTATDATA   *LPENUMSTATDATA;
 #undef INTERFACE
 #define INTERFACE   IRootStorage
 DECLARE_INTERFACE_( IRootStorage, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRootStorage methods */
     STDMETHOD( SwitchToFile )( THIS_ LPOLESTR ) PURE;
 };
 typedef IRootStorage    *LPROOTSTORAGE;
@@ -955,9 +1051,12 @@ typedef IRootStorage    *LPROOTSTORAGE;
 #undef INTERFACE
 #define INTERFACE   IAdviseSink
 DECLARE_INTERFACE_( IAdviseSink, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IAdviseSink methods */
     STDMETHOD_( void, OnDataChange )( THIS_ FORMATETC *, STGMEDIUM * ) PURE;
     STDMETHOD_( void, OnViewChange )( THIS_ DWORD, LONG ) PURE;
     STDMETHOD_( void, OnRename )( THIS_ IMoniker * ) PURE;
@@ -970,14 +1069,19 @@ typedef IAdviseSink *LPADVISESINK;
 #undef INTERFACE
 #define INTERFACE   IAdviseSink2
 DECLARE_INTERFACE_( IAdviseSink2, IAdviseSink ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IAdviseSink methods */
     STDMETHOD_( void, OnDataChange )( THIS_ FORMATETC *, STGMEDIUM * ) PURE;
     STDMETHOD_( void, OnViewChange )( THIS_ DWORD, LONG ) PURE;
     STDMETHOD_( void, OnRename )( THIS_ IMoniker * ) PURE;
     STDMETHOD_( void, OnSave )( THIS ) PURE;
     STDMETHOD_( void, OnClose )( THIS ) PURE;
+    
+    /* IAdviseSink2 methods */
     STDMETHOD_( void, OnLinkSrcChange )( THIS_ IMoniker * ) PURE;
 };
 typedef IAdviseSink2    *LPADVISESINK2;
@@ -986,9 +1090,12 @@ typedef IAdviseSink2    *LPADVISESINK2;
 #undef INTERFACE
 #define INTERFACE   IDataObject
 DECLARE_INTERFACE_( IDataObject, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IDataObject methods */
     STDMETHOD( GetData )( THIS_ FORMATETC *, STGMEDIUM * ) PURE;
     STDMETHOD( GetDataHere )( THIS_ FORMATETC *, STGMEDIUM * ) PURE;
     STDMETHOD( QueryGetData )( THIS_ FORMATETC * ) PURE;
@@ -1005,9 +1112,12 @@ typedef IDataObject *LPDATAOBJECT;
 #undef INTERFACE
 #define INTERFACE   IDataAdviseHolder
 DECLARE_INTERFACE_( IDataAdviseHolder, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IDataAdviseHolder methods */
     STDMETHOD( Advise )( THIS_ IDataObject *, FORMATETC *, DWORD, IAdviseSink *, DWORD * ) PURE;
     STDMETHOD( Unadvise )( THIS_ DWORD ) PURE;
     STDMETHOD( EnumAdvise )( THIS_ IEnumSTATDATA ** ) PURE;
@@ -1019,9 +1129,12 @@ typedef IDataAdviseHolder   *LPDATAADVISEHOLDER;
 #undef INTERFACE
 #define INTERFACE   IMessageFilter
 DECLARE_INTERFACE_( IMessageFilter, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IMessageFilter methods */
     STDMETHOD_( DWORD, HandleInComingCall )( THIS_ DWORD, HTASK, DWORD, LPINTERFACEINFO ) PURE;
     STDMETHOD_( DWORD, RetryRejectedCall )( THIS_ HTASK, DWORD, DWORD ) PURE;
     STDMETHOD_( DWORD, MessagePending )( THIS_ HTASK, DWORD, DWORD ) PURE;
@@ -1032,9 +1145,12 @@ typedef IMessageFilter  *LPMESSAGEFILTER;
 #undef INTERFACE
 #define INTERFACE   IRpcChannelBuffer
 DECLARE_INTERFACE_( IRpcChannelBuffer, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRpcChannelBuffer methods */
     STDMETHOD( GetBuffer )( THIS_ RPCOLEMESSAGE *, REFIID ) PURE;
     STDMETHOD( SendReceive )( THIS_ RPCOLEMESSAGE *, ULONG * ) PURE;
     STDMETHOD( FreeBuffer )( THIS_ RPCOLEMESSAGE * ) PURE;
@@ -1046,14 +1162,19 @@ DECLARE_INTERFACE_( IRpcChannelBuffer, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IRpcChannelBuffer2
 DECLARE_INTERFACE_( IRpcChannelBuffer2, IRpcChannelBuffer ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRpcChannelBuffer methods */
     STDMETHOD( GetBuffer )( THIS_ RPCOLEMESSAGE *, REFIID ) PURE;
     STDMETHOD( SendReceive )( THIS_ RPCOLEMESSAGE *, ULONG * ) PURE;
     STDMETHOD( FreeBuffer )( THIS_ RPCOLEMESSAGE * ) PURE;
     STDMETHOD( GetDestCtx )( THIS_ DWORD *, void ** ) PURE;
     STDMETHOD( IsConnected )( THIS ) PURE;
+    
+    /* IRpcChannelBuffer2 methods */
     STDMETHOD( GetProtocolVersion )( THIS_ DWORD * ) PURE;
 };
 
@@ -1061,15 +1182,22 @@ DECLARE_INTERFACE_( IRpcChannelBuffer2, IRpcChannelBuffer ) {
 #undef INTERFACE
 #define INTERFACE   IAsyncRpcChannelBuffer
 DECLARE_INTERFACE_( IAsyncRpcChannelBuffer, IRpcChannelBuffer2 ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRpcChannelBuffer methods */
     STDMETHOD( GetBuffer )( THIS_ RPCOLEMESSAGE *, REFIID ) PURE;
     STDMETHOD( SendReceive )( THIS_ RPCOLEMESSAGE *, ULONG * ) PURE;
     STDMETHOD( FreeBuffer )( THIS_ RPCOLEMESSAGE * ) PURE;
     STDMETHOD( GetDestCtx )( THIS_ DWORD *, void ** ) PURE;
     STDMETHOD( IsConnected )( THIS ) PURE;
+    
+    /* IRpcChannelBuffer2 methods */
     STDMETHOD( GetProtocolVersion )( THIS_ DWORD * ) PURE;
+    
+    /* IAsyncRpcChannelBuffer methods */
     STDMETHOD( Send )( THIS_ RPCOLEMESSAGE *, ISynchronize *, ULONG * ) PURE;
     STDMETHOD( Receive )( THIS_ RPCOLEMESSAGE *, ULONG * ) PURE;
     STDMETHOD( GetDestCtxEx )( THIS_ RPCOLEMESSAGE *, DWORD *, void ** ) PURE;
@@ -1079,15 +1207,22 @@ DECLARE_INTERFACE_( IAsyncRpcChannelBuffer, IRpcChannelBuffer2 ) {
 #undef INTERFACE
 #define INTERFACE   IRpcChannelBuffer3
 DECLARE_INTERFACE_( IRpcChannelBuffer3, IRpcChannelBuffer2 ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRpcChannelBuffer methods */
     STDMETHOD( GetBuffer )( THIS_ RPCOLEMESSAGE *, REFIID ) PURE;
     STDMETHOD( SendReceive )( THIS_ RPCOLEMESSAGE *, ULONG * ) PURE;
     STDMETHOD( FreeBuffer )( THIS_ RPCOLEMESSAGE * ) PURE;
     STDMETHOD( GetDestCtx )( THIS_ DWORD *, void ** ) PURE;
     STDMETHOD( IsConnected )( THIS ) PURE;
+    
+    /* IRpcChannelBuffer2 methods */
     STDMETHOD( GetProtocolVersion )( THIS_ DWORD * ) PURE;
+    
+    /* IRpcChannelBuffer3 methods */
     STDMETHOD( Send )( THIS_ RPCOLEMESSAGE *, ULONG * ) PURE;
     STDMETHOD( Receive )( THIS_ RPCOLEMESSAGE *, ULONG, ULONG * ) PURE;
     STDMETHOD( Cancel )( THIS_ RPCOLEMESSAGE * ) PURE;
@@ -1101,9 +1236,12 @@ DECLARE_INTERFACE_( IRpcChannelBuffer3, IRpcChannelBuffer2 ) {
 #undef INTERFACE
 #define INTERFACE   IRpcSyntaxNegotiate
 DECLARE_INTERFACE_( IRpcSyntaxNegotiate, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRpcSyntaxNegotiate methods */
     STDMETHOD( NegotiateSyntax )( THIS_ RPCOLEMESSAGE * ) PURE;
 };
 
@@ -1111,9 +1249,12 @@ DECLARE_INTERFACE_( IRpcSyntaxNegotiate, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IRpcProxyBuffer
 DECLARE_INTERFACE_( IRpcProxyBuffer, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRpcProxyBuffer methods */
     STDMETHOD( Connect )( THIS_ IRpcChannelBuffer * ) PURE;
     STDMETHOD_( void, Disconnect )( THIS ) PURE;
 };
@@ -1122,9 +1263,12 @@ DECLARE_INTERFACE_( IRpcProxyBuffer, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IRpcStubBuffer
 DECLARE_INTERFACE_( IRpcStubBuffer, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRpcStubBuffer methods */
     STDMETHOD( Connect )( THIS_ IUnknown * ) PURE;
     STDMETHOD_( void, Disconnect )( THIS ) PURE;
     STDMETHOD( Invoke )( THIS_ RPCOLEMESSAGE *, IRpcChannelBuffer * ) PURE;
@@ -1138,9 +1282,12 @@ DECLARE_INTERFACE_( IRpcStubBuffer, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IPSFactoryBuffer
 DECLARE_INTERFACE_( IPSFactoryBuffer, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPSFactoryBuffer methods */
     STDMETHOD( CreateProxy )( THIS_ IUnknown *, REFIID, IRpcProxyBuffer *, void ** ) PURE;
     STDMETHOD( CreateStub )( THIS_ REFIID, IUnknown *, IRpcStubBuffer * ) PURE;
 };
@@ -1150,9 +1297,12 @@ DECLARE_INTERFACE_( IPSFactoryBuffer, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IChannelHook
 DECLARE_INTERFACE_( IChannelHook, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IChannelHook methods */
     STDMETHOD_( void, ClientGetSize )( THIS_ REFGUID, REFIID, ULONG * ) PURE;
     STDMETHOD_( void, ClientFillBuffer )( THIS_ REFGUID, REFIID, ULONG *, void * ) PURE;
     STDMETHOD_( void, ClientNotify )( THIS_ REFGUID, REFIID, ULONG, void *, DWORD, HRESULT ) PURE;
@@ -1167,9 +1317,12 @@ DECLARE_INTERFACE_( IChannelHook, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IClientSecurity
 DECLARE_INTERFACE_( IClientSecurity, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IClientSecurity methods */
     STDMETHOD( QueryBlanket )( THIS_ IUnknown *, DWORD *, DWORD *, OLECHAR **, DWORD *, DWORD *, void **, DWORD * ) PURE;
     STDMETHOD( SetBlanket )( THIS_ IUnknown *, DWORD, DWORD, OLECHAR *, DWORD, DWORD, void *, DWORD ) PURE;
     STDMETHOD( CopyProxy )( THIS_ IUnknown *, IUnknown ** ) PURE;
@@ -1181,9 +1334,12 @@ DECLARE_INTERFACE_( IClientSecurity, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IServerSecurity
 DECLARE_INTERFACE_( IServerSecurity, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IServerSecurity methods */
     STDMETHOD( QueryBlanket )( THIS_ DWORD *, DWORD *, OLECHAR **, DWORD *, DWORD *, void **, DWORD * ) PURE;
     STDMETHOD( ImpersonateClient )( THIS ) PURE;
     STDMETHOD( RevertToSelf )( THIS ) PURE;
@@ -1196,9 +1352,12 @@ DECLARE_INTERFACE_( IServerSecurity, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IClassActivator
 DECLARE_INTERFACE_( IClassActivator, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IClassActivator methods */
     STDMETHOD( GetClassObject )( THIS_ REFCLSID, DWORD, LCID, REFIID, void ** ) PURE;
 };
 #endif
@@ -1208,9 +1367,12 @@ DECLARE_INTERFACE_( IClassActivator, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IRpcOptions
 DECLARE_INTERFACE_( IRpcOptions, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRpcOptions methods */
     STDMETHOD( Set )( THIS_ IUnknown *, DWORD, ULONG_PTR ) PURE;
     STDMETHOD( Query )( THIS_ IUnknown *, DWORD, ULONG_PTR * ) PURE;
 };
@@ -1220,9 +1382,12 @@ DECLARE_INTERFACE_( IRpcOptions, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IFillLockBytes
 DECLARE_INTERFACE_( IFillLockBytes, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IFillLockBytes methods */
     STDMETHOD( FillAppend )( THIS_ void const *, ULONG, ULONG * ) PURE;
     STDMETHOD( FillAt )( THIS_ ULARGE_INTEGER, void const *, ULONG, ULONG * ) PURE;
     STDMETHOD( SetFillSize )( THIS_ ULARGE_INTEGER ) PURE;
@@ -1233,9 +1398,12 @@ DECLARE_INTERFACE_( IFillLockBytes, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IProgressNotify
 DECLARE_INTERFACE_( IProgressNotify, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IProgressNotify methods */
     STDMETHOD( OnProgress )( THIS_ DWORD, DWORD, BOOL, BOOL ) PURE;
 };
 
@@ -1243,9 +1411,12 @@ DECLARE_INTERFACE_( IProgressNotify, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ILayoutStorage
 DECLARE_INTERFACE_( ILayoutStorage, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ILayoutStorage methods */
     STDMETHOD( LayoutScript )( THIS_ StorageLayout *, DWORD, DWORD ) PURE;
     STDMETHOD( BeginMonitor )( THIS ) PURE;
     STDMETHOD( EndMonitor )( THIS ) PURE;
@@ -1257,9 +1428,12 @@ DECLARE_INTERFACE_( ILayoutStorage, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IBlockingLock
 DECLARE_INTERFACE_( IBlockingLock, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IBlockingLock methods */
     STDMETHOD( Lock )( THIS_ DWORD ) PURE;
     STDMETHOD( Unlock )( THIS ) PURE;
 };
@@ -1268,9 +1442,12 @@ DECLARE_INTERFACE_( IBlockingLock, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ITimeAndNoticeControl
 DECLARE_INTERFACE_( ITimeAndNoticeControl, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ITimeAndNoticeControl methods */
     STDMETHOD( SuppressChanges )( THIS_ DWORD, DWORD ) PURE;
 };
 
@@ -1278,9 +1455,12 @@ DECLARE_INTERFACE_( ITimeAndNoticeControl, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IOplockStorage
 DECLARE_INTERFACE_( IOplockStorage, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IOplockStorage methods */
     STDMETHOD( CreateStorageEx )( THIS_ LPCWSTR, DWORD, DWORD, DWORD, REFIID, void ** ) PURE;
     STDMETHOD( OpenStorageEx )( THIS_ LPCWSTR, DWORD, DWORD, DWORD, REFIID, void ** ) PURE;
 };
@@ -1289,9 +1469,12 @@ DECLARE_INTERFACE_( IOplockStorage, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ISurrogate
 DECLARE_INTERFACE_( ISurrogate, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISurrogate methods */
     STDMETHOD( LoadDllServer )( THIS_ REFCLSID ) PURE;
     STDMETHOD( FreeSurrogate )( THIS ) PURE;
 };
@@ -1301,9 +1484,12 @@ typedef ISurrogate  *LPSURROGATE;
 #undef INTERFACE
 #define INTERFACE   IGlobalInterfaceTable
 DECLARE_INTERFACE_( IGlobalInterfaceTable, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IGlobalInterfaceTable methods */
     STDMETHOD( RegisterInterfaceInGlobal )( THIS_ IUnknown *, REFIID, DWORD * ) PURE;
     STDMETHOD( RevokeInterfaceFromGlobal )( THIS_ DWORD ) PURE;
     STDMETHOD( GetInterfaceFromGlobal )( THIS_ DWORD, REFIID, void ** ) PURE;
@@ -1314,9 +1500,12 @@ typedef IGlobalInterfaceTable   *LPGLOBALINTERFACETABLE;
 #undef INTERFACE
 #define INTERFACE   IDirectWriterLock
 DECLARE_INTERFACE_( IDirectWriterLock, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IDirectWriterLock methods */
     STDMETHOD( WaitForWriteAccess )( THIS_ DWORD ) PURE;
     STDMETHOD( ReleaseWriteAccess )( THIS ) PURE;
     STDMETHOD( HaveWriteAccess )( THIS ) PURE;
@@ -1326,9 +1515,12 @@ DECLARE_INTERFACE_( IDirectWriterLock, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ISynchronize
 DECLARE_INTERFACE_( ISynchronize, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISynchronize methods */
     STDMETHOD( Wait )( THIS_ DWORD, DWORD ) PURE;
     STDMETHOD( Signal )( THIS ) PURE;
     STDMETHOD( Reset )( THIS ) PURE;
@@ -1338,9 +1530,12 @@ DECLARE_INTERFACE_( ISynchronize, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ISynchronizeHandle
 DECLARE_INTERFACE_( ISynchronizeHandle, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISynchronizeHandle methods */
     STDMETHOD( GetHandle )( THIS_ HANDLE * ) PURE;
 };
 
@@ -1348,10 +1543,15 @@ DECLARE_INTERFACE_( ISynchronizeHandle, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ISynchronizeEvent
 DECLARE_INTERFACE_( ISynchronizeEvent, ISynchronizeHandle ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISynchronizeHandle methods */
     STDMETHOD( GetHandle )( THIS_ HANDLE * ) PURE;
+    
+    /* ISynchronizeEvent methods */
     STDMETHOD( SetEventHandle )( THIS_ HANDLE * ) PURE;
 };
 
@@ -1359,9 +1559,12 @@ DECLARE_INTERFACE_( ISynchronizeEvent, ISynchronizeHandle ) {
 #undef INTERFACE
 #define INTERFACE   ISynchronizeContainer
 DECLARE_INTERFACE_( ISynchronizeContainer, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISynchronizeContainer methods */
     STDMETHOD( AddSynchronize )( THIS_ ISynchronize * ) PURE;
     STDMETHOD( WaitMultiple )( THIS_ DWORD, DWORD, ISynchronize ** ) PURE;
 };
@@ -1370,9 +1573,12 @@ DECLARE_INTERFACE_( ISynchronizeContainer, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ISynchronizeMutex
 DECLARE_INTERFACE_( ISynchronizeMutex, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISynchronizeMutex methods */
     STDMETHOD( ReleaseMutex )( THIS ) PURE;
 };
 
@@ -1380,9 +1586,12 @@ DECLARE_INTERFACE_( ISynchronizeMutex, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ICancelMethodCalls
 DECLARE_INTERFACE_( ICancelMethodCalls, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ICancelMethodCalls methods */
     STDMETHOD( Cancel )( THIS_ ULONG ) PURE;
     STDMETHOD( TestCancel )( THIS ) PURE;
 };
@@ -1392,9 +1601,12 @@ typedef ICancelMethodCalls  *LPCANCELMETHODCALLS;
 #undef INTERFACE
 #define INTERFACE   IAsyncManager
 DECLARE_INTERFACE_( IAsyncManager, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IAsyncManager methods */
     STDMETHOD( CompleteCall )( THIS_ HRESULT ) PURE;
     STDMETHOD( GetCallContext )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD( GetState )( THIS_ ULONG * ) PURE;
@@ -1404,9 +1616,12 @@ DECLARE_INTERFACE_( IAsyncManager, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ICallFactory
 DECLARE_INTERFACE_( ICallFactory, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ICallFactory methods */
     STDMETHOD( CreateCall )( THIS_ REFIID, IUnknown *, REFIID, IUnknown ** ) PURE;
 };
 
@@ -1414,9 +1629,12 @@ DECLARE_INTERFACE_( ICallFactory, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IRpcHelper
 DECLARE_INTERFACE_( IRpcHelper, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRpcHelper methods */
     STDMETHOD( GetDCOMProtocolVersion )( THIS_ DWORD * ) PURE;
     STDMETHOD( GetIIDFromOBJREF )( THIS_ void *, IID ** ) PURE;
 };
@@ -1425,9 +1643,12 @@ DECLARE_INTERFACE_( IRpcHelper, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IReleaseMarshalBuffers
 DECLARE_INTERFACE_( IReleaseMarshalBuffers, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IReleaseMarshalBuffers methods */
     STDMETHOD( ReleaseMarshalBuffers )( THIS_ RPCOLEMESSAGE *, DWORD, IUnknown * ) PURE;
 };
 
@@ -1435,9 +1656,12 @@ DECLARE_INTERFACE_( IReleaseMarshalBuffers, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IWaitMultiple
 DECLARE_INTERFACE_( IWaitMultiple, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IWaitMultiple methods */
     STDMETHOD( WaitMultiple )( THIS_ DWORD, ISynchronize ** ) PURE;
     STDMETHOD( AddSynchronize )( THIS_ ISynchronize * ) PURE;
 };
@@ -1446,9 +1670,12 @@ DECLARE_INTERFACE_( IWaitMultiple, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IUrlMon
 DECLARE_INTERFACE_( IUrlMon, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IUrlMon methods */
     STDMETHOD( AsyncGetClassBits )( THIS_ REFCLSID, LPCWSTR, LPCWSTR, DWORD, DWORD, LPCWSTR, IBindCtx *, DWORD, REFIID, DWORD ) PURE;
 };
 
@@ -1456,9 +1683,12 @@ DECLARE_INTERFACE_( IUrlMon, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IForegroundTransfer
 DECLARE_INTERFACE_( IForegroundTransfer, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IForegroundTransfer methods */
     STDMETHOD( AllowForegroundTransfer )( THIS_ void * ) PURE;
 };
 
@@ -1466,9 +1696,12 @@ DECLARE_INTERFACE_( IForegroundTransfer, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IAddrTrackingControl
 DECLARE_INTERFACE_( IAddrTrackingControl, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IAddrTrackingControl methods */
     STDMETHOD( EnableCOMDynamicAddrTracking )( THIS ) PURE;
     STDMETHOD( DisableCOMDynamicAddrTracking )( THIS ) PURE;
 };
@@ -1478,9 +1711,12 @@ typedef IAddrTrackingControl    *LPADDRTRACKINGCONTROL;
 #undef INTERFACE
 #define INTERFACE   IAddrExclusionControl
 DECLARE_INTERFACE_( IAddrExclusionControl, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IAddrExclusionControl methods */
     STDMETHOD( GetCurrentAddrExclusionList )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD( UpdateAddrExclusionList )( THIS_ IUnknown * ) PURE;
 };
@@ -1490,9 +1726,12 @@ typedef IAddrExclusionControl   *LPADDREXCLUSIONCONTROL;
 #undef INTERFACE
 #define INTERFACE   IPipeByte
 DECLARE_INTERFACE_( IPipeByte, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPipeByte methods */
     STDMETHOD( Pull )( THIS_ BYTE *, ULONG, ULONG * ) PURE;
     STDMETHOD( Push )( THIS_ BYTE *, ULONG ) PURE;
 };
@@ -1501,9 +1740,12 @@ DECLARE_INTERFACE_( IPipeByte, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IPipeLong
 DECLARE_INTERFACE_( IPipeLong, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPipeLong methods */
     STDMETHOD( Pull )( THIS_ LONG *, ULONG, ULONG * ) PURE;
     STDMETHOD( Push )( THIS_ LONG *, ULONG ) PURE;
 };
@@ -1512,9 +1754,12 @@ DECLARE_INTERFACE_( IPipeLong, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IPipeDouble
 DECLARE_INTERFACE_( IPipeDouble, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPipeDouble methods */
     STDMETHOD( Pull )( THIS_ DOUBLE *, ULONG, ULONG * ) PURE;
     STDMETHOD( Push )( THIS_ DOUBLE *, ULONG ) PURE;
 };
@@ -1523,9 +1768,12 @@ DECLARE_INTERFACE_( IPipeDouble, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IThumbnailExtractor
 DECLARE_INTERFACE_( IThumbnailExtractor, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IThumbnailExtractor methods */
     STDMETHOD( ExtractThumbnail )( THIS_ IStorage *, ULONG, ULONG, ULONG *, ULONG *, HBITMAP * ) PURE;
     STDMETHOD( OnFileUpdated )( THIS_ IStorage * ) PURE;
 };
@@ -1534,9 +1782,12 @@ DECLARE_INTERFACE_( IThumbnailExtractor, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IDummyHICONIncluder
 DECLARE_INTERFACE_( IDummyHICONIncluder, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IDummyHICONIncluder methods */
     STDMETHOD( Dummy )( THIS_ HICON, HDC ) PURE;
 };
 
@@ -1544,9 +1795,12 @@ DECLARE_INTERFACE_( IDummyHICONIncluder, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IProcessLock
 DECLARE_INTERFACE_( IProcessLock, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IProcessLock methods */
     STDMETHOD_( ULONG, AddRefOnProcess )( THIS ) PURE;
     STDMETHOD_( ULONG, ReleaseOnProcess )( THIS ) PURE;
 };
@@ -1555,9 +1809,12 @@ DECLARE_INTERFACE_( IProcessLock, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ISurrogateService
 DECLARE_INTERFACE_( ISurrogateService, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISurrogateService methods */
     STDMETHOD( Init )( THIS_ REFGUID, IProcessLock *, BOOL * ) PURE;
     STDMETHOD( ApplicationLaunch )( THIS_ REFGUID, ApplicationType ) PURE;
     STDMETHOD( ApplicationFree )( THIS_ REFGUID ) PURE;
@@ -1569,9 +1826,12 @@ DECLARE_INTERFACE_( ISurrogateService, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IComThreadingInfo
 DECLARE_INTERFACE_( IComThreadingInfo, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IComThreadingInfo methods */
     STDMETHOD( GetCurrentApartmentType )( THIS_ APTTYPE * ) PURE;
     STDMETHOD( GetCurrentThreadType )( THIS_ THDTYPE * ) PURE;
     STDMETHOD( GetCurrentLogicalThreadId )( THIS_ GUID * ) PURE;
@@ -1582,9 +1842,12 @@ DECLARE_INTERFACE_( IComThreadingInfo, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IProcessInitControl
 DECLARE_INTERFACE_( IProcessInitControl, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IProcessInitControl methods */
     STDMETHOD( ResetInitializerTimeout )( THIS_ DWORD ) PURE;
 };
 
@@ -1593,9 +1856,12 @@ DECLARE_INTERFACE_( IProcessInitControl, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IInitializeSpy
 DECLARE_INTERFACE_( IInitializeSpy, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IInitializeSpy methods */
     STDMETHOD( PreInitialize )( THIS_ DWORD, DWORD ) PURE;
     STDMETHOD( PostInitialize )( THIS_ HRESULT, DWORD, DWORD ) PURE;
     STDMETHOD( PreUninitialize )( THIS_ DWORD ) PURE;

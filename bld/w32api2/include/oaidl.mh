@@ -13,8 +13,8 @@
 /* Forward declarations */
 typedef interface IDispatch     IDispatch;
 typedef interface IRecordInfo   IRecordInfo;
-typedef interface ITypeInfo     ITypeInfo;
 typedef interface ITypeComp     ITypeComp;
+typedef interface ITypeInfo     ITypeInfo;
 typedef interface ITypeLib      ITypeLib;
 
 /* Primitive data types for automation */
@@ -521,9 +521,12 @@ EXTERN_C const IID  IID_IPropertyBag;
 #undef INTERFACE
 #define INTERFACE   ICreateTypeInfo
 DECLARE_INTERFACE_( ICreateTypeInfo, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ICreateTypeInfo methods */
     STDMETHOD( SetGuid )( THIS_ REFGUID ) PURE;
     STDMETHOD( SetTypeFlags )( THIS_ UINT ) PURE;
     STDMETHOD( SetDocString )( THIS_ LPOLESTR ) PURE;
@@ -554,9 +557,12 @@ typedef ICreateTypeInfo *LPCREATETYPEINFO;
 #undef INTERFACE
 #define INTERFACE   ICreateTypeInfo2
 DECLARE_INTERFACE_( ICreateTypeInfo2, ICreateTypeInfo ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ICreateTypeInfo methods */
     STDMETHOD( SetGuid )( THIS_ REFGUID ) PURE;
     STDMETHOD( SetTypeFlags )( THIS_ UINT ) PURE;
     STDMETHOD( SetDocString )( THIS_ LPOLESTR ) PURE;
@@ -580,6 +586,8 @@ DECLARE_INTERFACE_( ICreateTypeInfo2, ICreateTypeInfo ) {
     STDMETHOD( SetMops )( THIS_ UINT, BSTR ) PURE;
     STDMETHOD( SetTypeIdlDesc )( THIS_ IDLDESC * ) PURE;
     STDMETHOD( LayOut )( THIS ) PURE;
+    
+    /* ICreateTypeInfo2 methods */
     STDMETHOD( DeleteFuncDesc )( THIS_ UINT ) PURE;
     STDMETHOD( DeleteFuncDescByMemId )( THIS_ MEMBERID, INVOKEKIND ) PURE;
     STDMETHOD( DeleteVarDesc )( THIS_ UINT ) PURE;
@@ -602,9 +610,12 @@ typedef ICreateTypeInfo2    *LPCREATETYPEINFO2;
 #undef INTERFACE
 #define INTERFACE   ICreateTypeLib
 DECLARE_INTERFACE_( ICreateTypeLib, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ICreateTypeLib methods */
     STDMETHOD( CreateTypeInfo )( THIS_ LPOLESTR, TYPEKIND, ICreateTypeInfo ** ) PURE;
     STDMETHOD( SetName )( THIS_ LPOLESTR ) PURE;
     STDMETHOD( SetVersion )( THIS_ WORD, WORD ) PURE;
@@ -622,9 +633,12 @@ typedef ICreateTypeLib  *LPCREATETYPELIB;
 #undef INTERFACE
 #define INTERFACE   ICreateTypeLib2
 DECLARE_INTERFACE_( ICreateTypeLib2, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ICreateTypeLib methods */
     STDMETHOD( CreateTypeInfo )( THIS_ LPOLESTR, TYPEKIND, ICreateTypeInfo ** ) PURE;
     STDMETHOD( SetName )( THIS_ LPOLESTR ) PURE;
     STDMETHOD( SetVersion )( THIS_ WORD, WORD ) PURE;
@@ -635,6 +649,8 @@ DECLARE_INTERFACE_( ICreateTypeLib2, IUnknown ) {
     STDMETHOD( SetLcid )( THIS_ LCID ) PURE;
     STDMETHOD( SetLibFlags )( THIS_ UINT ) PURE;
     STDMETHOD( SaveAllChanges )( THIS ) PURE;
+    
+    /* ICreateTypeLib2 methods */
     STDMETHOD( DeleteTypeInfo )( THIS_ LPOLESTR ) PURE;
     STDMETHOD( SetCustData )( THIS_ REFGUID, VARIANT * ) PURE;
     STDMETHOD( SetHelpStringContext )( THIS_ ULONG ) PURE;
@@ -646,9 +662,12 @@ typedef ICreateTypeLib2 *LPCREATETYPELIB2;
 #undef INTERFACE
 #define INTERFACE   IDispatch
 DECLARE_INTERFACE_( IDispatch, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IDispatch methods */
     STDMETHOD( GetTypeInfoCount )( THIS_ UINT * ) PURE;
     STDMETHOD( GetTypeInfo )( THIS_ UINT, LCID, ITypeInfo ** ) PURE;
     STDMETHOD( GetIDsOfNames )( THIS_ REFIID, LPOLESTR *, UINT, LCID, DISPID * ) PURE;
@@ -660,9 +679,12 @@ typedef IDispatch   *LPDISPATCH;
 #undef INTERFACE
 #define INTERFACE   IEnumVARIANT
 DECLARE_INTERFACE_( IEnumVARIANT, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IEnumVARIANT methods */
     STDMETHOD( Next )( THIS_ ULONG, VARIANT *, ULONG * ) PURE;
     STDMETHOD( Skip )( THIS_ ULONG ) PURE;
     STDMETHOD( Reset )( THIS ) PURE;
@@ -674,9 +696,12 @@ typedef IEnumVARIANT    *LPENUMVARIANT;
 #undef INTERFACE
 #define INTERFACE   ITypeComp
 DECLARE_INTERFACE_( ITypeComp, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ITypeComp methods */
     STDMETHOD( Bind )( THIS_ LPOLESTR, ULONG, WORD, ITypeInfo **, DESCKIND *, BINDPTR * ) PURE;
     STDMETHOD( BindType )( THIS_ LPOLESTR, ULONG, ITypeInfo **, ITypeComp ** ) PURE;
 };
@@ -686,9 +711,12 @@ typedef ITypeComp   *LPTYPECOMP;
 #undef INTERFACE
 #define INTERFACE   ITypeInfo
 DECLARE_INTERFACE_( ITypeInfo, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ITypeInfo methods */
     STDMETHOD( GetTypeAttr )( THIS_ TYPEATTR ** ) PURE;
     STDMETHOD( GetTypeComp )( THIS_ ITypeComp ** ) PURE;
     STDMETHOD( GetFuncDesc )( THIS_ UINT, FUNCDESC ** ) PURE;
@@ -715,9 +743,12 @@ typedef ITypeInfo   *LPTYPEINFO;
 #undef INTERFACE
 #define INTERFACE   ITypeInfo2
 DECLARE_INTERFACE_( ITypeInfo2, ITypeInfo ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ITypeInfo methods */
     STDMETHOD( GetTypeAttr )( THIS_ TYPEATTR ** ) PURE;
     STDMETHOD( GetTypeComp )( THIS_ ITypeComp ** ) PURE;
     STDMETHOD( GetFuncDesc )( THIS_ UINT, FUNCDESC ** ) PURE;
@@ -737,6 +768,8 @@ DECLARE_INTERFACE_( ITypeInfo2, ITypeInfo ) {
     STDMETHOD_( void, ReleaseTypeAttr )( THIS_ TYPEATTR * ) PURE;
     STDMETHOD_( void, ReleaseFuncDesc )( THIS_ FUNCDESC * ) PURE;
     STDMETHOD_( void, ReleaseVarDesc )( THIS_ VARDESC * ) PURE;
+    
+    /* ITypeInfo2 methods */
     STDMETHOD( GetTypeKind )( THIS_ TYPEKIND * ) PURE;
     STDMETHOD( GetTypeFlags )( THIS_ ULONG * ) PURE;
     STDMETHOD( GetFuncIndexOfMemId )( THIS_ MEMBERID, INVOKEKIND, UINT * ) PURE;
@@ -759,9 +792,12 @@ typedef ITypeInfo2  *LPTYPEINFO2;
 #undef INTERFACE
 #define INTERFACE   ITypeLib
 DECLARE_INTERFACE_( ITypeLib, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ITypeLib methods */
     STDMETHOD_( UINT, GetTypeInfoCount )( THIS ) PURE;
     STDMETHOD( GetTypeInfo )( THIS_ UINT, ITypeInfo ** ) PURE;
     STDMETHOD( GetTypeInfoType )( THIS_ UINT, TYPEKIND * ) PURE;
@@ -779,6 +815,12 @@ typedef ITypeLib    *LPTYPELIB;
 #undef INTERFACE
 #define INTERFACE   ITypeLib2
 DECLARE_INTERFACE_( ITypeLib2, ITypeLib ) {
+    /* IUnknown methods */
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
+    STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
+    STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ITypeLib methods */
     STDMETHOD_( UINT, GetTypeInfoCount )( THIS ) PURE;
     STDMETHOD( GetTypeInfo )( THIS_ UINT, ITypeInfo ** ) PURE;
     STDMETHOD( GetTypeInfoType )( THIS_ UINT, TYPEKIND * ) PURE;
@@ -789,6 +831,8 @@ DECLARE_INTERFACE_( ITypeLib2, ITypeLib ) {
     STDMETHOD( IsName )( THIS_ LPOLESTR, ULONG, BOOL * ) PURE;
     STDMETHOD( FindName )( THIS_ LPOLESTR, ULONG, ITypeInfo **, MEMBERID *, USHORT * ) PURE;
     STDMETHOD_( void, ReleaseTLibAttr )( THIS_ TLIBATTR * ) PURE;
+    
+    /* ITypeLib2 methods */
     STDMETHOD( GetCustData )( THIS_ REFGUID, VARIANT * ) PURE;
     STDMETHOD( GetLibStatistics )( THIS_ ULONG *, ULONG * ) PURE;
     STDMETHOD( GetDocumentation2 )( THIS_ INT, LCID, BSTR *, DWORD *, BSTR * ) PURE;
@@ -800,9 +844,12 @@ typedef ITypeLib2   *LPTYPELIB2;
 #undef INTERFACE
 #define INTERFACE   ITypeChangeEvents
 DECLARE_INTERFACE_( ITypeChangeEvents, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ITypeChangeEvents methods */
     STDMETHOD( RequestTypeChange )( THIS_ CHANGEKIND, ITypeInfo *, LPOLESTR, INT * ) PURE;
     STDMETHOD( AfterTypeChange )( THIS_ CHANGEKIND, ITypeInfo *, LPOLESTR ) PURE;
 };
@@ -812,9 +859,12 @@ typedef ITypeChangeEvents   *LPTYPECHANGEEVENTS;
 #undef INTERFACE
 #define INTERFACE   IErrorInfo
 DECLARE_INTERFACE_( IErrorInfo, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IErrorInfo methods */
     STDMETHOD( GetGUID )( THIS_ GUID * ) PURE;
     STDMETHOD( GetSource )( THIS_ BSTR * ) PURE;
     STDMETHOD( GetDescription )( THIS_ BSTR * ) PURE;
@@ -827,9 +877,12 @@ typedef IErrorInfo  *LPERRORINFO;
 #undef INTERFACE
 #define INTERFACE   ICreateErrorInfo
 DECLARE_INTERFACE_( ICreateErrorInfo, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ICreateErrorInfo methods */
     STDMETHOD( SetGUID )( THIS_ REFGUID ) PURE;
     STDMETHOD( SetSource )( THIS_ LPOLESTR ) PURE;
     STDMETHOD( SetDescription )( THIS_ LPOLESTR ) PURE;
@@ -842,9 +895,12 @@ typedef ICreateErrorInfo    *LPCREATEERRORINFO;
 #undef INTERFACE
 #define INTERFACE   ISupportErrorInfo
 DECLARE_INTERFACE_( ISupportErrorInfo, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ISupportErrorInfo methods */
     STDMETHOD( InterfaceSupportsErrorInfo )( THIS_ REFIID ) PURE;
 };
 typedef ISupportErrorInfo   *LPSUPPORTERRORINFO;
@@ -853,9 +909,12 @@ typedef ISupportErrorInfo   *LPSUPPORTERRORINFO;
 #undef INTERFACE
 #define INTERFACE   ITypeFactory
 DECLARE_INTERFACE_( ITypeFactory, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ITypeFactory methods */
     STDMETHOD( CreateFromTypeInfo )( THIS_ ITypeInfo *, REFIID, IUnknown ** ) PURE;
 };
 
@@ -863,9 +922,12 @@ DECLARE_INTERFACE_( ITypeFactory, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   ITypeMarshal
 DECLARE_INTERFACE_( ITypeMarshal, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* ITypeMarshal methods */
     STDMETHOD( Size )( THIS_ PVOID, DWORD, PVOID, ULONG * ) PURE;
     STDMETHOD( Marshal )( THIS_ PVOID, DWORD, PVOID, ULONG, BYTE *, ULONG * ) PURE;
     STDMETHOD( Unmarshal )( THIS_ PVOID, DWORD, ULONG, BYTE *, ULONG * ) PURE;
@@ -876,9 +938,12 @@ DECLARE_INTERFACE_( ITypeMarshal, IUnknown ) {
 #undef INTERFACE
 #define INTERFACE   IRecordInfo
 DECLARE_INTERFACE_( IRecordInfo, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IRecordInfo methods */
     STDMETHOD( RecordInit )( THIS_ PVOID ) PURE;
     STDMETHOD( RecordClear )( THIS_ PVOID ) PURE;
     STDMETHOD( RecordCopy )( THIS_ PVOID, PVOID ) PURE;
@@ -902,9 +967,12 @@ typedef IRecordInfo *LPRECORDINFO;
 #undef INTERFACE
 #define INTERFACE   IErrorLog
 DECLARE_INTERFACE_( IErrorLog, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IErrorLog methods */
     STDMETHOD( AddError )( THIS_ LPCOLESTR, EXCEPINFO * ) PURE;
 };
 typedef IErrorLog   *LPERRORLOG;
@@ -913,9 +981,12 @@ typedef IErrorLog   *LPERRORLOG;
 #undef INTERFACE
 #define INTERFACE   IPropertyBag
 DECLARE_INTERFACE_( IPropertyBag, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IPropertyBag methods */
     STDMETHOD( Read )( THIS_ LPCOLESTR, VARIANT *, IErrorLog * ) PURE;
     STDMETHOD( Write )( THIS_ LPCOLESTR, VARIANT * ) PURE;
 };

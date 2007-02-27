@@ -18,6 +18,7 @@ EXTERN_C const IID  IID_IClassFactory;
 #undef INTERFACE
 #define INTERFACE   IUnknown
 DECLARE_INTERFACE( IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
@@ -28,9 +29,12 @@ typedef IUnknown    *LPUNKNOWN;
 #undef INTERFACE
 #define INTERFACE   IClassFactory
 DECLARE_INTERFACE_( IClassFactory, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+
+    /* IClassFactory methods */
     STDMETHOD( CreateInstance )( THIS_ IUnknown *, REFIID, void ** ) PURE;
     STDMETHOD( LockServer )( THIS_ BOOL ) PURE;
 };

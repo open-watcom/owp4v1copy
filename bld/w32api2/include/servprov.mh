@@ -17,9 +17,12 @@ EXTERN_C const IID  IID_IServiceProvider;
 #undef INTERFACE
 #define INTERFACE   IServiceProvider
 DECLARE_INTERFACE_( IServiceProvider, IUnknown ) {
+    /* IUnknown methods */
     STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
+    
+    /* IServiceProvider methods */
     STDMETHOD( QueryService )( THIS_ REFGUID, REFIID, void ** ) PURE;
 };
 typedef IServiceProvider    *LPSERVICEPROVIDER;
