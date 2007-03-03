@@ -230,6 +230,7 @@ positive_tests = &
     ret02.$(exe) &
     ret03.$(exe) &
     ret04.$(exe) &
+    seh01.$(exe) &
     sizeof01.$(exe) &
     sizeof02.$(exe) &
     src01.$(exe) &

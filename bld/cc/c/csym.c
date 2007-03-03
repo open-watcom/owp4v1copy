@@ -226,11 +226,11 @@ void SpcSymInit( void )
     SymSTOSD = MakeFunction( "__STOSD", GetType( TYPE_VOID ) );
 #endif
 #ifdef __SEH__
-    SymTryInit = MakeFunction( "__TryInit2", typ );      /* 05-dec-92 */
-    SymTryFini = MakeFunction( "__TryFini2", typ );      /* 05-dec-92 */
-    SymExcept  = MakeFunction( "__Except2", typ );       /* 05-dec-92 */
-    SymFinally = MakeFunction( "__Finally2", typ );      /* 23-mar-94 */
-    SymTryUnwind = MakeFunction( "__TryUnwind2", typ );  /* 16-apr-94 */
+    SymTryInit = MakeFunction( "__TryInit", typ );      /* 05-dec-92 */
+    SymTryFini = MakeFunction( "__TryFini", typ );      /* 05-dec-92 */
+    SymExcept  = MakeFunction( "__Except", typ );       /* 05-dec-92 */
+    SymFinally = MakeFunction( "__Finally", typ );      /* 23-mar-94 */
+    SymTryUnwind = MakeFunction( "__TryUnwind", typ );  /* 16-apr-94 */
 #endif
     SymCover = MakeFunction( "__COVERAGE", typ );       /* 04-apr-92 */
     MakeFunction( "__C", typ );                 /* 04-apr-92 */

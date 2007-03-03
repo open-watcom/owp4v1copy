@@ -216,8 +216,8 @@ rtn_info RTInfo[RT_NOP-BEG_RTNS+1] = {
 "__FDIVR",  OP_NOP,        0,     RL_,            RL_,            RL_,
 "__FCMP",   OP_NOP,        0,     RL_,            RL_,            RL_,
 "__FCMPR",  OP_NOP,        0,     RL_,            RL_,            RL_,
-"__TryInit2",OP_NOP,       0,     RL_,            RL_,            RL_,
-"__TryUnwind2",OP_NOP,     0,     RL_,            RL_,            RL_,
+"__TryInit",OP_NOP,        0,     RL_,            RL_,            RL_,
+"__TryUnwind",OP_NOP,      0,     RL_,            RL_,            RL_,
 
 /* End of special runtime routines called from the FAST -od codegen */
 
