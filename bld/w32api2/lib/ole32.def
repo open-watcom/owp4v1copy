@@ -97,7 +97,10 @@ CreateGenericComposite
 CreateItemMoniker
 CreateObjrefMoniker
 CreatePointerMoniker
+CreateStdProgressIndicator
 DcomChannelSetHResult
+FmtIdToPropStgName
+FreePropVariantArray
 GetClassFile
 GetRunningObjectTable
 IIDFromString
@@ -105,8 +108,15 @@ MkParseDisplayName
 MonikerCommonPrefixWith
 MonikerRelativePathTo
 ProgIDFromCLSID
+PropStgNameToFmtId
+PropVariantCopy
+PropVariantClear
+StgConvertPropertyToVariant
+StgConvertVariantToProperty
 StgCreateDocfile
 StgCreateDocfileOnILockBytes
+StgCreatePropSetStg
+StgCreatePropStg
 StgCreateStorageEx
 StgGetIFillLockBytesOnFile
 StgGetIFillLockBytesOnILockBytes
@@ -114,6 +124,7 @@ StgIsStorageFile
 StgIsStorageILockBytes
 StgOpenAsyncDocfileOnIFillLockBytes
 StgOpenLayoutDocfile
+StgOpenPropStg
 StgOpenStorage
 StgOpenStorageEx
 StgOpenStorageOnILockBytes

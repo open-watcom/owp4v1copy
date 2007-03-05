@@ -28,6 +28,7 @@ headers =            &
         ole2.h       &
         oleidl.h     &
         poppack.h    &
+        propidl.h    &
         prsht.h      &
         pshpack1.h   &
         pshpack2.h   &

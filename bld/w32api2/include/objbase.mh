@@ -70,6 +70,7 @@
 #include <unknwn.h>
 #include <objidl.h>
 #include <urlmon.h>
+#include <propidl.h>
 
 /* Storage format data type */
 typedef DWORD   STGFMT;
@@ -296,6 +297,7 @@ WINOLEAPI               CreateGenericComposite( LPMONIKER, LPMONIKER, LPMONIKER 
 WINOLEAPI               CreateItemMoniker( LPCOLESTR, LPCOLESTR, LPMONIKER * );
 WINOLEAPI               CreateObjrefMoniker( LPUNKNOWN, LPMONIKER * );
 WINOLEAPI               CreatePointerMoniker( LPUNKNOWN, LPMONIKER * );
+WINOLEAPI               CreateStdProgressIndicator( HWND, LPCOLESTR, IBindStatusCallback *, IBindStatusCallback ** );
 WINOLEAPI               GetClassFile( LPCOLESTR, CLSID * );
 WINOLEAPI               GetRunningObjectTable( DWORD, LPRUNNINGOBJECTTABLE * );
 WINOLEAPI               IIDFromString( LPOLESTR, LPIID );
