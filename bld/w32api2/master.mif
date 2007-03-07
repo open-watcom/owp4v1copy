@@ -26,6 +26,7 @@ headers =            &
         objbase.h    &
         objidl.h     &
         ole2.h       &
+        oleauto.h    &
         oleidl.h     &
         poppack.h    &
         propidl.h    &
