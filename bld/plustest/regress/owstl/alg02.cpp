@@ -193,14 +193,46 @@ bool sort_test( )
 }
 
 
+bool bsearch_test( )
+{
+    using std::binary_search;
+    
+    static const int data[] = { 0, 2, 4, 6, 8, 10, 12, 14, 16, 18 };
+    
+    if(  binary_search( data, data +  0,  2 ) ) FAIL;
+    if( !binary_search( data, data +  1,  0 ) ) FAIL;
+    if(  binary_search( data, data +  1,  2 ) ) FAIL;
+    if( !binary_search( data, data +  2,  0 ) ) FAIL;
+    if( !binary_search( data, data +  2,  2 ) ) FAIL;
+    if(  binary_search( data, data +  2,  4 ) ) FAIL;
+    if( !binary_search( data, data +  3,  0 ) ) FAIL;
+    if( !binary_search( data, data +  3,  2 ) ) FAIL;
+    if( !binary_search( data, data +  3,  4 ) ) FAIL;
+    if(  binary_search( data, data +  3,  6 ) ) FAIL;
+    if( !binary_search( data, data + 10,  0 ) ) FAIL;
+    if( !binary_search( data, data + 10, 18 ) ) FAIL;
+    if( !binary_search( data, data + 10,  8 ) ) FAIL;
+    if( !binary_search( data, data + 10, 10 ) ) FAIL;
+    if( !binary_search( data, data + 10,  4 ) ) FAIL;
+    if( !binary_search( data, data + 10, 12 ) ) FAIL;
+    if(  binary_search( data, data + 10,  1 ) ) FAIL;
+    if(  binary_search( data, data + 10, -1 ) ) FAIL;
+    if(  binary_search( data, data + 10, 17 ) ) FAIL;
+    if(  binary_search( data, data + 10, 19 ) ) FAIL;
+    if(  binary_search( data, data + 10,  9 ) ) FAIL;
+    return( true );
+}
+
+
 int main( )
 {
     int rc = 0;
     int original_count = heap_count( );
 
     try {
-        if( !heap_test( ) || !heap_ok( "t01" ) ) rc = 1;
-        if( !sort_test( ) || !heap_ok( "t02" ) ) rc = 1;
+        if( !heap_test( )    || !heap_ok( "t01" ) ) rc = 1;
+        if( !sort_test( )    || !heap_ok( "t02" ) ) rc = 1;
+        if( !bsearch_test( ) || !heap_ok( "t03" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";

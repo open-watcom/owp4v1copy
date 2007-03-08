@@ -1002,6 +1002,7 @@ namespace _ow {
 // sort( RandomAccess, RandomAccess, Compare )
 // *******************************************
 template< class RandomAccess, class Compare >
+inline
 void sort( RandomAccess first, RandomAccess last, Compare comp )
 {
     if( first == last ) return;
@@ -1011,14 +1012,62 @@ void sort( RandomAccess first, RandomAccess last, Compare comp )
 // sort( RandomAccess, RandomAccess )
 // **********************************
 template< class RandomAccess >
+inline
 void sort( RandomAccess first, RandomAccess last )
 {
     if( first == last ) return;
-    _ow::quick_sort(
-      first, 0, (last - first) - 1,
-      std::less< typename std::iterator_traits< RandomAccess >::value_type >( )
+    _ow::quick_sort(first, 0, (last - first) - 1,
+      std::less< typename iterator_traits< RandomAccess >::value_type >( )
     );
-}    
+}
+
+// binary_search( ForwardIterator, ForwardIterator, const Type &, Compare )
+// ************************************************************************
+template< class ForwardIterator, class Type, class Compare >
+inline
+bool binary_search( ForwardIterator first, ForwardIterator last,
+                    const Type &value,
+                    Compare comp )
+{
+    typedef typename
+        iterator_traits< ForwardIterator >::difference_type length_type;
+        
+    ForwardIterator p1( first );
+    length_type len = last - first;   // This should really use distance( ).
+    length_type mid = len/2;
+    ForwardIterator p2( p1 );
+    advance( p2, mid );
+
+    while( len > 0 ) {
+        if( comp( value, *p2 ) ) {
+            len = mid;
+            mid = len/2;
+            p2  = p1;
+            advance( p2, mid );
+        }
+        else if( comp( *p2, value ) ) {
+            len = mid + ((len % 2) == 0 ? 0 : 1 ) - 1;
+            mid = len/2;
+            p1  = ++p2;
+            advance( p2, mid );
+        }
+        else {
+            return( true );
+        }
+    }
+    return( false );
+}
+
+// binary_search( ForwardIterator, ForwardIterator, const Type & )
+// ***************************************************************
+template< class ForwardIterator, class Type >
+inline
+bool binary_search( ForwardIterator first, ForwardIterator last,
+                    const Type &value )
+{
+    return( binary_search( first, last, value,
+      std::less< typename iterator_traits< ForwardIterator >::value_type >( ) ) );
+}
 
 // min( const Type &, const Type & )
 // *********************************
