@@ -30,6 +30,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/hcdos/prereq.ctl ]
 [ INCLUDE <DEVDIR>/bmp2eps/prereq.ctl ]
 [ INCLUDE <DEVDIR>/ssl/prereq.ctl ]
+[ INCLUDE <DEVDIR>/wpack/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstub/lang.ctl ]
 [ INCLUDE <DEVDIR>/vi/prereq.ctl ]
 #        Prebuild new WLIB for build process
@@ -165,7 +166,6 @@ echo Bootstrapping compiler using GNU tools...
 #[ INCLUDE <DEVDIR>/version/lang.ctl ]
 [ INCLUDE <DEVDIR>/dmpobj/lang.ctl ]
 [ INCLUDE <DEVDIR>/exedump/lang.ctl ]
-[ INCLUDE <DEVDIR>/wpack/lang.ctl ]
 [ INCLUDE <DEVDIR>/cvpack/lang.ctl ]
 [ INCLUDE <DEVDIR>/wic/lang.ctl ]
 [ INCLUDE <DEVDIR>/redist/lang.ctl ]

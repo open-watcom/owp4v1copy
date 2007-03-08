@@ -73,4 +73,10 @@ set CCCMD=accopy
 #==================
     set LOGFNAME=boot
 
+# Configure executable extension: DOS, OS/2 and Windows use .exe, others nothing
+
+[ BLOCK <BUILD_PLATFORM> nt386 ntaxp os2386 dos386 ]
+#===================================================
+    set CMDEXT=.exe
+
 [ BLOCK . . ]
