@@ -1,0 +1,13 @@
+LIBRARY OLESVR32.DLL
+EXPORTS
+OleBlockServer
+OleQueryServerVersion
+OleRegisterServer
+OleRegisterServerDoc
+OleRenameServerDoc
+OleRevertServerDoc
+OleRevokeObject
+OleRevokeServer
+OleRevokeServerDoc
+OleSavedServerDoc
+OleUnblockServer

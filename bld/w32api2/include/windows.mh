@@ -49,7 +49,11 @@
     #include <winefs.h>
     #include <winscard.h>
     #include <winspool.h>
-    #include <ole2.h>
+    #ifdef INC_OLE1
+        #include <ole.h>
+    #else
+        #include <ole2.h>
+    #endif
 #endif
 
 #endif /* _WINDOWS_H_INCLUDED */

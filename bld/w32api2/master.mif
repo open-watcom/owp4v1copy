@@ -25,6 +25,7 @@ headers =            &
         oaidl.h      &
         objbase.h    &
         objidl.h     &
+        ole.h        &
         ole2.h       &
         oleauto.h    &
         oleidl.h     &
