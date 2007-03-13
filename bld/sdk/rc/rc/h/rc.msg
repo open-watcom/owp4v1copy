@@ -306,3 +306,6 @@ pick(   ERR_NONOS2_RES_TO_OS2_EXE,
 pick(   ERR_BAD_RES_TYPE,
        "%ld is not a valid type id.",
        "%ld ‚Í³‚µ‚¢ƒŠƒ\[ƒXID‚Å‚Í‚ ‚è‚Ü‚¹‚ñ." )
+pick(   ERR_WIN16_TOO_MANY_CONTROLS,
+        "Too many controls for Win16 resource '%d' > 255.",
+        "Too many controls for Win16 resource '%d' > 255." )

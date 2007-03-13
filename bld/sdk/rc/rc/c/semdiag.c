@@ -720,8 +720,13 @@ extern void SemWriteDialogBox( WResID *name, ResMemFlags flags,
         if(!head->StyleGiven) {
             head->u.Head.Style |= (WS_POPUP | WS_BORDER | WS_SYSMENU);
         }
-
-        head->u.Head.NumOfItems = ctrls->numctrls;
+        /* Win16 resources stores resource count in one byte thus
+           limiting number of controls to 255. */
+        if (ctrls->numctrls > 255) {
+            RcError(ERR_WIN16_TOO_MANY_CONTROLS, ctrls->numctrls);
+            goto CustomError;
+        }
+        head->u.Head.NumOfItems = ctrls->numctrls & 0xFF;
         head->u.Head.Size = size;
     }
     if(!ErrorHasOccured) {
@@ -769,6 +774,7 @@ extern void SemWriteDialogBox( WResID *name, ResMemFlags flags,
 OutputWriteError:
     RcError( ERR_WRITTING_RES_FILE, CurrResFile.filename,
                 strerror( err_code )  );
+CustomError:
     ErrorHasOccured = TRUE;
     SemFreeDialogHeader( head );
     SemFreeDiagCtrlList( ctrls );

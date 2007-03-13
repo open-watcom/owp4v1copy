@@ -102,7 +102,7 @@ typedef struct FullDialogBoxControl {
 typedef struct FullDiagCtrlList {
     FullDialogBoxControl *          head;
     FullDialogBoxControl *          tail;
-    uint_8                          numctrls;
+    uint_16                         numctrls; /* Win16 only support upto 255 controls. */
 } FullDiagCtrlList;
 
 typedef struct FullDiagCtrlOptions {
