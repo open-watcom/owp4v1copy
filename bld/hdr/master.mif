@@ -72,6 +72,9 @@ common_no_ext = &
 
 common = &
         $(common_no_ext) &
+        _algmut.h &
+        _algnmod.h &
+        _algsort.h &
         _comdef.h &
         _hash.h &
         _rbtree.h &

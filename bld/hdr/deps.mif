@@ -120,6 +120,9 @@ vector       : $(vector_deps)
 
 # The follow describe the dependences for the various *.h files.
 
+_algmut.h       : ../watcom/_algmut.mh ../readonly.sp ../crwatcnt.sp
+_algnmod.h      : ../watcom/_algnmod.mh ../readonly.sp ../crwatcnt.sp
+_algsort.h      : ../watcom/_algsort.mh ../readonly.sp ../crwatcnt.sp
 _comdef.h       : ../watcom/_comdef.mh ../readonly.sp ../crwat.sp
 _hash.h         : ../watcom/_hash.mh ../readonly.sp ../crwatcnt.sp
 _rbtree.h       : ../watcom/_rbtree.mh ../readonly.sp ../crwatcnt.sp
