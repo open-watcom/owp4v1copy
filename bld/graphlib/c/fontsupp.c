@@ -35,7 +35,7 @@
 #include "dotfunc.h"
 
 
-typedef struct font_entry {
+typedef _Packed struct font_entry {
     short               type;       // 0 == bitmap, 1 == vector
     short               ascent;     // distance from top to baseline (in pixels)
     short               width;      // character width in pixels, 0 == proportional
