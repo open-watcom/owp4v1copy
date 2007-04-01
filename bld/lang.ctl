@@ -39,6 +39,8 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/posix/prereq.ctl ]
 #        Prebuild wres.lib and new WRC with OS/2 support for build process
 [ INCLUDE <DEVDIR>/sdk/rc/prereq.ctl ]
+#        Prebuild parsedlg tool for build process
+[ INCLUDE <DEVDIR>/parsedlg/prereq.ctl ]
 #
 #        Prebuild newest WASM version for build process
 [ INCLUDE <DEVDIR>/wasm/prereq.ctl ]
@@ -170,6 +172,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/wic/lang.ctl ]
 [ INCLUDE <DEVDIR>/redist/lang.ctl ]
 [ INCLUDE <DEVDIR>/wgml/lang.ctl ]
+[ INCLUDE <DEVDIR>/parsedlg/lang.ctl ]
 [ INCLUDE <DOC_ROOT>/lang.ctl ]
 #
 #        Do CDSAY to see end time

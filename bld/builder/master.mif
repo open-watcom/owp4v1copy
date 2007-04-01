@@ -64,7 +64,6 @@ builder.exe : builder.obj
 # exists only as dos version.
 runasdos.exe: runasdos.obj
         $(cl) $(clflags) $<
-        cp   $^. $(%OWBINDIR)/parsedlg
         cp   $^. $(%OWBINDIR)/wgml
 
 cdsay.exe : cdsay.obj equals.obj

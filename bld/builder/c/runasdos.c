@@ -33,7 +33,7 @@
 * relative to OpenWatcom's OWROOT; it is expected that dosemu executes an OW's
 * setvars.bat which sets D: to OWROOT .
 * This program should be copied under the name it should run as in the build/binl
-* directory, such as parsedlg, wgml, hcdos .
+* directory, such as wgml, hcdos .
 ****************************************************************************/
 
 #include <env.h>
