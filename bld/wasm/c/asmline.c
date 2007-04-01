@@ -43,6 +43,7 @@
 #include "asmexpnd.h"
 #include "macro.h"
 #include "asminput.h"
+#include "pathgrp.h"
 
 extern int              in_prologue;
 
@@ -353,16 +354,15 @@ int InputQueueFile( char *path )
     FILE        *file;
     file_list   *new;
     char        fullpath[ _MAX_PATH ];
-    char        *drive, *dir, *fname, *ext;
-    char        buffer[ _MAX_PATH2 ];
     char        *tmp;
+    PGROUP      pg;
 
-    _splitpath2( path, buffer, &drive, &dir, &fname, &ext );
-    _makepath( fullpath, drive, dir, fname, ext );
+    _splitpath2( path, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+    _makepath( fullpath, pg.drive, pg.dir, pg.fname, pg.ext );
     file = fopen( fullpath, "r" );
     tmp = path;
     if( file == NULL && IncludePath != NULL ) {
-        tmp = buffer;
+        tmp = pg.buffer;
         file = open_file_in_include_path( path, tmp );
     }
 

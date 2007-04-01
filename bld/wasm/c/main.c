@@ -49,6 +49,7 @@
 #include "swchar.h"
 #include "asminput.h"
 #include "asmerr.h"
+#include "pathgrp.h"
 
 #ifdef __OSI__
   #include "ostype.h"
@@ -388,12 +389,10 @@ static void get_fname( char *token, int type )
  * fill in default object file name if it is null
  */
 {
-    char        *def_drive, *def_dir, *def_fname, *def_ext;
-    char        *drive, *dir, *fname, *ext;
-    char        buffer[ _MAX_PATH2 ];
-    char        buffer2[ _MAX_PATH2 ];
     char        name [ _MAX_PATH  ];
     char        msgbuf[80];
+    PGROUP      pg;
+    PGROUP      def;
 
     /* get filename for source file */
 
@@ -406,63 +405,63 @@ static void get_fname( char *token, int type )
             Fatal( MSG_TOO_MANY_FILES );
         }
 
-        _splitpath2( token, buffer, &drive, &dir, &fname, &ext );
-        if( *ext == '\0' ) {
-            ext = ASM_EXT;
+        _splitpath2( token, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
+        if( *pg.ext == '\0' ) {
+            pg.ext = ASM_EXT;
         }
-        _makepath( name, drive, dir, fname, ext );
+        _makepath( name, pg.drive, pg.dir, pg.fname, pg.ext );
         AsmFiles.fname[ASM] = AsmAlloc( strlen( name ) + 1 );
         strcpy( AsmFiles.fname[ASM], name );
 
-        _makepath( name, drive, dir, NULL, NULL );
+        _makepath( name, pg.drive, pg.dir, NULL, NULL );
         /* add the source path to the include path */
         AddStringToIncludePath( name );
 
         if( AsmFiles.fname[OBJ] == NULL ) {
             /* set up default object and error filename */
-            ext = OBJ_EXT;
-            _makepath( name, NULL, NULL, fname, ext );
+            pg.ext = OBJ_EXT;
+            _makepath( name, NULL, NULL, pg.fname, pg.ext );
         } else {
-            _splitpath2( AsmFiles.fname[OBJ], buffer2, &def_drive,
-                         &def_dir, &def_fname, &def_ext );
-            if( *def_fname == NULLC )
-                def_fname = fname;
-            if( *def_ext == NULLC )
-                def_ext = OBJ_EXT;
+            _splitpath2( AsmFiles.fname[OBJ], def.buffer, &def.drive,
+                         &def.dir, &def.fname, &def.ext );
+            if( *def.fname == NULLC )
+                def.fname = pg.fname;
+            if( *def.ext == NULLC )
+                def.ext = OBJ_EXT;
 
-            _makepath( name, def_drive, def_dir, def_fname, def_ext );
+            _makepath( name, def.drive, def.dir, def.fname, def.ext );
             AsmFree( AsmFiles.fname[OBJ] );
         }
         AsmFiles.fname[OBJ] = AsmAlloc( strlen( name ) + 1 );
         strcpy( AsmFiles.fname[OBJ], name );
 
         if( AsmFiles.fname[ERR] == NULL ) {
-            ext = ERR_EXT;
-            _makepath( name, NULL, NULL, fname, ext );
+            pg.ext = ERR_EXT;
+            _makepath( name, NULL, NULL, pg.fname, pg.ext );
         } else {
-            _splitpath2( AsmFiles.fname[ERR], buffer2, &def_drive,
-                         &def_dir, &def_fname, &def_ext );
-            if( *def_fname == NULLC )
-                def_fname = fname;
-            if( *def_ext == NULLC )
-                def_ext = ERR_EXT;
-            _makepath( name, def_drive, def_dir, def_fname, def_ext );
+            _splitpath2( AsmFiles.fname[ERR], def.buffer, &def.drive,
+                         &def.dir, &def.fname, &def.ext );
+            if( *def.fname == NULLC )
+                def.fname = pg.fname;
+            if( *def.ext == NULLC )
+                def.ext = ERR_EXT;
+            _makepath( name, def.drive, def.dir, def.fname, def.ext );
             AsmFree( AsmFiles.fname[ERR] );
         }
         AsmFiles.fname[ERR] = AsmAlloc( strlen( name ) + 1 );
         strcpy( AsmFiles.fname[ERR], name );
 
         if( AsmFiles.fname[LST] == NULL ) {
-            ext = LST_EXT;
-            _makepath( name, NULL, NULL, fname, ext );
+            pg.ext = LST_EXT;
+            _makepath( name, NULL, NULL, pg.fname, pg.ext );
         } else {
-            _splitpath2( AsmFiles.fname[LST], buffer2, &def_drive,
-                         &def_dir, &def_fname, &def_ext );
-            if( *def_fname == NULLC )
-                def_fname = fname;
-            if( *def_ext == NULLC )
-                def_ext = LST_EXT;
-            _makepath( name, def_drive, def_dir, def_fname, def_ext );
+            _splitpath2( AsmFiles.fname[LST], def.buffer, &def.drive,
+                         &def.dir, &def.fname, &def.ext );
+            if( *def.fname == NULLC )
+                def.fname = pg.fname;
+            if( *def.ext == NULLC )
+                def.ext = LST_EXT;
+            _makepath( name, def.drive, def.dir, def.fname, def.ext );
             AsmFree( AsmFiles.fname[LST] );
         }
         AsmFiles.fname[LST] = AsmAlloc( strlen( name ) + 1 );
@@ -470,22 +469,22 @@ static void get_fname( char *token, int type )
 
     } else {
         /* get filename for object, error, or listing file */
-        _splitpath2( token, buffer, &drive, &dir, &fname, &ext );
+        _splitpath2( token, pg.buffer, &pg.drive, &pg.dir, &pg.fname, &pg.ext );
         if( AsmFiles.fname[ASM] != NULL ) {
-            _splitpath2( AsmFiles.fname[ASM], buffer2, &def_drive,
-                         &def_dir, &def_fname, &def_ext );
-            if( *fname == NULLC ) {
-                fname = def_fname;
+            _splitpath2( AsmFiles.fname[ASM], def.buffer, &def.drive,
+                         &def.dir, &def.fname, &def.ext );
+            if( *pg.fname == NULLC ) {
+                pg.fname = def.fname;
             }
         }
-        if( *ext == NULLC ) {
+        if( *pg.ext == NULLC ) {
             switch( type ) {
-            case ERR:   ext = ERR_EXT;  break;
-            case LST:   ext = LST_EXT;  break;
-            case OBJ:   ext = OBJ_EXT;  break;
+            case ERR:   pg.ext = ERR_EXT;  break;
+            case LST:   pg.ext = LST_EXT;  break;
+            case OBJ:   pg.ext = OBJ_EXT;  break;
             }
         }
-        _makepath( name, drive, dir, fname, ext );
+        _makepath( name, pg.drive, pg.dir, pg.fname, pg.ext );
         if( AsmFiles.fname[type] != NULL ) {
             AsmFree( AsmFiles.fname[type] );
         }
