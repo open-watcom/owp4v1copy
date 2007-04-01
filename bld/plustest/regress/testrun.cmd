@@ -78,7 +78,7 @@ cd gstring
 call testrun.cmd
 cd ..
 cd inline
-call onetest.cmd
+call testrun.cmd
 cd ..
 cd jam
 call testrun.cmd
