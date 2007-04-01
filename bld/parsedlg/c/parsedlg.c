@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  parse Windows dialog source file and 
-*               convert it into OS/2 dialog source file format
+* Description:  Parse Windows dialog resource script and 
+*               convert it into OS/2 dialog resource script.
 *
 ****************************************************************************/
 
@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <limits.h>
+#include "watcom.h"
 
 #include "parsedlg.h"
 
@@ -118,7 +119,7 @@ void disp_usage( void )
     
     p = usage;
     while( *p ) {
-        printf( "%s\n", p++ );
+        printf( "%s\n", *p++ );
     }
 }
 
@@ -284,7 +285,7 @@ char *skip_keyword( char *str, int *plen )
         }
     } else if( *str != '\0' ) {
         len = 1;
-        for( p = str + 1; isdigit( *p ) || ( flag == 3 ) && isalpha( *p ); ++p ) {
+        for( p = str + 1; isdigit( *p ) || ((flag == 3) && isalpha( *p )); ++p ) {
             ++len;
         }
     }
@@ -744,7 +745,7 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
 /***************************************************************/
 {
     long    font_size = 0;
-    char    *font_name;
+    char    *font_name = NULL;
     char    *separators = " \t,|";
     int     font_set = 0;
     int     hidden_dialog = 0;
@@ -752,7 +753,7 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
     char    *p;
     char    **p2;
     int     len;
-    int     sysmodal, visible;
+    int     sysmodal, visible = 0;
     int     i;
     
     ++dialogs_cnt;
@@ -868,7 +869,7 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
     if(( font_name != NULL ) || ( font_size != 0 )) {
         fprintf( fo, "\tPRESPARAMS PP_FONTNAMESIZE, " );
         if( font_size != 0 ) {
-            fprintf( fo, "\"%d.%s\"\n", font_size, font_name );
+            fprintf( fo, "\"%ld.%s\"\n", font_size, font_name );
         } else {
             fprintf( fo, "\"%s\"\n", font_name );
         }
