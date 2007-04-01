@@ -43,7 +43,7 @@
 #include "mexec.h"
 #include "mmisc.h"
 #include "mlex.h"
-#include "mpathgrp.h"
+#include "pathgrp.h"
 #include "mpreproc.h"
 #include "mrcmsg.h"
 #include "msg.h"

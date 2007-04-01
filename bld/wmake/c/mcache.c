@@ -34,7 +34,7 @@
     #include <stdlib.h>
     #include <string.h>
     #include "autodept.h"
-    #include "mpathgrp.h"
+    #include "pathgrp.h"
 #endif
 #include <unistd.h>
 #if defined( __UNIX__ )

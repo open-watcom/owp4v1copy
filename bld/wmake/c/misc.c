@@ -42,7 +42,7 @@
 #include "massert.h"
 #include "mmemory.h"
 #include "mmisc.h"
-#include "mpathgrp.h"
+#include "pathgrp.h"
 #include "mtypes.h"
 #include "mlex.h"
 

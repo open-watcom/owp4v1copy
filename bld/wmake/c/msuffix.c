@@ -39,7 +39,7 @@
 #include "mmemory.h"
 #include "mhash.h"
 #include "mmisc.h"
-#include "mpathgrp.h"
+#include "pathgrp.h"
 #include "mrcmsg.h"
 #include "msg.h"
 #include "msuffix.h"

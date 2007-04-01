@@ -50,7 +50,7 @@
 #include "mmemory.h"
 
 #include "mmisc.h"
-#include "mpathgrp.h"
+#include "pathgrp.h"
 #include "mpreproc.h"
 #include "mrcmsg.h"
 #include "msg.h"
