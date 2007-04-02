@@ -46,7 +46,7 @@
 
 #define MAX_PARM_LEN    45
 
-#define isEOL(x)    ((x=='\n')||(x=='\r')||(x==0x1A))
+#define isWSorCtrlZ(x)  (isspace(x)||(x==0x1A))
 
 #define ADD_AFTER   1
 #define ADD_BEFORE  0
@@ -105,9 +105,10 @@ char *my_fgets( char *buf, int n, FILE *fp )
     char    *rc;
     int     i;
     
-    rc = fgets( buf, n, fp );
-    for( i = strlen( buf ); i && isEOL( buf[ i - 1] ); ) {
-        buf[ --i ] = '\0';
+    if( (rc = fgets( buf, n, fp )) != NULL ) {
+        for( i = strlen( buf ); i && isWSorCtrlZ( buf[ i - 1] ); --i ) {
+            buf[ i - 1 ] = '\0';
+        }
     }
     return( rc );
 }
@@ -222,20 +223,21 @@ int check_statement( char *str )
 /******************************/
 {
     char    buff1[ MAX_LINE_LEN ];
+    char    *p;
     int     i;
     
     if( *str != '\0' ) {
+        while( isspace( *str ) )
+            ++str;
         strcpy( buff1, str );
         strupr( buff1 );
+        p = strtok( buff1, " \t," );
         for( i = 0; i < CTRL_TYPE_CNT; i++ ) {
-            if( strstr( buff1, control_type_win[ i ] ) != NULL ) {
-                if((( i != T_CHECKBOX ) || ( strstr( buff1, "AUTOCHECKBOX" ) == NULL ))
-                    && (( i != T_RADIOBUTTON ) || ( strstr( buff1, "AUTORADIOBUTTON" ) == NULL ))) {
-                    return( 1 );
-                }
+            if( strcmp( p, control_type_win[ i ] ) == 0 ) {
+                return( 1 );
             }
         }
-        if( strstr( buff1, "END" ) != NULL ) {
+        if( strcmp( p, "END" ) == 0 ) {
             return( 1 );
         }
     }
