@@ -366,7 +366,7 @@ control_type process_parms( char *parms[], int parms_cnt, char **win_tab,
     for( i = 0; i < parms_cnt; ++i ) {
         if( *(parms[ i ]) != '\0' ) {
             strcpy( buff1, parms[ i ] );
-            if( tab_cnt != 4 )
+            if( win_tab != font_win ) 
                 strupr( buff1 );
             fn( keyword, parms, control, i, tab_cnt, buff1, win_tab, os2_tab, &retval );
         }
