@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <time.h>
 #include <errno.h>
 #ifdef __WATCOMC__
@@ -75,6 +76,8 @@
 
 #define START_CHAR      'a'
 #define END_CHAR        'h'
+
+#define isWSorCtrlZ(x)  (isspace(x) || (x==0x1A))
 
 
 static bool     noEraseFileList;
@@ -303,6 +306,7 @@ void AutoSaveInit( void )
     int         handle;
     int         off;
     int         old_len;
+    int         i;
 
     /*
      * initialize tmpname
@@ -354,7 +358,8 @@ void AutoSaveInit( void )
             f = fdopen( handle, "r" );
             if( f != NULL ) {
                 while( fgets( path2, FILENAME_MAX, f ) != NULL ) {
-                    path2[ strlen( path2 ) - 1 ] = 0;
+                    for( i = strlen( path2 ); i && isWSorCtrlZ( path2[ i - 1] ); --i )
+                        path2[ i - 1 ] = '\0';
                     NextWord1( path2, path );
                     RemoveLeadingSpaces( path2 );
                     NewFile( path, FALSE );
@@ -456,6 +461,7 @@ void RemoveFromAutoSaveList( void )
     char        path2[FILENAME_MAX];
     char        data[FILENAME_MAX];
     bool        found;
+    int         i;
 
     if( !AutoSaveInterval ) {
         return;
@@ -483,7 +489,8 @@ void RemoveFromAutoSaveList( void )
         return;
     }
     while( fgets( path2, FILENAME_MAX, f ) != NULL ) {
-        path2[ strlen(path2) - 1 ] = 0;
+        for( i = strlen( path2 ); i && isWSorCtrlZ( path2[ i - 1] ); --i )
+            path2[ i - 1 ] = '\0';
         NextWord1( path2, data );
         RemoveLeadingSpaces( path2 );
         if( !strcmp( path, path2 ) ) {
@@ -492,7 +499,9 @@ void RemoveFromAutoSaveList( void )
                 found = TRUE;
                 remove( path2 );
                 while( fgets( data, FILENAME_MAX, f ) != NULL ) {
-                    MyFprintf( f2, "%s", data );
+                    for( i = strlen( data ); i && isWSorCtrlZ( data[ i - 1] ); --i )
+                        data[ i - 1 ] = '\0';
+                    MyFprintf( f2, "%s\n", data );
                 }
                 break;
             }

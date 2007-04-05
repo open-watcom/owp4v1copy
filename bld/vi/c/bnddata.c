@@ -45,8 +45,12 @@
 #endif
 #include "vi.h"
 
-static char magicCookie[]="CGEXXX";
+#define isWSorCtrlZ(x)  (isspace(x) || (x==0x1A))
+
+static char magicCookie[] = "CGEXXX";
+
 #define MAGIC_COOKIE_SIZE sizeof( magicCookie )
+
 static long *dataOffsets;
 static short *entryCounts,dataFcnt;
 static char *dataFnames;
@@ -214,17 +218,14 @@ void SpecialFclose( GENERIC_FILE *gf )
  */
 int SpecialFgets( char *buff, int max, GENERIC_FILE *gf )
 {
-    void        *tmp;
-    int         i,j;
+    int         i, j;
 
     switch( gf->type ) {
     case GF_FILE:
-        tmp = fgets( buff, max, gf->data.f );
-        if( tmp == NULL ) {
+        if( fgets( buff, max, gf->data.f ) == NULL )
             return( -1 );
-        }
-        i = strlen( buff ) - 1;
-        buff[ i ] = 0;
+        for( i = strlen( buff ); i && isWSorCtrlZ( buff[ i - 1] ); --i )
+            buff[ i - 1 ] = '\0';
         return( i );
     case GF_BOUND:
         if( gf->gf.a.currline >= gf->gf.a.maxlines ) {

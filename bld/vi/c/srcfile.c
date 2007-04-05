@@ -36,6 +36,8 @@
 #include "vi.h"
 #include "source.h"
 
+#define isEOL(x)        ((x==CR)||(x==LF)||(x==CTLZ))
+
 /*
  * SrcOpen - open a file
  */
@@ -123,6 +125,7 @@ int SrcOpen( sfile *curr, vlist *vl, files *fi, char *data )
 int SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
 {
     int         i;
+    int         j;
     char        id[MAX_SRC_LINE],v1[MAX_SRC_LINE];
 
     /*
@@ -149,9 +152,9 @@ int SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
         return( ERR_SRC_FILE_NOT_OPEN );
     }
     if( fi->ft[i] == SRCFILE_FILE ) {
-        if( fgets( id,MAX_SRC_LINE-1,fi->f[i] ) != NULL ) {
-            id[ MAX_SRC_LINE-1 ] = 0;
-            id[ strlen(id) - 1] = 0;
+        if( fgets( id,MAX_SRC_LINE,fi->f[i] ) != NULL ) {
+            for( j = strlen( id ); j && isEOL( id[ j - 1 ] ); --j )
+                id[ j - 1 ] = 0;
             VarAddStr( v1, id, vl );
         } else {
             fclose( fi->f[i] );

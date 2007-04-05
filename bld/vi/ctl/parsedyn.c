@@ -31,25 +31,27 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+
+#define MAX_LINE_LEN    200
+
+#define isWSorCtrlZ(x)  (isspace(x) || (x==0x1A))
 
 static char White_space[]=" \t";
 
 static int Line = 1;
 
-static char *get_line(
-/********************/
+static char *get_line( char *buf, FILE *file ) 
+/********************************************/
+{
+    char    *ret;
+    int     i;
 
-    char                *buf,
-    FILE                *file
-) {
-    char                *ret;
+    for( ; (ret = fgets( buf, MAX_LINE_LEN, file )) != NULL; ) {
 
-    for( ;; ) {
-        ret = fgets( buf, 200, file );
-        if( ret == NULL ) {
-            break;
+        for( i = strlen( buf ); i && isWSorCtrlZ( buf[ i - 1] ); --i ) {
+            buf[ i - 1 ] = '\0';
         }
-        *strrchr( ret, '\n' ) = '\0';
         ++Line;
 
         ret += strspn( ret, White_space );
@@ -62,12 +64,10 @@ static char *get_line(
     return( ret );
 }
 
-int empty_data(
-/*************/
-
-    char                *ret
-) {
-    char                *end;
+int empty_data( char *ret ) 
+/*************************/
+{
+    char    *end;
 
     if( *ret == '*' ) {
         for( end = ret+1;; ++end ) {
@@ -82,15 +82,12 @@ int empty_data(
     return( 0 );
 }
 
-int main(
-/*******/
-
-    int                 argc,
-    char                *argv[]
-) {
+int main( int argc, char *argv[] ) 
+/********************************/
+{
     FILE                *in;
     FILE                *out;
-    char                buf[200];
+    char                buf[ MAX_LINE_LEN ];
     int                 elt;
     int                 items;
     char                *start;
@@ -117,8 +114,8 @@ int main(
         return( -1 );
     }
 
-   fputs(
-    "/**** DO NOT MODIFY THIS FILE BY HAND. CREATED BY PARSEDYN ****/\n\n\n",
+    fputs(
+     "/**** DO NOT MODIFY THIS FILE BY HAND. CREATED BY PARSEDYN ****/\n\n\n",
                                                                         out );
     /* Create Data struct definition */
     fputs( "struct {\n", out );

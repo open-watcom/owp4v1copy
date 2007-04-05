@@ -4,6 +4,6 @@ host_os  = nt
 host_cpu = axp
 
 clib_ctags = 1
-def_flags  = -d__ENABLE_FNAME_PROCESSING__
+def_flags  = -D__ENABLE_FNAME_PROCESSING__
 
 !include ../master.mif

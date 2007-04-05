@@ -37,6 +37,8 @@
 #include <malloc.h>
 #include "ctags.h"
 
+#define isWSorCtrlZ(x)  (isspace(x) || (x==0x1A))
+
 static char     **tagList;
 
 /*
@@ -165,13 +167,15 @@ void ReadExtraTags( char *fname )
 {
     FILE        *f;
     char        res[MAX_STR];
+    int         i;
 
     f = fopen( fname, "r" );
     if( f == NULL ) {
         return;
     }
     while( fgets( res, sizeof( res ), f ) != NULL ) {
-        res[ strlen(res) -1 ] = 0;
+        for( i = strlen( res ); i && isWSorCtrlZ( res[ i - 1] ); --i )
+            res[ i - 1 ] = '\0';
         addToTagList( res );
     }
     fclose( f );

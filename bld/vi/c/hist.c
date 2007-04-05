@@ -33,7 +33,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "vi.h"
+
+#define isWSorCtrlZ(x)  (isspace(x) || (x==0x1A))
 
 static bool historyLoaded;
 
@@ -68,6 +71,7 @@ void LoadHistory( char *cmd )
     char        str[MAX_INPUT_LINE];
     int         cnt;
     read_state  rs;
+    int         i;
 
     historyLoaded = TRUE;
 
@@ -79,7 +83,8 @@ void LoadHistory( char *cmd )
         cnt = 0;
         rs = READ_NONE;
         while( fgets( str, MAX_INPUT_LINE, f ) != NULL ) {
-            str[ strlen( str ) - 1 ] = 0;
+            for( i = strlen( str ); i && isWSorCtrlZ( str[ i - 1 ] ); --i )
+                str[ i - 1 ] = 0;
             if( cnt == 0 ) {
                 cnt = atoi( str );
                 rs++;

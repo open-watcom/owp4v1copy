@@ -40,25 +40,27 @@
 #include <sys/stat.h>
 #include "banner.h"
 
-char magic_cookie[]="CGEXXX";
+char    magic_cookie[] = "CGEXXX";
+
+#define MAGIC_COOKIE_SIZE sizeof( magic_cookie )
+
+#define isWSorCtrlZ(x)  (isspace(x) || (x==0x1A))
 
 #define MAX_LINE_LEN 1024
 #define FALSE 0
 #define TRUE 1
 #define COPY_SIZE 0x8000-512
-#define MAX_FILES 255
+#define MAX_DATA_FILES 255
 
-char *dats[MAX_FILES];
+char    *dats[MAX_DATA_FILES];
 
-#define MAGIC_COOKIE_SIZE sizeof( magic_cookie )
-
-short FileCount;
-long *index;
-short *entries;
-short sflag = FALSE;
-short qflag = FALSE;
-char _bf[] = "edbind.dat";
-char *bindfile=_bf;
+short   FileCount;
+long    *index;
+short   *entries;
+short   sflag = FALSE;
+short   qflag = FALSE;
+char    _bf[] = "edbind.dat";
+char    *bindfile=_bf;
 
 void Banner( void )
 {
@@ -81,7 +83,7 @@ void Abort( char *str, ... )
     va_start( al, str );
     vprintf( str, al );
     va_end( al );
-    printf("\n");
+    printf( "\n" );
     exit( 1 );
 
 } /* Abort */
@@ -107,13 +109,13 @@ void MyPrintf( char *str, ... )
 void AddDataToEXE( char *exe, char *buffer, unsigned short len,
                         unsigned long tocopy )
 {
-    int                 h,i,newh;
-    char                buff[MAGIC_COOKIE_SIZE+3];
+    int                 h, i, newh;
+    char                buff[ MAGIC_COOKIE_SIZE + 3 ];
     long                shift;
     short               taillen;
     char                *copy;
-    char                foo[128];
-    char                drive[_MAX_DRIVE],dir[_MAX_DIR];
+    char                foo[ 128 ];
+    char                drive[ _MAX_DRIVE ], dir[ _MAX_DIR ];
 
     /*
      * get files
@@ -124,24 +126,24 @@ void AddDataToEXE( char *exe, char *buffer, unsigned short len,
     }
     h = open( exe, O_RDWR | O_BINARY );
     if( h == -1 ) {
-        Abort("Fatal error opening \"%s\"",exe );
+        Abort( "Fatal error opening \"%s\"", exe );
     }
     _splitpath( exe, drive, dir, NULL, NULL );
-    _makepath( foo, drive,dir,"__cge__",".exe" );
+    _makepath( foo, drive, dir, "__cge__", ".exe" );
     newh = open( foo, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, S_IRWXU | S_IRWXG | S_IRWXO );
     if( newh == -1 ) {
-        Abort("Fatal error opening \"%s\"",foo );
+        Abort( "Fatal error opening \"%s\"", foo );
     }
 
     /*
      * get trailer
      */
-    i = lseek( h, -((long) MAGIC_COOKIE_SIZE+3L), SEEK_END );
+    i = lseek( h, -((long)MAGIC_COOKIE_SIZE + 3L), SEEK_END );
     if( i == -1 ) {
         Abort( "Initial seek error on \"%s\"", exe );
     }
-    i = read( h, buff, 3+MAGIC_COOKIE_SIZE );
-    if( i == -1) {
+    i = read( h, buff, 3 + MAGIC_COOKIE_SIZE );
+    if( i == -1 ) {
         Abort( "Read error on \"%s\"", exe );
     }
 
@@ -151,14 +153,14 @@ void AddDataToEXE( char *exe, char *buffer, unsigned short len,
      */
     if( strcmp( buff, magic_cookie ) ) {
         if( sflag ) {
-            Abort("\"%s\" does not contain configuration data!", exe);
+            Abort( "\"%s\" does not contain configuration data!", exe);
         }
     } else {
-        taillen = *( (unsigned short *) &(buff[MAGIC_COOKIE_SIZE+1]) );
-        shift = (long) -((long) taillen+(long) MAGIC_COOKIE_SIZE+3);
+        taillen = *( (unsigned short *)&(buff[ MAGIC_COOKIE_SIZE + 1 ]) );
+        shift = (long)-((long)taillen + (long)MAGIC_COOKIE_SIZE + 3);
         tocopy += shift;
     }
-    i = lseek( h,0, SEEK_SET );
+    i = lseek( h, 0, SEEK_SET );
     if( i ) {
         Abort( "Seek error on \"%s\"",exe );
     }
@@ -167,7 +169,7 @@ void AddDataToEXE( char *exe, char *buffer, unsigned short len,
      * copy crap
      */
     while( tocopy > 0 ) {
-        if( tocopy > (unsigned long) COPY_SIZE ) {
+        if( tocopy > (unsigned long)COPY_SIZE ) {
             i = read( h, copy, COPY_SIZE );
             if( i != COPY_SIZE ) {
                 Abort( "Read error on \"%s\"", exe );
@@ -176,14 +178,14 @@ void AddDataToEXE( char *exe, char *buffer, unsigned short len,
             if( i != COPY_SIZE ) {
                 Abort( "Write error on \"%s\"", foo );
             }
-            tocopy -= (unsigned long) COPY_SIZE;
+            tocopy -= (unsigned long)COPY_SIZE;
         } else {
-            i = read( h, copy, (unsigned int) tocopy );
+            i = read( h, copy, (unsigned int)tocopy );
             if( i != tocopy ) {
                 Abort( "Read error on \"%s\"", exe );
             }
-            i = write( newh, copy, (unsigned int) tocopy );
-            if( i != (int) tocopy ) {
+            i = write( newh, copy, (unsigned int)tocopy );
+            if( i != (int)tocopy ) {
                 Abort( "Write error on \"%s\"", foo );
             }
             tocopy = 0;
@@ -199,8 +201,8 @@ void AddDataToEXE( char *exe, char *buffer, unsigned short len,
         if( i != len ) {
             Abort( "write 1 error on \"%s\"", exe );
         }
-        i = write( newh, magic_cookie, MAGIC_COOKIE_SIZE+1 );
-        if( i != MAGIC_COOKIE_SIZE+1 ) {
+        i = write( newh, magic_cookie, MAGIC_COOKIE_SIZE + 1 );
+        if( i != MAGIC_COOKIE_SIZE + 1 ) {
             Abort( "write 2 error on \"%s\"", exe );
         }
         i = write( newh, &len, sizeof( short ) );
@@ -219,11 +221,11 @@ void AddDataToEXE( char *exe, char *buffer, unsigned short len,
  */
 static void GetFromEnv( char *what, char *path )
 {
-    _searchenv(what,"EDPATH",path );
-    if( path[0] != 0 ) {
+    _searchenv( what, "EDPATH", path );
+    if( path[ 0 ] != 0 ) {
         return;
     }
-    _searchenv(what,"PATH",path );
+    _searchenv( what, "PATH", path );
 
 } /* GetFromEnv */
 
@@ -232,11 +234,11 @@ static void GetFromEnv( char *what, char *path )
  */
 FILE *GetFromEnvAndOpen( char *inpath )
 {
-    char tmppath[_MAX_PATH];
+    char tmppath[ _MAX_PATH ];
 
     GetFromEnv( inpath, tmppath );
-    if( tmppath[0] != 0 ) {
-        MyPrintf(" %s...",tmppath );
+    if( tmppath[ 0 ] != 0 ) {
+        MyPrintf( " %s...", tmppath );
         return( fopen( tmppath, "r" ) );
     }
     return( NULL );
@@ -254,13 +256,13 @@ void Usage( char *msg )
     if( msg != NULL ) {
         printf( "%s\n", msg );
     }
-    printf("Usage: edbind [-?sq] [-d<datfile>] <exename>\n");
+    printf( "Usage: edbind [-?sq] [-d<datfile>] <exename>\n" );
     if( msg == NULL ) {
-        printf("\t<exename>\t     executable to add editor data to\n" );
-        printf("\tOptions -?:\t     display this message\n");
-        printf("\t\t-s:\t     strip info from executable\n");
-        printf("\t\t-q:\t     run quietly\n");
-        printf("\t\t-d<datfile>: specify data file other than edbind.dat\n");
+        printf( "\t<exename>\t     executable to add editor data to\n" );
+        printf( "\tOptions -?:\t     display this message\n" );
+        printf( "\t\t-s:\t     strip info from executable\n" );
+        printf( "\t\t-q:\t     run quietly\n" );
+        printf( "\t\t-d<datfile>: specify data file other than edbind.dat\n" );
     }
     exit( 1 );
 
@@ -273,7 +275,7 @@ static void EliminateFirstN( char *buff, short n  )
 {
     char        *buff2;
 
-    buff2 = &buff[n];
+    buff2 = &buff[ n ];
     while( *buff2 != 0 ) {
         *buff++ = *buff2++;
     }
@@ -288,13 +290,13 @@ void RemoveLeadingSpaces( char *buff )
 {
     short       k=0;
 
-    if( buff[0] == 0 ) {
+    if( buff[ 0 ] == 0 ) {
         return;
     }
-    while( isspace( buff[k] ) ) {
+    while( isspace( buff[ k ] ) ) {
         k++;
     }
-    if( k==0 ) {
+    if( k == 0 ) {
         return;
     }
     EliminateFirstN( buff, k );
@@ -310,7 +312,7 @@ void *MyAlloc( unsigned size )
 
     tmp = malloc( size );
     if( tmp == NULL ) {
-        Abort("Out of Memory!" );
+        Abort( "Out of Memory!" );
     }
     return( tmp );
 
@@ -319,27 +321,28 @@ void *MyAlloc( unsigned size )
 
 int main( int argc, char *argv[] )
 {
-    char                *buff=NULL,*buff2,*buff3;
-    char                *buffn,*buffs;
-    int                 i,cnt,bytes,lines,j,k,sl;
+    char                *buff = NULL;
+    char                *buff2, *buff3;
+    char                *buffn, *buffs;
+    int                 i, cnt, bytes, lines, j, k, sl;
     FILE                *f;
     struct stat         fs;
-    char                drive[_MAX_DRIVE],dir[_MAX_DIR];
-    char                fname[_MAX_FNAME],ext[_MAX_EXT];
-    char                path[_MAX_PATH];
-    char                tmppath[_MAX_PATH];
-    char                tmpfname[_MAX_FNAME],tmpext[_MAX_EXT];
+    char                drive[ _MAX_DRIVE ], dir[ _MAX_DIR ];
+    char                fname[ _MAX_FNAME ], ext[ _MAX_EXT ];
+    char                path[ _MAX_PATH ];
+    char                tmppath[ _MAX_PATH ];
+    char                tmpfname[ _MAX_FNAME ], tmpext[ _MAX_EXT ];
 
-    j=argc-1;
+    j = argc - 1;
     while( j > 0 ) {
-        if( argv[j][0] == '/' || argv[j][0] == '-' ) {
-            sl = strlen( argv[j] );
-            for(i=1;i<sl;i++) {
-                switch( argv[j][i] ) {
+        if( argv[ j ][ 0 ] == '/' || argv[ j ][ 0 ] == '-' ) {
+            sl = strlen( argv[ j ] );
+            for( i = 1; i < sl; i++ ) {
+                switch( argv[ j ][ i ] ) {
                 case 's': sflag = TRUE; break;
                 case 'q': qflag = TRUE; break;
                 case 'd':
-                    bindfile = &argv[j][i+1];
+                    bindfile = &argv[ j ][ i + 1 ];
                     i = sl;
                     break;
                 case '?':
@@ -350,8 +353,8 @@ int main( int argc, char *argv[] )
                     Usage( "Invalid option" );
                 }
             }
-            for(i=j;i<(unsigned) argc;i++) {
-                argv[i]=argv[i+1];
+            for( i = j; i < (unsigned)argc; i++ ) {
+                argv[ i ]= argv[ i + 1 ];
             }
             argc--;
         }
@@ -361,14 +364,14 @@ int main( int argc, char *argv[] )
     /*
      * now, check for null file name
      */
-    if( argc<2 ) {
+    if( argc < 2 ) {
         Usage( "No executable to bind" );
     }
-    _splitpath( argv[1], drive, dir, fname, ext );
-    if( ext[0] == 0 ) {
+    _splitpath( argv[ 1 ], drive, dir, fname, ext );
+    if( ext[ 0 ] == 0 ) {
         _makepath( path, drive, dir, fname, ".exe" );
     } else {
-        strcpy( path, argv[1] );
+        strcpy( path, argv[ 1 ] );
     }
     if( stat( path, &fs ) == -1 ) {
         Abort( "Could not find executable \"%s\"", path );
@@ -388,24 +391,22 @@ int main( int argc, char *argv[] )
         f = GetFromEnvAndOpen( bindfile );
         MyPrintf( "\n" );
         if( f == NULL ) {
-            Abort( "Could not open %s",bindfile );
+            Abort( "Could not open %s", bindfile );
         }
-        while( fgets( buff3,MAX_LINE_LEN-1,f ) != NULL ) {
-            if( buff[0] == '#' ) {
+        while( fgets( buff3, MAX_LINE_LEN, f ) != NULL ) {
+            for( i = strlen( buff3 ); i && isWSorCtrlZ( buff3[ i - 1] ); --i )
+                buff3[ i - 1 ] = '\0';
+            if( buff3[ 0 ] == '\0' ) {
                 continue;
             }
-            i = strlen( buff3 );
-            // Strip off trailing '\n' - and possible '\r' from DOS file.
-            while( i > 0 && isspace( buff3[--i] ) ) {
-                buff3[i] = 0;
-            }
-            if( i == 0 ) {
+            RemoveLeadingSpaces( buff3 );
+            if( buff3[ 0 ] == '#' ) {
                 continue;
             }
-            dats[ FileCount ] = MyAlloc( i+1 );
-            strcpy( dats[ FileCount], buff3 );
+            dats[ FileCount ] = MyAlloc( strlen( buff3 ) + 1 );
+            strcpy( dats[ FileCount ], buff3 );
             FileCount++;
-            if( FileCount >= MAX_FILES ) {
+            if( FileCount >= MAX_DATA_FILES ) {
                 Abort( "Too many files to bind!" );
             }
         }
@@ -416,17 +417,17 @@ int main( int argc, char *argv[] )
         buffn = buff;
         cnt = 0;
 
-        *(short *) buffn = FileCount;
+        *(short *)buffn = FileCount;
         buffn += sizeof( short );
         cnt += sizeof( short );
         buffs = buffn;
         buffn += sizeof( short );
         cnt += sizeof( short );
         k = 0;
-        for( i=0;i<FileCount;i++ ) {
-//          j = strlen( dats[i] ) + 1;
-//          memcpy( buffn, dats[i], j );
-            _splitpath( dats[i], NULL, NULL, tmpfname, tmpext );
+        for( i = 0; i < FileCount; i++ ) {
+//          j = strlen( dats[ i ] ) + 1;
+//          memcpy( buffn, dats[ i ], j );
+            _splitpath( dats[ i ], NULL, NULL, tmpfname, tmpext );
             _makepath( tmppath, NULL, NULL, tmpfname, tmpext );
             j = strlen( tmppath ) + 1;
             memcpy( buffn, tmppath, j );
@@ -434,35 +435,35 @@ int main( int argc, char *argv[] )
             cnt += j;
             k += j;
         }
-        *(short *) buffs = k+1;     /* size of token list */
+        *(short *)buffs = k+1;      /* size of token list */
         *buffn = 0;                 /* trailing zero */
         buffn++;
         cnt++;
         buffs = buffn;
-        buffn += FileCount*(sizeof(short)+sizeof(long));
-        cnt += FileCount*(sizeof(short)+sizeof(long));
+        buffn += FileCount * ( sizeof( short ) + sizeof( long ) );
+        cnt += FileCount * ( sizeof( short ) + sizeof( long ) );
 
-        for( j=0;j<FileCount;j++ ) {
+        for( j = 0; j < FileCount; j++ ) {
             MyPrintf( "Loading" );
-            f = GetFromEnvAndOpen( dats[j] );
+            f = GetFromEnvAndOpen( dats[ j ] );
             if( f == NULL ) {
-                Abort("\nLoad of %s failed!",dats[j] );
+                Abort( "\nLoad of %s failed!", dats[ j ] );
             }
             setvbuf( f, buff2, _IOFBF, 32000 );
             bytes = lines = 0;
-            index[j] = (long) cnt;
-            while( fgets( buff3,MAX_LINE_LEN-1,f ) != NULL ) {
-                if( buff3[0] == '#' ) {
+            index[ j ] = (long)cnt;
+            while( fgets( buff3, MAX_LINE_LEN, f ) != NULL ) {
+                for( i = strlen( buff3 ); i && isWSorCtrlZ( buff3[ i - 1] ); --i )
+                    buff3[ i - 1 ] = '\0';
+                if( buff3[ 0 ] == '\0' ) {
+                    continue;
+                }
+                RemoveLeadingSpaces( buff3 );
+                if( buff3[ 0 ] == '#' ) {
                     continue;
                 }
                 i = strlen( buff3 );
-                i--;
-                buff3[i] = 0;
-                RemoveLeadingSpaces( buff3 );
-                if( buff3[0] == 0 ) {
-                    continue;
-                }
-                *buffn = (char) i;
+                *buffn = (char)i;
                 buffn++;
                 memcpy( buffn, buff3, i );
                 buffn += i;
@@ -471,18 +472,18 @@ int main( int argc, char *argv[] )
                 bytes += i;
             }
             fclose( f );
-            entries[j] = lines;
-            MyPrintf( "Added %d lines (%d bytes)\n",lines,bytes );
+            entries[ j ] = lines;
+            MyPrintf( "Added %d lines (%d bytes)\n", lines, bytes );
         }
         i = FileCount;
-        memcpy( buffs, index, FileCount * sizeof( long ));
+        memcpy( buffs, index, FileCount * sizeof( long ) );
         buffs += FileCount * sizeof( long );
-        memcpy( buffs, entries, FileCount * sizeof( short ));
+        memcpy( buffs, entries, FileCount * sizeof( short ) );
     }
 
     AddDataToEXE( path, buff, cnt, fs.st_size );
     if( !sflag ) {
-        MyPrintf( "Added %d bytes to \"%s\"\n",cnt, path );
+        MyPrintf( "Added %d bytes to \"%s\"\n", cnt, path );
     } else {
         MyPrintf( "\"%s\" has been stripped of configuration information\n", path );
     }

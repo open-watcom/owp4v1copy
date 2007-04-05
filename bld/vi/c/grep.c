@@ -47,7 +47,10 @@
 #include "font.h"
 #endif
 
+#define isEOL(x)        ((x==CR)||(x==LF)||(x==CTLZ))
+
 #define MAX_DISP 60
+
 static void fileGrep( char *, char **, int *, window_id );
 static int fSearch( char *, char * );
 static int eSearch( char *, char * );
@@ -528,12 +531,13 @@ static int eSearch( char *fn, char *res )
     buff = StaticAlloc();
     while( TRUE ) {
 
-        if( fgets( buff,MaxLine-1,f ) == NULL ) {
+        if( fgets( buff, MaxLine, f ) == NULL ) {
             fclose( f );
             StaticFree( buff );
             return( ERR_NO_ERR );
         }
-        buff[ strlen(buff)-1 ] = 0;
+        for( i = strlen( buff ); i && isEOL( buff[ i - 1 ] ); --i )
+            buff[ i - 1 ] = 0;
         i = RegExec( cRx, buff, TRUE );
         if( RegExpError != ERR_NO_ERR ) {
             StaticFree( buff );
