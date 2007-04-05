@@ -22,7 +22,7 @@ cf_common_objs = &
             cfheader.obj &
             cmdlhelp.obj &
             common.obj   &
-            dowlinux.obj &
+            lhdirect.obj &
             research.obj &
             swchar.obj
 

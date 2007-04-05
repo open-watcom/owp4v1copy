@@ -39,7 +39,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "dowlinux.h"
+#include "lhdirect.h"
 
 #define ITEM_MAX 78     /* Per documentation, max length of item name */
 

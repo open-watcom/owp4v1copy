@@ -36,7 +36,7 @@
 #include "banner.h"
 #include "cfheader.h"
 #include "common.h"
-#include "dowlinux.h"
+#include "lhdirect.h"
 #include "research.h"
 
 /* Local variables */
