@@ -464,7 +464,7 @@ start : .symbolic
 clean : .symbolic global
     @%null
 
-common_clean : .symbolic
+common_clean : .procedure
     @if exist *.?bj del *.?bj
     @if exist *.err del *.err
     @if exist *.lnk del *.lnk

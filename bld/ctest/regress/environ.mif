@@ -532,7 +532,7 @@ start : .symbolic
 clean : .symbolic global
     @%null
 
-common_clean : .symbolic
+common_clean : .procedure
     @if exist *.?bj rm *.?bj
     @if exist *.err rm *.err
     @if exist *.lnk rm *.lnk
