@@ -441,7 +441,8 @@ void add_parms_list( statement *stmt, char *separators, int flag )
         || ( strcmp( stmt->name, "GROUPBOX" ) == 0 )
         || ( strcmp( stmt->name, "CONTROL" ) == 0 )) {
         if( !process_parms( stmt->parms, MAX_STMT_PARMS, control_style_win, 
-            control_style_os2, CTRL_STYLE_CNT, 0, check_parm_item, "DT_MNEMONIC" ) ) {
+            control_style_os2, CTRL_STYLE_CNT, 0, check_parm_item, "DT_MNEMONIC" ) 
+            && strcmp( stmt->text, "\"\"" ) ) {
             add_parms_item( stmt->parms, "DT_MNEMONIC", ADD_AFTER );
         }
     }
@@ -533,7 +534,7 @@ void process_style( char *parms[], char *str )
 /********************************************/
 {
     char            **ptr;
-    control_type     control;
+    control_type    control;
     int             i;
     
     if( strcmp( str, "DIALOG" ) != 0 ) {
@@ -755,7 +756,7 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
     char    *p;
     char    **p2;
     int     len;
-    int     sysmodal, visible = 0;
+    int     sysmodal, visible;
     int     i;
     
     ++dialogs_cnt;
@@ -846,11 +847,10 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
                 break;
             }
         }
-    } else {
-        visible = process_parms( dlg_hdr.parms, MAX_STMT_PARMS, control_class_win,
-            control_class_os2, CTRL_NAME_CNT, 0, check_parm_item, "WS_VISIBLE" );
     }
-    fprintf( fo, "\nDLGTEMPLATE %s\n", dlg_hdr.ID );
+    visible = process_parms( dlg_hdr.parms, MAX_STMT_PARMS, control_class_win,
+        control_class_os2, CTRL_NAME_CNT, 0, check_parm_item, "WS_VISIBLE" );
+    fprintf( fo, "DLGTEMPLATE %s\n", dlg_hdr.ID );
     fprintf( fo, "BEGIN\n    DIALOG %s, %s, %d, %d, %d, %d, ", dlg_hdr.text,
                dlg_hdr.ID, dlg_hdr.x, dlg_hdr.y, dlg_hdr.dx, dlg_hdr.dy );
     if( hidden_dialog ) {
