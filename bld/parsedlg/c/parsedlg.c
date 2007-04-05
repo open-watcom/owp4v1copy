@@ -506,9 +506,9 @@ void out_parms_style( FILE *fo, char *parms[], char *str )
                 fprintf( fo, " " );
             }
             if( x == 0 ) {
-                fprintf( fo, "\n\t\t" );
+                fprintf( fo, "\n        " );
                 if( strcmp( str, "DIALOG" ) != 0 ) {
-                    fprintf( fo, "\t" );
+                    fprintf( fo, "    " );
                 }
             }
             if(( strcmp( p, "SS_WHITEFRAME" ) == 0 )
@@ -596,16 +596,16 @@ void out_color_style( FILE *fo, statement *x )
         p = x->parms[ i ];
         if(( strcmp( p, "SS_WHITEFRAME" ) == 0 )
             || ( strcmp( p, "SS_WHITERECT" ) == 0 )) {
-            fprintf( fo, "\t\tPRESPARAMS PP_BACKGROUNDCOLOR, RGB_WHITE\n" );
-            fprintf( fo, "\t\tPRESPARAMS PP_FOREGROUNDCOLOR, RGB_WHITE\n" );
+            fprintf( fo, "        PRESPARAMS PP_BACKGROUNDCOLOR, RGB_WHITE\n" );
+            fprintf( fo, "        PRESPARAMS PP_FOREGROUNDCOLOR, RGB_WHITE\n" );
         } else if(( strcmp( p, "SS_BLACKFRAME" ) == 0 )
             || ( strcmp( p, "SS_BLACKRECT" ) == 0 )) {
-            fprintf( fo, "\t\tPRESPARAMS PP_BACKGROUNDCOLOR, RGB_BLACK\n" );
-            fprintf( fo, "\t\tPRESPARAMS PP_FOREGROUNDCOLOR, RGB_BLACK\n" );
+            fprintf( fo, "        PRESPARAMS PP_BACKGROUNDCOLOR, RGB_BLACK\n" );
+            fprintf( fo, "        PRESPARAMS PP_FOREGROUNDCOLOR, RGB_BLACK\n" );
         } else if(( strcmp( p, "SS_GRAYFRAME" ) == 0 )
             || ( strcmp( p, "SS_GRAYRECT" ) == 0 )) {
-            fprintf( fo, "\t\tPRESPARAMS PP_BACKGROUNDCOLOR, 0x00C0C0C0L\n" );
-            fprintf( fo, "\t\tPRESPARAMS PP_FOREGROUNDCOLOR, 0x00C0C0C0L\n" );
+            fprintf( fo, "        PRESPARAMS PP_BACKGROUNDCOLOR, 0x00C0C0C0L\n" );
+            fprintf( fo, "        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00C0C0C0L\n" );
         }
         *p = '\0';
     }
@@ -677,7 +677,7 @@ int process_statement( char *line, FILE *fo )
     if( p != NULL )
         strcpy( dlg_item.name, p );
     if( strncmp( dlg_item.name, "END", 3 ) == 0 ) {
-        fprintf( fo, "\t%s\nEND\n", dlg_item.name );
+        fprintf( fo, "    %s\nEND\n", dlg_item.name );
         return( 1 );
     }
     if( strcmp( dlg_item.name, "CONTROL" ) == 0 ) {
@@ -730,10 +730,10 @@ int process_statement( char *line, FILE *fo )
     }
     process_style( dlg_item.parms, dlg_item.name );
     dlg_item.y = dlg_hdr.dy - dlg_item.y - dlg_item.dy;
-    fprintf( fo, "\t\t%s", dlg_item.name );
+    fprintf( fo, "        %s", dlg_item.name );
     if( strlen( dlg_item.name ) < 8 )
-        fprintf( fo, "\t" );
-    fprintf( fo, "\t" );
+        fprintf( fo, "    " );
+    fprintf( fo, "    " );
     if( strcmp( dlg_item.name, "LISTBOX" ) )
         fprintf( fo, "%s, ", dlg_item.text );
     fprintf( fo, "%s, %d, %d, %d, %d", dlg_item.ID, dlg_item.x,
@@ -851,25 +851,25 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
             control_class_os2, CTRL_NAME_CNT, 0, check_parm_item, "WS_VISIBLE" );
     }
     fprintf( fo, "DLGTEMPLATE %s\n", dlg_hdr.ID );
-    fprintf( fo, "BEGIN\n\tDIALOG %s, %s, %d, %d, %d, %d, ", dlg_hdr.text,
+    fprintf( fo, "BEGIN\n    DIALOG %s, %s, %d, %d, %d, %d, ", dlg_hdr.text,
                dlg_hdr.ID, dlg_hdr.x, dlg_hdr.y, dlg_hdr.dx, dlg_hdr.dy );
     if( hidden_dialog ) {
         fprintf( fo, "FS_BORDER | NOT FS_DLGBORDER | NOT WS_VISIBLE\n" );
     } else {
         if( sysmodal && visible ) {
-            fprintf( fo, "\n\t\tFS_SYSMODAL | WS_VISIBLE" );
+            fprintf( fo, "\n        FS_SYSMODAL | WS_VISIBLE" );
         } else if( sysmodal ) {
-            fprintf( fo, "\n\t\tFS_SYSMODAL" );
+            fprintf( fo, "\n        FS_SYSMODAL" );
         } else if( visible ) {
-            fprintf( fo, "\n\t\tWS_VISIBLE" );
+            fprintf( fo, "\n        WS_VISIBLE" );
         } else {
-            fprintf( fo, "\n\t\t0L" );
+            fprintf( fo, "\n        0L" );
         }
         remove_parms_item( dlg_hdr.parms, "WS_VISIBLE" );
         out_parms_style( fo, dlg_hdr.parms, "DIALOG" );
     }
     if(( font_name != NULL ) || ( font_size != 0 )) {
-        fprintf( fo, "\tPRESPARAMS PP_FONTNAMESIZE, " );
+        fprintf( fo, "    PRESPARAMS PP_FONTNAMESIZE, " );
         if( font_size != 0 ) {
             fprintf( fo, "\"%ld.%s\"\n", font_size, font_name );
         } else {
@@ -877,7 +877,7 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
         }
         free( font_name );
     }
-    fprintf( fo, "\tBEGIN\n" );
+    fprintf( fo, "    BEGIN\n" );
     free( buff1 );
 }
 
@@ -1003,7 +1003,7 @@ int main( int argc, char *argv[] )
             p = strtok( buff2, separators );
         }
         if( !feof( fi ) ) {
-            fprintf( fo, "\tEND\n" );
+            fprintf( fo, "    END\n" );
         }
     }
     free( buff2 );

@@ -1,4 +1,4 @@
-host_os = dos
+host_os  = dos
 host_cpu = i86
 
 proj_name = testovl
@@ -13,14 +13,10 @@ extra_c_flags = -of -s
 
 OBJS = ovl1.obj ovl2.obj ovl3.obj
 
+all : main.exe smain.exe .symbolic
+
 main.exe : main.obj $(OBJS) $(__MAKEFILES__)
-    %create tmp.lnk
-    %append tmp.lnk $(lflags)
-    %append tmp.lnk option map
-    %append tmp.lnk option dynamic, area=0
-    %append tmp.lnk file main.obj
-    %append tmp.lnk begin autosection
-    @for %i in ($(OBJS)) do %append tmp.lnk file %i
-    %append tmp.lnk end
-    %append tmp.lnk libpath ..\ovlldr
-    $(linker) @tmp.lnk
+    $(linker) n $@ $(lflags) op map, dynamic, area=0 file main.obj begin autosection file { $(OBJS) } end libpath ../ovlldr/dosi86
+
+smain.exe : main.obj $(OBJS) $(__MAKEFILES__)
+    $(linker) n $@ $(lflags) op map, standard file main.obj begin s f ovl1 s f ovl2 s f ovl3 end libpath ../ovlldr/dosi86
