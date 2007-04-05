@@ -866,7 +866,6 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
             fprintf( fo, "0L" );
         }
         fprintf( fo, "\n\t\t" );
-        remove_parms_item( dlg_hdr.parms, "WS_VISIBLE" );
         out_parms_style( fo, dlg_hdr.parms, "DIALOG" );
     }
     if(( font_name != NULL ) || ( font_size != 0 )) {
