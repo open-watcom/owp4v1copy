@@ -53,6 +53,21 @@ test_cflags_386 = -d1-oe-zri-mf
 test_cflags_i86 = -d1-oe-ms
 test_cflags_axp = -d1-oe
 alt_error = 09
+!else ifdef test10
+test_cflags_386 = -d2-mf-fpc
+test_cflags_i86 = -d2-mc-2-fpc
+test_cflags_axp = -d2-si
+!ifndef __MSDOS__
+!ifndef __LINUX__
+add_br_ = -br
+!endif
+!endif
+alt_error = 10
+!else ifdef test11
+test_cflags_386 = -d1-oxtan-ms-fpc
+test_cflags_i86 = -d1-oxtan-ms-fpc
+test_cflags_axp = -d1-oxtan-si
+alt_error = 11
 !else
 test_cflags_386 = -ox-d1-ms
 test_cflags_i86 = -ox-d1-ms

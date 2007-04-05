@@ -30,6 +30,12 @@ wmake -h test8= save
 wmake -h global
 wmake -h test9=
 wmake -h test9= save
+wmake -h global
+wmake -h test10=
+wmake -h test10= save
+wmake -h global
+wmake -h test11=
+wmake -h test11= save
 rem
 if [%extra_arch%] == [] goto no_extra
 wmake -h global
@@ -62,6 +68,12 @@ wmake -h test8= arch=%extra_arch% save
 wmake -h global
 wmake -h test9= arch=%extra_arch%
 wmake -h test9= arch=%extra_arch% save
+wmake -h global
+wmake -h test10= arch=%extra_arch%
+wmake -h test10= arch=%extra_arch% save
+wmake -h global
+wmake -h test11= arch=%extra_arch%
+wmake -h test11= arch=%extra_arch% save
 :no_extra
 wmake -h global
 popd

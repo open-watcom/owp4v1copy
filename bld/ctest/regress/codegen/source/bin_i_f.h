@@ -28,6 +28,35 @@
     FN_SET_1( T1, FD )  \
     FN_SET_1( T1, FL )
 
+#if defined(TREE_PARTS)
+
+#if defined(THIRD_PART)
+
+#define GEN_TESTS   \
+    FN_SET_2( FS )  \
+    FN_SET_2( FD )  \
+    FN_SET_2( FL )
+
+#elif defined(SECOND_PART)
+
+#define GEN_TESTS   \
+    FN_SET_2( U4 )  \
+    FN_SET_2( I4 )  \
+    FN_SET_2( U8 )  \
+    FN_SET_2( I8 )
+
+#else
+
+#define GEN_TESTS   \
+    FN_SET_2( U1 )  \
+    FN_SET_2( I1 )  \
+    FN_SET_2( U2 )  \
+    FN_SET_2( I2 )
+
+#endif
+
+#else
+
 #define GEN_TESTS   \
     FN_SET_2( U1 )  \
     FN_SET_2( I1 )  \
@@ -40,3 +69,5 @@
     FN_SET_2( FS )  \
     FN_SET_2( FD )  \
     FN_SET_2( FL )
+
+#endif

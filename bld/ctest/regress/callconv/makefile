@@ -1,8 +1,8 @@
 ctest_name = callconv
-!include ../environ.mif
 
 callconv_dir = source
 
+!include ../environ.mif
 !include $(callconv_dir)/callconv.mif
 
 !ifdef test1
@@ -78,77 +78,63 @@ test_cflags_386 += $(add_br_$(no_br_$^*))
 !endif
 
 .error
-    @%append $(%error_file) $(%error_msg)
+    @%append $(%ERROR_FILE) $(%ERROR_MSG)
 
 .c: $(callconv_dir)
 .c.obj:
-    @set error_msg=failure to compile $^@
+    @set ERROR_MSG=failure to compile $^@
     $(wcc_$(arch)) $[@ $(test_cflags_$(arch)) $(opt_$^*) $(opt_EH_$(EH_$^*)) -fo=.obj
 
 .obj.$(exe):
-    @set error_msg=failure to link $^@
+    @set ERROR_MSG=failure to link $^@
     $(linker) @test.lnk $(opt_link_$^*) FILE $[@ NAME $^@
-    @set error_msg=failure to execute $^@
+    @set ERROR_MSG=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $(exec_prefix)$^@ >>exec.out
-    rm $[@
-#    wstrip -q $^@
 
-test : .symbolic actual_test
-    @set error_msg=symbol names failure $^@
-    diff -b pubdef.out pub$(arch)$(alt_error).chk
-    diff -b extdef.out ext$(arch)$(alt_error).chk
-    @set error_file=error.out
-    @set error_msg=failure to complete test stream
+test : .symbolic start_test test.lnk $(callconv_exes)
+    @set ERROR_MSG=symbol name failure
+    diff -b symbols.out sym$(arch)$(alt_error).chk
+    @set ERROR_FILE=error.out
+    @set ERROR_MSG=failure to complete test stream
     echo OK >error.out
     $(bld_cl) chk_exec.c -ox-d1
     $(exec_prefix)chk_exec exec.out >>error.out
     diff -b error.out error.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__)
 
-actual_test : .symbolic start_test pubdef.out extdef.out $(callconv_exes)
-    rm -f *.obj
-    rm -f *.$(exe)
-
 fnstat1.$(exe) : fnstat1a.obj fnstat1b.obj
-    @set error_msg=failure to link $^@
+    @set ERROR_MSG=failure to link $^@
     $(linker) @test.lnk NAME $^@ FILE $[@, $]@
-    @set error_msg=failure to execute $^@
+    @set ERROR_MSG=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $(exec_prefix)$^@ >>exec.out
 
-start_test : .symbolic test.lnk
+start_test : .symbolic
+    rm -f s$(arch)_$(alt_error).sav
+    @%make global
     %create exec.out
-    @set error_file=exec.out
-    @rm -f pubdef.tmp
-    @rm -f extdef.tmp
+    %create symbols.out
+    @set ERROR_FILE=exec.out
 
-pubdef.out : $(all_objs)
-    @cp pubdef.tmp pubdef.out
-    @rm -f pubdef.tmp
-
-extdef.out : $(all_objs)
-    @cp extdef.tmp extdef.out
-    @rm -f extdef.tmp
-
-test.lnk : makefile
+test.lnk : $(__MAKEFILE__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ OPTION noredef
 
 save : .symbolic
-    if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+    @if exist symbols.out cp symbols.out x$(arch)_$(alt_error).sav
 
-global : .symbolic
-    @if exist failure rm failure
+global : .procedure
     @%make common_clean
 
-$(all_objs) : source/obj.c
-    @set error_msg=failure to compile $^@
+$(all_objs) : $(callconv_dir)/obj.c
+    @set ERROR_MSG=failure to compile $^@
     $(wcc_$(arch)) $[@ $(test_cflags_$(arch)) $(opt_$^*) -fo=$^@
-    @echo $^@ >>pubdef.tmp
-    @objxdef $^@ >>pubdef.tmp
-    @echo $^@ >>extdef.tmp
-    @objxref $^@ >>extdef.tmp
+    @echo **** $^@ pubdef ****>>symbols.out
+    objxdef $^@ >>symbols.out
+    @echo **** $^@ extdef ****>>symbols.out
+    objxref $^@ >>symbols.out

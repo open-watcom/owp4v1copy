@@ -11,6 +11,18 @@
 # 386 specific
 !else ifeq arch i86
 # i86 specific
+opt_op_add = -DTREE_PARTS
+opt_op_sub = -DTREE_PARTS
+opt_op_mul = -DTREE_PARTS
+opt_op_div = -DTREE_PARTS
+opt_op_add2 = -DTREE_PARTS
+opt_op_sub2 = -DTREE_PARTS
+opt_op_mul2 = -DTREE_PARTS
+opt_op_div2 = -DTREE_PARTS
+opt_op_add3 = -DTREE_PARTS
+opt_op_sub3 = -DTREE_PARTS
+opt_op_mul3 = -DTREE_PARTS
+opt_op_div3 = -DTREE_PARTS
 !endif
 
 codegen_tests = &
@@ -24,5 +36,15 @@ codegen_tests = &
     op_xor.$(exe) &
     op_rshift.$(exe) &
     op_lshift.$(exe) &
+!ifeq arch i86
+    op_add2.$(exe) &
+    op_sub2.$(exe) &
+    op_mul2.$(exe) &
+    op_div2.$(exe) &
+    op_add3.$(exe) &
+    op_sub3.$(exe) &
+    op_mul3.$(exe) &
+    op_div3.$(exe) &
+!endif
 
 codegen_exes = $+ $(codegen_tests) $-
