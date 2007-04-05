@@ -505,12 +505,6 @@ void out_parms_style( FILE *fo, char *parms[], char *str )
             } else {
                 fprintf( fo, " " );
             }
-            if( x == 0 ) {
-                fprintf( fo, "\n        " );
-                if( strcmp( str, "DIALOG" ) != 0 ) {
-                    fprintf( fo, "    " );
-                }
-            }
             if(( strcmp( p, "SS_WHITEFRAME" ) == 0 )
                 || ( strcmp( p, "SS_BLACKFRAME" ) == 0 )
                 || ( strcmp( p, "SS_GRAYFRAME" ) == 0 )) {
@@ -521,6 +515,12 @@ void out_parms_style( FILE *fo, char *parms[], char *str )
                 fprintf( fo, "SS_BKGNDRECT" );
             } else {
                 fprintf( fo, "%s", p );
+            }
+            if( x == 0 ) {
+                fprintf( fo, "\n\t" );
+//                if( strcmp( str, "DIALOG" ) != 0 ) {
+                    fprintf( fo, "\t" );
+//                }
             }
             oper_NOT = ( strcmp( p, "NOT" ) == 0 ) ? 1 : 0 ;
             ++x;
@@ -732,8 +732,8 @@ int process_statement( char *line, FILE *fo )
     dlg_item.y = dlg_hdr.dy - dlg_item.y - dlg_item.dy;
     fprintf( fo, "        %s", dlg_item.name );
     if( strlen( dlg_item.name ) < 8 )
-        fprintf( fo, "    " );
-    fprintf( fo, "    " );
+        fprintf( fo, "\t" );
+    fprintf( fo, "\t" );
     if( strcmp( dlg_item.name, "LISTBOX" ) )
         fprintf( fo, "%s, ", dlg_item.text );
     fprintf( fo, "%s, %d, %d, %d, %d", dlg_item.ID, dlg_item.x,
@@ -834,7 +834,7 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
     process_style( dlg_hdr.parms, "DIALOG" );
     if( font_set == 0 ) {
         font_name = malloc( 7 );
-        strcpy( font_name, "Helv\"" );
+        strcpy( font_name, "Helv" );
         font_size = 10;
     }
     sysmodal = process_parms( dlg_hdr.parms, MAX_STMT_PARMS, control_class_win,
@@ -850,21 +850,22 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
         visible = process_parms( dlg_hdr.parms, MAX_STMT_PARMS, control_class_win,
             control_class_os2, CTRL_NAME_CNT, 0, check_parm_item, "WS_VISIBLE" );
     }
-    fprintf( fo, "DLGTEMPLATE %s\n", dlg_hdr.ID );
+    fprintf( fo, "\nDLGTEMPLATE %s\n", dlg_hdr.ID );
     fprintf( fo, "BEGIN\n    DIALOG %s, %s, %d, %d, %d, %d, ", dlg_hdr.text,
                dlg_hdr.ID, dlg_hdr.x, dlg_hdr.y, dlg_hdr.dx, dlg_hdr.dy );
     if( hidden_dialog ) {
         fprintf( fo, "FS_BORDER | NOT FS_DLGBORDER | NOT WS_VISIBLE\n" );
     } else {
         if( sysmodal && visible ) {
-            fprintf( fo, "\n        FS_SYSMODAL | WS_VISIBLE" );
+            fprintf( fo, "FS_SYSMODAL | WS_VISIBLE" );
         } else if( sysmodal ) {
-            fprintf( fo, "\n        FS_SYSMODAL" );
+            fprintf( fo, "FS_SYSMODAL" );
         } else if( visible ) {
-            fprintf( fo, "\n        WS_VISIBLE" );
+            fprintf( fo, "WS_VISIBLE" );
         } else {
-            fprintf( fo, "\n        0L" );
+            fprintf( fo, "0L" );
         }
+        fprintf( fo, "\n\t\t" );
         remove_parms_item( dlg_hdr.parms, "WS_VISIBLE" );
         out_parms_style( fo, dlg_hdr.parms, "DIALOG" );
     }
@@ -1016,7 +1017,7 @@ int main( int argc, char *argv[] )
     if( fi != NULL )
         fclose( fi );
     if( fo != NULL ) {
-        fprintf( fo, "\n" );
+        fprintf( fo, "\n\n" );
         fclose( fo );
     }
     if( !opt.quiet )
