@@ -39,6 +39,8 @@
 
 #include "parsedlg.h"
 
+#define OLD_FORMAT
+
 #define MAX_NAME_LEN    122
 #define MAX_LINE_LEN    255
 
@@ -53,6 +55,12 @@
 
 #define CONV_X      54 / 46
 #define CONV_Y      52 / 62
+
+#if defined( OLD_FORMAT )
+#define STR_SPC     "    "
+#else
+#define STR_SPC     "\t"
+#endif
 
 typedef struct _statement {
     char    name[ MAX_NAME_LEN ];
@@ -441,8 +449,7 @@ void add_parms_list( statement *stmt, char *separators, int flag )
         || ( strcmp( stmt->name, "GROUPBOX" ) == 0 )
         || ( strcmp( stmt->name, "CONTROL" ) == 0 )) {
         if( !process_parms( stmt->parms, MAX_STMT_PARMS, control_style_win, 
-            control_style_os2, CTRL_STYLE_CNT, 0, check_parm_item, "DT_MNEMONIC" ) 
-            && strcmp( stmt->text, "\"\"" ) ) {
+            control_style_os2, CTRL_STYLE_CNT, 0, check_parm_item, "DT_MNEMONIC" ) ) {
             add_parms_item( stmt->parms, "DT_MNEMONIC", ADD_AFTER );
         }
     }
@@ -488,18 +495,29 @@ void out_parms_style( FILE *fo, char *parms[], char *str )
 /********************************************************/
 {
     int     oper_NOT;
-    int     x;
+    int     item_idx;
     int     i;
     char    *p;
     
     oper_NOT = 0;
-    x = 0;
+    item_idx = 0;
     for( i = 0; i < MAX_STMT_PARMS; ++i ) {
         p = parms[ i ];
         if(( *p != '\0' ) && !isdigit( *p ) ) {
-            if( x == 0 ) {
+#if defined( OLD_FORMAT )
+            if( item_idx == 1 ) {
+                fprintf( fo, "\n\t\t" );
+            }
+#endif
+            if( item_idx == 0 ) {
                 fprintf( fo, ", " );
-            } else if(( x == 1 ) && ( strcmp( str, "CONTROL" ) == 0 )) {
+#if !defined( OLD_FORMAT )
+                fprintf( fo, "\n\t\t" );
+                if( strcmp( str, "DIALOG" ) != 0 ) {
+                    fprintf( fo, "\t" );
+                }
+#endif
+            } else if(( item_idx == 1 ) && ( strcmp( str, "CONTROL" ) == 0 )) {
                 fprintf( fo, " , " );
             } else if( oper_NOT == 0 ) {
                 fprintf( fo, " | " );
@@ -517,14 +535,8 @@ void out_parms_style( FILE *fo, char *parms[], char *str )
             } else {
                 fprintf( fo, "%s", p );
             }
-            if( x == 0 ) {
-                fprintf( fo, "\n\t" );
-//                if( strcmp( str, "DIALOG" ) != 0 ) {
-                    fprintf( fo, "\t" );
-//                }
-            }
             oper_NOT = ( strcmp( p, "NOT" ) == 0 ) ? 1 : 0 ;
-            ++x;
+            ++item_idx;
         }
     }
     fprintf( fo, "\n" );
@@ -597,16 +609,16 @@ void out_color_style( FILE *fo, statement *x )
         p = x->parms[ i ];
         if(( strcmp( p, "SS_WHITEFRAME" ) == 0 )
             || ( strcmp( p, "SS_WHITERECT" ) == 0 )) {
-            fprintf( fo, "        PRESPARAMS PP_BACKGROUNDCOLOR, RGB_WHITE\n" );
-            fprintf( fo, "        PRESPARAMS PP_FOREGROUNDCOLOR, RGB_WHITE\n" );
+            fprintf( fo, "%sPRESPARAMS PP_BACKGROUNDCOLOR, RGB_WHITE\n", STR_SPC STR_SPC );
+            fprintf( fo, "%sPRESPARAMS PP_FOREGROUNDCOLOR, RGB_WHITE\n", STR_SPC STR_SPC );
         } else if(( strcmp( p, "SS_BLACKFRAME" ) == 0 )
             || ( strcmp( p, "SS_BLACKRECT" ) == 0 )) {
-            fprintf( fo, "        PRESPARAMS PP_BACKGROUNDCOLOR, RGB_BLACK\n" );
-            fprintf( fo, "        PRESPARAMS PP_FOREGROUNDCOLOR, RGB_BLACK\n" );
+            fprintf( fo, "%sPRESPARAMS PP_BACKGROUNDCOLOR, RGB_BLACK\n", STR_SPC STR_SPC );
+            fprintf( fo, "%sPRESPARAMS PP_FOREGROUNDCOLOR, RGB_BLACK\n", STR_SPC STR_SPC );
         } else if(( strcmp( p, "SS_GRAYFRAME" ) == 0 )
             || ( strcmp( p, "SS_GRAYRECT" ) == 0 )) {
-            fprintf( fo, "        PRESPARAMS PP_BACKGROUNDCOLOR, 0x00C0C0C0L\n" );
-            fprintf( fo, "        PRESPARAMS PP_FOREGROUNDCOLOR, 0x00C0C0C0L\n" );
+            fprintf( fo, "%sPRESPARAMS PP_BACKGROUNDCOLOR, 0x00C0C0C0L\n", STR_SPC STR_SPC );
+            fprintf( fo, "%sPRESPARAMS PP_FOREGROUNDCOLOR, 0x00C0C0C0L\n", STR_SPC STR_SPC );
         }
         *p = '\0';
     }
@@ -678,7 +690,7 @@ int process_statement( char *line, FILE *fo )
     if( p != NULL )
         strcpy( dlg_item.name, p );
     if( strncmp( dlg_item.name, "END", 3 ) == 0 ) {
-        fprintf( fo, "    %s\nEND\n", dlg_item.name );
+        fprintf( fo, "%s%s\nEND\n", STR_SPC, dlg_item.name );
         return( 1 );
     }
     if( strcmp( dlg_item.name, "CONTROL" ) == 0 ) {
@@ -731,7 +743,7 @@ int process_statement( char *line, FILE *fo )
     }
     process_style( dlg_item.parms, dlg_item.name );
     dlg_item.y = dlg_hdr.dy - dlg_item.y - dlg_item.dy;
-    fprintf( fo, "        %s", dlg_item.name );
+    fprintf( fo, "%s%s", STR_SPC STR_SPC, dlg_item.name );
     if( strlen( dlg_item.name ) < 8 )
         fprintf( fo, "\t" );
     fprintf( fo, "\t" );
@@ -851,25 +863,36 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
     visible = process_parms( dlg_hdr.parms, MAX_STMT_PARMS, control_class_win,
         control_class_os2, CTRL_NAME_CNT, 0, check_parm_item, "WS_VISIBLE" );
     fprintf( fo, "DLGTEMPLATE %s\n", dlg_hdr.ID );
-    fprintf( fo, "BEGIN\n    DIALOG %s, %s, %d, %d, %d, %d, ", dlg_hdr.text,
+    fprintf( fo, "BEGIN\n%sDIALOG %s, %s, %d, %d, %d, %d, ", STR_SPC, dlg_hdr.text,
                dlg_hdr.ID, dlg_hdr.x, dlg_hdr.y, dlg_hdr.dx, dlg_hdr.dy );
     if( hidden_dialog ) {
         fprintf( fo, "FS_BORDER | NOT FS_DLGBORDER | NOT WS_VISIBLE\n" );
     } else {
+#if defined( OLD_FORMAT )
         if( sysmodal && visible ) {
-            fprintf( fo, "FS_SYSMODAL | WS_VISIBLE" );
+            fprintf( fo, "FS_SYSMODAL\n\t\t| WS_VISIBLE" );
         } else if( sysmodal ) {
-            fprintf( fo, "FS_SYSMODAL" );
+            fprintf( fo, "FS_SYSMODAL\n\t\t" );
         } else if( visible ) {
-            fprintf( fo, "WS_VISIBLE" );
+            fprintf( fo, "WS_VISIBLE\n\t\t" );
         } else {
-            fprintf( fo, "0L" );
+            fprintf( fo, "0L\n\t\t" );
         }
-        fprintf( fo, "\n\t\t" );
+#else
+        if( sysmodal && visible ) {
+            fprintf( fo, "\n\t\tFS_SYSMODAL | WS_VISIBLE" );
+        } else if( sysmodal ) {
+            fprintf( fo, "\n\t\tFS_SYSMODAL" );
+        } else if( visible ) {
+            fprintf( fo, "\n\t\tWS_VISIBLE" );
+        } else {
+            fprintf( fo, "\n\t\t0L" );
+        }
+#endif
         out_parms_style( fo, dlg_hdr.parms, "DIALOG" );
     }
     if(( font_name != NULL ) || ( font_size != 0 )) {
-        fprintf( fo, "    PRESPARAMS PP_FONTNAMESIZE, " );
+        fprintf( fo, "%sPRESPARAMS PP_FONTNAMESIZE, ", STR_SPC );
         if( font_size != 0 ) {
             fprintf( fo, "\"%ld.%s\"\n", font_size, font_name );
         } else {
@@ -877,12 +900,12 @@ void process_dialog_declaration( FILE *fi, FILE *fo, char *line )
         }
         free( font_name );
     }
-    fprintf( fo, "    BEGIN\n" );
+    fprintf( fo, "%sBEGIN\n", STR_SPC );
     free( buff1 );
 }
 
 void alloc_statement( statement *stmt )
-/**********************************/
+/*************************************/
 {
     int i;
     
@@ -893,7 +916,7 @@ void alloc_statement( statement *stmt )
 }
 
 void free_statement( statement *stmt )
-/*********************************/
+/************************************/
 {
     int i;
     
@@ -986,7 +1009,10 @@ int main( int argc, char *argv[] )
                 my_fgets( line, MAX_LINE_LEN, fi );
                 break;
             } else {
-                fprintf( fo, "%s", line );
+#if !defined( OLD_FORMAT )
+                if( *line != '\0' )
+#endif
+                fprintf( fo, "%s\n", line );
                 my_fgets( line, MAX_LINE_LEN, fi );
             }
         }
@@ -1003,7 +1029,7 @@ int main( int argc, char *argv[] )
             p = strtok( buff2, separators );
         }
         if( !feof( fi ) ) {
-            fprintf( fo, "    END\n" );
+            fprintf( fo, "%sEND\n", STR_SPC );
         }
     }
     free( buff2 );
@@ -1016,7 +1042,9 @@ int main( int argc, char *argv[] )
     if( fi != NULL )
         fclose( fi );
     if( fo != NULL ) {
-        fprintf( fo, "\n\n" );
+#if defined( OLD_FORMAT )
+        fprintf( fo, "\n" );
+#endif
         fclose( fo );
     }
     if( !opt.quiet )
