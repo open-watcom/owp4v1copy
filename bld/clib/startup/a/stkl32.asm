@@ -24,9 +24,10 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Linux runtime library stack checking code.
+;* Description:  Stack checking for i386 Linux.
 ;*
 ;*****************************************************************************
+
 
 include mdef.inc
 include struct.inc
@@ -152,4 +153,3 @@ _putw   endp
 
         endmod
         end
-

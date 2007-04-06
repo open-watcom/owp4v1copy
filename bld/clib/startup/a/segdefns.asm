@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Segment definitions for Open Watcom C/C++32.
 ;*
 ;*****************************************************************************
 
 
-;
-; segment definitions for WATCOM C/C++32
-;
 include langenv.inc
 
         name    segdefns

@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C library setjmp/longjmp support for Alpha processors
+;* Description:  C library setjmp/longjmp support for Alpha processors.
 ;*
 ;*****************************************************************************
 

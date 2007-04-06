@@ -29,9 +29,6 @@
 ;*****************************************************************************
 
 
-//
-// startup code for WATCOM C/C++32 under Alpha AXP
-//
 //      This must be assembled using the following command:
 //              wasaxp cstrwaxp
 //
