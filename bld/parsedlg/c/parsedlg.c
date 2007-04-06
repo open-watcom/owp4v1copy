@@ -449,7 +449,8 @@ void add_parms_list( statement *stmt, char *separators, int flag )
         || ( strcmp( stmt->name, "GROUPBOX" ) == 0 )
         || ( strcmp( stmt->name, "CONTROL" ) == 0 )) {
         if( !process_parms( stmt->parms, MAX_STMT_PARMS, control_style_win, 
-            control_style_os2, CTRL_STYLE_CNT, 0, check_parm_item, "DT_MNEMONIC" ) ) {
+            control_style_os2, CTRL_STYLE_CNT, 0, check_parm_item, "DT_MNEMONIC" )
+            && strcmp( stmt->text, "\"\"" ) ) {
             add_parms_item( stmt->parms, "DT_MNEMONIC", ADD_AFTER );
         }
     }
