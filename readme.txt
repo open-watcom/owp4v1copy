@@ -39,10 +39,6 @@ d:\
 
     docs    - here is everything related to documentation, sources and tools
 
-    bin     - for the rare case where a tool is not available in source form
-
-    binp    - same as above, but containing OS/2 binaries
-
     distrib - contains manifests and scripts for building binary
               distribution packages
 
