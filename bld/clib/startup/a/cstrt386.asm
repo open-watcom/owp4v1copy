@@ -169,7 +169,7 @@ DATA    ends
 _BSS          segment word public 'BSS'
 _BSS          ends
 
-STACK_SIZE      equ     1000h
+STACK_SIZE      equ     10000h
 
 STACK   segment para stack 'STACK'
         db      (STACK_SIZE) dup(?)
