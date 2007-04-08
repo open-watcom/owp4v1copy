@@ -102,7 +102,8 @@ extern  unsigned_16     far __OVLSTARTPARA__;
 */
 
 typedef ovltab_entry __far *ovltab_entry_ptr;
-#define OVL_ACCESSES( __o )     (*(unsigned_8 far *)__o)
+
+#define OVL_ACCESSES( __o )     (*(unsigned_8 far *)&__o->flags_anc)
 
 /********************* memory management info *****************************/
 
