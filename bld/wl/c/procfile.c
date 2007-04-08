@@ -632,7 +632,7 @@ unsigned long ObjPass1( void )
     unsigned long loc;
     char *        savename;
 
-    DEBUG(( DBG_BASE, "1 : file %s", CurrMod->f.source->file->name ));
+    DEBUG(( DBG_BASE, "1 : file = %s, module = %s", CurrMod->f.source->file->name, CurrMod->name ));
     CurrMod->modinfo |= MOD_DONE_PASS_1;
     SymModStart();
     DBIInitModule( CurrMod );

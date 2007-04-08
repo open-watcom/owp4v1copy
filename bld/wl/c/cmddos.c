@@ -417,6 +417,9 @@ static void PrintSect( section *sect )
         DEBUG(( DBG_OLD, "OverLay #%d   Level %d", sect->ovl_num, OvlLevel ));
         DEBUG(( DBG_OLD, "Files:" ));
         list = sect->files;
+        if( list == NULL ) {
+            DEBUG(( DBG_OLD, "\"Non-section\"" ));
+        }
         while( list != NULL ) {
             DEBUG(( DBG_OLD, "%s", list->file->name ));
             list = list->next_file;
