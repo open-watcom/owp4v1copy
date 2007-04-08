@@ -157,7 +157,7 @@ pick(    MSG_MAP_STACK_SIZE,            "Stack size:" ,
                     "スタック サイズ:" )
 pick(    MSG_MAP_MEM_SIZE,              "Memory size:" ,
                     "メモリ サイズ:" )
-pick(    MSG_MAP_OVL_SIZE,              "Overlay are size:" ,
+pick(    MSG_MAP_OVL_SIZE,              "Overlay area size:" ,
                     "オーバレイ サイズ:" )
 pick(    MSG_MAP_ENTRY_PT_ADDR,     "Entry point address: %a" ,
                     "エントリアドレス: %a" )

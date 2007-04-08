@@ -589,13 +589,13 @@ static void ShortVectors( symbol *loadsym )
     loadval = MK_REAL_ADDR( loadsym->addr.seg, loadsym->addr.off );
     /* fill in overlay vector template */
     template.call_op = 0xe8;
-    template.jmp_op = 0xe9;
+    template.jmp_op = 0xe9;     // near jmp
     vecnum = 1;
     for( vec = OvlVectors; vec != NULL; vec = vec->next ) {
         temp = vect_off + offsetof( svector, ldr_addr ) + sizeof( unsigned_16 );
         diff = loadval - temp;
         if( ( diff < -32768 ) || ( diff > 32767 ) ) {
-            LnkMsg( ERR+MSG_SHORT_VECT_RANGE, "d", vecnum );
+            LnkMsg( ERR+MSG_VECT_RANGE, "sd", "short (1)", vecnum );
         }
         _HostU16toTarg( diff, template.ldr_addr );
         loadsym = vec->entry;
@@ -604,7 +604,7 @@ static void ShortVectors( symbol *loadsym )
         temp = vect_off + offsetof( svector, target ) + sizeof( unsigned_16 );
         diff = MK_REAL_ADDR( loadsym->addr.seg, loadsym->addr.off ) - temp;
         if( ( diff < -32768 ) || ( diff > 32767 ) ) {
-            LnkMsg( ERR+MSG_SHORT_VECT_RANGE, "d", vecnum );
+            LnkMsg( ERR+MSG_VECT_RANGE, "sd", "short (2)", vecnum );
         }
         _HostU16toTarg( diff, template.target );
         PutOvlInfo( vect_off, &template, sizeof( svector ) );
@@ -628,7 +628,7 @@ static void LongVectors( symbol *loadsym )
     vect_off = OvlvecAddr.off;
     /* fill in overlay vector template */
     template.u.v.call_op = 0xe8;
-    template.jmp_op = 0xea;
+    template.jmp_op = 0xea;     // far jmp
     loadval = loadsym->addr.off;
     addr.seg = OvlGroup->grp_addr.seg;
     vecnum = 1;
@@ -636,7 +636,7 @@ static void LongVectors( symbol *loadsym )
         temp = vect_off + offsetof( lvector, u.v.ldr_addr ) + sizeof( unsigned_16 );
         diff = loadval - temp;
         if( ( diff < -32768 ) || ( diff > 32767 ) ) {
-            LnkMsg( ERR+MSG_SHORT_VECT_RANGE, "d", vecnum );
+            LnkMsg( ERR+MSG_VECT_RANGE, "sd", "long", vecnum );
         }
         _HostU16toTarg( diff, template.u.v.ldr_addr );
         loadsym = vec->entry;

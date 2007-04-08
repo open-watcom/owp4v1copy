@@ -56,7 +56,7 @@
 #define    MSG_CANT_HAVE_START                   22 + MSG_BASE
 #define    MSG_NO_START_ADDR                     23 + MSG_BASE
 #define    MSG_NO_OVERLAY_LOADER                 24 + MSG_BASE
-#define    MSG_SHORT_VECT_RANGE                  25 + MSG_BASE
+#define    MSG_VECT_RANGE                        25 + MSG_BASE
 #define    MSG_RESERVED_SYM_DEFINED              26 + MSG_BASE
 #define    MSG_MULT_DEF                          27 + MSG_BASE
 #define    MSG_UNDEF_REF                         28 + MSG_BASE

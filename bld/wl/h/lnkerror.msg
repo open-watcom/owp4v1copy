@@ -44,8 +44,8 @@ pick(    MSG_NO_START_ADDR,     "no starting address found, using %a" ,
                     "開始アドレスが見つかりません.%aを開始アドレスとします" )
 pick(    MSG_NO_OVERLAY_LOADER,     "missing overlay loader" ,
                     "オーバレイ・ローダがありません" )
-pick(    MSG_SHORT_VECT_RANGE,      "short vector %d is out of range" ,
-                    "ショート・ベクタ %d が範囲外です" )
+pick(    MSG_VECT_RANGE,      "%s vector %d is out of range" ,
+                    "%s vector %d is out of range" )
 pick(    MSG_RESERVED_SYM_DEFINED,      "redefinition of reserved symbol %s" ,
                     "予約シンボル %s を再定義しました" )
 pick(    MSG_MULT_DEF,          "redefinition of %S ignored" ,
