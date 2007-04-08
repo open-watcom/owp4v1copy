@@ -556,6 +556,27 @@ static void ODBIGenAddrInfo( seg_leader *seg )
     DBIAddrInfoScan( seg, ODBIGenAddrInit, ODBIGenAddrAdd, dptr );
 }
 
+static void WriteBogusAddrInfo( debug_info * dptr )
+/*************************************************/
+{
+    addrinfo    info;
+    segheader   header;
+
+    dptr->addr.size = sizeof( segheader ) + sizeof( addrinfo );
+    dptr->addr.curr = DBIAlloc( dptr->addr.size );
+    dptr->addr.init = dptr->addr.curr;
+    dptr->dump_addr = dptr->addr.curr;
+    header.off = 0;
+    header.seg = 0;
+    header.num = 1;
+    DumpInfo( dptr, &header, sizeof( segheader ) );
+    dptr->addr.curr += sizeof( segheader );
+    info.size = 0;
+    info.mod_idx = 0;
+    DumpInfo( dptr, &info, sizeof( addrinfo ) );
+    dptr->addr.curr += sizeof( addrinfo );
+}
+
 void ODBIP2Start( section * sect )
 /***************************************/
 /* initialize pointers for pass 2 processing */
@@ -571,6 +592,12 @@ void ODBIP2Start( section * sect )
     if( dptr != NULL ) {
         dptr->dump_addr = dptr->addr.curr;
         SectWalkClass( sect, ODBIGenAddrInfo );
+        // if section is blank then write bogus address info
+        // minimum size of section is 2
+        // see AllocSections in ovlsupp.c
+        if(( sect->size == 2 ) && ( dptr->addr.size == 0 )) {
+            WriteBogusAddrInfo( dptr );
+        }
         dptr->dump_addr = dptr->line.curr;
         dptr->modnum = 0;
     }
