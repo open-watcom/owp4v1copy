@@ -47,7 +47,7 @@ void    initialize_globals( void )
     switch_char = _dos_switch_char();
 }
 
-/*
+/*  Function skip_spaces().
  *  Skip whitespace (as defined by isspace()).
  *
  *  Parameter:

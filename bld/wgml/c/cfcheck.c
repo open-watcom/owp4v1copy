@@ -34,7 +34,7 @@
 #include "common.h"
 #include "research.h"
 
-/*
+/*  Function main().
  *  Given a valid directory path, check all files in that directory
  *  for various conditions:
  *      whether the length is a multiple of 16
@@ -81,7 +81,7 @@ int main()
     initialize_globals();
     res_initialize_globals();
     
-    /* Parse the command line: allocates and sets dirpath */
+    /* Parse the command line: allocates and sets tgt_path */
 
     retval = parse_cmdline( cmdline );
     if( retval == FAILURE ) {
@@ -98,10 +98,10 @@ int main()
 
     retval = check_directory();
 
-    /* Free the memory held by tgtpath and reset it */
+    /* Free the memory held by tgt_path and reset it */
 
-    free( tgtpath );
-    tgtpath = NULL;
+    free( tgt_path );
+    tgt_path = NULL;
 
     /* Done */
 

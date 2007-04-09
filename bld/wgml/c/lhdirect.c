@@ -33,7 +33,7 @@
 
 #ifdef __LINUX__
 
-/*
+/*  Function get_file_size().
  *  This should return the size of the file; however, someone who knows Linux
  *  will have to implement it.
  *
@@ -50,6 +50,10 @@ long get_file_size( struct dirent * in_file )
 
 #else /* DOS, OS/2, Windows */
 
+/*  Function get_file_size().
+ *  Returns in_file->d_size.
+ */
+ 
 long get_file_size( struct dirent * in_file )
 {
     return( in_file->d_size );

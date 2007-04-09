@@ -32,7 +32,7 @@
 #include <string.h>
 #include "cfdev.h"
 
-/*
+/*  Function is_dev_file().
  *  Determines whether or not in_file points to the start of a .COP device
  *  file (the first byte after the header).
  *

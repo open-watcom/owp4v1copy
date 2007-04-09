@@ -32,7 +32,7 @@
 #include <string.h>
 #include "cfdrv.h"
 
-/*
+/*  Function is_drv_file().
  *  Determines whether or not in_file points to the start of a .COP driver
  *  file (the first byte after the header).
  *

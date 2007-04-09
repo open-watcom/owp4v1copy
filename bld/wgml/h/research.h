@@ -48,7 +48,7 @@
     #define global  extern
 #endif
 
-global  char *  tgtpath;    /* path of directory to be checked */
+global  char *  tgt_path;   /* path of directory to be checked */
 
 #undef global   /* reset so can be reused with other headers */
 

@@ -80,7 +80,7 @@ static int  verify_font( char *, char * );
 
 /*  Function definitions */
 
-/*
+/*  Function parse_cop_file().
  *  Verify that the file provided to the program is a .COP file and parse it
  *  if it is.
  *  This version only actually parses directory files.
@@ -93,7 +93,7 @@ static int  verify_font( char *, char * );
  *  is displayed.
  *
  *  Global Used:
- *      tgtpath contains the file passed on the command line
+ *      tgt_path contains the file passed on the command line
  *
  *  Returns:
  *      FAILURE if the directory provided cannot be opened
@@ -110,7 +110,7 @@ int parse_cop_file( void )
 
     /* Open the file */
 
-    fopen_s( &current_file, tgtpath, "rb" );
+    fopen_s( &current_file, tgt_path, "rb" );
     if( current_file == NULL ) return( FAILURE );
 
     /* Process the file */
@@ -118,7 +118,7 @@ int parse_cop_file( void )
     retval = parse_header( current_file, &file_type );
     if(retval == FAILURE)
     {
-        printf_s( "%s is not a valid .COP file\n", tgtpath );
+        printf_s( "%s is not a valid .COP file\n", tgt_path );
         return( FAILURE) ;
     }
     switch( file_type ) {
@@ -130,17 +130,17 @@ int parse_cop_file( void )
         break;
     case( 0x03 ):
         if( is_dev_file( current_file ) ) {
-            printf_s( "%s is a device file\n", tgtpath );
+            printf_s( "%s is a device file\n", tgt_path );
             break;
         }
         fseek( current_file, -3, SEEK_CUR ); /* Reset file to designator */
         if( is_drv_file( current_file ) ) {
-            printf_s( "%s is a driver file\n", tgtpath );
+            printf_s( "%s is a driver file\n", tgt_path );
             break;
         }
         fseek( current_file, -3, SEEK_CUR ); /* Reset file to designator */
         if( is_fon_file( current_file ) ) {
-            printf_s( "%s is a font file\n", tgtpath );
+            printf_s( "%s is a font file\n", tgt_path );
             break;
         }
         fseek( current_file, -3, SEEK_CUR ); /* Reset file to designator */
@@ -159,7 +159,7 @@ int parse_cop_file( void )
         check_directory( current_file, entry_count );
         break;
     default:
-        printf_s( "Unknown file type: %i\n", tgtpath, retval );
+        printf_s( "Unknown file type: %i\n", tgt_path, retval );
     }
     fclose( current_file );
     current_file = NULL;
@@ -167,7 +167,7 @@ int parse_cop_file( void )
     return( SUCCESS );
 }
 
-/*
+/*  Function print_banner().
  *  Print the banner to the screen
  */
 
@@ -179,7 +179,7 @@ void print_banner( void )
     puts( banner3a );
 }
 
-/*
+/*  Function print_usage().
  *  Print the usage information to the screen
  */
 
@@ -194,7 +194,7 @@ void print_usage( void )
     }
 }
 
-/*
+/*  Function check_directory().
  *  Checks the entry types. This function will print a message if an unknown
  *  entry type is found and prints the total number of each known type after
  *  processing the last entry. The check starts with the entry pointed to by
@@ -223,9 +223,9 @@ void check_directory( FILE * in_file, uint32_t count)
     int                 mismatch_count = 0;  /* counts files with wrong designator */
     int                 retval;
 
-    /* Split tgtpath */
+    /* Split tgt_path */
 
-    _splitpath( tgtpath, drive, dir, fname, ext );
+    _splitpath( tgt_path, drive, dir, fname, ext );
 
     /* Construct file_path */
 
@@ -348,7 +348,7 @@ void check_directory( FILE * in_file, uint32_t count)
     return;
 }
 
-/*
+/*  Function verify_device().
  *  Verifies that the file is a device file.
  *
  *  Parameter:
@@ -400,11 +400,11 @@ int verify_device( char * in_path, char * in_name)
         return( READ_ERROR );
     }
     designator[3] = NULLCHAR;
-    printf_s( "%s has incorrect designator for a device file: %s\n", tgtpath, designator );
+    printf_s( "%s has incorrect designator for a device file: %s\n", tgt_path, designator );
     return( BAD_MATCH );
 }
 
-/*
+/*  Function verify_driver().
  *  Verifies that the file is a driver file.
  *
  *  Parameter:
@@ -456,11 +456,11 @@ int verify_driver( char * in_path, char * in_name )
         return( READ_ERROR );
     }
     designator[3] = NULLCHAR;
-    printf_s( "%s has incorrect designator for a driver file: %s\n", tgtpath, designator );
+    printf_s( "%s has incorrect designator for a driver file: %s\n", tgt_path, designator );
     return( BAD_MATCH );
 }
 
-/*
+/*  Function verify_font().
  *  Verifies that the file is a font file.
  *
  *  Parameter:
@@ -512,7 +512,7 @@ int verify_font( char * in_path, char * in_name )
         return( READ_ERROR );
     }
     designator[3] = NULLCHAR;
-    printf_s( "%s has incorrect designator for a font file: %s\n", tgtpath, designator );
+    printf_s( "%s has incorrect designator for a font file: %s\n", tgt_path, designator );
     return( BAD_MATCH );
 }
 

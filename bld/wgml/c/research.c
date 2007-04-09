@@ -43,15 +43,15 @@
 #define global
 #include "research.h"
 
-/*
- *  Extract the path entered by the user into tgtpath. Doublequotes used
+/*  Function parse_cmdline().
+ *  Extract the path entered by the user into tgt_path. Doublequotes used
  *  to allow embedded spaces are removed.
  *
  *  Parameter:
  *      cmdline contains the command line without the program name
  *
  *  Global Used:
- *      tgtpath is loaded with the directory provided to the program, with any
+ *      tgt_path is loaded with the directory provided to the program, with any
  *          doublequotes removed
  *
  *  Returns:
@@ -70,7 +70,7 @@ int parse_cmdline( char * cmdline )
     cmdline = skip_spaces( cmdline );
 
     /* In case someone finds a way to enter an all-whitespace command line */
-        
+    
     if( *cmdline == NULLCHAR ) {
         print_usage();
         return ( FAILURE );
@@ -98,20 +98,20 @@ int parse_cmdline( char * cmdline )
         return( FAILURE );
     }
         
-    /* Allocate memory for the global pointer dirpath */
+    /* Allocate memory for the global pointer tgt_path */
         
     len++; /* To allow space for the final null character */
-    tgtpath = malloc( len );
-    if( tgtpath == NULL ) return( FAILURE );
+    tgt_path = malloc( len );
+    if( tgt_path == NULL ) return( FAILURE );
 
-    /* Copy the parameter into dirpath */
+    /* Copy the parameter into tgt_path */
 
-    strncpy_s( tgtpath, len, cmdline, len-1 );
-    tgtpath[ len ] = NULLCHAR;
+    strncpy_s( tgt_path, len, cmdline, len-1 );
+    tgt_path[ len ] = NULLCHAR;
 
     /* Remove doublequotes, if present */
 
-    if(opt == '\"') UnquoteFName( tgtpath, len, tgtpath );
+    if(opt == '\"') UnquoteFName( tgt_path, len, tgt_path );
 
     /* We are done */
 
@@ -119,13 +119,13 @@ int parse_cmdline( char * cmdline )
 
 }
 
-/*
+/*  Function res_initialize_globals().
  *  Initialize the global variable common to the research functions.
  */
 
 void res_initialize_globals( void )
 {
-    tgtpath = NULL;
+    tgt_path = NULL;
 }
 
 

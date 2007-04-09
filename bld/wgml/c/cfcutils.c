@@ -47,7 +47,7 @@ static  char const *    usage_text[] = {
 NULL
 };
 
-/*
+/*  Function check_directory().
  *  Perform the check of the directory provided to the program.
  *  Only files, not subdirectories, are checked.
  *  The length of all files is checked to see if it is a multiple of 16.
@@ -56,7 +56,7 @@ NULL
  *  Any file types other than 0x02, 0x03 and 0x04 are displayed.
  *
  *  Global Used:
- *      tgtpath contains the directory passed on the command line
+ *      tgt_path contains the directory passed on the command line
  *
  *  Returns:
  *      FAILURE if the directory provided cannot be opened
@@ -74,9 +74,9 @@ int check_directory( void )
     int                 retval;
     char                type;
 
-    current_dir = opendir( tgtpath );
+    current_dir = opendir( tgt_path );
     if( current_dir == NULL ) return( FAILURE );
-    chdir( tgtpath );
+    chdir( tgt_path );
     for(;;) {
         dir_entry = readdir( current_dir );
         if( dir_entry == NULL ) break;
@@ -126,7 +126,7 @@ int check_directory( void )
     return( SUCCESS );
 }
 
-/*
+/*  Function print_banner().
  *  Print the banner to the screen
  */
 
@@ -138,7 +138,7 @@ void print_banner( void )
     puts( banner3a );
 }
 
-/*
+/*  Function print_usage().
  *  Print the usage information to the screen
  */
 

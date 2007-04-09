@@ -39,7 +39,7 @@
 #include "common.h"
 #include "wstd.h"
 
-/*
+/*  Function get_entry_count().
  *  Reads and returns the entry count.
  *
  *  Parameters:
@@ -64,7 +64,7 @@ int get_entry_count( FILE * in_file, uint16_t * entry_count )
     return( SUCCESS );
 }
 
-/*
+/*  Function get_entry_type().
  *  Reads and returns the entry type.
  *  This is intended to be used for both meta-types and entry types as such.
  *  There are two meta-types:
@@ -98,7 +98,7 @@ int get_entry_type( FILE * in_file, uint16_t * entry_type )
     return( SUCCESS );
 }
 
-/*
+/*  Function get_compact_entry().
  *  Reads and returns the current entry.
  *
  *  Parameters:
@@ -161,7 +161,7 @@ int get_compact_entry( FILE * in_file, compact_entry_t * entry )
     return( SUCCESS );
 }
 
-/*
+/*  Function get_extended_entry().
  *  Reads and returns the current entry.
  *
  *  Parameters:
@@ -232,7 +232,7 @@ int get_extended_entry( FILE * in_file, extended_entry_t * entry )
     return( SUCCESS );
 }
 
-/*
+/*  Function skip_compact_entry().
  *  Skips the current entry.
  *
  *  Parameter:
@@ -271,7 +271,7 @@ int skip_compact_entry( FILE * in_file )
     return( SUCCESS );
 }
 
-/*
+/*  Function skip_extended_entry().
  *  Skips the current entry.
  *
  *  Parameter:

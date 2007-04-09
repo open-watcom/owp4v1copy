@@ -29,13 +29,17 @@
 *
 ****************************************************************************/
 
+#define __STDC_WANT_LIB_EXT1__ 1
+#include <stdio.h>
+
+
 #include <process.h>
 #include <stdlib.h>
 #include "cfparse.h"
 #include "common.h"
 #include "research.h"
 
-/*
+/*  Function main().
  *  Given a valid name, verify that it is a valid .COP file and parse it
  *  if it is. This version only parses directory files.
  *
@@ -81,7 +85,7 @@ int main()
     initialize_globals();
     res_initialize_globals();
     
-    /* Parse the command line: allocates and sets dirpath */
+    /* Parse the command line: allocates and sets tgt_path */
 
     retval = parse_cmdline( cmdline );
     if( retval == FAILURE ) {
@@ -98,10 +102,10 @@ int main()
 
     retval = parse_cop_file();
 
-    /* Free the memory held by tgtpath and reset it */
+    /* Free the memory held by tgt_path and reset it */
 
-    free( tgtpath );
-    tgtpath = NULL;
+    free( tgt_path );
+    tgt_path = NULL;
 
     /* Done */
 
@@ -109,6 +113,9 @@ int main()
       print_usage();
       return( EXIT_FAILURE );
     }
+
+    printf_s( "Value of retval: %i, of FAILURE: %i, and of EXIT_SUCCESS: %i\n", retval, FAILURE, EXIT_SUCCESS );
+
     
     return( EXIT_SUCCESS );
 }

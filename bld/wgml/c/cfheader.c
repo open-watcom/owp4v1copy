@@ -29,11 +29,12 @@
 *
 ****************************************************************************/
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include "common.h"
 
-/*
+/*  Function parse_header().
  *  Determine if the current position of the input stream points to the
  *  start of a valid .COP file and, if it does, advance the stream to the
  *  first byte following the header.
@@ -57,26 +58,42 @@
 
 int parse_header( FILE * in_file, char * type )
 {
-    char magic[4];
+    char        magic;
+    uint16_t    version;
+    char        count;
 
     /* Get the "magic number" and the version length byte */
 
-    fread( &magic, 4, 1, in_file );
+    magic = fgetc( in_file );
+    if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
+
+    /* If "magic" is not equal to 0x02, this is not a COP file. */
+
+    if( magic != 0x02 ) return( FAILURE );
+
+    /* Get the version number */
+
+    fread( &version, 2, 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* If neither a version 3 or a version 4 header, it is not a COP file */
     /* Check for a version 3 header */
 
-    if( memcmp( magic, "\x02\x0a\x00", 3 ) ) {
+    if( version != 0x000a ) {
 
         /* Check for a version 4 header */
         
-        if( memcmp( magic, "\x02\x0c\x00", 3 ) ) return( FAILURE );
+        if( version != 0x000c ) return( FAILURE );
     }
 
     /* Skip the version text */
     
-    fseek( in_file, magic[3], SEEK_CUR );
+    /* Get the version length byte */
+
+    count = fgetc( in_file );
+    if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
+
+    fseek( in_file, count, SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( FAILURE );
 
     /* Get the file type byte */
