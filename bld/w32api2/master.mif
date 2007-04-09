@@ -1,23 +1,30 @@
 proj_name = w32api
 
-.EXTENSIONS : .mh
+.EXTENSIONS : .rh .mh
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
 splice = wsplice -i$(hdr_dir) -i../include $[@ $^@
+rsplice = wsplice -i$(hdr_dir) -i../include -kRESOURCE $[@ $^@
 
 headers =            &
         basetsd.h    &
         bcrypt.h     &
         cderr.h      &
+        commctrl.h   &
+        commctrl.rh  &
+        commdlg.h    &
         dde.h        &
+        dde.rh       &
         ddeml.h      &
         dlgs.h       &
         guiddef.h    &
+        imm.h        &
         inaddr.h     &
         lzexpand.h   &
+        mcx.h        &
         mmsystem.h   &
         msxml.h      &
         nb30.h       &
@@ -47,6 +54,7 @@ headers =            &
         rpcnterr.h   &
         servprov.h   &
         shellapi.h   &
+        stralign.h   &
         tvout.h      &
         unknwn.h     &
         urlmon.h     &
@@ -62,20 +70,24 @@ headers =            &
         winnetwk.h   &
         winnls.h     &
         winnt.h      &
+        winnt.rh     &
         winperf.h    &
         winreg.h     &
+        winresrc.h   &
         winscard.h   &
         winsmcrd.h   &
         winsock.h    &
         winspool.h   &
+        winsvc.h     &
         winuser.h    &
+        winuser.rh   &
         winver.h     &
         wtypes.h
 
 libs =               &
         uuid.lib
 
-additional_cleanup = *.h
+additional_cleanup = *.h *.rh
 
 all : $(headers) $(libs) .SYMBOLIC
     @%null
@@ -86,6 +98,9 @@ all : $(headers) $(libs) .SYMBOLIC
 
 .mh.h:
     $(splice)
+
+.mh.rh:
+    $(rsplice)
 
 uuid.lib: uuid.obj
     %create $^&.lbc

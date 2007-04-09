@@ -7,10 +7,10 @@
 #ifndef _WINVER_H_INCLUDED
 #define _WINVER_H_INCLUDED
 
-:include readonly.sp
 #ifndef RC_INVOKED
+:include readonly.sp
 :include cpluspro.sp
-#endif
+#endif /* RC_INVOKED */
 
 /* Version information resource type */
 #define VS_FILE_INFO    RT_VERSION

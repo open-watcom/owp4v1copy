@@ -1,0 +1,18 @@
+/*
+ *  winresrc.h  Win32 main resource header file
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _WINRESRC_H_INCLUDED
+#define _WINRESRC_H_INCLUDED
+
+#include <winuser.rh>
+#include <commctrl.rh>
+#include <dde.rh>
+#include <winnt.rh>
+#include <dlgs.h>
+#include <winver.h>
+
+#endif /* _WINRESRC_H_INCLUDED */
+

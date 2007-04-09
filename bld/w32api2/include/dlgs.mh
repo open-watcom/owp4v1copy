@@ -7,8 +7,10 @@
 #ifndef _DLGS_H_INCLUDED
 #define _DLGS_H_INCLUDED
 
+#ifndef RC_INVOKED
 :include readonly.sp
 :include cpluspro.sp
+#endif /* RC_INVOKED */
 
 /* Control identifier range */
 #define ctlFirst    0x0400
@@ -217,6 +219,9 @@
     #define NEWFILEOPENV3ORD        1553
 #endif
 
+/* The rest of the file should be ignored when resources are being compiled. */
+#ifndef RC_INVOKED
+
 /* RGB color */
 typedef struct tagCRGB {
     BYTE    bRed;
@@ -226,6 +231,7 @@ typedef struct tagCRGB {
 } CRGB;
 
 :include cplusepi.sp
+#endif /* RC_INVOKED */
 
 #endif /* _DLGS_H_INCLUDED */
 

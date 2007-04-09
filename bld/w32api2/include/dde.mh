@@ -1,15 +1,28 @@
 /*
- * dde.h       Dynamic Data Exchange (DDE) definitions
+:segment !RESOURCE
+ *  dde.h       Dynamic Data Exchange (DDE) definitions
+:endsegment
+:segment RESOURCE
+ *  dde.rh      Dynamic Data Exchange (DDE) resource constants
+:endsegment
  *
 :include crwatcnt.sp
  */
 
+:segment !RESOURCE
 #ifndef _DDE_H_INCLUDED
 #define _DDE_H_INCLUDED
+:endsegment
+:segment RESOURCE
+#ifndef _DDE_RH_INCLUDED
+#define _DDE_RH_INCLUDED
+:endsegment
 
+:segment !RESOURCE
 :include readonly.sp
 :include cpluspro.sp
 
+:endsegment
 /* DDE messages */
 #define WM_DDE_FIRST        0x03E0
 #define WM_DDE_INITIATE     (WM_DDE_FIRST + 0)
@@ -23,6 +36,7 @@
 #define WM_DDE_EXECUTE      (WM_DDE_FIRST + 8)
 #define WM_DDE_LAST         (WM_DDE_FIRST + 8)
 
+:segment !RESOURCE
 /* Structure used with WM_DDE_ACK */
 typedef struct {
     unsigned short  bAppReturnCode  : 8;
@@ -90,4 +104,8 @@ WINUSERAPI BOOL WINAPI      UnpackDDElParam( UINT, LPARAM, PUINT_PTR, PUINT_PTR 
 :include cplusepi.sp
 
 #endif /* _DDE_H_INCLUDED */
+:endsegment
+:segment RESOURCE
+#endif /* _DDE_RH_INCLUDED */
+:endsegment
 

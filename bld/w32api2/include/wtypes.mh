@@ -29,8 +29,12 @@ typedef WORD    CLIPFORMAT;
 /* Date data type */
 typedef double  DATE;
 
-/* Boolean data type for Automation */
-typedef short   VARIANT_BOOL;
+/* String data type for automation */
+typedef OLECHAR *BSTR;
+typedef BSTR    *LPBSTR;
+
+/* Boolean data type for automation */
+typedef short           VARIANT_BOOL;
 
 /* Variant type data type */
 typedef unsigned short  VARTYPE;

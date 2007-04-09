@@ -1,12 +1,24 @@
 /*
+:segment !RESOURCE
  *  winnt.h     NT definitions used by Win32
+:endsegment
+:segment RESOURCE
+ *  winnt.rh    NT definitions used by Win32 resource files
+:endsegment
  *
 :include crwatcnt.sp
  */
 
+:segment !RESOURCE
 #ifndef _WINNT_H_INCLUDED
 #define _WINNT_H_INCLUDED
+:endsegment
+:segment RESOURCE
+#ifndef _WINNT_RH_INCLUDED
+#define _WINNT_RH_INCLUDED
+:endsegment
 
+:segment !RESOURCE
 :include readonly.sp
 #include <string.h>
 #include <basetsd.h>
@@ -81,6 +93,7 @@
 /* Macro used to specify an unspecified data type or an empty parameter list */
 #define VOID    void
 
+:endsegment
 /* Macro to specify neutral strings */
 #ifdef UNICODE
     #define TEXT( x )   L##x
@@ -88,6 +101,7 @@
     #define TEXT( x )   x
 #endif
 
+:segment !RESOURCE
 /* Macros to manipulate language identifiers */
 #define MAKELANGID( p1, p2 )    (((WORD)(p2) << 10) | (WORD)(p1))
 #define PRIMARYLANGID( x )      ((WORD)(x) & 0x03FF)
@@ -301,6 +315,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define PRODUCT_SMALLBUSINESS_SERVER_PREMIUM    0x00000019
 #define PRODUCT_UNLICENSED                      0xABCDABCD
 
+:endsegment
 /* Language identifiers */
 #define LANG_NEUTRAL        0x00
 #define LANG_INVARIANT      0x7F
@@ -668,6 +683,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 #define SORT_GEORGIAN_TRADITIONAL   0x0
 #define SORT_GEORGIAN_MODERN        0x1
 
+:segment !RESOURCE
 /* Default languages identifiers */
 #define LANG_SYSTEM_DEFAULT MAKELANGID( LANG_NEUTRAL, SUBLANG_SYS_DEFAULT )
 #define LANG_USER_DEFAULT   MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT )
@@ -5740,4 +5756,8 @@ PVOID   GetFiberData( void );
 :include cplusepi.sp
 
 #endif /* _WINNT_H_INCLUDED */
+:endsegment
+:segment RESOURCE
+#endif /* _WINNT_RH_INCLUDED */
+:endsegment
 

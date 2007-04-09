@@ -1,12 +1,25 @@
 /*
- * winuser.h    Win32 user interface functions
+:segment !RESOURCE
+ *  winuser.h   Win32 user interface functions
+:endsegment
+:segment RESOURCE
+ *  winuser.rh  Win32 user interface resource constants
+:endsegment
  *
 :include crwatcnt.sp
  */
 
+:segment !RESOURCE
 #ifndef _WINUSER_H_INCLUDED
 #define _WINUSER_H_INCLUDED
+:endsegment
+:segment RESOURCE
+#ifndef _WINUSER_RH_INCLUDED
+#define _WINUSER_RH_INCLUDED
+#endif
+:endsegment
 
+:segment !RESOURCE
 :include readonly.sp
 #include <tvout.h>
 
@@ -112,14 +125,29 @@ DECLARE_HANDLE( HRAWINPUT );
 #endif
 #define RT_HTML             MAKEINTRESOURCE( 23 )
 #define RT_MANIFEST         MAKEINTRESOURCE( 24 )
+:endsegment
+:segment RESOURCE
+/* Manifest resource type */
+#define RT_MANIFEST 24
+:endsegment
 
 /* Manifest resource identifiers */
+:segment !RESOURCE
 #define CREATEPROCESS_MANIFEST_RESOURCE_ID                  MAKEINTRESOURCE( 1 )
 #define ISOLATIONAWARE_MANIFEST_RESOURCE_ID                 MAKEINTRESOURCE( 2 )
 #define ISOLATIONAWARE_NOSTATICIMPORT_MANIFEST_RESOURCE_ID  MAKEINTRESOURCE( 3 )
 #define MINIMUM_RESERVED_MANIFEST_RESOURCE_ID               MAKEINTRESOURCE( 1 )
 #define MAXIMUM_RESERVED_MANIFEST_RESOURCE_ID               MAKEINTRESOURCE( 16 )
+:endsegment
+:segment RESOURCE
+#define CREATEPROCESS_MANIFEST_RESOURCE_ID                  1
+#define ISOLATIONAWARE_MANIFEST_RESOURCE_ID                 2
+#define ISOLATIONAWARE_NOSTATICIMPORT_MANIFEST_RESOURCE_ID  3
+#define MINIMUM_RESERVED_MANIFEST_RESOURCE_ID               1
+#define MAXIMUM_RESERVED_MANIFEST_RESOURCE_ID               16
+:endsegment
 
+:segment !RESOURCE
 /* Constant used with SPI_SETDESKWALLPAPER */
 #define SETWALLPAPER_DEFAULT    ((LPWSTR)-1)
 
@@ -146,6 +174,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define SB_RIGHT            7
 #define SB_ENDSCROLL        8
 
+:endsegment
 /* ShowWindow() commands */
 #define SW_HIDE             0
 #define SW_SHOWNORMAL       1
@@ -176,6 +205,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define SW_PARENTOPENING    3
 #define SW_OTHERUNZOOM      4
 
+:segment !RESOURCE
 /* AnimateWindow() commands */
 #if (WINVER >= 0x0500)
     #define AW_HOR_POSITIVE 0x00000001L
@@ -197,6 +227,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define KF_REPEAT   0x4000
 #define KF_UP       0x8000
 
+:endsegment
 /* Virtual key codes */
 #define VK_LBUTTON                  0x01
 #define VK_RBUTTON                  0x02
@@ -367,6 +398,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define VK_PA1                      0xFD
 #define VK_OEM_CLEAR                0xFE
 
+:segment !RESOURCE
 /* Hook types */
 #define WH_MIN                  (-1)
 #define WH_MSGFILTER            (-1)
@@ -676,6 +708,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define GCLP_WNDPROC        (-24)
 #define GCLP_HICONSM        (-34)
 
+:endsegment
 /* Window messages */
 #define WM_NULL                             0x0000
 #define WM_CREATE                           0x0001
@@ -1036,6 +1069,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define XBUTTON2    0x0002
 #endif
 
+:segment !RESOURCE
 /* Power management events */
 #if (WINVER >= 0x0400)
     #define PBT_APMQUERYSUSPEND         0x0000
@@ -1061,6 +1095,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define PBTF_APMRESUMEFROMFAILURE   0x00000001L
 #endif
 
+:endsegment
 /* WM_SIZING codes */
 #if (WINVER >= 0x0400)
     #define WMSZ_LEFT           1
@@ -1269,6 +1304,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define CS_DROPSHADOW   0x00020000
 #endif
 
+:segment !RESOURCE
 /* WM_PRINT flags */
 #if (WINVER >= 0x0400)
     #define PRF_CHECKVISIBLE    0x00000001L
@@ -1388,6 +1424,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define IDANI_CAPTION   3
 #endif
 
+:endsegment
 /* Clipboard formats */
 #define CF_TEXT             0x0001
 #define CF_BITMAP           0x0002
@@ -1425,6 +1462,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define CF_GDIOBJFIRST      0x0300
 #define CF_GDIOBJLAST       0x03FF
 
+:segment !RESOURCE
 /* Accelerator flags */
 #define FVIRTKEY    0x01
 #define FNOINVERT   0x02
@@ -2247,6 +2285,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define MF_END          0x00000080
 #endif
 
+:endsegment
 /* Menu types */
 #if (WINVER >= 0x0400)
     #define MFT_STRING          MF_STRING
@@ -2306,6 +2345,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define SCF_ISSECURE    0x00000001
 #endif
 
+:segment !RESOURCE
 /* Standard cursor identifiers */
 #define IDC_ARROW       MAKEINTRESOURCE( 32512 )
 #define IDC_IBEAM       MAKEINTRESOURCE( 32513 )
@@ -2371,6 +2411,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define RES_CURSOR  2
 #endif
 
+:endsegment
 /* OEM bitmap resource identifiers */
 #ifdef OEMRESOURCE
     #define OBM_CLOSE       32754
@@ -2451,10 +2492,13 @@ DECLARE_HANDLE( HRAWINPUT );
     #endif
 #endif
 
+:segment !RESOURCE
 /* Entry point ordinal for language drivers */
 #define ORD_LANGDRIVER  1
 
+:endsegment
 /* Standard icon identifiers */
+:segment !RESOURCE
 #define IDI_APPLICATION     MAKEINTRESOURCE( 32512 )
 #define IDI_HAND            MAKEINTRESOURCE( 32513 )
 #define IDI_QUESTION        MAKEINTRESOURCE( 32514 )
@@ -2469,6 +2513,23 @@ DECLARE_HANDLE( HRAWINPUT );
 #if (WINVER >= 0x0600)
     #define IDI_SHIELD      MAKEINTRESOURCE( 32518 )
 #endif
+:endsegment
+:segment RESOURCE
+#define IDI_APPLICATION     32512
+#define IDI_HAND            32513
+#define IDI_QUESTION        32514
+#define IDI_EXCLAMATION     32515
+#define IDI_ASTERISK        32516
+#if (WINVER >= 0x0400)
+    #define IDI_WINLOGO     32517
+    #define IDI_WARNING     IDI_EXCLAMATION
+    #define IDI_ERROR       IDI_HAND
+    #define IDI_INFORMATION IDI_ASTERISK
+#endif
+#if (WINVER >= 0x0600)
+    #define IDI_SHIELD      32518
+#endif
+:endsegment
 
 /* Dialog box button identifiers */
 #define IDOK            1
@@ -2505,6 +2566,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define ES_NUMBER   0x2000L
 #endif
 
+:segment !RESOURCE
 /* Edit control notification codes */
 #define EN_SETFOCUS         0x0100
 #define EN_KILLFOCUS        0x0200
@@ -2538,6 +2600,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define EIMES_COMPLETECOMPSTRKILLFOCUS  0x0004
 #endif
 
+:endsegment
 /* Edit control messages */
 #define EM_GETSEL               0x00B0
 #define EM_SETSEL               0x00B1
@@ -2583,11 +2646,13 @@ DECLARE_HANDLE( HRAWINPUT );
     #define EM_GETIMESTATUS     0x00D9
 #endif
 
+:segment !RESOURCE
 /* Word break procedure codes */
 #define WB_LEFT         0
 #define WB_RIGHT        1
 #define WB_ISDELIMITER  2
 
+:endsegment
 /* Button control styles */
 #define BS_PUSHBUTTON       0x0000L
 #define BS_DEFPUSHBUTTON    0x0001L
@@ -2699,6 +2764,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define SS_ELLIPSISMASK     0xC000L
 #endif
 
+:segment !RESOURCE
 /* Static control messages */
 #define STM_SETICON         0x0170
 #define STM_GETICON         0x0171
@@ -2740,6 +2806,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define DDL_DRIVES      0x4000
 #define DDL_EXCLUSIVE   0x8000
 
+:endsegment
 /* Dialog box styles */
 #define DS_ABSALIGN         0x0001L
 #define DS_SYSMODAL         0x0002L
@@ -2759,6 +2826,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define DS_SHELLFONT    (DS_SETFONT | DS_FIXEDSYS)
 #endif
 
+:segment !RESOURCE
 /* Dialog box messages */
 #define DM_GETDEFID         (WM_USER + 0)
 #define DM_SETDEFID         (WM_USER + 1)
@@ -2847,6 +2915,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define LB_MSGMAX           0x01A8
 #endif
 
+:endsegment
 /* List box control styles */
 #define LBS_NOTIFY              0x0001L
 #define LBS_SORT                0x0002L
@@ -2868,6 +2937,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define LBS_COMBOBOX            0x8000L
 #define LBS_STANDARD            (LBS_NOTIFY | LBS_SORT | WS_VSCROLL | WS_BORDER)
 
+:segment !RESOURCE
 /* Combo box control message return values */
 #define CB_OKAY     0
 #define CB_ERR      (-1)
@@ -2886,6 +2956,7 @@ DECLARE_HANDLE( HRAWINPUT );
 #define CBN_SELENDOK        9
 #define CBN_SELENDCANCEL    10
 
+:endsegment
 /* Combo box control styles */
 #define CBS_SIMPLE              0x0001L
 #define CBS_DROPDOWN            0x0002L
@@ -2903,6 +2974,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define CBS_LOWERCASE       0x4000L
 #endif
 
+:segment !RESOURCE
 /* Combo box control messages */
 #define CB_GETEDITSEL               0x0140
 #define CB_LIMITTEXT                0x0141
@@ -2949,6 +3021,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define CB_MSGMAX               0x015B
 #endif
 
+:endsegment
 /* Scroll bar control styles */
 #define SBS_HORZ                    0x0000L
 #define SBS_VERT                    0x0001L
@@ -2963,6 +3036,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define SBS_SIZEGRIP            0x0010L
 #endif
 
+:segment !RESOURCE
 /* Scroll bar control messages */
 #define SBM_SETPOS                  0x00E0
 #define SBM_GETPOS                  0x00E1
@@ -2999,6 +3073,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define MDITILE_ZORDER      0x0004
 #endif
 
+:endsegment
 /* WinHelp() commands */
 #define HELP_CONTEXT                0x00000001L
 #define HELP_QUIT                   0x00000002L
@@ -3034,6 +3109,7 @@ DECLARE_HANDLE( HRAWINPUT );
     #define IDH_HELP                28445
 #endif
 
+:segment !RESOURCE
 /* GetGuiResources() flags */
 #if (WINVER >= 0x0500)
     #define GR_GDIOBJECTS   0L
@@ -6395,4 +6471,8 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
 :include cplusepi.sp
 
 #endif /* _WINUSER_H_INCLUDED */
+:endsegment
+:segment RESOURCE
+#endif /* _WINUSER_RH_INCLUDED */
+:endsegment
 
