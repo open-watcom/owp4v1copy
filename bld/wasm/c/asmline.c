@@ -151,6 +151,8 @@ static bool get_asmline( char *ptr, unsigned max, FILE *fp )
             }
             skip = TRUE;
             break;
+        case '\r':
+            continue; /* don't store character in string */
         case '\n':
             /* if continuation character found, pass over newline */
             if( (got_something == TRUE) && (*(ptr - 1) == '\\') ) {
@@ -454,53 +456,46 @@ char *ReadTextLine( char *string )
     return( string );
 }
 
-static char *join_multiline_cmds( char *line, int len )
-/*****************************************************/
+static char *join_multiline_cmds( char *line, int max_len )
+/*********************************************************/
 {
-    char        *ptr;
     int         linelen;
+    int         i;
 
     linelen = strlen( line );
 
-    if( linelen == 0 )
-        return( line );
-
     /* if the last non-whitespace character is a comma, join the next line on */
 
-    for( ptr = line + linelen - 1 ; isspace( *ptr ); ptr-- )
-        ;
-
-    /* ptr now points at the last non-whitespace char */
-
-    if( *ptr != ',' ) {
-        return( line );
+    for( i = linelen; i; --i ) {
+        if( !isspace( line[ i - 1 ] ) ) {
+            if( line[ i - 1 ] == ',' )
+                ScanLine( line + linelen, max_len - linelen );
+            break;
+        }
     }
-    ptr++;
-
-    ptr = ScanLine( line + linelen, len - linelen );
     return( line );
 }
 
-char *ScanLine( char *string, int len )
-/*************************************/
+char *ScanLine( char *string, int max_len )
+/*****************************************/
 {
     char        *line;
     char        buffer[MAX_LINE_LEN];
 
-    line = ( len < MAX_LINE_LEN ? buffer : string );
+    line = ( max_len < MAX_LINE_LEN ? buffer : string );
     line = ReadTextLine( line );
     if( line != NULL ) {
 
         prep_line_for_conditional_assembly( line );
         if( line != string ) {          /* comparing the pointers */
-            if( strlen( line ) <= len ) {
+            if( strlen( line ) <= max_len ) {
                 strcpy( string, line );
             } else {
                 AsmError( ASM_CODE_TOO_LONG );
                 return( NULL );
             }
         }
-        join_multiline_cmds( string, len );
+        join_multiline_cmds( string, max_len );
     }
     return( line );
 }
