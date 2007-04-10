@@ -103,11 +103,17 @@ static int checkFree( frlptr p )
     }
     next = p->next;
     prev = p->prev;
+    if( next == NULL || prev == NULL ) {
+        return( _HEAPBADNODE );
+    }
     if( next->prev != p || prev->next != p ) {
         return( _HEAPBADNODE );
     }
     next_next = next->next;
     prev_prev = prev->prev;
+    if( next_next == NULL || prev_prev == NULL ) {
+        return( _HEAPBADNODE );
+    }
     if( next_next->prev != next || prev_prev->next != prev ) {
         return( _HEAPBADNODE );
     }
