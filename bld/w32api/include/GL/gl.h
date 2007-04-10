@@ -1,5 +1,3 @@
-/* $Id: gl.h,v 1.3 2003/08/25 02:02:37 dannysmith Exp $ */
-
 /*
  * Mesa 3-D graphics library
  * Version:  4.0

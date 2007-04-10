@@ -961,6 +961,8 @@ extern "C" {
 #define SM_CYFOCUSBORDER 84
 #define SM_TABLETPC 86
 #define SM_MEDIACENTER 87
+#define SM_STARTER 88
+#define SM_SERVERR2 89
 #if (_WIN32_WINNT < 0x0400)
 #define SM_CMETRICS 76
 #else
@@ -1082,6 +1084,21 @@ extern "C" {
 #if (_WIN32_WINNT >= 0x0500)
 #define MOUSEEVENTF_XDOWN 0x00000080
 #define MOUSEEVENTF_XUP 0x00000100
+#endif
+#if (_WIN32_WINNT >= 0x0400)
+#define PBT_APMQUERYSUSPEND 0x0000
+#define PBT_APMQUERYSTANDBY 0x0001
+#define PBT_APMQUERYSUSPENDFAILED 0x0002
+#define PBT_APMQUERYSTANDBYFAILED 0x0003
+#define PBT_APMSUSPEND 0x0004
+#define PBT_APMSTANDBY 0x0005
+#define PBT_APMRESUMECRITICAL 0x0006
+#define PBT_APMRESUMESUSPEND 0x0007
+#define PBT_APMRESUMESTANDBY 0x0008
+#define PBT_APMBATTERYLOW 0x0009
+#define PBT_APMPOWERSTATUSCHANGE 0x000A
+#define PBT_APMOEMEVENT 0x000B
+#define PBT_APMRESUMEAUTOMATIC 0x0012
 #endif
 #define PM_NOREMOVE 0
 #define PM_REMOVE 1
@@ -3101,12 +3118,14 @@ typedef struct tagSCROLLBARINFO {
 	int   reserved;
 	DWORD rgstate[CCHILDREN_SCROLLBAR+1];
 } SCROLLBARINFO,*PSCROLLBARINFO,*LPSCROLLBARINFO;
+#if (_WIN32_WINDOWS >= 0x0410)
 #define CCHILDREN_TITLEBAR 5
 typedef struct tagTITLEBARINFO {
 	DWORD cbSize;
 	RECT  rcTitleBar;
 	DWORD rgstate[CCHILDREN_TITLEBAR+1];
 } TITLEBARINFO,*PTITLEBARINFO,*LPTITLEBARINFO;
+#endif
 typedef struct tagWINDOWINFO {
 	DWORD cbSize;
 	RECT  rcWindow;
@@ -3711,7 +3730,9 @@ WINUSERAPI BOOL WINAPI GetMenuInfo(HMENU,LPMENUINFO);
 WINUSERAPI BOOL WINAPI GetProcessDefaultLayout(DWORD*);
 #endif
 WINUSERAPI BOOL WINAPI GetScrollBarInfo(HWND,LONG,PSCROLLBARINFO);
+#if (_WIN32_WINDOWS >= 0x0410)
 WINUSERAPI BOOL WINAPI GetTitleBarInfo(HWND,PTITLEBARINFO);
+#endif
 WINUSERAPI BOOL WINAPI GetWindowInfo(HWND,PWINDOWINFO);
 WINUSERAPI BOOL WINAPI GetMonitorInfoA(HMONITOR,LPMONITORINFO);
 WINUSERAPI BOOL WINAPI GetMonitorInfoW(HMONITOR,LPMONITORINFO);
@@ -4029,12 +4050,12 @@ WINUSERAPI BOOL WINAPI WinHelpA(HWND,LPCSTR,UINT,DWORD);
 WINUSERAPI BOOL WINAPI WinHelpW(HWND,LPCWSTR,UINT,DWORD);
 WINUSERAPI int WINAPIV wsprintfA(LPSTR,LPCSTR,...);
 WINUSERAPI int WINAPIV wsprintfW(LPWSTR,LPCWSTR,...);
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
-WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,va_list arglist);
-WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,va_list arglist);
-#else
+#if defined(__WATCOMC__) && defined(_X86_)
 WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,char *);
 WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,char *);
+#else
+WINUSERAPI int WINAPI wvsprintfA(LPSTR,LPCSTR,va_list arglist);
+WINUSERAPI int WINAPI wvsprintfW(LPWSTR,LPCWSTR,va_list arglist);
 #endif
 #if (_WIN32_WINNT >= 0x0500 || _WIN32_WINDOWS >= 0x0490)
 WINUSERAPI BOOL WINAPI AllowSetForegroundWindow(DWORD);
@@ -4203,10 +4224,10 @@ typedef MONITORINFOEXW MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExW
 #define WinHelp WinHelpW
 #define wsprintf wsprintfW
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
-#define wvsprintf wvsprintfW
-#else
+#if defined(__WATCOMC__) && defined(_X86_)
 #define wvsprintf(a,b,c) wvsprintfW(a,b,*(c))
+#else
+#define wvsprintf wvsprintfW
 #endif
 #ifndef NOGDI
 typedef ICONMETRICSW ICONMETRICS,*LPICONMETRICS;
@@ -4372,10 +4393,10 @@ typedef MONITORINFOEXA MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExA
 #define WinHelp WinHelpA
 #define wsprintf wsprintfA
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
-#define wvsprintf wvsprintfA
-#else
+#if defined(__WATCOMC__) && defined(_X86_)
 #define wvsprintf(a,b,c) wvsprintfA(a,b,*(c))
+#else
+#define wvsprintf wvsprintfA
 #endif
 #ifndef NOGDI
 typedef ICONMETRICSA ICONMETRICS,*LPICONMETRICS;

@@ -541,6 +541,9 @@ typedef DWORD FLONG;
 #define LANG_RUSSIAN	0x19
 #define LANG_CROATIAN	0x1a
 #define LANG_SERBIAN	0x1a
+#define LANG_SERBIAN_NEUTRAL 0x7c1a
+#define LANG_BOSNIAN	0x1a
+#define LANG_BOSNIAN_NEUTRAL 0x781a
 #define LANG_SLOVAK	0x1b
 #define LANG_ALBANIAN	0x1c
 #define LANG_SWEDISH	0x1d
@@ -3895,25 +3898,24 @@ static __inline__ struct _TEB * NtCurrentTeb(void)
 #else
 
 PVOID GetCurrentFiber(void);
-PVOID GetFiberData(void);
-struct _TEB * NtCurrentTeb(void);
-
 #pragma aux GetCurrentFiber = \
         "mov	eax, dword ptr fs:0x10" \
         value [eax] \
         modify [eax];
 
+PVOID GetFiberData(void);
 #pragma aux GetFiberData = \
 	"mov	eax, dword ptr fs:0x10" \
 	"mov	eax, [eax]" \
         value [eax] \
         modify [eax];
-        
+           
+struct _TEB * NtCurrentTeb(void);
 #pragma aux NtCurrentTeb = \
         "mov	eax, dword ptr fs:0x18" \
         value [eax] \
         modify [eax];
-
+        
 #endif /* __GNUC__ */
 #endif /* _X86_ */
 

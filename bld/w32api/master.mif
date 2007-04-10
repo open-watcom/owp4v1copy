@@ -220,7 +220,7 @@ vfw32.lbc: $(vfw32_libs)
         @%create $@
         @for %i in ($(vfw32_libs)) do @%append $@ @ %i
 
-uuid_objs = mshtml-u.obj msxml-uuid.obj unknwn-uuid.obj &
+uuid_objs = mshtml-uuid.obj msxml-uuid.obj unknwn-uuid.obj &
         servprov-uuid.obj oleidl-uuid.obj oleacc-uuid.obj ocidl-uuid.obj &
         objsafe-uuid.obj oaidl-uuid.obj docobj-uuid.obj comcat-uuid.obj &
         exdisp-uuid.obj mlang-uuid.obj objidl-uuid.obj cguid-uuid.obj &

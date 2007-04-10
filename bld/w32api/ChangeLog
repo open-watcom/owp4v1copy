@@ -1,3 +1,94 @@
+2007-03-30  Brian Dessent  <brian@dessent.net>
+
+	* lib/kernel32.def (CreateMemoryResourceNotification@4): Define.
+
+2007-03-25  Chris Sutcliffe  <ir0nh34d@users.sf.net>
+
+	* include/w32api.h: Increment version to 3.9.
+	* Makefile.in: Ditto.
+
+2007-03-23  Corinna Vinschen  <corinna@vinschen.de>
+
+	* include/psapi.h (GetMappedFileName): Fix messed up checkin.
+
+2007-03-23  Matthew Gregan  <kinetik@flim.org>
+
+	* include/psapi.h (GetMappedFileName): Rename from GetMappedFilenameEx.
+
+2007-03-06  Brandon Sneed <brandon@oqo.com>
+
+	* include/setupapi.h: Added SetupConfigureWmiFromInfSectionA
+	Added SetupConfigureWmiFromInfSectionW
+	Added SetupConfigureWmiFromInfSection define to unicode and non-unicode sections
+
+	* lib/setupapi.def: Added exports for SetupConfigureWmiFromInfSectionA and W
+
+	* include/winuser.h: Added PBT_APMQUERYSUSPEND
+	Added PBT_APMQUERYSTANDBY
+	Added PBT_APMQUERYSUSPENDFAILED
+	Added PBT_APMQUERYSTANDBYFAILED
+	Added PBT_APMSUSPEND
+	Added PBT_APMSTANDBY
+	Added PBT_APMRESUMECRITICAL
+	Added PBT_APMRESUMESUSPEND
+	Added PBT_APMRESUMESTANDBY
+	Added PBT_APMBATTERYLOW
+	Added PBT_APMPOWERSTATUSCHANGE
+	Added PBT_APMOEMEVENT
+	Added PBT_APMRESUMEAUTOMATIC
+
+	* include/wtsapi32.h: New file
+
+	* include/wingdi.h: Added DM_DISPLAYORIENTATION define for use with DMDO_* defines
+
+2007-03-05  Jan Nijtmans  <nijtmans@users.sourceforge.net>
+
+	* include/ddeml.h (DdeCreateStringHandleA, DdeCreateStringHandleW): Switch
+	argument to constant.
+
+2007-02-18  Jiri Malak  <jiri.malak@iol.cz>
+
+	* include/windef.h [WATCOM]: Fix !NONAMELESSUNION defines.
+	* include/winnt.h [WATCOM] (GetCurrentFiber, GetFiberData):
+	Add prototypes.
+	[WATCOM] (NtCurrentTeb): Add protype and inline asm definition.
+
+2007-02-18  Vesa J‰‰skel‰inen  <chaac@users.sourceforge.net>
+
+	* lib/user32.def (InternalGetWindowText): Add stub.
+
+2007-02-11  Daniel Atallah  <datallah@users.sourceforge.net>
+
+	* include/winnt.h (LANG_SERBIAN_NEUTRAL, LANG_BOSNIAN,
+	LANG_BOSNIAN_NEUTRAL): Define.
+
+2007-02-11  Daniel Schlyder  <thrug@users.sourceforge.net>
+
+	* include/winuser.h: Add guards around TITLEBARINFO and
+	GetTitleBarInfo().
+
+2007-01-11  Gisle Vanem  <giva@users.sourceforge.net>
+
+	* include/winbase.h (struct _OVERLAPPED): Change type of
+	Internal, InternalHigh members to ULONG_PTR.
+	(PAPCFUNC): Change DWORD parameter to ULONG_PTR.
+	(CreateIoCompletionPort): Likewise.
+	(PostQueuedCompletionStatus): Likewise.
+	(QueueUserAPC): Likewise.
+
+2007-01-06  Pierre A. Humblet  <Pierre.Humblet@ieee.org>
+
+	* include/windns.h (DNS_TYPE_RP, DNS_TYPE_AFSDB, DNS_TYPE_X25,
+	DNS_TYPE_ISDN, DNS_TYPE_RT, DNS_TYPE_NSAP, DNS_TYPE_NSAPPTR,
+	DNS_TYPE_SIG, DNS_TYPE_KEY, DNS_TYPE_PX, DNS_TYPE_GPOS,
+	DNS_TYPE_AAAA, DNS_TYPE_LOC, DNS_TYPE_NXT, DNS_TYPE_EID,
+	DNS_TYPE_NIMLOC, DNS_TYPE_SRV, DNS_TYPE_ATMA, DNS_TYPE_NAPTR,
+	DNS_TYPE_KX, DNS_TYPE_CERT, DNS_TYPE_A6, DNS_TYPE_DNAME,
+	DNS_TYPE_SINK, DNS_TYPE_OPT, DNS_TYPE_UINFO, DNS_TYPE_UID,
+	DNS_TYPE_GID, DNS_TYPE_UNSPEC, DNS_TYPE_ADDRS, DNS_TYPE_TKEY,
+	DNS_TYPE_TSIG, DNS_TYPE_IXFR, DNS_TYPE_AXFR, DNS_TYPE_MAILB,
+	DNS_TYPE_MAILA, DNS_TYPE_ALL, DNS_TYPE_ANY): Add enum values.
+
 2006-11-21  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* Makefile.in: Add aclocal.m4 to source release.
