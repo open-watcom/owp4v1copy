@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  General access routines for trap file.
 *
 ****************************************************************************/
 
@@ -41,28 +40,16 @@
 #pragma aux set_carry = 0xf9;
 extern void set_carry(void);
 
-#pragma aux push_ds = 0x1e;
-extern void push_ds(void);
-
 volatile bool HaveKey;
-#pragma aux mov_ds_dgroup = 0xbb seg HaveKey 0x8e 0xdb modify[bx];
-extern void mov_ds_dgroup( void );
-
-#pragma aux pop_ds = 0x1f;
-extern void pop_ds(void);
-
 int _info;
-void far DebuggerHookRtn( unsigned event, unsigned info )
+
+void __far __loadds DebuggerHookRtn( unsigned event, unsigned info )
 {
-    /* this stuff is to get around a CG bug */
-    push_ds();
-    mov_ds_dgroup();
     if( event == WM_KEYDOWN ) {
         HaveKey = TRUE;
         _info = info;
     }
-    pop_ds();
-    set_carry();
+    set_carry();    // what's this for?!
 }
 
 unsigned ReqRead_user_keyboard( void )
@@ -114,7 +101,7 @@ unsigned ReqGet_err_text( void )
     return( strlen( err_txt ) + 1 );
 }
 
-char *GetExeExtensions()
+char *GetExeExtensions( void )
 {
     return( ExtensionList );
 }
