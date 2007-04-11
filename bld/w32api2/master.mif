@@ -10,6 +10,7 @@ splice = wsplice -i$(hdr_dir) -i../include $[@ $^@
 rsplice = wsplice -i$(hdr_dir) -i../include -kRESOURCE $[@ $^@
 
 headers =            &
+        accctrl.h    &
         basetsd.h    &
         bcrypt.h     &
         cderr.h      &
