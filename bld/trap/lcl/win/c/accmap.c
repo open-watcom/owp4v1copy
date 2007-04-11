@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debuggee address mapping (using Toolhelp).
 *
 ****************************************************************************/
+
 
 #ifdef __WINDOWS__
 #pragma library("toolhelp.lib");
