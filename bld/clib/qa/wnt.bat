@@ -12,8 +12,13 @@ os2_c
 os2_l
 os2_h
 os2_mt
+if [%TEST_PLS%] == [] goto NoPLS
 pls_3r
 pls_3s
+goto DONE_PLS
+:NoPLS
+echo ***NOTE: TEST_PLS not set, skipping...
+:DONE_PLS
 which run286.exe > nul
 if errorlevel 1 goto NoRUN286
 run286 os2_s
@@ -41,8 +46,13 @@ goto DONE_TNT
 :NoTNT
 echo ***NOTE: tnt.exe not found, skipping...
 :DONE_TNT
+if [%TEST_X32%] == [] goto NoX32
 x32_3r
 x32_3s
+goto DONE_X32
+:NoX32
+echo ***NOTE: TEST_X32 not set, skipping...
+:DONE_X32
 win_s
 win_m
 win_c
