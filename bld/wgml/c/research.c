@@ -105,9 +105,9 @@ int parse_cmdline( char * cmdline )
     if( tgt_path == NULL ) return( FAILURE );
 
     /* Copy the parameter into tgt_path */
+    /* It will be null-terminated per documentation of strncpy_s() */
 
     strncpy_s( tgt_path, len, cmdline, len-1 );
-    tgt_path[ len ] = NULLCHAR;
 
     /* Remove doublequotes, if present */
 
