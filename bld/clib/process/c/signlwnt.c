@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Windows NT signal handling (based on OS provided exception
-*               handling).
+* Description:  Win32 signal handling (based on OS exception handling).
 *
 ****************************************************************************/
 
@@ -46,7 +45,7 @@
 _WCRTLINK extern void (*__sig_init_rtn)( void );
 _WCRTLINK extern void (*__sig_fini_rtn)( void );
 
-sigtab  SignalTable[] = {
+sigtab  _SignalTable[] = {
     { SIG_IGN, -1 },                                /* unused  */
     { SIG_DFL, -1 },                                /* SIGABRT */
     { SIG_DFL, -1 },                                /* SIGFPE  */
@@ -70,8 +69,8 @@ __sig_func __SetSignalFunc( int sig, __sig_func new_func )
     __sig_func  prev_func = NULL;
 
     if(( sig == SIGBREAK ) || ( sig == SIGINT )) {
-        prev_func = SignalTable[ sig ].func;
-        SignalTable[ sig ].func = new_func;
+        prev_func = _SignalTable[ sig ].func;
+        _SignalTable[ sig ].func = new_func;
     } else {
         prev_func = _RWD_sigtab[ sig ].func;
         _RWD_sigtab[ sig ].func = new_func;
@@ -83,7 +82,7 @@ __sig_func __SetSignalFunc( int sig, __sig_func new_func )
 __sig_func __GetSignalFunc( int sig )
 {
     if(( sig == SIGBREAK ) || ( sig == SIGINT ))
-        return( SignalTable[ sig ].func );
+        return( _SignalTable[ sig ].func );
 
     return( _RWD_sigtab[ sig ].func );
 }
@@ -92,7 +91,7 @@ __sig_func __GetSignalFunc( int sig )
 long __GetSignalOSCode( int sig )
 {
     if(( sig == SIGBREAK ) || ( sig == SIGINT ))
-        return( SignalTable[ sig ].os_sig_code );
+        return( _SignalTable[ sig ].os_sig_code );
 
     return( _RWD_sigtab[ sig ].os_sig_code );
 }
@@ -258,7 +257,7 @@ void __SigInit( void )
     int         i;
 
     for( i = 1; i <= __SIGLAST; ++i ) {
-        _RWD_sigtab[ i ] = SignalTable[ i ];
+        _RWD_sigtab[ i ] = _SignalTable[ i ];
     }
 #endif
 

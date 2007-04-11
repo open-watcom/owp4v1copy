@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 16-bit signal handling (based on OS provided exception
-*               handling).
+* Description:  OS/2 16-bit signal handling (based on OS signal handling).
 *
 ****************************************************************************/
 
@@ -45,7 +44,7 @@
 #include "_int23.h"
 
 
-static struct sigtab SignalTable[] = {
+static struct sigtab _SignalTable[] = {
     { SIG_IGN, NULL, 0, 0 },                /* unused  */
     { SIG_DFL, NULL, 0, 0 },                /* SIGABRT */
     { SIG_DFL, NULL, 0, 0 },                /* SIGFPE  */

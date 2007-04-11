@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 32-bit signal handling (based on OS provided exception
-*               handling).
+* Description:  OS/2 32-bit signal handling (based on OS exception handling).
 *
 ****************************************************************************/
 
@@ -52,7 +51,7 @@ unsigned        char    __ExceptionHandled;
 
 #define XCPT_FPE        -1      /* trap all floating-point exceptions */
 
-sigtab  SignalTable[] = {
+sigtab  _SignalTable[] = {
     { SIG_IGN, 0 },                                 /* unused  */
     { SIG_DFL, 0 },                                 /* SIGABRT */
     { SIG_DFL, XCPT_FPE },                          /* SIGFPE  */
@@ -211,7 +210,7 @@ void    __SigInit( void )
     int         i;
 
     for( i = 1; i <= __SIGLAST; ++i ) {
-        _RWD_sigtab[ i ] = SignalTable[ i ];
+        _RWD_sigtab[ i ] = _SignalTable[ i ];
     }
 #endif
     __XCPTHANDLER->prev_structure = NULL;
@@ -337,4 +336,3 @@ static void __SetSigInit( void ) {
 }
 
 AXI( __SetSigInit, INIT_PRIORITY_LIBRARY )
-

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  signal handling ( for DOS, Windows 3.x and ? Netware )
+* Description:  Signal handling for DOS, Windows 3.x and Netware.
 *
 ****************************************************************************/
 
@@ -51,7 +51,7 @@ extern      void    __restore_int_ctrl_break( void );
 
 #define __SIGLAST       SIGIOVFL
 
-static __sig_func _HUGEDATA SignalTable[] = {
+static __sig_func _HUGEDATA _SignalTable[] = {
     SIG_IGN,        /* unused  */
     SIG_DFL,        /* SIGABRT */
     SIG_DFL,        /* SIGFPE  */
@@ -116,10 +116,10 @@ _WCRTLINK void _WCI86FAR __sigfpe_handler( int fpe_type )
     }
   #endif
     
-    func = SignalTable[ SIGFPE ];
+    func = _SignalTable[ SIGFPE ];
     if( func != SIG_IGN  &&  func != SIG_DFL  &&  func != SIG_ERR ) {
-        SignalTable[ SIGFPE ] = SIG_DFL;      /* 09-nov-87 FWC */
-        (*(__sigfpe_func)func)( SIGFPE, fpe_type );        /* so we can pass 2'nd parm */
+        _SignalTable[ SIGFPE ] = SIG_DFL;              /* 09-nov-87 FWC */
+        (*(__sigfpe_func)func)( SIGFPE, fpe_type );    /* so we can pass 2nd parm */
     }
 }
 #endif

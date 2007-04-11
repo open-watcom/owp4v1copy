@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Signal handling related globals.
 *
 ****************************************************************************/
 
@@ -38,11 +37,11 @@
     #else
         #include "sigdefn.h"
         extern struct _EXCEPTIONREGISTRATIONRECORD *__XcptHandler;
-        #define __SIGNALTABLE   SignalTable
+        #define __SIGNALTABLE   _SignalTable
         #define __XCPTHANDLER   __XcptHandler
     #endif
 #elif defined(__NETWARE__)
     #define __SIGNALTABLE       (__THREADDATAPTR->signal_table)
 #else
-    #define __SIGNALTABLE       SignalTable
+    #define __SIGNALTABLE       _SignalTable
 #endif
