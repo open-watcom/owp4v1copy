@@ -58,7 +58,7 @@ sys_x86_win  = sys windows_dll &
             export SETHARDMODE.12 &
             export UNLOCKINPUT.13 &
             op modname=$^& &
-            option rwr &
+#            option rwr &
             option description $(description)
 sys_x86_nt   = sys nt_dll initinstance &
             export TrapInit_.1 &
