@@ -48,6 +48,9 @@ typedef void (_WCINTERRUPT _WCFAR *pfun)( void );
  #else
   #include "extender.h"
   #include "dpmi.h"
+
+  extern  int __DPMI_hosted( void );
+
   extern  void pharlap_setvect( unsigned, pfun );
   #pragma aux  pharlap_setvect =  0x1e   /* push ds    */\
                                0x8e 0xd9 /* mov ds,cx  */\
@@ -187,32 +190,6 @@ static void _WCINTERRUPT _WCFAR __int_ctrl_break_handler( void )
  *       SIZE OF __int_ctrl_break_handler()!!!
  */
 
-#if defined( __386__ )
-int __DPMI_hosted( void )
-{
-    static signed int _mode = 0;
-
-    if( _mode == 0 ) {
-        if( _IsRational() || DPMIModeDetect() == 0 ) {
-            version_info vi;
-            vi.major_version = 0;
-            vi.minor_version = 0;
-            vi.flags = 0;
-            vi.processor_type = 0;
-            DPMIGetVersion( &vi );
-            if( (vi.major_version + vi.minor_version) > 0 ) {
-                _mode = 1;
-            } else {
-                _mode = -1;
-            }
-        } else {
-            _mode = -1;
-        }
-    }
-    return( _mode );
-}
-#endif
-
 void __restore_int23( void )
 {
     if( __old_int23 == 0 ) {
@@ -339,7 +316,7 @@ void __grab_int_ctrl_break( void )
             pharlap_setvect( ctrlBreakVector, (pfun) (void (_WCNEAR *)(void))__int_ctrl_break_handler );
         } else if( __DPMI_hosted() == 1 ) {
             DPMILockLinearRegion((long)__int_ctrl_break_handler,
-                ((long)__DPMI_hosted - (long)__int_ctrl_break_handler));
+                ((long)__restore_int23 - (long)__int_ctrl_break_handler));
             __old_int_ctrl_break = DPMIGetRealModeInterruptVector( ctrlBreakVector );
             __old_pm_int_ctrl_break = DPMIGetPMInterruptVector( ctrlBreakVector );
             DPMISetPMInterruptVector( ctrlBreakVector, __int_ctrl_break_handler );
