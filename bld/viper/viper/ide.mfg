@@ -1149,19 +1149,17 @@ rem PackCode, PackData for DOS, OS/2, QNX, Win16?
         RSwitch  0, w?2d?, "Use linker default", "", ON
         RSwitch  0, n??d?, "Use linker default", "", ON
 rem     RSwitch  0, x??d?, "Use linker default", "", ON
-        RSwitch  0, wm6d?, "Use linker default", "", ON
-        RSwitch  0, wa6d?, "Use linker default", "", ON
+        RSwitch  0, w?6d?, "Use linker default", "", ON
         RSwitch  0, ???d?, "Use linker default", "", OFF
         RSwitch  0, ?????, "Use linker default", "", ON
         RSwitch  0, w?2d?, "DGROUP is shared", "op one", OFF
         RSwitch  0, n??d?, "DGROUP is shared", "op one", OFF
 rem     RSwitch  0, x??d?, "DGROUP is shared", "op one", OFF
-        RSwitch  0, wa6d?, "DGROUP is shared", "op one", OFF
-        RSwitch  0, wm6d?, "DGROUP is shared", "op one", OFF
+        RSwitch  0, w?6d?, "DGROUP is shared", "op one", OFF
         RSwitch  0, o?2d?, "DGROUP is shared", "op one", OFF
         RSwitch  0, ???d?, "DGROUP is shared", "op one", OFF
         RSwitch  0, ?????, "DGROUP is shared", "op one", OFF
-        RSwitch  0, o?2d?, "DGROUP is not shared", "op many", ON
+        RSwitch  0, n??d?, "DGROUP is not shared", "op many", OFF
         RSwitch  0, w??d?, "DGROUP is not shared", "op many", OFF
         RSwitch  0, ???d?, "DGROUP is not shared", "op many", ON
         RSwitch  0, ?????, "DGROUP is not shared", "op many", OFF
