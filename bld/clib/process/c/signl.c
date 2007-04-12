@@ -24,15 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Signal handling for DOS, Windows 3.x and Netware.
+* Description:  Signal handling for DOS and Windows 3.x.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include <stdio.h>
 #include <signal.h>
-#include <dos.h>
 #include <errno.h>
 #include <float.h>
 #include "rtdata.h"
@@ -41,88 +39,21 @@
 #include "seterrno.h"
 
 #ifndef __WINDOWS_386__
-#ifndef __NETWARE__
 extern      void    __grab_int23( void );
 extern      void    __restore_int23( void );
 extern      void    __grab_int_ctrl_break( void );
 extern      void    __restore_int_ctrl_break( void );
 #endif
-#endif
 
 #define __SIGLAST       SIGIOVFL
 
-static __sig_func _HUGEDATA _SignalTable[] = {
-    SIG_IGN,        /* unused  */
-    SIG_DFL,        /* SIGABRT */
-    SIG_DFL,        /* SIGFPE  */
-    SIG_DFL,        /* SIGILL  */
-    SIG_DFL,        /* SIGINT  */
-    SIG_DFL,        /* SIGSEGV */
-    SIG_DFL,        /* SIGTERM */
-    SIG_DFL,        /* SIGBREAK */
-    SIG_IGN,        /* SIGUSR1 */
-    SIG_IGN,        /* SIGUSR2 */
-    SIG_IGN,        /* SIGUSR3 */
-    SIG_DFL,        /* SIGIDIVZ */
-    SIG_DFL         /* SIGIOVFL */
-};
+/* defined in sigtab.c */
+extern __sig_func _HUGEDATA _SignalTable[];
 
 void __sigabort( void )
 {
     raise( SIGABRT );
 }
-
-#ifndef __WINDOWS_386__
-
-#if defined( __WINDOWS__ )
-
-// called from emulator callback
-void _WCI86NEAR __raise_fpe( void ) {
-    raise(SIGFPE);
-}
-
-extern void __far _fpmath( void );
-#pragma aux _fpmath "__fpmath";
-
-unsigned int win87em_get_sw( void );
-#pragma aux win87em_get_sw = \
-    "push   bx"                                     \
-    "mov    bx, 8h"                                 \
-    "call   far ptr _fpmath"                        \
-    "pop    bx"                                     \
-    value [ax];
-#endif
-
-_WCRTLINK void _WCI86FAR __sigfpe_handler( int fpe_type )
-{
-    __sig_func  func;
-    
-  #if defined( __WINDOWS__ )
-    unsigned int  sw;
-    sw = win87em_get_sw();
-    
-    if( sw & EM_INVALID ) {
-        fpe_type = FPE_INVALID;
-    } else if( sw & EM_DENORMAL ) {
-        fpe_type = FPE_DENORMAL;
-    } else if( sw & EM_ZERODIVIDE ) {
-        fpe_type = FPE_ZERODIVIDE;
-    } else if( sw & EM_OVERFLOW ) {
-        fpe_type = FPE_OVERFLOW;
-    } else if( sw & EM_UNDERFLOW ) {
-        fpe_type = FPE_UNDERFLOW;
-    } else if( sw & EM_INEXACT ) {
-        fpe_type = FPE_INEXACT;
-    }
-  #endif
-    
-    func = _SignalTable[ SIGFPE ];
-    if( func != SIG_IGN  &&  func != SIG_DFL  &&  func != SIG_ERR ) {
-        _SignalTable[ SIGFPE ] = SIG_DFL;              /* 09-nov-87 FWC */
-        (*(__sigfpe_func)func)( SIGFPE, fpe_type );    /* so we can pass 2nd parm */
-    }
-}
-#endif
 
 _WCRTLINK __sig_func signal( int sig, __sig_func func )
 {
@@ -133,7 +64,7 @@ _WCRTLINK __sig_func signal( int sig, __sig_func func )
         return( SIG_ERR );
     }
     _RWD_abort = __sigabort;           /* change the abort rtn address */
-#if !defined( __WINDOWS_386__ ) && !defined( __NETWARE__ )
+#if !defined( __WINDOWS_386__ )
     if( sig == SIGINT ) {
         if( func == SIG_DFL ) {
             __restore_int23();
@@ -168,7 +99,7 @@ _WCRTLINK int raise( int sig )
     
     func = _RWD_sigtab[ sig ];
     switch( sig ) {
-#if !defined( __WINDOWS_386__ ) && !defined( __NETWARE__ )
+#if !defined( __WINDOWS_386__ )
     case SIGFPE:
         __sigfpe_handler( FPE_EXPLICITGEN );
         break;
