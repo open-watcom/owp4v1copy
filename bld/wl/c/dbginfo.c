@@ -590,13 +590,12 @@ void ODBIP2Start( section * sect )
         dptr = sect->dbg_info;
     }
     if( dptr != NULL ) {
-        dptr->dump_addr = dptr->addr.curr;
-        SectWalkClass( sect, ODBIGenAddrInfo );
-        // if section is blank then write bogus address info
-        // minimum size of section is 2
-        // see AllocSections in ovlsupp.c
-        if(( sect->size == 2 ) && ( dptr->addr.size == 0 )) {
+        // if section has no info then write bogus address info
+        if( dptr->addr.curr == 0 ) {
             WriteBogusAddrInfo( dptr );
+        } else {
+            dptr->dump_addr = dptr->addr.curr;
+            SectWalkClass( sect, ODBIGenAddrInfo );
         }
         dptr->dump_addr = dptr->line.curr;
         dptr->modnum = 0;
