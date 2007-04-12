@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Initialize MBCS support.
 *
 ****************************************************************************/
 
@@ -334,19 +333,20 @@ typedef struct {
 unsigned short _WCFAR *dos_get_dbcs_lead_table( void )
 /****************************************************/
 {
-    union REGPACK       regs;
-
     if( _IsPharLap() ) {
         PHARLAP_block   pblock;
+        union REGS      regs;
+        struct SREGS    sregs;
 
         memset( &pblock, 0, sizeof( pblock ) );
         memset( &regs, 0, sizeof( regs ) );
+        memset( &sregs, 0, sizeof( sregs ) );
         pblock.real_eax = 0x6300;           /* get DBCS vector table */
         pblock.int_num = 0x21;              /* DOS call */
         regs.x.eax = 0x2511;                /* issue real-mode interrupt */
         regs.x.edx = FP_OFF( &pblock );     /* DS:EDX -> parameter block */
-        regs.w.ds = FP_SEG( &pblock );
-        intr( 0x21, &regs );
+        sregs.ds = FP_SEG( &pblock );
+        intdosx( &regs, &regs, &sregs );
         if( pblock.real_ds != 0xFFFF ) {    /* weird OS/2 value */
             return( MK_FP( _ExtenderRealModeSelector,
                            (((unsigned)pblock.real_ds)<<4) + regs.w.si ) );
@@ -368,7 +368,6 @@ unsigned short _WCFAR *dos_get_dbcs_lead_table( void )
 unsigned short dos_get_code_page( void )
 /**************************************/
 {
-    union REGPACK           regs;
     unsigned short __far  * temp;
     unsigned short          real_seg;
     unsigned short          codepage = 0;
@@ -377,28 +376,29 @@ unsigned short dos_get_code_page( void )
     /*** Get the code page ***/
     if( _IsPharLap() ) {
         union REGS      r;
+        struct SREGS    sregs;
         PHARLAP_block   pblock;
 
         /*** Alloc DOS Memory under Phar Lap ***/
         memset( &r, 0, sizeof( r ) );
+        memset( &sregs, 0, sizeof( sregs ) );
         r.x.ebx = 1;
         r.x.eax = 0x25c0;
-        intdos( &r, &r );
+        intdosx( &r, &r, &sregs );
         real_seg = r.w.ax;
 
         memset( &pblock, 0, sizeof( pblock ) );
-        memset( &regs, 0, sizeof( regs ) );
         pblock.real_eax = 0x6501;           /* get international info */
         pblock.real_edx = 0xFFFF;           /* current country */
         pblock.real_es = real_seg;          /* buffer segment */
-        regs.x.ebx = 0xFFFF;                /* global code page */
-        regs.x.ecx = 7;                     /* buffer size */
-        regs.x.edi = 0;                     /* buffer offset */
+        r.x.ebx = 0xFFFF;                   /* global code page */
+        r.x.ecx = 7;                        /* buffer size */
+        r.x.edi = 0;                        /* buffer offset */
         pblock.int_num = 0x21;              /* DOS call */
-        regs.x.eax = 0x2511;                /* issue real-mode interrupt */
-        regs.x.edx = FP_OFF( &pblock );     /* DS:EDX -> parameter block */
-        regs.w.ds = FP_SEG( &pblock );
-        intr( 0x21, &regs );
+        r.x.eax = 0x2511;                   /* issue real-mode interrupt */
+        r.x.edx = FP_OFF( &pblock );        /* DS:EDX -> parameter block */
+        sregs.ds = FP_SEG( &pblock );
+        intdosx( &r, &r, &sregs );
         if( pblock.real_ds != 0xFFFF ) {    /* weird OS/2 value */
             temp = MK_FP( _ExtenderRealModeSelector, (real_seg<<4) + 5 );
             codepage = *temp;
@@ -407,7 +407,7 @@ unsigned short dos_get_code_page( void )
         /*** Free DOS Memory under Phar Lap ***/
         r.x.ecx = real_seg;
         r.x.eax = 0x25c1;
-        intdos( &r, &r );
+        intdosx( &r, &r, &sregs );
     } else if( _IsRational() ) {
         unsigned long       dpmi_rc;
         unsigned short      selector;
