@@ -1,4 +1,4 @@
-.chap *refid=Introd1 Introduction
+.chap *refid=Introd1 Trap File Interface
 The &company debugger consists of a number of separate pieces of code. The
 main executable, WD.EXE (wd on UNIX systems), provides a debugging `engine'
 and user interface.

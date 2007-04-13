@@ -1,15 +1,14 @@
-.chap Introduction
+.chap Debugging Information Format
 This document describes the object and executable file structures
 used by the &company Debugger to provide symbolic information about a program.
 This information is subject to change.
 :P
 Note that version 4.0 of the &company debugger supports the DWARF and 
-Codeview symbolic debugging information formats in addition to the format
+CodeView symbolic debugging information formats in addition to the format
 described in this document. For the purposes of discussion, this format
-will be known as the "WATCOM" format. It is anticipated that DWARF will
-become the primary format used by &company compilers and support for
-generating the WATCOM format will be removed from later versions of 
-the compilers.
+will be known as the "WATCOM" format. DWARF is now the primary format used
+by &company compilers. Support for generating the WATCOM format will probably
+remain but is only useful for debugging DOS overlays.
 :P.
 Before reading this document you should understand the Intel 8086 Object
 Module Format (OMF). This format is described in the Intel document
