@@ -12,6 +12,7 @@ rsplice = wsplice -i$(hdr_dir) -i../include -kRESOURCE $[@ $^@
 headers =            &
         accctrl.h    &
         aclapi.h     &
+        aclui.h      &
         basetsd.h    &
         bcrypt.h     &
         cderr.h      &
