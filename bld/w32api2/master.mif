@@ -17,6 +17,7 @@ headers =            &
         basetyps.h   &
         bcrypt.h     &
         cderr.h      &
+        comcat.h     &
         commctrl.h   &
         commctrl.rh  &
         commdlg.h    &
