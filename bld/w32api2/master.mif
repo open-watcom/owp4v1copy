@@ -14,6 +14,7 @@ headers =            &
         aclapi.h     &
         aclui.h      &
         basetsd.h    &
+        basetyps.h   &
         bcrypt.h     &
         cderr.h      &
         commctrl.h   &
