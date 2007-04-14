@@ -1,0 +1,23 @@
+/*
+ *  cplext.h    Control panel extension definitions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _CPLEXT_H_INCLUDED
+#define _CPLEXT_H_INCLUDED
+
+:include readonly.sp
+:include cpluspro.sp
+
+/* Property page identifiers */
+#define CPLPAGE_MOUSE_BUTTONS       1
+#define CPLPAGE_MOUSE_PTRMOTION     2
+#define CPLPAGE_MOUSE_WHEEL         3
+#define CPLPAGE_KEYBOARD_SPEED      1
+#define CPLPAGE_DISPLAY_BACKGROUND  1
+
+:include cplusepi.sp
+
+#endif /* _CPLEXT_H_INCLUDED */
+

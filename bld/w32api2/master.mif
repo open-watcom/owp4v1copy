@@ -22,6 +22,8 @@ headers =            &
         commctrl.rh  &
         commdlg.h    &
         cpl.h        &
+        cplext.h     &
+        custcntl.h   &
         dde.h        &
         dde.rh       &
         ddeml.h      &
