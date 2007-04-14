@@ -24,6 +24,7 @@ headers =            &
         cpl.h        &
         cplext.h     &
         custcntl.h   &
+        dbt.h        &
         dde.h        &
         dde.rh       &
         ddeml.h      &
