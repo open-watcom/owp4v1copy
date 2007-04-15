@@ -43,13 +43,20 @@ extern void set_carry(void);
 volatile bool HaveKey;
 int _info;
 
+/*
+ * The handler installed by SetEventHook uses non-standard calling convention.
+ * Arguments are passed in ax and cx, and setting carry flag before exit
+ * may cause the message to be discarded. Also, the routine has to set ds
+ * to the proper value (ie. no multiple instances - but it may not be possible
+ * to register multiple event hooks anyway). See Undocumented Windows.
+ */ 
 void __far __loadds DebuggerHookRtn( unsigned event, unsigned info )
 {
     if( event == WM_KEYDOWN ) {
         HaveKey = TRUE;
         _info = info;
     }
-    set_carry();    // what's this for?!
+    set_carry();
 }
 
 unsigned ReqRead_user_keyboard( void )
