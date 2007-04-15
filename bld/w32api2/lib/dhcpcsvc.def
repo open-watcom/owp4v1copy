@@ -1,0 +1,9 @@
+LIBRARY DHCPCSVC.DLL
+EXPORTS
+DhcpCApiCleanup
+DhcpCApiInitialize
+DhcpDeRegisterParamChange
+DhcpRegisterParamChange
+DhcpRemoveDNSRestrictions
+DhcpRequestParams
+DhcpUndoRequestParams

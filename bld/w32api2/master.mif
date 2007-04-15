@@ -28,6 +28,7 @@ headers =            &
         dde.h        &
         dde.rh       &
         ddeml.h      &
+        dhcpcsdk.h   &
         dlgs.h       &
         guiddef.h    &
         imm.h        &
