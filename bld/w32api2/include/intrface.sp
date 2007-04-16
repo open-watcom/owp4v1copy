@@ -42,4 +42,3 @@
 #define IFACEMETHOD_( x, f )                        STDMETHOD_( x, f )
 #define IFACEMETHODV( f )                           STDMETHODV( f )
 #define IFACEMETHODV_( x, f )                       STDMETHODV_( x, f )
-
