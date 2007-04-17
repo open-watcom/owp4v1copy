@@ -406,8 +406,8 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
         fix.type |= FIX_ABS;
     }
     if( FmtData.type & MK_OVERLAYS ) {
-        if( ( (fix.type & FIX_REL) == 0 )
-            && ( targ->type == FIX_FRAME_EXT )
+        if( ( targ->type == FIX_FRAME_EXT )
+            && ( (fix.type & FIX_REL) == 0 || FmtData.u.dos.ovl_short ) 
             && targ->u.sym->u.d.ovlref
             && ( (targ->u.sym->u.d.ovlstate & OVL_VEC_MASK) == OVL_MAKE_VECTOR ) ) {
             // redirect target to appropriate vector entry

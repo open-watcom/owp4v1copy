@@ -152,18 +152,3 @@ void OvlPass2( void )
         ProcAllOvl( PSection );
     }
 }
-
-#ifdef OVERLAY_VERSION1
-void TryGetVector( extnode *ext, thread *targ )
-/****************************************************/
-{
-    /* check if reference needs overlay vector */
-    if( ext->ovlref != 0 ) {
-        /* get address for overlay vector */
-        GetVecAddr2( ext->entry->u.d.ovlref, targ );
-        targ->flags |= TRD_DEFINED;
-    } else {
-        XSymAddr( ext->entry, targ );
-    }
-}
-#endif
