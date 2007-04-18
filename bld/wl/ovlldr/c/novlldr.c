@@ -42,7 +42,7 @@ extern  void DoFastCopyPara( unsigned dst, unsigned src, unsigned len_in_paras )
         ".386" \
         "xor si,si" \
         "xor di,di" \
-        "test byte ptr __OVLFLAGS__, 1 " \
+        "test byte ptr CS:__OVLFLAGS__, 1 " \
         "jz   cpu86" \
         "shl cx,2" \
         "rep movsd" \
@@ -841,9 +841,8 @@ extern unsigned_32 near __OVLLONGJMP__( unsigned ovl_num, unsigned segment,
         __OVLBUILDRETTRAP__( FP_SEG( rt ), FP_SEG( rt ) );
 #endif
     }
-    if( ovl_num == 0 )
-        return( (unsigned_32)segment << 16 );
-    segment = __LoadNewOverlay__( ovl_num );
+    if( ovl_num )
+        segment = __LoadNewOverlay__( ovl_num );
     return( (unsigned_32)segment << 16 );
 }
 
