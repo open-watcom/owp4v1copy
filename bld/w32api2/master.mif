@@ -42,6 +42,7 @@ headers =            &
         oaidl.h      &
         objbase.h    &
         objidl.h     &
+        ocidl.h      &
         ole.h        &
         ole2.h       &
         oleauto.h    &
