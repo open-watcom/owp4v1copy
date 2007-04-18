@@ -39,6 +39,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_BUFF 256
 
@@ -357,7 +358,8 @@ int main( int argc, char *argv[] )
     }
 
     while( fgets( fname, 50, pf ) != NULL ) {
-        fname[ strlen( fname ) - 1 ] = 0;
+        for( i = strlen( fname ); i && isspace( fname[ --i ] );  )
+            fname[ i ] = '\0';
 #ifdef __UNIX__
         sprintf( defname, "%s/%s", dir, fname );
 #else
@@ -396,12 +398,12 @@ void ProcessDefFile( FILE *f )
             continue;
         }
 
+        for( i = strlen( buff ); i && isspace( buff[ --i ] );  )
+            buff[ i ] = '\0';
         if( buff[0] == '!' ) {
             ThunkStrs = _fmyrealloc( ThunkStrs, sizeof( char *) *
                                     (ThunkIndex + 1) );
-            i = strlen( buff );
-            ThunkStrs[ThunkIndex] = _fmyalloc( i-2 );
-            buff[i-1] = '\0';
+            ThunkStrs[ThunkIndex] = _fmyalloc( i );
             _fstrcpy( ThunkStrs[ThunkIndex], &buff[1] );
             ThunkIndex++;
             continue;
