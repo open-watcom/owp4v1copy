@@ -47,11 +47,6 @@ _Packed struct ovl_header {
     unsigned_16     signature;
     void            (far *hook)();
     unsigned_16     handler_offset;
-#if 1 //support for the 9.5 overlay manager, remove at a later date.
-    unsigned_16     spare1;
-    unsigned_16     spare2;
-    unsigned_16     dyn_area;
-#endif
 };
 
 #define OVL_SIGNATURE   0x2112

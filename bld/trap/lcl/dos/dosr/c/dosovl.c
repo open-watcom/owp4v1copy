@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface with Overlay Manager
 *
 ****************************************************************************/
 
@@ -33,9 +32,6 @@
 #include <string.h>
 #include <i86.h>
 #include "trpimp.h"
-
-typedef addr32_ptr      dos_addr;
-
 #include "ovltab.h"
 #include "ovldbg.h"
 
@@ -61,10 +57,6 @@ void NullOvlHdlr( void )
     OvlRequest = &NoOvlsHdlr;
 }
 
-#if 1 //support for the 9.5 overlay manager, remove at a later date.
-static struct ovl_header        far *Hdr;
-#endif
-
 bool CheckOvl( addr32_ptr start )
 /*******************************/
 {
@@ -72,9 +64,6 @@ bool CheckOvl( addr32_ptr start )
 
     hdr = MK_FP( start.segment, start.offset );
     if( hdr->signature == OVL_SIGNATURE ) {
-#if 1 //support for the 9.5 overlay manager, remove at a later date.
-        Hdr = hdr;
-#endif
         hdr->hook = &OvlTrap;
         OvlRequest = MK_FP( start.segment, hdr->handler_offset );
         RunProg( &TaskRegs, &TaskRegs ); /* init overlay manager */
@@ -168,33 +157,6 @@ unsigned ReqOvl_get_data( void )
     if( !OvlRequest( OVLDBG_GET_SECTION_DATA, &addr ) ) {
         addr.mach.segment = 0;
     }
-#if 1 //support for the 9.5 overlay manager, remove at a later date.
-    {
-        ovl_table       *tbl;
-        unsigned        num_sects;
-        ovltab_entry    *curr;
-
-        if( addr.mach.segment == 0 ) {
-            OvlRequest( OVLDBG_GET_OVL_TBL_ADDR, &tbl );
-            if( ( tbl->prolog.major == OVL_MAJOR_VERSION )
-                && ( tbl->prolog.minor == OVL_MINOR_VERSION ) ) {
-                num_sects = 0;
-                for( curr = &tbl->entries[0]; curr->flags_anc != OVLTAB_TERMINATOR; ++curr ) {
-                    ++num_sects;
-                    if( num_sects > addr.sect_id ) {
-                        break;
-                    }
-                }
-                if( addr.sect_id <= num_sects ) {
-                    addr.mach.segment = tbl->entries[addr.sect_id-1].code_handle;
-                    if( addr.mach.segment == 0 )
-                        addr.mach.segment = Hdr->dyn_area;
-                    addr.sect_id = tbl->entries[addr.sect_id-1].num_paras;
-                }
-            }
-        }
-    }
-#endif
     ret->segment = addr.mach.segment;
     ret->size = addr.sect_id * 16UL;
     return( sizeof( *ret ) );
