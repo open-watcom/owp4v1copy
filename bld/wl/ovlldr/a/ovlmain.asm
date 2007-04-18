@@ -148,8 +148,8 @@ endif
 XNAME   call,   OVLSETRTN                   ; change the next ret address.
 XNAME   call,   OVLLOAD                     ; load overlay
 
-        popf                                ; restore flags
         add     BP,2                        ; skip overlay # when returning.
+        popf                                ; restore flags
         push    BP                          ; restore return offset
         mov     BP,__SaveRegs__+2           ; restore registers
         mov     AX,__SaveRegs__+0           ; ...

@@ -71,8 +71,8 @@ XPROC   CHPOVLLDR, near
 
 XNAME   call,   OVLSETRTN           ; change the next return address.
 
-        popf                        ; restore flags
         add     BX,2                ; skip the overlay number
+        popf                        ; restore flags
         push    BX                  ; restore return offset
         mov     BX,__SaveRegs__+2   ; restore registers
         mov     AX,__SaveRegs__+0   ; ...
