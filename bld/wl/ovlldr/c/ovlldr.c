@@ -34,7 +34,7 @@
 #include <stddef.h>
 #include "ovlstd.h"
 
-extern void             NAME( OVLLDR )( void );
+extern void near        NAME( OVLLDR )( void );
 extern void near        NAME( OVLMUNGE )( void * );
 extern void near        NAME( CHPOVLLDR )( void );
 #define LOADOVERLAY     NAME( LoadOverlay )

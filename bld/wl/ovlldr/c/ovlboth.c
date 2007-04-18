@@ -41,7 +41,7 @@ extern void near __OvlMsg__( unsigned int msg )
     char far *  ptr;
 
     ptr = __OVLMSGS__[ msg ];
-    TinyWrite( TIO_STDERR_FILENO, ptr + sizeof( char ), *ptr );
+    TinyFarWrite( TIO_STDERR_FILENO, ptr + sizeof( char ), *ptr );
 }
 
 extern void near __OvlExit__( unsigned int msg )

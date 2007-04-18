@@ -43,7 +43,7 @@
 extern  int      near __OVLFIXCALLCHAIN__( unsigned old, unsigned new );
 extern  void     near __OVLBUILDRETTRAP__( unsigned old_handle, unsigned rt_seg );
 extern  unsigned near __OVLSCANCALLCHAIN__( void );
-extern  void     near __OVLRETTRAP__( void );
+extern  void     far  __OVLRETTRAP__( void );
 
 #ifdef OVL_MULTITHREAD
 
@@ -100,8 +100,6 @@ extern  unsigned_16     far __OVLSTARTPARA__;
 
     14-jun-91 DJG
 */
-
-typedef ovltab_entry __far *ovltab_entry_ptr;
 
 #define OVL_ACCESSES( __o )     (*(unsigned_8 far *)&__o->flags_anc)
 
