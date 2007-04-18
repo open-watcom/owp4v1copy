@@ -24,66 +24,33 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  New Overlay Manager definitions
+;* Description:  Standard Overlay Manager definitions and name macros
 ;*
 ;*****************************************************************************
 
-;   !!!!!!!!!   must correspond to declaration in novlldr.h  !!!!!!!!!
 
         include ovltab.inc
 
-;
-;       See novlldr.h for docs on these structures.
-;
-
-ifdef OVL_MULTITHREAD
-
-TRAP_ENTRY STRUC
-    te_stack_trap       dw      ?
-    te_ret_list         dw      ?
-    te_ret_offset       dw      ?
-    te_context          dw      ?
-TRAP_ENTRY ENDS
-
-RET_TRAP STRUC
-    rt_call_far         db      ?
-    rt_entry            dd      ?
-    rt_pad              db      ?
-    rt_old_code_handle  dw      ?
-    rt_traps            TRAP_ENTRY <?>
-RET_TRAP ENDS
-
-TASK_LIST STRUC
-    tl_saved_bp         dw      ?
-    tl_saved_sp         dw      ?
-    tl_next             dw      ?
-TASK_LIST ENDS
-
+XNAME macro prefix, symb, suffix
+ifdef OVL_SMALL
+    prefix __S&symb&__ suffix
 else
-
-RET_TRAP STRUC
-    rt_call_far         db      ?
-    rt_entry            dd      ?
-    rt_pad              db      ?
-    rt_ret_offset       dw      ?
-    rt_old_code_handle  dw      ?
-    rt_ret_list         dw      ?
-    rt_stack_trap       dw      ?
-RET_TRAP ENDS
-
+    prefix __L&symb&__ suffix
 endif
+endm
 
-CALL_FAR                equ     9aH
+XPROC macro symb, dist
+ifdef OVL_SMALL
+    __S&symb&__ proc dist
+else
+    __L&symb&__ proc dist
+endif
+endm
 
-FREE_BLOCK STRUC
-    fb_next             dw      ?
-    fb_prev             dw      ?
-    fb_num_paras        dw      ?
-FREE_BLOCK ENDS
-
-AREA_LIST STRUC
-    al_fblk             FREE_BLOCK <?>
-    al_next             dw      ?
-    al_size             dw      ?
-    al_free_paras       dw      ?
-AREA_LIST ENDS
+XENDP macro symb
+ifdef OVL_SMALL
+    __S&symb&__ endp
+else
+    __L&symb&__ endp
+endif
+endm

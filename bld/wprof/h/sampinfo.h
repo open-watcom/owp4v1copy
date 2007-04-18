@@ -38,7 +38,6 @@ typedef uint_16                 thread_id;
 typedef uint_16                 section_id;
 typedef unsigned long           clicks_t;
 typedef unsigned long           sample_index_t;
-typedef unsigned long           dos_addr;
 
 enum {
     SORT_COUNT = 0,

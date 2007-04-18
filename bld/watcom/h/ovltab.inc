@@ -34,6 +34,8 @@
 OVL_MAJOR_VERSION       equ     3
 OVL_MINOR_VERSION       equ     0
 
+OVL_SIGNATURE   equ     2112h
+
 OVLTAB_ENTRY    STRUC
     ove_flags_anc       dw      ?
     ove_relocs          dw      ?

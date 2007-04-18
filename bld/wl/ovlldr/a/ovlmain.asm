@@ -28,7 +28,7 @@
 ;*
 ;*****************************************************************************
 
-        include novlldr.inc
+        include ovlstd.inc
 
 
 ifdef OVL_SMALL

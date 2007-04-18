@@ -49,6 +49,4 @@ _Packed struct ovl_header {
     unsigned_16     handler_offset;
 };
 
-#define OVL_SIGNATURE   0x2112
-
 #endif

@@ -45,6 +45,7 @@
 #include "smpstuff.h"
 #include "wmsg.h"
 
+#include "ovltab.h"
 #include "ovldbg.h"
 
 char FAR_PTR    *CommonAddr = NULL;

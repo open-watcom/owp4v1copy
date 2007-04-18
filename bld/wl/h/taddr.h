@@ -37,13 +37,3 @@ typedef struct targ_addr {
     offset              off;
     segment             seg;
 } targ_addr;
-
-typedef struct dos_addr {
-    unsigned_16     off;
-    unsigned_16     seg;
-} dos_addr;
-
-typedef struct addr_386 {
-    unsigned_32     off;
-    unsigned_16     seg;
-} addr_386;

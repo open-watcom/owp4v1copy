@@ -37,7 +37,23 @@
 #define OVL_MAJOR_VERSION 3
 #define OVL_MINOR_VERSION 0
 
+#define OVL_SIGNATURE   0x2112
+
+/* Next is for compilers which don't like segmented architecture
+ * GCC is too dumb to understand far pointers; fortunately this define
+ * is only needed for building 16-bit overlay loader code.
+ */
+#if !defined( __WATCOMC__ )
+#define far
+#define near
+#endif
+
 #pragma pack( push, 1 )             /* make sure no structures are padded. */
+
+typedef struct dos_addr {
+    unsigned_16     off;
+    unsigned_16     seg;
+} dos_addr;
 
 typedef struct ovltab_entry {
     unsigned_16         flags_anc;  /* flags & number of ancestor */
@@ -48,6 +64,8 @@ typedef struct ovltab_entry {
     unsigned_16         fname;      /* offset from OVLTAB to filename */
     unsigned_32         disk_addr;  /* location of overlay in file */
 } ovltab_entry;
+
+typedef ovltab_entry far * ovltab_entry_ptr;
 
 // flags_anc
 #define OVE_FLAG_PRELOAD    0x8000  /* load overlay at init time */
@@ -82,7 +100,8 @@ typedef struct svector {            /* short overlay vector */
     unsigned_8  jmp_op;
     unsigned_16 target;
 } svector;
-typedef svector * svector_ptr;
+
+typedef svector far * svector_ptr;
 
 typedef struct {
     unsigned_16 big_nop;
@@ -122,12 +141,7 @@ typedef struct lvector {            /* long overlay vector */
     dos_addr            target;
 } lvector;
 
-/* GCC is too dumb to understand far pointers; fortunately this typedef
- * is only needed for building 16-bit overlay loader code.
- */
-#if defined( __WATCOMC__ )
-typedef lvector __far * lvector_ptr;
-#endif
+typedef lvector far * lvector_ptr;
 
 #pragma pack( pop )
 

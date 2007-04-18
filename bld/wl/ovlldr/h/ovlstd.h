@@ -30,14 +30,8 @@
 ****************************************************************************/
 
 
-#include <watcom.h>
-#include <tinyio.h>
-
-typedef struct {
-    unsigned_16 off;
-    unsigned_16 seg;
-} dos_addr;
-
+#include "watcom.h"
+#include "tinyio.h"
 #include "ovltab.h"
 
 // definitions used in the overlay loader.
@@ -92,8 +86,10 @@ enum {
 
 #ifdef OVL_SMALL
 #define vector          svector
+#define vector_ptr      svector_ptr
 #else
 #define vector          lvector
+#define vector_ptr      lvector_ptr
 #endif
 
 #if defined( OVL_WHOOSH )
@@ -127,7 +123,7 @@ extern  ovl_table       far __OVLTAB__;
 extern  unsigned_16     far __OVLTABEND__;
 extern  unsigned int    far __OVLPSP__;
 extern  char far *      far __OVLMSGS__[];
-extern  void            far * far __OVLCAUSE__;
+extern  void far *      far __OVLCAUSE__;
 extern  char            far __OVLISRET__;
 extern  char            far __OVLDOPAR__;
 extern  vector          far __OVLSTARTVEC__;

@@ -722,7 +722,7 @@ pcode_ret_trap proc far
 ;
         call    do_ret_trap             ; do the return trap;
         mov     AX,__OVLCAUSE__+2       ; load the segment of section
-        retf
+        ret
 pcode_ret_trap  endp
 
 ;
