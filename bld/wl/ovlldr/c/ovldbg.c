@@ -55,7 +55,7 @@ typedef unsigned char byte;
 
 #if defined( OVL_WHOOSH )
 extern int  near __LoadNewOverlay__( int );
-extern int  near __LoadSectionCode__( ovltab_entry far * );
+extern int  near __LoadSectionCode__( ovltab_entry_ptr );
 #else
 extern int  near NAME( LoadOverlay )( int );
 #endif
@@ -79,7 +79,7 @@ static int GetSizeOverlays( void )
 {
     unsigned    number;
 
-    number = (ovltab_entry far *)&__OVLTABEND__ - __OVLTAB__.entries;
+    number = (ovltab_entry_ptr)&__OVLTABEND__ - __OVLTAB__.entries;
 #ifdef OVL_WHOOSH
     __OVLDBGINFO__.bitsize = ( number + 7 ) / 8;
 #endif
@@ -91,9 +91,9 @@ static int GetSectionData( ovl_addr far * data )
 {
     unsigned            number;
     unsigned            seg;
-    ovltab_entry far *  ovl;
+    ovltab_entry_ptr    ovl;
 
-    number = (ovltab_entry far *)&__OVLTABEND__ - __OVLTAB__.entries;
+    number = (ovltab_entry_ptr)&__OVLTABEND__ - __OVLTAB__.entries;
     if( ( data->sect > number ) || ( data->sect <= 0 ) )
         return( 0 );
     ovl = &__OVLTAB__.entries[data->sect - 1];
@@ -112,7 +112,7 @@ static int SaveOvlState( char far * data )
 // this fills a bit array with the status of the overlays
 // 1 means overlay in memory, 0 means overlay on disk
 {
-    ovltab_entry far *  ovl;
+    ovltab_entry_ptr    ovl;
     unsigned char       mask;
     unsigned char       loaded;
     char far *          savedata;
@@ -153,7 +153,7 @@ static int RestoreOvlState( char far * data )
 /*******************************************/
 // set the overlay state to match the given vector.
 {
-    ovltab_entry far *  ovl;
+    ovltab_entry_ptr    ovl;
     unsigned char       mask;
     int                 ovlnum;
 #ifdef OVL_WHOOSH
@@ -237,11 +237,11 @@ static int CheckVecAddr( ovl_addr far * data )
 /**********************************************/
 // check if the address stored in data is a vector, returning TRUE if it is.
 {
-    char far *      address;
-    vector far *    vect;
-    unsigned        addr;
+    char far            *address;
+    vector_ptr          vect;
+    unsigned            addr;
 #ifdef OVL_WHOOSH
-    ovltab_entry *  ovl;
+    ovltab_entry_ptr    ovl;
 #endif
 
     address = data->addr;
@@ -255,7 +255,7 @@ static int CheckVecAddr( ovl_addr far * data )
     addr -= FP_OFF( &__OVLSTARTVEC__ );
     if( addr % sizeof( vector ) != 0 )
         return( FALSE );
-    vect = (vector *)address;
+    vect = (vector_ptr)address;
 #ifdef OVL_SMALL
     data->addr = MK_FP( FP_SEG( address ), vect->target + (unsigned)&vect->target + 2 );
     data->sect = vect->sec_num;
@@ -298,8 +298,8 @@ static int GetChangedSections( ovl_addr far *data )
 /* return TRUE if a section changed. return the section number and the new
  * segment in that memory pointed to by data */
 {
-    ovltab_entry *  ovl;
-    unsigned        ovl_num;
+    ovltab_entry_ptr    ovl;
+    unsigned            ovl_num;
 
      if( ( __OVLFLAGS__ & DBGAREA_LOADED )
          && ( __OVLFLAGS__ & DBGAREA_VALID ) ) {
@@ -341,7 +341,7 @@ unsigned near __OVLMAXSECT__( void )
 /***********************************/
 // This returns the size of the largest overlay section.
 {
-    ovltab_entry far *  ovl;
+    ovltab_entry_ptr    ovl;
     unsigned            max;
 
     max = 0;

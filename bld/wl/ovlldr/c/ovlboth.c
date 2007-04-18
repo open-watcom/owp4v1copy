@@ -52,8 +52,8 @@ extern void near __OvlExit__( unsigned int msg )
     TinyTerminateProcess( -1 );
 }
 
-void near __OvlCodeLoad__( ovltab_entry far *ovl, tiny_handle_t fp )
-//==================================================================
+void near __OvlCodeLoad__( ovltab_entry_ptr ovl, tiny_handle_t fp )
+//=================================================================
 // Load code portion of section.
 {
     unsigned int        block_size; // number of paragraphs
@@ -78,8 +78,8 @@ void near __OvlCodeLoad__( ovltab_entry far *ovl, tiny_handle_t fp )
 
 #define RELOC_CAPACITY 32
 
-int near __OvlRelocLoad__( ovltab_entry far *ovl, tiny_handle_t fp )
-//==================================================================
+int near __OvlRelocLoad__( ovltab_entry_ptr ovl, tiny_handle_t fp )
+//=================================================================
 // Relocate section code; returns 1 if section is self-referential.
 {
     unsigned int        buffered_relocs;

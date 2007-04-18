@@ -44,7 +44,7 @@ static void MungeVectors( int ovl_num )
 // Copy the jmp instruction on top of the call instruction in the vector table
 // so future references to this symbol will bypass the overlay manager.
 {
-    vector *    vect;
+    vector_ptr  vect;
 
     vect = &__OVLSTARTVEC__;
     while( vect < &__OVLENDVEC__ ) {
@@ -78,7 +78,7 @@ static void DeMungeVectors( int ovl_num )
 /***************************************/
 // overlay not in memory any more, so demunge vectors.
 {
-    vector *    vect;
+    vector_ptr  vect;
 
     vect = &__OVLSTARTVEC__;
     while( vect < &__OVLENDVEC__ ) {
@@ -98,16 +98,16 @@ static void DeMungeVectors( int ovl_num )
     }
 }
 
-static void ClearInMemFlags( ovltab_entry *loaded_ovl )
-//=====================================================
+static void ClearInMemFlags( ovltab_entry_ptr loaded_ovl )
+//========================================================
 // Turn off the IN_MEM flag in the overlay table for those sections
 // that overlap with the loaded section.
 {
-    ovltab_entry *  ovl;
-    int             ovl_num;
-    unsigned        end;
-    ovltab_entry *  anc;
-    int             anc_num;
+    ovltab_entry_ptr    ovl;
+    int                 ovl_num;
+    unsigned            end;
+    ovltab_entry_ptr    anc;
+    int                 anc_num;
 
     end = loaded_ovl->start_para + loaded_ovl->num_paras;
     ovl_num = 1;
@@ -146,10 +146,10 @@ int near LOADOVERLAY( unsigned int ovl_num )
 //==========================================
 // Load specified overlay.
 {
-    ovltab_entry *  ovl;
-    tiny_ret_t      status;
-    tiny_handle_t   fp;
-    int             loaded_something;
+    ovltab_entry_ptr    ovl;
+    tiny_ret_t          status;
+    tiny_handle_t       fp;
+    int                 loaded_something;
 
     loaded_something = 0;
     while( ovl_num != 0 ) { // load overlay and all its ancestors
@@ -197,7 +197,7 @@ dos_addr near NAME( OVLTINIT )( void )
 //====================================
 // Overlay initialization.
 {
-    ovltab_entry        *ovl;
+    ovltab_entry_ptr    ovl;
     unsigned int        ovl_num;
 
     if( __OVLTAB__.prolog.major != OVL_MAJOR_VERSION
