@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Munge OMF objects into something resembling a sensible
+*               object format.
 *
 ****************************************************************************/
 
@@ -1188,10 +1188,13 @@ orl_return              OmfAddComDat( omf_file_handle ofh, int is32, int flags,
     if( err != ORL_OKAY ) return( err );
 
     if( align == -1 ) {
-        if( !seg ) return( ORL_ERROR );
-        sh = findSegment( ofh, seg );
-        if( !sh ) return( ORL_ERROR );
-        align = sh->assoc.seg.alignment;
+        if( seg ) {
+            sh = findSegment( ofh, seg );
+            if( !sh ) return( ORL_ERROR );
+            align = sh->assoc.seg.alignment;
+        } else {
+            align = 0;  /* Use default for kinda-broken objects */
+        }
     }
 
     if( flags & COMDAT_CONTINUE ) {
