@@ -95,14 +95,14 @@ sw_a_386 += -D_PROFILE
 
 sw_a_086_ms = -ms
 sw_a_286_ms = -ms
-sw_a_086_mm = -mm
-sw_a_286_mm = -mm
+sw_a_086_mm = -mm-nt=_TEXT
+sw_a_286_mm = -mm-nt=_TEXT
 sw_a_086_mc = -mc
 sw_a_286_mc = -mc
-sw_a_086_ml = -ml
-sw_a_286_ml = -ml
-sw_a_086_mh = -mh
-sw_a_286_mh = -mh
+sw_a_086_ml = -ml-nt=_TEXT
+sw_a_286_ml = -ml-nt=_TEXT
+sw_a_086_mh = -mh-nt=_TEXT
+sw_a_286_mh = -mh-nt=_TEXT
 sw_a_386_ms = -ms$(sw_a_$(convention))
 sw_a_386_mf = -mf$(sw_a_$(convention))
 sw_a_386_   =

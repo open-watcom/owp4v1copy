@@ -94,14 +94,14 @@ sw_a_mps =
 
 sw_a_286_ms = -ms$(sw_a_16bit)
 sw_a_287_ms = -ms$(sw_a_16bit)
-sw_a_286_mm = -mm$(sw_a_16bit)
-sw_a_287_mm = -mm$(sw_a_16bit)
+sw_a_286_mm = -mm$(sw_a_16bit)-nt=_TEXT
+sw_a_287_mm = -mm$(sw_a_16bit)-nt=_TEXT
 sw_a_286_mc = -mc$(sw_a_16bit)
 sw_a_287_mc = -mc$(sw_a_16bit)
-sw_a_286_ml = -ml$(sw_a_16bit)
-sw_a_287_ml = -ml$(sw_a_16bit)
-sw_a_286_mh = -mh$(sw_a_16bit)
-sw_a_287_mh = -mh$(sw_a_16bit)
+sw_a_286_ml = -ml$(sw_a_16bit)-nt=_TEXT
+sw_a_287_ml = -ml$(sw_a_16bit)-nt=_TEXT
+sw_a_286_mh = -mh$(sw_a_16bit)-nt=_TEXT
+sw_a_287_mh = -mh$(sw_a_16bit)-nt=_TEXT
 sw_a_386_ms = -ms$(sw_a_$(convention))
 sw_a_387_ms = -ms$(sw_a_$(convention))
 sw_a_386_mf = -mf$(sw_a_$(convention))
