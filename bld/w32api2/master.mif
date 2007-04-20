@@ -48,6 +48,7 @@ headers =            &
         ole.h        &
         ole2.h       &
         oleauto.h    &
+        olectl.h     &
         oleidl.h     &
         poppack.h    &
         propidl.h    &
