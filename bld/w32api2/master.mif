@@ -30,6 +30,7 @@ headers =            &
         ddeml.h      &
         dhcpcsdk.h   &
         dlgs.h       &
+        docobj.h     &
         guiddef.h    &
         imm.h        &
         inaddr.h     &
