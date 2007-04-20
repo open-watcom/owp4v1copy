@@ -31,6 +31,7 @@ headers =            &
         dhcpcsdk.h   &
         dlgs.h       &
         docobj.h     &
+        errorrep.h   &
         guiddef.h    &
         imm.h        &
         inaddr.h     &
