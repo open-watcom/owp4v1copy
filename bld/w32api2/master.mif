@@ -33,6 +33,7 @@ headers =            &
         docobj.h     &
         errorrep.h   &
         exdisp.h     &
+        exdispid.h   &
         guiddef.h    &
         imm.h        &
         inaddr.h     &
