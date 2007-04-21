@@ -389,7 +389,7 @@ EXTERN_C const GUID     GUID_FONTUNDERSCORE;
 EXTERN_C const GUID     GUID_FONTSTRIKETHROUGH;
 EXTERN_C const GUID     GUID_HANDLE;
 
-/* Functions export by any DLL that supports self-registration */
+/* Functions exported to provide self-registration */
 STDAPI  DllRegisterServer( void );
 STDAPI  DllUnregisterServer( void );
 
