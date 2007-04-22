@@ -1071,7 +1071,8 @@ Global function names must be followed with an underscore.
 Global variable names must be preceded with an underscore.
 .note
 All used 80x86 registers must be saved on entry and restored on exit
-except those used to pass arguments and return values.
+except those used to pass arguments and return values, and AX, 
+which is considered a stratch register.
 .ix 'options' 'r'
 Note that segment registers only have to saved and restored if you are
 compiling your application with the "r" option.
@@ -1711,7 +1712,8 @@ _TEXT   ends
 Function names must be followed by an underscore.
 .note
 All used 80x86 registers must be saved on entry and restored on exit
-except those used to pass arguments and return values.
+except those used to pass arguments and return values, and EAX, 
+which is considered a stratch register.
 .ix 'options' 'r'
 Note that segment registers only have to saved and restored if you are
 compiling your application with the "r" option.
