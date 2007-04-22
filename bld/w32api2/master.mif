@@ -36,6 +36,7 @@ headers =            &
         exdispid.h   &
         guiddef.h    &
         httpext.h    &
+        idispids.h   &
         imm.h        &
         inaddr.h     &
         lzexpand.h   &
