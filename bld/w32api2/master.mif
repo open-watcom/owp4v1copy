@@ -97,6 +97,7 @@ headers =            &
         winsock.h    &
         winspool.h   &
         winsvc.h     &
+        wintrust.h   &
         winuser.h    &
         winuser.rh   &
         winver.h     &
