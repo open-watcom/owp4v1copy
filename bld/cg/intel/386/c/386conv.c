@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  386 machine type conversion routines.
+* Description:  Machine type conversion routines.
 *
 ****************************************************************************/
 
@@ -39,15 +39,15 @@
 #include "model.h"
 #include "funits.h"
 
-extern  name    *       AllocTemp(type_class_def);
-extern  instruction*    MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  void            MoveSegOp(instruction*,instruction*,int);
-extern  void            PrefixIns(instruction*,instruction*);
-extern  instruction*    MakeMove(name*,name*,type_class_def);
-extern  void            DupSeg(instruction*,instruction*);
-extern  void            ReplIns(instruction*,instruction*);
+extern  name            *AllocTemp( type_class_def );
+extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
+extern  void            MoveSegOp( instruction *, instruction *, int );
+extern  void            PrefixIns( instruction *, instruction * );
+extern  instruction     *MakeMove( name *, name *, type_class_def );
+extern  void            DupSeg( instruction *, instruction * );
+extern  void            ReplIns( instruction *, instruction * );
 
-extern    int   RoutineNum;
+extern  int             RoutineNum;
 
 
 static  opcode_entry    C2to1[] = {
@@ -58,7 +58,6 @@ _Un( R,    ANY,  NONE ),  V_NO,       R_MOVOP1TEMP,     RG_,    FU_NO,
 _Un( ANY,  ANY,  NONE ),  V_NO,       R_MOVELOW,        RG_,    FU_NO,
 };
 
-
 static  opcode_entry    C4to1[] = {
 /*********************************/
 /*    from  to    eq          verify          gen        reg    fu*/
@@ -66,7 +65,6 @@ _Un( U,    ANY,  NONE ),  V_CONSTTEMP,  G_UNKNOWN,      RG_,    FU_NO,
 _Un( C,    ANY,  NONE ),  V_OP1RELOC,   R_MOVOP1TEMP,   RG_,    FU_NO,
 _Un( ANY,  ANY,  NONE ),  V_NO,         R_CONVERT_LOW,  RG_,    FU_NO
 };
-
 
 static  opcode_entry    C4to2[] = {
 /*********************************/
@@ -84,7 +82,6 @@ _Un( C,    ANY,  NONE ),  V_OP1RELOC,   R_MOVOP1TEMP,   RG_,    FU_NO,
 _Un( ANY,  ANY,  NONE ),  V_NO,         R_MOVELOW,      RG_,    FU_NO
 };
 
-
 static  opcode_entry    S1to2[] = {
 /*********************************/
 /*    from  to    eq       verify        gen             reg            fu*/
@@ -94,7 +91,6 @@ _Un( U|C,  R,    NONE ),   V_NO,         G_UNKNOWN,      RG_BYTE_WORD,  FU_NO,
 _Un( ANY,  M,    NONE ),   V_NO,         R_MOVRESREG,    RG_BYTE_WORD,  FU_NO,
 _Un( ANY,  ANY,  NONE ),   V_NO,         G_UNKNOWN,      RG_BYTE_WORD_NEED_WORD,FU_NO,
 };
-
 
 static  opcode_entry    S1to4[] = {
 /*********************************/
@@ -289,11 +285,11 @@ CU4,   CI4,   CU4,   FPOK,  FPOK,  FPOK,  C7U8_D,FPOK,  BAD,   BAD,   FPOK,  FPO
 CU4,   CI4,   CU4,   FPOK,  FPOK,  FPOK,  C7U8_D,FPOK,  BAD,   BAD,   FPOK,  FPOK,  FPOK,    /* FL*/
 };
 
-extern  rt_class        AskHow( type_class_def fr, type_class_def to ) {
-/***********************************************************************
+extern  rt_class        AskHow( type_class_def fr, type_class_def to )
+/*********************************************************************
     return the conversion method required to convert from "fr" to "to"
 */
-
+{
     if( to == XX || fr == XX ) { /* special case for 64 bit operand of IDIV */
         return( BAD );
     }
@@ -304,24 +300,24 @@ extern  rt_class        AskHow( type_class_def fr, type_class_def to ) {
     }
 }
 
-extern  bool    CvtOk( type_class_def fr, type_class_def to ) {
-/**************************************************************
+extern  bool    CvtOk( type_class_def fr, type_class_def to )
+/************************************************************
     return true if a conversion from "fr" to "to" can be done
 */
-
+{
     if( fr == XX ) return( FALSE );
     if( to == XX ) return( FALSE );
     if( AskHow( fr, to ) != BAD ) return( TRUE );
     return( FALSE );
 }
 
-extern  instruction     *rDOCVT( instruction *ins ) {
-/****************************************************
+extern  instruction     *rDOCVT( instruction *ins )
+/**************************************************
     decide how to accomplish the conversion, then
     either point the instruction at a new generate
     table, or reduce it into two simpler conversions
 */
-
+{
     name        *src;
     name        *dst;
     name        *name;

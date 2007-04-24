@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Special 386 pointer types.
 *
 ****************************************************************************/
-
 
 
 #include "standard.h"
@@ -37,7 +35,7 @@
 #include "typedef.h"
 #include "model.h"
 
-extern  type_def        *TypeAlias(cg_type,cg_type);
+extern  type_def        *TypeAlias( cg_type, cg_type );
 extern  type_def        *TypeAddress( cg_type );
 
 // type_def THugeCP= {  T_HUGE_CODE_PTR,6,      TYPE_POINTER + TYPE_CODE };
@@ -53,9 +51,9 @@ extern type_def *PTPointer;
 extern type_def *PTCodePointer;
 
 
-extern  void    TargTypeInit() {
-/**************************/
-
+extern  void    TargTypeInit( void )
+/**********************************/
+{
     TypeAlias( T_UNSIGNED, T_UINT_4 );
     TypeAlias( T_INTEGER, T_INT_4 );
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  386 TLS support gear (for Win32).
 *
 ****************************************************************************/
 
@@ -62,30 +61,33 @@ extern  proc_def        *CurrProc;
 extern  bool            BlockByBlock;
 extern  block           *HeadBlock;
 
-static  name    *RTMemRef( int rt_index ) {
-/******************************************
+
+static  name    *RTMemRef( int rt_index )
+/****************************************
     create a memory_name to reference the given runtime label.
 */
+{
     label_handle        hdl;
 
     hdl = RTLabel( rt_index - BEG_RTNS );
     return( AllocMemory( hdl, 0, CG_LBL, WD ) );
 }
 
-static  void    AddSegOverride( instruction *ins, hw_reg_set reg ) {
-/******************************************************************/
-
+static  void    AddSegOverride( instruction *ins, hw_reg_set reg )
+/****************************************************************/
+{
     name                *reg_name;
 
     reg_name = AllocRegName( reg );
     ins->operands[ ins->num_operands++ ] = reg_name;
 }
 
-static  name    *GetNTTLSDataRef( instruction *ins, name *op, type_class_def tipe ) {
-/************************************************************************************
+static  name    *GetNTTLSDataRef( instruction *ins, name *op, type_class_def tipe )
+/**********************************************************************************
     Emit instructions to load allow a reference to op (a piece of
     TLS data) and return the resulting index name.
 */
+{
     name                *tls_index;
     name                *tls_array;
     name                *t1;
@@ -116,9 +118,9 @@ static  name    *GetNTTLSDataRef( instruction *ins, name *op, type_class_def tip
     return( result_index );
 }
 
-static  void    DropCall( instruction *ins, name *temp ) {
-/********************************************************/
-
+static  void    DropCall( instruction *ins, name *temp )
+/******************************************************/
+{
     name                *eax_name;
     name                *null_name;
     instruction         *new_ins;
@@ -139,9 +141,9 @@ static  void    DropCall( instruction *ins, name *temp ) {
     PrefixIns( ins, new_ins );
 }
 
-static  name    *GetGenericTLSDataRef( instruction *ins, name *op, type_class_def tipe ) {
-/****************************************************************************************/
-
+static  name    *GetGenericTLSDataRef( instruction *ins, name *op, type_class_def tipe )
+/**************************************************************************************/
+{
     name                *tls;
     name                *result_index;
     name                *temp;
@@ -172,9 +174,9 @@ static  name    *GetGenericTLSDataRef( instruction *ins, name *op, type_class_de
     return( result_index );
 }
 
-static  name    *GetTLSDataRef( instruction *ins, name *op, type_class_def tipe ) {
-/*********************************************************************************/
-
+static  name    *GetTLSDataRef( instruction *ins, name *op, type_class_def tipe )
+/*******************************************************************************/
+{
     if( _IsTargetModel( GENERIC_TLS ) ) {
         return( GetNTTLSDataRef( ins, op, tipe ) );
     } else {
@@ -182,8 +184,8 @@ static  name    *GetTLSDataRef( instruction *ins, name *op, type_class_def tipe 
     }
 }
 
-static  void    ExpandTlsOp( instruction *ins, name **pop ) {
-/************************************************************
+static  void    ExpandTlsOp( instruction *ins, name **pop )
+/**********************************************************
     If *pop is a ref to a piece of thread-local data, replace
     it by a ref to an index [t1] and prepend the magic sequence
     to get the address of a piece of tls data to the instruction.
@@ -195,6 +197,7 @@ static  void    ExpandTlsOp( instruction *ins, name **pop ) {
         mov [ t1 ] -> t3
         mov foo[ t3 ] -> result
 */
+{
     fe_attr             attr;
     name                *op;
     name                *temp;
@@ -245,8 +248,8 @@ static  void    ExpandTlsOp( instruction *ins, name **pop ) {
     }
 }
 
-extern  void    ExpandThreadDataRef( instruction *ins ) {
-/********************************************************
+extern  void    ExpandThreadDataRef( instruction *ins )
+/******************************************************
     Expand any references to thread-local data into the
     appropriate magical sequence of instructions.  Note
     that since this is done independantly for each
@@ -255,7 +258,7 @@ extern  void    ExpandThreadDataRef( instruction *ins ) {
     able to clean this up providing -oa has been
     used.
 */
-
+{
     int                 i;
 
     for( i = 0; i < ins->num_operands; i++ ) {

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  386 instruction splitting (simplifications/optimizations).
 *
 ****************************************************************************/
 
@@ -42,47 +41,48 @@
 #include "cfloat.h"
 #include "conflict.h"
 
-extern  void            ChangeType(instruction*,type_class_def);
-extern  name            *IntEquivalent(name*);
-extern  void            DupSegOp(instruction*,instruction*,int);
-extern  name            *AllocTemp(type_class_def);
-extern  opcode_entry    *CodeTable(instruction*);
-extern  bool            SameThing(name*,name*);
-extern  instruction     *MoveConst(unsigned_32,name*,type_class_def);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  constant_defn   *GetFloat(name*,type_class_def);
-extern  void            UpdateLive(instruction*,instruction*);
-extern  void            DupSegRes(instruction*,instruction*);
-extern  void            MoveSegOp(instruction*,instruction*,int);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  void            SuffixIns(instruction*,instruction*);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
-extern  void            HalfType(instruction*);
-extern  hw_reg_set      High64Reg(hw_reg_set);
-extern  hw_reg_set      High48Reg(hw_reg_set);
-extern  hw_reg_set      High32Reg(hw_reg_set);
-extern  hw_reg_set      High16Reg(hw_reg_set);
-extern  hw_reg_set      Low64Reg(hw_reg_set);
-extern  hw_reg_set      Low48Reg(hw_reg_set);
-extern  hw_reg_set      Low32Reg(hw_reg_set);
-extern  hw_reg_set      Low16Reg(hw_reg_set);
-extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def);
-extern  name            *TempOffset(name*,type_length,type_class_def);
-extern  name            *AllocRegName(hw_reg_set);
-extern  name            *AddrConst(name*,int,constant_class);
-extern  name            *AllocIntConst(int);
-extern  name            *AllocUIntConst(uint);
-extern  name            *AllocConst(pointer);
-extern  instruction     *MakeCondition(opcode_defs,name*,name*,int,int,type_class_def);
-extern  void            ReplIns(instruction*,instruction*);
-extern  void            PrefixIns(instruction*,instruction*);
-extern  void            DupSeg(instruction*,instruction*);
-extern  name            *SegName(name*);
-extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
-extern  name            *AllocS32Const(signed_32);
+
+extern  void            ChangeType( instruction *, type_class_def );
+extern  name            *IntEquivalent( name * );
+extern  void            DupSegOp( instruction *, instruction *, int );
+extern  name            *AllocTemp( type_class_def );
+extern  opcode_entry    *CodeTable( instruction * );
+extern  bool            SameThing( name *, name * );
+extern  instruction     *MoveConst( unsigned_32, name *, type_class_def );
+extern  instruction     *MakeMove( name *, name *, type_class_def );
+extern  constant_defn   *GetFloat( name *, type_class_def );
+extern  void            UpdateLive( instruction *, instruction * );
+extern  void            DupSegRes( instruction *, instruction * );
+extern  void            MoveSegOp( instruction *, instruction *, int );
+extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
+extern  void            SuffixIns( instruction *, instruction * );
+extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
+extern  instruction     *MakeConvert( name *, name *, type_class_def, type_class_def );
+extern  void            HalfType( instruction * );
+extern  hw_reg_set      High64Reg( hw_reg_set );
+extern  hw_reg_set      High48Reg( hw_reg_set );
+extern  hw_reg_set      High32Reg( hw_reg_set );
+extern  hw_reg_set      High16Reg( hw_reg_set );
+extern  hw_reg_set      Low64Reg( hw_reg_set );
+extern  hw_reg_set      Low48Reg( hw_reg_set );
+extern  hw_reg_set      Low32Reg( hw_reg_set );
+extern  hw_reg_set      Low16Reg( hw_reg_set );
+extern  name            *AllocMemory( pointer, type_length, cg_class, type_class_def );
+extern  name            *TempOffset( name *, type_length, type_class_def );
+extern  name            *AllocRegName( hw_reg_set );
+extern  name            *AddrConst( name *, int, constant_class );
+extern  name            *AllocIntConst( int );
+extern  name            *AllocUIntConst( uint );
+extern  name            *AllocConst( pointer );
+extern  instruction     *MakeCondition( opcode_defs, name *, name *, int, int, type_class_def );
+extern  void            ReplIns( instruction *, instruction * );
+extern  void            PrefixIns( instruction *, instruction * );
+extern  void            DupSeg( instruction *, instruction * );
+extern  name            *SegName( name * );
+extern  name            *ScaleIndex( name *, name *, type_length, type_class_def, type_length, int, i_flags );
+extern  name            *AllocS32Const( signed_32 );
 extern  name            *OpAdjusted( name *, int, type_class_def );
-extern  int             NumOperands(instruction*);
+extern  int             NumOperands( instruction * );
 extern  bool            Overlaps( name *, name * );
 extern  void            CnvOpToInt( instruction *, int );
 extern  name            *Int64Equivalent( name * );
@@ -90,9 +90,9 @@ extern  name            *Int64Equivalent( name * );
 extern    type_class_def        HalfClass[];
 extern    type_class_def        Unsigned[];
 
-extern  name    *LowPart( name *tosplit, type_class_def class ) {
-/************************************************************/
-
+extern  name    *LowPart( name *tosplit, type_class_def class )
+/*************************************************************/
+{
     name                *new;
     signed_8            s8;
     unsigned_8          u8;
@@ -168,9 +168,9 @@ extern  name    *LowPart( name *tosplit, type_class_def class ) {
     return( new );
 }
 
-extern  name    *OffsetPart( name *tosplit ) {
-/********************************************/
-
+extern  name    *OffsetPart( name *tosplit )
+/******************************************/
+{
     name        *new;
 
     switch( tosplit->n.class ) {
@@ -202,10 +202,9 @@ extern  name    *OffsetPart( name *tosplit ) {
 }
 
 
-
-extern  name    *SegmentPart( name *tosplit ) {
-/**********************************************/
-
+extern  name    *SegmentPart( name *tosplit )
+/*******************************************/
+{
     name        *new;
     name        *seg;
 
@@ -249,9 +248,9 @@ extern  name    *SegmentPart( name *tosplit ) {
 }
 
 
-extern  name    *HighPart( name *tosplit, type_class_def class ) {
-/*************************************************************/
-
+extern  name    *HighPart( name *tosplit, type_class_def class )
+/**************************************************************/
+{
     name                *new;
     signed_8            s8;
     unsigned_8          u8;
@@ -329,14 +328,13 @@ extern  name    *HighPart( name *tosplit, type_class_def class ) {
 }
 
 
-extern  instruction     *SplitUnary( instruction *ins ) {
-/*******************************************************/
-
-/* Pushing floating point */
-
-    instruction *new_ins;
-    name        *high_res;
-    name        *low_res;
+extern  instruction     *SplitUnary( instruction *ins )
+/******************************************************
+ * Pushing floating point */
+{
+    instruction     *new_ins;
+    name            *high_res;
+    name            *low_res;
 
     HalfType( ins );
     if( ins->result == NULL ) {
@@ -363,15 +361,14 @@ extern  instruction     *SplitUnary( instruction *ins ) {
 }
 
 
-extern  instruction     *rSPLITPUSH( instruction *ins ) {
-/*******************************************************/
-
-/* Pushing a 6 byte pointer */
-
-    instruction *new_ins;
-    instruction *ins2;
-    name        *op;
-    name        *temp;
+extern  instruction     *rSPLITPUSH( instruction *ins )
+/******************************************************
+ * Pushing a 6 byte pointer */
+{
+    instruction     *new_ins;
+    instruction     *ins2;
+    name            *op;
+    name            *temp;
 
     new_ins = MakeUnary( ins->head.opcode,
                          OffsetPart( ins->operands[ 0 ] ),
@@ -399,14 +396,13 @@ extern  instruction     *rSPLITPUSH( instruction *ins ) {
     }
 }
 
-extern  instruction     *rMAKEU2( instruction *ins ) {
-/***************************************************/
-
-/* for 48 bit pointers operations */
-
-    instruction *new_ins;
-    instruction *ins2;
-    name        *temp;
+extern  instruction     *rMAKEU2( instruction *ins )
+/***************************************************
+ * for 48 bit pointers operations */
+{
+    instruction     *new_ins;
+    instruction     *ins2;
+    name            *temp;
 
     if( Overlaps( ins->result, ins->operands[ 0 ] )
      || ( ins->num_operands >= 2 &&
@@ -450,9 +446,9 @@ extern  instruction     *rMAKEU2( instruction *ins ) {
 
 
 
-extern instruction      *rLOADLONGADDR( instruction *ins ) {
-/*********************************************************/
-
+extern instruction      *rLOADLONGADDR( instruction *ins )
+/********************************************************/
+{
     instruction         *new_ins;
     name                *name1;
 
@@ -476,10 +472,10 @@ extern instruction      *rLOADLONGADDR( instruction *ins ) {
 }
 
 
-extern  instruction     *rHIGHCMP( instruction *ins ) {
-/****************************************************/
-
-/* floating point comparison with 0*/
+extern  instruction     *rHIGHCMP( instruction *ins )
+/****************************************************
+ * floating point comparison with 0 */
+{
     if( ins->type_class == FD ) {
         ins->operands[ 0 ] = HighPart( ins->operands[ 0 ], SW );
     }
@@ -488,11 +484,10 @@ extern  instruction     *rHIGHCMP( instruction *ins ) {
 }
 
 
-extern  instruction     *rMAKEU4( instruction *ins ) {
-/***************************************************/
-
-/* change pointer '==' or '!=' to 6 byte compare */
-
+extern  instruction     *rMAKEU4( instruction *ins )
+/***************************************************
+ * change pointer '==' or '!=' to 6 byte compare */
+{
     name                *left;
     name                *rite;
     instruction         *new_ins;
@@ -548,9 +543,9 @@ extern  instruction     *rMAKEU4( instruction *ins ) {
 }
 
 
-extern  instruction     *rCLRHI_D( instruction *ins ) {
-/*******************************************************/
-
+extern  instruction     *rCLRHI_D( instruction *ins )
+/***************************************************/
+{
     name                *high;
     name                *low;
     instruction         *new_ins;
@@ -569,9 +564,9 @@ extern  instruction     *rCLRHI_D( instruction *ins ) {
 }
 
 
-extern  instruction     *rEXT_PUSH1( instruction *ins ) {
-/******************************************************/
-
+extern  instruction     *rEXT_PUSH1( instruction *ins )
+/*****************************************************/
+{
     name        *temp;
     instruction *new_ins;
 
@@ -586,9 +581,9 @@ extern  instruction     *rEXT_PUSH1( instruction *ins ) {
 
 
 
-extern  instruction     *rEXT_PUSH2( instruction *ins ) {
-/**********************************************************/
-
+extern  instruction     *rEXT_PUSH2( instruction *ins )
+/*****************************************************/
+{
     name        *temp;
     instruction *new_ins;
 
@@ -601,9 +596,9 @@ extern  instruction     *rEXT_PUSH2( instruction *ins ) {
     return( new_ins );
 }
 
-extern  instruction     *rINTCOMP( instruction *ins ) {
-/*********************************************************/
-
+extern  instruction     *rINTCOMP( instruction *ins )
+/***************************************************/
+{
     name                *left;
     name                *right;
     instruction         *low;
@@ -669,9 +664,9 @@ extern  instruction     *rINTCOMP( instruction *ins ) {
     return( high );
 }
 
-extern  instruction     *rCDQ( instruction *ins ) {
-/*************************************************/
-
+extern  instruction     *rCDQ( instruction *ins )
+/***********************************************/
+{
     instruction *ins2;
     name        *high;
 
@@ -687,9 +682,9 @@ extern  instruction     *rCDQ( instruction *ins ) {
     return( ins );
 }
 
-extern  instruction     *rCONVERT_UP( instruction *ins ) {
-/********************************************************/
-
+extern  instruction     *rCONVERT_UP( instruction *ins )
+/******************************************************/
+{
     name                *temp;
     instruction         *ins1;
     instruction         *ins2;
@@ -716,13 +711,13 @@ extern  instruction     *rCONVERT_UP( instruction *ins ) {
     return( ins1 );
 }
 
-extern  instruction     *rCYP_SEX( instruction *ins ) {
-/*****************************************************/
-
-    name        *op;
-    name        *new_op;
-    instruction *shft;
-    unsigned    size;
+extern  instruction     *rCYP_SEX( instruction *ins )
+/***************************************************/
+{
+    name            *op;
+    name            *new_op;
+    instruction     *shft;
+    unsigned        size;
 
     op = ins->operands[0];
     size = WORD_SIZE - op->n.size;

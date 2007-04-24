@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  i86 instruction splitting (simplifications/optimizations).
 *
 ****************************************************************************/
 
@@ -41,6 +40,7 @@
 #include "zoiks.h"
 #include "cfloat.h"
 
+
 typedef struct eight_byte_name {
         union name     *low;
         union name     *mid_low;
@@ -48,45 +48,45 @@ typedef struct eight_byte_name {
         union name     *high;
 } eight_byte_name;
 
-extern  void            ChangeType(instruction*,type_class_def);
-extern  name            *IntEquivalent(name*);
-extern  void            DupSegOp(instruction*,instruction*,int);
-extern  name            *AllocTemp(type_class_def);
-extern  opcode_entry    *CodeTable(instruction*);
-extern  bool            SameThing(name*,name*);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
-extern  instruction     *MoveConst(unsigned_32,name*,type_class_def);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  constant_defn   *GetFloat(name*,type_class_def);
-extern  void            UpdateLive(instruction*,instruction*);
-extern  void            DupSegRes(instruction*,instruction*);
-extern  void            MoveSegOp(instruction*,instruction*,int);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  void            SuffixIns(instruction*,instruction*);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  void            HalfType(instruction*);
-extern  hw_reg_set      High32Reg(hw_reg_set);
-extern  hw_reg_set      High16Reg(hw_reg_set);
-extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def);
-extern  name            *TempOffset(name*,type_length,type_class_def);
-extern  hw_reg_set      Low32Reg(hw_reg_set);
-extern  name            *AllocRegName(hw_reg_set);
-extern  hw_reg_set      Low16Reg(hw_reg_set);
-extern  name            *AddrConst(name*,int,constant_class);
-extern  name            *AllocIntConst(int);
-extern  name            *AllocUIntConst(uint);
-extern  name            *AllocConst(pointer);
-extern  instruction     *MakeCondition(opcode_defs,name*,name*,int,int,type_class_def);
-extern  void            ReplIns(instruction*,instruction*);
-extern  void            PrefixIns(instruction*,instruction*);
-extern  void            DupSeg(instruction*,instruction*);
-extern  void            DoNothing(instruction*);
-extern  name            *SegName(name*);
-extern  void            DelSeg(instruction*);
-extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
-extern  name            *AllocIntConst(int);
+extern  void            ChangeType( instruction *, type_class_def );
+extern  name            *IntEquivalent( name * );
+extern  void            DupSegOp( instruction *, instruction *, int );
+extern  name            *AllocTemp( type_class_def );
+extern  opcode_entry    *CodeTable( instruction * );
+extern  bool            SameThing( name *, name * );
+extern  instruction     *MakeConvert( name *, name *, type_class_def, type_class_def );
+extern  instruction     *MoveConst( unsigned_32, name *, type_class_def );
+extern  instruction     *MakeMove( name *, name *, type_class_def );
+extern  constant_defn   *GetFloat( name *, type_class_def );
+extern  void            UpdateLive( instruction *, instruction * );
+extern  void            DupSegRes( instruction *, instruction * );
+extern  void            MoveSegOp( instruction *, instruction *, int );
+extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
+extern  void            SuffixIns( instruction *, instruction * );
+extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
+extern  void            HalfType( instruction * );
+extern  hw_reg_set      High32Reg( hw_reg_set );
+extern  hw_reg_set      High16Reg( hw_reg_set );
+extern  name            *AllocMemory( pointer, type_length, cg_class, type_class_def );
+extern  name            *TempOffset( name *, type_length, type_class_def );
+extern  hw_reg_set      Low32Reg( hw_reg_set );
+extern  name            *AllocRegName( hw_reg_set );
+extern  hw_reg_set      Low16Reg( hw_reg_set );
+extern  name            *AddrConst( name *, int, constant_class );
+extern  name            *AllocIntConst( int );
+extern  name            *AllocUIntConst( uint );
+extern  name            *AllocConst( pointer );
+extern  instruction     *MakeCondition( opcode_defs,name *, name *, int, int, type_class_def );
+extern  void            ReplIns( instruction *, instruction * );
+extern  void            PrefixIns( instruction *, instruction * );
+extern  void            DupSeg( instruction *, instruction * );
+extern  void            DoNothing( instruction * );
+extern  name            *SegName( name * );
+extern  void            DelSeg( instruction * );
+extern  name            *ScaleIndex( name *, name *, type_length, type_class_def, type_length, int, i_flags );
+extern  name            *AllocIntConst( int );
 extern  bool            Overlaps( name *, name * );
-extern  instruction     *MakeNop(void);
+extern  instruction     *MakeNop( void );
 
 /*forward declaration*/
 static  void            Split8Name( instruction *ins, name *tosplit, eight_byte_name *out );
@@ -94,9 +94,10 @@ static  void            Split8Name( instruction *ins, name *tosplit, eight_byte_
 extern    type_class_def        HalfClass[];
 extern    type_class_def        Unsigned[];
 
-extern  name    *LowPart( name *tosplit, type_class_def class ) {
-/************************************************************/
 
+extern  name    *LowPart( name *tosplit, type_class_def class )
+/*************************************************************/
+{
     name                *new = NULL;
     name                *new_cons;
     signed_8            s8;
@@ -171,9 +172,9 @@ extern  name    *LowPart( name *tosplit, type_class_def class ) {
 }
 
 
-extern  name    *HighPart( name *tosplit, type_class_def class ) {
-/*************************************************************/
-
+extern  name    *HighPart( name *tosplit, type_class_def class )
+/**************************************************************/
+{
     name                *new = NULL;
     name                *new_cons;
     name                *op;
@@ -252,23 +253,23 @@ extern  name    *HighPart( name *tosplit, type_class_def class ) {
 }
 
 
-extern  name    *OffsetPart( name *tosplit ) {
-/********************************************/
-
+extern  name    *OffsetPart( name *tosplit )
+/******************************************/
+{
     return( LowPart( tosplit, U2 ) );
 }
 
 
-extern  name    *SegmentPart( name *tosplit ) {
-/********************************************/
-
+extern  name    *SegmentPart( name *tosplit )
+/*******************************************/
+{
     return( HighPart( tosplit, U2 ) );
 }
 
 
-extern  instruction     *SplitUnary( instruction *ins ) {
-/*******************************************************/
-
+extern  instruction     *SplitUnary( instruction *ins )
+/*****************************************************/
+{
     instruction *new_ins;
     name        *high_res;
     name        *low_res;
@@ -297,11 +298,10 @@ extern  instruction     *SplitUnary( instruction *ins ) {
     return( new_ins );
 }
 
-static  instruction     *SplitOverlapped( instruction *ins, int op ) {
-/********************************************************************/
-
+static  instruction     *SplitOverlapped( instruction *ins, int op )
+/******************************************************************/
 /* Used to split 8 byte operation because of overlap problems */
-
+{
     instruction         *move;
     name                *tmp;
 
@@ -314,11 +314,10 @@ static  instruction     *SplitOverlapped( instruction *ins, int op ) {
     return( move );
 }
 
-extern  instruction     *rMOVE8LOW( instruction *ins ) {
-/*****************************************************/
-
+extern  instruction     *rMOVE8LOW( instruction *ins )
+/****************************************************/
 /*   Move low 4 bytes of 8 byte thingy */
-
+{
     instruction         *lo_ins;
     instruction         *mid_lo_ins;
     eight_byte_name     result;
@@ -339,11 +338,10 @@ extern  instruction     *rMOVE8LOW( instruction *ins ) {
     return( lo_ins );
 }
 
-extern  instruction     *rSPLIT8( instruction *ins ) {
-/***************************************************/
-
+extern  instruction     *rSPLIT8( instruction *ins )
+/**************************************************/
 /*   Used to split 8 byte push, pop and move*/
-
+{
     opcode_defs         op;
     instruction         *lo_ins;
     instruction         *mid_lo_ins;
@@ -387,11 +385,10 @@ extern  instruction     *rSPLIT8( instruction *ins ) {
     return( first_ins );
 }
 
-extern  instruction     *rSPLIT8BIN( instruction *ins ) {
-/*******************************************************/
-
+extern  instruction     *rSPLIT8BIN( instruction *ins )
+/*****************************************************/
 /*   Used to split 8 byte binary operations (ADD,SUB,Logicals) */
-
+{
     opcode_defs         op;
     instruction         *lo_ins;
     instruction         *mid_lo_ins;
@@ -452,17 +449,15 @@ extern  instruction     *rSPLIT8BIN( instruction *ins ) {
     return( lo_ins );
 }
 
-extern  instruction     *rSPLIT8NEG( instruction *ins ) {
-/*******************************************************/
-
+extern  instruction     *rSPLIT8NEG( instruction *ins )
+/*****************************************************/
 /*   Used to split 8 byte negate */
-
+{
     instruction         *new;
 
-    /*
-        OK, so we're not really splitting the thing. But it works just
-        as well.
-    */
+    /*  OK, so we're not really splitting the thing. But it works just
+     *  as well.
+     */
     new = MakeBinary( OP_SUB, AllocIntConst( 0 ), ins->operands[0],
                         ins->result, ins->type_class );
     DupSeg( ins, new );
@@ -470,11 +465,10 @@ extern  instruction     *rSPLIT8NEG( instruction *ins ) {
     return( new );
 }
 
-extern  instruction     *rSPLIT8TST( instruction *ins ) {
-/*******************************************************/
-
+extern  instruction     *rSPLIT8TST( instruction *ins )
+/*****************************************************/
 /*   Used to split 8 byte test */
-
+{
     eight_byte_name     left;
     eight_byte_name     rite;
     byte                true_idx;
@@ -515,19 +509,10 @@ extern  instruction     *rSPLIT8TST( instruction *ins ) {
     return( hi_ins );
 }
 
-extern  instruction     *rSPLIT8CMP( instruction *ins ) {
-/*******************************************************/
-
+extern  instruction     *rSPLIT8CMP( instruction *ins )
+/*****************************************************/
 /*   Used to split 8 byte compare */
-
-/*
- * 2005-04-06 RomanT (bug #407)
- * I removed calls do DoNothing(), it seems ok, extra jumps are perfectly
- * optimized out in other places of compiler. Calling DoNothing() on chain
- * of conditions to reuse existing CC flags is ugly and causes unpredictable
- * logical faults in other places.
- */
-
+{
     eight_byte_name     left;
     eight_byte_name     rite;
     byte                true_idx;
@@ -537,6 +522,13 @@ extern  instruction     *rSPLIT8CMP( instruction *ins ) {
     unsigned            i;
     unsigned            j;
 
+/*
+ * 2005-04-06 RomanT (bug #407)
+ * I removed calls do DoNothing(), it seems ok, extra jumps are perfectly
+ * optimized out in other places of compiler. Calling DoNothing() on chain
+ * of conditions to reuse existing CC flags is ugly and causes unpredictable
+ * logical faults in other places.
+ */
     Split8Name( ins, ins->operands[ 0 ], &left );
     Split8Name( ins, ins->operands[ 1 ], &rite );
     true_idx = _TrueIndex( ins );
@@ -612,11 +604,10 @@ extern  instruction     *rSPLIT8CMP( instruction *ins ) {
 }
 
 
-extern  instruction     *rCLRHI_D( instruction *ins ) {
-/*******************************************************/
-
+extern  instruction     *rCLRHI_D( instruction *ins )
+/***************************************************/
 /*   Clear the high dword of an 8 byte thingy (zero extend) */
-
+{
     eight_byte_name     result;
     instruction         *move1;
     instruction         *move2;
@@ -643,11 +634,11 @@ extern  instruction     *rCLRHI_D( instruction *ins ) {
     return( move1 );
 }
 
-extern  instruction     *rCDQ( instruction *ins ) {
-/****************************************************/
 
+extern  instruction     *rCDQ( instruction *ins )
+/***********************************************/
 /*   Sign extend a 4 byte thingy to an 8 byte thingy */
-
+{
     eight_byte_name     result;
     instruction         *shift;
     instruction         *move1, *move2;
@@ -686,9 +677,9 @@ extern  instruction     *rCDQ( instruction *ins ) {
     return( lo_ins );
 }
 
-static  name    *High8Part( instruction *ins, name *temp ) {
-/****************************************/
-
+static  name    *High8Part( instruction *ins, name *temp )
+/********************************************************/
+{
     eight_byte_name     expand;
 
     Split8Name( ins, temp, & expand );
@@ -696,10 +687,9 @@ static  name    *High8Part( instruction *ins, name *temp ) {
 }
 
 
-
-static  void    Split8Name( instruction *ins, name *tosplit, eight_byte_name *out ) {
-/**************************************************************/
-
+static  void    Split8Name( instruction *ins, name *tosplit, eight_byte_name *out )
+/*********************************************************************************/
+{
     type_length         offset;
     sym_handle          symbol;
     constant_defn       *floatval;
@@ -788,9 +778,9 @@ static  void    Split8Name( instruction *ins, name *tosplit, eight_byte_name *ou
 }
 
 
-extern  instruction     *rCYPSHIFT( instruction *ins ) {
-/*******************************************************/
-
+extern  instruction     *rCYPSHIFT( instruction *ins )
+/****************************************************/
+{
     instruction *ins1;
     instruction *ins2;
     instruction *ins3;
@@ -830,9 +820,9 @@ extern  instruction     *rCYPSHIFT( instruction *ins ) {
 }
 
 
-extern  instruction     *rBYTESHIFT( instruction *ins ) {
-/******************************************************/
-
+extern  instruction     *rBYTESHIFT( instruction *ins )
+/*****************************************************/
+{
     instruction *ins1;
     instruction *ins2;
     instruction *ins3;
@@ -872,9 +862,9 @@ extern  instruction     *rBYTESHIFT( instruction *ins ) {
     return( ins1 );
 }
 
-extern instruction      *rLOADLONGADDR( instruction *ins ) {
-/*********************************************************/
-
+extern instruction      *rLOADLONGADDR( instruction *ins )
+/********************************************************/
+{
     instruction         *new_ins;
     name                *name1;
 
@@ -901,9 +891,9 @@ extern instruction      *rLOADLONGADDR( instruction *ins ) {
 }
 
 
-extern  instruction     *rHIGHCMP( instruction *ins ) {
-/****************************************************/
-
+extern  instruction     *rHIGHCMP( instruction *ins )
+/***************************************************/
+{
     name                *name1;
 
     name1 = ins->operands[ 0 ];
@@ -924,9 +914,9 @@ extern  instruction     *rHIGHCMP( instruction *ins ) {
 }
 
 
-extern instruction      *rMAKEU4( instruction *ins ) {
-/***************************************************/
-
+extern instruction      *rMAKEU4( instruction *ins )
+/**************************************************/
+{
     instruction         *new_ins;
     instruction         *ins2;
 
@@ -944,16 +934,17 @@ extern instruction      *rMAKEU4( instruction *ins ) {
     return( new_ins );
 }
 
-extern  instruction     *rSPLITPUSH( instruction *ins ) {
-/*******************************************************/
+extern  instruction     *rSPLITPUSH( instruction *ins )
+/*****************************************************/
 /* NOT NEEDED */
+{
     return( ins );
 }
 
 
-extern  instruction     *rEXT_PUSH1( instruction *ins ) {
-/******************************************************/
-
+extern  instruction     *rEXT_PUSH1( instruction *ins )
+/*****************************************************/
+{
     name        *temp;
     instruction *new_ins;
 
@@ -967,17 +958,17 @@ extern  instruction     *rEXT_PUSH1( instruction *ins ) {
 }
 
 
-
-extern  instruction     *rEXT_PUSH2( instruction *ins ) {
-/******************************************************/
+extern  instruction     *rEXT_PUSH2( instruction *ins )
+/*****************************************************/
 /* NOT NEEDED */
+{
     return( ins );
 }
 
 
-extern  instruction     *rINTCOMP( instruction *ins ) {
-/*********************************************************/
-
+extern  instruction     *rINTCOMP( instruction *ins )
+/***************************************************/
+{
     name                *left;
     name                *rite;
     instruction         *low;

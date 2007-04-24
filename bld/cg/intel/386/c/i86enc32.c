@@ -54,41 +54,41 @@
 
 
 extern  void            RTCall( rt_class rtn, oc_class pop_bit );
-extern  void            DoSymRef(name*,offset,bool);
-extern  void            LayRegAC(hw_reg_set);
-extern  void            LayOpword(opcode);
-extern  hw_reg_set      High32Reg(hw_reg_set);
-extern  hw_reg_set      Low32Reg(hw_reg_set);
-extern  hw_reg_set      CalcSegment(sym_handle,cg_class);
-extern  name            *DeAlias(name*);
-extern  void            AddByte(byte);
-extern  void            LayRMRegOp(name*);
-extern  void            LayOpbyte(opcode);
-extern  void            LayRegRM(hw_reg_set);
-extern  void            DoSegRef(seg_id);
-extern  void            GenSeg(hw_reg_set);
-extern  void            LayW(type_class_def);
-extern  void            AddWCons(name*,type_class_def);
-extern  void            AddSData(signed_32,type_class_def);
-extern  void            AddToTemp(byte );
-extern  void            LayOpword(opcode);
-extern  void            DoAbsPatch(abspatch_handle*,int);
-extern  type_class_def  OpndSize(hw_reg_set );
-extern  void            LayReg(hw_reg_set );
-extern  void            GCondFwait(void);
-extern  hw_reg_set      High64Reg(hw_reg_set);
-extern  hw_reg_set      Low64Reg(hw_reg_set);
-extern  type_length     NewBase(name*);
-extern  int             GetLog2(unsigned_32);
-extern  unsigned        UseRepForm(unsigned);
-extern  void            DoNothing(instruction*);
-extern  bool            BaseIsSP(name*);
+extern  void            DoSymRef( name *, offset, bool );
+extern  void            LayRegAC( hw_reg_set );
+extern  void            LayOpword( opcode );
+extern  hw_reg_set      High32Reg( hw_reg_set );
+extern  hw_reg_set      Low32Reg( hw_reg_set );
+extern  hw_reg_set      CalcSegment( sym_handle, cg_class );
+extern  name            *DeAlias( name * );
+extern  void            AddByte( byte );
+extern  void            LayRMRegOp( name * );
+extern  void            LayOpbyte( opcode );
+extern  void            LayRegRM( hw_reg_set );
+extern  void            DoSegRef( seg_id );
+extern  void            GenSeg( hw_reg_set );
+extern  void            LayW( type_class_def );
+extern  void            AddWCons( name *, type_class_def );
+extern  void            AddSData( signed_32, type_class_def );
+extern  void            AddToTemp( byte );
+extern  void            LayOpword( opcode );
+extern  void            DoAbsPatch( abspatch_handle *, int );
+extern  type_class_def  OpndSize( hw_reg_set );
+extern  void            LayReg( hw_reg_set );
+extern  void            GCondFwait( void );
+extern  hw_reg_set      High64Reg( hw_reg_set );
+extern  hw_reg_set      Low64Reg( hw_reg_set );
+extern  type_length     NewBase( name * );
+extern  int             GetLog2( unsigned_32 );
+extern  unsigned        UseRepForm( unsigned );
+extern  void            DoNothing( instruction * );
+extern  bool            BaseIsSP( name * );
 extern  seg_id          AskCode16Seg( void );
-extern  sym_handle      AskForLblSym(label_handle);
-extern  label_handle    AskForLabel(sym_handle);
+extern  sym_handle      AskForLblSym( label_handle );
+extern  label_handle    AskForLabel( sym_handle );
 extern  void            DoLblRef( label_handle, seg_id, offset, byte );
-extern  uint            Length(pointer);
-extern  bool            GetEnvVar(char*,char*,int);
+extern  uint            Length( pointer );
+extern  bool            GetEnvVar( char *, char *, int );
 extern  int             CountIns( block *blk );
 
 extern  bool            OptForSize;
@@ -352,7 +352,7 @@ static  void    EA( hw_reg_set base, hw_reg_set index,
 /*
  * 2004-11-05  RomanT
  *
- * Check that following instruction is addition or substraction with constant,
+ * Check that following instruction is addition or subtraction with constant,
  * and this instruction is safe to delete (ALU flags not generated).
  * If yes, return constant's value and delete instruction.
  * If no, return 0.
@@ -549,7 +549,6 @@ static  void    Add32Displacement( signed_32 val )
 }
 
 
-
 extern  void    DoMAddr( name *op )
 /*********************************/
 {
@@ -697,8 +696,8 @@ void    GenProfilingCode( char *fe_name, label_handle *data, bool prolog )
 segment_id GenP5ProfileData( char *fe_name, label_handle *data, label_handle *stack )
 /***********************************************************************************/
 {
-    seg_id              old;
-    segment_id  data_seg = (segment_id)FEAuxInfo( NULL, P5_PROF_SEG );
+    seg_id          old;
+    segment_id      data_seg = (segment_id)FEAuxInfo( NULL, P5_PROF_SEG );
 
     old = SetOP( data_seg );
     TellOptimizerByPassed();
@@ -745,6 +744,7 @@ void    doProfilingCode( char *fe_name, label_handle *data, bool prolog )
     _Emit;
     RTCall( prolog ? RT_PROFILE_ON : RT_PROFILE_OFF, ATTR_POP );
 }
+
 
 static  void    doProfilingPrologEpilog( label_handle label, bool prolog )
 /************************************************************************/
@@ -823,11 +823,13 @@ extern  void    GenP5ProfilingProlog( label_handle label )
     doProfilingPrologEpilog( label, TRUE );
 }
 
+
 extern  void    GenP5ProfilingEpilog( label_handle label )
 /********************************************************/
 {
     doProfilingPrologEpilog( label, FALSE );
 }
+
 
 extern  void    GFstp10( type_length where )
 /******************************************/
@@ -938,6 +940,7 @@ extern  void    By2Div( instruction *ins )
     }
 }
 
+
 extern  void    Gen4Neg( instruction *ins )
 /*****************************************/
 /* NOT NEEDED ON 386 */
@@ -945,12 +948,14 @@ extern  void    Gen4Neg( instruction *ins )
     ins = ins;
 }
 
+
 extern  void    Do4CXShift( instruction *ins, void (*rtn)(instruction *) )
 /************************************************************************/
 /* NOT NEEDED ON 386 */
 {
     ins = ins; rtn = rtn;
 }
+
 
 void StartBlockProfiling( block *blk )
 /************************************/
@@ -994,6 +999,7 @@ void StartBlockProfiling( block *blk )
     AddByte( 0 );
     _Emit;
 }
+
 
 void EndBlockProfiling( void )
 /****************************/

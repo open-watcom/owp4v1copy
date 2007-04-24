@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Special i86 pointer types.
 *
 ****************************************************************************/
 
@@ -52,9 +51,10 @@ extern type_def *PTUnsigned;
 extern type_def *PTPointer;
 extern type_def *PTCodePointer;
 
-extern  void    TargTypeInit( void ) {
-/**************************/
 
+extern  void    TargTypeInit( void )
+/**********************************/
+{
     TypeAlias( T_UNSIGNED, T_UINT_2 );
     TypeAlias( T_INTEGER, T_INT_2 );
     PTInteger = TypeAddress( T_INT_2 );

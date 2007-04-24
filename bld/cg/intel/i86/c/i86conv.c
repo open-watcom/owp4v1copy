@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  i86 machine type conversion routines.
+* Description:  Machine type conversion routines.
 *
 ****************************************************************************/
 
@@ -39,16 +39,16 @@
 #include "model.h"
 #include "funits.h"
 
-extern  name    *       AllocTemp(type_class_def);
-extern  instruction*    MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  void            MoveSegOp(instruction*,instruction*,int);
-extern  void            PrefixIns(instruction*,instruction*);
-extern  instruction*    MakeMove(name*,name*,type_class_def);
-extern  void            DupSeg(instruction*,instruction*);
-extern  void            ReplIns(instruction*,instruction*);
+extern  name            *AllocTemp( type_class_def );
+extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
+extern  void            MoveSegOp( instruction *, instruction *, int );
+extern  void            PrefixIns( instruction *, instruction * );
+extern  instruction     *MakeMove( name *, name *, type_class_def );
+extern  void            DupSeg( instruction *, instruction * );
+extern  void            ReplIns( instruction *, instruction * );
 extern  bool            IsTrickyPointerConv( instruction *ins );
 
-extern    int   RoutineNum;
+extern  int             RoutineNum;
 
 
 static  opcode_entry    C2to1[] = {
@@ -189,9 +189,9 @@ CI2,   CI2,   CI4,   FPOK,  FPOK,  FPOK,  C7U8_D,FPOK,  BAD,   BAD,   FPOK,  FPO
 CI2,   CI2,   CI4,   FPOK,  FPOK,  FPOK,  C7U8_D,FPOK,  BAD,   BAD,   FPOK,  FPOK,  FPOK,    /* FL*/
 };
 
-extern  rt_class        AskHow( type_class_def fr, type_class_def to ) {
-/**********************************************************************/
-
+extern  rt_class        AskHow( type_class_def fr, type_class_def to )
+/********************************************************************/
+{
     if( _FPULevel( FPU_87 ) ) {
         return( FPCvtTable[  fr + to * XX  ] );
     } else {
@@ -200,9 +200,9 @@ extern  rt_class        AskHow( type_class_def fr, type_class_def to ) {
 }
 
 
-extern  bool    CvtOk( type_class_def fr, type_class_def to ) {
-/*************************************************************/
-
+extern  bool    CvtOk( type_class_def fr, type_class_def to )
+/***********************************************************/
+{
     if( fr == XX ) return( FALSE );
     if( to == XX ) return( FALSE );
     if( AskHow( fr, to ) != BAD ) return( TRUE );
@@ -210,9 +210,9 @@ extern  bool    CvtOk( type_class_def fr, type_class_def to ) {
 }
 
 
-extern  instruction     *rDOCVT( instruction *ins ) {
-/**************************************************/
-
+extern  instruction     *rDOCVT( instruction *ins )
+/*************************************************/
+{
     name        *src;
     name        *dst;
     name        *name;

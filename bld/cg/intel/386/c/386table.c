@@ -1712,11 +1712,11 @@ static  opcode_entry    *FPOpcodeList[] = {
         NULL };         /* BAD*/
 
 
-extern  opcode_entry    *OpcodeTable( table_def i ) {
-/****************************************************
+extern  opcode_entry    *OpcodeTable( table_def i )
+/**************************************************
     return the address of the appropriate generate table given an index "i"
 */
-
+{
     if( _FPULevel( FPU_87 ) ) {
         return( FPOpcodeList[ i ] );
     } else {

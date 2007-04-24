@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate calls to runtime support routines.
 *
 ****************************************************************************/
 
@@ -42,42 +41,43 @@
 #include "seldef.h"
 #include "cgaux.h"
 
+
 extern    hw_reg_set      *RegSets[];
 
-extern  name            *GenFloat(name*,type_class_def);
-extern  name            *GenConstData(char*,type_class_def);
-extern  void            UpdateLive(instruction*,instruction*);
-extern  void            DoNothing(instruction*);
-extern  name            *AllocIntConst(int);
-extern  void            ReplIns(instruction*,instruction*);
-extern  void            SuffixIns(instruction*,instruction*);
-extern  void            MoveSegRes(instruction*,instruction*);
-extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def);
-extern  bool            SegIsSS(name*);
-extern  name            *GetSegment(name*);
-extern  void            DelSeg(instruction*);
-extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
-extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
-extern  void            PrefixIns(instruction*,instruction*);
-extern  void            MoveSegOp(instruction*,instruction*,int);
-extern  instruction     *MakeMove(name*,name*,type_class_def);
-extern  name            *AllocRegName(hw_reg_set);
-extern  rt_class        AskHow(type_class_def,type_class_def);
-extern  label_handle    AskRTLabel(sym_handle*);
-extern  instruction     *NewIns(int);
-extern  conflict_node   *NameConflict(instruction*,name*);
-extern  conflict_node   *InMemory(conflict_node*);
-extern  int             NumOperands(instruction*);
-extern  void            AddIns(instruction*);
-extern  name            *AllocTemp(type_class_def);
-extern  name            *AllocIndex(name*,name*,type_length,type_class_def);
-extern  name            *AddrConst(name*,int,constant_class);
-extern  seg_id          AskCodeSeg(void);
-extern  void            LookupRoutine(instruction *);
-extern  label_handle    RTLabel(int);
-extern  int             FindRTLabel(label_handle);
-extern  hw_reg_set      ReturnReg(type_class_def,bool);
+extern  name            *GenFloat( name *, type_class_def );
+extern  name            *GenConstData( char *, type_class_def );
+extern  void            UpdateLive( instruction *, instruction * );
+extern  void            DoNothing( instruction * );
+extern  name            *AllocIntConst( int );
+extern  void            ReplIns( instruction *, instruction * );
+extern  void            SuffixIns( instruction *, instruction * );
+extern  void            MoveSegRes( instruction *, instruction * );
+extern  instruction     *MakeBinary( opcode_defs, name *, name *, name *, type_class_def );
+extern  name            *AllocMemory( pointer, type_length, cg_class, type_class_def );
+extern  bool            SegIsSS( name * );
+extern  name            *GetSegment( name * );
+extern  void            DelSeg( instruction * );
+extern  instruction     *MakeUnary( opcode_defs, name *, name *, type_class_def );
+extern  instruction     *MakeConvert( name *, name *, type_class_def, type_class_def );
+extern  void            PrefixIns( instruction *, instruction * );
+extern  void            MoveSegOp( instruction *, instruction *, int );
+extern  instruction     *MakeMove( name *, name *, type_class_def );
+extern  name            *AllocRegName( hw_reg_set );
+extern  rt_class        AskHow( type_class_def, type_class_def );
+extern  label_handle    AskRTLabel( sym_handle * );
+extern  instruction     *NewIns( int );
+extern  conflict_node   *NameConflict( instruction *, name * );
+extern  conflict_node   *InMemory( conflict_node * );
+extern  int             NumOperands( instruction * );
+extern  void            AddIns( instruction * );
+extern  name            *AllocTemp( type_class_def );
+extern  name            *AllocIndex( name *, name *, type_length, type_class_def );
+extern  name            *AddrConst( name *, int, constant_class );
+extern  seg_id          AskCodeSeg( void );
+extern  void            LookupRoutine( instruction * );
+extern  label_handle    RTLabel( int );
+extern  int             FindRTLabel( label_handle );
+extern  hw_reg_set      ReturnReg( type_class_def, bool );
 
 /*
  * If you add a new routine, let John know as the debugger recognizes
@@ -267,20 +267,20 @@ static  rt_aux_info Scn4 = {
 
 #include "cgrealgn.h"
 
-extern  char    *AskRTName( int rtindex ) {
-/*****************************************/
-
+extern  char    *AskRTName( int rtindex )
+/***************************************/
+{
     return( RTInfo[  rtindex  ].nam );
 }
 
 
-static  hw_reg_set      FirstReg( reg_set_index index ) {
-/********************************************************
+static  hw_reg_set      FirstReg( reg_set_index index )
+/******************************************************
     the tables above use RL_ consts rather that hw_reg_sets cause
     it cheaper. This just picks off the first register from a
     register list and returns it.
 */
-
+{
     hw_reg_set  *list;
 
     list = RegSets[  index  ];
@@ -288,11 +288,12 @@ static  hw_reg_set      FirstReg( reg_set_index index ) {
 }
 
 
-extern  name    *Addressable( name *cons, type_class_def class ) {
-/*****************************************************************
+extern  name    *Addressable( name *cons, type_class_def class )
+/***************************************************************
     make sure a floating point constant is addressable (dropped
     it into memory if it isnt)
 */
+{
     unsigned_64         buffer;
 
     if( cons->n.class == N_CONSTANT ) {
@@ -315,12 +316,12 @@ extern  name    *Addressable( name *cons, type_class_def class ) {
 }
 
 
-static void CheckForPCS( instruction *ins ) {
-/********************************************
+static void CheckForPCS( instruction *ins )
+/******************************************
     check to see if pointer subtract is really pointer - pointer
     or pointer - integer (PCS = Pointer Constant Subtract)
 */
-
+{
     if( RoutineNum + BEG_RTNS == RT_PTS ) {
         if( ins->operands[ 1 ]->n.name_class != PT
          && ins->operands[ 1 ]->n.name_class != CP ) {
@@ -330,11 +331,12 @@ static void CheckForPCS( instruction *ins ) {
 }
 
 
-extern  bool    RTLeaveOp2( instruction *ins ) {
-/***********************************************
+extern  bool    RTLeaveOp2( instruction *ins )
+/*********************************************
     return true if it's a bad idea to put op2 into a temporary since we're
     gonna take the bugger's address in rMAKECALL anyway for FDD, FDC, EDA, etc
 */
+{
     switch( ins->type_class ) {
     case FD:
         if( _FPULevel( FPU_87 ) ) return( FALSE );
@@ -350,10 +352,11 @@ extern  bool    RTLeaveOp2( instruction *ins ) {
 }
 
 
-static  void    FlipIns( instruction *ins ) {
-/********************************************
+static  void    FlipIns( instruction *ins )
+/******************************************
    maybe flip the const/mem into the second operand so it goes in local data
 */
+{
     name        *temp;
 
     switch( ins->head.opcode ) {
@@ -381,12 +384,12 @@ static  void    FlipIns( instruction *ins ) {
 }
 
 
-extern  instruction     *rMAKECALL( instruction *ins ) {
-/*******************************************************
+extern  instruction     *rMAKECALL( instruction *ins )
+/*****************************************************
     turn an instruction into the approprate runtime call sequence, using
     the tables above to decide where parms go.
 */
-
+{
     rtn_info            *info;
     label_handle        lbl;
     instruction         *left_ins;
@@ -570,17 +573,16 @@ extern  instruction     *rMAKECALL( instruction *ins ) {
 }
 
 
-
 extern  name    *ScanCall( tbl_control *table, name *value,
-                           type_class_def tipe ) {
-/*************************************************
+                           type_class_def tipe )
+/**********************************************************
     generates a fake call to a rutime routine that looks up "value" in a table
     and jumps to the appropriate case, using either a pointer or index
     returned by the "routine". The "routine" will be generated inline later.
     See BEAuxInfo for the code sequences generated. That will explain
     how the jump destination is determined as well.
 */
-
+{
     instruction *new_ins;
     name        *reg_name;
     name        *result;
@@ -659,15 +661,15 @@ extern  name    *ScanCall( tbl_control *table, name *value,
 }
 
 
-extern  instruction     *rMAKEFNEG( instruction *ins ) {
-/*******************************************************
+extern  instruction     *rMAKEFNEG( instruction *ins )
+/*****************************************************
     negating a floating point value which is in the 386 registers only
     needs to change the register containing the exponent, so this is
     handled as a special case rather than using rMAKERTCALL that would
     assume all of the registers containing the number were used
     and modified by the call.
 */
-
+{
     rtn_info            *info;
     label_handle        lbl;
     instruction         *left_ins;
@@ -712,11 +714,11 @@ extern  instruction     *rMAKEFNEG( instruction *ins ) {
 }
 
 
-extern  pointer BEAuxInfo( pointer hdl, aux_class request ) {
-/************************************************************
+extern  pointer BEAuxInfo( pointer hdl, aux_class request )
+/**********************************************************
     see ScanCall for explanation
 */
-
+{
     pointer     info = NULL;
 
     switch( request ) {

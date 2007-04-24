@@ -38,11 +38,11 @@
 zero_page_scheme        ZPageType;
 extern  block           *HeadBlock;
 
-extern  name            *SAllocIndex(name*,name*,type_length,type_class_def,type_length);
-extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
-extern  hw_reg_set      High64Reg(hw_reg_set);
-extern  name            *AllocRegName(hw_reg_set);
-extern  bool            SegIsCS(name*);
+extern  name            *SAllocIndex( name *, name *, type_length, type_class_def, type_length );
+extern  name            *ScaleIndex( name *, name *, type_length, type_class_def, type_length, int, i_flags );
+extern  hw_reg_set      High64Reg( hw_reg_set );
+extern  name            *AllocRegName( hw_reg_set );
+extern  bool            SegIsCS( name * );
 
 
 static  void    CheckName( name **pop, name *gblreg )
