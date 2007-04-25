@@ -830,7 +830,7 @@ void BigKludge( msb *m )
     };
 #elif defined ( __NW30__ )
     static T_DebuggerStruct DbgStruct = {
-        NULL,
+        0,
         NULL,
         DebugEntry
     };
@@ -936,9 +936,9 @@ static int ReadMemory( addr48_ptr *addr, unsigned long req, void *buf )
 {
     if( MSB == NULL )
         return( -1 );
-    if( CValidatePointer( (char *)addr->offset ) == NULL )
+    if( CValidatePointer( (char *)addr->offset ) == 0 )
         return( -1 );
-    if( CValidatePointer( (char *)addr->offset+req-1 ) == NULL )
+    if( CValidatePointer( (char *)addr->offset + req - 1 ) == 0 )
         return( -1 );
     memcpy( buf, (void *)addr->offset, req );
     return( 0 );
@@ -948,9 +948,9 @@ static int WriteMemory( addr48_ptr *addr, unsigned long req, void *buf )
 {
     if( MSB == NULL )
         return( -1 );
-    if( CValidatePointer( (char *)addr->offset ) == NULL )
+    if( CValidatePointer( (char *)addr->offset ) == 0 )
         return( -1 );
-    if( CValidatePointer( (char *)addr->offset+req-1 ) == NULL )
+    if( CValidatePointer( (char *)addr->offset + req - 1 ) == 0 )
         return( -1 );
     memcpy( (void *)addr->offset, buf, req );
     return( 0 );

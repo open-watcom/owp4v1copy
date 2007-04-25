@@ -634,7 +634,7 @@ unsigned ReqProg_load( void )
     *dst = '\r';
     parm = MK_FP( psp, CMD_OFFSET );
     *parm = FP_OFF( dst ) - (CMD_OFFSET+1);
-    parmblock.envstring = NULL;
+    parmblock.envstring = 0;
     parmblock.commandln.segment = psp;
     parmblock.commandln.offset =  CMD_OFFSET;
     parmblock.fcb01.segment = psp;

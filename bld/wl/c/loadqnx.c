@@ -162,9 +162,9 @@ static bool WriteSegData( void *_sdata, void *_start )
         DbgAssert( pad >= 0 );
         if( pad > 0 ) {
             if( InVerifySegment ) {
-                SetVerifyInfo( ZeroVerify, NULL, pad );
+                SetVerifyInfo( ZeroVerify, 0, pad );
             }
-            WriteQNXInfo( ZeroLoad, NULL, pad );
+            WriteQNXInfo( ZeroLoad, 0, pad );
         }
         if( InVerifySegment ) {
             SetVerifyInfo( CopyVerify, sdata->data, sdata->length );

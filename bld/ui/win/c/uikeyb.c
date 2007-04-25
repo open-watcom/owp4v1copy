@@ -438,8 +438,8 @@ void WindowsMessageLoop( int yield )
 {
 MSG msg;
 
-        while( PeekMessage( &msg, NULL, NULL, NULL, PM_NOREMOVE | PM_NOYIELD ) ) {
-            GetMessage( &msg, NULL, NULL, NULL );
+        while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE | PM_NOYIELD ) ) {
+            GetMessage( &msg, NULL, 0, 0 );
             TranslateMessage( &msg );
             DispatchMessage( &msg );
         }

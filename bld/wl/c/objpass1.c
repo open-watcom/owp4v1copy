@@ -631,7 +631,7 @@ seg_leader *InitLeader( char *segname, unsigned_16 info )
     seg->class = NULL;
     seg->size = 0;
     seg->num = 0;
-    seg->seg_addr.off = NULL;
+    seg->seg_addr.off = 0;
     seg->seg_addr.seg = UNDEFINED;
     seg->group = NULL;
     seg->info = info;

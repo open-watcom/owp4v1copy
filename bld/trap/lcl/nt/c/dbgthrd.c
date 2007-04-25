@@ -568,7 +568,7 @@ static BOOL StartDebuggee( void )
                             break;
                         }
                         Shared.pid = ( *select ) ( Shared.name );
-                        if( Shared.pid != NULL && Shared.pid != -1 ) {
+                        if( Shared.pid != 0 && Shared.pid != -1 ) {
                             break;
                         }
                         Sleep( 500 );
@@ -579,7 +579,7 @@ static BOOL StartDebuggee( void )
         }
         CloseHandle( mod );
     }
-    if( Shared.pid != NULL && Shared.pid != -1 ) {
+    if( Shared.pid != 0 && Shared.pid != -1 ) {
         rc = MyDebugActiveProcess( Shared.pid );
         if( IsWOW ) {
             /*
@@ -722,7 +722,7 @@ static BOOL DoWaitForDebugEvent( void )
 
 static void StopDebuggee( void )
 {
-    if( DebugeePid != NULL && ( IsWOW || !DebugeeEnded ) ) {
+    if( DebugeePid && ( IsWOW || !DebugeeEnded ) ) {
         /*
          * we must process debug events until the process is actually
          * terminated
@@ -750,7 +750,7 @@ static void StopDebuggee( void )
         }
         Slaying = FALSE;
     }
-    DebugeePid = NULL;
+    DebugeePid = 0;
 }
 
 // end of seperate thread

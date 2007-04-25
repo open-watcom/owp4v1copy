@@ -269,7 +269,7 @@ void InitFonts( void )
     f = &Fonts[ 0 ];
     for( i = 0; i < MAX_FONTS; i++, f++ ) {
         f->used = FALSE;
-        f->handle = NULL;
+        f->handle = (HFONT)NULL;
     }
     customFont( &Fonts[ FONT_HELV ], &Helvetica6 );
     customFont( &Fonts[ FONT_ARIAL ], &Arial10 );

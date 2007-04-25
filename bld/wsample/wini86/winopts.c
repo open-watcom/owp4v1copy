@@ -167,7 +167,7 @@ long __export FAR PASCAL StartUpDriver( HWND hwnd, UINT message,
         return( DefWindowProc(hwnd,message,wparam,lparam) );
 
     } /* switch */
-    return( NULL );
+    return( 0L );
 
 } /* StartUpDriver */
 
@@ -182,7 +182,7 @@ long __export FAR PASCAL SubClassProc( HWND hwnd, UINT message,
     case WM_KEYDOWN:
         if( wparam == VK_RETURN ) {
             PostMessage( GetParent( hwnd ), WM_COMMAND, SELECT_ID, 0 );
-            return( NULL );
+            return( 0L );
         }
         break;
     }
@@ -338,7 +338,7 @@ BOOL GetFileName( HINSTANCE inst, int shcmd, char *fname )
 
     SetFocus( editChild );
 
-    while( GetMessage( &msg, NULL, NULL, NULL ) ) {
+    while( GetMessage( &msg, NULL, 0, 0 ) ) {
         if( !TranslateAccelerator( mainWindow, accel, &msg ) ) {
             TranslateMessage( &msg );
             DispatchMessage( &msg );

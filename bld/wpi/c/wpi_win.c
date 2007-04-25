@@ -337,7 +337,7 @@ void _wpi_suspendthread( UINT thread_id, WPI_QMSG *msg )
     thread_id = thread_id;              // not used in windows
 
     for( ;; ) {
-        _wpi_getmessage( NULL, msg, NULL, NULL, NULL );
+        _wpi_getmessage( NULL, msg, (HWND)NULL, 0, 0 );
 
         if( _wpi_ismessage( (*msg), WM_QUIT ) ) {
             break;

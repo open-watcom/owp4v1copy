@@ -91,7 +91,7 @@ static BOOL Init( window *w, void *parm )
  */
 DWORD GetEditStyle( bool is_max )
 {
-    DWORD style = NULL;
+    DWORD style = 0;
     is_max = is_max;
 
     style |= WS_HSCROLL;
@@ -150,7 +150,7 @@ window_id NewEditWindow( void )
     mdinew.cx = rect.right- rect.left ;
     mdinew.cy = rect.bottom - rect.top ;
     mdinew.style = style;
-    mdinew.lParam = NULL;
+    mdinew.lParam = 0;
 
     edit =(HWND)SendMessage( EditContainer, WM_MDICREATE, 0, (LONG)(&mdinew) );
 

@@ -1273,7 +1273,7 @@ extern BOOL _wpi_isiconic( HWND hwnd );
 void _wpi_getrestoredrect( HWND hwnd, WPI_RECT *prect );
 
     #define _wpi_setrestoredrect( hwnd, prect ) \
-        WinSetWindowPos( (hwnd), NULL, (prect)->xLeft, (prect)->yBottom, \
+        WinSetWindowPos( (hwnd), NULLHANDLE, (prect)->xLeft, (prect)->yBottom, \
                          (prect)->xRight - (prect)->xLeft, \
                          (prect)->yTop   - (prect)->yBottom, \
                          SWP_SHOW ) \
@@ -1284,10 +1284,10 @@ void _wpi_getrestoredrect( HWND hwnd, WPI_RECT *prect );
                                     WinSendMsg( hmenu, MM_QUERYITEMCOUNT, 0, 0 )
 
     #define _wpi_maximizewindow( hwnd ) \
-                        WinSetWindowPos( (hwnd), NULL, 0,0,0,0, SWP_MAXIMIZE )
+                        WinSetWindowPos( (hwnd), NULLHANDLE, 0,0,0,0, SWP_MAXIMIZE )
 
     #define _wpi_minimizewindow( hwnd ) \
-                        WinSetWindowPos( (hwnd), NULL, 0,0,0,0, SWP_MINIMIZE )
+                        WinSetWindowPos( (hwnd), NULLHANDLE, 0,0,0,0, SWP_MINIMIZE )
 
 extern BOOL _wpi_iszoomed( HWND hwnd );
 

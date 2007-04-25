@@ -59,7 +59,7 @@ void *gmem_alloc(
 
     mem_hld = GlobalAlloc( GMEM_MOVEABLE | GMEM_SHARE, size );
 
-    if( mem_hld != NULL ) {
+    if( mem_hld ) {
         mem = GlobalLock( mem_hld );
         if( mem != NULL ) {
             return( mem );
@@ -84,10 +84,10 @@ void *gmem_realloc(
     if( ptr != NULL ) {
         hld = _wpi_getglobalhdl( ptr );
 
-        if( hld != NULL ) {
+        if( hld ) {
             GlobalUnlock( hld );
             hld = GlobalReAlloc( hld, size, GMEM_MOVEABLE );
-            if( hld != NULL ) {
+            if( hld ) {
                 ptr = GlobalLock( hld );
                 return( ptr );
             }
@@ -114,7 +114,7 @@ void gmem_free(
     if( mem != NULL ) {
         hld = _wpi_getglobalhdl( mem );
 
-        if( hld != NULL ) {
+        if( hld ) {
             GlobalUnlock( hld );
             GlobalFree( hld );
         }

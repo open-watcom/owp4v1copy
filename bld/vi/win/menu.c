@@ -266,7 +266,7 @@ static menu *addMenuToMenu( menu *m, char *name, char *help )
     strcpy( new->help, help );
     // new->menu_handle = CreatePopupMenu();
     // AppendMenu( m->menu_handle, MF_ENABLED | MF_POPUP, new->menu_handle, name );
-    new->menu_handle = NULL;
+    new->menu_handle = (HMENU)NULL;
     new->item_head = NULL;
     new->item_tail = NULL;
     m->num_items += 1;
@@ -432,7 +432,7 @@ static void burnMenu( menu *parent, menu *m )
                 break;
             }
         }
-        m->menu_handle = NULL;
+        m->menu_handle = (HMENU)NULL;
     }
 } /* burnMenu */
 
@@ -704,7 +704,7 @@ int InitMenu( void )
         rootMenu->menu_handle = CreateMenu();
         if( EditFlags.Menus ) {
             for( m = (menu *)rootMenu->item_head; m != NULL; m = m->next ) {
-                m->menu_handle = NULL;
+                m->menu_handle = (HMENU)NULL;
                 makeMenu( rootMenu, m );
             }
         }
@@ -866,7 +866,7 @@ static void tabs_to_slash_t( char *buffer, char *text )
         buffer++;
         text++;
     }
-    *buffer = NULL;
+    *buffer = '\0';
 }
 
 /*

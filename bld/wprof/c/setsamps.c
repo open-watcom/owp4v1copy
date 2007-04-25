@@ -82,7 +82,7 @@ STATIC mod_info *findCurrMod( image_info *curr_image, mod_handle mh )
     mod_count = 0;
     while( mod_count < curr_image->mod_count ) {
         curr_mod = curr_image->module[mod_count];
-        if( curr_mod->mh != NULL && curr_mod->mh == mh ) {
+        if( curr_mod->mh != 0 && curr_mod->mh == mh ) {
             return( curr_mod );
         }
         mod_count++;

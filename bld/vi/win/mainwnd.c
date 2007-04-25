@@ -362,17 +362,17 @@ LONG WINEXP MainWindowProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
             ULONG linesPerNotch;
             HWND activeWnd;
             
-            activeWnd = (HWND)SendMessage( EditContainer, (UINT) WM_MDIGETACTIVE, NULL, NULL );
+            activeWnd = (HWND)SendMessage( EditContainer, (UINT) WM_MDIGETACTIVE, 0, 0 );
             SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &linesPerNotch, 0);
             
             increment = GET_WHEEL_DELTA_WPARAM( wparam ) / 120;         // see WM_MOUSEWHEEL-documentation for information about the "120"
 
             if( increment > 0 )
                 for( i = 0; i < increment*(int)linesPerNotch; i++ )
-                    SendMessage( activeWnd, WM_VSCROLL, SB_LINEUP, NULL );
+                    SendMessage( activeWnd, WM_VSCROLL, SB_LINEUP, 0 );
             else
                 for( i = 0; i < (-increment)*(int)linesPerNotch; i++ )
-                    SendMessage( activeWnd, WM_VSCROLL, SB_LINEDOWN, NULL );
+                    SendMessage( activeWnd, WM_VSCROLL, SB_LINEDOWN, 0 );
         }
         return( 0 );
     break;

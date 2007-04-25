@@ -185,7 +185,7 @@ unsigned ReqFile_write_console( void )
     len = GetTotalSize() - sizeof( *acc );
 
     handle = GetStdHandle( STD_ERROR_HANDLE );
-    if( DebugeePid != NULL ) {
+    if( DebugeePid ) {
         //NYI: write to program screen
     } else {
         rc = WriteFile( handle, buff, len, &bytes, NULL );

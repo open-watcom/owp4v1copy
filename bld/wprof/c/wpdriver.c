@@ -115,7 +115,7 @@ gui_menu_struct WndMainMenu[] = {
     { "&Windows", MENU_WINDOWS, GUI_ENABLED+GUI_MDIWINDOW,
       "Select an active window" },
     { "&Actions",  MENU_ACTIONS, GUI_ENABLED+WND_MENU_POPUP,
-      "Select an action for the active window", NULL, 0 },
+      "Select an action for the active window", 0, 0 },
     { "&Help",  MENU_HELP, GUI_ENABLED,
       "Display profiler help", WndMenuFields( helpMenu ) },
 };

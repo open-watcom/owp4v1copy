@@ -275,8 +275,8 @@ unsigned ReqProg_load( void )
     RemoveAllThreads();
     FreeLibList();
     DidWaitForDebugEvent = FALSE;
-    DebugeePid = NULL;
-    DebugeeTid = NULL;
+    DebugeePid = 0;
+    DebugeeTid = 0;
 
     /*
      * check if pid is specified
@@ -507,7 +507,7 @@ unsigned ReqProg_load( void )
             }
             return( sizeof( *ret ) );
         }
-        if( pid != NULL ) {
+        if( pid ) {
             addAllWOWModules();
         } else {
             addKERNEL();

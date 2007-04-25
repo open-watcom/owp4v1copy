@@ -249,7 +249,7 @@ static int getDeclTypeSize(pDeclInfo decl, DeclType type) {
     case DT_STRUCT_DEF:
         return 0;
     case DT_ENUM_DEF:
-        return NULL;
+        return 0;
     case DT_INVALID:
         return 0;
     case DT_FUNC:

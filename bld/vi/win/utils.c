@@ -570,10 +570,10 @@ HWND GetOwnedWindow( POINT pt )
                 return( hwndElement );
             }
             #endif
-            return( NULL );
+            return( (HWND)NULL );
         }
     }
-    return( NULL );
+    return( (HWND)NULL );
 }
 
 int GetNumWindowTypes( void )

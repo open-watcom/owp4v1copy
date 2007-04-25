@@ -332,7 +332,7 @@ void initMemory(void)
         exit(1);
     }
 #endif
-    InitFMem(BasicAlloc, BasicFree, NULL, NULL);
+    InitFMem(BasicAlloc, BasicFree, NULL, 0);
 }
 
 void zapMemory(void)

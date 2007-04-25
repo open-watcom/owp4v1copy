@@ -90,7 +90,7 @@ void FiniGrepDialog( void )
     (void)FreeProcInstance( (FARPROC) grepProc );
 #endif
     grepProc = NULL;
-    grepHwnd = NULL;
+    grepHwnd = (HWND) NULL;
 
 } /* FiniGrepDialog */
 

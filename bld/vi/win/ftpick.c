@@ -132,7 +132,7 @@ static long processMouseMove( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     GetWindowRect( GetParent( hwnd ), &rect );
     if( PtInRect( &rect, m_pt ) ) {
         CursorOp( COP_DROPFT );
-        mod_hwnd = NULL;
+        mod_hwnd = (HWND)NULL;
         return( 0 );
     }
 
@@ -142,7 +142,7 @@ static long processMouseMove( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
     if( mod_hwnd != NULL && mod_hwnd != GetToolbarWindow() ) {
         CursorOp( COP_DROPFT );
     } else {
-        mod_hwnd = NULL;
+        mod_hwnd = (HWND)NULL;
         CursorOp( COP_NODROP );
     }
 
@@ -200,7 +200,7 @@ static long setupForDrop( HWND hwnd )
     CursorOp( COP_DROPFT );
     SetCapture( hwnd );
     haveCapture = TRUE;
-    mod_hwnd = NULL;
+    mod_hwnd = (HWND)NULL;
 
     return( 0 );
 }
@@ -237,7 +237,7 @@ void InitFtPick( void )
     wndclass.cbClsExtra         = 0;
     wndclass.cbWndExtra         = 0;
     wndclass.hInstance          = InstanceHandle;
-    wndclass.hIcon              = NULL;
+    wndclass.hIcon              = (HICON)NULL;
     wndclass.hCursor            = LoadCursor( (HINSTANCE) NULL, IDC_ARROW );
     wndclass.hbrBackground      = (HBRUSH) ( COLOR_APPWORKSPACE );
     wndclass.lpszMenuName       = NULL;

@@ -41,7 +41,7 @@
 int     ConnHdl;
 int     ReadHdl;
 int     WriteHdl;
-int     BindHdl = NULL;
+int     BindHdl;
 
 extern          void SetLinkName( char* );
 

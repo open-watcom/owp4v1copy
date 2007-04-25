@@ -340,7 +340,7 @@ void _wpi_f_getsystemfont( WPI_PRES in_pres, WPI_F_FONT *font )
     WPI_F_FONT                  old_font;
     WPI_PRES                    pres;
 
-    if( in_pres == NULL ) {
+    if( in_pres == (WPI_PRES)NULL ) {
         /* assume screen */
         pres = _wpi_getpres( HWND_DESKTOP );
     } else {
@@ -362,7 +362,7 @@ void _wpi_f_getsystemfont( WPI_PRES in_pres, WPI_F_FONT *font )
     _wpi_f_deletefont( (WPI_F_FONT *)_wpi_f_selectfont( pres,
                                                 (HFONT)&old_font ) );
 
-    if( in_pres == NULL ) {
+    if( in_pres == (WPI_PRES)NULL ) {
         _wpi_releasepres( HWND_DESKTOP, pres );
     }
 }

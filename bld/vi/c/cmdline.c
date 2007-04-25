@@ -893,7 +893,7 @@ int RunCommandLine( char *cl )
             fp = MakeProcInstance( (FARPROC)(&Batcher), InstanceHandle );
             RCSRegisterBatchCallback( r, (BatchCallbackFP)fp, NULL );
   #else
-            r = RCSInit( NULL, getenv( "WATCOM" ) );
+            r = RCSInit( 0, getenv( "WATCOM" ) );
             RCSRegisterBatchCallback( r, (BatchCallbackFP)&Batcher, NULL );
   #endif
             if( RCSQuerySystem( r ) != 0 ) {
@@ -940,7 +940,7 @@ int RunCommandLine( char *cl )
         fp = MakeProcInstance( (FARPROC)(&Batcher), InstanceHandle );
         RCSRegisterBatchCallback( r, (BatchCallbackFP)fp, NULL );
   #else
-        r = RCSInit( NULL, getenv( "WATCOM" ) );
+        r = RCSInit( 0, getenv( "WATCOM" ) );
         RCSRegisterBatchCallback( r, (BatchCallbackFP)&Batcher, NULL );
   #endif
         RCSSetPause( r, TRUE );

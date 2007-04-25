@@ -776,7 +776,7 @@ BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
     mi.afAttribute = attr_flags;
     mi.id          = id;
     mi.hwndSubMenu = popup;
-    mi.hItem       = NULL;
+    mi.hItem       = NULLHANDLE;
 
     new_text = _wpi_menutext2pm( text );
 
@@ -855,14 +855,14 @@ HMENU _wpi_getsubmenu( HMENU hmenu, unsigned id )
 
     id = _wpi_getmenuitemidfrompos( hmenu, id );
     if( id == -1 ) {
-        return( NULL );
+        return( NULLHANDLE );
     }
     if( WinSendMsg( hmenu, MM_QUERYITEM, MPFROM2SHORT(id, TRUE), MPFROMP(&mi) ) ) {
         if( mi.afStyle & MIS_SUBMENU ) {
             return( mi.hwndSubMenu );
         }
     }
-    return( NULL );
+    return( NULLHANDLE );
 }
 
 HMENU _wpi_getsystemmenu( HWND hwnd )
@@ -876,7 +876,7 @@ HMENU _wpi_getsystemmenu( HWND hwnd )
                                MPFROMP((PSZ)&mi) ) ) {
         return( mi.hwndSubMenu );
     }
-    return( NULL );
+    return( NULLHANDLE );
 }
 
 BOOL _wpi_setmenu( HWND hwnd, HMENU hmenu )
@@ -2581,7 +2581,7 @@ HWND _wpi_createwindow( LPSTR class, LPSTR name, ULONG frame_style,
     param = param;
 
     // Old _wpi_createwindow used HWND_DESKTOP instead of parent_hwnd
-    if( parent == NULL ) {
+    if( parent == NULLHANDLE ) {
         parent = HWND_DESKTOP;
     }
 #ifdef __FLAT__

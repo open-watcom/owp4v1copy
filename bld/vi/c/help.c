@@ -88,7 +88,7 @@ int DoHelp( char *data )
 
     RemoveLeadingSpaces( data );
     if( !strcmp( data, "OnHelp" ) ){
-       WWinHelp( Root, NULL, HELP_HELPONHELP, NULL );
+       WWinHelp( Root, NULL, HELP_HELPONHELP, 0L );
     } else if( !strcmp( data, "Contents" ) ){
        WWinHelp( Root, vi_helpfile,  HELP_CONTENTS, 0L );
     } else if( !strcmp( data, "Search" ) ){

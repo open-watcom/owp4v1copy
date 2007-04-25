@@ -95,7 +95,7 @@ void CloseStartupDialog( void )
     return;
     }
     DestroyWindow( startDlgWindow );
-    startDlgWindow = NULL;
+    startDlgWindow = (HWND)NULL;
 #ifndef __NT__
     (void)FreeProcInstance( (FARPROC) startDlgProc );
 #endif

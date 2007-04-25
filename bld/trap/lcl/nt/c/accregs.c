@@ -92,7 +92,7 @@ unsigned ReqRead_cpu( void )
     regs = GetOutPtr( 0 );
 
     memset( regs, 0, sizeof( *regs ) );
-    if( DebugeePid != NULL ) {
+    if( DebugeePid ) {
         ti = FindThread( DebugeeTid );
         MyGetThreadContext( ti, &con );
         ReadCPU( ( void * ) regs, &con );
@@ -113,7 +113,7 @@ unsigned ReqRead_fpu( void )
     ret = GetOutPtr( 0 );
 
     memset( ret, 0, sizeof( *ret ) );
-    if( DebugeePid != NULL ) {
+    if( DebugeePid ) {
         ti = FindThread( DebugeeTid );
         MyGetThreadContext( ti, &con );
         memcpy( ret, &con.FloatSave, sizeof( *ret ) );
@@ -131,7 +131,7 @@ unsigned ReqWrite_cpu( void )
     thread_info     *ti;
     trap_cpu_regs   *regs;
 
-    if( DebugeePid == NULL ) {
+    if( DebugeePid == 0 ) {
         return( 0 );
     }
     regs = GetInPtr( sizeof( write_cpu_req ) );
@@ -151,7 +151,7 @@ unsigned ReqWrite_fpu( void )
     CONTEXT         con;
     thread_info     *ti;
 
-    if( DebugeePid == NULL ) {
+    if( DebugeePid == 0 ) {
         return( 0 );
     }
     fpu = GetInPtr( sizeof( write_fpu_req ) );
@@ -180,7 +180,7 @@ unsigned ReqRead_regs( void )
 #else
     #error ReqRead_regs not configured
 #endif
-    if( DebugeePid != NULL ) {
+    if( DebugeePid ) {
         ti = FindThread( DebugeeTid );
         MyGetThreadContext( ti, &con );
 #if defined( MD_x86 )
@@ -258,7 +258,7 @@ unsigned ReqWrite_regs( void )
     thread_info     *ti;
     mad_registers   _WCUNALIGNED *mr;
 
-    if( DebugeePid == NULL ) {
+    if( DebugeePid == 0 ) {
         return( 0 );
     }
     mr = GetInPtr( sizeof( write_regs_req ) );

@@ -133,9 +133,9 @@ static void CheckUninit( void *_seg, void *dummy )
     dummy = dummy;
     if( !(seg->info & SEG_LXDATA_SEEN) ) {
         seg->entry->isuninit = TRUE;
-        if( seg->entry->data != NULL ) {
+        if( seg->entry->data ) {
             ReleaseInfo( seg->entry->data );
-            seg->entry->data = NULL;
+            seg->entry->data = 0;
         }
     }
 }

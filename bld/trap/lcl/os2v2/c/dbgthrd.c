@@ -48,9 +48,9 @@
 static uDB_t            *DebugReqBuff;
 static uDB_t            StopBuff;
 static unsigned int     DebugReqResult;
-static HEV              DebugReqSem = NULL;
-static HEV              DebugDoneSem = NULL;
-static HEV              StopDoneSem = NULL;
+static HEV              DebugReqSem = NULLHANDLE;
+static HEV              DebugDoneSem = NULLHANDLE;
+static HEV              StopDoneSem = NULLHANDLE;
 static BOOL             InDosDebug;
 
 #define STACK_SIZE      32768
@@ -130,7 +130,7 @@ ULONG CallDosDebug(uDB_t *buff)
                     ULONG    ulCount;
 
                     SetBrkPending();
-                    DosCreateThread(&tid, (PFNTHREAD)StopApplication, NULL, 0, STACK_SIZE);
+                    DosCreateThread(&tid, (PFNTHREAD)StopApplication, NULLHANDLE, 0, STACK_SIZE);
                     DosSetPriority(PRTYS_THREAD, PRTYC_TIMECRITICAL, 10, tid);
                     WakeThreads(StopBuff.Pid);
                     DosWaitEventSem(StopDoneSem, SEM_INDEFINITE_WAIT);
@@ -213,18 +213,18 @@ VOID InitDebugThread(VOID)
     TID                 tid;
     ULONG               ulCount;
 
-    if (StopDoneSem == NULL)
+    if (StopDoneSem == NULLHANDLE)
         DosCreateEventSem(NULL, &StopDoneSem, 0, FALSE);
 
-    if (DebugReqSem == NULL)
+    if (DebugReqSem == NULLHANDLE)
         DosCreateEventSem(NULL, &DebugReqSem, 0, FALSE);
 
-    if (DebugDoneSem == NULL)
+    if (DebugDoneSem == NULLHANDLE)
         DosCreateEventSem(NULL, &DebugDoneSem, 0, FALSE);
 
     DosResetEventSem(StopDoneSem, &ulCount);
     DosResetEventSem(DebugReqSem, &ulCount);
     DosResetEventSem(DebugDoneSem, &ulCount);
-    DosCreateThread(&tid, DoDebugRequests, NULL, 0, STACK_SIZE);
+    DosCreateThread(&tid, DoDebugRequests, NULLHANDLE, 0, STACK_SIZE);
     DosSetPriority(PRTYS_THREAD, PRTYC_TIMECRITICAL, 0, tid);
 }

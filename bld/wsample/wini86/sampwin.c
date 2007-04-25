@@ -276,7 +276,7 @@ void StartProg( char *cmd, char *prog, char *args )
     pdata.wEnvSeg = 0;
     pdata.lpCmdLine = (char far *) args;
     pdata.lpCmdShow = (void far *) &cdata;
-    pdata.dwReserved = NULL;
+    pdata.dwReserved = 0;
 
     SampledProg = LoadModule( prog, (LPVOID) &pdata );
     while( !SharedMemory->TaskEnded ) {

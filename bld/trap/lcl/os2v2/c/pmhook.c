@@ -59,7 +59,7 @@ static hmq_redirect *NewHmqRedirect( HMQ hmq )
 {
     hmq_redirect        *redir;
 
-    redir = FindHmqRedirect( NULL );
+    redir = FindHmqRedirect( NULLHANDLE );
     if( redir == NULL )
         return( NULL );
     redir->hmq = hmq;
@@ -68,7 +68,7 @@ static hmq_redirect *NewHmqRedirect( HMQ hmq )
 
 static void FreeHmqRedirect( hmq_redirect *redir )
 {
-    redir->hmq = NULL;
+    redir->hmq = NULLHANDLE;
 }
 
 VOID EXPENTRY SendMsgHookProc( HAB hab, PSMHSTRUCT smh, BOOL it )

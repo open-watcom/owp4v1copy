@@ -62,7 +62,7 @@ BOOL WINEXP ClrDlgProc( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
         break;
     case WM_CLOSE:
         DestroyWindow( hwnd );
-        hColorbar = NULL;
+        hColorbar = (HWND)NULL;
         // update editflags (may have closed from system menu)
         EditFlags.Colorbar = FALSE;
         break;

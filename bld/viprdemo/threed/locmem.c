@@ -62,7 +62,7 @@ void near *lmem_alloc(
 
     mem_hld = LocalAlloc( LMEM_MOVEABLE, size );
 
-    if( mem_hld != NULL ) {
+    if( mem_hld ) {
         mem = LocalLock( mem_hld );
         if( mem != NULL ) {
             return( mem );
@@ -88,10 +88,10 @@ void near *lmem_realloc(
     if( mem != NULL ) {
         hld = _wpi_getlocalhdl( mem );
 
-        if( hld != NULL ) {
+        if( hld ) {
             LocalUnlock( hld );
             hld = LocalReAlloc( hld, size, LMEM_MOVEABLE );
-            if( hld != NULL ) {
+            if( hld ) {
                 ptr = LocalLock( hld );
                 return( ptr );
             }
@@ -118,7 +118,7 @@ void lmem_free(
     if( LOWORD(mem) != 0 ) {
         hld = _wpi_getlocalhdl( mem );
 
-        if( hld != NULL ) {
+        if( hld ) {
             LocalUnlock( hld );
             LocalFree( hld );
         }

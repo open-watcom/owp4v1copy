@@ -96,7 +96,7 @@ DWORD ReadMem( WORD seg, DWORD base, LPVOID buff, DWORD size )
     DWORD       oldbase;
 #endif
 
-    if( DebugeePid == NULL ) {
+    if( DebugeePid == 0 ) {
         return( 0 );
     }
 #ifdef DEBUGGING_THIS_DAMN_WIN95_PROBLEM
@@ -151,7 +151,7 @@ DWORD WriteMem( WORD seg, DWORD base, LPVOID buff, DWORD size )
     LONG    bytes;
     DWORD   limit;
 
-    if( DebugeePid == NULL ) {
+    if( DebugeePid == 0 ) {
         return( 0 );
     }
     base = getRealBase( seg, base, &limit );
@@ -180,7 +180,7 @@ unsigned ReqRead_mem( void )
 
     acc = GetInPtr( 0 );
 
-    if( DebugeePid == NULL ) {
+    if( DebugeePid == 0 ) {
         return( 0 );
     }
 
@@ -206,7 +206,7 @@ unsigned ReqWrite_mem( void )
     ret = GetOutPtr( 0 );
 
     ret->len = 0;
-    if( DebugeePid == NULL ) {
+    if( DebugeePid == 0 ) {
         return( sizeof( *ret ) );
     }
 
@@ -234,7 +234,7 @@ unsigned ReqChecksum_mem( void )
 
     length = acc->len;
     sum = 0;
-    if( DebugeePid != NULL ) {
+    if( DebugeePid ) {
         offset = acc->in_addr.offset;
         segment = acc->in_addr.segment;
         while( length != 0 ) {

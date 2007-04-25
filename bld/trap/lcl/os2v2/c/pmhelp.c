@@ -113,7 +113,7 @@ void UnLockIt( void )
     if (Locked) {
         WinThreadAssocQueue(Hab, Hmq);
         WinLockInput(0, 0);
-        WinThreadAssocQueue(Hab, NULL);
+        WinThreadAssocQueue(Hab, NULLHANDLE);
         Locked = FALSE;
     }
 }
@@ -129,7 +129,7 @@ void LockIt( void )
     if (!Locked) {
         WinThreadAssocQueue(Hab, Hmq);
         WinLockInput(0, 1);
-        WinThreadAssocQueue(Hab, NULL);
+        WinThreadAssocQueue(Hab, NULLHANDLE);
         Locked = TRUE;
     }
 }
@@ -288,7 +288,7 @@ INT main( int argc, char **argv )
         InStream  = *argv[1] - ADJUST_HFILE;
         OutStream = *argv[2] - ADJUST_HFILE;
     }
-    AbortIf((Hab = WinInitialize(NULL)) == 0L);
+    AbortIf((Hab = WinInitialize(NULLHANDLE)) == 0L);
     AbortIf((Hmq = WinCreateMsgQueue(Hab, 0)) == 0L);
 
     AbortIf(!WinRegisterClass(Hab, (PSZ)WDPMHLP_WNDCLASS, (PFNWP)MyWindowProc,
@@ -307,7 +307,7 @@ INT main( int argc, char **argv )
 
     AbortIf((hwndFrame = WinCreateStdWindow(HWND_DESKTOP, 0L,
              &flCreate, WDPMHLP_WNDCLASS, "", 0L,
-             NULL, ID_WINDOW, &hwndClient)) == 0L);
+             NULLHANDLE, ID_WINDOW, &hwndClient)) == 0L);
 
     WinSetWindowText(hwndFrame, TRP_The_WATCOM_Debugger);
 

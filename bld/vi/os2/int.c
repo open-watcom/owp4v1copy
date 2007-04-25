@@ -109,7 +109,7 @@ void SetInterrupts( void )
     signal( SIGBREAK, BrkHandler );
     exitThread = FALSE;
 #ifdef __OS2V2__
-    DosCreateThread( &timerTID, (PFNTHREAD)TimerThread, NULL, FALSE, TSTACK_SIZE );
+    DosCreateThread( &timerTID, (PFNTHREAD)TimerThread, 0, FALSE, TSTACK_SIZE );
 #else
     DosCreateThread( TimerThread, &timerTID, &thread_stack[TSTACK_SIZE-2] );
 #endif

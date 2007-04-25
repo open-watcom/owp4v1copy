@@ -347,7 +347,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
      * we ignore the DebugeeEnded setting if we are doing a kill
      */
     if( !Slaying ) {
-        if( DebugeeEnded || DebugeePid == NULL ) {
+        if( DebugeeEnded || DebugeePid == 0 ) {
             returnCode = COND_TERMINATE;
             goto done;
         }
@@ -659,7 +659,7 @@ static unsigned runProg( bool single_step )
 
     ret = GetOutPtr( 0 );
 
-    if( DebugeeEnded || DebugeePid == NULL ) {
+    if( DebugeeEnded || DebugeePid == 0 ) {
         ret->conditions = COND_TERMINATE;
         return( sizeof( *ret ) );
     }

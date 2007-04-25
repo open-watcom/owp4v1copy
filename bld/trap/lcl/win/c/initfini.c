@@ -126,7 +126,7 @@ void FinishDebugging( void )
     if( CSAlias != NULL ) {
         FreeSelector( CSAlias );
     }
-    CSAlias = NULL;
+    CSAlias = 0;
 
 } /* FinishDebugging */
 

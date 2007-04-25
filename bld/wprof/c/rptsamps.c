@@ -83,7 +83,7 @@ STATIC void dumpSampleImages( bint all_info, sio_data * curr_sio )
         mod_count = 0;
         while( mod_count < curr_image->mod_count ) {
             curr_mod = curr_image->module[mod_count];
-            if( (all_info && curr_mod->mh != NULL)
+            if( (all_info && curr_mod->mh != 0)
              || curr_mod->agg_count != 0) {
                 fprintf( df, "  module name '%s'   (%s language)\n", curr_mod->name,
                         ModSrcLang( curr_mod->mh ) );

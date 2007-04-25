@@ -83,7 +83,7 @@ HDDEDATA WINEXP DDECallback( UINT type, UINT fmt, HCONV hconv,
         }
         return( (HDDEDATA) DDERet );
     }
-    return( NULL );
+    return( (HDDEDATA) NULL );
 
 } /* DDECallback */
 

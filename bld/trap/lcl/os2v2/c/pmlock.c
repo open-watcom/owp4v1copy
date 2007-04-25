@@ -148,7 +148,7 @@ void StartPMHelp()
         return;
     if( SpawnLocker( HisInh, HisOuth ) )
         return;
-    if( DosCreateThread( &tid, (PFNTHREAD)SwitchBack, NULL, 0, STACK_SIZE ) )
+    if( DosCreateThread( &tid, (PFNTHREAD)SwitchBack, 0, 0, STACK_SIZE ) )
         return;
     HaveHelper = TRUE;
 }

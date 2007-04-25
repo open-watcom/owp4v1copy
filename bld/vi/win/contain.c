@@ -49,7 +49,7 @@ window_id CreateContainerWindow( RECT *size )
     HWND    container;
     CLIENTCREATESTRUCT client;
 
-    client.hWindowMenu = NULL;
+    client.hWindowMenu = (HMENU)NULL;
     client.idFirstChild = 3000; // some arbitrary number that doesn't conflict
 
     container = CreateWindow( className, "Container",

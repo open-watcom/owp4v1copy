@@ -134,10 +134,10 @@ long __export FAR PASCAL MainDriver( HWND hwnd, UINT message, WPARAM wparam,
         if( SharedMemory->ShopClosed ) {
             KillTimer( MainWindowHandle, TIMER_ID );
             DestroyWindow( MainWindowHandle );
-            return( NULL );
+            return( 0 );
         }
         MyOutput( MsgArray[MSG_SAMPLE_13-ERR_FIRST_MESSAGE] );
-        return( NULL );
+        return( 0 );
         break;
     case WM_COMMAND:
         switch( wparam ) {
@@ -155,13 +155,13 @@ long __export FAR PASCAL MainDriver( HWND hwnd, UINT message, WPARAM wparam,
         break;
 
     case WM_DESTROY:
-        PostQuitMessage(0);
+        PostQuitMessage( 0 );
         break;
 
     default:
         return( DefWindowProc( hwnd, message, wparam, lparam ) );
     }
-    return (NULL);
+    return( 0 );
 
 } /* MainDriver */
 
@@ -350,7 +350,7 @@ int PASCAL WinMain( HINSTANCE inst, HINSTANCE previnst, LPSTR cmd, int show)
         parm.wEnvSeg = 0;
         parm.lpCmdLine = (char far *) "";
         parm.lpCmdShow = (void far *) &cmddat;
-        parm.dwReserved = NULL;
+        parm.dwReserved = 0;
         newinst = LoadModule( "wsamplew.exe", (LPVOID) &parm );
         if( (UINT)newinst < 32 ) {
             WinMessage( MsgArray[MSG_SAMPLE_12-ERR_FIRST_MESSAGE] );

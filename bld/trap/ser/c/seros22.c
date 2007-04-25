@@ -337,7 +337,7 @@ char *InitSys( void )
         return( TRP_OS2_cannot_set_thread_priority );
     ReadBuffAdd = 0;
     ReadBuffRemove = 0;
-    rc = DosCreateThread( &ReaderId, Reader, NULL,
+    rc = DosCreateThread( &ReaderId, Reader, 0,
         CREATE_READY, READER_STACKSIZE );
     if( rc != 0 )
         return( TRP_OS2_cannot_create_helper_thread );

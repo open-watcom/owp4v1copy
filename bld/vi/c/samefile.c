@@ -106,7 +106,7 @@ void WinGetFullPath( char *filename, char *full ){
     handle  = GlobalDosAlloc( FILENAME_MAX * 2 );
 
     // if( (handle == 8) || (handle == 7) ){
-    if( handle == NULL ){
+    if( handle ) {
         // corrupt or insufficient memory
         full = NULL;
         return;
