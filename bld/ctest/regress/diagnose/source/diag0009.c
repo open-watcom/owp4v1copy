@@ -17,6 +17,7 @@ struct S1 s1 = {
 void asgn( void )
 {
     s1.f0 = 0x20;
+    s1.f0 = 0x1F + 1;
     s1.f0 = 0x1f;
     s1.f2 = 0x080000;
     s1.f2 = 0x100000L;

@@ -565,11 +565,12 @@ extern  int     ParmsToBeReversed(int,struct aux_info *);
 extern  char    *SrcFullPath( char *, char const *, unsigned );
 
 //cfold.c
-extern  void CastFloatValue( TREEPTR leaf, DATA_TYPE newtype );
-extern  void CastConstValue(TREEPTR,DATA_TYPE);
-extern  void DoConstFold(TREEPTR);
-extern  void FoldExprTree(TREEPTR);
-extern  bool BoolConstExpr( void );
+extern  int64   LongValue64( TREEPTR leaf );
+extern  void    CastFloatValue( TREEPTR leaf, DATA_TYPE newtype );
+extern  void    CastConstValue(TREEPTR,DATA_TYPE);
+extern  void    DoConstFold(TREEPTR);
+extern  void    FoldExprTree(TREEPTR);
+extern  bool    BoolConstExpr( void );
 
 //cgen.c
 extern  void    DoCompile(void);
