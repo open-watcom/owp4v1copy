@@ -285,10 +285,11 @@ typedef struct expr_node {
     union {
         TYPEPTR         expr_type;      // used during pass 1
         TREEPTR         thread;         // used during pass 2 full codegen
-        int     srclinenum;             // OPR_STMT, and OPR_NOP for callnode
+        int             srclinenum;     // OPR_STMT, and OPR_NOP for callnode
     };
     OPNODE          op;
     bool            visit;
+    bool            checked;            // opnd values have been checked
 } EXPRNODE;
 
 extern  TREEPTR LeafNode(int);

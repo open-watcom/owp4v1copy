@@ -805,6 +805,10 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
     TYPEPTR        typ2;
 
     if( opnd2->op.opr == OPR_ERROR ) return;
+
+    // Fold RHS expression so that we can properly check for null
+    // pointers or out of range constants
+    FoldExprTree( opnd2 );
     typ2 = opnd2->expr_type;
 
     SetDiagType2( typ2, typ1 );

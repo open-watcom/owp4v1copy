@@ -1108,6 +1108,8 @@ static void CheckOpndValues( TREEPTR tree )
     TREEPTR             opnd;
     arithmetic_type     con;
 
+    if( tree->checked ) return;
+
     switch( tree->op.opr ) {
     case OPR_LSHIFT:
     case OPR_RSHIFT:
@@ -1176,6 +1178,7 @@ static void CheckOpndValues( TREEPTR tree )
     default:
         break;
     }
+    tree->checked = TRUE;
 }
 
 

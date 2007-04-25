@@ -63,11 +63,12 @@ TREEPTR ExprNode( TREEPTR left, int opcode, TREEPTR right )
     }
     node = ExprNodeList;
     ExprNodeList = node->left;
-    node->visit  = FALSE;
-    node->left = left;
-    node->right = right;
-    node->op.opr = opcode;
+    node->left     = left;
+    node->right    = right;
+    node->op.opr   = opcode;
     node->op.flags = 0;
+    node->visit    = FALSE;
+    node->checked  = FALSE;
     ++NodeCount;
     return( node );
 }
