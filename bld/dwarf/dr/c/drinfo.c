@@ -201,7 +201,7 @@ extern unsigned DRGetScopedNameBuff( dr_handle entry,
     unsigned        length;
 
     of = DRGetContaining( entry );
-    if( of == NULL ) {
+    if( of == 0 ) {
         of = entry;
     }
     DRGetScopeList( &container, of );
@@ -490,7 +490,7 @@ extern dr_handle DRGetContaining( dr_handle entry )
     if( DWRScanForAttrib( &abbrev, &entry, DW_AT_containing_type ) != 0 ) {
         ret = DWRReadReference( abbrev, entry );
     } else {
-        ret = NULL;
+        ret = 0;
     }
     return( ret );
 }
@@ -693,7 +693,7 @@ extern dr_handle DRDebugPCHDef( dr_handle entry )
     if( DWRScanForAttrib( &abbrev, &entry, DW_AT_base_types ) != 0 ) {
         ret = DWRReadReference( abbrev, entry );
     } else {
-        ret = NULL;
+        ret = 0;
     }
     return( ret );
 }

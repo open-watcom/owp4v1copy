@@ -493,7 +493,7 @@ extern  void    DefSegment( seg_id id, seg_attr attr, char *str, uint align, boo
         if( codeSection == BACKSEGS ) {
             codeSection = id;
             if( _IsModel( DBG_DF ) ) {
-                DFBegCCU( id, NULL );
+                DFBegCCU( id, 0 );
             }
         }
     } else if( attr & INIT ) {

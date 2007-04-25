@@ -79,7 +79,7 @@ _WCRTLINK void _WCNEAR *_nmalloc( size_t amt )
     }
 
     _AccessNHeap();
-    ptr = NULL;
+    ptr = 0;
     expanded = 0;
     for(;;) {
         if( size > __LargestSizeB4MiniHeapRover ) {
@@ -100,7 +100,7 @@ _WCRTLINK void _WCNEAR *_nmalloc( size_t amt )
             largest = miniheap_ptr->largest_blk;
             if( largest >= amt ) {
                 ptr = __MemAllocator( amt, _DGroup(), (unsigned)miniheap_ptr );
-                if( ptr != NULL ) {
+                if( ptr != 0 ) {
                     goto lbl_release_heap;
                 }
             }

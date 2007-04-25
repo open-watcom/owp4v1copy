@@ -133,8 +133,8 @@ extern  type_def        *SelNodeType( an node, bool is_signed ) {
         signed_t = T_INT_4;
         break;
     default: /* an error */
-        unsigned_t = NULL;
-        signed_t =  NULL;
+        unsigned_t = 0;
+        signed_t   = 0;
         break;
     }
     return( TypeAddress( is_signed ? signed_t : unsigned_t ) );

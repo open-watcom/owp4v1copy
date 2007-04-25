@@ -148,7 +148,7 @@ static void dmp_imp_addr( unsigned_32 offset )
     Wdputslc( "====================\n" );
     addr_size = sizeof( unsigned_32 );
     Wread( &address, addr_size );
-    for( i = 0; address != NULL; i++ ) {
+    for( i = 0; address != 0; i++ ) {
         if( i != 0 ) {
             if( (i) % 4 == 0 ) {
                 Wdputslc( "\n" );
@@ -190,7 +190,7 @@ static void dmp_imp_lookup( unsigned_32 offset )
 
     addr_size = sizeof( unsigned_32 );
     Wread( &address, addr_size );
-    for( i = 0; address != NULL; ++i ) {
+    for( i = 0; address != 0; ++i ) {
         Wdputs( "       " );
         Puthex( address, 8 );
         if( address & PE_IMPORT_BY_ORDINAL ) {
@@ -301,7 +301,7 @@ void Dmp_imports( void )
     for( ;; ) {
         Wlseek( offset );
         Wread( &pe_import, sizeof( pe_import_directory ) );
-        if( pe_import.import_lookup_table_rva == NULL ) break;
+        if( pe_import.import_lookup_table_rva == 0 ) break;
         Banner( "Import Directory Table" );
         Dump_header( (char *)&pe_import.import_lookup_table_rva, pe_import_msg );
         Wlseek( pe_import.name_rva - Pe_head.table[ PE_TBL_IMPORT ].rva + Imp_off );

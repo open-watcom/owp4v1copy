@@ -191,12 +191,12 @@ unsigned        DIPENTRY DIPImpCueFile( imp_image_handle *ii,
     imx = ic->imx;
     DRSetDebug( ii->dwarf->handle );    /* must do at each call into dwarf */
     stmts = ii->mod_map[imx].stmts;
-    if( stmts == NULL ) {
+    if( stmts == 0 ) {
         DCStatus( DS_FAIL );
         return( 0 );
     }
     cu_handle = ii->mod_map[imx].cu_tag;
-    if( cu_handle == NULL ) {
+    if( cu_handle == 0 ) {
         DCStatus( DS_FAIL );
         return( 0 );
     }
@@ -334,7 +334,7 @@ walk_result     DIPENTRY DIPImpWalkFileList( imp_image_handle *ii,
     imx = IM2IMX( im );
     DRSetDebug( ii->dwarf->handle );    /* must do at each call into DWARF */
     stmts  =  ii->mod_map[imx].stmts;
-    if( stmts == NULL ) {
+    if( stmts == 0 ) {
         DCStatus( DS_FAIL );
         return( WR_CONTINUE );
     }
@@ -425,7 +425,7 @@ dip_status      DIPENTRY DIPImpCueAdjust( imp_image_handle *ii,
     imx = src->imx;
     DRSetDebug( ii->dwarf->handle );    /* must do at each call into DWARF */
     stmts  =  ii->mod_map[imx].stmts;
-    if( stmts == NULL ) {
+    if( stmts == 0 ) {
         DCStatus( DS_FAIL );
         return( DS_ERR|DS_FAIL  );
     }
@@ -530,7 +530,7 @@ search_result   DIPENTRY DIPImpAddrCue( imp_image_handle *ii,
     DRSetDebug( ii->dwarf->handle ); /* must do at each call into dwarf */
     imx = IM2IMX( im );
     stmts = ii->mod_map[imx].stmts;
-    if( stmts == NULL ) {
+    if( stmts == 0 ) {
         return( SR_NONE );
     }
     map_addr = addr;
@@ -598,7 +598,7 @@ search_result   DIPENTRY DIPImpLineCue( imp_image_handle *ii,
     DRSetDebug( ii->dwarf->handle );    /* must do at each call into DWARF */
     imx = IM2IMX( im );
     stmts  = ii->mod_map[imx].stmts;
-    if( stmts == NULL ) {
+    if( stmts == 0 ) {
         return( SR_NONE );
     }
     cue_map= ii->cue_map;

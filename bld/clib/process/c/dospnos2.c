@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 version of the spawn() worker routine.
 *
 ****************************************************************************/
 
@@ -148,7 +147,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
             rc = DosExecPgm( NULL, 0, exec_flag,
                              cmdline, envp, &returncodes, pgm );
         } else {
-            termq = NULL;
+            termq = NULLHANDLE;
             related = SSF_RELATED_INDEPENDENT;
             makeqname( queuename, ppib->pib_ulpid, ptib->tib_ordinal );
             if( mode == P_WAIT ) {
@@ -270,7 +269,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
                 #endif
             }
         } else {
-            termq = NULL;
+            termq = 0;
             related = 0; //SSF_RELATED_INDEPENDENT;
             makeqname( queuename, local->pidCurrent, local->tidCurrent );
             if( mode == P_WAIT ) {

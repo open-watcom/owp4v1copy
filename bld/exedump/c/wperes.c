@@ -104,7 +104,7 @@ void Dmp_fixups( void )
         Wlseek( offset );
         Wread( &pe_fixup, sizeof( pe_fixup_header ) );
         offset += pe_fixup.block_size;
-        if( pe_fixup.page_rva == NULL ) break;
+        if( pe_fixup.page_rva == 0 ) break;
         Dump_header( (char *)&pe_fixup.page_rva, pe_fixup_msg );
         if( Options_dmp & FIX_DMP ) {
             dmp_type_offset( ( pe_fixup.block_size -
@@ -285,7 +285,7 @@ static void dmp_res_data( void )
     Wlseek( Data_off );
     for( i = 0; ; i++ ) {
         Wread( &res_data, sizeof( resource_entry ) );
-        if( res_data.rsvd != NULL ) break;
+        if( res_data.rsvd != 0 ) break;
         Putdecl( i, 3 );
         Wdputs( ":   " );
         Puthex( res_data.data_rva, 8 );

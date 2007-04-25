@@ -706,8 +706,8 @@ extern  void    CVBlkBeg( dbg_block *blk, offset lc )
     blk->patches = patch;
     NewBuff( out, CVSyms );
     ptr = StartSym(  out, SG_BLOCK );
-    ptr->pParent = NULL;
-    ptr->pEnd = NULL;
+    ptr->pParent = 0;
+    ptr->pEnd = 0;
     ptr->length = 0;
     ptr->offset = 0;
     ptr->segment = 0;

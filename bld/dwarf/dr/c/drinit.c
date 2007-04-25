@@ -118,12 +118,12 @@ static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes, int bytes
         dbg->sections[i].size = *sizes;
         if( *sizes != 0 ) {
             dbg->sections[i].base = DWRVMAlloc( *sizes, i );
-            if( dbg->sections[i].base == NULL ) {
+            if( dbg->sections[i].base == 0 ) {
                 DWRFREE( dbg );
                 return( NULL );
             }
         } else {
-            dbg->sections[i].base = NULL;
+            dbg->sections[i].base = 0;
         }
         sizes++;
     }

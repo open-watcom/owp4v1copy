@@ -156,7 +156,7 @@ extern  dbg_type        DFCharBlock( unsigned_32 len ) {
 
     dbg_type    ret;
 
-    ret = DWString( Client, NULL, len, NULL, NULL, 0 );
+    ret = DWString( Client, NULL, len, NULL, 0, 0 );
     return( ret );
 }
 
@@ -243,7 +243,7 @@ static  dw_handle   MKBckVar( back_handle bck, int off, dw_handle tipe ){
     dw_segloc = NULL;
 #endif
     obj = DWVariable( Client, tipe, dw_loc,
-                NULL, dw_segloc, "__bck", NULL, 0 );
+                0, dw_segloc, "__bck", 0, 0 );
 
     DWLocTrash( Client, dw_loc );
     if( dw_segloc != NULL ){

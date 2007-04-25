@@ -466,7 +466,7 @@ address         DIPENTRY DIPImpModAddr( imp_image_handle *ii,
     }
     imx = IM2IMX( im );
     stmts =  ii->mod_map[imx].stmts;
-    if( stmts == NULL ){
+    if( stmts == 0 ) {
         DCStatus( DS_FAIL );
         return( NilAddr );
     }
@@ -504,12 +504,12 @@ dip_status      DIPENTRY DIPImpModInfo( imp_image_handle *ii,
         ret = DS_FAIL;
         break;
     case HK_TYPE:
-        if( stmts != NULL ){
+        if( stmts != 0 ) {
             ret = DS_OK;
         }
         break;
     case HK_CUE:
-        if( stmts != NULL ){ // need to get rid of stmts for file with no cues
+        if( stmts != 0 ) {  // need to get rid of stmts for file with no cues
             l_walk_info walk;
             address     a;
 

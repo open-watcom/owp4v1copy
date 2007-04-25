@@ -152,13 +152,13 @@ static BOOL firstInstance( HANDLE inst)
     /*
      * register window classes
      */
-    wc.style = NULL;
+    wc.style = 0;
     wc.lpfnWndProc = (LPVOID) _MainDriver;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = inst;
-    wc.hIcon = LoadIcon( NULL, IDI_APPLICATION );
-    wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+    wc.hIcon = LoadIcon( (HINSTANCE)NULL, IDI_APPLICATION );
+    wc.hCursor = LoadCursor( (HINSTANCE)NULL, IDC_ARROW );
     wc.hbrBackground = GetStockObject( GRAY_BRUSH );
     wc.lpszMenuName =  NULL;
     wc.lpszClassName = mainClass;
@@ -166,13 +166,13 @@ static BOOL firstInstance( HANDLE inst)
     rc = RegisterClass( &wc );
     if( !rc ) return( FALSE );
 
-    wc.style = NULL;
+    wc.style = 0;
     wc.lpfnWndProc = (LPVOID) _MainDriver;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = inst;
-    wc.hIcon = LoadIcon( NULL, IDI_APPLICATION );
-    wc.hCursor = LoadCursor( NULL, IDC_ARROW );
+    wc.hIcon = LoadIcon( (HINSTANCE)NULL, IDI_APPLICATION );
+    wc.hCursor = LoadCursor( (HINSTANCE)NULL, IDC_ARROW );
     wc.hbrBackground = GetStockObject( WHITE_BRUSH );
     wc.lpszMenuName =  NULL;
     wc.lpszClassName = _ClassName;
@@ -217,7 +217,7 @@ static int windowsInit( HANDLE inst, int showcmd )
         0,                              /* vertical position.         */
         x,                              /* width.                     */
         y,                              /* height.                    */
-        NULL,                           /* parent                     */
+        (HWND)NULL,                     /* parent                     */
         _MainMenu,                      /* menu handle                */
         inst,                           /* owner of window            */
         NULL                            /* extra data pointer         */

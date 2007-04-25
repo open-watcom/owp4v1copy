@@ -70,7 +70,7 @@ static dr_handle GetArrayDim( dr_handle index, int skip  ){
     if( !DRWalkArraySibs( index, ArrayWlkNext, &df ) ){
       index = df.curr;
     }else{
-      index = NULL;
+      index = 0;
     }
     return( index );
 }
@@ -166,7 +166,7 @@ static void GetArraySize( imp_image_handle *ii,
     it->array.low = df.low;
     df.cont = TRUE;
     dim = GetArrayDim( it->array.index, 1 );
-    if( dim != NULL ){
+    if( dim ) {
         DRWalkArraySibs( dim, ArrayWlk, &df );
     }
     it->array.dims = df.dim;
@@ -254,7 +254,7 @@ static void InitTypeHandle( imp_image_handle *ii,
                 }else if( ii->mod_map[it->imx].lang == DR_LANG_FORTRAN ){
                     it->array.column_major = 1;
                 }
-                if( info.child == NULL ){ // set info now
+                if( info.child == 0 ) { // set info now
                     it->array.dims = 1;
                     it->array.low = 0;
                     it->array.index = 0;
@@ -282,7 +282,7 @@ static void InitTypeHandle( imp_image_handle *ii,
                 }
             }
         }else if( it->typeinfo.kind == DR_TYPEK_STRING ){
-            if( DRStringLengthAT( it->type ) != NULL ){
+            if( DRStringLengthAT( it->type ) ) {
                 if( !GetStrLen( ii, it->type, lc, &it->typeinfo ) ){
                     it->typeinfo.size = 1;
                 }
@@ -505,13 +505,13 @@ dip_status      DIPENTRY DIPImpTypeBase( imp_image_handle *ii,
             base->array.is_set = FALSE;
         }
         base->array.is_based = TRUE;
-        if( base->array.index != NULL ){
+        if( base->array.index ) {
             return( DS_OK );
         }
     }
     btype =  DRSkipTypeChain( base->type ); /* skip modifiers and typedefs */
     base->type = DRGetTypeAT( btype );      /* get base type */
-    if( base->type == NULL ) {
+    if( base->type == 0 ) {
         base->type = DR_HANDLE_VOID;        /* no type means 'void' */
     }
     base->state = DF_NOT;
@@ -573,7 +573,7 @@ static int  GetSymVal( imp_image_handle *ii,
     im_idx          imx;
 
     dr_type =  DRGetTypeAT( dr_sym );
-    if( dr_type == NULL ){
+    if( dr_type == 0 ) {
         return( FALSE );
     }
     DRGetTypeInfo( dr_type, typeinfo );
@@ -681,9 +681,9 @@ dip_status      DIPENTRY DIPImpTypeArrayInfo( imp_image_handle *ii,
     ai->stride = array->array.base_stride;
     if( index != NULL ){
         index->imx = array->imx;
-        if( array->array.index == NULL ){  //Fake a type up
+        if( array->array.index == 0 ) { //Fake a type up
             index->state = DF_SET;
-            index->type = NULL;
+            index->type  = 0;
             index->typeinfo.size = 0;
             index->typeinfo.kind = DR_TYPEK_NONE;
             index->typeinfo.mclass = DR_MOD_NONE;
@@ -731,8 +731,8 @@ extern dr_handle GetParmN(  imp_image_handle *ii,dr_handle proc, int count ){
     df.count = 0;
     df.last = count;
     DRSetDebug( ii->dwarf->handle ); /* must do at each call into dwarf */
-    if( DRWalkBlock( proc,  DR_SRCH_parm, AParm, &df ) ){
-        ret = NULL;
+    if( DRWalkBlock( proc, DR_SRCH_parm, AParm, &df ) ) {
+        ret = 0;
     }else{
         ret = df.var;
     }
@@ -763,10 +763,10 @@ dip_status      DIPENTRY DIPImpTypeProcInfo( imp_image_handle *ii,
     if( n > 0 ){
         btype = GetParmN( ii, btype, n );
     }// if n == 0 just fall through and get type of function
-    if( btype != NULL ){
+    if( btype ) {
         parm_type = DRGetTypeAT( btype );    /* get type */
     }
-    if( parm_type != NULL ){
+    if( parm_type ) {
         parm->state = DF_NOT;
         parm->type = parm_type;
         parm->imx = proc->imx;
@@ -1122,7 +1122,7 @@ extern walk_result WalkTypeSymList( imp_image_handle *ii, imp_type_handle *it,
     df.com.ii = ii;
     df.com.d = d;
     df.com.root = it->type;
-    df.com.inh = NULL;
+    df.com.inh = 0;
     df.com.vbase = NULL;
     cleanup.rtn = FreeBases;   //push cleanup
     cleanup.d = &df.com.vbase;
@@ -1175,7 +1175,7 @@ extern search_result SearchMbr( imp_image_handle *ii, imp_type_handle *it,
     df.com.ii = ii;
     df.com.d = d;
     df.com.root = it->type;
-    df.com.inh = NULL;
+    df.com.inh = 0;
     df.com.vbase = NULL;
     cleanup.rtn = FreeBases;   //push cleanup
     cleanup.d = &df.com.vbase;
@@ -1336,7 +1336,7 @@ unsigned DIPENTRY DIPImpTypeName( imp_image_handle *ii, imp_type_handle *it,
     ++num;
     len = 0;
     dr_type = it->type;
-    while( dr_type != NULL ){
+    while( dr_type ) {
         name =  DRGetName( dr_type );
         if( name != NULL ){
             if(  --num == 0 )break;

@@ -415,7 +415,7 @@ static void BuildFortranList( BrokenName_T *decname, Loc_T *loc )
         break;
 
     case DW_TAG_member:
-        if( loc->parent != NULL ) {
+        if( loc->parent ) {
             FORDecMember( decname, loc );
         } else {
             FORDecVariable( decname, loc );
@@ -461,7 +461,7 @@ static void BuildCList( BrokenName_T *decname, Loc_T *loc )
         break;
 
     case DW_TAG_member:
-        if( loc->parent != NULL ) {
+        if( loc->parent ) {
             DecorateMember( decname, loc );
         } else {
             DecorateVariable( decname, loc );
@@ -529,7 +529,7 @@ static void GetClassName( dr_handle   entry,
     char        *name;
 
     name = NULL;
-    while( entry != NULL ){
+    while( entry ) {
         tmp_entry = entry;
         abbrev = DWRVMReadULEB128( &tmp_entry );
         abbrev = DWRLookupAbbrev( tmp_entry, abbrev );
@@ -557,7 +557,7 @@ static dr_handle SkipPCH( dr_handle entry )
     dw_tagnum   tag;
     dw_atnum    attrib;
 
-    while( entry != NULL ) {
+    while( entry ) {
         tmp_entry = entry;
         abbrev = DWRVMReadULEB128( &tmp_entry );
         abbrev = DWRLookupAbbrev( tmp_entry, abbrev );

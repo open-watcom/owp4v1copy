@@ -59,13 +59,13 @@ extern dr_handle DWRVMAlloc( unsigned long len, int sect )
     alloc_struct * nChunk;
 
     if( len == 0 ) {
-        return( NULL );
+        return( 0 );
     }
 
     nChunk = (alloc_struct *) DWRALLOC( len - 1 + sizeof( alloc_struct ) );
     if( nChunk == NULL ) {
         DWREXCEPT( DREXCEP_OUT_OF_MMEM );
-        return( NULL );
+        return( 0 );
     }
 
     nChunk->next = AllocHead;

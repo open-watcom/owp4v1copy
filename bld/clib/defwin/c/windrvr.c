@@ -114,7 +114,7 @@ static long MainWindowProc( HWND hwnd, UINT message, UINT wparam,
             if( _AutoClearLines != old ) {
                 sprintf( tmp,"Buffers will be cleared after %ld lines",
                     _AutoClearLines );
-                MessageBox( NULL,tmp,"Amount Set", MB_OK );
+                MessageBox( (HWND)NULL, tmp, "Amount Set", MB_OK );
             }
             break;
         case MSG_COPY:
@@ -256,7 +256,7 @@ long CALLBACK _MainDriver( HWND hwnd, UINT message, UINT wparam, LONG lparam )
         return( DefWindowProc( hwnd, message, wparam, lparam ) );
 
     case WM_COMPACTING:
-        rc = MessageBox( NULL,
+        rc = MessageBox( (HWND)NULL,
             "System has indicated low memory, Clear Lines?",
             "System Request",
             MB_OKCANCEL | MB_TASKMODAL | MB_ICONEXCLAMATION );

@@ -95,7 +95,7 @@ dw_handle DWENTRY DWModifier(
     dw_handle                   hdl,
     uint                        modifiers )
 {
-    dw_handle                   new_hdl = NULL;
+    dw_handle                   new_hdl = 0;
     abbrev_code                 abbrev;
 
     _Validate( hdl != NULL );
@@ -308,11 +308,11 @@ void DWENTRY DWArrayDimension(
     abbrev_code abbrev;
 
     abbrev = AB_ARRAY_BOUND;
-    if( dim_info->index_type != NULL ) {
+    if( dim_info->index_type != 0 ) {
         abbrev |= AB_TYPE;
     }
     StartDIE( cli, abbrev );
-    if( dim_info->index_type != NULL ) {
+    if( dim_info->index_type != 0 ) {
         EmitTypeRef( cli, dim_info->index_type );
     }
     /* AT_lower_bound */
@@ -329,11 +329,11 @@ void DWENTRY DWArrayVarDim(
     abbrev_code abbrev;
 
     abbrev = AB_ARRAY_VARDIM;
-    if( dim_info->index_type != NULL ) {
+    if( dim_info->index_type != 0 ) {
         abbrev |= AB_TYPE;
     }
     StartDIE( cli, abbrev );
-    if( dim_info->index_type != NULL ) {
+    if( dim_info->index_type != 0 ) {
         EmitTypeRef( cli, dim_info->index_type );
     }
     /* AT_lower_bound */

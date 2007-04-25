@@ -388,7 +388,7 @@ extern dr_handle DRGetTypeAT( dr_handle entry )
     dr_handle   type;
 
     abbrev = DWRGetAbbrev( &entry );
-    type = NULL;
+    type = 0;
     if( DWRScanForAttrib( &abbrev, &entry, DW_AT_type ) != 0 ) {
         type = DWRReadReference( abbrev, entry );
     }
@@ -430,7 +430,7 @@ extern dr_array_stat DRGetArrayInfo( dr_handle entry, dr_array_info *info )
         DWRSkipAttribs( abbrev, &entry );
         info->child = entry;
     } else {
-        info->child = NULL;
+        info->child = 0;
     }
     return( stat );
 }
@@ -462,7 +462,7 @@ extern dr_handle DRSkipTypeChain( dr_handle tref )
             entry = DWRReadReference( abbrev, entry );
             tref = entry;
         } else {
-            tref = NULL;
+            tref = 0;
             goto end_loop;
         }
     } end_loop:;

@@ -559,7 +559,7 @@ extern  void    DFObjInitInfo( void ) {
     }
     info.language = DWLANG_C;
     info.compiler_options = DW_CM_DEBUGGER;
-    info.abbrev_sym = NULL;
+    info.abbrev_sym = 0;
     info.producer_name = "WATCOM";
     info.language = SetLang();
     if( setjmp( info.exception_handler ) == 0 ) {
@@ -625,7 +625,7 @@ extern  void    DFObjLineInitInfo( void ) {
 
     info.language = DWLANG_C;
     info.compiler_options = DW_CM_DEBUGGER;
-    info.abbrev_sym = NULL;
+    info.abbrev_sym = 0;
     info.producer_name = "WATCOM";
     info.language = SetLang();
     if( setjmp( info.exception_handler ) == 0 ) {
@@ -637,7 +637,7 @@ extern  void    DFObjLineInitInfo( void ) {
         }
         cu.source_filename = FEAuxInfo( NULL, SOURCE_NAME );
         cu.directory = "";
-        cu.dbg_pch   = NULL;
+        cu.dbg_pch   = 0;
         cu.inc_list = NULL;
         cu.inc_list_len = 0;
 #if _TARGET &( _TARG_IAPX86 | _TARG_80386 )
@@ -803,7 +803,7 @@ extern  void    DFGenStatic( sym_handle sym, dbg_loc loc ) {
     dbtype = FEDbgType( sym ); /* causes name side effects */
     dw_loc = DBGLoc2DF( loc );
     obj = DWVariable( Client, dbtype, dw_loc,
-                NULL, dw_segloc, name, NULL, flags );
+                0, dw_segloc, name, 0, flags );
     if( attr &  FE_GLOBAL ){
         name = FEName( sym );
         DWPubname( Client, obj, name );
@@ -828,7 +828,7 @@ static  void    GenRetSym( dbg_loc loc, dbg_type tipe ) {
     dw_loc = DBGLoc2DF( loc );
     if( dw_loc != NULL ){
         DWVariable( Client, tipe, dw_loc,
-                   NULL, NULL, ".return", NULL, DW_FLAG_ARTIFICIAL );
+                   0, NULL, ".return", 0, DW_FLAG_ARTIFICIAL );
         DWLocTrash( Client, dw_loc );
     }
 }

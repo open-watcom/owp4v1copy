@@ -45,7 +45,7 @@ _WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
         *b++ = *a++;
     *b = 0;
 
-    MessageBox( NULL, tmp, "Open Watcom", MB_OK );
+    MessageBox( (HWND)NULL, tmp, "Open Watcom", MB_OK );
     _exit( retcode );
 }
 

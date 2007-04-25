@@ -445,9 +445,9 @@ static dr_handle SearchLocList( uint_32 start, uint_32 context,
     dr_handle   p;
 
     p =  DWRCurrNode->sections[DR_DEBUG_LOC].base;
-    if( p == NULL ){
+    if( p == 0 ) {
         DWREXCEPT( DREXCEP_BAD_DBG_INFO );
-        return( NULL );
+        return( 0 );
     }
     p += start;
     for( ;; ) {
@@ -456,7 +456,7 @@ static dr_handle SearchLocList( uint_32 start, uint_32 context,
         high = ReadVWord( p, addr_size );
         p+= addr_size;
         if( low == high && low == 0 ) {
-            p = NULL;
+            p = 0;
             break;
         }
         if( low <= context && context < high ) break;
@@ -514,7 +514,7 @@ static int DWRLocExpr( dr_handle        var,
             }
             loclist =  DWRVMReadDWord( info );
             info = SearchLocList( loclist, context, addr_size );
-            if( info == NULL ) {
+            if( info == 0 ) {
                 ret = FALSE;
                 goto exit;
             }
@@ -661,7 +661,7 @@ extern dr_handle DRStringLengthAT( dr_handle str )
     if( DWRScanForAttrib( &abbrev, &str, DW_AT_string_length ) != 0 ) {
          return( str );
     } else {
-         return( NULL );
+         return( 0 );
     }
 }
 

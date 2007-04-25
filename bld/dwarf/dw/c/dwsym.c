@@ -216,7 +216,7 @@ dw_handle DWENTRY DWBeginSubroutine(
         if( member_hdl ) abbrev |= AB_MEMBER;
         if( segment ) abbrev |= AB_SEGMENT;
     }
-    if( return_type != NULL ){
+    if( return_type != 0 ){
         abbrev |= AB_TYPE;
     }
     StartDIE( cli, abbrev | AB_SIBLING | AB_START_REF );
@@ -305,7 +305,7 @@ dw_handle DWENTRY DWBeginEntryPoint(
     abbrev = AB_ENTRY_POINT;
     if( segment ) abbrev |= AB_SEGMENT;
     if( return_addr_loc ) abbrev |= AB_RETURN_ADDR;
-    if( return_type != NULL ){
+    if( return_type != 0 ){
         abbrev |= AB_TYPE;
     }
     StartDIE( cli, abbrev | AB_SIBLING | AB_START_REF );

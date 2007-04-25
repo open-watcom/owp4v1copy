@@ -92,7 +92,7 @@ GLOBALHANDLE _DialogTemplate( LONG dtStyle, int dtx, int dty, int dtcx,
     }
 
     data = GlobalAlloc( GMEM_MOVEABLE | GMEM_ZEROINIT, blocklen );
-    if( data == NULL ) return( NULL );
+    if( data == NULL ) return( (GLOBALHANDLE)NULL );
 
     numbytes = (UINT _ISFAR *) MK_FP32( GlobalLock( data ) );
     *numbytes = (UINT) blocklen;
@@ -183,7 +183,7 @@ GLOBALHANDLE _AddControl( GLOBALHANDLE data, int dtilx, int dtily,
     GlobalUnlock( data );
 
     new = GlobalReAlloc( data, blocklen, GMEM_MOVEABLE | GMEM_ZEROINIT );
-    if( new == NULL ) return( NULL );
+    if( new == NULL ) return( (GLOBALHANDLE)NULL );
 
     numbytes = (UINT _ISFAR *) MK_FP32( GlobalLock( new ) );
 

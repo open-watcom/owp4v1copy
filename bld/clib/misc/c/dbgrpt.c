@@ -45,11 +45,7 @@
     #include <os2.h>
 #endif
 #ifndef __NT__
-    #ifdef __UNIX__
-        #include <unistd.h>
-    #else
-        #include <io.h>
-    #endif
+    #include <unistd.h>
 #endif
 #include "dbgdata.h"
 #include "enterdb.h"
@@ -139,7 +135,7 @@ static int window_report( int reporttype, const char *filename,
         #ifdef __NT__
             flags |= MB_SETFOREGROUND;
         #endif
-        osrc = MessageBox( NULL, outmsg, WINTITLE, flags );
+        osrc = MessageBox( (HWND)NULL, outmsg, WINTITLE, flags );
         switch( osrc ) {
             case 0:
                 retval = -1;

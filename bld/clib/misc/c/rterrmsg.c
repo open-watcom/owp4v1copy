@@ -75,7 +75,7 @@ void __F_NAME(__rterr_msg,__wrterr_msg)( const CHAR_TYPE *hdr, const CHAR_TYPE *
         const char  *outhdr = hdr;
         const char  *outmsg = msg;
     #endif
-    MessageBox( NULL, outmsg, outhdr, MB_OK | MB_TASKMODAL );
+    MessageBox( (HWND)NULL, outmsg, outhdr, MB_OK | MB_TASKMODAL );
 #elif defined( __NT__ )
     int     rc;
 
@@ -109,7 +109,7 @@ void __F_NAME(__rterr_msg,__wrterr_msg)( const CHAR_TYPE *hdr, const CHAR_TYPE *
         const char  *outhdr = hdr;
         const char  *outmsg = msg;
     #endif
-        pfnWinMessageBox( HWND_DESKTOP, NULL, outmsg, outhdr, 0,
+        pfnWinMessageBox( HWND_DESKTOP, NULLHANDLE, outmsg, outhdr, 0,
                           MB_SYSTEMMODAL | MB_OK );
         DosFreeModule( hmodPMWIN );
     } else {

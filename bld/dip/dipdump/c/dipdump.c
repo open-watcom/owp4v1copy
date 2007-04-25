@@ -968,7 +968,7 @@ static int DumpFile( const char *file, char **dips )
 
         if( proc ) {
             int         prty;
-            mod_handle  mh = NULL;
+            mod_handle  mh = 0;
 
             for( prty = DIPPriority( 0 );
                  prty != 0;
