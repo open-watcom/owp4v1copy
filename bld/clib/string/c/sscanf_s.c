@@ -83,5 +83,5 @@ _WCRTLINK int __F_NAME(sscanf_s,swscanf_s)( const CHAR_TYPE *s, const CHAR_TYPE 
         }
     }
     __rtct_fail( __func__, msg, NULL );
-    return( __F_NAME(EOF,WEOF) );
+    return( EOF );
 }

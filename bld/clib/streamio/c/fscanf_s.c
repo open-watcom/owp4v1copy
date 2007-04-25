@@ -92,5 +92,5 @@ _WCRTLINK int __F_NAME(fscanf_s,fwscanf_s)( FILE * __restrict stream,
         }
     }
     __rtct_fail( __func__, msg, NULL );
-    return( __F_NAME(EOF,WEOF) );
+    return( EOF );
 }

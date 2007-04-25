@@ -1001,7 +1001,7 @@ int __F_NAME(__scnf,__wscnf)( PTR_SCNF_SPECS specs, const CHAR_TYPE *format, va_
                 /* The '%' specifier is the only one not expecting pointer arg */
                 if( specs->assign && null_arg( specs, &margs ) ) {
                     *msg = "%ptr -> NULL";
-                    return( __F_NAME(EOF,WEOF) );
+                    return( EOF );
                 }
             }
 #endif
@@ -1097,7 +1097,7 @@ check_match:
 #ifdef SAFE_SCANF
                     if( specs->assign && null_arg( specs, &margs ) ) {
                         *msg = "%ptr -> NULL";
-                        return( __F_NAME(EOF,WEOF) );
+                        return( EOF );
                     }
 #endif
                     report_scan( specs, &margs, char_match );
@@ -1111,6 +1111,6 @@ check_match:
 
 fail:
     if( items_converted == 0 && specs->eoinp )
-        return( __F_NAME(EOF,WEOF) );
+        return( EOF );
     return( items_assigned );
 }
