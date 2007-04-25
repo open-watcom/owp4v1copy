@@ -4585,7 +4585,7 @@ typedef IMAGE_NT_HEADERS64  *PIMAGE_NT_HEADERS64;
 
 /* Map generic names to the 32- or 64-bit version. */
 typedef IMAGE_NT_HEADERS32  IMAGE_NT_HEADERS;
-typedef PIMAGE_NT_HEADERS32 PIMAGE_NT_HEADERS32;
+typedef PIMAGE_NT_HEADERS32 PIMAGE_NT_HEADERS;
 
 /* Required and optional headers for ROM images */
 typedef struct _IMAGE_ROM_HEADERS {
