@@ -317,10 +317,10 @@ HBRUSH GUIFreeBKBrush( gui_window * wnd )
             brush = SET_HBRBACKGROUND( wnd->hwnd, NULL );
         }
 #else
-        brush = NULL;
+        brush = NULLHANDLE;
 #endif
         _wpi_deletebrush( wnd->bk_brush );
-        wnd->bk_brush = NULL;
+        wnd->bk_brush = NULLHANDLE;
     }
     return( brush );
 }

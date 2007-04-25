@@ -60,7 +60,7 @@ void    DumpFormats( void ) {
     label_id    label;
 
     curr_fc = FCodeTell( 0 );
-    while( FormatList != NULL ) {
+    while( FormatList ) {
         FCodeSeek( FormatList );
         fmt_len = GetU16() - sizeof( fmt_header );
         FormatList = GetObjPtr();

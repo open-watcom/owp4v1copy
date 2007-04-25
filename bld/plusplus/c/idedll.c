@@ -246,7 +246,7 @@ static void initDLLInfo( DLL_DATA *data ) {
     data->print_chr = NULL;
     data->print_line = NULL;
     data->cmd_line = NULL;
-    data->argc = NULL;
+    data->argc = 0;
     data->argv = NULL;
 }
 

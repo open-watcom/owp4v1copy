@@ -658,7 +658,7 @@ static TYPE makeAnyPointer( type_id id, specifier_t cv_flags )
 
     ptype = MakeType( id );
     cvflag = convertCVSpec( cv_flags );
-    if( cvflag != NULL ) {
+    if( cvflag ) {
         /* build this backwards, since later processing reverses the list */
         ptype->of = MakeFlagModifier( cvflag );
     }

@@ -109,9 +109,9 @@ void    StdWrite( char *buff, int len ) {
     } else {
         if( __FAppType == FAPP_GUI ) {
 #if defined( __OS2__ ) && defined( __386__ )
-            WinMessageBox( HWND_DESKTOP, NULL, Buffer, "", 0, MB_SYSTEMMODAL | MB_OK );
+            WinMessageBox( HWND_DESKTOP, NULLHANDLE, Buffer, "", 0, MB_SYSTEMMODAL | MB_OK );
 #elif defined( __WINDOWS__ ) || defined( __NT__ )
-            MessageBox( NULL, Buffer,"", MB_SYSTEMMODAL | MB_OK );
+            MessageBox( (HWND)NULL, Buffer,"", MB_SYSTEMMODAL | MB_OK );
 #endif
         } else {
 #endif

@@ -128,5 +128,5 @@ void PaintAllWindows() {
     HTASK       task;
 
     task = GetCurrentTask();
-    EnumTaskWindows( task, (WNDENUMPROC)PaintFP, NULL );
+    EnumTaskWindows( task, (WNDENUMPROC)PaintFP, 0 );
 }

@@ -514,7 +514,7 @@ static boolean openSrcPath(     // ATTEMPT TO OPEN FILE (PATH TO BE PREPENDED)
         pp = NULL;
     }
     if( pp == NULL ) {
-        retn = NULL;
+        retn = FALSE;
     } else {
         pp = concSep( pp, dir );
         makeDirName( pp, fd );

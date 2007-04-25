@@ -90,7 +90,7 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned op, char *buff )
     case DO_IMMED:
     case DO_ABSOLUTE:
     case DO_MEMORY_ABS:
-        MCTypeInfoForHost( MTK_INTEGER, -sizeof( ins->op[0].value ), &mti );
+        MCTypeInfoForHost( MTK_INTEGER, -(int)sizeof( ins->op[0].value ), &mti );
         max = 40;
         MCTypeToString( dd->radix, &mti, &ins->op[op].value, &max, p );
         break;

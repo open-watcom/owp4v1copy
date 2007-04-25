@@ -613,7 +613,7 @@ static boolean dwarfClassInfo( TYPE type )
                 dh = DWVariable( Client,
                          dh,
                          dl,
-                         NULL,
+                         0,
                          dl_seg,
                          CppNameDebug( curr ),
                          0,
@@ -1321,7 +1321,7 @@ static void dwarf_block_open( SYMBOL sym )
         dh = DWVariable( Client,
                          dh,
                          dummyLoc,
-                         NULL,
+                         0,
                          dummyLoc,
                          name,
                          0,
@@ -1573,7 +1573,7 @@ static dw_handle dwarfData( SYMBOL sym )
         }
     #endif
     flags = 0;
-    class_dh = NULL;
+    class_dh = 0;
     if( SymIsClassMember( sym ) ) {
         if( SymIsStaticDataMember( sym ) ) {
             class_dh = dwarfType( SymClass( sym ), DC_DEFAULT );
@@ -1619,7 +1619,7 @@ static dw_handle dwarfDebugStatic( SYMBOL sym )
         }
     #endif
     flags = 0;
-    class_dh = NULL;
+    class_dh = 0;
     if( SymIsClassMember( sym ) ) {
         if( SymIsStaticDataMember( sym ) ) {
             class_dh = dwarfType( SymClass( sym ), DC_DEFAULT );

@@ -52,7 +52,7 @@ label_id        GDataProlog( void ) {
     EmitOp( FC_START_DATA_STMT );
     DtConstList = ObjTell();
     OutU16( 0 );
-    return( NULL );
+    return( 0 );
 }
 
 

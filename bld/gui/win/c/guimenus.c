@@ -116,7 +116,7 @@ static HMENU GetPopupHMENU( gui_window *wnd, HMENU hmenu, unsigned id,
     popup_info  *info;
 
     if( parent ) {
-        *parent = NULL;
+        *parent = NULLHANDLE;
     }
     if( offset ) {
         *offset = 0;
@@ -687,14 +687,14 @@ bool GUIAddToSystemMenu( gui_window *wnd, HWND hwnd, int num_menus,
         _wpi_enablemenuitem( system, SC_CLOSE, FALSE, FALSE );
     }
     if( style & GUI_CHANGEABLE_FONT ) {
-        if( _wpi_appendmenu( system, MF_SEPARATOR, 0, 0, NULL, NULL ) ) {
+        if( _wpi_appendmenu( system, MF_SEPARATOR, 0, 0, NULLHANDLE, NULL ) ) {
             _wpi_appendmenu( system, MF_STRING, MF_ENABLED,
-                             GUIHint[GUI_MENU_FONT].id, NULL,
+                             GUIHint[GUI_MENU_FONT].id, NULLHANDLE,
                              GUIHint[GUI_MENU_FONT].label );
         }
     }
     if( num_menus > 0 ) {
-        if( _wpi_appendmenu( system, MF_SEPARATOR, 0, 0, NULL, NULL ) ) {
+        if( _wpi_appendmenu( system, MF_SEPARATOR, 0, 0, NULLHANDLE, NULL ) ) {
             return( AppendMenus( wnd, system, num_menus, menu ) );
         }
     }

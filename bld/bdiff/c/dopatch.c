@@ -238,7 +238,7 @@ PATCH_RET_CODE InitPatch( char **target_given )
         if( compare_sig ) {
             if( ch != *p ) {
         PatchError( ERR_NOT_PATCHFILE, PatchName );
-        return( NULL );
+        return( PATCH_RET_OKAY );
             }
             ++p;
             if( ch == END_SIG_CHAR ) {

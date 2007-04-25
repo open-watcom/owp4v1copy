@@ -327,7 +327,7 @@ toolbar *ToolBarInit( HWND parent )
 
     hab = WinQueryAnchorBlock( parent );
     appInst.hab = hab;
-    appInst.mod_handle = NULL;
+    appInst.mod_handle = NULLHANDLE;
 
     if( !toolBarClassRegistered ) {
         rc = WinRegisterClass( hab, className,
@@ -381,7 +381,7 @@ void ToolBarDestroy ( toolbar *bar )
             curr = curr->next;
             MemFree( tmp );
         }
-        if( bar->bgbrush != NULL ) {
+        if( bar->bgbrush != NULLHANDLE ) {
             _wpi_deleteobject( bar->bgbrush );
         }
     }
@@ -522,12 +522,12 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     lastID = -1;
     mouse_captured = FALSE;
 
-    if( bar->bgbrush != NULL ) {
+    if( bar->bgbrush != NULLHANDLE ) {
         _wpi_deleteobject( bar->bgbrush );
-        bar->bgbrush = NULL;
+        bar->bgbrush = NULLHANDLE;
     }
 
-    if( disp->background != NULL ) {
+    if( disp->background != NULLHANDLE ) {
         bar->bgbrush = _wpi_createpatternbrush( disp->background );
     }
 
@@ -1113,7 +1113,7 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
                                                         (WPI_PARAM2)0 );
                 }
                 currTool = tool;
-                drawButton( hwnd, tool, TRUE, NULL, NULL, NULL );
+                drawButton( hwnd, tool, TRUE, NULLHANDLE, NULLHANDLE, NULLHANDLE );
                 mouse_captured = TRUE;
                 _wpi_setcapture( hwnd );
                 currIsDown = TRUE;
@@ -1132,7 +1132,7 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
                 if( tool == currTool ) {
                     _wpi_postmessage( bar->owner, WM_COMMAND, tool->id, CMDSRC_MENU );
                     posted = TRUE;
-                    drawButton( hwnd, tool, FALSE, NULL, NULL, NULL );
+                    drawButton( hwnd, tool, FALSE, NULLHANDLE, NULLHANDLE, NULLHANDLE );
                 }
             }
             if( !posted && bar->hook != NULL ) {
@@ -1163,14 +1163,14 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
             if( tool == currTool ) {
                 if( !currIsDown ) {
                     currIsDown = TRUE;
-                    drawButton( hwnd, currTool, TRUE, NULL, NULL, NULL );
+                    drawButton( hwnd, currTool, TRUE, NULLHANDLE, NULLHANDLE, NULLHANDLE );
                     if( bar->helphook != NULL ) {
                         bar->helphook( hwnd, MPFROMSHORT(currTool->id), TRUE );
                     }
                 }
             } else {
                 if( currIsDown ) {
-                    drawButton( hwnd, currTool, FALSE, NULL, NULL, NULL );
+                    drawButton( hwnd, currTool, FALSE, NULLHANDLE, NULLHANDLE, NULLHANDLE );
                     currIsDown = FALSE;
                     if( bar->helphook != NULL ) {
                         bar->helphook( hwnd, MPFROMSHORT(currTool->id), FALSE );
@@ -1223,7 +1223,7 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         break;
 #endif
     case WM_PAINT:
-        pres = _wpi_beginpaint( hwnd, NULL, &ps );
+        pres = _wpi_beginpaint( hwnd, NULLHANDLE, &ps );
         mempres = _wpi_createcompatiblepres( pres, appInst, &memdc );
 #ifdef __OS2_PM__
         WinFillRect( pres, &ps, CLR_PALEGRAY );
@@ -1240,7 +1240,7 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
             }
         }
         _wpi_deletecompatiblepres( mempres, memdc );
-        _wpi_endpaint( hwnd, NULL, &ps );
+        _wpi_endpaint( hwnd, NULLHANDLE, &ps );
         break;
 
 #ifndef __OS2_PM__

@@ -699,7 +699,7 @@ bool GUIXCreateDialog( gui_create_info *dialog, gui_window *wnd,
             GlobalFree( data );
             return( FALSE );
         }
-        if( GUIControlInsert( wnd, control->control_class, NULL, control,
+        if( GUIControlInsert( wnd, control->control_class, NULLHANDLE, control,
                               NULL ) == NULL ) {
             GlobalFree( data );
             return( FALSE );
@@ -823,7 +823,7 @@ void GUIInitDialog( void )
                            LIT( Empty ), LIT( Empty ), PointSize, Font );
     if( data != NULL ) {
         data = DoneAddingControls( data );
-        DynamicDialogBox( (LPVOID) GUIInitDialogFunc, GUIMainHInst, NULL, data, 0 );
+        DynamicDialogBox( (LPVOID) GUIInitDialogFunc, GUIMainHInst, NULLHANDLE, data, 0 );
     }
 }
 

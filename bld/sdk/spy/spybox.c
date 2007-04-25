@@ -229,8 +229,8 @@ void ResetSpyListBox( void  )
     MoveWindow( SpyListBoxTitle, LISTBOX_X+4, LISTBOX_Y,
                 (1+ TitleBarLen) * xChar, yChar, TRUE );
 
-    InvalidateRect( SpyListBox, NULL, NULL );
-    InvalidateRect( SpyListBoxTitle, NULL, NULL );
+    InvalidateRect( SpyListBox, NULL, FALSE );
+    InvalidateRect( SpyListBoxTitle, NULL, FALSE );
     UpdateWindow( SpyListBox );
     UpdateWindow( SpyListBoxTitle );
 

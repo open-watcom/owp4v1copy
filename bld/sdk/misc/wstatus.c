@@ -258,7 +258,7 @@ CB StatusWndCallback( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpar
         break;
 #endif
     case WM_PAINT:
-        pres = _wpi_beginpaint( hwnd, NULL, &ps );
+        pres = _wpi_beginpaint( hwnd, NULLHANDLE, &ps );
 #ifdef __OS2_PM__
         WinFillRect( pres, &ps, CLR_PALEGRAY );
 #endif

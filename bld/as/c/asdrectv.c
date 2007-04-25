@@ -428,7 +428,7 @@ static bool dirFuncString( directive_t *dir, dir_table_enum parm )
             byte++;
         }
         if( parm == DT_STR_NULL ) {
-            *byte++ = NULL;
+            *byte++ = '\0';
         }
 #ifdef _STANDALONE_
         ObjEmitData( CurrentSection, str, byte - str, ( opnum == 0 ) );

@@ -1301,7 +1301,7 @@ static void emitProfilingData(
         len = strlen( fn_name ) + 1;
         old_seg = BESetSeg( SEG_PROF_REF );
         DbgVerify( 0 == ( 3 & DGTell() ), "P5 segment out of wack" );
-        fnh = BENewBack( NULL );
+        fnh = BENewBack( 0 );
         DGLabel( fnh );
         DGInteger( 0,   T_INTEGER );
         DGInteger( -1,  T_INTEGER );

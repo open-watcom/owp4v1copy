@@ -166,7 +166,7 @@ bool GUICloseStatusWindow( gui_window *wnd )
         return( FALSE );
     }
     status = wnd->status;
-    wnd->status = NULL;
+    wnd->status = NULLHANDLE;
     DestroyWindow( status );
     GUIResizeBackground( wnd, TRUE );
     return( TRUE );

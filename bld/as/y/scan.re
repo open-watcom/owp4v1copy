@@ -80,7 +80,7 @@ static char *yytext( void ) {
         _yytext = (char *) MemAlloc( maxyytextlen );
     }
     memcpy( _yytext, tok, yytextlen );
-    _yytext[yytextlen] = NULL;
+    _yytext[yytextlen] = 0;
     return( _yytext );
 }
 
@@ -392,7 +392,7 @@ sym                     {
 string                  {
                             MemFree( cStr );
                             asyylval.str = ( cStr = AsStrdup( yytext()+1 ) );
-                            cStr[yytextlen - 2] = NULL;
+                            cStr[yytextlen - 2] = 0;
                             return( T_STRING_CONST );
                         }
 
@@ -426,7 +426,7 @@ nl                      { ++asyylineno; return( T_NEWLINE ); }
 :endsegment
 any                     {
                             if( eofPtr && ( cursor == eofPtr ) ) {
-                                return( NULL ); // end of input
+                                return( 0 ); // end of input
                             }
                             return( T_ERROR );
                         }
@@ -439,7 +439,7 @@ ws                      { goto getfname; }
 "\""fname"\""           {
                             MemFree( asyyfname );
                             asyyfname = AsStrdup( yytext()+1 );
-                            asyyfname[yytextlen - 2] = NULL;
+                            asyyfname[yytextlen - 2] = 0;
                             dropDblBackSlashes( asyyfname );
                             goto getfname;
                         }

@@ -2053,7 +2053,7 @@ PTREE PTreeCopyPrefix(         // COPY A PTREE IN (SELF,LEFT,RIGHT) ORDER
             if( ( ptreePTSFlags[ tree->op ] & PTS_OPERATOR ) &&
                 ( tree->op != PT_DUP_EXPR ||
                   ( ((*curr_copy)->u.dup.subtree[0]->flags & PTF_DEFARG_COPY)
-                      == NULL  ) ) ) {
+                      == 0) ) ) {
                 if( tree->u.subtree[0] != NULL ) {
                     /* has a left subtree; store current parent */
                     temp = tree;

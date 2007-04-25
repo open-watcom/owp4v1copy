@@ -89,7 +89,7 @@ void    InitFormatList( void ) {
 
 // Initialize format list.
 
-    FormatList = NULL;
+    FormatList = 0;
 }
 
 

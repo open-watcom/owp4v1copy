@@ -381,7 +381,7 @@ void GUIFreeWindowMemory( gui_window *wnd, bool from_parent, bool dialog )
     }
     if( wnd->hdc != (WPI_PRES)NULL ) {
         _wpi_releasepres( wnd->hwnd, wnd->hdc );
-        wnd->hdc = NULL;
+        wnd->hdc = NULLHANDLE;
     }
 #ifdef __OS2_PM__
     GUIFreeWndPaintHandles( wnd, TRUE );
@@ -500,7 +500,7 @@ void GUIMakeRelative( gui_window *wnd, WPI_POINT *pt, gui_point *point )
 HWND GUIGetScrollHWND( gui_window *wnd )
 {
     if( wnd == NULL ) {
-        return( NULL );
+        return( NULLHANDLE );
     }
     if( wnd->root != NULLHANDLE ) {
         return( wnd->root );
@@ -604,7 +604,7 @@ void GUIRedrawScroll( gui_window *wnd, int bar, bool redraw_now )
 HWND GUIGetParentHWND( gui_window *wnd )
 {
     if( wnd == NULL ) {
-        return( NULL );
+        return( NULLHANDLE );
     }
     if( wnd->root != NULLHANDLE ) {
         return( wnd->root );
@@ -615,7 +615,7 @@ HWND GUIGetParentHWND( gui_window *wnd )
 HWND GUIGetParentFrameHWND( gui_window *wnd )
 {
     if( wnd == NULL ) {
-        return( NULL );
+        return( NULLHANDLE );
     }
     if( wnd->root_frame != NULLHANDLE ) {
         return( wnd->root_frame );

@@ -77,7 +77,7 @@ static void HandleMessage( MSG *data ) {
     if( data->hwnd != spyHwnd && data->hwnd != spyLBHwnd ) {
         info.cbData = sizeof( MSG );
         info.lpData = data;
-        SendMessage( spyHwnd, WM_COPYDATA, NULL, (DWORD)&info );
+        SendMessage( spyHwnd, WM_COPYDATA, 0, (DWORD)&info );
     }
 }
 
@@ -162,11 +162,11 @@ void CALLBACK SetFilter( LPVOID hdlmsg )
         callHookHandle = SetWindowsHookEx( WH_CALLWNDPROC,
                         CallWndProcFilter,
                         dllInstance,
-                        /*(HTASK)*/ NULL);
+                        /*(HTASK)*/ 0 );
         getHookHandle = SetWindowsHookEx( WH_GETMESSAGE,
                         GetMessageFilter,
                         dllInstance,
-                        /*(HTASK)*/ NULL);
+                        /*(HTASK)*/ 0 );
         isFiltering = TRUE;
     }
 

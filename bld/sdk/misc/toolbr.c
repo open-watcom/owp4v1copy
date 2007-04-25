@@ -432,7 +432,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
 
     if( bar->bgbrush != NULL ) {
         DeleteObject( bar->bgbrush );
-        bar->bgbrush = NULL;
+        bar->bgbrush = 0;
     }
     if( disp->background != NULL ) {
         bar->bgbrush = CreatePatternBrush( disp->background );

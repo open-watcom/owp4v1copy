@@ -41,7 +41,7 @@ void GUIDrainEvents( void )
     WPI_QMSG    msg;
 
     // Dispatch all pending messages
-    while( _wpi_peekmessage( GUIMainHInst, &msg, NULL, NULL, NULL, PM_REMOVE ) ) {
+    while( _wpi_peekmessage( GUIMainHInst, &msg, NULLHANDLE, 0, 0, PM_REMOVE ) ) {
         _wpi_translatemessage( &msg );
         _wpi_dispatchmessage( GUIMainHInst, &msg );
     }

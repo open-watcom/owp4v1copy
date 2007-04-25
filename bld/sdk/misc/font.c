@@ -29,10 +29,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
 #include <windows.h>
 #include <commdlg.h>
+#include <stdio.h>
+#include <string.h>
 #include "font.h"
 #include "win1632.h"
 #ifdef __WINDOWS__
@@ -105,7 +105,7 @@ static void getCourierFont( HANDLE inst )
     inst = inst;        /* shut up the compiler for NT */
     hdc = GetDC( (HWND) NULL );
     fp = MakeProcInstance( (FARPROC) EnumFunc, inst );
-    EnumFonts( hdc, NULL, (LPVOID) fp, NULL);
+    EnumFonts( hdc, NULL, (LPVOID) fp, 0 );
     FreeProcInstance( fp );
     ReleaseDC( (HWND) NULL, hdc );
 

@@ -65,7 +65,7 @@ void WINEXP AddFMEditMenus( HMENU submenu, int bitmap )
     HBITMAP     hbitmap;
     HMENU       alignmenu;
 
-    InsertMenu( submenu, -1, MF_BYPOSITION | MF_SEPARATOR, NULL, NULL );
+    InsertMenu( submenu, -1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL );
     if( bitmap & MENU_CUT ) {
         InsertMenu( submenu, -1, MF_BYPOSITION | MF_STRING, IDM_CUTOBJECT,
                     "Cu&t\tShift+Del" );
@@ -86,24 +86,24 @@ void WINEXP AddFMEditMenus( HMENU submenu, int bitmap )
     if( bitmap & MENU_ALIGN ) {
         alignmenu = CreateMenu();
         if( bitmap & EDIT_MENU_FLAGS != MENU_ALIGN ) {
-            AppendMenu( submenu, MF_SEPARATOR, NULL, NULL );
+            AppendMenu( submenu, MF_SEPARATOR, 0, NULL );
         }
         AppendMenu( submenu, MF_POPUP, (UINT)alignmenu, "Group &Align" );
         hbitmap = LoadBitmap( GetInst(), "LEFT" );
         AppendMenu( alignmenu, MF_BITMAP, IDM_FMLEFT, (LPSTR) hbitmap );
-        AppendMenu( alignmenu, MF_SEPARATOR, NULL, NULL );
+        AppendMenu( alignmenu, MF_SEPARATOR, 0, NULL );
         hbitmap = LoadBitmap( GetInst(), "HCENTRE" );
         AppendMenu( alignmenu, MF_BITMAP, IDM_FMHCENTRE, (LPSTR) hbitmap );
-        AppendMenu( alignmenu, MF_SEPARATOR, NULL, NULL );
+        AppendMenu( alignmenu, MF_SEPARATOR, 0, NULL );
         hbitmap = LoadBitmap( GetInst(), "RIGHT" );
         AppendMenu( alignmenu, MF_BITMAP, IDM_FMRIGHT, (LPSTR) hbitmap );
-        AppendMenu( alignmenu, MF_SEPARATOR, NULL, NULL );
+        AppendMenu( alignmenu, MF_SEPARATOR, 0, NULL );
         hbitmap = LoadBitmap( GetInst(), "TOP" );
         AppendMenu( alignmenu, MF_BITMAP, IDM_FMTOP, (LPSTR) hbitmap );
-        AppendMenu( alignmenu, MF_SEPARATOR, NULL, NULL );
+        AppendMenu( alignmenu, MF_SEPARATOR, 0, NULL );
         hbitmap = LoadBitmap( GetInst(), "VCENTRE" );
         AppendMenu( alignmenu, MF_BITMAP, IDM_FMVCENTRE, (LPSTR) hbitmap );
-        AppendMenu( alignmenu, MF_SEPARATOR, NULL, NULL );
+        AppendMenu( alignmenu, MF_SEPARATOR, 0, NULL );
         hbitmap = LoadBitmap( GetInst(), "BOTTOM" );
         AppendMenu( alignmenu, MF_BITMAP, IDM_FMBOTTOM, (LPSTR) hbitmap );
     }

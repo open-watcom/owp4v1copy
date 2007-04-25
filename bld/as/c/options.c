@@ -59,7 +59,7 @@ static bool optionsPredefine( const char *str ) {
     if( ppDefines == NULL ) {
         length = maxNumPredefines * sizeof( char * );
         ppDefines = MemAlloc( length );
-        memset( ppDefines, NULL, length );
+        memset( ppDefines, 0, length );
         idx = 0;
     } else {
         ++idx;

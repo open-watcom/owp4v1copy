@@ -109,7 +109,7 @@ BOOL CALLBACK EnumWindowsFunc( HWND hwnd, DWORD lparam )
 {
     FARPROC     fp;
 
-    if( lparam != NULL ) {
+    if( lparam != 0 ) {
         if( GetParent( hwnd ) != (HWND) lparam ) {
             return( 1 );
         }

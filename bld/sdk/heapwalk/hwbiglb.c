@@ -201,7 +201,7 @@ BOOL __export FAR PASCAL TextBoxProc( HWND hwnd, unsigned msg, WORD wparam,
     default:
         return( DefWindowProc( hwnd, msg, wparam, lparam ) );
     }
-    return( NULL );
+    return( FALSE );
 }
 
 /*

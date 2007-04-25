@@ -356,7 +356,7 @@ LRESULT WINEXPORT WdeEditWndProc( HWND hWnd, UINT message,
                 case CTLCOLOR_SCROLLBAR:
                     result = (LRESULT)WdeCtl3dCtlColorEx( message, wParam, lParam );
                     if( result == (HBRUSH)NULL ) {
-                        SetTextColor ( (HDC) wParam, NULL);
+                        SetTextColor ( (HDC) wParam, 0 );
                         SetBkColor ( (HDC) wParam, RGB( 255, 255, 255 ) );
                         result = (LRESULT) WdeEditBrush;
                     }

@@ -543,7 +543,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
             ns = malloc( sizeof( size_list ) + strlen( root_file ) );
             if( ns == NULL ) {
                 printf( "Out of memory\n" );
-                return( NULL );
+                return( FALSE );
             }
             strcpy( ns->name, root_file );
             for( sl = curr->sizes; sl != NULL; sl = sl->next ) {
@@ -581,7 +581,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         ns = malloc( sizeof( size_list ) + strlen( root_file ) );
         if( ns == NULL ) {
             printf( "Out of memory\n" );
-            return( NULL );
+            return( FALSE );
         }
         strcpy( ns->name, root_file );
         ns->size = act_size;

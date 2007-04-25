@@ -64,7 +64,7 @@ BOOL FAR PASCAL LibMain( HINSTANCE hInstance, WORD wDataSegment,
     /* Do our DLL initialization */
     hlib = LoadLibrary( "vbdll32.dll" );
     if( (UINT)hlib < 32 ) {
-        MessageBox( NULL,
+        MessageBox( (HWND)NULL,
                     "Make sure your PATH contains VBDLL32.DLL",
                     "COVER16", MB_OK | MB_ICONEXCLAMATION );
         return( FALSE );

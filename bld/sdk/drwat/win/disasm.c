@@ -546,8 +546,8 @@ void PreviousInstruction( ADDRESS *addr )
             addr->offset = next_off;
         }
     }
-    addr->seg = NULL;
-    addr->offset = NULL;
+    addr->seg    = 0;
+    addr->offset = 0;
 
 } /* PreviousInstruction */
 

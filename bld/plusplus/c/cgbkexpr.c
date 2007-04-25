@@ -118,7 +118,7 @@ void CgPushGarbage(             // PUSH GARBAGE (TO BE TRASHED/POPPED)
 
     top = VstkPush( &expressions );
     top->expr = NULL;
-    top->type = NULL;
+    top->type = 0;
     top->garbage = TRUE;
 }
 

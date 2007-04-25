@@ -62,7 +62,7 @@ static gui_help_instance InitHelp( HWND hwnd, WPI_INST inst, char *title, char *
     if( hwndHelpInstance != (HWND)NULL ) {
         if( !WinAssociateHelpInstance( hwndHelpInstance, hwnd ) ) {
             WinDestroyHelpInstance( hwndHelpInstance );
-            hwndHelpInstance = NULL;
+            hwndHelpInstance = NULLHANDLE;
         }
     }
 
@@ -74,7 +74,7 @@ static void FiniHelp( gui_help_instance inst, HWND hwnd, char *file )
     hwnd=hwnd;
     file=file;
     if( (HWND)inst != (HWND)NULL ) {
-        WinAssociateHelpInstance( (HWND)inst, NULL );
+        WinAssociateHelpInstance( (HWND)inst, NULLHANDLE );
         WinDestroyHelpInstance( (HWND)inst );
     }
 }
