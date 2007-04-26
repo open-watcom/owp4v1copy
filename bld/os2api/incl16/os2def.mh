@@ -6,11 +6,7 @@
 
 :include cpluspro.sp
 
-#if (defined(M_I86SM) || defined(M_I86MM))
-#define NULL   0
-#else
-#define NULL   0L
-#endif
+:include null.sp
 
 #define FAR     _far
 #define NEAR    _near
