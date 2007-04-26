@@ -10,10 +10,6 @@
 :include readonly.sp
 :include cpluspro.sp
 
-#ifndef RC_INVOKED
-#include <stddef.h>
-#endif /* RC_INVOKED */
-
 #ifdef __WINDOWS_386__
 
 #ifndef NOAUTOPROCS
