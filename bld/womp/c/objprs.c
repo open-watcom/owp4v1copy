@@ -577,7 +577,7 @@ STATIC int pass1Pubdef( obj_rec *objr ) {
     if( !ObjEOR( objr ) ) {
         for(;;) {
             name_len = ObjGet8( objr );
-            pubdata[ num_pubs ].name = NameAdd( ObjGet( objr, name_len ),
+            pubdata[ num_pubs ].name = NameAdd( (char *)ObjGet( objr, name_len ),
                 name_len );
             pubdata[ num_pubs ].offset = ObjGetEither( objr );
             pubdata[ num_pubs ].type.idx = ObjGetIndex( objr );

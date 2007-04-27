@@ -181,7 +181,7 @@ STATIC name_handle hdlName( void ) {
     if( len > 0 ) {
         p = wat->ptr;
         wat->ptr += len;
-        return( NameAdd( p, len ) );
+        return( NameAdd( (char *)p, len ) );
     } else {
         return( NAME_NULL );
     }

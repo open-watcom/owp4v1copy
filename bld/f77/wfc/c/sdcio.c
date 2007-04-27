@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  System dependent compiler I/O routines.
 *
 ****************************************************************************/
 
-
-//
-// SDCIO      : System dependent compiler I/O routines
-//
 
 #include "ftnstd.h"
 #include "omodes.h"

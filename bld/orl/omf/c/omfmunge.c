@@ -741,16 +741,16 @@ static orl_return       checkSegmentLength( omf_sec_handle sh, uint_32 max )
 }
 
 
-static omf_bytes        strNUpper( omf_bytes buffer, int len )
+static char             *strNUpper( char *str, int len )
 {
-    assert( buffer );
+    assert( str );
 
     len--;
     while( len >= 0 ) {
-        buffer[ len ] = toupper( buffer[ len ] );
+        str[ len ] = toupper( str[ len ] );
         len--;
     }
-    return( buffer );
+    return( str );
 }
 
 
@@ -1141,7 +1141,7 @@ orl_return              OmfAddExtDef( omf_file_handle ofh, omf_bytes buffer,
     } else {
         styp |= ORL_SYM_TYPE_UNDEFINED;
     }
-    sym = newSymbol( ofh, styp, buffer, len );
+    sym = newSymbol( ofh, styp, (char *)buffer, len );
     if( !sym ) return( ORL_OUT_OF_MEMORY );
 
     sym->idx = ofh->extdefs->assoc.string.num + 1;

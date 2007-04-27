@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Pragma processing for x86 targets.
 *
 ****************************************************************************/
 
@@ -836,7 +835,7 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
             }
             VbufUsed( code_buffer, dst );
         }
-        buff = code_buffer->buf;
+        buff = (byte *)code_buffer->buf;
         i = dst;
         perform_fixups = DO_FLOATING_FIXUPS;
     }
@@ -901,7 +900,7 @@ boolean AsmSysInsertFixups( VBUF *code )
 
     VbufInit( &temp_buffer );
     VbufReqd( &temp_buffer, code->used );
-    uses_auto = insertFixups( &temp_buffer, code->buf, code->used );
+    uses_auto = insertFixups( &temp_buffer, (byte *)code->buf, code->used );
     VbufFree( &temp_buffer );
     AsmSymFini();
     return( uses_auto );
@@ -955,9 +954,10 @@ void AsmSysFini( void )
     AsmRestoreCPUInfo();
 }
 
-static char *copyCodeLen( char *d, void *v, unsigned len )
+static byte *copyCodeLen( byte *d, void *v, unsigned len )
 {
-    char *s = v;
+    byte *s = v;
+
     while( len ) {
         *d++ = *s++;
         --len;
@@ -973,15 +973,15 @@ void AsmSysPCHWriteCode( AUX_INFO *info )
     byte_seq_len seq_size;
     unsigned fixup;
     byte_seq *code;
-    char *d;
-    char *s;
-    char *c;
-    char *p;
-    char *tmp_buff;
+    byte *d;
+    byte *s;
+    byte *c;
+    byte *p;
+    byte *tmp_buff;
 #ifndef NDEBUG
-    auto char buff[8];
+    byte buff[8];
 #else
-    auto char buff[1024];
+    byte buff[1024];
 #endif
 
     seq_size = 0;
@@ -1042,8 +1042,8 @@ void AsmSysPCHWriteCode( AUX_INFO *info )
 void AsmSysPCHReadCode( AUX_INFO *info )
 /**************************************/
 {
-    char *p;
-    char *s;
+    byte *p;
+    byte *s;
     byte_seq *code;
     unsigned fixup;
     SYMBOL sym;
@@ -1108,7 +1108,7 @@ static int GetByteSeq( void )
         VbufReqd( &code_buffer, ( (i+ASM_BLOCK) + (ASM_BLOCK-1) ) & ~(ASM_BLOCK-1) );
         if( CurToken == T_STRING ) {
             AsmCodeAddress = i;
-            AsmCodeBuffer = code_buffer.buf;
+            AsmCodeBuffer = (byte *)code_buffer.buf;
             AsmLine( Buffer );
             i = AsmCodeAddress;
             NextToken();

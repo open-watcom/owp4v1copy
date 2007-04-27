@@ -214,7 +214,7 @@ orl_return PrintRelocInfo( orl_reloc *reloc )
 orl_return PrintSecInfo( orl_sec_handle o_shnd )
 /**********************************************/
 {
-    char *                      buf;
+    char                        *buf;
     int                         loop;
     int                         loop2;
     orl_sec_size                size;
@@ -347,7 +347,7 @@ orl_return PrintSecInfo( orl_sec_handle o_shnd )
         if( sep ) printf( "\n" );
     }
     if( dump.sec_contents ) {
-        if( ORLSecGetContents( o_shnd, &buf ) == ORL_OKAY ) {
+        if( ORLSecGetContents( o_shnd, (unsigned_8 **)&buf ) == ORL_OKAY ) {
             printf( "Contents:\n" );
             for( loop = 0; loop < size; loop += 16 ) {
                 printf( "0x%8.8x: ", loop );

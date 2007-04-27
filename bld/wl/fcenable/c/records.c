@@ -247,7 +247,7 @@ static void proclnames( void )
 {
     unsigned        rec_len;
     BYTE            name_len;
-    BYTE *          name;
+    char            *name;
 
     rec_len = Rec1->head.length;
     name = Rec1->u.anyobj.rest;

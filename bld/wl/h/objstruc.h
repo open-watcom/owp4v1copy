@@ -513,9 +513,9 @@ typedef struct grpnode {
 } grpnode;
 
 typedef struct segnode {
-    SEGDATA *   entry;
-    void *      handle;   // ORL: handle for the segment.
-    char *      contents; // ORL: pointer to contents of segment.
+    SEGDATA     *entry;
+    void        *handle;      // ORL: handle for the segment.
+    unsigned_8  *contents;    // ORL: pointer to contents of segment.
     unsigned    info;
 } segnode;
 
@@ -525,10 +525,10 @@ typedef struct list_of_names {
 } list_of_names;
 
 typedef struct lobject_data {
-    segdata *           seg;
+    segdata             *seg;
     offset              obj_offset;     // pass 1: delta for fixup offsets
     targ_addr           addr;
-    char *              data;
+    unsigned_8          *data;
 } lobject_data;
 
 typedef struct {

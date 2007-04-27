@@ -451,10 +451,10 @@ void PrintLinePrefix( void *data, orl_sec_offset off, orl_sec_offset total,
 }
 
 
-static return_val disassembleSection( section_ptr sec, char * contents,
+static return_val disassembleSection( section_ptr sec, unsigned_8 *contents,
                 orl_sec_size size, unsigned pass )
 {
-    hash_data *                 data_ptr;
+    hash_data                   *data_ptr;
     label_list                  sec_label_list;
     ref_list                    sec_ref_list;
     return_val                  error;
@@ -542,11 +542,11 @@ static label_entry dumpLabel( label_entry l_entry, section_ptr sec,
     return( l_entry );
 }
 
-static orl_sec_offset checkForDupLines( char *contents, orl_sec_offset loop,
+static orl_sec_offset checkForDupLines( unsigned_8 *contents, orl_sec_offset loop,
                                         orl_sec_size size, label_entry l_entry,
                                         ref_entry r_entry )
 {
-    char                        *cmp;
+    unsigned_8                  *cmp;
     orl_sec_offset              d;
     unsigned int                lines;
 
@@ -566,9 +566,9 @@ static orl_sec_offset checkForDupLines( char *contents, orl_sec_offset loop,
     return( d );
 }
 
-void DumpDataFromSection( char *contents, orl_sec_offset start,
-                                 orl_sec_offset end, label_entry *labent,
-                                 ref_entry *refent, section_ptr sec )
+void DumpDataFromSection( unsigned_8 *contents, orl_sec_offset start,
+                          orl_sec_offset end, label_entry *labent,
+                          ref_entry *refent, section_ptr sec )
 {
     orl_sec_offset              loop;
     unsigned                    loop2;
@@ -635,10 +635,10 @@ void DumpDataFromSection( char *contents, orl_sec_offset start,
     *refent = r_entry;
 }
 
-static void dumpSection( section_ptr sec, char * contents, orl_sec_size size,
+static void dumpSection( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
                         unsigned pass )
 {
-    hash_data *                 data_ptr;
+    hash_data                   *data_ptr;
     label_list                  sec_label_list;
     label_entry                 l_entry;
     ref_list                    sec_ref_list;
@@ -732,7 +732,7 @@ static void bssSection( section_ptr sec, orl_sec_size size, unsigned pass )
 static return_val DealWithSection( section_ptr sec, unsigned pass )
 {
     orl_sec_size        size;
-    char *              contents;
+    unsigned_8          *contents;
     return_val          error = OKAY;
 
     switch( sec->type ) {

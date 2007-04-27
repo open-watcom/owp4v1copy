@@ -43,7 +43,7 @@
 extern dis_handle       DHnd;
 
 
-ref_entry DoPass1Relocs( char *contents, ref_entry r_entry,
+ref_entry DoPass1Relocs( unsigned_8 *contents, ref_entry r_entry,
                          orl_sec_offset start, orl_sec_offset end )
 {
     long                                value;
@@ -107,7 +107,7 @@ static int isSelfReloc( ref_entry r_entry )
     return( 0 );
 }
 
-return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
+return_val DoPass1( orl_sec_handle shnd, unsigned_8 *contents, orl_sec_size size,
                     ref_list sec_ref_list, scantab_ptr stl )
 // perform pass 1 on one section
 {

@@ -233,7 +233,7 @@ static void write_end_of_pass1( void )
     objr = ObjNewRec( CMD_COMENT );
     objr->d.coment.attr = 0x00;
     objr->d.coment.class = CMT_MS_END_PASS_1;
-    ObjAttachData( objr, "\x001", 1 );
+    ObjAttachData( objr, (uint_8 *)"\x001", 1 );
     write_record( objr, TRUE );
 }
 
@@ -245,7 +245,7 @@ static void write_dosseg( void )
     objr = ObjNewRec( CMD_COMENT );
     objr->d.coment.attr = 0x80;
     objr->d.coment.class = CMT_DOSSEG;
-    ObjAttachData( objr, "", 0 );
+    ObjAttachData( objr, (uint_8 *)"", 0 );
     write_record( objr, TRUE );
 }
 
@@ -261,7 +261,7 @@ static void write_lib( void )
         objr = ObjNewRec( CMD_COMENT );
         objr->d.coment.attr = 0x80;
         objr->d.coment.class = CMT_DEFAULT_LIBRARY;
-        ObjAttachData( objr, name, strlen( name ) );
+        ObjAttachData( objr, (uint_8 *)name, strlen( name ) );
         write_record( objr, TRUE );
     }
 }
@@ -409,7 +409,7 @@ static void write_lnames( void )
     objr->d.lnames.num_names = LnamesIdx;
     total_size = GetLnameData( &lname );
     if( total_size > 0 ) {
-        ObjAttachData( objr, lname, total_size );
+        ObjAttachData( objr, (uint_8 *)lname, total_size );
     }
     ObjCanFree( objr );
     write_record( objr, TRUE );
@@ -458,7 +458,7 @@ static dir_node *write_extdef( dir_node *start )
         i += len;
         name[i++] = 0;      // for the type index
     }
-    ObjAttachData( objr, name, total_size );
+    ObjAttachData( objr, (uint_8 *)name, total_size );
     if( num != 0 ) {
         objr->d.extdef.num_names = num;
         write_record( objr, TRUE );
@@ -599,7 +599,7 @@ static dir_node *write_comdef( dir_node *start )
                 name[i++] = symsize;
             }
         }
-        ObjAttachData( objr, name, total_size );
+        ObjAttachData( objr, (uint_8 *)name, total_size );
     }
     ObjCanFree( objr );
     if( num != 0 ) {
@@ -680,7 +680,7 @@ static int write_autodep( void )
         strcpy(buff + 5, curr->name);
         len += 5;
 
-        ObjAttachData( objr, buff, len );
+        ObjAttachData( objr, (uint_8 *)buff, len );
 
         write_record( objr, TRUE );
     }
@@ -688,7 +688,7 @@ static int write_autodep( void )
     objr = ObjNewRec( CMD_COMENT );
     objr->d.coment.attr = 0x80;
     objr->d.coment.class = CMT_DEPENDENCY;
-    ObjAttachData( objr, "", 0 );
+    ObjAttachData( objr, (uint_8 *)"", 0 );
     write_record( objr, TRUE );
     return NOT_ERROR;
 }
@@ -909,7 +909,7 @@ static void write_alias( void )
         new -= len1 + 2;
 
         objr = ObjNewRec( CMD_ALIAS );
-        ObjAttachData( objr, new, len1+len2+2);
+        ObjAttachData( objr, (uint_8 *)new, len1+len2+2);
         write_record( objr, TRUE );
         first = FALSE;
     }
@@ -1078,7 +1078,7 @@ static unsigned long OnePass( char *string )
 void WriteObjModule( void )
 /**************************/
 {
-    char                codebuf[ MAX_LEDATA_THRESHOLD ];
+    uint_8              codebuf[ MAX_LEDATA_THRESHOLD ];
     char                string[ MAX_LINE_LEN ];
     char                *p;
     unsigned long       prev_total;

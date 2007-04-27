@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMF comment parsing.
 *
 ****************************************************************************/
 
@@ -62,7 +61,7 @@ orl_return      OmfParseComments( omf_sec_handle sh, orl_note_callbacks *cb,
         switch( comment->class ) {
         case( CMT_DEFAULT_LIBRARY ):
             if( cb->deflib_fn ) {
-                err = cb->deflib_fn( comment->data, cookie );
+                err = cb->deflib_fn( (char *)comment->data, cookie );
             }
             break;
         case( CMT_DISASM_DIRECTIVE ):
@@ -80,5 +79,3 @@ orl_return      OmfParseComments( omf_sec_handle sh, orl_note_callbacks *cb,
 
     return( err );
 }
-
-

@@ -215,7 +215,7 @@ void ObjRSkipPage( OBJ_RFILE *obj, size_t page_len ) {
     Routines for buffered writing of an object file
 */
 
-STATIC void safeWrite( int fh, const char *buf, size_t len ) {
+STATIC void safeWrite( int fh, const uint_8 *buf, size_t len ) {
 
     if( write( fh, buf, len ) != len ) {
         Fatal( MSG_DISK_ERROR, "write" );
@@ -252,7 +252,7 @@ void ObjWriteClose( OBJ_WFILE *obj ) {
 
 void ObjWBegRec( OBJ_WFILE *obj, uint_8 command ) {
 /***********************************************/
-    char    buf[3];
+    uint_8  buf[3];
 
 /**/myassert( obj != NULL && !obj->in_rec );
 
@@ -270,7 +270,7 @@ static void objWFlushBuffer( OBJ_WFILE *obj ) {
 /*******************************************/
     size_t  len_to_write;
     uint_8  checksum;
-    char    *p;
+    uint_8  *p;
 
 /**/myassert( obj != NULL );
 
@@ -288,7 +288,7 @@ static void objWFlushBuffer( OBJ_WFILE *obj ) {
 
 void ObjWEndRec( OBJ_WFILE *obj ) {
 /*******************************/
-    char    buf[2];
+    uint_8  buf[2];
     uint_8  checksum;
 
 /**/myassert( obj != NULL && obj->in_rec );
@@ -348,10 +348,10 @@ void ObjWriteIndex( OBJ_WFILE *obj, uint_16 index ) {
     ObjWrite8( obj, index & 0xff );
 }
 
-void ObjWrite( OBJ_WFILE *obj, const char *buf, size_t length ) {
-/*************************************************************/
-    const char *write;
-    size_t amt;
+void ObjWrite( OBJ_WFILE *obj, const uint_8 *buf, size_t length ) {
+/***************************************************************/
+    const uint_8    *write;
+    size_t          amt;
 
 /**/myassert( obj != NULL && buf != NULL );
 
@@ -386,13 +386,13 @@ STATIC uint_8 checkSum( const uint_8 *buf, uint_16 length ) {
 }
 
 void ObjWriteRec( OBJ_WFILE *obj, uint_8 command, uint_16 length,
-    const char *contents ) {
+    const uint_8 *contents ) {
 /***************************************************************/
 /*
     Contents and length don't include checksum
 */
-    char buf[3];
-    uint_8 checksum;
+    uint_8  buf[3];
+    uint_8  checksum;
 
 /**/myassert( obj != NULL && !obj->in_rec );
 

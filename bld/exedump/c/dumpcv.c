@@ -163,7 +163,7 @@ static void dump_cv4_sstPublic( unsigned_32 base, unsigned_32 offset,
     Wdputslc( "\n" );
     while( read < size ) {
         Wread( &pub16, sizeof( pub16 ) );
-        name_len = pub16.name[0];
+        name_len = (unsigned_8)pub16.name[0];
         Dump_header( &pub16, cv_sstPublic_msg );
         read += sizeof( pub16 );
         Wread( name, name_len );

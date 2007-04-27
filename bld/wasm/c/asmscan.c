@@ -127,8 +127,8 @@ done_scanning_float:
     return( NOT_ERROR );
 }
 
-static void array_mul_add(char *buf, unsigned base, unsigned num, unsigned size) {
-
+static void array_mul_add( unsigned char *buf, unsigned base, unsigned num, unsigned size )
+{
     while( size-- > 0 ) {
         num += *buf * base;
         *(buf++) = num;

@@ -29,10 +29,11 @@
 ****************************************************************************/
 
 
-static unsigned keyword_hash( const unsigned char *name,
+static unsigned keyword_hash( const char *sym,
                               const unsigned char *weights, unsigned len )
 {
-    unsigned hash;
+    const unsigned char  *name = (const unsigned char *)sym;
+    unsigned             hash;
 
 #ifdef IGNORE_CASE
     hash = len + tolower( name[ LEN_MIN ] );
@@ -59,5 +60,5 @@ static unsigned keyword_hash( const unsigned char *name,
 #else
     hash %= KEYWORD_HASH;
 #endif
-    return hash;
+    return( hash );
 }

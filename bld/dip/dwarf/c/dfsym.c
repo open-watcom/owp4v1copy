@@ -1661,7 +1661,7 @@ extern search_result   DoLookupSym( imp_image_handle *ii,
     int                 cont;
 
     if( *li->name.start == SH_ESCAPE ) {
-        CollectSymHdl( li->name.start, DCSymCreate( ii, d ) );
+        CollectSymHdl( (unsigned_8 *)li->name.start, DCSymCreate( ii, d ) );
         return( SR_EXACT );
     }
     if( li->type == ST_OPERATOR ) {

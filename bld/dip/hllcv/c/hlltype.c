@@ -129,8 +129,8 @@ static dip_status TypeVMGetName( imp_image_handle *ii, virt_mem base,
     /* A name can't be longer than 255 bytes */
     p = VMBlock( ii, base, 256 + skip );
     if( p == NULL ) return( DS_ERR | DS_FAIL );
-    name = (unsigned_8 *)p + skip;
-    *lenp = name[0];
+    name = (char *)p + skip;
+    *lenp = *(unsigned_8 *)name;
     *namep = &name[1];
     if( pp != NULL ) *pp = p;
     return( DS_OK );

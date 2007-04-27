@@ -252,7 +252,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                 break;
             }
             count = 0;
-            char_ptr = AsmBuffer[cur_pos]->bytes;
+            char_ptr = (char *)AsmBuffer[cur_pos]->bytes;
 #if defined( _STANDALONE_ )
             if( sym && Parse_Pass == PASS_1 ) {
                 update_sizes( sym, first, no_of_bytes );

@@ -38,8 +38,8 @@ typedef struct {
 } vflistrtns;
 
 typedef struct cdat_piece {
-    struct cdat_piece  *next;
-    char *              data;
+    struct cdat_piece   *next;
+    unsigned_8          *data;
     offset              length;
     unsigned            free_data : 1;
 } comdat_piece;
@@ -78,7 +78,7 @@ extern void             DefineVFReference( void *, symbol *, bool );
 extern void             DefineReference( symbol * );
 extern void             CheckComdatSym( symbol *, unsigned );
 extern void             DefineComdat( segdata *, symbol *, offset, sym_info,
-                                      char * );
+                                      unsigned_8 * );
 extern group_entry *    GetGroup( char * );
 extern group_entry *    SearchGroups( char * );
 extern void             SeenDLLRecord( void );
@@ -87,7 +87,7 @@ extern void             HandleImport( length_name *, length_name *,
 extern void             HandleExport( length_name *, length_name *, unsigned,
                                       unsigned );
 extern bool             CheckVFList( symbol * );
-extern void             SetCurrSeg( segdata *, offset, char * );
+extern void             SetCurrSeg( segdata *, offset, unsigned_8 * );
 extern void             ResetObjPass1( void );
 
 extern obj_format       ObjFormat;

@@ -51,7 +51,7 @@ extern orl_sec_handle           debugHnd;
 
 static int ConvertLines( const uint_8 * input, uint length, uint limit );
 
-static void fixupLines( char *relocContents, orl_sec_handle sec )
+static void fixupLines( uint_8 *relocContents, orl_sec_handle sec )
 {
     hash_data *                 data_ptr;
     ref_list                    sec_ref_list;
@@ -94,8 +94,8 @@ extern orl_table_index GetDwarfLines( section_ptr sec )
 {
     uint                size;
     uint                limit;
-    char *              contents;
-    char *              relocContents;
+    unsigned_8          *contents;
+    unsigned_8          *relocContents;
     orl_table_index     numlines;
 
     if( lines ) {
@@ -217,7 +217,7 @@ static int ConvertLines( const uint_8 * input, uint length, uint limit )
     uint *                      opcode_lengths;
     uint                        u;
     uint                        file_index;
-    const uint_8 *              name;
+    const char *                name;
     uint_32                     mod_time;
     uint_32                     file_length;
     uint_32                     directory;
@@ -273,21 +273,21 @@ static int ConvertLines( const uint_8 * input, uint length, uint limit )
         file_index = 0;
         while( *p != 0 ) {
             ++file_index;
-            name = p;
-            p += strlen( p ) + 1;
+            name = (char *)p;
+            p += strlen( (char *)p ) + 1;
             if( p - input >= length ) return 0;
         }
         p++;
         file_index = 0;
         while( *p != 0 ) {
             ++file_index;
-            name = p;
-            p += strlen( p ) + 1;
+            name = (char *)p;
+            p += strlen( (char *)p ) + 1;
             p = DecodeULEB128( p, &directory );
             p = DecodeULEB128( p, &mod_time );
             p = DecodeULEB128( p, &file_length );
             if( !SourceFileInDwarf ) {
-                SourceFileInDwarf = MemAlloc( strlen( (char *)name ) + 1 );
+                SourceFileInDwarf = MemAlloc( strlen( name ) + 1 );
                 strcpy( SourceFileInDwarf, name );
             }
             if( p - input >= length ) return 0;
@@ -334,15 +334,15 @@ static int ConvertLines( const uint_8 * input, uint length, uint limit )
                     break;
                 case DW_LNE_define_file:
                     ++file_index;
-                    name = p;
-                    p += strlen( p ) + 1;
+                    name = (char *)p;
+                    p += strlen( (char *)p ) + 1;
                     p = DecodeULEB128( p, &directory );
                     p = DecodeULEB128( p, &mod_time );
                     p = DecodeULEB128( p, &file_length );
                     if( SourceFileInDwarf ) {
                         MemFree( SourceFileInDwarf );
                     }
-                    SourceFileInDwarf = MemAlloc( strlen( (char *)name) + 1 );
+                    SourceFileInDwarf = MemAlloc( strlen( name) + 1 );
                     strcpy( SourceFileInDwarf, name );
                     break;
                 default:

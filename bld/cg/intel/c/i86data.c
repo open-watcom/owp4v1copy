@@ -345,7 +345,7 @@ static  cg_class ConstDataClass( void ) {
     }
 }
 
-extern  name    *GenConstData( char *buffer, type_class_def class ) {
+extern  name    *GenConstData( byte *buffer, type_class_def class ) {
 /*******************************************************************/
 
     seg_id              old;

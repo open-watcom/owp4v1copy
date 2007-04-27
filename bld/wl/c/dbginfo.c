@@ -103,7 +103,7 @@ struct {
 } TraceInfo;
 #endif
 
-static snamelist * LangAlloc( byte len, void *buff )
+static snamelist * LangAlloc( byte len, char *buff )
 /**************************************************/
 {
     snamelist *node;

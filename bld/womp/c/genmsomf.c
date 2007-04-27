@@ -216,7 +216,7 @@ STATIC int writeFixup( obj_rec *objr, pobj_state *state ) {
     OBJ_WFILE   *out;
     int         is32;
     fixup       *walk;
-    char        buf[ FIX_GEN_MAX ];
+    uint_8      buf[ FIX_GEN_MAX ];
     size_t      len;
     size_t      len_written;
 
@@ -395,10 +395,10 @@ STATIC int writeModend( obj_rec *objr, pobj_state *state ) {
     size_t  len;
     char    is32;
 #if _WOMP_OPT & _WOMP_WATFOR
-    char    buf[ 1 ];
+    uint_8  buf[ 1 ];
 #else
-    char    buf[ 1 + FIX_GEN_MAX ];
-    char    is_log;
+    uint_8  buf[ 1 + FIX_GEN_MAX ];
+    uint_8  is_log;
 #endif
 
 /**/myassert( objr != NULL );
@@ -533,7 +533,7 @@ STATIC int writePubdef( obj_rec *objr, pobj_state *state ) {
             name = NameGet( pubdata->name );
             name_len = strlen( name );
             ObjWrite8( out, name_len );
-            ObjWrite( out, name, (size_t)name_len );
+            ObjWrite( out, (uint_8 *)name, (size_t)name_len );
             if( is32 ) {
                 ObjWrite32( out, pubdata->offset );
             } else {
@@ -573,7 +573,7 @@ STATIC void writeLinnumData( obj_rec *objr, OBJ_WFILE *out ) {
     }
 #else
     if( is32 ) {
-        ObjWrite( out, (char *)objr->d.linnum.lines,
+        ObjWrite( out, (uint_8 *)objr->d.linnum.lines,
             6 * objr->d.linnum.num_lines );
 /**/    myassert( sizeof( linnum_data ) == 6 );
     } else {

@@ -984,12 +984,12 @@ INITDEFN( error_file, errFileInit, errFileFini )
 
 pch_status PCHReadErrWarnData( void )
 {
-    char tmp_buff[ sizeof( msg_level ) ];
-    char *pch_levels;
-    char *orig_levels;
-    char *p;
-    char *o;
-    char *stop;
+    char            tmp_buff[ sizeof( msg_level ) ];
+    unsigned char   *pch_levels;
+    unsigned char   *orig_levels;
+    unsigned char   *p;
+    unsigned char   *o;
+    unsigned char   *stop;
 
     PCHReadLocSize( pch_levels, tmp_buff, sizeof( msg_level ) );
     if( NULL != orig_err_levs ) {

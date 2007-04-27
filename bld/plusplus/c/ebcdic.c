@@ -156,7 +156,7 @@ char CharSet[LCHR_MAX]  = {                              /* EBCDIC */
     C___
   };
 
-char TokValue[]  = {                             /* EBCDIC */
+unsigned char TokValue[]  = {            /* EBCDIC */
 
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, /* 00 - 0F */
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, /* 10 - 1F */

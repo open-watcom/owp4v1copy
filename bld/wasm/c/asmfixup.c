@@ -130,7 +130,7 @@ static void PatchCodeBuffer( struct asmfixup *fixup, unsigned size )
 /******************************************************************/
 {
     long    disp;
-    char    *dst;
+    uint_8  *dst;
 
     dst = fixup->fixup_loc + AsmCodeBuffer;
     disp = fixup->offset + AsmCodeAddress - fixup->fixup_loc - size;

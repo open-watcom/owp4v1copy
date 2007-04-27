@@ -240,7 +240,7 @@ struct omf_sym_assoc_struct {
 
 typedef struct omf_string_struct {
     unsigned char       len;
-    unsigned char       string[1];
+    char                string[1];
 } omf_string_struct;
 
 struct omf_string_assoc_struct {
@@ -267,7 +267,7 @@ struct omf_sec_handle_struct {
     orl_sec_size        size;
     orl_sec_type        type;
     orl_sec_flags       flags;
-    char *              contents;
+    omf_bytes           contents;
     omf_quantity        index;
     // assoc - things associated with the section
     union {

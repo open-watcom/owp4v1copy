@@ -38,19 +38,19 @@
 extern  byte    *Copy( byte *x, byte *y, uint len ) {
 /***************************************************/
 
-    return(  CypCopy( x, y, len ) );
+    return( CypCopy( x, y, len ) );
 }
 
 extern  bool    Equal( char *src, char *dst, int length ) {
 /*********************************************************/
 
-    return( CypEqual( src, dst, length ) );
+    return( CypEqual( (byte *)src, (byte *)dst, length ) );
 }
 
 extern  char    *CopyStr( char *src, char *dst ) {
 /************************************************/
 
-    return( CypCopy( src, dst, CypLength( src ) + 1 ) - 1 );
+    return( (char *)CypCopy( (byte *)src, (byte *)dst, CypLength( src ) + 1 ) - 1 );
 }
 
 extern  uint    Length( char *string ) {

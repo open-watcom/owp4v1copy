@@ -130,7 +130,7 @@ enum {
 
 typedef struct {
     unsigned_16 len;
-    unsigned_8  *rname;
+    char        *rname;
 } res_name;
 
 struct int_entry_pnt {
@@ -166,7 +166,7 @@ struct relocation_item {
 struct section_data {
     uint        cur_offset;
     uint        max_offset;
-    char        *data;
+    unsigned_8  *data;
 };
 
 typedef struct {

@@ -527,7 +527,7 @@ static void printOut( char *string, orl_sec_offset offset, orl_sec_size size)
 
 static label_entry dumpAsmLabel( label_entry l_entry, section_ptr sec,
                                  orl_sec_offset curr_pos, orl_sec_offset end,
-                                 char *contents, char *buffer )
+                                 unsigned_8 *contents, char *buffer )
 {
     int         raw;
     int         is_masm;
@@ -553,7 +553,7 @@ static label_entry dumpAsmLabel( label_entry l_entry, section_ptr sec,
         case( LTYP_UNNAMED ):
 
             if( raw ) {
-                strncpy( buffer, (contents + curr_pos), sizeof( unsigned_32 ) );
+                strncpy( buffer, (char *)contents + curr_pos, sizeof( unsigned_32 ) );
             }
             if( l_entry->type == LTYP_UNNAMED ) {
                 if( !(DFormat & DFF_ASM) ) {
@@ -592,7 +592,7 @@ static label_entry dumpAsmLabel( label_entry l_entry, section_ptr sec,
     return( l_entry );
 }
 
-return_val DumpASMDataFromSection( char *contents, orl_sec_offset start,
+return_val DumpASMDataFromSection( unsigned_8 *contents, orl_sec_offset start,
                                    orl_sec_offset end, label_entry *labent,
                                    ref_entry *refent, section_ptr sec )
 {
@@ -602,7 +602,7 @@ return_val DumpASMDataFromSection( char *contents, orl_sec_offset start,
     orl_sec_size        size;
     label_entry         l_entry;
     ref_entry           r_entry;
-    char *              buffer;
+    char                *buffer;
 
     l_entry = *labent;
     r_entry = *refent;
@@ -660,10 +660,10 @@ return_val DumpASMDataFromSection( char *contents, orl_sec_offset start,
     return( OKAY );
 }
 
-return_val DumpASMSection( section_ptr sec, char * contents,
+return_val DumpASMSection( section_ptr sec, unsigned_8 *contents,
                         orl_sec_size size, unsigned pass )
 {
-    hash_data *         data_ptr;
+    hash_data           *data_ptr;
     label_list          sec_label_list;
     label_entry         l_entry;
     ref_list            sec_ref_list;

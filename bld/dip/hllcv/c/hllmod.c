@@ -79,15 +79,15 @@ walk_result DIPENTRY DIPImpWalkModList( imp_image_handle *ii, IMP_MOD_WKR *wk,
 /*
  * Strips path and extension from the name and copies into the specified buffer.
  */
-static unsigned StripAndCopyName( char *name, char *buf, unsigned max )
+static unsigned StripAndCopyName( unsigned_8 *name, char *buf, unsigned max )
 {
-    char        *start = &name[1];
-    char        *end   = start + *(unsigned_8 *)name;
+    char        *start = (char *)&name[1];
+    char        *end   = start + *name;
     char        *cur   = end - 1;
     /* FIXME there should be generic functions for stripping this stuff! */
 
     /* strip path */
-    for ( cur = end - 1; cur >= start && !IS_PATH_CHAR( *cur ); cur-- )
+    for( cur = end - 1; cur >= start && !IS_PATH_CHAR( *cur ); cur-- )
         /* nothing */;
     start = cur + 1;
 

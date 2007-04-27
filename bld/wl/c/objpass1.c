@@ -211,9 +211,9 @@ void InfoCDatAltDef( comdat_info *info )
     }
 }
 
-static void AddCDatAltDef( segdata *sdata, symbol *sym, char *data,
+static void AddCDatAltDef( segdata *sdata, symbol *sym, unsigned_8 *data,
                            sym_info flags )
-/*****************************************************************/
+/***********************************************************************/
 {
     comdat_info         info;
     comdat_piece        piece;
@@ -919,7 +919,7 @@ void SetComdatSym( symbol *sym, segdata *sdata )
 }
 
 void DefineComdat( segdata *sdata, symbol *sym, offset value,
-                          sym_info select, char *data )
+                          sym_info select, unsigned_8 *data )
 /******************************************************************/
 {
     if( IS_SYM_REGULAR(sym) && sym->info & SYM_DEFINED ) {
@@ -1154,8 +1154,8 @@ group_entry * SearchGroups( char *name )
     return NULL;
 }
 
-void SetCurrSeg( segdata *seg, offset obj_offset, char *data )
-/*******************************************************************/
+void SetCurrSeg( segdata *seg, offset obj_offset, unsigned_8 *data )
+/******************************************************************/
 /* register a segment for the purposes of storing relocations */
 {
     ObjFormat &= ~FMT_IS_LIDATA;

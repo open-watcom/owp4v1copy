@@ -333,13 +333,13 @@ static void AddToLinkerComdat( symbol *sym )
 }
 #endif
 
-static offset CountIDBlock( char ** buffptr )
-/*******************************************/
+static offset CountIDBlock( unsigned_8 **buffptr )
+/************************************************/
 /* this finds the length of an individual lidata block */
 {
     offset      repeat;
     offset      size;
-    char *      buff;
+    unsigned_8  *buff;
     unsigned_16 count;
 
     buff = *buffptr;
@@ -372,7 +372,7 @@ static offset CalcLIDataLength( void )
 /* this finds the length of the equivalent of an lidata record */
 {
     offset      total;
-    char *      buff;
+    unsigned_8  *buff;
 
     total = 0;
     buff = ObjBuff;

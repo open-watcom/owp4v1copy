@@ -88,9 +88,9 @@ extern uint Lookup_section_name( const char * );
  * dumpwv.c
  */
 extern void Dump_section( void );
-extern void Get_local_name( char *, char *, char * );
-extern char *Get_type_index( char *, unsigned_16 * );
-extern char *Dump_location_expression( char *, char * );
+extern void Get_local_name( char *, unsigned_8 *, unsigned_8 * );
+extern unsigned_8 *Get_type_index( unsigned_8 *, unsigned_16 * );
+extern unsigned_8 *Dump_location_expression( unsigned_8 *, char * );
 
 /*
  * typewv.c
@@ -167,8 +167,8 @@ extern void Wread( void *, unsigned_32 );
 extern void Wlseek( signed_32 );
 extern long WFileSize( void );
 extern void Wdputc( char );
-extern void Wdputs( char *);
-extern void Wdputslc( char *);
+extern void Wdputs( const char * );
+extern void Wdputslc( const char * );
 extern void Dump_header( void *, char ** );
 extern void DumpFlags( unsigned_32, unsigned_32, char **, char * );
 extern void *Wmalloc( size_t );

@@ -509,11 +509,11 @@ unsigned RelocMarkSyms( void *_fix )
     return( CalcSavedFixSize( fix->flags ) );
 }
 
-static bool MemIsZero( char *mem, unsigned size )
-/***********************************************/
+static bool MemIsZero( unsigned_8 *mem, unsigned size )
+/*****************************************************/
 {
     while( size > 0 ) {
-        if( *mem != '\0' )
+        if( *mem != 0 )
             return( FALSE );
         mem++;
         size--;
@@ -528,7 +528,7 @@ void StoreFixup( offset off, fix_type type, frame_spec *frame,
     save_fixup  save;
     fix_data    fix;
     unsigned    size;
-    char        buff[2 * sizeof( unsigned_32 )];
+    unsigned_8  buff[2 * sizeof( unsigned_32 )];
 
     if( LastSegData != CurrRec.seg ) {
         DbgAssert( CurrRec.seg != NULL );
@@ -1624,7 +1624,7 @@ static void Relocate( save_fixup *save, fix_data *fix, frame_spec *targ )
 {
     int         shift;
     unsigned    datasize;
-    char        addbuf[MAX_ADDEND_SIZE + 2];
+    unsigned_8  addbuf[MAX_ADDEND_SIZE + 2];
 
     shift = 0;
     datasize = CalcFixupSize( fix->type );

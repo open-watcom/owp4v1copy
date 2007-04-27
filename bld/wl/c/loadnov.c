@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  routines for creating novell netware load files
+* Description:  Routines for creating Novell NetWare load files.
 *
 ****************************************************************************/
 
@@ -475,7 +475,7 @@ static void NovNameWrite( char *name )
         len = strlen( name );
     } else {
         len = 0;
-        name = &len;
+        name = (char *)&len;
     }
     WriteLoad( &len, sizeof( unsigned_8 ) );
     WriteLoad( name, len + 1 );
@@ -600,7 +600,7 @@ void FiniNovellLoadFile( void )
     DBIWrite();
     memcpy( nov_header.signature, NLM_SIGNATURE, sizeof( NLM_SIGNATURE ) );
     nov_header.version = NLM_VERSION;
-    nov_header.moduleName[0] = len;
+    nov_header.moduleName[0] = (char)len;
     memcpy( &nov_header.moduleName[1], module_name, len );
     memset( &nov_header.moduleName[ len + 1 ], 0, NOV_MAX_MODNAME_LEN-len ); // zero rest.
     nov_header.uninitializedDataSize = 0; // MemorySize() - image_size;

@@ -631,7 +631,7 @@ static void DmpFileInfo( void ){
     }
     lst = DBFiles.lst;
     while( lst != NULL ){
-        DataBytes( lst->len, lst->fname );
+        DataBytes( lst->len, (byte *)lst->fname );
         lst = lst->next;
     }
 }

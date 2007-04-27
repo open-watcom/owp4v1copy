@@ -90,11 +90,11 @@ static void attribute_byte( unsigned_8 type )
 /*
  * base_type_index - dump info
  */
-static char *base_type_index( char *buff )
-/****************************************/
+static unsigned_8 *base_type_index( unsigned_8 *buff )
+/****************************************************/
 {
     unsigned_16 index;
-    char        *ptr;
+    unsigned_8  *ptr;
 
     Wdputs( "   base type idx = " );
     ptr = Get_type_index( buff, &index );
@@ -106,11 +106,11 @@ static char *base_type_index( char *buff )
 /*
  * near_ptr - dump info
  */
-static void near_ptr( char *buff )
-/********************************/
+static void near_ptr( unsigned_8 *buff )
+/**************************************/
 {
     unsigned_16 index;
-    char        *ptr;
+    unsigned_8  *ptr;
 
     index = 3;
     ptr = buff+2;
@@ -127,8 +127,8 @@ static void near_ptr( char *buff )
 /*
  * param_type_index - dump info
  */
-static void param_type_index( unsigned_8 num_params, char * ptr )
-/***************************************************************/
+static void param_type_index( unsigned_8 num_params, unsigned_8 *ptr )
+/********************************************************************/
 {
     unsigned_8  i;
     unsigned_16 index;
@@ -150,14 +150,14 @@ static void param_type_index( unsigned_8 num_params, char * ptr )
 /*
  * near_far_proc - dump info
  */
-static void near_far_proc( char *buff )
-/*************************************/
+static void near_far_proc( unsigned_8 *buff )
+/*******************************************/
 {
-    char            *ptr;
+    unsigned_8      *ptr;
     unsigned_16     index;
     unsigned_8      num_parms;
 
-    ptr = buff+2;
+    ptr = buff + 2;
     Wdputs( "          return type = " );
     num_parms = buff[0] - 4;
     if( *ptr & 0x80 ) {
@@ -172,8 +172,8 @@ static void near_far_proc( char *buff )
 /*
  * array_index - dump info
  */
-static void array_index( char *ptr, unsigned_8 size )
-/***************************************************/
+static void array_index( unsigned_8 *ptr, unsigned_8 size )
+/*********************************************************/
 {
     Wdputs( "          high bound = " );
     Puthex( *ptr, 2*size );
@@ -183,10 +183,10 @@ static void array_index( char *ptr, unsigned_8 size )
 /*
  * bit_field_struct - dump info
  */
-static void bit_field_struct( char *buff, unsigned_8 size, bool bit )
-/*******************************************************************/
+static void bit_field_struct( unsigned_8 *buff, unsigned_8 size, bool bit )
+/*************************************************************************/
 {
-    char        *ptr;
+    unsigned_8  *ptr;
     unsigned_16 index;
     char        name[256];
 
@@ -217,10 +217,10 @@ static void bit_field_struct( char *buff, unsigned_8 size, bool bit )
 /*
  * bit_field_class - dump info
  */
-static void bit_field_class( char *buff, bool bit )
-/*************************************************/
+static void bit_field_class( unsigned_8 *buff, bool bit )
+/*******************************************************/
 {
-    char        *ptr;
+    unsigned_8  *ptr;
     unsigned_16 index;
     char        name[256];
 
@@ -252,8 +252,8 @@ static void bit_field_class( char *buff, bool bit )
 /*
  * range - dump info
  */
-static void range( char *ptr, unsigned_8 size )
-/*********************************************/
+static void range( unsigned_8 *ptr, unsigned_8 size )
+/***************************************************/
 {
     Wdputs( "          low bound = " );
     Puthex( *ptr, 2*size );
@@ -267,8 +267,8 @@ static void range( char *ptr, unsigned_8 size )
 /*
  * enum_const - dump info
  */
-static void enum_const( char *buff, unsigned_8 size )
-/***************************************************/
+static void enum_const( unsigned_8 *buff, unsigned_8 size )
+/*********************************************************/
 {
     char        name[256];
 
@@ -283,8 +283,8 @@ static void enum_const( char *buff, unsigned_8 size )
 /*
  * desc_array - dump info
  */
-static void desc_array( char *ptr, bool is386 )
-/*********************************************/
+static void desc_array( unsigned_8 *ptr, bool is386 )
+/***************************************************/
 {
     addr32_ptr  *p32;
     addr48_ptr  *p48;
@@ -327,12 +327,12 @@ void Dmp_type( int cnt, unsigned_32 *offs )
     int         i;
     addr32_ptr  *p32;
     addr48_ptr  *p48;
-    char        *ptr;
+    unsigned_8  *ptr;
     unsigned_16 index;
     unsigned_16 curr_index;
     unsigned_32 coff;
     char        name[256];
-    char        buff[256];
+    unsigned_8  buff[256];
 
     for( i = 0; i < cnt; i++ ) {
         coff = 0;

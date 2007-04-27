@@ -493,7 +493,7 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned op_num,
     return( strlen( buff ) );
 }
 
-static void processDataInCode( section_ptr sec, char *contents, struct pass2 *data,
+static void processDataInCode( section_ptr sec, unsigned_8 *contents, struct pass2 *data,
                                orl_sec_size size, label_entry *l_entry )
 {
     orl_sec_size        offset;
@@ -513,7 +513,7 @@ static void processDataInCode( section_ptr sec, char *contents, struct pass2 *da
     data->loop = offset;
 }
 
-num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
+num_errors DoPass2( section_ptr sec, unsigned_8 *contents, orl_sec_size size,
                     label_list sec_label_list, ref_list sec_ref_list )
 // perform pass 2 on one section
 {

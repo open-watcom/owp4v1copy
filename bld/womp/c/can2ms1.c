@@ -177,7 +177,7 @@ STATIC idx_t        voidIdx;        /* index of the void type */
 
 #define MAX_LEDATA      1024        /* maximum amount of data in an LEDATA */
 
-STATIC char *getTrData( type_rec *tr, uint_16 len ) {
+STATIC uint_8 *getTrData( type_rec *tr, uint_16 len ) {
 
     uint_16 new_len;
 
@@ -291,7 +291,7 @@ STATIC void setupObjIO( void ) {
     nextWriteIdx = 512;
     writeLEOffset = 0;  /* offset of next LEDATA to be written */
     trCarver = CarveCreate( sizeof( type_rec ), 8 );
-    mySegdef = Can2MsSegdef( MS_DDTYPES MS_DEBTYP,
+    mySegdef = Can2MsSegdef( (uint_8 *) MS_DDTYPES MS_DEBTYP,
         MS_DDTYPES_LEN + MS_DEBTYP_LEN );
 }
 

@@ -113,7 +113,7 @@ void DBIP1Source( byte *buff, byte *endbuff )
     }
     ObjFormat |= FMT_DEBUG_COMENT;
     if( LinkFlags & OLD_DBI_FLAG ) {
-        ODBIP1Source( major, minor, buff, len );
+        ODBIP1Source( major, minor, (char *)buff, len );
     }
 }
 

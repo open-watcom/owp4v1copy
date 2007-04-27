@@ -46,7 +46,7 @@
 typedef struct orl_info {
     int                 handle;
     orl_file_handle     file;
-    char                *buffer;
+    uint_8              *buffer;
     DepInfo             *curr;
 }                       orl_info;
 
@@ -157,10 +157,10 @@ static orl_return findDependInfo( orl_sec_handle section )
 }
 
 
-static char *orlGetDependsInfo( orl_file_handle file )
-/****************************************************/
+static uint_8 *orlGetDependsInfo( orl_file_handle file )
+/******************************************************/
 {
-    char                *buffer;
+    uint_8  *buffer;
 
     orlDependsInfo = NULL;
     buffer = NULL;
@@ -178,7 +178,7 @@ static handle AutoORLFileInit( const char *name )
     orl_file_format type;
     orl_file_handle file;
     int             file_handle;
-    char            *buffer;
+    uint_8          *buffer;
 
     bufferInit();
     file_handle = open( name, O_RDONLY | O_BINARY );

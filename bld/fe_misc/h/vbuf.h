@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Declaration for VBUF functions.
 *
 ****************************************************************************/
 
-
-// VBUF.H -- DECLARATION FOR VBUF FUNCTIONS
 
 #ifndef _VBUF_H
 
@@ -39,9 +36,9 @@ extern "C" {
 #endif
 
 typedef struct vbuf{            // VBUF structure
-    char *buf;                  // - buffer pointer
-    size_t len;                 // - buffer size
-    size_t used;                // - amount used in buffer
+    char           *buf;        // - buffer pointer
+    size_t         len;         // - buffer size
+    size_t         used;        // - amount used in buffer
 } VBUF;
 
 // PROTOTYPES:

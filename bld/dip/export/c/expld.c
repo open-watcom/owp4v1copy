@@ -514,7 +514,7 @@ static char *CacheName( pe_export_info *exp, unsigned long rva )
         /* Assuming a single name is < NAME_CACHE_SIZE */
         off = 0;
     }
-    return( &exp->name_cache[ off ] );
+    return( (char *)&exp->name_cache[ off ] );
 }
 
 static dip_status PEExportBlock( imp_image_handle *ii, pe_export_info *exp,

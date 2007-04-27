@@ -64,7 +64,7 @@ static  char    *ReScanPtr;
 static  int     SavedCurrChar;          // used when get tokens from macro
 unsigned char   ClassTable[260];
 
-extern  char    TokValue[];
+extern  unsigned char   TokValue[];
 extern  unsigned short  UniCode[];
 
 
@@ -604,7 +604,7 @@ static cnv_cc Cnv16( void )
     uint64          value64;
     cnv_cc          ret;
 
-    curr = Buffer + 2;      // skip 0x thing
+    curr = (unsigned char *)Buffer + 2;      // skip 0x thing
     len = TokenLen - 2;
     value = 0;
     while( --len > 0 ) {

@@ -159,20 +159,20 @@ static void dump_line_numbers( mod_info *mi )
 /*
  * Get_type_index - get a type index
  */
-char *Get_type_index( char *ptr, unsigned_16 *index )
-/***************************************************/
+unsigned_8 *Get_type_index( unsigned_8 *ptr, unsigned_16 *index )
+/***************************************************************/
 {
     unsigned_16 idx;
 
     if( *ptr & 0x80 ) {
         idx = 0x7f & *ptr;
         idx *= 256;
-        idx += *(ptr+1);
+        idx += *(ptr + 1);
         *index = idx;
-        return( ptr+2 );
+        return( ptr + 2 );
     } else {
         *index = *ptr;
-        return( ptr+1 );
+        return( ptr + 1 );
     }
 
 } /* Get_type_index */
@@ -180,8 +180,8 @@ char *Get_type_index( char *ptr, unsigned_16 *index )
 /*
  * Get_local_name - get a name from a local variable data structure
  */
-void Get_local_name( char *name, char *data, char *start )
-/********************************************************/
+void Get_local_name( char *name, unsigned_8 *data, unsigned_8 *start )
+/********************************************************************/
 {
     int len;
 
@@ -194,8 +194,8 @@ void Get_local_name( char *name, char *data, char *start )
 /*
  * dump_block - dump local block record
  */
-static void dump_block( char *buff, bool is32 )
-/*********************************************/
+static void dump_block( unsigned_8 *buff, bool is32 )
+/***************************************************/
 {
     block_386   *blk386;
     block       *blk;
@@ -267,10 +267,10 @@ static char *regLocStrs[] =
 /*
  * dump_single_location_entry - dump a single location expression entry
  */
-static char *dump_single_location_entry( char *buff )
-/***************************************************/
+unsigned_8 *dump_single_location_entry( unsigned_8 *buff )
+/********************************************************/
 {
-    char        type;
+    unsigned_8  type;
     addr32_ptr  *p32;
     addr48_ptr  *p48;
     int         i;
@@ -435,11 +435,11 @@ static char *dump_single_location_entry( char *buff )
 /*
  * Dump_location_expression - dump out a location expression
  */
-char *Dump_location_expression( char *buff, char *spacing )
-/*********************************************************/
+unsigned_8 *Dump_location_expression( unsigned_8 *buff, char *spacing )
+/*********************************************************************/
 {
     int         multi;
-    char        *end;
+    unsigned_8  *end;
 
     if( *buff & 0x80 ) {
         end = buff + (*buff & 0x7f);
@@ -467,12 +467,12 @@ char *Dump_location_expression( char *buff, char *spacing )
 /*
  * dump_rtn - dump a near or far routine defn
  */
-static void dump_rtn( char *buff )
-/********************************/
+static void dump_rtn( unsigned_8 *buff )
+/**************************************/
 {
     int         pro,epi;
     unsigned_16 ret_off;
-    char        *ptr;
+    unsigned_8  *ptr;
     int         num_parms;
     unsigned_16 index;
     char        name[256];
@@ -520,12 +520,12 @@ static void dump_rtn( char *buff )
 /*
  * dump_rtn386 - dump a near or far routine defn (386)
  */
-static void dump_rtn386( char *buff )
-/***********************************/
+static void dump_rtn386( unsigned_8 *buff )
+/*****************************************/
 {
     int         pro,epi;
     unsigned_32 ret_off;
-    char        *ptr;
+    unsigned_8  *ptr;
     int         num_parms;
     unsigned_16 index;
     char        name[256];
@@ -580,11 +580,11 @@ static void dump_locals( mod_info *mi )
     unsigned_32 *offs;
     int         cnt;
     unsigned_32 coff;
-    char        buff[256];
+    unsigned_8  buff[256];
     char        name[256];
     set_base    *sb;
     set_base386 *sb386;
-    char        *ptr;
+    unsigned_8  *ptr;
     addr32_ptr  *p32;
     addr48_ptr  *p48;
     unsigned_16 index;

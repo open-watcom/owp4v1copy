@@ -135,7 +135,7 @@ STATIC void setupObjIO( void ) {
     doneFixups = NULL;
     waitFixups = NULL;
     offsetFixup = NULL;
-    mySegdef = Can2MsSegdef( MS_DDSYMBOLS MS_DEBSYM,
+    mySegdef = Can2MsSegdef( (uint_8 *)MS_DDSYMBOLS MS_DEBSYM,
         MS_DDSYMBOLS_LEN + MS_DEBSYM_LEN );
 }
 

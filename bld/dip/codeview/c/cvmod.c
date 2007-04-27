@@ -72,7 +72,7 @@ unsigned        DIPENTRY DIPImpModName( imp_image_handle *ii,
 {
     cv_directory_entry  *cde;
     cv_sst_module       *mp;
-    unsigned_8          *name;
+    char                *name;
     char                *start;
     char                *end;
     unsigned            len;
@@ -84,8 +84,8 @@ unsigned        DIPENTRY DIPImpModName( imp_image_handle *ii,
 
     mp = VMBlock( ii, cde->lfo, cde->cb );
     if( mp == NULL ) return( 0 );
-    name = (unsigned_8 *)&mp->SegInfo[ mp->cSeg ];
-    len = name[0];
+    name = (char *)&mp->SegInfo[ mp->cSeg ];
+    len = *(unsigned_8 *)name;
     ++name;
     start = name;
     end = name + len;

@@ -156,7 +156,7 @@ unsigned DIPENTRY DIPImpSymName( imp_image_handle *ii, imp_sym_handle *is,
         ++is;
         len = 0;
         #define STUFF_IT( c )   if( (len+1) < max ) *ep++ = (c); ++len
-        ep = name;
+        ep = (byte *)name;
         STUFF_IT( SH_ESCAPE );
         while( sp < (byte *)is ) {
             curr = *sp++;
@@ -269,7 +269,7 @@ search_result DoLookupSym( imp_image_handle *ii, symbol_source ss,
     imp_sym_handle      *scope_is;
 
     if( *li->name.start == SH_ESCAPE ) {
-        CollectSymHdl( li->name.start, DCSymCreate( ii, d ) );
+        CollectSymHdl( (byte *)li->name.start, DCSymCreate( ii, d ) );
         return( SR_EXACT );
     }
     if( li->type == ST_NAMESPACE ) return( SR_NONE );

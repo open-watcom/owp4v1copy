@@ -484,9 +484,9 @@ static  void    EmitNameInCode( void ) {
 /********************************/
 
     sym_handle      sym;
-    char        *name;
-    char        *endname;
-    char        b[128];
+    char            *name;
+    char            *endname;
+    char            b[128];
     label_handle    lbl;
 
     sym = AskForLblSym( CurrProc->label );
@@ -500,7 +500,7 @@ static  void    EmitNameInCode( void ) {
     TellKeepLabel( lbl );
     CodeLabel( lbl, 0 );
     GenKillLabel( lbl );
-    EyeCatchBytes( name, *endname+1 );
+    EyeCatchBytes( (byte *)name, *endname + 1 );
 }
 
 

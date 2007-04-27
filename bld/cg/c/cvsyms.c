@@ -146,7 +146,7 @@ static  void    BuffWrite( cv_out *out, void *to )
     int     len;
     seg_id  old;
 
-    len = (char *)to - out->beg;
+    len = (byte *)to - out->beg;
     old = SetOP( out->seg );
     DataBytes( len, out->beg );
     out->beg = to;
@@ -187,7 +187,7 @@ static  void    EndSym( cv_out *out )
 {
     int         len;
     s_common    *com;
-    char        *ptr;
+    byte        *ptr;
 
     com = (s_common *) out->beg; /* assume ptr marks end of a sym */
     ptr = out->ptr;
@@ -695,11 +695,11 @@ extern  void    CVBlkBeg( dbg_block *blk, offset lc )
 {
     block_patch        *patch;
     dbg_patch_handle   *handle;
-    cv_out          out[1];
-    offset          start;
-    sym_handle      sym;
-    cs_block        *ptr;
-    char           *nm;
+    cv_out             out[1];
+    offset             start;
+    sym_handle         sym;
+    cs_block           *ptr;
+    byte               *nm;
 
 
     patch = CGAlloc( sizeof( block_patch ) );
@@ -739,7 +739,7 @@ extern  void    CVBlkEnd( dbg_block *blk, offset lc )
     here = AskBigLocation();
     SetBigLocation( handle->offset + offsetof( s_block, f.length ) );
     length = lc - blk->start;
-    DataBytes( sizeof( fsize ), (char *)&length );
+    DataBytes( sizeof( fsize ), (byte *)&length );
     SetBigLocation( here );
     SetOP( old );
     NewBuff( out, CVSyms );
@@ -771,10 +771,10 @@ extern  void    CVRtnEnd( dbg_rtn *rtn, offset lc )
     here = AskBigLocation();
     SetBigLocation( handle->offset + offsetof( s_gproc, f.proc_length ) );
     proc_length = lc - rtn->blk->start;
-    DataBytes( sizeof( fsize ), (char *)&proc_length );
+    DataBytes( sizeof( fsize ), (byte *)&proc_length );
     SetBigLocation( handle->offset+ offsetof( s_gproc, f.debug_end ) );
     debug_end   = rtn->epi_start - rtn->blk->start;
-    DataBytes( sizeof( fsize ), (char*)&debug_end );
+    DataBytes( sizeof( fsize ), (byte *)&debug_end );
     SetBigLocation( here );
     SetOP( old );
     NewBuff( out, CVSyms );

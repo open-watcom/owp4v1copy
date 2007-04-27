@@ -293,7 +293,7 @@ static void CLIReloc( dw_sectnum sect, dw_relocs reloc_type, ... ){
     case DW_W_UNIT_SIZE:
         UnitSize->segment = curr->seg;
         UnitSize->offset =  AskBigLocation();
-        DataBytes( sizeof( uint_32 ), (char *)&zero );
+        DataBytes( sizeof( uint_32 ), (byte *)&zero );
         break;
     case DW_W_SECTION_POS:
         section = va_arg( args, uint );

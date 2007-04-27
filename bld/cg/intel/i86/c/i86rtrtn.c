@@ -45,7 +45,7 @@
 extern    hw_reg_set      *RegSets[];
 
 extern  name            *GenFloat( name *, type_class_def );
-extern  name            *GenConstData( char *, type_class_def );
+extern  name            *GenConstData( byte *, type_class_def );
 extern  void            UpdateLive( instruction *, instruction * );
 extern  void            DoNothing( instruction * );
 extern  name            *AllocIntConst( int );

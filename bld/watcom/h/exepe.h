@@ -177,7 +177,7 @@ enum {
 /* PE object table structure */
 #define PE_OBJ_NAME_LEN 8
 typedef struct {
-    unsigned_8          name[PE_OBJ_NAME_LEN];
+    char                name[PE_OBJ_NAME_LEN];
     unsigned_32         virtual_size;
     pe_va               rva;
     unsigned_32         physical_size;

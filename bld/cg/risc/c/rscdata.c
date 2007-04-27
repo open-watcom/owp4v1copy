@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Emit data items.
 *
 ****************************************************************************/
 
@@ -41,7 +40,7 @@
 #include <assert.h>
 #include <string.h>
 
-extern  void            ObjBytes( char *, unsigned );
+extern  void            ObjBytes( byte *, unsigned );
 extern  constant_defn   *GetFloat( name *, type_class_def );
 extern  seg_id          SetOP( seg_id );
 extern  seg_id          AskBackSeg( void );
@@ -103,14 +102,14 @@ extern  void    DataLong( long val ) {
 
 // FIXME: This is a cheap, lousy hack
 #define MAX_HACK_LEN    ( 8 * 1024 )
-static char     Buffer[ MAX_HACK_LEN ];
+static byte     Buffer[ MAX_HACK_LEN ];
 
 extern  void    IterBytes( offset len, byte pat ) {
 /***********************************************/
 
     TellOptimizerByPassed();
     if( len > MAX_HACK_LEN ) {
-        char    *buff;
+        byte    *buff;
 
         buff = CGAlloc( len );
         memset( buff, pat, len );
@@ -131,7 +130,7 @@ extern  void    BackPtr( bck_info *bck, seg_id seg,
     assert( tipe->length == 4 );
     TellOptimizerByPassed();
     OutReloc( bck->lbl, OWL_RELOC_WORD, 0 );
-    ObjBytes( (char *)&plus, 4 );
+    ObjBytes( (byte *)&plus, 4 );
     TellByPassOver();
 }
 
@@ -141,7 +140,7 @@ extern  void    BackBigOffset( bck_info *bck, seg_id seg,
     seg = seg;
     TellOptimizerByPassed();
     OutReloc( bck->lbl, OWL_RELOC_WORD, 0 );
-    ObjBytes( (char *)&plus, 4 );
+    ObjBytes( (byte *)&plus, 4 );
     TellByPassOver();
 }
 
@@ -149,7 +148,7 @@ extern  void    BackPtrBase( bck_info *bck, seg_id seg ){
 /*****************************************************/
     TellOptimizerByPassed();
     OutSegReloc( bck->lbl, seg );
-    ObjBytes( "\0\0", 2 );
+    ObjBytes( (byte *)"\0\0", 2 );
     TellByPassOver();
 }
 
@@ -163,7 +162,7 @@ extern  void    FEPtr( sym_handle sym, type_def *tipe, offset plus ) {
     TellOptimizerByPassed();
     bck = FEBack( sym );
     OutReloc( bck->lbl, OWL_RELOC_WORD, 0 );
-    ObjBytes( (char *)&plus, 4 );
+    ObjBytes( (byte *)&plus, 4 );
     TellByPassOver();
 }
 
@@ -176,10 +175,10 @@ extern  void    FEPtrBaseOffset( sym_handle sym,  offset plus ) {
     bck = FEBack( sym );
     seg = FESegID( sym );
     OutReloc( bck->lbl, OWL_RELOC_SECTION_INDEX, 0 );
-    ObjBytes( (char *)&plus, 4 );
+    ObjBytes( (byte *)&plus, 4 );
 //  OutSegReloc( bck->lbl, seg );
     OutReloc( bck->lbl, OWL_RELOC_SECTION_OFFSET, 0 );
-    ObjBytes( "\0\0", 2 );
+    ObjBytes( (byte *)"\0\0", 2 );
     TellByPassOver();
 }
 
@@ -192,7 +191,7 @@ extern  void    FEPtrBase( sym_handle sym ) {
     bck = FEBack( sym );
     seg = FESegID( sym );
     OutSegReloc( bck->lbl, seg );
-    ObjBytes( "\0\0", 2 );
+    ObjBytes( (byte *)"\0\0", 2 );
     TellByPassOver();
 }
 

@@ -348,7 +348,7 @@ extern void         ObjPut32( obj_rec *objr, uint_32 dword );
 extern void         ObjPutIndex( obj_rec *objr, uint_16 idx );
 extern void         ObjPutEither( obj_rec *objr, uint_32 val );
 extern void         ObjPut( obj_rec *objr, const uint_8 *data, uint_16 len );
-extern void         ObjPutName( obj_rec *objr, const uint_8 *name, uint_8 len );
+extern void         ObjPutName( obj_rec *objr, const char *name, uint_8 len );
 /*
     Notes:
 

@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     int         fi;
     int         i;
     int         len;
-    unsigned char *p;
+    char        *p;
     struct bursts *cb;
     struct stat bufstat;
 
@@ -84,9 +84,9 @@ int main(int argc, char *argv[])
     read( fi, buff, bufstat.st_size );
     close( fi );
     cb = (struct bursts *) Xptr( *(short*)buff );
-    for(;;) {
+    for( ;; ) {
         p = Xptr(cb->defs);
-        if( (char *)p == buff ) break;
+        if( p == buff ) break;
         for(;;) {
             fprintf( fp, "%s\n", p );
             while( *p != '\0' )  ++p;
@@ -114,5 +114,5 @@ int main(int argc, char *argv[])
     }
     fclose( fp );
     free( buff );
-    return 0;
+    return( 0 );
 }

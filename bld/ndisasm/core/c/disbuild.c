@@ -777,7 +777,7 @@ int main( void )
         }
     }
     BuildStringTable();
-    fprintf( fp, "\nconst char DisStringTable[] = {\n" );
+    fprintf( fp, "\nconst unsigned char DisStringTable[] = {\n" );
     for( i = 0; i < StringIndex; ++i ) {
         if( (i % 16) == 0 ) fprintf( fp, "/*%4.4x*/ ", i );
         if( StringTable[i] < ' ' || (StringTable[i] & LENGTH_BIT) ) {

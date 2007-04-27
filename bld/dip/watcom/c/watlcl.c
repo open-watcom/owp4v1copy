@@ -100,14 +100,14 @@ byte *GetAddress( imp_image_handle *ii, byte *ptr, address *addr, int is32 )
     return( ptr );
 }
 
-static void LclCreate( imp_sym_handle *is, byte *ptr, byte *name, lclinfo *local )
+static void LclCreate( imp_sym_handle *is, byte *ptr, char *name, lclinfo *local )
 {
     is->type = SH_LCL;
     is->im = local->im;
     is->u.lcl.base = local->base_off;
     is->u.lcl.offset = ptr - local->start;
     is->u.lcl.gbl_link = NULL;
-    is->name_off = name - ptr;
+    is->name_off = name - (char *)ptr;
 }
 
 /*
@@ -232,7 +232,7 @@ static byte *ProcDefn( byte *ptr, lcl_defn *defn, lclinfo *local )
         }
         break;
     }
-    defn->i.name = ptr;
+    defn->i.name = (char *)ptr;
     defn->i.namelen = end - ptr;
     return( end );
 }

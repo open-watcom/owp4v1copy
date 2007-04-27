@@ -191,8 +191,8 @@ static void getAT( uint_32 value )
 }
 
 
-static void dump_hex( const char *input, uint length )
-/****************************************************/
+static void dump_hex( const uint_8 *input, uint length )
+/******************************************************/
 {
     char        *p;
     int         i;
@@ -321,12 +321,12 @@ static char  * const RegName[] = {
 #undef DW_REG
 };
 
-static char const *GetInt( char const *p, uint_32 *ret, int size )
-/****************************************************************/
+static uint_8 const *GetInt( uint_8 const *p, uint_32 *ret, int size )
+/********************************************************************/
 {
     switch( size ) {
     case 1:
-        *ret = *(uint_8 *)p;
+        *ret = *p;
         break;
     case 2:
         *ret = get_u16( (uint_16 *)p );
@@ -342,8 +342,8 @@ static char const *GetInt( char const *p, uint_32 *ret, int size )
     return( p );
 }
 
-static void DmpLoc( char const *p, uint length, uint addr_size )
-/**************************************************************/
+static void DmpLoc( uint_8 const *p, uint length, uint addr_size )
+/****************************************************************/
 {
     uint_8 const    *end;
     uint_8          op;
@@ -471,11 +471,11 @@ static void DmpLoc( char const *p, uint length, uint addr_size )
 static void DmpLocList( uint_32 start, uint addr_size )
 /*****************************************************/
 {
-    uint_32     low;
-    uint_32     high;
-    int         len;
-    char const  *p;
-    char const  *stop;
+    uint_32         low;
+    uint_32         high;
+    int             len;
+    uint_8 const    *p;
+    uint_8 const    *stop;
 
     p = Sections[ DW_DEBUG_LOC ].data;
     stop = p + Sections[ DW_DEBUG_LOC ].max_offset;
@@ -504,24 +504,24 @@ static void DmpLocList( uint_32 start, uint addr_size )
 }
 
 typedef struct {
-    char const  *p;
-    uint_8      *abbrev;
-    int         addr_size;
-    uint_32     cu_header;
+    uint_8 const    *p;
+    uint_8          *abbrev;
+    int             addr_size;
+    uint_32         cu_header;
 } info_state;
 
 static bool dump_tag( info_state *info )
 /**************************************/
 {
-    uint_8      *abbrev;
-    uint_32     attr;
-    uint_32     offset;
-    uint_32     form;
-    uint_32     len;
-    uint_32     tmp;
-    int_32      stmp;
-    bool        is_loc;
-    char const  *p;
+    uint_8          *abbrev;
+    uint_32         attr;
+    uint_32         offset;
+    uint_32         form;
+    uint_32         len;
+    uint_32         tmp;
+    int_32          stmp;
+    bool            is_loc;
+    uint_8 const    *p;
 
     p = info->p;
     abbrev = info->abbrev;
@@ -655,14 +655,14 @@ decode_form:
             Wdputc( '"' );
             Wdputs( (char *)p );
             Wdputslc( "\"\n" );
-            p += strlen( p ) + 1;
+            p += strlen( (const char *)p ) + 1;
             break;
         case DW_FORM_strp:
             offset = get_u32( (uint_32 *)p );
             if( offset > Sections[ DW_DEBUG_STR ].max_offset ) {
                 Wdputslc( "Error: strp - invalid offset\n" );
             } else {
-                Wdputs( Sections[ DW_DEBUG_STR ].data + offset );
+                Wdputs( (const char *)Sections[ DW_DEBUG_STR ].data + offset );
                 Wdputslc( "\n" );
             }
             p += sizeof( uint_32 );
@@ -1183,8 +1183,8 @@ static void dump_ref( const uint_8 *input, uint length )
 }
 
 
-static void dump_aranges( const char *p, uint length )
-/*****************************************************/
+static void dump_aranges( const uint_8 *p, uint length )
+/******************************************************/
 {
     const uint_8    *end;
     const uint_8    *unit_end;
@@ -1240,8 +1240,8 @@ static void dump_aranges( const char *p, uint length )
 }
 
 
-static void dump_pubnames( const char *p, uint length )
-/*****************************************************/
+static void dump_pubnames( const uint_8 *p, uint length )
+/*******************************************************/
 {
     const uint_8    *end;
     const uint_8    *unit_end;
@@ -1278,14 +1278,14 @@ static void dump_pubnames( const char *p, uint length )
             Wdputs( "     " );
             Wdputs( (char *)p );
             Wdputslc( "\n" );
-            p += strlen( p ) + 1;
+            p += strlen( (char *)p ) + 1;
         }
         p = unit_end;
     }
 }
 
-void Dump_specific_section( uint sect, const char *data, uint len )
-/*****************************************************************/
+void Dump_specific_section( uint sect, const uint_8 *data, uint len )
+/*******************************************************************/
 {
     sort_tables();
     switch( sect ) {

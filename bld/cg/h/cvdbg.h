@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  CodeView debugging infromation types.
+* Description:  CodeView debugging information types.
 *
 ****************************************************************************/
 
@@ -36,10 +36,10 @@
     #define CVSIZE 32  // 16:32 or 0:32 compiler
 #endif
 typedef struct cv_out {
-    char       *beg;    /* where to start writting from */
-    char       *ptr;    /* end of data */
+    byte        *beg;  /* where to start writing from */
+    byte        *ptr;  /* end of data */
     seg_id      seg;   /* segment to write to */
-    char        buff[CV_MAX_REC];  /* buffer to use */
+    byte        buff[CV_MAX_REC];  /* buffer to use */
 }cv_out;
 
 #include "cv4w.h"

@@ -441,7 +441,7 @@ static orl_return DeclareSegment( orl_sec_handle sec )
         SeenDLLRecord();
         CurrMod->modinfo |= MOD_IMPORT_LIB;
         if( name[len + 1] == '6' ) {    // it is the segment containg the name
-            ORLSecGetContents( sec, &ImpExternalName );
+            ORLSecGetContents( sec, (unsigned_8 **)&ImpExternalName );
             ImpExternalName += 2;
         } else if( name[len + 1] == '4' ) {     // it is an import by ordinal
             ORLSecGetContents( sec, (void *) &contents );

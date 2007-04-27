@@ -90,7 +90,7 @@ gbl_defn unsigned_16    ISNNumber;      // ISN # only for FORTRAN statements;
 gbl_defn byte           *CmdPtr;        // pointer to command line
 gbl_defn uint           NumExtens;      // number of extens. during compilation
 gbl_defn uint           NumWarns;       // number of warnings during compilation
-gbl_defn byte           *SrcExtn;       // pointer to source file extension
+gbl_defn char           *SrcExtn;       // pointer to source file extension
 gbl_defn int            RetCode;        // return code for Main()
 
 

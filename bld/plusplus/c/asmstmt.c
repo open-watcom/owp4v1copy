@@ -119,7 +119,7 @@ static void getAsmLine( VBUF *buff )
         return;
     /* reserve at least MAX_INSTR_SIZE bytes in the buffer */
     VbufReqd( buff, ((AsmCodeAddress+MAX_INSTR_SIZE) + (MAX_INSTR_SIZE-1)) & ~(MAX_INSTR_SIZE-1) );
-    AsmCodeBuffer = buff->buf;
+    AsmCodeBuffer = (byte *)buff->buf;
     ensureBufferReflectsCurToken();
     if( isId( CurToken ) && strcmp( Buffer, "__emit" ) == 0 ) {
         strcpy( line, AsmSysDefineByte() );

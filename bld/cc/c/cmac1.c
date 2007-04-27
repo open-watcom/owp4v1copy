@@ -41,17 +41,9 @@ struct  tokens {
     char    buf[1];
 };
 
-// FIXME: the 'token' should be of type TOKEN, but there is code that
-// expects it's only a byte. This breaks if enum is not byte-sized, which
-// it won't be with non-Watcom compilers. The structure and code should
-// probably be rewriten to not make any unwarranted assumptions.
 typedef struct macro_token {
     struct macro_token  *next;
-#ifdef __WATCOMC__
-    TOKEN               token;
-#else
-    byte                token;
-#endif
+    TOKEN               token;  
     char                data[1];
 } MACRO_TOKEN;
 
@@ -333,7 +325,8 @@ local char *ExpandMacroToken( void )
         len = 0;
         break;
     default:                                            /* 28-mar-90 */
-        p = Tokens[ *MacroPtr++ ];
+        p = Tokens[ *(TOKEN *)MacroPtr ];
+        MacroPtr += sizeof( TOKEN );
         len = strlen( p );
         break;
     }
@@ -741,7 +734,7 @@ static MACRO_TOKEN *BuildAToken( char *p )
 }
 
 
-static MACRO_TOKEN *AppendToken( MACRO_TOKEN *head, int token, char *data )
+static MACRO_TOKEN *AppendToken( MACRO_TOKEN *head, TOKEN token, char *data )
 {
     MACRO_TOKEN *tail;
     MACRO_TOKEN *new;
@@ -959,7 +952,7 @@ static char *GlueTokenToBuffer( MACRO_TOKEN *first, char *gluebuf )
 
     buf = NULL;
     if( first != NULL ) {                               /* 19-apr-93 */
-        MacroPtr = (byte *)&first->token;
+        MacroPtr = (char *)&first->token;
         buf = ExpandMacroToken();
     }
     if ( buf == NULL )
@@ -1114,7 +1107,7 @@ static MACRO_TOKEN **NextString( MACRO_TOKEN **lnk, char *buf, unsigned i )
 }
 
 
-local MACRO_TOKEN *BuildString( byte *p )
+local MACRO_TOKEN *BuildString( char *p )
 {
     MACRO_TOKEN     *head;
     MACRO_TOKEN     **lnk;
@@ -1160,7 +1153,7 @@ local MACRO_TOKEN *BuildString( byte *p )
                 ++p;
                 buf[i++] = '\\';
                 buf[i++] = '"';
-                for(;;) {
+                for( ;; ) {
                     c = *p++;
                     if( c == '\0' ) break;
                     if( c == '\\'  ||  c == '"' ) buf[i++] = '\\';
@@ -1205,16 +1198,18 @@ local MACRO_TOKEN *BuildString( byte *p )
 }
 
 
-static MACRO_TOKEN *BuildMTokenList( byte *p, MACRO_ARG *macro_parms )
+static MACRO_TOKEN *BuildMTokenList( char *ptr, MACRO_ARG *macro_parms )
 {
     MACRO_TOKEN     *mtok;
     MACRO_TOKEN     *head;
     MACRO_TOKEN     **lnk;
     NESTED_MACRO    *nested;
+    byte            *p;
     byte            *p2;
     byte            buf[2];
     enum TOKEN      prev_token;
 
+    p = (byte *)ptr;
     head = NULL;
     lnk = &head;
     nested = NestedMacros;
@@ -1229,15 +1224,13 @@ static MACRO_TOKEN *BuildMTokenList( byte *p, MACRO_ARG *macro_parms )
         case T_ID:
         case T_UNEXPANDABLE_ID:
         case T_BAD_TOKEN:
-            mtok = BuildAToken( p + 1 );
-            mtok->token = *p++;
-            while( *p++ ) {;}
-            break;
         case T_LSTRING:
         case T_STRING:
-            mtok = BuildAToken( p + 1 );
-            mtok->token = *p++;
-            while( *p++ ) {;}
+            mtok = BuildAToken( (char *)p + sizeof( TOKEN ) );
+            mtok->token = *(TOKEN *)p;
+            p += sizeof( TOKEN );
+            while( *p++ )
+                ;
             break;
         case T_WHITE_SPACE:
             ++p;
@@ -1248,7 +1241,7 @@ static MACRO_TOKEN *BuildMTokenList( byte *p, MACRO_ARG *macro_parms )
         case T_BAD_CHAR:
             ++p;
             buf[0] = *p++;
-            mtok = BuildAToken( buf );
+            mtok = BuildAToken( (char *)buf );
             mtok->token = T_BAD_CHAR;
             break;
         case T_MACRO_SHARP:
@@ -1322,8 +1315,9 @@ static MACRO_TOKEN *BuildMTokenList( byte *p, MACRO_ARG *macro_parms )
             nested->substituting_parms = 0;
             break;
         default:
-            mtok = BuildAToken( Tokens[*p] );
-            mtok->token = *p++;
+            mtok = BuildAToken( Tokens[*(TOKEN *)p] );
+            mtok->token = *(TOKEN *)p;
+            p += sizeof( TOKEN );
             break;
         }
         if( mtok != NULL ) {

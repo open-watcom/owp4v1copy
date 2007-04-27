@@ -217,7 +217,7 @@ void Dump_lines( const uint_8 *input, uint length )
         while( *p != 0 ) {
             ++file_index;
             name = p;
-            p += strlen( p ) + 1;
+            p += strlen( (char *)p ) + 1;
             Wdputs( "path " );
             Putdec( file_index );
             Wdputs( ": '" );
@@ -231,7 +231,7 @@ void Dump_lines( const uint_8 *input, uint length )
         while( *p != 0 ) {
             ++file_index;
             name = p;
-            p += strlen( p ) + 1;
+            p += strlen( (char *)p ) + 1;
             p = DecodeULEB128( p, &directory );
             p = DecodeULEB128( p, &mod_time );
             p = DecodeULEB128( p, &file_length );
@@ -307,7 +307,7 @@ void Dump_lines( const uint_8 *input, uint length )
                 case DW_LNE_define_file:
                     ++file_index;
                     name = p;
-                    p += strlen( p ) + 1;
+                    p += strlen( (char *)p ) + 1;
                     p = DecodeULEB128( p, &directory );
                     p = DecodeULEB128( p, &mod_time );
                     p = DecodeULEB128( p, &file_length );

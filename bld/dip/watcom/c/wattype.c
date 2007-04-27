@@ -389,7 +389,7 @@ static dip_status FindRawTypeHandle( imp_image_handle *ii, imp_mod_handle im,
     return( DS_FAIL );
 }
 
-static int CharName( char *name, unsigned len )
+static int CharName( byte *name, unsigned len )
 {
     if( len > 4 ) {
         name += len - 5;

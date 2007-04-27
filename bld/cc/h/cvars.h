@@ -191,7 +191,7 @@ global  int      FunctionProfileSegment; /* segment for profiling data block */
 #endif
 
 global  int         MacroDepth;
-global  byte        *MacroPtr;
+global  char        *MacroPtr;
 global  MEPTR       NextMacro;
 global  MEPTR       UndefMacroList;
 global  MEPTR       *MacHash;       /* [ MACRO_HASH_SIZE ] */

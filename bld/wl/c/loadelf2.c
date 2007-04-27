@@ -24,17 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Additional routines for creating ELF load files.
 *
 ****************************************************************************/
-
-
-/*
-    LOADELF2 : Additional routines for creating ELF load files.
-
-*/
-
 
 
 #include "linkstd.h"
@@ -76,12 +68,13 @@ static unsigned FindClosestPrime( unsigned num )
     return prime;
 }
 
-static unsigned_32 ElfHash( unsigned char *name )
-/***********************************************/
+static unsigned_32 ElfHash( char *sym_name )
+/******************************************/
 // stolen from the ELF spec.
 {
     unsigned_32 h;
     unsigned_32 g;
+    unsigned_8  *name = (unsigned_8 *)sym_name;
 
     h = 0;
     while( *name != '\0' ) {

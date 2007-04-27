@@ -405,9 +405,9 @@ static orl_return       doCOMENT( omf_file_handle ofh )
          */
          if (*buffer)
              buffer++;
-         if( ( len == 0 ) || !strncmp( buffer, "CV", 2 ) ) {
+         if( ( len == 0 ) || !memcmp( buffer, "CV", 2 ) ) {
              ofh->debug_style = OMF_DBG_STYLE_CODEVIEW;
-         } else if( !strncmp( buffer, "HL", 2 ) ) {
+         } else if( !memcmp( buffer, "HL", 2 ) ) {
              ofh->debug_style = OMF_DBG_STYLE_HLL;
          } else {
              ofh->debug_style = OMF_DBG_STYLE_UNKNOWN;
@@ -486,7 +486,7 @@ static orl_return       doCEXTDEF( omf_file_handle ofh, omf_rectyp typ )
         loadIndex( &buffer, &len );
         slen = OmfGetLName( ofh->lnames, idx, name );
         if( slen < 0 ) return( ORL_ERROR );
-        err = OmfAddExtDef( ofh, name, slen, typ );
+        err = OmfAddExtDef( ofh, (omf_bytes)name, slen, typ );
         if( err != ORL_OKAY ) break;
     }
     return( err );
@@ -638,7 +638,7 @@ static orl_return       doPUBDEF( omf_file_handle ofh, omf_rectyp typ )
     omf_idx             seg;
     omf_idx             group;
     omf_frame           frame = 0;
-    omf_bytes           name;
+    char                *name;
     orl_sec_offset      offset;
     int                 is32;
     int                 wordsize;
@@ -670,7 +670,7 @@ static orl_return       doPUBDEF( omf_file_handle ofh, omf_rectyp typ )
         buffer++;
         len--;
         if( ( slen + 1 + wordsize ) > len ) return( ORL_ERROR );
-        name = buffer;
+        name = (char *)buffer;
         buffer += slen;
         len -= slen;
         offset = getUWord( buffer, wordsize );

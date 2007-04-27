@@ -287,7 +287,7 @@ static unsigned copySafe( unsigned i, char *m )
     return( i );
 }
 
-static unsigned expandMacroToken( unsigned i, char *m )
+static unsigned expandMacroToken( unsigned i, uint_8 *m )
 {
     char *p;
 
@@ -299,21 +299,21 @@ static unsigned expandMacroToken( unsigned i, char *m )
     case T_SAVED_ID:
     case T_BAD_TOKEN:
         ++m;
-        i = copySafe( i, m );
+        i = copySafe( i, (char *)m );
         break;
     case T_LSTRING:
         Buffer[i++] = 'L';
     case T_STRING:
         Buffer[i++] = '"';
         ++m;
-        i = copySafe( i, m );
+        i = copySafe( i, (char *)m );
         Buffer[i++] = '"';
         Buffer[i] = '\0';
         break;
     default:
         p = Tokens[ *m ];
         ++m;
-        i = copySafe( i, p );
+        i = copySafe( i, (char *)p );
     }
     return( i );
 }

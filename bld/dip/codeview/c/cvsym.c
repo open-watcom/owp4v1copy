@@ -92,7 +92,7 @@ static dip_status SymGetName( imp_image_handle *ii, imp_sym_handle *is,
         skip = sizeof( s_register );
         break;
     case S_CONSTANT:
-        name = (unsigned_8 *)p + sizeof( s_constant );
+        name = (char *)p + sizeof( s_constant );
         skip = (unsigned_8 *)GetNumLeaf( name, &val ) - (unsigned_8 *)p;
         break;
     case S_UDT:
@@ -153,8 +153,8 @@ static dip_status SymGetName( imp_image_handle *ii, imp_sym_handle *is,
     default:
         Confused();
     }
-    name = (unsigned_8 *)p + skip;
-    *lenp = name[0];
+    name = (char *)p + skip;
+    *lenp = *(unsigned_8 *)name;
     *namep = &name[1];
     return( DS_OK );
 }

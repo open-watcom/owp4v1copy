@@ -1116,7 +1116,7 @@ static  void    OutGroup( int sidx, array_control *group_def, int *index_p ) {
 static  void    OutCGroup( int sidx ) {
 /*************************************/
 
-    char        out[ 4 ];
+    byte        out[ 4 ];
     int         i;
 
     out[ 0 ] = CodeGroupNIdx;

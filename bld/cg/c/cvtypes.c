@@ -90,7 +90,7 @@ static  void    BuffWrite( cv_out *out, void *to )
     int     len;
     seg_id  old;
 
-    len = (char *)to - out->beg;
+    len = (byte *)to - out->beg;
     old = SetOP( out->seg );
     DataBytes( len, out->beg );
     out->beg = to;
@@ -130,7 +130,7 @@ static  void  *AlignBuff( cv_out *out )
 {
     int     len;
     int     len4;
-    char    *ptr;
+    byte    *ptr;
 
     ptr = out->ptr;
     len = ptr - out->buff;
@@ -315,7 +315,7 @@ static lf_values   LFIntType( int size )
 extern void CVPutINum( cv_out *out, signed_32 num )
 /*************************************************/
 {
-    char       *ptr;
+    byte       *ptr;
 #define LC( what, to )   *((to *)&what)
     if( num >= 0 && num < 0x00008000 ){
         *((u2*)out->ptr) = num;  /* out num as is */
@@ -347,7 +347,7 @@ extern void CVPutINum( cv_out *out, signed_32 num )
 extern  void        CVPutINum64( cv_out *out, signed_64 val )
 /***********************************************************/
 {
-    char       *ptr;
+    byte       *ptr;
 #define LC( what, to )   *((to *)&what)
     if( val.u._32[I64HI32] == 0 || val.u._32[I64HI32] == -1 ) {
         CVPutINum( out, val.u._32[I64LO32] );

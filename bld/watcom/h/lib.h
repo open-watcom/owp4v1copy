@@ -70,12 +70,12 @@ typedef struct
 
 typedef struct
 {
-    unsigned char       lib_name[LIB_NAME_LEN];
+    char                lib_name[LIB_NAME_LEN];
     unsigned char       lib_date[LIB_DATE_LEN];
     unsigned char       lib_uid[LIB_UID_LEN];
     unsigned char       lib_gid[LIB_GID_LEN];
     unsigned char       lib_mode[LIB_MODE_LEN];
-    unsigned char       lib_size[LIB_SIZE_LEN];
+    char                lib_size[LIB_SIZE_LEN];
     unsigned char       lib_fmag[LIBFMAG_LEN];
 } Lib32_Hdr;
 

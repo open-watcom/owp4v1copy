@@ -99,14 +99,14 @@ static uint_8 *DecodeLEB128( const uint_8 *input, uint_32 *value )
     return( (uint_8 *)input );
 }
 //TODO: check stack bounds
-static void DoLocExpr( char             *p,
+static void DoLocExpr( unsigned_8       *p,
                        int              length,
                        int              addr_size,
                        dr_loc_callbck   *callbck,
                        void             *d,
                        dr_handle        var )
 {
-    char            *end;
+    unsigned_8      *end;
     dw_op           op;
     dw_locop_op     opr;
     uint_32         op1;
@@ -476,8 +476,8 @@ static int DWRLocExpr( dr_handle        var,
 {
     unsigned    form;
     uint_32     size;
-    char        loc_buff[256];
-    char        *expr;
+    uint_8      loc_buff[256];
+    uint_8      *expr;
     int         ret;
     dr_handle   loclist;
     uint_32     context;

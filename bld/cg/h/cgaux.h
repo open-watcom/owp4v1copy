@@ -105,7 +105,7 @@ typedef unsigned long byte_seq_len;
 #include "cgnoalgn.h"
 typedef struct byte_seq {
         byte_seq_len    length;
-        char            data[];
+        byte            data[];
 } byte_seq;
 #include "cgrealgn.h"
 

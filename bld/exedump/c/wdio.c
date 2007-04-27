@@ -131,8 +131,8 @@ void Wdputc( char c )
 /*
  * writeout a msg - part of a line
  */
-void Wdputs( char *buf )
-/**********************/
+void Wdputs( const char *buf )
+/****************************/
 {
     fputs( buf, stdout );
 }
@@ -140,8 +140,8 @@ void Wdputs( char *buf )
 /*
  * writeout a msg - includes newline
  */
-void Wdputslc( char *buf )
-/************************/
+void Wdputslc( const char *buf )
+/******************************/
 {
     fputs( buf, stdout );
 }

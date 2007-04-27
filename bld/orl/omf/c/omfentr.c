@@ -332,7 +332,7 @@ omf_sec_handle OMFENTRY OmfSecGetRelocTable( omf_sec_handle sh )
 }
 
 
-orl_return OMFENTRY OmfSecGetContents( omf_sec_handle sh, char **buffer )
+orl_return OMFENTRY OmfSecGetContents( omf_sec_handle sh, unsigned_8 **buffer )
 {
     orl_return  err;
 
