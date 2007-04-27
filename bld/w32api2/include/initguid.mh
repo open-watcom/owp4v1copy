@@ -1,0 +1,9 @@
+/*
+ *  initguid.h  Enable initialization of GUIDs
+ *
+:include crwatcnt.sp
+ */
+
+#define INITGUID
+#include <guiddef.h>
+
