@@ -214,8 +214,8 @@ static void dmp_sec_progbits( char *name,
     unsigned_32 offset, unsigned_32 size )
 /****************************************/
 {
-    const char  *ptr;
-    uint        sect;
+    const uint_8    *ptr;
+    uint            sect;
 
     if( name == NULL ) {
         Dmp_seg_data( offset, size );

@@ -79,7 +79,7 @@ extern uint_8 *DecodeULEB128( const uint_8 *, uint_32 * );
 extern uint_8 *DecodeLEB128( const uint_8 *, int_32 * );
 uint_8 *find_abbrev( uint_32 start, uint_32 code );
 extern void dump_abbrevs( const uint_8 *input, uint length );
-extern void Dump_specific_section( uint, const char *, uint );
+extern void Dump_specific_section( uint, const uint_8 *, uint );
 extern void Dump_all_sections( void );
 extern void Dump_lines( const uint_8 *, uint );
 extern uint Lookup_section_name( const char * );
