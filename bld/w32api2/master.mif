@@ -37,6 +37,7 @@ headers =            &
         guiddef.h    &
         httpext.h    &
         idispids.h   &
+        imagehlp.h   &
         imm.h        &
         inaddr.h     &
         lzexpand.h   &
