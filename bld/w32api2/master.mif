@@ -45,6 +45,8 @@ headers =            &
         intshcut.h   &
         ipexport.h   &
         isguids.h    &
+        lm.h         &
+        lmcons.h     &
         lzexpand.h   &
         mcx.h        &
         mmsystem.h   &

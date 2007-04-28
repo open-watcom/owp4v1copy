@@ -1,0 +1,14 @@
+/*
+ *  lm.h        LAN Manager main header file
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _LM_H_INCLUDED
+#define _LM_H_INCLUDED
+
+:include readonly.sp
+#include <lmcons.h>
+
+#endif /* _LM_H_INCLUDED */
+
