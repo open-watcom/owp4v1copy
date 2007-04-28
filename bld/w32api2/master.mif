@@ -43,6 +43,7 @@ headers =            &
         inaddr.h     &
         initguid.h   &
         intshcut.h   &
+        ipexport.h   &
         isguids.h    &
         lzexpand.h   &
         mcx.h        &
@@ -59,6 +60,8 @@ headers =            &
         oleauto.h    &
         olectl.h     &
         oleidl.h     &
+        packon.h     &
+        packoff.h    &
         poppack.h    &
         propidl.h    &
         prsht.h      &
