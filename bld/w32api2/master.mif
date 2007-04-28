@@ -41,6 +41,8 @@ headers =            &
         imm.h        &
         inaddr.h     &
         initguid.h   &
+        intshcut.h   &
+        isguids.h    &
         lzexpand.h   &
         mcx.h        &
         mmsystem.h   &
