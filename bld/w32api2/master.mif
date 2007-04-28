@@ -39,6 +39,7 @@ headers =            &
         idispids.h   &
         imagehlp.h   &
         imm.h        &
+        in6addr.h    &
         inaddr.h     &
         initguid.h   &
         intshcut.h   &
