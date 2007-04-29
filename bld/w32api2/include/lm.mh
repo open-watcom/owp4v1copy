@@ -9,6 +9,7 @@
 
 :include readonly.sp
 #include <lmcons.h>
+#include <lmerr.h>
 
 #endif /* _LM_H_INCLUDED */
 

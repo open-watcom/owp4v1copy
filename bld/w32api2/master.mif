@@ -47,6 +47,7 @@ headers =            &
         isguids.h    &
         lm.h         &
         lmcons.h     &
+        lmerr.h      &
         lzexpand.h   &
         mcx.h        &
         mmsystem.h   &
