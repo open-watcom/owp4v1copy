@@ -89,10 +89,10 @@ FPUExpand  proc    near
         mov     es,dx
         mov     si,ax
         std
-        lea     di,[si + 28 + 80 - 1]
-        lea     si,[si + 14 + 80 - 1]
-        mov     cx,80
-        rep     movsb
+        lea     di,[si + 28 + 80 - 2]
+        lea     si,[si + 14 + 80 - 2]
+        mov     cx,40
+        rep     movsw
         xor     ax,ax
         mov     cx,6
 loop1:  stosw
@@ -124,8 +124,8 @@ FPUContract  proc    near
 loop2:  movsw
         add     si,2
         loop    loop2
-        mov     cx,80
-        rep     movsb
+        mov     cx,40
+        rep     movsw
         pop     cx
         pop     di
         pop     si
