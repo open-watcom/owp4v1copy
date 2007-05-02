@@ -46,6 +46,7 @@ headers =            &
         ipexport.h   &
         isguids.h    &
         lm.h         &
+        lmaccess.h   &
         lmcons.h     &
         lmerr.h      &
         lzexpand.h   &
