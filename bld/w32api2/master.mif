@@ -50,6 +50,7 @@ headers =            &
         lmalert.h    &
         lmcons.h     &
         lmerr.h      &
+        lmshare.h    &
         lzexpand.h   &
         mcx.h        &
         mmsystem.h   &

@@ -12,6 +12,7 @@
 #include <lmerr.h>
 #include <lmaccess.h>
 #include <lmalert.h>
+#include <lmshare.h>
 
 #endif /* _LM_H_INCLUDED */
 
