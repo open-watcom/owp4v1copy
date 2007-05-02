@@ -2,6 +2,8 @@ LIBRARY NETAPI32.DLL
 EXPORTS
 I_NetLogonControl
 I_NetLogonControl2
+NetAlertRaise
+NetAlertRaiseEx
 NetEnumerateTrustedDomains
 NetGetAnyDCName
 NetGetDCName

@@ -11,6 +11,7 @@
 #include <lmcons.h>
 #include <lmerr.h>
 #include <lmaccess.h>
+#include <lmalert.h>
 
 #endif /* _LM_H_INCLUDED */
 
