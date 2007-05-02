@@ -34,11 +34,16 @@ typedef void FAR        *LHANDLE;
 typedef SHANDLE    HFILE;
 typedef HFILE FAR  *PHFILE;
 
-typedef unsigned char FAR   *PSZ;
-typedef unsigned char NEAR  *NPSZ;
+:: Original MS OS/2 headers use unsigned char type for both PSZ and PCH type.
+:: We use char to be compatible with OS/2 2.x and to avoid unsigned/plain
+:: char type mismatches. Existing code should not care for sign of chars,
+:: and we default to unsigned anyway.
+::
+typedef char FAR   *PSZ;
+typedef char NEAR  *NPSZ;
 
-typedef unsigned char FAR   *PCH;
-typedef unsigned char NEAR  *NPCH;
+typedef char FAR   *PCH;
+typedef char NEAR  *NPCH;
 
 typedef unsigned short  BOOL;
 typedef BOOL FAR        *PBOOL;
