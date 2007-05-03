@@ -52,6 +52,7 @@ headers =            &
         lmerr.h      &
         lmmsg.h      &
         lmremutl.h   &
+        lmrepl.h     &
         lmshare.h    &
         lzexpand.h   &
         mcx.h        &
