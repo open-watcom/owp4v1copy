@@ -95,7 +95,6 @@ global  int     DebugFlag;
 global  TOKEN   CurToken;
 global  int     BadTokenInfo;
 global  int     TokenLen;
-global  int     MTokenLen;      /* macro token length */
 global  int     TokenLine;
 global  int     SrcFileLineNum; /* duplicate of SrcFile->src_line */
 global  int     TokenFno;

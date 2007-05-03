@@ -87,6 +87,7 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
     MEPTR       mentry;
     FCB         tmp_file;
     FCB         *old_file;
+    TOKEN       *p_token;
 
     str = copy_eq( Buffer, str);
     i = strlen( Buffer );
@@ -99,7 +100,9 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
     mentry->parm_count = 0;
     i = 0;
     if( !EqualChar( *str ) ) {
-        TokenBuf[ i++ ] = T_PPNUMBER;
+        p_token = (TOKEN *)&TokenBuf[i];
+        *p_token = T_PPNUMBER;
+        i += sizeof( TOKEN );
         TokenBuf[ i++ ] = '1';
         TokenBuf[ i++ ] = '\0';
     } else {
@@ -115,7 +118,9 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
             if( ReScanPos() == str ) break;
             if( CurToken == T_WHITE_SPACE ) break;      /* 28-apr-94 */
             if( CurToken == T_BAD_CHAR && ! multiple_tokens ) break;
-            TokenBuf[i++] = CurToken;
+            p_token = (TOKEN *)&TokenBuf[i];
+            *p_token = CurToken;
+            i += sizeof( TOKEN );
 
             switch( CurToken ) {
             case T_BAD_CHAR:
@@ -143,7 +148,7 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
     }
     TokenBuf[i] = T_NULL;
     if( strcmp( mentry->macro_name, "defined" ) != 0 ){
-        MacroAdd( mentry, TokenBuf, i + 1, flags );
+        MacroAdd( mentry, TokenBuf, i + sizeof( TOKEN ), flags );
     }else{
         CErr1( ERR_CANT_DEFINE_DEFINED );
         CMemFree( mentry );
