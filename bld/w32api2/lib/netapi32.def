@@ -32,6 +32,11 @@ NetLocalGroupGetInfo
 NetLocalGroupGetMembers
 NetLocalGroupSetInfo
 NetLocalGroupSetMembers
+NetMessageBufferSend
+NetMessageNameAdd
+NetMessageNameDel
+NetMessageNameEnum
+NetMessageNameGetInfo
 NetQueryDisplayInformation
 NetServerAliasAdd
 NetServerAliasDel
