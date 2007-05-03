@@ -195,7 +195,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
         }
         len = DdeGetData( data, NULL, 0, 0 );
         ptr = MemAlloc( len );
-        DdeGetData( data, ptr, len, 0 );
+        DdeGetData( data, (LPBYTE)ptr, len, 0 );
         VarAddStr( tmp1, ptr,  vl );
         MemFree( ptr );
 //      DdeFreeDataHandle( data );
@@ -219,7 +219,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
             rc = ERR_INVALID_DDE;
             break;
         }
-        data = DdeCreateDataHandle( DDEInstId, tmp2, strlen( tmp2)+1,
+        data = DdeCreateDataHandle( DDEInstId, (LPBYTE)tmp2, strlen( tmp2 ) + 1,
                         0, hdl, ClipboardFormat, 0 );
         if( data == (HDDEDATA)NULL ) {
             rc = ERR_DDE_FAIL;
@@ -288,7 +288,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
         } else {
             len = DdeGetData( data, NULL, 0, 0 )+1;
             ptr = MemAlloc( len );
-            DdeGetData( data, ptr, len, 0 );
+            DdeGetData( data, (LPBYTE)ptr, len, 0 );
             VarAddStr( tmp1, ptr,  vl );
             MemFree( ptr );
             DdeFreeDataHandle( data );
@@ -312,7 +312,7 @@ bool RunDDECommand( int token, char *str, char *tmp1, long *result, vlist *vl )
             rc = ERR_INVALID_DDE;
             break;
         }
-        data = DdeCreateDataHandle( DDEInstId, tmp1, strlen( tmp1 )+1,
+        data = DdeCreateDataHandle( DDEInstId, (LPBYTE)tmp1, strlen( tmp1 )+1,
                             0L, hdl, ClipboardFormat, 0 );
         if( data == (HDDEDATA)NULL ) {
             rc = ERR_DDE_FAIL;

@@ -78,7 +78,7 @@ static  WResID  *BitmapName             = NULL;
 #define _HUGE __huge
 #define __halloc halloc
 #define __hfree hfree
-static void HugeMemCopy( char far *dst, char far *src, unsigned bytes )
+static void HugeMemCopy( void far *dst, void far *src, unsigned bytes )
 {
     long                offset, selector;
     long                bytes_before_segment_end;
@@ -91,7 +91,7 @@ static void HugeMemCopy( char far *dst, char far *src, unsigned bytes )
         bytes -= bytes_before_segment_end;
         selector += HUGE_SHIFT;
         dst = MK_FP( selector, 0 );
-        src += bytes_before_segment_end;
+        src = (char *)src + bytes_before_segment_end;
     }
     _fmemcpy( dst, src, bytes );
 }

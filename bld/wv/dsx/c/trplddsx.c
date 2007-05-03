@@ -405,7 +405,7 @@ static bool CallTrapInit( char *parm, char *errmsg, trap_version *trap_ver )
     callstruct->errmsg_off = sizeof( *callstruct ) + strlen( parm ) + 1;
     GoToRealMode( RMTrapInit );
     *trap_ver = callstruct->version;
-    _fstrcpy( errmsg, (uint_8 __far *)callstruct + callstruct->errmsg_off );
+    _fstrcpy( errmsg, (char __far *)callstruct + callstruct->errmsg_off );
     return( *errmsg == NULLCHAR );
 }
 

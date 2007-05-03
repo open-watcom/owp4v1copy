@@ -121,7 +121,7 @@ static void MapCharacter( char ch, unsigned char data[16] )
     }
 }
 
-bool UIMapCharacters( char mapchar[], char mapdata[][16] )
+bool UIMapCharacters( char mapchar[], unsigned char mapdata[][16] )
 {
     int         i;
 

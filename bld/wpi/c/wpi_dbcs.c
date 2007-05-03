@@ -40,7 +40,7 @@ BOOL _wpi_is_dbcs( void )
 
 {
     COUNTRYCODE                 code;
-    UCHAR                       dbcs_env[12];
+    CHAR                        dbcs_env[12];
 
     code.country = 0;
     code.codepage = 0;

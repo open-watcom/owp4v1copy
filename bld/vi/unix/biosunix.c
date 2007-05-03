@@ -44,7 +44,7 @@ void BIOSSetColorRegister( short reg, char r, char g, char b ) {}
 void BIOSSetCursor( char page, char row, char col )
 {
     int type, attr;
-    char oldrow, oldcol;
+    unsigned char oldrow, oldcol;
 
     page = page;
     _uigetcursor( &oldrow, &oldcol, &type, &attr );

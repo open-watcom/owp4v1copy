@@ -56,7 +56,7 @@ char doRequest( char *szCommand )
 {
     HDDEDATA    hddeData;
     HSZ         hszCommand;
-    char        result;
+    BYTE        result;
 
     hszCommand = DdeCreateStringHandle( idInstance, szCommand, CP_WINANSI );
     hddeData = DdeClientTransaction( NULL, 0, hConv, hszCommand, CF_TEXT,

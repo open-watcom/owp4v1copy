@@ -368,10 +368,10 @@ static void trimOmfHeader( void )
     unsigned    i;
 
     omfRec->basic.contents[ omfRec->basic.len - 1 ] = '\0';
-    new_name = TrimPath( omfRec->basic.contents + 1 );
+    new_name = TrimPath( (char *)omfRec->basic.contents + 1 );
     omfRec->basic.contents[0] = strlen( new_name );
     omfRec->basic.len = omfRec->basic.contents[0] + 2;
-    strcpy( omfRec->basic.contents + 1, new_name );
+    strcpy( (char *)omfRec->basic.contents + 1, new_name );
     sum = 0;
     for( i = 0; i < omfRec->basic.len + 2; ++i ) {
         sum += omfRec->chkcalc[i];
@@ -465,7 +465,7 @@ void WriteOmfFile( sym_file *file )
         omfRec->basic.len = sym_len + 2;
         omfRec->basic.contents[0] = sym_len;
         charCount += ( sym_len + 1 ) | 1;
-        strcpy( omfRec->basic.contents + 1, file->import->symName );
+        strcpy( (char *)omfRec->basic.contents + 1, file->import->symName );
         sum = 0;
         for( i = 0; i < sym_len + 4; ++i ) {
             sum += omfRec->chkcalc[i];
@@ -484,9 +484,9 @@ void WriteOmfFile( sym_file *file )
             omfRec->basic.contents[3] = 0;
         }
         omfRec->basic.contents[4] = sym_len;
-        strcpy( omfRec->basic.contents + 5, file->import->symName );
+        strcpy( (char *)omfRec->basic.contents + 5, file->import->symName );
         omfRec->basic.contents[5 + sym_len] = file_len;
-        strcpy( omfRec->basic.contents + 6 + sym_len, file->import->DLLName );
+        strcpy( (char *)omfRec->basic.contents + 6 + sym_len, file->import->DLLName );
         if( file->import->type == ORDINAL ) {
            *( (unsigned_16 *)&( omfRec->basic.contents[6 + sym_len + file_len ] ) ) = (unsigned_16)file->import->ordinal;
         } else {

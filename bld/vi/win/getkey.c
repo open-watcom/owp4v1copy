@@ -184,7 +184,7 @@ bool AltDown( void )
 
 int ConvertWierdCharacter( WORD vk, WORD data )
 {
-    char keyboard_state[256];
+    unsigned char keyboard_state[256];
     unsigned int scancode = LOBYTE( data );
     #if defined(__NT__)
         WORD    newkey;

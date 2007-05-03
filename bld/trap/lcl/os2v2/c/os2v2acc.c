@@ -447,7 +447,7 @@ void WriteXMMRegs( struct x86_xmm *xmm_regs )
     TaskWriteXMMRegs( xmm_regs );
 }
 
-void ReadLinear( char *data, ULONG lin, USHORT size )
+void ReadLinear( void *data, ULONG lin, USHORT size )
 {
     Buff.Cmd = DBG_C_ReadMemBuf;
     Buff.Addr = lin;
@@ -456,7 +456,7 @@ void ReadLinear( char *data, ULONG lin, USHORT size )
     CallDosDebug(&Buff);
 }
 
-void WriteLinear( char *data, ULONG lin, USHORT size )
+void WriteLinear( void *data, ULONG lin, USHORT size )
 {
     Buff.Cmd    = DBG_C_WriteMemBuf;
     Buff.Addr   = lin;
@@ -465,12 +465,13 @@ void WriteLinear( char *data, ULONG lin, USHORT size )
     CallDosDebug(&Buff);
 }
 
-USHORT WriteBuffer( char *data, USHORT segv, ULONG offv, USHORT size )
+USHORT WriteBuffer( void *src, USHORT segv, ULONG offv, USHORT size )
 {
     USHORT      length;
     bool        iugs;
     USHORT      resdata;
     ULONG       flat;
+    BYTE        *data = src;
 
     if( segv < 4 ) {
         return( 0 );
@@ -541,12 +542,13 @@ USHORT WriteBuffer( char *data, USHORT segv, ULONG offv, USHORT size )
 }
 
 
-static USHORT ReadBuffer( char *data, USHORT segv, ULONG offv, USHORT size )
+static USHORT ReadBuffer( void *dst, USHORT segv, ULONG offv, USHORT size )
 {
     USHORT      length;
     bool        iugs;
     USHORT      resdata;
     ULONG       flat;
+    BYTE        *data = dst;
 
     if( segv < 4 ) {
         return( 0 );
@@ -581,7 +583,7 @@ static USHORT ReadBuffer( char *data, USHORT segv, ULONG offv, USHORT size )
             length--;
             if( length != 0 ) {
                 *data = resdata >> 8;
-                data++;
+                data++; 
                 offv++;
                 length--;
             }

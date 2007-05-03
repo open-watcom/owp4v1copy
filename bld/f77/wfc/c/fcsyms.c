@@ -1213,7 +1213,7 @@ static  void    DumpLitSCBs( void ) {
         }
         data = BENewBack( NULL );
         DGLabel( data );
-        DGString( &sym->lt.value, sym->lt.length );
+        DGString( (char *)&sym->lt.value, sym->lt.length );
         DumpSCB( ConstBack( sym ), data, sym->lt.length, FALSE, 0 );
         FreeBackHandle( &data );
     }

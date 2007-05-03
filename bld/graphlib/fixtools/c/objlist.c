@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Tool, list all modules name
+* Description:  List module names defined in an object file.
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -62,7 +63,7 @@ static byte GetByte( void )
     return( ret );
 }
 
-static char *GetName( void )
+static byte *GetName( void )
 /**************************/
 {
     NameLen = GetByte();

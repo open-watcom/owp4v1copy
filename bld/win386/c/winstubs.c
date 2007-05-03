@@ -239,7 +239,7 @@ int FAR PASCAL __GetInstanceData( HANDLE a, DWORD offset, int len )
     WORD        sel;
     char        ch;
 
-    got = GetInstanceData( a, (NPSTR) &MyDataSelector, sizeof( WORD ) );
+    got = GetInstanceData( a, (PBYTE) &MyDataSelector, sizeof( WORD ) );
     if( got == 2 ) {
         sel = MyDataSelector;
         MyDataSelector = DataSelector;

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  auxiliary information processing
+* Description:  Auxiliary information processing.
 *
 ****************************************************************************/
 
@@ -1377,7 +1377,7 @@ static  void    GetByteSeq( void ) {
     int             seq_len;
     int             len;
     char            *ptr;
-    char            buff[MAXIMUM_BYTESEQ+32]; // extra for assembler
+    byte            buff[MAXIMUM_BYTESEQ+32]; // extra for assembler
 #if _CPU == 8086
     bool            float_specified;
 

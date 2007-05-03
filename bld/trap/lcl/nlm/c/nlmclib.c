@@ -227,7 +227,7 @@ char *GetPIDName( T_ProcessID *pPID )
         }
     #endif
     if( pPID == NULL ) return( NULL );
-    return( pPID->PCBProcessName );
+    return( (char *)pPID->PCBProcessName );
 #endif
 }
 

@@ -149,7 +149,7 @@ _DBG_IPX(("Got a packet - size=%d\r\n", got));
         recvd += got;
         PostAListen( p );
         if( got != MAX_DATA_SIZE ) break;
-        rec = (unsigned_8 *)rec + got;
+        rec = (char *)rec + got;
     }
     return( recvd );
 }
@@ -176,7 +176,7 @@ unsigned RemotePut( char *snd, unsigned len )
         if( DoRemotePut( snd, MAX_DATA_SIZE ) == REQUEST_FAILED ) {
             return( REQUEST_FAILED );
         }
-        snd = (unsigned_8 *)snd + MAX_DATA_SIZE;
+        snd = (char *)snd + MAX_DATA_SIZE;
         len -= MAX_DATA_SIZE;
     }
     if( DoRemotePut( snd, len ) == REQUEST_FAILED ) {
@@ -342,13 +342,13 @@ LONG ReadPropertyValue( char *objectName,
 {
     LONG rc;
     LONG objectID;
-    BYTE name_buff[48];
+    char name_buff[48];
     BYTE moreSegmentsT, propertyFlagsT;
 
     ASCIIZToLenStr( name_buff, objectName );
-    MapNameToID( 0, name_buff, objectType, &objectID, NOCHECK );
+    MapNameToID( 0, (BYTE *)name_buff, objectType, &objectID, NOCHECK );
     ASCIIZToLenStr( name_buff, propertyName );
-    rc = ReadProperty( 0, objectID, name_buff, (LONG)segmentNumber,
+    rc = ReadProperty( 0, objectID, (BYTE *)name_buff, (LONG)segmentNumber,
                        propertyValue, &moreSegmentsT, &propertyFlagsT,
                        CHECK );
     if( rc != 0 ) return( rc );
@@ -360,7 +360,7 @@ static int FindPartner( void )
     BYTE        property_value[130];
     LONG        transport_time;
 
-    if( ReadPropertyValue( SAPStruct.ASServerIDpacket.serverName,
+    if( ReadPropertyValue( (char *)SAPStruct.ASServerIDpacket.serverName,
                            DBG_SERVER_TYPE, "NET_ADDRESS",
                            1, (BYTE *)&property_value ) != 0 ) return( 0 );
     AssignArray( ServHead.destination, property_value );

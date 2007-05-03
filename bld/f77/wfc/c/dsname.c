@@ -214,7 +214,7 @@ void    DSName(void) {
                 } else {
                     CITNode->sym_ptr->lt.flags |= LT_EXEC_STMT;
                 }
-                CITNode->value.cstring.strptr = &CITNode->sym_ptr->lt.value;
+                CITNode->value.cstring.strptr = (char *)&CITNode->sym_ptr->lt.value;
                 CITNode->value.cstring.len = CITNode->sym_ptr->lt.length;
             } else {
                 memcpy( &CITNode->value, &CITNode->sym_ptr->cn.value,

@@ -826,7 +826,7 @@ void    AddConst( itnode *node ) {
         if( node->value.cstring.len == 0 ) {
             Error( CN_ZERO_LEN );
         }
-        node->sym_ptr = STLit( val_ptr->strptr, val_ptr->len );
+        node->sym_ptr = STLit( (byte *)val_ptr->strptr, val_ptr->len );
     }
 }
 

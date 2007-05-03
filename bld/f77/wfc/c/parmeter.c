@@ -97,7 +97,7 @@ void    CpParameter( void ) {
             }
             if( !AError && assign_val ) {
                 if( typ == TY_CHAR ) {
-                    string = CITNode->value.cstring.strptr;
+                    string = (byte *)CITNode->value.cstring.strptr;
                     if( CITNode->size < parm_size ) {
                         lit = FMemAlloc( parm_size );
                         lit_len = CITNode->size;

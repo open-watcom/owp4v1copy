@@ -291,14 +291,14 @@ static int getInt( STUPIDNTINT *dest, char *data )
     return( TRUE );
 }
 
-static int getByte( char *dest, char *data )
+static int getByte( BYTE *dest, char *data )
 {
     char        tmp[ MAX_STR ];
 
     if( NextWord1( data, tmp ) <= 0 ) {
         return( FALSE );
     }
-    *dest = (char)atoi( tmp );
+    *dest = (BYTE)atoi( tmp );
     return( TRUE );
 }
 

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Processing for the i/o keyword list.
 *
 ****************************************************************************/
 
-
-//
-// IOPROCKW  : processing for the i/o keyword list
-//
 
 #include "ftnstd.h"
 #include "iodefs.h"
@@ -262,7 +257,7 @@ void    FormatIdd( void ) {
                 AddConst( CITNode ); // in case single constant
                 fmt_label.g_label = NextLabel();
                 FScan( CITNode->sym_ptr->lt.length,
-                       &CITNode->sym_ptr->lt.value, fmt_label );
+                       (char *)&CITNode->sym_ptr->lt.value, fmt_label );
                 GPassLabel( fmt_label.g_label, RT_SET_FMT );
             } else {
                 GFmtExprSet();

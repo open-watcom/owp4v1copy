@@ -290,7 +290,7 @@ void    ConstCat( int size ) {
         last_node = last_node->link;
         dest += opn_size;
     }
-    CITNode->value.cstring.strptr = string;
+    CITNode->value.cstring.strptr = (char *)string;
     CITNode->value.cstring.len = size;
     CITNode->size = size;
     link_node = last_node->link;
@@ -298,7 +298,7 @@ void    ConstCat( int size ) {
     FreeITNodes( CITNode->link );
     CITNode->link = link_node;
     AddConst( CITNode );
-    CITNode->value.cstring.strptr = &CITNode->sym_ptr->lt.value;
+    CITNode->value.cstring.strptr = (char *)&CITNode->sym_ptr->lt.value;
     FMemFree( string );
 }
 

@@ -461,7 +461,7 @@ char *GetLname( unsigned_16 idx ) {
             return( "" ); /* not found */
         }
     }
-    name = &(entry->Lname);
+    name = (char *)&(entry->Lname);
     return( name );
 }
 
@@ -563,7 +563,7 @@ char *GetXname( unsigned_16 idx ) {
             return( "" ); /* not found */
         }
     }
-    name = &(entry->Lname);
+    name = (char *)&(entry->Lname);
     return( name );
 }
 

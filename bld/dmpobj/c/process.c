@@ -369,10 +369,10 @@ static int doMSOmf( void )
         NameLen = RecLen - 3;
         RecPtr += NameLen;
         Output( INDENT "---- \"New OMF\" extensions present ----" CRLF );
-        if( strncmp( NamePtr, "CV", 2 ) == 0 ) {
+        if( strncmp( (char *)NamePtr, "CV", 2 ) == 0 ) {
             Output( INDENT "Microsoft CodeView style debugging information version %b" CRLF, version );
             DbgStyle = DBG_CODEVIEW;
-        } else if( strncmp( NamePtr, "HL", 2 ) == 0 ) {
+        } else if( strncmp( (char *)NamePtr, "HL", 2 ) == 0 ) {
             Output( INDENT "IBM HLL style debugging information version %b" CRLF, version );
             DbgStyle = DBG_HLL;
         }

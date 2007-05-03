@@ -1006,7 +1006,7 @@ short _WCI86FAR _CGRAPH _getfontinfo( struct _fontinfo _WCI86FAR *font )
 Entry( _GETFONTINFO, _getfontinfo ) // alternate entry-point
 
 
-short _WCI86FAR _CGRAPH _getgtextextent( unsigned char _WCI86FAR *text )
+short _WCI86FAR _CGRAPH _getgtextextent( char _WCI86FAR *text )
 //============================================================
 
 /*  Calculates the width of 'text' in pixels.  */

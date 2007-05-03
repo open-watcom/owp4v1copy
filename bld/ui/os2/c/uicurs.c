@@ -70,7 +70,7 @@ void global uioffcursor( void )
 void global uioncursor( void )
 /****************************/
 {
-    unsigned char       CharCellPair[2];
+    CHAR                CharCellPair[2];
     VIOCURSORINFO       vioCursor;
 
 
@@ -103,7 +103,7 @@ void global uioncursor( void )
 
         /* write out the character and the new attribute */
         CharCellPair[1] = UIData->cursor_attr;
-        VioWrtNCell(&CharCellPair[0],
+        VioWrtNCell((PBYTE)&CharCellPair[0],
                     24,
                     UIData->cursor_row,
                     UIData->cursor_col,
@@ -117,7 +117,7 @@ void global uioncursor( void )
 static void savecursor( void )
 /****************************/
 {
-    unsigned char       CharCellPair[2];
+    CHAR                CharCellPair[2];
     USHORT              length;
     VIOCURSORINFO       vioCursor;
 
@@ -171,7 +171,7 @@ void global uigetcursor( ORD *row, ORD *col, int *type, int *attr )
 {
 
     USHORT              length;
-    unsigned char       CharCellPair[2];
+    CHAR                CharCellPair[2];
     VIOCURSORINFO       vioCursor;
 
     /* read cursor position */

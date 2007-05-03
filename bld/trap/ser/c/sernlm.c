@@ -107,7 +107,7 @@ void SendByte( int value )
 {
     LONG count;
 
-    AIOWriteData( ComPortHandle, (BYTE *)&value, 1, &count );
+    AIOWriteData( ComPortHandle, (char *)&value, 1, &count );
     do {
         AIOWriteStatus( ComPortHandle, &count, NULL );
     } while( count != 0 );
@@ -132,7 +132,7 @@ int GetByte( void )
         data = NO_DATA;
     } else {
         data = 0;
-        AIOReadData( ComPortHandle, (BYTE *)&data, 1, &count );
+        AIOReadData( ComPortHandle, (char *)&data, 1, &count );
     }
     return( data );
 }
@@ -212,7 +212,7 @@ char *ParsePortSpec( char * *spec )
     }
     if( SerialTag == 0 ) {
         SerialTag = AllocateResourceTag( MyNLMHandle,
-                                        "Debug Server Serial IO",
+                                        (BYTE *)"Debug Server Serial IO",
                                         ASYNCIOSignature );
     }
     if( port == -1 ) port = com_num - 1;

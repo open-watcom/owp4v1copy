@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Tool, search all referenced external symbols
+* Description:  List all external symbols referenced by an object file.
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -119,7 +120,7 @@ static unsigned_16 GetIndex( void )
     return( index );
 }
 
-static char *GetName( void )
+static byte *GetName( void )
 /**************************/
 {
     NameLen = GetByte();
@@ -181,7 +182,7 @@ static void ProcFilePubDef( FILE *fp )
             while( ! EndRec() ) {
                 GetName();
                 *RecPtr = 0;
-                AddSymbol( pubdef_tab, NamePtr, NULL );
+                AddSymbol( pubdef_tab, (char *)NamePtr, NULL );
                 GetOffset();
                 GetIndex();
             }
@@ -237,9 +238,9 @@ static void ProcFileExtDef( FILE *fp )
                 GetName();
                 *RecPtr = 0;
                 GetIndex();
-                if( SymbolExists( pubdef_tab, NamePtr ) == 0 ) {
-                    if( SymbolExists( extdef_tab, NamePtr ) == 0 ) {
-                        AddSymbol( extdef_tab, NamePtr, NULL );
+                if( SymbolExists( pubdef_tab, (char *)NamePtr ) == 0 ) {
+                    if( SymbolExists( extdef_tab, (char *)NamePtr ) == 0 ) {
+                        AddSymbol( extdef_tab, (char *)NamePtr, NULL );
                         printf( "%s\n", NamePtr );
                     }
                 }

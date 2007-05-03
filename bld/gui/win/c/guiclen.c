@@ -52,7 +52,7 @@ static void MBInit( void )
 #elif defined __OS2__ || defined __OS2_PM__
     int                 countRange, countVal;
     COUNTRYCODE         countryInfo;
-    unsigned char       leadBytes[12];
+    CHAR                leadBytes[12];
     #ifdef __386__
         APIRET          rc;
     #else

@@ -87,7 +87,7 @@ gbl_defn byte           ContType;       // type of continuation char
 
 gbl_defn char           *LibMember;     // name of library member
 gbl_defn unsigned_16    ISNNumber;      // ISN # only for FORTRAN statements;
-gbl_defn byte           *CmdPtr;        // pointer to command line
+gbl_defn char           *CmdPtr;        // pointer to command line
 gbl_defn uint           NumExtens;      // number of extens. during compilation
 gbl_defn uint           NumWarns;       // number of warnings during compilation
 gbl_defn char           *SrcExtn;       // pointer to source file extension

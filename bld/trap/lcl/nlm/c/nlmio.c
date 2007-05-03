@@ -145,7 +145,7 @@ static long ReadDOS( long handle, long pos, void *buffer, long requested )
 }
 
 
-static long OpenServer( LONG (*routine)(), BYTE *name,
+static long OpenServer( LONG (*routine)(), char *name,
                  LONG *handle, LONG attr, LONG privs )
 {
    LONG volumeNumber, pathBase, pathCount, entryNumber;
@@ -154,7 +154,7 @@ static long OpenServer( LONG (*routine)(), BYTE *name,
    void *Entry;
 
    fileName[1] = '\0';
-   fileName[0] = AppendStr( fileName+1, name );
+   fileName[0] = AppendStr( (char *)fileName + 1, name );
 
    if (ConvertPathString(0, 0, fileName, &volumeNumber,
          &pathBase, pathString, &pathCount) != 0)
@@ -236,11 +236,11 @@ void StringToNLMPath( char *name, char *res )
     }
     name[i] = '\0';
 
-    ccode = OpenFileUsingSearchPath( name, &handle, &isdos,
-                                     res, filename, FALSE,
+    ccode = OpenFileUsingSearchPath( (BYTE *)name, &handle, &isdos,
+                                     (BYTE *)res, filename, FALSE,
                     4, ".NLM", ".DSK", ".LAN", ".NAM" );
     if( ccode == 0 ) {
-        AppendStr( res, filename );
+        AppendStr( res, (char *)filename );
         if( isdos ) {
             ccode = INWDOSClose( handle );
         } else {
@@ -263,9 +263,9 @@ int IOOpen( char *openname, int openmode )
 
 //  if( !MayRelinquishControl ) return( -1 );
     if( openmode == O_RDONLY ) {
-        ccode = OpenFileUsingSearchPath( openname, &handle, &isdos,
+        ccode = OpenFileUsingSearchPath( (BYTE *)openname, &handle, &isdos,
                                          loadpath, filename, FALSE, 0 );
-        AppendStr( loadpath, filename );
+        AppendStr( (char *)loadpath, (char *)filename );
                                                                     _DBG_IO(( ( ccode==0 ? "Opened %s." : "" ), loadpath ));
     } else {
         ccode = OpenServer( OpenFile, openname, &handle,

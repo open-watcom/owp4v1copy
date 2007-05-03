@@ -370,7 +370,7 @@ BOOL CALLBACK ChangeRegisterDialog( HWND hwnd, UINT msg,WPARAM  wparam, LPARAM l
 
 static void GetNewRegValue( HWND hwnd )
 {
-    HWND owner;
+    HWND            owner;
     FARPROC         fp;
     int             reg_modified;
     RegModifyData   modify_data;
@@ -389,7 +389,7 @@ static void GetNewRegValue( HWND hwnd )
         &( modify_data.th ), &( modify_data.maxv ) );
     MADTypeInfo( modify_data.curr_info->type, &tinfo );
     modify_data.curr_value = alloca( tinfo.b.bits / BITS_PER_BYTE );
-    BitGet( modify_data.curr_value, (char *)regs, modify_data.curr_info->bit_start, modify_data.curr_info->bit_size);
+    BitGet( modify_data.curr_value, (unsigned char *)regs, modify_data.curr_info->bit_start, modify_data.curr_info->bit_size);
     MADRegSetDisplayModify( modify_data.reg_set, modify_data.curr_info,
         (const mad_modify_list **)( &( modify_data.m_list ) ),
         &(modify_data.num_possible ));
@@ -415,7 +415,7 @@ static void GetNewRegValue( HWND hwnd )
     }
     if( reg_modified == 1 ) {
         MADRegUpdateStart( regs, modify_data.curr_info->flags, modify_data.curr_info->bit_start, modify_data.curr_info->bit_size );
-        BitPut( (char *)regs, modify_data.curr_info->bit_start, modify_data.curr_value, modify_data.curr_info->bit_size );
+        BitPut( (unsigned char *)regs, modify_data.curr_info->bit_start, modify_data.curr_value, modify_data.curr_info->bit_size );
         MADRegUpdateEnd( regs, modify_data.curr_info->flags, modify_data.curr_info->bit_start, modify_data.curr_info->bit_size );
     }
 }

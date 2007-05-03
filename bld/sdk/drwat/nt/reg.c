@@ -135,7 +135,7 @@ static DWORD genIndex( void ) {
     if( rc == ERROR_SUCCESS ) {
         datasize = sizeof( DWORD );
         rc = RegQueryValueEx( keyhdl, "Last Counter", NULL,
-                              &type, (char *)&indexSize, &datasize );
+                              &type, (LPBYTE)&indexSize, &datasize );
     }
     indexSize++;
     if( rc == ERROR_SUCCESS ) {
@@ -183,7 +183,7 @@ static DWORD getTitles( void ) {
         if( titleBuf == NULL ) {
             return( ERROR_OUTOFMEMORY );
         }
-        rc = RegQueryValueEx( keyhdl, "Counters", NULL, &type, titleBuf,
+        rc = RegQueryValueEx( keyhdl, "Counters", NULL, &type, (LPBYTE)titleBuf,
                               &datasize );
     }
     if( rc == ERROR_SUCCESS ) {

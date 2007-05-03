@@ -104,7 +104,7 @@ static BITMAPCOREINFO *readCoreInfo( FILE *fp )
 #if defined( _M_I86 )
 #define __halloc halloc
 #define __hfree hfree
-static void HugeMemCopy( char far *dst, char far *src, unsigned bytes )
+static void HugeMemCopy( void __far *dst, void __far *src, unsigned bytes )
 {
     long                offset, selector;
     long                bytes_before_segment_end;
@@ -117,7 +117,7 @@ static void HugeMemCopy( char far *dst, char far *src, unsigned bytes )
         bytes -= bytes_before_segment_end;
         selector += HUGE_SHIFT;
         dst = MK_FP( selector, 0 );
-        src += bytes_before_segment_end;
+        src = (char *)src + bytes_before_segment_end;
     }
     _fmemcpy( dst, src, bytes );
 }

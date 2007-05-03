@@ -279,7 +279,7 @@ static unsigned DoRemoteGet( char *rec, unsigned len )
         recvd += got;
         PostAListen( p );
         if( got != MAX_DATA_SIZE ) break;
-        rec = (unsigned_8 *)rec + got;
+        rec = (char *)rec + got;
     }
     return( recvd );
 }
@@ -307,7 +307,7 @@ unsigned RemotePut( char *snd, unsigned len )
         if( DoRemotePut( snd, MAX_DATA_SIZE ) == REQUEST_FAILED ) {
             return( REQUEST_FAILED );
         }
-        snd = (unsigned_8 *)snd + MAX_DATA_SIZE;
+        snd = (char *)snd + MAX_DATA_SIZE;
         len -= MAX_DATA_SIZE;
     }
     if( DoRemotePut( snd, len ) == REQUEST_FAILED ) {

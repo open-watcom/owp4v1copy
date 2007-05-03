@@ -159,8 +159,8 @@ void SeekCheck( long pos, char *name )
 #endif
 
 #ifdef BDIFF
-    extern      byte *PatchFile;
-    extern      byte *OldFile;
+    extern      char *PatchFile;
+    extern      char *OldFile;
 
     #define PatchName ""
 
@@ -215,16 +215,16 @@ void SeekCheck( long pos, char *name )
 
 PATCH_RET_CODE InitPatch( char **target_given )
 {
-    char        *p;
-    int         compare_sig;
-    char    target[FILENAME_MAX];
-    char        ch;
-    char    *temp;
+    char            *p;
+    int             compare_sig;
+    char            target[FILENAME_MAX];
+    char            ch;
+    char            *temp;
     PATCH_RET_CODE  ret;
 #ifdef BDIFF
-    char        *tmp;
+    char            *tmp;
 #else
-    char        tmp[4];
+    char            tmp[4];
 #endif
     ret = OpenPatch();
     if( ret != PATCH_RET_OKAY ) {

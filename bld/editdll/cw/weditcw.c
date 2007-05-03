@@ -149,7 +149,7 @@ BOOL doExecute( char *szCommand )
 {
     HDDEDATA    hddeData;
 
-    hddeData = DdeClientTransaction( szCommand, strlen( szCommand ) + 1,
+    hddeData = DdeClientTransaction( (LPBYTE)szCommand, strlen( szCommand ) + 1,
                                      hConv, NULL, CF_TEXT, XTYP_EXECUTE,
                                      5000, NULL );
     return( hddeData != 0 );
@@ -253,7 +253,7 @@ int extern __export FAR PASCAL EDITShowWindow( show_method iCmdShow )
         return( FALSE );
     }
 
-    szData = DdeAccessData( hData, &cbDataLen );
+    szData = (char *)DdeAccessData( hData, &cbDataLen );
     dwFlags = atol( szData );
     DdeUnaccessData( hData );
 

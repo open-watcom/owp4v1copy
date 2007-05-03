@@ -278,7 +278,7 @@ an_img *ImgResourceToImg( FILE *fp, an_img_file *img_file, unsigned i )
         }
 
         img->xor_mask = MemAlloc( img->xor_size + img->and_size );
-        img->and_mask = (char *)img->xor_mask + img->xor_size;
+        img->and_mask = (unsigned char *)img->xor_mask + img->xor_size;
         fseek( fp, res->DIB_offset + BITMAP_SIZE( h ), SEEK_SET );
         fread( img->xor_mask, img->xor_size + img->and_size, 1, fp );
 
@@ -396,7 +396,7 @@ an_img *ImgResourceToImgData( BYTE *data, unsigned *pos,
         img->xor_size = h->biSizeImage;
         img->and_size = BITS_INTO_BYTES( h->biWidth, h->biHeight );
         img->xor_mask = MemAlloc( img->xor_size + img->and_size );
-        img->and_mask = (char *)img->xor_mask + img->xor_size;
+        img->and_mask = (unsigned char *)img->xor_mask + img->xor_size;
         *pos = res->DIB_offset + BITMAP_SIZE( h );
         memcpy( img->xor_mask, data + *pos, img->xor_size + img->and_size );
         reverseAndBits(h->biWidth, h->biHeight, img->and_mask);

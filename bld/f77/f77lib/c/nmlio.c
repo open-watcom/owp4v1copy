@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time NAMELIST i/o processing.
 *
 ****************************************************************************/
 
-
-//
-// NMLIO        : run-time NAMELIST i/o processing
-//
 
 #include "ftnstd.h"
 #include "rundat.h"
@@ -242,12 +237,12 @@ static  void    NmlOut( void ) {
     string      scb;
     lg_adv      PGM *adv_ptr;
 
-    nml = (char PGM *)(IOCB->fmtptr);
+    nml = (byte PGM *)(IOCB->fmtptr);
     len = *nml; // get length of NAMELIST name
     ++nml;
     Drop( ' ' );
     Drop( '&' );
-    SendStr( nml, len );
+    SendStr( (char *)nml, len );
     nml += len;
     SendEOR();
     for(;;) {
@@ -255,7 +250,7 @@ static  void    NmlOut( void ) {
         if( len == 0 ) break;
         ++nml;
         Drop( ' ' );
-        SendStr( nml, len );
+        SendStr( (char *)nml, len );
         nml += len;
         SendWSLStr( " = " );
         info = *nml;
@@ -279,7 +274,7 @@ static  void    NmlOut( void ) {
                 if( typ == PT_CHAR ) {
                     scb.len = *(uint PGM *)nml;
                     nml += sizeof( uint );
-                    scb.strptr = *(byte PGM * PGM *)nml;
+                    scb.strptr = *(char PGM * PGM *)nml;
                 } else {
                     data = *(byte PGM * PGM *)nml;
                 }
@@ -355,7 +350,7 @@ static  byte PGM *FindNmlEntry( char *name, uint len ) {
     byte PGM    *nml;
     byte        info;
 
-    nml = (char PGM *)(IOCB->fmtptr);
+    nml = (byte PGM *)(IOCB->fmtptr);
     nml_len = *nml;
     nml += sizeof( byte ) + nml_len;
     for(;;) {
@@ -494,7 +489,7 @@ static  void    NmlIn( void ) {
             if( *JmpBlanks( ptr ) == NULLCHAR ) break;
         }
         ptr = ScanName( &len );
-        nml_entry = FindNmlEntry( ptr, len );
+        nml_entry = (char PGM *)FindNmlEntry( ptr, len );
         if( nml_entry == NULL ) {
             ptr[len] = NULLCHAR;
             IOErr( IO_NML_NO_SUCH_NAME, ptr );

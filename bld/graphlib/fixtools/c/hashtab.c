@@ -43,7 +43,7 @@ static unsigned int hashpjw( char *s )
 
     for( h = 0; *s; ++s ) {
         /* ( h & ~0x0fff ) == 0 is always true here */
-        h = (h << 4) + (*s | ' ');
+        h = (h << 4) + (*(unsigned char *)s | ' ');
         g = h & ~0x0fff;
         h ^= g;
         h ^= g >> 12;

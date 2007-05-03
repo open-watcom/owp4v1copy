@@ -39,18 +39,19 @@
 /*
  * Translate  foo/dir1\\dir2" \\"bar"grok  -->  "foo\\dir1\\dir2 \\"bargrok".
  */
-char *PathConvert( const char *path, char quote )
-/***********************************************/
+char *PathConvert( const char *pathname, char quote )
+/***************************************************/
 {
-    char *              out;
-    char *              p;
+    const unsigned char *path = (const unsigned char *)pathname;
+    char                *out;
+    unsigned char       *p;
     int                 quoteends;      /* quote the whole filename */
     int                 backslash = 0;  /* true if last char was a '\\' */
     int                 inquote = 0;    /* true if inside a quoted string */
 
     /*** Allocate a buffer for the new string (should be big enough) ***/
-    out = AllocMem( 2 * ( strlen(path) + 1 + 2 ) );
-    p = out;
+    out = AllocMem( 2 * ( strlen( (char *)path ) + 1 + 2 ) );
+    p = (unsigned char *)out;
 
     /*** Determine if path contains any bizarre characters ***/
     if( _mbschr( path, ' ' )  !=  NULL      ||
@@ -148,11 +149,12 @@ char *PathConvertWithoutQuotes( const char *path )
             }
             backslash = 0;
         } else {
-            _mbccpy( p, path );         /* copy an ordinary character */
-            p = _mbsinc( p );
+            /* copy an ordinary character */
+            _mbccpy( (unsigned char *)p, (unsigned char *)path );     /* copy an ordinary character */
+            p = (char *)_mbsinc( (unsigned char *)p );
             backslash = 0;
         }
-        path = _mbsinc( path );
+        path = (char *)_mbsinc( (unsigned char *)path );
     }
     *p++ = '\0';
 

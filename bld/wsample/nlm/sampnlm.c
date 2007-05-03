@@ -102,11 +102,11 @@ void SysInit( void )
 {
     AllocTag = AllocateResourceTag(
         (void *)GetNLMHandle(),
-        "Open Watcom Sampler Work Area",
+        (BYTE *)"Open Watcom Sampler Work Area",
         AllocSignature );
     SwitchModeTag = AllocateResourceTag(
         (void*) GetNLMHandle(),
-        "Open Watcom Sampler ModeSwitchMon",
+        (BYTE *)"Open Watcom Sampler ModeSwitchMon",
         EventSignature);
 }
 
@@ -189,7 +189,7 @@ void StartProg( char *cmd, char *prog, char *args )
 
     AESTag = AllocateResourceTag(
         (void *)GetNLMHandle(),
-        "Open Watcom Execution Sampler Flush Process",
+        (BYTE *)"Open Watcom Execution Sampler Flush Process",
         AESProcessSignature );
 
     prog = prog;
@@ -201,7 +201,7 @@ void StartProg( char *cmd, char *prog, char *args )
 
     EventTag = AllocateResourceTag(
         (void *)GetNLMHandle(),
-        "Open Watcom Execution Sampler Events",
+        (BYTE *)"Open Watcom Execution Sampler Events",
         EventSignature );
 
     events = RegisterForEventNotification(
@@ -219,7 +219,7 @@ void StartProg( char *cmd, char *prog, char *args )
 
     StartTimer();
 
-    if( LoadModule( systemConsoleScreen, cmd, 0 ) != 0 )
+    if( LoadModule( systemConsoleScreen, (BYTE *)cmd, 0 ) != 0 )
     {
         StopTimer();
         cputs( MsgArray[MSG_SAMPLE_1-ERR_FIRST_MESSAGE] );

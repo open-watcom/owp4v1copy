@@ -150,13 +150,13 @@ static bool elfAddImport( arch_header *arch, libfile io )
     _splitpath( oldname, NULL, NULL, NULL, arch->name + strlen( arch->name ) );
 
     export_sec = FindSec( file, ".exports" );
-    ORLSecGetContents( export_sec, (char **)&export_table );
+    ORLSecGetContents( export_sec, (unsigned_8 **)&export_table );
     export_size = (Elf32_Word) ORLSecGetSize( export_sec ) / sizeof( Elf32_Export );
     sym_sec = ORLSecGetSymbolTable( export_sec );
-    ORLSecGetContents( sym_sec, (char **)&sym_table );
+    ORLSecGetContents( sym_sec, (unsigned_8 **)&sym_table );
     sym_size = (Elf32_Word) ORLSecGetSize( sym_sec ) / sizeof( Elf32_Sym );
     string_sec = ORLSecGetStringTable( sym_sec );
-    ORLSecGetContents( string_sec, (char **)&strings );
+    ORLSecGetContents( string_sec, (unsigned_8 **)&strings );
 
     ElfMKImport( arch, ELF, export_size, DLLname, strings,
     export_table, sym_table, processor );
@@ -375,7 +375,7 @@ static void peAddImport( arch_header *arch, libfile io )
         FatalError( ERR_CANT_READ, io->name, "Not an AXP or PPC DLL" );
     }
     export_sec = FindSec( file, ".edata" );
-    ORLSecGetContents( export_sec, &edata );
+    ORLSecGetContents( export_sec, (unsigned_8 **)&edata );
     export_base = ORLSecGetBase( export_sec );
 
     if( export_table_rva != 0 ) {

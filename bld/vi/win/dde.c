@@ -75,10 +75,10 @@ HDDEDATA WINEXP DDECallback( UINT type, UINT fmt, HCONV hconv,
         DDERet = 0;
         rc = SourceHookData( SRC_HOOK_DDE, tmp );
         if( rc != ERR_NO_ERR ) {
-            DDERet = (DWORD)DdeCreateDataHandle( (DWORD)DDEInstId, "err",
+            DDERet = (DWORD)DdeCreateDataHandle( (DWORD)DDEInstId, (LPBYTE)"err",
                         (DWORD)4, (DWORD)0, (HSZ)itemstrh, (UINT)fmt, (UINT)0 );
         } else {
-            DDERet = (DWORD)DdeCreateDataHandle( DDEInstId, "ok", 3, 0,
+            DDERet = (DWORD)DdeCreateDataHandle( DDEInstId, (LPBYTE)"ok", 3, 0,
                                           itemstrh, fmt, 0 );
         }
         return( (HDDEDATA) DDERet );

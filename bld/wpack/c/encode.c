@@ -98,7 +98,7 @@ static void *           AltBuffer;
 unsigned long    codesize;
 
 #if defined( __WATCOMC__ ) && defined( __386__ )
-unsigned fastcmp( char *src, char *dst, int *cmp );
+unsigned fastcmp( unsigned char *src, unsigned char *dst, int *cmp );
 
 #pragma aux fastcmp parm [esi] [edi] [edx] modify exact [eax ebx] value [ecx] = \
         "       xor ecx,ecx" \

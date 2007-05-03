@@ -223,8 +223,8 @@ extern void ResetSize( void )
   }
 
 
-extern char GetSizing( void )
-/***************************/
+extern unsigned char GetSizing( void )
+/************************************/
 
 /* return the sizing info */
 

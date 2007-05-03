@@ -376,25 +376,25 @@ LONG _Prelude(
 //    OutputToScreen( systemConsoleScreen, "transport time = %8x \r\n", trtime );
 
 
-    Command = cmdLineP;
+    Command = (char *)cmdLineP;
     MyNLMHandle = NLMHandle;
-    ScreenTag = AllocateResourceTag( MyNLMHandle, "Debug server screens",
+    ScreenTag = AllocateResourceTag( MyNLMHandle, (BYTE *)"Debug server screens",
                                      ScreenSignature );
-    AllocTag = AllocateResourceTag( MyNLMHandle, "Debug server work area",
+    AllocTag = AllocateResourceTag( MyNLMHandle, (BYTE *)"Debug server work area",
                                     AllocSignature );
-    SemaphoreTag = AllocateResourceTag( MyNLMHandle, "Debug server semaphores",
+    SemaphoreTag = AllocateResourceTag( MyNLMHandle, (BYTE *)"Debug server semaphores",
                                   SemaphoreSignature );
-    ProcessTag = AllocateResourceTag( MyNLMHandle, "Debug server processes",
+    ProcessTag = AllocateResourceTag( MyNLMHandle, (BYTE *)"Debug server processes",
                                    ProcessSignature );
-    TimerTag = AllocateResourceTag( MyNLMHandle, "Debugger time out",
+    TimerTag = AllocateResourceTag( MyNLMHandle, (BYTE *)"Debugger time out",
                                    TimerSignature );
-    InterruptTag = AllocateResourceTag( MyNLMHandle, "Debugger interrupts",
+    InterruptTag = AllocateResourceTag( MyNLMHandle, (BYTE *)"Debugger interrupts",
                                    InterruptSignature );
-    SocketTag = AllocateResourceTag( MyNLMHandle, "Debugger IPX socket",
+    SocketTag = AllocateResourceTag( MyNLMHandle, (BYTE *)"Debugger IPX socket",
                                    SocketSignature );
-    DebugTag = AllocateResourceTag( MyNLMHandle, "WVIDEO Debugger",
+    DebugTag = AllocateResourceTag( MyNLMHandle, (BYTE *)"WVIDEO Debugger",
                                    DebuggerSignature );
-    BreakTag = AllocateResourceTag( MyNLMHandle, "WVIDEO Break Points",
+    BreakTag = AllocateResourceTag( MyNLMHandle, (BYTE *)"WVIDEO Break Points",
                                    BreakpointSignature );
     CMakeProcess( 50, &MainHelper, &stack[ sizeof( stack ) ],
                     sizeof( stack ), "WATCOM Debugger Server", ProcessTag );

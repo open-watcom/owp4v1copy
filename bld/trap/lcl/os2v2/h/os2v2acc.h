@@ -31,9 +31,9 @@
 
 void   WriteRegs( uDB_t * );
 void   ReadRegs( uDB_t * );
-void   WriteLinear( char *data, ULONG lin, USHORT size );
-void   ReadLinear( char *data, ULONG lin, USHORT size );
-USHORT WriteBuffer( char *data, USHORT segv, ULONG offv, USHORT size );
+void   WriteLinear( void *data, ULONG lin, USHORT size );
+void   ReadLinear( void *data, ULONG lin, USHORT size );
+USHORT WriteBuffer( void *data, USHORT segv, ULONG offv, USHORT size );
 char   *GetExceptionText( void );
 ULONG  MakeItFlatNumberOne( USHORT seg, ULONG offset );
 ULONG  MakeItSegmentedNumberOne( USHORT seg, ULONG offset );

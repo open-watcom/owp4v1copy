@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Tool, list all public symbols
+* Description:  List all public symbols defined in an object file.
 *
 ****************************************************************************/
 
@@ -112,7 +112,7 @@ static unsigned_16 GetIndex( void )
     return( index );
 }
 
-static char *GetName( void )
+static byte *GetName( void )
 /**************************/
 {
     NameLen = GetByte();

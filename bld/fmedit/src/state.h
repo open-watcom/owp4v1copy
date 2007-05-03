@@ -35,7 +35,7 @@
 typedef struct state {
     struct state * next;        /* pointer to next state                    */
     HANDLE      appwnd;         /* window handle                            */
-    char        sizeinfo;       /* information about sizing direction       */
+    unsigned char sizeinfo;     /* information about sizing direction       */
     STATE_ID    currstate;      /* current state                            */
     STATE_ID    basestate;      /* base state                               */
     OBJPTR      currobj;        /* current object                           */

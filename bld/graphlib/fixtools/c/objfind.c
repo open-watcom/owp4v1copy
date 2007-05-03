@@ -24,10 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  tool for search all modules which define any symbol
-*                from list of symbols ( defined in file )
+* Description:  Find all modules which define any symbol
+*               included in a list of symbols in input file.
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,7 +121,7 @@ static unsigned_16 GetIndex( void )
     return( index );
 }
 
-static char *GetName( void )
+static byte *GetName( void )
 /**************************/
 {
     NameLen = GetByte();
@@ -174,8 +175,8 @@ static void ProcFileModRef( FILE *fp )
                 free( module_name );
             GetName();
             *RecPtr = 0;
-            module_name = malloc( strlen( NamePtr ) + 1 );
-            strcpy( module_name, NamePtr );
+            module_name = malloc( strlen( (char *)NamePtr ) + 1 );
+            strcpy( module_name, (char *)NamePtr );
             break;
         case CMD_MODEND:
             if( module_name != NULL )
@@ -195,7 +196,7 @@ static void ProcFileModRef( FILE *fp )
             while( ! EndRec() ) {
                 GetName();
                 *RecPtr = 0;
-                if( SymbolExists( pubdef_tab, NamePtr ) != 0 ) {
+                if( SymbolExists( pubdef_tab, (char *)NamePtr ) != 0 ) {
                     if( SymbolExists( extdef_tab, module_name ) == 0 ) {
                         AddSymbol( extdef_tab, module_name, NULL );
                         printf( "%s\n", module_name );

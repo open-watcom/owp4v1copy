@@ -522,7 +522,7 @@ ULONG _cdecl ExceptRoutine( PEXCEPTIONREPORTRECORD report,
 int __checkIsDBCS( void )
 {
     COUNTRYCODE         countryInfo;
-    unsigned char       leadBytes[12];
+    CHAR                leadBytes[12];
 
     countryInfo.country = 0;                /* default country */
     countryInfo.codepage = 0;               /* default code page */

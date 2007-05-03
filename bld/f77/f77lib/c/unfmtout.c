@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time unformatted output.
 *
 ****************************************************************************/
 
-
-//
-// UNFMTOUT     : Run-time unformatted output
-//
 
 #include "ftnstd.h"
 #include "rundat.h"
@@ -126,10 +121,10 @@ void    UnFmtOut( void ) {
 //==================
 
     uint        len;
-    byte        *ptr;
+    char        *ptr;
     PTYPE       typ;
     ftnfile     *fcb;
-    byte        *d;
+    char        *d;
 
     fcb = IOCB->fileinfo;
     typ = IOTypeRtn();
@@ -139,7 +134,7 @@ void    UnFmtOut( void ) {
         } else if( typ == PT_ARRAY ) {
             OUnArray();
         } else {
-            ptr = (byte *)&IORslt;
+            ptr = (char *)&IORslt;
             len = SizeVars[ typ ];
             if( IsFixed() ) {
                 OutChkRecPos( fcb, len );

@@ -24,10 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  tool for changing any item in LNAMES and to modify 
-*                 EXTDEF/PUBDEF symbols by name pattern
+* Description:  Tool for changing LNAMES entries and modify 
+*               EXTDEF/PUBDEF based on a pattern.
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -124,7 +125,7 @@ static unsigned_16 GetIndex( void )
     return( index );
 }
 
-static char *GetName( void )
+static byte *GetName( void )
 /**************************/
 {
     NameLen = GetByte();
@@ -193,7 +194,7 @@ static byte create_chksum( char *data, int newlen, byte cksum )
     return( cksum );
 }
 
-static char *change_name( char *dst, char *src )
+static char *change_name( char *dst, byte *src )
 /**********************************************/
 {
     int     i;
@@ -205,7 +206,7 @@ static char *change_name( char *dst, char *src )
             if( symbol_name_change[i] == '*' ) {
                 int     len;
 
-                len = strlen( src );
+                len = strlen( (char *)src );
                 memcpy( dst, src, len );
                 dst += len;
             } else {
@@ -242,10 +243,10 @@ static int ChangeLNAMES( byte rec_type, FILE *fo, unsigned_16 newlen )
         GetName();
         b = *RecPtr;
         *RecPtr = 0;
-        n = SymbolExists( extdef_tab, NamePtr );
+        n = SymbolExists( extdef_tab, (char *)NamePtr );
         if( n != NULL ) {
             NameLen = strlen( n );
-            NamePtr = n;
+            NamePtr = (byte *)n;
         }
         *(p++) = NameLen;
         memcpy( p, NamePtr, NameLen );
@@ -267,7 +268,7 @@ static int ChangeEXTDEF( byte rec_type, FILE *fo, unsigned_16 newlen )
     byte        hdr[ 3 ];
     char        *data;
     char        *p;
-    char        *tmp;
+    byte        *tmp;
     long        lng1;
     byte        cksum;
 
@@ -286,7 +287,7 @@ static int ChangeEXTDEF( byte rec_type, FILE *fo, unsigned_16 newlen )
         tmp = RecPtr;
         lng1 = GetIndex();
         *tmp = 0;
-        if( SymbolExists( pubdef_tab, NamePtr ) != NULL ) {
+        if( SymbolExists( pubdef_tab, (char *)NamePtr ) != NULL ) {
             p = change_name( p, NamePtr );
         } else {
             *(p++) = NameLen;
@@ -310,7 +311,7 @@ static int ChangePUBDEF( byte rec_type, FILE *fo, unsigned_16 newlen )
     byte        hdr[ 3 ];
     char        *data;
     char        *p;
-    char        *tmp;
+    byte        *tmp;
     int         idx1;
     int         idx2;
     long        lng1;
@@ -337,7 +338,7 @@ static int ChangePUBDEF( byte rec_type, FILE *fo, unsigned_16 newlen )
         tmp = RecPtr;
         lng1 = GetOffset();
         *tmp = 0;
-        if( SymbolExists( pubdef_tab, NamePtr ) != NULL ) {
+        if( SymbolExists( pubdef_tab, (char *)NamePtr ) != NULL ) {
             p = change_name( p, NamePtr );
         } else {
             *(p++) = NameLen;
@@ -405,7 +406,7 @@ static int ProcFile( FILE *fp, FILE *fo )
                 GetName();
                 b = *RecPtr;
                 *RecPtr = 0;
-                n = SymbolExists( extdef_tab, NamePtr );
+                n = SymbolExists( extdef_tab, (char *)NamePtr );
                 if( n != NULL ) {
                     newlen += strlen( n ) - NameLen;
                     isChanged = 1;
@@ -421,7 +422,7 @@ static int ProcFile( FILE *fp, FILE *fo )
             while( ! EndRec() ) {
                 GetName();
                 *RecPtr = 0;
-                if( SymbolExists( pubdef_tab, NamePtr ) != NULL ) {
+                if( SymbolExists( pubdef_tab, (char *)NamePtr ) != NULL ) {
                     newlen += symbol_name_change_len;
                     isChanged = 1;
                 }
@@ -438,7 +439,7 @@ static int ProcFile( FILE *fp, FILE *fo )
             while( ! EndRec() ) {
                 GetName();
                 *RecPtr = 0;
-                if( SymbolExists( pubdef_tab, NamePtr ) != NULL ) {
+                if( SymbolExists( pubdef_tab, (char *)NamePtr ) != NULL ) {
                     newlen += symbol_name_change_len;
                     isChanged = 1;
                 }

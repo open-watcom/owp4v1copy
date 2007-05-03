@@ -63,7 +63,7 @@ static void SetKey( a_symbol *sym )
     b[1] = 0;
     b[2] = 0;
     b[3] = 0;
-    SymName( ASymHdl( sym ), NULL, SN_SOURCE, b, sizeof( b ) );
+    SymName( ASymHdl( sym ), NULL, SN_SOURCE, (char *)b, sizeof( b ) );
     sym->key = ((unsigned long)tolower(b[0])<<24)+
                ((unsigned long)tolower(b[1])<<16)+
                               (tolower(b[2])<< 8)+

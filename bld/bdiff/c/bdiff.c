@@ -95,8 +95,8 @@ char ext[_MAX_EXT];
 
 char buff[BUFF_SIZE];
 
-byte *OldSymName;
-byte *NewSymName;
+char *OldSymName;
+char *NewSymName;
 
 //exe_info old;
 //exe_info new;
@@ -1429,7 +1429,7 @@ void CopyComment( void )
 {
     int         fd;
     foff        size;
-    byte        *comment;
+    char        *comment;
 
     if( CommentFile != NULL ) {
         fd = open( CommentFile, O_RDONLY | O_BINARY, 0 );
@@ -1634,7 +1634,7 @@ void ScanSyncString( void )
 
 void main( int argc, char **argv )
 {
-    long savings;
+    long        savings;
     foff        buffsize;
     foff        best_from_new;
     algorithm   alg;
@@ -1647,8 +1647,8 @@ void main( int argc, char **argv )
 
     buffsize = ( EndOld > EndNew ) ? ( EndOld ) : ( EndNew );
     buffsize += sizeof( LEVEL );
-    OldFile = ReadIn( argv[1], buffsize, EndOld );
-    NewFile = ReadIn( argv[2], buffsize, EndNew );
+    OldFile = (byte *)ReadIn( argv[1], buffsize, EndOld );
+    NewFile = (byte *)ReadIn( argv[2], buffsize, EndNew );
 
     ScanSyncString();
 

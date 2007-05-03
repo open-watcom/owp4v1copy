@@ -623,7 +623,7 @@ extern bool CheckCRC( unsigned_32 value )
     byte *   crcptr;
     bool     result;
 
-    crcptr = (char *) &value;
+    crcptr = (byte *) &value;
     for( loopidx = 1; loopidx <= 4; loopidx++ ) {
         CALC_CRC( *crcptr, crcidx );        // NOTE: this assumes intel byte
         crcptr++;                           // ordering.

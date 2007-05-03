@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Run-time utilities
+* Description:  Run-time utilities.
 *
 ****************************************************************************/
 
@@ -381,7 +381,7 @@ void    ChkExist( void ) {
 }
 
 
-uint    StrItem( string PGM *strptr, byte *buff, uint buff_len ) {
+uint    StrItem( string PGM *strptr, char *buff, uint buff_len ) {
 //================================================================
 
 // Remove leading and trailing blanks from the string, copy the result

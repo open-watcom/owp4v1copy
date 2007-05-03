@@ -269,7 +269,7 @@ int WINEXPORT WdeEnumFontsProc( ENUMLOGFONT *lpelf,    TEXTMETRIC *lpntm,
     }
 
     if ( fonttype & TRUETYPE_FONTTYPE ) {
-        strncpy ( font_names->name, lpelf->elfFullName,
+        strncpy ( font_names->name, (char *)lpelf->elfFullName,
                   LF_FULLFACESIZE);
     } else {
         strncpy ( font_names->name, lpelf->elfLogFont.lfFaceName,

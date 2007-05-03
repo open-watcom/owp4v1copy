@@ -98,7 +98,7 @@ void InvalidateTblCache( void )
 
 int SectIsLoaded( unsigned sect_id, int sect_map_id )
 {
-    char    *tbl;
+    byte    *tbl;
 
     if( sect_id == 0 ) return( TRUE );
     if( OvlSize == 0 ) return( FALSE );

@@ -61,7 +61,7 @@ extern  void            Suicide(void);
 extern  file_handle     SDOpen(char *,int);
 extern  void            SDClose(file_handle);
 extern  void            SDSeek(file_handle,int,int);
-extern  uint            SDRead(file_handle,byte *,uint);
+extern  uint            SDRead(file_handle,char *,uint);
 extern  void            SDWrite(file_handle,byte *,int);
 extern  bool            SDError(file_handle,char *);
 extern  bool            SDEof(file_handle);
