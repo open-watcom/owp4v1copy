@@ -14,6 +14,7 @@
 #include <lmalert.h>
 #include <lmshare.h>
 #include <lmmsg.h>
+#include <lmremutl.h>
 
 #endif /* _LM_H_INCLUDED */
 

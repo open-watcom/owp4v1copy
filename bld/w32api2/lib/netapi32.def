@@ -38,6 +38,8 @@ NetMessageNameDel
 NetMessageNameEnum
 NetMessageNameGetInfo
 NetQueryDisplayInformation
+NetRemoteComputerSupports
+NetRemoteTOD
 NetServerAliasAdd
 NetServerAliasDel
 NetServerAliasEnum
@@ -73,3 +75,4 @@ RxNetAccessEnum
 RxNetAccessGetInfo
 RxNetAccessGetUserPerms
 RxNetAccessSetInfo
+RxRemoteApi

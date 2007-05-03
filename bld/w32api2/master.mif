@@ -51,6 +51,7 @@ headers =            &
         lmcons.h     &
         lmerr.h      &
         lmmsg.h      &
+        lmremutl.h   &
         lmshare.h    &
         lzexpand.h   &
         mcx.h        &
