@@ -26,6 +26,7 @@
 *
 * Description:  Implements the utility functions for cfparse():
 *                   check_directory()
+*                   display_device()
 *                   parse_cop_file()
 *                   print_banner()
 *                   print_usage()
@@ -74,6 +75,7 @@ NULL
 /*  Local function declarations */
 
 static void check_directory( FILE *, uint32_t);
+static void display_device( cop_device *);
 static int  verify_device( char *, char * );
 static int  verify_driver( char *, char * );
 static int  verify_font( char *, char * );
@@ -102,11 +104,12 @@ static int  verify_font( char *, char * );
 
 int parse_cop_file( void )
 {
-    FILE *      current_file    = NULL;
-    uint16_t    entry_count;
-    char        designator[4];
-    char        file_type;
-    int         retval;    
+    cop_device *    current_device  = NULL;
+    FILE       *    current_file    = NULL;
+    char            designator[4];
+    uint16_t        entry_count;
+    char            file_type;
+    int             retval;    
 
     /* Open the file */
 
@@ -131,6 +134,8 @@ int parse_cop_file( void )
     case( 0x03 ):
         if( is_dev_file( current_file ) ) {
             printf_s( "%s is a device file\n", tgt_path );
+            current_device = parse_device( current_file );
+            if( current_device ) display_device( current_device );
             break;
         }
         fseek( current_file, -3, SEEK_CUR ); /* Reset file to designator */
@@ -207,7 +212,7 @@ void print_usage( void )
 
 void check_directory( FILE * in_file, uint32_t count)
 {
-    int                 bad_file_count = 0;  /* counts files with errors */
+    int                 bad_file_count  = 0;  /* counts files with errors */
     compact_entry_t     compact_entry;
     int                 dev_file_count  = 0; /* counts entries of type 0x101 */
     char                dir[_MAX_DIR];
@@ -220,7 +225,7 @@ void check_directory( FILE * in_file, uint32_t count)
     char                fname[_MAX_FNAME];
     int                 fon_file_count  = 0; /* counts entries of type 0x401 */
     int                 i;
-    int                 mismatch_count = 0;  /* counts files with wrong designator */
+    int                 mismatch_count  = 0;  /* counts files with wrong designator */
     int                 retval;
 
     /* Split tgt_path */
@@ -265,7 +270,7 @@ void check_directory( FILE * in_file, uint32_t count)
                     else printf_s( "Entry: %i Device Name: %s File Name: %s\n", i+1, extended_entry.item_name, extended_entry.file_name );
                     retval = verify_device( &file_path, & extended_entry.file_name );
                     if( retval == BAD_MATCH ) mismatch_count++;
-                    else if( retval != GOOD_MATCH) bad_file_count++;                    
+                    else if( retval != GOOD_MATCH) bad_file_count++;
                     break;
                 case 0x0201:
                     drv_file_count++;   /* entry is for a driver file */
@@ -275,7 +280,7 @@ void check_directory( FILE * in_file, uint32_t count)
                     else printf_s( "Entry: %i Driver Name: %s File Name: %s\n", i+1, extended_entry.item_name, extended_entry.file_name );
                     retval = verify_driver( &file_path, & extended_entry.file_name );
                     if( retval == BAD_MATCH ) mismatch_count++;
-                    else if( retval != GOOD_MATCH) bad_file_count++;                    
+                    else if( retval != GOOD_MATCH) bad_file_count++;
                     break;
                 case 0x0401:
                     fon_file_count++;   /* entry is for a font file */
@@ -285,7 +290,7 @@ void check_directory( FILE * in_file, uint32_t count)
                     else printf_s( "Entry: %i Font Name: %s File Name: %s\n", i+1, extended_entry.item_name, extended_entry.file_name );
                     retval = verify_font( &file_path, & extended_entry.file_name );
                     if( retval == BAD_MATCH ) mismatch_count++;
-                    else if( retval != GOOD_MATCH) bad_file_count++;                    
+                    else if( retval != GOOD_MATCH) bad_file_count++;
                     break;
                 default:
                     retval = get_extended_entry( in_file, &extended_entry );
@@ -304,7 +309,7 @@ void check_directory( FILE * in_file, uint32_t count)
             else printf_s( "Entry: %i Device Name: %s File Name: %s\n", i+1, compact_entry.item_name, compact_entry.file_name );
             retval = verify_device( &file_path, & compact_entry.file_name );
             if( retval == BAD_MATCH ) mismatch_count++;
-            else if( retval != GOOD_MATCH) bad_file_count++;                    
+            else if( retval != GOOD_MATCH) bad_file_count++;
             break;
         case 0x0201:
             drv_file_count++;   /* entry is for a driver file */
@@ -314,7 +319,7 @@ void check_directory( FILE * in_file, uint32_t count)
             else printf_s( "Entry: %i Driver Name: %s File Name: %s\n", i+1, compact_entry.item_name, compact_entry.file_name );
             retval = verify_driver( &file_path, & compact_entry.file_name );
             if( retval == BAD_MATCH ) mismatch_count++;
-            else if( retval != GOOD_MATCH) bad_file_count++;                    
+            else if( retval != GOOD_MATCH) bad_file_count++;
             break;
         case 0x0401:
             fon_file_count++;   /* entry is for a font file */
@@ -324,9 +329,9 @@ void check_directory( FILE * in_file, uint32_t count)
             else printf_s( "Entry: %i Font Name: %s File Name: %s\n", i+1, compact_entry.item_name, compact_entry.file_name );
             retval = verify_font( &file_path, & compact_entry.file_name );
             if( retval == BAD_MATCH ) mismatch_count++;
-            else if( retval != GOOD_MATCH) bad_file_count++;                    
+            else if( retval != GOOD_MATCH) bad_file_count++;
             break;
-        default:
+          default:
             retval = get_compact_entry( in_file, &compact_entry );
             if( retval == FAILURE ) \
                 printf_s( "No data for unknown entry %i of type %i\n", i+1, entry_type);
@@ -348,7 +353,82 @@ void check_directory( FILE * in_file, uint32_t count)
     return;
 }
 
-/*  Function verify_device().
+/*  Function display_device().
+ *  Displays the contents of a cop_device instance.
+ *
+ *  Parameter:
+ *      in_device is a pointer to the cop_device instance.
+ */
+
+void display_device( cop_device * in_device)
+{
+    char        font_character[2];
+    int         i;
+    int         j;
+    char        translation[2];
+
+    printf_s( "Allocated size:         %i\n", in_device->allocated_size );
+    printf_s( "Bytes used:             %i\n", in_device->next_offset );
+    if( in_device->driver_name == NULL ) puts( "Driver Name:");
+    else printf_s( "Driver Name:            %s\n", in_device->driver_name );
+    if( in_device->output_name == NULL ) puts( "Output File Name:" );
+    else printf_s( "Output File Name:       %s\n", in_device->output_name );
+    if( in_device->output_extension == NULL ) puts( "Output File Extension:" );
+    else printf_s( "Output File Extension:  %s\n", in_device->output_extension );
+    printf_s( "Page Width:             %i\n", in_device->page_width );
+    printf_s( "Page Depth:             %i\n", in_device->page_depth );
+    printf_s( "Horizontal Base Units:  %i\n", in_device->horizontal_base_units );
+    printf_s( "Vertical Base Units:    %i\n", in_device->vertical_base_units );
+    printf_s( "Page Start X Value:     %i\n", in_device->x_start );
+    printf_s( "Page Start Y Value:     %i\n", in_device->y_start );
+    printf_s( "Page Offset X Value:    %i\n", in_device->x_offset );
+    printf_s( "Page Offset Y Value:    %i\n", in_device->y_offset );
+    printf_s( "Top line character:     %c\n", in_device->box.top_line );
+    printf_s( "Bottom line character:  %c\n", in_device->box.bottom_line );
+    printf_s( "Top left character:     %c\n", in_device->box.top_left );
+    printf_s( "Top right character:    %c\n", in_device->box.top_right );
+    printf_s( "Bottom left character:  %c\n", in_device->box.bottom_left );
+    printf_s( "Bottom right character: %c\n", in_device->box.bottom_right );
+    printf_s( "Top join character:     %c\n", in_device->box.top_join );
+    printf_s( "Bottom join character:  %c\n", in_device->box.bottom_join );
+    printf_s( "Left join character:    %c\n", in_device->box.left_join );
+    printf_s( "Right join character:   %c\n", in_device->box.right_join );
+    printf_s( "Inside join character:  %c\n", in_device->box.inside_join );
+    printf_s( "Underscore character:   %c\n", in_device->underscore.underscore_char );
+    if( in_device->intrans == NULL) {
+        puts( "No Intrans Table");
+    } else {
+        puts( "Intrans Table:" );
+        for( i = 0; i < 0x100; i++ ) {
+            if( in_device->intrans->table[i] != i ) {
+                display_char( font_character, (char) i );
+                display_char( translation, in_device->intrans->table[i] );
+                printf_s( "%c%c %c%c\n", font_character[0], font_character[1], translation[0], translation[1] );
+            }
+        }
+    }
+
+    if( in_device->outtrans == NULL) {
+        puts( "No Outtrans Table");
+    } else {
+        puts( "Outtrans Table:" );
+        for( i = 0; i < 0x100; i++ ) {
+            if( in_device->outtrans->table[i] != NULL ) {
+                display_char( font_character, (char) i );
+                printf_s( "%c%c ", font_character[0], font_character[1] );
+                for( j = 0; j < in_device->outtrans->table[i]->count; j++ ) {
+                    display_char( translation, in_device->outtrans->table[i]->data[j] );
+                    printf_s( "%c%c ", translation[0], translation[1] );
+                }
+                puts( "" );
+            }
+        }
+    }
+
+    return;
+}
+
+/*  Function verify_device().   
  *  Verifies that the file is a device file.
  *
  *  Parameter:
@@ -365,10 +445,11 @@ void check_directory( FILE * in_file, uint32_t count)
  
 int verify_device( char * in_path, char * in_name)
 {
-    char    designator[4];
-    char    file_name[_MAX_PATH];
-    char    type;
-    FILE *  device_file = NULL;
+    cop_device *    current_device = NULL;
+    char            designator[4];
+    char            file_name[_MAX_PATH];
+    char            type;
+    FILE *          device_file = NULL;
     
     /* Build the file name */
     strcpy_s( file_name, sizeof( file_name ), in_path );
@@ -386,21 +467,29 @@ int verify_device( char * in_path, char * in_name)
 
     if( parse_header( device_file, &type ) == FAILURE ) {
         printf_s( "%s is not a .COP file (bad header)\n", file_name );
+        fclose( device_file );
         return( BAD_HEADER );
     }
     
-    /* Perform the test */
-    if( is_dev_file( device_file ) ) return( GOOD_MATCH );
+    /* Perform the test and parse the file if appropriate */
+    if( is_dev_file( device_file ) ) {
+        current_device = parse_device( device_file );
+        if( current_device ) display_device( current_device );
+        fclose( device_file );
+        return( GOOD_MATCH );
+    }
 
     /* Report the mismatch */
     fseek( device_file, -3, SEEK_CUR ); /* Reset file to designator */
     fread( &designator, 3, 1, device_file );
     if( ferror( device_file ) || feof( device_file ) ) {
         puts("Incorrect file type: file error on attempt to get designator");
+        fclose( device_file );
         return( READ_ERROR );
     }
     designator[3] = NULLCHAR;
     printf_s( "%s has incorrect designator for a device file: %s\n", tgt_path, designator );
+    fclose( device_file );
     return( BAD_MATCH );
 }
 
@@ -442,21 +531,27 @@ int verify_driver( char * in_path, char * in_name )
 
     if( parse_header( driver_file, &type ) == FAILURE ) {
         printf_s( "%s is not a .COP file (bad header)\n", file_name );
+        fclose( driver_file );
         return( BAD_HEADER );
     }
     
     /* Perform the test */
-    if( is_drv_file( driver_file ) ) return( GOOD_MATCH );
+    if( is_drv_file( driver_file ) ) {
+        fclose( driver_file );
+        return( GOOD_MATCH );
+    }
 
     /* Report the mismatch */
     fseek( driver_file, -3, SEEK_CUR ); /* Reset file to designator */
     fread( &designator, 3, 1, driver_file );
     if( ferror( driver_file ) || feof( driver_file ) ) {
         puts("Incorrect file type: file error on attempt to get designator");
+        fclose( driver_file );
         return( READ_ERROR );
     }
     designator[3] = NULLCHAR;
     printf_s( "%s has incorrect designator for a driver file: %s\n", tgt_path, designator );
+    fclose( driver_file );
     return( BAD_MATCH );
 }
 
@@ -498,22 +593,27 @@ int verify_font( char * in_path, char * in_name )
 
     if( parse_header( font_file, &type ) == FAILURE ) {
         printf_s( "%s is not a .COP file (bad header)\n", file_name );
+        fclose( font_file );
         return( BAD_HEADER );
     }
     
     /* Perform the test */
-    if( is_fon_file( font_file ) ) return( GOOD_MATCH );
-
+    if( is_fon_file( font_file ) ) {
+        fclose( font_file );
+        return( GOOD_MATCH );
+    }
+    
     /* Report the mismatch */
     fseek( font_file, -3, SEEK_CUR ); /* Reset file to designator */
     fread( &designator, 3, 1, font_file );
     if( ferror( font_file ) || feof( font_file ) ) {
         puts("Incorrect file type: file error on attempt to get designator");
+        fclose( font_file );
         return( READ_ERROR );
     }
     designator[3] = NULLCHAR;
     printf_s( "%s has incorrect designator for a font file: %s\n", tgt_path, designator );
+    fclose( font_file );
     return( BAD_MATCH );
 }
-
 

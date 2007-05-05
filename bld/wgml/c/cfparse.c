@@ -29,10 +29,6 @@
 *
 ****************************************************************************/
 
-#define __STDC_WANT_LIB_EXT1__ 1
-#include <stdio.h>
-
-
 #include <process.h>
 #include <stdlib.h>
 #include "cfparse.h"
@@ -114,8 +110,5 @@ int main()
       return( EXIT_FAILURE );
     }
 
-    printf_s( "Value of retval: %i, of FAILURE: %i, and of EXIT_SUCCESS: %i\n", retval, FAILURE, EXIT_SUCCESS );
-
-    
     return( EXIT_SUCCESS );
 }

@@ -24,46 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  Declares items specific to the research programs:
-*                   display_char()
-*                   res_initialize_globals()
+* Description:  Implements the functions declared in cffunc.h:
+*                   get_functions()
 *
 ****************************************************************************/
 
-#ifndef RESEARCH_H_INCLUDED
-#define RESEARCH_H_INCLUDED
+//#include <string.h>
+#include "cffunc.h"
+#include "common.h"
 
-/* In theory, this should go into banner.h */
-/* For gendev and wgml, the equivalent macros will */
-
-#define _RESEARCH_VERSION_ BAN_VER_STR
-
-/* Global variable declarations */
-
-/*
- * This allows the same declarations to function as definitions.
- * Just #define global before including this file.
+/*  Function get_functions().
  */
 
-#ifndef global
-    #define global  extern
-#endif
-
-global  char *  tgt_path;   /* path of directory to be checked */
-
-#undef global   /* reset so can be reused with other headers */
-
-/* Function declarations */
-
-#ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode */
-#endif
-
-void    display_char( char[2], char );
-void    res_initialize_globals( void );
-
-#ifdef  __cplusplus
-}   /* End of "C" linkage for C++ */
-#endif
-
-#endif  /* RESEARCH_H_INCLUDED */
+functions_block * get_functions( FILE * in_file)
+{
+    functions_block * out_block = NULL;
+    
+    return( out_block );
+}

@@ -25,11 +25,13 @@
 *  ========================================================================
 *
 * Description:  Implements the functions common to the research programs:
+*                   display_char()
 *                   parse_cmdline()
 *                   res_initialize_globals()
 *
 ****************************************************************************/
 
+#include <ctype.h>
 #include <stddef.h>
 #include <stdlib.h>
 #define __STDC_WANT_LIB_EXT1__  1 // Activates "Safe C" functions
@@ -42,6 +44,37 @@
 
 #define global
 #include "research.h"
+
+/* Local data definition */ 
+
+static char     hexchar[] = "0123456789ABCDEF";
+
+/*  Function display_char().
+ *  If isgraph() indicates that in_char is displayable, returns a space in
+ *  out_chars[0] and in_char in out_chars[1]. Otherwise returns values in
+ *  out_chars which, when output together, provide a hexadecimal representation
+ *  of in_char. Since isgraph() is used, the space character will appear in
+ *  hexadecimal.
+ *
+ *  Parameters:
+ *      out_chars points to a two-char array 
+ *      in_char contains the value to be output
+ *
+ *  Value Returned:
+ *      The values indicated above are returned in the out_chars.
+ */
+void    display_char( char * out_chars, char in_char)
+{
+    if ( isgraph( in_char ) ) {
+        out_chars[0] = ' ';
+        out_chars[1] = in_char;
+    } else {
+        out_chars[0] = hexchar[ ( in_char >> 4 ) & 0x0f ];
+        out_chars[1] = hexchar[ in_char & 0x0f ];
+    }
+    
+    return;    
+}
 
 /*  Function parse_cmdline().
  *  Extract the path entered by the user into tgt_path. Doublequotes used

@@ -24,34 +24,43 @@
 *
 *  ========================================================================
 *
-* Description:  Declares items specific to the research programs:
-*                   display_char()
-*                   res_initialize_globals()
+* Description:  Declares structs and functions used to manipulate .COP
+*               FunctionsBlocks:
+*                   functions_block
+*                       code_block
+*                   get_functions()
 *
 ****************************************************************************/
 
-#ifndef RESEARCH_H_INCLUDED
-#define RESEARCH_H_INCLUDED
+#ifndef CFDEV_H_INCLUDED
+#define CFDEV_H_INCLUDED
 
-/* In theory, this should go into banner.h */
-/* For gendev and wgml, the equivalent macros will */
+#include <stdint.h>
+#include <stdio.h>
 
-#define _RESEARCH_VERSION_ BAN_VER_STR
+/* Structure declarations */
 
-/* Global variable declarations */
+// This section is under development!!!
 
-/*
- * This allows the same declarations to function as definitions.
- * Just #define global before including this file.
+/* These structs are based on the discussion in the Wiki, which should be
+ * consulted for further information on how the data is structured.
  */
 
-#ifndef global
-    #define global  extern
-#endif
+/* function points to an array of block_length bytes */
 
-global  char *  tgt_path;   /* path of directory to be checked */
+typedef struct code_block_struct
+{
+    uint16_t    block_length;
+    uint8_t *   function;
+} code_block;
 
-#undef global   /* reset so can be reused with other headers */
+/* code_blocks points to an array of count code_block structs */
+
+typedef struct functions_block_struct
+{
+    uint8_t         count;
+    code_block *    code_blocks;
+} functions_block;
 
 /* Function declarations */
 
@@ -59,11 +68,10 @@ global  char *  tgt_path;   /* path of directory to be checked */
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
-void    display_char( char[2], char );
-void    res_initialize_globals( void );
+functions_block * get_functions( FILE *);
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++ */
 #endif
 
-#endif  /* RESEARCH_H_INCLUDED */
+#endif  /* CFDEV_H_INCLUDED */
