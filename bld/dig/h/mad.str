@@ -118,9 +118,9 @@ wdpick( MSTR_VALID,
 wdpick( MSTR_ZERO,
     "Zero",
     "jZero" )
-wdpick( MSTR_NAN,
-    "Nan",
-    "jNan" )
+wdpick( MSTR_SPECIAL,
+    "Special",
+    "jSpecial" )
 wdpick( MSTR_EMPTY,
     "Empty",
     "jEmpty" )

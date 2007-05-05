@@ -737,7 +737,7 @@ static const mad_modify_list ModQWord[] = {
 static const mad_modify_list ModFPUTag[] = {
     { &zero,  X86T_BYTE, MSTR_VALID },
     { &one,   X86T_BYTE, MSTR_ZERO },
-    { &two,   X86T_BYTE, MSTR_NAN },
+    { &two,   X86T_BYTE, MSTR_SPECIAL },
     { &three, X86T_BYTE, MSTR_EMPTY },
 };
 static const mad_modify_list ModFPUStack[] = {
@@ -866,10 +866,8 @@ static mad_status FPUGetPiece(
             switch( tag ) {
             case 0: /* valid */
             case 1: /* zero */
+            case 2: /* special */
                 *disp_type_p = X86T_EXTENDED;
-                break;
-            case 2: /* nan */
-                *disp_type_p = X86T_F10NAN;
                 break;
             case 3: /* empty */
                 *disp_type_p = X86T_F10EMPTY;
@@ -1415,8 +1413,8 @@ unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buf
     case X86T_FPPTR_16:
         fp = d;
         return( FmtPtr( fp->p.segment, fp->p.offset & 0xffff, 4, max, buff ) );
-    case X86T_F10NAN:
-        return( MCString( MSTR_NAN, max, buff ) );
+    case X86T_F10SPECIAL:
+        return( MCString( MSTR_SPECIAL, max, buff ) );
     case X86T_MMX_TITLE0:
     case X86T_MMX_TITLE1:
     case X86T_MMX_TITLE2:

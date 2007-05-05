@@ -75,8 +75,8 @@ static const mad_type_info_float F10 =
     { MTK_FLOAT, D, 80, 79, MNR_SIGN_MAG, ME_LITTLE, 16383, 64, 2, 0, MTK_INTEGER, D, 15, 14, MNR_UNSIGNED, ME_LITTLE };
 static const mad_type_info_float F10EMPTY =
     { MTK_FLOAT, X86T_F10EMPTY, 80, 79, MNR_SIGN_MAG, ME_LITTLE, 16383, 64, 2, 0, MTK_INTEGER, 15, 0, 14, MNR_UNSIGNED, ME_LITTLE };
-static const mad_type_info_float F10NAN =
-    { MTK_FLOAT, X86T_F10NAN, 80, 79, MNR_SIGN_MAG, ME_LITTLE, 16383, 64, 2, 0, MTK_INTEGER, 15, 0, 14, MNR_UNSIGNED, ME_LITTLE };
+static const mad_type_info_float F10SPECIAL =
+    { MTK_FLOAT, X86T_F10SPECIAL, 80, 79, MNR_SIGN_MAG, ME_LITTLE, 16383, 64, 2, 0, MTK_INTEGER, 15, 0, 14, MNR_UNSIGNED, ME_LITTLE };
 
 static const mad_type_info_basic IRET16 =
     { MTK_CUSTOM, X86T_IRET16, 3*16 };
@@ -227,7 +227,7 @@ mad_status      DIGENTRY MITypeToString( unsigned radix, const mad_type_info *mt
     case X86T_FPPTR_REAL:
     case X86T_FPPTR_16:
     case X86T_FPPTR_32:
-    case X86T_F10NAN:
+    case X86T_F10SPECIAL:
     case X86T_MMX_TITLE0:
     case X86T_MMX_TITLE1:
     case X86T_MMX_TITLE2:

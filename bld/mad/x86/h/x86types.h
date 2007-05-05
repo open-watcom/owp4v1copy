@@ -66,7 +66,7 @@ enum {
     pick( EXTENDED,     EXTENDED,       0, LX, L1, F10 )
     pick( HEXTENDED,    NIL,            1, LX, LX, F10 )
     pick( F10EMPTY,     NIL,            0, LX, LX, F10EMPTY )
-    pick( F10NAN,       NIL,            0, LX, LX, F10NAN )
+    pick( F10SPECIAL,   NIL,            0, LX, LX, F10SPECIAL )
     /* customs */
     pick( IRET16,       NIL,            0, LX, LX, IRET16 )
     pick( IRET32,       NIL,            0, LX, LX, IRET32 )
