@@ -142,6 +142,7 @@ void AsmWarn( int level, int msgnum, ... )
         }
         va_end( args1 );
         va_end( args2 );
+        print_include_file_nesting_structure();
     }
 }
 
