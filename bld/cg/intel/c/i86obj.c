@@ -32,6 +32,7 @@
 
 #include <string.h>
 #include "standard.h"
+#include "cgdefs.h"
 #include "cgmem.h"
 #include "cg.h"
 #include "bckdef.h"
