@@ -30,6 +30,7 @@
 ****************************************************************************/
 
 
+#include "cgdefs.h"
 #include "optwif.h"
 #include "targsys.h"
 #include "feprotos.h"

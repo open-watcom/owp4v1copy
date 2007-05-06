@@ -33,6 +33,7 @@
 #include <assert.h>
 #include <string.h>
 #include "standard.h"
+#include "cgdefs.h"
 #include "coderep.h"
 #include "cgaux.h"
 #include "offset.h"

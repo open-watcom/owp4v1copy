@@ -37,6 +37,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "standard.h"
+#include "cgdefs.h"
 #include "cgmem.h"
 #include "cg.h"
 #include "cgaux.h"

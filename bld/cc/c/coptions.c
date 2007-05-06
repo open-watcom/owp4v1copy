@@ -40,6 +40,7 @@
 #include <ctype.h>
 #include "pragdefn.h"
 #include "pdefn2.h"
+#include "cgdefs.h"
 #include "cgswitch.h"
 #include "iopath.h"
 #include <unistd.h>

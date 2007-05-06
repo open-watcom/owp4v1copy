@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include "standard.h"
+#include "cgdefs.h"
 #include "cg.h"
 #include "cgmisc.h"
 #include "coderep.h"

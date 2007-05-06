@@ -30,6 +30,7 @@
 
 
 #include "standard.h"
+#include "cgdefs.h"
 #include "coderep.h"
 #include "opcodes.h"
 #include "procdef.h"
@@ -38,11 +39,11 @@
 #include "regset.h"
 #include "zoiks.h"
 #include "ppcparm.h"
+#include "feprotos.h"
 
 
 extern  hw_reg_set      InLineParm(hw_reg_set,hw_reg_set);
 extern  reg_list        *ParmChoices(type_class_def);
-extern  cg_type         FEParmType(sym_handle,sym_handle,cg_type);
 extern  type_def        *TypeAddress(cg_type);
 extern  hw_reg_set      ParmRegConflicts(hw_reg_set);
 extern  type_class_def  TypeClass( type_def * );

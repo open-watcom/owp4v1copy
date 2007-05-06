@@ -30,6 +30,7 @@
 
 
 #include "cvars.h"
+#include "cgdefs.h"
 #define BY_CLI
 #include "feprotos.h"
 

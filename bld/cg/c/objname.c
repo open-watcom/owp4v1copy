@@ -33,6 +33,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include "standard.h"
+#include "cgdefs.h"
 #include "cg.h"
 #include "bckdef.h"
 #include "cgaux.h"

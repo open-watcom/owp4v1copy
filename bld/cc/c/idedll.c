@@ -37,6 +37,7 @@
 #include <setjmp.h>
 #include "bool.h"
 #include "idedll.h"
+#include "cgdefs.h"
 #include "cgmisc.h"
 #include "cgdllcli.h"
 #define BY_CLI

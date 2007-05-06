@@ -30,6 +30,7 @@
 
 
 #include "standard.h"
+#include "cgdefs.h"
 #include "hostsys.h"
 #include "coderep.h"
 #include "feprotos.h"

@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 
+#include "cgdefs.h"
 #include "optwif.h"
 #include "dump.h"
 #include "opcodes.h"

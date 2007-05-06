@@ -30,6 +30,7 @@
 
 
 #include "standard.h"
+#include "cgdefs.h"
 #include "model.h"
 #include "coderep.h"
 #include "procdef.h"

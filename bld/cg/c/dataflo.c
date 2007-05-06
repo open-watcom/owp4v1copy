@@ -32,6 +32,7 @@
 
 #define GB_DEFINE_GBITNEXT
 #include "standard.h"
+#include "cgdefs.h"
 #include "coderep.h"
 #include "conflict.h"
 #include "procdef.h"

@@ -30,6 +30,7 @@
 
 
 #include "standard.h"
+#include "cgdefs.h"
 #include "coderep.h"
 #include "indvars.h"
 #include "opcodes.h"

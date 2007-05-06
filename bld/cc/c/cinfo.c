@@ -30,6 +30,7 @@
 
 
 #include "cvars.h"
+#include "cgdefs.h"
 #include "cg.h"
 #include "cgdefs.h"
 #include "cgswitch.h"
@@ -876,8 +877,8 @@ int FELexLevel( CGSYM_HANDLE cgsym_handle )
 
 
 #if _CPU == _AXP
-int FEParmType( CGSYM_HANDLE func, CGSYM_HANDLE parm, int tipe )
-/**************************************************************/
+cg_type FEParmType( CGSYM_HANDLE func, CGSYM_HANDLE parm, cg_type tipe )
+/**********************************************************************/
 {
     func = func;
     parm = parm;
@@ -905,8 +906,8 @@ int FEParmType( CGSYM_HANDLE func, CGSYM_HANDLE parm, int tipe )
     }
 }
 #else
-int FEParmType( CGSYM_HANDLE func, CGSYM_HANDLE parm, int tipe )
-/**************************************************************/
+cg_type FEParmType( CGSYM_HANDLE func, CGSYM_HANDLE parm, cg_type tipe )
+/**********************************************************************/
 {
 #if _CPU == 386
     SYM_HANDLE  sym_handle = func;

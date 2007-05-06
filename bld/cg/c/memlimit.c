@@ -30,7 +30,7 @@
 
 
 #include "standard.h"
-
+#include "cgdefs.h"
 #include "cg.h"
 #include "cgaux.h"
 #include "bckdef.h"

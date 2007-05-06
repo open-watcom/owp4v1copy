@@ -31,6 +31,7 @@
 
 #include <stddef.h>
 #include "standard.h"
+#include "cgdefs.h"
 #include "coderep.h"
 #include "opcodes.h"
 #include "pattern.h"
