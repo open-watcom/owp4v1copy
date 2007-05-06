@@ -38,13 +38,10 @@
 #include "symbol.h"
 #include "wf77defs.h"
 #include "cg.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  cg_name         CGBinary(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name         CGInteger(signed_32,cg_type);
-
-//==========================================================================
 
 
 cg_name StructRef( cg_name structure, int offset ) {

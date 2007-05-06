@@ -45,16 +45,12 @@
 #include "types.h"
 #include "fctypes.h"
 #include "rtconst.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
 #include <string.h>
 
-//=================== Back End Code Generation Routines ====================
-
-extern  cg_name         CGFEName(sym_handle,cg_type);
-extern  call_handle     CGInitCall(cg_name,cg_type,sym_handle);
-extern  void            BEFreeBack(back_handle);
-
-//=========================================================================
 
 extern  sym_id          STAdd(char *name,int length);
 extern  sym_id          STFree(sym_id sym_ptr);

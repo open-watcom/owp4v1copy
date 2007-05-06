@@ -40,16 +40,10 @@
 #include "cg.h"
 #include "fcodes.h"
 #include "emitobj.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  void            CGSelect(sel_handle,cg_name);
-extern  sel_handle      CGSelInit( void );
-extern  void            CGSelOther(sel_handle,label_handle);
-extern  void            CGSelRange(sel_handle,signed_32,signed_32,label_handle);
-extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
-
-//=========================================================================
 
 extern  label_handle    GetLabel(int);
 extern  label_handle    GetStmtLabel(sym_id);

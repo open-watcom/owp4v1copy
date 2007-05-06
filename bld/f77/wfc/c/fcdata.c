@@ -52,13 +52,6 @@
 #include "wf77defs.h"
 #include <string.h>
 
-//=================== Back End Code Generation Routines ====================
-
-extern  segment_id      BESetSeg(segment_id);
-extern  void            BEFiniBack(back_handle);
-extern  void            BEFreeBack(back_handle);
-
-//=========================================================================
 
 extern  void            DtInit(segment_id,seg_offset);
 extern  void            DtBytes(byte *,int);

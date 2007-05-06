@@ -41,26 +41,10 @@
 #include "wf77defs.h"
 #include "falloc.h"
 #include "emitobj.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  cg_name         CGInteger(signed_32,cg_type);
-extern  cg_name         CGCall(call_handle);
-extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
-extern  cg_name         CGBinary(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name         CGFlow(cg_op,cg_name,cg_name);
-extern  cg_name         CGBackName(back_handle,cg_type);
-extern  cg_name         CGFEName(sym_handle,cg_type);
-extern  cg_name         CGCompare(cg_op,cg_name,cg_name,cg_type);
-extern  void            CGControl(cg_op,cg_name,label_handle);
-extern  void            CGAddParm(call_handle,cg_name,cg_type);
-extern  void            CGDone(cg_name);
-extern  void            CGDone(cg_name);
-extern  label_handle    BENewLabel(void);
-extern  void            BEFiniLabel(label_handle);
-extern  unsigned long   BETypeLength(cg_type);
-
-//=========================================================================
 
 extern  call_handle     InitCall(RTCODE);
 extern  cg_name         XPop(void);

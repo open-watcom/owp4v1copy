@@ -39,15 +39,10 @@
 #include "cg.h"
 #include "emitobj.h"
 #include "fctypes.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  cg_name         CGFlow(cg_op,cg_name,cg_name);
-extern  cg_name         CGCompare(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name         CGInteger(signed_32,cg_type);
-extern  cg_type         CGType(cg_name);
-
-//=========================================================================
 
 extern  cg_name         XPop(void);
 extern  cg_name         XPopValue(cg_type);

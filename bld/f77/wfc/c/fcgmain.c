@@ -44,19 +44,12 @@
 #include "wf77labe.h"
 #include "compcfg.h"
 #include "emitobj.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
 #include <stdarg.h>
 
-//=================== Back End Code Generation Routines ====================
-
-extern  cg_init_info    BEInit(cg_switches,cg_target_switches,uint,proc_revision);
-extern  void            BEStart(void);
-extern  void            BEStop(void);
-extern  void            BEFini(void);
-extern  segment_id      BESetSeg(segment_id);
-extern  void            BEFreeBack(back_handle);
-
-//=========================================================================
 
 extern  void            InitSegs(void);
 extern  void            AllocSegs(void);

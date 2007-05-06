@@ -40,16 +40,10 @@
 #include "wf77cg.h"
 #include "wf77defs.h"
 #include "emitobj.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  void            DBLineNum(uint);
-extern  cg_name         CGInteger(signed_32,cg_type);
-extern  cg_name         CGCall(call_handle);
-extern  void            CGDone(cg_name);
-extern  void            CGAddParm(call_handle,cg_name,cg_type);
-
-//=========================================================================
 
 extern  call_handle     InitCall(RTCODE);
 

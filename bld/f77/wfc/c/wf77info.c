@@ -31,7 +31,6 @@
 
 #include "ftnstd.h"
 #include "global.h"
-#include "cg.h"
 #include "wf77defs.h"
 #include "wf77aux.h"
 #include "fcgbls.h"
@@ -41,7 +40,6 @@
 #include "progsw.h"
 #include "cpopt.h"
 #include "cgflags.h"
-#include "wf77segs.h"
 #include "types.h"
 #include "errcod.h"
 #include "csetinfo.h"
@@ -61,47 +59,17 @@
 #endif
 #include "langenv.h"
 
+#include "cg.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
+#include "feprotos.h"
+
+#include "wf77segs.h"
+
 #include <string.h>
 #include <stdlib.h>
 
-//=================== Back End Code Generation Routines ====================
-
-extern  back_handle     BENewBack(sym_handle);
-extern  void            BEFreeBack(back_handle);
-extern  void            BEDefSeg(segment_id,seg_attr,char*,uint);
-extern  segment_id      BESetSeg(segment_id);
-extern  void            BEDefType(cg_type,uint,unsigned long);
-extern  void            BEAliasType(cg_type,cg_type);
-extern  unsigned long   BETypeLength(cg_type);
-extern  dbg_type        DBScalar(char*,cg_type);
-extern  dbg_proc        DBBegProc(cg_type,dbg_type);
-extern  dbg_type        DBEndProc(dbg_proc);
-extern  dbg_array       *DBBegArray(dbg_type,cg_type,bool);
-extern  void            DBDimCon(dbg_array *,dbg_type,signed_32,signed_32);
-extern  void            DBDimVar(dbg_array *,back_handle,int,cg_type,cg_type);
-extern  dbg_type        DBEndArray(dbg_array *);
-extern  dbg_type        DBDereference(cg_type,dbg_type);
-extern  dbg_type        DBCharBlock(unsigned_32);
-extern  dbg_type        DBFtnType(char *,dbg_ftn_type);
-extern  unsigned long   DGSeek(unsigned long);
-extern  void            DGUBytes(unsigned long);
-extern  void            DGBytes(unsigned long,byte*);
-extern  void            DGIBytes(unsigned long,byte);
-extern  void            DGLabel(back_handle);
-extern  unsigned long   DGBackTell(back_handle);
-extern  void            DBAddParm(dbg_proc,dbg_type);
-extern  dbg_struct      DBBegStruct(cg_type,char);
-extern  dbg_type        DBEndStruct(dbg_struct);
-extern  void            DBAddField(dbg_struct,unsigned_32,char *,dbg_type);
-extern  dbg_loc         DBLocInit(void);
-extern  dbg_loc         DBLocSym(dbg_loc,sym_handle);
-extern  dbg_loc         DBLocTemp(dbg_loc,temp_handle);
-extern  dbg_loc         DBLocConst(dbg_loc,unsigned_32);
-extern  dbg_loc         DBLocOp(dbg_loc,dbg_loc_op,unsigned);
-extern  dbg_type        DBLocCharBlock(dbg_loc,cg_type);
-extern  void            DBLocFini(dbg_loc);
-
-//=========================================================================
 
 extern  int             MakeName(char *,char *,char *);
 extern  char            *SDExtn(char *,char *);
@@ -813,8 +781,8 @@ seg_offset      GetComOffset( unsigned_32 offset ) {
 }
 
 
-void    *FEBack( sym_id sym ) {
-//=============================
+struct bck_info *FEBack( sym_id sym ) {
+//=====================================
 
 // Return the back handle for the given symbol.
 
@@ -1111,8 +1079,8 @@ fe_attr FEAttr( sym_id sym ) {
 }
 
 
-void    FEGenProc( sym_id sym) {
-//==============================
+void    FEGenProc( sym_id sym, call_handle handle) {
+//==================================================
 
     sym = sym;
 }
@@ -1324,8 +1292,8 @@ cg_type FEParmType( sym_id fn, sym_id parm, cg_type tipe ) {
 }
 
 
-bool    FEMoreMem( uint size ) {
-//==============================
+int     FEMoreMem( int size ) {
+//=============================
 
 // We can't free any memory for use by the back end.
 
@@ -1334,7 +1302,7 @@ bool    FEMoreMem( uint size ) {
 }
 
 
-bool    FEStackChk( sym_id sym ) {
+int     FEStackChk( sym_id sym ) {
 //================================
 
 // Do we want to generate stack overflow checking in the prologue for the
@@ -1377,8 +1345,8 @@ void    FCMessage( fc_msg_class tipe, void *x ) {
     }
 }
 
-void    FEMessage( msg_class tipe, void *x ) {
-//============================================
+void    FEMessage( int msg, void *x ) {
+//======================================
 
 // Print a message for the back end.
 
@@ -1388,7 +1356,7 @@ void    FEMessage( msg_class tipe, void *x ) {
         SendStd( x );
         exit( 1 );
     }
-    switch( tipe ) {
+    switch( msg ) {
     case MSG_SYMBOL_TOO_LONG:
         /*  symbol too long, truncated (sym) */
         break;
@@ -1910,8 +1878,8 @@ char    *GetFullSrcName( void ) {
     }
 }
 
-void    *FEAuxInfo( aux_handle aux, aux_class request ) {
-//=======================================================
+void    *FEAuxInfo( aux_handle aux, int request ) {
+//=================================================
 
 // Return specified auxiliary information for given auxiliary entry.
 

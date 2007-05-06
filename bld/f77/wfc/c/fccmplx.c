@@ -43,29 +43,10 @@
 #include "global.h"
 #include "emitobj.h"
 #include "fctypes.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  cg_name         CGBinary(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name         CGCall(call_handle);
-extern  cg_name         CGCompare(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name         CGChoose(cg_name,cg_name,cg_name,cg_type);
-extern  cg_name         CGInteger(signed_32,cg_type);
-extern  cg_type         CGType(cg_name);
-extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
-extern  cg_name         CGFlow(cg_op,cg_name,cg_name);
-extern  cg_name         CGAssign(cg_name,cg_name,cg_type);
-extern  cg_name         CGFloat(char*,cg_type);
-extern  cg_name         CGVolatile(cg_name);
-extern  cg_name         CGEval(cg_name);
-extern  void            CGAddParm(call_handle,cg_name,cg_type);
-extern  void            CGTrash(cg_name);
-extern  cg_name         CGTempName(temp_handle,cg_type);
-extern  temp_handle     CGTemp(cg_type);
-extern  void            CGDone(cg_name);
-extern  unsigned long   BETypeLength(cg_type);
-
-//=========================================================================
 
 extern  void            XPush(cg_name);
 extern  cg_name         XPopValue(cg_type);

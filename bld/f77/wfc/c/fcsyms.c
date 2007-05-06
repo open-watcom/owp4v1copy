@@ -44,58 +44,15 @@
 #include "fmemmgr.h"
 #include "types.h"
 #include "fctypes.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
+#include "feprotos.h"
 
 #include <string.h>
 
-//=================== Back End Code Generation Routines ====================
 
-extern  void            BEFiniBack(back_handle);
-extern  void            BEFiniLabel(label_handle);
-extern  void            BEFreeBack(back_handle);
-extern  segment_id      BESetSeg(segment_id);
-extern  unsigned long   BETypeLength(cg_type);
-extern  label_handle    BENewLabel(void);
-extern  back_handle     BENewBack(sym_handle);
-extern  void            CGAutoDecl(pointer,cg_type);
-extern  void            CGParmDecl(pointer,cg_type);
-extern  void            CGLastParm(void);
-extern  sel_handle      CGSelInit(void);
-extern  void            CGSelCase(sel_handle,label_handle,signed_32);
-extern  void            CGSelOther(sel_handle,label_handle);
-extern  void            CGSelect(sel_handle,cg_name);
-extern  void            CGControl(cg_op,cg_name,label_handle);
-extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
-extern  cg_name         CGBinary(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name         CGFEName(sym_handle,cg_type);
-extern  cg_name         CGAssign(cg_name,cg_name,cg_type);
-extern  void            CGDone(cg_name);
-extern  void            DGBackPtr(back_handle,segment_id,signed long,cg_type);
-extern  void            DGLabel(back_handle);
-extern  void            DGAlign(uint);
-extern  void            DGString(char *,uint);
-extern  void            DGBytes(unsigned long,char *);
-extern  void            DGInteger(unsigned_32,cg_type);
-extern  void            DGUBytes(unsigned long);
-extern  void            DGIBytes(unsigned long,byte);
-extern  unsigned long   DGSeek(unsigned long);
-extern  void            DBLocalSym(sym_handle,cg_type);
-extern  void            DBModSym(sym_handle,cg_type);
-extern  void            DBGenSym(sym_handle,dbg_loc,int);
-extern  dbg_loc         DBLocInit(void);
-extern  dbg_loc         DBLocSym(dbg_loc,sym_handle);
-extern  dbg_loc         DBLocConst(dbg_loc,unsigned_32);
-extern  dbg_loc         DBLocOp(dbg_loc,dbg_loc_op,unsigned);
-extern  void            DBLocFini(dbg_loc);
-extern  temp_handle     CGTemp(cg_type);
-extern  cg_name         CGTempName(temp_handle,cg_type);
-extern  cg_name         CGInteger(signed_32,cg_type);
-extern  cg_name         CGBackName(back_handle,cg_type);
-
-//=========================================================================
-
-extern  fe_attr         FEAttr(sym_id);
 extern  pointer         ConstBack(sym_id);
-extern  pointer         FEBack(sym_id);
 extern  void            FCMessage(fc_msg_class,void *);
 extern  segment_id      GetComSeg(sym_id,unsigned_32);
 extern  seg_offset      GetComOffset(unsigned_32);

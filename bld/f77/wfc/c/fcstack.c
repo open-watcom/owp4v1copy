@@ -40,20 +40,10 @@
 #include "fltcnv.h"
 #include "emitobj.h"
 #include "fctypes.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  cg_name         CGFEName(sym_handle,cg_type);
-extern  cg_name         CGBackName(back_handle,cg_type);
-extern  cg_name         CGAssign(cg_name,cg_name,cg_type);
-extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
-extern  cg_name         CGBinary(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name         CGInteger(signed_32,cg_type);
-extern  cg_name         CGFloat(char*,cg_type);
-extern  cg_name         CGVolatile(cg_name);
-extern  cg_type         CGType(cg_name);
-
-//=========================================================================
 
 extern  pointer         ConstBack(sym_id);
 extern  void            CnvS2S(float *,char *);

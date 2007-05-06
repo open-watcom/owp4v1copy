@@ -39,27 +39,10 @@
 #include "types.h"
 #include "emitobj.h"
 #include "fctypes.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  void            CGDone(cg_name);
-extern  cg_name         CGInteger(signed_32,cg_type);
-extern  void            CGAddParm(call_handle,cg_name,cg_type);
-extern  cg_name         CGCall(call_handle);
-extern  cg_name         CGBackName(back_handle,cg_type);
-extern  cg_name         CGFEName(sym_handle,cg_type);
-extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
-extern  cg_name         CGBinary(cg_op,cg_name,cg_name,cg_type);
-extern  void            CGTrash(cg_name);
-extern  cg_name         CGAssign(cg_name,cg_name,cg_type);
-extern  void            CGControl(cg_op,cg_name,label_handle);
-extern  cg_name         CGCompare(cg_op,cg_name,cg_name,cg_type);
-extern  void            CG3WayControl(cg_name,label_handle,label_handle,
-                                      label_handle );
-extern  label_handle    BENewLabel(void);
-extern  void            BEFiniLabel(label_handle);
-
-//=========================================================================
 
 extern  call_handle     InitCall(RTCODE);
 extern  cg_name         XPop(void);

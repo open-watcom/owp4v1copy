@@ -37,14 +37,9 @@
 #include "ftnstd.h"
 #include "cgdefs.h"
 #include "cg.h"
-
-//=================== Back End Code Generation Routines ====================
-
 #include "cgswitch.h"
+#define  BY_CLI
 #include "cgprotos.h"
-
-//=========================================================================
-
 #include "emitobj.h"
 #include "fctypes.h"
 

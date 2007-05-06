@@ -43,43 +43,11 @@
 #include "fmemmgr.h"
 #include "emitobj.h"
 #include "fctypes.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
+#include "feprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  void            CGProcDecl(pointer,cg_type);
-extern  void            CGReturn(cg_name,cg_type);
-extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
-extern  cg_name         CGBinary(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name         CGAssign(cg_name,cg_name,cg_type);
-extern  cg_name         CGLVAssign(cg_name,cg_name,cg_type);
-extern  cg_name         CGIndex(cg_name,cg_name,cg_type,cg_type);
-extern  cg_name         CGInteger(signed_32,cg_type);
-extern  cg_name         CGFEName(sym_handle,cg_type);
-extern  cg_name         CGBackName(back_handle,cg_type);
-extern  call_handle     CGInitCall(cg_name,cg_type,sym_handle);
-extern  void            CGAddParm(call_handle,cg_name,cg_type);
-extern  cg_name         CGCall(call_handle);
-extern  cg_name         CGEval(cg_name);
-extern  sel_handle      CGSelInit( void );
-extern  void            CGSelCase(sel_handle,label_handle,signed_32);
-extern  void            CGSelOther(sel_handle,label_handle);
-extern  void            CGControl(cg_op,cg_name,label_handle);
-extern  void            CGSelect(sel_handle,cg_name);
-extern  void            CGDone(cg_name);
-extern  void            CGTrash(cg_name);
-extern  cg_type         CGType(cg_name);
-extern  segment_id      BESetSeg(segment_id);
-extern  void            BEFlushSeg(segment_id);
-extern  label_handle    BENewLabel(void);
-extern  void            BEFiniLabel(label_handle);
-extern  unsigned long   BETypeLength(cg_type);
-extern  void            DGLabel(back_handle);
-extern  void            DBModSym(sym_handle,cg_type);
-extern  unsigned long   DGSeek(unsigned long);
-extern  unsigned long   DGTell(void);
-extern  cg_name         CGTempName(temp_handle,cg_type);
-
-//=========================================================================
 
 extern  void            GenLocalSyms(void);
 extern  void            GenLocalDbgInfo(void);
@@ -92,7 +60,6 @@ extern  cg_name         GetTypedValue(void);
 extern  label_handle    GetLabel(int);
 extern  label_handle    GetStmtLabel(sym_id);
 extern  void            MakeSCB(sym_id,cg_name);
-extern  pointer         FEBack(sym_id);
 extern  void            SubCodeSeg(void);
 extern  void            FiniLabels(int);
 extern  void            DefineEntryPoint(entry_pt *);

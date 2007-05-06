@@ -41,17 +41,10 @@
 #include "rtconst.h"
 #include "emitobj.h"
 #include "fctypes.h"
+#include "cgswitch.h"
+#define  BY_CLI
+#include "cgprotos.h"
 
-//=================== Back End Code Generation Routines ====================
-
-extern  cg_name         CGCompare(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name         CGCall(call_handle);
-extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
-extern  cg_name         CGInteger(signed_32,cg_type);
-extern  void            CGAddParm(call_handle,cg_name,cg_type);
-extern  void            CGTrash(cg_name);
-
-//=========================================================================
 
 extern  void            XPush(cg_name);
 extern  cg_name         XPop(void);
