@@ -70,7 +70,6 @@ void EmitDataQuads( void )
         for(;;) {
             dq = NextDataQuad();
             if( dq == NULL ) break;
-            if( dq->opr == T_EOF ) break;
             for(;;) {
                 EmitDQuad( dq );
                 if( ! (dq->flags & Q_REPEATED_DATA) ) break; /* 06-apr-92 */
@@ -123,8 +122,8 @@ static void EmitDQuad( DATA_QUAD *dq )
         }
     }
 #endif
-    switch( dq->opr ) {
-    case T_STATIC:
+    switch( dq->type ) {
+    case QDT_STATIC:
         SymGet( &sym, dq->u.var.sym_handle );
         segment = sym.u.var.segment;
         BESetSeg( segment );
@@ -132,7 +131,9 @@ static void EmitDQuad( DATA_QUAD *dq )
         DGLabel( FEBack( dq->u.var.sym_handle ) );
         size = 0;
         break;
-    case T_CHAR:
+    case QDT_CHAR:
+    case QDT_UCHAR:
+    case QDT_BOOL:
         DGInteger( dq->u.long_values[0], T_UINT_1 );
         size += sizeof( char );
         if( dq->flags & Q_2_INTS_IN_ONE ) {
@@ -140,7 +141,8 @@ static void EmitDQuad( DATA_QUAD *dq )
             size += sizeof( char );
         }
         break;
-    case T_SHORT:
+    case QDT_SHORT:
+    case QDT_USHORT:
         DGInteger( dq->u.long_values[0], T_UINT_2 );
         size += sizeof( target_short );
         if( dq->flags & Q_2_INTS_IN_ONE ) {
@@ -148,7 +150,8 @@ static void EmitDQuad( DATA_QUAD *dq )
             size += sizeof( target_short );
         }
         break;
-    case T_INT:
+    case QDT_INT:
+    case QDT_UINT:
         DGInteger( dq->u.long_values[0], T_INTEGER );
         size += sizeof( target_int );
         if( dq->flags & Q_2_INTS_IN_ONE ) {
@@ -156,7 +159,8 @@ static void EmitDQuad( DATA_QUAD *dq )
             size += sizeof( target_int );
         }
         break;
-    case T_LONG:
+    case QDT_LONG:
+    case QDT_ULONG:
         DGInteger( dq->u.long_values[0], T_UINT_4 );
         size += sizeof( target_long );
         if( dq->flags & Q_2_INTS_IN_ONE ) {
@@ -164,11 +168,14 @@ static void EmitDQuad( DATA_QUAD *dq )
             size += sizeof( target_long );
         }
         break;
-    case T___INT64:
+    case QDT_LONG64:
+    case QDT_ULONG64:
         DGInteger64( dq->u.long64, T_UINT_8 );
         size += sizeof( int64 );
         break;
-    case T_FLOAT:
+
+    case QDT_FLOAT:
+    case QDT_FIMAGINARY:
 //      ftoa( dq->u.double_value, Buffer );
 //      DGFloat( Buffer, T_SINGLE );
         {
@@ -185,21 +192,24 @@ static void EmitDQuad( DATA_QUAD *dq )
         }
         size += sizeof( float );
         break;
-    case T_DOUBLE:
+    case QDT_DOUBLE:
+    case QDT_DIMAGINARY:
 //      ftoa( dq->u.double_value, Buffer );
 //      DGFloat( Buffer, TY_DOUBLE );
         DGBytes( sizeof(double), (char *)&dq->u.double_value );
         size += sizeof( double );
         break;
-    case T_LONG_DOUBLE:
+    case QDT_LONG_DOUBLE:
+    case QDT_LDIMAGINARY:
         DGBytes( sizeof(long_double), (char *)&dq->u.long_double_value );
         size += sizeof( long_double );
         break;
-    case T_STRING:
+    case QDT_STRING:
         EmitStrPtr( dq->u.string_leaf, data_type );
         size += size_of_item;
         break;
-    case T_ID:
+    case QDT_POINTER:
+    case QDT_ID:
         if( dq->u.var.sym_handle == 0 ) {
             DGInteger( dq->u.var.offset, data_type );
         } else {
@@ -207,10 +217,10 @@ static void EmitDQuad( DATA_QUAD *dq )
         }
         size += size_of_item;
         break;
-    case T_CONST:                       /* array of characters */
+    case QDT_CONST:                       /* array of characters */
         size += EmitBytes( dq->u.string_leaf );
         break;
-    case T_CONSTANT:
+    case QDT_CONSTANT:
 #if _CPU == 8086
         for( amount = dq->u.long_values[0]; amount != 0; ) {
             if( amount + size >= 0x00010000 ) {

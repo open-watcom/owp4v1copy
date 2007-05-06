@@ -35,41 +35,11 @@
 extern  char    *Tokens[];
 
 /* matches table of type in ctypes.h */
-static  char    *CTypeNames[TYPE_LAST_ENTRY] = {
-    "signed char",
-    "unsigned char",
-    "short",
-    "unsigned short",
-    "int",
-    "unsigned int",
-    "long",
-    "unsigned long",
-    "__int64",
-    "unsigned __int64",
-    "float",
-    "double",
-    "long double",
-    "float _Imaginary",
-    "double _Imaginary",
-    "long double _Imaginary",
-    "_Bool",
-    "pointer",
-    "array",
-    "struct",
-    "union",
-    "function",
-    "field",
-    "void",
-    "enum",
-    "<typdef>",
-    "<ufield>",
-    "...",
-    "<char>",
-    "<wide char>",
-    "float _Complex",
-    "double _Complex",
-    "long double _Complex",
- };
+static  char    *CTypeNames[] = {
+#undef  pick1
+#define pick1(enum,cgtype,x86asmtype,name,size) name,
+#include "cdatatyp.h"
+};
 
 static  char   do_message_output; /* Optimize output for human */
 

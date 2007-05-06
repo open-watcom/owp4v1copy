@@ -333,40 +333,10 @@ static int AsmPtrType( TYPEPTR typ, type_modifiers flags )
 }
 
 /* matches enum DataType in ctypes.h */
-static enum sym_type AsmDataType[TYPE_LAST_ENTRY] = {
-    SYM_INT1,       /* TYPE_CHAR,*/
-    SYM_INT1,       /* TYPE_UCHAR,*/
-    SYM_INT2,       /* TYPE_SHORT,*/
-    SYM_INT2,       /* TYPE_USHORT,*/
-    SYM_INT,        /* TYPE_INT,*/
-    SYM_INT,        /* TYPE_UINT,*/
-    SYM_INT4,       /* TYPE_LONG,*/
-    SYM_INT4,       /* TYPE_ULONG,*/
-    SYM_INT8,       /* TYPE_LONG64,*/
-    SYM_INT8,       /* TYPE_ULONG64,*/
-    SYM_FLOAT4,     /* TYPE_FLOAT,*/
-    SYM_FLOAT8,     /* TYPE_DOUBLE,*/
-    SYM_FLOAT10,    /* TYPE_LONG_DOUBLE */
-    SYM_FLOAT4,     /* TYPE_FIMAGINARY, */
-    SYM_FLOAT8,     /* TYPE_DIMAGINARY, */
-    SYM_FLOAT10,    /* TYPE_LDIMAGINARY, */
-    SYM_INT1,       /* TYPE_BOOL, */
-    0,              /* TYPE_POINTER,*/
-    0,              /* TYPE_ARRAY,*/
-    0,              /* TYPE_STRUCT,*/
-    0,              /* TYPE_UNION,*/
-    0,              /* TYPE_FUNCTION,*/
-    0,              /* TYPE_FIELD,*/
-    SYM_INT1,       /* TYPE_VOID,*/
-    0,              /* TYPE_ENUM,*/
-    0,              /* TYPE_TYPEDEF,*/
-    0,              /* TYPE_UFIELD,*/
-    0,              /* TYPE_DOT_DOT_DOT,*/
-    SYM_INT1,       /* TYPE_PLAIN_CHAR,*/
-    SYM_INT2,       /* TYPE_WCHAR,  */
-    0,              /* TYPE_FCOMPLEX, */
-    0,              /* TYPE_DCOMPLEX, */
-    0,              /* TYPE_LDCOMPLEX, */
+static enum sym_type AsmDataType[] = {
+#undef  pick1
+#define pick1(enum,cgtype,x86asmtype,name,size) x86asmtype,
+#include "cdatatyp.h"
 };
 
 local int AsmType( TYPEPTR typ, type_modifiers flags )

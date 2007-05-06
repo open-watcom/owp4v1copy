@@ -101,40 +101,10 @@ struct func_save {
 };
 
 /* matches table of type in ctypes.h */
-static  char    CGDataType[TYPE_LAST_ENTRY] = {
-    T_INT_1,        /* TYPE_CHAR */
-    T_UINT_1,       /* TYPE_UCHAR */
-    T_INT_2,        /* TYPE_SHORT */
-    T_UINT_2,       /* TYPE_USHORT */
-    T_INTEGER,      /* TYPE_INT */
-    TY_UNSIGNED,    /* TYPE_UINT */
-    T_INT_4,        /* TYPE_LONG */
-    T_UINT_4,       /* TYPE_ULONG */
-    T_INT_8,        /* TYPE_LONG64*/
-    T_UINT_8,       /* TYPE_ULONG64 */
-    T_SINGLE,       /* TYPE_FLOAT */
-    TY_DOUBLE,      /* TYPE_DOUBLE */
-    T_LONG_DOUBLE,  /* TYPE_LONG_DOUBLE */
-    T_FLOAT,        /* TYPE_FIMAGINARY */
-    T_DOUBLE,       /* TYPE_DIMAGINARY */
-    T_LONG_DOUBLE,  /* TYPE_LDIMAGINARY */
-    T_UINT_1,       /* TYPE_BOOL */
-    T_POINTER,      /* TYPE_POINTER */
-    T_POINTER,      /* TYPE_ARRAY */
-    T_POINTER,      /* TYPE_STRUCT */
-    T_POINTER,      /* TYPE_UNION */
-    TY_DEFAULT,     /* TYPE_FUNCTION */
-    TY_DEFAULT,     /* TYPE_FIELD */
-    T_INTEGER,      /* TYPE_VOID */
-    T_INTEGER,      /* TYPE_ENUM */
-    T_INTEGER,      /* TYPE_TYPEDEF */
-    T_INTEGER,      /* TYPE_UFIELD unsigned bit field */
-    T_INTEGER,      /* TYPE_DOT_DOT_DOT  for the ... in prototypes */
-    T_INTEGER,      /* TYPE_PLAIN_CHAR */
-    T_INTEGER,      /* TYPE_WCHAR L'c' - a wide character constant */
-    T_POINTER,      /* TYPE_FCOMPLEX */
-    T_POINTER,      /* TYPE_DCOMPLEX */
-    T_POINTER,      /* TYPE_LDCOMPLEX */
+static  char    CGDataType[] = {
+#undef  pick1
+#define pick1(enum,cgtype,x86asmtype,name,size) cgtype,
+#include "cdatatyp.h"
 };
 
 static  char    CGOperator[] = {

@@ -91,7 +91,7 @@ local   int             CharArray( TYPEPTR typ );
 local   int             WCharArray( TYPEPTR typ );
 local   void            InitCharArray( TYPEPTR typ );
 local   void            InitWCharArray( TYPEPTR typ );
-local   void            StoreFloat( int float_type, unsigned long size );
+local   void            StoreFloat( DATA_TYPE dtype, unsigned long size );
 local   void            StoreInt64( TYPEPTR typ );
 
 int DataQuadsAvailable( void )
@@ -198,11 +198,11 @@ local void SplitDataQuad( DATA_QUAD_LIST *dql, unsigned long size )
             dq->u.long_values[1] = size / (oldsize / dq->u.long_values[1]);
             ndq->u.long_values[1] -= dq->u.long_values[1];
             size = 0;
-        } else if( dq->opr == T_CONSTANT ) {
+        } else if( dq->type == QDT_CONSTANT ) {
             dq->u.long_values[0] = size;
             ndq->u.long_values[0] -= dq->u.long_values[0];
             size = 0;
-        } else if( dq->opr == T_CONST ) {
+        } else if( dq->type == QDT_CONST ) {
             dq->u.string_leaf->length = size;
             ndq->u.string_leaf->literal += size;
             ndq->u.string_leaf->length = oldsize - size;
@@ -259,7 +259,7 @@ local void ZeroBytes( long n )
     DATA_QUAD   dq;
 
     if( n == 0 ) return;
-    dq.opr = T_CONSTANT;
+    dq.type = QDT_CONSTANT;
     dq.flags = Q_DATA;
     dq.u.long_values[0] = n;
     dq.u.long_values[1] = 0;
@@ -299,7 +299,7 @@ local void ChkConstant( unsigned long value, unsigned long max_value )
     }
 }
 
-local void StoreIValue( TOKEN int_type, unsigned long value,
+local void StoreIValue( DATA_TYPE dtype, unsigned long value,
                         unsigned long size )
 {
     static DATA_QUAD_LIST   *LastCurDataQuad;
@@ -308,17 +308,17 @@ local void StoreIValue( TOKEN int_type, unsigned long value,
     DATA_QUAD               dq;
 
     dq.flags = 0;
-    dq.opr = 0;
+    dq.type = 0;
     dq_ptr = &dq;
     if( LastCurDataQuad == CurDataQuad ) {
         dq_ptr = &CurDataQuad->dq;
     }
-    if( dq_ptr->opr == int_type  &&             /* 06-apr-92 */
+    if( dq_ptr->type == dtype  &&             /* 06-apr-92 */
         dq_ptr->flags == (Q_DATA | Q_REPEATED_DATA)  &&
         dq_ptr->u.long_values[0] == value ) {
         dq_ptr->u.long_values[1]++;             /* increment repeat count */
         CurDataQuad->size += size;
-    } else if( dq_ptr->opr == int_type  &&  dq_ptr->flags == Q_DATA ) {
+    } else if( dq_ptr->type == dtype  &&  dq_ptr->flags == Q_DATA ) {
         if( dq_ptr->u.long_values[0] == value ) {
             dq_ptr->flags |= Q_REPEATED_DATA;
             dq_ptr->u.long_values[1] = 2;       /* repeat count */
@@ -328,7 +328,7 @@ local void StoreIValue( TOKEN int_type, unsigned long value,
         }
         CurDataQuad->size += size;
     } else {
-        dq.opr = int_type;
+        dq.type = dtype;
         dq.flags = Q_DATA;
         dq.u.long_values[0] = value;
         if( value != 0 ) CompFlags.non_zero_data = 1;
@@ -347,12 +347,12 @@ local void StoreIValue( TOKEN int_type, unsigned long value,
     }
 }
 
-local void StoreIValue64( uint64 value )
+local void StoreIValue64( DATA_TYPE dtype, uint64 value )
 {
     DATA_QUAD           *dq_ptr;
     DATA_QUAD           dq;
 
-    dq.opr = T___INT64;
+    dq.type = dtype;
     dq.flags = Q_DATA;
     dq_ptr = &dq;
     dq.u.long64 = value;
@@ -514,7 +514,7 @@ local void AddrFold( TREEPTR tree, addrfold_info *info )
     }
 }
 
-local void StorePointer( TYPEPTR typ, TOKEN int_type, unsigned long size )
+local void StorePointer( TYPEPTR typ, unsigned long size )
 {
     type_modifiers      flags;
     TREEPTR             tree;
@@ -547,7 +547,7 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type, unsigned long size )
 
     address_wanted = 0;
     if( CurToken == T_RIGHT_BRACE) { // t some x = {}
-        dq.opr = T_ID;
+        dq.type = QDT_ID;
         dq.u.var.sym_handle = 0;
         dq.u.var.offset = 0;
     } else {
@@ -571,15 +571,15 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type, unsigned long size )
         }
         if( info.is_error ) {
             CErr1( ERR_NOT_A_CONSTANT_EXPR );
-            dq.opr = T_ID;
+            dq.type = QDT_ID;
             dq.u.var.sym_handle = 0;
             dq.u.var.offset = 0;
         } else {
             if( info.is_str ) {
-                dq.opr = T_STRING;
+                dq.type = QDT_STRING;
                 dq.u.string_leaf = info.str_h;
             } else {
-                dq.opr = T_ID;
+                dq.type = QDT_ID;
                 dq.u.var.sym_handle = info.sym_h;
                 dq.u.var.offset = info.offset;
             }
@@ -587,19 +587,19 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type, unsigned long size )
     }
     if( typ->decl_type == TYPE_POINTER ) {
         GenDataQuad( &dq, size );
-    } else if( dq.opr == T_STRING ) {           /* 05-jun-91 */
+    } else if( dq.type == QDT_STRING ) {           /* 05-jun-91 */
         if( TypeSize( typ ) != DataPtrSize  ||  CompFlags.strict_ANSI ) {
             CErr1( ERR_INVALID_INITIALIZER );
         }
         GenDataQuad( &dq, size );
-    } else { /* dq.opr == T_ID */
+    } else { /* dq.type == QDT_ID */
         if( dq.u.var.sym_handle != 0 ) {
             if( TypeSize( typ ) != DataPtrSize ) {
                 CErr1( ERR_INVALID_INITIALIZER );
             }
             GenDataQuad( &dq, size );
         } else {
-            StoreIValue( int_type, dq.u.var.offset, size );
+            StoreIValue( typ->decl_type, dq.u.var.offset, size );
         }
     }
 }
@@ -609,7 +609,7 @@ local void StoreInt64( TYPEPTR typ )
     TREEPTR     tree;
     DATA_QUAD   dq;
 
-    dq.opr = T___INT64;
+    dq.type = typ->decl_type;
     dq.flags = Q_DATA;
     U32ToU64( 0, &dq.u.long64 );
     if( CurToken != T_RIGHT_BRACE ) {
@@ -636,44 +636,27 @@ local FIELDPTR InitBitField( FIELDPTR field )
     unsigned long       bit_value;
     unsigned long       offset;
     int                 token;
-    TOKEN               int_type = T_NULL;
+    int                 is64bit;
 
     token = CurToken;
-    if( CurToken == T_LEFT_BRACE ) NextToken();
+    if( CurToken == T_LEFT_BRACE )
+        NextToken();
     typ = field->field_type;
     size = SizeOfArg( typ );
-    switch( typ->u.f.field_type ) {
-    case TYPE_CHAR:
-    case TYPE_UCHAR:
-        int_type = T_CHAR;
-        break;
-    case TYPE_SHORT:
-    case TYPE_USHORT:
-        int_type = T_SHORT;
-        break;
-    case TYPE_INT:
-    case TYPE_UINT:
-        int_type = T_INT;
-        break;
-    case TYPE_LONG:
-    case TYPE_ULONG:
-        int_type = T_LONG;
-        break;
-    case TYPE_LONG64:
-    case TYPE_ULONG64:
-        int_type = T___INT64;
+    is64bit = ( typ->u.f.field_type == TYPE_LONG64 )
+           || ( typ->u.f.field_type == TYPE_ULONG64 );
+    if( is64bit )
         U32ToU64( 0, &value64 );
-        break;
-    }
     offset = field->offset;
     value = 0;
     while( typ->decl_type == TYPE_FIELD ||
            typ->decl_type == TYPE_UFIELD ) {
         bit_value = 0;
-        if( CurToken != T_RIGHT_BRACE ) bit_value = ConstExpr();
+        if( CurToken != T_RIGHT_BRACE )
+            bit_value = ConstExpr();
         ChkConstant( bit_value, BitMask[ typ->u.f.field_width - 1 ] );
         bit_value &= BitMask[ typ->u.f.field_width - 1 ];
-        if( int_type == T___INT64 ) {
+        if( is64bit ) {
             uint64 tmp;
             U32ToU64( bit_value, &tmp );
             U64ShiftL( &tmp, typ->u.f.field_start, &tmp );
@@ -683,16 +666,21 @@ local FIELDPTR InitBitField( FIELDPTR field )
             value |= bit_value << typ->u.f.field_start;
         }
         field = field->next_field;
-        if( field == NULL ) break;
-        if( field->offset != offset ) break;    /* bit field done */
+        if( field == NULL )
+            break;
+        if( field->offset != offset )
+            break;    /* bit field done */
         typ = field->field_type;
-        if( CurToken == T_EOF ) break;
-        if( CurToken != T_RIGHT_BRACE ) MustRecog( T_COMMA );
+        if( CurToken == T_EOF )
+            break;
+        if( CurToken != T_RIGHT_BRACE ) {
+            MustRecog( T_COMMA );
+        }
     }
-    if( int_type == T___INT64 ) {
-        StoreIValue64( value64 );
+    if( is64bit ) {
+        StoreIValue64( typ->u.f.field_type, value64 );
     } else {
-        StoreIValue( int_type, value, size );
+        StoreIValue( typ->u.f.field_type, value, size );
     }
     if( token == T_LEFT_BRACE ) {
         if( CurToken == T_COMMA ) NextToken();
@@ -964,49 +952,30 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
         break;
     case TYPE_CHAR:
     case TYPE_UCHAR:
-        StorePointer( typ, T_CHAR, size );
-        break;
+    case TYPE_BOOL:
     case TYPE_SHORT:
     case TYPE_USHORT:
-        StorePointer( typ, T_SHORT, size );
-        break;
     case TYPE_INT:
     case TYPE_UINT:
-        StorePointer( typ, T_INT, size );
-        break;
     case TYPE_LONG:
     case TYPE_ULONG:
-        StorePointer( typ, T_LONG, size );
+    case TYPE_POINTER:
+        StorePointer( typ, size );
         break;
     case TYPE_LONG64:
     case TYPE_ULONG64:
         StoreInt64( typ );
         break;
     case TYPE_FLOAT:
-        StoreFloat( T_FLOAT, size );
-        break;
     case TYPE_DOUBLE:
-        StoreFloat( T_DOUBLE, size );
+    case TYPE_FIMAGINARY:
+    case TYPE_DIMAGINARY:
+        StoreFloat( typ->decl_type, size );
         break;
     case TYPE_LONG_DOUBLE:
-        //StoreFloat( T_LONG_DOUBLE );
-        StoreFloat( T_DOUBLE, size );
-        break;
-    case TYPE_POINTER:
-        StorePointer( typ, T_ID, size );
-        break;
-    case TYPE_BOOL:
-        StorePointer( typ, T_CHAR, size );
-        break;
-    case TYPE_FIMAGINARY:
-        StoreFloat( T_FLOAT, size );
-        break;
-    case TYPE_DIMAGINARY:
-        StoreFloat( T_DOUBLE, size );
-        break;
     case TYPE_LDIMAGINARY:
-        //StoreFloat( T_LONG_DOUBLE );
-        StoreFloat( T_DOUBLE, size );
+        //StoreFloat( typ->decl_type, size );
+        StoreFloat( TYPE_DOUBLE, size );
         break;
     default:
         break;
@@ -1074,7 +1043,7 @@ local void InitCharArray( TYPEPTR typ )
         }
         str_lit->length = len = size; /* chop the string */
     }
-    dq.opr = T_CONST;
+    dq.type = QDT_CONST;
     dq.flags = Q_DATA;
     dq.u.string_leaf = str_lit;
     GenDataQuad( &dq, len );
@@ -1095,7 +1064,7 @@ local void InitWCharArray( TYPEPTR typ )
     unsigned long       size;
     DATA_QUAD           dq;
 
-    dq.opr = T_SHORT;
+    dq.type = QDT_SHORT;
     dq.flags = Q_DATA;
 
 /*      This function handles the initialization of statements like:  */
@@ -1131,12 +1100,12 @@ local void InitWCharArray( TYPEPTR typ )
  }
 
 
-local void StoreFloat( int float_type, unsigned long size )
+local void StoreFloat( DATA_TYPE dtype, unsigned long size )
 {
     TREEPTR     tree;
     DATA_QUAD   dq;
 
-    dq.opr = float_type;
+    dq.type = dtype;
     dq.flags = Q_DATA;
     dq.u.double_value = 0.0;
     if( CurToken != T_RIGHT_BRACE ) {
@@ -1177,7 +1146,7 @@ local void GenStaticDataQuad( SYM_HANDLE sym_handle )
 {
     DATA_QUAD       dq;
 
-    dq.opr = T_STATIC;
+    dq.type = QDT_STATIC;
     dq.flags = Q_DATA;
     dq.u.var.sym_handle = sym_handle;
     dq.u.var.offset = 0;
