@@ -70,6 +70,10 @@ NetServerTransportAdd
 NetServerTransportAddEx
 NetServerTransportDel
 NetServerTransportEnum
+NetServiceControl
+NetServiceEnum
+NetServiceGetInfo
+NetServiceInstall
 NetSessionDel
 NetSessionEnum
 NetSessionGetInfo
