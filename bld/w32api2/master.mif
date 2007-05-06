@@ -55,6 +55,7 @@ headers =            &
         lmrepl.h     &
         lmserver.h   &
         lmshare.h    &
+        lmsname.h    &
         lzexpand.h   &
         mcx.h        &
         mmsystem.h   &
