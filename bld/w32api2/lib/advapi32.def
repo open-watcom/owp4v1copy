@@ -386,6 +386,7 @@ SetSecurityDescriptorOwner
 SetSecurityDescriptorRMControl
 SetSecurityDescriptorSacl
 SetSecurityInfo
+SetServiceBits
 SetServiceObjectSecurity
 SetServiceStatus
 SetThreadToken

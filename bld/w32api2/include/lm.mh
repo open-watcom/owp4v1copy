@@ -16,6 +16,7 @@
 #include <lmmsg.h>
 #include <lmremutl.h>
 #include <lmrepl.h>
+#include <lmserver.h>
 
 #endif /* _LM_H_INCLUDED */
 
