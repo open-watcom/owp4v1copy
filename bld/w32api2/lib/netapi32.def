@@ -4,6 +4,10 @@ I_NetLogonControl
 I_NetLogonControl2
 NetAlertRaise
 NetAlertRaiseEx
+NetApiBufferAllocate
+NetApiBufferFree
+NetApiBufferReallocate
+NetApiBufferSize
 NetConnectionEnum
 NetEnumerateTrustedDomains
 NetFileClose
@@ -111,6 +115,7 @@ NetWkstaTransportEnum
 NetWkstaUserEnum
 NetWkstaUserGetInfo
 NetWkstaUserSetInfo
+NetapipBufferAllocate
 Netbios
 RxNetAccessAdd
 RxNetAccessDel

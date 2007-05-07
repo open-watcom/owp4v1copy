@@ -20,6 +20,7 @@
 #include <lmsvc.h>
 #include <lmuse.h>
 #include <lmwksta.h>
+#include <lmapibuf.h>
 
 #endif /* _LM_H_INCLUDED */
 
