@@ -86,6 +86,10 @@ NetShareEnum
 NetShareEnumSticky
 NetShareGetInfo
 NetShareSetInfo
+NetUseAdd
+NetUseDel
+NetUseEnum
+NetUseGetInfo
 NetUserAdd
 NetUserChangePassword
 NetUserDel

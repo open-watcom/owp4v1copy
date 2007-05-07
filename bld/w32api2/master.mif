@@ -57,6 +57,8 @@ headers =            &
         lmshare.h    &
         lmsname.h    &
         lmsvc.h      &
+        lmuse.h      &
+        lmuseflg.h   &
         lzexpand.h   &
         mcx.h        &
         mmsystem.h   &

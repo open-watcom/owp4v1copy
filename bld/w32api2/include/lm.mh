@@ -18,6 +18,7 @@
 #include <lmrepl.h>
 #include <lmserver.h>
 #include <lmsvc.h>
+#include <lmuse.h>
 
 #endif /* _LM_H_INCLUDED */
 
