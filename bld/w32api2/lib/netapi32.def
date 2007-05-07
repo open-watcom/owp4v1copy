@@ -103,6 +103,14 @@ NetUserSetGroups
 NetUsersetInfo
 NetValidatePasswordPolicy
 NetValidatePasswordPolicyFree
+NetWkstaGetInfo
+NetWkstaSetInfo
+NetWkstaTransportAdd
+NetWkstaTransportDel
+NetWkstaTransportEnum
+NetWkstaUserEnum
+NetWkstaUserGetInfo
+NetWkstaUserSetInfo
 Netbios
 RxNetAccessAdd
 RxNetAccessDel

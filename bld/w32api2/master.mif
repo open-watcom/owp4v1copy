@@ -59,6 +59,7 @@ headers =            &
         lmsvc.h      &
         lmuse.h      &
         lmuseflg.h   &
+        lmwksta.h    &
         lzexpand.h   &
         mcx.h        &
         mmsystem.h   &

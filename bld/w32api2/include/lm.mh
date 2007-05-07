@@ -19,6 +19,7 @@
 #include <lmserver.h>
 #include <lmsvc.h>
 #include <lmuse.h>
+#include <lmwksta.h>
 
 #endif /* _LM_H_INCLUDED */
 
