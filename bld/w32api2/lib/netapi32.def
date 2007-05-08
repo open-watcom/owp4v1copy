@@ -8,6 +8,9 @@ NetApiBufferAllocate
 NetApiBufferFree
 NetApiBufferReallocate
 NetApiBufferSize
+NetConfigGet
+NetConfigGetAll
+NetConfigSet
 NetConnectionEnum
 NetEnumerateTrustedDomains
 NetErrorLogClear
@@ -45,6 +48,7 @@ NetMessageNameDel
 NetMessageNameEnum
 NetMessageNameGetInfo
 NetQueryDisplayInformation
+NetRegisterDomainNameChangeNotification
 NetRemoteComputerSupports
 NetRemoteTOD
 NetReplExportDirAdd
@@ -93,6 +97,7 @@ NetShareEnum
 NetShareEnumSticky
 NetShareGetInfo
 NetShareSetInfo
+NetUnregisterDomainNameChangeNotification
 NetUseAdd
 NetUseDel
 NetUseEnum

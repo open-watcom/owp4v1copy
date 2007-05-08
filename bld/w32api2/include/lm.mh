@@ -22,6 +22,7 @@
 #include <lmwksta.h>
 #include <lmapibuf.h>
 #include <lmerrlog.h>
+#include <lmconfig.h>
 
 #endif /* _LM_H_INCLUDED */
 
