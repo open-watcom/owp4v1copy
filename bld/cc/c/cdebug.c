@@ -30,13 +30,13 @@
 
 
 #include "cvars.h"
+#include "standard.h"
 #include "cgdefs.h"
 #include "cgswitch.h"
-#include "cg.h"
-#include "standard.h"
 #define BY_CLI
 #include "cgprotos.h"
 #include "feprotos.h"
+#include "cgen.h"
 
 
 static dbug_type DBTypeStruct( TYPEPTR typ );
@@ -44,7 +44,6 @@ static dbug_type DBTypeEnum( TYPEPTR typ );
 static void InitDBType( void );
 
 //void RevTypeList();
-extern  int     CGenType( TYPEPTR );
 extern  void    SymGet(SYMPTR,SYM_HANDLE);
 extern  SYMPTR  SymGetPtr(SYM_HANDLE);
 

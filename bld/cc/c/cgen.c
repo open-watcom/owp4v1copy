@@ -38,6 +38,7 @@
 #define BY_CLI
 #include "cgprotos.h"
 #include "feprotos.h"
+#include "cgen.h"
 
 local void      FreeExtVars( void );
 local void      FreeGblVars( SYM_HANDLE sym_handle );
@@ -45,7 +46,7 @@ local void      FreeLocalVars( SYM_HANDLE sym_list );
 static void     FreeTrySymBackInfo( void );
 static void     FreeTryTableBackHandles( void );
 static void     FreeTrySymBackInfo( void );
-local int       CodePtrType( type_modifiers flags );
+local cg_type   CodePtrType( type_modifiers flags );
 local int       DoFuncDefn( SYM_HANDLE funcsym_handle );
 static void     CallTryFini( void );
 local void      EmitSyms( void );
@@ -1635,7 +1636,7 @@ local int DoFuncDefn( SYM_HANDLE funcsym_handle )
 local void CDoParmDecl( SYMPTR sym, SYM_HANDLE sym_handle )
 {
     TYPEPTR typ;
-    int     dtype;
+    cg_type dtype;
 
     typ = sym->sym_type;
     SKIP_TYPEDEFS( typ );
@@ -1829,9 +1830,9 @@ local void FreeExtVars( void )                          /* 02-apr-92 */
     }
 }
 
-int CGenType( TYPEPTR typ )
+cg_type CGenType( TYPEPTR typ )
 {
-    int         dtype;
+    cg_type     dtype;
     int         flags;
     int         align;
 
@@ -1886,10 +1887,10 @@ int CGenType( TYPEPTR typ )
 }
 
 
-local int CodePtrType( type_modifiers flags )
+local cg_type CodePtrType( type_modifiers flags )
 {
 #if ( _CPU == 8086 ) || ( _CPU == 386 )
-    int         dtype;
+    cg_type     dtype;
 
     if( flags & FLAG_FAR ) {
         dtype = T_LONG_CODE_PTR;
@@ -1905,9 +1906,9 @@ local int CodePtrType( type_modifiers flags )
 }
 
 
-extern int PtrType( TYPEPTR typ, type_modifiers flags )
+extern cg_type PtrType( TYPEPTR typ, type_modifiers flags )
 {
-    int         dtype;
+    cg_type     dtype;
 
     SKIP_TYPEDEFS( typ );       /*03-dec-91*/
     if( typ->decl_type == TYPE_FUNCTION ) {
