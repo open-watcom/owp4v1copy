@@ -49,6 +49,7 @@ headers =            &
         lmaccess.h   &
         lmalert.h    &
         lmapibuf.h   &
+        lmaudit.h    &
         lmconfig.h   &
         lmcons.h     &
         lmerr.h      &

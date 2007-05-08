@@ -23,6 +23,7 @@
 #include <lmapibuf.h>
 #include <lmerrlog.h>
 #include <lmconfig.h>
+#include <lmaudit.h>
 
 #endif /* _LM_H_INCLUDED */
 

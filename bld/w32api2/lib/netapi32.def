@@ -8,6 +8,9 @@ NetApiBufferAllocate
 NetApiBufferFree
 NetApiBufferReallocate
 NetApiBufferSize
+NetAuditClear
+NetAuditRead
+NetAuditWrite
 NetConfigGet
 NetConfigGetAll
 NetConfigSet
