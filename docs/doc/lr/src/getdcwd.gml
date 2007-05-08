@@ -1,7 +1,6 @@
 .func _getdcwd _wgetdcwd
 #include <direct.h>
-char * _getdcwd( int drive, char *buffer,
-                 size_t maxlen );
+char *_getdcwd( int drive, char *buffer, size_t maxlen );
 .ixfunc2 '&Direct' &func
 .if &'length(&wfunc.) ne 0 .do begin
 wchar_t *_wgetdcwd( int drive, wchar_t *buffer,
@@ -11,9 +10,11 @@ wchar_t *_wgetdcwd( int drive, wchar_t *buffer,
 .do end
 .funcend
 .desc begin
-The &func function returns the name of the current working directory
+The &func function gets the full path of the current working directory
 on the specified drive.
-Drive 0 corresponds to "A:", drive 1 corresponds to "B:", etc.
+The
+.arg drive
+argument specifies the drive (0 = default drive, 1 = A, 2 = B, etc.).
 The
 .arg buffer
 address is either
@@ -22,9 +23,13 @@ or is the location at which a string containing the name of the
 current working directory is placed.
 In the latter case, the value of
 .arg maxlen
-is the length (including the delimiting
+is the length (including the terminating
 .mono '\0'
 character) which can be be used to store this name.
+An error occurs if the length of the path (including the terminating
+.mono '\0'
+character) exceeds
+.arg maxlen.
 .np
 The maximum size that might be required for
 .arg buffer
@@ -32,7 +37,6 @@ is
 .kw PATH_MAX
 + 1 bytes.
 .np
-.us Extension:
 When
 .arg buffer
 has a value of
@@ -51,8 +55,8 @@ name of the current working directory as a wide-character string
 .desc end
 .return begin
 The &func function returns the address of the string containing the
-name of the current working directory, unless an error occurs, in
-which case
+name of the current working directory on the specified drive, unless
+an error occurs, in which case
 .mono NULL
 is returned.
 .return end

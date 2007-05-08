@@ -1176,7 +1176,6 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)_fpreset.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_freect.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_fsopen.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_fullpat.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)_getdcwd.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_gmtime.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_grow_ha.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)_harderr.gml &
