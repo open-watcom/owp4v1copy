@@ -59,6 +59,7 @@ headers =            &
         lmserver.h   &
         lmshare.h    &
         lmsname.h    &
+        lmstats.h    &
         lmsvc.h      &
         lmuse.h      &
         lmuseflg.h   &

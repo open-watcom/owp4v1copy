@@ -97,6 +97,7 @@ NetShareEnum
 NetShareEnumSticky
 NetShareGetInfo
 NetShareSetInfo
+NetStatisticsGet
 NetUnregisterDomainNameChangeNotification
 NetUseAdd
 NetUseDel
