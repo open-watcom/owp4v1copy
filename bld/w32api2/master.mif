@@ -51,6 +51,7 @@ headers =            &
         lmapibuf.h   &
         lmcons.h     &
         lmerr.h      &
+        lmerrlog.h   &
         lmmsg.h      &
         lmremutl.h   &
         lmrepl.h     &

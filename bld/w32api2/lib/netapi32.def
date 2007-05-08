@@ -10,6 +10,9 @@ NetApiBufferReallocate
 NetApiBufferSize
 NetConnectionEnum
 NetEnumerateTrustedDomains
+NetErrorLogClear
+NetErrorLogRead
+NetErrorLogWrite
 NetFileClose
 NetFileEnum
 NetFileGetInfo
