@@ -2,6 +2,7 @@ LIBRARY NETAPI32.DLL
 EXPORTS
 I_NetLogonControl
 I_NetLogonControl2
+NetAddAlternateComputerName
 NetAlertRaise
 NetAlertRaiseEx
 NetApiBufferAllocate
@@ -15,6 +16,7 @@ NetConfigGet
 NetConfigGetAll
 NetConfigSet
 NetConnectionEnum
+NetEnumerateComputerNames
 NetEnumerateTrustedDomains
 NetErrorLogClear
 NetErrorLogRead
@@ -25,6 +27,8 @@ NetFileGetInfo
 NetGetAnyDCName
 NetGetDCName
 NetGetDisplayInformationIndex
+NetGetJoinInformation
+NetGetJoinableOnUs
 NetGroupAdd
 NetGroupAddUser
 NetGroupDel
@@ -34,6 +38,7 @@ NetGroupGetInfo
 NetGroupGetUsers
 NetGroupSetInfo
 NetGroupSetUsers
+NetJoinDomain
 NetLocalGroupAdd
 NetLocalGroupAddMember
 NetLocalGroupAddMembers
@@ -54,6 +59,8 @@ NetQueryDisplayInformation
 NetRegisterDomainNameChangeNotification
 NetRemoteComputerSupports
 NetRemoteTOD
+NetRemoveAlternateComputerName
+NetRenameMachineInDomain
 NetReplExportDirAdd
 NetReplExportDirDel
 NetReplExportDirEnum
@@ -91,6 +98,7 @@ NetServiceInstall
 NetSessionDel
 NetSessionEnum
 NetSessionGetInfo
+NetSetPrimaryComputerName
 NetShareAdd
 NetShareCheck
 NetShareDel
@@ -101,6 +109,7 @@ NetShareEnumSticky
 NetShareGetInfo
 NetShareSetInfo
 NetStatisticsGet
+NetUnjoinDomain
 NetUnregisterDomainNameChangeNotification
 NetUseAdd
 NetUseDel
@@ -117,6 +126,7 @@ NetUserModalsGet
 NetUserModalsSet
 NetUserSetGroups
 NetUsersetInfo
+NetValidateName
 NetValidatePasswordPolicy
 NetValidatePasswordPolicyFree
 NetWkstaGetInfo

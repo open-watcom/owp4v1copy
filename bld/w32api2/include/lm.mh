@@ -24,6 +24,7 @@
 #include <lmerrlog.h>
 #include <lmconfig.h>
 #include <lmaudit.h>
+#include <lmjoin.h>
 
 #endif /* _LM_H_INCLUDED */
 

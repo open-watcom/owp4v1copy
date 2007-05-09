@@ -54,6 +54,7 @@ headers =            &
         lmcons.h     &
         lmerr.h      &
         lmerrlog.h   &
+        lmjoin.h     &
         lmmsg.h      &
         lmremutl.h   &
         lmrepl.h     &
