@@ -70,6 +70,7 @@ headers =            &
         mcx.h        &
         mmsystem.h   &
         msxml.h      &
+        naptypes.h   &
         nb30.h       &
         ncrypt.h     &
         oaidl.h      &
