@@ -91,6 +91,7 @@ headers =            &
         pshpack2.h   &
         pshpack4.h   &
         pshpack8.h   &
+        ras.h        &
         reason.h     &
         rpc.h        &
         rpcasync.h   &
