@@ -43,9 +43,9 @@ test : .symbolic stepanov.lnk $(exes)
     %create stepanov.out
 # Note: Fast machines may need larger iteration counts, otherwise the code could run
 # "too fast" and finish at "zero" execution time.
-    $(run) oop_v1p5 Max=5000 18 Matrix=50 15 Complex=4000 50 Iterator=15000 14 >>stepanov.out
-    $(run) oop_v1p6 Max=5000 49 Matrix=50 13 Complex=4000 52 Iterator=15000 18 >>stepanov.out
-    $(run) oop_v1p7 Max=5000 14 Matrix=50 14 Complex=4000 83 Iterator=15000 19 >>stepanov.out
+    $(run) oop_v1p5 Max=5000 18 Matrix=100 15 Complex=6000 50 Iterator=15000 14 >>stepanov.out
+    $(run) oop_v1p6 Max=5000 49 Matrix=100 13 Complex=6000 52 Iterator=15000 18 >>stepanov.out
+    $(run) oop_v1p7 Max=5000 14 Matrix=100 14 Complex=6000 83 Iterator=15000 19 >>stepanov.out
     @for %i in ( $(stepanovs) ) do $(run) %i 2500 >>stepanov.out
     diff stepanov.out stepanov.chk
 !endif
