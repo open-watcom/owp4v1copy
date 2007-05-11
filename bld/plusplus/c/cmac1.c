@@ -29,6 +29,10 @@
 ****************************************************************************/
 
 
+// FIXME: This code is seriously broken. It assumes that the TOKEN enum is
+// interchangeable with char. This assumption may break if plain char is
+// signed and will break if the TOKEN enum is not stored as 8-bit quantity.
+
 #include "plusplus.h"
 #include "preproc.h"
 #include "tokenbuf.h"
@@ -1041,9 +1045,10 @@ static MACRO_TOKEN **snapString( MACRO_TOKEN **ptail, unsigned i )
     return( ptail );
 }
 
-static MACRO_TOKEN **buildString( MACRO_TOKEN **ptail, char *p )
+static MACRO_TOKEN **buildString( MACRO_TOKEN **ptail, void *str )
 {
     MACRO_TOKEN **old_ptail;
+    unsigned char *p = str;
     char *token_str;
     unsigned len;
     int i;
@@ -1140,8 +1145,9 @@ static MACRO_TOKEN **buildString( MACRO_TOKEN **ptail, char *p )
     return( ptail );
 }
 
-static MACRO_TOKEN **buildMTokenList( MACRO_TOKEN **ptail, char *p, MACRO_ARG *macro_parms )
+static MACRO_TOKEN **buildMTokenList( MACRO_TOKEN **ptail, void *ptr, MACRO_ARG *macro_parms )
 {
+    unsigned char *p = ptr;
     unsigned prev_token;
     unsigned curr_token;
     auto char buf[2];
@@ -1251,9 +1257,9 @@ static MACRO_TOKEN *substituteParms( MACRO_TOKEN *head, MACRO_ARG *macro_parms )
             // macro_parms[mtok->data[0]].arg
             dummy_list = NULL;
             if( mtok->token != T_MACRO_VAR_PARM ||
-                macro_parms[mtok->data[0]].arg )
+                macro_parms[(unsigned char)mtok->data[0]].arg )
             {
-                buildMTokenList( &dummy_list, macro_parms[mtok->data[0]].arg, NULL );
+                buildMTokenList( &dummy_list, macro_parms[(unsigned char)mtok->data[0]].arg, NULL );
             }
             else
             {

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Compile time source input, listing output.
 *
 ****************************************************************************/
 
-
-//
-// COMIO     : compile time source input, listing output
-//
 
 #include "ftnstd.h"
 #include "progsw.h"
@@ -109,7 +104,7 @@ void    ComRead(void) {
             stmt_no = 0;
             stno_found = FALSE;
             for(;;) {
-                chtype = CharSetInfo.character_set[ ch ];
+                chtype = CharSetInfo.character_set[ (unsigned char)ch ];
                 if( chtype == C_EL ) break;
                 if( ( chtype == C_CM ) && ( column != CONT_COL - 1 ) ) {
                     if( ( ExtnSw & XS_EOL_COMMENT ) == 0 ) {

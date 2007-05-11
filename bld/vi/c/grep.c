@@ -595,7 +595,7 @@ static int fSearch( char *fn, char *r )
         buffloc = buff;
         while( bytes ) {
 
-            if( *strloc == cTable[*buffloc] ) {
+            if( *strloc == cTable[*(unsigned char *)buffloc] ) {
                 buffloc++;
                 bytes--;
                 strloc++;

@@ -159,7 +159,7 @@ char hex_dig(                   // GET HEXADECIMAL DIGIT FOR CHAR (OR 16)
 {
     char char_class;            // - character class
 
-    char_class = CharSet[ c ];
+    char_class = CharSet[ (unsigned char)c ];
     if(( char_class & (C_HX|C_DI) ) == 0 ) {
         return( 16 );
     }

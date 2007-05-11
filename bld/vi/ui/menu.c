@@ -333,7 +333,7 @@ static void initMenuList( menu *cmenu )
  */
 int ViEndMenu( void )
 {
-    char        ch;
+    int         ch;
 
     if( currMenu == NULL ) {
         return( ERR_INVALID_MENU );

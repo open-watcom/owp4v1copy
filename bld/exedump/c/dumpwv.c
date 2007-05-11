@@ -79,7 +79,7 @@ static void get_len_prefix_string( char *res, char *str )
         i = 1;
     }
     memcpy( res, &str[1], str[0] );
-    res[ str[0] ] = 0;
+    res[ *(unsigned_8 *)str ] = 0;
 
 } /* get_len_prefix_string */
 

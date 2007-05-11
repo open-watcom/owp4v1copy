@@ -96,7 +96,7 @@ typedef enum {
 
 static uint_8 ClassTable[LCHR_MAX];
 
-static char InitClassTable[] = {
+static uint_8 InitClassTable[] = {
     '\r',       SCAN_CR,
     '\n',       SCAN_NEWLINE,
     ' ',        SCAN_WHITESPACE,
@@ -1717,7 +1717,7 @@ static void nextMacroToken( void )
 void ScanInit( void )
 /*******************/
 {
-    char *p;
+    uint_8  *p;
 
 #ifndef NDEBUG
     {
@@ -1725,10 +1725,6 @@ void ScanInit( void )
         DbgAssert( c1 );
     }
     _BufferOverrun = BUFFER_OVERRUN_CHECK;
-#endif
-#if 0
-    // until codegen supports it
-    KwDisable( T___INT64 );
 #endif
     tokenSource = nextMacroToken;
     ReScanPtr = NULL;

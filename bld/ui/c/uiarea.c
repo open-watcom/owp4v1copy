@@ -57,7 +57,7 @@ void intern dividearea( SAREA area, SAREA centre, SAREA areas[ 5 ] )
 */
 
 {
-    register    char                    i;
+    register    int                     i;
     register    int                     row = 0;    // GCC thinks this might be uninited
     register    int                     col = 0;
     register    int                     arow;

@@ -82,8 +82,8 @@ void ImplyFormat( format_type typ )
     if( FmtType == FMT_DEFAULT ) FmtType = typ;
 }
 
-extern char *FileName( char *buff, int len, char etype, bool force )
-/******************************************************************/
+extern char *FileName( char *buff, int len, int etype, bool force )
+/*****************************************************************/
 {
     char                *namptr;
     char                *ptr;

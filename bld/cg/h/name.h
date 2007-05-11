@@ -189,7 +189,7 @@ typedef struct indexed_name {
         union  name             *base;
         type_length             constant;
         i_flags                 index_flags;
-        char                    scale;
+        unsigned char           scale;
 } indexed_name;
 
 typedef union name {

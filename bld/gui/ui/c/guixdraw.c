@@ -48,7 +48,7 @@
 
 extern int uionnec();
 
-static char DrawIndex[] =
+static unsigned char DrawIndex[] =
 {
     DRAW_BLANK,                 // GUI_FRAME_TOP
     DRAW_BLANK,                 // GUI_FRAME_UL_CORNER

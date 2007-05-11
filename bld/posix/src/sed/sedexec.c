@@ -18,7 +18,7 @@ readout() and memeql() are output and string-comparison utilities.
 */
 
 #include <assert.h>
-#include <io.h>                         /* isatty() */
+#include <unistd.h>                     /* isatty() */
 #include <stdio.h>                      /* {f}puts, {f}printf, etc. */
 #include <ctype.h>                      /* isprint(), isdigit(), toascii() */
 #include <stdlib.h>                     /* for exit() */
@@ -144,7 +144,7 @@ static int selected( sedcmd *ipc )
 {
     register char               *p1 = ipc->addr1;       /* first address */
     register char * const       p2 = ipc->addr2;        /*   and second */
-    char                        c;
+    int                         c;
     int const                   allbut = ipc->flags.allbut;
 
     if( !p1 )
@@ -282,16 +282,16 @@ static int advance(
             break;                      /*   and keep going */
 
         case CBRA:                      /* start of tagged pattern */
-            brastart[*ep++] = lp;       /* mark it */
+            brastart[(int)*ep++] = lp;  /* mark it */
             break;                      /* and go */
 
         case CKET:                      /* end of tagged pattern */
-            bracend[*ep++] = lp;        /* mark it */
+            bracend[(int)*ep++] = lp;   /* mark it */
             break;                      /* and go */
 
         case CBACK:
-            bbeg = brastart[*ep];
-            ct = bracend[*ep++] - bbeg;
+            bbeg = brastart[(int)*ep];
+            ct = bracend[(int)*ep++] - bbeg;
 
             if( !memeql( bbeg, lp, ct ) )
                 return( FALSE );        /* return false */
@@ -299,8 +299,8 @@ static int advance(
             break;                      /* matched */
 
         case CBACK | STAR:
-            bbeg = brastart[*ep];
-            if( ( ct = bracend[*ep++] - bbeg ) <= 0 )
+            bbeg = brastart[(int)*ep];
+            if( ( ct = bracend[(int)*ep++] - bbeg ) <= 0 )
                 break;                  /* zero (or negative ??) length match */
             curlp = lp;
             while( memeql( bbeg, lp, ct ) )
@@ -339,7 +339,7 @@ static int advance(
                     c = ep[1];
                     break;
                 case CBACK:
-                    c = *brastart[ep[1]];
+                    c = *brastart[(int)ep[1]];
                     break;
                 default:
                     do {
@@ -442,7 +442,7 @@ static int advance(
 
         case CKET | STAR:               /* match \(..\)* */
         case CKET | MTYPE:              /* match \(..\)\{...\} */
-            bracend[*ep] = lp;          /* mark it */
+            bracend[(int)*ep] = lp;     /* mark it */
             return( TRUE );
 
         case CDOT | MTYPE:              /* match .\{...\} */
@@ -479,8 +479,8 @@ static int advance(
             goto star;
 
         case CBACK | MTYPE:             /* e.g. \(.\)\1\{5\} */
-            bbeg = brastart[*ep];
-            ct = bracend[*ep++] - bbeg;
+            bbeg = brastart[(int)*ep];
+            ct = bracend[(int)*ep++] - bbeg;
             i1 = *ep++ & 0xFF, i2 = *ep++ & 0xFF;
             while( memeql( bbeg, lp, ct ) && i1 )
                 lp += ct, i1--;
@@ -828,7 +828,7 @@ static void command( sedcmd *ipc )
     case YCMD:
         p1 = linebuf;
         p2 = ipc->u.lhs;
-        while( ( *p1 = p2[*p1] ) != 0 )
+        while( ( *p1 = p2[*(unsigned char *)p1] ) != 0 )
             p1++;
         break;
 

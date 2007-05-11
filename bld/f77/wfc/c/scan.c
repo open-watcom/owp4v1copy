@@ -129,7 +129,7 @@ void    Scan( void ) {
 // Collect a token.
 
     token_state state2;
-    char        ch;
+    byte        ch;
     token_state old_state;
     char        *dpt = NULL;
     byte        tab;

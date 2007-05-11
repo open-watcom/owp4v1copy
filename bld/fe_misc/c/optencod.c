@@ -93,7 +93,7 @@ typedef struct codeseq CODESEQ;
 static char alternateEqual;
 static char chainOption[256];
 static char *chainUsage[256][LANG_MAX];
-static char lastChain;
+static unsigned char lastChain;
 static unsigned maxUsageLen;
 static char *pageUsage[LANG_MAX];
 static unsigned targetMask;
@@ -792,13 +792,13 @@ static void doPATH( char *p )
 // i.e., -oa -ox == -oax
 static void doCHAIN( char *p )
 {
-    char c;
+    unsigned char c;
 
     p = skipSpace( p );
     if( *p == '\0' ) {
         fail( "missing <char> in :chain. tag\n" );
     }
-    c = *p;
+    c = *(unsigned char *)p;
     chainOption[ c ] |= CHAIN_YES;
     ++p;
     p = skipSpace( p );
@@ -1702,7 +1702,7 @@ static size_t genOptionUsageStart( OPTION *o )
             strcat( tokbuff, o->special_arg_usage );
         }
     }
-    if( chainOption[ o->name[0] ] & CHAIN_YES ) {
+    if( chainOption[ (int)o->name[0] ] & CHAIN_YES ) {
         if( !o->nochain ) {
             tokbuff[0] = ' ';
             tokbuff[1] = ' ';
@@ -1762,7 +1762,7 @@ static void emitUsageH( void )
 
 static void createChainHeader( OPTION **o, unsigned language )
 {
-    char c;
+    int c;
     char *usage;
 
     c = (*o)->name[0];
@@ -1884,10 +1884,10 @@ static void processUsage( unsigned language, void (*process_line)( void ) )
     clearChainUsage();
     for( i = 0; i < count; ++i ) {
         o = t[i];
-        if( chainOption[ o->name[0] ] & CHAIN_YES ) {
-            if(! ( chainOption[ o->name[0] ] & CHAIN_USAGE )) {
+        if( chainOption[ (int)o->name[0] ] & CHAIN_YES ) {
+            if(! ( chainOption[ (int)o->name[0] ] & CHAIN_USAGE )) {
                 if( !o->nochain ) {
-                    chainOption[ o->name[0] ] |= CHAIN_USAGE;
+                    chainOption[ (int)o->name[0] ] |= CHAIN_USAGE;
                     createChainHeader( &t[i], language );
                     process_line();
                 }
@@ -1896,7 +1896,7 @@ static void processUsage( unsigned language, void (*process_line)( void ) )
         tokbuff[0] = '\0';
         len = genOptionUsageStart( o );
         fillOutSpaces( max - len );
-        if( chainOption[ o->name[0] ] & CHAIN_YES ) {
+        if( chainOption[ (int)o->name[0] ] & CHAIN_YES ) {
             if( !o->nochain ) {
                 strcat( tokbuff, "-> " );
             }

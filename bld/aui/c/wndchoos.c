@@ -120,7 +120,7 @@ static  bool    DoWndKeyChoose( a_window *wnd, unsigned key )
     }
     WndGetLine( wnd, wnd->current.row, wnd->keypiece, &line );
     strcpy( sofar, line.text );
-    sofar[ (unsigned)wnd->keyindex ] = key;
+    sofar[ wnd->keyindex ] = key;
     sofar[ wnd->keyindex+1 ] = '\0';
     for( row = wnd->current.row;; ++row ) {
         if( !WndGetLine( wnd, row, wnd->keypiece, &line ) ) break;

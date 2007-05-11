@@ -108,7 +108,7 @@ int GetEXEHeader( HANDLE handle, header_info *hi, WORD *stack )
         }
         if( hi->neh.target == TARGET_WINDOWS ) {
             DWORD       off;
-            char        len;
+            int         len;
             DWORD       bytes;
             DWORD       pos;
 

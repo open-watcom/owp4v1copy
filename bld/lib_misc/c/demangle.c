@@ -297,6 +297,7 @@ unsigned errors;
 static int scoped_name( output_desc *data, state_desc *state );
 static int type_encoding( output_desc *data, state_desc *state );
 static int recursive_mangled_name( output_desc *data, state_desc *state );
+static size_t terminateOutput( output_desc *data );
 
 static void zapSpace( output_desc *data )
 {
@@ -602,7 +603,7 @@ static void demangleEmit( void **cookie, dm_pts dp, int value, char const *ptr )
 // everything before this point deals with output to the demangled name
 // ==========================================================================
 
-static int typeChar( char c, int grouping )
+static int typeChar( int c, int grouping )
 {
     c -= LOWER_TABLE_LIMIT;
     if( c < num_elements( translate_type_encoding ) ) {
@@ -1348,7 +1349,7 @@ static int op_name( output_desc *data, state_desc *state )
 
 static int name( output_desc *data, state_desc *state )
 {
-    char c;
+    int c;
 
     c = nextChar( data );
     if( isdigit( c ) ) {
@@ -1532,7 +1533,6 @@ static void do_demangle( output_desc *data )
     if( !full_mangled_name( data ) ) {
         #if 0 || defined(TEST)
         if( ! no_errors ) {
-            size_t terminateOutput( output_desc * );
             ++errors;
             printf( "ERROR: full_mangled_name failed\n" );
             printf( "in:-->%s<--\n", input );

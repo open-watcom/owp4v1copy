@@ -41,9 +41,9 @@ ins_name GetFppCode()
 /*******************/
 
 {
-    char            op;
-    char            op_a;
-    char            op_b;
+    uint_8          op;
+    uint_8          op_a;
+    uint_8          op_b;
     ins_name        fp;
 
     fp = I_INVALID;

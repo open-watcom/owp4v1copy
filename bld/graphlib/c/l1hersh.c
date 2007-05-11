@@ -155,10 +155,12 @@ static char MultiLingIndex[ NUM_LANG_CHARS ][ 2 ] = {
 #endif
 
 
-void _HershDraw( char ch, short cx, short cy, short bx, short by,
+void _HershDraw( char pc, short cx, short cy, short bx, short by,
 /*=========================================*/ short px, short py )
 
 {
+    unsigned char   ch = pc;
+
     if( ch >= '!' && ch <= 0x7e ) {
         DrawChar( ch, cx, cy, bx, by, px, py );
 #if defined( _FRENCH )

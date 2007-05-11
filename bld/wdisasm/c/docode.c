@@ -1114,9 +1114,9 @@ void  ModRMRegOp( int op )
 void  ModRMOp( int op, char byte_ptr )
 /************************************/
 {
-    char                mod;
-    char                rm;
-    char                base;
+    uint_8              mod;
+    uint_8              rm;
+    uint_8              base;
     operand             *opnd;
 
 #if defined( O2A )

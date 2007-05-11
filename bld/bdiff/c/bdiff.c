@@ -503,7 +503,7 @@ int ReSync( void )
 
     foff_diff   i;
     foff_diff   backup;
-    char        j;
+    int         j;
     char        *spin = "-\\|/";
 
     SaveOld = OldCurr; SaveNew = NewCurr;

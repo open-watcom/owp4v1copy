@@ -88,7 +88,7 @@ static  char    *Temp_Link;         /* temporary linker directive file    */
                                     /* Temp_Link concurrent usages clash  */
 static  struct directives *Directive_List; /* linked list of directives   */
 static  char    *StackSize;         /* size of stack                      */
-static  char    DebugFlag;          /* debug info wanted                  */
+static  int     DebugFlag;          /* debug info wanted                  */
 static  char    CPU_Class;          /* [0..6]86, 'm'ips or 'a'xp          */
 static  char    Conventions[2];     /* 'r' for -3r or 's' for -3s         */
 static  char    *O_Name;            /* name of -o option                  */

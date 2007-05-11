@@ -106,7 +106,7 @@ static void DoWndDump( a_window *wnd, WRITERTN *rtn, handle file )
                 ++chars_written;
             }
             if( line.bitmap ) {
-                line.text = WndGadgetArray[ line.text[0] ].chars;
+                line.text = WndGadgetArray[ (int)line.text[0] ].chars;
                 line.length = strlen( line.text );
             }
             p = StrCopy( line.text, p );

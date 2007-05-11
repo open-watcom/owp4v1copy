@@ -116,7 +116,7 @@ typedef unsigned long wnd_switches;
 
 
 typedef int             wnd_row;
-typedef char            wnd_class;
+typedef unsigned char   wnd_class;
 typedef unsigned long   wnd_update_list;
 
 typedef struct wnd_line_piece {
@@ -251,7 +251,7 @@ typedef struct aui_private_window_structure {
     gui_ord                 max_indent;
     int                     top;
     char                    button_down_screen_row;
-    char                    keyindex;
+    unsigned char           keyindex;
     char                    keypiece;
     wnd_class               class;
     wnd_switches            switches;

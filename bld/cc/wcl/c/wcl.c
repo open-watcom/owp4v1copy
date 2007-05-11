@@ -106,7 +106,7 @@ static  char    *Temp_Link;         /* temporary linker directive file    */
                                     /* Temp_Link concurrent usages clash  */
 static  struct directives *Directive_List; /* linked list of directives   */
 static  char    *StackSize = NULL;  /* size of stack                      */
-static  char    DebugFlag = 0;      /* debug info wanted                  */
+static  int     DebugFlag = 0;      /* debug info wanted                  */
 static  char    Conventions;        /* 'r' for -3r or 's' for -3s         */
 static  char    Switch_Chars[4];    /* valid switch characters            */
 static  int     via_environment = FALSE;

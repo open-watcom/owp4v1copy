@@ -227,7 +227,7 @@ void DumpMDefn(                 // DUMP MACRO DEFINITION
                 printf( "parm#%c", '1' + *p++ );
                 continue;
             default:
-                printf( "%s", Tokens[ *p ] );
+                printf( "%s", Tokens[ *(unsigned char *)p ] );
                 ++p;
                 continue;
             }

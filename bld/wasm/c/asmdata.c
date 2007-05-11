@@ -81,8 +81,8 @@ static void little_endian( char *string, unsigned no_of_bytes )
     return;
 }
 
-static void output_float( char index, unsigned no_of_bytes, char negative )
-/*************************************************************************/
+static void output_float( unsigned char index, unsigned no_of_bytes, char negative )
+/**********************************************************************************/
 {
     double              double_value;
     float               float_value;

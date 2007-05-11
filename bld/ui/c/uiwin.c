@@ -36,7 +36,7 @@
 static bool covered( SAREA area, UI_WINDOW *wptr )
 /************************************************/
 {
-    register    char                    i;
+    register    int                     i;
     register    bool                    flag;
     auto        SAREA                   areas[ 5 ];
 

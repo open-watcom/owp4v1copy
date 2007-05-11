@@ -168,15 +168,15 @@ const uint_8 *GetLeadBytes( void ) {
 
 int DBStringToUnicode( int len, const char *str, char *buf ) {
 
-    const char  *ptr;
-    uint_16     *ubuf;
-    uint_16     dbchar;
-    int         ret;
+    const uint_8    *ptr;
+    uint_16         *ubuf;
+    uint_16         dbchar;
+    int             ret;
 
-    ptr = str;
+    ptr = (uint_8 *)str;
     ret = 0;
     ubuf = (uint_16 *)buf;
-    while( ptr < str + len ) {
+    while( (char *)ptr < str + len ) {
         if( charInfo.begchars[ *ptr ] == DB_BEG_CHAR ) {
             dbchar = *ptr << 8;
             ptr++;

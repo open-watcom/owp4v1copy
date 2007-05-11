@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implicit type processing.
 *
 ****************************************************************************/
 
-
-//
-// IMPLTAB   : implicit type processing.
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -91,8 +86,8 @@ bool    SetImplType( char chr1, char chr2, TYPE typ, uint size ) {
 // Set the implicit type of the given range of characters to the
 // given type.
 
-    char        i;
-    char        j;
+    int         i;
+    int         j;
 
     i = CharIndex( chr1 );
     j = CharIndex( chr2 );

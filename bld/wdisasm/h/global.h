@@ -131,8 +131,8 @@ extern prefix   const        SegPrefixTab[];
 extern uint_32          InsAddr;
 extern char             *TxtBuff;
 extern char             *NameBuff;
-extern char             Opcode;
-extern char             SecondByte;
+extern uint_8           Opcode;
+extern uint_8           SecondByte;
 
 /* wcode.c */
 extern uint_32          WtkAddr;

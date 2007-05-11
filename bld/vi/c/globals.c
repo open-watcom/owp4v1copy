@@ -80,7 +80,7 @@ int             HalfPageLines;
 char            *GrepDefault;
 int             LastEvent;
 int             StackK=MIN_STACK_K;
-char            SpinCount;
+int             SpinCount;
 char            _NEAR SpinData[]="Ä\\|/";
 char            ExitAttr=7;
 char            VideoPage;

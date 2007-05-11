@@ -119,7 +119,7 @@ static  char    SwitchChars[3];         // valid switch characters
 static  char    ExeName[_MAX_PATH];     // name of executable
 static  char    *ObjName;               // object file name pattern
 static  char    *SystemName;            // system name
-static  char    DebugFlag;              // debugging flag
+static  int     DebugFlag;              // debugging flag
 
 static char *DebugOptions[] = {
     "",

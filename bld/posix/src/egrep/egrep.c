@@ -200,16 +200,16 @@ static int searchBuffer( char *buf )
             char const  first = *p++;
             
             for( ;; ) {
-                if( CharTrans[ *s ] == first ) {
+                if( CharTrans[ *(unsigned char *)s ] == first ) {
                     char       * const next = ++s;
                     
                     for( ; ; s++, p++ ) {
                         if( *p == '\0' )
                             return( 1 );
-                        if( CharTrans[ *s ] != *p ) {
+                        if( CharTrans[ *(unsigned char *)s ] != *p ) {
                             if( *s == '\0' ) {
                                 goto outer;
-                            } else if( CharExist[ CharTrans[ *s ] ] == 0 ) {
+                            } else if( CharExist[ (unsigned char)CharTrans[ *(unsigned char *)s ] ] == 0 ) {
                                 s++;
                             } else {
                                 s = next;
@@ -327,8 +327,8 @@ static void parsePatterns( void )
 
     for( pat = fPatterns; *pat != NULL; pat++ ) {
         for( p = *pat; *p; p++ ) {
-            *p = CharTrans[ *p ];
-            CharExist[ *p ] = 1;
+            *p = CharTrans[ *(unsigned char *)p ];
+            CharExist[ *(unsigned char *)p ] = 1;
         }
     }
 }

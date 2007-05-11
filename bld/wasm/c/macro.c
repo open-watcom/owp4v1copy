@@ -374,7 +374,7 @@ static int my_sprintf( char *dest, char *format, int argc, char *argv[] )
     char buffer[3];
     char *start;
     char *end;
-    char parmno = 0;
+    int  parmno = 0;
 
     *dest = '\0';
     start = format;
@@ -409,7 +409,7 @@ static char *fill_in_parms( asmlines *lnode, parm_list *parmlist )
     parm_list           *parm;
     char                *new_line;
     char                **parm_array; /* array of ptrs to parm replace str's */
-    char                count = 0;
+    int                 count = 0;
 
     for( parm = parmlist; parm != NULL; parm = parm->next ) {
         count ++;
@@ -422,7 +422,7 @@ static char *fill_in_parms( asmlines *lnode, parm_list *parmlist )
     }
 
     my_sprintf( buffer, lnode->line, count-1, parm_array );
-    new_line = AsmAlloc( strlen( (char *)buffer ) + 1 );
+    new_line = AsmAlloc( strlen( buffer ) + 1 );
     strcpy( new_line, buffer );
     return( new_line );
 }

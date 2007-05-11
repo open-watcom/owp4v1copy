@@ -81,7 +81,7 @@ extern int PageLinesExposed;
 extern char *GrepDefault;
 extern int LastEvent;
 extern int StackK;
-extern char SpinCount;
+extern int SpinCount;
 extern char _NEAR SpinData[];
 extern char ExitAttr,VideoPage;
 extern char *Majick,*BndMemory,*EXEName,*HistoryFile,*TagFileName;
