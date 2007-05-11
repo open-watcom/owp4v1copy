@@ -69,6 +69,7 @@ headers =            &
         lzexpand.h   &
         mcx.h        &
         mmsystem.h   &
+        mprapi.h     &
         msxml.h      &
         naptypes.h   &
         nb30.h       &
