@@ -1558,7 +1558,7 @@ local int DoFuncDefn( SYM_HANDLE funcsym_handle )
 {
     int         parms_reversed;
     SYM_HANDLE  sym_handle;
-    int         ret_type;
+    cg_type     ret_type;
 
     SSVar = NULL;
     CurFunc = &CurFuncSym;

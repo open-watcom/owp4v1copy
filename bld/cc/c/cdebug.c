@@ -44,9 +44,6 @@ static dbug_type DBTypeEnum( TYPEPTR typ );
 static void InitDBType( void );
 
 //void RevTypeList();
-extern  void    SymGet(SYMPTR,SYM_HANDLE);
-extern  SYMPTR  SymGetPtr(SYM_HANDLE);
-
 
 static void InitDBType( void )
 {
