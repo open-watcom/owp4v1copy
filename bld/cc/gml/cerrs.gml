@@ -653,6 +653,29 @@ void bar( void )
 .eerrbad
 :eMSGGRP. Warn3
 :cmt -------------------------------------------------------------------
+:MSGGRP. Warn4
+:MSGGRPSTR. W
+:MSGGRPNUM. 400
+:MSGGRPTXT. Warning Level 4 Messages
+:cmt -------------------------------------------------------------------
+:MSGSYM. ERR_PLAIN_CHAR_SUBSCRIPT
+:MSGTXT. Array subscript is of type plain char
+:MSGJTXT. jNeedTranslation
+:WARNING. 3
+.np
+Array subscript expression is of plain char type. Such expression may be
+interpreted as either signed or unsigned, depending on compiler settings.
+A different type should be chosen instead of char. A cast may be used in
+cases when the value of the expression is known to never fall outside the
+0-127 range.
+.errbad
+int foo( int arr[], char c )
+{
+    return( arr[c] );
+}
+.eerrbad
+:eMSGGRP. Warn4
+:cmt -------------------------------------------------------------------
 :MSGGRP. Errs
 :MSGGRPSTR. E
 :MSGGRPNUM. 1000

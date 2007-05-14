@@ -1732,6 +1732,9 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
         FreeExprTree( tree );
         return( ErrorNode( index_expr ) );
     }
+    if( TypeOf( index_expr )->type_flags & TF2_TYPE_PLAIN_CHAR ) {
+        CWarn1( WARN_PLAIN_CHAR_SUBSCRIPT, ERR_PLAIN_CHAR_SUBSCRIPT );
+    }
     typ = tree->expr_type;
     SKIP_TYPEDEFS( typ );
     if( typ->decl_type == TYPE_ARRAY ) {
