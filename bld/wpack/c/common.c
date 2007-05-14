@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Routines needed for both compression & decompression.
 *
 ****************************************************************************/
 
-
-/*
- * COMMON.C : routines needed for both compression & decompression.
- */
 
 #include <string.h>
 #include <stdio.h>
@@ -144,8 +139,8 @@ typedef struct node {
     struct node *   next;
 } node;
 
-extern void LinkList( void **in_head, void *newnode )
-/***************************************************/
+extern void LinkList( void *in_head, void *newnode )
+/**************************************************/
 /* Link a new node into a linked list (new node goes at the end of the list) */
 {
     node                **owner;

@@ -62,7 +62,7 @@ extern  char            *SkipBlanks(char *);
 extern  int             Spawn(void (*)(void));
 extern  aux_info        *AuxLookupName(char *,int);
 extern  sym_id          SymFind(char *,uint);
-extern  void            FreeChain(void **);
+extern  void            FreeChain(void *);
 
 static  aux_info        *CurrAux;
 static  char            *TokStart;

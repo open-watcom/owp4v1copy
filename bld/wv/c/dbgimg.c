@@ -61,7 +61,7 @@ char *ImgSymName( image_entry *img, bool always )
     }
 }
 
-static int ImageCompare( void **_pa, void **_pb )
+static int ImageCompare( void *_pa, void *_pb )
 {
     image_entry **pa = _pa;
     image_entry **pb = _pb;

@@ -201,8 +201,8 @@ static void WriteQNXGroup( group_entry *grp, unsigned_32 *segments )
     Ring2Walk( grp->leaders, DoGroupLeader );
 }
 
-static void WriteQNXRelocs( void *head, unsigned lmf_type, unsigned_16 seg )
-/**************************************************************************/
+static void WriteQNXRelocs( RELOC_INFO *head, unsigned lmf_type, unsigned_16 seg )
+/********************************************************************************/
 {
     lmf_record          record;
     unsigned_32         pos;

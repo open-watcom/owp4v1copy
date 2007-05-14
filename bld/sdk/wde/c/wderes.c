@@ -566,7 +566,7 @@ void WdeActivateResourceWindow ( WdeResInfo *res_info,
                                  WPARAM wParam, LPARAM lParam )
 {
     WdeResInfo *info;
-    OBJPTR     *current_obj;
+    OBJPTR      current_obj;
     Bool        fActivate;
     HWND        hwndDeact;
     WORD        id;

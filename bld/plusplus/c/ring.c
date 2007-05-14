@@ -60,8 +60,9 @@ struct ring                     // model of a ring
 
 void * StackCarveAlloc(         // CARVER ALLOC AND PUSH STACK
     carve_t carver,             // - carving control
-    void **stack_hdr )          // - addr[ stack hdr ]
+    void *hdr )                 // - addr[ stack hdr ]
 {
+    void    **stack_hdr = hdr;
     void** element = CarveAlloc( carver );
     *element = *stack_hdr;
     *stack_hdr = (void*)element;

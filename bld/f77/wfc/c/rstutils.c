@@ -39,7 +39,7 @@
 
 #include <string.h>
 
-extern  void            FreeChain(void **);
+extern  void            FreeChain(void *);
 extern  void            *FreeLink(void *);
 
 

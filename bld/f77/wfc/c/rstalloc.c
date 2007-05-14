@@ -38,7 +38,7 @@
 
 extern  void            FreeSFHeader(sym_id);
 extern  sym_id          STFree(sym_id);
-extern  void            FreeChain(void **);
+extern  void            FreeChain(void *);
 extern  void            *FreeLink(void *);
 extern  void            FreeRList( sym_id sym );
 

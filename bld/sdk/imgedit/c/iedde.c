@@ -99,7 +99,7 @@ extern HDDEDATA CALLBACK DdeCallBack( WORD wType, WORD wFmt, HCONV hConv,
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
-extern BOOL     IEHData2Mem             ( HDDEDATA, void **, uint_32 * );
+extern BOOL     IEHData2Mem             ( HDDEDATA, void *, uint_32 * );
 extern BOOL     IEStartDDEEditSession   ( void );
 extern HDDEDATA IECreateResData         ( img_node *node );
 
@@ -323,8 +323,10 @@ void IEDDEEndConversation( void )
     }
 }
 
-BOOL IEHData2Mem( HDDEDATA hData, void **mem, uint_32 *size )
+BOOL IEHData2Mem( HDDEDATA hData, void *_mem, uint_32 *size )
 {
+    void    **mem = _mem;
+
     if( ( hData == (HDDEDATA)NULL ) && mem && size ) {
         return( FALSE );
     }

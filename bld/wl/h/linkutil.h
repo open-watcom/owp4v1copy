@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linker utility routine prototypes.
 *
 ****************************************************************************/
 
@@ -44,7 +43,7 @@ extern offset           FindLinearAddr2( targ_addr * );
 extern void             WalkLeaders( void (*rtn)( seg_leader * ) );
 extern void             SectWalkClass( section *sect, void * );
 extern void             WalkMods( void (*rtn)( mod_entry * ) );
-extern void             LinkList( void **, void * );
+extern void             LinkList( void *, void * );
 extern void             FreeList( void * );
 extern int              Spawn( void (*)() );
 extern void             Suicide( void );

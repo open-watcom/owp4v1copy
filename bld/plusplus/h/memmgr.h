@@ -36,7 +36,7 @@
 extern void CMemRegisterCleanup( void (*)( void ) );
 extern void *CMemAlloc(unsigned int );
 extern void CMemFree(void *);
-extern void CMemFreePtr(void **);
+extern void CMemFreePtr(void *);
 extern void *CPermAlloc(unsigned int );
 
 #ifndef NDEBUG

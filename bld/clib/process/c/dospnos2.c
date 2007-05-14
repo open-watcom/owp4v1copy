@@ -184,7 +184,7 @@ int _dospawn( int mode, char *pgm, char *cmdline, char *envp, const char * const
                 rc = 0;
                 if( mode == P_WAIT ) {
                     DosReadQueue( termq, &request_data, &data_len,
-                                  &data_address, 0, DCWW_WAIT,
+                                  (PPVOID)&data_address, 0, DCWW_WAIT,
                                   &element_priority, 0 );
                     returncodes.codeResult = data_address[1];
                     DosFreeMem( data_address );

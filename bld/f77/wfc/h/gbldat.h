@@ -107,7 +107,7 @@ gbl_defn sym_id         IFList;         // start of intrinsic function list
 gbl_defn sym_id         CurrStruct;     // sym_id of structure being defined
 gbl_defn itnode         *FieldNode;     // I.T. node of current field
 
-gbl_defn pointer        ITPool;         // head of free list of I.T. nodes
+gbl_defn pointer        *ITPool;        // head of free list of I.T. nodes
 gbl_defn unsigned_32    CGOpts;         // code generator options
 gbl_defn unsigned_32    CPUOpts;        // code generator options (CPU target)
 gbl_defn unsigned_32    OZOpts;         // code generator options (optimizations)

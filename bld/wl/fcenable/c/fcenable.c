@@ -512,8 +512,8 @@ typedef struct _node {      // structure used for list traversal routines.
     struct _node *  next;
 } node;
 
-extern void LinkList( void **in_head, void *newnode )
-/***************************************************/
+extern void LinkList( void *in_head, void *newnode )
+/**************************************************/
 /* Link a new node into a linked list (new node goes at the end of the list) */
 {
     node                **owner;

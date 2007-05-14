@@ -33,12 +33,13 @@
 #include "fmemmgr.h"
 
 
-void    FreeChain( void **head ) {
+void    FreeChain( void *_head ) {
 //================================
 
 // Free a chain.
 // The "link" field in the chain must be first in the structure.
 
+    void        **head = _head;
     void        *next;
     void        **chain;
 

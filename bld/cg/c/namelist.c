@@ -49,8 +49,8 @@ extern  uint_8          RegTrans( hw_reg_set );
 extern    name  *Names[];
 extern    int   TempId;
 
-static  pointer         FrlHead[N_INDEXED+1];
-static  pointer         ConstDefnFrl;
+static  pointer         *FrlHead[N_INDEXED+1];
+static  pointer         *ConstDefnFrl;
 static  name            *NullReg;
 static  name            *ConstZero;
 static  name            *ConstOne;

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Compile a FORTRAN statement.
 *
 ****************************************************************************/
 
-
-//
-// COMPSTMT  : compile a FORTRAN statement
-//
 
 #include "ftnstd.h"
 #include "progsw.h"

@@ -67,7 +67,7 @@ extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
 extern  tmp_handle      MkTmp(cg_name,cg_type);
 extern  cg_name         TmpPtr(tmp_handle,cg_type);
 extern  cg_name         TmpVal(tmp_handle,cg_type);
-extern  void            ReverseList(void **);
+extern  void            ReverseList(void *);
 
 static  void            StructIOArrayStruct( sym_id arr );
 static  void            StructIOItem( sym_id fd );

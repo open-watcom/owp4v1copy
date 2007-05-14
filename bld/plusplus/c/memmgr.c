@@ -185,15 +185,15 @@ void CMemFree( void *p )
     }
 }
 
-void CMemFreePtr( void **pp )
-/***************************/
+void CMemFreePtr( void *pp )
+/**************************/
 {
     void *p;
 
-    p = *pp;
+    p = *(void **)pp;
     if( p != NULL ) {
         _doFree( p );
-        *pp = NULL;
+        *(void **)pp = NULL;
     }
 }
 

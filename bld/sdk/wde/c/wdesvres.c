@@ -277,7 +277,7 @@ WdeDialogBoxInfo *WdeGetItemDBI( WdeResDlgItem *ditem )
     return( dbi );
 }
 
-Bool WdeGetItemData ( WdeResDlgItem *ditem, void **data, uint_32 *size )
+Bool WdeGetItemData ( WdeResDlgItem *ditem, void *data, uint_32 *size )
 {
     WdeDialogBoxInfo   *dbi;
 

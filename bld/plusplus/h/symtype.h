@@ -1653,7 +1653,7 @@ TYPE TypeGetActualFlags(        // GET ACTUAL MODIFIER FLAGS
 TYPE TypeModExtract(            // EXTRACT MODIFIER INFORMATION
     TYPE type,                  // - input type
     type_flag *flags,           // - addr[ modifier flags]
-    void **a_baser,             // - __based element
+    void *_baser,               // - __based element
     type_exclude mask )         // - exclusions
 ;
 TYPE TypeModFlags(              // GET MODIFIER FLAGS, UNMODIFIED TYPE

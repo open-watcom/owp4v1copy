@@ -121,7 +121,7 @@ extern int                      SaveStdIn;
 extern int                      SaveStdOut;
 extern BOOL                     WDebug386;
 extern WORD                     WPCount;
-extern HANDLE                   DebugeeModule;
+extern HMODULE                  DebugeeModule;
 extern WORD                     WasInt32;
 extern void                     (FAR PASCAL *DoneWithInterrupt)( LPVOID );
 extern int                      (FAR PASCAL *GetDebugInterruptData)( LPVOID );

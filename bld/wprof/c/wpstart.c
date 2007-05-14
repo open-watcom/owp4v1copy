@@ -330,7 +330,7 @@ STATIC int minLook( char * * value ) {
 
     int         index;
     int         curr_len;
-    void * *    strtab;
+    char * *    strtab;
     byte *      lentab;
     char *      strlook;
     char *      strchck;

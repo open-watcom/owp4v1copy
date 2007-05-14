@@ -91,7 +91,7 @@ void    FiniLabels( int label_type ) {
     label_entry **owner;
     label_entry *curr;
 
-    owner = &LabelList;
+    owner = (label_entry **)&LabelList;
     for(;;) {
         curr = *owner;
         if( curr == NULL ) break;
@@ -579,7 +579,7 @@ void    DoneLabel( label_id label ) {
     label_entry **owner;
     label_entry *curr;
 
-    owner = &LabelList;
+    owner = (label_entry **)&LabelList;
     for(;;) {
         curr = *owner;
         if( curr->label == label ) break;

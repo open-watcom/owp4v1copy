@@ -89,8 +89,8 @@ typedef struct address_name {
 
 typedef struct bool_node {
         an_formats              format;
-        label_handle            *t;
-        label_handle            *f;
+        block_pointer           *t;
+        block_pointer           *f;
         label_handle            e;
 } bool_node;
 

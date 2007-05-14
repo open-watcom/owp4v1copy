@@ -93,7 +93,7 @@ typedef enum {
 
 
 data_dag                *DataDag;   /* global for dump routines */
-static pointer          DepFrl;
+static pointer          *DepFrl;
 static dep_list_block   *CurrDepBlock;
 static block            *SBlock;
 

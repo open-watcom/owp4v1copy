@@ -62,8 +62,9 @@
 /* static variables                                                         */
 /****************************************************************************/
 
-Bool WGetClipData( HWND main, UINT fmt, void **data, uint_32 *dsize )
+Bool WGetClipData( HWND main, UINT fmt, void *_data, uint_32 *dsize )
 {
+    void        **data = _data;
     HANDLE      hclipdata;
     void        *mem;
     Bool        clipbd_open;

@@ -53,7 +53,7 @@ BOOL                    FaultHandlerEntered;
 int                     SaveStdIn=NIL_HANDLE;
 int                     SaveStdOut=NIL_HANDLE;
 BOOL                    WDebug386;
-HANDLE                  DebugeeModule;
+HMODULE                 DebugeeModule;
 void                    (FAR PASCAL *DoneWithInterrupt)( LPVOID );
 int                     (FAR PASCAL *GetDebugInterruptData)( LPVOID );
 void                    (FAR PASCAL *ResetDebugInterrupts32)( void );

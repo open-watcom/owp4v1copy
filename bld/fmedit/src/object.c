@@ -609,7 +609,7 @@ extern void SetPrimaryObject( CURROBJPTR obj )
 extern void StartCurrObjMod( void )
 /*********************************/
 {
-    OBJPTR *    currobj;
+    OBJPTR      currobj;
 
     currobj = GetCurrObj();
     Notify( currobj, CURR_OBJ_MOD_BEGIN, NULL );
@@ -618,7 +618,7 @@ extern void StartCurrObjMod( void )
 extern void EndCurrObjMod( void )
 /*******************************/
 {
-    OBJPTR *    currobj;
+    OBJPTR      currobj;
 
     currobj = GetCurrObj();
     Notify( currobj, CURR_OBJ_MOD_END, NULL );

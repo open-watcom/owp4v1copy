@@ -51,7 +51,7 @@ extern int              QOpenR( char * );
 extern unsigned long    QFileLen( int );
 extern unsigned long    QGetDate( int );
 extern unsigned_32      GetCRC( void );
-extern void             LinkList( void **, void * );
+extern void             LinkList( void *, void * );
 extern void             QClose( int );
 extern void             QSeek( int, signed long, int );
 extern int              QWrite( int, void *, int );

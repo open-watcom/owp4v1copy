@@ -79,7 +79,7 @@
 static  void    FreeTreeNode( tn node );
 static  void    Control( cg_op op, tn node, label_handle lbl, bool gen );
 
-static  pointer TreeFrl;
+static  pointer *TreeFrl;
 
 static type_class_def BinMat[] = {
 /*********************************

@@ -708,7 +708,7 @@ WREClipData *WRECreateClipData( WRECurrentResInfo *curr )
 {
     WREClipData *cdata;
     uint_32     cdata_size;
-    void        *rdata;
+    BYTE        *rdata;
     uint_32     rdata_size;
     void        *name;
     uint_32     name_size;

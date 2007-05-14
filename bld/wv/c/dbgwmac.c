@@ -541,7 +541,7 @@ static  bool    MacGetLine( a_window *wnd, int row, int piece,
 }
 
 
-static int MacCompare( void **pa, void **pb )
+static int MacCompare( void *pa, void *pb )
 {
     return( (*(wnd_macro **)pa)->key - (*(wnd_macro **)pb)->key );
 }

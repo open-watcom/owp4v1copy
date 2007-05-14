@@ -70,11 +70,11 @@ static void SetKey( a_symbol *sym )
                                tolower(b[3]);
 }
 
-OVL_EXTERN int SymCompare( void **pa, void **pb )
+OVL_EXTERN int SymCompare( void *pa, void *pb )
 {
     char        *cmpa,*cmpb;
-    a_symbol    *a = *pa;
-    a_symbol    *b = *pb;
+    a_symbol    *a = *(a_symbol **)pa;
+    a_symbol    *b = *(a_symbol **)pb;
 
     if( a->key == 0 ) SetKey( a );
     if( b->key == 0 ) SetKey( b );
@@ -168,7 +168,7 @@ static void UniqList( name_list *name, bool dup_ok )
     a_symbol    **owner, *next;
     address     addr, next_addr;
 
-    owner = &name->list;
+    owner = (a_symbol **)&name->list;
     for( ;; ) {
         next = *owner;
         if( next == NULL ) break;

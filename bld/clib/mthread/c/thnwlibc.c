@@ -143,7 +143,7 @@ void __LibCRemoveThread( int close_handle )
 
     if( __NXSlotID != NO_INDEX )
     {
-        int ccode = NXKeyGetValue(__NXSlotID, &tdata);
+        int ccode = NXKeyGetValue(__NXSlotID, (void **)&tdata);
         if(0 != ccode)
             return;
         #if defined( __RUNTIME_CHECKS__ ) && defined( _M_IX86 )
@@ -316,7 +316,7 @@ _WCRTLINK int *__threadid( void )
     thread_data *tdata = NULL;
 
     if( __NXSlotID != NO_INDEX ){
-        int ccode = NXKeyGetValue(__NXSlotID, &tdata);
+        int ccode = NXKeyGetValue(__NXSlotID, (void **)&tdata);
         if(0 != ccode)
             return &BadThreadId;
         #if defined( __RUNTIME_CHECKS__ ) && defined( _M_IX86 )

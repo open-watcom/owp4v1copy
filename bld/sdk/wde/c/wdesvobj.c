@@ -93,7 +93,7 @@ Bool WdeSaveObject( WdeResInfo *rinfo, WdeDialogBoxInfo *dbi,
             lang.lang    = DEF_LANG;
             lang.sublang = DEF_SUBLANG;
         }
-        ok = WdeDBI2Mem( dbi, &rdata, &size );
+        ok = WdeDBI2Mem( dbi, (unsigned_8 **)&rdata, &size );
     }
 
     if( ok ) {

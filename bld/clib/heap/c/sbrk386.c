@@ -100,7 +100,7 @@ _WCRTLINK void _WCNEAR *sbrk( int increment )
         PBYTE       p;
 
         increment = ( increment + 0x0fff ) & ~0x0fff;
-        if( !DosAllocMem( &p, increment, PAG_COMMIT|PAG_READ|PAG_WRITE ) ) {
+        if( !DosAllocMem( (PPVOID)&p, increment, PAG_COMMIT|PAG_READ|PAG_WRITE ) ) {
             return( p );
         }
         errno = ENOMEM;

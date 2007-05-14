@@ -394,7 +394,7 @@ static int __CreateNewNHeap( unsigned amount )
     {
         PBYTE           p;
 
-        if( DosAllocMem( &p, amount, PAG_COMMIT|PAG_READ|PAG_WRITE ) ) {
+        if( DosAllocMem( (PPVOID)&p, amount, PAG_COMMIT|PAG_READ|PAG_WRITE ) ) {
             return( 0 );
         }
         brk_value = (unsigned)p;

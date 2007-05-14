@@ -169,7 +169,7 @@ extern  void    DelRef(  ins_entry **owner, ins_entry *instr  ) {
     for(;;) {
         curr = *owner;
         if( curr == instr ) break;
-        owner = &_LblRef( curr );
+        owner = (ins_entry **)&_LblRef( curr );
     }
     *owner = _LblRef( curr );
   optend

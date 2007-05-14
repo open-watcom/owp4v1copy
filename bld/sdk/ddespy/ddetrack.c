@@ -185,7 +185,7 @@ void SetTrackFont( void ) {
  *              in the element list for a tracking window
  */
 
-static void **GetNextPos( DDETrackInfo *listinfo )
+static void *GetNextPos( DDETrackInfo *listinfo )
 {
     WORD                i;
     void                **data;
@@ -197,7 +197,7 @@ static void **GetNextPos( DDETrackInfo *listinfo )
     listinfo->cnt ++;
     listinfo->data = MemReAlloc( listinfo->data,
                                  listinfo->cnt * sizeof( void *) );
-    return( listinfo->data + listinfo->cnt - 1 );
+    return( (void **)listinfo->data + listinfo->cnt - 1 );
 }
 
 /* #########################################################################
@@ -652,13 +652,13 @@ static LinkInfo **FindLinkInfo( DDETrackInfo *info, MONLINKSTRUCT *find ) {
     topic = HSZToString( find->hszTopic );
     item = HSZToString( find->hszItem );
     for( i=0; i < info->cnt; i++ ) {
-        cur = info->data[i];
+        cur = ((void **)info->data)[i];
         if( cur == NULL ) break;
         if( cur->client == find->hConvClient
             && cur->server == find->hConvServer
             && !stricmp( service, cur->service )
             && !stricmp( topic, cur->topic )
-            && !stricmp( item, cur->item ) ) return( info->data + i );
+            && !stricmp( item, cur->item ) ) return( (LinkInfo **)info->data + i );
     }
     MemFree( service );
     MemFree( topic );
@@ -756,12 +756,12 @@ static LinkInfo **FindConvInfo( DDETrackInfo *info, MONCONVSTRUCT *find ) {
     service = HSZToString( find->hszSvc );
     topic = HSZToString( find->hszTopic );
     for( i=0; i < info->cnt; i++ ) {
-        cur = info->data[i];
+        cur = ((LinkInfo **)info->data)[i];
         if( cur == NULL ) break;
         if( cur->client == find->hConvClient
             && cur->server == find->hConvServer
             && !stricmp( service, cur->service )
-            && !stricmp( topic, cur->topic ) ) return( info->data + i );
+            && !stricmp( topic, cur->topic ) ) return( (LinkInfo **)info->data + i );
     }
     MemFree( service );
     MemFree( topic );

@@ -415,10 +415,11 @@ static int SetAssumeCSCurrSeg( void )
     return( NOT_ERROR );
 }
 
-void push( void **stack, void *elt )
-/**********************************/
+void push( void *stk, void *elt )
+/*******************************/
 {
-    stacknode *node;
+    void        **stack = stk;
+    stacknode   *node;
 
     node = AsmAlloc( sizeof( stacknode ));
     node->next = *stack;
@@ -426,9 +427,10 @@ void push( void **stack, void *elt )
     *stack = node;
 }
 
-void *pop( void **stack )
-/***********************/
+void *pop( void *stk )
+/********************/
 {
+    void        **stack = stk;
     stacknode   *node;
     void        *elt;
 

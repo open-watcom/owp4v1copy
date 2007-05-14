@@ -173,7 +173,7 @@ OVL_EXTERN walk_result BuildFileList( mod_handle mh, void *d )
 }
 
 
-static int CueCompare( void **pa, void **pb )
+static int CueCompare( void *pa, void *pb )
 {
     return( strcmp( (*(a_cue **)pa)->name, (*(a_cue **)pb)->name ) );
 }

@@ -291,8 +291,8 @@ seg_leader * FindSegment( char *name )
     return( seg );
 }
 
-void LinkList( void **in_head, void *newnode )
-/***************************************************/
+void LinkList( void *in_head, void *newnode )
+/*******************************************/
 /* Link a new node into a linked list (new node goes at the end of the list) */
 {
     node **     owner;
@@ -300,7 +300,7 @@ void LinkList( void **in_head, void *newnode )
     owner = in_head;
     ((node *)newnode)->next = NULL;
     while( *owner != NULL ) {
-        owner = &(*owner)->next;
+        owner = (node **)&(*owner)->next;
     }
     *owner = newnode;
 }

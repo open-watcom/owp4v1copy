@@ -66,8 +66,8 @@ void    FrlFree( void *arg_head, void *arg_item ) {
 }
 
 
-void    FrlInit( void **head ) {
-//==============================
+void    FrlInit( void ***head ) {
+//===============================
 
 // Initialize for free list manipulations.
 
@@ -75,8 +75,8 @@ void    FrlInit( void **head ) {
 }
 
 
-void    FrlFini( void **head ) {
-//==============================
+void    FrlFini( void ***head ) {
+//===============================
 
 // Throw away a free list.
 

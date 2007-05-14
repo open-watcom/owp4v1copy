@@ -647,11 +647,11 @@ static mad_status CPUGetPiece(
     static const x86_reg_info *listOS[] = {
         &CPU_iopl, &CPU_nt, &CPU_rf, &CPU_vm,
         };
-    const x86_reg_info  *curr;
-    const x86_reg_info  **list;
-    unsigned            list_num;
-    char                *p;
-    static const void   **last_list;
+    const x86_reg_info          *curr;
+    const x86_reg_info          **list;
+    unsigned                    list_num;
+    char                        *p;
+    static const x86_reg_info   **last_list;
 
     if( (MADState->reg_state[CPU_REG_SET] & CT_EXTENDED) || BIG_SEG( GetRegIP( mr ) ) ) {
         list = list32;

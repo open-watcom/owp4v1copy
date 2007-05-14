@@ -61,9 +61,10 @@ static carve_t carveRingHead;   // - memory control: rings of vfun ref.s
 
 
 static void extrefAddOvfn(      // ADD ORIGINATING VIRTUAL FUNCTION
-    OVFN **ring,                // - functions to date
+    void *_ring,                // - functions to date
     SYMBOL latest )             // - latest
 {
+    OVFN **ring = _ring;        // - functions to date
     OVFN *ovfn;                 // - new entry
 
     ovfn = RingCarveAlloc( carveOVFN, ring );
@@ -72,9 +73,10 @@ static void extrefAddOvfn(      // ADD ORIGINATING VIRTUAL FUNCTION
 
 
 static void extrefPruneOvfn(    // PRUNE ANY NON-ORIGINATING VIRT FUNC.S
-    OVFN **ring,                // - functions to date
+    void *_ring,                // - functions to date
     SYMBOL latest )             // - latest
 {
+    OVFN **ring = _ring;        // - functions to date
     OVFN *ovfn;                 // - existing items
     SCOPE scope;                // - class scope
 

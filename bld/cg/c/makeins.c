@@ -43,7 +43,7 @@
 extern  void            DoNothing(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 
-static    pointer       InsFrl;
+static  pointer         *InsFrl;
 
 extern  conflict_node   *ConfList;
 

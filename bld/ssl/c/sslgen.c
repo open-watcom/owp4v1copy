@@ -259,7 +259,7 @@ void GenTblLabel( instruction *choice, instruction *lbl, unsigned value )
         choice->ins |= INS_LONG;
     }
     new->lbl = lbl;
-    owner = &choice->ptr;
+    owner = (choice_entry **)&choice->ptr;
     for( ;; ) {
         curr = *owner;
         if( curr == NULL ) break;

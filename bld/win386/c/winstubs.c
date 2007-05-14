@@ -193,7 +193,7 @@ int FAR PASCAL __Escape(HDC a, int b, int c, LPSTR d, LPSTR e)
      */
     if( b != SETABORTPROC ) {
         od = d;
-        GetAlias( &d );
+        GetAlias( (LPLPVOID)&d );
     }
     if( b == NEXTBAND ) {
         RECT    r;

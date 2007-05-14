@@ -41,8 +41,8 @@ extern  hw_reg_set      LowOffsetReg(hw_reg_set);
 
 extern  hw_reg_set      *RegSets[];
 
-static  pointer RegFrl;
-static  pointer TreeFrl;
+static  pointer         *RegFrl;
+static  pointer         *TreeFrl;
 
 #define SET_SIZE (MAX_RG + 1)
 

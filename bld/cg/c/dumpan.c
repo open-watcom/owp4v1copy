@@ -123,7 +123,7 @@ static  void    DumpLbl( label_handle *what ) {
         }
         i = blk->targets;
         while( --i >= 0 ) {
-            if( what == &blk->edge[ i ].destination ) {
+            if( (void *)what == (void *)&blk->edge[ i ].destination ) {
                 DumpLiteral( "Target " );
                 DumpPtr( blk );
                 DumpLiteral( "(" );
@@ -140,9 +140,9 @@ static  void    DumpAnBool( bn node ) {
 /*************************************/
 
     DumpLiteral( "TRUE " );
-    DumpLbl( node->t );
+    DumpLbl( (void **)node->t );
     DumpLiteral( " FALSE " );
-    DumpLbl( node->f );
+    DumpLbl( (void **)node->f );
     DumpLiteral( " ENTRY L" );
     DumpPtr( node->e );
 }

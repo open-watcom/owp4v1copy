@@ -24,21 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Look up a keyword in a table.
 *
 ****************************************************************************/
 
-
-//
-// KWLOOK  : look up a keyword in a table
-//
 
 #include "ftnstd.h"
 #include "iodefs.h"
 #include "global.h"
 
-extern  int             KwLookUp(void **,int,char *,int,bool);
+extern  int             KwLookUp(char **,int,char *,int,bool);
 
 extern  char            *StmtKeywords[];
 extern  char            *IOKeywords[];

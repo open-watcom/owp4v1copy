@@ -168,8 +168,8 @@ static void WriteOS2Data( unsigned_32 stub_len, os2_exe_header *exe_head )
     }
 }
 
-static void AddLLItemAtEnd( void **head, void **tail, void *item )
-/****************************************************************/
+static void AddLLItemAtEnd( void *head, void *tail, void *item )
+/**************************************************************/
 {
     struct dllist {
         struct dllist *next;

@@ -270,7 +270,7 @@ static menu *addMenuToMenu( menu *m, char *name, char *help )
     new->item_head = NULL;
     new->item_tail = NULL;
     m->num_items += 1;
-    AddLLItemAtEnd( &m->item_head, &m->item_tail, (ss*)new );
+    AddLLItemAtEnd( (ss**)&m->item_head, (ss**)&m->item_tail, (ss*)new );
     return( new );
 
 } /* addMenuToMenu */
@@ -310,7 +310,7 @@ static item *addItemToMenu( menu *m, char *name, char *help, char *cmd,
     new->is_checked = FALSE;
     new->is_active = TRUE;
     m->num_items += 1;
-    AddLLItemAtEnd( &m->item_head, &m->item_tail, (ss*)new );
+    AddLLItemAtEnd( (ss**)&m->item_head, (ss**)&m->item_tail, (ss*)new );
     return( new );
 
 } /* addItemToMenu */
@@ -375,7 +375,7 @@ static int freeItem( menu *m, int offset )
             DeleteMenu( m->menu_handle, offset, MF_BYPOSITION );
         }
         m->num_items -= 1;
-        DeleteLLItem( &m->item_head, &m->item_tail, (ss*)citem );
+        DeleteLLItem( (ss**)&m->item_head, (ss**)&m->item_tail, (ss*)citem );
         MemFree( citem );
         return( TRUE );
     }
@@ -455,7 +455,7 @@ static void freeMenu( menu *parent, menu *m )
         DestroyMenu( m->menu_handle );
     }
     parent->num_items -= 1;
-    DeleteLLItem( &parent->item_head, &parent->item_tail, (ss*)m );
+    DeleteLLItem( (ss**)&parent->item_head, (ss**)&parent->item_tail, (ss*)m );
     MemFree( m );
 
 } /* freeMenu */
@@ -728,7 +728,7 @@ int FiniMenu( void )
                     clearMenu( m );
                     // DestroyMenu( m->menu_handle );
                 }
-                DeleteLLItem( &rootMenu->item_head, &rootMenu->item_tail, (ss*)m );
+                DeleteLLItem( (ss**)&rootMenu->item_head, (ss**)&rootMenu->item_tail, (ss*)m );
                 MemFree( m );
                 m = next;
             }
@@ -951,7 +951,7 @@ static void purgeOldMenuBottom( menu *cmenu )
         while( cnt < cmenu->num_items ) {
             nitem = citem->next;
             DeleteMenu( cmenu->menu_handle, cmenu->orig_num_items, MF_BYPOSITION );
-            DeleteLLItem( &cmenu->item_head, &cmenu->item_tail, (ss*)citem );
+            DeleteLLItem( (ss**)&cmenu->item_head, (ss**)&cmenu->item_tail, (ss*)citem );
             MemFree( citem );
             citem = nitem;
             cnt++;

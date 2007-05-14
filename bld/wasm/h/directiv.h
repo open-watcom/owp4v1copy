@@ -399,8 +399,8 @@ extern int              Comment( int, int ); /* handle COMMENT directives */
 
 extern int              AddAlias( int );
 extern void             FreeInfo( dir_node * );
-extern void             push( void **stack, void *elt );
-extern void             *pop( void **stack );
+extern void             push( void *stack, void *elt );
+extern void             *pop( void *stack );
 extern uint_32          GetCurrSegAlign( void );
 extern void             wipe_space( char *token );
 extern int              SetUse32Def( bool );

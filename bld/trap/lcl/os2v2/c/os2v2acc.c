@@ -138,7 +138,7 @@ static bool Is32BitSeg( unsigned seg )
 static void RecordModHandle( ULONG value )
 {
     if( ModHandles == NULL ) {
-        DosAllocMem( &ModHandles, sizeof(ULONG) * 512, PAG_COMMIT | PAG_READ | PAG_WRITE );
+        DosAllocMem( (PPVOID)&ModHandles, sizeof(ULONG) * 512, PAG_COMMIT | PAG_READ | PAG_WRITE );
         }
     ModHandles[NumModHandles] = value;
     ++NumModHandles;

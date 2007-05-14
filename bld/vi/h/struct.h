@@ -295,7 +295,7 @@ typedef int (*move_rtn)( range *, long count );
 typedef int (*op_rtn)( range * );
 typedef int (*misc_rtn)( long count );
 typedef int (*old_rtn)( void );
-typedef int (*alias_rtn)( void **, void ** );
+typedef int (*alias_rtn)( void *, void * );
 
 typedef union command_rtn {
     insert_rtn  ins;

@@ -46,7 +46,7 @@
 /****************************************************************************/
 extern Bool             WdeSaveResourceToFile   ( WdeResInfo * );
 extern WdeDialogBoxInfo *WdeGetItemDBI          ( WdeResDlgItem *ditem );
-extern Bool             WdeGetItemData          ( WdeResDlgItem *, void **,
+extern Bool             WdeGetItemData          ( WdeResDlgItem *, void *,
                                                   uint_32 * );
 
 #endif

@@ -230,7 +230,7 @@ typedef struct ddetrackinfo {
     WORD                type;
     WORD                cnt;
     WORD                sorttype;
-    void                **data;
+    void                *data;
     ListBoxInfo         list;
     WndConfigInfo       *config;
     WORD                hdrcnt;

@@ -135,13 +135,14 @@ static void * PERelocInit( offset size )
     return( OS2PagedRelocInit( size, sizeof( reloc_info * ) ) );
 }
 
-static void DoWriteReloc( reloc_info **list, void *reloc, unsigned size )
-/***********************************************************************/
+static void DoWriteReloc( void *lst, void *reloc, unsigned size )
+/***************************************************************/
 {
-    reloc_info *    info;
+    reloc_info      **list = lst;
+    reloc_info      *info;
     unsigned        offset;
 
-    info = *list;
+    info = *(reloc_info **)list;
     if( info == NULL ) {
         info = AllocRelocInfo();
         info->next = NULL;

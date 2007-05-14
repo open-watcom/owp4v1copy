@@ -84,7 +84,7 @@ static CMD_CTOR_TEST* ringCmdsCtorTest; // commands: CTOR_TEST
 
 static void* stateTableCmdAlloc(// ALLOCATE STATE-TABLE CMD
     carve_t allocation,         // - allocation
-    void** hdr )                // - ring hdr
+    void* hdr )                 // - ring hdr
 {
     CMD_BASE* cmd;
 
@@ -97,7 +97,7 @@ static void* stateTableCmdAlloc(// ALLOCATE STATE-TABLE CMD
 
 static void* stateTableCmdAllocVar( // ALLOCATE STATE-TABLE CMD, SET VAR
     carve_t allocation,         // - allocation
-    void** hdr,                 // - ring hdr
+    void* hdr,                  // - ring hdr
     target_size_t size )        // - size of command
 {
     CMD_BASE* cmd;

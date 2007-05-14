@@ -164,7 +164,7 @@ static BOOL CurrObjAddObject( OBJPTR _c, OBJPTR obj, void * reset )
 
   {
     CURROBJ *c = _c;
-    OBJPTR  *new;
+    OBJPTR  new;
     RECT    rect;
     OBJPTR  currobj;
 

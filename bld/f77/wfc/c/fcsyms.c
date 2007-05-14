@@ -70,7 +70,7 @@ extern  bool            EntryWithAltRets(void);
 extern  bool            ChkForAltRets(entry_pt *);
 extern  aux_info        *AuxLookup(sym_id);
 extern  cg_type         ArrayPtrType(sym_id);
-extern  void            ReverseList(void **);
+extern  void            ReverseList(void *);
 extern  cg_name         SCBPtrAddr(cg_name);
 extern  bool            ForceStatic(unsigned_16);
 extern  segment_id      AllocImpSegId(void);
@@ -1342,10 +1342,12 @@ void    FreeGlobalBacks( void ) {
 }
 
 
-static  void    FreeBackHandle( back_handle *back ) {
-//===================================================
+static  void    FreeBackHandle( void *_back ) {
+//=============================================
 
 // Free back handles.
+
+    back_handle     *back = _back;
 
     if( *back != NULL ) {
         /* no need to call BEFiniBack() since we immediately

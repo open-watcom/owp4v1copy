@@ -31,5 +31,5 @@
 
 extern  void    *FrlAlloc( void ***head, unsigned size );
 extern  void    FrlFree( void *arg_head, void *arg_item );
-extern  void    FrlInit( void **head );
-extern  void    FrlFini( void **head );
+extern  void    FrlInit( void ***head );
+extern  void    FrlFini( void ***head );
