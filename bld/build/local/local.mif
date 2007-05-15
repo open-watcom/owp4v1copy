@@ -97,7 +97,7 @@ inc_dirs_lang_linux =
 inc_dirs_lang_osi =
 
 # Warning flags: all enabled except the ones that have no use besides annoy people
-cflags_wng = -Wall -Wno-switch
+cflags_wng = -Wall -Wno-switch -Wno-missing-braces -Wno-parentheses
 
 cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__SMALL__ -DUNIX -D__FLAT__ -DBOOTSTRAP &
 $(cppflags_$(host_cpu)) -D_WCUNALIGNED="__attribute__((packed))" &
@@ -142,7 +142,7 @@ inc_dirs_lang_nto =
 inc_dirs_lang_osi =
 
 # Warning flags: all enabled except the ones that have no use besides annoy people
-cflags_wng = -Wall -Wno-switch
+cflags_wng = -Wall -Wno-switch -Wno-missing-braces -Wno-parentheses
 
 cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__QNX__ &
 -D__SMALL__ -DUNIX -D__FLAT__ $(cppflags_$(host_cpu)) &
