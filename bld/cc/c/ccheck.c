@@ -312,10 +312,9 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
     }
     if( typ1 != typ2 ) {    // if not equal see if diff by pointers
         if( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ) {
-        // allow  void ** with any **
+            // allow  void ** with any ** (but warn about it)
             if( top_level==1 || !CompFlags.strict_ANSI ) {
-                if ( voidptr_cmp == VC_WARN ||
-                     (top_level > 1 && !CompFlags.extensions_enabled) ) {
+                if ( voidptr_cmp == VC_WARN || (top_level > 1) ) {
                     CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
                 }
                 return( ret_val ); // void *  and  anything *
