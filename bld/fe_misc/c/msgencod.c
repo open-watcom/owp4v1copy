@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate C files from messages stored in GML source text.
 *
 ****************************************************************************/
 
@@ -1160,7 +1159,7 @@ static void writeLevHGP( void ) {
 static void outputNum( FILE *fp, unsigned n ) {
     char buff[16];
 
-    utoa( n, buff, 10 );
+    sprintf( buff, "%u", n );
     fputs( buff, fp );
 }
 
@@ -1168,7 +1167,7 @@ static void outputNumJ( FILE *fp, unsigned n, int width ) {
     char buff[16];
     char *p;
 
-    utoa( n, buff, 10 );
+    sprintf( buff, "%u", n );
     for( p = buff; *p; ++p ) {
         --width;
     }
@@ -1198,7 +1197,7 @@ static void outputChar( FILE *fp, char c ) {
 
             fputc( '\\', fp );
             fputc( 'x', fp );
-            utoa( c, buff, 16 );
+            sprintf( buff, "%x", c );
             fputs( buff, fp );
         }
     }
