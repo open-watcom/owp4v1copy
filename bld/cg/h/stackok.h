@@ -32,7 +32,7 @@
 #include "hostsys.h"
 
 
-#if defined( _M_IX86 )
+#if defined( __WATCOMC__ ) && defined( _M_IX86 )
 
 #if defined(__386__)
     #define __AX eax

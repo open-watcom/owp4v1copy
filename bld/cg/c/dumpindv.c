@@ -190,6 +190,7 @@ extern  void    DumpCurrLoop() {
     DumpNL();
     blk = HeadBlock;
     depth = MAX_INTERVAL_DEPTH;
+    header = NULL;
     while( blk != NULL ) {
         if( blk->class & IN_LOOP ) {
             if( blk->depth < depth ) {

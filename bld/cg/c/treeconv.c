@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Type conversion folding, tree demotion.
 *
 ****************************************************************************/
 
@@ -35,6 +34,7 @@
 #include "cgdefs.h"
 #include "addrname.h"
 #include "tree.h"
+#include "zoiks.h"
 #include "cfloat.h"
 
 extern  void            BurnTree(tn);
@@ -167,6 +167,9 @@ extern  tn      FoldCnvRnd( cg_op op, tn name, type_def *to_tipe ) {
                 CFFree( junk );
             }
             new = TGConst( cf, to_tipe );
+        } else {
+            new = NULL;
+            Zoiks( ZOIKS_078 ); /* Not supposed to get here, ever */
         }
         BurnTree( name );
     } else {
