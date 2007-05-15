@@ -126,8 +126,8 @@ char *token_class[ MAX_KEYWORDS+1 ];
 unsigned position[ MAX_KEYWORDS+1 ];
 letter_t first[ MAX_KEYWORDS+1 ];
 letter_t last[ MAX_KEYWORDS+1 ];
-size_t len[ MAX_KEYWORDS+1 ];
-size_t init_hash[ MAX_KEYWORDS+1 ];
+unsigned len[ MAX_KEYWORDS+1 ];
+unsigned init_hash[ MAX_KEYWORDS+1 ];
 unsigned done[ MAX_KEYWORDS+1 ];
 unsigned hash[ MAX_KEYWORDS+1 ];
 unsigned ordered[ MAX_KEYWORDS+1 ];
@@ -149,8 +149,8 @@ unsigned hashsize;
 unsigned hashmask;
 unsigned first_scale;
 unsigned last_scale;
-size_t min_len;
-size_t max_len;
+unsigned min_len;
+unsigned max_len;
 unsigned extra;
 unsigned long len_mask;
 
@@ -333,8 +333,8 @@ void init_tokens( char **input_file )
     keyword_t i,j,k;
     keyword_t size;
     unsigned col;
-    size_t key_len;
-    size_t tok_len;
+    unsigned key_len;
+    unsigned tok_len;
     FILE *fp;
     auto char keyword[80];
     auto char class[80];
@@ -441,8 +441,8 @@ void init_tokens( char **input_file )
     output( "\n%u keywords min_len=%u max_len=%u\n", num_keywords, min_len, max_len );
 }
 
-void init_arrays( size_t first_index, size_t last_index )
-/*******************************************************/
+void init_arrays( unsigned first_index, unsigned last_index )
+/***********************************************************/
 {
     keyword_t i;
     letter_t c;
@@ -811,8 +811,8 @@ boolean quick_failure( void )
     return( FALSE );
 }
 
-boolean hash_func( size_t first_index, size_t last_index )
-/********************************************************/
+boolean hash_func( unsigned first_index, unsigned last_index )
+/************************************************************/
 {
     keyword_t i,w;
 
@@ -839,8 +839,8 @@ boolean hash_func( size_t first_index, size_t last_index )
     return( FALSE );
 }
 
-void dump_common_defs( size_t first_index, size_t last_index )
-/************************************************************/
+void dump_common_defs( unsigned first_index, unsigned last_index )
+/****************************************************************/
 {
     fprintf( outfile, "#define KEYWORD_HASH  %d\n", hashsize );
     fprintf( outfile, "#define FIRST_INDEX   %d\n", first_index );
@@ -852,8 +852,8 @@ void dump_common_defs( size_t first_index, size_t last_index )
     fprintf( outfile, "#define LEN_MASK      0x%lx\n", len_mask );
 }
 
-void dump_weights( size_t first_index, size_t last_index )
-/********************************************************/
+void dump_weights( unsigned first_index, unsigned last_index )
+/************************************************************/
 {
     int bad_mask_hash;
     unsigned mask;
@@ -925,7 +925,7 @@ unsigned dump_token_name( keyword_t k )
 {
     char *tok;
     unsigned j;
-    size_t n;
+    unsigned n;
     int c;
     char buff[32];
 
@@ -989,7 +989,7 @@ void dump_hash( void )
     keyword_t i;
     unsigned j;
     unsigned ord;
-    size_t k;
+    unsigned k;
 
     init_ordered();
     outfile = fopen( "keywords.gh", "w" );
@@ -1020,8 +1020,8 @@ void dump_hash( void )
     fclose( outfile );
 }
 
-void dump_tiny( size_t first_index, size_t last_index )
-/*****************************************************/
+void dump_tiny( unsigned first_index, unsigned last_index )
+/*********************************************************/
 {
     int i;
     int c;
@@ -1086,7 +1086,7 @@ void dump_tiny( size_t first_index, size_t last_index )
 boolean hash_search( void )
 /*************************/
 {
-    size_t i,j;
+    unsigned i,j;
     boolean ok;
 
     hashsize = num_keywords;
