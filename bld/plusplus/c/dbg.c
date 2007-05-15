@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugging routines (debug build only).
 *
 ****************************************************************************/
 
@@ -143,10 +142,10 @@ void DumpMacToken(              // DUMP A MACRO TOKEN
 
 void DumpMacPush(               // DUMP PUSH OF MACRO
     const void *p_mac,          // - macro being pushed
-    const void**p_args )        // - arguments
+    const void **p_args )       // - arguments
 {
-    MEDEFN const *mac = p_mac;        // - macro being pushed
-    const char**args = p_args;  // - arguments
+    MEDEFN const *mac = p_mac;  // - macro being pushed
+    const char**args = (const char **)p_args;  // - arguments
     unsigned count;
     if( PragDbgToggle.dump_mtokens ) {
         printf( "Macro Push: %s", mac->macro_name );

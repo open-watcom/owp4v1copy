@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C++ debugging definitions.
 *
 ****************************************************************************/
 
-
-// DBG.H -- C++ Debugging Definitions
-//
-// 91/06/06 -- J.W.Welch        -- defined
 
 #ifndef NDEBUG
 
@@ -125,7 +120,7 @@ void DumpInitInfo(              // DUMP DATA INIT INFORMATION
 ;
 void DumpMacPush(               // DUMP PUSH OF MACRO
     const void *p_mac,          // - macro being pushed
-    const void**p_args )        // - arguments
+    const void **p_args )       // - arguments
 ;
 void DumpMacToken(              // DUMP A MACRO TOKEN
     void )
