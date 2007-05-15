@@ -33,8 +33,6 @@
 #include "cgswitch.h"
 
 
-#pragma intrinsic( memcpy )
-
 extern  void    CSegFree( SEGADDR_T );
 extern  TREEPTR CurFuncNode;
 

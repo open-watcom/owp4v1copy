@@ -701,6 +701,8 @@ static cg_name PushConstant( OPNODE *node )
         name = CGFloat( flt_string, dtype );
         break;
     default:
+        assert( 0 );
+        name = NULL;
         break;
     }
     return( name );

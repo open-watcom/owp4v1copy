@@ -402,6 +402,7 @@ static int InsertFixups( unsigned char *buff, unsigned i, byte_seq **code )
     int                 fixup_padding;
 #endif
 
+    sym_handle = 0;
     uses_auto = 0;
     perform_fixups = 0;
     head = FixupHead;
@@ -614,6 +615,8 @@ local int GetByteSeq( byte_seq **code )
     NextToken();
     too_many_bytes = 0;
     uses_auto = 0;
+    offset = 0;
+    name = NULL;
     for( ;; ) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
             AsmLine( Buffer );
@@ -639,7 +642,6 @@ local int GetByteSeq( byte_seq **code )
                     CErr1( ERR_EXPECTING_ID );
                 } else {
                     name = CStrSave( Buffer );
-                    offset = 0;
                     NextToken();
                     if( CurToken == T_PLUS ) {
                         NextToken();

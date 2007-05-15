@@ -758,6 +758,7 @@ local void CLine( void )
     FNAMEPTR        flist;
     unsigned long   src_line;
 
+    src_line = 0;
     CompFlags.pre_processing = 1;
     PPNextToken();
     if( CurToken != T_CONSTANT ) {

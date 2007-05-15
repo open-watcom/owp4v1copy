@@ -296,6 +296,7 @@ local char *ExpandMacroToken( void )
     char        *buf;
     TOKEN       tok;
 
+    p   = NULL;
     len = 0;
     tok = *(TOKEN *)MacroPtr;
     switch( tok ) {
@@ -1009,7 +1010,8 @@ static MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
     char        *buf;
     char        *gluebuf;
 
-    _lnk= NULL;
+    gluebuf = NULL;
+    _lnk = NULL;
     lnk  = &head;
     mtok = *lnk;
     buf = Buffer;

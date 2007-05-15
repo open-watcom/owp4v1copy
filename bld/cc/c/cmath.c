@@ -614,6 +614,10 @@ static cmp_result IsMeaninglessCompare( long val, int op1_type, int op2_type, in
     case T_LE:
         rel = REL_LE;
         break;
+    default:
+        assert( 0 );
+        rel = REL_EQ;
+        break;
     }
     if( NumSign( op1_size ) && NumSign( op1_size ) != NumSign( result_size ) ) {
         if( NumBits( op1_size ) < NumBits( result_size ) ) {

@@ -220,6 +220,7 @@ int DoSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
     int_32          right;
     DATA_TYPE       const_type;
 
+    left = 0;
     const_type = tree->expr_type->decl_type;
     if( op1 != NULL ) {
         left = op1->op.long_value;
@@ -244,6 +245,10 @@ int DoSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
             break;
         case CC_LE:
             value = (left <= right);
+            break;
+        default:
+            assert( 0 );
+            value = 0;
             break;
         }
         const_type = TYPE_INT;
@@ -274,6 +279,7 @@ int DoUnSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
     uint_32         right;
     DATA_TYPE       const_type;
 
+    left = 0;
     const_type = tree->expr_type->decl_type;
     if( op1 != NULL ) {
         left = op1->op.ulong_value;
@@ -298,6 +304,10 @@ int DoUnSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
             break;
         case CC_LE:
             value = (left <= right);
+            break;
+        default:
+            assert( 0 );
+            value = 0;
             break;
         }
         const_type = TYPE_INT;
@@ -390,6 +400,7 @@ int64 LongValue64( TREEPTR leaf )
 #endif
         break;
     default:
+        sign = FALSE;
         val32 = 0;
         break;
     }
@@ -685,6 +696,10 @@ int DoFloatOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
             break;
         case CC_LE:
             value = (cond <= 0);
+            break;
+        default:
+            assert( 0 );
+            value = 0;
             break;
         }
         tree->op.opr = OPR_PUSHINT;
