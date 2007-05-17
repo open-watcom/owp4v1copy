@@ -554,7 +554,8 @@ static MACRO_ARG *CollectParms(void)
             case T_BAD_CHAR:
                 TokenBuf[MTokenLen++] = Buffer[0];
                 if( Buffer[1] != '\0' ) {
-                     TokenBuf[MTokenLen++] = T_WHITE_SPACE;
+                     *(TOKEN *)&TokenBuf[MTokenLen] = T_WHITE_SPACE;
+                     MTokenLen += sizeof( TOKEN );
                 }
                 break;
             case T_CONSTANT:
@@ -1177,7 +1178,7 @@ local MACRO_TOKEN *BuildString( char *p )
                 buf[i++] = '"';
                 break;
             case T_WHITE_SPACE:
-                while( *p == T_WHITE_SPACE ) {
+                while( *(TOKEN *)p == T_WHITE_SPACE ) {
                     p += sizeof( TOKEN );
                 }
                 if( *(TOKEN *)p != T_NULL ) {
@@ -1186,7 +1187,7 @@ local MACRO_TOKEN *BuildString( char *p )
                 break;
             case T_BAD_CHAR:
                 p += sizeof( TOKEN );
-                if( *p == '\\' && p[1] == T_NULL ) {    /* 17-nov-94 */
+                if( *p == '\\' && *(TOKEN *)(p+1) == T_NULL ) {
                     CErr1( ERR_INVALID_STRING_LITERAL );
                 }
                 buf[i++] = *p++;
@@ -1230,8 +1231,8 @@ static MACRO_TOKEN *BuildMTokenList( char *ptr, MACRO_ARG *macro_parms )
     prev_token = T_NULL;
     if( p == NULL )  return( NULL );                    /* 12-nov-92 */
     for( ;; ) {
-        if( *p == 0 ) break;
-        switch( *p ) {
+        if( *(TOKEN *)p == T_NULL ) break;
+        switch( *(TOKEN *)p ) {
         case T_CONSTANT:
         case T_PPNUMBER:
         case T_ID:
@@ -1303,14 +1304,14 @@ static MACRO_TOKEN *BuildMTokenList( char *ptr, MACRO_ARG *macro_parms )
             p += sizeof( TOKEN );
             buf[0] = *p++;
             p2 = p;
-            while( *p2 == T_WHITE_SPACE ) ++p2;
+            while( *(TOKEN *)p2 == T_WHITE_SPACE ) p2 += sizeof( TOKEN );
             nested->substituting_parms = 1;             /* 09-nov-93 */
             if( macro_parms ) {
                 if( macro_parms[buf[0]].arg ) {
                     mtok = BuildMTokenList( macro_parms[buf[0]].arg, NULL );
                 } else {
                     if( prev_token == T_MACRO_SHARP_SHARP
-                    || *p2 == T_MACRO_SHARP_SHARP ) {
+                    || *(TOKEN *)p2 == T_MACRO_SHARP_SHARP ) {
                         mtok = BuildAToken( "" );
                         mtok->token = T_MACRO_EMPTY_VAR_PARM;
                     } else {
@@ -1322,7 +1323,7 @@ static MACRO_TOKEN *BuildMTokenList( char *ptr, MACRO_ARG *macro_parms )
                 mtok = BuildAToken( "" );
                 mtok->token = T_WHITE_SPACE;
             }
-            if( *p2 != T_MACRO_SHARP_SHARP  &&
+            if( *(TOKEN *)p2 != T_MACRO_SHARP_SHARP  &&
                 prev_token != T_MACRO_SHARP_SHARP ) {
                 if( mtok != NULL ) {
                     mtok = AppendToken( mtok, T_NULL, "P-<end of parm>" );

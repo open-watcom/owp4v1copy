@@ -146,7 +146,7 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
         FiniPPScan( ppscan_mode );
         SrcFile = old_file;
     }
-    TokenBuf[i] = T_NULL;
+    *(TOKEN *)&TokenBuf[i] = T_NULL;
     if( strcmp( mentry->macro_name, "defined" ) != 0 ){
         MacroAdd( mentry, TokenBuf, i + sizeof( TOKEN ), flags );
     }else{
