@@ -57,11 +57,12 @@ void MacroAdd( MEPTR mentry, char *buf, int len, enum macro_flags flags )
 void AllocMacroSegment( unsigned minimum )
 {
     struct macro_seg_list *msl;
+    unsigned amount;
 
-    minimum = minimum;
-    MacroSegment = FEmalloc( 0x8000 );
+    amount = (minimum + 0x8000) & ~0x7fff;
+    MacroSegment = FEmalloc( amount );
     MacroOffset = MacroSegment;
-    MacroLimit = MacroOffset + 0x7FFE;
+    MacroLimit = MacroOffset + amount - 2;
     if( MacroSegment == 0 ) {                   /* 16-aug-93 */
         CErr1( ERR_OUT_OF_MACRO_MEMORY );
         CSuicide();

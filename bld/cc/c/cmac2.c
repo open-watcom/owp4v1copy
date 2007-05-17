@@ -459,7 +459,8 @@ local void GrabTokens( int parm_cnt, struct macro_parm *formal_parms, const char
                 CErr1( ERR_MUST_BE_MACRO_PARM );
                 prev_token = *(TOKEN *)TokenBuf;
                 *(TOKEN *)TokenBuf = T_SHARP;               /* 17-jul-92 */
-                MacroCopy( TokenBuf, MacroOffset + mlen - 1, 1 );
+                MacroCopy( TokenBuf, MacroOffset + mlen - sizeof( TOKEN ),
+                           sizeof( TOKEN ) );
                 *(TOKEN *)TokenBuf = prev_token;
             }
             prev_non_ws_token = CurToken;
