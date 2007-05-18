@@ -181,9 +181,9 @@
 .if '&overlay' eq 'yes' .do begin
 .dir novector           ldnovect.gml    dos
 .do end
-.dir objalign           opobjali.gml    win32
+.dir objalign           opobjali.gml    elf win32
 .dir oldlibrary         opoldlib.gml    os2 win16 win32
-.dir offset             opoffset.gml    os2 pharlap qnx win32
+.dir offset             opoffset.gml    elf os2 pharlap qnx win32
 .dir oneautodata        oponeaut.gml    os2 win16
 .dir option             ldoption.gml    all
 .dir optlib             ldoptlib.gml    all
@@ -206,7 +206,7 @@
 .dir reentrant          opreentr.gml    netware
 .dir reference          ldrefere.gml    all
 .dir resource           opresour.gml    os2 qnx win16 win32
-.dir runtime            ldruntim.gml    pharlap win32
+.dir runtime            ldruntim.gml    pharlap win32 elf
 .dir rwreloccheck       oprwrelo.gml    win16
 .dir screenname         opscreen.gml    netware
 .if '&overlay' eq 'yes' .do begin

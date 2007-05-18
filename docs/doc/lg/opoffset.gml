@@ -3,7 +3,7 @@
 .option OFFSET
 .*
 .np
-For OS/2 and Win32 applications, the "OFFSET" option specifies the
+For OS/2, Win32 and ELF applications, the "OFFSET" option specifies the
 preferred base linear address at which the executable or DLL will be
 loaded.
 .np
@@ -13,7 +13,7 @@ data is loaded.
 .*
 .beglevel
 .*
-.section OFFSET - OS/2, Win32 only
+.section OFFSET - OS/2, Win32, ELF only
 .*
 .np
 The "OFFSET" option specifies the preferred base linear address at
@@ -42,7 +42,8 @@ loaded and must be a multiple of 64K.
 The linker will round the value up to a multiple of 64K if it is not
 already a multiple of 64K.
 The default base linear address is 64K for OS/2 executables and 4096K
-for Win32 executables.
+for Win32 executables. For ELF, the default base address depends on the
+CPU architecture.
 .np
 This option is most useful for improving the load time of DLLs,
 especially for an application that uses multiple DLLs.

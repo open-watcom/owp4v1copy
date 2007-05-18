@@ -58,6 +58,7 @@ is any of the following:
 .note NAMELEN=n
 .note NODEFAULTLIBS
 .note NOEXTENSION
+.note OFFSET=n
 .note OSNAME='string'
 .note QUIET
 .note REDEFSOK

@@ -563,17 +563,19 @@ pick(    MSG_ELF_HELP_5,    "            | \"IMPort\"      import{\",\"import}" 
                 "            | \"IMPort\"      import{\",\"import}" )
 pick(    MSG_ELF_HELP_6,    "            | \"EXPort\"      export{\",\"export}" ,
                 "            | \"EXPort\"      export{\",\"export}" )
-pick(    MSG_ELF_HELP_7,    "option    ::= \"Alignment=\"n | \"EXPORTAll\" | \"EXTRASections=\"n | \"OBJAlign=\"n" ,
+pick(    MSG_ELF_HELP_7,    "            | \"RUntime\"     runoption{\",\"runoption}" ,
+                "            | \"RUntime\"     runoption{\",\"runoption}" )
+pick(    MSG_ELF_HELP_8,    "option    ::= \"Alignment=\"n | \"EXPORTAll\" | \"EXTRASections=\"n | \"OBJAlign=\"n" ,
                 "option    ::= \"Alignment=\"n | \"EXPORTAll\" | \"EXTRASections=\"n | \"OBJAlign=\"n" )
-pick(    MSG_ELF_HELP_8,    "            | \"OFFSet=\"n" ,
+pick(    MSG_ELF_HELP_9,    "            | \"OFFSet=\"n" ,
                 "            | \"OFFSet=\"n" )
-pick(    MSG_ELF_HELP_9,    "import    ::= entryname" ,
+pick(    MSG_ELF_HELP_10,   "import    ::= entryname" ,
                 "import    ::= エントリ名" )
-pick(    MSG_ELF_HELP_10,   "export    ::= entryname" ,
+pick(    MSG_ELF_HELP_11,   "export    ::= entryname" ,
                 "export    ::= エントリ名" )
-pick(    MSG_ELF_HELP_11,   "runoption ::= (\"SVR4\" | \"LINux\" | \"FREebsd\" | \"NETbsd\" | \"SOLaris\" | \"ABIver\" )" ,
+pick(    MSG_ELF_HELP_12,   "runoption ::= (\"SVR4\" | \"LINux\" | \"FREebsd\" | \"NETbsd\" | \"SOLaris\" | \"ABIver\" )" ,
                 "runoption ::= (\"SVR4\" | \"LINux\" | \"FREebsd\" | \"NETbsd\" | \"SOLaris\" | \"ABIver\" )" )
-pick(    MSG_ELF_HELP_12,   " " ,
+pick(    MSG_ELF_HELP_13,   " " ,
                 " " )
 
 
