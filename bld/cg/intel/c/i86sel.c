@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Determine the cost of switch/case -style statement code, and
+*               generate the scan and jump tables.
 *
 ****************************************************************************/
 
@@ -45,6 +45,19 @@
 #define MIN_JUMPS       4            /* to make it worth while for jum*/
 #define MIN_LVALUES     5            /* to make it worth while for long sca*/
 #define MIN_SVALUES     7            /* to make it worth while for short sca*/
+#define MIN_JUMPS_SETUP 12           /* minimal size of jum code */
+/* for instance:
+0010    83 F8 03                  cmp       eax,0x00000003
+0013    77 0D                     ja        L$3
+0015    FF 24 85 00 00 00 00      jmp       dword ptr L$1[eax*4]
+*/
+#define MIN_SCAN_SETUP  12           /* minimal size of sca code */
+/* for instance:
+0022    B9 08 00                  mov       cx,0x0008
+0025    BF 00 00                  mov       di,offset L$1
+0028    F2 AF                     repne scasw 
+002A    26 FF 65 0C               jmp       word ptr es:0xc[di]
+*/
 
 #define MAX_COST        0x7FFFFFFFL
 #define MAX_IN_RANGE    (MAX_COST/1000) /* so no overflow */
@@ -132,7 +145,8 @@ extern  signed_32       ScanCost( select_node *s_node ) {
         cost = MAX_COST;
     } else {
         type_length = TypeAddress( tipe )->length;
-        cost = Balance( values * ( WORD_SIZE + type_length ), values / 2 );
+        cost = Balance( MIN_SCAN_SETUP + values * ( WORD_SIZE + type_length ),
+                        values / 2 );
     }
     return( cost );
 }
@@ -153,7 +167,12 @@ extern  signed_32       JumpCost( select_node *s_node ) {
     } else if( in_range < MIN_JUMPS ) {
         cost = MAX_COST;
     } else {
-        cost = Balance( WORD_SIZE * in_range, 1 );
+        cost = MIN_JUMPS_SETUP + WORD_SIZE * in_range;
+        /* an extra two bytes are needed to zero the high part before
+           the jump */
+        if ( SelType( 0xffffffff ) == U1 )
+            cost += 2;
+        cost = Balance( cost, 1 );
     }
     return( cost );
 }
@@ -162,11 +181,11 @@ extern  signed_32       JumpCost( select_node *s_node ) {
 #if _TARGET == _TARG_80386
     #define LONG_JUMP 6
     #define SHORT_JUMP 2
-    static byte CmpSize[] = { 0, 3, 5, 0, 6 };
+    static byte CmpSize[] = { 0, 2, 4, 0, 5 };
 #elif _TARGET == _TARG_IAPX86
     #define LONG_JUMP 5
     #define SHORT_JUMP 2
-    static byte CmpSize[] = { 0, 3, 4, 0, 12 };
+    static byte CmpSize[] = { 0, 2, 3, 0, 9 };
 #endif
 
 extern  signed_32       IfCost( select_node *s_node, int entries ) {
@@ -175,6 +194,7 @@ extern  signed_32       IfCost( select_node *s_node, int entries ) {
     signed_32   hi;
     signed_32   lo;
     signed_32   cost;
+    signed_32   jumpsize;
     int         log_entries;
     int         tipe_length;
 
@@ -182,18 +202,24 @@ extern  signed_32       IfCost( select_node *s_node, int entries ) {
     lo = s_node->lower;
     tipe_length = TypeAddress( SelType( hi - lo ) )->length;
     if( entries > 20 ) {
-        cost = LONG_JUMP;
+        jumpsize = LONG_JUMP;
     } else {
-        cost = SHORT_JUMP;
+        jumpsize = SHORT_JUMP;
     }
-    cost += CmpSize[ tipe_length ];
+    cost = jumpsize + CmpSize[ tipe_length ];
+    /* for char-sized switches, often the two-byte "cmp al,xx" is used.
+       otherwise we need three bytes */
+    if ( SelType( 0xffffffff ) != U1 && tipe_length == 1 )
+        cost++;
     cost *= entries;
     log_entries = 0;
     while( entries != 0 ) {
         log_entries++;
-        entries = (unsigned_32)entries >> 2;
+        entries = (unsigned_32)entries >> 1;
     }
-    cost = Balance( cost, log_entries );
+    /* add cost for extra jumps generated for parents */
+    cost += log_entries * jumpsize;
+    cost = Balance( cost, ( log_entries + 1 ) / 2 );
     if( cost >= MAX_COST ) {
         cost = MAX_COST - 1;
     }
