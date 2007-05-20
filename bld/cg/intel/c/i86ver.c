@@ -43,6 +43,8 @@ extern  int             NumOperands(instruction*);
 extern  bool            OtherVerify(vertype,instruction*,name*,name*,name*);
 
 extern  byte            OptForSize;
+extern  hw_reg_set      Low16Reg( hw_reg_set );
+extern  type_class_def  RegClass(hw_reg_set);
 
 
 extern  bool    DoVerify( vertype kind, instruction *ins ) {
@@ -212,6 +214,12 @@ extern  bool    DoVerify( vertype kind, instruction *ins ) {
         break;
     case V_GOOD_CLR:
         if( op1 == result ) return( TRUE );
+        /* Always allow cases like ax<-al which is just a simple mov or xor */
+        if( op1->n.class == N_REGISTER
+            && RegClass( result->r.reg ) == U2
+            && HW_Equal( op1->r.reg, Low16Reg( result->r.reg ) ) ) {
+            return( TRUE );
+        }
         /* On P6 architecture, 'and' will cause a partial register stall with
          * horrible performance implications. Always use movzx.
          */
