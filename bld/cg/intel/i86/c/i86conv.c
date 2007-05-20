@@ -83,7 +83,7 @@ static  opcode_entry    C8to4[] = {
 };
 
 
-static  opcode_entry    Ext1[] = {
+static  opcode_entry    Z1to2[] = {
 /*********************************/
 /*    from  to    eq          verify   gen             reg fu*/
 {_Un( R|M,  R,    NONE ),     V_GOOD_CLR,R_CLRHIGH_R,  RG_BYTE_2BYTE,FU_NO},
@@ -95,40 +95,40 @@ static  opcode_entry    Ext1[] = {
 };
 
 
-static  opcode_entry    Ext2[] = {
+static  opcode_entry    Z2to4[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
 {_Un( ANY,  ANY,  NONE ),     V_NO,           R_CLRHIGH_W,    RG_WORD_DBL,FU_NO},
 };
 
 
-static  opcode_entry    Ext4[] = {
+static  opcode_entry    Z4to8[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
 {_Un( ANY,  ANY,  NONE ),     V_NO,           R_CLRHIGH_D,   RG_WORD_DBL,FU_NO},
 };
 
 
-static  opcode_entry    SExt1[] = {
+static  opcode_entry    S1to2[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-{_Un( R,    R,    NONE ),     V_NO,           G_SIGNEX,       RG_BYTE_EXT,FU_ALU1},
+{_Un( R,    R,    NONE ),     V_NO,           G_SIGNEX,       RG_CBW,FU_ALU1},
 {_Un( R|M,  R,    NONE ),     V_80386,        G_MOVSX,        RG_BYTE_WORD,FU_ALU1},
 {_Un( U|C,  R,    NONE ),     V_80386,        G_UNKNOWN,      RG_BYTE_WORD,FU_NO},
 {_Un( ANY,  M,    NONE ),     V_80386,        R_MOVRESREG,    RG_BYTE_WORD,FU_NO},
 {_Un( ANY,  ANY,  NONE ),     V_80386,        G_UNKNOWN,      RG_BYTE_WORD_NEED_WORD,FU_NO},
-{_Un( ANY,  ANY,  NONE ),     V_NO,           R_OP1RESREG,    RG_BYTE_EXT,FU_NO},
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_OP1RESREG,    RG_CBW,FU_NO},
 };
 
 
-static  opcode_entry    SExt2[] = {
+static  opcode_entry    S2to4[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
-{_Un( R,    R,    NONE ),     V_NO,           G_SIGNEX,       RG_WORD_EXT,FU_ALU1},
-{_Un( ANY,  ANY,  NONE ),     V_NO,           R_OP1RESREG,    RG_WORD_EXT,FU_NO},
+{_Un( R,    R,    NONE ),     V_NO,           G_SIGNEX,       RG_CWD,FU_ALU1},
+{_Un( ANY,  ANY,  NONE ),     V_NO,           R_OP1RESREG,    RG_CWD,FU_NO},
 };
 
-static  opcode_entry    SExt4[] = {
+static  opcode_entry    S4to8[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
 {_Un( ANY,  ANY,  NONE ),     V_NO,           R_CDQ,   RG_WORD_DBL,FU_NO},
@@ -153,12 +153,12 @@ static opcode_entry     *CvtAddr[] = {
         C4to1,
         C4to2,
         C8to4,
-        Ext1,
-        Ext2,
-        Ext4,
-        SExt1,
-        SExt2,
-        SExt4,
+        Z1to2,
+        Z2to4,
+        Z4to8,
+        S1to2,
+        S2to4,
+        S4to8,
         ExtPT
         };
 
@@ -167,12 +167,12 @@ static  rt_class         CvtTable[] = {
 /*U1    I1     U2     I2     U4     I4     U8     I8     CP     PT     FS     FD    FL       to*/
 OK,    OK,    C2TO1, C2TO1, C4TO1, C4TO1, C4TO1, C4TO1, CU4,   CU4,   CU4,   CU4,  CU4,     /* U1*/
 OK,    OK,    C2TO1, C2TO1, C4TO1, C4TO1, C4TO1, C4TO1, CU4,   CU4,   CI4,   CI4,  CI4,     /* I1*/
-EXT1,  S_EXT1,OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   CU4,   CU4,  CU4,     /* U2*/
-EXT1,  S_EXT1,OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   CI4,   CI4,  CI4,     /* I2*/
-CU2,   CI2,   EXT2,  S_EXT2,OK,    OK,    C8TO4, C8TO4, OK,    OK,    C_S_U, C_D_U,C_D_U,   /* U4*/
-CU2,   CI2,   EXT2,  S_EXT2,OK,    OK,    C8TO4, C8TO4, OK,    OK,    C_S_4, C_D_4,C_D_4,   /* I4*/
-CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    EXT4,  EXT4,  C_S_U8,C_D_U8,C_D_U8, /* U8*/
-CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    EXT4,  EXT4,  C_S_I8,C_D_I8,C_D_I8, /* I8*/
+Z1TO2, S1TO2, OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   CU4,   CU4,  CU4,     /* U2*/
+Z1TO2, S1TO2, OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   CI4,   CI4,  CI4,     /* I2*/
+CU2,   CI2,   Z2TO4, S2TO4, OK,    OK,    C8TO4, C8TO4, OK,    OK,    C_S_U, C_D_U,C_D_U,   /* U4*/
+CU2,   CI2,   Z2TO4, S2TO4, OK,    OK,    C8TO4, C8TO4, OK,    OK,    C_S_4, C_D_4,C_D_4,   /* I4*/
+CU4,   CI4,   CU4,   CI4,   Z4TO8, S4TO8, OK,    OK,    Z4TO8, Z4TO8, C_S_U8,C_D_U8,C_D_U8, /* U8*/
+CU4,   CI4,   CU4,   CI4,   Z4TO8, S4TO8, OK,    OK,    Z4TO8, Z4TO8, C_S_I8,C_D_I8,C_D_I8, /* I8*/
 CU4,   CI4,   EXT_PT,CI4,   OK,    OK,    OK,    OK,    OK,    OK,    BAD,   BAD,  BAD,     /* CP*/
 CU4,   CI4,   EXT_PT,CI4,   OK,    OK,    OK,    OK,    OK,    OK,    BAD,   BAD,  BAD,     /* PT*/
 CU4,   CI4,   CU4,   CI4,   C_U4_S,C_I4_S,C_U8_S,C_I8_S,BAD,   BAD,   OK,    C_D_S,C_D_S,   /* FS*/
@@ -185,12 +185,12 @@ static  rt_class FPCvtTable[] = {
 /*U1    I1     U2     I2     U4     I4     U8     I8     CP     PT     FS     FD    FL       to*/
 OK,    OK,    C2TO1, C2TO1, C4TO1, C4TO1, C4TO1, C4TO1, CU4,   CU4,   CI2,   CI2,   CI2,     /* U1*/
 OK,    OK,    C2TO1, C2TO1, C4TO1, C4TO1, C4TO1, C4TO1, CU4,   CU4,   CI2,   CI2,   CI2,     /* I1*/
-EXT1,  S_EXT1,OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   CI4,   CI4,   CI4,     /* U2*/
-EXT1,  S_EXT1,OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   FPOK,  FPOK,  FPOK,    /* I2*/
-CU2,   CI2,   EXT2,  S_EXT2,OK,    OK,    C8TO4, C8TO4, OK,    OK,    FPOK,  FPOK,  FPOK,    /* U4*/
-CU2,   CI2,   EXT2,  S_EXT2,OK,    OK,    C8TO4, C8TO4, OK,    OK,    FPOK,  FPOK,  FPOK,    /* I4*/
-CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    EXT4,  EXT4,  C7S_U8,C7D_U8,C7D_U8,  /* U8*/
-CU4,   CI4,   CU4,   CI4,   EXT4,  S_EXT4,OK,    OK,    EXT4,  EXT4,  FPOK,  FPOK,  FPOK,    /* I8*/
+Z1TO2, S1TO2, OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   CI4,   CI4,   CI4,     /* U2*/
+Z1TO2, S1TO2, OK,    OK,    C4TO2, C4TO2, C4TO2, C4TO2, CU4,   CU4,   FPOK,  FPOK,  FPOK,    /* I2*/
+CU2,   CI2,   Z2TO4, S2TO4, OK,    OK,    C8TO4, C8TO4, OK,    OK,    FPOK,  FPOK,  FPOK,    /* U4*/
+CU2,   CI2,   Z2TO4, S2TO4, OK,    OK,    C8TO4, C8TO4, OK,    OK,    FPOK,  FPOK,  FPOK,    /* I4*/
+CU4,   CI4,   CU4,   CI4,   Z4TO8, S4TO8, OK,    OK,    Z4TO8, Z4TO8, C7S_U8,C7D_U8,C7D_U8,  /* U8*/
+CU4,   CI4,   CU4,   CI4,   Z4TO8, S4TO8, OK,    OK,    Z4TO8, Z4TO8, FPOK,  FPOK,  FPOK,    /* I8*/
 CU4,   CI4,   EXT_PT,CI4,   OK,    OK,    OK,    OK,    OK,    OK,    BAD,   BAD,   BAD,     /* CP*/
 CU4,   CI4,   EXT_PT,CI4,   OK,    OK,    OK,    OK,    OK,    OK,    BAD,   BAD,   PT,      /* PT*/
 CI2,   CI2,   CI4,   FPOK,  FPOK,  FPOK,  C7U8_S,FPOK,  BAD,   BAD,   FPOK,  FPOK,  FPOK,    /* FS*/
