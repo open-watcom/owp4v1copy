@@ -63,6 +63,8 @@ RG( RL_ST0,    RL_,       RL_STI,    RL_,        RL_,      RG_ST0_STI  ),
 RG( RL_STI,    RL_,       RL_ST0,    RL_,        RL_,      RG_STI_ST0  ),
 RG( RL_WORD,   RL_WORD,   RL_WORD,   RL_,        RL_,      RG_WORD ),
 RG( RL_AX,     RL_AX,     RL_AX,     RL_,        RL_,      RG_WORD_ACC ),
+RG( RL_BYTE,   RL_,       RL_WORD,   RL_,        RL_,      RG_BYTE_WORD ),
+RG( RL_BYTE,   RL_,       RL_WORD,   RL_,        RL_WORD,  RG_BYTE_WORD_NEED_WORD ),
 RG( RL_WORD,   RL_,       RL_DOUBLE, RL_,        RL_,      RG_WORD_DBL ),
 RG( RL_DX_AX,  RL_WORD,   RL_AX,     RL_DX,      RL_,      RG_WORD_DIV ),
 RG( RL_DX_AX,  RL_WORD,   RL_AX,     RL_DX_CL,   RL_CL,    RG_WORD_DIVPOW2 ),
@@ -82,4 +84,6 @@ RG( RL_BYTE,   RL_CL,     RL_BYTE,   RL_,        RL_BYTE,  RG_BYTE_SHIFT_NEED ),
 RG( RL_WORD,   RL_CL,     RL_WORD,   RL_,        RL_WORD,  RG_WORD_SHIFT_NEED ),
 RG( RL_DOUBLE, RL_CX,     RL_DOUBLE, RL_CX,      RL_CX,    RG_DBL_SHIFT_NEED ),
 RG( RL_STI,    RL_STI,    RL_STI,    RL_,        RL_WORD,  RG_8087_NEED ),
-#define MAX_RG  27
+RG( RL_BYTE,   RL_,       RL_TWOBYTE,RL_,        RL_,      RG_BYTE_2BYTE ),
+
+#define MAX_RG  30

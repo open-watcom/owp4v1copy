@@ -86,6 +86,11 @@ static  opcode_entry    C8to4[] = {
 static  opcode_entry    Ext1[] = {
 /*********************************/
 /*    from  to    eq          verify   gen             reg fu*/
+{_Un( R|M,  R,    NONE ),     V_GOOD_CLR,R_CLRHIGH_R,  RG_BYTE_2BYTE,FU_NO},
+{_Un( R|M,  R,    NONE ),     V_80386, G_MOVZX,        RG_BYTE_WORD,FU_ALU1},
+{_Un( U|C,  R,    NONE ),     V_80386, G_UNKNOWN,      RG_BYTE_WORD,FU_NO},
+{_Un( ANY,  M,    NONE ),     V_80386, R_MOVRESREG,    RG_BYTE_WORD,FU_NO},
+{_Un( ANY,  ANY,  NONE ),     V_80386, G_UNKNOWN,      RG_BYTE_WORD_NEED_WORD,FU_NO},
 {_Un( ANY,  ANY,  NONE ),     V_NO,    R_CLRHIGH_B,    RG_,FU_NO},
 };
 
@@ -108,6 +113,10 @@ static  opcode_entry    SExt1[] = {
 /*********************************/
 /*    from  to    eq          verify          gen             reg fu*/
 {_Un( R,    R,    NONE ),     V_NO,           G_SIGNEX,       RG_BYTE_EXT,FU_ALU1},
+{_Un( R|M,  R,    NONE ),     V_80386,        G_MOVSX,        RG_BYTE_WORD,FU_ALU1},
+{_Un( U|C,  R,    NONE ),     V_80386,        G_UNKNOWN,      RG_BYTE_WORD,FU_NO},
+{_Un( ANY,  M,    NONE ),     V_80386,        R_MOVRESREG,    RG_BYTE_WORD,FU_NO},
+{_Un( ANY,  ANY,  NONE ),     V_80386,        G_UNKNOWN,      RG_BYTE_WORD_NEED_WORD,FU_NO},
 {_Un( ANY,  ANY,  NONE ),     V_NO,           R_OP1RESREG,    RG_BYTE_EXT,FU_NO},
 };
 

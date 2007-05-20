@@ -1386,7 +1386,6 @@ extern  void    GenObjCode( instruction *ins ) {
             Pow2Div286( ins );
             break;
 #endif
-#if _TARGET & _TARG_80386
         case G_MOVSX:
         case G_MOVZX:
             if( gen == G_MOVSX ) {
@@ -1394,6 +1393,7 @@ extern  void    GenObjCode( instruction *ins ) {
             } else {
                 LayOpword( M_MOVZX );
             }
+#if _TARGET & _TARG_80386
             if( ins->operands[ 0 ]->n.size == 2 ) {
                 Inst[ KEY ] |= B_KEY_W;
             } else { /* base is byte */
@@ -1410,11 +1410,11 @@ extern  void    GenObjCode( instruction *ins ) {
                     break;
                 }
             }
+#endif
             LayModRM( left );
             LayRegOp( result );
             AddToTemp( M_SECONDARY );
             break;
-#endif
         default:
             _Zoiks( ZOIKS_028 );
             break;
