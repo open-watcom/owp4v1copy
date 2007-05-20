@@ -153,12 +153,12 @@ static opcode_entry     *CvtAddr[] = {
         C4to1,
         C4to2,
         C8to4,
-        Z1to2,
-        Z2to4,
-        Z4to8,
         S1to2,
         S2to4,
         S4to8,
+        Z1to2,
+        Z2to4,
+        Z4to8,
         ExtPT
         };
 
