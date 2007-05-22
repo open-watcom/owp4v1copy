@@ -215,11 +215,12 @@ extern  signed_32       IfCost( select_node *s_node, int entries ) {
     log_entries = 0;
     while( entries != 0 ) {
         log_entries++;
-        entries = (unsigned_32)entries >> 1;
+        entries = (unsigned_32)entries >> 2;
     }
-    /* add cost for extra jumps generated for parents */
-    cost += log_entries * jumpsize;
-    cost = Balance( cost, ( log_entries + 1 ) / 2 );
+    /* add cost for extra jumps generated for grandparents and 
+       every other child except the last one */
+    cost += (entries / 4) * 2 * jumpsize;
+    cost = Balance( cost, log_entries );
     if( cost >= MAX_COST ) {
         cost = MAX_COST - 1;
     }
