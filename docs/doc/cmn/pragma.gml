@@ -911,6 +911,48 @@ double test( double x )
     return( sin( x ) );
 }
 .millust end
+
+
+
+.*
+.section The INCLUDE_ALIAS Pragma
+.*
+.np
+.ix 'pragmas' 'include_alias'
+.ix 'include_alias pragma'
+In certain situations, it can be advantageous to remap the names of include
+files. Most commonly this occurs on systems that do not support long file
+names when building source code that references header files with long names.
+.np
+The form of the "include_alias" pragma follows.
+.mbox begin
+:prgbeg. include_alias ( ":id.alias_name:eid.", ":id.real_name:eid." ) :prgend.
+:prgbeg. include_alias ( <:id.alias_name:eid.>, <:id.real_name:eid.> ) :prgend.
+.mbox end
+.synote
+.note alias_name
+is the name referenced in include directives in source code.
+.note real_name
+is the translated name that the compiler will reference instead.
+.endnote
+.np
+The following is an example.
+.millust begin
+#pragma include_alias( "LongFileName.h", "lfn.h" )
+#include "LongFileName.h"
+.millust end
+In the example, the compiler will attempt to read lfn.h when LongFileName.h
+was included.
+.np
+Note that only simple textual substitution is performed. The aliased name
+must match exactly, including double quotes or angle brackets, as well as
+any directory separators. 
+Also, double quotes and angle brackets may not be mixed a single pragma.
+.np
+The value of the predefined
+.id __FILE__
+symbol, as well as the filename reported in error messages, will be the true
+filename after substitution was performed.
 .*
 .section Setting Priority of Static Data Initialization (C++ Only)
 .*

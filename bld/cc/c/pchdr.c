@@ -60,7 +60,7 @@ extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 
 #define PH_BUF_SIZE     32768
 #define PCH_SIGNATURE   (unsigned long) 'WPCH'
-#define PCH_VERSION     0x019B
+#define PCH_VERSION     0x019C
 #if defined(__I86__)
 #define PCH_VERSION_HOST ( ( 1L << 16 ) | PCH_VERSION )
 #elif defined(__386__)
@@ -96,6 +96,7 @@ static  struct textsegment **TextSegArray;
 static  unsigned        PH_SymHashCount;
 static  unsigned        PH_FileCount;
 static  unsigned        PH_RDirCount;
+static  unsigned        PH_IAliasCount;
 static  unsigned        PH_IncFileCount;
 static  unsigned        PH_LibraryCount;
 static  unsigned        PH_SegCount;
@@ -109,7 +110,8 @@ static  unsigned        PH_MacroSize;
 static  unsigned        PH_cwd_len;
 static  char            PH_computing_size;
 
-static  struct  rdir_list *PCHRDirNames;  /* list of read-only directories */
+static  RDIRPTR         PCHRDirNames;       /* list of read-only directories */
+static  IALIASPTR       PCHIAliasNames;     /* list of include aliases */
 
 struct  pheader {
     unsigned long   signature;      //  'WPCH'
@@ -124,6 +126,7 @@ struct  pheader {
     unsigned        macro_size;
     unsigned        file_count;
     unsigned        rdir_count;
+    unsigned        ialias_count;
     unsigned        incfile_count;
     unsigned        incline_count;  // IncLineCount
     unsigned        library_count;  // # of pragma library(s)
@@ -171,6 +174,7 @@ static void InitPHVars( void )
     PH_SymHashCount    = 0;
     PH_FileCount       = 0;
     PH_RDirCount       = 0;
+    PH_IAliasCount     = 0;
     PH_IncFileCount    = 0;
     PH_LibraryCount    = 0;
     PH_SegCount        = 0;
@@ -271,6 +275,7 @@ static void OutPutHeader( void )
     pch.macro_size        = PH_MacroSize;
     pch.file_count        = PH_FileCount;
     pch.rdir_count        = PH_RDirCount;
+    pch.ialias_count      = PH_IAliasCount;
     pch.incfile_count     = PH_IncFileCount;
     pch.incline_count     = IncLineCount;
     pch.library_count     = PH_LibraryCount;
@@ -411,6 +416,34 @@ static void OutPutRoDirList( void )
         }
         dirlist = next_dirlist;
         PH_RDirCount++;
+    }
+}
+
+static void OutPutIncAliasList( void )
+{
+    IALIASPTR   aliaslist;
+    IALIASPTR   next_aliaslist;
+    char        *real_name;
+    unsigned    len;
+    int         rc;
+
+    aliaslist = IAliasNames;
+    while( aliaslist != NULL ) {
+        next_aliaslist = aliaslist->next;
+        real_name = aliaslist->real_name;
+        len = sizeof( struct ialias_list ) + strlen( aliaslist->alias_name ) 
+            + strlen( aliaslist->real_name ) + 1;
+        len = _RoundUp( len, sizeof( int ) );
+        aliaslist->total_len = len;
+        aliaslist->alias_name_len = strlen( aliaslist->alias_name );
+        rc = WritePHeader( aliaslist, len );
+        aliaslist->real_name = real_name;
+        aliaslist->next = next_aliaslist;
+        if( rc != 0 ) {
+            longjmp( PH_jmpbuf, rc );
+        }
+        aliaslist = next_aliaslist;
+        PH_IAliasCount++;
     }
 }
 
@@ -892,9 +925,11 @@ void OutPutEverything( void )
     PH_SymHashCount = 0;
     PH_FileCount    = 0;
     PH_RDirCount    = 0;
+    PH_IAliasCount  = 0;
     PH_SegCount     = 0;
     OutPutIncludes();
     OutPutRoDirList();
+    OutPutIncAliasList();
     OutPutHFileList();
     OutPutIncFileList();
     OutPutLibraries();
@@ -913,13 +948,15 @@ void OutPutEverything( void )
 void InitBuildPreCompiledHeader( void )
 //Save any before info when building pre compiled headers
 {
-    struct rdir_list    *start;
+    RDIRPTR     start;
 
     start = RDirNames;
     if( start != NULL ){
         start = start->next;
     }
     PCHRDirNames = start;
+
+    PCHIAliasNames = IAliasNames;
 }
 
 void BuildPreCompiledHeader( char *filename )
@@ -1027,6 +1064,27 @@ static char *FixupRoDirList( char *p, unsigned list_count )
         --list_count;
     }
     *lnk = NULL;
+    return( p );
+}
+
+static char *FixupIncAliasList( char *p, unsigned list_count )
+{
+    IALIASPTR   aliaslist;
+    IALIASPTR   *lnk;
+    unsigned    len;
+
+    lnk = &IAliasNames;
+    while( list_count != 0 ) {
+        aliaslist = (IALIASPTR)p;
+        len = aliaslist->total_len;
+        p += len;
+        *lnk = aliaslist;
+        aliaslist->real_name = aliaslist->alias_name + aliaslist->alias_name_len + 1;
+        lnk = &aliaslist->next;
+        --list_count;
+    }
+    /* Tack pre-existing aliases onto the end (so that they're searched last) */
+    *lnk = PCHIAliasNames;
     return( p );
 }
 
@@ -1638,6 +1696,7 @@ void AbortPreCompiledHeader( void )
     FNameList        = NULL;
     IncFileList      = NULL;
     PCHMacroHash     = NULL;
+    IAliasNames      = PCHIAliasNames;
     CompFlags.make_precompiled_header = 1;      // force new PCH to be created
 }
 
@@ -1704,6 +1763,7 @@ int UsePreCompiledHeader( char *filename )
     }
     p = FixupIncludes( p + pch.cwd_len, pch.file_count );
     p = FixupRoDirList( p, pch.rdir_count );
+    p = FixupIncAliasList( p, pch.ialias_count );
     if( VerifyIncludes() ) {
         AbortPreCompiledHeader();
         return( -1 );

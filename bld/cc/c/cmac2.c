@@ -229,7 +229,7 @@ void CInclude( void )
             CompFlags.use_precompiled_header = 1;
         }
     }
-    if( CompFlags.make_precompiled_header ) {
+    if( CompFlags.use_precompiled_header ) {
         InitBuildPreCompiledHeader();
     }
     InitialMacroFlag = 0;

@@ -112,6 +112,7 @@ global  char    *ForceInclude;
 global  char    *AuxName;
 global  struct  fname_list *FNames;     /* list of file names processed */
 global  struct  rdir_list *RDirNames;  /* list of read only directorys */
+global  struct  ialias_list *IAliasNames;  /* list of include aliases */
 global  char    *ErrFName;      /* file name to be used in error message */
 global  unsigned ErrLine;       /* line number to be used in error msg */
 global  FILE    *ErrFile;       /* error file */
@@ -457,6 +458,7 @@ extern  int     FListSrcQue(void);
 extern  void    SrcFileReadOnlyDir( char const *dir );
 extern  void    SrcFileReadOnlyFile( char const *file );
 extern  bool    SrcFileInRDir( FNAMEPTR flist );
+extern  void    SrcFileIncludeAlias( const char *alias_name, const char *real_name, int delimiter );
 extern  int     SrcFileTime(char const *,time_t *);
 extern  void    SetSrcFNameOnce( void );
 extern  void    GetNextToken(void);

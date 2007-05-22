@@ -283,6 +283,19 @@ typedef struct rdir_list {
     char     name[1];
 } *RDIRPTR;
 
+typedef struct ialias_list {
+    union {
+        struct ialias_list  *next;
+        int                 total_len;      /* for pre-compiled header */
+    };
+    union {
+        char                *real_name;
+        int                 alias_name_len; /* for pre-compiled header */
+    };
+    int             delimiter;
+    char            alias_name[1];
+} *IALIASPTR;
+
 typedef struct incfile {
     struct incfile  *nextfile;
     int             len;

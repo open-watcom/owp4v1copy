@@ -46,6 +46,8 @@ opt_pch09 = -fhq -dAFS_CM
 opt_pch10 = -fhq -dAFS_CM
 opt_pch11 = -fhq -dAFS_CM
 opt_pp08 = -w0
+opt_prag01 = -fhq       # (1) write PCH
+opt_prag02 = -fhq       # (2) read PCH
 opt_thread01 = -i$(lang_root)\h\nt
 
 !ifneq arch i86
@@ -224,6 +226,8 @@ positive_tests = &
     pp29.$(exe) &
     pp30.$(exe) &
     pp31.$(exe) &
+    prag01.$(exe) &
+    prag02.$(exe) &
     quest01.$(exe) &
     quest02.$(exe) &
     ret01.$(exe) &

@@ -873,6 +873,61 @@ static void PragReadOnlyDir( void )
     }
 }
 
+// forms: (1) #pragma include_alias( "alias_name", "real_name" )
+//        (2) #pragma include_alias( <alias_name>, <real_name>" ) 
+// 
+// causes include directives referencing alias_name to be refer
+// to real_name instead
+//
+static void PragIncludeAlias( void )
+/**********************************/
+{
+    if( CurToken == T_LEFT_PAREN ) {
+        CompFlags.pre_processing = 1;           /* enable macros */
+        NextToken();
+        if( CurToken == T_STRING ) {
+            char    *alias_name;
+
+            alias_name = CStrSave( Buffer );
+            NextToken();
+            MustRecog( T_COMMA );
+            if( CurToken == T_STRING ) {
+                SrcFileIncludeAlias( alias_name, Buffer, 0 );
+                NextToken();
+            }
+            CMemFree( alias_name );
+        } else if( CurToken == T_LT ) {
+            char    a_buf[82];  /* same size as CInclude() in cmac2.c */
+            char    r_buf[82];
+
+            a_buf[0] = '\0';
+            for( ;; ) {
+                NextToken();
+                if( CurToken == T_GT ) {
+                    NextToken();
+                    break;
+                }
+                strncat( a_buf, Buffer, 80 );
+            }
+            MustRecog( T_COMMA );
+            if( CurToken == T_LT ) {
+                r_buf[0] = '\0';
+                for( ;; ) {
+                    NextToken();
+                    if( CurToken == T_GT ) {
+                        NextToken();
+                        break;
+                    }
+                    strncat( r_buf, Buffer, 80 );
+                }
+                SrcFileIncludeAlias( a_buf, r_buf, '<' );
+            }
+        }
+        CompFlags.pre_processing = 2;
+        MustRecog( T_RIGHT_PAREN );
+    }
+}
+
 // form: #pragma once
 //
 // (1) include file once
@@ -969,6 +1024,8 @@ void CPragma( void )
             PragEnableDisableMessage( 0 );
         } else if( PragRecog( "enable_message" ) ) {/* 18-jun-92 */
             PragEnableDisableMessage( 1 );
+        } else if( PragRecog( "include_alias" ) ) {
+            PragIncludeAlias();
         } else if( PragRecog( "message" ) ) {   /* 13-oct-94 */
             PragMessage();
         } else if( PragRecog( "intrinsic" ) ) { /* 09-oct-92 */
