@@ -180,8 +180,9 @@ static bool chkWrite( void *buff, unsigned *size )
 /*
  * chkRead - read checkpoint "file"
  */
-static bool chkRead( void **buff )
+static bool chkRead( void *buf )
 {
+    void    **buff = buf;
 
     switch( isWhere ) {
     case ON_DISK:
