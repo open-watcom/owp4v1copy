@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
 #include "standard.h"
 #include "cgdefs.h"
 #include "coderep.h"
@@ -386,17 +385,16 @@ static  void    DoBinarySearch( an node, select_list *list, type_def *tipe,
         cmp = BGCompare( O_EQ, BGDuplicate( node ),
                          BGInteger( mid_list->low, tipe ), NULL, tipe );
         BGControl( O_IF_TRUE, cmp, mid_list->label );
-        /* don't fiddle with bounds since we only compared for equality */
-#if 1
+        /* Because we only compared for equality, it is only possible to
+           decrease the upper bound if it was already set and equal to
+           the value we are comparing to. Otherwise the incoming value
+           may still be higher, where the inner call may produce an
+           unconditional O_GOTO to a specific case label!
+        */
+        if( have_hibound && hibound == mid_list->low )
+            hibound--;
         DoBinarySearch( node, list, tipe, lo, mid, other,
                         lobound, hibound, have_lobound, have_hibound );
-#else
-        /* although I would think that once "hi" is eliminated it provides
-           an upper bound? A rebuilt compiler (bootstrap 3x) crashes in asm
-           routines */
-        DoBinarySearch( node, list, tipe, lo, mid, other,
-                        lobound, mid_list->low-1, have_lobound, TRUE );
-#endif
         return;
     }
     lt = AskForNewLabel();
