@@ -26,7 +26,6 @@ shall be a null pointer.
 .arg s1max
 shall not be greater than
 .kw RSIZE_MAX.
-.arg s1max shall not equal zero.
 .arg s1max
 shall not equal zero.
 .arg s1max
