@@ -35,7 +35,7 @@
 
 extern jmp_buf env1;
 
-extern  void (*_close_ovl_file)(void);
+extern  void (far *_close_ovl_file)(void);
 
 void ovl3a( void ) {
     puts( "in ovl3a" );

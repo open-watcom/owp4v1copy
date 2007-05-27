@@ -43,10 +43,12 @@ extern jmp_buf env1;
 void main( int argc, char **argv ) {
 
     puts( "in main" );
+#ifdef DYNOVLMGR
     if( argc > 1 ) {
         puts( "grabbing low memory" );
         _ovl_grablow( strtoul( argv[1], NULL, 0 ) );
     }
+#endif
     ovl1();
     puts( "returned to main" );
 }

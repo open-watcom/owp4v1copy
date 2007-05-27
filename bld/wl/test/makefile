@@ -9,14 +9,38 @@ testovl_debugfmt = watcom
 !include defrule.mif
 !include deftarg.mif
 
-extra_c_flags = -of -s
+extra_c_flags = -s $(%COPTIONS)
 
-OBJS = ovl1.obj ovl2.obj ovl3.obj
+OBJS = main.obj ovl1.obj ovl2.obj ovl3.obj
 
-all : main.exe smain.exe .symbolic
+all : .symbolic
+    -wmake -h dmain.exe release=$(release)
+    -wmake -h lmain.exe release=$(release)
+    -wmake -h smain.exe release=$(release)
 
-main.exe : main.obj $(OBJS) $(__MAKEFILES__)
-    $(linker) n $@ $(lflags) op map, dynamic, area=0 file main.obj begin autosection file { $(OBJS) } end libpath ../ovlldr/dosi86
+dmain.exe : .always
+    rm -f *.obj
+    set COPTIONS=-ml -of -DDYNOVLMGR
+    %make main.obj
+    %make ovl1.obj
+    %make ovl2.obj
+    %make ovl3.obj
+    $(linker) n $@ $(lflags) op map, dynamic begin autosection file { $(OBJS) } end libpath ../ovlldr/dosi86
 
-smain.exe : main.obj $(OBJS) $(__MAKEFILES__)
-    $(linker) n $@ $(lflags) op map, standard file main.obj begin s f ovl1 s f ovl2 s f ovl3 end libpath ../ovlldr/dosi86
+lmain.exe : .always
+    rm -f *.obj
+    set COPTIONS=-ml
+    %make main.obj
+    %make ovl1.obj
+    %make ovl2.obj
+    %make ovl3.obj
+    $(linker) n $@ $(lflags) sort global op map, standard begin autosection file { $(OBJS) } end libpath ../ovlldr/dosi86
+
+smain.exe : .always
+    rm -f *.obj
+    set COPTIONS=-ms
+    %make main.obj
+    %make ovl1.obj
+    %make ovl2.obj
+    %make ovl3.obj
+    $(linker) n $@ $(lflags) sort global op map, small begin autosection file { $(OBJS) } end libpath ../ovlldr/dosi86
