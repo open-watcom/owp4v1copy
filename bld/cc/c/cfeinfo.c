@@ -89,6 +89,10 @@ static char *VarParmFuncs[] = {
     "",             // 31
 };
 
+/* bitmap for which of the above are Standard */
+#define VAR_PARM_FUNCS_ANSI \
+    ((1<<8) | (1<<9) | (1<<12) | (1<<13) | (1<<14) | (1<<17))
+
 #ifdef __SEH__
   #if _CPU == 386
     hw_reg_set TryParms[] = {
@@ -148,7 +152,9 @@ int VarFunc( SYMPTR sym )
         hash = (len + VarFuncWeights[ p[0] - 'a' ]
                  + VarFuncWeights[ p[len-1] -'a' ]) & 31;
 
-        if( strcmp( p, VarParmFuncs[ hash ] ) == 0 )
+        if( strcmp( p, VarParmFuncs[ hash ] ) == 0 
+            && ( CompFlags.extensions_enabled
+                 || ( ( 1 << hash ) & VAR_PARM_FUNCS_ANSI ) ) )
             return( 1 );
 
         return( VarParm( sym ) );
