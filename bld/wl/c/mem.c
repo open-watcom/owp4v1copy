@@ -108,17 +108,6 @@ void LnkMemFini( void )
 }
 
 #ifdef TRMEM
- void *LAlloc( unsigned size )
-/**********************************/
-{
-//    extern void *DoLAlloc( unsigned, void (*)() );
-    void        (*ra)();
-
-    ra = _trmem_guess_who();
-
-    return( DoLAlloc( size, ra ) );
-}
-
 void *DoLAlloc( unsigned size, void (*ra)() )
 #else
 void *LAlloc( unsigned size )
@@ -143,6 +132,19 @@ void *LAlloc( unsigned size )
 #endif
     return( p );
 }
+
+#ifdef TRMEM
+ void *LAlloc( unsigned size )
+/**********************************/
+{
+//    extern void *DoLAlloc( unsigned, void (*)() );
+    void        (*ra)();
+
+    ra = _trmem_guess_who();
+
+    return( DoLAlloc( size, ra ) );
+}
+#endif
 
 void * ChkLAlloc( unsigned size )
 /**************************************/
