@@ -46,6 +46,9 @@ extern  name            *DeAlias(name*);
 extern  name            *AllocS32Const(signed_32);
 extern  void            FreeIns(instruction*);
 extern  bool            VolatileIns(instruction *);
+extern  hw_reg_set      Low16Reg( hw_reg_set regs );
+extern  hw_reg_set      High16Reg( hw_reg_set regs );
+extern  hw_reg_set      FullReg( hw_reg_set regs );
 
 extern  block           *HeadBlock;
 extern  type_length     TypeClassSize[];
@@ -333,6 +336,37 @@ extern  void    OptSegs( void )
                         tmp = next->head.next;
                         FreeIns( next );
                         next = tmp;
+                    }
+                }
+                /* The scoreboarder may split "and ax,imm" into
+                   "xor ah,ah; and al,imm". This is sometimes useful
+                   (ah can be eliminated for
+                      short a, b, c; a &= 0x01; b &= 0x0f; c = (a|b) & 0xff;)
+                   but produces longer code if it is not. Remerge them here.
+                */
+                if( 
+                 /* is next of the form "and byte, imm" ? */
+                    ( next->head.opcode == OP_AND )
+                 && ( next->type_class == I1 || next->type_class == U1 )
+                 && ( next->result->n.class == N_REGISTER )
+                 && ( next->operands[0] == next->result )
+                 && ( next->operands[1]->n.class == N_CONSTANT ) 
+
+                 /* is ins of the form "xor byte, byte" ? */
+                 && ( ins->head.opcode == OP_XOR )
+                 && ( ins->type_class == next->type_class )
+                 && ( ins->result->n.class == N_REGISTER )
+                 && ( ins->operands[0] == ins->result )
+                 && ( ins->operands[1] == ins->result ) ) {
+                    hw_reg_set full_reg = FullReg( next->result->r.reg );
+                    /* check if instructions operate on correct halves */
+                    if ( HW_Equal( Low16Reg( full_reg ), next->result->r.reg )
+                      && HW_Equal( High16Reg( full_reg ), ins->result->r.reg )
+                       ) {
+                        /* convert to "and fullreg, imm" */
+                        next->type_class = next->type_class == I1 ? I2 : U2;
+                        next->result->r.reg = full_reg;
+                        DoNothing(ins);
                     }
                 }
     #if _TARGET & _TARG_IAPX86
