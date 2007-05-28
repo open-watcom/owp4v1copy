@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  NetWare NLM performance sampling core.
 *
 ****************************************************************************/
 
@@ -183,7 +182,7 @@ void WakeMeUp( LONG dummy )
 }
 
 
-void StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *full_args, char *dos_args )
 {
     LONG        events;
 
@@ -193,7 +192,8 @@ void StartProg( char *cmd, char *prog, char *args )
         AESProcessSignature );
 
     prog = prog;
-    args = args;
+    full_args = full_args;
+    dos_args = dos_args;
     SampleIndex = 0;
     Suspended = FALSE;
     Resumed = FALSE;

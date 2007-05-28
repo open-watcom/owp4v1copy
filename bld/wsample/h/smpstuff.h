@@ -115,7 +115,7 @@ extern int              SampSeek( unsigned long );
 extern int              SampClose( void );
 extern void             SaveSamples( void );
 
-extern void             StartProg( char *cmd, char *prog, char *args );
+extern void             StartProg( char *cmd, char *prog, char *full_args, char *dos_args );
 extern void             StopProg( void );
 extern void             GetProg( char *,char * );
 extern int              VersionCheck( void );

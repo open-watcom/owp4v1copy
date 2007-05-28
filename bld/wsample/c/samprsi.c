@@ -144,7 +144,7 @@ void StopProg()
 
 #define BSIZE 256
 
-void StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *full_args, char *dos_args )
 {
 
     seg_offset  where;
@@ -163,8 +163,7 @@ void StartProg( char *cmd, char *prog, char *args )
 
     error_num = D32DebugInit( &Proc );
     if( error_num == 0 ) {
-        memcpy( buff, &args[1], args[0] );
-        buff[ args[0] ] = '\0';
+        strcpy( buff, full_args );
         error_num = D32DebugLoad( prog, buff, &Proc );
     }
     if( error_num != 0 ) {

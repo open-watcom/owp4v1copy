@@ -729,7 +729,7 @@ static int GetExeNameFromPid( pid_t pid, char *buffer, int max_len )
 }
 
 
-void StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *full_args, char *dos_args )
 {
     char            exe_name[PATH_MAX];
     pid_t           save_pgrp;
@@ -752,12 +752,11 @@ void StartProg( char *cmd, char *prog, char *args )
 
         Attached = FALSE;
 
-        /* massage 'args' into argv format */
-        ++args;     // first byte contains length - throwback to DOS days, needs fixing
-        len = strlen( args );
-        num_args = SplitParms( args, NULL, len );
+        /* massage 'full_args' into argv format */
+        len = strlen( full_args );
+        num_args = SplitParms( full_args, NULL, len );
         argv = alloca( (num_args + 2)  * sizeof( *argv ) );
-        argv[SplitParms( args, &argv[1], len ) + 1] = NULL;
+        argv[SplitParms( full_args, &argv[1], len ) + 1] = NULL;
         argv[0] = prog;
 
         Output( MsgArray[MSG_SAMPLE_1 - ERR_FIRST_MESSAGE] );

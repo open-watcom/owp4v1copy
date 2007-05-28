@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Win16 performance samping core.
 *
 ****************************************************************************/
 
@@ -198,7 +197,7 @@ static void internalError( char * str )
 /*
  * StartProg - start and execute sampled program
  */
-void StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *full_args, char *dos_args )
 {
     WORD                timer;
     WORD                mod_count;
@@ -274,7 +273,7 @@ void StartProg( char *cmd, char *prog, char *args )
     cdata.always2= 2;
     cdata.nCmdShow = SW_NORMAL;
     pdata.wEnvSeg = 0;
-    pdata.lpCmdLine = (char far *) args;
+    pdata.lpCmdLine = (char far *) full_args;   /* Must be < 120 chars according to SDK */
     pdata.lpCmdShow = (void far *) &cdata;
     pdata.dwReserved = 0;
 

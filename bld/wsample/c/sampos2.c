@@ -449,7 +449,7 @@ static void LoadProg( char *cmd, char *cmd_tail )
 
 #define BSIZE 256
 
-void StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *full_args, char *dos_args )
 {
 
     char        *src;
@@ -493,11 +493,9 @@ void StartProg( char *cmd, char *prog, char *args )
     strcpy( dst, src );
     dst = UtilBuff + strlen( UtilBuff ) + 1;
     cmd_tail = dst;
-    memcpy( dst, args+1, args[0] );
-    dst += args[0];
-    *dst = '\0';
-    ++dst;
-    *dst = '\0';
+    strcpy( dst, full_args );
+    dst += strlen( dst );
+    *++dst = '\0';      /* Need two nulls at end */
     LoadProg( UtilBuff, cmd_tail );
     Output( MsgArray[MSG_SAMPLE_1-ERR_FIRST_MESSAGE] );
     Output( UtilBuff );

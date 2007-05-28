@@ -208,7 +208,7 @@ void FixTime( void )
     SetBiosClk( count );
 }
 
-void StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *full_args, char *dos_args )
 {
 
     PTR386      addr;
@@ -227,7 +227,7 @@ void StartProg( char *cmd, char *prog, char *args )
     check( dbg_edebug() );
     GrabVects();
     FixTime();
-    if( dbg_load( prog, NULL, args ) != 0 ) {
+    if( dbg_load( prog, NULL, dos_args ) != 0 ) {
         Output( MsgArray[MSG_SAMPLE_2-ERR_FIRST_MESSAGE] );
         Output( prog );
         Output( "\r\n" );

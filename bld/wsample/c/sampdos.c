@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS performance sampling core.
 *
 ****************************************************************************/
 
@@ -161,7 +160,7 @@ void StopProg( void )
     RemoveDOSIntercepts();
 }
 
-void StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *full_args, char *dos_args )
 {
     struct  SREGS       segs;
     seg_offset          ovl_tbl;
@@ -176,7 +175,7 @@ void StartProg( char *cmd, char *prog, char *args )
     segread( (struct SREGS *)&segs );
     parms.envstring = 0;
     parms.commandln.segment = segs.ss;
-    parms.commandln.offset = (off) args;
+    parms.commandln.offset = (off) dos_args;
     parms.fcb01.segment = GetPSP();
     parms.fcb01.offset  = 0x5c; /* formatted parameter area 1 (FCB) */
     parms.fcb02.segment = parms.fcb01.segment;

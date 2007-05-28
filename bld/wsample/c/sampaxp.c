@@ -561,29 +561,23 @@ static int GetDllName( LOAD_DLL_DEBUG_INFO *ld, char *buff, unsigned max )
 /*
  * StartProg - start sampling a program
  */
-void StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *full_args, char *dos_args )
 {
     DWORD       code;
     DWORD       tid;
     CONTEXT     con;
     BOOL        waiting_for_first_bp;
-    DWORD       len;
     DWORD       continue_how;
     BOOL        rc;
     DWORD       ttid;
     HANDLE      tth;
-    int         i;
     uint_32     Fir;
 
     cmd = cmd;
 
     strcpy( utilBuff, prog );
-    len = strlen( utilBuff );
-    utilBuff[ len++ ] = ' ';
-    for( i=0;i<args[0];i++ ) {
-        utilBuff[len++] = args[i+1];
-    }
-    utilBuff[len] = 0;
+    strcat( utilBuff, " " );
+    strcat( utilBuff, full_args );
 
     loadProg( prog, utilBuff );
     tid = debugEvent.dwThreadId;

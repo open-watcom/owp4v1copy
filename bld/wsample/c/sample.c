@@ -637,7 +637,11 @@ int sample_main( char far *win_cmd )
     /* record get re-written with other information filled in later */
     SampWrite( &Info, sizeof( Info ) );
     CurrTick  = 0L;
-    StartProg( cmd, ExeName, (char *)arg+1 );
+    /* Some systems need a simple null-terminated string, others need
+     * a DOS-style 128-byte array with length in the first byte and CR
+     * at the end. We pass both and let the callee pick & choose.
+     */
+    StartProg( cmd, ExeName, cmd_line, (char *)arg+1 );
     MsgFini();
     free( cmd_line );
     free( arg );
