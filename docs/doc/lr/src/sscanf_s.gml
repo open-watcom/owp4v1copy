@@ -69,10 +69,6 @@ if an input failure occurred before any conversion or if there was
 a runtime-constraint violation.
 Otherwise, the &func function returns the number of input items
 successfully assigned, which can be fewer than provided for, or even zero.
-.np
-When a file input error occurs, the
-.kw errno
-global variable may be set.
 .return end
 .*
 .see begin
@@ -91,8 +87,8 @@ void main( void )
     sscanf_s( "Friday August 0013 2004",
             "%s %s %d  %d",
              weekday, sizeof( weekday ),
-	     month, sizeof( month ),
-	     &day, &year );
+             month, sizeof( month ),
+             &day, &year );
     printf_s( "%s %s %d %d\n",
              weekday, month, day, year );
 }
