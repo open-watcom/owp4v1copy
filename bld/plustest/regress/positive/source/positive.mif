@@ -138,6 +138,8 @@ opt_pch19 = -fhq -dAFS_CM
 opt_pch20 = -fhq -dAFS_CM
 opt_pch21 = -fhq -dAFS_CM
 opt_pp08 = -w0
+opt_prag02 = -fhq
+opt_prag03 = -fhq
 opt_rtti02 = -xr
 opt_rtti03 = -xr
 opt_rtti04 = -xr
@@ -719,6 +721,8 @@ positive_tests = &
     pp36.$(ext) &
     pp37.$(ext) &
     prag01.$(ext) &
+    prag02.$(ext) &
+    prag03.$(ext) &
     quest01.$(ext) &
     quest02.$(ext) &
     quest03.$(ext) &

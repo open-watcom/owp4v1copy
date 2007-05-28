@@ -153,6 +153,7 @@ common_objs += gstack.obj
 common_objs += hfile.obj
 common_objs += hashtab.obj
 common_objs += i64supp.obj
+common_objs += ialias.obj
 common_objs += icemit.obj
 common_objs += initfini.obj
 common_objs += initref.obj

@@ -48,6 +48,7 @@
 #include "cginimps.h"
 #include "initdefs.h"
 #include "asmstmt.h"
+#include "ialias.h"
 
 // from \watcom\h
 #include "rtinit.h"
@@ -876,6 +877,62 @@ static void pragReadOnlyDir
     }
 }
 
+// form: #pragma include_alias( "alias_name", "real_name" )
+//       #pragma include_alias( <alias_name>, <real_name> )
+//
+// (1) causes include directives referencing alias_name to refer
+//     to real_name instead
+//
+static void pragIncludeAlias( void )
+{
+    if( CurToken == T_LEFT_PAREN ) {
+        PPState = PPS_EOL;
+        NextToken();
+        if( CurToken == T_STRING ) {
+            char    *alias_name;
+
+            alias_name = CMemAlloc( strlen( Buffer ) + 1 );
+            strcpy( alias_name, Buffer );
+            NextToken();
+            MustRecog( T_COMMA );
+            if( CurToken == T_STRING ) {
+                IAliasAdd( alias_name, Buffer, 0 );
+                NextToken();
+            }
+            CMemFree( alias_name );
+        }
+        else if( CurToken == T_LT ) {
+            char    a_buf[82];
+            char    r_buf[82];
+
+            a_buf[0] = '\0';
+            for( ;; ) {
+                NextToken();
+                if( CurToken == T_GT ) {
+                    NextToken();
+                    break;
+                }
+                strncat( a_buf, Buffer, 80 );
+            }
+            MustRecog( T_COMMA );
+            if( CurToken == T_LT ) {
+                r_buf[0] = '\0';
+                for( ;; ) {
+                    NextToken();
+                    if( CurToken == T_GT ) {
+                        NextToken();
+                        break;
+                    }
+                    strncat( r_buf, Buffer, 80 );
+                }
+                IAliasAdd( a_buf, r_buf, '<' );
+            }
+        }
+        PPState = PPS_EOL | PPS_NO_EXPAND;
+        MustRecog( T_RIGHT_PAREN );
+    }
+}
+
 // form: #pragma once
 //
 // (1) current source file will never be #include'd again
@@ -1024,6 +1081,8 @@ void CPragma()                  // PROCESS A PRAGMA
                 pragReadOnlyFile();
             } else if( startPrag( "read_only_directory" ) ) {
                 pragReadOnlyDir();
+            } else if( PragRecog( "include_alias" ) ) {
+                pragIncludeAlias();
             } else if( PragRecog( "message" ) ) {
                 pragMessage();
             } else if( PragRecog( "error" ) ) {
