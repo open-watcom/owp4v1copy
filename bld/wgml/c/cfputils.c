@@ -37,6 +37,7 @@
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__ 1
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -85,7 +86,7 @@ static int  verify_font( char *, char * );
 /*  Function parse_cop_file().
  *  Verify that the file provided to the program is a .COP file and parse it
  *  if it is.
- *  This version only actually parses directory files.
+ *  This version only actually parses directory and device files.
  *  The actual parsing is done using functions declared in other headers:
  *      cfdir.h for directory files
  *      cfdev.h for device files (planned, not implemented)
@@ -367,34 +368,38 @@ void display_device( cop_device * in_device)
     int         j;
     char        translation[2];
 
-    printf_s( "Allocated size:         %i\n", in_device->allocated_size );
-    printf_s( "Bytes used:             %i\n", in_device->next_offset );
+    printf_s( "Allocated size:            %i\n", in_device->allocated_size );
+    printf_s( "Bytes used:                %i\n", in_device->next_offset );
     if( in_device->driver_name == NULL ) puts( "Driver Name:");
-    else printf_s( "Driver Name:            %s\n", in_device->driver_name );
+    else printf_s( "Driver Name:               %s\n", in_device->driver_name );
     if( in_device->output_name == NULL ) puts( "Output File Name:" );
-    else printf_s( "Output File Name:       %s\n", in_device->output_name );
+    else printf_s( "Output File Name:          %s\n", in_device->output_name );
     if( in_device->output_extension == NULL ) puts( "Output File Extension:" );
-    else printf_s( "Output File Extension:  %s\n", in_device->output_extension );
-    printf_s( "Page Width:             %i\n", in_device->page_width );
-    printf_s( "Page Depth:             %i\n", in_device->page_depth );
-    printf_s( "Horizontal Base Units:  %i\n", in_device->horizontal_base_units );
-    printf_s( "Vertical Base Units:    %i\n", in_device->vertical_base_units );
-    printf_s( "Page Start X Value:     %i\n", in_device->x_start );
-    printf_s( "Page Start Y Value:     %i\n", in_device->y_start );
-    printf_s( "Page Offset X Value:    %i\n", in_device->x_offset );
-    printf_s( "Page Offset Y Value:    %i\n", in_device->y_offset );
-    printf_s( "Top line character:     %c\n", in_device->box.top_line );
-    printf_s( "Bottom line character:  %c\n", in_device->box.bottom_line );
-    printf_s( "Top left character:     %c\n", in_device->box.top_left );
-    printf_s( "Top right character:    %c\n", in_device->box.top_right );
-    printf_s( "Bottom left character:  %c\n", in_device->box.bottom_left );
-    printf_s( "Bottom right character: %c\n", in_device->box.bottom_right );
-    printf_s( "Top join character:     %c\n", in_device->box.top_join );
-    printf_s( "Bottom join character:  %c\n", in_device->box.bottom_join );
-    printf_s( "Left join character:    %c\n", in_device->box.left_join );
-    printf_s( "Right join character:   %c\n", in_device->box.right_join );
-    printf_s( "Inside join character:  %c\n", in_device->box.inside_join );
-    printf_s( "Underscore character:   %c\n", in_device->underscore.underscore_char );
+    else printf_s( "Output File Extension:     %s\n", in_device->output_extension );
+    printf_s( "Page Width:                %i\n", in_device->page_width );
+    printf_s( "Page Depth:                %i\n", in_device->page_depth );
+    printf_s( "Horizontal Base Units:     %i\n", in_device->horizontal_base_units );
+    printf_s( "Vertical Base Units:       %i\n", in_device->vertical_base_units );
+    printf_s( "Page Start X Value:        %i\n", in_device->x_start );
+    printf_s( "Page Start Y Value:        %i\n", in_device->y_start );
+    printf_s( "Page Offset X Value:       %i\n", in_device->x_offset );
+    printf_s( "Page Offset Y Value:       %i\n", in_device->y_offset );
+    if( in_device->box.font_name == NULL ) printf_s( "Box Font Number:           %i\n", in_device->box.font_number);
+    else printf_s( "Box Font Name:             %s\n", in_device->box.font_name );
+    printf_s( "Horizontal line character: %c\n", in_device->box.horizontal_line );
+    printf_s( "Vertical line character:   %c\n", in_device->box.vertical_line );
+    printf_s( "Top left character:        %c\n", in_device->box.top_left );
+    printf_s( "Top right character:       %c\n", in_device->box.top_right );
+    printf_s( "Bottom left character:     %c\n", in_device->box.bottom_left );
+    printf_s( "Bottom right character:    %c\n", in_device->box.bottom_right );
+    printf_s( "Top join character:        %c\n", in_device->box.top_join );
+    printf_s( "Bottom join character:     %c\n", in_device->box.bottom_join );
+    printf_s( "Left join character:       %c\n", in_device->box.left_join );
+    printf_s( "Right join character:      %c\n", in_device->box.right_join );
+    printf_s( "Inside join character:     %c\n", in_device->box.inside_join );
+    if( in_device->underscore.font_name == NULL ) printf_s( "Underscore Font Number:    %i\n", in_device->underscore.font_number);
+    else printf_s( "Underscore Font Name:      %s\n", in_device->underscore.font_name );
+    printf_s( "Underscore character:      %c\n", in_device->underscore.underscore_char );
     if( in_device->intrans == NULL) {
         puts( "No Intrans Table");
     } else {
@@ -407,7 +412,6 @@ void display_device( cop_device * in_device)
             }
         }
     }
-
     if( in_device->outtrans == NULL) {
         puts( "No Outtrans Table");
     } else {
@@ -424,6 +428,50 @@ void display_device( cop_device * in_device)
             }
         }
     }
+    printf_s( "Number of Default Fonts: %i\n", in_device->defaultfonts.count );
+    for( i = 0; i < in_device->defaultfonts.count; i++ ) {
+        printf_s( "  Default Font Number  %i:\n", i );
+        if( in_device->defaultfonts.font[i].font_name == NULL ) puts( "    Font Name:");
+        else printf_s( "    Font Name:         %s\n", in_device->defaultfonts.font[i].font_name );
+        if( in_device->defaultfonts.font[i].font_style == NULL ) puts( "    FontStyle:");
+        else printf_s( "    Font Style:        %s\n", in_device->defaultfonts.font[i].font_style );
+        printf_s( "    Font Height:       %i\n", in_device->defaultfonts.font[i].font_height );
+        printf_s( "    Font Space:        %i\n", in_device->defaultfonts.font[i].font_space );
+    }
+    if( in_device->pauses.startpause == NULL ) puts( "No START Pause" );
+    else {
+        puts( "START Pause:" );
+        display_hex_block( in_device->pauses.startpause, in_device->pauses.startpause_count );
+    }
+    if( in_device->pauses.documentpause == NULL ) puts( "No DOCUMENT Pause" );
+    else {
+        puts( "DOCUMENT Pause:" );
+        display_hex_block( in_device->pauses.documentpause, in_device->pauses.documentpause_count );
+    }
+    if( in_device->pauses.docpagepause == NULL ) puts( "No DOCUMENT_PAGE Pause" );
+    else {
+        puts( "DOCUMENT_PAGE Pause:" );
+        display_hex_block( in_device->pauses.docpagepause, in_device->pauses.docpagepause_count );
+    }
+    if( in_device->pauses.devpagepause == NULL ) puts( "No DEVICE_PAGE Pause" );
+    else {
+        puts( "DEVICE_PAGE Pause:" );
+        display_hex_block( in_device->pauses.devpagepause, in_device->pauses.devpagepause_count );
+    }
+    printf_s( "Number of Device Fonts: %i\n", in_device->devicefonts.count );
+    for( i = 0; i < in_device->devicefonts.count; i++ ) {
+        printf_s( "  Device Font Index:   %i:\n", i );
+        if( in_device->devicefonts.font[i].font_name == NULL ) puts( "    Font Name:");
+        else printf_s( "    Font Name:         %s\n", in_device->devicefonts.font[i].font_name );
+        if( in_device->devicefonts.font[i].font_switch == NULL ) puts( "    Font Switch:");
+        else printf_s( "    Font Switch:       %s\n", in_device->devicefonts.font[i].font_switch );
+        printf_s( "    Resident Font:     %i\n", in_device->devicefonts.font[i].resident );
+        if( in_device->devicefonts.font[i].fontpause == NULL ) puts( "    No Font Pause" );
+        else {
+            puts( "    Font Pause:" );
+            display_hex_block( in_device->devicefonts.font[i].fontpause, in_device->devicefonts.font[i].fontpause_count );
+        }
+    }
 
     return;
 }
@@ -433,7 +481,7 @@ void display_device( cop_device * in_device)
  *
  *  Parameter:
  *      in_path contains the path from the command-line parameter
- *      in_file contains the file name from the directory file entry
+     *      in_file contains the file name from the directory file entry
  *
  *  Returns:
  *      OPEN_ERROR if the file cannot be opened (implies file does not exist)

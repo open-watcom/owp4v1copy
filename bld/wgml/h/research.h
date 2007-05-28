@@ -26,12 +26,16 @@
 *
 * Description:  Declares items specific to the research programs:
 *                   display_char()
+*                   display_hex_block()
+*                   display_hex_line()
 *                   res_initialize_globals()
 *
 ****************************************************************************/
 
 #ifndef RESEARCH_H_INCLUDED
 #define RESEARCH_H_INCLUDED
+
+#include <stdint.h>
 
 /* In theory, this should go into banner.h */
 /* For gendev and wgml, the equivalent macros will */
@@ -59,7 +63,9 @@ global  char *  tgt_path;   /* path of directory to be checked */
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
-void    display_char( char[2], char );
+void    display_char( char *, char );
+void    display_hex_block( uint8_t *, uint16_t );
+void    display_hex_line( char *, char * );
 void    res_initialize_globals( void );
 
 #ifdef  __cplusplus

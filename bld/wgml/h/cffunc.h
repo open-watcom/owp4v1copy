@@ -28,19 +28,18 @@
 *               FunctionsBlocks:
 *                   functions_block
 *                       code_block
+*                   find_cumulative_index()
 *                   get_functions()
 *
 ****************************************************************************/
 
-#ifndef CFDEV_H_INCLUDED
-#define CFDEV_H_INCLUDED
+#ifndef CFFUNC_H_INCLUDED
+#define CFFUNC_H_INCLUDED
 
 #include <stdint.h>
 #include <stdio.h>
 
 /* Structure declarations */
-
-// This section is under development!!!
 
 /* These structs are based on the discussion in the Wiki, which should be
  * consulted for further information on how the data is structured.
@@ -50,7 +49,8 @@
 
 typedef struct code_block_struct
 {
-    uint16_t    block_length;
+    uint16_t    max_index;
+    uint16_t    cumulative_index;
     uint8_t *   function;
 } code_block;
 
@@ -68,10 +68,11 @@ typedef struct functions_block_struct
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
+int find_cumulative_index( functions_block *, uint16_t, uint8_t * );
 functions_block * get_functions( FILE *);
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++ */
 #endif
 
-#endif  /* CFDEV_H_INCLUDED */
+#endif  /* CFFUNC_H_INCLUDED */

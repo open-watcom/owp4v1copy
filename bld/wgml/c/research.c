@@ -26,15 +26,19 @@
 *
 * Description:  Implements the functions common to the research programs:
 *                   display_char()
+*                   display_hex_block()
+*                   display_hex_line()
 *                   parse_cmdline()
 *                   res_initialize_globals()
 *
 ****************************************************************************/
 
+#define __STDC_WANT_LIB_EXT1__  1 // Activates "Safe C" functions
 #include <ctype.h>
 #include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
-#define __STDC_WANT_LIB_EXT1__  1 // Activates "Safe C" functions
 #include <string.h>
 #include "cmdlhelp.h"
 #include "common.h"
@@ -48,6 +52,101 @@
 /* Local data definition */ 
 
 static char     hexchar[] = "0123456789ABCDEF";
+
+/*  Function definitions */
+
+/*  Function display_hex_block().
+ *  Given a pointer to a block of bytes and the number of bytes it contains,
+ *  display the data in a format similar to that of wdump -b to stdout.
+ *
+ *  Parameters:
+ *      in_data points to the first byte in the block
+ *      in_length contains the number of bytes in the block
+ */
+
+void display_hex_block( uint8_t * in_data, uint16_t in_count )
+{
+    uint16_t    i;
+    char        data_buffer[16];
+    char        data_display[69];
+
+    for( i = 0; i < in_count; i += 16 ) {
+        if( i + 16 > in_count ) {
+            memset(data_buffer, 0x00, 16);
+            memcpy_s(data_buffer, 16, &in_data[i], in_count - i );
+        } else {
+            memcpy_s(data_buffer, 16, &in_data[i], 16 );
+        }
+        display_hex_line( data_display, data_buffer );
+        printf_s( "%s\n", data_display );
+    }
+
+    return;
+}
+
+/*  Function display_hex_line().
+ *  Constructs out_chars from in_chars. The effect is to replace a line of 16
+ *  byte values with a line of 68 bytes:
+ *      8 groups of a two byte representation of a byte value plus a space
+ *      1 space, producing the "two spaces in the middle" pattern
+ *      8 groups of a two byte representation of a byte value plus a space
+ *      3 spaces, producing four spaces between the hex and byte displays
+ *      16 values, each of which is the value passed in if isprint() indicates
+ *          it is printable, or a space otherwise.
+ *  The result is the sort of hex display produced by wdump -b. The 69th byte
+ *  is 0x00: out_chars is intended to be displayable as a character string.
+ *
+ *  Parameters:
+ *      out_chars must point to an array of at least 69 bytes
+ *      in_chars must point to an array of 16 bytes
+ */
+ 
+void display_hex_line( char * out_chars, char * in_chars )
+{
+    uint8_t i;
+
+    /* Process the first eight input values */
+
+    for( i = 0; i < 8; i++) {
+        out_chars[3*i] = hexchar[ ( in_chars[i] >> 4 ) & 0x0f ];
+        out_chars[3*i + 1] = hexchar[ in_chars[i] & 0x0f ];
+        out_chars[3*i + 2] = ' ';
+    }
+
+    /* Insert the second space between the columns */
+
+    out_chars[24] = ' ';
+
+    /* Process the second eight input values */
+    
+    for( i = 8; i < 16; i++) {
+        out_chars[3*i + 1] = hexchar[ ( in_chars[i] >> 4 ) & 0x0f ];
+        out_chars[3*i + 2] = hexchar[ in_chars[i] & 0x0f ];
+        out_chars[3*i + 3] = ' ';
+    }
+
+    /* Insert three more spaces */
+
+    out_chars[49] = ' ';
+    out_chars[50] = ' ';
+    out_chars[51] = ' ';
+
+    /* Now append the input values, if printable */
+
+    for( i = 0; i < 16; i++ ) {
+        if ( isprint( in_chars[i] ) ) {
+            out_chars[i+52] = in_chars[i];
+        } else {
+           out_chars[i+52] = ' ';
+        }
+    }
+
+    /* Make out_chars a character string */
+
+    out_chars[68] = '\0';    
+
+    return;
+}
 
 /*  Function display_char().
  *  If isgraph() indicates that in_char is displayable, returns a space in
@@ -63,7 +162,7 @@ static char     hexchar[] = "0123456789ABCDEF";
  *  Value Returned:
  *      The values indicated above are returned in the out_chars.
  */
-void    display_char( char * out_chars, char in_char)
+void display_char( char * out_chars, char in_char)
 {
     if ( isgraph( in_char ) ) {
         out_chars[0] = ' ';

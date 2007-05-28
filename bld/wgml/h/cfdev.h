@@ -46,7 +46,6 @@
 #define CFDEV_H_INCLUDED
 
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 
 /* Structure declarations */
@@ -71,33 +70,33 @@
 
 typedef struct box_block_struct
 {
-    char *  font_name;
-    uint8_t font_number;
-    char    top_line;
-    char    bottom_line;
-    char    top_left;
-    char    top_right;
-    char    bottom_left;
-    char    bottom_right;
-    char    top_join;
-    char    bottom_join;
-    char    left_join;
-    char    right_join;
-    char    inside_join;
+    char *          font_name;
+    uint8_t         font_number;
+    char            horizontal_line;
+    char            vertical_line;
+    char            top_left;
+    char            top_right;
+    char            bottom_left;
+    char            bottom_right;
+    char            top_join;
+    char            bottom_join;
+    char            left_join;
+    char            right_join;
+    char            inside_join;
 } box_block;
 
 typedef struct underscore_block_struct
 {
-    char *  font_name;
-    uint8_t font_number;
-    char    underscore_char;
+    char *          font_name;
+    uint8_t         font_number;
+    char            underscore_char;
 } underscore_block;
 
 /* intrans_block is a struct for consistency with outtrans_block. */
 
 typedef struct intrans_block_struct
 {
-    uint8_t     table[0x100];
+    uint8_t         table[0x100];
 } intrans_block;
 
 /* Field "data" points to a buffer containing "count" bytes.
@@ -106,8 +105,8 @@ typedef struct intrans_block_struct
 
 typedef struct translation_struct
 {
-    uint8_t     count;
-    uint8_t *   data;
+    uint8_t         count;
+    uint8_t *       data;
 } translation;
 
 /* Each entry in table will be NULL if no out-translation is needed */
@@ -119,10 +118,10 @@ typedef struct outtrans_block_struct
 
 typedef struct default_font_struct
 {
-    char *      font_name;
-    char *      font_style;
-    uint16_t    font_height;
-    uint16_t    font_space;    
+    char *          font_name;
+    char *          font_style;
+    uint16_t        font_height;
+    uint16_t        font_space;    
 } default_font;
 
 /* Field "font" points to an array of "count" default_font instances. */
@@ -139,33 +138,33 @@ typedef struct defaultfont_block_struct
 
 typedef struct pause_block_struct
 {
-    uint16_t    startpause_count;
-    uint8_t *   startpause;
-    uint16_t    documentpause_count;
-    uint8_t *   documentpause;
-    uint16_t    docpagepause_count;
-    uint8_t *   docpagepause;
-    uint16_t    devpagepause_count;
-    uint8_t *   devpagepause;
+    uint16_t        startpause_count;
+    uint8_t *       startpause;
+    uint16_t        documentpause_count;
+    uint8_t *       documentpause;
+    uint16_t        docpagepause_count;
+    uint8_t *       docpagepause;
+    uint16_t        devpagepause_count;
+    uint8_t *       devpagepause;
 } pause_block;
 
 /* Field "fontpause" points to an array of "fontpause_count" bytes */
 
 typedef struct device_font_struct
 {
-    char *      fontname;
-    char *      fontswitch;
-    bool        resident;
-    uint16_t    fontpause_count;
-    uint8_t *   fontpause;
+    char *          font_name;
+    char *          font_switch;
+    uint8_t         resident;
+    uint16_t        fontpause_count;
+    uint8_t *       fontpause;
 } device_font;
 
 /* Field "font" points to an array of "count" device_font instances. */
 
 typedef struct devicefont_block_struct
 {
-    uint16_t        count;
-    device_font *   font;
+    uint16_t            count;
+    device_font *       font;
 } devicefont_block;
 
 /*  The comments refer to the "blocks" discussed in the Wiki. 
