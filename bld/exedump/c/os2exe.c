@@ -454,17 +454,21 @@ static void dmp_obj_table( void )
 bool Dmp_386_head( void )
 /***********************/
 {
+    unsigned_16             signature;
+
     Wlseek( New_exe_off );
-    Wread( &Os2_386_head, sizeof( Os2_386_head ) );
-    if( Os2_386_head.signature == OSF_FLAT_SIGNATURE ) {
+    Wread( &signature, sizeof( signature ) );
+    if( signature == OSF_FLAT_SIGNATURE ) {
         Form = FORM_LE;
         Banner( "Linear EXE Header (OS/2 V2.x) - LE" );
-    } else if ( Os2_386_head.signature == OSF_FLAT_LX_SIGNATURE ) {
+    } else if ( signature == OSF_FLAT_LX_SIGNATURE ) {
         Form = FORM_LX;
         Banner( "Linear EXE Header (OS/2 V2.x) - LX" );
     } else {
         return( 0 );
     }
+    Wlseek( New_exe_off );
+    Wread( &Os2_386_head, sizeof( Os2_386_head ) );
     Wdputs( "file offset = " );
     Puthex( New_exe_off, 8 );
     Wdputslc( "H\n" );
