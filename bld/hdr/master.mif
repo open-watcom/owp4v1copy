@@ -77,6 +77,7 @@ common = &
         _algsort.h &
         _comdef.h &
         _hash.h &
+        _ialias.h &
         _rbtree.h &
         _strdef.h &
 	alloca.h &

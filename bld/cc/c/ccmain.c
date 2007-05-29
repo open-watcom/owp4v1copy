@@ -1261,6 +1261,7 @@ static void ParseInit( void )
 local void Parse( void )
 {
     EmitInit();
+    OpenSrcFile( "_ialias.h", '<' );
     // The first token in a file should be #include if a user wants to
     // use pre-compiled headers. The following call to NextToken() to
     // get the very first token of the file will load the pre-compiled

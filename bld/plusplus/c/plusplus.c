@@ -308,6 +308,7 @@ static int doCCompile(          // COMPILE C++ PROGRAM
             ExitPointAcquire( cpp_preproc );
             if( CompFlags.cpp_output ) {
                 ExitPointAcquire( cpp_preproc_only );
+                OpenSrcFile( "_ialias.h", TRUE );
                 if( ForceInclude ) {
                     openForceIncludeFile();
                 }
@@ -322,6 +323,7 @@ static int doCCompile(          // COMPILE C++ PROGRAM
                     // in the primary source file
                     CompFlags.watch_for_pcheader = TRUE;
                 }
+                OpenSrcFile( "_ialias.h", TRUE );
                 if( ForceInclude ) {
                     openForceIncludeFile();
                     DbgVerify( ! CompFlags.watch_for_pcheader,
