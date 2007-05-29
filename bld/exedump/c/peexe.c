@@ -159,14 +159,15 @@ bool Dmp_pe_head( void )
 /**********************/
 {
     unsigned_16     i;
+    unsigned_16     signature;
 
     Exp_off = 0;
     Imp_off = 0;
     Res_off = 0;
     Fix_off = 0;
     Wlseek( New_exe_off );
-    Wread( &Pe_head, sizeof( pe_header ) );
-    switch( Pe_head.signature ) {
+    Wread( &signature, sizeof( signature ) );
+    switch( signature ) {
     case PE_SIGNATURE:
         Banner( "Windows NT EXE Header" );
         break;
@@ -176,6 +177,8 @@ bool Dmp_pe_head( void )
     default:
         return( 0 );
     }
+    Wlseek( New_exe_off );
+    Wread( &Pe_head, sizeof( pe_header ) );
     Wdputs( "file offset = " );
     Puthex( New_exe_off, 8 );
     Wdputslc( "H\n" );
