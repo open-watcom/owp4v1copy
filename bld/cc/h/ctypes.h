@@ -686,6 +686,7 @@ struct comp_flags {
     unsigned use_long_double        : 1;    /* Make CC send long double types to code gen */
 
     unsigned track_includes         : 1;    /* report opens of include files */
+    unsigned ignore_fnf             : 1;    /* ignore file not found errors */
 };
 
 struct global_comp_flags {  // things that live across compiles

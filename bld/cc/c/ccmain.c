@@ -729,9 +729,11 @@ cant_open_file:
         }
         CompFlags.cpp_output = 0;
     }
-    CErr2p( ERR_CANT_OPEN_FILE, filename );
+    if( !CompFlags.ignore_fnf ) {
+        CErr2p( ERR_CANT_OPEN_FILE, filename );
+    }
     CompFlags.cpp_output = save;
-    return( 0 );
+    return( CompFlags.ignore_fnf );
 }
 
 void CClose( FILE *fp )
@@ -1261,7 +1263,9 @@ static void ParseInit( void )
 local void Parse( void )
 {
     EmitInit();
+    CompFlags.ignore_fnf = TRUE;
     OpenSrcFile( "_ialias.h", '<' );
+    CompFlags.ignore_fnf = FALSE;
     // The first token in a file should be #include if a user wants to
     // use pre-compiled headers. The following call to NextToken() to
     // get the very first token of the file will load the pre-compiled

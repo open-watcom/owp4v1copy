@@ -177,9 +177,11 @@ int OpenSrcFile(                // OPEN A SOURCE FILE
             }
             CompFlags.cpp_output = 0;
         }
-        CErr2p( ERR_CANT_OPEN_FILE, filename );
+        if( !CompFlags.ignore_fnf ) {
+            CErr2p( ERR_CANT_OPEN_FILE, filename );
+        }
         CompFlags.cpp_output = save;
-        retn = FALSE;
+        retn = CompFlags.ignore_fnf;
     }
     return retn;
 }
@@ -308,7 +310,9 @@ static int doCCompile(          // COMPILE C++ PROGRAM
             ExitPointAcquire( cpp_preproc );
             if( CompFlags.cpp_output ) {
                 ExitPointAcquire( cpp_preproc_only );
+                CompFlags.ignore_fnf = TRUE;
                 OpenSrcFile( "_ialias.h", TRUE );
+                CompFlags.ignore_fnf = FALSE;
                 if( ForceInclude ) {
                     openForceIncludeFile();
                 }
@@ -323,7 +327,9 @@ static int doCCompile(          // COMPILE C++ PROGRAM
                     // in the primary source file
                     CompFlags.watch_for_pcheader = TRUE;
                 }
+                CompFlags.ignore_fnf = TRUE;
                 OpenSrcFile( "_ialias.h", TRUE );
+                CompFlags.ignore_fnf = FALSE;
                 if( ForceInclude ) {
                     openForceIncludeFile();
                     DbgVerify( ! CompFlags.watch_for_pcheader,
