@@ -38,6 +38,7 @@
 #include "cmdelf.h"
 #include "cmdphar.h"
 #include "cmddos.h"
+#include "cmd16m.h"
 #include "cmdline.h"
 
 
@@ -127,11 +128,15 @@ parse_entry     Directives[] = {
     "VEctor",   &ProcVector,            MK_OVERLAYS, CF_AFTER_INC,
     "FORCEVEctor",&ProcForceVector,     MK_OVERLAYS, CF_AFTER_INC,
 #endif
-#if defined( _PHARLAP ) || defined( _OS2 ) || defined( _ELF )
-    "RUntime",  &ProcRuntime,           (MK_PHAR_LAP | MK_PE | MK_ELF), 0,
+#if defined( _PHARLAP ) || defined( _DOS16M ) || defined( _OS2 ) || defined( _ELF )
+    "RUntime",  &ProcRuntime,           (MK_PHAR_LAP | MK_DOS16M | MK_PE | MK_ELF), 0,
 #endif
 #ifdef _NOVELL
     "MODUle",   &ProcModule,            MK_NOVELL | MK_ELF, 0,
+#endif
+#ifdef _DOS16M
+    "MEMory",   &ProcMemory,            MK_DOS16M, 0,
+    "TRansparent", &ProcTransparent,    MK_DOS16M, 0,
 #endif
 #if defined( _OS2 ) || defined( _EXE ) || defined ( _QNXLOAD )
     "NEWsegment",   &ProcNewSegment,    (MK_OS2_16BIT | MK_DOS | MK_QNX), 0,
@@ -184,8 +189,8 @@ parse_entry     MainOptions[] = {
     "NOIndirect",   &ProcNoIndirect,    MK_OVERLAYS, 0,
     "ARea",         &ProcArea,          MK_OVERLAYS, 0,
     "PADSections",  &ProcPadSections,   MK_OVERLAYS, 0,
-    "PACKCode",     &ProcPackcode,      (MK_OS2_16BIT | MK_DOS | MK_QNX), 0,
-    "PACKData",     &ProcPackdata,      (MK_OS2_16BIT | MK_DOS | MK_QNX), 0,
+    "PACKCode",     &ProcPackcode,      (MK_OS2_16BIT | MK_DOS | MK_QNX | MK_DOS16M), 0,
+    "PACKData",     &ProcPackdata,      (MK_OS2_16BIT | MK_DOS | MK_QNX | MK_DOS16M), 0,
     "Alignment",    &ProcAlignment,     MK_OS2_16BIT | MK_OS2_LX | MK_PE | MK_ELF, 0,
     "STUB",         &ProcStub,          MK_OS2 | MK_PE | MK_WIN_VXD | MK_PHAR_LAP, 0,
     "NOSTUB",       &ProcNoStub,        MK_OS2 | MK_PE | MK_WIN_VXD, 0,
@@ -227,7 +232,15 @@ parse_entry     MainOptions[] = {
     "VERSion",      &ProcVersion,       MK_NOVELL|MK_OS2_FLAT|MK_PE|MK_WINDOWS, 0,
     "IMPLib",       &ProcImplib,        MK_NOVELL|MK_OS2|MK_PE, 0,
     "IMPFile",      &ProcImpFile,       MK_NOVELL|MK_OS2|MK_PE, 0,
-    "NORelocs",     &ProcNoRelocs,      (MK_QNX | MK_PE | MK_ELF), 0,
+#ifdef _DOS16M
+    "BUFfer",       &ProcBuffer,        MK_DOS16M, 0,
+    "GDTsize",      &ProcGDTSize,       MK_DOS16M, 0,
+    "RELocs",       &ProcRelocs,        MK_DOS16M, 0,
+    "SELstart",     &ProcSelStart,      MK_DOS16M, 0,
+    "DATASize",     &ProcDataSize,      MK_DOS16M, 0,
+    "EXTended",     &ProcExtended,      MK_DOS16M, 0,
+#endif
+    "NORelocs",     &ProcNoRelocs,      (MK_QNX | MK_DOS16M  | MK_PE | MK_ELF), 0,
     "LOnglived",    &ProcLongLived,     MK_QNX, 0,
     "PRIVilege",    &ProcQNXPrivilege,  MK_QNX, 0,
     "LInearrelocs", &ProcLinearRelocs,  MK_QNX, 0,
@@ -255,11 +268,15 @@ parse_entry     SysDirectives[] = {
     "SOrt",     &ProcSort,              MK_ALL, 0,
     "ORDer",    &ProcOrder,             MK_ALL, 0,
     "OUTput",   &ProcOutput,            MK_ALL, 0,
-#if defined( _PHARLAP ) || defined( _OS2 ) || defined( _ELF )
-    "RUntime",  &ProcRuntime,           (MK_PHAR_LAP | MK_PE | MK_ELF), 0,
+#if defined( _PHARLAP ) || defined( _DOS16M ) || defined( _OS2 ) || defined( _ELF )
+    "RUntime",  &ProcRuntime,           (MK_PHAR_LAP | MK_DOS16M | MK_PE | MK_ELF), 0,
 #endif
 #if defined( _OS2 ) || defined( _QNXLOAD )
     "SEGment",  &ProcSegment,           (MK_QNX | MK_OS2 | MK_PE | MK_WIN_VXD ), 0,
+#endif
+#ifdef _DOS16M
+    "MEMory",   &ProcMemory16M,         MK_DOS16M, 0,
+    "TRansparent", &ProcTransparent,    MK_DOS16M, 0,
 #endif
     NULL
 };
@@ -279,6 +296,9 @@ parse_entry    Models[] = {
 #ifdef _QNXLOAD
     "QNX",          &ProcQNX,           MK_QNX, 0,
 #endif
+#ifdef _DOS16M
+    "DOS16M",       &Proc16M,           MK_DOS16M, 0,
+#endif
 #ifdef _ELF
     "ELF",          &ProcELF,           MK_ELF, 0,
 #endif
@@ -297,6 +317,16 @@ parse_entry      EndLinkOpt[] = {
 };
 
 parse_entry  RunOptions[] = {
+#ifdef _DOS16M
+        "KEYboard",     &ProcKeyboard,	MK_DOS16M, 0,
+        "OVERload",     &ProcOverload,	MK_DOS16M, 0,
+        "INIT00",       &ProcInit00,	MK_DOS16M, 0,
+        "INITFF",       &ProcInitFF,	MK_DOS16M, 0,
+        "ROTate",       &ProcRotate,	MK_DOS16M, 0,
+        "AUTO",         &ProcAuto,	    MK_DOS16M, 0,
+        "SELectors",    &ProcSelectors, MK_DOS16M, 0,
+        "INT10",        &ProcInt10,	    MK_DOS16M, 0,
+#endif
 #ifdef _PHARLAP
         "MINReal",      &ProcMinReal,   MK_PHAR_FLAT, 0,
         "MAXReal",      &ProcMaxReal,   MK_PHAR_FLAT, 0,
@@ -328,6 +358,30 @@ parse_entry  RunOptions[] = {
         "SOLaris",      &ProcELFRSolrs, MK_ELF, 0,
 #endif
         NULL };
+
+#ifdef _DOS16M
+/* parse tables used in cmd16m.c */
+
+extern bool	ProcTryExtended( void );
+extern bool	ProcTryLow( void );
+extern bool	ProcForceExtended( void );
+extern bool	ProcForceLow( void );
+
+extern parse_entry  Strategies[] = {
+        "TRYExtended",	&ProcTryExtended,	MK_DOS16M, 0,
+        "TRYLow",	    &ProcTryLow,		MK_DOS16M, 0,
+        "FORCEExtended",&ProcForceExtended,	MK_DOS16M, 0,
+        "FORCELow",	    &ProcForceLow,		MK_DOS16M, 0,
+        NULL };
+
+extern bool	ProcTStack( void );
+extern bool	ProcTData( void );
+
+extern parse_entry  TransTypes[] = {
+        "STack",	    &ProcTStack,	    MK_DOS16M, 0,
+        "DAta", 	    &ProcTData,	        MK_DOS16M, 0,
+        NULL };
+#endif
 
 #ifdef _QNXLOAD
 /* parse tables used in CMDQNX.C */

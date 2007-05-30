@@ -50,6 +50,8 @@
 #include "ring.h"
 #include "mapio.h"
 #include "virtmem.h"
+#include "load16m.h"
+
 
 static struct {
     char *name;
@@ -591,6 +593,10 @@ void CalcAddresses( void )
         }
         CalcGrpAddr( Groups );
         CalcGrpAddr( AbsGroups );
+#ifdef _DOS16M
+    } else if( FmtData.type & MK_DOS16M ) {
+        CalcGrpSegs();
+#endif
     } else if( FmtData.type & ( MK_PE | MK_OS2_FLAT | MK_QNX_FLAT | MK_ELF ) ) {
         if( FmtData.output_raw || FmtData.output_hex ) {
             flat = 0;
@@ -638,6 +644,10 @@ static void AllocFileSegs( void )
     for( currgrp = Groups; currgrp != NULL; currgrp = currgrp->next_group ){
         if( FmtData.type & MK_FLAT ) {
             currgrp->grp_addr.seg = 1;   // only segment 1 in flat mem.model
+#ifdef _DOS16M
+        } else if( FmtData.type & MK_DOS16M ) {
+            currgrp->grp_addr.seg = NextDos16Seg();
+#endif
         } else if( FmtData.type & MK_ID_SPLIT ) {
             if( currgrp->segflags & SEG_DATA ) {
                 currgrp->grp_addr.seg = DATA_SEGMENT;

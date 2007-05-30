@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Command Line Parser
+* Description:  Command line parser.
 *
 ****************************************************************************/
 
@@ -41,6 +41,7 @@
 #include "cmdall.h"
 #include "cmdos2.h"
 #include "cmdqnx.h"
+#include "cmd16m.h"
 #include "cmdnov.h"
 #include "cmdelf.h"
 #include "cmdphar.h"
@@ -68,6 +69,7 @@ static bool             ProcDosHelp( void );
 static bool             ProcOS2Help( void );
 static bool             ProcPharHelp( void );
 static bool             ProcNovellHelp( void );
+static bool             Proc16MHelp( void );
 static bool             ProcQNXHelp( void );
 static bool             ProcELFHelp( void );
 static bool             ProcWindowsHelp( void );
@@ -88,6 +90,9 @@ static  parse_entry   FormatHelp[] = {
 #endif
 #ifdef _NOVELL
     "NOVell",       ProcNovellHelp,         MK_ALL,     0,
+#endif
+#ifdef _DOS16M
+    "DOS16M",	    Proc16MHelp,	        MK_ALL,     0,
 #endif
 #ifdef _QNXLOAD
     "QNX",          ProcQNXHelp,            MK_ALL,     0,
@@ -424,6 +429,9 @@ static void DisplayOptions( void )
 #ifdef _NOVELL
     WriteHelp( MSG_NOVELL_HELP_0, MSG_NOVELL_HELP_31, isout );
 #endif
+#ifdef _DOS16M
+    WriteHelp( MSG_DOS16_HELP_0, MSG_DOS16_HELP_15, isout );
+#endif
 #if defined( _QNXLOAD ) && !defined( __QNX__ )
     WriteHelp( MSG_QNX_HELP_0, MSG_QNX_HELP_15, isout );
 #endif
@@ -492,6 +500,15 @@ static bool ProcNovellHelp( void )
     WriteGenHelp();
     WriteHelp( MSG_NOVELL_HELP_0, MSG_NOVELL_HELP_31,
                                                 CmdFlags & CF_TO_STDOUT );
+    return( TRUE );
+}
+#endif
+#ifdef _DOS16M
+static bool Proc16MHelp( void )
+/*****************************/
+{
+    WriteGenHelp();
+    WriteHelp( MSG_DOS16_HELP_0, MSG_DOS16_HELP_15, CmdFlags & CF_TO_STDOUT );
     return( TRUE );
 }
 #endif
@@ -652,6 +669,9 @@ struct select_format {
 
 static struct select_format PossibleFmt[] = {
     MK_DOS,         "LIBDOS",       NULL,           NULL,
+#ifdef _DOS16M
+    MK_DOS16M,	    "LIBDOS16M",    SetD16MFmt,     NULL,
+#endif
 #ifdef _QNXLOAD
     MK_QNX,         "LIBQNX",       SetQNXFmt,      FreeQNXFmt,
 #endif
@@ -928,7 +948,7 @@ bool ProcExport( void )
 }
 #endif
 
-#if defined( _QNXLOAD ) || defined( _OS2 ) || defined( _ELF )
+#if defined( _DOS16M ) || defined( _QNXLOAD ) || defined( _OS2 ) || defined( _ELF )
 bool ProcNoRelocs( void )
 /******************************/
 {
@@ -940,6 +960,11 @@ bool ProcNoRelocs( void )
 #if defined( _OS2 )
     if( HintFormat( MK_PE ) ) {
         return( ProcPENoRelocs() );
+    }
+#endif
+#ifdef _DOS16M
+    if( HintFormat( MK_DOS16M ) ) {
+        return( Proc16MNoRelocs() );
     }
 #endif
 #if defined( _ELF )

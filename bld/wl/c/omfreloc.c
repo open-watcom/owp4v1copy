@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  OMFRELOC:  routines specific processing relocations in OMF
+* Description:  Routines specific processing relocations in OMF.
 *
 ****************************************************************************/
+
 
 #include "linkstd.h"
 #include "msg.h"

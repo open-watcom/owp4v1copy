@@ -111,9 +111,21 @@ bool Dmp_dos_head( void )
         return( 0 );
     }
     dmp_dos_head_info();
+    /* OS/2 and Windows use a special method where the DOS EXE header is slghtly
+     * tweaked to point to the new style (NE, LE, LX, PE) header. DOS/16M simply
+     * pastes a DOS EXE and protected mode executable together without modifying
+     * the DOS exe in any way. If the file is larger than what the DOS EXE header
+     * suggests, we may have a DOS/16M executable.
+     */
     if( Dos_head.reloc_offset != OS2_EXE_HEADER_FOLLOWS ) {
-        Wdputslc( "No New Executable header.\n" );
-        return( 1 );
+        if( Load_len !=  WFileSize() ) {
+            Wdputslc( "Additional file data follows DOS executable.\n\n" );
+            New_exe_off = Load_len;
+            return( 3 );
+        } else {
+            Wdputslc( "No New Executable header.\n" );
+            return( 1 );
+        }
     }
     Wlseek( OS2_NE_OFFSET );
     Wread( &New_exe_off, sizeof( New_exe_off ) );

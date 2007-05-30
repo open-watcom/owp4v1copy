@@ -28,6 +28,7 @@ objs =                  &
 	pharexe.obj     &
 	qnxexe.obj      &
 	elfexe.obj      &
+	d16mexe.obj     &
 	wdwarf.obj      &
 	wsect.obj       &
 	wline.obj       &

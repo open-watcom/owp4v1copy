@@ -39,6 +39,7 @@
 #include "proc386.h"
 #include "exeqnx.h"
 #include "exeelf.h"
+#include "exe16m.h"
 #include "dwarf.h"
 #include "coff.h"
 #include "ar.h"

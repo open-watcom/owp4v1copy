@@ -78,6 +78,8 @@ pick(    MSG_FILE_TYPES_15, "ELF" ,
                 "ELF" )
 pick(    MSG_FILE_TYPES_16, "Windows VxD" ,
                 "Windows VxD" )
+pick(    MSG_FILE_TYPES_17, "DOS/16M" ,
+                "DOS/16M" )
 pick(    MSG_CREATE_TYPE_DLL,   "dynamic link library" ,
                 "ダイナミック・リンク・ライブラリ" )
 pick(    MSG_CREATE_TYPE_EXE,   "executable" ,
@@ -487,11 +489,11 @@ pick(    MSG_NOVELL_HELP_17,    " " ,
  */
 pick(    MSG_DOS16_HELP_0,  " " ,
                 " " )               
-pick(    MSG_DOS16_HELP_1,  "commands valid for the Dos/16M executable format only:" ,
+pick(    MSG_DOS16_HELP_1,  "commands valid for the DOS/16M executable format only:" ,
                 "DOS/16M実行可能形式に対してのみ有効なコマンド:" )
 pick(    MSG_DOS16_HELP_2,  " " ,
                 " " )
-pick(    MSG_DOS16_HELP_3,  "form      ::= \"DOS16m\"" ,
+pick(    MSG_DOS16_HELP_3,  "form      ::= \"DOS16M\"" ,
                 "form      ::= \"DOS16m\"" )
 pick(    MSG_DOS16_HELP_4,  "directive ::= \"MEMory\"      strategy" ,
                 "directive ::= \"MEMory\"      strategy" )              

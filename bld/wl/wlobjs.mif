@@ -26,6 +26,7 @@ common_objs = &
     autogrp.obj &
     carve.obj &
     wcomdef.obj &
+    cmd16m.obj &
     cmdall.obj &
     cmddos.obj &
     cmdelf.obj &
@@ -48,6 +49,7 @@ common_objs = &
     libr.obj &
     libsupp.obj &
     linkutil.obj &
+    load16m.obj &
     loaddos.obj &
     loadelf.obj &
     loadelf2.obj &

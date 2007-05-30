@@ -311,6 +311,7 @@ typedef struct group_entry {
     union {
         unsigned        qnxflags;       // QNX
         unsigned        miscflags;      // OS/2
+        segment         dos_segment;    // DOS/16M: DOS segment value
     } u;
     unsigned            num;
     unsigned            isfree : 1;

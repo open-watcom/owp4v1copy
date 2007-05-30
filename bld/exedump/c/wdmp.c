@@ -72,6 +72,12 @@ static void dmp_exe( void )
             } else {
                 Wdputslc( "Invalid OS/2, PE header\n" );
             }
+        } else if( dos_dmp == 3 ) {
+            if( Dmp_d16m_head() ) {
+                /* done */
+            } else {
+                Wdputslc( "No protected mode executable found\n" );
+            }
         } else if( !dos_dmp ) {
             if( Dmp_os2_head() ) {
                 /* done */
@@ -96,6 +102,8 @@ static void dmp_exe( void )
             } else if( Dmp_lib_head() ) {
                 /* done */
             } else if( Dmp_coff_head() ) {
+                /* done */
+            } else if( Dmp_d16m_head() ) {
                 /* done */
             } else {
                 Wdputs( Name );

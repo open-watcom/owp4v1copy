@@ -55,6 +55,7 @@
 #include "loaddos.h"
 #include "pharlap.h"
 #include "loadnov.h"
+#include "load16m.h"
 #include "loadqnx.h"
 #include "loadelf.h"
 #include "loadraw.h"
@@ -147,6 +148,10 @@ void FiniLoadFile( void )
 #ifdef _NOVELL
     } else if( FmtData.type & MK_NOVELL ) {
         FiniNovellLoadFile();
+#endif
+#ifdef _DOS16M
+    } else if( FmtData.type & MK_DOS16M ) {
+        Fini16MLoadFile();
 #endif
 #ifdef _QNXLOAD
     } else if( FmtData.type & MK_QNX ) {

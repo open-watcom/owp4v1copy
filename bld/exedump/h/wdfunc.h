@@ -161,6 +161,11 @@ extern int_16  get_s16( int_16 *src );
 extern bool Dmp_dos_head( void );
 
 /*
+ * d16mexe.c
+ */
+extern bool Dmp_d16m_head( void );
+
+/*
  * wdio.c
  */
 extern void Wread( void *, unsigned_32 );

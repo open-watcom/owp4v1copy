@@ -24,18 +24,33 @@
 *
 *  ========================================================================
 *
-* Description:  Macros for converting segment and offset data 
-*               into linear address and subtracting and comparing
+* Description:  DOS/16M command line parsing function prototypes.
 *
 ****************************************************************************/
 
 
-extern segment Find16MSeg( segment );
-
-#define SUB_ADDR( l, r ) ((((long)(l).seg-(long)(r).seg) << FmtData.SegShift) + ((l).off-(r).off))
-
-#define SUB_16M_ADDR( l, r ) (((long)Find16MSeg((l).seg)-(long)Find16MSeg((r).seg))*16+((l).off-(r).off))
-
-#define LESS_THAN_ADDR( l, r ) ((long)SUB_ADDR( l, r ) < 0L)
-
-#define MK_REAL_ADDR( seg, off )  ( ((unsigned long)(seg) << FmtData.SegShift) + (off) )
+extern bool     ProcMemory16M( void );
+extern bool     ProcTryExtended( void );
+extern bool     ProcTryLow( void );
+extern bool     ProcForceExtended( void );
+extern bool     ProcForceLow( void );
+extern bool     ProcTransparent( void );
+extern bool     ProcTStack( void );
+extern bool     ProcTData( void );
+extern bool     ProcKeyboard( void );
+extern bool     ProcOverload( void );
+extern bool     ProcInt10( void );
+extern bool     ProcInit00( void );
+extern bool     ProcInitFF( void );
+extern bool     ProcRotate( void );
+extern bool     ProcSelectors( void );
+extern bool     ProcAuto( void );
+extern bool     ProcBuffer( void );
+extern bool     ProcGDTSize( void );
+extern bool     ProcRelocs( void );
+extern bool     Proc16MNoRelocs( void );
+extern bool     ProcSelStart( void );
+extern bool     ProcExtended( void );
+extern bool     ProcDataSize( void );
+extern void     SetD16MFmt( void );
+extern bool     Proc16M( void );

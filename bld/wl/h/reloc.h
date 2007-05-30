@@ -225,6 +225,7 @@ extern bool             DumpRelocList( RELOC_INFO * );
 extern void             SetRelocSize( void );
 extern bool             SwapOutRelocs( void );
 extern void             ResetReloc( void );
+extern unsigned_32      WalkRelocList( RELOC_INFO **head, bool (*fn)( void *data, unsigned_32 size, void *ctx ), void *ctx );
 
 extern unsigned         FmtRelocSize;
 extern RELOC_INFO *     FloatFixups;

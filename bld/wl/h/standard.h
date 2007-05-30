@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Standard linker configuration.
 *
 ****************************************************************************/
 
@@ -108,7 +107,7 @@ typedef unsigned        f_handle;
     #define _OS2       2
     #define _PHARLAP   3
     #define _NOVELL    4
-//    #define _DOS16M    5
+    #define _DOS16M    5
 //    #define _ELF       6
 #else
     #define _EXE       0
@@ -116,6 +115,6 @@ typedef unsigned        f_handle;
     #define _OS2       2
     #define _PHARLAP   3
     #define _NOVELL    4
-//    #define _DOS16M    5
+    #define _DOS16M    5
     #define _ELF       6
 #endif

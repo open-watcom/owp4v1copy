@@ -391,6 +391,36 @@ bool DumpRelocList( reloc_info * list )
     return( FALSE );            /* so traverse works */
 }
 
+unsigned_32 WalkRelocList( reloc_info **head, bool (*fn)( void *data, unsigned_32 size, void *ctx ), void *ctx )
+/**************************************************************************************************************/
+/* walk the given reloc information list and call user fn for each reloc */
+{
+    unsigned_32         size;
+    unsigned_32         total;
+    reloc_info          *list;
+    bool                quit = FALSE;
+
+    total = 0;
+    list = *head;
+    for( ;; ) {
+        if( (list == NULL) || quit )
+            break;
+        size = RELOC_PAGE_SIZE - ( list->sizeleft & SIZELEFT_MASK );
+        if( size != 0 ) {
+            if( list->sizeleft & RELOC_SPILLED ) {
+                SpillRead( list->loc.spill, 0, TokBuff, size );
+                quit = fn( TokBuff, size, ctx );
+            } else {
+                quit = fn( list->loc.addr, size, ctx );
+            }
+        }
+        list = list->next;
+        total += size;
+    }
+    *head = list;
+    return( total );
+}
+
 void SetRelocSize( void )
 /******************************/
 {

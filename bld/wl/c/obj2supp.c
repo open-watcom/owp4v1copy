@@ -932,8 +932,12 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
         if( fix->type & FIX_ABS ) {
             off -= FindGroup( fix->loc_addr.seg )->linear;
         }
-    } else {
+    } else if( !(FmtData.type & MK_DOS16M) ) {
         off = SUB_ADDR( fix->tgt_addr, fix->loc_addr );
+#ifdef _DOS16M
+    } else {
+        off = SUB_16M_ADDR( fix->tgt_addr, fix->loc_addr );
+#endif
     }
     fixsize = CalcFixupSize( fix->type );
     if ( !( fix->type & FIX_NOADJ ) ) {
@@ -1056,7 +1060,7 @@ static void PatchData( fix_data *fix )
         if( FmtData.type & MK_PROT_MODE ) {
             PUT_U16( data, 0 );
         }
-        if( FmtData.type & MK_PHAR_MULTISEG ) {
+        if( FmtData.type & ( MK_DOS16M | MK_PHAR_MULTISEG ) ) {
             PUT_U16( data, fix->tgt_addr.seg );
         } else if( fix->done || ( FmtData.type & ( MK_QNX | MK_DOS ) ) ) {
             if( isdbi && ( LinkFlags & CV_DBI_FLAG ) ) {    // FIXME

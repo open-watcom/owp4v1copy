@@ -24,18 +24,23 @@
 *
 *  ========================================================================
 *
-* Description:  Macros for converting segment and offset data 
-*               into linear address and subtracting and comparing
+* Description:  DOS/16M specific constants and routines.
 *
 ****************************************************************************/
 
 
-extern segment Find16MSeg( segment );
+// these are the values used in the struct fmt_d16m_data flags field.
 
-#define SUB_ADDR( l, r ) ((((long)(l).seg-(long)(r).seg) << FmtData.SegShift) + ((l).off-(r).off))
+enum {
+    TRANS_DATA          = 0x0001,   // set if transparent data chosen
+    TRANS_STACK         = 0x0002,   // set if transparent stack chosen
+    FORCE_NO_RELOCS     = 0x0004,   // set if no relocs option chosen.
+    DATASIZE_SPECD      = 0x0008,   // datasize option was chosed.
+};
 
-#define SUB_16M_ADDR( l, r ) (((long)Find16MSeg((l).seg)-(long)Find16MSeg((r).seg))*16+((l).off-(r).off))
+#define TRANS_SPECD (TRANS_DATA | TRANS_STACK)
 
-#define LESS_THAN_ADDR( l, r ) ((long)SUB_ADDR( l, r ) < 0L)
-
-#define MK_REAL_ADDR( seg, off )  ( ((unsigned long)(seg) << FmtData.SegShift) + (off) )
+extern void     Fini16MLoadFile( void );
+extern unsigned NextDos16Seg( void );
+extern segment  Find16MSeg( segment selector );
+extern void     CalcGrpSegs( void );
