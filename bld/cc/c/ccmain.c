@@ -265,6 +265,65 @@ void DumpDepFile( void )
     }
 }
 
+static IALIASPTR AddIAlias( const char *alias_name, const char *real_name, int delimiter )
+{
+    size_t      alias_size, alias_len;
+    IALIASPTR   alias, old_alias;
+    IALIASPTR   *lnk;
+
+    lnk = &IAliasNames;
+    while( (old_alias = *lnk) != NULL ) {
+        if( (old_alias->delimiter == delimiter) && !strcmp( alias_name, old_alias->alias_name ) ) {
+            break;
+        }
+        lnk = &old_alias->next;
+    }
+
+    alias_len  = strlen( alias_name );
+    alias_size = sizeof( struct ialias_list ) + alias_len + strlen( real_name ) + 1;
+    alias = CMemAlloc( alias_size );
+    alias->next = NULL;
+    alias->delimiter = delimiter;
+    strcpy( alias->alias_name, alias_name );
+    alias->real_name = alias->alias_name + alias_len + 1;
+    strcpy( alias->real_name, real_name );
+
+    if( old_alias ) {
+        /* Replace old alias if it exists */
+        alias->next = old_alias->next;
+        CMemFree( old_alias );
+    }
+    *lnk = alias;
+
+    return( alias );
+}
+
+static void FreeIAlias( void )
+{
+    IALIASPTR   aliaslist;
+
+    while( (aliaslist = IAliasNames) ) {
+        IAliasNames = aliaslist->next;
+        CMemFree( aliaslist );
+    }
+}
+
+static const char *IncludeAlias( const char *filename, int delimiter )
+{
+    IALIASPTR       alias;
+    const char      *real_name = filename;
+
+    alias = IAliasNames;
+    while( alias ) {
+        if( !strcmp( filename, alias->alias_name ) && (alias->delimiter == delimiter) ) {
+            real_name = alias->real_name;
+            break;
+        }
+        alias = alias->next;
+    }
+    return( real_name );
+}
+
 static void DoCCompile( char **cmdline )
 /**************************************/
 {
@@ -1047,65 +1106,6 @@ void FreeRDir( void )
         RDirNames = dirlist->next;
         CMemFree( dirlist );
     }
-}
-
-static IALIASPTR AddIAlias( const char *alias_name, const char *real_name, int delimiter )
-{
-    size_t      alias_size, alias_len;
-    IALIASPTR   alias, old_alias;
-    IALIASPTR   *lnk;
-
-    lnk = &IAliasNames;
-    while( (old_alias = *lnk) != NULL ) {
-        if( (old_alias->delimiter == delimiter) && !strcmp( alias_name, old_alias->alias_name ) ) {
-            break;
-        }
-        lnk = &old_alias->next;
-    }
-
-    alias_len  = strlen( alias_name );
-    alias_size = sizeof( struct ialias_list ) + alias_len + strlen( real_name ) + 1;
-    alias = CMemAlloc( alias_size );
-    alias->next = NULL;
-    alias->delimiter = delimiter;
-    strcpy( alias->alias_name, alias_name );
-    alias->real_name = alias->alias_name + alias_len + 1;
-    strcpy( alias->real_name, real_name );
-
-    if( old_alias ) {
-        /* Replace old alias if it exists */
-        alias->next = old_alias->next;
-        CMemFree( old_alias );
-    }
-    *lnk = alias;
-
-    return( alias );
-}
-
-static void FreeIAlias( void )
-{
-    IALIASPTR   aliaslist;
-
-    while( (aliaslist = IAliasNames) ) {
-        IAliasNames = aliaslist->next;
-        CMemFree( aliaslist );
-    }
-}
-
-static const char *IncludeAlias( const char *filename, int delimiter )
-{
-    IALIASPTR       alias;
-    const char      *real_name = filename;
-
-    alias = IAliasNames;
-    while( alias ) {
-        if( !strcmp( filename, alias->alias_name ) && (alias->delimiter == delimiter) ) {
-            real_name = alias->real_name;
-            break;
-        }
-        alias = alias->next;
-    }
-    return( real_name );
 }
 
 static char *IncPathElement(     // GET ONE PATH ELEMENT FROM INCLUDE LIST
