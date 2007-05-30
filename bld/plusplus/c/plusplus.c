@@ -311,7 +311,9 @@ static int doCCompile(          // COMPILE C++ PROGRAM
             if( CompFlags.cpp_output ) {
                 ExitPointAcquire( cpp_preproc_only );
                 CompFlags.ignore_fnf = TRUE;
-                OpenSrcFile( "_ialias.h", TRUE );
+                if( !CompFlags.disable_ialias ) {
+                    OpenSrcFile( "_ialias.h", TRUE );
+                }
                 CompFlags.ignore_fnf = FALSE;
                 if( ForceInclude ) {
                     openForceIncludeFile();
@@ -328,7 +330,9 @@ static int doCCompile(          // COMPILE C++ PROGRAM
                     CompFlags.watch_for_pcheader = TRUE;
                 }
                 CompFlags.ignore_fnf = TRUE;
-                OpenSrcFile( "_ialias.h", TRUE );
+                if( !CompFlags.disable_ialias ) {
+                    OpenSrcFile( "_ialias.h", TRUE );
+                }
                 CompFlags.ignore_fnf = FALSE;
                 if( ForceInclude ) {
                     openForceIncludeFile();

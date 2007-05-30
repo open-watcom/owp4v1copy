@@ -687,6 +687,7 @@ struct comp_flags {
 
     unsigned track_includes         : 1;    /* report opens of include files */
     unsigned ignore_fnf             : 1;    /* ignore file not found errors */
+    unsigned disable_ialias         : 1;    /* supress inclusion of _ialias.h */
 };
 
 struct global_comp_flags {  // things that live across compiles

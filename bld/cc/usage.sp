@@ -144,6 +144,7 @@ Options:
 -mm           medium memory model (large code/small data)
 -ms           small memory model (small code/small data)
 :endsegment
+-na           disable automatic inclusion of _ialias.h
 :segment T386 | Ti86
 -nc=<id>      set code class name
 -nd=<id>      set data segment name

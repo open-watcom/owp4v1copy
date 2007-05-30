@@ -1264,7 +1264,9 @@ local void Parse( void )
 {
     EmitInit();
     CompFlags.ignore_fnf = TRUE;
-    OpenSrcFile( "_ialias.h", '<' );
+    if( !CompFlags.disable_ialias ) {
+        OpenSrcFile( "_ialias.h", '<' );
+    }
     CompFlags.ignore_fnf = FALSE;
     // The first token in a file should be #include if a user wants to
     // use pre-compiled headers. The following call to NextToken() to

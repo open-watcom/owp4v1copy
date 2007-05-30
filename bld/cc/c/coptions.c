@@ -1415,6 +1415,7 @@ static void SetAutoDependBackSlash( void )
 
 static void Set_PIL( void )         { CompFlags.cpp_ignore_line = 1; }
 static void Set_PL( void )          { CompFlags.cpp_line_wanted = 1; }
+static void Set_NA( void )          { CompFlags.disable_ialias = 1; }
 static void Set_PC( void )
 {
     CompFlags.keep_comments = 1;
@@ -1635,6 +1636,7 @@ static struct option const CFE_Options[] = {
 #if _CPU == 386
     { "mf",     SW_MF,          SetMemoryModel },
 #endif
+    { "na",     0,              Set_NA },
 #if _CPU == 8086 || _CPU == 386
     { "nc=$",   0,              SetCodeClass },
     { "nd=$",   0,              SetDataSegName },

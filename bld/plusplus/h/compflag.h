@@ -283,6 +283,7 @@ typedef struct comp_flags {
 
     unsigned generate_auto_depend   : 1;
     unsigned ignore_fnf             : 1;
+    unsigned disable_ialias         : 1;
 } COMP_FLAGS;
 
 #ifdef OPT_BR

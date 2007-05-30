@@ -1359,6 +1359,9 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
         CompFlags.virtual_stripping = TRUE;
     #endif
     }
+    if( data->na ) {
+        CompFlags.disable_ialias = 1;
+    }
 #ifndef NDEBUG
     if( data->tp ) {
         for(;;) {

@@ -7,8 +7,6 @@
 #ifndef __IALIAS_H_INCLUDED
 #define __IALIAS_H_INCLUDED
 
-#ifndef _DISABLE_AUTO_IALIAS
-
 #pragma include_alias( <algorithm>,     <algorith>   )
 #pragma include_alias( <exception>,     <exceptio>   )
 #pragma include_alias( <exception.h>,   <exceptio.h> )
@@ -21,7 +19,5 @@
 #pragma include_alias( <strstream.h>,   <strstrea.h> )
 #pragma include_alias( <type_traits>,   <type_tra>   )
 #pragma include_alias( <unordered_set>, <unordere>   )
-
-#endif /* _DISABLE_AUTO_IALIAS */
 
 #endif /* __IALIAS_H_INCLUDED */
