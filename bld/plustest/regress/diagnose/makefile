@@ -24,10 +24,10 @@ dosystest = testsys
 
 .c: $(diagnose_dir)
 .c.err:
-    -$(wpp_$(arch)) $[@ @diag $(opt_$^&)
+    -$(wpp_$(arch)) $[@ @diag -na $(opt_$^&)
     @if not exist $^&.err echo I did not generate errors for $^& > $^&.err
 .c.ser:
-    -$(wpp_$(arch)) $[@ @diag $(opt_$^&) $(archdep_opts)
+    -$(wpp_$(arch)) $[@ @diag -na $(opt_$^&) $(archdep_opts)
     @if not exist $^&.ser echo I did not generate errors for $^& > $^&.ser
 
 test : .symbolic initopts test0000 test0100 test0200 test0300 $(dosystest) test_special

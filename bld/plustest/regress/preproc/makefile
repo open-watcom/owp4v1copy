@@ -12,21 +12,21 @@ comp = $(cc)
 
 .c.pl:
     %append exec.out @@@ $^@ @@@
-    $(comp) $[@ -zq-w0 -pl -fo=.pl
+    $(comp) $[@ -zq-w0 -pl -fo=.pl -na
     ren exec.out tmp_exec.out
     copy /b tmp_exec.out+$^@ exec.out >nul
     del tmp_exec.out >nul
 
 .c.plc:
     %append exec.out @@@ $^@ @@@
-    $(comp) $[@ -zq-w0 -plc -fo=.plc
+    $(comp) $[@ -zq-w0 -plc -fo=.plc -na
     ren exec.out tmp_exec.out
     copy /b tmp_exec.out+$^@ exec.out >nul
     del tmp_exec.out >nul
 
 .c.pl0:
     %append exec.out @@@ $^@ @@@
-    $(comp) $[@ -zq-w0 -pl -pw=0 -fo=.pl0
+    $(comp) $[@ -zq-w0 -pl -pw=0 -fo=.pl0 -na
     ren exec.out tmp_exec.out
     copy /b tmp_exec.out+$^@ exec.out >nul
     del tmp_exec.out >nul
