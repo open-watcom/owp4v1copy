@@ -421,9 +421,9 @@ unsigned GetNumber( unsigned min, unsigned max, char **atstr, unsigned base )
 
 char *Parse( char *line, char arg[], char **eoc )
 {
-    char *cmd,*ptr;
-    int c;
-    char buff[2];
+    char        *cmd, *ptr;
+    int         c, len;
+    char        buff[2];
 
     InitTimerRate();
     SysDefaultOptions();
@@ -493,19 +493,20 @@ char *Parse( char *line, char arg[], char **eoc )
         if( *ptr == '\0' ) break;
         ++ptr;
     }
-    /* collect program arguments */
+    /* collect program arguments - arg will contain DOS-style command tail,
+     * possibly truncated (max 126 usable chars).
+     */
     *eoc = ptr;
-    arg[0] = 0;
+    arg[0] = len = 0;
     if( *ptr != '\0' ) {
         arg[0] = 1;
         arg[1] = *ptr++;
     }
-    while( *ptr != '\0' ) arg[++arg[0]] = *ptr++;
-#ifdef __DOS__
-    arg[arg[0] + 1] = '\r';
-#else
-    arg[++arg[0]] = '\0';
-#endif
+    while( (*ptr != '\0') && (len < 126) ) {
+        arg[++len] = *ptr++;
+    }
+    arg[len + 1] = '\r';
+    arg[0] = len;
     return( cmd );
 }
 
@@ -565,8 +566,8 @@ int sample_main( char far *win_cmd )
 
     /* Command line may be several KB large on most OSes */
     cmdlen = _bgetcmd( NULL, 0 );
-    cmd_line = malloc( cmdlen+1 );
-    arg = malloc( cmdlen+1 );
+    cmd_line = malloc( cmdlen + 1 );
+    arg = malloc( cmdlen + 1 );
     if( ( cmd_line == NULL ) || ( arg == NULL ) ) {
         Output( MsgArray[MSG_SAMPLE_BUFF-ERR_FIRST_MESSAGE] );
         Output( "\r\n" );
@@ -589,7 +590,7 @@ int sample_main( char far *win_cmd )
     while( *cmd ) ++cmd;
     while( *--cmd == ' ' || *cmd == '\t' ) ;
     *++cmd = '\0';
-    cmd = Parse( cmd_line, arg+1, (char **)&eoc );    /*
+    cmd = Parse( cmd_line, arg, &eoc );    /*
           will set Ceiling, Margin, TimerMult, cmd, and arg
                                  */
     GetProg( cmd, eoc );
@@ -641,7 +642,7 @@ int sample_main( char far *win_cmd )
      * a DOS-style 128-byte array with length in the first byte and CR
      * at the end. We pass both and let the callee pick & choose.
      */
-    StartProg( cmd, ExeName, cmd_line, (char *)arg+1 );
+    StartProg( cmd, ExeName, eoc, arg );
     MsgFini();
     free( cmd_line );
     free( arg );
