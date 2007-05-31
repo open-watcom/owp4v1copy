@@ -110,6 +110,8 @@ RG( RL_WORD,   RL_WORD,   RL_,       RL_,    RL_,      RG_WORD_OP ),
 RG( RL_BYTE,   RL_,       RL_ABCD,   RL_,    RL_,      RG_BYTE_4BYTE ),
 RG( RL_BYTE,   RL_,       RL_TWOBYTE,RL_,    RL_,      RG_BYTE_2BYTE ),
 
-#define MAX_RG  50
-/*  the number of elements in the largest RG_ */
-/*  table entry in GENREG */
+/*
+ * MAX_RG must be not less then number of elements in the largest
+ * register table in "386rgtbl.c", referenced from "rl.h".
+ */
+#define MAX_RG  55

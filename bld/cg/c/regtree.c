@@ -34,6 +34,7 @@
 #include "conflict.h"
 #include "regset.h"
 #include "freelist.h"
+#include "zoiks.h"
 
 extern  reg_set_index   RegIntersect(reg_set_index,reg_set_index);
 extern  hw_reg_set      HighOffsetReg(hw_reg_set);
@@ -182,6 +183,11 @@ static  void    BuildPossible( reg_tree *tree )
                 ++src;
                 ++dst;
             }
+#ifndef NDEBUG
+            if ( dst - tree->regs >= SET_SIZE ) { /* '>=' 'coz no increment before 'break' */
+                Zoiks( ZOIKS_143 );
+            }
+#endif
         }
     }
 }

@@ -56,6 +56,11 @@ extern  int             Max87Stk;
 /*       High                    Low*/
 /*       CS,SS,ES,DS,CX,DX       AX,BX,SI,DI*/
 
+/*
+ * Note: MAX_RG in "rg.h" must be not less then number of elements
+ *       in longest of these tables!
+ */
+
 static  hw_reg_set      Reg32Order[] = {
                 HW_D_1( HW_AX ),
                 HW_D_1( HW_BX ),

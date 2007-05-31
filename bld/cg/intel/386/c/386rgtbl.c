@@ -47,6 +47,11 @@ extern  proc_def        *CurrProc;
 #define RL_WD   RL_WORD
 #define RL_SG   RL_SEG
 
+/*
+ * Note: MAX_RG in "rg.h" must be not less then number of elements
+ *       in longest of these tables!
+ */
+
 static  hw_reg_set      Reg64Order[] = {
                 HW_D_1( HW_EAX ),
                 HW_D_1( HW_EBX ),

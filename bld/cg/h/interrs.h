@@ -173,5 +173,6 @@ typedef enum {
     ZOIKS_140,  /*  too many blocks to calculate dominators */
     ZOIKS_141,  /*  regalloc - missed last instruction in conflict block */
     ZOIKS_142,  /*  attempt to use OP_BLOCK as usual instruction */
+    ZOIKS_143,  /*  register set table too long, increase MAX_RG */
     ZOIKS_LAST
 } internal_errors;

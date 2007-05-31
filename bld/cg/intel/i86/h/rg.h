@@ -86,4 +86,8 @@ RG( RL_DOUBLE, RL_CX,     RL_DOUBLE, RL_CX,      RL_CX,    RG_DBL_SHIFT_NEED ),
 RG( RL_STI,    RL_STI,    RL_STI,    RL_,        RL_WORD,  RG_8087_NEED ),
 RG( RL_BYTE,   RL_,       RL_TWOBYTE,RL_,        RL_,      RG_BYTE_2BYTE ),
 
-#define MAX_RG  30
+/*
+ * MAX_RG must be not less then number of elements in the largest
+ * register table in "i86rgtbl.c", referenced from "rl.h".
+ */
+#define MAX_RG  50
