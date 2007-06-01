@@ -37,6 +37,8 @@ headers =            &
         guiddef.h    &
         httpext.h    &
         idispids.h   &
+        ifdef.h      &
+        ifmib.h      &
         imagehlp.h   &
         imm.h        &
         in6addr.h    &
@@ -44,6 +46,11 @@ headers =            &
         initguid.h   &
         intshcut.h   &
         ipexport.h   &
+        iphlpapi.h   &
+        ipifcons.h   &
+        ipmib.h      &
+        iprtrmib.h   &
+        iptypes.h    &
         isguids.h    &
         lm.h         &
         lmaccess.h   &
@@ -74,6 +81,7 @@ headers =            &
         naptypes.h   &
         nb30.h       &
         ncrypt.h     &
+        nldef.h      &
         oaidl.h      &
         objbase.h    &
         objidl.h     &
@@ -105,7 +113,10 @@ headers =            &
         servprov.h   &
         shellapi.h   &
         stralign.h   &
+        tcpestat.h   &
+        tcpmib.h     &
         tvout.h      &
+        udpmib.h     &
         unknwn.h     &
         urlmon.h     &
         winbase.h    &
