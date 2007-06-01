@@ -136,10 +136,12 @@ int GetKeyboard( int *scan )
     if( scan != NULL ) {
         *scan = (key>>8);
     }
+#ifndef __NT__  /* NT already returns cooked key codes, not scan/key combos */
     key &= 0xff;
     if( key == 0xe0 ) {
         return( 0 );
     }
+#endif
     return( key );
 
 } /* GetKeyboard */
