@@ -52,6 +52,7 @@ headers =            &
         iprtrmib.h   &
         iptypes.h    &
         isguids.h    &
+        largeint.h   &
         lm.h         &
         lmaccess.h   &
         lmalert.h    &
@@ -147,6 +148,7 @@ headers =            &
         wtypes.h
 
 libs =               &
+        largeint.lib &
         uuid.lib
 
 additional_cleanup = *.h *.rh
@@ -163,6 +165,11 @@ all : $(headers) $(libs) .SYMBOLIC
 
 .mh.rh:
     $(rsplice)
+
+largeint.lib: largeint.obj
+    %create $^&.lbc
+    @%append $^&.lbc +largeint.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
 
 uuid.lib: uuid.obj
     %create $^&.lbc
