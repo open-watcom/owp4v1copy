@@ -76,6 +76,10 @@ NetReplImportDirGetInfo
 NetReplImportDirLock
 NetReplImportDirUnlock
 NetReplSetInfo
+NetScheduleJobAdd
+NetScheduleJobDel
+NetScheduleJobEnum
+NetScheduleJobGetInfo
 NetServerAliasAdd
 NetServerAliasDel
 NetServerAliasEnum
