@@ -586,6 +586,10 @@ The base types are:
 :DD.unsigned long
 :DT.T_INT_4
 :DD.signed long
+:DT.T_UINT_8
+:DD.unsigned long long
+:DT.T_INT_8
+:DD.signed long long
 :DT.T_LONG_POINTER
 :DD.far *
 :DT.T_HUGE_POINTER
@@ -600,6 +604,8 @@ The base types are:
 :DD.float
 :DT.T_DOUBLE
 :DD.double
+:DT.T_LONG_DOUBLE
+:DD.long double
 :DT.T_INTEGER
 :DD.int
 :DT.T_UNSIGNED
@@ -948,6 +954,18 @@ The resulting node will have type T_INT_4.
 :DDHD.Definition
 :DT.val
 :DD.The integral value.
+:DT.type
+:DD.An integral type.
+:eDL.
+.section cg_name CGInt64( signed_64 val, cg_type type )
+:I1.CGInt64
+:I1.integers
+:P.Create an 64-bit integer constant leaf node.
+:DL.
+:DTHD.Parameter
+:DDHD.Definition
+:DT.val
+:DD.The 64-bit integer value.
 :DT.type
 :DD.An integral type.
 :eDL.
@@ -1683,6 +1701,17 @@ will be defined if it has not already been passed to DGLabel.
 :DDHD.Definition
 :DT.value
 :DD.An integral value.
+:DT.type
+:DD.The integral type to be used.
+:eDL.
+.section void DGInteger64( unsigned_64 value, cg_type type )
+:I1.DGInteger64
+:P.Generate an 64-bit integer.
+:DL.
+:DTHD.Parameter
+:DDHD.Definition
+:DT.value
+:DD.An 64-bit integer value.
 :DT.type
 :DD.The integral type to be used.
 :eDL.
@@ -2548,6 +2577,9 @@ evaluated.
 .section extern void DBAddConst( dbg_enum en, char *nm, signed_32 val )
 :I1.DBAddConst
 :P.add a symbolic constant to an enumerated type
+.section extern void DBAddConst64( dbg_enum en, char *nm, signed_64 val )
+:I1.DBAddConst64
+:P.add a symbolic 64-bit integer constant to an enumerated type
 .section extern dbg_type DBEndEnum( dbg_enum en )
 :I1.DBEndEnum
 :P.finish declaring an enumerated type
