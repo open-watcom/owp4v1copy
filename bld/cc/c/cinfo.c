@@ -620,10 +620,10 @@ void    SetSegs( void )
             BEDefSeg( seg, INIT | PRIVATE | GLOBAL, useg->name, SegAlign( TARGET_INT ) );
             break;
         case SEGTYPE_INITFINI:
-            BEDefSeg( useg->segment, INIT | GLOBAL, useg->name, SegAlign( 1 ) );
+            BEDefSeg( seg, INIT | GLOBAL, useg->name, SegAlign( 1 ) );
             break;
         case SEGTYPE_INITFINITR:
-            BEDefSeg( useg->segment, INIT | GLOBAL| THREAD_LOCAL, useg->name, SegAlign( 1 ) );
+            BEDefSeg( seg, INIT | GLOBAL| THREAD_LOCAL, useg->name, SegAlign( 1 ) );
             break;
         }
     }

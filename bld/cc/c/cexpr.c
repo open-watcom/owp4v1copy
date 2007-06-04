@@ -173,7 +173,7 @@ extern op_flags OpFlags( type_modifiers flags )
 {
     op_flags      ops;
 
-    ops = 0;
+    ops = OPFLAG_NONE;
     if( flags & FLAG_CONST )    ops |= OPFLAG_CONST;
     if( flags & FLAG_VOLATILE ) ops |= OPFLAG_VOLATILE;
     if( flags & FLAG_UNALIGNED )ops |= OPFLAG_UNALIGNED;
@@ -1724,7 +1724,7 @@ local int LValueArray( TREEPTR tree )
 local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
 {
     TYPEPTR         typ;
-    type_modifiers  tree_flags;
+    op_flags        tree_flags;
 
 //  if( ! LValueArray( tree ) ) {
 //      CErr1( ERR_CANT_TAKE_ADDR_OF_RVALUE );
@@ -1752,7 +1752,7 @@ local TREEPTR GenIndex( TREEPTR tree, TREEPTR index_expr )
         tree_flags = OpFlags( flags );
     } else {
         CErr2p( ERR_FATAL_ERROR, "Bad array index tree" );
-	tree_flags = FLAG_NONE;
+	tree_flags = OPFLAG_NONE;
     }
     typ = typ->object;
     SKIP_TYPEDEFS( typ );

@@ -1562,7 +1562,7 @@ TREEPTR CnvOp( TREEPTR opnd, TYPEPTR newtyp, int cast_op )
     enum  conv_types    cnv;
     enum ops            opr;
     op_flags            flags;
-    type_modifiers      opnd_type;
+    DATA_TYPE           opnd_type;
 
     if( opnd->op.opr == OPR_ERROR ) return( opnd );
     SKIP_TYPEDEFS( newtyp );

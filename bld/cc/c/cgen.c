@@ -1834,9 +1834,9 @@ local void FreeExtVars( void )                          /* 02-apr-92 */
 
 cg_type CGenType( TYPEPTR typ )
 {
-    cg_type     dtype;
-    int         flags;
-    int         align;
+    cg_type         dtype;
+    type_modifiers  flags;
+    int             align;
 
     SKIP_TYPEDEFS( typ );
     switch( typ->decl_type ) {
