@@ -1,0 +1,98 @@
+/*
+ *  lmbrowsr.h  LAN Manager browser functions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _LMBROWSR_H_INCLUDED
+#define _LMBROWSR_H_INCLUDED
+
+:include readonly.sp
+:include cpluspro.sp
+
+/* Browser roles */
+#define BROWSER_ROLE_PDC    0x00000001L
+#define BROWSER_ROLE_BDC    0x00000002L
+
+/* Browser statistics */
+typedef struct _BROWSER_STATISTICS {
+    LARGE_INTEGER   StatisticsStartTime;
+    LARGE_INTEGER   NumberOfServerAnnouncements;
+    LARGE_INTEGER   NumberOfDomainAnnouncements;
+    ULONG           NumberOfElectionPackets;
+    ULONG           NumberOfMailslotWrites;
+    ULONG           NumberOfGetBrowserServerListRequests;
+    ULONG           NumberOfServerEnumerations;
+    ULONG           NumberOfDomainEnumerations;
+    ULONG           NumberOfOtherEnumerations;
+    ULONG           NumberOfMissedServerAnnouncements;
+    ULONG           NumberOfMissedMailslotDatagrams;
+    ULONG           NumberOfMissedGetBrowserServerListRequests;
+    ULONG           NumberOfFailedServerAnnounceAllocations;
+    ULONG           NumberOfFailedMailslotAllocations;
+    ULONG           NumberOfFailedMailslotReceives;
+    ULONG           NumberOfFailedMailslotWrites;
+    ULONG           NumberOfFailedMailslotOpens;
+    ULONG           NumberOfDuplicateMasterAnnouncements;
+    LARGE_INTEGER   NumberOfIllegalDatagrams;
+} BROWSER_STATISTICS;
+typedef BROWSER_STATISTICS  *PBROWSER_STATISTICS;
+typedef BROWSER_STATISTICS  *LPBROWSER_STATISTICS;
+
+/* Browser statistics (version 100) */
+typedef struct _BROWSER_STATISTICS_100 {
+    LARGE_INTEGER   StartTime;
+    LARGE_INTEGER   NumberOfServerAnnouncements;
+    LARGE_INTEGER   NumberOfDomainAnnouncements;
+    ULONG           NumberOfElectionPackets;
+    ULONG           NumberOfMailslotWrites;
+    ULONG           NumberOfGetBrowserServerListRequests;
+    LARGE_INTEGER   NumberOfIllegalDatagrams;
+} BROWSER_STATISTICS_100;
+typedef BROWSER_STATISTICS_100  *PBROWSER_STATISTICS_100;
+
+/* Browser statistics (version 101) */
+typedef struct _BROWSER_STATISTICS_101 {
+    LARGE_INTEGER   StartTime;
+    LARGE_INTEGER   NumberOfServerAnnouncements;
+    LARGE_INTEGER   NumberOfDomainAnnouncements;
+    ULONG           NumberOfElectionPackets;
+    ULONG           NumberOfMailslotWrites;
+    ULONG           NumberOfGetBrowserServerListRequests;
+    LARGE_INTEGER   NumberOfIllegalDatagrams;
+    ULONG           NumberOfMissedServerAnnouncements;
+    ULONG           NumberOfMissedMailslotDatagrams;
+    ULONG           NumberOfMissedGetBrowserServerListRequests;
+    ULONG           NumberOfFailedServerAnnounceAllocations;
+    ULONG           NumberOfFailedMailslotAllocations;
+    ULONG           NumberOfFailedMailslotReceives;
+    ULONG           NumberOfFailedMailslotWrites;
+    ULONG           NumberOfFailedMailslotOpens;
+    ULONG           NumberOfDuplicateMasterAnnouncements;
+} BROWSER_STATISTICS_101;
+typedef BROWSER_STATISTICS_101  *PBROWSER_STATISTICS_101;
+
+/* Browser emulated domain */
+typedef struct _BROWSER_EMULATED_DOMAIN {
+    LPWSTR  DomainName;
+    LPWSTR  EmulatedDomainName;
+    DWORD   Role;
+} BROWSER_EMULATED_DOMAIN;
+typedef BROWSER_EMULATED_DOMAIN *PBROWSER_EMULATED_DOMAIN;
+
+/* Functions in NETAPI32.DLL */
+NET_API_STATUS NET_API_FUNCTION I_BrowserQueryEmulatedDomains( LPWSTR, PBROWSER_EMULATED_DOMAIN *, LPDWORD );
+NET_API_STATUS NET_API_FUNCTION I_BrowserQueryOtherDomains( LPCWSTR, LPBYTE *, LPDWORD, LPDWORD );
+NET_API_STATUS NET_API_FUNCTION I_BrowserQueryStatistics( LPCWSTR, LPBROWSER_STATISTICS * );
+NET_API_STATUS NET_API_FUNCTION I_BrowserResetNetlogonState( LPCWSTR );
+NET_API_STATUS NET_API_FUNCTION I_BrowserResetStatistics( LPCWSTR );
+NET_API_STATUS NET_API_FUNCTION I_BrowserServerEnum( LPCWSTR, LPCWSTR, LPCWSTR, DWORD, LPBYTE *, DWORD, LPDWORD, LPDWORD, DWORD, LPCWSTR, LPDWORD );
+NET_API_STATUS NET_API_FUNCTION I_BrowserSetNetlogonState( LPWSTR, LPWSTR, LPWSTR, DWORD );
+#if DBG
+NET_API_STATUS NET_API_FUNCTION I_BrowserDebugTrace( PWCHAR, PCHAR );
+#endif
+
+:include cplusepi.sp
+
+#endif /* _LMBROWSR_H_INCLUDED */
+

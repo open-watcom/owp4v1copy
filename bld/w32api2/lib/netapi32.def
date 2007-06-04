@@ -1,5 +1,13 @@
 LIBRARY NETAPI32.DLL
 EXPORTS
+I_BrowserDebugTrace
+I_BrowserQueryEmulatedDomains
+I_BrowserQueryOtherDomains
+I_BrowserQueryStatistics
+I_BrowserResetNetlogonState
+I_BrowserResetStatistics
+I_BrowserServerEnum
+I_BrowserSetNetlogonState
 I_NetLogonControl
 I_NetLogonControl2
 NetAddAlternateComputerName
