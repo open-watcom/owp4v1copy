@@ -76,6 +76,7 @@ headers =            &
         lmuseflg.h   &
         lmwksta.h    &
         lzexpand.h   &
+        mapi.h       &
         mcx.h        &
         mmsystem.h   &
         mprapi.h     &

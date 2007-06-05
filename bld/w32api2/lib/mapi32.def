@@ -1,0 +1,14 @@
+LIBRARY MAPI32.DLL
+EXPORTS
+MAPIAddress
+MAPIDeleteMail
+MAPIDetails
+MAPIFindNext
+MAPIFreeBuffer
+MAPILogoff
+MAPILogon
+MAPIReadMail
+MAPIResolveName
+MAPISaveMail
+MAPISendDocuments
+MAPISendMail
