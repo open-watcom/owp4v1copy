@@ -95,12 +95,14 @@ extern  void            HalfType(instruction*);
 extern  void            MarkPossible(instruction*,name*,reg_set_index);
 extern  void            MoveSegOp(instruction*,instruction*,int);
 extern  void            MoveSegRes(instruction*,instruction*);
+extern  instruction     *NewIns(int);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            ReplIns(instruction*,instruction*);
 extern  void            RevCond(instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  instruction     *SplitLoadAddr(instruction*);
 extern  void            UpdateLive(instruction*,instruction*);
+extern  byte            *Copy(void*,void*,uint);
 
 extern  instruction             *rCHANGESHIFT(instruction*);
 extern  instruction             *rFIXSHIFT(instruction *);
@@ -1041,14 +1043,26 @@ extern  instruction     *rTEMP2CONST( instruction *ins ) {
 
     int         i;
     name        *op;
+    instruction *new;
 
-    for( i = ins->num_operands-1; i >= 0; --i ) {
+    /* 2005-05-14 RomanT
+     * Never modify const temps operands "in place" - ReplIns() will be
+     * unable to move conflict edges and they will point to nowhere.
+     * Instead, new instruction must be created and ReplIns()'ed.
+     */
+    new = NewIns( ins->num_operands );
+    Copy( ins, new, sizeof( instruction ) );  // without operands
+    i = ins->num_operands;
+    while ( --i >= 0 ) {
         op = ins->operands[i];
-        if( op->n.class != N_TEMP ) continue;
-        if( !(op->t.temp_flags & CONST_TEMP) ) continue;
-        ins->operands[i] = op->v.symbol;
+        if ( _ConstTemp( op ) ) {
+            new->operands[i] = op->v.symbol;
+        } else {
+            new->operands[i] = op;
+        }
     }
-    return( ins );
+    ReplIns( ins, new );
+    return ( new );
 }
 
 
