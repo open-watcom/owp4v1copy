@@ -3,7 +3,7 @@
 # based on buildwin.bat
 
 awk95.exe:
-	set cl=-w -Ox -QIfdiv- -nologo -link -nologo setargv.obj
+	set cl=-w -Ox -QIfdiv- -nologo -link -nologo #setargv.obj
 	cl maketab.c -o maketab.exe
 	.\maketab.exe > proctab.c
 	cl -o awk95.exe b.c main.c parse.c proctab.c tran.c lib.c run.c lex.c ytab.c missing95.c
