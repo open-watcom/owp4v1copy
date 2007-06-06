@@ -116,6 +116,7 @@ headers =            &
         rpcnterr.h   &
         servprov.h   &
         shellapi.h   &
+        snmp.h       &
         stralign.h   &
         tcpestat.h   &
         tcpmib.h     &
