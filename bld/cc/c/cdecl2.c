@@ -289,12 +289,14 @@ TYPEPTR SkipDummyTypedef( TYPEPTR typ )                 /* 25-nov-94 */
 #define ATTRIB_MASK     (~(FLAG_INLINE | FLAG_LOADDS | FLAG_EXPORT | FLAG_LANGUAGES))
 local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class, decl_state *state )
 {
-    int         which;
-    TYPEPTR     typ;
-    SYM_HANDLE  sym_handle;
-    SYM_HANDLE  old_sym_handle;
-    SYM_ENTRY   old_sym;
-    SYM_ENTRY   sym2;
+    int                 which;
+    TYPEPTR             typ;
+    SYM_HANDLE          sym_handle;
+    SYM_HANDLE          old_sym_handle;
+    SYM_ENTRY           old_sym;
+    SYM_ENTRY           sym2;
+    type_modifiers      old_attrs;
+    type_modifiers      new_attrs;
 
     // Warn if neither type nor storage class were given; this should probably be
     // an error in strict C89 (and naturally C99) mode
@@ -393,8 +395,17 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class, decl_state *state )
         SetDiagSymbol( &old_sym, old_sym_handle );
         if( old_sym.level == SymLevel           /* 28-mar-88 */
         ||      stg_class == SC_EXTERN ) {              /* 12-dec-88 */
-            if( (sym->attrib & ATTRIB_MASK) !=
-                (old_sym.attrib & ATTRIB_MASK) ) {
+            old_attrs = old_sym.attrib;
+            new_attrs = sym->attrib;
+            /* add default far/near flags depending on data model */
+            if( TargetSwitches & BIG_DATA ) {
+                old_attrs |= FLAG_FAR;
+                new_attrs |= FLAG_FAR;
+            } else {
+                old_attrs |= FLAG_NEAR;
+                new_attrs |= FLAG_NEAR;
+            }
+            if( (new_attrs & ATTRIB_MASK) != (old_attrs & ATTRIB_MASK) ) {
                  CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
             }
             if( (sym->attrib & FLAG_LANGUAGES) != (old_sym.attrib & FLAG_LANGUAGES) ) {

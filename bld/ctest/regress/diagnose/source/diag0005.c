@@ -58,3 +58,10 @@ void __watcall foo( void );
 // about all other compilers (incl. wpp) allow this.
 void __cdecl bar( void );
 void bar( void );
+
+// The following is OK as long as small data model is used. This is allowed
+// by wpp and MS compilers and is a reasonable thing to do.
+extern int __near nvar1;
+extern int nvar1;
+extern int * __near nvar2;
+extern int * nvar2;
