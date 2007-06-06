@@ -1,21 +1,3 @@
-:cmt **********************************************************************
-:cmt *       Copyright by WATCOM International Corporation, 1987, 1992.   *
-:cmt *       All rights reserved. No part of this software may be         *
-:cmt *       reproduced in any form or by any means - graphic, electronic,*
-:cmt *       mechanical or otherwise, including, without limitation,      *
-:cmt *       photocopying, recording, taping or information storage and   *
-:cmt *       retrieval systems - except with the written permission of    *
-:cmt *       WATCOM International Corporation.                            *
-:cmt **********************************************************************
-:cmt
-:cmt    Modified    By              Reason
-:cmt    --------    --              ------
-:cmt    21-nov-95   M. Hildebrand   Initial implementation.
-:cmt    14-feb-96   T. Schiller     Added /nowopts and /passwopts options.
-:cmt    27-feb-96   Greg Bentz      Added /nowwarn option.
-:cmt    29-feb-96   A. Kucharczyk   Added /lesswd option.
-:cmt	16-may-96   Greg Bentz	    Chain F, G and O options.
-:cmt	10-jul-96   Greg Bentz	    Added /noinvoke option.
 :cmt
 :cmt GML Macros used:
 :cmt
@@ -379,9 +361,19 @@
 :immediate. handle_Oy
 :usage. disable stack frames
 
+:option. \o
+:target. any
+:special. parse_o <file>
+:usage. set executable or DLL file name
+
 :option. \P
 :target. any
 :usage. preprocess to a file
+
+:option. \Q\I\f\d\i\v
+:target. i86
+:immediate. handle_QIfdiv
+:usage. enable Pentium FDIV fix
 
 :option. \s\h\o\w\w\o\p\t\s
 :target. any

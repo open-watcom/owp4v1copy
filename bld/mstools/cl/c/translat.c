@@ -613,6 +613,7 @@ static void linker_opts( struct XlatStatus *status, OPT_STORAGE *cmdOpts,
 /***********************************************************************/
 {
     OPT_STRING *        optStr;
+    char *              newpath;
 
     if( cmdOpts->F ) {
         AppendFmtCmdLine( linkCmdLine, CL_L_OPTS_SECTION, "/STACK:%s",
@@ -622,6 +623,13 @@ static void linker_opts( struct XlatStatus *status, OPT_STORAGE *cmdOpts,
     if( cmdOpts->Fe ) {
         AppendFmtCmdLine( linkCmdLine, CL_L_OPTS_SECTION, "/OUT:%s",
                           cmdOpts->Fe_value->data );
+    }
+
+    optStr = cmdOpts->o_value;
+    if( cmdOpts->o_value != NULL ) {
+        newpath = PathConvert( optStr->data, '"' );
+        AppendFmtCmdLine( linkCmdLine, CL_L_OPTS_SECTION, "/OUT:%s",
+	newpath );
     }
 
     if( cmdOpts->Fm ) {

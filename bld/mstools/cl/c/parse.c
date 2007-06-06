@@ -288,6 +288,25 @@ static int parse_I( OPT_STRING **p )
 
 
 /*
+ * Parse the /o option.
+ */
+static int parse_o( OPT_STRING **p )
+/**********************************/
+{
+    char *              str;
+
+    CmdScanWhitespace();
+    str = CmdScanString();
+    if( str == NULL ) {
+        FatalError( "/o requires an argument" );
+        return( 0 );
+    }
+    add_string( p, str );
+    return( 1 );
+}
+
+
+/*
  * Parse the /link option.
  */
 static int parse_link( OPT_STRING **p )
@@ -1018,6 +1037,25 @@ static void handle_Oy( OPT_STORAGE *cmdOpts, int x )
         cmdOpts->Oy = 0;
     }
 }
+
+
+#ifdef __TARGET_386__
+/*
+ * Parse the /QIfdiv and /QIfdiv- options.
+ */
+static void handle_QIfdiv( OPT_STORAGE *cmdOpts, int x )
+/******************************************************/
+{
+    static int          hasBeenCalled;
+
+    x = x;
+    if( handle_on_off_option( &hasBeenCalled, "QIfdiv", cmdOpts->QIfdiv ) ) {
+        cmdOpts->QIfdiv = 1;
+    } else {
+        cmdOpts->QIfdiv = 0;
+    }
+}
+#endif
 
 
 /*
