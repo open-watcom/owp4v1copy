@@ -1084,7 +1084,7 @@ STRM_T PreGetCH( void )
 
             if( Glob.microsoft || Glob.posix ) {
                 /* Check for NMAKE and UNIX compatible 'include' directive */
-                if( t == 'i' && PreTestString( "nclude" ) ) {
+                if( t == 'i' && PreTestString( "nclude " ) ) {
                     UnGetCH( eatWhite() );
                     bangInclude();
                     t = GetCHR();
