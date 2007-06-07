@@ -69,6 +69,42 @@ static void fix_ehdr_byte_order( elf_file_handle elf_file_hnd, Elf32_Ehdr *e_hdr
 }
 
 
+static void fix_ehdr64_byte_order( elf_file_handle elf_file_hnd, Elf64_Ehdr *e_hdr )
+{
+    // note that one of the branches will always get compiled out,
+    // depending on host endianness
+    if( elf_file_hnd->flags & ORL_FILE_FLAG_BIG_ENDIAN ) {
+        CONV_BE_16( e_hdr->e_type );
+        CONV_BE_16( e_hdr->e_machine );
+        CONV_BE_32( e_hdr->e_version );
+        CONV_BE_64( e_hdr->e_entry );
+        CONV_BE_64( e_hdr->e_phoff );
+        CONV_BE_64( e_hdr->e_shoff );
+        CONV_BE_32( e_hdr->e_flags );
+        CONV_BE_16( e_hdr->e_ehsize );
+        CONV_BE_16( e_hdr->e_phentsize );
+        CONV_BE_16( e_hdr->e_phnum );
+        CONV_BE_16( e_hdr->e_shentsize );
+        CONV_BE_16( e_hdr->e_shnum );
+        CONV_BE_16( e_hdr->e_shstrndx );
+    } else {
+        CONV_LE_16( e_hdr->e_type );
+        CONV_LE_16( e_hdr->e_machine );
+        CONV_LE_32( e_hdr->e_version );
+        CONV_LE_64( e_hdr->e_entry.u._64[0] );
+        CONV_LE_64( e_hdr->e_phoff.u._64[0] );
+        CONV_LE_64( e_hdr->e_shoff.u._64[0] );
+        CONV_LE_32( e_hdr->e_flags );
+        CONV_LE_16( e_hdr->e_ehsize );
+        CONV_LE_16( e_hdr->e_phentsize );
+        CONV_LE_16( e_hdr->e_phnum );
+        CONV_LE_16( e_hdr->e_shentsize );
+        CONV_LE_16( e_hdr->e_shnum );
+        CONV_LE_16( e_hdr->e_shstrndx );
+    }
+}
+
+
 static void fix_shdr_byte_order( elf_file_handle elf_file_hnd, Elf32_Shdr *e_shdr )
 {
     // note that one of the branches will always get compiled out,
@@ -95,6 +131,36 @@ static void fix_shdr_byte_order( elf_file_handle elf_file_hnd, Elf32_Shdr *e_shd
         CONV_LE_32( e_shdr->sh_info );
         CONV_LE_32( e_shdr->sh_addralign );
         CONV_LE_32( e_shdr->sh_entsize );
+    }
+}
+
+
+static void fix_shdr64_byte_order( elf_file_handle elf_file_hnd, Elf64_Shdr *e_shdr )
+{
+    // note that one of the branches will always get compiled out,
+    // depending on host endianness
+    if( elf_file_hnd->flags & ORL_FILE_FLAG_BIG_ENDIAN ) {
+        CONV_BE_32( e_shdr->sh_name );
+        CONV_BE_32( e_shdr->sh_type );
+        CONV_BE_64( e_shdr->sh_flags );
+        CONV_BE_64( e_shdr->sh_addr );
+        CONV_BE_64( e_shdr->sh_offset );
+        CONV_BE_64( e_shdr->sh_size );
+        CONV_BE_32( e_shdr->sh_link );
+        CONV_BE_32( e_shdr->sh_info );
+        CONV_BE_64( e_shdr->sh_addralign );
+        CONV_BE_64( e_shdr->sh_entsize );
+    } else {
+        CONV_LE_32( e_shdr->sh_name );
+        CONV_LE_32( e_shdr->sh_type );
+        CONV_LE_64( e_shdr->sh_flags );
+        CONV_LE_64( e_shdr->sh_addr );
+        CONV_LE_64( e_shdr->sh_offset );
+        CONV_LE_64( e_shdr->sh_size );
+        CONV_LE_32( e_shdr->sh_link );
+        CONV_LE_32( e_shdr->sh_info );
+        CONV_LE_64( e_shdr->sh_addralign );
+        CONV_LE_64( e_shdr->sh_entsize );
     }
 }
 
@@ -135,6 +201,9 @@ static void determine_file_specs( elf_file_handle elf_file_hnd, Elf32_Ehdr *e_hd
     case EM_386:
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_I386;
         break;
+    case EM_X86_64:
+        elf_file_hnd->machine_type = ORL_MACHINE_TYPE_AMD64;
+        break;
     case EM_68K:
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_M68000;
         break;
@@ -174,10 +243,11 @@ static void determine_file_specs( elf_file_handle elf_file_hnd, Elf32_Ehdr *e_hd
 }
 
 
-static void determine_section_specs( elf_sec_handle elf_sec_hnd, Elf32_Shdr * s_hdr )
+static void determine_section_specs( elf_sec_handle elf_sec_hnd, int sh_type,
+                                     unsigned long long sh_flags )
 {
     elf_sec_hnd->flags = ORL_SEC_FLAG_READ_PERMISSION;
-    switch( s_hdr->sh_type ) {
+    switch( sh_type ) {
     case SHT_PROGBITS:
         elf_sec_hnd->type = ORL_SEC_TYPE_PROG_BITS;
         elf_sec_hnd->flags |= ORL_SEC_FLAG_INITIALIZED_DATA;
@@ -230,13 +300,13 @@ static void determine_section_specs( elf_sec_handle elf_sec_hnd, Elf32_Shdr * s_
         elf_sec_hnd->type = ORL_SEC_TYPE_NONE;
         break;
     }
-    if( s_hdr->sh_flags & SHF_WRITE ) {
+    if( sh_flags & SHF_WRITE ) {
         elf_sec_hnd->flags |= ORL_SEC_FLAG_WRITE_PERMISSION;
     }
-    if( !(s_hdr->sh_flags & SHF_ALLOC) ) {
+    if( !(sh_flags & SHF_ALLOC) ) {
         elf_sec_hnd->flags |= ORL_SEC_FLAG_REMOVE;
     }
-    if( s_hdr->sh_flags & SHF_EXECINSTR ) {
+    if( sh_flags & SHF_EXECINSTR ) {
         // set execute permission also?
         elf_sec_hnd->flags |= ORL_SEC_FLAG_EXEC;
     }
@@ -261,17 +331,24 @@ static void free_elf_sec_handles( elf_file_handle elf_file_hnd, int num_alloced 
 }
 
 
-static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_offset *name_index )
+static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_offset *name_index, char *s_hdr )
 {
-    Elf32_Shdr          *s_hdr;
+    Elf32_Shdr          *s_hdr32;
+    Elf64_Shdr          *s_hdr64;
     elf_sec_handle      elf_sec_hnd;
     int                 loop;
     orl_sec_offset      *associated_index;
     orl_sec_offset      *associated2_index;
+    unsigned_32         sh_align;
+    unsigned_32         sh_type;
+    unsigned_32         sh_link;
+    unsigned_32         sh_info;
+    uint64_t            sh_flags;
+    uint64_t            sh_size;
 
-    associated_index = (orl_sec_offset *) _ClientAlloc( elf_file_hnd, sizeof( Elf32_Word ) * elf_file_hnd->num_sections );
+    associated_index = (orl_sec_offset *) _ClientAlloc( elf_file_hnd, sizeof( Elf64_Word ) * elf_file_hnd->num_sections );
     if( !associated_index ) return( ORL_OUT_OF_MEMORY );
-    associated2_index = (orl_sec_offset *) _ClientAlloc( elf_file_hnd, sizeof( Elf32_Word ) * elf_file_hnd->num_sections );
+    associated2_index = (orl_sec_offset *) _ClientAlloc( elf_file_hnd, sizeof( Elf64_Word ) * elf_file_hnd->num_sections );
     if( !associated2_index ) {
         _ClientFree( elf_file_hnd, associated_index );
         return( ORL_OUT_OF_MEMORY );
@@ -284,10 +361,8 @@ static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_of
         _ClientFree( elf_file_hnd, associated2_index );
         return( ORL_OUT_OF_MEMORY );
     }
-    s_hdr = (Elf32_Shdr *) elf_file_hnd->s_hdr_table_buffer;
-    s_hdr++; // skip over index 0
+    s_hdr += elf_file_hnd->shentsize; // skip over index 0
     for( loop = 0; loop < elf_file_hnd->num_sections; loop++ ) {
-        fix_shdr_byte_order( elf_file_hnd, s_hdr );
         elf_sec_hnd = (elf_sec_handle) _ClientAlloc( elf_file_hnd, sizeof( elf_sec_handle_struct ) );
         if( !elf_sec_hnd ) {
             free_elf_sec_handles( elf_file_hnd, loop );
@@ -297,14 +372,40 @@ static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_of
             return( ORL_OUT_OF_MEMORY );
         }
         elf_file_hnd->orig_sec_hnd[loop] = elf_sec_hnd;
-        name_index[loop] = s_hdr->sh_name;
         elf_sec_hnd->file_format = ORL_ELF;
         elf_sec_hnd->elf_file_hnd = elf_file_hnd;
-        elf_sec_hnd->size = s_hdr->sh_size;
-        elf_sec_hnd->base = s_hdr->sh_addr;
         elf_sec_hnd->index = loop + 1;
-        elf_sec_hnd->offset = s_hdr->sh_offset;
-        switch( s_hdr->sh_addralign ) {
+
+        if( elf_file_hnd->flags & ORL_FILE_FLAG_64BIT_MACHINE ) {
+            s_hdr64 = (Elf64_Shdr *) s_hdr;
+            fix_shdr64_byte_order( elf_file_hnd, s_hdr64 );
+            name_index[loop] = s_hdr64->sh_name;
+            elf_sec_hnd->size = s_hdr64->sh_size;
+            elf_sec_hnd->base = s_hdr64->sh_addr;
+            elf_sec_hnd->offset = s_hdr64->sh_offset;
+            elf_sec_hnd->entsize = s_hdr64->sh_entsize;
+            sh_align = s_hdr64->sh_addralign;
+            sh_flags = s_hdr64->sh_flags;
+            sh_type = s_hdr64->sh_type;
+            sh_link = s_hdr64->sh_link;
+            sh_info = s_hdr64->sh_info;
+            sh_size = s_hdr64->sh_size;
+        } else {
+            s_hdr32 = (Elf32_Shdr *) s_hdr;
+            fix_shdr_byte_order( elf_file_hnd, s_hdr32 );
+            name_index[loop] = s_hdr32->sh_name;
+            elf_sec_hnd->size = s_hdr32->sh_size;
+            elf_sec_hnd->base = s_hdr32->sh_addr;
+            elf_sec_hnd->offset = s_hdr32->sh_offset;
+            elf_sec_hnd->entsize = s_hdr32->sh_entsize;
+            sh_align = s_hdr32->sh_addralign;
+            sh_flags = s_hdr32->sh_flags;
+            sh_type = s_hdr32->sh_type;
+            sh_link = s_hdr32->sh_link;
+            sh_info = s_hdr32->sh_info;
+            sh_size = s_hdr32->sh_size;
+        }
+        switch( sh_align ) {
         case 0:
         case 1:
             elf_sec_hnd->alignment = 0;
@@ -336,23 +437,23 @@ static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_of
         }
         elf_sec_hnd->contents = NULL;
         memset( &(elf_sec_hnd->assoc), '\0', sizeof( elf_sec_hnd->assoc ) );
-        determine_section_specs( elf_sec_hnd, s_hdr );
+        determine_section_specs( elf_sec_hnd, sh_type, sh_flags );
         switch( elf_sec_hnd->type ) {
         case ORL_SEC_TYPE_SYM_TABLE:
             elf_file_hnd->symbol_table = elf_sec_hnd;
         case ORL_SEC_TYPE_DYN_SYM_TABLE:
         case ORL_SEC_TYPE_IMPORT:
         case ORL_SEC_TYPE_EXPORT:
-            associated_index[loop] = s_hdr->sh_link - 1;
+            associated_index[loop] = sh_link - 1;
             break;
         case ORL_SEC_TYPE_RELOCS:
         case ORL_SEC_TYPE_RELOCS_EXPADD:
             // Certain funky toolchains produce two reloc sections for each
             // section containing relocations (both .rel and .rela) and one of
             // them is empty. We have to ignore the empty one!
-            if( s_hdr->sh_size != 0 ) {
-                associated_index[loop] = s_hdr->sh_info - 1;
-                associated2_index[loop] = s_hdr->sh_link - 1;
+            if( sh_size != 0 ) {
+                associated_index[loop] = sh_info - 1;
+                associated2_index[loop] = sh_link - 1;
             } else {
                 associated_index[loop] = -1;
                 associated2_index[loop] = -1;
@@ -361,7 +462,7 @@ static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_of
         default:
             break;
         }
-        s_hdr++;
+        s_hdr += elf_file_hnd->shentsize;
     }
     for( loop = 0; loop < elf_file_hnd->num_sections; loop++ ) {
         elf_sec_hnd = elf_file_hnd->orig_sec_hnd[loop];
@@ -421,7 +522,9 @@ static int sec_compare( const void *_first_sec, const void *_second_sec )
 orl_return ElfLoadFileStructure( elf_file_handle elf_file_hnd )
 {
     orl_return          error;
-    Elf32_Ehdr          *e_hdr;
+    char                *s_hdr;
+    Elf32_Ehdr          *e_hdr32;
+    Elf64_Ehdr          *e_hdr64;
     elf_sec_handle      elf_sec_hnd;
     elf_quantity        contents_size1;
     elf_quantity        contents_size2;
@@ -429,21 +532,46 @@ orl_return ElfLoadFileStructure( elf_file_handle elf_file_hnd )
     int                 loop;
     orl_sec_offset      *name_index;
     char                *string_table;
+    unsigned long long  shoff;
+    int                 shnum;
+    int                 ehsize;
+    int                 shstrndx;
 
-    elf_file_hnd->e_hdr_buffer = _ClientRead( elf_file_hnd, sizeof(Elf32_Ehdr));
-    if( !(elf_file_hnd->e_hdr_buffer) )
+    e_hdr32 = _ClientRead( elf_file_hnd, sizeof( e_hdr32->e_ident ) );
+    if( !(e_hdr32) )
         return( ORL_ERROR );
-    e_hdr = (Elf32_Ehdr *) elf_file_hnd->e_hdr_buffer;
-    determine_file_class( elf_file_hnd, e_hdr );
-    fix_ehdr_byte_order( elf_file_hnd, e_hdr );
-    determine_file_specs( elf_file_hnd, e_hdr );
-    elf_file_hnd->num_sections = e_hdr->e_shnum - 1; // -1 to ignore shdr table index
+    determine_file_class( elf_file_hnd, e_hdr32 );
+    _ClientSeek( elf_file_hnd, 0, SEEK_SET );
+    if( elf_file_hnd->flags & ORL_FILE_FLAG_64BIT_MACHINE ) {
+        e_hdr64 = _ClientRead( elf_file_hnd, sizeof( Elf64_Ehdr ) );
+        if( !(e_hdr64) )
+            return( ORL_ERROR );
+        fix_ehdr64_byte_order( elf_file_hnd, e_hdr64 );        
+        shoff = e_hdr64->e_shoff;
+        shnum = e_hdr64->e_shnum;
+        ehsize = e_hdr64->e_ehsize;
+        shstrndx = e_hdr64->e_shstrndx;
+        elf_file_hnd->shentsize = e_hdr64->e_shentsize;
+        determine_file_specs( elf_file_hnd, (Elf32_Ehdr *)e_hdr64 );
+    } else {
+        e_hdr32 = _ClientRead( elf_file_hnd, sizeof( Elf32_Ehdr ) );
+        if( !(e_hdr32) )
+            return( ORL_ERROR );
+        fix_ehdr_byte_order( elf_file_hnd, e_hdr32 );
+        shoff = e_hdr32->e_shoff;
+        shnum = e_hdr32->e_shnum;
+        ehsize = e_hdr32->e_ehsize;
+        shstrndx = e_hdr32->e_shstrndx;
+        elf_file_hnd->shentsize = e_hdr32->e_shentsize;
+        determine_file_specs( elf_file_hnd, e_hdr32 );
+    }
+    elf_file_hnd->num_sections = shnum - 1; // -1 to ignore shdr table index
 
-    contents_size1 = e_hdr->e_shoff - e_hdr->e_ehsize;
-    sec_header_table_size = e_hdr->e_shentsize * e_hdr->e_shnum;
+    contents_size1 = shoff - ehsize;
+    sec_header_table_size = elf_file_hnd->shentsize * shnum;
 
     // e_ehsize might not be the same as sizeof(Elf32_Ehdr) (different versions)
-    _ClientSeek( elf_file_hnd, e_hdr->e_ehsize - sizeof(Elf32_Ehdr), SEEK_CUR );
+    _ClientSeek( elf_file_hnd, ehsize, SEEK_SET );
 
     if( contents_size1 > 0 ) {
         elf_file_hnd->contents_buffer1 = _ClientRead( elf_file_hnd,
@@ -454,15 +582,14 @@ orl_return ElfLoadFileStructure( elf_file_handle elf_file_hnd )
     } else {
         elf_file_hnd->contents_buffer1 = NULL;
     }
-    elf_file_hnd->s_hdr_table_buffer = _ClientRead( elf_file_hnd,
-                                                    sec_header_table_size );
-    if( !(elf_file_hnd->s_hdr_table_buffer) )
+    s_hdr = _ClientRead( elf_file_hnd, sec_header_table_size );
+    if( !s_hdr )
         return( ORL_ERROR );
     name_index = _ClientAlloc( elf_file_hnd,
                          sizeof(orl_sec_offset) * elf_file_hnd->num_sections );
     if( !name_index )
         return( ORL_OUT_OF_MEMORY );
-    error = load_elf_sec_handles( elf_file_hnd, name_index );
+    error = load_elf_sec_handles( elf_file_hnd, name_index, s_hdr );
     if( error != ORL_OKAY ) {
         _ClientFree( elf_file_hnd, name_index );
         return( error );
@@ -472,7 +599,7 @@ orl_return ElfLoadFileStructure( elf_file_handle elf_file_hnd )
             sizeof( elf_sec_handle ), sec_compare );
 
     elf_sec_hnd = elf_file_hnd->elf_sec_hnd[elf_file_hnd->num_sections - 1];
-    contents_size2 = elf_sec_hnd->offset + elf_sec_hnd->size - e_hdr->e_shoff
+    contents_size2 = elf_sec_hnd->offset + elf_sec_hnd->size - shoff
                      - sec_header_table_size;
     if( contents_size2 > 0 ) {
         elf_file_hnd->size = elf_sec_hnd->offset + elf_sec_hnd->size;
@@ -483,24 +610,24 @@ orl_return ElfLoadFileStructure( elf_file_handle elf_file_hnd )
             return( ORL_ERROR );
         }
     } else {
-        elf_file_hnd->size = e_hdr->e_shoff + sec_header_table_size;
+        elf_file_hnd->size = shoff + sec_header_table_size;
     }
     // determine contents pointers of all sections
     for( loop = 0; loop < elf_file_hnd->num_sections; loop++ ) {
         elf_sec_hnd = elf_file_hnd->elf_sec_hnd[loop];
         if( elf_sec_hnd->size > 0 ) {
-            if( elf_sec_hnd->offset < e_hdr->e_shoff ) {
+            if( elf_sec_hnd->offset < shoff ) {
                 elf_sec_hnd->contents = elf_file_hnd->contents_buffer1
-                                + elf_sec_hnd->offset - e_hdr->e_ehsize;
+                                + elf_sec_hnd->offset - ehsize;
             } else {
                 elf_sec_hnd->contents = elf_file_hnd->contents_buffer2
-                                + elf_sec_hnd->offset - e_hdr->e_shoff
+                                + elf_sec_hnd->offset - shoff
                                 - sec_header_table_size;
             }
         }
     }
     // determine section names
-    string_table = elf_file_hnd->orig_sec_hnd[e_hdr->e_shstrndx - 1]->contents;
+    string_table = elf_file_hnd->orig_sec_hnd[shstrndx - 1]->contents;
     for( loop = 0; loop < elf_file_hnd->num_sections; loop++ ) {
         elf_file_hnd->orig_sec_hnd[loop]->name = string_table +name_index[loop];
     }

@@ -35,6 +35,7 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
 #include <watcom.h>
 
 // ELF scalar data types
@@ -44,6 +45,14 @@ typedef unsigned_16     Elf32_Half;
 typedef unsigned_32     Elf32_Off;
 typedef signed_32       Elf32_Sword;
 typedef unsigned_32     Elf32_Word;
+
+typedef uint64_t        Elf64_Addr;
+typedef uint16_t        Elf64_Half;
+typedef uint64_t        Elf64_Off;
+typedef int32_t         Elf64_Sword;
+typedef int64_t         Elf64_Sxword;
+typedef uint32_t        Elf64_Word;
+typedef uint64_t        Elf64_Xword;
 
 // the main header
 
@@ -68,6 +77,24 @@ typedef struct {
 /*    Elf32_Half        e_shosndx;              // OS info section index
     Elf32_Half  e_pad;                  // to keep header size a word multiple*/
 } Elf32_Ehdr;
+
+// ELF-64 header: identical to Elf32_Ehdr up to and including e_version
+typedef struct {
+    unsigned_8  e_ident[EI_NIDENT];     // signature & ID info
+    Elf64_Half  e_type;                 // file type (i.e. obj file, exe file)
+    Elf64_Half  e_machine;              // required architecture
+    Elf64_Word  e_version;              // version of the file
+    Elf64_Addr  e_entry;                // program entry point
+    Elf64_Off   e_phoff;                // program header offset
+    Elf64_Off   e_shoff;                // section header offset
+    Elf64_Word  e_flags;                // processor specific flags
+    Elf64_Half  e_ehsize;               // elf header size
+    Elf64_Half  e_phentsize;            // program header entry size
+    Elf64_Half  e_phnum;                // number of program header entries
+    Elf64_Half  e_shentsize;            // section header entry size
+    Elf64_Half  e_shnum;                // number of section header entries
+    Elf64_Half  e_shstrndx;             // section name string table index.
+} Elf64_Ehdr;
 
 // e_ident field indicies
 
@@ -266,6 +293,19 @@ typedef struct {
     Elf32_Word  sh_entsize;     // entry size for sects with fixed sized entries
 } Elf32_Shdr;
 
+typedef struct {
+    Elf64_Word  sh_name;        // name of the section
+    Elf64_Word  sh_type;        // section type
+    Elf64_Xword sh_flags;
+    Elf64_Addr  sh_addr;        // starting address of section in image
+    Elf64_Off   sh_offset;      // start of section in file
+    Elf64_Xword sh_size;        // size of section in file.
+    Elf64_Word  sh_link;        // multipurpose field   (based on type)
+    Elf64_Word  sh_info;        // another multipurpose field (based on type)
+    Elf64_Xword sh_addralign;   // address alignment
+    Elf64_Xword sh_entsize;     // entry size for sects with fixed sized entries
+} Elf64_Shdr;
+
 // section types
 
 #define SHT_NULL        0               // inactive
@@ -288,6 +328,7 @@ typedef struct {
 #define SHT_IDMDLL      0x60001002      // symbol name demangling information
 #define SHT_DEFLIB      0x60001003      // default static libraries
 #define SHT_LOPROC      0x70000000      // processor specific
+#define SHT_X86_64_UNWIND 0x70000001    // contains entries for stack unwinding
 #define SHT_HIPROC      0x7fffffff
 #define SHT_LOUSER      0x80000000      // user defined sections
 #define SHT_HIUSER      0xffffffff
@@ -309,6 +350,8 @@ typedef struct {
 #define SHF_END         0x02000000      // same, end.
 #define SHF_MASKPROC    0xf0000000      // processor specific flags
 
+#define SHF_X86_64_LARGE 0x1000000      // section with more than 2GB
+
 // symbol table entry
 
 typedef struct {
@@ -319,6 +362,15 @@ typedef struct {
     unsigned_8  st_other;       // no meaning yet.
     Elf32_Half  st_shndx;       // section index
 } Elf32_Sym;
+
+typedef struct {
+    Elf64_Word  st_name;        // symbol name index into string table
+    unsigned_8  st_info;        // symbol's type and binding attribs.
+    unsigned_8  st_other;       // no meaning yet.
+    Elf64_Half  st_shndx;       // section index
+    Elf64_Addr  st_value;       // symbol "value"
+    Elf64_Xword st_size;        // symbol size
+} Elf64_Sym;
 
 // symbol info field contents
 
@@ -359,11 +411,26 @@ typedef struct {
     Elf32_Sword r_addend;       // value used as a basis for the reloc.
 } Elf32_Rela;
 
+typedef struct {
+    Elf64_Addr  r_offset;       // place to apply reloc (from begin of section)
+    Elf64_Xword r_info;         // symbol idx, and type of reloc
+} Elf64_Rel;
+
+typedef struct {
+    Elf64_Addr  r_offset;       // place to apply reloc (from begin of section)
+    Elf64_Xword r_info;         // symbol idx, and type of reloc
+    Elf64_Sxword r_addend;      // value used as a basis for the reloc.
+} Elf64_Rela;
+
 // r_info field contents
 
 #define ELF32_R_SYM(i)  ((i)>>8)                // gets the symbol index
 #define ELF32_R_TYPE(i) ((unsigned_8)(i))       // gets the symbol type
 #define ELF32_R_INFO(s,t) (((s)<<8)+(unsigned_8)(t))    // make a new r_info
+
+#define ELF64_R_SYM(i)  ((i)>>32)               // gets the symbol index
+#define ELF64_R_TYPE(i) ((i)&0xffffffffL)       // gets the symbol type
+#define ELF64_R_INFO(s,t) (((s)<<32)+((t)&0xffffffffL)) // make a new r_info
 
 // relocation types.
 //386
@@ -378,6 +445,38 @@ typedef struct {
 #define R_386_RELATIVE          8
 #define R_386_GOTOFF            9
 #define R_386_GOTPC             10
+
+//X86_64
+#define R_X86_64_NONE           0
+#define R_X86_64_64             1
+#define R_X86_64_PC32           2
+#define R_X86_64_GOT32          3
+#define R_X86_64_PLT32          4
+#define R_X86_64_COPY           5
+#define R_X86_64_GLOB_DAT       6
+#define R_X86_64_JUMP_SLOT      7
+#define R_X86_64_RELATIVE       8
+#define R_X86_64_GOTPCREL       9
+#define R_X86_64_32             10
+#define R_X86_64_32S            11
+#define R_X86_64_16             12
+#define R_X86_64_PC16           13
+#define R_X86_64_8              14
+#define R_X86_64_PC8            15
+#define R_X86_64_DPTMOD64       16
+#define R_X86_64_DTPOFF64       17
+#define R_X86_64_TPOFF64        18
+#define R_X86_64_TLSGD          19
+#define R_X86_64_TLSLD          20
+#define R_X86_64_DTPOFF32       21
+#define R_X86_64_GOTTPOFF       22
+#define R_X86_64_TPOFF32        23
+#define R_X86_64_PC64           24
+#define R_X86_64_GOTOFF64       25
+#define R_X86_64_GOTPC32        26
+#define R_X86_64_SIZE32         32
+#define R_X86_64_SIZE64         33
+
 //PPC
 #define R_PPC_NONE              0
 #define R_PPC_ADDR32            1
