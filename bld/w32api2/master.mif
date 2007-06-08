@@ -79,6 +79,7 @@ headers =            &
         mapi.h       &
         mciavi.h     &
         mcx.h        &
+        mgmtapi.h    &
         mmsystem.h   &
         mprapi.h     &
         msxml.h      &
