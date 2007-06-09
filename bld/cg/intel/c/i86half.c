@@ -85,7 +85,7 @@ extern  void            CnvOpToInt( instruction *, int );
 extern    type_class_def        HalfClass[];
 extern    type_class_def        Unsigned[];
 
-static  bool    IndexOverlaps( instruction *ins, int i ) {
+extern  bool    IndexOverlaps( instruction *ins, int i ) {
 /********************************************************/
 
     if( ins->operands[ i ]->n.class != N_INDEXED ) return( FALSE );

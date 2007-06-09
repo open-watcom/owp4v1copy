@@ -87,6 +87,7 @@ extern  name            *ScaleIndex( name *, name *, type_length, type_class_def
 extern  name            *AllocIntConst( int );
 extern  bool            Overlaps( name *, name * );
 extern  instruction     *MakeNop( void );
+extern  bool            IndexOverlaps( instruction *ins, int i );
 
 /*forward declaration*/
 static  void            Split8Name( instruction *ins, name *tosplit, eight_byte_name *out );
@@ -320,16 +321,14 @@ extern  instruction     *rMOVE8LOW( instruction *ins )
 {
     instruction         *lo_ins;
     instruction         *mid_lo_ins;
-    eight_byte_name     result;
     eight_byte_name     left;
 
-    if( Overlaps( ins->result, ins->operands[ 0 ] ) ) {
+    if( IndexOverlaps( ins, 0 ) ) {
         return( SplitOverlapped( ins, 0 ) );
     }
     Split8Name( ins, ins->operands[ 0 ], &left );
-    Split8Name( ins, ins->result, &result );
-    lo_ins = MakeUnary( ins->head.opcode, left.low, result.low, U2 );
-    mid_lo_ins = MakeUnary( ins->head.opcode, left.mid_low, result.mid_low, U2 );
+    lo_ins = MakeMove( left.low, LowPart( ins->result, U2 ), U2 );
+    mid_lo_ins = MakeMove( left.mid_low, HighPart( ins->result, U2 ), U2 );
     DupSeg( ins, lo_ins );
     DupSeg( ins, mid_lo_ins );
     PrefixIns( ins, lo_ins );
@@ -352,7 +351,7 @@ extern  instruction     *rSPLIT8( instruction *ins )
     eight_byte_name     result;
     eight_byte_name     left;
 
-    if( Overlaps( ins->result, ins->operands[ 0 ] ) ) {
+    if( IndexOverlaps( ins, 0 ) ) {
         return( SplitOverlapped( ins, 0 ) );
     }
     Split8Name( ins, ins->operands[ 0 ], &left );
@@ -398,10 +397,10 @@ extern  instruction     *rSPLIT8BIN( instruction *ins )
     eight_byte_name     left;
     eight_byte_name     rite;
 
-    if( Overlaps( ins->result, ins->operands[ 0 ] ) ) {
+    if( IndexOverlaps( ins, 0 ) ) {
         return( SplitOverlapped( ins, 0 ) );
     }
-    if( Overlaps( ins->result, ins->operands[ 1 ] ) ) {
+    if( IndexOverlaps( ins, 1 ) ) {
         return( SplitOverlapped( ins, 1 ) );
     }
     Split8Name( ins, ins->operands[ 0 ], &left );
@@ -426,7 +425,6 @@ extern  instruction     *rSPLIT8BIN( instruction *ins )
     case OP_EXT_ADD:
     case OP_EXT_SUB:
         hi_ins->table = CodeTable( hi_ins );
-        hi_ins->ins_flags |= INS_CC_USED;
         mid_hi_ins->table = hi_ins->table;
         mid_hi_ins->ins_flags |= INS_CC_USED;
         mid_lo_ins->table = hi_ins->table;
@@ -614,7 +612,7 @@ extern  instruction     *rCLRHI_D( instruction *ins )
     instruction         *move3;
     instruction         *move4;
 
-    if( Overlaps( ins->result, ins->operands[ 0 ] ) ) {
+    if( IndexOverlaps( ins,  0 ) ) {
         return( SplitOverlapped( ins, 0 ) );
     }
     Split8Name( ins, ins->result, &result );
@@ -647,7 +645,7 @@ extern  instruction     *rCDQ( instruction *ins )
     name                *temp;
     name                *high;
 
-    if( Overlaps( ins->result, ins->operands[ 0 ] ) ) {
+    if( IndexOverlaps( ins, 0 ) ) {
         return( SplitOverlapped( ins, 0 ) );
     }
     Split8Name( ins, ins->result, &result );

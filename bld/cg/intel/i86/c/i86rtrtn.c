@@ -341,9 +341,11 @@ extern  bool    RTLeaveOp2( instruction *ins )
     case FD:
         if( _FPULevel( FPU_87 ) ) return( FALSE );
         break;
+/* -- This is not true now - I8 math and parameters are kept in registers -- [RomanT]
     case I8:
     case U8:
         break;
+*/
     default:
         return( FALSE );
     }
