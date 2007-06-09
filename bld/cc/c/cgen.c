@@ -1408,9 +1408,6 @@ void DoCompile( void )
     if( ! setjmp( env ) ) {
         Environment = &env;
         if( BEDLLLoad( NULL ) ) {
-#if ( _CPU == 8086 ) || ( _CPU == 386 )
-            BEMemInit(); // cg has a strange static var that doesn't get reset
-#endif
             if( ! CompFlags.zu_switch_used ) {
                 TargetSwitches &= ~ FLOATING_SS;
             }
@@ -1424,20 +1421,6 @@ void DoCompile( void )
 #endif
             cgi_info = BEInit( GenSwitches, TargetSwitches, OptSize, ProcRevision );
             if( cgi_info.success ) {
-#if 0
-                if( cgi_info.version.revision != II_REVISION ) WrongCodeGen();
-#if _CPU == 386
-                if( cgi_info.version.target != II_TARG_80386 ) WrongCodeGen();
-#elif _CPU == 370
-                if( cgi_info.version.target != II_TARG_370 ) WrongCodeGen();
-#elif _CPU == 8086
-                if( cgi_info.version.target != II_TARG_8086 ) WrongCodeGen();
-#elif _CPU == _AXP
-                if( cgi_info.version.target != II_TARG_AXP ) WrongCodeGen();
-#else
-#error "Undefined _CPU type"
-#endif
-#endif
 #if _CPU == 386
                 if( TargetSwitches & (P5_PROFILING | NEW_P5_PROFILING) ) {
                     FunctionProfileSegment = AddSegName( "TI", "DATA", SEGTYPE_INITFINI );
