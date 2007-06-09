@@ -35,10 +35,7 @@ extern  unsigned SymTypedef;
 
 extern FIELDPTR FieldCreate( char *name );
 
-local TYPEPTR StructDecl(int,int);
 //local TYPEPTR ComplexDecl(int,int);
-static void SetPlainCharType( int char_type );
-local void CheckBitfieldType( TYPEPTR typ );
 
 #if _CPU == 386
 #define _CHECK_SIZE( s )
@@ -407,6 +404,389 @@ local void AdvanceToken( void )
     }
 }
 
+static TAGPTR NewTag( char *name, int hash )
+{
+    TAGPTR      tag;
+
+    tag = (TAGPTR) CPermAlloc( sizeof( TAGDEFN ) + strlen( name ) );
+    tag->level = SymLevel;
+    tag->hash = hash;
+    tag->next_tag = TagHash[ hash ];
+    TagHash[ hash ] = tag;
+    strcpy( tag->name, name );
+    ++TagCount;
+    return( tag );
+}
+
+
+TAGPTR NullTag( void )
+{
+    return( NewTag( "", TAG_HASH_SIZE ) );
+}
+
+
+TAGPTR VfyNewTag( TAGPTR tag, int tag_type )
+{
+    if( tag->sym_type != NULL ) {               /* tag already exists */
+        if( tag->level != SymLevel ) {
+            tag = NewTag( tag->name, tag->hash );
+        } else if( tag->size != 0  ||   /* already defined */
+                   tag->sym_type->decl_type != tag_type ) { /* 18-jan-89 */
+            CErr2p( ERR_DUPLICATE_TAG, tag->name );
+        }
+    }
+    return( tag );
+}
+
+local TYPEPTR EnumFieldType( TYPEPTR ftyp,
+                             char plain_int,            /* 19-mar-91 */
+                             unsigned start,
+                             unsigned width )
+{
+    TYPEPTR     typ;
+    unsigned char data_type;
+
+    typ = TypeNode( TYPE_FIELD, NULL );
+    typ->u.f.field_start = start;
+    typ->u.f.field_width = width;
+    if( plain_int ) {
+        data_type = TYPE_INT;   /* default to signed bit fields */
+    } else {
+        SKIP_TYPEDEFS( ftyp );
+        if( ftyp->decl_type == TYPE_ENUM ) {
+            ftyp = ftyp->object;
+        }
+        data_type = ftyp->decl_type;
+    }
+    typ->u.f.field_type = data_type;
+    switch( data_type ) {
+    case TYPE_UCHAR:
+    case TYPE_USHORT:
+    case TYPE_UINT:
+    case TYPE_ULONG:
+    case TYPE_ULONG64:
+        typ->decl_type = TYPE_UFIELD;
+        break;
+    }
+    return( typ );
+}
+
+
+unsigned GetTypeAlignment( TYPEPTR typ )
+{
+    unsigned size;
+
+    for(;;) {
+        if(( typ->decl_type == TYPE_TYPEDEF ) ||
+           ( typ->decl_type == TYPE_ARRAY )) {
+            typ = typ->object;
+        } else {
+            break;
+        }
+    }
+    if( typ->decl_type == TYPE_STRUCT  ||       /* 25-jul-91 */
+        typ->decl_type == TYPE_UNION ) {
+        size = typ->u.tag->alignment;
+    #if _CPU == _AXP
+        if( CompFlags.align_structs_on_qwords ) {
+            size = 8;
+        }
+    #endif
+    } else {
+        size = TypeSize( typ );
+    }
+    return( size );
+}
+
+
+local unsigned long FieldAlign( unsigned long next_offset,
+                                FIELDPTR field,
+                                unsigned int *worst_alignment )
+{                               /* 05-jan-89 */
+    unsigned    pack_adjustment;
+    unsigned    align;
+
+    pack_adjustment = PackAmount;
+    align = GetTypeAlignment( field->field_type );
+    if( align > pack_adjustment ) { // can't be any bigger than pack( x )
+        align = pack_adjustment;
+    }
+    if( align > *worst_alignment ) {    /* 24-jul-91 */
+        *worst_alignment = align;
+    }
+    if( align != 1 ) {
+        unsigned long old_offset = next_offset;
+
+        next_offset += align - 1;
+        next_offset &= - (long)align;
+        if( CompFlags.slack_byte_warning && (next_offset - old_offset) ) {
+            CWarn2( WARN_LEVEL_1,
+                    ERR_SLACK_ADDED, (next_offset - old_offset) );
+        }
+    }
+    field->offset = next_offset;
+    return( next_offset );
+}
+
+local FIELDPTR NewField( FIELDPTR new_field, TYPEPTR decl )
+{
+    FIELDPTR    field;
+    FIELDPTR    prev_field;
+    TYPEPTR     typ;
+    TAGPTR      tag;
+
+    ++FieldCount;
+    typ = new_field->field_type;
+    if( typ != NULL ) {
+        SKIP_TYPEDEFS( typ );
+    }
+    if( new_field->name[0] == '\0' ) {
+        /* allow nameless structs and unions;  15-sep-90 */
+        if( (typ->decl_type != TYPE_STRUCT      &&
+             typ->decl_type != TYPE_UNION) ||
+             ! CompFlags.extensions_enabled ) {
+            CErr1( ERR_INVALID_DECLARATOR );
+        }
+    }
+    if( typ == decl ) {
+        CErr1( ERR_STRUCT_OR_UNION_INSIDE_ITSELF );
+    } else if( SizeOfArg( typ ) == 0 ) {   /* was TypeSize(typ) 15-may-90*/
+        /* can't have an array of incomplete type   24-aug-90 */
+        if( (typ->decl_type == TYPE_ARRAY  &&
+        (SizeOfArg( typ->object ) == 0 || !CompFlags.extensions_enabled ) )
+        ||      typ->decl_type != TYPE_ARRAY ) { /* JFD 15-jun-90 */
+            CErr( ERR_INCOMPLETE_TYPE, (SYM_NAMEPTR)(new_field->name) );
+        }
+    }
+    tag = decl->u.tag;
+    new_field->hash = HashValue;
+    if( new_field->name[0] != '\0' ) {  /* only check non-empty names */
+        for( field = FieldHash[HashValue]; field;
+              field = field->next_field_same_hash ) {
+            /* fields were added at the front of the hash linked list --
+               may as well stop if the level isn't the same anymore */
+            if( field->level != new_field->level )
+                break;
+            if( strcmp( field->name, new_field->name ) == 0 ) {
+                CErr2p( ERR_DUPLICATE_FIELD_NAME, field->name );
+            }
+        }
+        new_field->next_field_same_hash = FieldHash[HashValue];
+        FieldHash[HashValue] = new_field;
+    }
+    if( tag->u.field_list == NULL ) {
+        tag->u.field_list = new_field;
+    } else {
+        prev_field = tag->last_field;
+        prev_field->next_field = new_field;
+        if( SizeOfArg( prev_field->field_type ) == 0 ) { /* 05-jun-92 */
+            CErr( ERR_INCOMPLETE_TYPE, (SYM_NAMEPTR)(prev_field->name) );
+        }
+    }
+    tag->last_field = new_field;
+    return( new_field );
+}
+
+
+local unsigned long GetFields( TYPEPTR decl )
+{
+    unsigned long       start = 0;
+    TYPEPTR             typ;
+    decl_state          state;
+    FIELDPTR            field;
+    unsigned            scalar_size;
+    unsigned            bits_available, bits_total;
+    unsigned long       struct_size;
+    unsigned long       next_offset;
+    int                 width;
+    unsigned int        worst_alignment;                /* 24-jul-91 */
+    char                unqualified_type, prev_unqualified_type;
+    char                plain_int;
+    decl_info           info;
+    static int          struct_level = 0;
+
+    struct_level++;
+    prev_unqualified_type = TYPE_VOID;   /* so it doesn't match 1st time */
+    worst_alignment = 1;                                /* 24-jul-91 */
+    bits_available = 1;
+    bits_total = 0;
+    /* assertion: bits_available != bits_total && bits_total >> 3 == 0 */
+    struct_size = start;
+    next_offset = start;
+    for(;;) {
+       if( CurToken == T_SEMI_COLON && CompFlags.extensions_enabled ) {
+            NextToken();
+            if( CurToken == T_RIGHT_BRACE ) break;
+            continue;
+        }
+        GetFieldTypeSpecifier( &plain_int, &info );
+        typ = info.typ;
+        state = DECL_STATE_NONE;
+        if( typ == NULL ) {
+            state |= DECL_STATE_NOTYPE;
+            CErr2p( ERR_MISSING_DATA_TYPE, Buffer );
+            typ = TypeDefault();
+            if( CurToken == T_ID ) NextToken();
+        }
+        unqualified_type = UnQualifiedType( typ );
+        if( bits_available == bits_total ||
+            decl->decl_type == TYPE_UNION ) {           /* 12-nov-94 */
+            bits_available = TypeSize( typ ) * 8;
+            bits_total = bits_available;
+        } else if( unqualified_type != prev_unqualified_type ) {
+            next_offset += bits_total >> 3;
+            bits_available = TypeSize( typ ) * 8;
+            bits_total = bits_available;
+        }
+        prev_unqualified_type = unqualified_type;
+        for( ;; ) {
+            field = NULL;
+            if( CurToken != T_COLON ) {
+                field = FieldDecl( typ, info.mod, state );
+                field->level = struct_level;
+                AdjFieldTypeNode( field, info.decl_mod );
+                field = NewField( field, decl );
+            }
+            if( CurToken == T_COLON ) {
+                if( field != NULL ) {
+                    next_offset = FieldAlign( next_offset, field,
+                                              &worst_alignment );
+                }
+                CheckBitfieldType( typ );
+                NextToken();
+                width = ConstExpr();
+                if( width == 0  &&      field != NULL ) {
+                    CErr1( ERR_WIDTH_0 );
+                }
+                if( width > TARGET_BITS ) {
+                    CErr1( ERR_FIELD_TOO_WIDE );
+                    width = TARGET_BITS;
+                } else if( width < 0 ) {
+                    CErr1( ERR_WIDTH_NEGATIVE );
+                    width = 0;
+                }
+                if( width > bits_available      ||  width == 0 ) {
+                    scalar_size = TypeSize( typ );
+                    if( bits_available != bits_total ) {
+                        /* some bits have been used; abandon this unit */
+                        next_offset += bits_total >> 3;
+                    } else if( width == 0 ) {
+                        /* no bits have been used; align to base type */
+                        next_offset += scalar_size - 1;
+                        next_offset &= ~( scalar_size - 1 );
+                    }
+                    bits_available = scalar_size * 8;
+                    bits_total = bits_available;
+                }
+                if( field != NULL ) {
+                    field->offset = next_offset;
+                    field->field_type = EnumFieldType( typ, plain_int,
+                              bits_total - bits_available, width );
+                }
+                bits_available -= width;
+            } else {
+                if( bits_available != bits_total ) { //changed from bit field to non
+                    next_offset += bits_total >> 3;
+                    field->offset = next_offset;
+                    bits_available = TypeSize( typ ) * 8;
+                    bits_total = bits_available;
+                }
+                next_offset = FieldAlign( next_offset, field,
+                                          &worst_alignment );
+                next_offset += SizeOfArg( field->field_type );
+            }
+            if( next_offset > struct_size )  struct_size = next_offset;
+            if( decl->decl_type == TYPE_UNION ) {
+                next_offset = start;
+                bits_available = bits_total;
+            }
+            if( CurToken != T_COMMA ) break;
+            NextToken();
+        }
+        if( CurToken == T_RIGHT_BRACE ) {
+            CWarn1( WARN_MISSING_LAST_SEMICOLON,
+                    ERR_MISSING_LAST_SEMICOLON );
+        } else {
+            MustRecog( T_SEMI_COLON );
+        }
+        if( CurToken == T_RIGHT_BRACE ) break;
+    }
+    if( bits_available != bits_total ) { /* if last field was bit field */
+        next_offset += bits_total >> 3;
+        if( next_offset > struct_size )  struct_size = next_offset;
+    }
+    ClearFieldHashTable( decl->u.tag );
+    decl->u.tag->alignment = worst_alignment;   /* 25-jul-91 */
+    struct_size += worst_alignment - 1;         /* 01-may-92 */
+    struct_size &= - (long)worst_alignment;
+    _CHECK_SIZE( struct_size );
+    NextToken();
+    struct_level--;
+    return( struct_size );
+}
+
+
+local TYPEPTR StructDecl( int decl_typ, int packed )
+{
+    TYPEPTR     typ;
+    TAGPTR      tag;
+    int         saved_packamount;
+    TAGPTR      TagLookup( void );
+
+    saved_packamount = PackAmount;                      /* 20-nov-91 */
+    if( packed )  PackAmount = 1;
+    NextToken();
+    if( CurToken == T_LEFT_BRACE ) {
+        tag = NullTag();
+        NextToken();
+    } else {
+        for(;;) {
+            if( CurToken == T_ID ) break;
+            if( CurToken == T_LEFT_BRACE ) break;
+            if( CurToken == T_EOF ) break;
+            ExpectStructUnionTag();
+            NextToken();
+        }
+        if( CurToken == T_ID ) {        /* structure or union tag */
+            tag = TagLookup();
+            NextToken();
+        } else {
+            tag = NullTag();
+        }
+        if( CurToken != T_LEFT_BRACE ) {
+            if( CurToken == T_SEMI_COLON ) {
+                if( tag->level != SymLevel ) {
+                    tag = NewTag( tag->name, tag->hash );
+                }
+            }
+            typ = tag->sym_type;
+            if( typ == NULL ) {
+                typ = TypeNode( decl_typ, NULL );
+            } else {
+                if( typ->decl_type != decl_typ ) {              /* 18-jan-89 */
+                    CErr2p( ERR_DUPLICATE_TAG, tag->name );
+                }
+            }
+            tag->sym_type = typ;
+            typ->u.tag = tag;   /* FWC 19-jan-87 */
+            PackAmount = saved_packamount;
+            return( typ );
+        }
+        NextToken();
+        tag = VfyNewTag( tag, decl_typ );
+    }
+    typ = tag->sym_type;
+    if( typ == NULL ) {
+        typ = TypeNode( decl_typ, NULL );
+        tag->sym_type = typ;
+    }
+    typ->u.tag = tag;
+    tag->u.field_list = NULL;
+    tag->size = GetFields( typ );
+    PackAmount = saved_packamount;                      /* 20-nov-91 */
+    return( typ );
+}
+
 static void DeclSpecifiers( char *plain_int, decl_info *info )
 {
     TYPEPTR             typ;
@@ -711,191 +1091,6 @@ TYPEPTR TypeDefault( void )
 }
 
 
-static TAGPTR NewTag( char *name, int hash )
-{
-    TAGPTR      tag;
-
-    tag = (TAGPTR) CPermAlloc( sizeof( TAGDEFN ) + strlen( name ) );
-    tag->level = SymLevel;
-    tag->hash = hash;
-    tag->next_tag = TagHash[ hash ];
-    TagHash[ hash ] = tag;
-    strcpy( tag->name, name );
-    ++TagCount;
-    return( tag );
-}
-
-
-TAGPTR NullTag( void )
-{
-    return( NewTag( "", TAG_HASH_SIZE ) );
-}
-
-
-TAGPTR VfyNewTag( TAGPTR tag, int tag_type )
-{
-    if( tag->sym_type != NULL ) {               /* tag already exists */
-        if( tag->level != SymLevel ) {
-            tag = NewTag( tag->name, tag->hash );
-        } else if( tag->size != 0  ||   /* already defined */
-                   tag->sym_type->decl_type != tag_type ) { /* 18-jan-89 */
-            CErr2p( ERR_DUPLICATE_TAG, tag->name );
-        }
-    }
-    return( tag );
-}
-
-
-local FIELDPTR NewField( FIELDPTR new_field, TYPEPTR decl )
-{
-    FIELDPTR    field;
-    FIELDPTR    prev_field;
-    TYPEPTR     typ;
-    TAGPTR      tag;
-
-    ++FieldCount;
-    typ = new_field->field_type;
-    if( typ != NULL ) {
-        SKIP_TYPEDEFS( typ );
-    }
-    if( new_field->name[0] == '\0' ) {
-        /* allow nameless structs and unions;  15-sep-90 */
-        if( (typ->decl_type != TYPE_STRUCT      &&
-             typ->decl_type != TYPE_UNION) ||
-             ! CompFlags.extensions_enabled ) {
-            CErr1( ERR_INVALID_DECLARATOR );
-        }
-    }
-    if( typ == decl ) {
-        CErr1( ERR_STRUCT_OR_UNION_INSIDE_ITSELF );
-    } else if( SizeOfArg( typ ) == 0 ) {   /* was TypeSize(typ) 15-may-90*/
-        /* can't have an array of incomplete type   24-aug-90 */
-        if( (typ->decl_type == TYPE_ARRAY  &&
-        (SizeOfArg( typ->object ) == 0 || !CompFlags.extensions_enabled ) )
-        ||      typ->decl_type != TYPE_ARRAY ) { /* JFD 15-jun-90 */
-            CErr( ERR_INCOMPLETE_TYPE, (SYM_NAMEPTR)(new_field->name) );
-        }
-    }
-    tag = decl->u.tag;
-    new_field->hash = HashValue;
-    if( new_field->name[0] != '\0' ) {  /* only check non-empty names */
-        for( field = FieldHash[HashValue]; field;
-              field = field->next_field_same_hash ) {
-            /* fields were added at the front of the hash linked list --
-               may as well stop if the level isn't the same anymore */
-            if( field->level != new_field->level )
-                break;
-            if( strcmp( field->name, new_field->name ) == 0 ) {
-                CErr2p( ERR_DUPLICATE_FIELD_NAME, field->name );
-            }
-        }
-        new_field->next_field_same_hash = FieldHash[HashValue];
-        FieldHash[HashValue] = new_field;
-    }
-    if( tag->u.field_list == NULL ) {
-        tag->u.field_list = new_field;
-    } else {
-        prev_field = tag->last_field;
-        prev_field->next_field = new_field;
-        if( SizeOfArg( prev_field->field_type ) == 0 ) { /* 05-jun-92 */
-            CErr( ERR_INCOMPLETE_TYPE, (SYM_NAMEPTR)(prev_field->name) );
-        }
-    }
-    tag->last_field = new_field;
-    return( new_field );
-}
-
-
-local TYPEPTR EnumFieldType( TYPEPTR ftyp,
-                             char plain_int,            /* 19-mar-91 */
-                             unsigned start,
-                             unsigned width )
-{
-    TYPEPTR     typ;
-    unsigned char data_type;
-
-    typ = TypeNode( TYPE_FIELD, NULL );
-    typ->u.f.field_start = start;
-    typ->u.f.field_width = width;
-    if( plain_int ) {
-        data_type = TYPE_INT;   /* default to signed bit fields */
-    } else {
-        SKIP_TYPEDEFS( ftyp );
-        if( ftyp->decl_type == TYPE_ENUM ) {
-            ftyp = ftyp->object;
-        }
-        data_type = ftyp->decl_type;
-    }
-    typ->u.f.field_type = data_type;
-    switch( data_type ) {
-    case TYPE_UCHAR:
-    case TYPE_USHORT:
-    case TYPE_UINT:
-    case TYPE_ULONG:
-    case TYPE_ULONG64:
-        typ->decl_type = TYPE_UFIELD;
-        break;
-    }
-    return( typ );
-}
-
-
-unsigned GetTypeAlignment( TYPEPTR typ )
-{
-    unsigned size;
-
-    for(;;) {
-        if(( typ->decl_type == TYPE_TYPEDEF ) ||
-           ( typ->decl_type == TYPE_ARRAY )) {
-            typ = typ->object;
-        } else {
-            break;
-        }
-    }
-    if( typ->decl_type == TYPE_STRUCT  ||       /* 25-jul-91 */
-        typ->decl_type == TYPE_UNION ) {
-        size = typ->u.tag->alignment;
-    #if _CPU == _AXP
-        if( CompFlags.align_structs_on_qwords ) {
-            size = 8;
-        }
-    #endif
-    } else {
-        size = TypeSize( typ );
-    }
-    return( size );
-}
-
-
-local unsigned long FieldAlign( unsigned long next_offset,
-                                FIELDPTR field,
-                                unsigned int *worst_alignment )
-{                               /* 05-jan-89 */
-    unsigned    pack_adjustment;
-    unsigned    align;
-
-    pack_adjustment = PackAmount;
-    align = GetTypeAlignment( field->field_type );
-    if( align > pack_adjustment ) { // can't be any bigger than pack( x )
-        align = pack_adjustment;
-    }
-    if( align > *worst_alignment ) {    /* 24-jul-91 */
-        *worst_alignment = align;
-    }
-    if( align != 1 ) {
-        unsigned long old_offset = next_offset;
-
-        next_offset += align - 1;
-        next_offset &= - (long)align;
-        if( CompFlags.slack_byte_warning && (next_offset - old_offset) ) {
-            CWarn2( WARN_LEVEL_1,
-                    ERR_SLACK_ADDED, (next_offset - old_offset) );
-        }
-    }
-    field->offset = next_offset;
-    return( next_offset );
-}
-
 local int UnQualifiedType( TYPEPTR typ )                        /* 21-mar-91 */
 {
     SKIP_TYPEDEFS( typ );
@@ -974,205 +1169,6 @@ static void AdjFieldTypeNode( FIELDPTR field, type_modifiers decl_mod )
             CErr1( ERR_INVALID_DECLSPEC );
         }
     }
-}
-
-local unsigned long GetFields( TYPEPTR decl )
-{
-    unsigned long       start = 0;
-    TYPEPTR             typ;
-    decl_state          state;
-    FIELDPTR            field;
-    unsigned            scalar_size;
-    unsigned            bits_available, bits_total;
-    unsigned long       struct_size;
-    unsigned long       next_offset;
-    int                 width;
-    unsigned int        worst_alignment;                /* 24-jul-91 */
-    char                unqualified_type, prev_unqualified_type;
-    char                plain_int;
-    decl_info           info;
-    static int          struct_level = 0;
-
-    struct_level++;
-    prev_unqualified_type = TYPE_VOID;   /* so it doesn't match 1st time */
-    worst_alignment = 1;                                /* 24-jul-91 */
-    bits_available = 1;
-    bits_total = 0;
-    /* assertion: bits_available != bits_total && bits_total >> 3 == 0 */
-    struct_size = start;
-    next_offset = start;
-    for(;;) {
-       if( CurToken == T_SEMI_COLON && CompFlags.extensions_enabled ) {
-            NextToken();
-            if( CurToken == T_RIGHT_BRACE ) break;
-            continue;
-        }
-        GetFieldTypeSpecifier( &plain_int, &info );
-        typ = info.typ;
-        state = DECL_STATE_NONE;
-        if( typ == NULL ) {
-            state |= DECL_STATE_NOTYPE;
-            CErr2p( ERR_MISSING_DATA_TYPE, Buffer );
-            typ = TypeDefault();
-            if( CurToken == T_ID ) NextToken();
-        }
-        unqualified_type = UnQualifiedType( typ );
-        if( bits_available == bits_total ||
-            decl->decl_type == TYPE_UNION ) {           /* 12-nov-94 */
-            bits_available = TypeSize( typ ) * 8;
-            bits_total = bits_available;
-        } else if( unqualified_type != prev_unqualified_type ) {
-            next_offset += bits_total >> 3;
-            bits_available = TypeSize( typ ) * 8;
-            bits_total = bits_available;
-        }
-        prev_unqualified_type = unqualified_type;
-        for( ;; ) {
-            field = NULL;
-            if( CurToken != T_COLON ) {
-                field = FieldDecl( typ, info.mod, state );
-                field->level = struct_level;
-                AdjFieldTypeNode( field, info.decl_mod );
-                field = NewField( field, decl );
-            }
-            if( CurToken == T_COLON ) {
-                if( field != NULL ) {
-                    next_offset = FieldAlign( next_offset, field,
-                                              &worst_alignment );
-                }
-                CheckBitfieldType( typ );
-                NextToken();
-                width = ConstExpr();
-                if( width == 0  &&      field != NULL ) {
-                    CErr1( ERR_WIDTH_0 );
-                }
-                if( width > TARGET_BITS ) {
-                    CErr1( ERR_FIELD_TOO_WIDE );
-                    width = TARGET_BITS;
-                } else if( width < 0 ) {
-                    CErr1( ERR_WIDTH_NEGATIVE );
-                    width = 0;
-                }
-                if( width > bits_available      ||  width == 0 ) {
-                    scalar_size = TypeSize( typ );
-                    if( bits_available != bits_total ) {
-                        /* some bits have been used; abandon this unit */
-                        next_offset += bits_total >> 3;
-                    } else if( width == 0 ) {
-                        /* no bits have been used; align to base type */
-                        next_offset += scalar_size - 1;
-                        next_offset &= ~( scalar_size - 1 );
-                    }
-                    bits_available = scalar_size * 8;
-                    bits_total = bits_available;
-                }
-                if( field != NULL ) {
-                    field->offset = next_offset;
-                    field->field_type = EnumFieldType( typ, plain_int,
-                              bits_total - bits_available, width );
-                }
-                bits_available -= width;
-            } else {
-                if( bits_available != bits_total ) { //changed from bit field to non
-                    next_offset += bits_total >> 3;
-                    field->offset = next_offset;
-                    bits_available = TypeSize( typ ) * 8;
-                    bits_total = bits_available;
-                }
-                next_offset = FieldAlign( next_offset, field,
-                                          &worst_alignment );
-                next_offset += SizeOfArg( field->field_type );
-            }
-            if( next_offset > struct_size )  struct_size = next_offset;
-            if( decl->decl_type == TYPE_UNION ) {
-                next_offset = start;
-                bits_available = bits_total;
-            }
-            if( CurToken != T_COMMA ) break;
-            NextToken();
-        }
-        if( CurToken == T_RIGHT_BRACE ) {
-            CWarn1( WARN_MISSING_LAST_SEMICOLON,
-                    ERR_MISSING_LAST_SEMICOLON );
-        } else {
-            MustRecog( T_SEMI_COLON );
-        }
-        if( CurToken == T_RIGHT_BRACE ) break;
-    }
-    if( bits_available != bits_total ) { /* if last field was bit field */
-        next_offset += bits_total >> 3;
-        if( next_offset > struct_size )  struct_size = next_offset;
-    }
-    ClearFieldHashTable( decl->u.tag );
-    decl->u.tag->alignment = worst_alignment;   /* 25-jul-91 */
-    struct_size += worst_alignment - 1;         /* 01-may-92 */
-    struct_size &= - (long)worst_alignment;
-    _CHECK_SIZE( struct_size );
-    NextToken();
-    struct_level--;
-    return( struct_size );
-}
-
-
-local TYPEPTR StructDecl( int decl_typ, int packed )
-{
-    TYPEPTR     typ;
-    TAGPTR      tag;
-    int         saved_packamount;
-    TAGPTR      TagLookup( void );
-
-    saved_packamount = PackAmount;                      /* 20-nov-91 */
-    if( packed )  PackAmount = 1;
-    NextToken();
-    if( CurToken == T_LEFT_BRACE ) {
-        tag = NullTag();
-        NextToken();
-    } else {
-        for(;;) {
-            if( CurToken == T_ID ) break;
-            if( CurToken == T_LEFT_BRACE ) break;
-            if( CurToken == T_EOF ) break;
-            ExpectStructUnionTag();
-            NextToken();
-        }
-        if( CurToken == T_ID ) {        /* structure or union tag */
-            tag = TagLookup();
-            NextToken();
-        } else {
-            tag = NullTag();
-        }
-        if( CurToken != T_LEFT_BRACE ) {
-            if( CurToken == T_SEMI_COLON ) {
-                if( tag->level != SymLevel ) {
-                    tag = NewTag( tag->name, tag->hash );
-                }
-            }
-            typ = tag->sym_type;
-            if( typ == NULL ) {
-                typ = TypeNode( decl_typ, NULL );
-            } else {
-                if( typ->decl_type != decl_typ ) {              /* 18-jan-89 */
-                    CErr2p( ERR_DUPLICATE_TAG, tag->name );
-                }
-            }
-            tag->sym_type = typ;
-            typ->u.tag = tag;   /* FWC 19-jan-87 */
-            PackAmount = saved_packamount;
-            return( typ );
-        }
-        NextToken();
-        tag = VfyNewTag( tag, decl_typ );
-    }
-    typ = tag->sym_type;
-    if( typ == NULL ) {
-        typ = TypeNode( decl_typ, NULL );
-        tag->sym_type = typ;
-    }
-    typ->u.tag = tag;
-    tag->u.field_list = NULL;
-    tag->size = GetFields( typ );
-    PackAmount = saved_packamount;                      /* 20-nov-91 */
-    return( typ );
 }
 
 /*
