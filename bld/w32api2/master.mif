@@ -80,6 +80,7 @@ headers =            &
         mciavi.h     &
         mcx.h        &
         mgmtapi.h    &
+        mlang.h      &
         mmsystem.h   &
         mprapi.h     &
         msxml.h      &
