@@ -104,7 +104,7 @@ void Dmp_fixups( void )
         Wlseek( offset );
         Wread( &pe_fixup, sizeof( pe_fixup_header ) );
         offset += pe_fixup.block_size;
-        if( pe_fixup.page_rva == 0 ) break;
+        if( pe_fixup.block_size == 0 ) break;
         Dump_header( (char *)&pe_fixup.page_rva, pe_fixup_msg );
         if( Options_dmp & FIX_DMP ) {
             dmp_type_offset( ( pe_fixup.block_size -
