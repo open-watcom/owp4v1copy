@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  front end caling info structure and initialization
+* Description:  Calling convention structures and setup for front ends.
 *
 ****************************************************************************/
+
 
 #include <string.h>
 #include <stdio.h>
@@ -99,7 +100,9 @@ void PragmaAuxInfoInit( int flag_stdatnum )
                          //REVERSE_PARMS |
                          CALLER_POPS |
                          //GENERATE_STACK_FRAME |
+#if _CPU == 8086
                          NO_FLOAT_REG_RETURNS |
+#endif
                          NO_STRUCT_REG_RETURNS |
                          ROUTINE_RETURN |
                          //NO_8087_RETURNS |
