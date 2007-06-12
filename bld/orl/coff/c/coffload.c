@@ -37,8 +37,8 @@ static char SectionNames[3][COFF_SEC_NAME_LEN] =
     { ".rel", ".symtab", ".strtab" };
 
 static int determine_file_specs( coff_file_handle coff_file_hnd,
-                                  coff_file_header *f_hdr )
-/***************************************************************/
+                                 coff_file_header *f_hdr )
+/**************************************************************/
 {
     uint_16 cpu_type;
     uint_16 flags;
@@ -116,25 +116,37 @@ static int determine_file_specs( coff_file_handle coff_file_hnd,
     if( flags & IMAGE_FILE_SYSTEM ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_SYSTEM;
     }
-    /*
-    if( flags & IMAGE_FILE_BYTES_REVERSED_LO ) {
-            coff_file_hnd->flags |= ORL_FILE_FLAG_LITTLE_ENDIAN;
-    }
-    */
-    if( flags & IMAGE_FILE_BYTES_REVERSED_HI ) {
-        coff_file_hnd->flags |= ORL_FILE_FLAG_BIG_ENDIAN;
-    } else {
-        // inserting a default here
+    if( coff_file_hnd->type != ORL_FILE_TYPE_OBJECT ) {
+        /* There are no known big endian PE images, but there are lying
+         * cheating PE images that claim to be big endian and aren't.
+         */
         coff_file_hnd->flags |= ORL_FILE_FLAG_LITTLE_ENDIAN;
+    } else {
+        /*
+        if( flags & IMAGE_FILE_BYTES_REVERSED_LO ) {
+                coff_file_hnd->flags |= ORL_FILE_FLAG_LITTLE_ENDIAN;
+        }
+        */
+        if( flags & IMAGE_FILE_BYTES_REVERSED_HI ) {
+            coff_file_hnd->flags |= ORL_FILE_FLAG_BIG_ENDIAN;
+        } else {
+            /* Inserting a default here - note that the BYTES_REVERSED_LO/HI 
+             * flags are now deprecated and neither is supposed to be present.
+             */
+            coff_file_hnd->flags |= ORL_FILE_FLAG_LITTLE_ENDIAN;
+        }
     }
 
+    if( f_hdr->sym_table == 0 ) {
+        f_hdr->num_symbols = 0; /* Fix up incorrectly stripped images */
+    }
     /*
         At this point, we have filled in
             coff_file_hnd->type
             coff_file_hnd->machine_type
             coff_file_hnd->flags
     */
-    return flag_import_library;
+    return( flag_import_library );
 }
 
 static void determine_section_specs( coff_sec_handle coff_sec_hnd,
@@ -376,11 +388,7 @@ static orl_return load_coff_sec_handles( coff_file_handle coff_file_hnd,
     coff_file_hnd->string_table->name = SectionNames[2];
     coff_file_hnd->string_table->name_alloced = COFF_FALSE;
     coff_file_hnd->string_table->relocs_done = COFF_FALSE;
-    if( coff_file_hnd->type == ORL_FILE_TYPE_OBJECT ) {
-        coff_file_hnd->string_table->size = 4; // for now
-    } else {
-        coff_file_hnd->string_table->size = 0; // for now
-    }
+    coff_file_hnd->string_table->size = 4; // accurately determined later
     coff_file_hnd->string_table->base = 0;
     coff_file_hnd->string_table->offset = coff_file_hnd->symbol_table->offset + coff_file_hnd->symbol_table->size;
     coff_file_hnd->string_table->hdr = NULL;
@@ -408,7 +416,7 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     int                 loop_limit;
     pe_header *         pe_hdr;
     char *              PE;
-    orl_file_offset     PEoffset=0;
+    orl_file_offset     PEoffset = 0;
 
     pe_hdr = _ClientRead( coff_file_hnd, 2 );
     _ClientSeek( coff_file_hnd, -2, SEEK_CUR );
@@ -425,7 +433,7 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     coff_file_hnd->f_hdr_buffer = _ClientRead( coff_file_hnd, sizeof( coff_file_header ) );
     if( !(coff_file_hnd->f_hdr_buffer) ) return( ORL_OUT_OF_MEMORY );
     f_hdr = (coff_file_header *) coff_file_hnd->f_hdr_buffer;
-    if (determine_file_specs( coff_file_hnd, f_hdr )) {
+    if( determine_file_specs( coff_file_hnd, f_hdr ) ) {
         // we have identified an import_object_header
         // convert short import library structures to long import
         // library structures, change _ClientRead and _ClientSeek
@@ -441,7 +449,7 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
         determine_file_specs( coff_file_hnd, f_hdr );
     }
     if( f_hdr->opt_hdr_size > 0 ) {     // skip optional header
-        pe_opt_hdr *opt_hdr = (pe_opt_hdr *)_ClientRead(coff_file_hnd, f_hdr->opt_hdr_size);
+        pe_opt_hdr *opt_hdr = (pe_opt_hdr *)_ClientRead( coff_file_hnd, f_hdr->opt_hdr_size );
 
         if( (opt_hdr->magic == 0x10b) || (opt_hdr->magic == 0x20b) ) {
             coff_file_hnd->export_table_rva = opt_hdr->export_table_rva;
@@ -488,9 +496,12 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
         return( ORL_ERROR );
     }
     loop_limit = coff_file_hnd->num_sections;
-    if( last_sec_hnd == coff_file_hnd->string_table &&
-                coff_file_hnd->type == ORL_FILE_TYPE_OBJECT ) {
-        memcpy( &(last_sec_hnd->size), coff_file_hnd->rest_of_file_buffer + last_sec_hnd->offset - coff_file_hnd->initial_size, sizeof( coff_sec_size ) );
+    if( last_sec_hnd == coff_file_hnd->string_table ) {
+        if( f_hdr->sym_table ) {
+            memcpy( &(last_sec_hnd->size),
+                    coff_file_hnd->rest_of_file_buffer + last_sec_hnd->offset - coff_file_hnd->initial_size,
+                    sizeof( coff_sec_size ) );
+        }
         if( last_sec_hnd->size < 4 ) {
             last_sec_hnd->size = 0;
         }
