@@ -33,13 +33,15 @@
 #include "coderep.h"
 #include "opcodes.h"
 #include "model.h"
+#include "procdef.h"
+#include "addrname.h"
+#include "x87.h"
 
 
 extern  void            FreeIns(instruction*);
 extern  void            FreeAName(name*);
 extern  block           *TailBlocks(void);
 extern  bool            BreakExists(void);
-extern  bool            FPSideEffect(instruction*);
 extern  bool            IsVolatile(name*);
 extern  void            DoNothing(instruction*);
 extern  bool            DoesSomething(instruction*);

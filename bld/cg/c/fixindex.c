@@ -32,20 +32,21 @@
 #include "standard.h"
 #include "coderep.h"
 #include "opcodes.h"
+#include "procdef.h"
+#include "addrname.h"
+#include "x87.h"
+
 
 extern  block           *HeadBlock;
 
-extern  bool            FPIsStack(name*);
 extern  bool            IndexOkay(instruction*,name*);
 extern  bool            RTLeaveOp2(instruction*);
 extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  name            *AllocTemp(type_class_def);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
-extern  void            FPSetStack(name*);
 extern  void            FixFPConsts(instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
-extern  type_class_def  FPInsClass(instruction*);
 
 static byte NumTab[LAST_OP-FIRST_OP+1] = {
 /*****************************************

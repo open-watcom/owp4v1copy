@@ -45,6 +45,8 @@
 #include "cgaux.h"
 #include "funits.h"
 #include "feprotos.h"
+#include "x87.h"
+
 
 extern  block           *HeadBlock;
 extern  bool            BlockByBlock;
@@ -76,7 +78,6 @@ extern  void            RevCond(instruction*);
 extern  void            MoveSegRes(instruction*,instruction*);
 extern  void            MoveSegOp(instruction*,instruction*,int);
 extern  hw_reg_set      *IdxRegs( void );
-extern  void            FPCalcMax( void );
 extern  void            InitFPStkReq( void );
 
 /* forward declarations */
@@ -1202,6 +1203,5 @@ extern  void    FPExpand( void ) {
         ST0 = ST( 0 );
         ST1 = ST( 1 );
         Expand();
-//      FPCalcMax();
     }
 }

@@ -46,6 +46,9 @@
 #include "makeaddr.h"
 #include "optask.h"
 #include "bgcall.h"
+#include "x87.h"
+
+
 
 extern  label_handle    AskForSymLabel(pointer,cg_class);
 extern  instruction     *NewIns(int);
@@ -73,7 +76,6 @@ extern  void            Generate(bool);
 extern  void            PGBlip(char*);
 extern  void            EnLink(label_handle,bool);
 extern  void            UpdateReturn(call_state*,type_def*,type_class_def,aux_handle);
-extern  void            FPPushParms(pn,call_state*);
 extern  void            NewProc(int);
 extern  name            *StReturn(an,type_def*,instruction**);
 extern  hw_reg_set      StackReg(void);
@@ -83,7 +85,6 @@ extern  instruction     *PushOneParm(instruction*,name*,type_class_def,type_leng
 extern  bool            IsVolatile(name*);
 extern  void            TNZapParms(void);
 extern  name            *AllocS32Const(signed_32);
-extern  void            FPNotStack(name*);
 extern  void            FreeIns(instruction*);
 extern  void            PushInSameBlock(instruction*);
 #if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )

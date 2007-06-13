@@ -32,6 +32,8 @@
 #include "standard.h"
 #include "coderep.h"
 #include "opcodes.h"
+#include "procdef.h"
+#include "addrname.h"
 #include "zoiks.h"
 #include "typedef.h"
 #include "hostsys.h"
@@ -40,6 +42,8 @@
 #include "tree.h"
 #include "cfloat.h"
 #include "feprotos.h"
+#include "x87.h"
+
 
 typedef enum {
         ALL_LIVE,
@@ -58,16 +62,11 @@ static  bool            LeaveIndVars;
 
 extern  name            *ScaleIndex(name *,name *,type_length ,type_class_def ,type_length ,int ,i_flags );
 extern name             *AllocTemp(type_class_def);
-extern void             FPNotStack(name*);
-extern bool             FPStackOp(name*);
-extern bool             FPSideEffect(instruction*);
-extern bool             FPStackIns(instruction*);
 extern void             FreeIns(instruction*);
 extern void             PrefixIns(instruction*,instruction*);
 extern void             SuffixIns(instruction*,instruction*);
 extern instruction      *MakeMove(name*,name*,type_class_def);
 extern instruction      *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
-extern bool             FPIsConvert(instruction*);
 extern name             *AllocConst(pointer);
 extern pointer          CnvCFToType(pointer,type_def*);
 extern type_def         *ClassType(type_class_def);

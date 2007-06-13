@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  FPU stack (x87) register allocation.
 *
 ****************************************************************************/
 
@@ -39,6 +38,8 @@
 #include "typedef.h"
 #include "gen8087.h"
 #include "zoiks.h"
+#include "addrname.h"
+#include "x87.h"
 
 extern  block           *HeadBlock;
 extern  proc_def        *CurrProc;
@@ -78,7 +79,6 @@ static  void            CnvResult( instruction *ins );
 static  void            FindSinCos( instruction *ins, opcode_defs next_op );
 extern  int             Count87Regs( hw_reg_set regs );
 static  void            FPConvert( void );
-extern  void            FPSetStack( name *name );
 
 extern  void    FPRegAlloc( void ) {
 /*****************************

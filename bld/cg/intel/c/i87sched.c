@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction scheduling for x87 FPU.
 *
 ****************************************************************************/
 
@@ -33,6 +32,8 @@
 #include "standard.h"
 #include "coderep.h"
 #include "opcodes.h"
+#include "procdef.h"
+#include "addrname.h"
 #include "vergen.h"
 #include "pattern.h"
 #include "zoiks.h"
@@ -40,6 +41,8 @@
 #include "gen8087.h"
 #include "model.h"
 #include "i87sched.h"
+#include "x87.h"
+
 
 extern  block   *HeadBlock;
 extern  int     Max87Stk;
@@ -58,7 +61,6 @@ extern  bool            ReDefinedBy(instruction*,name*);
 extern  name            *DeAlias(name*);
 extern  void            MoveEdge( block_edge *edge, block *new_dest );
 extern  block           *AddPreBlock( block *postblk );
-extern  bool            FPStackIns( instruction *ins );
 extern  void            RevCond( instruction * );
 extern  int             FPStkReq( instruction * );
 extern  bool            InsOrderDependant( instruction *, instruction * );

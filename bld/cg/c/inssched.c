@@ -44,6 +44,9 @@
 #include "pattern.h"
 #include "vergen.h"
 #include "zoiks.h"
+#include "addrname.h"
+#include "x87.h"
+
 
 extern  void            ProcMessage(msg_class);
 extern  sym_handle      AskForLblSym(label_handle);
@@ -53,23 +56,13 @@ extern  bool            ReDefinedBy(instruction *, name *);
 extern  instruction_id  Renumber(void);
 extern  hw_reg_set      StackReg(void);
 extern  FU_entry        *FUEntry(instruction *);
-extern  bool            FPStackIns(instruction *);
 extern  int             CountIns(block*);
 extern  bool            VisibleToCall(instruction *,name *, bool);
 extern  bool            IsSegReg(hw_reg_set);
-extern  bool            FPStackReg(name*);
-extern  bool            FPInsIntroduced(instruction*);
-extern  int             FPStkOver(instruction *,int);
-extern  void            FPCalcStk(instruction*,int*);
-extern  void            FPPreSched(block*);
-extern  void            FPPostSched(block*);
-extern  bool            FPFreeIns(instruction*);
-extern  int             FPMaxDepth( instruction *ins );
 extern  bool            DoesSomething(instruction*);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  hw_reg_set      LowReg(hw_reg_set);
 extern  hw_reg_set      HighReg(hw_reg_set);
-extern  int             FPStackExit( block *);
 extern  void            ClearInsBits( instruction_flags );
 extern  hw_reg_set      FullReg( hw_reg_set );
 

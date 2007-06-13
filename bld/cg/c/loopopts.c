@@ -34,13 +34,16 @@
 #include "coderep.h"
 #include "indvars.h"
 #include "opcodes.h"
+#include "procdef.h"
 #include "cgmem.h"
 #include "cfloat.h"
 #include "model.h"
+#include "addrname.h"
 #include "stackok.h"
 #include "zoiks.h"
 #include "i64.h"
 #include "feprotos.h"
+#include "x87.h"
 
 
 typedef struct block_list {
@@ -88,7 +91,6 @@ extern  name            *DeAlias(name*);
 extern  void            LPBlip(void);
 extern  void            RemoveInputEdge(block_edge*);
 extern  block           *ReGenBlock(block*,label_handle);
-extern  void            FPNotStack(name*);
 extern  bool            NameIsConstant(name*);
 extern  void            ConstToTemp(block*,block*,block*(*)(block*));
 extern  bool            SideEffect(instruction*);

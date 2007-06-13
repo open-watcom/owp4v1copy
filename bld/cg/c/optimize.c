@@ -35,13 +35,16 @@
 #include "opcodes.h"
 #include "cgdefs.h"
 #include "zoiks.h"
+#include "procdef.h"
+#include "addrname.h"
+#include "x87.h"
+
 
 extern    block         *HeadBlock;
 extern    conflict_node *ConfList;
 
 extern  bool            PropagateMoves(void);
 extern  instruction_id  Renumber(void);
-extern  bool            FPIsStack(name*);
 extern  bool            SideEffect(instruction*);
 extern  void            FreeIns(instruction*);
 extern  conflict_node*  FindConflictNode(name*,block*,instruction*);

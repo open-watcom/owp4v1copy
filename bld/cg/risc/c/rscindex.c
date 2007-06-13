@@ -47,8 +47,6 @@ extern  conflict_node       *ConfList;
 extern  opcode_defs         String[];
 
 extern  void            SuffixIns(instruction*,instruction*);
-extern  bool            FPIsStack(name*);
-extern  void            FPSetStack(name*);
 extern  bool            IsIndexReg(hw_reg_set,type_class_def,bool);
 extern  reg_set_index   MarkIndex(instruction*,name*,bool);
 extern  void            PrefixIns(instruction*,instruction*);

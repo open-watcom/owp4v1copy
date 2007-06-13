@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Optimize x87 FPU instruction sequences. 
 *
 ****************************************************************************/
 
@@ -43,6 +42,8 @@
 #include "regset.h"
 #include "zoiks.h"
 #include "funits.h"
+#include "x87.h"
+
 
 extern  block           *HeadBlock;
 extern  block           *CurrBlock;
@@ -58,7 +59,6 @@ extern  int             FPRegNum(name*);
 extern  void            DoNothing(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  void            BGDone(an);
-extern  bool            FPIsStack(name*);
 extern  bool            ReDefinedBy(instruction*,name*);
 extern  instruction     *MakeNary(opcode_defs,name*,name*,name*,type_class_def,type_class_def,int);
 extern  void            AddIns(instruction*);

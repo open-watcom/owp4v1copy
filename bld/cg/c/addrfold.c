@@ -41,6 +41,7 @@
 #include "zoiks.h"
 #include "freelist.h"
 #include "cfloat.h"
+#include "x87.h"
 
 #include "addrfold.h"
 
@@ -51,7 +52,6 @@ extern  name            *STempOffset(name*,type_length,type_class_def,type_lengt
 extern  void            AddIns(instruction*);
 extern  name            *AllocIndex(name*,name*,type_length,type_class_def);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
-extern  void            FPSetStack(name*);
 extern  cg_type         NamePtrType(name*);
 extern  name            *AllocIntConst(int);
 extern  name            *AllocS32Const(signed_32);

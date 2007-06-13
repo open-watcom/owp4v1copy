@@ -47,7 +47,7 @@
 #include "addrfold.h"
 #include "bldins.h"
 
-extern  void            FPNotStack(name*);
+
 extern  an              MakeConst(pointer,type_def*);
 extern  uint            Length(char*);
 extern  an              MakeAddrName(cg_class,sym_handle,type_def*);

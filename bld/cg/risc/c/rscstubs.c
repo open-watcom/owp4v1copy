@@ -33,9 +33,11 @@
 #include "standard.h"
 #include "coderep.h"
 #include "cgdefs.h"
+#include "procdef.h"
 #include "regset.h"
 #include "addrname.h"
 #include "zoiks.h"
+#include "x87.h"
 
 
 /* KLUDGEY crud for segment register */
@@ -174,12 +176,6 @@ extern  bool    FPStackOp( name *name ) {
     return( FALSE );
 }
 
-extern  bool    FPPreIns( instruction *ins ) {
-/********************************************/
-    ins = ins;
-    return( FALSE );
-}
-
 extern  int     FPStackExit( block *blk ) {
 /*****************************************/
     blk = blk;
@@ -221,9 +217,10 @@ extern  void    InitFP() {
 /************************/
 }
 
-extern void             FPPushParms( pn* parm ) {
-/***********************************************/
+extern void     FPPushParms( pn parm, call_state *state ) {
+/*********************************************************/
     parm = parm;
+    state = state;
 }
 
 

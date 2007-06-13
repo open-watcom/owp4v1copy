@@ -36,6 +36,10 @@
 #include "opcodes.h"
 #include "pattern.h"
 #include "typedef.h"
+#include "procdef.h"
+#include "addrname.h"
+#include "x87.h"
+
 
 extern  void            FreeIns(instruction*);
 extern  int             NumOperands(instruction*);
@@ -46,7 +50,6 @@ extern  bool            CanReplace(instruction*);
 extern  instruction     *rSWAPOPS(instruction*);
 extern  instruction     *rSWAPCMP(instruction*);
 extern  bool            IsStackReg(name*);
-extern  bool            FPIsConvert(instruction*);
 
 extern  type_length     TypeClassSize[];
 
