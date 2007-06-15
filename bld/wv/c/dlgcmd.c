@@ -68,6 +68,9 @@ static bool CmdEvent( gui_window * gui, gui_event gui_ev, void * param )
     dlg = GUIGetExtra( gui );
     switch( gui_ev ) {
     case GUI_INIT_DIALOG:
+#ifdef __OS2__
+        GUILimitEditText( gui, CTL_CMD_EDIT, TXT_LEN ); // allow more than 32 chars input
+#endif
         DlgSetHistory( gui, CmdHistory, dlg->cmd, CTL_CMD_EDIT, CTL_CMD_LIST );
         GUISetFocus( gui, CTL_CMD_EDIT );
         return( TRUE );
