@@ -34,7 +34,12 @@
 #include "rtdata.h"
 
 
-#if !defined( __NETWARE__ ) && !defined( _THIN_LIB )
+#if !defined( __NETWARE__ ) || !defined( _THIN_LIB )
+
+/*
+ *  This code should be included on non-netware platforms and in cases where thin lib is not defined
+ *  This will ensure that fat netware libraries will be calling the Watcom version of __get_std_stream
+ */
 
 _WCRTLINK FILE *__get_std_stream( unsigned handle )
 {
@@ -110,6 +115,11 @@ _WCRTLINK FILE *__get_std_file( unsigned handle )
 
 
 #if defined( __NETWARE__ ) && !defined( _THIN_LIB )
+
+/*
+ *  This code is for fat netware libraries. We are using the Watcom FILE *'s
+ *  so this will be calling __get_std_stream from the top of this file.
+ */
 
 #include <io.h>
 
