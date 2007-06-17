@@ -1,3 +1,16 @@
+To try and create a full install from here, try:
+
+"C"
+builder rel2 cinst os_nt
+  
+"F77"
+builder rel2 finst os_nt
+
+use os_os2 for the OS/2 installers
+
+General stuff.
+=================================
+
 Sample commands to create setup.inf script for C/C++:
 
 langdat c
