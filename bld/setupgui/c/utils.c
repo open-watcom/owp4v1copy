@@ -2221,7 +2221,7 @@ extern bool GetDirParams( int       argc,
             switch( argv[i][1] ) {
             case '?':
             {            
-                char * msg = "Usage: setup [-options]\n\n" \
+                char * msg = "Usage: @ [-options]\n\n" \
                     "Supported options (case insensitive):\n\n" \
                     "-f=script\t\tspecify script file to override setup.inf\n" \
                     "-d<name=val>\tdefine a variable for the installer\n" \
