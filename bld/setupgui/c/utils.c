@@ -78,6 +78,8 @@ int             SkipDialogs;
 char            *VariablesFile;
 DEF_VAR         *ExtraVariables;
 int             Invisible;
+int             NoProgramGroups;
+int             NoStartupChange;
 
 #ifdef PATCH
 extern int      InitIO( void );
@@ -96,6 +98,10 @@ extern bool ModifyEnvironment( bool uninstall )
 #ifdef _UI
     uninstall = uninstall;
 #else
+
+    if(NoProgramGroups)
+        return TRUE;
+
     ret = CreatePMInfo( uninstall );
     if( !ret ) {                   // create folder and icons
         gui_message_return  gui_ret;
@@ -117,6 +123,9 @@ extern bool ModifyStartup( bool uninstall )
 /*****************************************/
 {
     bool                ret;
+
+    if(NoStartupChange)
+        return TRUE;
 
 #if !defined( _UI )
     WriteProfileStrings( uninstall );  // will write to the win.ini file.
@@ -2203,6 +2212,8 @@ extern bool GetDirParams( int       argc,
     SkipDialogs         = FALSE;
     VariablesFile       = NULL;
     ExtraVariables      = NULL;
+    NoProgramGroups     = FALSE;
+    NoStartupChange     = FALSE;
     i                   = 1;
 
     while( i < argc ) {
@@ -2228,6 +2239,14 @@ extern bool GetDirParams( int       argc,
             case 'S':
                 SkipDialogs = TRUE;
                 break;
+                
+            case 'n':
+            case 'N':
+                if(argv[i][2] == 's' || argv[i][2] == 'S')
+                    NoStartupChange = TRUE;
+                else if(argv[i][2] == 'p' || argv[i][2] == 'P')
+                    NoProgramGroups = TRUE;
+                break; 
             }
 
             i++;
