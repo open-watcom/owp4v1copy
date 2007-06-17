@@ -3071,6 +3071,9 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
           case IC_COMPCTOR_BEG :            // START COMPONENT CTOR, TEMPS
           { OBJ_INIT* init;                 // - initialization object
             init = ObjInitClass();
+            if(NULL == init){
+                CFatal( "ObjInitClass returned NULL\nPossible: http://bugzilla.openwatcom.org/show_bug.cgi?id=63" );
+            }
             if( init->defn != NULL ) {
                 if( NULL != dtor_last_reqd ) {
                     SE* se;
@@ -3099,6 +3102,9 @@ static FN_CTL* emit_virtual_file( // EMIT A VIRTUAL FILE
           { OBJ_INIT* init;                 // - initialization object
             cg_name expr;                   // - new expr
             init = ObjInitClass();
+            if(NULL == init){
+                CFatal( "ObjInitClass returned NULL\nPossible: http://bugzilla.openwatcom.org/show_bug.cgi?id=63" );
+            }
             if( init->defn != NULL
              && init->obj_se != NULL ) {
                 expr = CgCallBackCtorDone( NULL
