@@ -1707,7 +1707,7 @@ static bool ProcLine( char *line, pass_type pass )
             // new dialog
             memset( &dialog_info, 0, sizeof( DIALOG_INFO ) );
             dialog_info.curr_dialog = AddNewDialog( next );
-            InitArray( &dialog_info.curr_dialog->controls, sizeof( gui_control_info ), &dialog_info.array );
+            InitArray( (void **)&dialog_info.curr_dialog->controls, sizeof( gui_control_info ), &dialog_info.array );
             dialog_info.wrap_width = MaxWidthChars;
         } else if( stricmp( line, "condition" ) == 0 ) {
             CompileCondition( next, &dialog_info.curr_dialog->condition );
@@ -2481,26 +2481,26 @@ extern long SimInit( char *inf_name )
         return( SIM_INIT_NOFILE );
     }
 #endif
-    InitArray( &DiskInfo, sizeof( struct disk_info ), &SetupInfo.disks );
-    InitArray( &DirInfo, sizeof( struct dir_info ), &SetupInfo.dirs );
-    InitArray( &FileInfo, sizeof( struct file_info ), &SetupInfo.files );
-    InitArray( &PMInfo, sizeof( struct pm_info ), &SetupInfo.pm_files );
-    InitArray( &ProfileInfo, sizeof( struct profile_info ), &SetupInfo.profile );
-    InitArray( &AutoExecInfo, sizeof( struct config_info ), &SetupInfo.autoexec );
-    InitArray( &ConfigInfo, sizeof( struct config_info ), &SetupInfo.config );
-    InitArray( &EnvironmentInfo, sizeof( struct config_info ), &SetupInfo.environment );
-    InitArray( &TargetInfo, sizeof( struct target_info ), &SetupInfo.target );
-    InitArray( &LabelInfo, sizeof( struct label_info ), &SetupInfo.label );
-    InitArray( &UpgradeInfo, sizeof( struct upgrade_info ), &SetupInfo.upgrade );
+    InitArray( (void **)&DiskInfo, sizeof( struct disk_info ), &SetupInfo.disks );
+    InitArray( (void **)&DirInfo, sizeof( struct dir_info ), &SetupInfo.dirs );
+    InitArray( (void **)&FileInfo, sizeof( struct file_info ), &SetupInfo.files );
+    InitArray( (void **)&PMInfo, sizeof( struct pm_info ), &SetupInfo.pm_files );
+    InitArray( (void **)&ProfileInfo, sizeof( struct profile_info ), &SetupInfo.profile );
+    InitArray( (void **)&AutoExecInfo, sizeof( struct config_info ), &SetupInfo.autoexec );
+    InitArray( (void **)&ConfigInfo, sizeof( struct config_info ), &SetupInfo.config );
+    InitArray( (void **)&EnvironmentInfo, sizeof( struct config_info ), &SetupInfo.environment );
+    InitArray( (void **)&TargetInfo, sizeof( struct target_info ), &SetupInfo.target );
+    InitArray( (void **)&LabelInfo, sizeof( struct label_info ), &SetupInfo.label );
+    InitArray( (void **)&UpgradeInfo, sizeof( struct upgrade_info ), &SetupInfo.upgrade );
 #ifdef PATCH
-    InitArray( &PatchInfo, sizeof( struct patch_info ), &SetupInfo.patch_files );
+    InitArray( (void **)&PatchInfo, sizeof( struct patch_info ), &SetupInfo.patch_files );
 #endif
-    InitArray( &SpawnInfo, sizeof( struct spawn_info ), &SetupInfo.spawn );
-    InitArray( &DeleteInfo, sizeof( struct spawn_info ), &SetupInfo.delete );
-    InitArray( &FileCondInfo, sizeof( struct file_cond_info ), &SetupInfo.fileconds );
-    InitArray( &DLLsToCheck, sizeof( struct dlls_to_check ), &SetupInfo.dlls_to_count );
-    InitArray( &ForceDLLInstall, sizeof( struct force_DLL_install ), &SetupInfo.force_DLL_install );
-    InitArray( &AllPMGroups, sizeof( struct all_pm_groups ), &SetupInfo.all_pm_groups );
+    InitArray( (void **)&SpawnInfo, sizeof( struct spawn_info ), &SetupInfo.spawn );
+    InitArray( (void **)&DeleteInfo, sizeof( struct spawn_info ), &SetupInfo.delete );
+    InitArray( (void **)&FileCondInfo, sizeof( struct file_cond_info ), &SetupInfo.fileconds );
+    InitArray( (void **)&DLLsToCheck, sizeof( struct dlls_to_check ), &SetupInfo.dlls_to_count );
+    InitArray( (void **)&ForceDLLInstall, sizeof( struct force_DLL_install ), &SetupInfo.force_DLL_install );
+    InitArray( (void **)&AllPMGroups, sizeof( struct all_pm_groups ), &SetupInfo.all_pm_groups );
 #ifndef _UI
     SetDialogFont();
 #endif

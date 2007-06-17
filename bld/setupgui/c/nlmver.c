@@ -55,7 +55,7 @@
 static  void    LenToASCIIZStr(char *tobuf, char *frombuf)
 {
         memcpy(tobuf,frombuf+1,*frombuf);
-        tobuf[*frombuf] = NULL;
+        tobuf[(int)*frombuf] = NULL;
 }
 
 int     ReturnNLMVersionInfoFromFile

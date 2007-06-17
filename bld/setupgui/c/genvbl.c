@@ -89,7 +89,7 @@ extern void InitGlobalVarList( void )
     GlobalVarArray.num = 0;
     GlobalVarArray.alloc = 20;
     GlobalVarArray.increment = 20;
-    InitArray( &GlobalVarList, sizeof( a_variable ), &GlobalVarArray );
+    InitArray( (void **)&GlobalVarList, sizeof( a_variable ), &GlobalVarArray );
     GlobalVarHash = HashInit( HASH_SIZE, &stricmp );
 }
 
