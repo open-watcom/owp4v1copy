@@ -2219,6 +2219,30 @@ extern bool GetDirParams( int       argc,
     while( i < argc ) {
         if( argv[i][0] == '-' || argv[i][0] == '/' ) {
             switch( argv[i][1] ) {
+            case '?':
+            {            
+                char * msg = "Usage: setup [-options]\n\n" \
+                    "Supported options (case insensitive):\n\n" \
+                    "-f=script\t\tspecify script file to override setup.inf\n" \
+                    "-d<name=val>\tdefine a variable for the installer\n" \
+                    "-i\t\tinvisible: shows no dialogs; infers -s\n" \
+                    "-s\t\tskips dialogs but shows install progress\n" \
+                    "-np\t\tdoes not create Program Manager entries\n" \
+                    "-ns\t\tdoes not register startup information (paths, environment)\n" ;
+
+#if 0  /* If SetupInit is called, the dialog is shown on the big blue window */
+                if( !SetupInit() ) 
+                    return FALSE;
+#endif
+
+                InitGlobalVarList();
+                SetVariableByName( "IDS_USAGE", "%s");
+                MsgBox( NULL, "IDS_USAGE", GUI_OK, msg );
+                
+                /* return FALSE to terminate installer */
+                return FALSE;
+            }
+            
             case 'f': // Process "script" file to override variables in setup.inf
             case 'F':
                 if( argv[i][2] == '=' && argv[i][3] != '\0'
