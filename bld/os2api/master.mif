@@ -96,12 +96,14 @@ headers386 =                 &
         machine/endian.h     &
         machine/types.h      &
         net/if.h             &
-	net/if_arp.h         &
+        net/if_arp.h         &
         net/if_dl.h          &
         net/route.h          &
         netinet/icmp_var.h   &
         netinet/if_ether.h   &
         netinet/in.h         &
+        netinet/in_systm.h   &
+        netinet/ip.h         &
         netinet/ip_icmp.h    &
         netinet/ip_var.h     &
         netinet/tcp.h        &
