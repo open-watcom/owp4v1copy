@@ -30,6 +30,9 @@ type="s"	dir="lib386/dos"	usr="binmode.obj"	cond="dostarg 3r 3s |"		where="c f77
 type="s"	dir="lib386/dos"	usr="commode.obj"	cond="dostarg 3r 3s |"		where="c f77"
 
 type="l"	dir="lib386/netware"	usr="clib3s.lib"	cond="nlmtarg"			where="c f77"
+type="l"	dir="lib386/netware"	usr="clib3sl.lib"	cond="nlmtarg"			where="c f77"
+type="l"	dir="lib386/netware"	usr="libc3s.lib"	cond="nlmtarg"			where="c f77"
+type="l"	dir="lib386/netware"	usr="libc3sl.lib"	cond="nlmtarg"			where="c f77"
 type="s"	dir="lib386/netware"	usr="binmode.obj"	cond="nlmtarg"			where="c f77"
 
 type="l"	dir="lib286/os2"	usr="clibc.lib"		cond="tools16 os2targ mc"	where="c"

@@ -96,3 +96,5 @@ dir="nlm"	usr="serserv3.nlm"	cond="nlmtarg"				where="c f77"
 dir="nlm"	usr="serserv4.nlm"	cond="nlmtarg"				where="c f77"
 dir="nlm"	usr="novserv3.nlm"	cond="nlmtarg"				where="c f77"
 dir="nlm"	usr="novserv4.nlm"	cond="nlmtarg"				where="c f77"
+# Not shipping yet, but added to list as aide memoire
+#dir="nlm"	usr="tcpserv5.nlm"	cond="nlmtarg"				where="c f77"
