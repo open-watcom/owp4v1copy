@@ -940,6 +940,51 @@ static RcStatus writeLXHeadAndTables( void )
 
 
 /*
+ * copyLXNonresData
+ * NB when an error occurs this function must return without altering errno
+ */
+static RcStatus copyLXNonresData( void )
+{
+    long                seek_rc;
+    ExeFileInfo         *old;
+    ExeFileInfo         *tmp;
+    os2_flat_header     *old_head;
+    os2_flat_header     *new_head;
+    RcStatus            error;
+
+    old = &(Pass2Info.OldFile);
+    tmp = &(Pass2Info.TmpFile);
+    old_head = &old->u.LXInfo.OS2Head;
+    new_head = &tmp->u.LXInfo.OS2Head;
+
+    new_head->nonres_size = old_head->nonres_size;
+    new_head->nonres_cksum = old_head->nonres_cksum;
+
+    if( old_head->nonres_size == 0 ) {
+        new_head->nonres_off = 0;
+        return( RS_OK );
+    }
+
+    // DebugOffset is pointing to the current EOF
+    new_head->nonres_off = tmp->DebugOffset;
+
+    seek_rc = RcSeek( old->Handle, old_head->nonres_off, SEEK_SET );
+    if( seek_rc == -1)
+        return( RS_READ_ERROR );
+    seek_rc = RcSeek( tmp->Handle, tmp->DebugOffset, SEEK_SET );
+    if( seek_rc == -1)
+        return( RS_WRITE_ERROR );
+
+    error = CopyExeData( Pass2Info.OldFile.Handle, Pass2Info.TmpFile.Handle,
+                         old_head->nonres_size );
+
+    // Make DebugOffset point to new EOF
+    CheckDebugOffset( tmp );
+    return( error );
+} /* copyLXNonresData */
+
+
+/*
  * copyLXDebugInfo
  * NB when an error occurs this function must return without altering errno
  */
@@ -996,6 +1041,13 @@ extern int MergeResExeLX( void )
         err_code = errno;
         goto REPORT_ERROR;
     }
+
+    error = copyLXNonresData();
+    if( error != RS_OK ) {
+        err_code = errno;
+        goto REPORT_ERROR;
+    }
+    if( StopInvoked ) goto STOP_ERROR;
 
     error = copyLXDebugInfo();
     if( error != RS_OK ) {
