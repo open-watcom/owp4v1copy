@@ -75,7 +75,7 @@ typedef enum ops {
         OPR_PUSHSEG,    // push seg of sym_handle
         OPR_DUPE,       // dupe value
         OPR_CONVERT_PTR,// convert pointer
-    OPR_CONVERT_SEG,// convert pointer to segment value
+        OPR_CONVERT_SEG,// convert pointer to segment value
         OPR_NOP,        // no operation
         OPR_DOT,        // sym.field
         OPR_ARROW,      // sym->field
@@ -128,7 +128,7 @@ typedef enum ops {
         OPR_DBG_BEGBLOCK,// start of new block with local variables
         OPR_DBG_ENDBLOCK,// end of block
         OPR_ABNORMAL_TERMINATION, // SEH _abnormal_termination()
-}opr_code;
+} opr_code;
 
 enum  condition_codes {
         CC_EQ,
@@ -237,7 +237,7 @@ typedef struct floatval {
 struct expr_node;
 
 typedef struct  opnode {
-    enum ops            opr;            // see enum ops above
+    opr_code            opr;            // see opr_code above
     op_flags            flags;
     union {
         DATA_TYPE               const_type;     // OPR_PUSHINT, OPR_PUSHFLOAT
@@ -292,8 +292,8 @@ typedef struct expr_node {
     bool            checked;            // opnd values have been checked
 } EXPRNODE;
 
-extern  TREEPTR LeafNode(int);
-extern  TREEPTR ExprNode(TREEPTR,int,TREEPTR);
+extern  TREEPTR LeafNode(opr_code);
+extern  TREEPTR ExprNode(TREEPTR,opr_code,TREEPTR);
 extern  TREEPTR ErrorNode(TREEPTR);
 extern  void    FreeExprNode(TREEPTR);
 extern  void    FreeExprTree(TREEPTR);

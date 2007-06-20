@@ -54,7 +54,7 @@ void AllocMoreExprNodes( void )
     node->left = NULL;
 }
 
-TREEPTR ExprNode( TREEPTR left, int opcode, TREEPTR right )
+TREEPTR ExprNode( TREEPTR left, opr_code opcode, TREEPTR right )
 {
     TREEPTR     node;
 
@@ -73,7 +73,7 @@ TREEPTR ExprNode( TREEPTR left, int opcode, TREEPTR right )
     return( node );
 }
 
-TREEPTR LeafNode( int opr )
+TREEPTR LeafNode( opr_code opr )
 {
     return( ExprNode( NULL, opr, NULL ) );
 }

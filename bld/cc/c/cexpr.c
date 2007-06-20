@@ -2272,7 +2272,7 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
     TYPEPTR             *parms;
     type_modifiers      decl_flags;
     char                recursive = 0;
-    unsigned char       opr;
+    opr_code            opr;
     SYM_HANDLE          sym_handle;
     SYM_ENTRY           sym;
 

@@ -416,7 +416,7 @@ static  char    Operator[] = {
     OPR_MOD_EQUAL,      /* T_PERCENT_EQUAL, */
 };
 
-int TokenToOperator( TOKEN token )
+opr_code TokenToOperator( TOKEN token )
 {
     return( Operator[ token ] );
 }
@@ -884,7 +884,7 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
 }
 
 
-TREEPTR FlowOp( TREEPTR op1, int opr, TREEPTR op2 )
+TREEPTR FlowOp( TREEPTR op1, opr_code opr, TREEPTR op2 )
 {
     TREEPTR     tree;
 
@@ -1560,7 +1560,7 @@ TREEPTR CnvOp( TREEPTR opnd, TYPEPTR newtyp, int cast_op )
 {
     TYPEPTR             typ;
     enum  conv_types    cnv;
-    enum ops            opr;
+    opr_code            opr;
     op_flags            flags;
     DATA_TYPE           opnd_type;
 

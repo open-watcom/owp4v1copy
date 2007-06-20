@@ -245,8 +245,8 @@ static TREEPTR BracketExpr( void )
 
 static void JumpCond( TREEPTR expr,
                      LABEL_INDEX label,
-                     int jump_opcode,
-                     int jump_opposite )
+                     opr_code jump_opcode,
+                     opr_code jump_opposite )
 {
     TREEPTR     tree;
 
