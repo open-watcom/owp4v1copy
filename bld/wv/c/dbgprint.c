@@ -526,10 +526,22 @@ static void PrintCharBlock( void )
     char        *ascii_start;
     unsigned_16 *unicode_start;
     unsigned    len;
-
+    int         overflow = 0;
+    
     PrtChar( '\'' );
     ascii_start = ExprSP->v.string.loc.e[0].u.p;
     len = ExprSP->info.size;
+    
+    /*
+     *  If the memory required to display the string is larger than what we have to display, then
+     *  we adjust things so we can display them with a hint that the string is longer than can be displayed
+     */
+    
+    if(len + 2 > BUFLEN){   /* or UTIL_LEN/TXT_LEN? */
+        len = BUFLEN-7; /* 'string'....<NUL> */
+        overflow = 1;
+    }
+    
     switch( ExprSP->info.modifier ) {
     case TM_NONE:
     case TM_ASCII:
@@ -557,6 +569,9 @@ static void PrintCharBlock( void )
         break;
     }
     PrtChar( '\'' );
+    if(overflow && len == 0){
+        PrtStr( " ...",  4 );
+    }
 }
 
 static void GetExpr( void )
