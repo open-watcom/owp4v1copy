@@ -398,9 +398,6 @@ void CgFrontDbgLine(            // SET LINE FOR DEBUGGING
 void CgFrontFileScope(          // SET FILE SCOPE
     SCOPE file_scope )          // - file scope
 ;
-void CgFrontResetDefaultCodeSeg(// RESET DEFAULT CODE SEG TO DEFAULT NAME
-    void )
-;
 void CgFrontRetnOptEnd(         // COMPLETE BRACKETTING FOR RETURN OPT.
     void )
 ;

@@ -1041,8 +1041,7 @@ void SegmentCode(               // SET DEFAULT CODE SEGMENT
     unsigned control;           // - segmentAlloc control mask
 
     if( segname == NULL ) {
-        // will call SegmentCode()
-        CgFrontResetDefaultCodeSeg();
+        SegmentCode( TextSegName, NULL );
         return;
     }
     pruneDefSeg( &code_def_seg );

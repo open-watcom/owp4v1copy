@@ -875,13 +875,6 @@ static void cgfrontInit(        // INITIALIZE FOR FRONT-END CODE GENERATION
 }
 
 
-void CgFrontResetDefaultCodeSeg(// RESET DEFAULT CODE SEG TO DEFAULT NAME
-    void )
-{
-    SegmentCode( TextSegName, NULL );
-}
-
-
 static void cgfrontFini(        // COMPLETE FRONT-END CODE GENERATION
     INITFINI* defn )            // - definition
 {
