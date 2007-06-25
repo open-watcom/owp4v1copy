@@ -154,6 +154,7 @@ static void GetArraySize( imp_image_handle *ii,
     dr_handle     dim;
     array_wlk_wlk df;
     uint_32       base_stride;
+    uint_32       n_el;
 
     df.ii = ii;
     df.it = it;
@@ -173,7 +174,8 @@ static void GetArraySize( imp_image_handle *ii,
     it->typeinfo.size = df.count * it->array.base_stride;
     if( !it->array.column_major ){
         base_stride = it->typeinfo.size;
-        base_stride /= it->array.num_elts;
+        n_el = it->array.num_elts;
+        base_stride = n_el ? base_stride / n_el : 0;
         it->array.base_stride = base_stride;
     }
     it->array.is_set = TRUE;
@@ -187,6 +189,7 @@ static void GetArraySubSize( imp_image_handle *ii,
     array_wlk_wlk df;
     uint_32         new_size;
     uint_32         base_stride;
+    uint_32         n_el;
 
     df.ii = ii;
     df.it = it;
@@ -196,14 +199,15 @@ static void GetArraySubSize( imp_image_handle *ii,
     df.cont = FALSE;
     DRWalkArraySibs( it->array.index, ArrayWlk, &df );
     new_size = it->typeinfo.size;
-    new_size /= it->array.num_elts;
+    n_el = it->array.num_elts;
+    new_size = n_el ? new_size / n_el : 0;
     if( it->array.column_major ){
         base_stride = it->array.base_stride;
         base_stride *= it->array.num_elts;
         it->array.base_stride = base_stride;
     }else{
         base_stride = it->typeinfo.size;
-        base_stride /= df.count;
+        base_stride = df.count ? base_stride / df.count : 0;
         it->array.base_stride = base_stride;
     }
     it->typeinfo.size = new_size;
@@ -225,6 +229,7 @@ static void InitTypeHandle( imp_image_handle *ii,
     dr_handle       btype;
     dr_array_stat   stat;
     uint_32         base_stride;
+    uint_32         n_el;
 
     if( it->state == DF_NOT ) {
         DRSetDebug( ii->dwarf->handle ); /* must do at each call into dwarf */
@@ -269,7 +274,8 @@ static void InitTypeHandle( imp_image_handle *ii,
                     }
                     if( !it->array.column_major ){
                         base_stride = it->typeinfo.size;
-                        base_stride /= it->array.num_elts;
+                        n_el = it->array.num_elts;
+                        base_stride = n_el ? base_stride / n_el : 0;
                         it->array.base_stride = base_stride;
                     }
                     it->array.is_set = TRUE;
