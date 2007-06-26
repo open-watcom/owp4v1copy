@@ -25,8 +25,9 @@
 *  ========================================================================
 *
 * Description:  Implements the functions declared in cffunc.h:
-*                   find_cumulative_index();
-*                   get_functions()
+*                   get_code_blocks()
+*                   get_p_buffer()
+*                   parse_functions_block()
 *
 ****************************************************************************/
 
@@ -36,195 +37,202 @@
 #include "cffunc.h"
 #include "common.h"
 
-/*  Function find_cumulative_index().
- *  Finds the index the cumulative_max value.
+/*  Function definitions. */
+
+/*  Function get_code_blocks().
+ *  Return a pointer to an array of code_block structs containing the
+ *  CodeBlocks in a P-buffer.
  *
- *  Parameter:
- *      in_block contains the functions_block to search
- *      in_max contains the value sought
- *      out_index will contain the corresponding index
- *
- *  Returns:
- *      SUCCESS if in_max is found in in_block
- *      FAILURE otherwise
- */
-
-int find_cumulative_index( functions_block * in_block, uint16_t in_max, uint8_t * out_index )
-{
-    uint8_t i;
-
-    for( i = 0; i < in_block->count; i++ ) {
-        if( in_block->code_blocks[i].cumulative_index == in_max ) {
-            *out_index = i;
-            return(SUCCESS);
-        }
-    }
-
-    return(FAILURE);
-}
-
-/*  Function get_functions().
- *  Construct a functions_block containing the data in the P-buffer.
- *
- *  Parameter:
- *      in_file points to the start of a P-buffer
+ *  Parameters:
+ *      current points to the first byte of the data to be processed 
+ *      count contains the number of CodeBlocks expected
  *
  *  Parameter is changed:
- *      in_file will point to the start of the PausesBlock on success
- *      the status of in_file is unpredictable on failure
+ *      current points to the byte after the last byte processed
+ *      on failure, it's position is not meaningful
  *
  *  Returns:
- *      a pointer to a functions_block containing the processed data on success
+ *      a pointer to a code_block containing the CodeBlocks on success
  *      NULL on failure
  */
 
-functions_block * get_functions( FILE * in_file)
+code_block * get_code_blocks(uint8_t * current, uint8_t count )
 {
-    uint8_t             code_count;
-    uint8_t *           current     = NULL;
     uint8_t             i;
-    uint8_t             nulls[2];
-    functions_block *   out_block   = NULL;
-    uint8_t             p_count;
-    char                test_char;
+    code_block *        out_block   = NULL;
+
+    /* Allocate out_block */ 
+             
+    out_block = (code_block * ) malloc( sizeof( code_block ) * count ); 
+
+    /* Initialize each code_block */
+
+    for( i = 0; i < count; i++ ) {
+
+        /* Get the designator */
+            
+        memcpy_s( &out_block[i].designator, 1, current, 1 );
+        current += 1;
+
+        /* Skip the nulls */
+
+        if( memcmp( current, "\0\0", 2) ) {
+            printf_s( "CodeBlock %i doesn't conform to the Wiki: two nulls not present\n", i );
+            free( out_block );
+            out_block = NULL;
+            return( out_block );
+        }
+        current += 2;
+
+        /* Get the pass number */
+            
+        memcpy_s( &out_block[i].pass, 2, current, 2 );
+        current += 2;
+
+        /* Get the count */
+            
+        memcpy_s( &out_block[i].count, 2, current, 2 );
+        current += 2;
+
+        /* Set the pointer to the actual data */
+            
+        out_block[i].function = current;
+        current += out_block[i].count;
+    }
+        
+    return( out_block );
+}
+
+/* Function get_p_buffer().
+ * Extract one or more contiguous P-buffers from in_file.
+ *
+ * Parameter:
+ *     in_file points to the start of a P-buffer
+ *
+ * Parameter is changed:
+ *     in_file will point to the first non-P-buffer byte in the file on success
+ *     the status of in_file is unpredictable on failure
+ *
+ * Returns:
+ *     a pointer to a p_buffer containing the raw data on success
+ *     NULL on failure
+ */
+
+p_buffer * get_p_buffer( FILE * in_file )
+{
+    uint8_t *   current     = NULL;
+    uint8_t     i;
+    p_buffer *  out_buffer  = NULL;
+    uint8_t     p_count;
+    char        test_char;
 
     p_count = 0;
     test_char = fgetc( in_file );
-    if( ferror( in_file ) || feof( in_file ) ) return( out_block );
+    if( ferror( in_file ) || feof( in_file ) ) return( out_buffer );
     while( test_char == 80 ) {
         ++p_count;
         fseek( in_file, 80, SEEK_CUR );
-        if( ferror( in_file ) || feof( in_file ) ) return( out_block );
+        if( ferror( in_file ) || feof( in_file ) ) return( out_buffer );
         test_char = fgetc( in_file );
-        if( ferror( in_file ) || feof( in_file ) ) return( out_block );
+        if( ferror( in_file ) || feof( in_file ) ) return( out_buffer );
     }
 
     /* There should always be at least one P-buffer */
 
     if( p_count == 0 ) {
         puts( "No P-buffer found." );
-        return( out_block );
+        return( out_buffer );
     }
 
     /* Rewind the file by 81 bytes per P-buffer plus 1 */
 
-    fseek( in_file, -81 * p_count - 1, SEEK_CUR );
-    if( ferror( in_file ) || feof( in_file ) ) return( out_block );
+    fseek( in_file, -1 * ((81 * p_count) + 1), SEEK_CUR );
+    if( ferror( in_file ) || feof( in_file ) ) return( out_buffer );
 
-    /* Get the first entry in the first P-buffer */
+    /* Allocate out_buffer */ 
 
-    test_char = fgetc( in_file );    
-    if( ferror( in_file ) || feof( in_file ) ) return( out_block );
-    if( test_char != 80 ) {
-        puts( "P-buffer rewind failed." );
-        return( out_block );
-    }
+    out_buffer = (p_buffer *) malloc( sizeof( p_buffer ) + 80 * p_count);
+    if( out_buffer == NULL ) return( out_buffer );
 
-    fread( &code_count, sizeof( code_count ), 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) return( out_block );
-
-    /* Skip the nulls before the first CodeBlock, and ensure they are nulls */
-    
-    fread( &nulls, sizeof( nulls ), 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) return( out_block );
-
-    if( ferror( in_file ) || feof( in_file ) ) {
-        printf_s( "FunctionsBlock count not followed by nulls: %i\n", nulls );
-        return( out_block );
-    }
-
-    /* Allocate out_block so that it has room for:
-     *   the functions_block as such
-     *   code_count * code_blocks
-     *   p_block * 80 data bytes
-     *   minus the size of out_block->count, which is stored separately
-     *   and the size of nulls, which is not part of out_block
-     */
-
-    out_block = (functions_block *) malloc( sizeof( functions_block ) + code_count * sizeof( code_block ) + 80 * p_count - sizeof( out_block->count ) - sizeof( nulls ) );
-    if( out_block == NULL) return( out_block );
-
-    out_block->count = code_count;
-    out_block->code_blocks = (code_block * ) ((char *) out_block + sizeof( functions_block )); 
-    current = (uint8_t *) out_block->code_blocks + code_count * sizeof( code_block );
+    out_buffer->count = 80 * p_count;
+    out_buffer->buffer = (uint8_t *) out_buffer + sizeof( p_buffer );
+    current = out_buffer->buffer;
 
     /* Now get the data into the buffer */
 
-    fread( current, 80 - sizeof( out_block->count ) - sizeof( nulls ), 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) {
-        free( out_block );
-        out_block = NULL;
-        return( out_block );
-    }
-
-    current = current + 80 - sizeof( out_block->count ) - sizeof( nulls );
-
-    if( p_count > 1 ) {
-        for( i = 1; i < p_count; i++ ) {
-            test_char = fgetc( in_file );    
-            if( ferror( in_file ) || feof( in_file ) ) {
-                free( out_block );
-                out_block = NULL;
-                return( out_block );
-            }
-
-            if( test_char != 80 ) {
-                puts( "P-buffer terminated prematurely." );
-                return( out_block );
-            }
-
-            fread( current, 80, 1, in_file );
-            if( ferror( in_file ) || feof( in_file ) ) {
-                free( out_block );
-                out_block = NULL;
-                return( out_block );
-            }
-
-            current = current + 80;
+    for( i = 0; i < p_count; i++ ) {
+        test_char = fgetc( in_file );    
+        if( ferror( in_file ) || feof( in_file ) ) {
+            free( out_buffer );
+            out_buffer = NULL;
+            return( out_buffer );
         }
+
+        if( test_char != 80 ) {
+            puts( "P-buffer terminated prematurely." );
+            free( out_buffer );
+            out_buffer = NULL;
+            return( out_buffer );
+        }
+
+        fread( current, 80, 1, in_file );
+        if( ferror( in_file ) || feof( in_file ) ) {
+            free( out_buffer );
+            out_buffer = NULL;
+            return( out_buffer );
+        }
+
+        current = current + 80;
     }
+
+    return( out_buffer );
+}
+
+/*  Function parse_functions_block().
+ *  Construct a functions_block containing the data in the P-buffer.
+ *
+ *  Parameter:
+ *      current contains the first byte of the data to be processed 
+ *
+ *  Parameter is changed:
+ *      current will point to the first byte after the last byte parsed
+ *      on failure, the value of current will be meaningless
+ *
+ *  Note:
+ *      if not NULL, out_block->code_blocks is allocated separately from
+ *      out_block and so must be freed separately as well.
+ *
+ *  Returns:
+ *      a pointer to a functions_block containing the processed data on success
+ *      NULL on failure
+ */
+
+functions_block * parse_functions_block( uint8_t * current )
+{
+    uint16_t            code_count;
+    functions_block *   out_block   = NULL;
+
+    /* Get the number of CodeBlocks */
+
+    memcpy_s( &code_count, 2, current, 2 );
+    current += 2;
+
+    /* Allocate out_block */
+
+    out_block = (functions_block *) malloc( sizeof( functions_block ) );
+    if( out_block == NULL) return( out_block );
+
+    out_block->count = code_count;
 
     /* Now extract the CodeBlocks, if any */
 
     if( out_block->count == 0 ) {
         out_block->code_blocks = NULL;
     } else {
-
-       /* Set current to the start of the data */ 
-             
-        current = (uint8_t *) out_block->code_blocks + code_count * sizeof( code_block );
-        for( i = 0; i < out_block->count; i++ ) {
-
-            /* Skip the nulls */
-
-            if( memcmp( current, "\0\0\0\0", 4) ) {
-                printf_s( "CodeBlock %i doesn't start with four nulls\n", i );
-                free( out_block );
-                out_block = NULL;
-                return( out_block );
-            }
-            current += 4;
-
-            /* Get the number of bytes to copy */
-            
-            memcpy_s( &out_block->code_blocks[i].max_index, 2, current, 2 );
-            current += 2;
-
-            /* Adjust current: max_index is 1 less than the number of bytes */
-            
-            out_block->code_blocks[i].function = current;
-            current += out_block->code_blocks[i].max_index + 1;
-        }    
-
-        /* Now set the cumulative_index fields */
-
-        out_block->code_blocks[0].cumulative_index = 0x0000;
-        if( out_block->count > 1 ) {
-            for( i = 1; i < out_block->count; i++ ) {
-                out_block->code_blocks[i].cumulative_index = out_block->code_blocks[i-1].cumulative_index + out_block->code_blocks[i-1].max_index;
-            }
-        }
+        out_block->code_blocks = get_code_blocks( current, out_block->count );
     }
 
     return( out_block );
 }
+
+

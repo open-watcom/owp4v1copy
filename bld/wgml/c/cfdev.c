@@ -27,7 +27,10 @@
 * Description:  Implements the functions declared in cfdev.h:
 *                   is_dev_file()
 *                   parse_device()
+*               and contains these local functions:
+*                   find_cumulative_index()
 *                   resize_device()
+*                   set_cumulative_index()
 *
 ****************************************************************************/
 
@@ -46,7 +49,9 @@
 
 /*  Local function declaration */
 
+static int find_cumulative_index( functions_block *, uint16_t, uint8_t * );
 static cop_device * resize_device( cop_device *, size_t );
+static void set_cumulative_index( functions_block * );
 
 /*  Function definitions */
 
@@ -129,7 +134,9 @@ cop_device * parse_device( FILE * in_file )
     /* Used to acquire the PauseBlock and DevicefontBlock CodeBlocks */
 
     functions_block *   cop_functions       = NULL;
+    p_buffer *          raw_functions       = NULL;
     uint16_t            cumulative_index;
+    uint8_t *           current;
     uint8_t             j;
     uint8_t             nulls[2];
     int                 return_value;
@@ -1037,10 +1044,34 @@ cop_device * parse_device( FILE * in_file )
     }
 
     /* Now get the FunctionsBlock and position in_file to the start of 
-     * the PausesBlock. This must be done even if functions are present.
+     * the PausesBlock. This must be done even if no functions are present.
      */
 
-    cop_functions = get_functions( in_file );
+    raw_functions = get_p_buffer( in_file );
+    if( raw_functions == NULL) {
+        free( out_device );
+        out_device = NULL;
+        return( out_device );
+    }
+
+    if( raw_functions->buffer == NULL) {
+        free( raw_functions );
+        free( out_device );
+        out_device = NULL;
+        return( out_device );
+    }
+
+    current = raw_functions->buffer;
+    cop_functions = parse_functions_block( current );
+
+    if( cop_functions == NULL) {
+        free( raw_functions );
+        free( out_device );
+        out_device = NULL;
+        return( out_device );
+    }
+    
+    if( cop_functions->count > 0) set_cumulative_index( cop_functions );
 
     /* Get the PauseBlock */
 
@@ -1085,7 +1116,7 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        out_device->pauses.startpause_count = cop_functions->code_blocks[j].max_index + 1;
+        out_device->pauses.startpause_count = cop_functions->code_blocks[j].count;
 
         if( out_device->allocated_size < (out_device->next_offset + out_device->pauses.startpause_count) ) {
             out_device = resize_device( out_device, out_device->pauses.startpause_count );
@@ -1140,7 +1171,7 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        out_device->pauses.documentpause_count = cop_functions->code_blocks[j].max_index + 1;
+        out_device->pauses.documentpause_count = cop_functions->code_blocks[j].count;
 
         if( out_device->allocated_size < (out_device->next_offset + out_device->pauses.documentpause_count) ) {
             out_device = resize_device( out_device, out_device->pauses.documentpause_count );
@@ -1195,7 +1226,7 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        out_device->pauses.docpagepause_count = cop_functions->code_blocks[j].max_index + 1;
+        out_device->pauses.docpagepause_count = cop_functions->code_blocks[j].count;
 
         if( out_device->allocated_size < (out_device->next_offset + out_device->pauses.docpagepause_count) ) {
             out_device = resize_device( out_device, out_device->pauses.docpagepause_count );
@@ -1250,7 +1281,7 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
-        out_device->pauses.devpagepause_count = cop_functions->code_blocks[j].max_index + 1;
+        out_device->pauses.devpagepause_count = cop_functions->code_blocks[j].count;
 
         if( out_device->allocated_size < (out_device->next_offset + out_device->pauses.devpagepause_count) ) {
             out_device = resize_device( out_device, out_device->pauses.devpagepause_count );
@@ -1436,7 +1467,7 @@ cop_device * parse_device( FILE * in_file )
                 return( out_device );
             }
 
-            devicefont_ptr[i].fontpause_count = cop_functions->code_blocks[j].max_index + 1;
+            devicefont_ptr[i].fontpause_count = cop_functions->code_blocks[j].count;
 
             if( out_device->allocated_size < (out_device->next_offset + devicefont_ptr[i].fontpause_count) ) {
                 out_device = resize_device( out_device, devicefont_ptr[i].fontpause_count );
@@ -1451,7 +1482,17 @@ cop_device * parse_device( FILE * in_file )
             memcpy_s(byte_ptr, devicefont_ptr[i].fontpause_count, cop_functions->code_blocks[j].function, devicefont_ptr[i].fontpause_count );
         }
     }
+
+    /*  Free the memory used in parsing the CodeBlocks */
+
+    free( raw_functions );
+    raw_functions = NULL;
+    if( cop_functions != NULL) {
+        free( cop_functions->code_blocks );
+        cop_functions->code_blocks = NULL;
+        }
     free( cop_functions );
+    cop_functions = NULL;
 
     /* Convert non-NULL offsets to pointers */
 
@@ -1558,6 +1599,35 @@ cop_device * parse_device( FILE * in_file )
     return( out_device );
 }
 
+/*  Local functions definitions */
+
+/*  Function find_cumulative_index().
+ *  Finds the index the cumulative_max value.
+ *
+ *  Parameter:
+ *      in_block contains the functions_block to search
+ *      in_max contains the value sought
+ *      out_index will contain the corresponding index
+ *
+ *  Returns:
+ *      SUCCESS if in_max is found in in_block
+ *      FAILURE otherwise
+ */
+
+int find_cumulative_index( functions_block * in_block, uint16_t in_max, uint8_t * out_index )
+{
+    uint8_t i;
+
+    for( i = 0; i < in_block->count; i++ ) {
+        if( in_block->code_blocks[i].cumulative_index == in_max ) {
+            *out_index = i;
+            return(SUCCESS);
+        }
+    }
+
+    return(FAILURE);
+}
+
 /*  Function resize_device().
  *  Resizes a cop_device instance.
  *
@@ -1602,4 +1672,27 @@ cop_device * resize_device( cop_device * in_device, size_t in_size )
 
     return( local_device );
 }
-        
+
+/*  Function set_cumulative_index().
+ *  Sets the cumulative_index field in each code_block of a functions_block.
+ *
+ *  Parameter:
+ *      in_block contains a pointer to functions_block to index
+ */
+
+void set_cumulative_index( functions_block * in_block )
+{
+    uint8_t         i;
+
+    in_block->code_blocks[0].cumulative_index = 0x0000;
+
+    if( in_block->count > 1 ) {
+        for( i = 1; i < in_block->count; i++ ) {
+            in_block->code_blocks[i].cumulative_index = in_block->code_blocks[i-1].cumulative_index + in_block->code_blocks[i-1].count;
+        }
+    }
+
+    return;
+}
+
+

@@ -72,7 +72,7 @@ void display_hex_block( uint8_t * in_data, uint16_t in_count )
 
     for( i = 0; i < in_count; i += 16 ) {
         if( i + 16 > in_count ) {
-            memset(data_buffer, 0x00, 16);
+            memset(data_buffer, 0x20, 16);
             memcpy_s(data_buffer, 16, &in_data[i], in_count - i );
         } else {
             memcpy_s(data_buffer, 16, &in_data[i], 16 );
