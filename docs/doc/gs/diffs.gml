@@ -10,9 +10,128 @@ You should check the next section to determine if you need to
 recompile your application.
 .*
 .if '&lang' eq 'C/C++' .do begin
-:cmt. Reflects main Perforce branch as of 2006/10/31
+:cmt. Reflects main Perforce branch as of 2007/06/25
 :cmt. Good way to get list of changes since certain date:
 :cmt. p4 changes -l @yyyy/mm/dd,#head
+.*
+.*
+.section Differences from Open Watcom Version 1.6
+.*
+.np
+Following is a list of changes made in &product 1.7:
+.begbull
+.bull
+Functions using the __cdecl calling convention now return floating-point
+values in FPU registers in 32-bit code. This is the correct behaviour
+compatible with other compilers.
+.bull
+The C and C++ compilers now support an include_alias pragma which can be
+used, among other things, to map long include filenames onto 8.3 names. In
+addition, the compilers now support a -na switch to disable the automatic
+inclusion of _ialias.h (which contains new include_alias pragmas for
+certain standard headers).
+.bull
+The C compiler now emits warnings on operations which mix multi-level
+pointer types such as void** and int**. Previously a warning was only
+emitted in ANSI mode. Note that while void** is not assignment compatible
+with int**, void* is. The new stricter behaviour is in line with most other
+C compilers and helps users write cleaner and more portable code.
+.bull
+The C compiler now warns (W400) when an expression of plain char type is
+used as array index. Because the sign of plain char changes depending on
+compiler choice and settings, using plain char as array index is inherently
+non-portable and likely to cause problems.
+.bull
+The C compiler now folds constant expression before checking for range
+overflows etc. This enables the compiler to diagnose constant out of range
+issues in more cases.
+.bull
+The C compiler now allows benign variable redefinitions where __near or
+__far modifiers aren't always explicitly specified but match when current
+data model is taken into account (eg. 'extern int __near x;' and 'extern
+int x;' in small data models). The new behaviour is compatible with the C++
+compiler as well as with other vendors' compilers.
+.bull
+The default stack size for 32-bit DOS extended executables has been
+increased from 4K to 64K. Note that the linker can still set greater or
+smaller stack size.
+.bull
+The code generator now produces better 16-bit code for 64-bit math
+operations
+.bull
+The code generator no longer incorrectly optimizes out conditionals. The
+problem only occurred in very rare situations and probably only when
+doubles were being compared.
+.bull
+A long-standing problem with use of certain 64-bit constants as results of
+ternary operators has been fixed.
+.bull
+The C++ compilers now has a workaround for bugzilla bug #63
+(http://bugzilla.openwatcom.org/show_bug.cgi?id=63). The compiler now
+generates an error message referring to the bug entry rather than crashing.
+.bull
+The LIBC and CLIB thin netware libraries have been added to the
+distribution as experimental.
+.bull
+32-bit DOS executables now correctly pass environment to child processes
+started through the spawn family of functions. Previous incorrect behaviour
+was introduced in version 1.6.
+.bull
+In the NetWare libraries, __get_stdout with __get_std_stream was causing an
+infinite recursion. This has been fixed.
+.bull
+Fixed 8087 emulator/mathlib 80-bit real multiplication if one operator is
+zero and second is a power of two.
+.bull
+The _outgtext() function in graph.lib no longer fails on 32-bit targets.
+.bull
+The Win32 stat() function now returns correct results when it tries to
+access a file with given name and the directory containing that file also
+contained a subdirectory with the same name.
+.bull
+The debugger now supports a "No Source" toggle (right mouse click menu) in
+the assembly code window to switch on/off associated source code.
+.bull
+The debugger no longer crashes when tracing F77 programs that use
+variable-size arrays. This only applies to DWARF debugging information
+(which is used by default).
+.bull
+The debugger now correctly displays multi-dimensional Fortran arrays when
+DWARF debug information format is used (which is used by default).
+.bull
+The debugger can now display [partial] strings in Fortran code when the
+string length exceeds the debugger's internal limit. The internal limit has
+also been increased from 512 to 1024 characters.
+.bull
+The resource compiler now properly copies non-resident name table when
+processing LX executables.
+.bull
+The console version of vi for Win32 no longer quits after Ctrl+Left is
+pressed followed by any other key.
+.bull
+WCL now correctly takes options from the environment when there is more
+then one file to compile.
+.bull
+The linker now supports a MIXED1632 option to allow mixing of 16- and
+32-bit logical segments into a single physical segment in OS/2 LX/LE
+executables.
+.bull
+The linker now supports a NOSTUB option for Windows and OS/2 executable
+formats. This option causes no DOS stub executable to be written to the
+output image.
+.bull
+The installer now allows you to disable creating program groups or
+modifying the startup environment using the /np and /ns switches.
+.endbull
+.*
+.section Changes in 1.7 that may Require Recompilation
+.*
+.begnote
+.note __cdecl Calling Convention
+Functions in 32-bit code that return floating-point values now do so
+using the FPU registers. Such functions will need to be recompiled if
+they are to be linked with object code produced by &product 1.7.
+.endnote
 .*
 .*
 .section Differences from Open Watcom Version 1.5
