@@ -81,9 +81,11 @@ headers =            &
         mcx.h        &
         mgmtapi.h    &
         mlang.h      &
+        mmreg.h      &
         mmsystem.h   &
         mprapi.h     &
         mq.h         &
+        msacm.h      &
         msxml.h      &
         naptypes.h   &
         nb30.h       &
