@@ -338,7 +338,7 @@ EXTERN_C const IID  IID_IQuickActivate;
 #define INTERFACE   IEnumConnections
 DECLARE_INTERFACE_( IEnumConnections, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -356,7 +356,7 @@ typedef IEnumConnections    *LPENUMCONNECTIONS;
 #define INTERFACE   IConnectionPoint
 DECLARE_INTERFACE_( IConnectionPoint, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -375,7 +375,7 @@ typedef IConnectionPoint    *LPCONNECTIONPOINT;
 #define INTERFACE   IEnumConnectionPoints
 DECLARE_INTERFACE_( IEnumConnectionPoints, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -393,7 +393,7 @@ typedef IEnumConnectionPoints   *LPENUMCONNECTIONPOINTS;
 #define INTERFACE   IConnectionPointContainer
 DECLARE_INTERFACE_( IConnectionPointContainer, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -676,7 +676,7 @@ typedef IPersistPropertyBag *LPPERSISTPROPERTYBAG;
 #define INTERFACE   ISimpleFrameSite
 DECLARE_INTERFACE_( ISimpleFrameSite, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -691,7 +691,7 @@ typedef ISimpleFrameSite    *LPSIMPLEFRAMESITE;
 #define INTERFACE   IFont
 DECLARE_INTERFACE_( IFont, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -728,7 +728,7 @@ typedef IFont   *LPFONT;
 #define INTERFACE   IPicture
 DECLARE_INTERFACE_( IPicture, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -755,7 +755,7 @@ typedef IPicture    *LPPICTURE;
 #define INTERFACE   IPicture2
 DECLARE_INTERFACE_( IPicture2, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -1006,7 +1006,7 @@ typedef IOleParentUndoUnit  *LPOLEPARENTUNDOUNIT;
 #define INTERFACE   IEnumOleUndoUnits
 DECLARE_INTERFACE_( IEnumOleUndoUnits, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -1023,7 +1023,7 @@ typedef IEnumOleUndoUnits   *LPENUMOLEUNDOUNITS;
 #define INTERFACE   IOleUndoManager
 DECLARE_INTERFACE_( IOleUndoManager, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -1048,7 +1048,7 @@ typedef IOleUndoManager *LPOLEUNDOMANAGER;
 #define INTERFACE   IPointerInactive
 DECLARE_INTERFACE_( IPointerInactive, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -1064,7 +1064,7 @@ typedef IPointerInactive    *LPPOINTERINACTIVE;
 #define INTERFACE   IObjectWithSite
 DECLARE_INTERFACE_( IObjectWithSite, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -1079,7 +1079,7 @@ typedef IObjectWithSite *LPOBJECTWITHSITE;
 #define INTERFACE   IPerPropertyBrowsing
 DECLARE_INTERFACE_( IPerPropertyBrowsing, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -1096,7 +1096,7 @@ typedef IPerPropertyBrowsing    *LPPERPROPERTYBROWSING;
 #define INTERFACE   IPropertyBag2
 DECLARE_INTERFACE_( IPropertyBag2, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
@@ -1155,7 +1155,7 @@ typedef IAdviseSinkEx   *LPADVISESINKEX;
 #define INTERFACE   IQuickActivate
 DECLARE_INTERFACE_( IQuickActivate, IUnknown ) {
     /* IUnknown methods */
-    STDMETHOD( QueryInterface )( THIS_ REFCLSID, void ** ) PURE;
+    STDMETHOD( QueryInterface )( THIS_ REFIID, void ** ) PURE;
     STDMETHOD_( ULONG, AddRef )( THIS ) PURE;
     STDMETHOD_( ULONG, Release )( THIS ) PURE;
 
