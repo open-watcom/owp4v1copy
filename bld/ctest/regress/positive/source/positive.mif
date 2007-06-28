@@ -10,7 +10,6 @@
 # pch09.$(exe) &    # - Expression trees aren't stored in PCH, any
 # pch10.$(exe) &    #   functions defined in headers will screw
 # pch11.$(exe) &    #   things up (pch05/06 and others)
-# opt11.$(exe) &    # volatile + post increment problem
 
 !ifdef %ctest_bad_br
 no_br_except30 = no
@@ -153,6 +152,7 @@ positive_tests = &
     opt08.$(exe) &
     opt09.$(exe) &
     opt10.$(exe) &
+    opt11.$(exe) &
     opt12.$(exe) &
     opt14.$(exe) &
     opt15.$(exe) &
