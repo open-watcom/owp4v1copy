@@ -44,6 +44,7 @@ extern  void            PrefixInsRenum(instruction*,instruction*,bool);
 extern  instruction     *MakeNop(void);
 extern  void            Renumber(void);
 extern  int             NumOperands(instruction*);
+extern  bool            IsVolatile(name*);
 
 extern  block           *HeadBlock;
 extern  conflict_node   *ConfList;
@@ -244,7 +245,9 @@ static  void    FlowConflicts( instruction *first,
     int                 i;
     opcode_defs         opcode;
     name_set            alive;
+    name                *res_of_volatile;
 
+    res_of_volatile     = NULL;
     alive.regs          = last->head.live.regs;
     alive.out_of_block  = last->head.live.out_of_block;
     alive.within_block  = last->head.live.within_block;
@@ -297,6 +300,18 @@ static  void    FlowConflicts( instruction *first,
 
         ins->head.live.out_of_block = alive.out_of_block;
         ins->head.live.within_block = alive.within_block;
+
+        /* 2007-06-28 RomanT
+         * Force result of volatile instruction to live at least during this
+         * instruction. Otherwise we'll have a ghost which don't have conflicts
+         * but still need a register (and can steal assigned one). (bug #439)
+         */
+        if ( res_of_volatile != NULL ) {
+            conf = FindConflictNode( res_of_volatile, blk, ins );
+            NowAlive( res_of_volatile, conf, &ins->head.live, blk );
+            res_of_volatile = NULL;
+        }
+
         ins = ins->head.prev;
         if( ins == first ) break;
 
@@ -313,6 +328,14 @@ static  void    FlowConflicts( instruction *first,
             } else {
                 conf = FindConflictNode( opnd, blk, ins );
                 NowDead( opnd, conf, &alive, blk );
+                /* 2007-06-28 RomanT  See above */
+                i = ins->num_operands;
+                while( --i >= 0 ) {
+                    if( IsVolatile( ins->operands[ i ] ) ) {
+                        res_of_volatile = opnd;
+                        break;
+                    }
+                }
             }
         }
     }
