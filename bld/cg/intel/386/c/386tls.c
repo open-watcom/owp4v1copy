@@ -156,13 +156,12 @@ static  name    *GetGenericTLSDataRef( instruction *ins, name *op, type_class_de
         tls = AllocTemp( WD );
         CurrProc->targ.tls_index = tls;
         if( !BlockByBlock ) {
-            /*
-            //  Changed this call. Unfortunately, the TLS instructions gets inserted
-            //  too early in the instruction chain so the optimizer screws the
-            //  zapped registers
-            //DropCall( HeadBlock->ins.hd.prev, tls );
-            */
-            DropCall( ins, tls );
+            /* 2007-06-28 RomanT
+             * Grrr... DropCall() inserts new ins _before_ old one, screwing
+             * startup sequence. So keep call in first block, but make it
+             * before next instruction of last one  (== after last one).
+             */
+            DropCall( HeadBlock->ins.hd.prev->head.next, tls );
         }
     }
     if( BlockByBlock ) {
