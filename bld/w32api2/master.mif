@@ -29,6 +29,7 @@ headers =            &
         dde.rh       &
         ddeml.h      &
         dhcpcsdk.h   &
+        dimm.h       &
         dlgs.h       &
         docobj.h     &
         errorrep.h   &
