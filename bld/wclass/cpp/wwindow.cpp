@@ -190,7 +190,11 @@ bool WEXPORT WWindow::processMsg( gui_event msg, void *parm )
         return( TRUE );
     }
     case GUI_MOVE:
-        moved( 0, 0 );
+        // BobP removed because it caused size problems
+        // * could not move window to second monitor
+        // * Window would jump
+        // * project window would shrink
+        //moved( 0, 0 );
         enumChildren();
         return( TRUE );
     case GUI_RESIZE: {
@@ -751,8 +755,8 @@ void WEXPORT WWindow::removePopup( WPopupMenu *pop ) {
 }
 
 
-void WEXPORT WWindow::shrink( int wBorder, int hBorder ) {
 /********************************************************/
+void WEXPORT WWindow::shrink( int wBorder, int hBorder ) {
 
     if( _children.count() > 0 ) {
         WRect wr;
@@ -779,9 +783,8 @@ void WEXPORT WWindow::shrink( int wBorder, int hBorder ) {
     }
 }
 
-
-void WEXPORT WWindow::shrink() {
 /******************************/
+void WEXPORT WWindow::shrink() {
 
     WPoint      avg;
     WPoint      max;
@@ -789,11 +792,17 @@ void WEXPORT WWindow::shrink() {
     textMetrics( avg, max );
     shrink( avg.y(), avg.x() );
 }
-
-
+//
+// updateAutosize()
+//
+// When       Who      Why
+// ========== ======= ==================================
+// 06-29-2007 BobP    This code causes the x,y window position
+//                    to jump around.  Also, the project window
+//                    redraws incorrectly.  I don't believe this
+//                    code is needed
+//
 bool WEXPORT WWindow::updateAutosize() {
-/**************************************/
-
     WRect       rect;
     WRect       prect;
     bool        move;
@@ -805,6 +814,7 @@ bool WEXPORT WWindow::updateAutosize() {
     if( parent() ) {
         parent()->getClientRect( prect );
     }
+    
     if( _autosize.x() >= 0 ) {
         if( rect.x() < 0 ) {
             // don't let the x co-ordinate change sign in case
@@ -831,6 +841,7 @@ bool WEXPORT WWindow::updateAutosize() {
             _autosize.y( rect.y() );
         }
     }
+ 
     if( _autosize.w() >= 0 ) {
         _autosize.w( rect.w() + w_adjust );
     }
@@ -840,28 +851,22 @@ bool WEXPORT WWindow::updateAutosize() {
     return( move );
 }
 
-
+//
 void WEXPORT WWindow::moved( int, int ) {
-/***************************************/
 
-    if( updateAutosize() ) {
+    //if( updateAutosize() ) {
         // Don't let the window be moved to a location that
         // causes the x and/or y co-ordinates to change from
         // a positive value to a negative value
-        autosize();
-    }
+    //    autosize();
+    //}
 }
-
-
 void WEXPORT WWindow::resized( int, int ) {
-/*****************************************/
 
-    updateAutosize();
+    //updateAutosize();
 }
-
 
 void WEXPORT WWindow::size( WOrdinal w, WOrdinal h ) {
-/****************************************************/
 
     _autosize.w( w );
     _autosize.h( h );
@@ -870,7 +875,6 @@ void WEXPORT WWindow::size( WOrdinal w, WOrdinal h ) {
 
 
 void WEXPORT WWindow::move( WOrdinal x, WOrdinal y ) {
-/****************************************************/
 
     _autosize.x( x );
     _autosize.y( y );
@@ -879,12 +883,10 @@ void WEXPORT WWindow::move( WOrdinal x, WOrdinal y ) {
 
 
 void WEXPORT WWindow::move( const WRect& r ) {
-/********************************************/
 
     _autosize = r;
     autosize();
 }
-
 
 void WEXPORT WWindow::getRectangle( WRect& r, bool absolute ) {
 /*************************************************************/
@@ -953,9 +955,8 @@ void WWindow::show( WWindowState state ) {
 }
 
 
-void WWindow::autoPosition( WRect& cRect ) {
 /******************************************/
-
+void WWindow::autoPosition( WRect& cRect ) {
 // Automatically reposition the given co-ordinates for a window relative
 // to its parent window.
 
@@ -974,7 +975,6 @@ void WWindow::autoPosition( WRect& cRect ) {
     |         |                     |          |
     +------------------------------------------+
 */
-
     WRect pRect;
     if( _parent != NULL ) {
         _parent->getClientRect( pRect );
@@ -1009,9 +1009,7 @@ void WWindow::autoPosition( WRect& cRect ) {
     if( cRect.y() < 0 ) cRect.y( 0 );
 }
 
-
 void WEXPORT WWindow::autosize() {
-/********************************/
 
     if( (_handle == NULL) || isIconic() ) return;
     WRect cRect;
@@ -1023,7 +1021,6 @@ void WEXPORT WWindow::autosize() {
     c.height = cRect.h();
     GUIResizeWindow( _handle, &c );
 }
-
 
 bool WEXPORT WWindow::keyDown( WKeyCode key, WKeyState ) {
 /********************************************************/
