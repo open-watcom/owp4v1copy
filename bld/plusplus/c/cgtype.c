@@ -62,12 +62,12 @@ typedef enum
 PTR_CLASS;
 
 #define PTR_TYPE(name,diff) __PASTE3( T, name, _POINTER )  // - CG data types
-static unsigned ptr_dg_type[] =
+static cg_type ptr_dg_type[] =
 #include "ptrtypes.h"
 ;
 
 #define PTR_TYPE(name,diff) __PASTE3( T, name, _CODE_PTR ) // - CG code types
-static unsigned ptr_cg_type[] =
+static cg_type ptr_cg_type[] =
 #include "ptrtypes.h"
 ;
 
@@ -168,11 +168,11 @@ static unsigned cg_defined_type( // GET DEFINED TYPE
 }
 
 
-unsigned CgTypeOutput(          // COMPUTE TYPE FOR CODE GENERATOR
+cg_type CgTypeOutput(           // COMPUTE TYPE FOR CODE GENERATOR
     TYPE type )                 // - C++ type
 {
-    unsigned retn;              // - return type (code generator)
-    type_flag mod_flags;        // - modifier flags
+    cg_type     retn;           // - return type (code generator)
+    type_flag   mod_flags;      // - modifier flags
 
     type = TypeModFlags( type, &mod_flags );
     switch( type->id ) {
@@ -405,7 +405,7 @@ target_size_t CgMemorySize(     // COMPUTE SIZE OF A TYPE IN MEMORY
 }
 
 
-unsigned CgTypeSym(             // COMPUTE OUTPUT TYPE FOR SYMBOL
+cg_type CgTypeSym(             // COMPUTE OUTPUT TYPE FOR SYMBOL
     SYMBOL sym )                // - the symbol
 {
     TYPE type = sym->sym_type;

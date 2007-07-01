@@ -249,7 +249,7 @@ static dw_loc_handle dwarfDebugStaticSeg( SYMBOL sym )
 static uint  dwarfAddressClassFlags( TYPE type ){
 /**********************************/
     uint    flags;
-    uint    ptr_type;
+    cg_type ptr_type;
     uint    offset_type;
 
     ptr_type = CgTypeOutput( type );

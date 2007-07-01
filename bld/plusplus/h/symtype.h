@@ -31,6 +31,9 @@
 
 
 #ifndef _SYMTYPE_H
+#define _SYMTYPE_H
+
+#include "cgdefs.h"
 
 typedef struct cdopt_cache CDOPT_CACHE;
 typedef struct friend_list FRIEND;
@@ -1674,7 +1677,7 @@ TYPE TypeModFlagsBaseEC(        // GET MODIFIER FLAGS & BASE, UNMODIFIED TYPE
 TYPE CgStripType(               // STRIP ONE LEVEL OF TYPE INFORMATION
     TYPE type )                 // - type
 ;
-unsigned CgTypeOutput(          // COMPUTE TYPE FOR CODE GENERATOR
+cg_type CgTypeOutput(          // COMPUTE TYPE FOR CODE GENERATOR
     TYPE type )                 // - C++ type
 ;
 boolean IsCgTypeAggregate(      // CAN TYPE CAN BE INITIALIZED AS AGGREGATE?
@@ -1690,7 +1693,7 @@ unsigned CgTypePtrSym(          // COMPUTE OUTPUT TYPE OF POINTER TO SYMBOL
 target_size_t CgTypeSize(       // COMPUTE SIZE OF A TYPE
     TYPE type )                 // - type
 ;
-unsigned CgTypeSym(             // COMPUTE OUTPUT TYPE FOR SYMBOL
+cg_type CgTypeSym(             // COMPUTE OUTPUT TYPE FOR SYMBOL
     SYMBOL sym )                // - the symbol
 ;
 TYPE TypePointerDiff(           // GET TYPE FOR DIFFERENCE OF POINTERS
@@ -1736,5 +1739,4 @@ SYMBOL SymbolMapIndex( SYMBOL );
 SCOPE ScopeGetIndex( SCOPE );
 SCOPE ScopeMapIndex( SCOPE );
 
-#define _SYMTYPE_H
 #endif

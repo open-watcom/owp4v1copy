@@ -1267,7 +1267,7 @@ static void genAutoStaticInit(  // generate code to copy array into auto
     SYMBOL dst,                 // - destination auto var
     SYMBOL src )                // - source static var
 {
-    unsigned type_refno;
+    cg_type type_refno;
     cg_name d1;
     cg_name s1;
     cg_name e1;
