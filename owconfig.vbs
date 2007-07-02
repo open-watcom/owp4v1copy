@@ -93,8 +93,18 @@ Else
     End If
     OutFile.WriteLine
     OutFile.WriteLine "REM Documentation related variables"
-    OutFile.WriteLine "set WIN95HC=" + HcrtfPath
-    OutFile.WriteLine "set OS2HC=" + IpfcPath
+    If Len(HcrtfPath) > 0 Then
+        OutFile.WriteLine "set WIN95HC=hcrtf"
+        OutFile.WriteLine "set PATH=%PATH%;" + HcrtfPath
+    Else
+        OutFile.WriteLine "set WIN95HC="
+    End If
+    If Len(IpfcPath) > 0 Then
+        OutFile.WriteLine "set OS2HC=ipfc"
+        OutFile.WriteLine "set PATH=%PATH%;" + IpfcPath
+    Else
+        OutFile.WriteLine "set OS2HC="
+    End If
     OutFile.WriteLine
     OutFile.WriteLine "REM Subdirectory to be used for bootstrapping"
     OutFile.WriteLine "set OBJDIR=bootstrp"
