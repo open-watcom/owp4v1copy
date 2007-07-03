@@ -1093,6 +1093,8 @@ static int set_build_target( void )
         add_constant( "__UNIX__" );
     } else if( stricmp( Options.build_target, "LINUX" ) == 0 ) {
         add_constant( "__UNIX__" );
+    } else if( stricmp( Options.build_target, "BSD" ) == 0 ) {
+        add_constant( "__UNIX__" );
     }
     return( NOT_ERROR );
 }
