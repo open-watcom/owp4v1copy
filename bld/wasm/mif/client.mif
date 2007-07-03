@@ -19,7 +19,6 @@ asminline_objs = &
     asmfixup.obj &
     asmmatch.obj &
     asmdata.obj &
-    insthash.obj &
     asmjump.obj &
     asmexpnd.obj &
     asmeval.obj

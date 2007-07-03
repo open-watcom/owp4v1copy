@@ -74,6 +74,10 @@ fesupp_hdr   = "fesupp.h"
 carvecpp_hdr = "carvecpp.h"
 !endif
  
+!ifeq cg_dll 1
+extra_c_flags += -D_CGDLL
+!endif
+
 !ifeq release 0
 extra_c_flags_axp = -si
 !endif
@@ -366,8 +370,14 @@ cmdlnpr1.gh cmdlnpr2.gh cmdlnusg.gh usage.u usage01.int : ./optencod.exe ../gml/
 ic_mask.gh : ./icmask.exe ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
     $[@ ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
  
-./mkopcode.exe: $(wasm_dir)/mkopcode.c
-    $(bld_cl) $[@ $(wcl_util_opts)
+./mkopcod1.exe: $(wasm_dir)/mkopcod1.c
+    $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts)
+ 
+mkopcode.gh: ./mkopcod1.exe $(wasm_dir)/inlnops.tok
+    $[@ $(wasm_dir)/inlnops.tok $@
+ 
+./mkopcode.exe: $(wasm_dir)/mkopcode.c mkopcode.gh
+    $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts)
  
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
     $[@ $(wasm_dir)/inlnops.tok $@

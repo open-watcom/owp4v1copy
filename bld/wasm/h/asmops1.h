@@ -37,7 +37,7 @@ struct AsmCodeName {
         unsigned short  position;       // starting position in AsmOpTable
         unsigned short  len :4,         // length of command, e.g. "AX" = 2
                         index :12;      // index into AsmChars[] in asmops2.h
-        struct AsmCodeName *next;
+        unsigned short  next;           // index to next item in hash item list
 };
 
 enum asm_cpu {

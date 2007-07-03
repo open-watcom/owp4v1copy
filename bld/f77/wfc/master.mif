@@ -24,6 +24,9 @@ inc_dirs=-I"../h" -I"../../h" $(cg_inc_dirs) -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg
 extra_c_flags = -D_USE_RESOURCES_
 extra_c_flags_i86 = -zp1
 extra_c_flags_386 = -zp1
+!ifeq cg_dll 1
+extra_c_flags += -D_CGDLL
+!endif
 
 .h: ../h;../../h
 .c: ../c;../../c;$(asminline_c);$(trmem_dir);
@@ -83,11 +86,17 @@ option.obj : option.c optinfo.h
 errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/errcodi.h ../h/errcod3.h
     $(rc_aui) -I"../../h" $(asminline_inc_dirs) -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h" $[@ -fo=$^@
 
-./mkopcode.exe: $(wasm_dir)/mkopcode.c
-    $(bld_cl) $[@ $(wcl_util_opts)
+./mkopcod1.exe: $(wasm_dir)/mkopcod1.c
+    $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts)
+
+mkopcode.gh: ./mkopcod1.exe $(wasm_dir)/inlnops.tok
+    $[@ $(wasm_dir)/inlnops.tok $@
+
+./mkopcode.exe: $(wasm_dir)/mkopcode.c mkopcode.gh
+    $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
-    $[@ $(wasm_dir)/inlnops.tok $^@
+    $[@ $(wasm_dir)/inlnops.tok $@
 
 msg.gh : $(wasm_dir)/h/asmshare.msg
     $(vi) -s $(wasm_dir)/h/makemsg.vi -p "$^@ MSG_RC_BASE" $[@

@@ -286,8 +286,14 @@ patch_level=0
 cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
         $[@ $]@ $@ $$ $(dll_name).dll $(patch_level)
 
-./mkopcode.exe: $(wasm_dir)/mkopcode.c $(cl_objs)
-        $(bld_cl) $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)
+./mkopcod1.exe: $(wasm_dir)/mkopcod1.c $(cl_objs)
+        $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)
+
+mkopcode.gh: ./mkopcod1.exe $(wasm_dir)/inlnops.tok
+        $[@ $(wasm_dir)/inlnops.tok $@
+
+./mkopcode.exe: $(wasm_dir)/mkopcode.c $(cl_objs) mkopcode.gh
+        $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $@
