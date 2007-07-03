@@ -15,6 +15,7 @@
 !inject fcntl.obj                                                                               l32 lpc lmp
 !inject fork.obj                                                                                l32 lpc lmp
 !inject fstat.obj                                                                               l32 lpc lmp
+!inject fstat64.obj                                                                             l32     lmp
 !inject fsync.obj                                                                               l32 lpc lmp
 !inject ftrunc.obj                                                                              l32 lpc lmp
 !inject getdents.obj                                                                            l32 lpc lmp
@@ -34,6 +35,7 @@
 !inject link.obj                                                                                l32 lpc lmp
 !inject lseek.obj                                                                               l32 lpc lmp
 !inject lstat.obj                                                                               l32 lpc lmp
+!inject lstat64.obj                                                                             l32     lmp
 !inject mkdir.obj                                                                               l32 lpc lmp
 !inject mknod.obj                                                                               l32 lpc lmp
 !inject mprotect.obj                                                                            l32 lpc lmp
@@ -62,6 +64,7 @@
 !inject sigpmask.obj                                                                            l32 lpc lmp
 !inject sockcall.obj                                                                            l32 lpc lmp
 !inject stat.obj                                                                                l32 lpc lmp
+!inject stat64.obj                                                                              l32     lmp
 !inject symlink.obj                                                                             l32 lpc lmp
 !inject sync.obj                                                                                l32 lpc lmp
 !inject sys_brk.obj                                                                             l32 lpc lmp
