@@ -277,11 +277,25 @@ extern  void    DumpRegName( hw_reg_set regname ) {
 #endif
 #if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )
             if( Check(&name,HW_EAX)) { DumpLiteral("EAX"); continue; }
+            if( Check(&name,HW_AX) ) { DumpLiteral( "AX"); continue; }
+            if( Check(&name,HW_AL) ) { DumpLiteral( "AL"); continue; }
+            if( Check(&name,HW_AH) ) { DumpLiteral( "AH"); continue; }
             if( Check(&name,HW_EBX)) { DumpLiteral("EBX"); continue; }
+            if( Check(&name,HW_BX) ) { DumpLiteral( "BX"); continue; }
+            if( Check(&name,HW_BL) ) { DumpLiteral( "BL"); continue; }
+            if( Check(&name,HW_BH) ) { DumpLiteral( "BH"); continue; }
             if( Check(&name,HW_ECX)) { DumpLiteral("ECX"); continue; }
+            if( Check(&name,HW_CX) ) { DumpLiteral( "CX"); continue; }
+            if( Check(&name,HW_CL) ) { DumpLiteral( "CL"); continue; }
+            if( Check(&name,HW_CH) ) { DumpLiteral( "CH"); continue; }
             if( Check(&name,HW_EDX)) { DumpLiteral("EDX"); continue; }
+            if( Check(&name,HW_DX) ) { DumpLiteral( "DX"); continue; }
+            if( Check(&name,HW_DL) ) { DumpLiteral( "DL"); continue; }
+            if( Check(&name,HW_DH) ) { DumpLiteral( "DH"); continue; }
             if( Check(&name,HW_EDI)) { DumpLiteral("EDI"); continue; }
+            if( Check(&name,HW_DI) ) { DumpLiteral( "DI"); continue; }
             if( Check(&name,HW_ESI)) { DumpLiteral("ESI"); continue; }
+            if( Check(&name,HW_SI) ) { DumpLiteral( "SI"); continue; }
             if( Check(&name,HW_BP))  { DumpLiteral("EBP"); continue; }
             if( Check(&name,HW_SP))  { DumpLiteral("ESP"); continue; }
             if( Check(&name,HW_GS) ) { DumpLiteral( "GS"); continue; }
@@ -290,22 +304,6 @@ extern  void    DumpRegName( hw_reg_set regname ) {
             if( Check(&name,HW_DS) ) { DumpLiteral( "DS"); continue; }
             if( Check(&name,HW_CS) ) { DumpLiteral( "CS"); continue; }
             if( Check(&name,HW_SS) ) { DumpLiteral( "SS"); continue; }
-            if( Check(&name,HW_AX) ) { DumpLiteral( "AX"); continue; }
-            if( Check(&name,HW_BX) ) { DumpLiteral( "BX"); continue; }
-            if( Check(&name,HW_CX) ) { DumpLiteral( "CX"); continue; }
-            if( Check(&name,HW_DX) ) { DumpLiteral( "DX"); continue; }
-            if( Check(&name,HW_AL) ) { DumpLiteral( "AL"); continue; }
-            if( Check(&name,HW_BL) ) { DumpLiteral( "BL"); continue; }
-            if( Check(&name,HW_CL) ) { DumpLiteral( "CL"); continue; }
-            if( Check(&name,HW_DL) ) { DumpLiteral( "DL"); continue; }
-            if( Check(&name,HW_AH) ) { DumpLiteral( "AH"); continue; }
-            if( Check(&name,HW_BH) ) { DumpLiteral( "BH"); continue; }
-            if( Check(&name,HW_CH) ) { DumpLiteral( "CH"); continue; }
-            if( Check(&name,HW_DH) ) { DumpLiteral( "DH"); continue; }
-            if( Check(&name,HW_SI) ) { DumpLiteral( "SI"); continue; }
-            if( Check(&name,HW_DI) ) { DumpLiteral( "DI"); continue; }
-            if( Check(&name,HW_BP) ) { DumpLiteral( "BP"); continue; }
-            if( Check(&name,HW_SP) ) { DumpLiteral( "SP"); continue; }
             if( Check(&name,HW_ST0) ) { DumpLiteral( "ST(0)"); continue; }
             if( Check(&name,HW_ST1) ) { DumpLiteral( "ST(1)"); continue; }
             if( Check(&name,HW_ST2) ) { DumpLiteral( "ST(2)"); continue; }
