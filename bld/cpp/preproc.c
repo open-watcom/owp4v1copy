@@ -285,7 +285,7 @@ static void PP_TimeInit( void )
     tod = localtime( &time_of_day );
     sprintf( PP__TIME__, "\"%.2d:%.2d:%.2d\"", tod->tm_hour, tod->tm_min,
                                     tod->tm_sec );
-    sprintf( PP__DATE__, "\"%3s %.2d %d\"", Months[ tod->tm_mon ],
+    sprintf( PP__DATE__, "\"%3s %2d %d\"", Months[ tod->tm_mon ],
                             tod->tm_mday, tod->tm_year + 1900 );
 }
 
