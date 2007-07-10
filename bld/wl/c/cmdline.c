@@ -114,6 +114,7 @@ sysblock *      LinkCommands;
 static sysblock *       PrevCommand;
 
 #define INIT_FILE_NAME  "wlink.lnk"
+#define INIT_FILE_ENV   "WLINK_LNK"
 
 void InitCmdFile( void )
 /******************************/
@@ -160,6 +161,7 @@ void DoCmdFile( char *fname )
     f_handle    file;
     size_t      namelen;
     unsigned    extension;
+    char        *namelnk;
 
     ResetCmdFile();
     if( fname == NULL || *fname == '\0' ) {
@@ -196,17 +198,16 @@ void DoCmdFile( char *fname )
         Token.where = ENDOFLINE;
         LnkMsg( INF+MSG_PRESS_CTRL_Z, NULL );
     }
-#if _DEVELOPMENT == _ON
-    file = SearchPath( "nwlink.lnk" );
+    namelnk = GetEnvString( INIT_FILE_ENV );
+    file = SearchPath( namelnk );
     if( file == NIL_HANDLE ) {
-        file = SearchPath( INIT_FILE_NAME );
+        namelnk = INIT_FILE_NAME;
+        file = SearchPath( namelnk );
     }
-#else
-    file = SearchPath( INIT_FILE_NAME );
-#endif
     if( file != NIL_HANDLE ) {
-        _ChkAlloc( fname, sizeof(INIT_FILE_NAME));
-        memcpy( fname, INIT_FILE_NAME, sizeof(INIT_FILE_NAME) );
+        namelen = strlen( namelnk ) + 1;
+        _ChkAlloc( fname, namelen );
+        memcpy( fname, namelnk, namelen );
         SetCommandFile( file, fname );
     }
     if( Spawn( DoCmdParse ) ) {

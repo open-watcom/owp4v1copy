@@ -32,3 +32,8 @@ reference the
 .ev &pathvarup.
 environment variable which must be set to the directory in which you
 installed your software.
+.np
+Default directive file name (:FNAME.wlink.lnk:eFNAME.) can be overridden by 
+.ev WLINK_LNK 
+environment variable. If new file is not found then default file name is used 
+as usual.
