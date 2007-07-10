@@ -35,7 +35,6 @@
 #include "indvars.h"
 #include "opcodes.h"
 #include "model.h"
-#include "spawn.h"
 #include "memout.h"
 #include "procdef.h"
 #include "freelist.h"
