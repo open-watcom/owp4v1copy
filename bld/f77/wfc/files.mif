@@ -159,6 +159,7 @@ comovl1 += &
     cgmagic.obj &
     cptraps.obj &
     csdep.obj &
+    cspawn.obj &
     docle.obj &
     emit.obj &
     exprutil.obj &

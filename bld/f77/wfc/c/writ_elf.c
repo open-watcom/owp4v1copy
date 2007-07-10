@@ -43,10 +43,10 @@
 #include "global.h"
 #include "brow2elf.h"
 #include "ferror.h"
+#include "cspawn.h"
 
 #include <unistd.h>
 
-extern  void            Suicide( void );
 extern  void            SDWrite(file_handle,byte *,int);
 extern  bool            SDError(file_handle,char *);
 
@@ -160,7 +160,7 @@ void mywrite( FILE *fp, void *data, size_t len ) {
     SDWrite( fp, data, len );
     if( SDError( fp, err_msg ) ) {
         Error( SM_IO_WRITE_ERR, fName, err_msg );
-        Suicide();
+        CSuicide();
     }
 }
 

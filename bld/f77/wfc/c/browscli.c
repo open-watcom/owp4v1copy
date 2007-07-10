@@ -49,6 +49,7 @@
 #include "brow2elf.h"
 #include "fmemmgr.h"
 #include "ferror.h"
+#include "cspawn.h"
 
 #define SWAP( x, y )    {x^=y^=x^=y;}
 
@@ -57,7 +58,6 @@ static char                     initial_section_type;
 
 static uint_32          SymHandles[ 20 ];
 
-extern  void            Suicide(void);
 extern  file_handle     SDOpen(char *,int);
 extern  void            SDClose(file_handle);
 extern  void            SDSeek(file_handle,int,int);
@@ -109,7 +109,7 @@ static void CLIWrite( dw_sectnum sect, const void *block, dw_size_t size ) {
         break;
     default:
         Error( CP_FATAL_ERROR, "Internal browse generator error" );
-        Suicide();
+        CSuicide();
     };
     cur_sec->cur_offset += size;
     cur_sec->max_offset = max( cur_sec->cur_offset, cur_sec->max_offset );
@@ -237,7 +237,7 @@ static void *CLIAlloc( size_t size ) {
     p = FMemAlloc( size );
     if( p == NULL && size ) {
         Error( MO_DYNAMIC_OUT );
-        Suicide();
+        CSuicide();
     }
     return( p );
 }
@@ -307,7 +307,7 @@ static void chkIOErr( file_handle fp, int error, char *filename ) {
 
     if( SDError( fp, err_msg ) ) {
         Error( error, filename, err_msg );
-        Suicide();
+        CSuicide();
     }
 }
 

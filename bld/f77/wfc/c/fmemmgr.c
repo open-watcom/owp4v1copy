@@ -40,12 +40,11 @@
 #include "cle.h"
 #include "fmeminit.h"
 #include "utility.h"
+#include "cspawn.h"
 
 #if defined( TRMEM )
 #include "trmemcvr.h"
 #endif
-
-extern  void            Suicide(void);
 
 void    FMemInit( void ) {
 //========================
@@ -104,7 +103,7 @@ void    *FMemAlloc( size_t size ) {
                 ProgSw |= PS_FATAL_ERROR;
                 PurgeAll(); // free up memory so we can process the error
                 Error( MO_DYNAMIC_OUT );
-                Suicide();
+                CSuicide();
             }
         } else {
             UnFreeMem++;

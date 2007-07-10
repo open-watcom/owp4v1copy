@@ -24,53 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  CSpawn()/CSuicide() prototypes.
 *
 ****************************************************************************/
 
 
-//
-// FCFORMAT  : FORMAT processing
-//
-
-#include "ftnstd.h"
-#include "fcgbls.h"
-#include "fmthdr.h"
-#include "cg.h"
-#include "emitobj.h"
-#include "cgdefs.h"
-#include "cgswitch.h"
-#define  BY_CLI
-#include "cgprotos.h"
-
-//=========================================================================
-
-extern  back_handle     GetFmtLabel(label_id);
-
-
-void    DumpFormats( void ) {
-//=====================
-
-// Dump format statements.
-
-    obj_ptr     curr_fc;
-    unsigned_16 fmt_len;
-    label_id    label;
-
-    curr_fc = FCodeTell( 0 );
-    while( FormatList ) {
-        FCodeSeek( FormatList );
-        fmt_len = GetU16() - sizeof( fmt_header );
-        FormatList = GetObjPtr();
-        label = GetU16();
-        if( label != 0 ) {
-            DGLabel( GetFmtLabel( label ) );
-        }
-        while( fmt_len > 0 ) {
-            DGIBytes( 1, GetByte() );
-            fmt_len--;
-        }
-    }
-    FCodeSeek( curr_fc );
-}
+extern  void            CSuicide( void );
+extern  int             CSpawn(void (*)( void ));

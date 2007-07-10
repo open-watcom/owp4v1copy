@@ -43,13 +43,13 @@
 #include "errcod.h"
 #include "comio.h"
 #include "inout.h"
+#include "cspawn.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 extern  void            CompProg(void);
-extern  int             Spawn(void (*)(void));
 extern  void            MsgBuffer(uint,char *,...);
 extern  uint            MakeName(char *,char *,char *);
 
@@ -59,7 +59,7 @@ extern  unsigned_32     CompTime;
 void    DoCompile( void ) {
 //===================
 
-    Spawn( &CompProg );
+    CSpawn( &CompProg );
 }
 
 

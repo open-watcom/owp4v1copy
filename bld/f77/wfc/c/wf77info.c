@@ -46,6 +46,7 @@
 #include "ferror.h"
 #include "inout.h"
 #include "fctypes.h"
+#include "cspawn.h"
 
 #include "langenvd.h"
 #if _CPU == 386 || _CPU == 8086
@@ -76,7 +77,6 @@ extern  char            *SDExtn(char *,char *);
 extern  char            *SDFName(char *);
 extern  char            *STGetName(sym_id,char *);
 extern  char            *STExtractName(sym_id,char *);
-extern  void            Suicide(void);
 extern  intstar4        GetComBlkSize(sym_id);
 extern  aux_info        *AuxLookup(sym_id);
 extern  void            SendBlip(void);
@@ -1375,7 +1375,7 @@ void    FEMessage( int msg, void *x ) {
     case MSG_FATAL :
         Error( CP_FATAL_ERROR, x );
         CGFlags |= CG_FATAL;
-        Suicide();
+        CSuicide();
         break;
     case MSG_BAD_PARM_REGISTER :
         Error( CP_BAD_PARM_REGISTER, x );
