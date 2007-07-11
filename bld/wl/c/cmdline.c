@@ -199,7 +199,7 @@ void DoCmdFile( char *fname )
         LnkMsg( INF+MSG_PRESS_CTRL_Z, NULL );
     }
     namelnk = GetEnvString( INIT_FILE_ENV );
-    file = SearchPath( namelnk );
+    file = ( namelnk != NULL ) ? SearchPath( namelnk ) : NIL_HANDLE;
     if( file == NIL_HANDLE ) {
         namelnk = INIT_FILE_NAME;
         file = SearchPath( namelnk );
