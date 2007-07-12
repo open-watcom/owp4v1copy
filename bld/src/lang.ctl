@@ -24,6 +24,7 @@ cdsay .
     <CPCMD> <DEVDIR>/clib/h/initarg.h                   <RELROOT>/rel2/src/startup/initarg.h
     <CPCMD> <DEVDIR>/clib/startup/a/cstrt086.asm        <RELROOT>/rel2/src/startup/dos/cstrt086.asm
     <CPCMD> <DEVDIR>/clib/startup/a/dos16m.asm          <RELROOT>/rel2/src/startup/dos/dos16m.asm
+    <CPCMD> <DEVDIR>/clib/startup/a/dllstart.asm        <RELROOT>/rel2/src/startup/386/dllstart.asm
     <CPCMD> <DEVDIR>/clib/startup/a/dstrt386.asm        <RELROOT>/rel2/src/startup/386/dstrt386.asm
     <CPCMD> <DEVDIR>/clib/startup/c/cmain086.c          <RELROOT>/rel2/src/startup/dos/cmain086.c
     <CPCMD> <DEVDIR>/clib/startup/c/cmain086.c          <RELROOT>/rel2/src/startup/os2/cmain086.c
@@ -49,6 +50,11 @@ cdsay .
     <CPCMD> <DEVDIR>/clib/startup/h/initfini.h          <RELROOT>/rel2/src/startup/os2/initfini.h
     <CPCMD> <DEVDIR>/watcom/h/wos2.h                    <RELROOT>/rel2/src/startup/os2/wos2.h
     <CPCMD> <DEVDIR>/watcom/h/mdef.inc                  <RELROOT>/rel2/src/startup/mdef.inc
+    <CPCMD> <DEVDIR>/watcom/h/xinit.inc                 <RELROOT>/rel2/src/startup/xinit.inc
+    <CPCMD> <DEVDIR>/comp_cfg/h/langenv.inc             <RELROOT>/rel2/src/startup/langenv.inc
+    <CPCMD> <DEVDIR>/clib/startup/a/msgrt16.inc         <RELROOT>/rel2/src/startup/msgrt16.inc
+    <CPCMD> <DEVDIR>/clib/startup/a/msgrt32.inc         <RELROOT>/rel2/src/startup/msgrt32.inc
+    <CPCMD> <DEVDIR>/clib/startup/a/msgcpyrt.inc        <RELROOT>/rel2/src/startup/msgcpyrt.inc
 
     <CPCMD> <DEVDIR>/src/misc/*.*                       <RELROOT>/rel2/src/
 
