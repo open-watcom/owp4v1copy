@@ -1,23 +1,19 @@
-all: wstub.exe wstubq.exe
+#pmake: build os_dos os_win cpu_i86 cpu_386
 
-wstub.exe: wstub.obj
-    wlink sys dos f $<
+host_os  = dos
+host_cpu = i86
 
-wstub.obj: wstub.asm
-    wasm $<
+proj_name = wstuba
+wstuba_autodepends = .autodepend
 
-wstubq.exe: wstubq.obj
-    wlink sys dos f $<
+!include cproj.mif
+!include defrule.mif
+!include deftarg.mif
 
-wstubq.obj: wstub.asm
-    wasm -dQUIET -fo=wstubq.obj $<
+all : wstub.exe wstubq.exe
 
-clean : .symbolic
-        @if exist *.?bj del *.?bj
-        @if exist *.exe del *.exe
-        @if exist *.lst del *.lst
-        @if exist *.err del *.err
-        @if exist *.map del *.map
-        @if exist *.dmp del *.dmp
-        @if exist *.sym del *.sym
-        @if exist *.tmp del *.tmp
+wstub.exe : wstub.obj
+        $(linker) $(lflags) file $[@
+
+wstubq.exe : wstubq.obj
+        $(linker) $(lflags) file $[@
