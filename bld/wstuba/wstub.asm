@@ -322,8 +322,9 @@ L18:            mov     bx,7Eh                  ; max. length of parameters
                 jbe     L19
                 mov     cx,ax                   ; CX = bytes to be copied
 L19:            add     bx,cx                   ; BX = total length
-                inc     cx                      ; copy trailing CR
                 rep     movsb
+                mov     al,0Dh
+                stosb                           ; add trailing CR
                 pop     ds
 
                 mov     al,bl
@@ -416,7 +417,7 @@ Exec            PROC    NEAR
 ; Prepare Parameters
                 mov     EPB_Parm_Ofs,bx
                 mov     EPB_Parm_Seg,es
-; Prepare FCBs
+; Prepare FCBs (probably useless)
                 mov     ax,PSPSeg
                 mov     WORD PTR EPB_FCB1_Ofs,FCB1
                 mov     EPB_FCB1_Seg,ax
@@ -434,7 +435,7 @@ Exec            ENDP
 
 _TEXT   ENDS
 
-_DATA   SEGMENT 'DATA'
+_DATA   SEGMENT WORD 'DATA'
 
 Msg_Error       db      'Can''t run DOS/4G(W)',0Ah,0Dh,'$'
 
@@ -449,16 +450,16 @@ EnvDOS4G        db      'DOS4G=QUIET',0
 EnvDOS4G_Len    = $ - EnvDOS4G
 ENDIF
 
+; align the file-length to be a multiple of 16
+IFDEF QUIET
+;                db      0 dup (?)
+ELSE
+                db      4 dup (?)
+ENDIF
+
 _DATA   ENDS
 
 _BSS    SEGMENT 'BSS'
-
-; align the file-length to be a multiple of 16
-IFDEF QUIET
-                db      9 dup (?)
-ELSE
-                db      13 dup (?)
-ENDIF
 
 EnvSeg          dw      ?
 PSPSeg          dw      ?
