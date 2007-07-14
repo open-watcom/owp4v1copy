@@ -38,7 +38,7 @@ namespace std {
     typedef typename Iterator::value_type        value_type;
     typedef typename Iterator::pointer           pointer;
     typedef typename Iterator::reference         reference;
-    typedef typename Iterator::iterator_catagory iterator_catagory;
+    typedef typename Iterator::iterator_category iterator_category;
   };
 
   template< class Type >
@@ -47,7 +47,7 @@ namespace std {
     typedef Type                       value_type;
     typedef Type                      *pointer;
     typedef Type                      &reference;
-    typedef random_access_iterator_tag iterator_catagory;
+    typedef random_access_iterator_tag iterator_category;
   };
 
   template< class Type >
@@ -56,13 +56,13 @@ namespace std {
     typedef const Type                 value_type;
     typedef const Type                *pointer;
     typedef const Type                &reference;
-    typedef random_access_iterator_tag iterator_catagory;
+    typedef random_access_iterator_tag iterator_category;
   };
 
   // iterator
   // ********
 
-  template< class Catagory,
+  template< class Category,
             class Type,
             class Distance = ptrdiff_t,
             class Pointer = Type*,
@@ -72,7 +72,7 @@ namespace std {
     typedef Distance  difference_type;
     typedef Pointer   pointer;
     typedef Reference reference;
-    typedef Catagory  iterator_catagory;
+    typedef Category  iterator_category;
   };
 
   // advance( Iterator &, Distance )
@@ -119,7 +119,7 @@ namespace std {
   void advance( InputIterator &it, Distance n )
   {
     advance(
-      it, n, typename iterator_traits< InputIterator >::iterator_catagory( )
+      it, n, typename iterator_traits< InputIterator >::iterator_category( )
     );
   }
 
@@ -186,7 +186,7 @@ namespace std {
     distance( InputIterator first, InputIterator last )
   {
     return( distance(
-      first, last, iterator_traits< InputIterator >::iterator_catagory( )
+      first, last, iterator_traits< InputIterator >::iterator_category( )
     ) );
   }
 #endif
