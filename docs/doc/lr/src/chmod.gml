@@ -1,15 +1,16 @@
-.func chmod _wchmod _uchmod
+.func chmod _chmod _wchmod _uchmod
 #include <sys&pc.types.h>
 #include <sys&pc.stat.h>
-.if '&machsys' eq 'PP' .do begin
-int chmod( const char *path, mode_t permission );
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 int chmod( const char *path, mode_t permission );
 .do end
 .el .do begin
 #include <&iohdr>
 int chmod( const char *path, int permission );
+.if &'length(&_func.) ne 0 .do begin
+int _chmod( const char *path, int permission );
+.ixfunc2 '&FileOp' &_func
+.do end
 .do end
 .ixfunc2 '&FileOp' &func
 .if &'length(&wfunc.) ne 0 .do begin
@@ -55,6 +56,11 @@ Upon successful completion, the &func function will mark for update
 the
 .us st_ctime
 field of the file.
+.if &'length(&_func.) ne 0 .do begin
+.np
+The &_func function is identical to &func..
+Use &_func for ANSI naming conventions.
+.do end
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is identical to &func except that it accepts a
@@ -74,7 +80,6 @@ returns zero if the new settings are successfully made; otherwise,
 is set to indicate the error.
 .return end
 .error begin
-.if '&machsys' ne 'PP' .do begin
 .begterm 12
 .termhd1 Constant
 .termhd2 Meaning
@@ -106,7 +111,6 @@ calling process does not have the appropriate privileges.
 The named file resides on a read-only file system.
 .do end
 .endterm
-.do end
 .error end
 .see begin
 .if '&machsys' eq 'QNX' .do begin

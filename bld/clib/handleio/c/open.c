@@ -117,8 +117,8 @@ static int CTinyCreate( const char *path, int attribs )
 
 extern unsigned __NFiles;
 
-static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode,
-                                      int shflag, va_list args )
+static int __F_NAME(__sopen,__wsopen)( const CHAR_TYPE *name, int mode,
+                                       int shflag, va_list args )
 {
     int         rwmode;
     int         handle;
@@ -344,5 +344,5 @@ _WCRTLINK int __F_NAME(sopen,_wsopen)( const CHAR_TYPE *name, int mode, int shfl
     va_list             args;
 
     va_start( args, shflag );
-    return( __F_NAME(_sopen,__wsopen)( name, mode, shflag, args ) );
+    return( __F_NAME(__sopen,__wsopen)( name, mode, shflag, args ) );
 }

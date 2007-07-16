@@ -1,7 +1,11 @@
-.func read
+.func read _read
 #include <&iohdr>
 int read( int &fd, void *buffer, unsigned len );
 .ixfunc2 '&OsIo' &func
+.if &'length(&_func.) ne 0 .do begin
+int _read( int &fd, void *buffer, unsigned len );
+.ixfunc2 '&OsIo' &_func
+.do end
 .funcend
 .desc begin
 The &func function reads data at the operating system level.
@@ -40,6 +44,11 @@ is included in the access mode, the data is transmitted with the extra
 carriage return character removed before each linefeed character
 encountered in the original data.
 .do end
+.if &'length(&_func.) ne 0 .do begin
+.np
+The &_func function is identical to &func..
+Use &_func for ANSI/ISO naming conventions.
+.do end
 .desc end
 .return begin
 The &func function returns the number of bytes of data transmitted
@@ -69,17 +78,14 @@ detected.
 #include <fcntl.h>
 #include <&iohdr>
 .exmp break
-void main()
-  {
+void main( void )
+{
     int  &fd;
     int  size_read;
     char buffer[80];
 .exmp break
     /* open a file for input              */
-.if '&machsys' eq 'PP' .do begin
-    &fd = open( "file", O_RDONLY );
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
     &fd = open( "file", O_RDONLY );
 .do end
 .el .do begin
@@ -87,19 +93,23 @@ void main()
 .do end
     if( &fd != -1 ) {
 .exmp break
-      /* read the text                      */
-      size_read = read( &fd, buffer,
-                        sizeof( buffer ) );
+        /* read the text                      */
+        size_read = read( &fd, buffer,
+                          sizeof( buffer ) );
 .exmp break
-      /* test for error                     */
-      if( size_read == -1 ) {
-          printf( "Error reading file\n" );
-      }
+        /* test for error                     */
+        if( size_read == -1 ) {
+            printf( "Error reading file\n" );
+        }
 .exmp break
-      /* close the file                     */
-      close( &fd );
+        /* close the file                     */
+        close( &fd );
     }
-  }
+}
 .exmp end
 .class POSIX 1003.1
+.if &'length(&_func.) ne 0 .do begin
+.np
+&_func conforms to ANSI/ISO naming conventions
+.do end
 .system

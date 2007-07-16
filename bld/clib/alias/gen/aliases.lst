@@ -26,11 +26,17 @@
 #######################################################################################################################
 access          access          _access         d16 d32 nt  nta ntp         o16 o32         w16 w32
 close_          close           _close          d16 d32 nt  nta ntp         o16 o32         w16 w32
+chmod_          chmod           _chmod          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+chsize          chsize          _chsize         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+creat_          creat           _creat          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 cwait_          cwait           _cwait                  nt  nta ntp         o16 o32
 dup___          dup             _dup            d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+dup2__          dup2            _dup2           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+eof___          eof             _eof            d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 fdopen          fdopen          _fdopen         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 fgetch          fgetchar        _fgetchar       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 fgetwc          fgetwchar       _fgetwchar      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
+flelen          filelength      _filelength     d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 fputch          fputchar        _fputchar       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 fputwc          fputwchar       _fputwchar      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 fstat_          fstat           _fstat          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
@@ -40,6 +46,7 @@ getche          getche          _getche         d16 d32 nt  nta ntp         o16 
 getcwd          getcwd          _getcwd         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 getws_          getws           _getws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 dopen_          _hdopen         _dopen          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
+isatty          isatty          _isatty         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 _isasc          isascii         __isascii       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 iscsym          __iscsym        iscsym          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 iscsyf          __iscsymf       iscsymf         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
@@ -104,8 +111,10 @@ mkdir_          mkdir           _mkdir          d16 d32 nt  nta ntp         o16 
 open__          open            _open           d16 d32 nt  nta ntp         o16 o32         w16 w32
 putenv          putenv          _putenv         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 putws_          putws           _putws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
+read__          read            _read           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 rmdir_          rmdir           _rmdir          d16 d32 nt  nta ntp         o16 o32         w16 w32
 setmod          setmode         _setmode        d16 d32 nt  nta ntp nvc nvl o16 o32         w16 w32
+sopen_          sopen           _sopen          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 stat__          stat            _stat           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 lstat_          stat            lstat           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 strdup          __clib_strdup   _strdup         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
@@ -125,10 +134,14 @@ strspn          strspnp         _strspnp        d16 d32 nt  nta ntp nvc nvl o16 
 strupr          strupr          _strupr         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 strcc_          stricmp         strcasecmp      d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 strncc          strnicmp        strncasecmp     d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+tell__          tell            _tell           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 tolowe          tolower         _tolower        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 touppe          toupper         _toupper        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 tzset_          tzset           _tzset          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+umask_          umask           _umask          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+unlink          unlink          _unlink         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 utime_          utime           _utime          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+write_          write           _write          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 w_acce          _waccess        _w_access       d16 d32 nt  nta ntp         o16 o32         w16 w32
 wcscmp          _wcsicmp        wcscmpi         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 wcsico          _wcsicmp        _wcsicoll       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32

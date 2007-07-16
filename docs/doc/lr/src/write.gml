@@ -1,7 +1,11 @@
-.func write
+.func write _write
 #include <&iohdr>
 int write( int &fd, void *buffer, unsigned len );
 .ixfunc2 '&OsIo' &func
+.if &'length(&_func.) ne 0 .do begin
+int _write( int &fd, void *buffer, unsigned len );
+.ixfunc2 '&OsIo' &_func
+.do end
 .funcend
 .desc begin
 The &func function writes data at the operating system level.
@@ -9,6 +13,11 @@ The number of bytes transmitted is given by
 .arg len
 and the data to be transmitted is located at the address specified by
 .arg buffer.
+.if &'length(&_func.) ne 0 .do begin
+.np
+The &_func function is identical to &func..
+Use &_func for ANSI/ISO naming conventions.
+.do end
 .np
 The
 .arg &fd
@@ -80,18 +89,15 @@ A value of &minus.1 may be returned in the case of some output errors.
 char buffer[]
         = { "A text record to be written" };
 .exmp break
-void main()
-  {
+void main( void )
+{
     int &fd;
     int size_written;
 .exmp break
     /* open a file for output             */
     /* replace existing file if it exists */
     &fd = open( "file",
-.if '&machsys' eq 'PP' .do begin
-                O_WRONLY | O_CREAT | O_TRUNC,
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
                 O_WRONLY | O_CREAT | O_TRUNC,
 .do end
 .el .do begin
@@ -100,19 +106,23 @@ void main()
                 S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
     if( &fd != -1 ) {
 .exmp break
-      /* write the text                     */
-      size_written = write( &fd, buffer,
-                            sizeof( buffer ) );
+        /* write the text                     */
+        size_written = write( &fd, buffer,
+                              sizeof( buffer ) );
 .exmp break
-      /* test for error                     */
-      if( size_written != sizeof( buffer ) ) {
-          printf( "Error writing file\n" );
-      }
+        /* test for error                     */
+        if( size_written != sizeof( buffer ) ) {
+            printf( "Error writing file\n" );
+        }
 .exmp break
-      /* close the file                     */
-      close( &fd );
+        /* close the file                     */
+        close( &fd );
     }
-  }
+}
 .exmp end
 .class POSIX 1003.1
+.if &'length(&_func.) ne 0 .do begin
+.np
+&_func conforms to ANSI/ISO naming conventions
+.do end
 .system

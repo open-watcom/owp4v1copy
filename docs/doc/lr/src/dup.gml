@@ -62,15 +62,12 @@ The number of file &handle.s would exceed {OPEN_MAX}.
 #include <fcntl.h>
 #include <&iohdr>
 
-void main()
-  {
+void main( void )
+{
     int &fd, dup_&fd;
 .exmp break
     &fd = open( "file",
-.if '&machsys' eq 'PP' .do begin
-                O_WRONLY | O_CREAT | O_TRUNC,
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
                 O_WRONLY | O_CREAT | O_TRUNC,
 .do end
 .el .do begin
@@ -78,16 +75,16 @@ void main()
 .do end
                 S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
     if( &fd != -1 ) {
-      dup_&fd = dup( &fd );
-      if( dup_&fd != -1 ) {
+        dup_&fd = dup( &fd );
+        if( dup_&fd != -1 ) {
 .exmp break
-        /* process file */
+            /* process file */
 .exmp break
-        close( dup_&fd );
-      }
-      close( &fd );
+            close( dup_&fd );
+        }
+        close( &fd );
     }
-  }
+}
 .exmp end
 .class POSIX 1003.1
 .if &'length(&_func.) ne 0 .do begin

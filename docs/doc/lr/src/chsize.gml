@@ -1,16 +1,23 @@
-.func chsize
+.func chsize _chsize
 #include <&iohdr>
 int chsize( int &fd, long size );
 .ixfunc2 '&DosFunc' &func
+.if &'length(&_func.) ne 0 .do begin
+int _chsize( int &fd, long size );
+.ixfunc2 '&DosFunc' &_func
+.do end
 .funcend
 .desc begin
 The &func function changes the size of the file associated with
 .arg &fd
 by extending or truncating the file to the length specified by
 .arg size.
-.if '&machsys' ne 'PP' .do begin
 If the file needs to be extended, the file is padded with NULL ('\0')
 characters.
+.if &'length(&_func.) ne 0 .do begin
+.np
+The &_func function is identical to &func..
+Use &_func for ANSI naming conventions.
 .do end
 .if '&machsys' eq 'QNX' .do begin
 .np

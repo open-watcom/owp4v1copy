@@ -1,4 +1,4 @@
-.func creat _wcreat _ucreat
+.func creat _creat _wcreat _ucreat
 #include <sys&pc.types.h>
 #include <sys&pc.stat.h>
 .ixfunc2 '&OsIo' &func
@@ -17,6 +17,10 @@ int _ucreat( const wchar_t *path, mode_t mode );
 .el .do begin
 #include <&iohdr>
 int creat( const char *path, int mode );
+.if &'length(&_func.) ne 0 .do begin
+int _creat( const char *path, int mode );
+.ixfunc2 '&OsIo' &_func
+.do end
 .if &'length(&wfunc.) ne 0 .do begin
 int _wcreat( const wchar_t *path, int mode );
 .ixfunc2 '&OsIo' &wfunc
@@ -35,6 +39,11 @@ It is equivalent to:
 .millust begin
   open( path, O_WRONLY | O_CREAT | O_TRUNC, mode );
 .millust end
+.if &'length(&_func.) ne 0 .do begin
+.np
+The &_func function is identical to &func..
+Use &_func for ANSI naming conventions.
+.do end
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is identical to &func except that it accepts a

@@ -1,16 +1,17 @@
-.func umask
+.func umask _umask
 #include <sys&pc.types.h>
 #include <sys&pc.stat.h>
-.if '&machsys' eq 'PP' .do begin
-mode_t umask( mode_t cmask );
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 mode_t umask( mode_t cmask );
 .do end
 .el .do begin
 #include <fcntl.h>
 #include <&iohdr>
 int umask( int cmask );
+.if &'length(&_func.) ne 0 .do begin
+int _umask( int cmask );
+.ixfunc2 '&OsIo' &_func
+.do end
 .do end
 .ixfunc2 '&OsIo' &func
 .funcend
@@ -18,14 +19,7 @@ int umask( int cmask );
 The &func function sets the process's file mode creation mask to
 .arg cmask.
 The process's file mode creation mask is used during
-.if '&machsys' eq 'PP' .do begin
-.kw creat
-.ct,
-.kw mkdir
-or
-.kw open
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+.if '&machsys' eq 'QNX' .do begin
 .kw creat
 .ct,
 .kw mkdir
@@ -48,6 +42,11 @@ to turn off permission bits in the
 argument supplied.
 In other words, if a bit in the mask is on, then the corresponding bit
 in the file's requested permission value is disallowed.
+.if &'length(&_func.) ne 0 .do begin
+.np
+The &_func function is identical to &func..
+Use &_func for ANSI/ISO naming conventions.
+.do end
 .pp
 The argument
 .arg cmask
@@ -76,12 +75,9 @@ The &func function returns the previous value of
 #include <&iohdr>
 .do end
 
-void main()
-  {
-.if '&machsys' eq 'PP' .do begin
-    mode_t old_mask;
-.do end
-.el .if '&machsys' eq 'QNX' .do begin
+void main( void )
+{
+.if '&machsys' eq 'QNX' .do begin
     mode_t old_mask;
 .do end
 .el .do begin
@@ -91,7 +87,11 @@ void main()
     /* set mask to create read-only files */
     old_mask = umask( S_IWUSR | S_IWGRP | S_IWOTH |
                       S_IXUSR | S_IXGRP | S_IXOTH );
-  }
+}
 .exmp end
 .class POSIX 1003.1
+.if &'length(&_func.) ne 0 .do begin
+.np
+&_func conforms to ANSI/ISO naming conventions
+.do end
 .system
