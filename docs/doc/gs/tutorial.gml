@@ -238,8 +238,8 @@ You can ignore the settings displayed for
 and
 .us Image Type
 since the target definition already exists (we created it for you).
-The settings are important when you a defining a new target (i.e., one
-that was not predefined).
+The settings are important when you are defining a new target (i.e.,
+one that was not predefined).
 .figure *depth='3.05' *scale=50 *file='ide4c' Selecting a target type
 .np
 Press the Enter key or click on OK.
@@ -283,8 +283,8 @@ You can ignore the settings displayed for
 and
 .us Image Type
 since the target definition already exists (we created it for you).
-The settings are important when you a defining a new target (i.e., one
-that was not predefined).
+The settings are important when you are defining a new target (i.e.,
+one that was not predefined).
 .note
 Press the Enter key or click on OK.
 .endnote
