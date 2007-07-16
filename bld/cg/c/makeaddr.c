@@ -269,7 +269,8 @@ extern  an      MakeGets( an dst, an src, type_def *tipe )
         src->format = NF_ADDR;  /*% so instruction doesn't get freed!*/
     } else {
         src_name = GetValue( src, dst_name );
-        if( src_name != dst_name ) {
+        if( src_name != dst_name ||
+          ( dst->flags & VOLATILE ) ) {
             class = TypeClass( tipe );
             src_name = GenIns( src );
             if( dst_name->n.class == N_INDEXED &&
