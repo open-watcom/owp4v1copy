@@ -587,8 +587,7 @@ bool WriteDOSGroup( group_entry *group )
         }
         DEBUG((DBG_LOADDOS, "group %a section %d to %l in %s",
                 &group->grp_addr, sect->ovl_num, loc, finfo->fname ));
-        WriteGroupLoad( group );
-        loc += group->size;
+        loc += WriteGroupLoad( group );
         if( loc > finfo->file_loc ) {
             finfo->file_loc = loc;
         }
@@ -892,7 +891,7 @@ static bool WriteSegData( void *_sdata, void *_start )
     unsigned long newpos;
     signed long pad;
 
-    if( !sdata->isuninit && !sdata->isdead && sdata->length > 0 ) {
+    if( !sdata->isuninit && !sdata->isdead ) {
         newpos = *start + sdata->a.delta;
         pad = newpos - PosLoad();
         DbgAssert( pad >= 0 );
@@ -957,8 +956,8 @@ static bool WriteCopyGroups( void *_seg, void *_info )
     return FALSE;
 }
 
-void WriteGroupLoad( group_entry *group )
-/**********************************************/
+offset  WriteGroupLoad( group_entry *group )
+/******************************************/
 {
     grpwriteinfo     info;
     class_entry *    class;
@@ -970,9 +969,10 @@ void WriteGroupLoad( group_entry *group )
     if (class->flags & CLASS_COPY ) {
         info.lastgrp = NULL; // so it will use the first group
         RingLookup( class->DupClass->segs->group->leaders, WriteCopyGroups, &info );
-    }
-    else {
+        return( group->size );
+    } else {
         Ring2Lookup( group->leaders, DoGroupLeader, &(info.pos) );
+        return( PosLoad() - info.pos );
     }
 }
 

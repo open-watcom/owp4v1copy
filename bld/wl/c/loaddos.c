@@ -210,7 +210,7 @@ static bool WriteSegData( void *_sdata, void *_start )
     signed long newpos;
     signed long pad;
 
-    if( !sdata->isuninit && !sdata->isdead && ( sdata->length > 0 ) ) {
+    if( !sdata->isuninit && !sdata->isdead ) {
         newpos = *start + sdata->a.delta;
         if( newpos + (signed long)sdata->length <= 0 )
             return( FALSE );
