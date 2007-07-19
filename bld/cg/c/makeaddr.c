@@ -270,7 +270,7 @@ extern  an      MakeGets( an dst, an src, type_def *tipe )
     } else {
         src_name = GetValue( src, dst_name );
         if( src_name != dst_name ||
-          ( dst->flags & VOLATILE ) ) {
+         (( src_name->n.class == N_MEMORY ) && ( src_name->v.usage & VAR_VOLATILE )) ) {
             class = TypeClass( tipe );
             src_name = GenIns( src );
             if( dst_name->n.class == N_INDEXED &&
