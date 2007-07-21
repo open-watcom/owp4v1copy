@@ -31,7 +31,7 @@
 
 #include "cvars.h"
 #include "cgswitch.h"
-
+#include "pragdefn.h"
 
 extern  void    CSegFree( SEGADDR_T );
 extern  TREEPTR CurFuncNode;
@@ -594,8 +594,12 @@ local void ChkDefined( SYM_ENTRY *sym, SYM_NAMEPTR name )
         if( sym->flags & SYM_REFERENCED ) {     /* 28-apr-88 AFS */
             if( sym->stg_class == SC_STATIC ) {
                 if( sym->flags & SYM_FUNCTION ) {
-                    SetSymLoc( sym );
-                    CErr( ERR_FUNCTION_NOT_DEFINED, name );
+                    /* Check to see if we have a matching aux entry with code attached */
+                    struct aux_entry * paux = AuxLookup( name );
+                    if( !paux || !paux->info || !paux->info->code ) {
+                        SetSymLoc( sym );
+                        CErr( ERR_FUNCTION_NOT_DEFINED, name );
+                    }
                 }
             } else if( sym->stg_class == SC_FORWARD ) {
                 SetSymLoc( sym );                       /* 03-jun-91 */

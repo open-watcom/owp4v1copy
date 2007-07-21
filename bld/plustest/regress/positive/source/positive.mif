@@ -723,6 +723,7 @@ positive_tests = &
     prag01.$(ext) &
     prag02.$(ext) &
     prag03.$(ext) &
+    prag04.$(ext) &
     quest01.$(ext) &
     quest02.$(ext) &
     quest03.$(ext) &

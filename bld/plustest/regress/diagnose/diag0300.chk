@@ -104,3 +104,6 @@ File: source\diag0309.c
   definition: '<class template> X'
 (20,2): Error! E181: class template 'X' is already defined
   definition: '<class template> X'
+File: source\diag0310.c
+(10,21): Error! E229: function 'foo' has already been defined
+  definition: 'int foo( int )'

@@ -433,6 +433,20 @@ void PragEnding( void )
         CurrInfo->use = 1;
         CurrEntry->info = CurrInfo;
     }
+    
+    /* If this pragma defines code, check to see if we already have a function body */   
+    if( CurrEntry->name && CurrEntry->info && CurrEntry->info->code ) {
+        SYM_HANDLE  sym_handle;
+        SYM_ENTRY   sym;
+            
+        if( 0 != ( sym_handle = SymLook( CalcHash( CurrEntry->name, strlen( CurrEntry->name ) ), CurrEntry->name ))) {
+            SymGet( &sym, sym_handle );
+            if( ( sym.flags & SYM_DEFINED ) && ( sym.flags & SYM_FUNCTION ) ) {
+                CErr2p( ERR_SYM_ALREADY_DEFINED, CurrEntry->name );
+            }
+        }
+    }   
+    
     CurrEntry->next = AuxList;
     AuxList = CurrEntry;
 }
