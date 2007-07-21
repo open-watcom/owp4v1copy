@@ -14,7 +14,7 @@ inline int sub( int a, int b ) {
 }
 #pragma aux (__stdcall) sub parm reverse;
 
-int inline burst( int, int ){return 0;}
+int inline burst( int, int );
 #ifdef __386__
 #pragma aux burst = \
 	"xor eax,edx" \
