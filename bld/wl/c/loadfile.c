@@ -122,13 +122,11 @@ void FiniLoadFile( void )
     FreeSavedRelocs();
     OpenOutFiles();
     SetupImpLib();
-    if ( FmtData.output_raw ) {   // These must come first because they
-        BinOutput();              //   apply to all formats and override
-    }                             //   native output
-    else if ( FmtData.output_hex ) {
+    if ( FmtData.output_raw ) {         // These must come first because
+        BinOutput();                    //    they apply to all formats
+    } else if ( FmtData.output_hex ) {  //    and override native output
         HexOutput();
-    }
-    else if( FmtData.type & MK_REAL_MODE ) {
+    } else if( FmtData.type & MK_REAL_MODE ) {
         FiniDOSLoadFile();
 #ifdef _OS2
     } else if( IS_PPC_OS2 ) {
@@ -884,14 +882,15 @@ unsigned long OffsetAlign( unsigned long off, unsigned long align )
 }
 
 static bool WriteSegData( void *_sdata, void *_start )
-/****************************************************/
+/********************************************************/
 {
     segdata *sdata = _sdata;
     unsigned long *start = _start;
     unsigned long newpos;
     signed long pad;
 
-    if( !sdata->isuninit && !sdata->isdead ) {
+    if( !sdata->isuninit && !sdata->isdead 
+      && ( ( sdata->length > 0 ) || (FmtData.type & MK_END_PAD) ) ) {
         newpos = *start + sdata->a.delta;
         pad = newpos - PosLoad();
         DbgAssert( pad >= 0 );
@@ -926,7 +925,7 @@ static bool DoGroupLeader( void *seg, void *start )
 }
 
 static bool DoDupGroupLeader( void *seg, void *start )
-/*************************************************/
+/****************************************************/
 {
     // Substitute groups generally are sourced from NO_EMIT classes,
     // As copies, they need to be output, so ignore their MOEMIT flag here
@@ -957,7 +956,7 @@ static bool WriteCopyGroups( void *_seg, void *_info )
 }
 
 offset  WriteGroupLoad( group_entry *group )
-/******************************************/
+/**********************************************/
 {
     grpwriteinfo     info;
     class_entry *    class;
@@ -969,11 +968,10 @@ offset  WriteGroupLoad( group_entry *group )
     if (class->flags & CLASS_COPY ) {
         info.lastgrp = NULL; // so it will use the first group
         RingLookup( class->DupClass->segs->group->leaders, WriteCopyGroups, &info );
-        return( group->size );
     } else {
         Ring2Lookup( group->leaders, DoGroupLeader, &(info.pos) );
-        return( PosLoad() - info.pos );
     }
+    return( PosLoad() - info.pos );
 }
 
 static void OpenOutFiles( void )
