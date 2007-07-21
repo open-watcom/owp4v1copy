@@ -39,6 +39,12 @@
 #include "wdglb.h"
 #include "wdfunc.h"
 
+bool Weof( void )
+/***************/
+{
+    return( eof( Handle ) );
+}
+
 /*
  * read from the image
  */

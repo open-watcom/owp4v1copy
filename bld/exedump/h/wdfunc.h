@@ -168,6 +168,7 @@ extern bool Dmp_d16m_head( void );
 /*
  * wdio.c
  */
+extern bool Weof( void );
 extern void Wread( void *, unsigned_32 );
 extern void Wlseek( signed_32 );
 extern long WFileSize( void );

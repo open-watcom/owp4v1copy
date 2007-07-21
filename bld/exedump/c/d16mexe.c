@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <setjmp.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include "wdglb.h"
 #include "wdfunc.h"
@@ -80,13 +81,24 @@ static  char    *dos16m_gdt_msg[] = {
 };
 #endif
 
+typedef struct seg_data_info {
+    unsigned_32 size;
+    unsigned_32 file_off;
+} seg_data_info;
+
+typedef struct {
+    unsigned_16 off;
+    unsigned_16 sel;
+} reloc;
+
 /*
  * dump the DOS/16M GDT file data
  */
-static void dmp_dos16m_gdt( dos16m_exe_header *d16m_head )
-/********************************************************/
+static void dmp_dos16m_gdt( dos16m_exe_header *d16m_head, int sel_count,
+                                               seg_data_info *segs_info )
+/***********************************************************************/
 {
-    int                             i, num_gdts;
+    int                             i;
     gdt_info                        gdt;
     unsigned_32                     selector;
     unsigned_32                     file_size;
@@ -96,20 +108,15 @@ static void dmp_dos16m_gdt( dos16m_exe_header *d16m_head )
 
     Wdputslc( "GDT selectors:\n" );
     Wlseek( New_exe_off + sizeof( dos16m_exe_header ) );
-    selector = d16m_head->first_selector ? d16m_head->first_selector : 0;
+    selector = d16m_head->first_selector;
     /* Calculate offset of the first segment image in file */
     segdata_offset = New_exe_off + sizeof( dos16m_exe_header ) + 1
                    + d16m_head->gdtimage_size - 16 * sizeof( gdt_info );
 
-    /* Calculate the number of GDT entries in file. Guesswork! */
-    if( d16m_head->last_sel_used && d16m_head->first_selector )
-        num_gdts = (d16m_head->last_sel_used - d16m_head->first_selector) / sizeof( gdt_info ) + 1;
-    else
-        num_gdts = (d16m_head->gdtimage_size + 1) / sizeof( gdt_info ) - 17;
     Wdputslc( "                                 Size in    Size in\n" );
     Wdputslc( "Sel #    Access    File offset   File       Memory     DPL    Present    Flags\n" );
     Wdputslc( "-----    ------    -----------   -------    -------    ---    -------    -----\n" );
-    for( i = 0; i < num_gdts; ++i ) {
+    for( i = 0; i < sel_count; ++i ) {
         Wread( &gdt, sizeof( gdt_info ) );
 //        Dump_header( &gdt, dos16m_gdt_msg );
         Puthex( selector, 4 );
@@ -126,6 +133,8 @@ static void dmp_dos16m_gdt( dos16m_exe_header *d16m_head )
         Wdputs( "       " );
         file_size = gdt.gdtlen ? gdt.gdtlen + 1 : 0;
         Puthex( file_size, 5 );
+        segs_info[ i ].file_off = segdata_offset;
+        segs_info[ i ].size = file_size;
         segdata_offset += file_size;
         Wdputs( "      " );
         mem_size = ((unsigned_32)gdt.gdtreserved & 0x1FFF) << 4;
@@ -139,6 +148,33 @@ static void dmp_dos16m_gdt( dos16m_exe_header *d16m_head )
         if( gdt.gdtreserved & 0x2000 ) Wdputs( "Z" );
         Wdputslc( "\n" );
     }
+    Wdputslc( "\n" );
+}
+
+static int  get_selector_count( dos16m_exe_header *d16m_head )
+/************************************************************/
+{
+    /* Calculate the number of selector entries (GDT) in file. Guesswork! */
+    if( d16m_head->first_selector == 0 )
+        d16m_head->first_selector = D16M_USER_SEL;
+    if( d16m_head->last_sel_used && d16m_head->first_selector ) {
+        return( (d16m_head->last_sel_used - d16m_head->first_selector) / sizeof( gdt_info ) + 1 );
+    } else {
+        return( (d16m_head->gdtimage_size + 1) / sizeof( gdt_info ) - 17 );
+    }
+}
+
+static unsigned_16 put_reloc( reloc *r, unsigned_16 idx )
+{
+    Puthex( r->sel, 4 );
+    Wdputslc( ":" );
+    Puthex( r->off, 4 );
+    Wdputslc( " " );
+    ++idx;
+    if( idx % 4 == 0 ) {
+        Wdputslc( "\n" );
+    }
+    return( idx );
 }
 
 /*
@@ -147,13 +183,18 @@ static void dmp_dos16m_gdt( dos16m_exe_header *d16m_head )
 static void dmp_dos16m_head_info( dos16m_exe_header *d16m_head )
 /**************************************************************/
 {
-    unsigned_32                     load_start;
-    unsigned_32                     load_end;
-    unsigned_32                     load_len;
-    unsigned_16                     i;
-    unsigned_16                     ver;
-    struct { unsigned_16 offset;
-             unsigned_16 segment; } reloc;
+    unsigned_32     load_len;
+    unsigned_16     i;
+    unsigned_16     ver;
+    unsigned_16     sel;
+    unsigned_16     last_sel;
+    unsigned_32     load_pos_sel;
+    unsigned_32     load_pos_off;
+    unsigned_16     sel_count;
+    seg_data_info   *segs_info;
+    unsigned_32     size;
+    unsigned_16     offs_cnt;
+    reloc           r;
 
     Banner( "DOS/16M EXE Header" );
     Dump_header( &d16m_head->last_page_bytes, dos16m_exe_msg );
@@ -179,35 +220,74 @@ static void dmp_dos16m_head_info( dos16m_exe_header *d16m_head )
     Wdputslc( "\n" );
     Wdputslc( "\n" );
 
-    dmp_dos16m_gdt( d16m_head );
+    sel_count = get_selector_count( d16m_head );
 
-    // TODO: change fixup & segment data dumping to work with DOS/16M images
+    segs_info = Wmalloc( sel_count * sizeof( seg_data_info ) );
+
+    dmp_dos16m_gdt( d16m_head, sel_count, segs_info );
+
     if( Options_dmp & FIX_DMP ) {
-        if( Dos_head.num_relocs != 0 ) {
-            Wlseek( Dos_head.reloc_offset );
-            Wdputslc( "segment:offset\n  " );
-            for( i = 0; i < Dos_head.num_relocs; i++ ) {
-                Wread( &reloc, sizeof( reloc ) );
-                Puthex( reloc.segment, 4 );
-                Wdputc( ':' );
-                Puthex( reloc.offset, 4 );
-                if( (i+1) % 6 ) {
-                    Wdputs( "   " );
-                } else {
-                    Wdputslc( "\n  " );
+        Wdputslc( "Relocations selector:offset\n\n" );
+        i = 0;
+        if( d16m_head->first_reloc_sel == 0 ) {
+            //  RSI-1 reloc format
+            sel = ( d16m_head->last_sel_used - d16m_head->first_selector ) / sizeof( gdt_info );
+            size = segs_info[ sel ].size;
+            load_pos_sel = segs_info[ sel - 1 ].file_off;
+            load_pos_off = segs_info[ sel ].file_off;
+            while( size ) {
+                Wlseek( load_pos_sel );
+                Wread( &r.sel, sizeof( r.sel ) );
+                load_pos_sel += sizeof( r.sel );
+                Wlseek( load_pos_off );
+                Wread( &r.off, sizeof( r.off ) );
+                load_pos_off += sizeof( r.off );
+                if( (r.sel | r.off) == 0 )
+                    break;
+                size -= sizeof( r.sel );
+                i = put_reloc( &r, i );
+            }
+        } else {
+            //  RSI-2 reloc format
+            sel = ( d16m_head->first_reloc_sel - d16m_head->first_selector ) / sizeof( gdt_info );
+            for( ; sel < sel_count; ++sel ) {
+                size = segs_info[ sel ].size;
+                Wlseek( segs_info[ sel ].file_off );
+                while( size ) {
+                    Wread( &r.sel, sizeof( r.sel ) );
+                    size -= sizeof( r.sel );
+                    if( r.sel == 0 )
+                        break;
+                    Wread( &offs_cnt, sizeof( offs_cnt ) );
+                    size -= sizeof( offs_cnt ) + offs_cnt * sizeof( r.off );
+                    while( offs_cnt-- ) {
+                        Wread( &r.off, sizeof( r.off ) );
+                        i = put_reloc( &r, i );
+                    }
                 }
             }
-            Wdputslc( "\n" );
+        }
+        if( i % 4 ) {
             Wdputslc( "\n" );
         }
-    }
-    if( Options_dmp & DOS_SEG_DMP ) {
-        load_start = Dos_head.hdr_size << 4;
-        load_end = Load_len - load_start;
-        Wdputslc( "load module =\n" );
-        Dmp_seg_data( load_start, load_end );
         Wdputslc( "\n" );
     }
+    if( Options_dmp & DOS_SEG_DMP ) {
+        if( d16m_head->first_reloc_sel == 0 ) {
+            last_sel = sel_count - 2;
+        } else {
+            last_sel = ( d16m_head->first_reloc_sel - d16m_head->first_selector ) / sizeof( gdt_info );
+        }
+        sel = d16m_head->first_selector;
+        for( i = 0; i < last_sel; ++i ) {
+            Wdputslc( "Load selector = " );
+            Puthex( sel, 4 );
+            Wdputslc( "\n\n" );
+            Dmp_seg_data( segs_info[ i ].file_off, segs_info[ i ].size );
+            sel += 8;
+        }
+    }
+    free( segs_info );
 }
 
 /*
@@ -217,18 +297,24 @@ bool Dmp_d16m_head( void )
 /************************/
 {
     dos16m_exe_header   dos16m_head;
+    bool                retval;
 
+    retval = 0;
     Wlseek( New_exe_off );
     Wread( &dos16m_head, sizeof( dos16m_head ) );
-    if( dos16m_head.signature == DOS16M_SIGNATURE ) {
+    for( ; dos16m_head.signature == DOS16M_SIGNATURE; ) {
+        retval = 1;
         Banner( "DOS/16M EXE Header - BW" );
-    } else {
-        return( 0 );
+        Wdputs( "file offset = " );
+        Puthex( New_exe_off, 8 );
+        Wdputslc( "H\n" );
+        Wdputslc( "\n" );
+        dmp_dos16m_head_info( &dos16m_head );
+        New_exe_off = dos16m_head.next_header_pos;
+        Wlseek( New_exe_off );
+        if( Weof() )
+            break;
+        Wread( &dos16m_head, sizeof( dos16m_head ) );
     }
-    Wdputs( "file offset = " );
-    Puthex( New_exe_off, 8 );
-    Wdputslc( "H\n" );
-    Wdputslc( "\n" );
-    dmp_dos16m_head_info( &dos16m_head );
-    return( 1 );
+    return( retval );
 }
