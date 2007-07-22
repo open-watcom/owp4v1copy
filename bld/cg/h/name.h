@@ -173,7 +173,6 @@ typedef struct temp_name {
             unsigned_16         ref_count;      /* for counting references */
         } u;
         t_flags                 temp_flags;
-        byte                    possible;       /*  AKA reg_set_index */
 } temp_name;
 
 typedef struct register_name {

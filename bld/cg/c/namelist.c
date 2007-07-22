@@ -443,7 +443,6 @@ extern  name    *STempOffset( name *temp, type_length offset,
     temp->t.alias = new_t;
     new_t->t.temp_flags = ALIAS;
     new_t->t.temp_flags |= temp->t.temp_flags & PERM_TEMP_FLAGS;
-    new_t->t.possible = RL_NUMBER_OF_SETS;
     if( temp->t.location == NO_LOCATION ) {
         new_t->t.location = NO_LOCATION;
     } else {
@@ -470,7 +469,6 @@ extern  name    *SAllocTemp( type_class_def class, type_length size ) {
     new_t->t.location = NO_LOCATION;
     new_t->t.alias = new_t;
     new_t->t.temp_flags = 0;
-    new_t->t.possible = RL_NUMBER_OF_SETS;
     return( new_t );
 }
 

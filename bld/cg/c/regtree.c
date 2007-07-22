@@ -39,6 +39,7 @@
 extern  reg_set_index   RegIntersect(reg_set_index,reg_set_index);
 extern  hw_reg_set      HighOffsetReg(hw_reg_set);
 extern  hw_reg_set      LowOffsetReg(hw_reg_set);
+extern  reg_set_index   GetPossibleForTemp(conflict_node *, name *);
 
 extern  hw_reg_set      *RegSets[];
 
@@ -211,7 +212,8 @@ static  void    SimpleTree( conflict_node *conf )
 
 
 static  reg_tree        *BuildTree( name *alias, name *master,
-                                    type_length offset, type_length size )
+                                    type_length offset, type_length size,
+                                    conflict_node *conf )
 /************************************************************************/
 {
     reg_tree    *tree;
@@ -241,11 +243,11 @@ static  reg_tree        *BuildTree( name *alias, name *master,
     }
     if( tree->alt == NULL ) {
         if( tree->temp != NULL ) {
-            tree->idx = tree->temp->t.possible;
+            tree->idx = GetPossibleForTemp( conf, tree->temp );
         }
     } else {
-        tree->idx = RegIntersect( tree->temp->t.possible,
-                                  tree->alt->t.possible );
+        tree->idx = RegIntersect( GetPossibleForTemp( conf, tree->temp ),
+                                  GetPossibleForTemp( conf, tree->alt  ) );
     }
     if( size == 6 ) { /* this is harmlessly specific to 80386 big pointers */
         losize = 4;
@@ -262,20 +264,20 @@ static  reg_tree        *BuildTree( name *alias, name *master,
         while( temp != master ) {
             if( have_lo == FALSE
              && temp->v.offset == offset && temp->n.size == losize ) {
-                tree->lo = BuildTree( temp, master, offset, losize );
+                tree->lo = BuildTree( temp, master, offset, losize, conf );
                 have_lo = TRUE;
             } else if( have_hi == FALSE
                  && temp->v.offset == midpoint && temp->n.size == hisize ) {
-                tree->hi = BuildTree( temp, master, midpoint, hisize );
+                tree->hi = BuildTree( temp, master, midpoint, hisize, conf );
                 have_hi = TRUE;
             }
             temp = temp->t.alias;
         }
         if( have_lo == FALSE ) {
-            tree->lo = BuildTree( NULL, master, offset, losize );
+            tree->lo = BuildTree( NULL, master, offset, losize, conf );
         }
         if( have_hi == FALSE ) {
-            tree->hi = BuildTree( NULL, master, midpoint, hisize );
+            tree->hi = BuildTree( NULL, master, midpoint, hisize, conf );
         }
         if( tree->hi->has_name ) {
             tree->has_name = TRUE;
@@ -502,7 +504,7 @@ extern  void    BuildNameTree( conflict_node *conf )
 
     temp = conf->name;
     if( temp->n.class == N_TEMP && temp->t.alias != temp ) {
-        tree = BuildTree( temp, temp, temp->v.offset, temp->n.size );
+        tree = BuildTree( temp, temp, temp->v.offset, temp->n.size, conf );
         tree = CheckTree( tree );
         if( tree != NULL ) {
             TrimTree( tree );
@@ -522,7 +524,7 @@ extern  void    BuildRegTree( conflict_node *conf )
 
     temp = conf->name;
     if( temp->n.class == N_TEMP && temp->t.alias != temp ) {
-        tree = BuildTree( temp, temp, temp->v.offset, temp->n.size );
+        tree = BuildTree( temp, temp, temp->v.offset, temp->n.size, conf );
         tree = CheckTree( tree );
         if( tree != NULL ) {
             BuildPossible( tree );

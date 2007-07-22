@@ -543,7 +543,7 @@ extern  void    DumpSym( name *sym ) {
             DumpLong( sym->t.location );
             DumpLiteral( "  block id " );
             DumpInt( sym->t.u.block_id );
-            DumpPossible( sym->t.possible );
+            // DumpPossible( sym->t.possible );
             if( sym->t.temp_flags & ALIAS ) {
                 DumpLiteral( " ALIAS " );
                 sym = DeAlias( sym );

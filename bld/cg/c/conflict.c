@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Conflict manager functions (selection of best register set
+*               for variable).
 *
 ****************************************************************************/
 
@@ -48,6 +48,7 @@ extern  name            *DeAlias(name*);
 
 extern  conflict_node   *ConfList;
 static  pointer         *ConfFrl;
+static  pointer         *ConfAliasVarsFrl;
 
 /* forward declarations */
 extern  void    MarkPossible( instruction *ins,
@@ -78,6 +79,7 @@ extern  conflict_node   *AddConflictNode( name *opnd )
     new->savings        = 0;
     new->tree           = NULL;
     new->state          = EMPTY;
+    new->possible_for_alias_list = NULL;
     if( opnd->n.class == N_TEMP ) {
         flags = HAD_CONFLICT;
         if( new->next_for_name != NULL ) {
@@ -232,23 +234,84 @@ extern  conflict_node   *NameConflict( instruction *ins, name *opnd )
 }
 
 
+/*
+ * Find "possible" list entry for alias temp variable, or return NULL if
+ * variable is not in list.
+ */
+static  possible_for_alias *FindPossibleForAlias( conflict_node *conf, name *opnd )
+{
+    possible_for_alias   *aposs;
+
+    aposs = conf->possible_for_alias_list;
+    while( aposs != NULL ) {
+        if( aposs->temp == opnd ) {
+            break;
+        }
+        aposs = aposs->next;
+    }
+    return aposs;
+}
+
+
+/*
+ * Return "possible" list entry for alias temp variable. If none found 
+ * (new variable), create new entry and assign RL_NUMBER_OF_SETS
+ * (no restictions yet) to it.
+ */
+static  possible_for_alias *MakePossibleForAlias( conflict_node *conf, name *opnd )
+{
+    possible_for_alias   *aposs;
+
+    aposs = FindPossibleForAlias( conf, opnd );
+    if( aposs == NULL ) {
+        aposs = AllocFrl( &ConfAliasVarsFrl, sizeof( possible_for_alias ) );
+        aposs->next     = conf->possible_for_alias_list;
+        aposs->temp     = opnd;
+        aposs->possible = RL_NUMBER_OF_SETS;
+        conf->possible_for_alias_list = aposs;
+    }
+    return aposs;
+}
+
+
+/*
+ * Return "possible" field (reg_set_index of possible registers) for temp
+ * variable. For master variables, it's kept in "conf->possible", aliases
+ * are stored in "conf->possible_for_alias_list" list.
+ */
+extern  reg_set_index   GetPossibleForTemp(conflict_node *conf, name *temp)
+{
+    reg_set_index       possible;
+    possible_for_alias  *aposs;
+
+    if( temp->t.temp_flags & ALIAS ) {
+        aposs = FindPossibleForAlias( conf, temp );
+        if( aposs == NULL ) {
+            possible = RL_NUMBER_OF_SETS; /* not referenced, no restrictions yet */
+        } else {
+            possible = aposs->possible;
+        }
+    }
+    else {
+        possible = conf->possible;
+    }
+
+    return possible;
+}
+
+
 extern  void    MarkPossible( instruction *ins,
                               name *opnd, reg_set_index idx )
 /***********************************************************/
 {
     conflict_node       *conf;
-    reg_set_index       possible;
+    possible_for_alias  *aposs;
 
     conf = NameConflict( ins, opnd );
     if( conf != NULL ) {
-        if( opnd->n.class == N_TEMP ) {
-            if( !( opnd->t.temp_flags & ALIAS ) ) {
-                possible = RegIntersect( conf->possible, idx );
-                conf->possible = possible;
-            } else {
-                possible = RegIntersect( opnd->t.possible, idx );
-            }
-            opnd->t.possible = possible;
+        if( opnd->n.class == N_TEMP && ( opnd->t.temp_flags & ALIAS ) ) {
+            aposs = MakePossibleForAlias( conf, opnd );
+            aposs->possible = RegIntersect( aposs->possible, idx );
         } else {
             conf->possible = RegIntersect( conf->possible, idx );
         }
@@ -263,26 +326,36 @@ extern  reg_set_index   MarkIndex( instruction *ins,
     conflict_node       *conf;
     reg_set_index       possible;
     type_class_def      class;
+    possible_for_alias  *aposs;
 
     conf = NameConflict( ins, opnd );
     if( conf == NULL ) return( RG_ );
     class = opnd->n.name_class;
-    if( opnd->n.class == N_TEMP ) {
-        if( !( opnd->t.temp_flags & ALIAS ) ) {
-            possible = IndexIntersect( conf->possible,
-                                    class, is_temp_index );
-            conf->possible = possible;
-        } else {
-            possible = IndexIntersect( opnd->t.possible,
-                                    class, is_temp_index );
-        }
-        opnd->t.possible = possible;
+    if( opnd->n.class == N_TEMP && ( opnd->t.temp_flags & ALIAS ) ) {
+        aposs = MakePossibleForAlias( conf, opnd );
+        possible = IndexIntersect( aposs->possible, class, is_temp_index );
+        aposs->possible = possible;
     } else {
-        possible = IndexIntersect( conf->possible,
-                                    class, is_temp_index );
+        possible = IndexIntersect( conf->possible, class, is_temp_index );
         conf->possible = possible;
     }
     return( possible );
+}
+
+/*
+ * Free list of "possible" records for aliased temp vars
+ */
+extern  void    FreePossibleForAlias( conflict_node *conf )
+{
+    possible_for_alias  *aposs, *next;
+
+    aposs = conf->possible_for_alias_list;
+    while ( aposs != NULL ) {
+        next = aposs->next;
+        FrlFreeSize( &ConfAliasVarsFrl, (pointer *)aposs, sizeof( possible_for_alias ) );
+        aposs = next;
+    }
+    conf->possible_for_alias_list = NULL;
 }
 
 
@@ -344,6 +417,7 @@ extern  void    FreeAConflict( conflict_node *conf )
             opnd->t.u.block_id = conf->start_block->id;
         }
     }
+    FreePossibleForAlias( conf );
     FrlFreeSize( &ConfFrl, (pointer *)conf, sizeof( conflict_node ) );
 }
 
@@ -352,6 +426,7 @@ extern  void    InitConflict( void )
 /**********************************/
 {
     InitFrl( &ConfFrl );
+    InitFrl( &ConfAliasVarsFrl );
     ConfList = NULL;
 }
 
@@ -359,5 +434,9 @@ extern  void    InitConflict( void )
 extern  bool    ConfFrlFree( void )
 /*********************************/
 {
-    return( FrlFreeAll( &ConfFrl, sizeof( conflict_node ) ) );
+    bool    ret;
+
+    ret  = FrlFreeAll( &ConfFrl, sizeof( conflict_node ) );
+    ret |= FrlFreeAll( &ConfAliasVarsFrl, sizeof( possible_for_alias ) );
+    return ret;
 }

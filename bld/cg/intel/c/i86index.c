@@ -427,14 +427,19 @@ extern  void    FixChoices( void ) {
 */
 
     conflict_node       *conf;
+#if 0 /* 2007-07-10 RomanT -- This method is not used anymore */
     name                *temp;
     name                *alias;
+#else
+    possible_for_alias  *aposs;
+#endif
 
     PropSegments();
     conf = ConfList;
     while( conf != NULL ) {
         if( _Isnt( conf, VALID_SEGMENT ) ) {
             conf->possible = NoSegments( conf->possible );
+#if 0 /* 2007-07-10 RomanT -- This method is not used anymore */
             temp = conf->name;
             if( temp->n.class == N_TEMP ) {
                 alias = temp;
@@ -444,6 +449,13 @@ extern  void    FixChoices( void ) {
                     if( alias == temp ) break;
                 }
             }
+#else
+            aposs = conf->possible_for_alias_list;
+            while( aposs != NULL ) {
+                aposs->possible = NoSegments( aposs->possible );
+                aposs = aposs->next;
+            }
+#endif
         }
         conf = conf->next_conflict;
     }
