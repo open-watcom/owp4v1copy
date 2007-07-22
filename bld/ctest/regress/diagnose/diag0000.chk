@@ -126,4 +126,4 @@ source\diag0012.c(39): Warning! W112: Pointer truncated
 source\diag0012.c(39): Note! I2003: source conversion type is 'void __far *'
 source\diag0012.c(39): Note! I2004: target conversion type is 'struct HMENU__ __near const **'
 source\diag0012.c(39): Note! I2002: 'foo' defined in: source\diag0012.c(15)
-source\diag0013.c(10): Error! E1034: Symbol 'foo' already defined
+source\diag0013.c(12): Error! E1034: Symbol 'foo' already defined

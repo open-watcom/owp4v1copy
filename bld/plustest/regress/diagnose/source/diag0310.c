@@ -5,9 +5,15 @@
 
 int foo(int i) { return i; }
 
+#if defined __386__
 #pragma aux foo = \
     "mov  eax,1"  \
     parm caller [eax]
+#else
+#pragma aux foo = \
+    "mov  ax,1"  \
+    parm caller [ax]
+#endif
 
 int main(void)
 {
