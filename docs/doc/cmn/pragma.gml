@@ -535,11 +535,13 @@ may be a macro as in:
 .millust end
 .note class_name
 is the optional class name of the text segment and may be enclosed in quotes.
+Please note that in order to be recognized by the linker as code, a
+class name has to end in "CODE".
 Also,
 .mono class_name
 may be a macro as in:
 .millust begin
-#define class_name "MY_CLASS"
+#define class_name "MY_CODE"
 #pragma code_seg ( "MY_CODE_SEG", class_name );
 .millust end
 .endnote
