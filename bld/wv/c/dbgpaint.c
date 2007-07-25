@@ -410,9 +410,12 @@ void FiniPaint( void )
 
 extern gui_colour_set *GetWndColours( wnd_class class )
 {
-    if( class == WND_NO_CLASS ) return( WndColours );
-    if( WndClassColour[ class ] != NULL ) return( WndClassColour[ class ] );
-    if( WndClassColour[ WND_ALL ] != NULL ) return( WndClassColour[ WND_ALL ] );
+    if( class == WND_NO_CLASS ) 
+        return( WndColours );
+    if( WndClassColour[ class ] != NULL ) 
+        return( WndClassColour[ class ] );
+    if( WndClassColour[ WND_ALL ] != NULL ) 
+        return( WndClassColour[ WND_ALL ] );
     return( WndColours );
 }
 

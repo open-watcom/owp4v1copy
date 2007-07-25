@@ -46,7 +46,8 @@ static gui_colour_set Default[GUI_NUM_ATTRS] =
     { GUI_GREY,         GUI_BRIGHT_BLUE   }, // GUI_MENU_GRAYED
     { GUI_BROWN,        GUI_BLUE,         }, // GUI_MENU_ACTIVE    (selected in list)
     { GUI_BRIGHT_BLUE,  GUI_BRIGHT_GREEN  }, // GUI_MENU_ACTIVE_STANDOUT
-    { GUI_BLACK,        GUI_GREY          }, // GUI_BACKGROUND
+    /* CEY - ChangeList 31754: Changed to use dialog background 'special' colour. See guicolor.c */
+    { GUI_BLACK,        GUIEX_DLG_BKGRND  }, // GUI_BACKGROUND
     { GUI_BLUE,         GUI_GREY          }, // GUI_MENU_FRAME
     { GUI_GREY,         GUI_WHITE         }, // GUI_TITLE_INACTIVE
     { GUI_BLUE,         GUI_GREY          }, // GUI_FRAME_ACTIVE,
