@@ -46,6 +46,9 @@
 #define ROUND_UP( x, r )        (((x)+((r)-1))&~((r)-1))
 #define ROUND_SHIFT( x, r )     ROUND_UP( x, 1 << (r) )
 
+#define MAKE_EVEN( x ) ROUND_UP( x, 2 )
+#define MAKE_PARA( x ) ROUND_UP( x, 16 )
+
 // useful for stringizing tokens
 #define __str( m )      #m
 #define __xstr( l )     __str( l )
@@ -60,8 +63,6 @@
     #define DbgDefault( msg )
     #define DbgAssert( cond )
 #endif
-
-#define MAKE_EVEN( x ) ROUND_UP( x, 2 )
 
 #if defined( __UNIX__ )
     #define PATH_SEP '/'

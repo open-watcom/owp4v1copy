@@ -523,16 +523,14 @@ class_entry * FindClass( section *sect, char *name, bool is32bit,
     unsigned        namelen;
 
     if( is32bit ) is32bit = CLASS_32BIT;
-    currclass = sect->classlist;
-    lastclass = currclass;
-    for(;;) {
-        if( currclass == NULL ) break;
+    
+    lastclass = sect->classlist;
+    for( currclass = sect->classlist; currclass != NULL; currclass = currclass->next_class ) {
         if( stricmp( currclass->name, name ) == 0
                         && !((currclass->flags & CLASS_32BIT) ^ is32bit) ) {
             return( currclass );
         }
         lastclass = currclass;
-        currclass = currclass->next_class;
     }
     namelen = strlen( name );
     currclass = CarveAlloc( CarveClass );

@@ -159,12 +159,10 @@ void ChkLocated( targ_addr * segadr, bool fixed)
         if( (CurrLoc.seg << FmtData.SegShift) + CurrLoc.off >
              (segadr->seg << FmtData.SegShift) + segadr->off) {
               LnkMsg( ERR + MSG_FIXED_LOC_BEFORE_CUR_LOC, "a", segadr);
-        }
-        else {
+        } else {
             CurrLoc = *segadr;
         }
-   }
-   else {
+   } else {
       *segadr = CurrLoc;
    }
 }

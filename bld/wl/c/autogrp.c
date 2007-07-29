@@ -317,12 +317,10 @@ static void SortGroupList( void )
     if( Groups == NULL )
         return;
 // first, set all of the links in the group list to NULL
-    group = Groups;
-    while( Groups != NULL ) {
-        Groups = Groups->next_group;
+    for( group = Groups; group != NULL; group = Groups ) {
+        Groups = Groups->next_group;  // Take group out of original ring
         group->next_group = NULL;
         group->leaders = NULL;
-        group = Groups;
         NumGroups++;
     }
     number = NumGroups;
@@ -372,12 +370,10 @@ static void FindSplitGroups( void )
 
     if( !( FmtData.type & MK_OVERLAYS ) )
         return;
-    group = Groups;
-    while( group != NULL ) {
+    for( group = Groups; group != NULL; group = group->next_group ) {
         if( Ring2Lookup( group->leaders, CheckGroupSplit, group->section ) ) {
             LnkMsg( ERR+MSG_OVL_GROUP_SPLIT, "s", group->sym->name );
         }
-        group = group->next_group;
     }
 }
 

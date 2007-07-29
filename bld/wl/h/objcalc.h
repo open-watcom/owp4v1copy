@@ -55,7 +55,7 @@ extern bool     IsCodeClass( char *, unsigned );
 extern bool     IsConstClass( char *, unsigned );
 extern bool     IsStackClass( char *, unsigned );
 extern void     CalcAddresses( void );
-extern void     AllocClasses( class_entry * );
+extern void     AllocClasses( section * );
 extern void     CombineSeg( seg_leader *, signed_32 *, offset, byte, byte );
 extern void     ProcPubs( mod_entry *, section * );
 extern void     StartMapSort( void );

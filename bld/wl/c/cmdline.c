@@ -55,6 +55,7 @@
 // #include "carve.h"
 // #include "permdata.h"
 #include "dbgall.h"
+#include "loadfile.h"
 
 #ifdef _INT_DEBUG
 unsigned int            Debug;
@@ -601,20 +602,12 @@ void Burn( void )
 // necessary to split this out from Ignite() for the workframe options
 // processor.
 {
-    outfilelist *   fnode;
-
     FreePaths();
     if( MapFName != NULL ) {
         _LnkFree( MapFName );
         MapFName = NULL;
     }
-    fnode = OutFiles;
-    while( fnode != NULL ) {
-        _LnkFree( fnode->fname );
-        OutFiles = fnode->next;
-        _LnkFree( fnode );
-        fnode = OutFiles;
-    }
+    FreeOutFiles();
     BurnUtils();
 }
 

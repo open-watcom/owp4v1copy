@@ -1169,13 +1169,11 @@ outfilelist * NewOutFile( char * filename )
 {
     outfilelist *   fnode;
 
-    fnode = OutFiles;
-    while( fnode != NULL ) {
+    for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
         if( FNAMECMPSTR( filename, fnode->fname ) == 0 ) {
             _LnkFree( filename );       // don't need this now.
             return( fnode );
         }
-        fnode = fnode->next;
     }
 // file name not already in list, so add a list entry.
     _ChkAlloc( fnode, sizeof( outfilelist ) );

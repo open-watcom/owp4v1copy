@@ -369,13 +369,12 @@ static void AllocDBIClasses( class_entry *class )
 {
     group_entry *group;
 
-    while( class != NULL ) {
+    for( ; class != NULL; class = class->next_class ) {
         if( class->flags & CLASS_DEBUG_INFO ) {
             group = AllocGroup( AutoGrpName, &DBIGroups );
             group->grp_addr.seg = 0;
             RingLookup( class->segs, AllocASeg, group );
         }
-        class = class->next_class;
     }
 }
 

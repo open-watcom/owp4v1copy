@@ -421,8 +421,7 @@ static unsigned_32 WriteNovImage( unsigned_32 file_pos, bool docode )
 
     /* write groups.*/
     fnode = Root->outfile;
-    group = Groups;
-    while( group != NULL ) {
+    for( group = Groups; group != NULL; group = group->next_group ) {
         if( group->grp_addr.seg == CODE_SEGMENT ) {
             iscode = TRUE;
         } else {
@@ -434,7 +433,6 @@ static unsigned_32 WriteNovImage( unsigned_32 file_pos, bool docode )
                 SeekLoad( fnode->file_loc );
             }
         }
-        group = group->next_group;
     }
     return( fnode->file_loc - file_pos );
 }

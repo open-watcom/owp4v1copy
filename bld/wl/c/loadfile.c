@@ -197,11 +197,10 @@ static void DoCVPack( void )
 static seg_leader * FindStack( class_entry *class )
 /*************************************************/
 {
-    while( class != NULL ) {
+    for( ; class != NULL; class = class->next_class ) {
         if( class->flags & CLASS_STACK ) {
             return RingFirst( class->segs );
         }
-        class = class->next_class;
     }
     return( NULL );
 }
@@ -248,13 +247,15 @@ static class_entry * LocateBSSClass( void )
 /*****************************************/
 {
     class_entry *currclass;
+    section     *sect;
 
-    currclass = ((Root->areas == NULL) ? Root : NonSect)->classlist;
-    for(;;) {
-        if( currclass == NULL ) return( NULL );
-        if( stricmp( currclass->name, BSSClassName ) == 0 ) return( currclass );
-        currclass = currclass->next_class;
+    sect = (Root->areas == NULL) ? Root : NonSect;
+    for( currclass = sect->classlist; currclass != NULL; currclass = currclass->next_class ) {
+        if( stricmp( currclass->name, BSSClassName ) == 0 ) {
+            return( currclass );
+        }
     }
+    return( NULL );
 }
 
 static void DefABSSSym( char *name )
@@ -979,10 +980,8 @@ static void OpenOutFiles( void )
 {
     outfilelist * fnode;
 
-    fnode = OutFiles;   // skip the root
-    while( fnode != NULL ) {
+    for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
         OpenBuffFile( fnode );
-        fnode = fnode->next;
     }
 }
 
@@ -991,12 +990,10 @@ static void CloseOutFiles( void )
 {
     outfilelist *   fnode;
 
-    fnode = OutFiles;
-    while( fnode != NULL ) {
+    for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
         if( fnode->handle != NIL_HANDLE ) {
             CloseBuffFile( fnode );
         }
-        fnode = fnode->next;
     }
 }
 
@@ -1006,15 +1003,13 @@ void FreeOutFiles( void )
     outfilelist *   fnode;
 
     CloseOutFiles();
-    fnode = OutFiles;
-    while( fnode != NULL ) {
+    for( fnode = OutFiles; fnode != NULL; fnode = OutFiles ) {
         if( LinkState & LINK_ERROR ) {
             QDelete( fnode->fname );
         }
         _LnkFree( fnode->fname );
         OutFiles = fnode->next;
         _LnkFree( fnode );
-        fnode = OutFiles;
     }
 }
 

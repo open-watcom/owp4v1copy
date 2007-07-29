@@ -883,7 +883,7 @@ static seg_leader * SetLeaderTable( char *name, pe_hdr_table_entry *entry )
 {
     seg_leader *leader;
 
-    leader = FindSegment( name );
+    leader = FindSegment( Root, name );
     if( leader != NULL ) {
         entry->rva =  leader->group->linear + GetLeaderDelta( leader );
         entry->size = leader->size;

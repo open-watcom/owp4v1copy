@@ -144,7 +144,7 @@ static void DoSecPubs( section *sec )
     WriteMap( "Overlay section %d address %a", sec->ovl_num,
       &sec->sect_addr );
     WriteMap( "====================================" );
-    WriteSegs( sec->classlist );
+    WriteSegs( sec );
     StartMapSort();
     if( MapFlags & MAP_FLAG ) {
         WritePubHead();
@@ -238,7 +238,7 @@ static void AllocSections( section *first_sect )
     for( sect = first_sect; sect != NULL; sect = sect->next_sect ) {
         CurrSect = sect;
         sect->sect_addr = save;
-        AllocClasses( sect->classlist );
+        AllocClasses( sect );
         if( sect->areas != NULL ) {
             AllocAreas( sect->areas );
         }
@@ -280,11 +280,9 @@ void CalcOvl( void )
     temp = sizeof( ovl_null_table ) + ( OvlNum - 1 ) * sizeof( ovltab_entry );
     XDefSymAddr( OverlayTableEnd, CurrLoc.off + temp - sizeof( unsigned_16 ),
                                                                  CurrLoc.seg );
-    fnode = OutFiles;
-    while( fnode != NULL ) {
+    for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
         fnode->ovlfnoff = temp;
         temp += strlen( fnode->fname ) + 1;
-        fnode = fnode->next;
     }
     Root->outfile->ovlfnoff |= OVE_EXE_FILENAME;    // indicate the .exe file.
     /* calculate starting address of overlay vectors, record */
@@ -541,9 +539,9 @@ section * CheckOvlSect( char *clname )
 void EmitOvlVectors( void )
 /********************************/
 {
-    symbol *    symptr;
+    symbol      *symptr;
     dos_addr    addr;
-    char *      loader_name;
+    char        *loader_name;
     bool        isshort;
 
     /* output relocation items for overlay table */
@@ -662,7 +660,7 @@ static void LongVectors( symbol *loadsym )
 void SetOvlStartAddr( void )
 /*********************************/
 {
-    symbol *    sym;
+    symbol      *sym;
 
     /* stuff overlay init routine address in header */
     Stash = StartInfo.addr;
@@ -750,6 +748,7 @@ static unsigned EmitOvlEntry( unsigned off, section *sect )
 }
 
 static unsigned EmitOvlAreaEntry( unsigned off, OVL_AREA *area )
+/**************************************************************/
 {
     for( ; area != NULL; area = area->next_area ) {
         off = EmitOvlEntry( off, area->sections );
@@ -799,12 +798,10 @@ void EmitOvlTable( void )
     PutOvlInfo( off, &u16, sizeof( unsigned_16 ) );
     off += sizeof( unsigned_16 );
     /* generate overlay filenames, including NULLCHARS*/
-    fnode = OutFiles;
-    while( fnode != NULL ) {
+    for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
         len = strlen( fnode->fname ) + 1;
         PutOvlInfo( off, fnode->fname, len );
         off += len;
-        fnode = fnode->next;
     }
 }
 
@@ -816,13 +813,9 @@ void PadOvlFiles( void )
     outfilelist *   fnode;
     unsigned        pad;
 
-    fnode = OutFiles;
     for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
-        pad = FmtData.SegMask + 1 - ( fnode->file_loc & FmtData.SegMask );
-        if( pad != 16 ) {
-            if( fnode->handle == NIL_HANDLE ) {
-                OpenOvlFile( fnode );
-            }
+        pad = MAKE_PARA( fnode->file_loc ) - fnode->file_loc;
+        if( pad ) {
             PadBuffFile( fnode, pad );
         }
     }

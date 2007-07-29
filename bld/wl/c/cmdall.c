@@ -323,8 +323,7 @@ static void * AddObjFile( char *name, char *member, file_list **filelist )
         strcpy( new_member->name, member );
         new_member->next = NULL;
         _LnkFree( member );
-        new_entry = CurrSect->files;
-        while( new_entry != NULL ) {
+        for( new_entry = CurrSect->files; new_entry != NULL; new_entry = new_entry->next_file ) {
             if( FNAMECMPSTR( new_entry->file->name, name ) == 0 ) {
                 CmdFlags |= CF_MEMBER_ADDED;
                 if( new_entry->u.member != NULL ) {
@@ -335,7 +334,6 @@ static void * AddObjFile( char *name, char *member, file_list **filelist )
                     return( new_entry->u.member );
                 }
             }
-            new_entry = new_entry->next_file;
         }
     }
     new_entry = AllocNewFile( new_member );
@@ -1319,8 +1317,7 @@ bool ProcOutputOfs( void )
     if ( retval == ST_IS_ORDINAL && (value <= 0xFFFFL << FmtData.SegShift || HintFormat( ~(MK_DOS | MK_SEGMENTED)))) {
         FmtData.output_offset = value;
         return TRUE;
-    }
-    else {
+    } else {
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "output segment offset");
         return FALSE;
     }
@@ -1340,8 +1337,7 @@ bool ProcOutputHshift( void )
       FmtData.HexSegShift = 16 - value;
       FmtData.output_hshift = TRUE;
       return TRUE;
-   }
-   else {
+   } else {
       LnkMsg(LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "Hex HSHIFT");
       return FALSE;
    }
@@ -1361,8 +1357,7 @@ bool ProcHshift( void )
         FmtData.Hshift = value;
         SetSegMask();
         return TRUE;
-    }
-    else {
+    } else {
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "HSHIFT");
         return FALSE;
     }
@@ -1381,8 +1376,7 @@ bool ProcFillchar( void )
     if ( ret == ST_IS_ORDINAL && value < 256) {
         FmtData.FillChar = value;
         return TRUE;
-    }
-    else {
+    } else {
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "FillChar");
         return FALSE;
     }
@@ -1419,8 +1413,7 @@ bool ProcOrdClass( void )
    _ChkAlloc( CurrOClass, sizeof(ORDER_CLASS));
    if (LastOClass == NULL) {
       CurrSect->orderlist = CurrOClass;
-   }
-   else {
+   } else {
       LastOClass->NextClass = CurrOClass;
    }
    CurrOClass->Name = tostring();
@@ -1450,8 +1443,7 @@ bool ProcOrdSegAdr( void )
         CurrOClass->Base.seg = value;
         CurrOClass->FixedAddr = TRUE;
         return TRUE;
-    }
-    else {
+    } else {
         CurrOClass->FixedAddr = FALSE;
         LnkMsg(LOC+LINE+WRN+MSG_ADDR_INFO_TOO_LARGE, NULL);
         return FALSE;
@@ -1472,8 +1464,7 @@ bool ProcOrdOfsAdr( void )
         CurrOClass->Base.off = value;
         CurrOClass->FixedAddr = TRUE;
         return TRUE;
-    }
-    else {
+    } else {
         CurrOClass->FixedAddr = FALSE;
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "output segment offset");
         return FALSE;
@@ -1529,8 +1520,7 @@ bool ProcOrdSegSegAdr( void )
         CurrOSeg->Base.seg = value;
         CurrOSeg->FixedAddr = TRUE;
         return TRUE;
-    }
-    else {
+    } else {
         CurrOSeg->FixedAddr = FALSE;
         LnkMsg(LOC+LINE+WRN+MSG_ADDR_INFO_TOO_LARGE, NULL);
         return FALSE;
@@ -1551,8 +1541,7 @@ bool ProcOrdSegOfsAdr( void )
         CurrOSeg->Base.off = value;
         CurrOSeg->FixedAddr = TRUE;
         return TRUE;
-    }
-    else {
+    } else {
         CurrOSeg->FixedAddr = FALSE;
         LnkMsg(LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "output segment offset");
         return FALSE;

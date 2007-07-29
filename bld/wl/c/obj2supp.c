@@ -1126,7 +1126,7 @@ static bool FarCallOpt( fix_data *fix )
         return( FALSE );
     if( fix->loc_addr.seg != fix->tgt_addr.seg )
         return( FALSE );
-    if( !CurrRec.seg->canfarcall )
+    if( !(CurrRec.seg->canfarcall || CurrRec.seg->iscode) )
         return( FALSE );
     code = fix->data - 1;
     instruction = GET_U8( code );

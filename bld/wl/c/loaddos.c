@@ -47,8 +47,6 @@
 #include "dbgall.h"
 #include "loaddos.h"
 
-#define PARA_ALIGN( quant ) ( ( ( quant ) + 0xf ) & ~0xf )
-
 unsigned_32             OvlTabOffset;
 
 static unsigned_32 WriteDOSRootRelocs( void )
@@ -61,7 +59,7 @@ static unsigned_32 WriteDOSRootRelocs( void )
     NullAlign( 0x10 );
     header_size = (unsigned long)Root->relocs * sizeof( dos_addr )
                     + sizeof( dos_exe_header ) + sizeof( unsigned_32 );
-    return( PARA_ALIGN( header_size ) );
+    return( MAKE_PARA( header_size ) );
 }
 
 static void WriteDOSSectRelocs( section *sect, bool repos )
@@ -72,7 +70,7 @@ static void WriteDOSSectRelocs( section *sect, bool repos )
     OUTFILELIST *       out;
 
     if( sect->relocs != 0 ) {
-        loc = sect->u.file_loc + PARA_ALIGN( sect->size );
+        loc = sect->u.file_loc + MAKE_PARA( sect->size );
         out = sect->outfile;
         if( out->file_loc > loc ) {
             SeekLoad( loc );
@@ -97,45 +95,13 @@ static void AssignFileLocs( section *sect )
 /*****************************************/
 {
     if( FmtData.u.dos.pad_sections ) {
-        sect->outfile->file_loc = ( sect->outfile->file_loc + ( SECTOR_SIZE - 1 ) )
-                                        & ~( SECTOR_SIZE - 1 );
+        sect->outfile->file_loc = ROUND_UP( sect->outfile->file_loc, SECTOR_SIZE );
     }
     sect->u.file_loc = sect->outfile->file_loc;
-    sect->outfile->file_loc += PARA_ALIGN( sect->size )
-                            + PARA_ALIGN( sect->relocs * sizeof( dos_addr ) );
+    sect->outfile->file_loc += MAKE_PARA( sect->size )
+                            + MAKE_PARA( sect->relocs * sizeof( dos_addr ) );
     DEBUG((DBG_LOADDOS, "section %d assigned to %l in %s",
             sect->ovl_num, sect->u.file_loc, sect->outfile->fname ));
-}
-
-void OpenOvlFile( outfilelist *thefile )
-/*********************************************/
-{
-    outfilelist *   fnode;
-
-    do {
-        fnode = OutFiles->next;     // skip the root
-        while( fnode != NULL ) {
-            if( fnode->handle != NIL_HANDLE ) {
-                QClose( fnode->handle, fnode->fname );
-                DEBUG((DBG_LOADDOS, "closing file %s", fnode->fname ));
-                fnode->handle = NIL_HANDLE;
-                if( thefile->file_loc == 0 ) {
-                    thefile->handle = ExeCreate( thefile->fname );
-                } else {
-                    thefile->handle = ExeOpen( thefile->fname );
-                }
-                if( thefile->handle != NIL_HANDLE ) {
-                DEBUG((DBG_LOADDOS, "opened file %s, seeking to %l",
-                                      thefile->fname, thefile->file_loc ));
-                    QSeek( thefile->handle, thefile->file_loc, thefile->fname );
-                    return;
-                }
-                break;
-            }
-            fnode = fnode->next;
-        }
-    } while( fnode != NULL );
-    PrintIOError( FTL+MSG_CANT_OPEN, "12", thefile->fname );
 }
 
 static unsigned long WriteDOSData( void )
@@ -162,23 +128,17 @@ static unsigned long WriteDOSData( void )
     }
 
 // keep track of positions within the file.
-    fnode = OutFiles;
-    while( fnode != NULL ) {
+    for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
         fnode->file_loc = 0;
-        fnode = fnode->next;
     }
     Root->outfile->file_loc = Root->u.file_loc;
     Root->sect_addr = Groups->grp_addr;
 
 /* write groups and relocations */
-    group = Groups;
-    while( group != NULL ) {
+    for( group = Groups; group != NULL; ) {
         sect = group->section;
         CurrSect = sect;
         fnode = sect->outfile;
-        if( fnode->handle == NIL_HANDLE ) {
-            OpenOvlFile( fnode );
-        }
         repos = WriteDOSGroup( group );
         group = group->next_group;
         if( ( group == NULL ) || ( sect != group->section ) ) {
@@ -342,7 +302,7 @@ void FiniDOSLoadFile( void )
     // output debug info into root main output file
     CurrSect = Root;
     DBIWrite();
-    hdr_size = PARA_ALIGN( (unsigned long)Root->relocs * sizeof( dos_addr )
+    hdr_size = MAKE_PARA( (unsigned long)Root->relocs * sizeof( dos_addr )
                                                                  + hdr_size );
     DEBUG((DBG_LOADDOS, "root size %l, hdr size %l", root_size, hdr_size ));
     SeekLoad( 0 );

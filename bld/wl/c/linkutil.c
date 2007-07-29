@@ -224,9 +224,8 @@ void * ChkMemDup( void * mem, unsigned len  )
 static void WalkList( node *list, void (*fn)( void * ) )
 /******************************************************/
 {
-    while( list != NULL ) {
+    for( ; list != NULL; list = list->next ) {
         fn( list );
-        list = list->next;
     }
 }
 
@@ -274,15 +273,15 @@ static bool CmpSegName( void *leader, void *name )
     return( stricmp( ((seg_leader *)leader)->segname, name ) == 0 );
 }
 
-seg_leader * FindSegment( char *name )
-/*******************************************/
+seg_leader *FindSegment( section *sect, char *name )
+/***************************************************/
 /* NOTE: this doesn't work for overlays! */
 {
     class_entry *class;
     seg_leader * seg;
 
     seg = NULL;
-    for( class = Root->classlist; class != NULL; class = class->next_class ) {
+    for( class = sect->classlist; class != NULL; class = class->next_class ) {
         seg = RingLookup( class->segs, CmpSegName, name );
         if( seg != NULL ) {
             break;
@@ -579,13 +578,10 @@ group_entry *FindGroup( segment seg )
 {
     group_entry *group;
 
-    group = Groups;
-    for( ;; ) {
-        if( group == NULL )
+    for( group = Groups; group != NULL; group = group->next_group ) {
+        if( group->grp_addr.seg == seg ) {
             break;
-        if( group->grp_addr.seg == seg )
-            break;
-        group = group->next_group;
+        }
     }
     return( group );
 }
