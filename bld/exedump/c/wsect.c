@@ -365,8 +365,12 @@ static void DmpLoc( uint_8 const *p, uint length, uint addr_size )
         ++p;
 
         Wdputs( OpName[ op ] );
-        Wdputs( " " );
         opr = LocOpr[ op ];
+        if( opr == DW_LOP_REG1 || opr == DW_LOP_BRG1 ) {
+            Wdputs( "/" );
+        } else {
+            Wdputs( " " );
+        }
         switch( opr ) {
         case DW_LOP_NOOP:
             break;
@@ -454,10 +458,11 @@ static void DmpLoc( uint_8 const *p, uint length, uint addr_size )
             p = DecodeLEB128( p, (int_32 *)&tmp );
             op2s = tmp;
             Wdputs( RegName[ op1u] );
-            Wdputs( "," );
             if( op2s < 0 ) {
-                Wdputs( "-" );
+                Wdputs( " -" );
                 op2s = -op2s;
+            } else {
+                Wdputs( " +" );
             }
             Putdec( op2s );
             op = DW_OP_breg0;
