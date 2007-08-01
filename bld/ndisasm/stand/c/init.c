@@ -128,6 +128,7 @@ static char *intelSkipRefList[] = { "FIWRQQ", // boundary relocs
 #define NUM_ELTS( a )   (sizeof(a) / sizeof((a)[0]))
 
 static orl_sec_handle           symbolTable;
+static orl_sec_handle           dynSymTable;
 static orl_sec_handle           drectveSection;
 static orl_funcs                oFuncs;
 static section_list_struct      relocSections;
@@ -394,6 +395,14 @@ static orl_return sectionInit( orl_sec_handle shnd )
         case SECTION_TYPE_SYM_TABLE:
             symbolTable = shnd;
             // Might have a label or relocation in symbol section
+            error = registerSec( shnd, type );
+            if( error == OKAY ) {
+                error = createLabelList( shnd );
+            }
+            break;
+        case SECTION_TYPE_DYN_SYM_TABLE:
+            dynSymTable = shnd;
+            // Might have a label or relocation in dynsym section
             error = registerSec( shnd, type );
             if( error == OKAY ) {
                 error = createLabelList( shnd );
@@ -746,6 +755,9 @@ static return_val initSectionTables( void )
         o_error = ORLFileScan( ObjFileHnd, NULL, &sectionInit );
         if( o_error == ORL_OKAY && symbolTable ) {
             o_error = DealWithSymbolSection( symbolTable );
+            if( o_error == ORL_OKAY && dynSymTable ) {
+                o_error = DealWithSymbolSection( dynSymTable );
+            }
             if( o_error == ORL_OKAY ) {
                 sec = relocSections.first;
                 while( sec ) {
