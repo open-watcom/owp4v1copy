@@ -242,8 +242,8 @@ void PragmaAuxInfoInit( int flag_stdatnum )
     HW_CAsgn( FastcallInfo.streturn, HW_EMPTY );
     HW_TurnOn( FastcallInfo.save, full_no_segs );
     HW_CTurnOff( FastcallInfo.save, HW_FLTS );
-    HW_CTurnOff( StdcallInfo.save, HW_ABCD );
-    HW_CTurnOff( StdcallInfo.save, HW_ES );
+    HW_CTurnOff( FastcallInfo.save, HW_ABCD );
+    HW_CTurnOff( FastcallInfo.save, HW_ES );
 #endif
 
 /*************************************************
