@@ -157,7 +157,7 @@ static int  get_selector_count( dos16m_exe_header *d16m_head )
     /* Calculate the number of selector entries (GDT) in file. Guesswork! */
     if( d16m_head->first_selector == 0 )
         d16m_head->first_selector = D16M_USER_SEL;
-    if( d16m_head->last_sel_used && d16m_head->first_selector ) {
+    if( d16m_head->last_sel_used ) {
         return( (d16m_head->last_sel_used - d16m_head->first_selector) / sizeof( gdt_info ) + 1 );
     } else {
         return( (d16m_head->gdtimage_size + 1) / sizeof( gdt_info ) - 17 );
@@ -229,7 +229,9 @@ static void dmp_dos16m_head_info( dos16m_exe_header *d16m_head )
     if( Options_dmp & FIX_DMP ) {
         Wdputslc( "Relocations selector:offset\n\n" );
         i = 0;
-        if( d16m_head->first_reloc_sel == 0 ) {
+        if( (d16m_head->options & OPT_AUTO) == 0 ) {
+            //  no reloc info
+        } else if( d16m_head->first_reloc_sel == 0 ) {
             //  RSI-1 reloc format
             sel = ( d16m_head->last_sel_used - d16m_head->first_selector ) / sizeof( gdt_info );
             size = segs_info[ sel ].size;
@@ -273,8 +275,10 @@ static void dmp_dos16m_head_info( dos16m_exe_header *d16m_head )
         Wdputslc( "\n" );
     }
     if( Options_dmp & DOS_SEG_DMP ) {
-        if( d16m_head->first_reloc_sel == 0 ) {
-            last_sel = sel_count - 2;
+        if( (d16m_head->options & OPT_AUTO) == 0 ) {
+            last_sel = sel_count;
+        } else if( d16m_head->first_reloc_sel == 0 ) {
+            last_sel -= 2;
         } else {
             last_sel = ( d16m_head->first_reloc_sel - d16m_head->first_selector ) / sizeof( gdt_info );
         }
