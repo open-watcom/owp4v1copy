@@ -1377,12 +1377,14 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
         return( IntToType( result, TypeInteger ) );
     } else if( rite->class == TN_CONS ) {
         if( left->class != TN_BINARY ) {
-            base_l = FindBase( left, op_eq );
+            base_l = FindBase( left, FALSE );
             if( base_l != left ) {
-                // get rid of some lame converts the C++ compiler likes to emit
-                BurnToBase( left, base_l );
-                return( TGNode( TN_COMPARE, op, base_l, rite, TypeBoolean ) );
-            } else if( !(tipe->attr & TYPE_FLOAT) ) {
+                /* For folding comparisons, consider the variable's original type. If eg. a short
+                 * was converted to long, we know its value has to be in the short's range.
+                 */
+                tipe = base_l->tipe;
+            }
+            if( !(tipe->attr & TYPE_FLOAT) ) {
                 cmp_result  cmp;
 
                 cmp = CheckCmpRange( op, CmpType( tipe ), rite->u.name->c.value );
@@ -1395,6 +1397,12 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
                     left = TGTrash( left );
                     return( TGBinary( O_COMMA, left, IntToType( result, TypeInteger ), TypeInteger ) );
                 }
+            }
+            if( base_l != left ) {
+                // If we couldn't fold the comparison, get rid of some lame converts
+                // the C++ compiler likes to emit.
+                BurnToBase( left, base_l );
+                return( TGNode( TN_COMPARE, op, base_l, rite, TypeBoolean ) );
             }
             return( NULL );
         }
