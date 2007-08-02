@@ -1,6 +1,3 @@
-#ifndef _NWPFX_H
-#define _NWPFX_H
-
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -31,6 +28,9 @@
 *				prefix string.
 *
 ****************************************************************************/
+
+#ifndef _NWPFX_H
+#define _NWPFX_H
 
 extern bool SetCurrentPrefix(const char * pszPrefix, int nLen);
 

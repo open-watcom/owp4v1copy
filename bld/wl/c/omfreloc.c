@@ -49,7 +49,7 @@
 #include "omfreloc.h"
 
 typedef struct bakpatlist {
-    struct bakpatlist * next;
+    struct bakpatlist   *next;
     virt_mem            addr;
     unsigned_16         len;
     byte                loctype;
@@ -57,7 +57,7 @@ typedef struct bakpatlist {
     char                data[1];
 } bakpat_list;
 
-static bakpat_list *    BakPats;
+static bakpat_list      *BakPats;
 
 #define MAX_THREADS 4
 
@@ -97,7 +97,8 @@ void DoRelocs( void )
     frame_spec  fthread;
     frame_spec  tthread;
 
-    if( ObjFormat & FMT_IGNORE_FIXUPP ) return;
+    if( ObjFormat & FMT_IGNORE_FIXUPP )
+        return;
     if( ObjFormat & FMT_IS_LIDATA ) {
         LnkMsg( LOC_REC+WRN+MSG_REL_IN_LIDATA, NULL );
         return;
@@ -106,14 +107,14 @@ void DoRelocs( void )
         typ = GET_U8_UN( ObjBuff );
         ++ObjBuff;
         omftype = (typ >> 2) & 7;
-        if( (typ & 0x80) == 0 ) {/*  thread */
-            if( typ & 0x40 ) {/*  frame */
+        if( (typ & 0x80) == 0 ) {   /*  thread */
+            if( typ & 0x40 ) {      /*  frame */
                 GetFrame( omftype, &FrameThreads[typ & 3] );
-            } else {/*  target */
+            } else {                /*  target */
                 GetTarget( omftype, &TargThreads[typ & 3] );
             }
-        } else { /* fixup */
-            if( typ & 0x20 ) {   // used in 32-bit microsoft fixups.
+        } else {                    /* fixup */
+            if( typ & 0x20 ) {      // used in 32-bit microsoft fixups.
                 switch( omftype ) {
                 case LOC_OFFSET:
                 case LOC_MS_LINK_OFFSET:
@@ -166,9 +167,9 @@ static void GetFrame( unsigned frame, frame_spec *refframe )
 /**********************************************************/
 /* Get frame for fixup. */
 {
-    extnode *   ext;
-    grpnode *   group;
-    segnode *   seg;
+    extnode     *ext;
+    grpnode     *group;
+    segnode     *seg;
     unsigned    index;
 
     if( frame < FRAME_LOC ) {
@@ -207,9 +208,9 @@ static void GetFrame( unsigned frame, frame_spec *refframe )
 static void GetTarget( unsigned loc, frame_spec *targ )
 /*****************************************************/
 {
-    extnode *           ext;
-    grpnode *           group;
-    segnode *           seg;
+    extnode             *ext;
+    grpnode             *group;
+    segnode             *seg;
 
     targ->type = loc & 3;
     switch( loc ) {
@@ -236,12 +237,12 @@ static void GetTarget( unsigned loc, frame_spec *targ )
     }
 }
 
-static void StoreBakPat( segnode * seg, byte loctype )
+static void StoreBakPat( segnode *seg, byte loctype )
 /****************************************************/
 /* store a bakpat record away for future processing. */
 {
     unsigned            len;
-    bakpat_list *       bkptr;
+    bakpat_list         *bkptr;
 
     len = EOObjRec - ObjBuff;
     _ChkAlloc( bkptr, sizeof(bakpat_list) + len - 1 );
@@ -257,11 +258,12 @@ void ProcBakpat( void )
 /****************************/
 /* store the bakpat record away for future processing */
 {
-    segnode *           seg;
+    segnode             *seg;
     byte                loctype;
 
     seg = (segnode *) FindNode( SegNodes, GetIdx() );
-    if( seg->info & SEG_DEAD ) return;
+    if( seg->info & SEG_DEAD )
+        return;
     loctype = *ObjBuff++;
     StoreBakPat( seg, loctype );
 }
@@ -270,9 +272,9 @@ void DoBakPats( void )
 /***************************/
 /* go through the list of stored bakpats and apply them all */
 {
-    char *              data;
-    bakpat_list *       bkptr;
-    bakpat_list *       next;
+    char                *data;
+    bakpat_list         *bkptr;
+    bakpat_list         *next;
     offset              off;
     offset              value;
     unsigned_8          value8;
@@ -329,16 +331,18 @@ void ProcNbkpat( void )
 /****************************/
 /* process a named bakpat record */
 {
-    list_of_names *     symname;
-    symbol *            sym;
+    list_of_names       *symname;
+    symbol              *sym;
     segnode             seg;
     byte                loctype;
 
     loctype = *ObjBuff++;
     symname = FindName( GetIdx() );
     sym = RefISymbol( symname->name );
-    if( !IS_SYM_COMDAT(sym) ) return;   /* can't handle these otherwise */
-    if( sym->info & SYM_DEAD ) return;
+    if( !IS_SYM_COMDAT(sym) )           /* can't handle these otherwise */
+        return;
+    if( sym->info & SYM_DEAD )
+        return;
     seg.entry = sym->p.seg;
     StoreBakPat( &seg, loctype );
 }

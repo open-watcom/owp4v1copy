@@ -60,19 +60,19 @@ carve_t                 CarveClass;
 carve_t                 CarveGroup;
 carve_t                 CarveDLLInfo;
 carve_t                 CarveExportInfo;
-char *                  IncFileName;
-incgroupdef *           IncGroupDefs;
-group_entry **          IncGroups;
-libnamelist *           SavedUserLibs;
-libnamelist *           SavedDefLibs;
+char                    *IncFileName;
+incgroupdef             *IncGroupDefs;
+group_entry             **IncGroups;
+libnamelist             *SavedUserLibs;
+libnamelist             *SavedDefLibs;
 
 static stringtable      StoredRelocs;
-static char *           ReadRelocs;
+static char             *ReadRelocs;
 static unsigned         SizeRelocs;
-static char *           OldExe;
-static char *           OldSymFile;
-static void *           AltDefData;
-static char *           IncStrTab;
+static char             *OldExe;
+static char             *OldSymFile;
+static void             *AltDefData;
+static char             *IncStrTab;
 
 #define SEG_CARVE_SIZE          (2*1024)
 #define MOD_CARVE_SIZE          (5*1024)
@@ -140,14 +140,14 @@ static void MarkSymbol( void *sym )
     ((symbol *)sym)->info |= SYM_IS_FREE;
 }
 
-static void * GetString( perm_write_info *info, char *str )
+static void *GetString( perm_write_info *info, char *str )
 /*********************************************************/
 {
     unsigned idx;
 
     idx = GetStringTableSize( &info->strtab );
     StringStringTable( &info->strtab, str );
-    return (void *)idx;
+    return( (void *)idx );
 }
 
 static bool WriteLeaderName( void *_leader, void *info )
@@ -157,7 +157,7 @@ static bool WriteLeaderName( void *_leader, void *info )
 
     BufWritePermFile( info, &leader->class->name, sizeof(unsigned_32) );
     BufWritePermFile( info, &leader->segname, sizeof(unsigned_32) );
-    return FALSE;
+    return( FALSE );
 }
 
 static unsigned WriteGroups( perm_write_info *info )
@@ -178,7 +178,7 @@ static unsigned WriteGroups( perm_write_info *info )
             Ring2Lookup( group->leaders, WriteLeaderName, info );
         }
     }
-    return num;
+    return( num );
 }
 
 static bool CheckFree( bool isfree, perm_write_info *info )
@@ -190,7 +190,7 @@ static bool CheckFree( bool isfree, perm_write_info *info )
         dummy = CARVE_INVALID_INDEX;
         BufWritePermFile( info, &dummy, sizeof(unsigned_32) );
     }
-    return isfree;
+    return( isfree );
 }
 
 static void WriteDLLInfo( void *_dll, void *info )
@@ -271,9 +271,9 @@ static void PrepSegData( void *_sdata, void *info )
 static void PrepSymbol( void *_sym, void *info )
 /**********************************************/
 {
-    symbol *    sym = _sym;
-    char *      save;
-    symbol *    mainsym;
+    symbol      *sym = _sym;
+    char        *save;
+    symbol      *mainsym;
 
     if( sym->info & SYM_IS_FREE ) {
         *((unsigned_32 *)sym) = CARVE_INVALID_INDEX;
@@ -320,7 +320,7 @@ static void PrepSymbol( void *_sym, void *info )
 static void PrepNameTable( name_list *list, perm_write_info *info )
 /*****************************************************************/
 {
-    char *      savename;
+    char        *savename;
 
     while( list != NULL ) {
         savename = list->name;
@@ -333,9 +333,9 @@ static void PrepNameTable( name_list *list, perm_write_info *info )
 static void PrepFileList( perm_write_info *info )
 /***********************************************/
 {
-    infilelist *list;
-    char *      path_ptr;
-    char *      name;
+    infilelist  *list;
+    char        *path_ptr;
+    char        *name;
     char        new_name[ PATH_MAX ];
 
     for( list = CachedFiles; list != NULL; list = list->next ) {
@@ -356,7 +356,7 @@ static bool PrepLeaders( void *_leader, void *info )
     seg_leader *leader = _leader;
 
     leader->segname = GetString( info, leader->segname );
-    return FALSE;
+    return( FALSE );
 }
 
 static void PrepClasses( perm_write_info *info )
@@ -426,7 +426,8 @@ static void FlushPermBuf( perm_write_info *info )
     unsigned    adjust;
 
     modpos = info->currpos % MAX_HEADROOM;
-    if( modpos == 0 ) return;
+    if( modpos == 0 )
+        return;
     adjust = SECTOR_SIZE - (info->currpos % SECTOR_SIZE);
     if( adjust != SECTOR_SIZE ) {
         memset( TokBuff + modpos, 0, adjust );
@@ -484,7 +485,7 @@ static unsigned WriteSmallCarve( carve_t carver, void (*markfn)(void *),
 {
     CarveWalkAllFree( carver, markfn );
     CarveWalkAll( carver, writefn, info );
-    return CarveNumElements( carver );
+    return( CarveNumElements( carver ) );
 }
 
 static void PrepStartValue( inc_file_header *hdr )
@@ -511,7 +512,7 @@ static void PrepStartValue( inc_file_header *hdr )
 static void WriteAltData( perm_write_info *info )
 /***********************************************/
 {
-    symbol *    sym;
+    symbol      *sym;
     unsigned    savepos;
 
     info->currpos = 0;
@@ -529,8 +530,8 @@ static unsigned_32 WriteLibList( perm_write_info *info, bool douser )
 /*******************************************************************/
 {
     unsigned_32 numlibs;
-    file_list * file;
-    void *      data;
+    file_list   *file;
+    void        *data;
 
     numlibs = 0;
     for( file = ObjLibFiles; file != NULL; file = file->next_file ) {
@@ -540,7 +541,7 @@ static unsigned_32 WriteLibList( perm_write_info *info, bool douser )
             numlibs++;
         }
     }
-    return numlibs;
+    return( numlibs );
 }
 
 void WritePermData( void )
@@ -549,7 +550,8 @@ void WritePermData( void )
     inc_file_header     hdr;
     perm_write_info     info;
 
-    if( !(LinkFlags & INC_LINK_FLAG) || LinkState & LINK_ERROR ) return;
+    if( !(LinkFlags & INC_LINK_FLAG) || LinkState & LINK_ERROR )
+        return;
     InitStringTable( &info.strtab, FALSE );
     CharStringTable( &info.strtab, '\0' );      // make 0 idx not valid
     info.incfhdl = QOpenRW( IncFileName );
@@ -611,7 +613,7 @@ void ReadPermFile( perm_read_info *info, void *data, unsigned len )
 static unsigned_32 BufPeekU32( perm_read_info *info )
 /***************************************************/
 {
-    return *((unsigned_32 *)(info->buffer + info->currpos));
+    return( *((unsigned_32 *)(info->buffer + info->currpos)) );
 }
 
 static unsigned_32 BufReadU32( perm_read_info *info )
@@ -621,7 +623,7 @@ static unsigned_32 BufReadU32( perm_read_info *info )
 
     retval = *((unsigned_32 *)(info->buffer + info->currpos));
     info->currpos += sizeof(unsigned_32);
-    return retval;
+    return( retval );
 }
 
 static void BufRead( perm_read_info *info, void *data, unsigned len )
@@ -631,17 +633,18 @@ static void BufRead( perm_read_info *info, void *data, unsigned len )
     info->currpos += len;
 }
 
-static char * MapString( char *off )
+static char *MapString( char *off )
 /**********************************/
 {
-    if( off == 0 ) return NULL;
-    return IncStrTab + (unsigned)off;
+    if( off == 0 )
+        return( NULL );
+    return( IncStrTab + (unsigned)off );
 }
 
 static void ReadGroups( unsigned count, perm_read_info *info )
 /************************************************************/
 {
-    incgroupdef *       def;
+    incgroupdef         *def;
     unsigned_32         size;
 
     while( count > 0 ) {
@@ -653,7 +656,8 @@ static void ReadGroups( unsigned count, perm_read_info *info )
         BufRead( info, def->names, (size + 1) * sizeof(char *) );
         for(;;) {
             def->names[size] = MapString( def->names[size] );
-            if( size == 0 ) break;
+            if( size == 0 )
+                break;
             size--;
         }
         count--;
@@ -664,8 +668,8 @@ static void ReadLibList( unsigned count, libnamelist **head,
                          perm_read_info *info )
 /**********************************************************/
 {
-    libnamelist *       list;
-    char *              name;
+    libnamelist         *list;
+    char                *name;
     unsigned            namelen;
     unsigned_32         nameidx;
 
@@ -838,7 +842,7 @@ static void PurgeRead( perm_read_info *info )
 static void ReadBinary( char **buf, unsigned_32 nameidx, time_t modtime )
 /***********************************************************************/
 {
-    char *              fname;
+    char                *fname;
     f_handle            hdl;
     unsigned long       size;
 
@@ -880,10 +884,11 @@ void ReadPermData( void )
 /******************************/
 {
     perm_read_info      info;
-    inc_file_header *   hdr;
+    inc_file_header     *hdr;
 
     info.incfhdl = QObjOpen( IncFileName );
-    if( info.incfhdl == NIL_HANDLE ) return;
+    if( info.incfhdl == NIL_HANDLE )
+        return;
     _ChkAlloc( info.buffer, SECTOR_SIZE );
     QRead( info.incfhdl, info.buffer, SECTOR_SIZE, IncFileName );
     hdr = (inc_file_header *) info.buffer;
@@ -961,7 +966,7 @@ void PermSaveFixup( void *fix, unsigned size )
                               unsigned (*fn)(void *) )
 /***************************************************************/
 {
-    char *      fixoff;
+    char        *fixoff;
     unsigned    size;
 
     fixoff = ReadRelocs + offset;
@@ -988,7 +993,7 @@ static void SaveRelocData( void *_curr, char *data, unsigned size )
 void IncP2Start( void )
 /****************************/
 {
-    char * spare;
+    char   *spare;
 
     _LnkFree( ReadRelocs );
     ReadRelocs = NULL;
@@ -1013,19 +1018,19 @@ void PermEndMod( mod_entry *mod )
     mod->sizerelocs = GetStringTableSize( &StoredRelocs ) - mod->relocs;
 }
 
-void * GetSegContents( segdata *sdata, virt_mem off )
+void *GetSegContents( segdata *sdata, virt_mem off )
 /**********************************************************/
 {
     if( OldSymFile != NULL && sdata->u.leader->dbgtype != NOT_DEBUGGING_INFO ) {
-        return OldSymFile + off;
+        return( OldSymFile + off );
     }
-    return OldExe + off;
+    return( OldExe + off );
 }
 
-void * GetAltdefContents( segdata *sdata )
+void *GetAltdefContents( segdata *sdata )
 /***********************************************/
 {
-    return (char *)AltDefData + sdata->data;
+    return( (char *)AltDefData + sdata->data );
 }
 
 void FreeSavedRelocs( void )

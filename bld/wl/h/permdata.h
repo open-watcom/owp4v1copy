@@ -73,13 +73,13 @@ typedef struct {
 #define INC_FLAG_START_SEG      0x0001  // startidx is a segname
 
 typedef struct groupdef {
-    struct groupdef *   next;
+    struct groupdef     *next;
     unsigned            numsegs;
-    char *              names[1];
+    char                *names[1];
 } incgroupdef;
 
 typedef struct liblist {
-    struct liblist *    next;
+    struct liblist      *next;
     unsigned            namelen;
     char                name[1];
 } libnamelist;
@@ -87,7 +87,7 @@ typedef struct liblist {
 struct perm_read_info_struct {
     f_handle    incfhdl;
     unsigned    currpos;
-    char *      buffer;
+    char        *buffer;
     unsigned    num;
     void        (*cbfn)(void *, struct perm_read_info_struct *);
     carve_t     cv;
@@ -114,11 +114,11 @@ extern carve_t          CarveSymbol;
 extern carve_t          CarveSegData;
 extern carve_t          CarveClass;
 extern carve_t          CarveGroup;
-extern char *           IncFileName;
-extern incgroupdef *    IncGroupDefs;
-extern group_entry **   IncGroups;
-extern libnamelist *    SavedUserLibs;
-extern libnamelist *    SavedDefLibs;
+extern char             *IncFileName;
+extern incgroupdef      *IncGroupDefs;
+extern group_entry      **IncGroups;
+extern libnamelist      *SavedUserLibs;
+extern libnamelist      *SavedDefLibs;
 
 extern void     ResetPermData( void );
 extern void     CleanPermData( void );
@@ -132,6 +132,6 @@ extern void     PermEndMod( mod_entry * );
 extern void     WritePermFile( perm_write_info *, void *, unsigned );
 extern void     ReadPermFile( perm_read_info *, void *, unsigned );
 extern void     IterateModRelocs( unsigned,unsigned,unsigned (*)(void *));
-extern void *   GetSegContents( segdata *, virt_mem );
-extern void *   GetAltdefContents( segdata * );
+extern void     *GetSegContents( segdata *, virt_mem );
+extern void     *GetAltdefContents( segdata * );
 extern void     FreeSavedRelocs( void );

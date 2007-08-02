@@ -67,17 +67,17 @@
 #include "permdata.h"
 #include "dllentry.h"
 
-seg_leader *    StackSegPtr;
+seg_leader      *StackSegPtr;
 startinfo       StartInfo;
 
 #define IMPLIB_BUFSIZE 4096
 
 typedef struct {
     f_handle    handle;
-    char *      fname;
-    char *      buffer;
+    char        *fname;
+    char        *buffer;
     unsigned    bufsize;
-    char *      dllname;
+    char        *dllname;
     size_t      dlllen;
     unsigned    didone : 1;
 } implibinfo;
@@ -91,7 +91,7 @@ static void DoCVPack( void );
 static void FlushImpBuffer( void );
 static void ExecWlib( void );
 static void WriteBuffer( char *info, unsigned long len, outfilelist *outfile,
-                         void * (*rtn)(void *, const void *, unsigned) );
+                         void *(*rtn)(void *, const void *, unsigned) );
 static void BufImpWrite( char *buffer, int len );
 static void FlushBuffFile( outfilelist *outfile );
 
@@ -177,7 +177,7 @@ static void DoCVPack( void )
 /**************************/
 {
     int         retval;
-    char *      name;
+    char        *name;
 
     if( LinkFlags & CVPACK_FLAG && !(LinkState & LINK_ERROR) ) {
         if( SymFileName != NULL ) {
@@ -194,12 +194,12 @@ static void DoCVPack( void )
 }
 #endif
 
-static seg_leader * FindStack( class_entry *class )
+static seg_leader *FindStack( class_entry *class )
 /*************************************************/
 {
     for( ; class != NULL; class = class->next_class ) {
         if( class->flags & CLASS_STACK ) {
-            return RingFirst( class->segs );
+            return( RingFirst( class->segs ) );
         }
     }
     return( NULL );
@@ -243,7 +243,7 @@ void GetStkAddr( void )
     }
 }
 
-static class_entry * LocateBSSClass( void )
+static class_entry *LocateBSSClass( void )
 /*****************************************/
 {
     class_entry *currclass;
@@ -286,10 +286,10 @@ void DefBSSSyms( void )
 static bool CompSymPtr( void *sym, void *chk )
 /********************************************/
 {
-    return chk == sym;
+    return( chk == sym );
 }
 
-static void CheckBSSInStart( symbol * sym, char * name )
+static void CheckBSSInStart( symbol *sym, char *name )
 /******************************************************/
 /* It's OK to define _edata if:
         1) the DOSSEG flag is not set
@@ -297,7 +297,7 @@ static void CheckBSSInStart( symbol * sym, char * name )
         2) the definition occurs in the module containing the
             start addresses */
 {
-    symbol *    chk;
+    symbol      *chk;
 
     chk = NULL;
     if( StartInfo.mod != NULL ) {
@@ -308,11 +308,11 @@ static void CheckBSSInStart( symbol * sym, char * name )
     }
 }
 
-static void DefBSSStartSize( char * name, class_entry * class )
+static void DefBSSStartSize( char *name, class_entry *class )
 /*************************************************************/
 /* set the value of an start symbol, and see if it has been defined */
 {
-    symbol *    sym;
+    symbol      *sym;
     seg_leader *seg;
 
     sym = FindISymbol( name );
@@ -327,11 +327,11 @@ static void DefBSSStartSize( char * name, class_entry * class )
     }
 }
 
-static void DefBSSEndSize( char * name, class_entry * class )
+static void DefBSSEndSize( char *name, class_entry *class )
 /***********************************************************/
 /* set the value of an end symbol, and see if it has been defined */
 {
-    symbol *    sym;
+    symbol      *sym;
     seg_leader *seg;
 
     sym = FindISymbol( name );
@@ -428,7 +428,8 @@ void GetStartAddr( void )
     bool        addoff;
     int         deltaseg;
 
-    if( FmtData.type & MK_NOVELL ) return;
+    if( FmtData.type & MK_NOVELL )
+        return;
     addoff = TRUE;
     switch( StartInfo.type ) {
     case START_UNDEFED:         // NOTE: the possible fall through
@@ -507,30 +508,30 @@ offset CalcSplitSize( void )
 bool CompareDosSegments( targ_addr *left, targ_addr *right )
 /*****************************************************************/
 {
-    return LESS_THAN_ADDR( *left, *right );
+    return( LESS_THAN_ADDR( *left, *right ) );
 }
 
 bool CompareOffsets( targ_addr *left, targ_addr *right )
 /*****************************************************************/
 {
-    return left->off < right->off;
+    return( left->off < right->off );
 }
 
 bool CompareProtSegments( targ_addr *left, targ_addr *right )
 /*****************************************************************/
 {
     if( left->seg == right->seg ) {
-        return left->off < right->off;
+        return( left->off < right->off );
     }
-    return left->seg < right->seg;
+    return( left->seg < right->seg );
 }
 
 void OrderGroups( bool (*lessthan)(targ_addr *, targ_addr *) )
 /*******************************************************************/
 {
     group_entry     *group, *low_group, *firstgroup, **lastgroup;
-    targ_addr *     low_addr;
-    targ_addr *     grp_addr;
+    targ_addr       *low_addr;
+    targ_addr       *grp_addr;
 
     firstgroup = Groups;
     lastgroup = &Groups;
@@ -564,9 +565,9 @@ bool WriteDOSGroup( group_entry *group )
 {
     unsigned long       loc;
     signed  long        diff;
-    section *           sect;
+    section             *sect;
     bool                repos;
-    outfilelist *       finfo;
+    outfilelist         *finfo;
 
     repos = FALSE;
     if( group->size != 0 ) {
@@ -620,7 +621,7 @@ unsigned_32 MemorySize( void )
     }
 }
 
-unsigned_32 AppendToLoadFile( char * name )
+unsigned_32 AppendToLoadFile( char *name )
 /************************************************/
 {
     f_handle        handle;
@@ -638,7 +639,7 @@ unsigned_32 AppendToLoadFile( char * name )
 static void SetupImpLib( void )
 /*****************************/
 {
-    char *      fname;
+    char        *fname;
     int         namelen;
 
     ImpLib.bufsize = 0;
@@ -670,7 +671,8 @@ void BuildImpLib( void )
 /*****************************/
 {
     if( LinkState & LINK_ERROR || ImpLib.handle == NIL_HANDLE
-                                || !FmtData.make_implib ) return;
+                                || !FmtData.make_implib )
+        return;
     if( ImpLib.bufsize > 0 ) {
         FlushImpBuffer();
     }
@@ -692,8 +694,8 @@ void BuildImpLib( void )
 static void ExecWlib( void )
 /**************************/
 {
-    char *      cmdline;
-    char *      temp;
+    char        *cmdline;
+    char        *temp;
     size_t      namelen;
     size_t      impnamelen;
 
@@ -733,10 +735,10 @@ static void ExecWlib( void ) {}
 static void ExecWlib( void )
 /**************************/
 {
-    char *      atfname;
+    char        *atfname;
     size_t      namelen;
     int         retval;
-    char *      libtype;
+    char        *libtype;
 
     namelen = strlen(ImpLib.fname) + 1;
     _ChkAlloc( atfname, namelen + 1 );  // +1 for the @
@@ -763,10 +765,11 @@ void AddImpLibEntry( char *intname, char *extname, unsigned ordinal )
 {
     size_t      intlen;
     size_t      otherlen;
-    char *      buff;
-    char *      currpos;
+    char        *buff;
+    char        *currpos;
 
-    if( ImpLib.handle == NIL_HANDLE ) return;
+    if( ImpLib.handle == NIL_HANDLE )
+        return;
     ImpLib.didone = TRUE;
     intlen = strlen( intname );
     if( ordinal == NOT_IMP_BY_ORDINAL ) {
@@ -839,7 +842,7 @@ void WriteLoad3( void* dummy, char *buff, unsigned size )
     WriteLoad( buff, size );
 }
 
-unsigned_32 CopyToLoad( f_handle handle, char * name )
+unsigned_32 CopyToLoad( f_handle handle, char *name )
 /***********************************************************/
 {
     unsigned_32     amt_read;
@@ -848,7 +851,8 @@ unsigned_32 CopyToLoad( f_handle handle, char * name )
     wrote = 0;
     for(;;) {
         amt_read = QRead( handle, TokBuff, TokSize, name );
-        if( amt_read == 0 ) break;
+        if( amt_read == 0 )
+            break;
         WriteLoad( TokBuff, amt_read );
         wrote += amt_read;
     }
@@ -899,7 +903,7 @@ static bool WriteSegData( void *_sdata, void *_start )
         WriteInfo( sdata->data, sdata->length );
         sdata->data = newpos;   // for incremental linking
     }
-    return FALSE;
+    return( FALSE );
 }
 
 static void DoWriteLeader( seg_leader *seg, unsigned long start )
@@ -922,7 +926,7 @@ static bool DoGroupLeader( void *seg, void *start )
            ((seg_leader *)seg)->segflags & SEG_NOEMIT) ) {
         DoWriteLeader( seg, *(unsigned long *)start + GetLeaderDelta( seg ) );
     }
-    return FALSE;
+    return( FALSE );
 }
 
 static bool DoDupGroupLeader( void *seg, void *start )
@@ -931,7 +935,7 @@ static bool DoDupGroupLeader( void *seg, void *start )
     // Substitute groups generally are sourced from NO_EMIT classes,
     // As copies, they need to be output, so ignore their MOEMIT flag here
     DoWriteLeader( seg, *(unsigned long *)start + GetLeaderDelta( seg ) );
-    return FALSE;
+    return( FALSE );
 }
 
 typedef struct  {
@@ -944,7 +948,7 @@ static bool WriteCopyGroups( void *_seg, void *_info )
 {
     // This is called by the outer level iteration looking for classes
     //  that have more than one group in them
-    seg_leader * seg = _seg;
+    seg_leader *seg = _seg;
     grpwriteinfo *info = _info;
 
     if( info->lastgrp != seg->group ) {   // Only interate new groups
@@ -953,14 +957,14 @@ static bool WriteCopyGroups( void *_seg, void *_info )
         Ring2Lookup( seg->group->leaders, DoDupGroupLeader, (&info->pos));
         info->pos += seg->group->totalsize;
     }
-    return FALSE;
+    return( FALSE );
 }
 
 offset  WriteGroupLoad( group_entry *group )
 /**********************************************/
 {
     grpwriteinfo     info;
-    class_entry *    class;
+    class_entry      *class;
 
     class = group->leaders->class;
 
@@ -978,7 +982,7 @@ offset  WriteGroupLoad( group_entry *group )
 static void OpenOutFiles( void )
 /******************************/
 {
-    outfilelist * fnode;
+    outfilelist   *fnode;
 
     for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
         OpenBuffFile( fnode );
@@ -988,7 +992,7 @@ static void OpenOutFiles( void )
 static void CloseOutFiles( void )
 /*******************************/
 {
-    outfilelist *   fnode;
+    outfilelist     *fnode;
 
     for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
         if( fnode->handle != NIL_HANDLE ) {
@@ -1000,7 +1004,7 @@ static void CloseOutFiles( void )
 void FreeOutFiles( void )
 /******************************/
 {
-    outfilelist *   fnode;
+    outfilelist     *fnode;
 
     CloseOutFiles();
     for( fnode = OutFiles; fnode != NULL; fnode = OutFiles ) {
@@ -1013,20 +1017,21 @@ void FreeOutFiles( void )
     }
 }
 
-static void * SetToZero( void *dest, const void *dummy, unsigned size )
+static void *SetToZero( void *dest, const void *dummy, unsigned size )
 /*********************************************************************/
 {
     memset( dest, FmtData.FillChar, size );
-    return (void *) dummy;
+    return( (void *)dummy );
 }
 
 void PadLoad( unsigned long size )
 /***************************************/
 /* pad out load file with zeros */
 {
-    outfilelist *       outfile;
+    outfilelist         *outfile;
 
-    if( size == 0 ) return;
+    if( size == 0 )
+        return;
     outfile = CurrSect->outfile;
     if( outfile->buffer != NULL ) {
         WriteBuffer( NULL, size, outfile, SetToZero );
@@ -1052,7 +1057,7 @@ void WriteLoad( void *buff, unsigned long size )
 /*****************************************************/
 /* write a buffer out to the load file */
 {
-    outfilelist *       outfile;
+    outfilelist         *outfile;
 
     outfile = CurrSect->outfile;
     if( outfile->buffer != NULL ) {
@@ -1062,18 +1067,18 @@ void WriteLoad( void *buff, unsigned long size )
     }
 }
 
-static void * NullBuffFunc( void *dest, const void *dummy, unsigned size )
+static void *NullBuffFunc( void *dest, const void *dummy, unsigned size )
 /************************************************************************/
 {
     dummy = dummy;
     size = size;
-    return dest;
+    return( dest );
 }
 
 void SeekLoad( unsigned long offset )
 /******************************************/
 {
-    outfilelist *       outfile;
+    outfilelist         *outfile;
 
     outfile = CurrSect->outfile;
     if( outfile->buffer != NULL && offset < outfile->bufpos ) {
@@ -1089,7 +1094,7 @@ void SeekLoad( unsigned long offset )
 void SeekEndLoad( unsigned long offset )
 /*********************************************/
 {
-    outfilelist *       outfile;
+    outfilelist         *outfile;
 
     outfile = CurrSect->outfile;
     if( outfile->buffer != NULL && offset > 0 ) {
@@ -1104,9 +1109,9 @@ unsigned long PosLoad( void )
 /**********************************/
 {
     if( CurrSect->outfile->buffer != NULL ) {
-        return CurrSect->outfile->bufpos;
+        return( CurrSect->outfile->bufpos );
     } else {
-        return QPos( CurrSect->outfile->handle );
+        return( QPos( CurrSect->outfile->handle ) );
     }
 }
 
@@ -1161,7 +1166,7 @@ void CloseBuffFile( outfilelist *outfile )
 }
 
 static void WriteBuffer( char *info, unsigned long len, outfilelist *outfile,
-                         void * (*rtn)(void *, const void *, unsigned) )
+                         void *(*rtn)(void *, const void *, unsigned) )
 /***************************************************************************/
 {
     unsigned modpos;

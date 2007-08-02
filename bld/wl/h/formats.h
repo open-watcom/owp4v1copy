@@ -92,9 +92,9 @@ struct fmt_dos_data {
 struct fmt_phar_data {
     unsigned_32     mindata;
     unsigned_32     maxdata;
-    char *          breaksym;       // name of realbreak symbol
+    char            *breaksym;       // name of realbreak symbol
     struct rtpblock *params;         // run-time parameter block.
-    char *          stub;       // name of stub file.
+    char            *stub;       // name of stub file.
 //    bool            pack;    needed if/when .exp packing implemented
 };
 
@@ -102,13 +102,13 @@ struct fmt_phar_data {
 
 struct fmt_os2_data {
     struct entry_export *exports;
-    name_list *         mod_ref_list;
-    name_list *         imp_tab_list;
-    char *              stub_file_name;
-    char *              res_module_name;
-    char *              old_lib_name;
+    name_list           *mod_ref_list;
+    name_list           *imp_tab_list;
+    char                *stub_file_name;
+    char                *res_module_name;
+    char                *old_lib_name;
     struct os2_seg_flags *os2_seg_flags;
-    char *              description;
+    char                *description;
     unsigned_32         heapsize;
     unsigned            segment_shift;
     unsigned            flags;            // in LOADOS2.H
@@ -125,7 +125,7 @@ struct fmt_os2_data {
 
 struct fmt_pe_data {
     struct fmt_os2_data os2;    /* must be first field */
-    list_of_names *     resources;
+    list_of_names       *resources;
     unsigned_32         heapcommit;
     unsigned_32         stackcommit;
     unsigned            subsystem;
@@ -159,25 +159,25 @@ struct fmt_d16m_data {
 // stuff common to some file formats which have the concept of an export
 
 struct exp_common {
-    name_list * export;
-    name_list * module;
+    name_list   *export;
+    name_list   *module;
 };
 
 // linker specific Novell NLM data
 
 struct fmt_nov_data {
     struct exp_common   exp;            // must be at the start
-    char *              screenname;     // actually a length byte then a string
-    char *              description;    // ditto.
-    char *              checkfn;        // check function name;
-    char *              exitfn;         // exit function name;
-    char *              customdata;     // custom data file name;
-    char *              threadname;
-    char *              copyright;
-    char *              messages;
-    char *              help;
-    char *              rpcdata;
-    char *              sharednlm;
+    char                *screenname;     // actually a length byte then a string
+    char                *description;    // ditto.
+    char                *checkfn;        // check function name;
+    char                *exitfn;         // exit function name;
+    char                *customdata;     // custom data file name;
+    char                *threadname;
+    char                *copyright;
+    char                *messages;
+    char                *help;
+    char                *rpcdata;
+    char                *sharednlm;
     unsigned            moduletype;
     unsigned            flags;
     unsigned_32         exeflags;
@@ -191,7 +191,7 @@ struct fmt_nov_data {
 // linker specific QNX 4.0 data
 
 struct fmt_qnx_data {
-    struct qnx_seg_flags *  seg_flags;
+    struct qnx_seg_flags    *seg_flags;
     unsigned_32             heapsize;
     unsigned                flags;
     unsigned                priv_level;
@@ -224,13 +224,13 @@ struct fmt_data {
         struct  fmt_qnx_data    qnx;
         struct  fmt_elf_data    elf;
     }               u;
-    seg_leader *    dgroupsplitseg;
+    seg_leader      *dgroupsplitseg;
     offset          bsspad;
     offset          base;
     offset          objalign;
-    char *          implibname;
-    char *          osname;
-    char *          resource;
+    char            *implibname;
+    char            *osname;
+    char            *resource;
     int             cpu_type;       /* '0' => 86, '1' => 186, etc */
     exe_format      type;
     unsigned        major;

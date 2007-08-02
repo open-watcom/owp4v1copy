@@ -57,7 +57,7 @@
 
 #define MAX_SEGMENT         0x10000
 
-static seg_leader *     LastCodeSeg;    // last code segment in current module
+static seg_leader       *LastCodeSeg;    // last code segment in current module
 
 static void MakeNewLeader( segdata *sdata, class_entry *class, unsigned_16 info);
 static void FindALeader( segdata *sdata, class_entry *class, unsigned_16 info );
@@ -78,7 +78,7 @@ void P1Start( void )
 static void DoSavedImport( symbol *sym )
 /**************************************/
 {
-    dll_sym_info *      dll;
+    dll_sym_info        *dll;
     length_name         modname;
     length_name         extname;
 
@@ -102,7 +102,7 @@ static void DoSavedImport( symbol *sym )
 static void DoSavedExport( symbol *sym )
 /**************************************/
 {
-    entry_export *      exp;
+    entry_export        *exp;
 
     if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
         exp = sym->e.export;
@@ -119,11 +119,11 @@ static bool StoreCDatData( void *_piece, void *_loc )
 /***************************************************/
 {
     comdat_piece *piece = _piece;
-    virt_mem *loc = _loc;
+    virt_mem     *loc = _loc;
 
     PutInfo( *loc, piece->data, piece->length );
     *loc += piece->length;
-    return FALSE;
+    return( FALSE );
 }
 
 void StoreInfoData( comdat_info *info )
@@ -140,32 +140,32 @@ static bool CheckVMemPieceDiff( void *_piece, void *_loc )
 /********************************************************/
 {
     comdat_piece *piece = _piece;
-    virt_mem *loc = _loc;
-    bool retval;
+    virt_mem     *loc = _loc;
+    bool         retval;
 
     retval = !CompareInfo( *loc, piece->data, piece->length );
     *loc += piece->length;
-    return retval;
+    return( retval );
 }
 
 static bool CheckMemPieceDiff( void *_piece, void *_loc )
 /*******************************************************/
 {
     comdat_piece *piece = _piece;
-    char **loc = _loc;
-    bool retval;
+    char         **loc = _loc;
+    bool         retval;
 
     retval = memcmp( *loc, piece->data, piece->length ) != 0;
     *loc += piece->length;
-    return retval;
+    return( retval );
 }
 
 static bool CheckSameData( symbol *sym, comdat_info *info )
 /*********************************************************/
 {
-    virt_mem            temp;
-    char *              data;
-    comdat_piece *      piece;
+    virt_mem        temp;
+    char            *data;
+    comdat_piece    *piece;
 
     temp = sym->p.seg->data;
     if( sym->mod->modinfo & MOD_DONE_PASS_1 ) {
@@ -176,27 +176,27 @@ static bool CheckSameData( symbol *sym, comdat_info *info )
     }
     if( piece == NULL ) {       // found a match
         info->sym->u.datasym = sym;
-        return TRUE;
+        return( TRUE );
     }
-    return FALSE;
+    return( FALSE );
 }
 
 static bool CheckAltSym( void *_sym, void *_info )
 /************************************************/
 {
     comdat_info *info = _info;
-    symbol *sym = _sym;
+    symbol      *sym = _sym;
 
     if( sym != info->sym && IS_SYM_COMDAT(sym) && sym->info & SYM_HAS_DATA ) {
-        return CheckSameData( sym, info );
+        return( CheckSameData( sym, info ) );
     }
-    return FALSE;
+    return( FALSE );
 }
 
 void InfoCDatAltDef( comdat_info *info )
 /*********************************************/
 {
-    symbol *    mainsym;
+    symbol      *mainsym;
 
     mainsym = info->sym;
     info->sym = AddAltDef( mainsym, SYM_COMDAT );
@@ -215,8 +215,8 @@ static void AddCDatAltDef( segdata *sdata, symbol *sym, unsigned_8 *data,
                            sym_info flags )
 /***********************************************************************/
 {
-    comdat_info         info;
-    comdat_piece        piece;
+    comdat_info     info;
+    comdat_piece    piece;
 
     if( LinkFlags & INC_LINK_FLAG ) {
         info.sdata = sdata;
@@ -234,9 +234,9 @@ static void AddCDatAltDef( segdata *sdata, symbol *sym, unsigned_8 *data,
 static void DoIncSymbol( void *_sym )
 /***********************************/
 {
-    symbol *    sym = _sym;
-    symbol *    mainsym;
-    void *      data;
+    symbol      *sym = _sym;
+    symbol      *mainsym;
+    void        *data;
     sym_flags   flags;
 
     if( sym->info & SYM_IS_ALTDEF ) {
@@ -266,7 +266,8 @@ static void DoIncSymbol( void *_sym )
         if( !IS_SYM_COMDAT(sym) ) {
             Ring2Append( &CurrMod->publist, sym );
         }
-        if( sym->info & SYM_DEAD ) return;
+        if( sym->info & SYM_DEAD )
+            return;
         if( IS_SYM_IMPORTED(sym) ) {
             DoSavedImport( sym );
         } else if( IS_SYM_COMDAT(sym) ) {
@@ -283,9 +284,9 @@ static void DoIncSymbol( void *_sym )
 unsigned long IncPass1( void )
 /***********************************/
 {
-    segdata *   seglist;
-    segdata *   seg;
-    symbol *    publist;
+    segdata     *seglist;
+    segdata     *seg;
+    symbol      *publist;
     virt_mem    dataoff;
     unsigned    relocs;
 
@@ -294,7 +295,8 @@ unsigned long IncPass1( void )
     CurrMod->lines = NULL;
     for(;;) {
         seg = Ring2Pop( &seglist );
-        if( seg == NULL ) break;
+        if( seg == NULL )
+            break;
         dataoff = seg->data;
         DoAllocateSegment( seg, seg->o.clname );
         seg->o.mod = CurrMod;
@@ -309,37 +311,39 @@ unsigned long IncPass1( void )
     relocs = CurrMod->relocs;
     PermStartMod( CurrMod );    // destroys currmod->relocs
     IterateModRelocs( relocs, CurrMod->sizerelocs, IncSaveRelocs );
-    return 0;
+    return( 0 );
 }
 
-static class_entry * FindNamedClass( char *name )
+static class_entry *FindNamedClass( char *name )
 /***********************************************/
 // NYI:  this doesn't take into account 16 & 32 bit classes with the same name.
 {
-    class_entry * class;
+    class_entry   *class;
 
     for( class = Root->classlist; class != NULL; class = class->next_class ) {
-        if( stricmp( class->name, name ) == 0 ) return class;
+        if( stricmp( class->name, name ) == 0 ) {
+            return( class );
+        }
     }
-    return NULL;
+    return( NULL );
 }
 
 static bool CmpSegName( void *leader, void *name )
 /************************************************/
 {
-    return stricmp( ((seg_leader *)leader)->segname, name ) == 0;
+    return( stricmp( ((seg_leader *)leader)->segname, name ) == 0 );
 }
 
 static bool DefIncGroup( void *_def, void *_grouptab )
 /****************************************************/
 {
-    incgroupdef *       def = _def;
-    group_entry ***     grouptab = _grouptab;
-    group_entry *       group;
-    unsigned            index;
-    char **             currname;
-    class_entry *       class;
-    seg_leader *        leader;
+    incgroupdef     *def = _def;
+    group_entry     ***grouptab = _grouptab;
+    group_entry     *group;
+    unsigned        index;
+    char            **currname;
+    class_entry     *class;
+    seg_leader      *leader;
 
     group = GetGroup( def->names[0] );
     currname = &def->names[1];
@@ -356,14 +360,14 @@ static bool DefIncGroup( void *_def, void *_grouptab )
     }
     **grouptab = group;
     (*grouptab)++;
-    return FALSE;
+    return( FALSE );
 }
 
 void DoIncGroupDefs( void )
 /********************************/
 {
-    unsigned            numgroups;
-    group_entry **      grouptab;
+    unsigned        numgroups;
+    group_entry     **grouptab;
 
     numgroups = RingCount( IncGroupDefs );
     _ChkAlloc( IncGroups, sizeof(group_entry *) * numgroups );
@@ -410,9 +414,9 @@ void AllocateSegment( segnode *newseg, char *clname )
 static void DoAllocateSegment( segdata *sdata, char *clname )
 /***********************************************************/
 {
-    section *           sect;
-    class_entry *       class;
-    bool                isovlclass;
+    section         *sect;
+    class_entry     *class;
+    bool            isovlclass;
 
     isovlclass = FALSE;
     if( FmtData.type & MK_OVERLAYS ) {
@@ -514,15 +518,16 @@ void AddSegment( segdata *sd, class_entry *class )
     }
 }
 
-class_entry * FindClass( section *sect, char *name, bool is32bit,
+class_entry *FindClass( section *sect, char *name, bool is32bit,
                                 bool iscode )
 /*********************************************************************/
 {
-    class_entry *   currclass;
-    class_entry *   lastclass;
+    class_entry     *currclass;
+    class_entry     *lastclass;
     unsigned        namelen;
 
-    if( is32bit ) is32bit = CLASS_32BIT;
+    if( is32bit )
+        is32bit = CLASS_32BIT;
     
     lastclass = sect->classlist;
     for( currclass = sect->classlist; currclass != NULL; currclass = currclass->next_class ) {
@@ -573,17 +578,17 @@ static void CheckForLast( seg_leader *seg, class_entry *class )
 static bool CheckClassName( void *_seg, void *_sdata )
 /****************************************************/
 {
-    seg_leader *seg = _seg;
-    segdata *sdata = _sdata;
+    seg_leader  *seg = _seg;
+    segdata     *sdata = _sdata;
 
-    return stricmp( seg->segname, sdata->u.name ) == 0 &&
-                                seg->combine != COMBINE_INVALID;
+    return( stricmp( seg->segname, sdata->u.name ) == 0 &&
+                                seg->combine != COMBINE_INVALID );
 }
 
 static void AddToLeader( seg_leader *seg, segdata *sdata )
 /********************************************************/
 {
-    segdata *   first;
+    segdata     *first;
     offset      length;
 
     if( sdata->combine == COMBINE_COMMON ) {
@@ -606,7 +611,7 @@ static void AddToLeader( seg_leader *seg, segdata *sdata )
 static void FindALeader( segdata *sdata, class_entry *class, unsigned_16 info )
 /*****************************************************************************/
 {
-    seg_leader *seg;
+    seg_leader  *seg;
 
     seg = RingLookup( class->segs, CheckClassName, sdata );
     if( seg == NULL ) {
@@ -620,7 +625,7 @@ static void FindALeader( segdata *sdata, class_entry *class, unsigned_16 info )
 seg_leader *InitLeader( char *segname, unsigned_16 info )
 /**************************************************************/
 {
-    seg_leader * seg;
+    seg_leader  *seg;
 
     seg = CarveAlloc( CarveLeader );
     seg->next_seg = NULL;
@@ -661,13 +666,14 @@ static void MakeNewLeader( segdata *sdata, class_entry *class, unsigned_16 info)
 static bool CmpLeaderPtr( void *a, void *b )
 /******************************************/
 {
-    return a == b;
+    return( a == b );
 }
 
 void AddToGroup( group_entry *group, seg_leader *seg )
 /***********************************************************/
 {
-    if( Ring2Lookup( group->leaders, CmpLeaderPtr, seg ) ) return;
+    if( Ring2Lookup( group->leaders, CmpLeaderPtr, seg ) )
+        return;
     if( seg->group != NULL && seg->group != group ) {
         LnkMsg( LOC+ERR+MSG_SEG_IN_TWO_GROUPS, "123", seg->segname,
                                    seg->group->sym->name, group->sym->name );
@@ -770,11 +776,11 @@ static segdata *GetSegment( char *seg_name, char *class_name, char *group_name,
                             unsigned align, unsigned comb, bool use_16 )
 /*****************************************************************************/
 {
-    section *           sect;
-    class_entry *       class;
-    group_entry *       group;
+    section             *sect;
+    class_entry         *class;
+    group_entry         *group;
     unsigned_16         info;
-    segdata *           sdata;
+    segdata             *sdata;
 
     sect = GetOvlSect( class_name );
     class = FindClass( sect, class_name, !use_16, FALSE );
@@ -795,7 +801,7 @@ static segdata *GetSegment( char *seg_name, char *class_name, char *group_name,
         group = GetGroup( group_name );
         AddToGroup( group, sdata->u.leader );
     }
-    return sdata;
+    return( sdata );
 }
 
 static void NearAllocCommunal( symbol *sym, unsigned size )
@@ -809,14 +815,15 @@ static void NearAllocCommunal( symbol *sym, unsigned size )
 static void FarAllocCommunal( symbol *sym, unsigned size )
 /********************************************************/
 {
-    segdata *   seg;
-    segdata *   first;
+    segdata     *seg;
+    segdata     *first;
 
     first = NULL;
     for(;;) {
         seg = GetSegment( sym->name, FarDataClassName, NULL,
                           0, COMBINE_INVALID, !IS_SYM_COMM32(sym) );
-        if( first == NULL ) first = seg;
+        if( first == NULL )
+            first = seg;
         if( size < MAX_SEGMENT ) {
             seg->length = size;
             break;
@@ -842,12 +849,12 @@ void AllocCommunal( symbol *sym, offset size )
     }
 }
 
-symbol * MakeCommunalSym( symbol *sym, offset size, bool isfar,
+symbol *MakeCommunalSym( symbol *sym, offset size, bool isfar,
                                  bool is32bit )
 /*********************************************************************/
 {
     unsigned    symtype;
-    symbol *    altsym;
+    symbol      *altsym;
 
     if( is32bit ) {
         symtype = SYM_COMMUNAL_32;
@@ -878,7 +885,7 @@ symbol * MakeCommunalSym( symbol *sym, offset size, bool isfar,
             altsym->p.cdefsize = size;
         }
     }
-    return sym;
+    return( sym );
 }
 
 void CheckComdatSym( symbol *sym, unsigned flags )
@@ -950,9 +957,9 @@ void DefineLazyExtdef( symbol *sym, symbol *def, bool isweak )
 /*******************************************************************/
 /* handle the lazy and weak extdef comments */
 {
-    symbol *    defaultsym;
+    symbol      *defaultsym;
 
-    if( !(sym->info & (SYM_DEFINED|SYM_EXPORTED)) && !IS_SYM_IMPORTED(sym)
+    if( !(sym->info & (SYM_DEFINED | SYM_EXPORTED)) && !IS_SYM_IMPORTED(sym)
                                                   && !IS_SYM_COMMUNAL(sym) ) {
         if( IS_SYM_A_REF(sym) && !IS_SYM_LINK_WEAK(sym) ) {
             if( IS_SYM_VF_REF(sym) ) {
@@ -960,7 +967,7 @@ void DefineLazyExtdef( symbol *sym, symbol *def, bool isweak )
             } else {
                 defaultsym = sym->e.def;
             }
-            if( def != defaultsym ){
+            if( def != defaultsym ) {
                 LnkMsg( LOC_REC+WRN+MSG_LAZY_EXTDEF_MISMATCH, "S",sym );
             }
         } else if( !(sym->info & SYM_OLDHAT) || IS_SYM_LINK_WEAK(sym) ) {
@@ -977,17 +984,17 @@ void DefineLazyExtdef( symbol *sym, symbol *def, bool isweak )
     }
 }
 
-static symbol ** GetVFList( symbol * defsym, symbol * mainsym, bool generate,
+static symbol **GetVFList( symbol *defsym, symbol *mainsym, bool generate,
                             vflistrtns *rtns )
 /****************************************************************************/
 /* get the conditional symbols list from the vftable record, adding edges
  * to the dead code graph if necessary */
 {
-    symbol **   liststart;
-    symbol **   symlist;
-    symbol *    condsym;
-    void *      bufstart;
-    char *      name;
+    symbol      **liststart;
+    symbol      **symlist;
+    symbol      *condsym;
+    void        *bufstart;
+    char        *name;
     unsigned    count;
 
     liststart = NULL;
@@ -1000,7 +1007,9 @@ static symbol ** GetVFList( symbol * defsym, symbol * mainsym, bool generate,
             condsym = MakeWeakExtdef( name, defsym );
         } else if( condsym->info & SYM_DEFINED && !IS_SYM_COMMUNAL(condsym) ) {
             generate = FALSE;
-            if( mainsym == NULL ) break;
+            if( mainsym == NULL ) {
+                break;
+            }
         }
         if( LinkFlags & STRIP_CODE && mainsym != NULL ) {
             AddSymEdge( condsym, mainsym );
@@ -1020,7 +1029,7 @@ static symbol ** GetVFList( symbol * defsym, symbol * mainsym, bool generate,
         }
         *symlist = NULL;
     }
-    return liststart;
+    return( liststart );
 }
 
 static void DefineVirtualFunction( symbol *sym, symbol *defsym, bool ispure,
@@ -1028,7 +1037,7 @@ static void DefineVirtualFunction( symbol *sym, symbol *defsym, bool ispure,
 /***************************************************************************/
 // change sym into a virtual function reference
 {
-    symbol **   symlist;
+    symbol      **symlist;
 
     symlist = GetVFList( defsym, sym, TRUE, rtns );
     sym->info |= SYM_VF_REFS_DONE;
@@ -1054,15 +1063,15 @@ void DefineVFTableRecord( symbol *sym, symbol *def, bool ispure,
 /**********************************************************************/
 // process the watcom virtual function table information extension
 {
-    symbol **   symlist;
-    symbol **   startlist;
-    symbol **   oldlist;
+    symbol      **symlist;
+    symbol      **startlist;
+    symbol      **oldlist;
 
     if( sym->info & SYM_DEFINED ) {
         /* if defined, still may have to keep track of conditional symbols
          * for dead code elimination */
         if( LinkFlags & STRIP_CODE
-                        && !(sym->info & (SYM_VF_REFS_DONE|SYM_EXPORTED)) ) {
+                        && !(sym->info & (SYM_VF_REFS_DONE | SYM_EXPORTED)) ) {
             GetVFList( def, sym, FALSE, rtns );
             sym->e.def = def;
             sym->info |= SYM_VF_REFS_DONE;
@@ -1086,7 +1095,8 @@ void DefineVFTableRecord( symbol *sym, symbol *def, bool ispure,
                         LnkMsg( LOC_REC+WRN+MSG_VF_TABLE_MISMATCH, "S", sym );
                         break;
                     }
-                    if( *oldlist == NULL ) break;
+                    if( *oldlist == NULL )
+                        break;
                     oldlist++;
                     symlist++;
                 }
@@ -1098,7 +1108,7 @@ void DefineVFTableRecord( symbol *sym, symbol *def, bool ispure,
     }
 }
 
-void DefineVFReference( void *src, symbol * targ, bool issym )
+void DefineVFReference( void *src, symbol *targ, bool issym )
 /*******************************************************************/
 {
     if( issym ) {
@@ -1110,7 +1120,7 @@ void DefineVFReference( void *src, symbol * targ, bool issym )
     }
 }
 
-void DefineReference( symbol * sym )
+void DefineReference( symbol *sym )
 /*****************************************/
 // we have an object file reference for sym
 {
@@ -1124,24 +1134,24 @@ void DefineReference( symbol * sym )
     }
 }
 
-group_entry * GetGroup( char *name )
+group_entry *GetGroup( char *name )
 /*****************************************/
 /* Get group of specified name. */
 {
-    group_entry * grp;
+    group_entry     *grp;
 
     grp = SearchGroups( name );
     if( grp == NULL ) {
         grp = AllocGroup( name, &Groups );
     }
-    return grp;
+    return( grp );
 }
 
-group_entry * SearchGroups( char *name )
+group_entry *SearchGroups( char *name )
 /*********************************************/
 /* Find group of specified name. */
 {
-    group_entry *       currgrp;
+    group_entry     *currgrp;
 
     for( currgrp = Groups; currgrp != NULL; currgrp = currgrp->next_group ) {
         if( stricmp( currgrp->sym->name, name ) == 0 ) {
@@ -1149,7 +1159,7 @@ group_entry * SearchGroups( char *name )
             return( currgrp );
         }
     }
-    return NULL;
+    return( NULL );
 }
 
 void SetCurrSeg( segdata *seg, offset obj_offset, unsigned_8 *data )
@@ -1166,7 +1176,7 @@ void SeenDLLRecord( void )
 /*******************************/
 {
     LinkState |= FMT_SEEN_IMPORT_CMT;
-    if( !HintFormat( (MK_OS2|MK_PE|MK_ELF|MK_NOVELL) ) ) {
+    if( !HintFormat( (MK_OS2 | MK_PE | MK_ELF | MK_NOVELL) ) ) {
         LnkMsg( LOC+WRN+MSG_DLL_WITH_386, NULL );
         return;
     }
@@ -1177,7 +1187,7 @@ void HandleImport( length_name *intname, length_name *modname,
 /*********************************************************************/
 // handle the import coment record
 {
-    symbol *    sym;
+    symbol      *sym;
 
     sym = SymXOp( ST_CREATE, intname->name, intname->len );
     if( !(sym->info & SYM_DEFINED) ) {
@@ -1185,7 +1195,7 @@ void HandleImport( length_name *intname, length_name *modname,
             Ring2Append( &CurrMod->publist, sym );
             sym->mod = CurrMod;
         }
-        if( FmtData.type & (MK_OS2|MK_PE|MK_WIN_VXD) ) {
+        if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
             MSImportKeyword( sym, modname, extname, ordinal );
         } else {
             SET_SYM_TYPE( sym, SYM_IMPORTED );
@@ -1203,9 +1213,9 @@ void HandleExport( length_name *expname, length_name *intname,
                           unsigned flags, unsigned ordinal )
 /*******************************************************************/
 {
-    symbol *            sym;
+    symbol      *sym;
 
-    if( FmtData.type & (MK_OS2|MK_PE|MK_WIN_VXD) ) {
+    if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
         MSExportKeyword( expname, intname, flags, ordinal );
         return;
     }
@@ -1214,24 +1224,24 @@ void HandleExport( length_name *expname, length_name *intname,
     AddNameTable( expname->name, expname->len, TRUE, &FmtData.u.nov.exp.export);
 }
 
-bool CheckVFList( symbol * sym )
+bool CheckVFList( symbol *sym )
 /*************************************/
 /* see if any of the conditional symbols for this symbol are defined */
 {
-    symbol **   symlist;
+    symbol      **symlist;
 
     if( sym->info & SYM_VF_MARKED ) {
         ConvertVFSym( sym );
-        return TRUE;
+        return( TRUE );
     }
     symlist = sym->e.vfdata + 1;
     while( *symlist != NULL ) {
-        if( (*symlist)->info & (SYM_DEFINED|SYM_VF_MARKED) ) {
+        if( (*symlist)->info & (SYM_DEFINED | SYM_VF_MARKED) ) {
             ConvertVFSym( sym );
-            return TRUE;
+            return( TRUE );
         }
         symlist++;
     }
-    return FALSE;
+    return( FALSE );
 }
 

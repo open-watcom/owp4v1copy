@@ -71,7 +71,7 @@ static struct {
 
 static unsigned long NumMapSyms;
 
-static seg_leader *     FindASeg( class_entry *, char * );
+static seg_leader       *FindASeg( class_entry *, char * );
 static void             SortSegments( void );
 static void             ReOrderClasses( section *sec );
 static void             AllocSeg( void * );
@@ -80,11 +80,11 @@ static void             ReallocFileSegs( void );
 static void             FindUninitDataStart( void );
 static void             CalcGrpAddr( group_entry *currgrp );
 static void             DefinePublics( void );
-static void             WriteSymArray( symbol ** symarray, unsigned num );
+static void             WriteSymArray( symbol **symarray, unsigned num );
 static void             FillClassFlags( char *name, unsigned_16 flags );
 static void             FillTypeFlags( unsigned_16 flags, segflag_type type );
 static void             FindFloatSyms( void );
-static void             CheckClassUninitialized( class_entry * currcl );
+static void             CheckClassUninitialized( class_entry *currcl );
 static void             SortClasses ( section *sec );
 
 void CheckClassOrder( void )
@@ -359,7 +359,7 @@ static bool CheckLxdataSeen( void *_seg, void *dummy )
     return( FALSE );
 }
 
-static void CheckClassUninitialized( class_entry * currcl )
+static void CheckClassUninitialized( class_entry *currcl )
 /*********************************************************/
 {
     RingLookup( currcl->segs, CheckLxdataSeen, NULL );
@@ -1048,7 +1048,7 @@ void FinishMapSort( void )
     }
 }
 
-static void WriteSymArray( symbol ** symarray, unsigned num )
+static void WriteSymArray( symbol **symarray, unsigned num )
 /***********************************************************/
 {
     if( MapFlags & MAP_ALPHA ) {
@@ -1075,7 +1075,7 @@ static bool DefPubSym( void *_pub, void *_info )
 {
     symbol      *pub = _pub;
     pubdefinfo  *info = _info;
-    segdata *   seg;
+    segdata     *seg;
     seg_leader  *leader;
     offset      off;
     unsigned_16 frame;
@@ -1164,7 +1164,7 @@ static void SetReadOnly( void *_seg )
     }
 }
 
-void SetSegFlags( seg_flags * flag_list )
+void SetSegFlags( seg_flags *flag_list )
 /**********************************************/
 {
     seg_flags       *next_one;
@@ -1211,7 +1211,7 @@ static bool SegNameCmp( void *seg, void *seg_name )
     return( stricmp( ((seg_leader *)seg)->segname, seg_name ) == 0 );
 }
 
-static seg_leader * FindASeg( class_entry *class, char *seg_name )
+static seg_leader *FindASeg( class_entry *class, char *seg_name )
 /****************************************************************/
 {
     seg_leader      *seg;

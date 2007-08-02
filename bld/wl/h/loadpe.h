@@ -44,14 +44,14 @@ extern unsigned long    GetPEHeaderSize( void );
 extern void             ResetLoadPE( void );
 
 struct import_name {
-    struct import_name *next;
-    dll_sym_info *      dll;
-    name_list *         imp;
+    struct import_name  *next;
+    dll_sym_info        *dll;
+    name_list           *imp;
 };
 
 typedef struct module_import {
-    struct module_import *      next;
-    struct name_list *          mod;
-    struct import_name *        imports;
+    struct module_import        *next;
+    struct name_list            *mod;
+    struct import_name          *imports;
     unsigned                    num_entries;
 } module_import;

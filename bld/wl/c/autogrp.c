@@ -46,20 +46,20 @@
 #include "objpass1.h"
 
 
-static group_entry *    GetAutoGroup( bool );
+static group_entry      *GetAutoGroup( bool );
 static void             SortGroup( seg_leader * );
 static void             PackClass( class_entry *class, section *sec );
-static void             PackSegs( seg_leader * seg, unsigned num_segs,
+static void             PackSegs( seg_leader *seg, unsigned num_segs,
                                   offset size, class_entry *class,
                                   bool isdata, bool isrdwr );
 static void             SortGroupList( void );
 static void             FindSplitGroups( void );
 static void             NumberNonAutos( void );
 
-static group_entry *    CurrGroup;
+static group_entry      *CurrGroup;
 int                     NumGroups;
 
-static void AutoGroupSect( section * sec );
+static void AutoGroupSect( section *sec );
 
 void AutoGroup( void )
 /***************************/
@@ -73,10 +73,10 @@ void AutoGroup( void )
     NumberNonAutos();
 }
 
-static void AutoGroupSect( section * sec )
+static void AutoGroupSect( section *sec )
 /****************************************/
 {
-    class_entry *           class;
+    class_entry             *class;
     
     CurrGroup = NULL;
     for( class = sec->classlist; class != NULL; class = class->next_class ) {
@@ -86,7 +86,7 @@ static void AutoGroupSect( section * sec )
     }
 }
 
-static offset SetSegType( seg_leader * seg )
+static offset SetSegType( seg_leader *seg )
 /******************************************/
 // set packlimit if necessary.
 {
@@ -135,9 +135,9 @@ static bool CanPack( seg_leader *one, seg_leader *two )
 static void PackClass( class_entry *class, section *sec )
 /*******************************************************/
 {
-    seg_leader *    seg;
-    seg_leader *    packstart;
-    seg_leader *    anchor;
+    seg_leader      *seg;
+    seg_leader      *packstart;
+    seg_leader      *anchor;
     offset          size;
     offset          new_size;
     offset          align_size;
@@ -208,11 +208,11 @@ static void PackClass( class_entry *class, section *sec )
     PackSegs( packstart, num_segs, size, class, isdata, isreadwrite );
 }
 
-static void PackSegs( seg_leader * seg, unsigned num_segs, offset size,
+static void PackSegs( seg_leader *seg, unsigned num_segs, offset size,
                       class_entry *class, bool isdata, bool isrdwr )
 /*********************************************************************/
 {
-    group_entry *       group;
+    group_entry         *group;
     bool                fakegroup;
 
     if( num_segs == 0 )
@@ -262,11 +262,11 @@ static void InitGroup( group_entry *group )
     group->g.grp_relocs = NULL;
 }
 
-group_entry * AllocGroup( char *name, group_entry ** grp_list )
+group_entry *AllocGroup( char *name, group_entry ** grp_list )
 /********************************************************************/
 {
     group_entry *group;
-    symbol *    sym;
+    symbol      *sym;
 
     group = CarveAlloc( CarveGroup );
     group->leaders = NULL;
@@ -288,10 +288,10 @@ group_entry * AllocGroup( char *name, group_entry ** grp_list )
     return( group );
 }
 
-static group_entry * GetAutoGroup( bool abs_seg )
+static group_entry *GetAutoGroup( bool abs_seg )
 /***********************************************/
 {
-    group_entry *    group;
+    group_entry      *group;
     group_entry **   grp_list;
 
     if( abs_seg ) {
@@ -310,7 +310,7 @@ static void SortGroupList( void )
 /*******************************/
 // Sort the group list by segments within classes.
 {
-    group_entry *   group;
+    group_entry     *group;
     unsigned        number;
 
     NumGroups = 0;
@@ -366,7 +366,7 @@ static void FindSplitGroups( void )
 // overlays. This causes all hell to break loose, so this checks to make sure
 // that this doesn't happen.
 {
-    group_entry *   group;
+    group_entry     *group;
 
     if( !( FmtData.type & MK_OVERLAYS ) )
         return;
@@ -380,7 +380,7 @@ static void FindSplitGroups( void )
 static void NumberNonAutos( void )
 /********************************/
 {
-    group_entry *       group;
+    group_entry         *group;
     unsigned            num;
 
     num = 0;
