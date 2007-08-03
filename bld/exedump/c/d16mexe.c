@@ -276,10 +276,13 @@ static void dmp_dos16m_head_info( dos16m_exe_header *d16m_head )
     }
     if( Options_dmp & DOS_SEG_DMP ) {
         if( (d16m_head->options & OPT_AUTO) == 0 ) {
+            // no reloc info
             last_sel = sel_count;
         } else if( d16m_head->first_reloc_sel == 0 ) {
-            last_sel -= 2;
+            // RSI-1 reloc info
+            last_sel = sel_count - 2;
         } else {
+            // RSI-2 reloc info
             last_sel = ( d16m_head->first_reloc_sel - d16m_head->first_selector ) / sizeof( gdt_info );
         }
         sel = d16m_head->first_selector;
