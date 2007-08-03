@@ -50,6 +50,10 @@
   #include <new>
 #endif
 
+#ifndef _TYPEINFO_INCLUDED  
+  #include <typeinfo>
+#endif 
+
 :include throws.sp
 
 template< class Iterator, class Type >
@@ -325,6 +329,493 @@ namespace std {
   private:
     Type *ptr;
   };
+  
+  
+  namespace tr1 {
+  
+    // bad_weak_ptr class
+    // ******************
+    
+    class bad_weak_ptr : public std::exception {
+    public:
+        bad_weak_ptr( ) { }
+        virtual const char *what( ) const
+            {  return "tr1::bad_weak_ptr"; }
+    };
+    
+    
+    
+    // shared_ptr template
+    // *******************
+    
+    template< class T > class weak_ptr;
+    template< class T > class enable_shared_from_this;
+    
+    namespace detail {
+        class shared_holder;
+        template< class T > class shared_holder_ptr;
+        template< class T, class D > class shared_holder_deleter;
+
+        class static_pointer_cast_tag { };
+        class dynamic_pointer_cast_tag { };
+        class const_pointer_cast_tag { };
+    }
+  
+    template< class T > class shared_ptr {
+    public:
+        typedef T element_type;
+        
+        // constructors
+        shared_ptr( ) : ptr( 0 ), holder( 0 ) { }
+
+        template< class Y > explicit shared_ptr( Y *p ) : ptr( p )
+            {
+                try {
+                    holder = new detail::shared_holder_ptr< T >( ptr, 1 );
+                }
+                catch( ... ) {
+                    delete ptr;
+                    throw;
+                }
+                check_enable_shared_from_this( p );
+            }
+
+        template< class Y, class D > shared_ptr( Y *p, D d ) : ptr( p )
+            {
+                try {
+                    holder = new detail::shared_holder_deleter< T, D >( ptr, d, 1 );
+                }
+                catch( ... ) {
+                    d( ptr );
+                    throw;
+                }
+                check_enable_shared_from_this( p );
+            }
+
+        shared_ptr( shared_ptr const &r ) : ptr( r.ptr ), holder( r.holder )
+            {
+                if( ptr && holder )
+                    holder->increase_count( );
+            }
+        
+        template< class Y > 
+        shared_ptr( shared_ptr< Y > const &r ) : ptr( r.ptr ), holder( r.holder )
+            {
+                if( ptr && holder )
+                    holder->increase_count( );
+            }
+
+        template< class Y > 
+        explicit shared_ptr( weak_ptr< Y > const &r ) : ptr( r.ptr ), holder( r.holder )
+            {
+                if( r.expired( ) )
+                    throw bad_weak_ptr( );
+                
+                if( ptr && holder )
+                    holder->increase_count( );
+            }
+        
+        template< class Y > explicit shared_ptr( auto_ptr< Y > &r ) : ptr( r.get( ) ) 
+            {
+                holder = new detail::shared_holder_ptr< T >( ptr, 1 );
+                check_enable_shared_from_this( r.release( ) );
+            }
+
+        template< class Y > 
+        shared_ptr( shared_ptr< Y > const &r, detail::static_pointer_cast_tag& ) : 
+        ptr( static_cast< T* >( r.ptr ) ), holder( r.holder )
+            { 
+                if( ptr && holder )
+                    holder->increase_count( );
+            }
+
+        template< class Y > 
+        shared_ptr( shared_ptr< Y > const &r, detail::dynamic_pointer_cast_tag& ) : 
+        ptr( dynamic_cast< T* >( r.ptr ) ), holder( r.holder )
+            { 
+                if( ptr && holder )
+                    holder->increase_count( );
+                else
+                    holder = 0;
+            }
+
+        template< class Y > 
+        shared_ptr( shared_ptr< Y > const &r, detail::const_pointer_cast_tag& ) : 
+        ptr( const_cast< T* >( r.ptr ) ), holder( r.holder )
+            { 
+                if( ptr && holder )
+                    holder->increase_count( );
+            }
+        
+        // destructor
+        ~shared_ptr( )
+            {
+                if( holder )
+                    holder->decrease_count( );
+            }
+        
+        // assignments
+        shared_ptr& operator=( shared_ptr const& r )
+            {
+                shared_ptr( r ).swap( *this );
+                return *this;
+            }
+
+        template< class Y > shared_ptr& operator=( shared_ptr< Y > const &r )
+            {
+                shared_ptr( r ).swap( *this );
+                return *this;
+            }
+        
+        template< class Y > shared_ptr& operator=( auto_ptr< Y > &r )
+            {
+                shared_ptr( r ).swap( *this );
+                return *this;
+            }
+        
+        // modifiers
+        void swap( shared_ptr &r )
+            {
+                T *tmp_ptr = ptr;
+                detail::shared_holder *tmp_holder = holder;
+                ptr = r.ptr;
+                holder = r.holder;
+                r.ptr = tmp_ptr;
+                r.holder = tmp_holder;
+                
+                //std::swap( ptr, r.ptr );
+                //std::swap( holder, r.holder );
+            }
+        
+        void reset( )
+            {
+                shared_ptr( ).swap( *this );
+            }
+        
+        template< class Y > void reset( Y *p )
+            {
+                shared_ptr( p ).swap( *this );
+            }
+
+        template< class Y, class D > void reset( Y *p, D d )
+            {
+                shared_ptr( p, d ).swap( *this );
+            }
+        
+        // observers
+        T *get( ) const
+            { return ptr; }
+            
+        T &operator*( ) const
+            { return *ptr; }
+        
+        T *operator->( ) const
+            { return ptr; }
+            
+        long use_count( ) const
+            { return holder ? holder->use_count( ) : 0; }
+           
+        bool unique( ) const
+            { return holder && holder->use_count( ) == 1; }
+        
+        operator bool( ) const
+            { return ptr != 0; }
+
+        void *get_deleter( const type_info &ti ) const
+            { return holder ? holder->get_deleter( ti ) : 0; }
+
+        const detail::shared_holder *get_holder( ) const
+            { return holder; }
+        
+    private:
+      
+        T *ptr;
+        detail::shared_holder *holder;
+
+        void check_enable_shared_from_this( enable_shared_from_this< T > *e )
+            { if( e ) e->weak_this = *this; }
+
+        void check_enable_shared_from_this( void* ) { }
+
+        friend class shared_ptr;
+        friend class weak_ptr;
+        //friend template< class Y, class U > 
+        //bool operator< ( shared_ptr< Y > const &, shared_ptr< U > const & );
+        
+    };
+
+    
+    template< class T, class U > bool operator==( shared_ptr< T > const &a, 
+                                                  shared_ptr< U > const &b )
+    {
+        return a.get( ) == b.get( );
+    }
+    
+    template< class T, class U > bool operator!=( shared_ptr< T > const &a,
+                                                  shared_ptr< U > const &b )
+    {
+        return a.get( ) != b.get( );
+    }
+    
+    template< class T, class U > bool operator<( shared_ptr< T > const &a, 
+                                                 shared_ptr< U > const &b )
+    {
+        //return std::less< detail::shared_holder* >( )( a.holder, b.holder );
+        return a.get_holder( ) < b.get_holder( );
+    }
+    
+    /*template< class E, class T, class Y >
+    basic_ostream< E, T > &operator<<( basic_ostream< E, T > &os, 
+                                       shared_ptr< Y > const &p )
+    {
+        os << p.get( );
+    }*/
+    
+    template< class T >
+    void swap( shared_ptr< T > &a, shared_ptr< T > &b )
+    {
+        a.swap( b );
+    }
+    
+    /*template< class T, class U >
+    shared_ptr< T > static_pointer_cast( shared_ptr< U > const &r )
+    {
+        return shared_ptr< T >( r, detail::static_pointer_cast_tag( ) );        
+    }*/
+
+    /*template< class T, class U >
+    shared_ptr< T > dynamic_pointer_cast( shared_ptr< U > const &r )
+    {
+        return shared_ptr< T >( r, detail::dynamic_pointer_cast_tag( ) );
+    }*/
+
+    /*template< class T, class U >
+    shared_ptr< T > const_pointer_cast( shared_ptr< U > const &r )
+    {
+        return shared_ptr< T >( r, detail::const_pointer_cast_tag( ) );
+    }*/
+
+    /*template< class D, class T > D *get_deleter( shared_ptr< T > const &p )
+    {
+        return static_cast< D* >( p.get_deleter( typeid( D ) ) );
+    }*/
+
+    // weak_ptr template
+    // *****************
+
+    template< class T > class weak_ptr {
+    public:
+        typedef T element_type;
+
+        // constructors
+
+        weak_ptr( ) : ptr( 0 ), holder( 0 ) { }
+
+        template< class Y > 
+        weak_ptr( shared_ptr< Y > const &r ) : ptr( r.ptr ), holder( r.holder )
+            {
+                if( holder )
+                    holder->increase_weak_count( );
+            }
+
+        weak_ptr( weak_ptr const &r ) : ptr( r.ptr ), holder( r.holder ) 
+            {
+                if( holder )
+                    holder->increase_weak_count( );
+            }
+
+        template< class Y >
+        weak_ptr( weak_ptr< Y > const & r ) : ptr( r.ptr ), holder( r.holder )
+            {
+                if( holder )
+                    holder->increase_weak_count( );
+            }
+
+        ~weak_ptr( )
+            {
+                if( holder )
+                    holder->decrease_weak_count( );
+            }
+
+        // assignment
+
+        weak_ptr &operator=( weak_ptr const &r )
+            { 
+                //weak_ptr( r ).swap( *this ); 
+                return *this;
+            }
+
+        template< class Y > weak_ptr &operator=( weak_ptr< Y > const &r )
+            { 
+                //weak_ptr( r ).swap( *this ); 
+                return *this;
+            }
+
+        template< class Y > weak_ptr &operator=( shared_ptr< Y > const &r )
+            { 
+                //weak_ptr( r ).swap( *this );
+                return *this;
+            }
+
+        // modifiers
+
+        void swap( weak_ptr &r )
+            {
+                T *tmp_ptr = ptr;
+                detail::shared_holder *tmp_holder = holder;
+                ptr = r.ptr;
+                holder = r.holder;
+                r.ptr = tmp_ptr;
+                r.holder = tmp_holder;
+                
+                //std::swap( ptr, r.ptr );
+                //std::swap( holder, r.holder );
+            }
+
+        void reset( )
+            { weak_ptr( ).swap( *this ); }
+
+        // observers
+
+        long use_count( ) const
+            { return holder ? holder->use_count( ) : 0; }
+
+        bool expired( ) const
+            { return holder ? holder->use_count( ) == 0 : true; } 
+
+        shared_ptr< T > lock( ) const
+            //{ return expired( ) ? shared_ptr< T >( ) : shared_ptr< T >( *this ); }
+            { return shared_ptr< T >( ); }
+
+        const detail::shared_holder *get_holder( ) const
+            { return holder; }
+
+    private:
+        T *ptr;
+        detail::shared_holder *holder;
+
+        //friend template< class Y > class shared_ptr< Y >;
+        friend class shared_ptr;
+        //friend template< class Y > class weak_ptr;
+        friend class weak_ptr;
+        //friend template< class Y, class U >
+        //bool operator< ( weak_ptr< Y > const &, weak_ptr< U > const & );
+    };
+
+    template< class T, class U >
+    bool operator<( weak_ptr< T > const &a, weak_ptr< U > const &b )
+    {
+        //return std::less< detail::shared_holder* >( )( a.holder( ), b.holder( ) );
+        return a.get_holder( ) < b.get_holder( );
+    }
+
+
+    // enable_shared_from_this template
+    // ********************************
+
+    template< class T > class enable_shared_from_this {
+    protected:
+        enable_shared_from_this( ) { }
+        enable_shared_from_this( enable_shared_from_this const & ) { }
+        enable_shared_from_this &operator=( enable_shared_from_this const & )
+            { return *this; }
+        ~enable_shared_from_this( ) { }
+
+    public:
+        shared_ptr< T > shared_from_this( )
+            //{ return shared_ptr< T >( weak_this ); }
+            { return shared_ptr< T >( ); }
+        shared_ptr< T const > shared_from_this( ) const
+            //{ return shared_ptr< T const >( weak_this ); }
+            { return shared_ptr< T const >( ); }
+
+    private:
+        weak_ptr< T > weak_this;
+    
+        friend class shared_ptr;
+    };
+
+    namespace detail {
+
+        class shared_holder {
+        public:
+            shared_holder( long _count = 0 ) : count( _count ), weak_count( 0 ) { }
+            
+            long use_count( ) const
+                { return count; }
+                
+            void increase_count( )
+                { ++count; }
+                
+            void decrease_count( )
+                {
+                    if( !(--count) ) {
+                        delete_ptr( );
+                        if( !weak_count ) {
+                            delete this;
+                        }
+                    }
+                }
+
+            void increase_weak_count( )
+                { ++weak_count; }
+
+            void decrease_weak_count( )
+                { 
+                    if( !(--weak_count) ) {
+                        if( !count ) {
+                            delete this;
+                        }
+                    }
+                }
+
+            virtual void *get_deleter( const type_info &ti ) const
+                { return 0; }
+                
+            virtual ~shared_holder( ) { }
+                   
+        private:
+            long count;
+            long weak_count;
+            virtual void delete_ptr( ) = 0;
+        };
+
+        template< class T >
+        class shared_holder_ptr : public shared_holder {
+        public:
+            shared_holder_ptr( T *_ptr, long _count = 0 ) : 
+            shared_holder( _count), ptr( _ptr ) { }
+        
+        private:
+            virtual void delete_ptr( )
+                { delete ptr; } 
+        
+            T *ptr;
+        };
+    
+        template< class T, class D >
+        class shared_holder_deleter : public shared_holder {
+        public:
+            shared_holder_deleter( T *_ptr, D _d, long _count = 0 ) : 
+            shared_holder( _count ), ptr( _ptr ), d( _d ) { }
+
+        private:
+            T *ptr;
+            D d;
+            
+            virtual void delete_ptr( )
+                { d( ptr ); }
+
+            virtual void *get_deleter( const type_info &ti ) const
+                { 
+                    return typeid( D ) == ti ? 
+                    static_cast< void* >( const_cast< D* >(&d) ) : 0; 
+                }
+        };
+
+    } // namespace detail
+  
+  } // namespace tr1
 
 } // namespace std.
 
