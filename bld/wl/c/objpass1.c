@@ -345,8 +345,8 @@ static bool DefIncGroup( void *_def, void *_grouptab )
     class_entry     *class;
     seg_leader      *leader;
 
-    group = GetGroup( def->names[0] );
-    currname = &def->names[1];
+    group = GetGroup( def->grpname );
+    currname = def->names;
     for( index = 0; index < def->numsegs; index++ ) {
         class = FindNamedClass( *currname );
         currname++;

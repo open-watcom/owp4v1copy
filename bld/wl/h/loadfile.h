@@ -78,6 +78,7 @@ extern void             FreeOutFiles( void );
 extern void             InitBuffFile( outfilelist *outfile, char *, bool );
 extern void             OpenBuffFile( outfilelist * );
 extern void             CloseBuffFile( outfilelist * );
+extern void             SetOriginLoad( unsigned long );
 extern void             WriteLoad3( void *, char *, unsigned );
 extern void             WriteLoad( void *, unsigned long );
 extern void             PadLoad( unsigned long );

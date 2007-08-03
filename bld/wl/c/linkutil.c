@@ -267,24 +267,27 @@ void WalkLeaders( void (*rtn)( seg_leader * ) )
     ParmWalkAllSects( SectWalkClass, rtn );
 }
 
-static bool CmpSegName( void *leader, void *name )
-/************************************************/
-{
-    return( stricmp( ((seg_leader *)leader)->segname, name ) == 0 );
-}
-
 seg_leader *FindSegment( section *sect, char *name )
 /***************************************************/
-/* NOTE: this doesn't work for overlays! */
+/* NOTE: this doesn't work for overlays!
+ *
+ * sect != NULL then it works as FindFirstSegment
+ * sect == NULL then it works as FindNextSegment
+ *
+ */
 {
-    class_entry *class;
-    seg_leader  *seg;
+static seg_leader   *seg = NULL;
+static class_entry  *class = NULL;
 
-    seg = NULL;
-    for( class = sect->classlist; class != NULL; class = class->next_class ) {
-        seg = RingLookup( class->segs, CmpSegName, name );
-        if( seg != NULL ) {
-            break;
+    if( sect != NULL ) {
+        class = sect->classlist;
+        seg = NULL;
+    }
+    for( ; class != NULL; class = class->next_class ) {
+        while( (seg = RingStep( class->segs, seg )) != NULL ) {
+            if( stricmp( seg->segname, name ) == 0 ) {
+                return( seg );
+            }
         }
     }
     return( seg );

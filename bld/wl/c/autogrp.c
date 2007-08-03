@@ -161,7 +161,9 @@ static void PackClass( class_entry *class, section *sec )
         isdata = !( seg->info & SEG_CODE );
     }
     while( seg != NULL ) {
-        if( seg->group == NULL ) {
+        if( seg->info & SEG_ABSOLUTE ) {
+            PackSegs( seg, 1, seg->size, class, TRUE, FALSE );
+        } else if( seg->group == NULL ) {
             align_size = CAlign( size, seg->align );
             new_size = align_size + seg->size;
             if( ( new_size >= limit )      // group overflow 16/32-bit

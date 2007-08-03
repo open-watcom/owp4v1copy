@@ -646,21 +646,19 @@ static void ReadGroups( unsigned count, perm_read_info *info )
 {
     incgroupdef         *def;
     unsigned_32         size;
+    char                **p;
 
-    while( count > 0 ) {
+    while( count-- ) {
         size = BufReadU32( info );
-        _ChkAlloc( def, sizeof(incgroupdef) + size * 2 * sizeof(char *) );
+        _ChkAlloc( def, sizeof(incgroupdef) + (size - 1) * 2 * sizeof(char *) );
         RingAppend( &IncGroupDefs, def );
         def->numsegs = size;
-        size *= 2;
-        BufRead( info, def->names, (size + 1) * sizeof(char *) );
-        for(;;) {
-            def->names[size] = MapString( def->names[size] );
-            if( size == 0 )
-                break;
-            size--;
+        def->grpname = MapString( (char *)BufReadU32( info ) );
+        p = def->names;
+        while( size-- ) {
+            *(p++) = MapString( (char *)BufReadU32( info ) );
+            *(p++) = MapString( (char *)BufReadU32( info ) );
         }
-        count--;
     }
 }
 

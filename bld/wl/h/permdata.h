@@ -75,6 +75,7 @@ typedef struct {
 typedef struct groupdef {
     struct groupdef     *next;
     unsigned            numsegs;
+    char                *grpname;
     char                *names[1];
 } incgroupdef;
 

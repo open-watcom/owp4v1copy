@@ -194,10 +194,12 @@ static void DoCVPack( void )
 }
 #endif
 
-static seg_leader *FindStack( class_entry *class )
-/*************************************************/
+static seg_leader *FindStack( section *sect )
+/*******************************************/
 {
-    for( ; class != NULL; class = class->next_class ) {
+    class_entry *class;
+
+    for( class = sect->classlist; class != NULL; class = class->next_class ) {
         if( class->flags & CLASS_STACK ) {
             return( RingFirst( class->segs ) );
         }
@@ -211,10 +213,10 @@ static seg_leader *StackSegment( void )
 {
     seg_leader  *seg;
 
-    seg = FindStack( Root->classlist );
+    seg = FindStack( Root );
     if( seg == NULL ) {
         if( FmtData.type & MK_OVERLAYS ) {
-            seg = FindStack( NonSect->classlist );
+            seg = FindStack( NonSect );
         }
     }
     return( seg );
@@ -1081,13 +1083,13 @@ void SeekLoad( unsigned long offset )
     outfilelist         *outfile;
 
     outfile = CurrSect->outfile;
-    if( outfile->buffer != NULL && offset < outfile->bufpos ) {
+    if( outfile->buffer != NULL && offset + outfile->origin < outfile->bufpos ) {
         FlushBuffFile( outfile );
     }
     if( outfile->buffer == NULL ) {
-        QSeek( outfile->handle, offset, outfile->fname );
+        QSeek( outfile->handle, offset + outfile->origin, outfile->fname );
     } else {
-        WriteBuffer( NULL, offset - outfile->bufpos, outfile, NullBuffFunc );
+        WriteBuffer( NULL, offset + outfile->origin - outfile->bufpos, outfile, NullBuffFunc );
     }
 }
 
@@ -1109,9 +1111,9 @@ unsigned long PosLoad( void )
 /**********************************/
 {
     if( CurrSect->outfile->buffer != NULL ) {
-        return( CurrSect->outfile->bufpos );
+        return( CurrSect->outfile->bufpos - CurrSect->outfile->origin );
     } else {
-        return( QPos( CurrSect->outfile->handle ) );
+        return( QPos( CurrSect->outfile->handle ) - CurrSect->outfile->origin );
     }
 }
 
@@ -1127,6 +1129,13 @@ void InitBuffFile( outfilelist *outfile, char *filename, bool executable )
     outfile->buffer   = NULL;
     outfile->ovlfnoff = 0;
     outfile->is_exe   = executable;
+    outfile->origin   = 0;
+}
+
+void SetOriginLoad( unsigned long origin )
+/****************************************/
+{
+    CurrSect->outfile->origin = origin;
 }
 
 void OpenBuffFile( outfilelist *outfile )

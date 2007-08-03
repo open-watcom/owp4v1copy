@@ -71,7 +71,6 @@ static struct {
 
 static unsigned long NumMapSyms;
 
-static seg_leader       *FindASeg( class_entry *, char * );
 static void             SortSegments( void );
 static void             ReOrderClasses( section *sec );
 static void             AllocSeg( void * );
@@ -473,14 +472,19 @@ static void AddUpSegData( void *_sdata )
 {
     segdata     *sdata = _sdata;
     seg_leader  *leader;
-    offset      align_size;
 
     if( sdata->isdead )
         return;
     leader = sdata->u.leader;
-    align_size = CAlign( leader->size, sdata->align );
-    sdata->a.delta = align_size;
-    leader->size = align_size + sdata->length;
+    if( leader->info & SEG_ABSOLUTE ) {
+        sdata->a.delta = 0;
+        if( leader->size < sdata->length ) {
+            leader->size = sdata->length;
+        }
+    } else {
+        sdata->a.delta = CAlign( leader->size, sdata->align );
+        leader->size = sdata->a.delta + sdata->length;
+    }
     if( sdata->align > leader->align ) {
         leader->align = sdata->align;
     }
@@ -1192,7 +1196,7 @@ void SetSegFlags( seg_flags *flag_list )
     // now process individual segments   
     for( flag_list = start; flag_list != NULL; flag_list = next_one ) {
         if( flag_list->type == SEGFLAG_SEGMENT ) {
-            leader = FindASeg( Root->classlist, flag_list->name );
+            leader = FindSegment( Root, flag_list->name );
             if( leader == NULL ) {
                 LnkMsg( WRN + MSG_SEG_NAME_NOT_FOUND, "s", flag_list->name );
             } else {
@@ -1203,26 +1207,6 @@ void SetSegFlags( seg_flags *flag_list )
         _LnkFree( flag_list->name );
         _LnkFree( flag_list );
     }
-}
-
-static bool SegNameCmp( void *seg, void *seg_name )
-/*************************************************/
-{
-    return( stricmp( ((seg_leader *)seg)->segname, seg_name ) == 0 );
-}
-
-static seg_leader *FindASeg( class_entry *class, char *seg_name )
-/****************************************************************/
-{
-    seg_leader      *seg;
-
-    for( ; class != NULL; class = class->next_class ) {
-        seg = RingLookup( class->segs, SegNameCmp, seg_name );
-        if( seg != NULL ) {
-            return( seg );
-        }
-    }
-    return( NULL );
 }
 
 static bool SetClassFlag( void *seg, void *flags )
