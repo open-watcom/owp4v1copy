@@ -1589,7 +1589,7 @@ typedef IQuickActivate  *LPQUICKACTIVATE;
     #define IFontEventsDisp_GetIDsOfNames( x, p1, p2, p3, p4, p5 ) \
         (x)->lpVtbl->GetIDsOfNames( x, p1, p2, p3, p4, p5 )
     #define IFontEventsDisp_Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->lpVtbl->Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 )#endif
+        (x)->lpVtbl->Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 )
     #define IFontDisp_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IFontDisp_AddRef( x ) \
@@ -1603,7 +1603,7 @@ typedef IQuickActivate  *LPQUICKACTIVATE;
     #define IFontDisp_GetIDsOfNames( x, p1, p2, p3, p4, p5 ) \
         (x)->lpVtbl->GetIDsOfNames( x, p1, p2, p3, p4, p5 )
     #define IFontDisp_Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 ) \
-        (x)->lpVtbl->Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 )#endif
+        (x)->lpVtbl->Invoke( x, p1, p2, p3, p4, p5, p6, p7, p8 )
     #define IPictureDisp_QueryInterface( x, p1, p2 ) \
         (x)->lpVtbl->QueryInterface( x, p1, p2 )
     #define IPictureDisp_AddRef( x ) \
