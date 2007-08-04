@@ -39,11 +39,11 @@
 #include "cmd16m.h"
 #include "wlnkmsg.h"
 
-extern int		ProcOne( parse_entry *, sep_type, bool );
-extern bool		GetLong( unsigned_32 * );
+extern int          ProcOne( parse_entry *, sep_type, bool );
+extern bool         GetLong( unsigned_32 * );
 
-extern tok	    Token;
-extern byte	    Extension;
+extern tok          Token;
+extern byte         Extension;
 
 extern parse_entry  Strategies[];
 extern parse_entry  TransTypes[];
@@ -178,7 +178,8 @@ extern bool ProcBuffer( void )
 {
     unsigned_32 value;
 
-    if( !GetLong( &value ) ) return( FALSE );
+    if( !GetLong( &value ) )
+        return( FALSE );
     if( value < 1024 || value > 32768 ) {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "buffer" );
     } else {
@@ -192,10 +193,11 @@ extern bool ProcGDTSize( void )
 {
     unsigned_32 value;
 
-    if( !GetLong( &value ) ) return( FALSE );
+    if( !GetLong( &value ) )
+        return( FALSE );
     if( (value & 8) != 0 ) {
-    	LnkMsg( LOC+LINE+WRN+MSG_NOT_MULTIPLE_OF_8, "s", "gdtsize" );
-    	value &= ~8;
+        LnkMsg( LOC+LINE+WRN+MSG_NOT_MULTIPLE_OF_8, "s", "gdtsize" );
+        value &= ~8;
     }
     if( value > 65536 ) {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "gdtsize" );
@@ -231,10 +233,11 @@ extern bool ProcSelStart( void )
 {
     unsigned_32 value;
 
-    if( !GetLong( &value ) ) return( FALSE );
+    if( !GetLong( &value ) )
+        return( FALSE );
     if( (value & 8) != 0 ) {
         LnkMsg( LOC+LINE+WRN+MSG_NOT_MULTIPLE_OF_8, "s", "selstart" );
-	    value &= ~8;
+        value &= ~8;
     }
     if( value > 65536 || value < D16M_USER_SEL ) {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "selstart" );
@@ -249,7 +252,8 @@ extern bool ProcExtended( void )
 {
     unsigned_32 value;
 
-    if( !GetLong( &value ) ) return( FALSE );
+    if( !GetLong( &value ) )
+        return( FALSE );
     value >>= 10;      // value should be in K.
     if( value > 65535 ) {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "extended" );
@@ -264,12 +268,13 @@ extern bool ProcDataSize( void )
 {
     unsigned_32 value;
 
-    if( !GetLong( &value ) ) return( FALSE );
+    if( !GetLong( &value ) )
+        return( FALSE );
     if( value > 65536 ) {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "datasize" );
     } else {
-    	FmtData.u.d16m.datasize = (value + 15) >> 4;
-    	FmtData.u.d16m.flags |= DATASIZE_SPECD;
+        FmtData.u.d16m.datasize = (value + 15) >> 4;
+        FmtData.u.d16m.flags |= DATASIZE_SPECD;
     }
     return( TRUE );
 }
@@ -277,13 +282,13 @@ extern bool ProcDataSize( void )
 extern void SetD16MFmt( void )
 /****************************/
 {
-    LinkState &= ~MAKE_RELOCS;	      // assume none being produced.
+    LinkState &= ~MAKE_RELOCS;              // assume none being produced.
     Extension = E_PROTECT;
     FmtData.u.d16m.options = 0;
     FmtData.u.d16m.flags = 0;
     FmtData.u.d16m.strategy = MNoStrategy;
     FmtData.u.d16m.buffer = 0;
-    FmtData.u.d16m.gdtsize = 0xFFFF;	     // 64 K - 1.
+    FmtData.u.d16m.gdtsize = 0xFFFF;        // 64 K - 1.
     FmtData.u.d16m.selstart = D16M_USER_SEL;
     FmtData.u.d16m.extended = 0x7FFF;
     FmtData.u.d16m.datasize = 0x1000;
