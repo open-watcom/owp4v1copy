@@ -141,10 +141,10 @@ typedef struct os2_exe_header {
 #define WIN_GANGLOAD_PRESENT    0x08
 
 typedef struct segment_record {
-    unsigned_16         address;        /* segment position within file     */
-    unsigned_16         size;           /* segment length in bytes          */
-    unsigned_16         info;           /* various flags (see below)        */
-    unsigned_16         min;            /* minimum allocation (size in mem) */
+    unsigned_16         address;        /* segment position within file           */
+    unsigned_16         size;           /* segment length in bytes (size in file) */
+    unsigned_16         info;           /* various flags (see below)              */
+    unsigned_16         min;            /* minimum allocation (size in mem)       */
 } segment_record;
 
 /******************************************************************************

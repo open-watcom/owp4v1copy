@@ -73,7 +73,7 @@ typedef enum exe_format {       // there is a corresp. table in MSG.C
 #define MK_IMPORTS   (MK_NOVELL | MK_OS2 | MK_PE | MK_ELF)
 #define MK_SPLIT_DATA (MK_ELF | MK_PE)
 #define MK_LINEARIZE (MK_ELF | MK_PE)
-#define MK_END_PAD   (MK_286)
+#define MK_END_PAD   (MK_DOS)
 #define MK_ALL       (0x0003FFFF)
 
 #define IS_PPC_PE   ( LinkState & HAVE_PPC_CODE && FmtData.type & MK_PE )
