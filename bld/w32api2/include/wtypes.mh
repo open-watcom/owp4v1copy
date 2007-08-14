@@ -290,13 +290,7 @@ typedef struct tagBSTRBLOB {
 } BSTRBLOB;
 typedef BSTRBLOB    *LPBSTRBLOB;
 
-/* Blob */
-typedef struct tagBLOB {
-    ULONG   cbSize;
-    BYTE    *pBlobData;
-} BLOB;
-typedef BLOB    *LPBLOB;
-
+:include blob.sp
 /* Clipboard data */
 typedef struct tagCLIPDATA {
     ULONG   cbSize;

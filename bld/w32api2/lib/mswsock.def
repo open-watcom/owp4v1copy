@@ -1,0 +1,6 @@
+LIBRARY MSWSOCK.DLL
+EXPORTS
+AcceptEx
+GetAcceptExSockaddrs
+TransmitFile
+WSARecvEx

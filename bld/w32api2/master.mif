@@ -8,6 +8,7 @@ proj_name = w32api
 
 splice = wsplice -i$(hdr_dir) -i../include $[@ $^@
 rsplice = wsplice -i$(hdr_dir) -i../include -kRESOURCE $[@ $^@
+ws2splice = wsplice -i$(hdr_dir) -i../include -kWINSOCK2 $[@ $^@
 
 headers =            &
         accctrl.h    &
@@ -88,6 +89,7 @@ headers =            &
         mq.h         &
         msacm.h      &
         mshtml.h     &
+        mswsock.h    &
         msxml.h      &
         naptypes.h   &
         nb30.h       &
@@ -152,6 +154,7 @@ headers =            &
         winscard.h   &
         winsmcrd.h   &
         winsock.h    &
+        winsock2.h   &
         winspool.h   &
         winsvc.h     &
         wintrust.h   &
@@ -179,6 +182,9 @@ all : $(headers) $(libs) .SYMBOLIC
 
 .mh.rh:
     $(rsplice)
+
+winsock2.h: winsock.mh
+    $(ws2splice)
 
 largeint.lib: largeint.obj
     %create $^&.lbc
