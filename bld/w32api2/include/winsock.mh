@@ -822,6 +822,7 @@ typedef WSACOMPLETION   *LPWSACOMPLETION;
 #endif
 
 :include blob.sp
+
 /* Address family protocols */
 typedef struct _AFPROTOCOLS {
     INT iAddressFamily;

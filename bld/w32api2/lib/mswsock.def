@@ -1,6 +1,18 @@
 LIBRARY MSWSOCK.DLL
 EXPORTS
 AcceptEx
+EnumProtocolsA
+EnumProtocolsW
 GetAcceptExSockaddrs
+GetAddressByNameA
+GetAddressByNameW
+GetNameByTypeA
+GetNameByTypeW
+GetServiceA
+GetServiceW
+GetTypeByNameA
+GetTypeByNameW
+SetServiceA
+SetServiceW
 TransmitFile
 WSARecvEx

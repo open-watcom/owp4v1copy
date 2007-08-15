@@ -7,4 +7,3 @@ typedef struct tagBLOB {
 } BLOB;
 typedef BLOB    *LPBLOB;
 #endif /* _BLOB_DEFINED */
-

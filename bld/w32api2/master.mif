@@ -95,6 +95,7 @@ headers =            &
         nb30.h       &
         ncrypt.h     &
         nldef.h      &
+        nspapi.h     &
         oaidl.h      &
         objbase.h    &
         objidl.h     &
