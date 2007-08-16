@@ -94,6 +94,7 @@ headers =            &
         naptypes.h   &
         nb30.h       &
         ncrypt.h     &
+        nddeapi.h    &
         nldef.h      &
         nspapi.h     &
         oaidl.h      &
@@ -125,6 +126,7 @@ headers =            &
         rpcnsip.h    &
         rpcnsi.h     &
         rpcnterr.h   &
+        schedule.h   &
         servprov.h   &
         shellapi.h   &
         shtypes.h    &
