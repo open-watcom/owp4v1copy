@@ -91,19 +91,10 @@ void CheckClassOrder( void )
 /* Reorder the classes if DOSSEG flag set or ORDER directive given */
 {
     SortSegments();
-    if( Root->orderlist != NULL ) {
-       SortClasses( Root );
-    }
-    else if( LinkState & DOSSEG_FLAG ) {
-       ReOrderClasses( Root );
-    }
-}
-
-static void ReOrderAreas( OVL_AREA *ovl )
-/***************************************/
-{
-    for( ; ovl != NULL; ovl = ovl->next_area ) {
-        ReOrderClasses( ovl->sections );
+    if( LinkState & SPEC_ORDER_FLAG ) {
+       ProcAllSects( SortClasses );
+    } else if( LinkState & DOSSEG_FLAG ) {
+       ProcAllSects( ReOrderClasses );
     }
 }
 
@@ -139,99 +130,88 @@ static void ReOrderClasses( section *sec )
     int                 i;
     int                 ord;
 
-    for( ; sec != NULL; sec = sec->next_sect ) {
-        for( i = ORD_FIRST; i <= ORD_LAST; ++i ) {
-            rings[i] = NULL;
-        }
-        for( currcl = sec->classlist; currcl != NULL; currcl = nextcl ) {
-            nextcl = currcl->next_class;  // Take class out of original ring
-            currcl->next_class = NULL;
-            CheckClassUninitialized( currcl );
-            if( ( FmtData.type & ( MK_NOVELL | MK_PHAR_LAP | MK_OS2_LX ) )
-                && !( currcl->flags & CLASS_32BIT ) ) {
-                ord = ORD_REALMODE;
-            } else {
-                name = currcl->name;
-                if( currcl->flags & CLASS_CODE ) {
-                    if( stricmp( name, OvlMgrClass ) == 0 ) {
-                        ord = ORD_OVLMGR;
-                    } else if( stricmp( name, BegCodeClassName ) == 0 ) {
-                        ord = ORD_BEGCODE;
-                    } else {
-                        ord = ORD_CODE;
-                    }
-                } else if( ( currcl->segs == NULL )
-                    || ( currcl->segs->group == NULL )
-                    || ( currcl->segs->group != DataGroup ) ) {
-                    ord = ORD_OTHER;
-                } else {     // it's the DGROUP segments.
-                    if( stricmp( name, BSSClassName ) == 0 ) {
-                        ord = ORD_BSS;
-                    } else if( stricmp( name, StackClassName ) == 0 ) {
-                        ord = ORD_STACK;
-                    } else if( stricmp( name, BegDataClassName ) == 0 ) {
-                        ord = ORD_BEGDGROUP;
-                    } else if( stricmp( name, DataClassName ) == 0 ) {
-                        ord = ORD_DATA;
-                    } else if( currcl->flags & CLASS_LXDATA_SEEN ) {
-                        ord = ORD_INITDGROUP;
-                    } else {
-                        ord = ORD_UNINITDGROUP;
-                    }
+    for( i = ORD_FIRST; i <= ORD_LAST; ++i ) {
+        rings[i] = NULL;
+    }
+    for( currcl = sec->classlist; currcl != NULL; currcl = nextcl ) {
+        nextcl = currcl->next_class;  // Take class out of original ring
+        currcl->next_class = NULL;
+        CheckClassUninitialized( currcl );
+        if( ( FmtData.type & ( MK_NOVELL | MK_PHAR_LAP | MK_OS2_LX ) )
+            && !( currcl->flags & CLASS_32BIT ) ) {
+            ord = ORD_REALMODE;
+        } else {
+            name = currcl->name;
+            if( currcl->flags & CLASS_CODE ) {
+                if( stricmp( name, OvlMgrClass ) == 0 ) {
+                    ord = ORD_OVLMGR;
+                } else if( stricmp( name, BegCodeClassName ) == 0 ) {
+                    ord = ORD_BEGCODE;
+                } else {
+                    ord = ORD_CODE;
+                }
+            } else if( ( currcl->segs == NULL )
+                || ( currcl->segs->group == NULL )
+                || ( currcl->segs->group != DataGroup ) ) {
+                ord = ORD_OTHER;
+            } else {     // it's the DGROUP segments.
+                if( stricmp( name, BSSClassName ) == 0 ) {
+                    ord = ORD_BSS;
+                } else if( stricmp( name, StackClassName ) == 0 ) {
+                    ord = ORD_STACK;
+                } else if( stricmp( name, BegDataClassName ) == 0 ) {
+                    ord = ORD_BEGDGROUP;
+                } else if( stricmp( name, DataClassName ) == 0 ) {
+                    ord = ORD_DATA;
+                } else if( currcl->flags & CLASS_LXDATA_SEEN ) {
+                    ord = ORD_INITDGROUP;
+                } else {
+                    ord = ORD_UNINITDGROUP;
                 }
             }
-            /* add the class to the appropriate ring */
-            /* 'rings[ord]' points to the _last_ element of the ring */
-            if( rings[ord] == NULL ) {
-                currcl->next_class = currcl;
-            } else {
-                currcl->next_class = rings[ord]->next_class;
-                rings[ord]->next_class = currcl;
-            }
-            rings[ord] = currcl;
         }
+        /* add the class to the appropriate ring */
+        /* 'rings[ord]' points to the _last_ element of the ring */
+        if( rings[ord] == NULL ) {
+            currcl->next_class = currcl;
+        } else {
+            currcl->next_class = rings[ord]->next_class;
+            rings[ord]->next_class = currcl;
+        }
+        rings[ord] = currcl;
+    }
 
-        /* move the BEGTEXT segment in CODE class to front of segment list */
-        currcl = rings[ORD_CODE];
-        if( currcl != NULL ) {
-            do {
-                prevseg = currcl->segs;
-                if( prevseg == NULL )
+    /* move the BEGTEXT segment in CODE class to front of segment list */
+    currcl = rings[ORD_CODE];
+    if( currcl != NULL ) {
+        do {
+            prevseg = currcl->segs;
+            if( prevseg == NULL )
+                break;
+            currseg = prevseg->next_seg;
+            for( ;; ) {
+                if( stricmp( currseg->segname, BegTextSegName ) == 0 ) {
+                    RingPromote( &currcl->segs, currseg, prevseg );
                     break;
-                currseg = prevseg->next_seg;
-                for( ;; ) {
-                    if( stricmp( currseg->segname, BegTextSegName ) == 0 ) {
-                        RingPromote( &currcl->segs, currseg, prevseg );
-                        break;
-                    }
-                    if( currseg == currcl->segs )
-                        break;
-                    prevseg = currseg;
-                    currseg = currseg->next_seg;
                 }
-                currcl = currcl->next_class;
-            } while( currcl != rings[ORD_CODE] );
-        }
-
-        /* now construct list out of the collected parts. */
-        owner = &sec->classlist;
-        for( i = ORD_FIRST; i <= ORD_LAST; ++i ) {
-            if( rings[i] != NULL ) {
-                *owner = rings[i]->next_class;
-                owner = &rings[i]->next_class;
+                if( currseg == currcl->segs )
+                    break;
+                prevseg = currseg;
+                currseg = currseg->next_seg;
             }
-        }
-        *owner = NULL;
-        ReOrderAreas( sec->areas );
+            currcl = currcl->next_class;
+        } while( currcl != rings[ORD_CODE] );
     }
-}
 
-static void SortAreas( OVL_AREA *ovl )
-/***************************************/
-{
-    for( ; ovl != NULL; ovl = ovl->next_area ) {
-        SortClasses( ovl->sections );
+    /* now construct list out of the collected parts. */
+    owner = &sec->classlist;
+    for( i = ORD_FIRST; i <= ORD_LAST; ++i ) {
+        if( rings[i] != NULL ) {
+            *owner = rings[i]->next_class;
+            owner = &rings[i]->next_class;
+        }
     }
+    *owner = NULL;
 }
 
 static void SortClasses( section *sec )
@@ -254,95 +234,92 @@ static void SortClasses( section *sec )
 
     DefaultRing = NULL;
 
-    for( ; sec != NULL; sec = sec->next_sect ) {
-        for( currcl = sec->classlist; currcl != NULL; currcl = nextcl ) {
-            nextcl = currcl->next_class;  // Take class out of original ring
-            currcl->next_class = NULL;
-            CheckClassUninitialized( currcl );
-            NewRing = &DefaultRing;  // In case no special class is found
-            for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
-                if( stricmp( currcl->name, MatchClass->Name ) == 0 ) { // search order list for name match
-                    NewRing = &(MatchClass->Ring);   // if found save ptr to instance
-                    if( MatchClass->FixedAddr) {     // and copy any flags or address from it
-                        currcl->flags |= CLASS_FIXED;
-                        currcl->BaseAddr = MatchClass->Base;
-                        FmtData.base = 0;  // Otherwise PE will use default and blow up
+    for( currcl = sec->classlist; currcl != NULL; currcl = nextcl ) {
+        nextcl = currcl->next_class;  // Take class out of original ring
+        currcl->next_class = NULL;
+        CheckClassUninitialized( currcl );
+        NewRing = &DefaultRing;  // In case no special class is found
+        for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
+            if( stricmp( currcl->name, MatchClass->Name ) == 0 ) { // search order list for name match
+                NewRing = &(MatchClass->Ring);   // if found save ptr to instance
+                if( MatchClass->FixedAddr) {     // and copy any flags or address from it
+                    currcl->flags |= CLASS_FIXED;
+                    currcl->BaseAddr = MatchClass->Base;
+                    FmtData.base = 0;  // Otherwise PE will use default and blow up
+                }
+                if( MatchClass->NoEmit ) {
+                    currcl->flags |= CLASS_NOEMIT;
+                }
+                break;
+            }
+        }
+        // add the class to front of ring attached to order class, or to default ring
+        if( *NewRing == NULL ) {
+            currcl->next_class = currcl;
+        } else {
+            currcl->next_class = (*NewRing)->next_class;
+            (*NewRing)->next_class = currcl;
+        }
+        *NewRing = currcl;
+    }
+    // Now re-arrange segments in any order classes for which we have segments specified
+    for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
+        for( MatchSeg = MatchClass->SegList; MatchSeg != NULL; MatchSeg = MatchSeg->NextSeg ) {
+           currcl = MatchClass->Ring;
+            do {
+                prevseg = currcl->segs;
+                if( prevseg == NULL )
+                    break;
+                currseg = prevseg->next_seg;
+
+                for( ;; ) {
+                    if( stricmp( currseg->segname, MatchSeg->Name ) == 0 ) {
+                        if( MatchSeg->FixedAddr) {     // and copy any flags or address from it
+                            currseg->segflags |= SEG_FIXED;
+                            currseg->seg_addr = MatchSeg->Base;
+                        }
+                        if( MatchSeg->NoEmit ) {
+                            currseg->segflags |= SEG_NOEMIT;
+                        }
+                        RingPromote( &currcl->segs, currseg, prevseg );
+                        break;
                     }
-                    if( MatchClass->NoEmit ) {
-                        currcl->flags |= CLASS_NOEMIT;
+                    if( currseg == currcl->segs ) {
+                        break;
                     }
+                    prevseg = currseg;
+                    currseg = currseg->next_seg;
+                }
+                currcl = currcl->next_class;
+            } while( currcl != MatchClass->Ring );
+        }
+    }
+    /* now construct list out of the collected parts. */
+    owner = &sec->classlist;
+    for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
+        if( MatchClass->Ring != NULL ) {
+            *owner = MatchClass->Ring->next_class;
+            owner = &(MatchClass->Ring->next_class);
+        }
+    }
+    if( DefaultRing != NULL ) { // Finish with unmatched ones
+        *owner = DefaultRing->next_class;
+        owner = &(DefaultRing->next_class);
+    }
+    *owner = NULL;
+    // This has to happen after the class list is rebuilt, so it can be searched
+    for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
+         if( MatchClass->Copy && MatchClass->Ring != NULL ) {   // If this is a duplicate destination, find the source
+             for( currcl = sec->classlist; currcl != NULL; currcl = currcl->next_class ) {
+                if( stricmp( MatchClass->SrcName, currcl->name ) == 0 ) {
+                    MatchClass->Ring->DupClass = currcl;
+                    MatchClass->Ring->flags |= CLASS_COPY;
                     break;
                 }
             }
-            // add the class to front of ring attached to order class, or to default ring
-            if( *NewRing == NULL ) {
-                currcl->next_class = currcl;
-            } else {
-                currcl->next_class = (*NewRing)->next_class;
-                (*NewRing)->next_class = currcl;
-            }
-            *NewRing = currcl;
         }
-        // Now re-arrange segments in any order classes for which we have segments specified
-        for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
-            for( MatchSeg = MatchClass->SegList; MatchSeg != NULL; MatchSeg = MatchSeg->NextSeg ) {
-               currcl = MatchClass->Ring;
-                do {
-                    prevseg = currcl->segs;
-                    if( prevseg == NULL )
-                        break;
-                    currseg = prevseg->next_seg;
-
-                    for( ;; ) {
-                        if( stricmp( currseg->segname, MatchSeg->Name ) == 0 ) {
-                            if( MatchSeg->FixedAddr) {     // and copy any flags or address from it
-                                currseg->segflags |= SEG_FIXED;
-                                currseg->seg_addr = MatchSeg->Base;
-                            }
-                            if( MatchSeg->NoEmit ) {
-                                currseg->segflags |= SEG_NOEMIT;
-                            }
-                            RingPromote( &currcl->segs, currseg, prevseg );
-                            break;
-                        }
-                        if( currseg == currcl->segs ) {
-                            break;
-                        }
-                        prevseg = currseg;
-                        currseg = currseg->next_seg;
-                    }
-                    currcl = currcl->next_class;
-                } while( currcl != MatchClass->Ring );
-            }
-        }
-        /* now construct list out of the collected parts. */
-        owner = &sec->classlist;
-        for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
-            if( MatchClass->Ring != NULL ) {
-                *owner = MatchClass->Ring->next_class;
-                owner = &(MatchClass->Ring->next_class);
-            }
-        }
-        if( DefaultRing != NULL ) { // Finish with unmatched ones
-            *owner = DefaultRing->next_class;
-            owner = &(DefaultRing->next_class);
-        }
-        *owner = NULL;
-        // This has to happen after the class list is rebuilt, so it can be searched
-        for( MatchClass = sec->orderlist; MatchClass != NULL; MatchClass = MatchClass->NextClass ) {
-             if( MatchClass->Copy && MatchClass->Ring != NULL ) {   // If this is a duplicate destination, find the source
-                 for( currcl = sec->classlist; currcl != NULL; currcl = currcl->next_class ) {
-                    if( stricmp( MatchClass->SrcName, currcl->name ) == 0 ) {
-                        MatchClass->Ring->DupClass = currcl;
-                        MatchClass->Ring->flags |= CLASS_COPY;
-                        break;
-                    }
-                }
-            }
-        }
-
-        SortAreas( sec->areas ); // Not tested, not sure if needed
     }
+
 }
 
 static bool CheckLxdataSeen( void *_seg, void *dummy )

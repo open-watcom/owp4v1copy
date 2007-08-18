@@ -1425,6 +1425,7 @@ bool ProcOrdClass( void )
     if( !GetToken( SEP_NO, TOK_INCLUDE_DOT ) ) {
         return( FALSE );
     }
+    LinkState |= SPEC_ORDER_FLAG;
     LastOClass = CurrOClass;
     _ChkAlloc( CurrOClass, sizeof(ORDER_CLASS));
     if(LastOClass == NULL) {
