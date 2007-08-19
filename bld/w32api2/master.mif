@@ -97,6 +97,7 @@ headers =            &
         nddeapi.h    &
         nldef.h      &
         nspapi.h     &
+        ntdsapi.h    &
         oaidl.h      &
         objbase.h    &
         objidl.h     &
