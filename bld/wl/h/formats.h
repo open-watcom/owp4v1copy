@@ -147,13 +147,14 @@ struct fmt_pe_data {
 
 struct fmt_d16m_data {
     unsigned_16     options;
-    unsigned_8      flags;                  // in load16m.h
+    unsigned_8      flags;              // in load16m.h
     unsigned_8      strategy;
     unsigned_16     buffer;
     unsigned_16     gdtsize;
     unsigned_16     selstart;
     unsigned_16     extended;
     unsigned_16     datasize;
+    char            *stub;              // name of stub file.
 };
 
 // stuff common to some file formats which have the concept of an export

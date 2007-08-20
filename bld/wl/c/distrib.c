@@ -42,7 +42,7 @@
 #include "ring.h"
 #include "distrib.h"
 #include "specials.h"
-
+#include "load16m.h"
 
 static unsigned_16  CurrModThere;
 static arcdata *    ArcBuffer;
@@ -184,6 +184,9 @@ void SetSegments( void )
 // now that we know where everything is, do all the processing that has been
 // postponed until now.
 {
+    if( FmtData.type & MK_DOS16M ) {
+        MakeDos16PM();
+    }
     if( !( LinkFlags & STRIP_CODE ) )
         return;
     LinkState &= ~CAN_REMOVE_SEGMENTS;

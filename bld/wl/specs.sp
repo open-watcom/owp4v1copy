@@ -660,3 +660,12 @@ system begin zrdx
     format os2 le
 :endsegment
 end
+system begin dos16m
+:segment Pspecs
+    wcc -bt=dos 
+:elsesegment Pwlsystem
+    libpath %WATCOM%/lib286
+    libpath %WATCOM%/lib286/dos
+    format dos16m runtime auto ^
+:endsegment
+end

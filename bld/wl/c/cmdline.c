@@ -664,7 +664,7 @@ struct select_format {
 static struct select_format PossibleFmt[] = {
     MK_DOS,         "LIBDOS",       NULL,           NULL,
 #ifdef _DOS16M
-    MK_DOS16M,	    "LIBDOS16M",    SetD16MFmt,     NULL,
+    MK_DOS16M,	    "LIBDOS16M",    SetD16MFmt,     FreeD16MFmt,
 #endif
 #ifdef _QNXLOAD
     MK_QNX,         "LIBQNX",       SetQNXFmt,      FreeQNXFmt,

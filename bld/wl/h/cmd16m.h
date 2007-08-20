@@ -53,4 +53,5 @@ extern bool     ProcSelStart( void );
 extern bool     ProcExtended( void );
 extern bool     ProcDataSize( void );
 extern void     SetD16MFmt( void );
+extern void     FreeD16MFmt( void );
 extern bool     Proc16M( void );

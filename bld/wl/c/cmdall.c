@@ -1121,6 +1121,8 @@ bool ProcStub( void )
 
     if( HintFormat( MK_OS2 | MK_PE | MK_WIN_VXD ) ) {
         nameptr = &FmtData.u.os2.stub_file_name;
+    } else if( HintFormat( MK_DOS16M ) ) {
+        nameptr = &FmtData.u.d16m.stub;
     } else {    /* it must be pharlap */
         nameptr = &FmtData.u.phar.stub;
         Extension = E_LOAD;     /* want .exe instead of .exp now */

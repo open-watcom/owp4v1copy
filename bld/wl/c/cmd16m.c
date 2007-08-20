@@ -195,9 +195,9 @@ extern bool ProcGDTSize( void )
 
     if( !GetLong( &value ) )
         return( FALSE );
-    if( (value & 8) != 0 ) {
+    if( (value % 8) != 0 ) {
         LnkMsg( LOC+LINE+WRN+MSG_NOT_MULTIPLE_OF_8, "s", "gdtsize" );
-        value &= ~8;
+        value &= -8;
     }
     if( value > 65536 ) {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_TOO_LARGE, "s", "gdtsize" );
@@ -235,9 +235,9 @@ extern bool ProcSelStart( void )
 
     if( !GetLong( &value ) )
         return( FALSE );
-    if( (value & 8) != 0 ) {
+    if( (value % 8) != 0 ) {
         LnkMsg( LOC+LINE+WRN+MSG_NOT_MULTIPLE_OF_8, "s", "selstart" );
-        value &= ~8;
+        value &= -8;
     }
     if( value > 65536 || value < D16M_USER_SEL ) {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "selstart" );
@@ -292,6 +292,13 @@ extern void SetD16MFmt( void )
     FmtData.u.d16m.selstart = D16M_USER_SEL;
     FmtData.u.d16m.extended = 0x7FFF;
     FmtData.u.d16m.datasize = 0x1000;
+    FmtData.u.d16m.stub = NULL;
+}
+
+extern void FreeD16MFmt( void )
+/*****************************/
+{
+    _LnkFree( FmtData.u.d16m.stub );
 }
 
 extern bool Proc16M( void )

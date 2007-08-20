@@ -44,3 +44,4 @@ extern void     Fini16MLoadFile( void );
 extern unsigned NextDos16Seg( void );
 extern segment  Find16MSeg( segment selector );
 extern void     CalcGrpSegs( void );
+extern void     MakeDos16PM( void );
