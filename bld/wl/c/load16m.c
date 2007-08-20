@@ -155,8 +155,6 @@ static void write_sel_reloc( unsigned_16 sel, reloc_addr *block_start, reloc_add
     unsigned_16     block_cnt;
 
     if( sel != 0 ) {
-        if( sel == DataGroup->grp_addr.seg )   // DGROUP is shared (global)
-            sel |= 0x02;
         WriteLoad( &sel, sizeof( sel ) );
         block_cnt = block_end - block_start;
         WriteLoad( &block_cnt, sizeof( block_cnt ) );
@@ -208,9 +206,15 @@ static unsigned GetRelocBlock( reloc_addr **reloc_data )
     return( 0 );
 }
 
-// relocations for DOS/16 are stored internally in one virtual memory block,
-// with the segment selectors being stored in the first half of the memory
-// block, and the segment offsets being stored in the second half (RSI-1 style).
+// There are two types of relocations for DOS/16M. Old style or RSI-1 relocs
+// are stored internally in one virtual memory block, with the segment selectors 
+// being stored in the first half of the memory block, and the segment offsets 
+// being stored in the second half. These are limited to 32K relocs.
+// Newer style or "huge" RSI-2 relocs are stored in one or more consecutive
+// segments. First is the selector, then a count word, followed by offsets within
+// the selector. This sequence is repeated for other selectors. The last selector
+// in the list has bit 1 set (selector numbers are multiples of 8 so the 
+// low four bits are unused).
 
 static unsigned_32 Write16MRelocs( reloc_addr *reloc_data )
 /*********************************************************************/
@@ -243,7 +247,7 @@ static unsigned_32 Write16MRelocs( reloc_addr *reloc_data )
                 sel = reloc_data[i].seg;
             }
         }
-        write_sel_reloc( sel, reloc_data + block_start, reloc_data + i );
+        write_sel_reloc( sel | 0x02, reloc_data + block_start, reloc_data + i );
     }
     return( NullAlign( 0x10 ) - pos );
 }
