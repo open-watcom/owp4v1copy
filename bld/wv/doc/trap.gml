@@ -1567,6 +1567,18 @@ The structure is defined as follows:
 :eXMP.
 The :F.segment:eF. field contains the segment of the address and the :F.offset:eF.
 field stores the offset of the address.
+:DT.ovl_address
+:DD.This type contains the overlay address and
+the number of entries down in the overlay stack.
+The structure is defined as follows:
+:XMP.
+    typedef struct {
+        addr32_ptr  mach;
+        unsigned_16 sect_id;
+    } ovl_address;
+:eXMP.
+The :F.mach:eF. field is the machine address. The :F.sect_id:eF.
+field stores the address section number.
 :eDL.
 .beglevel
 .section REQ_OVL_STATE_SIZE (0)
@@ -1675,15 +1687,6 @@ Request message:
     ovl_address     ovl_addr
 :eXMP.
 :PC.
-The :F.ovl_addr:eF. field contains the overlay address. The :F.ovl_addr:eF.
-field is defined as follows:
-:XMP.
-    typedef struct {
-        addr32_ptr  mach;
-        unsigned_16 sect_id;
-    }
-:eXMP.
-:PC.
 The :F.mach:eF. field is the machine address. The :F.sect_id:eF.
 field stores the number of entries down in the overlay stack.
 :P.
@@ -1694,7 +1697,7 @@ Return message:
 :PC.
 The translated address will be returned in the :F.ovl_addr:eF. field.
 If the address is not an overlay vector, then the input address will be
-returned and the :F.section_id:eF. field will be zero.
+returned and the :F.sect_id:eF. field will be zero.
 .section REQ_OVL_TRANS_RET_ADDR (5)
 Request to check if the address is the overlay manager parallel return
 code.
@@ -1716,7 +1719,7 @@ Return message:
 :PC.
 The translated address will be returned in the :F.ovl_addr:eF. field.
 If the address is not an parallel return code, then the input address will be
-returned and the :F.section_id:eF. field in the structure :F.ovl_addr:eF. will
+returned and the :F.sect_id:eF. field in the structure :F.ovl_addr:eF. will
 be zero.
 .section REQ_OVL_GET_REMAP_ENTRY (6)
 Request to check if the overlay address needs to be remapped.
