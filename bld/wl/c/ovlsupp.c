@@ -51,7 +51,6 @@
 #include "overlays.h"
 #include "ring.h"
 #include "specials.h"
-#include "ovlsupp.h"
 
 static segdata      *OvlSegData;
 static symbol       *OverlayTable;   /* symbol entry for overlay table */
@@ -67,8 +66,6 @@ static void         AllocAreas( OVL_AREA *area );
 static void         ShortVectors( symbol *loadsym );
 static void         LongVectors( symbol *loadsym );
 static void         PutOvlInfo( unsigned off, void *src, unsigned len );
-
-static unsigned     EmitOvlAreaEntry( unsigned off, OVL_AREA *area );
 
 void ResetOvlSupp( void )
 /******************************/
@@ -718,42 +715,30 @@ void OvlPass1( void )
     sym->u.d.ovlstate |= OVL_REF;
 }
 
-static unsigned EmitOvlEntry( unsigned off, section *sect )
+static void EmitOvlEntry( section *sect, void *_off )
 /*********************************************************/
 {
     ovltab_entry        entry;
     offset              len;
     unsigned_16         flags_anc;
     unsigned_16         start_para;
+    unsigned            *off = _off;
 
     _HostU16toTarg( 0, entry.code_handle );
-    for( ; sect != NULL; sect = sect->next_sect ) {/* write out table entry */
-        flags_anc = sect->parent->ovl_num;
-        if( sect == NonSect ) {
-            flags_anc |= OVE_FLAG_PRELOAD;/*  pre-load the data area */
-        }
-        _HostU16toTarg( sect->outfile->ovlfnoff, entry.fname );
-        _HostU16toTarg( sect->relocs, entry.relocs );
-        _HostU16toTarg( flags_anc, entry.flags_anc );
-        start_para = sect->sect_addr.seg + ( sect->sect_addr.off >> FmtData.SegShift );
-        _HostU16toTarg( start_para, entry.start_para );
-        len = sect->size + 15 >> 4;
-        _HostU16toTarg( len, entry.num_paras );
-        _HostU32toTarg( sect->u.file_loc, entry.disk_addr );
-        PutOvlInfo( off, &entry, sizeof( entry ) );
-        off += sizeof( ovltab_entry );
-        off = EmitOvlAreaEntry( off, sect->areas );
+    flags_anc = sect->parent->ovl_num;
+    if( sect == NonSect ) {
+        flags_anc |= OVE_FLAG_PRELOAD;/*  pre-load the data area */
     }
-    return( off );
-}
-
-static unsigned EmitOvlAreaEntry( unsigned off, OVL_AREA *area )
-/**************************************************************/
-{
-    for( ; area != NULL; area = area->next_area ) {
-        off = EmitOvlEntry( off, area->sections );
-    }
-    return( off );
+    _HostU16toTarg( sect->outfile->ovlfnoff, entry.fname );
+    _HostU16toTarg( sect->relocs, entry.relocs );
+    _HostU16toTarg( flags_anc, entry.flags_anc );
+    start_para = sect->sect_addr.seg + ( sect->sect_addr.off >> FmtData.SegShift );
+    _HostU16toTarg( start_para, entry.start_para );
+    len = sect->size + 15 >> 4;
+    _HostU16toTarg( len, entry.num_paras );
+    _HostU32toTarg( sect->u.file_loc, entry.disk_addr );
+    PutOvlInfo( *off, &entry, sizeof( entry ) );
+    *off += sizeof( ovltab_entry );
 }
 
 void EmitOvlTable( void )
@@ -790,7 +775,7 @@ void EmitOvlTable( void )
     Generate entries :
 */
     off += sizeof( template );
-    off = EmitOvlAreaEntry( off, Root->areas );
+    ParmWalkAreas( Root->areas, EmitOvlEntry, &off );
 /*
     Generate epilog :
 */
@@ -825,4 +810,12 @@ static void PutOvlInfo( unsigned off, void *src, unsigned len )
 /*************************************************************/
 {
    PutInfo( OvlSegData->data + off - OvlGroup->grp_addr.off, src, len );
+}
+
+void SetOvlTableLoc( group_entry *group, unsigned long loc )
+/**********************************************************/
+{
+    if( group == OvlGroup ) {
+        OvlTabOffset = loc;
+    }
 }

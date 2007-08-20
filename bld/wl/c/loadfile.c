@@ -66,6 +66,7 @@
 #include "strtab.h"
 #include "permdata.h"
 #include "dllentry.h"
+#include "overlays.h"
 
 seg_leader      *StackSegPtr;
 startinfo       StartInfo;
@@ -584,8 +585,8 @@ bool WriteDOSGroup( group_entry *group )
             SeekLoad( loc );
             repos = TRUE;
         }
-        if( group == OvlGroup ) {
-            OvlTabOffset = loc;
+        if( FmtData.type & MK_OVERLAYS ) {
+            SetOvlTableLoc( group, loc );
         }
         DEBUG((DBG_LOADDOS, "group %a section %d to %l in %s",
                 &group->grp_addr, sect->ovl_num, loc, finfo->fname ));
