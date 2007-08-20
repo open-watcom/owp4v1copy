@@ -78,7 +78,7 @@ char *Bolt[] = {
 
 static char         cpy1[1024];
 static char *       cpy1_templ = banner4gui();  //"Copyright © 2002-%s Open Watcom Contributors. All Rights Reserved."
-static char *       cpy2 = banner2a();    //"Portions Copyright © 1982-2002 Sybase, Inc. All Rights Reserved."
+static char *       cpy2 = banner2agui();    //"Portions Copyright © 1982-2002 Sybase, Inc. All Rights Reserved."
 static char *       cpy3 = banner5sti();  //"Install Copyright © SciTech Software, Inc."
 
 
