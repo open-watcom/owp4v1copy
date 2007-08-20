@@ -36,6 +36,10 @@
 #include "setupinf.h"
 #include "resource.h"
 #include <string.h>
+
+#include "banner.h"
+#include <stdio.h>
+
 extern char *GetVariableStrVal( const char *vbl_name );
 extern gui_colour_set   MainColours[];
 extern  void            GUISetJapanese();
@@ -72,6 +76,12 @@ char *Bolt[] = {
 #define WND_APPROX_SIZE 10000
 
 
+static char         cpy1[1024];
+static char *       cpy1_templ = banner4gui();  //"Copyright © 2002-%s Open Watcom Contributors. All Rights Reserved."
+static char *       cpy2 = banner2a();    //"Portions Copyright © 1982-2002 Sybase, Inc. All Rights Reserved."
+static char *       cpy3 = banner5sti();  //"Install Copyright © SciTech Software, Inc."
+
+
 gui_resource WndGadgetArray[] = {
     BITMAP_SPLASH, "splash",
 };
@@ -94,6 +104,9 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
             gui_ord             topdent;
             int                 row;
 
+            gui_rgb             rgb, foreg;
+            int                 row_count;
+            
             GUIGetClientRect( gui, &rect );
             GUIGetTextMetrics( gui, &metrics );
             indent = ( rect.width - BitMapSize.x ) / 2;
@@ -105,6 +118,29 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
                 topdent = 0;
             row = topdent / metrics.max.y;
             GUIDrawHotSpot( gui, 1, row, indent, GUI_BACKGROUND );
+            
+            /*
+             *  Do copyright stuff. There is a chance that we could overwrite the bitmap's graphics section
+             *  if this stuff became too big, but that's a risk I'll have to take for now. I can't be bothered
+             *  to actually calculate the clean space within the bitmap
+             */
+
+            if(BitMapSize.y) {
+                row_count = BitMapSize.y / metrics.max.y;
+            } else {
+                row_count = 3;  /* If there is no bitmap attached - such as virgin.exe - then just copyright to upper screen */
+                indent = 16;
+            }
+                
+            GUIGetRGB( GUI_BRIGHT_BLUE, &rgb ); /* background - no effect */
+            GUIGetRGB( GUI_BLACK, &foreg );     /* foreground */
+
+            /* Start at bottom left of hotspot and use neagtive offset */
+            GUIDrawTextRGB(gui, cpy1, strlen(cpy1), row_count-2, indent, foreg, rgb);
+            GUIDrawTextRGB(gui, cpy2, strlen(cpy2), row_count-1, indent, foreg, rgb);
+            GUIDrawTextRGB(gui, cpy3, strlen(cpy3), row_count-0, indent, foreg, rgb);
+
+            
         } else {
             for( i = 0; i < sizeof( Bolt ) / sizeof( Bolt[0] ); ++i ) {
                 GUIDrawTextExtent( gui, Bolt[i], strlen( Bolt[i] ), i, 0, GUI_BACKGROUND, WND_APPROX_SIZE );
@@ -124,6 +160,8 @@ extern bool SetupInit( void )
 {
     gui_rect            rect;
     gui_create_info     init;
+    char *              curr_date = __DATE__;   // Mon DD YYYY
+    size_t              adj_date;
 
     // Cancel button may be wider in other languages
     NominalButtonWidth = strlen( LIT( Cancel ) ) + 5;
@@ -163,19 +201,30 @@ extern bool SetupInit( void )
 
     GUIInitHotSpots( 1, WndGadgetArray );
     GUIGetHotSpotSize( 1, &BitMapSize );
+    
     MainWnd = GUICreateWindow( &init );
 
-#if defined(__NT__)
     /*
-     * GUI Toolkit now works such that default system colors are used instead of
-     * RGB colors. Since we really want nice blue background, we have to hack
-     * around that by specifying a specific RGB color and re-setting the background
-     * to use that color.
+     *  Create copyright information 
+     *
+     *  If the compile fails at this line, then the date is not in the 'MMM DD YYYY' format that I was expecting
+     *  so we should check what it is as the code below [adj_date onwards] may fail horribly
+     *
+     *  see curr_date above
      */
-    GUISetRGB( GUI_BRIGHT_BLUE, 0x00ff0000 );
-    GUISetWndColour( MainWnd, GUI_BACKGROUND, &MainColours[GUI_BACKGROUND] );
-#endif
+    if(1){
+        char                tt[sizeof(__DATE__) == 12];
+        tt[0] = 0;
+    }
 
+    adj_date = strlen(curr_date) - 4;  /* subtract YYYY */
+    if(strlen(cpy1_templ) < 1000)
+        sprintf(cpy1, cpy1_templ, &curr_date[adj_date]);
+    else
+        strcpy(cpy1, "Copyright © 2002- Open Watcom Contributors. All Rights Reserved.");
+
+    /* remove GUI toolkit adjustment here as it is no longer required */
+    
     return( TRUE );
 }
 

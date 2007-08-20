@@ -44,7 +44,7 @@
 #define _BETA_                  _BANEXTRA
 #endif
 
-#define CURR_YEAR       "2004"
+#define CURR_YEAR       "2007"
 
 #define banner1p1(p)  p
 #define banner1p2(v)  "Version " v
@@ -65,6 +65,10 @@
 #define banner1ps(p,v)  "Powersoft " banner1p1(p) " " banner1p2(v)
 #define banner2ps       banner2a()
 #define banner3ps       "All rights reserved.  Powersoft is a trademark of Sybase, Inc."
+
+/* Used by setupgui/c/guiinit.c */
+#define banner4gui()    "Copyright © 2002-%s Open Watcom Contributors. All Rights Reserved."
+#define banner5sti()    "Install Copyright © SciTech Software, Inc."
 
 // the following macros define the delimeters used bythe resource
 // compiler when concatenating strings
