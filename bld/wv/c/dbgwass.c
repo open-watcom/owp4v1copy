@@ -1072,6 +1072,7 @@ extern a_window *DoWndAsmOpen( address addr, bool track )
     asm->active = addr;
     asm->track = 0;
     asm->cache_addr = NilAddr;
+    asm->dotaddr = NilAddr;
     asm->last_width = 0;
     wnd = DbgTitleWndCreate( LIT( WindowAssembly ), &AsmInfo, WND_ASSEMBLY,
                              asm, &AsmIcon, TITLE_SIZE, FALSE );
