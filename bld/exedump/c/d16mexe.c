@@ -195,6 +195,7 @@ static void dmp_dos16m_head_info( dos16m_exe_header *d16m_head )
     unsigned_32     size;
     unsigned_16     offs_cnt;
     reloc           r;
+    bool            last_reloc;
 
     Banner( "DOS/16M EXE Header" );
     Dump_header( &d16m_head->last_page_bytes, dos16m_exe_msg );
@@ -253,19 +254,24 @@ static void dmp_dos16m_head_info( dos16m_exe_header *d16m_head )
             //  RSI-2 reloc format
             sel = ( d16m_head->first_reloc_sel - d16m_head->first_selector ) / sizeof( gdt_info );
             for( ; sel < sel_count; ++sel ) {
+                last_reloc = FALSE;
                 size = segs_info[ sel ].size;
                 Wlseek( segs_info[ sel ].file_off );
                 while( size ) {
                     Wread( &r.sel, sizeof( r.sel ) );
                     size -= sizeof( r.sel );
-                    if( r.sel == 0 )
-                        break;
+                    if( r.sel & 0x02 ) {        // last selector in list
+                        r.sel &= ~0x02;
+                        last_reloc = TRUE;
+                    }
                     Wread( &offs_cnt, sizeof( offs_cnt ) );
                     size -= sizeof( offs_cnt ) + offs_cnt * sizeof( r.off );
                     while( offs_cnt-- ) {
                         Wread( &r.off, sizeof( r.off ) );
                         i = put_reloc( &r, i );
                     }
+                    if( last_reloc )
+                        break;
                 }
             }
         }
