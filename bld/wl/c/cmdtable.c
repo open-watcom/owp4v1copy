@@ -135,7 +135,7 @@ parse_entry     Directives[] = {
     "MODUle",       &ProcModule,        MK_NOVELL | MK_ELF, 0,
 #endif
 #ifdef _DOS16M
-    "MEMory",       &ProcMemory,        MK_DOS16M, 0,
+    "MEMory",       &ProcMemory16M,     MK_DOS16M, 0,
     "TRansparent",  &ProcTransparent,   MK_DOS16M, 0,
 #endif
 #if defined( _OS2 ) || defined( _EXE ) || defined ( _QNXLOAD )
