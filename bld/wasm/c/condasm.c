@@ -32,10 +32,8 @@
 #include "asmglob.h"
 #include <ctype.h>
 
-#include "asmins.h"
 #include "directiv.h"
 #include "asmexpnd.h"
-#include "asmdefs.h"
 
 #include "myassert.h"
 

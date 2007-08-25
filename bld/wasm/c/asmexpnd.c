@@ -30,10 +30,8 @@
 
 #include "asmglob.h"
 
-#include "asmins.h"
 #include "asmeval.h"
 #include "asmexpnd.h"
-#include "asmdefs.h"
 
 #if defined( _STANDALONE_ )
 

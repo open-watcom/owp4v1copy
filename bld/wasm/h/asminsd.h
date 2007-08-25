@@ -29,6 +29,34 @@
 ****************************************************************************/
 
 
+#ifdef MKOPCODE
+
+#define ins(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) tok,
+   
+#if defined( _STANDALONE_ )
+    #define insa(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) tok,
+#else
+    #define insa(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
+#endif
+
+const unsigned short AsmOpTable[] = {
+
+#else
+
+#define ins(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
+                {tok,prefix,byte1_info,rm_info,op3,op_dir,cpu,{op1,op2},opcode,rm_byte},
+
+#if defined( _STANDALONE_ )
+    #define insa(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
+                ins(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
+#else
+    #define insa(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
+#endif
+
+const struct asm_ins ASMFAR AsmOpTable[] = {
+
+#endif
+
 /*   tok                op1          b1_info op2           op3   op_dir rm_info opcode     rm_byte                   cpu     prefix  */
 
 ins (T_DOT_186,         OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_DIRECTIVE,             P_86,        0)
@@ -1434,3 +1462,4 @@ ins (T_XOR,             OP_M,        0,      OP_R,          OP3_NONE,0,  0,     
 ins (T_XOR,             OP_M,        0,      OP_I,          OP3_NONE,0,  0,      0x80,     0x30,                     P_86,        LOCK)
 ins (T_XORPD,           OP_XMM,      F_660F, OP_XMM|OP_M,   OP3_NONE,1,  no_WDS, 0x57,     0x00,                     P_686|P_SSE2,0)
 ins (T_XORPS,           OP_XMM,      F_0F,   OP_XMM|OP_M,   OP3_NONE,1,  no_WDS, 0x57,     0x00,                     P_686|P_SSE, 0)
+};

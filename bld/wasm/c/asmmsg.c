@@ -34,7 +34,6 @@
 #include "asmglob.h"
 #include <stdarg.h>
 
-#include "asmdefs.h"
 #include "asmsym.h"
 #include "directiv.h"
 #include "asminput.h"
@@ -148,7 +147,7 @@ void AsmWarn( int level, int msgnum, ... )
 
 static void PrtMsg1( char *prefix, int msgnum, va_list args1, va_list args2 )
 /***************************************************************************/
-// print messages from WOMP !!!
+// print standard WASM messages, no WOMP
 {
     if( !Options.banner_printed ) {
         Options.banner_printed = TRUE;

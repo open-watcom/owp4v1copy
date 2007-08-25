@@ -35,8 +35,6 @@
 #include <ctype.h>
 
 #include "asmalloc.h"
-#include "asmins.h"
-#include "asmdefs.h"
 #include "asmeval.h"
 #include "asmexpnd.h"
 #include "directiv.h"

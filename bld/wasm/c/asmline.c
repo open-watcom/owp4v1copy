@@ -32,9 +32,6 @@
 #include "asmglob.h"
 #include <ctype.h>
 
-#include "asmins.h"
-#include "asmdefs.h"
-
 #if defined( _STANDALONE_ )
 
 #include "directiv.h"

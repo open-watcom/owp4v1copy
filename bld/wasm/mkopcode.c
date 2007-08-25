@@ -5,20 +5,12 @@
 #include "watcom.h"
 
 #include "hash.h"
-#include "mkopcode.gh"
+#include "asmops.gh"
 
-#define ins(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) tok,
-
-#if defined( _STANDALONE_ )
-    #define insa(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) tok,
-#else
-    #define insa(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
-#endif
-
-const unsigned short AsmOpTable[] = {
+#define MKOPCODE
 #include "asminsd.h"
-};
 
+#include "mkopcode.h"
 
 char Chars[ 32000 ];
 
@@ -26,17 +18,12 @@ static unsigned short inst_table[ HASH_TABLE_SIZE ] = { 0 };
 static unsigned short *index_table;
 static unsigned short *pos_table;
 
-struct words {
-        char    *word;
-        int     index;
-};
-
 int len_compare( const void *pv1, const void *pv2 )
 {
-    int         len1;
-    int         len2;
-    const struct words *p1 = pv1;
-    const struct words *p2 = pv2;
+    int             len1;
+    int             len2;
+    const sword     *p1 = pv1;
+    const sword     *p2 = pv2;
 
     len1 = strlen( p1->word );
     len2 = strlen( p2->word );
@@ -47,13 +34,7 @@ int len_compare( const void *pv1, const void *pv2 )
     return( strcmp( p1->word, p2->word ) );
 }
 
-int str_compare( const void *p1, const void *p2 )
-{
-    return( strcmp( ((const struct words *)p1)->word,
-                    ((const struct words *)p2)->word ) );
-}
-
-void make_inst_hash_tables( unsigned int count, struct words *Words )
+void make_inst_hash_tables( unsigned int count, sword *Words )
 /*******************************************************************/
 {
     char            *name;
@@ -95,16 +76,12 @@ int main( int argc, char *argv[] )
     char            *out_name;
     unsigned int    i;
     unsigned int    index;
-    unsigned int    j;
     unsigned int    count;
     unsigned int    len;
     unsigned int    idx;
-    struct words    *Words;
+    sword           *Words;
     char            *word;
-    char            buf[ 80 ];
-    char            *prefix;
-    char            *suffix;
-    char            *ptr;
+    char            buf[ KEY_MAX_LEN ];
 
     out_name = argv[ argc - 1 ];
     --argc;
@@ -117,14 +94,12 @@ int main( int argc, char *argv[] )
             printf( "Unable to open '%s'\n", argv[ idx ] );
             exit( 1 );
         }
-        for( ; ; ) {
-            if( fgets( buf, 80, in ) == NULL )
-                break;
+        for( ; fgets( buf, KEY_MAX_LEN, in ) != NULL; ) {
             count++;
         }
         fclose( in );
     }
-    Words = malloc( (count+1) * sizeof( struct words ) );
+    Words = malloc( (count+1) * sizeof( sword ) );
     if( Words == NULL ) {
         printf( "Unable to allocate Words array\n" );
         exit( 1 );
@@ -137,9 +112,7 @@ int main( int argc, char *argv[] )
             printf( "Unable to open '%s'\n", argv[ idx ] );
             exit( 1 );
         }
-        for( ; ; ) {
-            if( fgets( buf, 80, in ) == NULL )
-                break;
+        for( ; fgets( buf, KEY_MAX_LEN, in ) != NULL; ) {
             for( i = 0; buf[ i ] && !isspace( buf[ i ] ); i++ )
                 ;
             buf[ i ] = '\0';
@@ -152,7 +125,7 @@ int main( int argc, char *argv[] )
         }
         fclose( in );
     }
-    qsort( Words, count, sizeof( struct words ), len_compare );
+    qsort( Words, count, sizeof( sword ), len_compare );
     index = 0;
     Chars[ 0 ] = '\0';
     for( i = 0; i < count; i++ ) {
@@ -177,7 +150,7 @@ int main( int argc, char *argv[] )
         }
         Words[ i ].index = word - Chars;
     }
-    qsort( Words, count, sizeof( struct words ), str_compare );
+    qsort( Words, count, sizeof( sword ), str_compare );
 
     make_inst_hash_tables( count, Words );
 
@@ -186,12 +159,7 @@ int main( int argc, char *argv[] )
         printf( "Unable to open '%s'\n", out_name );
         exit( 1 );
     }
-    fprintf( out, "\n#ifndef DEFINE_ASMOPS\n" );
-    fprintf( out, "  #undef asm_op\n" );
-    fprintf( out, "  #define asm_op(token,pos,len,index,next) token\n" );
-    fprintf( out, "  enum asm_token {\n" );
-    fprintf( out, "#else\n" );
-    fprintf( out, "  extern const char AsmChars[] = {\n" );
+    fprintf( out, "extern const char AsmChars[] = {\n" );
     for( i = 0; i < index; i++ ) {
         if( i % 10 == 0 )
             fprintf( out, "/*%4d*/ ", i );
@@ -205,38 +173,14 @@ int main( int argc, char *argv[] )
     for( i = 0; i < HASH_TABLE_SIZE; i++ )
         fprintf( out, "\t%d,\n", inst_table[ i ] );
     fprintf( out, "};\n\n" );
-    fprintf( out, "  #undef asm_op\n" );
-    fprintf( out, "  #define asm_op(token,pos,len,index,next) {pos,len,index,next}\n" );
-    fprintf( out, "  extern const struct AsmCodeName AsmOpcode[] = {\n" );
-    fprintf( out, "#endif\n\n" );
+    fprintf( out, "extern const struct AsmCodeName AsmOpcode[] = {\n" );
     for( i = 0; i < count; i++ ) {
-        strcpy( buf, Words[ i ].word );
-        strupr( buf );
-        ptr = buf;
-        if( *ptr == '.' ) {
-            ptr++;
-            prefix = "T_DOT_";
-        } else {
-            prefix = "T_";
-        }
-        j = strlen(buf);
-        if( *(buf + j - 1) == '?' ) {
-        // append suffix _UN if ? on end
-            suffix = "_UN";
-            *(buf + j - 1) = 0;
-        } else {
-            suffix = "";
-        }
-        fprintf( out, "asm_op( %s%s%s,\t", prefix, ptr, suffix );
-        j = 9 + strlen( prefix ) + strlen( ptr ) + strlen( suffix );
-        while ( j < 24) {
-            fprintf( out, "\t" );
-            j += 8;
-        }
-        j = strlen(Words[ i ].word);
-        fprintf( out, "%d,\t%d,\t%d,\t%d\t),\n", pos_table[ i ], j, Words[ i ].index, index_table[ i ] );
+        word = Words[ i ].word;
+        fprintf( out, "\t{\t%d,\t%d,\t%d,\t%d\t},\t/* %s */\n", pos_table[ i ],
+            strlen( word ), Words[ i ].index, index_table[ i ], 
+            get_enum_key( word ) );
     }
-    fprintf( out, "asm_op( T_NULL,\t\t\t0,\t0,\t0,\t0\t)\n" );
+    fprintf( out, "\t{\t0,\t0,\t0,\t0\t}\t/* T_NULL */\n" );
     fprintf( out, "};\n\n" );
     fclose( out );
     return( 0 );

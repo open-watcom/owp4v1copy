@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*    Copyright (c) 2002-2008 Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -24,31 +24,59 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Shared procedures and data for encoding WASM keyword enum keys
 *
 ****************************************************************************/
 
-#ifdef DEFINE_ASMOPS
 
-#if defined( _STANDALONE_ )
-#include "fullops.gh"
-#else
-#include "inlnops.gh"
-#endif
-#undef DEFINE_ASMOPS
+#define KEY_MAX_LEN 80
 
-#else
+typedef struct sword {
+    char    *word;
+    int     index;
+} sword;
+   
+static char enum_key[ KEY_MAX_LEN + 10 ];
 
-#ifndef _ASMOPS2_H_
-#define _ASMOPS2_H_
+int str_compare( const void *p1, const void *p2 )
+/***********************************************/
+{
+    return( strcmp( ((const sword *)p1)->word,
+                    ((const sword *)p2)->word ) );
+}
 
-#if defined( _STANDALONE_ )
-#include "fullops.gh"
-#else
-#include "inlnops.gh"
-#endif
+char *get_enum_key( const char *src )
+/***********************************/
+{
+    int     add_underscore;
+    int     pos;
+    char    *dst;
 
-#endif
-
-#endif
+    add_underscore = 1;
+    pos = 0;
+    dst = enum_key;
+    *dst++ = 'T';
+    while( *src ) {
+        if( *src == '.' ) {
+            *dst++ = '_';
+            *dst++ = 'D';
+            *dst++ = 'O';
+            *dst++ = 'T';
+            add_underscore = 1;
+        } else if( *src == '?' ) {
+            *dst++ = '_';
+            *dst++ = 'U';
+            *dst++ = 'N';
+            add_underscore = 1;
+        } else {
+            if( add_underscore ) {
+                *dst++ = '_';
+                add_underscore = 0;
+            }
+            *dst++ = toupper( *src );
+        }
+        ++src;
+    }
+    *dst = '\0';
+    return( enum_key );
+}

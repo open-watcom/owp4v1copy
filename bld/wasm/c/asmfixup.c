@@ -32,8 +32,6 @@
 
 #include "asmglob.h"
 
-#include "asmins.h"
-#include "asmdefs.h"
 #include "asmalloc.h"
 
 #if defined( _STANDALONE_ )

@@ -33,7 +33,6 @@
 #define _ASMSYM_H_
 
 #include "asminlin.h"
-#include "asmops2.h"
 
 typedef enum {
         MT_BYTE,

@@ -4,18 +4,7 @@
 #include <string.h>
 #include "watcom.h"
 
-char Chars[ 32000 ];
-
-struct words {
-    char    *word;
-    int     index;
-};
-
-int str_compare( const void *p1, const void *p2 )
-{
-    return( strcmp( ((const struct words *)p1)->word,
-                    ((const struct words *)p2)->word ) );
-}
+#include "mkopcode.h"
 
 int main( int argc, char *argv[] )
 {
@@ -24,14 +13,10 @@ int main( int argc, char *argv[] )
     char            *out_name;
     unsigned int    i;
     unsigned int    index;
-    unsigned int    j;
     unsigned int    count;
     unsigned int    idx;
-    struct words    *Words;
-    char            buf[ 80 ];
-    char            *prefix;
-    char            *suffix;
-    char            *ptr;
+    sword           *Words;
+    char            buf[ KEY_MAX_LEN ];
 
     out_name = argv[ argc - 1 ];
     --argc;
@@ -44,14 +29,12 @@ int main( int argc, char *argv[] )
             printf( "Unable to open '%s'\n", argv[ idx ] );
             exit( 1 );
         }
-        for( ; ; ) {
-            if( fgets( buf, 80, in ) == NULL )
-                break;
+        for( ; fgets( buf, KEY_MAX_LEN, in ) != NULL; ) {
             count++;
         }
         fclose( in );
     }
-    Words = malloc( (count+1) * sizeof( struct words ) );
+    Words = malloc( (count+1) * sizeof( sword ) );
     if( Words == NULL ) {
         printf( "Unable to allocate Words array\n" );
         exit( 1 );
@@ -64,9 +47,7 @@ int main( int argc, char *argv[] )
             printf( "Unable to open '%s'\n", argv[ idx ] );
             exit( 1 );
         }
-        for( ; ; ) {
-            if( fgets( buf, 80, in ) == NULL )
-                break;
+        for( ; fgets( buf, KEY_MAX_LEN, in ) != NULL; ) {
             for( i = 0; buf[ i ] && !isspace( buf[ i ] ); i++ )
                 ;
             buf[ i ] = '\0';
@@ -79,34 +60,18 @@ int main( int argc, char *argv[] )
         }
         fclose( in );
     }
-    qsort( Words, count, sizeof( struct words ), str_compare );
+    qsort( Words, count, sizeof( sword ), str_compare );
 
     out = fopen( out_name, "w" );
     if( out == NULL ) {
         printf( "Unable to open '%s'\n", out_name );
         exit( 1 );
     }
-    fprintf( out, "  enum mkopcode {\n" );
+    fprintf( out, "enum asm_token {\n" );
     for( i = 0; i < count; i++ ) {
-        strcpy( buf, Words[ i ].word );
-        strupr( buf );
-        ptr = buf;
-        if( *ptr == '.' ) {
-            ptr++;
-            prefix = "T_DOT_";
-        } else {
-            prefix = "T_";
-        }
-        j = strlen(buf);
-        if( *(buf + j - 1) == '?' ) {
-        // append suffix _UN if ? on end
-            suffix = "_UN";
-            *(buf + j - 1) = 0;
-        } else {
-            suffix = "";
-        }
-        fprintf( out, "\t%s%s%s,\n", prefix, ptr, suffix );
+        fprintf( out, "\t%s,\n", get_enum_key( Words[ i ].word ) );
     }
+    fprintf( out, "\tT_NULL\n" );
     fprintf( out, "};\n\n" );
     fclose( out );
     return( 0 );

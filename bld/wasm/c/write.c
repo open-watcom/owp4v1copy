@@ -35,10 +35,8 @@
 #include <time.h>
 
 #include "asmsym.h"
-#include "asmins.h"
 #include "asmalloc.h"
 #include "fatal.h"
-#include "asmdefs.h"
 #include "asmeval.h"
 #include "objio.h"
 #include "objprs.h"

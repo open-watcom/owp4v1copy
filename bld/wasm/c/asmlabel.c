@@ -31,8 +31,6 @@
 
 #include "asmglob.h"
 
-#include "asmins.h"
-#include "asmdefs.h"
 #include "asmfixup.h"
 #include "asmlabel.h"
 

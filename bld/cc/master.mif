@@ -144,7 +144,7 @@ inc_dirs  = -I. -I"../h" $(cg_inc_dirs) $(asminline_inc_dirs)
 inc_dirs += -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h"
 
 .c: ../c;$(asminline_c);$(watcom_dir)/c;$(fe_misc_dir)/c
-.h: ../h;$(asminline_h);$(watcom_dir)/h
+.h: ../h;$(watcom_dir)/h
 
 comp_objs_exe = $(common_objs) $(exe_objs)
 comp_objs_dll = $(common_objs) $(dll_objs)
@@ -286,16 +286,16 @@ patch_level=0
 cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
         $[@ $]@ $@ $$ $(dll_name).dll $(patch_level)
 
-./mkopcod1.exe: $(wasm_dir)/mkopcod1.c $(cl_objs)
+./mkopcod1.exe: $(wasm_dir)/mkopcod1.c $(wasm_dir)/mkopcode.h $(cl_objs)
         $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)
 
-mkopcode.gh: ./mkopcod1.exe $(wasm_dir)/inlnops.tok
+asmops.gh: ./mkopcod1.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $@
 
-./mkopcode.exe: $(wasm_dir)/mkopcode.c $(cl_objs) mkopcode.gh
+./mkopcode.exe: $(wasm_dir)/mkopcode.c $(wasm_dir)/mkopcode.h asmops.gh $(cl_objs)
         $(bld_cl) -I"$(wasm_dir)/h" $[@ $(wcl_util_opts) $(cl_libs) $(cl_objs)
 
-inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
+asmopsd.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $@
 
 key_objs = ../h/c.key ../h/pc.key ../h/seh.key

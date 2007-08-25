@@ -24,11 +24,11 @@ asminline_objs = &
     asmeval.obj
 
 !ifeq proj_name wfc
-asminline_deps = inlnops.gh msg.gh
+asminline_deps = asmops.gh asmopsd.gh msg.gh
 !else ifeq proj_name F03
-asminline_deps = inlnops.gh msg.gh
+asminline_deps = asmops.gh asmopsd.gh msg.gh
 !else
-asminline_deps = inlnops.gh
+asminline_deps = asmops.gh asmopsd.gh
 !endif
 
 asminline_lib =

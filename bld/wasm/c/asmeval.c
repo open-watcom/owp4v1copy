@@ -31,9 +31,7 @@
 
 #include "asmglob.h"
 
-#include "asmins.h"
 #include "asmeval.h"
-#include "asmdefs.h"
 
 #if defined( _STANDALONE_ )
 #include "myassert.h"

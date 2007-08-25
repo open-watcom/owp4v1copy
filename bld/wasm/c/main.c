@@ -38,9 +38,7 @@
 #include <ctype.h>
 
 #include "asmalloc.h"
-#include "asmins.h"
 #include "fatal.h"
-#include "asmdefs.h"
 #include "asmexpnd.h"
 #include "objprs.h"
 #include "genmsomf.h"
@@ -48,7 +46,6 @@
 #include "womputil.h"
 #include "swchar.h"
 #include "asminput.h"
-#include "asmerr.h"
 #include "pathgrp.h"
 
 #ifdef __OSI__

@@ -33,12 +33,10 @@
 #include <ctype.h>
 
 #include "asmalloc.h"
-#include "asmins.h"
 #include "asmsym.h"
 #include "directiv.h"
 #include "queues.h"
 #include "asmexpnd.h"
-#include "asmdefs.h"
 #include "asmfixup.h"
 #include "mangle.h"
 #include "asmlabel.h"

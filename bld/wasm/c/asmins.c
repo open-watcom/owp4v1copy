@@ -42,27 +42,6 @@
 
 #include "asmglob.h"
 #include "hash.h"
-#include "asmins.h"
-
-#define ins(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
-                {tok,prefix,byte1_info,rm_info,op3,op_dir,cpu,{op1,op2},opcode,rm_byte},
-
-#if defined( _STANDALONE_ )
-    #define insa(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
-                ins(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
-#else
-    #define insa(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix)
-#endif
-
-/* put the commands which begin with a dot first */
-const struct asm_ins ASMFAR AsmOpTable[] = {
-#include "asminsd.h"
-};
-
-#define DEFINE_ASMOPS 1
-#include "asmops2.h"
-
-#include "asmdefs.h"
 #include "asmexpnd.h"
 #include "asmfixup.h"
 #include "asmeval.h"
@@ -73,6 +52,9 @@ const struct asm_ins ASMFAR AsmOpTable[] = {
   #include "myassert.h"
   #include "asminput.h"
 #endif
+
+#include "asminsd.h"
+#include "asmopsd.gh"
 
 extern int              match_phase_1( void );
 extern int              ptr_operator( memtype, uint_8 );
