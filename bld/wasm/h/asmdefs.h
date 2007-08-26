@@ -32,8 +32,6 @@
 #ifndef _ASMDEFS_H_INCLUDED
 #define _ASMDEFS_H_INCLUDED
 
-#include "asmopnds.h"
-
 #define IS_CALL( inst )     ( inst == T_CALL || inst == T_CALLF )
 #define IS_JMP( inst )      ( inst >= T_JA && inst <= T_JZ )
 #define IS_BRANCH( inst )   ( IS_JMP( inst ) || IS_CALL( inst ) )

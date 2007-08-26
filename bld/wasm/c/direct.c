@@ -33,7 +33,6 @@
 #include <ctype.h>
 
 #include "asmalloc.h"
-#include "asmsym.h"
 #include "directiv.h"
 #include "queues.h"
 #include "asmexpnd.h"

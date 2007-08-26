@@ -45,7 +45,6 @@
 #include "asmopnds.h"
 #include "asmsym.h"
 #include "asmops.h"
-#include "asmops.gh"
 
 enum prefix_reg {
     PREFIX_EMPTY = EMPTY,

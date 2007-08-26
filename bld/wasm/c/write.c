@@ -34,7 +34,6 @@
 #include <ctype.h>
 #include <time.h>
 
-#include "asmsym.h"
 #include "asmalloc.h"
 #include "fatal.h"
 #include "asmeval.h"

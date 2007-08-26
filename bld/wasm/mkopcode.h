@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*    Copyright (c) 2002-2008 Open Watcom Contributors. All Rights Reserved.
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Shared procedures and data for encoding WASM keyword enum keys
+* Description:  Shared procedures and data for encoding WASM keywords
 *
 ****************************************************************************/
 

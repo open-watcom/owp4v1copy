@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  Symbols interface between inline assembler
-*                  and C/C++ compiler
+*                  and C/C++/F77 compilers
 *
 ****************************************************************************/
 
@@ -133,7 +133,7 @@ struct asmfixup {
 };
 
 #if defined( _STANDALONE_ )
-#define     AsmCodeAddress      ( GetCurrAddr() )
+#define AsmCodeAddress          ( GetCurrAddr() )
 #else
 extern uint_32                  AsmCodeAddress;
 #endif

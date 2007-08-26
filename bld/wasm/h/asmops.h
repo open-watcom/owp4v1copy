@@ -30,8 +30,10 @@
 ****************************************************************************/
 
 
-#ifndef _ASMOPS1_H_
-#define _ASMOPS1_H_
+#ifndef _ASMOPS_H_
+#define _ASMOPS_H_
+
+#include "asmops.gh"
 
 struct AsmCodeName {
         unsigned short  position;       // starting position in AsmOpTable

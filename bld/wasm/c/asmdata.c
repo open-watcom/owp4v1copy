@@ -31,7 +31,6 @@
 
 #include "asmglob.h"
 
-#include "asmsym.h"
 #include "asmexpnd.h"
 #include "tbyte.h"
 #include "asmfixup.h"

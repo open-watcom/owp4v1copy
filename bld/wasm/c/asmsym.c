@@ -31,7 +31,6 @@
 
 #include "asmglob.h"
 
-#include "asmsym.h"
 #include "asmalloc.h"
 
 #ifdef __USE_BSD

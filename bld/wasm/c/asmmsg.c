@@ -34,7 +34,6 @@
 #include "asmglob.h"
 #include <stdarg.h>
 
-#include "asmsym.h"
 #include "directiv.h"
 #include "asminput.h"
 
