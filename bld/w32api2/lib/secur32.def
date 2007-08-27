@@ -1,0 +1,13 @@
+LIBRARY SECUR32.DLL
+EXPORTS
+LsaCallAuthenticationPackage
+LsaConnectUntrusted
+LsaDeregisterLogonProcess
+LsaEnumerateLogonSessions
+LsaFreeReturnBuffer
+LsaGetLogonSessionData
+LsaLogonUser
+LsaLookupAuthenticationPackage
+LsaRegisterLogonProcess
+LsaRegisterPolicyChangeNotification
+LsaUnregisterPolicyChangeNotification

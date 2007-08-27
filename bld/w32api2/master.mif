@@ -101,6 +101,7 @@ headers =            &
         ntdsbcli.h   &
         ntdsbmsg.h   &
         ntldap.h     &
+        ntsecapi.h   &
         oaidl.h      &
         objbase.h    &
         objidl.h     &
