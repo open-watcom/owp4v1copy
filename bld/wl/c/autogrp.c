@@ -282,7 +282,7 @@ group_entry *AllocGroup( char *name, group_entry ** grp_list )
     InitGroup( group );
     group->sym = sym;
     LinkList( grp_list, group );
-    if( strcmp( name, DataGrpName ) == 0 ) {
+    if( stricmp( name, DataGrpName ) == 0 ) {
         DataGroup = group;
     } else if( name == AutoGrpName ) {
         group->isautogrp = 1;
