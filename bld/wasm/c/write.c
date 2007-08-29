@@ -671,10 +671,10 @@ static int write_autodep( void )
         objr->d.coment.attr = 0x80;
         objr->d.coment.class = CMT_DEPENDENCY;
 
-        len = strlen(curr->name);
+        len = strlen(curr->fullname);
         *((time_t *)buff) = _timet2dos(curr->mtime);
         *(buff + 4) = (unsigned char)len;
-        strcpy(buff + 5, curr->name);
+        strcpy(buff + 5, curr->fullname);
         len += 5;
 
         ObjAttachData( objr, (uint_8 *)buff, len );
