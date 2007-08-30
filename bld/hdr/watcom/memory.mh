@@ -331,26 +331,24 @@ namespace std {
   };
   
   
-  namespace tr1 {
-  
     // bad_weak_ptr class
     // ******************
-    
+
     class bad_weak_ptr : public std::exception {
     public:
         bad_weak_ptr( ) { }
         virtual const char *what( ) const
             {  return "tr1::bad_weak_ptr"; }
     };
-    
-    
-    
+
+
+
     // shared_ptr template
     // *******************
-    
+
     template< class T > class weak_ptr;
     template< class T > class enable_shared_from_this;
-    
+
     namespace detail {
         class shared_holder;
         template< class T > class shared_holder_ptr;
@@ -360,7 +358,7 @@ namespace std {
         class dynamic_pointer_cast_tag { };
         class const_pointer_cast_tag { };
     }
-  
+
     template< class T > class shared_ptr {
     public:
         typedef T element_type;
@@ -544,39 +542,39 @@ namespace std {
         
     };
 
-    
+
     template< class T, class U > bool operator==( shared_ptr< T > const &a, 
                                                   shared_ptr< U > const &b )
     {
         return a.get( ) == b.get( );
     }
-    
+
     template< class T, class U > bool operator!=( shared_ptr< T > const &a,
                                                   shared_ptr< U > const &b )
     {
         return a.get( ) != b.get( );
     }
-    
+
     template< class T, class U > bool operator<( shared_ptr< T > const &a, 
                                                  shared_ptr< U > const &b )
     {
         //return std::less< detail::shared_holder* >( )( a.holder, b.holder );
         return a.get_holder( ) < b.get_holder( );
     }
-    
+
     /*template< class E, class T, class Y >
     basic_ostream< E, T > &operator<<( basic_ostream< E, T > &os, 
                                        shared_ptr< Y > const &p )
     {
         os << p.get( );
     }*/
-    
+
     template< class T >
     void swap( shared_ptr< T > &a, shared_ptr< T > &b )
     {
         a.swap( b );
     }
-    
+
     /*template< class T, class U >
     shared_ptr< T > static_pointer_cast( shared_ptr< U > const &r )
     {
@@ -731,7 +729,7 @@ namespace std {
 
     private:
         weak_ptr< T > weak_this;
-    
+
         friend class shared_ptr;
     };
 
@@ -792,7 +790,7 @@ namespace std {
         
             T *ptr;
         };
-    
+
         template< class T, class D >
         class shared_holder_deleter : public shared_holder {
         public:
@@ -814,8 +812,6 @@ namespace std {
         };
 
     } // namespace detail
-  
-  } // namespace tr1
 
 } // namespace std.
 
