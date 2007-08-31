@@ -338,6 +338,7 @@ extern  void    OptSegs( void )
                         next = tmp;
                     }
                 }
+    #if _TARGET & _TARG_IAPX86
                 /* The scoreboarder may split "and ax,imm" into
                    "xor ah,ah; and al,imm". This is sometimes useful
                    (ah can be eliminated for
@@ -369,7 +370,6 @@ extern  void    OptSegs( void )
                         DoNothing(ins);
                     }
                 }
-    #if _TARGET & _TARG_IAPX86
                 if( _CPULevel( CPU_386 ) ) {
                     if( isPushX2( ins ) && isPushX2( next ) ) {
                         if( OptPushDWORDConstant( ins, next ) ) {
