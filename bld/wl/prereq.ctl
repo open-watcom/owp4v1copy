@@ -16,14 +16,12 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     echo rm -f -r <PROJDIR>/<OBJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>
     rm -f <OWBINDIR>/wlink
-    echo rm -f wlsystem.lnk
-    rm -f wlsystem.lnk
+    wmake -h clean
     set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
-    echo wsplice -k Pwlsystem specs.sp wlsystem.lnk
-    wsplice -k Pwlsystem specs.sp wlsystem.lnk
+    wmake -h
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
