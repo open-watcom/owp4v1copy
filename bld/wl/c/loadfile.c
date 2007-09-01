@@ -83,6 +83,13 @@ typedef struct {
     unsigned    didone : 1;
 } implibinfo;
 
+typedef struct  {
+    unsigned_32 grp_start;
+    unsigned_32 seg_start;
+    group_entry *lastgrp;  // used only for copy classes
+    bool        repos;
+} grpwriteinfo;
+
 static implibinfo       ImpLib;
 
 static void OpenOutFiles( void );
@@ -590,7 +597,7 @@ bool WriteDOSGroup( group_entry *group )
         }
         DEBUG((DBG_LOADDOS, "group %a section %d to %l in %s",
                 &group->grp_addr, sect->ovl_num, loc, finfo->fname ));
-        loc += WriteGroupLoad( group );
+        loc += WriteDOSGroupLoad( group, repos );
         if( loc > finfo->file_loc ) {
             finfo->file_loc = loc;
         }
@@ -889,97 +896,114 @@ unsigned long OffsetAlign( unsigned long off, unsigned long align )
     return( off + pad );
 }
 
-static bool WriteSegData( void *_sdata, void *_start )
-/********************************************************/
+static bool WriteSegData( void *_sdata, void *_info )
+/***************************************************/
 {
-    segdata *sdata = _sdata;
-    unsigned long *start = _start;
-    unsigned long newpos;
-    signed long pad;
+    segdata         *sdata = _sdata;
+    grpwriteinfo    *info = _info;
+    unsigned long   newpos;
+    signed long     pad;
 
     if( !sdata->isuninit && !sdata->isdead 
       && ( ( sdata->length > 0 ) || (FmtData.type & MK_END_PAD) ) ) {
-        newpos = *start + sdata->a.delta;
-        pad = newpos - PosLoad();
-        DbgAssert( pad >= 0 );
-        PadLoad( pad );
+        newpos = info->seg_start + sdata->a.delta;
+        if( info->repos ) {
+            SeekLoad( newpos );
+        } else {
+            pad = newpos - PosLoad();
+            DbgAssert( pad >= 0 );
+            PadLoad( pad );
+        }
         WriteInfo( sdata->data, sdata->length );
         sdata->data = newpos;   // for incremental linking
     }
     return( FALSE );
 }
 
-static void DoWriteLeader( seg_leader *seg, unsigned long start )
-/***************************************************************/
+static void DoWriteLeader( seg_leader *seg, grpwriteinfo *info )
+/**************************************************************/
 {
-    RingLookup( seg->pieces, WriteSegData, &start );
+    RingLookup( seg->pieces, WriteSegData, info );
 }
 
 void WriteLeaderLoad( void *seg )
 /**************************************/
 {
-    DoWriteLeader( seg, PosLoad() );
+    grpwriteinfo    info;
+
+    info.repos = FALSE;
+    info.seg_start = PosLoad();
+    DoWriteLeader( seg, &info );
 }
 
-static bool DoGroupLeader( void *seg, void *start )
-/*************************************************/
+static bool DoGroupLeader( void *_seg, void *_info )
+/**************************************************/
 {
+    seg_leader      *seg = _seg;
+    grpwriteinfo    *info = _info;
+
     // If class or sector should not be output, skip it
-    if ( !(((seg_leader *)seg)->class->flags & CLASS_NOEMIT ||
-           ((seg_leader *)seg)->segflags & SEG_NOEMIT) ) {
-        DoWriteLeader( seg, *(unsigned long *)start + GetLeaderDelta( seg ) );
+    if ( !(seg->class->flags & CLASS_NOEMIT ||
+           seg->segflags & SEG_NOEMIT) ) {
+        info->seg_start = info->grp_start + GetLeaderDelta( seg );
+        DoWriteLeader( seg, info );
     }
     return( FALSE );
 }
 
-static bool DoDupGroupLeader( void *seg, void *start )
+static bool DoDupGroupLeader( void *seg, void *_info )
 /****************************************************/
+// Substitute groups generally are sourced from NO_EMIT classes,
+// As copies, they need to be output, so ignore their MOEMIT flag here
 {
-    // Substitute groups generally are sourced from NO_EMIT classes,
-    // As copies, they need to be output, so ignore their MOEMIT flag here
-    DoWriteLeader( seg, *(unsigned long *)start + GetLeaderDelta( seg ) );
+    grpwriteinfo    *info = _info;
+
+    info->seg_start = info->grp_start + GetLeaderDelta( seg );
+    DoWriteLeader( seg, info );
     return( FALSE );
 }
 
-typedef struct  {
-    unsigned_32 pos;
-    group_entry *lastgrp;  // used only for copy classes
-} grpwriteinfo;
-
 static bool WriteCopyGroups( void *_seg, void *_info )
-/************************************************/
+/****************************************************/
+// This is called by the outer level iteration looking for classes
+//  that have more than one group in them
 {
-    // This is called by the outer level iteration looking for classes
-    //  that have more than one group in them
-    seg_leader *seg = _seg;
-    grpwriteinfo *info = _info;
+    seg_leader      *seg = _seg;
+    grpwriteinfo    *info = _info;
 
     if( info->lastgrp != seg->group ) {   // Only interate new groups
         info->lastgrp = seg->group;
         // Check each initialized segment in group
-        Ring2Lookup( seg->group->leaders, DoDupGroupLeader, (&info->pos));
-        info->pos += seg->group->totalsize;
+        Ring2Lookup( seg->group->leaders, DoDupGroupLeader, info );
+        info->grp_start += seg->group->totalsize;
     }
     return( FALSE );
 }
 
-offset  WriteGroupLoad( group_entry *group )
-/**********************************************/
+offset  WriteDOSGroupLoad( group_entry *group, bool repos )
+/*********************************************************/
 {
     grpwriteinfo     info;
     class_entry      *class;
 
     class = group->leaders->class;
 
-    info.pos = PosLoad();
+    info.repos = repos;
+    info.grp_start = PosLoad();
     // If group is a copy group, substitute source group(s) here
     if (class->flags & CLASS_COPY ) {
         info.lastgrp = NULL; // so it will use the first group
         RingLookup( class->DupClass->segs->group->leaders, WriteCopyGroups, &info );
     } else {
-        Ring2Lookup( group->leaders, DoGroupLeader, &(info.pos) );
+        Ring2Lookup( group->leaders, DoGroupLeader, &info );
     }
-    return( PosLoad() - info.pos );
+    return( PosLoad() - info.grp_start );
+}
+
+offset  WriteGroupLoad( group_entry *group )
+/******************************************/
+{
+    return( WriteDOSGroupLoad( group, FALSE ) );
 }
 
 static void OpenOutFiles( void )

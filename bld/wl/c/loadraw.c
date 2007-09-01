@@ -73,7 +73,7 @@ static bool WriteBinSegGroup( group_entry *group )
             }
             DEBUG((DBG_LOADDOS, "group %a section %d to %l in %s",
                 &group->grp_addr, sect->ovl_num, loc, finfo->fname ));
-            loc += WriteGroupLoad( group );
+            loc += WriteDOSGroupLoad( group, repos );
             if( loc > finfo->file_loc ) {
                 finfo->file_loc = loc;
             }

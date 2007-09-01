@@ -88,6 +88,7 @@ extern void             SeekEndLoad( unsigned long );
 extern unsigned long    PosLoad( void );
 extern void             WriteLeaderLoad( void * );
 extern offset           WriteGroupLoad( group_entry * );
+extern offset           WriteDOSGroupLoad( group_entry *, bool );
 extern unsigned_32      CopyToLoad( f_handle, char * );
 extern unsigned long    NullAlign( unsigned );
 extern unsigned long    OffsetAlign( unsigned long, unsigned long );
