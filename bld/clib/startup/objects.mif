@@ -187,6 +187,7 @@
 !inject dllnmwnt.obj                     nt nta ntp
 !inject dmndo32.obj                                                     o32
 !inject dmndwnt.obj                      nt nta ntp
+!inject d16msels.obj d16
 !inject dos16m.obj   d16
 !inject libentry.obj                                                                w16
 !inject main3o32.obj                                                    o32
@@ -241,6 +242,7 @@ seterrno_postopts=-os
 binmode_postopts=-zld
 commode_postopts=-zld
 cstrtiny_postopts=-zld
+d16msels_postopts=-zld
 dos16m_postopts=-zld
 libentry_postopts=-zld
 

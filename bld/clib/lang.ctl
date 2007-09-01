@@ -22,6 +22,7 @@ cdsay .
     <CPCMD> library/msdos.086/mm/clibm.lib                  <RELROOT>/rel2/lib286/dos/clibm.lib
     <CPCMD> library/msdos.086/mm_ov/clibm.lib               <RELROOT>/rel2/lib286/dos/clibom.lib
     <CPCMD> library/msdos.086/ms/clibs.lib                  <RELROOT>/rel2/lib286/dos/clibs.lib
+    <CPCMD> startup/library/msdos.086/ml/d16msels.obj       <RELROOT>/rel2/lib286/dos/d16msels.obj
     <CPCMD> startup/library/msdos.086/ml/dos16m.obj         <RELROOT>/rel2/lib286/dos/dos16m.obj
     <CPCMD> startup/library/msdos.086/ms/binmode.obj        <RELROOT>/rel2/lib286/dos/binmode.obj
     <CPCMD> startup/library/msdos.086/ms/commode.obj        <RELROOT>/rel2/lib286/dos/commode.obj
