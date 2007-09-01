@@ -49,11 +49,9 @@ char *get_enum_key( const char *src )
 /***********************************/
 {
     int     add_underscore;
-    int     pos;
     char    *dst;
 
     add_underscore = 1;
-    pos = 0;
     dst = enum_key;
     *dst++ = 'T';
     while( *src ) {
