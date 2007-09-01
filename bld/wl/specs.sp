@@ -666,6 +666,8 @@ system begin dos16m
 :elsesegment Pwlsystem
     libpath %WATCOM%/lib286
     libpath %WATCOM%/lib286/dos
+    libfile dos16m.obj
+    libfile d16msels.obj
     format dos16m runtime auto ^
 :endsegment
 end
