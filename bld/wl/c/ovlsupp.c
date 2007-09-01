@@ -317,6 +317,7 @@ void CalcOvl( void )
 
     OvlSeg->group = OvlGroup;
     OvlSeg->seg_addr = OvltabAddr;
+    OvlSeg->size = OvltabSize;
 
     OvlSegData->data = AllocStg( OvltabSize );
     OvlSegData->length = OvltabSize;
