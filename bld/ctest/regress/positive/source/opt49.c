@@ -4,7 +4,7 @@
 
 #include "fail.h"
 
-int test_function( int a )
+int test_function( long int a )
 {
     return( (a & 0xffff0001) != 0xffff0001);
 }
