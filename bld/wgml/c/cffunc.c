@@ -56,7 +56,7 @@
  *      NULL on failure
  */
 
-code_block * get_code_blocks(uint8_t * current, uint8_t count )
+code_block * get_code_blocks(uint8_t * * current, uint16_t count )
 {
     uint8_t             i;
     code_block *        out_block   = NULL;
@@ -71,33 +71,31 @@ code_block * get_code_blocks(uint8_t * current, uint8_t count )
 
         /* Get the designator */
             
-        memcpy_s( &out_block[i].designator, 1, current, 1 );
-        current += 1;
+        memcpy_s( &out_block[i].designator, 1, *current, 1 );
+        *current += 1;
 
-        /* Skip the nulls */
+        /* Skip the "unknown" field, which is 2 bytes in size */ 
 
-        if( memcmp( current, "\0\0", 2) ) {
-            printf_s( "CodeBlock %i doesn't conform to the Wiki: two nulls not present\n", i );
-            free( out_block );
-            out_block = NULL;
-            return( out_block );
-        }
-        current += 2;
+        *current += 2;
 
         /* Get the pass number */
             
-        memcpy_s( &out_block[i].pass, 2, current, 2 );
-        current += 2;
+        memcpy_s( &out_block[i].pass, 2, *current, 2 );
+        *current += 2;
 
         /* Get the count */
             
-        memcpy_s( &out_block[i].count, 2, current, 2 );
-        current += 2;
+        memcpy_s( &out_block[i].count, 2, *current, 2 );
+        *current += 2;
 
         /* Set the pointer to the actual data */
-            
-        out_block[i].function = current;
-        current += out_block[i].count;
+
+        if( &out_block[i].count == 0 ) {
+            out_block[i].function = NULL;
+        } else {                        
+            out_block[i].function = *current;
+            *current += out_block[i].count;
+        }
     }
         
     return( out_block );
@@ -207,15 +205,15 @@ p_buffer * get_p_buffer( FILE * in_file )
  *      NULL on failure
  */
 
-functions_block * parse_functions_block( uint8_t * current )
+functions_block * parse_functions_block( uint8_t * * current )
 {
     uint16_t            code_count;
     functions_block *   out_block   = NULL;
 
     /* Get the number of CodeBlocks */
 
-    memcpy_s( &code_count, 2, current, 2 );
-    current += 2;
+    memcpy_s( &code_count, 2, *current, 2 );
+    *current += 2;
 
     /* Allocate out_block */
 

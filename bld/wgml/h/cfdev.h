@@ -46,6 +46,7 @@
 #define CFDEV_H_INCLUDED
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 /* Structure declarations */

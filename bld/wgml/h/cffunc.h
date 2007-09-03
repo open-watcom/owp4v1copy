@@ -54,7 +54,7 @@
 
 typedef struct p_buffer_struct
 {
-    uint8_t     count;
+    uint16_t    count;
     uint8_t *   buffer;
 } p_buffer;
 
@@ -83,9 +83,9 @@ typedef struct functions_block_struct
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
-code_block *        get_code_blocks( uint8_t *, uint8_t );
+code_block *        get_code_blocks( uint8_t * *, uint16_t );
 p_buffer *          get_p_buffer( FILE * );
-functions_block *   parse_functions_block( uint8_t * );
+functions_block *   parse_functions_block( uint8_t * * );
 
 #ifdef  __cplusplus
 }   /* End of "C" linkage for C++ */

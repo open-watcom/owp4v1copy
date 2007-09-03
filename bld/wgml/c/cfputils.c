@@ -27,6 +27,7 @@
 * Description:  Implements the utility functions for cfparse():
 *                   check_directory()
 *                   display_device()
+*                   display_driver()
 *                   parse_cop_file()
 *                   print_banner()
 *                   print_usage()
@@ -77,6 +78,7 @@ NULL
 
 static void check_directory( FILE *, uint32_t);
 static void display_device( cop_device *);
+static void display_driver( cop_driver *);
 static int  verify_device( char *, char * );
 static int  verify_driver( char *, char * );
 static int  verify_font( char *, char * );
@@ -106,6 +108,7 @@ static int  verify_font( char *, char * );
 int parse_cop_file( void )
 {
     cop_device *    current_device  = NULL;
+    cop_driver *    current_driver  = NULL;
     FILE       *    current_file    = NULL;
     char            designator[4];
     uint16_t        entry_count;
@@ -142,6 +145,8 @@ int parse_cop_file( void )
         fseek( current_file, -3, SEEK_CUR ); /* Reset file to designator */
         if( is_drv_file( current_file ) ) {
             printf_s( "%s is a driver file\n", tgt_path );
+            current_driver = parse_driver( current_file );
+            if( current_driver ) display_driver( current_driver );
             break;
         }
         fseek( current_file, -3, SEEK_CUR ); /* Reset file to designator */
@@ -493,10 +498,10 @@ void display_device( cop_device * in_device)
  
 int verify_device( char * in_path, char * in_name)
 {
-    cop_device *    current_device = NULL;
     char            designator[4];
     char            file_name[_MAX_PATH];
     char            type;
+    cop_device *    current_device = NULL;
     FILE *          device_file = NULL;
     
     /* Build the file name */
@@ -541,6 +546,171 @@ int verify_device( char * in_path, char * in_name)
     return( BAD_MATCH );
 }
 
+/*  Function display_driver().
+ *  Displays the contents of a cop_driver instance.
+ *
+ *  Parameter:
+ *      in_driver is a pointer to the cop_driver instance.
+ */
+
+void display_driver( cop_driver * in_driver )
+{
+    int i;
+    int j;
+    
+    printf_s( "Allocated size:            %i\n", in_driver->allocated_size );
+    printf_s( "Bytes used:                %i\n", in_driver->next_offset );
+    if( in_driver->rec_spec == NULL ) puts( "Record Specification:");
+    else printf_s( "Record Specification:      %s\n", in_driver->rec_spec );
+    printf_s( "Fill Character:            %c\n", in_driver->fill_char );
+    puts( "Page Address Flags:");
+    printf_s( "  x_positive:              %i\n", in_driver->x_positive );
+    printf_s( "  y_positive:              %i\n", in_driver->y_positive );
+    puts( "Start :INIT Block:" );
+    if( in_driver->init.start_initblock != NULL ) {
+        for( i = 0; i < in_driver->init.start_initblock->count; i++ ) {
+            if( in_driver->init.start_initblock->codetext[i].is_fontvalue ) puts( ":FONTVALUE Block:");
+            else puts( ":VALUE Block:");
+            display_hex_block( in_driver->init.start_initblock->codetext[i].text, in_driver->init.start_initblock->codetext[i].count );
+        }
+    }
+    puts( "Document :INIT Block:" );
+    if( in_driver->init.document_initblock != NULL ) {
+        for( i = 0; i < in_driver->init.document_initblock->count; i++ ) {
+            if( in_driver->init.document_initblock->codetext[i].is_fontvalue ) puts( ":FONTVALUE Block:");
+            else puts( ":VALUE Block:");
+            display_hex_block( in_driver->init.document_initblock->codetext[i].text, in_driver->init.document_initblock->codetext[i].count );
+        }
+    }
+    puts( "End :FINISH Block:" );
+    if( in_driver->finish.end_finishblock != NULL ) {
+        display_hex_block( in_driver->finish.end_finishblock->text, in_driver->finish.end_finishblock->count );
+    }
+    puts( "Document :FINISH Block:" );
+    if( in_driver->finish.document_finishblock != NULL ) {
+        display_hex_block( in_driver->finish.document_finishblock->text, in_driver->finish.document_finishblock->count );
+    }
+    if( in_driver->newline.newlineblock == NULL ) puts( ":NEWLINE Block:");
+    else {
+        puts( ":NEWLINE Block(s):" );
+        for( i = 0; i < in_driver->newline.count; i++ ) {
+            printf_s( "  Advance: %i\n", in_driver->newline.newlineblock[i].advance );
+            if( in_driver->newline.newlineblock[i].text != NULL ) {
+                display_hex_block( in_driver->newline.newlineblock[i].text, in_driver->newline.newlineblock[i].count );
+            }
+        }
+    }
+    puts( ":NEWPAGE Block:" );
+    if( in_driver->newpage.text != NULL ) {
+        display_hex_block( in_driver->newpage.text, in_driver->newpage.count );
+    }
+    puts( ":HTAB Block:" );
+    if( in_driver->htab.text != NULL ) {
+        display_hex_block( in_driver->htab.text, in_driver->htab.count );
+    }
+    if( in_driver->fontswitch.fontswitchblock == NULL ) puts( ":FONTSWITCH Block:");
+    else {
+        puts( ":FONTSWITCH Block(s):" );    
+        for( i = 0; i < in_driver->fontswitch.count; i++ ) {
+            printf_s( "  Type: %s\n", in_driver->fontswitch.fontswitchblock[i].type );
+            if( in_driver->fontswitch.fontswitchblock[i].startvalue != NULL ) {
+                puts( "  :STARTVALUE Block:");
+                display_hex_block( in_driver->fontswitch.fontswitchblock[i].startvalue->text, in_driver->fontswitch.fontswitchblock[i].startvalue->count );
+            }
+            if( in_driver->fontswitch.fontswitchblock[i].endvalue != NULL ) {
+                puts( "  :ENDVALUE Block:");
+                display_hex_block( in_driver->fontswitch.fontswitchblock[i].endvalue->text, in_driver->fontswitch.fontswitchblock[i].endvalue->count );
+            }
+        }
+    }
+    if( in_driver->fontstyle.fontstyle == NULL ) puts( ":FONTSTYLE Block:");
+    else {
+        puts( ":FONTSTYLE Block(s):" );    
+        for( i = 0; i < in_driver->fontstyle.count; i++ ) {
+            printf_s( "  Type: %s\n", in_driver->fontstyle.fontstyle[i].type );
+            if( in_driver->fontstyle.fontstyle[i].startvalue == NULL ) {
+                puts( "  No :STARTVALUE Block");
+            } else {
+                puts( "  :STARTVALUE Block:");
+                display_hex_block( in_driver->fontstyle.fontstyle[i].startvalue->text, in_driver->fontstyle.fontstyle[i].startvalue->count );
+            }
+            if( in_driver->fontstyle.fontstyle[i].endvalue == NULL ) {
+                puts( "  No :ENDVALUE Block");
+            } else {
+                puts( "  :ENDVALUE Block:");
+                display_hex_block( in_driver->fontstyle.fontstyle[i].endvalue->text, in_driver->fontstyle.fontstyle[i].endvalue->count );
+            }
+            if(in_driver->fontstyle.fontstyle[i].lineprocs == NULL ) {
+                puts( "  No :LINEPROC Blocks");
+            } else {
+                puts( "  :LINEPROC Block(s):");
+                for( j = 0; j < in_driver->fontstyle.fontstyle[i].passes; j++ ) { 
+                    printf_s( "  Pass: %i\n", j+1 );
+                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].startvalue == NULL ) {
+                        puts( "  No :STARTVALUE Block");
+                    } else {
+                        puts( "  :STARTVALUE Block:");
+                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].startvalue->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].startvalue->count );
+                    }
+                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].firstword == NULL ) {
+                        puts( "  No :FIRSTWORD Block");
+                    } else {
+                        puts( "  :FIRSTWORD Block:");
+                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].firstword->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].firstword->count );
+                    }
+                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].startword == NULL ) {
+                        puts( "  No :STARTWORD Block");
+                    } else {
+                        puts( "  :STARTWORD Block");
+                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].startword->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].startword->count );
+                    }
+                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].endword == NULL ) {
+                        puts( "  No :ENDWORD Block");
+                    } else {
+                        puts( "  :ENDWORD Block:");
+                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].endword->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].endword->count );
+                    }
+                    if( in_driver->fontstyle.fontstyle[i].lineprocs[j].endvalue == NULL ) {
+                        puts( "  No :ENDVALUE Block");
+                    } else {
+                        puts( "  :ENDVALUE Block:");
+                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].endvalue->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].endvalue->count );
+                    }
+                }
+            }
+        }
+    }
+    if( in_driver->absoluteaddress.text == NULL ) {
+        puts( "No :ABSOLUTEADDRESS Block" );
+    } else {
+    puts( ":ABSOLUTEADDRESS Block:" );
+        display_hex_block( in_driver->absoluteaddress.text, in_driver->absoluteaddress.count );
+    }
+    if( in_driver->hline.text == NULL ) {
+        puts( "No :HLINE Block" );
+    } else {
+    puts( ":HLINE Block:" );
+        printf_s( "  Thickness:               %i\n", in_driver->hline.thickness );
+        display_hex_block( in_driver->hline.text, in_driver->hline.count );
+    }
+    if( in_driver->vline.text == NULL ) {
+        puts( "No :VLINE Block" );
+    } else {
+    puts( ":VLINE Block:" );
+        printf_s( "  Thickness:               %i\n", in_driver->vline.thickness );
+        display_hex_block( in_driver->vline.text, in_driver->vline.count );
+    }
+    if( in_driver->dbox.text == NULL ) {
+        puts( "No :DBOX Block" );
+    } else {
+    puts( ":DBOX Block:" );
+        printf_s( "  Thickness:               %i\n", in_driver->dbox.thickness );
+        display_hex_block( in_driver->dbox.text, in_driver->dbox.count );
+    }
+
+    return;
+}
+
 /*  Function verify_driver().
  *  Verifies that the file is a driver file.
  *
@@ -558,10 +728,11 @@ int verify_device( char * in_path, char * in_name)
  
 int verify_driver( char * in_path, char * in_name )
 {
-    char    designator[4];
-    char    file_name[_MAX_PATH];
-    char    type;
-    FILE *  driver_file = NULL;
+    char            designator[4];
+    char            file_name[_MAX_PATH];
+    char            type;
+    cop_driver *    current_driver = NULL;
+    FILE *          driver_file = NULL;
 
     /* Build the file name */
     strcpy_s( file_name, sizeof( file_name ), in_path );
@@ -583,8 +754,10 @@ int verify_driver( char * in_path, char * in_name )
         return( BAD_HEADER );
     }
     
-    /* Perform the test */
+    /* Perform the test and parse the file if appropriate */
     if( is_drv_file( driver_file ) ) {
+        current_driver = parse_driver( driver_file );
+        if( current_driver ) display_driver( current_driver );
         fclose( driver_file );
         return( GOOD_MATCH );
     }
