@@ -60,7 +60,7 @@ extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 
 #define PH_BUF_SIZE     32768
 #define PCH_SIGNATURE   (unsigned long) 'WPCH'
-#define PCH_VERSION     0x019C
+#define PCH_VERSION     0x019D
 #if defined(__I86__)
 #define PCH_VERSION_HOST ( ( 1L << 16 ) | PCH_VERSION )
 #elif defined(__386__)
@@ -99,6 +99,7 @@ static  unsigned        PH_RDirCount;
 static  unsigned        PH_IAliasCount;
 static  unsigned        PH_IncFileCount;
 static  unsigned        PH_LibraryCount;
+static  unsigned        PH_AliasCount;
 static  unsigned        PH_SegCount;
 static  unsigned        PH_MacroCount;
 static  unsigned        PH_UndefMacroCount;
@@ -130,6 +131,7 @@ struct  pheader {
     unsigned        incfile_count;
     unsigned        incline_count;  // IncLineCount
     unsigned        library_count;  // # of pragma library(s)
+    unsigned        alias_count;    // # of pragma alias(s)
     unsigned        seg_count;
     unsigned        macro_count;
     unsigned        undef_macro_count;
@@ -177,6 +179,7 @@ static void InitPHVars( void )
     PH_IAliasCount     = 0;
     PH_IncFileCount    = 0;
     PH_LibraryCount    = 0;
+    PH_AliasCount      = 0;
     PH_SegCount        = 0;
     PH_MacroCount      = 0;
     PH_UndefMacroCount = 0;
@@ -197,10 +200,10 @@ static void CreatePHeader( char *filename )
     }
 }
 
-static int WritePHeader( void *bufptr, unsigned len )
+static int WritePHeader( const void *bufptr, unsigned len )
 {
     unsigned    amt_written;
-    char        *buf;
+    const char  *buf;
 
     buf = bufptr;
     if( PH_computing_size ) {
@@ -279,6 +282,7 @@ static void OutPutHeader( void )
     pch.incfile_count     = PH_IncFileCount;
     pch.incline_count     = IncLineCount;
     pch.library_count     = PH_LibraryCount;
+    pch.alias_count       = PH_AliasCount;
     pch.seg_count         = PH_SegCount;
     pch.macro_count       = PH_MacroCount;
     pch.undef_macro_count = PH_UndefMacroCount;
@@ -350,6 +354,50 @@ static void OutPutLibraries( void )
             longjmp( PH_jmpbuf, rc );
         }
         PH_LibraryCount++;
+    }
+}
+
+static void OutPutAliases( void )
+{
+    int                 rc;
+    unsigned            len;
+    struct alias_list   *alias;
+    struct alias_list   tmp_alias;
+    const char          *alias_name;
+    const char          *alias_subst;
+
+    for( alias = AliasHead; alias; alias = alias->next ) {
+        memcpy( &tmp_alias, alias, sizeof( tmp_alias ) );
+        alias_name  = alias->name;
+        alias_subst = alias->subst;
+        if( alias_name ) {
+            len = strlen( alias_name ) + 1;
+            len = _RoundUp( len, sizeof( int ) );
+            tmp_alias.name = (const void *)len;
+        }
+        if( alias_subst ) {
+            len =  strlen( alias_subst ) + 1;
+            len = _RoundUp( len, sizeof( int ) );
+            tmp_alias.subst = (const void *)len;
+        }
+        len = sizeof( struct alias_list );
+        rc = WritePHeader( &tmp_alias, len );
+        if( rc != 0 ) {
+            longjmp( PH_jmpbuf, rc );
+        }
+        if( alias_name ) {
+            rc = WritePHeader( alias_name, (unsigned)tmp_alias.name );
+            if( rc != 0 ) {
+                longjmp( PH_jmpbuf, rc );
+            }
+        }
+        if( alias_subst ) {
+            rc = WritePHeader( alias_subst, (unsigned)tmp_alias.subst );
+            if( rc != 0 ) {
+                longjmp( PH_jmpbuf, rc );
+            }
+        }
+        PH_AliasCount++;
     }
 }
 
@@ -933,6 +981,7 @@ void OutPutEverything( void )
     OutPutHFileList();
     OutPutIncFileList();
     OutPutLibraries();
+    OutPutAliases();
     OutPutSegInfo();
     OutPutTypes();
     OutPutTags();
@@ -1116,7 +1165,7 @@ static int VerifyIncludes( void )
     return( failed );
 }
 
-static char *FixupLibrarys( char *p, unsigned library_count )
+static char *FixupLibraries( char *p, unsigned library_count )
 {
     struct library_list *lib;
     unsigned            len;
@@ -1135,6 +1184,47 @@ static char *FixupLibrarys( char *p, unsigned library_count )
             lib = (struct library_list *)p;
         }
         lib->next = NULL;
+    }
+    return( p );
+}
+
+static char *FixupAliases( char *p, unsigned alias_count )
+{
+    struct alias_list   *alias;
+    struct alias_list   *new_alias;
+    unsigned            len;
+    char                *str;
+
+    AliasHead = NULL;
+    if( alias_count != 0 ) {
+        new_alias = CMemAlloc( sizeof( struct alias_list ) );
+        memcpy( new_alias, p, sizeof( struct alias_list ) );
+        AliasHead = alias = new_alias;
+        for( ;; ) {
+            len = sizeof( struct alias_list );
+            p += len;
+            len = (unsigned)new_alias->name;
+            if( len ) {
+                str = CMemAlloc( len );
+                memcpy( str, p, len );
+                new_alias->name = str;
+                p += len;
+            }
+            len = (unsigned)new_alias->subst;
+            if( len ) {
+                str = CMemAlloc( len );
+                memcpy( str, p, len );
+                new_alias->subst = str;
+                p += len;
+            }
+            --alias_count;
+            if( alias_count == 0 ) break;
+            new_alias = CMemAlloc( sizeof( struct alias_list ) );
+            memcpy( new_alias, p, sizeof( struct alias_list ) );
+            alias->next = new_alias;
+            alias = new_alias;
+        }
+        alias->next = NULL;
     }
     return( p );
 }
@@ -1639,7 +1729,8 @@ extern void SetNextSymHandle( unsigned val );
 
 static int FixupDataStructures( char *p, struct pheader *pch )
 {
-    p = FixupLibrarys( p, pch->library_count );
+    p = FixupLibraries( p, pch->library_count );
+    p = FixupAliases( p, pch->alias_count );
     p = FixupSegInfo( p, pch->seg_count );
     p = FixupTypes( p, pch->type_count );
     p = FixupTags( p, pch->tag_count );

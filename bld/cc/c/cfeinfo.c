@@ -661,6 +661,61 @@ static VOIDPTR NextLibrary( int index, aux_class request )
     return( (char *)index );
 }
 
+//    NextAlias
+//        Called (indirectly) from the code generator to go through the list of
+//        linker aliases.
+//    Inputs:
+//        index    (n-1)
+//            Called from a loop until we return 0/NULL to show no more aliases
+//        request
+//            NEXT_ALIAS
+//                returns the index of next alias in the list, or zero if none.
+//            ALIAS_NAME
+//                returns the alias name, or NULL if alias refers to a symbol.
+//            ALIAS_SYMBOL
+//                returns the alias symbol, or NULL if alias refers to a name.
+//            ALIAS_SUBSTITUTE
+//                returns the name to be substituted for the alias.
+//
+// Note: One of ALIAS_NAME and ALIAS_SYMBOL will always be 0/NULL and the other
+// will be valid, depending on which form of the pragma was used.
+static VOIDPTR NextAlias( int index, aux_class request )
+{
+    struct alias_list   *aliaslist;
+    SYM_HANDLE          alias_sym = NULL;
+    SYM_HANDLE          subst_sym = NULL;
+    const char          *alias_name = NULL;
+    const char          *subst_name = NULL;
+    int                 i;
+
+    if( request == NEXT_ALIAS )
+        ++index;
+
+    for( i = 1, aliaslist = AliasHead; aliaslist; aliaslist = aliaslist->next, ++i ) {
+        alias_name = aliaslist->name;
+        alias_sym  = aliaslist->a_sym;
+        subst_name = aliaslist->subst;
+        subst_sym  = aliaslist->s_sym;
+        if( i == index ) {
+            break;
+        }
+    }
+    if( aliaslist == NULL )
+        index = 0;          /* no (more) aliases */
+
+    if( request == ALIAS_NAME ) {
+        return( (VOIDPTR)alias_name );
+    } else if( request == ALIAS_SYMBOL ) {
+        return( (VOIDPTR)alias_sym );
+    } else if( request == ALIAS_SUBST_NAME ) {
+        return( (VOIDPTR)subst_name );
+    } else if( request == ALIAS_SUBST_SYMBOL ) {
+        return( (VOIDPTR)subst_sym );
+    } else {    // this had better be a NEXT_ALIAS request
+        return( (VOIDPTR)index );
+    }
+}
+
 /* Return the size of function parameters or -1 if size could
  * not be determined (symbol isn't a function or is variadic)
  */
@@ -1073,6 +1128,12 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, int request )
     case NEXT_IMPORT_S:
     case IMPORT_NAME_S:
         return( NextImportS( (int)sym_handle, request ) );
+    case NEXT_ALIAS:
+    case ALIAS_NAME:
+    case ALIAS_SYMBOL:
+    case ALIAS_SUBST_NAME:
+    case ALIAS_SUBST_SYMBOL:
+        return( NextAlias( (int)sym_handle, request ) );
     case TEMP_LOC_NAME:
         return( (char *)TEMP_LOC_QUIT );
     case TEMP_LOC_TELL:
@@ -1296,6 +1357,12 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, int request )
     case NEXT_IMPORT_S:
     case IMPORT_NAME_S:
         return( NextImportS( (int)sym_handle, request ) );
+    case NEXT_ALIAS:
+    case ALIAS_NAME:
+    case ALIAS_SYMBOL:
+    case ALIAS_SUBST_NAME:
+    case ALIAS_SUBST_SYMBOL:
+        return( NextAlias( (int)sym_handle, request ) );
     case FREE_SEGMENT:
         return( NULL );
     case TEMP_LOC_NAME:

@@ -289,6 +289,14 @@ global  struct library_list {
     char                    name[1];
 } *HeadLibs;
 
+global  struct alias_list {
+    struct  alias_list      *next;
+    const char              *name;  /* one of 'name', 'a_sym' is valid */
+    SYM_HANDLE              a_sym;
+    const char              *subst;
+    SYM_HANDLE              s_sym;  /* one of 'subst', 's_sym' is valid */
+} *AliasHead;
+
 global  SYMPTR  CurFunc;        /* current function being worked on */
 global  SYM_ENTRY CurFuncSym;   /* for contents of current function symbol */
 global  SYM_HANDLE CurFuncHandle;/* sym_handle for current function */

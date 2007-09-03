@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Emit OMF object records.
 *
 ****************************************************************************/
 
@@ -1195,6 +1194,7 @@ extern  void    ObjFini( void )
     int         i;
     pointer     auto_import;
     char        *lib;
+    char        *alias;
 
     if( _IsModel( DBG_DF ) ) {
         if( _IsModel( DBG_LOCALS | DBG_TYPES ) ) {
@@ -1265,6 +1265,7 @@ extern  void    ObjFini( void )
         PutObjRec( CMD_EXTDEF, Imports->array, Imports->used );
         Imports->used = 0;
     }
+    /* Emit default library search records. */
     lib = NULL;
     for( ;; ) {
         lib = FEAuxInfo( lib, NEXT_LIBRARY );
@@ -1277,6 +1278,31 @@ extern  void    ObjFini( void )
         PutObjRec( CMD_COMENT, Imports->array, Imports->used );
         Imports->used = 0;
     }
+    /* Emit alias definition records. */
+    alias = NULL;
+    for( ;; ) {
+        char    *alias_name;
+        char    *subst_name;
+
+        alias = FEAuxInfo( alias, NEXT_ALIAS );
+        if( alias == NULL )
+            break;
+        alias_name = FEAuxInfo( alias, ALIAS_NAME );
+        if( alias_name == NULL ) {
+            OutObjectName( FEAuxInfo( alias, ALIAS_SYMBOL ), Imports );
+        } else {
+            OutName( alias_name, Imports );
+        }
+        subst_name = FEAuxInfo( alias, ALIAS_SUBST_NAME );
+        if( subst_name == NULL ) {
+            OutObjectName( FEAuxInfo( alias, ALIAS_SUBST_SYMBOL ), Imports );
+        } else {
+            OutName( subst_name, Imports );
+        }
+        PutObjRec( CMD_ALIAS, Imports->array, Imports->used );
+        Imports->used = 0;
+    }
+
     KillArray( Imports );
     Imports = NULL;
     KillArray( SegInfo );
@@ -2683,8 +2709,8 @@ static  void    OutName( char *name, void *dst )
     len = Length( name );
     if( len >= 256 ) {
         len = 255;
-        FEMessage( MSG_INFO_PROC, "Code generator truncated name, because it's length "
-            "overflows allowed maximum." );
+        FEMessage( MSG_INFO_PROC, "Code generator truncated name, its length "
+            "exceeds allowed maximum." );
         FEMessage( MSG_INFO_PROC, name );
     }
     NeedMore( dest, len + 1 );

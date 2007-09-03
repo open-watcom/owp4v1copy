@@ -477,6 +477,47 @@ used to compile the file will be generated.
 .*
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 .*
+.section The ALIAS Pragma (C Only)
+.*
+.np
+.ix 'pragmas' 'alias'
+.ix 'alias pragma'
+The "alias" pragma can be used to emit alias records in the object file,
+causing the linker to substitute references to a specified symbol with
+references to another symbol. Either identifiers or names (strings) may
+be used. Strings are used verbatim, while names corresponding to identifiers
+are derived as appropriate for the kind and calling convention of the symbol.
+The following describes the form of the "alias" pragma.
+.mbox begin
+:prgbeg. alias ( :id.alias:eid., :id.subst:eid. ) :prgend.
+.mbox end
+.synote
+.note alias
+is either a name or an identifier of the symbol to be aliased.
+.note subst
+is either a name or an identifier of the symbol that references to
+.id alias
+will be replaced with.
+.endnote
+.np
+Consider the following example.
+.millust begin
+extern int var;
+
+void fn( void )
+{
+    var = 3;
+}
+
+#pragma alias ( var, "other_var" );
+.millust end
+.pc
+Instead of
+.id var
+the linker will reference symbol named "other_var". Symbol
+.id var
+need not be defined, although "other_var" has to be.
+.*
 .section The ALLOC_TEXT Pragma (C Only)
 .*
 .np
