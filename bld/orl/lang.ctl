@@ -13,6 +13,9 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
+    <CCCMD> <PROJDIR>/test/nt386/objread.exe    <RELROOT>/rel2/binnt/objread.exe
+    <CCCMD> <PROJDIR>/test/os2386/objread.exe   <RELROOT>/rel2/binp/objread.exe
+    <CCCMD> <PROJDIR>/test/linux386/objread.exe <RELROOT>/rel2/binl/objread
 
 [ BLOCK <1> clean ]
 #==================
