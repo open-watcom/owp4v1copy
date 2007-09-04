@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Load string resources.
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -131,24 +131,6 @@ static int GetString(   WResLangInfo    *res,
     return( 0 );
 }
 
-#if 0   // moved to loadres.c
-static int GetResource( WResLangInfo    *res,
-                        PHANDLE_INFO    hInstance,
-                        LPSTR           lpszBuffer )
-/**************************************************/
-{
-    off_t               prevpos;
-    unsigned            numread;
-
-    prevpos = WRESSEEK( hInstance->handle, res->Offset, SEEK_SET );
-    if ( prevpos == -1L ) return( -1 );
-    numread = WRESREAD( hInstance->handle, (void *)lpszBuffer, (int)res->Length );
-
-    return( 0 );
-}
-#endif
-
-
 extern int WINAPI WResLoadString2(  WResDir             dir,
                                     PHANDLE_INFO        hInstance,
                                     UINT                idResource,
@@ -228,78 +210,8 @@ extern int CloseResFile( PHANDLE_INFO hInstance )
     return( CloseResFile2( MainDir, hInstance ) );
 }
 
-#if !defined( NATURAL_PACK )
-#include "pshpk1.h"
-#endif
-
-typedef struct dbgheader {
-    uint_16     signature;
-    uint_8      exe_major_ver;
-    uint_8      exe_minor_ver;
-    uint_8      obj_major_ver;
-    uint_8      obj_minor_ver;
-    uint_16     lang_size;
-    uint_16     seg_size;
-    uint_32     debug_size;
-} dbgheader;
-
-#if !defined( NATURAL_PACK )
-#include "poppk.h"
-#endif
-
-#define VALID_SIGNATURE 0x8386
-#define FOX_SIGNATURE1  0x8300
-#define FOX_SIGNATURE2  0x8301
-#define WAT_RES_SIG     0x8302
-
-/* Include patch signature header shared with BPATCH */
-#include "patchsig.h"
-
-long                    FileShift = 0;
-
-extern int FindResources( PHANDLE_INFO hInstance )
-/* look for the resource information in a debugger record at the end of file */
-{
-    off_t       currpos;
-    off_t       offset;
-    dbgheader   header;
-    int         notfound;
-    char        buffer[ sizeof( LEVEL ) ];
-
-    #define     __handle        hInstance->handle
-    notfound = 1;
-    FileShift = 0;
-    offset = sizeof(dbgheader);
-    if( WRESSEEK( __handle, -(long)sizeof(LEVEL), SEEK_END ) != -1L ){
-        if( WRESREAD( __handle, buffer, sizeof(LEVEL) ) == sizeof(LEVEL) ) {
-            if( memcmp( buffer, LEVEL, LEVEL_HEAD_SIZE ) == 0 ) {
-                offset += sizeof(LEVEL);
-            }
-        }
-    }
-    currpos = WRESSEEK( __handle, - offset, SEEK_END );
-    for(;;) {
-        WRESREAD( __handle, &header, sizeof(dbgheader) );
-        if( header.signature == WAT_RES_SIG ) {
-            notfound = 0;
-            FileShift = currpos - header.debug_size + sizeof(dbgheader);
-            break;
-        } else if( header.signature == VALID_SIGNATURE ||
-                   header.signature == FOX_SIGNATURE1 ||
-                   header.signature == FOX_SIGNATURE2 ) {
-            currpos -= header.debug_size;
-            WRESSEEK( __handle, currpos, SEEK_SET );
-        } else {        /* did not find the resource information */
-            break;
-        }
-    }
-    return( notfound );
-    #undef __handle
-}
-
 extern void LoadstrInitStatics( void )
 /************************************/
 {
     MainDir = NULL;
 }
-

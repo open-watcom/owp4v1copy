@@ -20,8 +20,7 @@ memory_model_386 = $(model)
 !include deftarg.mif
 
 objs = &
-    loadstr.obj &
-    loadres.obj &
+    loadfind.obj loadstr.obj loadres.obj &
     wrfree.obj &
     mropnewf.obj mrrdrh.obj ralliae.obj rclosef.obj rdlli.obj &
     rduint16.obj rduint32.obj rduint8.obj resseek.obj &
