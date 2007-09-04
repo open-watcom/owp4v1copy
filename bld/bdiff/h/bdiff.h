@@ -44,6 +44,7 @@
 
 #include "banner.h"
 #include "machtype.h"
+#include "patchsig.h"
 
 typedef unsigned long foff;
 typedef signed long foff_diff;
@@ -51,9 +52,6 @@ typedef unsigned long hole;
 #define IsHoleSize( x ) ( ( (x) & (sizeof(hole)-1) ) == 0 )
 
 #define WORD_MAX        65535
-#define SIGNATURE       "WATCOM binary patch file format\r\n\r\n"
-#define LEVEL           "WATCOM patch level .xxx"
-#define LEVEL_HEAD_SIZE (sizeof(LEVEL)-5)       /* w/o ".xxx\0" */
 
 #define END_SIG_CHAR    '\r'
 #define EOF_CHAR        0x1a

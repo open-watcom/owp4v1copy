@@ -252,9 +252,8 @@ typedef struct dbgheader {
 #define FOX_SIGNATURE2  0x8301
 #define WAT_RES_SIG     0x8302
 
-/* The following define for LEVEL was borrowed from definition in BPATCH */
-#define LEVEL           "Open Watcom patch level .xxx"
-#define LEVEL_HEAD_SIZE (sizeof(LEVEL)-5)       /* w/o ".xxx\0" */
+/* Include patch signature header shared with BPATCH */
+#include "patchsig.h"
 
 long                    FileShift = 0;
 
