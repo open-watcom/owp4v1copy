@@ -219,6 +219,9 @@ static void determine_file_specs( elf_file_handle elf_file_hnd, Elf32_Ehdr *e_hd
     case EM_MIPS:
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_R3000;
         break;
+    case EM_ALPHA:
+        elf_file_hnd->machine_type = ORL_MACHINE_TYPE_ALPHA;
+        break;
     default:
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_NONE;
     }

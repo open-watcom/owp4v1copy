@@ -203,7 +203,7 @@ static  void    DefaultLibs( void )
 
     comments = NULL;
     lib = NULL;
-    for(;;) {  //Library dependencies
+    for( ;; ) {  //Library dependencies
         lib = FEAuxInfo( lib, NEXT_LIBRARY );
         if( lib == NULL ) break;
         name =  (char*)FEAuxInfo( lib, LIBRARY_NAME ) + 1;
@@ -227,6 +227,35 @@ static void stringOut( char *name, void *data )
     *(char **)data = name;
 }
 
+static  void    AliasNames( void )
+/*********************************/
+{
+    pointer             alias;
+    char                *alias_name;
+    char                *subst_name;
+    owl_symbol_handle   owl_alias;
+    owl_symbol_handle   owl_subst;
+
+    alias = NULL;
+    for( ;; ) {  // Aliases
+        alias = FEAuxInfo( alias, NEXT_ALIAS );
+        if( alias == NULL ) break;
+        alias_name = FEAuxInfo( alias, ALIAS_NAME );
+        if( alias_name == NULL ) {
+            DoOutObjectName( FEAuxInfo( alias, ALIAS_SYMBOL ),
+                             stringOut, &alias_name, NORMAL );
+        }
+        subst_name = FEAuxInfo( alias, ALIAS_SUBST_NAME );
+        owl_alias = OWLSymbolInit( owlFile, alias_name );
+        if( subst_name == NULL ) {
+            DoOutObjectName( FEAuxInfo( alias, ALIAS_SUBST_SYMBOL ),
+                             stringOut, &subst_name, NORMAL );
+        }
+        owl_subst = OWLSymbolInit( owlFile, subst_name );
+        OWLWeakExt( owlFile, owl_alias, owl_subst, OWL_WKSYM_ALIAS );
+    }
+}
+
 static  void    EmitImports( void )
 /*********************************/
 {
@@ -234,14 +263,14 @@ static  void    EmitImports( void )
     char        *name;
 
     auto_import = NULL;
-    for(;;) {
+    for( ;; ) {
         auto_import = FEAuxInfo( auto_import, NEXT_IMPORT );
         if( auto_import == NULL )
             break;
         OWLEmitImport( owlFile, FEAuxInfo( auto_import, IMPORT_NAME ) );
     }
     auto_import = NULL;
-    for(;;) {
+    for( ;; ) {
         auto_import = FEAuxInfo( auto_import, NEXT_IMPORT_S );
         if( auto_import == NULL )
             break;
@@ -266,7 +295,7 @@ static  void    EmitDependencyInfo( void )
 
     sect = NULL;
     depend = NULL;
-    for(;;) {
+    for( ;; ) {
         depend = FEAuxInfo( depend, NEXT_DEPENDENCY );
         if( depend == NULL ) break;
         if( sect == NULL ) {
@@ -347,6 +376,7 @@ extern  void    ObjFini( void )
         CVObjFiniDbgInfo();
     }
     DefaultLibs();
+    AliasNames();
     EmitImports();
     EmitDependencyInfo();
     OWLFileFini( owlFile );
@@ -867,10 +897,10 @@ static void DumpImportResolve( code_lbl *label )
             type = (int) FEAuxInfo( sym, IMPORT_TYPE );
             switch( type ) {
             case IMPORT_IS_LAZY:
-                OWLWeakExt( owlFile, labelOwlSym( label ), labelOwlSym( bck->lbl ), TRUE  );
+                OWLWeakExt( owlFile, labelOwlSym( label ), labelOwlSym( bck->lbl ), OWL_WKSYM_LAZY );
                 break;
             case IMPORT_IS_WEAK:
-                OWLWeakExt( owlFile, labelOwlSym( label ), labelOwlSym( bck->lbl ), FALSE  );
+                OWLWeakExt( owlFile, labelOwlSym( label ), labelOwlSym( bck->lbl ), OWL_WKSYM_NORMAL );
                 break;
             case IMPORT_IS_CONDITIONAL_PURE:
                 /* fall through */

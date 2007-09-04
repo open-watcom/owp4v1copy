@@ -128,6 +128,12 @@ typedef enum {
     OWL_FILE_LIB,
 } owl_file_type;
 
+typedef enum {
+    OWL_WKSYM_NORMAL            = 0x0000,   // regular weak symbol
+    OWL_WKSYM_LAZY              = 0x0001,   // lazy weak symbol
+    OWL_WKSYM_ALIAS             = 0x0002,   // alias symbol
+} owl_wksym_flags;
+
 typedef uint_32         owl_line_num;
 typedef int_32          owl_offset;
 typedef owl_offset      owl_alignment;
@@ -173,7 +179,7 @@ extern void OWLENTRY OWLEmitExport( owl_file_handle file, owl_symbol_handle sym 
 
 #define OWLTellOffset OWLTellLocation
 
-extern void OWLENTRY OWLWeakExt( owl_file_handle file, owl_symbol_handle wk, owl_symbol_handle alt, int is_lazy  );
+extern void OWLENTRY OWLWeakExt( owl_file_handle file, owl_symbol_handle wk, owl_symbol_handle alt, owl_wksym_flags flags );
 extern void OWLENTRY OWLSetLocation( owl_section_handle section, owl_offset location );
 extern owl_offset OWLENTRY OWLTellLocation( owl_section_handle section );
 extern owl_offset OWLENTRY OWLTellSize( owl_section_handle section );

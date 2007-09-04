@@ -393,6 +393,28 @@ static orl_reloc_type convertMIPSReloc( elf_reloc_type elf_type )
 }
 
 
+static orl_reloc_type convertAlphaReloc( elf_reloc_type elf_type )
+{
+    switch( elf_type ) {
+    case R_ALPHA_NONE:
+    case R_ALPHA_COPY:
+        return( ORL_RELOC_TYPE_ABSOLUTE );
+    case R_ALPHA_REFLONG:
+    case R_ALPHA_REFQUAD:
+        return( ORL_RELOC_TYPE_WORD_32 );
+    case R_ALPHA_GPREL32:
+        return( ORL_RELOC_TYPE_GOT_32 );
+    case R_ALPHA_GPRELHIGH:
+        return( ORL_RELOC_TYPE_HALF_HI );
+    case R_ALPHA_GPRELLOW:
+        return( ORL_RELOC_TYPE_HALF_LO );
+    default:
+        assert( 0 );
+    }
+    return( ORL_RELOC_TYPE_NONE );
+}
+
+
 orl_reloc_type ElfConvertRelocType( elf_file_handle elf_file_hnd, elf_reloc_type elf_type )
 {
     switch( elf_file_hnd->machine_type ) {
@@ -405,6 +427,8 @@ orl_reloc_type ElfConvertRelocType( elf_file_handle elf_file_hnd, elf_reloc_type
     case ORL_MACHINE_TYPE_R3000:
     case ORL_MACHINE_TYPE_R4000:
         return( convertMIPSReloc( elf_type ) );
+    case ORL_MACHINE_TYPE_ALPHA:
+        return( convertAlphaReloc( elf_type ) );
     default:
         assert( 0 );
     }

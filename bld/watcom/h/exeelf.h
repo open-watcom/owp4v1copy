@@ -351,6 +351,7 @@ typedef struct {
 #define SHF_MASKPROC    0xf0000000      // processor specific flags
 
 #define SHF_X86_64_LARGE 0x1000000      // section with more than 2GB
+#define SHF_ALPHA_GPREL 0x10000000      
 
 // symbol table entry
 
@@ -583,6 +584,40 @@ typedef struct {
 #define R_MIPS_CALLHI16         30
 #define R_MIPS_CALLLO16         31
 
+// Alpha
+#define R_ALPHA_NONE            0 
+#define R_ALPHA_REFLONG         1 
+#define R_ALPHA_REFQUAD         2 
+#define R_ALPHA_GPREL32         3 
+#define R_ALPHA_LITERAL         4 
+#define R_ALPHA_LITUSE          5 
+#define R_ALPHA_GPDISP          6 
+#define R_ALPHA_BRADDR          7 
+#define R_ALPHA_HINT            8 
+#define R_ALPHA_SREL16          9 
+#define R_ALPHA_SREL32          10
+#define R_ALPHA_SREL64          11
+#define R_ALPHA_GPRELHIGH       17
+#define R_ALPHA_GPRELLOW        18
+#define R_ALPHA_GPREL16         19
+#define R_ALPHA_COPY            24
+#define R_ALPHA_GLOB_DAT        25
+#define R_ALPHA_JMP_SLOT        26
+#define R_ALPHA_RELATIVE        27
+#define R_ALPHA_BRSGP           28
+#define R_ALPHA_TLSGD           29
+#define R_ALPHA_TLS_LDM         30
+#define R_ALPHA_DTPMOD64        31
+#define R_ALPHA_GOTDTPREL       32
+#define R_ALPHA_DTPREL64        33
+#define R_ALPHA_DTPRELHI        34
+#define R_ALPHA_DTPRELLO        35
+#define R_ALPHA_DTPREL16        36
+#define R_ALPHA_GOTTPREL        37
+#define R_ALPHA_TPREL64         38
+#define R_ALPHA_TPRELHI         39
+#define R_ALPHA_TPRELLO         40
+#define R_ALPHA_TPREL16         41
 
 // program header
 

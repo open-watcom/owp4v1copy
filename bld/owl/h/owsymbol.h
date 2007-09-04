@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Symbol management data and routines.
 *
 ****************************************************************************/
 
@@ -76,6 +75,7 @@ typedef enum {
     OWL_SYM_EXPORT              = 0x0008,       // client wants this sym exported
     OWL_SYM_DEAD                = 0x0010,       // no longer needed
     OWL_SYM_COMDEF              = 0x0020,       // a comdef symbol
+    OWL_SYM_ALIAS               = 0x0040,       // alias symbol
 } owl_sym_flags;
 
 struct owl_symbol_info {
