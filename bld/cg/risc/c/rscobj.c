@@ -116,9 +116,9 @@ extern  int                     ObjFile;
 static  short                   CurrFNo;
 extern  proc_def                *CurrProc;
 
-extern section_def *FindSection( seg_id id ) {
-/********************************************/
-
+extern section_def *FindSection( seg_id id )
+/******************************************/
+{
     section_def         *curr;
 
     curr = sectionDefs[ id % N_SECTIONS ];
@@ -129,9 +129,9 @@ extern section_def *FindSection( seg_id id ) {
     return( curr );
 }
 
-extern section_def *AddSection( seg_id id ) {
-/*******************************************/
-
+extern section_def *AddSection( seg_id id )
+/*****************************************/
+{
     section_def         *new;
     unsigned            bucket;
 
@@ -145,9 +145,9 @@ extern section_def *AddSection( seg_id id ) {
     return( new );
 }
 
-static void DeleteSections( void ) {
-/**********************************/
-
+static void DeleteSections( void )
+/********************************/
+{
     unsigned            bucket;
     section_def         *ptr;
     section_def         *next;
@@ -163,39 +163,40 @@ static void DeleteSections( void ) {
     }
 }
 
-extern owl_section_handle DbgSectDefComdat( char *str ){
-/************************************************/
+extern owl_section_handle DbgSectDefComdat( char *str )
+/*****************************************************/
+{
     owl_section_handle  owl_handle;
 
     owl_handle = OWLSectionInit( owlFile, str, OWL_SECTION_COMDAT_DEBUG, 1 );
     return( owl_handle );
 }
 
-extern  void    ObjInit() {
-/*************************/
-
+extern  void    ObjInit( void )
+/*****************************/
+{
     OpenObj();
     CurrFNo = 0;
     if( _IsModel( DBG_DF ) ) {
-        if( _IsModel( DBG_LOCALS | DBG_TYPES ) ){
+        if( _IsModel( DBG_LOCALS | DBG_TYPES ) ) {
             DFDefSegs();
             DFObjInitInfo();
 #if 0 //save for jimr
-        }else if( _IsModel( NUMBERS ) ){
+        } else if( _IsModel( NUMBERS ) ) {
             DFDefSegs();
             DFObjLineInitInfo();
 #endif
         }
-    }else if( _IsModel( DBG_CV ) ) {
+    } else if( _IsModel( DBG_CV ) ) {
         CVDefSegs();
         CVObjInitInfo();
     }
 }
 
 
-#if 1
-static  void    DefaultLibs( void ){
-/***********************************/
+static  void    DefaultLibs( void )
+/*********************************/
+{
     char               *lib;
     char               *name;
     owl_section_handle  comments;
@@ -219,7 +220,6 @@ static  void    DefaultLibs( void ){
         OWLEmitData( comments, "", 1 );
     }
 }
-#endif
 
 static void stringOut( char *name, void *data )
 /*********************************************/
@@ -227,9 +227,9 @@ static void stringOut( char *name, void *data )
     *(char **)data = name;
 }
 
-static  void    EmitImports( void ) {
-/***********************************/
-
+static  void    EmitImports( void )
+/*********************************/
+{
     void        *auto_import;
     char        *name;
 
@@ -566,16 +566,16 @@ extern  void    OutLineNum( cg_linenum line, bool label_line )
 
     label_line = label_line;
     lc = OWLTellOffset( currSection->owl_handle );
-    if( _IsModel( DBG_DF ) || _IsModel( DBG_CV ) ){
+    if( _IsModel( DBG_DF ) || _IsModel( DBG_CV ) ) {
         CueFind( line, &info );
-        if( _IsModel( DBG_DF ) ){
-            if( _IsModel( DBG_LOCALS | DBG_TYPES ) ){
+        if( _IsModel( DBG_DF ) ) {
+            if( _IsModel( DBG_LOCALS | DBG_TYPES ) ) {
                 DFLineNum( &info, lc );
             }
-        }else if( _IsModel( DBG_CV ) ){
-            char *fname;
+        } else if( _IsModel( DBG_CV ) ) {
+            char    *fname;
 
-            if( info.fno != CurrFNo ){
+            if( info.fno != CurrFNo ) {
                 fname = SrcFNoFind( info.fno );
                 CurrFNo = info.fno;
                 OWLDebugFuncFile( currSection->func, fname );
@@ -583,7 +583,7 @@ extern  void    OutLineNum( cg_linenum line, bool label_line )
         }
         line = info.line;
     }
-    if( currSection->start != line ){  // Else we get two func starts
+    if( currSection->start != line ) {  // Else we get two func starts
         if( currSection->func != NULL ) // FIXME: added check to prevent crashes - MN
             OWLDebugFuncLine( currSection->func, line, lc );
         currSection->line = line;
@@ -651,9 +651,9 @@ extern  seg_id  AskBackSeg( void )
 }
 
 
-extern  seg_id  AskOP() {
-/***********************/
-
+extern  seg_id  AskOP( void )
+/***************************/
+{
     assert( currSection != NULL );
      return( currSection->id );
 }
@@ -770,9 +770,9 @@ extern  void    FlushOP( seg_id id )
     owl_section_type    tipe;
 
     sect = FindSection( id );
-    if( _IsModel( DBG_DF ) ){
+    if( _IsModel( DBG_DF ) ) {
         tipe = OWLTellSectionType( sect->owl_handle );
-        switch( tipe ){
+        switch( tipe ) {
         case OWL_SECTION_INFO:
         case OWL_SECTION_DEBUG:
         case OWL_SECTION_PDATA:
@@ -799,10 +799,10 @@ extern  bool    NeedBaseSet( void )
 {
     bool        need;
 
-    if( currSection->is_start ){
+    if( currSection->is_start ) {
         need = TRUE;
         currSection->is_start = FALSE;
-    }else{
+    } else {
         need = FALSE;
     }
     return( need );
@@ -887,8 +887,8 @@ static void DumpImportResolve( code_lbl *label )
     }
 }
 
-extern  void            OutReloc( code_lbl *label, owl_reloc_type tipe, unsigned offset )
-/***************************************************************************************/
+extern  void    OutReloc( code_lbl *label, owl_reloc_type tipe, unsigned offset )
+/*******************************************************************************/
 {
     DumpImportResolve( label );
     offset = offset;
@@ -897,8 +897,8 @@ extern  void            OutReloc( code_lbl *label, owl_reloc_type tipe, unsigned
         labelOwlSym( label ), tipe );
 }
 
-extern  void            OutSegReloc( code_lbl *label, seg_id seg )
-/****************************************************************/
+extern  void    OutSegReloc( code_lbl *label, seg_id seg )
+/********************************************************/
 {
     section_def             *sect;
 
@@ -927,8 +927,8 @@ extern  owl_sym_linkage labelLinkage( label_handle label )
     return( linkage );
 }
 
-extern  void            OutLabel( label_handle label )
-/****************************************************/
+extern  void    OutLabel( label_handle label )
+/********************************************/
 {
     sym_handle          sym;
     fe_attr             attr;
@@ -1035,21 +1035,21 @@ extern void OutPDataRec( code_lbl *label, offset proc_size, offset pro_size )
 }
 
 
-extern  void            *InitPatch( void )
-/****************************************/
+extern  void    *InitPatch( void )
+/********************************/
 {
     return( NULL );
 }
 
-extern void     AbsPatch( void * patch, offset lc )
+extern  void    AbsPatch( void * patch, offset lc )
 /*************************************************/
 {
     patch = patch;
     lc = lc;
 }
 
-extern void DoEmptyQueue( void )
-/******************************/
+extern  void    DoEmptyQueue( void )
+/**********************************/
 {
     EmptyQueue();
     TellUnreachLabels();
@@ -1073,7 +1073,7 @@ extern  void    TellObjNewProc( sym_handle proc )
         if( _IsModel( DBG_CV ) ) { // set the $debug for comdat
             CVDefSymComdat( currSection->owl_handle );
         }
-    }else{
+    } else {
         if( _IsModel( DBG_CV ) ) {
             CVDefSymNormal();  // reset to normal $debug section
         }
