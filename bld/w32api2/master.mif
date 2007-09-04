@@ -102,6 +102,7 @@ headers =            &
         ntdsbmsg.h   &
         ntldap.h     &
         ntsecapi.h   &
+        ntsecpkg.h   &
         oaidl.h      &
         objbase.h    &
         objidl.h     &
@@ -136,6 +137,7 @@ headers =            &
         shellapi.h   &
         shtypes.h    &
         snmp.h       &
+        sspi.h       &
         stralign.h   &
         tcpestat.h   &
         tcpmib.h     &

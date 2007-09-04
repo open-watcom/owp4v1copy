@@ -1838,12 +1838,7 @@ typedef struct _KERB_QUERY_TKT_CACHE_EX2_RESPONSE {
 } KERB_QUERY_TKT_CACHE_EX2_RESPONSE;
 typedef KERB_QUERY_TKT_CACHE_EX2_RESPONSE   *PKERB_QUERY_TKT_CACHE_EX2_RESPONSE;
 
-/* Security handle */
-typedef struct _SecHandle {
-    ULONG_PTR   dwLower;
-    ULONG_PTR   dwUpper;
-} SecHandle;
-typedef SecHandle   *PSecHandle;
+:include sechandl.sp
 
 /* Kerberos authentication data */
 #if (_WIN32_WINNT >= 0x0501)
