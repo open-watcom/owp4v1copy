@@ -83,6 +83,10 @@ libs_win = $(guidir)/win/win$(host_cpu)/gui.lib
 
 !else
 
+# custom version of resource finder
+extra_c_flags_loadfind = -I"$(wres_dir)/h"
+objs += loadfind.obj
+
 libs_dos = &
 $(guidir)/ui/dos$(host_cpu)/gui.lib &
 $(uidir)/dos/dos$(host_cpu)/ui.lib &
