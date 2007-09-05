@@ -106,6 +106,7 @@ headers =            &
         oaidl.h      &
         objbase.h    &
         objidl.h     &
+        objsafe.h    &
         ocidl.h      &
         ole.h        &
         ole2.h       &

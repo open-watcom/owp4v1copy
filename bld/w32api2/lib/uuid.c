@@ -1903,3 +1903,7 @@ EXTERN_C const IID      IID_IElementBehaviorSiteLayout2 =
 EXTERN_C const IID      IID_IHostBehaviorInit =
     { 0x3050F842, MSHTML_SUFFIX };
 
+/* objsafe.h */
+EXTERN_C const IID  IID_IObjectSafety =
+    { 0xCB5BDC81, 0x93C1, 0x11CF, { 0x8F, 0x20, 0x00, 0x80, 0x5F, 0x2C, 0xD0, 0x64 } };
+
