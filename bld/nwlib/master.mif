@@ -58,6 +58,8 @@ common_objs = &
 
 !ifdef prebuild
 
+!include $(wres_dir)/wrobjs.mif
+
 orl_objs = &
     orlentry.obj &
     orlflhnd.obj &
@@ -77,44 +79,7 @@ orl_objs = &
     coffload.obj &
     coffimpl.obj
 
-wres_objs = &
-    loadstr.obj &
-    loadfind.obj &
-    wriidfn.obj &
-    wrfindrs.obj &
-    wrgetli.obj &
-    ropenfro.obj &
-    wrinitdi.obj &
-    wrreaddi.obj &
-    wrfreedi.obj &
-    rclosef.obj &
-    wridcmp.obj &
-    wrerror.obj &
-    ralliae.obj &
-    wrrfrr.obj &
-    wridexby.obj &
-    wrrewrid.obj &
-    wrrftr.obj &
-    wrrhr.obj &
-    mrrdrh.obj &
-    wrfree.obj &
-    wridfnoo.obj &
-    wraddres.obj &
-    wriswrf.obj &
-    wridnacm.obj &
-    resseek.obj &
-    rduint32.obj &
-    rrnamoor.obj &
-    rduint16.obj &
-    wridfrst.obj &
-    wridfrnu.obj &
-    wrfirres.obj &
-    rduint8.obj &
-    rrdstr.obj &
-    varstr.obj
-
-common_objs += $(orl_objs)
-common_objs += $(wres_objs)
+common_objs += $(orl_objs) $(wres_core_objs)
 
 !else
 

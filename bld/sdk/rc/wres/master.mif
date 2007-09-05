@@ -19,29 +19,8 @@ memory_model_386 = $(model)
 !include defrule.mif
 !include deftarg.mif
 
-objs = &
-    loadfind.obj loadstr.obj loadres.obj &
-    wrfree.obj &
-    mropnewf.obj mrrdrh.obj ralliae.obj rclosef.obj rdlli.obj &
-    rduint16.obj rduint32.obj rduint8.obj resseek.obj &
-    restell.obj rillia.obj rillib.obj ropenfro.obj ropenfrw.obj &
-    rrdstr.obj rrlli.obj rrnamoor.obj wraddres.obj wrchkwrf.obj wrdelrs.obj &
-    wrerror.obj wrfilein.obj wrfindrs.obj wrfirres.obj wrfreedi.obj &
-    wrgetli.obj wrgetri.obj wrgetti.obj wrhidcmp.obj wridcmp.obj wridexby.obj &
-    wridfnoo.obj wridfree.obj wridfrnu.obj wridfrst.obj &
-    wrhidfno.obj wrhidfre.obj wrhidfrn.obj wrhidfrs.obj &
-    wridnacm.obj wridnfst.obj wridtnoo.obj wridtonu.obj &
-    wridtost.obj wriidfn.obj wrinitdi.obj wrisempt.obj &
-    wrihidf.obj &
-    wrislr.obj wriswrf.obj wrnextrs.obj wropnewf.obj &
-    wrreaddi.obj wrrewrid.obj wrrfrr.obj wrrftr.obj wrrfwrid.obj &
-    wrrhr.obj wrrwrid.obj &
-    wrwritdi.obj resver.obj wresrtns.obj &
-    resaccel.obj resbitmp.obj resdiag.obj resfont.obj resiccu.obj &
-    resmenu.obj resnamor.obj resraw.obj resstr.obj varstr.obj write.obj &
-    restbar.obj wrauto.obj wrmergdi.obj
-
-# removed files: wrrtr.obj wrrwridn.obj
+!include $(wres_dir)/wrobjs.mif
+objs = $(wres_core_objs) $(wres_more_objs)
 
 # options to use
 !ifdef IS_GUI
