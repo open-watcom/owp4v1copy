@@ -79,6 +79,7 @@ orl_objs = &
 
 wres_objs = &
     loadstr.obj &
+    loadfind.obj &
     wriidfn.obj &
     wrfindrs.obj &
     wrgetli.obj &
