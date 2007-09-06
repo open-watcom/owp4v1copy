@@ -153,18 +153,18 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
 
 gui_coord               GUIScale;
 
-extern bool SetupInit( void )
-/***************************/
+extern bool SetupPreInit( void )
+/******************************/
 {
     gui_rect            rect;
-    gui_create_info     init;
-    char *              curr_date = __DATE__;   // Mon DD YYYY
+    char                *curr_date = __DATE__;  // Mon DD YYYY
     size_t              adj_date;
 
-    // Cancel button may be wider in other languages
+    /* Cancel button may be wider in other languages */
     NominalButtonWidth = strlen( LIT( Cancel ) ) + 5;
 
-    GUIWndInit( 300, GUI_PLAIN ); // 300 uS mouse dbl click rate, graphics mouse
+    /* Initialize enough of the GUI lib to let us show message boxes etc. */
+    GUIWndInit( 300, GUI_PLAIN ); // 300 uS mouse dbl click rate, no char remapping
     GUISetCharacter( GUI_SCROLL_SLIDER, 177 );
     GUISetBetweenTitles( 2 );
     GUIScale.x = WND_APPROX_SIZE;
@@ -176,6 +176,36 @@ extern bool SetupInit( void )
     rect.height = GUIScale.y;
     GUISetScale( &rect );
 
+    /*
+     *  Create copyright information 
+     *
+     *  If the compile fails at this line, then the date is not in the 'MMM DD YYYY' format that I was expecting
+     *  so we should check what it is as the code below [adj_date onwards] may fail horribly
+     *
+     *  see curr_date above
+     */
+    if( 1 ) {
+        char        tt[sizeof(__DATE__) == 12];
+        tt[0] = 0;
+    }
+
+    adj_date = strlen( curr_date ) - 4; /* subtract YYYY */
+    if( strlen( cpy1_templ ) < 1000 ) {
+        sprintf( cpy1, cpy1_templ, &curr_date[adj_date] );
+    } else {
+        strcpy( cpy1, "Copyright © 2002- Open Watcom Contributors. All Rights Reserved." );
+    }
+
+    return( TRUE );
+}
+
+extern bool SetupInit( void )
+/***************************/
+{
+    gui_rect            rect;
+    gui_create_info     init;
+
+    GUIGetScale( &rect );
     memset( &init, 0, sizeof( init ) );
     init.rect = rect;
     init.scroll = 0;
@@ -202,34 +232,14 @@ extern bool SetupInit( void )
     
     MainWnd = GUICreateWindow( &init );
 
-    /*
-     *  Create copyright information 
-     *
-     *  If the compile fails at this line, then the date is not in the 'MMM DD YYYY' format that I was expecting
-     *  so we should check what it is as the code below [adj_date onwards] may fail horribly
-     *
-     *  see curr_date above
-     */
-    if(1){
-        char                tt[sizeof(__DATE__) == 12];
-        tt[0] = 0;
-    }
-
-    adj_date = strlen(curr_date) - 4;  /* subtract YYYY */
-    if( strlen( cpy1_templ ) < 1000 ) {
-        sprintf( cpy1, cpy1_templ, &curr_date[adj_date] );
-    } else {
-        strcpy( cpy1, "Copyright © 2002- Open Watcom Contributors. All Rights Reserved." );
-    }
-
     /* remove GUI toolkit adjustment here as it is no longer required */
-    
+
     return( TRUE );
 }
 
 
-extern void SetupTitle()
-/**********************/
+extern void SetupTitle( void )
+/****************************/
 {
     char        buff[MAXBUF];
 
