@@ -1,5 +1,5 @@
 proj_name       = ziplib
-orl_autodepends = .autodepend
+ziplib_autodepends = .autodepend
 
 !include cproj.mif
 !include defrule.mif
