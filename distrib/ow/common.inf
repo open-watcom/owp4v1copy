@@ -92,7 +92,6 @@ cfg=RUN=%DstDir%\BINP\NMPBIND.EXE,              IsOS2 IsOS2DosBox | ?%DstDir%\bi
 cfg=FILES=20,                                   IsDOS IsWin |
 auto=+PATH=%DstDir%\BINNT,                      IsWin95
 auto=+PATH=%CDDir%\BINNT,                       IsWin95 MinimalInstall
-auto=+DOS16M=1,                                 IsDOS
 auto=+PATH=%DstDir%\BINW,                       IsDOS IsWin IsWin95 | |
 auto=+PATH=%CDDir%\BINW,                        IsDOS IsWin IsWin95 | | MinimalInstall
 auto=+PATH=%DstDir%\BIN,                        false
