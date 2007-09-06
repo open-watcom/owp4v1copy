@@ -77,9 +77,8 @@ char *Bolt[] = {
 
 
 static char         cpy1[1024];
-static char *       cpy1_templ = banner4gui();  //"Copyright © 2002-%s Open Watcom Contributors. All Rights Reserved."
-static char *       cpy2 = banner2agui();    //"Portions Copyright © 1982-2002 Sybase, Inc. All Rights Reserved."
-static char *       cpy3 = banner5sti();  //"Install Copyright © SciTech Software, Inc."
+static char         *cpy1_templ = banner4gui(); //"Copyright © 2002-%s Open Watcom Contributors. All Rights Reserved."
+static char         *cpy2 = banner2agui();      //"Portions Copyright © 1982-2002 Sybase, Inc. All Rights Reserved."
 
 
 gui_resource WndGadgetArray[] = {
@@ -136,9 +135,8 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
             GUIGetRGB( GUI_BLACK, &foreg );     /* foreground */
 
             /* Start at bottom left of hotspot and use neagtive offset */
-            GUIDrawTextRGB(gui, cpy1, strlen(cpy1), row_count-2, indent, foreg, rgb);
-            GUIDrawTextRGB(gui, cpy2, strlen(cpy2), row_count-1, indent, foreg, rgb);
-            GUIDrawTextRGB(gui, cpy3, strlen(cpy3), row_count-0, indent, foreg, rgb);
+            GUIDrawTextRGB( gui, cpy1, strlen( cpy1 ), row_count-2, indent, foreg, rgb );
+            GUIDrawTextRGB( gui, cpy2, strlen( cpy2 ), row_count-1, indent, foreg, rgb );
 
             
         } else {
@@ -218,10 +216,11 @@ extern bool SetupInit( void )
     }
 
     adj_date = strlen(curr_date) - 4;  /* subtract YYYY */
-    if(strlen(cpy1_templ) < 1000)
-        sprintf(cpy1, cpy1_templ, &curr_date[adj_date]);
-    else
-        strcpy(cpy1, "Copyright © 2002- Open Watcom Contributors. All Rights Reserved.");
+    if( strlen( cpy1_templ ) < 1000 ) {
+        sprintf( cpy1, cpy1_templ, &curr_date[adj_date] );
+    } else {
+        strcpy( cpy1, "Copyright © 2002- Open Watcom Contributors. All Rights Reserved." );
+    }
 
     /* remove GUI toolkit adjustment here as it is no longer required */
     

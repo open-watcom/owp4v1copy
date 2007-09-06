@@ -68,7 +68,6 @@
 
 /* Used by setupgui/c/guiinit.c */
 #define banner4gui()    "Copyright © 2002-%s Open Watcom Contributors. All Rights Reserved."
-#define banner5sti()    "Install Copyright © SciTech Software, Inc."
 #define banner2agui() "Portions Copyright © 1984-2002 Sybase, Inc. All Rights Reserved."
 
 // the following macros define the delimeters used bythe resource
