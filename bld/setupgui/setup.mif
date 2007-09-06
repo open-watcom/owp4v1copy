@@ -267,6 +267,9 @@ setup.lnk : makefile ../setup.mif
 ! endif
 !else ifeq host_os dos
     @%append setup.lnk option stack=30K
+!ifeq host_cpu 386
+    @%append setup.lnk option stub=cwstub.exe
+!endif
 !else
 !endif
 !ifdef PROJECT_LIBS
