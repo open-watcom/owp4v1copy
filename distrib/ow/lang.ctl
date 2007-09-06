@@ -38,6 +38,9 @@ echo Installer Build: <1> <2> <3> <4> <5>
   [ IFDEF (os_os2 "") <2*> ]
      mkexezip <RELROOT>/rel2/open-watcom-c-os2-<BLD_VER_STR>.exe   <RELROOT>/rel2/csetup.zip <DEVDIR>/setupgui/os2386.gui/csetup.exe
 
+  [ IFDEF (os_dos "") <2*> ]
+     mkexezip <RELROOT>/rel2/open-watcom-c-dos-<BLD_VER_STR>.exe   <RELROOT>/rel2/csetup.zip <DEVDIR>/setupgui/dos386/setup.exe
+
   [ IFDEF (finst "") <2*> ]
      echo Creating Fortran setup.inf
      langdat f77
@@ -55,6 +58,9 @@ echo Installer Build: <1> <2> <3> <4> <5>
 
   [ IFDEF (os_os2 "") <2*> ]
      mkexezip <RELROOT>/rel2/open-watcom-f77-os2-<BLD_VER_STR>.exe   <RELROOT>/rel2/fsetup.zip <DEVDIR>/setupgui/os2386.gui/f77setup.exe
+
+  [ IFDEF (os_dos "") <2*> ]
+     mkexezip <RELROOT>/rel2/open-watcom-f77-dos-<BLD_VER_STR>.exe   <RELROOT>/rel2/fsetup.zip <DEVDIR>/setupgui/dos386/setup.exe
 
 [ BLOCK . . ]
   # Get setup.inf out of the way
