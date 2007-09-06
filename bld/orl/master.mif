@@ -5,34 +5,12 @@ orl_autodepends = .autodepend
 !include defrule.mif
 !include deftarg.mif
 
+!include ../orlobjs.mif
+
 .c: $(orl_dir)/c;$(orl_dir)/elf/c;$(orl_dir)/coff/c;$(orl_dir)/omf/c
 .h: $(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h
 
 inc_dirs = -I"$(orl_dir)/h" -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(orl_dir)/omf/h"
-
-omf_objs =  omfload.obj &
-            omfmunge.obj &
-            omfentr.obj &
-            omfflhn.obj &
-            omfdrctv.obj
-
-elf_objs  = elfentr.obj &
-            elflwlv.obj &
-            elfflhn.obj &
-            elfload.obj
-
-coff_objs = coffentr.obj &
-            cofflwlv.obj &
-            coffflhn.obj &
-            coffload.obj &
-            coffimpl.obj
-
-orl_objs  = orlentry.obj &
-            orlflhnd.obj &
-            orlhash.obj &
-            $(omf_objs) &
-            $(elf_objs) &
-            $(coff_objs)
 
 orl.lib : $(orl_objs)
 !ifeq bootstrap 1
