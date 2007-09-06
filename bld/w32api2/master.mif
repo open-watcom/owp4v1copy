@@ -139,6 +139,7 @@ headers =            &
         shellapi.h   &
         shtypes.h    &
         snmp.h       &
+        sql.h        &
         sqltypes.h   &
         sspi.h       &
         stralign.h   &
