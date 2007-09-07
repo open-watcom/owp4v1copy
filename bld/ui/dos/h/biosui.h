@@ -48,15 +48,10 @@ extern void IdleInterrupt(void);
  #define _INT_10        "call __Int10"
  #define _INT_16        "call __Int16"
  #define _INT_21        "call __Int21"
-
-#pragma aux IdleInterrupt =
 #else
  #define _INT_10        "int 0x10"
  #define _INT_16        "int 0x16"
  #define _INT_21        "int 0x21"
-
-#pragma aux IdleInterrupt = \
- 0xCD 0x28;         /* int     028 */
 #endif
 
 #define BIOS_VIDEO      0x10
