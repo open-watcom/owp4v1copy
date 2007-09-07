@@ -178,6 +178,7 @@ typedef struct {
 
 #define DPMIAllocateDOSMemoryBlock              _DPMIAllocateDOSMemoryBlock
 #define DPMIFreeDOSMemoryBlock                  _DPMIFreeDOSMemoryBlock
+#define DPMIIdle                                _DPMIIdle
 #define DPMIModeDetect                          _DPMIModeDetect
 #define DPMIRawRMtoPMAddr                       _DPMIRawRMtoPMAddr
 #define DPMIRawPMtoRMAddr                       _DPMIRawPMtoRMAddr
@@ -211,6 +212,7 @@ extern void __far *_DPMIGetPMExceptionVector( char iv );
 extern void __far *_DPMIGetPMInterruptVector( char iv );
 extern void _DPMISetRealModeInterruptVector( char iv, void __far * ptr );
 extern short _DPMIModeDetect( void );
+extern void _DPMIIdle( void );
 extern void _DPMIGetVersion( version_info __far * );
 extern void _fDPMIGetVersion( version_info __far * );
 extern void _nDPMIGetVersion( version_info * );
@@ -262,6 +264,10 @@ extern void _DPMIResetWatch( short handle );
         "mov ax,1686h"  \
         "int 2fh"  \
         value[ax];
+
+#pragma aux _DPMIIdle = \
+        "mov ax,1680h"  \
+        "int 2fh";
 
 #pragma aux _DPMISetWatch = \
         "mov    ax,0b00h" \
