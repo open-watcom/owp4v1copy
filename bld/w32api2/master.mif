@@ -116,6 +116,7 @@ headers =            &
         oleacc.h     &
         oleauto.h    &
         olectl.h     &
+        olectlid.h   &
         oleidl.h     &
         packon.h     &
         packoff.h    &
