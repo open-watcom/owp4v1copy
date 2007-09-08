@@ -95,8 +95,13 @@ void IdleInterrupt( void )
 #endif
 }
 #else
-#pragma aux IdleInterrupt = \
- "int 20h"
+extern void DOSIdleInterrupt( void );
+#pragma aux DOSIdleInterrupt = "int 28h";
+
+void IdleInterrupt( void )
+{
+    DOSIdleInterrupt();
+}
 #endif
 
 void intern setvideomode( unsigned mode )
