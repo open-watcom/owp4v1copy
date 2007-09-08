@@ -113,6 +113,7 @@ headers =            &
         ole.h        &
         ole2.h       &
         ole2ver.h    &
+        oleacc.h     &
         oleauto.h    &
         olectl.h     &
         oleidl.h     &
