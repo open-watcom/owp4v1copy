@@ -438,7 +438,7 @@ STDAPI_( LRESULT )  LresultFromObject( REFIID, WPARAM, LPUNKNOWN );
 STDAPI              ObjectFromLresult( LRESULT, REFIID, WPARAM, void ** );
 STDAPI              WindowFromAccessibleObject( IAccessible *, HWND * );
 
-/* Map generic function names to the appropriate ANSI or Unicode versions. */
+/* Map generic function names to the appropriate ANSI or Unicode version. */
 #ifdef UNICODE
     #define CreateStdAccessibleProxy    CreateStdAccessibleProxyW
     #define GetRoleText                 GetRoleTextW
