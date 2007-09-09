@@ -121,6 +121,7 @@ headers =            &
         oleidl.h     &
         packon.h     &
         packoff.h    &
+        pbt.h        &
         poppack.h    &
         propidl.h    &
         prsht.h      &
