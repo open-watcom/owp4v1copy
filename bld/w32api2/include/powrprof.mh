@@ -1,0 +1,269 @@
+/*
+ *  powrprof.h  Power profile functions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _POWRPROF_H_INCLUDED
+#define _POWRPROF_H_INCLUDED
+
+:include readonly.sp
+:include cpluspro.sp
+
+:include ntstatus.sp
+
+/* Global flags */
+#define EnableSysTrayBatteryManager 0x00000001L
+#define EnableMultiBatteryDisplay   0x00000002L
+#define EnablePasswordLogon         0x00000004L
+#define EnableWakeOnRing            0x00000008L
+#define EnableVideoDimDisplay       0x00000010L
+
+/* Power attributes */
+#define POWER_ATTRIBUTE_HIDE    0x00000001L
+
+/* Power scheme identifier special value */
+#define NEWSCHEME   0xFFFFFFFF
+
+/* DevicePowerEnumDevices() flags */
+#if (NTDDI_VERSION >= 0x05020000)
+    #define DEVICEPOWER_HARDWAREID              0x80000000L
+    #define DEVICEPOWER_AND_OPERATION           0x40000000L
+    #define DEVICEPOWER_FILTER_DEVICES_PRESENT  0x20000000L
+    #define DEVICEPOWER_FILTER_HARDWARE         0x10000000L
+    #define DEVICEPOWER_FILTER_WAKEENABLED      0x08000000L
+    #define DEVICEPOWER_FILTER_WAKEPROGRAMMABLE 0x04000000L
+    #define DEVICEPOWER_FILTER_ON_NAME          0x02000000L
+    #define DEVICEPOWER_SET_WAKEENABLED         0x00000001L
+    #define DEVICEPOWER_CLEAR_WAKEENABLED       0x00000002L
+#endif
+
+/* Device power capabilities */
+#if (NTDDI_VERSION >= 0x05020000)
+    #define PDCAP_S0_SUPPORTED              0x00010000L
+    #define PDCAP_S1_SUPPORTED              0x00020000L
+    #define PDCAP_S2_SUPPORTED              0x00040000L
+    #define PDCAP_S3_SUPPORTED              0x00080000L
+    #define PDCAP_WAKE_FROM_S0_SUPPORTED    0x00100000L
+    #define PDCAP_WAKE_FROM_S1_SUPPORTED    0x00200000L
+    #define PDCAP_WAKE_FROM_S2_SUPPORTED    0x00400000L
+    #define PDCAP_WAKE_FROM_S3_SUPPORTED    0x00800000L
+    #define PDCAP_S4_SUPPORTED              0x01000000L
+    #define PDCAP_S5_SUPPORTED              0x02000000L
+#endif
+
+/* Global machine power policy */
+typedef struct _GLOBAL_MACHINE_POWER_POLICY {
+    ULONG               Revision;
+    SYSTEM_POWER_STATE  LidOpenWakeAc;
+    SYSTEM_POWER_STATE  LidOpenWakeDc;
+    ULONG               BroadcastCapacityResolution;
+} GLOBAL_MACHINE_POWER_POLICY;
+typedef GLOBAL_MACHINE_POWER_POLICY *PGLOBAL_MACHINE_POWER_POLICY;
+
+/* Global user power policy */
+typedef struct _GLOBAL_USER_POWER_POLICY {
+    ULONG               Revision;
+    POWER_ACTION_POLICY PowerButtonAc;
+    POWER_ACTION_POLICY PowerButtonDc;
+    POWER_ACTION_POLICY SleepButtonAc;
+    POWER_ACTION_POLICY SleepButtonDc;
+    POWER_ACTION_POLICY LidCloseAc;
+    POWER_ACTION_POLICY LidCloseDc;
+    SYSTEM_POWER_LEVEL  DischargePolicy[NUM_DISCHARGE_POLICIES];
+    ULONG               GlobalFlags;
+} GLOBAL_USER_POWER_POLICY;
+typedef GLOBAL_USER_POWER_POLICY    *PGLOBAL_USER_POWER_POLICY;
+
+/* Global power policy */
+typedef struct _GLOBAL_POWER_POLICY {
+    GLOBAL_USER_POWER_POLICY    user;
+    GLOBAL_MACHINE_POWER_POLICY mach;
+} GLOBAL_POWER_POLICY;
+typedef GLOBAL_POWER_POLICY *PGLOBAL_POWER_POLICY;
+
+/* Machine power policy */
+typedef struct _MACHINE_POWER_POLICY {
+    ULONG               Revision;
+    SYSTEM_POWER_STATE  MinSleepAc;
+    SYSTEM_POWER_STATE  MinSleepDc;
+    SYSTEM_POWER_STATE  ReducedLatencySleepAc;
+    SYSTEM_POWER_STATE  ReducedLatencySleepDc;
+    ULONG               DozeTimeoutAc;
+    ULONG               DozeTimeoutDc;
+    ULONG               DozeS4TimeoutAc;
+    ULONG               DozeS4TimeoutDc;
+    UCHAR               MinThrottleAc;
+    UCHAR               MinThrottleDc;
+    UCHAR               pad1[2];
+    POWER_ACTION_POLICY OverThrottledAc;
+    POWER_ACTION_POLICY OverThrottledDc;
+} MACHINE_POWER_POLICY;
+typedef MACHINE_POWER_POLICY    *PMACHINE_POWER_POLICY;
+
+/* Machine processor power policy */
+#if (NTDDI_VERSION >= 0x05010000)
+typedef struct _MACHINE_PROCESSOR_POWER_POLICY {
+    ULONG                   Revision;
+    PROCESSOR_POWER_POLICY  ProcessorPolicyAc;
+    PROCESSOR_POWER_POLICY  ProcessorPolicyDc;
+} MACHINE_PROCESSOR_POWER_POLICY;
+typedef MACHINE_PROCESSOR_POWER_POLICY  *PMACHINE_PROCESSOR_POWER_POLICY;
+#endif
+
+/* User power policy */
+typedef struct _USER_POWER_POLICY {
+    ULONG               Revision;
+    POWER_ACTION_POLICY IdleAc;
+    POWER_ACTION_POLICY IdleDc;
+    ULONG               IdleTimeoutAc;
+    ULONG               IdleTimeoutDc;
+    UCHAR               IdleSensitivityAc;
+    UCHAR               IdleSensitivityDc;
+    UCHAR               ThrottlePolicyAc;
+    UCHAR               ThrottlePolicyDc;
+    SYSTEM_POWER_STATE  MaxSleepAc;
+    SYSTEM_POWER_STATE  MaxSleepDc;
+    ULONG               Reserved[2];
+    ULONG               VideoTimeoutAc;
+    ULONG               VideoTimeoutDc;
+    ULONG               SpindownTimeoutAc;
+    ULONG               SpindownTimeoutDc;
+    BOOLEAN             OptimizeForPowerAc;
+    BOOLEAN             OptimizeForPowerDc;
+    UCHAR               FanThrottleToleranceAc;
+    UCHAR               FanThrottleToleranceDc;
+    UCHAR               ForcedThrottleAc;
+    UCHAR               ForcedThrottleDc;
+} USER_POWER_POLICY;
+typedef USER_POWER_POLICY   *PUSER_POWER_POLICY;
+
+/* Power policy */
+typedef struct _POWER_POLICY {
+    USER_POWER_POLICY       user;
+    MACHINE_POWER_POLICY    mach;
+} POWER_POLICY;
+typedef POWER_POLICY    *PPOWER_POLICY;
+
+/* Power enumeration callbacks */
+#if (NTDDI_VERSION >= 0x06000000)
+typedef BOOLEAN (CALLBACK *PWRSCHEMESENUMPROC)( UINT, DWORD, LPWSTR, DWORD, LPWSTR, PPOWER_POLICY, LPARAM );
+#else
+typedef BOOLEAN (CALLBACK *PWRSCHEMESENUMPROC)( UINT, DWORD, LPTSTR, DWORD, LPTSTR, PPOWER_POLICY, LPARAM );
+#endif
+typedef BOOLEAN (CALLBACK *PFNNTINITIATEPWRACTION)( POWER_ACTION, SYSTEM_POWER_STATE, ULONG, BOOLEAN );
+
+/* Power data accessors */
+#if (NTDDI_VERSION >= 0x06000000)
+typedef enum _POWER_DATA_ACCESSOR {
+    ACCESS_AC_POWER_SETTING_INDEX               = 0,
+    ACCESS_DC_POWER_SETTING_INDEX               = 1,
+    ACCESS_FRIENDLY_NAME                        = 2,
+    ACCESS_DESCRIPTION                          = 3,
+    ACCESS_POSSIBLE_POWER_SETTING               = 4,
+    ACCESS_POSSIBLE_POWER_SETTING_FRIENDLY_NAME = 5,
+    ACCESS_POSSIBLE_POWER_SETTING_DESCRIPTION   = 6,
+    ACCESS_DEFAULT_AC_POWER_SETTING             = 7,
+    ACCESS_DEFAULT_DC_POWER_SETTING             = 8,
+    ACCESS_POSSIBLE_VALUE_MIN                   = 9,
+    ACCESS_POSSIBLE_VALUE_MAX                   = 10,
+    ACCESS_POSSIBLE_VALUE_INCREMENT             = 11,
+    ACCESS_POSSIBLE_VALUE_UNITS                 = 12,
+    ACCESS_ICON_RESOURCE                        = 13,
+    ACCESS_DEFAULT_SECURITY_DESCRIPTOR          = 14,
+    ACCESS_ATTRIBUTES                           = 15,
+    ACCESS_SCHEME                               = 16,
+    ACCESS_SUBGROUP                             = 17,
+    ACCESS_INDIVIDUAL_SETTING                   = 18,
+    ACCESS_ACTIVE_SCHEME                        = 19,
+    ACCESS_CREATE_SCHEME                        = 20
+} POWER_DATA_ACCESSOR;
+typedef POWER_DATA_ACCESSOR *PPOWER_DATA_ACCESSOR;
+#endif
+
+/* Functions in POWRPROF.DLL */
+NTSTATUS WINAPI CallNtPowerInformation( POWER_INFORMATION_LEVEL, PVOID, ULONG, PVOID, ULONG );
+BOOLEAN WINAPI  CanUserWritePwrScheme( VOID );
+BOOLEAN WINAPI  DeletePwrScheme( UINT );
+BOOLEAN WINAPI  EnumPwrSchemes( PWRSCHEMESENUMPROC, LPARAM );
+BOOLEAN WINAPI  GetActivePwrScheme( PUINT );
+BOOLEAN WINAPI  GetCurrentPowerPolicies( PGLOBAL_POWER_POLICY, PPOWER_POLICY );
+BOOLEAN WINAPI  GetPwrCapabilities( PSYSTEM_POWER_CAPABILITIES );
+BOOLEAN WINAPI  GetPwrDiskSpindownRange( PUINT, PUINT );
+BOOLEAN WINAPI  IsAdminOverrideActive( PADMINISTRATOR_POWER_POLICY );
+BOOLEAN WINAPI  IsPwrHibernateAllowed( VOID );
+BOOLEAN WINAPI  IsPwrShutdownAllowed( VOID );
+BOOLEAN WINAPI  IsPwrSuspendAllowed( VOID );
+BOOLEAN WINAPI  ReadGlobalPwrPolicy( PGLOBAL_POWER_POLICY );
+BOOLEAN WINAPI  ReadPwrScheme( UINT, PPOWER_POLICY );
+BOOLEAN WINAPI  SetActivePwrScheme( UINT, PGLOBAL_POWER_POLICY, PPOWER_POLICY );
+BOOLEAN WINAPI  SetSuspendState( BOOLEAN, BOOLEAN, BOOLEAN );
+BOOLEAN WINAPI  ValidatePowerPolicies( PGLOBAL_POWER_POLICY, PPOWER_POLICY );
+BOOLEAN WINAPI  WriteGlobalPwrPolicy( PGLOBAL_POWER_POLICY );
+BOOLEAN WINAPI  WritePwrScheme( PUINT, LPCWSTR, LPCWSTR, PPOWER_POLICY );
+#if (NTDDI_VERSION >= 0x05010000)
+BOOLEAN WINAPI  ReadProcessorPwrScheme( UINT, PMACHINE_PROCESSOR_POWER_POLICY );
+BOOLEAN WINAPI  WriteProcessorPwrScheme( UINT, PMACHINE_PROCESSOR_POWER_POLICY );
+#endif
+#if (NTDDI_VERSION >= 0x05020000)
+BOOLEAN WINAPI  DevicePowerClose( VOID );
+BOOLEAN WINAPI  DevicePowerEnumDevices( ULONG, ULONG, ULONG, PBYTE, PULONG );
+BOOLEAN WINAPI  DevicePowerOpen( ULONG );
+DWORD WINAPI    DevicePowerSetDeviceState( LPCWSTR, ULONG, PVOID );
+#endif
+#if (NTDDI_VERSION >= 0x06000000)
+DWORD WINAPI    PowerCanRestoreIndividualDefaultPowerScheme( CONST GUID * );
+DWORD WINAPI    PowerCreatePossibleSetting( HKEY, CONST GUID *, CONST GUID *, ULONG );
+DWORD WINAPI    PowerCreateSetting( HKEY, CONST GUID *, CONST GUID * );
+DWORD WINAPI    PowerDeleteScheme( HKEY, CONST GUID * );
+POWER_PLATFORM_ROLE WINAPI  PowerDeterminePlatformRole( VOID );
+DWORD WINAPI    PowerDuplicateScheme( HKEY, CONST GUID *, GUID ** );
+DWORD WINAPI    PowerEnumerate( HKEY, CONST GUID *, CONST GUID *, POWER_DATA_ACCESSOR, ULONG, UCHAR *, DWORD * );
+DWORD WINAPI    PowerGetActiveScheme( HKEY, GUID ** );
+DWORD WINAPI    PowerImportPowerScheme( HKEY, LPCWSTR, GUID ** );
+DWORD WINAPI    PowerOpenSystemPowerKey( HKEY *, REGSAM, BOOL );
+DWORD WINAPI    PowerOpenUserPowerKey( HKEY *, REGSAM, BOOL );
+DWORD WINAPI    PowerReadACDefaultIndex( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, LPDWORD );
+DWORD WINAPI    PowerReadACValue( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, PULONG, LPBYTE, LPDWORD );
+DWORD WINAPI    PowerReadACValueIndex( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, LPDWORD );
+DWORD WINAPI    PowerReadDCDefaultIndex( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, LPDWORD );
+DWORD WINAPI    PowerReadDCValue( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, PULONG, PUCHAR, LPDWORD );
+DWORD WINAPI    PowerReadDCValueIndex( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, LPDWORD );
+DWORD WINAPI    PowerReadDescription( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, PUCHAR, LPDWORD );
+DWORD WINAPI    PowerReadFriendlyName( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, PUCHAR, LPDWORD );
+DWORD WINAPI    PowerReadIconResourceSpecifier( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, PUCHAR, LPDWORD );
+DWORD WINAPI    PowerReadPossibleDescription( HKEY, CONST GUID *, CONST GUID *, ULONG, PUCHAR, LPDWORD );
+DWORD WINAPI    PowerReadPossibleFriendlyName( HKEY, CONST GUID *, CONST GUID *, ULONG, PUCHAR, LPDWORD );
+DWORD WINAPI    PowerReadPossibleValue( HKEY, CONST GUID *, CONST GUID *, PULONG, ULONG, PUCHAR, LPDWORD );
+DWORD WINAPI    PowerReadSettingAttributes( CONST GUID *, CONST GUID * );
+DWORD WINAPI    PowerReadValueIncrement( HKEY, CONST GUID *, CONST GUID *, LPDWORD );
+DWORD WINAPI    PowerReadValueMax( HKEY, CONST GUID *, CONST GUID *, LPDWORD );
+DWORD WINAPI    PowerReadValueMin( HKEY, CONST GUID *, CONST GUID *, LPDWORD );
+DWORD WINAPI    PowerReadValueUnitsSpecifier( HKEY, CONST GUID *, CONST GUID *, UCHAR *, LPDWORD );
+DWORD WINAPI    PowerRemovePowerSetting( CONST GUID *, CONST GUID * );
+DWORD WINAPI    PowerReplaceDefaultPowerSchemes( VOID );
+DWORD WINAPI    PowerRestoreDefaultPowerSchemes( VOID );
+DWORD WINAPI    PowerRestoreIndividualDefaultPowerScheme( CONST GUID * );
+DWORD WINAPI    PowerSetActiveScheme( HKEY, CONST GUID * );
+DWORD WINAPI    PowerSettingAccessCheck( POWER_DATA_ACCESSOR, CONST GUID * );
+DWORD WINAPI    PowerWriteACDefaultIndex( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, DWORD );
+DWORD WINAPI    PowerWriteACValueIndex( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, DWORD );
+DWORD WINAPI    PowerWriteDCDefaultIndex( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, DWORD );
+DWORD WINAPI    PowerWriteDCValueIndex( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, DWORD );
+DWORD WINAPI    PowerWriteDescription( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, UCHAR *, DWORD );
+DWORD WINAPI    PowerWriteFriendlyName( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, UCHAR *, DWORD );
+DWORD WINAPI    PowerWriteIconResourceSpecifier( HKEY, CONST GUID *, CONST GUID *, CONST GUID *, UCHAR *, DWORD );
+DWORD WINAPI    PowerWritePossibleDescription( HKEY, CONST GUID *, CONST GUID *, ULONG, UCHAR *, DWORD );
+DWORD WINAPI    PowerWritePossibleFriendlyName( HKEY, CONST GUID *, CONST GUID *, ULONG, UCHAR *, DWORD );
+DWORD WINAPI    PowerWritePossibleValue( HKEY, CONST GUID *, CONST GUID *, ULONG, ULONG, UCHAR *, DWORD );
+DWORD WINAPI    PowerWriteSettingAttributes( CONST GUID *, CONST GUID *, DWORD );
+DWORD WINAPI    PowerWriteValueIncrement( HKEY, CONST GUID *, CONST GUID *, DWORD );
+DWORD WINAPI    PowerWriteValueMax( HKEY, CONST GUID *, CONST GUID *, DWORD );
+DWORD WINAPI    PowerWriteValueMin( HKEY, CONST GUID *, CONST GUID *, DWORD );
+DWORD WINAPI    PowerWriteValueUnitsSpecifier( HKEY, CONST GUID *, CONST GUID *, UCHAR *, DWORD );
+#endif
+
+:include cplusepi.sp
+
+#endif /* _POWRPROF_H_INCLUDED */
+

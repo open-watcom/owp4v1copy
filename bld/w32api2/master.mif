@@ -123,6 +123,7 @@ headers =            &
         packoff.h    &
         pbt.h        &
         poppack.h    &
+        powrprof.h   &
         propidl.h    &
         prsht.h      &
         pshpack1.h   &
