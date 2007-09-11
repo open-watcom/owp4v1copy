@@ -64,6 +64,7 @@ extern  void            RevCond(instruction*);
 extern  void            SuffixIns(instruction*,instruction*);
 extern  hw_reg_set      HighReg(hw_reg_set);
 extern  instruction     *MakeNop(void);
+extern  bool            CheckIndecies(instruction*,hw_reg_set,hw_reg_set,name*);
 
 extern    reg_list      *RegSets[];
 extern    op_regs       RegList[];
@@ -527,9 +528,15 @@ extern instruction      *rCLRHI_R( instruction *ins )
     res = ins->result;
     high = HighReg( res->r.reg );
     if( op->n.class == N_INDEXED
-        && op->i.index->n.class == N_REGISTER
-        && HW_Ovlap( op->i.index->r.reg, res->r.reg ) ) {
-        /* would have gen'd movzd  eax,[eax] */
+        && (   ( op->i.index->n.class == N_REGISTER && HW_Ovlap( op->i.index->r.reg, res->r.reg ) ) /* (1) */
+            || ( CheckIndecies( ins, res->r.reg, HW_EMPTY, NULL ) ) /* 2 */
+           )
+      ) {
+        /* (1) would have gen'd movzd  eax,[eax]
+         * (2) avoid incorrect reduction of "cnv [foo] => BX" to
+         *      xor bx,bx / mov bx, [foo] / mov bl, [bx]
+         *     (zoiks register allocator)
+         */
         new_ins = NULL;
     } else if( !HW_CEqual( high, HW_EMPTY ) && half_class == class ) {
         if( op->n.class == N_REGISTER && HW_Equal( op->r.reg, high ) ) {        // BBB - may 19, 1994

@@ -711,7 +711,7 @@ static  bool    StealsIdx( instruction *ins,
 }
 
 
-static  bool            CheckIndecies( instruction *ins,
+extern  bool            CheckIndecies( instruction *ins,
                                        hw_reg_set reg, hw_reg_set except,
                                        name *op ) {
 /***************************************************************************
