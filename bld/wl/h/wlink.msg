@@ -505,15 +505,17 @@ pick(    MSG_DOS16_HELP_7,  "option    ::= \"BUFfer=\"n | \"GDTsize=\"n | (\"REL
                 "option    ::= \"BUFfer=\"n | \"GDTsize=\"n | (\"RELocs\" | \"NORelocs\") | \"SELstart=\"n" )
 pick(    MSG_DOS16_HELP_8,  "            | \"DATASize=\"n | \"EXTended=\"n" ,
                 "            | \"DATASize=\"n | \"EXTended=\"n" )
-pick(    MSG_DOS16_HELP_9,  "runoption ::= \"KEYboard\" | \"OVERload\" | \"INIT00\" | \"INITFF\" | \"ROTate\" | \"AUTO\"" ,
+pick(    MSG_DOS16_HELP_9,   "            | \"STUB=\"stub_name" ,
+                                "            | \"STUB=\"ÉXÉ^Éuñº")
+pick(    MSG_DOS16_HELP_10, "runoption ::= \"KEYboard\" | \"OVERload\" | \"INIT00\" | \"INITFF\" | \"ROTate\" | \"AUTO\"" ,
                 "runoption ::=  \"KEYbord\" | \"OVERload\" | \"INIT00\" | \"INITFF\" | \"ROTate\" | \"AUTO\"" )
-pick(    MSG_DOS16_HELP_10, "            | \"SELectors\" | \"INT10\"" ,
+pick(    MSG_DOS16_HELP_11, "            | \"SELectors\" | \"INT10\"" ,
                 "            | \"SELectors\" | \"INT10\"" )
-pick(    MSG_DOS16_HELP_11, "strategy  ::= \"TRYExtended\" | \"TRYLow\" | \"FORCEExtended\" | \"FORCELow\"" ,
+pick(    MSG_DOS16_HELP_12, "strategy  ::= \"TRYExtended\" | \"TRYLow\" | \"FORCEExtended\" | \"FORCELow\"" ,
                 "strategy  ::= \"TRYExtended\" | \"TRYLow\" | \"FORCEExtended\" | \"FORCELow\"" )
-pick(    MSG_DOS16_HELP_12, "seg_type  ::= \"STack\" | \"DAta\"" ,
+pick(    MSG_DOS16_HELP_13, "seg_type  ::= \"STack\" | \"DAta\"" ,
                 "seg_type  ::= \"STack\" | \"DAta\"" )              
-pick(    MSG_DOS16_HELP_13, " " ,
+pick(    MSG_DOS16_HELP_14, " " ,
                 " " )
 
 /*
