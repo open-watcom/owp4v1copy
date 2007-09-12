@@ -1,0 +1,8 @@
+LIBRARY RASDLG.DLL
+EXPORTS
+RasDialDlgA
+RasDialDlgW
+RasEntryDlgA
+RasEntryDlgW
+RasPhonebookDlgA
+RasPhonebookDlgW

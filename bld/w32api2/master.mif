@@ -126,12 +126,14 @@ headers =            &
         powrprof.h   &
         propidl.h    &
         prsht.h      &
+        psapi.h      &
         pshpack1.h   &
         pshpack2.h   &
         pshpack4.h   &
         pshpack8.h   &
         qos.h        &
         ras.h        &
+        rasdlg.h     &
         reason.h     &
         rpc.h        &
         rpcasync.h   &
