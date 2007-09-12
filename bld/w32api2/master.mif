@@ -84,6 +84,7 @@ headers =            &
         mgmtapi.h    &
         mlang.h      &
         mmreg.h      &
+        mmstream.h   &
         mmsystem.h   &
         mprapi.h     &
         mq.h         &
@@ -188,6 +189,7 @@ headers =            &
         wtypes.h
 
 libs =               &
+        amstrmid.lib &
         largeint.lib &
         uuid.lib
 
@@ -208,6 +210,11 @@ all : $(headers) $(libs) .SYMBOLIC
 
 winsock2.h: winsock.mh
     $(ws2splice)
+
+amstrmid.lib: amstrmid.obj
+    %create $^&.lbc
+    @%append $^&.lbc +amstrmid.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
 
 largeint.lib: largeint.obj
     %create $^&.lbc
