@@ -38,6 +38,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <utime.h>
 #if !defined( __UNIX__ )
     #include <direct.h>
 #else
@@ -3523,15 +3524,15 @@ static bool PatchErrorDialog( int ret, int i )
 }
 
 
-static a_bool FindStr( FILE *fp, char *fullpath, char *pattern )
-/**************************************************************/
+static bool FindStr( FILE *fp, char *fullpath, char *pattern )
+/************************************************************/
 {
     char            *buff;
     size_t          len;
     size_t          readsize;
     char            *p;
     size_t          i;
-    a_bool          found;
+    bool            found;
     size_t          patternlen;
 
     patternlen = strlen( pattern );
@@ -3572,8 +3573,8 @@ static a_bool FindStr( FILE *fp, char *fullpath, char *pattern )
 }
 
 
-a_bool ReadBlock( char *fullpath, char *pattern, void *block, long blocklen )
-/***************************************************************************/
+bool ReadBlock( char *fullpath, char *pattern, void *block, long blocklen )
+/*************************************************************************/
 {
     FILE            *fp;
     int             len;
@@ -3603,10 +3604,10 @@ a_bool ReadBlock( char *fullpath, char *pattern, void *block, long blocklen )
 }
 
 
-a_bool WriteBlock( char *fullpath, char *pattern, void *block, long blocklen )
-/****************************************************************************/
+bool WriteBlock( char *fullpath, char *pattern, void *block, long blocklen )
+/**************************************************************************/
 {
-    a_bool          foundstr;
+    bool            foundstr;
     FILE            *fp;
     int             len;
     struct stat     statbuf;
@@ -3702,14 +3703,14 @@ extern bool PatchFiles( void )
     char                srcfullpath[ _MAX_PATH ];
     gui_message_return  guiret;
     int                 count;  // count successful patches
-    a_bool              log;
+    bool                log;
     FILE                *logfp;
     char                *appname;
     char                *msg;
     int                 Index;  // used in secondary search during patch
     unsigned_32         internal;
     unsigned_32         embeddedinfo;
-    a_bool              go_ahead;
+    bool                go_ahead;
     char                exetype[ 3 ];
 
 
