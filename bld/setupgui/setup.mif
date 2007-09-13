@@ -103,6 +103,11 @@ $(guidir)/ui/os2$(host_cpu)/gui.lib &
 $(uidir)/os2/os2$(host_cpu)/ui.lib &
 $(wres_lib)
 
+libs_nt = &
+$(guidir)/ui/nt$(host_cpu)/gui.lib &
+$(uidir)/nt/nt$(host_cpu)/ui.lib &
+$(wres_lib)
+
 !endif
 
 libs_os2    += ../zlib/osi386/zlib.lib ../ziplib/osi386/ziplib.lib
@@ -209,6 +214,8 @@ setup.exe: $(gendeps) setupui.res
 
 !else ifeq host_os nt
 
+!ifeq sys_windowed 1
+
 all : setup.exe csetup.exe f77setup.exe .SYMBOLIC
 
 setup.exe: virgin.exe setup.res
@@ -218,6 +225,14 @@ setup.exe: virgin.exe setup.res
 
 virgin.exe: $(gendeps)
     $(linker) name $^@ @setup.lnk
+
+!else
+
+setup.exe: $(gendeps) setupui.res
+    $(linker) name $^@ @setup.lnk
+    wstrip -q -a -r setup.exe . setupui.res
+
+!endif
 
 !else ifeq host_os dos
 

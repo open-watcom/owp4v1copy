@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows specific utility routines.
 *
 ****************************************************************************/
 
@@ -461,7 +460,7 @@ extern void WriteProfileStrings( bool uninstall )
     }
 }
 
-#if defined( __NT__ )  ||  defined( __WINDOWS__ )
+#if ( defined( __NT__ )  ||  defined( __WINDOWS__ ) ) && !defined( _UI )
 static bool IsWin40()
 {
 #if defined(WINNT)
@@ -485,7 +484,7 @@ static bool IsWin40()
 
 void SetDialogFont()
 {
-#if defined( __NT__ )  ||  defined( __WINDOWS__ )
+#if ( defined( __NT__ )  ||  defined( __WINDOWS__ ) ) && !defined( _UI )
 
     char            *fontstr;
     LOGFONT         lf;
