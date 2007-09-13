@@ -17,11 +17,8 @@ extra_l_flags = name $^@ op map
 
 .ERASE
 
-all : bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe .SYMBOLIC
-    @%null
+all : bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe wpatch.exe wcpatch.exe
 
-# I don't know what WPATCH and WCPATCH are for, they look somewhat like forerunner versions.
-# They are not in the list of targets.
 #
 # WCPATCH. Create patch.
 #

@@ -24,18 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Directory-based patch creation utility.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <direct.h>
-#include <io.h>
-#include "wpatchio.h"
+#include <unistd.h>
 
-#define NULL 0
+#include "bdiff.h"
+#include "wpatchio.h"
+#include "wpatch.h"
+
 #define FALSE 0
 
 struct {
@@ -45,14 +48,14 @@ struct {
 
 int cmpStrings( const void *, const void * );
 
-void main( int argc, char *argv[] ) {
-
-    if ( argc != 4 ) {
+void main( int argc, char *argv[] ) 
+{
+    if( argc != 4 ) {
         printf( "Usage: WCPATCH source-dir target-dir patchfile\n" );
         printf( "where source-dir is the directory containing the original files,\n" );
         printf( "target-dir is the directory containing the modified files,\n" );
         printf( "and patchfile is the path to store the resulting patchfile in.\n\n" );
-        exit ( -2 );
+        exit( -2 );
     } else {
         printf( "Watcom Create Patch (WCPATCH) version 11.0\n" );
         printf( "Copyright (c) 1996 by Sybase, Inc., and its subsidiaries.\n");
@@ -64,23 +67,23 @@ void main( int argc, char *argv[] ) {
     WPatchCreate( argv[ 1 ], argv[ 2 ], argv[ 3 ] );
 }
 
-void WPatchCreate(char *SrcDirName, char *TgtDirName, char *PatchName) {
-
+void WPatchCreate( char *SrcDirName, char *TgtDirName, char *PatchName ) 
+{
     PatchWriteOpen( PatchName );
     DirRecurse( SrcDirName, TgtDirName );
     PatchWriteClose();
 
 }
 
-void DirRecurse( char *srcDir, char *tgtDir ) {
+void DirRecurse( char *srcDir, char *tgtDir ) 
+{
+    DIR     *srcdirp;
+    DIR     *tgtdirp;
 
-    DIR *srcdirp;
-    DIR *tgtdirp;
-
-    char **srcFiles = malloc ( 1000 * sizeof( char *));
-    char **srcDirs = malloc ( 500 * sizeof( char *));
-    char **tgtFiles = malloc ( 1000 * sizeof( char *));
-    char **tgtDirs = malloc ( 500 * sizeof( char *));
+    char **srcFiles = malloc( 1000 * sizeof( char * ) );
+    char **srcDirs = malloc( 500 * sizeof( char * ) );
+    char **tgtFiles = malloc( 1000 * sizeof( char * ) );
+    char **tgtDirs = malloc( 500 * sizeof( char * ) );
 
     srcdirp = opendir( srcDir );
     tgtdirp = opendir( tgtDir );
@@ -95,32 +98,32 @@ void DirRecurse( char *srcDir, char *tgtDir ) {
     DirCmpFiles( srcDir, srcDirs,  tgtDir, tgtDirs,  1 );
 }
 
-void DirGetFiles( DIR *dirp, char *Files[], char *Dirs[] ) {
+void DirGetFiles( DIR *dirp, char *Files[], char *Dirs[] ) 
+{
+    struct dirent   *direntp;
+    int             file = 0;
+    int             dir  = 0;
 
-    struct dirent *direntp;
-    int file = 0;
-    int dir  = 0;
-
-    for (;;) {
+    for( ;; ) {
         direntp = readdir( dirp );
-        if ( direntp == NULL ) break;
-        if (( direntp->d_attr & _A_SUBDIR ) == 0 ) {
+        if( direntp == NULL ) break;
+        if( ( direntp->d_attr & _A_SUBDIR ) == 0 ) {
             /* must be a file */
             Files[ file ] = (char *)malloc( strlen( direntp->d_name ) + 1 );;
             strcpy( Files[ file ], direntp->d_name );
             strlwr( Files[ file ] );
             file += 1;
-            if (file >= 1000 ) perror( "File limit in directory is 1000." );
+            if( file >= 1000 ) perror( "File limit in directory is 1000." );
         } else {
             /* must be a directory */
             Dirs[ dir ] = (char *)malloc( strlen( direntp->d_name ) + 1 );
             strcpy( Dirs[ dir ], direntp->d_name );
             strlwr( Dirs[ dir ] );
-            if ( strcmp( Dirs[ dir ], "." ) != 0 &&
+            if( strcmp( Dirs[ dir ], "." ) != 0 &&
                     strcmp( Dirs[ dir ], ".." ) != 0 ) {
                 dir += 1;
             }
-            if (dir >= 500 ) perror( "Subdirectory limit is 500." );
+            if( dir >= 500 ) perror( "Subdirectory limit is 500." );
         }
     }
     Files[file] = NULL;
@@ -146,52 +149,52 @@ compared, and a patch is made if they do not match.
 
 */
 
-void DirCmpFiles( char *srcDir,  char *srcFiles[],
-                    char *tgtDir, char *tgtFiles[], int Dirflag ) {
+void DirCmpFiles( char *srcDir, char *srcFiles[],
+                  char *tgtDir, char *tgtFiles[], int Dirflag ) 
+{
+    int     indexSrc = 0;
+    int     indexTgt = 0;
+    int     test;
+    char    FullSrcPath[ PATCH_MAX_PATH_SIZE ];
+    char    FullTgtPath[ PATCH_MAX_PATH_SIZE ];
 
-    int indexSrc = 0;
-    int indexTgt = 0;
-    int test;
-    char FullSrcPath[ PATCH_MAX_PATH_SIZE ];
-    char FullTgtPath[ PATCH_MAX_PATH_SIZE ];
-
-    while ( srcFiles[ indexSrc ] != NULL || tgtFiles[ indexTgt ] != NULL ){
-        if ( srcFiles[ indexSrc ] == NULL ) {
+    while( srcFiles[ indexSrc ] != NULL || tgtFiles[ indexTgt ] != NULL ) {
+        if( srcFiles[ indexSrc ] == NULL ) {
             test = 1;
-        } else if ( tgtFiles[ indexTgt ] == NULL ) {
+        } else if( tgtFiles[ indexTgt ] == NULL ) {
             test = -1;
         } else {
-            test = strcmp ( srcFiles[ indexSrc ], tgtFiles[ indexTgt ] );
+            test = strcmp( srcFiles[ indexSrc ], tgtFiles[ indexTgt ] );
         }
-        if ( test == 0 ) {
-            strcpy ( FullSrcPath, srcDir );
-            strcat ( FullSrcPath, "\\" );
-            strcat ( FullSrcPath, srcFiles[ indexSrc ] );
-            strcpy ( FullTgtPath, tgtDir );
-            strcat ( FullTgtPath, "\\" );
-            strcat ( FullTgtPath, tgtFiles[ indexTgt ] );
-            if ( Dirflag == 1 ) {
+        if( test == 0 ) {
+            strcpy( FullSrcPath, srcDir );
+            strcat( FullSrcPath, "\\" );
+            strcat( FullSrcPath, srcFiles[ indexSrc ] );
+            strcpy( FullTgtPath, tgtDir );
+            strcat( FullTgtPath, "\\" );
+            strcat( FullTgtPath, tgtFiles[ indexTgt ] );
+            if( Dirflag == 1 ) {
                 DirRecurse( FullSrcPath, FullTgtPath );
             } else {
                 FileCmp( FullSrcPath, FullTgtPath, tgtFiles[ indexTgt ] );
             }
             indexSrc += 1;
             indexTgt += 1;
-        } else if ( test < 0 ) { /* file deleted */
-            strcpy ( FullSrcPath, srcDir );
-            strcat ( FullSrcPath, "\\" );
-            strcat ( FullSrcPath, srcFiles[ indexSrc ] );
-            if ( Dirflag == 1 ) {
+        } else if( test < 0 ) { /* file deleted */
+            strcpy( FullSrcPath, srcDir );
+            strcat( FullSrcPath, "\\" );
+            strcat( FullSrcPath, srcFiles[ indexSrc ] );
+            if( Dirflag == 1 ) {
                 DirMarkDeleted( &FullSrcPath[ glob.origSrcDirLen + 1 ] );
             } else {
                 FileMarkDeleted( &FullSrcPath[ glob.origSrcDirLen + 1 ] );
             }
             indexSrc += 1;
         } else { /* file added */
-            strcpy ( FullTgtPath, tgtDir );
-            strcat ( FullTgtPath, "\\" );
-            strcat ( FullTgtPath, tgtFiles[ indexTgt ] );
-            if (Dirflag == 1 ) {
+            strcpy( FullTgtPath, tgtDir );
+            strcat( FullTgtPath, "\\" );
+            strcat( FullTgtPath, tgtFiles[ indexTgt ] );
+            if( Dirflag == 1 ) {
                 DirMarkAdded( FullTgtPath, glob.origTgtDirLen + 1 );
             } else {
                 FileMarkAdded( FullTgtPath, glob.origTgtDirLen + 1 );
@@ -201,51 +204,52 @@ void DirCmpFiles( char *srcDir,  char *srcFiles[],
     }
 }
 
-void FileCmp( char *SrcPath, char *TgtPath, char *name ) {
-    FILE *srcF;
-    FILE *tgtF;
-    char srcchar;
-    char tgtchar;
-    char different = 0;
+void FileCmp( char *SrcPath, char *TgtPath, char *name ) 
+{
+    FILE    *srcF;
+    FILE    *tgtF;
+    char    srcchar;
+    char    tgtchar;
+    char    different = 0;
 
     srcF = fopen( SrcPath, "rb" );
     tgtF = fopen( TgtPath, "rb" );
     do {
         srcchar = fgetc( srcF );
         tgtchar = fgetc( tgtF );
-        if (srcchar != tgtchar ) {
+        if( srcchar != tgtchar ) {
             different = 1;
         }
-    } while ( feof( srcF ) == FALSE && feof( tgtF ) == FALSE
-                    && different == 0 );
+    } while( feof( srcF ) == FALSE && feof( tgtF ) == FALSE && different == 0 );
     fclose( srcF );
     fclose( tgtF );
 
-    if ( different == 1 ) {
+    if( different == 1 ) {
         printf( "%s is different.  Patching...\n", name );
-        PatchWriteFile( PATCH_FILE_PATCHED,
-                    &TgtPath[ glob.origTgtDirLen + 1 ] );
+        PatchWriteFile( PATCH_FILE_PATCHED, &TgtPath[ glob.origTgtDirLen + 1 ] );
         DoBdiff( SrcPath, TgtPath, name );
     }
 }
 
-void DirMarkDeleted( char *Path ) {
+void DirMarkDeleted( char *Path ) 
+{
     printf( "Deleting directory %s\n", Path );
     PatchWriteFile( PATCH_DIR_DELETED, Path );
 }
 
-void FileMarkDeleted( char *Path ) {
+void FileMarkDeleted( char *Path ) 
+{
     printf( "Deleting file %s\n", Path );
     PatchWriteFile( PATCH_FILE_DELETED, Path );
 }
 
-void DirMarkAdded( char *Path, int start ) {
-
-    DIR *dirp;
-    char *Files[ 1000 ];
-    char *Dirs [  500 ];
-    char FullPath[ PATCH_MAX_PATH_SIZE ];
-    int index;
+void DirMarkAdded( char *Path, int start ) 
+{
+    DIR     *dirp;
+    char    *Files[ 1000 ];
+    char    *Dirs [  500 ];
+    char    FullPath[ PATCH_MAX_PATH_SIZE ];
+    int     index;
 
     printf( "Adding directory %s\n", Path );
     PatchWriteFile( PATCH_DIR_ADDED, &Path[ start ] );
@@ -257,26 +261,26 @@ void DirMarkAdded( char *Path, int start ) {
     DirGetFiles( dirp, Files, Dirs );
     closedir( dirp );
     index = 0;
-    while ( Files[ index ] != NULL ) {
-        strcpy ( FullPath, Path );
-        strcat ( FullPath, "\\" );
-        strcat ( FullPath, Files[ index ] );
+    while( Files[ index ] != NULL ) {
+        strcpy( FullPath, Path );
+        strcat( FullPath, "\\" );
+        strcat( FullPath, Files[ index ] );
         FileMarkAdded( FullPath, start );
         index += 1;
     }
     index = 0;
-    while ( Dirs[ index ] != NULL ) {
-        strcpy ( FullPath, Path );
-        strcat ( FullPath, "\\" );
-        strcat ( FullPath, Dirs[ index ] );
+    while( Dirs[ index ] != NULL ) {
+        strcpy( FullPath, Path );
+        strcat( FullPath, "\\" );
+        strcat( FullPath, Dirs[ index ] );
         DirMarkAdded( FullPath, start );
         index += 1;
     }
 }
 
-void FileMarkAdded( char *Path, int start ) {
+void FileMarkAdded( char *Path, int start ) 
+{
     printf( "Adding file %s\n", Path );
     PatchWriteFile( PATCH_FILE_ADDED, &Path[ start ] );
     PatchAddFile( Path );
 }
-

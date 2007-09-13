@@ -34,6 +34,7 @@
 #include <sys/stat.h>
 #include "bdiff.h"
 #include "wpatchio.h"
+#include "wpatch.h"
 
 FILE        *PatchF;
 char *PatchName;

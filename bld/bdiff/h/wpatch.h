@@ -24,34 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Internal routines for wpatch/wcpatch.
 *
 ****************************************************************************/
 
 
-#include "bpatch.h"
+#ifndef __WPATCH_H_
+#define __WPATCH_H_
 
-#define PATCH_FILE_PATCHED      100
-#define PATCH_DIR_DELETED       101
-#define PATCH_FILE_DELETED      102
-#define PATCH_FILE_ADDED        103
-#define PATCH_DIR_ADDED         104
-#define PATCH_EOF               255
+extern void     PatchAddFile( char *path );
+extern int      DoBdiff( char *srcPath, char *tgtPath, char *name );
 
-#define PATCH_MAX_PATH_SIZE     250
-
-extern void PatchWrite( void *patch, int size );
-extern void PatchWriteOpen( char *name );
-extern void PatchWriteClose( void );
-extern void PatchWriteFile( short flag, char *RelPath );
-extern void PatchGetFile( char *path );
-extern void PatchReadOpen( char *name );
-extern void PatchReadClose( void );
-extern void PatchReadFile( short *Pflag, char *RelPath );
-
-extern PATCH_RET_CODE DoPatch( char *patchname,
-                   int doprompt,
-                   int dobackup,
-                   int printlevel,
-                   char *outfilename );
+#endif
