@@ -267,7 +267,7 @@ int GUIXMain( int argc, char *argv[] )
     bool        register_done;
     HAB         inst;
 
-    inst = WinInitialize( NULLHANDLE );
+    inst = WinInitialize( 0 );
     if( !inst ) {
         return( 0 );
     }
@@ -590,7 +590,7 @@ bool GUIXCreateWindow( gui_window *wnd, gui_create_info *info,
     }
     frame_hwnd = WinCreateStdWindow( parent_hwnd, frame_flags | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, &flags,
                                      NULL, info->text,
-                                     0, NULLHANDLE, 0, NULL );
+                                     0, (HMODULE)0, 0, NULL );
     if( frame_hwnd != NULLHANDLE ) {
         oldFrameProc = _wpi_subclasswindow( frame_hwnd, (WPI_PROC)GUIFrameProc );
         _wpi_setmenu( frame_hwnd, hmenu );

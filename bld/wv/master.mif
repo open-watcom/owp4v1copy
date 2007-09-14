@@ -335,7 +335,7 @@ extra_l_flags_dos_i86 = op stack=12k, area=0
 extra_l_flags_dos_386 = op stack=12k export DOS4GOPTIONS=_DOS4GOPTIONS
 extra_l_flags_dos = $(extra_l_flags_dos_$(host_cpu))
 !ifeq sys_windowed 1
-extra_l_flags_os2_i86 = op stack=20k, newfile
+extra_l_flags_os2_i86 = op stack=19k, newfile
 extra_l_flags_os2_386 = imp WinThreadAssocQueue PMMERGE.5398
 !else
 extra_l_flags_os2_i86 = op stack=16k, newfile

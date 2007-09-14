@@ -776,7 +776,7 @@ BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
     mi.afAttribute = attr_flags;
     mi.id          = id;
     mi.hwndSubMenu = popup;
-    mi.hItem       = NULLHANDLE;
+    mi.hItem       = 0;
 
     new_text = _wpi_menutext2pm( text );
 
