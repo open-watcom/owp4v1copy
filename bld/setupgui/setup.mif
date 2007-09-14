@@ -33,12 +33,7 @@ objs = &
 
 !ifdef patch
 objs +=             &
-    common.obj      &
-    decode.obj      &
-    exetype.obj     &
-    io.obj          &
-    lookup.obj      &
-    qsort.obj
+    exetype.obj
 !endif
 
 !ifeq host_os win

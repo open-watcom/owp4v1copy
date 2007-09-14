@@ -66,11 +66,10 @@ typedef struct def_var {
 
 extern void     BumpStatus( long );
 
-extern int      ReadInternal( char * );
-
 bool            ConfigModified = FALSE;
 static enum { SRC_UNKNOWN, SRC_CD, SRC_DISK } SrcInstState;
 
+extern int      IsPatch;
 extern bool     CancelSetup;
 extern vhandle  UnInstall;
 extern vhandle  PreviousInstall;
@@ -80,14 +79,6 @@ DEF_VAR         *ExtraVariables;
 int             Invisible;
 int             NoProgramGroups;
 int             NoStartupChange;
-
-#ifdef PATCH
-extern int      InitIO( void );
-extern int      Decode( arccmd *);
-
-static int      DecodeError;
-extern int      IsPatch;
-#endif
 
 extern bool ModifyEnvironment( bool uninstall )
 /*********************************************/
@@ -1971,95 +1962,6 @@ extern gui_message_return MsgBox( gui_window *gui, char *messageid, gui_message_
     return( result );
 }
 
-#ifdef PATCH
-// *********************** DECODE Functions **********************************
-
-static jmp_buf          PackFailed;
-
-extern int PerformDecode( char *src, char *dst, unsigned_32 internal )
-/*********************************************************************/
-{
-
-    arccmd              cmd;
-    wpackfile           files[ 1 ];
-    char                drive[ _MAX_DRIVE ];
-    char                dir[ _MAX_DIR ];
-    char                destdir[ _MAX_DIR ];
-
-     // get rid of trailing filename if it exists.
-    _splitpath( dst, drive, dir, NULL, NULL );
-    _makepath( destdir, drive, dir, NULL, NULL );
-
-    cmd.u.path = destdir;
-    files[ 0 ].filename = NULL;
-    files[ 0 ].packname = NULL;
-    cmd.files = &files;
-    cmd.arcname = src;
-    cmd.flags = PREPEND_PATH | BE_QUIET;
-    cmd.internal = internal;
-    DecodeError = CFE_NOERROR;
-    if( setjmp( PackFailed ) == 0 ) {
-        if( !Decode( &cmd ) ) {
-            DecodeError = CFE_ERROR;
-        }
-    } else {
-        // we longjmp'd to here
-    }
-    return( DecodeError );
-}
-
-void QueryCancel()
-{
-    if( StatusCancelled() ) {
-        PackExit();
-    }
-}
-
-
-// functions required for WPack Decoder
-
-static void PackExitWithCode( int code )
-/********************************/
-{
-    DecodeError = code;
-    longjmp( PackFailed, 1 );
-}
-
-
-extern void PackExit( void )
-/**************************/
-{
-    // the WPACK code can't handle this routine returning
-    PackExitWithCode( CFE_ERROR );
-}
-
-extern void Error( int code, char *msg )
-/****************************/
-{
-    dlg_state           return_state;
-
-    switch( code ) {
-    case TXT_INC_CRC:
-        PackExitWithCode( CFE_BAD_CRC );
-        break;
-    case TXT_ARC_NOT_EXIST:
-        PackExitWithCode( CFE_CANTOPENSRC );
-        break;
-    case TXT_NOT_OPEN:
-        SetVariableByName( "OpenError", msg );
-        return_state = DoDialog( "CantOpen" );
-        if( return_state == DLG_CAN || return_state == DLG_DONE ) {
-            PackExit();
-        }
-        break;
-    default:
-        MsgBox( NULL, "IDS_ERROR", GUI_OK, msg );
-        PackExit();
-        break;
-    }
-}
-#endif
-
 
 extern int PromptUser( char *name, char *dlg, char *skip,
             char *replace, int *value )
@@ -2095,56 +1997,19 @@ int UnPackHook( char *name )
     _splitpath( name, drive, dir, fname, ext );
     if( stricmp( ext, ".NLM" ) == 0 ) {
         NewFileToCheck( name, FALSE );
-#ifndef PATCH
         _makepath( name, drive, dir, fname, "._N_" );
-#endif
         return( 1 );
     } else if( stricmp( ext, ".DLL" ) == 0 ) {
         NewFileToCheck( name, TRUE );
-#ifdef PATCH
         if( !IsPatch ) {
 #ifdef EXTRA_CAUTIOUS_FOR_DLLS
             _makepath( name, drive, dir, fname, "._D_" );
 #endif
         }
-#endif
         return( 1 );
     }
     return( 0 );
 }
-
-
-#ifdef PATCH
-extern int OK_ToReplace( char *name )
-/***********************************/
-{
-    name=name;
-    return( FALSE ); // pre-checked.  Anything left is NOT ok
-}
-
-
-extern int OK_ReplaceRDOnly( char *name )
-/***************************************/
-{
-    name=name;
-    return( FALSE ); // pre-checked.  Anything left is NOT ok
-}
-
-
-extern void LogUnPacking( char *name )
-/************************************/
-{
-    StatusLines( STAT_COPYINGFILE, name );
-}
-
-extern void Log( char *start, ... )
-/*********************************/
-{
-    // shouldn't get called
-
-    start = start;
-}
-#endif
 
 
 static void AddDefine( char *def )
@@ -2229,11 +2094,6 @@ extern bool GetDirParams( int       argc,
                     "-s\t\tskips dialogs but shows install progress\n" \
                     "-np\t\tdoes not create Program Manager entries\n" \
                     "-ns\t\tdoes not register startup information (paths, environment)\n" ;
-
-#if 0  /* If SetupInit is called, the dialog is shown on the big blue window */
-                if( !SetupInit() ) 
-                    return FALSE;
-#endif
 
                 InitGlobalVarList();
                 SetVariableByName( "IDS_USAGE", "%s");

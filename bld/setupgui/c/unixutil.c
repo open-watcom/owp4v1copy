@@ -71,13 +71,7 @@ char            *VariablesFile;
 //DEF_VAR         *ExtraVariables;
 int             Invisible;
 
-#ifdef PATCH
-extern int      InitIO( void );
-extern int      Decode( arccmd *);
-
-static int      DecodeError;
 extern int      IsPatch;
-#endif
 extern bool     CancelSetup;
 extern vhandle  UnInstall;
 extern vhandle  PreviousInstall;
@@ -644,15 +638,11 @@ static char lastchance[1024];
         bytes_read = read( src_files, pbuff, buffer_size );
         bytes_written = write( dst_files, pbuff, bytes_read );
 
-        #ifdef PATCH
-            if( !IsPatch ) {
-        #endif
-                // if a patch, don't change status because denominator of status
-                // fraction is the number of operations, not a number of bytes
-                BumpStatus( bytes_written );
-        #ifdef PATCH
-            }
-        #endif
+        if( !IsPatch ) {
+            // if a patch, don't change status because denominator of status
+            // fraction is the number of operations, not a number of bytes
+            BumpStatus( bytes_written );
+        }
         if( bytes_written != bytes_read || StatusCancelled() ) {
             close( dst_files );
             close( src_files );
@@ -1470,122 +1460,10 @@ extern gui_message_return MsgBox( gui_window *gui, char *messageid, gui_message_
 }
 
 
-#ifdef PATCH
-// *********************** DECODE Functions **********************************
-
-
-static jmp_buf          PackFailed;
-
-
-static int DoDecode( char *src, char *dst )
-/*****************************************/
-{
-    arccmd              cmd;
-    int                 len;
-    wpackfile           files[ 1 ];
-
-    // append trailing slash if not already there
-    len = strlen( dst );
-    if( dst[ len - 1 ] != '/' ) {
-        dst[ len ] = '/';
-        dst[ len + 1 ] = '\0';
-    }
-    cmd.u.path = dst;
-    files[ 0 ].filename = NULL;
-    files[ 0 ].packname = NULL;
-    cmd.files = files;
-    cmd.arcname = src;
-    cmd.flags = PREPEND_PATH | BE_QUIET;
-    DecodeError = CFE_NOERROR;
-    if( setjmp( PackFailed ) == 0 ) {
-        Decode( &cmd );
-    } else {
-        // we longjmp'd to here
-    }
-    return( DecodeError );
-}
-
-extern void PackExit( void );           // PackExit is defined further down in the file
-void QueryCancel()
-{
-    if( StatusCancelled() ) {
-        PackExit();
-    }
-}
-
-
-// functions required for WPack Decoder
-
-
-extern void *MemAlloc( int size )
-/*******************************/
-{
-    void                *stg;
-
-    stg = GUIMemAlloc( size );
-    if( stg == NULL ) {
-        SetupError( "IDS_NOMEMORY" );
-    }
-    return( stg );
-}
-
-
-extern void MemFree( void *mem )
-/******************************/
-{
-    GUIMemFree( mem );
-}
-
-
-static void PackExitWithCode( int code )
-/********************************/
-{
-    DecodeError = code;
-    longjmp( PackFailed, 1 );
-}
-
-
-extern void PackExit( void )
-/**************************/
-{
-    // the WPACK code can't handle this routine returning
-    PackExitWithCode( CFE_ERROR );
-}
-
-extern void Error( int code, char *msg )
-/****************************/
-{
-    dlg_state           return_state;
-
-    switch( code ) {
-    case TXT_INC_CRC:
-        PackExitWithCode( CFE_BAD_CRC );
-        break;
-    case TXT_ARC_NOT_EXIST:
-        PackExitWithCode( CFE_CANTOPENSRC );
-        break;
-    case TXT_NOT_OPEN:
-        SetVariableByName( "OpenError", msg );
-        return_state = DoDialog( "CantOpen" );
-        if( return_state == DLG_CAN || return_state == DLG_DONE ) {
-            PackExit();
-        }
-        break;
-    default:
-        MsgBox( NULL, "IDS_ERROR", GUI_OK, msg );
-        PackExit();
-        break;
-    }
-}
-#else
-
 static int DoDecode( char *src, char *dst )
 {
     return( 1 );
 }
-
-#endif
-
 
 
 int UnPackHook( char *name )
@@ -1609,36 +1487,6 @@ int UnPackHook( char *name )
         return( 1 );
     }
     return( 0 );
-}
-
-extern int OK_ToReplace( char *name )
-/***********************************/
-{
-    name=name;
-    return( FALSE ); // pre-checked.  Anything left is NOT ok
-}
-
-
-extern int OK_ReplaceRDOnly( char *name )
-/***************************************/
-{
-    name=name;
-    return( FALSE ); // pre-checked.  Anything left is NOT ok
-}
-
-
-extern void LogUnPacking( char *name )
-/************************************/
-{
-    StatusLines( STAT_COPYINGFILE, name );
-}
-
-extern void Log( char *start, ... )
-/*********************************/
-{
-    // shouldn't get called
-
-    start = start;
 }
 
 extern bool GetDirParams( int                   argc,

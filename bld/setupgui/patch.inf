@@ -1,8 +1,8 @@
 [Application]
 AppName=WATCOM SQL Patch for Windows
 DstDir=d:\src
-SrcDir=a:\
-PatchSrcDir=a:\
+#SrcDir=a:\
+#PatchSrcDir=a:\
 DiskDesc=
 FileDesc=
 ModNow=1
@@ -21,6 +21,7 @@ DoModifyAuto=1
 DoCreateIcons=1
 DoLicense=1
 Patch=1
+PatchLog=patch.log
 AutoOptionsDialog=0
 
 [Dialog]
@@ -36,16 +37,16 @@ static_text=
 push_button=OK
 push_button=Cancel
 
-[Dialog]
-name=InsertDisk
-static_text="@ needs the following disk:"
-dynamic_text=DiskDesc,""
-static_text=
-static_text="Please insert or specify new path"
-edit_control=SrcDir,a:\,"Source Directory:"
-static_text=
-push_button=OK
-push_button=Cancel
+#[Dialog]
+#name=InsertDisk
+#static_text="@ needs the following disk:"
+#dynamic_text=DiskDesc,""
+#static_text=
+#static_text="Please insert or specify new path"
+#edit_control=SrcDir,a:\,"Source Directory:"
+#static_text=
+#push_button=OK
+#push_button=Cancel
 
 [ErrorMessage]
 IDS_ERROR=              "%s"
@@ -76,6 +77,30 @@ IDS_IO_ERROR=           "An I/O error occurred while %s the file '%s'"
 IDS_QIEST=              "dr=%c,cs=%u,nf=%u,sn=%lu"
 IDS_FIRST=              "%s"
 IDS_UNKNOWNERROR=       "Unknown error"
+# patch specific messages
+IDS_NO_FILES_PATCHED=   "No files were patched"
+IDS_COPYFILEERROR=      "Cannot copy file %s.&\nContinue with PATCH process?"
+IDS_DELETEFILEERROR=    "Cannot delete file %s.&\nContinue with PATCH Process?"
+IDS_PATCHFILEERROR=     "Cannot apply patch file %s.&\nContinue with PATCH process?"
+IDS_CREATEDIRERROR=     "Cannot create directory %s.&\nContinue with PATCH Process?"
+IDS_LOGFILE_EXISTS=     "Requested log file: %s exists already.&\nReplace it?\n(If you choose 'NO', this program will abort.)"
+IDS_CANT_OPEN_LOGFILE=  "Requested log file: %s could not be opened."
+IDS_CANT_WRITE_LOGFILE= "%s could not be written."
+IDS_PATCHABORT=         "Patch Process Aborted."
+IDS_UNPACKING=          "Unpacking %s... "
+IDS_SUCCESS=            "Successful"
+IDS_FAILED_UNPACKING=   "Failed unpacking"
+IDS_DELETING=           "Deleting %s... "
+IDS_FAILED_DELETING=    "Failed deleting."
+IDS_CREATINGDIR=        "Creating directory %s... "
+IDS_FAILED_CREATINGDIR= "Failed creating directory"
+IDS_BADLENGTH=          "File length Error"
+IDS_CANTRENAME=         "Cannot rename %s to %s."
+IDS_WRONGCHECKSUM=      "Invalid Checksum Error"
+IDS_NOTPATCHFILE=       "%s is not a patch file."
+IDS_INVALID_EXE=        "Existing executable is invalid"
+IDS_FAILED_PATCHING=    "Failed patching new file"
+IDS_CANTFINDOUTPUT=     "Cannot find output file (to be patched) %s."
 
 [SetupErrorMessage]
 IDS_WRITEERROR=         "Error writing to destination file"
@@ -130,7 +155,9 @@ IDS_APPLYLICENSE=	"Applying License..."
 # copy, dbengt, win32, dbeng50.exe 
 # delete, dbstopw.exe, win32
 
-# [Patch]
+[Patch]
+delete, dbstopw.exe, win32
+copy, dbengt, win32, dbeng50.exe
 
 [Disks]
 1=Disk 1

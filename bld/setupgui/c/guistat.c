@@ -59,12 +59,10 @@ static char             StatusLine1[_MAX_PATH];
 static gui_ord          StatusBarLen;
 static gui_rect         StatusRect;
 static char             StatusBarBuf[256];
+extern int              IsPatch;
 
 int                     MsgLine0 = STAT_BLANK;
 bool                    CancelSetup = FALSE;
-#ifdef PATCH
-extern int              IsPatch;
-#endif
 
 #if defined( __UNIX__ )
   #include "stdui.h"
@@ -143,15 +141,11 @@ extern void StatusLines( int msg0, char *message1 )
 
 extern void BumpStatus( long by ) {
 /*********************************/
-#ifdef PATCH
     if( !IsPatch ) {
-#endif
-    // if a patch, don't change status because denominator of status
-    // fraction is the number of operations, not a number of bytes
-    StatusAmount( Parts_Complete + by, Parts_Injob );
-#ifdef PATCH
+        // if a patch, don't change status because denominator of status
+        // fraction is the number of operations, not a number of bytes
+        StatusAmount( Parts_Complete + by, Parts_Injob );
     }
-#endif
 }
 
 extern void StatusAmount( long parts_complete, long parts_injob )
