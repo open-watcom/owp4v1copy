@@ -35,7 +35,7 @@
 #include "bool.h"
 #include "align.h"
 
-#ifdef GUISETUP
+#ifdef PATCH
 
 #define WPMemAlloc malloc
 #define WPMemFree  free
