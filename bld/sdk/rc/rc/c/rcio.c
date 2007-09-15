@@ -768,21 +768,20 @@ extern void RcIoPrintHelp( const char * progpath )
 
     InitOutPutInfo( &errinfo );
     errinfo.severity = SEV_BANNER;
-    #ifdef __OSI__
-        if( _Copyright != NULL ) {                      /* 04-may-94 */
-            RcFprintf( stdout, &errinfo, "%s\n", _Copyright );
-        }
-    #endif
+#ifdef __OSI__
+    if( _Copyright != NULL ) {                      /* 04-may-94 */
+        RcFprintf( stdout, &errinfo, "%s\n", _Copyright );
+    }
+#endif
     _splitpath( progpath, NULL, NULL, progfname, NULL );
     strlwr( progfname );
 
-    GetRcMsg( USAGE_MSG_BASE, buf, sizeof( buf ) );
+    index = USAGE_MSG_FIRST;
+    GetRcMsg( index, buf, sizeof( buf ) );
     RcFprintf( stdout, &errinfo, buf, progfname );
     RcFprintf( stdout, &errinfo, "\n" );
-    index = USAGE_MSG_BASE + 1;
-    for( ;; index++ ) {
+    for( ++index; index <= USAGE_MSG_LAST; index++ ) {
         GetRcMsg( index, buf, sizeof( buf ) );
-        if( buf[0] == '.' && buf[1] == '\0' ) break;
         RcFprintf( stdout, &errinfo, "%s\n", buf );
     }
 }

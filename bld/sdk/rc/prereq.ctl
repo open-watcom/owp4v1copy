@@ -83,7 +83,7 @@ set ODIR=<PREOBJDIR>
     mkdir <PROJDIR>/rc/<OBJDIR>
     cdsay <PROJDIR>/rc/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
-    <CPCMD> wrce.exe <OWBINDIR>/wrc
+    <CPCMD> wrce.exe <OWBINDIR>/bwrc
 
 [ BLOCK . . ]
 #============

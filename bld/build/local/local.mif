@@ -21,6 +21,7 @@ as = $(bas)
 vi = $(bvi)
 librarian = $(blib)
 rc = $(brc)
+rcaui = $(brc)
 
 !ifdef %open_nlang_root
 lang_root = $(%open_nlang_root)

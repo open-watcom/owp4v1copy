@@ -24,38 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Message constants definition for librarian.
 *
 ****************************************************************************/
 
+#if defined( INCL_MSGTEXT )
 
-#ifdef WR_COMPILED
-#include "wrcmsg.gh"
-#elif defined( INCL_MSGTEXT )
 #undef pick
-#define pick( id, en, jp )  id,
-enum msg_num {
-    #include "rc.msg"
+#define pick( code, e_msg, j_msg ) code,
+
+enum msg_text {
+    #include "wlib.msg"
 };
+
 #else
-#define MSG_LANG_SPACING        1000
-#include "rcmsg.gh"
-#endif
-#undef ERRITEM
 
-enum {
-    INTERR_UNKNOWN_RCSTATUS,
-    INTERR_EXE_HAS_MINUS_1_SEGS,
-    INTERR_ERR_BUILDING_RES_DIR,
-    INTERR_MEM_FREE_FAILED,
-    INTERR_MEM_REALLOC_FAILED
-};
+#include "msg.gh"
 
-extern void RcWarning( unsigned errornum, ... );
-extern void RcError(unsigned int ,... );
-#if defined(__WATCOMC__)
-#pragma aux RcFatalError aborts;
 #endif
-extern void RcFatalError( unsigned int, ... );
-extern void ErrorInitStatics( void );

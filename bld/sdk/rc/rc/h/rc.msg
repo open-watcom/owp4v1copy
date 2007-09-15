@@ -139,7 +139,8 @@ pick(   ERR_DUPLICATE_RESOURCE,
 pick(   ERR_PARSER_INTERNAL,
         "Internal parser error.",
         "内部解析エラ－." )
-pick(   ERR_SYNTAX_INT,         /* this message is unused */
+/* this message is unused */
+pick(   ERR_SYNTAX_INT,
         "",
         "" )
 pick(   ERR_SYNTAX_STR,
@@ -190,10 +191,10 @@ pick(   ERR_NT_KEYWORD,
 pick(   ERR_UNSUPPORTED,
         "Keyword \"%s\" not currently supported",
         " \"%s\" は現在サポ－トされていないキ－ワ－ドです" )
+/* this is a place holder message, its text is embedded in the cannot be found */
 pick(   ERR_RCSTR_NOT_FOUND,
         "",
-        "" ) /* this is a place holder message, its text is embedded in the
-                cannot be found */
+        "" )
 pick(   ERR_CANT_FIND_CHAR_FILE,
         "Error can't find character translation file \"%s\".",
         "文字変換ファイル \"%s\" が見つかりません." )
@@ -283,20 +284,16 @@ pick(   ERR_RES_OS_MISMATCH,
         "Included RES file '%s' is compiled for a different platform." )
 pick(   ERR_DUPLICATE_RES,
         "Duplicate %s named '%s' found.",
-        "Duplicate %s named '%s' found."
-)
+        "Duplicate %s named '%s' found." )
 pick(   ERR_DUPLICATE_RES_FILE,
         "Duplicate %s named '%s' found in files '%s' and '%s'.",
-        "Duplicate %s named '%s' found in files '%s' and '%s'."
-)
+        "Duplicate %s named '%s' found in files '%s' and '%s'." )
 pick(   ERR_DUPLICATE_STR_TABLE,
         "Duplicate string table block containing strings %d to %d found.",
-        "Duplicate string table block containing strings %d to %d found."
-)
+        "Duplicate string table block containing strings %d to %d found." )
 pick(   ERR_DUPLICATE_STR_TABLE_FILE,
         "Duplicate string table block containing strings %d to %d found in files '%s' and '%s'.",
-        "Duplicate string table block containing strings %d to %d found in files '%s' and '%s'."
-)
+        "Duplicate string table block containing strings %d to %d found in files '%s' and '%s'." )
 pick(   ERR_RCVARIABLE_RECURSIVE,
         "Can't expand environment variable '%s' recursively.",
         "Can't expand environment variable '%s' recursively." )
@@ -309,3 +306,147 @@ pick(   ERR_BAD_RES_TYPE,
 pick(   ERR_WIN16_TOO_MANY_CONTROLS,
         "Too many controls for Win16 resource '%d' > 255.",
         "Too many controls for Win16 resource '%d' > 255." )
+pick(   USAGE_MSG_FIRST,
+        "Usage: %s {options} input-filename {options} [output-filename] {options}",
+        "Usage: %s {options} input-filename {options} [output-filename] {options}" )
+pick(   USAGE_MSG_1,
+        "Options: (/option is also accepted)",
+        "Options: (/option is also accepted)" )
+pick(   USAGE_MSG_2,
+        "-?             - print this help message",
+        "-?             - print this help message" )
+pick(   USAGE_MSG_3,
+        "-q             - operate quietly",
+        "-q             - operate quietly" )
+pick(   USAGE_MSG_4,
+        "-30            - stamp file as requiring Windows 3.0",
+        "-30            - stamp file as requiring Windows 3.0" )
+pick(   USAGE_MSG_5,
+        "-31            - stamp file as requiring Windows 3.1 (default)",
+        "-31            - stamp file as requiring Windows 3.1 (default)" )
+pick(   USAGE_MSG_6,
+        "-DNAME=value   - behave as if #define NAME value was at top of file",
+        "-DNAME=value   - behave as if #define NAME value was at top of file" )
+pick(   USAGE_MSG_7,
+        "-ad            - generate auto dependency information for use by wmake",
+        "-ad            - generate auto dependency information for use by wmake" )
+pick(   USAGE_MSG_8,
+#if defined( __OSI__ ) || defined( __NT__ )
+        "-bt=windows    - build a Win16 resource file",
+        "-bt=windows    - build a Win16 resource file" )
+#else
+        "-bt=windows    - build a Win16 resource file (default)",
+        "-bt=windows    - build a Win16 resource file (default)" )
+#endif
+pick(   USAGE_MSG_9,
+#if defined( __NT__ )
+        "-bt=nt         - build a Win32 resource file (default)",
+        "-bt=nt         - build a Win32 resource file (default)" )
+#else
+        "-bt=nt         - build a Win32 resource file",
+        "-bt=nt         - build a Win32 resource file" )
+#endif
+pick(   USAGE_MSG_10,
+#if defined( __OS2__ )
+        "-bt=os2        - build an OS/2 resource file (default)",
+        "-bt=os2        - build an OS/2 resource file (default)" )
+#else
+        "-bt=os2        - build an OS/2 resource file",
+        "-bt=os2        - build an OS/2 resource file" )
+#endif
+pick(   USAGE_MSG_11,
+        "-c=name        - set code page conversion file",
+        "-c=name        - set code page conversion file" )
+pick(   USAGE_MSG_12,
+        "-e             - for a DLL, global memory above EMS line",
+        "-e             - for a DLL, global memory above EMS line" )
+pick(   USAGE_MSG_13,
+        "-fo=name       - set the output resource file to name",
+        "-fo=name       - set the output resource file to name" )
+pick(   USAGE_MSG_14,
+        "-fe=name       - set the output executable file to name",
+        "-fe=name       - set the output executable file to name" )
+pick(   USAGE_MSG_15,
+        "-i=path        - look in path for include files",
+        "-i=path        - look in path for include files" )
+pick(   USAGE_MSG_16,
+        "-k             - don't sort segments (same as -s0)",
+        "-k             - don't sort segments (same as -s0)" )
+pick(   USAGE_MSG_17,
+        "-l             - program uses LIM 3.2 EMS directly",
+        "-l             - program uses LIM 3.2 EMS directly" )
+pick(   USAGE_MSG_18,
+        "-m             - each instance of program has its own EMS bank",
+        "-m             - each instance of program has its own EMS bank" )
+pick(   USAGE_MSG_19,
+        "-o             - preprocess only",
+        "-o             - preprocess only" )
+pick(   USAGE_MSG_20,
+        "-p             - private DLL",
+        "-p             - private DLL" )
+pick(   USAGE_MSG_21,
+        "-r             - only build the resource file",
+        "-r             - only build the resource file" )
+pick(   USAGE_MSG_22,
+        "-s{0,1,2}      - segment and resource sorting method:",
+        "-s{0,1,2}      - segment and resource sorting method:" )
+pick(   USAGE_MSG_23,
+        "                 0: no sorting, leave segments in the linker order",
+        "                 0: no sorting, leave segments in the linker order" )
+pick(   USAGE_MSG_24,
+        "                 1: move preload segments to front and mark for fast load",
+        "                 1: move preload segments to front and mark for fast load" )
+pick(   USAGE_MSG_25,
+        "                    if possible",
+        "                    if possible" )
+pick(   USAGE_MSG_26,
+        "                 2: (default) move preload, data, and non-discardable segments",
+        "                 2: (default) move preload, data, and non-discardable segments" )
+pick(   USAGE_MSG_27,
+        "                    to front and mark for fast load if possible",
+        "                    to front and mark for fast load if possible" )
+pick(   USAGE_MSG_28,
+        "-t             - protected mode only",
+        "-t             - protected mode only" )
+#ifdef SCANDEBUG
+pick(   USAGE_MSG_29,
+        "-v             - verbose: print tokens as they are scanned",
+        "-v             - verbose: print tokens as they are scanned" )
+#endif
+#ifdef YYDEBUG
+pick(   USAGE_MSG_30,
+        "-v1            - verbose: print grammar rules as they are reduced",
+        "-v1            - verbose: print grammar rules as they are reduced" )
+#endif
+#if defined(YYDEBUG) || defined(SCANDEBUG)
+pick(   USAGE_MSG_31,
+        "-v2            - verbose: print both tokens and grammar rules",
+        "-v2            - verbose: print both tokens and grammar rules" )
+pick(   USAGE_MSG_32,
+        "-v3            - verbose: print tokens as they are scanned",
+        "-v3            - verbose: print tokens as they are scanned" )
+#endif
+pick(   USAGE_MSG_33,
+        "-x             - ignore the INCLUDE environment variable",
+        "-x             - ignore the INCLUDE environment variable" )
+pick(   USAGE_MSG_34,
+        "-zk{0,1,2,3}   - double-byte char support:",
+        "-zk{0,1,2,3}   - double-byte char support:" )
+pick(   USAGE_MSG_35,
+        "                 0: (default) Japanese (Kanji, CP 932)",
+        "                 0: (default) Japanese (Kanji, CP 932)" )
+pick(   USAGE_MSG_36,
+        "                 1: Chinese (Traditional, CP 950)",
+        "                 1: Chinese (Traditional, CP 950)" )
+pick(   USAGE_MSG_37,
+        "                 2: Korean (Wansung, CP 949)",
+        "                 2: Korean (Wansung, CP 949)" )
+pick(   USAGE_MSG_38,
+        "                 3: Chinese (Simplified, CP 936)",
+        "                 3: Chinese (Simplified, CP 936)" )
+pick(   USAGE_MSG_39,
+        "-zm            - output Microsoft/IBM format .res files",
+        "-zm            - output Microsoft/IBM format .res files" )
+pick(   USAGE_MSG_LAST,
+        "-zn            - don't preprocess the file",
+        "-zn            - don't preprocess the file" )

@@ -39,41 +39,38 @@
 #if !defined( __UNIX__ ) || defined( __WATCOMC__ )
 #include "process.h"
 #endif
-#include "wreslang.h"
 #include "iortns.h"
 
-#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
-    #undef BOOTSTRAP_RC
-    #define BOOTSTRAP_RC
-#endif
+#if defined( INCL_MSGTEXT )
 
-#ifdef BOOTSTRAP_RC
-    #define pick( id, en, jp )  en,
+#undef pick
+#define pick( id, en, jp )  en,
 
-    static char *StringTable[] = {
-        #include "rc.msg"
-    };
+static char *StringTable[] = {
+    #include "rc.msg"
+};
 
-    static char *UsageTable[] = {
-        #include "usage.h"
-    };
+int InitRcMsgs( char *dllname ) { return( 1 ); }
 
-    #ifndef _arraysize
-        #define _arraysize( a ) (sizeof(a)/sizeof(a[0]))
-    #endif
+int GetRcMsg( unsigned resid, char *buff, unsigned buff_len )
+{
+    strcpy( buff, StringTable[resid] );
+    return( 1 );
+}
+
+void FiniRcMsgs( void ) {}
 
 #else
 
+#include "wreslang.h"
+
 static unsigned MsgShift;
-#endif
 
-
-int InitRcMsgs( char *dllname ) {
-
-#ifndef BOOTSTRAP_RC
+int InitRcMsgs( char *dllname )
+{
     int         error;
     char        fname[_MAX_PATH];
-    WResFileID (*oldopen) (const char *, int, ...);
+    WResFileID  (*oldopen) (const char *, int, ...);
 
     error = FALSE;
 #ifdef DLL_COMPILE
@@ -106,7 +103,7 @@ int InitRcMsgs( char *dllname ) {
             error = InitResources( &Instance );
         }
         MsgShift = WResLanguage() * MSG_LANG_SPACING;
-        if( !error && !GetRcMsg( USAGE_MSG_BASE, fname, sizeof( fname ) ) ) {
+        if( !error && !GetRcMsg( USAGE_MSG_FIRST, fname, sizeof( fname ) ) ) {
             error = TRUE;
         }
     }
@@ -115,39 +112,20 @@ int InitRcMsgs( char *dllname ) {
         RcFatalError( ERR_RCSTR_NOT_FOUND );
 //      return( 0 );
     }
-#endif // BOOTSTRAP_RC
     return( 1 );
 }
 
-int GetRcMsg( unsigned resid, char *buff, unsigned buff_len ) {
-#ifdef BOOTSTRAP_RC
-    {
-        *buff = '\0';
-        if( resid >= USAGE_MSG_BASE ) {
-            resid -= USAGE_MSG_BASE;
-            if( resid >= _arraysize( UsageTable ) ) {
-                return( 0 );
-            }
-            strcpy( buff, UsageTable[resid] );
-            return( 1 );
-        }
-
-        if( resid >= _arraysize( StringTable ) ) {
-            return( 0 );
-        }
-        strcpy( buff, StringTable[resid] );
-    }
-#else
+int GetRcMsg( unsigned resid, char *buff, unsigned buff_len )
+{
     if( WResLoadString( &Instance, resid + MsgShift, buff, buff_len ) != 0 ) {
         buff[0] = '\0';
         return( 0 );
     }
-#endif
     return( 1 );
 }
 
 void FiniRcMsgs( void ) {
-#ifndef BOOTSTRAP_RC
     CloseResFile( &Instance );
-#endif
 }
+
+#endif

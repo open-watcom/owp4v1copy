@@ -1,6 +1,18 @@
 proj_name = wrc
 name = wrc
 
+!ifdef bootstrap
+incl_msgtext = 1
+!ifdef sys_dll
+!undef sys_dll
+!endif
+!else ifdef prebuild
+incl_msgtext = 1
+!ifdef sys_dll
+!undef sys_dll
+!endif
+!endif
+
 !ifeq sys_dll 1
 xname = $(name)e.dll
 !else
@@ -51,6 +63,12 @@ objs =  ytabw.obj ytab2.obj keyword.obj keyword2.obj errors.obj         &
 objs += rcdll.obj libmain.obj idemsgpr.obj
 !endif
 
+!ifdef incl_msgtext
+res_depends =
+!else
+res_depends = wrc.res
+!endif
+
 !ifeq release 0
 splice_opts = -kDEBUG
 !ifeq WRC_USE_TRMEM 1
@@ -61,6 +79,11 @@ objs += trmem.obj
 # cflags stuff
 ###############
 extra_c_flags     = -DYYDEBUG -DSCANDEBUG
+
+!ifdef incl_msgtext
+extra_c_flags    += -DINCL_MSGTEXT
+!endif
+
 !ifeq host_os nt
 extra_c_flags    += -DNT_HOSTED
 !endif
@@ -92,6 +115,10 @@ build_rc_nt_386 = nt
 res_objs = version.res
 !endif
 
+extra_rc_flags_os2 = -D__OS2__
+extra_rc_flags_nt  = -D__NT__
+extra_rc_flags_osi = -D__OSI__
+
 # where to look for various files
 .c : .;$(wrc_dir)/c;$(cpp_dir);$(trmem_dir);$(watcom_dir)/c
 .y : $(wrc_dir)/y
@@ -102,19 +129,19 @@ inc_dirs = -I. -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(fe_misc_dir)/h" -I"$(cpp_
 
 # explicit rules
 
-!ifeq sys_dll 1
+!ifdef bootstrap
+
+$(name)e.exe : $(res_depends) $(objs) clibext.obj $(wres_lib)
+        $(cc) $(objs) clibext.obj -o $@ $(wres_lib)
+
+!else ifeq sys_dll 1
 
 $(name).lib: $(name)e.dll $(__MAKEFILES__)
         $(librarian) $(libflags) $@ +$[@
 
-!else ifdef bootstrap
-
-$(name)e.exe : usage.h rcmsg.gh $(objs) clibext.obj $(wres_lib)
-        $(cc) $(objs) clibext.obj -o $@ $(wres_lib)
-
 !else
 
-$(name)e.exe : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
+$(name)e.exe : $(res_depends) $(objs) $(wres_lib)
 !ifeq host_os osi
         $(linker) $(lflags) name $^&.rex file { $(objs) } lib {$(wres_lib)}
         $(w32bind) $^&.rex $@ $(os2ldr)
@@ -122,11 +149,13 @@ $(name)e.exe : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
 !else	
         $(linker) $(lflags) name $@ file { $(objs) } lib {$(wres_lib)}
 !endif
+!ifndef incl_msgtext
         wstrip -q -a -r $@ . $(name).res
+!endif
 
 !endif
 
-$(name)e.dll : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib) $(res_objs)
+$(name)e.dll : $(res_depends) $(objs) $(wres_lib) $(res_objs)
         $(linker) $(lflags) name $@ file { $(objs) } lib {$(wres_lib)}
 !ifdef build_rc_$(host_os)_$(host_cpu)
         $(rc) -k version.res $^@
@@ -161,22 +190,14 @@ weights2.gh keyword2.gh : ./findhash.exe ../hash/rcos2.key
         @cp weights.gh weights2.gh
         @rm -f weights.gh
 
-$(name).res : ../rc.rc .AUTODEPEND
-        $(rc_aui) -ad -I../h $[@ -fo=$^@
+rcmsg1.gh : ../h/rcmsg.h ../h/rc.msg
+        $(cc) $(cflags) -p $[@ -fo=$@
 
-rcmsg.gh : ../h/rc.msg
-        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+rcmsg.gh : rcmsg1.gh
+        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$@" $[@
 
-usage.rc : $(wrc_dir)/usage.sp
-        wsplice -kENGLISH -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc
-
-usagej.rc : $(wrc_dir)/usage.sp
-        wsplice -kJAPANESE -kIS_RC -k$(host_os) $(splice_opts) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
-
-!ifdef bootstrap
-usage.h: $(wrc_dir)/usage.sp
-        tr -d "\015" <$< | sed 's/\(.*\)/"\1",/' | sed 's;/;-;' >$@
-!endif
+$(name).res : ../rc.rc rcmsg.gh $(__MAKEFILES__) .AUTODEPEND
+        $(rc_aui) -ad $(extra_rc_flags_$(host_os)) $(extra_c_flags) -I../h $[@ -fo=$^@
 
 keyword.obj : keyword.c keywords.gh weights.gh .AUTODEPEND
 

@@ -11,7 +11,16 @@ suppress_bd = 1
 
 wlib_nosymfile = 1
 
-!ifdef prebuild
+!ifdef bootstrap
+incl_msgtext = 1
+!ifdef wlib_dll
+!undef wlib_dll
+!endif
+!ifdef wlib_rtdll
+!undef wlib_rtdll
+!endif
+!else ifdef prebuild
+incl_msgtext = 1
 !ifdef wlib_dll
 !undef wlib_dll
 !endif
@@ -59,14 +68,19 @@ common_objs = &
 !ifdef prebuild
 
 !include $(orl_dir)/orlobjs.mif
+!ifdef incl_msgtext
+common_objs += $(orl_objs)
+!else
 !include $(wres_dir)/wrobjs.mif
-
 common_objs += $(orl_objs) $(wres_core_objs)
+!endif
 
 !else
 
 !include $(orl_dir)/client.mif
+!ifndef incl_msgtext
 !include wres.mif
+!endif
 
 !endif
 
@@ -87,12 +101,20 @@ external_dependencies = $(xlibs)
 external_dependencies += $(os2ldr)
 !endif
 
+!ifdef incl_msgtext
 depends_exe = $(comp_objs_exe) $(external_dependencies)
+!else
+depends_exe = msg.gh wlib.res $(comp_objs_exe) $(external_dependencies)
+!endif
 depends_dll = $(comp_objs_dll) $(external_dependencies)
 depends_drv = $(drv_objs)
 
 #########
 # cflags
+
+!ifdef incl_msgtext
+extra_c_flags += -DINCL_MSGTEXT
+!endif
 
 !ifeq release 0
 extra_c_flags += -D__DEBUG__
@@ -144,7 +166,7 @@ res_objs = version.res
 
 !ifeq bootstrap 1
 
-inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h
+inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I..
 .c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
 .h: ../h;$(watcom_dir)/h
 defines = -DIDE_PGM -D__stdcall=
@@ -153,7 +175,7 @@ comp_objs_exe += clibext.obj
 !else ifdef prebuild
 
 inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" -I"$(wres_dir)/h" &
-  -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(orl_dir)/omf/h"
+  -I"$(orl_dir)/elf/h" -I"$(orl_dir)/coff/h" -I"$(orl_dir)/omf/h" -I..
 .c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c;$(orl_dir)/c;$(orl_dir)/elf/c;$(orl_dir)/coff/c;$(orl_dir)/omf/c;$(wres_dir)/c;
 .h: ../h;$(watcom_dir)/h;$(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h;
 
@@ -167,6 +189,8 @@ inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h"
 
 !ifdef prebuild
 xlibs = 
+!else ifdef incl_msgtext
+xlibs = $(orl_lib)
 !else
 xlibs = $(orl_lib) $(wres_lib)
 !endif
@@ -178,7 +202,7 @@ wlib.exe: $(depends_drv) wlibd.lib drv.lnk
 
 !else
 
-wlib.exe: msg.gh $(depends_exe) wlib.res exe.lnk
+wlib.exe: $(depends_exe) exe.lnk
 !ifeq bootstrap 1
     $(cc) -g -o $@ $(comp_objs_exe) $(xlibs)
 !else ifeq host_os osi
@@ -188,11 +212,13 @@ wlib.exe: msg.gh $(depends_exe) wlib.res exe.lnk
 !else
     $(linker) name $@ @exe.lnk
 !endif
+!ifndef incl_msgtext
     wstrip -q -a -r $@ . wlib.res
+!endif
 
 !endif
 
-wlibd.dll: msg.gh $(depends_dll) wlib.res $(res_objs) dll.lnk
+wlibd.dll: msg.gh $(depends_dll) $(res_objs) wlib.res dll.lnk
     $(linker) name $@ @dll.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)
     $(rc) -k version.res $^@
@@ -222,8 +248,6 @@ dll.lnk : $(__MAKEFILES__)
 !endif
     @for %i in ($(comp_objs_dll)) do @%append $@ file %i
     @for %i in ($(xlibs)) do @%append $@ lib %i
-
-error.obj : msg.gh error.c
 
 ./mkstr.exe : ../mkstr.c ../wlib.msg
     $(bld_cl) $(wcl_util_opts) -I.. $[@

@@ -32,6 +32,8 @@
 
 #include <wlib.h>
 
+jmp_buf Env;
+
 int InitSubSystems( )
 {
     if( !setjmp( Env ) ) {
