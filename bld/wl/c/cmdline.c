@@ -77,6 +77,7 @@ static bool             ProcWindowsHelp( void );
 static bool             ProcWinVxdHelp( void );
 static bool             ProcNTHelp( void );
 static void             WriteHelp( unsigned first_ln, unsigned last_ln, bool prompt );
+static void             GetExtraCommands( void );
 
 static  parse_entry   FormatHelp[] = {
     "Dos",          ProcDosHelp,            MK_ALL,     0,
@@ -105,14 +106,14 @@ static  parse_entry   FormatHelp[] = {
 };
 
 byte            Extension;
-file_list **    CurrFList;
+file_list       **CurrFList;
 tok             Token;
 commandflag     CmdFlags;
-char *          Name;
-sysblock *      SysBlocks;
-sysblock *      LinkCommands;
+char            *Name;
+sysblock        *SysBlocks;
+sysblock        *LinkCommands;
 
-static sysblock *       PrevCommand;
+static sysblock         *PrevCommand;
 
 #define INIT_FILE_NAME  "wlink.lnk"
 #define INIT_FILE_ENV   "WLINK_LNK"
@@ -280,10 +281,10 @@ void DoCmdFile( char *fname )
     DBIInit();
 }
 
-char * GetNextLink( void )
-/*******************************/
+char *GetNextLink( void )
+/***********************/
 {
-    char *      cmd;
+    char        *cmd;
 
     cmd = NULL;
     _LnkFree( PrevCommand );
@@ -292,7 +293,7 @@ char * GetNextLink( void )
         LinkCommands = LinkCommands->next;
         cmd = PrevCommand->commands;
     }
-    return cmd;
+    return( cmd );
 }
 
 #define PREFIX_SIZE 8
@@ -311,7 +312,7 @@ static struct extra_cmd_info ExtraCmds[] = {
         0,              "\0",           FALSE
 };
 
-void GetExtraCommands( void )
+static void GetExtraCommands( void )
 /**********************************/
 {
     struct extra_cmd_info const        *cmd;
@@ -623,17 +624,16 @@ void SetFormat( void )
 /***************************/
 // do final processing now that the executable format has been decided.
 {
-    char *      fname;
+    char        *fname;
 
     if( CmdFlags & CF_NO_EXTENSION ) {
         fname = Name;
     } else {
         int const len = (int) strlen(Name);
 
-        if ( FmtData.output_hex ) {  // override default extension if hex or raw (bin)
+        if( FmtData.output_hex ) {  // override default extension if hex or raw (bin)
             Extension = E_HEX;       //   has been specified
-        }
-        else if ( FmtData.output_raw ) {
+        } else if( FmtData.output_raw ) {
             Extension = E_BIN;
         }
         fname = FileName( Name, len, Extension, CmdFlags & CF_UNNAMED);
@@ -769,7 +769,7 @@ void DecideFormat( void )
     }
 }
 
-void FreeFormatStuff()
+void FreeFormatStuff( void )
 /***************************/
 {
     struct select_format const *check;
@@ -790,7 +790,7 @@ void AddCommentLib( char *ptr, int len, unsigned char priority )
 /*********************************************************************/
 //  Add a library from a comment record.
 {
-    file_list * result;
+    file_list   *result;
 
     if( CmdFlags & CF_NO_DEF_LIBS ) return;
     ptr = FileName( ptr, len, E_LIBRARY, FALSE );
@@ -850,7 +850,7 @@ void ExecSystem( char *name )
 /* run a system block with the given name (only called once!)
  * (this is called after the parser has already been stopped */
 {
-    sysblock *  sys;
+    sysblock    *sys;
 
     sys = FindSysBlock( name );
     if( sys != NULL ) {
@@ -874,9 +874,9 @@ static void CleanSystemList( bool check )
 /***************************************/
 /* clean up the list of system blocks */
 {
-    sysblock ** sys;
-    sysblock *  next;
-    char *      name;
+    sysblock    **sys;
+    sysblock    *next;
+    char        *name;
 
     sys = &SysBlocks;
     while( *sys != NULL ) {
@@ -912,16 +912,16 @@ bool ProcImport( void )
 {
 #if defined( _OS2) || defined( _ELF ) || defined( _NOVELL )
     if( HintFormat( MK_OS2 | MK_PE ) ) {
-        return ProcOS2Import();
+        return( ProcOS2Import() );
     } else if( HintFormat( MK_WIN_VXD ) ) {
-        return FALSE;
+        return( FALSE );
     } else if( HintFormat( MK_ELF ) ) {
-        return ProcELFImport();
+        return( ProcELFImport() );
     } else {
-        return ProcNovImport();
+        return( ProcNovImport() );
     }
 #else
-    return FALSE;
+    return( FALSE );
 #endif
 }
 
@@ -1064,6 +1064,6 @@ bool ProcIntDbg( void )
 /****************************/
 {
     LinkState |= INTERNAL_DEBUG;
-    return TRUE;
+    return( TRUE );
 }
 #endif

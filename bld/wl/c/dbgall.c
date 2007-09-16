@@ -52,8 +52,8 @@
 #include "ring.h"
 #include "loadnov.h"
 
-char *          SymFileName;
-group_entry *   DBIGroups;
+char            *SymFileName;
+group_entry     *DBIGroups;
 
 void ResetDBI( void )
 /**************************/
@@ -117,7 +117,7 @@ void DBIP1Source( byte *buff, byte *endbuff )
     }
 }
 
-section * DBIGetSect( char *clname )
+section *DBIGetSect( char *clname )
 /*****************************************/
 {
     if( ( stricmp( clname, _MSTypeClass ) == 0 )
@@ -257,11 +257,11 @@ void DBIPreAddrCalc( void )
 void DBIAddrInfoScan( seg_leader *seg,
                          void (*initfn)( segdata *, void * ),
                          void (*addfn)( segdata *, offset, offset, void *, bool ),
-                         void * cookie )
+                         void *cookie )
 /********************************************************************************/
 {
-    segdata *   prev;
-    segdata *   curr;
+    segdata     *prev;
+    segdata     *curr;
     offset      size;
     bool        isnewmod;
 
@@ -408,7 +408,7 @@ void DBIAddGlobal( symbol *sym )
     }
 }
 
-void DBIGenGlobal( symbol * sym, section *sect )
+void DBIGenGlobal( symbol *sym, section *sect )
 /*****************************************************/
 // called during symbol address calculation (between pass 1 & pass 2)
 // also called by loadpe between passes
@@ -432,7 +432,7 @@ void DBIAddLines( segdata *seg, void *line, unsigned size, bool is32bit )
 /******************************************************************************/
 // called during pass 1 linnum processing
 {
-    lineinfo *  info;
+    lineinfo    *info;
 
     _PermAlloc( info, sizeof( lineinfo ) + size - 1 );
     info->seg = seg;
@@ -493,10 +493,10 @@ void DBIAddrStart( void )
     if( LinkFlags & CV_DBI_FLAG ) {
         CVAddrStart();
     }
-    ProcAllSects( DBIAddrSectStart );
+    WalkAllSects( DBIAddrSectStart );
 }
 
-void DBIAddrSectStart( section * sect )
+void DBIAddrSectStart( section *sect )
 /********************************************/
 // called for each section after address calculation is done.
 {

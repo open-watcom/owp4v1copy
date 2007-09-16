@@ -64,7 +64,7 @@ static void AutoGroupSect( section *sec );
 void AutoGroup( void )
 /***************************/
 {
-    ProcAllSects( &AutoGroupSect );
+    WalkAllSects( &AutoGroupSect );
     SortGroupList();
     FindSplitGroups();
     if( NumGroups == 0 ) {

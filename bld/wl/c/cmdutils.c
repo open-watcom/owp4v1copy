@@ -47,7 +47,7 @@
 
 #define _LinkerPrompt "WLINK>"
 
-cmdfilelist *    CmdFile = NULL;
+cmdfilelist      *CmdFile = NULL;
 
 static  char            *DefExt[] = {           /* see LINK.H */
     ".lnk",
@@ -100,12 +100,12 @@ static bool WildCard( bool (*rtn)( void ), tokcontrol ctrl )
 #if defined( __UNIX__ )
     //opendir - readdir wildcarding not supported here.
     ctrl = ctrl;
-    return rtn();
+    return( rtn() );
 #else
-    char *              p;
-    char *              start;
-    DIR *               dir;
-    struct dirent *     dirent;
+    char                *p;
+    char                *start;
+    DIR                 *dir;
+    struct dirent       *dirent;
     char                drive[_MAX_DRIVE];
     char                directory[_MAX_DIR];
     char                name[_MAX_FNAME];
@@ -160,7 +160,7 @@ static bool WildCard( bool (*rtn)( void ), tokcontrol ctrl )
         }
         _LnkFree( start );
     }
-    return retval;
+    return( retval );
 #endif
 }
 
@@ -188,12 +188,12 @@ bool ProcArgListEx( bool (*rtn)( void ), tokcontrol ctrl ,cmdfilelist *resetpoin
         }
     } else {
         if(resetpoint && bfilereset)
-            return TRUE;
+            return( TRUE );
         if( GetTokenEx( SEP_NO, ctrl, resetpoint, &bfilereset) == FALSE )
             return( FALSE );
         do {
             if(resetpoint && bfilereset)
-                return TRUE;
+                return( TRUE );
             if( !WildCard( rtn, ctrl ) ) {
                 return( FALSE );
             }
@@ -253,7 +253,7 @@ bool ProcOne( parse_entry *entry, sep_type req, bool suicide )
     return( ret );
 }
 
-bool MatchOne( parse_entry *entry , sep_type req , char * match, int len )
+bool MatchOne( parse_entry *entry , sep_type req , char *match, int len )
 /*******************************************************************/
 /* recognize token out of parse table */
 {
@@ -269,7 +269,7 @@ bool MatchOne( parse_entry *entry , sep_type req , char * match, int len )
         for(;;) {
             if( plen == 0 && !isupper( *key ) ) {
                 ret = TRUE;
-                return ( ret );
+                return( ret );
             }
             if( *key == '\0' || tolower( *ptr ) != tolower( *key ) )
                 break;
@@ -285,7 +285,7 @@ bool MatchOne( parse_entry *entry , sep_type req , char * match, int len )
     return( ret );
 }
 
-ord_state getatoi( unsigned_16 * pnt )
+ord_state getatoi( unsigned_16 *pnt )
 /*******************************************/
 {
     unsigned_32 value;
@@ -301,10 +301,10 @@ ord_state getatoi( unsigned_16 * pnt )
     return( retval );
 }
 
-ord_state getatol( unsigned_32 * pnt )
+ord_state getatol( unsigned_32 *pnt )
 /*******************************************/
 {
-    char *          p;
+    char            *p;
     int             len;
     unsigned long   value;
     unsigned        radix;
@@ -392,13 +392,13 @@ bool GetLong( unsigned_32 *addr )
     return( TRUE );
 }
 
-char * tostring( void )
+char *tostring( void )
 /****************************/
 // make the current token into a C string.
 {
-    char *          src;
+    char            *src;
     int             len;
-    char *          str;
+    char            *str;
 
     src = Token.this;
     len = Token.len;
@@ -408,7 +408,7 @@ char * tostring( void )
     return( str );
 }
 
-char * totext()
+char *totext( void )
 /********************/
 /* get a possiblly quoted string */
 {
@@ -425,9 +425,9 @@ static void ExpandEnvVariable( void )
 /***********************************/
 /* parse the specified environment variable & deal with it */
 {
-    char *  envname;
-    char *  env;
-    char *  buff;
+    char    *envname;
+    char    *env;
+    char    *buff;
     size_t  envlen;
 
     Token.next++;
@@ -456,20 +456,20 @@ static void ExpandEnvVariable( void )
     }
 }
 
-static bool CheckFence()
-/**********************/
+static bool CheckFence( void )
+/****************************/
 /* check for a "fence", and skip it if it is there */
 {
     if( Token.thumb == REJECT ) {
         if( Token.quoted ) return( FALSE );   /* no fence inside quotes */
         if( *Token.this == '}' ) {
             Token.this++;
-            return TRUE;
+            return( TRUE );
         }
     } else {
-        return GetToken( SEP_RCURLY, 0 );
+        return( GetToken( SEP_RCURLY, 0 ) );
     }
-    return FALSE;
+    return( FALSE );
 }
 
 bool GetToken( sep_type req, tokcontrol ctrl)
@@ -477,7 +477,7 @@ bool GetToken( sep_type req, tokcontrol ctrl)
     return(GetTokenEx(req, ctrl, NULL, NULL));
 }
 
-bool GetTokenEx( sep_type req, tokcontrol ctrl, cmdfilelist *resetpoint, bool * pbreset)
+bool GetTokenEx( sep_type req, tokcontrol ctrl, cmdfilelist *resetpoint, bool *pbreset)
 /***************************************************/
 /* return TRUE if no problem */
 /* return FALSE if problem   */
@@ -603,7 +603,7 @@ bool GetTokenEx( sep_type req, tokcontrol ctrl, cmdfilelist *resetpoint, bool * 
                         Token.next++;
                         break;
                     case SEP_QUOTE:
-                        if( hmm != '\'' ) return FALSE;
+                        if( hmm != '\'' ) return( FALSE );
                         Token.next++;
                         Token.quoted = TRUE;
                         break;
@@ -644,7 +644,7 @@ bool GetTokenEx( sep_type req, tokcontrol ctrl, cmdfilelist *resetpoint, bool * 
                     break;
                 if( pbreset )
                     *pbreset = TRUE;            /* Show we have hit a file end-point for a directive */
-                return FALSE;
+                return( FALSE );
             }
             break;
         case ENDOFCMD:
@@ -728,7 +728,7 @@ void NewCommandSource( char *name, char *buff, method how )
 /****************************************************************/
 /* start reading from a new command source, and save the old one */
 {
-    cmdfilelist *   newfile;
+    cmdfilelist     *newfile;
 
     _ChkAlloc( newfile, sizeof( cmdfilelist ) );
     newfile->file = STDIN_HANDLE;
@@ -764,7 +764,7 @@ void SetCommandFile( f_handle file, char *fname )
 /* read input from given file */
 {
     unsigned long   size;
-    char *          buff;
+    char            *buff;
 
     if( QIsDevice( file ) ) {
         size = 0x10000;
@@ -792,9 +792,9 @@ void SetCommandFile( f_handle file, char *fname )
 static void StartNewFile( void )
 /******************************/
 {
-    char *      fname;
-    char *      envstring;
-    char *      buff;
+    char        *fname;
+    char        *envstring;
+    char        *buff;
     f_handle    file;
     size_t      envlen;
 
@@ -830,7 +830,7 @@ void EatWhite( void )
     }
 }
 
-static int ParseNumber( char * str, int radix )
+static int ParseNumber( char *str, int radix )
 /*********************************************/
 /* read a (possibly hexadecimal) number */
 {
@@ -869,7 +869,7 @@ static void MapEscapeChar( void )
 /* turn the current character located at Token.next into a possibly unprintable
  * character using C escape codes */
 {
-    char *      str;
+    char        *str;
     int         shift;
 
     shift = 2;
@@ -920,7 +920,7 @@ static int MapDoubleByteChar( char c )
     case CF_LANGUAGE_JAPANESE:
         if( (c >= 0x81 && c <= 0x9F) || (c >= 0xE0 && c <=0xFC) ) {
             Token.next++;
-            return 1;
+            return( 1 );
         }
         break;
     case CF_LANGUAGE_CHINESE:
@@ -929,9 +929,9 @@ static int MapDoubleByteChar( char c )
         if( c > 0xFD ) break;
         if( c < 0x81 ) break;
         Token.next++;
-        return 1;
+        return( 1 );
     }
-    return 0;
+    return( 0 );
 }
 
 static bool MakeToken( tokcontrol ctrl, sep_type separator )
@@ -1036,9 +1036,9 @@ static bool MakeToken( tokcontrol ctrl, sep_type separator )
 char *FileName( char *buff, int len, byte etype, bool force )
 /******************************************************************/
 {
-    char *  namptr;
-    char *  namstart;
-    char *  ptr;
+    char    *namptr;
+    char    *namstart;
+    char    *ptr;
     int     cnt;
     int     namelen;
 
@@ -1088,7 +1088,7 @@ void RestoreCmdLine( void )
 /********************************/
 // Restore a saved command line.
 {
-    cmdfilelist *   temp;
+    cmdfilelist     *temp;
 
     if( CmdFile->prev == NULL ) {     /* can't free last file */
         Token.where = ENDOFCMD;
@@ -1118,11 +1118,11 @@ void RestoreCmdLine( void )
     memcpy( &Token, &CmdFile->token, sizeof( tok ) ); // restore old state.
 }
 
-bool IsSystemBlock()
+bool IsSystemBlock( void )
 /*************************/
 // Are we in a system block?
 {
-    cmdfilelist *   temp;
+    cmdfilelist     *temp;
 
     if( Token.how == SYSTEM ) return( TRUE );
 
@@ -1136,7 +1136,7 @@ void BurnUtils( void )
 /***************************/
 // Burn data structures used in command utils.
 {
-    void *      temp;
+    void        *temp;
 
     if( CmdFile->next != NULL ) {
         LnkMsg( LOC+LINE+ERR+MSG_NO_INPUT_LEFT, NULL );
@@ -1164,10 +1164,10 @@ void BurnUtils( void )
     Token.how = BUFFERED;       // so error message stuff reports right name
 }
 
-outfilelist * NewOutFile( char * filename )
+outfilelist *NewOutFile( char *filename )
 /************************************************/
 {
-    outfilelist *   fnode;
+    outfilelist     *fnode;
 
     for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
         if( FNAMECMPSTR( filename, fnode->fname ) == 0 ) {
@@ -1185,10 +1185,10 @@ outfilelist * NewOutFile( char * filename )
 
 int stricmp_wrapper( const void *s1, const void *s2 )
 {
-    return stricmp( s1, s2 );
+    return( stricmp( s1, s2 ) );
 }
 
-section * NewSection( void )
+section *NewSection( void )
 /*********************************/
 {
     section             *sect;
@@ -1216,13 +1216,13 @@ section * NewSection( void )
     return( sect );
 }
 
-char * GetFileName( char **membname, bool setname )
+char *GetFileName( char **membname, bool setname )
 /********************************************************/
 {
-    char *  ptr;
+    char    *ptr;
     int     namelen;
-    char *  objname;
-    char *  fullmemb;
+    char    *objname;
+    char    *fullmemb;
     int     memblen;
 
     namelen = Token.len;

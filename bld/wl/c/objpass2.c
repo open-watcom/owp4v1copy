@@ -55,7 +55,7 @@ void ObjPass2( void )
 {
     DEBUG(( DBG_BASE, "ObjPass2()" ));
     IncP2Start();
-    ProcAllSects( DBIP2Start );
+    WalkAllSects( DBIP2Start );
     CurrSect = Root;/*  TAI */
     PModList( Root->mods );
     OvlPass2();
@@ -69,7 +69,7 @@ void ObjPass2( void )
     if( FmtData.type & MK_OVERLAYS ) {
         SetOvlStartAddr();
     }
-    ProcAllSects( DBIFini );
+    WalkAllSects( DBIFini );
 }
 
 void PModList( mod_entry *head )

@@ -66,7 +66,7 @@ int InitMsg( void )
     char        buff[_MAX_PATH];
     int         initerror;
 #if defined( _DLLHOST )
-    char *      fname;
+    char        *fname;
 
     fname = _LpDllName;
     initerror = fname == NULL;
@@ -100,7 +100,7 @@ int InitMsg( void )
     } else {
         Res_Flag = EXIT_SUCCESS;
     }
-    return Res_Flag;
+    return( Res_Flag );
 }
 
 int Msg_Get( int resourceid, char *buffer )
@@ -195,16 +195,16 @@ void Msg_Write_Map( int resourceid, ... )
     va_end( arglist );
 }
 
-int FiniMsg()
+int FiniMsg( void )
 {
     int     retcode = EXIT_SUCCESS;
 
     if( Res_Flag == EXIT_SUCCESS ) {
-        if ( CloseResFile( &hInstance ) != -1 ) {
+        if( CloseResFile( &hInstance ) != -1 ) {
             Res_Flag = EXIT_FAILURE;
         } else {
             retcode = EXIT_FAILURE;
         }
     }
-    return retcode;
+    return( retcode );
 }

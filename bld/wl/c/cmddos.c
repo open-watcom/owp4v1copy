@@ -45,7 +45,9 @@
 byte            OvlLevel;
 
 #ifdef _INT_DEBUG
-static  void            PrintOvl( void );
+static void             PrintOvl( void );
+static void             PrintAreas( OVL_AREA *ovlarea );
+static void             PrintSect( section *sect );
 #endif
 static bool             AddClass( void );
 static void             NewArea( section *sect );
@@ -68,7 +70,7 @@ static void SetOvlClasses( void )
 /*******************************/
 // make sure the overlay loader is always "overlayed".
 {
-    list_of_names *     ovlmgr;
+    list_of_names       *ovlmgr;
 
     if( OvlClasses != NULL ) {
         _PermAlloc( ovlmgr, sizeof( list_of_names ) + OVL_MGR_CL_LEN );
@@ -132,9 +134,9 @@ bool ProcBegin( void )
 /***************************/
 /* process a new overlay area */
 {
-    section *       oldsect;
-    file_list **    oldflist;
-    section *       sect;
+    section         *oldsect;
+    file_list       **oldflist;
+    section         *sect;
 
     LinkState |= FMT_SPECIFIED;      // she must want DOS mode.
     if( ( OvlLevel > 0 ) && FmtData.u.dos.dynamic ) {
@@ -279,7 +281,7 @@ bool ProcDynamic( void )
 static bool AddNoVector( void )
 /*****************************/
 {
-    symbol *    sym;
+    symbol      *sym;
 
     sym = SymXOp( ST_CREATE | ST_REFERENCE, Token.this, Token.len );
     sym->u.d.ovlstate |= ( OVL_FORCE | OVL_NO_VECTOR );
@@ -408,7 +410,7 @@ static void PrintAreas( OVL_AREA *ovlarea )
 static void PrintSect( section *sect )
 /************************************/
 {
-    file_list * list;
+    file_list   *list;
 
     OvlLevel++;
     for( ; sect != NULL; sect = sect->next_sect ) {

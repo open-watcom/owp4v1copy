@@ -78,15 +78,15 @@ typedef struct seginfo     {
     unsigned_32         dbioff;
     segheader           head;
     unsigned_32         endoflast;
-    seg_leader *        prevlead;
-    seg_leader *        final;
+    seg_leader          *prevlead;
+    seg_leader          *final;
     byte                nonsect : 1;
     byte                full : 1;
     byte                finished : 1;
 } seginfo;
 
 typedef struct snamelist {        // source name list
-    struct snamelist *  next;
+    struct snamelist    *next;
     byte                len;        // length of the name
     char                name[1];       // stored WITH a nullchar
 } snamelist;
@@ -94,7 +94,7 @@ typedef struct snamelist {        // source name list
 static unsigned_32  DBISize;
 static dbgheader    Master;            // rest depend on .obj files.
 
-static snamelist *  DBISourceLang;     // list of source languages
+static snamelist    *DBISourceLang;     // list of source languages
 
 #ifdef _INT_DEBUG
 struct {
@@ -103,7 +103,7 @@ struct {
 } TraceInfo;
 #endif
 
-static snamelist * LangAlloc( byte len, char *buff )
+static snamelist *LangAlloc( byte len, char *buff )
 /**************************************************/
 {
     snamelist *node;
@@ -153,7 +153,7 @@ static bool FindMatch( byte len, void *buff, unsigned *offset )
 /*************************************************************/
 // returns FALSE if not found
 {
-    snamelist * node;
+    snamelist   *node;
 
     node = DBISourceLang;
     *offset = 0;
@@ -172,7 +172,7 @@ static bool FindMatch( byte len, void *buff, unsigned *offset )
 void ODBIP1Source( byte major, byte minor, char *name, int len )
 /*********************************************************************/
 {
-    snamelist * node;
+    snamelist   *node;
 
     if( Master.obj_major_ver == 0 )
         Master.obj_major_ver = major;
@@ -190,7 +190,7 @@ void ODBIP1Source( byte major, byte minor, char *name, int len )
     }
 }
 
-static void DoAddLocal( dbi_section * dbi, offset length )
+static void DoAddLocal( dbi_section *dbi, offset length )
 /********************************************************/
 {
     if( ( dbi->size == 0 ) || ( dbi->size + length > DEMAND_INFO_SPLIT ) ) {
@@ -232,8 +232,8 @@ void ODBIP1ModuleScanned( void )
     dinfo->locallinks.size = 0;
 }
 
-static void DoGenLocal( dbi_section *dsect, dbi_section * dlink,
-                        demanddata * dmod, offset length )
+static void DoGenLocal( dbi_section *dsect, dbi_section *dlink,
+                        demanddata *dmod, offset length )
 /**************************************************************/
 {
     unsigned_32 spot;
@@ -446,7 +446,7 @@ static void DoName( char *cname, char *intelname, int len )
     memcpy( &intelname[ 1 ], cname, len );
 }
 
-void ODBIGenGlobal( symbol * sym, section *sect )
+void ODBIGenGlobal( symbol *sym, section *sect )
 /******************************************************/
 {
     int         len;
@@ -555,7 +555,7 @@ static void ODBIGenAddrInfo( seg_leader *seg )
     DBIAddrInfoScan( seg, ODBIGenAddrInit, ODBIGenAddrAdd, dptr );
 }
 
-static void WriteBogusAddrInfo( debug_info * dptr )
+static void WriteBogusAddrInfo( debug_info *dptr )
 /*************************************************/
 {
     addrinfo    info;
@@ -576,7 +576,7 @@ static void WriteBogusAddrInfo( debug_info * dptr )
     dptr->addr.curr += sizeof( addrinfo );
 }
 
-void ODBIP2Start( section * sect )
+void ODBIP2Start( section *sect )
 /***************************************/
 /* initialize pointers for pass 2 processing */
 
@@ -827,8 +827,8 @@ static unsigned_16 WriteSegValues( void )
 // write out all possible group segment values
 {
     unsigned_16     segarray[2];
-    group_entry *   currgrp;
-    unsigned_16 *   buffer;
+    group_entry     *currgrp;
+    unsigned_16     *buffer;
     unsigned_16     buflen;
 
     if( FmtData.type & MK_FLAT ) {
@@ -889,8 +889,8 @@ void ODBIWrite( void )
 /***************************/
 /* copy debugging info from extra memory to loadfile */
 {
-    snamelist * node;
-    snamelist * nextnode;
+    snamelist   *node;
+    snamelist   *nextnode;
 
     CurrSect = Root;
     Master.lang_size = 0;
@@ -904,7 +904,7 @@ void ODBIWrite( void )
     }
     DBISourceLang = NULL;
     Master.seg_size = WriteSegValues();
-    ProcAllSects( WriteDBISecs );
+    WalkAllSects( WriteDBISecs );
     Master.debug_size = DBISize;
     if( Master.obj_major_ver == 0 )
         Master.obj_major_ver = 1;

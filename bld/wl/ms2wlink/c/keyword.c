@@ -68,7 +68,7 @@ extern bool         DebugInfo;
 
 extern cmdfilelist *CmdFile;
 
-static void             (*MultiLine)() = NULL;
+static void             (*MultiLine)( void ) = NULL;
 static char *           OptionBuffer;
 static int              BufferLeft;
 static bool             SegWarning = FALSE;

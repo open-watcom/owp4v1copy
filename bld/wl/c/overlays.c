@@ -40,7 +40,7 @@
 #include "distrib.h"
 #include "overlays.h"
 
-void ProcAllSects( void (*rtn)( section * ) )
+void WalkAllSects( void (*rtn)( section * ) )
 /**************************************************/
 {
     rtn( Root );
@@ -49,7 +49,7 @@ void ProcAllSects( void (*rtn)( section * ) )
     }
 }
 
-void ProcAllOvl( void (*rtn)( section * ) )
+void WalkAllOvl( void (*rtn)( section * ) )
 /************************************************/
 {
     if( FmtData.type & MK_OVERLAYS ) {
@@ -91,16 +91,16 @@ void NumberSections( void )
         SectOvlTab[0] = Root;
     }
     OvlNum = 1;
-    ProcAllOvl( &NumASect );
+    WalkAllOvl( &NumASect );
 }
 
 void FillOutFilePtrs( void )
 /*********************************/
 {
-    ProcAllOvl( FillOutPtr );
+    WalkAllOvl( FillOutPtr );
 }
 
-void TryDefVector( symbol * sym )
+void TryDefVector( symbol *sym )
 /**************************************/
 {
     if( FmtData.type & MK_OVERLAYS ) {
@@ -112,7 +112,7 @@ void TryDefVector( symbol * sym )
     }
 }
 
-void TryUseVector( symbol * sym, extnode *newnode )
+void TryUseVector( symbol *sym, extnode *newnode )
 /********************************************************/
 {
     if( newnode != NULL ) {
@@ -123,7 +123,7 @@ void TryUseVector( symbol * sym, extnode *newnode )
     }
 }
 
-section * GetOvlSect( char *clname )
+section *GetOvlSect( char *clname )
 /*****************************************/
 /* Pick the right section for this segment, based on its class */
 {
@@ -149,6 +149,6 @@ void OvlPass2( void )
 {
     if( FmtData.type & MK_OVERLAYS ) {
         EmitOvlVectors();
-        ProcAllOvl( PSection );
+        WalkAllOvl( PSection );
     }
 }

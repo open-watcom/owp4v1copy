@@ -321,8 +321,8 @@ extern void OutPutPrompt( int prompt )
 
 static void *SpawnStack;
 
-extern int Spawn( void (*fn)() )
-/******************************/
+extern int Spawn( void (*fn)( void ) )
+/************************************/
 {
     void *save_env;
     jmp_buf env;

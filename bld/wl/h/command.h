@@ -73,10 +73,10 @@ typedef enum {
 } ord_state;
 
 typedef struct tok {
-    char *      buff;
+    char        *buff;
     int         len;
-    char *      next;
-    char *      this;
+    char        *next;
+    char        *this;
     unsigned_16 line;
     unsigned_16 where : 2;
     unsigned_16 how : 3;
@@ -114,21 +114,21 @@ typedef struct cmdfilelist {
     struct cmdfilelist *prev;
     struct cmdfilelist *next;
     f_handle            file;
-    char *              symprefix;
-    char *              name;
+    char                *symprefix;
+    char                *name;
     tok                 token;
 } cmdfilelist;
 
 typedef struct parse_entry {
     char                *keyword;
-    bool                (*rtn)();
+    bool                (*rtn)( void );
     enum exe_format     format;
     commandflag         flags;
 } parse_entry;
 
 typedef struct sysblock {
-    struct sysblock *   next;
-    char *              name;
+    struct sysblock     *next;
+    char                *name;
     char                commands[1];
 } sysblock;
 
@@ -184,36 +184,36 @@ extern parse_entry OutputOpts[];
 /* handy globals */
 
 extern byte         Extension;
-extern file_list ** CurrFList;
+extern file_list    **CurrFList;
 extern tok          Token;
 extern commandflag  CmdFlags;
-extern char *       Name;
-extern sysblock *   SysBlocks;
-extern sysblock *   LinkCommands;
+extern char         *Name;
+extern sysblock     *SysBlocks;
+extern sysblock     *LinkCommands;
 extern cmdfilelist *CmdFile;
 
 /* routines used in command parser */
 
 extern bool             ProcArgList( bool (*)( void ), tokcontrol );
-extern bool             ProcArgListEx( bool (*)( void ), tokcontrol ,cmdfilelist *resetpoint);
+extern bool             ProcArgListEx( bool (*)( void ), tokcontrol ,cmdfilelist * );
 extern bool             ProcOne( parse_entry *, sep_type, bool );
-extern bool             MatchOne( parse_entry *, sep_type, char * match, int len );
+extern bool             MatchOne( parse_entry *, sep_type, char *, int );
 extern ord_state        getatoi( unsigned_16 * );
 extern ord_state        getatol( unsigned_32 * );
 extern bool             HaveEquals( tokcontrol );
 extern bool             GetLong( unsigned_32 * );
-extern char *           tostring( void );
-extern char *           totext( void );
+extern char             *tostring( void );
+extern char             *totext( void );
 extern bool             GetToken( sep_type, tokcontrol );
-extern bool             GetTokenEx( sep_type, tokcontrol ,cmdfilelist *, bool * pbreset);
+extern bool             GetTokenEx( sep_type, tokcontrol ,cmdfilelist *, bool * );
 extern void             RestoreParser( void );
 extern void             NewCommandSource( char *, char *, method );
 extern void             SetCommandFile( f_handle, char * );
 extern void             EatWhite( void );
-extern char *           FileName( char *, int, byte, bool );
+extern char             *FileName( char *, int, byte, bool );
 extern void             RestoreCmdLine( void );
 extern bool             IsSystemBlock( void );
 extern void             BurnUtils( void );
-extern outfilelist *    NewOutFile( char * );
-extern section *        NewSection( void );
-extern char *           GetFileName( char **, bool );
+extern outfilelist      *NewOutFile( char * );
+extern section          *NewSection( void );
+extern char             *GetFileName( char **, bool );

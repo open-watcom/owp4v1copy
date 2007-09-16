@@ -115,7 +115,7 @@ static void WriteVectors( void )
     vecnode             *vec;
     int                 n;
     targ_addr           addr;
-    symbol *            sym;
+    symbol              *sym;
 
     WriteMapNL( 2 );
     XReportSymAddr( OverlayTable );
@@ -154,7 +154,7 @@ static void DoSecPubs( section *sec )
 void ProcOvlSectPubs( section *sec )
 /*****************************************/
 {
-    mod_entry * next;
+    mod_entry   *next;
 
     if( sec->u.dist_mods != NULL ) {
         for( CurrMod = sec->u.dist_mods; CurrMod != NULL; CurrMod = next ) {
@@ -168,7 +168,7 @@ void ProcOvlPubs( void )
 /*****************************/
 {
     WriteVectors();
-    ProcAllOvl( DoSecPubs );
+    WalkAllOvl( DoSecPubs );
 }
 
 void FillOutPtr( section *sec )
@@ -189,7 +189,7 @@ static void AllocSections( section *first_sect )
 {
     targ_addr           save;
     targ_addr           max;
-    section *           sect;
+    section             *sect;
     unsigned long       result;
     unsigned            ovl_size;
     unsigned            min_size;
@@ -265,7 +265,7 @@ void CalcOvl( void )
 /*************************/
 {
     unsigned        temp;
-    outfilelist *   fnode;
+    outfilelist     *fnode;
 
     CurrSect = Root;
     /* record starting address of overlay table */
@@ -351,10 +351,10 @@ static bool IsAncestor( int elder, section *ceorl )
 #define NO_VECTOR( sym ) ( ( IS_SYM_COMMUNAL( sym ) ) \
                             || ( (sym)->u.d.ovlstate & OVL_FORCE ) )
 
-void OvlDefVector( symbol * sym )
+void OvlDefVector( symbol *sym )
 /**************************************/
 {
-    segdata *   sdata;
+    segdata     *sdata;
     unsigned_16 ovl_num;
 
     if( NO_VECTOR( sym ) )
@@ -381,7 +381,7 @@ void OvlDefVector( symbol * sym )
     }
 }
 
-void Vectorize( symbol * sym )
+void Vectorize( symbol *sym )
 /***********************************/
 /* allocate an overlay vector for a symbol */
 {
@@ -396,7 +396,7 @@ void Vectorize( symbol * sym )
     DEBUG(( DBG_OLD, "Vectorize %d %S", VecNum, sym ));
 }
 
-static void OvlRefVector( symbol * sym )
+static void OvlRefVector( symbol *sym )
 /**************************************/
 {
     unsigned_16 ovl_num;
@@ -425,7 +425,7 @@ static void OvlRefVector( symbol * sym )
     }
 }
 
-void TryRefVector( symbol * sym )
+void TryRefVector( symbol *sym )
 /**************************************/
 {
     if( !( FmtData.type & MK_OVERLAYS ) )
@@ -437,7 +437,7 @@ void TryRefVector( symbol * sym )
     }
 }
 
-void OvlUseVector( symbol * sym, extnode *newnode )
+void OvlUseVector( symbol *sym, extnode *newnode )
 /********************************************************/
 {
     if( !( FmtData.type & MK_OVERLAYS ) )
@@ -496,7 +496,7 @@ bool CheckOvlClass( char *clname, bool *isovlclass )
 /*********************************************************/
 /* check if among overlay classes, and return TRUE if it is code. */
 {
-    list_of_names *     cnamelist;
+    list_of_names       *cnamelist;
     bool                retval;
 
     retval = IsCodeClass( clname, strlen( clname ) );
@@ -517,10 +517,10 @@ bool CheckOvlClass( char *clname, bool *isovlclass )
     return( FALSE );
 }
 
-section * CheckOvlSect( char *clname )
+section *CheckOvlSect( char *clname )
 /*******************************************/
 {
-    section *   sect;
+    section     *sect;
     bool        dummy;
 
     sect = DBIGetSect( clname );
@@ -680,9 +680,9 @@ void SetOvlStartAddr( void )
 void OvlPass1( void )
 /**************************/
 {
-    symbol *    sym;
+    symbol      *sym;
 
-    ProcAllOvl( LoadObjFiles );
+    WalkAllOvl( LoadObjFiles );
 
     /* define symbols for overlay table */
     OverlayTable = DefISymbol( _OvltabName );
@@ -750,7 +750,7 @@ void EmitOvlTable( void )
     ovltab_prolog       template;
     unsigned_16         u16;
     int                 len;
-    outfilelist *       fnode;
+    outfilelist         *fnode;
 
     off = OvltabAddr.off;
 /*
@@ -796,7 +796,7 @@ void PadOvlFiles( void )
 // The overlay files must contain a complete paragraph at the end of the file
 // for the overlay loader to be able to correctly read it.
 {
-    outfilelist *   fnode;
+    outfilelist     *fnode;
     unsigned        pad;
 
     for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {

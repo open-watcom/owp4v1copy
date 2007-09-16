@@ -45,7 +45,7 @@ extern void             SectWalkClass( section *sect, void * );
 extern void             WalkMods( void (*rtn)( mod_entry * ) );
 extern void             LinkList( void *, void * );
 extern void             FreeList( void * );
-extern int              Spawn( void (*)() );
+extern int              Spawn( void (*)( void ) );
 extern void             Suicide( void );
 extern f_handle         SearchPath( char * );
 extern name_list        *AddNameTable( char *, unsigned, bool, name_list ** );

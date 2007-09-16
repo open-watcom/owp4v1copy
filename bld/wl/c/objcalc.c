@@ -92,9 +92,9 @@ void CheckClassOrder( void )
 {
     SortSegments();
     if( LinkState & SPEC_ORDER_FLAG ) {
-       ProcAllSects( SortClasses );
+       WalkAllSects( SortClasses );
     } else if( LinkState & DOSSEG_FLAG ) {
-       ProcAllSects( ReOrderClasses );
+       WalkAllSects( ReOrderClasses );
     }
 }
 
@@ -521,12 +521,13 @@ void CalcAddresses( void )
         } else if( FmtData.type & MK_OS2_FLAT ) {
             FmtData.base = FLAT_GRANULARITY;
         } else if( FmtData.type & MK_ELF ) {
-            if( LinkState & HAVE_PPC_CODE )
+            if( LinkState & HAVE_PPC_CODE ) {
                 FmtData.base = 0x10000000;
-            else if( LinkState & HAVE_MIPS_CODE )
+            } else if( LinkState & HAVE_MIPS_CODE ) {
                 FmtData.base = 0x00400000;
-            else
+            } else {
                 FmtData.base = 0x08048000;
+            }
         } else {
             FmtData.base = 0;
         }
@@ -790,7 +791,7 @@ static bool FindCopyGroups( void *_seg, void *_info )
         // Check each initialized segment in group
         Ring2Lookup( seg->group->leaders, FindInitEndAddr, info);
     }
-    return FALSE;
+    return( FALSE );
 }
 
 static void CalcGrpAddr( group_entry *currgrp )

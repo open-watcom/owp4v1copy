@@ -67,7 +67,7 @@ static void WriteDOSSectRelocs( section *sect, bool repos )
 /* write all relocs associated with sect to the file */
 {
     unsigned long       loc;
-    OUTFILELIST *       out;
+    OUTFILELIST         *out;
 
     if( sect->relocs != 0 ) {
         loc = sect->u.file_loc + MAKE_PARA( sect->size );
@@ -111,7 +111,7 @@ static unsigned long WriteDOSData( void )
     group_entry         *group;
     SECTION             *sect;
     unsigned long       header_size;
-    outfilelist *       fnode;
+    outfilelist         *fnode;
     bool                repos;
     unsigned long       root_size;
 
@@ -123,7 +123,7 @@ static unsigned long WriteDOSData( void )
     Root->u.file_loc = header_size;
     if( Root->areas != NULL ) {
         Root->outfile->file_loc = header_size + Root->size;
-        ProcAllOvl( &AssignFileLocs );
+        WalkAllOvl( &AssignFileLocs );
         EmitOvlTable();
     }
 
@@ -204,9 +204,9 @@ static bool WriteCOMGroup( group_entry *group, signed long chop )
 {
     unsigned long       loc;
     signed  long        diff;
-    section *           sect;
+    section             *sect;
     bool                repos;
-    outfilelist *       finfo;
+    outfilelist         *finfo;
 
     repos = FALSE;
     sect = group->section;
@@ -235,7 +235,7 @@ static void WriteCOMFile( void )
 /******************************/
 // generate a DOS .COM file.
 {
-    outfilelist *       fnode;
+    outfilelist         *fnode;
     group_entry         *group;
     bool                repos;
     unsigned long       root_size;

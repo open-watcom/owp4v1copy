@@ -136,7 +136,7 @@ static void CheckNewFile( mod_entry *mod, file_list *list,
 static void SetStartAddr( void )
 /******************************/
 {
-    mod_entry * mod;
+    mod_entry   *mod;
 
     if( StartInfo.user_specd || !StartInfo.from_inc ) return;
     mod = StartInfo.mod;
@@ -149,8 +149,8 @@ static void SetStartAddr( void )
 static void SetupModule( mod_entry **mod, file_list *list )
 /*********************************************************/
 {
-    char *      fname;
-    mod_entry * currmod;
+    char        *fname;
+    mod_entry   *currmod;
 
     currmod = *mod;
 
@@ -168,30 +168,32 @@ static void SetupModule( mod_entry **mod, file_list *list )
 static void DoIncLibDefs( void )
 /******************************/
 {
-    libnamelist *       lib;
+    libnamelist         *lib;
 
     for( lib = SavedDefLibs; lib != NULL; lib = lib->next ) {
         AddObjLib( lib->name, 1 );
     }
 }
 
-static libnamelist * CalcLibBlacklist( void )
+static libnamelist *CalcLibBlacklist( void )
 /*******************************************/
 /* figure out if the user has changed any of the specified libraries, and
  * torch anything after a changed library */
 {
-    infilelist *        userlibs;
-    libnamelist *       oldlibs;
+    infilelist          *userlibs;
+    libnamelist         *oldlibs;
 
     userlibs = CachedLibFiles;
     oldlibs = SavedUserLibs;
     while( oldlibs != NULL ) {
-        if( userlibs == NULL ) return oldlibs;
-        if( FNAMECMPSTR(userlibs->name, oldlibs->name) != 0 ) return oldlibs;
+        if( userlibs == NULL )
+            return( oldlibs );
+        if( FNAMECMPSTR(userlibs->name, oldlibs->name) != 0 )
+            return( oldlibs );
         oldlibs = oldlibs->next;
         userlibs = userlibs->next;
     }
-    return NULL;
+    return( NULL );
 }
 
 static void CheckBlacklist( file_list *list, libnamelist *blacklist )
@@ -217,9 +219,9 @@ static void CheckBlacklist( file_list *list, libnamelist *blacklist )
 static void PrepareModList( void )
 /********************************/
 {
-    file_list * list;
-    mod_entry * mod;
-    mod_entry * curr;
+    file_list   *list;
+    mod_entry   *mod;
+    mod_entry   *curr;
     libnamelist *blacklist;
 
     mod = Root->mods;
@@ -356,10 +358,10 @@ static void SavedPass1( mod_entry *mod )
 static void ProcessMods( void )
 /*****************************/
 {
-    mod_entry * mod;
-    mod_entry * next;
-    mod_entry * savemod;
-    file_list * list;
+    mod_entry   *mod;
+    mod_entry   *next;
+    mod_entry   *savemod;
+    file_list   *list;
 
     mod = Root->mods;
     Root->mods = NULL;
@@ -445,7 +447,7 @@ static void IncLoadObjFiles( void )
 void LoadObjFiles( section *sect )
 /***************************************/
 {
-    file_list * list;
+    file_list   *list;
 
     CurrSect = sect;
     CurrMod = NULL;
@@ -454,12 +456,12 @@ void LoadObjFiles( section *sect )
     }
 }
 
-static member_list * FindMember( file_list *list, char *name )
+static member_list *FindMember( file_list *list, char *name )
 /************************************************************/
 // see if name is in the member list of list
 {
-    member_list **      memb;
-    member_list *       foundmemb;
+    member_list         **memb;
+    member_list         *foundmemb;
 
     foundmemb = NULL;
     memb = &list->u.member;
@@ -471,16 +473,16 @@ static member_list * FindMember( file_list *list, char *name )
         }
         memb = &(*memb)->next;
     }
-    return foundmemb;
+    return( foundmemb );
 }
 
 static void DoPass1( mod_entry *next, file_list *list )
 /*****************************************************/
 /* do pass 1 on the object file */
 {
-    mod_entry *         old;
-    member_list *       member;
-    char *              membname;
+    mod_entry           *old;
+    member_list         *member;
+    char                *membname;
     unsigned long       loc;
     unsigned long       size;
     unsigned            reclength;
@@ -560,12 +562,12 @@ static void DoPass1( mod_entry *next, file_list *list )
     CheckStop();
 }
 
-char * IdentifyObject( file_list * list, unsigned long *loc,
+char *IdentifyObject( file_list *list, unsigned long *loc,
                               unsigned long *size )
 /*****************************************************************/
 {
-    ar_header * ar_hdr;
-    char *      name;
+    ar_header   *ar_hdr;
+    char        *name;
 
     name = NULL;
     *size = 0;
@@ -581,7 +583,7 @@ char * IdentifyObject( file_list * list, unsigned long *loc,
             name = GetOMFName( list, loc );
         }
     }
-    return name;
+    return( name );
 }
 
 static void BadSkip( file_list *list, unsigned long *loc )
@@ -608,13 +610,13 @@ static bool EndOfLib( file_list *list, unsigned long loc )
 
     if( list->status & STAT_OMF_LIB) {
         id = CacheRead( list, loc, sizeof(unsigned_8) );
-        return *id == LIB_TRAILER_REC;
+        return( *id == LIB_TRAILER_REC );
     } else {
-        return 0;
+        return( 0 );
     }
 }
 
-static unsigned long (*CallPass1[])() = {
+static unsigned long (*CallPass1[])( void ) = {
     BadObjFormat,
     OMFPass1,
     ORLPass1,
@@ -630,7 +632,7 @@ unsigned long ObjPass1( void )
 /* Pass 1 of 8086 linker. */
 {
     unsigned long loc;
-    char *        savename;
+    char          *savename;
 
     DEBUG(( DBG_BASE, "1 : file = %s, module = %s", CurrMod->f.source->file->name, CurrMod->name ));
     CurrMod->modinfo |= MOD_DONE_PASS_1;
@@ -638,7 +640,7 @@ unsigned long ObjPass1( void )
     DBIInitModule( CurrMod );
     RelocStartMod();
     P1Start();
-    loc = CallPass1[GET_FMT_IDX(ObjFormat)]();
+    loc = CallPass1[ GET_FMT_IDX( ObjFormat ) ]();
     CollapseLazyExtdefs();
     SymModEnd();
     if( !(CurrMod->modinfo & MOD_GOT_NAME) ) {
@@ -652,7 +654,7 @@ unsigned long ObjPass1( void )
     PermEndMod( CurrMod );
     FreeObjInfo();
     ObjFormat = 0;       //clear flags for processing obj file
-    return loc;
+    return( loc );
 }
 
 static bool ResolveVFExtdefs( void )
@@ -661,7 +663,7 @@ static bool ResolveVFExtdefs( void )
  * should turned into real extdefs */
 {
     bool        resolved;
-    symbol *    sym;
+    symbol      *sym;
 
     resolved = FALSE;
     for( sym = HeadSym; sym != NULL; sym = sym->link ) {
@@ -669,14 +671,14 @@ static bool ResolveVFExtdefs( void )
             resolved |= CheckVFList( sym );
         }
     }
-    return resolved;
+    return( resolved );
 }
 
 void ResolveUndefined( void )
 /**********************************/
 {
-    symbol *    sym;
-    file_list * lib;
+    symbol      *sym;
+    file_list   *lib;
     bool        keepgoing;
 
     LnkMsg( INF+MSG_SEARCHING_LIBS, NULL );

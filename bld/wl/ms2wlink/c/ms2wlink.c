@@ -82,7 +82,7 @@ extern void         MemFini( void );
 extern void         MemFree( void * );
 extern void         Error( char * );
 extern void         CommandOut( char * );
-extern int          Spawn( void (*fn)() );
+extern int          Spawn( void (*fn)( void ) );
 extern void         ParseMicrosoft( void );
 extern bool         InitParsing( void );
 extern void         FreeParserMem( void );

@@ -41,7 +41,7 @@
 
 typedef union {
     unsigned long   spill;
-    void *          addr;
+    void            *addr;
 } spilladdr;
 
 /* note: if either of these two structures get any bigger, the magic constants
@@ -49,14 +49,14 @@ typedef union {
  * occurs. */
 
 typedef struct reloc_info {
-    struct reloc_info * next;
+    struct reloc_info   *next;
     unsigned            sizeleft;
     spilladdr           loc;
 } reloc_info;
 
 typedef struct os2_reloc_header {
-    reloc_info *        externals; /* external and segment style fixups */
-    reloc_info *        internals; /* internal, non-segment fixups */
+    reloc_info          *externals; /* external and segment style fixups */
+    reloc_info          *internals; /* internal, non-segment fixups */
 } os2_reloc_header;
 
 #define RELOC_PAGE_SIZE 512
@@ -64,7 +64,7 @@ typedef struct os2_reloc_header {
 #define SIZELEFT_MASK   0x7FFF
 
 unsigned        FmtRelocSize;
-reloc_info  *   FloatFixups;
+reloc_info      *FloatFixups;
 
 void ResetReloc( void )
 /****************************/
@@ -72,11 +72,11 @@ void ResetReloc( void )
     FloatFixups = NULL;
 }
 
-static reloc_info * AllocRelocInfo( void )
+static reloc_info *AllocRelocInfo( void )
 /****************************************/
 /* allocate a relocation information block */
 {
-    reloc_info *    info;
+    reloc_info      *info;
 
     _PermAlloc( info, sizeof( reloc_info ) );       /* allocate more */
     info->sizeleft = RELOC_PAGE_SIZE;
@@ -88,7 +88,7 @@ static reloc_info * AllocRelocInfo( void )
     return( info );
 }
 
-static void * OS2PagedRelocInit( offset size, int unitsize )
+static void *OS2PagedRelocInit( offset size, int unitsize )
 /***************************************************************/
 /* For some OS/2 formats we have to split up the structure off the grp_relocs
  * field up into small bits to ensure that we don't get structure allocations
@@ -121,14 +121,14 @@ static void * OS2PagedRelocInit( offset size, int unitsize )
     return( start );
 }
 
-static void * OS2FlatRelocInit( offset size )
+static void *OS2FlatRelocInit( offset size )
 /*******************************************/
 /* initialize relocations for OS2 flat memory manager. */
 {
     return( OS2PagedRelocInit( size, sizeof( os2_reloc_header ) ) );
 }
 
-static void * PERelocInit( offset size )
+static void *PERelocInit( offset size )
 /**************************************/
 /* initialize relocations for PE executable format */
 {
@@ -213,20 +213,20 @@ void WriteReloc( group_entry *group, offset off, void *reloc,
 }
 
 #ifdef _QNXLOAD
-void FloatReloc( reloc_item * item )
+void FloatReloc( reloc_item *item )
 /****************************************/
 {
     DoWriteReloc( &FloatFixups, item, sizeof( qnx_reloc_item ) );
 }
 
-void QNXLinearReloc( group_entry * group, reloc_item * item )
+void QNXLinearReloc( group_entry *group, reloc_item *item )
 /******************************************************************/
 {
     DoWriteReloc( &group->g.grp_relocs, item, sizeof( qnx_linear_item ) );
 }
 #endif
 
-static bool FreeRelocList( reloc_info * list )
+static bool FreeRelocList( reloc_info *list )
 /********************************************/
 /* free any reloc blocks pointed to by list */
 {
@@ -262,7 +262,7 @@ static bool TraverseRelocBlock( reloc_info ** reloclist, unsigned num,
     return( FALSE );
 }
 
-bool TraverseOS2RelocList( group_entry * group, bool (*fn)( reloc_info * ) )
+bool TraverseOS2RelocList( group_entry *group, bool (*fn)( reloc_info * ) )
 /******************************************************************************/
 /* traverse all items in one of the big OS2 page relocation lists */
 {
@@ -322,7 +322,7 @@ void FreeRelocInfo( void )
 /*******************************/
 /* free up blocks allocated for relocations */
 {
-    group_entry *       group;
+    group_entry         *group;
 
     if( !( LinkState & MAKE_RELOCS ) )
         return;
@@ -331,7 +331,7 @@ void FreeRelocInfo( void )
             FreeGroupRelocs( group );
         }
     } else if( Root != NULL ) {
-        ProcAllSects( FreeRelocSect );
+        WalkAllSects( FreeRelocSect );
     }
     if( FmtData.type & MK_QNX ) {
         FreeRelocList( FloatFixups );
@@ -339,7 +339,7 @@ void FreeRelocInfo( void )
     }
 }
 
-unsigned_32 RelocSize( reloc_info * list )
+unsigned_32 RelocSize( reloc_info *list )
 /***********************************************/
 /* find the size of all the relocations stored here */
 {
@@ -359,7 +359,7 @@ unsigned_32 DumpMaxRelocList( reloc_info **head, unsigned_32 max )
 {
     unsigned_32         size;
     unsigned_32         total;
-    reloc_info *        list;
+    reloc_info          *list;
 
     total = 0;
     list = *head;
@@ -384,7 +384,7 @@ unsigned_32 DumpMaxRelocList( reloc_info **head, unsigned_32 max )
     return( total );
 }
 
-bool DumpRelocList( reloc_info * list )
+bool DumpRelocList( reloc_info *list )
 /********************************************/
 {
     DumpMaxRelocList( &list, 0 );
@@ -446,7 +446,7 @@ void SetRelocSize( void )
 }
 
 
-static bool SpillRelocList( reloc_info * list )
+static bool SpillRelocList( reloc_info *list )
 /*********************************************/
 /* spill any reloc blocks pointed to by list */
 {

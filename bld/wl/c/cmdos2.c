@@ -94,12 +94,12 @@ static bool GetWlibImports( void )
 /* read in a wlib command file, get the import directives, and treat them
  * as exports (hey man, GO asked for it ...... ) */
 {
-    char *          fname;
-    char *          symname;
-    char *          internal;
+    char            *fname;
+    char            *symname;
+    char            *internal;
     f_handle        handle;
     unsigned_16     ordinal;
-    entry_export *  exp;
+    entry_export    *exp;
 
     fname = FileName( Token.this, Token.len, E_LBC, FALSE );
     handle = QOpenR( fname );
@@ -209,7 +209,7 @@ static bool getimport( void )
 static bool getexport( void )
 /***************************/
 {
-    entry_export *  exp;
+    entry_export    *exp;
     unsigned_16     value;
 
     exp = AllocExport( Token.this, Token.len );
@@ -520,7 +520,7 @@ void ChkBase( offset align )
     }
 }
 
-void SetOS2Fmt()
+void SetOS2Fmt( void )
 /*********************/
 // set up the structures needed to be able to process something in OS/2 mode.
 {
@@ -542,7 +542,7 @@ void SetOS2Fmt()
     ChkBase(64*1024);
 }
 
-void FreeOS2Fmt()
+void FreeOS2Fmt( void )
 /**********************/
 {
     _LnkFree( FmtData.u.os2.stub_file_name );
@@ -698,7 +698,7 @@ bool ProcTermThread( void )
 static bool getsegflags( void )
 /*****************************/
 {
-    os2_seg_flags * entry;
+    os2_seg_flags   *entry;
 
     Token.thumb = REJECT;
     _ChkAlloc( entry, sizeof( os2_seg_flags ) );
@@ -1124,7 +1124,7 @@ typedef struct tagVersBlock
     unsigned_32 revision;
 }VersBlock;
 
-static unsigned_32 ProcGenericVersion( VersBlock * pVers, unsigned_32 major_limit, unsigned_32 minor_limit, unsigned_32 revision_limit)
+static unsigned_32 ProcGenericVersion( VersBlock *pVers, unsigned_32 major_limit, unsigned_32 minor_limit, unsigned_32 revision_limit)
 {
     unsigned_32 state = 0;
     ord_state   retval;
@@ -1178,7 +1178,7 @@ static unsigned_32 ProcGenericVersion( VersBlock * pVers, unsigned_32 major_limi
     retval = getatol( &value );
     if( retval == ST_NOT_ORDINAL && Token.len == 1 ) {
         value  = tolower( *Token.this ) - 'a' + 1;
-    } else if ( retval == ST_NOT_ORDINAL ) {
+    } else if( retval == ST_NOT_ORDINAL ) {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "version" );
         return( state );
     }

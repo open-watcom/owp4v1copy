@@ -49,7 +49,7 @@ extern void             OvlUseVector( symbol *, extnode * );
 extern void             IndirectCall( symbol * );
 extern void             GetVecAddr( int, targ_addr * );
 extern bool             CheckOvlClass( char *, bool * );
-extern section *        CheckOvlSect( char * );
+extern section          *CheckOvlSect( char * );
 extern void             EmitOvlVectors( void );
 extern void             SetOvlStartAddr( void );
 extern void             OvlPass1( void );
@@ -60,14 +60,14 @@ extern void             SetOvlTableLoc( group_entry *, unsigned long );
 
 /* in overlays.c */
 
-extern void             ProcAllSects( void (*)( section * ) );
-extern void             ProcAllOvl( void (*)( section * ) );
-extern void             ParmWalkAllSects( void (*)( section *, void * ), void * );
+extern void             WalkAllOvl( void (*)( section * ) );
 extern void             ParmWalkAllOvl( void (*)( section *, void * ), void * );
+extern void             WalkAllSects( void (*)( section * ) );
+extern void             ParmWalkAllSects( void (*)( section *, void * ), void * );
 extern void             NumberSections( void );
 extern void             FillOutFilePtrs( void );
 extern void             TryDefVector( symbol * );
 extern void             TryUseVector( symbol *, extnode * );
-extern section *        GetOvlSect( char * );
+extern section          *GetOvlSect( char * );
 extern void             OvlPass2( void );
 extern virt_mem         GetLoadObjTarget( segdata * );

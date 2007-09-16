@@ -524,7 +524,7 @@ void VMemQSort( virt_mem base, unsigned n, unsigned width,
 
 static void *SpawnStack;
 
-int Spawn( void (*fn)() )
+int Spawn( void (*fn)( void ) )
 /******************************/
 {
     void    *save_env;

@@ -44,7 +44,7 @@
 
 extern void     MemInit( void );
 extern void     MemFini( void );
-extern void *   MemAlloc( unsigned );
+extern void     *MemAlloc( unsigned );
 extern void     MemFree( void * );
 extern void     CleanRecStuff( void );
 extern int      ReadRec( void );
@@ -53,8 +53,18 @@ extern void     InitRecStuff( void );
 extern void     FlushBuffer( void );
 extern void     FinalCleanup( void );
 extern void     FileCleanup( void );
+extern void     IOError( char * );
+extern void     put( char * );
+extern void     Warning( char * );
+extern void     Error( char * );
+extern void     LinkList( void *, void * );
+extern void     FreeList( void * );
+extern void     putlen( char *, int );
+extern int      CopyFile( char *, char * );
+extern int      QRead( int, char *, int );
+extern int      QWrite( int, char *, int );
 
-extern void *   Rec1;
+extern void     *Rec1;
 extern int      PageLen;
 
 #define NOFILE -1
@@ -109,8 +119,8 @@ static void     ProcFile( char * fname );
 
 static void *SpawnStack;
 
-static int Spawn1( void (*fn)(), void *data1 )
-/********************************************/
+static int Spawn1( void (*fn)( char ** ), char **data1 )
+/******************************************************/
 {
     void *  save_env;
     jmp_buf env;
