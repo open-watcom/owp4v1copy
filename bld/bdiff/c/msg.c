@@ -70,6 +70,16 @@ static long res_seek( int handle, long position, int where )
 
 WResSetRtns( open, close, read, write, res_seek, tell, malloc, free );
 
+int GetMsg( char *buffer, int resourceid )
+{
+    if( !LoadString( &hInstance, resourceid + MsgShift,
+                (LPSTR) buffer, 128 ) == 0 ) {
+        buffer[0] = '\0';
+        return( 0 );
+    }
+    return( 1 );
+}
+
 int MsgInit( void )
 {
     int         initerror;
@@ -102,16 +112,6 @@ int MsgInit( void )
     return( 1 );
 }
 
-int GetMsg( char *buffer, int resourceid )
-{
-    if( !LoadString( &hInstance, resourceid + MsgShift,
-                (LPSTR) buffer, 128 ) == 0 ) {
-        buffer[0] = '\0';
-        return( 0 );
-    }
-    return( 1 );
-}
-
 static void OrderMsg ( int order[], int num_arg, char *msg_ptr )
 {
     int         i = 0;
@@ -128,15 +128,6 @@ static void OrderMsg ( int order[], int num_arg, char *msg_ptr )
     }
 }
 
-void Message( int format, ... )
-{
-    va_list     args;
-
-    va_start( args, format );
-    MsgPrintf( format, args );
-    va_end( args );
-}
-
 void MsgPrintf( int resourceid, va_list arglist )
 {
     char        msgbuf[80];
@@ -150,6 +141,15 @@ void MsgPrintf( int resourceid, va_list arglist )
     GetMsg( msgbuf, resourceid );
     OrderMsg( order, 3, msgbuf );
     printf( msgbuf, argbuf[order[0]], argbuf[order[1]], argbuf[order[2]] );
+}
+
+void Message( int format, ... )
+{
+    va_list     args;
+
+    va_start( args, format );
+    MsgPrintf( format, args );
+    va_end( args );
 }
 
 void MsgFini( void )

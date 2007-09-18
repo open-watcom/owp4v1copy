@@ -112,7 +112,7 @@ extern void     Execute( byte * );
 extern void     GetMsg( char *, int );
 extern void     FileCheck( int fd, char *name );
 extern void     SeekCheck( long pos, char *name );
-extern  void            MsgPrintf( int resourceid, va_list arglist );
+extern void     MsgPrintf( int resourceid, va_list arglist );
 
 #define MAX_DIFF        (1L<<17)
 #define MIN_DIFF        (1L<<7)
@@ -163,6 +163,8 @@ static char LevelBuff[64];
 static foff SyncOld = (foff)-1;
 static foff SyncNew = (foff)-1;
 
+/* Forward declarations */
+void SortHoleArray( void );
 
 /*
  * Utility routines
@@ -322,20 +324,6 @@ void AddSimilar( foff old_start, foff new_start, foff size )
     AddRegion( &SimilarRegions, old_start, new_start, size );
 }
 
-void AddSimilarDiff( foff old_start, foff new_start, foff size )
-{
-    if( SimilarRegions != NULL ) {
-        if( old_start+size < EndOld || new_start+size < EndNew ) {
-            if( SimilarRegions->new_start >= ( new_start + size ) ) {
-                AddDiff( new_start + size,
-                     SimilarRegions->new_start - ( new_start + size ) );
-            }
-        }
-    }
-    AddSimilar( old_start, new_start, size );
-}
-
-
 void AddDiff( foff new_start, foff size )
 {
     if( size == 0 ) return;
@@ -351,6 +339,20 @@ void AddDiff( foff new_start, foff size )
     }
     NumDiffs++;
     AddRegion( &DiffRegions, -1, new_start, size );
+}
+
+
+void AddSimilarDiff( foff old_start, foff new_start, foff size )
+{
+    if( SimilarRegions != NULL ) {
+        if( old_start+size < EndOld || new_start+size < EndNew ) {
+            if( SimilarRegions->new_start >= ( new_start + size ) ) {
+                AddDiff( new_start + size,
+                     SimilarRegions->new_start - ( new_start + size ) );
+            }
+        }
+    }
+    AddSimilar( old_start, new_start, size );
 }
 
 
@@ -1106,6 +1108,19 @@ int HoleCompare(const void *_h1, const void *_h2)
 }
 
 
+void CheckPatch( int size )
+{
+    byte *oldpatch;
+
+    if( CurrPatch - PatchFile + size >= PatchSize ) {
+        oldpatch = PatchFile;
+        PatchSize += 10*1024;
+        PatchFile = _reallocate( PatchFile, PatchSize );
+        NotNull( PatchFile, "patch file" );
+        CurrPatch = PatchFile + ( CurrPatch - oldpatch );
+    }
+}
+
 #define OutPatch( val, type ) {CheckPatch( sizeof(type) );*(type*)CurrPatch=(val);CurrPatch+=sizeof(type);}
 
 /*
@@ -1448,19 +1463,6 @@ void CopyComment( void )
     }
 }
 
-void CheckPatch( int size )
-{
-    byte *oldpatch;
-
-    if( CurrPatch - PatchFile + size >= PatchSize ) {
-        oldpatch = PatchFile;
-        PatchSize += 10*1024;
-        PatchFile = _reallocate( PatchFile, PatchSize );
-        NotNull( PatchFile, "patch file" );
-        CurrPatch = PatchFile + ( CurrPatch - oldpatch );
-    }
-}
-
 void WritePatchFile( char *name )
 {
 
@@ -1527,7 +1529,6 @@ void SortHoleArray( void )
 {
     qsort( HoleArray, NumHoles, sizeof( region ), HoleCompare );
 }
-
 
 void FreeHoleArray( void )
 {

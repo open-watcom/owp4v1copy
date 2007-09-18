@@ -47,7 +47,11 @@ struct {
 extern void     GetMsg( char *, int );
 extern void     MsgPrintf( int resourceid, va_list arglist );
 
-int cmpStrings( const void *, const void * );
+int     cmpStrings( const void *, const void * );
+void    WPatchApply( char *PatchName, char *TgtPath );
+void    DirDelete( char *tgtDir );
+void    DirDelFiles( char *tgtDir, char *tgtFiles[], int Dirflag );
+void    DirGetFiles( DIR *dirp, char *Files[], char *Dirs[] );
 
 void main( int argc, char *argv[] ) 
 {
