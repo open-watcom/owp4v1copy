@@ -386,41 +386,6 @@ static bool     CreatedPragmas = FALSE;
 
 #endif
 
-call_handle     InitInlineCall( int rtn_id ) {
-//============================================
-
-// Initialize a call to a runtime routine.
-
-#if _CPU == 386 || _CPU == 8086
-    sym_id              sym;
-    inline_rtn __FAR    *in_entry;
-    int                 name_len;
-
-    if( !CreatedPragmas ) {
-        InitInlinePragmas();
-    }
-    in_entry = &InlineTab[ rtn_id ];
-    sym = in_entry->sym_ptr;
-    if( sym == NULL ) {
-        name_len = strlen( in_entry->name );
-        strcpy( SymBuff, in_entry->name );
-        sym = STAdd( SymBuff, name_len );
-        sym->ns.flags = SY_USAGE | SY_TYPE | SY_SUBPROGRAM | SY_FUNCTION;
-        sym->ns.typ = TY_INTEGER_TARG;
-        sym->ns.xt.size = TypeSize( sym->ns.typ );
-        sym->ns.address = NULL;
-        in_entry->sym_ptr = sym;
-        in_entry->aux = AuxLookupName( in_entry->name, name_len );
-    }
-    return( CGInitCall( CGFEName( sym, in_entry->typ ), in_entry->typ,
-                        in_entry->aux ) );
-#else
-    rtn_id = rtn_id;
-    return( 0 );
-#endif
-}
-
-
 void    InitInlinePragmas( void ) {
 //===========================
 
@@ -458,6 +423,41 @@ void    InitInlinePragmas( void ) {
     for( index = 0; index < MAX_IN_INDEX; index++ ) {
         InlineTab[ index ].sym_ptr = NULL;
     }
+#endif
+}
+
+
+call_handle     InitInlineCall( int rtn_id ) {
+//============================================
+
+// Initialize a call to a runtime routine.
+
+#if _CPU == 386 || _CPU == 8086
+    sym_id              sym;
+    inline_rtn __FAR    *in_entry;
+    int                 name_len;
+
+    if( !CreatedPragmas ) {
+        InitInlinePragmas();
+    }
+    in_entry = &InlineTab[ rtn_id ];
+    sym = in_entry->sym_ptr;
+    if( sym == NULL ) {
+        name_len = strlen( in_entry->name );
+        strcpy( SymBuff, in_entry->name );
+        sym = STAdd( SymBuff, name_len );
+        sym->ns.flags = SY_USAGE | SY_TYPE | SY_SUBPROGRAM | SY_FUNCTION;
+        sym->ns.typ = TY_INTEGER_TARG;
+        sym->ns.xt.size = TypeSize( sym->ns.typ );
+        sym->ns.address = NULL;
+        in_entry->sym_ptr = sym;
+        in_entry->aux = AuxLookupName( in_entry->name, name_len );
+    }
+    return( CGInitCall( CGFEName( sym, in_entry->typ ), in_entry->typ,
+                        in_entry->aux ) );
+#else
+    rtn_id = rtn_id;
+    return( 0 );
 #endif
 }
 

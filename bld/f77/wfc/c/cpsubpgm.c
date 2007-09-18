@@ -46,41 +46,44 @@
 #include "insert.h"
 #include "utility.h"
 
-extern  TYPE            MapTypes(TYPE,int);
-extern  TYPE            ImplType(char);
-extern  bool            EmptyCSList(void);
-extern  sym_id          LkSym(void);
-extern  sym_id          LkProgram(void);
-extern  sym_id          LkBlkData(void);
-extern  void            FreeLabel(label_id);
-extern  void            FiniSubProg(void);
-extern  void            InitSubProg(void);
-extern  void            GSegLabel(void);
-extern  void            GPgmLabel(void);
-extern  void            GBranch(label_id);
-extern  void            GLabel(label_id);
-extern  void            GWarp(sym_id);
-extern  void            GEpilog(void);
-extern  void            GGotoEpilog(void);
-extern  void            GSPProlog(void);
-extern  void            GEPProlog(void);
-extern  void            GRetIdx(void);
-extern  void            GNullRetIdx(void);
-extern  void            GBlockLabel(void);
-extern  bool            LenSpec(TYPE,uint *);
-extern  label_id        NextLabel(void);
-extern  void            CkDefStmtNo(void);
-extern  bool            InArgList(entry_pt *,sym_id);
-extern  sym_id          STFnShadow(sym_id);
+extern  TYPE            MapTypes( TYPE,int );
+extern  TYPE            ImplType( char);
+extern  bool            EmptyCSList( void );
+extern  sym_id          LkSym( void );
+extern  sym_id          LkProgram( void );
+extern  sym_id          LkBlkData( void );
+extern  void            FreeLabel( label_id );
+extern  void            FiniSubProg( void );
+extern  void            InitSubProg( void );
+extern  void            GSegLabel( void );
+extern  void            GPgmLabel( void );
+extern  void            GBranch( label_id );
+extern  void            GLabel( label_id );
+extern  void            GWarp( sym_id );
+extern  void            GEpilog( void );
+extern  void            GGotoEpilog( void );
+extern  void            GSPProlog( void );
+extern  void            GEPProlog( void );
+extern  void            GRetIdx( void );
+extern  void            GNullRetIdx( void );
+extern  void            GBlockLabel( void );
+extern  bool            LenSpec( TYPE,uint * );
+extern  label_id        NextLabel( void );
+extern  void            CkDefStmtNo( void );
+extern  bool            InArgList( entry_pt *,sym_id );
+extern  sym_id          STFnShadow( sym_id );
 extern  void            BIStartRBorEP( sym_id );
 extern  void            BIStartBlockData( sym_id );
 extern  void            BIStartSubroutine( void );
-extern  void            GSetSrcLine(void);
+extern  void            GSetSrcLine( void );
 
+/* forward declarations */
+static void CkSubEnd( void );
+static void StartProg( void );
+static void ParmList( bool star_ok, entry_pt *entry );
 
-void    CpProgram(void) {
-//===================
-
+void CpProgram( void )
+{
     CkSubEnd();
     if( ReqName( NAME_PROGRAM ) ) {
         SubProgId = LkProgram();    // use default name
@@ -92,10 +95,8 @@ void    CpProgram(void) {
     ReqEOS();
 }
 
-
-void    DefProg(void) {
-//=================
-
+void DefProg( void )
+{
 // Define the program unit since no PROGRAM, SUBROUTINE, FUNCTION or
 // BLOCK DATA statements were specified.
 
@@ -103,10 +104,8 @@ void    DefProg(void) {
     StartProg();
 }
 
-
-static  void    StartProg(void) {
-//===========================
-
+static void StartProg( void )
+{
     ProgSw &= ~PS_IN_SUBPROGRAM;
     if( ProgSw & PS_PROGRAM_DONE ) {
         Error( SR_TWO_PROGRAMS );
@@ -117,9 +116,8 @@ static  void    StartProg(void) {
 }
 
 
-static  entry_pt        *AddEntryPt( sym_id sym_ptr ) {
-//=====================================================
-
+static entry_pt *AddEntryPt( sym_id sym_ptr )
+{
     entry_pt    *ptr;
 
     if( Entries == NULL ) {
@@ -144,10 +142,9 @@ static  entry_pt        *AddEntryPt( sym_id sym_ptr ) {
 }
 
 
-static  entry_pt        *SubProgName( TYPE typ, unsigned_16 flags,
-                                      uint def_size, bool len_spec ) {
-//====================================================================
-
+static  entry_pt *SubProgName( TYPE typ, unsigned_16 flags,
+                                uint def_size, bool len_spec )
+{
 // Process the symbolic name of a SUBROUTINE or FUNCTION.
 
     entry_pt    *entry;
@@ -185,9 +182,8 @@ static  entry_pt        *SubProgName( TYPE typ, unsigned_16 flags,
 }
 
 
-void    CpSubroutine(void) {
-//======================
-
+void CpSubroutine( void )
+{
     entry_pt    *entry;
 
     CkSubEnd();
@@ -211,9 +207,8 @@ void    CpSubroutine(void) {
 }
 
 
-void    Function( TYPE typ, uint size, bool len_spec ) {
-//=====================================================
-
+void    Function( TYPE typ, uint size, bool len_spec )
+{
 // Compile [type] [*len] FUNCTION NAME[*len] ([d,d,...])
 //            \                /
 //             Already scanned
@@ -249,16 +244,13 @@ void    Function( TYPE typ, uint size, bool len_spec ) {
 }
 
 
-void    CpFunction(void) {
-//====================
-
+void CpFunction( void )
+{
     Function( TY_NO_TYPE, -1, FALSE );
 }
 
-
-void    CpEntry(void) {
-//=================
-
+void CpEntry( void )
+{
     entry_pt    *entry;
     bool        in_subr;
     sym_id      sym;
@@ -304,10 +296,21 @@ void    CpEntry(void) {
     SgmtSw &= ~SG_PROLOG_DONE;       // indicate we need prologue
 }
 
+static void CkRemBlock( void )
+{
+    csnode      *csptr;
 
-void    CpReturn(void) {
-//==================
+    csptr = CSHead;
+    for(;;) {
+        if( csptr->typ == CS_EMPTY_LIST ) return;
+        if( csptr->typ == CS_REMOTEBLOCK ) break;
+        csptr = csptr->link;
+    }
+    Error( SP_RET_IN_REMOTE );
+}
 
+void CpReturn( void )
+{
     if( !(ProgSw & PS_IN_SUBPROGRAM) ) {
         Extension( RE_IN_PROGRAM );
     }
@@ -333,25 +336,8 @@ void    CpReturn(void) {
     Remember.stop_or_return = TRUE;
 }
 
-
-static  void    CkRemBlock(void) {
-//============================
-
-    csnode      *csptr;
-
-    csptr = CSHead;
-    for(;;) {
-        if( csptr->typ == CS_EMPTY_LIST ) return;
-        if( csptr->typ == CS_REMOTEBLOCK ) break;
-        csptr = csptr->link;
-    }
-    Error( SP_RET_IN_REMOTE );
-}
-
-
-static  void    CkSubEnd(void) {
-//==========================
-
+static void CkSubEnd( void )
+{
 // Check if we had an END statement.
 
     if( ( SgmtSw & SG_STMT_PROCESSED ) && !Remember.endstmt ) {
@@ -361,10 +347,8 @@ static  void    CkSubEnd(void) {
     CkDefStmtNo();
 }
 
-
-static  parameter       *NameParm( entry_pt *entry ) {
-//====================================================
-
+static parameter *NameParm( entry_pt *entry )
+{
 // Process a symbolic dummy argument.
 
     parameter           *result;
@@ -422,10 +406,8 @@ static  parameter       *NameParm( entry_pt *entry ) {
     return( result );
 }
 
-
-static  parameter       *StarParm(void) {
-//===================================
-
+static parameter *StarParm( void )
+{
 // Process an asterisk dummy argument.
 
     parameter   *result;
@@ -437,9 +419,8 @@ static  parameter       *StarParm(void) {
 }
 
 
-static  void    ParmList( bool star_ok, entry_pt *entry ) {
-//=========================================================
-
+static void ParmList( bool star_ok, entry_pt *entry )
+{
 // Process the formal parameter list of a FUNCTION/SUBROUTINE.
 
     parameter   **args;
@@ -470,11 +451,30 @@ static  void    ParmList( bool star_ok, entry_pt *entry ) {
     }
 }
 
+static void DoWarps( void )
+{
+// Generate calls to warp code.
 
+    parameter   *parm;
+    sym_id      sym;
 
-void    Prologue(void) {
-//==================
+    for( parm = ArgList->parms; parm != NULL; parm = parm->link ) {
+        if( parm->flags & ARG_STMTNO ) continue;
+        sym = parm->id;
+        if( ( sym->ns.flags & SY_CLASS ) != SY_VARIABLE ) continue;
+        if( ( sym->ns.flags & SY_SUBSCRIPTED ) == 0 ) continue;
+        if( _AdvRequired( sym->ns.si.va.dim_ext ) == 0 ) continue;
+        GWarp( sym );
+    }
+}
 
+static void InitParms( void )
+{
+    DoWarps();
+}
+
+void Prologue( void )
+{
 // Generate a FUNCTION/SUBROUTINE/ENTRY prologue starting with ArgList.
 
     label_id    skip_label;
@@ -496,36 +496,8 @@ void    Prologue(void) {
     }
 }
 
-
-static  void    InitParms(void) {
-//===========================
-
-    DoWarps();
-}
-
-
-static  void    DoWarps(void) {
-//=========================
-
-// Generate calls to warp code.
-
-    parameter   *parm;
-    sym_id      sym;
-
-    for( parm = ArgList->parms; parm != NULL; parm = parm->link ) {
-        if( parm->flags & ARG_STMTNO ) continue;
-        sym = parm->id;
-        if( ( sym->ns.flags & SY_CLASS ) != SY_VARIABLE ) continue;
-        if( ( sym->ns.flags & SY_SUBSCRIPTED ) == 0 ) continue;
-        if( _AdvRequired( sym->ns.si.va.dim_ext ) == 0 ) continue;
-        GWarp( sym );
-    }
-}
-
-
-void    Epilogue(void) {
-//==================
-
+void Epilogue( void )
+{
 // Generate an epilogue.
 
     if( ( SgmtSw & SG_PROLOG_DONE ) == 0 ) {
@@ -536,10 +508,8 @@ void    Epilogue(void) {
     }
 }
 
-
-void    CpBlockData(void) {
-//=====================
-
+void CpBlockData( void )
+{
     sym_id  sym_ptr;
 
     CkSubEnd();

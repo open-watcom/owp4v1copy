@@ -59,6 +59,9 @@ extern  b_file          *FStdIn;
 extern  b_file          *FStdOut;
 extern  b_file          *FStdErr;
 
+/* Forward declarations */
+static  void    ChkRedirection( b_file *fp );
+
 static  int             IOBufferSize = { IO_BUFFER };
 
 #define PERMS   (S_IROTH | S_IWOTH | S_IRGRP | S_IWGRP | S_IRUSR | S_IWUSR)

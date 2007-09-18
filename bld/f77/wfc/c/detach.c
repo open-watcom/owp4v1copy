@@ -44,7 +44,12 @@
 #include "insert.h"
 #include "utility.h"
 
-extern  bool            OptimalChSize(uint);
+extern  bool    OptimalChSize(uint);
+
+/* Forward declarations */
+static  void    SubStrArgs( itnode *cit );
+static  void    Detach( itnode *cit );
+static  void    CkScrStr(void);
 
 
 static  bool    CheckColon(void) {
@@ -160,7 +165,7 @@ void    DetSubList(void) {
 }
 
 
-void    DetSStr(void) {
+void    DetSStr( void ) {
 //=================
 
     itnode      *cit;
@@ -194,7 +199,7 @@ static  void    SubStrArgs( itnode *cit ) {
 }
 
 
-static  void    CkScrStr(void) {
+static  void    CkScrStr( void ) {
 //==========================
 
     USOPN        opn;

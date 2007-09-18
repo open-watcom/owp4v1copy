@@ -46,29 +46,27 @@
 extern void             BIOutSymbol( sym_id ste_ptr );
 extern void             BIStartRBorEP( sym_id ste_ptr );
 extern void             BIEndRBorEP( void );
-extern  label_id        NextLabel(void);
-extern  void            AddCSNode(byte);
-extern  void            DelCSNode(void);
-extern  bool            CheckCSList(byte);
-extern  void            Match(void);
-extern  bool            EmptyCSList(void);
-extern  void            CSExtn(void);
-extern  void            CSNoMore(void);
-extern  sym_id          LkSym(void);
-extern  void            GLabel(label_id);
-extern  void            GBranch(label_id);
-extern  void            GStartBlock(void);
-extern  void            GExecute(void);
-extern  void            GEndBlock(void);
-extern  void            ClearRem(void);
+extern  label_id        NextLabel( void );
+extern  void            AddCSNode( byte );
+extern  void            DelCSNode( void );
+extern  bool            CheckCSList( byte );
+extern  void            Match( void );
+extern  bool            EmptyCSList( void );
+extern  void            CSExtn( void );
+extern  void            CSNoMore( void );
+extern  sym_id          LkSym( void );
+extern  void            GLabel( label_id );
+extern  void            GBranch( label_id );
+extern  void            GStartBlock( void );
+extern  void            GExecute( void );
+extern  void            GEndBlock( void );
+extern  void            ClearRem( void );
 extern  void            FreeLabel(label_id);
 
 #define RB_FLAGS (SY_USAGE | SY_SUBPROGRAM | SY_REMOTE_BLOCK)
 
-
-static  bool    BlockName( unsigned_16 rb_defined ) {
-//===================================================
-
+static bool BlockName( unsigned_16 rb_defined )
+{
     sym_id      sym_ptr;
     unsigned_16 flag_mask;
     bool        rb_name;
@@ -93,10 +91,8 @@ static  bool    BlockName( unsigned_16 rb_defined ) {
     return( rb_name );
 }
 
-
-void    CpRemBlock(void) {
-//====================
-
+void CpRemBlock( void )
+{
     sym_id      rb;
 
     if( EmptyCSList() == FALSE ) {
@@ -122,10 +118,8 @@ void    CpRemBlock(void) {
     ClearRem();
 }
 
-
-void    CpEndBlock(void) {
-//====================
-
+void CpEndBlock( void )
+{
     CheckCSList( CS_REMOTEBLOCK );
     if( CSHead->typ == CS_REMOTEBLOCK ) {
         GLabel( CSHead->bottom );
@@ -147,10 +141,21 @@ void    CpEndBlock(void) {
     BIEndRBorEP();
 }
 
+static void CkRemBlkRec( void )
+{
+    csnode      *node;
 
-void    CpExecute(void) {
-//===================
+    node = CSHead;
+    while( node->typ != CS_REMOTEBLOCK ) {
+        node = node->link;
+    }
+    if( CmpNode2Str( CITNode, &node->label ) ) {
+        Error( SP_RECURSE );
+    }
+}
 
+void CpExecute( void )
+{
     sym_id      rb;
 
     if( StNumbers.in_remote ) {
@@ -170,17 +175,3 @@ void    CpExecute(void) {
     ReqEOS();
 }
 
-
-static  void    CkRemBlkRec(void) {
-//=============================
-
-    csnode      *node;
-
-    node = CSHead;
-    while( node->typ != CS_REMOTEBLOCK ) {
-        node = node->link;
-    }
-    if( CmpNode2Str( CITNode, &node->label ) ) {
-        Error( SP_RECURSE );
-    }
-}

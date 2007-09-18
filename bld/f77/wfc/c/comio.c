@@ -45,16 +45,30 @@
 #include <string.h>
 #include <stdlib.h>
 
-extern  char            *SkipBlanks(char *);
-extern  void            SrcOption(void);
-extern  bool            CompileDebugStmts(void);
+extern  char    *SkipBlanks( char * );
+extern  void    SrcOption( void );
+extern  bool    CompileDebugStmts( void );
 
 extern  character_set   CharSetInfo;
 
+static void Comment( void )
+{
+// Process a comment for possible compiler directives.
 
-void    ComRead(void) {
-//=================
+    int old_srcrecnum;
 
+    if( ( SrcBuff[ 0 ] != NULLCHAR ) && ( SrcBuff[ 1 ] == '$' ) ) {
+        old_srcrecnum = SrcRecNum;
+        SrcRecNum = CurrFile->rec; // in case we get an error processing comment
+        SrcOption();
+        SrcRecNum = old_srcrecnum;
+    } else {
+        ComPrint();
+    }
+}
+
+void ComRead( void )
+{
     char        *cursor;
     uint        column;
     char        ch;
@@ -180,9 +194,8 @@ void    ComRead(void) {
 }
 
 
-void    ProcInclude(void) {
-//=====================
-
+void ProcInclude( void )
+{
     int old_srcrecnum;
 
     ComPrint();
@@ -195,33 +208,8 @@ void    ProcInclude(void) {
     SrcRecNum = old_srcrecnum;
 }
 
-
-void    LinePrint(void) {
-//===================
-
-    char        buffer[8];
-
-    ISNNumber++;
-    if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
-    FmtInteger( buffer, CurrFile->rec, 7 );
-    PrintLineInfo( buffer );
-}
-
-
-void    ComPrint(void) {
-//==================
-
-    char        buffer[8];
-
-    if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
-    FmtInteger( buffer, CurrFile->rec, 7 );
-    PrintLineInfo( buffer );
-}
-
-
-static  void    PrintLineInfo( char *buffer ) {
-//=============================================
-
+static void PrintLineInfo( char *buffer )
+{
     PrtLst( buffer );
     if( CurrFile->link == NULL ) {
         PrtLst( " " );
@@ -232,9 +220,8 @@ static  void    PrintLineInfo( char *buffer ) {
 }
 
 
-void    FmtInteger( char *buff, int num, int width ) {
-//====================================================
-
+void FmtInteger( char *buff, int num, int width )
+{
     char        nbuf[MAX_INT_SIZE];
 
     ltoa( num, nbuf, 10 );
@@ -242,20 +229,23 @@ void    FmtInteger( char *buff, int num, int width ) {
     strcpy( &buff[ width - strlen( nbuf ) ], nbuf );
 }
 
+void ComPrint( void )
+{
+    char        buffer[8];
 
-static  void    Comment(void) {
-//=========================
-
-// Process a comment for possible compiler directives.
-
-    int old_srcrecnum;
-
-    if( ( SrcBuff[ 0 ] != NULLCHAR ) && ( SrcBuff[ 1 ] == '$' ) ) {
-        old_srcrecnum = SrcRecNum;
-        SrcRecNum = CurrFile->rec; // in case we get an error processing comment
-        SrcOption();
-        SrcRecNum = old_srcrecnum;
-    } else {
-        ComPrint();
-    }
+    if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
+    FmtInteger( buffer, CurrFile->rec, 7 );
+    PrintLineInfo( buffer );
 }
+
+void LinePrint( void )
+{
+    char        buffer[8];
+
+    ISNNumber++;
+    if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
+    FmtInteger( buffer, CurrFile->rec, 7 );
+    PrintLineInfo( buffer );
+}
+
+

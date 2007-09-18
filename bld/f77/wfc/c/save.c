@@ -52,6 +52,19 @@ extern  sym_id                  LkSym(void);
 #define SV_ON_OR_OFF    (SY_USAGE | SY_TYPE | SY_IN_DIMEXPR | SY_SUBSCRIPTED | \
                          SY_DATA_INIT | SY_SAVED | SY_IN_EQUIV | SY_REFERENCED)
 
+static  void    Save( sym_id sym_ptr ) {
+//======================================
+
+// Check that item has not been saved twice.
+
+    if( ( ( sym_ptr->ns.flags & SY_SAVED ) == 0 ) &&
+        ( ( SgmtSw & SG_BIG_SAVE ) == 0 ) ) {
+        sym_ptr->ns.flags |= SY_SAVED;
+        SgmtSw |= SG_LITTLE_SAVE;
+    } else {
+        Error( SA_SAVED );
+    }
+}
 
 void    CpSave( void ) {
 //================
@@ -99,17 +112,3 @@ void    CpSave( void ) {
     }
 }
 
-
-static  void    Save( sym_id sym_ptr ) {
-//======================================
-
-// Check that item has not been saved twice.
-
-    if( ( ( sym_ptr->ns.flags & SY_SAVED ) == 0 ) &&
-        ( ( SgmtSw & SG_BIG_SAVE ) == 0 ) ) {
-        sym_ptr->ns.flags |= SY_SAVED;
-        SgmtSw |= SG_LITTLE_SAVE;
-    } else {
-        Error( SA_SAVED );
-    }
-}

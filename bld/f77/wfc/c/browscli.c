@@ -68,6 +68,10 @@ extern  bool            SDEof(file_handle);
 extern  void            SDScratch(char *);
 extern  void            SDSetAttr(file_attr);
 
+/* Forward declarations */
+static void chkIOErr( file_handle fp, int error, char *filename );
+
+
 static void CLIWrite( dw_sectnum sect, const void *block, dw_size_t size ) {
 /*********************************************************************/
 

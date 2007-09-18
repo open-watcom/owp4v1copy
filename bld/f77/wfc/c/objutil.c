@@ -82,6 +82,17 @@ extern  void            SDSetAttr(file_attr);
 #define PF_INIT         0x00    // initial page flags
 #define PF_DIRTY        0x01    // page has been updated
 
+static  void    ChkIOErr( file_handle fp, int error ) {
+//=====================================================
+
+// Check for i/o errors to page file.
+
+    char        err_msg[ERR_BUFF_SIZE+1];
+
+    if( SDError( fp, err_msg ) ) {
+        Error( error, PageFileName, err_msg );
+    }
+}
 
 void    InitObj( void ) {
 //=================
@@ -133,20 +144,6 @@ void    InitObj( void ) {
     MaxPage = 0;
 }
 
-
-static  void    ChkIOErr( file_handle fp, int error ) {
-//=====================================================
-
-// Check for i/o errors to page file.
-
-    char        err_msg[ERR_BUFF_SIZE+1];
-
-    if( SDError( fp, err_msg ) ) {
-        Error( error, PageFileName, err_msg );
-    }
-}
-
-
 void    FiniObj( void ) {
 //=======================
 
@@ -163,6 +160,22 @@ void    FiniObj( void ) {
     }
 }
 
+static  void    DumpCurrPage( void ) {
+//====================================
+
+// Dump current page to disk.
+
+    if( PageFlags & PF_DIRTY ) {
+        if( CurrPage > MaxPage ) {
+            MaxPage = CurrPage;
+        }
+        SDSeek( PageFile, CurrPage, PAGE_SIZE );
+        ChkIOErr( PageFile, SM_IO_WRITE_ERR );
+        SDWrite( PageFile, ObjCode, PAGE_SIZE );
+        ChkIOErr( PageFile, SM_IO_WRITE_ERR );
+        PageFlags &= ~PF_DIRTY;
+    }
+}
 
 static  void    LoadPage( unsigned_16 page ) {
 //============================================
@@ -185,7 +198,6 @@ static  void    LoadPage( unsigned_16 page ) {
     }
 }
 
-
 static  void    NewPage( void ) {
 //===============================
 
@@ -200,25 +212,6 @@ static  void    NewPage( void ) {
     }
     ObjPtr = ObjCode;
 }
-
-
-static  void    DumpCurrPage( void ) {
-//====================================
-
-// Dump current page to disk.
-
-    if( PageFlags & PF_DIRTY ) {
-        if( CurrPage > MaxPage ) {
-            MaxPage = CurrPage;
-        }
-        SDSeek( PageFile, CurrPage, PAGE_SIZE );
-        ChkIOErr( PageFile, SM_IO_WRITE_ERR );
-        SDWrite( PageFile, ObjCode, PAGE_SIZE );
-        ChkIOErr( PageFile, SM_IO_WRITE_ERR );
-        PageFlags &= ~PF_DIRTY;
-    }
-}
-
 
 obj_ptr ObjTell( void ) {
 //=======================

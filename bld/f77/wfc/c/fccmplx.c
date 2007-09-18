@@ -61,6 +61,10 @@ extern  tmp_handle      AllocTmp(cg_type);
 extern  cg_name         TmpPtr(tmp_handle,cg_type);
 extern  void            CloneCGName(cg_name,cg_name *,cg_name *);
 
+/* Forward declarations */
+void    XCmplxMixOp( RTCODE rtn_id, bool cmplx_scalar );
+void    InLineMulCC( unsigned_16 typ_info );
+
 
 cg_name ImagPtr( cg_name dest, cg_type typ ) {
 //============================================

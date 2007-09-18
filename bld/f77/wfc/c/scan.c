@@ -84,6 +84,9 @@ static  TOKCLASS        TokenREA;
 static  TOKCLASS        TokenDBL;
 static  TOKCLASS        TokenEXT;
 
+/* Forward declarations */
+static  void    ScanNum( void );
+static  void    LkUpLog( void );
 
 void    InitScan( void ) {
 //==================

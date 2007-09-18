@@ -64,6 +64,14 @@ extern  void            CheckCCtrl(void);
 extern  void            R_FmtLog(uint);
 extern  bool            __AllowCommaSep(void);
 
+/* Forward declarations */
+static  void    HexFlip( char *src, int len );
+static  void    OutInt( uint width, uint min );
+void    ChkBuffLen( uint width );
+void    R_FOHex( void );
+
+
+    
 #if defined( _M_IX86 ) || defined( __AXP__ ) || defined( __PPC__ )
 
 extern  const double __FAR      P1d100;
@@ -171,13 +179,6 @@ void    R_ChkRecLen( void ) {
 }
 
 
-void    R_FOStr( void ) {
-//=================
-
-    FOString( IOCB->fmtptr->fmt4.fld1 );
-}
-
-
 uint    GetLen( void ) {
 //================
 
@@ -219,6 +220,13 @@ void    FOString( uint width ) {
     } else {
         SendStrRtn( (char *)&IORslt, width );
     }
+}
+
+
+void    R_FOStr( void ) {
+//=================
+
+    FOString( IOCB->fmtptr->fmt4.fld1 );
 }
 
 
@@ -627,13 +635,6 @@ void    R_FIHex( void ) {
 }
 
 
-void    R_FOHex( void ) {
-//=================
-
-    FOHex( IOCB->fmtptr->fmt1.fld1 );
-}
-
-
 void    FOHex( uint width ) {
 //===========================
 
@@ -703,6 +704,13 @@ void    FOHex( uint width ) {
             RMemFree( buff );
         }
     }
+}
+
+
+void    R_FOHex( void ) {
+//=================
+
+    FOHex( IOCB->fmtptr->fmt1.fld1 );
 }
 
 

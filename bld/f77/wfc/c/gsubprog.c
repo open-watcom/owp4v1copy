@@ -63,6 +63,13 @@ extern  aux_info        *AuxLookupAdd(char *,int);
 
 extern  aux_info        ProgramInfo;
 
+/* Forward declarations */
+static  int     DumpArgInfo( itnode *node );
+static  void    SetArgAddrs( void );
+static  void    FinishCALL( itnode *sp );
+void    GNullRetIdx( void );
+
+
 
 void    GBegCall( itnode *itptr ) {
 //=================================

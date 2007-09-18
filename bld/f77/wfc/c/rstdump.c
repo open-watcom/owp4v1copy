@@ -59,6 +59,15 @@ extern  uint            DataThreshold;
 extern  sym_id          ReturnValue;
 extern  sym_id          EPValue;
 
+static  void            DumpStmtNos( void );
+static  void            DumpNameLists( void );
+static  void            DumpLocalVars( void );
+static  void            DumpConsts( void );
+static  void            DumpStrings( void );
+static  void            UnrefSym( sym_id sym );
+static  void            CkDataOk( sym_id sym );
+
+
 
 void    STDump( void ) {
 //================

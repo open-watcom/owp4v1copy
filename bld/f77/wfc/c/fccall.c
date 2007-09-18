@@ -90,6 +90,14 @@ extern  aux_info        FortranInfo;
 extern  back_handle     TraceEntry;
 extern  segment_id      CurrCodeSegId;
 
+/* Forward declarations */
+static  void    GenTraceback( void );
+static  void    GenReturnValue( sym_id sym );
+static  void    GenCommonReturnValue( void );
+static  void    DefineEntries( void );
+static  void    PassCommonArgs( call_handle call, entry_pt *ep_called );
+
+
 
 cg_type SPType( sym_id sym ) {
 //============================

@@ -66,6 +66,10 @@ static  unsigned_32     NmlInCount;
 static  PTYPE           NmlInType;
 static  void            PGM *NmlInAddr;
 
+/* Forward declarations */
+static  void    NmlIn( void );
+static  void    NmlOut( void );
+
 
 char            *Scanner( void ) {
 //==========================

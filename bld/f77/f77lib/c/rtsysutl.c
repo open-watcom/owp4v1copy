@@ -78,6 +78,11 @@ extern  int             FlushBuffer(file_handle);
 extern  int             FSkipLogical(file_handle);
 extern  int             FCheckLogical(file_handle);
 
+/* Forward declarations */
+static  void    SysIOInfo( ftnfile *fcb );
+static  void    ChkDisk( ftnfile *fcb );
+int     _FileAttrs( ftnfile *fcb );
+
 extern  file_handle     FStdIn;
 extern  file_handle     FStdOut;
 extern  file_handle     FStdErr;

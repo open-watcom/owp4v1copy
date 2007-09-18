@@ -127,6 +127,39 @@ void    FCCmpGE( void ) {
     XCompare( O_GE );
 }
 
+cg_name GetChOp( cg_type ch_type ) {
+//==================================
+
+// Get character operand.
+
+    sym_id      lit;
+
+    lit = GetPtr();
+    if( lit != NULL ) {
+        if( lit->lt.flags & (LT_SCB_REQUIRED | LT_SCB_TMP_REFERENCE) ) {
+            CGTrash( XPop() );
+        }
+        return( IntegerConstant( (ftn_type *)(&lit->lt.value), lit->lt.length));
+    } else {
+        return( CGUnary( O_POINTS, SCBPointer( XPop() ), ch_type ) );
+    }
+}
+
+
+static  void    XChar1Compare( cg_op op ) {
+//=========================================
+
+// Compare single characters.
+
+    cg_name     op_1;
+    cg_name     op_2;
+    cg_type     ch_type;
+
+    ch_type = GetType( GetU16() );
+    op_1 = GetChOp( ch_type );
+    op_2 = GetChOp( ch_type );
+    XPush( CGCompare( op, op_1, op_2, ch_type ) );
+}
 
 static  void    XCharCompare( cg_op op ) {
 //========================================
@@ -255,36 +288,3 @@ void    FCChar1CmpGT( void ) {
 }
 
 
-cg_name GetChOp( cg_type ch_type ) {
-//==================================
-
-// Get character operand.
-
-    sym_id      lit;
-
-    lit = GetPtr();
-    if( lit != NULL ) {
-        if( lit->lt.flags & (LT_SCB_REQUIRED | LT_SCB_TMP_REFERENCE) ) {
-            CGTrash( XPop() );
-        }
-        return( IntegerConstant( (ftn_type *)(&lit->lt.value), lit->lt.length));
-    } else {
-        return( CGUnary( O_POINTS, SCBPointer( XPop() ), ch_type ) );
-    }
-}
-
-
-static  void    XChar1Compare( cg_op op ) {
-//=========================================
-
-// Compare single characters.
-
-    cg_name     op_1;
-    cg_name     op_2;
-    cg_type     ch_type;
-
-    ch_type = GetType( GetU16() );
-    op_1 = GetChOp( ch_type );
-    op_2 = GetChOp( ch_type );
-    XPush( CGCompare( op, op_1, op_2, ch_type ) );
-}

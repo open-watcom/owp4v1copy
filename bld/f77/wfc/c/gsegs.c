@@ -76,6 +76,24 @@ void    FreeGlobalSegs( void ) {
 }
 
 
+static  void    NewGlobalSeg( void ) {
+//==============================
+
+// Allocate a new global segment.
+
+    global_seg  *new_seg;
+
+    new_seg = FMemAlloc( sizeof( global_seg ) );
+    new_seg->segment = WF77_NULLSEGID;
+    new_seg->link = NULL;
+    if( CurrGSeg == NULL ) {
+        GlobalSeg = new_seg;
+    } else {
+        CurrGSeg->link = new_seg;
+    }
+    CurrGSeg = new_seg;
+}
+
 segment_id      AllocGlobal( unsigned_32 g_size, bool init ) {
 //============================================================
 
@@ -133,21 +151,3 @@ segment_id      AllocGlobal( unsigned_32 g_size, bool init ) {
     return( seg );
 }
 
-
-static  void    NewGlobalSeg( void ) {
-//==============================
-
-// Allocate a new global segment.
-
-    global_seg  *new_seg;
-
-    new_seg = FMemAlloc( sizeof( global_seg ) );
-    new_seg->segment = WF77_NULLSEGID;
-    new_seg->link = NULL;
-    if( CurrGSeg == NULL ) {
-        GlobalSeg = new_seg;
-    } else {
-        CurrGSeg->link = new_seg;
-    }
-    CurrGSeg = new_seg;
-}

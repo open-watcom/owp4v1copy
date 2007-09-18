@@ -47,6 +47,13 @@ extern  void                    NextRec(void);
 extern  bool                    IsFixed(void);
 extern  bool                    CheckLogicalRecord(ftnfile *);
 
+/* Forward declarations */
+static  void    StreamUnFmtIn( void );
+static  void    RecordUnFmtIn( void );
+static  void    IUnString( void );
+static  void    IUnArray( void );
+
+
 extern  const byte __FAR        SizeVars[];
 
 

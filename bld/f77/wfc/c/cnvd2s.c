@@ -46,9 +46,21 @@
 // of precision.  In the 11.0 and higher libraries gcvt() also use __LDCvt().
 extern char     *__gcvt( double __val, int __ndig, char *__buf );
 
-void    CnvS2S( float *val, char *buff ) {
-//========================================
 
+void    CnvD2S( double *val, char *buff ) {
+// Convert floating point number to string.
+
+    __gcvt( *val, CONVERSION_DIGITS, buff );
+}
+
+
+void    CnvX2S( extended *val, char *buff ) {
+// Convert floating point number to string.
+
+    __gcvt( *val, CONVERSION_DIGITS, buff );
+}
+
+void    CnvS2S( float *val, char *buff ) {
 // Convert floating point number to string.
 
     double      dval;
@@ -57,20 +69,3 @@ void    CnvS2S( float *val, char *buff ) {
     CnvD2S( &dval, buff );
 }
 
-
-void    CnvD2S( double *val, char *buff ) {
-//=========================================
-
-// Convert floating point number to string.
-
-    __gcvt( *val, CONVERSION_DIGITS, buff );
-}
-
-
-void    CnvX2S( extended *val, char *buff ) {
-//===========================================
-
-// Convert floating point number to string.
-
-    __gcvt( *val, CONVERSION_DIGITS, buff );
-}

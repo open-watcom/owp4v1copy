@@ -50,34 +50,6 @@ extern  void            R_FDoSpec(void);
 extern const FmtElements RFmtStruct;
 
 
-void    FmtAScan( char PGM *array, long int num_elts, int elt_size,
-                  uint extend_format ) {
-//=================================================================
-
-// Encode format specification from a character array.
-
-    string      scb;
-
-    _SetIOCB();
-    scb.strptr = array;
-    scb.len = num_elts * elt_size;
-    FmtScan( &scb, extend_format );
-  }
-
-
-void    FmtScan( string *fmt, uint extend_format ) {
-//==================================================
-
-    _SetIOCB();
-    if( extend_format ) {
-        IOCB->flags |= IOF_EXTEND_FORMAT;
-    }
-    FInit( fmt );
-    R_FDoSpec();
-    FFinish();
-}
-
-
 static  void    FInit( string *fmt ) {
 //====================================
 
@@ -99,3 +71,33 @@ static  void    FFinish( void ) {
     R_FEmEnd();
     SetFmt( &FmtBuff[ 0 ] );
 }
+
+
+void    FmtScan( string *fmt, uint extend_format ) {
+//==================================================
+
+    _SetIOCB();
+    if( extend_format ) {
+        IOCB->flags |= IOF_EXTEND_FORMAT;
+    }
+    FInit( fmt );
+    R_FDoSpec();
+    FFinish();
+}
+
+
+void    FmtAScan( char PGM *array, long int num_elts, int elt_size,
+                  uint extend_format ) {
+//=================================================================
+
+// Encode format specification from a character array.
+
+    string      scb;
+
+    _SetIOCB();
+    scb.strptr = array;
+    scb.len = num_elts * elt_size;
+    FmtScan( &scb, extend_format );
+}
+
+

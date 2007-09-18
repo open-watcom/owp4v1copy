@@ -71,8 +71,14 @@ extern  void            (* __FAR FCJmpTab[])( void );
 extern  void            (* __FAR DataJmpTab[])( void );
 extern  char            *StmtKeywords[];
 
-static  void            InitStructArr( sym_id fd, act_dim_list *dim );
-static  void            StructInit( sym_id fd );
+/* Forward declarations */
+static  void    InitStructArr( sym_id fd, act_dim_list *dim );
+static  void    StructInit( sym_id fd );
+static  void    GetDataConst( void );
+static  void    FlushConsts( void );
+static  void    StructInit( sym_id fd );
+static  void    StructInitItem( sym_id fd );
+
 
 #define CONST_TYPES     9
 

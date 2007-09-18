@@ -73,6 +73,12 @@ extern  char            *GetFullSrcName(void);
 
 extern  void            (* __FAR FCJmpTab[])(void);
 
+/* Forward declarations */
+static  void    CGStart( void );
+static  void    InitCG( void );
+void    FCodeSequence( void );
+
+
 unsigned_8              CGFlags = { 0 };
 
 

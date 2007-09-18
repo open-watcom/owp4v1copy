@@ -235,6 +235,32 @@ aux_info                FortranInfo;
 aux_info                ProgramInfo;
 dep_info                *DependencyInfo;
 
+/* Forward declarations */
+static  void    FreeAuxEntry( aux_info *aux );
+static  void    FreeAuxElements( aux_info *aux );
+static  void    FreeArgList( aux_info *aux );
+static  void    ScanToken( void );
+static  void    ScanFnToken( void );
+static  void    SymbolId( void );
+static  void    TokUpper( void );
+static  void    ReqToken( char *tok );
+static  void    AliasName( void );
+static  void    SymbolName( void );
+static  void    ProcessAlias( void );
+static  void    DupCallBytes( aux_info *dst, aux_info *src );
+static  void    ObjectName( void );
+static  void    GetParmInfo( void );
+static  void    GetByteSeq( void );
+static  void    GetRetInfo( void );
+static  void    GetSaveInfo( void );
+static  void    GetArgList( void );
+static  void    GetSTRetInfo( void );
+static  void    DupParmInfo( aux_info *dst, aux_info *src );
+static  void    DupObjectName( aux_info *dst, aux_info *src );
+static  void    DupArgInfo( aux_info *dst, aux_info *src );
+void    CopyAuxInfo( aux_info *dst, aux_info *src );
+void    DoPragma( char *ptr );
+
 
 void            InitAuxInfo( void ) {
 //=============================

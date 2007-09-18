@@ -80,6 +80,8 @@ static  bool            IOStatSpecified;
 static  label_handle    IOSLabel;
 static  bool            NmlSpecified;
 
+/* Forward declarations */
+void    FCChkIOStmtLabel( void );
 
 static  void    ChrArrayIO( RTCODE rtn, cg_name arr, cg_name num_elts,
                             cg_name elt_size ) {

@@ -52,23 +52,27 @@
 
 #include <string.h>
 
-extern  void            Function(int,uint,bool);
-extern  act_dim_list    *STSubsList(act_dim_list *);
-extern  sym_id          LkSym(void);
-extern  bool            LenSpec(TYPE,uint *);
-extern  warp_label      GBegSList(void);
-extern  void            GSLoBound(int,sym_id);
-extern  void            GSHiBound(int,sym_id);
-extern  void            GForceHiBound(int,sym_id);
-extern  void            GEndSList(sym_id);
-extern  void            DataInit(itnode *);
-extern  void            RemKeyword(itnode *,int);
-extern  void            CkDefStmtNo(void);
-extern  void            DefProg(void);
-extern  void            FreeWarpLabel(warp_label);
-extern  sym_id          STField(char *,uint);
+extern  void            Function( int, uint, bool );
+extern  act_dim_list    *STSubsList( act_dim_list * );
+extern  sym_id          LkSym( void );
+extern  bool            LenSpec( TYPE, uint * );
+extern  warp_label      GBegSList( void );
+extern  void            GSLoBound( int,sym_id );
+extern  void            GSHiBound( int,sym_id );
+extern  void            GForceHiBound( int, sym_id );
+extern  void            GEndSList( sym_id );
+extern  void            DataInit( itnode * );
+extern  void            RemKeyword( itnode *, int );
+extern  void            CkDefStmtNo( void );
+extern  void            DefProg( void );
+extern  void            FreeWarpLabel( warp_label );
+extern  sym_id          STField( char *, uint );
 
 extern  char            *StmtKeywords[];
+
+/* Forward declarations */
+void    ArrayDecl( sym_id sym );
+
 
 #define ERR_MASK                (SY_DATA_INIT | SY_CLASS | SY_USAGE)
 #define SSB_CONSTANT            0    // lo/hi subscript bound is constant
@@ -199,6 +203,18 @@ TYPE    MapTypes( TYPE typ, uint size ) {
     return( typ );
 }
 
+void    MustBeTypeDecl( void ) {
+//========================
+
+// Called when type declaration is not a function definition.
+
+    SgmtSw |= SG_NO_MORE_IMPLICIT;
+    CkDefStmtNo();
+    if( ( SgmtSw & SG_STMT_PROCESSED ) == 0 ) {
+        CtrlFlgs &= ~CF_SUBPROGRAM;        // not TYPE*LEN FUNCTION
+        DefProg();
+    }
+}
 
 static  void    TypeDecl( TYPE typ ) {
 //====================================
@@ -356,19 +372,6 @@ void    CpLogVar( void ) {
     TypeDecl( TY_LOGICAL );
 }
 
-
-void    MustBeTypeDecl( void ) {
-//========================
-
-// Called when type declaration is not a function definition.
-
-    SgmtSw |= SG_NO_MORE_IMPLICIT;
-    CkDefStmtNo();
-    if( ( SgmtSw & SG_STMT_PROCESSED ) == 0 ) {
-        CtrlFlgs &= ~CF_SUBPROGRAM;        // not TYPE*LEN FUNCTION
-        DefProg();
-    }
-}
 
 
 void    CpDimension( void ) {

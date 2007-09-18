@@ -40,6 +40,20 @@
 #include <string.h>
 
 
+int     CopyMaxStr( char *str, char *buff, int max_len ) {
+//========================================================
+
+    int         len;
+
+    len = strlen( str );
+    if( len > max_len ) {
+        len = max_len;
+    }
+    memcpy( buff, str, len );
+    buff[ len ] = NULLCHAR;
+    return( len );
+}
+
 int     MakeName( char *fn, char *extn, char *buff ) {
 //====================================================
 
@@ -59,16 +73,3 @@ int     MakeName( char *fn, char *extn, char *buff ) {
 }
 
 
-int     CopyMaxStr( char *str, char *buff, int max_len ) {
-//========================================================
-
-    int         len;
-
-    len = strlen( str );
-    if( len > max_len ) {
-        len = max_len;
-    }
-    memcpy( buff, str, len );
-    buff[ len ] = NULLCHAR;
-    return( len );
-}

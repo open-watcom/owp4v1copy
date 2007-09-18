@@ -48,6 +48,12 @@ extern  long int        CurrFileOffset(b_file *);
 
 extern  b_file          *FStdOut;
 
+/* forward declarations */
+static  void    PutTextRec( b_file *io, char *b, int len );
+static  void    PutVariableRec( b_file *io, char *b, uint len );
+static  void    PutFixedRec( b_file *io, char *b, uint len );
+int     SysWrite( b_file *io, char *b, uint len );
+void    ChopFile( b_file *io );
 
 void    FPutRec( b_file *io, char *b, int len ) {
 //===============================================
@@ -194,7 +200,7 @@ uint    writebytes( b_file *io, char *buff, uint len ) {
 }
 
 
-int     SysWrite( b_file *io, char *b, uint len ) {
+int SysWrite( b_file *io, char *b, uint len ) {
 //=================================================
 
     uint        amt;

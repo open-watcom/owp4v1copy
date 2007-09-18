@@ -122,16 +122,6 @@ cg_type         F772CGType( sym_id sym ) {
 }
 
 
-cg_type         ResCGType( cg_type typ1, cg_type typ2 ) {
-//=======================================================
-
-// For a binary operation of two operands of the given CG-types, return
-// the result CG-type.
-
-    return( MapCGTypes[ CGIndex( typ1 ) * NUM_TYPES + CGIndex( typ2 ) ] );
-}
-
-
 static  int     CGIndex( cg_type typ ) {
 //======================================
 
@@ -149,6 +139,16 @@ static  int     CGIndex( cg_type typ ) {
     if( typ == T_DCOMPLEX ) return( 9 );
     if( typ == T_XCOMPLEX ) return( 10 );
     return( 11 ); // typ == T_CHAR
+}
+
+
+cg_type         ResCGType( cg_type typ1, cg_type typ2 ) {
+//=======================================================
+
+// For a binary operation of two operands of the given CG-types, return
+// the result CG-type.
+
+    return( MapCGTypes[ CGIndex( typ1 ) * NUM_TYPES + CGIndex( typ2 ) ] );
 }
 
 

@@ -42,39 +42,41 @@
 #include "comio.h"
 #include "inout.h"
 
-extern  void            BIInit(void);
-extern  void            BIEnd(void);
-extern  void            BIStartSubProg(void);
-extern  void            BIResolveUndefTypes(void);
-extern  void            BIEndSubProg(void);
-extern  void            TrapInit(void);
-extern  void            TrapFini(void);
-extern  void            CompStatement(void);
-extern  void            InitCSList(void);
-extern  bool            CheckCSList(byte);
-extern  void            CSPurge(void);
-extern  void            InitStNumbers(void);
-extern  void            ClearRem(void);
-extern  void            OpenSymTab(void);
-extern  void            STInit(void);
-extern  void            STResolve(void);
-extern  void            STDump(void);
-extern  void            DumpEntries(void);
-extern  void            EnPurge(void);
-extern  void            IFInit(void);
-extern  void            TDProgInit(void);
-extern  void            TDProgFini(void);
-extern  void            TDSubInit(void);
-extern  void            TDSubFini(void);
-extern  void            Epilogue(void);
-extern  void            GReturn(void);
-extern  bool            TBreak(void);
-extern  void            GEndBlockData(void);
+extern  void    BIInit( void );
+extern  void    BIEnd( void );
+extern  void    BIStartSubProg( void );
+extern  void    BIResolveUndefTypes( void );
+extern  void    BIEndSubProg( void );
+extern  void    TrapInit( void );
+extern  void    TrapFini( void );
+extern  void    CompStatement( void );
+extern  void    InitCSList( void );
+extern  bool    CheckCSList( byte );
+extern  void    CSPurge( void );
+extern  void    InitStNumbers( void );
+extern  void    ClearRem( void );
+extern  void    OpenSymTab( void );
+extern  void    STInit( void );
+extern  void    STResolve( void );
+extern  void    STDump( void );
+extern  void    DumpEntries( void );
+extern  void    EnPurge( void );
+extern  void    IFInit( void );
+extern  void    TDProgInit( void );
+extern  void    TDProgFini( void );
+extern  void    TDSubInit( void );
+extern  void    TDSubFini( void );
+extern  void    Epilogue( void );
+extern  void    GReturn( void );
+extern  bool    TBreak( void );
+extern  void    GEndBlockData( void );
 
+/*forward declarations */
+void    InitSubProg( void );
+void    FiniSubProg( void );
 
-static  bool    CompSProg(void) {
-//============================
-
+static bool CompSProg( void )
+{
     bool        fini_subprog;
 
     InitSubProg();
@@ -118,9 +120,8 @@ static  bool    CompSProg(void) {
 }
 
 
-static  bool    CompFile(void) {
-//==========================
-
+static bool CompFile( void )
+{
     bool        tbreak;
 
     tbreak = FALSE;
@@ -133,9 +134,8 @@ static  bool    CompFile(void) {
 }
 
 
-static  void    InitProgram(void) {
-//=============================
-
+static void InitProgram( void )
+{
     ExtnSw = 0;
     OpenSymTab();
     // VAX/VMS version of TrapInit() goes back 2 stack frames to set
@@ -152,9 +152,8 @@ static  void    InitProgram(void) {
 }
 
 
-static  void    FiniProgram(void) {
-//=============================
-
+static void FiniProgram( void )
+{
     TrapFini();
     Options = NewOptions;
     TDProgFini();
@@ -164,9 +163,8 @@ static  void    FiniProgram(void) {
 
 
 
-void    CompProg(void) {
-//==================
-
+void CompProg( void )
+{
     bool        tbreak;
 
     InitProgram();
@@ -178,9 +176,8 @@ void    CompProg(void) {
 }
 
 
-void    InitSubProg(void) {
-//=====================
-
+void InitSubProg( void )
+{
     ProgSw &= ~( PS_END_OF_SUBPROG | PS_IN_SUBPROGRAM | PS_BLOCK_DATA );
     FrlInit( &ITPool );
     SgmtSw       = 0;
@@ -195,10 +192,8 @@ void    InitSubProg(void) {
     BIStartSubProg();
 }
 
-
-void    FiniSubProg(void) {
-//=====================
-
+void FiniSubProg( void )
+{
     FrlFini( &ITPool );
     CheckCSList( CS_EMPTY_LIST ); // all control structures should be finished
     if( !Remember.endstmt ) {

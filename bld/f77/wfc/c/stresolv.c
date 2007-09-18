@@ -43,6 +43,12 @@ extern  bool            DoSubscript(act_dim_list *,intstar4 *,intstar4 *);
 extern  void            StructResolve(void);
 extern  void            BIFiniStartOfSubroutine( void );
 
+/* Forward declarations */
+static  void    SetHigh( sym_id sym );
+static  void    GenEquivSet( act_eq_entry *a, act_eq_entry *b,
+                             intstar4 a_offset, intstar4 b_offset );
+void    EquivResolve( void );
+                             
 
 void    STResolve( void ) {
 //===================

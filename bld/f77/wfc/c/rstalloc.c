@@ -42,6 +42,15 @@ extern  void            FreeChain(void *);
 extern  void            *FreeLink(void *);
 extern  void            FreeRList( sym_id sym );
 
+/* Forward declarations */
+static  void    FreeList( sym_id sym_ptr );
+static  void    FreeMList( sym_id sym_ptr );
+void    FreeNameList( sym_id sym_ptr );
+void    FreeLocalLists( void );
+void    FreeNmList( sym_id sym );
+
+
+
 
 grp_entry       *STGroupEntry( void ) {
 //===============================

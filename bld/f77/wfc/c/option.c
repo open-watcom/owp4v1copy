@@ -46,23 +46,27 @@
 #include <ctype.h>
 #include <string.h>
 
-extern  char            *SkipBlanks(char *);
-extern  void            MacroDEFINE(char *,uint);
-extern  void            MacroUNDEFINE(char *,uint);
-extern  void            MacroIFDEF(char *,uint);
-extern  void            MacroIFNDEF(char *,uint);
-extern  void            MacroELIFDEF(char *,uint);
-extern  void            MacroELIFNDEF(char *,uint);
-extern  void            MacroELSE(void);
-extern  void            MacroENDIF(void);
-extern  void            ProcPragma(char *);
-extern  void            __UseChineseCharSet(void);
-extern  void            __UseJapaneseCharSet(void);
-extern  void            __UseKoreanCharSet(void);
+extern  char            *SkipBlanks( char * );
+extern  void            MacroDEFINE( char *,uint );
+extern  void            MacroUNDEFINE( char *,uint );
+extern  void            MacroIFDEF( char *,uint );
+extern  void            MacroIFNDEF( char *,uint );
+extern  void            MacroELIFDEF( char *,uint );
+extern  void            MacroELIFNDEF( char *,uint );
+extern  void            MacroELSE( void );
+extern  void            MacroENDIF( void );
+extern  void            ProcPragma( char * );
+extern  void            __UseChineseCharSet( void );
+extern  void            __UseJapaneseCharSet( void );
+extern  void            __UseKoreanCharSet( void );
 
 extern  character_set   CharSetInfo;
 
 extern  uint            DataThreshold;
+
+/* Forward declarations */
+static  int     GetDirective( char *buff );
+static  void    ScanOpts( char *buff );
 
 // Compiler directives
 

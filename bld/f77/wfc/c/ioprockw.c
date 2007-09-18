@@ -139,6 +139,15 @@ static  void    LabelItem( FCODE routine ) {
 }
 
 
+void    CkSize4( void ) {
+//=======================
+
+    if( CITNode->size != 4 ) {
+        Error( IL_BAD_SIZE );
+    }
+}
+
+
 static  void    BoolInq( FCODE routine ) {
 //========================================
 
@@ -173,15 +182,6 @@ static  void    IntInq( FCODE routine ) {
 }
 
 
-void    CkSize4( void ) {
-//=======================
-
-    if( CITNode->size != 4 ) {
-        Error( IL_BAD_SIZE );
-    }
-}
-
-
 static  void    IntItem( FCODE routine ) {
 //========================================
 
@@ -211,6 +211,22 @@ static  void    Recl( void ) {
     } else {
         IntItem( FC_SET_RECL );
     }
+}
+
+
+void    ChkAssumed( void ) {
+//==========================
+
+// Check for illegal use of assumed size array.
+
+    sym_id      sym;
+
+    if( CITNode->opn.us & USOPN_FLD ) return;
+    sym = CITNode->sym_ptr;
+    if( sym->ns.si.va.dim_ext->dim_flags & DIM_ASSUMED ) {
+        NameErr( SV_CANT_USE_ASSUMED, sym );
+    }
+    sym->ns.si.va.dim_ext->dim_flags |= DIM_USED_IN_IO;
 }
 
 
@@ -300,22 +316,6 @@ void    Unit(void) {
             }
         }
     }
-}
-
-
-void    ChkAssumed( void ) {
-//==========================
-
-// Check for illegal use of assumed size array.
-
-    sym_id      sym;
-
-    if( CITNode->opn.us & USOPN_FLD ) return;
-    sym = CITNode->sym_ptr;
-    if( sym->ns.si.va.dim_ext->dim_flags & DIM_ASSUMED ) {
-        NameErr( SV_CANT_USE_ASSUMED, sym );
-    }
-    sym->ns.si.va.dim_ext->dim_flags |= DIM_USED_IN_IO;
 }
 
 

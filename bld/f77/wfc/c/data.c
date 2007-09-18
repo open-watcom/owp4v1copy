@@ -66,6 +66,17 @@ extern  void            TermDo(void);
 extern  int             HSToB(char *,uint,char *);
 extern  bool            CalcStructSize(sym_id);
 
+/* Forward declarations */
+static  void    DoData( void );
+static  void    DumpDataSets( int num, itnode *node );
+static  void    Free2CIT( itnode *node );
+static  void    VarList( void );
+static  void    ConList( void );
+static  void    CkFlags( void );
+static  void    GetSConst( void );
+
+int     MkHexConst( char *hex_data, char *dst, int hex_len );
+
 
 void    CpData(void) {
 //================
@@ -145,7 +156,7 @@ static  void    Free2CIT( itnode *node ) {
 }
 
 
-static  void    DoData(void) {
+static  void    DoData( void ) {
 //========================
 
 // Process one vlist/dlist/ pair.
@@ -195,7 +206,7 @@ static  OPR    FindSlash( itnode **itptr_ptr ) {
 }
 
 
-static  void    VarList(void) {
+static  void    VarList( void ) {
 //=========================
 
 // Process one variable list in a DATA statement.
@@ -281,7 +292,7 @@ static  bool    HexConst(void) {
 }
 
 
-static  void    ConList(void) {
+static  void    ConList( void ) {
 //=========================
 
 // Collect constants for data initialization.
@@ -348,7 +359,7 @@ static  void    DumpDataSets( int num, itnode *node ) {
 }
 
 
-static  void    GetSConst(void) {
+static  void    GetSConst( void ) {
 //===========================
 
 // Signed constant converting without downscan-upscan process.
@@ -392,7 +403,7 @@ static  void    GetSConst(void) {
 }
 
 
-int             MkHexConst( char *hex_data, char *dst, int hex_len ) {
+int  MkHexConst( char *hex_data, char *dst, int hex_len ) {
 //====================================================================
 
     uint        len;
@@ -403,7 +414,7 @@ int             MkHexConst( char *hex_data, char *dst, int hex_len ) {
 }
 
 
-static  void    CkFlags(void) {
+static  void    CkFlags( void ) {
 //=========================
 
     if( ( InitVar->ns.flags & SY_CLASS ) != SY_VARIABLE ) {

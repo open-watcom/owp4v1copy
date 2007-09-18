@@ -144,6 +144,27 @@ void    FCConvert( void ) {
 }
 
 
+static  void    MakeComplex( cg_type to ) {
+//=========================================
+
+// Make a COMPLEX/COMPLEX*16/COMPLEX*20 number from 2 scalars.
+
+    cg_type     arg_type;
+    cg_name     real_part;
+    cg_name     imag_part;
+
+    arg_type = GetType( GetU16() );
+    real_part = XPopValue( arg_type );
+    imag_part = XPopValue( arg_type );
+    if( arg_type != to ) {
+        real_part = CGUnary( O_CONVERT, real_part, to );
+        imag_part = CGUnary( O_CONVERT, imag_part, to );
+    }
+    XPush( imag_part );
+    XPush( real_part );
+}
+
+
 void            FCMakeComplex( void ) {
 //===============================
 
@@ -171,22 +192,3 @@ void            FCMakeXComplex( void ) {
 }
 
 
-static  void    MakeComplex( cg_type to ) {
-//=========================================
-
-// Make a COMPLEX/COMPLEX*16/COMPLEX*20 number from 2 scalars.
-
-    cg_type     arg_type;
-    cg_name     real_part;
-    cg_name     imag_part;
-
-    arg_type = GetType( GetU16() );
-    real_part = XPopValue( arg_type );
-    imag_part = XPopValue( arg_type );
-    if( arg_type != to ) {
-        real_part = CGUnary( O_CONVERT, real_part, to );
-        imag_part = CGUnary( O_CONVERT, imag_part, to );
-    }
-    XPush( imag_part );
-    XPush( real_part );
-}

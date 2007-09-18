@@ -54,25 +54,8 @@ extern  void            GCatArg(itnode *);
 extern  void            MoveDown(void);
 extern  void            KillOpnOpr(void);
 
-
-void            CatOpn( void ) {
-//========================
-
-// Process a concatenation operand.
-
-    GenCatOpn();
-    BackTrack();
-}
-
-
-static  void    GenCatOpn( void ) {
-//===========================
-
-    if( CITNode->opn.us != USOPN_CON ) {
-        ChkConstCatOpn( CITNode->link );
-        PushOpn( CITNode );
-    }
-}
+/* Forward declarations */
+void            CatArgs( int num );
 
 
 static  void    FoldCatSequence( itnode *cit ) {
@@ -123,11 +106,66 @@ static  void    ChkConstCatOpn( itnode *cat_opn ) {
 }
 
 
+static  void    GenCatOpn( void ) {
+//===========================
+
+    if( CITNode->opn.us != USOPN_CON ) {
+        ChkConstCatOpn( CITNode->link );
+        PushOpn( CITNode );
+    }
+}
+
+
 static  void    FoldCat( void ) {
 //=========================
 
     GenCatOpn();
     ChkConstCatOpn( CITNode );
+}
+
+void            CatOpn( void ) {
+//========================
+
+// Process a concatenation operand.
+
+    GenCatOpn();
+    BackTrack();
+}
+
+static  int     ScanCat( int *size_ptr ) {
+//========================================
+
+// Scan for strings to be concatenated.
+
+    uint        cat_size;
+    itnode      *itptr;
+    uint        num_cats;
+
+    itptr = CITNode;
+    cat_size = 0;
+    num_cats = 0;
+    for(;;) {
+        if( CITNode->opn.ds == DSOPN_PHI ) {
+            // no operand (A = B // // C)
+            TypeErr( SX_WRONG_TYPE, TY_CHAR );
+        } else if( CITNode->typ != TY_CHAR ) {
+            TypeTypeErr( MD_MIXED, TY_CHAR, CITNode->typ );
+        } else if( ( CITNode->size == 0 ) && ( size_ptr != NULL ) ) {
+            // NULL 'size_ptr' means we are concatenating into a character
+            // variable so character*(*) variables are allowed.
+            OpndErr( CV_BAD_LEN );
+        } else {
+            cat_size += CITNode->size;
+        }
+        CITNode = CITNode->link;
+        num_cats++;
+        if( CITNode->opr != OPR_CAT ) break;
+    }
+    CITNode = itptr;
+    if( size_ptr != NULL ) {
+        *size_ptr = cat_size;
+    }
+    return( num_cats );
 }
 
 
@@ -165,43 +203,6 @@ int             AsgnCat( void ) {
 // Get character operand to assign.
 
     return( ScanCat( NULL ) );
-}
-
-
-static  int     ScanCat( int *size_ptr ) {
-//========================================
-
-// Scan for strings to be concatenated.
-
-    uint        cat_size;
-    itnode      *itptr;
-    uint        num_cats;
-
-    itptr = CITNode;
-    cat_size = 0;
-    num_cats = 0;
-    for(;;) {
-        if( CITNode->opn.ds == DSOPN_PHI ) {
-            // no operand (A = B // // C)
-            TypeErr( SX_WRONG_TYPE, TY_CHAR );
-        } else if( CITNode->typ != TY_CHAR ) {
-            TypeTypeErr( MD_MIXED, TY_CHAR, CITNode->typ );
-        } else if( ( CITNode->size == 0 ) && ( size_ptr != NULL ) ) {
-            // NULL 'size_ptr' means we are concatenating into a character
-            // variable so character*(*) variables are allowed.
-            OpndErr( CV_BAD_LEN );
-        } else {
-            cat_size += CITNode->size;
-        }
-        CITNode = CITNode->link;
-        num_cats++;
-        if( CITNode->opr != OPR_CAT ) break;
-    }
-    CITNode = itptr;
-    if( size_ptr != NULL ) {
-        *size_ptr = cat_size;
-    }
-    return( num_cats );
 }
 
 

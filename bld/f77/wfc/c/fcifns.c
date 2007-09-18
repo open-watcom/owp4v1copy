@@ -55,6 +55,12 @@ extern  cg_name         TmpPtr(tmp_handle,cg_type);
 extern  cg_name         SCBPointer(cg_name);
 extern  bool            IntType(PTYPE);
 
+/* Forward declarations */
+static  void    MinMax( cg_op cmp );
+static  void    GBinaryMath( uint ifn );
+static  void    GUnaryMath( uint ifn );
+
+
 
 void    FCCharLen( void ) {
 //===================

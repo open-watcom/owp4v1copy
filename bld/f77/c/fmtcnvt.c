@@ -47,6 +47,10 @@
 extern  bool            MulIOFlo(intstar4 *,intstar4 *);
 extern  bool            AddIOFlo(intstar4 *,intstar4 *);
 
+/* Forward declarations */
+static  void    AddDig( canon_form *canon, char ch );
+static  int     Digits( canon_form *canon, char *field, char *stop,
+                        int decimals, bool blanks, byte flag );
 
 int     FmtS2I( char *str, int len, bool blanks, intstar4 *value, bool stop_ok,
                 int *width ) {

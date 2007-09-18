@@ -106,6 +106,19 @@ void    CpStmtFunc(void) {
     }
 }
 
+static  void    ArithNewSubr(void) {
+//==============================
+
+    if( CITNode->flags & SY_TYPE ) {
+        Extension( SR_FUNC_AS_SUB );
+        CITNode->sym_ptr->ns.flags |= SY_USAGE | SY_SUBPROGRAM | SY_FUNCTION;
+    } else {
+        ASType |= AST_ALT;
+        CITNode->sym_ptr->ns.flags |= SY_USAGE | SY_SUBPROGRAM |
+                                      SY_SUBROUTINE;
+    }
+    Arith();
+}
 
 void    CpCall(void) {
 //================
@@ -159,16 +172,3 @@ void    CpCall(void) {
 }
 
 
-static  void    ArithNewSubr(void) {
-//==============================
-
-    if( CITNode->flags & SY_TYPE ) {
-        Extension( SR_FUNC_AS_SUB );
-        CITNode->sym_ptr->ns.flags |= SY_USAGE | SY_SUBPROGRAM | SY_FUNCTION;
-    } else {
-        ASType |= AST_ALT;
-        CITNode->sym_ptr->ns.flags |= SY_USAGE | SY_SUBPROGRAM |
-                                      SY_SUBROUTINE;
-    }
-    Arith();
-}

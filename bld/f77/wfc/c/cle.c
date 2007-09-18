@@ -45,60 +45,34 @@
 
 #include <time.h>
 
-extern  void            DoCompile(void);
-extern  void            StatProg(void);
-extern  void            VSTInit(void);
-extern  void            STPurge(void);
-extern  void            CSPurge(void);
-extern  void            EnPurge(void);
-extern  void            EqPurge(void);
-extern  void            TDPurge(void);
-extern  void            OpenSymTab(void);
-extern  void            InitMacros(void);
-extern  void            FiniMacros(void);
-extern  void            FiniMacroProcessor(void);
-extern  void            InitAuxInfo(void);
-extern  void            FiniAuxInfo(void);
-extern  void            InitGlobalSegs(void);
-extern  void            FreeGlobalSegs(void);
+extern  void            DoCompile( void );
+extern  void            StatProg( void );
+extern  void            VSTInit( void );
+extern  void            STPurge( void );
+extern  void            CSPurge( void );
+extern  void            EnPurge( void );
+extern  void            EqPurge( void );
+extern  void            TDPurge( void );
+extern  void            OpenSymTab( void );
+extern  void            InitMacros( void );
+extern  void            FiniMacros( void );
+extern  void            FiniMacroProcessor( void );
+extern  void            InitAuxInfo( void );
+extern  void            FiniAuxInfo( void );
+extern  void            InitGlobalSegs( void );
+extern  void            FreeGlobalSegs( void );
 extern  void            SDRewind(file_handle);
 
 unsigned_32     CompTime;
 
-
-void            CLE(void) {
-//=====================
-
-    time_t      start;
-
-    InitPurge();
-    OpenSrc();
-    if( CurrFile != NULL ) {
-        StartCompile();
-        start = time( NULL );
-        Compile();
-        CompTime = difftime( time( NULL ), start );
-        FiniCompile();
-        Conclusion();
-    } else {
-        // Consider: wfc /who what
-        CloseErr();
-    }
-}
-
-
-static  void    StartCompile(void) {
-//==============================
-
+static  void StartCompile( void )
+{
     OpenLst();
     PrtBanner();
 }
 
-
-
-static  void    Compile(void) {
-//=========================
-
+static void Compile( void )
+{
     InitGlobalSegs();
     ProgSw |= PS_DONT_GENERATE;
     InitAuxInfo();      // must be done before ComRead()
@@ -117,10 +91,8 @@ static  void    Compile(void) {
     FreeGlobalSegs();
 }
 
-
-void            InvokeCompile(void) {
-//===============================
-
+void InvokeCompile( void )
+{
     InitMacros();
     ComRead(); // pre-read must occur here in case of null program
     if( ProgSw & PS_SOURCE_EOF ) {
@@ -132,18 +104,16 @@ void            InvokeCompile(void) {
 }
 
 
-static  void    FiniCompile(void) {
-//=============================
-
+static void FiniCompile( void )
+{
     SetLst( TRUE ); // listing file on for statistics
     LFEndSrc();
     CloseErr();
 }
 
 
-static  void    Conclusion(void) {
-//============================
-
+static void Conclusion( void )
+{
     StatProg();
     if( ProgSw & PS_ERROR ) {
         PurgeAll();
@@ -151,10 +121,8 @@ static  void    Conclusion(void) {
     CloseLst();
 }
 
-
-void            PurgeAll(void) {
-//==========================
-
+void PurgeAll( void )
+{
     STPurge();
     ITPurge();
     CSPurge();
@@ -165,10 +133,8 @@ void            PurgeAll(void) {
     FiniMacroProcessor();
 }
 
-
-static  void    InitPurge(void) {
-//===========================
-
+static  void    InitPurge( void )
+{
 // Initialize variables for purge routines in case the purge routines
 // get called and the corresponding variables don't get initialized.
 
@@ -186,4 +152,23 @@ static  void    InitPurge(void) {
     Entries = NULL;
     // Initialize for EqPurge();
     EquivSets = NULL;
+}
+
+void CLE( void )
+{
+    time_t      start;
+
+    InitPurge();
+    OpenSrc();
+    if( CurrFile != NULL ) {
+        StartCompile();
+        start = time( NULL );
+        Compile();
+        CompTime = difftime( time( NULL ), start );
+        FiniCompile();
+        Conclusion();
+    } else {
+        // Consider: wfc /who what
+        CloseErr();
+    }
 }

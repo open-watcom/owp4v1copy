@@ -71,23 +71,6 @@ void    StdBuffer( void ) {
 }
 
 
-void    StdFlush( void ) {
-//==================
-
-// Flush buffered lines of output.
-
-#if defined( __IS_WINDOWED__ )
-    uint        len;
-
-    if( __FAppType == FAPP_GUI ) {
-        len = BuffCursor - Buffer;
-        BuffCursor = NULL;
-        StdWrite( Buffer, len );
-    }
-#endif
-}
-
-
 void    StdWrite( char *buff, int len ) {
 //=======================================
 
@@ -139,6 +122,23 @@ void    StdWrite( char *buff, int len ) {
     }
 #endif
     console_flag = 1;
+}
+
+
+void    StdFlush( void ) {
+//==================
+
+// Flush buffered lines of output.
+
+#if defined( __IS_WINDOWED__ )
+    uint        len;
+
+    if( __FAppType == FAPP_GUI ) {
+        len = BuffCursor - Buffer;
+        BuffCursor = NULL;
+        StdWrite( Buffer, len );
+    }
+#endif
 }
 
 

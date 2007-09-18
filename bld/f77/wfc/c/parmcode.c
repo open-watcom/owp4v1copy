@@ -41,33 +41,6 @@
 #include "utility.h"
 
 
-int     ParmCode( itnode *arg ) {
-//===============================
-
-// Return the argument code.
-// We cannot assume that USOPN_SAFE is PC_CONST otherwise we will not be able
-// to diagnose an error in the following case (optimizing compiler only).
-//      external f
-//      print *, sin( f )
-// "f" will be USOPN_SAFE by the time ParmCode() is called but we want to return
-// PC_FN_OR_SUB.
-
-    USOPN   opn;
-
-    opn = arg->opn.us & USOPN_WHERE;
-    if( ( arg->opn.us & USOPN_WHAT ) == USOPN_ARR ) {
-        // an array name can't be part of an expression so check it first
-        // so that we can detect whether an array has been passed to an
-        // intrinsic function
-        return( PC_ARRAY_NAME );
-    } else if( opn == USOPN_VAL ) {
-        return( PC_CONST );
-    } else {
-        return( ParmClass( arg ) );
-    }
-}
-
-
 int     ParmClass( itnode *arg ) {
 //===============================
 
@@ -119,3 +92,32 @@ int     ParmClass( itnode *arg ) {
             return( PC_CONST );
     }
 }
+
+
+int     ParmCode( itnode *arg ) {
+//===============================
+
+// Return the argument code.
+// We cannot assume that USOPN_SAFE is PC_CONST otherwise we will not be able
+// to diagnose an error in the following case (optimizing compiler only).
+//      external f
+//      print *, sin( f )
+// "f" will be USOPN_SAFE by the time ParmCode() is called but we want to return
+// PC_FN_OR_SUB.
+
+    USOPN   opn;
+
+    opn = arg->opn.us & USOPN_WHERE;
+    if( ( arg->opn.us & USOPN_WHAT ) == USOPN_ARR ) {
+        // an array name can't be part of an expression so check it first
+        // so that we can detect whether an array has been passed to an
+        // intrinsic function
+        return( PC_ARRAY_NAME );
+    } else if( opn == USOPN_VAL ) {
+        return( PC_CONST );
+    } else {
+        return( ParmClass( arg ) );
+    }
+}
+
+

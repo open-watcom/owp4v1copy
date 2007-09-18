@@ -75,6 +75,25 @@ static  lib_handle FindSrcFile( char *fname ) {
 }
 
 
+static  int     Combine( char *path, char *name, char *buff, int buff_len ) {
+//===========================================================================
+
+// Combine the path and filename.
+
+    int         len;
+
+    len = CopyMaxStr( path, buff, buff_len );
+    if( ( buff[ len - 1 ] != ':' ) && ( buff[ len - 1 ] != '\\' ) &&
+        ( buff[ len - 1 ] != '/' ) ) {
+        buff[ len ] = '\\';
+        ++len;
+        buff[ len ] = NULLCHAR;
+    }
+    len += CopyMaxStr( name, buff + len, buff_len - len );
+    return( len );
+}
+
+
 static  lib_handle SearchDir( char *path, char *name ) {
 //======================================================
 
@@ -199,20 +218,3 @@ void    IncMemClose( lib_handle lp ) {
 }
 
 
-static  int     Combine( char *path, char *name, char *buff, int buff_len ) {
-//===========================================================================
-
-// Combine the path and filename.
-
-    int         len;
-
-    len = CopyMaxStr( path, buff, buff_len );
-    if( ( buff[ len - 1 ] != ':' ) && ( buff[ len - 1 ] != '\\' ) &&
-        ( buff[ len - 1 ] != '/' ) ) {
-        buff[ len ] = '\\';
-        ++len;
-        buff[ len ] = NULLCHAR;
-    }
-    len += CopyMaxStr( name, buff + len, buff_len - len );
-    return( len );
-}

@@ -45,19 +45,24 @@
 #include "ferror.h"
 #include "utility.h"
 
-extern  sym_id          LkSym(void);
-extern  void            InitIO(void);
-extern  void            FiniIO(void);
-extern  void            KeywordList(void);
-extern  void            Unit(void);
-extern  void            FormatIdd(void);
-extern  void            IOList(void);
+extern  sym_id           LkSym( void );
+extern  void            InitIO( void );
+extern  void            FiniIO( void );
+extern  void            KeywordList( void );
+extern  void            Unit( void );
+extern  void            FormatIdd( void );
+extern  void            IOList( void );
 extern  bool            Permission(IOKW);
-extern  void            GStartIO(void);
-extern  void            GNullEofStmt(void);
+extern  void            GStartIO( void );
+extern  void            GNullEofStmt( void );
 
+/* Forward declararations */
+static  void    UnitOrList( void );
+static  void    JustList( void );
+static  void    Form( void );
+static  void    DoKWList( void );
 
-void    CpBackSp(void) {
+void    CpBackSp( void ) {
 //==================
 
 // Compile BACKSPACE statement.
@@ -66,7 +71,7 @@ void    CpBackSp(void) {
 }
 
 
-void    CpClose(void) {
+void    CpClose( void ) {
 //=================
 
 // Compile CLOSE statement.
@@ -75,7 +80,7 @@ void    CpClose(void) {
 }
 
 
-void    CpEndfile(void) {
+void    CpEndfile( void ) {
 //===================
 
 // Compile ENDFILE statement.
@@ -84,7 +89,7 @@ void    CpEndfile(void) {
 }
 
 
-void    CpInquire(void) {
+void    CpInquire( void ) {
 //===================
 
 // Compile INQUIRE statement.
@@ -93,7 +98,7 @@ void    CpInquire(void) {
 }
 
 
-void    CpOpen(void) {
+void    CpOpen( void ) {
 //================
 
 // Compile OPEN statement.
@@ -102,7 +107,7 @@ void    CpOpen(void) {
 }
 
 
-void    CpPrint(void) {
+void    CpPrint( void ) {
 //=================
 
 // Compile PRINT statement.
@@ -129,7 +134,7 @@ void    CpPrint(void) {
 }
 
 
-static  bool    Scan4ListOprs(void) {
+static  bool    Scan4ListOprs( void ) {
 //===============================
 
     itnode      *cit;
@@ -155,7 +160,7 @@ static  bool    Scan4ListOprs(void) {
 }
 
 
-static  bool            ReadKWList(void) {
+static  bool            ReadKWList( void ) {
 //====================================
 
     OPR         opr;
@@ -183,7 +188,7 @@ static  bool            ReadKWList(void) {
 }
 
 
-void    CpRead(void) {
+void    CpRead( void ) {
 //================
 
 // Compile READ statement.
@@ -213,7 +218,7 @@ void    CpRead(void) {
 }
 
 
-void    CpRewind(void) {
+void    CpRewind( void ) {
 //==================
 
 // Compile REWIND statement.
@@ -222,7 +227,7 @@ void    CpRewind(void) {
 }
 
 
-void    CpWrite(void) {
+void    CpWrite( void ) {
 //=================
 
 // Compile WRITE statement.
@@ -241,7 +246,7 @@ void    CpWrite(void) {
 }
 
 
-static  void    UnitOrList(void) {
+static  void    UnitOrList( void ) {
 //============================
 
 // The io statement can have a unit id by itself or have a keyword list
@@ -262,7 +267,7 @@ static  void    UnitOrList(void) {
 }
 
 
-static  void    JustList(void) {
+static  void    JustList( void ) {
 //==========================
 
 // The io statement must have a keyword list in brackets.
@@ -280,7 +285,7 @@ static  void    JustList(void) {
 }
 
 
-static  void    DoKWList(void) {
+static  void    DoKWList( void ) {
 //==========================
 
 // Call KeywordList() and check for closing parenthesis.
@@ -295,7 +300,7 @@ static  void    DoKWList(void) {
 }
 
 
-static  void    Form(void) {
+static  void    Form( void ) {
 //======================
 
     Permission( IO_FMT );                  // remember FMT=

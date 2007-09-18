@@ -137,6 +137,19 @@ extern  sym_id                  FindShadow(sym_id);
 extern  sym_id                  FindEqSetShadow(sym_id);
 extern  uint                    SymAlign(sym_id);
 
+/* Forward declarations */
+static  void    SegBytes( unsigned_32 size );
+static  void    DefineGlobalSeg( global_seg *seg );
+static  void    DefineGlobalSegs( void );
+static  void    DefineCommonSegs( void );
+static  void    AllocGlobalSegs( void );
+static  void    AllocCommonSegs( void );
+static  void    DefCodeSeg( void );
+static  void    BldCSName( char *buff );
+static  void    AllocComBlk( sym_id cb );
+segment_id       GetGlobalSeg( unsigned_32 g_offset );
+
+
 #define _Shadow( s )    if( (s->ns.flags & SY_CLASS) == SY_VARIABLE ) { \
                             if( s->ns.flags & SY_SPECIAL_PARM ) { \
                                 s = FindShadow( s ); \
@@ -431,7 +444,7 @@ static  void    SegBytes( unsigned_32 size ) {
 }
 
 
-static  void            DefineGlobalSeg( global_seg *seg ) {
+static  void   DefineGlobalSeg( global_seg *seg ) {
 //==========================================================
 
 // Define a global segment.

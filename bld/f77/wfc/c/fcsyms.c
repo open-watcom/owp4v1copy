@@ -52,40 +52,64 @@
 #include <string.h>
 
 
-extern  pointer         ConstBack(sym_id);
-extern  void            FCMessage(fc_msg_class,void *);
-extern  segment_id      GetComSeg(sym_id,unsigned_32);
-extern  seg_offset      GetComOffset(unsigned_32);
-extern  segment_id      GetGlobalSeg(unsigned_32);
-extern  seg_offset      GetGlobalOffset(unsigned_32);
-extern  label_handle    GetLabel(label_id);
-extern  label_handle    GetStmtLabel(sym_id);
-extern  void            FiniLabels(uint);
-extern  void            DumpFormats(void);
-extern  void            FreeSFHeader(sym_id);
-extern  void            MakeName(char *,char *,char *);
-extern  char            *SDFName(char *);
-extern  cg_type         F772CGType(sym_id);
-extern  bool            EntryWithAltRets(void);
-extern  bool            ChkForAltRets(entry_pt *);
-extern  aux_info        *AuxLookup(sym_id);
-extern  cg_type         ArrayPtrType(sym_id);
-extern  void            ReverseList(void *);
-extern  cg_name         SCBPtrAddr(cg_name);
-extern  bool            ForceStatic(unsigned_16);
-extern  segment_id      AllocImpSegId(void);
-extern  sym_id          STArgShadow(sym_id);
-extern  sym_id          STAdvShadow(sym_id);
-extern  cg_name         SCBLenAddr(cg_name);
-extern  cg_name         SCBFlagsAddr(cg_name);
-extern  cg_name         SubAltSCB(sym_id);
-extern  sym_id          FindEqSetShadow(sym_id);
-extern  sym_id          FindAdvShadow(sym_id);
-extern  cg_type         CmplxBaseType(cg_type);
-extern  bool            TypeCmplx(TYPE);
-extern  cg_name         StructRef(cg_name,int);
+extern  pointer         ConstBack( sym_id );
+extern  void            FCMessage( fc_msg_class, void * );
+extern  segment_id      GetComSeg( sym_id,unsigned_32 );
+extern  seg_offset      GetComOffset( unsigned_32 );
+extern  segment_id      GetGlobalSeg( unsigned_32 );
+extern  seg_offset      GetGlobalOffset( unsigned_32 );
+extern  label_handle    GetLabel( label_id );
+extern  label_handle    GetStmtLabel( sym_id );
+extern  void            FiniLabels( uint );
+extern  void            DumpFormats( void );
+extern  void            FreeSFHeader( sym_id );
+extern  void            MakeName( char *, char *, char * );
+extern  char            *SDFName( char * );
+extern  cg_type         F772CGType( sym_id );
+extern  bool            EntryWithAltRets( void );
+extern  bool            ChkForAltRets( entry_pt * );
+extern  aux_info        *AuxLookup( sym_id );
+extern  cg_type         ArrayPtrType( sym_id );
+extern  void            ReverseList( void * );
+extern  cg_name         SCBPtrAddr( cg_name );
+extern  bool            ForceStatic( unsigned_16 );
+extern  segment_id      AllocImpSegId( void );
+extern  sym_id          STArgShadow( sym_id );
+extern  sym_id          STAdvShadow( sym_id );
+extern  cg_name         SCBLenAddr( cg_name );
+extern  cg_name         SCBFlagsAddr( cg_name );
+extern  cg_name         SubAltSCB( sym_id );
+extern  sym_id          FindEqSetShadow( sym_id );
+extern  sym_id          FindAdvShadow( sym_id );
+extern  cg_type         CmplxBaseType( cg_type );
+extern  bool            TypeCmplx( TYPE );
+extern  cg_name         StructRef( cg_name,int );
 
 extern  segment_id      CurrCodeSegId;
+
+/* Forward declarations */
+static  void    AssignAdv( sym_id sym );
+static  void    AssignName2Adv( sym_id sym );
+static  void    AssignStaticAdv( sym_id sym );
+static  void    CreateAllocatableADV( sym_id sym );
+static  void    DefineCommonEntry( void );
+static  void    MergeCommonInfo( void );
+static  void    DumpBrTable( void );
+static  void    DumpLitSCBs( void );
+static  void    DumpNameLists( void );
+static  void    DumpSymName( sym_id sym );
+static  void    DumpStaticAdv( sym_id sym, bool dmp_nam_ptr );
+static  void    DbgVarInfo( sym_id sym );
+static  void    DbgSubProgInfo( sym_id sym );
+static  void    AssignAutoAdv( sym_id sym );
+static  void    DumpAutoAdv( sym_id sym, sym_id shadow );
+static  void    PostponeFreeBackHandle( back_handle data );
+static  void    FreeBackHandle( void *_back );
+static  void    DefineArgs( entry_pt *ep );
+static  void    DeclareArg( parameter *arg, pass_by *arg_aux );
+
+void    DefineEntryPoint( entry_pt *ep );
+void    FreeUsedBacks( bool nuke );
 
 static  back_handle     ModuleName = { NULL };
 

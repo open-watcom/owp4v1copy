@@ -47,9 +47,20 @@
 #include <process.h>
 #include <malloc.h>
 
-extern  void                    MsgBuffer(uint,char *,...);
-extern  void                    ShowOptions(char *);
-extern  void                    __InitResource(void);
+extern  void    MsgBuffer(uint,char *,...);
+extern  void    ShowOptions(char *);
+extern  void    __InitResource(void);
+
+/* forward declarations */
+static  void    Usage( void );
+static  int     Parse( void );
+static  void    FindPath( char *name, char *buf );
+static  int     CompLink( void );
+static  void    MakeName( char *name, char *ext );
+static  void    Fputnl( char *text, FILE *fptr );
+static  int     IsOption( char *cmd, int cmd_len, char *opt );
+static  void    AddName( char *name, FILE *link_fp );
+
 
 #if _CPU == 386
   #define _CmpName        "wfc386"        // compiler name
@@ -538,7 +549,7 @@ static  int     Parse( void ) {
 }
 
 
-int     IsOption( char *cmd, int cmd_len, char *opt ) {
+static int     IsOption( char *cmd, int cmd_len, char *opt ) {
 //=====================================================
 
     int         len;

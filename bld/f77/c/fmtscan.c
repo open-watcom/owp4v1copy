@@ -49,6 +49,18 @@ extern  void            FEmChar(char PGM *);
 extern  void            FEmByte(int);
 extern  void            FEmNum(int);
 
+/* Forward declarations */
+static  void    FSkipSpaces( void );
+static  void    R_FSpec( void );
+static  void    GetRepSpec( void );
+static  void    FCode( void );
+static  int     R_FConst( void );
+static  void    FChkDelimiter( void );
+static  void    FReal( byte format_code );
+
+
+
+
 typedef struct f_procs {
     byte        code;
     void        (*routine)(void);

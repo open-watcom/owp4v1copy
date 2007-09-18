@@ -50,11 +50,13 @@ void    R_FEmInit( void ) {
 }
 
 
-void    R_FEmEnd( void ) {
-//==================
+void    CheckHole( uint size ) {
+//==============================
 
-    R_FEmCode( END_FORMAT );
-    R_FEmNum( (char PGM *)(IOCB->fmtptr) - Fmt_revert.rt );
+    if( IOCB->fmtlen < size ) {
+        RTErr( FM_TOO_LARGE );
+    }
+    IOCB->fmtlen -= size;
 }
 
 
@@ -92,6 +94,14 @@ void    R_FEmNum( int num ) {
 }
 
 
+void    R_FEmEnd( void ) {
+//==================
+
+    R_FEmCode( END_FORMAT );
+    R_FEmNum( (char PGM *)(IOCB->fmtptr) - Fmt_revert.rt );
+}
+
+
 void    R_FEmByte( int signed_num ) {
 //=============================
 
@@ -106,12 +116,3 @@ void    R_FEmByte( int signed_num ) {
     }
 }
 
-
-void    CheckHole( uint size ) {
-//==============================
-
-    if( IOCB->fmtlen < size ) {
-        RTErr( FM_TOO_LARGE );
-    }
-    IOCB->fmtlen -= size;
-}

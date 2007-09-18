@@ -45,67 +45,35 @@
 #include "insert.h"
 #include "utility.h"
 
-extern  void            GFiniSS(itnode *,itnode *);
-extern  void            GInitSS(itnode *);
-extern  void            GSubStr(itnode *);
-extern  void            GBegCall(itnode *);
-extern  int             GParms(itnode *);
-extern  void            GEndCall(itnode *,int);
-extern  void            GBegSubScr(itnode *);
-extern  void            GSubScr(void);
-extern  void            GEndSubScr(itnode *);
-extern  void            GBegSSStr(itnode *);
-extern  void            GBegFSS(itnode *);
-extern  void            GBegSFSS(itnode *);
-extern  void            GSFCall(itnode *);
-extern  void            GSFArg(sym_id);
-extern  void            GSFRetVal(itnode *);
-extern  void            AdjSFList(itnode *);
-extern  void            GFieldSCB(inttarg);
+extern  void            GFiniSS( itnode *, itnode * );
+extern  void            GInitSS( itnode * );
+extern  void            GSubStr( itnode * );
+extern  void            GBegCall( itnode * );
+extern  int             GParms( itnode * );
+extern  void            GEndCall( itnode *, int );
+extern  void            GBegSubScr( itnode * );
+extern  void            GSubScr( void );
+extern  void            GEndSubScr( itnode * );
+extern  void            GBegSSStr( itnode * );
+extern  void            GBegFSS( itnode * );
+extern  void            GBegSFSS( itnode * );
+extern  void            GSFCall( itnode * );
+extern  void            GSFArg( sym_id );
+extern  void            GSFRetVal( itnode * );
+extern  void            AdjSFList( itnode * );
+extern  void            GFieldSCB( inttarg );
 
 
-void    ProcList( itnode *cit ) {
-//===============================
+static  void    SubStrArgs( itnode *sym_node ) {
+//==============================================
 
-    itnode      *save_citnode;
-    unsigned_16 cit_flags;
+    itnode      *ss_node;
 
-    save_citnode = CITNode;
-    cit_flags = cit->flags;
-    CITNode = cit->list;
-    if( ( cit_flags & SY_CLASS ) == SY_SUBPROGRAM ) {
-        if( ( cit_flags & SY_SUBPROG_TYPE ) == SY_STMT_FUNC ) {
-            CITNode = cit;  // PrSFList has to look up the symbol
-            PrSFList();
-        } else {
-            if( ( cit->typ == TY_CHAR ) && ( cit->size == 0 ) ) {
-                CITNode = cit;    // For OpndErr().
-                OpndErr( SR_ILL_CHARFUNC );
-            } else {
-                PrCallList( cit );
-            }
-        }
-    } else if( ( ( cit_flags & SY_CLASS ) == SY_VARIABLE ) &&
-            ( cit_flags & SY_SUBSCRIPTED ) ) {
-        PrSubList( cit );
-    } else {
-        PrSStr( cit );
-    }
-    FreeITNodes( cit->list );
-    cit->list = NULL;
-    CITNode = save_citnode;
-}
-
-
-static  void    PrCallList( itnode *subpgm_node ) {
-//=================================================
-
-    GBegCall( subpgm_node );
-    GEndCall( subpgm_node, GParms( subpgm_node ) );
-    if( RecColon() ) {
-        GBegFSS( subpgm_node );
-        SubStrArgs( subpgm_node );
-    }
+    ss_node = CITNode;
+    GSubStr( sym_node );
+    AdvanceITPtr();
+    GSubStr( sym_node );
+    GFiniSS( sym_node, ss_node );
 }
 
 
@@ -218,14 +186,47 @@ static  void    PrSStr( itnode *var_node ) {
 }
 
 
-static  void    SubStrArgs( itnode *sym_node ) {
-//==============================================
+static  void    PrCallList( itnode *subpgm_node ) {
+//=================================================
 
-    itnode      *ss_node;
-
-    ss_node = CITNode;
-    GSubStr( sym_node );
-    AdvanceITPtr();
-    GSubStr( sym_node );
-    GFiniSS( sym_node, ss_node );
+    GBegCall( subpgm_node );
+    GEndCall( subpgm_node, GParms( subpgm_node ) );
+    if( RecColon() ) {
+        GBegFSS( subpgm_node );
+        SubStrArgs( subpgm_node );
+    }
 }
+
+void    ProcList( itnode *cit ) {
+//===============================
+
+    itnode      *save_citnode;
+    unsigned_16 cit_flags;
+
+    save_citnode = CITNode;
+    cit_flags = cit->flags;
+    CITNode = cit->list;
+    if( ( cit_flags & SY_CLASS ) == SY_SUBPROGRAM ) {
+        if( ( cit_flags & SY_SUBPROG_TYPE ) == SY_STMT_FUNC ) {
+            CITNode = cit;  // PrSFList has to look up the symbol
+            PrSFList();
+        } else {
+            if( ( cit->typ == TY_CHAR ) && ( cit->size == 0 ) ) {
+                CITNode = cit;    // For OpndErr().
+                OpndErr( SR_ILL_CHARFUNC );
+            } else {
+                PrCallList( cit );
+            }
+        }
+    } else if( ( ( cit_flags & SY_CLASS ) == SY_VARIABLE ) &&
+            ( cit_flags & SY_SUBSCRIPTED ) ) {
+        PrSubList( cit );
+    } else {
+        PrSStr( cit );
+    }
+    FreeITNodes( cit->list );
+    cit->list = NULL;
+    CITNode = save_citnode;
+}
+
+

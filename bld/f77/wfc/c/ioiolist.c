@@ -41,22 +41,28 @@
 #include "insert.h"
 #include "utility.h"
 
-extern  void            ChkAssumed(void);
-extern  void            TermDo(void);
-extern  void            ImpDo(void);
-extern  void            DelCSNode(void);
-extern  void            GStartIO(void);
-extern  void            GIOItem(void);
-extern  void            GIOArray(void);
-extern  void            GIOStructArray(void);
-extern  void            GStopIO(void);
-extern  sym_id          CkAssignOk(void);
+extern  void            ChkAssumed( void );
+extern  void            TermDo( void );
+extern  void            ImpDo( void );
+extern  void            DelCSNode( void );
+extern  void            GStartIO( void );
+extern  void            GIOItem( void );
+extern  void            GIOArray( void );
+extern  void            GIOStructArray( void );
+extern  void            GStopIO( void );
+extern  sym_id          CkAssignOk( void );
 extern  void            GIOStruct(sym_id);
 extern  bool            Already(uint);
-extern  bool            NotFormatted(void);
+extern  bool            NotFormatted( void );
+
+/* Forward declarations */
+void    ProcessList( void );
+void    InitImpDo( itnode *lastcomma );
+void    FinishImpDo( void );
+void    ListItem( void );
 
 
-void    IOList(void) {
+void    IOList( void ) {
 //================
 
 // Process the input/output list.
@@ -103,7 +109,7 @@ static  void    ChkStructIO( sym_id sym ) {
 }
 
 
-bool    StartImpDo(void) {
+bool    StartImpDo( void ) {
 //====================
 
 // This procedure scans the i/o list to recognize an implied do.
@@ -156,7 +162,7 @@ bool    StartImpDo(void) {
 }
 
 
-void    ProcessList(void) {
+void    ProcessList( void ) {
 //=====================
 
 // This procedure will process one 'thing' from the i/o list. A 'thing' is:
@@ -179,7 +185,7 @@ void    ProcessList(void) {
 }
 
 
-void    ListItem(void) {
+void    ListItem( void ) {
 //==================
 
 // Process one list item.
@@ -255,7 +261,7 @@ void    InitImpDo( itnode *lastcomma ) {
 }
 
 
-void    FinishImpDo(void) {
+void    FinishImpDo( void ) {
 //=====================
 
 // Finish the implied DO.

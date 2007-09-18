@@ -58,6 +58,12 @@ static  unsigned_8      MacroFlags;
 #define DEBUG_MACRO_LEN 9
 static  char            DebugMacro[] = { "__debug__" };
 
+/* Forward declarations */
+static  void    FreeMacros( bool free_perm );
+static  void    MacroCondition( bool cond );
+static  void    IFCondition( bool cond );
+void    MacroDEFINE( char *macro, uint macro_len );
+
 
 void    InitMacroProcessor( void ) {
 //============================

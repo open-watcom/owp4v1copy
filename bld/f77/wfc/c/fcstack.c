@@ -215,6 +215,16 @@ cg_type SymPtrType( sym_id sym ) {
 }
 
 
+void    XPush( cg_name cgname ) {
+//===============================
+
+// Push a CG-name on the stack.
+
+    *(cg_name *)StkPtr = cgname;
+    StkPtr = (char *)StkPtr + sizeof( cg_name );
+}
+
+
 cg_name SymIndex( sym_id sym, cg_name i ) {
 //=========================================
 
@@ -400,16 +410,6 @@ cg_name SymValue( sym_id sym ) {
 // Generate value of a symbol.
 
     return( CGUnary( O_POINTS, SymAddr( sym ), F772CGType( sym ) ) );
-}
-
-
-void    XPush( cg_name cgname ) {
-//===============================
-
-// Push a CG-name on the stack.
-
-    *(cg_name *)StkPtr = cgname;
-    StkPtr = (char *)StkPtr + sizeof( cg_name );
 }
 
 

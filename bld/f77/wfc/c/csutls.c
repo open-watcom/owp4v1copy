@@ -41,12 +41,14 @@
 
 #include <string.h>
 
-extern  void            GBoolExpr(void);
-extern  void            GBrFalse(label_id);
-extern  void            FreeLabel(label_id);
+extern  void            GBoolExpr( void );
+extern  void            GBrFalse( label_id );
+extern  void            FreeLabel( label_id );
 
-extern  char            *StmtKeywords[];
+/* forward declarations */
+void DelCSNode(void);
 
+extern  char                *StmtKeywords[];
 static  const STMT __FAR    CSWords[] = {
         0,
         PR_IF,
@@ -67,9 +69,8 @@ static  const STMT __FAR    CSWords[] = {
 };
 
 
-csnode  *NewCSNode( int label_len ) {
-//===================================
-
+csnode  *NewCSNode( int label_len )
+{
 // Allocate a new "csnode".
 
     csnode  *csptr;
@@ -87,18 +88,14 @@ csnode  *NewCSNode( int label_len ) {
     return( csptr );
 }
 
-
-void    InitCSList(void) {
-//====================
-
+void InitCSList(void)
+{
     BlockNum = 0;
     CSHead = NewCSNode( 0 );
 }
 
-
-void    CSPurge(void) {
-//=================
-
+void CSPurge(void)
+{
     if( CSHead != NULL ) {
         while( CSHead->typ != CS_EMPTY_LIST ) {
             DelCSNode();
@@ -108,10 +105,8 @@ void    CSPurge(void) {
     }
 }
 
-
-itnode  *GetBlockLabel(void) {
-//========================
-
+itnode *GetBlockLabel(void)
+{
     itnode      *citnode;
 
     citnode = CITNode;
@@ -124,10 +119,8 @@ itnode  *GetBlockLabel(void) {
     return( citnode );
 }
 
-
-void    AddCSNode( byte typ ) {
-//=============================
-
+void    AddCSNode( byte typ )
+{
     csnode      *new_cs_node;
     itnode      *label;
     char        *label_ptr;
@@ -149,10 +142,8 @@ void    AddCSNode( byte typ ) {
     label_ptr[ label_len ] = NULLCHAR;
 }
 
-
-void    DelCSNode(void) {
-//===================
-
+void DelCSNode(void)
+{
     csnode      *old;
     case_entry  *currcase;
     case_entry  *newcase;
@@ -182,32 +173,16 @@ void    DelCSNode(void) {
     }
 }
 
-
-void    CSNoMore(void) {
-//==================
-
+void CSNoMore(void)
+{
     if( RecNOpn() ) {
         AdvanceITPtr();
     }
     ReqEOS();
 }
 
-
-void    BlockLabel(void) {
-//====================
-
-    if( RecNOpn() ) {
-        AdvanceITPtr();
-        ColonLabel();
-    } else {
-        Error( SX_NO_EOS_OR_COLON );
-    }
-}
-
-
-void    ColonLabel(void) {
-//====================
-
+void ColonLabel(void)
+{
     if( RecColon() ) {
         if( RecName() == FALSE ) {
             Error( SP_BAD_LABEL );
@@ -217,10 +192,18 @@ void    ColonLabel(void) {
     ReqEOS();
 }
 
+void BlockLabel(void)
+{
+    if( RecNOpn() ) {
+        AdvanceITPtr();
+        ColonLabel();
+    } else {
+        Error( SX_NO_EOS_OR_COLON );
+    }
+}
 
-void    Match(void) {
-//===============
-
+void Match(void)
+{
     if( CSHead->typ == CS_EMPTY_LIST ) {
         StmtErr( SP_INCOMPLETE );
     } else {
@@ -228,17 +211,13 @@ void    Match(void) {
     }
 }
 
-
-void    CSExtn(void) {
-//================
-
+void CSExtn(void)
+{
     StmtExtension( SP_STRUCTURED_EXT );
 }
 
-
-bool    CheckCSList( byte typ ) {
-//===============================
-
+bool CheckCSList( byte typ )
+{
     byte        head_typ;
 
     for(;;) {
@@ -251,17 +230,13 @@ bool    CheckCSList( byte typ ) {
     return( head_typ == typ );
 }
 
-
-bool    EmptyCSList(void) {
-//======================
-
+bool EmptyCSList(void)
+{
     return( CSHead->typ == CS_EMPTY_LIST );
 }
 
-
-void    CSCond( label_id label ) {
-//================================
-
+void CSCond( label_id label )
+{
 // Process a control structure condition (e.g. WHILE( cond )DO).
 
     if( RecNOpn() ) {

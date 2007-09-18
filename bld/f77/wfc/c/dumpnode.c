@@ -118,6 +118,20 @@ static  char    *Opr( byte opr ) {
 }
 
 
+static  void    LLine( void ) {
+//=======================
+
+    printf( "+-----------+------------+\n" );
+}
+
+
+static  void    Node( void ) {
+//======================
+
+    printf( "|  %s  |  %s  |\n", Opr( CITNode->opr ), Opn[ CITNode->opn.ds ] );
+}
+
+
 void    DumpLex( void ) {
 //=================
 
@@ -130,15 +144,4 @@ void    DumpLex( void ) {
 }
 
 
-static  void    Node( void ) {
-//======================
 
-    printf( "|  %s  |  %s  |\n", Opr( CITNode->opr ), Opn[ CITNode->opn.ds ] );
-}
-
-
-static  void    LLine( void ) {
-//=======================
-
-    printf( "+-----------+------------+\n" );
-}

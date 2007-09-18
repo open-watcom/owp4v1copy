@@ -149,6 +149,34 @@ sym_id      AddSP2GList( sym_id ste_ptr ) {
 }
 
 
+void    CkComSize( sym_id sym_ptr, unsigned_32 size ) {
+//=====================================================
+
+// Check for matching sizes of common blocks.
+
+    char        buff[MAX_SYMLEN+1];
+    intstar4    com_size;
+
+    com_size = GetComBlkSize( sym_ptr );
+    if( size != com_size ) {
+        if( size > com_size ) {
+            SetComBlkSize( sym_ptr, size );
+        }
+        if( ( sym_ptr->ns.flags & SY_COMSIZE_WARN ) == 0 ) {
+            // It's nice to give a warning message when the blank common
+            // block appears as different sizes even though the standard
+            // permits it.
+            if( sym_ptr->ns.flags & SY_BLANK_COMMON ) {
+                Warning( CM_BLANK_DIFF_SIZE );
+            } else {
+                STGetName( sym_ptr, buff );
+                Warning( CM_NAMED_DIFF_SIZE, buff );
+            }
+            sym_ptr->ns.flags |= SY_COMSIZE_WARN;
+        }
+    }
+}
+
 sym_id  AddCB2GList( sym_id ste_ptr ) {
 //=====================================
 
@@ -180,30 +208,3 @@ sym_id  AddCB2GList( sym_id ste_ptr ) {
 }
 
 
-void    CkComSize( sym_id sym_ptr, unsigned_32 size ) {
-//=====================================================
-
-// Check for matching sizes of common blocks.
-
-    char        buff[MAX_SYMLEN+1];
-    intstar4    com_size;
-
-    com_size = GetComBlkSize( sym_ptr );
-    if( size != com_size ) {
-        if( size > com_size ) {
-            SetComBlkSize( sym_ptr, size );
-        }
-        if( ( sym_ptr->ns.flags & SY_COMSIZE_WARN ) == 0 ) {
-            // It's nice to give a warning message when the blank common
-            // block appears as different sizes even though the standard
-            // permits it.
-            if( sym_ptr->ns.flags & SY_BLANK_COMMON ) {
-                Warning( CM_BLANK_DIFF_SIZE );
-            } else {
-                STGetName( sym_ptr, buff );
-                Warning( CM_NAMED_DIFF_SIZE, buff );
-            }
-            sym_ptr->ns.flags |= SY_COMSIZE_WARN;
-        }
-    }
-}

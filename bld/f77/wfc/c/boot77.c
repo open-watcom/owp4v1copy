@@ -90,6 +90,19 @@ int     CompMain( char *parm ) {
     return( RetCode );
 }
 
+static  int     ProcName( void ) {
+//==========================
+
+    int code;
+
+    code = _SUCCESSFUL;
+    if( *SrcName == NULLCHAR ) {
+        code = _NOFILENAME;
+    } else if( *SrcName == '?' ) {
+        code = _REQSYNTAX;
+    }
+    return( code );
+}
 
 static  bool    ProcCmd( char *buffer ) {
 //=======================================
@@ -198,21 +211,6 @@ void    FiniCompile( void ) {
 //=====================
 
     ProgSw &= ~PS_FIRST_COMPILE;
-}
-
-
-static  int     ProcName( void ) {
-//==========================
-
-    int code;
-
-    code = _SUCCESSFUL;
-    if( *SrcName == NULLCHAR ) {
-        code = _NOFILENAME;
-    } else if( *SrcName == '?' ) {
-        code = _REQSYNTAX;
-    }
-    return( code );
 }
 
 

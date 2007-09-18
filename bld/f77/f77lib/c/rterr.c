@@ -57,6 +57,12 @@ extern  void            RTSysInit(void);
 extern  void            (* __BldErrMsg)(unsigned int ,char *,va_list args);
 extern  file_handle     FStdOut;
 
+/* Forward declarations */
+void    ErrHandler( int errcode, va_list args );
+void    WriteErr( int errcode, va_list args );
+void    FlushStdUnit( void );
+
+
 void                    (*TraceRoutine)(char *) = { NULL };
 
 #define ERR_PREF_SIZE   5

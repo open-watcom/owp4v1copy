@@ -53,6 +53,11 @@ extern  bool            SameFile(char *,char *);
 extern  void            RTErr(int,...);
 extern  int             DfltRecType(ftnfile *);
 
+/* Forward declarations */
+static  void    RTFill( void PGM *dest, int size );
+static  void    StrFill( string PGM *scb );
+static  void    RTCopy( char *ptr, string PGM *str );
+
 static  char            *ModeAcc[] = {
         "",              // dummy entry
         "SEQUENTIAL",    // ACCM_SEQUENTIAL

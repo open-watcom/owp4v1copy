@@ -58,7 +58,15 @@ extern  cg_name         StructRef(cg_name,int);
 extern  call_handle     InitCall(RTCODE);
 extern  sym_id          FindAdvShadow(sym_id);
 
+/* Forward declarations */
+static  void    DbSubscript( sym_id arr );
+static  void    VariableDims( sym_id arr );
+static  void    ConstDims( sym_id arr );
+static  void    Index( sym_id arr, cg_name offset );
+void    MakeSCB( sym_id scb, cg_name len );
 
+    
+    
 cg_name GetAdv( sym_id arr ) {
 //============================
 

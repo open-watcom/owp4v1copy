@@ -49,6 +49,15 @@ extern  void            CSExtn(void);
 extern  char            *StmtKeywords[];
 
 
+void    EndOfStatement( void ) {
+//========================
+
+    ReqNOpn();
+    AdvanceITPtr();
+    ReqEOS();
+}
+
+
 void    CpUnion( void ) {
 //=================
 
@@ -104,11 +113,3 @@ void    CpEndMap( void ) {
     EndOfStatement();
 }
 
-
-void    EndOfStatement( void ) {
-//========================
-
-    ReqNOpn();
-    AdvanceITPtr();
-    ReqEOS();
-}

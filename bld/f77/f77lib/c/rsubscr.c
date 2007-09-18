@@ -45,6 +45,8 @@
 
 extern  void            RTErr(int,...);
 
+/* Forward declarations */
+static  void    SubscriptError( int dims, va_list args, char *name );
 
 intstar4        Subscript( int dims, adv_entry *adv, ... ) {
 //==========================================================

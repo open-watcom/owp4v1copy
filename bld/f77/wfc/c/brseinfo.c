@@ -97,6 +97,10 @@ static sym_list         *fixSubParms = NULL;
 
 static dw_handle        baseTypes[LAST_BASE_TYPE + 1];
 
+/* Forward declarations */
+static void BIRefSymbol( dw_handle handle );
+
+
 #define BI_STATE_IN_COMMON_BLOCK        0x00000001
 #define BI_STATE_IN_STMT_FUNC           0x00000002
 #define BI_STATE_RESOLVED               0x00000004
@@ -198,6 +202,15 @@ void    BIFiniStartOfSubroutine( void ) {
     }
 }
 
+void    BIEndBlockData( void ) {
+//==============================
+
+    if( _GenerateBrInfo() ) {
+        currState &= ~BI_STATE_IN_COMMON_BLOCK;
+        DWEndLexicalBlock ( cBIId );
+    }
+}
+
 void    BIEndSubProg( void ) {
 //======================
 
@@ -283,15 +296,6 @@ void    BIStartBlockData( sym_id ste_ptr ) {
         DWDeclPos( cBIId, CurrFile->rec, 0 );
         DWBeginLexicalBlock( cBIId, 0,
                 strncpy( name, ste_ptr->ns.name, ste_ptr->ns.name_len ) );
-    }
-}
-
-void    BIEndBlockData( void ) {
-//==============================
-
-    if( _GenerateBrInfo() ) {
-        currState &= ~BI_STATE_IN_COMMON_BLOCK;
-        DWEndLexicalBlock ( cBIId );
     }
 }
 

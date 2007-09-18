@@ -44,6 +44,9 @@ extern  void            IOOk(b_file *);
 extern  int             FlushBuffer(b_file *);
 extern  uint            readbytes(b_file *,char *,uint len);
 
+/* forward declarations */
+int     SysSeek( b_file *io, long int new_offset, int seek_mode );
+
 
 void    FSeekRec( b_file *io, unsigned_32 rec, uint recsize ) {
 //=============================================================

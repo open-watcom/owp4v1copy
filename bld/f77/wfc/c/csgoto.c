@@ -47,62 +47,40 @@
 
 #include <ctype.h>
 
-extern  sym_id          CkAssignOk(void);
-extern  void            CkSize4(void);
-extern  void            ScanExpr(void);
-extern  label_id        NextLabel(void);
-extern  void            CkTypeDeclared(void);
-extern  sym_id          LkUpAssign(void);
-extern  sym_id          LkUpStmtNo(void);
-extern  void            AddCSNode(byte);
-extern  void            DelCSNode(void);
-extern  case_entry      *NewCase(void);
-extern  void            InitSelect(void);
-extern  void            FiniSelect(void);
-extern  void            GAsgnGoTo(bool);
-extern  void            GAssign(sym_id);
-extern  void            GLabel(label_id);
-extern  void            G3WayBranch(sym_id,sym_id,sym_id);
-extern  void            GBranch(label_id);
-extern  void            GStmtBr(sym_id);
-extern  void            FreeLabel(label_id);
-extern  void            GStmtAddr(sym_id);
-extern  void            GEndBrTab(void);
-extern  void            BIOutSymbol(sym_id);
+extern  sym_id          CkAssignOk( void );
+extern  void            CkSize4( void );
+extern  void            ScanExpr( void );
+extern  label_id        NextLabel( void );
+extern  void            CkTypeDeclared( void );
+extern  sym_id          LkUpAssign( void );
+extern  sym_id          LkUpStmtNo( void );
+extern  void            AddCSNode( byte );
+extern  void            DelCSNode( void );
+extern  case_entry      *NewCase( void );
+extern  void            InitSelect( void );
+extern  void            FiniSelect( void );
+extern  void            GAsgnGoTo( bool );
+extern  void            GAssign( sym_id );
+extern  void            GLabel( label_id );
+extern  void            G3WayBranch( sym_id, sym_id, sym_id );
+extern  void            GBranch( label_id );
+extern  void            GStmtBr( sym_id );
+extern  void            FreeLabel( label_id );
+extern  void            GStmtAddr( sym_id );
+extern  void            GEndBrTab( void );
+extern  void            BIOutSymbol( sym_id );
 
 
-void    CpGoto(void) {
-//================
-
-// Process a GOTO statement.
-
-    if( RecNumber() ) {
-        Remember.transfer = TRUE;
-        UnCondGoto();
-    } else if( RecNOpn() ) {
-        CompGoto();
-        CtrlFlgs &= ~CF_BAD_DO_ENDING;
-    } else {
-        Remember.transfer = TRUE;
-        AsgnGoto();
-    }
-    ReqEOS();
-}
-
-
-static  void    UnCondGoto(void) {
-//============================
-
+static void UnCondGoto( void )
+{
 // Process an unconditional GOTO statement.
 
     GStmtBr( LkUpStmtNo() );
     AdvanceITPtr();
 }
 
-
-static  void    CompGoto(void) {
-//==========================
-
+static void CompGoto( void )
+{
 // Process a computed GOTO statement.
 
     case_entry  *caseptr;
@@ -148,10 +126,15 @@ static  void    CompGoto(void) {
     DelCSNode();
 }
 
+void CkVarRef( void )
+{
+    BIOutSymbol( CITNode->sym_ptr );
+    CITNode->sym_ptr->ns.flags |= SY_REFERENCED;
+    CkTypeDeclared();
+}
 
-static  void    AsgnGoto(void) {
-//==========================
-
+static void AsgnGoto( void )
+{
 // Process an assigned GOTO statement.
 
     if( ReqIntVar() ) {
@@ -181,19 +164,25 @@ static  void    AsgnGoto(void) {
     }
 }
 
+void CpGoto( void )
+{
+// Process a GOTO statement.
 
-void    CkVarRef(void) {
-//==================
-
-    BIOutSymbol( CITNode->sym_ptr );
-    CITNode->sym_ptr->ns.flags |= SY_REFERENCED;
-    CkTypeDeclared();
+    if( RecNumber() ) {
+        Remember.transfer = TRUE;
+        UnCondGoto();
+    } else if( RecNOpn() ) {
+        CompGoto();
+        CtrlFlgs &= ~CF_BAD_DO_ENDING;
+    } else {
+        Remember.transfer = TRUE;
+        AsgnGoto();
+    }
+    ReqEOS();
 }
 
-
-void    CpArithIf(void) {
-//===================
-
+void CpArithIf( void )
+{
 // Process an arithmetic IF.
 
     sym_id      lt_label;
@@ -228,10 +217,8 @@ void    CpArithIf(void) {
     G3WayBranch( lt_label, eq_label, gt_label );
 }
 
-
-void    CpAssign(void) {
-//==================
-
+void CpAssign( void )
+{
 // Process an ASSIGN statement ( eg. ASSIGN 10 TO I ).
 
     char        *opnd;

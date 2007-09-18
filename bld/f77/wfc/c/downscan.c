@@ -49,14 +49,18 @@
 #include <string.h>
 #include <limits.h>
 
-extern  void            MoveDown(void);
-extern  void            DSName(void);
-extern  sym_id          LkUpStmtNo(void);
+extern  void            MoveDown( void );
+extern  void            DSName( void );
+extern  sym_id          LkUpStmtNo( void );
 extern  int             FmtS2I(char *,int,bool,intstar4 *,bool,int *);
 extern  int             FmtS2F(char *,int,int,bool,int,int,reallong *,bool,int *,bool);
 
+/* Forward declarations */
+static  void    ConstBase( uint base );
+static  void    BuildCplx( int real_sign, int imag_sign );
+static  void    AltReturn( void );
 
-static  void    LitC(void) {
+static  void    LitC( void ) {
 //======================
 
     CITNode->value.cstring.strptr = CITNode->opnd;
@@ -67,7 +71,7 @@ static  void    LitC(void) {
 }
 
 
-static  void    LogC(void) {
+static  void    LogC( void ) {
 //======================
 
     CITNode->value.logstar1 = *CITNode->opnd == 'T';
@@ -77,7 +81,7 @@ static  void    LogC(void) {
 }
 
 
-static  void    IntC(void) {
+static  void    IntC( void ) {
 //======================
 
     if( FmtS2I( CITNode->opnd, CITNode->opnd_size, FALSE, &CITNode->value.intstar4, FALSE, NULL ) != INT_OK ) {
@@ -111,7 +115,7 @@ static  bool    CnvFloat( itnode *cit, int prec ) {
 }
 
 
-static  void    RealC(void) {
+static  void    RealC( void ) {
 //=======================
 
     if( CnvFloat( CITNode, PRECISION_SINGLE ) ) {
@@ -123,7 +127,7 @@ static  void    RealC(void) {
 }
 
 
-static  void    DoubleC(void) {
+static  void    DoubleC( void ) {
 //=========================
 
     if( CnvFloat( CITNode, PRECISION_DOUBLE ) ) {
@@ -135,7 +139,7 @@ static  void    DoubleC(void) {
 }
 
 
-static  void    ExtendedC(void) {
+static  void    ExtendedC( void ) {
 //===========================
 
     CnvFloat( CITNode, PRECISION_EXTENDED );
@@ -145,7 +149,7 @@ static  void    ExtendedC(void) {
 }
 
 
-static  void    OctalC(void) {
+static  void    OctalC( void ) {
 //========================
 
     ConstBase( 8 );
@@ -153,7 +157,7 @@ static  void    OctalC(void) {
 }
 
 
-static  void    HexC(void) {
+static  void    HexC( void ) {
 //======================
 
     ConstBase( 16 );
@@ -189,7 +193,7 @@ static  void    ConstBase( uint base ) {
 }
 
 
-static  bool    Number(void) {
+static  bool    Number( void ) {
 //========================
 
     if( CITNode->opn.ds == DSOPN_PHI ) {
@@ -202,7 +206,7 @@ static  bool    Number(void) {
 }
 
 
-static  bool    Complex(void) {
+static  bool    Complex( void ) {
 //=========================
 
     if( Number() && RecComma() && Number() && RecCloseParen() ) {
@@ -245,7 +249,7 @@ static  itnode  *CollectNumber( itnode *itptr, int *sign ) {
 }
 
 
-static  void    Phi(void) {
+static  void    Phi( void ) {
 //=====================
 
 // Processing a null operand in an expression.
@@ -348,7 +352,7 @@ static  void    BuildCplx( int real_sign, int imag_sign ) {
 }
 
 
-static  void    AltReturn(void) {
+static  void    AltReturn( void ) {
 //===========================
 
     itnode      *itptr;
@@ -364,7 +368,7 @@ static  void    AltReturn(void) {
 }
 
 
-static  void    OprEqu(void) {
+static  void    OprEqu( void ) {
 //========================
 
     if( ( ASType & AST_EOK ) == 0 ) {
@@ -390,12 +394,12 @@ static  void    OprEqu(void) {
 #endif
 #define pick(tok_id,dsopn_id,opn_proc) opn_proc,
 
-static void (* const __FAR DSTable[])(void) = {
+static void (* const __FAR DSTable[])( void ) = {
 #include "tokdsopn.h"
 };
 
 
-void    GetConst(void) {
+void    GetConst( void ) {
 //==================
 
 // Constant converting without downscan-upscan process.
@@ -407,7 +411,7 @@ void    GetConst(void) {
 }
 
 
-void    GetIntConst(void) {
+void    GetIntConst( void ) {
 //=====================
 
     GetConst();
@@ -417,7 +421,7 @@ void    GetIntConst(void) {
 }
 
 
-void    DownScan(void) {
+void    DownScan( void ) {
 //==================
 
     AError = FALSE;

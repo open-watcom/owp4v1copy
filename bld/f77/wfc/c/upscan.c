@@ -118,6 +118,19 @@ extern  void            SetDefinedStatus(void);
 extern  void            (* const __FAR GenOprTable[])(TYPE, TYPE, OPTR);
 extern  void            (* const __FAR ConstTable[])(TYPE, TYPE, OPTR);
 
+/* Forward declarations */
+static  void    InlineCnvt( void );
+static  void    IFPrmChk( void );
+static  void    EvalList( void );
+static  void    FixList( void );
+static  void    PrepArg( void );
+static  void    LowColon( void );
+static  void    AddSS( int number );
+
+void    AddConst( itnode *node );
+
+
+
 #ifdef pick
 #undef pick
 #endif
