@@ -66,6 +66,9 @@ union record   *head;                   /* Points to current archive header */
 struct stat     hstat[1];               /* Stat struct corresponding */
 struct stat    *phstat = hstat;         /* to overcome construct ACK C can't handle */
 
+/* Forward declarations */
+void demode( unsigned int mode, char *string );
+
 /*
  * Print a header record, based on tar options.
  */

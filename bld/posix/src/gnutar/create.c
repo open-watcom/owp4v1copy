@@ -111,6 +111,12 @@
 
 union record   *start_header( char *name, struct stat *st );
 
+/* Forward declarations */
+int dump_file( char *fname );
+void finish_header( union record *header );
+void write_eot( void );
+void to_oct( long value, int digs, char *where);
+
 void create_archive( void )
 {
         char  *p;

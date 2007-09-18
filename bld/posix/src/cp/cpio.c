@@ -48,6 +48,11 @@
 #endif
 #include "cp.h"
 
+/* forward declarations */
+static int readABuffer( void );
+static void freeCB( ctrl_block *cb, int freecb );
+
+
 /*
  * GrabFile - read in a specified file, dump it to destination
  */

@@ -99,6 +99,11 @@ static int      baserec;
  */
 static int      r_error_count;
 
+/* Forward declarations */
+void fl_write( void );
+void fl_read( void );
+void flush_archive( void );
+
 
 /*
  * Return the location of the next available input or output record.

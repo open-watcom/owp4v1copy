@@ -104,6 +104,13 @@ static char    *binexts[NBINEXTS] =             /* extensions for O_BINARY files
 static void name_init( int argc, char **argv );
 static void addbinext( char *s );
 
+/* Forward declarations */
+void options( int argc, char **argv );
+void describe( void );
+static void addname( char *name );
+
+
+
 /*
  * Main routine for tar.
  */

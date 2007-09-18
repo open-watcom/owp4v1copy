@@ -95,6 +95,11 @@ static const char *usageMsg[] = {
     NULL
 };
 
+/* Forward declarations */
+void DoLC( char *dir );
+void PrintFile( struct dirent *file );
+
+
 /*
  * start of mainline
  */
