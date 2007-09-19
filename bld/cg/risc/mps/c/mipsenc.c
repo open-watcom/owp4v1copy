@@ -73,6 +73,7 @@ extern void             InputOC( any_oc * );
 extern opcode_defs      FlipOpcode( opcode_defs );
 extern void             FactorInt32( signed_32 val, signed_16 *, signed_16 *, signed_16 * );
 extern label_handle     RTLabel( int );
+extern  void            GenIType( uint_8 opcode, uint_8 rt, uint_8 rs, signed_16 immed );
 
 extern type_class_def   Unsigned[];
 extern type_length      TypeClassSize[];

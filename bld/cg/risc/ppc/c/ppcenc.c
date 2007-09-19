@@ -73,6 +73,7 @@ extern void             OutLineNum( unsigned_16 line, bool label_line );
 extern void             EmitDbgInfo( instruction * );
 extern pointer          FEAuxInfo( pointer *, aux_class );
 extern code_lbl         *GetWeirdPPCDotDotLabel( code_lbl * );
+extern  void            GenCondJump( instruction *cond );
 
 extern type_class_def   Unsigned[];
 extern type_length      TypeClassSize[];

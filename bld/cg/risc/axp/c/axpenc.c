@@ -80,6 +80,8 @@ extern  opcode_defs     FlipOpcode( opcode_defs );
 extern  void            FactorInt32( signed_32 val, signed_16 *, signed_16 *, signed_16 * );
 extern  label_handle    RTLabel( int );
 
+extern void GenMEMINS( uint_8 opcode, uint_8 a, uint_8 b, signed_16 displacement );
+
 extern type_class_def   Unsigned[];
 extern type_length      TypeClassSize[];
 extern proc_def         *CurrProc;

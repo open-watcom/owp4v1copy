@@ -67,8 +67,8 @@ typedef struct track_entry {
 
 #ifdef _SYS_CHKS
 
-extern  char            MemOk(void *,int);
-extern  void            *MemOtherOk();
+extern  char    MemOk(void *,int);
+extern  void    *MemOtherOk();
 
 #endif
 
@@ -243,7 +243,6 @@ static TRPTR   AllocTrk( tracker *trk ) {
 #pragma off(unreferenced);
 static  void    FreeTrk( TRPTR  entry, tracker *trk ) {
 #pragma on(unreferenced);
-/*********************************************/
 
 #ifdef _EXTRA_MEM
     entry->next = TrkFrl;
@@ -254,9 +253,8 @@ static  void    FreeTrk( TRPTR  entry, tracker *trk ) {
 }
 
 
-static  void    Fill( void *start, unsigned len, char filler ) {
-/**********************************************************/
-
+static  void    Fill( void *start, unsigned len, char filler )
+{
     char    *ptr;
 
     ptr = start;
@@ -269,8 +267,8 @@ static  void    Fill( void *start, unsigned len, char filler ) {
 extern  tracker *TrMemInit( char *name,
                             void *(*alloc)(int),
                             void (*free)(void *),
-                            void (*print_line)(char *, unsigned) ){
-
+                            void (*print_line)(char *, unsigned) )
+{
     tracker     *trk;
     char        *p1;
 
@@ -300,9 +298,27 @@ extern  tracker *TrMemInit( char *name,
     return( trk );
 }
 
-extern  void    TrCheck( tracker *trk ) {
-/***************************************/
+extern int TrFree( void *chunk, tracker *trk );
+static int ValidChunk( TRPTR entry, char *who, void (*ra)(), tracker *trk );
 
+extern  int TrValidate( void *chunk, void (*ra)(), tracker *trk )
+{
+    TRPTR       entry;
+
+    entry = trk->allocated_list;
+    for(;;) {
+        if( entry == 0 ) {
+            TrPrt( trk, "%W unowned chunk %D", "Validate", ra, chunk );
+            return( FALSE );
+        }
+        if( _POINTER( entry->mem ) == _POINTER( chunk ) ) break;
+        entry = entry->next;
+    }
+    return( ValidChunk( entry, "Validate", ra, trk ) );
+}
+
+extern  void    TrCheck( tracker *trk )
+{
     TRPTR       alloc;
 
     alloc = trk->allocated_list;
@@ -312,9 +328,8 @@ extern  void    TrCheck( tracker *trk ) {
     }
 }
 
-extern  void    TrMemFini( tracker *trk ) {
-/*****************************************/
-
+extern  void    TrMemFini( tracker *trk )
+{
     unsigned    chunks;
     TRPTR       alloc;
 
@@ -340,15 +355,13 @@ extern  void    TrMemFini( tracker *trk ) {
 #endif
 }
 
-extern  void    TrPrtUsage( tracker *trk ) {
-/******************************************/
-
+extern  void    TrPrtUsage( tracker *trk )
+{
     TrPrt( trk, "%N Memory usage: %L bytes", trk->max_memory_used );
 }
 
-extern  void    TrPrtMemUse( tracker *trk ) {
-/*******************************************/
-
+extern  void    TrPrtMemUse( tracker *trk )
+{
     TRPTR       alloc;
 
     TrPrtUsage( trk );
@@ -362,9 +375,8 @@ extern  void    TrPrtMemUse( tracker *trk ) {
     } while( alloc != 0 );
 }
 
-extern  void *TrAlloc( unsigned size, void (*ra)(), tracker *trk ) {
-/******************************************************************/
-
+extern  void *TrAlloc( unsigned size, void (*ra)(), tracker *trk )
+{
     void        *chunk;
     TRPTR       trchunk;
 
@@ -389,9 +401,8 @@ extern  void *TrAlloc( unsigned size, void (*ra)(), tracker *trk ) {
     return( chunk );
 }
 
-static int ValidChunk( TRPTR entry, char *who, void (*ra)(), tracker *trk ) {
-/****************************************************************************/
-
+static int ValidChunk( TRPTR entry, char *who, void (*ra)(), tracker *trk )
+{
     void    *chunk;
 
     chunk = entry->mem;
@@ -411,26 +422,9 @@ static int ValidChunk( TRPTR entry, char *who, void (*ra)(), tracker *trk ) {
     return( TRUE );
 }
 
-extern  int    TrValidate( void *chunk, void (*ra)(), tracker *trk ) {
-/*************************************************************************/
-
-    TRPTR       entry;
-
-    entry = trk->allocated_list;
-    for(;;) {
-        if( entry == 0 ) {
-            TrPrt( trk, "%W unowned chunk %D", "Validate", ra, chunk );
-            return( FALSE );
-        }
-        if( _POINTER( entry->mem ) == _POINTER( chunk ) ) break;
-        entry = entry->next;
-    }
-    return( ValidChunk( entry, "Validate", ra, trk ) );
-}
-
-
-extern  int    TrChkRange( void *start, unsigned len,
-                            void (*ra)(), tracker *trk ) {
+extern  int TrChkRange( void *start, unsigned len,
+                          void (*ra)(), tracker *trk )
+{
 
     TRPTR       ptr;
     void        *end;
@@ -456,15 +450,8 @@ extern  int    TrChkRange( void *start, unsigned len,
     return( ValidChunk( ptr, "ChkRange", ra, trk ) );
 }
 
-extern  int     TrFree( void *chunk, tracker *trk ) {
-/*****************************************************/
-
-    return( TrFreeSize( chunk, 0, trk ) );
-}
-
-extern  int     TrFreeSize( void *chunk, unsigned given_size, tracker *trk ) {
-/**************************************************************************/
-
+extern  int     TrFreeSize( void *chunk, unsigned given_size, tracker *trk )
+{
     unsigned    size;
     TRPTR       entry;
     TRPTR       prev;
@@ -499,4 +486,9 @@ extern  int     TrFreeSize( void *chunk, unsigned given_size, tracker *trk ) {
         return( FALSE );
     }
     return( ret );
+}
+
+extern  int TrFree( void *chunk, tracker *trk )
+{
+    return( TrFreeSize( chunk, 0, trk ) );
 }

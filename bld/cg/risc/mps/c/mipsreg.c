@@ -54,6 +54,8 @@ extern  hw_reg_set      ReturnAddrReg( void );
 extern  hw_reg_set      VarargsHomePtr( void );
 extern  sym_handle      AskForLblSym( label_handle );
 extern  bool            AskIfRTLabel( code_lbl * );
+extern  void            UpdateReturn( call_state *state, type_def *tipe,
+                                        type_class_def class, aux_handle aux );
 
 extern hw_reg_set SavedRegs( void )
 /*********************************/
