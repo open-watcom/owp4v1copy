@@ -54,12 +54,6 @@ void Output( char *str )
     SetInputToOutputCursorPosition( screenID );
 }
 
-void StartupErr( char *err )
-{
-    OutputToScreen( systemConsoleScreen, "%s\r\n", err );
-    SayGNiteGracey( 1 );
-}
-
 
 void SayGNiteGracey( int return_code )
 {
@@ -70,6 +64,12 @@ void SayGNiteGracey( int return_code )
 #else
     CDestroyProcess( CGetMyProcessID() );
 #endif
+}
+
+void StartupErr( char *err )
+{
+    OutputToScreen( systemConsoleScreen, "%s\r\n", err );
+    SayGNiteGracey( 1 );
 }
 
 int KeyPress()

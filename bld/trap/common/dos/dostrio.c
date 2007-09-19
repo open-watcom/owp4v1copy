@@ -56,13 +56,6 @@ extern int KeyGet_pragma( void );
     modify [ax];
 
 
-void StartupErr( char *err )
-{
-    Output( err );
-    Output( "\r\n" );
-    SayGNiteGracey( 1 );
-}
-
 void Output( char *str )
 {
     TinyWrite( 2, str, strlen( str ) );
@@ -71,6 +64,13 @@ void Output( char *str )
 void SayGNiteGracey( int return_code )
 {
     TinyTerminateProcess( return_code );
+}
+
+void StartupErr( char *err )
+{
+    Output( err );
+    Output( "\r\n" );
+    SayGNiteGracey( 1 );
 }
 
 int KeyPress( void )

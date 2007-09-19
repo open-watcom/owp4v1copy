@@ -346,6 +346,12 @@ static void CheckForTraffic( HPIPE hdl )
     DosDisConnectNmPipe( hdl );
 }
 
+void Error( char *msg )
+{
+    mywrite( 2, msg, strlen( msg ) );
+    mywrite( 2, "\r\n", 2 );
+    exit( 1 );
+}
 
 int main( int argc, char *argv[] )
 {
@@ -374,9 +380,3 @@ int main( int argc, char *argv[] )
     return( 0 );
 }
 
-void Error( char *msg )
-{
-    mywrite( 2, msg, strlen( msg ) );
-    mywrite( 2, "\r\n", 2 );
-    exit( 1 );
-}

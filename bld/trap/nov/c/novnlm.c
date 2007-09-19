@@ -57,7 +57,7 @@ extern struct ResourceTagStructure              *SemaphoreTag;
 #define SPXCancelEvent( x )     if( CSPXCancelSessionListen( x ) ) \
                                     CIPXCancelECB( x );
 
-extern  void    NothingToDo(void);
+extern  void    NothingToDo( void );
 
 #define NUM_REC_BUFFS   5
 
@@ -114,6 +114,15 @@ static void MyDelay( unsigned amount )
     while( Tick < amount ) {
         NothingToDo();
     }
+}
+
+static void PostAListen( int i )
+{
+_DBG_IPX(("Posting RecECB[%d]\r\n", i));
+    _INITECB( RecECB[i], RecHead[i], 2, SPX );
+    RecECB[i].fragmentDescriptor[1].address = Buffer[i];
+    RecECB[i].fragmentDescriptor[1].size = sizeof( Buffer[i] );
+    CSPXListenForSequencedPacket( &RecECB[i] );
 }
 
 static unsigned DoRemoteGet( char *rec, unsigned len )
@@ -183,15 +192,6 @@ unsigned RemotePut( char *snd, unsigned len )
         return( REQUEST_FAILED );
     }
     return( len );
-}
-
-static void PostAListen( int i )
-{
-_DBG_IPX(("Posting RecECB[%d]\r\n", i));
-    _INITECB( RecECB[i], RecHead[i], 2, SPX );
-    RecECB[i].fragmentDescriptor[1].address = Buffer[i];
-    RecECB[i].fragmentDescriptor[1].size = sizeof( Buffer[i] );
-    CSPXListenForSequencedPacket( &RecECB[i] );
 }
 
 static void PostListens( void )

@@ -77,6 +77,11 @@ extern BOOL _EXPORT FAR PASCAL OptionsDlgProc( HWND hwnd, unsigned msg,
 
 long _EXPORT FAR PASCAL WindowProc( HWND, unsigned, UINT, LONG );
 
+/* Forward declarations */
+void StartupErr(char *err);
+void ServError( char *msg );
+void Output( char *str );
+
 /*
  * WinMain - initialization, message loop
  */

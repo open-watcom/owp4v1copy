@@ -47,6 +47,9 @@ static unsigned short PortTest[] = { 0x378, 0x3bc, 0x278 };
 static unsigned short PortAddress[NUM_ELTS( PortTest )];
 static unsigned PortsFound = 0;
 
+/* Forward declarations */
+void FiniSys( void );
+
 bool Terminate( void )
 {
         FiniSys();

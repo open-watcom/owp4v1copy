@@ -85,6 +85,10 @@ int             kSemaphoreSignalAll( void *sp );
 
 #endif
 
+/* Forward declarations */
+static void ClearDebugRegs( void );
+static void ActivateDebugRegs( void );
+
 struct      {
     dword   address;
     byte    type;
