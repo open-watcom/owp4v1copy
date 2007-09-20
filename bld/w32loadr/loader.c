@@ -432,24 +432,6 @@ typedef struct SysERegRec {
                            PVOID);
 } SYSEREGREC;
 
-void Fatal( char *what, PCONTEXTRECORD p )
-{
-    tiny_ret_t  rc;
-
-    DumpContext( what, p );
-    rc = TinyCreate( "_watcom_.dmp", 0 );
-    if( TINY_OK( rc ) ) {
-        MsgFileHandle = TINY_INFO( rc );
-        PrintMsg( "Program: %s\r\n", ProgramName );
-        PrintMsg( "CmdLine: %s\r\n", ProgramArgs );
-        DumpContext( what, p );
-        DumpEnvironment();
-        TinyClose( MsgFileHandle );
-        MsgFileHandle = 1;
-    }
-    DosExit( EXIT_PROCESS, 8 );
-}
-
 void DumpContext( char *what, PCONTEXTRECORD p )
 {
     int                 i;
@@ -478,6 +460,24 @@ void DumpContext( char *what, PCONTEXTRECORD p )
         i++;
     }
     PrintMsg( "\r\n" );
+}
+
+void Fatal( char *what, PCONTEXTRECORD p )
+{
+    tiny_ret_t  rc;
+
+    DumpContext( what, p );
+    rc = TinyCreate( "_watcom_.dmp", 0 );
+    if( TINY_OK( rc ) ) {
+        MsgFileHandle = TINY_INFO( rc );
+        PrintMsg( "Program: %s\r\n", ProgramName );
+        PrintMsg( "CmdLine: %s\r\n", ProgramArgs );
+        DumpContext( what, p );
+        DumpEnvironment();
+        TinyClose( MsgFileHandle );
+        MsgFileHandle = 1;
+    }
+    DosExit( EXIT_PROCESS, 8 );
 }
 
 ULONG _cdecl ExceptRoutine( PEXCEPTIONREPORTRECORD report,
@@ -602,25 +602,6 @@ typedef struct _REGISTRATION_RECORD {
     void                        *RegistrationRecordFilter;
 } REGISTRATION_RECORD;
 
-
-void Fatal( char *what, PCONTEXT p )
-{
-    tiny_ret_t  rc;
-
-    DumpContext( what, p );
-    rc = TinyCreate( "_watcom_.dmp", 0 );
-    if( TINY_OK( rc ) ) {
-        MsgFileHandle = TINY_INFO( rc );
-        PrintMsg( "Program: %s\r\n", ProgramName );
-        PrintMsg( "CmdLine: %s\r\n", ProgramArgs );
-        DumpContext( what, p );
-        DumpEnvironment();
-        TinyClose( MsgFileHandle );
-        MsgFileHandle = 1;
-    }
-    ExitProcess( 8 );
-}
-
 void DumpContext( char *what, PCONTEXT p )
 {
     int                 i;
@@ -649,6 +630,24 @@ void DumpContext( char *what, PCONTEXT p )
         i++;
     }
     PrintMsg( "\r\n" );
+}
+
+void Fatal( char *what, PCONTEXT p )
+{
+    tiny_ret_t  rc;
+
+    DumpContext( what, p );
+    rc = TinyCreate( "_watcom_.dmp", 0 );
+    if( TINY_OK( rc ) ) {
+        MsgFileHandle = TINY_INFO( rc );
+        PrintMsg( "Program: %s\r\n", ProgramName );
+        PrintMsg( "CmdLine: %s\r\n", ProgramArgs );
+        DumpContext( what, p );
+        DumpEnvironment();
+        TinyClose( MsgFileHandle );
+        MsgFileHandle = 1;
+    }
+    ExitProcess( 8 );
 }
 
 int __stdcall __ExceptionFilter( LPEXCEPTION_RECORD ex,

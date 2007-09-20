@@ -42,6 +42,9 @@
 extern void *ProfRealloc(void *p,size_t new_size);
 extern void SetSampleInfo(sio_data *curr_sio);
 
+/* Forward declarations */
+extern int  WPPopEvent( void );
+
 
 static int      *wpEventStack = 0;
 static void     *wpDataStack = 0;

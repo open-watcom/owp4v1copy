@@ -233,6 +233,27 @@ static char * Day[] = {
         "Sat  "
         };
 
+
+/* Forward declarations */
+extern  void    Replace( char *frum, char *to, char *into );
+extern  void    FinishName( char *fn, file_parse *parse, int loc, int addext );
+extern  int     GetFreeSpace( dir_handle *h, int loc );
+extern  void    Format( char *buff, trap_dta *dir, bool wide );
+extern  void    CopyStrMax( char *src, char *dst, unsigned int max_len );
+        
+void    FreeCopySpec( COPYPTR junk );
+void    ProcCD( int argc, char **argv, int crlf );
+int     ProcessCmd( char * cmd );
+int     ProcessArgv( int argc, char **argv, char *cmd );
+void    ProcCopy( int argc, char **argv );
+void    ProcDir( int argc, char **argv );
+void    ProcMakeDir( int argc, char **argv );
+void    ProcErase( int argc, char **argv );
+void    ProcDelDir( int argc, char **argv );
+void    ProcRename( int argc, char **argv );
+void    ProcType( int argc, char **argv );
+int     ProcDrive( int argc, char **argv );
+
 /**************************************************************************/
 /* UTILITIES                                                              */
 /**************************************************************************/

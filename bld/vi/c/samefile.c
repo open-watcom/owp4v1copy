@@ -45,6 +45,12 @@
     #define file_cmp    stricmp
 #endif
 
+#ifdef __WINDOWS__
+/* Forward declarations */
+void WinGetFullPath( char *filename, char *full );
+#endif
+
+
 /*
  * SameFile - check if two files are the same
  */
@@ -54,25 +60,25 @@ int SameFile( char *f1, char *f2 )
         return( TRUE );
     }
 
-{
-    char        full1[FILENAME_MAX];
-    char        full2[FILENAME_MAX];
+    {
+        char        full1[FILENAME_MAX];
+        char        full2[FILENAME_MAX];
 
 #ifndef __WINDOWS__
-    DosGetFullPath( f1, full1 );
-    DosGetFullPath( f2, full2 );
+        DosGetFullPath( f1, full1 );
+        DosGetFullPath( f2, full2 );
 #else
 // this is not to be used under NT
-    WinGetFullPath( f1, full1 );
-    WinGetFullPath( f2, full2 );
+        WinGetFullPath( f1, full1 );
+        WinGetFullPath( f2, full2 );
 #endif
-    if( !file_cmp( full1, full2 ) ) {
-        if( EditFlags.SameFileCheck ) {
-            return( TRUE );
+        if( !file_cmp( full1, full2 ) ) {
+            if( EditFlags.SameFileCheck ) {
+                return( TRUE );
+            }
+            EditFlags.DuplicateFile = TRUE;
         }
-        EditFlags.DuplicateFile = TRUE;
     }
-}
 
     return( FALSE );
 
@@ -89,7 +95,7 @@ int SameFile( char *f1, char *f2 )
  *                  to resolve full file name from protected mode windows.
  *                  ( Ref. UnDocumented DOS pg. 149 )
  */
-void WinGetFullPath( char *filename, char *full ){
+void WinGetFullPath( char *filename, char *full ) {
 
     rm_call_struct r;
 

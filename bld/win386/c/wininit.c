@@ -135,6 +135,7 @@ extern WORD     DPL,Has87,HasWGod;
 extern void     FAR __CallBack();
 void GetDataSelectorInfo( void );
 WORD InitFlatAddrSpace( DWORD baseaddr, DWORD len );
+void CodeRelocate( DWORD far *reloc, WORD cnt );
 
 #define Align4K( x ) (((x)+0xfffL) & ~0xfffL )
 

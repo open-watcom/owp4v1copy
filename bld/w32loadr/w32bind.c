@@ -65,6 +65,12 @@ char    *CompressedBufPtr;
 unsigned short  *RelocBuffer;
 #define W32Putc(c) *CompressedBufPtr++ = (c)
 
+/* Function prototypes */
+int lookup( unsigned char, unsigned char );
+int fileread( FILE * );
+void CompressFile( int handle, DWORD filesize );
+void CompressRelocs( DWORD relocsize );
+
 int CmpReloc( const void *_p, const void *_q )
 {
     DWORD       reloc1, const *p = _p;
@@ -413,10 +419,6 @@ int     old_size;
 int     chars_used;
 int     BlockSize;
 
-/* Function prototypes */
-int lookup( unsigned char, unsigned char );
-int fileread( FILE * );
-
 /* Return index of character pair in hash table */
 /* Deleted nodes have count of 1 for hashing */
 
@@ -547,48 +549,6 @@ void inc_count( int index )
     }
 }
 
-/* Compress from input file to output file */
-void CompressFile( int handle, DWORD filesize )
-{
-    int         len;
-
-    /* Compress each data block until end of file */
-    BlockSize = 2048;
-    while( filesize != 0 ) {
-        len = BlockSize;
-        if( len > filesize )  len = filesize;
-        if( read( handle, buffer, len ) != len ) {
-            printf( "Read error\n" );
-            exit( 1 );
-        }
-        HashBlock( len );
-        CompressBlock();
-        filewrite();
-        filesize -= len;
-    }
-}
-
-void CompressRelocs( DWORD relocsize )
-{
-    int         len;
-    char        *p;
-
-    p = (char *)RelocBuffer;
-    while( relocsize != 0 ) {
-        if( relocsize < BLOCKSIZE ) {
-            len = relocsize;
-        } else {
-            len = 4096;
-        }
-        memcpy( buffer, p, len );
-        p += len;
-        HashBlock( len );
-        CompressBlock();
-        filewrite();
-        relocsize -= len;
-    }
-}
-
 void CompressBlock( void )
 {
     unsigned char       leftch;
@@ -664,5 +624,47 @@ void CompressBlock( void )
         /* Delete pair from hash table */
 //          index = lookup( leftch, rightch );
         count[best_index] = 1;
+    }
+}
+
+void CompressRelocs( DWORD relocsize )
+{
+    int         len;
+    char        *p;
+
+    p = (char *)RelocBuffer;
+    while( relocsize != 0 ) {
+        if( relocsize < BLOCKSIZE ) {
+            len = relocsize;
+        } else {
+            len = 4096;
+        }
+        memcpy( buffer, p, len );
+        p += len;
+        HashBlock( len );
+        CompressBlock();
+        filewrite();
+        relocsize -= len;
+    }
+}
+
+/* Compress from input file to output file */
+void CompressFile( int handle, DWORD filesize )
+{
+    int         len;
+
+    /* Compress each data block until end of file */
+    BlockSize = 2048;
+    while( filesize != 0 ) {
+        len = BlockSize;
+        if( len > filesize )  len = filesize;
+        if( read( handle, buffer, len ) != len ) {
+            printf( "Read error\n" );
+            exit( 1 );
+        }
+        HashBlock( len );
+        CompressBlock();
+        filewrite();
+        filesize -= len;
     }
 }

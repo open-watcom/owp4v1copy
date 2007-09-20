@@ -78,6 +78,9 @@ static menu     *currMenu = NULL;
 
 static int      selectedItem;
 
+/* Forward declarations */
+int InitMenu( void );
+
 /* utility functions used in rest of module */
 
 /*
