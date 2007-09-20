@@ -319,12 +319,6 @@ void WFreeStringTableBlock( WStringBlock *block )
     }
 }
 
-void WFreeStringNodes( WStringInfo *info )
-{
-    WFreeStringNode( info->tables );
-    info->tables = NULL;
-}
-
 void WFreeStringNode( WStringNode *node )
 {
     WStringNode *n;
@@ -364,6 +358,12 @@ WStringNode *WMakeStringNodeFromStringBlock( WStringBlock *block )
     }
 
     return( node );
+}
+
+void WFreeStringNodes( WStringInfo *info )
+{
+    WFreeStringNode( info->tables );
+    info->tables = NULL;
 }
 
 WStringNode *WMakeStringNodes( WStringTable *tbl )

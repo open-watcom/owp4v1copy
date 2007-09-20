@@ -48,8 +48,10 @@
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
-static void          WdeFreeControlList       ( LIST **);
-static void          WdeDestroyMDIWindow      ( HWND );
+static void          WdeFreeControlList( LIST **);
+static void          WdeDestroyMDIWindow( HWND );
+void                  WdeFreeResItemList( LIST **item_list );
+
 
 Bool WdeFreeResInfo( WdeResInfo *res_info )
 {
@@ -86,10 +88,10 @@ Bool WdeFreeResInfo( WdeResInfo *res_info )
     return( TRUE );
 }
 
-Bool WdeFreeDialogBoxInfo ( WdeDialogBoxInfo *dlg_info )
+Bool WdeFreeDialogBoxInfo( WdeDialogBoxInfo *dlg_info )
 {
 
-    if (dlg_info != NULL) {
+    if(dlg_info != NULL) {
         WdeFreeControlList ( &(dlg_info->control_list) );
         WdeFreeDialogBoxHeader ( &(dlg_info->dialog_header) );
         WdeMemFree ( dlg_info );
@@ -118,13 +120,13 @@ void WdeFreeResDlgItem ( WdeResDlgItem **ditem, Bool destroy_object )
     }
 }
 
-void WdeFreeControlList ( LIST **control_list )
+void WdeFreeControlList( LIST **control_list )
 {
     WdeDialogBoxControl *control;
     LIST                *clist;
 
-    if ( (control_list != NULL) && (*control_list != NULL) ){
-        for ( clist = *control_list; clist; clist = ListNext(clist) ) {
+    if( (control_list != NULL) && (*control_list != NULL) ){
+        for( clist = *control_list; clist; clist = ListNext(clist) ) {
             control = (WdeDialogBoxControl *) ListElement(clist);
             WdeFreeDialogBoxControl( &control );
         }
@@ -133,15 +135,15 @@ void WdeFreeControlList ( LIST **control_list )
     }
 }
 
-void WdeFreeResItemList ( LIST **item_list )
+void WdeFreeResItemList( LIST **item_list )
 {
     LIST          *ilist;
     WdeResDlgItem *item;
 
-    if ( (item_list != NULL) && (*item_list != NULL) ) {
-        for ( ilist = *item_list; ilist; ilist = ListNext(ilist) ) {
+    if( (item_list != NULL) && (*item_list != NULL) ) {
+        for( ilist = *item_list; ilist; ilist = ListNext(ilist) ) {
             item = (WdeResDlgItem *) ListElement(ilist);
-            if ( item->object ) {
+            if( item->object ) {
                 Destroy ( item->object, FALSE );
             } else {
                 WdeFreeResDlgItem ( &item, TRUE );
@@ -152,59 +154,59 @@ void WdeFreeResItemList ( LIST **item_list )
     }
 }
 
-WdeResDlgItem *WdeAllocResDlgItem ( void )
+WdeResDlgItem *WdeAllocResDlgItem( void )
 {
     WdeResDlgItem  *item;
 
     item = (WdeResDlgItem *) WdeMemAlloc ( sizeof(WdeResDlgItem) );
 
-    if ( item ) {
-        memset ( item, 0, sizeof(WdeResDlgItem) );
+    if( item ) {
+        memset( item, 0, sizeof(WdeResDlgItem) );
     }
 
-    return ( item );
+    return( item );
 }
 
-WdeResInfo *WdeAllocResInfo ( void )
+WdeResInfo *WdeAllocResInfo( void )
 {
     WdeResInfo  *res_info;
 
     res_info = (WdeResInfo *) WdeMemAlloc ( sizeof(WdeResInfo) );
 
-    if ( res_info ) {
+    if( res_info ) {
         memset ( res_info, 0, sizeof(WdeResInfo) );
     }
 
-    return ( res_info );
+    return( res_info );
 }
 
-Bool WdeIsResModified ( WdeResInfo *res_info )
+Bool WdeIsResModified( WdeResInfo *res_info )
 {
     LIST          *ilist;
     WdeResDlgItem *item;
 
-    if ( res_info ) {
-        if ( res_info->modified ) {
+    if( res_info ) {
+        if( res_info->modified ) {
             return ( TRUE );
         }
-        for ( ilist=res_info->dlg_item_list; ilist; ilist=ListNext(ilist) ) {
+        for( ilist=res_info->dlg_item_list; ilist; ilist=ListNext(ilist) ) {
             item = (WdeResDlgItem *) ListElement(ilist);
-            if ( item->modified ) {
+            if( item->modified ) {
                 return ( TRUE );
             }
         }
     }
 
-    return ( FALSE );
+    return( FALSE );
 }
 
-void WdeSetResModified ( WdeResInfo *res_info, Bool mod )
+void WdeSetResModified( WdeResInfo *res_info, Bool mod )
 {
     LIST          *ilist;
     WdeResDlgItem *item;
 
-    if ( res_info ) {
-        for ( ilist=res_info->dlg_item_list; ilist; ilist=ListNext(ilist) ) {
+    if( res_info ) {
+        for( ilist=res_info->dlg_item_list; ilist; ilist=ListNext(ilist) ) {
             item = (WdeResDlgItem *) ListElement(ilist);
             item->modified = mod;
         }
@@ -212,8 +214,8 @@ void WdeSetResModified ( WdeResInfo *res_info, Bool mod )
     }
 }
 
-void WdeDestroyMDIWindow ( HWND win )
+void WdeDestroyMDIWindow( HWND win )
 {
-    SendMessage ( WdeGetMDIWindowHandle(), WM_MDIDESTROY, (WPARAM) win, 0 );
+    SendMessage( WdeGetMDIWindowHandle(), WM_MDIDESTROY, (WPARAM) win, 0 );
 }
 

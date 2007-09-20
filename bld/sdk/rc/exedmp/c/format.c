@@ -129,6 +129,12 @@ const unsigned_32 obj_masks_table[] = {
 
 int indentLevel = 0;
 
+/* forward declarations */
+void printHexDump( long int addr, size_t length, ExeFile *exeFile,
+                   Parameters *param );
+void printHexBytes( long int addr, size_t length, ExeFile *exeFile );
+
+
 void indentMore( int level )
 /***************************/
 {

@@ -36,6 +36,9 @@
 #include "wrfindt.h"
 #include "wrmem.h"
 
+/* forward declaration */
+int WRIsCorrectNode( WResID *node, uint_16 id, char *name );
+
 /****************************************************************************/
 /* static function prototypes                                               */
 /****************************************************************************/
@@ -63,22 +66,22 @@ WResTypeNode * WR_EXPORT WRFindTypeNodeFromWResID( WResDir dir, WResID *type )
 
     type_node = NULL;
 
-    if ( dir && type ) {
-        if ( type->IsName ) {
-            type_name = WResIDToStr ( type );
-            if ( type_name ) {
-                type_node = WRFindTypeNode ( dir, 0, type_name );
-                WRMemFree ( type_name );
+    if( dir && type ) {
+        if( type->IsName ) {
+            type_name = WResIDToStr( type );
+            if( type_name ) {
+                type_node = WRFindTypeNode( dir, 0, type_name );
+                WRMemFree( type_name );
             }
         } else {
-            type_node = WRFindTypeNode ( dir, type->ID.Num, NULL );
+            type_node = WRFindTypeNode( dir, type->ID.Num, NULL );
         }
     }
 
-    return ( type_node );
+    return( type_node );
 }
 
-WResResNode * WR_EXPORT WRFindResNodeFromWResID ( WResTypeNode *type,
+WResResNode * WR_EXPORT WRFindResNodeFromWResID( WResTypeNode *type,
                                                   WResID *res )
 {
     WResResNode *res_node;
@@ -86,120 +89,120 @@ WResResNode * WR_EXPORT WRFindResNodeFromWResID ( WResTypeNode *type,
 
     res_node = NULL;
 
-    if ( type && res ) {
-        if ( res->IsName ) {
-            res_name = WResIDToStr ( res );
-            if ( res_name ) {
-                res_node = WRFindResNode ( type, 0, res_name );
-                WRMemFree ( res_name );
+    if( type && res ) {
+        if( res->IsName ) {
+            res_name = WResIDToStr( res );
+            if( res_name ) {
+                res_node = WRFindResNode( type, 0, res_name );
+                WRMemFree( res_name );
             }
         } else {
-            res_node = WRFindResNode ( type, res->ID.Num, NULL );
+            res_node = WRFindResNode( type, res->ID.Num, NULL );
         }
     }
 
-    return ( res_node );
+    return( res_node );
 }
 
-WResLangNode * WR_EXPORT WRFindLangNodeFromLangType ( WResResNode *rnode,
+WResLangNode * WR_EXPORT WRFindLangNodeFromLangType( WResResNode *rnode,
                                                       WResLangType *lang )
 {
     WResLangNode *lnode;
 
-    if ( rnode && lang ) {
+    if( rnode && lang ) {
         lnode = rnode->Head;
-        while ( lnode ) {
-            if ( ( lnode->Info.lang.lang == lang->lang )  &&
-                 ( lnode->Info.lang.sublang == lang->sublang ) ) {
-                return ( lnode );
+        while( lnode ) {
+            if(( lnode->Info.lang.lang == lang->lang )  &&
+                ( lnode->Info.lang.sublang == lang->sublang ) ) {
+                return( lnode );
             }
-            if ( lnode == rnode->Tail ) {
+            if( lnode == rnode->Tail ) {
                 break;
             }
             lnode = lnode->Next;
         }
     }
 
-    return ( NULL );
+    return( NULL );
 }
 
-WResTypeNode * WR_EXPORT WRFindTypeNode ( WResDir dir, uint_16 type,
+WResTypeNode * WR_EXPORT WRFindTypeNode( WResDir dir, uint_16 type,
                                           char *type_name )
 {
     WResTypeNode *type_node;
 
-    if ( dir == NULL ) {
-        return ( NULL );
+    if( dir == NULL ) {
+        return( NULL );
     }
 
     type_node = dir->Head;
 
-    while (type_node != NULL) {
+    while(type_node != NULL) {
 
-        if (WRIsCorrectNode (&type_node->Info.TypeName, type, type_name)) {
-            return ( type_node );
+        if(WRIsCorrectNode(&type_node->Info.TypeName, type, type_name)) {
+            return( type_node );
         }
 
-        if ( type_node == dir->Tail ) {
+        if( type_node == dir->Tail ) {
             break;
         }
 
         type_node = type_node->Next;
     }
 
-    return ( NULL );
+    return( NULL );
 
 }
 
-WResResNode * WR_EXPORT WRFindResNode ( WResTypeNode *type, uint_16 res,
+WResResNode * WR_EXPORT WRFindResNode( WResTypeNode *type, uint_16 res,
                                         char *res_name )
 {
     WResResNode *res_node;
 
-    if ( type == NULL ) {
-        return ( NULL );
+    if( type == NULL ) {
+        return( NULL );
     }
 
     res_node = type->Head;
 
-    while ( res_node != NULL ) {
+    while( res_node != NULL ) {
 
-        if (WRIsCorrectNode (&res_node->Info.ResName, res, res_name)) {
-            return ( res_node );
+        if(WRIsCorrectNode(&res_node->Info.ResName, res, res_name)) {
+            return( res_node );
         }
 
-        if ( res_node == type->Tail ) {
+        if( res_node == type->Tail ) {
             break;
         }
 
         res_node = res_node->Next;
     }
 
-    return ( NULL );
+    return( NULL );
 
 }
 
-int WRIsCorrectNode ( WResID *node, uint_16 id, char *name )
+int WRIsCorrectNode( WResID *node, uint_16 id, char *name )
 {
     char *type_name;
     int  ret;
 
     ret = FALSE;
 
-    if ( !node->IsName ) {
-        if ( node->ID.Num == id ) {
+    if( !node->IsName ) {
+        if( node->ID.Num == id ) {
             ret = TRUE;
         }
-    } else if ( name ) {
-        type_name = WResIDToStr ( node );
-        if ( type_name ) {
-            if ( !stricmp ( type_name, name ) ) {
+    } else if( name ) {
+        type_name = WResIDToStr( node );
+        if( type_name ) {
+            if( !stricmp( type_name, name ) ) {
                 ret = TRUE;
             }
-            WRMemFree ( type_name );
+            WRMemFree( type_name );
         }
     }
 
-    return ( ret );
+    return( ret );
 }
 
