@@ -99,6 +99,10 @@ static int fileStackLevel = -1;
 
 TargetLangOpt g_tlang;
 
+/* Forward declarations */
+int popPrintStack(PrintStackType *type, PrintType *listType, void **data, void**param, int *fileNum);
+
+
 static pOUnit _createOUnit(OUnitType type, pTokPos pos, char *string) {
     pOUnit newUnit = wicMalloc(sizeof *newUnit);
     newUnit->type = type;
