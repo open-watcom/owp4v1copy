@@ -698,6 +698,7 @@ static void defaultParms( void )
     #ifdef YYDEBUG
         CmdLineParms.DebugParser = FALSE;
     #endif
+    CmdLineParms.DBCharSupport = DB_NONE;
     CmdLineParms.PrintHelp = FALSE;
     CmdLineParms.Quiet = FALSE;
     CmdLineParms.Pass1Only = FALSE;
@@ -803,8 +804,10 @@ static void getCodePage( void ) {
         }
     } else {
 #ifdef NT_HOSTED
-        SetNativeLeadBytes();
-        ConvToUnicode = NativeDBStringToUnicode;
+        if(DB_NONE == CmdLineParms.DBCharSupport){
+            SetNativeLeadBytes();
+            ConvToUnicode = NativeDBStringToUnicode;
+        }
 #endif
     }
 }
