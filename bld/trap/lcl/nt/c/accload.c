@@ -489,7 +489,6 @@ unsigned ReqProg_load( void )
 
 #ifdef WOW
     if( IsWOW ) {
-
         ret->flags = LD_FLAG_IS_PROT;
         ret->err = 0;
         ret->task_id = DebugeePid;
@@ -525,7 +524,44 @@ unsigned ReqProg_load( void )
         MySetThreadContext( ti, &con );
     } else
 #endif
- {
+    if( IsDOS ) {
+        // TODO! Clean up this code
+        ret->flags = 0; //LD_FLAG_IS_PROT;
+        ret->err = 0;
+        ret->task_id = DebugeePid;
+        /*
+         * we use our own CS and DS as the Flat CS and DS, for lack
+         * of anything better
+         */
+        FlatDS = DS();
+        FlatCS = CS();
+        if( !executeUntilVDMStart() ) {
+            ret->err = GetLastError();
+            if( buff ) {
+                free( buff );
+                buff = NULL;
+            }
+            return( sizeof( *ret ) );
+        }
+#if 0
+        if( pid ) {
+            addAllWOWModules();
+        } else {
+            addKERNEL();
+        }
+#endif
+        /*
+         * we save the starting CS:IP of the WOW app, since we will use
+         * it to force execution of code later
+         */
+        ti = FindThread( DebugeeTid );
+        MyGetThreadContext( ti, &con );
+        WOWAppInfo.segment = ( WORD ) con.SegCs;
+        WOWAppInfo.offset = ( WORD ) con.Eip;
+        con.SegSs = con.SegDs; // Wow lies about the stack segment.  Reset it
+        con.Esp = stack;
+        MySetThreadContext( ti, &con );
+    } else {
         DWORD base;
 
         if( pid == 0 ) {
