@@ -112,8 +112,10 @@
 .fnc cgets                      cgets.gml       DOS QNX W WIN32
 .fnc _chain_intr                chainint.gml    DOS
 .fnc chdir                      chdir.gml       DOS QNX W WIN32
+.fnc _chdir                     chdir.gml       DOS QNX W WIN32
 .fnw _wchdir                    chdir.gml       DOS       WIN32
 .fnu _uchdir                    chdir.gml       DOS       WIN32
+.fnc _chdrive                   chdrive.gml     DOS     W WIN32
 .fnc chkctype                   chkctype.gml    NEC
 .fnc chmod                      chmod.gml       DOS QXO   WIN32
 .fnc _chmod                     chmod.gml       DOS       WIN32
@@ -708,6 +710,7 @@
 .fnc jtolower                   jtolower.gml    NEC
 .fnc jtoupper                   jtoupper.gml    NEC
 .fnc kbhit                      kbhit.gml       DOS QNX W WIN32
+.fnc _kbhit                     kbhit.gml       DOS QNX W WIN32
 .fnc kill                       kill.gml            QXO
 .fnc labs                       labs.gml        DOS QNX W WIN32
 .fnc ldexp                      ldexp.gml       DOS QNX W WIN32
@@ -1280,6 +1283,7 @@
 .fnc sscanf_s                   sscanf_s.gml    DOS QNX W WIN32
 .fnw swscanf_s                  sscanf_s.gml    DOS QNX W WIN32
 .fnc stackavail                 stackava.gml    DOS QNX W WIN32
+.fnc _stackavail                stackava.gml    DOS QNX W WIN32
 .fnc stat                       stat.gml        DOS QNX W WIN32
 .fnc _stat                      stat.gml        DOS       WIN32
 .fn8 _stati64                   stat.gml        DOS       WIN32

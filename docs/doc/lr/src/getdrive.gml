@@ -16,11 +16,11 @@ A value of 1 is drive A, 2 is drive B, 3 is drive C, etc.
 #include <stdio.h>
 #include <direct.h>
 .exmp break
-void main()
-  {
+void main( void )
+{
     printf( "The current drive is %c\n",
                 'A' + _getdrive() - 1 );
-  }
+}
 .exmp output
 The current drive is C
 .exmp end

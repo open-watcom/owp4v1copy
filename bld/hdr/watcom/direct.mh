@@ -85,6 +85,8 @@ typedef struct dirent   DIR;
 :include dskfreet.sp
 
 _WCRTLINK extern int              chdir( const char *__path );
+_WCRTLINK extern int              _chdir( const char *__path );
+_WCRTLINK extern int              _chdrive( int __drive );
 _WCRTLINK extern int              closedir( struct dirent * );
 _WCRTLINK extern char             *getcwd( char *__buf, size_t __size );
 _WCRTLINK extern char             *_getcwd( char *__buf, size_t __size );

@@ -23,6 +23,7 @@ _WCRTLINK extern int _getch(void);
 _WCRTLINK extern int getche(void);
 _WCRTLINK extern int _getche(void);
 _WCRTLINK extern int kbhit(void);
+_WCRTLINK extern int _kbhit(void);
 #if defined(_M_IX86)
  _WCIRTLINK extern unsigned inp(unsigned __port);
  _WCIRTLINK extern unsigned inpw(unsigned __port);

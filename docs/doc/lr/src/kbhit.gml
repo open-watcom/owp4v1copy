@@ -1,7 +1,10 @@
-.func kbhit
+.func kbhit _kbhit
 #include <conio.h>
 int kbhit( void );
 .ixfunc2 '&KbIo' &func
+.if &'length(&_func.) ne 0 .do begin
+int _kbhit( void );
+.ixfunc2 '&KbIo' &_func
 .funcend
 .desc begin
 The &func function tests whether or not a keystroke is currently
@@ -17,6 +20,11 @@ continuously until a keystroke is available.
 .if '&machsys' eq 'QNX' .do begin
 Note that loops involving the &func function are not recommended in
 multitasking systems.
+.do end
+.if &'length(&_func.) ne 0 .do begin
+.np
+The &_func function is identical to &func..
+Use &_func for ANSI/ISO naming conventions.
 .do end
 .desc end
 .return begin
@@ -35,18 +43,22 @@ non-zero value is returned.
 #include <stdio.h>
 #include <conio.h>
 
-void main()
-  {
+void main( void )
+{
     unsigned long i;
 .exmp break
     printf( "Program looping. Press any key.\n" );
     for( i = 0; i < 10000; i++ ) {
-      if( kbhit() ) {
-        getch();
-        break;
-      }
+        if( kbhit() ) {
+            getch();
+            break;
+        }
     }
-  }
+}
 .exmp end
 .class WATCOM
+.if &'length(&_func.) ne 0 .do begin
+.np
+&_func conforms to ANSI/ISO naming conventions
+.do end
 .system

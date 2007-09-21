@@ -24,38 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of kbhit() for DOS.
+* Description:  Implementation of _chdrive().
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include <dos.h>
-#include <conio.h>
-#include "rtdata.h"
-#include "defwin.h"
+#include <direct.h>
 
-#ifndef DEFAULT_WINDOWING
-    extern      signed char _os_kbhit( void );
-
-    #pragma aux _os_kbhit =  "mov ah,0bh"   \
-                             "int 21h"      \
-                             value [al];
-#endif
-
-_WCRTLINK int kbhit( void )
+_WCRTLINK int _chdrive( int drive )
 {
-    if( _RWD_cbyte != 0 )
-        return( 1 );
-#ifdef DEFAULT_WINDOWING
-    if( _WindowsKbhit != 0 ) {
-        LPWDATA res;
-        res = _WindowsIsWindowedHandle( STDIN_FILENO );
-        return( _WindowsKbhit( res ) );
-    } else {
-        return( 0 );
-    }
-#else
-    return( _os_kbhit() );
-#endif
+    unsigned    dnum, ndrv;
+
+    _dos_setdrive( drive, &ndrv );
+    _dos_getdrive( &dnum );
+    return( dnum == drive ? 0 : -1 );
 }
