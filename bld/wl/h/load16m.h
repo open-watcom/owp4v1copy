@@ -41,7 +41,7 @@ enum {
 #define TRANS_SPECD (TRANS_DATA | TRANS_STACK)
 
 extern void     Fini16MLoadFile( void );
-extern unsigned NextDos16Seg( void );
-extern segment  Find16MSeg( segment selector );
+extern unsigned ToD16MSel( unsigned );
+extern segment  Find16MSeg( segment );
 extern void     CalcGrpSegs( void );
 extern void     MakeDos16PM( void );

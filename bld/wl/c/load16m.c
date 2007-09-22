@@ -66,8 +66,8 @@ typedef struct context {
     reloc_addr      *reloc_data;
 } context;
 
-static unsigned long PrevSeg = 1;
-static unsigned      reloc_fmt = 0;
+static unsigned_32  LastSel = 0;
+static unsigned     reloc_fmt = 0;
 
 static void WriteGDT( unsigned_32 reloc_size )
 /********************************************/
@@ -325,7 +325,6 @@ extern void Fini16MLoadFile( void )
     _HostU16toTarg( 2000, exe_head.MAKEPM_version );   // pretend GLU version 2.0
     _HostU32toTarg( exe_size + stub_size, exe_head.next_header_pos );
     _HostU32toTarg( 0, exe_head.cv_info_offset );
-    _HostU16toTarg( PrevSeg + extra_sels * sizeof( gdt_info ), exe_head.last_sel_used );
     if( extra_sels ) {
         _HostU16toTarg( ef_auto, exe_head.exp_flags );
     } else {
@@ -338,25 +337,33 @@ extern void Fini16MLoadFile( void )
     _HostU16toTarg( FmtData.u.d16m.selstart, exe_head.first_selector );
     _HostU16toTarg( FmtData.u.d16m.buffer, exe_head.transfer_buffer_size );
     _HostU16toTarg( FmtData.u.d16m.strategy, exe_head.default_mem_strategy );
+    while( extra_sels-- ) {
+        LastSel += sizeof( gdt_info );
+        if( LastSel > 0xFFFF ) {
+            LnkMsg( FTL + MSG_TOO_MANY_SELECTORS, NULL );
+        }
+        if( LastSel >= 0xA000 && (LastSel & 0x1FF) == 0 ) {   // check for reserved selector
+            LastSel += sizeof( gdt_info );
+        }
+    }
+    _HostU16toTarg( LastSel, exe_head.last_sel_used );
     WriteLoad( &exe_head, sizeof( exe_head ) );
     WriteGDT( reloc_size );
 }
 
-extern unsigned NextDos16Seg( void )
-/**********************************/
+extern unsigned ToD16MSel( unsigned seg_num )
+/*******************************************/
 {
-    if( PrevSeg == 1 ) {
-        PrevSeg = FmtData.u.d16m.selstart;
-    } else {
-        PrevSeg += sizeof( gdt_info );
-        if( PrevSeg >= 0xA000 && !(PrevSeg & 0x1FF) ) {  // reserved selector
-            PrevSeg += sizeof( gdt_info );
+    unsigned_32    x;
+    
+    LastSel = FmtData.u.d16m.selstart + ( seg_num - 1 ) * sizeof( gdt_info );
+    for( x = 0xA000; LastSel >= x; x += 0x200 ) {   // check for reserved selector
+        LastSel += sizeof( gdt_info );
+        if( LastSel > 0xFFFF ) {
+            LnkMsg( FTL + MSG_TOO_MANY_SELECTORS, NULL );
         }
     }
-    if( PrevSeg > 0xFFFF ) {
-        LnkMsg( FTL + MSG_TOO_MANY_SELECTORS, NULL );
-    }
-    return( (unsigned)PrevSeg );
+    return( LastSel );
 }
 
 extern segment Find16MSeg( segment selector )

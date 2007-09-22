@@ -598,9 +598,7 @@ void CalcAddresses( void )
             }
             flat = ROUND_UP( flat + size, FmtData.objalign );
         }
-        if( FmtData.type & ( MK_QNX_FLAT | MK_PE | MK_ELF ) ) {
-            ReallocFileSegs();
-        }
+        ReallocFileSegs();
     } else if( FmtData.type & ( MK_QNX | MK_OS2_16BIT ) ) {
         ReallocFileSegs();
     }
@@ -621,7 +619,7 @@ static void AllocFileSegs( void )
             currgrp->grp_addr.seg = 1;   // only segment 1 in flat mem.model
 #ifdef _DOS16M
         } else if( FmtData.type & MK_DOS16M ) {
-            currgrp->grp_addr.seg = NextDos16Seg();
+            currgrp->grp_addr.seg = ToD16MSel( seg_num++ );
 #endif
         } else if( FmtData.type & MK_ID_SPLIT ) {
             if( currgrp->segflags & SEG_DATA ) {
@@ -664,14 +662,21 @@ static void ReallocFileSegs( void )
 
     seg_num = 1;
     for( currgrp = Groups; currgrp != NULL; currgrp = currgrp->next_group ){
-        if( currgrp->totalsize != 0 ) {
-            if( FmtData.type & MK_QNX ) {
-                currgrp->grp_addr.seg = ToQNXSel( seg_num++ );
-            } else {
-                currgrp->grp_addr.seg = seg_num++;
-            }
+        /*
+         * segment number is also set for zero length group to be 
+         * segments in map file sorted properly even if they are not emited
+         * into load file
+         */
+        if( FmtData.type & MK_QNX ) {
+            currgrp->grp_addr.seg = ToQNXSel( seg_num );
         } else {
-            NumGroups--;        /* <-- to make life easier in loadxxx */
+            currgrp->grp_addr.seg = seg_num;
+        }
+        if( currgrp->totalsize != 0 ) {
+            seg_num++;
+        } else {
+            /* to make life easier in loadxxx */
+            NumGroups--;
         }
     }
     for( class = Root->classlist; class != NULL; class = class->next_class ){
