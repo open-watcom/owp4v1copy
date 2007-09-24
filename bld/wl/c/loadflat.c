@@ -45,6 +45,8 @@
 #include "dbgall.h"
 #include "vxd_ddb.h"
 
+#define STUB_ALIGN 16
+
 #define PAGE_COUNT( size )  (((size)+(OSF_DEF_PAGE_SIZE-1))>>OSF_PAGE_SHIFT)
 #define PAGEMAP_BUF_SIZE (MAX_HEADROOM / sizeof(map_entry) * (unsigned long)OSF_DEF_PAGE_SIZE)
 
@@ -425,7 +427,7 @@ void FiniOS2FlatLoadFile( void )
     unsigned            last_page;
 
     memset( &exe_head, 0, sizeof( exe_head ) ); /* zero all header fields */
-    stub_len = Write_Stub_File();
+    stub_len = Write_Stub_File( STUB_ALIGN );
     curr_loc  = sizeof(os2_flat_header);
     SeekLoad( stub_len + sizeof(os2_flat_header) );
     curr_loc += WriteObjectTables( &exe_head, curr_loc );

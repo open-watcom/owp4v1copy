@@ -73,6 +73,8 @@
 #define MINIMUM_SEG_SHIFT       2       /* Corresponds to 2^2 == 4 bytes */
 #define DEFAULT_SEG_SHIFT       9       /* Corresponds to 2^9 == 512 bytes */
 
+#define STUB_ALIGN 8    /* for PE format */
+
 #pragma pack(1);
 
 typedef struct {
@@ -1113,7 +1115,7 @@ void FiniPELoadFile( void )
     exe_head.num_tables = PE_TBL_NUMBER;
     CurrSect = Root;
     SeekLoad( 0 );
-    stub_len = Write_Stub_File();
+    stub_len = Write_Stub_File( STUB_ALIGN );
     _ChkAlloc( object, num_objects * sizeof( pe_object ) );
     memset( object, 0, num_objects * sizeof( pe_object ) );
     /* leave space for the header and object table */
@@ -1207,8 +1209,8 @@ unsigned long GetPEHeaderSize( void )
     unsigned            num_objects;
 
     num_objects = FindNumObjects();
-    size = sizeof( pe_header ) + num_objects * sizeof( pe_object );
-    size += GetStubSize();
+    size = ROUND_UP( GetStubSize(), STUB_ALIGN );
+    size += sizeof( pe_header ) + num_objects * sizeof( pe_object );
     return( ROUND_UP( size, FmtData.objalign ) );
 }
 
