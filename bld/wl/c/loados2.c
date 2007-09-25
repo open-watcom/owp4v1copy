@@ -696,6 +696,12 @@ void ChkOS2Exports( void )
             } else if( exp->sym->info & SYM_WAS_LAZY ) {
                 LnkMsg( WRN+MSG_EXP_SYM_NOT_FOUND, "s", exp->sym->name );
             }
+            // Keep the import name. If an alias is exported, we want the
+            // alias name in the import lib, not the substitute name
+            if( exp->impname == NULL ) {
+                exp->impname = ChkStrDup( exp->sym->name );
+            }
+
             exp->sym = symptr;
         }
         if( !(symptr->info & SYM_DEFINED) ) {
