@@ -32,8 +32,8 @@
 #include <wlib.h>
 #include "symomf.h"
 
-static unsigned short CurrSegRef = 0;
-static char                     Rec32Bit;
+static unsigned short   CurrSegRef = 0;
+static char             Rec32Bit;
 
 struct lname {
     struct lname        *next;
@@ -54,23 +54,13 @@ typedef enum {
     S_PUBDEF
 } sym_type;
 
-static void procsegdef (void);
-static void getpubdef (void);
-static void GetComent (sym_file *sfile);
-static void getcomdef (void);
-static void getcomdat (void);
-static void getlname (int local);
-static void FreeCommonBlk (void);
-static void FreeLNames (void);
-static int IsCommonRef (void);
-
 static struct lname     *LName_Head;
 static struct lname     **LName_Owner;
 static char             Typ;
 static unsigned short   Len, MaxLen;
-static char *           CurrRec;
-static char *           RecPtr;
-static common_blk *     CurrCommonBlk;
+static char             *CurrRec;
+static char             *RecPtr;
+static common_blk       *CurrCommonBlk;
 static unsigned short   SegDefCount;
 static bool             EasyOMF;
 static char             NameBuff[257];
@@ -106,8 +96,265 @@ bool GetRec( libfile io )
     return( TRUE );
 }
 
+static void AddOMFSymbol( sym_type type )
+{
+    if( type == S_COMDEF || type == S_COMDAT || IsCommonRef() ) {
+        AddSym( NameBuff, SYM_WEAK, 0 );
+    } else {
+        AddSym( NameBuff, SYM_STRONG, 0 );
+    }
+}
 
-void OMFWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char*name,symbol_strength,unsigned char) )
+static unsigned short GetIndex( void )
+/************************************/
+{
+    unsigned short index;
+
+    index = *RecPtr++;
+    if( index > 0x7F ) {
+        index &= 0x7f;
+        index = (index << 8) | *RecPtr++;
+    }
+    return( index );
+}
+
+
+static void GetOffset( void )
+/***************************/
+{
+    RecPtr += 2;
+    if( Rec32Bit ) { /* if 386, must skip over 4 bytes */
+        RecPtr += 2;
+    }
+}
+
+/*
+ * throw away a group and segment number and possibly frame number
+ */
+static void GetIdx( void )
+/************************/
+{
+    unsigned short      grp;
+
+    grp = GetIndex();
+    CurrSegRef = GetIndex();
+    if( ( grp == 0 ) && ( CurrSegRef == 0 ) ) {
+        RecPtr += 2;                    /* skip over frame number */
+    }
+}
+
+static int IsCommonRef( void )      /* dedicated routine for FORTRAN 77 common block */
+/****************************/
+{
+    common_blk          *tmpblk = CurrCommonBlk;
+
+    while( tmpblk != NULL  &&  tmpblk->segindex <= CurrSegRef ) {
+        if( tmpblk->segindex == CurrSegRef ) {
+            return( TRUE );
+        }
+        tmpblk = tmpblk->next;
+    }
+    return( FALSE );
+}
+
+static void FreeCommonBlk( void )   /* dedicated routine for FORTRAN 77 common block */
+/*******************************/
+{
+    common_blk          *tmpblk;
+
+    while( CurrCommonBlk != NULL ) {
+        tmpblk = CurrCommonBlk->next;
+        MemFree( CurrCommonBlk );
+        CurrCommonBlk = tmpblk;
+    }
+}
+
+static void procsegdef( void )      /* dedicated routine for FORTRAN 77 common block */
+/****************************/
+{
+    common_blk          *cmn;
+    common_blk          **owner;
+
+    uint_8  tmpbyte = ( *RecPtr & 0x1f ) >> 2; /* get "COMBINE" bits */
+
+    SegDefCount++;
+    if( tmpbyte == 6 ) {    /* COMBINE == COMMON, record it */
+
+        owner = &CurrCommonBlk;
+
+        for( ;; ) {
+            cmn = *owner;
+            if( cmn == NULL ) break;
+            owner = &cmn->next;
+        }
+        cmn = MemAlloc( sizeof( common_blk ) );
+        cmn->segindex = SegDefCount;
+        cmn->next = NULL;
+        *owner = cmn;
+    }
+}
+
+
+/*
+ * from infl, get a intel name: length and name
+ */
+void GetName( void )
+{
+    int        num_char;
+
+    num_char = (int)*RecPtr++;
+    memcpy( NameBuff, RecPtr, num_char );
+    RecPtr += num_char;
+    NameBuff[ num_char ] = '\0';
+}
+
+/*
+ * loop over the publics in the record
+ */
+static void getpubdef( void )
+{
+    GetIdx();
+    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
+        GetName();
+        GetOffset();
+        GetIndex();
+        AddOMFSymbol( S_PUBDEF );
+    }
+}
+
+/*
+ * get the public definition out of the coment record
+ */
+
+static void GetComent( sym_file *sfile )
+{
+    RecPtr++;   // skip attribute byte of comment rec
+    switch( *RecPtr++ ) {
+    case CMT_DLL_ENTRY:
+        if( *RecPtr++ == DLL_IMPDEF ) {
+            RecPtr++;       // skip the ordinal flag
+            GetName();
+            AddOMFSymbol( S_PUBDEF );
+        }
+        break;
+    case CMT_LINKER_DIRECTIVE:
+        if( *RecPtr++ == LDIR_OBJ_TIMESTAMP ) {
+            sfile->arch.date = *(unsigned_32 *)RecPtr;
+        }
+        break;
+    }
+}
+
+static void GetComLen( void )
+{
+    switch( *RecPtr++ ) {
+    case COMDEF_LEAF_4:
+        RecPtr += 4;
+        break;
+    case COMDEF_LEAF_3:
+        RecPtr += 3;
+        break;
+    case COMDEF_LEAF_2:
+        RecPtr += 2;
+        break;
+    default:
+        break;
+    }
+}
+
+/*
+ * process a COMDEF record
+ */
+static void getcomdef( void )
+{
+    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
+        GetName();
+        AddOMFSymbol( S_COMDEF );
+        GetIndex();
+        switch( *RecPtr++ ) {
+        case COMDEF_FAR:
+            GetComLen();
+            /* fall through */
+        case COMDEF_NEAR:
+            GetComLen();
+            break;
+        }
+    }
+}
+
+static void getcomdat( void )
+{
+    unsigned            alloc;
+    unsigned            idx;
+    struct lname        *ln;
+
+    if( *RecPtr & (COMDAT_CONTINUE|COMDAT_LOCAL) ) return;
+    RecPtr++;
+    alloc = *RecPtr++ & COMDAT_ALLOC_MASK;
+    RecPtr++;
+    GetOffset();
+    GetIndex();
+    if( alloc == COMDAT_EXPLICIT ) {
+        GetIdx();
+    }
+    idx = GetIndex() - 1;
+    for( ln = LName_Head; idx != 0; --idx, ln = ln->next ) {
+        /* nothing to do */
+    }
+    if( ln->local ) return;
+    memcpy( NameBuff, ln->name, ln->len );
+    NameBuff[ (int)ln->len ] = '\0';
+    AddOMFSymbol( S_COMDAT );
+}
+
+/*
+ * process a LNAME record
+ */
+static void getlname( int local )
+{
+    unsigned            len;
+    struct lname        *ln;
+
+    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
+        len = *RecPtr++;
+        ln = MemAlloc( (sizeof( struct lname ) - 1) + len );
+        ln->local = local;
+        ln->len = len;
+        memcpy( ln->name, RecPtr, len );
+        ln->next = NULL;
+        *LName_Owner = ln;
+        LName_Owner = &ln->next;
+        RecPtr += len;
+    }
+}
+
+static void FreeLNames( void )
+{
+    struct lname        *next;
+
+    while( LName_Head != NULL ) {
+        next = LName_Head->next;
+        MemFree( LName_Head );
+        LName_Head = next;
+    }
+}
+
+
+/*
+ * Skip to the end of the current object -- used in the code to delete
+ * omf objects.
+ */
+void OMFSkipThisObject( arch_header *arch, libfile io )
+{
+    obj_file            *file;
+
+    file = OpenLibFile( arch->name, io );
+    OMFWalkSymList( file, NULL, NULL );
+    CloseLibFile( file );
+} /* OMFSkipThisObject() */
+
+
+void OMFWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char *name, symbol_strength, unsigned char) )
 {
     EasyOMF = FALSE;
     SegDefCount = 0;    // just for FORTRAN 77 common block
@@ -126,40 +373,37 @@ void OMFWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char*name,sym
             Rec32Bit = EasyOMF;
         }
 
-        if (sfile)
-        {
-            switch (Typ)
-            {
-                case CMD_SEGDEF:
-                case CMD_SEGD32:
-                    procsegdef();
-                    break;
-                case CMD_PUBDEF:
-                case CMD_PUBD32:
-                    getpubdef();
-                    break;
-                case CMD_COMENT:
-                    GetComent( sfile );
-                    break;
-                case CMD_COMDEF:
-                    getcomdef();
-                    break;
-                case CMD_COMDAT:
-                case CMD_COMD32:
-                    getcomdat();
-                    break;
-                case CMD_LNAMES:
-                    getlname( FALSE );
-                    break;
-                case CMD_LLNAME:
-                    getlname( TRUE );
-                    break;
+        if( sfile ) {
+            switch( Typ ) {
+            case CMD_SEGDEF:
+            case CMD_SEGD32:
+                procsegdef();
+                break;
+            case CMD_PUBDEF:
+            case CMD_PUBD32:
+                getpubdef();
+                break;
+            case CMD_COMENT:
+                GetComent( sfile );
+                break;
+            case CMD_COMDEF:
+                getcomdef();
+                break;
+            case CMD_COMDAT:
+            case CMD_COMD32:
+                getcomdat();
+                break;
+            case CMD_LNAMES:
+                getlname( FALSE );
+                break;
+            case CMD_LLNAME:
+                getlname( TRUE );
+                break;
             } /* switch */
         } /* if */
     } while( Typ != CMD_MODEND && Typ != CMD_MODE32 );
 
-    if (sfile)
-    {
+    if( sfile ) {
         FreeCommonBlk();
         FreeLNames();
         MemFree( CurrRec );
@@ -219,261 +463,3 @@ void OMFLibWalk( libfile io, char *name, void (*rtn)( arch_header *arch, libfile
     Len = MaxLen = 0;
     CurrRec = NULL;
 }
-
-
-
-static void AddOMFSymbol( sym_type type )
-{
-    if( type == S_COMDEF || type == S_COMDAT || IsCommonRef() ) {
-        AddSym( NameBuff, SYM_WEAK, 0 );
-    } else {
-        AddSym( NameBuff, SYM_STRONG, 0 );
-    }
-}
-
-static unsigned short GetIndex( void )
-/************************************/
-{
-    unsigned short index;
-
-    index = *RecPtr++;
-    if( index > 0x7F ) {
-        index &= 0x7f;
-        index = (index << 8) | *RecPtr++;
-    }
-    return( index );
-}
-
-
-static void GetOffset( void )
-/***************************/
-{
-    RecPtr += 2;
-    if( Rec32Bit ) { /* if 386, must skip over 4 bytes */
-        RecPtr += 2;
-    }
-}
-
-/*
- * throw away a group and segment number and possibly frame number
- */
-static void GetIdx( void )
-/************************/
-{
-    register unsigned short         grp;
-
-    grp = GetIndex();
-    CurrSegRef = GetIndex();
-    if( ( grp == 0 ) && ( CurrSegRef == 0 ) ) {
-        RecPtr += 2;                    /* skip over frame number */
-    }
-}
-
-static int IsCommonRef( void )      /* dedicated routine for FORTRAN 77 common block */
-/****************************/
-{
-    common_blk * tmpblk = CurrCommonBlk;
-
-    while( tmpblk != NULL  &&  tmpblk->segindex <= CurrSegRef ) {
-        if( tmpblk->segindex == CurrSegRef ) {
-            return( TRUE );
-        }
-        tmpblk = tmpblk->next;
-    }
-    return( FALSE );
-}
-
-static void FreeCommonBlk( void )   /* dedicated routine for FORTRAN 77 common block */
-/*******************************/
-{
-    common_blk *    tmpblk;
-
-    while( CurrCommonBlk != NULL ) {
-        tmpblk = CurrCommonBlk->next;
-        MemFree( CurrCommonBlk );
-        CurrCommonBlk = tmpblk;
-    }
-}
-
-static void procsegdef( void )      /* dedicated routine for FORTRAN 77 common block */
-/****************************/
-{
-    common_blk   *      cmn;
-    common_blk  **      owner;
-
-    uint_8  tmpbyte = ( *RecPtr & 0x1f ) >> 2; /* get "COMBINE" bits */
-
-    SegDefCount++;
-    if( tmpbyte == 6 ) {    /* COMBINE == COMMON, record it */
-
-        owner = &CurrCommonBlk;
-
-        for( ;; ) {
-            cmn = *owner;
-            if( cmn == NULL ) break;
-            owner = &cmn->next;
-        }
-        cmn = MemAlloc( sizeof( common_blk ) );
-        cmn->segindex = SegDefCount;
-        cmn->next = NULL;
-        *owner = cmn;
-    }
-}
-
-
-/*
- * from infl, get a intel name: length and name
- */
-void GetName( void )
-{
-    int        num_char;
-
-    num_char = (int)*RecPtr++;
-    memcpy( NameBuff, RecPtr, num_char );
-    RecPtr += num_char;
-    NameBuff[ num_char ] = '\0';
-}
-/*
- * loop over the publics in the record
- */
-static void getpubdef( void )
-{
-    GetIdx();
-    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
-        GetName();
-        GetOffset();
-        GetIndex();
-        AddOMFSymbol( S_PUBDEF );
-    }
-}
-
-/*
- * get the public definition out of the coment record
- */
-
-static void GetComent( sym_file *sfile )
-{
-    RecPtr++;   // skip attribute byte of comment rec
-    switch( *RecPtr++ ){
-    case CMT_DLL_ENTRY:
-        if( *RecPtr++ == DLL_IMPDEF ){
-            RecPtr++;       // skip the ordinal flag
-            GetName();
-            AddOMFSymbol( S_PUBDEF );
-        }
-        break;
-    case CMT_LINKER_DIRECTIVE:
-        if( *RecPtr++ == LDIR_OBJ_TIMESTAMP ) {
-            sfile->arch.date = *(unsigned_32 *)RecPtr;
-        }
-        break;
-    }
-}
-
-static void GetComLen( void )
-{
-    switch( *RecPtr++ ) {
-    case COMDEF_LEAF_4:
-        RecPtr += 4;
-        break;
-    case COMDEF_LEAF_3:
-        RecPtr += 3;
-        break;
-    case COMDEF_LEAF_2:
-        RecPtr += 2;
-        break;
-    default:
-        break;
-    }
-}
-
-/*
- * process a COMDEF record
- */
-static void getcomdef( void )
-{
-    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
-        GetName();
-        AddOMFSymbol( S_COMDEF );
-        GetIndex();
-        switch( *RecPtr++ ) {
-        case COMDEF_FAR:
-            GetComLen();
-            /* fall through */
-        case COMDEF_NEAR:
-            GetComLen();
-            break;
-        }
-    }
-}
-
-/*
- * process a COMDAT record
- */
-static void getcomdat( void )
-{
-    unsigned            alloc;
-    unsigned            idx;
-    struct lname                *ln;
-
-    if( *RecPtr & (COMDAT_CONTINUE|COMDAT_LOCAL) ) return;
-    RecPtr++;
-    alloc = *RecPtr++ & COMDAT_ALLOC_MASK;
-    RecPtr++;
-    GetOffset();
-    GetIndex();
-    if( alloc == COMDAT_EXPLICIT ) {
-        GetIdx();
-    }
-    idx = GetIndex() - 1;
-    for( ln = LName_Head; idx != 0; --idx, ln = ln->next ) {
-        /* nothing to do */
-    }
-    if( ln->local ) return;
-    memcpy( NameBuff, ln->name, ln->len );
-    NameBuff[ (int)ln->len ] = '\0';
-    AddOMFSymbol( S_COMDAT );
-}
-
-static void     getlname( int local )
-{
-    unsigned    len;
-    struct lname        *ln;
-
-    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
-        len = *RecPtr++;
-        ln = MemAlloc( (sizeof( struct lname ) - 1) + len );
-        ln->local = local;
-        ln->len = len;
-        memcpy( ln->name, RecPtr, len );
-        ln->next = NULL;
-        *LName_Owner = ln;
-        LName_Owner = &ln->next;
-        RecPtr += len;
-    }
-}
-
-static void FreeLNames( void )
-{
-    struct lname        *next;
-
-    while( LName_Head != NULL ) {
-        next = LName_Head->next;
-        MemFree( LName_Head );
-        LName_Head = next;
-    }
-}
-
-
-/*
- * Skip to the end of the current object -- used in the code to delete
- * omf objects.
- */
-void OMFSkipThisObject(arch_header *arch, libfile io)
-{
-    obj_file *file;
-
-    file = OpenLibFile(arch->name, io);
-    OMFWalkSymList(file, NULL, NULL);
-    CloseLibFile(file);
-} /* OMFSkipThisObject() */
