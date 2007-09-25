@@ -426,7 +426,7 @@ static image_sym_class storageClass( owl_sym_linkage kind ) {
         ret = IMAGE_SYM_CLASS_EXTERNAL;
         break;
     case OWL_SYM_WEAK:
-        ret = IMAGE_SYM_CLASS_EXTERNAL;
+        ret = IMAGE_SYM_CLASS_WEAK_EXTERNAL;
         break;
     default:
         assert( 0 );
