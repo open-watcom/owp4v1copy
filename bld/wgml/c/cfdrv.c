@@ -48,7 +48,7 @@
 #define START_SIZE 2048
 #define INC_SIZE   1024
 
-/*  Local function declaration */
+/*  Local function declarations */
 
 static cop_driver * parse_finish_block( cop_driver *, uint8_t * * );
 static cop_driver * parse_font_style( FILE *, cop_driver *, font_style *, p_buffer * *, uint8_t * *, uint8_t );
@@ -667,7 +667,7 @@ cop_driver * parse_driver( FILE * in_file )
             fontswitch_block_ptr[i].type = (char *) out_driver->next_offset;
             out_driver->next_offset += length;
 
-            /* Verify that the next 20 or 21 bytes are nulls */
+            /* Skip the next 20 or 21 bytes */
 
             if( length == 78 ) {
                 current += 20;
@@ -1785,13 +1785,8 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
     int             i;
     line_proc *     line_proc_ptr       = NULL;
     ptrdiff_t       font_style_offset;
-    uint8_t         nulls[21];
     uint8_t *       text_ptr            = NULL;
     uint16_t        count16;
-
-    /* Initialize nulls */
-
-    memset( nulls, 0x00, 21 );
 
     /* Get the number of passes, which can be 0 */
 
@@ -1918,16 +1913,8 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
     *current = (*p_buffer_set)->buffer;
 
-    /* Verify that the first 21 bytes are nulls */
+    /* Skip the first 21 bytes */
 
-    if( memcmp( *current, nulls, 21 ) ) {
-        printf_s( ":FONTSTYLE block %i does not have 21 nulls after the 'type'\n", i );
-        free( *p_buffer_set );
-        *p_buffer_set = NULL;
-        free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
-    } 
     *current += 21;
 
     /* Get the number of codeblocks, which can be 0 */

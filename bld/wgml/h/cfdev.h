@@ -29,9 +29,6 @@
 *                   cop_device
 *                       box_block
 *                       underscore_block
-*                       intrans_block
-*                       outtrans_block
-*                           translation
 *                       defaultfont_block
 *                           default_font
 *                       pause_block
@@ -48,6 +45,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "cftrans.h"
 
 /* Structure declarations */
 
@@ -92,30 +90,6 @@ typedef struct underscore_block_struct
     uint8_t         font_number;
     char            underscore_char;
 } underscore_block;
-
-/* intrans_block is a struct for consistency with outtrans_block. */
-
-typedef struct intrans_block_struct
-{
-    uint8_t         table[0x100];
-} intrans_block;
-
-/* Field "data" points to a buffer containing "count" bytes.
- * This is not a string: $00 is a valid embedded value.
- */
-
-typedef struct translation_struct
-{
-    uint8_t         count;
-    uint8_t *       data;
-} translation;
-
-/* Each entry in table will be NULL if no out-translation is needed */
-
-typedef struct outtrans_block_struct
-{
-    translation *   table[0x100];
-} outtrans_block;
 
 typedef struct default_font_struct
 {

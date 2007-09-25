@@ -118,12 +118,14 @@ cop_device * parse_device( FILE * in_file )
     uint8_t             data_count;
     uint16_t            i;
     uint8_t             intrans_flag;
-    uint16_t            outtrans_array[0x100];    
     uint8_t *           outtrans_data       = NULL;
+    uint8_t             outtrans_data_size;
     uint8_t             outtrans_flag;
     outtrans_block *    outtrans_ptr        = NULL;
     translation *       translation_ptr     = NULL;
     uint8_t *           translation_start   = NULL;
+    uint8_t             uint8_array[0x100];    
+    uint16_t            uint16_array[0x100];    
 
     /* Used to acquire the DefaultFonts and DeviceFonts */
 
@@ -789,133 +791,235 @@ cop_device * parse_device( FILE * in_file )
         out_device->outtrans = NULL;
     } else {
 
-        /* Verify that the next byte is 0x82 */
+        /* Get the next byte, which indicates the OuttransBlock data size */
 
-        fread( &count8, sizeof( count8 ), 1, in_file );
+        fread( &outtrans_data_size, sizeof( outtrans_data_size ), 1, in_file );
         if( ferror( in_file ) || feof( in_file ) ) {
            free( out_device );
            out_device = NULL;
            return( out_device );
         }
 
-        if( count8 != 0x82 ) {
+        /* Read the count byte */
+
+        fread( &count8, sizeof( count8 ), 1, in_file );
+        if( ferror( in_file ) || feof( in_file ) ) {
+            free( out_device );
+            out_device = NULL;
+            return( out_device );
+        }
+
+        /* The file is positioned at the start of the data */
+
+        switch( outtrans_data_size) {
+        case 0x81:
+
+            /* The count byte should be 0x00 */
+
+            if( count8 != 0x00 ) {
+                free( out_device );
+                out_device = NULL;
+                return( out_device );
+            }
+
+            /* Get the data into the local buffer */
+
+            fread( &uint8_array, sizeof( uint8_array ), 1, in_file );
+            if( ferror( in_file ) || feof( in_file ) ) {
+                free( out_device );
+                out_device = NULL;
+                return( out_device );
+            }
+            
+            /* Reserve space for the outtrans_block */
+
+            if( out_device->allocated_size < (out_device->next_offset + sizeof( out_device->outtrans->table )) ) {
+                out_device = resize_cop_device( out_device, sizeof( out_device->outtrans->table ) );
+                if( out_device == NULL ) {
+                    free( outtrans_data );
+                    outtrans_data = NULL;
+                    return( out_device );
+                }
+            }
+
+            out_device->outtrans = (outtrans_block *) out_device->next_offset;
+            out_device->next_offset += sizeof( out_device->outtrans->table );
+
+            outtrans_ptr = (outtrans_block *) ((char *) out_device + (size_t) out_device->outtrans);
+
+            /* Build the actual table, which requires actual pointers in
+             * place of the offsets recorded in *out_device:
+             *   outtrans_ptr is the pointer version of out_device->outtrans
+             *   for each iteration,
+             *     translation_ptr is the pointer version of outtrans->ptr->table[i]
+             *     byte_ptr is the pointer version of translation->ptr.data
+             */
+
+            for( i = 0; i < 0x100; i++ ) {
+
+                /* If the first byte matches the index, there is no translation */
+
+                if( uint8_array[i] == i) {
+                    outtrans_ptr->table[i] = NULL;
+                } else {
+
+                    /* Reserve space for the translation */
+
+                    if( out_device->allocated_size < (out_device->next_offset + sizeof( translation )) ) {
+                        out_device = resize_cop_device( out_device, sizeof( translation ) );
+                        if( out_device == NULL ) {
+                            free( outtrans_data );
+                            outtrans_data = NULL;
+                            return( out_device );
+                        }
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
+                    }
+
+                    outtrans_ptr->table[i] = (translation *) out_device->next_offset;
+                    out_device->next_offset += sizeof( translation );
+
+                    /* Get the translation for the current character */
+
+                    translation_ptr = (translation *) ((char *) out_device + (size_t) outtrans_ptr->table[i] );
+
+                    /* The translation always contains exactly one character */
+                    
+                    translation_ptr->count = 1;
+
+                    if( out_device->allocated_size < (out_device->next_offset + translation_ptr->count ) ) {
+                        out_device = resize_cop_device( out_device, translation_ptr->count  );
+                        if( out_device == NULL ) {
+                            free( outtrans_data );
+                            outtrans_data = NULL;
+                            return( out_device );
+                        }
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
+                        translation_ptr = (translation *) ((uint8_t *) out_device + (size_t) outtrans_ptr->table[i] );
+                    }
+
+                    translation_ptr->data = (uint8_t *) out_device->next_offset;
+                    out_device->next_offset += translation_ptr->count;
+
+                    byte_ptr = (uint8_t *) out_device + (size_t) translation_ptr->data;
+
+                    /* The translation character is the value in the input array */
+                    
+                    *byte_ptr = uint8_array[i];
+                }
+            }
+            break;
+        case 0x82:
+
+            /* The count byte should be equal to data_count */
+        
+            if( count8 != data_count ) {
+                printf_s( "Incorrect OuttransBlock data_count: %i instead of %i\n", data_count, count8 );
+                free( out_device );
+                out_device = NULL;
+                return( out_device );
+            }
+
+            /* Get the outtrans array into the local array */
+
+            fread( &uint16_array, sizeof( uint16_array ), 1, in_file );
+            if( ferror( in_file ) || feof( in_file ) ) {
+                free( out_device );
+                out_device = NULL;
+                return( out_device );
+            }
+
+            /* Allocate a buffer and read the translation characters into it */
+
+            outtrans_data = (uint8_t *) malloc( data_count );
+
+            fread( outtrans_data, sizeof( *outtrans_data ), data_count, in_file );
+            if( ferror( in_file ) || feof( in_file ) ) {
+                free( outtrans_data );
+                outtrans_data = NULL;
+                free( out_device );
+                out_device = NULL;
+                return( out_device );
+            }
+
+            /* Initialize outtrans_ptr and the outtrans pointer in out_device */
+
+            if( out_device->allocated_size < (out_device->next_offset + sizeof( out_device->outtrans->table )) ) {
+                out_device = resize_cop_device( out_device, sizeof( out_device->outtrans->table ) );
+                if( out_device == NULL ) {
+                    free( outtrans_data );
+                    outtrans_data = NULL;
+                    return( out_device );
+                }
+            }
+
+            out_device->outtrans = (outtrans_block *) out_device->next_offset;
+            out_device->next_offset += sizeof( out_device->outtrans->table );
+
+            outtrans_ptr = (outtrans_block *) ((char *) out_device + (size_t) out_device->outtrans);
+
+            /* Convert the data in uint16_array to our format, which requires
+             * actual pointers in place of the offsets recorded in *out_device:
+             *   outtrans_ptr is the pointer version of out_device->outtrans
+             *   for each iteration,
+             *     translation_ptr is the pointer version of outtrans->ptr->table[i]
+             *     byte_ptr is the pointer version of translation->ptr.data
+             */
+
+            for( i = 0; i < 0x100; i++ ) {
+
+                /* If the first byte matches the index, there is no translation */
+
+                if( uint16_array[i] == i) {
+                    outtrans_ptr->table[i] = NULL;
+                } else {
+
+                    /* Reserve space for the translation */
+
+                    if( out_device->allocated_size < (out_device->next_offset + sizeof( translation )) ) {
+                        out_device = resize_cop_device( out_device, sizeof( translation ) );
+                        if( out_device == NULL ) {
+                            free( outtrans_data );
+                            outtrans_data = NULL;
+                            return( out_device );
+                        }
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
+                    }
+
+                    outtrans_ptr->table[i] = (translation *) out_device->next_offset;
+                    out_device->next_offset += sizeof( translation );
+
+                    /* Get the translation for the current character */
+
+                    translation_ptr = (translation *) ((char *) out_device + (size_t) outtrans_ptr->table[i] );
+
+                    translation_start = outtrans_data + (uint16_array[i] & 0x00ff);        
+                    translation_ptr->count = *translation_start;
+                    ++translation_start;
+
+                    if( out_device->allocated_size < (out_device->next_offset + translation_ptr->count ) ) {
+                        out_device = resize_cop_device( out_device, translation_ptr->count  );
+                        if( out_device == NULL ) {
+                            free( outtrans_data );
+                            outtrans_data = NULL;
+                            return( out_device );
+                        }
+                        outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
+                        translation_ptr = (translation *) ((uint8_t *) out_device + (size_t) outtrans_ptr->table[i] );
+                    }
+
+                    translation_ptr->data = (uint8_t *) out_device->next_offset;
+                    out_device->next_offset += translation_ptr->count;
+
+                    byte_ptr = (uint8_t *) out_device + (size_t) translation_ptr->data;
+                    memcpy_s(byte_ptr, translation_ptr->count, translation_start, translation_ptr->count );
+                }
+            }
+            break;
+        default:
            printf_s( "Incorrect OuttransBlock designator: %i\n", count8 );
            free( out_device );
            out_device = NULL;
            return( out_device );
-        }
-
-        /* Read the count byte, and verify that it is equal to data_count */
-        
-        fread( &count8, sizeof( count8 ), 1, in_file );
-        if( ferror( in_file ) || feof( in_file ) ) {
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
-        }
-
-        if( count8 != data_count ) {
-           printf_s( "Incorrect OuttransBlock data_count: %i instead of %i\n", data_count, count8 );
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
-        }
-
-        /* Get the outtrans array into the local array */
-
-        fread( &outtrans_array, sizeof( outtrans_array ), 1, in_file );
-        if( ferror( in_file ) || feof( in_file ) ) {
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
-        }
-
-        /* Allocate a buffer and read the translation characters into it */
-
-        outtrans_data = (uint8_t *) malloc( data_count );
-
-        fread( outtrans_data, sizeof( *outtrans_data ), data_count, in_file );
-        if( ferror( in_file ) || feof( in_file ) ) {
-           free( outtrans_data );
-           outtrans_data = NULL;
-           free( out_device );
-           out_device = NULL;
-           return( out_device );
-        }
-
-        /* Initialize outtrans_ptr and the outtrans pointer in out_device */
-
-        if( out_device->allocated_size < (out_device->next_offset + sizeof( out_device->outtrans->table )) ) {
-            out_device = resize_cop_device( out_device, sizeof( out_device->outtrans->table ) );
-            if( out_device == NULL ) {
-                free( outtrans_data );
-                outtrans_data = NULL;
-                return( out_device );
-            }
-        }
-
-        out_device->outtrans = (outtrans_block *) out_device->next_offset;
-        out_device->next_offset += sizeof( out_device->outtrans->table );
-
-        outtrans_ptr = (outtrans_block *) ((char *) out_device + (size_t) out_device->outtrans);
-
-        /* Convert the data in outtrans_array to our format, which requires
-         * actual pointers in place of the offsets recorded in *out_device
-         * rather than offsets:
-         *   outtrans_ptr is the pointer version of out_device->outtrans
-         *   for each iteration,
-         *     translation_ptr is the pointer version of outtrans->ptr->table[i]
-         *     byte_ptr is the pointer version of translation->ptr.data
-         */
-
-        for( i = 0; i < 0x100; i++ ) {
-
-            /* If the first byte matches the index, there is no translation */
-
-            if( outtrans_array[i] == i) {
-                outtrans_ptr->table[i] = NULL;
-            } else {
-
-                /* Reserve space for the translation and adjust next_offset */
-
-                if( out_device->allocated_size < (out_device->next_offset + sizeof( translation )) ) {
-                    out_device = resize_cop_device( out_device, sizeof( translation ) );
-                    if( out_device == NULL ) {
-                        free( outtrans_data );
-                        outtrans_data = NULL;
-                        return( out_device );
-                    }
-                    outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
-                }
-
-                outtrans_ptr->table[i] = (translation *) out_device->next_offset;
-                out_device->next_offset += sizeof( translation );
-
-                /* Get the translation for the current character */
-
-                translation_ptr = (translation *) ((char *) out_device + (size_t) outtrans_ptr->table[i] );
-
-                translation_start = outtrans_data + (outtrans_array[i] & 0x00ff);        
-                translation_ptr->count = *translation_start;
-                ++translation_start;
-
-                if( out_device->allocated_size < (out_device->next_offset + translation_ptr->count ) ) {
-                    out_device = resize_cop_device( out_device, translation_ptr->count  );
-                    if( out_device == NULL ) {
-                        free( outtrans_data );
-                        outtrans_data = NULL;
-                        return( out_device );
-                    }
-                    outtrans_ptr = (outtrans_block *) ((uint8_t *) out_device + (size_t) out_device->outtrans);
-                    translation_ptr = (translation *) ((uint8_t *) out_device + (size_t) outtrans_ptr->table[i] );
-                }
-
-                translation_ptr->data = (uint8_t *) out_device->next_offset;
-                out_device->next_offset += translation_ptr->count;
-
-                byte_ptr = (uint8_t *) out_device + (size_t) translation_ptr->data;
-                memcpy_s(byte_ptr, translation_ptr->count, translation_start, translation_ptr->count );
-            }
         }
         free( outtrans_data );
         outtrans_data = NULL;

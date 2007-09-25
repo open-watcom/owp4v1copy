@@ -24,24 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  Declares the structs and functions used to manipulate .COP
-*               font files:
-*                   cop_font
-*                     width_block
-*                   is_fon_file()
-*                   parse_font()
+* Description:  Declares the structs for the intrans and outtrans blocks
+*                   intrans_block
+*                   outtrans_block
+*                       translation
 *
 ****************************************************************************/
 
-#ifndef CFFON_H_INCLUDED
-#define CFFON_H_INCLUDED
+#ifndef CFTRANS_H_INCLUDED
+#define CFTRANS_H_INCLUDED
 
-#include <stdbool.h>
+//#include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
-#include "cftrans.h"
-
-/* Structure declarations */
 
 /* Structure declarations */
 
@@ -49,43 +43,28 @@
  * consulted for further information on how the data is structured.
  */
 
-/* width_block is a struct for consistency with outtrans_block. */
+/* intrans_block is a struct for consistency with outtrans_block. */
 
-typedef struct width_block_struct
+typedef struct intrans_block_struct
 {
-    uint32_t         table[0x100];
-} width_block;
+    uint8_t         table[0x100];
+} intrans_block;
 
-typedef struct cop_font_struct
+/* Field "data" points to a buffer containing "count" bytes.
+ * This is not a string: $00 is a valid embedded value.
+ */
+
+typedef struct translation_struct
 {
-    size_t           allocated_size;
-    size_t           next_offset;
-    /* The Attributes */
-    char *           font_out_name1;
-    char *           font_out_name2;
-    uint32_t         line_height;
-    uint32_t         line_space;
-    uint32_t         scale_basis;
-    uint32_t         scale_min;
-    uint32_t         scale_max;
-    uint32_t         char_width;
-    /* CharacterDescriptionBlock */
-    intrans_block *  intrans;
-    outtrans_block * outtrans;
-    width_block *    width;
-} cop_font;
+    uint8_t         count;
+    uint8_t *       data;
+} translation;
 
-/* Function declarations */
+/* Each entry in table will be NULL if no out-translation is needed */
 
-#ifdef  __cplusplus
-extern "C" {    /* Use "C" linkage when in C++ mode */
-#endif
+typedef struct outtrans_block_struct
+{
+    translation *   table[0x100];
+} outtrans_block;
 
-bool is_fon_file( FILE * );
-cop_font * parse_font( FILE * );
-
-#ifdef  __cplusplus
-}   /* End of "C" linkage for C++ */
-#endif
-
-#endif  /* CFFON_H_INCLUDED */
+#endif  /* CFTRANS_H_INCLUDED */

@@ -28,6 +28,7 @@
 *                   check_directory()
 *                   display_device()
 *                   display_driver()
+*                   display_font()
 *                   parse_cop_file()
 *                   print_banner()
 *                   print_usage()
@@ -79,6 +80,7 @@ NULL
 static void check_directory( FILE *, uint32_t);
 static void display_device( cop_device *);
 static void display_driver( cop_driver *);
+static void display_font( cop_font *);
 static int  verify_device( char *, char * );
 static int  verify_driver( char *, char * );
 static int  verify_font( char *, char * );
@@ -109,6 +111,7 @@ int parse_cop_file( void )
 {
     cop_device *    current_device  = NULL;
     cop_driver *    current_driver  = NULL;
+    cop_font   *    current_font    = NULL;
     FILE       *    current_file    = NULL;
     char            designator[4];
     uint16_t        entry_count;
@@ -152,6 +155,8 @@ int parse_cop_file( void )
         fseek( current_file, -3, SEEK_CUR ); /* Reset file to designator */
         if( is_fon_file( current_file ) ) {
             printf_s( "%s is a font file\n", tgt_path );
+            current_font = parse_font( current_file );
+            if( current_font ) display_font( current_font );
             break;
         }
         fseek( current_file, -3, SEEK_CUR ); /* Reset file to designator */
@@ -776,6 +781,76 @@ int verify_driver( char * in_path, char * in_name )
     return( BAD_MATCH );
 }
 
+/*  Function display_font().
+ *  Displays the contents of a cop_font instance.
+ *
+ *  Parameter:
+ *      in_font is a pointer to the cop_font instance.
+ */
+
+void display_font( cop_font * in_font )
+{
+
+    char        font_character[2];
+    int         i;
+    int         j;
+    char        translation[2];
+
+    printf_s( "Allocated size:            %i\n", in_font->allocated_size );
+    printf_s( "Bytes used:                %i\n", in_font->next_offset );
+    if( in_font->font_out_name1 == NULL ) puts( "Font Output Name 1:");
+    else printf_s( "Font Output Name 1:        %s\n", in_font->font_out_name1 );
+    if( in_font->font_out_name2 == NULL ) puts( "Font Output Name 2:" );
+    else printf_s( "Font Output Name 2:        %s\n", in_font->font_out_name2 );
+    printf_s( "Line Height:               %i\n", in_font->line_height );
+    printf_s( "Line Space:                %i\n", in_font->line_space );
+    printf_s( "Scale Basis:               %i\n", in_font->scale_basis );
+    printf_s( "Scale Minimum:             %i\n", in_font->scale_min );
+    printf_s( "Scale Maximum:             %i\n", in_font->scale_max );
+    printf_s( "Character Width:           %i\n", in_font->char_width );
+    if( in_font->intrans == NULL) {
+        puts( "No Intrans Table");
+    } else {
+        puts( "Intrans Table:" );
+        for( i = 0; i < 0x100; i++ ) {
+            if( in_font->intrans->table[i] != i ) {
+                display_char( font_character, (char) i );
+                display_char( translation, in_font->intrans->table[i] );
+                printf_s( "%c%c %c%c\n", font_character[0], font_character[1], translation[0], translation[1] );
+            }
+        }
+    }
+    if( in_font->outtrans == NULL) {
+        puts( "No Outtrans Table");
+    } else {
+        puts( "Outtrans Table:" );
+        for( i = 0; i < 0x100; i++ ) {
+            if( in_font->outtrans->table[i] != NULL ) {
+                display_char( font_character, (char) i );
+                printf_s( "%c%c ", font_character[0], font_character[1] );
+                for( j = 0; j < in_font->outtrans->table[i]->count; j++ ) {
+                    display_char( translation, in_font->outtrans->table[i]->data[j] );
+                    printf_s( "%c%c ", translation[0], translation[1] );
+                }
+                puts( "" );
+            }
+        }
+    }
+    if( in_font->width == NULL) {
+        puts( "No Width Table");
+    } else {
+        puts( "Width Table:" );
+        for( i = 0; i < 0x100; i++ ) {
+            if( in_font->width->table[i] != in_font->char_width ) {
+                display_char( font_character, (char) i );
+                printf_s( "%c%c %lu\n", font_character[0], font_character[1], in_font->width->table[i] );
+            }
+        }
+    }
+
+    return;
+}
+
 /*  Function verify_font().
  *  Verifies that the file is a font file.
  *
@@ -793,10 +868,11 @@ int verify_driver( char * in_path, char * in_name )
  
 int verify_font( char * in_path, char * in_name )
 {
-    char    designator[4];
-    char    file_name[_MAX_PATH];
-    char    type;
-    FILE *  font_file = NULL;
+    char       designator[4];
+    char       file_name[_MAX_PATH];
+    char       type;
+    cop_font * current_font = NULL;
+    FILE *     font_file = NULL;
     
     /* Build the file name */
     strcpy_s( file_name, sizeof( file_name ), in_path );
@@ -818,8 +894,10 @@ int verify_font( char * in_path, char * in_name )
         return( BAD_HEADER );
     }
     
-    /* Perform the test */
+    /* Perform the test and parse the file if appropriate */
     if( is_fon_file( font_file ) ) {
+        current_font = parse_font( font_file );
+        if( current_font ) display_font( current_font );
         fclose( font_file );
         return( GOOD_MATCH );
     }
@@ -837,4 +915,5 @@ int verify_font( char * in_path, char * in_name )
     fclose( font_file );
     return( BAD_MATCH );
 }
+
 
