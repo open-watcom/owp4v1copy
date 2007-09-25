@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Walk symbols accessed through ORL.
 *
 ****************************************************************************/
 
@@ -56,6 +55,8 @@ orl_return CheckSymbol( orl_symbol_handle orl_sym_hnd )
         } else if( ORLSymbolGetValue( orl_sym_hnd ) != 0 ) {
             Rtn( name,  SYM_WEAK, info );
         }
+    } else if( binding == ORL_SYM_BINDING_ALIAS ) {
+        Rtn( name, SYM_WEAK, 0 );
     }
     return( ORL_OKAY );
 }

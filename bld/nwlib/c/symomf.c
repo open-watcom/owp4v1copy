@@ -51,7 +51,8 @@ typedef struct COMMON_BLK {
 typedef enum {
     S_COMDEF,
     S_COMDAT,
-    S_PUBDEF
+    S_PUBDEF,
+    S_ALIAS
 } sym_type;
 
 static struct lname     *LName_Head;
@@ -98,7 +99,7 @@ bool GetRec( libfile io )
 
 static void AddOMFSymbol( sym_type type )
 {
-    if( type == S_COMDEF || type == S_COMDAT || IsCommonRef() ) {
+    if( type == S_COMDEF || type == S_COMDAT || type == S_ALIAS || IsCommonRef() ) {
         AddSym( NameBuff, SYM_WEAK, 0 );
     } else {
         AddSym( NameBuff, SYM_STRONG, 0 );
@@ -282,6 +283,9 @@ static void getcomdef( void )
     }
 }
 
+/*
+ * process a COMDAT record
+ */
 static void getcomdat( void )
 {
     unsigned            alloc;
@@ -308,7 +312,7 @@ static void getcomdat( void )
 }
 
 /*
- * process a LNAME record
+ * process a LNAMES record
  */
 static void getlname( int local )
 {
@@ -328,6 +332,17 @@ static void getlname( int local )
     }
 }
 
+/*
+ * process an ALIAS record
+ */
+static void getalias( void )
+{
+    while( (int)( RecPtr - CurrRec ) < ( Len - 1 ) ) {
+        GetName();  // alias symbol
+        AddOMFSymbol( S_ALIAS );
+        GetName();  // substitute symbol
+    }
+}
 static void FreeLNames( void )
 {
     struct lname        *next;
@@ -398,6 +413,9 @@ void OMFWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char *name, s
                 break;
             case CMD_LLNAME:
                 getlname( TRUE );
+                break;
+            case CMD_ALIAS:
+                getalias();
                 break;
             } /* switch */
         } /* if */
