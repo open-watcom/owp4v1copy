@@ -14,12 +14,14 @@ atomic
     %s/^\+\+'(__osmajor)'/++'\1_br'/
     %s/^\+\+'(__osminor)'/++'\1_br'/
     %s/^\+\+'(__osver)'/++'\1_br'/
+    %s/^\+\+'(__pgmptr)'/++'\1_br'/
     %s/^\+\+'(__sys_errlist)'/++'\1_br'/
     %s/^\+\+'(__sys_nerr)'/++'\1_br'/
     %s/^\+\+'(__wenviron)'/++'\1_br'/
     %s/^\+\+'(__winmajor)'/++'\1_br'/
     %s/^\+\+'(__winminor)'/++'\1_br'/
     %s/^\+\+'(__winver)'/++'\1_br'/
+    %s/^\+\+'(__wpgmptr)'/++'\1_br'/
     %s/^\+\+'(_daylight)'/++'\1_br'/
     %s/^\+\+'(_environ)'/++'\1_br'/
     %s/^\+\+'(_timezone)'/++'\1_br'/
@@ -36,6 +38,7 @@ atomic
     %s/^\+\+'(_osbuild)'/++'\1_br'/
     %s/^\+\+'(_osmajor)'/++'\1_br'/
     %s/^\+\+'(_osminor)'/++'\1_br'/
+    %s/^\+\+'(_pgmptr)'/++'\1_br'/
     %s/^\+\+'(_osver)'/++'\1_br'/
     %s/^\+\+'(_sys_errlist)'/++'\1_br'/
     %s/^\+\+'(_sys_nerr)'/++'\1_br'/
@@ -43,6 +46,7 @@ atomic
     %s/^\+\+'(_winmajor)'/++'\1_br'/
     %s/^\+\+'(_winminor)'/++'\1_br'/
     %s/^\+\+'(_winver)'/++'\1_br'/
+    %s/^\+\+'(_wpgmptr)'/++'\1_br'/
     %s/^\+\+'(daylight)'/++'\1_br'/
     %s/^\+\+'(environ)'/++'\1_br'/
     %s/^\+\+'(timezone)'/++'\1_br'/

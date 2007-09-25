@@ -431,15 +431,19 @@ _WCRTLINK extern errno_t wcstombs_s( size_t * __restrict __retval, char * __rest
 #define _MAX_PATH2 (_MAX_PATH+3) /* maximum size of output buffer
                                     for _splitpath2() */
 
-_WCRTLINK char     ***__get_environ_ptr( void );
+_WCRTLINK char             ***__get_environ_ptr( void );
+_WCRTLINK char _WCI86FAR   **__get_pgmptr_ptr( void );
 #if defined(__FUNCTION_DATA_ACCESS)
  #define environ   (*__get_environ_ptr())
+ #define _pgmptr   (*__get_pgmptr_ptr())
 :segment !QNX & !LINUX
 #elif defined(__SW_BR) || defined(_RTDLL)
  #define environ   environ_br
+ #define _pgmptr   _pgmptr_br
 :endsegment
 #endif
-_WCRTDATA extern char **_WCNEAR environ;    /* pointer to environment table */
+_WCRTDATA extern char  **_WCNEAR environ;   /* pointer to environment table */
+_WCRTDATA extern char _WCI86FAR *_pgmptr;   /* pointer to executable name */
 
 :segment !QNX & !LINUX
 #if defined(__NT__)
@@ -451,20 +455,26 @@ _WCRTDATA extern char **_WCNEAR environ;    /* pointer to environment table */
  #endif
  _WCRTDATA extern int _fileinfo;        /* for inheriting POSIX handles */
 #endif
+
 :endsegment
 :segment !QNX & !NO_WIDECHAR
 :segment !LINUX
-_WCRTLINK wchar_t  ***__get_wenviron_ptr( void );
+_WCRTLINK wchar_t               ***__get_wenviron_ptr( void );
+_WCRTLINK wchar_t _WCI86FAR     **__get_wpgmptr_ptr( void );
 #if defined(__FUNCTION_DATA_ACCESS)
  #define _wenviron (*__get_wenviron_ptr())
+ #define _wpgmptr  (*__get_wpgmptr_ptr())
 #elif defined(__SW_BR) || defined(_RTDLL)
  #define _wenviron _wenviron_br
+ #define _wpgmptr  _wpgmptr_br
 #endif
 #ifdef __NETWARE__
- _WCRTDATA extern wchar_t **_WCDATA _wenviron;   /* pointer to wide environment */
+ _WCRTDATA extern wchar_t **_WCDATA _wenviron;  /* pointer to wide environment */
+ _WCRTDATA extern wchar_t  *_WCDATA _wpgmptr;   /* pointer to wide executable name */
 #else
 :endsegment
- _WCRTDATA extern wchar_t **_WCNEAR _wenviron;   /*  pointer to wide environment */
+ _WCRTDATA extern wchar_t  **_WCNEAR _wenviron; /* pointer to wide environment */
+ _WCRTDATA extern wchar_t _WCI86FAR *_wpgmptr;  /* pointer to wide executable name */
 :segment !LINUX
 #endif
 :endsegment

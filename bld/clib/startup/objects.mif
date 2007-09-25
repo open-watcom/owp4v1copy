@@ -108,6 +108,8 @@
 !inject osmjptr.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject osmnptr.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject osvrptr.obj                      nt
+!inject pgmptr.obj   d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject pgmptra.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject prelude.obj                                 nvc ncl
 !inject pspptr.obj   d16 d32                                                        w16     osi
 !inject rdllmwnt.obj                     nt nta ntp
@@ -148,6 +150,8 @@
 !inject wnmjptr.obj                      nt
 !inject wnmnptr.obj                      nt
 !inject wnvrptr.obj                      nt
+!inject wpgmptr.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
+!inject wpgmptra.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32 osi l32 lpc lmp
 !inject wstrtaxp.obj                        nta
 !inject wstrtwna.obj                        nta ntp
 !inject wstrtwnt.obj                     nt
