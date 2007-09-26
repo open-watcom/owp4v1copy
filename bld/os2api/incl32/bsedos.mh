@@ -594,7 +594,7 @@ typedef struct _FILEFINDBUF4 {
     CHAR  achName[CCHMAXPATHCOMP];
 } FILEFINDBUF4, *PFILEFINDBUF4;
 
-typedef struct _FILEFINDBUF3L {
+typedef _Packed struct _FILEFINDBUF3L {
     ULONG    oNextEntryOffset;
     FDATE    fdateCreation;
     FTIME    ftimeCreation;
@@ -675,7 +675,7 @@ typedef struct _FILESTATUS4 {
     ULONG cbList;
 } FILESTATUS4, *PFILESTATUS4;
 
-typedef struct _FILESTATUS3L {
+typedef _Packed struct _FILESTATUS3L {
     FDATE    fdateCreation;
     FTIME    ftimeCreation;
     FDATE    fdateLastAccess;
@@ -687,7 +687,7 @@ typedef struct _FILESTATUS3L {
     ULONG    attrFile;
 } FILESTATUS3L, *PFILESTATUS3L;
 
-typedef struct _FILESTATUS4L {
+typedef _Packed struct _FILESTATUS4L {
     FDATE    fdateCreation;
     FTIME    ftimeCreation;
     FDATE    fdateLastAccess;
