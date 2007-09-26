@@ -33,6 +33,13 @@
 #include <stdlib.h>
 
 
+#if __WATCOMC__ < 1280
+#include "widechar.h"
+#include "initarg.h"
+#undef  _wpgmptr
+#define _wpgmptr _LpwPgmName
+#endif
+
 _WCRTLINK wchar_t _WCI86FAR **__get_wpgmptr_ptr( void )
 {
     return( &_wpgmptr );

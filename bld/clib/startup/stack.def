@@ -10,8 +10,8 @@ _LpwCmdLine
 _LpwPgmName
 _osmajor
 _osminor
-_pgmptr
-_wpgmptr
+#_pgmptr
+#_wpgmptr
 _STACKLOW
 _STACKTOP
 __STKOVERFLOW
