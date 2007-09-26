@@ -1,0 +1,49 @@
+#
+# Watcom GML/Script (wgml) Makefile
+# =======================================
+#
+
+proj_name = cfparse
+wgml_autodepends = .AUTODEPEND
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = -I"../h"
+
+.c: ../c;../../../watcom/c
+
+cf_common_objs = &
+	    cfdir.obj &
+	    cfdev.obj &
+	    cfdrv.obj &
+	    cffon.obj &
+	    cffunc.obj &
+            cfheader.obj &
+            cmdlhelp.obj &
+            common.obj   &
+            lhdirect.obj &
+            research.obj &
+            swchar.obj
+
+cfc_objs = &
+            cfcheck.obj  &
+            cfcutils.obj
+
+objs = &
+            $(cf_common_objs) &
+            cfparse.obj  &
+            cfputils.obj
+
+!include exetarg.mif
+nwgml : cfcheck.exe .SYMBOLIC
+
+cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)
+!ifeq verbose 1
+        $(cl) $(clflags) $< $(cl_libs)
+!else
+        @echo cl $@
+        @$(cl) $(clflags) $< $(cl_libs)
+!endif
+

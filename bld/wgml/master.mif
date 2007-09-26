@@ -14,27 +14,6 @@ inc_dirs = -I"../h"
 
 .c: ../c;../../watcom/c
 
-cf_common_objs = &
-	    cfdir.obj &
-	    cfdev.obj &
-	    cfdrv.obj &
-	    cffon.obj &
-	    cffunc.obj &
-            cfheader.obj &
-            cmdlhelp.obj &
-            common.obj   &
-            lhdirect.obj &
-            research.obj &
-            swchar.obj
-
-cfc_objs = &
-            cfcheck.obj  &
-            cfcutils.obj
-
-cfp_objs = &
-            cfparse.obj  &
-            cfputils.obj
-
 objs = &
             wgml.obj    &
             gdata.obj    &
@@ -45,25 +24,10 @@ objs = &
 # don't build wgml.exe for linux
 
 !ifneq host_os linux
-nwgml : wgml.exe cfcheck.exe cfparse.exe .SYMBOLIC
+nwgml : wgml.exe .SYMBOLIC
 
 !include exetarg.mif
 !else
-nwgml : cfcheck.exe cfparse.exe .SYMBOLIC
+nwgml : .SYMBOLIC
 !endif
 
-cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)
-!ifeq verbose 1
-        $(cl) $(clflags) $< $(cl_libs)
-!else
-        @echo cl $@
-        @$(cl) $(clflags) $< $(cl_libs)
-!endif
-
-cfparse.exe : $(cfp_objs) $(cf_common_objs) $(libs)
-!ifeq verbose 1
-        $(cl) $(clflags) $< $(cl_libs)
-!else
-        @echo cl $@
-        @$(cl) $(clflags) $< $(cl_libs)
-!endif
