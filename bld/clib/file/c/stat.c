@@ -66,16 +66,16 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
 {
     struct find_t       dta;
     const CHAR_TYPE *   ptr;
-    tiny_ret_t          rc;
+    unsigned            rc;
     CHAR_TYPE           fullpath[_MAX_PATH];
     int                 isrootdir = 0;
 
     /* reject null string and names that has wildcard */
-    #ifdef __WIDECHAR__
+#ifdef __WIDECHAR__
     if( *path == L'\0' || wcspbrk( path, L"*?" ) != NULL )
-    #else
+#else
     if( *path == '\0' || _mbspbrk( path, "*?" ) != NULL )
-    #endif
+#endif
     {
         __set_errno( ENOENT );
         return( -1 );
@@ -83,13 +83,13 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
 
     /*** Determine if 'path' refers to a root directory ***/
     if( __F_NAME(_fullpath,_wfullpath)( fullpath, path, _MAX_PATH ) != NULL ) {
-        #ifdef __WIDECHAR__
+#ifdef __WIDECHAR__
         if( iswalpha( fullpath[0] )  &&  fullpath[1] == L':'  &&
             fullpath[2] == L'\\'  &&  fullpath[3] == L'\0' )
-        #else
+#else
         if( isalpha( fullpath[0] )  &&  fullpath[1] == ':'  &&
             fullpath[2] == '\\'  &&  fullpath[3] == '\0' )
-        #endif
+#endif
         {
             isrootdir = 1;
         }
@@ -97,11 +97,11 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
 
     ptr = path;
     if( __F_NAME(*_mbsinc(path),path[1]) == __F_NAME(':',L':') )  ptr += 2;
-    #ifdef __WIDECHAR__
+#ifdef __WIDECHAR__
     if( ( (ptr[0] == L'\\' || ptr[0] == L'/') && ptr[1] == L'\0' )  ||  isrootdir )
-    #else
+#else
     if( ( (ptr[0] == '\\' || ptr[0] == '/') && ptr[1] == '\0' )  ||  isrootdir )
-    #endif
+#endif
     {
         /* handle root directory */
         CHAR_TYPE       cwd[_MAX_PATH];
@@ -121,28 +121,28 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
         dta.size      = 0;
         dta.name[0] = NULLCHAR;
     } else {                            /* not a root directory */
-        #if defined(__OSI__) || defined(__WATCOM_LFN__)
-            #if defined(__WIDECHAR__) && defined(__WATCOM_LFN__)
-                char    mbPath[MB_CUR_MAX*_MAX_PATH];
-                __filename_from_wide( mbPath, path );
-                rc = _dos_findfirst( mbPath,
-                        _A_NORMAL | _A_RDONLY | _A_HIDDEN |
-                        _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
-            #else
-                rc = _dos_findfirst( path,
-                        _A_NORMAL | _A_RDONLY | _A_HIDDEN |
-                        _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
-            #endif
-        #else
-            #ifdef __WIDECHAR__
-                char    mbPath[MB_CUR_MAX*_MAX_PATH];
-                __filename_from_wide( mbPath, path );
-            #endif
-            TinySetDTA( &dta );
-            rc = TinyFindFirst( __F_NAME(path,mbPath),
-                                _A_NORMAL | _A_RDONLY | _A_HIDDEN |
-                                _A_SYSTEM | _A_SUBDIR | _A_ARCH );
-        #endif
+#if defined(__OSI__) || defined(__WATCOM_LFN__)
+    #if defined(__WIDECHAR__) && defined(__WATCOM_LFN__)
+        char    mbPath[MB_CUR_MAX*_MAX_PATH];
+        __filename_from_wide( mbPath, path );
+        rc = _dos_findfirst( mbPath,
+                _A_NORMAL | _A_RDONLY | _A_HIDDEN |
+                _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
+    #else
+        rc = _dos_findfirst( path,
+                _A_NORMAL | _A_RDONLY | _A_HIDDEN |
+                _A_SYSTEM | _A_SUBDIR | _A_ARCH, &dta );
+    #endif
+#else
+    #ifdef __WIDECHAR__
+        char    mbPath[MB_CUR_MAX*_MAX_PATH];
+        __filename_from_wide( mbPath, path );
+    #endif
+        TinySetDTA( &dta );
+        rc = TINY_ERROR( TinyFindFirst( __F_NAME(path,mbPath),
+                            _A_NORMAL | _A_RDONLY | _A_HIDDEN |
+                            _A_SYSTEM | _A_SUBDIR | _A_ARCH ) );
+#endif
         if( rc != 0 ) { // Try getting information another way.
             int         handle;
             int         canread = 0;
@@ -186,9 +186,9 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
             }
             return( 0 );
         }
-        #if defined(__OSI__)
-            _dos_findclose( &dta );
-        #endif
+#if defined(__OSI__)
+        _dos_findclose( &dta );
+#endif
     }
 
     /* process drive number */
