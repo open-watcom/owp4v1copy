@@ -609,7 +609,7 @@ typedef _Packed struct _FILEFINDBUF3L {
     CHAR     achName[CCHMAXPATHCOMP];
 } FILEFINDBUF3L, *PFILEFINDBUF3L;
 
-typedef struct _FILEFINDBUF4L {
+typedef _Packed struct _FILEFINDBUF4L {
     ULONG    oNextEntryOffset;
     FDATE    fdateCreation;
     FTIME    ftimeCreation;
