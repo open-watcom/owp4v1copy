@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command matching, file management.
 *
 ****************************************************************************/
 
@@ -44,6 +43,27 @@ extern void     SavePrompt( char PASPTR *line );
 extern char     far *GetEnv( char far *name, int len );
 extern int      Equal( char far * str1, char far * str2, int len );
 
+
+void SaveLine( void )
+/*******************/
+{
+    LineSaved = TRUE;
+    memcpy( OldLine, Line, LINE_WIDTH );
+    OldMaxCursor = MaxCursor;
+    OldCursor = Cursor;
+}
+
+
+void RestoreLine( void )
+/**********************/
+{
+    memcpy( Line, OldLine, LINE_WIDTH );
+    Cursor = OldCursor;
+    MaxCursor = OldMaxCursor;
+    HaveDirent = FALSE;
+}
+
+
 void MatchACommand( int (*advance)(char *), int (*retreat)(char *) )
 /******************************************************************/
 {
@@ -51,7 +71,7 @@ void MatchACommand( int (*advance)(char *), int (*retreat)(char *) )
 
     SaveLine();
     advanced = 0;
-    for(;;) {
+    for( ;; ) {
         ++advanced;
         MaxCursor = advance( Line );
         if( MaxCursor == 0 ) {
@@ -77,42 +97,6 @@ void FiniFile( void )
     HaveDirent = FALSE;
     NextFileCalls = 0;
     PathCurr = 0;
-}
-
-
-void PrevFile( void )
-/*******************/
-{
-    int         nexts;
-
-    if( NextFileCalls ) {
-        RestoreLine();
-        nexts = NextFileCalls - 1;
-        FiniFile();
-        while( NextFileCalls != nexts ) {
-            NextFile();
-        }
-        Draw = TRUE;
-    }
-}
-
-void SaveLine( void )
-/*******************/
-{
-    LineSaved = TRUE;
-    memcpy( OldLine, Line, LINE_WIDTH );
-    OldMaxCursor = MaxCursor;
-    OldCursor = Cursor;
-}
-
-
-void RestoreLine( void )
-/**********************/
-{
-    memcpy( Line, OldLine, LINE_WIDTH );
-    Cursor = OldCursor;
-    MaxCursor = OldMaxCursor;
-    HaveDirent = FALSE;
 }
 
 
@@ -172,8 +156,8 @@ int FileIgnore( DIRINFO *dir, int attr )
 #endif
     len = 0;
     for( p = name; !_null( *p ); ++p ) ++len;
-    for(;;) {
-        for(;;) {
+    for( ;; ) {
+        for( ;; ) {
             if( *envname == '.' ) break;
             if( _null( *envname ) ) return( !ignore_matches );
             ++envname;
@@ -247,7 +231,7 @@ recurse:
             dot = FALSE;
 #endif
             in_quote = FALSE;
-            for(;;) {
+            for( ;; ) {
                 if( Line[ i ] == '/' || Line[ i ] == '\\' ) path = 1;
 #ifdef DOS
                 if( path == 0 && Line[ i ] == '.' ) dot = TRUE;
@@ -356,7 +340,7 @@ done:
                     PutNL();
                     i = 1;
                 }
-                for(;;) {
+                for( ;; ) {
                     if( PrintAllFiles ) {
                         if( --i == 0 ) {
                             PutNL();
@@ -389,7 +373,7 @@ done:
                 --i;
             }
             in_quote = FALSE;
-            for(;;) {
+            for( ;; ) {
                 if( Line[ i ] == '"' ) in_quote = !in_quote;
                 if( Line[ i ] == '\\' ) break;
                 if( Line[ i ] == '/' ) break;
@@ -420,4 +404,21 @@ done:
     }
     Draw = TRUE;
     PrintAllFiles = FALSE;
+}
+
+
+void PrevFile( void )
+/*******************/
+{
+    int         nexts;
+
+    if( NextFileCalls ) {
+        RestoreLine();
+        nexts = NextFileCalls - 1;
+        FiniFile();
+        while( NextFileCalls != nexts ) {
+            NextFile();
+        }
+        Draw = TRUE;
+    }
 }

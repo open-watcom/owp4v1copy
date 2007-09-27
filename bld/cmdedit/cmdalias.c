@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Process command aliases.
 *
 ****************************************************************************/
 
@@ -44,6 +43,9 @@ extern void     SavePrompt( char PASPTR *line );
 extern char     far *GetEnv( char far *name, int len );
 extern int      PutMore( void );
 extern int      Equal( char far * str1, char far * str2, int len );
+
+int ReplaceAlias( char far * alias, char * word, char * endword );
+
 
 void ListAliases( void )
 /**********************/
@@ -346,23 +348,6 @@ void LookForAlias( void )
     }
 }
 
-void PFKey( void )
-/****************/
-{
-    static char buff[14];
-    int     i;
-    char    far *start;
-
-    if( WantAlias ) {
-        i = FormName( buff, KbdChar.scan );
-        PFChars = FindAlias( buff, (buff + i), &start );
-        if( PFChars && *PFChars == '!' ) {
-            ++PFChars;
-            ImmedCommand = TRUE;
-        }
-    }
-}
-
 int FormName( char * name, char scan )
 /************************************/
 {
@@ -392,4 +377,21 @@ int FormName( char * name, char scan )
     name[ 3 ] = scan + '0';
     name[ 4 ] = '>';
     return( 5 );
+}
+
+void PFKey( void )
+/****************/
+{
+    static char buff[14];
+    int     i;
+    char    far *start;
+
+    if( WantAlias ) {
+        i = FormName( buff, KbdChar.scan );
+        PFChars = FindAlias( buff, (buff + i), &start );
+        if( PFChars && *PFChars == '!' ) {
+            ++PFChars;
+            ImmedCommand = TRUE;
+        }
+    }
 }

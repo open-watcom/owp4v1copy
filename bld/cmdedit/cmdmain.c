@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command input.
 *
 ****************************************************************************/
 
@@ -85,6 +84,7 @@ extern void     UpScreen( void );
 extern void     NextCmd( char * );
 extern void     PrevCmd( char * );
 extern void     DelCmd( char * );
+
 
 void InitRetrieve( char far * inname )
 /************************************/
@@ -212,6 +212,75 @@ static void ConsolidateQuotes( void )
     }
 }
 
+void CopyCmd( char far * userbuff, LENGTH far * l, int i )
+/********************************************************/
+{
+    char ch;
+    int j;
+
+    j = 0;
+    for( ;; ) {
+        if( i == MaxCursor ) {
+            More = 0;
+            break;
+        }
+        userbuff[j] = ch = Line[i];
+        if( ch == CmdSeparator ) {
+            if( Line[ i+1 ] == CmdSeparator ) {
+                ++i;
+            } else {
+                More = i + 1;
+                break;
+            }
+        }
+        ++i;
+        ++j;
+    }
+    l->output = j;
+    userbuff[ j ] = Kbd.cr;
+}
+
+
+static void DrawLine( int old_len, int old_base )
+/***********************************************/
+{
+    int towrite;
+    int oldwrite;
+    int left;
+    int right;
+
+    if( Draw ) {
+        towrite = MaxCursor - Base;
+        right = 0;
+        if( towrite > SCREEN_WIDTH - 1 - StartCol ) {
+            towrite = SCREEN_WIDTH - 1 - StartCol;
+            right = 1;
+        }
+        oldwrite = old_len - old_base;
+        if( oldwrite > SCREEN_WIDTH - 1 - StartCol ) {
+            oldwrite = SCREEN_WIDTH - 1 - StartCol;
+        }
+        left = StartDraw - Base;
+        VioWrtCharStr( (char PASPTR *)Line + Base + left,
+                       towrite - left, Row, StartCol + left, 0 );
+        if( Cursor == MaxCursor ) {
+            VioWrtNChar( (char PASPTR *)" ", 1, Row,
+                         MaxCursor + StartCol - Base, 0 );
+        }
+        if( towrite < oldwrite ) {
+            VioWrtNChar( (char PASPTR *)" ", oldwrite - towrite, Row,
+                         MaxCursor + StartCol - Base, 0 );
+        }
+        if( Base != 0 ) {
+            VioWrtNChar( (char PASPTR *)"\021", 1, Row, StartCol, 0 );
+        }
+        if( right ) {
+            VioWrtNChar( (char PASPTR *)"\020", 1, Row, SCREEN_WIDTH-2, 0 );
+        }
+    }
+}
+
+
 int StringIn( char far * userbuff, LENGTH far * l, int want_alias, int routine )
 /******************************************************************************/
 {
@@ -257,7 +326,7 @@ int StringIn( char far * userbuff, LENGTH far * l, int want_alias, int routine )
     FirstNextOrPrev = TRUE;
     first_match = TRUE;
 
-    for(;;) { /* for each typed character */
+    for( ;; ) { /* for each typed character */
         Draw = FALSE;
         StartDraw = Base;
         old_len = MaxCursor;
@@ -507,73 +576,4 @@ int StringIn( char far * userbuff, LENGTH far * l, int want_alias, int routine )
     }
 #endif
     return( 0 );
-}
-
-
-
-static void DrawLine( int old_len, int old_base )
-/***********************************************/
-{
-    int towrite;
-    int oldwrite;
-    int left;
-    int right;
-
-    if( Draw ) {
-        towrite = MaxCursor - Base;
-        right = 0;
-        if( towrite > SCREEN_WIDTH - 1 - StartCol ) {
-            towrite = SCREEN_WIDTH - 1 - StartCol;
-            right = 1;
-        }
-        oldwrite = old_len - old_base;
-        if( oldwrite > SCREEN_WIDTH - 1 - StartCol ) {
-            oldwrite = SCREEN_WIDTH - 1 - StartCol;
-        }
-        left = StartDraw - Base;
-        VioWrtCharStr( (char PASPTR *)Line + Base + left,
-                       towrite - left, Row, StartCol + left, 0 );
-        if( Cursor == MaxCursor ) {
-            VioWrtNChar( (char PASPTR *)" ", 1, Row,
-                         MaxCursor + StartCol - Base, 0 );
-        }
-        if( towrite < oldwrite ) {
-            VioWrtNChar( (char PASPTR *)" ", oldwrite - towrite, Row,
-                         MaxCursor + StartCol - Base, 0 );
-        }
-        if( Base != 0 ) {
-            VioWrtNChar( (char PASPTR *)"\021", 1, Row, StartCol, 0 );
-        }
-        if( right ) {
-            VioWrtNChar( (char PASPTR *)"\020", 1, Row, SCREEN_WIDTH-2, 0 );
-        }
-    }
-}
-
-void CopyCmd( char far * userbuff, LENGTH far * l, int i )
-/********************************************************/
-{
-    char ch;
-    int j;
-
-    j = 0;
-    for(;;) {
-        if( i == MaxCursor ) {
-            More = 0;
-            break;
-        }
-        userbuff[j] = ch = Line[i];
-        if( ch == CmdSeparator ) {
-            if( Line[ i+1 ] == CmdSeparator ) {
-                ++i;
-            } else {
-                More = i + 1;
-                break;
-            }
-        }
-        ++i;
-        ++j;
-    }
-    l->output = j;
-    userbuff[ j ] = Kbd.cr;
 }
