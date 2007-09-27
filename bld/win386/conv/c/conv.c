@@ -117,6 +117,9 @@ fcn     *Class, *CurrClass;      /* class list */
 fcn     *Head, *Curr;            /* list of all prototypes */
 fcn     *VoidHead, *VoidCurr;    /* list of all prototypes */
 
+FILE    *stubs,*stubsinc;
+FILE    *dllthunk;
+
 void *myalloc( size_t size )
 {
     void        *tmp;
@@ -307,81 +310,6 @@ void ClassifyParmList( char *plist, fcn *tmpf )
     }
 } /* ClassifyParmList */
 
-
-int main( int argc, char *argv[] )
-{
-    char        *name,*dir;
-    FILE        *f,*pf;
-    char        defname[80];
-    char        fname[50];
-    int         i,j;
-
-    _nheapgrow();
-    j=argc-1;
-    while( j > 0 ) {
-        if( argv[j][0] == '-' ) {
-            for(i=1;i<strlen(argv[j]);i++) {
-                switch( argv[j][i] ) {
-                case 'q': quiet = 1; break;
-                case 's': genstubs=1; break;
-                case '?':
-                    printf("conv -s (gen stubs)\n");
-                    exit(1);
-                default:
-                    fprintf(stderr,"Unrecognized switch %c",argv[j][i] );
-                    break;
-                }
-            }
-            for(i=j;i<argc;i++) {
-                argv[i]=argv[i+1];
-            }
-            argc--;
-        }
-        j--;
-    }
-
-    if( argc < 2 ) {
-        name = "win386";
-    } else {
-        name = argv[1];
-    }
-    if( argc < 3 ) {
-        dir = "def";
-    } else {
-        dir = argv[2];
-    }
-
-    pf = fopen( name,"r" );
-    if( pf == NULL ) {
-        printf("error opening file %s\n",name );
-        exit( 1 );
-    }
-
-    while( fgets( fname, 50, pf ) != NULL ) {
-        for( i = strlen( fname ); i && isspace( fname[ --i ] );  )
-            fname[ i ] = '\0';
-#ifdef __UNIX__
-        sprintf( defname, "%s/%s", dir, fname );
-#else
-        sprintf( defname, "%s\\%s", dir, fname );
-#endif
-        f = fopen( defname, "r" );
-        if( f == NULL ) {
-            printf("error opening file %s\n", defname );
-            exit( 1 );
-        }
-        ProcessDefFile( f );
-        fclose( f );
-    }
-    fclose( pf );
-    BuildClasses();
-    GenerateCode();
-    GenerateThunkC();
-    GenerateCStubs();
-    ClosingComments();
-    return( 0 );
-
-} /* main */
 
 void ProcessDefFile( FILE *f )
 {
@@ -1125,11 +1053,11 @@ static void startOBJECT( int modindex )
 {
     char        fname[20];
 
-    sprintf( fname,"win%d.obj", modindex );
+    sprintf( fname, "win%d.obj", modindex );
     objFile = open( fname, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY,
         S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
     if( objFile == - 1 ) {
-        fprintf(stderr,"error opening %s\n", fname );
+        fprintf( stderr, "error opening %s\n", fname );
         exit( 1 );
     }
     objBufIndex = 0;
@@ -1166,7 +1094,7 @@ void GenerateCStubs( void )
             strcpy( fn2, tmpf->fn );
         }
         if( !quiet ) {
-            printf("Generating stub %s\n",fn2 );
+            printf( "Generating stub %s\n", fn2 );
         }
 
         if( tmpf->is_16 ) {
@@ -1207,74 +1135,6 @@ void GenerateCStubs( void )
 } /* GenerateCStubs */
 
 
-FILE *stubs,*stubsinc;
-FILE *dllthunk;
-
-/*
- * GenerateCode - generate code for all glue functions
- */
-void GenerateCode( void )
-{
-    fcn *tmpf, *tmpf2;
-
-    /*
-     * find out which _16 functions have a regular type
-     */
-    tmpf = Head;
-    while( tmpf != NULL ) {
-
-        if( tmpf->is_16 ) {
-            tmpf2 = Head;
-            while( tmpf2 != NULL ) {
-                if( strcmp( &tmpf->fn[3], tmpf2->fn ) == 0 ) {
-                    break;
-                }
-                tmpf2 = tmpf2->next;
-            }
-            if( tmpf2 == NULL ) {
-                tmpf->noregfor_16 = 1;
-            }
-        }
-        tmpf = tmpf->next;
-
-    }
-
-    stubs = fopen("winglue.asm","w" );
-    stubsinc = fopen(GlueInc,"w" );
-    dllthunk = fopen("dllthk.asm","w" );
-    if( stubs == NULL || stubsinc == NULL || dllthunk == NULL) {
-        fprintf(stderr,"Error opening glue file\n");
-        exit(1);
-    }
-    FunctionHeader();
-    DLLThunkHeader();
-
-    tmpf = Class;
-    while( tmpf != NULL ) {
-        if( !quiet ) {
-            printf("Code for class %d\n",tmpf->class );
-        }
-        GenerateAPICall( tmpf );
-        tmpf = tmpf->next_class;
-    }
-#if 0
-    tmpf = Head;
-    while( tmpf != NULL ) {
-        if( tmpf->thunk ) {
-            GenerateDLLThunk( tmpf );
-        }
-        tmpf = tmpf->next;
-    }
-#endif
-    FunctionTrailer();
-    DLLThunkTrailer();
-
-    fclose( stubs );
-    fclose( stubsinc );
-    fclose( dllthunk );
-
-} /* GenerateCode */
-
 /*
  * GenerateThunkTable - generate table of thunks
  */
@@ -1288,6 +1148,7 @@ void GenerateThunkTable( fcn *tmpf )
     }
 
 } /* GenerateThunkTable */
+
 
 /*
  * CloseHeader - close off header comments
@@ -1305,118 +1166,151 @@ void CloseHeader( FILE *f )
 
 
 /*
+ * GenerateDLLData - generate data for a DLL thunk
+ */
+void GenerateDLLData( void )
+{
+    int         i;
+    char     *thunkstr;
+
+    fprintf( dllthunk, "DGROUP group _DATA\n" );
+    fprintf( dllthunk, "_DATA segment word public 'DATA' use16\n" );
+    fprintf( dllthunk, "\n" );
+    fprintf( dllthunk, "public DLLHandles\n" );
+    fprintf( dllthunk, "DLLHandles LABEL WORD\n" );
+    for( i = 0; i < ThunkIndex; i++ ) {
+        fprintf( dllthunk, "\tdw    0\n" );
+    }
+    fprintf( dllthunk, "public DLLNames\n" );
+    fprintf( dllthunk, "DLLNames LABEL WORD\n" );
+    for( i = 0; i < ThunkIndex; i++ ) {
+        thunkstr = ThunkStrs[ i ];
+        fprintf( dllthunk, "\tdw    DGROUP:%s\n", thunkstr );
+    }
+    fprintf( dllthunk, "\n" );
+    for( i = 0; i < ThunkIndex; i++ ) {
+        thunkstr = ThunkStrs[ i ];
+        fprintf( dllthunk, "%s\tdb    '%s.dll',0\n", thunkstr, thunkstr );
+    }
+    fprintf( dllthunk, "_DATA ends\n" );
+    fprintf( dllthunk, "\n" );
+
+} /* GenerateDLLData */
+
+
+/*
  * DLLThunkHeader - generate header for DLL thunking stuff
  */
 void DLLThunkHeader( void )
 {
     int      i;
 
-    fprintf( dllthunk,line );
-    fprintf( dllthunk,blank );
+    fprintf( dllthunk, line );
+    fprintf( dllthunk, blank );
     fprintf( dllthunk, ";*** DLLTHK.ASM - thunking layer to Windows 3.1 DLLs                      ***\n" );
     fprintf( dllthunk, ";***              This set of functions makes sure that the proper dll    ***\n" );
     fprintf( dllthunk, ";***              is loaded, and gets the real address of the function    ***\n" );
     fprintf( dllthunk, ";***              to invoke, which is back-patched into the table.        ***\n" );
     CloseHeader( dllthunk );
-    fprintf(dllthunk,"extrn LOADLIBRARY : far\n");
-    fprintf(dllthunk,"extrn FREELIBRARY : far\n");
-    fprintf(dllthunk,"extrn GETPROCADDRESS : far\n");
-    fprintf(dllthunk,"extrn DLLLoadFail_ : near\n");
-//    fprintf(dllthunk,"extrn _FunctionTable : word\n");
+    fprintf( dllthunk, "extrn LOADLIBRARY : far\n" );
+    fprintf( dllthunk, "extrn FREELIBRARY : far\n" );
+    fprintf( dllthunk, "extrn GETPROCADDRESS : far\n" );
+    fprintf( dllthunk, "extrn DLLLoadFail_ : near\n" );
+//    fprintf( dllthunk, "extrn _FunctionTable : word\n" );
     GenerateDLLData();
-    fprintf(dllthunk,"\n");
-    fprintf(dllthunk,"_TEXT segment word public 'CODE' use16\n");
-    fprintf(dllthunk,"assume cs:_TEXT\n");
-    fprintf(dllthunk,"assume ds:DGROUP\n");
+    fprintf( dllthunk, "\n" );
+    fprintf( dllthunk, "_TEXT segment word public 'CODE' use16\n" );
+    fprintf( dllthunk, "assume cs:_TEXT\n" );
+    fprintf( dllthunk, "assume ds:DGROUP\n" );
 #if 0
-    fprintf(dllthunk,"public __BackPatch\n");
-    fprintf(dllthunk,"__BackPatch proc near\n");
-    fprintf(dllthunk,"        pop    si\n");
-    fprintf(dllthunk,"        mov    di,cs:[si]\n");
-    fprintf(dllthunk,"        mov    ax,[di]\n");
-    fprintf(dllthunk,"        or     ax,ax\n");
-    fprintf(dllthunk,"        jne    loaded\n");
-    fprintf(dllthunk,"          mov  ax,di\n");
-    fprintf(dllthunk,"          add  ax,2\n");
-    fprintf(dllthunk,"          push ds\n");
-    fprintf(dllthunk,"          push ax\n");
-    fprintf(dllthunk,"          call LOADLIBRARY\n");
-    fprintf(dllthunk,"          mov  [di],ax\n");
-    fprintf(dllthunk,"loaded: add    si,2\n");
-    fprintf(dllthunk,"        cmp    ax,32\n");
-    fprintf(dllthunk,"        jb     loadfail\n");
-    fprintf(dllthunk,"        push   ax\n");
-    fprintf(dllthunk,"        push   cs\n");
-    fprintf(dllthunk,"        push   si\n");
-    fprintf(dllthunk,"        call   GETPROCADDRESS\n");
-    fprintf(dllthunk,"        mov    _FunctionTable[bx],ax\n");
-    fprintf(dllthunk,"        mov    _FunctionTable+2[bx],dx\n");
+    fprintf( dllthunk, "public __BackPatch\n" );
+    fprintf( dllthunk, "__BackPatch proc near\n" );
+    fprintf( dllthunk, "        pop    si\n" );
+    fprintf( dllthunk, "        mov    di,cs:[si]\n" );
+    fprintf( dllthunk, "        mov    ax,[di]\n" );
+    fprintf( dllthunk, "        or     ax,ax\n" );
+    fprintf( dllthunk, "        jne    loaded\n" );
+    fprintf( dllthunk, "          mov  ax,di\n" );
+    fprintf( dllthunk, "          add  ax,2\n" );
+    fprintf( dllthunk, "          push ds\n" );
+    fprintf( dllthunk, "          push ax\n" );
+    fprintf( dllthunk, "          call LOADLIBRARY\n" );
+    fprintf( dllthunk, "          mov  [di],ax\n" );
+    fprintf( dllthunk, "loaded: add    si,2\n" );
+    fprintf( dllthunk, "        cmp    ax,32\n" );
+    fprintf( dllthunk, "        jb     loadfail\n" );
+    fprintf( dllthunk, "        push   ax\n" );
+    fprintf( dllthunk, "        push   cs\n" );
+    fprintf( dllthunk, "        push   si\n" );
+    fprintf( dllthunk, "        call   GETPROCADDRESS\n" );
+    fprintf( dllthunk, "        mov    _FunctionTable[bx],ax\n" );
+    fprintf( dllthunk, "        mov    _FunctionTable+2[bx],dx\n" );
 //        mov    word ptr [bx + offset DGROUP:_FunctionTable],ax
 //        mov    word ptr [bx + offset DGROUP:_FunctionTable+2],dx
-    fprintf(dllthunk,"        push   dx\n");
-    fprintf(dllthunk,"        push   ax\n");
-    fprintf(dllthunk,"        retf\n");
-    fprintf(dllthunk,"loadfail:lea   ax,2[di]\n");
-    fprintf(dllthunk,"        call   DLLLoadFail_\n");
-    fprintf(dllthunk,"        retf\n");
-    fprintf(dllthunk,"__BackPatch endp\n");
-    fprintf(dllthunk,"\n");
+    fprintf( dllthunk, "        push   dx\n" );
+    fprintf( dllthunk, "        push   ax\n" );
+    fprintf( dllthunk, "        retf\n" );
+    fprintf( dllthunk, "loadfail:lea   ax,2[di]\n" );
+    fprintf( dllthunk, "        call   DLLLoadFail_\n" );
+    fprintf( dllthunk, "        retf\n" );
+    fprintf( dllthunk, "__BackPatch endp\n" );
+    fprintf( dllthunk, "\n" );
 #endif
-    fprintf(dllthunk,"public __BackPatch_xxx\n");
-    fprintf(dllthunk,"__BackPatch_xxx proc near\n");
-    fprintf(dllthunk,"        push   di\n");
-    fprintf(dllthunk,"        mov    dh,0\n");
-    fprintf(dllthunk,"        mov    di,dx\n");
-    fprintf(dllthunk,"        add    di,di\n");
-    fprintf(dllthunk,"        mov    dx,ax\n");
-    fprintf(dllthunk,"        mov    ax,DLLHandles[di]\n");
-    fprintf(dllthunk,"        or     ax,ax\n");
-    fprintf(dllthunk,"        jne    load1\n");
-    fprintf(dllthunk,"          push dx\n");
-    fprintf(dllthunk,"          mov  ax,DLLNames[di]\n");
-    fprintf(dllthunk,"          push ds\n");
-    fprintf(dllthunk,"          push ax\n");
-    fprintf(dllthunk,"          call LOADLIBRARY\n");
-    fprintf(dllthunk,"          mov  DLLHandles[di],ax\n");
-    fprintf(dllthunk,"          pop  dx\n");
-    fprintf(dllthunk,"load1:  cmp    ax,32\n");
-    fprintf(dllthunk,"        jb     loadf1\n");
-    fprintf(dllthunk,"        push   ax\n");
-    fprintf(dllthunk,"        push   ds\n");
-    fprintf(dllthunk,"        push   dx\n");
-    fprintf(dllthunk,"        call   GETPROCADDRESS\n");
-    fprintf(dllthunk,"        pop    di\n");
-    fprintf(dllthunk,"        retf\n");
-    fprintf(dllthunk,"loadf1: mov    ax,DLLNames[di]\n");
-    fprintf(dllthunk,"        call   DLLLoadFail_\n");
-    fprintf(dllthunk,"        sub    ax,ax\n");
-    fprintf(dllthunk,"        sub    dx,dx\n");
-    fprintf(dllthunk,"        pop    di\n");
-    fprintf(dllthunk,"        retf\n");
-    fprintf(dllthunk,"__BackPatch_xxx endp\n");
-    fprintf(dllthunk,"\n");
-    fprintf(dllthunk,"public FiniDLLs_\n");
-    fprintf(dllthunk,"FiniDLLs_ proc far\n");
-    fprintf(dllthunk,"        push   si\n");
-    fprintf(dllthunk,"        sub    si,si\n");
-    fprintf(dllthunk,"next:   mov    ax,DLLHandles[si]\n");
-    fprintf(dllthunk,"        cmp    ax,32\n");
-    fprintf(dllthunk,"        jb     nextdll\n");
-    fprintf(dllthunk,"        push   ax\n");
-    fprintf(dllthunk,"        call   FREELIBRARY\n");
-    fprintf(dllthunk,"nextdll:add    si,2\n");
-    fprintf(dllthunk,"        cmp    si,%d\n", ThunkIndex * 2 );
-    fprintf(dllthunk,"        jne    next\n");
-    fprintf(dllthunk,"        pop    si\n");
-    fprintf(dllthunk,"        ret\n");
-    fprintf(dllthunk,"FiniDLLs_ endp\n");
-    fprintf(dllthunk,"\n");
+    fprintf( dllthunk, "public __BackPatch_xxx\n" );
+    fprintf( dllthunk, "__BackPatch_xxx proc near\n" );
+    fprintf( dllthunk, "        push   di\n" );
+    fprintf( dllthunk, "        mov    dh,0\n" );
+    fprintf( dllthunk, "        mov    di,dx\n" );
+    fprintf( dllthunk, "        add    di,di\n" );
+    fprintf( dllthunk, "        mov    dx,ax\n" );
+    fprintf( dllthunk, "        mov    ax,DLLHandles[di]\n" );
+    fprintf( dllthunk, "        or     ax,ax\n" );
+    fprintf( dllthunk, "        jne    load1\n" );
+    fprintf( dllthunk, "          push dx\n" );
+    fprintf( dllthunk, "          mov  ax,DLLNames[di]\n" );
+    fprintf( dllthunk, "          push ds\n" );
+    fprintf( dllthunk, "          push ax\n" );
+    fprintf( dllthunk, "          call LOADLIBRARY\n" );
+    fprintf( dllthunk, "          mov  DLLHandles[di],ax\n" );
+    fprintf( dllthunk, "          pop  dx\n" );
+    fprintf( dllthunk, "load1:  cmp    ax,32\n" );
+    fprintf( dllthunk, "        jb     loadf1\n" );
+    fprintf( dllthunk, "        push   ax\n" );
+    fprintf( dllthunk, "        push   ds\n" );
+    fprintf( dllthunk, "        push   dx\n" );
+    fprintf( dllthunk, "        call   GETPROCADDRESS\n" );
+    fprintf( dllthunk, "        pop    di\n" );
+    fprintf( dllthunk, "        retf\n" );
+    fprintf( dllthunk, "loadf1: mov    ax,DLLNames[di]\n" );
+    fprintf( dllthunk, "        call   DLLLoadFail_\n" );
+    fprintf( dllthunk, "        sub    ax,ax\n" );
+    fprintf( dllthunk, "        sub    dx,dx\n" );
+    fprintf( dllthunk, "        pop    di\n" );
+    fprintf( dllthunk, "        retf\n" );
+    fprintf( dllthunk, "__BackPatch_xxx endp\n" );
+    fprintf( dllthunk, "\n" );
+    fprintf( dllthunk, "public FiniDLLs_\n" );
+    fprintf( dllthunk, "FiniDLLs_ proc far\n" );
+    fprintf( dllthunk, "        push   si\n" );
+    fprintf( dllthunk, "        sub    si,si\n" );
+    fprintf( dllthunk, "next:   mov    ax,DLLHandles[si]\n" );
+    fprintf( dllthunk, "        cmp    ax,32\n" );
+    fprintf( dllthunk, "        jb     nextdll\n" );
+    fprintf( dllthunk, "        push   ax\n" );
+    fprintf( dllthunk, "        call   FREELIBRARY\n" );
+    fprintf( dllthunk, "nextdll:add    si,2\n" );
+    fprintf( dllthunk, "        cmp    si,%d\n", ThunkIndex * 2 );
+    fprintf( dllthunk, "        jne    next\n" );
+    fprintf( dllthunk, "        pop    si\n" );
+    fprintf( dllthunk, "        ret\n" );
+    fprintf( dllthunk, "FiniDLLs_ endp\n" );
+    fprintf( dllthunk, "\n" );
     for( i = 0; i < ThunkIndex; i++ ) {
-        fprintf(dllthunk,"public BackPatch_%s_\n", ThunkStrs[i] );
-        fprintf(dllthunk,"BackPatch_%s_ proc far\n", ThunkStrs[i] );
-        fprintf(dllthunk,"\tmov    dl,%d\n", i );
-        fprintf(dllthunk,"\tjmp    __BackPatch_xxx\n" );
-        fprintf(dllthunk,"BackPatch_%s_ endp\n\n", ThunkStrs[i] );
+        fprintf( dllthunk, "public BackPatch_%s_\n", ThunkStrs[i] );
+        fprintf( dllthunk, "BackPatch_%s_ proc far\n", ThunkStrs[i] );
+        fprintf( dllthunk, "\tmov    dl,%d\n", i );
+        fprintf( dllthunk, "\tjmp    __BackPatch_xxx\n" );
+        fprintf( dllthunk, "BackPatch_%s_ endp\n\n", ThunkStrs[i] );
     }
 
 } /* DLLThunkHeader */
@@ -1427,42 +1321,192 @@ void DLLThunkHeader( void )
  */
 void DLLThunkTrailer( void )
 {
-    fprintf(dllthunk,"_TEXT ends\n");
-    fprintf(dllthunk,"end\n");
+    fprintf( dllthunk, "_TEXT ends\n" );
+    fprintf( dllthunk, "end\n" );
 
 } /* DLLThunkTrailer */
 
+
 /*
- * GenerateDLLData - generate data for a DLL thunk
+ * FunctionHeader - build glue functions header area
  */
-void GenerateDLLData( void )
+void FunctionHeader( void )
+{
+    fcn         *tmpf;
+    char        *thunkstr;
+    char        *th1,*th2;
+
+    fprintf( stubs, line );
+    fprintf( stubs, blank );
+    fprintf( stubs, ";*** WINGLUE.ASM - windows glue functions                                 ***\n" );
+    fprintf( stubs, ";***               This set of functions encompasses all possible types   ***\n" );
+    fprintf( stubs, ";***               of calls.  Each API call has a little                  ***\n" );
+    fprintf( stubs, ";***               stub which generates the appropriate call into these   ***\n" );
+    fprintf( stubs, ";***               functions.                                             ***\n" );
+    CloseHeader( stubs );
+    fprintf( stubs, ".386p\n" );
+    fprintf( stubs, "\n" );
+    fprintf( stubs, "include %s\n", GlueInc );
+
+    fprintf( stubs, "DGROUP group _DATA\n" );
+    fprintf( stubs, "\n" );
+    fprintf( stubs, "\n" );
+    fprintf( stubsinc, "extrn        __DLLPatch:far\n" );
+    tmpf = Head;
+    while( tmpf != NULL ) {
+        if( tmpf->thunk ) {
+            th1 = ";";
+            th2 = "(thunked)";
+        } else {
+            th1 = "";
+            th2 = "";
+        }
+        if( tmpf->is_16 ) {
+            if( tmpf->noregfor_16 ) {
+                fprintf(stubsinc,"%sextrn        %s:FAR ; t=%d %s\n",
+                        th1,&tmpf->fn[3], tmpf->class, th2 );
+            } else {
+                fprintf(stubsinc,";               %s ; t=%d %s\n",
+                        tmpf->fn, tmpf->class, th2 );
+            }
+        } else {
+            if( tmpf->is_tinyio ) {
+                fprintf( stubsinc,"%sextrn        _%s:FAR ; t=%d %s\n", th1,
+                        tmpf->fn, tmpf->class, th2 );
+            } else {
+                fprintf(stubsinc,"%sextrn        %s:FAR ; t=%d %s\n",
+                        th1, tmpf->fn, tmpf->class, th2 );
+            }
+        }
+        tmpf = tmpf->next;
+    }
+    fprintf( stubs, "\n" );
+    fprintf( stubs, ";*\n" );
+    fprintf( stubs, ";*** 16-bit segment declarations\n" );
+    fprintf( stubs, ";*\n" );
+    fprintf( stubs, "_TEXT segment word public 'CODE' use16\n" );
+    fprintf( stubs, "_TEXT ends\n" );
+    fprintf( stubs, "\n" );
+    fprintf( stubs, "_DATA segment word public 'DATA' use16\n" );
+    fprintf( stubs, "_DATA ends\n" );
+    fprintf( stubs, "\n" );
+    fprintf( stubs, "_DATA segment use16\n" );
+
+    tmpf = Head;
+    fprintf( stubs, "_FunctionTable LABEL DWORD\n" );
+    fprintf( stubs, "PUBLIC _FunctionTable\n" );
+    while( tmpf != NULL ) {
+        if( tmpf->thunk ) {
+            thunkstr = ThunkStrs[ tmpf->thunkindex ];
+        } else {
+            thunkstr = (char *) "";
+        }
+        if( tmpf->is_16 ) {
+            if( tmpf->noregfor_16 ) {
+                if( tmpf->thunk ) {
+                    fprintf( stubs, "  dd __DLLPatch ; %s%s\n",
+                                thunkstr, &tmpf->fn[3] );
+                } else {
+                    fprintf( stubs, "  dd %s%s\n",
+                                thunkstr, &tmpf->fn[3] );
+                }
+            }
+        } else {
+            if( tmpf->is_tinyio ) {
+                fprintf( stubs, "  dd _%s\n", tmpf->fn );
+            } else if( tmpf->thunk ) {
+                fprintf( stubs, "  dd __DLLPatch ; %s%s\n",
+                                thunkstr, tmpf->fn );
+            } else {
+                fprintf( stubs, "  dd %s\n", tmpf->fn );
+            }
+        }
+        tmpf = tmpf->next;
+    }
+
+    fprintf( stubs, "_DATA ends\n" );
+    fprintf( stubs, "\n" );
+    fprintf( stubsinc, "extrn   GetFirst16Alias:near\n" );
+    fprintf( stubsinc, "extrn   Get16Alias:near\n" );
+    fprintf( stubsinc, "extrn   Free16Alias:near\n" );
+
+    fprintf( stubs, "_TEXT segment use16\n" );
+    fprintf( stubs, "assume cs:_TEXT\n" );
+    fprintf( stubs, "assume ds:dgroup\n" );
+    GenerateThunkTable( Class );
+    fprintf( stubs, "\n" );
+
+} /* FunctionHeader */
+
+
+/*
+ * FunctionTrailer - very last crap at end of glue functions
+ */
+void FunctionTrailer( void )
+{
+    fprintf( stubs, "_TEXT   ends\n" );
+    fprintf( stubs, "        end\n" );
+
+} /* FunctionTrailer */
+
+
+/*
+ * GenerateStartupCode - init. code for each glue function
+ */
+void GenerateStartupCode( fcn *tmpf )
+{
+    fprintf( stubs,"PUBLIC  __Thunk%d\n", tmpf->class );
+    fprintf( stubs,"__Thunk%d proc near\n", tmpf->class );
+
+} /* GenerateStartupCode */
+
+
+/*
+ * GenerateStackLocals - generate equates to access local variables (where
+ *                       we store the 16-bit aliases for 32-bit ptrs)
+ */
+int GenerateStackLocals( fcn *tmpf )
 {
     int         i;
-    char     *thunkstr;
+    int         offset;
 
-    fprintf( dllthunk, "DGROUP group _DATA\n");
-    fprintf( dllthunk, "_DATA segment word public 'DATA' use16\n");
-    fprintf( dllthunk, "\n" );
-    fprintf( dllthunk, "public DLLHandles\n");
-    fprintf( dllthunk, "DLLHandles LABEL WORD\n");
-    for( i = 0; i < ThunkIndex; i++ ) {
-        fprintf( dllthunk, "\tdw    0\n" );
+    offset = 0;
+    for( i = tmpf->pcnt - 1; i >= 0; i-- ) {
+        if( tmpf->plist[i] == PARM_PTR ) {
+            offset += 8;
+//          fprintf( stubs, "Parm%dAlias = dword ptr [bp-%d]\n", i + 1,
+//                   offset );
+        }
     }
-    fprintf( dllthunk, "public DLLNames\n");
-    fprintf( dllthunk, "DLLNames LABEL WORD\n");
-    for( i = 0; i < ThunkIndex; i++ ) {
-        thunkstr = ThunkStrs[ i ];
-        fprintf( dllthunk, "\tdw    DGROUP:%s\n", thunkstr );
-    }
-    fprintf( dllthunk, "\n" );
-    for( i = 0; i < ThunkIndex; i++ ) {
-        thunkstr = ThunkStrs[ i ];
-        fprintf( dllthunk, "%s\tdb    '%s.dll',0\n", thunkstr, thunkstr );
-    }
-    fprintf( dllthunk, "_DATA ends\n");
-    fprintf( dllthunk, "\n");
+    return( offset );
 
-} /* GenerateDLLData */
+} /* GenerateStackLocals */
+
+
+/*
+ * Generate16BitAliases - code to generate a 16-bit alias for each
+ *                        of the applications 32-bit pointers
+ */
+void Generate16BitAliases( fcn *tmpf )
+{
+    int         i;
+    int         offset;
+    char        *first;
+
+    first = "First";
+    offset = STACK_FRAME;
+    for( i = tmpf->pcnt - 1; i >= 0; i-- ) {
+        if( tmpf->plist[i] == PARM_PTR ) {
+            fprintf( stubs, "\tmov\teax,es:[edi+%d]\t\t; Parm%d\n",
+                                        offset, i+1 );
+            fprintf( stubs, "\tcall\tGet%s16Alias\n", first );
+            first = "";
+        }
+        offset += 4;
+    }
+
+} /* Generate16BitAliases */
+
 
 int Parm1Offset( fcn *tmpf )
 {
@@ -1567,53 +1611,6 @@ void GenerateAPICall( fcn *tmpf )
 } /* GenerateAPICall */
 
 
-/*
- * Generate16BitAliases - code to generate a 16-bit alias for each
- *                        of the applications 32-bit pointers
- */
-void Generate16BitAliases( fcn *tmpf )
-{
-    int         i;
-    int         offset;
-    char        *first;
-
-    first = "First";
-    offset = STACK_FRAME;
-    for( i = tmpf->pcnt - 1; i >= 0; i-- ) {
-        if( tmpf->plist[i] == PARM_PTR ) {
-            fprintf( stubs, "\tmov\teax,es:[edi+%d]\t\t; Parm%d\n",
-                                        offset, i+1 );
-            fprintf( stubs, "\tcall\tGet%s16Alias\n", first );
-            first = "";
-        }
-        offset += 4;
-    }
-
-} /* Generate16BitAliases */
-
-
-/*
- * GenerateStackLocals - generate equates to access local variables (where
- *                       we store the 16-bit aliases for 32-bit ptrs)
- */
-int GenerateStackLocals( fcn *tmpf )
-{
-    int         i;
-    int         offset;
-
-    offset = 0;
-    for( i = tmpf->pcnt - 1; i >= 0; i-- ) {
-        if( tmpf->plist[i] == PARM_PTR ) {
-            offset += 8;
-//          fprintf( stubs, "Parm%dAlias = dword ptr [bp-%d]\n", i + 1,
-//                   offset );
-        }
-    }
-    return( offset );
-
-} /* GenerateStackLocals */
-
-
 #if 0
 /*
  * GenerateStackAccessEquates - generate equates to access the variables
@@ -1640,136 +1637,69 @@ void GenerateStackAccessEquates( fcn *tmpf )
 #endif
 
 /*
- * GenerateStartupCode - init. code for each glue function
+ * GenerateCode - generate code for all glue functions
  */
-void GenerateStartupCode( fcn *tmpf )
+void GenerateCode( void )
 {
-    fprintf( stubs,"PUBLIC  __Thunk%d\n",tmpf->class );
-    fprintf( stubs,"__Thunk%d proc near\n",tmpf->class );
+    fcn *tmpf, *tmpf2;
 
-} /* GenerateStartupCode */
-
-
-/*
- * FunctionHeader - build glue functions header area
- */
-void FunctionHeader( void )
-{
-    fcn      *tmpf;
-    char        *thunkstr;
-    char        *th1,*th2;
-
-    fprintf( stubs,line );
-    fprintf( stubs,blank );
-    fprintf( stubs, ";*** WINGLUE.ASM - windows glue functions                                 ***\n" );
-    fprintf( stubs, ";***               This set of functions encompasses all possible types   ***\n" );
-    fprintf( stubs, ";***               of calls.  Each API call has a little                  ***\n" );
-    fprintf( stubs, ";***               stub which generates the appropriate call into these   ***\n" );
-    fprintf( stubs, ";***               functions.                                             ***\n" );
-    CloseHeader( stubs );
-    fprintf( stubs,".386p\n");
-    fprintf( stubs,"\n");
-    fprintf( stubs,"include %s\n", GlueInc);
-
-    fprintf( stubs,"DGROUP group _DATA\n");
-    fprintf( stubs,"\n");
-    fprintf( stubs,"\n");
-    fprintf( stubsinc,"extrn        __DLLPatch:far\n");
+    /*
+     * find out which _16 functions have a regular type
+     */
     tmpf = Head;
     while( tmpf != NULL ) {
-        if( tmpf->thunk ) {
-            th1 = ";";
-            th2 = "(thunked)";
-        } else {
-            th1 = "";
-            th2 = "";
-        }
-        if( tmpf->is_16 ) {
-            if( tmpf->noregfor_16 ) {
-                fprintf(stubsinc,"%sextrn        %s:FAR ; t=%d %s\n",
-                        th1,&tmpf->fn[3], tmpf->class, th2 );
-            } else {
-                fprintf(stubsinc,";               %s ; t=%d %s\n",
-                        tmpf->fn, tmpf->class, th2 );
-            }
-        } else {
-            if( tmpf->is_tinyio ) {
-                fprintf( stubsinc,"%sextrn        _%s:FAR ; t=%d %s\n", th1,
-                        tmpf->fn, tmpf->class, th2 );
-            } else {
-                fprintf(stubsinc,"%sextrn        %s:FAR ; t=%d %s\n",
-                        th1, tmpf->fn, tmpf->class, th2 );
-            }
-        }
-        tmpf = tmpf->next;
-    }
-    fprintf(stubs,"\n");
-    fprintf(stubs,";*\n");
-    fprintf(stubs,";*** 16-bit segment declarations\n");
-    fprintf(stubs,";*\n");
-    fprintf(stubs,"_TEXT segment word public 'CODE' use16\n");
-    fprintf(stubs,"_TEXT ends\n");
-    fprintf(stubs,"\n");
-    fprintf(stubs,"_DATA segment word public 'DATA' use16\n");
-    fprintf(stubs,"_DATA ends\n");
-    fprintf(stubs,"\n");
-    fprintf(stubs,"_DATA segment use16\n");
 
-    tmpf = Head;
-    fprintf( stubs,"_FunctionTable LABEL DWORD\n");
-    fprintf( stubs,"PUBLIC _FunctionTable\n");
-    while( tmpf != NULL ) {
-        if( tmpf->thunk ) {
-            thunkstr = ThunkStrs[ tmpf->thunkindex ];
-        } else {
-            thunkstr = (char *) "";
-        }
         if( tmpf->is_16 ) {
-            if( tmpf->noregfor_16 ) {
-                if( tmpf->thunk ) {
-                    fprintf( stubs,"  dd __DLLPatch ; %s%s\n",
-                                thunkstr, &tmpf->fn[3] );
-                } else {
-                    fprintf( stubs,"  dd %s%s\n",
-                                thunkstr, &tmpf->fn[3] );
+            tmpf2 = Head;
+            while( tmpf2 != NULL ) {
+                if( strcmp( &tmpf->fn[3], tmpf2->fn ) == 0 ) {
+                    break;
                 }
+                tmpf2 = tmpf2->next;
             }
-        } else {
-            if( tmpf->is_tinyio ) {
-                fprintf( stubs,"  dd _%s\n", tmpf->fn );
-            } else if( tmpf->thunk ) {
-                fprintf( stubs,"  dd __DLLPatch ; %s%s\n",
-                                thunkstr, tmpf->fn );
-            } else {
-                fprintf( stubs,"  dd %s\n", tmpf->fn );
+            if( tmpf2 == NULL ) {
+                tmpf->noregfor_16 = 1;
             }
         }
         tmpf = tmpf->next;
+
     }
 
-    fprintf(stubs,"_DATA ends\n");
-    fprintf(stubs,"\n");
-    fprintf( stubsinc, "extrn   GetFirst16Alias:near\n" );
-    fprintf( stubsinc, "extrn   Get16Alias:near\n" );
-    fprintf( stubsinc, "extrn   Free16Alias:near\n" );
+    stubs = fopen("winglue.asm","w" );
+    stubsinc = fopen(GlueInc,"w" );
+    dllthunk = fopen("dllthk.asm","w" );
+    if( stubs == NULL || stubsinc == NULL || dllthunk == NULL) {
+        fprintf(stderr,"Error opening glue file\n");
+        exit(1);
+    }
+    FunctionHeader();
+    DLLThunkHeader();
 
-    fprintf(stubs,"_TEXT segment use16\n");
-    fprintf(stubs,"assume cs:_TEXT\n");
-    fprintf(stubs,"assume ds:dgroup\n");
-    GenerateThunkTable( Class );
-    fprintf(stubs,"\n");
+    tmpf = Class;
+    while( tmpf != NULL ) {
+        if( !quiet ) {
+            printf("Code for class %d\n",tmpf->class );
+        }
+        GenerateAPICall( tmpf );
+        tmpf = tmpf->next_class;
+    }
+#if 0
+    tmpf = Head;
+    while( tmpf != NULL ) {
+        if( tmpf->thunk ) {
+            GenerateDLLThunk( tmpf );
+        }
+        tmpf = tmpf->next;
+    }
+#endif
+    FunctionTrailer();
+    DLLThunkTrailer();
 
-} /* FunctionHeader */
+    fclose( stubs );
+    fclose( stubsinc );
+    fclose( dllthunk );
 
-/*
- * FunctionTrailer - very last crap at end of glue functions
- */
-void FunctionTrailer( void )
-{
-    fprintf(stubs,"_TEXT   ends\n");
-    fprintf(stubs,"        end\n");
-
-} /* FunctionTrailer */
+} /* GenerateCode */
 
 /*
  * AddCommentTrailer -  add trailing '***' to a comment line
@@ -1791,3 +1721,78 @@ void AddCommentTrailer( char *tmp )
     fprintf( stubs,tmp );
 
 } /* AddCommentTrailer */
+
+int main( int argc, char *argv[] )
+{
+    char        *name,*dir;
+    FILE        *f,*pf;
+    char        defname[80];
+    char        fname[50];
+    int         i,j;
+
+    _nheapgrow();
+    j=argc-1;
+    while( j > 0 ) {
+        if( argv[j][0] == '-' ) {
+            for(i=1;i<strlen(argv[j]);i++) {
+                switch( argv[j][i] ) {
+                case 'q': quiet = 1; break;
+                case 's': genstubs=1; break;
+                case '?':
+                    printf("conv -s (gen stubs)\n");
+                    exit(1);
+                default:
+                    fprintf(stderr,"Unrecognized switch %c",argv[j][i] );
+                    break;
+                }
+            }
+            for(i=j;i<argc;i++) {
+                argv[i]=argv[i+1];
+            }
+            argc--;
+        }
+        j--;
+    }
+
+    if( argc < 2 ) {
+        name = "win386";
+    } else {
+        name = argv[1];
+    }
+    if( argc < 3 ) {
+        dir = "def";
+    } else {
+        dir = argv[2];
+    }
+
+    pf = fopen( name, "r" );
+    if( pf == NULL ) {
+        printf( "error opening file %s\n", name );
+        exit( 1 );
+    }
+
+    while( fgets( fname, 50, pf ) != NULL ) {
+        for( i = strlen( fname ); i && isspace( fname[ --i ] );  )
+            fname[ i ] = '\0';
+#ifdef __UNIX__
+        sprintf( defname, "%s/%s", dir, fname );
+#else
+        sprintf( defname, "%s\\%s", dir, fname );
+#endif
+        f = fopen( defname, "r" );
+        if( f == NULL ) {
+            printf( "error opening file %s\n", defname );
+            exit( 1 );
+        }
+        ProcessDefFile( f );
+        fclose( f );
+    }
+    fclose( pf );
+    BuildClasses();
+    GenerateCode();
+    GenerateThunkC();
+    GenerateCStubs();
+    ClosingComments();
+    return( 0 );
+
+} /* main */
