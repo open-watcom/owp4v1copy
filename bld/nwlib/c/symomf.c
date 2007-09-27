@@ -97,15 +97,6 @@ bool GetRec( libfile io )
     return( TRUE );
 }
 
-static void AddOMFSymbol( sym_type type )
-{
-    if( type == S_COMDEF || type == S_COMDAT || type == S_ALIAS || IsCommonRef() ) {
-        AddSym( NameBuff, SYM_WEAK, 0 );
-    } else {
-        AddSym( NameBuff, SYM_STRONG, 0 );
-    }
-}
-
 static unsigned short GetIndex( void )
 /************************************/
 {
@@ -118,7 +109,6 @@ static unsigned short GetIndex( void )
     }
     return( index );
 }
-
 
 static void GetOffset( void )
 /***************************/
@@ -195,6 +185,15 @@ static void procsegdef( void )      /* dedicated routine for FORTRAN 77 common b
     }
 }
 
+static void AddOMFSymbol( sym_type type )
+/***************************************/
+{
+    if( type == S_COMDEF || type == S_COMDAT || type == S_ALIAS || IsCommonRef() ) {
+        AddSym( NameBuff, SYM_WEAK, 0 );
+    } else {
+        AddSym( NameBuff, SYM_STRONG, 0 );
+    }
+}
 
 /*
  * from infl, get a intel name: length and name
