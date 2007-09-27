@@ -37,8 +37,7 @@
  * need to be modified to uncomment _pgmptr and _wpgmptr references.
  */
 #if __WATCOMC__ < 1280
-#include "widechar.h"
-#include "initarg.h"
+_WCRTDATA extern char _WCI86FAR *_LpPgmName;
 #undef  _pgmptr
 #define _pgmptr _LpPgmName
 #endif

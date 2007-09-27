@@ -34,8 +34,7 @@
 
 
 #if __WATCOMC__ < 1280
-#include "widechar.h"
-#include "initarg.h"
+_WCRTDATA extern wchar_t _WCI86FAR *_LpwPgmName;
 #undef  _wpgmptr
 #define _wpgmptr _LpwPgmName
 #endif
