@@ -9,9 +9,9 @@ static int fn2( void );     // bad external->internal linkage redeclaration
 int fn3( void );            // implicitly extern
 static int fn3( void );     // bad external->internal linkage redeclaration
 
-// We do not want to warn in this case - Watcom extension. Note that
-// in -za mode, a warning will be emitted (also a warning about missing
-// prototype).
+// Warn about unprotoyped function, extensions or not (behavioural change
+// from earlier versions).
+// The extension just made it too easy to write non-portable code.
 void foo( void )
 {
     fn4();                  // implicit extern declaration

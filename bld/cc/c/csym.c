@@ -604,12 +604,6 @@ local void ChkDefined( SYM_ENTRY *sym, SYM_NAMEPTR name )
             } else if( sym->stg_class == SC_FORWARD ) {
                 SetSymLoc( sym );                       /* 03-jun-91 */
                 sym->stg_class = SC_EXTERN;
-                if( CompFlags.extensions_enabled ) {
-                    /* No prototype ever found. In ISO mode, we already warned
-                     * in cexpr.c when unprototyped function was first seen.
-                     */
-                    CWarn( WARN_ASSUMED_IMPORT, ERR_ASSUMED_IMPORT, name );
-                }
             }
         }
     }

@@ -34,6 +34,7 @@ source\diag0005.c(7): Warning! W137: Extern function 'fn2' redeclared as static
 source\diag0005.c(7): Note! I2002: 'fn2' defined in: source\diag0005.c(6)
 source\diag0005.c(10): Warning! W137: Extern function 'fn3' redeclared as static
 source\diag0005.c(10): Note! I2002: 'fn3' defined in: source\diag0005.c(9)
+source\diag0005.c(17): Warning! W131: No prototype found for function 'fn4'
 source\diag0005.c(30): Error! E1072: Storage class disagrees with previous definition of 'i2'
 source\diag0005.c(30): Note! I2002: 'i2' defined in: source\diag0005.c(29)
 source\diag0005.c(33): Error! E1072: Storage class disagrees with previous definition of 'i3'

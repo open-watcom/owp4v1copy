@@ -414,13 +414,8 @@ TREEPTR SymLeaf( void )
     if( sym_handle == 0 ) {
         if( CurToken == T_LEFT_PAREN ) {
             sym.stg_class = SC_FORWARD;     /* indicate forward decl */
-            if( !CompFlags.extensions_enabled ) {
-                /* Warn about unprototyped function here, but only in ISO mode.
-                 * In extensions mode, forward declarations are OK. If no prototype
-                 * is ever found, we'll warn later in csym.c.
-                 */
-                CWarn( WARN_ASSUMED_IMPORT, ERR_ASSUMED_IMPORT, sym.name );
-            }
+            /* Warn about unprototyped function */
+            CWarn( WARN_ASSUMED_IMPORT, ERR_ASSUMED_IMPORT, sym.name );
             sym_handle = SymAddL0( hash, &sym ); /* add symbol to level 0 */
             sym.flags |= SYM_FUNCTION;
             sym.sym_type = FuncNode( GetType( TYPE_INT ), 0, NULL );
