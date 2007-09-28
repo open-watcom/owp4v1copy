@@ -19,6 +19,9 @@ objs = &
             gdata.obj    &
             gerror.obj   &
             goptions.obj &
+            gscan.obj    &
+            gutil.obj    &
+            gresrch.obj  &
             swchar.obj
 
 # don't build wgml.exe for linux
