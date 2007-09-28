@@ -32,7 +32,38 @@
 #ifndef GTYPE_H_INCLUDED
 #define GTYPE_H_INCLUDED
 
-typedef void                *VOIDPTR;
+
+#if defined(__QNX__) || defined(__LINUX__) // try to be nice to linux
+    #define PATH_SEP        "/"
+    #define INCLUDE_SEP     ':'
+#elif defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__OSI__)
+    #define PATH_SEP        "\\"
+    #define INCLUDE_SEP     ';'
+#else
+    #error gtype.h not configured for system
+#endif
+
+#define ulong           unsigned long
+
+
+
+/* default extensions */
+#define DEF_EXT         ".def"
+#define ERR_EXT         ".err"
+#define GML_EXT         ".gml"
+#define LAY_EXT         ".lay"
+#define OPT_EXT         ".opt"
+
+/* environment variable names */
+#define GMLLIB          "GMLLIB"
+#define GMLINC          "GMLINC"
+
+
+#define GML_CHAR_DEFAULT    ':'
+#define SCR_CHAR_DEFAULT    '.'
+#define CW_SEP_CHAR_DEFAULT ';'
+
+
 typedef enum {FALSE, TRUE}   bool;
 
 
@@ -48,76 +79,85 @@ typedef enum {
 
 
 /***************************************************************************/
-/*  Space units Horiz + Vert                                               */
+/*  Space units Horiz + Vert to be redesigned                              */
 /***************************************************************************/
 
 typedef enum space_units {
     SU_undefined,                       // don't care = value zero
-    SU_chars = 1,                       // chars per inch horizontal
-    SU_lines = 1,                       // lines per inch vertical
-    SU_inch,                            // inch
-    SU_cm,                              // centimeter
-    SU_mm,                              // millimeter
+    SU_chars_lines = 10,                // undimensioned value
+    SU_chars = 1,                       // chars horizontal
+    SU_lines = 1,                       // lines vertical
     SU_cicero,                          // Cicero
-    SU_dev_unit,                        // device units
+    SU_cm,                              // centimeter
+    SU_dv,                              // device units
     SU_ems,                             // Ems
-    SU_pica                             // pica
+    SU_inch,                            // inch
+    SU_mm,                              // millimeter
+    SU_pica,                            // pica
+    SU_absolute                         // absolute mm with 4 decimals
 } space_units;
 
-typedef struct filelist {
-    struct filelist     *next;
-    size_t              len;            // length of name
-    char                name[1];        // var length
-} FILELIST;
+#define MAX_SU_CHAR     12            // length of space units in char format
 
+typedef struct {
+    char        su_txt[ MAX_SU_CHAR ];
+    long        su_whole;               // integer part
+    long        su_dec;                 // decimal part (if any)
+    long        su_conv;              // absolute value in mm with 4 decimals
+    space_units su_u;                   // unit
+    bool        su_relative;            // + - sign found
+} su;
 
-typedef enum fflags {
-    FF_clear          = 0x0000,         // clear all flags
-    FF_startofline    = 0x0001,         // at start of physical line
-    FF_eof            = 0x0002,         // file eof
-    FF_open           = 0x8000          // file is open
+typedef enum {
+    FF_clear        = 0x0000,           // clear all flags
+    FF_startofline  = 0x0001,           // at start of physical line
+    FF_eof          = 0x0002,           // file eof
+    FF_err          = 0x0004,           // file error
+    FF_open         = 0x8000            // file is open
 } fflags;
 
+
 typedef struct filecb {
-    struct filecb  *prev;
-    int         level;                  // include level
-    int         lineno;                 // line number
-    size_t      buflen;                 // length of filebuf
-    size_t      recsize;                // size from (x:nnnn)
-    char        *filebuf;
-    char        *scanPtr;               // ptr into filebuf
-    char        currchar;
-    FILE        *fp;                   // FILE ptr
-    fpos_t      pos;                    // position for reopen
-    fflags      flags;
-    char        filename[1];            // full filename var length
-} FILECB;
+    struct filecb   *prev;
+    FILE            *fp;                // FILE ptr
+    ulong           lineno;             // current line number
+    ulong           linemin;            // first line number to process
+    ulong           linemax;            // last line number to process
+    size_t          buflen;             // length of filebuf
+    char            fileattr[ MAX_FILE_ATTR ]; // T:xxxx
+    char            *filebuf;
+    char            *scanPtr;           // ptr into filebuf
+    char            *scanStop;          // last position to scan
+    size_t          usedlen;            // used data of filebuf
+    fpos_t          pos;                // position for reopen
+    fflags          flags;
+    char            filename[1];        // full filename var length
+} filecb;
 
 
-#if defined(__QNX__) || defined(__LINUX__)
- #define PATH_SEP       "/"
- #define INCLUDE_SEP    ':'
-#elif defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__OSI__)
- #define PATH_SEP       "\\"
- #define INCLUDE_SEP    ';'
-#else
- #error gtype.h not configured for system
-#endif
-
-/* default extensions */
-#define DEF_EXT         ".def"
-#define ERR_EXT         ".err"
-#define GML_EXT         ".gml"
-#define LAY_EXT         ".lay"
-#define OPT_EXT         ".opt"
-/* environment variable names */
-#define GMLLIB          "GMLLIB"
-#define GMLINC          "GMLINC"
+typedef enum {
+    tagonly     = 1,                    // tag without any attr
+    tagbasic    = 2,                    // basic elements possible on tag line.
+    tagtext     = 4,                    // only text possible
+    etagreq     = 8,                    // eTAG required
+    etagopt     = 16                    // eTAG optional
+} gmlflags;
 
 
-#define GML_CHAR_DEFAULT    ':'
-#define SCR_CHAR_DEFAULT    '.'
-#define CW_SEP_CHAR_DEFAULT ';'
+typedef struct {
+   char             tagname[ TAG_NAME_LENGTH ];
+   gmlflags         tagflags;
+   void             (*proctag)( void );
+} gmltag;
+
+
+typedef enum condcode {            // return code for some scanning functions
+    omit    = 1,                        // parm(s) omitted
+    pos     = 2,                        // value >= 0
+    neg     = 4,                        // value < 0
+    notnum  = 8                         // value not numeric / overflow
+} condcode;
+
 
 
 #endif                                 // GTYPE_H_INCLUDED

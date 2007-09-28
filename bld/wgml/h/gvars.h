@@ -36,70 +36,99 @@
     #define global  extern
 #endif
 
-global  jmp_buf        *Environment;    // var for GSuicide()
+global  jmp_buf         *environment;   // var for GSuicide()
 
-global  char           *ScanCharPtr;   // used by character scanning routines
-global  int             CurrChar;
+global  char            *scan_char_ptr;// used by character scanning routines
+global  int             curr_char;
 
-global  int             SwitchChar;     // DOS switch character
-global  char           *AltExt;         // alternate extension
-
-
-global  FILELIST       *OPTFiles;       // Option files *.opt
-global  char           *MasterFName;    // Primary input file name
-global  char           *MasterFNameAttr;// Primary input file name attributes
-global  FILECB         *FileCbs;        // GML files
-global  char           *OutFile;        // output file name
-global  char           *OutFileAttr;    // output file attributes (T:2222)
+global  int             switch_char;    // DOS switch character
+global  char            *alt_ext;       // alternate extension
+global  char            *def_ext;       // default extension
 
 
-#define BUF_SIZE 1024
+global  char            *master_fname;  // Primary input file name
+global  char            *master_fname_attr;// Primary input file name attributes
+global  ulong           print_from;     // first page to print
+global  ulong           print_to;       // last page to print
 
-global  size_t          BufSize;
-global  char           *Buffer;
-global  char           *TokenBuf;
-global  char           *TryFileName;
-global  FILE           *Tryfp;
+global  filecb          *file_cbs;      // GML input files
+global  char            *out_file;      // output file name
+global  char            *out_file_attr; // output file attributes (T:2222)
+global  unsigned        inc_level;   // include nesting level 1 = MasterFname
+global  ulong           line_from;      // starting lineno to process
+global  ulong           line_to;        // ending lineno to process
+#define LINEFROM_DEFAULT    1
+#define LINETO_DEFAULT      (0x1000000) // 16 meg lines should be enough
 
-global  char           *Pathes;         // content of PATH Envvar
-global  char           *GMLlibs;        // content of GMMLIB Envvar
-global  char           *GMLincs;        // content of GMLINC Envvar
+global  size_t          buf_size;
+global  char            *buffer;
+global  char            *token_buf;
+global  char            *try_file_name;
+global  FILE            *try_fp;
 
-global  int             ErrCount;       // Overall Errrorcount
-global  int             WngCount;       // Overall warning count
+global  char            *Pathes;        // content of PATH Envvar
+global  char            *GMLlibs;       // content of GMMLIB Envvar
+global  char            *GMLincs;       // content of GMLINC Envvar
 
+global  int             err_count;      // Overall Errrorcount
+global  int             wng_count;      // Overall warning count
 
+global  char            GML_char;       // GML Keywword start char :
+global  char            SCR_char;       // SCRIPT keywword start char .
+global  char            CW_sep_char;    // Control Word separator char ;
 
-global  char            GMLChar;        // GML Keywword start char :
-global  char            SCRChar;        // SCRIPT keywword start char .
-global  char            CWSepChar;      // Control Word separator char ;
 global  int             CPI;            // chars per inch
 global  space_units     CPI_units;      // unit for chars per inch
 global  int             LPI;            // lines per inch
 global  space_units     LPI_units;      // unit for lines per inch
-global  int             Bind;           // Bind value for even pages
-global  space_units     Bind_units;     // unit for bind
-global  int             BindOdd;        // Bind value for odd pages
-global  space_units     BindOdd_units;  // unit for bind
 
+global  su              bind_odd;       // Bind value for odd pages
 
+global  su              bind_even;      // Bind value for even pages
 
+global  int             passes;         // Max no of passes
+global  int             pass;           // current pass no
 
 global struct GlobalFlags {
-    unsigned            quiet         : 1; // show Productinfo?
-    unsigned            bannerprinted : 1; // Productinfo  shown
-    unsigned            wscript       : 1; // enable WATCOM script extension (default)
-    unsigned            free3         : 1;
-    unsigned            free4         : 1;
-    unsigned            free5         : 1;
+    unsigned            quiet         : 1;  // show Productinfo?
+    unsigned            bannerprinted : 1;  // Productinfo shown
+    unsigned            wscript       : 1;  // enable WATCOM script extension
+    unsigned            firstpass     : 1;  // first or only pass
+    unsigned            lastpass      : 1;  // last pass
+    unsigned            inclist       : 1;  // show included files
+
+    unsigned            warning       : 1;  // show warnings
+    unsigned            free7         : 1;
+
+    unsigned            free8         : 1;
+    unsigned            free9         : 1;
+    unsigned            freea         : 1;
+    unsigned            freeb         : 1;
+    unsigned            freec         : 1;
+    unsigned            freed         : 1;
+    unsigned            freee         : 1;
+    unsigned            research      : 1;  // research mode, no formatting
+                                            // research mode will eventually go away
+} GlobalFlags;
+
+global struct ProcFlags {
+    unsigned            macro_ignore  : 1;  // .. in col 1-2
+    unsigned            CW_sep_ignore : 1;  // .' in col 1-2
+    unsigned            newLevel      : 1;  // start new include Level
+
+    unsigned            GML_tag_cont  : 1;// tag continued from prev line
+    unsigned            nocase        : 1;  // case insensitive switch
     unsigned            free6         : 1;
     unsigned            free7         : 1;
 
+} ProcFlags;
 
-
-
-} GlobalFlags;
-
+global char            *buff2;          // input buffer
+global char            *buff2_lg;       // input buffer used length
+global char            *arg_start;      // start of Arg
+global char            *arg_stop;       // End of Arg
+global char            *open_paren;     // ( in input
+global char            *clos_paren;     // ) in input
 
 #endif  /* GVARS_H_INCLUDED */
 

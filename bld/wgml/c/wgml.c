@@ -24,8 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  wgml top level driver module and file I/O.
-*
+* Description:  WGML top level driver module and file I/O.
+*               not yet functional
+*   some logic / ideas adopted from Watcom Script 3.2 IBM S/360 Assembler
 ****************************************************************************/
 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
@@ -56,13 +57,7 @@
     #define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
 #endif
 
-#define MAX_INC_DEPTH   255
 #define CRLF            "\n"
-
-
-// local function prototypes
-void    *GMemAlloc( unsigned size );
-void    GMemFree( void *p );
 
 
 
@@ -70,7 +65,7 @@ void    GMemFree( void *p );
 /*  Program end                                                            */
 /***************************************************************************/
 
-void MyExit( int rc )
+void my_exit( int rc )
 {
     exit( rc );
 }
@@ -80,13 +75,13 @@ void MyExit( int rc )
 /*  Output Banner if wanted and not yet done                               */
 /***************************************************************************/
 
-void GBanner( void )
+void g_banner( void )
 {
     if( !(GlobalFlags.bannerprinted || GlobalFlags.quiet) ) {
-        OutMsg( banner1w( "WGML Script/GML", _WGML_VERSION_ ) CRLF );
-        OutMsg( banner2a() CRLF );
-        OutMsg( banner3 CRLF );
-        OutMsg( banner3a CRLF );
+        out_msg( banner1w( "WGML Script/GML", _WGML_VERSION_ ) CRLF );
+        out_msg( banner2a() CRLF );
+        out_msg( banner3 CRLF );
+        out_msg( banner3a CRLF );
         GlobalFlags.bannerprinted = TRUE;
     }
 }
@@ -97,17 +92,19 @@ void GBanner( void )
 
 static void usage( void )
 {
-    GBanner();
+    g_banner();
 
-    OutMsg( "Usage: wgml [options] srcfile" CRLF );
-    OutMsg( "Options:" CRLF );
-    OutMsg( "-q\t\tQuiet, don't show product info." CRLF );
-    OutMsg( "\tothers to be done / documented." CRLF );
-    MyExit( 4 );
+    out_msg( CRLF "Usage: wgml [options] srcfile [options]" CRLF );
+    out_msg( "Options:" CRLF );
+    out_msg( "-q\t\tQuiet, don't show product info." CRLF );
+    out_msg( "-r\t\tResearch, no formatting, only count GML/SCR keywords" CRLF );
+    out_msg( "\t\tand follow .im, .ap, :include tags." CRLF );
+    out_msg( "\tother options to be done / documented." CRLF );
+    my_exit( 4 );
 }
 
 
-char *GetFilenameFullPath( char *buff, char const *name, size_t max )
+char *get_filename_full_path( char *buff, char const *name, size_t max )
 /********************************************************************/
 {
     char        *p;
@@ -135,15 +132,15 @@ char *GetFilenameFullPath( char *buff, char const *name, size_t max )
 /*  Allocate some storage                                                  */
 /***************************************************************************/
 
-void *GMemAlloc( unsigned size )
+void *mem_alloc( unsigned size )
 {
     void    *p;
 
     p = malloc( size );
     if( p == NULL ) {
-        OutMsg( "ERR_NOMEM_AVAIL" );
-        ErrCount++;
-        GSuicide();
+        out_msg( "ERR_NOMEM_AVAIL" );
+        err_count++;
+        g_suicide();
     }
     return( p );
 }
@@ -152,7 +149,7 @@ void *GMemAlloc( unsigned size )
 /*  Free storage                                                           */
 /***************************************************************************/
 
-void GMemFree( void *p )
+void mem_free( void *p )
 {
     free( p );
 }
@@ -162,25 +159,25 @@ void GMemFree( void *p )
 /*  Try to close an opened include file                                    */
 /***************************************************************************/
 
-static bool freeIncFP( void )
+static bool free_inc_fp( void )
 {
-    FILECB      *cb;
+    filecb      *cb;
     int         rc;
 
-    cb = FileCbs;
+    cb = file_cbs;
     while( cb != NULL ) {
         if( cb->flags & FF_open ) {
             rc = fgetpos( cb->fp, &cb->pos );
             if( rc != 0 ) {
-                OutMsg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
-                ErrCount++;
-                GSuicide();
+                out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                err_count++;
+                g_suicide();
             }
             rc = fclose( cb->fp );
             if( rc != 0 ) {
-                OutMsg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
-                ErrCount++;
-                GSuicide();
+                out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                err_count++;
+                g_suicide();
             }
             cb->flags &= ~FF_open;
             return TRUE;
@@ -191,7 +188,7 @@ static bool freeIncFP( void )
 }
 
 
-static void reopenIncFP( FILECB *cb )
+static void reopen_inc_fp( filecb *cb )
 {
     int         rc;
     errno_t     erc;
@@ -203,20 +200,20 @@ static void reopenIncFP( FILECB *cb )
             if( erc == 0 ) break;
             erc2 = errno;
             if( errno != ENOMEM && errno != ENFILE && errno != EMFILE ) break;
-            if( !freeIncFP() ) break;       // try closing an include file
+            if( !free_inc_fp() ) break; // try closing an include file
         }
         if( erc == 0 ) {
             rc = fsetpos( cb->fp, &cb->pos );
             if( rc != 0 ) {
-                OutMsg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
-                ErrCount++;
-                GSuicide();
+                out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                err_count++;
+                g_suicide();
             }
             cb->flags |= FF_open;
         } else {
-            OutMsg( "ERR_FILE_IO %d %s\n", erc2, cb->filename );
-            ErrCount++;
-            GSuicide();
+            out_msg( "ERR_FILE_IO %d %s\n", erc2, cb->filename );
+            err_count++;
+            g_suicide();
         }
     }
 }
@@ -225,7 +222,7 @@ static void reopenIncFP( FILECB *cb )
 /*  Compose full path / filename and try to open for reading               */
 /***************************************************************************/
 
-int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
+int try_open( char *prefix, char *separator, char *filename, char *suffix )
 {
     int         i;
     FILE        *fp;
@@ -239,20 +236,20 @@ int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
     while( (buf[i] = *suffix++) )    ++i;
     filename = &buf[0];                 // point to the full name
 
-    TryFileName = NULL;
-    Tryfp = NULL;
+    try_file_name = NULL;
+    try_fp = NULL;
 
     for( ;; ) {
         erc = fopen_s( &fp, filename, "rb" );
         if( erc == 0 ) break;
         if( errno != ENOMEM && errno != ENFILE && errno != EMFILE ) break;
-        if( !freeIncFP() ) break;       // try closing an include file
+        if( !free_inc_fp() ) break;     // try closing an include file
     }
     if( fp == NULL ) return( 0 );
 
-    TryFileName = GMemAlloc( i + 2 );
-    strcpy_s( TryFileName, i + 2, buf );
-    Tryfp = fp;
+    try_file_name = mem_alloc( i + 2 );
+    strcpy_s( try_file_name, i + 2, buf );
+    try_fp = fp;
     return( 1 );
 }
 
@@ -261,7 +258,7 @@ int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
 /*  Search for filename in curdir, and along environment vars              */
 /***************************************************************************/
 
-int  SearchFileinDirs( char * filename, char * defext, char * altext, DIRSEQ sequence )
+int search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ sequence )
 {
     char        buff[_MAX_PATH2];
     char        try[_MAX_PATH];
@@ -277,31 +274,37 @@ int  SearchFileinDirs( char * filename, char * defext, char * altext, DIRSEQ seq
     _splitpath2( filename, buff, &drive, &dir, &name, &ext );
     if( drive[0] != '\0' || IS_PATH_SEP(dir[0]) ) {
         /* Drive or path from root specified */
-        if( TryOpen( "", "", filename, "" ) != 0 ) return( 1 );
+        if( try_open( "", "", filename, "" ) != 0 ) return( 1 );
         if( *ext == '\0' ) {
-            if( TryOpen( "", "", filename, defext ) != 0 ) return( 1 );
+            if( try_open( "", "", filename, defext ) != 0 ) return( 1 );
             if( *altext != '\0' ) {
-                if( TryOpen( "", "", filename, altext ) != 0 ) return( 1 );
+                if( try_open( "", "", filename, altext ) != 0 ) return( 1 );
+            }
+            if( strcmp(defext, GML_EXT )) { // one more try with .gml
+                if( try_open( "", "", filename, GML_EXT ) != 0 ) return( 1 );
             }
         } else {
             if( *altext != '\0' ) {
                 _makepath( try, drive, dir, filename, altext );
-                if( TryOpen( "", "", try, "" ) != 0 ) return( 1 );
+                if( try_open( "", "", try, "" ) != 0 ) return( 1 );
             }
         }
         return( 0 );
     }
     /* no absolute path specified, try curr dir */
-    if( TryOpen( "", "", filename, "" ) != 0 ) return( 1 );
+    if( try_open( "", "", filename, "" ) != 0 ) return( 1 );
     if( *ext == '\0' ) {
-        if( TryOpen( "", "", filename, defext ) != 0 ) return( 1 );
+        if( try_open( "", "", filename, defext ) != 0 ) return( 1 );
         if( *altext != '\0' ) {
-            if( TryOpen( "", "", filename, altext ) != 0 ) return( 1 );
+            if( try_open( "", "", filename, altext ) != 0 ) return( 1 );
+        }
+        if( strcmp(defext, GML_EXT )) { // one more try with .gml
+            if( try_open( "", "", filename, GML_EXT ) != 0 ) return( 1 );
         }
     } else {
         if( *altext != '\0' ) {
             _makepath( try, drive, dir, name, altext );
-            if( TryOpen( "", "", try, "" ) != 0 ) return( 1 );
+            if( try_open( "", "", try, "" ) != 0 ) return( 1 );
         }
     }
 
@@ -318,10 +321,14 @@ int  SearchFileinDirs( char * filename, char * defext, char * altext, DIRSEQ seq
         searchdirs[ 0 ] = GMLlibs;
         searchdirs[ 1 ] = Pathes;
         searchdirs[ 2 ] = NULL;
+    } else {
+        searchdirs[ 0 ] = NULL;
+        searchdirs[ 1 ] = NULL;
+        searchdirs[ 2 ] = NULL;
     }
     for( k = 0; k < 3; k++ ) {
         p = searchdirs[ k ];
-        if( p == NULL ) continue;
+        if( p == NULL ) break;
 
         do {
             i = 0;
@@ -338,23 +345,30 @@ int  SearchFileinDirs( char * filename, char * defext, char * altext, DIRSEQ seq
                 if( try[ i-1 ] != ' ' ) break;
                 --i;
             }
+
 #define SEP_LEN (sizeof( PATH_SEP ) - 1)
+
             try[ i ] = '\0';
             if( i >= SEP_LEN && strcmp( &try[ i - SEP_LEN ], PATH_SEP ) == 0 ) {
                 try[ i - SEP_LEN ] = '\0';
             }
-            if( TryOpen( try, PATH_SEP, filename, "" ) != 0 ) return( 1 );
 
+#undef  SEP_LEN
+
+            if( try_open( try, PATH_SEP, filename, "" ) != 0 ) return( 1 );
 
             if( *ext == '\0' ) {
-                if( TryOpen( try, PATH_SEP, filename, defext ) != 0 ) return( 1 );
+                if( try_open( try, PATH_SEP, filename, defext ) != 0 ) return( 1 );
                 if( *altext != '\0' ) {
-                    if( TryOpen( try, PATH_SEP, filename, altext ) != 0 ) return( 1 );
+                    if( try_open( try, PATH_SEP, filename, altext ) != 0 ) return( 1 );
+                }
+                if( strcmp(defext, GML_EXT )) { // one more try with .gml
+                    if( try_open( try, PATH_SEP, filename, GML_EXT ) != 0 ) return( 1 );
                 }
             } else {
                 if( *altext != '\0' ) {
                     _makepath( try, drive, dir, filename, altext );
-                    if( TryOpen( "", "", try, "" ) != 0 ) return( 1 );
+                    if( try_open( "", "", try, "" ) != 0 ) return( 1 );
                 }
             }
             if( *p == INCLUDE_SEP || *p == ';' ) ++p;
@@ -363,168 +377,301 @@ int  SearchFileinDirs( char * filename, char * defext, char * altext, DIRSEQ seq
     return( 0 );
 }
 
+
 /***************************************************************************/
-/*  Add info about file  to LIFO list                                      */
+/*  Set the extension of the Master input file as default extension        */
 /***************************************************************************/
 
-static  void    addFileCbEntry( void )
+void set_default_extension( const char *masterfname )
 {
-    FILECB      *new;
+    char        buff[_MAX_PATH2];
+    char        *ext;
 
-    new = GMemAlloc( sizeof( FILECB ) + strlen( TryFileName ) );
-    new->prev  = NULL;
-    new->lineno = 0;
-    new->flags = FF_open;
-    strcpy( new->filename, TryFileName );
-    new->fp = Tryfp;
-    new->filebuf = GMemAlloc( BufSize );
-    new->currchar = '\n';               // for reading
-
-    if( FileCbs == NULL ) {
-        new->level = 1;
-    } else {
-        new->prev = FileCbs;
-        new->level = FileCbs->level + 1;
+    _splitpath2( masterfname, buff, NULL, NULL, NULL, &ext );
+    if( strlen( ext ) > 0) {
+        if( strlen( ext ) > strlen( def_ext ) ) {
+            mem_free( def_ext);
+            def_ext = mem_alloc( 1+ strlen( ext ) );
+        }
+        strcpy_s( def_ext, 1 + strlen( ext ), ext );
     }
-    FileCbs = new;
 }
+
+
+/***************************************************************************/
+/*  add info about file  to LIFO list                                      */
+/***************************************************************************/
+
+static  void    add_file_cb_entry( void )
+{
+    filecb      *new;
+    size_t      fnlen;
+
+    fnlen = strlen( try_file_name );
+    new = mem_alloc( sizeof( filecb ) + fnlen );// count for terminating \0
+                                                 // is in filecb structure
+    new->prev    = NULL;
+    new->lineno  = 0;
+    new->linemin = line_from;
+    new->linemax = line_to;
+    strcpy_s( new->filename, fnlen + 1, try_file_name );
+    mem_free( try_file_name );
+
+    if( try_fp ) {
+        new->flags = FF_open;
+        new->fp    = try_fp;
+    } else {
+        new->flags = FF_clear;
+        new->fp    = NULL;
+    }
+
+    new->filebuf = mem_alloc( buf_size );
+    new->buflen = buf_size -1;
+
+    if( file_cbs != NULL ) {
+        new->prev = file_cbs;
+    }
+    file_cbs = new;
+}
+
 
 /***************************************************************************/
 /*  remove info about file  from LIFO list                                 */
 /***************************************************************************/
 
-static  void    delFileCbEntry( FILECB *cb )
+static  void    del_file_cb_entry( void )
 {
-    FILECB      *wk;
+    filecb      *wk;
 
-    GMemFree( cb->filebuf );
-    wk = FileCbs;
-    if( wk == cb ) {
-        FileCbs = wk->prev;
+    wk = file_cbs;
+    if( wk == NULL ) {
+        return;
     }
-    GMemFree( cb );
+    if( wk->flags & FF_open ) {         // close file if neccessary
+       fclose( wk->fp );
+    }
+    if( wk->filebuf ) {
+        mem_free( wk->filebuf );
+    }
+    file_cbs = file_cbs->prev;
+    mem_free( wk );
 }
 
 
 /***************************************************************************/
-/*  get line from current input source                                     */
+/*  get line from current input ( file )                                   */
+/*  skipping lines before the first one to process if neccessary           */
 /***************************************************************************/
-static  void    getLine( void )
+static  void    get_line( void )
 {
-    FILECB      *cb;
+    filecb      *cb;
     char        *p;
 
-    cb = FileCbs;
+    cb = file_cbs;
     if( ! cb->flags & FF_open ) {
-        reopenIncFP( cb );
+        reopen_inc_fp( cb );
     }
-    if( cb->currchar == '\n' ) {
+    do {
         p = fgets( cb->filebuf, cb->buflen, cb->fp );
         if( p != NULL ) {
             cb->lineno++;
-            cb->currchar = *p;
             cb->scanPtr = p;
             cb->flags |= FF_startofline;
         } else {
-            if( feof( cb->fp ) ) {
+            if( feof( cb->fp ) || cb->lineno > cb->linemax ) {
                 cb->flags |= FF_eof;
                 cb->flags &= ~FF_startofline;
-                cb->currchar = '\0';
                 cb->scanPtr = cb->filebuf;
                 *(cb->filebuf) = '\0';
+                break;
             } else {
-                OutMsg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
-                ErrCount++;
-                GSuicide();
+                out_msg( "ERR_FILE_IO %d %s\n", errno, cb->filename );
+                err_count++;
+                g_suicide();
             }
         }
-#if 0
-    } else {
-        cb->flags &= ~FF_startofline;
-        if( cb->currchar = CWSepChar ) {
-            cb->currchar = *(++cb->scanPtr);
-        } else {
-            OutMsg( "ERR_NOT_LLstart \n" );
-            ErrCount++;
-            GSuicide();
-        }
-#endif
-    }
+    } while( cb->lineno < cb->linemin );
+    cb->usedlen = strlen( cb->filebuf );
 }
+
 
 /***************************************************************************/
 /*  process the input file                                                 */
+/*      if research mode flag set, minimal processing                      */
 /***************************************************************************/
 
-static  void    procGML( char *filename )
+static  void    proc_GML( char *filename )
 {
-    FILECB      *cb;
+    filecb      *cb;
+    char        attrwork[ 32 ];
 
-    strcpy( TokenBuf, filename );
-    if( SearchFileinDirs( TokenBuf, GML_EXT, AltExt, DS_cur_inc_lib_path ) ) {
-        addFileCbEntry();
+    ProcFlags.newLevel = TRUE;
+    strcpy_s( token_buf, buf_size, master_fname );
 
-        getLine();
-        cb = FileCbs;
-        OutMsg( "Processing GML File ( still dummy ) \n" );
+    for( ; ; ) {
+        if( ProcFlags.newLevel ) {
+
+        /*******************************************************************/
+        /*  start a new include file level                                 */
+        /*******************************************************************/
+            ProcFlags.newLevel = FALSE;
+
+        /*******************************************************************/
+        /*  split off attribute  (f:xxxx)                                  */
+        /*******************************************************************/
+            split_attr_file( token_buf, attrwork, sizeof( attrwork ) );
+
+            if( attrwork[0] ) {
+                out_msg( "WNG_FILEATTR_IGNORED (%s) %s\n", attrwork, token_buf );
+                wng_count++;
+            }
+            if( search_file_in_dirs( token_buf, def_ext, alt_ext,
+                                     DS_cur_inc_lib_path ) ) {
+
+                if( inc_level >= MAX_INC_DEPTH ) {
+                    out_msg( "ERR_MAX_INPUT_NESTING %s\n", token_buf );
+                    err_count++;
+                    continue;           // terminate this inc level
+                }
+            } else {
+                out_msg( "ERR_INPUT_FILE_NOT_FOUND %s\n", token_buf );
+                err_count++;
+                continue;               // terminate this inc level
+            }
+            inc_level++;                // start new level
+            add_file_cb_entry();
+            cb = file_cbs;
+            cb->linemin = line_from;
+            cb->linemax = line_to;
+            if( attrwork[0] ) {
+                strcpy_s( cb->fileattr, sizeof( cb->fileattr ), attrwork );
+            } else {
+                cb->fileattr[ 0 ] = '\0';
+            }
+            if( GlobalFlags.inclist ) {
+                out_msg( "\nCurrent file is '%s'\n", cb->filename );
+            }
+        }
+        if( inc_level == 0 ) {
+            break;                 // we are done (master document not found)
+        }
+
+        while( !(cb->flags & FF_eof) ) {
+
+            get_line();
+
+            if( cb->flags & (FF_eof | FF_err) ) {
+                break;
+            }
+            if( GlobalFlags.research && GlobalFlags.firstpass ) {
+                printf( "\n%s", cb->scanPtr );
+            }
 
 
-/* fill in processing */
-/* fill in processing */
-/* fill in processing */
-/* fill in processing */
-/* fill in processing */
-/* fill in processing */
-/* fill in processing */
-/* fill in processing */
+            scan_line();
 
+            if( ProcFlags.newLevel ) {  // imbed and friends found
+                break;                  // start new file
+            }
 
-        delFileCbEntry( FileCbs );
-    } else {
-        OutMsg( "ERR_MASTER_INPUT_FILE_NOT_FOUND %s\n", filename );
-        ErrCount++;
-        return;
+        }
+        if( ProcFlags.newLevel ) {
+            continue;
+        }
+
+        del_file_cb_entry();               // one level finished
+        cb = file_cbs;
+        inc_level--;
+        if( inc_level == 0 ) {
+            break;                      // we are done with master document
+        }
     }
 }
 
+/***************************************************************************/
+/*  printStats show statistics at program end                              */
+/***************************************************************************/
+
+static  void    print_stats( void )
+{
+    out_msg( "Statistics:\n" );
+    out_msg( "  Error count: %6ld\n", err_count );
+    out_msg( "Warning count: %6ld\n", wng_count );
+    out_msg( "   Returncode: %6d\n",  err_count ? 8 : wng_count ? 4 : 0 );
+
+}
 
 /***************************************************************************/
-/*  main                                                                   */
+/*  initPass                                                               */
+/***************************************************************************/
+static  void    init_pass( void )
+{
+
+    GlobalFlags.firstpass = pass > 1      ? FALSE : TRUE;
+    GlobalFlags.lastpass  = pass < passes ? FALSE : TRUE;
+
+    line_from   = 1;                  // processing line range Masterdocument
+    line_to     = ULONG_MAX - 1;
+}
+
+/***************************************************************************/
+/*  main WGML                                                              */
 /***************************************************************************/
 
 int main( int argc, char *argv[] )
 {
-    char        cmdline[ BUF_SIZE ];
+    char       *cmdline;
+    int         cmdlen;
     jmp_buf     env;
 
-    Environment = &env;
+    environment = &env;
     if( setjmp( env ) ) {               // if fatal error has occurred
-        MyExit( 16 );
+        my_exit( 16 );
     }
 
-    InitGlobalVars();
+    init_global_vars();
 
-    BufSize = BUF_SIZE;
-    Buffer = GMemAlloc( BufSize );
-    TokenBuf = GMemAlloc( BufSize );
+    token_buf = mem_alloc( buf_size );
 
-    GetEnvVars();
+    get_env_vars();
 
-    getcmd( cmdline );
+    cmdlen = _bgetcmd( NULL, 0 ) + 1;
+    cmdline = mem_alloc( cmdlen );
+    _bgetcmd( cmdline, cmdlen );
 
-    OutMsg( "cmdline=%s\n", cmdline );
+    out_msg( "cmdline=%s\n", cmdline );
 
-    ProcOptions( cmdline );
-    GBanner();
+    proc_options( cmdline );
+    g_banner();
 
-    if( MasterFName != NULL ) {         // filename specified
-        procGML( MasterFName );
+    if( master_fname != NULL ) {        // filename specified
+        set_default_extension( master_fname );// make this extension first choice
+
+        for( pass = 1; pass <= passes; pass++ ) {
+
+            init_pass();
+
+            out_msg( "\nStarting pass %d of %d ( %s mode ) \n", pass, passes,
+                     GlobalFlags.research ? "research" : "normal" );
+
+            proc_GML( master_fname );
+        }
     } else {
-        OutMsg( "ERR_MISSING_MAINFILENAME\n");
-        ErrCount++;
+        out_msg( "ERR_MISSING_MAINFILENAME\n");
+        err_count++;
         usage();
     }
+    if( GlobalFlags.research ) {
+        print_GML_tags_research();
+        free_GML_tags_research();
 
-    return( ErrCount ? 8 : WngCount ? 4 : 0 );
+        print_SCR_tags_research();
+        free_SCR_tags_research();
+    }
+
+    mem_free( cmdline );
+    print_stats();
+    my_exit( err_count ? 8 : wng_count ? 4 : 0 );
+    return( 0 );                   // never reached, but makes compiler happy
 }
 

@@ -39,9 +39,21 @@
 #include <setjmp.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
+#include <stdint.h>
+//#include <time.h>
 #include <ctype.h>
+#include <limits.h>
 #include <process.h>
+
+
+//================= Some global defines ========================
+#define MAX_NESTING     32              // max nesting of option files
+#define MAX_PASSES      10              // max no of passes
+#define MAX_INC_DEPTH   255             // max include level depth
+#define BUF_SIZE        512             // buffersize for filecb e.a.
+#define MAX_FILE_ATTR   16              // max size for fileattr (T:xxxx)
+#define TAG_NAME_LENGTH 12              // :tag name length
+
 
 #include "gtype.h"
 
@@ -50,46 +62,66 @@
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
+
 //================= Function Prototypes ========================
 
-/* nwgml.c                              */
-extern  void    GBanner( void );
-extern  char   *GetFilenameFullPath( char *buff, char const *name, size_t max );
-extern  void    MyExit( int );
+/* wgml.c                              */
+extern  void    g_banner( void );
+extern  char   *get_filename_full_path( char *buff, char const *name, size_t max );
 
-extern  int     TryOpen( char *prefix, char *separator, char *filename, char *suffix );
-extern  int     SearchFileinDirs( char * filename, char * defext, char * altext, DIRSEQ sequence );
+#pragma aux     my_exit aborts;
+extern  void    my_exit( int );
 
+extern  int     search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ seq );
+extern  int     try_open( char *prefix, char *separator, char *filename, char *suffix );
 
-
-
-
-extern  void    GMemFree( void *p );
-extern  void   *GMemAlloc( size_t size );
+extern  void    mem_free( void *p );
+extern  void    *mem_alloc( size_t size );
 
 
+/* garginit.c                           */
+extern  void    garg_init( void );
 
 
 
 /* gdata.c                              */
-extern  void    InitGlobalVars( void );
-extern  void    GetEnvVars( void );
-extern  char   *GMLGetEnv( char *name );
+extern  void    init_global_vars( void );
+extern  void    get_env_vars( void );
+extern  char    *GML_get_env( char *name );
 
 
 /* goptions.c                           */
-extern  void    ProcOptions( char *cmdline );
+extern  void    proc_options( char *cmdline );
+extern  void    split_attr_file( char *filename, char *attr, size_t attrlen );
 
 /* gerror.c                             */
-extern  void    OutMsg( char *fmt, ... );
+extern  void    out_msg( char *fmt, ... );
 
 /* -------------------------------- TBD
-extern  void    GErr(int,...);
-extern  void    GWarn(int, ...);
-extern  void    GInfoMsg(int,...);
+extern  void    g_err(int,...);
+extern  void    g_warn(int, ...);
+extern  void    g_info(int,...);
 ----------------------------------*/
 
-extern  void    GSuicide(void);
+extern  void    g_suicide(void);
+
+
+/* gresrch.c                          */
+extern  void    add_GML_tag_research( char * tag );
+extern  void    free_GML_tags_research( void );
+extern  void    print_GML_tags_research( void );
+extern  void    add_SCR_tag_research( char * tag );
+extern  void    free_SCR_tags_research( void );
+extern  void    print_SCR_tags_research( void );
+extern  void    printf_research( char * msg, ... );
+
+
+/* gutils.c                           */
+extern  bool    to_internal_SU( char **scaninput, su *spaceunit );
+
+
+/* gscan.c                           */
+extern  void    scan_line( void );
 
 
 #ifdef  __cplusplus

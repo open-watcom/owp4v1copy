@@ -1,4 +1,3 @@
-
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -25,92 +24,117 @@
 *
 *  ========================================================================
 *
-* Description:  Initialze global variables
+* Description:  define and initialize global variables for wgml
 *
 ****************************************************************************/
 #include    "wgml.h"
 
-#define global
+#define global                          // allocate storage for global vars
 #include    "gvars.h"
+#undef  global
 
 #include    "swchar.h"
 
 /***************************************************************************/
-/*  Read environment variable and return content in allocated buffer       */
+/*  Read an environment variable and return content in allocated buffer    */
 /***************************************************************************/
 
-char *GMLGetEnv( char *name )
+char *GML_get_env( char *name )
 {
     errno_t     rc;
     size_t      len;
     char       *value;
     size_t      maxsize;
 
-    maxsize = BUF_SIZE;
-    value = GMemAlloc( maxsize );
+    maxsize = 128;
+    value = mem_alloc( maxsize );
     rc = getenv_s( &len, value, maxsize, name );
     if( rc ) {
-        GMemFree( value );
+        mem_free( value );
         value = NULL;
         if( len ) {   /*  we need more space */
             maxsize = len + 1;
-            value = GMemAlloc( maxsize );
+            value = mem_alloc( maxsize );
             rc = getenv_s( &len, value, maxsize, name );
         }
     }
     if( len == 0 ) {
-        GMemFree( value );
+        if( value != NULL ) {
+            mem_free( value );
+        }
         value = NULL;
     }
     return( value );
 }
 
 
-void GetEnvVars( void )
+/***************************************************************************/
+/*  get the wgml environment variables                                     */
+/***************************************************************************/
+
+void get_env_vars( void )
 {
-    Pathes  = GMLGetEnv( "PATH" );
-    GMLlibs = GMLGetEnv( GMLLIB );
-    GMLincs = GMLGetEnv( GMLINC );
+    Pathes  = GML_get_env( "PATH" );
+    GMLlibs = GML_get_env( GMLLIB );
+    GMLincs = GML_get_env( GMLINC );
 }
 
-/* initialize globals     */
-void InitGlobalVars( void )
+/***************************************************************************/
+/*  Init some global variables                                             */
+/***************************************************************************/
+
+void init_global_vars( void )
 {
 
     memset( &GlobalFlags, 0, sizeof( GlobalFlags ) );
-    GlobalFlags.wscript = TRUE;         // wscript extension set default
+    GlobalFlags.wscript = TRUE;         // we want (w)script support
+    GlobalFlags.warning = TRUE;         // display warnings default
 
+    memset( &ProcFlags, 0, sizeof( ProcFlags ) );
 
-    TryFileName = NULL;
-    Pathes = NULL;                      // content of PATH environment var
-    GMLlibs = NULL;                     // content of GMLLIB environment var
-    GMLincs = NULL;                     // content of GMLINC environment var
+    try_file_name       = NULL;
+    Pathes              = NULL;         // content of PATH environment var
+    GMLlibs             = NULL;         // content of GMLLIB environment var
+    GMLincs             = NULL;         // content of GMLINC environment var
 
-    MasterFName = NULL;                 // Master input file name
-    MasterFNameAttr = NULL;             // Master input file name attributes
+    master_fname        = NULL;         // Master input file name
+    master_fname_attr   = NULL;         // Master input file name attributes
+    line_from           = 1;            // default first line to process
+    line_to             = ULONG_MAX -1; // default last line to process
 
-    OPTFiles = NULL;                    // Command (option) file names
-    FileCbs = NULL;                     // list of GML files
-    OutFile = NULL;                     // output file name
-    SwitchChar = _dos_switch_char();
-    AltExt = GMemAlloc( 5 );            // alternate extension
-    *AltExt = '\0';
+    file_cbs            = NULL;         // list of open GML files
+    out_file            = NULL;         // output file name
+    inc_level           = 0;            // include nesting level
+    switch_char         = _dos_switch_char();
+    alt_ext             = mem_alloc( 5 );   // alternate extension   .xxx
+    *alt_ext            = '\0';
 
-    ErrCount = 0;                       // total error count
-    WngCount = 0;                       // total warnig count
+    def_ext             = mem_alloc( sizeof( GML_EXT ) );
+    strcpy_s( def_ext, sizeof( GML_EXT ), GML_EXT );
 
-    GMLChar = GML_CHAR_DEFAULT;         // GML start char
-    SCRChar = SCR_CHAR_DEFAULT;         // Script start char
-    CWSepChar = CW_SEP_CHAR_DEFAULT;    // control word seperator
+    err_count           = 0;            // total error count
+    wng_count           = 0;            // total warnig count
 
-    CPI = 10;                           // chars per inch
-    CPI_units = SU_chars;
-    LPI = 6;                            // lines per inch
-    LPI_units = SU_lines;
-    Bind = 0;                           // Bind value
-    Bind_units = SU_undefined;          // indicate 0 = no value
-    BindOdd = 0;                        // Bind value
-    BindOdd_units = SU_undefined;       // indicate 0 = no value
+    GML_char            = GML_CHAR_DEFAULT; // GML start char
+    SCR_char            = SCR_CHAR_DEFAULT; // Script start char
+    CW_sep_char         = CW_SEP_CHAR_DEFAULT;  // control word seperator
 
+    CPI                 = 10;           // chars per inch
+    CPI_units           = SU_chars;
+
+    LPI                 = 6;            // lines per inch
+    LPI_units           = SU_lines;
+
+    memset( &bind_odd, 0, sizeof( bind_odd ) ); // bind value odd pages
+    bind_odd.su_u        = SU_chars_lines;
+
+    memset( &bind_even, 0, sizeof( bind_even ) );   // bind value Even pages
+    bind_even.su_u       = SU_chars_lines;
+
+    passes              = 1;            // default number of passes
+
+    buf_size            = BUF_SIZE;
+    buffer              = mem_alloc( buf_size );
+    buff2               = mem_alloc( buf_size );
 }
 
