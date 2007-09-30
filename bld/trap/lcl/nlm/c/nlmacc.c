@@ -960,7 +960,7 @@ static int WriteMemory( addr48_ptr *addr, unsigned long req, void *buf )
     return( 0 );
 }
 
-static unsigned short ReadWrite( int (*rtn)(), addr48_ptr *addr,
+static unsigned short ReadWrite( int (*rtn)(addr48_ptr *, unsigned long, void *), addr48_ptr *addr,
                                 char *buff, unsigned short requested )
 {
     int                 err;

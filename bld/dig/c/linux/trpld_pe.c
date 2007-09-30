@@ -48,7 +48,7 @@ extern char **environ;
 
 static const trap_requests      *TrapFuncs;
 static PE_MODULE *TrapFile;
-static void (TRAPENTRY *FiniFunc)();
+static void (TRAPENTRY *FiniFunc)(void);
 extern trap_version     TrapVer;
 extern unsigned         (TRAPENTRY *ReqFunc)( unsigned, mx_entry *, unsigned, mx_entry * );
 

@@ -67,6 +67,16 @@ char TellHardMode( char hard )
     return( HardFunc( hard ) );
 }
 
+void KillTrap( void )
+{
+    FiniFunc();
+    ReqFunc = NULL;
+    InitFunc = NULL;
+    FiniFunc = NULL;
+    InfoFunc = NULL;
+    HardFunc = NULL;
+}
+
 char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
 {
     char                trpfile[256];
@@ -128,15 +138,4 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     }
     TrapVer = *trap_ver;
     return( NULL );
-}
-
-
-void KillTrap()
-{
-    FiniFunc();
-    ReqFunc = NULL;
-    InitFunc = NULL;
-    FiniFunc = NULL;
-    InfoFunc = NULL;
-    HardFunc = NULL;
 }

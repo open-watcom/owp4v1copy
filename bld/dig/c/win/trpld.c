@@ -39,14 +39,14 @@
 #include "trpimp.h"
 #include "tcerr.h"
 
-static trap_version     (TRAPENTRY*InitFunc)();
-static void             (TRAPENTRY*FiniFunc)();
-void                    (TRAPENTRY*HookFunc)();
-void                    (TRAPENTRY*InfoFunction)();
-void                    (TRAPENTRY*UnLockInput)();
-void                    (TRAPENTRY*SetHardMode)();
-static int              (TRAPENTRY*HardModeCheck)();
-static int              (TRAPENTRY*GetHwndFunc)();
+static trap_version     (TRAPENTRY*InitFunc)(char *, char *, bool);
+static void             (TRAPENTRY*FiniFunc)(void);
+void                    (TRAPENTRY*HookFunc)(LPVOID);
+void                    (TRAPENTRY*InfoFunction)(HWND);
+void                    (TRAPENTRY*UnLockInput)(void);
+void                    (TRAPENTRY*SetHardMode)(char);
+static int              (TRAPENTRY*HardModeCheck)(void);
+static int              (TRAPENTRY*GetHwndFunc)(void);
 
 extern trap_version     TrapVer;
 extern unsigned         (TRAPENTRY*ReqFunc)( unsigned, mx_entry *,
@@ -123,15 +123,15 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
         sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trpfile );
         return( buff );
     }
-    InitFunc = (trap_version(TRAPENTRY*)()) GetProcAddress( dll, (LPSTR)2 );
-    FiniFunc = (void(TRAPENTRY*)()) GetProcAddress( dll, (LPSTR)3 );
+    InitFunc = (trap_version(TRAPENTRY*)(char *, char *, bool)) GetProcAddress( dll, (LPSTR)2 );
+    FiniFunc = (void(TRAPENTRY*)(void)) GetProcAddress( dll, (LPSTR)3 );
     ReqFunc  = (unsigned (TRAPENTRY*)(unsigned,mx_entry*,unsigned,mx_entry*)) GetProcAddress( dll, (LPSTR)4 );
-    HookFunc = (void(TRAPENTRY*)()) GetProcAddress( dll, (LPSTR)5 );
-    InfoFunction = (void(TRAPENTRY*)()) GetProcAddress( dll, (LPSTR)6 );
-    HardModeCheck = (int(TRAPENTRY*)()) GetProcAddress( dll, (LPSTR)7 );
-    SetHardMode = (void(TRAPENTRY*)()) GetProcAddress( dll, (LPSTR)12 );
-    UnLockInput = (void(TRAPENTRY*)()) GetProcAddress( dll, (LPSTR)13 );
-    GetHwndFunc = (int(TRAPENTRY*)()) GetProcAddress( dll, (LPSTR)8 );
+    HookFunc = (void(TRAPENTRY*)(LPVOID)) GetProcAddress( dll, (LPSTR)5 );
+    InfoFunction = (void(TRAPENTRY*)(HWND)) GetProcAddress( dll, (LPSTR)6 );
+    HardModeCheck = (int(TRAPENTRY*)(void)) GetProcAddress( dll, (LPSTR)7 );
+    SetHardMode = (void(TRAPENTRY*)(char)) GetProcAddress( dll, (LPSTR)12 );
+    UnLockInput = (void(TRAPENTRY*)(void)) GetProcAddress( dll, (LPSTR)13 );
+    GetHwndFunc = (int(TRAPENTRY*)(void)) GetProcAddress( dll, (LPSTR)8 );
     strcpy( buff, TC_ERR_WRONG_TRAP_VERSION );
     if( InitFunc == NULL || FiniFunc == NULL || ReqFunc == NULL ||
         HookFunc == NULL || GetHwndFunc == NULL ||

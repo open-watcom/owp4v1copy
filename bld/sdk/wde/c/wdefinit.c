@@ -66,7 +66,7 @@
 /****************************************************************************/
 typedef struct {
     Bool     (*init)( Bool );
-    void     (*fini)();
+    void     (*fini)( void );
     OBJPTR ( WINEXPORT *create)( OBJPTR , RECT *, OBJPTR );
 } WdeObjectRoutinesType;
 

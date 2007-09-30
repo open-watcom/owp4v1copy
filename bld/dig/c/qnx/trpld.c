@@ -69,6 +69,13 @@ extern  int      PathOpen(char *,unsigned, char *);
 
 #define TRAPSIG 0x50415254UL
 
+void KillTrap( void )
+{
+    TrapFuncs->fini_func();
+    ReqFunc = NULL;
+    DIGCliFree( TrapCode );
+}
+
 char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
 {
     char                init_error[256];
@@ -109,12 +116,4 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     TrapVer = *trap_ver;
     ReqFunc = TrapFuncs->req_func;
     return( NULL );
-}
-
-
-void KillTrap( void )
-{
-    TrapFuncs->fini_func();
-    ReqFunc = NULL;
-    DIGCliFree( TrapCode );
 }

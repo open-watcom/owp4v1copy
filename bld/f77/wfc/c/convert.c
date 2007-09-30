@@ -36,6 +36,7 @@
 
 #include "ftnstd.h"
 #include "global.h"
+#include "convert.h"
 
 
 static  void    CnI2I( itnode *it, uint size ) {

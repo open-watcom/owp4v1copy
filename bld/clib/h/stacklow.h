@@ -45,7 +45,7 @@
 #endif
 
 #if defined(__NT__)
-    void __init_stack_limits( unsigned *stacklow, unsigned *stacktop );
+    extern void         __init_stack_limits( unsigned *stacklow, unsigned *stacktop );
 #endif
 
 #if defined(__SW_BM)

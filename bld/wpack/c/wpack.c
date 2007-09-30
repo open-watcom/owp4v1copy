@@ -55,7 +55,6 @@ extern void             IndentLine( unsigned );
 extern void             WriteMsg( char * );
 extern void             WriteLen( char *, int );
 extern int              InitIO( void );
-extern void             Encode( void );
 extern file_info **     ReadHeader( arccmd *, arc_header * );
 extern void             QClose( int );
 extern int              QWrite( int, void *, int );
@@ -359,8 +358,8 @@ static void WriteNumber( unsigned long number, unsigned indent )
     WriteMsg( numstr );
 }
 
-extern void DisplayArchive( arccmd *cmd )
-/***************************************/
+extern int DisplayArchive( arccmd *cmd )
+/**************************************/
 {
     file_info **    filedata;
     file_info **    currfile;
@@ -400,17 +399,19 @@ extern void DisplayArchive( arccmd *cmd )
         WriteNumber( totaluncomp, 10 );
         WriteNumber( totalcomp, 11 );
     }
+    return( TRUE );
 }
 
-static void HandleError( arccmd *cmd )
-/************************************/
+static int HandleError( arccmd *cmd )
+/***********************************/
 {
     cmd = cmd;
     PackExit();
+    return( TRUE );
 }
 
-static void DeleteEntry( arccmd *cmd )
-/************************************/
+static int DeleteEntry( arccmd *cmd )
+/***********************************/
 {
     char            tempname[ L_tmpnam ];
     char            drive[_MAX_DRIVE];
@@ -520,12 +521,13 @@ static void DeleteEntry( arccmd *cmd )
         remove( cmd->arcname );
         rename( tmpfname, cmd->arcname );
     }
+    return( TRUE );
 }
 
-static void (*CmdJumpTable[])() = {
+static int (*CmdJumpTable[])(arccmd *) = {
     HandleError,
     Encode,
-    (void (*)(arccmd *))Decode,
+    Decode,
     DisplayArchive,
     DeleteEntry
 };

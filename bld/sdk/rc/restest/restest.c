@@ -44,7 +44,7 @@ HACCEL          Accel;
  * FirstInstInit - register classes and do other initializiation that
  *                 is only done by the first instance of the spy
  */
-static BOOL FirstInstInit()
+static BOOL FirstInstInit( void )
 {
     WNDCLASS    wc;
 

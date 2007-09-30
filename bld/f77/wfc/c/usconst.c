@@ -38,90 +38,22 @@
 #include "fmemmgr.h"
 #include "types.h"
 #include "utility.h"
+#include "convert.h"
+#include "usfold.h"
+#include "errcod.h"
+#include "ferror.h"
 
 #include <string.h>
 
-extern  void            BadEqual(void);
 extern  void            AddConst(itnode *);
-extern  void            AddI(ftn_type *,ftn_type *);
-extern  void            SubI(ftn_type *,ftn_type *);
-extern  void            DivI(ftn_type *,ftn_type *);
-extern  void            MulI(ftn_type *,ftn_type *);
-extern  void            AddR(ftn_type *,ftn_type *);
-extern  void            SubR(ftn_type *,ftn_type *);
-extern  void            DivR(ftn_type *,ftn_type *);
-extern  void            MulR(ftn_type *,ftn_type *);
-extern  void            AddD(ftn_type *,ftn_type *);
-extern  void            SubD(ftn_type *,ftn_type *);
-extern  void            DivD(ftn_type *,ftn_type *);
-extern  void            MulD(ftn_type *,ftn_type *);
-extern  void            AddE(ftn_type *,ftn_type *);
-extern  void            SubE(ftn_type *,ftn_type *);
-extern  void            DivE(ftn_type *,ftn_type *);
-extern  void            MulE(ftn_type *,ftn_type *);
-extern  void            AddC(complex*,complex *);
-extern  void            SubC(complex *,complex *);
-extern  void            DivC(complex *,complex *);
-extern  void            MulC(complex *,complex *);
-extern  void            AddQ(dcomplex *,dcomplex *);
-extern  void            SubQ(dcomplex *,dcomplex *);
-extern  void            DivQ(dcomplex *,dcomplex *);
-extern  void            MulQ(dcomplex *,dcomplex *);
-extern  void            AddX(xcomplex *,xcomplex *);
-extern  void            SubX(xcomplex *,xcomplex *);
-extern  void            DivX(xcomplex *,xcomplex *);
-extern  void            MulX(xcomplex *,xcomplex *);
 extern  void            GenExp(TYPE);
 extern  void            ExpI(byte,ftn_type *,intstar4);
-extern  void            XINeg(ftn_type *,ftn_type *);
-extern  void            XRNeg(ftn_type *,ftn_type *);
-extern  void            XDNeg(ftn_type *,ftn_type *);
-extern  void            XENeg(ftn_type *,ftn_type *);
-extern  void            XCNeg(ftn_type *,ftn_type *);
-extern  void            XQNeg(ftn_type *,ftn_type *);
-extern  void            XXNeg(ftn_type *,ftn_type *);
-extern  void            XIPlus(ftn_type *,ftn_type *);
-extern  void            XRPlus(ftn_type *,ftn_type *);
-extern  void            XDPlus(ftn_type *,ftn_type *);
-extern  void            XEPlus(ftn_type *,ftn_type *);
-extern  void            XCPlus(ftn_type *,ftn_type *);
-extern  void            XQPlus(ftn_type *,ftn_type *);
-extern  void            XXPlus(ftn_type *,ftn_type *);
-extern  void            XLEqv(ftn_type *,ftn_type *);
-extern  void            XLNeqv(ftn_type *,ftn_type *);
-extern  void            XLOr(ftn_type *,ftn_type *);
-extern  void            XLAnd(ftn_type *,ftn_type *);
-extern  void            XLNot(ftn_type *,ftn_type *);
-extern  void            XBitEqv(ftn_type *,ftn_type *);
-extern  void            XBitNeqv(ftn_type *,ftn_type *);
-extern  void            XBitOr(ftn_type *,ftn_type *);
-extern  void            XBitAnd(ftn_type *,ftn_type *);
-extern  void            XBitNot(ftn_type *,ftn_type *);
-extern  void            XICmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
-extern  void            XRCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
-extern  void            XDCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
-extern  void            XECmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
-extern  void            XCCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
-extern  void            XQCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
-extern  void            XXCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
-extern  void            XChCmp(ftn_type *,ftn_type *,const logstar1 __FAR *);
-extern  void            CnvTo(itnode *,TYPE,uint);
-extern  void            CnI2R(void *);
-extern  void            CnI2D(void *);
-extern  void            CnI2C(void *);
-extern  void            CnI2Q(void *);
-extern  void            CnR2D(void *);
-extern  void            CnR2C(void *);
-extern  void            CnR2Q(void *);
-extern  void            CnD2C(void *);
-extern  void            CnD2Q(void *);
-extern  void            CnC2Q(void *);
 
 #define UAR_TAB_ROWS    9
 #define UAR_TAB_COLS    2
 #define UAR_TAB_SIZE    18
 
-static  void    (* const __FAR XUArithTab[])() = {
+static  void    (* const __FAR XUArithTab[])(ftn_type *, ftn_type *) = {
                                         // operator/
                                         //     /
                     // PLUS    MINUS    //  /result
@@ -146,7 +78,7 @@ static  void    (* const __FAR XUArithTab[])() = {
 #define AR_TAB_COLS     4
 #define AR_TAB_SIZE     36
 
-static  void    (* const __FAR XArithTab[])() = {
+static  void    (* const __FAR XArithTab[])(ftn_type *, ftn_type *) = {
                                                  // operator/
                                                  //     /
          // PLUS    MINUS     TIMES     DIVIDE   //  /result
@@ -163,25 +95,25 @@ static  void    (* const __FAR XArithTab[])() = {
            &AddX,   &SubX,    &MulX,    &DivX    // xcomplex
                                                  };
 
-static  void    (* const __FAR XCmpTab[])() = {
+static  void    (* const __FAR XCmpTab[])(ftn_type *, ftn_type *, const logstar1 __FAR *) = {
 
 // int*1   int*2   integer real    double  extended complex dcomplex xcomplex character
    &XICmp, &XICmp, &XICmp, &XRCmp, &XDCmp, &XECmp,  &XCCmp, &XQCmp,  &XXCmp,  &XChCmp
           };
 
-static  void    (* const __FAR XLogicalTab[])() = {
+static  void    (* const __FAR XLogicalTab[])(ftn_type *, ftn_type *) = {
 
        // EQV        NEQV       OR         AND        NOT
          &XLEqv,    &XLNeqv,   &XLOr,     &XLAnd,    &XLNot
          };
 
-static  void    (* const __FAR XBitWiseTab[])() = {
+static  void    (* const __FAR XBitWiseTab[])(ftn_type *, ftn_type *) = {
 
        // EQV        NEQV       OR         AND        NOT
          &XBitEqv,  &XBitNeqv, &XBitOr,   &XBitAnd,  &XBitNot
          };
 
-static  const bool __FAR        CmpValue[] = {
+static  const logstar1 __FAR    CmpValue[] = {
                                      // result/
                                      //   /
          // <         =         >    ///operator
@@ -194,6 +126,13 @@ static  const bool __FAR        CmpValue[] = {
            TRUE,    TRUE,     FALSE, // .LE.
            FALSE,   FALSE,    TRUE   // .GT.
            };
+
+
+static void    BadEqual( TYPE typ1, TYPE typ2, OPTR op ) {
+//========================================================
+
+    Error( EQ_BAD_TARGET );
+}
 
 
 static  void    Convert( void ) {
@@ -307,6 +246,6 @@ void    ConstCat( int size ) {
 #endif
 #define pick(id,const,gener) const,
 
-void    (* const __FAR ConstTable[])() = {
+void    (* const __FAR ConstTable[])(TYPE, TYPE, OPTR) = {
 #include "optrdefn.h"
 };

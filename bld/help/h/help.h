@@ -64,6 +64,13 @@ typedef enum {
     SRCHTYPE_EOL
 } HelpSrchItemType;
 
+typedef struct {
+    char        *buf;
+    int         pos;
+    bool        changecurr;
+    int         line;
+} ScanInfo;
+
 #pragma pack(push, 1)
 
 typedef struct helpsrch {

@@ -45,7 +45,7 @@
 #define EDIT_MENU_FLAGS (MENU_DELETE | MENU_COPY | MENU_CUT | MENU_PASTE | MENU_ALIGN)
 
 
-static OBJPTR  (*InternalCreate[])() = {
+static OBJPTR  (*InternalCreate[])(OBJPTR, RECT *, OBJPTR) = {
     NULL                        /* O_NONE     */
 ,   EAtomCreate                 /* O_EATOM    */
 ,   OItemCreate                 /* O_ITEM     */

@@ -105,7 +105,7 @@ global  int         SwitchChar;         // DOS switch character
 // extra uint_32 is for buffer overrun checking in debugging compiler
 global  char        Buffer[BUF_SIZE+16+sizeof(uint_32)];
 
-extern  int     (*NextChar)();  // next-character routine (initialized in SRCFILE)
+extern  int     (*NextChar)( void );    // next-character routine (initialized in SRCFILE)
 
 // PROTOTYPES: exposed to C++ project
 

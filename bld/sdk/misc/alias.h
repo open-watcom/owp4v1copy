@@ -42,13 +42,13 @@ typedef struct analias {
 
 typedef struct {
     AnAlias             *data;
-    void                (*updatefn)();
+    void                (*updatefn)(unsigned long, char *, char *, void *);
     void                *userdata;
 } AliasList;
 
 typedef AliasList       *AliasHdl;
 
-void InitAliasHdl( AliasHdl *hdl, void (*updatefn)(), void *userdata );
+void InitAliasHdl( AliasHdl *hdl, void (*updatefn)(unsigned long, char *, char *, void *), void *userdata );
 void AddAlias( AliasHdl hdl, char *text, unsigned long id );
 void FreeAlias( AliasHdl hdl );
 char *LookupAlias( AliasHdl hdl, unsigned long id );

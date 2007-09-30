@@ -334,7 +334,7 @@ extern unsigned         GetTotalSize( void );
 
 #define BUFF_SIZE       256
 
-extern trap_version TRAPENTRY TrapInit( char *, char *, unsigned_8 );
+extern trap_version TRAPENTRY TrapInit( char *, char *, bool );
 extern unsigned     TRAPENTRY TrapRequest( unsigned, mx_entry *,
                                           unsigned, mx_entry * );
 extern void         TRAPENTRY TrapFini( void );

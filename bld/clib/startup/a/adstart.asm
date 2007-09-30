@@ -124,22 +124,22 @@ endif   ; ACAD
         extrn   _edata          : byte          ; end of DATA (start of BSS)
         extrn   _end            : byte          ; end of BSS (start of STACK)
 
-        extrn   _dynend         : dword
-        extrn   _curbrk         : dword
-        extrn   _psp            : word
-        extrn   _osmajor        : byte
-        extrn   _osminor        : byte
-        extrn   _STACKLOW       : dword
-        extrn   _STACKTOP       : dword
-        extrn   _child          : dword
-        extrn   __no87          : word
-        extrn   "C",_Extender   : byte
-        extrn   _ExtenderSubtype: byte
-        extrn   _Envptr         : dword
-        extrn   _Envseg         : word
-        extrn   "C",__FPE_handler : dword
-        extrn   _LpCmdLine      : dword
-        extrn   _LpPgmName      : dword
+        extrn   "C",_dynend         : dword
+        extrn   "C",_curbrk         : dword
+        extrn   "C",_psp            : word
+        extrn   "C",_osmajor        : byte
+        extrn   "C",_osminor        : byte
+        extrn   "C",_STACKLOW       : dword
+        extrn   "C",_STACKTOP       : dword
+        extrn   "C",_child          : dword
+        extrn   __no87              : word
+        extrn   "C",_Extender       : byte
+        extrn   "C",_ExtenderSubtype: byte
+        extrn   "C",_Envptr         : dword
+        extrn   "C",_Envseg         : word
+        extrn   "C",__FPE_handler   : dword
+        extrn   "C",_LpCmdLine      : dword
+        extrn   "C",_LpPgmName      : dword
 
 DGROUP group _NULL,_AFTERNULL,CONST,_DATA,DATA,XIB,XI,XIE,YIB,YI,YIE,_BSS,STACK
 

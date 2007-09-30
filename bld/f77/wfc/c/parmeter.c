@@ -40,13 +40,13 @@
 #include "recog.h"
 #include "insert.h"
 #include "utility.h"
+#include "convert.h"
 
 #include <string.h>
 
 extern  sym_id          LkSym(void);
 extern  sym_id          STLit(byte *,uint);
 extern  sym_id          STConst(void *,TYPE,uint);
-extern  void            CnvTo(itnode *,TYPE,uint);
 extern  void            CkSymDeclared(sym_id);
 
 

@@ -83,9 +83,9 @@ static  int     Min( int a, int b ) {
     return( a );
 }
 
-static  cfloat  *CSSum( cfloat *op1, cfloat *op2, int (*arith)() ) {
-/******************************************************************/
-
+static  cfloat  *CSSum( cfloat *op1, cfloat *op2, int (*arith)( int, int ) )
+/****************************************************************************/
+{
     int         carry;
     int         pos;
     int         length;

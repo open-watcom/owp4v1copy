@@ -36,14 +36,14 @@
 #include <stdlib.h>
 #include "extfunc.h"
 
-typedef int bcomp();
+typedef int bcomp(const void *, const void *, void *);
 #ifdef _M_IX86
     #pragma aux (__outside_CLIB) bcomp;
 #endif
 
 _WCRTLINK void * bsearch_s( const void * key, const void * base,
                             rsize_t nmemb, rsize_t size,
-            int (*compar)( const void *k, const void *y, void *context ),
+            int (*compar)(const void *x, const void *y, void *context),
                             void *context )
 /***********************************************************************/
 {
@@ -59,26 +59,29 @@ _WCRTLINK void * bsearch_s( const void * key, const void * base,
     // if nmemb > 0 then key, base, compar not NULL
     if( __check_constraint_maxsize( nmemb ) &&
         __check_constraint_maxsize( size ) &&
-        ( (nmemb == 0) || __check_constraint_nullptr( key ) &&
+        ( ( nmemb == 0 ) || __check_constraint_nullptr( key ) &&
                           __check_constraint_nullptr( base ) &&
                           __check_constraint_nullptr( compar )) ) {
 
         if( nmemb == 0 ) {                      /* empty array - nothing to do */
             return( NULL );
         }
-        low = (char *) base;
-        high = low + (nmemb - 1) * size;
+        low = (char *)base;
+        high = low + ( nmemb - 1 ) * size;
         while( low < high ) {
-            mid = low + ( (high - low) / size / 2 ) * size;
+            mid = low + ( ( high - low ) / size / 2 ) * size;
             cond = (*comp)( key, mid, context );
-            if( cond == 0 ) return( mid );
+            if( cond == 0 )
+                return( mid );
             if( cond < 0 ) {    /* key < mid */
                 high = mid;
             } else {            /* key > mid */
                 low = mid + size;
             }
         }
-        if (low == high) return( (*comp)( key, low, context ) ? NULL : low );
+        if( low == high ) {
+           return( (*comp)( key, low, context ) ? NULL : low );
+        }
     }
     return( NULL );
 }

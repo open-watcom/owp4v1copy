@@ -179,7 +179,7 @@ static unsigned numTABs;
 static unsigned numBlanks2;
 static unsigned tabWidth;
 
-int (*NextChar)() = GetNextChar;
+int (*NextChar)( void ) = GetNextChar;
 
 // the following table is used to map three character sequences
 // beginning with ?? followed by 'tri' into the single character 'new'

@@ -812,8 +812,8 @@ static void MultiPack( arccmd *cmd, info_list *list )
     remove( cmd->arcname );
 }
 
-extern void Encode( arccmd *cmd )
-/*******************************/
+extern int Encode( arccmd *cmd )
+/******************************/
 {
     wpackfile *     currname;       // current file name being processed.
     unsigned long   length;         // unencrypted length of the file.
@@ -943,6 +943,7 @@ extern void Encode( arccmd *cmd )
             QClose( outfile );      // close the archive file.
         }
     }
+    return( TRUE );
 }
 
 

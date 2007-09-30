@@ -35,6 +35,7 @@
 #include "global.h"
 #include "rtenv.h"
 #include "ferror.h"
+#include "usfold.h"
 
 extern  void            (* const __FAR GenOprTable[])(TYPE, TYPE, OPTR);
 
@@ -192,165 +193,153 @@ void    DivE( ftn_type *opnd1, ftn_type *opnd2 ) {
 //-------------------------------------------- complex arithmetic
 
 
-void    AddC( complex *x, complex *y ) {
+void    AddC( ftn_type *x, ftn_type *y ) {
+//========================================
+
+    complex     result;
+
+    result.realpart = x->complex.realpart + y->complex.realpart;
+    result.imagpart = x->complex.imagpart + y->complex.imagpart;
+    x->complex = result;
+}
+
+
+void    SubC( ftn_type *x, ftn_type *y ) {
 //======================================
 
     complex     result;
 
-    result.realpart = x->realpart + y->realpart;
-    result.imagpart = x->imagpart + y->imagpart;
-    *x = result;
+    result.realpart = x->complex.realpart - y->complex.realpart;
+    result.imagpart = x->complex.imagpart - y->complex.imagpart;
+    x->complex = result;
 }
 
 
-void    SubC( complex *x, complex *y ) {
+void    MulC( ftn_type *x, ftn_type *y ) {
 //======================================
 
     complex     result;
 
-    result.realpart = x->realpart - y->realpart;
-    result.imagpart = x->imagpart - y->imagpart;
-    *x = result;
+    result.realpart = x->complex.realpart * y->complex.realpart - x->complex.imagpart * y->complex.imagpart;
+    result.imagpart = x->complex.realpart * y->complex.imagpart + x->complex.imagpart * y->complex.realpart;
+    x->complex = result;
 }
 
 
-void    MulC( ftn_type *_x, ftn_type *_y ) {
-//======================================
-
-    complex     result;
-    complex     *x = &_x->complex;
-    complex     *y = &_y->complex;
-
-    result.realpart = x->realpart * y->realpart - x->imagpart * y->imagpart;
-    result.imagpart = x->realpart * y->imagpart + x->imagpart * y->realpart;
-    *x = result;
-}
-
-
-void    DivC( ftn_type *_x, ftn_type *_y ) {
+void    DivC( ftn_type *x, ftn_type *y ) {
 //======================================
 
     single      bottom;
     complex     result;
-    complex     *x = &_x->complex;
-    complex     *y = &_y->complex;
 
-    bottom = y->realpart * y->realpart + y->imagpart * y->imagpart;
-    result.realpart = x->realpart * y->realpart + x->imagpart * y->imagpart;
-    result.imagpart = x->imagpart * y->realpart - x->realpart * y->imagpart;
+    bottom = y->complex.realpart * y->complex.realpart + y->complex.imagpart * y->complex.imagpart;
+    result.realpart = x->complex.realpart * y->complex.realpart + x->complex.imagpart * y->complex.imagpart;
+    result.imagpart = x->complex.imagpart * y->complex.realpart - x->complex.realpart * y->complex.imagpart;
     result.realpart /= bottom;
     result.imagpart /= bottom;
-    *x = result;
+    x->complex = result;
 }
 
 
 //------------------------------------------- dcomplex arithmetic
 
 
-void    AddQ( dcomplex *x, dcomplex *y ) {
+void    AddQ( ftn_type *x, ftn_type *y ) {
 //========================================
 
     dcomplex    result;
 
-    result.realpart = x->realpart + y->realpart;
-    result.imagpart = x->imagpart + y->imagpart;
-    *x = result;
+    result.realpart = x->dcomplex.realpart + y->dcomplex.realpart;
+    result.imagpart = x->dcomplex.imagpart + y->dcomplex.imagpart;
+    x->dcomplex = result;
 }
 
 
-void    SubQ( dcomplex *x, dcomplex *y ) {
+void    SubQ( ftn_type *x, ftn_type *y ) {
 //========================================
 
     dcomplex    result;
 
-    result.realpart = x->realpart - y->realpart;
-    result.imagpart = x->imagpart - y->imagpart;
-    *x = result;
+    result.realpart = x->dcomplex.realpart - y->dcomplex.realpart;
+    result.imagpart = x->dcomplex.imagpart - y->dcomplex.imagpart;
+    x->dcomplex = result;
 }
 
 
-void    MulQ( ftn_type *_x, ftn_type *_y ) {
+void    MulQ( ftn_type *x, ftn_type *y ) {
 //========================================
 
     dcomplex    result;
-    dcomplex    *x = &_x->dcomplex;
-    dcomplex    *y = &_y->dcomplex;
 
-    result.realpart = x->realpart * y->realpart - x->imagpart * y->imagpart;
-    result.imagpart = x->realpart * y->imagpart + x->imagpart * y->realpart;
-    *x = result;
+    result.realpart = x->dcomplex.realpart * y->dcomplex.realpart - x->dcomplex.imagpart * y->dcomplex.imagpart;
+    result.imagpart = x->dcomplex.realpart * y->dcomplex.imagpart + x->dcomplex.imagpart * y->dcomplex.realpart;
+    x->dcomplex = result;
 }
 
 
-void    DivQ( ftn_type *_x, ftn_type *_y ) {
+void    DivQ( ftn_type *x, ftn_type *y ) {
 //========================================
 
     single      bottom;
     dcomplex    result;
-    dcomplex    *x = &_x->dcomplex;
-    dcomplex    *y = &_y->dcomplex;
 
-    bottom = y->realpart * y->realpart + y->imagpart * y->imagpart;
-    result.realpart = x->realpart * y->realpart + x->imagpart * y->imagpart;
-    result.imagpart = x->imagpart * y->realpart - x->realpart * y->imagpart;
+    bottom = y->dcomplex.realpart * y->dcomplex.realpart + y->dcomplex.imagpart * y->dcomplex.imagpart;
+    result.realpart = x->dcomplex.realpart * y->dcomplex.realpart + x->dcomplex.imagpart * y->dcomplex.imagpart;
+    result.imagpart = x->dcomplex.imagpart * y->dcomplex.realpart - x->dcomplex.realpart * y->dcomplex.imagpart;
     result.realpart /= bottom;
     result.imagpart /= bottom;
-    *x = result;
+    x->dcomplex = result;
 }
 
 
 //------------------------------------------- xcomplex arithmetic
 
 
-void    AddX( xcomplex *x, xcomplex *y ) {
+void    AddX( ftn_type *x, ftn_type *y ) {
 //========================================
 
     xcomplex    result;
 
-    result.realpart = x->realpart + y->realpart;
-    result.imagpart = x->imagpart + y->imagpart;
-    *x = result;
+    result.realpart = x->xcomplex.realpart + y->xcomplex.realpart;
+    result.imagpart = x->xcomplex.imagpart + y->xcomplex.imagpart;
+    x->xcomplex = result;
 }
 
 
-void    SubX( xcomplex *x, xcomplex *y ) {
+void    SubX( ftn_type *x, ftn_type *y ) {
 //========================================
 
     xcomplex    result;
 
-    result.realpart = x->realpart - y->realpart;
-    result.imagpart = x->imagpart - y->imagpart;
-    *x = result;
+    result.realpart = x->xcomplex.realpart - y->xcomplex.realpart;
+    result.imagpart = x->xcomplex.imagpart - y->xcomplex.imagpart;
+    x->xcomplex = result;
 }
 
 
-void    MulX( ftn_type *_x, ftn_type *_y ) {
+void    MulX( ftn_type *x, ftn_type *y ) {
 //========================================
 
     xcomplex    result;
-    xcomplex    *x = &_x->xcomplex;
-    xcomplex    *y = &_y->xcomplex;
 
-    result.realpart = x->realpart * y->realpart - x->imagpart * y->imagpart;
-    result.imagpart = x->realpart * y->imagpart + x->imagpart * y->realpart;
-    *x = result;
+    result.realpart = x->xcomplex.realpart * y->xcomplex.realpart - x->xcomplex.imagpart * y->xcomplex.imagpart;
+    result.imagpart = x->xcomplex.realpart * y->xcomplex.imagpart + x->xcomplex.imagpart * y->xcomplex.realpart;
+    x->xcomplex = result;
 }
 
 
-void    DivX( ftn_type *_x, ftn_type *_y ) {
+void    DivX( ftn_type *x, ftn_type *y ) {
 //========================================
 
     single      bottom;
     xcomplex    result;
-    xcomplex    *x = &_x->xcomplex;
-    xcomplex    *y = &_y->xcomplex;
 
-    bottom = y->realpart * y->realpart + y->imagpart * y->imagpart;
-    result.realpart = x->realpart * y->realpart + x->imagpart * y->imagpart;
-    result.imagpart = x->imagpart * y->realpart - x->realpart * y->imagpart;
+    bottom = y->xcomplex.realpart * y->xcomplex.realpart + y->xcomplex.imagpart * y->xcomplex.imagpart;
+    result.realpart = x->xcomplex.realpart * y->xcomplex.realpart + x->xcomplex.imagpart * y->xcomplex.imagpart;
+    result.imagpart = x->xcomplex.imagpart * y->xcomplex.realpart - x->xcomplex.realpart * y->xcomplex.imagpart;
     result.realpart /= bottom;
     result.imagpart /= bottom;
-    *x = result;
+    x->xcomplex = result;
 }
 
 //------------------------------------------- unary plus/minus

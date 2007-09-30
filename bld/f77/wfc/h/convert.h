@@ -24,24 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  QNX and Linux specific trap implementation stuff
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
-typedef struct {
-    trap_version        (TRAPENTRY *init_func)( char *, char *, bool);
-    unsigned            (TRAPENTRY *req_func)( unsigned, mx_entry *, unsigned, mx_entry * );
-    void                (TRAPENTRY *fini_func)( void );
-} trap_requests;
-
-typedef struct {
-    unsigned long       len;
-    char                ***environ;
-    void                **_slib_func;
-    void                *(*malloc)( unsigned );
-    void                *(*realloc)( void *, unsigned );
-    void                (*free)( void * );
-    char                *(*getenv)( const char * );
-    void                (*(*signal)( int __sig, void (*__func)(int) ))(int);
-} trap_callbacks;
+extern  void            CnvTo(itnode *, TYPE, uint);

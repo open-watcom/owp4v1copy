@@ -67,7 +67,7 @@ extern  void    TDStmtInit( void );
 extern  void    TDStmtFini( void );
 
 extern  char    *StmtKeywords[];
-extern  void    (* const __FAR ProcTable[])();
+extern  void    (* const __FAR ProcTable[])( void );
 extern  const unsigned_16   __FAR CFTable[];
 
 /* forward declarations */

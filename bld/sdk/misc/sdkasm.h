@@ -33,14 +33,14 @@
 #include "deasm.h"
 
 typedef struct disasmrtns {
-    int_16              (*GetDataByte)();
-    int_16              (*GetDataWord)();
-    int_16              (*GetNextByte)();
-    long                (*GetDataLong)();
-    char                (*EndOfSegment)();
-    DWORD               (*GetOffset)();
-    void                (*DoWtk)();
-    int                 (*IsWtk)();
+    int_16              (*GetDataByte)( void );
+    int_16              (*GetDataWord)( void );
+    int_16              (*GetNextByte)( void );
+    long                (*GetDataLong)( void );
+    char                (*EndOfSegment)( void );
+    DWORD               (*GetOffset)( void );
+    void                (*DoWtk)( void );
+    int                 (*IsWtk)( void );
     char                *(*ToStr)( unsigned long value, uint_16 len,
                                     DWORD addr );
     char                *(*JmpLabel)( unsigned long addr, DWORD off );

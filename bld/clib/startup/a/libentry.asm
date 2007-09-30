@@ -111,13 +111,29 @@ assume cs:_TEXT
         extrn   "C",__win_alloc_flags       : dword
         extrn   "C",__win_realloc_flags     : dword
 
+        public  "C",_curbrk
+        public  "C",_psp
+        public  "C",_osmajor
+        public  "C",_osminor
+        public  "C",_osmode
+        public  "C",_STACKLOW
+        public  "C",_STACKTOP
+        public  "C",_cbyte
+        public  "C",_child
+        public  __no87
+        public  "C",_HShift
+        public  __get_ovl_stack
+        public  __restore_ovl_stack
+        public  "C",__FPE_handler
+        public  "C",_LpCmdLine
+
 __aaltstkovr dw -1              ; alternate stack overflow routine address
 _curbrk    dw 0                 ; top of usable memory
 _psp       dw 0                 ; segment addr of program segment prefix
 _osmajor   db 0                 ; major DOS version number
 _osminor   db 0                 ; minor DOS version number
-__osmode   db 0                 ; 0 => DOS real mode
-__HShift   db 0                 ; Huge Shift value
+_osmode    db 0                 ; 0 => DOS real mode
+_HShift    db 0                 ; Huge Shift value
 _cbyte     dw 0                 ; used by getch, getche
 _child     dw 0                 ; non-zero => a spawned process is running
 __no87     dw 0                 ; always try to use the 8087
@@ -126,22 +142,6 @@ __restore_ovl_stack dw 0,0      ; restore overlay stack pointer
 __FPE_handler dd 0              ; FPE handler
 _LpCmdLine dw 0,0               ; lpCmdLine (for _argc, _argv processing)
            db 0                 ; slack byte
-
-        public  "C",_curbrk
-        public  "C",_psp
-        public  "C",_osmajor
-        public  "C",_osminor
-        public  __osmode
-        public  "C",_STACKLOW
-        public  "C",_STACKTOP
-        public  "C",_cbyte
-        public  "C",_child
-        public  __no87
-        public  __HShift
-        public  __get_ovl_stack
-        public  __restore_ovl_stack
-        public  "C",__FPE_handler
-        public  "C",_LpCmdLine
 
 _DATA ends
 
@@ -194,11 +194,11 @@ callc:
         or      word ptr __win_alloc_flags, GMEM_SHARE
         or      word ptr __win_realloc_flags, GMEM_SHARE
         mov     ax,offset __AHSHIFT ; get huge shift value
-        mov     __HShift,al     ; ...
-        cmp     al,12           ; real mode?
-        je      notprot         ; yes, so leave osmode alone
+        mov     _HShift,al       ; ...
+        cmp     al,12            ; real mode?
+        je      notprot          ; yes, so leave osmode alone
         mov     al,1
-        mov     __osmode,al     ; protected mode!
+        mov     _osmode,al      ; protected mode!
 notprot:
         mov     ax,offset __null_FPE_rtn; initialize floating-point exception
         mov     word ptr __FPE_handler,ax       ; ... handler address

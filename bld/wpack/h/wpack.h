@@ -151,6 +151,7 @@ typedef struct {
 extern void             SetupTextTable();
 extern int              InitIO();
 extern int              Decode( arccmd * );
+extern int              Encode( arccmd * );
 
 #ifdef __WATCOMC__
 #pragma pack();

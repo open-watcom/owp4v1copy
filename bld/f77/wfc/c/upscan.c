@@ -45,6 +45,7 @@
 #include "ferror.h"
 #include "insert.h"
 #include "utility.h"
+#include "convert.h"
 
 extern  void            DetSubList(void);
 extern  void            DetCallList(void);
@@ -55,7 +56,6 @@ extern  void            GMakeDCplx(void);
 extern  void            GMakeXCplx(void);
 extern  void            GArg(void);
 extern  void            GILCnvTo(TYPE,uint);
-extern  void            CnvTo(itnode*,TYPE,uint);
 extern  void            UpdateNode(itnode *,itnode *);
 extern  void            BackTrack(void);
 extern  void            MoveDown(void);
@@ -539,8 +539,8 @@ static  void    BadBracket( void ) {
 }
 
 
-void    BadEqual( void ) {
-//========================
+static void    BadEqual( void ) {
+//===============================
 
 // Upscan routine for illegal quantity on left side of equal sign
 

@@ -145,5 +145,5 @@ void    ScInitRegs( score *sc );
 void    ScoreSegments( score *sc );
 bool    ScConvert( instruction *ins );
 bool    ScAddOk( hw_reg_set reg1, hw_reg_set reg2 );
-void    AddRegs();
+void    AddRegs( void );
 bool    ScRealRegister( name *reg );

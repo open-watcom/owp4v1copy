@@ -65,16 +65,16 @@ endif
         extrn   "C",_psp                : word
         extrn   "C",_osmajor            : byte
         extrn   "C",_osminor            : byte
-        extrn   __osmode                : byte
-        extrn   __HShift                : byte
+        extrn   "C",_osmode             : byte
+        extrn   "C",_HShift             : byte
         extrn   "C",_STACKLOW           : word
         extrn   "C",_STACKTOP           : word
         extrn   "C",_cbyte              : word
         extrn   "C",_child              : word
         extrn   __no87                  : word
         extrn   "C",__FPE_handler       : dword
-        extrn   "C",_LpCmdLine          : word
-        extrn   "C",_LpPgmName          : word
+        extrn   "C",_LpCmdLine          : dword
+        extrn   "C",_LpPgmName          : dword
         extrn   __get_ovl_stack         : word
         extrn   __restore_ovl_stack     : word
         extrn   __close_ovl_file        : word
@@ -267,7 +267,7 @@ endif
 ;
 ;  check to see if running in protect-mode (Ergo 286 DPMI DOS-extender)
 ;
-        cmp     byte ptr es:__osmode,0  ; if not protect-mode
+        cmp     byte ptr es:_osmode,0   ; if not protect-mode
         jne     mem_setup               ; then it is real-mode
         mov     cx,ds:2h                ; get highest segment address
         mov     ax,es                   ; point to data segment
@@ -332,8 +332,8 @@ else
 endif
         mov     es,dx                   ; es:di is destination
         mov     di,es:_STACKLOW
-        mov     es:_LpCmdLine+0,di      ; stash lpCmdLine pointer
-        mov     es:_LpCmdLine+2,es      ; ...
+        mov     word ptr es:_LpCmdLine+0,di ; stash lpCmdLine pointer
+        mov     word ptr es:_LpCmdLine+2,es ; ...
         je      noparm
         inc     cx
         rep     movsb
@@ -379,8 +379,8 @@ L2:     cmp     byte ptr [si],0         ; - end of pgm name ?
         jne     L2                      ; - until end of pgm name
 nopgmname:                              ; endif
         mov     si,cx                   ; save address of pgm name
-        mov     es:_LpPgmName+0,si      ; stash LpPgmName pointer
-        mov     es:_LpPgmName+2,es      ; ...
+        mov     word ptr es:_LpPgmName+0,si ; stash LpPgmName pointer
+        mov     word ptr es:_LpPgmName+2,es ; ...
 
         mov     ax,es:_psp              ; get segment addr of PSP
         mov     es,ax                   ; place in ES

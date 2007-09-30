@@ -1531,7 +1531,7 @@ void SortHoleArray( void )
 }
 
 
-void FreeHoleArray()
+void FreeHoleArray( void )
 {
     if( NumHoles != 0 ) {
         _free( HoleArray );

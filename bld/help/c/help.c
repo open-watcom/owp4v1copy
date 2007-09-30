@@ -114,13 +114,6 @@ typedef struct a_field {
     char                keyword[1];
 } a_field;
 
-typedef struct {
-    char        *buf;
-    int         pos;
-    bool        changecurr;
-    int         line;
-} ScanInfo;
-
 static VSCREEN helpScreen = {
     EV_NO_EVENT,                    /* event number */
     NULL,                           /* screen title */

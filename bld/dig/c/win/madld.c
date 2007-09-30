@@ -53,7 +53,7 @@ void Say( char *buff )
 
 void MADSysUnload( unsigned long sys_hdl )
 {
-    void        (DIGENTRY *fini_func)() = (void *)sys_hdl;
+    void        (DIGENTRY *fini_func)(void) = (void *)sys_hdl;
 
     if( fini_func != NULL ) {
         fini_func();

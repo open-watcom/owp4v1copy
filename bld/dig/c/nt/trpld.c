@@ -39,8 +39,8 @@
 #include "tcerr.h"
 
 static HANDLE   TrapFile;
-static trap_version (TRAPENTRY *InitFunc)();
-static void (TRAPENTRY *FiniFunc)();
+static trap_version (TRAPENTRY *InitFunc)(char *, char *, bool);
+static void (TRAPENTRY *FiniFunc)(void);
 static void (TRAPENTRY *InfoFunction)( HWND );
 
 extern trap_version     TrapVer;

@@ -214,12 +214,35 @@ YIE     ends
 _DATA   segment word public 'DATA'
 
         extrn   ___d16_selectors:far
+
+        public  __ovlflag
+        public  __intno
+        public  __ovlvec
+
+        public  "C",_curbrk
+        public  "C",_psp
+        public  "C",_osmajor
+        public  "C",_osminor
+        public  "C",_osmode
+        public  "C",_HShift
+        public  "C",_STACKLOW
+        public  "C",_STACKTOP
+        public  "C",_cbyte
+        public  "C",_child
+        public  __no87
+        public  __get_ovl_stack
+        public  __restore_ovl_stack
+        public  __close_ovl_file
+        public  "C",__FPE_handler
+        public  "C",_LpCmdLine
+        public  "C",_LpPgmName
+
 _curbrk     dw 0                ; top of usable memory
 _psp        dw 0                ; segment addr of program segment prefix
 _osmajor    db 0                ; major DOS version number
 _osminor    db 0                ; minor DOS version number
-__osmode    db 1                ; 0 => DOS real mode, 1 =>protect mode
-__HShift    db 3                ; Huge Shift amount (real-mode=12,prot-mode=3)
+_osmode     db 1                ; 0 => DOS real mode, 1 =>protect mode
+_HShift     db 3                ; Huge Shift amount (real-mode=12,prot-mode=3)
 _STACKLOW   dw 0                ; lowest address in stack
 _STACKTOP   dw 0                ; highest address in stack
 _cbyte      dw 0                ; used by getch, getche
@@ -238,27 +261,6 @@ _LpPgmName dw 0,0               ; lpPgmName (for _argc, _argv processing)
 __ovlflag  db 0                 ; non-zero => program is overlayed
 __intno    db 0                 ; interrupt number used by MS Overlay Manager
 __ovlvec   dd 0                 ; saved contents of interrupt vector used
-        public  __ovlflag
-        public  __intno
-        public  __ovlvec
-
-        public  "C",_curbrk
-        public  "C",_psp
-        public  "C",_osmajor
-        public  "C",_osminor
-        public  __osmode
-        public  __HShift
-        public  "C",_STACKLOW
-        public  "C",_STACKTOP
-        public  "C",_cbyte
-        public  "C",_child
-        public  __no87
-        public  __get_ovl_stack
-        public  __restore_ovl_stack
-        public  __close_ovl_file
-        public  "C",__FPE_handler
-        public  "C",_LpCmdLine
-        public  "C",_LpPgmName
 
 _DATA   ends
 

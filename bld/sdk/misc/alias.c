@@ -65,7 +65,7 @@ static AnAlias *FindAlias( AliasHdl hdl, unsigned long id ) {
  *                assigned to it
  */
 
-void InitAliasHdl( AliasHdl *hdl, void (*updatefn)(), void *userdata ) {
+void InitAliasHdl( AliasHdl *hdl, void (*updatefn)(unsigned long, char *, char *, void *), void *userdata ) {
     *hdl = MemAlloc( sizeof( AliasList ) );
     (*hdl)->data = NULL;
     (*hdl)->userdata = userdata;
