@@ -161,12 +161,7 @@ void  AddName( char *name, FILE *link_fp )
     char        quoted[_MAX_PATH ];
     char        buff1 [_MAX_PATH2];
     char        buff2 [_MAX_PATH2];
-    char        *drive;
-    char        *dir;
     char        *fname;
-    char        *ext1;
-    char        *ext2;
-    char        *extension;
 
     curr_name = Obj_List;
     while( curr_name != NULL ) {
@@ -184,13 +179,27 @@ void  AddName( char *name, FILE *link_fp )
     new_name->next = NULL;
     fputs( "file ", link_fp );
     if( Obj_Name != NULL ) {
+        char        *drive;
+        char        *drive2;
+        char        *dir;
+        char        *dir2;
+        char        *extension;
+        char        *ext2;
+        
         /* construct full name of object file from Obj_Name information */
-        _splitpath2( Obj_Name, buff1, &drive, &dir, &fname, &ext1 );
-        extension = ext1;
-        if( ext1[0] == '\0' )  extension = OBJ_EXT;
+        _splitpath2( Obj_Name, buff1, &drive, &dir, &fname, &extension );
+        if( extension[0] == '\0' )  extension = OBJ_EXT;
+        
         if( fname[0] == '\0' || fname[0] == '*' ) {
-            _splitpath2( name, buff2, NULL, NULL, &fname, &ext2 );
+            /* there's no usable basename in the -fo= pattern, but there drive and directory
+             * and extension should still be applied.
+             * OTOH the input name may have its own, explicitly given
+             * drive, directory and extension, so let those take precedence */
+            _splitpath2( name, buff2, &drive2, &dir2, &fname, &ext2 );
             if( ext2[0] != '\0' )  extension = ext2;
+            if( drive2[0] != '\0' ) drive = drive2;
+            if( dir2[0] != '\0' ) dir = dir2;
+           
         }
         _makepath( path, drive, dir, fname, extension );
         name = path;
