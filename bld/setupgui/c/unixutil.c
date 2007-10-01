@@ -534,74 +534,9 @@ extern bool DoDeleteFile( char *Path )
 extern COPYFILE_ERROR DoCopyFile( char *src_path, char *dst_path, int append )
 /******************************************************************************/
 {
-#if 0
-    const WORD          buffer_size = 32 * 1024;
-    int                 src_files, dst_files;
-    WORD                bytes_read, date, time, style, bytes_written;
-    OFSTRUCT            src, dst;
-    char _far           *pbuff;
-    GLOBALHANDLE        mem_handle;
-
-    src_files = OpenFile( src_path, &src, OF_READ );
-    if( src_files == -1 ) return( CFE_CANTOPENSRC );
-
-    mem_handle = GlobalAlloc( GMEM_MOVEABLE, buffer_size );
-    if( mem_handle == NULL ) {
-        _lclose( src_files );
-        return( CFE_NOMEMORY );
-    }
-
-    if( append ) {
-        style = OF_READWRITE;
-    } else {
-        style = OF_CREATE | OF_WRITE;
-    }
-    dst_files = OpenFile( dst_path, &dst, style );
-    if( dst_files == -1 ) {
-        _lclose( src_files );
-        GlobalFree( mem_handle );
-        return( CFE_CANTOPENDST );
-    }
-    if( append ) {
-        _llseek( dst_files, 0, SEEK_END );
-    }
-
-    pbuff = GlobalLock( mem_handle );
-    do {
-        bytes_read = _lread( src_files, pbuff, buffer_size );
-        bytes_written = _lwrite( dst_files, pbuff, bytes_read );
-        BumpStatus( bytes_written );
-        if( bytes_written != bytes_read || StatusCancelled() ) {
-            _lclose( dst_files );
-            _lclose( src_files );
-            GlobalUnlock( mem_handle );
-            GlobalFree( mem_handle );
-            if( bytes_written == bytes_read ) {
-                // copy was aborted, delete destination file
-                DoDeleteFile( src_path );
-                return( CFE_ABORT );
-            }
-            // error writing file - probably disk full
-            SetupError( "IDS_WRITEERROR" );
-            return( CFE_ERROR );
-        }
-    } while( bytes_read == buffer_size );
-    GlobalUnlock( mem_handle );
-
-    // Make the destination file have the same time stamp as the source file.
-    _dos_getftime( src_files, (unsigned short *)&date, (unsigned short*)&time );
-    _dos_setftime( dst_files, date, time );
-    _lclose( dst_files );
-
-    GlobalFree( mem_handle );
-    _lclose( src_files );
-#else
 static char lastchance[1024];
-    int           buffer_size = 16 * 1024;
+    int                 buffer_size = 16 * 1024;
     int                 src_files, dst_files;
-#if 0
-    int                 date, time;
-#endif
     int                 bytes_read, bytes_written, style;
     char                *pbuff;
 
@@ -657,46 +592,13 @@ static char lastchance[1024];
             return( CFE_ERROR );
         }
     } while( bytes_read == buffer_size );
-
-    // Make the destination file have the same time stamp as the source file.
-#if 0
-  #ifdef __OS2__
-    {
-        APIRET          rc;
-        FILESTATUS3     srcinfobuff;
-        FILESTATUS3     dstinfobuff;
-
-        rc = DosQueryFileInfo( src_files, FIL_STANDARD, &srcinfobuff,
-                                sizeof(FILESTATUS3) );
-        if( rc !=0 ) {
-            MsgBox( NULL, "IDS_QUERYFILEERROR", GUI_OK, rc);
-        }
-        rc = DosQueryFileInfo( dst_files, FIL_STANDARD, &dstinfobuff,
-                                sizeof(FILESTATUS3) );
-        if( rc !=0 ) {
-            MsgBox( NULL, "IDE_QUERYFILEERROR", GUI_OK, rc);
-        }
-        dstinfobuff.fdateCreation = srcinfobuff.fdateCreation;
-        dstinfobuff.ftimeCreation = srcinfobuff.ftimeCreation;
-
-        rc = DosSetFileInfo( dst_files, FIL_STANDARD, &dstinfobuff,
-                                sizeof(FILESTATUS3) );
-        if( rc !=0 ) {
-            MsgBox( NULL, "IDE_SETFILEERROR", GUI_OK, rc);
-        }
-
-    }
-  #else
-    _dos_getftime( src_files, (unsigned short *)&date, (unsigned short *)&time );
-    _dos_setftime( dst_files, (unsigned short)date, (unsigned short)time );
-  #endif
-#endif
     close( dst_files );
 
+    // Make the destination file have the same time stamp as the source file.
     SameFileDate( src_path, dst_path );
+
     if( pbuff != lastchance ) GUIMemFree( pbuff );
     close( src_files );
-#endif
     return( CFE_NOERROR );
 }
 

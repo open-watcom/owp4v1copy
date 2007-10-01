@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate makefile used for setup.
 *
 ****************************************************************************/
 
@@ -62,37 +61,59 @@ FILE_INFO               *FileList = NULL;
 VERSION_INFO            *VersionList = NULL;
 
 
-int main( int argc, char *argv[] )
-//================================
-
+int AddFile( char *path, char *file, char *rel_file, char *patch )
+//================================================================
 {
-    int                 i, ok;
-    FILE                *fp;
+    FILE_INFO           *new, *curr;
 
-    if( argc < 2 ) {
-        printf( "Usage: GEMMKFIL <file_list> [versions]\n" );
-        return( 1 );
+    new = malloc( sizeof( FILE_INFO ) );
+    if( new == NULL ) {
+        printf( "Out of memory\n" );
+        return( FALSE );
+    } else {
+        new->path = strdup( path );
+        new->file = strdup( file );
+        new->rel_file = strdup( rel_file );
+        new->pack = strdup( patch );
+        if( new->path == NULL || new->file == NULL || new->pack == NULL ) {
+            printf( "Out of memory\n" );
+            return( FALSE );
+        }
+        new->next = NULL;
+        if( FileList == NULL ) {
+            FileList = new;
+        } else {
+            curr = FileList;
+            while( curr->next != NULL ) {
+                curr = curr->next;
+            }
+            curr->next = new;
+        }
+        return( TRUE );
     }
-    fp = fopen( argv[ 1 ], "r" );
-    if( fp == NULL ) {
-        printf( "Cannot open '%s'\n", argv[ 1 ] );
-        return( 1 );
+}
+
+
+int InVersionList( char *str )
+//============================
+{
+    VERSION_INFO        *ver;
+
+    if( VersionList == NULL ) {
+        return( TRUE );
+    } else {
+        for( ver = VersionList; ver != NULL; ver = ver->next ) {
+            if( stricmp( str, ver->version ) == 0 ) {
+                return( TRUE );
+            }
+        }
+        return( FALSE );
     }
-    for( i = 2; argv[ i ] != NULL; ++i ) {
-        AddVersion( argv[ i ] );
-    }
-    ok = ReadList( fp );
-    fclose( fp );
-    if( ok ) {
-        CreateMakeFile();
-    }
-    return( 0 );
 }
 
 
 int ReadList( FILE *fp )
 //======================
-
 {
     char                *type;
     char                *path;
@@ -134,43 +155,8 @@ int ReadList( FILE *fp )
 }
 
 
-int AddFile( char *path, char *file, char *rel_file, char *patch )
-//================================================
-
-{
-    FILE_INFO           *new, *curr;
-
-    new = malloc( sizeof( FILE_INFO ) );
-    if( new == NULL ) {
-        printf( "Out of memory\n" );
-        return( FALSE );
-    } else {
-        new->path = strdup( path );
-        new->file = strdup( file );
-        new->rel_file = strdup( rel_file );
-        new->pack = strdup( patch );
-        if( new->path == NULL || new->file == NULL || new->pack == NULL ) {
-            printf( "Out of memory\n" );
-            return( FALSE );
-        }
-        new->next = NULL;
-        if( FileList == NULL ) {
-            FileList = new;
-        } else {
-            curr = FileList;
-            while( curr->next != NULL ) {
-                curr = curr->next;
-            }
-            curr->next = new;
-        }
-        return( TRUE );
-    }
-}
-
-
-void CreateMakeFile()
-//===================
-
+void CreateMakeFile( void )
+//=========================
 {
     FILE                *fp;
     FILE_INFO           *curr;
@@ -212,7 +198,6 @@ void CreateMakeFile()
 
 void AddVersion( char *str )
 //==========================
-
 {
     VERSION_INFO        *ver;
 
@@ -227,20 +212,28 @@ void AddVersion( char *str )
 }
 
 
-int InVersionList( char *str )
-//============================
-
+int main( int argc, char *argv[] )
+//================================
 {
-    VERSION_INFO        *ver;
+    int                 i, ok;
+    FILE                *fp;
 
-    if( VersionList == NULL ) {
-        return( TRUE );
-    } else {
-        for( ver = VersionList; ver != NULL; ver = ver->next ) {
-            if( stricmp( str, ver->version ) == 0 ) {
-                return( TRUE );
-            }
-        }
-        return( FALSE );
+    if( argc < 2 ) {
+        printf( "Usage: GEMMKFIL <file_list> [versions]\n" );
+        return( 1 );
     }
+    fp = fopen( argv[ 1 ], "r" );
+    if( fp == NULL ) {
+        printf( "Cannot open '%s'\n", argv[ 1 ] );
+        return( 1 );
+    }
+    for( i = 2; argv[ i ] != NULL; ++i ) {
+        AddVersion( argv[ i ] );
+    }
+    ok = ReadList( fp );
+    fclose( fp );
+    if( ok ) {
+        CreateMakeFile();
+    }
+    return( 0 );
 }
