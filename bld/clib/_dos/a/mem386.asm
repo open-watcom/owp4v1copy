@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  DOS memory management routines for 32-bit DOS.
 ;*
 ;*****************************************************************************
 
@@ -41,7 +40,7 @@ include struct.inc
         defp    _dos_allocmem
         xdefp   "C",_dos_allocmem
 ;
-;       unsigned _dos_allocmem( unsigned size, unsigned short *segment );
+;       unsigned _dos_allocmem( unsigned size, unsigned *segment );
 ;
         push    EBX             ; save EBX
         push    EDX             ; save EDX
@@ -52,14 +51,13 @@ endif
         mov     EBX,EAX         ; get # of paragraphs wanted
         mov     AH,48h          ; allocate memory
         int     21h             ; ...
-        xchg    EBX,EDX         ; get pointer for result
         _if     nc              ; if no error
-          mov   EDX,EAX         ; - get segment of allocated memory
+          mov   EBX,EAX         ; - get segment of allocated memory
           sub   EAX,EAX         ; - indicate no error
         _else                   ; else
           call  __doserror_     ; - set error code
         _endif                  ; endif
-        mov     [EBX],DX        ; store size of largest block or segment
+        mov     [EDX],EBX       ; store size of largest block or segment
         pop     EDX             ; restore EDX
         pop     EBX             ; restore EBX
         ret                     ; return to caller
@@ -68,13 +66,13 @@ endif
         defp    _dos_freemem
         xdefp   "C",_dos_freemem
 ;
-;       unsigned _dos_freemem( unsigned short segment );
+;       unsigned _dos_freemem( unsigned segment );
 ;
 ifdef __STACK__
         mov     EAX,4[ESP]      ; get segment
 endif
         push    ES              ; save ES
-        mov     ES,AX           ; get segment to be freed
+        mov     ES,EAX          ; get segment to be freed
         mov     AH,49h          ; free allocated memory
         int     21h             ; ...
         call    __doserror_     ; set return code
@@ -86,8 +84,7 @@ endif
         xdefp   "C",_dos_setblock
 ;
 ;       unsigned _dos_setblock( unsigned size,
-;                               unsigned short segment,
-;                               unsigned  *maxsize );
+;                               unsigned segment, unsigned *maxsize );
 ;
 ;
 ifdef __STACK__
@@ -99,7 +96,7 @@ ifdef __STACK__
 endif
         push    ES              ; save ES
         push    EBX             ; save pointer to maxsize
-        mov     ES,DX           ; get segment to be modified
+        mov     ES,EDX          ; get segment to be modified
         mov     EBX,EAX         ; get new size
         mov     AH,4Ah          ; modify allocated memory
         int     21h             ; ...

@@ -1,7 +1,7 @@
 .func _dos_setblock
 #include <&doshdr>
 unsigned _dos_setblock( unsigned size,
-                        unsigned short segment,
+                        unsigned segment,
                         unsigned *maxsize );
 .ixfunc2 '&DosFunc' &func
 .funcend
@@ -23,7 +23,7 @@ DPMI services be used.
 .desc end
 .return begin
 The &func function returns zero if successful.
-Otherwise, it returns an MS-DOS error code and sets
+Otherwise, it returns an OS error code and sets
 .kw errno
 to
 .kw ENOMEM
@@ -37,42 +37,42 @@ memory.
 #include <stdio.h>
 #include <&doshdr>
 
-void main()
-  {
+void main( void )
+{
 #if defined(__NT__) || \
   ( defined(__OS2__) && \
         (defined(__386__) || defined(__PPC__)) )
     void *segment;
 #else
-    unsigned short segment;
+    unsigned segment;
 #endif
 .exmp break
     /* Try to allocate 100 paragraphs, then free them */
     if( _dos_allocmem( 100, &segment ) != 0 ) {
-      printf( "_dos_allocmem failed\n" );
-      printf( "Only %u paragraphs available\n", segment);
+        printf( "_dos_allocmem failed\n" );
+        printf( "Only %u paragraphs available\n", segment);
     } else {
-      printf( "_dos_allocmem succeeded\n" );
+        printf( "_dos_allocmem succeeded\n" );
 .exmp break
 #if defined(__DOS__)
-      { unsigned maxsize = 0;
-      /* Try to increase it to 200 paragraphs */
-      if( _dos_setblock( 200, segment, &maxsize ) != 0 ){
-        printf( "_dos_setblock failed: max=%u, err=%s\n",
-                maxsize, strerror( errno) );
-      } else {
-        printf( "_dos_setblock succeeded\n" );
-      }
-      }
+        { unsigned maxsize = 0;
+        /* Try to increase it to 200 paragraphs */
+        if( _dos_setblock( 200, segment, &maxsize ) != 0 ) {
+            printf( "_dos_setblock failed: max=%u, err=%s\n",
+                    maxsize, strerror( errno) );
+        } else {
+            printf( "_dos_setblock succeeded\n" );
+        }
+        }
 #endif
 .exmp break
-      if( _dos_freemem( segment ) != 0 ) {
-        printf( "_dos_freemem failed\n" );
-      } else {
-        printf( "_dos_freemem succeeded\n" );
-      }
+        if( _dos_freemem( segment ) != 0 ) {
+            printf( "_dos_freemem failed\n" );
+        } else {
+            printf( "_dos_freemem succeeded\n" );
+        }
     }
-  }
+}
 .exmp end
 .class DOS
 .system

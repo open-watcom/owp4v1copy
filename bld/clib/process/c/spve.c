@@ -254,7 +254,7 @@ _WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
 #endif
 #if defined( __DOS__ ) && defined( _M_I86 )
     if( _osmode != DOS_MODE ) {     /* if protect-mode e.g. DOS/16M */
-        unsigned short  segment;
+        unsigned    segment;
         
         if( _dos_allocmem( num_of_paras, &segment ) != 0 ) {
             lib_nfree( np );

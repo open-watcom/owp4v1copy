@@ -127,8 +127,7 @@ _WCRTLINK extern void     _chain_intr( void
 #if defined(__NT__) || ( defined(__OS2__) && (defined(__386__)||defined(__PPC__)) )
 _WCRTLINK extern unsigned _dos_allocmem( unsigned __size, void **__storage );
 #else
-_WCRTLINK extern unsigned _dos_allocmem( unsigned __size,
-                                         unsigned short *__seg );
+_WCRTLINK extern unsigned _dos_allocmem( unsigned __size, unsigned *__seg );
 #endif
 _WCRTLINK extern unsigned _dos_close( int __handle );
 _WCRTLINK extern unsigned _dos_commit( int __handle );
@@ -144,7 +143,7 @@ _WCRTLINK extern unsigned _dos_findclose( struct find_t *__buf );
 #if defined(__NT__) || ( defined(__OS2__) && (defined(__386__)||defined(__PPC__)) )
 _WCRTLINK extern unsigned _dos_freemem( void *__storage );
 #else
-_WCRTLINK extern unsigned _dos_freemem( unsigned short __seg );
+_WCRTLINK extern unsigned _dos_freemem( unsigned __seg );
 #endif
 _WCRTLINK extern void     _dos_getdate( struct dosdate_t *__date );
 _WCRTLINK extern unsigned _dos_getdiskfree( unsigned __drive,
@@ -165,7 +164,7 @@ _WCRTLINK extern unsigned _dos_open( const char *__path, unsigned __mode,
                                      int *__handle );
 _WCRTLINK extern unsigned _dos_read( int __handle, void _DOSFAR *__buf,
                                      unsigned __count, unsigned *__bytes );
-_WCRTLINK extern unsigned _dos_setblock( unsigned __size, unsigned short __seg,
+_WCRTLINK extern unsigned _dos_setblock( unsigned __size, unsigned __seg,
                                          unsigned  *__maxsize );
 _WCRTLINK extern unsigned _dos_setdate( struct dosdate_t *__date );
 _WCRTLINK extern void     _dos_setdrive( unsigned __drivenum,

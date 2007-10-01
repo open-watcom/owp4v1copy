@@ -151,7 +151,7 @@ void TestMemoryOperations( void )
     void                *segment;
     char                *cptr;
     #else
-    unsigned short      segment;
+    unsigned            segment;
     char __far          *cptr;
     #endif
     unsigned            ctr;
