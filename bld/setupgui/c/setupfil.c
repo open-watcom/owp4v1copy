@@ -33,16 +33,14 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
-#if !defined( __UNIX__ )
+#if defined( __DOS__ ) || defined( __WINDOWS__ )
     #include <dos.h>
 #endif
 #include <ctype.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined( __UNIX__ )
-    #include <time.h>
-#endif
+#include <time.h>
 #if defined( __WINDOWS__ ) || defined( __NT__ )
     #include <windows.h>
 #endif
@@ -1094,30 +1092,14 @@ static void VersionStr( int fp, char *ver, int verlen, char *verbuf )
 }
 
 
-#define YEAR( t )       (((t & 0xFE00) >> 9) + 1980)
-#define MONTH( t )      ((t & 0x01E0) >> 5)
-#define DAY( t )        (t & 0x001F)
-#define HOUR( t )       ((t & 0xF800 ) >> 11)
-#define MINUTE( t )     ((t & 0x07E0) >> 5)
-
-
 static void CheckVersion( char *path, char *drive, char *dir )
 /************************************************************/
 {
     int                 fp, len, hours;
     char                am_pm, buf[100];
-#if defined( __UNIX__ )
     int                 check;
-    struct stat *       statbuf;
-    struct tm   *       timeptr;
-
-    statbuf     =       GUIMemAlloc( sizeof( struct stat ) );
-    if( statbuf == NULL ) {
-        return;
-    }
-#else
-    unsigned short      date, time;
-#endif
+    struct stat         statbuf;
+    struct tm           *timeptr;
 
     fp = open( path, O_RDONLY + O_BINARY, 0 );
     if( fp == -1 ) {
@@ -1125,19 +1107,13 @@ static void CheckVersion( char *path, char *drive, char *dir )
     }
 
     // concat date and time to end of path
-#if defined( __UNIX__ )
-    check = fstat( fp, statbuf );
+    check = fstat( fp, &statbuf );
     if( check == -1 ) {
         return;         // shouldn't happen
     }
 
-    timeptr = gmtime( &(statbuf->st_mtime) );
+    timeptr = gmtime( &(statbuf.st_mtime) );
     hours   = timeptr->tm_hour;
-#else
-    _dos_getftime( fp, &date, &time );
-
-    hours = HOUR( time );
-#endif
     if( hours <= 11 ) {
         am_pm = 'a';
         if( hours == 0 ) hours += 12;
@@ -1148,13 +1124,8 @@ static void CheckVersion( char *path, char *drive, char *dir )
     _splitpath( path, drive, dir, NULL, NULL );
     _makepath( path, drive, dir, NULL, NULL );
     len = strlen( path );
-#if defined( __UNIX__ )
     sprintf( path + len, "  (%.2d-%.2d-%.4d %.2d:%.2d%cm)  ",
              timeptr->tm_mon + 1, timeptr->tm_mday, timeptr->tm_year, hours, timeptr->tm_min, am_pm );
-#else
-    sprintf( path + len, "  (%.2d-%.2d-%.4d %.2d:%.2d%cm)  ",
-             MONTH( date ), DAY( date ), YEAR( date ), hours, MINUTE( time ), am_pm );
-#endif
 
     // also concat version number if it exists
     VersionStr( fp, "VeRsIoN=", 8, buf );
