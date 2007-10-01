@@ -66,7 +66,11 @@ int GrabFile( char *src, struct stat *stat_s, char *dest, char srcattr )
     int                 handle;
     int                 okay=TRUE;
     timedate            td;
+#if __WATCOMC__ >= 1280
+    unsigned            t,d;
+#else
     unsigned short      t,d;
+#endif
 
     /*
      * file handle

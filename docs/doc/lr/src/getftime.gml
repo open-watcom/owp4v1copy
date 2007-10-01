@@ -1,8 +1,8 @@
 .func _dos_getftime
 #include <&doshdr>
 unsigned _dos_getftime( int &fd,
-                        unsigned short *date,
-                        unsigned short *time );
+                        unsigned *date,
+                        unsigned *time );
 .ixfunc2 '&DosFunc' &func
 .funcend
 .desc begin
@@ -56,23 +56,23 @@ accordingly.
 #define MINUTE(t) ((t & 0x07E0) >> 5)
 #define SECOND(t) ((t & 0x001F) << 1)
 .exmp break
-void main()
-  {
+void main( void )
+{
     int      &fd;
-    unsigned short date, time;
+    unsigned date, time;
 .exmp break
     if( _dos_open( "file", O_RDONLY, &amp.&fd ) != 0 ) {
-      printf( "Unable to open file\n" );
+        printf( "Unable to open file\n" );
     } else {
-      printf( "Open succeeded\n" );
-      _dos_getftime( &fd, &amp.date, &amp.time );
-      printf( "The file was last modified on %d/%d/%d",
-              MONTH(date), DAY(date), YEAR(date) );
-      printf( " at %.2d:%.2d:%.2d\n",
-              HOUR(time), MINUTE(time), SECOND(time) );
-      _dos_close( &fd );
+        printf( "Open succeeded\n" );
+        _dos_getftime( &fd, &amp.date, &amp.time );
+        printf( "The file was last modified on %d/%d/%d",
+                MONTH(date), DAY(date), YEAR(date) );
+        printf( " at %.2d:%.2d:%.2d\n",
+                HOUR(time), MINUTE(time), SECOND(time) );
+        _dos_close( &fd );
     }
-  }
+}
 .exmp output
 Open succeeded
 The file was last modified on 12/29/1989 at 14:32:46

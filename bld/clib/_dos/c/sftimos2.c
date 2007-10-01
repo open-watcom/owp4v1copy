@@ -35,7 +35,7 @@
 #include "seterrno.h"
 
 
-_WCRTLINK unsigned _dos_setftime( int handle, unsigned short date, unsigned short time )
+_WCRTLINK unsigned _dos_setftime( int handle, unsigned date, unsigned time )
 {
     APIRET          error;
     OS_UINT         hand_type;
@@ -55,9 +55,9 @@ _WCRTLINK unsigned _dos_setftime( int handle, unsigned short date, unsigned shor
             return( error );
         }
         p = (USHORT *)(&info.fdateLastWrite);
-        *(unsigned short *)p = date;
+        *p = date;
         p = (USHORT *)(&info.ftimeLastWrite);
-        *(unsigned short *)p = time;
+        *p = time;
         error = DosSetFileInfo( handle, 1, (PBYTE)&info, sizeof( FILESTATUS ) );
         if( error ) {
             __set_errno_dos( error );

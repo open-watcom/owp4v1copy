@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Implementation of _dos_get/setftime() for 32-bit DOS. 
 ;*
 ;*****************************************************************************
 
@@ -43,15 +42,15 @@ include int21.inc
         xdefp   "C",_dos_getftime
 ;
 ;       unsigned _dos_getftime( int handle,
-;                               unsigned short *date,
-;                               unsigned short *time );
+;                               unsigned *date,
+;                               unsigned *time );
 ;
 ifdef __STACK__
         push    EBX
         push    EDX
-        mov     EAX,12[ESP]     ; get path
-        mov     EDX,16[ESP]     ; mode
-        mov     EBX,20[ESP]     ; handle
+        mov     EAX,12[ESP]     ; get handle
+        mov     EDX,16[ESP]     ; pointer to date
+        mov     EBX,20[ESP]     ; pointer to time
 endif
         push    EDI             ; save DI
         push    EDX             ; save DX
@@ -59,12 +58,14 @@ endif
         push    EBX             ; save BX
         mov     EDI,EDX         ; get pointer to date
         mov     EBX,EAX         ; get file handle
+	xor     ECX,ECX         ; clear junk in high bits of ECX
+	xor     EDX,EDX         ; and EDX
         mov     AX,5700h        ; get file's date and time
         int21h                  ; ...
         pop     EBX             ; get pointer to time
         _if     nc              ; if no error
-          mov   [EDI],DX        ; - store date
-          mov   [EBX],CX        ; - store time
+          mov   [EDI],EDX       ; - store date
+          mov   [EBX],ECX       ; - store time
         _endif                  ; endif
         call    __doserror_     ; set return code
         pop     ECX             ; restore CX
@@ -81,19 +82,19 @@ endif
         xdefp   "C",_dos_setftime
 ;
 ;       unsigned _dos_setftime( int handle,
-;                               unsigned short date,
-;                               unsigned short time );
+;                               unsigned date,
+;                               unsigned time );
 ;
 ifdef __STACK__
         push    EBX
         push    EDX
-        mov     EAX,12[ESP]     ; get path
-        mov     EDX,16[ESP]     ; mode
-        mov     EBX,20[ESP]     ; handle
+        mov     EAX,12[ESP]     ; get handle
+        mov     EDX,16[ESP]     ; date
+        mov     EBX,20[ESP]     ; time
 endif
         push    ECX             ; save ECX
-        mov     CX,BX           ; get time
-        mov     BX,AX           ; get file handle
+        mov     ECX,EBX         ; get time
+        mov     EBX,EAX         ; get file handle
         mov     AX,5701h        ; set file's date and time
         int21h                  ; ...
         call    __doserror_     ; set return code

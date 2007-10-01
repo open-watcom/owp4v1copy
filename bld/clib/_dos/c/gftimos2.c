@@ -36,7 +36,7 @@
 
 
 
-_WCRTLINK unsigned _dos_getftime( int handle, unsigned short *date, unsigned short *time )
+_WCRTLINK unsigned _dos_getftime( int handle, unsigned *date, unsigned *time )
 {
     APIRET          error;
     OS_UINT         hand_type;
@@ -56,9 +56,9 @@ _WCRTLINK unsigned _dos_getftime( int handle, unsigned short *date, unsigned sho
             return( error );
         }
         p = (USHORT *)(&info.fdateLastWrite);
-        *date = *(unsigned short *)p;
+        *date = *p;
         p = (USHORT *)(&info.ftimeLastWrite);
-        *time = *(unsigned short *)p;
+        *time = *p;
     } else {                        /* it is a device */
         *date = 0;
         *time = 0;
