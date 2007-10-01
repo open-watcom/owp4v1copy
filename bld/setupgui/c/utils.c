@@ -165,7 +165,8 @@ int __far critical_error_handler( unsigned deverr,
 typedef __far (HANDLER)( unsigned deverr,
                   unsigned errcode,
                   unsigned far *devhdr );
-static void NoHardErrors()
+
+static void NoHardErrors( void )
 {
 #if defined( __OS2__ )
     DosError( FERR_DISABLEHARDERR );
@@ -389,7 +390,7 @@ static void GetTmpFileNameInTarget( unsigned drive, char *buff )
     GetTmpFileName( drive, buff );
 }
 
-void ResetDriveInfo()
+void ResetDriveInfo( void )
 {
     int         i;
 
@@ -604,14 +605,14 @@ extern unsigned long long GetFreeDiskSpace( unsigned drive, bool removable )
     return( Drives[ GetDriveInfo( drive, removable ) ].free_space );
 }
 
-void ResetDiskInfo()
-/******************/
+void ResetDiskInfo( void )
+/************************/
 {
     memset( Drives, 0, sizeof( Drives ) );
 }
 
 bool IsFixedDisk( unsigned drive )
-/************************************/
+/********************************/
 {
     if( drive == 0 )
         return( FALSE );
@@ -966,8 +967,8 @@ static bool FindUpgradeFile( char *path )
     return( FALSE );
 }
 
-extern bool CheckUpgrade()
-/************************/
+extern bool CheckUpgrade( void )
+/******************************/
 {
     char                disk[_MAX_PATH];
     dlg_state           return_state;
@@ -1238,7 +1239,7 @@ typedef struct split_file {
 
 #define OVERHEAD_SIZE 10000 // removing a file is about like copying a small file
 
-static bool CreateDirectoryTree()
+static bool CreateDirectoryTree( void )
 {
     long                num_total_install;
     long                num_installed;
@@ -1272,8 +1273,8 @@ static bool CreateDirectoryTree()
     return( TRUE );
 }
 
-static bool RelocateFiles()
-/*************************/
+static bool RelocateFiles( void )
+/*******************************/
 {
     int                 filenum;
     int                 subfilenum, max_subfiles;
@@ -1344,7 +1345,7 @@ static file_check *FileCheck = NULL;
 static file_check *FileCheckThisPack = NULL;
 
 static void NewFileToCheck( char *name, bool is_dll )
-/***********************************************************/
+/***************************************************/
 {
     file_check  *new;
 
@@ -1357,7 +1358,7 @@ static void NewFileToCheck( char *name, bool is_dll )
 }
 
 static void UpdateCheckList( char *name, vhandle var_handle )
-/********************************************************/
+/***********************************************************/
 {
     file_check  *check;
 
@@ -1368,8 +1369,8 @@ static void UpdateCheckList( char *name, vhandle var_handle )
     }
 }
 
-static void TransferCheckList()
-/*****************************/
+static void TransferCheckList( void )
+/***********************************/
 {
     file_check  *check,*next;
 
@@ -1381,8 +1382,8 @@ static void TransferCheckList()
     FileCheckThisPack = NULL;
 }
 
-static bool CheckPendingFiles()
-/*****************************/
+static bool CheckPendingFiles( void )
+/***********************************/
 {
     file_check  *curr, *next;
     gui_message_return  ret;
@@ -1401,8 +1402,8 @@ static bool CheckPendingFiles()
     return( TRUE );
 }
 
-static void CopySetupInfFile()
-/****************************/
+static void CopySetupInfFile( void )
+/**********************************/
 {
     char                *p;
     char                dst_path[ _MAX_PATH ];
@@ -1422,8 +1423,33 @@ static void CopySetupInfFile()
     }
 }
 
-static bool DoCopyFiles()
-/***********************/
+int UnPackHook( char *name )
+/**************************/
+{
+    char        drive[_MAX_DRIVE];
+    char        dir[ _MAX_DIR ];
+    char        fname[_MAX_FNAME];
+    char        ext[_MAX_EXT];
+
+    _splitpath( name, drive, dir, fname, ext );
+    if( stricmp( ext, ".NLM" ) == 0 ) {
+        NewFileToCheck( name, FALSE );
+        _makepath( name, drive, dir, fname, "._N_" );
+        return( 1 );
+    } else if( stricmp( ext, ".DLL" ) == 0 ) {
+        NewFileToCheck( name, TRUE );
+        if( !IsPatch ) {
+#ifdef EXTRA_CAUTIOUS_FOR_DLLS
+            _makepath( name, drive, dir, fname, "._D_" );
+#endif
+        }
+        return( 1 );
+    }
+    return( 0 );
+}
+
+static bool DoCopyFiles( void )
+/*****************************/
 {
     int                 filenum, disk_num;
     int                 subfilenum, max_subfiles;
@@ -1636,8 +1662,8 @@ static bool DoCopyFiles()
 }
 
 
-static void RemoveUnusedDirs()
-/****************************/
+static void RemoveUnusedDirs( void )
+/**********************************/
 {
     char        dst_path[_MAX_PATH];
     int         i;
@@ -1650,8 +1676,8 @@ static void RemoveUnusedDirs()
     }
 }
 
-static void RemoveExtraFiles()
-/****************************/
+static void RemoveExtraFiles( void )
+/**********************************/
 // remove supplemental files
 {
     char                *p;
@@ -1767,8 +1793,8 @@ static bool NukePath( char *path, int stat )
 
 // *********************** Miscellaneous Function ****************************
 
-void DeleteObsoleteFiles()
-/************************/
+void DeleteObsoleteFiles( void )
+/******************************/
 {
     int         i, max_deletes;
     int         group;
@@ -1825,7 +1851,7 @@ void DeleteObsoleteFiles()
     }
 }
 
-extern char *GetInstallName()
+extern char *GetInstallName( void )
 {
     static char name[_MAX_FNAME];
     int         argc;
@@ -1986,32 +2012,6 @@ extern int PromptUser( char *name, char *dlg, char *skip,
     return( TRUE );
 }
 
-int UnPackHook( char *name )
-/***************************/
-{
-    char        drive[_MAX_DRIVE];
-    char        dir[ _MAX_DIR ];
-    char        fname[_MAX_FNAME];
-    char        ext[_MAX_EXT];
-
-    _splitpath( name, drive, dir, fname, ext );
-    if( stricmp( ext, ".NLM" ) == 0 ) {
-        NewFileToCheck( name, FALSE );
-        _makepath( name, drive, dir, fname, "._N_" );
-        return( 1 );
-    } else if( stricmp( ext, ".DLL" ) == 0 ) {
-        NewFileToCheck( name, TRUE );
-        if( !IsPatch ) {
-#ifdef EXTRA_CAUTIOUS_FOR_DLLS
-            _makepath( name, drive, dir, fname, "._D_" );
-#endif
-        }
-        return( 1 );
-    }
-    return( 0 );
-}
-
-
 static void AddDefine( char *def )
 /********************************/
 // Process command line switch to set a variable
@@ -2032,8 +2032,8 @@ static void AddDefine( char *def )
     }
 }
 
-static void DefineVars()
-/**********************/
+static void DefineVars( void )
+/****************************/
 // Create variables specified on command line
 {
     DEF_VAR             *var;
