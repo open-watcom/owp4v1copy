@@ -62,6 +62,7 @@
 #include "dlggen.h"
 #include "utils.h"
 #include "setupio.h"
+#include "diskos.h"
 #if !defined( __UNIX__ )
     #include "bdiff.h"
 #endif
@@ -620,17 +621,10 @@ static void EndHandle( char *source )
     int         length;
 
     length = strlen( source );
-#if defined( __UNIX__ )
-    if( source[ length - 1 ] != '/' ) {
-        source[ length ] = '/';
+    if( source[ length - 1 ] != SYS_DIR_SEP_CHAR ) {
+        source[ length ] = SYS_DIR_SEP_CHAR;
         source[ length + 1 ] = '\0';
     }
-#else
-    if( source[ length - 1 ] != '\\' ) {
-        source[ length ] = '\\';
-        source[ length + 1 ] = '\0';
-    }
-#endif
 }
 
 static void GetDestDir( int i, char *buffer )
@@ -2176,12 +2170,7 @@ static bool GetFileInfo( int dir_index, int i, bool in_old_dir, bool *pzeroed )
     if( access( buff, F_OK ) != 0 )
         return( FALSE );
 
-#if defined( __UNIX__ )
-    strcat( buff, "/" );
-#else
-    strcat( buff, "\\" );
-#endif
-
+    strcat( buff, SYS_DIR_SEP_STR );
     dir_end = buff + strlen( buff );
     found = FALSE;
     supp = TargetInfo[ DirInfo[ FileInfo[ i ].dir_index ].target ].supplimental;
@@ -2659,33 +2648,21 @@ extern void SimDirNoSlash( int i, char *buff )
     strcpy( dir, DirInfo[ i ].desc );
     if( dir[0] != '.'  &&  dir[0] != '\0' ) {
         len = strlen( buff );
-#if defined( __UNIX__ )
-    if( len > 0 && buff[ len - 1 ] != '/' ) {
-        buff[ len ] = '/';
-        buff[ len + 1 ] = '\0';
-    }
-#else
-    if( len > 0 && buff[ len - 1 ] != '\\' ) {
-        buff[ len ] = '\\';
-        buff[ len + 1 ] = '\0';
-    }
-#endif
+        if( len > 0 && buff[ len - 1 ] != SYS_DIR_SEP_CHAR ) {
+            buff[ len ] = SYS_DIR_SEP_CHAR;
+            buff[ len + 1 ] = '\0';
+        }
         strcat( buff, dir );
     }
     len = strlen( buff );
 
-#if defined( __UNIX__ )
-    if( len > 1 && buff[ len - 1 ] == '/' ) {
-        buff[len-1] = '\0';
-    }
-#else
-    if( len > 1 && buff[ len - 1 ] == '\\' ) {
-        if( !(len == 3 && buff[ 1 ] == ':') ) {
+    if( len > 1 && buff[ len - 1 ] == SYS_DIR_SEP_CHAR ) {
+#ifndef __UNIX__
+        if( !(len == 3 && buff[ 1 ] == ':') )
             /* got a trailing slash that's not a root directory */
-            buff[len-1] = '\0';
-        }
-    }
 #endif
+            buff[len-1] = '\0';
+    }
 }
 
 extern bool SimDirUsed( int i )
@@ -2702,17 +2679,10 @@ extern void SimGetDir( int i, char *buff )
 
     SimDirNoSlash( i, buff );
     len = strlen( buff );
-#if defined( __UNIX__ )
-    if( len > 0 && buff[ len - 1 ] != '/' ) {
-        buff[ len ] = '/';
+    if( len > 0 && buff[ len - 1 ] != SYS_DIR_SEP_CHAR ) {
+        buff[ len ] = SYS_DIR_SEP_CHAR;
         buff[ len + 1 ] = '\0';
     }
-#else
-    if( len > 0 && buff[ len - 1 ] != '\\' ) {
-        buff[ len ] = '\\';
-        buff[ len + 1 ] = '\0';
-    }
-#endif
 }
 
 /*
