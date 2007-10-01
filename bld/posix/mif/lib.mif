@@ -12,5 +12,4 @@ libobjs = &
     isdotdot.obj &
     lineprt.obj &
     quit.obj &
-    setftime.obj &
     regexp.obj
