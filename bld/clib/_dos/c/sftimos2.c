@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of _dos_setftime() for OS/2.
 *
 ****************************************************************************/
 
@@ -36,36 +35,34 @@
 #include "seterrno.h"
 
 
-
 _WCRTLINK unsigned _dos_setftime( int handle, unsigned short date, unsigned short time )
-    {
-        APIRET          error;
-        OS_UINT         hand_type;
-        OS_UINT         device_attr;
-        FILESTATUS      info;
-        USHORT          *p;
+{
+    APIRET          error;
+    OS_UINT         hand_type;
+    OS_UINT         device_attr;
+    FILESTATUS      info;
+    USHORT          *p;
 
-        error = DosQHandType( handle, &hand_type, &device_attr );
+    error = DosQHandType( handle, &hand_type, &device_attr );
+    if( error ) {
+        __set_errno_dos( error );
+        return( error );
+    }
+    if( ( hand_type & ~HANDTYPE_NETWORK ) == HANDTYPE_FILE ) {
+        error = DosQFileInfo( handle, 1, (PBYTE)&info, sizeof( FILESTATUS ) );
         if( error ) {
             __set_errno_dos( error );
             return( error );
         }
-        if( ( hand_type & ~HANDTYPE_NETWORK ) == HANDTYPE_FILE ) {
-            error = DosQFileInfo( handle, 1, (PBYTE)&info, sizeof( FILESTATUS ) );
-            if( error ) {
-                __set_errno_dos( error );
-                return( error );
-            }
-            p = (USHORT *)(&info.fdateLastWrite);
-            *(unsigned short *)p = date;
-            p = (USHORT *)(&info.ftimeLastWrite);
-            *(unsigned short *)p = time;
-            error = DosSetFileInfo( handle, 1, (PBYTE)&info, sizeof( FILESTATUS ) );
-            if( error ) {
-                __set_errno_dos( error );
-                return( error );
-            }
+        p = (USHORT *)(&info.fdateLastWrite);
+        *(unsigned short *)p = date;
+        p = (USHORT *)(&info.ftimeLastWrite);
+        *(unsigned short *)p = time;
+        error = DosSetFileInfo( handle, 1, (PBYTE)&info, sizeof( FILESTATUS ) );
+        if( error ) {
+            __set_errno_dos( error );
+            return( error );
         }
-        return( 0 );
     }
-
+    return( 0 );
+}
