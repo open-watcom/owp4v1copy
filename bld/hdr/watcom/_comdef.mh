@@ -55,13 +55,8 @@
   #ifdef _WCUNALIGNED
     #error The macro _WCUNALIGNED is reserved for use by the runtime library.
   #endif
-  #if __WATCOMC__ > 1250
-    #define _WRTLFCONV __declspec(__watcall)
-    #define _WRTLDCONV __declspec(__watcall)
-  #else
-    #define _WRTLFCONV
-    #define _WRTLDCONV
-  #endif
+  #define _WRTLFCONV __declspec(__watcall)
+  #define _WRTLDCONV __declspec(__watcall)
   #if defined(_M_IX86)
     #define _WCNEAR __near
     #define _WCFAR __far
