@@ -54,10 +54,7 @@ extern  void            __InitMultipleThread( void );
 
 extern  DWORD           __TlsIndex;
 
-extern  void            (*__sig_init_rtn)(void);
-extern  void            (*__sig_fini_rtn)(void);
-
-extern  void            _endthread(void);
+extern  void            _endthread( void );
 
 typedef struct thread_args {
     thread_fn   *rtn;

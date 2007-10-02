@@ -326,9 +326,6 @@ _WCRTLINK int raise( int sig ) {
 }
 
 
-_WCRTLINK extern  void  (*__sig_init_rtn)( void );
-_WCRTLINK extern  void  (*__sig_fini_rtn)( void );
-
 static void __SetSigInit( void ) {
     __sig_init_rtn = &__SigInit;
     __sig_fini_rtn = &__SigFini;

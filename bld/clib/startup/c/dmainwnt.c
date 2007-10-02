@@ -38,6 +38,7 @@
 #include "osthread.h"
 #include "widechar.h"
 #include "initarg.h"
+#include "sigtab.h"
 
 extern int APIENTRY LibMain( HANDLE, DWORD, LPVOID );
 extern void __CommonInit( void );
@@ -56,8 +57,6 @@ extern BOOL __disallow_single_dgroup( HANDLE );
 
     extern thread_data * __FirstThreadData;
 #endif
-
-_WCRTLINK extern void (*__sig_init_rtn)(void);
 
 
 int APIENTRY _LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
