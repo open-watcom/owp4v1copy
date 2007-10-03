@@ -77,7 +77,7 @@ extern  int     try_open( char *prefix, char *separator, char *filename, char *s
 
 extern  void    mem_free( void *p );
 extern  void    *mem_alloc( size_t size );
-
+extern  void    *mem_realloc( void *p, size_t size );
 
 /* garginit.c                           */
 extern  void    garg_init( void );
