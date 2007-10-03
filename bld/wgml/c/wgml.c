@@ -132,7 +132,7 @@ char *get_filename_full_path( char *buff, char const *name, size_t max )
 /*  Allocate some storage                                                  */
 /***************************************************************************/
 
-void *mem_alloc( unsigned size )
+void *mem_alloc( size_t size )
 {
     void    *p;
 
@@ -149,7 +149,7 @@ void *mem_alloc( unsigned size )
 /*  Re-allocate some storage                                                  */
 /***************************************************************************/
 
-void *mem_realloc( void *p, unsigned size )
+void *mem_realloc( void *p, size_t size )
 {
     p = realloc( p, size );
     if( p == NULL ) {
