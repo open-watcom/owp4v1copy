@@ -4,11 +4,14 @@
 
 #include <limits.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <sys/types.h>      /* for off_t */
-#ifdef __QNX__
+#if defined(__QNX__) || defined(__SVR4)
+    #define _XPG4_2         /* Required on Solaris... */
     #include <strings.h>    /* for str*case* functions */
+    #undef _XPG4_2          /* ...but causes trouble */
 #endif
 
 #if defined(__linux__) && !defined(__LINUX__)
@@ -42,6 +45,10 @@
 #define sopen(x,y,z) open((x),(y))
 #define _fsopen(x,y,z) fopen(x,y)
 #define _fmemcpy memcpy
+#ifndef PATH_MAX
+/* PATH_MAX is not standard, just common. FILENAME_MAX is ISO C. */
+#define PATH_MAX FILENAME_MAX
+#endif
 #ifndef _MAX_PATH
 #define _MAX_PATH (PATH_MAX+1)
 #endif
