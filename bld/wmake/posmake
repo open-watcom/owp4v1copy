@@ -1,0 +1,74 @@
+# This makefile ought to be POSIX compatible, ie. maximally simple. No vendor
+# specific extensions, no 'clever' tricks here.
+
+INCS = -I../h -I../../watcom/h -I../../lib_misc/h -I. $(DEFS)
+DEFS = -D__LINUX__ -D__UNIX__ -DUNIX -Uunix -DBOOTSTRAP
+CFLAGS = -g -O $(INCS)
+
+all: $(OWBINDIR)/wmake
+
+
+# Unfortunately there appears to be no portable way of specifying source
+# directories. So we use brute force - it's just this one makefile, once we
+# build wmake we're set :-)
+
+macros.o: ../c/macros.c
+main.o: ../c/main.c
+massert.o: ../c/massert.c
+mautodep.o: ../c/mautodep.c
+mautoomf.o: ../c/mautoomf.c
+mautoorl.o: ../c/mautoorl.c
+mautores.o: ../c/mautores.c
+mcache.o: ../c/mcache.c
+memory.o: ../c/memory.c
+mexec.o: ../c/mexec.c
+mglob.o: ../c/mglob.c
+mhash.o: ../c/mhash.c
+misc.o: ../c/misc.c
+mlex.o: ../c/mlex.c
+mlexmac.o: ../c/mlexmac.c
+mlexprs.o: ../c/mlexprs.c
+mparse.o: ../c/mparse.c
+mpreproc.o: ../c/mpreproc.c
+mrcmsg.o: ../c/mrcmsg.c
+msg.o: ../c/msg.c
+mstream.o: ../c/mstream.c
+msuffix.o: ../c/msuffix.c
+msysdep.o: ../c/msysdep.c
+mtarget.o: ../c/mtarget.c
+mupdate.o: ../c/mupdate.c
+mvecstr.o: ../c/mvecstr.c
+autodept.o: ../../watcom/c/autodept.c
+wsplice.o: ../../builder/c/wsplice.c
+clibext.o: ../../watcom/c/clibext.c
+
+OBJS = macros.o main.o massert.o mautodep.o mautoomf.o mautoorl.o mautores.o \
+ mcache.o memory.o mexec.o mglob.o mhash.o misc.o mlex.o mlexmac.o mlexprs.o \
+ mparse.o mpreproc.o mrcmsg.o msg.o mstream.o msuffix.o msysdep.o \
+ mtarget.o mupdate.o mvecstr.o autodept.o clibext.o
+
+wsplice: wsplice.o clibext.o
+	$(CC) -g wsplice.o clibext.o -o $@
+
+usage.gh : ../h/usage.sp wsplice
+	./wsplice -kIS_RC -kENGLISH -f '{%+(MSG_USE_E_BASE+%#-1), "%s"},' ../h/usage.sp $@
+
+usageend.gh: usage.gh wsplice
+	./wsplice usage.gh -o "%n%n%n%n" usage.rcp
+	./wsplice -f "%+" usage.rcp -o "#define USAGE_LAST (USAGE_BASE+%#)%n" $@
+	rm -f usage.rcp
+
+cretype : ../c/cretype.c
+	$(CC) -o $@ $<
+
+isarray.gh : cretype
+	./cretype > $@
+
+$(OWBINDIR)/wmake: wmake
+	cp wmake $@
+
+wmake: usageend.gh isarray.gh $(OBJS)
+	$(CC) -g $(OBJS) -o $@
+
+clean:
+	rm -f *.o *.gh
