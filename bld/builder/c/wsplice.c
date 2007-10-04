@@ -24,13 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for splice program.
 *
 ****************************************************************************/
 
-// WSPLICE.C -- mainline for splice program
-//
+
 // This program reads a file and produces another according to the
 // directives within the file(s) read.  The directives are:
 //  (1) :include file-name
@@ -73,11 +71,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <sys/stat.h>
-#ifdef __UNIX__
 #include <utime.h>
-#else
-#include <sys/utime.h>
-#endif
 #include "watcom.h"
 
 //#define local static
@@ -757,7 +751,7 @@ local FILE *OpenFileTruncate(
 
     new = fopen( file_name, mode );
     if( new == NULL ) {
-        char    buff[_MAX_PATH2];
+        char    buff[FILENAME_MAX];
         char    *drive;
         char    *dir;
         char    *fname;
@@ -784,7 +778,7 @@ local FILE *OpenFilePathList( //OPEN FILE, TRY EACH LOCATION IN PATH LIST
 
     new = OpenFileTruncate( file_name, mode );
     if( new == NULL ) {
-        char            buff[_MAX_PATH2];
+        char            buff[FILENAME_MAX];
         IPATHLST        *list;
 
         list = IncPathList;
