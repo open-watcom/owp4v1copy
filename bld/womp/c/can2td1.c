@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Turbo Debugger style output.
 *
 ****************************************************************************/
 
@@ -66,6 +65,8 @@ struct type_rec {
 
 STATIC carve_t  typeRecCarver;  /* we carve type_recs from here */
 STATIC idx_t    nextIdx;        /* next available index */
+
+STATIC int typePass2( void *type, void *force );
 
 STATIC uint_8 *getTrData( type_rec *tr, uint_16 len ) {
 

@@ -30,7 +30,7 @@
 
 
 #ifndef MYASSERT_H
-#if defined( __WATCOMC__ ) && !defined( __AXP__ )
+#if defined( __WATCOMC__ )
 #pragma aux InternalError aborts;
 #endif
 extern int InternalError( const char *file, unsigned line );
