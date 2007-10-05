@@ -1006,11 +1006,7 @@ void DoCostlyRefresh( void *dum ) {
  * RefreshCostlyInfo -
  */
 void RefreshCostlyInfo( void ) {
-#if (__WATCOMC__ < 1080 )
-    _beginthread( DoCostlyRefresh, NULL, 0, NULL );
-#else
     _beginthread( DoCostlyRefresh, 0, NULL );
-#endif
     Sleep( 0 );         /* make sure the new thread gets the semaphore */
 }
 

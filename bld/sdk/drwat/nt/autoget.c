@@ -186,10 +186,6 @@ void InitAutoAttatch( void ) {
         rc = GetNextProcess( &info, &place, FALSE );
     }
 //    CreateThread( NULL, 0, AutoAttatchMain, 0, 0, &threadid );
-#if (__WATCOMC__ < 1080 )
-    _beginthread( AutoAttatchMain, NULL, 0, 0 );
-#else
     _beginthread( AutoAttatchMain, 0, 0 );
-#endif
 }
 

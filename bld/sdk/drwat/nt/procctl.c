@@ -70,11 +70,7 @@ void DebugThdMsgBox( HWND hwnd, char *text, char *title, DWORD flags ) {
     strcpy( info->text, text );
     info->title = MemAlloc( strlen( title ) + 1 );
     strcpy( info->title, title );
-#if (__WATCOMC__ < 1080 )
-    _beginthread( MsgBoxMain, NULL, 0, info );
-#else
     _beginthread( MsgBoxMain, 0, info );
-#endif
 }
 
 /*
@@ -248,9 +244,5 @@ void CallProcCtl( DWORD event, void *info, void (*hdler)(void *) )
         break;
     }
     threadinfo->errhdler = hdler;
-#if (__WATCOMC__ < 1080 )
-    _beginthread( DebuggerMain, NULL, 0, threadinfo );
-#else
     _beginthread( DebuggerMain, 0, threadinfo );
-#endif
 }
