@@ -4,8 +4,8 @@ Usage: wic [options] filename [[options] [filename] ...]
 Options must be preceeded by '-' or '/'.  They may be specified in any order
 but in case of conflict, the rightmost takes precedence. Available options are:
   -?, -h         Print this message
-  -16            16-bit mode:  Equivalient to \"-I16 -P16\"
-  -32            32-bit mode:  Equivalient to \"-I32 -P32\" [DEFAULT]
+  -16            16-bit mode:  Equivalent to \"-I16 -P16\"
+  -32            32-bit mode:  Equivalent to \"-I32 -P32\" [DEFAULT]
   -a             Generate Assembly code
   -ad            Attach 'D' to the end of every decimal number when
                  generating assembly code
@@ -52,8 +52,8 @@ Usage: wic [options] filename [[options] [filename] ...]
 Options must be preceeded by '-' or '/'.  They may be specified in any order
 but in case of conflict, the rightmost takes precedence. Available options are:
   -?, -h         Print this message
-  -16            16-bit mode:  Equivalient to \"-I16 -P16\"
-  -32            32-bit mode:  Equivalient to \"-I32 -P32\" [DEFAULT]
+  -16            16-bit mode:  Equivalent to \"-I16 -P16\"
+  -32            32-bit mode:  Equivalent to \"-I32 -P32\" [DEFAULT]
   -a             Generate Assembly code
   -ad            Attach 'D' to the end of every decimal number when
                  generating assembly code
