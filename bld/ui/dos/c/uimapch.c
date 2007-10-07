@@ -141,7 +141,7 @@ bool UIMapCharacters( char mapchar[], unsigned char mapdata[][16] )
     return( FALSE );
 }
 
-bool FlipCharacterMap()
+bool FlipCharacterMap( void )
 {
     ATTR        old;
     ATTR        new;

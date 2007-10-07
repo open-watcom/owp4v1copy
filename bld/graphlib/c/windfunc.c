@@ -176,7 +176,7 @@ struct _wxycoord _WCI86FAR _CGRAPH _getcurrentposition_w( void )
 Entry( _GETCURRENTPOSITION_W, _getcurrentposition_w ) // alternate entry-point
 
 
-void _resetscalefactor()
+void _resetscalefactor( void )
 //======================
 
 {

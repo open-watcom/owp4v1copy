@@ -79,7 +79,7 @@ struct  fpu_area {
 };
 
 
-extern void BreakPoint();
+extern void BreakPoint( void );
 #pragma aux BreakPoint = "int 3";
 
 struct wstart_vars {
@@ -132,7 +132,7 @@ extern DWORD    EDataAddr;              // end of loaded code+data
 extern WORD     _no87;
 extern WORD     DPL,Has87,HasWGod;
 
-extern void     FAR __CallBack();
+extern void     FAR __CallBack( void );
 void GetDataSelectorInfo( void );
 WORD InitFlatAddrSpace( DWORD baseaddr, DWORD len );
 void CodeRelocate( DWORD far *reloc, WORD cnt );

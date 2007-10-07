@@ -42,7 +42,7 @@
     #pragma aux _dos = _INT_21 parm caller [ah] value [al];
 #endif
 
-_WCRTLINK int getch()
+_WCRTLINK int getch( void )
     {
         register unsigned int c;
 

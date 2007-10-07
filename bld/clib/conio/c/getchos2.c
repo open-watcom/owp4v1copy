@@ -45,7 +45,7 @@
     #pragma aux _dos = 0xcd 0x21 /* int 21h */ parm caller [ah] value [al];
 #endif
 
-_WCRTLINK int getch()
+_WCRTLINK int getch( void )
     {
         char c;
 

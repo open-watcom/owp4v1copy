@@ -87,7 +87,7 @@ static  select_list *NewCase( signed_32 lo, signed_32 hi, label_handle label ) {
 }
 
 
-extern  select_node     *BGSelInit() {
+extern  select_node     *BGSelInit( void ) {
 /************************************/
 
     select_node         *s_node;

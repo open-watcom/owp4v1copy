@@ -38,7 +38,7 @@
 
 extern  unsigned    _cbyte;
 
-_WCRTLINK int (kbhit)()
+_WCRTLINK int (kbhit)( void )
 {
     int    rc;
     fd_set s;

@@ -46,7 +46,7 @@
 #include "walloca.h"
 
 
-extern int uionnec();
+extern int uionnec( void );
 
 static unsigned char DrawIndex[] =
 {

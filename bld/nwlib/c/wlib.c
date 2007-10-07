@@ -34,7 +34,7 @@
 
 jmp_buf Env;
 
-int InitSubSystems( )
+int InitSubSystems( void )
 {
     if( !setjmp( Env ) ) {
         InitMem();
@@ -74,7 +74,7 @@ int WlibMainLine( char *argv[] )
     return( retcode );
 }
 
-void FiniSubSystems()
+void FiniSubSystems( void )
 {
     if( !setjmp( Env ) ) {
         FiniFileTab();

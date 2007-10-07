@@ -35,12 +35,12 @@ extern char *ToStr( uint_32 value, uint_16 length, uint_32 addr );
 extern char *ToIndex( uint_32 addr, uint_32 value );
 extern char *ToBrStr( uint_32 value, uint_32 addr );
 extern char *ToSegStr( uint_32 value, uint_16 seg, uint_32 addr );
-extern uint_32 GetOffset();
-extern int_16 GetNextByte();
-extern int_16 GetDataByte();
-extern int_16 GetDataWord();
-extern int_32 GetDataLong();
-extern char EndOfSegment();
+extern uint_32 GetOffset( void );
+extern int_16 GetNextByte( void );
+extern int_16 GetDataByte( void );
+extern int_16 GetDataWord( void );
+extern int_32 GetDataLong( void );
+extern char EndOfSegment( void );
 
 extern void  DoCode( instruction *curr, char use_32 );
 extern void  FormatIns( char *buf, instruction *curr_ins, form_option format );

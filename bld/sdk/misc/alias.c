@@ -295,7 +295,7 @@ void Query4Aliases( AliasHdl hdl, HANDLE instance, HWND hwnd, char *title ) {
     CurHdl = NULL;
 }
 
-void EnumAliases( AliasHdl hdl, void (*enumfn)(), void *userdata ) {
+void EnumAliases( AliasHdl hdl, void (*enumfn)(unsigned long, char *, void *), void *userdata ) {
     AnAlias     *cur;
 
     cur = hdl->data;
@@ -303,5 +303,5 @@ void EnumAliases( AliasHdl hdl, void (*enumfn)(), void *userdata ) {
         enumfn( cur->id, cur->name, userdata );
         cur = cur->next;
     }
-    enumfn( (DWORD)-1, userdata );
+    enumfn( (DWORD)-1, NULL, userdata );
 }

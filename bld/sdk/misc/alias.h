@@ -53,4 +53,4 @@ void AddAlias( AliasHdl hdl, char *text, unsigned long id );
 void FreeAlias( AliasHdl hdl );
 char *LookupAlias( AliasHdl hdl, unsigned long id );
 void Query4Aliases( AliasHdl hdl, HANDLE instance, HWND hwnd, char *title );
-void EnumAliases( AliasHdl hdl, void (*enumfn)(), void *userdata );
+void EnumAliases( AliasHdl hdl, void (*enumfn)(unsigned long, char *, void *), void *userdata );

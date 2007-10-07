@@ -34,12 +34,12 @@
 
 static libfile fileList;
 
-void InitLibIo()
+void InitLibIo( void )
 {
     fileList = NULL;
 }
 
-void ResetLibIo()
+void ResetLibIo( void )
 {
     libfile lio;
 
