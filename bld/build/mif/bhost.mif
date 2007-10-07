@@ -65,13 +65,13 @@ bld_cc          = *wcc386 $(bld_incs)
 !endif
 
 !ifdef __NTAXP__
-bcl             = wclaxp
+bcl             = *wclaxp
 !else ifdef __LINUXPPC__
-bcl             = wclppc
+bcl             = *wclppc
 !else ifdef __LINUXMIPS__
-bcl             = wclmps
+bcl             = *wclmps
 !else
-bcl             = bwcl386
+bcl             = *bwcl386
 !endif
 
 bld_cl          = $(bcl) -l=$(bld_sys) $(bld_incs)
