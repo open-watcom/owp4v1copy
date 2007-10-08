@@ -2,6 +2,8 @@
 # Watcom GML/Script (wgml) Makefile
 # =======================================
 #
+# wgml depends on bld\trmem memory tracker source
+#
 
 proj_name = wgml
 
