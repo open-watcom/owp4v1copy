@@ -29,6 +29,7 @@ headers =            &
         dde.h        &
         dde.rh       &
         ddeml.h      &
+        ddraw.h      &
         dhcpcsdk.h   &
         dimm.h       &
         dlgs.h       &
@@ -189,8 +190,8 @@ headers =            &
         wtypes.h
 
 libs =               &
-        amstrmid.lib &
         largeint.lib &
+        strmiids.lib &
         uuid.lib
 
 additional_cleanup = *.h *.rh
@@ -211,14 +212,14 @@ all : $(headers) $(libs) .SYMBOLIC
 winsock2.h: winsock.mh
     $(ws2splice)
 
-amstrmid.lib: amstrmid.obj
-    %create $^&.lbc
-    @%append $^&.lbc +amstrmid.obj
-    $(librarian) $(libflags) $@ @$^&.lbc
-
 largeint.lib: largeint.obj
     %create $^&.lbc
     @%append $^&.lbc +largeint.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
+
+strmiids.lib: strmiids.obj
+    %create $^&.lbc
+    @%append $^&.lbc +strmiids.obj
     $(librarian) $(libflags) $@ @$^&.lbc
 
 uuid.lib: uuid.obj
