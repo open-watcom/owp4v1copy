@@ -40,16 +40,30 @@
 #include "gvars.h"
 #include "banner.h"
 
-/* #include "gscan.h" */
+#ifdef  TRMEM
 
+/***************************************************************************/
+/*  memory tracking use project code from bld\trmem                        */
+/***************************************************************************/
 
+    #include "trmem.h"
 
-#ifndef _MAX_PATH
-    #define _MAX_PATH   (PATH_MAX + 1)
+    _trmem_hdl  handle;
+
+    static void prt( int * fhandle, const char * buff, size_t len )
+    /*************************************************************/
+    {
+        size_t i;
+
+        fhandle = fhandle;
+        for( i = 0; i < len; ++i ) {
+//          fputc( *buff++, stderr );
+            fputc( *buff++, stdout );
+        }
+    }
+
 #endif
-#ifndef _MAX_PATH2
-    #define _MAX_PATH2  (PATH_MAX + 4)
-#endif
+
 
 #if defined( __UNIX__ )
     #define IS_PATH_SEP( ch ) ((ch) == '/')
@@ -82,6 +96,9 @@ void g_banner( void )
         out_msg( banner2a() CRLF );
         out_msg( banner3 CRLF );
         out_msg( banner3a CRLF );
+#ifdef  TRMEM
+        out_msg( CRLF "Compiled with TRMEM memory tracker (trmem)" CRLF );
+#endif
         GlobalFlags.bannerprinted = TRUE;
     }
 }
@@ -136,7 +153,11 @@ void *mem_alloc( size_t size )
 {
     void    *p;
 
-    p = malloc( size );
+    #ifdef TRMEM
+        p = _trmem_alloc( size, _trmem_guess_who(), handle );
+    #else
+        p = malloc( size );
+    #endif
     if( p == NULL ) {
         out_msg( "ERR_NOMEM_AVAIL" );
         err_count++;
@@ -146,12 +167,16 @@ void *mem_alloc( size_t size )
 }
 
 /***************************************************************************/
-/*  Re-allocate some storage                                                  */
+/*  Re-allocate some storage                                               */
 /***************************************************************************/
 
 void *mem_realloc( void *p, size_t size )
 {
-    p = realloc( p, size );
+    #ifdef TRMEM
+        p = _trmem_realloc( p, size, _trmem_guess_who(), handle );
+    #else
+        p = realloc( p, size );
+    #endif
     if( p == NULL ) {
         out_msg( "ERR_NOMEM_AVAIL" );
         err_count++;
@@ -166,7 +191,12 @@ void *mem_realloc( void *p, size_t size )
 
 void mem_free( void *p )
 {
-    free( p );
+    #ifdef TRMEM
+        _trmem_free( p, _trmem_guess_who(), handle );
+    #else
+        free( p );
+    #endif
+    p = NULL;
 }
 
 
@@ -241,7 +271,7 @@ int try_open( char *prefix, char *separator, char *filename, char *suffix )
 {
     int         i;
     FILE        *fp;
-    char        buf[ _MAX_PATH2 ];
+    char        buf[ FILENAME_MAX ];
     errno_t     erc;
 
     i = 0;
@@ -275,8 +305,8 @@ int try_open( char *prefix, char *separator, char *filename, char *suffix )
 
 int search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ sequence )
 {
-    char        buff[_MAX_PATH2];
-    char        try[_MAX_PATH];
+    char        buff[ FILENAME_MAX ];
+    char        try[ FILENAME_MAX ];
     char        *drive;
     char        *dir;
     char        *name;
@@ -399,7 +429,7 @@ int search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ sequ
 
 void set_default_extension( const char *masterfname )
 {
-    char        buff[_MAX_PATH2];
+    char        buff[ FILENAME_MAX ];
     char        *ext;
 
     _splitpath2( masterfname, buff, NULL, NULL, NULL, &ext );
@@ -643,11 +673,17 @@ int main( int argc, char *argv[] )
     if( setjmp( env ) ) {               // if fatal error has occurred
         my_exit( 16 );
     }
+    #ifdef TRMEM
+
+        handle = _trmem_open( &malloc, &free, &realloc, NULL, NULL, &prt,
+                              _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 |
+                              _TRMEM_REALLOC_NULL | _TRMEM_FREE_NULL |
+                              _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
+    #endif
 
     init_global_vars();
 
     token_buf = mem_alloc( buf_size );
-
     get_env_vars();
 
     cmdlen = _bgetcmd( NULL, 0 ) + 1;
@@ -670,6 +706,13 @@ int main( int argc, char *argv[] )
                      GlobalFlags.research ? "research" : "normal" );
 
             proc_GML( master_fname );
+
+            #ifdef TRMEM
+                _trmem_prt_list( handle );// show allocated memory at pass end
+
+                out_msg( "\n  End of pass %d of %d ( %s mode ) \n", pass, passes,
+                     GlobalFlags.research ? "research" : "normal" );
+            #endif
         }
     } else {
         out_msg( "ERR_MISSING_MAINFILENAME\n");
@@ -685,7 +728,48 @@ int main( int argc, char *argv[] )
     }
 
     mem_free( cmdline );
+    if( token_buf != NULL ) {
+        mem_free( token_buf );
+    }
+    if( alt_ext != NULL ) {
+        mem_free( alt_ext );
+    }
+    if( def_ext != NULL ) {
+        mem_free( def_ext );
+    }
+    if( master_fname != NULL ) {
+        mem_free( master_fname );
+    }
+    if( master_fname_attr != NULL ) {
+        mem_free( master_fname_attr );
+    }
+    if( out_file != NULL ) {
+        mem_free( out_file );
+    }
+    if( out_file_attr != NULL ) {
+        mem_free( out_file_attr );
+    }
+    if( GMLlibs != NULL ) {
+        mem_free( GMLlibs );
+    }
+    if( GMLincs != NULL) {
+        mem_free( GMLincs );
+    }
+    if( Pathes != NULL ) {
+        mem_free( Pathes );
+    }
+
+    #ifdef TRMEM
+        _trmem_prt_list( handle );
+    #endif
+
     print_stats();
+
+    #ifdef TRMEM
+        _trmem_prt_list( handle );
+        _trmem_close( handle );
+    #endif
+
     my_exit( err_count ? 8 : wng_count ? 4 : 0 );
     return( 0 );                   // never reached, but makes compiler happy
 }

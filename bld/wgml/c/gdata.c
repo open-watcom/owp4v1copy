@@ -134,7 +134,9 @@ void init_global_vars( void )
     passes              = 1;            // default number of passes
 
     buf_size            = BUF_SIZE;
-    buffer              = mem_alloc( buf_size );
-    buff2               = mem_alloc( buf_size );
+    buffer              = NULL;
+    buff2               = NULL;
+//    buffer              = mem_alloc( buf_size );
+//    buff2               = mem_alloc( buf_size );
 }
 

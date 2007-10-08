@@ -28,31 +28,20 @@
 *
 ****************************************************************************/
 
-
 #include "wgml.h"
 #include "gvars.h"
 
 #include <io.h>
 #include <fcntl.h>
 
-
-static unsigned         level;          // include level 0 = cmdline
-static char             *save[ MAX_NESTING ];
-static char             *buffers[ MAX_NESTING ];
-static char             *file_names[ MAX_NESTING ];
-static char             *opt_parm;
-static long             opt_value;
-static char             *opt_scan_ptr;
-
-
 typedef struct  option
 {
-    char                *option;        // the option
-    short               optionLenM1;    // length of option - 1
-    short               minLength;      // minimum abbreviation
-    long                value;          // sometimes value to set option to
-    void                (*function)( struct option *optentry );
-    int                 parmcount;      // expected number of parms
+    char            *option;            // the option
+    short           optionLenM1;        // length of option - 1
+    short           minLength;          // minimum abbreviation
+    long            value;              // sometimes value to set option to
+    void            (*function)( struct option *optentry );
+    int             parmcount;          // expected number of parms
 } option;
 
 
@@ -64,18 +53,30 @@ typedef struct cmd_tok {
 
 } cmd_tok;
 
+static unsigned     level;              // include level 0 = cmdline
+static char         *buffers[ MAX_NESTING ];
 static cmd_tok      *cmd_tokens[ MAX_NESTING ];
+static char         *file_names[ MAX_NESTING ];
 static cmd_tok      *sav_tokens[ MAX_NESTING ];
+static char         *save[ MAX_NESTING ];
+static char         *opt_parm;
+static char         *opt_scan_ptr;
+static long         opt_value;
 static cmd_tok      *tokennext;
 
 
+/***************************************************************************/
+/*  free storage for tokens at specified include level                     */
+/***************************************************************************/
+
 static  void    free_tokens( int lvl )
 {
-    cmd_tok *tok;
-    cmd_tok *wk;
+    cmd_tok         *tok;
+    cmd_tok         *wk;
 
     tok = cmd_tokens[ lvl ];
     cmd_tokens[ lvl ] = NULL;
+
     while( tok != NULL ) {
         wk = tok->nxt;
         mem_free( tok );
@@ -83,15 +84,19 @@ static  void    free_tokens( int lvl )
     }
 }
 
+/***************************************************************************/
+/*  split a line into blank delimited words                                */
+/***************************************************************************/
+
 static  int     split_tokens( char *str )
 {
-    cmd_tok *tok;
-    cmd_tok *new;
-    int     cnt;
-    char    *tokstart;
-    char    *tokend;
-    int     linestart;
-    size_t  tokl;
+    cmd_tok         *tok;
+    cmd_tok         *new;
+    int             cnt;
+    char            *tokstart;
+    char            *tokend;
+    int             linestart;
+    size_t          tokl;
 
     linestart = 1;                      // assume start of line
     cnt = 0;                            // found tokens
@@ -348,6 +353,7 @@ static void set_outfile( option *opt )
         out_msg( "ERR_INVALID_MISSING_OPTION_VALUE %s\n", opt->option );
         err_count++;
         out_file = NULL;
+        out_file_attr = NULL;
     } else {
         len = tokennext->toklen;
         out_file = mem_alloc( len + 1 );
@@ -370,6 +376,9 @@ static void set_outfile( option *opt )
 }
 
 
+/***************************************************************************/
+/*  convert string to integer                                              */
+/***************************************************************************/
 static  long    get_num_value( char *p )
 {
     char    c;
@@ -507,7 +516,9 @@ static void set_OPTFile( option *opt )
 
         out_msg( "INF_RECOGNIZED_OPTION_FILE %s\n", str );
         strcpy_s( token_buf, buf_size, str );
-        try_file_name = NULL;
+        if( try_file_name != NULL ) {
+            mem_free( try_file_name );
+        }
         split_attr_file( token_buf, attrwork, sizeof( attrwork ) );
         if( attrwork[0]  ) {
             out_msg( "WNG_FILEATTR_IGNORED (%s) %s\n", attrwork, token_buf );
@@ -537,10 +548,12 @@ static void set_OPTFile( option *opt )
                     }
                 }
                 if( !skip ) {
-                    ++level;
-                    file_names[ level ] = try_file_name;
+                    file_names[ ++level ] = try_file_name;
+
                     str = read_indirect_file( try_file_name );
                     split_tokens( str );
+                    mem_free( str );
+                    try_file_name = NULL;// free will be done via file_names[ level ]
                     tokennext = cmd_tokens[ level ];
                     return;
                 }
@@ -551,6 +564,7 @@ static void set_OPTFile( option *opt )
             }
             if( str == NULL )  {
                 if( try_file_name != NULL ) mem_free( try_file_name );
+                if( file_names[ level ] != NULL ) mem_free( file_names[ level ] );
                 str = save[--level];
                 tokennext = sav_tokens[ level ];
             }
@@ -1011,7 +1025,12 @@ void proc_options( char *string )
             mem_free( buffers[ level ] );
             buffers[ level ] = NULL;
         }
-        free_tokens( level );
+        if( cmd_tokens[ level ] != NULL ) {
+            free_tokens( level );
+        }
+        if( file_names[ level ] != NULL ) {
+            mem_free( file_names[ level ] );
+        }
         if( level == 0 ) break;
         tok = sav_tokens[ --level ];
     }
