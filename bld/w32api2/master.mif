@@ -154,6 +154,7 @@ headers =            &
         sqltypes.h   &
         sspi.h       &
         stralign.h   &
+        strmif.h     &
         tcpestat.h   &
         tcpmib.h     &
         tvout.h      &
