@@ -193,17 +193,20 @@ headers =            &
         ws2def.h     &
         wtypes.h
 
+directx_headers =               &
+        directx/d3dtypes.h
+
 libs =               &
         largeint.lib &
         strmiids.lib &
         uuid.lib
 
-additional_cleanup = *.h *.rh
+additional_cleanup = *.h *.rh directx/*.h
 
-all : $(headers) $(libs) .SYMBOLIC
+all : $(headers) $(directx_headers) $(libs) .SYMBOLIC
     @%null
 
-.mh: ../include
+.mh: ../include;../include/directx
 
 .c: ../lib
 
