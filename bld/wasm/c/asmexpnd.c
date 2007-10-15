@@ -61,7 +61,7 @@ static label_list *label_cmp( char *name, label_list *head )
 }
 
 
-void AddTokens( ASM_TOK **buffer, int start, int count )
+void AddTokens( asm_tok **buffer, int start, int count )
 /************************************************************/
 {
     int i;
@@ -299,7 +299,7 @@ static void FreeConstData( const_info *constinfo )
 static int createconstant( char *name, bool value, int start, bool redefine, bool expand_early )
 /**********************************************************************************************/
 {
-    struct asm_tok      *new;
+    asm_tok             *new;
     dir_node            *dir;
     struct asm_sym      *sym;
     int                 i;
@@ -334,7 +334,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
 
     if( value ) {
         /* just define it to be 1 and get out */
-        new = AsmAlloc( sizeof( struct asm_tok ) );
+        new = AsmAlloc( sizeof( asm_tok ) );
         memset( new[0].bytes, 0, sizeof( new[0].bytes ) );
         new[0].token = T_NUM;
         new[0].value = 1;
@@ -362,7 +362,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
         count = 0;
         can_be_redefine = TRUE;
     } else {
-        new = AsmAlloc( counta * sizeof( struct asm_tok ) );
+        new = AsmAlloc( counta * sizeof( asm_tok ) );
         can_be_redefine = ( counta > 1 ) ? TRUE : FALSE;
     }
     for( i=0; i < count; i++ ) {

@@ -35,7 +35,7 @@
 extern int ExpandAllConsts( int start_pos, bool early_only );
 extern int ExpandProcString( int index );
 extern int ExpandSymbol( int i, bool early_only );
-extern void AddTokens( ASM_TOK **buffer, int start, int count );
+extern void AddTokens( asm_tok **buffer, int start, int count );
 extern int DefineConstant( int i, bool redefine, bool expand_early );
 extern int StoreConstant( char *name, char *value, bool redefine );
 extern void MakeConstantUnderscored( int token );

@@ -100,9 +100,9 @@ static char             ConstantOnly;
 static int              mem2code( char, int, int, asm_sym * );
 
 /* moved here from asmline */
-static struct asm_tok   tokens[MAX_TOKEN];
+static asm_tok          tokens[MAX_TOKEN];
 
-struct asm_tok          *AsmBuffer[MAX_TOKEN];  // buffer to store token
+asm_tok                 *AsmBuffer[MAX_TOKEN];  // buffer to store token
 
 #if defined( _STANDALONE_ )
 void find_frame( struct asm_sym *sym )

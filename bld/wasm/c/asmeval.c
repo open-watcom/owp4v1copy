@@ -45,7 +45,7 @@ extern void             DefFlatGroup( void );
 static int              TakeOut[ MAX_TOKEN ];
 static int              TokCnt;
 
-static struct asm_tok   Store[ MAX_TOKEN ];
+static asm_tok          Store[ MAX_TOKEN ];
 
 static int              op_sq_bracket_level;
 static bool             error_msg;

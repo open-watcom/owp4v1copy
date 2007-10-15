@@ -50,10 +50,6 @@
 #define SCRAP_INSTRUCTION       3
 #define INDIRECT_JUMP           4
 
-#include "asmerr.h"
-#include "asmins.h"
-#include "asmdefs.h"
-
 #define MAX_TOKEN               100     // there is no restriction for this number
 #define MAX_LINE_LEN            512     // there is no restriction for this number
 #define MAX_TOK_LEN             256
@@ -66,6 +62,10 @@
 #define MAX_EXT_LENGTH          0x400   // max length ( in chars ) of extdef
 
 /* max_ledata_threshold = 1024 - 6 for the header, -6 for space for fixups */
+
+#include "asmerr.h"
+#include "asmins.h"
+#include "asmdefs.h"
 
 #define NULLC                   '\0'
 #define NULLS                   "\0"
@@ -201,8 +201,6 @@ typedef struct global_vars{
 } global_vars;
 
 extern global_vars Globals;
-
-typedef struct asm_tok ASM_TOK;
 
 #endif
 

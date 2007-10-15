@@ -164,7 +164,7 @@ typedef struct {
     unsigned            redefine:1;     // whether it is redefinable or not
     unsigned            expand_early:1; // if TRUE expand before parsing
     int                 count;          // number of tokens
-    struct asm_tok      *data;          // array of asm_tok's to replace symbol
+    asm_tok             *data;          // array of asm_tok's to replace symbol
 } const_info;
 
 typedef struct regs_list {

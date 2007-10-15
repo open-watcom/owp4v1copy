@@ -102,7 +102,7 @@
 #endif
 
 /* global variables */
-extern struct asm_tok   *AsmBuffer[];
+extern asm_tok          *AsmBuffer[];
 extern struct asm_code  *Code;
 extern int_8            Frame;
 extern uint_8           Frame_Datum;

@@ -123,13 +123,13 @@ enum state {
         T_PERCENT       = '%'
 };
 
-struct asm_tok {
+typedef struct asm_tok {
         enum state      token;
         char            *string_ptr;
         union {
             long          value;
             unsigned char bytes[10];
         };
-};
+} asm_tok;
 
 #endif

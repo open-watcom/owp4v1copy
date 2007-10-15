@@ -230,15 +230,15 @@ enum regsize {
     A_DWORD,
 };
 
-static struct asm_tok const_CodeSize = { T_NUM, NULL, 0 };
-static struct asm_tok const_DataSize = { T_NUM, NULL, 0 };
-static struct asm_tok const_Model = { T_NUM, NULL, 0 };
-static struct asm_tok const_Interface = { T_NUM, NULL, 0 };
+static asm_tok      const_CodeSize = { T_NUM, NULL, 0 };
+static asm_tok      const_DataSize = { T_NUM, NULL, 0 };
+static asm_tok      const_Model = { T_NUM, NULL, 0 };
+static asm_tok      const_Interface = { T_NUM, NULL, 0 };
 
-static const_info info_CodeSize = { TRUE, 0, 0, TRUE, &const_CodeSize };
-static const_info info_DataSize = { TRUE, 0, 0, TRUE, &const_DataSize };
-static const_info info_Model = { TRUE, 0, 0, TRUE, &const_Model };
-static const_info info_Interface = { TRUE, 0, 0, TRUE, &const_Interface };
+static const_info   info_CodeSize = { TRUE, 0, 0, TRUE, &const_CodeSize };
+static const_info   info_DataSize = { TRUE, 0, 0, TRUE, &const_DataSize };
+static const_info   info_Model = { TRUE, 0, 0, TRUE, &const_Model };
+static const_info   info_Interface = { TRUE, 0, 0, TRUE, &const_Interface };
    
 
 #define ROUND_UP( i, r ) (((i)+((r)-1)) & ~((r)-1))
