@@ -194,6 +194,7 @@ headers =            &
         wtypes.h
 
 directx_headers =               &
+        directx/d3dcaps.h       &
         directx/d3dtypes.h
 
 libs =               &
