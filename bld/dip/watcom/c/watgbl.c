@@ -160,7 +160,7 @@ static search_result LkupGblName( section_info *inf, imp_mod_handle cim,
     gbl_link            *lnk_array;
     gbl_info            *gbl;
     hash_link           lnk_off;
-    int                 (*compare)();
+    int                 (*compare)(void const*,void const*,unsigned);
     char                *gblname;
     size_t              gbllen;
     char                *nam;

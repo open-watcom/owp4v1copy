@@ -38,79 +38,8 @@
 #endif
 
 
-extern void pascal      _MoveLeft256();
-extern void pascal      _MoveRight256();
-extern void pascal      _MoveUp640();
-extern void pascal      _MoveDown640();
-extern void pascal      _MoveUp800();
-extern void pascal      _MoveDown800();
-extern void pascal      _MoveUp1024();
-extern void pascal      _MoveDown1024();
-extern void             _Rep19();
-extern void             _CoXor();
-extern void             _And19();
-extern void             _CoOr();
-#if 0 // This mode is untested
-extern void             _MoveUp1280();
-extern void             _MoveDown1280();
-extern void             _MoveLeftWord();
-extern void             _MoveRightWord();
-extern void             _RepWord();
-extern void             _XorWord();
-extern void             _AndWord();
-extern void             _OrWord();
-extern void             _GetDotWord();
-extern void             _ZapWord();
-extern void             _FillWord();
-extern void             _PixCopyWord();
-extern void             _PixReadWord();
-extern void             _ScanLeftWord();
-extern void             _ScanRightWord();
-#endif
-extern short            _GetDot19();
-extern void             _Zap256();
-extern void              _Fill256();
-extern void             _PixCopy256();
-extern void             _PixRead256();
-extern short pascal     _ScanLeft256();
-extern short pascal     _ScanRight256();
-extern void             _EGASet();
+extern void             _EGASet( void );
 extern void             _EGAReset( void );
-extern void pascal      _EGAMoveLeft();
-extern void pascal      _EGAMoveRight();
-extern void pascal      _MoveUp100();
-extern void pascal      _MoveDown100();
-extern void pascal      _MoveUp128();
-extern void pascal      _MoveDown128();
-extern void             _EGARep();
-extern short            _EGAGetDot();
-extern void             _EGAZap();
-extern void             _EGAFill();
-extern void             _EGAPixCopy();
-extern void             _EGAReadRow();
-extern short pascal     _EGAScanLeft();
-extern short pascal     _EGAScanRight();
-extern void pascal      _MoveLeft19();
-extern void pascal      _MoveRight19();
-extern void             _Zap19();
-extern void             _Fill19();
-extern void             _PixCopy19();
-extern void             _PixRead19();
-extern short pascal     _ScanLeft19();
-extern short pascal     _ScanRight19();
-extern void             _PageVESA();
-extern void             _PageVideo7();
-extern void             _PageParadise();
-extern void             _PageATI();
-extern void             _PageTseng3();
-extern void             _PageTseng4();
-extern void             _PageOak();
-extern void             _PageTrident();
-extern void             _PageChips();
-extern void             _PageGenoa();
-extern void             _PageS3();
-extern void             _PageCirrus();
-extern void             _PageViper();
 
 
 /*  Use PASCAL pragma to define our convention for

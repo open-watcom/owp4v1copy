@@ -97,677 +97,677 @@ static  TYPE    MapType[] = {
 static  unsigned_32     DtItemSize;
 
 
-static  void    I2toI1( intstar2 *old, intstar1 *to ) {
+static  void    I2toI1( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old INTEGER*2 to INTEGER*1.
 
-    *to = *old;
+    to->intstar1 = old->intstar2;
 }
 
 
-static  void    I4toI1( intstar4 *old, intstar1 *to ) {
+static  void    I4toI1( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old INTEGER*4 to INTEGER*1.
 
-    *to = *old;
+    to->intstar1 = old->intstar4;
 }
 
 
-static  void    R4toI1( single *old, intstar1 *to ) {
+static  void    R4toI1( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old REAL*4 to INTEGER*1.
 
-    *to = *old;
+    to->intstar1 = old->single;
 }
 
 
-static  void    R8toI1( double *old, intstar1 *to ) {
+static  void    R8toI1( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old REAL*8 to INTEGER*1.
 
-    *to = *old;
+    to->intstar1 = old->dble;
 }
 
 
-static  void    R10toI1( extended *old, intstar1 *to ) {
+static  void    R10toI1( ftn_type *old, ftn_type *to ) {
 //==========================================================
 
 // Convert constant old REAL*10 to INTEGER*1.
 
-    *to = *old;
+    to->intstar1 = old->extended;
 }
 
 
-static  void    C8toI1( complex *old, intstar1 *to ) {
+static  void    C8toI1( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old COMPLEX*8 to INTSTAR4.
 
-    *to = old->realpart;
+    to->intstar1 = old->complex.realpart;
 }
 
 
-static  void    C16toI1( dcomplex *old, intstar1 *to ) {
+static  void    C16toI1( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old COMPLEX*16 to INTEGER*1.
 
-    *to = old->realpart;
+    to->intstar1 = old->dcomplex.realpart;
 }
 
 
-static  void    C20toI1( xcomplex *old, intstar1 *to ) {
+static  void    C20toI1( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old COMPLEX*20 to INTEGER*1.
 
-    *to = old->realpart;
+    to->intstar1 = old->xcomplex.realpart;
 }
 
 
-static  void    I1toI2( intstar1 *old, intstar2 *to ) {
+static  void    I1toI2( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old INTEGER*1 to INTEGER*2.
 
-    *to = *old;
+    to->intstar2 = old->intstar1;
 }
 
 
-static  void    I4toI2( intstar4 *old, intstar2 *to ) {
+static  void    I4toI2( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old INTEGER*4 to INTEGER*2.
 
-    *to = *old;
+    to->intstar2 = old->intstar4;
 }
 
 
-static  void    R4toI2( single *old, intstar2 *to ) {
+static  void    R4toI2( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old REAL*4 to INTEGER*2.
 
-    *to = *old;
+    to->intstar2 = old->single;
 }
 
 
-static  void    R8toI2( double *old, intstar2 *to ) {
+static  void    R8toI2( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old REAL*8 to INTEGER*2.
 
-    *to = *old;
+    to->intstar2 = old->dble;
 }
 
 
-static  void    R10toI2( extended *old, intstar2 *to ) {
+static  void    R10toI2( ftn_type *old, ftn_type *to ) {
 //=========================================================
 
 // Convert constant old REAL*10 to INTEGER*2.
 
-    *to = *old;
+    to->intstar2 = old->extended;
 }
 
 
-static  void    C8toI2( complex *old, intstar2 *to ) {
+static  void    C8toI2( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old COMPLEX*8 to INTEGER*2.
 
-    *to = old->realpart;
+    to->intstar2 = old->complex.realpart;
 }
 
 
-static  void    C16toI2( dcomplex *old, intstar2 *to ) {
+static  void    C16toI2( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old COMPLEX*16 to INTEGER*2.
 
-    *to = old->realpart;
+    to->intstar2 = old->dcomplex.realpart;
 }
 
 
-static  void    C20toI2( xcomplex *old, intstar2 *to ) {
+static  void    C20toI2( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old COMPLEX*20 to INTEGER*2.
 
-    *to = old->realpart;
+    to->intstar2 = old->xcomplex.realpart;
 }
 
 
-static  void    I1toI4( intstar1 *old, intstar4 *to ) {
+static  void    I1toI4( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old INTEGER*1 to INTEGER*4.
 
-    *to = *old;
+    to->intstar4 = old->intstar1;
 }
 
 
-static  void    I2toI4( intstar2 *old, intstar4 *to ) {
+static  void    I2toI4( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old INTEGER*2 to INTEGER*4.
 
-    *to = *old;
+    to->intstar4 = old->intstar2;
 }
 
 
-static  void    R4toI4( single *old, intstar4 *to ) {
+static  void    R4toI4( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old REAL*8 to INTEGER*4.
 
-    *to = *old;
+    to->intstar4 = old->single;
 }
 
 
-static  void    R8toI4( double *old, intstar4 *to ) {
+static  void    R8toI4( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old REAL*8 to INTEGER*4.
 
-    *to = *old;
+    to->intstar4 = old->dble;
 }
 
 
-static  void    R10toI4( extended *old, intstar4 *to ) {
+static  void    R10toI4( ftn_type *old, ftn_type *to ) {
 //=========================================================
 
 // Convert constant old REAL*10 to INTEGER*4.
 
-    *to = *old;
+    to->intstar4 = old->extended;
 }
 
 
-static  void    C8toI4( complex *old, intstar4 *to ) {
+static  void    C8toI4( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old COMPLEX*8 to INTEGER*4.
 
-    *to = old->realpart;
+    to->intstar4 = old->complex.realpart;
 }
 
 
-static  void    C16toI4( dcomplex *old, intstar4 *to ) {
+static  void    C16toI4( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old COMPLEX*16 to INTEGER*4.
 
-    *to = old->realpart;
+    to->intstar4 = old->dcomplex.realpart;
 }
 
 
-static  void    C20toI4( xcomplex *old, intstar4 *to ) {
+static  void    C20toI4( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old COMPLEX*20 to INTEGER*4.
 
-    *to = old->realpart;
+    to->intstar4 = old->xcomplex.realpart;
 }
 
 
-static  void    I1toR4( intstar1 *old, single *to ) {
+static  void    I1toR4( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old INTEGER*1 to REAL*4.
 
-    *to = *old;
+    to->single = old->intstar1;
 }
 
 
-static  void    I2toR4( intstar2 *old, single *to ) {
+static  void    I2toR4( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old INTEGER*2 to REAL*4.
 
-    *to = *old;
+    to->single = old->intstar2;
 }
 
 
-static  void    I4toR4( intstar4 *old, single *to ) {
+static  void    I4toR4( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old INTEGER*4 to REAL*4.
 
-    *to = *old;
+    to->single = old->intstar4;
 }
 
 
-static  void    R8toR4( double *old, single *to ) {
+static  void    R8toR4( ftn_type *old, ftn_type *to ) {
 //=================================================
 
 // Convert constant old REAL*8 to REAL*4.
 
-    *to = *old;
+    to->single = old->dble;
 }
 
 
-static  void    R10toR4( extended *old, single *to ) {
+static  void    R10toR4( ftn_type *old, ftn_type *to ) {
 //=======================================================
 
 // Convert constant old REAL*10 to REAL*4.
 
-    *to = *old;
+    to->single = old->extended;
 }
 
 
-static  void    C8toR4( complex *old, single *to ) {
+static  void    C8toR4( ftn_type *old, ftn_type *to ) {
 //==================================================
 
 // Convert constant old COMPLEX*8 to REAL*4.
 
-    *to = old->realpart;
+    to->single = old->complex.realpart;
 }
 
 
-static  void    C16toR4( dcomplex *old, single *to ) {
+static  void    C16toR4( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old COMPLEX*16 to REAL*4.
 
-    *to = old->realpart;
+    to->single = old->dcomplex.realpart;
 }
 
 
-static  void    C20toR4( xcomplex *old, single *to ) {
+static  void    C20toR4( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old COMPLEX*20 to REAL*4.
 
-    *to = old->realpart;
+    to->single = old->xcomplex.realpart;
 }
 
 
-static  void    I1toR8( intstar1 *old, double *to ) {
+static  void    I1toR8( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old INTEGER*1 to REAL*8.
 
-    *to = *old;
+    to->dble = old->intstar1;
 }
 
 
-static  void    I2toR8( intstar2 *old, double *to ) {
+static  void    I2toR8( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old INTEGER*2 to REAL*8.
 
-    *to = *old;
+    to->dble = old->intstar2;
 }
 
 
-static  void    I4toR8( intstar4 *old, double *to ) {
+static  void    I4toR8( ftn_type *old, ftn_type *to ) {
 //===================================================
 
 // Convert constant old INTEGER*4 to REAL*8.
 
-    *to = *old;
+    to->dble = old->intstar4;
 }
 
 
-static  void    R4toR8( single *old, double *to ) {
+static  void    R4toR8( ftn_type *old, ftn_type *to ) {
 //=================================================
 
 // Convert constant old REAL*4 to REAL*8.
 
-    *to = *old;
+    to->dble = old->single;
 }
 
 
-static  void    R10toR8( extended *old, double *to ) {
+static  void    R10toR8( ftn_type *old, ftn_type *to ) {
 //=======================================================
 
 // Convert constant old REAL*10 to REAL*8.
 
-    *to = *old;
+    to->dble = old->extended;
 }
 
 
-static  void    C8toR8( complex *old, double *to ) {
+static  void    C8toR8( ftn_type *old, ftn_type *to ) {
 //==================================================
 
 // Convert constant old COMPLEX*8 to REAL*8.
 
-    *to = old->realpart;
+    to->dble = old->complex.realpart;
 }
 
 
-static  void    C16toR8( dcomplex *old, double *to ) {
+static  void    C16toR8( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old COMPLEX*16 to REAL*8.
 
-    *to = old->realpart;
+    to->dble = old->dcomplex.realpart;
 }
 
 
-static  void    C20toR8( xcomplex *old, double *to ) {
+static  void    C20toR8( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old COMPLEX*20 to REAL*8.
 
-    *to = old->realpart;
+    to->dble = old->xcomplex.realpart;
 }
 
 
-static  void    I1toR10( intstar1 *old, extended *to ) {
+static  void    I1toR10( ftn_type *old, ftn_type *to ) {
 //=========================================================
 
 // Convert constant old INTEGER*1 to REAL*10.
 
-    *to = *old;
+    to->extended = old->intstar1;
 }
 
 
-static  void    I2toR10( intstar2 *old, extended *to ) {
+static  void    I2toR10( ftn_type *old, ftn_type *to ) {
 //=========================================================
 
 // Convert constant old INTEGER*2 to REAL*10.
 
-    *to = *old;
+    to->extended = old->intstar2;
 }
 
 
-static  void    I4toR10( intstar4 *old, extended *to ) {
+static  void    I4toR10( ftn_type *old, ftn_type *to ) {
 //=========================================================
 
 // Convert constant old INTEGER*4 to REAL*10.
 
-    *to = *old;
+    to->extended = old->intstar4;
 }
 
 
-static  void    R4toR10( single *old, extended *to ) {
+static  void    R4toR10( ftn_type *old, ftn_type *to ) {
 //=======================================================
 
 // Convert constant old REAL*4 to REAL*10.
 
-    *to = *old;
+    to->extended = old->single;
 }
 
 
-static  void    R8toR10( double *old, extended *to ) {
+static  void    R8toR10( ftn_type *old, ftn_type *to ) {
 //=======================================================
 
 // Convert constant old REAL*8 to REAL*10.
 
-    *to = *old;
+    to->extended = old->dble;
 }
 
 
-static  void    C8toR10( complex *old, extended *to ) {
+static  void    C8toR10( ftn_type *old, ftn_type *to ) {
 //========================================================
 
 // Convert constant old COMPLEX*8 to REAL*10.
 
-    *to = old->realpart;
+    to->extended = old->complex.realpart;
 }
 
 
-static  void    C16toR10( dcomplex *old, extended *to ) {
+static  void    C16toR10( ftn_type *old, ftn_type *to ) {
 //==========================================================
 
 // Convert constant old COMPLEX*16 to REAL*10.
 
-    *to = old->realpart;
+    to->extended = old->dcomplex.realpart;
 }
 
 
-static  void    C20toR10( xcomplex *old, extended *to ) {
+static  void    C20toR10( ftn_type *old, ftn_type *to ) {
 //==========================================================
 
 // Convert constant old COMPLEX*20 to REAL*10.
 
-    *to = old->realpart;
+    to->extended = old->xcomplex.realpart;
 }
 
 
-static  void    I1toC8( intstar1 *old, complex *to ) {
+static  void    I1toC8( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old INTEGER*1 to COMPLEX*8.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->complex.realpart = old->intstar1;
+    to->complex.imagpart = 0;
 }
 
 
-static  void    I2toC8( intstar2 *old, complex *to ) {
+static  void    I2toC8( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old INTEGER*2 to COMPLEX*8.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->complex.realpart = old->intstar2;
+    to->complex.imagpart = 0;
 }
 
 
-static  void    I4toC8( intstar4 *old, complex *to ) {
+static  void    I4toC8( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old INTEGER*4 to COMPLEX*8.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->complex.realpart = old->intstar4;
+    to->complex.imagpart = 0;
 }
 
 
-static  void    R4toC8( single *old, complex *to ) {
+static  void    R4toC8( ftn_type *old, ftn_type *to ) {
 //==================================================
 
 // Convert constant old REAL*4 to COMPLEX*8.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->complex.realpart = old->single;
+    to->complex.imagpart = 0;
 }
 
 
-static  void    R8toC8( double *old, complex *to ) {
+static  void    R8toC8( ftn_type *old, ftn_type *to ) {
 //==================================================
 
 // Convert constant old REAL*8 to COMPLEX*8.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->complex.realpart = old->dble;
+    to->complex.imagpart = 0;
 }
 
 
-static  void    R10toC8( extended *old, complex *to ) {
+static  void    R10toC8( ftn_type *old, ftn_type *to ) {
 //========================================================
 
 // Convert constant old REAL*10 to COMPLEX*8.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->complex.realpart = old->extended;
+    to->complex.imagpart = 0;
 }
 
 
-static  void    C16toC8( dcomplex *old, complex *to ) {
+static  void    C16toC8( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old COMPLEX*16 to COMPLEX*8.
 
-    to->realpart = old->realpart;
-    to->imagpart = old->imagpart;
+    to->complex.realpart = old->dcomplex.realpart;
+    to->complex.imagpart = old->dcomplex.imagpart;
 }
 
 
-static  void    C20toC8( xcomplex *old, complex *to ) {
+static  void    C20toC8( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old COMPLEX*20 to COMPLEX*8.
 
-    to->realpart = old->realpart;
-    to->imagpart = old->imagpart;
+    to->complex.realpart = old->xcomplex.realpart;
+    to->complex.imagpart = old->xcomplex.imagpart;
 }
 
 
-static  void    I1toC16( intstar1 *old, dcomplex *to ) {
+static  void    I1toC16( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old INTEGER*1 to COMPLEX*16.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->dcomplex.realpart = old->intstar1;
+    to->dcomplex.imagpart = 0;
 }
 
 
-static  void    I2toC16( intstar2 *old, dcomplex *to ) {
+static  void    I2toC16( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old INTEGER*2 to COMPLEX*16.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->dcomplex.realpart = old->intstar2;
+    to->dcomplex.imagpart = 0;
 }
 
 
-static  void    I4toC16( intstar4 *old, dcomplex *to ) {
+static  void    I4toC16( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old INTEGER*4 to COMPLEX*16.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->dcomplex.realpart = old->intstar4;
+    to->dcomplex.imagpart = 0;
 }
 
 
-static  void    R4toC16( single *old, dcomplex *to ) {
+static  void    R4toC16( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old REAL*4 to COMPLEX*16.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->dcomplex.realpart = old->single;
+    to->dcomplex.imagpart = 0;
 }
 
 
-static  void    R8toC16( double *old, dcomplex *to ) {
+static  void    R8toC16( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old REAL*8 to COMPLEX*16.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->dcomplex.realpart = old->dble;
+    to->dcomplex.imagpart = 0;
 }
 
 
-static  void    R10toC16( extended *old, dcomplex *to ) {
+static  void    R10toC16( ftn_type *old, ftn_type *to ) {
 //===========================================================
 
 // Convert constant old REAL*10 to COMPLEX*16.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->dcomplex.realpart = old->extended;
+    to->dcomplex.imagpart = 0;
 }
 
 
-static  void    C8toC16( complex *old, dcomplex *to ) {
+static  void    C8toC16( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old COMPLEX*8 to COMPLEX*16.
 
-    to->realpart = old->realpart;
-    to->imagpart = old->imagpart;
+    to->dcomplex.realpart = old->complex.realpart;
+    to->dcomplex.imagpart = old->complex.imagpart;
 }
 
-static  void    C20toC16( xcomplex *old, dcomplex *to ) {
+static  void    C20toC16( ftn_type *old, ftn_type *to ) {
 //=======================================================
 
 // Convert constant old COMPLEX*20 to COMPLEX*16.
 
-    to->realpart = old->realpart;
-    to->imagpart = old->imagpart;
+    to->dcomplex.realpart = old->xcomplex.realpart;
+    to->dcomplex.imagpart = old->xcomplex.imagpart;
 }
 
 
-static  void    I1toC20( intstar1 *old, xcomplex *to ) {
+static  void    I1toC20( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old INTEGER*1 to COMPLEX*20.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->xcomplex.realpart = old->intstar1;
+    to->xcomplex.imagpart = 0;
 }
 
 
-static  void    I2toC20( intstar2 *old, xcomplex *to ) {
+static  void    I2toC20( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old INTEGER*2 to COMPLEX*20.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->xcomplex.realpart = old->intstar2;
+    to->xcomplex.imagpart = 0;
 }
 
 
-static  void    I4toC20( intstar4 *old, xcomplex *to ) {
+static  void    I4toC20( ftn_type *old, ftn_type *to ) {
 //======================================================
 
 // Convert constant old INTEGER*4 to COMPLEX*20.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->xcomplex.realpart = old->intstar4;
+    to->xcomplex.imagpart = 0;
 }
 
 
-static  void    R4toC20( single *old, xcomplex *to ) {
+static  void    R4toC20( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old REAL*4 to COMPLEX*20.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->xcomplex.realpart = old->single;
+    to->xcomplex.imagpart = 0;
 }
 
 
-static  void    R8toC20( double *old, xcomplex *to ) {
+static  void    R8toC20( ftn_type *old, ftn_type *to ) {
 //====================================================
 
 // Convert constant old REAL*8 to COMPLEX*20.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->xcomplex.realpart = old->dble;
+    to->xcomplex.imagpart = 0;
 }
 
 
-static  void    R10toC20( extended *old, xcomplex *to ) {
+static  void    R10toC20( ftn_type *old, ftn_type *to ) {
 //===========================================================
 
 // Convert constant old REAL*10 to COMPLEX*20.
 
-    to->realpart = *old;
-    to->imagpart = 0;
+    to->xcomplex.realpart = old->extended;
+    to->xcomplex.imagpart = 0;
 }
 
 
-static  void    C8toC20( complex *old, xcomplex *to ) {
+static  void    C8toC20( ftn_type *old, ftn_type *to ) {
 //=====================================================
 
 // Convert constant old COMPLEX*8 to COMPLEX*20.
 
-    to->realpart = old->realpart;
-    to->imagpart = old->imagpart;
+    to->xcomplex.realpart = old->complex.realpart;
+    to->xcomplex.imagpart = old->complex.imagpart;
 }
 
-static  void    C16toC20( dcomplex *old, xcomplex *to ) {
+static  void    C16toC20( ftn_type *old, ftn_type *to ) {
 //=======================================================
 
 // Convert constant old COMPLEX*16 to COMPLEX*20.
 
-    to->realpart = old->realpart;
-    to->imagpart = old->imagpart;
+    to->xcomplex.realpart = old->dcomplex.realpart;
+    to->xcomplex.imagpart = old->dcomplex.imagpart;
 }
 
 
-static  void            (*DataCnvTab[])() = {
+static  void            (*DataCnvTab[])(ftn_type *, ftn_type *) = {
     NULL,     &I2toI1,  &I4toI1,  &R4toI1,  &R8toI1,  &R10toI1,  &C8toI1,  &C16toI1,  &C20toI1,
     &I1toI2,  NULL,     &I4toI2,  &R4toI2,  &R8toI2,  &R10toI2,  &C8toI2,  &C16toI2,  &C20toI2,
     &I1toI4,  &I2toI4,  NULL,     &R4toI4,  &R8toI4,  &R10toI4,  &C8toI4,  &C16toI4,  &C20toI4,
@@ -861,7 +861,7 @@ static  void    DoDataInit( PTYPE var_type ) {
     } else {        // numeric to numeric
         if( DtConstType != var_type ) {
             DataCnvTab[ ( var_type - PT_INT_1 ) * CONST_TYPES +
-                        ( DtConstType - PT_INT_1 ) ]( const_ptr, &const_buff );
+                        ( DtConstType - PT_INT_1 ) ]( (ftn_type *)const_ptr, (ftn_type *)&const_buff );
             const_ptr = const_buff;
         }
 

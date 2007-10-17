@@ -42,23 +42,6 @@
 #define HERC_HALF       0x0001      /* half configuration   */
 
 
-extern void pascal      _HercMoveUp();
-extern void pascal      _HercMoveDown();
-extern void pascal      _Move1Left();
-extern void pascal      _Move1Right();
-extern void             _CoRep();
-extern void             _CoXor();
-extern void             _CoAnd();
-extern void             _CoOr();
-extern short            _Get1Dot();
-extern void             _Pix1Zap();
-extern void             _Pix1Fill();
-extern void             _Pix1Copy();
-extern void             _Pix1Read();
-extern short pascal     _CGAScanLeft();
-extern short pascal     _CGAScan1Right();
-
-
 /*  Table of values for CRT registers. Use 0x57 for the two 0x58 in the
     table to get 348 scan lines visible on the screen instead of 350.   */
 

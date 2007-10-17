@@ -471,10 +471,10 @@ BOOL CALLBACK StatDialog( HWND hwnd, UINT msg,WPARAM  wparam, LPARAM lparam )
  */
 int DoStatDialog( HWND hwnd )
 {
-    FARPROC     fp;
+    DLGPROC     fp;
     int ret;
 
-    fp = MakeProcInstance( StatDialog, Instance );
+    fp = (DLGPROC)MakeProcInstance( StatDialog, Instance );
     ret=JDialogBox( Instance, "TASKSTATUS", hwnd, fp );
     FreeProcInstance( fp );
     return( ret );

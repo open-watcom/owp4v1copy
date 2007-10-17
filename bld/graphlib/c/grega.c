@@ -34,36 +34,6 @@
 #include "gbios.h"
 
 
-extern void pascal      _EGAMoveUpHi();
-extern void pascal      _EGAMoveUpLo();
-extern void pascal      _EGAMoveLeft();
-extern void pascal      _EGAMoveDownHi();
-extern void pascal      _EGAMoveDownLo();
-extern void pascal      _EGAMoveRight();
-extern void             _EGARep();
-extern short            _EGAGetDot();
-extern short            _EGAGetDotEO();
-extern short            _EGAGetDotMono();
-extern void             _EGAZap();
-extern void             _EGAZapEO();
-extern void             _EGAZapMono();
-extern void             _EGAFill();
-extern void             _EGAFillEO();
-extern void             _EGAFillMono();
-extern void             _EGAPixCopy();
-extern void             _EGAPixCopyEO();
-extern void             _EGAPixCopyMono();
-extern void             _EGAReadRow();
-extern void             _EGAReadRowEO();
-extern void             _EGAReadRowMono();
-extern short pascal     _EGAScanLeft();
-extern short pascal     _EGAScanLeftEO();
-extern short pascal     _EGAScanLeftMono();
-extern short pascal     _EGAScanRight();
-extern short pascal     _EGAScanRightEO();
-extern short pascal     _EGAScanRightMono();
-
-
 #define SEQADDR         0x03C4
 #define GRADDR          0x03CE
 

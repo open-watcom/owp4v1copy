@@ -34,47 +34,9 @@
 #include "rotate.h"
 
 
-extern void pascal      _MoveUp19();
-extern void pascal      _Move1Left();
-extern void pascal      _EGAMoveLeft();
-extern void pascal      _MoveLeft19();
-extern void pascal      _MoveDown19();
-extern void pascal      _Move1Right();
-extern void pascal      _EGAMoveRight();
-extern void pascal      _MoveRight19();
-extern void pascal      _EGAMoveUpHi();
-extern void pascal      _EGAMoveDownHi();
-extern void             _CoRep();
-extern void             _CoXor();
-extern void             _CoAnd();
-extern void             _CoOr();
-extern void             _EGARep();
-extern short            _Get1Dot();
-extern short            _GetDot19();
-extern void             _EGASet();
-extern void             _EGAReset();
-extern void             _EGASetup80();
-extern short            _EGAGetDot();
-extern void             _Rep19();
-extern void             _And19();
-extern void             _Pix1Zap();
-extern void             _EGAZap();
-extern void             _Zap19();
-extern void             _Pix1Fill();
-extern void             _EGAFill();
-extern void             _Fill19();
-extern void             _Pix1Copy();
-extern void             _EGAPixCopy();
-extern void             _PixCopy19();
-extern void             _Pix1Read();
-extern void             _EGAReadRow();
-extern void             _PixRead19();
-extern short pascal     _CGAScanLeft();
-extern short pascal     _EGAScanLeft();
-extern short pascal     _ScanLeft19();
-extern short pascal     _CGAScan1Right();
-extern short pascal     _EGAScanRight();
-extern short pascal     _ScanRight19();
+extern void             _EGASet( void );
+extern void             _EGAReset( void );
+extern void             _EGASetup80( short, short, short );
 
 
 static short _VGAInit( short mode )

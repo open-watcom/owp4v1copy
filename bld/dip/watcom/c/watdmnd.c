@@ -229,7 +229,7 @@ void InfoUnlock( void )
  */
 
 void *InfoLoad( imp_image_handle *ii, imp_mod_handle im, unsigned item,
-                unsigned entry, void (*clear)() )
+                unsigned entry, void (*clear)(void *, void *) )
 {
     demand_ctrl         *section;
     demand_info         *info;

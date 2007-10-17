@@ -34,31 +34,6 @@
 #include "rotate.h"
 
 
-extern void pascal            _MoveUp();
-extern void pascal            _Move1Left();
-extern void pascal            _Move2Left();
-extern void pascal            _MoveDown();
-extern void pascal            _Move1Right();
-extern void pascal            _Move2Right();
-extern void                   _CoRep();
-extern void                   _CoXor();
-extern void                   _CoAnd();
-extern void                   _CoOr();
-extern short                  _Get1Dot();
-extern short                  _Get2Dot();
-extern void                   _Pix1Zap();
-extern void                   _Pix2Zap();
-extern void                   _Pix1Fill();
-extern void                   _Pix2Fill();
-extern void                   _Pix1Copy();
-extern void                   _Pix2Copy();
-extern void                   _Pix1Read();
-extern void                   _Pix2Read();
-extern short pascal           _CGAScanLeft();
-extern short pascal           _CGAScan1Right();
-extern short pascal           _CGAScan2Right();
-
-
 static short _CGAInit( short mode )
 //=================================
 

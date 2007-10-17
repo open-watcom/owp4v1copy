@@ -51,7 +51,7 @@ extern  void            FieldOp(TYPE,TYPE,OPTR);
 #endif
 #define pick(id,const,gener) gener,
 
-void    (* const __FAR GenOprTable[])() = {
+void    (* const __FAR GenOprTable[])(TYPE,TYPE,OPTR) = {
 #include "optrdefn.h"
 };
 

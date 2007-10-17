@@ -349,7 +349,7 @@ search_result SearchLclMod( imp_image_handle *ii, imp_mod_handle im,
                 lookup_item *li, void *d )
 {
     lcl_defn            defn;
-    int                 (*compare)();
+    int                 (*compare)(void const*,void const*,unsigned);
     byte                *ptr;
     byte                *next;
     char                *name;
@@ -396,7 +396,7 @@ static search_result DoLclScope( imp_image_handle *ii, imp_mod_handle im,
     byte                *ptr;
     byte                *next;
     unsigned            parent;
-    int                 (*compare)();
+    int                 (*compare)(void const*,void const*,unsigned);
     char                *name;
     unsigned            len;
     search_result       sr;
