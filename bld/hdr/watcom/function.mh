@@ -17,6 +17,10 @@
 #error The header functional requires C++
 #endif
 
+#ifndef _CSTDDEF_INCLUDED
+#include <cstddef>
+#endif
+
 namespace std {
 
     template< class Arg1, class Result >
@@ -387,6 +391,181 @@ namespace std {
     inline const_mem_fun1_ref_t< Result, Klass, Arg >
     mem_fun_ref( Result ( Klass::*f )( Arg ) const )
         { return( const_mem_fun1_ref_t< Result, Klass, Arg >( f ) ); }
+
+
+    // ================================
+    // struct hash with specializations
+    // ================================
+
+    template< class Type >
+    struct hash : public unary_function< Type, size_t >
+    {
+        size_t operator( )( Type value ) const;
+    };
+
+    template< >
+    struct hash< bool > : public unary_function< bool, size_t >
+    {
+        size_t operator( )( bool value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    template< >
+    struct hash< char > : public unary_function< char, size_t >
+    {
+        size_t operator( )( char value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    template< >
+    struct hash< signed char > : public unary_function< signed char, size_t >
+    {
+        size_t operator( )( signed char value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    template< >
+    struct hash< unsigned char > : public unary_function< unsigned char, size_t >
+    {
+        size_t operator( )( unsigned char value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    // Assume wchar_t is not more than 16 bits.
+    template< >
+    struct hash< wchar_t > : public unary_function< wchar_t, size_t >
+    {
+        size_t operator( )( wchar_t value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    template< >
+    struct hash< short > : public unary_function< short, size_t >
+    {
+        size_t operator( )( short value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    template< >
+    struct hash< unsigned short > : public unary_function< unsigned short, size_t >
+    {
+        size_t operator( )( unsigned short value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    // Assume size_t is always at least as wide as int.
+    template< >
+    struct hash< int > : public unary_function< int, size_t >
+    {
+        size_t operator( )( int value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    // Assume size_t is always at least as wide as unsigned int.
+    template< >
+    struct hash< unsigned > : public unary_function< unsigned, size_t >
+    {
+        size_t operator( )( unsigned value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+#if defined(__386__) || defined(__AXP__) || defined (__PPC__) || defined(__MIPS__)
+
+    template< >
+    struct hash< long > : public unary_function< long, size_t >
+    {
+        size_t operator( )( long value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    template< >
+    struct hash< unsigned long > : public unary_function< unsigned long, size_t >
+    {
+        size_t operator( )( unsigned long value ) const
+            { return( static_cast< size_t >( value ) ); }
+    };
+
+    template< >
+    struct hash< long long > : public unary_function< long long, size_t >
+    {
+        size_t operator( )( long long value ) const
+        {
+            long long result = value;
+            result ^= (value & 0xFFFFFFFF00000000ULL) >> 32;
+            return( static_cast< size_t >( result ) );
+        }
+    };
+
+    template< >
+    struct hash< unsigned long long > : public unary_function< unsigned long long, size_t >
+    {
+        size_t operator( )( unsigned long long value ) const
+        {
+            unsigned long long result = value;
+            result ^= (value & 0xFFFFFFFF00000000ULL) >> 32;
+            return( static_cast< size_t >( result ) );
+        }
+    };
+
+#else  // 16 bit
+
+    template< >
+    struct hash< long > : public unary_function< long, size_t >
+    {
+        size_t operator( )( long value ) const
+        {
+            long result = value;
+            result ^= (value & 0xFFFF0000UL) >> 16;
+            return( static_cast< size_t >( result ) );
+        }
+    };
+
+    template< >
+    struct hash< unsigned long > : public unary_function< unsigned long, size_t >
+    {
+        size_t operator( )( unsigned long value ) const
+        {
+            unsigned long result = value;
+            result ^= (value & 0xFFFF0000UL) >> 16;
+            return( static_cast< size_t >( result ) );
+        }
+    };
+
+    template< >
+    struct hash< long long > : public unary_function< long long, size_t >
+    {
+        size_t operator( )( long long value ) const
+        {
+            long long result = value;
+            result ^= (value & 0x00000000FFFF0000ULL) >> 16;
+            result ^= (value & 0x0000FFFF00000000ULL) >> 32;
+            result ^= (value & 0xFFFF000000000000ULL) >> 48;
+            return( static_cast< size_t >( result ) );
+        }
+    };
+
+    template< >
+    struct hash< unsigned long long > : public unary_function< unsigned long long, size_t >
+    {
+        size_t operator( )( unsigned long long value ) const
+        {
+            unsigned long long result = value;
+            result ^= (value & 0x00000000FFFF0000ULL) >> 16;
+            result ^= (value & 0x0000FFFF00000000ULL) >> 32;
+            result ^= (value & 0xFFFF000000000000ULL) >> 48;
+            return( static_cast< size_t >( result ) );
+        }
+    };
+
+#endif
+
+:: Not really what one would want for far pointers.
+    template< class Type >
+    struct hash< Type * > : public unary_function< Type *, size_t >
+    {
+        size_t operator( )( Type *p ) const
+            { return( static_cast< size_t >( p ) ); }
+    };
 
 } // End of namespace std.
 
