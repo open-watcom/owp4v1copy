@@ -1,16 +1,14 @@
-proj_name = w32api
-
 .EXTENSIONS : .rh .mh
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-splice = wsplice -i$(hdr_dir) -i../include $[@ $^@
-rsplice = wsplice -i$(hdr_dir) -i../include -kRESOURCE $[@ $^@
-ws2splice = wsplice -i$(hdr_dir) -i../include -kWINSOCK2 $[@ $^@
+splice = wsplice -i$(hdr_dir) -i$(include_dir) $[@ $^@
+rsplice = wsplice -i$(hdr_dir) -i$(include_dir) -kRESOURCE $[@ $^@
+ws2splice = wsplice -i$(hdr_dir) -i$(include_dir) -kWINSOCK2 $[@ $^@
 
-headers =            &
+base_headers =       &
         accctrl.h    &
         aclapi.h     &
         aclui.h      &
@@ -193,23 +191,27 @@ headers =            &
         ws2def.h     &
         wtypes.h
 
-directx_headers =               &
-        directx/d3dcaps.h       &
-        directx/d3dtypes.h
+directx_headers =    &
+        d3d.h        &
+        d3dcaps.h    &
+        d3dtypes.h
 
-libs =               &
+base_libs =          &
         largeint.lib &
         strmiids.lib &
         uuid.lib
 
-additional_cleanup = *.h *.rh directx/*.h
+directx_libs =       &
+        dxguid.lib
 
-all : $(headers) $(directx_headers) $(libs) .SYMBOLIC
+additional_cleanup = *.h *.rh
+
+all : $($(proj_name)_headers) $($(proj_name)_libs) .SYMBOLIC
     @%null
 
-.mh: ../include;../include/directx
+.mh: $(include_dir)
 
-.c: ../lib
+.c: $(lib_dir)
 
 .mh.h:
     $(splice)
@@ -233,4 +235,9 @@ strmiids.lib: strmiids.obj
 uuid.lib: uuid.obj
     %create $^&.lbc
     @%append $^&.lbc +uuid.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
+
+dxguid.lib: dxguid.obj
+    %create $^&.lbc
+    @%append $^&.lbc +dxguid.obj
     $(librarian) $(libflags) $@ @$^&.lbc

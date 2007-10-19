@@ -28,7 +28,7 @@
 *
 **************************************************************************/
 
-#include <guiddef.h>
+#include <windows.h>
 
 /* unknwn.h */
 EXTERN_C const IID  IID_IUnknown = 

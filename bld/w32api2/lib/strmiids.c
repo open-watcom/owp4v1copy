@@ -28,7 +28,7 @@
 *
 **************************************************************************/
 
-#include <guiddef.h>
+#include <windows.h>
 
 /* mmstream.h */
 EXTERN_C const IID  IID_IMultiMediaStream =
