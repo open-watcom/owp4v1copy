@@ -44,6 +44,7 @@ extern  void            DoNothing(instruction*);
 extern  name            *AllocRegName(hw_reg_set);
 extern  name            *DeAlias(name*);
 extern  name            *AllocS32Const(signed_32);
+extern  name            *AllocIntConst( int );
 extern  void            FreeIns(instruction*);
 extern  bool            VolatileIns(instruction *);
 extern  hw_reg_set      Low16Reg( hw_reg_set regs );
@@ -367,6 +368,7 @@ extern  void    OptSegs( void )
                         /* convert to "and fullreg, imm" */
                         next->type_class = next->type_class == I1 ? I2 : U2;
                         next->result->r.reg = full_reg;
+                        next->operands[1] = AllocIntConst( next->operands[1]->c.int_value & 0xFF );
                         DoNothing(ins);
                     }
                 }
