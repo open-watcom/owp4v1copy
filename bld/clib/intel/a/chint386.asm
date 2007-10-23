@@ -24,12 +24,10 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  32-bit chain interrupt handler function
+;* Description:  32-bit chain interrupt handler function.
 ;*
-;* date          by              reason
-;* ====          ==              ======
-;* 14-aug-02     SJHowe          Now passes original flags
 ;*****************************************************************************
+
 
         include mdef.inc
         include struct.inc
@@ -56,6 +54,7 @@ endif
         xchg    ecx,40[ebp]             ; restore ecx, & put in offset
         xchg    eax,44[ebp]             ; restore eax, & put in segment
         mov     ebx,56[ebp]             ; restore flags
+        and     ebx,0FFFFFCFFh          ; except for IF and TF
         push    ebx                     ; :
         popfd                           ; :
         pop     gs                      ; restore segment registers
