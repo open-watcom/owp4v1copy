@@ -281,11 +281,14 @@ void DumpInfix( TREEPTR node )
         printf( "funcend\n" );
         break;
     case OPR_LABEL:
-    case OPR_CASE:
     case OPR_JUMP:
     case OPR_JUMPTRUE:
     case OPR_JUMPFALSE:
         printf( "%s L%u ", _Ops[ node->op.opr ], node->op.label_index );
+        break;
+    case OPR_CASE:
+        printf( "%s %u (L%u)", _Ops[ node->op.opr ], 
+                node->op.case_info->value, node->op.case_info->label );
         break;
     case OPR_INDEX:
         printf( "[" );

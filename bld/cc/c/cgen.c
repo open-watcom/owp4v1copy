@@ -1077,8 +1077,12 @@ local void EmitNodes( TREEPTR tree )
             PushCGName( call_list );
             break;
         case OPR_LABEL:                 // label
-        case OPR_CASE:                  // case label
             CGControl( O_LABEL, NULL, CGLabelHandles[ node->label_index ] );
+            break;
+        case OPR_CASE:                  // case label
+            if( node->case_info->gen_label ) {
+                CGControl( O_LABEL, NULL, CGLabelHandles[ node->case_info->label ] );
+            }
             break;
         case OPR_JUMP:                  // jump
             CGControl( O_GOTO, NULL, CGLabelHandles[ node->label_index ] );

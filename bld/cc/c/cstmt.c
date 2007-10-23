@@ -798,13 +798,22 @@ static void AddCaseLabel( unsigned long value )
     } else {
         new_ce = (CASEPTR)CMemAlloc( sizeof( CASEDEFN ) );
         new_ce->value = converted_value;
-        new_ce->label = NextLabel();
         if( prev_ce == NULL ) {
             new_ce->next_case = SwitchStack->case_list;
             SwitchStack->case_list = new_ce;
         } else {
             prev_ce->next_case = new_ce;
             new_ce->next_case = ce;
+        }
+        /* Check if the previous statement was a 'case'. If so, reuse the label, as generating
+         * too many labels seriously slows down code generation.
+         */
+        if( prev_ce && LastStmt->op.opr == OPR_STMT && LastStmt->right->op.opr == OPR_CASE ) {
+            new_ce->label = SwitchStack->last_case_label;
+            new_ce->gen_label = FALSE;
+        } else {
+            new_ce->label = NextLabel();
+            new_ce->gen_label = TRUE;
         }
         SwitchStack->number_of_cases++;
         if( converted_value < SwitchStack->low_value ) {
@@ -813,8 +822,9 @@ static void AddCaseLabel( unsigned long value )
         if( converted_value > SwitchStack->high_value ) {
             SwitchStack->high_value = converted_value;
         }
+        SwitchStack->last_case_label = new_ce->label;
         tree = LeafNode( OPR_CASE );
-        tree->op.label_index = new_ce->label;
+        tree->op.case_info = new_ce;
         AddStmt( tree );
     }
 }

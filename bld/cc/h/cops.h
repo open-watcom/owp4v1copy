@@ -198,9 +198,10 @@ struct patch_entry {
 };
 
 typedef struct  case_entry {
-        struct  case_entry *next_case;
-        long    value;
-        int     label;
+        struct  case_entry  *next_case;
+        long                value;
+        LABEL_INDEX         label;
+        bool                gen_label;
 } CASEDEFN, *CASEPTR;
 
 typedef struct  switch_entry {
@@ -210,6 +211,7 @@ typedef struct  switch_entry {
         struct  case_entry *case_list;
         unsigned long    low_value;
         unsigned long    high_value;
+        LABEL_INDEX     last_case_label;
         char            *case_format;           /* "%ld" or "%lu" */
 } SWITCHDEFN, *SWITCHPTR;
 
@@ -261,6 +263,7 @@ typedef struct  opnode {
         LABEL_INDEX     label_index;
         void            *label_list;    // OPR_AND_AND, OPR_OR_OR
         SWITCHPTR       switch_info;    // OPR_SWITCH
+        CASEPTR         case_info;      // OPR_CASE
         struct func_info {              // OPR_FUNCEND, OPR_RETURN
             SYM_HANDLE      sym_handle;// OPR_FUNCTION
             func_flags      flags;
