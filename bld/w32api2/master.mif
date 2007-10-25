@@ -194,6 +194,7 @@ base_headers =       &
 directx_headers =    &
         d3d.h        &
         d3dcaps.h    &
+        d3drm.h      &
         d3drmdef.h   &
         d3drmobj.h   &
         d3dtypes.h

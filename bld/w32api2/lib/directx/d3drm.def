@@ -4,6 +4,7 @@ D3DRMColorGetAlpha
 D3DRMColorGetBlue
 D3DRMColorGetGreen
 D3DRMColorGetRed
+D3DRMCreate
 D3DRMCreateColorRGB
 D3DRMCreateColorRGBA
 D3DRMMatrixFromQuaternion
