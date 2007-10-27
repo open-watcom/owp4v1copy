@@ -197,7 +197,8 @@ directx_headers =    &
         d3drm.h      &
         d3drmdef.h   &
         d3drmobj.h   &
-        d3dtypes.h
+        d3dtypes.h   &
+        dxtrans.h    &
 
 base_libs =          &
         largeint.lib &
