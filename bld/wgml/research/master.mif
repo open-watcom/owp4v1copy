@@ -36,8 +36,8 @@ objs = &
             cfparse.obj  &
             cfputils.obj
 
-!include exetarg.mif
 nwgml : cfcheck.exe .SYMBOLIC
+!include exetarg.mif
 
 cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)
 !ifeq verbose 1
