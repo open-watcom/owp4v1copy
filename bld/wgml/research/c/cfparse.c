@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Parses .COP files. This first version only does directory
-*               files.
+* Description:  Parses .COP files based on the filename. 
 *
 ****************************************************************************/
 
