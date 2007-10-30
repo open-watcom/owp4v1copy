@@ -51,7 +51,7 @@ include mdef.inc
         extrn   __DOSseg__      : byte
 
 
- DGROUP group _NULL,_AFTERNULL,CONST,STRINGS,_DATA,_BSS,STACK,XIB,XI,XIE,YIB,YI,YIE
+DGROUP  group _NULL,_AFTERNULL,CONST,STRINGS,_DATA,XIB,XI,XIE,YIB,YI,YIE,_BSS,STACK
 
 ife _MODEL and _BIG_CODE
 

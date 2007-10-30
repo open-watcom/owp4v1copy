@@ -36,7 +36,7 @@ include exitwmsg.inc
         .286C
 
 ifdef __MT__
-        extrn   __threadid          : dword
+        extrn   "C",_threadid       : dword
         extrn   "C",__ThreadData    : word
 else
         extrn   "C",_STACKLOW       : word
@@ -69,7 +69,7 @@ ifdef __MT__
         push    ds                      ; - save registers
         push    si                      ; - ...
         mov     ds,cs:dgroupp           ; - . . .
-        lds     si,__threadid           ; - get thread id
+        lds     si,_threadid            ; - get thread id
         mov     si,[si]                 ; - ...
         shl     si,1                    ; - turn into index
         shl     si,1                    ; - ...

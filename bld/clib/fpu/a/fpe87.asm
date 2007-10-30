@@ -52,7 +52,7 @@ DGROUP group _emu_init_start,_emu_init_end
 
         extrn   __8087          : byte
 ifdef   __MT__
-        extrn   __threadid      : dword
+        extrn   "C",_threadid   : dword
         extrn   "C",__ThreadData: word
 else
         extrn   "C",_STACKLOW   : word
@@ -273,7 +273,7 @@ endif
           mov   SS,SI                   ; - get new stack pointer
           mov   SP,DX                   ; - ...
 ifdef __MT__
-          les   si,__threadid           ; - get thread id
+          les   si,_threadid            ; - get thread id
           mov   si,es:[si]              ; - ...
           shl   si,1                    ; - turn into index
           shl   si,1                    ; - ...
