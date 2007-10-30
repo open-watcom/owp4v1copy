@@ -154,7 +154,7 @@ directly by setting it in your program.
 .*
 .do end
 .if '&machsys' ne 'QNX' .do begin
-.df _MaxThreads
+.df __MaxThreads
 There is a limit to the number of threads an application can create
 under 16-bit OS/2 and 32-bit NetWare.
 The default limit is 32.
@@ -441,13 +441,13 @@ This
 .id wchar_t ** __near
 data item is a pointer to an array of wide-character pointers to the
 wide-character equivalents of the environment strings.
-.df __win_flags_alloc
+.df __win_alloc_flags
 .proto stdlib.h
 This
 .id unsigned long int
 variable contains the flags to be used when allocating memory in
 Windows.
-.df __win_flags_realloc
+.df __win_realloc_flags
 .proto stdlib.h
 This
 .id unsigned long int
