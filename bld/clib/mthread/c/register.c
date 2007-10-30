@@ -32,11 +32,9 @@
 
 
 #include "variety.h"
-#include "extfunc.h"
+#include <process.h>
 #include "thread.h"
-
-extern beginner __CBeginThread;
-extern ender    __CEndThread;
+#include "cthread.h"
 
 static int __CInitThread( void *p ) { p=p; return 0; }
 
@@ -49,11 +47,19 @@ int __initthread( void *p )
     return __InitThread( p );
 }
 
+#if defined( __NT__ )
+_WCRTLINK unsigned long _beginthread( thread_fn *start_addr,
+                        unsigned stack_size, void *arglist )
+{
+    return( __BeginThread( start_addr, NULL, stack_size, arglist ) );
+}
+#else
 _WCRTLINK int _beginthread( thread_fn *start_addr, void *stack_bottom,
                         unsigned stack_size, void *arglist )
 {
     return( __BeginThread( start_addr, stack_bottom, stack_size, arglist ) );
 }
+#endif
 
 _WCRTLINK void _endthread( void )
 {

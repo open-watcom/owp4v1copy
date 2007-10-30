@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  multi-threaded internal functions and data declarations
 *
 ****************************************************************************/
 
@@ -33,28 +32,55 @@
 #ifndef _MTHREAD_H_INCLUDED
 #define _MTHREAD_H_INCLUDED
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
-  thread_data *__AllocInitThreadData( thread_data *tdata );
-  thread_data   *__AllocThreadData( void );
-  void          __InitThreadData( thread_data * );
-  void          __AccessTDList( void );
-  void          __ReleaseTDList( void );
-  #if defined(__NT__)
-    BOOL        __NTThreadInit( void );
-    BOOL        __NTAddThread( thread_data * );
-    void        __NTRemoveThread( int );
-  #endif
-  #if defined(_NETWARE_LIBC)
+    extern void         *__InitThreadProcessing( void );
+    extern void         __FiniThreadProcessing( void );
+#if defined( __OS2_286__ )
+    extern void         __SetupThreadProcessing( int );
+#endif
+
+#if !defined( _M_I86 )
+    extern thread_data  *__AllocInitThreadData( thread_data *tdata );
+    extern void         __FreeInitThreadData( thread_data *tdata );
+    extern thread_data  *__AllocThreadData( void );
+    extern void         __InitThreadData( thread_data * );
+
+    extern void         __InitMultipleThread( void );
+
+    extern void         __AccessTDList( void );
+    extern void         __ReleaseTDList( void );
+  #if defined( __NT__ )
+    extern BOOL         __NTThreadInit( void );
+    extern BOOL         __NTAddThread( thread_data * );
+    extern void         __NTRemoveThread( int );
+  #elif defined( _NETWARE_LIBC )
     #include "nw_libc.h"
-    BOOL        __LibCThreadInit( void );
-    void        __LibCThreadFini( void );
-    BOOL        __LibCAddThread( thread_data * );
-    void        __LibCRemoveThread( int );
+    extern BOOL         __LibCThreadInit( void );
+    extern void         __LibCThreadFini( void );
+    extern BOOL         __LibCAddThread( thread_data * );
+    extern void         __LibCRemoveThread( int );
+  #elif defined( __OS2__ )
+    extern int          __OS2AddThread( TID, thread_data * );
+    extern void         __OS2RemoveThread( void );
+  #elif defined( __QNX__ )
+    extern thread_data  *__QNXAddThread( thread_data *tdata );
+    extern void         __QNXRemoveThread( void );
+  #elif defined( __LINUX__ )
+    extern thread_data  *__LinuxAddThread( thread_data *tdata );
+    extern void         __LinuxRemoveThread( void );
   #endif
-  #if defined(__OS2__)
-    int         __OS2AddThread( TID, thread_data * );
-    void        __OS2RemoveThread( void );
+
+    extern thread_data  *__FirstThreadData;
+
+  #if 1 //defined( __SW_BM )
+    extern void         (*_AccessTDList)( void );
+    extern void         (*_ReleaseTDList)( void );
+    extern void         (*_ThreadExitRtn)( void );
+  #else
+    #define _AccessTDList()
+    #define _ReleaseTDList()
+    #define _ThreadExitRtn()
   #endif
+
 #endif
 
 #endif

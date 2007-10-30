@@ -68,6 +68,9 @@
   #include "sigdefn.h"
 #endif
 
+// define thread registration function
+#include "thrdreg.h"
+
 /* Make sure these are in C linkage */
 #ifdef __cplusplus
 extern "C" {
@@ -173,18 +176,10 @@ typedef struct thread_data {
     unsigned                    __data_size;
 } thread_data;
 
-#ifdef __cplusplus
-}   /* extern "C" */
-#endif
+extern thread_data *__MultipleThread( void );
 
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
 
-    // define thread registration function
-    #include "thrdreg.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
     // prototype for thread data init function
     int __initthread( void *p );
@@ -197,46 +192,25 @@ extern "C" {
         } thread_data_vector;
         extern thread_data_vector *__ThreadData;
 
-        _WCRTLINK extern int *__threadid(void);
-        #define _threadid (__threadid())
     #endif
     #if defined(__NT__) || defined(_NETWARE_LIBC)
         #define NO_INDEX        0xffffffffL
     #endif
-    #if defined(__QNX__)
-        // QNX uses magic memory for thread specific data
-        extern struct thread_data *__MultipleThread( void );
-    #endif
 
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
 
 #else
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-    extern int _WCFAR *_threadid;
     extern thread_data **__ThreadData;
-    extern struct thread_data * __MultipleThread( void );
     #define __THREADDATAPTR     (__MultipleThread())
 
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
 
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 extern  unsigned        __GetMaxThreads(void);
-#if defined(_M_IX86)
-    #pragma aux __GetMaxThreads "^"
-#endif
+#pragma aux __GetMaxThreads "^"
+
 extern  unsigned        __MaxThreads;
 
 #ifdef __cplusplus

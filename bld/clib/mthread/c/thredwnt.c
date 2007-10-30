@@ -32,6 +32,7 @@
 
 #include "variety.h"
 #include <windows.h>
+#include <process.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dos.h>
@@ -45,16 +46,14 @@
 #include "trdlist.h"
 #include "mthread.h"
 #include "rtdata.h"
-#include "extfunc.h"
 #include "seterrno.h"
 #include "widechar.h"
 #include "initarg.h"
+#include "cthread.h"
 
 extern  void            __InitMultipleThread( void );
 
 extern  DWORD           __TlsIndex;
-
-extern  void            _endthread( void );
 
 typedef struct thread_args {
     thread_fn   *rtn;
@@ -64,7 +63,7 @@ typedef struct thread_args {
 } thread_args;
 
 static DWORD WINAPI begin_thread_helper( thread_args *td )
-/***************************************************/
+/********************************************************/
 {
     thread_fn           *rtn;
     void                *arg;
@@ -99,12 +98,15 @@ static DWORD WINAPI begin_thread_helper( thread_args *td )
      return( 0 );
 }
 
-unsigned long __CBeginThread(thread_fn *start_addr, unsigned stack_size,
-                     void *arglist)
+int __CBeginThread( thread_fn *start_addr, void *stack_bottom,
+                    unsigned stack_size, void *arglist )
+/************************************************************/
 {
     DWORD       tid;
     thread_args *td;
     HANDLE      th;
+
+    stack_bottom = stack_bottom;    /* parameter not used for NT version */
 
     if( __TlsIndex == NO_INDEX ) {
         if( __NTThreadInit() == FALSE ) return( -1L );
@@ -133,10 +135,11 @@ unsigned long __CBeginThread(thread_fn *start_addr, unsigned stack_size,
         free( td );
         th = (HANDLE)-1L;
     }
-    return( (unsigned long)th );
+    return( (int)th );
 }
 
 void __CEndThread( void )
+/***********************/
 {
     __sig_fini_rtn();
     __DoneExceptionFilter();

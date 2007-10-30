@@ -31,12 +31,10 @@
 
 
 #include "variety.h"
-#include "extfunc.h"
+#include <process.h>
 #include "thread.h"
-#include "thrdreg.h"
+#include "cthread.h"
 
-extern beginnerex   __CBeginThreadEx;
-extern enderex      __CEndThreadEx;
 
 static beginnerex   *__BeginThreadEx    = __CBeginThreadEx;
 static enderex      *__EndThreadEx      = __CEndThreadEx;

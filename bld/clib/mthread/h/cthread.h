@@ -24,46 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  Linux multi-threading functions
+* Description:  C default registered thread functions
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include <string.h>
-#include <signal.h>
-#include <float.h>
-#include <unistd.h>
-#include <errno.h>
-#include <process.h>
-
-#include "liballoc.h"
-#include "osthread.h"
-#include "stacklow.h"
-#include "rtdata.h"
-#include "extfunc.h"
-#include "mthread.h"
-#include "seterrno.h"
-#include "cthread.h"
-
-// TODO: Implement this for Linux!
-//static int begin_thread_helper( void *ptr )
-///*****************************************/
-//{
-//    return( 0 );
-//}
-
-int __CBeginThread( thread_fn *start_addr, void *stack_bottom,
-                    unsigned stack_size, void *arglist )
-/******************************************************/
-{
-    // TODO: Implement this for Linux!
-    return( 0 );
-}
-
-void __CEndThread( void )
-/***********************/
-{
-    // TODO: Implement this for Linux!
-}
-
+extern beginner     __CBeginThread;
+extern ender        __CEndThread;
+#if defined( __NT__ )
+extern beginnerex   __CBeginThreadEx;
+extern enderex      __CEndThreadEx;
+#endif

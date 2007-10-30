@@ -32,12 +32,13 @@
 #ifndef _THRDREG_H_INCLUDED
 #define _THRDREG_H_INCLUDED
 
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
+typedef void _WCI86FAR thread_fn( void _WCI86FAR * );
+#if defined(_M_IX86)
     #include "extfunc.h"
-    typedef void thread_fn( void * );
-    #if defined(_M_IX86)
-        #pragma aux (__outside_CLIB) thread_fn;
-    #endif
+    #pragma aux (__outside_CLIB) thread_fn;
+#endif
+
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__) || defined(__MIPS__)
     typedef int     beginner( thread_fn *start_addr, void *stack_bottom,
                                 unsigned stack_size, void *arglist );
     typedef void    ender( void );

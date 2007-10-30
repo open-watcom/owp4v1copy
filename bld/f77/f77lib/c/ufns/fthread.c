@@ -54,18 +54,15 @@ typedef struct {
     void        *arglist;
 } thread_info;
 
-#ifdef __NT__
-/*
- *  Note - this is a hack to restore mthread support to Fortran. The NT library CBeginThread takes 3 parameters - not 4
- */
-static  int             (*__BeginThread)();
-#else
 static  beginner        *__BeginThread;
-#endif
-static  void            (*__EndThread)(void);
-static  int             (*__InitDataThread)(void *);
-static  bool            ThreadsInitialized;
+static  ender           *__EndThread;
+static  initializer     *__InitDataThread;
 
+beginner        FBeginThread;
+ender           FEndThread;
+initializer     FInitDataThread;
+
+static  bool            ThreadsInitialized;
 
 static  unsigned  InitFThreads( void ) {
 //================================
@@ -133,26 +130,19 @@ int FBeginThread( void (*rtn)(void *), void *stack, unsigned stk_size, void *arg
     ti->rtn = rtn;
     ti->arglist = arglist;
 
-#ifdef __NT__
-/*
- *  Note - this is a hack to restore mthread support to Fortran. The NT library CBeginThread takes 3 parameters - not 4
- */
-    return( __BeginThread( ThreadHelper, stk_size, ti ) );
-#else
     return( __BeginThread( ThreadHelper, stack, stk_size, ti ) );
-#endif
 }
 
 
-void    FEndThread( void ) {
-//====================
+void FEndThread( void ) {
+//=======================
 
     Suicide();
 }
 
 
-int     FInitDataThread( void *td ) {
-//===================================
+int  FInitDataThread( void *td ) {
+//================================
 
     __InitFThreadData( (fthread_data *)((char *)td + __FThreadDataOffset) );
     return( __InitDataThread( td ) );
@@ -165,16 +155,11 @@ int     FInitDataThread( void *td ) {
 int     fortran BEGINTHREAD( void (*rtn)(void *), unsigned long *stk_size ) {
 //===========================================================================
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
-  #ifdef __NT__
+#ifdef __NT__
     return( (int)_beginthread( rtn, *stk_size, NULL ) );
-  #else
-    return( _beginthread( rtn, NULL, *stk_size, NULL ) );
-  #endif
 #else
     return( _beginthread( rtn, NULL, *stk_size, NULL ) );
 #endif
-
 }
 
 

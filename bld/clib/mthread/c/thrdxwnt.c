@@ -32,6 +32,7 @@
 
 #include "variety.h"
 #include <windows.h>
+#include <process.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dos.h>
@@ -45,17 +46,14 @@
 #include "trdlist.h"
 #include "mthread.h"
 #include "rtdata.h"
-#include "extfunc.h"
 #include "seterrno.h"
-#include "thrdreg.h"
 #include "widechar.h"
 #include "initarg.h"
+#include "cthread.h"
 
 extern  void            __InitMultipleThread( void );
 
 extern  DWORD           __TlsIndex;
-
-extern  void            _endthreadex( unsigned );
 
 typedef struct thread_args {
     thread_fnex *rtn;
@@ -93,7 +91,7 @@ static DWORD WINAPI begin_thread_helper( thread_args *td )
     return( rv );
 }
 
-int __CBeginThreadEx(
+unsigned long __CBeginThreadEx(
     void *security,
     unsigned stack_size,
     thread_fnex *start_addr,

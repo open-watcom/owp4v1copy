@@ -30,6 +30,8 @@
 
 
 #include "variety.h"
+#include <process.h>
+#include <stddef.h>
 #include <string.h>
 #include <malloc.h>
 #include <i86.h>
@@ -38,16 +40,15 @@
 #include "sigtab.h"
 #include "thread.h"
 #include "rtdata.h"
-#include "extfunc.h"
 #include "exitwmsg.h"
 
 #include "trdlist.h"
 #include "mthread.h"
+#include "cthread.h"
 
 #if !defined (_NETWARE_LIBC)
 #error This file is for the NetWare LibC based library only
 #endif
-#include "nw_libc.h"
 
 extern  void            __InitMultipleThread( void );
 
@@ -65,8 +66,6 @@ void __RestoreSingleThreading(void)
 {
     __GetThreadPtr = &__SingleThread;
 }
-
-extern  void            _endthread(void);
 
 extern void BreakPointInt3(void);
 #pragma aux BreakPointInt3 = 0xCC;
