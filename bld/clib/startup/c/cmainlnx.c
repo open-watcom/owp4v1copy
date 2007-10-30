@@ -40,12 +40,13 @@
 int     _argc;                      /* argument count  */
 char    **_argv;                    /* argument vector */
 
-/* address of FP exception handler */
-#if defined( __386__ )
-static void __null_FPE_rtn( int i )
-{
-}
+extern  unsigned    __ASTACKSIZ;    /* alternate F77 stack size */
+extern  char        *__ASTACKPTR;   /* alternate F77 stack pointer */
+#if defined(_M_IX86)
+ #pragma aux        __ASTACKPTR "*"
+ #pragma aux        __ASTACKSIZ "*"
 #endif
+extern  char        *_LpPgmName;
 
 extern int main( int, char **, char ** );
 
@@ -65,14 +66,17 @@ void __cdecl _LinuxMain( int argc, char **argv, char **arge )
     _argc               = argc;
     _argv               = argv;
     environ             = arge;
-#if defined( __386__ )
-    __FPE_handler =     &__null_FPE_rtn;
-#endif
+    _LpPgmName          = argv[0];
+
     __InitRtns( INIT_PRIORITY_THREAD );
 //    tdata = __alloca( __ThreadDataSize );
 //    memset( tdata, 0, __ThreadDataSize );
 //    tdata->__data_size = __ThreadDataSize;
     __InitRtns( 255 );
+
+    /* allocate alternate stack for F77 */
+    __ASTACKPTR = (char *)__alloca( __ASTACKSIZ ) + __ASTACKSIZ;
+
     _amblksiz = 8 * 1024;       /* set minimum memory block allocation  */
     exit( main( argc, argv, arge ) );
 }

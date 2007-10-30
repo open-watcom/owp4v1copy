@@ -53,12 +53,12 @@ ifndef __NETWARE__
 _dynend      dd 0               ; top of dynamic data area
 _curbrk      dd 0               ; top of usable memory
 endif
-ifndef __QNX__
-ifndef __LINUX__
 ifndef _NETWARE_LIBC
 _LpCmdLine   dd 0               ; pointer to raw command line
 _LpPgmName   dd 0               ; pointer to program name (for argv[0])
 endif
+ifndef __QNX__
+ifndef __LINUX__
 ifdef __NT__
 _LpDllName   dd 0               ; pointer to dll name (for OS/2,WIN32)
 _LpwCmdLine  dd 0               ; pointer to widechar raw command line
@@ -79,8 +79,8 @@ endif
 endif
 _STACKLOW  dd 0                 ; lowest address in stack
 _STACKTOP  dd 0                 ; highest address in stack
-__ASTACKSIZ dd 0                ; alternate stack size
-__ASTACKPTR dd 0                ; alternate stack pointer
+__ASTACKSIZ dd 0                ; alternate F77 stack size
+__ASTACKPTR dd 0                ; alternate F77 stack pointer
 ifndef __NETWARE__
 _cbyte     dd 0                 ; used by getch, getche
 _cbyte2    dd 0                 ; used by getch, getche
@@ -132,10 +132,6 @@ ifdef __DOS__
         public  __X32VM
         public  __x386_stacklow
 endif
-ifndef _NETWARE_LIBC
-        public  "C",_LpCmdLine
-        public  "C",_LpPgmName
-endif
 ifdef __NT__
         public  "C",_LpDllName
         public  "C",_LpwCmdLine
@@ -149,6 +145,10 @@ ifdef __OS2__
         public  "C",_LpwDllName
 endif
 endif
+endif
+ifndef _NETWARE_LIBC
+        public  "C",_LpCmdLine
+        public  "C",_LpPgmName
 endif
 ifndef __NETWARE__
         public  "C",_dynend

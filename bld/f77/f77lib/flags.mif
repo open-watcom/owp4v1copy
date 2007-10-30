@@ -133,8 +133,8 @@ sw_c_winnt_386    = -oaxt-d__MT__ #-bm
 sw_c_winnt_387    = -oaxt-d__MT__ #-bm
 sw_c_winnt_axp    = -oaxt-d__MT__-dWIN32-d_WIN32 #-bm
 sw_c_winnt_ppc    = -oaxt-d__MT__-dWIN32-d_WIN32 #-bm
-sw_c_linux_386    = -oaxt-d__MT__
-sw_c_linux_387    = -oaxt-d__MT__
+sw_c_linux_386    = -oaxt #-d__MT__
+sw_c_linux_387    = -oaxt #-d__MT__
 
 # sw_a_(system)_(processor)
 sw_a_msdos_086    =
@@ -162,8 +162,8 @@ sw_a_winnt_386    = -d__MT__
 sw_a_winnt_387    = -d__MT__
 sw_a_winnt_axp    = -d__MT__ #-dWIN32 -d_WIN32
 sw_a_winnt_ppc    = -oc -d__MT__ #-dWIN32 -d_WIN32
-sw_a_linux_386    = -d__MT__
-sw_a_linux_387    = -d__MT__
+sw_a_linux_386    = #-d__MT__
+sw_a_linux_387    = #-d__MT__
 
 # sw_l_(system)_(processor)
 sw_l_msdos_086    =

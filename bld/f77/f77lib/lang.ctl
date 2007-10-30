@@ -65,10 +65,10 @@ cdsay .
 
   [ IFDEF (os_linux "") <2*> ]
    # LINUX Libraries
-#    <CPCMD> <DEVDIR>/f77/f77lib/linux.386/mf_r/flib.lib     <RELROOT>/rel2/lib386/linux/flib.lib
-#    <CPCMD> <DEVDIR>/f77/f77lib/linux.386/mf_s/flibs.lib    <RELROOT>/rel2/lib386/linux/flibs.lib
-#    <CPCMD> <DEVDIR>/f77/f77lib/linux.387/mf_r/flib7.lib    <RELROOT>/rel2/lib386/linux/flib7.lib
-#    <CPCMD> <DEVDIR>/f77/f77lib/linux.387/mf_s/flib7s.lib   <RELROOT>/rel2/lib386/linux/flib7s.lib
+    <CPCMD> <DEVDIR>/f77/f77lib/linux.386/mf_r/flib.lib     <RELROOT>/rel2/lib386/linux/flib.lib
+    <CPCMD> <DEVDIR>/f77/f77lib/linux.386/mf_s/flibs.lib    <RELROOT>/rel2/lib386/linux/flibs.lib
+    <CPCMD> <DEVDIR>/f77/f77lib/linux.387/mf_r/flib7.lib    <RELROOT>/rel2/lib386/linux/flib7.lib
+    <CPCMD> <DEVDIR>/f77/f77lib/linux.387/mf_s/flib7s.lib   <RELROOT>/rel2/lib386/linux/flib7s.lib
 
 # axp compilers and link utilities (NT)
   [ IFDEF (cpu_axp) <2*> ]

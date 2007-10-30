@@ -58,6 +58,7 @@ ALT_STACK_SIZE = 8*1024
 NORMAL_STACK_SIZE = 4*1024
 
 ifndef __NT__
+ifndef __LINUX__
 STACK   SEGMENT STACK BYTE 'STACK'
         db      ALT_STACK_SIZE dup(?)
 ifdef __WINDOWS__
@@ -65,6 +66,7 @@ ifdef __WINDOWS__
 endif
         db      NORMAL_STACK_SIZE dup(?)
 STACK   ENDS
+endif
 endif
 
 _FRT_SaveESP dd      ?
