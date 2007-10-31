@@ -138,6 +138,7 @@ base_headers =       &
         qos.h        &
         ras.h        &
         rasdlg.h     &
+        raserror.h   &
         reason.h     &
         rpc.h        &
         rpcasync.h   &
