@@ -56,14 +56,14 @@ cdsay .
   [ IFDEF (os_nov "") <2*> ]
 
   [ IFDEF (os_linux "") <2*> ]
-#    <CPCMD> wfc/linux386.i86/wfc.exe        <RELROOT>/rel2/binl/wfc
-#    <CPCMD> wfc/linux386.i86/wfc.sym        <RELROOT>/rel2/binl/wfc.sym
-#    <CPCMD> wfc/linux386.386/wfc386.exe     <RELROOT>/rel2/binl/wfc386
-#    <CPCMD> wfc/linux386.386/wfc386.sym     <RELROOT>/rel2/binl/wfc386.sym
-#    <CPCMD> wfl/linux386.i86/wfl.exe        <RELROOT>/rel2/binl/wfl
-#    <CPCMD> wfl/linux386.i86/wfl.sym        <RELROOT>/rel2/binl/wfl.sym
-#    <CPCMD> wfl/linux386.386/wfl386.exe     <RELROOT>/rel2/binl/wfl386
-#    <CPCMD> wfl/linux386.386/wfl386.sym     <RELROOT>/rel2/binl/wfl386.sym
+    <CPCMD> wfc/linux386.i86/wfc.exe        <RELROOT>/rel2/binl/wfc
+    <CPCMD> wfc/linux386.i86/wfc.sym        <RELROOT>/rel2/binl/wfc.sym
+    <CPCMD> wfc/linux386.386/wfc386.exe     <RELROOT>/rel2/binl/wfc386
+    <CPCMD> wfc/linux386.386/wfc386.sym     <RELROOT>/rel2/binl/wfc386.sym
+    <CPCMD> wfl/linux386.i86/wfl.exe        <RELROOT>/rel2/binl/wfl
+    <CPCMD> wfl/linux386.i86/wfl.sym        <RELROOT>/rel2/binl/wfl.sym
+    <CPCMD> wfl/linux386.386/wfl386.exe     <RELROOT>/rel2/binl/wfl386
+    <CPCMD> wfl/linux386.386/wfl386.sym     <RELROOT>/rel2/binl/wfl386.sym
 
 # axp compilers and link utilities (NT)
   [ IFDEF (cpu_axp) <2*> ]

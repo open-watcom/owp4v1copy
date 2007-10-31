@@ -15,6 +15,11 @@ dir="binp"	usr="wfl.exe"		cond="os2host tools16"	desc="Compile and link utility 
 dir="binp"	usr="wfc386.exe"	cond="os2host"		desc="32-bit FORTRAN 77 compiler"
 dir="binp"	usr="wfl386.exe"	cond="os2host"		desc="Compile and link utility for 32-bit FORTRAN 77 compiler"
 
+dir="binl"	usr="wfc"		cond="lnxhost tools16"	desc="16-bit FORTRAN 77 compiler"
+dir="binl"	usr="wfl"		cond="lnxhost tools16"	desc="Compile and link utility for 16-bit FORTRAN 77 compiler"
+dir="binl"	usr="wfc386"		cond="lnxhost"		desc="32-bit FORTRAN 77 compiler"
+dir="binl"	usr="wfl386"		cond="lnxhost"		desc="Compile and link utility for 32-bit FORTRAN 77 compiler"
+
 type="l"	dir="lib386/dos" 	usr="flib.lib"		cond="dostarg 3r"	desc="32-bit DOS FORTRAN 77 library"
 type="l"	dir="lib386/dos" 	usr="flib7.lib"		cond="dostarg 3r"	desc="32-bit DOS FORTRAN 77 library"
 type="l"	dir="lib386/dos" 	usr="flibs.lib"		cond="dostarg 3s"	desc="32-bit DOS FORTRAN 77 library"
@@ -37,6 +42,11 @@ type="l"	dir="lib386/win" 	usr="flib.lib"		cond="wintarg 3r"	desc="32-bit Window
 type="l"	dir="lib386/win" 	usr="flib7.lib"		cond="wintarg 3r"	desc="32-bit Windows FORTRAN 77 library"
 type="l"	dir="lib386/win" 	usr="flibs.lib"		cond="wintarg 3s"	desc="32-bit Windows FORTRAN 77 library"
 type="l"	dir="lib386/win" 	usr="flib7s.lib"	cond="wintarg 3s"	desc="32-bit Windows FORTRAN 77 library"
+
+type="l"	dir="lib386/linux" 	usr="flib.lib"		cond="lnxtarg 3r"	desc="32-bit Linux FORTRAN 77 library"
+type="l"	dir="lib386/linux" 	usr="flib7.lib"		cond="lnxtarg 3r"	desc="32-bit Linux FORTRAN 77 library"
+type="l"	dir="lib386/linux" 	usr="flibs.lib"		cond="lnxtarg 3s"	desc="32-bit Linux FORTRAN 77 library"
+type="l"	dir="lib386/linux" 	usr="flib7s.lib"	cond="lnxtarg 3s"	desc="32-bit Linux FORTRAN 77 library"
 
 
 type="l"	dir="lib286/dos" 	usr="flibl.lib"		cond="tools16 dostarg ml"	desc="16-bit DOS FORTRAN 77 library"
