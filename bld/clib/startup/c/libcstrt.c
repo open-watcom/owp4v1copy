@@ -44,11 +44,8 @@
 #include "fileacc.h"
 #include "initfini.h"
 
-/*
-//  Shouldn't do this, but I'm going to have to for now.
-*/
-#include "../../mthread/h/trdlist.h"
-#include "../../mthread/h/nw_libc.h"
+#include "trdlist.h"
+#include "nw_libc.h"
 
 /*****************************************************************************
 //  TLS slot key
@@ -58,84 +55,45 @@ NXKey_t     __NXSlotID;
 #ifdef __cplusplus
 extern "C" {
 #endif
-    extern int      __CreateFirstThreadData(
-        void
-        );
-
-    extern void     __InitMultipleThread(
-        void
-        );
-
-    extern void     __RestoreSingleThreading(
-        void
-        );
+    extern int      __CreateFirstThreadData( void );
+    extern void     __InitMultipleThread( void );
+    extern void     __RestoreSingleThreading( void );
     /*
     //  Called from LibC startup / termination code in libcpre.obj
     */
-    extern int      __init_environment(
-        void *  reserved
-        );
-    extern int     __deinit_environment(
-        void *  reserved
-        );
+    extern int      __init_environment( void *reserved );
+    extern int      __deinit_environment( void *reserved );
 
     /*
     //  LibC exports
     */
-    char *      getnlmloadpath(
-        char *  loadpath );
-
-    void *      getnlmhandle(
-        void
-        );
-
-    char *      getnlmname(
-        void *  handle,
-        char *  name );
+    char *      getnlmloadpath( char *loadpath );
+    void *      getnlmhandle( void );
+    char *      getnlmname( void *handle, char *name );
 
     /*
     //  NW386 Server exported functions
     */
     #define     AllocSignature  0x54524C41
-    extern long AllocateResourceTag(
-        void *  __NLMHandle,
-        char *  __descriptionString,
-        long    __resourceType
-        );
-
-    extern void *Alloc(
-        long    __numberOfBytes,
-        long    __resourceTag
-        );
-
-    extern long SizeOfAllocBlock(
-        void *
-        );
-
-    extern void Free(
-        void *  __address
-        );
+    extern long AllocateResourceTag( void *__NLMHandle, 
+                    char *__descriptionString, long __resourceType );
+    extern void *Alloc( long __numberOfBytes, long __resourceTag );
+    extern long SizeOfAllocBlock( void * );
+    extern void Free( void *__address );
 
     /*
     //  module level functions
     */
-    static void __NullSema4Rtn(
-        semaphore_object *  p
-        );
-    #if !defined (_THIN_LIB)
-    static void __NullAccessRtn(
-        int     hdl
-        );
-    #endif
-    static void __NullRtn(
-        void
-        );
+    static void __NullSema4Rtn( semaphore_object *p );
+#if !defined (_THIN_LIB)
+    static void __NullAccessRtn( int hdl );
+#endif
+    static void __NullRtn( void );
 
     /*
     //  global library support functions
     */
-    extern unsigned short __DS(
-        void );
+    extern unsigned short __DS( void );
 
 #ifdef __cplusplus
 }

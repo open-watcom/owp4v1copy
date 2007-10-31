@@ -235,6 +235,8 @@ axp_xd_opts=-xd
 main2wnt_opts=$($(processor)_xd_opts)
 main4wnt_opts=$($(processor)_xd_opts)
 
+libcstrt_opts=-I"$(clib_dir)/mthread/h"
+
 abort_postopts   =-os
 atexit_postopts  =-os
 dmaino32_postopts=-os
