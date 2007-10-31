@@ -134,6 +134,7 @@ base_headers =       &
         pshpack2.h   &
         pshpack4.h   &
         pshpack8.h   &
+        qedit.h      &
         qos.h        &
         ras.h        &
         rasdlg.h     &
