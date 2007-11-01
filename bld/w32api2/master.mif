@@ -139,6 +139,7 @@ base_headers =       &
         ras.h        &
         rasdlg.h     &
         raserror.h   &
+        rassapi.h    &
         reason.h     &
         rpc.h        &
         rpcasync.h   &

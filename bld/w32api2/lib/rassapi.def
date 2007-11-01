@@ -1,0 +1,17 @@
+LIBRARY RASSAPI.DLL
+EXPORTS
+RasAdminAcceptNewConnection
+RasAdminConnectionHangupNotification
+RasAdminFreeBuffer
+RasAdminGetErrorString
+RasAdminGetIpAddressForUser
+RasAdminGetUserAccountServer
+RasAdminGetUserParms
+RasAdminPortClearStatistics
+RasAdminPortDisconnect
+RasAdminPortEnum
+RasAdminPortGetInfo
+RasAdminReleaseIpInfo
+RasAdminSetUserParms
+RasAdminUserGetInfo
+RasAdminUserSetInfo
