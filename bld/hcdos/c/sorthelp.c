@@ -56,9 +56,11 @@ static bool     Verbose = FALSE;
 static bool     GenIndex = TRUE;
 static bool     GenStrings = TRUE;
 
-static bool pass1( FILE *fin, char **helpstr );
-static bool pass2( FILE *fin, int fout, char **helpstr );
-static void fgetstring( char *buffer, int max, FILE *f );
+static bool     pass1( FILE *fin, char **helpstr );
+static bool     pass2( FILE *fin, int fout, char **helpstr );
+static void     fgetstring( char *buffer, int max, FILE *f );
+static ScanCBfunc lineLenCB;
+static ScanCBfunc checkBufCB;
 
 static int      MaxCol = 78;
 static int      MaxRow = 21;
@@ -260,21 +262,19 @@ int main( int argc, char **argv )
     return( 0 );
 }
 
-static void lineLenCB( TokenType type, void *info, unsigned *len )
+static void lineLenCB( TokenType type, Info *info, void *_len )
 {
-    TextInfo        *text;
     TextInfoBlock   *block;
-    HyperLinkInfo   *hyperlink;
     unsigned        i;
+    unsigned        *len = _len;
 
     switch( type ) {
     case TK_TEXT:
-        text = info;
-        switch( text->type ) {
+        switch( info->u.text.type ) {
         case TT_PLAIN:
         case TT_LEFT_ARROW:
         case TT_RIGHT_ARROW:
-            *len += text->len;
+            *len += info->u.text.len;
             break;
         case TT_ESC_SEQ:
             *len += 1;
@@ -285,19 +285,18 @@ static void lineLenCB( TokenType type, void *info, unsigned *len )
         *len += 2;
     /* fall through */
     case TK_GOOFY_LINK:
-        hyperlink = info;
-        block = &( hyperlink->block1 );
+        block = &( info->u.link.block1 );
         while( block != NULL ) {
             for( i=0; i < block->cnt; i++ ) {
-            text = &( block->info[i] );
-            switch( text->type ) {
-            case TT_PLAIN:
-                *len = text->len;
-                break;
-            case TT_ESC_SEQ:
-                *len += 1;
-                break;
-            }
+                info = (Info *)&( block->info[i] );
+                switch( info->u.text.type ) {
+                case TT_PLAIN:
+                    *len = info->u.text.len;
+                    break;
+                case TT_ESC_SEQ:
+                    *len += 1;
+                    break;
+                }
             }
             block = block->next;
         }
@@ -562,18 +561,19 @@ static void fgetstring( char *buffer, int max, FILE *f )
 static char         *nameBuf;
 static unsigned     nameBufLen;
 
-static void checkBufCB( TokenType type, HyperLinkInfo *info,
-            a_helpnode *node )
+static void checkBufCB( TokenType type, Info *info, void *_node )
 {
+    a_helpnode  *node = _node;
+
     if( type == TK_PLAIN_LINK || type == TK_GOOFY_LINK ) {
-        if( nameBufLen <= info->topic_len ) {
+        if( nameBufLen <= info->u.link.topic_len ) {
             HelpMemFree( nameBuf );
-            nameBuf = HelpMemAlloc( info->topic_len + 1 );
-            nameBufLen = info->topic_len + 1;
+            nameBuf = HelpMemAlloc( info->u.link.topic_len + 1 );
+            nameBufLen = info->u.link.topic_len + 1;
         }
-        memcpy( nameBuf, info->topic, info->topic_len );
-        nameBuf[ info->topic_len ] = '\0';
-        if( info->hfname_len == 0 ) {
+        memcpy( nameBuf, info->u.link.topic, info->u.link.topic_len );
+        nameBuf[ info->u.link.topic_len ] = '\0';
+        if( info->u.link.hfname_len == 0 ) {
             lookup_name( node, nameBuf );
         }
     }
