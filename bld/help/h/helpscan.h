@@ -69,6 +69,15 @@ typedef struct {
     unsigned            hfname_len;
 } HyperLinkInfo;
 
+typedef struct Info {
+    union {
+        TextInfo        text;
+        HyperLinkInfo   link;
+    } u;
+} Info;
+
 #pragma pack(pop)
 
-bool ScanLine( char *line, void (*cb)(), void *info );
+typedef void ScanCBfunc(TokenType, Info *, void *);
+
+extern bool ScanLine( char *, ScanCBfunc *, void * );

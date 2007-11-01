@@ -167,11 +167,10 @@ void freeHyperlinkInfo( TextInfoBlock *cur )
     }
 }
 
-bool ScanLine( char *line, void (*cb)(TokenType, void *, ScanInfo *), void *info )
+bool ScanLine( char *line, ScanCBfunc *cb, void *info )
 {
     char                *cur;
-    TextInfo            textinfo;
-    HyperLinkInfo       hyperlink;
+    Info                tinfo;
     TokenType           type;
     bool                newfile;
 
@@ -180,7 +179,7 @@ bool ScanLine( char *line, void (*cb)(TokenType, void *, ScanInfo *), void *info
     for( ;; ) {
         switch( *cur ) {
         case HELP_ESCAPE:
-            textinfo.str = cur;
+            tinfo.u.text.str = cur;
             cur ++;
             switch( *cur ) {
             case H_UNDERLINE:
@@ -188,16 +187,16 @@ bool ScanLine( char *line, void (*cb)(TokenType, void *, ScanInfo *), void *info
             case H_BOLD:
             case H_BOLD_END:
                 cur++;
-                textinfo.type = TT_CTRL_SEQ;
-                textinfo.len = 2;
+                tinfo.u.text.type = TT_CTRL_SEQ;
+                tinfo.u.text.len = 2;
                 break;
             default:
                 cur++;
-                textinfo.type = TT_ESC_SEQ;
-                textinfo.len = 2;
+                tinfo.u.text.type = TT_ESC_SEQ;
+                tinfo.u.text.len = 2;
                 break;
             }
-            cb( TK_TEXT, &textinfo, info );
+            cb( TK_TEXT, &tinfo, info );
             break;
         case '{':
         case '>':
@@ -216,42 +215,42 @@ bool ScanLine( char *line, void (*cb)(TokenType, void *, ScanInfo *), void *info
             }
             /* fall through */
         case GOOFY_HYPERLINK:
-            cur += scanHyperLink( cur, &type, &hyperlink );
-            if( hyperlink.hfname_len != 0 ) {
+            cur += scanHyperLink( cur, &type, &tinfo.u.link );
+            if( tinfo.u.link.hfname_len != 0 ) {
                 newfile = TRUE;
             }
-            cb( type, &hyperlink, info );
-            if( hyperlink.block1.next != NULL ) {
-                freeHyperlinkInfo( hyperlink.block1.next );
+            cb( type, &tinfo, info );
+            if( tinfo.u.link.block1.next != NULL ) {
+                freeHyperlinkInfo( tinfo.u.link.block1.next );
             }
             break;
         case FAKE_RIGHT_ARROW:
-            textinfo.str = cur;
-            textinfo.type = TT_RIGHT_ARROW;
-            textinfo.len = 1;
-            cb( TK_TEXT, &textinfo, info );
+            tinfo.u.text.str = cur;
+            tinfo.u.text.type = TT_RIGHT_ARROW;
+            tinfo.u.text.len = 1;
+            cb( TK_TEXT, &tinfo, info );
             cur++;
             break;
         case FAKE_LEFT_ARROW:
-            textinfo.str = cur;
-            textinfo.type = TT_LEFT_ARROW;
-            textinfo.len = 1;
-            cb( TK_TEXT, &textinfo, info );
+            tinfo.u.text.str = cur;
+            tinfo.u.text.type = TT_LEFT_ARROW;
+            tinfo.u.text.len = 1;
+            cb( TK_TEXT, &tinfo, info );
             cur++;
             break;
         case '\0':
-            textinfo.str = cur;
-            textinfo.type = TT_END_OF_LINE;
-            textinfo.len = 1;
-            cb( TK_TEXT, &textinfo, info );
+            tinfo.u.text.str = cur;
+            tinfo.u.text.type = TT_END_OF_LINE;
+            tinfo.u.text.len = 1;
+            cb( TK_TEXT, &tinfo, info );
             return( newfile );
             break;
         default:
-            textinfo.str = cur;
-            textinfo.type = TT_PLAIN;
-            textinfo.len = strcspn( cur, specialChars );
-            cur += textinfo.len;
-            cb( TK_TEXT, &textinfo, info );
+            tinfo.u.text.str = cur;
+            tinfo.u.text.type = TT_PLAIN;
+            tinfo.u.text.len = strcspn( cur, specialChars );
+            cur += tinfo.u.text.len;
+            cb( TK_TEXT, &tinfo, info );
             break;
         }
     }

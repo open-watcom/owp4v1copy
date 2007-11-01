@@ -58,6 +58,8 @@ extern  EVENT   uivget( VSCREEN * );
 static int CheckHelpBlock( HelpFp help_file, char *topic, char *buffer,
                            long int start );
 static void replacetopic( char *word );
+static ScanCBfunc scanCallBack;
+
 int do_showhelp( char **helptopic, char *filename, EVENT (*rtn)( EVENT ),
                  bool first );
 
@@ -219,7 +221,7 @@ static HelpFp           helpFileHdl;
 static HelpHdl          helpSearchHdl;
 static VTAB             tabFilter;
 static EVENT            curEvent;
-static EVENT            (*eventMapFn)();
+static EVENT            (*eventMapFn)( EVENT );
 
 extern a_ui_edit        *UIEdit;
 
@@ -782,20 +784,18 @@ static void clearline( void )
     helpOutBuf[0] = '\0';
 }
 
-static void scanCallBack( TokenType type, void *info, ScanInfo *myinfo )
+static void scanCallBack( TokenType type, Info *info, void *_myinfo )
 {
-    TextInfo            *text;
-    HyperLinkInfo       *link;
     TextInfoBlock       *block;
     bool                goofy;
     unsigned            cnt;
     a_field             *ht;
+    ScanInfo            *myinfo = _myinfo;
 
     goofy = TRUE;
     switch( type ) {
     case TK_TEXT:
-        text = info;
-        switch( text->type ) {
+        switch( info->u.text.type ) {
         case TT_LEFT_ARROW:
             myinfo->buf[0] = REAL_LEFT_ARROW;
             myinfo->buf++;
@@ -812,62 +812,61 @@ static void scanCallBack( TokenType type, void *info, ScanInfo *myinfo )
             myinfo->pos++;
             break;
         case TT_CTRL_SEQ:
-            memcpy( myinfo->buf, text->str, text->len );
-            myinfo->buf += text->len;
+            memcpy( myinfo->buf, info->u.text.str, info->u.text.len );
+            myinfo->buf += info->u.text.len;
             break;
         case TT_ESC_SEQ:
-            memcpy( myinfo->buf, text->str, text->len );
-            myinfo->buf += text->len;
+            memcpy( myinfo->buf, info->u.text.str, info->u.text.len );
+            myinfo->buf += info->u.text.len;
             myinfo->pos += 1;
             break;
         default:
-            memcpy( myinfo->buf, text->str, text->len );
-            myinfo->buf += text->len;
-            myinfo->pos += text->len;
+            memcpy( myinfo->buf, info->u.text.str, info->u.text.len );
+            myinfo->buf += info->u.text.len;
+            myinfo->pos += info->u.text.len;
             break;
         }
         break;
     case TK_PLAIN_LINK:
-            myinfo->buf[0] = '<';
-            myinfo->buf ++;
-            myinfo->pos ++;
-            goofy = FALSE;
-            /* fall through */
+        myinfo->buf[0] = '<';
+        myinfo->buf ++;
+        myinfo->pos ++;
+        goofy = FALSE;
+        /* fall through */
     case TK_GOOFY_LINK:
-        link = info;
-        block = &( link->block1 );
+        block = &( info->u.link.block1 );
         cnt = 0;
-        ht = HelpMemAlloc( sizeof( a_field ) + link->topic_len
-                           + link->hfname_len );
+        ht = HelpMemAlloc( sizeof( a_field ) + info->u.link.topic_len
+                           + info->u.link.hfname_len );
         ht->area.width = 0;
         ht->area.row = myinfo->line;
         ht->area.height = 1;
         ht->area.col = myinfo->pos;
-        memcpy( ht->keyword, link->topic, link->topic_len );
-        if( link->hfname_len != 0 ) {
-            memcpy( ht->keyword + link->topic_len, link->hfname,
-                    link->hfname_len );
-            ht->keyword[ link->topic_len + link->hfname_len ] = '\0';
+        memcpy( ht->keyword, info->u.link.topic, info->u.link.topic_len );
+        if( info->u.link.hfname_len != 0 ) {
+            memcpy( ht->keyword + info->u.link.topic_len, info->u.link.hfname,
+                    info->u.link.hfname_len );
+            ht->keyword[ info->u.link.topic_len + info->u.link.hfname_len ] = '\0';
         } else {
-            ht->keyword[ link->topic_len ] = '\0';
+            ht->keyword[ info->u.link.topic_len ] = '\0';
         }
-        ht->key1_len = link->topic_len;
-        ht->key2_len = link->hfname_len;
+        ht->key1_len = info->u.link.topic_len;
+        ht->key2_len = info->u.link.hfname_len;
         while( block != NULL ) {
             while( cnt < block->cnt ) {
-                text = &( block->info[cnt] );
-                switch( text->type ) {
+                info = (Info *)&( block->info[cnt] );
+                switch( info->u.text.type ) {
                 case TT_ESC_SEQ:
-                    memcpy( myinfo->buf, text->str, text->len );
-                    myinfo->buf += text->len;
+                    memcpy( myinfo->buf, info->u.text.str, info->u.text.len );
+                    myinfo->buf += info->u.text.len;
                     myinfo->pos ++;
                     ht->area.width ++;
                     break;
                 case TT_PLAIN:
-                    memcpy( myinfo->buf, text->str, text->len );
-                    myinfo->buf += text->len;
-                    myinfo->pos += text->len;
-                    ht->area.width += text->len;
+                    memcpy( myinfo->buf, info->u.text.str, info->u.text.len );
+                    myinfo->buf += info->u.text.len;
+                    myinfo->pos += info->u.text.len;
+                    ht->area.width += info->u.text.len;
                     break;
                 }
                 cnt++;
@@ -1379,7 +1378,7 @@ int showhelp( char *helptopic, EVENT (*rtn)( EVENT ), HelpLangType lang )
     tabFilter.tab = (unsigned (*)(void *,void *))help_in_tab;
     tabFilter.next = (a_tab_field *(*)(void *,void *))help_next_field;
     tabFilter.parm = helpTab;
-    tabFilter.mousepos = (void *(*)())uivmousepos;
+    tabFilter.mousepos = (void *(*)(void *,ORD *, ORD *))uivmousepos;
     tabFilter.mouseparm = &helpScreen;
     tabFilter.first = helpTab;
     tabFilter.wrap = FALSE;
