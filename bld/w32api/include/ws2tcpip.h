@@ -173,7 +173,7 @@ struct in6_addr {
 
 /* These are GLIBC names */ 
 #define s6_addr16	_S6_un._S6_u16
-#define s6_addr32	_S6_un._S6_u16
+#define s6_addr32	_S6_un._S6_u32
 
 /* These are used in some MS code */
 #define in_addr6	in6_addr
@@ -304,9 +304,6 @@ int WSAAPI getnameinfo(const struct sockaddr*,socklen_t,char*,DWORD,
 /* FIXME: Need WS protocol-independent API helpers.  */
 #endif
 
-#if defined(__WATCOMC__) && (__WATCOMC__ < 1260)
-#pragma disable_message(202)
-#endif
 static __inline char*
 gai_strerrorA(int ecode)
 {

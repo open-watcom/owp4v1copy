@@ -272,6 +272,7 @@ GetConsoleKeyboardLayoutNameA@4
 GetConsoleKeyboardLayoutNameW@4
 GetConsoleMode@8
 GetConsoleOutputCP@0
+GetConsoleProcessList@8
 GetConsoleScreenBufferInfo@8
 GetConsoleTitleA@8
 GetConsoleTitleW@8
@@ -632,6 +633,7 @@ ReleaseSemaphore@12
 RemoveDirectoryA@4
 RemoveDirectoryW@4
 RemoveVectoredExceptionHandler@4
+ReOpenFile@16
 ReplaceFile@24
 ReplaceFileA@24
 ReplaceFileW@24
