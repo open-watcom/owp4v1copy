@@ -200,8 +200,8 @@ static int cm_fini()
     return 0;
 }
 
-static int cm_set_speed( unsigned speed )
-/****************************************/
+static int cm_set_speed( int speed )
+/**********************************/
 
 /* Set speed of mouse. 1 is fastest; the higher the number the slower
  * it goes.
