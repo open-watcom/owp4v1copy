@@ -324,11 +324,8 @@ _WCRTDATA extern int    daylight;               /* d.s.t. indicator */
 
 :segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:: This #endif closes the #ifdef __cplusplus in time.h
-:segment !CNAME
-#endif
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif

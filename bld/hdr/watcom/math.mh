@@ -169,12 +169,13 @@ struct _complex {
         double  x;
         double  y;
 };
-#ifndef __cplusplus
+:segment !CNAME
+
 struct complex {
         double  x;
         double  y;
 };
-#endif
+:endsegment
 
 :segment CNAME
 namespace std {
@@ -207,7 +208,8 @@ struct _exception {
         double  arg2;           /* second argument (if indicated) */
         double  retval;         /* default return value */
 };
-#ifndef __cplusplus
+:segment !CNAME
+
 struct  exception {
         int     type;           /* type of error, see below */
         char    *name;          /* name of math function */
@@ -215,7 +217,7 @@ struct  exception {
         double  arg2;           /* second argument (if indicated) */
         double  retval;         /* default return value */
 };
-#endif
+:endsegment
 
 #define DOMAIN          1       /* argument domain error */
 #define SING            2       /* argument singularity  */
@@ -254,13 +256,11 @@ namespace std {
 #endif
 
 :include poppack.sp
+
 :segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:: This #endif closes the #ifdef __cplusplus in math.h
-:segment !CNAME
-#endif
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif

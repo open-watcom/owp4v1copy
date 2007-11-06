@@ -120,11 +120,8 @@ typedef __va_list va_list;
 
 :segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:: This #endif closes the #ifdef __cplusplus in stdarg.h
-:segment !CNAME
-#endif
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif

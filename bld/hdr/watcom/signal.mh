@@ -236,9 +236,8 @@ _WCRTLINK extern int  sigsuspend( const sigset_t *sigmask );
 
 :segment CNAME
 :include cplusepi.sp
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
-:segment !CNAME
-#endif /* __cplusplus */
-:endsegment
 #endif

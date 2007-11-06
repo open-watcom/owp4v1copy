@@ -390,15 +390,19 @@ _WCRTLINK extern errno_t wcstombs_s( size_t * __restrict __retval, char * __rest
 #if !defined(__max)
 #define __max(a,b)  (((a) > (b)) ? (a) : (b))
 #endif
-#if !defined(max) && !defined(__cplusplus)
+:segment !CNAME
+#if !defined(max)
 #define max(a,b)  (((a) > (b)) ? (a) : (b))
 #endif
+:endsegment
 #if !defined(__min)
 #define __min(a,b)  (((a) < (b)) ? (a) : (b))
 #endif
-#if !defined(min) && !defined(__cplusplus)
+:segment !CNAME
+#if !defined(min)
 #define min(a,b)  (((a) < (b)) ? (a) : (b))
 #endif
+:endsegment
 
 /*
  * The following sizes are the maximum sizes of buffers used by the _fullpath()
@@ -609,12 +613,11 @@ _WCRTLINK extern onexit_t     onexit( onexit_t __func );
 #endif /* End of extensions section. */
 
 :include poppack.sp
+
 :segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:segment !CNAME
-#endif /* __cplusplus */
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif

@@ -17,6 +17,7 @@
   }
 #endif
 :elsesegment
+:segment !CONLY
 #ifdef __cplusplus
   #ifndef _STDCLOCK_T_DEFINED
     #define _STDCLOCK_T_DEFINED
@@ -29,9 +30,12 @@
     using std::clock_t;
   #endif
 #else
+:endsegment
   #ifndef _CLOCK_T_DEFINED
     #define _CLOCK_T_DEFINED
     typedef unsigned long clock_t;
   #endif
+:segment !CONLY
 #endif /* __cplusplus */
+:endsegment
 :endsegment

@@ -725,13 +725,11 @@ _WCRTLINK extern int         pclose( FILE *__stream );
 :endsegment
 
 :include poppack.sp
+
 :segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:: This #endif closes the #ifdef __cplusplus in stdio.h
-:segment !CNAME
-#endif
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif

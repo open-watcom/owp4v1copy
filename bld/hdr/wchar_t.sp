@@ -14,6 +14,7 @@
   using std::wchar_t;
 #endif
 :elsesegment
+:segment !CONLY
 #ifdef __cplusplus
   #ifndef _STDWCHAR_T_DEFINED
     #define _STDWCHAR_T_DEFINED
@@ -27,10 +28,13 @@
     using std::wchar_t;
   #endif
 #else
+:endsegment
   #ifndef _WCHAR_T_DEFINED
     #define _WCHAR_T_DEFINED
     #define _WCHAR_T_DEFINED_
     typedef unsigned short wchar_t;
   #endif
+:segment !CONLY
 #endif /* __cplusplus */
+:endsegment
 :endsegment

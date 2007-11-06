@@ -414,10 +414,8 @@ _WCRTLINK extern size_t  strnlen_s( const char *__s, size_t __maxsize );
 
 :segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:segment !CNAME
-#endif /* __cplusplus */
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif

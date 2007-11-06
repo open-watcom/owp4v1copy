@@ -10,6 +10,7 @@
   }
 #endif
 :elsesegment
+:segment !CONLY
 #ifdef __cplusplus
   #ifndef _STDTIME_T_DEFINED
     #define _STDTIME_T_DEFINED
@@ -27,6 +28,7 @@
     using std::time_t;
   #endif
 #else
+:endsegment
   #ifndef _TIME_T_DEFINED
     #define _TIME_T_DEFINED
     #define _TIME_T_DEFINED_
@@ -36,5 +38,7 @@
     typedef unsigned long time_t;
 :endsegment
   #endif
+:segment !CONLY
 #endif /* __cplusplus */
+:endsegment
 :endsegment

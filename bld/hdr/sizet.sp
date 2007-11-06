@@ -12,6 +12,7 @@
   typedef std::size_t _w_size_t;
 #endif
 :elsesegment
+:segment !CONLY
 #ifdef __cplusplus
   #ifndef _STDSIZE_T_DEFINED
     #define _STDSIZE_T_DEFINED
@@ -26,11 +27,14 @@
     using std::size_t;
   #endif
 #else
+:endsegment
   #ifndef _SIZE_T_DEFINED
     #define _SIZE_T_DEFINED
     #define _SIZE_T_DEFINED_
     typedef unsigned size_t;
     typedef size_t   _w_size_t;
   #endif
+:segment !CONLY
 #endif /* __cplusplus */
+:endsegment
 :endsegment

@@ -374,11 +374,8 @@ _WCRTLINK extern errno_t _fwcsrtombs_s( size_t _WCFAR * __restrict __retval, cha
 
 :segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:: This #endif closes the #ifdef __cplusplus in wchar.h
-:segment !CNAME
-#endif
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif

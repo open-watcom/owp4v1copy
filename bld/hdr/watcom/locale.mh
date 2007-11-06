@@ -104,12 +104,11 @@ _WCRTLINK extern wchar_t *_wsetlocale( int __category,const wchar_t *__locale );
 :endsegment
 
 :include poppack.sp
+
 :segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:segment !CNAME
-#endif /* __cplusplus */
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif

@@ -10,6 +10,7 @@
   }
 #endif
 :elsesegment
+:segment !CONLY
 #ifdef __cplusplus
   #ifndef _STDPTRDIFF_T_DEFINED
     #define _STDPTRDIFF_T_DEFINED
@@ -27,6 +28,7 @@
     using std::ptrdiff_t;
   #endif
 #else
+:endsegment
   #ifndef _PTRDIFF_T_DEFINED
     #define _PTRDIFF_T_DEFINED
     #define _PTRDIFF_T_DEFINED_
@@ -36,5 +38,7 @@
       typedef int ptrdiff_t;
     #endif
   #endif
+:segment !CONLY
 #endif /* __cplusplus */
+:endsegment
 :endsegment

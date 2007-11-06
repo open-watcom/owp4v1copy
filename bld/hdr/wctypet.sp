@@ -7,6 +7,7 @@
   }
 #endif
 :elsesegment
+:segment !CONLY
 #ifdef __cplusplus
   #ifndef _STDWCTYPE_T_DEFINED
     #define _STDWCTYPE_T_DEFINED
@@ -22,11 +23,14 @@
     using std::wctype_t;
   #endif
 #else
+:endsegment
   #ifndef _WCTYPE_T_DEFINED
     #define _WCTYPE_T_DEFINED
     #define _WCTYPE_T_DEFINED_
     typedef wchar_t wint_t;
     typedef wchar_t wctype_t;
   #endif
+:segment !CONLY
 #endif /* __cplusplus */
+:endsegment
 :endsegment

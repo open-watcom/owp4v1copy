@@ -63,11 +63,12 @@ using std::ptrdiff_t;
 :include saferepi.sp
 :endsegment
 
-#ifdef __cplusplus
+:segment CNAME
 #define offsetof(__typ,__id) __offsetof(__typ,__id)
-#else
+:elsesegment
 #define offsetof(__typ,__id) ((size_t)&(((__typ*)0)->__id))
-#endif
+:endsegment
+
 :segment QNX | LINUX
 #if defined(__386__)
  _WCRTLINK extern int *__threadid(void); /* pointer to thread id */
@@ -89,11 +90,8 @@ using std::ptrdiff_t;
 
 :segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:: This #endif closes the #ifdef __cplusplus in stddef.h
-:segment !CNAME
-#endif
+:elsesegment
+#endif /* __cplusplus not defined */
 :endsegment
 
 #endif
