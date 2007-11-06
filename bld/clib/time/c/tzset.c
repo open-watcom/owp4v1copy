@@ -296,7 +296,50 @@ static int tryOSTimeZone( const char *tz )
                 dtzone[0] = '\0';
             else  // ensure null-terminated
                 dtzone[TZNAME_MAX] = '\0';
+		
+	    /*
+	    StandardDate for Eastern
+		wYear = 0
+		wMonth = 11
+		wDayOfWeek = 0
+		wDay = 1
+		wHour = 2
+		wMinute = 0
+		wSecond = 0
+		wMilliseconds = 0
+	    DaylightDate for Eastern 
+		wYear = 0
+		wMonth = 3
+		wDayOfWeek = 0
+		wDay = 2
+		wHour = 2
+		wMinute = 0
+		wSecond = 0
+		wMilliseconds = 0
+	    */
+	    st = &tz_info.DaylightDate;
+	    __start_dst.tm_sec  = st->wSecond;
+	    __start_dst.tm_min  = st->wMinute;
+	    __start_dst.tm_hour = st->wHour;
+	    __start_dst.tm_mday = st->wDay;	    // 1st, 2nd, 3rd, 4th week
+	    __start_dst.tm_mon	= st->wMonth - 1;   // 0-11
+	    __start_dst.tm_year = st->wYear;
+	    __start_dst.tm_wday = st->wDayOfWeek;   // 0-6
+	    __start_dst.tm_yday = 0;		    // 0-365 -> 0-365
+	    __start_dst.tm_isdst= 0;
+	
+	    st = &tz_info.StandardDate;
+	    __end_dst.tm_sec  = st->wSecond;
+	    __end_dst.tm_min  = st->wMinute;
+	    __end_dst.tm_hour = st->wHour;
+	    __end_dst.tm_mday = st->wDay;	    // 1st, 2nd, 3rd, 4th week
+	    __end_dst.tm_mon  = st->wMonth - 1;	    // 0-11
+	    __end_dst.tm_year = st->wYear;
+	    __end_dst.tm_wday = st->wDayOfWeek;	    // 0-6
+	    __end_dst.tm_yday = 0;		    // 0-365 -> 0-365
+	    __end_dst.tm_isdst= 0;
             break;
+	    
         default:
             // assume Eastern (North America) time zone
             _RWD_timezone = 5L * 60L * 60L;
