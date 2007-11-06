@@ -371,8 +371,8 @@ void DUIAddrInspect( address addr )
     WndAddrInspect( addr );
 }
 
-extern void RemovePoint( brk *bp );
-extern void DUIRemoveBreak( brk *bp )
+extern void RemovePoint( brkp *bp );
+extern void DUIRemoveBreak( brkp *bp )
 /***********************************/
 {
     RemovePoint( bp );

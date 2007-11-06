@@ -94,8 +94,8 @@ extern char             *CnvULongHex( unsigned long value, char *p );
 extern int              AddrComp( address a, address b );
 
 extern char             *CmdStart;
-extern brk              UserTmpBrk;
-extern brk              DbgTmpBrk;
+extern brkp             UserTmpBrk;
+extern brkp             DbgTmpBrk;
 extern char             *TxtBuff;
 extern tokens           CurrToken;
 extern char             OnOffNameTab[];

@@ -41,7 +41,7 @@
 #include "namelist.h"
 
 
-extern brk              *FindBreak(address);
+extern brkp             *FindBreak(address);
 extern void             *AddBreak(address );
 extern void             RemoveBreak(address );
 extern void             GoToAddr( address addr );

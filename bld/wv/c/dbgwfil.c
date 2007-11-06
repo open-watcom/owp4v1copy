@@ -60,7 +60,7 @@ extern void             Scan( void );
 extern char             *ReScan( char * );
 extern unsigned long    FSize( void * );
 extern unsigned long    FLastOffset( void * );
-extern brk              *FindBreakByLine( mod_handle, cue_file_id, unsigned );
+extern brkp             *FindBreakByLine( mod_handle, cue_file_id, unsigned );
 extern void             WndFuncInspect( mod_handle mod );
 extern void             *AddBreak( address );
 extern bool             DlgBreak( address );
@@ -429,7 +429,7 @@ bool FileOpenGadget( a_window *wnd, wnd_line_piece *line, mod_handle mod )
 }
 
 
-void FileBreakGadget( a_window *wnd, wnd_line_piece *line, bool curr, brk *bp )
+void FileBreakGadget( a_window *wnd, wnd_line_piece *line, bool curr, brkp *bp )
 {
     if( curr ) {
         if( bp == NULL ) {
@@ -458,7 +458,7 @@ static  bool    FileGetLine( a_window *wnd, int row, int piece,
     int         len;
     file_window *file = WndFile( wnd );
     address     addr;
-    brk         *bp;
+    brkp        *bp;
     bool        curr;
     DIPHDL( cue, ch );
 

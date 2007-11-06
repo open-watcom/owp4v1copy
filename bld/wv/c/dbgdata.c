@@ -80,9 +80,9 @@ mod_handle              ContextMod;
 mod_handle              CodeAddrMod;
 unsigned                TaskId;
 
-brk                     UserTmpBrk; // brk changed
-brk                     DbgTmpBrk; // brk changed
-brk                     *BrkList; // brk changed
+brkp                    UserTmpBrk; // brk changed
+brkp                    DbgTmpBrk;  // brk changed
+brkp                    *BrkList;   // brk changed
 
 void                    *CmdHistory;
 void                    *SrchHistory;

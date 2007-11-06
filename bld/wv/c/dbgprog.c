@@ -86,7 +86,7 @@ extern void             ReqMemAddr( memory_expr, address * );
 extern void             SetNoSectSeg( void );
 extern char             *Format( char *buff, char *fmt, ... );
 extern void             TraceKill( void );
-extern void             ActPoint( brk*, bool );
+extern void             ActPoint( brkp *, bool );
 extern void             AddAliasInfo( unsigned, unsigned );
 extern void             FreeAliasInfo( void );
 extern void             CheckSegAlias( void );
@@ -95,7 +95,7 @@ extern void             SetCodeDot( address );
 extern address          GetRegIP( void );
 extern bool             DlgGivenAddr( char *title, address *value );
 extern void             SetLastExe( char *name );
-extern void             SetPointAddr( brk *bp, address addr );
+extern void             SetPointAddr( brkp *bp, address addr );
 extern void             RemoteMapAddr( addr_ptr *, addr_off *, addr_off *, unsigned long handle );
 extern void             AddrSection( address *, unsigned );
 extern void             VarFreeScopes( void );
@@ -114,7 +114,7 @@ extern char             *CheckForPowerBuilder( char * );
 extern char             *DupStr( char * );
 extern mod_handle       LookupImageName( char *start, unsigned len );
 extern mod_handle       LookupModName( mod_handle search, char *start, unsigned len );
-extern bool             GetBPSymAddr( brk *bp, address *addr );
+extern bool             GetBPSymAddr( brkp *bp, address *addr );
 extern void             DbgUpdate( update_list );
 extern long             RemoteGetFileDate( char *name );
 extern long             LocalGetFileDate( char *name );
@@ -137,8 +137,8 @@ extern void             FClearOpenSourceCache( void );
 extern tokens           CurrToken;
 extern char             *TxtBuff;
 extern system_config    SysConfig;
-extern brk              UserTmpBrk;
-extern brk              *BrkList;
+extern brkp             UserTmpBrk;
+extern brkp             *BrkList;
 extern mod_handle       CodeAddrMod;
 extern mod_handle       ContextMod;
 extern image_entry      *DbgImageList;
@@ -407,7 +407,7 @@ bool UnMapAddress( mappable_addr *loc, image_entry *image )
 }
 
 
-static void UnMapOnePoint( brk *bp, image_entry *image )
+static void UnMapOnePoint( brkp *bp, image_entry *image )
 {
     mod_handle          himage;
     if( bp->status.b.unmapped ) return;
@@ -425,7 +425,7 @@ static void UnMapOnePoint( brk *bp, image_entry *image )
 
 void UnMapPoints( image_entry *image )
 {
-    brk                 *bp;
+    brkp                *bp;
 
     for( bp = BrkList; bp != NULL; bp = bp->next ) {
         UnMapOnePoint( bp, image );
@@ -720,7 +720,7 @@ bool ReMapAddress( mappable_addr *loc )
     return( FALSE );
 }
 
-static remap_return ReMapOnePoint( brk *bp, image_entry *image )
+static remap_return ReMapOnePoint( brkp *bp, image_entry *image )
 {
     mod_handle  himage,mod;
     bool        ok;
@@ -773,7 +773,7 @@ static remap_return ReMapOnePoint( brk *bp, image_entry *image )
 
 void ReMapPoints( image_entry *image )
 {
-    brk         *bp;
+    brkp        *bp;
 
     for( bp = BrkList; bp != NULL; bp = bp->next ) {
         switch( ReMapOnePoint( bp, image ) ) {

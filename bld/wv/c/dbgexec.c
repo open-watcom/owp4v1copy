@@ -57,7 +57,7 @@ extern bool             UpdateWPs( void );
 extern unsigned         CheckBPs( unsigned, unsigned );
 extern void             Ring( void );
 extern unsigned         MakeProgRun( bool );
-extern void             DoSetWatchPnt( unsigned int, brk * );
+extern void             DoSetWatchPnt( unsigned int, brkp * );
 extern bool             TBreak( void );
 extern void             PopInpStack( void );
 extern bool             PurgeInpStack( void );
@@ -116,12 +116,12 @@ extern input_stack      *InpStack;
 extern machine_state    *DbgRegs;
 extern tokens           CurrToken;
 extern screen_state     ScrnState;
-extern brk              DbgTmpBrk;
+extern brkp             DbgTmpBrk;
 extern char             *TxtBuff;
 extern thread_state     *HeadThd;
 extern thread_state     *ExecThd;
 static char             *MsgText;
-extern brk              UserTmpBrk;
+extern brkp             UserTmpBrk;
 
 static int              InCall = 0;
 

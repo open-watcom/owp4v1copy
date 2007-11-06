@@ -41,7 +41,7 @@
 
 
 extern machine_state    *DbgRegs;
-extern brk              DbgTmpBrk;
+extern brkp             DbgTmpBrk;
 extern stack_entry      *ExprSP;
 
 

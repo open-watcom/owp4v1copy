@@ -93,7 +93,7 @@ enum {
 } Req = REQ_NONE;
 
 /* External Functions Used */
-extern brk              *AddBreak( address addr );
+extern brkp             *AddBreak( address addr );
 extern void             AddSourceSpec( char *str );
 extern void             BrkClearAll( void );
 extern void             BrkDisableAll( void );
@@ -111,7 +111,7 @@ extern void             FDoneSource(void         *);
 extern void             FlushEOC(void);
 extern int              FReadLine(void   *,int ,int ,char *,int );
 extern  void            FiniSource( void );
-extern brk*             GetBPAt(int row);
+extern brkp             *GetBPAt(int row);
 extern int              GetBPsCount( void );
 extern address          GetCodeDot();
 extern address          GetRowAddrDirectly( mod_handle mod, cue_file_id file_id, int row, bool exact );
@@ -385,7 +385,7 @@ address SetBreakPointInFile( char *filename,int line_num )
     module_list         list;
     address             mod_address = NilAddr;
     address             bp_address = NilAddr;
-    brk                 *bp;
+    brkp                *bp;
     int                 mod_nums;
     int                 row;
     char                mod_name[200];

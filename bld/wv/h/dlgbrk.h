@@ -32,8 +32,8 @@
 
 #ifndef RC
     typedef struct {
-        brk             *bp;
-        brk             tmpbp;
+        brkp            *bp;
+        brkp            tmpbp;
         unsigned        last_edit;
         unsigned        brand_new       : 1;
         unsigned        cancel          : 1;

@@ -89,8 +89,8 @@ typedef struct {
 
 static trace_state      TraceState;
 
-extern brk              UserTmpBrk;
-extern brk              DbgTmpBrk;
+extern brkp             UserTmpBrk;
+extern brkp             DbgTmpBrk;
 extern debug_level      DbgLevel;
 extern debug_level      ActiveWindowLevel;
 extern machine_state    *DbgRegs;

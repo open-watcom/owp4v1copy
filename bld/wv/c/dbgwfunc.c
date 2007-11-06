@@ -41,7 +41,7 @@
 #include "namelist.h"
 
 
-extern brk              *FindBreak( address );
+extern brkp             *FindBreak( address );
 extern a_window         *WndAsmInspect( address );
 extern a_window         *WndSrcInspect( address );
 extern void             *AddBreak( address );
@@ -50,7 +50,7 @@ extern bool             DlgBreak( address );
 extern void             GoToAddr( address addr );
 extern bool             HasLineInfo( address );
 extern void             ToggleBreak( address );
-extern char             *FileBreakGadget( a_window *, wnd_line_piece *, bool curr, brk *bp );
+extern char             *FileBreakGadget( a_window *, wnd_line_piece *, bool curr, brkp *bp );
 extern address          GetCodeDot( void );
 extern search_result    DeAliasAddrMod( address a, mod_handle *mh );
 
