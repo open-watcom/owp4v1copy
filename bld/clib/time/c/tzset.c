@@ -273,6 +273,7 @@ static int tryOSTimeZone( const char *tz )
 #if defined( __NT__ )
     {
         auto TIME_ZONE_INFORMATION  tz_info;
+        LPSYSTEMTIME                st;
         size_t                      rc;
 
         _RWD_daylight = 1;                  // assume daylight savings supported
