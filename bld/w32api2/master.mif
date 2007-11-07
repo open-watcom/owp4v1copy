@@ -143,6 +143,7 @@ base_headers =       &
         reason.h     &
         regstr.h     &
         richedit.h   &
+        richole.h    &
         rpc.h        &
         rpcasync.h   &
         rpcdce.h     &
