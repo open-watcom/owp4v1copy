@@ -160,6 +160,7 @@ base_headers =       &
         sql.h        &
         sqltypes.h   &
         sspi.h       &
+        stm.h        &
         stralign.h   &
         strmif.h     &
         tcpestat.h   &
