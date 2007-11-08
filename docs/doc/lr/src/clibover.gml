@@ -360,8 +360,8 @@ convert to upper/lower case.
 .fd *fun="isascii" test for ASCII character
 .fd *fun="isblank" test for blank character
 .fd *fun="iscntrl" test for control character
-.fd *fun="iscsym" test for letter, underscore or digit
-.fd *fun="iscsymf" test for letter or underscore
+.fd *fun="__iscsym" test for letter, underscore or digit
+.fd *fun="__iscsymf" test for letter or underscore
 .fd *fun="isdigit" test for digit
 .fd *fun="isgraph" test for printable character, except space
 .fd *fun="islower" test for letter in lowercase
@@ -389,6 +389,8 @@ between upper and lowercase.
 .fd *fun="iswascii" test for ASCII character
 .fd *fun="iswblank" test for blank character
 .fd *fun="iswcntrl" test for control character
+.fd *fun="__iswcsym" test for letter, underscore or digit
+.fd *fun="__iswcsymf" test for letter or underscore
 .fd *fun="iswdigit" test for digit
 .fd *fun="iswgraph" test for printable character, except space
 .fd *fun="iswlower" test for letter in lowercase

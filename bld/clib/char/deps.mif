@@ -16,6 +16,8 @@ uisalnum.obj : ../../../c/uisalnum.c ../../../c/isalnum.c  ../../../h/istable.h
 uisalpha.obj : ../../../c/uisalpha.c ../../../c/isalpha.c  ../../../h/istable.h
 uisascii.obj : ../../../c/uisascii.c ../../../c/isascii.c
 uiscntrl.obj : ../../../c/uiscntrl.c ../../../c/iscntrl.c  ../../../h/istable.h
+uiscsym.obj  : ../../../c/uiscsym.c  ../../../c/iscsym.c   ../../../h/istable.h
+uiscsymf.obj : ../../../c/uiscsymf.c ../../../c/iscsymf.c  ../../../h/istable.h
 uisdigit.obj : ../../../c/uisdigit.c ../../../c/isdigit.c  ../../../h/istable.h
 uisgraph.obj : ../../../c/uisgraph.c ../../../c/isgraph.c  ../../../h/istable.h
 uislower.obj : ../../../c/uislower.c ../../../c/islower.c  ../../../h/istable.h

@@ -141,6 +141,9 @@ _WCRTDATA extern const char _WCDATA _IsTable[257];
 :endsegment
 #endif
 
+#define iscsym        __iscsym
+#define iscsymf       __iscsymf
+
 :segment CNAME
 :include cplusepi.sp
 :elsesegment

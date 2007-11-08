@@ -564,8 +564,12 @@
 .fnc iscntrl                    iscntrl.gml     DOS QNX W WIN32
 .fnw iswcntrl                   iscntrl.gml     DOS QNX W WIN32
 .fnu _uiscntrl                  iscntrl.gml     DOS       WIN32
+.fnc iscsym                     iscsym.gml      DOS QNX W WIN32
 .fnc __iscsym                   iscsym.gml      DOS QNX W WIN32
+.fnw __iswcsym                  iscsym.gml      DOS QNX W WIN32
+.fnc iscsymf                    iscsymf.gml     DOS QNX W WIN32
 .fnc __iscsymf                  iscsymf.gml     DOS QNX W WIN32
+.fnw __iswcsymf                 iscsymf.gml     DOS QNX W WIN32
 .fnc isdigit                    isdigit.gml     DOS QNX W WIN32
 .fnw iswdigit                   isdigit.gml     DOS QNX W WIN32
 .fnu _uisdigit                  isdigit.gml     DOS       WIN32

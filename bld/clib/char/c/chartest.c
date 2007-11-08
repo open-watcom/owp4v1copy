@@ -179,9 +179,9 @@ void TestClassifyWideMacro( void )
     WideMacroResults[0].space  = iswspace( WEOF );
     WideMacroResults[0].upper  = iswupper( WEOF );
     WideMacroResults[0].xdigit = iswxdigit( WEOF );
-    WideMacroResults[0].ascii  = isascii( WEOF );
-    WideMacroResults[0].csym   = __iscsym( WEOF );
-    WideMacroResults[0].csymf  = __iscsymf( WEOF );
+    WideMacroResults[0].ascii  = iswascii( WEOF );
+    WideMacroResults[0].csym   = __iswcsym( WEOF );
+    WideMacroResults[0].csymf  = __iswcsymf( WEOF );
 
     for( i = 1; i < TEST_ARRAY_SIZE_WIDE; i++ ) {
         WideMacroResults[i].alnum  = iswalnum( i );
@@ -196,9 +196,9 @@ void TestClassifyWideMacro( void )
         WideMacroResults[i].space  = iswspace( i );
         WideMacroResults[i].upper  = iswupper( i );
         WideMacroResults[i].xdigit = iswxdigit( i );
-        WideMacroResults[i].ascii  = isascii( i );
-        WideMacroResults[i].csym   = __iscsym( i );
-        WideMacroResults[i].csymf  = __iscsymf( i );
+        WideMacroResults[i].ascii  = iswascii( i );
+        WideMacroResults[i].csym   = __iswcsym( i );
+        WideMacroResults[i].csymf  = __iswcsymf( i );
     }
 }
 
@@ -221,9 +221,9 @@ void TestClassifyWideFunct( void )
     WideFunctResults[0].space  = (iswspace)( WEOF );
     WideFunctResults[0].upper  = (iswupper)( WEOF );
     WideFunctResults[0].xdigit = (iswxdigit)( WEOF );
-    WideFunctResults[0].ascii  = (isascii)( WEOF );
-    WideFunctResults[0].csym   = (__iscsym)( WEOF );
-    WideFunctResults[0].csymf  = (__iscsymf)( WEOF );
+    WideFunctResults[0].ascii  = (iswascii)( WEOF );
+    WideFunctResults[0].csym   = (__iswcsym)( WEOF );
+    WideFunctResults[0].csymf  = (__iswcsymf)( WEOF );
 
     for( i = 1; i < TEST_ARRAY_SIZE_WIDE; i++ ) {
         WideFunctResults[i].alnum  = (iswalnum)( i );
@@ -238,9 +238,9 @@ void TestClassifyWideFunct( void )
         WideFunctResults[i].space  = (iswspace)( i );
         WideFunctResults[i].upper  = (iswupper)( i );
         WideFunctResults[i].xdigit = (iswxdigit)( i );
-        WideFunctResults[i].ascii  = (isascii)( i );
-        WideFunctResults[i].csym   = (__iscsym)( i );
-        WideFunctResults[i].csymf  = (__iscsymf)( i );
+        WideFunctResults[i].ascii  = (iswascii)( i );
+        WideFunctResults[i].csym   = (__iswcsym)( i );
+        WideFunctResults[i].csymf  = (__iswcsymf)( i );
     }
 }
 

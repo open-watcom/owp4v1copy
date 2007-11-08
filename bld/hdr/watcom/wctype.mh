@@ -116,6 +116,14 @@ _WCRTLINK extern int      iswblank( wint_t __wc );
 :endsegment
 
 :segment CNAME
+_WCRTLINK extern int      __iswcsymf( std::wint_t __wc );
+_WCRTLINK extern int      __iswcsym( std::wint_t __wc );
+:elsesegment
+_WCRTLINK extern int      __iswcsymf( wint_t __wc );
+_WCRTLINK extern int      __iswcsym( wint_t __wc );
+:endsegment
+
+:segment CNAME
 :include cplusepi.sp
 :elsesegment
 #endif /* __cplusplus not defined */

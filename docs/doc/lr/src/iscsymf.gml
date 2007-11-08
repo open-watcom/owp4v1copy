@@ -1,14 +1,36 @@
-.func __iscsymf
+.func iscsymf __iscsymf __iswcsymf
+.funcw __iswcsymf
 #include <ctype.h>
+int iscsymf( int c );
+.ixfunc2 '&CharTest' &func
 int __iscsymf( int c );
 .ixfunc2 '&CharTest' &func
+.if &'length(&wfunc.) ne 0 .do begin
+#include <wctype.h>
+int __iswcsymf( wint_t c );
+.ixfunc2 '&CharTest' &wfunc
+.ixfunc2 '&Wide' &wfunc
+.do end
 .funcend
 .desc begin
 The &func function tests for a letter or underscore.
+.np
+The &__func function is identical to &func..
+Use &__func for ANSI/ISO naming conventions.
+.if &'length(&wfunc.) ne 0 .do begin
+.np
+The &wfunc function is similar to &func except that it accepts a
+wide-character argument.
+.do end
 .desc end
 .return begin
 A non-zero value is returned when the character is a letter or
 underscore; otherwise, zero is returned.
+.if &'length(&wfunc.) ne 0 .do begin
+The &wfunc function returns a non-zero value when
+.arg c
+is a wide-character representation of a letter or underscore character.
+.do end
 .return end
 .see begin
 .seelist &function. isalpha isalnum iscntrl isdigit isgraph islower isprint
@@ -45,5 +67,7 @@ Char _ is a csymf character
 Char 9 is not a csymf character
 Char + is not a csymf character
 .exmp end
-.class WATCOM
+.class begin WATCOM
+.ansiname &__func
+.class end
 .system
