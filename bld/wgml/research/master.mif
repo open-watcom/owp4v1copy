@@ -10,9 +10,9 @@ wgml_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = -I"../h"
+inc_dirs = -I"../h;../../h"
 
-.c: ../c;../../../watcom/c
+.c: ../c;../../c;../../../watcom/c
 
 cf_common_objs = &
 	    cfdir.obj &
@@ -31,15 +31,32 @@ cfc_objs = &
             cfcheck.obj  &
             cfcutils.obj
 
+copparse_objs = &
+            copparse.obj &
+	    copdir.obj   &
+            copfiles.obj &
+            common.obj   &
+            research.obj &
+            cmdlhelp.obj &
+            swchar.obj
+
 objs = &
             $(cf_common_objs) &
             cfparse.obj  &
             cfputils.obj
 
-nwgml : cfcheck.exe .SYMBOLIC
+nwgml : cfcheck.exe copparse.exe .SYMBOLIC
 !include exetarg.mif
 
 cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)
+!ifeq verbose 1
+        $(cl) $(clflags) $< $(cl_libs)
+!else
+        @echo cl $@
+        @$(cl) $(clflags) $< $(cl_libs)
+!endif
+
+copparse.exe : $(copparse_objs) $(libs)
 !ifeq verbose 1
         $(cl) $(clflags) $< $(cl_libs)
 !else
