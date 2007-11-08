@@ -153,6 +153,7 @@ base_headers =       &
         rpcnsip.h    &
         rpcnsi.h     &
         rpcnterr.h   &
+        rpcproxy.h   &
         schedule.h   &
         servprov.h   &
         shellapi.h   &
