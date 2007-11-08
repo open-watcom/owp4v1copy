@@ -92,9 +92,7 @@ void main()
 -12
 12
 .exmp end
-.class WATCOM
-.if &'length(&_func.) ne 0 .do begin
-.np
-&_func conforms to ANSI/ISO naming conventions
-.do end
+.class begin WATCOM
+.ansiname &_func
+.class end
 .system

@@ -139,5 +139,6 @@ void main()
     _findclose( handle );
   }
 .exmp end
+.funcw
 .class DOS
 .system

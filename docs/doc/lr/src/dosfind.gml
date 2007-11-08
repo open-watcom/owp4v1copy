@@ -189,5 +189,6 @@ void main()
     #endif
 }
 .exmp end
+.funcw
 .class DOS
 .system

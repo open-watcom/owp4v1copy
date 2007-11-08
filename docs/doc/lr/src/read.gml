@@ -107,9 +107,7 @@ void main( void )
     }
 }
 .exmp end
-.class POSIX 1003.1
-.if &'length(&_func.) ne 0 .do begin
-.np
-&_func conforms to ANSI/ISO naming conventions
-.do end
+.class begin POSIX 1003.1
+.ansiname &_func
+.class end
 .system

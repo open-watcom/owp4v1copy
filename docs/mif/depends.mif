@@ -1312,7 +1312,6 @@ $(docsrc_dir)$(SL)lr$(SL)src$(SL)dosattr.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)doscommi.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)dosexter.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)dosfind.gml &
-$(docsrc_dir)$(SL)lr$(SL)src$(SL)dosfindn.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)dup.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)dup2.gml &
 $(docsrc_dir)$(SL)lr$(SL)src$(SL)ecvt.gml &
@@ -1922,7 +1921,6 @@ $(docsrc_dir)$(SL)lr$(SL)clib_nt.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_qnx.gml &
 $(docsrc_dir)$(SL)lr$(SL)clib_tst.gml &
 $(docsrc_dir)$(SL)lr$(SL)clibban.gml &
-$(docsrc_dir)$(SL)lr$(SL)clibhelp.gml &
 $(docsrc_dir)$(SL)lr$(SL)clibref.gml &
 $(docsrc_dir)$(SL)lr$(SL)f77graph.gml &
 $(docsrc_dir)$(SL)lr$(SL)os2help.gml &

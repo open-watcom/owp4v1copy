@@ -471,11 +471,13 @@ to
 .blktext end
 .oldtext end
 .if &farfnc eq 0 .do begin
-.class ISO C90
-The I64 modifier is an extension to ISO C.
+.class begin ISO C90
+.br The I64 modifier is an extension to ISO C.
+.class end
 .do end
 .el .do begin
-.class ISO C90
-The N, W pointer size modifiers and the I64 modifier are extensions to ISO C.
+.class begin ISO C90
+.br The N, W pointer size modifiers and the I64 modifier are extensions to ISO C.
+.class end
 .do end
 .system

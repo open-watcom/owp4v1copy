@@ -126,7 +126,7 @@ void main( int argc, char *argv[] )
     _exit( EXIT_SUCCESS );
 }
 .exmp end
-.class POSIX 1003.1
-.np
-_Exit is ISO C99
+.class begin POSIX 1003.1
+.br _Exit is ISO C99
+.class end
 .system

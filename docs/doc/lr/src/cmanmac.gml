@@ -4,6 +4,7 @@
 .* Define these here otherwise &_func. expands to &_func. and not ''
 .*
 .sr _func=''
+.sr __func=''
 .sr ffunc=''
 .sr wfunc=''
 .sr mfunc=''
@@ -45,12 +46,20 @@
 .if '&*' eq '_&$$fnc(1)' .do begin
 .   .sr _func=&*
 .do end
+.el .if '&*' eq '__&$$fnc(1)' .do begin
+.   .sr __func=&*
+.do end
 .el .if '&*' eq '_f&$$fnc(1)' .do begin
 .   .sr ffunc=&*
 .do end
 .el .if &'pos('_w',&*) eq 1 .do begin
 .   .if '&*' ne '_wrapon' .do begin
 .   .   .sr wfunc=&*
+.   .do end
+.do end
+.el .if &'pos('_u',&*) eq 1 .do begin
+.   .if '&*' ne '_utime' .do begin
+.   .   .sr ufunc=&*
 .   .do end
 .do end
 .el .if &'pos('wc',&*) eq 1 .do begin
@@ -68,11 +77,6 @@
 .el .if &'pos('_fmb',&*) eq 1 .do begin
 .   .sr fmfunc=&*
 .do end
-.el .if &'pos('_u',&*) eq 1 .do begin
-.   .if '&*' ne '_utime' .do begin
-.   .   .sr ufunc=&*
-.   .do end
-.do end
 .dm funkw end
 .*
 .dm funix begin
@@ -87,11 +91,12 @@
 .*
 .*  .func norm Functions
 .*  .func norm
-.*  .func norm _norm _wnorm _mbsnorm
+.*  .func norm _norm __norm _wnorm _unorm _fnorm _mbsnorm
 .*
 .dm func begin
 .sr func=&'strip(&*1,'T',',')
 .sr _func=''
+.sr __func=''
 .sr ffunc=''
 .sr wfunc=''
 .sr mfunc=''
@@ -221,6 +226,9 @@
 .if &'length(&_func.) ne 0 .do begin
 .   :set symbol="_func" value=";.sf4 &_func.;.esf ".
 .do end
+.if &'length(&__func.) ne 0 .do begin
+.   :set symbol="__func" value=";.sf4 &__func.;.esf ".
+.do end
 .if &'length(&ffunc.) ne 0 .do begin
 .   :set symbol="ffunc" value=";.sf4 &ffunc.;.esf ".
 .do end
@@ -263,23 +271,11 @@
 .newtext Example:
 See example provided with
 .mono &*..
-.if &e'&dohelp eq 0 .do begin
-:eDL.
-.do end
-.el .do begin
-:ZeDL.
-.do end
-.in &INDlvl
+.oldtext
 .dm seexmp end
 .*
 .dm newcode begin
-.in 0
-.if &e'&dohelp eq 0 .do begin
-:DL &NTEphi..:DT.&*:DD.
-.do end
-.el .do begin
-:ZDL &NTEphi..:ZDT.&*:ZDD.
-.do end
+.listnew &*
 .xmpon
 .sk -1
 .sr XMPlin=&sysfnum.
@@ -287,13 +283,7 @@ See example provided with
 .*
 .dm endcode begin
 .if '&XMPset' eq 'on' .xmpoff
-.if &e'&dohelp eq 0 .do begin
-:eDL.
-.do end
-.el .do begin
-:ZeDL.
-.do end
-.in &INDlvl
+.listend
 .sr XMPlin=0
 .dm endcode end
 .*
@@ -405,19 +395,37 @@ Prototype in
 :SF font=1.&*:eSF.
 .dm arg end
 .*
-.dm class begin
-.in 0
-.sr __class=&*1
-.if &e'&dohelp eq 0 .do begin
-:DL &NTEphi..:DT.Classification::DD.
+.dm clitm begin
+.if &clitmc eq 0 .do begin
+.ct &*
+.sr clitmc=1
 .do end
 .el .do begin
-:ZDL &NTEphi..:ZDT.Classification::ZDD.
+.br .ct &*
+:cmt. .ct , &*
 .do end
-:set symbol="*extr" value=0.
+.dm clitm end
+.*
+.dm ansiname begin
+.if '&*' ne '' .do begin
+.br &*. conforms to ANSI/ISO naming conventions
+.do end
+.dm ansiname end
+.*
+.dm class begin
+.sr *extr=0
+.if |&*1| ne |end| .do begin
+.if |&*1| eq |begin| .sr __class=&*2
+.el .sr __class=&*1
+.listnew Classification:
 .if &'length(&_func.) ne 0 .do begin
 .'  :set symbol="_func" value="&'translate("&_func.",' ',';')".
 .'  :set symbol="_func" value="&'word("&_func.",2)".
+.'  :set symbol="*extr" value=1.
+.do end
+.if &'length(&__func.) ne 0 .do begin
+.'  :set symbol="__func" value="&'translate("&__func.",' ',';')".
+.'  :set symbol="__func" value="&'word("&__func.",2)".
 .'  :set symbol="*extr" value=1.
 .do end
 .if &'length(&ffunc.) ne 0 .do begin
@@ -445,69 +453,74 @@ Prototype in
 .'  :set symbol="ufunc" value="&'word("&ufunc.",2)".
 .'  :set symbol="*extr" value=1.
 .do end
-.if &*extr. eq 0 .do begin
-&*
+.if |&*1| eq |begin| .sr *all=&'strip(&'substr(&*,6),'L',' ')
+.el .sr *all=&*
+.if &*extr eq 0 .do begin
+&*all
 .do end
-.el .if |&*| eq |WATCOM| .do begin
-&*
+.el .if |&*all| eq |WATCOM| .do begin
+&*all
 .do end
-.el .if &'words(|&*|) gt 6 .do begin
-&*
+.el .if &'words(|&*all|) gt 6 .do begin
+&*all
 .do end
 .el .do begin
-.   &function. is &*
-.   .if &*1 eq ISO OR &*1 eq TR .do begin
-.   .   .sr *cls=&'strip(&*,'T',',')
-.   .   .if |&*| eq |ISO C90| .do begin
+.   .sr clitmc=0
+.   .clitm &function. is &*all
+.   .if |&*1| eq |begin| .sr *first=&*2
+.   .el .sr *first=&*1
+.   .if |&*first| eq |ISO| OR |&*first| eq |TR| .do begin
+.   .   .sr *cls=&'strip(&*all,'T',',')
+.   .   .if |&*all| eq |ISO C90| .do begin
 .   .   .   .sr *wcls='ISO C95'
 .   .   .do end
 .   .   .el .do begin
-.   .   .   .sr *wcls=&'strip(&*,'T',',')
+.   .   .   .sr *wcls=&'strip(&*all,'T',',')
 .   .   .do end
 .   .do end
 .   .el .do begin
-.   .   .sr *cls=&'strip(&*1,'T',',')
-.   .   .sr *wcls=&'strip(&*1,'T',',')
+.   .   .sr *cls=&'strip(&*first,'T',',')
+.   .   .sr *wcls=&'strip(&*first,'T',',')
 .   .do end
 .   .if &'length(&_func.) ne 0 .do begin
-.   .   .ct , &_func. is not &*cls
+.   .   .clitm &_func. is not &*cls
+.   .do end
+.   .if &'length(&__func.) ne 0 .do begin
+.   .   .clitm &__func. is not &*cls
 .   .do end
 .   .if &'length(&ffunc.) ne 0 .do begin
-.   .   .ct , &ffunc. is not &*cls
+.   .   .clitm &ffunc. is not &*cls
 .   .do end
 .   .if &'length(&wfunc.) ne 0 .do begin
 .   .   .if "&'substr(&wfunc.,1,1)" eq "_" .do begin
-.   .   .   .ct , &wfunc. is not &*cls
+.   .   .   .clitm &wfunc. is not &*cls
 .   .   .do end
 .   .   .el .do begin
 .   .   .   .if '&wfunc.' ne '&funcn.' .do begin
-.   .   .   .   .ct , &wfunc. is &*wcls
+.   .   .   .   .clitm &wfunc. is &*wcls
 .   .   .   .do end
 .   .   .do end
 .   .do end
 .   .if &'length(&mfunc.) ne 0 .do begin
-.   .   .ct , &mfunc. is not &*cls
+.   .   .clitm &mfunc. is not &*cls
 .   .do end
 .   .if &'length(&fmfunc.) ne 0 .do begin
-.   .   .ct , &fmfunc. is not &*cls
+.   .   .clitm &fmfunc. is not &*cls
 .   .do end
 .   .if &'length(&ufunc.) ne 0 .do begin
-.   .   .ct , &ufunc. is not &*cls
+.   .   .clitm &ufunc. is not &*cls
 .   .do end
 .do end
-.if &e'&dohelp eq 0 .do begin
-:eDL.
 .do end
-.el .do begin
-:ZeDL.
+.if |&*1| ne |begin| .do begin
+.   .listend
+.   .sr clitmc=0
 .do end
-.in &INDlvl
 .dm class end
 .*
 .dm system begin
 .if '&machsys' eq 'PP' or '&__class' eq 'WIN386' .me
 .if '&machsys' eq 'WIN32' .me
-.in 0
 .se *stm=0
 .se *flg=0
 ...loopsys
@@ -516,13 +529,7 @@ Prototype in
 .if '&$$str' ne '' .do begin
 .   .if &*flg. eq 0 .do begin
 .   .   .se *flg=1
-.   .   .if &e'&dohelp eq 0 .do begin
-.   .   .   :DL &NTEphi..:DT.Systems::DD.
-.   .   .do end
-.   .   .el .do begin
-.   .   .   :ZDL &NTEphi..:ZDT.Systems::ZDD.
-:cmt.   .   .br
-.   .   .do end
+.   .   .listnew Systems:
 .   .do end
 .   .if &__fnx. gt 1 .do begin
 .   .   .mono &$$fnc(&*stm.) - &$$str
@@ -534,14 +541,8 @@ Prototype in
 .do end
 .if &*stm. lt &__fnx. .go loopsys
 .if &*flg. ne 0 .do begin
-.   .if &e'&dohelp eq 0 .do begin
-.   :eDL.
-.   .do end
-.   .el .do begin
-.   :ZeDL.
-.   .do end
+.   .listend
 .do end
-.in &INDlvl
 .dm system end
 .*
 .dm see begin
@@ -582,13 +583,7 @@ Prototype in
 .dm seeall begin
 .newtext See also:
 All functions starting with &mn.&*&emn.~...
-.if &e'&dohelp eq 0 .do begin
-:eDL.
-.do end
-.el .do begin
-:ZeDL.
-.do end
-.in &INDlvl
+.oldtext
 .dm seeall end
 .*
 .dm blkcode begin
@@ -646,8 +641,7 @@ All functions starting with &mn.&*&emn.~...
 :eSF.:set symbol="XMPset" value="of".
 .dm xmpoff end
 .*
-.dm newtext begin
-.cp 3
+.dm listnew begin
 .in 0
 .if &e'&dohelp eq 0 .do begin
 :DL &NTEphi..:DT.&*:DD.
@@ -655,17 +649,25 @@ All functions starting with &mn.&*&emn.~...
 .el .do begin
 :ZDL &NTEphi..:ZDT.&*:ZDD.
 .do end
-.dm newtext end
+.dm listnew end
 .*
-.dm oldtext begin
+.dm listend begin
 .if &e'&dohelp eq 0 .do begin
 :eDL.
 .do end
 .el .do begin
 :ZeDL.
 .do end
-:cmt. .in &INDlvl
-.in 0.76i
+.in &INDlvl
+.dm listend end
+.*
+.dm newtext begin
+.cp 3
+.listnew &*
+.dm newtext end
+.*
+.dm oldtext begin
+.listend
 .dm oldtext end
 .*
 .dm doscmd begin
@@ -711,6 +713,7 @@ command
 .sr function=''
 .sr func=''
 .sr _func=''
+.sr __func=''
 .sr ffunc=''
 .sr fwfunc=''
 .sr wfunc=''
@@ -744,8 +747,7 @@ command
 .se $$fnc(&__fnx.)=&*1
 .if /&*2./ eq // .se __cl=WATCOM
 .el .se __cl=&*2. &*3.
-.if &__fnx. eq 1 .se __cltxt=&*1 is &__cl.
-.el .se __cltxt=&__cltxt., &*1 is &__cl.
+.se __cltxt(&__fnx.)=&*1 is &__cl.
 .dm functii end
 .*
 .*  macros for the different function types
@@ -761,6 +763,12 @@ command
 .if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct_  end
+.*
+.dm funct__  begin
+.sr __func=&*1
+.if '&function' eq '' .sr function=&*1.
+.functii &*
+.dm funct__  end
 .*
 .dm funct_f begin
 .sr ffunc=&*1
@@ -837,6 +845,9 @@ command
 .if &'length(&_func.) ne 0 .do begin
 .   :set symbol="_func" value=";.sf4 &_func.;.esf ".
 .do end
+.if &'length(&__func.) ne 0 .do begin
+.   :set symbol="__func" value=";.sf4 &__func.;.esf ".
+.do end
 .if &'length(&ffunc.) ne 0 .do begin
 .   :set symbol="ffunc" value=";.sf4 &ffunc.;.esf ".
 .do end
@@ -871,23 +882,19 @@ command
 .*    output classifications for the defined functions
 .*
 .dm classt begin
-.in 0
-.sr __class=&*1
-.if &e'&dohelp eq 0 .do begin
-:DL &NTEphi..:DT.Classification::DD.
+.if |&*1| ne |end| .do begin
+.   .if |&*1| eq |begin| .sr __class=&*2
+.   .el .sr __class=&*1
+.   .listnew Classification:
+.   .sr clitmc=0
+.   .sr *i=1
+.   .pe &__fnx.
+.   .   .clitm &__cltxt(&*i).;-sr *i=&*i+1;
 .do end
-.el .do begin
-:ZDL &NTEphi..:ZDT.Classification::ZDD.
+.if |&*1| ne |begin| .do begin
+.   .listend
+.   .sr clitmc=0
 .do end
-:set symbol="*extr" value=0.
-&__cltxt.
-.if &e'&dohelp eq 0 .do begin
-:eDL.
-.do end
-.el .do begin
-:ZeDL.
-.do end
-.in &INDlvl
 .dm classt end
 .*
 :cmt. include 'Safer C Library' related macros

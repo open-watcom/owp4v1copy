@@ -4,7 +4,7 @@
 int isascii( int c );
 .ixfunc2 '&CharTest' &func
 int __isascii( int c );
-.ixfunc2 '&CharTest' _&_func
+.ixfunc2 '&CharTest' &__func
 .if &'length(&wfunc.) ne 0 .do begin
 #include <wctype.h>
 int iswascii( wint_t c );
@@ -19,8 +19,8 @@ int _uisascii( int c );
 .desc begin
 The &func function tests for a character in the range from 0 to 127.
 .np
-The __&func function is identical to &func..
-Use __&func for ANSI/ISO naming conventions.
+The &__func function is identical to &func..
+Use &__func for ANSI/ISO naming conventions.
 .if &'length(&wfunc.) ne 0 .do begin
 .np
 The &wfunc function is similar to &func except that it accepts a
@@ -71,7 +71,7 @@ Char A is an ASCII character
 Char   is not an ASCII character
 Char Z is an ASCII character
 .exmp end
-.class WATCOM
-.np
-__&func conforms to ANSI/ISO naming conventions
+.class begin WATCOM
+.ansiname &__func
+.class end
 .system
