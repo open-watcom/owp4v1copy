@@ -154,6 +154,7 @@ base_headers =       &
         rpcnsi.h     &
         rpcnterr.h   &
         rpcproxy.h   &
+        rtutils.h    &
         schedule.h   &
         servprov.h   &
         shellapi.h   &
