@@ -1,0 +1,14 @@
+/*
+ *  schnlsp.h   Secure channel security provider definitions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _SCHNLSP_H_INCLUDED
+#define _SCHNLSP_H_INCLUDED
+
+:include readonly.sp
+#include <schannel.h>
+
+#endif /* _SCHNLSP_H_INCLUDED */
+
