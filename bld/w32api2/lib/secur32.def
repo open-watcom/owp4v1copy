@@ -23,6 +23,10 @@ EnumerateSecurityPackagesW
 ExportSecurityContext
 FreeContextBuffer
 FreeCredentialsHandle
+GetComputerObjectNameA
+GetComputerObjectNameA
+GetUserNameExA
+GetUserNameExW
 ImpersonateSecurityContext
 ImportSecurityContextA
 ImportSecurityContextW
@@ -65,4 +69,6 @@ SetContextAttributesA
 SetContextAttributesW
 SetCredentialsAttributesA
 SetCredentialsAttributesW
+TranslateNameA
+TranslateNameW
 VerifySignature

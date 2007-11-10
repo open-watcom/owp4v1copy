@@ -159,6 +159,8 @@ base_headers =       &
         schedule.h   &
         schnlsp.h    &
         sddl.h       &
+        secext.h     &
+        security.h   &
         servprov.h   &
         shellapi.h   &
         shtypes.h    &
