@@ -1022,27 +1022,34 @@ static void PragAlias( void )
     if( CurToken != T_LEFT_PAREN ) 
         return;
 
-    NextToken();
+    CompFlags.pre_processing = 1;
+    PPNextToken();
     alias_name = subst_name = NULL;
     alias_sym  = subst_sym  = NULL;
 
     if( CurToken == T_ID ) {
         alias_sym = SymLook( HashValue, Buffer );
+        if( alias_sym == 0) {
+            CErr2p( ERR_UNDECLARED_SYM, Buffer );
+        }
     } else if( CurToken == T_STRING ) {
         alias_name = CStrSave( Buffer );
     } else {
         return;     /* error */
     }
-    NextToken();
+    PPNextToken();
     MustRecog( T_COMMA );
     if( CurToken == T_ID ) {
         subst_sym = SymLook( HashValue, Buffer );
+        if( subst_sym == 0) {
+            CErr2p( ERR_UNDECLARED_SYM, Buffer );
+        }
     } else if( CurToken == T_STRING ) {
         subst_name = CStrSave( Buffer );
     } else {
         return;     /* error */
     }
-    NextToken();
+    PPNextToken();
 
     /* Add a new alias record - if it's valid - to the list */
     if( ( alias_name || alias_sym ) && ( subst_name || subst_sym ) ) {
@@ -1062,8 +1069,8 @@ static void PragAlias( void )
         }
         *alias = new_alias;
     }
-
     MustRecog( T_RIGHT_PAREN );
+    CompFlags.pre_processing = 0;
 }
 
 void CPragma( void )
