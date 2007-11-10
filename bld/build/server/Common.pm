@@ -45,6 +45,19 @@ sub read_config {
     close(CONFIG_FILE);
 }
 
+sub check_real_error
+{
+    if ($_[0] =~ /\*\*\* WARNING: Hyperlink name too long on line [0-9]+./) {
+       # ignore anoying warning, which has changed line number when
+       # some change is done into documentation
+       # it is more likely note than something danger and there is
+       # no reason why we should mark the build as unsuccesful
+       return 0;
+    } else {
+       return 1;
+    }
+}
+
 sub process_summary {
 
     my($inp_filename) = $_[0];
@@ -57,7 +70,7 @@ sub process_summary {
     # Read the build log file a line at a time and output the error summary.
     while (<INFILE>) {
         chomp;
-        if (/^[=]+ /) {
+        if (/^[=]+ .* [=]+$/) {
             @header = split;
             $current_project = $header[2];
             $source_location = $Common::config{"OW"};
@@ -65,7 +78,7 @@ sub process_summary {
             $current_project =~ /$source_location\\(.*)/i;
             $current_project = $1;
         }
-        if (/Warning|Error|Can not|ERROR|WARNING/) {
+        if (/Warning|Error|Can not|ERROR|WARNING/ and check_real_error($_)) {
             print OUTFILE "\nPROJECT $current_project\n";
             print OUTFILE "$_\n";
         }
@@ -141,7 +154,7 @@ sub process_compare
         foreach $candidate (@old_records) {
             if ($record eq $candidate) { $found = "yes"; }
         }
-        if ($found eq "no") {
+        if (($found eq "no") and check_real_error($record)) {
             if ($first_added eq "yes") {
                 print $fh "Messages Added\n";
                 print $fh "--------------\n\n";
@@ -162,7 +175,7 @@ sub process_compare
             foreach $candidate (@new_records) {
                 if ($record eq $candidate) { $found = "yes"; }
             }
-            if ($found eq "no") {
+            if (($found eq "no") and check_real_error($record)) {
                 if ($first_removed eq "yes") {
                     print $fh "Messages Removed\n";
                     print $fh "----------------\n\n";

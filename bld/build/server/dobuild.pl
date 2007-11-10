@@ -117,7 +117,7 @@ sub process_log
     
     open(LOGFILE, $_[0]) || die "Can't open $_[0]";
     while (<LOGFILE>) {
-        if (/^=====/) {
+        if (/^[=]+ .* [=]+$/) {
             if ($project_name ne "none") {
                 if ($first_message eq "yes") {
                     print REPORT "Failed!\n";
