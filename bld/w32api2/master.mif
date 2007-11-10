@@ -158,6 +158,7 @@ base_headers =       &
         schannel.h   &
         schedule.h   &
         schnlsp.h    &
+        sddl.h       &
         servprov.h   &
         shellapi.h   &
         shtypes.h    &
