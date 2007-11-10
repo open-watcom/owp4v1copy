@@ -1,0 +1,9 @@
+/*
+ *  _w32ials.h  Win32 include aliases
+ *
+:include crwatcnt.sp
+ */
+
+#pragma include_alias( <devpropdef.h>, <devprdef.h> )
+#pragma include_alias( <tcpestats.h>, <tcpestat.h> )
+

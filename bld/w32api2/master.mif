@@ -9,6 +9,7 @@ rsplice = wsplice -i$(hdr_dir) -i$(include_dir) -kRESOURCE $[@ $^@
 ws2splice = wsplice -i$(hdr_dir) -i$(include_dir) -kWINSOCK2 $[@ $^@
 
 base_headers =       &
+        _w32ials.h   &
         accctrl.h    &
         aclapi.h     &
         aclui.h      &
@@ -31,6 +32,7 @@ base_headers =       &
         ddeml.h      &
         ddraw.h      &
         ddstream.h   &
+        devprdef.h   &
         dhcpcsdk.h   &
         dimm.h       &
         dlgs.h       &
@@ -165,6 +167,7 @@ base_headers =       &
         shellapi.h   &
         shtypes.h    &
         snmp.h       &
+        spapidef.h   &
         sql.h        &
         sqltypes.h   &
         sspi.h       &
