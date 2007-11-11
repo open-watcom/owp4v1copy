@@ -64,7 +64,8 @@ template = &
         typetr01$(ext)  &
         unoset01$(ext)  &
         util01$(ext)    &
-        vector01$(ext)  
+        vector01$(ext)  &
+        smtptr01$(ext)
 
 # the list of .exe targets
 ext = .$(exe)
