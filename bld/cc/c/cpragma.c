@@ -1070,7 +1070,6 @@ static void PragAlias( void )
         *alias = new_alias;
     }
     MustRecog( T_RIGHT_PAREN );
-    CompFlags.pre_processing = 0;
 }
 
 void CPragma( void )
