@@ -24,37 +24,58 @@
 *
 *  ========================================================================
 *
-* Description:  Declares functions used to manipulate .COP directory files:
-*                   get_compact_entry()
-*                   get_extended_entry()
+* Description:  Declares structs and functions used to manipulate .COP
+*               FunctionsBlocks:
+*                   p_buffer
+*                   functions_block
+*                       code_block
+*                   get_code_blocks()
+*                   get_p_buffer()
+*                   parse_functions_block()
 *
 ****************************************************************************/
 
-#ifndef COPDIR_H_INCLUDED
-#define COPDIR_H_INCLUDED
+#ifndef COPFUNC_H_INCLUDED
+#define COPFUNC_H_INCLUDED
 
 #include <stdint.h>
 #include <stdio.h>
 
-#define DEFINED_NAME_MAX 78 // Per documentation, max length of a defined name.
-
 /* struct declarations */
 
-/* _MAX_PATH is used for the member_name because gendev will embed member names
- * which exceed the space allowed by _MAX_FNAME in DOS if one is found.
+/* These structs are based on the discussion in the Wiki, which should be
+ * consulted for further information on how the data is structured.
  */
 
-typedef struct {
-    char    defined_name[ DEFINED_NAME_MAX ];
-    char    member_name[ _MAX_PATH ];
-} directory_entry;
+/* This holds the raw contents of one or more contiguous P-buffers. The
+ * buffer is to be interpreted as an array of count uint8_t value. The
+ * value of count should always be a multiple of 80.
+ */
 
-/* enum declaration */
+typedef struct p_buffer_struct
+{
+    uint16_t    count;
+    uint8_t *   buffer;
+} p_buffer;
 
-typedef enum {
-    valid_entry,        // Both defined_name and member_name were found.
-    not_valid_entry     // The entry was not valid.
-} entry_found;
+/* This is the CodeBlock discussed in the Wiki. */
+
+typedef struct code_block_struct
+{
+    uint8_t     designator;
+    uint16_t    pass;
+    uint16_t    count;
+    uint16_t    cumulative_index;
+    uint8_t *   function;
+} code_block;
+
+/* This is the Variant A FunctionsBlock discussed in the Wiki. */
+
+typedef struct functions_block_struct
+{
+    uint16_t        count;
+    code_block *    code_blocks;
+} functions_block;
 
 /* function declarations */
 
@@ -62,11 +83,12 @@ typedef enum {
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
-entry_found     get_compact_entry( FILE * file, directory_entry * entry);
-entry_found     get_extended_entry( FILE * file, directory_entry * entry);
+code_block      *   get_code_blocks( uint8_t * * position, uint16_t count );
+p_buffer        *   get_p_buffer( FILE * file );
+functions_block *   parse_functions_block( uint8_t * * position);
 
 #ifdef  __cplusplus
 }               /* End of "C" linkage for C++ */
 #endif
 
-#endif          /* COPDIR_H_INCLUDED */
+#endif          /* COPFUNC_H_INCLUDED */

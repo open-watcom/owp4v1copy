@@ -33,8 +33,12 @@ cfc_objs = &
 
 copparse_objs = &
             copparse.obj &
+            copdev.obj   &
 	    copdir.obj   &
+	    copdrv.obj   &
             copfiles.obj &
+	    copfon.obj   &
+	    copfunc.obj  &
             common.obj   &
             research.obj &
             cmdlhelp.obj &
@@ -45,7 +49,7 @@ objs = &
             cfparse.obj  &
             cfputils.obj
 
-nwgml : cfcheck.exe copparse.exe .SYMBOLIC
+nwgml : cfcheck.exe cfparse.exe copparse.exe .SYMBOLIC
 !include exetarg.mif
 
 cfcheck.exe : $(cfc_objs) $(cf_common_objs) $(libs)

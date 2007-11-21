@@ -44,26 +44,28 @@
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
 
+#include "copdev.h"
 #include "copdir.h"
-#include "copfiles.h"
+#include "copdrv.h"
+#include "copfon.h"
 #include "gvars.h"
 
-/* These items might more properly be globals, used by all of wgml and gendev */
+/* These items might more properly be globals, used by all of wgml and gendev. */
 
-/* The count contains the number of directories */
+/* The count contains the number of directories. */
 
 typedef struct {
     uint16_t count;
     char * * directories;
 } directory_list;
 
-/* These should be globals, or part of a wgml/gendev file search module */
+/* These should be globals, or part of a wgml/gendev file search module. */
 
 static  directory_list  gml_lib_dirs;
 static  directory_list  gml_inc_dirs;
 static  directory_list  path_dirs;
 
-/* Function initialize_directory_list()
+/* Function initialize_directory_list().
  * Initializes in_directory_list from in_path_list.
  *
  * Parameters:
@@ -75,7 +77,7 @@ static  directory_list  path_dirs;
  *
  * Notes:
  *      in_directory_list should be in its as-created state.
- *      If in_path_list is NULL, *in_directory_list will not be changed.
+ *      If in_path_list is NULL, *in_directory_list will be cleared.
  *      If *in_directory_list->directories is not NULL on exit, it is a 
  *          single block of memory and can be freed with one statement.
  */
@@ -94,7 +96,12 @@ static void initialize_directory_list( char const * in_path_list, \
 
     /* If in_path_list is NULL, return at once. */
 
-    if( in_path_list == NULL ) return;
+    if( in_path_list == NULL ) {
+        in_list->count = 0;
+        mem_free( in_list->directories );
+        in_list->directories = NULL;
+        return;
+    }
 
     /* Determine the number of paths and the total length needed. */
 
@@ -107,7 +114,11 @@ static void initialize_directory_list( char const * in_path_list, \
                 byte_count++;
             }    
             i = j;
-            if( in_path_list[ i ] == '\0' ) break;
+            if( in_path_list[ i ] == '\0' ) {
+                if( in_path_list[ i - 1 ] == INCLUDE_SEP ) path_count++;
+                if( in_path_list[ i - 1 ] != PATH_SEP[ 0 ] ) byte_count++;
+                break;
+            }
             continue;
         }
         if( in_path_list[ i ] == INCLUDE_SEP ) {
@@ -148,7 +159,15 @@ static void initialize_directory_list( char const * in_path_list, \
                 *current++ = in_path_list[ j ];
             }    
             i = j;
-            if( in_path_list[ i ] == '\0' ) break;
+            if( in_path_list[ i ] == '\0' ) {
+                if( in_path_list[ i - 1 ] == INCLUDE_SEP ) {
+                    if( ++k < path_count ) array_base[ k ] = current;
+                }
+                if( in_path_list[ i - 1 ] != PATH_SEP[ 0 ] ) \
+                    *current++ = PATH_SEP[0];
+                *current++ = '\0';
+                break;
+            }
             continue;
         }
         if( in_path_list[ i ] == INCLUDE_SEP ) {
@@ -201,6 +220,10 @@ static void initialize_directory_list( char const * in_path_list, \
         return;
     }
 
+    /* If some paths were eliminated for length, then initialize in_list with
+     * the remaining paths (only).
+     */
+
     if( path_count < local_list.count) {
 
         in_list->count = path_count;
@@ -228,31 +251,31 @@ static void initialize_directory_list( char const * in_path_list, \
     return;
 }
 
-/* Local enum */
+/* local enum */
 
 typedef enum {
-    dir_v4_1_le,        // The file is a little-endian version 4.1 directory file.
-    le_v4_1_not_dir,    // The file is a little-endian version 4.1 device, driver, or font file.
-    not_le_v4_1,        // The file is not little-endian and/or not version 4.1.
+    dir_v4_1_se,        // The file is a same-endian version 4.1 directory file.
+    se_v4_1_not_dir,    // The file is a same-endian version 4.1 device, driver, or font file.
+    not_se_v4_1,        // The file is not same-endian and/or not version 4.1.
     not_bin_dev,        // The file is not a binary device file at all.
     file_error          // An error occurred while reading the file.
 } cop_file_type;
 
-/* Local function definitions */
+/* static function definitions */
 
 /* Function parse_header().
  * Determine if the current position of the input stream points to the
- * start of a valid little-endian version 4.1 binary device file and, if 
+ * start of a valid same-endian version 4.1 binary device file and, if 
  * it does, advance the stream to the first byte following the header.
  *
  * Parameter:
- *      in_file points the input stream
+ *      in_file points the input stream.
  *
  * Returns:
- *      dir_v4_1_le if the file is a little-endian version 4.1 directory file.
- *      le_v4_1_not_dir if the file is a little-endian version 4.1 device,
+ *      dir_v4_1_se if the file is a same-endian version 4.1 directory file.
+ *      se_v4_1_not_dir if the file is a same-endian version 4.1 device,
  *          driver, or font file.
- *      not_le_v4_1 if the file is not little-endian and/or not version 4.1.
+ *      not_se_v4_1 if the file is not same-endian and/or not version 4.1.
  *      not_bin_dev if the file is not a binary device file at all.
  *      file_error if an error occurred while reading the file.
  */
@@ -262,14 +285,12 @@ static cop_file_type parse_header( FILE * in_file )
     char        count;
     uint16_t    version;
 
-    /* Get the "magic number", which is the version length byte. */
+    /* Get the version length byte. */
 
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
 
-    /* If the "magic number" is not equal to 0x02,
-     * then this is not a binary device file.
-     */
+    /* If count is not equal to 0x02, then this is not a binary device file. */
 
     if( count != 0x02 ) return( not_bin_dev );
 
@@ -278,24 +299,24 @@ static cop_file_type parse_header( FILE * in_file )
     fread( &version, 2, 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
 
-    /* Check for a little_endian version 4.1 header.
-    *  Note: checking 0x0c00 would, presumably, identify a big-endian
+    /* Check for a same_endian version 4.1 header.
+    *  Note: checking 0x0c00 would, presumably, identify a different-endian
     *  version 4.1 header, if that ever becomes necessary.
     */
         
-    if( version != 0x000c ) return( not_le_v4_1 );
+    if( version != 0x000c ) return( not_se_v4_1 );
 
-    /* Skip the version text */
-    
     /* Get the version length byte */
 
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
 
+    /* Skip the version text. */
+
     fseek( in_file, count, SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
 
-    /* Get the file type byte */
+    /* Get the next length byte */
 
     count = fgetc( in_file );
 
@@ -306,9 +327,9 @@ static cop_file_type parse_header( FILE * in_file )
     /* Valid header, more data exists, determine the file type */
 
     if( count == 0x03 ) {
-        return( le_v4_1_not_dir );
+        return( se_v4_1_not_dir );
     } else {
-        return( dir_v4_1_le ); 
+        return( dir_v4_1_se ); 
     }
 }
 
@@ -318,12 +339,12 @@ static cop_file_type parse_header( FILE * in_file )
  * returns the corresponding member name.
  *
  * Parameters:
- *      in_dir:  the directory to search
- *      in_name: the defined name to match
+ *      in_dir points to the directory to search.
+ *      in_name points to the defined name to match.
  *
  * Returns:
- *      on success, the corresponding member name
- *      on failure, a NULL string
+ *      on success, the corresponding member name.
+ *      on failure, a NULL pointer.
  */
 
 static char * get_member_name( char const * in_dir, char const * in_name )
@@ -338,9 +359,12 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
     /* See if in_dir contains a wgmlst.cop file */
 
-    if( (strnlen_s( filename_buffer, _MAX_PATH  ) + strlen( "wgmlst.cop" ) + 1) > _MAX_PATH ) {
-        out_msg( "Directory path is too long to be used with 'wgmlst.cop'" \
-            "(limit is %i):\n  %s\n", _MAX_PATH - strlen( "wgmlst.cop" ), in_dir );
+    if( (strnlen_s( filename_buffer, _MAX_PATH  ) + strlen( "wgmlst.cop" ) \
+        + 1) > _MAX_PATH ) {
+
+        out_msg( "Directory path is too long to be used with 'wgmlst.cop' " \
+            "(limit is %i):\n  %s\n", _MAX_PATH - strlen( "wgmlst.cop" ), \
+            in_dir );
         return( member_name );
     }
 
@@ -361,34 +385,36 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
         /* The file was not a binary device (.COP) file. */
 
-        out_msg( "This directory contains a file named 'wgmlst.cop', \n" \
+        out_msg( "This directory contains a file named 'wgmlst.cop',\n" \
             "but that file is not a directory file:\n  %s\n", in_dir );
         break;
 
-    case not_le_v4_1:
+    case not_se_v4_1:
 
-        /* The file was not a little-endian version 4.1 file. */
+        /* The file was not a same-endian version 4.1 file. */
 
-        out_msg( "This directory contains a binary device directory, \n" \
-            "but it is either not version 4.1 or not little-endian:\n  %s\n", in_dir );
+        out_msg( "This directory contains a binary device directory,\n" \
+            "but it is either not version 4.1 or not same-endian:\n  %s\n", \
+            in_dir );
         break;
 
-    case le_v4_1_not_dir:
+    case se_v4_1_not_dir:
 
-        /* The file was a little-endian version 4.1 file, but not a directory file. */
+        /* The file was a same-endian version 4.1 file, but not a directory file. */
 
-        out_msg( "This directory may contain a binary device directory, \n" \
-            "but the file 'wgmlst.cop' is not a directory file:\n  %s\n", in_dir );
+        out_msg( "This directory may contain a binary device directory,\n" \
+            "but the file 'wgmlst.cop' is not a directory file:\n  %s\n", \
+            in_dir );
         break;
 
-    case dir_v4_1_le:
+    case dir_v4_1_se:
     
-        /* The file was a little-endian version 4.1 directory file */
+        /* The file was a same-endian version 4.1 directory file */
 
-        /* Skip the two-byte count. */
+        /* Skip the number of entries. */
 
-        fseek( directory_file, sizeof( uint16_t ), SEEK_CUR );
-        if( ferror( directory_file ) || feof( directory_file ) ) return( member_name );
+        fseek( directory_file, sizeof( uint32_t ), SEEK_CUR );
+        if( ferror( directory_file ) || feof( directory_file ) ) break;
 
         for( ;; ) {
 
@@ -401,10 +427,12 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
             case 0x0000:
 
-            /* Skip this value if it ever occurs. */
+                /* This should only happen when the "padding" is reached,
+                 * but continue in case there is more data.
+                 */
 
-                continue;    
-
+                continue;
+                
             case 0x0001:
 
             /* This will be an "extended" entry. */
@@ -413,17 +441,21 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
                     /* Catch the final entry and exit. */
 
-                    fread( &entry_type, sizeof( entry_type ), 1, directory_file );
-                    if( feof( directory_file ) || ferror( directory_file ) ) break;
+                    fread( &entry_type, sizeof( entry_type ), 1, \
+                        directory_file );
+                    if( feof( directory_file ) || ferror( directory_file ) ) \
+                        break;
                 
                     switch( entry_type) {
 
                     case 0x0000:
 
-                        /* If it ever occurs, it should indicate a "compact" entry. */
+                        /* This should only happen when the "padding" is 
+                         * reached,but continue in case there is more data.
+                         */
 
-                        break;    
-
+                        continue;
+                
                     case 0x0001:
                  
                         /* This is the only case where the loop is not exited. */
@@ -444,14 +476,16 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
                             /* Return the member name, if found. */
        
-                            if( !strcmp( in_name, current_entry.defined_name ) ) {
+                            if( !strcmp( in_name, current_entry.defined_name ) \
+                                ) {
+
                                 fclose( directory_file );
                                 directory_file = NULL;
                                 member_name = (char *) mem_alloc( strnlen_s( \
                                     current_entry.member_name, _MAX_PATH ) + 1 );
                                 strcpy_s( member_name, strnlen_s( \
-                                    current_entry.member_name, _MAX_PATH ) + 1, \
-                                    current_entry.member_name );
+                                    current_entry.member_name, _MAX_PATH ) \
+                                    + 1, current_entry.member_name );
                                 return( member_name );
                             }
 
@@ -461,23 +495,23 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
                             /* The entry was incomplete */
 
-                            out_msg("This directory file may be corrupt: %n  %s", \
-                                &filename_buffer );
+                            out_msg("This directory file may be corrupt:\n" \
+                                "  %s\n", &filename_buffer );
 
                             break;
                         default:
 
-                            /* The entry status is an unknown value */
+                            /* The entry_type is an unknown value */
 
-                            out_msg("wgml internal error");
+                            out_msg("wgml internal error\n");
                         }
                         break;
 
                     default:
 
-                        /* The entry type is an unknown value */
+                        /* The entry_type is an unknown value */
 
-                        out_msg("wgml internal error");
+                        out_msg("wgml internal error\n");
                     }
                     break;
                 }
@@ -489,7 +523,8 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
                 /* For any type, check the defined name */
 
-                entry_status = get_compact_entry( directory_file, &current_entry );
+                entry_status = get_compact_entry( directory_file, \
+                    &current_entry );
                 switch( entry_status ) {
 
                 case valid_entry:
@@ -513,23 +548,24 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
                     /* The entry was incomplete */
 
-                    out_msg("This directory file may be corrupt: %n  %s", &filename_buffer );
+                    out_msg("This directory file may be corrupt:\n  %s\n", \
+                        &filename_buffer );
 
                     break;
 
                 default:
 
-                    /* The entry status is an unknown value */
+                    /* The entry_type is an unknown value */
 
-                    out_msg("wgml internal error");
+                    out_msg("wgml internal error\n");
                 }
                 break;
 
             default:
 
-                /* The entry type is an unknown value */
+                /* The entry_type is an unknown value */
 
-                out_msg("wgml internal error");
+                out_msg("wgml internal error\n");
           }
         }
 
@@ -537,7 +573,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
     case file_error:
 
-        out_msg( "This directory may contain a binary device directory, \n" \
+        out_msg( "This directory may contain a binary device directory,\n" \
             "but a file error occurred when the file 'wgmlst.cop' was being "  \
             "read:\n  %s\n", in_dir );
         break;
@@ -546,7 +582,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
     /* parse_header() returned an unknown value */
 
-        out_msg("wgml internal error");
+        out_msg("wgml internal error\n");
     }
 
     fclose( directory_file );
@@ -560,16 +596,16 @@ static char * get_member_name( char const * in_dir, char const * in_name )
  * the corresponding :DEVICE, :DRIVER, or :FONT block.
  *
  * Parameter:
- *      in_name: the defined name to convert
+ *      in_name points to the defined name to convert.
  *
  * Globals used:
- *      GMLlibs: the content of the environment variable GML_LIB
- *      GMLincs: the content of the environment variable GML_INC
- *      Pathes:  the content of the environment variable PATH
+ *      GMLlibs points to the content of the environment variable GML_LIB.
+ *      GMLincs points to the content of the environment variable GML_INC.
+ *      Pathes points to the content of the environment variable PATH.
  *
  * Returns:
- *      on success, the fully-qualified name of the file to search for
- *      on failure, a NULL pointer
+ *      on success, the fully-qualified name of the file to search for.
+ *      on failure, a NULL pointer.
  */
 
 static char * get_cop_file( char const * in_name )
@@ -589,7 +625,8 @@ static char * get_cop_file( char const * in_name )
 
             /* See if the current directory contains the desired library. */
 
-            member_name = get_member_name( gml_lib_dirs.directories[ i ], in_name );
+            member_name = get_member_name( gml_lib_dirs.directories[ i ], \
+                in_name );
             if( member_name != NULL ) {
                 current_path = gml_lib_dirs.directories[ i ];
                 break;
@@ -607,7 +644,8 @@ static char * get_cop_file( char const * in_name )
 
                 /* See if the current directory contains the desired library. */
 
-                member_name = get_member_name( gml_inc_dirs.directories[ i ], in_name );
+                member_name = get_member_name( gml_inc_dirs.directories[ i ], \
+                    in_name );
                 if( member_name != NULL ) {
                     current_path = gml_inc_dirs.directories[ i ];
                     break;
@@ -626,7 +664,8 @@ static char * get_cop_file( char const * in_name )
 
                 /* See if the current directory contains the desired library. */
 
-                member_name = get_member_name( path_dirs.directories[ i ], in_name );
+                member_name = get_member_name( path_dirs.directories[ i ], \
+                    in_name );
                 if( member_name != NULL ) {
                     current_path = path_dirs.directories[ i ];
                     break;
@@ -642,8 +681,8 @@ static char * get_cop_file( char const * in_name )
     if( member_name != NULL ) {
         if( memchr( member_name, '.', strnlen_s( member_name, _MAX_PATH ) ) == \
             NULL ) {
-            buffer_length = strnlen_s( gml_lib_dirs.directories[ i ], _MAX_PATH ) \
-                + strnlen_s( member_name, _MAX_PATH ) + strlen( ".cop" ) + 1;
+            buffer_length = strnlen_s( current_path, _MAX_PATH ) + \
+                strnlen_s( member_name, _MAX_PATH ) + strlen( ".cop" ) + 1;
             if( buffer_length <= _MAX_PATH ) {
                 file_name = mem_alloc( buffer_length );
                 strcpy_s( file_name, buffer_length, current_path );
@@ -652,8 +691,8 @@ static char * get_cop_file( char const * in_name )
                 return( file_name );
             }
         } else {
-            buffer_length = strnlen_s( gml_lib_dirs.directories[ i ], _MAX_PATH ) \
-                + strnlen_s( member_name, _MAX_PATH ) + 1;
+            buffer_length = strnlen_s( current_path, _MAX_PATH ) + \
+                strnlen_s( member_name, _MAX_PATH ) + 1;
             if( buffer_length <= _MAX_PATH ) {
                 file_name = mem_alloc( buffer_length );
                 strcpy_s( file_name, buffer_length, current_path );
@@ -664,8 +703,8 @@ static char * get_cop_file( char const * in_name )
             
         /* If we get here, then the file name is too long. */
                 
-        out_msg( "File name for %s is too long (limit is %i):\n  %s%s\n", in_name, \
-            _MAX_PATH, current_path, member_name );
+        out_msg( "File name for %s is too long (limit is %i):\n  %s%s\n", \
+            in_name, _MAX_PATH, current_path, member_name );
         mem_free( file_name );
         file_name = NULL;
         mem_free( member_name );
@@ -676,27 +715,110 @@ static char * get_cop_file( char const * in_name )
     return( file_name );
 }
 
-/* Global function definitions */
+/* extern function definitions */
 
 /* Function get_cop_device().
  * Converts the defined name of a :DEVICE block into a cop_device struct
  * containing the information in that :DEVICE block.
  *
  * Parameter:
- *      in_name: the defined name of the device
+ *      in_name points to the defined name of the device.
  *
  * Return:
- *      on success, a cop_device instance containing the data
- *      on failure, a NULL pointer
+ *      on success, a cop_device instance containing the data.
+ *      on failure, a NULL pointer.
  */
 
 cop_device * get_cop_device( char const * in_name )
 {
-    char        *    file_name   = NULL;
-    cop_device  *   out_device  = NULL;
+    char            *    file_name   = NULL;
+    cop_device      *   out_device  = NULL;
+    cop_file_type       file_type;
+    FILE            *   device_file = NULL;
+
+    /* Acquire the file, if it exists. */
 
     file_name = get_cop_file( in_name );
-    // do all processing, including error messages, requiring file_name
+    if( file_name == NULL ) {
+        out_msg( "No entry for the device %s was found.\n", in_name );
+        return( out_device );
+    }
+
+    fopen_s( &device_file, file_name, "rb" );
+    if( device_file == NULL ) {
+        out_msg( "The file for the device %s was not found:\n  %s\n", in_name, \
+            file_name );
+        mem_free( file_name );
+        file_name = NULL;
+        return( out_device );
+    }
+
+    /* Determine if the file encodes a :DEVICE block. */
+    
+    file_type = parse_header( device_file );
+
+    switch( file_type ) {
+    case not_bin_dev:
+
+        /* The file was not a binary device (.COP) file. */
+
+        out_msg( "This file is not a binary device file:\n  %s\n", file_name );
+        break;
+
+    case not_se_v4_1:
+
+        /* The file was not a same-endian version 4.1 file. */
+
+        out_msg( "This file is a binary device file,\n" \
+            "but it is either not version 4.1 or not same-endian:\n  %s\n", \
+            file_name );
+        break;
+
+    case se_v4_1_not_dir:
+
+        /* The file was a same-endian version 4.1 file,
+         * but not a directory file.
+         */
+
+        if( !is_dev_file( device_file ) ) {
+            out_msg( "This file is supposed to be for the device %s, but it " \
+                "does not encode a device:\n  %s\n", in_name, file_name );
+            break;
+        }
+
+        out_device = parse_device( device_file );
+        if( out_device == NULL ) \
+            out_msg( "The file for the device %s appears to be corrupted:\n" \
+                "  %s\n", in_name, file_name );
+
+        break;
+
+    case dir_v4_1_se:
+    
+        /* The file was a same-endian version 4.1 directory file. */
+
+        out_msg( "This file is a directory file for a binary device library:" \
+            "\n  %s\n", file_name );
+        break;
+
+    case file_error:
+
+        /* A file error occurred */
+
+        out_msg( "This directory may contain a binary device directory,\n" \
+            "but a file error occurred when this file was being read:\n  %s\n", \
+            file_name );
+        break;
+
+    default:
+
+        /* parse_header() returned an unknown value. */
+
+        out_msg("wgml internal error\n");
+    }
+
+    fclose( device_file );
+    device_file = NULL;
     mem_free( file_name );
     file_name = NULL;
 
@@ -708,20 +830,103 @@ cop_device * get_cop_device( char const * in_name )
  * containing the information in that :DRIVER block.
  *
  * Parameter:
- *      in_name: the defined name of the device
+ *      in_name points to the defined name of the device.
  *
  * Returns:
- *      on success, a cop_driver instance containing the data
- *      on failure, a NULL pointer
+ *      on success, a cop_driver instance containing the data.
+ *      on failure, a NULL pointer.
  */
 
 cop_driver * get_cop_driver( char const * in_name )
 {
-    char        *    file_name   = NULL;
-    cop_driver  *   out_driver  = NULL;
+    char            *   file_name   = NULL;
+    cop_driver      *   out_driver  = NULL;
+    cop_file_type       file_type;
+    FILE            *   driver_file = NULL;
+
+    /* Acquire the file, if it exists. */
 
     file_name = get_cop_file( in_name );
-    // do all processing, including error messages, requiring file_name
+    if( file_name == NULL ) {
+        out_msg( "No entry for the driver %s was found.\n", in_name );
+        return( out_driver );
+    }
+
+    fopen_s( &driver_file, file_name, "rb" );
+    if( driver_file == NULL ) {
+        out_msg( "The file for the driver %s was not found:\n  %s\n", in_name, \
+            file_name );
+        mem_free( file_name );
+        file_name = NULL;
+        return( out_driver );
+    }
+
+    /* Determine if the file encodes a :DRIVER block. */
+    
+    file_type = parse_header( driver_file );
+
+    switch( file_type ) {
+    case not_bin_dev:
+
+        /* The file was not a binary device (.COP) file. */
+
+        out_msg( "This file is not a binary device file:\n  %s\n", file_name );
+        break;
+
+    case not_se_v4_1:
+
+        /* The file was not a same-endian version 4.1 file. */
+
+        out_msg( "This file is a binary device file,\n" \
+            "but it is either not version 4.1 or not same-endian:\n  %s\n", \
+            file_name );
+        break;
+
+    case se_v4_1_not_dir:
+
+        /* The file was a same-endian version 4.1 file,
+         * but not a directory file.
+         */
+
+        if( !is_drv_file( driver_file ) ) {
+            out_msg( "This file is supposed to be for the driver %s, but it " \
+                "does not encode a driver:\n  %s\n", in_name, file_name );
+            break;
+        }
+
+        out_driver = parse_driver( driver_file );
+        if( out_driver == NULL ) \
+            out_msg( "The file for the driver %s appears to be corrupted:\n" \
+                "  %s\n", in_name, file_name );
+
+        break;
+
+    case dir_v4_1_se:
+    
+        /* The file was a same-endian version 4.1 directory file. */
+
+        out_msg( "This file is a directory file for a binary device library:" \
+            "\n  %s\n", file_name );
+        break;
+
+    case file_error:
+
+        /* A file error occurred */
+
+        out_msg( "This directory may contain a binary device directory,\n" \
+            "but a file error occurred when this file was being read:\n  %s\n", \
+            file_name );
+        break;
+
+    default:
+
+        /* parse_header() returned an unknown value. */
+
+        out_msg("wgml internal error\n");
+    }
+
+    fclose( driver_file );
+    driver_file = NULL;
     mem_free( file_name );
     file_name = NULL;
 
@@ -733,20 +938,103 @@ cop_driver * get_cop_driver( char const * in_name )
  * containing the information in that :FONT block.
  *
  * Parameter:
- *      in_name: the defined name of the font
+ *      in_name points to the defined name of the font.
  *
  * Returns:
- *      on success, a cop_font instance containing the data
- *      on failure, a NULL pointer
+ *      on success, a cop_font instance containing the data.
+ *      on failure, a NULL pointer.
  */
 
 cop_font * get_cop_font( char const * in_name )
 {
-    char        *    file_name   = NULL;
-    cop_font    *   out_font    = NULL;
+    char            *   file_name   = NULL;
+    cop_font        *   out_font    = NULL;
+    cop_file_type       file_type;
+    FILE            *   font_file   = NULL;
+
+    /* Acquire the file, if it exists. */
 
     file_name = get_cop_file( in_name );
-    // do all processing, including error messages, requiring file_name
+    if( file_name == NULL ) {
+        out_msg( "No entry for the font %s was found.\n", in_name );
+        return( out_font );
+    }
+
+    fopen_s( &font_file, file_name, "rb" );
+    if( font_file == NULL ) {
+        out_msg( "The file for the font %s was not found:\n  %s\n", in_name, \
+            file_name );
+        mem_free( file_name );
+        file_name = NULL;
+        return( out_font );
+    }
+
+    /* Determine if the file encodes a :FONT block. */
+    
+    file_type = parse_header( font_file );
+
+    switch( file_type ) {
+    case not_bin_dev:
+
+        /* The file was not a binary device (.COP) file. */
+
+        out_msg( "This file is not a binary device file:\n  %s\n", file_name );
+        break;
+
+    case not_se_v4_1:
+
+        /* The file was not a same-endian version 4.1 file. */
+
+        out_msg( "This file is a binary device file,\n" \
+            "but it is either not version 4.1 or not same-endian:\n  %s\n", \
+            file_name );
+        break;
+
+    case se_v4_1_not_dir:
+
+        /* The file was a same-endian version 4.1 file,
+         * but not a directory file.
+         */
+
+        if( !is_fon_file( font_file ) ) {
+            out_msg( "This file is supposed to be for the font %s, but it " \
+                "does not encode a font:\n  %s\n", in_name, file_name );
+            break;
+        }
+
+        out_font = parse_font( font_file );
+        if( out_font == NULL ) \
+            out_msg( "The file for the font %s appears to be corrupted:\n" \
+                "  %s\n", in_name, file_name );
+
+        break;
+
+    case dir_v4_1_se:
+    
+        /* The file was a same-endian version 4.1 directory file. */
+
+        out_msg( "This file is a directory file for a binary device library:" \
+            "\n  %s\n", file_name );
+        break;
+
+    case file_error:
+
+        /* A file error occurred */
+
+        out_msg( "This directory may contain a binary device directory,\n" \
+            "but a file error occurred when this file was being read:\n  %s\n", \
+            file_name );
+        break;
+
+    default:
+
+        /* parse_header() returned an unknown value. */
+
+        out_msg("wgml internal error\n");
+    }
+
+    fclose( font_file );
+    font_file = NULL;
     mem_free( file_name );
     file_name = NULL;
 

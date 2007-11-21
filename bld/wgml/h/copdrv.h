@@ -24,37 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  Declares functions used to manipulate .COP directory files:
-*                   get_compact_entry()
-*                   get_extended_entry()
+* Description:  Declares functions used to manipulate .COP driver files:
+*                   is_drv_file()
+*                   parse_driver()
 *
 ****************************************************************************/
 
-#ifndef COPDIR_H_INCLUDED
-#define COPDIR_H_INCLUDED
+#ifndef COPDRV_H_INCLUDED
+#define COPDRV_H_INCLUDED
 
-#include <stdint.h>
-#include <stdio.h>
-
-#define DEFINED_NAME_MAX 78 // Per documentation, max length of a defined name.
-
-/* struct declarations */
-
-/* _MAX_PATH is used for the member_name because gendev will embed member names
- * which exceed the space allowed by _MAX_FNAME in DOS if one is found.
- */
-
-typedef struct {
-    char    defined_name[ DEFINED_NAME_MAX ];
-    char    member_name[ _MAX_PATH ];
-} directory_entry;
-
-/* enum declaration */
-
-typedef enum {
-    valid_entry,        // Both defined_name and member_name were found.
-    not_valid_entry     // The entry was not valid.
-} entry_found;
+#include "copfiles.h"
 
 /* function declarations */
 
@@ -62,11 +41,11 @@ typedef enum {
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
-entry_found     get_compact_entry( FILE * file, directory_entry * entry);
-entry_found     get_extended_entry( FILE * file, directory_entry * entry);
+bool            is_drv_file( FILE * file );
+cop_driver  *   parse_driver( FILE * file );
 
 #ifdef  __cplusplus
 }               /* End of "C" linkage for C++ */
 #endif
 
-#endif          /* COPDIR_H_INCLUDED */
+#endif          /* COPDRV_H_INCLUDED */

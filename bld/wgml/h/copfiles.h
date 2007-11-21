@@ -448,9 +448,9 @@ typedef struct
 extern "C" {    /* Use "C" linkage when in C++ mode */
 #endif
 
-cop_device * get_cop_device( char const * defined_name );
-cop_driver * get_cop_driver( char const * defined_name );
-cop_font   * get_cop_font( char const * defined_name );
+cop_device  *   get_cop_device( char const * defined_name );
+cop_driver  *   get_cop_driver( char const * defined_name );
+cop_font    *   get_cop_font( char const * defined_name );
 
 #ifdef  __cplusplus
 }               /* End of "C" linkage for C++ */
