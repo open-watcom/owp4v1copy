@@ -14,37 +14,37 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
 
-    <CPCMD> <DEVDIR>/misc/unicode.*    <RELROOT>/rel2/binw/
-    <CPCMD> <DEVDIR>/misc/watcom.ico   <RELROOT>/rel2/
-    <CPCMD> <DEVDIR>/misc/unicode.*    <RELROOT>/rel2/binl/
-    <CPCMD> <OWROOT>/license.txt       <RELROOT>/rel2/license.txt
+    <CPCMD> <DEVDIR>/misc/unicode.*    <RELROOT>/binw/
+    <CPCMD> <DEVDIR>/misc/watcom.ico   <RELROOT>/
+    <CPCMD> <DEVDIR>/misc/unicode.*    <RELROOT>/binl/
+    <CPCMD> <OWROOT>/license.txt       <RELROOT>/license.txt
 
 # NT, OS2 32-bit version
-    <CCCMD> <DEVDIR>/sdk/rc/wres/flat386/mf_r/wres.lib  <RELROOT>/rel2/lib386/wresf.lib
-    <CCCMD> <DEVDIR>/sdk/rc/wres/flat386/mf_s/wres.lib  <RELROOT>/rel2/lib386/wresfs.lib
+    <CCCMD> <DEVDIR>/sdk/rc/wres/flat386/mf_r/wres.lib  <RELROOT>/lib386/wresf.lib
+    <CCCMD> <DEVDIR>/sdk/rc/wres/flat386/mf_s/wres.lib  <RELROOT>/lib386/wresfs.lib
 # OSI 32-bit version
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/small386/ms_r/wres.lib <RELROOT>/rel2/lib386/osi/wresf.lib
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/small386/ms_s/wres.lib <RELROOT>/rel2/lib386/osi/wresfs.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/small386/ms_r/wres.lib <RELROOT>/lib386/osi/wresf.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/small386/ms_s/wres.lib <RELROOT>/lib386/osi/wresfs.lib
 # DOS 32-bit version
-    <CCCMD> <DEVDIR>/sdk/rc/wres/small386/ms_r/wres.lib <RELROOT>/rel2/lib386/dos/wresf.lib
-    <CCCMD> <DEVDIR>/sdk/rc/wres/small386/ms_s/wres.lib <RELROOT>/rel2/lib386/dos/wresfs.lib
+    <CCCMD> <DEVDIR>/sdk/rc/wres/small386/ms_r/wres.lib <RELROOT>/lib386/dos/wresf.lib
+    <CCCMD> <DEVDIR>/sdk/rc/wres/small386/ms_s/wres.lib <RELROOT>/lib386/dos/wresfs.lib
 # AXP version
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/ntaxp/_s/wres.lib   <RELROOT>/rel2/libaxp/
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/ntaxp/_s/wres.lib   <RELROOT>/libaxp/
 # LINUX version
-    <CCCMD> <DEVDIR>/sdk/rc/wres/linux386/mf_r/wres.lib <RELROOT>/rel2/lib386/linux/wresf.lib
-    <CCCMD> <DEVDIR>/sdk/rc/wres/linux386/mf_s/wres.lib <RELROOT>/rel2/lib386/linux/wresfs.lib
+    <CCCMD> <DEVDIR>/sdk/rc/wres/linux386/mf_r/wres.lib <RELROOT>/lib386/linux/wresf.lib
+    <CCCMD> <DEVDIR>/sdk/rc/wres/linux386/mf_s/wres.lib <RELROOT>/lib386/linux/wresfs.lib
 # QNX version
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/qnx386/ms_r/wres.lib <RELROOT>/rel2/lib386/qnx/wresf.lib
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/qnx386/ms_s/wres.lib <RELROOT>/rel2/lib386/qnx/wresfs.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/qnx386/ms_r/wres.lib <RELROOT>/lib386/qnx/wresf.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/qnx386/ms_s/wres.lib <RELROOT>/lib386/qnx/wresfs.lib
 
 # DOS 16-bit version
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/mm/wres.lib    <RELROOT>/rel2/lib286/wresm.lib
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/ml/wres.lib    <RELROOT>/rel2/lib286/wresl.lib
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/ms/wres.lib   <RELROOT>/rel2/lib286/wress.lib
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/mc/wres.lib   <RELROOT>/rel2/lib286/wresc.lib
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/mh/wres.lib   <RELROOT>/rel2/lib286/wresh.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/mm/wres.lib    <RELROOT>/lib286/wresm.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/ml/wres.lib    <RELROOT>/lib286/wresl.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/ms/wres.lib   <RELROOT>/lib286/wress.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/mc/wres.lib   <RELROOT>/lib286/wresc.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/dosi86/mh/wres.lib   <RELROOT>/lib286/wresh.lib
 # OS2 16-bit version
-#    <CCCMD> <DEVDIR>/sdk/rc/wres/os2i86/ml/wres.lib    <RELROOT>/rel2/lib286/os2/wresl.lib
+#    <CCCMD> <DEVDIR>/sdk/rc/wres/os2i86/ml/wres.lib    <RELROOT>/lib286/os2/wresl.lib
 
 [ BLOCK <1> clean ]
 #==================

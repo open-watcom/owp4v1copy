@@ -15,7 +15,7 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_qnx) <2*> ]
-    <CPCMD> <PROJDIR>/qnx/tix/*.tix <RELROOT>/rel2/qnx/tix/
+    <CPCMD> <PROJDIR>/qnx/tix/*.tix <RELROOT>/qnx/tix/
 
 [ BLOCK <1> clean ]
 #==================

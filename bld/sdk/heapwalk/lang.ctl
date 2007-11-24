@@ -15,7 +15,7 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> <DEVDIR>/sdk/heapwalk/wini86/wheapwlk.exe <RELROOT>/rel2/binw/wheapwlk.exe
+    <CPCMD> <DEVDIR>/sdk/heapwalk/wini86/wheapwlk.exe <RELROOT>/binw/wheapwlk.exe
 
 [ BLOCK <1> clean ]
 #==================

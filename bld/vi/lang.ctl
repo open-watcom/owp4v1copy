@@ -15,50 +15,50 @@ cdsay .
 #========================
 # Common stuff
 
-    <CPCMD> <PROJDIR>/dat/v*.cmd    <RELROOT>/rel2/binp/
-    <CPCMD> <PROJDIR>/dat/v*.bat    <RELROOT>/rel2/binw/
-    <CPCMD> <PROJDIR>/dat/*.vi      <RELROOT>/rel2/eddat/
-    <CPCMD> <PROJDIR>/dat/*.cfg     <RELROOT>/rel2/eddat/
-    <CPCMD> <PROJDIR>/dat/*.dat     <RELROOT>/rel2/eddat/
-    <CPCMD> <PROJDIR>/dat/*.ini     <RELROOT>/rel2/eddat/
-    <CPCMD> <PROJDIR>/dat/bindvi.*  <RELROOT>/rel2/eddat/
-    <CPCMD> <PROJDIR>/doc/*.hlp  <RELROOT>/rel2/eddat/
+    <CPCMD> <PROJDIR>/dat/v*.cmd                <RELROOT>/binp/
+    <CPCMD> <PROJDIR>/dat/v*.bat                <RELROOT>/binw/
+    <CPCMD> <PROJDIR>/dat/*.vi                  <RELROOT>/eddat/
+    <CPCMD> <PROJDIR>/dat/*.cfg                 <RELROOT>/eddat/
+    <CPCMD> <PROJDIR>/dat/*.dat                 <RELROOT>/eddat/
+    <CPCMD> <PROJDIR>/dat/*.ini                 <RELROOT>/eddat/
+    <CPCMD> <PROJDIR>/dat/bindvi.*              <RELROOT>/eddat/
+    <CPCMD> <PROJDIR>/doc/*.hlp                 <RELROOT>/eddat/
 
   [ IFDEF (os_dos "") <2*> ]
-#    <CPCMD> <PROJDIR>/obj286/vi.exe            <RELROOT>/rel2/binw/vi286.exe
-    <CPCMD> <PROJDIR>/dos386/vi.exe             <RELROOT>/rel2/binw/vi.exe
-    <CPCMD> <PROJDIR>/ctags/dos386/ctags.exe    <RELROOT>/rel2/binw/ctags.exe
-    <CPCMD> <PROJDIR>/bind/dosi86/edbind.exe    <RELROOT>/rel2/binw/edbind.exe
+#    <CPCMD> <PROJDIR>/obj286/vi.exe            <RELROOT>/binw/vi286.exe
+    <CPCMD> <PROJDIR>/dos386/vi.exe             <RELROOT>/binw/vi.exe
+    <CPCMD> <PROJDIR>/ctags/dos386/ctags.exe    <RELROOT>/binw/ctags.exe
+    <CPCMD> <PROJDIR>/bind/dosi86/edbind.exe    <RELROOT>/binw/edbind.exe
 
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> <PROJDIR>/wini86/vi.exe             <RELROOT>/rel2/binw/viw.exe
-    <CPCMD> <PROJDIR>/win386/vi.exe             <RELROOT>/rel2/binw/viwp.exe
+    <CPCMD> <PROJDIR>/wini86/vi.exe             <RELROOT>/binw/viw.exe
+    <CPCMD> <PROJDIR>/win386/vi.exe             <RELROOT>/binw/viwp.exe
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <PROJDIR>/nt386/vi.exe              <RELROOT>/rel2/binnt/vi.exe
-    <CPCMD> <PROJDIR>/nt386.win/vi.exe          <RELROOT>/rel2/binnt/viw.exe
-    <CPCMD> <PROJDIR>/ctags/nt386/ctags.exe     <RELROOT>/rel2/binnt/ctags.exe
-    <CPCMD> <PROJDIR>/bind/nt386/edbind.exe     <RELROOT>/rel2/binnt/edbind.exe
+    <CPCMD> <PROJDIR>/nt386/vi.exe              <RELROOT>/binnt/vi.exe
+    <CPCMD> <PROJDIR>/nt386.win/vi.exe          <RELROOT>/binnt/viw.exe
+    <CPCMD> <PROJDIR>/ctags/nt386/ctags.exe     <RELROOT>/binnt/ctags.exe
+    <CPCMD> <PROJDIR>/bind/nt386/edbind.exe     <RELROOT>/binnt/edbind.exe
 
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <PROJDIR>/ntaxp/vi.exe              <RELROOT>/rel2/axpnt/vi.exe
-    <CPCMD> <PROJDIR>/ntaxp.win/vi.exe          <RELROOT>/rel2/axpnt/viw.exe
-    <CPCMD> <PROJDIR>/ctags/ntaxp/ctags.exe     <RELROOT>/rel2/axpnt/ctags.exe
-    <CPCMD> <PROJDIR>/bind/ntaxp/edbind.exe     <RELROOT>/rel2/axpnt/edbind.exe
+    <CPCMD> <PROJDIR>/ntaxp/vi.exe              <RELROOT>/axpnt/vi.exe
+    <CPCMD> <PROJDIR>/ntaxp.win/vi.exe          <RELROOT>/axpnt/viw.exe
+    <CPCMD> <PROJDIR>/ctags/ntaxp/ctags.exe     <RELROOT>/axpnt/ctags.exe
+    <CPCMD> <PROJDIR>/bind/ntaxp/edbind.exe     <RELROOT>/axpnt/edbind.exe
 
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> <PROJDIR>/os2386/vi.exe             <RELROOT>/rel2/binp/vi.exe
-    <CPCMD> <PROJDIR>/ctags/os2386/ctags.exe    <RELROOT>/rel2/binp/ctags.exe
-    <CPCMD> <PROJDIR>/bind/os2386/edbind.exe    <RELROOT>/rel2/binp/edbind.exe
+    <CPCMD> <PROJDIR>/os2386/vi.exe             <RELROOT>/binp/vi.exe
+    <CPCMD> <PROJDIR>/ctags/os2386/ctags.exe    <RELROOT>/binp/ctags.exe
+    <CPCMD> <PROJDIR>/bind/os2386/edbind.exe    <RELROOT>/binp/edbind.exe
 
   [ IFDEF (os_qnx) <2*> ]
-    <CPCMD> <PROJDIR>/qnxi86/vi.exe             <RELROOT>/rel2/qnx/binq/vi
+    <CPCMD> <PROJDIR>/qnxi86/vi.exe             <RELROOT>/qnx/binq/vi
 
   [ IFDEF (os_linux "") <2*> ]
-    <CPCMD> <PROJDIR>/linux386/vi.exe           <RELROOT>/rel2/binl/vi
-    <CPCMD> <PROJDIR>/linux386/vi.sym           <RELROOT>/rel2/binl/vi.sym
-    <CPCMD> <PROJDIR>/ctags/linux386/ctags.exe  <RELROOT>/rel2/binl/ctags
-    <CPCMD> <PROJDIR>/bind/linux386/edbind.exe  <RELROOT>/rel2/binl/edbind
+    <CPCMD> <PROJDIR>/linux386/vi.exe           <RELROOT>/binl/vi
+    <CPCMD> <PROJDIR>/linux386/vi.sym           <RELROOT>/binl/vi.sym
+    <CPCMD> <PROJDIR>/ctags/linux386/ctags.exe  <RELROOT>/binl/ctags
+    <CPCMD> <PROJDIR>/bind/linux386/edbind.exe  <RELROOT>/binl/edbind
 
 [ BLOCK <1> clean ]
 #==================

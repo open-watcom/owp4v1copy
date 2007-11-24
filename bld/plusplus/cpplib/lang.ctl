@@ -8,7 +8,7 @@ set PROJDIR=<CWD>
 
 cdsay .
 
-set destdir=<RELROOT>/rel2
+set destdir=<RELROOT>
 
 #
 # Make sure we have the reference compilers
@@ -20,7 +20,7 @@ set destdir=<RELROOT>/rel2
 
 [ BLOCK <1> rel2 ]
 #=================
-    set destdir=<RELROOT>/rel2
+    set destdir=<RELROOT>
 
 [ BLOCK <1> nlang ]
 #==================

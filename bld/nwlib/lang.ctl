@@ -14,31 +14,31 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> dos386/wlib.exe  <RELROOT>/rel2/binw/
-    <CPCMD> dos386/wlib.sym  <RELROOT>/rel2/binw/
+    <CPCMD> dos386/wlib.exe  <RELROOT>/binw/
+    <CPCMD> dos386/wlib.sym  <RELROOT>/binw/
 
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> os2386/wlib.exe  <RELROOT>/rel2/binp/
-    <CPCMD> os2386/wlibd.dll <RELROOT>/rel2/binp/dll/
-    <CPCMD> os2386/wlibd.sym <RELROOT>/rel2/binp/dll/
+    <CPCMD> os2386/wlib.exe  <RELROOT>/binp/
+    <CPCMD> os2386/wlibd.dll <RELROOT>/binp/dll/
+    <CPCMD> os2386/wlibd.sym <RELROOT>/binp/dll/
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> nt386/wlib.exe   <RELROOT>/rel2/binnt/
-    <CPCMD> nt386/wlibd.dll  <RELROOT>/rel2/binnt/
-    <CPCMD> nt386/wlibd.sym  <RELROOT>/rel2/binnt/
+    <CPCMD> nt386/wlib.exe   <RELROOT>/binnt/
+    <CPCMD> nt386/wlibd.dll  <RELROOT>/binnt/
+    <CPCMD> nt386/wlibd.sym  <RELROOT>/binnt/
 
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> ntaxp/wlib.exe   <RELROOT>/rel2/axpnt/
-    <CPCMD> ntaxp/wlibd.dll  <RELROOT>/rel2/axpnt/
-    <CPCMD> ntaxp/wlibd.sym  <RELROOT>/rel2/axpnt/
+    <CPCMD> ntaxp/wlib.exe   <RELROOT>/axpnt/
+    <CPCMD> ntaxp/wlibd.dll  <RELROOT>/axpnt/
+    <CPCMD> ntaxp/wlibd.sym  <RELROOT>/axpnt/
 
   [ IFDEF (os_qnx) <2*> ]
-    <CPCMD> qnx386/wlib.exe  <RELROOT>/rel2/qnx/binq/wlib
-    <CPCMD> qnx386/wlib.sym  <RELROOT>/rel2/qnx/sym/wlib.sym
+    <CPCMD> qnx386/wlib.exe  <RELROOT>/qnx/binq/wlib
+    <CPCMD> qnx386/wlib.sym  <RELROOT>/qnx/sym/wlib.sym
 
   [ IFDEF (os_linux "") <2*> ]
-    <CPCMD> linux386/wlib.exe  <RELROOT>/rel2/binl/wlib
-    <CPCMD> linux386/wlib.sym  <RELROOT>/rel2/binl/wlib.sym
+    <CPCMD> linux386/wlib.exe  <RELROOT>/binl/wlib
+    <CPCMD> linux386/wlib.sym  <RELROOT>/binl/wlib.sym
 
 [ BLOCK <1> clean ]
 #==================

@@ -24,22 +24,22 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> <DEVDIR>/browser/brg/dos386/wbrg.exe    <RELROOT>/rel2/binw/wbrg.exe
+    <CPCMD> <DEVDIR>/browser/brg/dos386/wbrg.exe    <RELROOT>/binw/wbrg.exe
 
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> <DEVDIR>/browser/wini86/wbrw.exe        <RELROOT>/rel2/binw/wbrw.exe
+    <CPCMD> <DEVDIR>/browser/wini86/wbrw.exe        <RELROOT>/binw/wbrw.exe
 
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> <DEVDIR>/browser/os2386/wbrw.exe        <RELROOT>/rel2/binp/wbrw.exe
-    <CPCMD> <DEVDIR>/browser/brg/os2386/wbrg.exe    <RELROOT>/rel2/binp/wbrg.exe
+    <CPCMD> <DEVDIR>/browser/os2386/wbrw.exe        <RELROOT>/binp/wbrw.exe
+    <CPCMD> <DEVDIR>/browser/brg/os2386/wbrg.exe    <RELROOT>/binp/wbrg.exe
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <DEVDIR>/browser/nt386/wbrw.exe         <RELROOT>/rel2/binnt/wbrw.exe
-    <CPCMD> <DEVDIR>/browser/brg/nt386/wbrg.exe     <RELROOT>/rel2/binnt/wbrg.exe
+    <CPCMD> <DEVDIR>/browser/nt386/wbrw.exe         <RELROOT>/binnt/wbrw.exe
+    <CPCMD> <DEVDIR>/browser/brg/nt386/wbrg.exe     <RELROOT>/binnt/wbrg.exe
 
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <DEVDIR>/browser/axpnt/wbrw.exe         <RELROOT>/rel2/axpnt/wbrw.exe
-    <CPCMD> <DEVDIR>/browser/brg/ntaxp/wbrg.exe     <RELROOT>/rel2/axpnt/wbrg.exe
+    <CPCMD> <DEVDIR>/browser/axpnt/wbrw.exe         <RELROOT>/axpnt/wbrw.exe
+    <CPCMD> <DEVDIR>/browser/brg/ntaxp/wbrg.exe     <RELROOT>/axpnt/wbrg.exe
 
 [ BLOCK <1> clean ]
 #==================

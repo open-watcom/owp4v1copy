@@ -15,19 +15,19 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> <DEVDIR>/sdk/wresedit/waccel/wini86/wacc.dll     <RELROOT>/rel2/binw/wacc.dll
-    <CPCMD> <DEVDIR>/sdk/wresedit/wmenu/wini86/wmenu.dll     <RELROOT>/rel2/binw/wmenu.dll
-    <CPCMD> <DEVDIR>/sdk/wresedit/wstring/wini86/wstring.dll <RELROOT>/rel2/binw/wstring.dll
+    <CPCMD> <DEVDIR>/sdk/wresedit/waccel/wini86/wacc.dll     <RELROOT>/binw/wacc.dll
+    <CPCMD> <DEVDIR>/sdk/wresedit/wmenu/wini86/wmenu.dll     <RELROOT>/binw/wmenu.dll
+    <CPCMD> <DEVDIR>/sdk/wresedit/wstring/wini86/wstring.dll <RELROOT>/binw/wstring.dll
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <DEVDIR>/sdk/wresedit/waccel/nt386/wacc.dll      <RELROOT>/rel2/binnt/wacc.dll
-    <CPCMD> <DEVDIR>/sdk/wresedit/wmenu/nt386/wmenu.dll      <RELROOT>/rel2/binnt/wmenu.dll
-    <CPCMD> <DEVDIR>/sdk/wresedit/wstring/nt386/wstring.dll  <RELROOT>/rel2/binnt/wstring.dll
+    <CPCMD> <DEVDIR>/sdk/wresedit/waccel/nt386/wacc.dll      <RELROOT>/binnt/wacc.dll
+    <CPCMD> <DEVDIR>/sdk/wresedit/wmenu/nt386/wmenu.dll      <RELROOT>/binnt/wmenu.dll
+    <CPCMD> <DEVDIR>/sdk/wresedit/wstring/nt386/wstring.dll  <RELROOT>/binnt/wstring.dll
 
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <DEVDIR>/sdk/wresedit/waccel/ntaxp/wacc.dll      <RELROOT>/rel2/axpnt/wacc.dll
-    <CPCMD> <DEVDIR>/sdk/wresedit/wmenu/ntaxp/wmenu.dll      <RELROOT>/rel2/axpnt/wmenu.dll
-    <CPCMD> <DEVDIR>/sdk/wresedit/wstring/ntaxp/wstring.dll  <RELROOT>/rel2/axpnt/wstring.dll
+    <CPCMD> <DEVDIR>/sdk/wresedit/waccel/ntaxp/wacc.dll      <RELROOT>/axpnt/wacc.dll
+    <CPCMD> <DEVDIR>/sdk/wresedit/wmenu/ntaxp/wmenu.dll      <RELROOT>/axpnt/wmenu.dll
+    <CPCMD> <DEVDIR>/sdk/wresedit/wstring/ntaxp/wstring.dll  <RELROOT>/axpnt/wstring.dll
 
 [ BLOCK <1> clean ]
 #==================

@@ -13,52 +13,52 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <DEVDIR>/wv/dbg/*.dbg               <RELROOT>/rel2/binw/
-    <CPCMD> <DEVDIR>/wv/ssl/*.prs               <RELROOT>/rel2/binw/
+    <CPCMD> <DEVDIR>/wv/dbg/*.dbg               <RELROOT>/binw/
+    <CPCMD> <DEVDIR>/wv/ssl/*.prs               <RELROOT>/binw/
 
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> <DEVDIR>/wv/rfx/dosi86/rfx.exe      <RELROOT>/rel2/binw/rfx.exe
-    <CPCMD> <DEVDIR>/wv/dsx/dos386/wv.exe       <RELROOT>/rel2/binw/wd.exe
-    <CPCMD> <DEVDIR>/wv/dsx/dos386/wv.sym       <RELROOT>/rel2/binw/wd.sym
+    <CPCMD> <DEVDIR>/wv/rfx/dosi86/rfx.exe      <RELROOT>/binw/rfx.exe
+    <CPCMD> <DEVDIR>/wv/dsx/dos386/wv.exe       <RELROOT>/binw/wd.exe
+    <CPCMD> <DEVDIR>/wv/dsx/dos386/wv.sym       <RELROOT>/binw/wd.sym
 
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> <DEVDIR>/wv/win/wini86/wv.exe       <RELROOT>/rel2/binw/wdc.exe
-    <CPCMD> <DEVDIR>/wv/win/wini86/wv.sym       <RELROOT>/rel2/binw/wdc.sym
-    <CPCMD> <DEVDIR>/wv/win/wini86.gui/wv.exe   <RELROOT>/rel2/binw/wdw.exe
-    <CPCMD> <DEVDIR>/wv/win/wini86.gui/wv.sym   <RELROOT>/rel2/binw/wdw.sym
+    <CPCMD> <DEVDIR>/wv/win/wini86/wv.exe       <RELROOT>/binw/wdc.exe
+    <CPCMD> <DEVDIR>/wv/win/wini86/wv.sym       <RELROOT>/binw/wdc.sym
+    <CPCMD> <DEVDIR>/wv/win/wini86.gui/wv.exe   <RELROOT>/binw/wdw.exe
+    <CPCMD> <DEVDIR>/wv/win/wini86.gui/wv.sym   <RELROOT>/binw/wdw.sym
 
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> <DEVDIR>/wv/rfx/os2386/rfx.exe      <RELROOT>/rel2/binp/rfx.exe
-    <CPCMD> <DEVDIR>/wv/os2/os2386/wv.exe       <RELROOT>/rel2/binp/wd.exe
-    <CPCMD> <DEVDIR>/wv/os2/os2386/wv.sym       <RELROOT>/rel2/binp/wd.sym
-    <CPCMD> <DEVDIR>/wv/os2/os2386.gui/wv.exe   <RELROOT>/rel2/binp/wdw.exe
-    <CPCMD> <DEVDIR>/wv/os2/os2386.gui/wv.sym   <RELROOT>/rel2/binp/wdw.sym
-#   <CPCMD> <DEVDIR>/wv/os2/os2i86/wv.exe       <RELROOT>/rel2/binp/wd16.exe
-#   <CPCMD> <DEVDIR>/wv/os2/os2i86.gui/wv.exe   <RELROOT>/rel2/binp/wdw16.exe
+    <CPCMD> <DEVDIR>/wv/rfx/os2386/rfx.exe      <RELROOT>/binp/rfx.exe
+    <CPCMD> <DEVDIR>/wv/os2/os2386/wv.exe       <RELROOT>/binp/wd.exe
+    <CPCMD> <DEVDIR>/wv/os2/os2386/wv.sym       <RELROOT>/binp/wd.sym
+    <CPCMD> <DEVDIR>/wv/os2/os2386.gui/wv.exe   <RELROOT>/binp/wdw.exe
+    <CPCMD> <DEVDIR>/wv/os2/os2386.gui/wv.sym   <RELROOT>/binp/wdw.sym
+#   <CPCMD> <DEVDIR>/wv/os2/os2i86/wv.exe       <RELROOT>/binp/wd16.exe
+#   <CPCMD> <DEVDIR>/wv/os2/os2i86.gui/wv.exe   <RELROOT>/binp/wdw16.exe
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <DEVDIR>/wv/win/nt386/wv.exe        <RELROOT>/rel2/binnt/wd.exe
-    <CPCMD> <DEVDIR>/wv/win/nt386/wv.sym        <RELROOT>/rel2/binnt/wd.sym
-    <CPCMD> <DEVDIR>/wv/win/nt386.gui/wv.exe    <RELROOT>/rel2/binnt/wdw.exe
-    <CPCMD> <DEVDIR>/wv/win/nt386.gui/wv.sym    <RELROOT>/rel2/binnt/wdw.sym
+    <CPCMD> <DEVDIR>/wv/win/nt386/wv.exe        <RELROOT>/binnt/wd.exe
+    <CPCMD> <DEVDIR>/wv/win/nt386/wv.sym        <RELROOT>/binnt/wd.sym
+    <CPCMD> <DEVDIR>/wv/win/nt386.gui/wv.exe    <RELROOT>/binnt/wdw.exe
+    <CPCMD> <DEVDIR>/wv/win/nt386.gui/wv.sym    <RELROOT>/binnt/wdw.sym
 
   [ IFDEF (os_linux "") <2*> ]
-    <CPCMD> <DEVDIR>/wv/linux/linux386/wv.exe   <RELROOT>/rel2/binl/wd
-    <CPCMD> <DEVDIR>/wv/linux/linux386/wv.sym   <RELROOT>/rel2/binl/wd.sym
-    <CPCMD> <DEVDIR>/wv/dbg/*.dbg               <RELROOT>/rel2/binl/
-    <CPCMD> <DEVDIR>/wv/ssl/*.prs               <RELROOT>/rel2/binl/
+    <CPCMD> <DEVDIR>/wv/linux/linux386/wv.exe   <RELROOT>/binl/wd
+    <CPCMD> <DEVDIR>/wv/linux/linux386/wv.sym   <RELROOT>/binl/wd.sym
+    <CPCMD> <DEVDIR>/wv/dbg/*.dbg               <RELROOT>/binl/
+    <CPCMD> <DEVDIR>/wv/ssl/*.prs               <RELROOT>/binl/
 
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <DEVDIR>/wv/win/ntaxp/wv.exe        <RELROOT>/rel2/axpnt/wd.exe
-    <CPCMD> <DEVDIR>/wv/win/ntaxp/wv.sym        <RELROOT>/rel2/axpnt/wd.sym
-    <CPCMD> <DEVDIR>/wv/win/ntaxp.gui/wv.exe    <RELROOT>/rel2/axpnt/wdw.exe
-    <CPCMD> <DEVDIR>/wv/win/ntaxp.gui/wv.sym    <RELROOT>/rel2/axpnt/wdw.sym
+    <CPCMD> <DEVDIR>/wv/win/ntaxp/wv.exe        <RELROOT>/axpnt/wd.exe
+    <CPCMD> <DEVDIR>/wv/win/ntaxp/wv.sym        <RELROOT>/axpnt/wd.sym
+    <CPCMD> <DEVDIR>/wv/win/ntaxp.gui/wv.exe    <RELROOT>/axpnt/wdw.exe
+    <CPCMD> <DEVDIR>/wv/win/ntaxp.gui/wv.sym    <RELROOT>/axpnt/wdw.sym
 
   [ IFDEF (os_qnx) <2*> ]
-    <CPCMD> <DEVDIR>/wv/qnx/qnx386/wv.qnx       <RELROOT>/rel2/qnx/binq/wd
-    <CPCMD> <DEVDIR>/wv/qnx/qnx386/wv.sym       <RELROOT>/rel2/qnx/sym/wd.sym
-    <CPCMD> <DEVDIR>/wv/dbg/*.dbg               <RELROOT>/rel2/qnx/watcom/wd/
-    <CPCMD> <DEVDIR>/wv/ssl/*.prs               <RELROOT>/rel2/qnx/watcom/wd/
+    <CPCMD> <DEVDIR>/wv/qnx/qnx386/wv.qnx       <RELROOT>/qnx/binq/wd
+    <CPCMD> <DEVDIR>/wv/qnx/qnx386/wv.sym       <RELROOT>/qnx/sym/wd.sym
+    <CPCMD> <DEVDIR>/wv/dbg/*.dbg               <RELROOT>/qnx/watcom/wd/
+    <CPCMD> <DEVDIR>/wv/ssl/*.prs               <RELROOT>/qnx/watcom/wd/
 
 [ BLOCK <1> clean ]
 #==================

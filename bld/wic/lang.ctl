@@ -14,11 +14,11 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> <DEVDIR>/wic/dos386/wic.exe <RELROOT>/rel2/binw/wic.exe
+    <CPCMD> <DEVDIR>/wic/dos386/wic.exe <RELROOT>/binw/wic.exe
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> <DEVDIR>/wic/os2386/wic.exe <RELROOT>/rel2/binp/wic.exe
+    <CPCMD> <DEVDIR>/wic/os2386/wic.exe <RELROOT>/binp/wic.exe
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <DEVDIR>/wic/nt386/wic.exe <RELROOT>/rel2/binnt/wic.exe
+    <CPCMD> <DEVDIR>/wic/nt386/wic.exe <RELROOT>/binnt/wic.exe
 
 [ BLOCK <1> clean ]
 #==================

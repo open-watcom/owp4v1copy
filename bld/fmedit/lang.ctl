@@ -16,11 +16,11 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> <PROJDIR>/wini86/fmedit.dll <RELROOT>/rel2/binw/
+    <CPCMD> <PROJDIR>/wini86/fmedit.dll <RELROOT>/binw/
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <PROJDIR>/nt386/fmedit.dll <RELROOT>/rel2/binnt/
+    <CPCMD> <PROJDIR>/nt386/fmedit.dll <RELROOT>/binnt/
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <PROJDIR>/ntaxp/fmedit.dll <RELROOT>/rel2/axpnt/
+    <CPCMD> <PROJDIR>/ntaxp/fmedit.dll <RELROOT>/axpnt/
 
 [ BLOCK <1> clean ]
 #==================

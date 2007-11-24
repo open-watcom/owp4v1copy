@@ -15,13 +15,13 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> <DEVDIR>/sdk/zoom/wini86/wzoom.exe <RELROOT>/rel2/binw/wzoom.exe
+    <CPCMD> <DEVDIR>/sdk/zoom/wini86/wzoom.exe <RELROOT>/binw/wzoom.exe
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <DEVDIR>/sdk/zoom/nt386/wzoom.exe  <RELROOT>/rel2/binnt/wzoom.exe
+    <CPCMD> <DEVDIR>/sdk/zoom/nt386/wzoom.exe  <RELROOT>/binnt/wzoom.exe
 
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <DEVDIR>/sdk/zoom/ntaxp/wzoom.exe  <RELROOT>/rel2/axpnt/wzoom.exe
+    <CPCMD> <DEVDIR>/sdk/zoom/ntaxp/wzoom.exe  <RELROOT>/axpnt/wzoom.exe
 
 [ BLOCK <1> clean ]
 #==================

@@ -15,10 +15,10 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> wini86/*.lib               <RELROOT>/rel2/lib286/win/
+    <CPCMD> wini86/*.lib                <RELROOT>/lib286/win/
   [ ENDIF ]
-    <CPCMD> wini86/*.h                <RELROOT>/rel2/h/win/
-    <CPCMD> <DEVDIR>/sdk/misc/ctl3d.h  <RELROOT>/rel2/h/win/
+    <CPCMD> wini86/*.h                  <RELROOT>/h/win/
+    <CPCMD> <DEVDIR>/sdk/misc/ctl3d.h   <RELROOT>/h/win/
 
 [ BLOCK <1> clean ]
 #==================

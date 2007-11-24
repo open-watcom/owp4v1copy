@@ -14,19 +14,19 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> <PROJDIR>/dosi86/wtouch.exe    <RELROOT>/rel2/binw/wtouch.exe
+    <CPCMD> <PROJDIR>/dosi86/wtouch.exe    <RELROOT>/binw/wtouch.exe
 
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> <PROJDIR>/os2386/wtouch.exe    <RELROOT>/rel2/binp/wtouch.exe
+    <CPCMD> <PROJDIR>/os2386/wtouch.exe    <RELROOT>/binp/wtouch.exe
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <PROJDIR>/nt386/wtouch.exe     <RELROOT>/rel2/binnt/wtouch.exe
+    <CPCMD> <PROJDIR>/nt386/wtouch.exe     <RELROOT>/binnt/wtouch.exe
 
   [ IFDEF (os_linux "") <2*> ]
-    <CPCMD> <PROJDIR>/linux386/wtouch.exe  <RELROOT>/rel2/binl/wtouch
+    <CPCMD> <PROJDIR>/linux386/wtouch.exe  <RELROOT>/binl/wtouch
 
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <PROJDIR>/ntaxp/wtouch.exe     <RELROOT>/rel2/axpnt/wtouch.exe
+    <CPCMD> <PROJDIR>/ntaxp/wtouch.exe     <RELROOT>/axpnt/wtouch.exe
 
 
 [ BLOCK <1> clean ]

@@ -13,7 +13,7 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <PROJDIR>/cw32/dosi86/cw32.exe <RELROOT>/rel2/binw/cwstub.exe
+    <CPCMD> <PROJDIR>/cw32/dosi86/cw32.exe <RELROOT>/binw/cwstub.exe
 
 [ BLOCK <1> clean ]
 #==================

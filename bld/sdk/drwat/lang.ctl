@@ -15,14 +15,14 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> <DEVDIR>/sdk/drwat/win/wini86/drwatcom.exe  <RELROOT>/rel2/binw/drwatcom.exe
+    <CPCMD> <DEVDIR>/sdk/drwat/win/wini86/drwatcom.exe  <RELROOT>/binw/drwatcom.exe
 
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <DEVDIR>/sdk/drwat/nt/nt386/drwatcom.exe    <RELROOT>/rel2/binnt/drwatcom.exe
-    <CPCMD> <DEVDIR>/sdk/drwat/nt/win95/drwatcom.exe    <RELROOT>/rel2/binnt/_drwin95.exe
+    <CPCMD> <DEVDIR>/sdk/drwat/nt/nt386/drwatcom.exe    <RELROOT>/binnt/drwatcom.exe
+    <CPCMD> <DEVDIR>/sdk/drwat/nt/win95/drwatcom.exe    <RELROOT>/binnt/_drwin95.exe
 
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <DEVDIR>/sdk/drwat/nt/ntaxp/drwatcom.exe    <RELROOT>/rel2/axpnt/drwatcom.exe
+    <CPCMD> <DEVDIR>/sdk/drwat/nt/ntaxp/drwatcom.exe    <RELROOT>/axpnt/drwatcom.exe
 
 [ BLOCK <1> clean ]
 #==================

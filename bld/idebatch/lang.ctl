@@ -14,16 +14,16 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> <DEVDIR>/idebatch/os2/batserv.exe  <RELROOT>/rel2/binp/batserv.exe
+    <CPCMD> <DEVDIR>/idebatch/os2/batserv.exe  <RELROOT>/binp/batserv.exe
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <DEVDIR>/idebatch/nt/batserv.exe   <RELROOT>/rel2/binnt/batserv.exe
+    <CPCMD> <DEVDIR>/idebatch/nt/batserv.exe   <RELROOT>/binnt/batserv.exe
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> <DEVDIR>/idebatch/dos/int.exe      <RELROOT>/rel2/binw/dosserv.exe
+    <CPCMD> <DEVDIR>/idebatch/dos/int.exe      <RELROOT>/binw/dosserv.exe
 # there is no makefile in the wini86 dir
   [ IFDEF (os_win "") <2*> ]
-    <CPCMD> <DEVDIR>/idebatch/wini86/batchbox.pif <RELROOT>/rel2/binw/batchbox.pif
+    <CPCMD> <DEVDIR>/idebatch/wini86/batchbox.pif <RELROOT>/binw/batchbox.pif
   [ IFDEF (cpu_axp) <2*> ]
-    <CPCMD> <DEVDIR>/idebatch/nt/axp/batserv.exe  <RELROOT>/rel2/axpnt/batserv.exe
+    <CPCMD> <DEVDIR>/idebatch/nt/axp/batserv.exe  <RELROOT>/axpnt/batserv.exe
 
 [ BLOCK <1> clean ]
 #==================

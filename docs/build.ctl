@@ -6,16 +6,16 @@
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <DOC_ROOT>/dos/*.ihp    <RELROOT>/rel2/binw/
-    <CPCMD> <DOC_ROOT>/win/*.hlp    <RELROOT>/rel2/binw/
-    <CPCMD> <DOC_ROOT>/os2/*.inf    <RELROOT>/rel2/binp/help/
-    <CPCMD> <DOC_ROOT>/os2/*.hlp    <RELROOT>/rel2/binp/help/
-    <CPCMD> <DOC_ROOT>/nt/*.hlp     <RELROOT>/rel2/binnt/
-    <CPCMD> <DOC_ROOT>/nt/*.cnt     <RELROOT>/rel2/binnt/
-    <CPCMD> <DOC_ROOT>/readme.txt   <RELROOT>/rel2/readme.txt
-    <CPCMD> <DOC_ROOT>/freadme.txt  <RELROOT>/rel2/freadme.txt
-    <CPCMD> <DOC_ROOT>/areadme.txt  <RELROOT>/rel2/areadme.txt
-    <CPCMD> <DOC_ROOT>/instlic.txt  <RELROOT>/rel2/instlic.txt
+    <CPCMD> <DOC_ROOT>/dos/*.ihp    <RELROOT>/binw/
+    <CPCMD> <DOC_ROOT>/win/*.hlp    <RELROOT>/binw/
+    <CPCMD> <DOC_ROOT>/os2/*.inf    <RELROOT>/binp/help/
+    <CPCMD> <DOC_ROOT>/os2/*.hlp    <RELROOT>/binp/help/
+    <CPCMD> <DOC_ROOT>/nt/*.hlp     <RELROOT>/binnt/
+    <CPCMD> <DOC_ROOT>/nt/*.cnt     <RELROOT>/binnt/
+    <CPCMD> <DOC_ROOT>/readme.txt   <RELROOT>/readme.txt
+    <CPCMD> <DOC_ROOT>/freadme.txt  <RELROOT>/freadme.txt
+    <CPCMD> <DOC_ROOT>/areadme.txt  <RELROOT>/areadme.txt
+    <CPCMD> <DOC_ROOT>/instlic.txt  <RELROOT>/instlic.txt
     cdsay .
 
 [ BLOCK <1> clean ]

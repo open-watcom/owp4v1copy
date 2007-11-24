@@ -14,15 +14,15 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_dos "") <2*> ]
-    <CPCMD> <PROJDIR>/dosi86/dmpobj.exe    <RELROOT>/rel2/binw/dmpobj.exe
+    <CPCMD> <PROJDIR>/dosi86/dmpobj.exe    <RELROOT>/binw/dmpobj.exe
   [ IFDEF (os_os2 "") <2*> ]
-    <CPCMD> <PROJDIR>/os2386/dmpobj.exe    <RELROOT>/rel2/binp/dmpobj.exe
+    <CPCMD> <PROJDIR>/os2386/dmpobj.exe    <RELROOT>/binp/dmpobj.exe
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> <PROJDIR>/nt386/dmpobj.exe     <RELROOT>/rel2/binnt/dmpobj.exe
+    <CPCMD> <PROJDIR>/nt386/dmpobj.exe     <RELROOT>/binnt/dmpobj.exe
   [ IFDEF (os_linux "") <2*> ]
-    <CPCMD> <PROJDIR>/linux386/dmpobj.exe  <RELROOT>/rel2/binl/dmpobj
+    <CPCMD> <PROJDIR>/linux386/dmpobj.exe  <RELROOT>/binl/dmpobj
   [ IFDEF cpu_axp <2*> ]
-    <CPCMD> <PROJDIR>/ntaxp/dmpobj.exe     <RELROOT>/rel2/axpnt/dmpobj.exe
+    <CPCMD> <PROJDIR>/ntaxp/dmpobj.exe     <RELROOT>/axpnt/dmpobj.exe
 
 [ BLOCK <1> clean ]
 #==================
