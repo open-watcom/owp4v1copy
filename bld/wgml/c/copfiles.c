@@ -306,7 +306,7 @@ static cop_file_type parse_header( FILE * in_file )
         
     if( version != 0x000c ) return( not_se_v4_1 );
 
-    /* Get the version length byte */
+    /* Get the version length byte. */
 
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
@@ -316,21 +316,26 @@ static cop_file_type parse_header( FILE * in_file )
     fseek( in_file, count, SEEK_CUR );
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
 
-    /* Get the next length byte */
+    /* Get the next length byte. */
 
     count = fgetc( in_file );
 
-    /* If there is no more data, this is not a valid .COP file */
+    /* If there is no more data, this is not a valid .COP file. */
     
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
     
-    /* Valid header, more data exists, determine the file type */
+    /* Valid header, more data exists, determine the file type. */
 
     if( count == 0x03 ) {
         return( se_v4_1_not_dir );
-    } else {
+    }
+    if( count == 0x04 ) {
         return( dir_v4_1_se ); 
     }
+
+    /* Invalid file type: this cannot be a valid .COP file. */
+
+    return( not_bin_dev );
 }
 
 /* Function get_member_name().
@@ -357,7 +362,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
     FILE    *       directory_file  = NULL;
     uint16_t        entry_type;
 
-    /* See if in_dir contains a wgmlst.cop file */
+    /* See if in_dir contains a wgmlst.cop file. */
 
     if( (strnlen_s( filename_buffer, _MAX_PATH  ) + strlen( "wgmlst.cop" ) \
         + 1) > _MAX_PATH ) {
@@ -376,7 +381,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
     fopen_s( &directory_file, &filename_buffer, "rb" );
     if( directory_file == NULL ) return( member_name );
 
-    /* Now see in in_name is found in it */
+    /* Now see in in_name is found in it. */
 
     file_type = parse_header( directory_file );
 
@@ -400,7 +405,9 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
     case se_v4_1_not_dir:
 
-        /* The file was a same-endian version 4.1 file, but not a directory file. */
+        /* The file was a same-endian version 4.1 file,
+         * but not a directory file.
+         */
 
         out_msg( "This directory may contain a binary device directory,\n" \
             "but the file 'wgmlst.cop' is not a directory file:\n  %s\n", \
@@ -409,7 +416,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
     case dir_v4_1_se:
     
-        /* The file was a same-endian version 4.1 directory file */
+        /* The file was a same-endian version 4.1 directory file. */
 
         /* Skip the number of entries. */
 
@@ -446,19 +453,20 @@ static char * get_member_name( char const * in_dir, char const * in_name )
                     if( feof( directory_file ) || ferror( directory_file ) ) \
                         break;
                 
-                    switch( entry_type) {
+                    switch( entry_type ) {
 
                     case 0x0000:
 
                         /* This should only happen when the "padding" is 
-                         * reached,but continue in case there is more data.
+                         * reached, but continue in case there is more data.
                          */
 
                         continue;
                 
                     case 0x0001:
                  
-                        /* This is the only case where the loop is not exited. */
+                        /* This is the only case where the loop is not exited.
+                         */
 
                         continue;    
 
@@ -466,7 +474,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
                     case 0x0201:
                     case 0x0401:
 
-                        /* For any type, check the defined name */
+                        /* For any type, check the defined name. */
 
                         entry_status = get_extended_entry( directory_file, \
                             &current_entry );
@@ -482,7 +490,8 @@ static char * get_member_name( char const * in_dir, char const * in_name )
                                 fclose( directory_file );
                                 directory_file = NULL;
                                 member_name = (char *) mem_alloc( strnlen_s( \
-                                    current_entry.member_name, _MAX_PATH ) + 1 );
+                                    current_entry.member_name, _MAX_PATH ) \
+                                    + 1 );
                                 strcpy_s( member_name, strnlen_s( \
                                     current_entry.member_name, _MAX_PATH ) \
                                     + 1, current_entry.member_name );
@@ -493,7 +502,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
                         case not_valid_entry:
 
-                            /* The entry was incomplete */
+                            /* The entry was incomplete. */
 
                             out_msg("This directory file may be corrupt:\n" \
                                 "  %s\n", &filename_buffer );
@@ -501,7 +510,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
                             break;
                         default:
 
-                            /* The entry_type is an unknown value */
+                            /* The entry_status is an unknown value. */
 
                             out_msg("wgml internal error\n");
                         }
@@ -509,7 +518,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
                     default:
 
-                        /* The entry_type is an unknown value */
+                        /* The entry_type is an unknown value. */
 
                         out_msg("wgml internal error\n");
                     }
@@ -521,7 +530,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
             case 0x0201:
             case 0x0401:
 
-                /* For any type, check the defined name */
+                /* For any type, check the defined name. */
 
                 entry_status = get_compact_entry( directory_file, \
                     &current_entry );
@@ -546,7 +555,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
                 case not_valid_entry:
 
-                    /* The entry was incomplete */
+                    /* The entry was incomplete. */
 
                     out_msg("This directory file may be corrupt:\n  %s\n", \
                         &filename_buffer );
@@ -555,7 +564,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
                 default:
 
-                    /* The entry_type is an unknown value */
+                    /* The entry_status is an unknown value. */
 
                     out_msg("wgml internal error\n");
                 }
@@ -563,7 +572,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
             default:
 
-                /* The entry_type is an unknown value */
+                /* The entry_type is an unknown value. */
 
                 out_msg("wgml internal error\n");
           }
@@ -573,6 +582,8 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
     case file_error:
 
+        /* A file error or premature end-of-file occurred. */
+
         out_msg( "This directory may contain a binary device directory,\n" \
             "but a file error occurred when the file 'wgmlst.cop' was being "  \
             "read:\n  %s\n", in_dir );
@@ -580,7 +591,7 @@ static char * get_member_name( char const * in_dir, char const * in_name )
 
     default:
 
-    /* parse_header() returned an unknown value */
+        /* The file_type is an unknown value. */
 
         out_msg("wgml internal error\n");
     }
@@ -803,7 +814,7 @@ cop_device * get_cop_device( char const * in_name )
 
     case file_error:
 
-        /* A file error occurred */
+        /* A file error or premature end-of-file occurred */
 
         out_msg( "This directory may contain a binary device directory,\n" \
             "but a file error occurred when this file was being read:\n  %s\n", \
@@ -911,7 +922,7 @@ cop_driver * get_cop_driver( char const * in_name )
 
     case file_error:
 
-        /* A file error occurred */
+        /* A file error or premature end-of-file occurred */
 
         out_msg( "This directory may contain a binary device directory,\n" \
             "but a file error occurred when this file was being read:\n  %s\n", \
@@ -1019,7 +1030,7 @@ cop_font * get_cop_font( char const * in_name )
 
     case file_error:
 
-        /* A file error occurred */
+        /* A file error or premature end-of-file occurred */
 
         out_msg( "This directory may contain a binary device directory,\n" \
             "but a file error occurred when this file was being read:\n  %s\n", \
