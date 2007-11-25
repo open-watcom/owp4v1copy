@@ -60,6 +60,8 @@ struct BtreePage
     // Split a page which has gotten too large into two pages.
     int         split();
 
+    int         needSplit( uint_32 size );
+
     BtreePage( uint_32 max_size, BtreePage *ancestor, BtreePage *descendant=NULL );
     ~BtreePage();
 };
@@ -323,6 +325,24 @@ int BtreePage::split()
 }
 
 
+//  BtreePage::needSplit    --Check if page size overflow.
+
+int BtreePage::needSplit( uint_32 size )
+{
+    uint_32     cur_size = _size + size;
+    uint_32     num      = _numEntries;
+
+
+    if( size )
+        ++num;
+    if( _firstChild != NULL ) {
+        cur_size += num * sizeof( uint_16 );
+    }
+    return( cur_size > _maxSize || num >= (uint_16)~1 );
+}
+
+
+
 //  Btree::Btree
 
 Btree::Btree( char const *magnum, uint_32 max_size )
@@ -360,8 +380,7 @@ void Btree::insert( BtreeData *newdata )
         if( nextlevel == NULL ) break;
 
         // As we search, split any full pages we see on the way down.
-        if( nextlevel->_size > _maxSize - newdata->size() ||
-            nextlevel->_numEntries >= (uint_16) ~1 ){
+        if( nextlevel->needSplit( newdata->size() ) ){
             ++_numSplits;
             nextlevel->split();
             if( nextlevel->_nextPage->_entries->lessThan( newdata ) ){
@@ -375,8 +394,7 @@ void Btree::insert( BtreeData *newdata )
     newdata->insertSelf( curpage );
 
     // If the _root page has to be split, do it now.
-    if( _root->_size >= _maxSize ||
-        _root->_numEntries >= (uint_16) ~1 ){
+    if( _root->needSplit( 0 ) ) {
         BtreePage *newroot = new BtreePage( _maxSize, NULL, _root );
         _root->_parent = newroot;
         _root->split();
