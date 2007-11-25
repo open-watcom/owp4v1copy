@@ -283,6 +283,7 @@ typedef enum {
 static cop_file_type parse_header( FILE * in_file )
 {
     char        count;
+    char        text[0x0c];
     uint16_t    version;
 
     /* Get the version length byte. */
@@ -306,15 +307,20 @@ static cop_file_type parse_header( FILE * in_file )
         
     if( version != 0x000c ) return( not_se_v4_1 );
 
-    /* Get the version length byte. */
+    /* Get the version length byte and ensure it is 0x0b. */
 
     count = fgetc( in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
 
-    /* Skip the version text. */
+    if( count != 0x0b ) return( not_bin_dev );
 
-    fseek( in_file, count, SEEK_CUR );
+    /* Verify the version text. */
+
+    fread( &text, 0x0b, 1, in_file );
     if( ferror( in_file ) || feof( in_file ) ) return( file_error );
+
+    text[0x0b] = '\0';
+    if( strcmp( text, "V4.1 PC/DOS" ) ) return( not_bin_dev );
 
     /* Get the next length byte. */
 
