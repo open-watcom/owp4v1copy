@@ -92,7 +92,7 @@ static void output_float( unsigned char index, unsigned no_of_bytes, char negati
     } else {
         double_value = strtod( AsmBuffer[index]->string_ptr, NULL );
         if( negative )
-            double_value *= -1;
+            double_value = -double_value;
         switch( no_of_bytes ) {
         case BYTE_1:
         case BYTE_2:
@@ -204,7 +204,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
         case T_MINUS:
             switch( AsmBuffer[cur_pos+1]->token ) {
             case T_NUM:
-                AsmBuffer[cur_pos+1]->value *= -1;
+                AsmBuffer[cur_pos+1]->value = -AsmBuffer[cur_pos+1]->value;
                 AsmBuffer[cur_pos]->token = T_PLUS;
                 break;
             case T_FLOAT:
@@ -435,7 +435,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                         AsmError( EXPECTING_NUMBER );
                         return( ERROR );
                     }
-                    AsmBuffer[cur_pos+1]->value *=-1;
+                    AsmBuffer[cur_pos+1]->value = -AsmBuffer[cur_pos+1]->value;
                     break;
                 case T_NUM:
                     data += AsmBuffer[cur_pos]->value;
@@ -608,7 +608,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                                 AsmError( EXPECTING_NUMBER );
                                 return( ERROR );
                             }
-                            AsmBuffer[cur_pos+1]->value *=-1;
+                            AsmBuffer[cur_pos+1]->value = -AsmBuffer[cur_pos+1]->value;
                             break;
                         case T_NUM:
                             data += AsmBuffer[cur_pos]->value;

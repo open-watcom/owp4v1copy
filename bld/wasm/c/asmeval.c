@@ -894,7 +894,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         } else if( token_1->type == EXPR_REG &&
                    token_2->type == EXPR_CONST ) {
 
-            token_1->value = -1 * token_2->value;
+            token_1->value = -token_2->value;
             token_1->indirect |= token_2->indirect;
             token_1->type = EXPR_ADDR;
 
