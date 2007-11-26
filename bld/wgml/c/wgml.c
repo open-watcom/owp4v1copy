@@ -28,67 +28,43 @@
 *               not yet functional
 *   some logic / ideas adopted from Watcom Script 3.2 IBM S/360 Assembler
 ****************************************************************************/
-
+ 
 #define __STDC_WANT_LIB_EXT1__  1      /* use safer C library              */
-
+ 
 #include <stdarg.h>
 #include <io.h>
 #include <fcntl.h>
 #include <errno.h>
-
+ 
 #include "wgml.h"
 #include "gvars.h"
 #include "banner.h"
-
-#ifdef  TRMEM
-
-/***************************************************************************/
-/*  memory tracking use project code from bld\trmem                        */
-/***************************************************************************/
-
-    #include "trmem.h"
-
-    _trmem_hdl  handle;
-
-    static void prt( int * fhandle, const char * buff, size_t len )
-    /*************************************************************/
-    {
-        size_t i;
-
-        fhandle = fhandle;
-        for( i = 0; i < len; ++i ) {
-//          fputc( *buff++, stderr );
-            fputc( *buff++, stdout );
-        }
-    }
-
-#endif
-
-
+ 
+ 
 #if defined( __UNIX__ )
     #define IS_PATH_SEP( ch ) ((ch) == '/')
 #else
     #define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
 #endif
-
+ 
 #define CRLF            "\n"
-
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /*  Program end                                                            */
 /***************************************************************************/
-
+ 
 void my_exit( int rc )
 {
     exit( rc );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  Output Banner if wanted and not yet done                               */
 /***************************************************************************/
-
+ 
 void g_banner( void )
 {
     if( !(GlobalFlags.bannerprinted || GlobalFlags.quiet) ) {
@@ -99,18 +75,18 @@ void g_banner( void )
 #ifdef  TRMEM
         out_msg( CRLF "Compiled with TRMEM memory tracker (trmem)" CRLF );
 #endif
-        GlobalFlags.bannerprinted = TRUE;
+        GlobalFlags.bannerprinted = true;
     }
 }
-
+ 
 /***************************************************************************/
 /*  Usage info TBD                                                         */
 /***************************************************************************/
-
+ 
 static void usage( void )
 {
     g_banner();
-
+ 
     out_msg( CRLF "Usage: wgml [options] srcfile [options]" CRLF );
     out_msg( "Options:" CRLF );
     out_msg( "-q\t\tQuiet, don't show product info." CRLF );
@@ -119,17 +95,17 @@ static void usage( void )
     out_msg( "\tother options to be done / documented." CRLF );
     my_exit( 4 );
 }
-
-
+ 
+ 
 char *get_filename_full_path( char *buff, char const *name, size_t max )
 /********************************************************************/
 {
     char        *p;
-
+ 
     p = _fullpath( buff, name, max );
     if( p == NULL )
         p = (char *)name;
-
+ 
 #ifdef __UNIX__
     if( (p[0] == '/' && p[1] == '/') && (name[0] != '/' || name[1] != '/') ) {
         //
@@ -143,72 +119,18 @@ char *get_filename_full_path( char *buff, char const *name, size_t max )
 #endif
     return( p );
 }
-
-
-/***************************************************************************/
-/*  Allocate some storage                                                  */
-/***************************************************************************/
-
-void *mem_alloc( size_t size )
-{
-    void    *p;
-
-    #ifdef TRMEM
-        p = _trmem_alloc( size, _trmem_guess_who(), handle );
-    #else
-        p = malloc( size );
-    #endif
-    if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL" );
-        err_count++;
-        g_suicide();
-    }
-    return( p );
-}
-
-/***************************************************************************/
-/*  Re-allocate some storage                                               */
-/***************************************************************************/
-
-void *mem_realloc( void *p, size_t size )
-{
-    #ifdef TRMEM
-        p = _trmem_realloc( p, size, _trmem_guess_who(), handle );
-    #else
-        p = realloc( p, size );
-    #endif
-    if( p == NULL ) {
-        out_msg( "ERR_NOMEM_AVAIL" );
-        err_count++;
-        g_suicide();
-    }
-    return( p );
-}
-
-/***************************************************************************/
-/*  Free storage                                                           */
-/***************************************************************************/
-
-void mem_free( void *p )
-{
-    #ifdef TRMEM
-        _trmem_free( p, _trmem_guess_who(), handle );
-    #else
-        free( p );
-    #endif
-    p = NULL;
-}
-
-
+ 
+ 
+ 
 /***************************************************************************/
 /*  Try to close an opened include file                                    */
 /***************************************************************************/
-
+ 
 static bool free_inc_fp( void )
 {
     filecb      *cb;
     int         rc;
-
+ 
     cb = file_cbs;
     while( cb != NULL ) {
         if( cb->flags & FF_open ) {
@@ -225,20 +147,20 @@ static bool free_inc_fp( void )
                 g_suicide();
             }
             cb->flags &= ~FF_open;
-            return TRUE;
+            return( true );
         }
         cb = cb->prev;
     }
-    return FALSE;                       // nothing to close
+    return( false );                    // nothing to close
 }
-
-
+ 
+ 
 static void reopen_inc_fp( filecb *cb )
 {
     int         rc;
     errno_t     erc;
     errno_t     erc2;
-
+ 
     if( ! cb->flags & FF_open ) {
         for( ;; ) {
             erc = fopen_s( &cb->fp, cb->filename, "rb" );
@@ -262,28 +184,28 @@ static void reopen_inc_fp( filecb *cb )
         }
     }
 }
-
+ 
 /***************************************************************************/
 /*  Compose full path / filename and try to open for reading               */
 /***************************************************************************/
-
+ 
 int try_open( char *prefix, char *separator, char *filename, char *suffix )
 {
     int         i;
     FILE        *fp;
     char        buf[ FILENAME_MAX ];
     errno_t     erc;
-
+ 
     i = 0;
     while( (buf[i] = *prefix++) )    ++i;
     while( (buf[i] = *separator++) ) ++i;
     while( (buf[i] = *filename++) )  ++i;
     while( (buf[i] = *suffix++) )    ++i;
     filename = &buf[0];                 // point to the full name
-
+ 
     try_file_name = NULL;
     try_fp = NULL;
-
+ 
     for( ;; ) {
         erc = fopen_s( &fp, filename, "rb" );
         if( erc == 0 ) break;
@@ -291,18 +213,18 @@ int try_open( char *prefix, char *separator, char *filename, char *suffix )
         if( !free_inc_fp() ) break;     // try closing an include file
     }
     if( fp == NULL ) return( 0 );
-
+ 
     try_file_name = mem_alloc( i + 2 );
     strcpy_s( try_file_name, i + 2, buf );
     try_fp = fp;
     return( 1 );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  Search for filename in curdir, and along environment vars              */
 /***************************************************************************/
-
+ 
 int search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ sequence )
 {
     char        buff[ FILENAME_MAX ];
@@ -315,7 +237,7 @@ int search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ sequ
     char        *searchdirs[ 3 ];
     int         i;
     int         k;
-
+ 
     _splitpath2( filename, buff, &drive, &dir, &name, &ext );
     if( drive[0] != '\0' || IS_PATH_SEP(dir[0]) ) {
         /* Drive or path from root specified */
@@ -352,7 +274,7 @@ int search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ sequ
             if( try_open( "", "", try, "" ) != 0 ) return( 1 );
         }
     }
-
+ 
     /* now try the dirs in specified sequence */
     if( sequence == DS_cur_lib_inc_path ) {
         searchdirs[ 0 ] = GMLlibs;
@@ -374,7 +296,7 @@ int search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ sequ
     for( k = 0; k < 3; k++ ) {
         p = searchdirs[ k ];
         if( p == NULL ) break;
-
+ 
         do {
             i = 0;
             while( *p == ' ' ) ++p;
@@ -390,18 +312,18 @@ int search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ sequ
                 if( try[ i-1 ] != ' ' ) break;
                 --i;
             }
-
+ 
 #define SEP_LEN (sizeof( PATH_SEP ) - 1)
-
+ 
             try[ i ] = '\0';
             if( i >= SEP_LEN && strcmp( &try[ i - SEP_LEN ], PATH_SEP ) == 0 ) {
                 try[ i - SEP_LEN ] = '\0';
             }
-
+ 
 #undef  SEP_LEN
-
+ 
             if( try_open( try, PATH_SEP, filename, "" ) != 0 ) return( 1 );
-
+ 
             if( *ext == '\0' ) {
                 if( try_open( try, PATH_SEP, filename, defext ) != 0 ) return( 1 );
                 if( *altext != '\0' ) {
@@ -421,17 +343,17 @@ int search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ sequ
     }
     return( 0 );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  Set the extension of the Master input file as default extension        */
 /***************************************************************************/
-
+ 
 void set_default_extension( const char *masterfname )
 {
     char        buff[ FILENAME_MAX ];
     char        *ext;
-
+ 
     _splitpath2( masterfname, buff, NULL, NULL, NULL, &ext );
     if( strlen( ext ) > 0) {
         if( strlen( ext ) > strlen( def_ext ) ) {
@@ -441,17 +363,17 @@ void set_default_extension( const char *masterfname )
         strcpy_s( def_ext, 1 + strlen( ext ), ext );
     }
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  add info about file  to LIFO list                                      */
 /***************************************************************************/
-
+ 
 static  void    add_file_cb_entry( void )
 {
     filecb      *new;
     size_t      fnlen;
-
+ 
     fnlen = strlen( try_file_name );
     new = mem_alloc( sizeof( filecb ) + fnlen );// count for terminating \0
                                                  // is in filecb structure
@@ -461,7 +383,7 @@ static  void    add_file_cb_entry( void )
     new->linemax = line_to;
     strcpy_s( new->filename, fnlen + 1, try_file_name );
     mem_free( try_file_name );
-
+ 
     if( try_fp ) {
         new->flags = FF_open;
         new->fp    = try_fp;
@@ -469,25 +391,25 @@ static  void    add_file_cb_entry( void )
         new->flags = FF_clear;
         new->fp    = NULL;
     }
-
+ 
     new->filebuf = mem_alloc( buf_size );
     new->buflen = buf_size -1;
-
+ 
     if( file_cbs != NULL ) {
         new->prev = file_cbs;
     }
     file_cbs = new;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  remove info about file  from LIFO list                                 */
 /***************************************************************************/
-
+ 
 static  void    del_file_cb_entry( void )
 {
     filecb      *wk;
-
+ 
     wk = file_cbs;
     if( wk == NULL ) {
         return;
@@ -501,8 +423,8 @@ static  void    del_file_cb_entry( void )
     file_cbs = file_cbs->prev;
     mem_free( wk );
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  get line from current input ( file )                                   */
 /*  skipping lines before the first one to process if neccessary           */
@@ -511,7 +433,7 @@ static  void    get_line( void )
 {
     filecb      *cb;
     char        *p;
-
+ 
     cb = file_cbs;
     if( ! cb->flags & FF_open ) {
         reopen_inc_fp( cb );
@@ -519,11 +441,33 @@ static  void    get_line( void )
     do {
         p = fgets( cb->filebuf, cb->buflen, cb->fp );
         if( p != NULL ) {
+            if( cb->lineno >= cb->linemax ) {
+                cb->flags |= FF_eof;
+                cb->flags &= ~FF_startofline;
+                cb->scanPtr = cb->filebuf;
+                *(cb->filebuf) = '\0';
+                break;
+            }
             cb->lineno++;
-            cb->scanPtr = p;
             cb->flags |= FF_startofline;
+            cb->scanPtr = p;
+ 
+            if( cb->flags & FF_crlf ) { // try to delete CRLF at end
+                p += strlen( p ) - 1;
+                if( *p == '\r' ) {
+                    *p-- = '\0';
+                    if( *p == '\n' ) {
+                        *p-- = '\0';
+                    }
+                } else if( *p == '\n' ) {
+                    *p-- = '\0';
+                    if( *p == '\r' ) {
+                        *p-- = '\0';
+                    }
+                }
+            }
         } else {
-            if( feof( cb->fp ) || cb->lineno > cb->linemax ) {
+            if( feof( cb->fp ) ) {
                 cb->flags |= FF_eof;
                 cb->flags &= ~FF_startofline;
                 cb->scanPtr = cb->filebuf;
@@ -537,42 +481,43 @@ static  void    get_line( void )
         }
     } while( cb->lineno < cb->linemin );
     cb->usedlen = strlen( cb->filebuf );
+    cb->scanStop = cb->scanPtr + cb->usedlen - 1;
 }
-
-
+ 
+ 
 /***************************************************************************/
 /*  process the input file                                                 */
 /*      if research mode flag set, minimal processing                      */
 /***************************************************************************/
-
+ 
 static  void    proc_GML( char *filename )
 {
     filecb      *cb;
     char        attrwork[ 32 ];
-
-    ProcFlags.newLevel = TRUE;
+ 
+    ProcFlags.newLevel = true;
     strcpy_s( token_buf, buf_size, master_fname );
-
+ 
     for( ; ; ) {
         if( ProcFlags.newLevel ) {
-
+ 
         /*******************************************************************/
         /*  start a new include file level                                 */
         /*******************************************************************/
-            ProcFlags.newLevel = FALSE;
-
+            ProcFlags.newLevel = false;
+ 
         /*******************************************************************/
         /*  split off attribute  (f:xxxx)                                  */
         /*******************************************************************/
             split_attr_file( token_buf, attrwork, sizeof( attrwork ) );
-
+ 
             if( attrwork[0] ) {
                 out_msg( "WNG_FILEATTR_IGNORED (%s) %s\n", attrwork, token_buf );
                 wng_count++;
             }
             if( search_file_in_dirs( token_buf, def_ext, alt_ext,
                                      DS_cur_inc_lib_path ) ) {
-
+ 
                 if( inc_level >= MAX_INC_DEPTH ) {
                     out_msg( "ERR_MAX_INPUT_NESTING %s\n", token_buf );
                     err_count++;
@@ -588,6 +533,7 @@ static  void    proc_GML( char *filename )
             cb = file_cbs;
             cb->linemin = line_from;
             cb->linemax = line_to;
+            cb->flags |= FF_crlf;      // delete crlf at end
             if( attrwork[0] ) {
                 strcpy_s( cb->fileattr, sizeof( cb->fileattr ), attrwork );
             } else {
@@ -600,30 +546,30 @@ static  void    proc_GML( char *filename )
         if( inc_level == 0 ) {
             break;                 // we are done (master document not found)
         }
-
+ 
         while( !(cb->flags & FF_eof) ) {
-
+ 
             get_line();
-
+ 
             if( cb->flags & (FF_eof | FF_err) ) {
                 break;
             }
             if( GlobalFlags.research && GlobalFlags.firstpass ) {
-                printf( "\n%s", cb->scanPtr );
+                printf( "\n%s\n", cb->scanPtr );
             }
-
-
+ 
+ 
             scan_line();
-
+ 
             if( ProcFlags.newLevel ) {  // imbed and friends found
                 break;                  // start new file
             }
-
+ 
         }
         if( ProcFlags.newLevel ) {
             continue;
         }
-
+ 
         del_file_cb_entry();               // one level finished
         cb = file_cbs;
         inc_level--;
@@ -632,87 +578,80 @@ static  void    proc_GML( char *filename )
         }
     }
 }
-
+ 
 /***************************************************************************/
 /*  printStats show statistics at program end                              */
 /***************************************************************************/
-
+ 
 static  void    print_stats( void )
 {
     out_msg( "Statistics:\n" );
     out_msg( "  Error count: %6ld\n", err_count );
     out_msg( "Warning count: %6ld\n", wng_count );
     out_msg( "   Returncode: %6d\n",  err_count ? 8 : wng_count ? 4 : 0 );
-
+ 
 }
-
+ 
 /***************************************************************************/
 /*  initPass                                                               */
 /***************************************************************************/
 static  void    init_pass( void )
 {
-
-    GlobalFlags.firstpass = pass > 1      ? FALSE : TRUE;
-    GlobalFlags.lastpass  = pass < passes ? FALSE : TRUE;
-
+ 
+    GlobalFlags.firstpass = pass > 1      ? false : true;
+    GlobalFlags.lastpass  = pass < passes ? false : true;
+ 
     line_from   = 1;                  // processing line range Masterdocument
     line_to     = ULONG_MAX - 1;
 }
-
+ 
 /***************************************************************************/
 /*  main WGML                                                              */
 /***************************************************************************/
-
+ 
 int main( int argc, char *argv[] )
 {
     char       *cmdline;
     int         cmdlen;
     jmp_buf     env;
-
+ 
     environment = &env;
     if( setjmp( env ) ) {               // if fatal error has occurred
         my_exit( 16 );
     }
-    #ifdef TRMEM
-
-        handle = _trmem_open( &malloc, &free, &realloc, NULL, NULL, &prt,
-                              _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 |
-                              _TRMEM_REALLOC_NULL | _TRMEM_FREE_NULL |
-                              _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
-    #endif
-
+ 
+    g_trmem_init();                     // init memory tracker if necessary
+ 
     init_global_vars();
-
+ 
     token_buf = mem_alloc( buf_size );
     get_env_vars();
-
+ 
     cmdlen = _bgetcmd( NULL, 0 ) + 1;
     cmdline = mem_alloc( cmdlen );
     _bgetcmd( cmdline, cmdlen );
-
+ 
     out_msg( "cmdline=%s\n", cmdline );
-
+ 
     proc_options( cmdline );
     g_banner();
-
+ 
     if( master_fname != NULL ) {        // filename specified
         set_default_extension( master_fname );// make this extension first choice
-
+ 
         for( pass = 1; pass <= passes; pass++ ) {
-
+ 
             init_pass();
-
+ 
             out_msg( "\nStarting pass %d of %d ( %s mode ) \n", pass, passes,
                      GlobalFlags.research ? "research" : "normal" );
-
+ 
             proc_GML( master_fname );
-
-            #ifdef TRMEM
-                _trmem_prt_list( handle );// show allocated memory at pass end
-
-                out_msg( "\n  End of pass %d of %d ( %s mode ) \n", pass, passes,
+ 
+            g_trmem_prt_list();         // show allocated memory at pass end
+ 
+            out_msg( "\n  End of pass %d of %d ( %s mode ) \n", pass, passes,
                      GlobalFlags.research ? "research" : "normal" );
-            #endif
         }
     } else {
         out_msg( "ERR_MISSING_MAINFILENAME\n");
@@ -722,11 +661,11 @@ int main( int argc, char *argv[] )
     if( GlobalFlags.research ) {
         print_GML_tags_research();
         free_GML_tags_research();
-
+ 
         print_SCR_tags_research();
         free_SCR_tags_research();
     }
-
+ 
     mem_free( cmdline );
     if( token_buf != NULL ) {
         mem_free( token_buf );
@@ -758,19 +697,15 @@ int main( int argc, char *argv[] )
     if( Pathes != NULL ) {
         mem_free( Pathes );
     }
-
-    #ifdef TRMEM
-        _trmem_prt_list( handle );
-    #endif
-
+ 
+    g_trmem_prt_list();
+ 
     print_stats();
-
-    #ifdef TRMEM
-        _trmem_prt_list( handle );
-        _trmem_close( handle );
-    #endif
-
+ 
+    g_trmem_prt_list();
+    g_trmem_close();
+ 
     my_exit( err_count ? 8 : wng_count ? 4 : 0 );
     return( 0 );                   // never reached, but makes compiler happy
 }
-
+ 

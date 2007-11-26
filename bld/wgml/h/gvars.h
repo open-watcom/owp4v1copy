@@ -89,6 +89,13 @@ global  su              bind_even;      // Bind value for even pages
 global  int             passes;         // Max no of passes
 global  int             pass;           // current pass no
 
+global  char            *scan_start;
+global  char            *scan_stop;
+
+
+
+
+
 global struct GlobalFlags {
     unsigned            quiet         : 1;  // show Productinfo?
     unsigned            bannerprinted : 1;  // Productinfo shown
@@ -129,6 +136,11 @@ global char            *arg_start;      // start of Arg
 global char            *arg_stop;       // End of Arg
 global char            *open_paren;     // ( in input
 global char            *clos_paren;     // ) in input
+
+
+
+
+
 
 #endif  /* GVARS_H_INCLUDED */
 

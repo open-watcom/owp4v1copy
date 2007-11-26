@@ -40,7 +40,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
-//#include <time.h>
+#include <stdbool.h>
 #include <ctype.h>
 #include <limits.h>
 #include <process.h>
@@ -67,7 +67,7 @@ extern "C" {    /* Use "C" linkage when in C++ mode */
 
 /* wgml.c                              */
 extern  void    g_banner( void );
-extern  char   *get_filename_full_path( char *buff, char const *name, size_t max );
+extern  char    *get_filename_full_path( char *buff, char const *name, size_t max );
 
 #pragma aux     my_exit aborts;
 extern  void    my_exit( int );
@@ -75,13 +75,10 @@ extern  void    my_exit( int );
 extern  int     search_file_in_dirs( char *filename, char *defext, char *altext, DIRSEQ seq );
 extern  int     try_open( char *prefix, char *separator, char *filename, char *suffix );
 
-extern  void    mem_free( void *p );
-extern  void    *mem_alloc( size_t size );
-extern  void    *mem_realloc( void *p, size_t size );
+
 
 /* garginit.c                           */
 extern  void    garg_init( void );
-
 
 
 /* gdata.c                              */
@@ -90,20 +87,31 @@ extern  void    get_env_vars( void );
 extern  char    *GML_get_env( char *name );
 
 
-/* goptions.c                           */
-extern  void    proc_options( char *cmdline );
-extern  void    split_attr_file( char *filename, char *attr, size_t attrlen );
-
 /* gerror.c                             */
 extern  void    out_msg( char *fmt, ... );
 
 /* -------------------------------- TBD
-extern  void    g_err(int,...);
-extern  void    g_warn(int, ...);
-extern  void    g_info(int,...);
+extern  void    g_err( int, ... );
+extern  void    g_warn( int, ... );
+extern  void    g_info( int, ... );
 ----------------------------------*/
 
-extern  void    g_suicide(void);
+extern  void    g_suicide( void );
+
+
+/* gmemory.c                            */
+extern  void    mem_free( void *p );
+extern  void    *mem_alloc( size_t size );
+extern  void    *mem_realloc( void *p, size_t size );
+
+extern  void    g_trmem_init( void );
+extern  void    g_trmem_prt_list( void );
+extern  void    g_trmem_close( void );
+
+
+/* goptions.c                           */
+extern  void    proc_options( char *cmdline );
+extern  void    split_attr_file( char *filename, char *attr, size_t attrlen );
 
 
 /* gresrch.c                          */
@@ -116,12 +124,17 @@ extern  void    print_SCR_tags_research( void );
 extern  void    printf_research( char * msg, ... );
 
 
+/* gscan.c                            */
+extern  void    scan_line( void );
+
+
+/* gsetvar.c                          */
+extern condcode getnum( getnum_block *gn );
+extern void     sc_se( void );
+
+
 /* gutils.c                           */
 extern  bool    to_internal_SU( char **scaninput, su *spaceunit );
-
-
-/* gscan.c                           */
-extern  void    scan_line( void );
 
 
 #ifdef  __cplusplus

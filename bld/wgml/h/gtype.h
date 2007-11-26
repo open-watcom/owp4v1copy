@@ -64,9 +64,6 @@
 #define CW_SEP_CHAR_DEFAULT ';'
 
 
-typedef enum {FALSE, TRUE}   bool;
-
-
 /***************************************************************************/
 /*  search sequence for gml, opt or layout files                           */
 /***************************************************************************/
@@ -113,6 +110,7 @@ typedef enum {
     FF_startofline  = 0x0001,           // at start of physical line
     FF_eof          = 0x0002,           // file eof
     FF_err          = 0x0004,           // file error
+    FF_crlf         = 0x0008,           // delete trailing CR and or LF
     FF_open         = 0x8000            // file is open
 } fflags;
 
@@ -135,6 +133,24 @@ typedef struct filecb {
 } filecb;
 
 
+
+typedef struct tag {
+    struct tag  *next;
+    char        tagname[ 16 ];
+    unsigned    min_abbrev;
+    void       (*tagproc)( void );
+} tag;
+
+
+
+
+
+
+
+/***************************************************************************/
+/*  GML tags                                                               */
+/***************************************************************************/
+
 typedef enum {
     tagonly     = 1,                    // tag without any attr
     tagbasic    = 2,                    // basic elements possible on tag line.
@@ -151,6 +167,10 @@ typedef struct {
 } gmltag;
 
 
+/***************************************************************************/
+/*  definitions for getnum routine                                         */
+/***************************************************************************/
+
 typedef enum condcode {            // return code for some scanning functions
     omit    = 1,                        // parm(s) omitted
     pos     = 2,                        // value >= 0
@@ -158,6 +178,29 @@ typedef enum condcode {            // return code for some scanning functions
     notnum  = 8                         // value not numeric / overflow
 } condcode;
 
+typedef enum {
+    selfdef     = 4,
+    aritherr    = 8,
+    ilorder     = 12,
+    illchar     = 16,
+    mnyerr      = 20,
+    operr       = 24,
+    parerr      = 28,
+    enderr      = 32
+} getnumrc;
+
+typedef struct getnum_block {
+    condcode    cc;
+    int         ignore_blanks;          // 1 if blanks are ignored
+    char        *argstart;
+    char        *argstop;
+    char        *errstart;
+    char        *first;
+    long        length;
+    long        res;
+    getnumrc    error;
+    char        resc[5];
+} getnum_block;
 
 
 #endif                                 // GTYPE_H_INCLUDED

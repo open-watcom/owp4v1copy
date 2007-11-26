@@ -2,13 +2,16 @@
 # Watcom GML/Script (wgml) Makefile
 # =======================================
 #
-# wgml depends on bld\trmem memory tracker source
+# wgml depends on
+#                 bld\watcom\c\swchar  DOS switch Char
+#                 bld\trmem            memory tracker
 #
 
 proj_name = wgml
 
 wgml_autodepends = .AUTODEPEND
 wgml_nosymfile   = 1
+wgml_trmem       = 1
 
 debug_build      = 1
 verbose          = 1
@@ -22,15 +25,17 @@ inc_dirs = -I"../h" -I$(trmem_dir)
 
 .c: ../c;../../watcom/c;$(trmem_dir)
 
-objs = &
-            wgml.obj     &
-            gdata.obj    &
-            gerror.obj   &
-            goptions.obj &
-            gscan.obj    &
-            gutil.obj    &
-            gresrch.obj  &
-            swchar.obj
+objs =  &
+        wgml.obj        &
+        gdata.obj       &
+        gerror.obj      &
+        gmemory.obj     &
+        goptions.obj    &
+        gresrch.obj     &
+        gscan.obj       &
+        gsetvar.obj     &
+        gutil.obj       &
+        swchar.obj
 
 !ifeq wgml_trmem 1
 extra_c_flags      += -of+ -dTRMEM
