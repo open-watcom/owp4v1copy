@@ -164,6 +164,7 @@ base_headers =       &
         secext.h     &
         security.h   &
         servprov.h   &
+        setupapi.h   &
         shellapi.h   &
         shtypes.h    &
         snmp.h       &
