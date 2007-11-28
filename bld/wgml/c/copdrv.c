@@ -948,10 +948,10 @@ static cop_driver * parse_init_block( cop_driver * in_driver, uint8_t * * curren
 
             switch( cop_codeblocks[i].designator ) {
             case 0x00:
-                init_text_ptr[i].is_fontvalue = FALSE;
+                init_text_ptr[i].is_fontvalue = false;
                 break;
             case 0x02:
-                init_text_ptr[i].is_fontvalue = TRUE;
+                init_text_ptr[i].is_fontvalue = true;
                 break;
             default:
                 mem_free( cop_codeblocks );
@@ -1034,10 +1034,10 @@ static cop_driver * parse_init_block( cop_driver * in_driver, uint8_t * * curren
 
             switch( cop_codeblocks[i].designator ) {
             case 0x00:
-                init_text_ptr[i].is_fontvalue = FALSE;
+                init_text_ptr[i].is_fontvalue = false;
                 break;
             case 0x02:
-                init_text_ptr[i].is_fontvalue = TRUE;
+                init_text_ptr[i].is_fontvalue = true;
                 break;
             default:
                 mem_free( cop_codeblocks );
@@ -1089,8 +1089,8 @@ static cop_driver * parse_init_block( cop_driver * in_driver, uint8_t * * curren
  *      in_file points to the presumed start of a .COP driver file
  *
  * Returns:
- *      TRUE if this has the correct designator
- *      FALSE otherwise
+ *      true if this has the correct designator
+ *      false otherwise
  */
 
 bool is_drv_file( FILE * in_file)
@@ -1100,13 +1100,13 @@ bool is_drv_file( FILE * in_file)
     /* Get the designator */
 
     fread( &designator, 3, 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) return( FALSE );
+    if( ferror( in_file ) || feof( in_file ) ) return( false );
 
     /* Verify that the designator is for a .COP driver file */
 
-    if( memcmp( designator, "DRV", 3 ) ) return( FALSE );
+    if( memcmp( designator, "DRV", 3 ) ) return( false );
     
-    return( TRUE );
+    return( true );
 }
 
 /* Function parse_driver().

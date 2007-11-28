@@ -164,8 +164,8 @@ static void set_cumulative_index( functions_block * in_block )
  *      in_file points to the presumed start of a .COP device file.
  *
  * Returns:
- *      TRUE if this has the correct designator.
- *      FALSE otherwise.
+ *      true if this has the correct designator.
+ *      false otherwise.
  */
 
 bool is_dev_file( FILE * in_file )
@@ -175,13 +175,13 @@ bool is_dev_file( FILE * in_file )
     /* Get the designator. */
 
     fread( &designator, 3, 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) return( FALSE );
+    if( ferror( in_file ) || feof( in_file ) ) return( false );
 
     /* Verify that the designator is for a .COP device file. */
 
-    if( memcmp( designator, "DEV", 3 ) ) return( FALSE );
+    if( memcmp( designator, "DEV", 3 ) ) return( false );
     
-    return( TRUE );
+    return( true );
 }
 
 /* Function parse_device().
