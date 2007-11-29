@@ -168,6 +168,7 @@ base_headers =       &
         servprov.h   &
         setupapi.h   &
         shellapi.h   &
+        sherrors.h   &
         shtypes.h    &
         snmp.h       &
         spapidef.h   &
