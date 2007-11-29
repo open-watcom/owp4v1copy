@@ -1,0 +1,41 @@
+/*
+ *  propkdef.h / propkeydef.h   Property key definitions
+ *
+:include crwatcnt.sp
+ */
+
+:include readonly.sp
+
+/* Macro to define a property key */
+#ifdef DEFINE_PROPERTYKEY
+    #undef DEFINE_PROPERTYKEY
+#endif
+#ifdef INITGUID
+    #define DEFINE_PROPERTYKEY( x, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 ) \
+        EXTERN_C const GUID x = { { p1, p2, p3, { p4, p5, p6, p7, p8, p9, p10, p11 } }, p12 }
+#else
+    #define DEFINE_PROPERTYKEY( x, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12 ) \
+        EXTERN_C const GUID x
+#endif
+
+#ifndef _PROPKEYDEF_H_INCLUDED
+#define _PROPKEYDEF_H_INCLUDED
+
+/* Reference data types */
+#ifdef __cplusplus
+    #define REFPROPERTYKEY  const PROPERTYKEY &
+#else
+    #define REFPROPERTYKEY  const PROPERTYKEY * const
+#endif
+
+/* Property key comparison macro */
+#define IsEqualPropertyKey( p1, p2 ) \
+    (IsEqualIID( p1, p2 ) && ((p1).fmtid == (p2).fmtid))
+
+/* First usable property identifier */
+#ifndef PID_FIRST_USABLE
+    #define PID_FIRST_USABLE    0x00000002L
+#endif
+
+#endif /* _PROPKEYDEF_H_INCLUDED */
+

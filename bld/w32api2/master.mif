@@ -130,6 +130,8 @@ base_headers =       &
         poppack.h    &
         powrprof.h   &
         propidl.h    &
+        propkdef.h   &
+        propsys.h    &
         prsht.h      &
         psapi.h      &
         pshpack1.h   &
