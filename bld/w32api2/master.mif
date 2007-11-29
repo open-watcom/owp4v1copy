@@ -175,6 +175,7 @@ base_headers =       &
         stm.h        &
         stralign.h   &
         strmif.h     &
+        strquery.h   &
         tcpestat.h   &
         tcpmib.h     &
         tvout.h      &
@@ -222,6 +223,7 @@ directx_headers =    &
 base_libs =          &
         largeint.lib &
         strmiids.lib &
+        strquery.lib &
         uuid.lib
 
 directx_libs =       &
@@ -253,6 +255,11 @@ largeint.lib: largeint.obj
 strmiids.lib: strmiids.obj
     %create $^&.lbc
     @%append $^&.lbc +strmiids.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
+
+strquery.lib: strquery.obj
+    %create $^&.lbc
+    @%append $^&.lbc +strquery.obj
     $(librarian) $(libflags) $@ @$^&.lbc
 
 uuid.lib: uuid.obj

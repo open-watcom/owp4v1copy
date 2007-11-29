@@ -4,6 +4,7 @@
 :include crwatcnt.sp
  */
 
-#pragma include_alias( <devpropdef.h>, <devprdef.h> )
-#pragma include_alias( <tcpestats.h>, <tcpestat.h> )
+#pragma include_alias( <devpropdef.h>,      <devprdef.h> )
+#pragma include_alias( <structuredquery.h>, <strquery.h> )
+#pragma include_alias( <tcpestats.h>,       <tcpestat.h> )
 
