@@ -655,6 +655,10 @@ int main()
     free( cmdline );
     cmdline = NULL;
 
+    /* Adjust tgt_path if necessary; see the Wiki */
+
+    if( !strcmp( tgt_path, "''" ) ) tgt_path[0] = '\0';
+
     /* Parse the alleged .COP file */
 
     retval = parse_defined_name();
