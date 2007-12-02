@@ -53,12 +53,8 @@ static int OpenUnicodeFile( char *filename )
     int         handle;
     char        fullpath[ _MAX_PATH ];
 
-#if defined(__UNIX__)
-#if defined(__WATCOMC__)
+#if defined(__QNX__)
     _searchenv( filename, "ETC_PATH", fullpath );
-#else
-    fullpath[0] = '\0';
-#endif
     if( fullpath[0] == '\0' ) {
         #define ETC "/etc/"
         strcpy( fullpath, ETC );

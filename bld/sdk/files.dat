@@ -71,6 +71,17 @@
     dir="axpnt"	usr="fmedit.dll"	cond="alphahost" where="ac"
 # .UNI files    
     dir="binw"	usr="kanji.uni"		where="c f77 ac" old="binb"
+    dir="binw"	usr="1250.uni"		where="c f77 ac"
+    dir="binw"	usr="1251.uni"		where="c f77 ac"
     dir="binw"	usr="1252.uni"		where="c f77 ac"
     dir="binw"	usr="936.uni"		where="c f77 ac"
     dir="binw"	usr="949.uni"		where="c f77 ac"
+    dir="binw"	usr="950.uni"		where="c f77 ac"
+# .UNI files for linux
+    dir="binl"	usr="kanji.uni"	cond="wnttarg wintarg | os2targ | lnxhost"
+    dir="binl"	usr="1250.uni"	cond="wnttarg wintarg | os2targ | lnxhost"
+    dir="binl"	usr="1251.uni"	cond="wnttarg wintarg | os2targ | lnxhost"
+    dir="binl"	usr="1252.uni"	cond="wnttarg wintarg | os2targ | lnxhost"
+    dir="binl"	usr="936.uni"	cond="wnttarg wintarg | os2targ | lnxhost"
+    dir="binl"	usr="949.uni"	cond="wnttarg wintarg | os2targ | lnxhost"
+    dir="binl"	usr="950.uni"	cond="wnttarg wintarg | os2targ | lnxhost"

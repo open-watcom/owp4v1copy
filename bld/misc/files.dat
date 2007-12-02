@@ -30,3 +30,6 @@ type="l"			dir="lib386"	usr="wresfs.lib"		where="f77      jf77"
 
 #type="e"			dir="binnt"	usr="api32wh.hlp"	cond="wnttarg helpfiles"	where="jc jf77"
 #type="e"			dir="binnt"	usr="api32wh.ind"	cond="wnttarg helpfiles"	where="jc jf77"
+
+type="s"			dir="binl"	usr="unicode.850"	cond="lnxhost"	where="c jc"
+type="s"			dir="binl"	usr="unicode.437"	cond="lnxhost"	where="c jc"
