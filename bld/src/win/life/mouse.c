@@ -4,6 +4,8 @@ static pixels           SelectStartX, SelectStartY;
 static pixels           SelectEndX, SelectEndY;
 static BOOL             RegionIsSelected = FALSE;
 
+static void XORSelectedRegion( void );
+
 
 extern BOOL SelectOn( void )
 /**************************/

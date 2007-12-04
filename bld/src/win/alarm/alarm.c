@@ -38,6 +38,12 @@ static BOOL     AlarmIsRinging;
 static BOOL FirstInstance( HINSTANCE this_inst );
 static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow );
 
+void CreateSupplies( void );
+void DeleteSupplies( void );
+static void InitializeTheClock( void );
+static void PaintClock( HDC dc );
+static void ReSize( pixels width, pixels height, WORD type );
+
 int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst,
                     LPSTR cmdline, int cmdshow )
 /***********************************************

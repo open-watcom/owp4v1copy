@@ -7,6 +7,7 @@
 static char LifeClass[32]="LifeClass";
 static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow );
 static BOOL FirstInstance( HINSTANCE this_inst );
+static void RePaint( void );
 
 extern void Error( char *str )
 /*****************************
