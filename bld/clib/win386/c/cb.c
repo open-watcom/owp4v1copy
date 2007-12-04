@@ -234,7 +234,7 @@ static CALLBACKPTR DoEmitCode( int argcnt, int bytecnt, char *array,
 } /* DoEmitCode */
 
 
-static CALLBACKPTR vGetCallbackRoutine( PROCPTR fn, va_list vl )
+CALLBACKPTR vGetCallbackRoutine( PROCPTR fn, va_list vl )
 {
     int         type;
     int         bytecnt = 0;
