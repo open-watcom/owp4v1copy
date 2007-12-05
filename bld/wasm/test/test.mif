@@ -41,7 +41,7 @@ finish_test : .symbolic ./chk_exec.exe
     %append $(log_file) PASS $(%__CWD__)
 
 ./chk_exec.exe : ../c/chk_exec.c
-    $(bld_cl) $< -ox-d1
+    $(bld_cl) $< $(wcl_util_opts)
 
 start_test : .symbolic
     @%create exec.out

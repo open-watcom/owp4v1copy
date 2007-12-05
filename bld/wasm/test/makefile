@@ -38,7 +38,7 @@ finish_test : .symbolic ./chktest.exe
     %append $(log_file) PASS $(%__CWD__)
 
 ./chktest.exe : c/chktest.c
-   $(bld_cl) $< -ox-d1
+    $(bld_cl) $< $(wcl_util_opts)
 
 global : .symbolic
     %make common_clean
