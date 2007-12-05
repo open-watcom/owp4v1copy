@@ -1,59 +1,59 @@
-.extensions:
-.extensions: .exe .lst .dis .obj .err .out .c .cpp .asm .mif
-.mif: $(mif_path)
+tmp_file = tmp.tmp
 
-.CONTINUE
-
-tmp_file=tmp.tmp
-
-!ifndef testasm
-testasm=wasm
-!endif 
-
-!ifdef nulldevice
-!else ifdef __UNIX__
-nulldevice=/dev/null
-!else
-nulldevice=nul
-!endif
-
-log_file=testasm.log
-
-.BEFORE
-    @%create $(log_file)
-    @set error_file=$(log_file)
+!include ../environ.mif
 
 .error
-    @%append $(%error_file) $(%error_msg)
-    @echo $(%error_msg)
-
-all : clean $(objs) $(dis_objs) .SYMBOLIC
+    @%append $(%ERROR_FILE) $(%ERROR_MSG)
 
 .obj.dis:
-    @set error_msg=failure to decode $[@
+    @set ERROR_MSG=failure to decode $[@
     @wdis -l=$@ -a $[@
     @set ESM_CHECK=%null
     @if exist $^&.esm @set ESM_CHECK=diff -i -b $^&.dis $^&.esm
-    @$(%ESM_CHECK)
+    $(%ESM_CHECK)
     @dmpobj -q -l -rec=FIXUPP $[@
     @vi -d -q -s ../fixlst1.vi -k "ZZ" $^&.lst
     @set EMP_CHECK=@%null
     @if exist $^&.emp @set EMP_CHECK=diff -i -b $^&.lst $^&.emp
-    @$(%EMP_CHECK)
-    @%append $(%error_file) PASS decoding $[@
-    @echo PASS decoding $[@
+    $(%EMP_CHECK)
+    @%append $(%ERROR_FILE) PASS decoding $[@
 
 .asm.obj:
-    @set error_msg=failure to compile $[@
-    -@$(testasm) -q -zld -wx -nm=$[@ $(asm_flags_$^&) $[@ -fr=$^&.out -fo=$@ > $(nulldevice)
+    @set ERROR_MSG=failure to compile $[@
+    -$(wasm_$(arch)) -zq -zld -wx -nm=$[@ $(asm_flags_$^&) $[@ -fr=$^&.out -fo=$@
     @if not exist $^&.out @%create $^&.out
     @if not exist $(tmp_file) @%create $(tmp_file)
     @set CHK_CHECK=diff -i -b $^&.out $(tmp_file)
     @if exist $^&.chk @set CHK_CHECK=diff -i -b $^&.out $^&.chk
-    @$(%CHK_CHECK)
-    @%append $(%error_file) PASS compiling $[@
-    @echo PASS compiling $[@
+    $(%CHK_CHECK)
+    @%append $(%ERROR_FILE) PASS compiling $[@
     @if not exist $@ @%create $@
 
-clean : .SYMBOLIC
-    @rm -f *.obj *.err *.dis *.lst *.out *.tmp mem.trk *.log
+test : .symbolic clean_save global start_test $(dis_objs) $(objs) finish_test save global
+
+finish_test : .symbolic ./chk_exec.exe
+    @set ERROR_FILE=error.out
+    @set ERROR_MSG=failure to complete test stream
+    echo OK >error.out
+    $< exec.out >>error.out
+    diff -b error.out ../error.chk
+    rm -f exec.out
+    %append $(log_file) PASS $(%__CWD__)
+
+./chk_exec.exe : ../c/chk_exec.c
+    $(bld_cl) $< -ox-d1
+
+start_test : .symbolic
+    @%create exec.out
+    @set ERROR_FILE=exec.out
+    @set ERROR_MSG=unknown failure
+
+clean_save : .symbolic
+    rm -f exec$(arch).sav
+
+save : .symbolic
+    @if exist exec.out cp exec.out exec$(arch).sav
+
+global : .procedure
+    @if exist failure rm failure
+    @%make common_clean

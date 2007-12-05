@@ -1,3 +1,4 @@
+wasmtest_name = test3
 
 dis_objs = &
 3dnow.dis &

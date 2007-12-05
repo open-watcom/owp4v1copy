@@ -1,3 +1,4 @@
+wasmtest_name = test1
 
 dis_objs = &
 387.dis &
@@ -76,7 +77,7 @@ strmang.dis &
 struct.dis &
 t2.dis &
 test.dis &
-tmp.dis &
+tmp2.dis &
 tn.dis &
 wincall.dis &
 word.dis &
@@ -85,6 +86,6 @@ xx.dis
 
 asm_flags_x = -c
 asm_flags_loader2 = -c
-asm_flags_getenv = -I"$(watcom_dir)/h"
+asm_flags_getenv = -I"../../../watcom/h"
 
 !include ../test.mif

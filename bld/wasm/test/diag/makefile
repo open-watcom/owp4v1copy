@@ -1,3 +1,4 @@
+wasmtest_name = diag
 
 dis_objs = &
 callimpl.dis &
@@ -22,7 +23,7 @@ diag04.obj &
 diag05.obj &
 diag06.obj &
 diag07.obj &
-error.obj &
+error1.obj &
 include.obj &
 irp.obj
 

@@ -1,3 +1,4 @@
+wasmtest_name = test2
 
 dis_objs = &
 a.dis &
@@ -77,6 +78,6 @@ t39.dis &
 t51.dis &
 test.dis &
 timer.dis &
-tmp.dis
+tmp1.dis
 
 !include ../test.mif
