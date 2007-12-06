@@ -529,7 +529,9 @@ cop_device * parse_device( FILE * in_file )
             string_ptr[length] = 0x00;
             ++out_device->next_offset;
         } else {
-            out_device->box.font_name = NULL;
+            mem_free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
     
         out_device->box.font_number = 0;
@@ -1179,7 +1181,7 @@ cop_device * parse_device( FILE * in_file )
             string_ptr[length] = 0x00;
             ++out_device->next_offset;
         } else {
-            defaultfont_ptr[i].font_style = NULL;
+            defaultfont_ptr[i].font_name = NULL;
         }
     }
 
@@ -1716,7 +1718,15 @@ cop_device * parse_device( FILE * in_file )
             string_ptr[length] = 0x00;
             ++out_device->next_offset;
         } else {
-            devicefont_ptr[i].font_name = NULL;
+            raw_functions = NULL;
+            mem_free( cop_functions->code_blocks );
+            cop_functions->code_blocks = NULL;
+            mem_free( cop_functions );
+            cop_functions = NULL;
+            mem_free( out_device );
+            mem_free( out_device );
+            out_device = NULL;
+            return( out_device );
         }
 
         /* Get the font_switch */
