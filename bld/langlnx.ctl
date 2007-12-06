@@ -90,7 +90,6 @@ set OWLINUXBUILD=normal
     rm -f <OWBINDIR>/wpp
     rm -f <OWBINDIR>/wmake
     rm -f <OWBINDIR>/wgml
-    rm -f <OWBINDIR>/parsedlg
     rm -f <OWBINDIR>/diff
     rm -f <OWBINDIR>/builder
     
