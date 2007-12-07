@@ -1991,11 +1991,9 @@ cop_device * parse_device( FILE * in_file )
             (size_t) out_device->defaultfonts.font;
         out_device->defaultfonts.font = (default_font *) byte_ptr;
         for( i = 0; i < out_device->defaultfonts.count; i++ ) {
-            if( out_device->defaultfonts.font[i].font_name != NULL ) {
-                string_ptr = (char *) out_device + \
-                    (size_t) out_device->defaultfonts.font[i].font_name;
-                out_device->defaultfonts.font[i].font_name = string_ptr;
-            }
+            string_ptr = (char *) out_device + \
+                (size_t) out_device->defaultfonts.font[i].font_name;
+            out_device->defaultfonts.font[i].font_name = string_ptr;
             if( out_device->defaultfonts.font[i].font_style != NULL ) {
                 string_ptr = (char *) out_device + \
                     (size_t) out_device->defaultfonts.font[i].font_style;

@@ -349,7 +349,8 @@ void display_driver( cop_driver * in_driver )
     else {
         puts( ":FONTSWITCH Block(s):" );    
         for( i = 0; i < in_driver->fontswitches.count; i++ ) {
-            printf_s( "  Type: %s\n", in_driver->fontswitches.fontswitchblocks[i].type );
+            if( in_driver->fontswitches.fontswitchblocks[i].type == NULL ) puts( "  Type:");
+            else printf_s( "  Type: %s\n", in_driver->fontswitches.fontswitchblocks[i].type );
             if( in_driver->fontswitches.fontswitchblocks[i].startvalue != NULL ) {
                 puts( "  :STARTVALUE Block:");
                 display_hex_block( in_driver->fontswitches.fontswitchblocks[i].startvalue->text, in_driver->fontswitches.fontswitchblocks[i].startvalue->count );
@@ -364,7 +365,8 @@ void display_driver( cop_driver * in_driver )
     else {
         puts( ":FONTSTYLE Block(s):" );    
         for( i = 0; i < in_driver->fontstyles.count; i++ ) {
-            printf_s( "  Type: %s\n", in_driver->fontstyles.fontstyle_list[i].type );
+            if( in_driver->fontstyles.fontstyle_list[i].type == NULL ) puts( "  Type:");
+            else printf_s( "  Type: %s\n", in_driver->fontstyles.fontstyle_list[i].type );
             if( in_driver->fontstyles.fontstyle_list[i].startvalue == NULL ) {
                 puts( "  No :STARTVALUE Block");
             } else {

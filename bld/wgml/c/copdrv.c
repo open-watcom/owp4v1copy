@@ -357,28 +357,34 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
         return( in_driver );
     }
 
-    /* Add the space for the type. */
+    if( count > 1 ) {
 
-    if( in_driver->allocated_size < (in_driver->next_offset + count) ) {
-        font_style_offset = ((uint8_t *) font_style_ptr - \
-            (uint8_t *) in_driver);
-        in_driver = resize_cop_driver( in_driver, count );
-        font_style_ptr = (font_style *) ((uint8_t *) in_driver + \
-            font_style_offset);
-    }
+        /* Add the space for the type. */
 
-    string_ptr = (char *) in_driver + in_driver->next_offset;
+        if( in_driver->allocated_size < (in_driver->next_offset + count) ) {
+            font_style_offset = ((uint8_t *) font_style_ptr - \
+                (uint8_t *) in_driver);
+            in_driver = resize_cop_driver( in_driver, count );
+            font_style_ptr = (font_style *) ((uint8_t *) in_driver + \
+                font_style_offset);
+        }
 
-    font_style_ptr->type = (char *) in_driver->next_offset;
-    in_driver->next_offset += count;
+        string_ptr = (char *) in_driver + in_driver->next_offset;
 
-    /* Acquire the type. */
+        font_style_ptr->type = (char *) in_driver->next_offset;
+        in_driver->next_offset += count;
+
+        /* Acquire the type. */
         
-    fread( string_ptr, count, 1, in_file );
-    if( ferror( in_file ) || feof( in_file ) ) {
-        mem_free( in_driver );
-        in_driver = NULL;
-        return( in_driver );
+        fread( string_ptr, count, 1, in_file );
+        if( ferror( in_file ) || feof( in_file ) ) {
+            mem_free( in_driver );
+            in_driver = NULL;
+            return( in_driver );
+        }
+    } else {
+        fseek( in_file, 1, SEEK_CUR );
+        font_style_ptr->type = NULL;
     }
 
     /* Done here so lineprocs can be used as an array. */
@@ -1659,32 +1665,28 @@ cop_driver * parse_driver( FILE * in_file )
             /* The "type" is a null-terminated character string. */
             
             length = strlen(current);
-            length++;
-            
-            if( length == 0 ) {
-                mem_free( p_buffer_set );
-                p_buffer_set = NULL;
-                mem_free( out_driver );
-                out_driver = NULL;
-                return( out_driver );
-            }
+            if( length > 0 ) {
+                length++;
+                if( out_driver->allocated_size < (out_driver->next_offset + \
+                    length) ) {
 
-            if( out_driver->allocated_size < (out_driver->next_offset + \
-                length) ) {
+                    out_driver = resize_cop_driver( out_driver, \
+                        out_driver->next_offset + length );
+                    fontswitch_block_ptr = (fontswitch_block *) ((uint8_t *) \
+                        out_driver + (size_t) \
+                        out_driver->fontswitches.fontswitchblocks);
+                }
 
-                out_driver = resize_cop_driver( out_driver, \
-                    out_driver->next_offset + length );
-                fontswitch_block_ptr = (fontswitch_block *) ((uint8_t *) \
-                    out_driver + (size_t) \
-                    out_driver->fontswitches.fontswitchblocks);
-            }
+                string_ptr = (char *) out_driver + out_driver->next_offset;
+                strcpy_s( string_ptr, length, current );
+                current += length;
 
-            string_ptr = (char *) out_driver + out_driver->next_offset;
-            strcpy_s( string_ptr, length, current );
-            current += length;
-
-            fontswitch_block_ptr[i].type = (char *) out_driver->next_offset;
-            out_driver->next_offset += length;
+                fontswitch_block_ptr[i].type = (char *) out_driver->next_offset;
+                out_driver->next_offset += length;
+            } else {
+                current++;
+                fontswitch_block_ptr[i].type = NULL;
+            }                
 
             /* Skip the next 20 or 21 bytes. */
 
@@ -1724,7 +1726,7 @@ cop_driver * parse_driver( FILE * in_file )
                 fontswitch_block_ptr[i].endvalue = NULL;
 
                 for( j = 0; j < count16; j++ ) {
-                    switch( cop_codeblocks[j].designator) {
+                    switch( cop_codeblocks[j].designator ) {
                     case 0x04:
 
                         /* Add the code_text struct for endvalue. */
