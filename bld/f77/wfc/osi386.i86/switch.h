@@ -30,6 +30,5 @@
 ****************************************************************************/
 
 
-#define _EDITOR         _OFF    // editor interface available?
 #define _CPU            8086    // target machine?
 #define BY_FORTRAN_FRONT_END    // identify yourself
