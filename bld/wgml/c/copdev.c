@@ -1950,10 +1950,8 @@ cop_device * parse_device( FILE * in_file )
         out_device->output_extension = string_ptr;
     }
     
-    if( out_device->box.font_name  != NULL ) {
-        string_ptr = (char *) out_device + (size_t) out_device->box.font_name;
-        out_device->box.font_name = string_ptr;
-    }
+    string_ptr = (char *) out_device + (size_t) out_device->box.font_name;
+    out_device->box.font_name = string_ptr;
     
     if( out_device->underscore.font_name != NULL ) {
         string_ptr = (char *) out_device + \
