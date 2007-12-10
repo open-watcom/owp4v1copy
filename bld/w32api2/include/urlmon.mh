@@ -2733,7 +2733,7 @@ STDAPI          CopyStgMedium( const STGMEDIUM *, STGMEDIUM * );
 STDAPI          CreateAsyncBindCtx( DWORD, IBindStatusCallback *, IEnumFORMATETC *, IBindCtx ** );
 STDAPI          CreateAsyncBindCtxEx( IBindCtx *, DWORD, IBindStatusCallback *, IEnumFORMATETC *, IBindCtx **, DWORD );
 STDAPI          CreateFormatEnumerator( UINT, FORMATETC *, IEnumFORMATETC ** );
-STDAPI          CreateURLBinding( LPCWSTR, IBindCtx *, IBinding ** ) PURE;
+STDAPI          CreateURLBinding( LPCWSTR, IBindCtx *, IBinding ** );
 STDAPI          CreateURLMoniker( LPMONIKER, LPCWSTR, LPMONIKER * );
 STDAPI          CreateURLMonikerEx( LPMONIKER, LPCWSTR, LPMONIKER *, DWORD );
 STDAPI          FaultInIEFeature( HWND, uCLSSPEC *, QUERYCONTEXT *, DWORD );
