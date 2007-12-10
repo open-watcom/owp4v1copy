@@ -1,5 +1,5 @@
 /*
- *  devpropdef.h    Device property definitions
+ *  devprdef.h / devpropdef.h   Device property definitions
  *
 :include crwatcnt.sp
  */

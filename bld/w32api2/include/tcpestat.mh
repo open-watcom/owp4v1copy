@@ -1,5 +1,5 @@
 /*
- *  tcpestats.h TCP extended statistics
+ *  tcpestat.h / tcpestats.h    TCP extended statistics
  *
 :include crwatcnt.sp
  */
