@@ -12,7 +12,7 @@
     #define THIS_
     #define THIS                                    void
     #define DECLARE_INTERFACE( x )                  interface x
-    #define DECLARE_INTERFACE( x, p )               interface x : public p
+    #define DECLARE_INTERFACE_( x, p )              interface x : public p
 #else
     #define STDMETHOD( f )                          HRESULT (STDMETHODCALLTYPE *f)
     #define STDMETHOD_( x, f )                      x (STDMETHODCALLTYPE *f)
