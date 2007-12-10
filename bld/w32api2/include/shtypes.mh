@@ -36,9 +36,9 @@ typedef GUID    FOLDERTYPEID;
 /* Task owner identifier data type */
 typedef GUID    TASKOWNERID;
 #ifdef __cplusplus
-    #define REFTASKOWNERID  const REFTASKOWNERID &
+    #define REFTASKOWNERID  const TASKOWNERID &
 #else
-    #define REFTASKOWNERID  const REFTASKOWNERID * const
+    #define REFTASKOWNERID  const TASKOWNERID * const
 #endif
 
 /* Shell column state flags data type */
