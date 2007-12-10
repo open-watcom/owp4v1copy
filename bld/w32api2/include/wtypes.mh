@@ -188,21 +188,21 @@ typedef enum tagSTATFLAG {
 /* Byte blob */
 typedef struct _BYTE_BLOB {
     unsigned long   clSize;
-    byte            abData[];
+    byte            abData[1];
 } BYTE_BLOB;
 typedef BYTE_BLOB   *UP_BYTE_BLOB;
 
 /* Word blob */
 typedef struct _WORD_BLOB {
     unsigned long   clSize;
-    unsigned short  asData[];
+    unsigned short  asData[1];
 } WORD_BLOB;
 typedef WORD_BLOB   *UP_WORD_BLOB;
 
 /* Double word blob */
 typedef struct _DWORD_BLOB {
     unsigned long   clSize;
-    unsigned long   alData[];
+    unsigned long   alData[1];
 } DWORD_BLOB;
 typedef DWORD_BLOB  *UP_DWORD_BLOB;
 
@@ -210,7 +210,7 @@ typedef DWORD_BLOB  *UP_DWORD_BLOB;
 typedef struct _FLAGGED_BYTE_BLOB {
     unsigned long   fFlags;
     unsigned long   clSize;
-    byte            abData[];
+    byte            abData[1];
 } FLAGGED_BYTE_BLOB;
 typedef FLAGGED_BYTE_BLOB   *UP_FLAGGED_BYTE_BLOB;
 
@@ -218,7 +218,7 @@ typedef FLAGGED_BYTE_BLOB   *UP_FLAGGED_BYTE_BLOB;
 typedef struct _FLAGGED_WORD_BLOB {
     unsigned long   fFlags;
     unsigned long   clSize;
-    unsigned short  asData[];
+    unsigned short  asData[1];
 } FLAGGED_WORD_BLOB;
 typedef FLAGGED_WORD_BLOB   *UP_FLAGGED_WORD_BLOB;
 

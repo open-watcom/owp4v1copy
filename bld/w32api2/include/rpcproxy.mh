@@ -65,7 +65,7 @@ typedef struct tagCInterfaceProxyHeader {
 /* C interface proxy virtual table */
 typedef struct tagCInterfaceProxyVtbl {
     CInterfaceProxyHeader   header;
-    void                    *vtbl[];
+    void                    *vtbl[1];
 } CInterfaceProxyVtbl;
 
 /* RPC stub function */

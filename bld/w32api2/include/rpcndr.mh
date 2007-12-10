@@ -352,7 +352,7 @@ typedef const MIDL_STUB_DESC    *PMIDL_STUB_DESC;
 /* MIDL format string */
 typedef struct _MIDL_FORMAT_STRING {
     short           Pad;
-    unsigned char   Format[];
+    unsigned char   Format[1];
 } MIDL_FORMAT_STRING;
 
 /* Stub thunk */

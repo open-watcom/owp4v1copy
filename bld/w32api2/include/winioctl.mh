@@ -1357,7 +1357,7 @@ typedef STORAGE_PRIORITY_HINT_SUPPORT   *PSTORAGE_PRIORITY_HINT_SUPPORT;
 typedef struct _STORAGE_MEDIA_SERIAL_NUMBER_DATA {
     WORD    Reserved;
     WORD    SerialNumberLength;
-    BYTE    SerialNumber[];
+    BYTE    SerialNumber[1];
 } STORAGE_MEDIA_SERIAL_NUMBER_DATA;
 typedef STORAGE_MEDIA_SERIAL_NUMBER_DATA    *PSTORAGE_MEDIA_SERIAL_NUMBER_DATA;
 
@@ -1429,7 +1429,7 @@ typedef struct _PERSISTENT_RESERVE_COMMAND {
             BYTE    Reserved1       : 3;
             BYTE    Type            : 4;
             BYTE    Scope           : 4;
-            BYTE    ParameterList[];
+            BYTE    ParameterList[1];
         } PR_OUT;
     };
 } PERSISTENT_RESERVE_COMMAND;

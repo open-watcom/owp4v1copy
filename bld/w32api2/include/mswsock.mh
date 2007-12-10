@@ -152,7 +152,7 @@ typedef struct {
     int         result;
     ULONG       fds;
     INT         timeout;
-    WSAPOLLFD   fdArray[];
+    WSAPOLLFD   fdArray[1];
 } WSAPOLLDATA;
 typedef WSAPOLLDATA *LPWSAPOLLDATA;
 

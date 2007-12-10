@@ -100,7 +100,7 @@ typedef struct tagSAFEARRAY {
     ULONG           cbElements;
     ULONG           cLocks;
     PVOID           pvData;
-    SAFEARRAYBOUND  rgsaBound[];
+    SAFEARRAYBOUND  rgsaBound[1];
 } SAFEARRAY;
 typedef SAFEARRAY   *LPSAFEARRAY;
 
@@ -214,7 +214,7 @@ typedef struct tagTYPEDESC {
 typedef struct tagARRAYDESC {
     TYPEDESC        tdescElem;
     USHORT          cDims;
-    SAFEARRAYBOUND  rgbounds[];
+    SAFEARRAYBOUND  rgbounds[1];
 } ARRAYDESC;
 
 /* Parameter descriptor (extended version) */

@@ -223,7 +223,7 @@ typedef struct IP_ADAPTER_BINDING_INFO {
     DWORD               RemoteAddress;
     ULONG               Mtu;
     ULONGLONG           Speed;
-    IP_LOCAL_BINDING    Address[];
+    IP_LOCAL_BINDING    Address[1];
 } IP_ADAPTER_BINDING_INFO;
 typedef IP_ADAPTER_BINDING_INFO *PIP_ADAPTER_BINDING_INFO;
 
@@ -233,7 +233,7 @@ typedef struct IPV6_ADAPTER_BINDING_INFO {
     IN6_ADDR            RemoteAddress;
     ULONG               Mtu;
     ULONGLONG           Speed;
-    IPV6_LOCAL_BINDING  Address[];
+    IPV6_LOCAL_BINDING  Address[1];
 } IPV6_ADAPTER_BINDING_INFO;
 typedef IPV6_ADAPTER_BINDING_INFO   *PIPV6_ADAPTER_BINDING_INFO;
 

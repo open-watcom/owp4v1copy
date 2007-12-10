@@ -77,7 +77,7 @@ typedef struct tagPAGESET {
     BOOL        fOddPages;
     BOOL        fEvenPages;
     ULONG       cPageRange;
-    PAGERANGE   rgPages[];
+    PAGERANGE   rgPages[1];
 } PAGESET;
 
 /* OLE command flags */
@@ -106,7 +106,7 @@ typedef struct _tagOLECMDTEXT {
     DWORD   cmdtextf;
     ULONG   cwActual;
     ULONG   cwBuf;
-    wchar_t rgwz[];
+    wchar_t rgwz[1];
 } OLECMDTEXT;
 typedef OLECMDTEXT  MSOCMDTEXT;
 

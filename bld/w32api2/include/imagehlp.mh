@@ -1227,7 +1227,7 @@ typedef MINIDUMP_DIRECTORY  *PMINIDUMP_DIRECTORY;
 /* Minidump string */
 typedef struct _MINIDUMP_STRING {
     ULONG32 Length;
-    WCHAR   Buffer[];
+    WCHAR   Buffer[1];
 } MINIDUMP_STRING;
 typedef MINIDUMP_STRING *PMINIDUMP_STRING;
 
@@ -1321,7 +1321,7 @@ typedef MINIDUMP_THREAD *PMINIDUMP_THREAD;
 /* Minidump thread list */
 typedef struct _MINIDUMP_THREAD_LIST {
     ULONG32         NumberOfThreads;
-    MINIDUMP_THREAD Threads[];
+    MINIDUMP_THREAD Threads[1];
 } MINIDUMP_THREAD_LIST;
 typedef MINIDUMP_THREAD_LIST    *PMINIDUMP_THREAD_LIST;
 
@@ -1341,7 +1341,7 @@ typedef MINIDUMP_THREAD_EX  *PMINIDUMP_THREAD_EX;
 /* Minidump thread list (extended version) */
 typedef struct _MINIDUMP_THREAD_EX_LIST {
     ULONG32             NumberOfThreads;
-    MINIDUMP_THREAD_EX  Threads[];
+    MINIDUMP_THREAD_EX  Threads[1];
 } MINIDUMP_THREAD_EX_LIST;
 typedef MINIDUMP_THREAD_EX_LIST *PMINIDUMP_THREAD_EX_LIST;
 
@@ -1384,14 +1384,14 @@ typedef MINIDUMP_MODULE *PMINIDUMP_MODULE;
 /* Minidump module list */
 typedef struct _MINIDUMP_MODULE_LIST {
     ULONG32         NumberOfModules;
-    MINIDUMP_MODULE Modules[];
+    MINIDUMP_MODULE Modules[1];
 } MINIDUMP_MODULE_LIST;
 typedef MINIDUMP_MODULE_LIST    *PMINIDUMP_MODULE_LIST;
 
 /* Minidump memory list */
 typedef struct _MINIDUMP_MEMORY_LIST {
     ULONG32                     NumberOfMemoryRanges;
-    MINIDUMP_MEMORY_DESCRIPTOR  MemoryRanges[];
+    MINIDUMP_MEMORY_DESCRIPTOR  MemoryRanges[1];
 } MINIDUMP_MEMORY_LIST;
 typedef MINIDUMP_MEMORY_LIST    *PMINIDUMP_MEMORY_LIST;
 
@@ -1399,7 +1399,7 @@ typedef MINIDUMP_MEMORY_LIST    *PMINIDUMP_MEMORY_LIST;
 typedef struct _MINIDUMP_MEMORY64_LIST {
     ULONG64                         NumberOfMemoryRanges;
     RVA64                           BaseRva;
-    MINIDUMP_MEMORY_DESCRIPTOR64    MemoryRanges[];
+    MINIDUMP_MEMORY_DESCRIPTOR64    MemoryRanges[1];
 } MINIDUMP_MEMORY64_LIST;
 typedef MINIDUMP_MEMORY64_LIST  *PMINIDUMP_MEMORY64_LIST;
 
