@@ -1065,6 +1065,9 @@ static void PatchData( fix_data *fix )
         } else if( fix->done || ( FmtData.type & ( MK_QNX | MK_DOS ) ) ) {
             if( isdbi && ( LinkFlags & CV_DBI_FLAG ) ) {    // FIXME
                 segval = FindGroupIdx( fix->tgt_addr.seg );
+            } else if( fix->type & FIX_ABS ) {
+                /* MASM 5.1 stuffs abs seg length in displacement; ignore it like LINK. */
+                segval = fix->tgt_addr.seg;
             } else {
                 segval = GET_U16( data ) + fix->tgt_addr.seg;
             }
