@@ -170,6 +170,7 @@ base_headers =       &
         setupapi.h   &
         shellapi.h   &
         sherrors.h   &
+        shldisp.h    &
         shobjidl.h   &
         shtypes.h    &
         snmp.h       &
