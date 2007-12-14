@@ -31,7 +31,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     echo Building the wmake bootstrap
     cdsay <PROJDIR>
     <MAKE> -f gnumake
-    <CPCMD> <OBJDIR>/wmake <DEVDIR>/build/binl/wmake
+    <CPCMD> <OBJDIR>/wmake <OWBINDIR>/wmake
 
 [ BLOCK . . ]
 #============
