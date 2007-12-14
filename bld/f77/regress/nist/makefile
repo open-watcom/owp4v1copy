@@ -90,19 +90,19 @@ fflags_axp += -INCPath=$(positive_dir) $(run_quietly) #-we-w0
     rm $*.out
 #    wstrip -q $^@
 
-test : .symbolic actual_test
+test : .symbolic global start_test test.lnk $(positive_exes) finish_test save global
+    
+./chk_exec.exe : ../c/chk_exec.c
+    $(bld_cl) $< $(wcl_util_opts)
+
+finish_test : .symbolic ./chk_exec.exe
     @set error_file=error.out
     @set error_msg=failure to complete test stream
     echo OK > error.out
-    $(bld_cl) chk_exec.c -ox-d1
-    $(exec_prefix)chk_exec exec.out >> error.out
+    $[@ exec.out >> error.out
     diff -b error.out error.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
-
-actual_test : .symbolic start_test $(positive_exes)
-    rm -f *.obj
-    rm -f *.$(exe)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 fnstat1.$(exe) : fnstat1a.obj fnstat1b.obj
     @set error_msg=failure to link $^@
@@ -111,7 +111,8 @@ fnstat1.$(exe) : fnstat1a.obj fnstat1b.obj
     @%append exec.out PASS executing $^@
     $(run) $(exec_prefix)$^@ >>exec.out
 
-start_test : .symbolic test.lnk
+start_test : .symbolic
+    rm -f s$(arch)_$(alt_error).sav
     %create exec.out
     @set error_file=exec.out
 
@@ -122,9 +123,9 @@ test.lnk : makefile
     @%append $^@ OPTION noredef
 
 save : .symbolic
-    if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
-global : .symbolic
+global : .procedure
     @if exist for007 rm for007
     @if exist for009 rm for009
     @if exist for024 rm for024

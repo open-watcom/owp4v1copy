@@ -10,7 +10,6 @@ int main( int argc, char **argv ) {
     FILE *fp;
     char *chk;
     unsigned line;
-    unsigned flip;
 
     if( argc != 2 ) {
         puts( "usage: chk_exec <file>" );
