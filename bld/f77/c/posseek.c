@@ -56,7 +56,11 @@ void    FSeekRec( b_file *io, unsigned_32 rec, uint recsize ) {
     IOOk( io );
     if( io->attrs & SEEK ) {
         if( io->attrs & REC_TEXT ) {
+#if defined( __UNIX__ )
+            recsize += sizeof( char );     // compensate for LF
+#else
             recsize += 2 * sizeof( char ); // compensate for CR/LF
+#endif
         } else if( io->attrs & REC_VARIABLE ) {
             recsize += 2 * sizeof( unsigned_32 ); // compensate for length tags
         }
