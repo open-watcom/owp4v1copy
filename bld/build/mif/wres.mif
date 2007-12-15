@@ -6,7 +6,6 @@
 # 4. For large memory model pegged version, define 'pegged'
 # 5. For large memory model windows version, define 'windows'
 #
-!ifdef __UNIX__
 
 !ifdef stack
 name_model_conv = m$(memory_model_386)_s/wres.lib
@@ -51,53 +50,4 @@ wres_lib = $(wres_dir)/$(%OBJDIR)/wres.lib
 wres_lib = $(wres_dir)/$(%PREOBJDIR)/wres.lib
 !else
 wres_lib = $(name_$(host_cpu))
-!endif
-
-!else # non-UNIX, workaround for OW 1.3
-
-!ifdef stack
-name_model_conv = m$(memory_model_386)_s\wres.lib
-!else
-name_model_conv = m$(memory_model_386)_r\wres.lib
-!endif
-
-name_i86_s = $(wres_dir)\dosi86\ms\wres.lib
-name_i86_m = $(wres_dir)\dosi86\mm\wres.lib
-name_i86_c = $(wres_dir)\dosi86\mc\wres.lib
-!ifdef WINDOWS
-name_i86_l = $(wres_dir)\wini86\ml\wres.lib
-!else ifdef pegged
-name_i86_l = $(wres_dir)\os2i86\ml\wres.lib
-!else
-name_i86_l = $(wres_dir)\dosi86\ml\wres.lib
-!endif
-name_i86_h = $(wres_dir)\dosi86\mh\wres.lib
-
-name_386_dos      = $(wres_dir)\small386\$(name_model_conv)
-name_386_osi      = $(wres_dir)\small386\$(name_model_conv)
-name_386_nov      = $(wres_dir)\small386\$(name_model_conv)
-name_386_qnx      = $(wres_dir)\qnx386\$(name_model_conv)
-name_386_linux    = $(wres_dir)\linux386\$(name_model_conv)
-name_386_os2      = $(wres_dir)\flat386\$(name_model_conv)
-name_386_win      = $(wres_dir)\flat386\$(name_model_conv)
-!ifeq $(proj_name)_rtdll 1
-name_386_nt       = $(wres_dir)\nt386.dll\$(name_model_conv)
-!else
-name_386_nt       = $(wres_dir)\flat386\$(name_model_conv)
-!endif
-
-name_i86 = $(name_i86_$(memory_model_i86))
-name_386 = $(name_386_$(host_os))
-name_axp = $(wres_dir)\$(host_os)axp\_s\wres.lib
-name_ppc = $(wres_dir)\$(host_os)ppc\_s\wres.lib
-name_mps = $(wres_dir)\$(host_os)mps\_s\wres.lib
-
-!ifdef bootstrap
-wres_lib = $(wres_dir)\$(%OBJDIR)\wres.lib
-!else ifdef prebuild
-wres_lib = $(wres_dir)\$(%PREOBJDIR)\wres.lib
-!else
-wres_lib = $(name_$(host_cpu))
-!endif
-
 !endif
