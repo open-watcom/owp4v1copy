@@ -39,12 +39,16 @@ tests = &
 
 !ifdef test1
 test_cflags = -op-d2
+alt_error=01
 !else ifdef test2
 test_cflags = -ot-op-d1-xds
+alt_error=02
 !else ifdef test3
 test_cflags = -op-d2-xds
+alt_error=03
 !else
 test_cflags = -ot-op-d1
+alt_error=00
 !endif
 
 test_cflags += -zq -I../.. -w0
@@ -135,7 +139,7 @@ test : .symbolic ex.lnk $(tests)
     diff test.out testi86.chk
 !endif
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 ex.lnk : makefile
     %create $^@

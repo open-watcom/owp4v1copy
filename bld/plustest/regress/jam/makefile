@@ -3,8 +3,10 @@ plustest_name = jam
 
 !ifdef test1
 test_cflags = -d2
+alt_error=01
 !else
 test_cflags = -otexan-d1
+alt_error=00
 !endif
 
 test_cflags += -zq-w0-i..
@@ -28,7 +30,7 @@ test : .symbolic jam.$(exe)
     $(run) jam >jam.out
     diff jam.out jam.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 jam.$(exe) : $(objs) jam.lnk
     $(linker) @$]@

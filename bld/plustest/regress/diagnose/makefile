@@ -7,6 +7,7 @@ diagnose_dir = source
 
 diagnose_opts += -ew -we -wx -e1000 -zq -eq
 archdep_opts = -dARCH=$(arch) -fr=.ser
+alt_error=00
 
 # The check files for x86 are a bit different.
 !ifeq arch i86
@@ -32,7 +33,7 @@ dosystest = testsys
 
 test : .symbolic initopts test0000 test0100 test0200 test0300 $(dosystest) test_special
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 initopts : .symbolic
     set diag=$(diagnose_opts)

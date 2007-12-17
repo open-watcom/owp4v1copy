@@ -44,7 +44,7 @@ test : .symbolic test.lnk tempbuf.obj random.obj start_test $(tests)
     diff exec.out exec.chk
 !endif
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 start_test : .symbolic
     %create exec.out

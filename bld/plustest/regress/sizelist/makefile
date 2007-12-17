@@ -3,8 +3,10 @@ plustest_name = sizelist
 
 !ifdef test1
 test_cflags = -d2
+alt_error=01
 !else
 test_cflags = -ox-d1
+alt_error=00
 !endif
 
 test_cflags += -zq-w0
@@ -27,7 +29,7 @@ test : .symbolic psfistt.$(exe)
     $(run) psfistt.$(exe) >psfistt.out
     diff psfistt.out psfistt.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 psfistt.$(exe) : $(objs) psfistt.lnk
     $(linker) @$]@

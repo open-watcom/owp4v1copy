@@ -116,7 +116,7 @@ test : .symbolic actual_test
     chk_exec exec.out >>error.out
     diff -b error.out error.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 actual_test : .symbolic start_test $(positive_exes)
     rm -f *.obj

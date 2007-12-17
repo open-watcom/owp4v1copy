@@ -4,15 +4,19 @@ plustest_name = extref
 !ifdef test1
 test_cflags = -d2
 extref_eh = -xss
+alt_error=01
 !else ifdef test2
 test_cflags = -ot-d1
 extref_eh = -xst
+alt_error=02
 !else ifdef test3
 test_cflags = -d2
 extref_eh = -xst
+alt_error=03
 !else
 test_cflags = -ot-d1
 extref_eh = -xss
+alt_error=00
 !endif
 
 !ifneq arch axp
@@ -48,7 +52,7 @@ test : .symbolic $(tests)
     for %i in ($(tests)) do $(run) %i >>test.out
     diff test.out test.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 er01.$(exe) : er01a.obj er01.lib er.lnk
     wlink @er NAME $^@ FILE er01a LIBRARY er01

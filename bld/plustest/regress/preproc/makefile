@@ -6,6 +6,7 @@ comp = $(wpp_$(arch))
 !ifdef test_cc
 comp = $(cc)
 !endif
+alt_error=00
 
 .extensions:
 .extensions: .pl0 .pl .plc .c
@@ -55,7 +56,7 @@ pp17.plc &
 test : .symbolic zap_output gen_input $(all_tests)
     diff exec.out exec.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 zap_output : .procedure
     %create exec.out

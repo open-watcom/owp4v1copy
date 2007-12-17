@@ -50,7 +50,7 @@ test : .symbolic stepanov.lnk $(exes)
     diff stepanov.out stepanov.chk
 !endif
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 stepanov.lnk : $(__MAKEFILES__)
     %create $^@

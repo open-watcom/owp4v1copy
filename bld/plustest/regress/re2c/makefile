@@ -3,8 +3,10 @@ plustest_name = re2c
 
 !ifdef test1
 test_cflags = -d2
+alt_error=01
 !else
 test_cflags = -ox-d1
+alt_error=00
 !endif
 
 test_cflags += -zq
@@ -36,7 +38,7 @@ test : .symbolic re2c.$(exe)
     diff debug.out debug.chk | wc -w >word.out
     diff word.out word.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 re2c.$(exe) : $(objs) re2c.lnk
     $(linker) @$]@

@@ -5,10 +5,12 @@ plustest_name = claslist
 test_cflags_386 = -d2~
 test_cflags_i86 = -d2~
 test_cflags_axp = -d2~
+alt_error=01
 !else
 test_cflags_386 = -ox-d1
 test_cflags_i86 = -ox-d1
 test_cflags_axp = -ox-d1
+alt_error=00
 !endif
 
 test_cflags_386 += -zq-mf
@@ -28,7 +30,7 @@ test : .symbolic pcfistt.$(exe)
     $(run) pcfistt >pcfistt.out
     diff pcfistt.out pcfist.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 pcfistt.$(exe) : $(objs) pcfistt.lnk
     $(linker) @$]@

@@ -3,12 +3,16 @@ plustest_name = winnt
 
 !ifdef test1
 test_cflags = -oxa-d1
+alt_error=01
 !else ifdef test2
 test_cflags = -oxa-d1 -br
+alt_error=02
 !else ifdef test3
 test_cflags = -d2 -br
+alt_error=03
 !else
 test_cflags = -d2
+alt_error=00
 !endif
 
 test_cflags += -w0-zq -i$(%watcom)\h\nt
@@ -21,7 +25,7 @@ test : .symbolic tomexe.exe tomdll.dll
     $(run) tomexe
     diff exec.out exec.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 tomexe.exe : tomexe.obj tomexe.lnk
     $(linker) @$]@

@@ -76,7 +76,7 @@ test : .symbolic actual_test
     $(exec_prefix)chk_exec.exe exec.out >>error.out
     diff -b error.out error.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 !ifdef $(arch)_inline_objs
 actual_test : .symbolic start_test $($(arch)_inline_objs)

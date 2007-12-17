@@ -3,8 +3,10 @@ plustest_name = format
 
 !ifdef test1
 test_cflags = -d2
+alt_error=01
 !else
 test_cflags = -ox-d1
+alt_error=00
 !endif
 
 test_cflags += -zq
@@ -29,7 +31,7 @@ test : .symbolic testi.$(exe) testf.$(exe)
     $(run) testf >testf.out
     diff testf.out fcheck.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 testi.$(exe) : $(i_objs) testi.lnk
     $(linker) @$]@

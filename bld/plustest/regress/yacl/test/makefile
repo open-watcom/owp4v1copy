@@ -22,12 +22,16 @@ wordcnt.$(exe)
 
 !ifdef test1
 test_cflags = -ot-op-d1
+alt_error=01
 !else ifdef test2
 test_cflags = -ot-op-d1-xds
+alt_error=02
 !else ifdef test3
 test_cflags = -op-d2-xds
+alt_error=03
 !else
 test_cflags = -op-d2
+alt_error=00
 !endif
 
 test_cflags += -ei -zq -i.. -w0 -d__OS2__
@@ -89,7 +93,7 @@ test : .symbolic ex.lnk $(exes)
     $(run) wordcnt.$(exe) <wordcnt.cpp >>test.out
     diff test.out test.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 ex.lnk : makefile
     %create $^@

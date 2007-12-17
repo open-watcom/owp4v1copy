@@ -10,8 +10,10 @@ objs = &
     
 !ifdef test1
 test_cflags = -d2-j
+alt_error=01
 !else
 test_cflags = -ox-d1-j
+alt_error=00
 !endif
 
 test_cflags += -zq-w0-i.
@@ -34,7 +36,7 @@ test : .symbolic mdarr.$(exe) diarr.$(exe)
     $(run) diarr >>exec.out
     diff exec.out exec.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 diarr.$(exe) : dim2arr.obj tort.lnk tort.lib
     $(linker) @tort NAME $^@ FILE $[@ LIB $]@

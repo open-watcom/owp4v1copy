@@ -9,10 +9,13 @@ plustest_name = wclass
 
 !ifdef test1
 comp_flags = -d2-ml
+alt_error=01
 !else ifdef test2
 comp_flags = -ox-d1-xds-mc
+alt_error=02
 !else
 comp_flags = -ox-d1-mc
+alt_error=00
 !endif
 
 comp_flags += -zq -zw -i$(%watcom)\h\win -bt=windows
@@ -65,7 +68,7 @@ wwinmain.obj
 test : .symbolic test.exe
     cp test.exe test.ice
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     ren test.ice test.exe
 
 test.exe : $(objs) test.lnk
@@ -85,7 +88,7 @@ test.lnk : makefile $(objs)
     
 test : .symbolic
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 !endif
     

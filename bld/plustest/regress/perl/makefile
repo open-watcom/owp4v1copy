@@ -17,8 +17,10 @@ exes = &
 
 !ifdef test1
 test_cflags = -d2
+alt_error=01
 !else
 test_cflags = -ox-d1
+alt_error=00
 !endif
 
 test_cflags += -zq-w0
@@ -46,7 +48,7 @@ test : .symbolic $(objs) $(exes)
     diff tstio.out tstio.chk
     diff t2.txt t2.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 perltest.$(exe) : perltest.obj perlclas.obj regex.obj test.lnk
     $(linker) @test.lnk FILE perltest, perlclas, regex.obj

@@ -13,10 +13,12 @@ objs = &
 test_cflags_386 = -d2
 test_cflags_i86 = -d2
 test_cflags_axp = -d2
+alt_error=01
 !else
 test_cflags_386 = -ox-d1
 test_cflags_i86 = -ox-d1
 test_cflags_axp = -ox-d1
+alt_error=00
 !endif
 
 test_cflags_386 += -zq -e10 -w0 -i. -d__ATT_complex__
@@ -39,7 +41,7 @@ test : .symbolic matrix.lib test.lnk test.$(exe) tmatrix.$(exe)
     $(run) tmatrix >>test.out
     diff test.out test.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 matrix.lib : $(objs) matrix.lbc
     $(librarian_$(arch)) /b/n/q $^@ @matrix.lbc

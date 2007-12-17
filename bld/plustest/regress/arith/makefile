@@ -5,26 +5,32 @@ plustest_name = arith
 test_cflags_386 = -d2-fpd
 test_cflags_i86 = -d2-fpd
 test_cflags_axp = -d2
+alt_error=01
 !else ifdef test2
 test_cflags_386 = -os-d1-3s-xds-br
 test_cflags_i86 = -os-d1-xds
 test_cflags_axp = -os-d1-xds
+alt_error=02
 !else ifdef test3
 test_cflags_386 = -os-d1-3s-xss-fpd
 test_cflags_i86 = -os-d1-xss-fpd
 test_cflags_axp = -os-d1-xss
+alt_error=03
 !else ifdef test4
 test_cflags_386 = -ot-d1-3r-fpd -oe1000
 test_cflags_i86 = -ot-d1-fpd -oe1000
 test_cflags_axp = -ot-d1 -oe1000
+alt_error=04
 !else ifdef test5
 test_cflags_386 = -d2-br
 test_cflags_i86 = -d2
 test_cflags_axp = -d2
+alt_error=05
 !else
 test_cflags_386 = -os-d1-xst
 test_cflags_i86 = -os-d1-xst
 test_cflags_axp = -os-d1-xst
+alt_error=00
 !endif
 
 test_cflags_386 += -zq-fpi87-fp5-mf
@@ -85,7 +91,7 @@ test : .symbolic test.lnk $(tests)
     $(run) waste >>test.out
     diff test.out test.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 test.lnk : makefile
     %create $^@

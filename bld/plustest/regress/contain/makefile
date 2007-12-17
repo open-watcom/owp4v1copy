@@ -9,23 +9,27 @@ comp_flags = -d2-j
 EH_yes = -xst
 opt_386 += -ei-zp1
 opt_i86 += -ei-zp2
+alt_error=01
 !else ifdef test2
 save_out = $(arch)_2
 comp_flags = -oxratl-d1-j
 opt_386 += -ei-zp2
 EH_yes = -xss
+alt_error=02
 !else ifdef test3
 save_out = $(arch)_3
 comp_flags = -oxratl-d1-j
 EH_yes = -xs
 opt_386 += -ei
 opt_i86 += -ei
+alt_error=03
 !else
 save_out = $(arch)_0
 comp_flags = -d2-j
 EH_yes = -xs
 opt_386 += -ei-zp4
 opt_i86 += -ei-zp2
+alt_error=00
 !endif
 
 special_memchk = -zl -wcd=887
@@ -228,7 +232,7 @@ exes =   $(wc_list_template) $(wc_vect_template) $(wc_hash_template) &
 		
 test : .symbolic test_exes
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 test_exes : .symbolic cont.lnk start_test $(exes)
     set msg=*** output differences

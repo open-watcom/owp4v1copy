@@ -15,7 +15,7 @@ set CCCMD=accopy
     set 1=build
 
 [ BLOCK .<1> .. ]
-#===============
+#================
     # default rule
     set 1=build
 
@@ -43,6 +43,9 @@ set CCCMD=accopy
 #===================
     echo **** CPREL2 rule
     set LOGFNAME=cprel2
+    # with 'cprel2', we want to force the copy to occur
+    set CPCMD=copy
+    set CCCMD=ccopy
 
 [ BLOCK <1> build ]
 #==================
@@ -62,12 +65,6 @@ set CCCMD=accopy
 [ BLOCK <1> install ]
 #==================
     set LOGFNAME=install
-
-[ BLOCK <1> cprel2 ]
-#===================
-    # with 'cprel2', we want to force the copy to occur
-    set CPCMD=copy
-    set CCCMD=ccopy
 
 [ BLOCK <1> boot ]
 #==================

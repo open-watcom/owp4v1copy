@@ -3,8 +3,10 @@ plustest_name = gstring
 
 !ifdef test1
 test_cflags = -d2
+alt_error=01
 !else
 test_cflags = -ox-d1
+alt_error=00
 !endif
 
 test_cflags += -zq -i.
@@ -29,7 +31,7 @@ test : .symbolic strtest.$(exe)
     $(run) strtest >strtest.out
     diff strtest.out strtest.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 strtest.$(exe) : $(objs) strtest.lnk
     $(linker) @$]@

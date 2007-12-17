@@ -5,10 +5,12 @@ plustest_name = bits64
 test_cflags_386 = -d2-3r
 test_cflags_i86 = -d2
 test_cflags_axp = -d2
+alt_error=01
 !else
 test_cflags_386 = -ox-d1-3s
 test_cflags_i86 = -ox-d1
 test_cflags_axp = -ox-d1
+alt_error=00
 !endif
 
 test_cflags_386 += -zq-mf
@@ -29,7 +31,7 @@ test : .symbolic tbits.$(exe)
     $(run) tbits >tbits.out
     diff tbits.out ..\bits\tbits.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 tbits.$(exe) : $(objs) tbits.lnk
     $(linker) @$]@

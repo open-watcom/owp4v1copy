@@ -113,10 +113,13 @@ opt_cv08 = -xbov1
 
 !ifdef test1
 !   define test_flags -d2-zq
+alt_error=01
 !else ifdef test2
 !   define test_flags -ox-d1-zq-w0-j
+alt_error=02
 !else
 !   define test_flags -ox-d1-zq-w0-otexanr
+alt_error=00
 !endif
 
 stack_386=opt stack=16k
@@ -140,7 +143,7 @@ test : .symbolic overload.lnk $(exes)
     diff overload.out overload.chk
 !endif
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 overload.lnk : $(__MAKEFILES__)
     %create $^@

@@ -13,6 +13,7 @@ opt_diag0253  += -ei	# make Intel match the AXP compiler for now
 
 diagnose_opts += -ew -we -wx -e1000 -eq
 archdep_opts = -dARCH=$(arch) -fr=.ser 
+alt_error=00
 
 .c: $(diagnose_dir)
 .c.err:
@@ -25,7 +26,7 @@ archdep_opts = -dARCH=$(arch) -fr=.ser
 
 test : .symbolic test0000 test0100 test0200 testsys
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 test0000 : .symbolic diag0000.out
     -diff diag0000.out diag0000.chk >diff0000.out

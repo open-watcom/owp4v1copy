@@ -42,14 +42,18 @@ test_cflags += -i..\positive\source
     
 !ifdef test1
 test_cflags += -d2-xst
+alt_error=01
 !else ifdef test2
 test_cflags += -d2-xss
 add_br_ = -br
+alt_error=02
 !else ifdef test3
 test_cflags += -ox-d1-xss
+alt_error=03
 !else
 test_cflags += -ox-d1-xst
 add_br_ = -br
+alt_error=00
 !endif
 
 !ifdef %plustest_bad_br
@@ -76,7 +80,7 @@ stack_axp=opt stack=32k
     
 test : .symbolic $(batch_sym) run_test
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 run_test : .symbolic $(batch_sym) test.lnk $(exes)
     %create except.out

@@ -46,6 +46,7 @@ idata41.$(exe) &
 idata42.$(exe)
 
 test_cflags += -ox-d1-zq-w0
+alt_error=00
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
@@ -62,7 +63,7 @@ test : .symbolic idata.lnk $(exes)
     @for %i in ( $(exes) ) do $(run) %i >>idata.out
     diff idata.out idata.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 idata.lnk : $(__MAKEFILES__)
     %create $^@

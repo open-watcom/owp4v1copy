@@ -15,10 +15,13 @@ xcl.obj
 
 !ifdef test1
 test_cflags = -d2
+alt_error=01
 !else ifdef test2
 test_cflags = -ox-d1
+alt_error=02
 !else
 test_cflags = -ox-d1 -oe1000
+alt_error=00
 !endif
 test_cflags += -zq-w0-dTEST
 
@@ -46,7 +49,7 @@ test : .symbolic $(objs) $(exes)
     $(run) spltest >spltest.out
     diff spltest.out spltest.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 spltest.$(exe) : spltest.obj splash.obj regex.obj test.lnk
     $(linker) @test.lnk NAME $^@ FILE spltest, splash, regex

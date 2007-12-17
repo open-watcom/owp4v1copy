@@ -3,16 +3,22 @@ plustest_name = ehmix
 
 !ifdef test1
 comp_flags = -d2-xs-hd -br
+alt_error=01
 !else ifdef test2
 comp_flags = -d2-xss-hd
+alt_error=02
 !else ifdef test3
 comp_flags = -d2-xst-hd
+alt_error=03
 !else ifdef test4
 comp_flags = -ox-d1-xst
+alt_error=04
 !else ifdef test5
 comp_flags = -ox-d1-xss
+alt_error=05
 !else
 comp_flags = -ox-d1-xs -br
+alt_error=00
 !endif
 
 comp_flags += -zq -xr
@@ -37,7 +43,7 @@ test : .symbolic exec.out
     -diff exec.out exec.chk >diff.out
 !endif
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 exec.out : ehmix.lnk ehmix.exe
     ehmix.exe >exec.out

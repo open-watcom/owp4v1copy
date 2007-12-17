@@ -28,11 +28,6 @@
 *
 ****************************************************************************/
 
-/*
-Modified        By              Reason
---------        --              ------
-95/12/31    A.F.Scian    defined
-*/
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -161,6 +156,10 @@ int IsPassLine( char *t ) {
     char *p;
 
     p = SkipStr( buff, "PASS" );
+    if( *p == '\0' ) return( 0 );
+    p = SkipSequenceOf( p, ' ' );
+    if( *p == '\0' ) return( 0 );
+    p = SkipTestDir( p, t );
     if( *p == '\0' ) return( 0 );
     p = SkipSequenceOf( p, ' ' );
     if( *p == '\0' ) return( 0 );

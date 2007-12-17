@@ -102,7 +102,7 @@ test : .symbolic start_test test.lnk $(callconv_exes)
     $(exec_prefix)chk_exec exec.out >>error.out
     diff -b error.out error.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 fnstat1.$(exe) : fnstat1a.obj fnstat1b.obj
     @set ERROR_MSG=failure to link $^@

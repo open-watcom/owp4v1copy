@@ -5,26 +5,32 @@ plustest_name = owstl
 test_cflags_386 = -d2-fpd-xs-za
 test_cflags_i86 = -d2-fpd-xs-za
 test_cflags_axp = -d2-xs-za
+alt_error=01
 !else ifdef test2
 test_cflags_386 = -os-d1-3s-xss-br
 test_cflags_i86 = -os-d1-xss
 test_cflags_axp = -os-d1-xss
+alt_error=02
 !else ifdef test3
 test_cflags_386 = -os-d1-3s-xss-xr
 test_cflags_i86 = -os-d1-xss-xr
 test_cflags_axp = -os-d1-xss-xr
+alt_error=03
 !else ifdef test4
 test_cflags_386 = -ot-d1-3r-fpd-xs -oe500
 test_cflags_i86 = -ot-d1-fpd-xs -oe100
 test_cflags_axp = -ot-d1-xs -oe500
+alt_error=04
 !else ifdef test5
 test_cflags_386 = -d2-br-xs
 test_cflags_i86 = -d2-xs
 test_cflags_axp = -d2-xs
+alt_error=05
 !else
 test_cflags_386 = -os-d2-xst
 test_cflags_i86 = -os-d2-xst
 test_cflags_axp = -os-d2-xst
+alt_error=00
 !endif
 
 test_cflags_386 += -zq-wx-wcd433-fpi87-fp5-mf
@@ -105,7 +111,7 @@ test : .symbolic $(tests)
     @%make $(do_tests)
     diff test.out test.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 # the special target that runs the required commands for each test
 $(do_tests) : .symbolic

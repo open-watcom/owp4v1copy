@@ -38,7 +38,7 @@ finish_test : .symbolic ./chk_exec.exe
     $< exec.out >>error.out
     diff -b error.out ../error.chk
     rm -f exec.out
-    %append $(log_file) PASS $(%__CWD__)
+    %append $(log_file) PASS $(%__CWD__) $(arch)
 
 ./chk_exec.exe : ../c/chk_exec.c
     $(bld_cl) $< $(wcl_util_opts)
