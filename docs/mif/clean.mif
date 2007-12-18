@@ -1,4 +1,4 @@
-clean : .SYMBOLIC
+clean : .procedure
  @if exist *.pdf rm -f *.pdf
  @if exist *.ps rm -f *.ps
  @if exist *.ihp rm -f *.ihp
@@ -37,3 +37,5 @@ clean : .SYMBOLIC
 # delete generated headers for online help
  @if exist $(guitools_dir_$(dotarget))\*.h  rm $(guitools_dir_$(dotarget))\*.h 
  
+# delete generated DOSEMU batch file
+ @if exist *.bat rm -f *.bat

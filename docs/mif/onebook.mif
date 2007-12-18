@@ -48,12 +48,13 @@ optfile_wgml=wgmlopts.tmp
 optfile_whpcvt=whpcopts.tmp
 vi_script_nt=crtcnt.tmp
 gml_lib=..$(SL)gml$(SL)syslib
+dosemu_wgml_batch=wgml.bat
 
 #
 # define target and platform help compilers
 #
 hc_nt = $(%WIN95HC)
-hc_wat = whc
+hc_win = whc
 hc_os2 = $(%OS2HC)
 hc_dos = hcdos
 
@@ -98,7 +99,7 @@ wgml = $(%DOC_ROOT)\gml\dos\wgml
 OS2_TK = dummy
 
 !else ifeq %build_platform linux386
-wgml = wgml
+wgml = dosemu -dumb $(dosemu_wgml_batch)
 OS2_TK = dummy
 
 !else
@@ -179,7 +180,7 @@ $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 .EXTENSIONS: .hlp .hpj .rtf
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh
-    $(hc_wat) $(hbook).hpj
+    $(hc_win) $(hbook).hpj
 
 $(hbook).hpj : $(proj_objs)
     @%make compile_hpj_win
@@ -214,7 +215,7 @@ $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
 
 $(hbook).html $(hbook).h : $(book_objs) $(proj_objs)
 !ifdef book_bmroot
-    $(CPYCMD) $(book_bmroot)$(SL)*.bmp $^: > $(nulldevice)
+    $(CPYCMD) $(book_bmroot)$(SL)*.bmp $^:. > $(nulldevice)
 !endif
     @%make compile_gml_to_xxx
 
@@ -347,6 +348,9 @@ prepare_whpcvt_opts : .PROCEDURE
 #
 ####################################################
 prepare_wgml_opts : .PROCEDURE
+!ifeq %build_platform linux386
+    %make $(dosemu_wgml_batch)
+!endif
     @%create $(optfile_wgml)
 #---------------------------------------
 # settings for Post Script documentation
@@ -528,7 +532,7 @@ compile_hpj_nt : .PROCEDURE
     @%append $^@ REPORT=Yes
     @%append $^@ CONTENTS=table_of_contents
     @%append $^@ TITLE=$(book_title) Help
-    @%append $^@ COPYRIGHT=Copyright © 1996 Sybase, Inc. and its subsidiaries. All rights reserved. %date
+    @%append $^@ COPYRIGHT=Copyright ï¿½ 1996 Sybase, Inc. and its subsidiaries. All rights reserved. %date
 !ifdef book_bmroot
     @%append $^@ BMROOT=$(book_bmroot)
 !else
@@ -586,6 +590,16 @@ prepare_vi_script_cp: .PROCEDURE
     @%append $(vi_script_nt) execute /^1\ndd
     @%append $(vi_script_nt) w! $^@
     @%append $(vi_script_nt) q!
+
+#-------------------------------------------------------
+# create DOSEMU batch file to run wgml utility
+#-------------------------------------------------------
+$(dosemu_wgml_batch): $(__MAKEFILES__)
+    @%create $@
+    @%append $@ unix -s GMLLIB
+    @%append $@ unix -s GMLINC
+    @%append $@ ..\gml\dos\wgml.exe "%1 %2 %3 %4 %5 %6 %7 %8"
+    @%append $@ exitemu
 
 ####################################################
 

@@ -4,18 +4,15 @@ proj_name = builder
 !include defrule.mif
 !include deftarg.mif
 
+all : cdsay.exe sweep.exe wsplice.exe comstrip.exe &
 !ifndef __UNIX__
-rm_exe = rm.exe
+    diff.exe &
 !endif
-
-!ifdef bootstrap
-all : cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
-!else
-all : langdat.exe mksetup.exe cdsay.exe sweep.exe wsplice.exe diff.exe &
-!ifdef __UNIX__
-        runasdos.exe &
+!ifndef bootstrap
+    langdat.exe mksetup.exe wgrep.exe builder.exe &
+!ifndef __UNIX__
+    rm.exe
 !endif
-        comstrip.exe $(rm_exe) builder.exe wgrep.exe
 !endif
 
 inc_dirs = -I"../../pmake" -I"../../posix/h"
@@ -42,11 +39,13 @@ diff.exe : diff.obj clibext.obj
 __DOS__=1
 !endif
 
-!ifndef bootstrap
-builder.exe : builder.obj
+builder.exe : builder.obj utils.obj $(sys_$(host_os)) runit.obj pmake.obj equals.obj
         $(cl) $(clflags) $<
 !ifndef __$(host_os)__                  # Don't copy unless host_os=build_os
-!else ifndef __UNIX__                   # Avoid "text file busy".
+!else ifndef %LOGFNAME                  # Don't copy unless build outside builder
+!ifdef __UNIX__
+        cp   $^. $(%OWBINDIR)/$^&       # Remove .exe from working name
+!else
         copy $^. $(%OWBINDIR) > nul     # MS-influenced command noisy
 !endif
 !endif
@@ -60,14 +59,7 @@ builder.exe : builder.obj
         copy $^. $(%OWBINDIR) > nul     # MS-influenced command noisy
 !endif
 
-# runasdos will run itself under dosemu. Copy once for each program that still
-# exists only as dos version.
-runasdos.exe: runasdos.obj
-        $(cl) $(clflags) $<
-        cp   $^. $(%OWBINDIR)/wgml
-
 cdsay.exe : cdsay.obj equals.obj
-builder.exe : builder.obj utils.obj $(sys_$(host_os)) runit.obj pmake.obj equals.obj
 langdat.exe : langdat.obj utils.obj $(sys_$(host_os))
 rm.exe: rm.obj getopt.obj quit.obj lineprt.obj alloc.obj filerx.obj &
         regexp.obj fnlower.obj die.obj isdotdot.obj

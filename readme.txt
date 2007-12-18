@@ -88,25 +88,8 @@ are first built using gcc, then the rest of the tree is built using the
 freshly created Open Watcom tools. See the build.sh script in the root of
 the source tree - it should take care of everything.
 
-Some of the OW tools are still only available as DOS versions. Under Linux,
+WGML OW tool is still only available as DOS version. Under Linux,
 DOSEMU and FREEDOS need to be installed to be able to do a complete build.
-In addition:
-- You need to copy parsedlg.exe from %OWROOT%/bin to %OWROOT%/docs/gml/dos,
-  to keep the dosemu PATH statement short.
-- In setvars.sh, set DOC_BUILD=1 if you want to build docs.
-- The setvars.bat file needs to be set up to use D:\ as OWROOT.
-- The dosemu autoexec.bat needs to have the "unix -e" and the end replaced by:
-
-call d:setvars.bat
-path=d:\docs\gml\dos;%PATH%
-unix -s GMLINC
-cdd d:\
-unix -s RUNASDOS_CWD
-cd %RUNASDOS_CWD%
-cd
-unix -e RUNASDOS_CMD
-exitemu
-----
 
 We use the Open Watcom C/C++ compilers and Open Watcom wmake to build our
 tools, but at the top level we have a tool which oversees traversing the
