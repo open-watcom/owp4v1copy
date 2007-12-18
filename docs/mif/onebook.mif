@@ -1,4 +1,4 @@
-proj_name = docs
+﻿proj_name = docs
 
 !ifdef __UNIX__
 SL=/
@@ -532,7 +532,7 @@ compile_hpj_nt : .PROCEDURE
     @%append $^@ REPORT=Yes
     @%append $^@ CONTENTS=table_of_contents
     @%append $^@ TITLE=$(book_title) Help
-    @%append $^@ COPYRIGHT=Copyright � 1996 Sybase, Inc. and its subsidiaries. All rights reserved. %date
+    @%append $^@ COPYRIGHT=Copyright 1996 Sybase, Inc. and its subsidiaries. All rights reserved. %date
 !ifdef book_bmroot
     @%append $^@ BMROOT=$(book_bmroot)
 !else
