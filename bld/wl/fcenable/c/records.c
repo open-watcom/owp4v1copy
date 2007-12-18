@@ -32,11 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fcntl.h>
-#include <io.h>
-#include <sys/types.h>
-#include <sys/utime.h>
-#include <sys/stat.h>
+#include <unistd.h>
 #include "fcenable.h"
 
 extern void *   MemAlloc( unsigned );
