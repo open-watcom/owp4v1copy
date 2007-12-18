@@ -17,9 +17,6 @@ target_as_comm_objs = &
     mipsfmt.obj &
     mipsins.obj
 
-extra_c_flags_mipsfmt = -fh
-extra_c_flags_mipsins = -fh
-
 !ifdef __UNIX__
 asi_dir = $(as_dir)/mips/inline/osi$(host_cpu)
 !else

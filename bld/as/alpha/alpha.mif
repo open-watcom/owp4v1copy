@@ -17,9 +17,6 @@ target_as_comm_objs = &
     alphafmt.obj &
     alphains.obj
 
-extra_c_flags_alphafmt = -fh
-extra_c_flags_alphains = -fh
-
 !ifdef __UNIX__
 asi_dir = $(as_dir)/alpha/inline/osi$(host_cpu)
 !else
