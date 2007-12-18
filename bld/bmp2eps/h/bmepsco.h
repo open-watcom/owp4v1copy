@@ -134,7 +134,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <fcntl.h>
-#include <io.h>
+#include <unistd.h>
 #include <process.h>
 
 #endif
