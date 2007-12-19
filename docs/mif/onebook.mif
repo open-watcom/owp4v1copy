@@ -1,4 +1,4 @@
-﻿proj_name = docs
+proj_name = docs
 
 !ifdef __UNIX__
 SL=/
