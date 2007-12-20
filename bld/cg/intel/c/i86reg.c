@@ -138,6 +138,9 @@ extern  type_class_def  CallState( aux_handle aux,
     if( cclass & PARMS_STACK_RESERVE ) {
         state->attr |= ROUTINE_STACK_RESERVE;
     }
+    if( cclass & PARMS_PREFER_REGS ) {
+        state->attr |= ROUTINE_PREFER_REGS;
+    }
     if( state == &CurrProc->state ) {
         if( cclass & ( GENERATE_STACK_FRAME | PROLOG_HOOKS | EPILOG_HOOKS ) ) {
             CurrProc->prolog_state |= GENERATE_FAT_PROLOG;

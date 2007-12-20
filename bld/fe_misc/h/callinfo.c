@@ -226,6 +226,7 @@ void PragmaAuxInfoInit( int flag_stdatnum )
     HW_CTurnOff( FastcallInfo.save, HW_EDX );
 #else
     FastcallInfo.cclass = call_type |
+                         PARMS_PREFER_REGS |
                          //REVERSE_PARMS |
                          //CALLER_POPS |
                          //GENERATE_STACK_FRAME |

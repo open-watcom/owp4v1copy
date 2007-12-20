@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Aux pragma flags and data shared between cg and front ends.
 *
 ****************************************************************************/
 
@@ -87,6 +86,7 @@ typedef enum  {
 #define HAS_VARARGS             0x00000010L
 #define PARMS_STACK_RESERVE     0x00000020L
 #define SETJMP_KLUGE            0x00000040L
+#define PARMS_PREFER_REGS       0x00000080L
 #define LAST_AUX_ATTRIBUTE      0x00000080L
 
 #define _TARG_AUX_SHIFT         8
