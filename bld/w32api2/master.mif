@@ -178,7 +178,9 @@ base_headers =       &
         snmp.h       &
         spapidef.h   &
         sql.h        &
+        sqlext.h     &
         sqltypes.h   &
+        sqlucode.h   &
         sspi.h       &
         stm.h        &
         stralign.h   &
