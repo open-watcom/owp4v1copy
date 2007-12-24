@@ -68,31 +68,32 @@ test_cflags_i86 += -s -os -wx -we $(run_quietly)
     $(%EMP_CHECK)
     @%append exec.out PASS decoding $[@
 
-test : .symbolic actual_test
+./chk_exec.exe : ../../c/chk_exec.c
+    $(bld_cl) -DINLINETEST $< $(wcl_util_opts)
+
+test : .symbolic start_test $($(arch)_inline_objs) ./chk_exec.exe
     @set error_file=error.out
     @set error_msg=failure to complete test stream
-    echo OK >error.out
-    $(bld_cl) -ox-d1 chk_exec.c
-    $(exec_prefix)chk_exec.exe exec.out >>error.out
+    %write error.out OK
+    $]@ exec.out >>error.out
     diff -b error.out error.chk
     %make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
-!ifdef $(arch)_inline_objs
-actual_test : .symbolic start_test $($(arch)_inline_objs)
-    rm -f *.gc *.ls? *.obj *.dis
-!else
-actual_test : .symbolic start_test
-    @%append exec.out PASS decoding $(arch)
-!endif
-
 start_test : .symbolic
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     %create exec.out
     @set error_file=exec.out
+!ifndef $(arch)_inline_objs
+    @%append exec.out PASS decoding
+!endif
 
 save : .symbolic
-    if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
 global : .symbolic
+    @if exist *.gc rm -f *.gc
+    @if exist *.ls1 rm -f *.ls1
+    @if exist *.dis rm -f *.dis
     @if exist failure rm failure
     @%make common_clean

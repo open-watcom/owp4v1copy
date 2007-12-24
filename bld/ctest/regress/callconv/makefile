@@ -92,14 +92,16 @@ test_cflags_386 += $(add_br_$(no_br_$^*))
     @%append exec.out PASS executing $^@
     $(run) $(exec_prefix)$^@ >>exec.out
 
-test : .symbolic start_test test.lnk $(callconv_exes)
+./chk_exec.exe : ../../c/chk_exec.c
+    $(bld_cl) $< $(wcl_util_opts)
+
+test : .symbolic start_test $(callconv_exes) ./chk_exec.exe
     @set ERROR_MSG=symbol name failure
     diff -b symbols.out sym$(arch)$(alt_error).chk
     @set ERROR_FILE=error.out
     @set ERROR_MSG=failure to complete test stream
-    echo OK >error.out
-    $(bld_cl) chk_exec.c -ox-d1
-    $(exec_prefix)chk_exec exec.out >>error.out
+    %write error.out OK
+    $]@ exec.out >>error.out
     diff -b error.out error.chk
     @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
@@ -111,9 +113,8 @@ fnstat1.$(exe) : fnstat1a.obj fnstat1b.obj
     @%append exec.out PASS executing $^@
     $(run) $(exec_prefix)$^@ >>exec.out
 
-start_test : .symbolic
-    rm -f s$(arch)_$(alt_error).sav
-    @%make global
+start_test : .symbolic test.lnk
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     %create exec.out
     %create symbols.out
     @set ERROR_FILE=exec.out
@@ -128,13 +129,13 @@ save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
     @if exist symbols.out cp symbols.out x$(arch)_$(alt_error).sav
 
-global : .procedure
+global : .symbolic
     @%make common_clean
 
 $(all_objs) : $(callconv_dir)/obj.c
     @set ERROR_MSG=failure to compile $^@
     $(wcc_$(arch)) $[@ $(test_cflags_$(arch)) $(opt_$^*) -fo=$^@
-    @echo **** $^@ pubdef ****>>symbols.out
+    %append symbols.out **** $^@ pubdef ****
     objxdef $^@ >>symbols.out
-    @echo **** $^@ extdef ****>>symbols.out
+    %append symbols.out **** $^@ extdef ****
     objxref $^@ >>symbols.out

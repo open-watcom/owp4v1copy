@@ -11,37 +11,31 @@ alt_error=00
 
 .c: $(diagnose_dir)
 .c.err:
-    -$(wcc_$(arch)) $[@ $(diagnose_opts) $(opt_$^&)
-    @if not exist $^&.err echo I did not generate errors for $^& > $^&.err
+    -$(wcc_$(arch)) $< $(diagnose_opts) $(opt_$^&) -fo=.obj
+    @if not exist $@ %write $@ I did not generate errors for $^&
 .c.ser:
-    -$(wcc_$(arch)) $[@ $(diagnose_opts) $(opt_$^&) $(archdep_opts)
-    @if not exist $^&.ser echo I did not generate errors for $^& > $^&.ser
+    -$(wcc_$(arch)) $< $(diagnose_opts) $(opt_$^&) $(archdep_opts) -fo=.obj
+    @if not exist $@ %write $@ I did not generate errors for $^&
 
-test : .symbolic test0000
+test : .symbolic start_test diag0000.out
+    -diff -b diag0000.out diag0000.chk >diff0000.out
+    diff -b diff0000.out diff0000.chk
     %make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
-test0000 : .symbolic diag0000.out
-    -diff -b diag0000.out diag0000.chk >diff0000.out
-    diff -b diff0000.out diff0000.chk
-
-diag0000.out : ./catfile.exe $(diags_0099)
-    $[@ -a *.err >diag0000.out
-    %make diag_clean
-
 ./catfile.exe: source/catfile.c
-        $(bld_cl) $[@
+    $(bld_cl) $< $(wcl_util_opts)
 
-diag_clean : .procedure
-    if exist *.err del *.err
-    if exist *.ser del *.ser
-    if exist *.pch del *.pch
+diag0000.out : $(diags_0099) ./catfile.exe
+    $]@ -a *.err | sed -e "s/source\//source\\\\/g" >diag0000.out
+
+start_test : .symbolic
+    @if exist s$(arch)0000.sav rm s$(arch)0000.sav
 
 save : .symbolic
-    if exist diff0000.out cp diff0000.out s$(arch)_0000.sav
+    @if exist diff0000.out cp diff0000.out s$(arch)0000.sav
 
 global : .symbolic
-    %make diag_clean
-    %make common_clean
-    if exist catfile.* del catfile.*
-
+    @if exist *.ser del *.ser
+    @if exist catfile.* rm catfile.*
+    @%make common_clean
