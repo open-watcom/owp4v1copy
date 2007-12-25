@@ -154,6 +154,7 @@ typedef struct
 
 typedef struct
 {
+    bool                specified_font;
     char *              font_name;
     uint8_t             font_number;
     char                underscore_char;

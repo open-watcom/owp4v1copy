@@ -607,6 +607,7 @@ cop_device * parse_device( FILE * in_file )
             return( out_device );
         }
 
+        out_device->underscore.specified_font = true;
         out_device->underscore.font_name = NULL;
         break;
     case 0x0201:
@@ -640,7 +641,9 @@ cop_device * parse_device( FILE * in_file )
             out_device->next_offset += length;
             string_ptr[length] = 0x00;
             ++out_device->next_offset;
+            out_device->underscore.specified_font = true;
         } else {
+            out_device->underscore.specified_font = false;
             out_device->underscore.font_name = NULL;
         }
     
