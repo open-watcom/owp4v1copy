@@ -173,6 +173,7 @@ base_headers =       &
         shldisp.h    &
         shlguid.h    &
         shlobj.h     &
+        shlwapi.h    &
         shobjidl.h   &
         shtypes.h    &
         snmp.h       &
