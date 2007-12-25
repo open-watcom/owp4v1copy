@@ -187,6 +187,7 @@ base_headers =       &
         stralign.h   &
         strmif.h     &
         strquery.h   &
+        subauth.h    &
         tcpestat.h   &
         tcpmib.h     &
         tvout.h      &
