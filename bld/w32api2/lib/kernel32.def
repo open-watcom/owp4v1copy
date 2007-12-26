@@ -140,6 +140,7 @@ CreateThreadpoolWait
 CreateThreadpoolWork
 CreateTimerQueue
 CreateTimerQueueTimer
+CreateToolhelp32Snapshot
 CreateWaitableTimerA
 CreateWaitableTimerExA
 CreateWaitableTimerExW
@@ -588,6 +589,10 @@ GlobalUnWire
 GlobalUnfix
 GlobalUnlock
 GlboalWire
+Heap32First
+Heap32ListFirst
+Heap32ListNext
+Heap32Next
 HeapAlloc
 HeapCompact
 HeapCreate
@@ -675,6 +680,10 @@ MapUserPhysicalPagesScatter
 MapViewOfFile
 MapViewOfFileEx
 MapViewOfFileExNuma
+Module32First
+Module32FirstW
+Module32Next
+Module32NextW
 MoveFileA
 MoveFileExA
 MoveFileExW
@@ -713,6 +722,10 @@ PeekConsoleInputW
 PeekNamedPipe
 PostQueuedCompletionStatus
 PrepareTape
+Process32First
+Process32FirstW
+Process32Next
+Process32NextW
 ProcessIdToSessionId
 PulseEvent
 PurgeComm
@@ -903,6 +916,8 @@ SystemTimeToTzSpecificLocalTime
 TerminateJobObject
 TerminateProcess
 TerminateThread
+Thread32First
+Thread32Next
 TlsAlloc
 TlsFree
 TlsGetValue
@@ -911,6 +926,7 @@ TransactNamedPipe
 TransmitCommChar
 TryEnterCriticalSection
 TrySubmitThreadpoolCallback
+Toolhelp32ReadProcessMemory
 TzSpecificLocalTimeToSystemTime
 UnhandledExceptionFilter
 UnlockFile

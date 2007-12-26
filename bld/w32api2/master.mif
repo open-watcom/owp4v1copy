@@ -191,6 +191,7 @@ base_headers =       &
         svcguid.h    &
         tcpestat.h   &
         tcpmib.h     &
+        tlhelp32.h   &
         tvout.h      &
         udpmib.h     &
         unknwn.h     &
