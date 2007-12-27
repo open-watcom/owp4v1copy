@@ -13,6 +13,8 @@ system begin 386
     libpath %WATCOM%/lib386
     libpath %WATCOM%/lib386/linux
     format elf
+    runtime linux
     op exportall
+    op norelocs
 end
-@%WATCOM%/binw/wlsystem.lnk
+@%WATCOM%/binl/wlsystem.lnk

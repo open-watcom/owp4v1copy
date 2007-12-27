@@ -16,6 +16,7 @@ set PROJDIR=<CWD>
 #=================
     echo Building the wlink bootstrap
     wmake -h
+    <CPCMD> wlsystem.lnk <RELROOT>/binw/wlsystem.lnk
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../bootmake

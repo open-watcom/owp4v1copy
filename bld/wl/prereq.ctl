@@ -22,6 +22,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 [ BLOCK <BUILD_PLATFORM> linux386boot ]
 #======================================
     wmake -h
+    <CPCMD> wlsystem.lnk <RELROOT>/binw/wlsystem.lnk
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
