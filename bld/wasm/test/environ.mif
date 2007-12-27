@@ -264,7 +264,7 @@ targ_lnk_d4g386 = system dos4g
 targ_lnk_tnt386 = system nt option offset=64k
 targ_lnk_os2386 = system os2v2 option offset=64k
 targ_lnk_wnt386 = system nt option offset=64k
-targ_lnk_lnx386 = system bld_linux
+targ_lnk_lnx386 = system linux
 !ifdef __NT386__
 targ_lnk_wnti86 = system dos option stack=3k
 !else
@@ -273,8 +273,8 @@ targ_lnk_wnti86 = system os2 pmc libpath $(watcom_dir)\lib
 targ_lnk_dosi86 = system dos option stack=3k
 targ_lnk_os2i86 = system os2 pmc libpath $(watcom_dir)\lib
 targ_lnk_wntaxp = system ntaxp
-targ_lnk_lnxppc = system bld_linuxppc
-targ_lnk_lnxmps = system bld_linuxmips
+targ_lnk_lnxppc = system linuxppc
+targ_lnk_lnxmps = system linuxmips
 
 lnk_any    = # option noundefsok # add once we only use 11.0 linkers
 

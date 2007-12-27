@@ -234,15 +234,9 @@ clflags_osi_386    = -l=osi
 clflags_dos_i86    = -l=dos
 clflags_dos_386    = -l=dos4g
 clflags_nov_386    = -l=netware
-!ifdef bootstrapmode
-clflags_linux_386  = -l=bld_linux
-clflags_linux_ppc  = -l=bld_linuxppc
-clflags_linux_mps  = -l=bld_linuxmips
-!else
 clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linuxppc
 clflags_linux_mps  = -l=linuxmips
-!endif
 
 clflags_exe_osi_386 = -fe=$^&.rex
 !ifdef clflags_exe_$(host_os)_$(host_cpu)
@@ -297,15 +291,9 @@ lflags_win_386   = sys win386
 lflags_win_i86   = sys windows
 lflags_nov_386   = sys novell
 lflags_osi_386   = sys osi
-!ifdef bootstrapmode
-lflags_linux_386 = sys bld_linux
-lflags_linux_ppc = sys bld_linuxppc
-lflags_linux_mps = sys bld_linuxmips
-!else
 lflags_linux_386 = sys linux
 lflags_linux_ppc = sys linuxppc
 lflags_linux_mps = sys linuxmips
-!endif
 
 lflags_dll_nt_axp    = sys ntaxp dll
 lflags_dll_nt_386    = sys nt dll

@@ -229,7 +229,7 @@ targ_lnk_d4g386 = system dos4g
 targ_lnk_tnt386 = system nt option offset=64k
 targ_lnk_os2386 = system os2v2 option offset=64k
 targ_lnk_wnt386 = system nt option offset=64k
-targ_lnk_lnx386 = system bld_linux
+targ_lnk_lnx386 = system linux
 !ifdef __NT386__
 targ_lnk_wnti86 = system dos
 !else

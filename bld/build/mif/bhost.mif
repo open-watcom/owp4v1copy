@@ -31,20 +31,18 @@ lang_dll        = $(lang_root)\binnt
 nlang_dll       = $(nlang_root)\binnt
 nulldevice      = nul
 !else ifdef __LINUX__
-!ifndef bootstrapmode
-bld_sys         = linux
-!else ifdef __LINUXPPC__
-bld_sys         = bld_linuxppc
+!ifdef __LINUXPPC__
+bld_sys         = linuxppc
 !else ifdef __LINUXMIPS__
-bld_sys         = bld_linuxmips
+bld_sys         = linuxmips
 !else
-bld_sys         = bld_linux
+bld_sys         = linux
 !endif
 bld_incs        = $(bld_extra_incs) -I$(hdr_dir)/linux -I$(watcom_dir)/h
-lang_bin        = $(lang_root)/binnt
-nlang_bin       = $(nlang_root)/binnt
-lang_dll        = $(lang_root)/binnt
-nlang_dll       = $(nlang_root)/binnt
+lang_bin        = $(lang_root)/binl
+nlang_bin       = $(nlang_root)/binl
+lang_dll        = $(lang_root)/binl
+nlang_dll       = $(nlang_root)/binl
 nulldevice      = /dev/null
 !else ifdef __NT__
 #

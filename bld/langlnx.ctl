@@ -6,6 +6,8 @@ set PROJDIR=<CWD>
 [ INCLUDE <OWROOT>/bat/master.ctl ]
 
 set OWLINUXBUILD=bootstrap
+set WLINK_LNK=bootstrp.lnk
+
 # compiled using GNU make + gcc + ar
 [ INCLUDE <DEVDIR>/wmake/prereq.ctl ]
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
@@ -52,6 +54,7 @@ set OWLINUXBUILD=bootstrap
 
 [ BLOCK . . ]
 set OWLINUXBUILD=normal
+set WLINK_LNK=
 
 # create full-featured wmake...
 
