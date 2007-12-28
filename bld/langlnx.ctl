@@ -38,6 +38,7 @@ set WLINK_LNK=bootstrp.lnk
 [ INCLUDE <DEVDIR>/owl/lang.ctl ]
 [ INCLUDE <DEVDIR>/dwarf/lang.ctl ]
 [ INCLUDE <DEVDIR>/re2c/prereq.ctl ]
+[ INCLUDE <DEVDIR>/sdk/rc/wres/prereq.ctl ]
 [ INCLUDE <DEVDIR>/as/lang.ctl ]
 [ INCLUDE <DEVDIR>/cg/lang.ctl ]
 [ INCLUDE <DEVDIR>/cc/lang.ctl ]
