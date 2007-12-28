@@ -197,6 +197,7 @@ base_headers =       &
         unknwn.h     &
         urlmon.h     &
         vsstyle.h    &
+        vssym32.h    &
         winbase.h    &
         wincon.h     &
         wincrypt.h   &
