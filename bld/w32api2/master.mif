@@ -193,6 +193,7 @@ base_headers =       &
         tcpestat.h   &
         tcpmib.h     &
         tlhelp32.h   &
+        tmschema.h   &
         tvout.h      &
         udpmib.h     &
         unknwn.h     &
