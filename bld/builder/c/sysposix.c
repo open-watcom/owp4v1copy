@@ -52,6 +52,8 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     int         i = 0;
 
     while( sp != NULL ) {
+        while( *sp != '\0' && *sp == ' ' )
+            ++sp;
         argv[i++] = sp;
         sp = strchr( sp, ' ' );
         if( sp != NULL ) {
