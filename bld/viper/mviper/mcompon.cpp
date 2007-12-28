@@ -606,8 +606,8 @@ void MComponent::writeTargetCD( ContFile& mak )
     if( path.match( NULL, matchDir ) ) {
         path.concat( "\\" );
     }
-
-    mak.printf( " @%s\n", path.drive() );
+    if( path.drive()[0] != '\0' && path.drive()[1] == ':' )
+        mak.printf( " @%s\n", path.drive() );
     mak.printf( " cd %s\n", (const char*)path );
 }
 
