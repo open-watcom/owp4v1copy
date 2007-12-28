@@ -162,6 +162,7 @@ base_headers =       &
         rtutils.h    &
         schannel.h   &
         schedule.h   &
+        schemdef.h   &
         schnlsp.h    &
         sddl.h       &
         secext.h     &
