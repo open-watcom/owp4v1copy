@@ -8,12 +8,16 @@ set PROJDIR=<CWD>
 
 cdsay .
 
+set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+    set IDECFGFILE=<DEVDIR>/viper/viper/ideunix.cfg
+
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <PROJDIR>
 
     cdsay src/os2
-    bviper -r drawos2.tgt
+    bviper -r drawos2.tgt -c <IDECFGFILE>
     # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f drawos2.mk1  <DEVDIR>/viprdemo/src/os2/box.obj
     wmake -i -h -f drawos2.mk1  <DEVDIR>/viprdemo/src/os2/drawroom.obj
@@ -21,7 +25,7 @@ cdsay .
     # rm -f wpp386.exe
 
     cdsay ../win
-    bviper -r draw16.tgt
+    bviper -r draw16.tgt -c <IDECFGFILE>
     # <CPCMD> <DEVDIR>\plusplus\bin\rppi8610.exe wpp.exe
     wmake -i -h -f draw16.mk1   <DEVDIR>/viprdemo/src/win/box.obj
     wmake -i -h -f draw16.mk1   <DEVDIR>/viprdemo/src/win/drawroom.obj
@@ -29,7 +33,7 @@ cdsay .
     # rm -f wpp.exe
 
     cdsay ../win386
-    bviper -r draw.tgt
+    bviper -r draw.tgt -c <IDECFGFILE>
     # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f draw.mk1     <DEVDIR>/viprdemo/src/win386/box.obj
     wmake -i -h -f draw.mk1     <DEVDIR>/viprdemo/src/win386/drawroom.obj
@@ -37,7 +41,7 @@ cdsay .
     # rm -f wpp386.exe
 
     cdsay ../win32
-    bviper -r draw32.tgt
+    bviper -r draw32.tgt -c <IDECFGFILE>
     # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f draw32.mk1   <DEVDIR>/viprdemo/src/win32/box.obj
     wmake -i -h -f draw32.mk1   <DEVDIR>/viprdemo/src/win32/drawroom.obj
@@ -94,5 +98,6 @@ cdsay .
 
 [ BLOCK . . ]
 #============
+set IDECFGFILE=
 
 cdsay <PROJDIR>
