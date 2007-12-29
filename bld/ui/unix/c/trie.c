@@ -32,9 +32,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
-#ifndef __WATCOMC__
 #include "walloca.h"
-#endif
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -221,12 +219,6 @@ static int child_comp( const int *pkey, const eNode *pbase )
 {
     return( *pkey - pbase->c );
 }
-
-#if defined( SUN )
-    #define __alloca( x ) _alloca( (x) )
-#elif defined( SGI ) || defined( HP ) || defined( LINUX )
-    #define __alloca( x ) alloca( (x) )
-#endif
 
 EVENT TrieRead( void )
 {
