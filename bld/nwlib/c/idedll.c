@@ -194,7 +194,7 @@ void Usage( void )
     int                 count;
     if( ideCb ) {
         msg_info.severity = IDEMSGSEV_BANNER;
-        count=3;
+        count = 3;
         msg_info.flags = 0;
         msg_info.helpfile = NULL;
         msg_info.helpid = 0;
@@ -209,15 +209,15 @@ void Usage( void )
         for( str = str_first; str <= str_last; ++str ) {
             MsgGet( str, buff );
             if( ideInfo && ideInfo->ver > 2 && ideInfo->console_output &&
-                ( (count>20 && (!buff || buff[0]=='\0')) || count==24 ) ) {
+                ( count > 20 && buff[0] == '\0' || count == 24 ) ) {
                 msg_info.msg = "    (Press Return to continue)" ;
                 ideCb->PrintWithInfo( ideHdl, &msg_info );
                 getch();
-                count=0;
+                count = 0;
                 msg_info.msg = buff;
             }
-            count ++;
-            if( buff[0]=='\0' ) {
+            ++count;
+            if( buff[0] == '\0' ) {
                 continue;
             }
             ideCb->PrintWithInfo( ideHdl, &msg_info );

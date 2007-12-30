@@ -60,7 +60,9 @@ extern          void                    stopmouse(void);
 extern          int                     nextc(int);
 extern          char                    *GetTermType(void);
 
+#ifdef __LINUX__
 static          void                    GPM_parse( void );
+#endif
 
 #define         MOUSE_SCALE             8
 

@@ -92,7 +92,7 @@ typedef int_32                          omf_quantity;
 
 typedef uint_8                          *omf_bytes;
 typedef uint_8                          omf_rectyp;
-typedef uint_8                          omf_dbg_style;
+typedef int_8                           omf_dbg_style;
 
 typedef struct omf_handle_struct        omf_handle_struct;
 typedef omf_handle_struct               *omf_handle;
