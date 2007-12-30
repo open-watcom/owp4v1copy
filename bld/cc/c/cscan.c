@@ -995,16 +995,11 @@ int ScanSlash( void )
 int ScanDelim1( void )
 {
     int         token;
-    int         c;
 
     Buffer[0] = CurrChar;
     Buffer[1] = '\0';
     token = TokValue[ CurrChar ];
-    c = *ScanCharPtr++;
-    if( CharSet[c] & C_EX ) {
-        c = GetCharCheck( c );
-    }
-    CurrChar = c;
+    NextChar();
     return( token );
 }
 
@@ -1172,6 +1167,9 @@ static void ScanComment( void )
         c = '\0';
         for( ;; ) {
             scanptr = ScanCharPtr;
+            if( c == '\n' ) {
+                TokenLine = SrcFileLineNum = SrcFile->src_line;
+            }
             do {
                 prev_char = c;
                 c = *scanptr++;
@@ -1188,7 +1186,6 @@ static void ScanComment( void )
                 if( c == '*' ) {
                     c = NextChar();
                     if( c == '/' ) break;       /* 19-oct-94 */
-                    TokenLine = SrcFileLineNum;
                     CWarn2( WARN_NESTED_COMMENT,
                              ERR_NESTED_COMMENT, start_line );
                 }
@@ -1346,7 +1343,6 @@ static int ScanString( void )
     TokenLen = 1;
     for( ;; ) {
         if( c == '\n' ) {
-            TokenLine = SrcFileLineNum-1; /* place error at site */
             if( NestLevel != SkipLevel ) {
                 if ( CompFlags.extensions_enabled ) {
                     CWarn1( WARN_MISSING_QUOTE, ERR_MISSING_QUOTE );
@@ -1519,11 +1515,13 @@ void SkipAhead( void )
             if( CompFlags.cpp_output ) {
                 if( !CompFlags.pre_processing )  PrtChar( '\n' );
             }
+            SrcFileLineNum = SrcFile->src_line;
             NextChar();
         }
         if( CurrChar != '/' )  break;
         NextChar();
         if( CurrChar == '*' ) {
+            TokenLine = SrcFileLineNum;
             ScanComment();
         } else {
             UnGetChar( CurrChar );
@@ -1535,20 +1533,18 @@ void SkipAhead( void )
 
 int ScanNewline( void )
 {
+    SrcFileLineNum = SrcFile->src_line;
     if( CompFlags.pre_processing ) return( T_NULL );
     return( ChkControl() );
 }
 
 int ScanCarriageReturn( void )
 {
-    int         c;
-
-    c = NextChar();
-    if( c == '\n' ) {
-        if( CompFlags.pre_processing ) return( T_NULL );
-        return( ChkControl() );
+    if( NextChar() == '\n' ) {
+        return( ScanNewline() );
+    } else {
+        return( ScanWhiteSpace() );
     }
-    return( ScanWhiteSpace() );
 }
 
 #if defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__OSI__)

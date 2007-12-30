@@ -307,7 +307,6 @@ int GetCharCheck( int c )
             return( CurrChar );
         case '\n':
             SrcFile->src_line++;
-            SrcFileLineNum = SrcFile->src_line;
 //          SrcFile->column = 0;
             break;
         case '\t':
