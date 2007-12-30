@@ -15,7 +15,6 @@ cdsay .
     rm -f <OWBINDIR>/cdsay
     rm -f <OWBINDIR>/sweep
     rm -f <OWBINDIR>/wsplice
-    rm -f <OWBINDIR>/wdiff
     rm -f <OWBINDIR>/comstrip
     rm -f <OWBINDIR>/wgrep
     rm -f <OWBINDIR>/wtouch
