@@ -61,8 +61,9 @@ int main( int argc, char **argv )
     {
         int        ret;
         argc = argc; /* shut the compiler up */
-#ifndef __WATCOMC__
+#if !defined( __WATCOMC__ )
         _argv = argv;
+        _argc = argc;
 #endif
 #endif
         FrontEndInit( FALSE );

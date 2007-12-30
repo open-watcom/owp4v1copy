@@ -78,6 +78,9 @@
 #include "wcomdef.h"
 #include "objomf.h"
 #include "wlink.h"
+#ifndef __WATCOMC__
+    #include "clibext.h"
+#endif
 
 static void     PreAddrCalcFormatSpec( void );
 static void     PostAddrCalcFormatSpec( void );
@@ -87,27 +90,6 @@ static void     ResetMisc( void );
 static void     ResetSubSystems( void );
 static void     DoLink( char * );
 static void     CleanSubSystems( void );
-
-// Not sure what this is for - doesn't seem to be referenced
-//extern int              __nheapblk;
-
-#if !defined( _DLLHOST )           // it's the standalone linker
-
-int main( int argc, char ** argv )
-/***************************************/
-{
-    argc = argc;        /* to avoid a warning */
-    argv = argv;
-#ifndef __WATCOMC__
-    _argv = argv;
-#endif
-    InitSubSystems();
-    LinkMainLine( NULL );
-    FiniSubSystems();
-    return( (LinkState & LINK_ERROR) ? 1 : 0 );
-}
-
-#endif
 
 #ifdef _INT_DEBUG
 /*
@@ -119,6 +101,26 @@ extern char     *_end;
 #endif
 
 static char     *ArgSave;
+
+// Not sure what this is for - doesn't seem to be referenced
+//extern int              __nheapblk;
+
+#if !defined( _DLLHOST )           // it's the standalone linker
+int main( int argc, char ** argv )
+/***************************************/
+{
+    argc = argc;        /* to avoid a warning */
+    argv = argv;
+#ifndef __WATCOMC__
+    _argv = argv;
+    _argc = argc;
+#endif
+    InitSubSystems();
+    LinkMainLine( NULL );
+    FiniSubSystems();
+    return( (LinkState & LINK_ERROR) ? 1 : 0 );
+}
+#endif
 
 static void LinkMeBaby( void )
 /****************************/

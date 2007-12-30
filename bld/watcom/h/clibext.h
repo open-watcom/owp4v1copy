@@ -104,6 +104,7 @@ int memicmp(const void *, const void *, size_t);
 off_t tell( int handle );
 long filelength(int handle);
 int eof( int fildes );
+int _bgetcmd( char *buffer, int len );
 char *getcmd( char *buffer );
 char *_cmdname( char *name );
 void _searchenv( const char *name, const char *env_var, char *buf );
@@ -114,3 +115,4 @@ size_t strlcat( char *dst, const char *t, size_t n );
 #endif
 
 extern char **_argv;    /* argument vector */
+extern int  _argc;

@@ -30,7 +30,9 @@
 
 #include <ctype.h>
 #ifdef __WATCOMC__
-#include <process.h>
+    #include <process.h>
+#else
+    #include "clibext.h"
 #endif
 #include <unistd.h>
 #include <signal.h>
@@ -39,11 +41,11 @@
 #include <string.h>
 #include <stdlib.h>
 #ifdef __UNIX__
-#include <dirent.h>
-#include <sys/stat.h>
+    #include <dirent.h>
+    #include <sys/stat.h>
 #else
-#include <direct.h>
-#include <dos.h>
+    #include <direct.h>
+    #include <dos.h>
 #endif
 #include "watcom.h"
 
@@ -437,6 +439,7 @@ int GetNumber( int default_num )
 #ifndef __WATCOMC__
 int main( int argc, char **argv ) {
     _argv = argv;
+    _argc = argc;
 #else
 int main( void ) {
 #endif

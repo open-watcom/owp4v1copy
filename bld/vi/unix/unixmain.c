@@ -35,16 +35,14 @@
 #ifdef __WATCOMC__
     #include <malloc.h>
     #include <process.h>
-#endif
-#if defined( __WATCOMC__ ) && defined( __X86__ )
+  #if defined( __X86__ )
     #include "stack.h"
+  #endif
+#else
+    #include "clibext.h"
 #endif
 #include "vi.h"
 #include "source.h"
-
-#ifndef __WATCOMC__
-int _argc;
-#endif
 
 int main( int argc, char *argv[] )
 {

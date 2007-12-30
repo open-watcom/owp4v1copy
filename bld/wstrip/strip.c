@@ -38,15 +38,13 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(__UNIX__)
 #include <utime.h>
-#else
-#include <sys/utime.h>
-#endif
 #include <unistd.h>
 #include <fcntl.h>
-#ifdef __WATCOMC__
-#include <share.h>
+#if defined( __WATCOMC__ )
+    #include <share.h>
+#else
+    #include "clibext.h"
 #endif
 #include "watcom.h"
 #include "machtype.h"
@@ -147,8 +145,8 @@ int res = 0;
 unsigned bufsize;
 
 #ifndef __WATCOMC__
-#undef sopen
-#define sopen(w,x,y,z) open(w,x,z)
+    #undef sopen
+    #define sopen(w,x,y,z) open(w,x,z)
 #endif
 
 int main( int argc, char *argv[] )
@@ -168,6 +166,7 @@ int main( int argc, char *argv[] )
 
 #ifndef __WATCOMC__
     _argv = argv;
+    _argc = argc;
 #endif
 
     if( Msg_Init() != EXIT_SUCCESS ) {

@@ -61,12 +61,12 @@ bool GUIMainTouched = FALSE;
 #include "win1632.h"
 #include <dos.h>
 
+extern char **_argv;
+extern int  _argc;
+
 int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                     LPSTR lpCmdLine, int nShowCmd )
 {
-    extern char **_argv;
-    extern int  _argc;
-
     hInstance = hInstance;
     hPrevInstance = hPrevInstance;
     lpCmdLine = lpCmdLine;
@@ -75,6 +75,11 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
     return( GUIXMain( _argc, _argv ) );
 }
 #else
+
+#if !defined(__WATCOMC__)
+    #include "clibext.h"
+#endif
+
 #ifdef __UNIX__
     bool                In_raw_mode = FALSE;
     struct termios      Saved_terminal_configuration;
@@ -82,8 +87,9 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 int main( int argc, char *argv[] )
 {
-#if defined(__UNIX__) && !defined(__WATCOMC__)
+#if !defined(__WATCOMC__)
     _argv = argv;
+    _argc = argc;
 #endif
     return( GUIXMain( argc, argv ) );
 }

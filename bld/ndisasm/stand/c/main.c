@@ -46,7 +46,9 @@
 #include "pdata.h"
 #include "groups.h"
 #include "demangle.h"
-
+#if !defined( __WATCOMC__ )
+    #include "clibext.h"
+#endif
 
 #define SMALL_STRING_LEN        8
 #define TMP_TABLE_SIZE          29
@@ -984,6 +986,7 @@ int main( int argc, char *argv[] )
 
 #if !defined( __WATCOMC__ )
     _argv = argv;
+    _argc = argc;
 #endif
 
     Init();

@@ -35,8 +35,10 @@
 #if defined(__OS2__) || defined(__DOS__)
    #include <stdio.h>
 #endif
-#ifdef __WATCOMC__
+#if defined( __WATCOMC__ )
     #include <process.h>
+#else
+    #include "clibext.h"
 #endif
 
 #include "massert.h"
@@ -557,9 +559,7 @@ STATIC void init( char const * const *argv )
     AutoDepInit();
 
 #ifdef __NT__
-#if __WATCOMC__ >= 1100
     _fileinfo = 0;      /* C Library Kludge -------------------------- */
-#endif
 #endif
 #ifdef __OS2__
     _grow_handles( 100 ); /* Some OS/2 versions allow only 20 files open by default */
@@ -620,12 +620,13 @@ int ExitSafe( int rc )
     return( rc );
 }
 
-int main( int argc, char * const *argv )
+int main( int argc, char **argv )
 /*********************************************/
 {
     assert( argv[argc] == NULL );       /* part of ANSI standard */
 #ifndef __WATCOMC__
-    _argv = (char**)argv;
+    _argv = argv;
+    _argc = argc;
 #endif
     InitSignals();
     InitHardErr();

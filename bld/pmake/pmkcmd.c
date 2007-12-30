@@ -37,20 +37,23 @@
 #include <assert.h>
 #include <errno.h>
 #ifdef __UNIX__
-#include <sys/wait.h>
-#include <sys/stat.h>
-#ifdef __WATCOMC__
-#include <process.h>
-#endif
+    #include <sys/wait.h>
+    #include <sys/stat.h>
+  #ifdef __WATCOMC__
+    #include <process.h>
+  #endif
 #else
-#include <direct.h>
-#include <process.h>
-#include <dos.h>
+    #include <direct.h>
+    #include <process.h>
+    #include <dos.h>
 #endif
 #include <setjmp.h>
 #include <stdarg.h>
 #include "watcom.h"
 #include "pmake.h"
+#if !defined( __WATCOMC__ )
+    #include "clibext.h"
+#endif
 
 #if defined( __OS2__ )
 #define TMPBAT "tmp.cmd"
@@ -179,10 +182,11 @@ void PrintHelp( void )
 
 char    CmdBuff[512];
 
-#if !defined( __WATCOMC__ ) && defined( __UNIX__ )
+#if !defined( __WATCOMC__ )
 int main( int argc, char **argv )
 {
     _argv = argv;
+    _argc = argc;
 #else
 int main( void )
 {

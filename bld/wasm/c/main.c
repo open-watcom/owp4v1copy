@@ -33,7 +33,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #ifdef __WATCOMC__
-  #include <process.h>
+    #include <process.h>
+#else
+    #include "clibext.h"
 #endif
 #include <ctype.h>
 
@@ -49,7 +51,7 @@
 #include "pathgrp.h"
 
 #ifdef __OSI__
-  #include "ostype.h"
+    #include "ostype.h"
 #endif
 
 extern void             Fatal( unsigned msg, ... );
@@ -1170,6 +1172,7 @@ int main( int argc, char **argv )
     argc = argc;
 #ifndef __WATCOMC__
     _argv = argv;
+    _argc = argc;
 #endif
 
 #else

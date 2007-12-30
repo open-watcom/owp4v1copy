@@ -1,4 +1,4 @@
-/****************************************************************************
+/***************************************************************************
 *
 *                            Open Watcom Project
 *
@@ -537,15 +537,10 @@ void AllocSamples( unsigned tid )
     LastSampleIndex = 0;
 }
 
-#if !defined(__WINDOWS__)
-
-#ifndef __WATCOMC__
-char **_argv;
-#endif
-
-int main( int argc, char **argv )
-#else
+#if defined( __WINDOWS__ )
 int sample_main( char far *win_cmd )
+#else
+int main( int argc, char **argv )
 #endif
 {
     char            *cmd_line;
@@ -555,12 +550,13 @@ int sample_main( char far *win_cmd )
     char            *eoc;
     int             cmdlen;
 
-#ifndef __WATCOMC__
-    _argv = (char **)argv;
+#if !defined( __WINDOWS__ ) && !defined( __WATCOMC__ )
+    _argv = argv;
+    _argc = argc;
 #endif
 
     SysInit();
-#if !defined(__WINDOWS__)
+#if !defined( __WINDOWS__ )
     if( !MsgInit() )
         fatal();
 

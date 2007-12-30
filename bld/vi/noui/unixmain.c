@@ -33,16 +33,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef __WATCOMC__
-#include <malloc.h>
-#include <process.h>
+    #include <malloc.h>
+    #include <process.h>
+#else
+    #include "clibext.h"
 #endif
 #include "vi.h"
 #include "source.h"
 #include "stack.h"
-
-#ifndef __WATCOMC__
-int _argc;
-#endif
 
 void main( int argc, char *argv[] )
 {
