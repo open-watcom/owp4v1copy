@@ -200,6 +200,7 @@ base_headers =       &
         urlmon.h     &
         vsstyle.h    &
         vssym32.h    &
+        wbemcli.h    &
         winbase.h    &
         wincon.h     &
         wincrypt.h   &
@@ -242,7 +243,8 @@ base_libs =          &
         largeint.lib &
         strmiids.lib &
         strquery.lib &
-        uuid.lib
+        uuid.lib     &
+        wbemuuid.lib
 
 directx_libs =       &
         dxguid.lib
@@ -283,6 +285,11 @@ strquery.lib: strquery.obj
 uuid.lib: uuid.obj
     %create $^&.lbc
     @%append $^&.lbc +uuid.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
+
+wbemuuid.lib: wbemuuid.obj
+    %create $^&.lbc
+    @%append $^&.lbc +wbemuuid.obj
     $(librarian) $(libflags) $@ @$^&.lbc
 
 dxguid.lib: dxguid.obj
