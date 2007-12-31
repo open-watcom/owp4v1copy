@@ -9,10 +9,13 @@ set PROJDIR=<CWD>
 cdsay .
 
 set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
+
 [ BLOCK <BUILD_PLATFORM> linux386 ]
+#==================================
     set IDECFGFILE=<DEVDIR>/viper/viper/ideunix.cfg
 
 [ BLOCK <1> build rel2 ]
+#=======================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <PROJDIR>
 
@@ -48,6 +51,10 @@ set IDECFGFILE=<DEVDIR>\viper\viper\ide.cfg
     wmake -i -h -f draw32.mk1   <DEVDIR>/viprdemo/src/win32/furnitu.obj
     # rm -f wpp386.exe
     cd <PROJDIR>
+
+[ BLOCK <1> rel2 ]
+#=================
+    cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================

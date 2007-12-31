@@ -17,6 +17,10 @@ cdsay .
     cdsay <DEVDIR>/viper/viper
     wmake -i -h PBIDE
 
+[ BLOCK <1> rel2 ]
+#=================
+    cdsay <PROJDIR>
+
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   [ IFDEF (os_dos "") <2*> ]

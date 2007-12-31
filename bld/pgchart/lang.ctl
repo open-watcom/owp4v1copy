@@ -9,8 +9,10 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
+#=======================
     echo <PROJDIR> builds under GRAPHLIB
 
 [ BLOCK <1> clean ]
+#==================
     echo <PROJDIR> cleans under GRAPHLIB
 

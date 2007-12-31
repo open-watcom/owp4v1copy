@@ -10,7 +10,7 @@ cdsay .
 echo Languages Build: <1> <2> <3>
 
 [ BLOCK <BUILDMODE> bootstrap ]
-#================================
+#==============================
 echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/langlnx.ctl ]
 

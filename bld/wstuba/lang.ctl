@@ -9,7 +9,12 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
+#=======================
     [ INCLUDE prereq.ctl ]
+
+[ BLOCK <1> rel2 ]
+#=================
+    cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================

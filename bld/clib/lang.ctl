@@ -1,5 +1,6 @@
 # CLIB Builder Control file
 # =========================
+
 set PROJDIR=<CWD>
 
 [ INCLUDE <OWROOT>/bat/master.ctl ]
@@ -10,6 +11,10 @@ cdsay .
 [ BLOCK <1> build rel2 ]
 #=======================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+    cdsay <PROJDIR>
+
+[ BLOCK <1> rel2 ]
+#=================
     cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
@@ -142,10 +147,6 @@ cdsay .
 # ALIASGEN_CLEAN takes care of no longer trying to !include the not existing
 # file objs.mif in projects clib/alias and mathlib/alias
     set ALIASGEN_CLEAN=1
-
-    cdsay alias
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    cdsay ..
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
 
 [ BLOCK . . ]

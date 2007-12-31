@@ -23,6 +23,10 @@ cdsay .
     cdsay <PROJDIR>/wresdmp
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
+[ BLOCK <1> rel2 ]
+#=================
+    cdsay <PROJDIR>
+
 [ BLOCK <1> rel2 cprel2 ]
 #========================
   <CPCMD> <PROJDIR>/rc/*.uni                    <RELROOT>/binw/

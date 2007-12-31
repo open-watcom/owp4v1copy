@@ -14,6 +14,10 @@ cdsay .
     wsplice -k Pspecs <OWROOT>/bld/wl/specs.sp specs.owc
     pmake -d buildwcl <2> <3> <4> <5> <6> <7> <8> <9> -h
 
+[ BLOCK <1> rel2 ]
+#=================
+    cdsay <PROJDIR>
+
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
 

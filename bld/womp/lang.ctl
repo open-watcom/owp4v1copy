@@ -9,6 +9,7 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
+#=======================
 #    cdsay h
 #    wmake -h -i
 #   cdsay ../release
