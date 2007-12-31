@@ -90,7 +90,7 @@ fflags_axp += -INCPath=$(positive_dir) $(run_quietly) #-we-w0
     rm $*.out
 #    wstrip -q $^@
 
-test : .symbolic global start_test test.lnk $(positive_exes) finish_test save global
+test : .symbolic start_test test.lnk $(positive_exes) finish_test
     
 ./chk_exec.exe : ../c/chk_exec.c
     $(bld_cl) $< $(wcl_util_opts)
@@ -125,7 +125,7 @@ test.lnk : makefile
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
-global : .procedure
+global : .symbolic
     @if exist for007 rm for007
     @if exist for009 rm for009
     @if exist for024 rm for024

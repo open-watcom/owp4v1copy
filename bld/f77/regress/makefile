@@ -2,50 +2,39 @@
 
 ftest_name = result
 
+all_tests = test0 test1 test2 test3 test4 test5 test6 test7 test8 test9
+
 !include environ.mif
 
-test : .symbolic clean_all start_test finish_test
+test : .symbolic global start_test $(all_tests) finish_test global
 
 start_test: .symbolic
+    @if exist *.sav rm -f *.sav
+    @if exist *.log rm -f *.log
     set FTEST_NAME=$(ftest_name)
     cd nist
-    -wmake -h
-    -wmake -h test1=
-    -wmake -h test2=
-    -wmake -h test3=
-    -wmake -h test4=
-    -wmake -h test5=
-    -wmake -h test6=
-    -wmake -h test7=
-    -wmake -h test8=
-    -wmake -h test9=
-!ifdef %EXTRA_ARCH
-    cd ../nist
-    -wmake -h arch=$(%EXTRA_ARCH)
-    -wmake -h arch=$(%EXTRA_ARCH) test1=
-    -wmake -h arch=$(%EXTRA_ARCH) test2=
-    -wmake -h arch=$(%EXTRA_ARCH) test3=
-    -wmake -h arch=$(%EXTRA_ARCH) test4=
-    -wmake -h arch=$(%EXTRA_ARCH) test5=
-    -wmake -h arch=$(%EXTRA_ARCH) test6=
-    -wmake -h arch=$(%EXTRA_ARCH) test7=
-    -wmake -h arch=$(%EXTRA_ARCH) test8=
-    -wmake -h arch=$(%EXTRA_ARCH) test9=
-!endif
+
+cd_back : .symbolic
     cd ..
 
-clean_all : .symbolic
-    %make global
-    rm -f *.sav
-    rm -f $(log_file)
-
-finish_test : .symbolic ./chktest.exe
+finish_test : .symbolic cd_back ./chktest.exe
     @cdsay >> $(log_file)
-    $< $(log_file)
+    $]@ $(log_file)
     %append $(log_file) PASS $(%__CWD__)
 
 ./chktest.exe : c/chktest.c
     $(bld_cl) $< $(wcl_util_opts)
+
+$(all_tests) : .procedure
+    -@wmake -h global
+    -wmake -h $@=
+    -@wmake -h $@= save
+    -@wmake -h global
+!ifdef %EXTRA_ARCH
+    -wmake -h arch=$(%EXTRA_ARCH) $@=
+    -@wmake -h arch=$(%EXTRA_ARCH) $@= save
+    -@wmake -h global
+!endif
 
 global : .procedure
     %make common_clean
