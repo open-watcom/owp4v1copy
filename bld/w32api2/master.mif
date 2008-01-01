@@ -130,6 +130,7 @@ base_headers =       &
         pbt.h        &
         poppack.h    &
         powrprof.h   &
+        profinfo.h   &
         propidl.h    &
         propkdef.h   &
         propsys.h    &
@@ -198,6 +199,7 @@ base_headers =       &
         udpmib.h     &
         unknwn.h     &
         urlmon.h     &
+        userenv.h    &
         vsstyle.h    &
         vssym32.h    &
         wbemcli.h    &
