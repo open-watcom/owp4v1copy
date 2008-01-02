@@ -59,6 +59,9 @@
     struct _heapinfo info;
 
     info._pentry = NULL;
+    if( _heapwalk( &info ) != _HEAPOK )
+      return( 0 );
+    info._pentry = NULL;
     while( _heapwalk( &info ) != _HEAPEND ) {
       if( info._useflag == _USEDENTRY ) {
         used_size += info._size;
@@ -67,8 +70,8 @@
     return( used_size );
   }
 
-void heap_dump()
-{
+  void heap_dump()
+  {
     struct _heapinfo h_info;
     int heap_status;
 
@@ -100,7 +103,7 @@ void heap_dump()
     default:
       std::cout << "unexpected!\n";
     }
-}
+  }
 
   
   
