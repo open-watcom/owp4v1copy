@@ -200,6 +200,7 @@ base_headers =       &
         unknwn.h     &
         urlmon.h     &
         userenv.h    &
+        usp10.h      &
         vsstyle.h    &
         vssym32.h    &
         wbemcli.h    &
