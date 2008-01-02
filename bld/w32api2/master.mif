@@ -201,6 +201,7 @@ base_headers =       &
         urlmon.h     &
         userenv.h    &
         usp10.h      &
+        uxtheme.h    &
         vsstyle.h    &
         vssym32.h    &
         wbemcli.h    &
