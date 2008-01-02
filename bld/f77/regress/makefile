@@ -37,4 +37,6 @@ $(all_tests) : .procedure
 !endif
 
 global : .procedure
-    %make common_clean
+    @if exist *.obj rm *.obj
+    @if exist *.err rm *.err
+    @if exist *.exe rm *.exe
