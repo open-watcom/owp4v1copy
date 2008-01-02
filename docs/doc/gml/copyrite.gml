@@ -2,7 +2,7 @@
 .sect Notice of Copyright
 .*
 .if &e'&dohelp eq 0 .do begin
-Copyright :SF font=7.~C:eSF. 2002-2007 the Open Watcom Contributors.
+Copyright :SF font=7.~C:eSF. 2002-2008 the Open Watcom Contributors.
 Portions Copyright :SF font=7.~C:eSF. 1984-2002 Sybase, Inc. and its
 subsidiaries.
 .do end
