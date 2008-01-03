@@ -22,20 +22,24 @@ objs = &
     getlongo.obj &
     readme.obj
     
-test : .symbolic opt.$(exe)
-    $(run) opt >opt.out
-    $(run) opt -h >>opt.out
-    -$(run) opt -hopeless >>opt.out
-    $(run) opt -vers >>opt.out
-    $(run) opt -v >>opt.out
-    -$(run) opt -o >>opt.out
-    -$(run) opt -v=1 >>opt.out
+test : .symbolic start_test opt.$(exe)
     diff opt.out opt.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 opt.$(exe) : $(objs) opt.lnk
     $(linker) @$]@
+    $(run) $@ >>opt.out
+    $(run) $@ -h >>opt.out
+    -$(run) $@ -hopeless >>opt.out
+    $(run) $@ -vers >>opt.out
+    $(run) $@ -v >>opt.out
+    -$(run) $@ -o >>opt.out
+    -$(run) $@ -v=1 >>opt.out
+
+start_test : .symbolic
+    %create opt.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     
 opt.lnk : makefile
     %create $^@
@@ -45,5 +49,8 @@ opt.lnk : makefile
     @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
+save : .symbolic
+    @if exist opt.out cp opt.out s$(arch)_$(alt_error).sav
+
 global : .SYMBOLIC
     @%make common_clean

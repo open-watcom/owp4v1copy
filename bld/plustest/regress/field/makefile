@@ -33,29 +33,38 @@ stack_axp=opt stack=16k
 
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
-    
-test : .symbolic test1.$(exe) test2.$(exe) test3.$(exe)
-    $(run) test1 >test.out
-    $(run) test2 >>test.out
-    $(run) test3 1000 1000 >>test.out
+
+exes = test1.$(exe) test2.$(exe) test3.$(exe)    
+
+test : .symbolic start_test $(exes)
     diff test.out test.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 test1.$(exe) : field.obj test1.obj field.lnk
     $(linker) @$]@ NAME $^* FILE test1.obj, field.obj
+    $(run) $@ >>test.out
     
 test2.$(exe) : field.obj test2.obj field.lnk
     $(linker) @$]@ NAME $^* FILE test2.obj, field.obj
+    $(run) $@ >>test.out
     
 test3.$(exe) : field.obj test3.obj field.lnk
     $(linker) @$]@ NAME $^* FILE test3.obj, field.obj
+    $(run) $@ 1000 1000 >>test.out
+
+start_test : .symbolic
+    %create test.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 field.lnk : makefile
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
+
+save : .symbolic
+    @if exist test.out cp test.out s$(arch)_$(alt_error).sav
 
 global : .SYMBOLIC
     @%make common_clean

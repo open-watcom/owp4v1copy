@@ -230,18 +230,17 @@ exes =   $(wc_list_template) $(wc_vect_template) $(wc_hash_template) &
     %append exec.out --- end execution of $^&
     del $^&.map
 		
-test : .symbolic test_exes
-    %make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
-test_exes : .symbolic cont.lnk start_test $(exes)
+test : .symbolic start_test memchk.obj cont.lnk $(exes)
     set msg=*** output differences
     diff exec.out exec.chk
     set msg=*** general failure
-
-start_test : .symbolic memchk.obj
+    @%make global
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    
+start_test : .symbolic
+    %create exec.out
     set msg=general error
-    if exist exec.out del exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     
 cont.lnk : $(__MAKEFILES__)
     %create $^@
@@ -251,7 +250,7 @@ cont.lnk : $(__MAKEFILES__)
     @%append $^@ FILE memchk
     
 save : .symbolic
-    if exist exec.out cp exec.out $(save_out).sav
-    
-global : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

@@ -1,5 +1,5 @@
 plustest_name = format
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 test_cflags = -d2
@@ -25,34 +25,35 @@ stack_axp=opt stack=16k
 i_objs = iformat.obj itest.obj
 f_objs = fformat.obj ftest.obj
 
-test : .symbolic testi.$(exe) testf.$(exe)
-    $(run) testi >testi.out
-    diff testi.out icheck.chk
-    $(run) testf >testf.out
-    diff testf.out fcheck.chk
-    %make global
+exes = testi.$(exe) testf.$(exe)
+
+test : .symbolic start_test $(exes)
+    diff exec.out exec.chk
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
-testi.$(exe) : $(i_objs) testi.lnk
-    $(linker) @$]@
+testi.$(exe) : $(i_objs) test.lnk
+    $(linker) @$]@ NAME $^* file {$(i_objs)}
+    @%append exec.out --------$^&--------
+    $(run) $@ >>exec.out
 
-testf.$(exe) : $(f_objs) testf.lnk
-    $(linker) @$]@
+testf.$(exe) : $(f_objs) test.lnk
+    $(linker) @$]@ NAME $^* file {$(f_objs)}
+    @%append exec.out --------$^&--------
+    $(run) $@ >>exec.out
 
-testi.lnk : makefile
+start_test : .symbolic
+    %create exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
+test.lnk : makefile
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ OPTION verbose
-    @for %i in ( $(i_objs) ) do @%append $^@ FILE %i
 
-testf.lnk : makefile
-    %create $^@
-    @%append $^@ NAME $^*
-    @%append $^@ $(ldebug_$(arch))
-    @%append $^@ $(lnk_$(arch))
-    @for %i in ( $(f_objs) ) do @%append $^@ FILE %i
+save : .symbolic
+    @if exist testf.out cp testf.out s$(arch)_$(alt_error).sav
 
 global : .SYMBOLIC
     @%make common_clean

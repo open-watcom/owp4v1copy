@@ -20,15 +20,18 @@ test_cflags += -w0-zq -i$(%watcom)\h\nt
 .c.obj:
     $(wpp_$(arch)) $[@ $(test_cflags)
     
-test : .symbolic tomexe.exe tomdll.dll
-    if exist exec.out del exec.out
-    $(run) tomexe
+test : .symbolic start_test tomexe.exe tomdll.dll
     diff exec.out exec.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
-tomexe.exe : tomexe.obj tomexe.lnk
+tomexe.exe : tomexe.obj tomdll.dll tomexe.lnk
     $(linker) @$]@
+    $(run) tomexe
+
+start_test : .symbolic
+    %create exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 tomdll.dll : tomdll.obj tomdll.lnk
     $(linker) @$]@
@@ -52,5 +55,8 @@ tomdll.lnk : $(__MAKEFILES__)
     @%append $^@ OPTION map, caseexact, stack=128k, quiet
     @%append $^@ FILE tomdll
     
+save : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
 global : .symbolic
     @%make common_clean

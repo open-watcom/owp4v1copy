@@ -21,28 +21,33 @@ stack_386=opt stack=8k
 stack_i86=opt stack=4k
 stack_axp=opt stack=8k
 
-.cpp: ..\bits
+.cpp: ../bits
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -d_USE_INT64
 
 objs = tbits.obj
     
-test : .symbolic tbits.$(exe)
-    $(run) tbits >tbits.out
-    diff tbits.out ..\bits\tbits.chk
-    %make global
+test : .symbolic start_test tbits.$(exe)
+    diff tbits.out ../bits/tbits.chk
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 tbits.$(exe) : $(objs) tbits.lnk
-    $(linker) @$]@
+    $(linker) @$]@ name $@ file {$(objs)}
+    $(run) $@ >>tbits.out
+
+start_test : .symbolic
+    %create tbits.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 tbits.lnk : makefile
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
-    @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
-global : .SYMBOLIC
+save : .symbolic
+    @if exist tbits.out cp tbits.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

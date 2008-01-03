@@ -1,5 +1,5 @@
 plustest_name = gstring
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 test_cflags = -d2
@@ -27,14 +27,18 @@ objs = &
     strngrep.obj &
     strtest1.obj
     
-test : .symbolic strtest.$(exe)
-    $(run) strtest >strtest.out
+test : .symbolic start_test strtest.$(exe)
     diff strtest.out strtest.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 strtest.$(exe) : $(objs) strtest.lnk
     $(linker) @$]@
+    $(run) strtest >>strtest.out
+
+start_test : .symbolic
+    %create strtest.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 strtest.lnk : makefile
     %create $^@
@@ -44,5 +48,8 @@ strtest.lnk : makefile
     @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
+save : .symbolic
+    @if exist strtest.out cp strtest.out s$(arch)_$(alt_error).sav
+
 global : .SYMBOLIC
     @%make common_clean

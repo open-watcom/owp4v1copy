@@ -130,11 +130,10 @@ stack_axp=opt stack=16k
     $(wpp_$(arch)) $[@ $(test_flags) $(opt_$^*)
     
 .obj.$(exe):
-    wlink @overload FILE $[@
+    $(linker) @overload FILE $[@
+    $(run) $@ >>overload.out
 
-test : .symbolic overload.lnk $(exes)
-    %create overload.out
-    @for %i in ( $(exes) ) do $(run) %i >>overload.out
+test : .symbolic start_test overload.lnk $(exes)
 !ifeq arch i86
     # There are certain unavoidable differences between 16-bit and
     # 32-bit platforms, causing slightly different (but valid) results
@@ -142,14 +141,21 @@ test : .symbolic overload.lnk $(exes)
 !else
     diff overload.out overload.chk
 !endif
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
+start_test : .symbolic
+    %create overload.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
 overload.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
+
+save : .symbolic
+    @if exist overload.out cp overload.out s$(arch)_$(alt_error).sav
 
 global : .SYMBOLIC
     @%make common_clean

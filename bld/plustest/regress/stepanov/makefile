@@ -1,5 +1,5 @@
 plustest_name = stepanov
-!include ..\environ.mif
+!include ../environ.mif
 
 
 oopacks = &
@@ -34,13 +34,12 @@ stack_axp=opt stack=16k
     $(wpp_$(arch)) $[@ $(test_flags) $(test_flags_$(arch)) $(opt_$^*)
 
 .obj.$(exe):
-    wlink @stepanov FILE $[@
+    $(linker) @stepanov FILE $[@
 
 !ifeq arch i86
-test : .symbolic
+test : .symbolic start_test
 !else
-test : .symbolic stepanov.lnk $(exes)
-    %create stepanov.out
+test : .symbolic start_test stepanov.lnk $(exes)
 # Note: Fast machines may need larger iteration counts, otherwise the code could run
 # "too fast" and finish at "zero" execution time.
     $(run) oop_v1p5 Max=5000 18 Matrix=100 15 Complex=6000 50 Iterator=15000 14 >>stepanov.out
@@ -49,8 +48,12 @@ test : .symbolic stepanov.lnk $(exes)
     @for %i in ( $(stepanovs) ) do $(run) %i 2500 >>stepanov.out
     diff stepanov.out stepanov.chk
 !endif
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+
+start_test : .symbolic
+    %create stepanov.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 stepanov.lnk : $(__MAKEFILES__)
     %create $^@
@@ -59,8 +62,7 @@ stepanov.lnk : $(__MAKEFILES__)
     @%append $^@ $(stack_$(arch))
 
 save : .symbolic
-    if exist s$(arch)_$(alt_error).sav erase s$(arch)_$(alt_error).sav
-    if exist stepanov.out copy stepanov.out s$(arch)_$(alt_error).sav
+    @if exist stepanov.out cp stepanov.out s$(arch)_$(alt_error).sav
 
 global : .SYMBOLIC
     @%make common_clean

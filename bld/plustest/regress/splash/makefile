@@ -1,5 +1,5 @@
 plustest_name = splash
-!include ..\environ.mif
+!include ../environ.mif
 
 objs = &
 assoc.obj &
@@ -41,24 +41,29 @@ exes = &
     justify.$(exe) &
     spltest.$(exe)
 
-test : .symbolic $(objs) $(exes)
-    $(run) splassoc >assoc.out
-    diff assoc.out assoc.chk
-    $(run) justify 13 <justify.c >justify.out
-    diff justify.out justify.chk
-    $(run) spltest >spltest.out
-    diff spltest.out spltest.chk
-    %make global
+test : .symbolic start_test $(exes)
+    diff exec.out exec.chk
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 spltest.$(exe) : spltest.obj splash.obj regex.obj test.lnk
     $(linker) @test.lnk NAME $^@ FILE spltest, splash, regex
+    @%append exec.out --------$^&--------
+    $(run) $@ >>exec.out
     
 splassoc.$(exe) : assoc.obj splash.obj regex.obj test.lnk
     $(linker) @test.lnk NAME $^@ FILE assoc, splash, regex
+    @%append exec.out --------$^&--------
+    $(run) $@ >>exec.out
     
 justify.$(exe) : justify.obj splash.obj regex.obj test.lnk
     $(linker) @test.lnk NAME $^@ FILE justify, splash, regex
+    @%append exec.out --------$^&--------
+    $(run) $@ 13 <justify.c >>exec.out
+
+start_test : .symbolic
+    %create exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     
 regex.obj : regex.c
     $(wcc_$(arch)) $[* $(test_cflags_$(arch))
@@ -69,5 +74,8 @@ test.lnk : makefile
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
     
+save : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
 global : .symbolic
     @%make common_clean

@@ -1,5 +1,5 @@
 plustest_name = claslist
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 test_cflags_386 = -d2~
@@ -25,23 +25,28 @@ stack_axp=opt stack=8k
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
 
 objs = pcfistt.obj
-
-test : .symbolic pcfistt.$(exe)
-    $(run) pcfistt >pcfistt.out
+    
+test : .symbolic start_test pcfistt.$(exe)
     diff pcfistt.out pcfist.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 pcfistt.$(exe) : $(objs) pcfistt.lnk
-    $(linker) @$]@
+    $(linker) @$]@ name $^@ file {$(objs)}
+    $(run) $@ >>pcfistt.out
+
+start_test : .symbolic
+    %create pcfistt.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 pcfistt.lnk : makefile
-    %create $^@
-    @%append $^@ NAME $^*
-    @%append $^@ DEBUG line
-    @%append $^@ $(lnk_$(arch))
-    @%append $^@ $(stack_$(arch))
-    @for %i in ( $(objs) ) do @%append $^@ FILE %i
+    %create $@
+    @%append $@ DEBUG line
+    @%append $@ $(lnk_$(arch))
+    @%append $@ $(stack_$(arch))
     
-global : .SYMBOLIC
+save : .symbolic
+    @if exist pcfistt.out cp pcfistt.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

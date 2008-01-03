@@ -54,12 +54,12 @@ address ptrs[10000];
 void tr4() {
   printf("tr4(): exhaust memory using new[]\n");
   int count=0;
-  try
-  {
+  try {
     for(int i=inimemamt;;i*=memmul)
     {
       printf("Allocating (new no %d) %d bytes .. ",count,i);
       ptrs[count]=new char[i];
+      if( count >= 6 ) throw bad_alloc_impl(0,0);
       ++count;
       printf(" .. done %d\n",i);
     }
@@ -78,7 +78,7 @@ void tr4() {
 
 void tr5()
 {
-  printf("tr4(): exhaust memory using malloc\n");
+  printf("tr5(): exhaust memory using malloc\n");
   int count=0;
   try
   {

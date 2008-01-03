@@ -75,7 +75,7 @@ test : .symbolic actual_test
     $(bld_cl) -ox-d1 chk_exec.c
     $(exec_prefix)chk_exec.exe exec.out >>error.out
     diff -b error.out error.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 !ifdef $(arch)_inline_objs
@@ -89,9 +89,10 @@ actual_test : .symbolic start_test
 start_test : .symbolic
     %create exec.out
     @set error_file=exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 save : .symbolic
-    if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
 global : .symbolic
     @if exist failure rm failure

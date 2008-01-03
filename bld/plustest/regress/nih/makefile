@@ -1,5 +1,5 @@
 plustest_name = nih
-!include ..\environ.mif
+!include ../environ.mif
 
 objs =  &
     arrayob.obj  &
@@ -64,8 +64,11 @@ test_cflags_axp += -zq
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -i. -dNESTED_TYPES -w0
     
 test : .symbolic $(objs)
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
+save : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
 global : .symbolic
-    %make common_clean
+    @%make common_clean

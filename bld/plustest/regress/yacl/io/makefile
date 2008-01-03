@@ -1,5 +1,5 @@
 plustest_name = yacl
-!include ..\..\environ.mif
+!include ../../environ.mif
 
 OBJECTS =  binfile.obj bytstore.obj dskbtree.obj slotfile.obj 
 
@@ -24,12 +24,19 @@ test_cflags_i86 = -ml
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
-test : .symbolic ..\io.lib
-    %make global
+test : .symbolic start_test ../io.lib
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
-..\io.lib : $(OBJECTS)
-    *$(librarian_$(arch)) /n/q/b $^@ $(OBJECTS)
+../io.lib : $(OBJECTS)
+    $(librarian_$(arch)) -q-n-b $^@ $(OBJECTS)
+
+start_test : .symbolic
+    %create exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
+save : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
 global : .symbolic
-    %make common_clean
+    @%make common_clean

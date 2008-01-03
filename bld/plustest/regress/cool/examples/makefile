@@ -1,29 +1,29 @@
 plustest_name = cool
 !include ../../environ.mif
 
-exps = &
-ex2_4.$(exe) &
-ex2_7.$(exe) &
-ex2_9.$(exe) &
-ex3_4.$(exe) &
-ex3_6.$(exe) &
-ex3_8.$(exe) &
-ex3_10.$(exe) &
-ex4_7.$(exe) &
-ex4_9.$(exe) &
-ex5_8.$(exe) &
-ex6_4.$(exe) &
-ex6_6.$(exe) &
-ex6_8.$(exe) &
-ex6_10.$(exe) &
-ex7_4.$(exe) &
-ex7_7.$(exe) &
-ex7_9.$(exe) &
-ex8_4.$(exe) &
-ex8_6.$(exe) &
-ex9_5.$(exe) &
-ex9_7.$(exe) &
-ex9_11.$(exe)
+exes = &
+    ex2_4.$(exe) &
+    ex2_7.$(exe) &
+    ex2_9.$(exe) &
+    ex3_4.$(exe) &
+    ex3_6.$(exe) &
+    ex3_8.$(exe) &
+    ex3_10.$(exe) &
+    ex4_7.$(exe) &
+    ex4_9.$(exe) &
+    ex5_8.$(exe) &
+    ex6_4.$(exe) &
+    ex6_6.$(exe) &
+    ex6_8.$(exe) &
+    ex6_10.$(exe) &
+    ex7_4.$(exe) &
+    ex7_7.$(exe) &
+    ex7_9.$(exe) &
+    ex8_4.$(exe) &
+    ex8_6.$(exe) &
+    ex9_5.$(exe) &
+    ex9_7.$(exe) &
+    ex9_11.$(exe)
 
 !ifdef test1
 test_cflags = -op-d2
@@ -51,21 +51,27 @@ stack_axp=opt stack=64k
     $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
 .obj.$(exe):
-    $(linker) @ex.lnk NAME $^* FILE $[@
+    $(linker) @ex.lnk NAME $@ FILE $[@
+    $(run) $@ >>exec.out
     
-test : .symbolic ex.lnk $(exps)
-    %create exec.out
-    @for %i in ( $(exps) ) do $(run) %i >>exec.out
+test : .symbolic start_test ex.lnk $(exes)
     diff exec.out exec.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+
+start_test : .symbolic
+    %create exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     
 ex.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(stack_$(arch))
-    @%append $^@ LIBRARY ..\cool.lib
+    @%append $^@ LIBRARY ../cool.lib
     
-global : .symbolic
+save : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

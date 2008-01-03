@@ -29,22 +29,26 @@ stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
-.c.$(exe):
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
-    $(linker) @test.lnk FILE $[*
+.obj.$(exe):
+    $(linker) @test.lnk name $@ FILE $[@
+    $(run) $@ >>test.out
     
 .c.obj:
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
     
-test : .symbolic matrix.lib test.lnk test.$(exe) tmatrix.$(exe)
-    $(run) test >test.out
-    $(run) tmatrix >>test.out
+exes = test.$(exe) tmatrix.$(exe)
+    
+test : .symbolic start_test matrix.lib test.lnk $(exes)
     diff test.out test.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
+start_test : .symbolic
+    %create test.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
 matrix.lib : $(objs) matrix.lbc
-    $(librarian_$(arch)) /b/n/q $^@ @matrix.lbc
+    $(librarian_$(arch)) -q-n-b $^@ @matrix.lbc
     
 matrix.lbc : makefile
     %create $^@
@@ -57,5 +61,8 @@ test.lnk : makefile
     @%append $^@ $(stack_$(arch))
     @%append $^@ LIBRARY matrix.lib
     
-global : .symbolic
+save : .symbolic
+    @if exist test.out cp test.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

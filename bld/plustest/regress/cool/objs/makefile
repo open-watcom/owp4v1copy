@@ -34,15 +34,18 @@ test_cflags_i86 = -ml -zm -s
     $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
 test : .symbolic ../cool.lib
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
-..\cool.lib : $(objs) cool.lbc
-    $(librarian_$(arch)) -n -q -b -p=512 $^@ @cool.lbc
+../cool.lib : $(objs) cool.lbc
+    $(librarian_$(arch)) -q-n-b-p=512 $^@ @cool.lbc
     
 cool.lbc : makefile
     %create $^@
     @for %i in ($(objs)) do @%append $^@ +%i
     
-global : .symbolic
-    %make common_clean
+save : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
+global : .procedure
+    @%make common_clean

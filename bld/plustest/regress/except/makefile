@@ -76,17 +76,18 @@ stack_axp=opt stack=32k
     $(wpp_$(arch)) $[* $(test_cflags_$(arch)) -zq
     
 .obj.$(exe):
-    $(linker) @test file $[@
+    $(linker) @test.lnk name $@ file $[@
+    -$(run) $@ >>except.out
     
-test : .symbolic $(batch_sym) run_test
-    %make global
+test : .symbolic start_test $(batch_sym) test.lnk $(exes)
+    diff except.out except.chk
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
-run_test : .symbolic $(batch_sym) test.lnk $(exes)
+start_test : .symbolic
     %create except.out
-    @for %i in ( $(exes) ) do -$(run) %i >>except.out
-    diff except.out except.chk
-    
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
 !ifdef BATCH_TEST
 $(batch_lnk) : $(__MAKEFILES__)
     %create $(batch_lnk)
@@ -109,7 +110,10 @@ test.lnk : $(__MAKEFILES__)
     @%append $^@ $(stack_$(arch))
     @%append $^@ OPTION undefsok
     
-global : .symbolic
+save : .symbolic
+    @if exist except.out cp except.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean
 !ifdef BATCH_TEST
     @if exist *.fcb del *.fcb

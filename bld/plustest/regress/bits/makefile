@@ -26,22 +26,27 @@ stack_axp=opt stack=8k
 
 objs = tbits.obj
     
-test : .symbolic tbits.$(exe)
-    $(run) tbits >tbits.out
+test : .symbolic start_test tbits.$(exe)
     diff tbits.out tbits.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 tbits.$(exe) : $(objs) tbits.lnk
-    $(linker) @$]@
+    $(linker) @$]@ name $@ file {$(objs)}
+    $(run) $@ >>tbits.out
+
+start_test : .symbolic
+    %create tbits.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 tbits.lnk : makefile
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
-    @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
-global : .SYMBOLIC
+save : .symbolic
+    @if exist tbits.out cp tbits.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

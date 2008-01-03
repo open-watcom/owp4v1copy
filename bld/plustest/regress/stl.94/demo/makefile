@@ -1,5 +1,5 @@
 plustest_name = stl94
-!include ..\..\environ.mif
+!include ../../environ.mif
 
 objs = demo.obj tempbuf.obj
 
@@ -34,17 +34,21 @@ stack_axp=opt stack=128k
 # don't use it for i86 target
 #
 !ifeq arch i86
-test : .symbolic
+test : .symbolic start_test
 !else    
-test : .symbolic demo.$(exe)
-    $(run) $[@ <demo.in >demo.out
+test : .symbolic start_test demo.$(exe)
     diff demo.out demo.chk
 !endif
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 demo.$(exe) : $(objs) demo.lnk
     $(linker) @$]@
+    $(run) $@ <demo.in >>demo.out
+
+start_test : .symbolic
+    %create demo.out
+    @if exist s$(arch)_$(alt_error).sav rm -f s$(arch)_$(alt_error).sav
     
 demo.lnk : $(__MAKEFILES__)
     %create $^@
@@ -54,5 +58,8 @@ demo.lnk : $(__MAKEFILES__)
     @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
+save : .symbolic
+    @if exist demo.out cp demo.out s$(arch)_$(alt_error).sav
+
 global : .symbolic
     @%make common_clean

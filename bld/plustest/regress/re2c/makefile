@@ -33,15 +33,19 @@ objs = &
     ebc2asc.obj &
     getopt.obj
     
-test : .symbolic re2c.$(exe)
-    $(run) re2c -d plusplus.lex
+test : .symbolic start_test re2c.$(exe)
     diff debug.out debug.chk | wc -w >word.out
     diff word.out word.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 re2c.$(exe) : $(objs) re2c.lnk
     $(linker) @$]@
+    $(run) $@ -d plusplus.lex
+
+start_test : .symbolic
+    %create debug.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     
 re2c.lnk : makefile
     %create $^@
@@ -51,5 +55,8 @@ re2c.lnk : makefile
     @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
+save : .symbolic
+    @if exist debug.out cp debug.out s$(arch)_$(alt_error).sav
+
 global : .SYMBOLIC
     @%make common_clean

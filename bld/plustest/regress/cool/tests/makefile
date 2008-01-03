@@ -1,7 +1,7 @@
 plustest_name = cool
 !include ../../environ.mif
 
-tests = &
+exes = &
     test_as1.$(exe) &
     test_ass.$(exe) &
     test_avl.$(exe) &
@@ -61,86 +61,25 @@ stack_axp=opt stack=32k
 
 .obj.$(exe):
     $(linker) @ex.lnk FILE $[@
+    %append test.out $^&
+    $(run) $@ >>test.out
     
 .c.obj:
     $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
-test : .symbolic ex.lnk $(tests)
-    %create test.out
-    %append test.out test_as1.$(exe)
-    $(run) test_as1.$(exe) >>test.out
-    %append test.out test_ass.$(exe)
-    $(run) test_ass.$(exe) >>test.out
-    %append test.out test_avl.$(exe)
-    $(run) test_avl.$(exe) >>test.out
-    %append test.out test_big.$(exe)
-    $(run) test_big.$(exe) >>test.out
-    %append test.out test_bit.$(exe)
-    $(run) test_bit.$(exe) >>test.out
-    %append test.out test_bt.$(exe)
-    $(run) test_bt.$(exe) >>test.out
-    %append test.out test_cha.$(exe)
-    $(run) test_cha.$(exe) >>test.out
-    %append test.out test_com.$(exe)
-    $(run) test_com.$(exe) >>test.out
-    %append test.out test_dt.$(exe)
-    $(run) test_dt.$(exe) >>test.out
-    %append test.out test_gs.$(exe)
-    $(run) test_gs.$(exe) >>test.out
-    %append test.out test_has.$(exe)
-    $(run) test_has.$(exe) >>test.out
-    %append test.out test_lis.$(exe)
-    $(run) test_lis.$(exe) >>test.out
-    %append test.out test_mat.$(exe)
-    $(run) test_mat.$(exe) >>test.out
-    %append test.out test_nod.$(exe)
-    $(run) test_nod.$(exe) >>test.out
-    %append test.out test_nt.$(exe)
-    $(run) test_nt.$(exe) >>test.out
-    %append test.out test_pai.$(exe)
-    $(run) test_pai.$(exe) >>test.out
-    %append test.out test_pro.$(exe)
-    $(run) test_pro.$(exe) >>test.out
-    %append test.out test_que.$(exe)
-    $(run) test_que.$(exe) >>test.out
-    %append test.out test_ran.$(exe)
-    $(run) test_ran.$(exe) >>test.out
-    %append test.out test_rat.$(exe)
-    $(run) test_rat.$(exe) >>test.out
-    %append test.out test_reg.$(exe)
-    $(run) test_reg.$(exe) >>test.out
-    %append test.out test_rng.$(exe)
-    $(run) test_rng.$(exe) >>test.out
-    %append test.out test_set.$(exe)
-    $(run) test_set.$(exe) >>test.out
-    %append test.out test_sta.$(exe)
-    $(run) test_sta.$(exe) >>test.out
-    %append test.out test_str.$(exe)
-    $(run) test_str.$(exe) >>test.out
-    %append test.out test_tim.$(exe)
-    $(run) test_tim.$(exe) >>test.out
-    %append test.out test_val.$(exe)
-    $(run) test_val.$(exe) >>test.out
-    %append test.out test_vec.$(exe)
-    $(run) test_vec.$(exe) >>test.out
-!ifneq arch i86
-    %append test.out test_han.$(exe)
-    $(run) test_han.$(exe) >>test.out
-    %append test.out test_ite.$(exe)
-    $(run) test_ite.$(exe) >>test.out
-    %append test.out test_m_v.$(exe)
-    $(run) test_m_v.$(exe) >>test.out
-    %append test.out test_qua.$(exe)
-    $(run) test_qua.$(exe) >>test.out
-!endif
-!ifneq arch i86
-    diff test.out test.chk
-!else
+test : .symbolic start_test ex.lnk $(exes)
+!ifeq arch i86
     diff test.out testi86.chk
+!else
+    diff test.out test.chk
 !endif
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
+start_test : .symbolic
+    %create test.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
 ex.lnk : makefile
     %create $^@
     @%append $^@ $(lnk_$(arch))
@@ -148,5 +87,8 @@ ex.lnk : makefile
     @%append $^@ $(stack_$(arch))
     @%append $^@ LIBRARY ../cool.lib
     
-global : .symbolic
+save : .symbolic
+    @if exist test.out cp test.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

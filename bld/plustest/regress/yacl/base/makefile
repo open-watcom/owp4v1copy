@@ -1,5 +1,5 @@
 plustest_name = yacl
-!include ..\..\environ.mif
+!include ../../environ.mif
 
 OBJECTS =    &
 basicops.obj &
@@ -56,12 +56,19 @@ test_cflags_i86_map = -zm -oxs
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) $(test_cflags_$(arch)_$^*) 
     
-test : .symbolic ..\base.lib
-    %make global
+test : .symbolic start_test ../base.lib
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
-..\base.lib : $(OBJECTS)
-    *$(librarian_$(arch)) /n/q/b $^@ $(OBJECTS)
+../base.lib : $(OBJECTS)
+    $(librarian_$(arch)) -q-n-b $^@ $(OBJECTS)
+
+start_test : .symbolic
+    %create ecec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
+save : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
 global : .symbolic
-    %make common_clean
+    @%make common_clean

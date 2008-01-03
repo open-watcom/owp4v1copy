@@ -40,8 +40,13 @@ comp_out = $+ $(files_comp) $-
 
 
 test : .symbolic $(comp_out) $(err_out)
-   	diff mscompat.out mscompat.chk
-        %append $(log_file) PASS $(%__CWD__)
+    diff mscompat.out mscompat.chk
+    @%make global
+    %append $(log_file) PASS $(%__CWD__)
 
-global : .symbolic common_clean
+save : .symbolic
+    @if exist mscompat.out cp mscompat.out s$(arch)_$(alt_error).sav
+
+global : .symbolic
     @if exist *.merr del *.merr
+    @%make common_clean

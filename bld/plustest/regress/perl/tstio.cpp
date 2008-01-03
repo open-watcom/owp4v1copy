@@ -7,7 +7,7 @@
 void main()
 {
 ifstream fin("t.in");
-ofstream fout("t2.txt");
+ofstream fout("t2.out");
 
 PerlString s;
 PerlStringList l;

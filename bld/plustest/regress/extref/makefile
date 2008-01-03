@@ -29,7 +29,7 @@ stack_386=opt stack=8k
 stack_i86=opt stack=4k
 stack_axp=opt stack=8k
 
-lib = $(librarian_$(arch)) /n/b/q
+lib = $(librarian_$(arch)) -q-n-b
 
 #
 # extra flags for a module
@@ -45,26 +45,31 @@ extra_er03c = $(extref_eh)
 .c.obj:
     $(wpp_$(arch)) $[@ $(test_cflags) $(extra_$^*)
     
-tests = er01.$(exe) er02.$(exe) er03.$(exe)
+exes = er01.$(exe) er02.$(exe) er03.$(exe)
     
-test : .symbolic $(tests)
-    %create test.out
-    for %i in ($(tests)) do $(run) %i >>test.out
+test : .symbolic start_test $(exes)
     diff test.out test.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
+start_test : .symbolic
+    %create test.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
 er01.$(exe) : er01a.obj er01.lib er.lnk
-    wlink @er NAME $^@ FILE er01a LIBRARY er01
+    $(linker) @er.lnk NAME $^@ FILE er01a LIBRARY er01
+    $(run) $@ >>test.out
     
 er01.lib : er01b.obj er01c.obj er01d.obj
     $(lib) $^@ $?
     
 er02.$(exe) : er02a.obj er02b.obj er.lnk
-    wlink @er NAME $^@ FILE er02a, er02b
+    $(linker) @er.lnk NAME $^@ FILE er02a, er02b
+    $(run) $@ >>test.out
     
 er03.$(exe) : er03c.obj er03.lib er.lnk
-    wlink @er NAME $^@ FILE er03c LIB er03.lib
+    $(linker) @er.lnk NAME $^@ FILE er03c LIB er03.lib
+    $(run) $@ >>test.out
     
 er03.lib : er03a.obj er03b.obj
     $(lib) $^@ +er03a +er03b
@@ -79,5 +84,8 @@ er.lnk : makefile
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(ldebug_$(arch))
     
+save : .symbolic
+    @if exist test.out cp test.out s$(arch)_$(alt_error).sav
+
 global : .symbolic
     @%make common_clean

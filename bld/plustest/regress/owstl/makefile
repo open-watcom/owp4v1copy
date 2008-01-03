@@ -1,5 +1,5 @@
 plustest_name = owstl
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 test_cflags_386 = -d2-fpd-xs-za
@@ -75,19 +75,20 @@ template = &
 
 # the list of .exe targets
 ext = .$(exe)
-tests = $+ $(template) $-
+exes = $+ $(template) $-
 # a list of names so lazy old me can type "wmake alg01" to 
 # create and run algo01.exe without running the full suite
 ext =
 names = $+ $(template) $-
-# this is used as special target to run multiple commands for each test
-ext = ._do_test_
-do_tests = $+ $(template) $-
 
 # define flags specific to tests here
 extra_cflags_typetr01 = -za0x
 extra_cflags_mmwin16 = -i$(%WATCOM)\h\win -dmmWin16
+!ifeq arch i86
+extra_cflags_mmwindef = -3 -i$(%WATCOM)\h\nt
+!else
 extra_cflags_mmwindef = -i$(%WATCOM)\h\nt
+!endif
 
 .cpp.obj :
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000 $(extra_cflags_$[*)
@@ -98,34 +99,38 @@ $(names) : .symbolic
     $(run) $^*
     @echo PASS
 
-$(tests) :: test.lnk
-
-.obj.$(exe):
-    $(linker) @test.lnk NAME $^* FILE $^*
-
-# the main target environment.mif calls to run the test suite
-test : .symbolic $(tests)
-    %create test.out
-    # if I could figure out how to make a "for" loop execute multiple 
-    # commands this would be a lot more clear...
-    @%make $(do_tests)
-    diff test.out test.chk
-    %make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-
-# the special target that runs the required commands for each test
-$(do_tests) : .symbolic
 # Note that there must be no space before the redirection symbol - otherwise
 # echo will emit the space character and subsequent diff will fail. This
 # way is more transparent than keeping trailing blanks in the check file.
+
+.obj.$(exe):
+    $(linker) @test.lnk NAME $^* FILE $^*
     @echo ----------$^*---------->> test.out
-    $(run) $^* >> test.out
+    $(run) $@ >> test.out
+
+# the main target environment.mif calls to run the test suite
+
+!ifeq arch i86
+test : .symbolic start_test
+!else
+test : .symbolic start_test test.lnk $(exes)
+    diff test.out test.chk
+!endif
+    @%make global
+    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+
+start_test : .symbolic
+    %create test.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 test.lnk : makefile
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
+
+save : .symbolic
+    @if exist test.out cp test.out s$(arch)_$(alt_error).sav
 
 global : .SYMBOLIC
     @%make common_clean
@@ -134,8 +139,8 @@ global : .SYMBOLIC
 # nominmax.cpp
 
 mmwin16.cpp : nominmax.cpp
-    copy nominmax.cpp mmwin16.cpp /v
+    cp nominmax.cpp mmwin16.cpp
 
 mmwindef.cpp : nominmax.cpp
-    copy nominmax.cpp mmwindef.cpp /v
+    cp nominmax.cpp mmwindef.cpp
 

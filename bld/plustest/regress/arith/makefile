@@ -1,5 +1,5 @@
 plustest_name = arith
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 test_cflags_386 = -d2-fpd
@@ -41,57 +41,45 @@ stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
-tests = &
-        bench.$(exe)    &
-        bitcount.$(exe) &
-        calc_e.$(exe)   &
-        calc_pi.$(exe)  &
-        calc_pi2.$(exe) &
-        calc_pi3.$(exe) &
-        dmc.$(exe)      &
-        mldiv.$(exe)    &
-        rsa.$(exe)      &
-        waste.$(exe)    &
-
+exes = &
+    bench.$(exe)    &
+    bitcount.$(exe) &
+    calc_e.$(exe)   &
+    calc_pi.$(exe)  &
+    calc_pi2.$(exe) &
+    calc_pi3.$(exe) &
+    dmc.$(exe)      &
+    mldiv.$(exe)    &
+    rsa.$(exe)      &
+    waste.$(exe)
 
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000 -fi=arith.h
 
-.obj.$(exe):
-    $(linker) @test.lnk NAME $^* FILE $^*
-
-test : .symbolic test.lnk $(tests)
-    $(run) bench >bench.out
-    diff bench.out bench.chk
-    %create test.out
 # Note that there must be no space before the redirection symbol - otherwise
 # echo will emit the space character and subsequent diff will fail. This
 # way is more transparent than keeping trailing blanks in the check file.
-    @echo -------bench--------->> test.out
-    $(run) bench >>test.out
-    @echo -------bitcount--------->> test.out
-    $(run) bitcount >>test.out
-    @echo -------calc_e----------->> test.out
-    $(run) calc_e >>test.out
-    @echo -------calc_pi---------->> test.out
-    $(run) calc_pi >>test.out
-    @echo -------calc_pi2--------->> test.out
-    $(run) calc_pi2 >>test.out
-    @echo -------calc_pi3--------->> test.out
-    $(run) calc_pi3 >>test.out
-    @echo -------dmc-------------->> test.out
-    $(run) dmc c dmc.cpp dmc.out >>test.out
-    $(run) dmc d dmc.out cpp.out >>test.out
+
+.obj.$(exe):
+    $(linker) @test.lnk NAME $^* FILE $^*
+    @echo --------$^*-------->> test.out
+    $(run) $^* >>test.out
+
+dmc.$(exe) : dmc.obj
+    $(linker) @test.lnk NAME $^* FILE $^*
+    @echo --------$^*-------->> test.out
+    $(run) $^* c dmc.cpp dmc.out >>test.out
+    $(run) $^* d dmc.out cpp.out >>test.out
     diff cpp.out dmc.cpp >>test.out
-    @echo -------mldiv------------>> test.out
-    $(run) mldiv >>test.out
-    @echo -------rsa------------>> test.out
-    $(run) rsa >>test.out
-    @echo -------waste------------>> test.out
-    $(run) waste >>test.out
+
+test : .symbolic start_test test.lnk $(exes)
     diff test.out test.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+
+start_test : .symbolic
+    %create test.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 test.lnk : makefile
     %create $^@
@@ -99,5 +87,8 @@ test.lnk : makefile
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
 
-global : .SYMBOLIC
+save : .symbolic
+    @if exist test.out cp test.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

@@ -1,5 +1,5 @@
 plustest_name = stl94
-!include ..\..\environ.mif
+!include ../../environ.mif
 
 !ifdef test1
 alt_error = 01
@@ -30,24 +30,25 @@ stack_axp=opt stack=64k
     $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
     
 .obj.$(exe):
-    wlink @test FILE $[@, tempbuf.obj, random.obj
+    $(linker) @test FILE $[@, tempbuf.obj, random.obj
     del $[@
     %append exec.out @@@ $^@ @@@
     $(run) $^@ $(extra_$^*) >>exec.out
     
 !include stl_test.mif
 
-test : .symbolic test.lnk tempbuf.obj random.obj start_test $(tests)
+test : .symbolic start_test test.lnk tempbuf.obj random.obj $(tests)
 !ifeq arch i86
     diff exec.out execi86.chk
 !else
     diff exec.out exec.chk
 !endif
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 start_test : .symbolic
     %create exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     
 test.lnk : $(__MAKEFILES__)
     %create $^@
@@ -56,7 +57,7 @@ test.lnk : $(__MAKEFILES__)
     @%append $^@ $(stack_$(arch))
     
 save : .symbolic
-    if exist exec.out copy exec.out s$(arch)_$(alt_error).sav
-    
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
 global : .symbolic
     @%make common_clean

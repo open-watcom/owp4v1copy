@@ -32,7 +32,7 @@ dosystest = testsys
     @if not exist $^&.ser echo I did not generate errors for $^& > $^&.ser
 
 test : .symbolic initopts test0000 test0100 test0200 test0300 $(dosystest) test_special
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 initopts : .symbolic
@@ -66,52 +66,52 @@ testsys : .symbolic diag$(arch).out
 test_special : .symbolic
     -$(wpp_$(arch)) $(diagnose_dir)\diag0001.c @diag $(opt_diag0001) -eq >diagspec.out
     -diff -b diagspec.out diagspec.chk >diffspec.out
-    %make diag_clean
+    @%make diag_clean
     diff -b diffspec.out diffspec.chk
     @rm diffspec.out
 
 diag0000.out : ./catfile.exe $(diags_0099)
     $[@ -a *.err >diag0000.out
-    %make diag_clean
+    @%make diag_clean
 
 diag0100.out : ./catfile.exe $(diags_0199)
     $[@ -a *.err >diag0100.out
-    %make diag_clean
+    @%make diag_clean
 
 diag0200.out : ./catfile.exe $(diags_0299)
     $[@ -a *.err >diag0200.out
-    %make diag_clean
+    @%make diag_clean
 
 diag0300.out : ./catfile.exe $(diags_0399)
     $[@ -a *.err >diag0300.out
-    %make diag_clean
+    @%make diag_clean
 
 diag386.out : ./catfile.exe $(diags_sys)
     $[@ -a *.ser >diag386.out
-    %make diag_clean
+    @%make diag_clean
 
 diagaxp.out : ./catfile.exe $(diags_sys)
     $[@ -a *.ser >diagaxp.out
-    %make diag_clean
+    @%make diag_clean
 
 ./catfile.exe: source/catfile.c
-        $(bld_cl) $[@
+    $(bld_cl) $[@
 
 diag_clean : .procedure
-    if exist *.err del *.err
-    if exist *.ser del *.ser
-    if exist *.pch del *.pch
+    @if exist *.err rm -f *.err
+    @if exist *.ser rm -f *.ser
+    @if exist *.pch rm -f *.pch
 
 save : .symbolic
-    if exist diff0000.out cp diag0000.out s$(arch)0000.sav
-    if exist diff0100.out cp diag0100.out s$(arch)0100.sav
-    if exist diff0200.out cp diag0200.out s$(arch)0200.sav
-    if exist diff0300.out cp diag0300.out s$(arch)0300.sav
-    if exist diff$(arch).out cp diag$(arch).out s$(arch)_$(arch).sav
-    if exist diffspec.out cp diagspec.out s$(arch)spec.sav
+    @if exist diff0000.out cp diag0000.out s$(arch)0000.sav
+    @if exist diff0100.out cp diag0100.out s$(arch)0100.sav
+    @if exist diff0200.out cp diag0200.out s$(arch)0200.sav
+    @if exist diff0300.out cp diag0300.out s$(arch)0300.sav
+    @if exist diff$(arch).out cp diag$(arch).out s$(arch)_$(arch).sav
+    @if exist diffspec.out cp diagspec.out s$(arch)spec.sav
 
 global : .symbolic
-    %make diag_clean
-    %make common_clean
-    if exist catfile.* del catfile.*
+    @%make diag_clean
+    @%make common_clean
+    @if exist catfile.* rm -f catfile.*
 

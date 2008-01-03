@@ -108,19 +108,15 @@ lnk_i86 += op stack=8k
     $(run) $^@ >>exec.out
     rm $[@
 
-test : .symbolic actual_test
+test : .symbolic start_test $(positive_exes)
     @set error_file=error.out
     @set error_msg=failure to complete test stream
     echo OK >error.out
     $(bld_cl) chk_exec.c -ox-d1
     chk_exec exec.out >>error.out
     diff -b error.out error.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-
-actual_test : .symbolic start_test $(positive_exes)
-    rm -f *.obj
-    rm -f *.$(exe)
 
 link3.$(exe) : link3a.obj link3b.obj
     @set error_msg=failure to link $^@
@@ -216,6 +212,7 @@ cltemp21.$(exe) : cltemp21.obj cltmp21b.obj
 start_test : .symbolic test.lnk
     %create exec.out
     @set error_file=exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 test.lnk : makefile
     %create $^@
@@ -224,7 +221,7 @@ test.lnk : makefile
     @%append $^@ OPTION quiet, noredef
 
 save : .symbolic
-    if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
 global : .symbolic
     @if exist failure rm failure

@@ -1,5 +1,5 @@
 plustest_name = jam
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 test_cflags = -d2
@@ -26,14 +26,18 @@ objs = &
     assert.obj &
     testftor.obj
     
-test : .symbolic jam.$(exe)
-    $(run) jam >jam.out
+test : .symbolic start_test jam.$(exe)
     diff jam.out jam.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 jam.$(exe) : $(objs) jam.lnk
     $(linker) @$]@
+    $(run) $@ >>jam.out
+
+start_test : .symbolic
+    %create jam.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 jam.lnk : makefile
     %create $^@
@@ -43,5 +47,8 @@ jam.lnk : makefile
     @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
+save : .symbolic
+    @if exist jam.out cp jam.out s$(arch)_$(alt_error).sav
+
 global : .symbolic
     @%make common_clean

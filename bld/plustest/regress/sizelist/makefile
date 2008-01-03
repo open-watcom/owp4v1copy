@@ -25,14 +25,18 @@ stack_axp=opt stack=8k
 objs = &
     psfistt.obj
     
-test : .symbolic psfistt.$(exe)
-    $(run) psfistt.$(exe) >psfistt.out
+test : .symbolic start_test psfistt.$(exe)
     diff psfistt.out psfistt.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 psfistt.$(exe) : $(objs) psfistt.lnk
     $(linker) @$]@
+    $(run) $@ >>psfistt.out
+
+start_test : .symbolic
+    %create psfistt.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     
 psfistt.lnk : makefile
     %create $^@
@@ -42,5 +46,8 @@ psfistt.lnk : makefile
     @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
+save : .symbolic
+    @if exist psfistt.out cp psfistt.out s$(arch)_$(alt_error).sav
+
 global : .SYMBOLIC
     @%make common_clean

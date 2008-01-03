@@ -29,6 +29,7 @@ tr3(): throw floating overflow error
 Caught precondition Violation
   ..  Exact type floating_overflow_impl
   ..  Level 0 Exact type floating_overflow_impl
+  ..  We've got an arithmetic_domain_error = floating_overflow_impl
   ..  Dynamic cast [exact type is floating_overflow_impl] to exception_backtrace?
   ..  CAST FAILED!
 Test 3 complete, exceptions handled
@@ -61,7 +62,7 @@ Caught resource acquisition failure
 Test 4 complete, exceptions handled
 
 ---- Test 5 ----
-tr4(): exhaust memory using malloc
+tr5(): exhaust memory using malloc
 Allocating (malloc no 0) 1000 bytes ..  .. done 1000
 Allocating (malloc no 1) 10000 bytes ..  .. done 10000
 Allocating (malloc no 2) 100000 bytes ..  .. done 100000
@@ -85,11 +86,10 @@ Test 5 complete, exceptions handled
 
 ---- Test 6 ----
 tr6(): throw assertion failure
-Unexpected exception trapped in unexpected handler
-Caught protocol Violation
-  ..  Exact type exception_specification_violation_impl
-  ..  Level 0 Exact type exception_specification_violation_impl
-  ..  Dynamic cast [exact type is exception_specification_violation_impl] to exception_backtrace?
+Caught assertion failure
+  ..  Exact type assertion_failure_impl
+  ..  Level 0 Exact type assertion_failure_impl
+  ..  Dynamic cast [exact type is assertion_failure_impl] to exception_backtrace?
   ..  CAST FAILED!
 Test 6 complete, exceptions handled
 
@@ -106,7 +106,7 @@ Test 7 complete, exceptions handled
 ---- Test 8 ----
 tr8(): MI test
 Caught resource acquisition failure
-  ..  Exact type exception_message_impl
+  ..  Exact type resource_limit_impl
   ..  rethrowing (nested) internally ..
   ..  No more information
   ..  Internal rethrow handled
@@ -149,7 +149,7 @@ Linked object of source is 00000006
 0000000a [exception_message_impl] Cloned 00000009 [exception_message_impl]
 Linked object cloned to 00000009 and attached to 00000008
 COPY->END:   Copy backtrace object 00000005 --> 00000008 done
-0000000c [exception_backtrace_impl] Cloned 0000000b [exception_backtrace_impl]
+0000000c [backAssert] Cloned 0000000b [backAssert]
 ATTACH: the clone 0000000b of 0000000e to 0000000d
 COPY->BEGIN: Copy backtrace object 0000000d --> 0000000f 
 Linked object of source is 0000000b
@@ -158,116 +158,116 @@ Linked object of source is 00000009
 00000012 [exception_message_impl] Cloned 00000011 [exception_message_impl]
 Linked object cloned to 00000011 and attached to 00000010
 COPY->END:   Copy backtrace object 00000008 --> 00000010 done
-00000014 [exception_backtrace_impl] Cloned 00000013 [exception_backtrace_impl]
+00000014 [backAssert] Cloned 00000013 [backAssert]
 Linked object cloned to 00000013 and attached to 0000000f
 COPY->END:   Copy backtrace object 0000000d --> 0000000f done
 Destructor 0000000d is Deleting backtrace 0000000b
 Destructor 00000008 is Deleting backtrace 00000009
 Destructor 00000005 is Deleting backtrace 00000006
 tr11_1: caught exception
-COPY->BEGIN: Copy backtrace object 0000000f --> 00000015 
+COPY->BEGIN: Copy backtrace object 0000000f --> 00000008 
 Linked object of source is 00000013
-COPY->BEGIN: Copy backtrace object 00000010 --> 00000016 
+COPY->BEGIN: Copy backtrace object 00000010 --> 00000015 
 Linked object of source is 00000011
-00000018 [exception_message_impl] Cloned 00000017 [exception_message_impl]
-Linked object cloned to 00000017 and attached to 00000016
-COPY->END:   Copy backtrace object 00000010 --> 00000016 done
-0000001a [exception_backtrace_impl] Cloned 00000019 [exception_backtrace_impl]
-Linked object cloned to 00000019 and attached to 00000015
-COPY->END:   Copy backtrace object 0000000f --> 00000015 done
-0000001c [exception_backtrace_impl] Cloned 0000001b [exception_backtrace_impl]
-ATTACH: the clone 0000001b of 0000001e to 0000001d
-COPY->BEGIN: Copy backtrace object 0000001d --> 0000001f 
-Linked object of source is 0000001b
-COPY->BEGIN: Copy backtrace object 00000015 --> 00000020 
-Linked object of source is 00000019
-COPY->BEGIN: Copy backtrace object 00000016 --> 00000021 
+00000016 [exception_message_impl] Cloned 00000006 [exception_message_impl]
+Linked object cloned to 00000006 and attached to 00000015
+COPY->END:   Copy backtrace object 00000010 --> 00000015 done
+00000018 [backAssert] Cloned 00000017 [backAssert]
+Linked object cloned to 00000017 and attached to 00000008
+COPY->END:   Copy backtrace object 0000000f --> 00000008 done
+00000019 [backAssert] Cloned 0000000b [backAssert]
+ATTACH: the clone 0000000b of 0000001b to 0000001a
+COPY->BEGIN: Copy backtrace object 0000001a --> 0000001c 
+Linked object of source is 0000000b
+COPY->BEGIN: Copy backtrace object 00000008 --> 0000001d 
 Linked object of source is 00000017
-00000023 [exception_message_impl] Cloned 00000022 [exception_message_impl]
-Linked object cloned to 00000022 and attached to 00000021
-COPY->END:   Copy backtrace object 00000016 --> 00000021 done
-00000025 [exception_backtrace_impl] Cloned 00000024 [exception_backtrace_impl]
-Linked object cloned to 00000024 and attached to 00000020
-COPY->END:   Copy backtrace object 00000015 --> 00000020 done
-00000027 [exception_backtrace_impl] Cloned 00000026 [exception_backtrace_impl]
-Linked object cloned to 00000026 and attached to 0000001f
-COPY->END:   Copy backtrace object 0000001d --> 0000001f done
-Destructor 0000001d is Deleting backtrace 0000001b
-Destructor 00000015 is Deleting backtrace 00000019
-Destructor 00000016 is Deleting backtrace 00000017
+COPY->BEGIN: Copy backtrace object 00000015 --> 0000001e 
+Linked object of source is 00000006
+0000000a [exception_message_impl] Cloned 0000001f [exception_message_impl]
+Linked object cloned to 0000001f and attached to 0000001e
+COPY->END:   Copy backtrace object 00000015 --> 0000001e done
+00000021 [backAssert] Cloned 00000020 [backAssert]
+Linked object cloned to 00000020 and attached to 0000001d
+COPY->END:   Copy backtrace object 00000008 --> 0000001d done
+00000014 [backAssert] Cloned 00000022 [backAssert]
+Linked object cloned to 00000022 and attached to 0000001c
+COPY->END:   Copy backtrace object 0000001a --> 0000001c done
+Destructor 0000001a is Deleting backtrace 0000000b
+Destructor 00000008 is Deleting backtrace 00000017
+Destructor 00000015 is Deleting backtrace 00000006
 Destructor 0000000f is Deleting backtrace 00000013
 Destructor 00000010 is Deleting backtrace 00000011
 tr11: caught exception
-COPY->BEGIN: Copy backtrace object 0000001f --> 00000028 
-Linked object of source is 00000026
-COPY->BEGIN: Copy backtrace object 00000020 --> 00000029 
-Linked object of source is 00000024
-COPY->BEGIN: Copy backtrace object 00000021 --> 0000002a 
+COPY->BEGIN: Copy backtrace object 0000001c --> 00000008 
 Linked object of source is 00000022
-0000002c [exception_message_impl] Cloned 0000002b [exception_message_impl]
-Linked object cloned to 0000002b and attached to 0000002a
-COPY->END:   Copy backtrace object 00000021 --> 0000002a done
-0000002e [exception_backtrace_impl] Cloned 0000002d [exception_backtrace_impl]
-Linked object cloned to 0000002d and attached to 00000029
-COPY->END:   Copy backtrace object 00000020 --> 00000029 done
-00000030 [exception_backtrace_impl] Cloned 0000002f [exception_backtrace_impl]
-Linked object cloned to 0000002f and attached to 00000028
-COPY->END:   Copy backtrace object 0000001f --> 00000028 done
-00000032 [exception_backtrace_impl] Cloned 00000031 [exception_backtrace_impl]
-ATTACH: the clone 00000031 of 00000034 to 00000033
-COPY->BEGIN: Copy backtrace object 00000033 --> 00000035 
-Linked object of source is 00000031
-COPY->BEGIN: Copy backtrace object 00000028 --> 00000036 
-Linked object of source is 0000002f
-COPY->BEGIN: Copy backtrace object 00000029 --> 00000037 
-Linked object of source is 0000002d
-COPY->BEGIN: Copy backtrace object 0000002a --> 00000038 
-Linked object of source is 0000002b
-0000003a [exception_message_impl] Cloned 00000039 [exception_message_impl]
-Linked object cloned to 00000039 and attached to 00000038
-COPY->END:   Copy backtrace object 0000002a --> 00000038 done
-0000003c [exception_backtrace_impl] Cloned 0000003b [exception_backtrace_impl]
-Linked object cloned to 0000003b and attached to 00000037
-COPY->END:   Copy backtrace object 00000029 --> 00000037 done
-0000003e [exception_backtrace_impl] Cloned 0000003d [exception_backtrace_impl]
-Linked object cloned to 0000003d and attached to 00000036
-COPY->END:   Copy backtrace object 00000028 --> 00000036 done
-00000040 [exception_backtrace_impl] Cloned 0000003f [exception_backtrace_impl]
-Linked object cloned to 0000003f and attached to 00000035
-COPY->END:   Copy backtrace object 00000033 --> 00000035 done
-Destructor 00000033 is Deleting backtrace 00000031
-Destructor 00000028 is Deleting backtrace 0000002f
-Destructor 00000029 is Deleting backtrace 0000002d
-Destructor 0000002a is Deleting backtrace 0000002b
-Destructor 0000001f is Deleting backtrace 00000026
-Destructor 00000020 is Deleting backtrace 00000024
-Destructor 00000021 is Deleting backtrace 00000022
+COPY->BEGIN: Copy backtrace object 0000001d --> 00000023 
+Linked object of source is 00000020
+COPY->BEGIN: Copy backtrace object 0000001e --> 00000024 
+Linked object of source is 0000001f
+00000026 [exception_message_impl] Cloned 00000025 [exception_message_impl]
+Linked object cloned to 00000025 and attached to 00000024
+COPY->END:   Copy backtrace object 0000001e --> 00000024 done
+00000028 [backAssert] Cloned 00000027 [backAssert]
+Linked object cloned to 00000027 and attached to 00000023
+COPY->END:   Copy backtrace object 0000001d --> 00000023 done
+0000002a [backAssert] Cloned 00000029 [backAssert]
+Linked object cloned to 00000029 and attached to 00000008
+COPY->END:   Copy backtrace object 0000001c --> 00000008 done
+0000002b [backAssert] Cloned 0000000b [backAssert]
+ATTACH: the clone 0000000b of 0000002d to 0000002c
+COPY->BEGIN: Copy backtrace object 0000002c --> 0000002e 
+Linked object of source is 0000000b
+COPY->BEGIN: Copy backtrace object 00000008 --> 0000002f 
+Linked object of source is 00000029
+COPY->BEGIN: Copy backtrace object 00000023 --> 00000030 
+Linked object of source is 00000027
+COPY->BEGIN: Copy backtrace object 00000024 --> 00000031 
+Linked object of source is 00000025
+00000033 [exception_message_impl] Cloned 00000032 [exception_message_impl]
+Linked object cloned to 00000032 and attached to 00000031
+COPY->END:   Copy backtrace object 00000024 --> 00000031 done
+00000035 [backAssert] Cloned 00000034 [backAssert]
+Linked object cloned to 00000034 and attached to 00000030
+COPY->END:   Copy backtrace object 00000023 --> 00000030 done
+00000037 [backAssert] Cloned 00000036 [backAssert]
+Linked object cloned to 00000036 and attached to 0000002f
+COPY->END:   Copy backtrace object 00000008 --> 0000002f done
+00000014 [backAssert] Cloned 00000038 [backAssert]
+Linked object cloned to 00000038 and attached to 0000002e
+COPY->END:   Copy backtrace object 0000002c --> 0000002e done
+Destructor 0000002c is Deleting backtrace 0000000b
+Destructor 00000008 is Deleting backtrace 00000029
+Destructor 00000023 is Deleting backtrace 00000027
+Destructor 00000024 is Deleting backtrace 00000025
+Destructor 0000001c is Deleting backtrace 00000022
+Destructor 0000001d is Deleting backtrace 00000020
+Destructor 0000001e is Deleting backtrace 0000001f
 Caught assertion failure
-  ..  Exact type exception_backtrace_impl
-  ..  Level 0 Exact type exception_backtrace_impl
+  ..  Exact type backAssert
+  ..  Level 0 Exact type backAssert
   .. MESSAGE tr11 (0) translator
-  ..  Dynamic cast [exact type is exception_backtrace_impl] to exception_backtrace?
-  ..  backtrace to 0000003f detected
-  ..  Level 1 Exact type exception_backtrace_impl
+  ..  Dynamic cast [exact type is backAssert] to exception_backtrace?
+  ..  backtrace to 00000038 detected
+  ..  Level 1 Exact type backAssert
   .. MESSAGE tr11_1 translator
-  ..  Dynamic cast [exact type is exception_backtrace_impl] to exception_backtrace?
-  ..  backtrace to 0000003d detected
-  ..  Level 2 Exact type exception_backtrace_impl
+  ..  Dynamic cast [exact type is backAssert] to exception_backtrace?
+  ..  backtrace to 00000036 detected
+  ..  Level 2 Exact type backAssert
   .. MESSAGE tr11_2 translator
-  ..  Dynamic cast [exact type is exception_backtrace_impl] to exception_backtrace?
-  ..  backtrace to 0000003b detected
-  ..  Level 3 Exact type exception_backtrace_impl
+  ..  Dynamic cast [exact type is backAssert] to exception_backtrace?
+  ..  backtrace to 00000034 detected
+  ..  Level 3 Exact type backAssert
   .. MESSAGE tr11_3 translator
-  ..  Dynamic cast [exact type is exception_backtrace_impl] to exception_backtrace?
-  ..  backtrace to 00000039 detected
+  ..  Dynamic cast [exact type is backAssert] to exception_backtrace?
+  ..  backtrace to 00000032 detected
   ..  Level 4 Exact type exception_message_impl
   .. MESSAGE Root exception
   ..  Dynamic cast [exact type is exception_message_impl] to exception_backtrace?
   ..  CAST FAILED!
-Destructor 00000035 is Deleting backtrace 0000003f
-Destructor 00000036 is Deleting backtrace 0000003d
-Destructor 00000037 is Deleting backtrace 0000003b
-Destructor 00000038 is Deleting backtrace 00000039
+Destructor 0000002e is Deleting backtrace 00000038
+Destructor 0000002f is Deleting backtrace 00000036
+Destructor 00000030 is Deleting backtrace 00000034
+Destructor 00000031 is Deleting backtrace 00000032
 Test 11 complete, exceptions handled
 
 ---- Test 12 ----

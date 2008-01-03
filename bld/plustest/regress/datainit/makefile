@@ -56,14 +56,17 @@ stack_axp=opt stack=16k
     $(wpp_$(arch)) $[@ $(test_cflags)
     
 .obj.$(exe):
-    wlink @idata FILE $[@
+    $(linker) @idata.lnk FILE $[@
+    $(run) $@ >>idata.out
 
-test : .symbolic idata.lnk $(exes)
-    %create idata.out
-    @for %i in ( $(exes) ) do $(run) %i >>idata.out
+test : .symbolic start_test idata.lnk $(exes)
     diff idata.out idata.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+
+start_test : .symbolic
+    %create idata.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     
 idata.lnk : $(__MAKEFILES__)
     %create $^@
@@ -71,5 +74,8 @@ idata.lnk : $(__MAKEFILES__)
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
 
-global : .SYMBOLIC
+save : .symbolic
+    @if exist idata.out cp idata.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

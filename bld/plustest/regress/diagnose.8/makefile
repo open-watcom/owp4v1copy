@@ -25,7 +25,7 @@ alt_error=00
     @if not exist $^&.ser echo I did not generate errors for $^& > $^&.ser
 
 test : .symbolic test0000 test0100 test0200 testsys
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 test0000 : .symbolic diag0000.out
@@ -44,55 +44,58 @@ testsys : .symbolic diag$(arch).out
     -diff diag$(arch).out diag$(arch).chk >diff$(arch).out
     diff diff$(arch).out diff$(arch).chk
     
-diag0000.out : $(diags_0099)
-    ..\..\bin\catfile /a *.err >diag0000.out
+diag0000.out : ./catfile.exe $(diags_0099)
+    $[@ -a *.err >diag0000.out
     del *.err
     
-diag0100.out : $(diags_0199)
-    ..\..\bin\catfile /a *.err >diag0100.out
+diag0100.out : ./catfile.exe $(diags_0199)
+    $[@ -a *.err >diag0100.out
     del *.err
     
-diag0200.out : $(diags_0299)
-    ..\..\bin\catfile /a *.err >diag0200.out
+diag0200.out : ./catfile.exe $(diags_0299)
+    $[@ -a *.err >diag0200.out
     del *.err
     
-diag386.out : $(diags_sys)
-    ..\..\bin\catfile /a *.ser >diag386.out
+diag386.out : ./catfile.exe $(diags_sys)
+    $[@ -a *.ser >diag386.out
     del *.ser
     
-diagaxp.out : $(diags_sys)
-    ..\..\bin\catfile /a *.ser >diagaxp.out
+diagaxp.out : ./catfile.exe $(diags_sys)
+    $[@ -a *.ser >diagaxp.out
     del *.ser
     
+./catfile.exe: ../diagnose/source/catfile.c
+    $(bld_cl) $[@
+
 diag_fc : .symbolic
     %create diagnose.fc
     for %i in ($(diags_0099_c)) do %append diagnose.fc source\%i $(opt_%i)
     -$(wpp_$(arch)) $(diagnose_opts) -fc=diagnose.fc -k >nul
-    ..\..\bin\catfile /a *.err >diag0000.out
+    ..\..\bin\catfile -a *.err >diag0000.out
     del *.err
     %create diagnose.fc
     for %i in ($(diags_0199_c)) do %append diagnose.fc source\%i $(opt_%i)
     cp diagnose.fc jww.fc
     -$(wpp_$(arch)) $(diagnose_opts) -fc=diagnose.fc -k >nul
-    ..\..\bin\catfile /a *.err >diag0100.out
+    ..\..\bin\catfile -a *.err >diag0100.out
     del *.err
     %create diagnose.fc
     for %i in ($(diags_0299_c)) do %append diagnose.fc source\%i $(opt_%i)
     -$(wpp_$(arch)) $(diagnose_opts) -fc=diagnose.fc -k >nul
-    ..\..\bin\catfile /a *.err >diag0200.out
+    ..\..\bin\catfile -a *.err >diag0200.out
     del *.err
     %create diagnose.fc
     for %i in ($(diags_sys_c)) do %append diagnose.fc source\%i $(opt_%i)
     -$(wpp_$(arch)) $(diagnose_opts) -fc=diagnose.fc $(archdep_opts) -k >nul
-    ..\..\bin\catfile /a *.ser >diag$(arch).out
+    ..\..\bin\catfile -a *.ser >diag$(arch).out
     del *.ser
     
 save : .symbolic
-    if exist diff0000.out cp diff0000.out s$(arch)_0000.sav
-    if exist diff0100.out cp diff0100.out s$(arch)_0100.sav
-    if exist diff0200.out cp diff0200.out s$(arch)_0200.sav
-    if exist diff$(arch).out cp diff$(arch).out s$(arch)_$(arch).sav
+    @if exist diff0000.out cp diff0000.out s$(arch)_0000.sav
+    @if exist diff0100.out cp diff0100.out s$(arch)_0100.sav
+    @if exist diff0200.out cp diff0200.out s$(arch)_0200.sav
+    @if exist diff$(arch).out cp diff$(arch).out s$(arch)_$(arch).sav
     
 global : .symbolic
-    if exist *.ser del *.ser
-    %make common_clean
+    @if exist *.ser del *.ser
+    @%make common_clean

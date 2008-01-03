@@ -16,22 +16,25 @@
 # targ_env_386 = wnt386/d4g386/os2386 (depends on current OS)
 # targ_env_i86 = os2i86/dosi86 (depends on current OS)
 # targ_env_axp = os2axp/ntaxp (depends on current OS)
+# targ_env_ppc = linuxppc/ntppc (depends on current OS)
+# targ_env_mps = linuxmips (depends on current OS)
 #
 # nb: above directories can have extensions:
 #   .    - Intel 386 hosted compiler
 #   .axp - Digital AXP hosted compiler
 #   ( more to be defined )
 #
-# wcc_386 = wcc386
-# wcc_i86 = wcc
-# wcc_axp = wccaxp
 # wpp_386 = wpp386
 # wpp_i86 = wpp
 # wpp_axp = wppaxp
+# wpp_ppc = wppppc
+# wpp_mps = wppmps
 # dll_i86 = wppdi86.dll
 # dll_386 = wppd386.dll
 # dll_axp = wppdaxp.dll
-# arch = 386/axp (depends on current hardware)
+# dll_ppc = wppdppc.dll
+# dll_mps = wppdmps.dll
+# arch = 386/axp/ppc/mps (depends on current hardware)
 # linker = wlink
 # log_file = $(plustest_dir)\$(plustest_name).log
 
@@ -65,6 +68,18 @@
 !ifndef wpp_axp
 !  ifdef %plustest_wpp_axp
 !    define wpp_axp $(%plustest_wpp_axp)
+!  endif
+!endif
+
+!ifndef wpp_ppc
+!  ifdef %plustest_wpp_ppc
+!    define wpp_ppc $(%plustest_wpp_ppc)
+!  endif
+!endif
+
+!ifndef wpp_mps
+!  ifdef %plustest_wpp_mps
+!    define wpp_mps $(%plustest_wpp_mps)
 !  endif
 !endif
 
@@ -104,6 +119,18 @@
 !  endif
 !endif
 
+!ifndef targ_env_ppc
+!  ifdef %plustest_targ_env_ppc
+!    define targ_env_ppc $(%plustest_targ_env_ppc)
+!  endif
+!endif
+
+!ifndef targ_env_mps
+!  ifdef %plustest_targ_env_mps
+!    define targ_env_mps $(%plustest_targ_env_mps)
+!  endif
+!endif
+
 !ifndef plustest_name
 !error macro 'plustest_name' has not been set
 !endif
@@ -131,15 +158,17 @@
 # architectures -- 386, i86, axp
 #
 !ifndef arch
-!  ifdef %plustest_arch
-!      define arch $+$(%plustest_arch)$-
-!  else
-!      ifdef __NTAXP__
-!          define arch axp
-!      else
-!          define arch 386
-!     endif
-!  endif
+!   ifdef %plustest_arch
+!       define arch $+$(%plustest_arch)$-
+!   else ifdef __NTAXP__
+!       define arch axp
+!   else ifdef __LINUXPPC__
+!       define arch ppc
+!   else ifdef __LINUXMIPS__
+!       define arch mps
+!   else
+!       define arch 386
+!   endif
 !endif
 
 #
@@ -164,6 +193,8 @@
 !    define targ_env_386 d4g386
 !  else ifdef __OS2__
 !    define targ_env_386 os2386
+!  else ifdef __LINUX__
+!    define targ_env_386 lnx386
 !  else ifdef __NT386__
 !    define targ_env_386 wnt386
 !  endif
@@ -189,6 +220,12 @@
 !  endif
 !endif
 
+!ifndef targ_env_mps
+!  ifdef __LINUX__
+!    define targ_env_mps lnxmps
+!  endif
+!endif
+
 #
 # targ_run      name of executable loader (e.g., run386)
 targ_run_pls386 = run386
@@ -202,30 +239,31 @@ targ_run_os2i86 =
 targ_run_wntaxp =
 targ_run_dosaxp =
 targ_run_os2axp =
+targ_run_lnxppc =
+targ_run_lnxmps =
 
 run_386 = $(targ_run_$(targ_env_386))
 run_i86 = $(targ_run_$(targ_env_i86))
 run_axp = $(targ_run_$(targ_env_axp))
+run_ppc = $(targ_run_$(targ_env_ppc))
+run_mps = $(targ_run_$(targ_env_mps))
 
 run = $(run_$(arch))
 
 #
-# targ_ext      extension (e.g., exp )
+# targ_ext      extension (e.g., exp ) - must have one for default rules to work
 targ_ext_pls386 = exp
 targ_ext_d4g386 = exe
 targ_ext_tnt386 = exe
 targ_ext_os2386 = exe
 targ_ext_wnt386 = exe
-targ_ext_wnti86 = exe
-targ_ext_dosi86 = exe
-targ_ext_os2i86 = exe
-targ_ext_wntaxp = exe
-targ_ext_dosaxp = exe
-targ_ext_os2axp = exe
+targ_ext_lnx386 = exe
 
 ext_386 = $(targ_ext_$(targ_env_386))
-ext_i86 = $(targ_ext_$(targ_env_i86))
-ext_axp = $(targ_ext_$(targ_env_axp))
+ext_i86 = exe
+ext_axp = exe
+ext_ppc = exe
+ext_mps = exe
 
 exe = $(ext_$(arch))
 
@@ -236,6 +274,7 @@ targ_lnk_d4g386 = system dos4g
 targ_lnk_tnt386 = system nt option offset=64k
 targ_lnk_os2386 = system os2v2 option offset=64k
 targ_lnk_wnt386 = system nt option offset=64k
+targ_lnk_lnx386 = system linux
 !ifdef __NT386__
 targ_lnk_wnti86 = system dos
 !else
@@ -246,12 +285,16 @@ targ_lnk_os2i86 = system os2 pmc libpath $(watcom_dir)\lib
 targ_lnk_wntaxp = system ntaxp
 targ_lnk_dosaxp = system ntaxp
 targ_lnk_os2axp = system ntaxp
+targ_lnk_lnxppc = system linuxppc
+targ_lnk_lnxmps = system linuxmips
 
 lnk_any    = op map,quiet
 
 lnk_386 = $(targ_lnk_$(targ_env_386)) $(lnk_any)
 lnk_i86 = $(targ_lnk_$(targ_env_i86)) $(lnk_any)
 lnk_axp = $(targ_lnk_$(targ_env_axp)) $(lnk_any)
+lnk_ppc = $(targ_lnk_$(targ_env_ppc)) $(lnk_any)
+lnk_mps = $(targ_lnk_$(targ_env_mps)) $(lnk_any)
 
 #
 # targ_ldb      linker debug directive (e.g., DEBUG all)
@@ -266,10 +309,14 @@ targ_ldb_os2i86 = debug all
 targ_ldb_wntaxp = debug codeview
 targ_ldb_dosaxp = debug codeview
 targ_ldb_os2axp = debug codeview
+targ_ldb_lnxppc = debug all
+targ_ldb_lnxmps = debug all
 
 ldebug_386 = $(targ_ldb_$(targ_env_386))
 ldebug_i86 = $(targ_ldb_$(targ_env_i86))
 ldebug_axp = $(targ_ldb_$(targ_env_axp))
+ldebug_ppc = $(targ_ldb_$(targ_env_ppc))
+ldebug_mps = $(targ_ldb_$(targ_env_mps))
 
 #
 # targ_bld      build options (e.g., -bt=dos)
@@ -278,6 +325,7 @@ targ_bld_d4g386 = -bt=dos
 targ_bld_tnt386 = -bt=nt
 targ_bld_os2386 = -bt=os2
 targ_bld_wnt386 = -bt=nt
+targ_bld_lnx386 = -bt=linux
 !ifdef __NT386__
 targ_bld_wnti86 = -bt=dos
 !else
@@ -304,6 +352,13 @@ wcc_i86 = wcc $(targ_bld_$(targ_env_i86))
 !ifndef wcc_axp
 wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 !endif
+!ifndef wcc_ppc
+wcc_ppc = wccppc $(targ_bld_$(targ_env_ppc))
+!endif
+!ifndef wcc_mps
+wcc_mps = wccmps $(targ_bld_$(targ_env_mps))
+!endif
+
 
 !ifndef wpp_386
 !  ifdef dev
@@ -311,6 +366,8 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 !      define wpp_386 run386 $(plusplus_dir)\dos386\wcpp386d
 !    else ifdef __OS2__
 !      define wpp_386 $(plusplus_dir)\os2386\wcpp386d
+!    else ifdef __LINUX__
+!      define wpp_386 $(plusplus_dir)/linux386/wcpp386d
 !    else ifdef __NT386__
 !      define wpp_386 $(plusplus_dir)\nt386\wcpp386d
 !    else ifdef __NTAXP__
@@ -326,6 +383,8 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 !      define wpp_i86 run386 $(plusplus_dir)\dosi86\wcppi86d
 !    else ifdef __OS2__
 !      define wpp_i86 $(plusplus_dir)\os2i86\wcppi86d
+!    else ifdef __LINUX__
+!      define wpp_i86 $(plusplus_dir)/linuxi86/wcppi86d
 !    else ifdef __NT386__
 !      define wpp_i86 $(plusplus_dir)\nti86\wcppi86d
 !    else ifdef __NTAXP__
@@ -405,6 +464,8 @@ wcc_axp = wccaxp $(targ_bld_$(targ_env_axp))
 wpp_386 += $(targ_bld_$(targ_env_386))
 wpp_i86 += $(targ_bld_$(targ_env_i86))
 wpp_axp += $(targ_bld_$(targ_env_axp))
+wpp_ppc += $(targ_bld_$(targ_env_ppc))
+wpp_mps += $(targ_bld_$(targ_env_mps))
 
 #
 # MAKEINIT vars
@@ -417,6 +478,8 @@ host_CPU = $(arch)
 !  define host_OS os2
 !else ifdef __NT__
 !  define host_OS nt
+!else ifdef __LINUX__
+!  define host_os linux
 !else
 !  error unknown OS
 !endif

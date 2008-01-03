@@ -4,11 +4,11 @@ plustest_name = regress
 test : .symbolic
     $(bld_cl) $(plustest_dir)\c\chktest.c -ox-d1
     chktest $(log_file)
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__)
 
 del_log : .symbolic
-    rm -f $(log_file)
+    @if exist $(log_file) rm -f $(log_file)
 
 global : .symbolic
-    %make common_clean
+    @%make common_clean

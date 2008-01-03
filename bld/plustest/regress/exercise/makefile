@@ -2,11 +2,11 @@ plustest_name = exercise
 !include ../environ.mif
 
 exes = &
-chkcl.$(exe) &
-ctordtor.$(exe) &
-mp.$(exe) &
-ovldall.$(exe) &
-switcher.$(exe) &
+    chkcl.$(exe) &
+    ctordtor.$(exe) &
+    mp.$(exe) &
+    ovldall.$(exe) &
+    switcher.$(exe) &
 
 !ifdef test1
 test_cflags += -d2-xds
@@ -61,20 +61,26 @@ stack_axp=opt stack=16k
     $(wpp_$(arch)) $[@ $(test_cflags)
     
 .obj.$(exe):
-    wlink @test FILE $[@
+    $(linker) @test.lnk name $@ FILE $[@
+    $(run) $@ >>exercise.out
 
-test : .symbolic test.lnk $(exes)
-    %create exercise.out
-    @for %i in ( $(exes) ) do $(run) %i >>exercise.out
+test : .symbolic start_test test.lnk $(exes)
     diff exercise.out exercise.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
+start_test : .symbolic
+    %create exercise.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
 test.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ DEBUG line
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
+
+save : .symbolic
+    @if exist exercise.out cp exercise.out s$(arch)_$(alt_error).sav
 
 global : .SYMBOLIC
     @%make common_clean

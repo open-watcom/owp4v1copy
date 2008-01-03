@@ -1,5 +1,5 @@
 plustest_name = torture
-!include ..\environ.mif
+!include ../environ.mif
 
 objs = &
     assert.obj &
@@ -29,23 +29,30 @@ stack_axp=opt stack=16k
 .cpp.obj:
     $(wpp_$(arch)) $[* $(test_cflags) $(test_cflags_$(arch))
     
-test : .symbolic mdarr.$(exe) diarr.$(exe)
-    $(run) mdarr >exec.out
-    diff output output.chk
-    del output
-    $(run) diarr >>exec.out
+test : .symbolic start_test mdarr.$(exe) diarr.$(exe)
     diff exec.out exec.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     
 diarr.$(exe) : dim2arr.obj tort.lnk tort.lib
     $(linker) @tort NAME $^@ FILE $[@ LIB $]@
+    @%append exec.out --------$^&--------
+    $(run) diarr >>exec.out
     
 mdarr.$(exe) : mdarrtst.obj tort.lnk tort.lib
     $(linker) @tort NAME $^@ FILE $[@ LIB $]@
+    @%append exec.out --------$^&--------
+    $(run) mdarr >>exec.out
+    @%append exec.out --------output--------
+    cat output >>exec.out
+    del output
     
+start_test : .symbolic
+    %create exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
+
 tort.lib : tort.lbc $(objs)
-    $(librarian_$(arch)) /b /q /n @$[@
+    $(librarian_$(arch)) -q-n-b @$[@
     
 tort.lbc : $(__MAKEFILES__)
     %create $^@
@@ -58,5 +65,8 @@ tort.lnk : $(__MAKEFILES__)
     @%append $^@ $(stack_$(arch))
     @%append $^@ $(ldebug_$(arch))
     
+save : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
 global : .symbolic
     @%make common_clean

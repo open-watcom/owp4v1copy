@@ -28,22 +28,27 @@ objs = &
     tbitset.obj &
     bitset.obj
     
-test : .symbolic bitset.$(exe)
-    $(run) bitset >bitset.out
+test : .symbolic start_test bitset.$(exe)
     diff bitset.out bitset.chk
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 bitset.$(exe) : $(objs) bitset.lnk
-    $(linker) @$]@
+    $(linker) @$]@ NAME $@ file {$(objs)}
+    $(run) $@ >>bitset.out
+
+start_test : .symbolic
+    %create bitset.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 bitset.lnk : makefile
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
-    @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
-global : .SYMBOLIC
+save : .symbolic
+    @if exist bitset.out cp bitset.out s$(arch)_$(alt_error).sav
+
+global : .procedure
     @%make common_clean

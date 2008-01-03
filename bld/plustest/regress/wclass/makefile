@@ -65,9 +65,9 @@ wmdichld.obj &
 wmsgdlg.obj &
 wwinmain.obj
 
-test : .symbolic test.exe
+test : .symbolic start_test test.exe
     cp test.exe test.ice
-    %make global
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
     ren test.ice test.exe
 
@@ -81,16 +81,23 @@ test.lnk : makefile $(objs)
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
-    @%append $^@ LIBRARY $(%watcom)\lib286\win\DDEML.LIB
-    @%append $^@ LIBRARY $(%watcom)\lib286\win\COMMDLG.LIB
+    @%append $^@ LIBRARY $(%watcom)/lib286/win/DDEML.LIB
+    @%append $^@ LIBRARY $(%watcom)/lib286/win/COMMDLG.LIB
 
 !else
     
-test : .symbolic
-    %make global
+test : .symbolic start_test
+    @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
 
 !endif
+
+start_test : .symbolic
+    %create exec.out
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     
+save : .symbolic
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+   
 global : .procedure
-    %make common_clean
+    @%make common_clean
