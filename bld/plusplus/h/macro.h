@@ -92,7 +92,7 @@ struct macro_entry {
 #define MACRO_BRINFO_DEFN                       ( MACRO_USER_DEFINED \
                                                 | MACRO_BRINFO_UNDEF )
 
-#pragma pack( push, 1 );
+#pragma pack( push, 1 )
 typedef struct macro_stack MSTACK, *MSTACKPTR;
 struct macro_stack {
     MSTACKPTR   stacked_macro;
@@ -102,6 +102,6 @@ struct macro_stack {
     int         macro_class;            /* T_MACRO or T_MACRO_PARM */
     char        macro_definition[1];    /* copy of current macro definition */
 };
-#pragma pack( pop );
+#pragma pack( pop )
 
 #endif

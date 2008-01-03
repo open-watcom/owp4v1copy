@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definitions for #pragma aux processing.
 *
 ****************************************************************************/
 
@@ -39,13 +38,13 @@
 typedef struct aux_entry AUX_ENTRY;
 typedef struct aux_info AUX_INFO;
 
-#pragma pack( push, 1 );
+#pragma pack( push, 1 )
 struct aux_entry {
     AUX_ENTRY       *next;
     AUX_INFO        *info;
     char            name[1];
 };
-#pragma pack( pop );
+#pragma pack( pop )
 
 typedef char aux_flags;
 #define AUX_FLAG_FAR16  0x01
