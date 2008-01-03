@@ -44,7 +44,7 @@
 #define _BETA_                  _BANEXTRA
 #endif
 
-#define CURR_YEAR       "2007"
+#define CURR_YEAR       "2008"
 
 #define banner1p1(p)  p
 #define banner1p2(v)  "Version " v
