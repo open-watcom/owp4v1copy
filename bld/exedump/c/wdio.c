@@ -31,6 +31,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include <setjmp.h>
 #include <unistd.h>
 #include <string.h>
@@ -156,29 +157,50 @@ void Dump_header( void *data_ptr, char **msg )
 /********************************************/
 {
     unsigned_8  *data = (unsigned_8 *)data_ptr;
+    int         skip;
+    bool        print_h;
 
     for( ; *msg != NULL; ++msg ) {
-        Wdputs( &msg[0][1] );
+        print_h = TRUE;
         switch( msg[0][0] ) {
         case '1':
+            Wdputs( &msg[0][1] );
             Wdputs( "      " );
             Puthex( *(unsigned_8 *)data, 2 );
             data += sizeof( unsigned_8 );
             break;
         case '2':
+            Wdputs( &msg[0][1] );
             Wdputs( "    " );
             Puthex( *(unsigned_16 *)data, 4 );
             data += sizeof( unsigned_16 );
             break;
         case '4':
+            Wdputs( &msg[0][1] );
             Puthex( *(unsigned_32 *)data, 8 );
             data += sizeof( unsigned_32 );
             break;
+        case '0':       // fixed size ASCIIZ string
+            skip = msg[0][1] - '0';
+            if( isdigit( msg[0][2] ) ) {
+                skip = skip * 10 + msg[0][2] - '0';
+                Wdputs( &msg[0][3] );
+            } else {
+                Wdputs( &msg[0][2] );
+            }
+            Wdputs( (char *)data );
+            data += skip;
+            print_h = FALSE;
+            break;
         default:
+            Wdputs( &msg[0][1] );
             Wdputs( "*** invalid size" );
             break;
         }
-        Wdputslc( "H\n" );
+        if( print_h ) {
+            Wdputs( "H" );
+        }
+        Wdputslc( "\n" );
     }
 }
 

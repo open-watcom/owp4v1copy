@@ -29,6 +29,7 @@ objs =                  &
 	qnxexe.obj      &
 	elfexe.obj      &
 	d16mexe.obj     &
+	machoexe.obj    &
 	wdwarf.obj      &
 	wsect.obj       &
 	wline.obj       &

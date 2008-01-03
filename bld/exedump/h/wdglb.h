@@ -42,6 +42,7 @@
 #include "exe16m.h"
 #include "dwarf.h"
 #include "coff.h"
+#include "macho.h"
 #include "ar.h"
 #include "lib.h"
 

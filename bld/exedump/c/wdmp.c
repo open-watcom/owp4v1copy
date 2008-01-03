@@ -89,6 +89,8 @@ static void dmp_exe( void )
                 /* done */
             } else if( Dmp_qnx_head() ) {
                 /* done */
+            } else if( Dmp_macho_head() ) {
+                /* done */
             } else if( Dmp_elf_head() ) {
                 /* done */
                 // elf debug info has already been handled

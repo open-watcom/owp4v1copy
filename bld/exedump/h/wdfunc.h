@@ -66,6 +66,12 @@ extern bool Dmp_elf_header( unsigned long );
 extern bool Dmp_lib_head( void );
 
 /*
+ * machoexe.c
+ */
+extern bool Dmp_macho_header( unsigned long );
+extern bool Dmp_macho_head( void );
+
+/*
  * wdwarf.c
  */
 extern bool Dmp_dwarf( void );

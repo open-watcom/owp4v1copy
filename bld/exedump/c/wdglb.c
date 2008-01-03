@@ -31,8 +31,49 @@
 
 #include <setjmp.h>
 #include <stdio.h>
-
-#undef  extern
-#define extern
-
 #include "wdglb.h"
+
+
+int                     Handle;
+int                     Lhandle;
+unsigned_16             Sizeleft;
+unsigned_16             WSize;
+unsigned_16             Num_buff;
+char                    Read_buff[BSIZE];
+char                    Write_buff[BSIZE];
+char                    *Wbuff;
+char                    *Lang_lst;
+int                     Num_read;
+unsigned_32             Data_count;
+unsigned_32             Curr_sectoff;
+unsigned_32             Coff_off;
+unsigned_32             New_exe_off;
+unsigned_32             Exp_off;
+unsigned_32             Imp_off;
+unsigned_32             Fix_off;
+unsigned_32             Res_off;
+unsigned_32             Data_off;
+struct segment_record   *Int_seg_tab;
+char                    **Int_mod_ref_tab;
+unsigned_16             Segspec;
+unsigned_32             Hexoff;
+Elf32_Ehdr              Elf_head;
+lmf_header              Qnx_head;
+extended_header         Phar_ext_head;
+simple_header           Phar_head;
+extended_nlm_header     Nlm_ext_head;
+nlm_header              Nlm_head;
+pe_header               Pe_head;
+struct os2_flat_header	Os2_386_head;
+struct os2_exe_header   Os2_head;
+struct dos_exe_header   Dos_head;
+unsigned_16             Resrc_shift_cnt;
+unsigned_16             Options_dmp;
+unsigned_8              Debug_options;
+char                    *Name;
+unsigned_32             Load_len;
+unsigned_32             Resrc_end;
+jmp_buf                 Se_env;
+int                     Form;
+bool                    Byte_swap;
+struct                  section_data Sections[DR_DEBUG_NUM_SECTS];
