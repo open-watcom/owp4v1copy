@@ -36,7 +36,6 @@
     #include <malloc.h>
 #else
     #include <stdlib.h>
-    #define __alloca    alloca
 #endif
 
 #endif

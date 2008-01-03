@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Trie implementation for UI lib.
 *
 ****************************************************************************/
 
@@ -231,7 +230,7 @@ EVENT TrieRead( void )
     eNode       *node;
     int         timeout;
 
-    buf = (char *)__alloca( KeyTrieDepth + 1 );
+    buf = alloca( KeyTrieDepth + 1 );
 
     trie = &KeyTrie;
     buf[0] = '\0';
