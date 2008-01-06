@@ -27,9 +27,6 @@
 * Description:  WGML memory management routines
 *               uses project bld\trmem memory tracker code  if TRMEM defined
 *
-*
-*
-*
 ****************************************************************************/
 
 #include "wgml.h"
@@ -125,12 +122,14 @@ void *mem_alloc( size_t size )
 /*  Re-allocate some storage                                               */
 /***************************************************************************/
 
-void *mem_realloc( void *p, size_t size )
+void *mem_realloc( void *oldp, size_t size )
 {
+    void *p;
+
     #ifdef TRMEM
-        p = _trmem_realloc( p, size, _trmem_guess_who(), handle );
+        p = _trmem_realloc( oldp, size, _trmem_guess_who(), handle );
     #else
-        p = realloc( p, size );
+        p = realloc( oldp, size );
     #endif
     if( p == NULL ) {
         out_msg( "ERR_NOMEM_AVAIL" );
