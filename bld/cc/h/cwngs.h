@@ -85,4 +85,4 @@ warn( WARN_NONPROTO_FUNC_CALLED,                3 )
 warn( WARN_NONPROTO_FUNC_CALLED_INDIRECT,       3 )
 warn( WARN_MISSING_QUOTE,                       1 )
 warn( WARN_PLAIN_CHAR_SUBSCRIPT,                4 )
-
+warn( WARN_DIV_BY_ZERO,                         1 )

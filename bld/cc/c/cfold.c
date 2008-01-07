@@ -1138,6 +1138,7 @@ static void CheckOpndValues( TREEPTR tree )
             opnd = tree->right;
             r_type = opnd->expr_type;
             con = ArithmeticType( r_type->decl_type );
+
             // shift arguments undergo integral promotion; 'char c = 1 << 10;'
             // is not undefined, though it will overflow
             max_shift = max( SizeOfArg( tree->left->expr_type ),
@@ -1187,6 +1188,43 @@ static void CheckOpndValues( TREEPTR tree )
                 CWarn1( WARN_SHIFT_AMOUNT_NEGATIVE, ERR_SHIFT_AMOUNT_NEGATIVE );
             } else if( shift_too_big ) {
                 CWarn1( WARN_SHIFT_AMOUNT_TOO_BIG, ERR_SHIFT_AMOUNT_TOO_BIG );
+            }
+        }
+        break;
+    case OPR_DIV:
+    case OPR_MOD:
+        if( ConstantLeaf( tree->right ) ) {
+            bool    zero_divisor = FALSE;
+
+            opnd = tree->right;
+            r_type = opnd->expr_type;
+            con = ArithmeticType( r_type->decl_type );
+
+            switch( con ) {
+            case SIGNED_INT:
+            case UNSIGNED_INT:
+                if( opnd->op.long_value == 0 )
+                    zero_divisor = TRUE;
+                break;
+            case SIGNED_INT64:
+            case UNSIGNED_INT64: {
+                uint64      right;
+
+                right = LongValue64( opnd );
+                if( U64Test( &right ) == 0 )
+                    zero_divisor = TRUE;
+                break;
+                }
+            case FLOATING:
+                // Should we warn here? Floating-point division by zero is
+                // not necessarily undefined...
+                break;
+            default:
+                // Not supposed to happen?
+                break;
+            }
+            if( zero_divisor ) {
+                CWarn1( WARN_DIV_BY_ZERO, ERR_DIV_BY_ZERO );
             }
         }
         break;

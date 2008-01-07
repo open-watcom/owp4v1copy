@@ -2,6 +2,7 @@
  * >>= and <<= operators. Must work with shift amounts which are constant
  * expressions and must work with shift expressions which are themselves
  * constant. Needs to be careful about long long shift amounts.
+ * Also test division by zero warnings (same sort of thing).
  */
 
 int main( void )
@@ -25,5 +26,15 @@ int main( void )
     ll = ll << (sizeof( ll ) * 8ll);    // too big shift
     ll = ll << (sizeof( ll ) * 8 - 1);  // no problem here
 
+    i = i / 1;                          // no problem here
+    i = 1 / 0x800000000ull;             // 64-bit divisor with high bits set (OK)
+    i = i / 0;                          // division by zero
+    i = 7 / (1 - 1);                    // division by zero
+    i = 7 / 0ll;                        // 64-bit division by zero
+    i = i / 0ll;                        // 64-bit division by zero
+    i = 7 % (1 / 2);                    // modulo with zero divisor
+    i = i % 0;                          // modulo with zero divisor
+    i = ll % (2 * 3 - 6);               // 64-bit modulo with zero divisor
+    i = 1 / 0.0;                        // No warnings for floating-point div by zero for now
     return( i );
 }

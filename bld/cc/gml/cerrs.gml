@@ -482,6 +482,20 @@ static int bar( void )
 ISO C requires that a non-empty source file must include a newline character
 at the end of the last line. If no newline was found, it will be automatically
 inserted.
+:MSGSYM. ERR_DIV_BY_ZERO
+:MSGTXT. Divisor for modulo or division operation is zero
+:MSGJTXT. Divisor for modulo or division operation is zero
+:WARNING. 2
+.np
+The right operand of a division or modulo operation is zero. The result
+of this operation is undefined and you should rewrite the offending code
+to avoid divisions by zero.
+:errbad.
+int foo( void )
+{
+    return( 7 / 0 );
+}
+:eerrbad.
 :eMSGGRP. Warn1
 :cmt -------------------------------------------------------------------
 :MSGGRP. Warn2
