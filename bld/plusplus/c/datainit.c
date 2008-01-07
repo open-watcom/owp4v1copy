@@ -348,12 +348,16 @@ static void dataInitLabel( void )
 static void dataInitCheckHugeSegment( target_size_t position )
 /************************************************************/
 {
+    // The following is meaningless when TARGET_UINT_MAX == UINT_MAX
+    // and will cause division by zero
+#if _CPU == 8086
     target_size_t check;
 
     check = position % (TARGET_UINT_MAX+1);
     if( position > 0 && check == 0 ) {
         DgSegmentIncrement();
     }
+#endif
 }
 
 static boolean dataInitCheckHugeAlign( TYPE type )
