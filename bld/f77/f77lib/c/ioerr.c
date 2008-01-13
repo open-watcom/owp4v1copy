@@ -24,21 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  I/O error processing
 *
 ****************************************************************************/
-
-
-//
-// IOERR        : I/O error processing
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
 #include "rundat.h"
 #include "cioconst.h"
-#include "rtflags.h"
 #include "xfflags.h"
 
 #include <stdarg.h>

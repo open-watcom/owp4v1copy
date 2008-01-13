@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time utilities for WRITE
 *
 ****************************************************************************/
-
-
-//
-// WRUTILS      : Run-time utilities for WRITE
-//
 
 #include <string.h>
 #include <stdlib.h>
@@ -40,7 +34,6 @@
 #include "ftnstd.h"
 #include "rundat.h"
 #include "errcod.h"
-#include "rtflags.h"
 #include "csetinfo.h"
 
 extern  void            IOErr(int,...);
