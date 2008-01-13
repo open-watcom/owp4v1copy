@@ -59,6 +59,7 @@ base_headers =       &
         iptypes.h    &
         isguids.h    &
         knownfld.h   &
+        ks.h         &
         largeint.h   &
         lm.h         &
         lmaccess.h   &
