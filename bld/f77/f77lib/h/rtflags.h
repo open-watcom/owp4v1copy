@@ -24,10 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-Time Flags
 *
 ****************************************************************************/
 
-
 // Run-Time Flags
+
+// BartoszP
+// IMHO file could be removed as it defines nothing

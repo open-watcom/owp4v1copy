@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  complex type declarations
 *
 ****************************************************************************/
-
 
 #define complex __complex
 #define cabs __cabs

@@ -24,14 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Constants using for processing default file name -
+*               corresponding to unit number when no file name is specified.
 *
 ****************************************************************************/
-
-
-// Constants using for processing default file name (corresponding to
-// unit number when no file name is specified).
 
 #define     UNIT_OFFSET     3       // offset to unit digit in file name
 #define     DFLT_FNAME_LEN  7       // includes NULLCHAR

@@ -24,11 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Some nameing sugar.
 *
 ****************************************************************************/
 
+// BartoszP
+// IMHO pgm_*  name should be replaced with the orignal names
 
 #include <string.h>
 

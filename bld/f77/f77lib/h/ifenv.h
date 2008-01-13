@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Inform CG which functions modify FPU registers
 *
 ****************************************************************************/
-
 
 // When compiling "/3s" or "/windows", by default, functions modify CPU
 // registers and 80x87 registers. It is not possible to tell the code generator
@@ -82,7 +80,7 @@
   #define AMOD  FMOD
   #define DMOD  DFMOD
   #define QMOD  QFMOD
-  #pragma aux (flt_if_rtn) LOG; // support routine called IF@LOG, not IF@ALOG
+  #pragma aux (flt_if_rtn) LOG;         // support routine called IF@LOG, not IF@ALOG
   #pragma aux (flt_if_rtn) LOG10;       // support routine called IF@LOG, not IF@ALOG
   #pragma aux (flt_if_rtn) FMOD;        // support routine called IF@FMOD, not IF@AMOD
   #pragma aux (flt_if_rtn) DFMOD;       // support routine called IF@DFMOD, not IF@DMOD

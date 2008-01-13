@@ -24,14 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Define traceback information
 *
 ****************************************************************************/
-
-
-// Define traceback information:
-// ==============================
 
 // This is the basic traceback structure that must be common to optimizing
 // and load 'n go compilers. If the line field is TB_LG it indicates that the
