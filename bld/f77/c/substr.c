@@ -24,18 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  substring at compile-time
 *
 ****************************************************************************/
 
-
-//
-// SUBSTR       : substring at compile-time
-//
-
 #include "ftnstd.h"
-
 
 bool    DoSubstring( intstar4 first, intstar4 last, int len ) {
 //=============================================================

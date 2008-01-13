@@ -24,19 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  compare 2 strings
 *
 ****************************************************************************/
 
-
-//
-// LEXCMP    : compare 2 strings
-//
-
 #include "ftnstd.h"
 #include "rtenv.h"
-
 
 static  int     ChkBlanks( char PGM *ptr, uint len ) {
 //====================================================

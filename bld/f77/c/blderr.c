@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Build an error message.
 *
 ****************************************************************************/
-
-
-//
-// BLDERR    :  Build an error message.
-//
 
 #include "ftnstd.h"
 

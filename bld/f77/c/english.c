@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  English character set support
 *
 ****************************************************************************/
-
-
-//
-// ENGLISH      : English character set support
-//
 
 #include "ftnstd.h"
 #include "scan.h"

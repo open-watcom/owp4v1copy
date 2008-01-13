@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Spawn() and Suicide()
 *
 ****************************************************************************/
-
-
-//
-// SPAWN        :  Spawn() and Suicide()
-//
 
 #if defined( __WINDOWS__ ) && !defined( __386__ )
 #include <windows.h>
@@ -66,8 +60,6 @@ static  __jmp_buf       *SpawnStack = { NULL };
 
 
 int     Spawn( void (*fn)( void ) ) {
-//=============================
-
     __jmp_buf   *save_env;
     __jmp_buf   env;
     int         status;
@@ -84,8 +76,6 @@ int     Spawn( void (*fn)( void ) ) {
 
 
 void    Suicide( void ) {
-//=================
-
     if( __SpawnStack == NULL ) exit( -1 );
     __longjmp( *__SpawnStack, 1 );
 }

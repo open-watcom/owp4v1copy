@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  integer and floating point conversion routines
 *
 ****************************************************************************/
-
-
-//
-// FMTCNVT      : integer and floating point conversion routines
-//
 
 #include "ftnstd.h"
 #include "intcnv.h"

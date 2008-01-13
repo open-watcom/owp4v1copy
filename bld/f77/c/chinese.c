@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Chinese character set support
 *
 ****************************************************************************/
-
-
-//
-// CHINESE      : Chinese character set support
-//
 
 #include "ftnstd.h"
 #include "scan.h"

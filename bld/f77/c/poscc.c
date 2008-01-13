@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File I/O EOL output routines
 *
 ****************************************************************************/
-
 
 #include "ftnstd.h"
 #include "fio.h"

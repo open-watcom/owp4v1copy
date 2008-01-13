@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File I/O "move back" routines
 *
 ****************************************************************************/
-
 
 #include "ftnstd.h"
 #include "fio.h"
@@ -40,7 +38,6 @@ extern  uint            SysRead(b_file *,char *,int);
 extern  long int        CurrFileOffset(b_file *);
 
 #define NO_CHAR         0xffff
-
 
 static  uint    GetPrevChar( b_file *io ) {
 //=========================================

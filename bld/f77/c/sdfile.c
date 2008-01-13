@@ -28,12 +28,12 @@
 *
 ****************************************************************************/
 
-
 #include "ftnstd.h"
 
 char    FFCtrlSeq[] = { "1" };
 char    SkipCtrlSeq[] = { "0" };
 char    NormalCtrlSeq[] = { " " };
+
 #if defined( __UNIX__ )
 char    SDTermIn[] = { "/dev/tty" };
 char    SDTermOut[] = { "/dev/tty" };

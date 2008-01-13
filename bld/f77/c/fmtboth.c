@@ -24,20 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  format data emiting routines
 *
 ****************************************************************************/
-
-
-//
-// FMTBOTH      : format data emiting routines
-//
 
 #include "ftnstd.h"
 #include "fmtdef.h"
 #include "fmtdat.h"
-
 
 void    FEmCode( int code ) {
 //===========================

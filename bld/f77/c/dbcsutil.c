@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  double-byte character processing utilities
 *
 ****************************************************************************/
-
-
-//
-// DBCSUTIL     : double-byte character processing utilities
-//
 
 #include "ftnstd.h"
 #include "csetinfo.h"

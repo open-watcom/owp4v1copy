@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Korean character set support
 *
 ****************************************************************************/
-
-
-//
-// KOREAN       : Korean character set support
-//
 
 #include "ftnstd.h"
 #include "scan.h"

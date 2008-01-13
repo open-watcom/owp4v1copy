@@ -24,10 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  i/o read processing
+* Description:  File I/O read processing
 *
 ****************************************************************************/
-
 
 #include "ftnstd.h"
 #include "fio.h"

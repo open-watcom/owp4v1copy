@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  common exception handling
 *
 ****************************************************************************/
-
-
-//
-// BTRAPS       : common exception handling
-//
 
 #include "ftnstd.h"
 

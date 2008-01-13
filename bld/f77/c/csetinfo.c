@@ -24,15 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  character set information structure
 *
 ****************************************************************************/
-
-
-//
-// CSETINFO     : character set information structure
-//
 
 #include "ftnstd.h"
 #include "csetinfo.h"
