@@ -204,6 +204,7 @@ base_headers =       &
         usp10.h      &
         uxtheme.h    &
         vfw.h        &
+        vidcap.h     &
         vsstyle.h    &
         vssym32.h    &
         wbemcli.h    &
