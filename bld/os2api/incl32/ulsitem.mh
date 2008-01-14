@@ -123,7 +123,7 @@
 #define LOCI_iCodepage          111
 #define LOCI_iAltCodepage       112
 #define LOCI_iMacCodepage       113
-#define LOCI_iEbcdicCodepage    114                           */
+#define LOCI_iEbcdicCodepage    114
 #define LOCI_sOtherCodepages    115
 #define LOCI_sSetCodepage       116
 #define LOCI_sKeyboard          117
