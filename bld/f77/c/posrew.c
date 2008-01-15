@@ -29,16 +29,10 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
-#include "fio.h"
+#include "ftextfun.h"
 #include "posio.h"
 
-extern  void            IOOk(b_file *);
-extern  int             SysSeek(b_file *,long int,int);
-
-
 void    FRewind( b_file *io ) {
-//=============================
-
 // Rewind a file.
 
     IOOk( io );

@@ -24,13 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Character set information structure definition
 *
 ****************************************************************************/
 
-
-// Character set information structure:
+#ifndef _F77_CSETINFO_H
+#define _F77_CSETINFO_H 1
 
 typedef struct character_set {
     int         (* extract_text)(char *,int);
@@ -43,3 +42,5 @@ typedef struct character_set {
     char        *initializer;
 #endif
 } character_set;
+
+#endif

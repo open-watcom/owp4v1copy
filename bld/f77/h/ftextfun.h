@@ -24,26 +24,32 @@
 *
 *  ========================================================================
 *
-* Description:  double-byte character processing utilities
+* Description:  Declaration of external functions for f77 compiler & lib
 *
 ****************************************************************************/
 
-#include "ftnstd.h"
-#include "ftextfun.h"
-#include "ftextvar.h"
+#ifndef _F77_EXTERNAL_FUNCS_H
+#define _F77_EXTERNAL_FUNCS_H 1
 
-int     ExtractText( char *string, int len ) {
-// Given a string of text, extract as much text as possible up to a maximum
-// of "len" bytes so that we don't split double-byte characters.
+#include "fio.h"
 
-    int         str_len;
-    int         chr_len;
+extern  int             ExtractText( char *, int );
 
-    str_len = 0;
-    for(;;) {
-        chr_len = CharSetInfo.character_width( string + str_len );
-        if( str_len + chr_len > len ) break;
-        str_len += chr_len;
-    }
-    return( str_len );
-}
+extern  void            IOOk( b_file * );
+extern  int             SysSeek( b_file *, long int, int );
+extern  uint            SysRead( b_file *, char *, uint );
+extern  long int        CurrFileOffset( b_file * );
+extern  void            FSetErr( int, b_file * );
+extern  void            FSetSysErr( b_file * );
+extern  void            FSetEof( b_file * );
+extern  void            FSetTrunc( b_file * );
+extern  long int        FGetFilePos( b_file * );
+extern  int             FlushBuffer( b_file * );
+extern  int             FSetCC( b_file *, char, char ** );
+extern  int             SysWrite( b_file *, char *, uint );
+extern  int             FlushBuffer( b_file * );
+extern  bool            __DevicesCC( void );
+extern  uint            readbytes( b_file *, char *, uint );
+extern  void            ChopFile( b_file * );
+
+#endif

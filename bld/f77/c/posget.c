@@ -29,7 +29,8 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
-#include "fio.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "posio.h"
 #include "sysbuff.h"
 
@@ -38,18 +39,6 @@
 #if defined( __WINDOWS__ )
 #include <conio.h>
 #endif
-
-extern  void            FSetErr(int,b_file *);
-extern  void            FSetSysErr(b_file *);
-extern  void            FSetEof(b_file *);
-extern  void            FSetTrunc(b_file *);
-extern  long int        FGetFilePos(b_file *);
-extern  void            IOOk(b_file *);
-extern  int             FlushBuffer(b_file *);
-extern  int             SysSeek(b_file *,long int,int);
-
-extern  b_file          *FStdIn;
-
 
 uint    readbytes( b_file *io, char *buff, uint len ) {
 //=====================================================

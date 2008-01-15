@@ -29,7 +29,8 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
-#include "fio.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "posio.h"
 
 #if defined( __RT__ )
@@ -45,18 +46,6 @@
 #define MEM_FREE        FMemFree
 
 #endif
-
-extern  void            FSetErr(int,b_file *);
-extern  void            FSetSysErr(b_file *);
-extern  void            IOOk(b_file *);
-extern  int             FSetCC(b_file *,char,char **);
-extern  int             SysWrite(b_file *,char *,uint);
-extern  int             FlushBuffer(b_file *);
-extern  bool            __DevicesCC(void);
-
-extern  b_file          *FStdIn;
-extern  b_file          *FStdOut;
-extern  b_file          *FStdErr;
 
 /* Forward declarations */
 static  void    ChkRedirection( b_file *fp );

@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
-#include "fio.h"
+#include "ftextfun.h"
 #include "posio.h"
 
 #include <string.h>
@@ -49,9 +49,7 @@ static  char    * const __FAR ErrMsgs[] = {
 };
 
 
-int     Errorf( a_file *io ) {
-//============================
-
+int     Errorf( b_file *io ) {
 // Check for i/o error condition.
 
     int         err;
@@ -68,9 +66,7 @@ int     Errorf( a_file *io ) {
 }
 
 
-bool    EOFile( a_file *io ) {
-//============================
-
+bool    EOFile( b_file *io ) {
 // Check if end-of-file.
 
     if( io == NULL ) {
@@ -81,9 +77,7 @@ bool    EOFile( a_file *io ) {
 }
 
 
-char    *ErrorMsg( a_file *io ) {
-//===============================
-
+char    *ErrorMsg( b_file *io ) {
 // Get i/o error message.
 
     int         err;
@@ -101,9 +95,7 @@ char    *ErrorMsg( a_file *io ) {
 }
 
 
-void    FSetTrunc( a_file *io ) {
-//===============================
-
+void    FSetTrunc( b_file *io ) {
 // Set "truncated" condition.
 
     Stat = IO_EOR;
@@ -111,9 +103,7 @@ void    FSetTrunc( a_file *io ) {
 }
 
 
-void    FSetSysErr( a_file *io ) {
-//================================
-
+void    FSetSysErr( b_file *io ) {
 // Set system i/o error condition.
 
     if( io != NULL ) {
@@ -123,9 +113,7 @@ void    FSetSysErr( a_file *io ) {
 }
 
 
-void    FSetErr( int error, a_file *io ) {
-//========================================
-
+void    FSetErr( int error, b_file *io ) {
 // Set i/o error condition.
 
     if( io != NULL ) {
@@ -134,10 +122,7 @@ void    FSetErr( int error, a_file *io ) {
     Stat = error;
 }
 
-
-void    FSetEof( a_file *io ) {
-//=============================
-
+void    FSetEof( b_file *io ) {
 // Set end-of-file condition.
 
     if( io != NULL ) {
@@ -147,9 +132,7 @@ void    FSetEof( a_file *io ) {
 }
 
 
-void    IOOk( a_file *io ) {
-//==========================
-
+void    IOOk( b_file *io ) {
 // Clear i/o error conditions.
 
     if( io != NULL ) {

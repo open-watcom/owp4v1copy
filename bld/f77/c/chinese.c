@@ -29,8 +29,9 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "scan.h"
-#include "csetinfo.h"
 
 // Double-byte characters are represented as follows:
 //
@@ -143,14 +144,7 @@ static const byte __FAR CharSet[] = {
 
 #endif
 
-extern  int                     ExtractText(char *,int);
-
-extern  character_set           CharSetInfo;
-
-
 static  bool    IsDoubleByteBlank( char *ptr ) {
-//==============================================
-
 // Determine if character is a double-byte blank character.
 
     if( ( *ptr == 0x81 ) && ( *(ptr + 1) == 0x40 ) ) return( TRUE );
@@ -159,8 +153,6 @@ static  bool    IsDoubleByteBlank( char *ptr ) {
 
 
 static  bool    IsDoubleByteChar( char ch ) {
-//===========================================
-
 // Determine if character is a double-byte character.
 
     if( ( 0x81 <= ch ) && ( ch <= 0xfc ) ) return( TRUE );
@@ -169,8 +161,6 @@ static  bool    IsDoubleByteChar( char ch ) {
 
 
 static  int     CharacterWidth( char PGM *ptr ) {
-//===============================================
-
 // Determine character width.
 
     char        ch;
@@ -187,8 +177,6 @@ static  int     CharacterWidth( char PGM *ptr ) {
 
 
 static  bool    IsForeign( char ch ) {
-//====================================
-
 // Determine if character is a foreign character (i.e. non-ASCII).
 
     return( IsDoubleByteChar( ch ) );
@@ -196,8 +184,6 @@ static  bool    IsForeign( char ch ) {
 
 
 void    __UseChineseCharSet( void ) {
-//=============================
-
     CharSetInfo.extract_text = &ExtractText;
     CharSetInfo.is_double_byte_blank = &IsDoubleByteBlank;
     CharSetInfo.is_double_byte_char = &IsDoubleByteChar;

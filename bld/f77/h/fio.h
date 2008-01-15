@@ -24,11 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File I/O types & modes definitions
 *
 ****************************************************************************/
 
+#ifndef _F77_FIO_H
+#define _F77_FIO_H 1
 
 typedef unsigned_16     f_attrs;        // file attributes
 
@@ -97,3 +98,5 @@ typedef struct b_file {                 // file with buffered i/o
 #define CTRL_Z  0x1a                    // Ctrl/Z character (EOF marker)
 
 #define READ_ERROR      ((uint)-1)      // read error indicator
+
+#endif

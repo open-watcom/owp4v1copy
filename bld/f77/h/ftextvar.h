@@ -24,26 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  double-byte character processing utilities
+* Description:  Declaration of external vars for f77 compiler & lib
 *
 ****************************************************************************/
 
-#include "ftnstd.h"
-#include "ftextfun.h"
-#include "ftextvar.h"
+#ifndef _F77_EXTERNAL_VARS_H
+#define _F77_EXTERNAL_VARS_H 1
 
-int     ExtractText( char *string, int len ) {
-// Given a string of text, extract as much text as possible up to a maximum
-// of "len" bytes so that we don't split double-byte characters.
+#include "csetinfo.h"
+#include "fio.h"
 
-    int         str_len;
-    int         chr_len;
+extern  character_set           CharSetInfo;
+extern  b_file                  *FStdIn;
+extern  b_file                  *FStdOut;
+extern  b_file                  *FStdErr;
 
-    str_len = 0;
-    for(;;) {
-        chr_len = CharSetInfo.character_width( string + str_len );
-        if( str_len + chr_len > len ) break;
-        str_len += chr_len;
-    }
-    return( str_len );
-}
+#endif

@@ -29,7 +29,8 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
-#include "fio.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "posio.h"
 #include "sysbuff.h"
 
@@ -37,26 +38,14 @@
 #include <string.h>
 #include <limits.h>
 
-extern  void            FSetErr(int,b_file *);
-extern  void            FSetSysErr(b_file *);
-extern  void            IOOk(b_file *);
-extern  int             FSetCC(b_file *,char,char **);
-extern  int             FlushBuffer(b_file *);
-extern  int             SysSeek(b_file *,long int,int);
-extern  long int        CurrFileOffset(b_file *);
-
-extern  b_file          *FStdOut;
-
 /* forward declarations */
 static  void    PutTextRec( b_file *io, char *b, int len );
 static  void    PutVariableRec( b_file *io, char *b, uint len );
 static  void    PutFixedRec( b_file *io, char *b, uint len );
-int     SysWrite( b_file *io, char *b, uint len );
-void    ChopFile( b_file *io );
+int             SysWrite( b_file *io, char *b, uint len );
+void            ChopFile( b_file *io );
 
 void    FPutRec( b_file *io, char *b, int len ) {
-//===============================================
-
 // Put a record to a file.
 
     IOOk( io );
@@ -78,8 +67,6 @@ void    FPutRec( b_file *io, char *b, int len ) {
 #if defined( __RT__ )
 
 void    ChopFile( b_file *io ) {
-//==============================
-
     long int    offset;
 
     offset = CurrFileOffset( io );
@@ -99,8 +86,6 @@ void    ChopFile( b_file *io ) {
 
 
 void    PutRec( char *b, int len ) {
-//==================================
-
 // Put a record to standard output device.
 
     FPutRec( FStdOut, b, len );
@@ -108,8 +93,6 @@ void    PutRec( char *b, int len ) {
 
 
 static  void    PutTextRec( b_file *io, char *b, int len ) {
-//==========================================================
-
 // Put a record to a file with "text" records.
 
     int         cc_len;
@@ -145,8 +128,6 @@ static  void    PutTextRec( b_file *io, char *b, int len ) {
 
 
 static  void    PutVariableRec( b_file *io, char *b, uint len ) {
-//===============================================================
-
 // Put a record to a file with "variable" records.
 
     unsigned_32 tag;
@@ -162,8 +143,6 @@ static  void    PutVariableRec( b_file *io, char *b, uint len ) {
 
 
 static  void    PutFixedRec( b_file *io, char *b, uint len ) {
-//============================================================
-
 // Put a record to a file with "fixed" records.
 
     if( SysWrite( io, b, len ) == -1 ) return;
@@ -171,8 +150,6 @@ static  void    PutFixedRec( b_file *io, char *b, uint len ) {
 
 
 uint    writebytes( b_file *io, char *buff, uint len ) {
-//======================================================
-
     int         written;
     uint        total;
     uint        amt;
@@ -200,8 +177,6 @@ uint    writebytes( b_file *io, char *buff, uint len ) {
 
 
 int SysWrite( b_file *io, char *b, uint len ) {
-//=================================================
-
     uint        amt;
 
     if( len == 0 ) return( 0 );
