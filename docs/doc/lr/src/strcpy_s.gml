@@ -40,7 +40,8 @@ is not a null pointer and
 is greater than zero and not greater than
 .kw RSIZE_MAX,
 then
-.kw strcpy_s sets
+.kw strcpy_s
+sets
 .arg s1[0]
 to the null character.
 .rtconst end
