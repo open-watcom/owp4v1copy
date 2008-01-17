@@ -4,9 +4,9 @@
 !include deftarg.mif
 !include defrule.mif
 
-splice = wsplice -i$(hdr_dir) -i$(include_dir) $[@ $^@
-rsplice = wsplice -i$(hdr_dir) -i$(include_dir) -kRESOURCE $[@ $^@
-ws2splice = wsplice -i$(hdr_dir) -i$(include_dir) -kWINSOCK2 $[@ $^@
+splice = wsplice -i$(hdr_dir) -i$(root_include_dir) $[@ $^@
+rsplice = wsplice -i$(hdr_dir) -i$(root_include_dir) -kRESOURCE $[@ $^@
+ws2splice = wsplice -i$(hdr_dir) -i$(root_include_dir) -kWINSOCK2 $[@ $^@
 
 base_headers =       &
         _w32ials.h   &
@@ -239,6 +239,7 @@ base_headers =       &
 
 directx_headers =    &
         d3d.h        &
+        d3d9type.h   &
         d3dcaps.h    &
         d3drm.h      &
         d3drmdef.h   &

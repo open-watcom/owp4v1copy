@@ -783,10 +783,7 @@ typedef HWAVEOUT    *LPHWAVEOUT;
 #endif
 #define MMIOM_USER          0x8000
 
-/* Macro to make a FOURCC value */
-#define MAKEFOURCC( p1, p2, p3, p4 ) \
-    ((DWORD)(BYTE)(p1) | ((DWORD)(BYTE)(p2) << 8) | ((DWORD)(BYTE)(p3) << 16) | \
-    ((DWORD)(BYTE)(p4) << 24))
+:include fourcc.sp
 #define mmioFOURCC( p1, p2, p3, p4 )    MAKEFOURCC( p1, p2, p3, p4 )
 
 /* FOURCC values */
