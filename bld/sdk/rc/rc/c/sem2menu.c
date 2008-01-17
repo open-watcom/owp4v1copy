@@ -192,7 +192,7 @@ static int SemOS2CalcSubMenuSize( FullMenuOS2 *submenu, int *count )
         if( !(curritem->item.ItemStyle & OS2_MIS_SEPARATOR) &&
             curritem->item.ItemText != NULL )
             size += strlen( curritem->item.ItemText ) + 1;
-        if( curritem->submenu != NULL ) {
+        if( curritem->item.ItemStyle & OS2_MIS_SUBMENU ) {
             size += SemOS2CalcSubMenuSize( curritem->submenu, &dummycount );
         }
     }
@@ -231,7 +231,7 @@ static int SemOS2WriteSubMenu( FullMenuOS2 *submenu, int *err_code,
                 curritem = curritem->next ) {
         if( !ErrorHasOccured ) {
             error = SemOS2WriteMenuItem( curritem, err_code );
-            if( !error && (curritem->submenu != NULL) ) {
+            if( !error && (curritem->item.ItemStyle & OS2_MIS_SUBMENU) ) {
                 error = SemOS2WriteSubMenu( curritem->submenu, err_code, codepage );
             }
         }
