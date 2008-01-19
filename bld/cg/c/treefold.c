@@ -1308,6 +1308,21 @@ static  void    BurnToBase( tn root, tn base )
     }
 }
 
+static bool IsObjectAddr( tn tree )
+/*********************************/
+{
+    if( tree->class == TN_LEAF && tree->u.addr->format == NF_ADDR ) {
+        switch( tree->u.addr->class ) {
+        case CL_ADDR_GLOBAL:
+        case CL_ADDR_TEMP:
+            return( TRUE );
+        default:
+            break;
+        }
+    }
+    return( FALSE );
+}
+
 extern  tn      FoldCompare( opcode_defs op, tn left,
                              tn rite, type_def *tipe )
 /****************************************************/
@@ -1396,6 +1411,14 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
                     BurnTree( rite );
                     left = TGTrash( left );
                     return( TGBinary( O_COMMA, left, IntToType( result, TypeInteger ), TypeInteger ) );
+                }
+                if( _IsntModel( NULL_DEREF_OK ) && IsObjectAddr( left ) && ( CFTest( rite->u.name->c.value ) == 0 ) ) {
+                    /* Addresses of globals or local variables are guaranteed not to be null
+                     * unless NULL_DEREF_OK is in effect
+                     */
+                    BurnTree( left );
+                    BurnTree( rite );
+                    return( FoldCompare( op, IntToType( 1, TypeInteger ), IntToType( 0, TypeInteger ), TypeInteger ) );
                 }
             }
             if( base_l != left ) {
