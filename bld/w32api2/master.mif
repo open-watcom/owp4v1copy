@@ -205,6 +205,7 @@ base_headers =       &
         uxtheme.h    &
         vfw.h        &
         vidcap.h     &
+        vmr9.h       &
         vsstyle.h    &
         vssym32.h    &
         wbemcli.h    &
