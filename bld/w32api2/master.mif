@@ -206,6 +206,7 @@ base_headers =       &
         vfw.h        &
         vidcap.h     &
         vmr9.h       &
+        vptype.h     &
         vsstyle.h    &
         vssym32.h    &
         wbemcli.h    &
