@@ -29,12 +29,8 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
-#include "errrtns.h"
-
-extern  void            Substitute(char *,char *,va_list args);
-
-extern  char            __FAR * __FAR GroupTable[];
-extern  char            __FAR ErrWord[];
+#include "ftextfun.h"
+#include "ftextvar.h"
 
 char __FAR *            __FAR *PGroupTable = GroupTable;
 char                    __FAR *PErrWord = ErrWord;
@@ -44,10 +40,7 @@ char                    __FAR *PErrWord = ErrWord;
 
 
 static  char    __FAR *GetMsg( unsigned int err ) {
-//==================================================
-
 // Get pointer to message.
-
     unsigned int    num;
     char            __FAR *msg;
 
@@ -62,10 +55,7 @@ static  char    __FAR *GetMsg( unsigned int err ) {
 
 
 static  char    __FAR *GetWord( unsigned int index ) {
-//====================================================
-
 // Get pointer to word.
-
     char        __FAR *word;
 
     word = PErrWord;
@@ -78,10 +68,7 @@ static  char    __FAR *GetWord( unsigned int index ) {
 
 
 static  void    BldErrMsg( unsigned int err, char *buffer, va_list args ) {
-//=========================================================================
-
 // Build error message.
-
     char                __FAR *char_ptr;
     char                __FAR  *phrase_ptr;
     char                *buff_start;
@@ -126,21 +113,15 @@ static  void    BldErrMsg( unsigned int err, char *buffer, va_list args ) {
 
 
 static  void    ErrorInit( char *unused ) {
-//=========================================
-
     unused = unused;
 }
 
 
 static  void    ErrorFini( void ) {
-//===========================
-
 }
 
 
 void    __InitError( void ) {
-//=====================
-
     __ErrorInit = &ErrorInit;
     __ErrorFini = &ErrorFini;
     __BldErrMsg = &BldErrMsg;

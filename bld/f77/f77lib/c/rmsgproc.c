@@ -24,17 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  run-time message processing
 *
 ****************************************************************************/
 
-
-//
-// RMSGPROC   : run-time message processing
-//
-
 #include "ftnstd.h"
+#include "errrtns.h"
 #include "cioconst.h"
 
 #include <stdarg.h>
@@ -45,12 +40,7 @@ extern  void            useLGTables(void);
 extern  void            useDfltTables(void);
 #endif
 
-extern  void            (* __BldErrMsg)(uint,char *,va_list);
-
-
 void    MsgLine( uint msg, ... ) {
-//================================
-
 // Display message.
 
     char        buff[LIST_BUFF_SIZE+1];

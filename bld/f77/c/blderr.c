@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
+#include "ftextfun.h"
 
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>

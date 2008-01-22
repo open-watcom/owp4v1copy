@@ -29,22 +29,13 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 
-#include <stdarg.h>
-
-extern  void            Substitute(char *,char *,va_list args);
-
-extern  void            (* __BldErrMsg)(unsigned int,char *,va_list);
-
-extern  char            __FAR GrpCodes[];
 char                    __FAR *PGrpCodes = GrpCodes;
 
-
 void    BldErrCode( unsigned int error_num, char *buffer ) {
-//==========================================================
-
 // Build error code.
-
     char            __FAR *group;
     unsigned int    num;
 
@@ -65,12 +56,8 @@ void    BldErrCode( unsigned int error_num, char *buffer ) {
 extern  char            __FAR CaretTable[];
 char                    __FAR *PCaretTable = CaretTable;
 
-
 uint    CarrotType( uint error_num ) {
-//====================================
-
 // Return the type of caret.
-
     char        __FAR *group;
     char        __FAR *grp;
     uint        idx;
@@ -87,12 +74,8 @@ uint    CarrotType( uint error_num ) {
 
 #endif
 
-
 void    MsgFormat( char *msg, char *buff, ... ) {
-//===============================================
-
 // Format a message.
-
     va_list     args;
 
     va_start( args, buff );
@@ -100,12 +83,8 @@ void    MsgFormat( char *msg, char *buff, ... ) {
     va_end( args );
 }
 
-
 void    MsgBuffer( uint msg, char *buff, ...  ) {
-//===============================================
-
 // Format message to buffer.
-
     va_list     args;
 
     va_start( args, buff );

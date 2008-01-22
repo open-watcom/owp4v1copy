@@ -29,17 +29,11 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
-#include "fio.h"
+#include "ftextfun.h"
 #include "posio.h"
 
-extern  void            FSetSysErr(a_file *);
-
-
 void    Scratchf( char *fn ) {
-//============================
-
 // Erase a file.
-
     if( unlink( fn ) != 0 ) {
         FSetSysErr( NULL );
     }

@@ -24,17 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  handle ALL errors, warnings, and extensions
 *
 ****************************************************************************/
 
-
-//
-// ERROR     : handle ALL errors, warnings, and extensions
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "errcod.h"
 #include "cpopt.h"
 #include "progsw.h"
@@ -48,42 +43,19 @@
 #include <stdarg.h>
 #include <string.h>
 
-extern  bool            RecEOS(void);
-extern  void            BldErrCode(unsigned int,char *);
-extern  int             CarrotType(unsigned int);
-extern  void            MsgPrintErr(uint,...);
-extern  void            MsgJustErr(uint,...);
-extern  void            MsgFormat(char *,char *,...);
-extern  char            *STGetName(sym_id,char *);
-
-extern  void            (* __BldErrMsg)(unsigned int,char *,va_list);
-
-
-
 
 static  void    ExtIssued( void ) {
-//=========================
-
 // An extension message has just been issued.
-
     NumExtens++;
 }
 
-
 static  void    WrnIssued( void ) {
-//=========================
-
 // A warning message has just been issued.
-
     NumWarns++;
 }
 
-
 static  void    ErrIssued( void ) {
-//=========================
-
 // An error message has just been issued.
-
     if( ( ProgSw & PS_SYMTAB_PROCESS ) == 0 ) {
         CpError = TRUE;
         AError = TRUE;
@@ -92,12 +64,8 @@ static  void    ErrIssued( void ) {
     ProgSw |= PS_ERROR;
 }
 
-
 static  void    ErrHandler( char *err_type, int error, va_list args ) {
-//=====================================================================
-
 // Handle errors ANY time
-
     int         column;
     int         contline;
     byte        caret;
@@ -194,12 +162,8 @@ static  void    ErrHandler( char *err_type, int error, va_list args ) {
     SetLst( save_list );
 }
 
-
 void    Error( int code, ... ) {
-//==============================
-
 // Error message handler
-
     va_list     args;
 
     va_start( args, code );
@@ -208,12 +172,8 @@ void    Error( int code, ... ) {
     ErrIssued();
 }
 
-
 void    Warning( int code, ... ) {
-//================================
-
 // Warning message handler
-
     va_list     args;
 
     if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
@@ -225,12 +185,8 @@ void    Warning( int code, ... ) {
     WrnIssued();
 }
 
-
 void    Extension( int code, ... ) {
-//==================================
-
 // Extension Message Handler
-
     va_list     args;
 
     if( ( ProgSw & PS_DONT_GENERATE ) == 0 ) return;
@@ -242,12 +198,8 @@ void    Extension( int code, ... ) {
     ExtIssued();
 }
 
-
 void    InfoError( int code, ... ) {
-//==================================
-
 // Informational error - should not affect compilation.
-
     va_list     args;
 
     NumErrors++;

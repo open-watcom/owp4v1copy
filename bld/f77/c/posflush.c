@@ -29,16 +29,11 @@
 ****************************************************************************/
 
 #include "ftnstd.h"
-#include "fio.h"
+#include "ftextfun.h"
 #include "posio.h"
 
-extern  uint            writebytes(b_file *,char *,uint);
-
 int     FlushBuffer( b_file *io ) {
-//=================================
-
 // Flush i/o buffer.
-
     uint        amt;
     int         bytes_written;
     int         rc;

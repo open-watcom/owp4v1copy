@@ -31,11 +31,8 @@
 #include "ftnstd.h"
 
 bool    DoSubstring( intstar4 first, intstar4 last, int len ) {
-//=============================================================
-
 // Do substring operation for EQUIVALENCE or DATA statement and
 // NAMELIST-directed i/o at run-time.
-
     if( first <= 0 ) return( FALSE );
     if( last > len ) return( FALSE );
     if( first > last ) return( FALSE );

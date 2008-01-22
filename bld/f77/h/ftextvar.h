@@ -34,9 +34,13 @@
 #include "csetinfo.h"
 #include "fio.h"
 
-extern  character_set           CharSetInfo;
-extern  b_file                  *FStdIn;
-extern  b_file                  *FStdOut;
-extern  b_file                  *FStdErr;
+extern  character_set    CharSetInfo;
+extern  long            FileShift;
+extern  b_file           *FStdIn;
+extern  b_file           *FStdOut;
+extern  b_file           *FStdErr;
+extern  char            __FAR ErrWord[];
+extern  char            __FAR * __FAR GroupTable[];
+extern  char            __FAR GrpCodes[];
 
 #endif
