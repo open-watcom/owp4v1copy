@@ -210,6 +210,7 @@ base_headers =       &
         vsstyle.h    &
         vssym32.h    &
         wbemcli.h    &
+        winable.h    &
         winbase.h    &
         wincon.h     &
         wincrypt.h   &
