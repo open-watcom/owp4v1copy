@@ -212,6 +212,7 @@ base_headers =       &
         wbemcli.h    &
         winable.h    &
         winbase.h    &
+        winber.h     &
         wincon.h     &
         wincrypt.h   &
         windef.h     &
