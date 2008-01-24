@@ -636,10 +636,9 @@ cop_driver * parse_driver( FILE * in_file )
 
         for( i = 0; i < out_driver->fontswitch.count; i++ ) {
 
-            /* The "type" is a null-terminated character string */
+            /* The "type" is a null-terminated character string. */
             
-            length = strlen(current);
-            length++;
+            length = strlen( current );
             
             if( length == 0 ) {
                 printf_s( ":FONTSWITCH block %i has no 'type'\n", i );
@@ -650,6 +649,7 @@ cop_driver * parse_driver( FILE * in_file )
                 return( out_driver );
             }
 
+            length++;
             if( out_driver->allocated_size < (out_driver->next_offset + length) ) {
                 out_driver = resize_cop_driver( out_driver, out_driver->next_offset + length );
                 if( out_driver == NULL ) {
@@ -667,13 +667,9 @@ cop_driver * parse_driver( FILE * in_file )
             fontswitch_block_ptr[i].type = (char *) out_driver->next_offset;
             out_driver->next_offset += length;
 
-            /* Skip the next 20 or 21 bytes */
+            /* Skip the flags */
 
-            if( length == 78 ) {
-                current += 20;
-            } else {
-                current += 21;
-            }
+            current += 21;
 
             /* Get the number of CodeBlocks; only 1 or 2 is valid */
 
@@ -1913,7 +1909,7 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
     *current = (*p_buffer_set)->buffer;
 
-    /* Skip the first 21 bytes */
+    /* Skip the flags */
 
     *current += 21;
 

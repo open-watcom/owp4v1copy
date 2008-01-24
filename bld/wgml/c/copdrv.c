@@ -433,7 +433,7 @@ static cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, \
 
     *current = (*p_buffer_set)->buffer;
 
-    /* Skip the first 21 bytes. */
+    /* Skip the flags. */
 
     *current += 21;
 
@@ -1664,7 +1664,7 @@ cop_driver * parse_driver( FILE * in_file )
 
             /* The "type" is a null-terminated character string. */
             
-            length = strlen(current);
+            length = strlen( current );
             if( length > 0 ) {
                 length++;
                 if( out_driver->allocated_size < (out_driver->next_offset + \
@@ -1688,13 +1688,9 @@ cop_driver * parse_driver( FILE * in_file )
                 fontswitch_block_ptr[i].type = NULL;
             }                
 
-            /* Skip the next 20 or 21 bytes. */
+            /* Skip the flags. */
 
-            if( length == 78 ) {
-                current += 20;
-            } else {
-                current += 21;
-            }
+            current += 21;
 
             /* Get the number of CodeBlocks; only 1 or 2 is valid. */
 
