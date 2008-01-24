@@ -216,6 +216,7 @@ base_headers =       &
         wincon.h     &
         wincrypt.h   &
         windef.h     &
+        windns.h     &
         windows.h    &
         winefs.h     &
         winerror.h   &
