@@ -51,7 +51,7 @@
     #define NUM_PARA            2047
     #define SIZE_PARA           16
 #endif
-#define INTERRUPT_TIME          2       // seconds
+#define INTERRUPT_TIME          1       // seconds
 #define TICK_COUNT              (INTERRUPT_TIME * 18)
 #ifdef __SW_BW
     #include <wdefwin.h>
@@ -217,6 +217,10 @@ void TestFileOperations( void )
         _dos_close( fh[0] );
     }
     NowTest( "_dos_setfileattr()" ) ;
+    if( _dos_getfileattr( "not_exst.fil", &attribute ) == 0 ) {
+        printf( "_dos_getfileattr() failed.\n" );
+        PROG_ABORT( __LINE__ );
+    }
     if( _dos_getfileattr( "tmpfile", &attribute ) != 0 ) {
         printf( "_dos_getfileattr() failed.\n" );
         PROG_ABORT( __LINE__ );
@@ -462,7 +466,7 @@ void TestInterruptOperations( void )
     NowTest( "_dos_getvect(), _dos_setvect(), and _chain_intr()" );
     if( verbose ) {
         printf( "Looping until the interrupt occurs in " );
-        printf( "%d seconds.\n", INTERRUPT_TIME );
+        printf( "%d second(s).\n", INTERRUPT_TIME );
     }
     fflush( stdout );
     prev_int_1c = _dos_getvect( 0x1c );

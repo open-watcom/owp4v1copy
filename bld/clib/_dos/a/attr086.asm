@@ -64,15 +64,17 @@ ifdef __WATCOM_LFN__
         jc      nonlfn          ; on error use non-lfn
         cmp     AX,7100h        ; test if function was supported
         jnz     getsuccess      ; AX won't equal 7100h if function succeeded
+                                ; if jump is taken, we'll test carry again but
+                                ; we *must* always restore DS in large data models!
 nonlfn:
 endif
         mov     AX,4300h        ; otherwise use the regular function
         int     21h             ; ...
-        jc      finishget       ; skip storing attributes if error
 getsuccess:
 if _MODEL and (_BIG_DATA or _HUGE_DATA)
         pop     DS              ; get segment part of attr
 endif
+        jc      finishget       ; skip storing attributes if error
         mov     [BX],CX         ; - store file attributes
 finishget:
         call    __doserror_     ; set return code
