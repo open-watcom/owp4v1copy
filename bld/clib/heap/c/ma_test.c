@@ -63,7 +63,7 @@
 #define FREED_AFTER     1
 #define INTERNAL_ERR    255
 
-#if !defined(__386__) && !defined(__AXP__) // Only appropriate to 16-bit versions
+#if defined( _M_I86 )   // Only appropriate to 16-bit versions
     #define     HUGE_NUM_EL     16384 // Must be a power of 2
 #endif
 
@@ -82,23 +82,7 @@
 #define HACK_CAST   (unsigned)
 
 // This is a macro performing everything needed before returning the call
-#if defined(__386__) || defined(__AXP__)
-    #define _CRET() {                                                   \
-        if( doheapwlk ) AskHeapWlk( FREED_BEFORE, type, __LINE__ );     \
-        if( type == TYPE_DEFAULT ) {                                    \
-            free( (char *) ptr_char );                                  \
-            free( (int *) ptr_int );                                    \
-            free( (double *) ptr_double );                              \
-        } else if( type == TYPE_NEAR ) {                                \
-            _nfree( (char __near *) ptr_char );                         \
-            _nfree( (int __near *) ptr_int );                           \
-            _nfree( (double __near *) ptr_double );                     \
-        }                                                               \
-        if( doheapwlk ) AskHeapWlk( FREED_AFTER, type, __LINE__ );      \
-        memavail = _memavl();                                           \
-        return;                                                         \
-    }
-#else
+#if defined( _M_I86 )
     #define _CRET() {                                                   \
         if( doheapwlk ) AskHeapWlk( FREED_BEFORE, type, __LINE__ );     \
         if( type == TYPE_DEFAULT ) {                                    \
@@ -124,13 +108,29 @@
         memavail = _memavl();                                           \
         return;                                                         \
     }
+#else
+    #define _CRET() {                                                   \
+        if( doheapwlk ) AskHeapWlk( FREED_BEFORE, type, __LINE__ );     \
+        if( type == TYPE_DEFAULT ) {                                    \
+            free( (char *) ptr_char );                                  \
+            free( (int *) ptr_int );                                    \
+            free( (double *) ptr_double );                              \
+        } else if( type == TYPE_NEAR ) {                                \
+            _nfree( (char __near *) ptr_char );                         \
+            _nfree( (int __near *) ptr_int );                           \
+            _nfree( (double __near *) ptr_double );                     \
+        }                                                               \
+        if( doheapwlk ) AskHeapWlk( FREED_AFTER, type, __LINE__ );      \
+        memavail = _memavl();                                           \
+        return;                                                         \
+    }
 #endif
 
 // _NUL combines NULL and _NULLOFF
-#if defined( __AXP__ ) || defined( __UNIX__ )
-    #define _NUL        NULL
-#else
+#if defined( _M_I86 )
     #define _NUL        (type == TYPE_BASED ? (long)_NULLOFF: (long)NULL)
+#else
+    #define _NUL        NULL
 #endif
 
 // Macro to free based pointers and the corresponding segment
@@ -152,7 +152,7 @@ typedef struct _test_result {
     char    msg[256];
 } test_result;
 
-#if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 ) && !defined(__WINDOWS__)
     size_t      memrecord;
 #endif
 size_t memavail;
@@ -163,7 +163,7 @@ int dotrace = FALSE;
 int dopause = FALSE;
 int tracethisloop;
 int doheapwlk = FALSE;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
     __segment   seg = _NULLSEG;
 #endif
 
@@ -219,7 +219,7 @@ void AskHeapWlk( int timing, int type, int lineno )
                 case TYPE_NEAR:
                     heap_status = _nheapwalk( &h_info );
                     break;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
                 case TYPE_FAR:
                     heap_status = _fheapwalk( &h_info );
                     break;
@@ -263,6 +263,51 @@ void AskHeapWlk( int timing, int type, int lineno )
         }
         printf( "-----------------------------------------\n" );
     }
+}
+
+int AskTrace( char *name, int lineno )
+{
+    if( dotrace ) {
+        char ans;
+
+        cprintf( "[-t] %s: Do you want to trace into the loop? ", name );
+        ans = getche();
+        cprintf( "\n\r" );
+        if( ans == 'y' || ans == 'Y' ) {
+            cprintf( "Into the loop (line #%d)...", lineno );
+            return( TRUE );
+        }
+        cprintf( "Continue on...\r\n" );
+    }
+    return( FALSE );
+}
+
+int CheckContent( long ptr, size_t n, int type )
+{
+    size_t      ctr;
+    int         flag;
+
+    for( ctr = 0, flag = TRUE; ( ctr < n ) && flag; ++ctr ) {
+        switch( type ) {
+            case TYPE_DEFAULT:
+                flag = ( ((int *)ptr)[ctr] == 6 );
+                break;
+            case TYPE_NEAR:
+                flag = ( ((int __near *)ptr)[ctr] == 6 );
+                break;
+#if defined( _M_I86 )
+            case TYPE_FAR:
+                flag = ( ((int __far *)ptr)[ctr] == 6 );
+                break;
+            case TYPE_BASED:
+                flag = ( ((int __based( seg ) *)ptr)[ctr] == 6 );
+                break;
+#endif
+            default:
+                break;
+        }
+    }
+    return( flag );
 }
 
 void Test_alloca_stackavail__memavl__memmax( test_result *result )
@@ -354,7 +399,7 @@ void Test_calloc__msize( test_result *result, int type )
             ptr_int    = (long) _ncalloc( NUM_EL, sizeof( int ) );
             ptr_double = (long) _ncalloc( NUM_EL, sizeof( double ) );
             break;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
         case TYPE_FAR:
             if( more_debug ) {
                 printf( "Testing: _fcalloc(), _fmsize()...\n" );
@@ -399,7 +444,7 @@ void Test_calloc__msize( test_result *result, int type )
         if( more_debug ) nomem_lineno = __LINE__;
         _CRET();
     }
-#if !defined(__386__) && !defined(__AXP__) && (defined(__SMALL__) || defined(__MEDIUM__))
+#if defined( _M_I86 ) && (defined(__SMALL__) || defined(__MEDIUM__))
     if( type != TYPE_FAR && HACK_CAST ptr_double != HACK_CAST _NUL ) {
         result->status = TEST_FAIL;
         strcpy( result->msg, errmsg[14] );
@@ -411,7 +456,7 @@ void Test_calloc__msize( test_result *result, int type )
     }
 #else       // 32-bit or large data model
     if( type == TYPE_BASED || type == TYPE_NEAR ) {
-    #if !defined(__386__) && !defined(__AXP__)
+    #if defined( _M_I86 )
         if( HACK_CAST ptr_double != HACK_CAST _NUL ) {
             result->status = TEST_FAIL;
             strcpy( result->msg, errmsg[14] );
@@ -420,13 +465,13 @@ void Test_calloc__msize( test_result *result, int type )
     #endif
     } else if( ptr_double == _NUL ) {
         result->status = TEST_FAIL;
-    #if !defined(__386__) && !defined(__AXP__) // Different error messages
+    #if defined( _M_I86 )   // Different error messages
         strcpy( result->msg, errmsg[16] );
     #else
         strcpy( result->msg, errmsg[17] );
     #endif
         _CRET();
-    #if !defined(__386__) && !defined(__AXP__)
+    #if defined( _M_I86 )
     } else if( _memavl() < chkmemavl ) {
         result->status = TEST_FAIL;
         strcpy( result->msg, errmsg[18] );
@@ -451,7 +496,7 @@ void Test_calloc__msize( test_result *result, int type )
                     result->status = TEST_FAIL;
                 }
                 break;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
             case TYPE_FAR:
                 if( ((char __far *)ptr_char)[ctr] != 0 ||
                     ((int __far *)ptr_int)[ctr] != 0 ) {
@@ -488,7 +533,7 @@ void Test_calloc__msize( test_result *result, int type )
             strcpy( result->funcname,"_nmsize()" );
             retsize = _nmsize( (char __near *)ptr_char );
             break;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
         case TYPE_FAR:
             strcpy( result->funcname,"_fmsize()" );
             retsize = _fmsize( (char __far *)ptr_char );
@@ -538,7 +583,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
             ptr_int    = (long) _nmalloc( NUM_EL * sizeof( int ) );
             ptr_double = (long) _nmalloc( NUM_EL * sizeof( double ) );
             break;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
         case TYPE_FAR:
             if( more_debug ) {
                 printf( "Testing: _fmalloc(), _frealloc(), _fexpand()...\n" );
@@ -583,7 +628,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
         if( more_debug ) nomem_lineno = __LINE__;
         _CRET();
     }
-#if !defined(__386__) && !defined(__AXP__) && (defined(__SMALL__) || defined(__MEDIUM__))
+#if defined( _M_I86 ) && (defined(__SMALL__) || defined(__MEDIUM__))
     if( type != TYPE_FAR && HACK_CAST ptr_double != HACK_CAST _NUL ) {
         result->status = TEST_FAIL;
         strcpy( result->msg, errmsg[14] );
@@ -595,7 +640,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
     }
 #else       // 32-bit or large data model
     if( type == TYPE_BASED || type == TYPE_NEAR ) {
-    #if !defined(__386__) && !defined(__AXP__)
+    #if defined( _M_I86 )
         if( HACK_CAST ptr_double != HACK_CAST _NUL ) {
             result->status = TEST_FAIL;
             strcpy( result->msg, errmsg[14] );
@@ -604,13 +649,13 @@ void Test_malloc_realloc__expand( test_result *result, int type )
     #endif
     } else if( ptr_double == _NUL ) {
         result->status = TEST_FAIL;
-    #if !defined(__386__) && !defined(__AXP__) // Different error messages
+    #if defined( _M_I86 )   // Different error messages
         strcpy( result->msg, errmsg[16] );
     #else
         strcpy( result->msg, errmsg[17] );
     #endif
         _CRET();
-    #if !defined(__386__) && !defined(__AXP__)
+    #if defined( _M_I86 )
     } else if( _memavl() < chkmemavl ) {
         result->status = TEST_FAIL;
         strcpy( result->msg, errmsg[18] );
@@ -631,7 +676,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
                 ((char __near *)ptr_char)[ctr] = 6;
                 ((int __near *)ptr_int)[ctr]   = 6;
                 break;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
             case TYPE_FAR:
                 ((char __far *)ptr_char)[ctr] = 6;
                 ((int __far *)ptr_int)[ctr]   = 6;
@@ -659,7 +704,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
             strcpy( result->funcname, "_nrealloc()" );
             tmp_ptr = (long) _nrealloc((int __near*) ptr_int, size );
             break;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
         case TYPE_FAR:
             strcpy( result->funcname, "_frealloc()" );
             tmp_ptr = (long) _frealloc( (int __far *) ptr_int, size );
@@ -696,7 +741,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
             strcpy( result->funcname, "_nexpand()" );
             tmp_ptr = (long)_nexpand( (int __near *)ptr_int, size );
             break;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
         case TYPE_FAR:
             strcpy( result->funcname, "_fexpand()" );
             tmp_ptr = (long)_fexpand( (int __far *)ptr_int, size );
@@ -732,7 +777,7 @@ void Test_malloc_realloc__expand( test_result *result, int type )
                 ((char __near *)ptr_char)[ctr] = 6;
                 ((int __near *)ptr_int)[ctr]   = 6;
                 break;
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
             case TYPE_FAR:
                 ((char __far *)ptr_char)[ctr] = 6;
                 ((int __far *)ptr_int)[ctr]   = 6;
@@ -747,34 +792,6 @@ void Test_malloc_realloc__expand( test_result *result, int type )
         }
     }   // Make sure that rest of the array is still accessible.
     _CRET();
-}
-
-int CheckContent( long ptr, size_t n, int type )
-{
-    size_t      ctr;
-    int         flag;
-
-    for( ctr = 0, flag = TRUE; ( ctr < n ) && flag; ++ctr ) {
-        switch( type ) {
-            case TYPE_DEFAULT:
-                flag = ( ((int *)ptr)[ctr] == 6 );
-                break;
-            case TYPE_NEAR:
-                flag = ( ((int __near *)ptr)[ctr] == 6 );
-                break;
-#if !defined(__386__) && !defined(__AXP__)
-            case TYPE_FAR:
-                flag = ( ((int __far *)ptr)[ctr] == 6 );
-                break;
-            case TYPE_BASED:
-                flag = ( ((int __based( seg ) *)ptr)[ctr] == 6 );
-                break;
-#endif
-            default:
-                break;
-        }
-    }
-    return( flag );
 }
 
 void Test__freect( test_result *result )
@@ -803,14 +820,14 @@ void Test__freect( test_result *result )
         Note: this should be the last test that involves the near heap
               since the memory allocated is not freed.
     */
-#if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 ) && !defined(__WINDOWS__)
     // To avoid the warning in TranslateResult()
     //      - near heap should almost be used up.
     memrecord = memavail = _memavl();
 #endif
 }
 
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
 void Test_halloc( test_result *result )
 {
     int           ctr;
@@ -891,7 +908,7 @@ void TranslateResult( test_result *result )
         printf( "INTERNAL: UNEXPECTED TEST RESULT.\n" );
         exit(-1);
     }
-#if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 ) && !defined(__WINDOWS__)
     if( memrecord != memavail ) {
         printf( "FUNCTION(S): %s.\n", result->funcname );
         printf( "WARNING: SIZE OF FREE NEAR HEAP HAS BEEN CHANGED.\n" );
@@ -909,23 +926,6 @@ void TranslateResult( test_result *result )
         getche();
         cprintf( "\r\n" );
     }
-}
-
-int AskTrace( char *name, int lineno )
-{
-    if( dotrace ) {
-        char ans;
-
-        cprintf( "[-t] %s: Do you want to trace into the loop? ", name );
-        ans = getche();
-        cprintf( "\n\r" );
-        if( ans == 'y' || ans == 'Y' ) {
-            cprintf( "Into the loop (line #%d)...", lineno );
-            return( TRUE );
-        }
-        cprintf( "Continue on...\r\n" );
-    }
-    return( FALSE );
 }
 
 void Usage( char *filename )
@@ -1013,7 +1013,7 @@ void DisplayConstants( void )
     printf( "     Important constants used in the test        \n" );
     printf( "-------------------------------------------------\n" );
     printf( "  Number of elements (NUM_EL)          = %-7d \n", NUM_EL );
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
     printf( "  Number of huge elemnts (HUGE_NUM_EL) = %-7d \n", HUGE_NUM_EL );
     printf( "  BASED_HEAP_SIZE                      = " );
     printf( "%-7d \n", BASED_HEAP_SIZE );
@@ -1037,7 +1037,7 @@ void main( int argc, char *argv[] )
 
     if( more_debug ) DisplayConstants();
 
-#if !defined(__WINDOWS__) && !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 ) && !defined(__WINDOWS__)
     _nheapgrow();
     memrecord = memavail = _memavl();
 #endif
@@ -1059,7 +1059,7 @@ void main( int argc, char *argv[] )
 
     Test__freect( &result );
     TranslateResult( &result );
-#if !defined(__386__) && !defined(__AXP__)
+#if defined( _M_I86 )
     Test_calloc__msize( &result, TYPE_FAR );
     TranslateResult( &result );
 

@@ -199,7 +199,7 @@ void TestFileOperations( void )
     struct find_t       fileinfo;
     unsigned long       flag;
     unsigned            attribute;
-    unsigned short      date,time;
+    unsigned            date,time;
     char                buffer[] = "This is a test for _dos_write().";
     char                tmpbuff[80];
     unsigned            len;
