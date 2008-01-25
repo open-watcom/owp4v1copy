@@ -47,6 +47,8 @@ include struct.inc
 ifdef __STACK__
         mov     EAX,12[ESP]     ; get size
         mov     EDX,16[ESP]     ; get pointer to segment
+        push    EDX             ; workaround for EDX getting trashed
+                                ; under DOS/4GW on NT
 endif
         mov     EBX,EAX         ; get # of paragraphs wanted
         mov     AH,48h          ; allocate memory
@@ -57,8 +59,11 @@ endif
         _else                   ; else
           call  __doserror_     ; - set error code
         _endif                  ; endif
-        mov     [EDX],EBX       ; store size of largest block or segment
         pop     EDX             ; restore EDX
+        mov     [EDX],EBX       ; store size of largest block or segment
+ifdef __STACK__
+        pop     EDX             ; restore EDX
+endif
         pop     EBX             ; restore EBX
         ret                     ; return to caller
         endproc _dos_allocmem
