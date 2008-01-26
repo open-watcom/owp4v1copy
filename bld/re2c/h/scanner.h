@@ -34,6 +34,7 @@
 #define _scanner_h
 
 #include "token.h"
+#include <iostream>
 
 class Scanner {
   private:
@@ -44,7 +45,7 @@ class Scanner {
     uchar *fill(uchar*);
   public:
     Scanner(int);
-    int echo(ostream&);
+    int echo(std::ostream&);
     int scan();
     void fatal(char*);
     SubStr token();

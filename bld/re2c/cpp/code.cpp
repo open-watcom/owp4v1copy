@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <iomanip.h>
+#include <iomanip>
 #include "substr.h"
 #include "globals.h"
 #include "dfa.h"
@@ -86,7 +86,7 @@ for(; b < e; ++b){
 }
 }
 
-void prt(ostream& o, Go *g, State *s){
+void prt(std::ostream& o, Go *g, State *s){
 Span *b = g->span, *e = &b[g->nSpans];
 uint lb = 0;
 for(; b < e; ++b){
@@ -122,7 +122,7 @@ uchar           m;
 public:
 static BitMap *find(Go*, State*);
 static BitMap *find(State*);
-static void gen(ostream&, uint, uint);
+static void gen(std::ostream&, uint, uint);
 static void stats();
 BitMap(Go*, State*);
 };
@@ -149,7 +149,7 @@ BitMap *BitMap::find(State *x){
     return NULL;
 }
 
-void BitMap::gen(ostream &o, uint lb, uint ub){
+void BitMap::gen(std::ostream &o, uint lb, uint ub){
     BitMap *b = first;
     if(b){
         o << "\tstatic unsigned char yybm[] = {";
@@ -163,7 +163,7 @@ void BitMap::gen(ostream &o, uint lb, uint ub){
             }
             for(uint j = 0; j < n; ++j){
                 if(j%8 == 0) o << "\n\t";
-                o << setw(3) << (uint) bm[j] << ", ";
+                o << std::setw(3) << (uint) bm[j] << ", ";
             }
         }
         o << "\n\t};\n";
@@ -173,29 +173,29 @@ void BitMap::gen(ostream &o, uint lb, uint ub){
 void BitMap::stats(){
     uint n = 0;
     for(BitMap *b = first; b; b = b->next){
-prt(cerr, b->go, b->on); cerr << endl;
+prt(std::cerr, b->go, b->on); std::cerr << std::endl;
          ++n;
     }
-    cerr << n << " bitmaps\n";
+    std::cerr << n << " bitmaps\n";
     first = NULL;
 }
 
-void genGoTo(ostream &o, State *to){
+void genGoTo(std::ostream &o, State *to){
     o  << "\tgoto yy" << to->label << ";\n";
 }
 
-void genIf(ostream &o, char *cmp, uint v){
+void genIf(std::ostream &o, char *cmp, uint v){
     o << "\tif(yych " << cmp << " '";
     prtCh(o, (uchar)v);
     o << "')";
 }
 
-void indent(ostream &o, uint i){
+void indent(std::ostream &o, uint i){
     while(i-- > 0)
         o << "\t";
 }
 
-static void need(ostream &o, uint n){
+static void need(std::ostream &o, uint n){
     if(n == 1)
         o << "\tif(YYLIMIT == YYCURSOR) YYFILL(1);\n";
     else
@@ -203,7 +203,7 @@ static void need(ostream &o, uint n){
     o << "\tyych = *YYCURSOR;\n";
 }
 
-void Match::emit(ostream &o){
+void Match::emit(std::ostream &o){
     if(state->link){
         o << "\t++YYCURSOR;\n";
         need(o, state->depth);
@@ -212,7 +212,7 @@ void Match::emit(ostream &o){
     }
 }
 
-void Enter::emit(ostream &o){
+void Enter::emit(std::ostream &o){
     if(state->link){
         o << "\t++YYCURSOR;\n";
         o << "yy" << label << ":\n";
@@ -223,7 +223,7 @@ void Enter::emit(ostream &o){
     }
 }
 
-void Save::emit(ostream &o){
+void Save::emit(std::ostream &o){
     o << "\tyyaccept = " << selector << ";\n";
     if(state->link){
         o << "\tYYMARKER = ++YYCURSOR;\n";
@@ -237,7 +237,7 @@ Move::Move(State *s) : Action(s) {
     ;
 }
 
-void Move::emit(ostream &o){
+void Move::emit(std::ostream &o){
     (void)o;
 }
 
@@ -246,7 +246,7 @@ Accept::Accept(State *x, uint n, uint *s, State **r)
     ;
 }
 
-void Accept::emit(ostream &o){
+void Accept::emit(std::ostream &o){
     bool first = true;
     for(uint i = 0; i < nRules; ++i)
         if(saves[i] != ~0){
@@ -266,7 +266,7 @@ Rule::Rule(State *s, RuleOp *r) : Action(s), rule(r) {
     ;
 }
 
-void Rule::emit(ostream &o){
+void Rule::emit(std::ostream &o){
     uint back = rule->ctx->fixedLength();
     if(back != ~0 && back > 0)
         o << "\tYYCURSOR -= " << back << ";";
@@ -274,7 +274,7 @@ void Rule::emit(ostream &o){
       << "\n\t" << rule->code->text << "\n";
 }
 
-void doLinear(ostream &o, uint i, Span *s, uint n, State *next){
+void doLinear(std::ostream &o, uint i, Span *s, uint n, State *next){
     for(;;){
         State *bg = s[0].to;
         while(n >= 3 && s[2].to == bg && (s[1].ub - s[0].ub) == 1){
@@ -301,11 +301,11 @@ void doLinear(ostream &o, uint i, Span *s, uint n, State *next){
     }
 }
 
-void Go::genLinear(ostream &o, State *next){
+void Go::genLinear(std::ostream &o, State *next){
     doLinear(o, 0, span, nSpans, next);
 }
 
-void genCases(ostream &o, uint lb, Span *s){
+void genCases(std::ostream &o, uint lb, Span *s){
     if(lb < s->ub){
         for(;;){
             o << "\tcase '"; prtCh(o, (uchar)lb); o << "':";
@@ -316,7 +316,7 @@ void genCases(ostream &o, uint lb, Span *s){
     }
 }
 
-void Go::genSwitch(ostream &o, State *next){
+void Go::genSwitch(std::ostream &o, State *next){
     if(nSpans <= 2){
         genLinear(o, next);
     } else {
@@ -353,7 +353,7 @@ void Go::genSwitch(ostream &o, State *next){
     }
 }
 
-void doBinary(ostream &o, uint i, Span *s, uint n, State *next){
+void doBinary(std::ostream &o, uint i, Span *s, uint n, State *next){
     if(n <= 4){
         doLinear(o, i, s, n, next);
     } else {
@@ -366,11 +366,11 @@ void doBinary(ostream &o, uint i, Span *s, uint n, State *next){
     }
 }
 
-void Go::genBinary(ostream &o, State *next){
+void Go::genBinary(std::ostream &o, State *next){
     doBinary(o, 0, span, nSpans, next);
 }
 
-void Go::genBase(ostream &o, State *next){
+void Go::genBase(std::ostream &o, State *next){
     if(nSpans == 0)
         return;
     if(!sFlag){
@@ -401,7 +401,7 @@ void Go::genBase(ostream &o, State *next){
     }
 }
 
-void Go::genGoto(ostream &o, State *next){
+void Go::genGoto(std::ostream &o, State *next){
     if(bFlag){
         for(uint i = 0; i < nSpans; ++i){
             State *to = span[i].to;
@@ -423,7 +423,7 @@ void Go::genGoto(ostream &o, State *next){
     genBase(o, next);
 }
 
-void State::emit(ostream &o){
+void State::emit(std::ostream &o){
     o << "yy" << label << ":";
     action->emit(o);
 }
@@ -570,7 +570,7 @@ void DFA::split(State *s){
     s->go.span[0].to = move;
 }
 
-void DFA::emit(ostream &o){
+void DFA::emit(std::ostream &o){
     static uint label = 0;
     State *s;
     uint i;

@@ -41,7 +41,7 @@ inline char octCh(uint c){
     return '0' + (char)c%8;
 }
 
-void prtCh(ostream &o, uchar c){
+void prtCh(std::ostream &o, uchar c){
     uchar oc = talx[c];
     switch(oc){
     case '\'': o << "\\'"; break;
@@ -61,7 +61,7 @@ void prtCh(ostream &o, uchar c){
     }
 }
 
-void printSpan(ostream &o, uint lb, uint ub){
+void printSpan(std::ostream &o, uint lb, uint ub){
     if(lb > ub)
     o << "*";
     o << "[";
@@ -75,7 +75,7 @@ void printSpan(ostream &o, uint lb, uint ub){
     o << "]";
 }
 
-uint Span::show(ostream &o, uint lb){
+uint Span::show(std::ostream &o, uint lb){
     if(to){
     printSpan(o, lb, ub);
     o << " " << to->label << "; ";
@@ -83,7 +83,7 @@ uint Span::show(ostream &o, uint lb){
     return ub;
 }
 
-ostream& operator<<(ostream &o, const State &s){
+std::ostream& operator<<(std::ostream &o, const State &s){
     o << "state " << s.label;
     if(s.rule)
     o << " accepts " << s.rule->accept;
@@ -94,7 +94,7 @@ ostream& operator<<(ostream &o, const State &s){
     return o;
 }
 
-ostream& operator<<(ostream &o, const DFA &dfa){
+std::ostream& operator<<(std::ostream &o, const DFA &dfa){
     for(State *s = dfa.head; s; s = s->next)
     o << s << "\n\n";
     return o;

@@ -32,8 +32,8 @@
 
 #include <time.h>
 #include <string.h>
-#include <iostream.h>
-#include <iomanip.h>
+#include <iostream>
+#include <iomanip>
 
 #include "globals.h"
 #include "parser.h"
@@ -51,7 +51,7 @@ Symbol *Symbol::find(const SubStr &str){
     return new Symbol(str);
 }
 
-void showIns(ostream &o, const Ins &i, const Ins &base){
+void showIns(std::ostream &o, const Ins &i, const Ins &base){
     o.width(3);
     o << &i - &base << ": ";
     switch(i.i.tag){
@@ -98,7 +98,7 @@ void NullOp::split(CharSet&){
     ;
 }
 
-ostream& operator<<(ostream &o, const Range &r){
+std::ostream& operator<<(std::ostream &o, const Range &r){
     if((r.ub - r.lb) == 1){
         prtCh(o, (uchar)r.lb);
     } else {
@@ -185,7 +185,7 @@ MatchOp *merge(MatchOp *m1, MatchOp *m2){
 
 char *MatchOp::type = "MatchOp";
 
-void MatchOp::display(ostream &o) const{
+void MatchOp::display(std::ostream &o) const{
     o << match;
 }
 
@@ -456,7 +456,7 @@ void RuleOp::split(CharSet &s){
     ctx->split(s);
 }
 
-extern void printSpan(ostream&, uint, uint);
+extern void printSpan(std::ostream&, uint, uint);
 
 void optimize(Ins *i){
     while(!isMarked(i)){
@@ -485,7 +485,7 @@ void optimize(Ins *i){
     }
 }
 
-void genCode(ostream& o, RegExp *re){
+void genCode(std::ostream& o, RegExp *re){
     uint j;
     CharSet cs;
     memset(&cs, 0, sizeof(cs));

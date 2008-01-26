@@ -32,7 +32,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <iostream.h>
+#include <iostream>
 #include <unistd.h>
 #include "scanner.h"
 #include "parser.h"
@@ -94,7 +94,7 @@ uchar *Scanner::fill(uchar *cursor){
 
 
 
-int Scanner::echo(ostream &out){
+int Scanner::echo(std::ostream &out){
     uchar *cursor = cur;
     tok = cursor;
 echo:
@@ -252,7 +252,7 @@ yy34:
                                 }
 yy35:   yych = *++YYCURSOR;
 yy36:
-        { cerr << "unexpected character: " << *tok << endl;
+        { std::cerr << "unexpected character: " << *tok << std::endl;
                                   goto scan;
                                 }
 yy37:   ++YYCURSOR;
@@ -468,7 +468,7 @@ yy86:
 }
 
 void Scanner::fatal(char *msg){
-    cerr << "line " << tline << ", column " << (tchar + 1) << ": "
-        << msg << endl;
+    std::cerr << "line " << tline << ", column " << (tchar + 1) << ": "
+        << msg << std::endl;
     exit(1);
 }

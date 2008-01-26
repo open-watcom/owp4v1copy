@@ -33,7 +33,7 @@
 #include <string.h>
 #include "substr.h"
 
-void SubStr::out(ostream& o) const {
+void SubStr::out(std::ostream& o) const {
     o.write(str, len);
 }
 

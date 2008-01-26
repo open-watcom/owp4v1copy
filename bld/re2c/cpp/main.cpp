@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <fstream.h>
+#include <fstream>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -43,7 +43,7 @@ char *fileName;
 bool sFlag = false;
 bool bFlag = false;
 
-int main(unsigned argc, char *argv[]){
+int main(int argc, char *argv[]){
     fileName = NULL;
     if(argc == 1)
         goto usage;
@@ -74,13 +74,13 @@ int main(unsigned argc, char *argv[]){
         fd = 0;
     } else {
         if((fd = open(fileName, O_RDONLY)) < 0){
-            cerr << "can't open " << fileName << "\n";
+            std::cerr << "can't open " << fileName << "\n";
             return 1;
         }
     }
-    parse(fd, cout);
+    parse(fd, std::cout);
     return 0;
 usage:
-    cerr << "usage: re2c [-esb] name\n";
+    std::cerr << "usage: re2c [-esb] name\n";
     return 2;
 }

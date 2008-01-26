@@ -47,6 +47,6 @@ public:
     static Symbol *find(const SubStr&);
 };
 
-void parse(int, ostream&);
+void parse(int, std::ostream&);
 
 #endif

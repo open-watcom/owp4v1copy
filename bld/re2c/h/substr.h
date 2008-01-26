@@ -33,7 +33,7 @@
 #ifndef _substr_h
 #define _substr_h
 
-#include <iostream.h>
+#include <iostream>
 #include "basics.h"
 
 class SubStr {
@@ -45,7 +45,7 @@ public:
     SubStr(uchar*, uint);
     SubStr(char*, uint);
     SubStr(const SubStr&);
-    void out(ostream&) const;
+    void out(std::ostream&) const;
 };
 
 class Str: public SubStr {
@@ -56,12 +56,12 @@ public:
     ~Str();
 };
 
-inline ostream& operator<<(ostream& o, const SubStr s){
+inline std::ostream& operator<<(std::ostream& o, const SubStr s){
     s.out(o);
     return o;
 }
 
-inline ostream& operator<<(ostream& o, const SubStr* s){
+inline std::ostream& operator<<(std::ostream& o, const SubStr* s){
     return o << *s;
 }
 

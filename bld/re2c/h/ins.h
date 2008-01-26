@@ -33,7 +33,7 @@
 #ifndef _ins_h
 #define _ins_h
 
-#include <iostream.h>
+#include <iostream>
 #include "basics.h"
 
 const uint nChars = 256;

@@ -33,7 +33,7 @@
 #ifndef _re_h
 #define _re_h
 
-#include <iostream.h>
+#include <iostream>
 #include "token.h"
 #include "ins.h"
 
@@ -60,11 +60,11 @@ public:
         { }
     Range(Range &r) : next(NULL), lb(r.lb), ub(r.ub)
         { }
-    friend ostream& operator<<(ostream&, const Range&);
-    friend ostream& operator<<(ostream&, const Range*);
+    friend std::ostream& operator<<(std::ostream&, const Range&);
+    friend std::ostream& operator<<(std::ostream&, const Range*);
 };
 
-inline ostream& operator<<(ostream &o, const Range *r){
+inline std::ostream& operator<<(std::ostream &o, const Range *r){
         return r? o << *r : o;
 }
 
@@ -79,17 +79,17 @@ public:
     virtual void calcSize(Char*) = 0;
     virtual uint fixedLength();
     virtual void compile(Char*, Ins*) = 0;
-    virtual void display(ostream&) const = 0;
-    friend ostream& operator<<(ostream&, const RegExp&);
-    friend ostream& operator<<(ostream&, const RegExp*);
+    virtual void display(std::ostream&) const = 0;
+    friend std::ostream& operator<<(std::ostream&, const RegExp&);
+    friend std::ostream& operator<<(std::ostream&, const RegExp*);
 };
 
-inline ostream& operator<<(ostream &o, const RegExp &re){
+inline std::ostream& operator<<(std::ostream &o, const RegExp &re){
     re.display(o);
     return o;
 }
 
-inline ostream& operator<<(ostream &o, const RegExp *re){
+inline std::ostream& operator<<(std::ostream &o, const RegExp *re){
     return o << *re;
 }
 
@@ -103,7 +103,7 @@ public:
     void calcSize(Char*);
     uint fixedLength();
     void compile(Char*, Ins*);
-    void display(ostream &o) const {
+    void display(std::ostream &o) const {
         o << "_";
     }
 };
@@ -121,7 +121,7 @@ public:
     void calcSize(Char*);
     uint fixedLength();
     void compile(Char*, Ins*);
-    void display(ostream&) const;
+    void display(std::ostream&) const;
 };
 
 class RuleOp: public RegExp {
@@ -141,7 +141,7 @@ public:
     void split(CharSet&);
     void calcSize(Char*);
     void compile(Char*, Ins*);
-    void display(ostream &o) const {
+    void display(std::ostream &o) const {
         o << exp << "/" << ctx << ";";
     }
 };
@@ -163,7 +163,7 @@ public:
     void calcSize(Char*);
     uint fixedLength();
     void compile(Char*, Ins*);
-    void display(ostream &o) const {
+    void display(std::ostream &o) const {
         o << exp1 << "|" << exp2;
     }
     friend RegExp *mkAlt(RegExp*, RegExp*);
@@ -183,7 +183,7 @@ public:
     void calcSize(Char*);
     uint fixedLength();
     void compile(Char*, Ins*);
-    void display(ostream &o) const {
+    void display(std::ostream &o) const {
         o << exp1 << exp2;
     }
 };
@@ -201,12 +201,12 @@ public:
     void split(CharSet&);
     void calcSize(Char*);
     void compile(Char*, Ins*);
-    void display(ostream &o) const {
+    void display(std::ostream &o) const {
         o << exp << "+";
     }
 };
 
-extern void genCode(ostream&, RegExp*);
+extern void genCode(std::ostream&, RegExp*);
 extern RegExp *mkDiff(RegExp*, RegExp*);
 extern RegExp *strToRE(SubStr);
 extern RegExp *ranToRE(SubStr);
