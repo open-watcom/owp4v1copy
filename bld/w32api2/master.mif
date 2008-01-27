@@ -218,6 +218,7 @@ base_headers =       &
         windef.h     &
         windns.h     &
         windows.h    &
+        windowsx.h   &
         winefs.h     &
         winerror.h   &
         wingdi.h     &
