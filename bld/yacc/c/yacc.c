@@ -54,11 +54,114 @@ index_t RR_conflicts;
 index_t SR_conflicts;
 index_t nstate_1_reduce;
 
-static FILE *openr(), *openw();
-static void setoptions( char *p );
-
 static int warnings;
 static int proflag;
+
+static FILE *openr( char *filename )
+{
+    FILE *file;
+
+    if( !(file = fopen( filename, "r" )) ) {
+        msg( "Can't open %s.\n", filename );
+    }
+    return( file );
+}
+
+static FILE *openw( char *filename )
+{
+    FILE *file;
+
+    if( !(file = fopen( filename, "w" )) ) {
+        msg( "Can't open %s for output.\n", filename );
+    }
+    return( file );
+}
+
+static void setoptions( char *p )
+{
+    for( ; *p; ++p ) {
+        switch( *p ) {
+        case 'b':
+            bigflag = 1;
+            break;
+        case 'c':
+            compactflag = 1;
+            break;
+        case 'd':
+            if( p[1] == 's' ) {
+                ++p;
+                default_shiftflag = 1;
+            } else {
+                denseflag = 1;
+            }
+            break;
+        case 'f':
+            fastflag = 1;
+            break;
+        case 's':
+            showflag = 1;
+            break;
+        case 'l':
+            lineflag = 1;
+            break;
+        case 'p':
+            proflag = 1;
+            break;
+        case 't':
+            translateflag = 1;
+            break;
+        case 'u':
+            eliminateunitflag = 1;
+            break;
+        case 'w':
+            defaultwarnflag = 0;
+            break;
+        default:
+            msg( "Unknown option '%c'\n", *p );
+        }
+    }
+}
+
+void warn( char *fmt, ... )
+{
+    va_list arg_ptr;
+
+    if( srcname != NULL ) {
+        printf( "%s(%d): ", srcname, lineno );
+    }
+    printf( "Warning! " );
+    va_start( arg_ptr, fmt );
+    vprintf( fmt, arg_ptr );
+    va_end( arg_ptr );
+    ++warnings;
+}
+
+void msg( char *fmt, ... )
+{
+    va_list arg_ptr;
+
+    if( srcname != NULL ) {
+        printf( "%s(%d): ", srcname, lineno );
+    }
+    printf( "Error! " );
+    va_start( arg_ptr, fmt );
+    vprintf( fmt, arg_ptr );
+    va_end( arg_ptr );
+    exit( 1 );
+}
+
+void dumpstatistic( char *name, unsigned stat )
+{
+    size_t len;
+
+    len = strlen( name );
+    printf( "%s:", name );
+    while( len < 39 ) {
+        putchar( ' ' );
+        ++len;
+    }
+    printf( "%6u\n", stat );
+}
 
 int main( int argc, char **argv )
 {
@@ -177,110 +280,4 @@ int main( int argc, char **argv )
     }
     tail();
     return( 0 );
-}
-
-static FILE *openr( char *filename )
-{
-    FILE *file;
-
-    if( !(file = fopen( filename, "r" )) ) {
-        msg( "Can't open %s.\n", filename );
-    }
-    return( file );
-}
-
-static FILE *openw( char *filename )
-{
-    FILE *file;
-
-    if( !(file = fopen( filename, "w" )) ) {
-        msg( "Can't open %s for output.\n", filename );
-    }
-    return( file );
-}
-
-static void setoptions( char *p )
-{
-    for( ; *p; ++p ) {
-        switch( *p ) {
-        case 'b':
-            bigflag = 1;
-            break;
-        case 'c':
-            compactflag = 1;
-            break;
-        case 'd':
-            if( p[1] == 's' ) {
-                ++p;
-                default_shiftflag = 1;
-            } else {
-                denseflag = 1;
-            }
-            break;
-        case 'f':
-            fastflag = 1;
-            break;
-        case 's':
-            showflag = 1;
-            break;
-        case 'l':
-            lineflag = 1;
-            break;
-        case 'p':
-            proflag = 1;
-            break;
-        case 't':
-            translateflag = 1;
-            break;
-        case 'u':
-            eliminateunitflag = 1;
-            break;
-        case 'w':
-            defaultwarnflag = 0;
-            break;
-        default:
-            msg( "Unknown option '%c'\n", *p );
-        }
-    }
-}
-
-void warn( char *fmt, ... )
-{
-    va_list arg_ptr;
-
-    if( srcname != NULL ) {
-        printf( "%s(%d): ", srcname, lineno );
-    }
-    printf( "Warning! " );
-    va_start( arg_ptr, fmt );
-    vprintf( fmt, arg_ptr );
-    va_end( arg_ptr );
-    ++warnings;
-}
-
-void msg( char *fmt, ... )
-{
-    va_list arg_ptr;
-
-    if( srcname != NULL ) {
-        printf( "%s(%d): ", srcname, lineno );
-    }
-    printf( "Error! " );
-    va_start( arg_ptr, fmt );
-    vprintf( fmt, arg_ptr );
-    va_end( arg_ptr );
-    exit( 1 );
-}
-
-void dumpstatistic( char *name, unsigned stat )
-{
-    size_t len;
-
-    len = strlen( name );
-    printf( "%s:", name );
-    while( len < 39 ) {
-        putchar( ' ' );
-        ++len;
-    }
-    printf( "%6u\n", stat );
 }
