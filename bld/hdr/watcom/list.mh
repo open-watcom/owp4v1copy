@@ -28,7 +28,11 @@
     #include <type_tra>
 #endif
 
-//#line 32 "list.mh"
+#ifndef _FUNCTIONAL_INCLUDED
+    #include <function>
+#endif
+
+#line 35 "list.mh"
 
 namespace std {
 
@@ -105,9 +109,9 @@ public:
     public:
         iterator_base( ) { }
         iterator_base( DoubleLink *d ) : self( d ) { }
-        bool operator==( iterator_base it )
+        bool operator==( iterator_base const it ) const
             { return( it.self == self ); }
-        bool operator!=( iterator_base it )
+        bool operator!=( iterator_base const it ) const
             { return( it.self != self ); }
     protected:
         DoubleLink *self;
@@ -122,9 +126,9 @@ public:
             : iterator_base( ) { }
         iterator( DoubleLink* d )
             : iterator_base( d ) { }
-        value_type& operator*( )
+        reference operator*( ) const
             { return( static_cast< Node *>( self )->value ); }
-        value_type* operator->( )
+        value_type* operator->( ) const
             { return( &( static_cast< Node * >( self )->value ) ); }
         iterator& operator++( )
             { self = self->fwd; return( *this ); }
@@ -187,8 +191,8 @@ public:
         { return( const_reverse_iterator( const_iterator( sentinel->fwd ) ) ); }
     
     //capacity
-    size_type  size( )  { return( mSize );      }
-    bool       empty( ) { return( mSize == 0 ); }
+    size_type  size( )  const { return( mSize );      }
+    bool       empty( ) const { return( mSize == 0 ); }
 
     //element access
     reference  front( )
@@ -273,6 +277,158 @@ private:
         //moved above constructors for the time being
         //as this seems to stop compiler crashing.
     size_type mSize;
+
+
+    // ---------------------------------------------------------------
+    // SORT Add-ons by Alexey Kovalenko.
+    //
+    // recursive merge sort for double-linked list
+    // time_optimized, not memory-.
+    //
+public:
+    //Sorts self according to the operator <.
+    //sort maintains the relative order of equal elements.
+
+    void sort( )
+    {
+        if( size() > 1 ) _merge_sort( sentinel->fwd, sentinel->bwd,
+                                      size()-1, less< value_type >() );
+    }
+
+    template< class Compare >
+    void sort( Compare comp )
+    {
+        if( size() > 1 ) _merge_sort( sentinel->fwd, sentinel->bwd,
+                                      size()-1, comp);
+    }
+
+private:
+    // internal sort module
+    template< class Compare >
+    void _merge_sort( DoubleLink * first, DoubleLink * last,
+                      size_type _distance, Compare comp )
+    // first, last - pointers in chain
+    // _distance - internal value, distance between first and last,
+    //             for first call, it's a size()-1
+    // comp - compare function, usually less< value_type >
+    //
+    // _distance introduced for simplification of calculating the middle of
+    // given list's range. I's number of steps to go from first to last.
+    // 1 element  in range - _distance is 0
+    // 2 elements in range - _distance is 1
+    // etc
+    //
+    // Here we can't make inexpensive check, what _distance
+    // corresponds with (last - first).
+    // So, using guard check in loop :(
+    //
+    {
+        if( first != last ) // is it one-element list?
+        {
+            // anchors beyond list borders.
+            DoubleLink * first_bwd = first->bwd;
+            DoubleLink * last_fwd = last->fwd;
+            DoubleLink * middle = first;
+            DoubleLink * l2begin = NULL;
+            size_type middle_pos = _distance / 2;
+            
+            // meaning middle = (first + last) / 2
+            
+            // 2 elements: _distance == 1
+            // middle_pos == 0
+            // middle == first
+            
+            // 3 elements: _distance == 2
+            // middle_pos == 1
+            // middle == first+1
+            
+            // 4 elements: _distance == 3
+            // middle_pos == 1
+            // middle == first+1
+            
+            // etc.
+            // moving throw links
+            while( ( middle_pos >= 1) && (middle != last) ) {
+                middle = middle->fwd;
+                middle_pos-=1;
+            }
+            // Here middle_pos may be not zero. It means, what rounding errors make
+            // such binary cut innacurate. Redo it more nicely.
+            if( middle_pos ) {
+                _distance = _distance / 2 - middle_pos;
+                middle_pos = _distance / 2;
+                middle = first;
+                // moving throw links. Again.
+                while( ( middle_pos >= 1) && (middle != last) ) {
+                    middle = middle->fwd;
+                    middle_pos-=1;
+                }
+            }
+    
+            if( _distance > 0 ) {
+                // two recursive calls for two subranges
+                l2begin = middle->fwd;
+                _merge_sort(first, middle, (size_type)_distance/2, comp );
+                middle = l2begin->bwd; // can change
+                _merge_sort( l2begin, last,(size_type) (_distance - _distance/2 - 1), comp);
+                //l2begin = middle->fwd;// can change
+                first = first_bwd->fwd; // can change
+                last = last_fwd->bwd;   // can change
+            }
+            _merge_lists( first, middle, /*middle->fwd,*/ last, comp );
+        }
+        return;
+    };
+    
+    //
+    // merge two ajacent sorted ranges in one sorted
+    // first is start, middle is end of first subrange (so as middle->fwd is start of
+    // other subrange), last is end.
+    //
+    template< class Compare >
+    void _merge_lists( DoubleLink * first, DoubleLink * middle,
+                       DoubleLink * last, Compare comp )
+    {
+        DoubleLink *list1 = first;
+        DoubleLink *list2 = middle->fwd;
+        DoubleLink *list2end = last->fwd;
+        DoubleLink *temp_l2next = NULL;
+        
+        if( first == last ) return; /* just guard for 1-element lists */
+        
+        //compare elements on both lists as long as possible.
+        do{ // while( (list2 != list2end)  && (list1 != list2) )
+            while( !comp( static_cast< Node * >( list2 )->value,
+                          static_cast< Node * >( list1 )->value ) ) {
+                list1 = list1->fwd;
+                if( list1 == list2 ) return;
+            }
+            
+            // *list2 is less than *list1
+            // move *list2 _before_ *list1
+            temp_l2next = list2->fwd; // store list2 next value
+            if( list1->fwd == list2 ) { // ajacent list elements
+                list2->bwd      = list1->bwd;
+                list1->bwd->fwd = list2;
+                list2->fwd->bwd = list1;
+                list1->fwd      = list2->fwd;
+                list1->bwd      = list2;
+                list2->fwd      = list1;
+            }else{ // non-ajacent elements
+                list2->bwd->fwd = list2->fwd;
+                list2->fwd->bwd = list2->bwd;
+                list1->bwd->fwd = list2;
+                list2->bwd      = list1->bwd;
+                list2->fwd      = list1;
+                list1->bwd      = list2;
+            } // non-ajacent
+            list2 = temp_l2next;
+        }while( (list2 != list2end) && (list1 != list2) /*guards*/ &&
+                (list2 != sentinel) && (list1 != sentinel) );
+        return;
+    };
+    // end of sort code by Alexey Kovalenko.
+    // ---------------------------------------------------------------
 };
 
 /* ------------------------------------------------------------------

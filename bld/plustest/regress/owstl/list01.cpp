@@ -2,7 +2,7 @@
 *
 *                            Open Watcom Project
 *
-*  Copyright (c) 2004-2006 The Open Watcom Contributors. All Rights Reserved.
+*  Copyright (c) 2004-2008 The Open Watcom Contributors. All Rights Reserved.
 *
 *  ========================================================================
 *
@@ -31,8 +31,10 @@
 #include <algorithm>
 #include <iostream>
 #include <list>
+#include <cstdlib>
 #include "sanity.cpp"
 #include "allocxtr.hpp"
+
 
 /* ------------------------------------------------------------------
  * construct_test()
@@ -663,6 +665,152 @@ bool allocator_test( )
     return( true );
 }
 
+/* ------------------------------------------------------------------
+ * sort_test
+ * test sort function
+ */
+// helper for sort tests
+// check ordered with operator<
+template< class T >
+bool chk_sorted( T const & lst )
+{
+    T::const_iterator it,nit;
+    it = lst.begin();
+    nit = it;
+    ++nit;
+    for( ; nit != lst.end(); ++it, ++nit ){
+        if( *nit < *it ) return( false );
+    }
+    return( true );
+}
+
+// quick and nasty helper class for sort test
+// used for checking sort is stable
+struct MyPair{
+    int x;
+    int y;
+    MyPair( int xx, int yy ) : x(xx), y(yy) {}
+    MyPair( MyPair const & o ) : x(o.x), y(o.y) {}
+    bool operator==( MyPair const & o ) { return( x == o.x ); }
+};
+bool operator<( MyPair const & t, MyPair const & o ) { return( t.x < o.x ); }
+
+
+bool sort_test()
+{
+    typedef class std::list<int> li_t;
+    li_t lst;
+    
+    // check some special cases
+    
+    // empty
+    lst.sort();
+    if( INSANE( lst ) || !lst.empty() ) FAIL
+    
+    // single element
+    lst.push_back( 99 );
+    lst.sort();
+    if( INSANE( lst ) || lst.size() != 1 || lst.front() != 99 ) FAIL
+    lst.clear();
+    
+    // try all combinations of 3 numbers
+    // 1
+    lst.push_back( 1 );
+    lst.push_back( 2 );
+    lst.push_back( 3 );
+    lst.sort();
+    if( INSANE( lst ) || lst.size() != 3 || !chk_sorted(lst) ) FAIL
+    lst.clear();
+    // 2
+    lst.push_back( 1 ) ;
+    lst.push_back( 3 ) ;
+    lst.push_back( 2 ) ;
+    lst.sort();
+    if( INSANE( lst ) || lst.size() != 3 || !chk_sorted(lst) ) FAIL
+    lst.clear();
+    // 3
+    lst.push_back( 2 ) ;
+    lst.push_back( 1 ) ;
+    lst.push_back( 3 ) ;
+    lst.sort();
+    if( INSANE( lst ) || lst.size() != 3 || !chk_sorted(lst) ) FAIL
+    lst.clear();
+    // 4
+    lst.push_back( 2 ) ;
+    lst.push_back( 3 ) ;
+    lst.push_back( 1 ) ;
+    lst.sort();
+    if( INSANE( lst ) || lst.size() != 3 || !chk_sorted(lst) ) FAIL
+    lst.clear();
+    // 5
+    lst.push_back( 3 ) ;
+    lst.push_back( 1 ) ;
+    lst.push_back( 2 ) ;
+    lst.sort();
+    if( INSANE( lst ) || lst.size() != 3 || !chk_sorted(lst) ) FAIL
+    lst.clear();
+    // 6
+    lst.push_back( 3 ) ;
+    lst.push_back( 2 ) ;
+    lst.push_back( 1 ) ;
+    lst.sort();
+    if( INSANE( lst ) || lst.size() != 3 || !chk_sorted(lst) ) FAIL
+    lst.clear();
+
+    // hit it with a load of random numbers
+    int const rand_size = 16383;
+    for( int i = 0; i < rand_size; i++ ){
+        lst.push_back( std::rand() );
+    }
+    lst.sort();
+    if( INSANE( lst ) || lst.size() != rand_size || !chk_sorted(lst) ) FAIL
+    lst.clear();
+
+    // test the version that takes a functor
+    for( int i = 0; i < rand_size; i++ ){
+        lst.push_back( std::rand() );
+    }
+    lst.sort( std::greater<int>() );
+    lst.reverse();
+    if( INSANE( lst ) || lst.size() != rand_size || !chk_sorted(lst) ) FAIL
+    lst.clear();
+    
+    // test sort is stable
+    std::list< MyPair > l2;
+    int c;
+    // build array of random numbers
+    for( c = 0; c < 10001; ){
+        int r = std::rand() % 15;
+        if( r == 7 ){
+            // 7s are special, second value ascends and 
+            // should stay in that order after sort
+            l2.push_back( MyPair( 7, c ) ); 
+            c++;
+        }else{
+            l2.push_back( MyPair( r, 0 ) );
+        }
+    }
+    l2.sort();
+    if( INSANE( l2 ) ) FAIL
+    c = 0;
+    int last = l2.front().x;
+    while( !l2.empty()){
+        // check in sorted order
+        if( l2.front().x < last ) FAIL 
+        last = l2.front().x;
+        // check 7s still in order
+        if( l2.front().x == 7 ){
+            if( l2.front().y != c ) FAIL
+            c++;
+        }
+        l2.pop_front();
+    }
+    // end stable test
+    
+    return( true );
+}
+
+
 int main( )
 {
     int rc = 0;
@@ -686,6 +834,7 @@ int main( )
         if( !reverse_test( )          || !heap_ok( "t14" ) ) rc = 1;
         if( !merge_test( )            || !heap_ok( "t15" ) ) rc = 1;
         if( !allocator_test( )        || !heap_ok( "t16" ) ) rc = 1;
+        if( !sort_test( )             || !heap_ok( "t17" ) ) rc = 1;
     }
     catch( ... ) {
         std::cout << "Unexpected exception of unexpected type.\n";
