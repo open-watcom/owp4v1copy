@@ -102,6 +102,7 @@ void CoolRandom::init (RNG_TYPE rng) {
       ix2 = (MULT2*ix2+INCR2) % MOD2;           // Calculate 2nd deviate
       this->buffer[i] = (ix1+ix2*RMOD2)*RMOD1;  // Fill random cache
     }
+    this->buffer[0] = 0.5; // Avoid uninited data to work around buggy algorithm
     break;
 
   case SUBTRACTIVE:
