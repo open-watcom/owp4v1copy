@@ -234,6 +234,7 @@ base_headers =       &
         winresrc.h   &
         winscard.h   &
         winsmcrd.h   &
+        winsnmp.h    &
         winsock.h    &
         winsock2.h   &
         winspool.h   &
