@@ -222,6 +222,7 @@ base_headers =       &
         winefs.h     &
         winerror.h   &
         wingdi.h     &
+        wininet.h    &
         winioctl.h   &
         winldap.h    &
         winnetwk.h   &
