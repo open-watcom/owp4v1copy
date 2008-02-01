@@ -135,3 +135,9 @@ source\diag0012.c(39): Note! I2003: source conversion type is 'void __far *'
 source\diag0012.c(39): Note! I2004: target conversion type is 'struct HMENU__ __near const **'
 source\diag0012.c(39): Note! I2002: 'foo' defined in: source\diag0012.c(15)
 source\diag0013.c(12): Error! E1034: Symbol 'foo' already defined
+source\diag0014.c(13): Warning! W107: Missing return value for function 'fn1'
+source\diag0014.c(17): Warning! W107: Missing return value for function 'fn2'
+source\diag0014.c(27): Warning! W201: Unreachable code
+source\diag0014.c(35): Warning! W107: Missing return value for function 'fn5'
+source\diag0014.c(53): Warning! W201: Unreachable code
+source\diag0014.c(62): Warning! W107: Missing return value for function 'fn8'
