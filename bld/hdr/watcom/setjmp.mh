@@ -29,19 +29,13 @@ _WCRTLINK extern void longjmp( jmp_buf __env, int __val );
  #define setjmp(__env)  _setjmp(__env)
 #endif
 
-#if defined(__PPC__)
-#elif defined(__AXP__)
-#elif defined(__MIPS__)
- #pragma aux longjmp __aborts;
+#if defined(__I86__)
+ #pragma aux _setjmp __modify [__8087];
 #elif defined(__386__)
  #pragma aux _setjmp __parm __caller [__eax] __modify [__8087];
- #ifndef __SW_3R
-  #pragma aux longjmp __aborts;
- #endif
-#else
- #pragma aux _setjmp __modify [__8087];
- #pragma aux longjmp __aborts;
 #endif
+
+#pragma aux longjmp __aborts;
 
 :segment QNX | LINUX
 :include unixext.sp
