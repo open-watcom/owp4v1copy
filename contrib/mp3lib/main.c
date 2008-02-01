@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "mp3dec.h"
+#include "internal.h"
 
 extern void audio_write_wav( uint32_t *samples, uint32_t nsamples, int sample_rate );
 extern void audio_write( uint32_t *samples, uint32_t nsamples, int sample_rate );
