@@ -2220,7 +2220,7 @@ local TREEPTR GenFuncCall( TREEPTR last_parm )
     }
     tree = CallNode( functree, tree, func_result );
     if( ! DeadCode ) {                          /* 09-apr-93 */
-        if( functree->op.opr == OPR_PUSHADDR ) {
+        if( functree->op.opr == OPR_FUNCNAME ) {
             CompFlags.pending_dead_code |=
                         FunctionAborts( &sym, functree->op.sym_handle );
         }

@@ -1435,7 +1435,7 @@ void Statement( void )
         }
     }
     if( !return_info.with_expr ) {   /* no return values present */
-        if( !CurFunc->naked ) {
+        if( !DeadCode && !CurFunc->naked ) {
             ChkRetValue();
         }
     } else if( ! return_at_outer_level ) {              /* 28-feb-92 */
