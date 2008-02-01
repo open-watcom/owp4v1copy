@@ -1,8 +1,10 @@
 LIBRARY WS2_32.DLL
 EXPORTS
+WPUCompleteOverlappedRequest
 WSAAccept
 WSAAddressToStringA
 WSAAddressToStringW
+WSAAdvertiseProvider
 WSAAsyncGetHostByAddr
 WSAAsyncGetHostByName
 WAAAsyncGetProtoByName
@@ -52,6 +54,7 @@ WSANSPIoctl
 WSANtohl
 WSANtohs
 WSAPoll
+WSAProviderCompleteAsyncCall
 WSAProviderConfigChange
 WSARecv
 WSARecvDisconnect
@@ -72,8 +75,23 @@ WSASocketW
 WSAStartup
 WSAStringToAddressA
 WSAStringToAddressW
+WSAUnadvertiseProvider
 WSAUnhookBlockingHost
 WSAWaitForMultipleEvents
+WSCDeinstallProvider
+WSCEnableNSProvider
+WSCEnumProtocols
+WSCGetApplicationCategory
+WSCGetProviderInfo
+WSCGetProviderPath
+WSCInstallNameSpace
+WSCInstallNameSpaceEx
+WSCInstallProvider
+WSCInstallProviderAndChains
+WSCSetApplicationCategory
+WSCSetProviderInfo
+WSCUnInstallNameSpace
+WSCUpdateProvider
 __WSAFDIsSet
 accept
 bind

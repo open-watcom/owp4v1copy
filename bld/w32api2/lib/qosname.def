@@ -1,0 +1,4 @@
+LIBRARY QOSNAME.DLL
+EXPORTS
+WSCInstallQOSTemplate
+WSCRemoveQOSTemplate

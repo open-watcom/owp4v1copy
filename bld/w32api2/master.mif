@@ -244,6 +244,7 @@ base_headers =       &
         winuser.rh   &
         winver.h     &
         ws2def.h     &
+        ws2spi.h     &
         wtypes.h
 
 directx_headers =    &
