@@ -38,6 +38,7 @@ _WCRTDATA extern char           *sys_errlist[]; /* strerror error message table 
 #define _sys_errlist            sys_errlist
 #endif
 
-_WCRTLINK char * (*__get_sys_errlist_ptr( void ))[] {
-    return &_sys_errlist;
+_WCRTLINK char *(*__get_sys_errlist_ptr( void ))[]
+{
+    return( &_sys_errlist );
 }

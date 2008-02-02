@@ -186,6 +186,5 @@ ustrstr_postopts =-os
 ustrtok_postopts =-os
 ustrcmp_postopts =-os
 ustrupr_postopts =-os
-ustrerrp_postopts=-os
 uvsprint_postopts=-os
 ubprintf_postopts=-os

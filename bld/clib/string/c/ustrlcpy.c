@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of strlcpy().
+* Description:  Wide-character version of strlcpy().
 *
 ****************************************************************************/
 

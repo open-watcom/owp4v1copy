@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of _fstrpbrk() - far strpbrk().
 *
 ****************************************************************************/
 
@@ -41,8 +40,8 @@
 
 _WCRTLINK char _WCFAR *_fstrpbrk( const char _WCFAR *str, const char _WCFAR *charset )
 {
-    unsigned char tc;
-    unsigned char vector[32];
+    unsigned char   tc;
+    unsigned char   vector[32];
 
     __fsetbits( vector, charset );
     for( ; tc = *str; ++str ) {

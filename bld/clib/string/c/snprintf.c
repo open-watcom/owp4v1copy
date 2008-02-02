@@ -65,11 +65,11 @@ static void __SLIB_CALLBACK buf_count_putc( SPECS __SLIB *specs, int op_char )
 }
 
 
-_WCRTLINK int __F_NAME(vsnprintf,vsnwprintf) ( CHAR_TYPE *s, size_t bufsize,
-                const CHAR_TYPE *format, va_list arg)
+_WCRTLINK int __F_NAME(vsnprintf,vsnwprintf)( CHAR_TYPE *s, size_t bufsize,
+                                              const CHAR_TYPE *format, va_list arg )
 {
-    register int            len;
-    auto struct buf_limit   bufinfo;
+    int                 len;
+    struct buf_limit    bufinfo;
 
     bufinfo.bufptr  = s;
     bufinfo.bufsize = bufsize - 1;
@@ -83,10 +83,10 @@ _WCRTLINK int __F_NAME(vsnprintf,vsnwprintf) ( CHAR_TYPE *s, size_t bufsize,
 }
 
 
-_WCRTLINK int __F_NAME(snprintf,snwprintf) ( CHAR_TYPE *dest, size_t bufsize,
-                const CHAR_TYPE *format, ... )
+_WCRTLINK int __F_NAME(snprintf,snwprintf)( CHAR_TYPE *dest, size_t bufsize,
+                                            const CHAR_TYPE *format, ... )
 {
-    auto va_list    args;
+    va_list         args;
 
     va_start( args, format );
     return( __F_NAME(vsnprintf,vsnwprintf)( dest, bufsize, format, args ) );

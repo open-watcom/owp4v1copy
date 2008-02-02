@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of strpbrk() and wcspbrk().
 *
 ****************************************************************************/
 
@@ -45,8 +44,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strpbrk,wcspbrk) ( const CHAR_TYPE *str, const CHA
 {
 #if defined(__WIDECHAR__)
 
-    const CHAR_TYPE             *p1;
-    const CHAR_TYPE             *p2;
+    const CHAR_TYPE     *p1;
+    const CHAR_TYPE     *p2;
     CHAR_TYPE           tc1;
     CHAR_TYPE           tc2;
     size_t              len;
@@ -54,15 +53,17 @@ _WCRTLINK CHAR_TYPE *__F_NAME(strpbrk,wcspbrk) ( const CHAR_TYPE *str, const CHA
     len = 0;
     for( p1 = str; tc1 = *p1; p1++, len++ ) {
         for( p2 = charset; tc2 = *p2; p2++ ) {
-            if( tc1 == tc2 ) break;
+            if( tc1 == tc2 )
+                break;
         }
-        if( tc2 != NULLCHAR ) return( (CHAR_TYPE *)p1 );
+        if( tc2 != NULLCHAR )
+            return( (CHAR_TYPE *)p1 );
     }
     return( NULL );
 
 #else
-    unsigned char tc;
-    unsigned char vector[32];
+    unsigned char   tc;
+    unsigned char   vector[32];
 
     __setbits( vector, charset );
     for( ; tc = *str; ++str ) {

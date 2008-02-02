@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of _fstrspn() - far strspn().
 *
 ****************************************************************************/
 
@@ -41,15 +40,16 @@
 
 _WCRTLINK size_t _fstrspn( const char _WCFAR *str, const char _WCFAR *charset )
 {
-    unsigned /*char*/ tc;
-    unsigned char vector[32];
-    size_t len;
+    unsigned /*char*/   tc;
+    unsigned char       vector[32];
+    size_t              len;
 
     __fsetbits( vector, charset );
     len = 0;
-    for( ; tc = (unsigned char) *str; ++str, ++len ) {
+    for( ; tc = (unsigned char)*str; ++str, ++len ) {
         /* quit if we find any char not in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) == 0 )  break;
+        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) == 0 )
+            break;
     }
     return( len );
 }

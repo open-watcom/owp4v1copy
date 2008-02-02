@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  RISC style strncpy().
+* Description:  Implementation of strncpy() for RISC architectures.
 *
 ****************************************************************************/
 
@@ -38,18 +38,17 @@ CHAR_TYPE *__F_NAME(strncpy,wcsncpy)( CHAR_TYPE *dest, const CHAR_TYPE *src,
                                       size_t n )
 /**************************************************************************/
 {
-    CHAR_TYPE *         destStart = dest;
-    UINT *              dwSrc;
-    UINT *              dwDest;
+    CHAR_TYPE           *destStart = dest;
+    UINT                *dwSrc;
+    UINT                *dwDest;
     UINT                dword, tmpdword;
     int                 shl, shr;
     int                 offset = OFFSET(dest);
 
-    #ifdef __WIDECHAR__
-        if( offset % 2  ||  OFFSET(src) % 2 ) {
-            return( __simple_wcsncpy( dest, src, n ) );
-        }
-    #endif
+#ifdef __WIDECHAR__
+    if( offset % 2  ||  OFFSET(src) % 2 )
+        return( __simple_wcsncpy( dest, src, n ) );
+#endif
 
     if( n == 0 )  return( destStart );
 
@@ -70,7 +69,7 @@ CHAR_TYPE *__F_NAME(strncpy,wcsncpy)( CHAR_TYPE *dest, const CHAR_TYPE *src,
     }
 
     /*** Copy in aligned 4-byte groups ***/
-    for( ; n>=CHARS_PER_WORD; n-=CHARS_PER_WORD ) {
+    for( ; n >= CHARS_PER_WORD; n -= CHARS_PER_WORD ) {
         /*** Form the dword containing the next four characters ***/
         if( shr == 0 ) {
             tmpdword = *dwSrc++;
@@ -102,7 +101,7 @@ CHAR_TYPE *__F_NAME(strncpy,wcsncpy)( CHAR_TYPE *dest, const CHAR_TYPE *src,
 
     /*** If necessary, pad with more null bytes ***/
     if( n > 0 ) {
-        memset( dest, '\0', n*CHARSIZE );
+        memset( dest, '\0', n * CHARSIZE );
     }
 
     return( destStart );

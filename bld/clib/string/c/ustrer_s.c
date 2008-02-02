@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of strerror_s().
+* Description:  Wide-character version of strerror_s().
 *
 ****************************************************************************/
 

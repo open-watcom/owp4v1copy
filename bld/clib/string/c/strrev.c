@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of strrev() and _wcsrev().
 *
 ****************************************************************************/
 
@@ -132,26 +131,27 @@ extern void fast_rev( char *, char _WCFAR * );
 #endif
 
 
-_WCRTLINK CHAR_TYPE *__F_NAME(strrev,_wcsrev) ( CHAR_TYPE *str ) {  /* reverse characters in string */
-    #if  defined( _M_I86 ) && !defined(__WIDECHAR__)
-        fast_rev( str, (char _WCFAR *) str );
-        return( str );
-    #else
-        CHAR_TYPE       *p1;
-        CHAR_TYPE       *p2;
-        CHAR_TYPE       c1;
-        CHAR_TYPE       c2;
+_WCRTLINK CHAR_TYPE *__F_NAME(strrev,_wcsrev)( CHAR_TYPE *str ) /* reverse characters in string */
+{
+#if  defined( _M_I86 ) && !defined(__WIDECHAR__)
+    fast_rev( str, (char _WCFAR *) str );
+    return( str );
+#else
+    CHAR_TYPE       *p1;
+    CHAR_TYPE       *p2;
+    CHAR_TYPE       c1;
+    CHAR_TYPE       c2;
 
-        p1 = str;
-        p2 = p1 + __F_NAME(strlen,wcslen)( p1 ) - 1;
-        while( p1 < p2 ) {
-            c1 = *p1;
-            c2 = *p2;
-            *p1 = c2;
-            *p2 = c1;
-            ++p1;
-            --p2;
-        }
-        return( str );
-    #endif
+    p1 = str;
+    p2 = p1 + __F_NAME(strlen,wcslen)( p1 ) - 1;
+    while( p1 < p2 ) {
+        c1 = *p1;
+        c2 = *p2;
+        *p1 = c2;
+        *p2 = c1;
+        ++p1;
+        --p2;
+    }
+    return( str );
+#endif
 }

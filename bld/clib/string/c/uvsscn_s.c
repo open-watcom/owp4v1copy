@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of sscanf_s().
+* Description:  Wide-character version of sscanf_s().
 *
 ****************************************************************************/
 

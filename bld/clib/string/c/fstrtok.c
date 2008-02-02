@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of _fstrtok() - far strtok().
 *
 ****************************************************************************/
 
@@ -40,9 +39,9 @@
 
 _WCRTLINK char _WCFAR *_fstrtok( char _WCFAR *str, const char _WCFAR *charset )
 {
-    unsigned /*char*/ tc;
-    unsigned char vector[32];
-    unsigned char _WCFAR *p1;
+    unsigned /*char*/       tc;
+    unsigned char           vector[32];
+    unsigned char _WCFAR    *p1;
 
     _INITNEXTFTOK
     if( str == NULL ) {
@@ -50,11 +49,13 @@ _WCRTLINK char _WCFAR *_fstrtok( char _WCFAR *str, const char _WCFAR *charset )
         if( str == NULL ) return( NULL );
     }
     __fsetbits( vector, charset );
-    for( ; tc = (unsigned char) *str; ++str ) {
+    for( ; tc = (unsigned char)*str; ++str ) {
         /* quit if we find any char not in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) == 0 )  break;
+        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) == 0 )
+            break;
     }
-    if( tc == '\0' ) return( NULL );
+    if( tc == '\0' )
+        return( NULL );
     p1 = str;
     for( ; tc = *p1; ++p1 ) {
         /* quit when we find any char in charset */

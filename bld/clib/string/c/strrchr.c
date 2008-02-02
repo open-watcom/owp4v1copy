@@ -90,17 +90,18 @@ extern  char *_fast_strrchr( const char _WCFAR *, char );
 #else
  _WCRTLINK CHAR_TYPE *__F_NAME(strrchr,wcsrchr)( const CHAR_TYPE *s, INTCHAR_TYPE c )
 #endif
-    {
+{
 #if defined( _M_I86 ) && !defined(__WIDECHAR__)
-        return( _fast_strrchr( s, c ) );
+    return( _fast_strrchr( s, c ) );
 #else
-        CHAR_TYPE *p;
-        CHAR_TYPE cc = c;
+    CHAR_TYPE   *p;
+    CHAR_TYPE   cc = c;
 
-        p = NULL;       /* assume c will not be found */
-        do {
-            if( *s == cc ) p = (CHAR_TYPE *)s;
-        } while( *s++ != NULLCHAR );
-        return( p );
+    p = NULL;       /* assume c will not be found */
+    do {
+        if( *s == cc )
+            p = (CHAR_TYPE *)s;
+    } while( *s++ != NULLCHAR );
+    return( p );
 #endif
-    }
+}

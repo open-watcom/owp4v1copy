@@ -81,33 +81,36 @@ extern  int     i86_memeq( const char *, const char _WCFAR *, int );
 */
 
 
-_WCRTLINK CHAR_TYPE *__F_NAME(strstr,wcsstr) ( const CHAR_TYPE *s1, const CHAR_TYPE *s2 )
-    {
-        CHAR_TYPE *end_of_s1;
-        size_t s1len, s2len;
+_WCRTLINK CHAR_TYPE *__F_NAME(strstr,wcsstr)( const CHAR_TYPE *s1, const CHAR_TYPE *s2 )
+{
+    CHAR_TYPE       *end_of_s1;
+    size_t          s1len, s2len;
 
-        if( s2[0] == NULLCHAR ) {
-            return( (CHAR_TYPE *)s1 );
-        } else if( s2[1] == NULLCHAR ) {
-            return( __F_NAME(strchr,wcschr)( s1, s2[0] ) );
-        }
-        #ifdef __WIDECHAR__
-            end_of_s1 = (CHAR_TYPE*)s1 + wcslen( s1 );
-        #else
-            end_of_s1 = memchr( s1, NULLCHAR, ~0u );
-        #endif
-        s2len = __F_NAME(strlen,wcslen)( s2 );
-        for(;;) {
-            s1len = end_of_s1 - s1;
-            if( s1len < s2len ) break;
-            #ifdef __WIDECHAR__
-                s1 = wcschr( s1, *s2 );  /* find start of possible match */
-            #else
-                s1 = memchr( s1, *s2, s1len );  /* find start of possible match */
-            #endif
-            if( s1 == NULL ) break;
-            if( memeq( s1, s2, s2len ) ) return( (CHAR_TYPE *)s1 );
-            ++s1;
-        }
-        return( NULL );
+    if( s2[0] == NULLCHAR ) {
+        return( (CHAR_TYPE *)s1 );
+    } else if( s2[1] == NULLCHAR ) {
+        return( __F_NAME(strchr,wcschr)( s1, s2[0] ) );
     }
+#ifdef __WIDECHAR__
+    end_of_s1 = (CHAR_TYPE*)s1 + wcslen( s1 );
+#else
+    end_of_s1 = memchr( s1, NULLCHAR, ~0u );
+#endif
+    s2len = __F_NAME(strlen,wcslen)( s2 );
+    for( ;; ) {
+        s1len = end_of_s1 - s1;
+        if( s1len < s2len )
+            break;
+#ifdef __WIDECHAR__
+        s1 = wcschr( s1, *s2 );  /* find start of possible match */
+#else
+        s1 = memchr( s1, *s2, s1len );  /* find start of possible match */
+#endif
+        if( s1 == NULL )
+            break;
+        if( memeq( s1, s2, s2len ) )
+            return( (CHAR_TYPE *)s1 );
+        ++s1;
+    }
+    return( NULL );
+}

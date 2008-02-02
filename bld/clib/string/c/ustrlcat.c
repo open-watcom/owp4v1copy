@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of strlcat().
+* Description:  Wide-character version of strlcat().
 *
 ****************************************************************************/
 

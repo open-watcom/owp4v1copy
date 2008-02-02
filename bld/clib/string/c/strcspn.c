@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of strcspn() and wcscspn().
 *
 ****************************************************************************/
 
@@ -43,12 +42,12 @@
 */
 
 
-_WCRTLINK size_t __F_NAME(strcspn,wcscspn) ( const CHAR_TYPE *str, const CHAR_TYPE *charset )
+_WCRTLINK size_t __F_NAME(strcspn,wcscspn)( const CHAR_TYPE *str, const CHAR_TYPE *charset )
 {
 #if defined(__WIDECHAR__)
 
-    const CHAR_TYPE             *p1;
-    const CHAR_TYPE             *p2;
+    const CHAR_TYPE     *p1;
+    const CHAR_TYPE     *p2;
     CHAR_TYPE           tc1;
     CHAR_TYPE           tc2;
     size_t              len;
@@ -56,22 +55,25 @@ _WCRTLINK size_t __F_NAME(strcspn,wcscspn) ( const CHAR_TYPE *str, const CHAR_TY
     len = 0;
     for( p1 = str; tc1 = *p1; p1++, len++ ) {
         for( p2 = charset; tc2 = *p2; p2++ ) {
-            if( tc1 == tc2 ) break;
+            if( tc1 == tc2 )
+                break;
         }
-        if( tc2 != NULLCHAR ) break;
+        if( tc2 != NULLCHAR )
+            break;
     }
     return( len );
 
 #else
-    unsigned /*char*/ tc;
-    unsigned char vector[32];
-    size_t len;
+    unsigned /*char*/   tc;
+    unsigned char       vector[32];
+    size_t              len;
 
     __setbits( vector, charset );
     len = 0;
-    for( ; tc = (unsigned char) *str; ++len, ++str ) {
+    for( ; tc = (unsigned char)*str; ++len, ++str ) {
         /* quit if we find any char in charset */
-        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) != 0 )  break;
+        if( ( vector[ tc >> 3 ] & _Bits[ tc & 0x07 ] ) != 0 )
+            break;
     }
     return( len );
 #endif

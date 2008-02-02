@@ -78,4 +78,3 @@ _WCRTLINK errno_t __F_NAME(strcat_s,wcscat_s)( CHAR_TYPE * __restrict s1,
     }
     return( rc );
 }
-

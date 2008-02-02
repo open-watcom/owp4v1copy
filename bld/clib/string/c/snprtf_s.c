@@ -64,7 +64,7 @@ static void __SLIB_CALLBACK buf_putc( SPECS __SLIB *specs, int op_char )
 _WCRTLINK int __F_NAME(snprintf_s,snwprintf_s)( CHAR_TYPE * __restrict s, rsize_t n,
                                           const CHAR_TYPE * __restrict format, ... )
 {
-    va_list    arg;
+    va_list             arg;
     struct buf_limit    info;
     const char          *msg;
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of strncmp() and wcsncmp().
 *
 ****************************************************************************/
 
@@ -85,20 +84,23 @@ extern int _fast_strncmp( const char *, const char _WCFAR *, size_t );
 #else
  _WCRTLINK int __F_NAME(strncmp,wcsncmp)( const CHAR_TYPE *s, const CHAR_TYPE *t, size_t n )
 #endif
-    {
+{
 #if defined( _M_I86 ) && !defined(__WIDECHAR__)
-        if( n ) {
-            return( _fast_strncmp( s, t, n ) );
-        }
-        return( 0 );
+    if( n )
+        return( _fast_strncmp( s, t, n ) );
+
+    return( 0 );
 #else
-        for(;;) {
-            if( n == 0 )     return( 0 );       /* equal */
-            if( *s != *t )   return( *s - *t ); /* less than or greater than */
-            if( *s == NULLCHAR ) return( 0 );       /* equal */
-            ++s;
-            ++t;
-            --n;
-        }
-#endif
+    for( ;; ) {
+        if( n == 0 )
+            return( 0 );       /* equal */
+        if( *s != *t )
+            return( *s - *t ); /* less than or greater than */
+        if( *s == NULLCHAR )
+            return( 0 );       /* equal */
+        ++s;
+        ++t;
+        --n;
     }
+#endif
+}

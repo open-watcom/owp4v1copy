@@ -116,10 +116,11 @@ extern  char * _scan1();
 #else
  _WCRTLINK CHAR_TYPE *__F_NAME(strchr,wcschr)( const CHAR_TYPE *s, INTCHAR_TYPE c )
 #endif
-    {
-        CHAR_TYPE cc = c;
-        do {
-            if( *s == cc ) return( (CHAR_TYPE *)s );
-        } while( *s++ != NULLCHAR );
-        return( NULL );
-    }
+{
+    CHAR_TYPE   cc = c;
+    do {
+        if( *s == cc )
+            return( (CHAR_TYPE *)s );
+    } while( *s++ != NULLCHAR );
+    return( NULL );
+}

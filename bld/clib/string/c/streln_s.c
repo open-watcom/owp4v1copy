@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of strerrorlen_s().
+* Description:  Implementation of strerrorlen_s() - safe strerrorlen().
 *
 ****************************************************************************/
 
@@ -38,7 +38,6 @@
 
 
 _WCRTLINK size_t __F_NAME(strerrorlen_s,wcserrorlen_s)( errno_t errnum )
-/************************************************************************/
 {
     size_t  m = 0;
     char    *msg;

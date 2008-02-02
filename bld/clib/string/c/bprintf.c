@@ -24,17 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  This module supports formatted output to a character buffer.
-*               Both character and wide character formatting are included.
-*       For added library granularity, this module could be split
-*       into two, with "bprintf" functions in one file and the
-*       "snprintf" functions in another.
-*
-*       C library functions:
-*       _bprintf, _vbprintf
-*       _bwprintf, _vbwprintf
-*       _snprintf, _snwprintf
-*       _vsnprintf, _vsnwprintf
+* Description:  Implementation of _bprintf() and _snprintf().
 *
 ****************************************************************************/
 
@@ -71,8 +61,8 @@ static void __SLIB_CALLBACK buf_putc( SPECS __SLIB *specs, int op_char )
 _WCRTLINK int __F_NAME(_vbprintf,_vbwprintf) ( CHAR_TYPE *s, size_t bufsize,
         const CHAR_TYPE *format, va_list arg)
 {
-    register int            len;
-    auto struct buf_limit   bufinfo;
+    int                     len;
+    struct buf_limit        bufinfo;
     slib_callback_t         *tmp;
 
     bufinfo.bufptr  = s;
@@ -92,7 +82,7 @@ _WCRTLINK int __F_NAME(_vbprintf,_vbwprintf) ( CHAR_TYPE *s, size_t bufsize,
 _WCRTLINK int __F_NAME(_bprintf,_bwprintf) ( CHAR_TYPE *dest, size_t bufsize,
             const CHAR_TYPE *format, ... )
 {
-    auto va_list    args;
+    va_list     args;
 
     va_start( args, format );
     return( __F_NAME(_vbprintf,_vbwprintf)( dest, bufsize, format, args ) );
@@ -105,8 +95,8 @@ _WCRTLINK int __F_NAME(_bprintf,_bwprintf) ( CHAR_TYPE *dest, size_t bufsize,
 _WCRTLINK int __F_NAME(_vsnprintf,_vsnwprintf) ( CHAR_TYPE *s, size_t bufsize,
         const CHAR_TYPE *format, va_list arg)
 {
-    register int            len;
-    auto struct buf_limit   bufinfo;
+    int                     len;
+    struct buf_limit        bufinfo;
     slib_callback_t         *tmp;
 
     bufinfo.bufptr  = s;
@@ -132,7 +122,7 @@ _WCRTLINK int __F_NAME(_vsnprintf,_vsnwprintf) ( CHAR_TYPE *s, size_t bufsize,
 _WCRTLINK int __F_NAME(_snprintf,_snwprintf) ( CHAR_TYPE *dest, size_t bufsize,
             const CHAR_TYPE *format, ... )
 {
-    auto va_list    args;
+    va_list     args;
 
     va_start( args, format );
     return( __F_NAME(_vsnprintf,_vsnwprintf)( dest, bufsize, format, args ) );

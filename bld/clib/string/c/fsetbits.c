@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of __fsetbits() - far __setbits().
 *
 ****************************************************************************/
 
@@ -36,7 +35,7 @@
 
 void __fsetbits( unsigned char _WCFAR *vector, const char _WCFAR *charset )
 {
-    unsigned char c;
+    unsigned char   c;
 
     _fmemset( vector, 0, 32 );
     for( ; c = *charset; ++charset ) {
