@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Test __Init_Argv() and __wInit_Argv().
+* Description:  Test startup and nonlocal goto related processing.
 *
 ****************************************************************************/
 
@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>             /* for EXIT_SUCCESS, etc */
 #include <string.h>             /* For strcmp */
+#include <setjmp.h>
 
 /*
  * The following is abstracted from "widechar.h".
@@ -89,6 +90,29 @@ int NumErrors = 0;                              // number of errors
 
 static void tryanalysis( int line, int hist, const CHAR_TYPE *pgm, const CHAR_TYPE *args,
         int argc, ... );
+
+static void jump_fn( jmp_buf env )
+{
+    longjmp( env, 7 );
+}
+
+static void test_long_jump( int line )
+{
+    volatile int    first_pass;     // volatile is required!
+    jmp_buf         env;
+    int             rc;
+
+    first_pass = 1;
+    rc = setjmp( env );
+    if( first_pass ) {
+        VERIFY( rc == 0 );
+        first_pass = 0;
+        jump_fn( env );
+    } else {
+        VERIFY( rc == 7 );
+    }
+    VERIFY( rc == 7 );
+}
 
 int __F_NAME( main, wmain )( int argc, const CHAR_TYPE * const * const argv )
 {
@@ -157,6 +181,7 @@ int __F_NAME( main, wmain )( int argc, const CHAR_TYPE * const * const argv )
     tryanalysis( __LINE__, 1, TAGSTR( "3 args" ), TAGSTR( "hell\\\"o w\\o\"rld wars" ),
         4, TAGSTR( "hell\"o" ), TAGSTR( "w\\o\"rld" ), TAGSTR( "wars" ) );
 
+    test_long_jump( __LINE__ );
 
     // Print a pass/fail message and quit
     if( NumErrors != 0 ) {
