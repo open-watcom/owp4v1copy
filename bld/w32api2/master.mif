@@ -249,6 +249,7 @@ base_headers =       &
         ws2tcpip.h   &
         wsipx.h      &
         wsnetbs.h    &
+        wtsapi32.h   &
         wtypes.h
 
 directx_headers =    &
