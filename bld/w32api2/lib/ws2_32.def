@@ -1,5 +1,16 @@
 LIBRARY WS2_32.DLL
 EXPORTS
+FreeAddrInfoEx
+FreeAddrInfoExW
+FreeAddrInfoW
+GetAddrInfoExA
+GetAddrInfoExW
+GetAddrInfoW
+GetNameInfoW
+InetNtopW
+InetPtonW
+SetAddrInfoExA
+SetAddrInfoExW
 WPUCompleteOverlappedRequest
 WSAAccept
 WSAAddressToStringA
@@ -97,9 +108,12 @@ accept
 bind
 closesocket
 connect
+freeaddrinfo
+getaddrinfo
 gethostbyaddr
 gethostbyname
 gethostname
+getnameinfo
 getpeername
 getprotobyname
 getprotobynumber
@@ -111,6 +125,8 @@ htonl
 htons
 inet_addr
 inet_ntoa
+inet_ntop
+inet_pton
 ioctlsocket
 listen
 ntohl
