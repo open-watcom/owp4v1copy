@@ -15,6 +15,7 @@ base_headers =       &
         aclui.h      &
         amstream.h   &
         amvideo.h    &
+        audevcod.h   &
         austream.h   &
         basetsd.h    &
         basetyps.h   &
