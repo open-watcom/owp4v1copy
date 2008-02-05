@@ -250,7 +250,9 @@ base_headers =       &
         wsipx.h      &
         wsnetbs.h    &
         wtsapi32.h   &
-        wtypes.h
+        wtypes.h     &
+        xprtdefs.h   &
+        zmouse.h
 
 directx_headers =    &
         d3d.h        &
