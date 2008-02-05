@@ -17,6 +17,7 @@ base_headers =       &
         amvideo.h    &
         audevcod.h   &
         austream.h   &
+        aviriff.h    &
         basetsd.h    &
         basetyps.h   &
         bcrypt.h     &
