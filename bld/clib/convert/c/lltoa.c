@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Long long integer to ASCII conversion routines.
+* Description:  Implementation of lltoa() - convert long long to string.
 *
 ****************************************************************************/
 
@@ -170,43 +170,44 @@ _WCRTLINK CHAR_TYPE *__F_NAME(ulltoa,_ulltow)(
         unsigned long long int value,
         CHAR_TYPE *buffer,
         int radix )
-    {
-        CHAR_TYPE *p = buffer;
-        char *q;
-        unsigned rem;
-        auto char buf[66];      // only holds ASCII so 'char' is OK
+{
+    CHAR_TYPE       *p = buffer;
+    char            *q;
+    unsigned        rem;
+    char            buf[66];    // only holds ASCII so 'char' is OK
 
-        buf[0] = '\0';
-        q = &buf[1];
-        do {
+    buf[0] = '\0';
+    q = &buf[1];
+    do {
 #if defined( _M_IX86 )
-            rem = radix;
-            value = __ulldiv( value, (unsigned _WCNEAR *) &rem );
+        rem = radix;
+        value = __ulldiv( value, (unsigned _WCNEAR *) &rem );
 #else
-            rem = value % radix;
-            value = value / radix;
+        rem = value % radix;
+        value = value / radix;
 #endif
-            *q = __Alphabet[ rem ];
-            ++q;
-        } while( value );
-        while( *p++ = (CHAR_TYPE)*--q );
-        return( buffer );
-    }
+        *q = __Alphabet[ rem ];
+        ++q;
+    } while( value );
+    while( *p++ = (CHAR_TYPE)*--q )
+        ;
+    return( buffer );
+}
 
 
 _WCRTLINK CHAR_TYPE *__F_NAME(lltoa,_lltow)(
         long long int value,
         CHAR_TYPE *buffer,
         int radix )
-    {
-        register CHAR_TYPE *p = buffer;
+{
+    CHAR_TYPE       *p = buffer;
 
-        if( radix == 10 ) {
-            if( value < 0 ) {
-                *p++ = '-';
-                value = -value;
-            }
+    if( radix == 10 ) {
+        if( value < 0 ) {
+            *p++ = '-';
+            value = -value;
         }
-        __F_NAME(ulltoa,_ulltow)( value, p, radix );
-        return( buffer );
     }
+    __F_NAME(ulltoa,_ulltow)( value, p, radix );
+    return( buffer );
+}

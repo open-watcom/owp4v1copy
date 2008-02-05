@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  String to long long conversion routines.
+* Description:  Implementation of strtoll() - convert string to long long.
 *
 ****************************************************************************/
 
@@ -115,7 +115,7 @@ static unsigned long long int _stoll( const CHAR_TYPE *nptr, CHAR_TYPE **endptr,
     startp = p;
     overflow = 0;
     value = 0;
-    for(;;) {
+    for( ;; ) {
         digit = radix_value( *p );
         if( digit >= base )
             break;

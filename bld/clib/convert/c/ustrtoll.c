@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of strtoll().
+* Description:  Wide-character version of strtoll().
 *
 ****************************************************************************/
 

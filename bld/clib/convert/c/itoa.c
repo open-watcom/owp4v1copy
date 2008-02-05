@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of itoa() and utoa().
+* Description:  Implementation of itoa()/utoa() - convert int to string.
 *
 ****************************************************************************/
 

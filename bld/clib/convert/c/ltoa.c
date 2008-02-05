@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of ltoa().
+* Description:  Implementation of ltoa() - convert long to string.
 *
 ****************************************************************************/
 

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  ASCII to long long conversion routine.
+* Description:  Implementation of atoll() - convert string to long long.
 *
 ****************************************************************************/
 
