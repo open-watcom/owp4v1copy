@@ -23,6 +23,7 @@ base_headers =       &
         bcrypt.h     &
         bdatypes.h   &
         cderr.h      &
+        cmnquery.h   &
         comcat.h     &
         commctrl.h   &
         commctrl.rh  &
