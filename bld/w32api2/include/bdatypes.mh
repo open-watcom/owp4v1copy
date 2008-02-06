@@ -1,0 +1,484 @@
+/*
+ *  bdatypes.h  Broadcast Driver Architecture (BDA) types
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _BDATYPES_H_INCLUDED
+#define _BDATYPES_H_INCLUDED
+
+:include readonly.sp
+:include cpluspro.sp
+
+/* Minimum dimension */
+#define MIN_DIMENSION   1
+
+/* BDA template connection */
+typedef struct _BDA_TEMPLATE_CONNECTION {
+    ULONG   FromNodeType;
+    ULONG   FromNodePinType;
+    ULONG   ToNodeType;
+    ULONG   ToNodePinType;
+} BDA_TEMPLATE_CONNECTION;
+typedef BDA_TEMPLATE_CONNECTION *PBDA_TEMPLATE_CONNECTION;
+
+/* BDA template pin joint */
+typedef struct _BDA_TEMPLATE_PIN_JOINT {
+    ULONG   uliTemplateConnection;
+    ULONG   ulcInstancesMax;
+} BDA_TEMPLATE_PIN_JOINT;
+typedef BDA_TEMPLATE_PIN_JOINT  *PBDA_TEMPLATE_PIN_JOINT;
+
+/* BDA event identifiers */
+typedef enum BDA_EVENT_ID {
+    BDA_EVENT_SIGNAL_LOSS               = 0,
+    BDA_EVENT_SIGNAL_LOCK               = 1,
+    BDA_EVENT_DATA_START                = 2,
+    BDA_EVENT_DATA_STOP                 = 3,
+    BDA_EVENT_CHANNEL_ACQUIRED          = 4,
+    BDA_EVENT_CHANNEL_LOST              = 5,
+    BDA_EVENT_CHANNEL_SOURCE_CHANGED    = 6,
+    BDA_EVENT_CHANNEL_ACTIVATED         = 7,
+    BDA_EVENT_CHANNEL_DEACTIVATED       = 8,
+    BDA_EVENT_SUBCHANNEL_ACQUIRED       = 9,
+    BDA_EVENT_SUBCHANNEL_LOST           = 10,
+    BDA_EVENT_SUBCHANNEL_SOURCE_CHANGED = 11,
+    BDA_EVENT_SUBCHANNEL_ACTIVATED      = 12,
+    BDA_EVENT_SUBCHANNEL_DEACTIVATED    = 13,
+    BDA_EVENT_ACCESS_GRANTED            = 14,
+    BDA_EVENT_ACCESS_DENIED             = 15,
+    BDA_EVENT_OFFER_EXTENDED            = 16,
+    BDA_EVENT_PURCHASE_COMPLETED        = 17,
+    BDA_EVENT_SMART_CARD_INSERTED       = 18,
+    BDA_EVENT_SMART_CARD_REMOVED        = 19
+} BDA_EVENT_ID;
+typedef BDA_EVENT_ID    *PBDA_EVENT_ID;
+
+/* Kernel streaming BDA frame information */
+typedef struct tagKS_BDA_FRAME_INFO {
+    ULONG   ExtendedHeaderSize;
+    DWORD   dwFrameFlags;
+    ULONG   ulEvent;
+    ULONG   ulChannelNumber;
+    ULONG   ulSubchannelNumber;
+    ULONG   ulReason;
+} KS_BDA_FRAME_INFO;
+typedef KS_BDA_FRAME_INFO   *PKS_BDA_FRAME_INFO;
+
+/* BDA Ethernet address */
+typedef struct _BDA_ETHERNET_ADDRESS {
+    BYTE    rgbAddress[6];
+} BDA_ETHERNET_ADDRESS;
+typedef BDA_ETHERNET_ADDRESS    *PBDA_ETHERNET_ADDRESS;
+
+/* BDA Ethernet address list */
+typedef struct _BDA_ETHERNET_ADDRESS_LIST {
+    ULONG                   ulcAddresses;
+    BDA_ETHERNET_ADDRESS    rgAddressl[MIN_DIMENSION];
+} BDA_ETHERNET_ADDRESS_LIST;
+typedef BDA_ETHERNET_ADDRESS_LIST   *PBDA_ETHERNET_ADDRESS_LIST;
+
+/* BDA multicast modes */
+typedef enum BDA_MULTICAST_MODE {
+    BDA_PROMISCUOUS_MULTICAST   = 0,
+    BDA_FILTERED_MULTICAST      = 1,
+    BDA_NO_MULTICAST            = 2
+} BDA_MULTICAST_MODE;
+typedef BDA_MULTICAST_MODE  *PBDA_MULTICAST_MODE;
+
+/* BDA IPv4 address */
+typedef struct _BDA_IPv4_ADDRESS {
+    BYTE    rgbAddress[4];
+} BDA_IPv4_ADDRESS;
+typedef BDA_IPv4_ADDRESS    *PBDA_IPv4_ADDRESS;
+
+/* BDA IPv4 address list */
+typedef struct _BDA_IPv4_ADDRESS_LIST {
+    ULONG               ulcAddresses;
+    BDA_IPv4_ADDRESS    rgAddressl[MIN_DIMENSION];
+} BDA_IPv4_ADDRESS_LIST;
+typedef BDA_IPv4_ADDRESS_LIST   *PBDA_IPv4_ADDRESS_LIST;
+
+/* BDA IPv6 address */
+typedef struct _BDA_IPv6_ADDRESS {
+    BYTE    rgbAddress[6];
+} BDA_IPv6_ADDRESS;
+typedef BDA_IPv6_ADDRESS    *PBDA_IPv6_ADDRESS;
+
+/* BDA IPv6 address list */
+typedef struct _BDA_IPv6_ADDRESS_LIST {
+    ULONG               ulcAddresses;
+    BDA_IPv6_ADDRESS    rgAddressl[MIN_DIMENSION];
+} BDA_IPv6_ADDRESS_LIST;
+typedef BDA_IPv6_ADDRESS_LIST   *PBDA_IPv6_ADDRESS_LIST;
+
+/* BDA signal states */
+typedef enum BDA_SIGNAL_STATE {
+    BDA_SIGNAL_UNAVAILABLE  = 0,
+    BDA_SIGNAL_INACTIVE     = 1,
+    BDA_SIGNAL_ACTIVE       = 2
+} BDA_SIGNAL_STATE;
+typedef BDA_SIGNAL_STATE    *PBDA_SIGNAL_STATE;
+
+/* BDA change states */
+typedef enum BDA_CHANGE_STATE {
+    BDA_CHANGES_COMPLETE    = 0,
+    BDA_CHANGES_PENDING     = 1
+} BDA_CHANGE_STATE;
+typedef BDA_CHANGE_STATE    *PBDA_CHANGE_STATE;
+
+/* BDA node descriptor */
+typedef struct _BDANODE_DESCRIPTOR {
+    ULONG   ulBdaNodeType;
+    GUID    guidFunction;
+    GUID    guidName;
+} BDANODE_DESCRIPTOR;
+typedef BDANODE_DESCRIPTOR  *PBDANODE_DESCRIPTOR;
+
+/* BDA table section */
+typedef struct _BDA_TABLE_SECTION {
+    ULONG   ulPrimarySectionId;
+    ULONG   ulSecondarySectionId;
+    ULONG   ulcbSectionLength;
+    ULONG   argbSectionData[MIN_DIMENSION];
+} BDA_TABLE_SECTION;
+typedef BDA_TABLE_SECTION   *PBDA_TABLE_SECTION;
+
+/* Media sample content values */
+typedef enum MEDIA_SAMPLE_CONTENT {
+    MEDIA_TRANSPORT_PACKET  = 0,
+    MEDIA_ELEMENTARY_STREAM = 1,
+    MEDIA_MPEG2_PSI         = 2,
+    MEDIA_TRANSPORT_PAYLOAD = 3
+} MEDIA_SAMPLE_CONTENT;
+
+/* PID map */
+typedef struct {
+    ULONG                   ulPID;
+    MEDIA_SAMPLE_CONTENT    MediaSampleContent;
+} PID_MAP;
+
+/* BDA PID map */
+typedef struct _BDA_PID_MAP {
+    MEDIA_SAMPLE_CONTENT    MediaSampleContent;
+    ULONG                   ulcPIDs;
+    ULONG                   aulPIDs[MIN_DIMENSION];
+} BDA_PID_MAP;
+typedef BDA_PID_MAP *PBDA_PID_MAP;
+
+/* BDA PID unmap */
+typedef struct _BDA_PID_UNMAP {
+    ULONG   ulcPIDs;
+    ULONG   aulPIDs[MIN_DIMENSION];
+} BDA_PID_UNMAP;
+typedef BDA_PID_UNMAP   *PBDA_PID_UNMAP;
+
+/* BDA CA module UI */
+typedef struct _BDA_CA_MODULE_UI {
+    ULONG   ulFormat;
+    ULONG   ulcbDesc;
+    ULONG   ulDesc[MIN_DIMENSION];
+} BDA_CA_MODULE_UI;
+typedef BDA_CA_MODULE_UI    *PBDA_CA_MODULE_UI;
+
+/* BDA program PID list */
+typedef struct _BDA_PROGRAM_PID_LIST {
+    ULONG   ulProgramNumber;
+    ULONG   ulcPIDs;
+    ULONG   ulPID[MIN_DIMENSION];
+} BDA_PROGRAM_PID_LIST;
+typedef BDA_PROGRAM_PID_LIST    *PBDA_PROGRAM_PID_LIST;
+
+/* DVB system types */
+typedef enum DVBSystemType {
+    DVB_Cable       = 0,
+    DVB_Terrestrial = 1,
+    DVB_Satellite   = 2
+} DVBSystemType;
+
+/* BDA channels */
+typedef enum BDA_Channel {
+    BDA_UNDEFINED_CHANNEL   = -1
+} BDA_Channel;
+
+/* Component categories */
+typedef enum ComponentCategory {
+    CategoryNotSet  = -1,
+    CategoryOther   = 0,
+    CategoryVideo   = 1,
+    CategoryAudio   = 2,
+    CategoryText    = 3,
+    CategoryData    = 4
+} ComponentCategory;
+
+/* Component status values */
+typedef enum ComponentStatus {
+    StatusActive        = 0,
+    StatusInactive      = 1,
+    StatusUnavailable   = 2
+} ComponentStatus;
+
+/* MPEG-2 stream types */
+typedef enum MPEG2StreamType {
+    BDA_UNITIALIZED_MPEG2STREAMTYPE = -1,
+    ISO_IEC_11172_2_VIDEO           = 0x01,
+    ISO_IEC_13818_2_VIDEO           = 0x02,
+    ISO_IEC_11172_3_AUDIO           = 0x03,
+    ISO_IEC_13818_3_AUDIO           = 0x04,
+    ISO_IEC_13818_1_PRIVATE_SECTION = 0x05,
+    ISO_IEC_13818_1_PES             = 0x06,
+    ISO_IEC_13522_MHEG              = 0x07,
+    ANNEX_A_DSM_CC                  = 0x08,
+    ITU_T_REC_H_222_1               = 0x09,
+    ISO_IEC_13818_6_TYPE_A          = 0x0A,
+    ISO_IEC_13818_6_TYPE_B          = 0x0B,
+    ISO_IEC_13818_6_TYPE_C          = 0x0C,
+    ISO_IEC_13818_6_TYPE_D          = 0x0D,
+    ISO_IEC_13818_1_AUXILIARY       = 0x0E,
+    USER_PRIVATE                    = 0x10,
+    ISO_IEC_USER_PRIVATE            = 0x80,
+    DOLBY_AC3_AUDIO                 = 0x81
+} MPEG2StreamType;
+
+/* MPEG-2 transport stride */
+typedef struct _MPEG2_TRANSPORT_STRIDE {
+    DWORD   dwOffset;
+    DWORD   dwPacketLength;
+    DWORD   dwStride;
+} MPEG2_TRANSPORT_STRIDE;
+typedef MPEG2_TRANSPORT_STRIDE  *PMPEG2_TRANSPORT_STRIDE;
+
+/* ATSC component type flags */
+typedef enum ATSCComponentTypeFlags {
+    ATSCCT_AC3  = 0x00000001
+} ATSCComponentTypeFlags;
+
+/* Binary convolution code rates */
+typedef enum BinaryConvolutionCodeRate {
+    BDA_BCC_RATE_NOT_SET        = -1,
+    BDA_BCC_RATE_NOT_DEFINED    = 0,
+    BDA_BCC_RATE_1_2            = 1,
+    BDA_BCC_RATE_2_3            = 2,
+    BDA_BCC_RATE_3_4            = 3,
+    BDA_BCC_RATE_3_5            = 4,
+    BDA_BCC_RATE_4_5            = 5,
+    BDA_BCC_RATE_5_6            = 6,
+    BDA_BCC_RATE_5_11           = 7,
+    BDA_BCC_RATE_7_8            = 8,
+    BDA_BCC_RATE_1_4            = 9,
+    BDA_BCC_RATE_1_3            = 10,
+    BDA_BCC_RATE_2_5            = 11,
+    BDA_BCC_RATE_6_7            = 12,
+    BDA_BCC_RATE_8_9            = 13,
+    BDA_BCC_RATE_9_10           = 14,
+    BDA_BCC_RATE_MAX            = 15
+} BinaryConvolutionCodeRate;
+
+/* FEC methods */
+typedef enum FECMethod {
+    BDA_FEC_METHOD_NOT_SET      = -1,
+    BDA_FEC_METHOD_NOT_DEFINED  = 0,
+    BDA_FEC_VITERBI             = 1,
+    BDA_FEC_RS_204_188          = 2,
+    BDA_FEC_LDPC                = 3,
+    BDA_FEC_BCH                 = 4,
+    BDA_FEC_RS_147_130          = 5,
+    BDA_FEC_MAX                 = 6
+} FECMethod;
+
+/* Modulation types */
+typedef enum ModulationType {
+    BDA_MOD_NOT_SET             = -1,
+    BDA_MOD_NOT_DEFINED         = 0,
+    BDA_MOD_16QAM               = 1,
+    BDA_MOD_32QAM               = 2,
+    BDA_MOD_64QAM               = 3,
+    BDA_MOD_80QAM               = 4,
+    BDA_MOD_96QAM               = 5,
+    BDA_MOD_112QAM              = 6,
+    BDA_MOD_128QAM              = 7,
+    BDA_MOD_160QAM              = 8,
+    BDA_MOD_192QAM              = 9,
+    BDA_MOD_224QAM              = 10,
+    BDA_MOD_256QAM              = 11,
+    BDA_MOD_320QAM              = 12,
+    BDA_MOD_384QAM              = 13,
+    BDA_MOD_448QAM              = 14,
+    BDA_MOD_512QAM              = 15,
+    BDA_MOD_640QAM              = 16,
+    BDA_MOD_768QAM              = 17,
+    BDA_MOD_896QAM              = 18,
+    BDA_MOD_1024QAM             = 19,
+    BDA_MOD_QPSK                = 20,
+    BDA_MOD_BPSK                = 21,
+    BDA_MOD_OQPSK               = 22,
+    BDA_MOD_8VSB                = 23,
+    BDA_MOD_16VSB               = 24,
+    BDA_MOD_ANALOG_AMPLITUDE    = 25,
+    BDA_MOD_ANALOG_FREQUENCY    = 26,
+    BDA_MOD_8PSK                = 27,
+    BDA_MOD_RF                  = 28,
+    BDA_MOD_16APSK              = 29,
+    BDA_MOD_32APSK              = 30,
+    BDA_MOD_NBC_QPSK            = 31,
+    BDA_MOD_NBC_8PSK            = 32,
+    BDA_MOD_DIRECTV             = 33,
+    BDA_MOD_MAX                 = 34
+} ModulationType;
+
+/* Scan modulation types */
+typedef enum tagScanModulationTypes {
+    BDA_SCAN_MOD_16QAM      = 0x00000001,
+    BDA_SCAN_MOD_32QAM      = 0x00000002,
+    BDA_SCAN_MOD_64QAM      = 0x00000004,
+    BDA_SCAN_MOD_80QAM      = 0x00000008,
+    BDA_SCAN_MOD_96QAM      = 0x00000010,
+    BDA_SCAN_MOD_112QAM     = 0x00000020,
+    BDA_SCAN_MOD_128QAM     = 0x00000040,
+    BDA_SCAN_MOD_160QAM     = 0x00000080,
+    BDA_SCAN_MOD_192QAM     = 0x00000100,
+    BDA_SCAN_MOD_224QAM     = 0x00000200,
+    BDA_SCAN_MOD_256QAM     = 0x00000400,
+    BDA_SCAN_MOD_320QAM     = 0x00000800,
+    BDA_SCAN_MOD_384QAM     = 0x00001000,
+    BDA_SCAN_MOD_448QAM     = 0x00002000,
+    BDA_SCAN_MOD_512QAM     = 0x00004000,
+    BDA_SCAN_MOD_640QAM     = 0x00008000,
+    BDA_SCAN_MOD_768QAM     = 0x00010000,
+    BDA_SCAN_MOD_896QAM     = 0x00020000,
+    BDA_SCAN_MOD_1024QAM    = 0x00040000,
+    BDA_SCAN_MOD_QPSK       = 0x00080000,
+    BDA_SCAN_MOD_BPSK       = 0x00100000,
+    BDA_SCAN_MOD_OQPSK      = 0x00200000,
+    BDA_SCAN_MOD_8VSB       = 0x00400000,
+    BDA_SCAN_MOD_16VSB      = 0x00800000,
+    BDA_SCAN_MOD_AM_RADIO   = 0x01000000,
+    BDA_SCAN_MOD_FM_RADIO   = 0x02000000,
+    BDA_SCAN_MOD_8PSK       = 0x04000000,
+    BDA_SCAN_MOD_RF         = 0x08000000,
+    ScanModulationTypesMask_MCE_DigitalCable    = BDA_MOD_64QAM | BDA_MOD_256QAM,
+    ScanModulationTypesMask_MCE_TerrestialATSC  = BDA_MOD_8VSB,
+    ScanModulationTypesMask_MCE_AnalogTV        = BDA_MOD_RF,
+    ScanModulationTypesMask_MCE_All_TV          = 0xFFFFFFFF
+} ScanModulationTypes;
+
+/* Spectral inversion values */
+typedef enum SpectralInversion {
+    BDA_SPECTRAL_INVERSION_NOT_SET      = -1,
+    BDA_SPECTRAL_INVERSION_NOT_DEFINED  = 0,
+    BDA_SPECTRAL_INVERSION_AUTOMATIC    = 1,
+    BDA_SPECTRAL_INVERSION_NORMAL       = 2,
+    BDA_SPECTRAL_INVERSION_INVERTED     = 3,
+    BDA_SPECTRAL_INVERSION_MAX          = 4
+} SpectralInversion;
+
+/* Polarisation values */
+typedef enum Polarisation {
+    BDA_POLARISATION_NOT_SET        = -1,
+    BDA_POLARISATION_NOT_DEFINED    = 0,
+    BDA_POLARISATION_LINEAR_H       = 1,
+    BDA_POLARISATION_LINEAR_V       = 2,
+    BDA_POLARISATION_CIRCULAR_L     = 3,
+    BDA_POLARISATION_CIRCULAR_R     = 4,
+    BDA_POLARISATION_MAX            = 5
+} Polarisation;
+
+/* Guard intervals */
+typedef enum GuardInterval {
+    BDA_GUARD_NOT_SET       = -1,
+    BDA_GUARD_NOT_DEFINED   = 0,
+    BDA_GUARD_1_32          = 1,
+    BDA_GUARD_1_16          = 2,
+    BDA_GUARD_1_8           = 3,
+    BDA_GUARD_1_4           = 4,
+    BDA_GUARD_MAX           = 5
+} GuardInterval;
+
+/* Hierarchy alpha values */
+typedef enum HierarchyAlpha {
+    BDA_HALPHA_NOT_SET      = -1,
+    BDA_HALPHA_NOT_DEFINED  = 0,
+    BDA_HALPHA_1            = 1,
+    BDA_HALPHA_2            = 2,
+    BDA_HALPHA_4            = 3,
+    BDA_HALPHA_MAX          = 4
+} HierarchyAlpha;
+
+/* Transmission modes */
+typedef enum TransmissionMode {
+    BDA_XMIT_MODE_NOT_SET           = -1,
+    BDA_XMIT_MODE_NOT_DEFINED       = 0,
+    BDA_XMIT_MODE_2K                = 1,
+    BDA_XMIT_MODE_8K                = 2,
+    BDA_XMIT_MODE_4K                = 3,
+    BDA_XMIT_MODE_2K_INTERLEAVED    = 4,
+    BDA_XMIT_MODE_4K_INTERLEAVED    = 5,
+    BDA_XMIT_MODE_MAX               = 6
+} TransmissionMode;
+
+/* Roll-off values */
+typedef enum RollOff {
+    BDA_ROLL_OFF_NOT_SET        = -1,
+    BDA_ROLL_OFF_NOT_DEFINED    = 0,
+    BDA_ROLL_OFF_20             = 1,
+    BDA_ROLL_OFF_25             = 2,
+    BDA_ROLL_OFF_35             = 3,
+    BDA_ROLL_OFF_MAX            = 4
+} RollOff;
+
+/* Pilot values */
+typedef enum Pilot {
+    BDA_PILOT_NOT_SET       = -1,
+    BDA_PILOT_NOT_DEFINED   = 0,
+    BDA_PILOT_OFF           = 1,
+    BDA_PILOT_ON            = 2,
+    BDA_PILOT_MAX           = 3
+} Pilot;
+
+/* BDA frequencies */
+typedef enum BDA_Frequency {
+    BDA_FREQUENCY_NOT_SET       = -1,
+    BDA_FREQUENCY_NOT_DEFINED   = 0
+} BDA_Frequency;
+
+/* BDA ranges */
+typedef enum BDA_Range {
+    BDA_RANGE_NOT_SET       = -1,
+    BDA_RANGE_NOT_DEFINED   = 0
+} BDA_Range;
+
+/* BDA channel bandwidths */
+typedef enum BDA_Channel_Bandwidth {
+    BDA_CHAN_BANDWIDTH_NOT_SET      = -1,
+    BDA_CHAN_BANDWIDTH_NOT_DEFINED  = 0
+} BDA_Channel_Bandwidth;
+
+/* BDA frequency multipliers */
+typedef enum BDA_Frequency_Multiplier {
+    BDA_FREQUENCY_MULTIPLIER_NOT_SET        = -1,
+    BDA_FREQUENCY_MULTIPLIER_NOT_DEFINED    = 0
+} BDA_Frequency_Multiplier;
+
+/* BDA comparison flags */
+typedef enum BDA_Comp_Flags {
+    BDACOMP_NOT_DEFINED             = 0x00000000,
+    BDACOMP_EXCLUDE_TS_FROM_TR      = 0x00000001,
+    BDACOMP_INCLUDE_LOCATOR_IN_TR   = 0x00000002
+} BDA_Comp_Flags;
+
+/* Application type types */
+typedef enum ApplicationTypeType {
+    SCTE28_ConditionalAccess            = 0,
+    SCTE28_POD_Host_Binding_Information = 1,
+    SCTE28_IPService                    = 2,
+    SCTE28_NetworkInterface_SCTE55_2    = 3,
+    SCTE28_NetworkInterface_SCTE55_1    = 4,
+    SCTE28_CopyProtection               = 5,
+    SCTE28_Diagnostic                   = 6,
+    SCTE28_Undesignated                 = 7
+} ApplicationTypeType;
+
+:include cplusepi.sp
+
+#endif /* _BDATYPES_H_INCLUDED */
+
