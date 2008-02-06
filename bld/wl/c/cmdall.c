@@ -1184,7 +1184,7 @@ bool ProcVersion( void )
     retval = getatol( &value );
     if( retval == ST_NOT_ORDINAL && Token.len == 1 ) {
         FmtData.revision = tolower( *Token.this ) - 'a' + 1;
-    } else if( retval == ST_IS_ORDINAL && value < 27 ) {
+    } else if( retval == ST_IS_ORDINAL && value < 100 ) {
         FmtData.revision = value;
     } else {
         LnkMsg( LOC+LINE+WRN+MSG_VALUE_INCORRECT, "s", "version" );
