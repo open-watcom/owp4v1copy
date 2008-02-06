@@ -56,6 +56,7 @@
 #include "cfheader.h"
 #include "cfparse.h"
 #include "common.h"
+#include "dfinterp.h"
 #include "research.h"
 
 /*  Return values for the verify_ local functions */
@@ -451,22 +452,22 @@ void display_device( cop_device * in_device)
     if( in_device->pauses.startpause == NULL ) puts( "No START Pause" );
     else {
         puts( "START Pause:" );
-        display_hex_block( in_device->pauses.startpause, in_device->pauses.startpause_count );
+        interpret_function( in_device->pauses.startpause );
     }
     if( in_device->pauses.documentpause == NULL ) puts( "No DOCUMENT Pause" );
     else {
         puts( "DOCUMENT Pause:" );
-        display_hex_block( in_device->pauses.documentpause, in_device->pauses.documentpause_count );
+        interpret_function( in_device->pauses.documentpause );
     }
     if( in_device->pauses.docpagepause == NULL ) puts( "No DOCUMENT_PAGE Pause" );
     else {
         puts( "DOCUMENT_PAGE Pause:" );
-        display_hex_block( in_device->pauses.docpagepause, in_device->pauses.docpagepause_count );
+        interpret_function( in_device->pauses.docpagepause );
     }
     if( in_device->pauses.devpagepause == NULL ) puts( "No DEVICE_PAGE Pause" );
     else {
         puts( "DEVICE_PAGE Pause:" );
-        display_hex_block( in_device->pauses.devpagepause, in_device->pauses.devpagepause_count );
+        interpret_function( in_device->pauses.devpagepause );
     }
     printf_s( "Number of Device Fonts: %i\n", in_device->devicefonts.count );
     for( i = 0; i < in_device->devicefonts.count; i++ ) {
@@ -479,7 +480,7 @@ void display_device( cop_device * in_device)
         if( in_device->devicefonts.font[i].fontpause == NULL ) puts( "    No Font Pause" );
         else {
             puts( "    Font Pause:" );
-            display_hex_block( in_device->devicefonts.font[i].fontpause, in_device->devicefonts.font[i].fontpause_count );
+            interpret_function( in_device->devicefonts.font[i].fontpause );
         }
     }
 
@@ -576,7 +577,7 @@ void display_driver( cop_driver * in_driver )
         for( i = 0; i < in_driver->init.start_initblock->count; i++ ) {
             if( in_driver->init.start_initblock->codetext[i].is_fontvalue ) puts( ":FONTVALUE Block:");
             else puts( ":VALUE Block:");
-            display_hex_block( in_driver->init.start_initblock->codetext[i].text, in_driver->init.start_initblock->codetext[i].count );
+            interpret_function( in_driver->init.start_initblock->codetext[i].text );
         }
     }
     puts( "Document :INIT Block:" );
@@ -584,16 +585,16 @@ void display_driver( cop_driver * in_driver )
         for( i = 0; i < in_driver->init.document_initblock->count; i++ ) {
             if( in_driver->init.document_initblock->codetext[i].is_fontvalue ) puts( ":FONTVALUE Block:");
             else puts( ":VALUE Block:");
-            display_hex_block( in_driver->init.document_initblock->codetext[i].text, in_driver->init.document_initblock->codetext[i].count );
+            interpret_function( in_driver->init.document_initblock->codetext[i].text );
         }
     }
     puts( "End :FINISH Block:" );
     if( in_driver->finish.end_finishblock != NULL ) {
-        display_hex_block( in_driver->finish.end_finishblock->text, in_driver->finish.end_finishblock->count );
+        interpret_function( in_driver->finish.end_finishblock->text );
     }
     puts( "Document :FINISH Block:" );
     if( in_driver->finish.document_finishblock != NULL ) {
-        display_hex_block( in_driver->finish.document_finishblock->text, in_driver->finish.document_finishblock->count );
+        interpret_function( in_driver->finish.document_finishblock->text );
     }
     if( in_driver->newline.newlineblock == NULL ) puts( ":NEWLINE Block:");
     else {
@@ -601,17 +602,17 @@ void display_driver( cop_driver * in_driver )
         for( i = 0; i < in_driver->newline.count; i++ ) {
             printf_s( "  Advance: %i\n", in_driver->newline.newlineblock[i].advance );
             if( in_driver->newline.newlineblock[i].text != NULL ) {
-                display_hex_block( in_driver->newline.newlineblock[i].text, in_driver->newline.newlineblock[i].count );
+                interpret_function( in_driver->newline.newlineblock[i].text );
             }
         }
     }
     puts( ":NEWPAGE Block:" );
     if( in_driver->newpage.text != NULL ) {
-        display_hex_block( in_driver->newpage.text, in_driver->newpage.count );
+        interpret_function( in_driver->newpage.text );
     }
     puts( ":HTAB Block:" );
     if( in_driver->htab.text != NULL ) {
-        display_hex_block( in_driver->htab.text, in_driver->htab.count );
+        interpret_function( in_driver->htab.text );
     }
     if( in_driver->fontswitch.fontswitchblock == NULL ) puts( ":FONTSWITCH Block:");
     else {
@@ -620,11 +621,11 @@ void display_driver( cop_driver * in_driver )
             printf_s( "  Type: %s\n", in_driver->fontswitch.fontswitchblock[i].type );
             if( in_driver->fontswitch.fontswitchblock[i].startvalue != NULL ) {
                 puts( "  :STARTVALUE Block:");
-                display_hex_block( in_driver->fontswitch.fontswitchblock[i].startvalue->text, in_driver->fontswitch.fontswitchblock[i].startvalue->count );
+                interpret_function( in_driver->fontswitch.fontswitchblock[i].startvalue->text );
             }
             if( in_driver->fontswitch.fontswitchblock[i].endvalue != NULL ) {
                 puts( "  :ENDVALUE Block:");
-                display_hex_block( in_driver->fontswitch.fontswitchblock[i].endvalue->text, in_driver->fontswitch.fontswitchblock[i].endvalue->count );
+                interpret_function( in_driver->fontswitch.fontswitchblock[i].endvalue->text );
             }
         }
     }
@@ -637,13 +638,13 @@ void display_driver( cop_driver * in_driver )
                 puts( "  No :STARTVALUE Block");
             } else {
                 puts( "  :STARTVALUE Block:");
-                display_hex_block( in_driver->fontstyle.fontstyle[i].startvalue->text, in_driver->fontstyle.fontstyle[i].startvalue->count );
+                interpret_function( in_driver->fontstyle.fontstyle[i].startvalue->text );
             }
             if( in_driver->fontstyle.fontstyle[i].endvalue == NULL ) {
                 puts( "  No :ENDVALUE Block");
             } else {
                 puts( "  :ENDVALUE Block:");
-                display_hex_block( in_driver->fontstyle.fontstyle[i].endvalue->text, in_driver->fontstyle.fontstyle[i].endvalue->count );
+                interpret_function( in_driver->fontstyle.fontstyle[i].endvalue->text );
             }
             if(in_driver->fontstyle.fontstyle[i].lineprocs == NULL ) {
                 puts( "  No :LINEPROC Blocks");
@@ -655,31 +656,31 @@ void display_driver( cop_driver * in_driver )
                         puts( "  No :STARTVALUE Block");
                     } else {
                         puts( "  :STARTVALUE Block:");
-                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].startvalue->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].startvalue->count );
+                        interpret_function( in_driver->fontstyle.fontstyle[i].lineprocs[j].startvalue->text );
                     }
                     if( in_driver->fontstyle.fontstyle[i].lineprocs[j].firstword == NULL ) {
                         puts( "  No :FIRSTWORD Block");
                     } else {
                         puts( "  :FIRSTWORD Block:");
-                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].firstword->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].firstword->count );
+                        interpret_function( in_driver->fontstyle.fontstyle[i].lineprocs[j].firstword->text );
                     }
                     if( in_driver->fontstyle.fontstyle[i].lineprocs[j].startword == NULL ) {
                         puts( "  No :STARTWORD Block");
                     } else {
                         puts( "  :STARTWORD Block");
-                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].startword->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].startword->count );
+                        interpret_function( in_driver->fontstyle.fontstyle[i].lineprocs[j].startword->text );
                     }
                     if( in_driver->fontstyle.fontstyle[i].lineprocs[j].endword == NULL ) {
                         puts( "  No :ENDWORD Block");
                     } else {
                         puts( "  :ENDWORD Block:");
-                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].endword->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].endword->count );
+                        interpret_function( in_driver->fontstyle.fontstyle[i].lineprocs[j].endword->text );
                     }
                     if( in_driver->fontstyle.fontstyle[i].lineprocs[j].endvalue == NULL ) {
                         puts( "  No :ENDVALUE Block");
                     } else {
                         puts( "  :ENDVALUE Block:");
-                        display_hex_block( in_driver->fontstyle.fontstyle[i].lineprocs[j].endvalue->text, in_driver->fontstyle.fontstyle[i].lineprocs[j].endvalue->count );
+                        interpret_function( in_driver->fontstyle.fontstyle[i].lineprocs[j].endvalue->text );
                     }
                 }
             }
@@ -689,28 +690,28 @@ void display_driver( cop_driver * in_driver )
         puts( "No :ABSOLUTEADDRESS Block" );
     } else {
     puts( ":ABSOLUTEADDRESS Block:" );
-        display_hex_block( in_driver->absoluteaddress.text, in_driver->absoluteaddress.count );
+        interpret_function( in_driver->absoluteaddress.text );
     }
     if( in_driver->hline.text == NULL ) {
         puts( "No :HLINE Block" );
     } else {
     puts( ":HLINE Block:" );
         printf_s( "  Thickness:               %i\n", in_driver->hline.thickness );
-        display_hex_block( in_driver->hline.text, in_driver->hline.count );
+        interpret_function( in_driver->hline.text );
     }
     if( in_driver->vline.text == NULL ) {
         puts( "No :VLINE Block" );
     } else {
     puts( ":VLINE Block:" );
         printf_s( "  Thickness:               %i\n", in_driver->vline.thickness );
-        display_hex_block( in_driver->vline.text, in_driver->vline.count );
+        interpret_function( in_driver->vline.text );
     }
     if( in_driver->dbox.text == NULL ) {
         puts( "No :DBOX Block" );
     } else {
     puts( ":DBOX Block:" );
         printf_s( "  Thickness:               %i\n", in_driver->dbox.thickness );
-        display_hex_block( in_driver->dbox.text, in_driver->dbox.count );
+        interpret_function( in_driver->dbox.text );
     }
 
     return;

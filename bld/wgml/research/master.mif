@@ -23,6 +23,7 @@ cf_common_objs = &
             cfheader.obj &
             cmdlhelp.obj &
             common.obj   &
+	    dfinterp.obj &
             lhdirect.obj &
             research.obj &
             swchar.obj
@@ -40,6 +41,7 @@ copp_objs = &
 	    copfon.obj   &
 	    copfunc.obj  &
             common.obj   &
+	    dfinterp.obj &
             research.obj &
             cmdlhelp.obj &
             swchar.obj
