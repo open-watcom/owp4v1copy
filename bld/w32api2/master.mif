@@ -28,6 +28,7 @@ base_headers =       &
         commctrl.h   &
         commctrl.rh  &
         commdlg.h    &
+        control.h    &
         cpl.h        &
         cplext.h     &
         custcntl.h   &
