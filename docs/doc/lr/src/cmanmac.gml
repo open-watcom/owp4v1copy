@@ -355,6 +355,10 @@ contains a value indicating the type of error that has been detected.
 .ix '&*'
 .dm termhi end
 .*
+.dm termnx begin
+.note &*
+.dm termnx end
+.*
 .dm endterm begin
 .endnote
 .dm endterm end
@@ -519,7 +523,7 @@ Prototype in
 .dm class end
 .*
 .dm system begin
-.if '&machsys' eq 'PP' or '&__class' eq 'WIN386' .me
+.if '&__class' eq 'WIN386' .me
 .if '&machsys' eq 'WIN32' .me
 .se *stm=0
 .se *flg=0

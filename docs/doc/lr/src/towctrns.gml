@@ -22,10 +22,10 @@ call to the wide character case mapping function shown.
 .termhd1 Expression
 .termhd2 Equivalent
 .*
-.term towctrans(wc, wctrans("tolower"))
+.termnx towctrans(wc, wctrans("tolower"))
 towlower(wc)
 .*
-.term towctrans(wc, wctrans("toupper"))
+.termnx towctrans(wc, wctrans("toupper"))
 towupper(wc)
 .*
 .endterm

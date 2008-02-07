@@ -16,21 +16,21 @@ The constructed value is affected by the
 category of the current locale; the constructed value becomes
 indeterminate if the category's setting is changed.
 .np
-The eleven strings listed below are valid in all locales as
+The twelve strings listed below are valid in all locales as
 .arg property
 arguments to the &func function.
 .begterm 10
 .termhd1 Constant
 .termhd2 Meaning
 .*
-.term alnum
+.termnx alnum
 any wide character for which one of
 .kw iswalpha
 or
 .kw iswdigit
 is true
 .*
-.term alpha
+.termnx alpha
 any wide character for which
 .kw iswupper
  or
@@ -44,16 +44,23 @@ or
 .kw iswspace
 is true
 .*
-.term cntrl
+.termnx blank
+any wide character corresponding to a standard blank character
+(space or horizontal tab) or is one of an implementation-defined set of wide
+characters for which
+.kw iswblank
+is true
+.*
+.termnx cntrl
 any control wide character
 .*
-.term digit
+.termnx digit
 any wide character corresponding to a decimal-digit character
 .*
-.term graph
+.termnx graph
 any printable wide character except a space wide character
 .*
-.term lower
+.termnx lower
 any wide character corresponding to a lowercase letter, or one of an
 implementation-defined set of wide characters for which none of
 .kw iswcntrl,
@@ -63,23 +70,23 @@ or
 .kw iswspace
 is true
 .*
-.term print
+.termnx print
 any printable wide character including a space wide character
 .*
-.term punct
+.termnx punct
 any printable wide character that is not a space wide character or a
 wide character for which
 .kw iswalnum
 is true
 .*
-.term space
+.termnx space
 any wide character corresponding to a standard white-space character
 or is one of an implementation-defined set of wide
 characters for which
 .kw iswalnum
 is false
 .*
-.term upper
+.termnx upper
 any wide character corresponding to a uppercase letter, or if c is one
 of an implementation-defined set of wide characters for which none of
 .kw iswcntrl,
@@ -89,7 +96,7 @@ or
 .kw iswspace
 is true
 .*
-.term xdigit
+.termnx xdigit
 any wide character corresponding to a hexadecimal digit character
 .endterm
 .desc end
@@ -113,8 +120,9 @@ function; otherwise, it returns zero.
 #include <stdio.h>
 #include <wchar.h>
 
-char *types[11] = {
+char *types[] = {
     "alnum",
+    "blank",
     "alpha",
     "cntrl",
     "digit",
@@ -132,7 +140,7 @@ void main( void )
     int     i;
     wint_t  wc = 'A';
 .exmp break
-    for( i = 0; i < 11; i++ )
+    for( i = 0; i < 12; i++ )
         if( iswctype( wc, wctype( types[i] ) ) )
             printf( "%s\n", types[i] );
 }

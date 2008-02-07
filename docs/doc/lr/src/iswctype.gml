@@ -16,43 +16,46 @@ are defined by the use of the
 .kw wctype
 function.
 .np
-The eleven expressions listed below have a truth-value equivalent to a
+The twelve expressions listed below have a truth-value equivalent to a
 call to the wide character testing function shown.
 .begterm 20
 .termhd1 Expression
 .termhd2 Equivalent
 .*
-.term iswctype(wc, wctype("alnum"))
+.termnx iswctype(wc, wctype("alnum"))
 iswalnum(wc)
 .*
-.term iswctype(wc, wctype("alpha"))
+.termnx iswctype(wc, wctype("alpha"))
 iswalpha(wc)
 .*
-.term iswctype(wc, wctype("cntrl"))
+.termnx iswctype(wc, wctype("blank"))
+isblank(wc)
+.*
+.termnx iswctype(wc, wctype("cntrl"))
 iswcntrl(wc)
 .*
-.term iswctype(wc, wctype("digit"))
+.termnx iswctype(wc, wctype("digit"))
 iswdigit(wc)
 .*
-.term iswctype(wc, wctype("graph"))
+.termnx iswctype(wc, wctype("graph"))
 iswgraph(wc)
 .*
-.term iswctype(wc, wctype("lower"))
+.termnx iswctype(wc, wctype("lower"))
 iswlower(wc)
 .*
-.term iswctype(wc, wctype("print"))
+.termnx iswctype(wc, wctype("print"))
 iswprint(wc)
 .*
-.term iswctype(wc, wctype("punct"))
+.termnx iswctype(wc, wctype("punct"))
 iswpunct(wc)
 .*
-.term iswctype(wc, wctype("space"))
+.termnx iswctype(wc, wctype("space"))
 iswspace(wc)
 .*
-.term iswctype(wc, wctype("upper"))
+.termnx iswctype(wc, wctype("upper"))
 iswupper(wc)
 .*
-.term iswctype(wc, wctype("xdigit"))
+.termnx iswctype(wc, wctype("xdigit"))
 iswxdigit(wc)
 .endterm
 .desc end
@@ -73,9 +76,10 @@ has the property described by
 #include <stdio.h>
 #include <wctype.h>
 
-char *types[11] = {
+char *types[] = {
     "alnum",
     "alpha",
+    "blank",
     "cntrl",
     "digit",
     "graph",
@@ -92,7 +96,7 @@ void main( void )
     int     i;
     wint_t  wc = 'A';
 .exmp break
-    for( i = 0; i < 11; i++ )
+    for( i = 0; i < 12; i++ )
         if( iswctype( wc, wctype( types[i] ) ) )
             printf( "%s\n", types[i] );
 }
