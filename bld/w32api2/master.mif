@@ -38,6 +38,7 @@ base_headers =       &
         ddeml.h      &
         ddraw.h      &
         ddstream.h   &
+        devguid.h    &
         devprdef.h   &
         dhcpcsdk.h   &
         dimm.h       &
