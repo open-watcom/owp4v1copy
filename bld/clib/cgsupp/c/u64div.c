@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description: long long division routine
+* Description:  64-bit integer division/modulo operation.
 *
 ****************************************************************************/
 
