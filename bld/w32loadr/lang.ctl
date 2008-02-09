@@ -19,8 +19,9 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
   [ IFDEF (os_dos "") <2*> ]
+   <CPCMD> dos386/cwsrun.exe   <RELROOT>/binw/w32run.exe
 #   <CPCMD> dos386/x32run.exe   <RELROOT>/binw/x32run.exe
-#   <CPCMD> dos386/x32run.exe   <RELROOT>/binw/w32run.exe
+#   <CPCMD> dos386/x32run.exe   <RELROOT>/binw/x32run.exe
 #   <CPCMD> dos386/d4grun.exe   <RELROOT>/binw/d4grun.exe
 #   <CPCMD> dos386/tntrun.exe   <RELROOT>/binw/tntrun.exe
 

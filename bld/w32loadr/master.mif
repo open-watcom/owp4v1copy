@@ -35,8 +35,9 @@ os2stub.exe : loader16.obj dpmildr.obj int21win.obj
 extra_c_flags_tntrun = -D__DOS -D__CALL21__ -D__TNT -fo=$@
 extra_c_flags_x32run = -D__DOS -D__CALL21__ -D__X32 -fo=$@
 extra_c_flags_d4grun = -D__DOS -D__CALL21__ -D__DOS4G -fo=$@
+extra_c_flags_cwsrun = -D__DOS -D__CALL21__ -D__CAUSEWAY -fo=$@
 	
-all: .SYMBOLIC #d4grun.exe x32run.exe tntrun.exe
+all: .SYMBOLIC cwsrun.exe #d4grun.exe x32run.exe tntrun.exe
 
 dpmi_ldr.exe : loader16.obj dpmi_ldr.obj int21win.obj
   $(linker) system dos name dpmi_ldr file loader16.obj,dpmi_ldr.obj,int21win.obj option map
@@ -46,11 +47,17 @@ dpmi_ldr.exe : loader16.obj dpmi_ldr.obj int21win.obj
 d4grun.exe : d4grun.obj cmain32.obj int21dos.obj
    $(linker) system dos4g name w386run file d4grun.obj,cmain32.obj,int21dos.obj option stack=32k,map export DOS4GOPTIONS=_DOS4GOPTIONS
    $(rsi_root)\bin\4gbind $(rsi_root)\bin\dos4g.exe w386run.exe d4grun.exe -V
+
 dbgrun.exe : d4grun.obj cmain32.obj int21dos.obj
    $(linker) d a system dos4g name dbgrun file d4grun.obj,cmain32.obj,int21dos.obj option stack=32k,map
+
+cwsrun.exe : cwsrun.obj cmain32.obj int21dos.obj
+   $(linker) system causeway name cwsrun file cwsrun.obj,cmain32.obj,int21dos.obj option stack=32k,map
+
 tntrun.exe : tntrun.obj cmain32.obj int21pl.obj
    $(linker) system pharlap ext name tntrun file tntrun.obj,cmain32.obj,int21pl.obj option stack=32k,map
    $(%tntdir)\bin\rebind $(%tntdir)\bin\rtk\tntb.exe tntrun.exp -exe tntrun.exe
+
 x32run.exe : x32run.obj cmain32.obj x32start.obj
    $(linker) format os2 lx name x32run file x32start.obj,x32run.obj,cmain32.obj lib x32b option map,dosseg,internalrelocs,stack=4k libpath $(lang_root)/lib386/dos;$(lang_root)/lib386
    x32fix x32run.exe
@@ -61,6 +68,8 @@ tntrun.obj : loader.c loader.h
 x32run.obj : loader.c loader.h
         $(cc) $(cflags) $(extra_c_flags_$^&) $(inc_path) $[@
 d4grun.obj : loader.c loader.h dginfo.gh
+        $(cc) $(cflags) $(extra_c_flags_$^&) $(inc_path) $[@
+cwsrun.obj : loader.c loader.h
         $(cc) $(cflags) $(extra_c_flags_$^&) $(inc_path) $[@
 	
 dginfo.gh : $(rsi_root)/bin/dos4g.exe

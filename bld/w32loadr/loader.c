@@ -887,9 +887,12 @@ void main( void ) {}
 
 #include <string.h>
 
+#if defined(__DOS4G) || defined(__CAUSEWAY)
+ #include "dpmi.h"
+#endif
+
 #ifdef __DOS4G
  #include "dginfo.gh"
- #include "dpmi.h"
 char DOS4GOPTIONS[] =
         "[dos4g-global]\n"
         "Include=OSIOPTS.INI\n"
@@ -939,7 +942,7 @@ int __checkIsDBCS( void )
         }
     }
     return( 0 );
-#elif defined(__DOS4G)
+#elif defined(__DOS4G) || defined(__CAUSEWAY)
     unsigned short  *leadBytes;
     rm_call_struct  dblock;
 
