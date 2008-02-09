@@ -187,6 +187,7 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
     __F_NAME(getcwd,_wgetcwd)( cwd, _MAX_PATH );
 
     /*** Determine if 'path' refers to a root directory ***/
+    /* FindFirstFile can not be used on root directories! */
     if( __F_NAME(_fullpath,_wfullpath)( fullpath, path, _MAX_PATH ) != NULL ) {
         #ifdef __WIDECHAR__
         if( iswalpha( fullpath[0] )  &&  fullpath[1] == L':'  &&
@@ -214,6 +215,7 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname, CHAR_TYPE const *orig_path )
         /* restore current directory */
         __F_NAME(chdir,_wchdir)( cwd );
         memset( &ffb, 0, sizeof( ffb ) );
+        d = t = md = mt = 0;
         ffb.dwFileAttributes = _A_SUBDIR;
     } else {
         h = __F_NAME(FindFirstFileA,__lib_FindFirstFileW)( path, &ffb );
