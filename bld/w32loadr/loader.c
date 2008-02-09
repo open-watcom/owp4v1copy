@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Loader for OSI executables.
 *
 ****************************************************************************/
 
@@ -361,6 +360,13 @@ int Init32BitTask( char *file )
         PrintMsg( PickMsg( LOADER_NOT_ENOUGH_MEMORY ) );
         return( LOADER_NOT_ENOUGH_MEMORY );
     }
+#ifdef __NT__
+    {
+    DWORD   old_flags;
+    /* Adjust page protection to allow code execution. Required for DEP-enabled systems. */
+    VirtualProtect( (LPVOID)BaseAddr, w32_hdr->memory_size, PAGE_EXECUTE_READWRITE, &old_flags );
+    }
+#endif
     CodeLoadAddr = BaseAddr;
     load_addr = CodeLoadAddr;
     CodeEntryPoint = w32_hdr->initial_EIP + CodeLoadAddr;

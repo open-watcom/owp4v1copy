@@ -76,7 +76,8 @@ dos16m.obj : dos16m.asm
 
 !else ifeq host_os nt
 
-extra_c_flags_loader = -D__NT -D__CALL21__ -DW32RUN
+extra_c_flags_loader  = -D__NT -D__CALL21__ -DW32RUN -s
+extra_c_flags_int21nt = -s
 
 all : w32run.exe
 

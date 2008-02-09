@@ -32,7 +32,7 @@
 #include "cvars.h"
 #include <unistd.h>
 #include <limits.h>
-#if defined( __DOS__ ) || defined( __OS2__ ) || defined( __OSI__ ) || defined( __NT__ )
+#if defined( __DOS__ ) || defined( __OS2__ ) || defined( __NT__ )
   #include <process.h>
 #endif
 #ifdef __OSI__
@@ -47,15 +47,13 @@ void ResetHandlers( void )
     CloseFiles();                       /* 09-may-89 */
 }
 
-#if defined( __DOS__ ) || defined( __OS2__ ) || defined( __OSI__ ) || defined( __NT__ )
+#if defined( __DOS__ ) || defined( __OS2__ ) || defined( __NT__ )
 int main( void )
     {
         char       *argv[2];
         int        ret;
-#if !defined( __OSI__ )	
         char       *buffer;
         int        len;
-#endif	
 #else
 int main( int argc, char **argv )
     {
