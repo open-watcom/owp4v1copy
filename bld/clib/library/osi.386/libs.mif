@@ -30,7 +30,6 @@ other_libs = $+ &
     $(pfx__)fpu$(__sfx) &
     $(pfx__)intel$(__sfx) &
     $(pfx__)mbyte$(__sfx) &
-    $(pfx__)tchar$(__sfx) &
     $(pfx__)process$(__sfx) &
     $-
 

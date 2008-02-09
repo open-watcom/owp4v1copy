@@ -122,7 +122,6 @@ Previously Implemented Changes:
         startup         - run time startup functions
         streamio        - stream I/O functions
         string          - string manipulation functions
-        tchar           - only contains _stprintf()
         time            - time functions
         win386          - Win386 support routines
         _dos            - MS-DOS functions

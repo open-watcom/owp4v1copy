@@ -25,7 +25,6 @@ libs = $+ &
     $(pfx__)startup$(__sfx) &
     $(pfx__)streamio$(__sfx) &
     $(pfx__)string$(__sfx) &
-    $(pfx__)tchar$(__sfx) &
     $(pfx__)time$(__sfx) &
     $(pfx__)_dos$(__sfx) &
     $-
