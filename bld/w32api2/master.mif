@@ -46,6 +46,7 @@ base_headers =       &
         docobj.h     &
         dvdevcod.h   &
         dvdmedia.h   &
+        edevdefs.h   &
         errorrep.h   &
         exdisp.h     &
         exdispid.h   &
