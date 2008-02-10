@@ -8,6 +8,7 @@
 !inject fnextfil.obj                     nt
 !inject fgtattr.obj                      nt nta ntp
 !inject getcdir.obj                      nt
+!inject getdtype.obj                     nt
 !inject getfattr.obj                     nt
 !inject getmodfn.obj                     nt
 !inject getfulpn.obj                     nt

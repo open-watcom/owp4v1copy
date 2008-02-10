@@ -123,6 +123,12 @@ void main( int argc, char *argv[] )
     VERIFY( chmod( filename[1], S_IRWXU | S_IRWXG ) == 0 );
     VERIFY( stat( filename[1], &info ) == 0 );
     VERIFY( stat( "NSF", &info ) == -1 );       // No Such File
+    VERIFY( stat( "/", &info ) == 0 );
+#ifndef __UNIX__
+    VERIFY( stat( "C:\\", &info ) == 0 );       // the a/c/m times are faked
+    VERIFY( info.st_atime == info.st_ctime && info.st_ctime == info.st_mtime );
+    VERIFY( info.st_dev == 2 );
+#endif
 #ifndef __UNIX__
     EXPECT( 0 <= info.st_dev && info.st_dev < 26 );
 #endif

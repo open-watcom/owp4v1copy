@@ -171,7 +171,7 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
         DosQCurDisk( &drive, &dummy );
         buf->st_dev = drive;
     }
-    buf->st_rdev = --(buf->st_dev);
+    buf->st_rdev = buf->st_dev;
 
     buf->st_size = dir_buff.cbFile;
     buf->st_mode = at2mode( dir_buff.attrFile, dir_buff.achName );
