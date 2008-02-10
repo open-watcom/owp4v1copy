@@ -501,7 +501,9 @@ Prototype in
 .   .   .do end
 .   .   .el .do begin
 .   .   .   .if '&wfunc.' ne '&funcn.' .do begin
-.   .   .   .   .clitm &wfunc. is &*wcls
+.   .   .   .   .if '&wfunc.' ne '&function.' .do begin
+.   .   .   .   .   .clitm &wfunc. is &*wcls
+.   .   .   .   .do end
 .   .   .   .do end
 .   .   .do end
 .   .do end
@@ -893,7 +895,7 @@ command
 .   .sr clitmc=0
 .   .sr *i=1
 .   .pe &__fnx.
-.   .   .clitm &__cltxt(&*i).;-sr *i=&*i+1;
+.   .   .clitm &__cltxt(&*i).;.sr *i=&*i+1;
 .do end
 .if |&*1| ne |begin| .do begin
 .   .listend
