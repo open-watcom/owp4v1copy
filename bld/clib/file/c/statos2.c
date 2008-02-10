@@ -73,7 +73,7 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     FF_BUFFER           dir_buff;
     CHAR_TYPE const *   ptr;
     HDIR                handle = 1;
-    ULONG               dummy;
+    ULONG               drvmap;
     OS_UINT             drive;
     OS_UINT             searchcount = 1;
     APIRET              rc;
@@ -114,16 +114,15 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     #endif
     {
         /* handle root directory */
-        CHAR_TYPE       cwd[_MAX_PATH];
+        int             drv;
 
-        /* save current directory */
-        __F_NAME(getcwd,_wgetcwd)( cwd, _MAX_PATH );
-
-        /* try to change to specified root */
-        if( __F_NAME(chdir,_wchdir)( path ) != 0 )  return( -1 );
-
-        /* restore current directory */
-        __F_NAME(chdir,_wchdir)( cwd );
+        /* check if drive letter is valid */
+        drv = __F_NAME(tolower,towlower)( *fullpath ) - __F_NAME('a',L'a');
+        DosQCurDisk( &drive, &drvmap );
+        if( ( drvmap & ( 1UL << drv ) ) == 0 ) {
+            __set_errno( ENOENT );
+            return( -1 );
+        }
 
         dir_buff.attrFile = _A_SUBDIR;           /* fill in DTA */
         *(USHORT *)(&dir_buff.ftimeCreation) = 0;
@@ -168,8 +167,8 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     if( __F_NAME(*_mbsinc(path),path[1]) == __F_NAME(':',L':') ) {
         buf->st_dev = __F_NAME(tolower,towlower)( *path ) - __F_NAME('a',L'a');
     } else {
-        DosQCurDisk( &drive, &dummy );
-        buf->st_dev = drive;
+        DosQCurDisk( &drive, &drvmap );
+        buf->st_dev = drive - 1;
     }
     buf->st_rdev = buf->st_dev;
 
