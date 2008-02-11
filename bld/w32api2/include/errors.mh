@@ -8,6 +8,8 @@
 #define _ERRORS_H_INCLUDED
 
 :include readonly.sp
+#include <vfwmsgs.h>
+
 :include cpluspro.sp
 
 /* Macro to specify ActiveMovie functions */

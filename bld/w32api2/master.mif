@@ -215,6 +215,7 @@ base_headers =       &
         usp10.h      &
         uxtheme.h    &
         vfw.h        &
+        vfwmsgs.h    &
         vidcap.h     &
         vmr9.h       &
         vptype.h     &
