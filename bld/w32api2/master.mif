@@ -49,6 +49,7 @@ base_headers =       &
         edevdefs.h   &
         errorrep.h   &
         errors.h     &
+        evcode.h     &
         exdisp.h     &
         exdispid.h   &
         guiddef.h    &
