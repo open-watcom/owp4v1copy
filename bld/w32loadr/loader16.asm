@@ -34,6 +34,8 @@
 .386
 include struct.inc
 
+        DOSSEG
+
         extrn   __Int21 : near
         extrn   __fInt21: near
         extrn   _end    : byte
