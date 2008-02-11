@@ -410,6 +410,7 @@ prepare_wgml_opts : .PROCEDURE
     @%append $(optfile_wgml) ( cpinch 10
     @%append $(optfile_wgml) ( index
     @%append $(optfile_wgml) ( setsymbol dotarget $(dotarget)
+    @%append $(optfile_wgml) ( setsymbol book_ver $(%BLD_VER_STR)
 # add default windowing for NT
 #    @%append $(optfile_wgml) ( setsymbol defwinnt 1
 # add default windowing for OS/2
