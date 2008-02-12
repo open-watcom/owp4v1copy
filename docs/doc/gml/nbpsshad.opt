@@ -1,4 +1,5 @@
 ( sets $draft no
+( sets $shade yes
 ( dev ps
 ( wscript
 ( lay nb7x9lay
