@@ -12,7 +12,7 @@
 :FONT
   defined_name	   = 'shadefill'
   member_name	   = 'PSSHADE'
-  font_out_name1   = ''
+  font_out_name1   = 'shade'
   line_height	   = 1000
   line_space	   = 113
   scale_basis	   = 72000
