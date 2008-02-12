@@ -52,6 +52,7 @@ base_headers =       &
         evcode.h     &
         exdisp.h     &
         exdispid.h   &
+        fltdefs.h    &
         guiddef.h    &
         httpext.h    &
         idispids.h   &
