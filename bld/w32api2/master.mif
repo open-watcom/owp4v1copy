@@ -59,6 +59,7 @@ base_headers =       &
         idispids.h   &
         ifdef.h      &
         ifmib.h      &
+        il21dec.h    &
         imagehlp.h   &
         imm.h        &
         in6addr.h    &
