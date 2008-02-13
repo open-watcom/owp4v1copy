@@ -69,6 +69,7 @@ base_headers =       &
         ipexport.h   &
         iphlpapi.h   &
         ipifcons.h   &
+        ipinfoid.h   &
         ipmib.h      &
         iprtrmib.h   &
         iptypes.h    &
