@@ -1,0 +1,26 @@
+LIBRARY ICM32.DLL
+EXPORTS
+CMCheckColors
+CMCheckColorsInGamut
+CMCheckRGBs
+CMConvertColorNameToIndex
+CMConvertIndexToColorName
+CMCreateDeviceLinkProfile
+CMCreateMultiProfileTransform
+CMCreateProfile
+CMCreateProfileW
+CMCreateTransform
+CMCreateTransformExt
+CMCreateTransformExtW
+CMCreateTransformW
+CMDeleteTransform
+CMGetInfo
+CMGetNamedProfileInfo
+CMGetPS2ColorRenderingDictionary
+CMGetPS2ColorRenderingIntent
+CMGetPS2ColorSpaceArray
+CMIsProfileValid
+CMTranslateColors
+CMTranslateRGB
+CMTranslateRGBs
+CMTranslateRGBsExt

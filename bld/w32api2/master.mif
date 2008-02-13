@@ -55,6 +55,7 @@ base_headers =       &
         fltdefs.h    &
         guiddef.h    &
         httpext.h    &
+        icm.h        &
         idispids.h   &
         ifdef.h      &
         ifmib.h      &
