@@ -74,6 +74,10 @@ base_headers =       &
         iprtrmib.h   &
         iptypes.h    &
         ipxconst.h   &
+        ipxrip.h     &
+        ipxrtdef.h   &
+        ipxsap.h     &
+        ipxtfflt.h   &
         isguids.h    &
         knownfld.h   &
         ks.h         &
