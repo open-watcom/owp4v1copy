@@ -398,7 +398,7 @@ static void dump_cv4_sstSrcModule( unsigned_32 base, unsigned_32 offset )
         Wlseek( base + offset + seg_idx * sizeof( unsigned_32 ) * 2);
         Wread( &range_lo, sizeof( unsigned_32 ) );
         Wread( &range_hi, sizeof( unsigned_32 ) );
-        Wlseek( base + offset + mod.cSeg + sizeof( unsigned_32 ) * 2 + seg_idx * sizeof( unsigned_16 ) );
+        Wlseek( base + offset + mod.cSeg * sizeof( unsigned_32 ) * 2 + seg_idx * sizeof( unsigned_16 ) );
         Wread( &seg, sizeof( unsigned_16 ) );
 
         Wdputs( "      " );
