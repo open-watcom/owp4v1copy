@@ -26,6 +26,6 @@ IBM compilers compatible
 .sk 1
 &company specific
 .kwon
-›&kwbldiflt. ›&kwwatcall. ›&kwimagunit.
+›&kwbldiflt. ›&kwimagunit. ›&kwwatcall.
 .kwoff
 ..tb

@@ -226,6 +226,14 @@
 :eSF.
 .dm monooff end
 .*
+.dm smonoon begin
+:SF font=5.
+.dm smonoon end
+.*
+.dm smonooff begin
+:eSF.
+.dm smonooff end
+.*
 .dm autonote begin
 .if '&*' ne '' .do begin
 .   .sr tmplvl=&WDWlvl-3

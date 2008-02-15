@@ -5,6 +5,7 @@
 .  ..im wnohelp
 ..do end
 ..im fmtmacro
+..im gmlmacs
 :CMT. ..im htmlmacs
 ..im xdefs
 ..im cmac

@@ -310,9 +310,9 @@ storage size.
 .if &e'&nobox eq 0 .do begin
 .boxdef
 ..if '&format' eq '7x9' ..th ..do begin
+.  .boxcol 14
+.  .boxcol 17
 .  .boxcol 16
-.  .boxcol 19
-.  .boxcol 18
 ..do end
 ..el ..do begin
 .  .boxcol 18
@@ -323,55 +323,55 @@ storage size.
 ›                  ›Minimum    ›Maximum
 ›Type              ›Value      ›Value
 .boxline
-.monoon
+.smonoon
 ›signed char       ›-128       ›127
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›unsigned char     ›0          ›255
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›char              ›0          ›255
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›short int         ›-32768     ›32767
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›unsigned short int›0          ›65535
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›int :HP0.(&c286.):eHP0.›-32768     ›32767
-.monooff
-.monoon
+.smonooff
+.smonoon
 ›int :HP0.(&c386.):eHP0.›-2147483648›2147483647
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›unsigned int :HP0.(&c286.):eHP0.›0          ›65535
-.monooff
-.monoon
+.smonooff
+.smonoon
 ›unsigned int :HP0.(&c386.):eHP0.›0          ›4294967295
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›long int          ›-2147483648›2147483647
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›unsigned long int ›0          ›18446744073709551615
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›long long int     ›-92233720368547758078›9223372036854775807
-.monooff
+.smonooff
 .boxline
-.monoon
+.smonoon
 ›unsigned long long›0     ›18446744073709551615
-.monooff
+.smonooff
 .boxend
 .do end
 .el .do begin
@@ -498,16 +498,21 @@ has the same range as an object of type
 The following are some examples of declarations of objects with
 integer type:
 .millust begin
-short              a;
-unsigned short int b;
-int                c,d;
-signed             e;
-unsigned int       f;
-long               g;
-signed long        h;
-unsigned long int  i;
-long long          j;
-unsigned long long k;
-long long int      l;
+char               a;
+unsigned char      b;
+signed char        c;
+short              d;
+unsigned short int e;
+int                f,g;
+signed             h;
+unsigned int       i;
+long               j;
+unsigned long      k
+signed long        l;
+unsigned long int  m;
+signed long long   n;
+long long          o;
+unsigned long long p;
+long long int      q;
 .millust end
 .keep end

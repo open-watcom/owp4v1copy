@@ -363,6 +363,8 @@ prepare_wgml_opts : .PROCEDURE
     @%append $(optfile_wgml) ( file nn7x9ps
 !else ifeq hbook f77lr
     @%append $(optfile_wgml) ( file nbpsshad
+!else ifeq hbook clr
+    @%append $(optfile_wgml) ( file nbpsshad
 !else ifeq hbook cgdoc
     @%append $(optfile_wgml) ( file cgdps
 !else ifeq hbook wddoc

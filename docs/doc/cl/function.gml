@@ -622,7 +622,6 @@ The function
 has the following definition:
 .millust begin
 extern int main( int argc, char * argv[] )
-/****************************************/
 {
     :ITAL.statements:eITAL.
 }
@@ -720,7 +719,6 @@ The function
 may also be declared without any parameters, as,
 .millust begin
 extern int main( void )
-/*********************/
 {
     statements
 }

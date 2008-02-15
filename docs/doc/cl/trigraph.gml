@@ -3,10 +3,9 @@
 .if &e'&nobox eq 0 .do begin
 .boxdef
 .boxcol 8 c
-.boxcol 8 c
+.boxcol 15 c
 .boxbeg
-›         ›Trigraph
-›Character›Sequence
+›Character›Trigraph Sequence
 .boxline
 .monoon
 ›[  ›??(

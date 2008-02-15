@@ -222,7 +222,7 @@ interpretation and type:
 ››Decimal›  -decimal›&wc286.›&wc386.
 › Constant› Value› Value› Type› Type
 .boxline
-.monoon
+.smonoon
 ›33        ›33        ›21      ›signed int   ›signed int
 ›033       ›27        ›1B      ›signed int   ›signed int
 ›0x33      ›51        ›33      ›signed int   ›signed int
@@ -233,7 +233,7 @@ interpretation and type:
 ›0x80000000›2147483648›80000000›unsigned long›unsigned int
 ›2147483648›2147483648›80000000›unsigned long›unsigned int
 ›4294967295›4294967295›FFFFFFFF›unsigned long›unsigned int
-.monooff
+.smonooff
 .boxend
 .do end
 .el .do begin
@@ -431,8 +431,7 @@ sequences:
 ..do end
 .* .cp 15
 .boxbeg
-›         ›  Character      ›Escape
-›Character›  Name           ›Sequence
+›Character›  Character Name ›Escape Sequence
 .boxline
 .monoon
 ›'›:HP0.single quote:eHP0.     ›\'
