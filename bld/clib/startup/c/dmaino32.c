@@ -80,6 +80,9 @@ extern  int                 __disallow_single_dgroup( unsigned );
     #endif
 #endif
 
+#ifdef __386__
+    #pragma aux __LibMain "*" parm caller []
+#endif
 
 unsigned __LibMain( unsigned hmod, unsigned termination )
 /*******************************************************/
@@ -98,28 +101,24 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         }
         rc = LibMain( hmod, termination );
         --processes;
-        #ifndef __SW_BR
-            if( _LpwCmdLine ) {
-                lib_free( _LpwCmdLine );
-                _LpwCmdLine = NULL;
-            }
-            if( _LpwPgmName ) {
-                lib_free( _LpwPgmName );
-                _LpwPgmName = NULL;
-            }
-        #endif
-        #ifdef __SW_BR
-            __FiniRtns( 0, 255 );
-        #else
-            __FiniRtns( FINI_PRIORITY_EXIT, 255 );
-            // calls to free memory have to be done before semaphores closed
-            __FreeInitThreadData( __FirstThreadData );
-            __OS2Fini(); // must be done before following finalizers get called
-            __FiniRtns( 0, FINI_PRIORITY_EXIT - 1 );
-        #endif
-        #ifndef __SW_BR
-            __shutdown_stack_checking();
-        #endif
+#ifdef __SW_BR
+        __FiniRtns( 0, 255 );
+#else
+        if( _LpwCmdLine ) {
+            lib_free( _LpwCmdLine );
+            _LpwCmdLine = NULL;
+        }
+        if( _LpwPgmName ) {
+            lib_free( _LpwPgmName );
+            _LpwPgmName = NULL;
+        }
+        __FiniRtns( FINI_PRIORITY_EXIT, 255 );
+        // calls to free memory have to be done before semaphores closed
+        __FreeInitThreadData( __FirstThreadData );
+        __OS2Fini(); // must be done before following finalizers get called
+        __FiniRtns( 0, FINI_PRIORITY_EXIT - 1 );
+        __shutdown_stack_checking();
+#endif
         return( rc );
     }
     ++processes;
@@ -129,10 +128,11 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         }
     }
     __hmodule = hmod;
-    #ifdef __SW_BR
+#ifdef __SW_BR
     {
-        static char fname[_MAX_PATH];
-        static wchar_t wfname[_MAX_PATH];
+        static char     fname[_MAX_PATH];
+        static wchar_t  wfname[_MAX_PATH];
+
         __Is_DLL = 1;
         __InitRtns( 255 );
         DosQueryModuleName( hmod, sizeof( fname ), fname );
@@ -140,7 +140,7 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         _LpwDllName = wfname;
         _atouni( _LpwDllName, _LpDllName );
     }
-    #else
+#else
     {
         PTIB        pptib;
         PPIB        pppib;
@@ -160,6 +160,7 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
             // environment space. apparently the OS fullpath name is
             // just before this one in the environment space
             char    *cmd_path;
+
             cmd_path = pppib->pib_pchcmd;
             for( cmd_path -= 2; *cmd_path != '\0'; --cmd_path );
             ++cmd_path;
@@ -176,8 +177,9 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         __InitRtns( INIT_PRIORITY_EXIT - 1 );
         __InitMultipleThread();
         {
-            static char fname[_MAX_PATH];
-            static wchar_t wfname[_MAX_PATH];
+            static char     fname[_MAX_PATH];
+            static wchar_t  wfname[_MAX_PATH];
+
             DosQueryModuleName( hmod, sizeof( fname ), fname );
             _LpDllName = fname;
             _LpwDllName = wfname;
@@ -185,14 +187,11 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         }
         __InitRtns( 255 );
     }
-    #endif
+#endif
     __CommonInit();
-    #ifndef __SW_BR
-        /* allocate alternate stack for F77 */
-        __ASTACKPTR = (char *)_STACKLOW + __ASTACKSIZ;
-    #endif
+#ifndef __SW_BR
+    /* allocate alternate stack for F77 */
+    __ASTACKPTR = (char *)_STACKLOW + __ASTACKSIZ;
+#endif
     return( LibMain( hmod, termination ) );
 }
-#ifdef __386__
-    #pragma aux __LibMain "*" parm caller []
-#endif
