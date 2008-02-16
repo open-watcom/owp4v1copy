@@ -789,7 +789,7 @@ cop_driver * parse_driver( FILE * in_file )
 
                         break;
                     default:
-                        printf_s( ":FONTSWITCH block %s has unexpected CodeBlock designator: %i\n", fontswitch_block_ptr[i].type, cop_codeblocks[i].designator );
+                        printf_s( ":FONTSWITCH block %s has unexpected CodeBlock designator: %i\n", string_ptr, cop_codeblocks[i].designator );
                         free( p_buffer_set );
                         p_buffer_set = NULL;
                         free( cop_codeblocks );
