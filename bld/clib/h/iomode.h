@@ -51,10 +51,9 @@ extern  HANDLE      __NTGetFakeHandle( void );
 
 extern  HANDLE      *__OSHandles;
 
-#define __getOSHandle( hid ) __OSHandles[ hid ]
-#define NT_STDIN_FILENO  (__getOSHandle( STDIN_FILENO ))
-#define NT_STDOUT_FILENO (__getOSHandle( STDOUT_FILENO ))
-#define NT_STDERR_FILENO (__getOSHandle( STDERR_FILENO ))
+#define NT_STDIN_FILENO  (GetStdHandle( STD_INPUT_HANDLE ))
+#define NT_STDOUT_FILENO (GetStdHandle( STD_OUTPUT_HANDLE ))
+#define NT_STDERR_FILENO (GetStdHandle( STD_ERROR_HANDLE ))
 
 #endif
 
