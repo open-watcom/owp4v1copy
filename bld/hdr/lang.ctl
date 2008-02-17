@@ -62,6 +62,7 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/ostream        <RELROOT>/h/
     <CPCMD> <PROJDIR>/dos/queue          <RELROOT>/h/
     <CPCMD> <PROJDIR>/dos/set            <RELROOT>/h/
+    <CPCMD> <PROJDIR>/dos/slist          <RELROOT>/h/
     <CPCMD> <PROJDIR>/dos/sstream        <RELROOT>/h/
     <CPCMD> <PROJDIR>/dos/stack          <RELROOT>/h/
     <CPCMD> <PROJDIR>/dos/stdexcep       <RELROOT>/h/
@@ -120,6 +121,7 @@ cdsay .
     <CPCMD> <PROJDIR>/linux/ostream      <RELROOT>/lh/
     <CPCMD> <PROJDIR>/linux/queue        <RELROOT>/lh/
     <CPCMD> <PROJDIR>/linux/set          <RELROOT>/lh/
+    <CPCMD> <PROJDIR>/linux/slist        <RELROOT>/lh/
     <CPCMD> <PROJDIR>/linux/sstream      <RELROOT>/lh/
     <CPCMD> <PROJDIR>/linux/stack        <RELROOT>/lh/
     <CPCMD> <PROJDIR>/linux/stdexcep     <RELROOT>/lh/

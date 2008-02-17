@@ -83,6 +83,7 @@ new_deps = ../watcom/new.mh ../readonly.sp ../cpppfv.sp ../crwat.sp
 numeric_deps = ../watcom/numeric.mh ../readonly.sp ../crwatcnt.sp
 queue_deps = ../watcom/queue.mh ../readonly.sp ../crwatcnt.sp
 set_deps = ../watcom/set.mh ../readonly.sp ../crwatcnt.sp
+slist_deps = ../watcom/slist.mh ../readonly.sp ../crwatcnt.sp
 stack_deps = ../watcom/stack.mh ../readonly.sp ../crwatcnt.sp
 stdexcept_deps = ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp ../throws.sp
 typeinfo_deps = ../watcom/typeinfo.mh ../readonly.sp ../crwat.sp
@@ -108,6 +109,7 @@ new          : $(new_deps)
 numeric      : $(numeric_deps)
 queue        : $(queue_deps)
 set          : $(set_deps)
+slist        : $(slist_deps)
 stack        : $(stack_deps)
 stdexcep     : $(stdexcept_deps)
 string       : $(string_deps)

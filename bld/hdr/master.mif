@@ -58,6 +58,7 @@ common_no_ext = &
         ostream &
         queue &
         set &
+        slist &
         sstream &
         stack &
         stdexcep &
@@ -79,9 +80,10 @@ common = &
         _comdef.h &
         _hash.h &
         _ialias.h &
+        _meta.h &
         _rbtree.h &
         _strdef.h &
-	alloca.h &
+        alloca.h &
         assert.h &
         complex.h &
         conio.h &
