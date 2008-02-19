@@ -1781,7 +1781,9 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
     int             i;
     line_proc *     line_proc_ptr       = NULL;
     ptrdiff_t       font_style_offset;
+    uint8_t         save_designator;
     uint8_t *       text_ptr            = NULL;
+    uint16_t        save_pass;
     uint16_t        count16;
 
     /* Get the number of passes, which can be 0 */
@@ -1935,6 +1937,10 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
     /* Process the CodeBlocks into the font_style instance */
 
+    save_designator = 0;
+    save_pass = 0;
+    printf( "Fontstyle: %s\n", string_ptr );
+
     for( i = 0; i < count16; i++ ) {
 
         /* Trap zero-length CodeBlocks */
@@ -1989,6 +1995,13 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
+            /* Research code */
+
+            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
+                cop_codeblocks[i].designator);
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
             break;
         case 0x05 :
 
@@ -2037,6 +2050,16 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
             memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].function, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code */
+
+            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
+                cop_codeblocks[i].designator);
+            if( save_designator == 0x04 ) {
+                puts( "  :STARTVALUE block appeared after the :ENDVALUE block" );
+            }
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
 
             break;
         case 0x08 :
@@ -2100,6 +2123,13 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
+            /* Research code */
+
+            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
+                cop_codeblocks[i].designator);
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
             break;
         case 0x09 :
 
@@ -2161,6 +2191,16 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
             memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].function, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code */
+
+            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
+                cop_codeblocks[i].designator);
+            if( save_designator == 0x08 ) {
+                puts( "  :STARTVALUE block appeared after the :ENDVALUE block\n" );
+            }
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
 
             break;
         case 0x28 :
@@ -2224,6 +2264,13 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
+            /* Research code */
+
+            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
+                cop_codeblocks[i].designator);
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
             break;
         case 0x29 :
 
@@ -2285,6 +2332,16 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
             memcpy_s( text_ptr, code_text_ptr->count, cop_codeblocks[i].function, code_text_ptr->count );
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
+
+            /* Research code */
+
+            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
+                cop_codeblocks[i].designator);
+            if( save_designator == 0x28 ) {
+                puts( "  :STARTWORD block appeared after the :ENDWORD block\n" );
+            }
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
 
             break;
         case 0x49 :
@@ -2348,9 +2405,17 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
             code_text_ptr->text = (uint8_t *) in_driver->next_offset;
             in_driver->next_offset += code_text_ptr->count;
 
+            /* Research code */
+
+            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
+                cop_codeblocks[i].designator);
+            save_designator = cop_codeblocks[i].designator;
+            save_pass = cop_codeblocks[i].pass;
+
             break;
         default :
-            printf_s( ":FONTSTYLE block %i has unknown designator: %i\n", i, cop_codeblocks[i].designator );
+            printf_s( "  CodeBlock %i has unknown designator: %i\n", \
+                string_ptr, i, cop_codeblocks[i].designator );
             free( *p_buffer_set );
             *p_buffer_set = NULL;
             free(cop_codeblocks);
