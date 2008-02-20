@@ -81,6 +81,7 @@ base_headers =       &
         isguids.h    &
         knownfld.h   &
         ks.h         &
+        ksmedia.h    &
         largeint.h   &
         lm.h         &
         lmaccess.h   &
