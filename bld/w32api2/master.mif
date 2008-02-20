@@ -303,7 +303,7 @@ directx_libs =       &
 
 additional_cleanup = *.h *.rh
 
-all : $($(proj_name)_headers) $($(proj_name)_libs) .SYMBOLIC
+all : $($(proj_name)_$(what_to_build)) .SYMBOLIC
     @%null
 
 .mh: $(include_dir)
