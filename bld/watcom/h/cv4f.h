@@ -835,4 +835,12 @@ typedef struct {
     u4          offset;
     u2          module;
 } cs_procref, cs_dataref;
+
+typedef struct {
+    u4          type;
+    u4          offset;
+    u2          segment;
+//  u1          name[1];
+} cs_pub32_new;
+
 #pragma pack()

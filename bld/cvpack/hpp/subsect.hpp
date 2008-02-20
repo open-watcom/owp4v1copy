@@ -134,7 +134,7 @@ class SstAlignSym : public SymbolSubsection {
             _symbolInfo.clearAndDestroy();
         }
 
-        void Insert( SymbolStruct* );
+        int Insert( SymbolStruct* );
 
         bool IsInGlobalScope() {
             return symStack.isEmpty();
@@ -148,7 +148,7 @@ class SstAlignSym : public SymbolSubsection {
 
     private :
 
-        void InsertOneRecord( SymbolStruct* );
+        int InsertOneRecord( SymbolStruct* );
 
         static WCStack< SymbolStruct*, WCPtrSList<SymbolStruct> > symStack;
 
@@ -269,11 +269,11 @@ class SstGlobalSym : public SymbolSubsection {
             _symbolInfo.clearAndDestroy();
         }
 
-        void Insert( SymbolStruct* sym ) {
-            _symbolInfo.append(sym);
+        int Insert( SymbolStruct* sym ) {
+            return _symbolInfo.append(sym);
         }
 
-        void Put( ExeMaker&, const uint ) const;
+        void Put( ExeMaker&, const uint );
 
     private :
 

@@ -300,6 +300,7 @@ typedef struct {
 #define DEBUG_TYPE_UNKNOWN    0
 #define DEBUG_TYPE_COFF       1
 #define DEBUG_TYPE_CODEVIEW   2
+#define DEBUG_TYPE_MISC       4
 typedef struct {
    unsigned_32          flags;
    unsigned_32          time_stamp;
@@ -310,6 +311,15 @@ typedef struct {
    pe_va                data_rva;
    unsigned_32          data_seek;
 } debug_directory;
+
+/* PE DEBUG_TYPE_MISC data */
+typedef struct {
+   unsigned_32  data_type;          /* 1 == filename of debug info file */
+   unsigned_32  length;             /* size of this data block */
+   unsigned_32  unicode;            /* LSB is unicode flag, rest is reserved */
+   char         data[256-16];       /* name + path of debug info file, null terminated */
+   unsigned_32  special_purpose;    /* used to pass file offset to cvpack utility */
+} debug_misc_dbgdata;
 
 /* procedure descriptor format for alpha and powerpc */
 

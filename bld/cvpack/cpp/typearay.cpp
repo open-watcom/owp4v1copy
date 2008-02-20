@@ -56,7 +56,10 @@ void GlobalHashContainer::Rehash()
             newBucket[HFn(iter.current()->Variant())%newSize].append(iter.current());
         }
     }
-    delete [] _buckets;
+    if (_buckets) {
+        delete [] _buckets;
+        _buckets=NULL;
+    }
     _bucketSize = newSize;
     _buckets = newBucket;
 }

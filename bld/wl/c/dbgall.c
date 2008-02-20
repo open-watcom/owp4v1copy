@@ -557,6 +557,14 @@ void DBIWrite( void )
 
     if( !( LinkFlags & ANY_DBI_FLAG ) )
         return;
+    if( LinkFlags & CV_DBI_FLAG ) {
+        // write DEBUG_TYPE_MISC: name of file containing the debug info
+        if( SymFileName != NULL ) {
+            CVWriteDebugTypeMisc( SymFileName );
+        } else {
+            CVWriteDebugTypeMisc( Root->outfile->fname );
+        }
+    }
     if( SymFileName != NULL ) {
         InitBuffFile( &symfile, SymFileName, FALSE );
         OpenBuffFile( &symfile );

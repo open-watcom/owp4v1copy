@@ -1034,6 +1034,47 @@ class CSPub32 : public SymbolStruct {
         cs_pub32      _pub32;
 };
 
+class CSPub32_new : public SymbolStruct {
+
+    public :
+
+        CSPub32_new ( const s_common    common,
+                  const cs_pub32_new    pub32_new,
+                  const char*       var,
+                  const uint        varLen )
+                : SymbolStruct( common, var, varLen ),
+                  _pub32_new( pub32_new ) { }
+
+        ~CSPub32_new() { }
+
+        // don't know if it's data or code seg for public sym.
+        uint DataSegment() const {
+            return _pub32_new.segment;
+        }
+
+        uint CodeSegment() const {
+            return _pub32_new.segment;
+        }
+
+        uint MemOffset() const {
+            return _pub32_new.offset;
+        }
+
+        void FixType() {
+            _pub32_new.type = TypeMap.Lookup(_pub32_new.type);
+        }
+
+        static SymbolStruct* Construct( const char* );
+
+    protected:
+
+        virtual void DerivedPut( ExeMaker& ) const;
+
+    private :
+
+        cs_pub32_new      _pub32_new;
+};
+
 class CSLProc32 : public SymbolStruct {
 
     public :

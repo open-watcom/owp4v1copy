@@ -45,6 +45,8 @@ extern void     CVGenAddrInfo( seg_leader * );
 extern void     CVAddrStart( void );
 extern void     CVDefClass( class_entry *, unsigned_32 );
 extern void     CVFini( section * );
+extern void     CVWriteDebugTypeMisc( const char *filename );
 extern void     CVWrite( void );
 
 extern unsigned_32      CVSize;
+extern unsigned_32      CVDebugDirEntryPos;

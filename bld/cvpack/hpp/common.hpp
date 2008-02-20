@@ -81,7 +81,9 @@ class VariantString {
         }
 
         ~VariantString() {
-            delete [] _string;
+            if (_string) {
+                delete [] _string;
+            }
         }
 
         bool operator == ( const VariantString& target ) const {
