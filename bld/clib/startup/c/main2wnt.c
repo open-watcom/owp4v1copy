@@ -86,7 +86,7 @@ void __F_NAME(__NTMain,__wNTMain)( void )
     __process_fini = &__FiniRtns;
     __InitRtns( 255 );
     __CommonInit();
-    __F_NAME(main( ___Argc, ___Argv ),wmain( ___wArgc, ___wArgv ));
+    exit( __F_NAME(main( ___Argc, ___Argv ),wmain( ___wArgc, ___wArgv )) );
 #else
     REGISTRATION_RECORD     rr;
     thread_data             *tdata;
