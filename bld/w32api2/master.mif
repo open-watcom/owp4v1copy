@@ -115,6 +115,7 @@ base_headers =       &
         mmreg.h      &
         mmstream.h   &
         mmsystem.h   &
+        mpegtype.h   &
         mprapi.h     &
         mq.h         &
         msacm.h      &
