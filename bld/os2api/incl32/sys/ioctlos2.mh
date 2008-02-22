@@ -1,10 +1,4 @@
 /*
- *  sys/ioctlos2.h
- *
-:include crwatcnt.sp
- */
-
-/*
  * Copyright (c) 1983, 1987 The Regents of the University of California.
  * All rights reserved.
  *
