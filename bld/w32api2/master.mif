@@ -289,7 +289,10 @@ directx_headers =    &
         d3drmdef.h   &
         d3drmobj.h   &
         d3dtypes.h   &
-        dxtrans.h    &
+        dxtrans.h
+
+gl_headers =         &
+        gl.h
 
 base_libs =          &
         largeint.lib &
