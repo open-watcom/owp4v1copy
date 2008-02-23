@@ -1944,7 +1944,13 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
     for( i = 0; i < count16; i++ ) {
 
         /* Trap zero-length CodeBlocks */
-        if( cop_codeblocks[i].count == 0 ) continue;
+
+        if( cop_codeblocks[i].count == 0 ) {
+            printf("  designator = %x, cb05_flag = %x, unknown = %x, pass = %x\n", \
+                cop_codeblocks[i].designator, cop_codeblocks[i].cb05_flag, \
+                cop_codeblocks[i].unknown, cop_codeblocks[i].pass);
+            continue;
+        }
         
         switch( cop_codeblocks[i].designator ) {
         case 0x04 :
