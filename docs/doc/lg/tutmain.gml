@@ -44,6 +44,8 @@ necessary to create each specific executable file format.
 .begnote
 .notehd1 System
 .notehd2 Description
+.note causeway
+32-bit x86 CauseWay executable
 .note com
 16-bit x86 DOS ".COM" executable
 .note dos
@@ -159,9 +161,9 @@ you will find more information on the directives available with the
 executable format used.
 .np
 At this point, it should be noted that various systems have adopted
-particular executable file formats. For example, both the Tenberry
-Software DOS/4G(W) and FlashTek DOS extenders support one of the OS/2
-executable file
+particular executable file formats. For example, the CauseWay DOS extender,
+Tenberry Software DOS/4G(W) and FlashTek DOS extenders all
+support one of the OS/2 executable file
 formats. It is for this reason that you may find that we direct you to
 a chapter which would, at first glance, seem unrelated to the
 executable file format in which you are interested.
@@ -296,6 +298,19 @@ The following sections describe how to create a variety of 32-bit
 executable files.
 .*
 .beglevel
+.*
+.section Linking 32-bit x86 CauseWay Executable Files
+.*
+.np
+.ix '32-bit CauseWay executables'
+To create this type of file, use the following structure.
+.millust begin
+system   causeway
+.im tutsteps
+.millust end
+.np
+For more information,
+see the chapter entitled :HDREF refid='os2chap'..
 .*
 .section Linking 32-bit x86 DOS/4GW Executable Files
 .*

@@ -41,6 +41,8 @@ necessary to create each specific executable file format.
 .begnote
 .notehd1 System
 .notehd2 Description
+.note causeway
+32-bit x86 CauseWay executable
 .note com
 16-bit x86 DOS ".COM" executable
 .note dos

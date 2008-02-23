@@ -52,6 +52,8 @@ Phar Lap's 286|DOS-Extender
 .np
 .ix 'OS/2 32-bit applications' 'creating'
 .ix 'applications' 'creating for 32-bit OS/2'
+.ix 'CauseWay applications' 'creating'
+.ix 'applications' 'creating for CauseWay'
 .ix 'DOS/4G applications' 'creating'
 .ix 'applications' 'creating for DOS/4G'
 .ix 'FlashTek applications' 'creating'

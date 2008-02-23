@@ -188,7 +188,7 @@ tells the &lnkname to generate an OS/2 executable file format.
 The name of the executable file will have extension "exe".
 If "LE" is specified, an early form of the OS/2 32-bit linear
 executable will be generated.
-This executable file format is required by CauseWay DOS extender,
+This executable file format is required by the CauseWay DOS extender,
 Tenberry Software's DOS/4G and DOS/4GW DOS extenders, and similar products.
 .np
 In order to improve load time and minimize the size of the executable

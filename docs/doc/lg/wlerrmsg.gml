@@ -779,9 +779,10 @@ If it is issued, please report this problem.
 .np
 A reference to an absolute location is not allowed in protected mode.
 A protected-mode application is one that is being generated for OS/2,
+CauseWay DOS extender,
+Tenberry Software's DOS/4G or DOS/4GW DOS extender,
 FlashTek's DOS extender,
 Phar Lap's 386|DOS-Extender,
-Tenberry Software's DOS/4G or DOS/4GW DOS extender,
 Novell's NetWare operating systems,
 Windows NT,
 or Windows 95.
