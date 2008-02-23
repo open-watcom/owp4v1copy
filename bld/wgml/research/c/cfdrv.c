@@ -1997,8 +1997,9 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
             /* Research code */
 
-            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
-                cop_codeblocks[i].designator);
+            printf("  designator = %x, cb05_flag = %x, unknown = %x, pass = %x\n", \
+                cop_codeblocks[i].designator, cop_codeblocks[i].cb05_flag, \
+                cop_codeblocks[i].unknown, cop_codeblocks[i].pass);
             save_designator = cop_codeblocks[i].designator;
             save_pass = cop_codeblocks[i].pass;
 
@@ -2053,11 +2054,12 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
             /* Research code */
 
-            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
-                cop_codeblocks[i].designator);
-            if( save_designator == 0x04 ) {
-                puts( "  :STARTVALUE block appeared after the :ENDVALUE block" );
-            }
+            printf("  designator = %x, cb05_flag = %x, unknown = %x, pass = %x", \
+                cop_codeblocks[i].designator, cop_codeblocks[i].cb05_flag, \
+                cop_codeblocks[i].unknown, cop_codeblocks[i].pass);
+            if( (save_designator == 0x04) && (save_pass == cop_codeblocks[i].pass) ) \
+                puts( " <-inversion!" );
+            else puts("");
             save_designator = cop_codeblocks[i].designator;
             save_pass = cop_codeblocks[i].pass;
 
@@ -2125,8 +2127,9 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
             /* Research code */
 
-            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
-                cop_codeblocks[i].designator);
+            printf("  designator = %x, cb05_flag = %x, unknown = %x, pass = %x\n", \
+                cop_codeblocks[i].designator, cop_codeblocks[i].cb05_flag, \
+                cop_codeblocks[i].unknown, cop_codeblocks[i].pass);
             save_designator = cop_codeblocks[i].designator;
             save_pass = cop_codeblocks[i].pass;
 
@@ -2194,11 +2197,12 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
             /* Research code */
 
-            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
-                cop_codeblocks[i].designator);
-            if( save_designator == 0x08 ) {
-                puts( "  :STARTVALUE block appeared after the :ENDVALUE block\n" );
-            }
+            printf("  designator = %x, cb05_flag = %x, unknown = %x, pass = %x", \
+                cop_codeblocks[i].designator, cop_codeblocks[i].cb05_flag, \
+                cop_codeblocks[i].unknown, cop_codeblocks[i].pass);
+            if( (save_designator == 0x08) && (save_pass == cop_codeblocks[i].pass) ) \
+                puts( " <-inversion!" );
+            else puts("");
             save_designator = cop_codeblocks[i].designator;
             save_pass = cop_codeblocks[i].pass;
 
@@ -2266,8 +2270,9 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
             /* Research code */
 
-            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
-                cop_codeblocks[i].designator);
+            printf("  designator = %x, cb05_flag = %x, unknown = %x, pass = %x\n", \
+                cop_codeblocks[i].designator, cop_codeblocks[i].cb05_flag, \
+                cop_codeblocks[i].unknown, cop_codeblocks[i].pass);
             save_designator = cop_codeblocks[i].designator;
             save_pass = cop_codeblocks[i].pass;
 
@@ -2335,11 +2340,12 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
             /* Research code */
 
-            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
-                cop_codeblocks[i].designator);
-            if( save_designator == 0x28 ) {
-                puts( "  :STARTWORD block appeared after the :ENDWORD block\n" );
-            }
+            printf("  designator = %x, cb05_flag = %x, unknown = %x, pass = %x", \
+                cop_codeblocks[i].designator, cop_codeblocks[i].cb05_flag, \
+                cop_codeblocks[i].unknown, cop_codeblocks[i].pass);
+            if( (save_designator == 0x28) && (save_pass == cop_codeblocks[i].pass) ) \
+                puts( " <-inversion!" );
+            else puts("");
             save_designator = cop_codeblocks[i].designator;
             save_pass = cop_codeblocks[i].pass;
 
@@ -2407,8 +2413,12 @@ cop_driver * parse_font_style( FILE * in_file, cop_driver * in_driver, font_styl
 
             /* Research code */
 
-            printf("  Pass = %i, designator = %i\n", cop_codeblocks[i].pass, \
-                cop_codeblocks[i].designator);
+            printf("  designator = %x, cb05_flag = %x, unknown = %x, pass = %x", \
+                cop_codeblocks[i].designator, cop_codeblocks[i].cb05_flag, \
+                cop_codeblocks[i].unknown, cop_codeblocks[i].pass);
+            if( (save_designator == 0x08) && (save_pass == cop_codeblocks[i].pass) ) \
+                puts( " <-inversion!" );
+            else puts("");
             save_designator = cop_codeblocks[i].designator;
             save_pass = cop_codeblocks[i].pass;
 

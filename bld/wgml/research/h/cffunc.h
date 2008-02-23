@@ -63,6 +63,8 @@ typedef struct p_buffer_struct
 typedef struct code_block_struct
 {
     uint8_t     designator;
+    uint8_t     cb05_flag;
+    uint8_t     unknown;
     uint16_t    pass;
     uint16_t    count;
     uint16_t    cumulative_index;

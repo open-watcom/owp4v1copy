@@ -74,9 +74,15 @@ code_block * get_code_blocks(uint8_t * * current, uint16_t count )
         memcpy_s( &out_block[i].designator, 1, *current, 1 );
         *current += 1;
 
-        /* Skip the "unknown" field, which is 2 bytes in size */ 
+        /* Get the cb05_flag */
+            
+        memcpy_s( &out_block[i].cb05_flag, 1, *current, 1 );
+        *current += 1;
 
-        *current += 2;
+        /* Get the unknown flag */
+            
+        memcpy_s( &out_block[i].unknown, 1, *current, 1 );
+        *current += 1;
 
         /* Get the pass number */
             
