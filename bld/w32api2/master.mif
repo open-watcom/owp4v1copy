@@ -292,7 +292,8 @@ directx_headers =    &
         dxtrans.h
 
 gl_headers =         &
-        gl.h
+        gl.h         &
+        glu.h
 
 base_libs =          &
         largeint.lib &
