@@ -29,7 +29,7 @@ iswalnum(wc)
 iswalpha(wc)
 .*
 .termnx iswctype(wc, wctype("blank"))
-isblank(wc)
+iswblank(wc)
 .*
 .termnx iswctype(wc, wctype("cntrl"))
 iswcntrl(wc)
