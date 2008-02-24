@@ -1,12 +1,12 @@
-.EXTENSIONS : .rh .mh
+.EXTENSIONS : .rh .mh .lbc .def
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-splice = wsplice -i$(hdr_dir) -i$(root_include_dir) $[@ $^@
-rsplice = wsplice -i$(hdr_dir) -i$(root_include_dir) -kRESOURCE $[@ $^@
-ws2splice = wsplice -i$(hdr_dir) -i$(root_include_dir) -kWINSOCK2 $[@ $^@
+splice = wsplice -i$(hdr_dir) -i$(root_dir)/include $[@ $^@
+rsplice = wsplice -i$(hdr_dir) -i$(root_dir)/include -kRESOURCE $[@ $^@
+ws2splice = wsplice -i$(hdr_dir) -i$(root_dir)/include -kWINSOCK2 $[@ $^@
 
 base_headers =       &
         _w32ials.h   &
@@ -296,6 +296,7 @@ gl_headers =         &
         glu.h
 
 base_libs =          &
+        kernel32.lib &
         largeint.lib &
         strmiids.lib &
         strquery.lib &
@@ -305,12 +306,19 @@ base_libs =          &
 directx_libs =       &
         dxguid.lib
 
+extra_lib_flags = -p=16
+
+extra_lib_flags_386 = -io -ii
+extra_lib_flags_axp = -ic -ia
+
 additional_cleanup = *.h *.rh
 
 all : $($(proj_name)_$(what_to_build)) .SYMBOLIC
     @%null
 
 .mh: $(include_dir)
+
+.def: $(lib_dir)
 
 .c: $(lib_dir)
 
@@ -319,6 +327,12 @@ all : $($(proj_name)_$(what_to_build)) .SYMBOLIC
 
 .mh.rh:
     $(rsplice)
+
+.def.lbc:
+    $(vi) -s $(root_dir)/def2lbc.vi -p"$[@ $* $(host_cpu)"
+
+.lbc.lib:
+    $(librarian) $(libflags) $@ @$<
 
 winsock2.h: winsock.mh
     $(ws2splice)

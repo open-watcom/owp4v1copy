@@ -1,0 +1,65 @@
+set norc
+set caseignore
+r %1
+#
+# remove comment if any
+#
+%s/;.*$//g
+#
+# remove non-significant spaces and TABs
+#
+%s/^[ \t]+//g
+%s/[ \t]+/ /g
+#
+# get uppercased module name
+#
+/^LIBRARY "?\([^ "]+\)
+assign %(ModuleName) = /\U\1/r
+#
+# remove unused lines
+#
+%s/^LIBRARY.*$//g
+%s/^EXPORTS.*$//g
+#
+# since calling convention essentially does not exist on non-x86,
+# simply strip the decoration
+#
+# TODO: remove symbols ???? probably C++ ???? they are mangled, should be converted
+# to OW mangling
+#
+%s/^\([A-Za-z0-9_]+\)\([@0-9]*\) ?= ?\([A-Za-z0-9_]*\)$//g
+#
+# process fastcall symbols "@symbol@size"
+#
+if %3 == 386
+%s/^@\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'__imp_@\1\2'.'%(ModuleName)'.'@\1\2'.'\1'/g
+else
+%s/^@\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'__imp_\1'.'%(ModuleName)'.'\1'.'\1'/g
+endif
+#
+# process stdcall symbols "symbol@size"
+#
+if %3 == 386
+%s/^\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'__imp__\1\2'.'%(ModuleName)'.'_\1\2'.'\1'/g
+else
+%s/^\([A-Za-z0-9_]+\)\(@[0-9]+\).*$/++'__imp_\1'.'%(ModuleName)'.'\1'.'\1'/g
+endif
+#
+# process DATA symbols "symbol DATA"
+#
+if %3 == 386
+%s/^\([A-Za-z0-9_]+\) DATA.*$/++'__imp__\1'.'%(ModuleName)'.'_\1'.'\1'/g
+else
+%s/^\([A-Za-z0-9_]+\) DATA.*$/++'__imp_\1'.'%(ModuleName)'.'\1'.'\1'/g
+endif
+#
+# process cdecl symbols "symbol"
+#
+if %3 == 386
+%s/^\([A-Za-z0-9_]+\).*$/++'__imp__\1'.'%(ModuleName)'.'_\1'.'\1'/g
+else
+%s/^\([A-Za-z0-9_]+\).*$/++'__imp_\1'.'%(ModuleName)'.'\1'.'\1'/g
+endif
+#
+w! %2.lbc
+q!
