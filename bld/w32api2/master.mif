@@ -296,10 +296,12 @@ gl_headers =         &
         glu.h
 
 base_libs =          &
+        gdi32.lib    &
         kernel32.lib &
         largeint.lib &
         strmiids.lib &
         strquery.lib &
+        user32.lib   &
         uuid.lib     &
         wbemuuid.lib
 

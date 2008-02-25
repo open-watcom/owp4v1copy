@@ -4592,6 +4592,7 @@ WINGDIAPI BOOL WINAPI           StretchBlt( HDC, int, int, int, int, HDC, int, i
 WINGDIAPI int WINAPI            StretchDIBits( HDC, int, int, int, int, int, int, int, int, CONST VOID *, CONST BITMAPINFO *, UINT, DWORD );
 WINGDIAPI BOOL WINAPI           StrokeAndFillPath( HDC );
 WINGDIAPI BOOL WINAPI           StrokePath( HDC );
+WINGDIAPI BOOL WINAPI           SwapBuffers( HDC );
 WINGDIAPI BOOL WINAPI           TextOutA( HDC, int, int, LPCSTR, int );
 WINGDIAPI BOOL WINAPI           TextOutW( HDC, int, int, LPCWSTR, int );
 WINGDIAPI BOOL WINAPI           UnrealizeObject( HGDIOBJ );
@@ -4656,12 +4657,6 @@ WINGDIAPI BOOL WINAPI           RemoveFontResourceExW( LPCWSTR, DWORD, PVOID );
 WINGDIAPI COLORREF WINAPI       SetDCBrushColor( HDC, COLORREF );
 WINGDIAPI COLORREF WINAPI       SetDCPenColor( HDC, COLORREF );
 #endif
-#if (_WIN32_WINNT >= 0x0600)
-WINGDIAPI VOID WINAPI           GdiMarshal( DWORD, HGDIOBJ, PVOID, ULONG );
-WINGDIAPI ULONG WINAPI          GdiMarshalSize( VOID );
-WINGDIAPI BOOL WINAPI           GdiRegisterDdraw( PGDIREGISTERDDRAWPACKET, GDIMARSHALLOC * );
-WINGDIAPI HGDIOBJ WINAPI        GdiUnmarshal( PVOID, ULONG );
-#endif
 
 /* Functions in MSIMG32.DLL */
 #if (WINVER >= 0x0400)
@@ -4671,7 +4666,6 @@ WINGDIAPI BOOL WINAPI   TransparentBlt( HDC, int, int, int, int, HDC, int, int, 
 #endif
 
 /* Functions in OPENGL32.DLL */
-WINGDIAPI BOOL WINAPI   SwapBuffers( HDC );
 WINGDIAPI BOOL WINAPI   wglCopyContext( HGLRC, HGLRC, UINT );
 WINGDIAPI HGLRC WINAPI  wglCreateContext( HDC );
 WINGDIAPI HGLRC WINAPI  wglCreateLayerContext( HDC, int );
