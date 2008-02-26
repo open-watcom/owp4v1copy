@@ -228,7 +228,7 @@ all : $(dirs) $(headers) $(libs) .SYMBOLIC
 .mh: ../$(incldir)
 
 .def.lbc:
-        $(vi) -s ../def2lbc.vi -p"$*" ../$(libdir)/$[.
+        sed -f ../def2lbc.sed ../$(libdir)/$[. > $@
 
 .lbc.lib:
         $(librarian) $(libflags) $@ @$<
