@@ -359,11 +359,9 @@ This ISO C90 header file declares constants related to floating-point
 numbers, declarations for low-level floating-point functions, and the
 declaration of the floating-point exception codes.
 .*------------------------------
-.if '&machsys' eq 'QNX' .do begin
 .df fnmatch.h
 This header file declares the pattern matching function
 .kw fnmatch
-.do end
 .*------------------------------
 .if '&machsys' ne 'PP' .do begin
 .df graph.h

@@ -97,6 +97,7 @@ common = &
         fcntl.h &
         fenv.h &
         float.h &
+        fnmatch.h &
         fstream.h &
         generic.h &
         graph.h &
@@ -197,7 +198,6 @@ QNX_files = &
         dir.h &
         dirent.h &
         form.h &
-        fnmatch.h &
         ftw.h &
         grp.h &
         libc.h &

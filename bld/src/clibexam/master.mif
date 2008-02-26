@@ -544,6 +544,7 @@ ctime_s.exe &
 dirname.exe &
 exit.exe &
 ffs.exe &
+fnmatch.exe &
 getcmd.exe &
 getenv.exe &
 getenv_s.exe &

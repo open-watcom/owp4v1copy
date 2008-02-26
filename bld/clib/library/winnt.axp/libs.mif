@@ -21,6 +21,7 @@ libs = $+ &
     $(pfx__)memory$(__sfx) &
     $(pfx__)misc$(__sfx) &
     $(pfx__)mthread$(__sfx) &
+    $(pfx__)posix$(__sfx) &
     $(pfx__)process$(__sfx) &
     $(pfx__)search$(__sfx) &
     $(pfx__)startup$(__sfx) &

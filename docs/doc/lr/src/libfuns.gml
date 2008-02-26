@@ -337,7 +337,7 @@
 .fnc flushall                   flushall.gml    DOS QNX W WIN32
 .fnc fmod                       fmod.gml        DOS QNX W WIN32
 .fn8 _fmsbintoieee              fms2ieee.gml    DOS QNX W WIN32
-.fnc fnmatch                    fnmatch.gml         QXO
+.fnc fnmatch                    fnmatch.gml     DOS QXO W WIN32
 .fnc fopen                      fopen.gml       DOS QNX W WIN32
 .fnw _wfopen                    fopen.gml       DOS QNX W WIN32
 .fnc fopen_s                    fopen_s.gml     DOS QNX W WIN32
