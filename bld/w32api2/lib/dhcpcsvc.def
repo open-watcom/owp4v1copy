@@ -1,9 +1,10 @@
 LIBRARY DHCPCSVC.DLL
 EXPORTS
-DhcpCApiCleanup
-DhcpCApiInitialize
-DhcpDeRegisterParamChange
-DhcpRegisterParamChange
-DhcpRemoveDNSRestrictions
-DhcpRequestParams
-DhcpUndoRequestParams
+DhcpCApiCleanup@0
+DhcpCApiInitialize@4
+DhcpDeRegisterParamChange@12
+DhcpRegisterParamChange@28
+DhcpRemoveDNSRegistrations@0
+DhcpRequestParams@44
+DhcpUndoRequestParams@16
+

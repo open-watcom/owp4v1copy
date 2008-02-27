@@ -77,19 +77,19 @@ typedef NET_ADDRESS_INFO    *PNET_ADDRESS_INFO;
 
 /* Functions in IPHLPAPI.DLL */
 DWORD WINAPI    AddIPAddress( IPAddr, IPMask, DWORD, PULONG, PULONG );
-DWORD WINAPI    DeleteIPAddress( ULONG );
-DWORD WINAPI    GetAdapterIndex( LPWSTR, PULONG );
-PIP_ADAPTER_ORDER_MAP WINAPI    GetAdapterOrderMap( VOID );
-ULONG WINAPI    GetAdaptersInfo( PIP_ADAPTER_INFO, PULONG );
 DWORD WINAPI    CreateIpForwardEntry( PMIB_IPFORWARDROW );
 DWORD WINAPI    CreateIpNetEntry( PMIB_IPNETROW );
 DWORD WINAPI    CreateProxyArpEntry( DWORD, DWORD, DWORD );
+DWORD WINAPI    DeleteIPAddress( ULONG );
 DWORD WINAPI    DeleteIpForwardEntry( PMIB_IPFORWARDROW );
 DWORD WINAPI    DeleteIpNetEntry( PMIB_IPNETROW );
 DWORD WINAPI    DeleteProxyArpEntry( DWORD, DWORD, DWORD );
 DWORD WINAPI    DisableMediaSense( HANDLE *, OVERLAPPED * );
 DWORD WINAPI    EnableRouter( HANDLE *, OVERLAPPED * );
 DWORD WINAPI    FlushIpNetTable( DWORD );
+DWORD WINAPI    GetAdapterIndex( LPWSTR, PULONG );
+PIP_ADAPTER_ORDER_MAP WINAPI    GetAdapterOrderMap( VOID );
+ULONG WINAPI    GetAdaptersInfo( PIP_ADAPTER_INFO, PULONG );
 DWORD WINAPI    GetBestInterface( IPAddr, PDWORD );
 DWORD WINAPI    GetBestInterfaceEx( struct sockaddr *, PDWORD );
 DWORD WINAPI    GetBestRoute( DWORD, DWORD, PMIB_IPFORWARDROW );

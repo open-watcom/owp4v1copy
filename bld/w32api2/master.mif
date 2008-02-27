@@ -296,17 +296,47 @@ gl_headers =         &
         glu.h
 
 base_libs =          &
+        aclui.lib    &
+        advapi32.lib &
+        bcrypt.lib   &
+        comctl32.lib &
+        comdlg32.lib &
+        crypt32.lib  &
+        cryptnet.lib &
+        dbghelp.lib  &
+        ddraw.lib    &
+        dhcpcsvc.lib &
+        dnsapi.lib   &
+        faultrep.lib &
         gdi32.lib    &
+        glu32.lib    &
+        icm32.lib    &
+        icmui.lib    &
+        imagehlp.lib &
+        imm32.lib    &
+        iphlpapi.lib &
         kernel32.lib &
+        ksuser.lib   &
         largeint.lib &
+        lz32.lib     &
+        mapi32.lib   &
+        mgmtapi.lib  &
+        mpr.lib      &
+        mprapi.lib   &
         strmiids.lib &
         strquery.lib &
         user32.lib   &
         uuid.lib     &
+        vfw32.lib    &
         wbemuuid.lib
 
 directx_libs =       &
         dxguid.lib
+
+vfw32_lbcs =         &
+        avicap32.lbc &
+        avifil32.lbc &
+        msvfw32.lbc
 
 extra_lib_flags = -p=16
 
@@ -368,3 +398,8 @@ dxguid.lib: dxguid.obj
     %create $^&.lbc
     @%append $^&.lbc +dxguid.obj
     $(librarian) $(libflags) $@ @$^&.lbc
+
+vfw32.lbc: $(vfw32_lbcs) vfwuuid.obj
+    @%create $@
+    @for %i in ($(vfw32_lbcs)) do @%append $@ @ %i
+    @%append $@ +vfwuuid.obj

@@ -1,11 +1,12 @@
 LIBRARY MGMTAPI.DLL
 EXPORTS
-SnmpMgrClose
-SnmpMgrCtl
-SnmpMgrGetTrap
-SnmpMgrGetTrapEx
-SnmpMgrOidToStr
-SnmpMgrOpen
-SnmpMgrRequest
-SnmpMgrStrToOid
-SnmpMgrTrapListen
+SnmpMgrClose@4
+SnmpMgrCtl@28
+SnmpMgrGetTrap@24
+SnmpMgrGetTrapEx@32
+SnmpMgrOidToStr@8
+SnmpMgrOpen@16
+SnmpMgrRequest@20
+SnmpMgrStrToOid@8
+SnmpMgrTrapListen@4
+

@@ -1,4 +1,5 @@
 LIBRARY ICMUI.DLL
 EXPORTS
-SetupColorMatchingA
-SetupColorMatchingW
+SetupColorMatchingA@4
+SetupColorMatchingW@4
+

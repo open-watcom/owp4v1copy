@@ -1000,25 +1000,6 @@ typedef IMultiLanguage3 *LPMULTILANGUAGE3;
         (x)->lpVtbl->DetectOutboundCodePageInIStream( x, p1, p2, p3, p4, p5, p6, p7 )
 #endif
 
-/* Functions in MLANG.DLL */
-STDAPI  ConvertINetMultiByteToUnicode( LPDWORD, DWORD, LPCSTR, LPINT, LPWSTR, LPINT );
-STDAPI  ConvertINetString( LPDWORD, DWORD, DWORD, LPCSTR, LPINT, LPSTR, LPINT );
-STDAPI  ConvertINetUnicodeToMultiByte( LPDWORD, DWORD, LPCWSTR, LPINT, LPSTR, LPINT );
-STDAPI  IsConvertINetStringAvailable( DWORD, DWORD );
-STDAPI  LcidToRfc1766A( LCID, LPSTR, int );
-STDAPI  LcidToRfc1766W( LCID, LPWSTR, int );
-STDAPI  Rfc1766ToLcidA( LCID *, LPCSTR );
-STDAPI  Rfc1766ToLcidW( LCID *, LPCWSTR );
-
-/* Map generic function names to the appropriate ANSI or Unicode version. */
-#ifdef UNICODE
-    #define LcidToRfc1766   LcidToRfc1766W
-    #define Rfc1766ToLcid   Rfc1766ToLcidW
-#else
-    #define LcidToRfc1766   LcidToRfc1766A
-    #define Rfc1766ToLcid   Rfc1766ToLcidA
-#endif
-
 :include cplusepi.sp
 
 #endif /* _MLANG_H_INCLUDED */
