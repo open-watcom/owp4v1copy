@@ -1,9 +1,5 @@
 LIBRARY NORMALIZ.DLL
 EXPORTS
-GetStringScripts
-IdnToAscii
-IdnToNameprepUnicode
-IdnToUnicode
-IsNormalizedString
-NormalizeString
-VerifyScripts
+IsNormalizedString@12
+NormalizeString@20
+

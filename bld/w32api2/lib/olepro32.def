@@ -1,14 +1,10 @@
 LIBRARY OLEPRO32.DLL
 EXPORTS
-OleCreateFontIndirect
-OleCreatePictureIndirect
-OleCreatePropertyFrame
-OleCreatePropertyFrameIndirect
-OleIconToCursor
-OleLoadPicture
-OleLoadPictureEx
-OleLoadPictureFile
-OleLoadPictureFileEx
-OleLoadPicturePath
-OleSavePicturePath
-OleTranslateColor
+OleCreateFontIndirect@12
+OleCreatePictureIndirect@16
+OleCreatePropertyFrame@44
+OleCreatePropertyFrameIndirect@4
+OleIconToCursor@8
+OleLoadPicture@20
+OleTranslateColor@12
+

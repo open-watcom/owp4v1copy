@@ -200,7 +200,6 @@ WINOLEAPI_( DWORD )     CoBuildVersion( VOID );
 WINOLEAPI               CoCreateFreeThreadedMarshaler( LPUNKNOWN, LPUNKNOWN * );
 WINOLEAPI               CoCreateGuid( GUID * );
 WINOLEAPI               CoCreateInstance( REFCLSID, LPUNKNOWN, DWORD, REFIID, LPVOID * );
-WINOLEAPI               CoCreateStandardMalloc( DWORD, IMalloc ** );
 WINOLEAPI               CoDisconnectObject( LPUNKNOWN, DWORD );
 WINOLEAPI_( BOOL )      CoDosDateTimeToFileTime( WORD, WORD, FILETIME * );
 WINOLEAPI               CoFileTimeNow( FILETIME * );
@@ -272,7 +271,6 @@ WINOLEAPI               StgGetIFillLockBytesOnILockBytes( ILockBytes *, IFillLoc
 WINOLEAPI               StgIsStorageFile( const WCHAR * );
 WINOLEAPI               StgIsStorageILockBytes( ILockBytes * );
 WINOLEAPI               StgOpenAsyncDocfileOnIFillLockBytes( IFillLockBytes *, DWORD, DWORD, IStorage ** );
-WINOLEAPI               StgOpenLayoutDocfile( OLECHAR const *, DWORD, DWORD, IStorage ** );
 WINOLEAPI               StgOpenStorage( const WCHAR *, IStorage *, DWORD, SNB, DWORD, IStorage ** );
 WINOLEAPI               StgOpenStorageEx( const WCHAR *, DWORD, DWORD, DWORD, STGOPTIONS *, PSECURITY_DESCRIPTOR, REFIID, void ** );
 WINOLEAPI               StgOpenStorageOnILockBytes( ILockBytes *, IStorage *, DWORD, SNB, DWORD, IStorage ** );
@@ -321,6 +319,9 @@ WINOLEAPI               CoRevokeInitializeSpy( ULARGE_INTEGER );
 #if (_WIN32_WINNT >= 0x0600)
 WINOLEAPI               CoDisconnectContext( DWORD );
 #endif
+
+/* Functions in DFLAYOUT.DLL */
+WINOLEAPI   StgOpenLayoutDocfile( OLECHAR const *, DWORD, DWORD, IStorage ** );
 
 #endif /* _OBJBASE_H_INCLUDED */
 

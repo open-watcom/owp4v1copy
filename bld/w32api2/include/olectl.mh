@@ -393,7 +393,7 @@ EXTERN_C const GUID     GUID_HANDLE;
 STDAPI  DllRegisterServer( void );
 STDAPI  DllUnregisterServer( void );
 
-/* Functions in OLEPRO32.DLL */
+/* Functions in OLEAUT32.DLL and OLEPRO32.DLL */
 WINOLECTLAPI                OleCreateFontIndirect( LPFONTDESC, REFIID, LPVOID * );
 WINOLECTLAPI                OleCreatePictureIndirect( LPPICTDESC, REFIID, BOOL, LPVOID * );
 WINOLECTLAPI                OleCreatePropertyFrame( HWND, UINT, UINT, LPCOLESTR, ULONG, LPUNKNOWN *, ULONG, LPCLSID, LCID, DWORD, LPVOID );
