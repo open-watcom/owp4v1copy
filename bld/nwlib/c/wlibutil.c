@@ -45,6 +45,11 @@ void GetFileContents( char *name, libfile io, arch_header *arch, char **contents
     file_offset size = arch->size;
     file_offset         bytes_read;
 
+    if( !arch->size ){
+        *contents = NULL;
+        return;
+    }
+
     if( size % 2 == 1 ) {
         size++;
     }
