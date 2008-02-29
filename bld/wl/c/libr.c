@@ -211,7 +211,7 @@ static bool ReadARDict( file_list *list, unsigned long *loc, unsigned *numdicts,
         *loc += MAKE_EVEN( size );
     } else if( ar_hdr->name[0] == '/' && ar_hdr->name[1] == '/' ) {
         *loc += sizeof(ar_header);
-        if(size){
+        if( size ) {
             list->strtab = CachePermRead( list, *loc, size );
         }
         *loc += MAKE_EVEN( size );
