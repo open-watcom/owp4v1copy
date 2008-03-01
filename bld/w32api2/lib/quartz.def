@@ -1,4 +1,5 @@
 LIBRARY QUARTZ.DLL
 EXPORTS
-AMGetErrorTextA
-AMGetErrorTextW
+AMGetErrorTextA@12
+AMGetErrorTextW@12
+

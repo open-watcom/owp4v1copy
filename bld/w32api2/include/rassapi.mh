@@ -207,22 +207,24 @@ typedef struct _RAS_SERVER_0 {
 typedef RAS_SERVER_0    *PRAS_SERVER_0;
 
 /* Functions in RASSAPI.DLL */
-BOOL APIENTRY   RasAdminAcceptNewConnection( RAS_PORT_1 *, RAS_PORT_STATISTICS *, RAS_PARAMETERS * );
-VOID APIENTRY   RasAdminConnectionHangupNotification( RAS_PORT_1 *, RAS_PORT_STATISTICS *, RAS_PARAMETERS * );
 DWORD APIENTRY  RasAdminFreeBuffer( PVOID );
 DWORD APIENTRY  RasAdminGetErrorString( UINT, WCHAR *, DWORD );
-DWORD APIENTRY  RasAdminGetIpAddressForUser( WCHAR *, WCHAR *, IPADDR *, BOOL * );
 DWORD APIENTRY  RasAdminGetUserAccountServer( const WCHAR *, const WCHAR *, LPWSTR );
 DWORD APIENTRY  RasAdminGetUserParms( WCHAR *, PRAS_USER_0 );
 DWORD APIENTRY  RasAdminPortClearStatistics( const WCHAR *, const WCHAR * );
 DWORD APIENTRY  RasAdminPortDisconnect( const WCHAR *, const WCHAR * );
 DWORD APIENTRY  RasAdminPortEnum( const WCHAR *, PRAS_PORT_0 *, WORD * );
 DWORD APIENTRY  RasAdminPortGetInfo( const WCHAR *, const WCHAR *, RAS_PORT_1 *, RAS_PORT_STATISTICS *, RAS_PARAMETERS ** );
-VOID APIENTRY   RasAdminReleaseIpAddress( WCHAR *, WCHAR *, IPADDR * );
 DWORD APIENTRY  RasAdminServerGetInfo( const WCHAR *, PRAS_SERVER_0 );
 DWORD APIENTRY  RasAdminSetUserParms( WCHAR *, DWORD, PRAS_USER_0 );
 DWORD APIENTRY  RasAdminUserGetInfo( const WCHAR *, const WCHAR *, PRAS_USER_0 );
 DWORD APIENTRY  RasAdminUserSetInfo( const WCHAR *, const WCHAR *, const PRAS_USER_0 );
+
+/* Function implemented by RAS administration providers */
+BOOL APIENTRY   RasAdminAcceptNewConnection( RAS_PORT_1 *, RAS_PORT_STATISTICS *, RAS_PARAMETERS * );
+VOID APIENTRY   RasAdminConnectionHangupNotification( RAS_PORT_1 *, RAS_PORT_STATISTICS *, RAS_PARAMETERS * );
+DWORD APIENTRY  RasAdminGetIpAddressForUser( WCHAR *, WCHAR *, IPADDR *, BOOL * );
+VOID APIENTRY   RasAdminReleaseIpAddress( WCHAR *, WCHAR *, IPADDR * );
 
 :include cplusepi.sp
 

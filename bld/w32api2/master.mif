@@ -344,6 +344,17 @@ base_libs =          &
         oledlg.lib   &
         olepro32.lib &
         olesvr32.lib &
+        opengl32.lib &
+        powrprof.lib &
+        propsys.lib  &
+        psapi.lib    &
+        qosname.lib  &
+        quartz.lib   &
+        rasapi32.lib &
+        rasdlg.lib   &
+        rassapi.lib  &
+        rpcns4.lib   &
+        rpcrt4.lib   &
         strmiids.lib &
         strquery.lib &
         user32.lib   &
