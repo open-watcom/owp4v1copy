@@ -874,7 +874,6 @@ LWSTDAPI_( BOOL )       IsCharSpaceW( WCHAR );
 LWSTDAPI                SHCreateThreadRef( LONG *, IUnknown ** );
 LWSTDAPI_( LSTATUS )    SHRegGetValueA( HKEY, LPCSTR, LPCSTR, SRRF, DWORD *, void *, DWORD * );
 LWSTDAPI_( LSTATUS )    SHRegGetValueW( HKEY, LPCWSTR, LPCWSTR, SRRF, DWORD *, void *, DWORD * );
-LWSTDAPI_( LSTATUS )    SHRegSetValue( HKEY, LPCWSTR, LPCWSTR, SRRF, DWORD, LPCVOID, DWORD );
 LWSTDAPI_( int )        StrCmpCA( LPCSTR, LPCSTR );
 LWSTDAPI_( int )        StrCmpCW( LPCWSTR, LPCWSTR );
 LWSTDAPI_( int )        StrCmpICA( LPCSTR, LPCSTR );

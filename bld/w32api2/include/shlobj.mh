@@ -3057,7 +3057,6 @@ SHSTDAPI                        SHILCreateFromPath( LPCWSTR, PIDLIST_ABSOLUTE *,
 SHSTDAPI                        SHLoadInProc( REFCLSID );
 SHSTDAPI_( int )                SHMapPIDLToSystemImageListIndex( IShellFolder *, PCUITEMID_CHILD, int * );
 SHSTDAPI_( BOOL )               SHObjectProperties( HWND, DWORD, PCWSTR, PCWSTR );
-SHSTDAPI_( BOOL )               SHOpenPropSheetA( LPCSTR, HKEY [], UINT, const CLSID *, IDataObject *, IShellBrowser *, LPCSTR );
 SHSTDAPI_( BOOL )               SHOpenPropSheetW( LPCWSTR, HKEY [], UINT, const CLSID *, IDataObject *, IShellBrowser *, LPCWSTR );
 SHSTDAPI                        SHOpenWithDialog( HWND, const OPENASINFO * );
 SHSTDAPI                        SHPathPrepareForWriteA( HWND, IUnknown *, LPCSTR, DWORD );
@@ -3071,7 +3070,6 @@ SHSTDAPI_( BOOL )               SHRunControlPanel( LPCWSTR, HWND );
 SHSTDAPI_( void )               SHSetInstanceExplorer( IUnknown * );
 SHSTDAPI_( LRESULT )            SHShellFolderView_Message( HWND, UINT, LPARAM );
 SHSTDAPI_( PIDLIST_ABSOLUTE )   SHSimpleIDListFromPath( LPCWSTR );
-SHSTDAPI                        SHStartNetConnectionDialogA( HWND, LPCSTR, DWORD );
 SHSTDAPI                        SHStartNetConnectionDialogW( HWND, LPCWSTR, DWORD );
 SHSTDAPI_( BOOL )               SHValidateUNC( HWND, LPWSTR, UINT );
 SHSTDAPI_( int )                Shell_GetCachedImageIndexA( LPCSTR, int, UINT );
@@ -3186,9 +3184,7 @@ SHFOLDERAPI SHGetFolderPathW( HWND, int, HANDLE, DWORD, LPWSTR );
     #define SHGetIconOverlayIndex           SHGetIconOverlayIndexA
     #define SHGetPathFromIDList             SHGetPathFromIDListA
     #define SHGetSpecialFolderPath          SHGetSpecialFolderPathA
-    #define SHOpenPropSheet                 SHOpenPropSheetA
     #define SHPathPrepareForWrite           SHPathPrepareForWriteA
-    #define SHStartNetConnectionDialog      SHStartNetConnectionDialogA
     #define Shell_GetCachedImageIndex       Shell_GetCachedImageIndexA
     #if (_WIN32_IE >= 0x0400)
         #define ILCreateFromPath            ILCreateFromPathA

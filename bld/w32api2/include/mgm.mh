@@ -84,7 +84,6 @@ DWORD WINAPI    MgmGroupEnumerationGetNext( HANDLE, PDWORD, PBYTE, PDWORD );
 DWORD WINAPI    MgmGroupEnumerationStart( HANDLE, MGM_ENUM_TYPES, HANDLE * );
 DWORD WINAPI    MgmRegisterMProtocol( PROUTING_PROTOCOL_CONFIG, DWORD, DWORD, HANDLE * );
 DWORD WINAPI    MgmReleaseInterfaceOwnership( HANDLE, DWORD, DWORD );
-DWORD WINAPI    MgmSetMfe( HANDLE, PMIB_IPMCAST_MFE );
 DWORD WINAPI    MgmTakeInterfaceOwnership( HANDLE, DWORD, DWORD );
 
 :include cplusepi.sp

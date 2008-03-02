@@ -2776,7 +2776,7 @@ STDAPI          UrlMkGetSessionOption( DWORD, LPVOID, DWORD, DWORD *, DWORD );
 STDAPI          UrlMkSetSessionOption( DWORD, LPVOID, DWORD, DWORD );
 #if (_WIN32_IE >= 0x0602)
 STDAPI          CoInternetIsFeatureEnabled( INTERNETFEATURELIST, DWORD );
-STDAPI          CoInternetIsFeatureEnabledForURL( INTERNETFEATURELIST, DWORD, LPCWSTR, IInternetSecurityManager * );
+STDAPI          CoInternetIsFeatureEnabledForUrl( INTERNETFEATURELIST, DWORD, LPCWSTR, IInternetSecurityManager * );
 STDAPI          CoInternetIsFeatureZoneElevationEnabled( LPCWSTR, LPCWSTR, IInternetSecurityManager *, DWORD );
 STDAPI          CoInternetSetFeatureEnabled( INTERNETFEATURELIST, DWORD, BOOL );
 #endif

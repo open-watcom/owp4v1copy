@@ -8626,7 +8626,6 @@ SHSTDAPI    SHCreateShellItemArray( PCIDLIST_ABSOLUTE, IShellFolder *, UINT, PCU
 SHSTDAPI    SHCreateShellItemArrayFromDataObject( IDataObject *, REFIID, void ** );
 SHSTDAPI    SHCreateShellItemArrayFromIDList( UINT, PCIDLIST_ABSOLUTE_ARRAY, IShellItemArray ** );
 SHSTDAPI    SHCreateShellItemArrayFromShellItem( IShellItem *, REFIID, void ** );
-SHSTDAPI    SHRemovePersonalPropertyValues( IShellItemArray * );
 SHSTDAPI    SHSetDefaultProperties( HWND, IShellItem *, DWORD, IFileOperationProgressSink * );
 #endif
 #if (NTDDI_VERSION >= 0x06000000)

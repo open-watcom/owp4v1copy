@@ -143,10 +143,8 @@ typedef struct tagVS_FIXEDFILEINFO {
 /* Functions in VERSION.DLL */
 BOOL APIENTRY   GetFileVersionInfoA( LPCSTR, DWORD, DWORD, LPVOID );
 DWORD APIENTRY  GetFileVersionInfoSizeA( LPCSTR, LPDWORD );
-DWORD APIENTRY  GetFileVersionInfoSizeExA( DWORD, LPCSTR, LPDWORD );
 DWORD APIENTRY  GetFileVersionInfoSizeExW( DWORD, LPCWSTR, LPDWORD );
 DWORD APIENTRY  GetFileVersionInfoSizeW( LPCWSTR, LPDWORD );
-BOOL APIENTRY   GetFileVersionInfoExA( DWORD, LPCSTR, DWORD, DWORD, LPVOID );
 BOOL APIENTRY   GetFileVersionInfoExW( DWORD, LPCWSTR, DWORD, DWORD, LPVOID );
 BOOL APIENTRY   GetFileVersionInfoW( LPCWSTR, DWORD, DWORD, LPVOID );
 DWORD APIENTRY  VerFindFileA( DWORD, LPSTR, LPSTR, LPSTR, LPSTR, PUINT, LPSTR, PUINT );
@@ -170,9 +168,7 @@ BOOL APIENTRY   VerQueryValueW( const LPVOID, LPWSTR, LPVOID *, PUINT );
     #define VerQueryValue               VerQueryValueW
 #else
     #define GetFileVersionInfo          GetFileVersionInfoA
-    #define GetFileVersionInfoEx        GetFileVersionInfoExA
     #define GetFileVersionInfoSize      GetFileVersionInfoSizeA
-    #define GetFileVersionInfoSizeEx    GetFileVersionInfoSizeExA
     #define VerFindFile                 VerFindFileA
     #define VerInstallFile              VerInstallFileA
     #define VerLanguageName             VerLanguageNameA
