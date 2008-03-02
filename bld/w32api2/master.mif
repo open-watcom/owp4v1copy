@@ -355,12 +355,31 @@ base_libs =          &
         rassapi.lib  &
         rpcns4.lib   &
         rpcrt4.lib   &
+        rtm.lib      &
+        rtutils.lib  &
+        scarddlg.lib &
+        secur32.lib  &
+        setupapi.lib &
+        shell32.lib  &
+        shfolder.lib &
+        shlwapi.lib  &
+        snmpapi.lib  &
         strmiids.lib &
         strquery.lib &
+        url.lib      &
+        urlmon.lib   &
         user32.lib   &
+        userenv.lib  &
+        usp10.lib    &
         uuid.lib     &
+        uxtheme.lib  &
+        version.lib  &
         vfw32.lib    &
-        wbemuuid.lib
+        wbemuuid.lib &
+        wininet.lib  &
+        winmm.lib    &
+        winscard.lib &
+        winspool.lib
 
 directx_libs =       &
         dxguid.lib
