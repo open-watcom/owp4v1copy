@@ -602,7 +602,6 @@ WINLDAPAPI ULONG LDAPAPI    ldap_delete_sW( LDAP *, const PWCHAR );
 WINLDAPAPI PCHAR LDAPAPI    ldap_dn2ufn( const PCHAR );
 WINLDAPAPI PCHAR LDAPAPI    ldap_dn2ufnA( const PCHAR );
 WINLDAPAPI PWCHAR LDAPAPI   ldap_dn2ufnW( const PWCHAR );
-WINLDAPAPI ULONG LDAPAPI    ldap_encode_sort_control( PLDAP, PLDAPSortKeyA *, PLDAPControlA, BOOLEAN );
 WINLDAPAPI ULONG LDAPAPI    ldap_encode_sort_controlA( PLDAP, PLDAPSortKeyA *, PLDAPControlA, BOOLEAN );
 WINLDAPAPI ULONG LDAPAPI    ldap_encode_sort_controlW( PLDAP, PLDAPSortKeyW *, PLDAPControlW, BOOLEAN );
 WINLDAPAPI PCHAR LDAPAPI    ldap_err2string( ULONG );

@@ -92,7 +92,6 @@ ldap_delete_sW
 ldap_dn2ufn
 ldap_dn2ufnA
 ldap_dn2ufnW
-ldap_encode_sort_control
 ldap_encode_sort_controlA
 ldap_encode_sort_controlW
 ldap_err2string
@@ -244,3 +243,4 @@ ldap_value_free
 ldap_value_freeA
 ldap_value_freeW
 ldap_value_free_len
+

@@ -379,9 +379,17 @@ base_libs =          &
         wininet.lib  &
         winmm.lib    &
         winscard.lib &
-        winspool.lib
+        winspool.lib &
+        wintrust.lib &
+        wldap32.lib  &
+        ws2_32.lib   &
+        wsnmp32.lib  &
+        wsock32.lib  &
+        wtsapi32.lib
 
 directx_libs =       &
+        d3d9.lib     &
+        d3drm.lib    &
         dxguid.lib
 
 vfw32_lbcs =         &
