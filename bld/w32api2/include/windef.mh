@@ -10,6 +10,11 @@
 :include readonly.sp
 :include cpluspro.sp
 
+/* Override default compiler behavior for these keywords. */
+#define far
+#define near
+#define pascal  __stdcall
+
 /* Calling conventions */
 #define CALLBACK    __stdcall
 #define WINAPI      __stdcall
