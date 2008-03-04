@@ -586,7 +586,7 @@ static BOOL getOpenFName( char *fname )
     {
         OSVERSIONINFO os_info;
         os_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-        GetVersionEx(os_info);
+        GetVersionEx(&os_info);
         if ( os_info.dwMajorVersion < 5 ) {
             of_size = OPENFILENAME_SIZE_VERSION_400;
             /* WIN32 major version < 5 detected     */
@@ -793,7 +793,7 @@ static BOOL getOpenPalName( char *fname )
     {
         OSVERSIONINFO os_info;
         os_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-        GetVersionEx(os_info);
+        GetVersionEx(&os_info);
         if ( os_info.dwMajorVersion < 5 ) {
             of_size = OPENFILENAME_SIZE_VERSION_400;
             /* WIN32 major version < 5 detected     */
