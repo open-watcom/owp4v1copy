@@ -21,10 +21,10 @@
 :include readonly.sp
 :segment WINSOCK2
 #define _WINSOCK_H_INCLUDED
+:endsegment
 #ifndef _WINDOWS_H_INCLUDED
     #include <windows.h>
 #endif
-:endsegment
 #include <inaddr.h>
 #include <qos.h>
 
