@@ -39,16 +39,16 @@ typedef LONG    LSTATUS;
 #define REG_MUI_STRING_TRUNCATE 0x00000001L
 
 /* Special key handles */
-#define HKEY_CLASSES_ROOT           0x80000000L
-#define HKEY_CURRENT_USER           0x80000001L
-#define HKEY_LOCAL_MACHINE          0x80000002L
-#define HKEY_USERS                  0x80000003L
-#define HKEY_PERFORMANCE_DATA       0x80000004L
-#define HKEY_PERFORMANCE_TEXT       0x80000050L
-#define HKEY_PERFORMANCE_NLSTEXT    0x80000060L
+#define HKEY_CLASSES_ROOT           ((HKEY)0x80000000L)
+#define HKEY_CURRENT_USER           ((HKEY)0x80000001L)
+#define HKEY_LOCAL_MACHINE          ((HKEY)0x80000002L)
+#define HKEY_USERS                  ((HKEY)0x80000003L)
+#define HKEY_PERFORMANCE_DATA       ((HKEY)0x80000004L)
+#define HKEY_PERFORMANCE_TEXT       ((HKEY)0x80000050L)
+#define HKEY_PERFORMANCE_NLSTEXT    ((HKEY)0x80000060L)
 #if (WINVER >= 0x0400)
-    #define HKEY_CURRENT_CONFIG     0x80000005L
-    #define HKEY_DYN_DATA           0x80000006L
+    #define HKEY_CURRENT_CONFIG     ((HKEY)0x80000005L)
+    #define HKEY_DYN_DATA           ((HKEY)0x80000006L)
 #endif
 
 /* RegConnectRegistryEx() flags */
