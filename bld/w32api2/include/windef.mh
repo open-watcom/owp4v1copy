@@ -28,6 +28,11 @@
 #define NEAR
 #define CONST const
 
+/* Parameter attributes */
+#define IN
+#define OUT
+#define OPTIONAL
+
 /* Primitive data types */
 typedef unsigned long   ULONG;
 typedef ULONG           *PULONG;
@@ -130,8 +135,12 @@ typedef HICON       HCURSOR;
         #define NULL    ((void *)0)
     #endif
 #endif
-#define FALSE           0
-#define TRUE            1
+#ifndef FALSE
+    #define FALSE       0
+#endif
+#ifndef TRUE
+    #define TRUE        1
+#endif
 #define HFILE_ERROR     0xFFFFFFFF
 
 /* Rectangle */
