@@ -62,7 +62,7 @@ CompareStringA@24
 CompareStringEx@36
 CompareStringOrdinal@20
 CompareStringW@24
-ConnectNamePipe@8
+ConnectNamedPipe@8
 ContinueDebugEvent@12
 ConvertDefaultLocale@4
 ConvertFiberToThread@0
