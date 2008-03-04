@@ -17,6 +17,10 @@
 
 :include dummy.sp
 
+/* Macro to calculate structure sizes */
+#define CDSIZEOF_STRUCT( x, p ) \
+    (((int)(LPBYTE)(&((x *)0)->p) - ((LPBYTE)((x *)0)))) + sizeof( ((x *)0)->p ))
+
 /* GetOpenFileName() flags */
 #define OFN_READONLY                0x00000001L
 #define OFN_OVERWRITEPROMPT         0x00000002L
@@ -771,6 +775,23 @@ typedef LPPAGESETUPDLGW LPPAGESETUPDLG;
 typedef PAGESETUPDLGA   PAGESETUPDLG;
 typedef LPPAGESETUPDLGA LPPAGESETUPDLG;
 #endif
+#endif
+
+/* Structure sizes */
+#if (_WIN32_WINNT >= 0x0500)
+    #define OPENFILENAME_SIZE_VERSION_400A \
+        CDSIZEOF_STRUCT( OPENFILENAMEA, lpTemplateName )
+    #define OPENFILENAME_SIZE_VERSION_400W \
+        CDSIZEOF_STRUCT( OPENFILENAMEW, lpTemplateName )
+#endif
+#ifdef UNICODE
+    #if (_WIN32_WINNT >= 0x0500)
+        #define OPENFILENAME_SIZE_VERSION_400   OPENFILENAME_SIZE_VERSION_400W
+    #endif
+#else
+    #if (_WIN32_WINNT >= 0x0500)
+        #define OPENFILENAME_SIZE_VERSION_400   OPENFILENAME_SIZE_VERSION_400A
+    #endif
 #endif
 
 /* GUIDs */
