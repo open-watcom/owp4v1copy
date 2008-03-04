@@ -60,11 +60,11 @@
         #endif
         #include <commdlg.h>
         #include <stralign.h>
-        #include <winsvc.h>
-        #if (WINVER >= 0x0400)
-            #include <mcx.h>
-            #include <imm.h>
-        #endif
+    #endif
+    #include <winsvc.h>
+    #if (WINVER >= 0x0400)
+        #include <mcx.h>
+        #include <imm.h>
     #endif
 #endif
 
