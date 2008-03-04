@@ -501,6 +501,7 @@ GetShortPathNameW@12
 GetStartupInfoA@4
 GetStartupInfoW@4
 GetStdHandle@4
+GetStringScripts@20
 GetStringTypeA@20
 GetStringTypeExA@20
 GetStringTypeExW@20
@@ -791,6 +792,7 @@ RestoreLastError@4
 ResumeThread@4
 RtlCaptureContext@4
 RtlCaptureStackBackTrace@16
+RtlUnwind@16
 ScrollConsoleScreenBufferA@20
 ScrollConsoleScreenBufferW@20
 SearchPathA@24
@@ -943,6 +945,7 @@ UpdateProcThreadAttribute@28
 UpdateResourceA@24
 UpdateResourceW@24
 VerSetConditionMask@16
+VerifyScripts@20
 VerifyVersionInfoA@16
 VerifyVersionInfoW@16
 VirtualAlloc@16

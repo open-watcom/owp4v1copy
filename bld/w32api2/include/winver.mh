@@ -157,7 +157,7 @@ BOOL APIENTRY   VerQueryValueA( const LPVOID, LPSTR, LPVOID *, PUINT );
 BOOL APIENTRY   VerQueryValueW( const LPVOID, LPWSTR, LPVOID *, PUINT );
 
 /* Map generic function names to the appropriate ANSI or Unicode version. */
-#ifndef UNICODE
+#ifdef UNICODE
     #define GetFileVersionInfo          GetFileVersionInfoW
     #define GetFileVersionInfoEx        GetFileVersionInfoExW
     #define GetFileVersionInfoSize      GetFileVersionInfoSizeW

@@ -567,7 +567,7 @@ typedef struct tagCHOOSEFONTA {
     LPCSTR          lpTemplateName;
     HINSTANCE       hInstance;
     LPSTR           lpszStyle;
-    WORD            nFontSize;
+    WORD            nFontType;
     WORD            __MISSING_ALIGNMENT__;
     INT             nSizeMin;
     INT             nSizeMax;
@@ -586,7 +586,7 @@ typedef struct tagCHOOSEFONTW {
     LPCWSTR         lpTemplateName;
     HINSTANCE       hInstance;
     LPWSTR          lpszStyle;
-    WORD            nFontSize;
+    WORD            nFontType;
     WORD            __MISSING_ALIGNMENT__;
     INT             nSizeMin;
     INT             nSizeMax;

@@ -25,6 +25,7 @@
 #ifdef RC_INVOKED
     #include <winresrc.h>
 #else
+    #include <_w32ials.h>
     #include <excpt.h>
     #include <stdarg.h>
     #include <windef.h>

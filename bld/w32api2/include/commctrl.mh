@@ -3609,7 +3609,7 @@ typedef struct tagTRACKMOUSEEVENT {
 } TRACKMOUSEEVENT;
 typedef TRACKMOUSEEVENT *LPTRACKMOUSEEVENT;
 
-#endif /* (_WIN32_IE >= 0x0300) && !defined( TME_HOVER )
+#endif /* (_WIN32_IE >= 0x0300) && !defined( TME_HOVER ) */
 
 /* Flat scroll bar properties */
 #if (_WIN32_IE >= 0x0400)

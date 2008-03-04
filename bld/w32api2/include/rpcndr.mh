@@ -91,8 +91,6 @@ typedef void    *RPC_SS_THREAD_HANDLE;
 /* Abstract data types */
 typedef struct _NDR_ASYNC_MESSAGE       *PNDR_ASYNC_MESSAGE;
 typedef struct _NDR_CORRELATION_INFO    *PNDR_CORRELATION_INFO;
-typedef struct _MIDL_SYNTAX_INFO        MIDL_SYNTAX_INFO;
-typedef struct _MIDL_SYNTAX_INFO        *PMIDL_SYNTAX_INFO;
 
 /* NDR client context */
 typedef void    *NDR_CCONTEXT;
@@ -363,25 +361,25 @@ typedef long (RPC_ENTRY *SERVER_ROUTINE)();
 
 /* MIDL server information */
 typedef struct _MIDL_SERVER_INFO {
-    PMIDL_STUB_DESC         pStubDesc;
-    const SERVER_ROUTINE    *DispatchTable;
-    PFORMAT_STRING          ProcString;
-    const unsigned short    *FmtStringOffset;
-    const STUB_THUNK        *ThunkTable;
-    PRPC_SYNTAX_IDENTIFIER  pTransferSyntax;
-    ULONG_PTR               nCount;
-    PMIDL_SYNTAX_INFO       pSyntaxInfo;
+    PMIDL_STUB_DESC             pStubDesc;
+    const SERVER_ROUTINE        *DispatchTable;
+    PFORMAT_STRING              ProcString;
+    const unsigned short        *FmtStringOffset;
+    const STUB_THUNK            *ThunkTable;
+    PRPC_SYNTAX_IDENTIFIER      pTransferSyntax;
+    ULONG_PTR                   nCount;
+    struct _MIDL_SYNTAX_INFO    *pSyntaxInfo;
 } MIDL_SERVER_INFO;
 typedef MIDL_SERVER_INFO    *PMIDL_SERVER_INFO;
 
 /* MIDL stubless proxy information */
 typedef struct _MIDL_STUBLESS_PROXY_INFO {
-    PMIDL_STUB_DESC         pStubDesc;
-    PFORMAT_STRING          ProcFormatString;
-    const unsigned short    *FormatStringOffset;
-    PRPC_SYNTAX_IDENTIFIER  pTransferSyntax;
-    ULONG_PTR               nCount;
-    PMIDL_SYNTAX_INFO       pSyntaxInfo;
+    PMIDL_STUB_DESC             pStubDesc;
+    PFORMAT_STRING              ProcFormatString;
+    const unsigned short        *FormatStringOffset;
+    PRPC_SYNTAX_IDENTIFIER      pTransferSyntax;
+    ULONG_PTR                   nCount;
+    struct _MIDL_SYNTAX_INFO    *pSyntaxInfo;
 } MIDL_STUBLESS_PROXY_INFO;
 typedef MIDL_STUBLESS_PROXY_INFO    *PMIDL_STUBLESS_PROXY_INFO;
 

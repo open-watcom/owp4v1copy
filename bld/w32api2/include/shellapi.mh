@@ -811,7 +811,7 @@ typedef NC_ADDRESS  *PNC_ADDRESS;
 
 /* Functions in SHELL32.DLL */
 SHSTDAPI_( LPWSTR * )   CommandLineToArgvW( LPCWSTR, int * );
-SHSTDAPI_( void )       DragAceptFiles( HWND, BOOL );
+SHSTDAPI_( void )       DragAcceptFiles( HWND, BOOL );
 SHSTDAPI_( void )       DragFinish( HDROP );
 SHSTDAPI_( UINT )       DragQueryFileA( HDROP, UINT, LPSTR, UINT );
 SHSTDAPI_( UINT )       DragQueryFileW( HDROP, UINT, LPWSTR, UINT );
