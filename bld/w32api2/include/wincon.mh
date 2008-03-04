@@ -385,6 +385,7 @@ WINBASEAPI DWORD WINAPI     GetConsoleOriginalTitleW( LPWSTR, DWORD );
     #define ReadConsoleOutputCharacter      ReadConsoleOutputCharacterW
     #define ScrollConsoleScreenBuffer       ScrollConsoleScreenBufferW
     #define SetConsoleTitle                 SetConsoleTitleW
+    #define WriteConsole                    WriteConsoleW
     #define WriteConsoleInput               WriteConsoleInputW
     #define WriteConsoleOutput              WriteConsoleOutputW
     #define WriteConsoleOutputCharacter     WriteConsoleOutputCharacterW
@@ -409,6 +410,7 @@ WINBASEAPI DWORD WINAPI     GetConsoleOriginalTitleW( LPWSTR, DWORD );
     #define ReadConsoleOutputCharacter      ReadConsoleOutputCharacterA
     #define ScrollConsoleScreenBuffer       ScrollConsoleScreenBufferA
     #define SetConsoleTitle                 SetConsoleTitleA
+    #define WriteConsole                    WriteConsoleA
     #define WriteConsoleInput               WriteConsoleInputA
     #define WriteConsoleOutput              WriteConsoleOutputA
     #define WriteConsoleOutputCharacter     WriteConsoleOutputCharacterA
