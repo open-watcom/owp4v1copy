@@ -2975,6 +2975,7 @@ WINADVAPI BOOL WINAPI               AddMandatoryAce( PACL, DWORD, DWORD, DWORD, 
     #define FreeEnvironmentStrings          FreeEnvironmentStringsW
     #define GetAtomName                     GetAtomNameW
     #define GetBinaryType                   GetBinaryTypeW
+    #define GetCommandLine                  GetCommandLineW
     #define GetCompressedFileSize           GetCompressedFileSizeW
     #define GetComputerName                 GetComputerNameW
     #define GetCurrentDirectory             GetCurrentDirectoryW
@@ -3187,6 +3188,7 @@ WINADVAPI BOOL WINAPI               AddMandatoryAce( PACL, DWORD, DWORD, DWORD, 
     #define FreeEnvironmentStrings          FreeEnvironmentStringsA
     #define GetAtomName                     GetAtomNameA
     #define GetBinaryType                   GetBinaryTypeA
+    #define GetCommandLine                  GetCommandLineA
     #define GetCompressedFileSize           GetCompressedFileSizeA
     #define GetComputerName                 GetComputerNameA
     #define GetCurrentDirectory             GetCurrentDirectoryA
