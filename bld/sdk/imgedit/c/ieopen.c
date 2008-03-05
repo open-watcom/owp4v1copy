@@ -584,10 +584,11 @@ static BOOL getOpenFName( char *fname )
     of_size = sizeof(OPENFILENAME);
 #if defined (__NT__) && (WINVER >= 0x0500) && (_WIN32_WINNT >= 0x0500)
     {
-        OSVERSIONINFO os_info;
+        OSVERSIONINFO   os_info;
+
         os_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-        GetVersionEx(&os_info);
-        if ( os_info.dwMajorVersion < 5 ) {
+        GetVersionEx( &os_info );
+        if( os_info.dwMajorVersion < 5 ) {
             of_size = OPENFILENAME_SIZE_VERSION_400;
             /* WIN32 major version < 5 detected     */
             /* See OPENFILENAME doc on www.msdn.com */
@@ -791,10 +792,11 @@ static BOOL getOpenPalName( char *fname )
     of_size = sizeof(OPENFILENAME);
 #if defined (__NT__) && (WINVER >= 0x0500) && (_WIN32_WINNT >= 0x0500)
     {
-        OSVERSIONINFO os_info;
+        OSVERSIONINFO   os_info;
+
         os_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-        GetVersionEx(&os_info);
-        if ( os_info.dwMajorVersion < 5 ) {
+        GetVersionEx( &os_info );
+        if( os_info.dwMajorVersion < 5 ) {
             of_size = OPENFILENAME_SIZE_VERSION_400;
             /* WIN32 major version < 5 detected     */
             /* See OPENFILENAME doc on www.msdn.com */
