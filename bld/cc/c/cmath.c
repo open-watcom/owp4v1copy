@@ -1094,7 +1094,7 @@ local int LValue( TREEPTR op1 )
     if( IsLValue( op1 ) ) {
         typ = TypeOf( op1 );
         if( typ->decl_type != TYPE_ARRAY ) {
-            if( TypeSize(typ) == 0 ) {
+            if( TypeSize( typ ) == 0 ) {
                 CErr1( ERR_INCOMPLETE_EXPR_TYPE );
             }
             if( op1->op.flags & OPFLAG_LVALUE_CAST ) {
@@ -1192,7 +1192,7 @@ TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
                 } else if( (TargetSwitches & (BIG_DATA | CHEAP_POINTER) )
                           == BIG_DATA ) {
                     if( ((op1_tp->u.p.decl_flags & (FLAG_FAR | FLAG_NEAR)) == 0 )
-                    && ((op2_tp->u.p.decl_flags & (FLAG_FAR | FLAG_NEAR)) == 0) ) {
+                     && ((op2_tp->u.p.decl_flags & (FLAG_FAR | FLAG_NEAR)) == 0) ) {
 
                         result_type = LNG;
                     }
@@ -1218,7 +1218,7 @@ TREEPTR AddOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         if( size != 1 ) {
             /* subtraction of 2 pointers */
             if( (result_type == INT) || (result_type == LNG) ) {
-                result = ExprNode( op1, TokenToOperator(opr), op2 );
+                result = ExprNode( op1, TokenToOperator( opr ), op2 );
                 return( PtrSubtract( result, size, result_type ) );
             } else if( (op1_tp->u.p.decl_flags & FLAG_HUGE) ||
                       ((TargetSwitches & (BIG_DATA | CHEAP_POINTER)) == BIG_DATA) ) {
@@ -1578,7 +1578,9 @@ TREEPTR CnvOp( TREEPTR opnd, TYPEPTR newtyp, int cast_op )
         }
     }
     opnd_type = opnd->expr_type->decl_type;
-    if( ! CompFlags.pre_processing )  opnd = RValue( opnd );
+    if( !CompFlags.pre_processing ) {
+        opnd = RValue( opnd );
+    }
     typ = TypeOf( opnd );
     if( newtyp->decl_type > TYPE_POINTER ) {
         if( newtyp->decl_type == TYPE_VOID ) {
@@ -1615,7 +1617,7 @@ convert:                                /* moved here 30-aug-89 */
                     != ( newtyp->u.p.decl_flags & NEAR_FAR_HUGE )
                     || ( opnd_type == TYPE_ARRAY ) ) {
                     if( cast_op == 0 ) {
-                        if( TypeSize(typ) > TypeSize(newtyp) ) {
+                        if( TypeSize( typ ) > TypeSize( newtyp ) ) {
                             CWarn1( WARN_POINTER_TRUNCATION,
                                     ERR_POINTER_TRUNCATION );
                         }
@@ -1628,9 +1630,9 @@ convert:                                /* moved here 30-aug-89 */
                         }
                         cast_op = 1;        /* force a convert */
                     }
-                } else if( FuncPtr(typ) || FuncPtr( newtyp ) ) {
+                } else if( FuncPtr( typ ) || FuncPtr( newtyp ) ) {
                     cast_op = 1;    /* force a convert */
-                } else if( TypeSize(typ) != TypeSize( newtyp ) ) {
+                } else if( TypeSize( typ ) != TypeSize( newtyp ) ) {
                                         /* 25-apr-88*/
                     cast_op = 1;    /* force a convert */
                 } else if( typ->decl_type != TYPE_POINTER ||
@@ -1656,7 +1658,7 @@ convert:                                /* moved here 30-aug-89 */
                     /*              (char *)p += 2;  */
                     if( opr == OPR_PUSHADDR || IsLValue( opnd ) ) {
                         /* don't do it for based or far16. 27-oct-92*/
-                        if( !Far16Pointer(opnd->op.flags) ) {
+                        if( !Far16Pointer( opnd->op.flags ) ) {
                             opnd->expr_type = newtyp;
                             opnd->op.opr = opr;
                             opnd->op.flags |= OPFLAG_LVALUE_CAST;
