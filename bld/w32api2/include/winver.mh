@@ -7,6 +7,9 @@
 #ifndef _WINVER_H_INCLUDED
 #define _WINVER_H_INCLUDED
 
+#ifndef VER_H
+#define VER_H
+
 #ifndef RC_INVOKED
 :include readonly.sp
 :include cpluspro.sp
@@ -178,5 +181,6 @@ BOOL APIENTRY   VerQueryValueW( const LPVOID, LPWSTR, LPVOID *, PUINT );
 :include cplusepi.sp
 #endif /* RC_INVOKED */
 
+#endif /* VER_H */
 #endif /* _WINVER_H_INCLUDED */
 

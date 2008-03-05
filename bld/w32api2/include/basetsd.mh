@@ -3,9 +3,12 @@
  *
 :include crwatcnt.sp
  */
- 
+
 #ifndef _BASETSD_H_INCLUDED
 #define _BASETSD_H_INCLUDED
+
+#ifndef _BASETSD_H_
+#define _BASETSD_H_
 
 :include readonly.sp
 :include cpluspro.sp
@@ -104,5 +107,6 @@ typedef KAFFINITY   *PKAFFINITY;
 
 :include cplusepi.sp
 
+#endif /* _BASETSD_H_ */
 #endif /* _BASETSD_H_INCLUDED */
 

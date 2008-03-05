@@ -7,6 +7,9 @@
 #ifndef _ICM_H_INCLUDED
 #define _ICM_H_INCLUDED
 
+#ifndef _ICM_H_
+#define _ICM_H_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -680,5 +683,6 @@ BOOL WINAPI         CMTranslateRGBsExt( HCMTRANSFORM, LPVOID, BMFORMAT, DWORD, D
 
 :include cplusepi.sp
 
+#endif /* _ICM_H_ */
 #endif /* _ICM_H_INCLUDED */
 

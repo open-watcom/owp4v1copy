@@ -7,6 +7,9 @@
 #ifndef _BDATYPES_H_INCLUDED
 #define _BDATYPES_H_INCLUDED
 
+#ifndef _BDATYPES_
+#define _BDATYPES_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -480,5 +483,6 @@ typedef enum ApplicationTypeType {
 
 :include cplusepi.sp
 
+#endif /* _BDATYPES_ */
 #endif /* _BDATYPES_H_INCLUDED */
 

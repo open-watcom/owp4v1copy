@@ -7,6 +7,9 @@
 #ifndef _WSIPX_H_INCLUDED
 #define _WSIPX_H_INCLUDED
 
+#ifndef _WSIPX_
+#define _WSIPX_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -27,5 +30,6 @@ typedef SOCKADDR_IPX    *LPSOCKADDR_IPX;
 
 :include cplusepi.sp
 
+#endif /* _WSIPX_ */
 #endif /* _WSIPX_H_INCLUDED */
 

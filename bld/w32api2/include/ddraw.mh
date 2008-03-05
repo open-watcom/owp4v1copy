@@ -7,6 +7,9 @@
 #ifndef _DDRAW_H_INCLUDED
 #define _DDRAW_H_INCLUDED
 
+#ifndef __DDRAW_INCLUDED__
+#define __DDRAW_INCLUDED__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -3219,5 +3222,6 @@ extern HRESULT WINAPI   DirectDrawEnumerateW( LPDDENUMCALLBACKW, LPVOID );
 
 :include cplusepi.sp
 
+#endif /* __DDRAW_INCLUDED__ */
 #endif /* _DDRAW_H_INCLUDED */
 

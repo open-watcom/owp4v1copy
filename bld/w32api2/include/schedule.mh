@@ -7,6 +7,9 @@
 #ifndef _SCHEDULE_H_INCLUDED
 #define _SCHEDULE_H_INCLUDED
 
+#ifndef _SCHEDULE_H_
+#define _SCHEDULE_H_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -36,5 +39,6 @@ typedef SCHEDULE    *PSCHEDULE;
 
 :include cplusepi.sp
 
+#endif /* _SCHEDULE_H_ */
 #endif /* _SCHEDULE_H_INCLUDED */
 

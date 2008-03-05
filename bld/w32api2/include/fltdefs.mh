@@ -7,6 +7,9 @@
 #ifndef _FLTDEFS_H_INCLUDED
 #define _FLTDEFS_H_INCLUDED
 
+#ifndef _FLTDEFS_H
+#define _FLTDEFS_H
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -179,5 +182,6 @@ PFAPIENTRY  PfUnBindInterface( INTERFACE_HANDLE );
 
 :include cplusepi.sp
 
+#endif /* _FLTDEFS_H */
 #endif /* _FLTDEFS_H_INCLUDED */
 

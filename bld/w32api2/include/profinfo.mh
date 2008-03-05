@@ -7,6 +7,9 @@
 #ifndef _PROFINFO_H_INCLUDED
 #define _PROFINFO_H_INCLUDED
 
+#ifndef _INC_PROFINFO
+#define _INC_PROFINFO
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -43,5 +46,6 @@ typedef LPPROFILEINFOA  LPPROFILEINFO;
 
 :include cplusepi.sp
 
+#endif /* _INC_PROFINFO */
 #endif /* _PROFINFO_H_INCLUDED */
 

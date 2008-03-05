@@ -7,6 +7,9 @@
 #ifndef _IFMIB_H_INCLUDED
 #define _IFMIB_H_INCLUDED
 
+#ifndef _IFMIB_
+#define _IFMIB_
+
 :include readonly.sp
 #include <ifdef.h>
 
@@ -63,5 +66,6 @@ typedef MIB_IFTABLE *PMIB_IFTABLE;
 
 :include cplusepi.sp
 
+#endif /* _IFMIB_ */
 #endif /* _IFMIB_H_INCLUDED */
 

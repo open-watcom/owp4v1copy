@@ -7,6 +7,9 @@
 #ifndef _LMSVC_H_INCLUDED
 #define _LMSVC_H_INCLUDED
 
+#ifndef _LMSVC_
+#define _LMSVC_
+
 :include readonly.sp
 #include <lmsname.h>
 
@@ -174,5 +177,6 @@ NET_API_STATUS NET_API_FUNCTION NetServiceInstall( LPCWSTR, LPCWSTR, DWORD, LPCW
 
 :include cplusepi.sp
 
+#endif /* _LMSVC_ */
 #endif /* _LMSVC_H_INCLUDED */
 

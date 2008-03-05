@@ -7,6 +7,9 @@
 #ifndef _COMMDLG_H_INCLUDED
 #define _COMMDLG_H_INCLUDED
 
+#ifndef _INC_COMMDLG
+#define _INC_COMMDLG
+
 :include cpluspro.sp
 :include readonly.sp
 
@@ -906,5 +909,5 @@ WINCOMMDLGAPI BOOL APIENTRY     PageSetupDlgW( LPPAGESETUPDLGW );
 
 :include cplusepi.sp
 
+#endif /* _INC_COMMDLG */
 #endif /* _COMMDLG_H_INCLUDED */
-

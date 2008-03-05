@@ -7,6 +7,9 @@
 #ifndef _EXDISPID_H_INCLUDED
 #define _EXDISPID_H_INCLUDED
 
+#ifndef EXDISPID_H_
+#define EXDISPID_H_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -150,5 +153,6 @@
 
 :include cplusepi.sp
 
+#endif /* EXDISP_H_ */
 #endif /* _EXDISPID_H_INCLUDED */
 

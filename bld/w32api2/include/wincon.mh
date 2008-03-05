@@ -7,6 +7,9 @@
 #ifndef _WINCON_H_INCLUDED
 #define _WINCON_H_INCLUDED
 
+#ifndef _WINCON_
+#define _WINCON_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -429,5 +432,6 @@ WINBASEAPI DWORD WINAPI     GetConsoleOriginalTitleW( LPWSTR, DWORD );
 
 :include cplusepi.sp
 
+#endif /* _WINCON_ */
 #endif /* _WINCON_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _RPCNSIP_H_INCLUDED
 #define _RPCNSIP_H_INCLUDED
 
+#ifndef __RPCNSIP_H__
+#define __RPCNSIP_H__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -26,5 +29,6 @@ RPCNSAPI RPC_STATUS RPC_ENTRY   I_RpcReBindBuffer( PRPC_MESSAGE );
 
 :include cplusepi.sp
 
+#endif /* __RPCNSIP_H__ */
 #endif /* _RPCNSIP_H_INCLUDED */
 

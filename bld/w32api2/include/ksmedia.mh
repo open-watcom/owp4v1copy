@@ -7,6 +7,9 @@
 #ifndef _KSMEDIA_H_INCLUDED
 #define _KSMEDIA_H_INCLUDED
 
+#ifndef _KSMEDIA_
+#define _KSMEDIA_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -3550,5 +3553,6 @@ typedef KSJACK_DESCRIPTION  *PKSJACK_DESCRIPTION;
 
 :include cplusepi.sp
 
+#endif /* _KSMEDIA_ */
 #endif /* _KSMEDIA_H_INCLUDED */
 

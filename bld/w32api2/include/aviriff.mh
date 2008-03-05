@@ -7,6 +7,9 @@
 #ifndef _AVIRIFF_H_INCLUDED
 #define _AVIRIFF_H_INCLUDED
 
+#ifndef AVIRIFF_H
+#define AVIRIFF_H
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -321,5 +324,6 @@ typedef AVIFIELDINDEX   *PAVIFIELDINDEX;
 
 :include cplusepi.sp
 
+#endif /* AVIRIFF_H */
 #endif /* _AVIRIFF_H_INCLUDED */
 

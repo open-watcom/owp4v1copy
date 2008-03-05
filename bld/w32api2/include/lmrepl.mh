@@ -7,6 +7,9 @@
 #ifndef _LMREPL_H_INCLUDED
 #define _LMREPL_H_INCLUDED
 
+#ifndef _LMREPL_
+#define _LMREPL_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -166,5 +169,6 @@ NET_API_STATUS NET_API_FUNCTION NetReplSetInfo( LPCWSTR, DWORD, const LPBYTE, LP
 
 :include cplusepi.sp
 
+#endif /* _LMREPL_ */
 #endif /* _LMREPL_H_INCLUDED */
 

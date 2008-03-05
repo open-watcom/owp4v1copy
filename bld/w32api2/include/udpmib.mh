@@ -7,6 +7,9 @@
 #ifndef _UDPMIB_H_INCLUDED
 #define _UDPMIB_H_INCLUDED
 
+#ifndef _UDPMIB_
+#define _UDPMIB_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -145,5 +148,6 @@ typedef MIB_UDPSTATS    *PMIB_UDPSTATS;
 
 :include cplusepi.sp
 
+#endif /* _UDPMIB_ */
 #endif /* _UDPMIB_H_INCLUDED */
 

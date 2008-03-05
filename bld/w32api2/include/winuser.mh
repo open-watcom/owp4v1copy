@@ -12,6 +12,9 @@
 :segment !RESOURCE
 #ifndef _WINUSER_H_INCLUDED
 #define _WINUSER_H_INCLUDED
+
+#ifndef _WINUSER_
+#define _WINUSER_
 :endsegment
 :segment RESOURCE
 #ifndef _WINUSER_RH_INCLUDED
@@ -6440,6 +6443,7 @@ WINUSERAPI BOOL WINAPI  ActivateKeyboardLayout( HKL, UINT );
 
 :include cplusepi.sp
 
+#endif /* _WINUSER_ */
 #endif /* _WINUSER_H_INCLUDED */
 :endsegment
 :segment RESOURCE

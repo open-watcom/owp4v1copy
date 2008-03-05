@@ -7,6 +7,9 @@
 #ifndef _IPXRTDEF_H_INCLUDED
 #define _IPXRTDEF_H_INCLUDED
 
+#ifndef _IPXRTDEF_
+#define _IPXRTDEF_
+
 :include readonly.sp
 #include <ipxconst.h>
 #include <ipxsap.h>
@@ -255,5 +258,6 @@ typedef IPX_MIB_SET_INPUT_DATA  *PIPX_MIB_SET_INPUT_DATA;
 
 :include cplusepi.sp
 
+#endif /* _IPXRTDEF_ */
 #endif /* _IPXRTDEF_H_INCLUDED */
 

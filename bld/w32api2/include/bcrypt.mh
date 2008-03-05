@@ -7,6 +7,9 @@
 #ifndef _BCRYPT_H_INCLUDED
 #define _BCRYPT_H_INCLUDED
 
+#ifndef __BCRYPT_H__
+#define __BCRYPT_H__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -530,5 +533,6 @@ NTSTATUS WINAPI BCryptVerifySignature( BCRYPT_KEY_HANDLE, VOID *, PUCHAR, ULONG,
 
 :include cplusepi.sp
 
+#endif /* __BCRYPT_H__ */
 #endif /* _BCRYPT_H_INCLUDED */
 

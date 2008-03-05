@@ -7,6 +7,9 @@
 #ifndef _WS2SPI_H_INCLUDED
 #define _WS2SPI_H_INCLUDED
 
+#ifndef _WINSOCK2SPI_
+#define _WINSOCK2SPI_
+
 :include readonly.sp
 #include <winsock2.h>
 
@@ -301,5 +304,6 @@ int WSPAPI  WSCRemoveQOSTemplate( const LPGUID, LPWSABUF );
 
 :include cplusepi.sp
 
+#endif /* _WINSOCK2SPI_ */
 #endif /* _WS2SPI_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _WINERROR_H_INCLUDED
 #define _WINERROR_H_INCLUDED
 
+#ifndef _WINERROR_
+#define _WINERROR_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -4618,5 +4621,6 @@
 
 :include cplusepi.sp
 
+#endif /* _WINERROR_ */
 #endif /* _WINERROR_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _IL21DEC_H_INCLUDED
 #define _IL21DEC_H_INCLUDED
 
+#ifndef __IL21DEC__
+#define __IL21DEC__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -79,5 +82,6 @@ DECLARE_INTERFACE_( IAMLine21Decoder, IUnknown ) {
 
 :include cplusepi.sp
 
+#endif /* __IL21DEC__ */
 #endif /* _IL21DEC_H_INCLUDED */
 

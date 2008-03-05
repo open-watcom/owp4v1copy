@@ -7,6 +7,9 @@
 #ifndef _OLEDLG_H_INCLUDED
 #define _OLEDLG_H_INCLUDED
 
+#ifndef _OLEDLG_H_
+#define _OLEDLG_H_
+
 :include readonly.sp
 #include <prsht.h>
 
@@ -1109,5 +1112,6 @@ STDAPI_( BOOL ) OleUIUpdateLinksW( LPOLEUILINKCONTAINERW, HWND, LPWSTR, int );
 
 :include cplusepi.sp
 
+#endif /* _OLEDLG_H_ */
 #endif /* _OLEDLG_H_INCLUDED */
 

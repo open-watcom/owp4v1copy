@@ -7,6 +7,9 @@
 #ifndef _WTSAPI32_H_INCLUDED
 #define _WTSAPI32_H_INCLUDED
 
+#ifndef _INC_WTSAPI
+#define _INC_WTSAPI
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -258,5 +261,6 @@ BOOL WINAPI     WTSWaitSystemEvent( HANDLE, DWORD, DWORD * );
 
 :include cplusepi.sp
 
+#endif /* _INC_WTSAPI */
 #endif /* _WTSAPI32_H_INCLUDED */
 

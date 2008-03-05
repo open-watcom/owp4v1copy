@@ -7,6 +7,9 @@
 #ifndef _SQL_H_INCLUDED
 #define _SQL_H_INCLUDED
 
+#ifndef __SQL
+#define __SQL
+
 :include readonly.sp
 #include <sqltypes.h>
 
@@ -550,5 +553,6 @@ SQLRETURN SQL_API   SQLSetStmtAttr( SQLHSTMT, SQLINTEGER, SQLPOINTER, SQLINTEGER
 
 :include cplusepi.sp
 
+#endif /* __SQL */
 #endif /* _SQL_H_INCLUDED */
 

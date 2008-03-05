@@ -7,6 +7,9 @@
 #ifndef _MSACM_H_INCLUDED
 #define _MSACM_H_INCLUDED
 
+#ifndef _INC_ACM
+#define _INC_ACM
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -689,5 +692,6 @@ MMRESULT ACMAPI acmStreamUnprepareHeader( HACMSTREAM, LPACMSTREAMHEADER, DWORD )
 
 :include cplusepi.sp
 
+#endif /* _INC_ACM */
 #endif /* _MSACM_H_INCLUDED */
 

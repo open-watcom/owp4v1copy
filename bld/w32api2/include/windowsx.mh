@@ -7,6 +7,9 @@
 #ifndef _WINDOWSX_H_INCLUDED
 #define _WINDOWSX_H_INCLUDED
 
+#ifndef _INC_WINDOWSX
+#define _INC_WINDOWSX
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -1016,5 +1019,6 @@
 
 :include cplusepi.sp
 
+#endif /* _INC_WINDOWSX */
 #endif /* _WINDOWSX_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _IPTYPES_H_INCLUDED
 #define _IPTYPES_H_INCLUDED
 
+#ifndef IP_TYPES_INCLUDED
+#define IP_TYPES_INCLUDED
+
 :include readonly.sp
 #include <time.h>
 #include <ifdef.h>
@@ -423,5 +426,6 @@ typedef IP_INTERFACE_NAME_INFO_W2KSP1   *PIP_INTERFACE_NAME_INFO;
 
 :include cplusepi.sp
 
+#endif /* IP_TYPES_INCLUDED */
 #endif /* _IPTYPES_H_INCLUDED */
 

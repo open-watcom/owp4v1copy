@@ -74,6 +74,9 @@ DEFINE_GUID( Audit_AccountLogon, 0x69979850, 0x797A, 0x11D9, 0xBE, 0xD3, 0x50, 0
 #ifndef _NTSECAPI_H_INCLUDED
 #define _NTSECAPI_H_INCLUDED
 
+#ifndef _NTSECAPI_
+#define _NTSECAPI_
+
 :include cpluspro.sp
 
 :include ntstatus.sp
@@ -2155,5 +2158,6 @@ BOOLEAN NTAPI   RtlGenRandom( PVOID, ULONG );
 
 :include cplusepi.sp
 
+#endif /* _NTSECAPI_ */
 #endif /* _NTSECAPI_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _SQLEXT_H_INCLUDED
 #define _SQLEXT_H_INCLUDED
 
+#ifndef __SQLEXT
+#define __SQLEXT
+
 :include readonly.sp
 #include <sql.h>
 #include <sqlucode.h>
@@ -1696,5 +1699,6 @@ SQLRETURN SQL_API   SQLBulkOperations( SQLHSTMT, SQLSMALLINT );
 
 :include cplusepi.sp
 
+#endif /* __SQLEXT */
 #endif /* _SQLEXT_H_INCLUDED */
 

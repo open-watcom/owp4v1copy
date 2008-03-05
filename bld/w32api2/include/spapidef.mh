@@ -7,6 +7,9 @@
 #ifndef _SPAPIDEF_H_INCLUDED
 #define _SPAPIDEF_H_INCLUDED
 
+#ifndef _INC_SPAPIDEF
+#define _INC_SPAPIDEF
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -63,5 +66,6 @@ typedef DWORDLONG   *PSP_LOG_TOKEN;
 
 :include cplusepi.sp
 
+#endif /* _INC_SPAPIDEF */
 #endif /* _SPAPIDEF_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _AUDEVCOD_H_INCLUDED
 #define _AUDEVCOD_H_INCLUDED
 
+#ifndef __AUDEVCOD__
+#define __AUDEVCOD__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -35,5 +38,6 @@ typedef enum _tagSND_DEVICE_ERROR {
 
 :include cplusepi.sp
 
+#endif /* __AUDEVCOD__ */
 #endif /* _AUDEVCOD_H_INCLUDED */
 

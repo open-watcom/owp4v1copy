@@ -12,15 +12,22 @@
 :segment !WINSOCK2
 #ifndef _WINSOCK_H_INCLUDED
 #define _WINSOCK_H_INCLUDED
+
+#ifndef _WINSOCKAPI_
+#define _WINSOCKAPI_
 :endsegment
 :segment WINSOCK2
 #ifndef _WINSOCK2_H_INCLUDED
 #define _WINSOCK2_H_INCLUDED
+
+#ifndef _WINSOCK2API_
+#define _WINSOCK2API_
 :endsegment
 
 :include readonly.sp
 :segment WINSOCK2
 #define _WINSOCK_H_INCLUDED
+#define _WINSOCKAPI_
 :endsegment
 #ifndef _WINDOWS_H_INCLUDED
     #include <windows.h>

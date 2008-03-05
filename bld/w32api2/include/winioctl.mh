@@ -7,6 +7,9 @@
 #ifndef _WINIOCTL_H_INCLUDED
 #define _WINIOCTL_H_INCLUDED
 
+#ifndef _WINIOCTL_
+#define _WINIOCTL_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -2975,5 +2978,6 @@ typedef VOLUME_DISK_EXTENTS *PVOLUME_DISK_EXTENTS;
 
 :include cplusepi.sp
 
+#endif /* _WINIOCTL_ */
 #endif /* _WINIOCTL_H_INCLUDED */
 

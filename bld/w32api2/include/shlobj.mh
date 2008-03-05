@@ -7,6 +7,9 @@
 #ifndef _SHLOBJ_H_INCLUDED
 #define _SHLOBJ_H_INCLUDED
 
+#ifndef _SHLOBJ_H_
+#define _SHLOBJ_H_
+
 :include readonly.sp
 #include <ole2.h>
 #include <prsht.h>
@@ -3202,5 +3205,6 @@ SHFOLDERAPI SHGetFolderPathW( HWND, int, HANDLE, DWORD, LPWSTR );
 
 :include cplusepi.sp
 
+#endif /* _SHLOBJ_H_ */
 #endif /* _SHLOBJ_H_INCLUDED */
 

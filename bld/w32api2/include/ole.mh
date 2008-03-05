@@ -7,6 +7,9 @@
 #ifndef _OLE_H_INCLUDED
 #define _OLE_H_INCLUDED
 
+#ifndef _INC_OLE
+#define _INC_OLE
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -342,5 +345,6 @@ OLESTATUS WINAPI            OleUnblockServer( LHSERVER, BOOL * );
 
 :include cplusepi.sp
 
+#endif /* _INC_OLE */
 #endif /* _OLE_H_INCLUDED */
 

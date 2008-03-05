@@ -7,6 +7,9 @@
 #ifndef _KS_H_INCLUDED
 #define _KS_H_INCLUDED
 
+#ifndef _KS_
+#define _KS_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -2334,5 +2337,6 @@ KSDDKAPI DWORD WINAPI   KsCreateTopologyNode( HANDLE, PKSNODE_CREATE, ACCESS_MAS
 
 :include cplusepi.sp
 
+#endif /* _KS_ */
 #endif /* _KS_H_INCLUDED */
 

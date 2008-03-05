@@ -7,6 +7,9 @@
 #ifndef _LM_H_INCLUDED
 #define _LM_H_INCLUDED
 
+#ifndef _LM_
+#define _LM_
+
 :include readonly.sp
 #include <lmcons.h>
 #include <lmerr.h>
@@ -26,5 +29,6 @@
 #include <lmaudit.h>
 #include <lmjoin.h>
 
+#endif /* _LM_ */
 #endif /* _LM_H_INCLUDED */
 

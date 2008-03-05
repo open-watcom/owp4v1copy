@@ -7,6 +7,9 @@
 #ifndef _SSPI_H_INCLUDED
 #define _SSPI_H_INCLUDED
 
+#ifndef __SSPI_H__
+#define __SSPI_H__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -995,5 +998,6 @@ KSECDDDECLSPEC SECURITY_STATUS SEC_ENTRY    QuerySecurityPackageInfoW( SEC_WCHAR
 
 :include cplusepi.sp
 
+#endif /* __SSPI_H__ */
 #endif /* _SSPI_H_INCLUDED */
 

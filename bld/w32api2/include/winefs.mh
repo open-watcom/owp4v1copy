@@ -7,6 +7,9 @@
 #ifndef _WINEFS_H_INCLUDED
 #define _WINEFS_H_INCLUDED
 
+#ifndef __WINEFS_H__
+#define __WINEFS_H__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -170,5 +173,6 @@ WINADVAPI DWORD WINAPI  SetUserFileEncryptionKeyEx( PENCRYPTION_CERTIFICATE, DWO
 
 :include cplusepi.sp
 
+#endif /* __WINEFS_H__ */
 #endif /* _WINEFS_H_INCLUDED */
 

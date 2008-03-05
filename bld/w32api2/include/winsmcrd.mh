@@ -7,6 +7,9 @@
 #ifndef _WINSMCRD_H_INCLUDED
 #define _WINSMCRD_H_INCLUDED
 
+#ifndef _NTDDSCRD_H2_
+#define _NTDDSCRD_H2_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -238,5 +241,6 @@ typedef SCARD_T1_REQUEST    *LPSCARD_T1_REQUEST;
 
 :include cplusepi.sp
 
+#endif /* _NTDDSCRD_H2_ */
 #endif /* _WINSMCRD_H_INCLUDED */
 

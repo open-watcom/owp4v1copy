@@ -7,6 +7,9 @@
 #ifndef _WSNETBS_H_INCLUDED
 #define _WSNETBS_H_INCLUDED
 
+#ifndef _WSNETBS_
+#define _WSNETBS_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -45,5 +48,6 @@ typedef SOCKADDR_NB *LPSOCKADDR_NB;
 
 :include cplusepi.sp
 
+#endif /* _WSNETBS_ */
 #endif /* _WSNETBS_H_INCLUDED */
 

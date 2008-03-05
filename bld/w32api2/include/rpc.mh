@@ -7,6 +7,9 @@
 #ifndef _RPC_H_INCLUDED
 #define _RPC_H_INCLUDED
 
+#ifndef __RPC_H__
+#define __RPC_H__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -34,5 +37,6 @@ typedef long    RPC_STATUS;
 #include <rpcnterr.h>
 #include <rpcasync.h>
 
+#endif /* __RPC_H__ */
 #endif /* _RPC_H_INCLUDED */
 

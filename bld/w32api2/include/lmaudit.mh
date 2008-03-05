@@ -7,6 +7,9 @@
 #ifndef _LMAUDIT_H_INCLUDED
 #define _LMAUDIT_H_INCLUDED
 
+#ifndef _LMAUDIT_
+#define _LMAUDIT_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -168,5 +171,6 @@ NET_API_STATUS NET_API_FUNCTION NetAuditWrite( DWORD, LPBYTE, DWORD, LPCWSTR, LP
 
 :include cplusepi.sp
 
+#endif /* _LMAUDIT_ */
 #endif /* _LMAUDIT_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _VPTYPE_H_INCLUDED
 #define _VPTYPE_H_INCLUDED
 
+#ifndef __IVPType__
+#define __IVPType__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -63,5 +66,6 @@ typedef AMVPDATAINFO    *LPAMVPDATAINFO;
 
 :include cplusepi.sp
 
+#endif /* __IVPType__ */
 #endif /* _VPTYPE_H_INCLUDED */
 

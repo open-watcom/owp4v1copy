@@ -7,6 +7,9 @@
 #ifndef _NTDSAPI_H_INCLUDED
 #define _NTDSAPI_H_INCLUDED
 
+#ifndef _NTDSAPI_H_
+#define _NTDSAPI_H_
+
 :include readonly.sp
 #include <schedule.h>
 #include <accctrl.h>
@@ -1197,5 +1200,6 @@ NTDSAPI DWORD WINAPI    DsWriteAccountSpnW( HANDLE, DS_SPN_WRITE_OP, LPCWSTR, DW
 
 :include cplusepi.sp
 
+#endif /* _NTDSAPI_H_ */
 #endif /* _NTDSAPI_H_INCLUDED */
 

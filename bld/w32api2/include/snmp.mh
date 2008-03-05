@@ -7,6 +7,9 @@
 #ifndef _SNMP_H_INCLUDED
 #define _SNMP_H_INCLUDED
 
+#ifndef _INC_SNMP
+#define _INC_SNMP
+
 :include readonly.sp
 #include <windows.h>
 
@@ -328,5 +331,6 @@ VOID SNMP_FUNC_TYPE     SnmpUtilVarBindListFree( SnmpVarBindList * );
 
 :include cplusepi.sp
 
+#endif /* _INC_SNMP */
 #endif /* _SNMP_H_INCLUDED */
 

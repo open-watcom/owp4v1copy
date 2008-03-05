@@ -7,6 +7,9 @@
 #ifndef _CPLEXT_H_INCLUDED
 #define _CPLEXT_H_INCLUDED
 
+#ifndef _INC_CPLEXT
+#define _INC_CPLEXT
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -19,5 +22,6 @@
 
 :include cplusepi.sp
 
+#endif /* _INC_CPLEXT */
 #endif /* _CPLEXT_H_INCLUDED */
 

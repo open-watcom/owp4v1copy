@@ -7,6 +7,9 @@
 #ifndef _SHELLAPI_H_INCLUDED
 #define _SHELLAPI_H_INCLUDED
 
+#ifndef _INC_SHELLAPI
+#define _INC_SHELLAPI
+
 :include readonly.sp
 #include <pshpack1.h>
 
@@ -982,5 +985,6 @@ typedef HRESULT (STDMETHODCALLTYPE *PFNSHOWSHAREFOLDERUIW)( HWND, LPCWSTR );
 
 :include cplusepi.sp
 
+#endif /* _INC_SHELLAPI */
 #endif /* _SHELLAPI_H_INCLUDED */
 

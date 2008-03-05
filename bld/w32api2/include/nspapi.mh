@@ -7,6 +7,9 @@
 #ifndef _NSPAPI_H_INCLUDED
 #define _NSPAPI_H_INCLUDED
 
+#ifndef _NSPAPI_INCLUDED
+#define _NSPAPI_INCLUDED
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -415,5 +418,6 @@ INT APIENTRY    SetServiceW( DWORD, DWORD, DWORD, LPSERVICE_INFOW, LPSERVICE_ASY
 
 :include cplusepi.sp
 
+#endif /* _NSPAPI_INCLUDED */
 #endif /* _NSPAPI_H_INCLUDED */
 

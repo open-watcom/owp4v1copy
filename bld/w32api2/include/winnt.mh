@@ -12,6 +12,9 @@
 :segment !RESOURCE
 #ifndef _WINNT_H_INCLUDED
 #define _WINNT_H_INCLUDED
+
+#ifndef _WINNT_
+#define _WINNT_
 :endsegment
 :segment RESOURCE
 #ifndef _WINNT_RH_INCLUDED
@@ -5737,6 +5740,7 @@ PVOID   GetFiberData( void );
 
 :include cplusepi.sp
 
+#endif /* _WINNT_ */
 #endif /* _WINNT_H_INCLUDED */
 :endsegment
 :segment RESOURCE

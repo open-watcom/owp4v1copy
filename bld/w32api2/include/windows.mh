@@ -7,6 +7,12 @@
 #ifndef _WINDOWS_H_INCLUDED
 #define _WINDOWS_H_INCLUDED
 
+#ifndef _WINDOWS_
+#define _WINDOWS_
+
+#ifndef _INC_WINDOWS
+#define _INC_WINDOWS
+
 :include readonly.sp
 /* Define default version numbers. */
 #ifndef WINVER
@@ -68,5 +74,7 @@
     #endif
 #endif
 
+#endif /* _INC_WINDOWS */
+#endif /* _WINDOWS_ */
 #endif /* _WINDOWS_H_INCLUDED */
 

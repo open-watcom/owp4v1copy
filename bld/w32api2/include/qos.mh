@@ -7,6 +7,9 @@
 #ifndef _QOS_H_INCLUDED
 #define _QOS_H_INCLUDED
 
+#ifndef __QOS_H_
+#define __QOS_H_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -89,5 +92,6 @@ typedef QOS_SHAPING_RATE    *LPQOS_SHAPING_RATE;
 
 :include cplusepi.sp
 
+#endif /* __QOS_H_ */
 #endif /* _QOS_H_INCLUDED */
 

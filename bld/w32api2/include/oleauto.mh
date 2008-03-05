@@ -7,6 +7,9 @@
 #ifndef _OLEAUTO_H_INCLUDED
 #define _OLEAUTO_H_INCLUDED
 
+#ifndef _OLEAUTO_H_
+#define _OLEAUTO_H_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -668,5 +671,6 @@ WINOLEAUTAPI                    VectorFromBstr( BSTR, SAFEARRAY ** );
 
 :include cplusepi.sp
 
+#endif /* _OLEAUTO_H_ */
 #endif /* _OLEAUTO_H_INCLUDED */
 

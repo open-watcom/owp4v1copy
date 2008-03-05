@@ -7,6 +7,9 @@
 #ifndef _WININET_H_INCLUDED
 #define _WININET_H_INCLUDED
 
+#ifndef _WININET_
+#define _WININET_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -1794,5 +1797,6 @@ URLCACHEAPI_( BOOL )        SetUrlCacheGroupAttributeW( GROUPID, DWORD, DWORD, L
 
 :include cplusepi.sp
 
+#endif /* _WININET_ */
 #endif /* _WININET_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _WINPERF_H_INCLUDED
 #define _WINPERF_H_INCLUDED
 
+#ifndef _WINPERF_
+#define _WINPERF_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -271,5 +274,6 @@ typedef DWORD (APIENTRY PM_QUERY_PROC)( LPDWORD, LPVOID *, LPDWORD, LPDWORD );
 
 :include cplusepi.sp
 
+#endif /* _WINPERF_ */
 #endif /* _WINPERF_H_INCLUDED */
 

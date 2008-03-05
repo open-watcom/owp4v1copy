@@ -7,6 +7,9 @@
 #ifndef _RPCNDR_H_INCLUDED
 #define _RPCNDR_H_INCLUDED
 
+#ifndef __RPCNDR_H__
+#define __RPCNDR_H__
+
 :include readonly.sp
 #include <rpcnsip.h>
 
@@ -643,5 +646,6 @@ RPCRTAPI void RPC_ENTRY                 RpcUserFree( handle_t, void * );
 
 :include cplusepi.sp
 
+#endif /* __RPCNDR_H__ */
 #endif /* _RPCNDR_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _XPRTDEFS_H_INCLUDED
 #define _XPRTDEFS_H_INCLUDED
 
+#ifndef __XPRTDEFS__
+#define __XPRTDEFS__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -457,5 +460,6 @@
 
 :include cplusepi.sp
 
+#endif /* __XPRTDEFS__ */
 #endif /* _XPRTDEFS_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _SCHANNEL_H_INCLUDED
 #define _SCHANNEL_H_INCLUDED
 
+#ifndef __SCHANNEL_H__
+#define __SCHANNEL_H__
+
 :include readonly.sp
 #include <wincrypt.h>
 
@@ -495,5 +498,6 @@ typedef VOID (WINAPI *SSL_FREE_CERTIFICATE_FN)( PX509Certificate );
 
 :include cplusepi.sp
 
+#endif /* __SCHANNEL_H__ */
 #endif /* _SCHANNEL_H_INCLUDED */
 

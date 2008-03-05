@@ -7,6 +7,9 @@
 #ifndef _IPEXPORT_H_INCLUDED
 #define _IPEXPORT_H_INCLUDED
 
+#ifndef IP_EXPORT_INCLUDED
+#define IP_EXPORT_INCLUDED
+
 :include readonly.sp
 #include <in6addr.h>
 #include <inaddr.h>
@@ -196,5 +199,6 @@ typedef IP_MCAST_COUNTER_INFO   *PIP_MCAST_COUNTER_INFO;
 
 :include cplusepi.sp
 
+#endif /* IP_EXPORT_INCLUDED */
 #endif /* _IPEXPORT_H_INCLUDED */
 

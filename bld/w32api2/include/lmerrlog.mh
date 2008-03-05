@@ -7,6 +7,9 @@
 #ifndef _LMERRLOG_H_INCLUDED
 #define _LMERRLOG_H_INCLUDED
 
+#ifndef _LMERRLOG_
+#define _LMERRLOG_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -271,5 +274,6 @@ NET_API_STATUS NET_API_FUNCTION NetErrorLogWrite( LPBYTE, DWORD, LPCWSTR, LPBYTE
 
 :include cplusepi.sp
 
+#endif /* _LMERRLOG_ */
 #endif /* _LMERRLOG_H_INCLUDED */
 

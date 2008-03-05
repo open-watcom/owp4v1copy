@@ -7,6 +7,9 @@
 #ifndef _DEVPROPDEF_H_INCLUDED
 #define _DEVPROPDEF_H_INCLUDED
 
+#ifndef _DEVPROPDEF_H_
+#define _DEVPROPDEF_H_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -74,6 +77,7 @@ typedef DEVPROPKEY  *PDEVPROPKEY;
 
 :include cplusepi.sp
 
+#endif /* _DEVPROPDEF_H_ */
 #endif /* _DEVPROPDEF_H_INCLUDED */
 
 /* Macro to define a device property key */

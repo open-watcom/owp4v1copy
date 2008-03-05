@@ -7,6 +7,9 @@
 #ifndef _IPIFCONS_H_INCLUDED
 #define _IPIFCONS_H_INCLUDED
 
+#ifndef __IPIFCONS_H__
+#define __IPIFCONS_H__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -270,5 +273,6 @@ typedef enum _INTERNAL_IF_OPER_STATUS {
 
 :include cplusepi.sp
 
+#endif /* __IPIFCONS_H__ */
 #endif /* _IPIFCONS_H_INCLUDED */
 

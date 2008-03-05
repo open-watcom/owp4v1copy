@@ -12,6 +12,9 @@
 :segment !RESOURCE
 #ifndef _COMMCTRL_H_INCLUDED
 #define _COMMCTRL_H_INCLUDED
+
+#ifndef _INC_COMMCTRL
+#define _INC_COMMCTRL
 :endsegment
 :segment RESOURCE
 #ifndef _COMMCTRL_RH_INCLUDED
@@ -7146,6 +7149,7 @@ WINCOMMCTRLAPI HRESULT WINAPI       LoadIconWithScaleDown( HINSTANCE, PCWSTR, in
 
 :include cplusepi.sp
 
+#endif /* _INC_COMMCTRL */
 #endif /* _COMMCTRL_H_INCLUDED */
 :endsegment
 :segment RESOURCE

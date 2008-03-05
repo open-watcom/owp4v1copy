@@ -7,6 +7,9 @@
 #ifndef _OBJBASE_H_INCLUDED
 #define _OBJBASE_H_INCLUDED
 
+#ifndef _OBJBASE_H_
+#define _OBJBASE_H_
+
 :include readonly.sp
 #include <rpc.h>
 #include <rpcndr.h>
@@ -323,5 +326,6 @@ WINOLEAPI               CoDisconnectContext( DWORD );
 /* Functions in DFLAYOUT.DLL */
 WINOLEAPI   StgOpenLayoutDocfile( OLECHAR const *, DWORD, DWORD, IStorage ** );
 
+#endif /* _OBJBASE_H_ */
 #endif /* _OBJBASE_H_INCLUDED */
 

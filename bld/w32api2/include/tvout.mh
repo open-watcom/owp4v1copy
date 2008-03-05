@@ -7,6 +7,9 @@
 #ifndef _TVOUT_H_INCLUDED
 #define _TVOUT_H_INCLUDED
 
+#ifndef __TVOUT__
+#define __TVOUT__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -91,5 +94,6 @@ typedef VIDEOPARAMETERS *LPVIDEOPARAMETERS;
 
 :include cplusepi.sp
 
+#endif /* __TVOUT__ */
 #endif /* _TVOUT_H_INCLUDED */
 

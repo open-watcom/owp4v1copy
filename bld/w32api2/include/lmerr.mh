@@ -7,6 +7,9 @@
 #ifndef _LMERR_H_INCLUDED
 #define _LMERR_H_INCLUDED
 
+#ifndef NETERR_INCLUDED
+#define NETERR_INCLUDED
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -328,5 +331,6 @@
 
 :include cplusepi.sp
 
+#endif /* NETERR_INCLUDED */
 #endif /* LMERR_H_INCLUDED */
 

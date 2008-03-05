@@ -7,6 +7,9 @@
 #ifndef _IPXCONST_H_INCLUDED
 #define _IPXCONST_H_INCLUDED
 
+#ifndef _IPXCONST_
+#define _IPXCONST_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -55,5 +58,6 @@
 
 :include cplusepi.sp
 
+#endif /* _IPXCONST_ */
 #endif /* _IPXCONST_H_INCLUDED */
 

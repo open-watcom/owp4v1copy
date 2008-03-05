@@ -7,6 +7,9 @@
 #ifndef _SVCGUID_H_INCLUDED
 #define _SVCGUID_H_INCLUDED
 
+#ifndef _SVCGUID_
+#define _SVCGUID_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -304,5 +307,6 @@
 
 :include cplusepi.sp
 
+#endif /* _SVCGUID_ */
 #endif /* _SVCGUID_H_INCLUDED */
 

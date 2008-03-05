@@ -7,6 +7,9 @@
 #ifndef _AMVIDEO_H_INCLUDED
 #define _AMVIDEO_H_INCLUDED
 
+#ifndef __AMVIDEO__
+#define __AMVIDEO__
+
 :include readonly.sp
 #include <ddraw.h>
 
@@ -277,5 +280,6 @@ DECLARE_INTERFACE_( IBaseVideoMixer, IUnknown ) {
 
 :include cplusepi.sp
 
+#endif /* __AMVIDEO__ */
 #endif /* _AMVIDEO_H_INCLUDED */
 

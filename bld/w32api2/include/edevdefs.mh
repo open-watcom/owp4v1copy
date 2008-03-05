@@ -7,6 +7,9 @@
 #ifndef _EDEVDEFS_H_INCLUDED
 #define _EDEVDEFS_H_INCLUDED
 
+#ifndef __EDEVDEFS__
+#define __EDEVDEFS__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -389,5 +392,6 @@
 
 :include cplusepi.sp
 
+#endif /* __EDEVDEFS__ */
 #endif /* _EDEVDEFS_H_INCLUDED */
 

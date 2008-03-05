@@ -7,6 +7,12 @@
 #ifndef _GL_H_INCLUDED
 #define _GL_H_INCLUDED
 
+#ifndef __GL_H__
+#define __GL_H__
+
+#ifndef __gl_h__
+#define __gl_h__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -1084,5 +1090,7 @@ WINGDIAPI void APIENTRY         glVertex4sv( const GLshort * );
 WINGDIAPI void APIENTRY         glVertexPointer( GLint, GLenum, GLsizei, const GLvoid * );
 WINGDIAPI void APIENTRY         glViewport( GLint, GLint, GLsizei, GLsizei );
 
+#endif /* __gl_h__ */
+#endif /* __GL_H__ */
 #endif /* _GL_H_INCLUDED */
 

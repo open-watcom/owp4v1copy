@@ -27,6 +27,9 @@
 #ifndef _GUIDDEF_H_INCLUDED
 #define _GUIDDEF_H_INCLUDED
 
+#ifndef _GUIDDEF_H_
+#define _GUIDDEF_H_
+
 #include <string.h>
 
 :include cpluspro.sp
@@ -78,5 +81,6 @@ typedef FMTID   *LPFMTID;
 
 :include cplusepi.sp
 
-#endif
+#endif /* _GUIDDEF_H_ */
+#endif /* _GUIDDEF_H_INCLUDED */
 

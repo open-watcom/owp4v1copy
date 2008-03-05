@@ -7,6 +7,9 @@
 #ifndef _D3D9TYPES_H_INCLUDED
 #define _D3D9TYPES_H_INCLUDED
 
+#ifndef _d3d9TYPES_H_
+#define _d3d9TYPES_H_
+
 :include readonly.sp
 #include <float.h>
 
@@ -1543,5 +1546,6 @@ typedef enum D3DDISPLAYROTATION {
 
 :include cplusepi.sp
 
+#endif /* _d3d9TYPES_H_ */
 #endif /* _D3D9TYPES_H_INCLUDED */
 

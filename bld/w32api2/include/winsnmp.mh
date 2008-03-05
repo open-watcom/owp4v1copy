@@ -7,6 +7,9 @@
 #ifndef _WINSNMP_H_INCLUDED
 #define _WINSNMP_H_INCLUDED
 
+#ifndef _INC_WINSNMP
+#define _INC_WINSNMP
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -280,5 +283,6 @@ SNMPAPI_STATUS SNMPAPI_CALL SnmpStrToOid( LPCSTR, smiLPOID );
 
 :include cplusepi.sp
 
+#endif /* _INC_WINSNMP */
 #endif /* _WINSNMP_H_INCLUDED */
 

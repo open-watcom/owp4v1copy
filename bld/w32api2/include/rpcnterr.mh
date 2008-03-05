@@ -7,6 +7,9 @@
 #ifndef _RPCNTERR_H_INCLUDED
 #define _RPCNTERR_H_INCLUDED
 
+#ifndef __RPCNTERR_H__
+#define __RPCNTERR_H__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -37,5 +40,6 @@
 
 :include cplusepi.sp
 
+#endif /* __RPCNTERR_H__ */
 #endif /* _RPCNTERR_H_INCLUDED */
 

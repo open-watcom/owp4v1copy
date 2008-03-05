@@ -7,6 +7,9 @@
 #ifndef _VFW_H_INCLUDED
 #define _VFW_H_INCLUDED
 
+#ifndef _INC_VFW
+#define _INC_VFW
+
 :include readonly.sp
 #include <mmsystem.h>
 #include <mmreg.h>
@@ -1939,5 +1942,6 @@ static DWORD    dwICValue;
 
 :include cplusepi.sp
 
+#endif /* _INC_VFW */
 #endif /* _VFW_H_INCLUDED */
 

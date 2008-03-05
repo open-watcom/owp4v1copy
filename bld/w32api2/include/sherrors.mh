@@ -7,6 +7,9 @@
 #ifndef _SHERRORS_H_INCLUDED
 #define _SHERRORS_H_INCLUDED
 
+#ifndef _SHERROR_
+#define _SHERROR_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -85,5 +88,6 @@
 
 :include cplusepi.sp
 
+#endif /* _SHERROR_ */
 #endif /* _SHERRORS_H_INCLUDED */
 

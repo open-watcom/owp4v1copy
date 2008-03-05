@@ -7,6 +7,9 @@
 #ifndef _NTSECPKG_H_INCLUDED
 #define _NTSECPKG_H_INCLUDED
 
+#ifndef _NTSECPKG_
+#define _NTSECPKG_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -866,5 +869,6 @@ SECURITY_STATUS SEC_ENTRY   KSecRegisterSecurityProvider( PSECURITY_STRING, PSEC
 
 :include cplusepi.sp
 
+#endif /* _NTSECPKG_ */
 #endif /* _NTSECPKG_H_INCLUDED */
 

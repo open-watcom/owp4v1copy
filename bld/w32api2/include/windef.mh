@@ -7,6 +7,9 @@
 #ifndef _WINDEF_H_INCLUDED
 #define _WINDEF_H_INCLUDED
 
+#ifndef _WINDEF_
+#define _WINDEF_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -222,5 +225,6 @@ typedef POINTS  *LPPOINTS;
 
 :include cplusepi.sp
 
+#endif /* _WINDEF_ */
 #endif /* _WINDEF_H_INCLUDED */
 

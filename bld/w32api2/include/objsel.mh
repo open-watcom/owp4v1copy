@@ -7,6 +7,9 @@
 #ifndef _OBJSEL_H_INCLUDED
 #define _OBJSEL_H_INCLUDED
 
+#ifndef __OBJSEL_H_
+#define __OBJSEL_H_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -176,5 +179,6 @@ DECLARE_INTERFACE_( IDsObjectPickerCredentials, IUnknown ) {
 
 :include cplusepi.sp
 
+#endif /* __OBJSEL_H_ */
 #endif /* _OBJSEL_H_INCLUDED */
 

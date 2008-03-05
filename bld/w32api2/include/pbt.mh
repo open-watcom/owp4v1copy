@@ -7,6 +7,9 @@
 #ifndef _PBT_H_INCLUDED
 #define _PBT_H_INCLUDED
 
+#ifndef _INC_PBT
+#define _INC_PBT
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -33,5 +36,6 @@
 
 :include cplusepi.sp
 
+#endif /* _INC_PBT */
 #endif /* _PBT_H_INCLUDED */
 

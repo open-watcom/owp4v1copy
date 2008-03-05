@@ -7,6 +7,9 @@
 #ifndef _LMSNAME_H_INCLUDED
 #define _LMSNAME_H_INCLUDED
 
+#ifndef _LMSNAME_
+#define _LMSNAME_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -82,5 +85,6 @@
 
 :include cplusepi.sp
 
+#endif /* _LMSNAME_ */
 #endif /* _LMSNAME_H_INCLUDED */
 

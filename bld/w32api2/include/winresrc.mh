@@ -7,6 +7,9 @@
 #ifndef _WINRESRC_H_INCLUDED
 #define _WINRESRC_H_INCLUDED
 
+#ifndef _WINRESRC_
+#define _WINRESRC_
+
 #include <winuser.rh>
 #include <commctrl.rh>
 #include <dde.rh>
@@ -14,5 +17,6 @@
 #include <dlgs.h>
 #include <winver.h>
 
+#endif /* _WINRESRC_ */
 #endif /* _WINRESRC_H_INCLUDED */
 

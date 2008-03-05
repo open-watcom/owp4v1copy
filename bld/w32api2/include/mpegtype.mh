@@ -7,6 +7,9 @@
 #ifndef _MPEGTYPE_H_INCLUDED
 #define _MPEGTYPE_H_INCLUDED
 
+#ifndef __MPEGTYPE__
+#define __MPEGTYPE__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -57,5 +60,6 @@ DECLARE_INTERFACE_( IMpegAudioDecoder, IUnknown ) {
 
 :include cplusepi.sp
 
+#endif /* __MPEGTYPE__ */
 #endif /* _MPEGTYPE_H_INCLUDED */
 

@@ -12,6 +12,9 @@
 :segment !RESOURCE
 #ifndef _DDE_H_INCLUDED
 #define _DDE_H_INCLUDED
+
+#ifndef _DDEHEADER_INCLUDED_
+#define _DDEHEADER_INCLUDED_
 :endsegment
 :segment RESOURCE
 #ifndef _DDE_RH_INCLUDED
@@ -103,6 +106,7 @@ WINUSERAPI BOOL WINAPI      UnpackDDElParam( UINT, LPARAM, PUINT_PTR, PUINT_PTR 
 
 :include cplusepi.sp
 
+#endif /* _DDEHEADER_INCLUDED_ */
 #endif /* _DDE_H_INCLUDED */
 :endsegment
 :segment RESOURCE

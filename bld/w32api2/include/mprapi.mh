@@ -7,6 +7,9 @@
 #ifndef _MPRAPI_H_INCLUDED
 #define _MPRAPI_H_INCLUDED
 
+#ifndef __ROUTING_MPRADMIN_H__
+#define __ROUTING_MPRADMIN_H__
+
 :include readonly.sp
 #include <lmcons.h>
 #include <ras.h>
@@ -841,5 +844,6 @@ VOID APIENTRY   MprAdminReleaseIpAddress2( WCHAR *, WCHAR *, DWORD *, IN6_ADDR )
 
 :include cplusepi.sp
 
+#endif /* __ROUTING_MPRADMIN_H__ */
 #endif /* _MPRAPI_H_INCLUDED */
 

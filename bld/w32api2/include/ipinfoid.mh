@@ -7,6 +7,9 @@
 #ifndef _IPINFOID_H_INCLUDED
 #define _IPINFOID_H_INCLUDED
 
+#ifndef __ROUTING_IPINFOID_H__
+#define __ROUTING_IPINFOID_H__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -39,5 +42,6 @@
 
 :include cplusepi.sp
 
+#endif /* __ROUTING_IPINFOID_H__ */
 #endif /* _IPINFOID_H_INCLUDED */
 

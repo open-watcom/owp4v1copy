@@ -7,6 +7,9 @@
 #ifndef _LZEXPAND_H_INCLUDED
 #define _LZEXPAND_H_INCLUDED
 
+#ifndef _LZEXPAND_
+#define _LZEXPAND_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -45,5 +48,6 @@ INT APIENTRY    LZStart( VOID );
 
 :include cplusepi.sp
 
+#endif /* _LZEXPAND_ */
 #endif /* _LZEXPAND_H_INCLUDED */
 

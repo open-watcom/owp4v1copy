@@ -7,6 +7,9 @@
 #ifndef _OLECTL_H_INCLUDED
 #define _OLECTL_H_INCLUDED
 
+#ifndef _OLECTL_H_
+#define _OLECTL_H_
+
 :include readonly.sp
 #include <ocidl.h>
 
@@ -409,5 +412,6 @@ WINOLECTLAPI                OleTranslateColor( OLE_COLOR, HPALETTE, COLORREF * )
 
 :include cplusepi.sp
 
+#endif /* _OLECTL_H_ */
 #endif /* _OLECTL_H_INCLUDED */
 

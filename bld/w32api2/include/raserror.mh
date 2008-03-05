@@ -7,6 +7,9 @@
 #ifndef _RASERROR_H_INCLUDED
 #define _RASERROR_H_INCLUDED
 
+#ifndef _RASERROR_H_
+#define _RASERROR_H_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -306,5 +309,6 @@
 
 :include cplusepi.sp
 
+#endif /* _RASERROR_H_ */
 #endif /* _RASERROR_H_INCLUDED */
 

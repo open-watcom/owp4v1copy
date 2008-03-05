@@ -7,6 +7,9 @@
 #ifndef _IPHLPAPI_H_INCLUDED
 #define _IPHLPAPI_H_INCLUDED
 
+#ifndef __IPHLPAPI_H__
+#define __IPHLPAPI_H__
+
 :include readonly.sp
 #include <iprtrmib.h>
 #include <ipexport.h>
@@ -181,5 +184,6 @@ DWORD WINAPI    ParseNetworkString( CONST WCHAR *, DWORD, PNET_ADDRESS_INFO, USH
 
 :include cplusepi.sp
 
+#endif /* __IPHLPAPI_H__ */
 #endif /* _IPHLPAPI_H_INCLUDED */
 

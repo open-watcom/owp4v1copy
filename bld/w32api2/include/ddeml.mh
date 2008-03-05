@@ -7,6 +7,9 @@
 #ifndef _DDEML_H_INCLUDED
 #define _DDEML_H_INCLUDED
 
+#ifndef _INC_DDEMLH
+#define _INC_DDEMLH
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -401,5 +404,6 @@ WINUSERAPI BOOL WINAPI      DdeUninitialize( DWORD );
 
 :include cplusepi.sp
 
+#endif /* _INC_DDEMLH */
 #endif /* _DDEML_H_INCLUDED */
 

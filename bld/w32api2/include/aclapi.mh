@@ -7,6 +7,9 @@
 #ifndef _ACLAPI_H_INCLUDED
 #define _ACLAPI_H_INCLUDED
 
+#ifndef __ACCESS_CONTROL_API__
+#define __ACCESS_CONTROL_API__
+
 :include readonly.sp
 #include <windows.h>
 #include <accctrl.h>
@@ -123,5 +126,6 @@ WINADVAPI DWORD WINAPI          TreeSetNamedSecurityInfoW( LPWSTR, SE_OBJECT_TYP
 
 :include cplusepi.sp
 
-#endif /* _ACLAPI_H_INCLUDED */
+#endif /* __ACCESS_CONTROL_API__ */
+#endif /* _ACCCTRL_H_INCLUDED */
 

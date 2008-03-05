@@ -7,6 +7,9 @@
 #ifndef _DVDEVCOD_H_INCLUDED
 #define _DVDEVCOD_H_INCLUDED
 
+#ifndef __DVDEVCOD__
+#define __DVDECVOD__
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -86,5 +89,6 @@ typedef enum _tagDVD_PB_STOPPED {
 
 :include cplusepi.sp
 
+#endif /* __DVDEVCOD__ */
 #endif /* _DVDEVCOD_H_INCLUDED */
 

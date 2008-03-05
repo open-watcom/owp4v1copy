@@ -7,6 +7,9 @@
 #ifndef _NTLDAP_H_INCLUDED
 #define _NTLDAP_H_INCLUDED
 
+#ifndef NT_LDAP_H
+#define NT_LDAP_H
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -146,5 +149,6 @@
 
 :include cplusepi.sp
 
+#endif /* NT_LDAP_H */
 #endif /* _NTLDAP_H_INCLUDED */
 

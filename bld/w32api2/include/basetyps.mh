@@ -7,6 +7,9 @@
 #ifndef _BASETYPS_H_INCLUDED
 #define _BASETYPS_H_INCLUDED
 
+#ifndef _BASETYPS_H_
+#define _BASETYPS_H_
+
 :include readonly.sp
 #include <guiddef.h>
 
@@ -18,5 +21,6 @@
 
 :include cplusepi.sp
 
+#endif /* _BASETYPS_H_ */
 #endif /* _BASETYPS_H_INCLUDED */
 

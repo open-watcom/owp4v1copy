@@ -7,6 +7,9 @@
 #ifndef _LMCONFIG_H_INCLUDED
 #define _LMCONFIG_H_INCLUDED
 
+#ifndef _LMCONFIG_
+#define _LMCONFIG_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -27,5 +30,6 @@ NET_API_STATUS NET_API_FUNCTION NetUnregisterDomainNameChangeNotification( HANDL
 
 :include cplusepi.sp
 
+#endif /* _LMCONFIG_ */
 #endif /* _LMCONFIG_H_INCLUDED */
 

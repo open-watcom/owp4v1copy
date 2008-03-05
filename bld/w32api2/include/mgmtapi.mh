@@ -7,6 +7,9 @@
 #ifndef _MGMTAPI_H_INCLUDED
 #define _MGMTAPI_H_INCLUDED
 
+#ifndef _INC_MGMTAPI
+#define _INC_MGMTAPI
+
 :include readonly.sp
 #include <snmp.h>
 #include <winsock.h>
@@ -43,5 +46,6 @@ BOOL SNMP_FUNC_TYPE                 SnmpMgrTrapListen( HANDLE * );
 
 :include cplusepi.sp
 
+#endif /* _INC_MGMTAPI */
 #endif /* _MGMTAPI_H_INCLUDED */
 

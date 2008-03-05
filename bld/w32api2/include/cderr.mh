@@ -7,6 +7,9 @@
 #ifndef _CDERR_H_INCLUDED
 #define _CDERR_H_INCLUDED
 
+#ifndef _INC_CDERR
+#define _INC_CDERR
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -61,5 +64,6 @@
 
 :include cplusepi.sp
 
+#endif /* _INC_CDERR */
 #endif /* _CDERR_H_INCLUDED */
 

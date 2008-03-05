@@ -7,6 +7,9 @@
 #ifndef _TCPMIB_H_INCLUDED
 #define _TCPMIB_H_INCLUDED
 
+#ifndef _TCPMIB_
+#define _TCPMIB_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -295,5 +298,6 @@ typedef MIB_TCPSTATS_W2K    *PMIB_TCPSTATS;
 
 :include cplusepi.sp
 
+#endif /* _TCPMIB_ */
 #endif /* _TCPMIB_H_INCLUDED */
 

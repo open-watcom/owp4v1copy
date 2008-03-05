@@ -7,6 +7,9 @@
 #ifndef _RICHEDIT_H_INCLUDED
 #define _RICHEDIT_H_INCLUDED
 
+#ifndef _RICHEDIT_
+#define _RICHEDIT_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -1054,5 +1057,6 @@ typedef struct tagHyphenateInfo {
 
 :include cplusepi.sp
 
+#endif /* _RICHEDIT_ */
 #endif /* _RICHEDIT_H_INCLUDED */
 

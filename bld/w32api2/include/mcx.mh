@@ -7,6 +7,9 @@
 #ifndef _MCX_H_INCLUDED
 #define _MCX_H_INCLUDED
 
+#ifndef _MCX_H_
+#define _MCX_H_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -409,5 +412,6 @@ typedef MODEMSETTINGS   *LPMODEMSETTINGS;
 
 :include cplusepi.sp
 
+#endif /* _MCX_H_ */
 #endif /* _MCX_H_INCLUDED */
 

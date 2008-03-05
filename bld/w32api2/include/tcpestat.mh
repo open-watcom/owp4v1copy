@@ -7,6 +7,9 @@
 #ifndef _TCPESTATS_H_INCLUDED
 #define _TCPESTATS_H_INCLUDED
 
+#ifndef _TCPESTATS_
+#define _TCPESTATS_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -237,5 +240,6 @@ typedef TCP_ESTATS_FINE_RTT_ROD_v0  *PTCP_ESTATS_FINE_RTT_ROD_v0;
 
 :include cplusepi.sp
 
+#endif /* _TCPESTATS_ */
 #endif /* _TCPESTATS_H_INCLUDED */
 

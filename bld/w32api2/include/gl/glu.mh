@@ -7,6 +7,12 @@
 #ifndef _GLU_H_INCLUDED
 #define _GLU_H_INCLUDED
 
+#ifndef __GLU_H__
+#define __GLU_H__
+
+#ifndef __glu_h__
+#define __glu_h__
+
 :include readonly.sp
 #include <gl/gl.h>
 
@@ -254,5 +260,7 @@ int APIENTRY                gluUnProject( GLdouble, GLdouble, GLdouble, const GL
 
 :include cplusepi.sp
 
+#endif /* __glu_h__ */
+#endif /* __GLU_H__ */
 #endif /* _GLU_H_INCLUDED */
 

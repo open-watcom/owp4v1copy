@@ -7,6 +7,9 @@
 #ifndef _LMALERT_H_INCLUDED
 #define _LMALERT_H_INCLUDED
 
+#ifndef _ALERT_
+#define _ALERT_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -91,5 +94,6 @@ NET_API_STATUS NET_API_FUNCTION NetAlertRaiseEx( LPCWSTR, LPVOID, DWORD, LPCWSTR
 
 :include cplusepi.sp
 
+#endif /* _ALERT_ */
 #endif /* _LMALERT_H_INCLUDED */
 

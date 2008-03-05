@@ -7,6 +7,9 @@
 #ifndef _SCHEMADEF_H_INCLUDED
 #define _SCHEMADEF_H_INCLUDED
 
+#ifndef SCHEMADEF_H
+#define SCHEMADEF_H
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -47,5 +50,6 @@ struct TMSCHEMAINFO {
 
 :include cplusepi.sp
 
+#endif /* SCHEMADEF_H */
 #endif /* _SCHEMADEF_H_INCLUDED */
 

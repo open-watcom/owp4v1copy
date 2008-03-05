@@ -7,6 +7,9 @@
 #ifndef _NTDSBMSG_H_INCLUDED
 #define _NTDSBMSG_H_INCLUDED
 
+#ifndef _NTDSBMSG_
+#define _NTDSBMSG_
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -212,5 +215,6 @@
 
 :include cplusepi.sp
 
+#endif /* _NTDSBMSG_ */
 #endif /* _NTDSBMSG_H_INCLUDED */
 

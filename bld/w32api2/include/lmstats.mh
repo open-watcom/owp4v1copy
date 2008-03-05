@@ -7,6 +7,9 @@
 #ifndef _LMSTATS_H_INCLUDED
 #define _LMSTATS_H_INCLUDED
 
+#ifndef _LMSTATS_
+#define _LMSTATS_
+
 :include readonly.sp
 #include <lmcons.h>
 
@@ -126,5 +129,6 @@ NET_API_STATUS NET_API_FUNCTION NetStatisticsGet( LPTSTR, LPTSTR, DWORD, DWORD, 
 
 :include cplusepi.sp
 
+#endif /* _LMSTATS_ */
 #endif /* _LMSTATS_H_INCLUDED */
 

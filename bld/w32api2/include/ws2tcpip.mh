@@ -7,6 +7,9 @@
 #ifndef _WS2TCPIP_H_INCLUDED
 #define _WS2TCPIP_H_INCLUDED
 
+#ifndef _WS2TCPIP_H_
+#define _WS2TCPIP_H_
+
 :include readonly.sp
 #include <winsock2.h>
 #include <ws2ipdef.h>
@@ -206,5 +209,6 @@ WINSOCK_API_LINKAGE INT WSAAPI      inet_pton( INT, PCSTR, PVOID );
 
 :include cplusepi.sp
 
+#endif /* _WS2TCPIP_H_ */
 #endif /* _WS2TCPIP_H_INCLUDED */
 

@@ -7,6 +7,9 @@
 #ifndef _DBT_H_INCLUDED
 #define _DBT_H_INCLUDED
 
+#ifndef _DBT_H
+#define _DBT_H
+
 :include readonly.sp
 :include cpluspro.sp
 
@@ -246,5 +249,6 @@ struct _DEV_BROADCAST_USERDEFINED {
 
 :include cplusepi.sp
 
+#endif /* _DBT_H */
 #endif /* _DBT_H_INCLUDED */
 
