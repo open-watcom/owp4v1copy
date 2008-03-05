@@ -1377,9 +1377,11 @@ WINSOCK_API_LINKAGE int WSAAPI      WSAPoll( LPWSAPOLLFD, ULONG, INT );
 :include cplusepi.sp
 
 :segment !WINSOCK2
+#endif /* _WINSOCKAPI_ */
 #endif /* _WINSOCK_H_INCLUDED */
 :endsegment
 :segment WINSOCK2
+#endif /* _WINSOCK2API_ */
 #endif /* _WINSOCK2_H_INCLUDED */
 :endsegment
 
