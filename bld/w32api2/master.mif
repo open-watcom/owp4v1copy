@@ -366,6 +366,7 @@ base_libs =          &
         snmpapi.lib  &
         strmiids.lib &
         strquery.lib &
+        th32.lib     &
         url.lib      &
         urlmon.lib   &
         user32.lib   &
