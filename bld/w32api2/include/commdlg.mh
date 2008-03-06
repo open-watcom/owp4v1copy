@@ -22,7 +22,7 @@
 
 /* Macro to calculate structure sizes */
 #define CDSIZEOF_STRUCT( x, p ) \
-    (((int)(LPBYTE)(&((x *)0)->p) - ((LPBYTE)((x *)0)))) + sizeof( ((x *)0)->p ))
+    (((int)((LPBYTE)(&((x *)0)->p) - ((LPBYTE)((x *)0)))) + sizeof( ((x *)0)->p ))
 
 /* GetOpenFileName() flags */
 #define OFN_READONLY                0x00000001L
