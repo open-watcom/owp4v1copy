@@ -511,7 +511,7 @@ WString
 119
 WString
 35
-../.. $(%WATCOM)/h $(%WATCOM)/h/os2
+..\.. $(%WATCOM)\h $(%WATCOM)\h\os2
 0
 120
 WVList
