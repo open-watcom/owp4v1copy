@@ -1,4 +1,4 @@
-37
+40
 targetIdent
 0
 MProject
@@ -13,11 +13,9 @@ LIB
 WString
 5
 w_6sn
-
-
-
-
-
+1
+0
+1
 4
 MCommand
 0
@@ -40,7 +38,8 @@ WVList
 0
 -1
 1
-
+1
+0
 10
 WPickList
 2
@@ -65,14 +64,12 @@ WFOR
 WString
 28
 w????Path for include files:
-
-
+1
 17
 WString
-55
-"../;$(%watcom)/src/fortran/win;$(%watcom)/src/fortran"
-
-
+52
+..;$(%WATCOM)\src\fortran\win;$(%WATCOM)\src\fortran
+0
 18
 MCState
 19
@@ -83,9 +80,8 @@ WFOR
 WString
 31
 ?????Require symbol declaration
-
-
-
+1
+1
 21
 MRState
 22
@@ -96,10 +92,8 @@ WFOR
 WString
 28
 ?????Line number information
-
-
-
-
+1
+0
 24
 MRState
 25
@@ -110,15 +104,15 @@ WFOR
 WString
 31
 ?????Full debugging information
-
-
-
+1
+1
 27
 WVList
 0
 -1
 1
-
+1
+0
 28
 MItem
 13
@@ -135,4 +129,5 @@ WVList
 0
 11
 1
-
+1
+0

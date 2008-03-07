@@ -1,4 +1,4 @@
-37
+40
 targetIdent
 0
 MProject
@@ -13,11 +13,9 @@ WEXE
 WString
 5
 w_6en
-
-
-
-
-
+1
+0
+1
 4
 MCommand
 0
@@ -45,13 +43,12 @@ WINLINK
 WString
 11
 ?????Stack:
-
+1
 12
 WString
 5
 16384
-
-
+0
 13
 MVState
 14
@@ -62,13 +59,12 @@ WINLINK
 WString
 18
 ?????Libraries(,):
-
+1
 16
 WString
 6
 flib7l
-
-
+0
 17
 MRState
 18
@@ -79,10 +75,8 @@ WINLINK
 WString
 25
 ?????No debug information
-
-
-
-
+1
+0
 20
 MRState
 21
@@ -93,9 +87,8 @@ WINLINK
 WString
 14
 ?????Debug All
-
-
-
+1
+1
 23
 WVList
 1
@@ -110,7 +103,8 @@ WVList
 0
 -1
 1
-
+1
+0
 27
 WPickList
 21
@@ -130,8 +124,8 @@ WVList
 0
 -1
 1
-
-
+0
+0
 32
 MItem
 14
@@ -148,7 +142,8 @@ WVList
 0
 28
 1
-
+1
+0
 36
 MItem
 18
@@ -165,7 +160,8 @@ WVList
 0
 28
 1
-
+1
+0
 40
 MItem
 16
@@ -182,7 +178,8 @@ WVList
 0
 28
 1
-
+1
+0
 44
 MItem
 14
@@ -199,7 +196,8 @@ WVList
 0
 28
 1
-
+1
+0
 48
 MItem
 17
@@ -216,7 +214,8 @@ WVList
 0
 28
 1
-
+1
+0
 52
 MItem
 14
@@ -233,7 +232,8 @@ WVList
 0
 28
 1
-
+1
+0
 56
 MItem
 15
@@ -250,7 +250,8 @@ WVList
 0
 28
 1
-
+1
+0
 60
 MItem
 12
@@ -267,7 +268,8 @@ WVList
 0
 28
 1
-
+1
+0
 64
 MItem
 5
@@ -284,7 +286,8 @@ WVList
 0
 -1
 1
-
+1
+0
 68
 MItem
 10
@@ -301,7 +304,8 @@ WVList
 0
 64
 1
-
+1
+0
 72
 MItem
 5
@@ -323,14 +327,12 @@ WFOR
 WString
 28
 w????Path for include files:
-
-
+1
 78
 WString
-55
-"../;$(%watcom)/src/fortran/win;$(%watcom)/src/fortran"
-
-
+52
+..;$(%WATCOM)\src\fortran\win;$(%WATCOM)\src\fortran
+0
 79
 MCState
 80
@@ -341,9 +343,8 @@ WFOR
 WString
 31
 ?????Require symbol declaration
-
-
-
+1
+1
 82
 MRState
 83
@@ -354,10 +355,8 @@ WFOR
 WString
 28
 ?????Line number information
-
-
-
-
+1
+0
 85
 MRState
 86
@@ -368,15 +367,15 @@ WFOR
 WString
 31
 ?????Full debugging information
-
-
-
+1
+1
 88
 WVList
 0
 -1
 1
-
+1
+0
 89
 MItem
 14
@@ -393,7 +392,8 @@ WVList
 0
 72
 1
-
+1
+0
 93
 MItem
 5
@@ -410,7 +410,8 @@ WVList
 0
 -1
 1
-
+1
+0
 97
 MItem
 10
@@ -427,7 +428,8 @@ WVList
 0
 93
 1
-
+1
+0
 101
 MItem
 5
@@ -444,7 +446,8 @@ WVList
 0
 -1
 1
-
+1
+0
 105
 MItem
 7
@@ -461,7 +464,8 @@ WVList
 0
 101
 1
-
+1
+0
 109
 MItem
 12
@@ -478,7 +482,8 @@ WVList
 0
 101
 1
-
+1
+0
 113
 MItem
 11
@@ -495,7 +500,8 @@ WVList
 0
 101
 1
-
+1
+0
 117
 MItem
 4
@@ -512,7 +518,8 @@ WVList
 0
 -1
 1
-
+1
+0
 121
 MItem
 13
@@ -529,4 +536,5 @@ WVList
 0
 117
 1
-
+1
+0
