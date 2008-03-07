@@ -279,6 +279,9 @@ base_headers =       &
         xprtdefs.h   &
         zmouse.h
 
+ddk_headers =        &
+        ntdef.h
+
 directx_headers =    &
         d3d.h        &
         d3d9.h       &
