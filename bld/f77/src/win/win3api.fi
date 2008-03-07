@@ -1081,13 +1081,13 @@ c                                         value*2 )
 
 !---- Special WIN386 library functions -----------------------------------------
 
-c$pragma aux GetProc16 "^_" parm ( value*4, value*4 )
-c$pragma aux ReleaseProc16 "^_" parm ( value*4 )
-c$pragma aux AllocAlias16 "^_" parm ( value*4 )
-c$pragma aux AllocHugeAlias16 "^_" parm ( value*4, value*4 )
+c$pragma aux GetProc16 "*_" parm ( value*4, value*4 )
+c$pragma aux ReleaseProc16 "*_" parm ( value*4 )
+c$pragma aux AllocAlias16 "*_" parm ( value*4 )
+c$pragma aux AllocHugeAlias16 "*_" parm ( value*4, value*4 )
 c$pragma aux FreeAlias16 "^_" parm ( value*4 )
-c$pragma aux FreeHugeAlias16 "^_" parm ( value*4, value*4 )
-c$pragma aux MapAliasToFlat "^_" parm ( value*4 )
+c$pragma aux FreeHugeAlias16 "*_" parm ( value*4, value*4 )
+c$pragma aux MapAliasToFlat "*_" parm ( value*4 )
 c$pragma aux InvokeIndirectFunction "*_" parm( value*4 ) caller []
 c$pragma aux DefineDLLEntry "*_" parm( value*4 ) caller []
 c$pragma aux DefineUserProc16 "*_" parm( value*4, value*4 ) caller []
