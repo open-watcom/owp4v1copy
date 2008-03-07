@@ -805,8 +805,8 @@ extern  TAGPTR  NullTag(void);
 extern  TAGPTR  TagLookup(void);
 extern  void    FreeTags(void);
 extern  unsigned long TypeSize(TYPEPTR);
-/* CarlYoung 31-Oct-03 */
 extern  unsigned long TypeSizeEx( TYPEPTR, unsigned long * pFieldWidth );
+extern  TYPEPTR GetIntTypeBySize( unsigned long size, bool sign, bool exact );
 extern  TAGPTR  VfyNewTag( TAGPTR, int );
 extern  void    VfyNewSym( int, char * );
 extern  unsigned GetTypeAlignment( TYPEPTR );

@@ -66,7 +66,10 @@ using std::ptrdiff_t;
 :segment CNAME
 #define offsetof(__typ,__id) __offsetof(__typ,__id)
 :elsesegment
-#define offsetof(__typ,__id) ((size_t)&(((__typ*)0)->__id))
+:: Use subtraction so that the result before cast is of ptrdiff_t type;
+:: without this, we have a problem in environments where size_t is
+:: not large enough for far pointers
+#define offsetof(__typ,__id) ((size_t)((char *)&(((__typ*)0)->__id) - (char *)0))
 :endsegment
 
 :segment QNX | LINUX

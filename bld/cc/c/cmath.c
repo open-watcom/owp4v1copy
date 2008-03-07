@@ -718,11 +718,23 @@ TREEPTR BaseConv( TYPEPTR typ1, TREEPTR op2 )
     typ2 =  op2->expr_type;
     typ1 = SkipTypeFluff( typ1 ); // skip typedefs go into enums base
     typ2 = SkipTypeFluff( typ2 );
+    typ1_flags = typ1->u.p.decl_flags;
+    typ2_flags = typ2->u.p.decl_flags;
     if( typ1->decl_type == TYPE_POINTER && typ2->decl_type == TYPE_POINTER ) {
-        typ1_flags = typ1->u.p.decl_flags;
-        typ2_flags = typ2->u.p.decl_flags;
         if( (typ1_flags & FLAG_FAR) && (typ2_flags & FLAG_BASED) ) {
             op2 = BasedPtrNode( typ2, op2 );
+        }
+    } else if( typ2->decl_type == TYPE_POINTER ) {
+        // If we're converting a near pointer to some larger arithmetic type,
+        // we must convert it to a long pointer first to get proper segment.
+        if( TypeSize( typ1 ) > TypeSize( typ2 ) ) {
+            op2 = CnvOp( op2, PtrNode( typ2->object, FLAG_FAR, 0 ), 1 );
+        }
+    } else if( typ1->decl_type == TYPE_POINTER ) {
+        // If we're converting an arithmetic type to a pointer, first convert
+        // it to appropriately sized integer to correctly extend/truncate.
+        if( TypeSize( typ1 ) != TypeSize( typ2 ) ) {
+            op2 = CnvOp( op2, GetIntTypeBySize( TypeSize( typ1 ), FALSE, FALSE ), 1 );
         }
     }
     return( op2 );
@@ -836,6 +848,10 @@ TREEPTR RelOp( TREEPTR op1, TOKEN opr, TREEPTR op2 )
         ;           /* do nothing, since error has already been given */
     } else if( op1_type == TYPE_POINTER  &&  op2_type == TYPE_POINTER ) {
          CompatiblePtrType( typ1, typ2 );
+         if( TypeSize( typ2 ) > TypeSize( typ1 ) ) {
+             /* Make sure near pointer is converted to far if necessary */
+             cmp_type = typ2;
+         }
     } else if( (op1_type == TYPE_POINTER  && IsInt( op2_type )) ||
                (op2_type == TYPE_POINTER  && IsInt( op1_type )) ) {
         /* ok to compare pointer with constant 0 */
@@ -1665,6 +1681,16 @@ convert:                                /* moved here 30-aug-89 */
                             return( opnd );
                         }
                     }
+                }
+            }
+            if( !cast_op && cnv == P2A && TypeSize( typ ) > TypeSize( newtyp ) ) {
+                CWarn1( WARN_POINTER_TRUNCATION,
+                        ERR_POINTER_TRUNCATION );
+            }
+            if( cnv == P2A || cnv == A2P ) {
+                if( TypeSize( typ ) != TypeSize( newtyp ) ) {
+                    // Conversion to/from a pointer may need special treatment
+                    opnd = BaseConv( newtyp, opnd );
                 }
             }
             if( cast_op  ||  cnv != P2P ) {

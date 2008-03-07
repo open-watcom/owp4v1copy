@@ -68,7 +68,6 @@ static BLOCKPTR     BlockStack;
 static BLOCKPTR     LoopStack;
 static SWITCHPTR    SwitchStack;
 
-extern  TREEPTR BaseConv( TYPEPTR typ1, TREEPTR op2 );
 extern  TREEPTR BoolConv( TYPEPTR typ, TREEPTR tree );
 extern  int     LoopDecl( SYM_HANDLE *sym_head );
 

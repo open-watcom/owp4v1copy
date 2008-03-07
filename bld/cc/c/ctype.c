@@ -1597,6 +1597,38 @@ unsigned long TypeSizeEx( TYPEPTR typ, unsigned long *pFieldWidth )
     return( size );
 }
 
+/* Return an integer type of specified size, or NULL in case of failure. 
+ * The type will be signed if 'sign' is TRUE. The type will have exactly
+ * requested size if 'exact' is true, or the next larger type will be
+ * returned (eg. 64-bit integer if 6 byte size is requested).
+ */
+TYPEPTR GetIntTypeBySize( unsigned long size, bool sign, bool exact )
+{
+    static const DATA_TYPE  s_types[] = { TYPE_CHAR, TYPE_SHORT, TYPE_INT, TYPE_LONG, TYPE_LONG64 };
+    static const DATA_TYPE  u_types[] = { TYPE_UCHAR, TYPE_USHORT, TYPE_UINT, TYPE_ULONG, TYPE_ULONG64 };
+    const DATA_TYPE         *type_list;
+    DATA_TYPE               type_id;
+    TYPEPTR                 typ = NULL;
+    unsigned                i;
+
+    /* Make sure the types are laid out the way we expect */
+    assert( TYPE_CHAR == 0 );
+    assert( TYPE_FLOAT == TYPE_ULONG64 + 1 );
+
+    if( size ) {
+        type_list = sign ? s_types : u_types;
+        for( i = 0; i < sizeof( s_types ) / sizeof( s_types[0] ); ++i ) {
+            type_id = type_list[ i ];
+            if( size == CTypeSizes[ type_id ]
+              || ( !exact && size < CTypeSizes[ type_id ] ) ) {
+                typ = GetType( type_id );
+                assert( typ );
+                break;
+            }
+        }
+    }
+    return( typ );
+}
 
 void TypesPurge( void )
 {
