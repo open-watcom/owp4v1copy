@@ -889,6 +889,9 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
         case TYPE_ULONG:
             leaf->op.ulong_value = (target_ulong)val32;
             break;
+        case TYPE_POINTER:
+            leaf->op.ulong_value = (target_ulong)val32;
+            break;
         case TYPE_FLOAT:
         case TYPE_DOUBLE:
         case TYPE_LONG_DOUBLE:
@@ -902,6 +905,13 @@ void CastConstValue( TREEPTR leaf, DATA_TYPE newtyp )
     leaf->op.const_type = newtyp;
 }
 
+void CastConstNode( TREEPTR leaf, TYPEPTR newtyp )
+{
+    CastConstValue( leaf, newtyp->decl_type );
+    if( newtyp->decl_type == TYPE_POINTER ) {
+        leaf->op.flags = OpFlags( newtyp->u.p.decl_flags );
+    }
+}
 
 static bool IsConstantZero( TREEPTR tree )
 {
@@ -1005,7 +1015,7 @@ static bool FoldableTree( TREEPTR tree )
         opnd = tree->right;
         if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
             typ = tree->expr_type;
-            CastConstValue( opnd, typ->decl_type );
+            CastConstNode( opnd, typ );
             *tree = *opnd;
             tree->expr_type = typ;
             opnd->op.opr = OPR_NOP;
@@ -1015,8 +1025,7 @@ static bool FoldableTree( TREEPTR tree )
     case OPR_RETURN:
         opnd = tree->right;
         if( opnd->op.opr == OPR_PUSHINT || opnd->op.opr == OPR_PUSHFLOAT ) {
-            typ = tree->expr_type;
-            CastConstValue( opnd, typ->decl_type );
+            CastConstNode( opnd, tree->expr_type );
         }
         break;
     case OPR_COMMA:

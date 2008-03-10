@@ -577,6 +577,7 @@ extern  char    *SrcFullPath( char *, char const *, unsigned );
 extern  int64   LongValue64( TREEPTR leaf );
 extern  void    CastFloatValue( TREEPTR leaf, DATA_TYPE newtype );
 extern  void    CastConstValue(TREEPTR,DATA_TYPE);
+extern  void    CastConstNode( TREEPTR leaf, TYPEPTR newtyp );
 extern  void    DoConstFold(TREEPTR);
 extern  void    FoldExprTree(TREEPTR);
 extern  bool    BoolConstExpr( void );

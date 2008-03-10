@@ -313,7 +313,6 @@ static cg_type DataPointerType( OPNODE *node )
 #endif
 }
 
-
 local cg_name ForceVolatileFloat( cg_name name, TYPEPTR typ ) /* 05-sep-92 */
 {
     if( CompFlags.op_switch_used ) {
@@ -679,8 +678,10 @@ static cg_name PushConstant( OPNODE *node )
     case TYPE_UINT:
     case TYPE_LONG:
     case TYPE_ULONG:
-    case TYPE_POINTER:
         name = CGInteger( node->ulong_value, dtype );
+        break;
+    case TYPE_POINTER:
+        name = CGInteger( node->ulong_value, DataPointerType( node ) );
         break;
     case TYPE_LONG64:
     case TYPE_ULONG64:

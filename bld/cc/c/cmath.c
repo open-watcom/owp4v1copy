@@ -1697,7 +1697,7 @@ convert:                                /* moved here 30-aug-89 */
 /* convert: moved 30-aug-89 */
                 if( opnd->op.opr == OPR_PUSHINT ||
                     opnd->op.opr == OPR_PUSHFLOAT ) {
-                    CastConstValue( opnd, newtyp->decl_type );
+                    CastConstNode( opnd, newtyp );
                     opnd->expr_type = newtyp;
                 } else {
                     pointer_class     new_class;
