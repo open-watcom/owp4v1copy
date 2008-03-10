@@ -910,6 +910,11 @@ void CastConstNode( TREEPTR leaf, TYPEPTR newtyp )
     CastConstValue( leaf, newtyp->decl_type );
     if( newtyp->decl_type == TYPE_POINTER ) {
         leaf->op.flags = OpFlags( newtyp->u.p.decl_flags );
+        // This really ought to be in CastConstValue, but that
+        // function can't figure out the exact pointer size
+        if ( TypeSize( newtyp ) == sizeof( target_ushort ) ) {
+            leaf->op.ulong_value = (target_ushort)leaf->op.ulong_value;
+        }
     }
 }
 

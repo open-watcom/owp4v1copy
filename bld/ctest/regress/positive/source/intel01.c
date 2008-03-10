@@ -65,9 +65,12 @@ void ptr_cvt( void )
 
     n_ptr = 0x123456;
     if( n_ptr != 0x3456 ) fail( __LINE__ );
+    n_ptr = (void __near *)0xfff8;
 
     f_ptr = 0x123456;
     if( f_ptr != 0x123456 ) fail( __LINE__ );
+
+    if( n_ptr < (void near *) ~0x0f ) fail( __LINE__ );
 #endif
 }
 
