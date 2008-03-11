@@ -56,6 +56,9 @@ ifdef __WASM__
     ifdef __FLAT__
         _MODEL = _FLAT
     endif
+    ifdef __TINY__
+        _MODEL = _TINY
+    endif
     ifdef __SMALL__
         _MODEL = _SMALL
     endif
