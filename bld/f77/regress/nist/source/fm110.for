@@ -134,7 +134,7 @@ C     I02 CONTAINS THE LOGICAL UNIT NUMBER FOR THE PRINTER.             01290110
 C-----------------------------------------------------------------------
 C     For Watcom by Jeff Moss on 30-Jan-2004
 C
-      OPEN( UNIT=I01, FILE='FM110.DAT', STATUS='OLD', ACTION='READ',
+      OPEN( UNIT=I01, FILE='fm110.dat', STATUS='OLD', ACTION='READ',
      &      IOSTAT=ISTAT )
       IF( ISTAT .NE. 0 )THEN
          WRITE( I02, * )'Fatal Error opening FM110.DAT'
