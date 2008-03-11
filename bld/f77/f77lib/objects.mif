@@ -497,11 +497,11 @@ xfns += &
 #                        d16 d32 dpm nt nta ntp nov o16 o32 q16 q32 w16 w32 l32
 #===============================================================================
 # ufns 
-!inject fdefwin.obj                  nt nta ntp         o32         w16 w32                  
-!inject fintr.obj        d16 d32 dpm                                w16 w32               
-!inject fspawn.obj       d16 d32 dpm nt nta ntp nov o16 o32             w32                                 
-!inject fsystem.obj      d16 d32 dpm nt nta ntp nov o16 o32             w32                                 
-!inject winapi.obj                                                  w16 w32        
+!inject fdefwin.obj                  nt nta ntp         o32         w16 w32
+!inject fintr.obj        d16 d32 dpm                                w16 w32
+!inject fspawn.obj       d16 d32 dpm nt nta ntp nov o16 o32             w32 l32
+!inject fsystem.obj      d16 d32 dpm nt nta ntp nov o16 o32             w32 l32
+!inject winapi.obj                                                  w16 w32
 #===============================================================================
 
 ufns += &
