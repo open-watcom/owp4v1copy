@@ -19,7 +19,7 @@
 #error The header _rbtree.h requires C++
 #endif
 
-//#line 22 "_rbtree.mh"
+#line 22 "_rbtree.mh"
 
 #ifndef _UTILITY_INCLUDED
     #include <utility>
@@ -212,6 +212,10 @@ public:
     const_iterator  upper_bound( key_type const & x) const;
     iterator        lower_bound( key_type const & );
     const_iterator  lower_bound( key_type const & x) const;
+    std::pair< iterator, iterator > equal_range( key_type const & x )
+        { return( make_pair( lower_bound(x), upper_bound(x) ) ); }
+    std::pair< const_iterator, const_iterator > equal_range( key_type const & x ) const
+        { return( make_pair( lower_bound(x), upper_bound(x) ) ); }
     
     bool _Sane();
     int mError;
@@ -1473,6 +1477,10 @@ public:
     const_iterator  upper_bound( key_type const & x) const;
     iterator        lower_bound( key_type const & );
     const_iterator  lower_bound( key_type const & x) const;
+    std::pair< iterator, iterator > equal_range( key_type const & x )
+        { return( make_pair( lower_bound(x), upper_bound(x) ) ); }
+    std::pair< const_iterator, const_iterator > equal_range( key_type const & x ) const
+        { return( make_pair( lower_bound(x), upper_bound(x) ) ); }
     
     //owstl extentions
     bool _Sane();

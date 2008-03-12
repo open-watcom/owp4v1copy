@@ -364,6 +364,14 @@ bool bounds_test( )
     if( m.upper_bound( 9 )  != m.end()   ) FAIL
     if( m.upper_bound( 10 ) != m.end()   ) FAIL
     
+    std::pair< m_t::iterator, m_t::iterator> pit;
+    pit = m.equal_range( 4 );
+    for( i = 0; pit.first != pit.second; ++i ){
+        if( pit.first->first != 4 || pit.first->second != i ) FAIL
+        ++pit.first;
+    }
+    if( i != 10 ) FAIL
+    
     m_t const mc( m );
     if( mc.lower_bound( -1 ) != mc.begin() ) FAIL
     if( mc.lower_bound( 0 )  != mc.begin() ) FAIL
@@ -395,6 +403,14 @@ bool bounds_test( )
     if( mc.upper_bound( 9 )  != mc.end()   ) FAIL
     if( mc.upper_bound( 10 ) != mc.end()   ) FAIL
     //m_t::iterator it = mc.upper_bound( 3 );       //illegal
+    
+    std::pair< m_t::const_iterator, m_t::const_iterator> pcit;
+    pcit = mc.equal_range( 4 );
+    for( i = 0; pcit.first != pcit.second; ++i ){
+        if( pcit.first->first != 4 || pcit.first->second != i ) FAIL
+        ++pcit.first;
+    }
+    if( i != 10 ) FAIL
     
     return( true );
 }

@@ -488,6 +488,13 @@ bool bounds_test( )
     if( m.upper_bound( 8 )->first  != 9  ) FAIL
     if( m.upper_bound( 9 )  != m.end()   ) FAIL
     if( m.upper_bound( 10 ) != m.end()   ) FAIL
+        
+    if( m.equal_range( 1 ).first   != ++m.begin() ) FAIL
+    if( m.equal_range( 1 ).second  != ++(++m.begin()) ) FAIL
+    if( m.equal_range( 4 ).first->second  != 4 ) FAIL
+    if( m.equal_range( 4 ).second->second != 6 ) FAIL
+    if( m.equal_range( 5 ).first->second  != 6 ) FAIL
+    if( m.equal_range( 5 ).second->second != 6 ) FAIL
     
     m_t const mc( m );
     if( mc.lower_bound( -1 ) != mc.begin() ) FAIL
@@ -509,6 +516,13 @@ bool bounds_test( )
     if( mc.upper_bound( 9 )  != mc.end()   ) FAIL
     if( mc.upper_bound( 10 ) != mc.end()   ) FAIL
     //m_t::iterator it = mc.upper_bound( 3 );       //illegal
+    
+    if( mc.equal_range( 1 ).first   != ++mc.begin() ) FAIL
+    if( mc.equal_range( 1 ).second  != ++(++mc.begin()) ) FAIL
+    if( mc.equal_range( 4 ).first->second  != 4 ) FAIL
+    if( mc.equal_range( 4 ).second->second != 6 ) FAIL
+    if( mc.equal_range( 5 ).first->second  != 6 ) FAIL
+    if( mc.equal_range( 5 ).second->second != 6 ) FAIL
     
     return( true );
 }

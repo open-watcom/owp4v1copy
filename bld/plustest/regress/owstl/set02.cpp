@@ -357,6 +357,14 @@ bool bounds_test( )
     if( s.upper_bound( 9 )  != s.end() )        FAIL
     if( s.upper_bound( 10 ) != s.end() )        FAIL
     
+    std::pair< s_t::iterator, s_t::iterator> pit;
+    pit = s.equal_range( 4 );
+    for( i = 0; pit.first != pit.second; ++i ){
+        if( *pit.first != 4 ) FAIL
+        ++pit.first;
+    }
+    if( i != 10 ) FAIL
+    
     s_t const sc( s );
     s_t::const_iterator cit;
     
@@ -390,6 +398,14 @@ bool bounds_test( )
     if( sc.upper_bound( 9 )  != sc.end() )      FAIL
     if( sc.upper_bound( 10 ) != sc.end() )      FAIL
     //it = sc.upper_bound( 3 );       //illegal
+    
+    std::pair< s_t::const_iterator, s_t::const_iterator> pcit;
+    pcit = sc.equal_range( 4 );
+    for( i = 0; pcit.first != pcit.second; ++i ){
+        if( *pcit.first != 4 ) FAIL
+        ++pcit.first;
+    }
+    if( i != 10 ) FAIL
     
     return( true );
 }
