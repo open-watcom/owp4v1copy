@@ -280,6 +280,7 @@ base_headers =       &
         zmouse.h
 
 ddk_headers =        &
+        bugcodes.h   &
         ntdef.h      &
         ntstatus.h
 
