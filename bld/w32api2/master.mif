@@ -280,7 +280,8 @@ base_headers =       &
         zmouse.h
 
 ddk_headers =        &
-        ntdef.h
+        ntdef.h      &
+        ntstatus.h
 
 directx_headers =    &
         d3d.h        &
