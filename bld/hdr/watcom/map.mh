@@ -240,9 +240,9 @@ public:
     ~multimap() {}
     multimap& operator=( multimap const & x ){Implementation::operator=( x ); return( *this );}
         
-};//end class multiset
+}; //end template class multimap
 
-};//end namespace std
+} //end namespace std
 
 
 #endif
