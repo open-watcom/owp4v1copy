@@ -703,7 +703,7 @@ typedef enum _SE_ADT_PARAMETER_TYPE {
 } SE_ADT_PARAMETER_TYPE;
 typedef SE_ADT_PARAMETER_TYPE   *PSE_ADT_PARAMETER_TYPE;
 
-/* Security audit objecyt type */
+/* Security audit object type */
 typedef struct _SE_ADT_OBJECT_TYPE {
     GUID        ObjectType;
     USHORT      Flags;
