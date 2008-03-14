@@ -998,6 +998,7 @@ local void EmitNodes( TREEPTR tree )
             name = CGTempName( temp_name, T_LONG_POINTER );
             left = CGAssign( name, op1, T_LONG_POINTER );
             name = CGTempName( temp_name, T_LONG_POINTER );
+            left = CGEval( left );  // force order - temp_name used on both sides
             PushCGName( left );
             name = CGUnary( O_POINTS, name, T_LONG_POINTER );
             PushCGName( CGUnary( O_POINTS, name, T_LONG_POINTER ) );
