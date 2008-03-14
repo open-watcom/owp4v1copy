@@ -1386,7 +1386,7 @@ typedef const UCSCHAR UNALIGNED *PCUUCSCHAR;
 /* Session access rights */
 #define SESSION_QUERY_ACCESS    0x0001L
 #define SESSION_MODIFY_ACCESS   0x0002L
-#define SESSION_ALL_ACCESS      (STNADARD_RIGHTS_REQUIRED | 0x0003L)
+#define SESSION_ALL_ACCESS      (STANDARD_RIGHTS_REQUIRED | 0x0003L)
 
 /* Memory protection and allocation flags */
 #define PAGE_NOACCESS           0x00000001L
