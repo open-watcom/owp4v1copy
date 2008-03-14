@@ -314,7 +314,7 @@ int DoUnSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
         tree->op.long_value = (target_int)value;
     } else {
         value = DoOp32( left, tree->op.opr, right, FALSE );
-        if( const_type == TYPE_ULONG ) {
+        if( const_type == TYPE_ULONG || const_type == TYPE_POINTER ) {
             tree->op.long_value = value;
         } else {
             tree->op.long_value = (target_uint)value;
