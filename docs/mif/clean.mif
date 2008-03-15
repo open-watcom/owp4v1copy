@@ -34,8 +34,5 @@ clean : .procedure
  @if exist *.gid @attrib -h *.gid
  @if exist *.gid rm -f *.gid
  
-# delete generated headers for online help
- @if exist $(guitools_dir_$(dotarget))\*.h  rm $(guitools_dir_$(dotarget))\*.h 
- 
 # delete generated DOSEMU batch file
  @if exist *.bat rm -f *.bat

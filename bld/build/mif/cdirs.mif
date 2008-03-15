@@ -197,9 +197,6 @@ batch_dir       = $(dev_dir)/idebatch
 !ifndef editdll_dir
 editdll_dir     = $(dev_dir)/editdll
 !endif
-!ifndef guitools_dir
-guitools_dir    = $(dev_dir)/online/hlp
-!endif
 !ifndef gui_dir
 gui_dir         = $(dev_dir)/gui
 !endif
@@ -514,9 +511,6 @@ batch_dir       = $(dev_dir)\idebatch
 !endif
 !ifndef editdll_dir
 editdll_dir     = $(dev_dir)\editdll
-!endif
-!ifndef guitools_dir
-guitools_dir    = $(dev_dir)\online\hlp
 !endif
 !ifndef gui_dir
 gui_dir         = $(dev_dir)\gui

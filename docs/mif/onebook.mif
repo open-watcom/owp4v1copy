@@ -18,14 +18,6 @@ LOWERC=ren
 docsrc_dir=..$(SL)doc
 bldsrc_dir=..$(SL)..$(SL)bld
 
-#
-# output directories for online help header files:
-#
-guitools_dir_nt = $(guitools_dir)$(SL)win95
-guitools_dir_win = $(guitools_dir)$(SL)win
-guitools_dir_os2 = $(guitools_dir)$(SL)os2
-guitools_dir_dos = $(guitools_dir)$(SL)ib
-
 !include ../mif/depends.mif
 !include ../mif/books.mif
 
@@ -64,21 +56,21 @@ hc_dos = hcdos
 #
 
 !ifeq header 1
-dep_nt = $(guitools_dir_nt)/$(hbook).h
+dep_nt = $(hbook).h
 !else ifneq hc_nt
-dep_nt = $(guitools_dir_nt)/$(hbook).h $(hbook).hlp $(hbook).cnt
+dep_nt = $(hbook).h $(hbook).hlp $(hbook).cnt
 !endif
 !ifeq header 1
-dep_win = $(guitools_dir_win)/$(hbook).h
+dep_win = $(hbook).h
 !else ifneq hc_win
-dep_win = $(guitools_dir_win)/$(hbook).h $(hbook).hlp
+dep_win = $(hbook).h $(hbook).hlp
 !endif
 !ifeq header 1
-dep_os2 = $(guitools_dir_os2)/$(hbook).h
+dep_os2 = $(hbook).h
 !else ifneq hc_os2
-dep_os2 = $(guitools_dir_os2)/$(hbook).h $(hbook).inf $(hbook).hlp
+dep_os2 = $(hbook).h $(hbook).inf $(hbook).hlp
 !endif
-dep_dos = $(guitools_dir_dos)/$(hbook).h $(hbook).ihp
+dep_dos = $(hbook).h $(hbook).ihp
 dep_html = $(hbook).html
 dep_ps = $(hbook).ps
 dep_pdf = $(hbook).pdf
@@ -289,14 +281,6 @@ $(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
 
 !endif
-
-####################################################
-#
-# generate online help header file
-#
-####################################################
-$(guitools_dir_$(dotarget))$(SL)$(hbook).h: $(hbook).h
-    $(CPYCMD) $(hbook).h $@ > $(nulldevice)
 
 ####################################################
 #

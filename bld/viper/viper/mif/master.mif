@@ -7,6 +7,11 @@ sys_windowed = 1
 viper_autodepends = .autodepend
 !endif
 
+additional_cleanup = &
+    $(docs_root)/os2/ide.h &
+    $(docs_root)/win/ide.h &
+    $(docs_root)/nt/ide.h
+
 .SUFFIXES : .rc
 
 c_path_os2 = $(batch_dir)/os2
@@ -42,9 +47,9 @@ extra_cpp_flags_i86     = -zc -zm
 
 extra_l_flags = op eliminate sort global
 
-prereq_inc_os2 = $(guitools_dir)/os2
-prereq_inc_win = $(guitools_dir)/win
-prereq_inc_nt  = $(guitools_dir)/win95
+prereq_inc_os2 = $(docs_root)/os2
+prereq_inc_win = $(docs_root)/win
+prereq_inc_nt  = $(docs_root)/nt
 !ifdef prereq_inc_$(host_os)
 prereq_ide_h = $(prereq_inc_$(host_os))/ide.h
 !endif
@@ -83,7 +88,7 @@ _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
 !ifdef prereq_ide_h
 $(prereq_ide_h): .ALWAYS
 curr_dir=$+$(%cwd)$-
-        @cd $(%DOC_ROOT)/$(host_os)
+        @cd $(docs_root)/$(host_os)
         @wmake -h hbook=ide header=1
         @cd $(curr_dir)
 !endif

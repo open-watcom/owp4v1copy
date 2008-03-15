@@ -5,6 +5,11 @@ name = wbrw
 browse_autodepends = .AUTODEPEND
 !endif
 
+additional_cleanup = &
+    $(docs_root)/os2/wbrw.h &
+    $(docs_root)/win/wbrw.h &
+    $(docs_root)/nt/wbrw.h
+
 .extensions: .gpp
 
 sys_windowed = 1
@@ -39,10 +44,10 @@ ext = mbr
 mbr_files = $+$(template)$-
 !endif
 
-inc_dirs_nt  = -I"$(guitools_dir)/win95"
-inc_dirs_win = -I"$(guitools_dir)/win"
-inc_dirs_dos = -I"$(guitools_dir)/os2"
-inc_dirs_os2 = -I"$(guitools_dir)/os2"
+inc_dirs_nt  = -I"$(docs_root)/nt"
+inc_dirs_win = -I"$(docs_root)/win"
+inc_dirs_dos = -I"$(docs_root)/os2"
+inc_dirs_os2 = -I"$(docs_root)/os2"
 
 inc_dirs = -I"../h" -I"../brg/h" -I"../gen" $(wclass_inc_dirs) -I"$(dwarf_dir)/dr/h" -I"$(posix_dir)/h" -I$(editdll_dir)
 
@@ -119,10 +124,10 @@ exe_ext = $(exe_ext_$(host_os))
 exe_ext = exe
 !endif
 
-prereq_nt = $(guitools_dir)/win95/wbrw.h
-prereq_win = $(guitools_dir)/win/wbrw.h
-prereq_os2 = $(guitools_dir)/os2/wbrw.h
-prereq_dos = $(guitools_dir)/os2/wbrw.h
+prereq_nt = $(docs_root)/nt/wbrw.h
+prereq_win = $(docs_root)/win/wbrw.h
+prereq_os2 = $(docs_root)/os2/wbrw.h
+prereq_dos = $(docs_root)/os2/wbrw.h
 
 all: $(prereq_$(host_os)) $(name).exe .SYMBOLIC
 
@@ -142,7 +147,7 @@ dmem.obj : mem.cpp
 !ifdef prereq_$(host_os)
 $(prereq_$(host_os)): .ALWAYS
 curr_dir=$+$(%cwd)$-
-        @cd $(%DOC_ROOT)/$(host_os)
+        @cd $(docs_root)/$(host_os)
         @wmake -h hbook=wbrw header=1
         @cd $(curr_dir)
 !endif
