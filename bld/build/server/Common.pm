@@ -81,7 +81,7 @@ sub process_summary
             $current_project = remove_OWloc($header[2]);
         } elsif (/Warning|Error|Can not|ERROR|WARNING/) {
             print OUTFILE "\nPROJECT $current_project\n";
-            print OUTFILE "$_\n";
+            print OUTFILE remove_OWloc($_) . "\n";
         }
     }
     close(OUTFILE);
