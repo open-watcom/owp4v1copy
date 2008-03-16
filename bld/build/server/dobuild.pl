@@ -28,11 +28,14 @@
 #  Description: This file is the main program for the build server.
 #
 ###########################################################################
-#use strict;
+use strict;
 
 use Common;
 
 my(@p4_messages);
+my($OStype);
+my($ext);
+my($setenv);
 
 if( $#ARGV == -1 ) {
     Common::read_config( "config.txt" );
@@ -47,64 +50,96 @@ my $home    = $Common::config{"HOME"};
 my $OW      = $Common::config{"OW"};
 my $WATCOM  = $Common::config{"WATCOM"};
 my $report_archive = $Common::config{"REPORTS"};
-my $bldbase = "$home\\$Common::config{'BLDBASE'}";
-my $bldlast = "$home\\$Common::config{'BLDLAST'}";
+my $bldbase = "$home\/$Common::config{'BLDBASE'}";
+my $bldlast = "$home\/$Common::config{'BLDLAST'}";
 
-my $build_batch_name  = "$home\\buildtmp.bat";
-my $test_batch_name   = "$home\\testtmp.bat";
-my $rotate_batch_name = "$home\\rotate.bat";
+if( $^O eq "MSWin32" ) {
+    $OStype = "WIN32";
+    $ext    = "bat";
+    $setenv = "set";
+} elsif( $^O eq "linux" ) {
+    $OStype = "UNIX";
+    $ext    = "sh";
+    $setenv = "export";
+} else {
+    print "Unsupported or unknown platform!\n";
+    print "Review dobuild.pl file and fix it for new platform!\n";
+    exit 1;
+}
+
+my $build_batch_name  = "$home\/buildtmp.$ext";
+my $test_batch_name   = "$home\/testtmp.$ext";
+my $rotate_batch_name = "$home\/rotate.$ext";
+my $setvars           = "$OW\/setvars.$ext";
+my $relsubdir         = "rel2";
+
+sub get_reldir
+{
+    if ($OStype eq "UNIX") {
+        return "$OW\/$relsubdir";
+    } else {
+        return "$OW\\$relsubdir";
+    }
+}
 
 sub make_build_batch()
 {
-    open(BATCH, ">$build_batch_name") || die "Unable to open temporary build batch file.";
-    open(INPUT, "$OW\\setvars.bat") || die "Unable to open setvars.bat";
+    open(BATCH, ">$build_batch_name") || die "Unable to open $build_batch_name file.";
+    open(INPUT, "$setvars") || die "Unable to open $setvars file.";
     while (<INPUT>) {
-        if    (/set OWROOT/i) { print BATCH "set OWROOT=" . $OW . "\n"; }
-        elsif (/set WATCOM/i) { print BATCH "set WATCOM=" . $WATCOM . "\n"; }
-        else                  { print BATCH; }
+        if    (/set OWROOT/i)    { print BATCH "$setenv OWROOT=", $OW, "\n"; }
+        elsif (/set WATCOM/i)    { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
+        elsif (/set DOC_BUILD/i) { print BATCH "$setenv DOC_BUILD=1\n"; }
+        else                     { print BATCH; }
     }
     close(INPUT);
     
     # Add additional commands to do the build.
     print BATCH "\n";
-    print BATCH "cd $OW\n";
-    print BATCH "rm -rf rel2\n";
-    print BATCH "cd $OW\\bld\n";
+    print BATCH "$setenv RELROOT=", get_reldir(), "\n";
+    print BATCH "rm -rf ", get_reldir(), "\n";
+    print BATCH "cd $OW\ncd bld\n";
     print BATCH "builder clean\n";
-    print BATCH "cd $OW\\bld\\builder\\nt386\n";
+    if( $^O eq "MSWin32" ) {
+        print BATCH "cd $OW\ncd bld\ncd builder\ncd nt386\n";
+    } elsif( $^O eq "linux" ) {
+        print BATCH "cd $OW\ncd bld\ncd builder\ncd linux386\n";
+    }
     print BATCH "wmake\n";
-    print BATCH "cd $OW\\contrib\\wattcp\\src\n";
+    print BATCH "cd $OW\ncd contrib\ncd wattcp\ncd src\n";
     print BATCH "wmake -ms\n";
-    print BATCH "cd $OW\\bld\n";
+    print BATCH "cd $OW\ncd bld\n";
     print BATCH "builder rel2\n";
     close(BATCH);
 }
 
 sub make_test_batch()
 {
-    open(BATCH, ">$test_batch_name") || die "Unable to open temporary test batch file.";
-    open(INPUT, "$OW\\setvars.bat") || die "Unable to open setvars.bat";
+    open(BATCH, ">$test_batch_name") || die "Unable to open $test_batch_name file.";
+    open(INPUT, "$setvars") || die "Unable to open $setvars file.";
     while (<INPUT>) {
-        if    (/set OWROOT/i) { print BATCH "set OWROOT=" . $OW . "\n"; }
-        elsif (/set WATCOM/i) { print BATCH "set WATCOM=" . "$OW\\rel2" . "\n"; }
-        else                  { print BATCH; }
+        if    (/set OWROOT/i)    { print BATCH "$setenv OWROOT=", $OW, "\n"; }
+        elsif (/set WATCOM/i)    { print BATCH "$setenv WATCOM=", get_reldir(), "\n"; }
+        else                     { print BATCH; }
     }
     close(INPUT);
     
     # Add additional commands to do the testing.
     print BATCH "\n";
-    print BATCH "cd $OW\\bld\\f77\\regress\n";
-    print BATCH "del *.log\n";
-    print BATCH "cd $OW\\bld\\f77\\regress\\nist\n";
-    print BATCH "call testrun\n";
-    print BATCH "cd $OW\\bld\\ctest\n";
-    print BATCH "del *.log\n";
-    print BATCH "cd $OW\\bld\\ctest\\regress\n";
-    print BATCH "call testrun\n";
-    print BATCH "cd $OW\\bld\\plustest\n";
-    print BATCH "del *.log\n";
-    print BATCH "cd $OW\\bld\\plustest\\regress\n";
-    print BATCH "call testrun\n";
+    print BATCH "$setenv EXTRA_ARCH=i86\n";
+    print BATCH "\n";
+    print BATCH "cd $OW\ncd bld\ncd f77\ncd regress\n";
+    print BATCH "rm *.log\n";
+    print BATCH "wmake\n";
+    print BATCH "cd $OW\ncd bld\ncd ctest\n";
+    print BATCH "rm *.log\n";
+    print BATCH "wmake\n";
+    print BATCH "cd $OW\ncd bld\ncd plustest\n";
+    print BATCH "rm *.log\n";
+    print BATCH "wmake\n";
+    print BATCH "cd $OW\ncd bld\ncd wasm\ncd test\n";
+    print BATCH "rm *.log\n";
+    print BATCH "wmake\n";
     close(BATCH);
 }
 
@@ -113,10 +148,11 @@ sub process_log
     my($result)        = "success";
     my($project_name)  = "none";
     my($first_message) = "yes";
-    my(@fields, $source_location);
+    my(@fields);
     
     open(LOGFILE, $_[0]) || die "Can't open $_[0]";
     while (<LOGFILE>) {
+        s/\r?\n/\n/;
         if (/^[=]+ .* [=]+$/) {
             if ($project_name ne "none") {
                 if ($first_message eq "yes") {
@@ -127,15 +163,9 @@ sub process_log
                 $result = "fail";
             }
             @fields = split;
-            $source_location = $OW;
-            $source_location =~ s/\\/\\\\/g;
-            $fields[2] =~ /$source_location\\(.*)/i; 
-            $project_name = $1;
-        }
-        else {
-            if (/^PASS/) {
-                $project_name = "none";
-            }
+            $project_name = Common::remove_OWloc($fields[2]);
+        } elsif (/^PASS/) {
+            $project_name = "none";
         }
     }
     close(LOGFILE);
@@ -200,13 +230,13 @@ if ($home eq $OW) {
 
 my $shortdate_stamp = get_shortdate();
 my $date_stamp = get_date();
-my $report_directory = "$report_archive\\$shortdate_stamp";
+my $report_directory = "$report_archive\/$shortdate_stamp";
 if (!stat($report_directory)) {
     mkdir($report_directory);
 }
-my $report_name = "$report_directory\\$date_stamp-report.txt";
+my $report_name = "$report_directory\/$date_stamp-report.txt";
 
-open(REPORT, ">$report_name") || die "Unable to open report file.";
+open(REPORT, ">$report_name") || die "Unable to open $report_name file.";
 print REPORT "Open Watcom Build Report\n";
 print REPORT "========================\n\n";
 
@@ -214,17 +244,14 @@ print REPORT "========================\n\n";
 #########################################
 
 #force all files update to head
-#open(SYNC, "p4 sync -f $OW\\...#head |");
+#open(SYNC, "p4 sync -f $OW\/...#head |");
 
-open(SYNC, "p4 sync $OW\\... |");
+open(SYNC, "p4 sync $OW\/... |");
 while (<SYNC>) {
     my @fields = split;
-    my $source_location = $OW;
-    $source_location =~ s/\\/\\\\/g;
-    $fields[-1] =~ /$source_location\\(.*)/i;
-    if( defined( $1 ) ) {
-        $fields[-1] = $1;    
-        push(@p4_messages, sprintf("%-8s %s", $fields[2], $fields[-1]));    
+    my $loc = Common::remove_OWloc($fields[-1]);
+    if( $loc ne "" ) {
+        push(@p4_messages, sprintf("%-8s %s", $fields[2], $loc));
     } else {
         push(@p4_messages, sprintf("%s", $_));    
     }
@@ -248,21 +275,19 @@ print REPORT "\n";
 ####################################################
 
 make_build_batch();
-my $datetime_stamp = get_datetime();
-print REPORT "CLEAN+BUILD STARTED  : $datetime_stamp\n";
+print REPORT "CLEAN+BUILD STARTED  : ", get_datetime(), "\n";
 if (system($build_batch_name) != 0) {
     print REPORT "clean+build failed!\n";
     display_p4_messages();
     close(REPORT);
     exit 1;
 }
-$datetime_stamp = get_datetime();
-print REPORT "CLEAN+BUILD COMPLETED: $datetime_stamp\n\n";
+print REPORT "CLEAN+BUILD COMPLETED: ", get_datetime(), "\n\n";
 
 # Analyze build result.
 #######################
 
-Common::process_summary("$OW\\bld\\build.log", $bldlast);
+Common::process_summary("$OW\/bld\/build.log", $bldlast);
 # If 'compare' fails, end now. Don't test if there was a build failure.
 if (Common::process_compare($bldbase, $bldlast, \*REPORT)) {
     display_p4_messages();
@@ -273,18 +298,18 @@ if (Common::process_compare($bldbase, $bldlast, \*REPORT)) {
 # Run regression tests for the Fortran, C, and C++ compilers.
 ##############################################################
 make_test_batch();
-$datetime_stamp = get_datetime();
-print REPORT "REGRESSION TESTS STARTED  : $datetime_stamp\n";
+print REPORT "REGRESSION TESTS STARTED  : ", get_datetime(), "\n";
 system("$test_batch_name");
-$datetime_stamp = get_datetime();
-print REPORT "REGRESSION TESTS COMPLETED: $datetime_stamp\n\n";
+print REPORT "REGRESSION TESTS COMPLETED: ", get_datetime(), "\n\n";
 
 print REPORT "\tFortran Compiler: ";
-my $f_compiler = process_log("$OW\\bld\\f77\\regress\\positive.log");
+my $f_compiler = process_log("$OW\/bld\/f77\/regress\/result.log");
 print REPORT "\tC Compiler      : ";
-my $c_compiler = process_log("$OW\\bld\\ctest\\result.log");
+my $c_compiler = process_log("$OW\/bld\/ctest\/result.log");
 print REPORT "\tC++ Compiler    : ";
-my $cpp_compiler = process_log("$OW\\bld\\plustest\\result.log");
+my $cpp_compiler = process_log("$OW\/bld\/plustest\/result.log");
+print REPORT "\tWASM            : ";
+my $wasm_compiler = process_log("$OW\/bld\/wasm\/test\/result.log");
 print REPORT "\n";
 
 # Display p4 sync messages for reference.
@@ -296,10 +321,10 @@ close(REPORT);
 
 # Rotate the freshly built system into position on the web site.
 ################################################################
-if (($f_compiler   eq "success") &&
-    ($c_compiler   eq "success") &&
-    ($cpp_compiler eq "success")) {
+if (($f_compiler    eq "success") &&
+    ($c_compiler    eq "success") &&
+    ($cpp_compiler  eq "success") &&
+    ($wasm_compiler eq "success")) {
         
     system("$rotate_batch_name");
 }
-

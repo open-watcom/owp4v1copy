@@ -33,11 +33,11 @@ start_test: .symbolic
     set CTEST_NAME=$(ctest_name)
     cd regress
 
-./chktest.exe : c/chktest.c
-    $(bld_cl) $< $(wcl_util_opts)
-
 cd_back : .symbolic
     cd ..
+
+./chktest.exe : $(watcom_dir)/c/chktest.c
+    $(bld_cl) $< $(wcl_util_opts)
 
 finish_test : .symbolic cd_back ./chktest.exe
     @cdsay >> $(log_file)

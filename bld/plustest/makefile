@@ -135,11 +135,11 @@ start_test: .symbolic
     set PLUSTEST_NAME=$(plustest_name)
     cd $(main_dir)
 
-./chktest.exe : c/chktest.c
-    $(bld_cl) $< $(wcl_util_opts)
-
 cd_back : .symbolic
     cd ..
+
+./chktest.exe : $(watcom_dir)/c/chktest.c
+    $(bld_cl) $< $(wcl_util_opts)
 
 finish_test : .symbolic cd_back ./chktest.exe
     @cdsay >> $(log_file)

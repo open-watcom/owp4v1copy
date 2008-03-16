@@ -27,15 +27,20 @@
 #  Description: Common definitions for the various scripts.
 #
 ###########################################################################
+use strict;
 
 package Common;
 
-sub read_config {
+my($OWloc) = "";
+
+sub read_config
+{
     my($filename) = $_[0];
     my(@fields);
 
     open(CONFIG_FILE, $filename) || die "Unable to open configuration file.";
     while (<CONFIG_FILE>) {
+        s/\r?\n/\n/;
         chomp;
         s/#.*//;
         if (/^\s*$/) { next; }
@@ -43,47 +48,42 @@ sub read_config {
         $Common::config{$fields[0]} = $fields[1];
     }
     close(CONFIG_FILE);
-}
-
-sub check_real_error
-{
-    if ($_[0] =~ /\*\*\* WARNING: Hyperlink name too long on line [0-9]+./) {
-       # ignore anoying warning, which has changed line number when
-       # some change is done into documentation
-       # it is more likely note than something danger and there is
-       # no reason why we should mark the build as unsuccesful
-       return 0;
-    } else {
-       return 1;
+    if(defined($Common::config{"OW"})) {
+        $OWloc = $Common::config{"OW"};
+        $OWloc =~ s/\\/\\\\/g;
     }
 }
 
-sub process_summary {
+sub remove_OWloc
+{
+    my($txt) = $_[0];
 
-    my($inp_filename) = $_[0];
-    my($out_filename) = $_[1];
-    my(@header, $current_project, $source_location);
+    $txt =~ s/$OWloc[\/\\]//g;
+    return $txt;
+}
+
+sub process_summary
+{
+    my($inp_filename)    = $_[0];
+    my($out_filename)    = $_[1];
+    my($current_project) = "";
+    my(@header);
 
     open(INFILE, $inp_filename) || die "Unable to open input file: $inp_filename";
     open(OUTFILE, ">", $out_filename) || die "Unable to open output file: $out_filename";
 
     # Read the build log file a line at a time and output the error summary.
     while (<INFILE>) {
+        s/\r?\n/\n/;
         chomp;
         if (/^[=]+ .* [=]+$/) {
             @header = split;
-            $current_project = $header[2];
-            $source_location = $Common::config{"OW"};
-            $source_location =~ s/\\/\\\\/g;
-            $current_project =~ /$source_location\\(.*)/i;
-            $current_project = $1;
-        }
-        if (/Warning|Error|Can not|ERROR|WARNING/ and check_real_error($_)) {
+            $current_project = remove_OWloc($header[2]);
+        } elsif (/Warning|Error|Can not|ERROR|WARNING/) {
             print OUTFILE "\nPROJECT $current_project\n";
             print OUTFILE "$_\n";
         }
     }
-
     close(OUTFILE);
     close(INFILE);
 }
@@ -94,6 +94,7 @@ sub read_record
     my($file) = $_[0];
     my($record, $line);
     while (<$file>) {
+        s/\r?\n/\n/;
         chomp;
         s/#.*//;
         if (/^\s*$/) { next; }
@@ -154,7 +155,7 @@ sub process_compare
         foreach $candidate (@old_records) {
             if ($record eq $candidate) { $found = "yes"; }
         }
-        if (($found eq "no") and check_real_error($record)) {
+        if ($found eq "no") {
             if ($first_added eq "yes") {
                 print $fh "Messages Added\n";
                 print $fh "--------------\n\n";
@@ -175,7 +176,7 @@ sub process_compare
             foreach $candidate (@new_records) {
                 if ($record eq $candidate) { $found = "yes"; }
             }
-            if (($found eq "no") and check_real_error($record)) {
+            if ($found eq "no") {
                 if ($first_removed eq "yes") {
                     print $fh "Messages Removed\n";
                     print $fh "----------------\n\n";

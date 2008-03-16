@@ -17,13 +17,13 @@ start_test: .symbolic
 cd_back : .symbolic
     cd ..
 
+./chktest.exe : $(watcom_dir)/c/chktest.c
+    $(bld_cl) $< $(wcl_util_opts)
+
 finish_test : .symbolic cd_back ./chktest.exe
     @cdsay >> $(log_file)
     $]@ $(log_file)
     %append $(log_file) PASS $(%__CWD__)
-
-./chktest.exe : c/chktest.c
-    $(bld_cl) $< $(wcl_util_opts)
 
 $(all_tests) : .procedure
     -@wmake -h global

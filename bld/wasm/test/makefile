@@ -21,12 +21,12 @@ $(all_tests) : .symbolic
 !endif
     cd ..
 
-./chktest.exe : c/chktest.c
+./chktest.exe : $(watcom_dir)/c/chktest.c
     $(bld_cl) $< $(wcl_util_opts)
 
 finish_test : .symbolic ./chktest.exe
     @cdsay >> $(log_file)
-    $< $(log_file)
+    $]@ $(log_file)
     %append $(log_file) PASS $(%__CWD__)
 
 global : .symbolic
