@@ -1,9 +1,11 @@
 plustest_name = regress
 !include environ.mif
 
-test : .symbolic
-    $(bld_cl) $(plustest_dir)\c\chktest.c -ox-d1
-    chktest $(log_file)
+./chktest.exe : $(watcom_dir)/c/chktest.c
+    $(bld_cl) $< $(wcl_util_opts)
+
+test : .symbolic ./chktest.exe
+    $]@ $(log_file)
     @%make global
     %append $(log_file) PASS $(%__CWD__)
 
