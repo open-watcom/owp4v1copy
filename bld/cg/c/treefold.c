@@ -1399,7 +1399,7 @@ extern  tn      FoldCompare( opcode_defs op, tn left,
                  */
                 tipe = base_l->tipe;
             }
-            if( !(tipe->attr & TYPE_FLOAT) ) {
+            if( !( tipe->attr & ( TYPE_FLOAT | TYPE_POINTER ) ) ) {
                 cmp_result  cmp;
 
                 cmp = CheckCmpRange( op, CmpType( tipe ), rite->u.name->c.value );

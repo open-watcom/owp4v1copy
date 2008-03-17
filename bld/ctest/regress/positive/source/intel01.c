@@ -24,14 +24,13 @@ void __far *Ptr;
 
 // verify that far pointer <-> long long conversions can generate code
 // and test other fun pointer <-> integer conversions
-void ptr_cvt( void )
+void ptr_cvt( int __near *np )
 {
 #ifdef _M_I86
     void __near *n_ptr;
     long        l_tmp;
 #endif
     void __far  *f_ptr;
-#if 0
     long long   tmp;
 
     f_ptr = Ptr;
@@ -43,7 +42,6 @@ void ptr_cvt( void )
     Ptr = f_ptr;
     if( Ptr != (void __far *)tmp ) fail(__LINE__);
     if( Ptr != (void __far *)1 ) fail(__LINE__);
-#endif
 
 #ifdef _M_I86
     /* 16-bit tests - assuming near pointer is 2 int/short sized, far pointer is long sized */
@@ -70,7 +68,8 @@ void ptr_cvt( void )
     f_ptr = 0x123456;
     if( f_ptr != 0x123456 ) fail( __LINE__ );
 
-    if( n_ptr < (void near *) ~0x0f ) fail( __LINE__ );
+    if( n_ptr < (void __near *)~0x0f ) fail( __LINE__ );
+    if( (void __far *)0x10000 > np ) fail( __LINE__ );
 #endif
 }
 
@@ -90,6 +89,6 @@ void ptr_cvt( void )
 int main( void )
 {
     set_vec( 0 );
-    ptr_cvt();
+    ptr_cvt( Ptr );
     _PASS;
 }
