@@ -82,6 +82,7 @@ base_headers =       &
         knownfld.h   &
         ks.h         &
         ksmedia.h    &
+        ktmtypes.h   &
         largeint.h   &
         lm.h         &
         lmaccess.h   &
@@ -282,6 +283,7 @@ base_headers =       &
 ddk_headers =        &
         bugcodes.h   &
         ntdef.h      &
+        ntiologc.h   &
         ntstatus.h
 
 directx_headers =    &
