@@ -89,6 +89,6 @@ void ptr_cvt( void )
 int main( void )
 {
     set_vec( 0 );
-    ptr_cvt( Ptr );
+    ptr_cvt();
     _PASS;
 }
