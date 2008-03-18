@@ -213,7 +213,11 @@ void FindExtender( char *extname, char *winext )
         watcom = getenv( "WATCOM" );
         if( watcom != NULL ) {
             strcpy( winext, watcom );
+#if defined( __UNIX__ )
+            strcat( winext, "/binw/" );
+#else
             strcat( winext, "\\binw\\" );
+#endif
             strcat( winext, extname );
             if( access( winext, R_OK ) == -1 ) {
                 winext[0] = '\0';               // indicate file not found
