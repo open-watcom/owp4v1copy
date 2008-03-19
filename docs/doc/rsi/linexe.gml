@@ -158,7 +158,7 @@ extended memory.
 DOS memory and upper memory together compose real memory, the memory
 that can be addressed when the processor is running in real mode.
 :cmt. :image xoff='0.0i' depth='4.0i' file='RSI\MEM1' text='Basic Memory Layout'.
-.figure *depth='4.0' *scale=100 *file='MEM1' Basic Memory Layout
+.figure *depth='4.0' *scale=100 *file='mem1' Basic Memory Layout
 .np
 Under &dos4g, the first megabyte of physical memory &mdash the real
 memory &mdash is mapped as a shared linear address space.
@@ -181,7 +181,7 @@ mapped to the first MB of physical memory &mdash is called a
 The illustration below shows the layout of physical memory on the
 left, and the layout of the linear address space on the right.
 :cmt. :image xoff='0.0i' depth='4.0i' file='RSI\MEM2' text='Physical Memory/Linear Address Space'.
-.figure *depth='4.0' *scale=100 *file='MEM2' Physical Memory/Linear Address Space
+.figure *depth='4.0' *scale=100 *file='mem2' Physical Memory/Linear Address Space
 .np
 The 1KB label in the diagram indicates the top of the real-mode
 interrupt vectors.

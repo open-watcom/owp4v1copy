@@ -291,13 +291,13 @@ format and meet the requirements shown in the figures below.
 The access rights/type byte passed in CL has the format shown in the
 figure below.
 :cmt. :image xoff='0.0i' depth='4.0i' file='RSI\MEM3' text='Access Rights/Type'.
-.figure *depth='4.0' *scale=100 *file='MEM3' Access Rights/Type
+.figure *depth='4.0' *scale=100 *file='mem3' Access Rights/Type
 .cp 30
 .np
 The extended access rights/type byte passed in CH has the following
 format.
 :cmt. :image xoff='0.0i' depth='4.0i' file='RSI\MEM4' text='Extended Access Rights/Type'.
-.figure *depth='4.0' *scale=100 *file='MEM4' Extended Access Rights/Type
+.figure *depth='4.0' *scale=100 *file='mem4' Extended Access Rights/Type
 .*
 .note Function 000AH
 .*

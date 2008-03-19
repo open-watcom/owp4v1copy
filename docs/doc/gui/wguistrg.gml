@@ -55,7 +55,7 @@ How you proceed depends on whether you are
 opening a new (empty) string table or an existing string table. The
 String Editor works on resources found in resource files.
 :CMT. This is a new screen snap shot
-.figure *depth='3.20' *scale=53 *file='STR1' The String Editor window
+.figure *depth='3.20' *scale=53 *file='str1' The String Editor window
 .*
 .beglevel
 .*
@@ -143,7 +143,7 @@ and efficient to use.
 .section The String Editor Menu Bar
 .*
 :CMT. This is a new screen snap shot
-.figure *depth='1.67' *scale=66 *file='STR2' The String Editor menu bar
+.figure *depth='1.67' *scale=66 *file='str2' The String Editor menu bar
 .np
 .ix 'String Editor' 'Menu bar'
 .ix 'Menu bar' 'String Editor'
@@ -176,8 +176,8 @@ In the &company String Editor window, the toolbar appears below the menu
 bar. When the toolbar is shown choose Hide Toolbar from the Edit menu
 to hide it. When the toolbar is hidden you can display it by choosing
 Show Toolbar from the Edit menu.
-:CMT. .figure *depth='4.86' *scale=180 *file='STR2' You can access seven String Editor functions from the toolbar.
-.figure *depth='0.88' *scale=76 *file='STR3' You can access seven String Editor functions from the toolbar.
+:CMT. .figure *depth='4.86' *scale=180 *file='str2' You can access seven String Editor functions from the toolbar.
+.figure *depth='0.88' *scale=76 *file='str3' You can access seven String Editor functions from the toolbar.
 .np
 The following explains the function each toolbar button performs,
 as well as the equivalent menu item.
@@ -228,8 +228,8 @@ Action Buttons
 .bull
 Strings List
 .endbull
-:CMT. .figure *depth='4.86' *scale=180 *file='STR2' The &company String Editor window contains a menu bar, toolbar, workspace, and status line.
-.figure *depth='3.20' *scale=53 *file='STR4' The String Editor window contains a menu bar, toolbar, workspace, and status line.
+:CMT. .figure *depth='4.86' *scale=180 *file='str2' The &company String Editor window contains a menu bar, toolbar, workspace, and status line.
+.figure *depth='3.20' *scale=53 *file='str4' The String Editor window contains a menu bar, toolbar, workspace, and status line.
 .*
 .beglevel
 .*
@@ -431,8 +431,8 @@ to continue.
 Choosing Yes removes all string items from the current string table.
 The Strings list is left empty.
 .endstep
-:CMT. .figure *depth='2.22' *scale=200 *file='STR3' As a safety feature, a message box appears when you choose the Clear function.
-.figure *depth='1.46' *scale=68 *file='STR5' As a safety feature, a message box appears when you choose the Clear function.
+:CMT. .figure *depth='2.22' *scale=200 *file='str3' As a safety feature, a message box appears when you choose the Clear function.
+.figure *depth='1.46' *scale=68 *file='str5' As a safety feature, a message box appears when you choose the Clear function.
 .*
 .endlevel
 .*
@@ -477,8 +477,8 @@ Choose Save As from the File menu on the String Editor window to save
 the current string table to another resource file. A Save Menu dialog
 appears where you specify the resource file to which you want to save the
 current string table.
-:CMT. .figure *depth='2.78' *scale=150 *file='STR4' On the Save Menu dialog, specify the resource file to which you want to save the string table.
-.figure *depth='2.24' *scale=65 *file='STR6' On the Save Menu dialog, specify the resource file to which you want to save the string table.
+:CMT. .figure *depth='2.78' *scale=150 *file='str4' On the Save Menu dialog, specify the resource file to which you want to save the string table.
+.figure *depth='2.24' *scale=65 *file='str6' On the Save Menu dialog, specify the resource file to which you want to save the string table.
 .begnote
 .note Important:
 If the resource file to which you are saving the string table already
@@ -495,8 +495,8 @@ dialog appears where you specify the resource file to which you want to copy
 the current string table. Unlike the Save As function, copying a
 string table to a resource file adds an entry to the list of resources
 rather than replacing the existing resources with the new entry.
-:CMT. .figure *depth='3.24' *scale=165 *file='STR5' On the Copy To dialog, specify the resource file to which you want to copy the String list.
-.figure *depth='2.24' *scale=65 *file='STR7' On the Copy To dialog, specify the resource file to which you want to copy the String list.
+:CMT. .figure *depth='3.24' *scale=165 *file='str5' On the Copy To dialog, specify the resource file to which you want to copy the String list.
+.figure *depth='2.24' *scale=65 *file='str7' On the Copy To dialog, specify the resource file to which you want to copy the String list.
 .*
 .endlevel
 .*
@@ -541,7 +541,7 @@ The Memory Flags option allows you to change the selected memory
 options for the current string table. These options indicate the
 memory type and loading instructions.
 :CMT. This is a new screen snap shot
-.figure *depth='1.89' *scale=66 *file='STR8' Changing memory options
+.figure *depth='1.89' *scale=66 *file='str8' Changing memory options
 .begstep To set the memory flags for a string table:
 .step Choose Memory Flags
 from the Resource menu

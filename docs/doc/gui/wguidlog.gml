@@ -58,7 +58,7 @@ new or existing resource file.
 .np
 How you proceed depends on whether you are opening a new resource file or
 working with an existing resource file.
-.figure *depth='3.20' *scale=50 *file='DIA1' The Dialog Editor window
+.figure *depth='3.20' *scale=50 *file='dia1' The Dialog Editor window
 .*
 .beglevel
 .*
@@ -104,7 +104,7 @@ to select them, then
 The selected dialog(s) appears in the &company Dialog Editor window in
 the editor window.
 .endstep
-.figure *depth='1.78' *scale=66 *file='DIA2' You can select one or more resources to edit
+.figure *depth='1.78' *scale=66 *file='dia2' You can select one or more resources to edit
 .*
 .endlevel
 .*
@@ -198,7 +198,7 @@ the Dialog Editor window.
 .*
 .section The Dialog Editor Menu Bar
 .*
-.figure *depth='3.20' *scale=50 *file='DIA3' The Dialog Editor menu bar
+.figure *depth='3.20' *scale=50 *file='dia3' The Dialog Editor menu bar
 .np
 .ix 'Dialog Editor' 'menu bar'
 .ix 'menu bar' 'Dialog Editor'
@@ -238,7 +238,7 @@ menu bar when the Show Toolbar item in the Window menu is enabled.
 Once enabled, the menu item changes to Hide Toolbar. To disable this
 feature, choose Hide Toolbar from the File menu and the Toolbar
 disappears.
-.figure *depth='0.43' *scale=100 *file='DIA4' The Dialog Editor Toolbar
+.figure *depth='0.43' *scale=100 *file='dia4' The Dialog Editor Toolbar
 .np
 The following explains the function each icon performs, as well as the
 equivalent function in the menu bar.
@@ -290,7 +290,7 @@ without having to access it through the Tools menu. Each toolbox
 button represents an option in the Tools menu. Moving the cursor over
 the toolbox buttons displays the function of the button in the status
 bar.
-.figure *depth='3.20' *scale=43 *file='DIA5' The Dialog Editor toolbox
+.figure *depth='3.20' *scale=43 *file='dia5' The Dialog Editor toolbox
 .*
 .endlevel
 .*
@@ -309,7 +309,7 @@ The Edit Window
 .bull
 The Workspace
 .endbull
-.figure *depth='3.20' *scale=44 *file='DIA6' The Dialog Editor window contains a menu bar, toolbar, workspace, and status line.
+.figure *depth='3.20' *scale=44 *file='dia6' The Dialog Editor window contains a menu bar, toolbar, workspace, and status line.
 .*
 .beglevel
 .*
@@ -325,7 +325,7 @@ two fields depends on whether the selected object is a dialog or a
 control. You may press F9 to set the keyboard focus to the Information Bar.
 While the Information Bar has the keyboard focus you may press ESCAPE to
 have the focus return to the Editor.
-.figure *depth='0.63' *scale=84 *file='DIA7' The Dialog Editor information bar
+.figure *depth='0.63' *scale=84 *file='dia7' The Dialog Editor information bar
 .np
 Changes made to these fields are only processed once you press ENTER
 or click on the Set button. Reverse uncommitted changes by clicking on
@@ -386,7 +386,7 @@ using double quotes if the dialogs name is to be an character string.
 .note Text
 When the selected object is a control, the Text field contains the
 text appearing in the dialog with the selected object.
-.figure *depth='0.47' *scale=62 *file='DIA8' The information bar text field
+.figure *depth='0.47' *scale=62 *file='dia8' The information bar text field
 .np
 This field is not applicable for all objects. Any changes you make to
 this field are not stored until you:
@@ -415,7 +415,7 @@ alternate way to identify the control in your source code.
 .np
 The edit window is the window on which you create dialogs and
 controls. It represents the resource file that your dialog is a part of.
-.figure *depth='3.20' *scale=39 *file='DIA9' The Dialog Editor edit window
+.figure *depth='3.20' *scale=39 *file='dia9' The Dialog Editor edit window
 .np
 The edit window gives you space so you can temporarily move controls
 off your dialog when it gets too crowded. For example, to rearrange
@@ -437,7 +437,7 @@ your desktop. For instance, if you minimize an edit window, an icon
 representing that edit window appears in the workspace. The
 workspace provides you with an area in which to open and close
 edit windows.
-.figure *depth='3.34' *scale=68 *file='DIA10' The Dialog Editor workspace
+.figure *depth='3.34' *scale=68 *file='dia10' The Dialog Editor workspace
 .*
 .endlevel
 .*
@@ -634,7 +634,7 @@ dialog (the editor gives you one as a default). Type in the edit field
 a name you want to give your dialog or, if symbols have been loaded,
 you can select a symbol from the combo box. You can drop down the
 combo list box and select a symbol from there.
-.figure *depth='0.47' *scale=62 *file='DIA11' The combo box is labelled "ID".
+.figure *depth='0.47' *scale=62 *file='dia11' The combo box is labelled "ID".
 :cmt. For more information about loading and selecting symbols, see the
 :cmt. sections entitled "Loading Symbols" and "Selecting Symbols".
 .*

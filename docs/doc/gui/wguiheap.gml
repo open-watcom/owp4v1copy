@@ -56,7 +56,7 @@ To start Heap Walker, double click on the Heap Walker icon. This opens
 the Heap Walker window. The information list displayed is the last
 list that was viewed during the previous Heap Walker session.
 .keep 15
-.figure *depth=2.28 *scale=63 *file='HW1' The Heap Walker window displays lists of memory objects
+.figure *depth=2.28 *scale=63 *file='hw1' The Heap Walker window displays lists of memory objects
 .*
 .section Quitting Heap Walker
 .*
@@ -106,7 +106,7 @@ the Configure item from the File menu. This opens the Heap Walker
 Configuration dialog box where you customize the Heap Walker's
 behavior.
 .keep 17
-.figure *depth='2.67' *scale=67 *file='HW2' On the Heap Walker Configuration dialog, you customize the Heap Walker's behavior
+.figure *depth='2.67' *scale=67 *file='hw2' On the Heap Walker Configuration dialog, you customize the Heap Walker's behavior
 .np
 The Configuration dialog is set up with defaults for all options.
 To reset all options to their defaults, click the Defaults button.
@@ -287,7 +287,7 @@ global heap in the Heap Walker window. The global heap is a pool of
 memory set aside by the system from which all program memory is
 allocated.
 .keep 15
-.figure *depth='2.29' *scale=63 *file='HW3' Choosing the Entire Heap item displays the global heap.
+.figure *depth='2.29' *scale=63 *file='hw3' Choosing the Entire Heap item displays the global heap.
 .np
 The following are the column headings that appear when the selected
 display is Entire Heap, Free Items, or LRU Items.
@@ -357,7 +357,7 @@ The selector list displays all valid ring three selectors in
 the system. This list also shows descriptor table information
 about each selector.
 .keep 15
-.figure *depth='2.29' *scale=63 *file='HW4' The Selector List displays all valid ring three selectors.
+.figure *depth='2.29' *scale=63 *file='hw4' The Selector List displays all valid ring three selectors.
 .np
 .ix 'Heap Walker' 'Memory Display window'
 .ix 'Memory Display window'
@@ -481,7 +481,7 @@ desired object. This opens a Memory Display window for the object.
 .section The Memory Display Window
 .*
 .keep 8
-.figure *depth='0.87' *scale=64 *file='HW5' The Memory Display window displays the data stored in the selected object.
+.figure *depth='0.87' *scale=64 *file='hw5' The Memory Display window displays the data stored in the selected object.
 .np
 .ix 'Heap Walker' 'Memory Display window'
 .ix 'Memory Display window'
@@ -620,7 +620,7 @@ from the menu.
 .result
 This opens a Goto Offset dialog box.
 .keep 15
-.figure *depth='2.26' *scale=100 *file='HW6' In the Goto Offset dialog, enter the offset you want to appear at the top of the Memory Display window.
+.figure *depth='2.26' *scale=100 *file='hw6' In the Goto Offset dialog, enter the offset you want to appear at the top of the Memory Display window.
 .step Enter the desired offset
 that you want to position at the top of the Memory Display window.
 You can enter the offset in decimal or hexadecimal form. However, you must
@@ -651,7 +651,7 @@ Lock Count
 Page Lock Count
 .endbull
 .keep 11
-.figure *depth='1.62' *scale=100 *file='HW7' The Handle Information dialog box displays information for the selected object.
+.figure *depth='1.62' *scale=100 *file='hw7' The Handle Information dialog box displays information for the selected object.
 .np
 .ix 'Selector List' 'in Heap Walker'
 .ix 'Heap Walker' 'selector list'
@@ -675,7 +675,7 @@ Granularity
 Access
 .endbull
 .keep 13
-.figure *depth='1.98' *scale=100 *file='HW8' The Selector Information dialog displays the Selector List information for the selected object.
+.figure *depth='1.98' *scale=100 *file='hw8' The Selector Information dialog displays the Selector List information for the selected object.
 .np
 .ix 'Auto Position Info'
 .ix 'Heap Walker' 'Auto Position Info'
@@ -853,7 +853,7 @@ memory requirements are increasing over time.
 .np
 Choosing Add from the Objects menu opens an Add dialog box.
 .keep 13
-.figure *depth='1.92' *scale=100 *file='HW9' As you select objects, the Add function calculates and displays the number of selected objects and their total size.
+.figure *depth='1.92' *scale=100 *file='hw9' As you select objects, the Add function calculates and displays the number of selected objects and their total size.
 .np
 During an Add operation the global heap list acts as an extended selection
 list box. There are several ways to select objects in an extended
@@ -947,7 +947,7 @@ handle of its default data segment.
 The Local Heap monitor window opens which displays the usage scale for
 the selected object.
 .keep 15
-.figure *depth='2.25' *scale=68 *file='HW10' The Local Heap Monitor window displays a scale indicating how the selected object is used.
+.figure *depth='2.25' *scale=68 *file='hw10' The Local Heap Monitor window displays a scale indicating how the selected object is used.
 .step Double click on the system menu
 to close the window.
 .endstep
@@ -960,7 +960,7 @@ to close the window.
 Selecting the Local Walk item from the Local menu opens the Local
 Heap window for the selected object.
 .keep 11
-.figure *depth='1.59' *scale=72 *file='HW11' The Local Heap window displays the local heap for the selected object.
+.figure *depth='1.59' *scale=72 *file='hw11' The Local Heap window displays the local heap for the selected object.
 .np
 This window displays all objects on the selected
 object's local heap. Unlike the global heap, you cannot double
@@ -1016,7 +1016,7 @@ the information in the Local Heap window.
 Selecting the Heap Info item in the File menu of the Local Heap window
 opens the Local Heap Information dialog box.
 .keep 19
-.figure *depth='3.06' *scale=100 *file='HW12' The Local Heap Information dialog displays summary information for the current local heap.
+.figure *depth='3.06' *scale=100 *file='hw12' The Local Heap Information dialog displays summary information for the current local heap.
 .np
 This dialog displays the count and size, in bytes, of the free, moveable,
 and fixed objects in the local heap for the selected object.
@@ -1155,7 +1155,7 @@ Selecting the Global Heap Info item from the Global Menu opens a
 Global Heap Information dialog box. This dialog summarizes global
 heap usage.
 .keep 15
-.figure *depth='2.30' *scale=100 *file='HW13' The Global Heap Information dialog provides a summary of global heap usage.
+.figure *depth='2.30' *scale=100 *file='hw13' The Global Heap Information dialog provides a summary of global heap usage.
 .np
 Information included on this dialog is:
 .begbull $compact
@@ -1179,7 +1179,7 @@ Selecting the Memory Management Info item from the Global menu opens
 a Memory Management Information dialog box. This dialog displays
 information regarding the state of the virtual memory manager.
 .keep 17
-.figure *depth='2.69' *scale=66 *file='HW14' The Memory Management Information dialog displays information regarding the state of the virtual memory manager.
+.figure *depth='2.69' *scale=66 *file='hw14' The Memory Management Information dialog displays information regarding the state of the virtual memory manager.
 .np
 Following is the information that appears on this dialog.
 .begpoint $break
@@ -1223,7 +1223,7 @@ can see how your program reacts in low memory situations.
 Each time you select the Alloc menu an Allocation Information
 dialog box appears on the screen.
 .keep 11
-.figure *depth='1.52' *scale=100 *file='HW15' The Allocation Information dialog provides approximate size information regarding allocated and free memory.
+.figure *depth='1.52' *scale=100 *file='hw15' The Allocation Information dialog provides approximate size information regarding allocated and free memory.
 .np
 The information in this dialog
 includes Kilobytes allocated (approximately), Kilobytes free, and
@@ -1288,7 +1288,7 @@ K free (approx.)
 Bytes Free
 .endbull
 .keep 16
-.figure *depth='2.44' *scale=100 *file='HW16' On the allocation dialog box, enter the desired amount of memory to allocate, free, or leave unallocated.
+.figure *depth='2.44' *scale=100 *file='hw16' On the allocation dialog box, enter the desired amount of memory to allocate, free, or leave unallocated.
 .step In this dialog, enter the specific number of bytes to Allocate
 all but, Allocate, or Free.
 .result

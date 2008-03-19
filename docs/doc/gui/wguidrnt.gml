@@ -97,7 +97,7 @@ section entitled :HDREF refid='drntat'..
 Some examples of events are errors, the starting and ending of
 threads, and the loading and unloading of DLLs.
 .keep 16
-.figure *depth='2.24' *scale=64 *file='DRW1' The &drnt window contains the event list where occurring events are recorded.
+.figure *depth='2.24' *scale=64 *file='drw1' The &drnt window contains the event list where occurring events are recorded.
 .np
 The following sections describe functions that allow you to manipulate
 the event list:
@@ -176,7 +176,7 @@ to read a different type of debugging information.
 Choosing the Show DIP Status item from the File menu displays the
 Debugging Information Processor Status dialog.
 .keep 17
-.figure *depth='2.5' *scale=80 *file='DRW4' The Debugging Information Processor Status dialog shows the DIP's &drnt has loaded.
+.figure *depth='2.5' *scale=80 *file='drw4' The Debugging Information Processor Status dialog shows the DIP's &drnt has loaded.
 .np
 This dialog contains a list of all the DIP's that &drnt attempted to
 load at startup and the results of those loads. If &drnt was unable to
@@ -199,7 +199,7 @@ appears on the screen indicating that a fatal error has occurred. This
 dialog displays information about the error and gives you several
 options.
 .keep 24
-.figure *depth='2.30' *scale=64 *file='DRW5' The exception dialog appears when a fatal error occurs in a program.
+.figure *depth='2.30' *scale=64 *file='drw5' The exception dialog appears when a fatal error occurs in a program.
 .np
 The information displayed about the error includes:
 .begpoint $break
@@ -288,7 +288,7 @@ dialog.
 .ix '&drnt' 'Process Status dialog'
 The Process Status dialog appears when you choose the Registers button
 in the exception dialog.
-:CMT. .figure *depth='1.xx' *file='DRWx' The Process Status dialog provides additional information on the program state when the exception occurred.
+:CMT. .figure *depth='1.xx' *file='drwx' The Process Status dialog provides additional information on the program state when the exception occurred.
 .np
 This dialog displays information in four sections:
 .begbull $compact
@@ -357,7 +357,7 @@ information based on your changes.
 Selecting the View Memory button in the Process Status dialog opens a
 Memory Walk window which allows you to view the address space of the
 process that caused the exception.
-:CMT. .figure *depth='1.xx' *file='DRWx' The Memory Walk window displays a walk of the address space for the process that caused the exception.
+:CMT. .figure *depth='1.xx' *file='drwx' The Memory Walk window displays a walk of the address space for the process that caused the exception.
 .np
 The information in this window appears under the following headings:
 .begpoint
@@ -414,7 +414,7 @@ opens a Memory Range window for the selected object. This window
 displays all of the data stored in the selected object. The data
 appears in hexadecimal form. This window allows you to see if the data
 in memory is what you believe it should be.
-:CMT. .figure *depth='1.xx' *file='DRWx' The Memory Range window displays the data, in hexadecimal form, that is stored in the selected object.
+:CMT. .figure *depth='1.xx' *file='drwx' The Memory Range window displays the data, in hexadecimal form, that is stored in the selected object.
 .begnote
 .note Note:
 You can only view memory for an object whose state is Committed since
@@ -510,7 +510,7 @@ prefix hexadecimal values with 0x.
 This closes the dialog and positions the data as requested.
 .endstep
 .keep 15
-.figure *depth='2.26' *scale=100 *file='DRW9' In the Goto Offset dialog, enter the offset you want to appear at the top of the Memory Display window.
+.figure *depth='2.26' *scale=100 *file='drw9' In the Goto Offset dialog, enter the offset you want to appear at the top of the Memory Display window.
 .*
 .endlevel
 .*
@@ -563,7 +563,7 @@ Memory Dump
 .np
 When the Query for notes option in the Log Options dialog is selected,
 an Annotate Log dialog box appears whenever a log entry is created.
-:CMT. .figure *depth='1.xx' *file='DRWx' In the Annotate Log dialog box, enter text you want to include in the log file entry.
+:CMT. .figure *depth='1.xx' *file='drwx' In the Annotate Log dialog box, enter text you want to include in the log file entry.
 .np
 In the space provided, enter any explanatory text that you want to
 include in the log file. Press OK when completed. This information
@@ -577,7 +577,7 @@ When the Memory Dump option in the Log Options dialog is selected,
 created because of an exception. This dialog displays a list of all
 committed pages of memory owned by the process that caused the
 exception.
-:CMT. .figure *depth='1.xx' *file='DRWx' In the Memory Dump dialog box, select the information you want to include in the log file entry.
+:CMT. .figure *depth='1.xx' *file='drwx' In the Memory Dump dialog box, select the information you want to include in the log file entry.
 .np
 This dialog allows you to select the memory objects you want to
 include in the log file entry. The data contained in any memory object
@@ -630,7 +630,7 @@ The Log Options item in the Log menu opens the Log Options dialog
 where you indicate to &drnt the information you want to appear in log
 file entries. The Log Options item also appears in the system menu.
 .keep 23
-.figure *depth='3.73' *scale=64 *file='DRW12' In the Log Options dialog, you customize the log file to which you write information.
+.figure *depth='3.73' *scale=64 *file='drw12' In the Log Options dialog, you customize the log file to which you write information.
 .np
 The following sections describe the options that make up the Log
 Options dialog.
@@ -725,7 +725,7 @@ The Max Log File Size option allows you to set the maximum size in
 bytes for a log file. When the log file exceeds this size, &drnt
 prompts you with a message box when you start the application.
 .keep 14
-.figure *depth='2.02' *scale=100 *file='DRW14' A message box prompts you to erase the log file when it becomes larger than the maximum log file size specified on the Log File Options dialog.
+.figure *depth='2.02' *scale=100 *file='drw14' A message box prompts you to erase the log file when it becomes larger than the maximum log file size specified on the Log File Options dialog.
 .np
 This message box offers you the opportunity to delete your log file
 before it becomes uncontrollably large.
@@ -761,7 +761,7 @@ Process Control dialog
 attachment exists until the process terminates. If you try to close
 &drnt while it is attached to processes, a warning box appears listing
 the processes to which &drnt is still attached.
-:CMT. .figure *depth='1.xx' *file='DRWx' A warning box appears when you try to close &drnt while it is still attached to processes.
+:CMT. .figure *depth='1.xx' *file='drwx' A warning box appears when you try to close &drnt while it is still attached to processes.
 .np
 Select Yes or No to continue.
 .*
@@ -862,7 +862,7 @@ This attaches &drnt to the selected process. An asterisk appears to
 the left of this process indicating that &drnt is currently attached
 to it.
 .endstep
-:CMT. .figure *depth='1.xx' *file='DRWx5' The Process Control dialog displays all currently running processes.
+:CMT. .figure *depth='1.xx' *file='drwx5' The Process Control dialog displays all currently running processes.
 .*
 .endlevel
 .*
@@ -877,7 +877,7 @@ currently running under Windows. Any process to which &drnt
 is attached is marked with an asterisk. When you select a process by
 clicking on it, the Selected Process section of the dialog displays
 its Process ID, Name, and Priority.
-:CMT. .figure *depth='1.xx' *file='DRWx' The Selected Process section of the Process Control dialog displays summary information for the selected process.
+:CMT. .figure *depth='1.xx' *file='drwx' The Selected Process section of the Process Control dialog displays summary information for the selected process.
 .np
 The Refresh button on this dialog updates the displayed process
 information.
@@ -915,7 +915,7 @@ for the selected process.
 .step Click on OK
 to assign the priority and close the Set Process Priority dialog.
 .endstep
-:CMT. .figure *depth='1.xx' *file='DRWx' In the Set Process Priority dialog, you choose the desired priority for the selected process.
+:CMT. .figure *depth='1.xx' *file='drwx' In the Set Process Priority dialog, you choose the desired priority for the selected process.
 .*
 .section Terminating a Process
 .*
@@ -959,7 +959,7 @@ button from the Process Control dialog.
 This opens the Thread Control dialog which displays the threads that
 make up the selected process.
 .endstep
-:CMT. .figure *depth='1.xx' *file='DRWx' From the Thread Control dialog box, you can terminate, suspend, and resume threads.
+:CMT. .figure *depth='1.xx' *file='drwx' From the Thread Control dialog box, you can terminate, suspend, and resume threads.
 .np
 Selecting a thread from the Threads list displays information for that
 thread in the Selected Thread section of the dialog. This information
@@ -1041,7 +1041,7 @@ Reserved Memory
 .bull
 Memory Usage by Module (Address Space)
 .endbull
-:CMT. .figure *depth='1.xx' *file='DRWx' The Memory Information dialog summarizes the memory usage of the selected process.
+:CMT. .figure *depth='1.xx' *file='drwx' The Memory Information dialog summarizes the memory usage of the selected process.
 .np
 The Mapped and Committed section displays the amount of committed
 memory the application is using broken down by its protection.

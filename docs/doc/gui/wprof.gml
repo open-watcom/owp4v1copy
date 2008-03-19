@@ -627,7 +627,7 @@ based on absolute percentages.
 .*
 .section *refid=prfui The &prfname. User Interface
 .*
-.figure *depth='3.4' *scale=51 *file='WPROF01' The Main Profiler Screen
+.figure *depth='3.4' *scale=51 *file='wprof01' The Main Profiler Screen
 .np
 The profile screen is divided into six areas.  In the middle of
 the screen is the
@@ -641,7 +641,7 @@ bottom line displays status information.
 .*
 .section *refid=prftitl The Title Area
 .*
-.figure *depth='1.7' *scale=55 *file='WPROF02' The Profiler Title Area
+.figure *depth='1.7' *scale=55 *file='wprof02' The Profiler Title Area
 .np
 As you zoom in and back out, the title area adds and removes lines
 to show you that path that you took to your current detail view.
@@ -650,7 +650,7 @@ double clicking on that line.
 .*
 .section *refid=prfinfo The Information Area
 .*
-.figure *depth='1.9' *scale=53 *file='WPROF03' The Profiler Information Area
+.figure *depth='1.9' *scale=53 *file='wprof03' The Profiler Information Area
 .np
 The information area is updated as you move around in the detail
 view.  The red and green percentage numbers give you numerical
@@ -661,7 +661,7 @@ percentage of the time spent within the current detail level.
 .*
 .section *refid=prfdetl The Detail View
 .*
-.figure *depth='3.4' *scale=51 *file='WPROF04' The Profiler Detail View
+.figure *depth='3.4' *scale=51 *file='wprof04' The Profiler Detail View
 .np
 The detail view shows you a list of one of the following:
 .begbull $compact
@@ -694,7 +694,7 @@ by pressing F4 or BACKSPACE.  As you zoom in and back out, the
 title area is updated to show that path you took to your current
 detail area.
 .*
-.figure *depth='3.4' *scale=51 *file='WPROF05' The Profiler Assembly Detail
+.figure *depth='3.4' *scale=51 *file='wprof05' The Profiler Assembly Detail
 .np
 The histogram will be drawn in two &colour.s, red and green.  The
 red portion represents the absolute percentages of execution time for
@@ -830,7 +830,7 @@ will zoom in to the line on which the mouse was clicked.
 .*
 .section *refid=prfdopt The Options Dialog
 .*
-.figure *depth='2.9' *scale=52 *file='WPROF06' The Profiler Options Dialog
+.figure *depth='2.9' *scale=52 *file='wprof06' The Profiler Options Dialog
 .np
 The options dialog changes profiler settings across all views and
 windows.  The following items can be changed:
@@ -857,11 +857,11 @@ a single line starting with the text '***Gathered'.
 Specify a new cutoff percentage here.  You can specify any
 value between 0 and 100.
 .endnote
-.figure *depth='3.4' *scale=51 *file='WPROF07' The Bar Graph After the Stretch Option is Selected
+.figure *depth='3.4' *scale=51 *file='wprof07' The Bar Graph After the Stretch Option is Selected
 .*
 .section *refid=prfdcnv The Convert Dialog
 .*
-.figure *depth='1.85' *scale=54 *file='WPROF08' The Convert Dialog
+.figure *depth='1.85' *scale=54 *file='wprof08' The Convert Dialog
 .np
 After selecting from the Convert menu the portion of the sample
 information that you wish to

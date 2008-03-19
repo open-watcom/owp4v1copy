@@ -21,7 +21,7 @@ dialog where you customize &appname.'s behaviour when it logs to a
 file. This dialog contains four sections where you specify
 information.
 .keep 20
-.figure *depth='3.07' *scale=92 *file='SPY10' In the Log Configuration dialog you set the desired behaviour for &appname when logging to a file.
+.figure *depth='3.07' *scale=92 *file='spy10' In the Log Configuration dialog you set the desired behaviour for &appname when logging to a file.
 .*
 .beglevel
 .*
@@ -72,7 +72,7 @@ existing file is lost.
 course of action&mdash.Replace, Append, or Cancel.
 .endpoint
 .keep 14
-.figure *depth='2.14' *scale=100 *file='SPY11' The Log Information message box appears when logging if the Query option is selected on the Log Configuration dialog.
+.figure *depth='2.14' *scale=100 *file='spy11' The Log Information message box appears when logging if the Query option is selected on the Log Configuration dialog.
 .*
 .endlevel
 .*

@@ -66,7 +66,7 @@ you must first open the Resource Editor. How
 you proceed depends on whether you are opening a new (empty) menu
 table or an existing menu table.
 :CMT.  This is a new figure
-.figure *depth='3.20' *scale=45 *file='MNU1' The Menu Editor window
+.figure *depth='3.20' *scale=45 *file='mnu1' The Menu Editor window
 .*
 .beglevel
 .*
@@ -152,7 +152,7 @@ makes the Menu Editor more convenient and efficient to use.
 .*
 .section The Menu Editor Menu Bar
 .*
-.figure *depth='1.61' *scale=67 *file='MNU2' The Menu Editor menu bar.
+.figure *depth='1.61' *scale=67 *file='mnu2' The Menu Editor menu bar.
 .np
 .ix 'Menu Editor' 'menu bar'
 The menu bar consists of the following five menus:
@@ -184,8 +184,8 @@ In the &company Menu Editor window, the toolbar appears below the menu
 bar. When the toolbar is shown choose Hide Toolbar from the Edit menu
 to hide it. When the toolbar is hidden you can display it by choosing
 Show Toolbar from the Edit menu.
-:CMT. .figure *depth='4.30' *scale=150 *file='MNU2' You can access eight Menu Editor functions from the toolbar.
-.figure *depth='0.86' *scale=76 *file='MNU3' The Menu Editor toolbar.
+:CMT. .figure *depth='4.30' *scale=150 *file='mnu2' You can access eight Menu Editor functions from the toolbar.
+.figure *depth='0.86' *scale=76 *file='mnu3' The Menu Editor toolbar.
 .np
 The following explains the function each icon performs, as well as the
 equivalent function in the menu bar.
@@ -256,8 +256,8 @@ Menu Item List
 .bull
 Action Buttons
 .endbull
-:CMT. .figure *depth='3.59' *scale=125 *file='MNU2' On the &company Menu Editor window, you create menus for your application.
-.figure *depth='3.20' *scale=45 *file='MNU4' On the &company Menu Editor window, you create menus for your application.
+:CMT. .figure *depth='3.59' *scale=125 *file='mnu2' On the &company Menu Editor window, you create menus for your application.
+.figure *depth='3.20' *scale=45 *file='mnu4' On the &company Menu Editor window, you create menus for your application.
 .*
 .beglevel
 .*
@@ -286,8 +286,8 @@ The Preview window appears on the Menu Editor window above the menu
 item list. This window allows you to see how the menu you are creating
 will look in the application. The popup menu items in the preview
 window are functional so you can test your menu as you create it.
-:CMT. .figure *depth='1.24' *scale=200 *file='MNU3' The preview window allows you to see how the menu will look and work in the application.
-.figure *depth='0.71' *scale=81 *file='MNU5' The preview window allows you to see how the menu will look and work in the application.
+:CMT. .figure *depth='1.24' *scale=200 *file='mnu3' The preview window allows you to see how the menu will look and work in the application.
+.figure *depth='0.71' *scale=81 *file='mnu5' The preview window allows you to see how the menu will look and work in the application.
 .np
 You can use the sample menu that appears in the preview window to test
 the behaviour of your menu items. For example, by selecting top-level
@@ -627,8 +627,8 @@ to continue.
 Choosing Yes removes all menu items from the current menu. The menu
 item left list is empty.
 .endstep
-:CMT. .figure *depth='2.22' *scale=200 *file='MNU4' As a safety feature, a message box appears when you choose the Clear function.
-.figure *depth='1.46' *scale=68 *file='MNU6' As a safety feature, a message box appears when you choose the Clear function.
+:CMT. .figure *depth='2.22' *scale=200 *file='mnu4' As a safety feature, a message box appears when you choose the Clear function.
+.figure *depth='1.46' *scale=68 *file='mnu6' As a safety feature, a message box appears when you choose the Clear function.
 .*
 .endlevel
 .*
@@ -650,8 +650,8 @@ Old Name
 .bull
 New Name
 .endbull
-:CMT. .figure *depth='2.40' *scale=200 *file='MNU5' In the Rename Resource dialog, you enter the new name of the menu.
-.figure *depth='1.31' *scale=69 *file='MNU7' In the Rename Resource dialog, you enter the new name of the menu.
+:CMT. .figure *depth='2.40' *scale=200 *file='mnu5' In the Rename Resource dialog, you enter the new name of the menu.
+.figure *depth='1.31' *scale=69 *file='mnu7' In the Rename Resource dialog, you enter the new name of the menu.
 .step Enter the desired menu name in the New Name field.
 .step Click on OK
 to close the Rename Resource dialog.
@@ -699,8 +699,8 @@ saving causes you to lose any the menu changes made.
 Choose Save As from the File menu on the Menu Editor window to save
 the current menu to another resource file. A Save Menu dialog appears where
 you specify the resource file to which you want to save the current menu.
-:CMT. .figure *depth='2.78' *scale=150 *file='MNU6' On the Save Menu dialog, specify the resource file to which you want to save the menu.
-.figure *depth='2.24' *scale=65 *file='MNU8' On the Save Menu dialog, specify the resource file to which you want to save the menu.
+:CMT. .figure *depth='2.78' *scale=150 *file='mnu6' On the Save Menu dialog, specify the resource file to which you want to save the menu.
+.figure *depth='2.24' *scale=65 *file='mnu8' On the Save Menu dialog, specify the resource file to which you want to save the menu.
 .begnote
 .mnote Important:
 If the resource file to which you are saving the menu already contains
@@ -717,8 +717,8 @@ To dialog appears where you specify the resource file to which you want to
 copy the current menu item list. Unlike the Save As function, copying
 a menu item list to a resource file adds an entry to the list of resources
 rather than replacing the existing resources with the new entry.
-:CMT. .figure *depth='2.78' *scale=150 *file='MNU7' On the Copy To dialog, specify the resource file to which you want to copy the menu item list.
-.figure *depth='2.24' *scale=65 *file='MNU9' On the Copy To dialog, specify the resource file to which you want to copy the menu item list.
+:CMT. .figure *depth='2.78' *scale=150 *file='mnu7' On the Copy To dialog, specify the resource file to which you want to copy the menu item list.
+.figure *depth='2.24' *scale=65 *file='mnu9' On the Copy To dialog, specify the resource file to which you want to copy the menu item list.
 .*
 .endlevel
 .*

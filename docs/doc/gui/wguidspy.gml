@@ -47,7 +47,7 @@ To start &dde, double click on the &dde icon. This opens the &dde
 window. When you start the application, the &company &dde window is
 always empty. This window displays the menu bar and a toolbar.
 .keep 19
-.figure *depth='2.56' *scale=71 *file='DDE1' The &company &dde window contains the event list, menu bar, and toolbar.
+.figure *depth='2.56' *scale=71 *file='dde1' The &company &dde window contains the event list, menu bar, and toolbar.
 .*
 .section Quitting &dde
 .*
@@ -77,7 +77,7 @@ Replace numeric values with meaningful text
 .point Help
 Access on-line help information
 .endpoint
-.figure *depth='0.72' *scale=71 *file='DDE1A' The &company &dde menu bar.
+.figure *depth='0.72' *scale=71 *file='dde1a' The &company &dde menu bar.
 .*
 .section The &dde Toolbar
 .*
@@ -126,7 +126,7 @@ Add Task Alias item in the Alias menu.
 Replace conversation id values with text. This is equivalent to the
 Add Conversation Alias item in the Alias menu.
 .endnote
-.figure *depth='0.72' *scale=71 *file='DDE1A' The &company &dde toolbar.
+.figure *depth='0.72' *scale=71 *file='dde1a' The &company &dde toolbar.
 .*
 .endlevel
 .*
@@ -140,7 +140,7 @@ Opening &dde reveals an empty window. This is the event list where
 examples of events are strings being created or deleted and
 conversations and links being established or terminated.
 .keep 19
-.figure *depth='2.56' *scale=71 *file='DDE2' Once you start spying, the event list displays the information selected for monitoring.
+.figure *depth='2.56' *scale=71 *file='dde2' Once you start spying, the event list displays the information selected for monitoring.
 .np
 This section describes the tasks you can perform in relation to the
 event list.
@@ -292,7 +292,7 @@ lists the various DDE messages that can be posted or sent. This
 dialog allows you to select the specific messages you want &dde to
 write to the event list.
 .keep 16
-.figure *depth='2.22' *scale=75 *file='DDE5' In the Set Message Filter dialog, select the messages on which you want &dde to report.
+.figure *depth='2.22' *scale=75 *file='dde5' In the Set Message Filter dialog, select the messages on which you want &dde to report.
 .np
 Select the messages that you want &dde to report on when posted or
 sent. A message is activated when its check box contains a check.
@@ -316,7 +316,7 @@ which lists the various types of transactions for which a DDE
 callback function may be called. This dialog allows you to specify
 the transaction types you want &dde to report in the event list.
 .keep 19
-.figure *depth='2.48' *scale=68 *file='DDE6' In the Set Callback Filter dialog, select the transaction types on which you want &dde to report.
+.figure *depth='2.48' *scale=68 *file='dde6' In the Set Callback Filter dialog, select the transaction types on which you want &dde to report.
 .np
 Select the transaction types on which you want &dde to report. A
 transaction type will be reported on when its check box contains a
@@ -381,7 +381,7 @@ Choose Strings from the Track menu to open a Strings window which
 tracks all strings currently registered with the operating system. As
 strings are destroyed, &dde removes them from the list.
 .keep 15
-.figure *depth='2.1' *scale=90 *file='DDE9' The Strings window tracks all strings currently registered with the operating system.
+.figure *depth='2.1' *scale=90 *file='dde9' The Strings window tracks all strings currently registered with the operating system.
 .np
 The information in this window is:
 .begpoint $break
@@ -402,7 +402,7 @@ The text of the registered string
 Choose Conversations from the Track menu to open a Conversations
 window which tracks all conversations currently active in the system.
 .keep 12
-.figure *depth='1.46' *scale=91 *file='DDE10' The Conversations window tracks all conversations currently active in the system.
+.figure *depth='1.46' *scale=91 *file='dde10' The Conversations window tracks all conversations currently active in the system.
 .np
 The information in this window is:
 .begpoint $break
@@ -424,7 +424,7 @@ The topic specified by the client when the conversation was established
 Choose Links from the Track menu to open a Links window which tracks
 all links currently active in the system.
 .keep 9
-.figure *depth='1.09' *scale=68 *file='DDE11' The Links window tracks all links currently active in the system.
+.figure *depth='1.09' *scale=68 *file='dde11' The Links window tracks all links currently active in the system.
 .np
 The information in this window is:
 .begpoint $break
@@ -461,7 +461,7 @@ applications.
 Choose Servers from the Track menu to open a Servers window which
 tracks all servers currently registered with the operating system.
 .keep 12
-.figure *depth='1.46' *scale=92 *file='DDE12' The Servers window tracks all servers currently registered with the operating system.
+.figure *depth='1.46' *scale=92 *file='dde12' The Servers window tracks all servers currently registered with the operating system.
 .np
 The information in this dialog is:
 .begpoint $break
@@ -503,7 +503,7 @@ This opens the appropriate Add Alias dialog. The dialog contains a
 list box that lists all identifiers of the chosen type that &dde
 has encountered.
 .keep 28
-.figure *depth='3.45' *scale=79 *file='DDE13' In the Add Alias dialog box, you replace the selected window handle, task, or conversation id with descriptive text.
+.figure *depth='3.45' *scale=79 *file='dde13' In the Add Alias dialog box, you replace the selected window handle, task, or conversation id with descriptive text.
 .step Click once on the window handle, task, or conversation
 for which you want to add an alias
 .orstep Enter a numeric value in the Value field.

@@ -36,7 +36,7 @@ The Zoom Window
 To start Zoom double-click on the Zoom icon. This opens the
 &company Zoom window. When you start Zoom, the Zoom window contains a
 magnification of the upper left hand corner of the current screen.
-.figure *depth='4.64' *scale=100 *file='WZM1' The Zoom window displays, in magnification, the selected screen area.
+.figure *depth='4.64' *scale=100 *file='wzm1' The Zoom window displays, in magnification, the selected screen area.
 .*
 .section Quitting Zoom
 .*
@@ -219,7 +219,7 @@ application behaves. Once you have selected the desired configure
 options, click on OK to store this information and close the Configure
 dialog. The following sections explain the options presented in the
 configure dialog.
-.figure *depth='2.90' *scale=100 *file='WZM2' On the Configure dialog, you customize the behaviour of the Zoom application.
+.figure *depth='2.90' *scale=100 *file='wzm2' On the Configure dialog, you customize the behaviour of the Zoom application.
 .*
 .beglevel
 .*
