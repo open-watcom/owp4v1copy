@@ -9,7 +9,7 @@ exes = &
     ex3_6.$(exe) &
     ex3_8.$(exe) &
     ex3_10.$(exe) &
-    ex4_7.$(exe) &
+#    ex4_7.$(exe) &   # it is incompatible with OW timezone stuff, fix it!
     ex4_9.$(exe) &
     ex5_8.$(exe) &
     ex6_4.$(exe) &

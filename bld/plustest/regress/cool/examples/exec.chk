@@ -77,14 +77,6 @@ b2 - b3 = -12344999999999999999999995705032705
 b2 * b3 = 53021371256775000000000000000000000000000000
 b3 / b2 = 2874294296576244359970149
 b3 % b2 = 2868723045
-ex4_7.c
-Local date/time is: United States 01-01-1980 17:12:34 US/Central
-GMT date/time is: United Kingdom 01-01-1980 17:12:34 GB-Eire
-Date/time parsed is: United Kingdom 01-04-1890 16:30:00 GB-Eire
-Date/time in France: France 04-01/1890 16:30:00 WET
-Date/time set is: United States 01-01-1980 17:12:34 US/Central
-Date/time thirteen months earlier: United States 12-01-1978 17:12:34 US/Central
-Duration between dates is 1 years, 4 weeks, 4 days, 0 hours, 0 minutes, 0 seconds
 ex4_9.c
 Summation of integers from 0 through 1000000 (1783293664=1783293664) took log10(log10(time in ms)) = 0
 ex5_8.c
