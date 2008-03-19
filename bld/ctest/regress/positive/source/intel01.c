@@ -75,13 +75,16 @@ void ptr_cvt( int __near *np )
 
 #else
 
+void *Ptr;
+
 void set_vec( int i )
 {
     i = i;
 }
 
-void ptr_cvt( void )
+void ptr_cvt( void *p )
 {
+    p = p;
 }
 
 #endif
@@ -89,6 +92,6 @@ void ptr_cvt( void )
 int main( void )
 {
     set_vec( 0 );
-    ptr_cvt();
+    ptr_cvt( Ptr );
     _PASS;
 }
