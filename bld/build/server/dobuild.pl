@@ -36,6 +36,12 @@ my(@p4_messages);
 my($OStype);
 my($ext);
 my($setenv);
+my($WATCOM);
+my($relsubdir);
+my($buildlog);
+my($bldbase);
+my($bldlast);
+my($build_platform);
 
 if( $#ARGV == -1 ) {
     Common::read_config( "config.txt" );
@@ -46,21 +52,20 @@ if( $#ARGV == -1 ) {
     exit 1;
 }
 
-my $home    = $Common::config{"HOME"};
-my $OW      = $Common::config{"OW"};
-my $WATCOM  = $Common::config{"WATCOM"};
+my $home           = $Common::config{"HOME"};
+my $OW             = $Common::config{"OW"};
 my $report_archive = $Common::config{"REPORTS"};
-my $bldbase = "$home\/$Common::config{'BLDBASE'}";
-my $bldlast = "$home\/$Common::config{'BLDLAST'}";
 
 if( $^O eq "MSWin32" ) {
     $OStype = "WIN32";
     $ext    = "bat";
     $setenv = "set";
+    $build_platform = "win32-x86";
 } elsif( $^O eq "linux" ) {
     $OStype = "UNIX";
     $ext    = "sh";
     $setenv = "export";
+    $build_platform = "linux-x86";
 } else {
     print "Unsupported or unknown platform!\n";
     print "Review dobuild.pl file and fix it for new platform!\n";
@@ -71,7 +76,6 @@ my $build_batch_name  = "$home\/buildtmp.$ext";
 my $test_batch_name   = "$home\/testtmp.$ext";
 my $rotate_batch_name = "$home\/rotate.$ext";
 my $setvars           = "$OW\/setvars.$ext";
-my $relsubdir         = "rel2";
 
 sub get_reldir
 {
@@ -84,16 +88,20 @@ sub get_reldir
 
 sub make_build_batch()
 {
+    my($pass1) = ($WATCOM eq $Common::config{"WATCOM"});
+
     open(BATCH, ">$build_batch_name") || die "Unable to open $build_batch_name file.";
     open(INPUT, "$setvars") || die "Unable to open $setvars file.";
     while (<INPUT>) {
-        if    (/set OWROOT/i)    { print BATCH "$setenv OWROOT=", $OW, "\n"; }
-        elsif (/set WATCOM/i)    { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
-        elsif (/set DOC_BUILD/i) { print BATCH "$setenv DOC_BUILD=1\n"; }
-        else                     { print BATCH; }
+        if    (/$setenv OWROOT/i)    { print BATCH "$setenv OWROOT=", $OW, "\n"; }
+        elsif (/$setenv WATCOM/i)    { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
+        elsif (/$setenv DOC_BUILD/i) {
+            if ($pass1)              { print BATCH "$setenv DOC_BUILD=1\n"; }
+            else                     { print BATCH "$setenv DOC_BUILD=0\n"; }
+        } else                       { print BATCH; }
     }
     close(INPUT);
-    
+
     # Add additional commands to do the build.
     print BATCH "\n";
     print BATCH "$setenv RELROOT=", get_reldir(), "\n";
@@ -101,16 +109,22 @@ sub make_build_batch()
     print BATCH "cd $OW\ncd bld\n";
     print BATCH "builder clean\n";
     if( $^O eq "MSWin32" ) {
-        print BATCH "cd $OW\ncd bld\ncd builder\ncd nt386\n";
+        print BATCH "cd builder\ncd nt386\n";
     } elsif( $^O eq "linux" ) {
-        print BATCH "cd $OW\ncd bld\ncd builder\ncd linux386\n";
+        print BATCH "cd builder\ncd linux386\n";
     }
     print BATCH "wmake\n";
     print BATCH "cd $OW\ncd contrib\ncd wattcp\ncd src\n";
     print BATCH "wmake -ms\n";
     print BATCH "cd $OW\ncd bld\n";
-    print BATCH "builder rel2\n";
+    if ($pass1) {
+        print BATCH "builder pass1\n";
+    } else {
+        print BATCH "builder pass2\n";
+    }
     close(BATCH);
+    # On Windows it has no efect
+    chmod 0777, $build_batch_name;
 }
 
 sub make_test_batch()
@@ -118,16 +132,17 @@ sub make_test_batch()
     open(BATCH, ">$test_batch_name") || die "Unable to open $test_batch_name file.";
     open(INPUT, "$setvars") || die "Unable to open $setvars file.";
     while (<INPUT>) {
-        if    (/set OWROOT/i)    { print BATCH "$setenv OWROOT=", $OW, "\n"; }
-        elsif (/set WATCOM/i)    { print BATCH "$setenv WATCOM=", get_reldir(), "\n"; }
-        else                     { print BATCH; }
+        if    (/$setenv OWROOT/i) { print BATCH "$setenv OWROOT=", $OW, "\n"; }
+        elsif (/$setenv WATCOM/i) { print BATCH "$setenv WATCOM=", get_reldir(), "\n"; }
+        else                      { print BATCH; }
     }
     close(INPUT);
-    
+
     # Add additional commands to do the testing.
     print BATCH "\n";
-    print BATCH "$setenv EXTRA_ARCH=i86\n";
-    print BATCH "\n";
+    if( $^O eq "MSWin32" ) {
+        print BATCH "$setenv EXTRA_ARCH=i86\n\n";
+    }
     print BATCH "cd $OW\ncd bld\ncd f77\ncd regress\n";
     print BATCH "rm *.log\n";
     print BATCH "wmake\n";
@@ -141,6 +156,8 @@ sub make_test_batch()
     print BATCH "rm *.log\n";
     print BATCH "wmake\n";
     close(BATCH);
+    # On Windows it has no efect
+    chmod 0777, $test_batch_name;
 }
 
 sub process_log
@@ -148,8 +165,9 @@ sub process_log
     my($result)        = "success";
     my($project_name)  = "none";
     my($first_message) = "yes";
+    my($arch_test)     = "";
     my(@fields);
-    
+
     open(LOGFILE, $_[0]) || die "Can't open $_[0]";
     while (<LOGFILE>) {
         s/\r?\n/\n/;
@@ -159,11 +177,17 @@ sub process_log
                     print REPORT "Failed!\n";
                     $first_message = "no";
                 }
-                print REPORT "\t\t$project_name\n";
+#                if ($arch_test ne "") {
+                    print REPORT "\t\t$project_name\t$arch_test\n";
+#                }
                 $result = "fail";
             }
             @fields = split;
             $project_name = Common::remove_OWloc($fields[2]);
+            $arch_test = "";
+        } elsif (/^TEST/) {
+            @fields = split;
+            $arch_test = $fields[1];
         } elsif (/^PASS/) {
             $project_name = "none";
         }
@@ -176,7 +200,9 @@ sub process_log
             print REPORT "Failed!\n";
             $first_message = "no";
         }
-        print REPORT "\t\t$project_name\n";
+#        if ($arch_test ne "") {
+            print REPORT "\t\t$project_name\t$arch_test\n";
+#        }
         $result = "fail";
     }
 
@@ -218,6 +244,56 @@ sub display_p4_messages
     }
 }
 
+sub run_tests
+{
+    my($result) = "success";
+
+    # Run regression tests for the Fortran, C, C++ compilers and WASM.
+
+    make_test_batch();
+    print REPORT "REGRESSION TESTS STARTED  : ", get_datetime(), "\n";
+    system("$test_batch_name");
+    print REPORT "REGRESSION TESTS COMPLETED: ", get_datetime(), "\n\n";
+
+    print REPORT "\tFortran Compiler: ";
+    if (process_log("$OW\/bld\/f77\/regress\/result.log") ne "success") { $result = "fail"; }
+    print REPORT "\tC Compiler      : ";
+    if (process_log("$OW\/bld\/ctest\/result.log") ne "success") { $result = "fail"; }
+    print REPORT "\tC++ Compiler    : ";
+    if (process_log("$OW\/bld\/plustest\/result.log") ne "success") { $result = "fail"; }
+    print REPORT "\tWASM            : ";
+    if (process_log("$OW\/bld\/wasm\/test\/result.log") ne "success") { $result = "fail"; }
+    print REPORT "\n";
+
+    return $result;
+}
+
+sub run_build
+{
+    make_build_batch();
+    print REPORT "CLEAN+BUILD STARTED  : ", get_datetime(), "\n";
+    if (system($build_batch_name) != 0) {
+        print REPORT "clean+build failed!\n";
+        return "fail";
+    } else {
+        print REPORT "CLEAN+BUILD COMPLETED: ", get_datetime(), "\n\n";
+
+        # Analyze build result.
+
+        Common::process_summary($buildlog, $bldlast);
+        # If 'compare' fails, end now. Don't test if there was a build failure.
+        if (Common::process_compare($bldbase, $bldlast, \*REPORT)) {
+            return "fail";
+        } else {
+
+            # Run regression tests
+
+            $WATCOM = get_reldir();
+            return run_tests();
+        }
+    }
+}
+
 #######################
 #      Main Script
 #######################
@@ -234,11 +310,11 @@ my $report_directory = "$report_archive\/$shortdate_stamp";
 if (!stat($report_directory)) {
     mkdir($report_directory);
 }
-my $report_name = "$report_directory\/$date_stamp-report.txt";
+my $report_name = "$report_directory\/$date_stamp-report-$build_platform.txt";
 
 open(REPORT, ">$report_name") || die "Unable to open $report_name file.";
-print REPORT "Open Watcom Build Report\n";
-print REPORT "========================\n\n";
+print REPORT "Open Watcom Build Report (", $build_platform, ")\n";
+print REPORT "=====================================\n\n";
 
 # Do a p4 sync to get the latest changes.
 #########################################
@@ -253,7 +329,7 @@ while (<SYNC>) {
     if( $loc ne "" ) {
         push(@p4_messages, sprintf("%-8s %s", $fields[2], $loc));
     } else {
-        push(@p4_messages, sprintf("%s", $_));    
+        push(@p4_messages, sprintf("%s", $_));
     }
 }
 if (!close(SYNC)) {
@@ -271,46 +347,38 @@ while (<LEVEL>) {
 close(LEVEL);
 print REPORT "\n";
 
-# Build a fresh version of the system from scratch.
-####################################################
+############################################################
+#
+#  pass 1  Build and test full Open Watcom
+#
+############################################################
 
-make_build_batch();
-print REPORT "CLEAN+BUILD STARTED  : ", get_datetime(), "\n";
-if (system($build_batch_name) != 0) {
-    print REPORT "clean+build failed!\n";
-    display_p4_messages();
-    close(REPORT);
-    exit 1;
-}
-print REPORT "CLEAN+BUILD COMPLETED: ", get_datetime(), "\n\n";
+$WATCOM    = $Common::config{"WATCOM"};
+$relsubdir = "pass1";
+$buildlog  = "$OW\/bld\/pass1.log";
+$bldbase   = "$home\/$Common::config{'BLDBASE'}";
+$bldlast   = "$home\/$Common::config{'BLDLAST'}";
 
-# Analyze build result.
-#######################
+my $pass1_result = run_build();
 
-Common::process_summary("$OW\/bld\/build.log", $bldlast);
-# If 'compare' fails, end now. Don't test if there was a build failure.
-if (Common::process_compare($bldbase, $bldlast, \*REPORT)) {
-    display_p4_messages();
-    close(REPORT);
-    exit 1;
-}
+############################################################
+#
+#  pass 2  Build and test Compilers and Tools only
+#          it uses OW pass1 version
+#
+############################################################
 
-# Run regression tests for the Fortran, C, and C++ compilers.
-##############################################################
-make_test_batch();
-print REPORT "REGRESSION TESTS STARTED  : ", get_datetime(), "\n";
-system("$test_batch_name");
-print REPORT "REGRESSION TESTS COMPLETED: ", get_datetime(), "\n\n";
-
-print REPORT "\tFortran Compiler: ";
-my $f_compiler = process_log("$OW\/bld\/f77\/regress\/result.log");
-print REPORT "\tC Compiler      : ";
-my $c_compiler = process_log("$OW\/bld\/ctest\/result.log");
-print REPORT "\tC++ Compiler    : ";
-my $cpp_compiler = process_log("$OW\/bld\/plustest\/result.log");
-print REPORT "\tWASM            : ";
-my $wasm_compiler = process_log("$OW\/bld\/wasm\/test\/result.log");
 print REPORT "\n";
+print REPORT "Compilers and Tools (pass 2)\n";
+print REPORT "============================\n\n";
+
+$WATCOM    = get_reldir();
+$relsubdir = "pass2";
+$buildlog  = "$OW\/bld\/pass2.log";
+$bldbase   = "$home\/$Common::config{'BLDBASE2'}";
+$bldlast   = "$home\/$Common::config{'BLDLAST2'}";
+
+my $pass2_result = run_build();
 
 # Display p4 sync messages for reference.
 ##########################################
@@ -321,10 +389,8 @@ close(REPORT);
 
 # Rotate the freshly built system into position on the web site.
 ################################################################
-if (($f_compiler    eq "success") &&
-    ($c_compiler    eq "success") &&
-    ($cpp_compiler  eq "success") &&
-    ($wasm_compiler eq "success")) {
-        
+if (($pass1_result eq "success") &&
+    ($pass2_result eq "success")) {
+
     system("$rotate_batch_name");
 }

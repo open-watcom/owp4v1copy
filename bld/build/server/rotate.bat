@@ -5,17 +5,17 @@ rem ==============
 path=%path%;c:\Program Files\7-Zip
 cd \www
 
-if exist \OW\rel2 goto prerequisite_ok
-echo Missing \OW\rel2. Can't continue with rotation.
+if exist \OW\pass1 goto prerequisite_ok
+echo Missing \OW\pass1. Can't continue with rotation.
 goto done
 
 :prerequisite_ok
 
-rem Move rel2
-rem =========
+rem Move pass1 build
+rem =================
 if exist snapshot ren snapshot snapshot.bak
 if exist snapshot goto done
-move \OW\rel2 snapshot
+move \OW\pass1 snapshot
 
 rem Build Archives
 rem ==============

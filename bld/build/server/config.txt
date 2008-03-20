@@ -16,7 +16,8 @@ WATCOM=C:\WATCOM
 
 # File holding the baseline build results. Relative to HOME.
 BLDBASE=bldbase.txt
+BLDBASE2=bldbase2.txt
 
 # File holding the most recent build results. Relative to HOME.
 BLDLAST=bldlast.txt
-
+BLDLAST2=bldlast2.txt

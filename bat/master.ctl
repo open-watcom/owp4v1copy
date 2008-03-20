@@ -70,6 +70,18 @@ set CCCMD=accopy
 #==================
     set LOGFNAME=boot
 
+[ BLOCK <1> pass1 ]
+#==================
+    echo **** REL2 rule
+    set LOGFNAME=pass1
+    set 1=rel2
+
+[ BLOCK <1> pass2 ]
+#==================
+    echo **** REL2 rule
+    set LOGFNAME=pass2
+    set 1=rel2
+
 # Configure executable extension: DOS, OS/2 and Windows use .exe, others nothing
 
 [ BLOCK <BUILD_PLATFORM> nt386 ntaxp os2386 dos386 ]
