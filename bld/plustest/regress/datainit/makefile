@@ -53,21 +53,21 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags)
-    
+    $(wpp_$(arch)) $[@ $(test_cflags) -fo=.obj
+
 .obj.$(exe):
-    $(linker) @idata.lnk FILE $[@
-    $(run) $@ >>idata.out
+    $(linker) @idata.lnk name $@ file $[@
+    $(run) $(exec_prefix)$@ >>idata.out
 
 test : .symbolic start_test idata.lnk $(exes)
     diff idata.out idata.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 start_test : .symbolic
     %create idata.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
-    
+
 idata.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ DEBUG line

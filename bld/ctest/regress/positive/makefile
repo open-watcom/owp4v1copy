@@ -114,7 +114,7 @@ test : .symbolic start_test $(positive_exes) ./chk_exec.exe
     $]@ exec.out >> error.out
     diff -b error.out error.chk
     %make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 fnstat1.$(exe) : fnstat1a.obj fnstat1b.obj
     @set error_msg=failure to link $^@

@@ -53,7 +53,7 @@ History:
 #ifndef JAM_Functor1_H
 #define JAM_Functor1_H
 
-#include <jam/CRCPtr.h>
+#include <jam/crcptr.h>
 
 //**************************************************************************
 // Defines JAM_Functor1<R, P1>, functor(O*, R (O::*)(P1)) and helper classes

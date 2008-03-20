@@ -455,6 +455,7 @@ start : .symbolic
 !endif
     @cdsay
     @cdsay >> $(log_file)
+    %append $(log_file) TEST $(arch)/$(alt_error)
 
 clean : .symbolic global
     @%null

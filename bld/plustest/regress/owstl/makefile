@@ -1,13 +1,19 @@
 plustest_name = owstl
 !include ../environ.mif
 
+!ifndef __UNIX__
+!ifndef __DOS__
+br_opt = -br
+!endif
+!endif
+
 !ifdef test1
 test_cflags_386 = -d2-fpd-xs-za
 test_cflags_i86 = -d2-fpd-xs-za
 test_cflags_axp = -d2-xs-za
 alt_error=01
 !else ifdef test2
-test_cflags_386 = -os-d1-3s-xss-br
+test_cflags_386 = -os-d1-3s-xss $(br_opt)
 test_cflags_i86 = -os-d1-xss
 test_cflags_axp = -os-d1-xss
 alt_error=02
@@ -22,7 +28,7 @@ test_cflags_i86 = -ot-d1-fpd-xs -oe100
 test_cflags_axp = -ot-d1-xs -oe500
 alt_error=04
 !else ifdef test5
-test_cflags_386 = -d2-br-xs
+test_cflags_386 = -d2-xs $(br_opt)
 test_cflags_i86 = -d2-xs
 test_cflags_axp = -d2-xs
 alt_error=05
@@ -44,8 +50,8 @@ stack_axp=opt stack=16k
 # to update add test names here:
 template = &
         aaa$(ext)       &
-        algn01$(ext)    &
-        algm01$(ext)    &
+	algn01$(ext)    &
+	algm01$(ext)    &
         algs01$(ext)    &
         bitset01$(ext)  &
         clib01$(ext)    &
@@ -84,15 +90,14 @@ names = $+ $(template) $-
 
 # define flags specific to tests here
 extra_cflags_typetr01 = -za0x
-extra_cflags_mmwin16 = -i$(%WATCOM)\h\win -dmmWin16
+extra_cflags_mmwin16 = -I"$(%WATCOM)/h/win" -dmmWin16
+extra_cflags_mmwindef = -I"$(%WATCOM)/h/nt"
 !ifeq arch i86
-extra_cflags_mmwindef = -3 -i$(%WATCOM)\h\nt
-!else
-extra_cflags_mmwindef = -i$(%WATCOM)\h\nt
+extra_cflags_mmwindef += -3
 !endif
 
 .cpp.obj :
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000 $(extra_cflags_$[*)
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000 $(extra_cflags_$[*) -fo=.obj
 
 # this is my laziness bit...
 $(names) : .symbolic
@@ -100,14 +105,10 @@ $(names) : .symbolic
     $(run) $^*
     @echo PASS
 
-# Note that there must be no space before the redirection symbol - otherwise
-# echo will emit the space character and subsequent diff will fail. This
-# way is more transparent than keeping trailing blanks in the check file.
-
 .obj.$(exe):
-    $(linker) @test.lnk NAME $^* FILE $^*
-    @echo ----------$^*---------->> test.out
-    $(run) $@ >> test.out
+    $(linker) @test.lnk NAME $@ FILE $[@
+    @%append test.out ----------$^*----------
+    $(run) $(exec_prefix)$@ >> test.out
 
 # the main target environment.mif calls to run the test suite
 
@@ -118,7 +119,7 @@ test : .symbolic start_test test.lnk $(exes)
     diff test.out test.chk
 !endif
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 start_test : .symbolic
     %create test.out

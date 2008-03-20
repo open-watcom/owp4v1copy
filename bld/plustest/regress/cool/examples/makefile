@@ -40,6 +40,9 @@ alt_error=00
 !endif
 
 test_cflags += -zq -I../.. -w0
+!ifdef __UNIX__
+test_cflags += -fi=../__ialias.h
+!endif
 
 test_cflags_i86 = -ml -zm
 
@@ -48,28 +51,28 @@ stack_i86=opt stack=48k
 stack_axp=opt stack=64k
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
-    
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) -fo=.obj
+
 .obj.$(exe):
     $(linker) @ex.lnk NAME $@ FILE $[@
-    $(run) $@ >>exec.out
-    
+    $(run) $(exec_prefix)$@ >>exec.out
+
 test : .symbolic start_test ex.lnk $(exes)
     diff exec.out exec.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 start_test : .symbolic
     %create exec.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
-    
+
 ex.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(stack_$(arch))
     @%append $^@ LIBRARY ../cool.lib
-    
+
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 

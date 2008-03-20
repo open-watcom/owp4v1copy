@@ -34,43 +34,43 @@ stack_i86=opt stack=16k
 stack_axp=opt stack=32k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[* $(test_cflags) $(test_cflags_$(arch)) -dTEST
-    
+    $(wpp_$(arch)) $[* $(test_cflags) $(test_cflags_$(arch)) -dTEST -fo=.obj
+
 .c.obj:
-    $(wcc_$(arch)) $[* $(test_cflags) $(test_cflags_$(arch))
+    $(wcc_$(arch)) $[* $(test_cflags) $(test_cflags_$(arch)) -fo=.obj
 
 test : .symbolic start_test $(exes)
     diff exec.out exec.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 perltest.$(exe) : perltest.obj perlclas.obj regex.obj test.lnk
-    $(linker) @test.lnk FILE perltest, perlclas, regex.obj
+    $(linker) @test.lnk NAME $@ FILE perltest.obj, perlclas.obj, regex.obj
     @%append exec.out --------$^&--------
-    $(run) perltest >>exec.out
-    
+    $(run) $(exec_prefix)$@ >>exec.out
+
 perlasso.$(exe) : perlasso.obj perlclas.obj regex.obj test.lnk
-    $(linker) @test.lnk FILE perlasso, perlclas, regex.obj
+    $(linker) @test.lnk NAME $@ FILE perlasso.obj, perlclas.obj, regex.obj
     @%append exec.out --------$^&--------
-    $(run) perlasso >>exec.out
-    
+    $(run) $(exec_prefix)$@ >>exec.out
+
 tstio.$(exe) : tstio.obj perlclas.obj regex.obj test.lnk
-    $(linker) @test.lnk FILE tstio, perlclas, regex.obj
+    $(linker) @test.lnk NAME $@ FILE tstio.obj, perlclas.obj, regex.obj
     @%append exec.out --------$^&--------
-    $(run) tstio <tstio.in >>exec.out
+    $(run) $(exec_prefix)$@ <tstio.in >>exec.out
     @%append exec.out --------t2--------
     cat t2.out >>exec.out
 
 start_test : .symbolic
     %create exec.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
-    
+
 test.lnk : makefile
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
-    
+
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 

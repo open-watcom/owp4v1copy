@@ -25,18 +25,15 @@ dosystest = testsys
 
 .c: $(diagnose_dir)
 .c.err:
-    -$(wpp_$(arch)) $[@ @diag -na $(opt_$^&)
-    @if not exist $^&.err echo I did not generate errors for $^& > $^&.err
+    -$(wpp_$(arch)) $[@ $(diagnose_opts) -na $(opt_$^&) -fo=.obj
+    @if not exist $^&.err %write $^&.err I did not generate errors for $^&
 .c.ser:
-    -$(wpp_$(arch)) $[@ @diag -na $(opt_$^&) $(archdep_opts)
-    @if not exist $^&.ser echo I did not generate errors for $^& > $^&.ser
+    -$(wpp_$(arch)) $[@ $(diagnose_opts) -na $(opt_$^&) $(archdep_opts) -fo=.obj
+    @if not exist $^&.ser %write $^&.ser I did not generate errors for $^&
 
-test : .symbolic initopts test0000 test0100 test0200 test0300 $(dosystest) test_special
+test : .symbolic test0000 test0100 test0200 test0300 $(dosystest) test_special
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-
-initopts : .symbolic
-    set diag=$(diagnose_opts)
+    %append $(log_file) PASS $(%__CWD__)
 
 test0000 : .symbolic diag0000.out
     -diff -b diag0000.out $(diagchk0) >diff0000.out
@@ -63,39 +60,41 @@ testsys : .symbolic diag$(arch).out
     diff -b diff$(arch).out diff$(arch).chk
     @rm diff$(arch).out
 
-test_special : .symbolic
-    -$(wpp_$(arch)) $(diagnose_dir)\diag0001.c @diag $(opt_diag0001) -eq >diagspec.out
+diagspec.out : .procedure $(diagnose_dir)/diag0001.c
+    -$(wpp_$(arch)) $[@ $(diagnose_opts) $(opt_diag0001) -eq | sed -e 's/source\//source\\/g' >diagspec.out
+
+test_special : .symbolic diagspec.out
     -diff -b diagspec.out diagspec.chk >diffspec.out
     @%make diag_clean
     diff -b diffspec.out diffspec.chk
     @rm diffspec.out
 
 diag0000.out : ./catfile.exe $(diags_0099)
-    $[@ -a *.err >diag0000.out
+    $[@ -a *.err | sed -e 's/source\//source\\/g' >diag0000.out
     @%make diag_clean
 
 diag0100.out : ./catfile.exe $(diags_0199)
-    $[@ -a *.err >diag0100.out
+    $[@ -a *.err | sed -e 's/source\//source\\/g' >diag0100.out
     @%make diag_clean
 
 diag0200.out : ./catfile.exe $(diags_0299)
-    $[@ -a *.err >diag0200.out
+    $[@ -a *.err | sed -e 's/source\//source\\/g' >diag0200.out
     @%make diag_clean
 
 diag0300.out : ./catfile.exe $(diags_0399)
-    $[@ -a *.err >diag0300.out
+    $[@ -a *.err | sed -e 's/source\//source\\/g' >diag0300.out
     @%make diag_clean
 
 diag386.out : ./catfile.exe $(diags_sys)
-    $[@ -a *.ser >diag386.out
+    $[@ -a *.ser | sed -e 's/source\//source\\/g' >diag386.out
     @%make diag_clean
 
 diagaxp.out : ./catfile.exe $(diags_sys)
-    $[@ -a *.ser >diagaxp.out
+    $[@ -a *.ser | sed -e 's/source\//source\\/g' >diagaxp.out
     @%make diag_clean
 
 ./catfile.exe: source/catfile.c
-    $(bld_cl) $[@
+    $(bld_cl) $< $(wcl_util_opts)
 
 diag_clean : .procedure
     @if exist *.err rm -f *.err
@@ -103,12 +102,12 @@ diag_clean : .procedure
     @if exist *.pch rm -f *.pch
 
 save : .symbolic
-    @if exist diff0000.out cp diag0000.out s$(arch)0000.sav
-    @if exist diff0100.out cp diag0100.out s$(arch)0100.sav
-    @if exist diff0200.out cp diag0200.out s$(arch)0200.sav
-    @if exist diff0300.out cp diag0300.out s$(arch)0300.sav
-    @if exist diff$(arch).out cp diag$(arch).out s$(arch)_$(arch).sav
-    @if exist diffspec.out cp diagspec.out s$(arch)spec.sav
+    @if exist diag0000.out cp diag0000.out s$(arch)0000.sav
+    @if exist diag0100.out cp diag0100.out s$(arch)0100.sav
+    @if exist diag0200.out cp diag0200.out s$(arch)0200.sav
+    @if exist diag0300.out cp diag0300.out s$(arch)0300.sav
+    @if exist diag$(arch).out cp diag$(arch).out s$(arch)_$(arch).sav
+    @if exist diagspec.out cp diagspec.out s$(arch)spec.sav
 
 global : .symbolic
     @%make diag_clean

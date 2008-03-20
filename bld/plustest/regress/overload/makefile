@@ -127,11 +127,11 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_flags) $(opt_$^*)
-    
+    $(wpp_$(arch)) $[@ $(test_flags) $(opt_$^*) -fo=.obj
+
 .obj.$(exe):
-    $(linker) @overload FILE $[@
-    $(run) $@ >>overload.out
+    $(linker) @overload.lnk NAME $@ FILE $[@
+    $(run) $(exec_prefix)$@ >>overload.out
 
 test : .symbolic start_test overload.lnk $(exes)
 !ifeq arch i86
@@ -142,8 +142,8 @@ test : .symbolic start_test overload.lnk $(exes)
     diff overload.out overload.chk
 !endif
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 start_test : .symbolic
     %create overload.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav

@@ -20,7 +20,7 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -fo=.obj
 
 objs = &
 code.obj &
@@ -34,14 +34,14 @@ translat.obj &
 actions.obj
 
 test : .symbolic start_test re2c.$(exe)
-    diff debug.out debug.chk | wc -l >line.out
-    diff line.out line.chk
+    diff debug.out debug.chk | wc >wc.out
+    diff -b wc.out wc.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 re2c.$(exe) : $(objs) re2c.lnk
-    $(linker) @$]@
-    $(run) $@ -b scanner.re >>debug.out
+    $(linker) @$]@ NAME $@
+    $(run) $(exec_prefix)$@ -b scanner.re >>debug.out
 
 start_test : .symbolic
     %create debug.out
@@ -49,7 +49,6 @@ start_test : .symbolic
 
 re2c.lnk : makefile
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))

@@ -143,6 +143,13 @@
 .extensions: .exp .exe .ls1 .lst .obj .ser .err .gc .c .cc .cpp .asm .mif
 .mif: ..;$(mif_path)
 
+!ifndef __LOADDLL__
+# this feature isn't supported
+!ifdef use_dll
+!undef use_dll
+!endif
+!endif
+
 !ifndef no_continue
 .continue
 !else
@@ -458,10 +465,6 @@ wcc_mps = wccmps $(targ_bld_$(targ_env_mps))
 !  endif
 !endif
 
-!ifdef dll_loaded
-!  undef dll_loaded
-!endif
-
 !ifdef use_dll
 !  define dll_loaded
 !  loaddll $(wpp_$(arch)) $(dll_$(arch))
@@ -528,6 +531,7 @@ start : .symbolic
 !endif
     @cdsay
     @cdsay >> $(log_file)
+    %append $(log_file) TEST $(arch)/$(alt_error)
 
 clean : .symbolic global
     @%null

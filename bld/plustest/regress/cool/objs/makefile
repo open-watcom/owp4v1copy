@@ -26,24 +26,27 @@ alt_error=00
 !endif
 
 test_cflags += -zq -I../.. -w0
+!ifdef __UNIX__
+test_cflags += -fi=../__ialias.h
+!endif
 
 test_cflags_i86 = -ml -zm -s
-   
+
 .c: ..
 .c.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
-    
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) -fo=.obj
+
 test : .symbolic ../cool.lib
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 ../cool.lib : $(objs) cool.lbc
     $(librarian_$(arch)) -q-n-b-p=512 $^@ @cool.lbc
-    
+
 cool.lbc : makefile
     %create $^@
     @for %i in ($(objs)) do @%append $^@ +%i
-    
+
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 

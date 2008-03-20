@@ -1,5 +1,5 @@
 #include <math.h>
-#include "doubMat.h"
+#include "doubmat.h"
 
 #define DIM 3
 

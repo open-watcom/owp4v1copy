@@ -5,6 +5,12 @@ plustest_name = except
 
 !include ../environ.mif
 
+!ifndef __UNIX__
+!ifndef __DOS__
+br_opt = -br
+!endif
+!endif
+
 files = &
     excok.$(ext) &
     excfancy.$(ext) &
@@ -21,8 +27,8 @@ files = &
     excrt_09.$(ext) &
     excrt_10.$(ext) &
     excrt_11.$(ext)
-    
-ext = $(exe)    
+
+ext = $(exe)
 exes = $+ $(files) $-
 
 !ifdef BATCH_TEST
@@ -37,22 +43,22 @@ batch_lnk = except.fcl
 
 batch_sym = batch_build
 !endif
-    
-test_cflags += -i..\positive\source
-    
+
+test_cflags += -I"../positive/source"
+
 !ifdef test1
 test_cflags += -d2-xst
 alt_error=01
 !else ifdef test2
 test_cflags += -d2-xss
-add_br_ = -br
+add_br_ = $(br_opt)
 alt_error=02
 !else ifdef test3
 test_cflags += -ox-d1-xss
 alt_error=03
 !else
 test_cflags += -ox-d1-xst
-add_br_ = -br
+add_br_ = $(br_opt)
 alt_error=00
 !endif
 
@@ -73,17 +79,18 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=32k
 
 .c.obj:
-    $(wpp_$(arch)) $[* $(test_cflags_$(arch)) -zq
-    
+    $(wpp_$(arch)) $[* $(test_cflags_$(arch)) -zq -fo=.obj
+
 .obj.$(exe):
     $(linker) @test.lnk name $@ file $[@
-    -$(run) $@ >>except.out
-    
+    @%append except.out --------$^*--------
+    -$(run) $(exec_prefix)$@ >>except.out
+
 test : .symbolic start_test $(batch_sym) test.lnk $(exes)
     diff except.out except.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 start_test : .symbolic
     %create except.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
@@ -101,25 +108,25 @@ batch_build : .symbolic test.lnk $(batch_lnk) $(batch_cmp)
     $(wpp_$(arch)) -fc=$(batch_cmp) $(test_cflags_$(arch)) 
     $(linker) @$(batch_lnk)
 !endif
-    
-    
+
+
 test.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
     @%append $^@ OPTION undefsok
-    
+
 save : .symbolic
     @if exist except.out cp except.out s$(arch)_$(alt_error).sav
 
 global : .procedure
     @%make common_clean
 !ifdef BATCH_TEST
-    @if exist *.fcb del *.fcb
-    @if exist *.fcl del *.fcl
+    @if exist *.fcb rm *.fcb
+    @if exist *.fcl rm *.fcl
 !endif
-    
+
 !ifdef BATCH_TEST
 .before
     @echo test_cflags=$(test_cflags_$(arch))

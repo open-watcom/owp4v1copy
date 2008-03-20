@@ -14,7 +14,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <fcntl.h>
-#include <io.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <time.h>
 

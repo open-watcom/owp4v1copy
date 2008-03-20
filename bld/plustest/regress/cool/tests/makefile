@@ -52,21 +52,24 @@ alt_error=00
 !endif
 
 test_cflags += -zq -I../.. -w0
+!ifdef __UNIX__
+test_cflags += -fi=../__ialias.h
+!endif
 
 test_cflags_i86 = -ml -zm
-    
+
 stack_386=opt stack=32k
 stack_i86=opt stack=24k
 stack_axp=opt stack=32k
 
 .obj.$(exe):
-    $(linker) @ex.lnk FILE $[@
+    $(linker) @ex.lnk name $@ file $[@
     %append test.out $^&
-    $(run) $@ >>test.out
-    
+    $(run) $(exec_prefix)$@ >>test.out
+
 .c.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
-    
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) -fo=.obj
+
 test : .symbolic start_test ex.lnk $(exes)
 !ifeq arch i86
     diff test.out testi86.chk
@@ -74,8 +77,8 @@ test : .symbolic start_test ex.lnk $(exes)
     diff test.out test.chk
 !endif
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 start_test : .symbolic
     %create test.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
@@ -86,7 +89,7 @@ ex.lnk : makefile
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(stack_$(arch))
     @%append $^@ LIBRARY ../cool.lib
-    
+
 save : .symbolic
     @if exist test.out cp test.out s$(arch)_$(alt_error).sav
 

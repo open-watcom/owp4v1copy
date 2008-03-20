@@ -8,6 +8,12 @@ exes = &
     ovldall.$(exe) &
     switcher.$(exe) &
 
+!ifndef __UNIX__
+!ifndef __DOS__
+br_opt = -br
+!endif
+!endif
+
 !ifdef test1
 test_cflags += -d2-xds
 alt_error=01
@@ -31,11 +37,11 @@ test_cflags += -ox-d1-xdt
 alt_error=07
 !else ifdef test8
 test_cflags += -d2-xs
-add_br_ = -br
+add_br_ = $(br_opt)
 alt_error=08
 !else ifdef test9
 test_cflags += -ox-d1-xs
-add_br_ = -br
+add_br_ = $(br_opt)
 alt_error=09
 !else
 test_cflags += -ox-d1-xst
@@ -58,17 +64,17 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags)
-    
+    $(wpp_$(arch)) $[@ $(test_cflags) -fo=.obj
+
 .obj.$(exe):
     $(linker) @test.lnk name $@ FILE $[@
-    $(run) $@ >>exercise.out
+    $(run) $(exec_prefix)$@ >>exercise.out
 
 test : .symbolic start_test test.lnk $(exes)
     diff exercise.out exercise.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 start_test : .symbolic
     %create exercise.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav

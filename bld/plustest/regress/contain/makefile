@@ -35,10 +35,10 @@ alt_error=00
 special_memchk = -zl -wcd=887
 
 opt_386 += -3s-mf
-opt_i86 += -3-ml -fi=source\noinline.h
+opt_i86 += -3-ml -fi=source/noinline.h
 opt_axp += -si
 
-comp_flags += -w4 -we -zq -i=source $(EH_$(EH_$[&)) $(special_$[&) $(opt_$(arch))
+comp_flags += -w4 -we -zq -I=source $(EH_$(EH_$[&)) $(special_$[&) $(opt_$(arch))
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
@@ -205,50 +205,50 @@ wc_skip_template =  &
         wcst14.$(ext) &
         wcst15.$(ext) &
         wcst16.$(ext)
-        
+
 wc_example_template =  &
         wcvdli.$(ext)    &
         alloctor.$(ext)
 
 exes =   $(wc_list_template) $(wc_vect_template) $(wc_hash_template) &
                 $(wc_skip_template) $(wc_example_template)
-		
+
 .error
     %append exec.out $(%msg)
-		
+
 .cpp : source
 .cpp.obj:
-    set msg=*** failure to compile $[@
-    $(wpp_$(arch)) $[@ $(comp_flags)
-    
+    @set msg=*** failure to compile $[@
+    $(wpp_$(arch)) $[@ $(comp_flags) -fo=.obj
+
 .obj.$(ext):
-    set msg=*** failure to link $^@
+    @set msg=*** failure to link $^@
     $(linker) @cont.lnk name $^@ file $[@
-    set msg=*** failure to execute $^@
-    %append exec.out --- start execution of $^&
-    $(run) $^@ >>exec.out
-    %append exec.out --- end execution of $^&
-    del $^&.map
-		
+    @set msg=*** failure to execute $^@
+    @%append exec.out --- start execution of $^&
+    $(run) $(exec_prefix)$@ >>exec.out
+    @%append exec.out --- end execution of $^&
+    @rm $^&.map
+
 test : .symbolic start_test memchk.obj cont.lnk $(exes)
-    set msg=*** output differences
-    diff exec.out exec.chk
-    set msg=*** general failure
+    @set msg=*** output differences
+    sed -e 's/source\//source\\/g' exec.out | diff - exec.chk
+    @set msg=*** general failure
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 start_test : .symbolic
     %create exec.out
-    set msg=general error
+    @set msg=general error
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
-    
+
 cont.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch)) OPTION noredef
-    @%append $^@ FILE memchk
-    
+    @%append $^@ FILE memchk.obj
+
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 

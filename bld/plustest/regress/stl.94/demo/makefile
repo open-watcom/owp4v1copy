@@ -17,7 +17,7 @@ test_cflags = -d2-hd
 alt_error=00
 !endif
 
-test_cflags += -w0-zq -i..
+test_cflags += -w0-zq -I..
 
 test_cflags_i86 = -mm -zm
 
@@ -27,7 +27,7 @@ stack_axp=opt stack=128k
 
 .cpp: .;..
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) -fo=.obj
 
 #
 # function code overflow 16-bit segment
@@ -35,29 +35,28 @@ stack_axp=opt stack=128k
 #
 !ifeq arch i86
 test : .symbolic start_test
-!else    
+!else
 test : .symbolic start_test demo.$(exe)
     diff demo.out demo.chk
 !endif
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 demo.$(exe) : $(objs) demo.lnk
-    $(linker) @$]@
-    $(run) $@ <demo.in >>demo.out
+    $(linker) @$]@ NAME $@
+    $(run) $(exec_prefix)$@ <demo.in >>demo.out
 
 start_test : .symbolic
     %create demo.out
     @if exist s$(arch)_$(alt_error).sav rm -f s$(arch)_$(alt_error).sav
-    
+
 demo.lnk : $(__MAKEFILES__)
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
-    
+
 save : .symbolic
     @if exist demo.out cp demo.out s$(arch)_$(alt_error).sav
 

@@ -9,7 +9,7 @@ test_cflags = -otexan-d1
 alt_error=00
 !endif
 
-test_cflags += -zq-w0-i..
+test_cflags += -zq-w0-I..
 
 test_cflags_386 += $(test_cflags) -mf
 test_cflags_i86 += $(test_cflags) -mm
@@ -20,20 +20,20 @@ stack_i86=opt stack=4k
 stack_axp=opt stack=8k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -fo=.obj
 
 objs = &
     assert.obj &
     testftor.obj
-    
+
 test : .symbolic start_test jam.$(exe)
     diff jam.out jam.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 jam.$(exe) : $(objs) jam.lnk
-    $(linker) @$]@
-    $(run) $@ >>jam.out
+    $(linker) @$]@ NAME $@
+    $(run) $(exec_prefix)$@ >>jam.out
 
 start_test : .symbolic
     %create jam.out
@@ -41,12 +41,11 @@ start_test : .symbolic
 
 jam.lnk : makefile
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ DEBUG line
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
-    
+
 save : .symbolic
     @if exist jam.out cp jam.out s$(arch)_$(alt_error).sav
 

@@ -15,46 +15,44 @@ test_cflags = -d2
 alt_error=00
 !endif
 
-test_cflags += -w0-zq -i$(%watcom)\h\nt
+test_cflags += -w0-zq -I"$(%watcom)/h/nt"
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags)
-    
+    $(wpp_$(arch)) $[@ $(test_cflags) -fo=.obj
+
 test : .symbolic start_test tomexe.exe tomdll.dll
     diff exec.out exec.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 tomexe.exe : tomexe.obj tomdll.dll tomexe.lnk
-    $(linker) @$]@
-    $(run) tomexe
+    $(linker) @$]@ NAME $@
+    $(run) $(exec_prefix)$@
 
 start_test : .symbolic
     %create exec.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 tomdll.dll : tomdll.obj tomdll.lnk
-    $(linker) @$]@
-    
+    $(linker) @$]@ NAME $@
+
 tomdll.obj : tomdll.c
     $(wpp_$(arch)) $[@ $(test_cflags) -bd
-    
+
 tomexe.lnk : $(__MAKEFILES__)
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ OPTION map, caseexact, stack=128k, quiet
     @%append $^@ FILE tomexe
-    
+
 tomdll.lnk : $(__MAKEFILES__)
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ SYSTEM nt dll initinstance terminstance reference __DLLstart_
     @%append $^@ OPTION map, caseexact, stack=128k, quiet
     @%append $^@ FILE tomdll
-    
+
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 

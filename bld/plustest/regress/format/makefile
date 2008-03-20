@@ -20,7 +20,7 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -fo=.obj
 
 i_objs = iformat.obj itest.obj
 f_objs = fformat.obj ftest.obj
@@ -30,17 +30,17 @@ exes = testi.$(exe) testf.$(exe)
 test : .symbolic start_test $(exes)
     diff exec.out exec.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 testi.$(exe) : $(i_objs) test.lnk
-    $(linker) @$]@ NAME $^* file {$(i_objs)}
+    $(linker) @$]@ NAME $@ file {$(i_objs)}
     @%append exec.out --------$^&--------
-    $(run) $@ >>exec.out
+    $(run) $(exec_prefix)$@ >>exec.out
 
 testf.$(exe) : $(f_objs) test.lnk
-    $(linker) @$]@ NAME $^* file {$(f_objs)}
+    $(linker) @$]@ NAME $@ file {$(f_objs)}
     @%append exec.out --------$^&--------
-    $(run) $@ >>exec.out
+    $(run) $(exec_prefix)$@ >>exec.out
 
 start_test : .symbolic
     %create exec.out

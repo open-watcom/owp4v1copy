@@ -9,7 +9,7 @@ test_cflags = -ox-d1
 alt_error=00
 !endif
 
-test_cflags += -zq -i.
+test_cflags += -zq-I.
 
 test_cflags_386 = $(test_cflags) -mf
 test_cflags_i86 = $(test_cflags) -ml
@@ -20,21 +20,21 @@ stack_i86=opt stack=4k
 stack_axp=opt stack=8k
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -fo=.obj
 
 objs = &
     string.obj &
     strngrep.obj &
     strtest1.obj
-    
+
 test : .symbolic start_test strtest.$(exe)
     diff strtest.out strtest.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 strtest.$(exe) : $(objs) strtest.lnk
-    $(linker) @$]@
-    $(run) strtest >>strtest.out
+    $(linker) @$]@ NAME $@
+    $(run) $(exec_prefix)$@ >>strtest.out
 
 start_test : .symbolic
     %create strtest.out
@@ -42,12 +42,11 @@ start_test : .symbolic
 
 strtest.lnk : makefile
     %create $^@
-    @%append $^@ NAME $^*
     @%append $^@ DEBUG line
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
-    
+
 save : .symbolic
     @if exist strtest.out cp strtest.out s$(arch)_$(alt_error).sav
 

@@ -32,7 +32,7 @@
 #pragma warn -ncf
 #endif
 #ifdef __WATCOMC__
-#include <io.h>
+#include <unistd.h>
 #endif
 
 #if defined(__GNUC__)

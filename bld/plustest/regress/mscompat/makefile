@@ -48,5 +48,5 @@ save : .symbolic
     @if exist mscompat.out cp mscompat.out s$(arch)_$(alt_error).sav
 
 global : .symbolic
-    @if exist *.merr del *.merr
+    @if exist *.merr rm *.merr
     @%make common_clean

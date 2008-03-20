@@ -144,6 +144,7 @@ cd_back : .symbolic
 finish_test : .symbolic cd_back ./chktest.exe
     @cdsay >> $(log_file)
     $]@ $(log_file)
+    %append $(log_file) TEST
     %append $(log_file) PASS $(%__CWD__)
 
 $(all) : .procedure

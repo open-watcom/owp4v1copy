@@ -1,13 +1,19 @@
 plustest_name = arith
 !include ../environ.mif
 
+!ifndef __UNIX__
+!ifndef __DOS__
+br_opt = -br
+!endif
+!endif
+
 !ifdef test1
 test_cflags_386 = -d2-fpd
 test_cflags_i86 = -d2-fpd
 test_cflags_axp = -d2
 alt_error=01
 !else ifdef test2
-test_cflags_386 = -os-d1-3s-xds-br
+test_cflags_386 = -os-d1-3s-xds $(br_opt)
 test_cflags_i86 = -os-d1-xds
 test_cflags_axp = -os-d1-xds
 alt_error=02
@@ -22,7 +28,7 @@ test_cflags_i86 = -ot-d1-fpd -oe1000
 test_cflags_axp = -ot-d1 -oe1000
 alt_error=04
 !else ifdef test5
-test_cflags_386 = -d2-br
+test_cflags_386 = -d2 $(br_opt)
 test_cflags_i86 = -d2
 test_cflags_axp = -d2
 alt_error=05
@@ -54,28 +60,24 @@ exes = &
     waste.$(exe)
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000 -fi=arith.h
-
-# Note that there must be no space before the redirection symbol - otherwise
-# echo will emit the space character and subsequent diff will fail. This
-# way is more transparent than keeping trailing blanks in the check file.
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000 -fi=arith.h -fo=.obj
 
 .obj.$(exe):
-    $(linker) @test.lnk NAME $^* FILE $^*
-    @echo --------$^*-------->> test.out
-    $(run) $^* >>test.out
+    $(linker) @test.lnk NAME $@ FILE $[@
+    @%append test.out --------$^*--------
+    $(run) $(exec_prefix)$@ >>test.out
 
 dmc.$(exe) : dmc.obj
-    $(linker) @test.lnk NAME $^* FILE $^*
-    @echo --------$^*-------->> test.out
-    $(run) $^* c dmc.cpp dmc.out >>test.out
-    $(run) $^* d dmc.out cpp.out >>test.out
+    $(linker) @test.lnk NAME $@ FILE $[@
+    @%append test.out --------$^*--------
+    $(run) $(exec_prefix)$@ c dmc.cpp dmc.out >>test.out
+    $(run) $(exec_prefix)$@ d dmc.out cpp.out >>test.out
     diff cpp.out dmc.cpp >>test.out
 
 test : .symbolic start_test test.lnk $(exes)
     diff test.out test.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 start_test : .symbolic
     %create test.out

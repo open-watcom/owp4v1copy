@@ -15,7 +15,7 @@ alt_error = 00
 test_cflags = -d2
 !endif
 
-test_cflags += -w0-zq -i.;.. -fi=..\pch.h -fhq
+test_cflags += -w0-zq -I".;.." -fi=../pch.h -fhq
 
 test_cflags_i86 = -mm -zm
 
@@ -27,14 +27,14 @@ stack_axp=opt stack=64k
 
 .cpp: .;..
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch))
-    
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) -fo=.obj
+
 .obj.$(exe):
-    $(linker) @test FILE $[@, tempbuf.obj, random.obj
-    del $[@
+    $(linker) @test.lnk NAME $@ FILE $[@, tempbuf.obj, random.obj
+    rm $[@
     %append exec.out @@@ $^@ @@@
-    $(run) $^@ $(extra_$^*) >>exec.out
-    
+    $(run) $(exec_prefix)$@ $(extra_$^*) >>exec.out
+
 !include stl_test.mif
 
 test : .symbolic start_test test.lnk tempbuf.obj random.obj $(tests)
@@ -44,18 +44,18 @@ test : .symbolic start_test test.lnk tempbuf.obj random.obj $(tests)
     diff exec.out exec.chk
 !endif
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 start_test : .symbolic
     %create exec.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
-    
+
 test.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(stack_$(arch))
-    
+
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 

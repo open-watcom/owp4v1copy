@@ -46,7 +46,7 @@ test_cflags = -op-d2
 alt_error=00
 !endif
 
-test_cflags += -ei -w0 -zq -i.. -d__OS2__
+test_cflags += -ei -w0 -zq -I.. -D__OS2__
 
 test_cflags_i86 = -ml
 
@@ -54,12 +54,12 @@ test_cflags_i86 = -ml
 test_cflags_i86_map = -zm -oxs
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) $(test_cflags_$(arch)_$^*) 
-    
+    $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) $(test_cflags_$(arch)_$^*) -fo=.obj
+
 test : .symbolic start_test ../base.lib
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 ../base.lib : $(OBJECTS)
     $(librarian_$(arch)) -q-n-b $^@ $(OBJECTS)
 

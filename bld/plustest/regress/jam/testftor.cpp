@@ -5,9 +5,9 @@
 
 #include <iostream.h>
 #include <assert.h>
-#include <jam/Functor0.h>
-#include <jam/Functor1.h>
-#include <jam/Functor2.h>
+#include <jam/functor0.h>
+#include <jam/functor1.h>
+#include <jam/functor2.h>
 
 class Model {
 public:

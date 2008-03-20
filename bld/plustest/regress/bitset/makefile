@@ -22,7 +22,7 @@ stack_i86=opt stack=4k
 stack_axp=opt stack=8k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -fo=.obj
 
 objs = &
     tbitset.obj &
@@ -31,11 +31,11 @@ objs = &
 test : .symbolic start_test bitset.$(exe)
     diff bitset.out bitset.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 bitset.$(exe) : $(objs) bitset.lnk
     $(linker) @$]@ NAME $@ file {$(objs)}
-    $(run) $@ >>bitset.out
+    $(run) $(exec_prefix)$@ >>bitset.out
 
 start_test : .symbolic
     %create bitset.out

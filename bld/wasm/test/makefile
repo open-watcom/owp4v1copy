@@ -27,6 +27,7 @@ $(all_tests) : .symbolic
 finish_test : .symbolic ./chktest.exe
     @cdsay >> $(log_file)
     $]@ $(log_file)
+    %append $(log_file) TEST
     %append $(log_file) PASS $(%__CWD__)
 
 global : .symbolic

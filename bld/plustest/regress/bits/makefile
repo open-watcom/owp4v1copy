@@ -22,18 +22,18 @@ stack_i86=opt stack=4k
 stack_axp=opt stack=8k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -fo=.obj
 
 objs = tbits.obj
     
 test : .symbolic start_test tbits.$(exe)
     diff tbits.out tbits.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 tbits.$(exe) : $(objs) tbits.lnk
     $(linker) @$]@ name $@ file {$(objs)}
-    $(run) $@ >>tbits.out
+    $(run) $(exec_prefix)$@ >>tbits.out
 
 start_test : .symbolic
     %create tbits.out

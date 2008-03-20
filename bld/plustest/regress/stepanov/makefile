@@ -31,25 +31,35 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .c.obj:
-    $(wpp_$(arch)) $[@ $(test_flags) $(test_flags_$(arch)) $(opt_$^*)
+    $(wpp_$(arch)) $[@ $(test_flags) $(test_flags_$(arch)) $(opt_$^*) -fo=.obj
+
+# Note: Fast machines may need larger iteration counts, otherwise the code could run
+# "too fast" and finish at "zero" execution time.
 
 .obj.$(exe):
-    $(linker) @stepanov FILE $[@
+    $(linker) @stepanov.lnk NAME $@ FILE $[@
+    $(run) $(exec_prefix)$@ 2500 >>stepanov.out
+
+oop_v1p5.$(exe) : oop_v1p5.obj
+    $(linker) @stepanov.lnk NAME $@ FILE $[@
+    $(run) $(exec_prefix)$@ Max=5000 18 Matrix=100 15 Complex=6000 50 Iterator=15000 14 >>stepanov.out
+
+oop_v1p6.$(exe) : oop_v1p6.obj
+    $(linker) @stepanov.lnk NAME $@ FILE $[@
+    $(run) $(exec_prefix)$@ Max=5000 49 Matrix=100 13 Complex=6000 52 Iterator=15000 18 >>stepanov.out
+
+oop_v1p7.$(exe) : oop_v1p7.obj
+    $(linker) @stepanov.lnk NAME $@ FILE $[@
+    $(run) $(exec_prefix)$@ Max=5000 14 Matrix=100 14 Complex=6000 83 Iterator=15000 19 >>stepanov.out
 
 !ifeq arch i86
 test : .symbolic start_test
 !else
 test : .symbolic start_test stepanov.lnk $(exes)
-# Note: Fast machines may need larger iteration counts, otherwise the code could run
-# "too fast" and finish at "zero" execution time.
-    $(run) oop_v1p5 Max=5000 18 Matrix=100 15 Complex=6000 50 Iterator=15000 14 >>stepanov.out
-    $(run) oop_v1p6 Max=5000 49 Matrix=100 13 Complex=6000 52 Iterator=15000 18 >>stepanov.out
-    $(run) oop_v1p7 Max=5000 14 Matrix=100 14 Complex=6000 83 Iterator=15000 19 >>stepanov.out
-    @for %i in ( $(stepanovs) ) do $(run) %i 2500 >>stepanov.out
     diff stepanov.out stepanov.chk
 !endif
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
+    %append $(log_file) PASS $(%__CWD__)
 
 start_test : .symbolic
     %create stepanov.out

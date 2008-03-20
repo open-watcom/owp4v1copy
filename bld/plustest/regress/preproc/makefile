@@ -28,7 +28,7 @@ alt_error=00
     $(comp) $[@ -zq-w0 -pl -pw=0 -fo=.pl0 -na
     cat exec.out $^@ >tmp_exec.out
     cp tmp_exec.out exec.out
-    
+
 all_tests = &
     pp01.pl &
     pp02.pl &
@@ -53,25 +53,27 @@ all_tests = &
 test : .symbolic start_test $(all_tests)
     diff exec.out exec.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 start_test : .symbolic
     %create exec.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
     %make gen_input
 
 zap_output : .procedure
-    @if exist *.pl del *.pl
-    @if exist *.pl0 del *.pl0
-    @if exist *.plc del *.plc
-    @if exist *.gh del *.gh
-    
-gen_input: .procedure
-    $(bld_cl) geninput.c -ox-d1 -cc++
-    geninput
-    del *.exe
-    del *.obj
-    
+    @if exist *.pl rm *.pl
+    @if exist *.pl0 rm *.pl0
+    @if exist *.plc rm *.plc
+    @if exist *.gh rm *.gh
+
+gen_input: .procedure ./geninput.exe
+    $[@
+    @rm *.exe
+    @rm *.obj
+
+./geninput.exe : geninput.c
+    $(bld_cl) $< $(wcl_util_opts) -cc++
+
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 

@@ -1,4 +1,4 @@
-#include "doubMat.h"
+#include "doubmat.h"
 
 doubleMatrix doubleArray::operator - () const {
   double* newX = new double [M*N];

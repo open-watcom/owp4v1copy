@@ -25,7 +25,7 @@ History:
 #ifndef JAM_Functor0_H
 #define JAM_Functor0_H
 
-#include <jam/CRCPtr.h>
+#include <jam/crcptr.h>
 
 //**************************************************************************
 // Defines JAM_Functor0<R>, functor(O*, R (O::*)()) and helper classes

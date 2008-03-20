@@ -18,15 +18,15 @@ comp_flags = -ox-d1-mc
 alt_error=00
 !endif
 
-comp_flags += -zq -zw -i$(%watcom)\h\win -bt=windows
+comp_flags += -zq -zw -I"$(%watcom)/h;$(%watcom)/h/win" -bt=windows
 
 stack_386=opt stack=16k
 stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_i86) $[* $(comp_flags) $(extra)
-    
+    $(wpp_i86) $[* $(comp_flags) $(extra) -fo=.obj
+
 objs = &
 nullfunc.obj &
 wboolsw.obj &
@@ -66,26 +66,23 @@ wmsgdlg.obj &
 wwinmain.obj
 
 test : .symbolic start_test test.exe
-    cp test.exe test.ice
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    ren test.ice test.exe
+    %append $(log_file) PASS $(%__CWD__)
 
 test.exe : $(objs) test.lnk
-    $(linker) @$]@
+    $(linker) @$]@ NAME $@
 
 test.lnk : makefile $(objs)
     %create $^@
     @%append $^@ SYSTEM windows
     @%append $^@ OPTION rwreloccheck
-    @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
-    @%append $^@ LIBRARY $(%watcom)/lib286/win/DDEML.LIB
-    @%append $^@ LIBRARY $(%watcom)/lib286/win/COMMDLG.LIB
+    @%append $^@ LIBRARY $(%watcom)/lib286/win/ddeml.lib
+    @%append $^@ LIBRARY $(%watcom)/lib286/win/commdlg.lib
 
 !else
-    
+
 test : .symbolic start_test
     @%make global
     %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
@@ -95,9 +92,9 @@ test : .symbolic start_test
 start_test : .symbolic
     %create exec.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
-    
+
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
-   
+
 global : .procedure
     @%make common_clean

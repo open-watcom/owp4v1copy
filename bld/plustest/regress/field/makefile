@@ -32,26 +32,26 @@ stack_i86=opt stack=8k
 stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(test_cflags_$(arch))
+    $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -fo=.obj
 
 exes = test1.$(exe) test2.$(exe) test3.$(exe)    
 
 test : .symbolic start_test $(exes)
     diff test.out test.chk
     @%make global
-    %append $(log_file) PASS $(%__CWD__) $(arch)/$(alt_error)
-    
+    %append $(log_file) PASS $(%__CWD__)
+
 test1.$(exe) : field.obj test1.obj field.lnk
-    $(linker) @$]@ NAME $^* FILE test1.obj, field.obj
-    $(run) $@ >>test.out
-    
+    $(linker) @$]@ NAME $@ FILE test1.obj, field.obj
+    $(run) $(exec_prefix)$@ >>test.out
+
 test2.$(exe) : field.obj test2.obj field.lnk
-    $(linker) @$]@ NAME $^* FILE test2.obj, field.obj
-    $(run) $@ >>test.out
-    
+    $(linker) @$]@ NAME $@ FILE test2.obj, field.obj
+    $(run) $(exec_prefix)$@ >>test.out
+
 test3.$(exe) : field.obj test3.obj field.lnk
-    $(linker) @$]@ NAME $^* FILE test3.obj, field.obj
-    $(run) $@ 1000 1000 >>test.out
+    $(linker) @$]@ NAME $@ FILE test3.obj, field.obj
+    $(run) $(exec_prefix)$@ 1000 1000 >>test.out
 
 start_test : .symbolic
     %create test.out
