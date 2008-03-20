@@ -38,7 +38,7 @@ test_cflags += -w0-zq -I.. -fi=../pch.h -fh
 test_cflags_i86 += -mm -zm
 
 extra_istmit1 = <istmit1.in
-extra_tech01 = | sed -e 's/\//\\/g'
+extra_tech01 = | sed -f fixpath.sed
 
 stack_386=opt stack=64k
 stack_i86=opt stack=16k

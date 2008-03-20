@@ -61,7 +61,7 @@ testsys : .symbolic diag$(arch).out
     @rm diff$(arch).out
 
 diagspec.out : .procedure $(diagnose_dir)/diag0001.c
-    -$(wpp_$(arch)) $[@ $(diagnose_opts) $(opt_diag0001) -eq | sed -e 's/source\//source\\/g' >diagspec.out
+    -$(wpp_$(arch)) $[@ $(diagnose_opts) $(opt_diag0001) -eq | sed -f fixpath.sed >diagspec.out
 
 test_special : .symbolic diagspec.out
     -diff -b diagspec.out diagspec.chk >diffspec.out
@@ -70,27 +70,27 @@ test_special : .symbolic diagspec.out
     @rm diffspec.out
 
 diag0000.out : ./catfile.exe $(diags_0099)
-    $[@ -a *.err | sed -e 's/source\//source\\/g' >diag0000.out
+    $[@ -a *.err | sed -f fixpath.sed >diag0000.out
     @%make diag_clean
 
 diag0100.out : ./catfile.exe $(diags_0199)
-    $[@ -a *.err | sed -e 's/source\//source\\/g' >diag0100.out
+    $[@ -a *.err | sed -f fixpath.sed >diag0100.out
     @%make diag_clean
 
 diag0200.out : ./catfile.exe $(diags_0299)
-    $[@ -a *.err | sed -e 's/source\//source\\/g' >diag0200.out
+    $[@ -a *.err | sed -f fixpath.sed >diag0200.out
     @%make diag_clean
 
 diag0300.out : ./catfile.exe $(diags_0399)
-    $[@ -a *.err | sed -e 's/source\//source\\/g' >diag0300.out
+    $[@ -a *.err | sed -f fixpath.sed >diag0300.out
     @%make diag_clean
 
 diag386.out : ./catfile.exe $(diags_sys)
-    $[@ -a *.ser | sed -e 's/source\//source\\/g' >diag386.out
+    $[@ -a *.ser | sed -f fixpath.sed >diag386.out
     @%make diag_clean
 
 diagaxp.out : ./catfile.exe $(diags_sys)
-    $[@ -a *.ser | sed -e 's/source\//source\\/g' >diagaxp.out
+    $[@ -a *.ser | sed -f fixpath.sed >diagaxp.out
     @%make diag_clean
 
 ./catfile.exe: source/catfile.c

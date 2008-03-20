@@ -26,8 +26,8 @@ test : .symbolic start_test diag0000.out
 ./catfile.exe: source/catfile.c
     $(bld_cl) $< $(wcl_util_opts)
 
-diag0000.out : $(diags_0099) ./catfile.exe
-    $]@ -a *.err | sed -e 's/source\//source\\/g' >diag0000.out
+diag0000.out : ./catfile.exe $(diags_0099)
+    $[@ -a *.err | sed -f fixpath.sed >diag0000.out
 
 start_test : .symbolic
     @if exist s$(arch)0000.sav rm s$(arch)0000.sav

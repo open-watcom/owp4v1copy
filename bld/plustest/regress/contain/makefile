@@ -232,7 +232,7 @@ exes =   $(wc_list_template) $(wc_vect_template) $(wc_hash_template) &
 
 test : .symbolic start_test memchk.obj cont.lnk $(exes)
     @set msg=*** output differences
-    sed -e 's/source\//source\\/g' exec.out | diff - exec.chk
+    sed -f fixpath.sed exec.out | diff - exec.chk
     @set msg=*** general failure
     @%make global
     %append $(log_file) PASS $(%__CWD__)
