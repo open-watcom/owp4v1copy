@@ -49,6 +49,10 @@ hc_nt = $(%WIN95HC)
 hc_win = whc
 hc_os2 = $(%OS2HC)
 hc_dos = hcdos
+!ifdef %GHOSTSCRIPT
+hc_pdf = ps2pdf12 
+!endif
+
 
 #
 # define what should be build
@@ -73,7 +77,9 @@ dep_os2 = $(hbook).h $(hbook).inf $(hbook).hlp
 dep_dos = $(hbook).h $(hbook).ihp
 dep_html = $(hbook).html
 dep_ps = $(hbook).ps
+!ifdef hc_pdf
 dep_pdf = $(hbook).pdf
+!endif
 
 #
 # There should be settings for supported building platforms
@@ -252,7 +258,7 @@ $(hbook).ps : $(book_objs) $(proj_objs)
     cd ../pdf
 
 $(hbook).pdf : $(hbook).ps
-    -ps2pdf12 -r600 $[@ $(hbook).pdf
+    -$(hc_pdf) -r600 $[@ $(hbook).pdf
 
 ####################################################
 #

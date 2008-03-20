@@ -1,4 +1,4 @@
-#pmake: docs pdf
+#pmake: build docs pdf
 
 dotarget=pdf
 

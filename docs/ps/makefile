@@ -1,4 +1,4 @@
-#pmake/50: docs ps pdf
+#pmake/50: build docs ps pdf
 
 # postscript files need to be created before pdf files
 
