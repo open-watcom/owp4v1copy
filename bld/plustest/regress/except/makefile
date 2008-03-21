@@ -84,7 +84,7 @@ stack_axp=opt stack=32k
 .obj.$(exe):
     $(linker) @test.lnk name $@ file $[@
     @%append except.out --------$^*--------
-    -$(run) $(exec_prefix)$@ >>except.out
+    -$(run) $(exec_prefix)$@ >>except.out 2>&1
 
 test : .symbolic start_test $(batch_sym) test.lnk $(exes)
     diff except.out except.chk
