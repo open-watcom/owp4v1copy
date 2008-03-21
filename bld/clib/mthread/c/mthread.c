@@ -129,13 +129,13 @@ static CRITICAL_SECTION *__NTGetCriticalSection( void )
         ptr = lib_calloc( 1, sizeof( *ptr ) );
         if( ptr == NULL ) {
             __fatal_runtime_error(
-                "Unable to allocate semaphore data\r\n", 1 );
+                "Unable to allocate semaphore data", 1 );
         }
         critsect_vector = lib_realloc( critsect_vector,
                 (critsect_vectornext+1)*sizeof(CRITICAL_SECTION*));
         if( critsect_vector == NULL ) {
             __fatal_runtime_error(
-                "Unable to allocate semaphore data\r\n", 1 );
+                "Unable to allocate semaphore data", 1 );
         }
         critsect_vector[critsect_vectornext] = ptr;
         critsect_vectornext++;
@@ -168,10 +168,10 @@ _WCRTLINK void __CloseSemaphore( semaphore_object *obj )
         // 1 is ok  // JBS I don't think so. I would mean a critical section is active.
                     // JBS For every lock, there should be an unlock.
 //      if( obj->count >= 2 ) {
-//          __fatal_runtime_error( "Semaphore locked too many times\r\n", 1 );
+//          __fatal_runtime_error( "Semaphore locked too many times", 1 );
 //      }
         if( obj->count >= 1 ) {
-            __fatal_runtime_error( "Semaphore not unlocked\r\n", 1 );
+            __fatal_runtime_error( "Semaphore not unlocked", 1 );
         }
     #endif
     #if !defined( __NT__ )
@@ -212,7 +212,7 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
                 if( obj->initialized == 0 ) {
                     #if defined( __RUNTIME_CHECKS__ ) && defined( _M_IX86 )
                         if( obj == &InitSemaphore ) {
-                            __fatal_runtime_error( "Bad semaphore lock\r\n", 1 );
+                            __fatal_runtime_error( "Bad semaphore lock", 1 );
                         }
                     #endif
                     __AccessSemaphore( &InitSemaphore );
@@ -269,7 +269,7 @@ _WCRTLINK void __ReleaseSemaphore( semaphore_object *obj )
     #endif
     if( obj->count > 0 ) {
         if( obj->owner != tid ) {
-            __fatal_runtime_error( "Semaphore unlocked by wrong owner\r\n", 1 );
+            __fatal_runtime_error( "Semaphore unlocked by wrong owner", 1 );
         }
         if( --obj->count == 0 ) {
             obj->owner = 0;
@@ -658,7 +658,7 @@ void __InitMultipleThread( void )
             ptr = lib_calloc( 1, __ThreadDataSize );
             if( ptr == NULL ) {
                 __fatal_runtime_error(
-                    "Unable to allocate thread-specific data\r\n", 1 );
+                    "Unable to allocate thread-specific data", 1 );
             }
             __ThreadData[ 0 ].data = ptr;
             __ThreadData[ 0 ].allocated_entry = 1;
@@ -668,12 +668,12 @@ void __InitMultipleThread( void )
             if( __initthread( ptr ) ) {
                 lib_free( ptr );
                 __fatal_runtime_error(
-                    "Unable to initialize thread-specific data\r\n", 1 );
+                    "Unable to initialize thread-specific data", 1 );
             }
             ptr = lib_calloc( 1, __ThreadDataSize );
             if( ptr == NULL ) {
                 __fatal_runtime_error(
-                    "Unable to allocate thread-specific data\r\n", 1 );
+                    "Unable to allocate thread-specific data", 1 );
             }
             __FirstThreadData = ptr;
             __FirstThreadData->__allocated = 1;
@@ -685,7 +685,7 @@ void __InitMultipleThread( void )
             if( __initthread( ptr ) ) {
                 lib_free( ptr );
                 __fatal_runtime_error(
-                    "Unable to initialize thread-specific data\r\n", 1 );
+                    "Unable to initialize thread-specific data", 1 );
             }
         }
         #elif defined (_NETWARE_LIBC)
@@ -700,7 +700,7 @@ void __InitMultipleThread( void )
             if(0 != NXKeySetValue(__NXSlotID, __FirstThreadData))
             {
                 __fatal_runtime_error(
-                    "Unable to initialize thread-specific data\r\n", 1 );
+                    "Unable to initialize thread-specific data", 1 );
             }
         #elif defined( __NT__ )
             InitSemaphore.semaphore = __NTGetCriticalSection();

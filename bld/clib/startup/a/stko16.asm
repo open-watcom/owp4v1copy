@@ -45,7 +45,7 @@ endif
         modstart        stk
 
 CONST   segment word public 'DATA'
-msg     db      "Stack Overflow!", 0dh, 0ah
+msg     db      "Stack Overflow!", 0
 CONST   ends
 
 _DATA   segment word public 'DATA'

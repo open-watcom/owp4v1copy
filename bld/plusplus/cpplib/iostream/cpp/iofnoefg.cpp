@@ -41,7 +41,7 @@
 
 
 static void _no_support_loaded() {
-    __fatal_runtime_error( "C++ floating-point support not loaded\r\n", 1 );
+    __fatal_runtime_error( "C++ floating-point support not loaded", 1 );
 }
 
 _WPRTLINK _type_EFG_cnvs2d __EFG_cnvs2d

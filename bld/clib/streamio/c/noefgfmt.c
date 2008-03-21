@@ -39,7 +39,7 @@
 
 static void _no_support_loaded( void )
 {
-    __fatal_runtime_error( "Floating-point support not loaded\r\n", 1 );
+    __fatal_runtime_error( "Floating-point support not loaded", 1 );
 }
 
 _WCRTLINK FAR_STRING (*__EFG_printf)() = (FAR_STRING (*)())_no_support_loaded;

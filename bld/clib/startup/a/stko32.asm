@@ -41,7 +41,7 @@ ifdef __MT__
 else
         extrn   "C",_STACKLOW : dword
 endif
-msg     db      "Stack Overflow!", 0dh, 0ah, 0
+msg     db      "Stack Overflow!", 0
 enddata
 
 include xinit.inc

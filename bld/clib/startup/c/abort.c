@@ -81,5 +81,5 @@ _WCRTLINK void abort( void )
 
 void __terminate( void )
 {
-    __fatal_runtime_error( "ABNORMAL TERMINATION\r\n", EXIT_FAILURE );
+    __fatal_runtime_error( "ABNORMAL TERMINATION", EXIT_FAILURE );
 }

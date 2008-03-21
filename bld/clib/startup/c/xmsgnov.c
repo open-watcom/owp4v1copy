@@ -43,7 +43,12 @@ extern void             NXThreadExit( void *);
 
 _WCRTLINK void __exit_with_msg( char *msg, unsigned retcode )
 {
+    char    newline[2];
+
     write( STDOUT_FILENO, msg, strlen( msg ) );
+    newline[0] = '\r';
+    newline[1] = '\n';
+    write( STDOUT_FILENO, &newline, 2 );
 #if defined (_NETWARE_CLIB)
     ExitThread( 0, retcode );
 #else
@@ -62,6 +67,6 @@ _WCRTLINK void __fatal_runtime_error( char *msg, unsigned retcode )
 #if defined (_NETWARE_LIBC)
 _WCRTLINK void AbortWithStackOverflow( unsigned TID )
 {
-    __fatal_runtime_error("OpenWatcom RTL : Stack Overflow\n", TID);
+    __fatal_runtime_error("OpenWatcom RTL : Stack Overflow", TID);
 }
 #endif

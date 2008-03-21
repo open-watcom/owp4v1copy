@@ -61,7 +61,7 @@ void __InitFiles( void )
             link = lib_malloc( sizeof( __stream_link ) );
             if( link == NULL ) {
                 __fatal_runtime_error(
-                    "Not enough memory to allocate file structures\r\n", 1 );
+                    "Not enough memory to allocate file structures", 1 );
             }
         } else {
             link = ptr;

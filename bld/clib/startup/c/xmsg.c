@@ -32,7 +32,7 @@
 #include "variety.h"
 #include "exitwmsg.h"
 
-_WCRTLINK void __exit_with_msg( char _WCI86FAR * msg, unsigned retcode )
+_WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
 {
     __do_exit_with_msg( msg, retcode );
 }

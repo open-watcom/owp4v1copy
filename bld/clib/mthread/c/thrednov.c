@@ -97,7 +97,7 @@ extern int *__threadid( void )
             ptr = lib_calloc( 1, __ThreadDataSize );
             if( ptr == NULL ) {
                 __fatal_runtime_error(
-                    "Unable to allocate thread-specific data\r\n", 1 );
+                    "Unable to allocate thread-specific data", 1 );
             }
             __ThreadData[ id ].data = ptr;
             __ThreadData[ id ].allocated_entry = 1;
@@ -107,7 +107,7 @@ extern int *__threadid( void )
             if( __initthread( ptr ) ) {
                 lib_free( ptr );
                 __fatal_runtime_error(
-                    "Unable to initialize thread-specific data\r\n", 1 );
+                    "Unable to initialize thread-specific data", 1 );
             }
         }
     }

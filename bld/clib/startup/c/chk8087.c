@@ -179,7 +179,7 @@ void __init_8087( void )
 
 void _WCI86FAR __default_sigfpe_handler( int fpe_sig )
 {
-    __fatal_runtime_error( "Floating point exception\r\n", EXIT_FAILURE );
+    __fatal_runtime_error( "Floating point exception", EXIT_FAILURE );
 }
 #endif
 

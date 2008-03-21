@@ -38,7 +38,7 @@ include exitwmsg.inc
 datasegment
         extrn   "C",_STACKLOW : dword
 SS_seg  dw      0
-msg     db      "Stack Overflow!", 0dh, 0ah, 0
+msg     db      "Stack Overflow!", 0
 enddata
 
 include xinit.inc

@@ -86,7 +86,7 @@ static void __FAR __null_FPE_rtn()
 
 void _Not_Enough_Memory()
 {
-    __fatal_runtime_error( "Not enough memory\n", 1 );
+    __fatal_runtime_error( "Not enough memory", 1 );
 }
 
 #if !defined(__386__)

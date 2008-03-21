@@ -37,7 +37,11 @@
 
 _WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
 {
-    write( 1, msg, strlen( msg ) );
+    char    newline;
+
+    write( STDERR_FILENO, msg, strlen( msg ) );
+    newline = '\n';
+    write( STDERR_FILENO, &newline, 1 );
     sys_exit( retcode );
 }
 

@@ -39,11 +39,12 @@
 .386p
 .387
 
+include exitwmsg.inc
+
         assume  nothing
 
         extrn   __CMain                     : near
         extrn   "C",__qnx_exit              : near
-        extrn   "C",__fatal_runtime_error   : near
         extrn   __QNXseg__                  : near
 
         extrn   "C",_STACKTOP               : dword
@@ -92,7 +93,7 @@ end_null dw      0                       ; nullchar for string at address 0
 _AFTERNULL ends
 
 CONST   segment word public 'DATA'
-NullAssign      db      0ah,'*** NULL assignment detected',0ah,0
+NullAssign      db      '*** NULL assignment detected',0
 CONST   ends
 
 XIB     segment word public 'DATA'

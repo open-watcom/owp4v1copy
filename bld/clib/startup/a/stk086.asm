@@ -92,6 +92,6 @@ __STKOVERFLOW:
         call    __fatal_runtime_error
         endproc __STK
 
-msg     db      "Stack Overflow!", 0dh, 0ah, 0
+msg     db      "Stack Overflow!", 0
         endmod
         end

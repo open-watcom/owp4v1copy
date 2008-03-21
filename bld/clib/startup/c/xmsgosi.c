@@ -37,6 +37,8 @@
 _WCRTLINK void __exit_with_msg( char *msg, unsigned retcode )
 {
     cputs( msg );
+    putch( '\r' );
+    putch( '\n' );
     __exit( retcode );
 }
 

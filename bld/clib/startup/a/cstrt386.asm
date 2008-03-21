@@ -198,6 +198,8 @@ include msgcpyrt.inc
 ;
 ConsoleName     db      "con",00h
 
+NewLine         db      0Dh,0Ah
+
 around: sti                             ; enable interrupts
 
         assume  ds:DGROUP
@@ -399,6 +401,10 @@ L4:     lodsb                           ; get char
         sub     ecx,edx                 ; . . .
         dec     ecx                     ; . . .
         mov     ah,040h                 ; write out the string
+        int     021h                    ; . . .
+        mov     edx,offset NewLine      ; write out the string
+        mov     ecx,sizeof NewLine      ; . . .
+        mov     ah,040h                 ; . . .
         int     021h                    ; . . .
         pop     eax                     ; restore return code
 ok:

@@ -194,11 +194,13 @@ __x386_break    dd      ?
 
 __saved_DS      dw  0           ; save area for DS for interrupt routines
 
-insuf_msg       db      10,13,'Insufficient memory for stack setup',24h
+insuf_msg       db      'Insufficient memory for stack setup',0Dh,0Ah,'$'
 
-null_msg        db      10,13,'Null code pointer was called',0
+null_msg        db      'Null code pointer was called',0
 
 ConsoleName     db      "con",0
+
+NewLine         db      0Dh,0Ah
 
 _DATA    ends
 
@@ -388,6 +390,10 @@ L4:     lodsb                           ; get char
         sub     ecx,edx                 ; . . .
         dec     ecx                     ; . . .
         mov     ah,040h                 ; write out the string
+        int     021h                    ; . . .
+        mov     edx,offset DGROUP:NewLine ; write out the string
+        mov     ecx,sizeof NewLine      ; . . .
+        mov     ah,040h                 ; . . .
         int     021h                    ; . . .
         pop     eax                     ; restore return code
 

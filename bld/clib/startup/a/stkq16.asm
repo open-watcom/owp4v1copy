@@ -111,10 +111,6 @@ endif                           ; dx:ax points at retaddr
         stosb
         pop     bx              ; get offset
         call    _putw
-        mov     al,0dh
-        stosb
-        mov     al,0ah
-        stosb
         mov     al,0
         stosb
         mov     ds,cs:dgroupp

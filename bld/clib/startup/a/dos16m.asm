@@ -53,7 +53,7 @@ include xinit.inc
 public  __acrtused              ; trick to lend harmony to dealings with
         __acrtused = 9876h      ; DOS16LIB
 
- DGROUP group _NULL,_AFTERNULL,CONST,STRINGS,_DATA,DATA,BCSD,XIB,XI,XIE,YIB,YI,YIE,_BSS,STACK,verylast
+DGROUP  group _NULL,_AFTERNULL,CONST,STRINGS,_DATA,DATA,BCSD,XIB,XI,XIE,YIB,YI,YIE,_BSS,STACK,verylast
 
 _TEXT   segment word public 'CODE'
 
@@ -270,8 +270,8 @@ DATA    ends
 BCSD    segment word public 'DATA'
 BCSD    ends
 
-_BSS          segment word public 'BSS'
-_BSS          ends
+_BSS    segment word public 'BSS'
+_BSS    ends
 
 STACK_SIZE      equ    1000h
 
@@ -293,7 +293,7 @@ verylast ends
 
         assume  cs:_TEXT
 
- _startup_ proc near
+_startup_ proc near
         dd      stackavail_
 _cstart_:
         jmp     around
@@ -307,14 +307,11 @@ include msgcpyrt.inc
 ;
 ; miscellaneous code-segment messages
 ;
-NullAssign      db      0dh,0ah,'*** NULL assignment detected',0dh,0ah,0
-
-NoMemory        db      'Not enough memory',0dh,0ah,0
-ConsoleName     db      'con',00h
-
-__OurDS         dw      0
-
-msg_notPM db    'requires DOS/16M', 0Ah, 0Dh, '$'
+NullAssign      db      '*** NULL assignment detected',0
+NoMemory        db      'Not enough memory',0
+ConsoleName     db      'con',0
+NewLine         db      0Dh,0Ah
+msg_notPM       db      'requires DOS/16M', 0Dh, 0Ah, '$'
 
 _Not_Enough_Memory_:
         mov     bx,1                    ; - set exit code
@@ -496,8 +493,8 @@ __do_exit_with_msg__:
         push    bx                      ; save return code
         push    ax                      ; save address of msg
         push    dx                      ; . . .
-        mov     dx,_TEXT
-        mov     ds,dx
+        mov     di,cs
+        mov     ds,di
         mov     dx,offset ConsoleName
         mov     ax,03d01h               ; write-only access to screen
         int     021h
@@ -513,6 +510,11 @@ L3:     lodsb                           ; get char
         sub     cx,dx                   ; . . .
         dec     cx                      ; . . .
         mov     ah,040h                 ; write out the string
+        int     021h                    ; . . .
+        mov     ds,di
+        mov     dx,offset NewLine       ; write out the new line
+        mov     cx,sizeof NewLine       ; . . .
+        mov     ah,040h                 ; . . .
         int     021h                    ; . . .
         pop     ax                      ; restore return code
 ok:

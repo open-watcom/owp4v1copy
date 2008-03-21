@@ -167,7 +167,7 @@ int _OS2Main( char far *stklow, char far * stktop,
         DosGetInfoSeg( &globalseg, &localseg );
         _threadid = MK_FP( localseg, offsetof( LINFOSEG, tidCurrent ) );
         if( __InitThreadProcessing() == NULL )
-            __fatal_runtime_error( "Not enough memory\r\n", 1 );
+            __fatal_runtime_error( "Not enough memory", 1 );
         #if defined(__SW_BD)
         {
             unsigned    i;

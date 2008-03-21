@@ -40,6 +40,7 @@
 
 include mdef.inc
 include xinit.inc
+include exitwmsg.inc
 
 .286p
 
@@ -51,12 +52,10 @@ if _MODEL and _BIG_CODE
         extrn   __CMain                 : far
         extrn   __InitRtns              : far
         extrn   __FiniRtns              : far
-        extrn   __fatal_runtime_error_  : far
 else
         extrn   __CMain                 : near
         extrn   __InitRtns              : near
         extrn   __FiniRtns              : near
-        extrn   __fatal_runtime_error_  : near
 endif
         extrn   _edata                  : byte  ; end of DATA (start of BSS)
         extrn   _end                    : byte  ; end of BSS (start of STACK)
@@ -200,7 +199,7 @@ ifdef __TINY__
         org     0100h
 endif
 
- _cstart_ proc near
+_cstart_ proc near
         jmp     around
 
 ;
@@ -214,13 +213,13 @@ include msgcpyrt.inc
 ;
 ifndef __TINY__
 
-NullAssign      db      0dh,0ah,'*** NULL assignment detected',0dh,0ah,0
+NullAssign      db      '*** NULL assignment detected',0
 
 endif
 
-NoMemory        db      'Not enough memory',0dh,0ah,0
-
+NoMemory        db      'Not enough memory',0
 ConsoleName     db      'con',00h
+NewLine         db      0Dh,0Ah
 
 ife _MODEL and _BIG_CODE
 ifndef __TINY__
@@ -464,10 +463,8 @@ __do_exit_with_msg__:
         push    bx                      ; save return code
         push    ax                      ; save address of msg
         push    dx                      ; . . .
-ifndef __TINY__
-        mov     dx,_TEXT
-        mov     ds,dx
-endif
+        mov     di,cs
+        mov     ds,di
         mov     dx,offset ConsoleName
         mov     ax,03d01h               ; write-only access to screen
         int     021h
@@ -483,6 +480,11 @@ L3:     lodsb                           ; get char
         sub     cx,dx                   ; . . .
         dec     cx                      ; . . .
         mov     ah,040h                 ; write out the string
+        int     021h                    ; . . .
+        mov     ds,di
+        mov     dx,offset NewLine       ; write out the new line
+        mov     cx,sizeof NewLine       ; . . .
+        mov     ah,040h                 ; . . .
         int     021h                    ; . . .
         pop     ax                      ; restore return code
 ok:
