@@ -143,16 +143,16 @@ sub make_test_batch()
     if( $^O eq "MSWin32" ) {
         print BATCH "$setenv EXTRA_ARCH=i86\n\n";
     }
-    print BATCH "cd $OW\ncd bld\ncd f77\ncd regress\n";
-    print BATCH "rm *.log\n";
-    print BATCH "wmake\n";
     print BATCH "cd $OW\ncd bld\ncd ctest\n";
     print BATCH "rm *.log\n";
     print BATCH "wmake\n";
-    print BATCH "cd $OW\ncd bld\ncd plustest\n";
+    print BATCH "cd $OW\ncd bld\ncd wasm\ncd test\n";
     print BATCH "rm *.log\n";
     print BATCH "wmake\n";
-    print BATCH "cd $OW\ncd bld\ncd wasm\ncd test\n";
+    print BATCH "cd $OW\ncd bld\ncd f77\ncd regress\n";
+    print BATCH "rm *.log\n";
+    print BATCH "wmake\n";
+    print BATCH "cd $OW\ncd bld\ncd plustest\n";
     print BATCH "rm *.log\n";
     print BATCH "wmake\n";
     close(BATCH);
@@ -177,9 +177,9 @@ sub process_log
                     print REPORT "Failed!\n";
                     $first_message = "no";
                 }
-#                if ($arch_test ne "") {
+                if ($arch_test ne "") {
                     print REPORT "\t\t$project_name\t$arch_test\n";
-#                }
+                }
                 $result = "fail";
             }
             @fields = split;
@@ -200,9 +200,9 @@ sub process_log
             print REPORT "Failed!\n";
             $first_message = "no";
         }
-#        if ($arch_test ne "") {
+        if ($arch_test ne "") {
             print REPORT "\t\t$project_name\t$arch_test\n";
-#        }
+        }
         $result = "fail";
     }
 
