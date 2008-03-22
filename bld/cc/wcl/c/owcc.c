@@ -1027,7 +1027,6 @@ static  int  CompLink( void )
         p = end;        /* get next filespec */
     }
     if( errors_found ) {
-        puts( "" );
         return( 1 );            /* 21-jan-92 */
     }
     BuildLinkFile();
@@ -1045,11 +1044,13 @@ static  int  CompLink( void )
             } else {
                 PrintMsg( WclMsgs[ LINKER_RETURNED_A_BAD_STATUS ] );
             }
-            puts( "" );
             return( 2 );        /* return 2 to show Temp_File already closed */
         }
         if( Flags.do_cvpack ) {
             FindPath( "cvpack" EXE_EXT, PathBuffer );
+            if( !Flags.be_quiet ) {
+                puts( "" );
+            }
             fflush( NULL );
             rc = spawnlp( P_WAIT, PathBuffer, "cvpack", Exe_Name, NULL );
             if( rc != 0 ) {
