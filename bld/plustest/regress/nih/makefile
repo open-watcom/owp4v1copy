@@ -61,9 +61,12 @@ test_cflags_axp =
 .c.obj:
     $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) -fo=.obj
 
-test : .symbolic $(objs)
+test : .symbolic start_test $(objs)
     @%make global
     %append $(log_file) PASS $(%__CWD__)
+
+start_test : .symbolic
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav

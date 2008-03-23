@@ -36,7 +36,7 @@ test_cflags_i86 = -ml -zm -s
 .c.obj:
     $(wpp_$(arch)) $[@ $(test_cflags) $(test_cflags_$(arch)) -fo=.obj
 
-test : .symbolic ../cool.lib
+test : .symbolic start_test ../cool.lib
     @%make global
     %append $(log_file) PASS $(%__CWD__)
 
@@ -46,6 +46,9 @@ test : .symbolic ../cool.lib
 cool.lbc : makefile
     %create $^@
     @for %i in ($(objs)) do @%append $^@ +%i
+
+start_test : .symbolic
+    @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 save : .symbolic
     @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
