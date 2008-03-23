@@ -55,7 +55,6 @@ CMDLDATA    equ 81h
 
 
 if _MODEL and _TINY
-        extrn   __stacksize             : word
  DGROUP group _TEXT,CONST,STRINGS,_DATA,DATA,XIB,XI,XIE,YIB,YI,YIE,_BSS
 else
  DGROUP group _NULL,_AFTERNULL,CONST,STRINGS,_DATA,DATA,XIB,XI,XIE,YIB,YI,YIE,_BSS,STACK
@@ -162,6 +161,9 @@ _DATA   segment word public 'DATA'
         extrn   __restore_ovl_stack     : word
         extrn   __close_ovl_file        : word
         extrn   __DOSseg__              : byte
+if _MODEL and _TINY
+        extrn   __stacksize             : word
+endif
 
 if _MODEL and _BIG_CODE
 ;       Variables filled in by Microsoft Overlay Manager
