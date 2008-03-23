@@ -78,21 +78,29 @@ stack_386=opt stack=32k
 stack_i86=opt stack=8k
 stack_axp=opt stack=32k
 
+fatal_error_check_i86=
+fatal_error_check_386=| diff - fatalerr.chk
+fatal_error_check_axp=| diff - fatalerr.chk
+
 .c.obj:
     $(wpp_$(arch)) $[* $(test_cflags_$(arch)) -zq -fo=.obj
 
 .obj.$(exe):
     $(linker) @test.lnk name $@ file $[@
-    @%append except.out --------$^*--------
-    -$(run) $(exec_prefix)$@ >>except.out 2>&1
+    @%append exec.out --------$^*--------
+!ifneq fatal_error_check_$(arch)
+    -$(run) $(exec_prefix)$@ >>exec.out 2>&1
+!else
+    -$(run) $(exec_prefix)$@ >>exec.out
+!endif
 
 test : .symbolic start_test $(batch_sym) test.lnk $(exes)
-    diff except.out except.chk
+    diff exec.out except.chk $(fatal_error_check_$(arch))
     @%make global
     %append $(log_file) PASS $(%__CWD__)
 
 start_test : .symbolic
-    %create except.out
+    %create exec.out
     @if exist s$(arch)_$(alt_error).sav rm s$(arch)_$(alt_error).sav
 
 !ifdef BATCH_TEST
@@ -118,7 +126,7 @@ test.lnk : $(__MAKEFILES__)
     @%append $^@ OPTION undefsok
 
 save : .symbolic
-    @if exist except.out cp except.out s$(arch)_$(alt_error).sav
+    @if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
 global : .procedure
     @%make common_clean
