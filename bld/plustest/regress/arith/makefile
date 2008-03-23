@@ -70,9 +70,15 @@ exes = &
 dmc.$(exe) : dmc.obj
     $(linker) @test.lnk NAME $@ FILE $[@
     @%append test.out --------$^*--------
-    $(run) $(exec_prefix)$@ c dmc.cpp dmc.out >>test.out
+!ifdef __UNIX__
+    # it converts \n to \r\n by the help of temporary \xFF character
+    cat dmc.cpp | tr '\n' '\377' | sed -e 's/\xFF/\r\n/g' >dmctest.out
+!else
+    cp dmc.cpp dmctest.out
+!endif
+    $(run) $(exec_prefix)$@ c dmctest.out dmc.out >>test.out
     $(run) $(exec_prefix)$@ d dmc.out cpp.out >>test.out
-    diff cpp.out dmc.cpp >>test.out
+    diff cpp.out dmctest.out >>test.out
 
 test : .symbolic start_test test.lnk $(exes)
     diff test.out test.chk

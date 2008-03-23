@@ -737,7 +737,7 @@ File: source\diag0044.c
 (71,8): Error! E460: protected base class accessed to convert assignment expression
   source conversion type is 'OM *'
   target conversion type is 'V *'
-I did not generate errors for diag0045 
+I did not generate errors for diag0045
 File: source\diag0046.c
 (10,34): Error! E256: default argument expression cannot use local variable 'a'
   definition: 'int a' in 'void sam( void )'

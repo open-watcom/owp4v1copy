@@ -31,7 +31,7 @@ dosystest = testsys
     -$(wpp_$(arch)) $[@ $(diagnose_opts) -na $(opt_$^&) $(archdep_opts) -fo=.obj
     @if not exist $^&.ser %write $^&.ser I did not generate errors for $^&
 
-test : .symbolic test0000 test0100 test0200 test0300 $(dosystest) test_special
+test : .symbolic start_test test0000 test0100 test0200 test0300 $(dosystest) test_special
     @%make global
     %append $(log_file) PASS $(%__CWD__)
 
@@ -61,7 +61,8 @@ testsys : .symbolic diag$(arch).out
     @rm diff$(arch).out
 
 diagspec.out : .procedure $(diagnose_dir)/diag0001.c
-    -$(wpp_$(arch)) $[@ $(diagnose_opts) $(opt_diag0001) -eq | sed -f fixpath.sed >diagspec.out
+    -$(wpp_$(arch)) $[@ $(diagnose_opts) $(opt_diag0001) -eq
+    @sed -f fixpath.sed diag0001.err >diagspec.out
 
 test_special : .symbolic diagspec.out
     -diff -b diagspec.out diagspec.chk >diffspec.out
@@ -100,6 +101,14 @@ diag_clean : .procedure
     @if exist *.err rm -f *.err
     @if exist *.ser rm -f *.ser
     @if exist *.pch rm -f *.pch
+
+start_test : .symbolic
+    @if exist s$(arch)0000.sav rm s$(arch)0000.sav
+    @if exist s$(arch)0100.sav rm s$(arch)0100.sav
+    @if exist s$(arch)0200.sav rm s$(arch)0200.sav
+    @if exist s$(arch)0300.sav rm s$(arch)0300.sav
+    @if exist s$(arch)_$(arch).sav rm s$(arch)_$(arch).sav
+    @if exist s$(arch)spec.sav rm s$(arch)spec.sav
 
 save : .symbolic
     @if exist diag0000.out cp diag0000.out s$(arch)0000.sav

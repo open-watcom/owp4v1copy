@@ -281,11 +281,11 @@ File: source\diag0127.c
 (4,2): Error! E080: one error for DIAGNOSE test stream
 File: source\diag0128.c
 (4,2): Error! E080: one error for DIAGNOSE test stream
-I did not generate errors for diag0129 
+I did not generate errors for diag0129
 End of file
 Warning! W014: no reference to symbol 'foo'
   definition: 'void foo( void )'
-I did not generate errors for diag0131 
+I did not generate errors for diag0131
 File: source\diag0132.c
 (7,2): Error! E080: one error for DIAGNOSE test stream
 File: source\diag0133.c
@@ -301,7 +301,7 @@ File: source\diag0136.c
 (5,2): Error! E080: one error for DIAGNOSE test stream
 File: source\diag0137.c
 (5,2): Error! E080: one error for DIAGNOSE test stream
-I did not generate errors for diag0138 
+I did not generate errors for diag0138
 File: source\diag0139.h
   included from source\diag0139.c(1)
 (2,2): Error! E080: should print twice
