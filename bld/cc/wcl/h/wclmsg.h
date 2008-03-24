@@ -36,7 +36,7 @@
 #endif
 #define FILEREF DELIM "%s" DELIM
 
-/* No \n on messages followed by exit() or on "pause" message */
+/* \n should not be added after "pause" message, add it to messages followed by exit() */
 pick( UNABLE_TO_OPEN_DIRECTIVE_FILE,  "Error: Unable to open directive file " FILEREF " - %s\n" ),
 pick( UNABLE_TO_OPEN_TEMPORARY_FILE,  "Error: Unable to open temporary file " FILEREF " - %s\n" ),
 pick( UNABLE_TO_INVOKE_EXE,           "Error: Unable to invoke " FILEREF "\n" ),
