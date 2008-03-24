@@ -1,12 +1,17 @@
 @echo off
 
+rem Path configuration
+rem ==================
+set OWBUILDPATH=\OW\pass1
+set WWWPATH=\www
+
 rem Initialization
 rem ==============
 path=%path%;c:\Program Files\7-Zip
-cd \www
+cd %WWWPATH%
 
-if exist \OW\pass1 goto prerequisite_ok
-echo Missing \OW\pass1. Can't continue with rotation.
+if exist %OWBUILDPATH% goto prerequisite_ok
+echo Missing %OWBUILDPATH%. Can't continue with rotation.
 goto done
 
 :prerequisite_ok
@@ -15,7 +20,7 @@ rem Move pass1 build
 rem =================
 if exist snapshot ren snapshot snapshot.bak
 if exist snapshot goto done
-move \OW\pass1 snapshot
+move %OWBUILDPATH% snapshot
 
 rem Build Archives
 rem ==============

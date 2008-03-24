@@ -1,28 +1,36 @@
 #!/bin/sh
 #
+# Path configuration
+# ==================
+owbuildpath=/OW/pass1
+wwwpath=/www
+
+#
 # Initialization
 # ==============
-cd /www
-if [ ! -d /OW/pass1 ]; then
-    echo "Missing /OW/pass1. Can't continue with rotation."
+cd $wwwpath
+if [ ! -d $owbuildpath ]; then
+    echo "Missing $owbuildpath. Can't continue with rotation."
     exit -1
 fi
 
 # Backup old snapshot
 # ===================
-if [ -d snapshot -a ! mv snapshot snapshot.bak ]; then
-    echo "Existing snapshot backup failed. Can't continue with rotation."
-    exit -1
+if [ -d snapshot ]; then
+    if ! mv snapshot snapshot.bak; then
+        echo "Existing snapshot backup failed. Can't continue with rotation."
+        exit -1
+    fi
 fi
 
 # Move pass1 build
 # =================
-mv /OW/pass1 snapshot
+mv $owbuildpath/ snapshot
 
 # Build Archives
 # ==============
-test -f ss.zip -a rm ss.zip
-test -f ss.7z -a rm ss.7z
+if [ -f ss.zip ]; then rm ss.zip; fi
+if [ -f ss.7z ]; then rm ss.7z; fi
 cd snapshot
 7za a -tzip -r ../ss.zip *
 7za a -t7z -r ../ss.7z *
@@ -30,11 +38,11 @@ cd ..
 
 # Move Archives
 # =============
-test -f ow-snapshot.zip -a rm ow-snapshot.zip
-test -f ow-snapshot.7z -a rm ow-snapshot.7z
+if [ -f ow-snapshot.zip ]; then rm ow-snapshot.zip; fi
+if [ -f ow-snapshot.7z ]; then rm ow-snapshot.7z; fi
 mv ss.zip ow-snapshot.zip
 mv ss.7z ow-snapshot.7z
 
 # Final Cleanup
 # =============
-rm -r snapshot.bak
+if [ -d snapshot.bak ]; then rm -r snapshot.bak; fi
