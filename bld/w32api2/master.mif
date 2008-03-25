@@ -50,6 +50,7 @@ base_headers =       &
         errorrep.h   &
         errors.h     &
         evcode.h     &
+        evntprov.h   &
         exdisp.h     &
         exdispid.h   &
         fltdefs.h    &

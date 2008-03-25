@@ -161,6 +161,14 @@ EnumServicesStatusW@32
 EqualDomainSid@12
 EqualPrefixSid@8
 EqualSid@8
+EventActivityIdControl@8
+EventEnabled@12
+EventProviderEnabled@20
+EventRegister@16
+EventUnregister@8
+EventWrite@20
+EventWriteString@24
+EventWriteTransfer@28
 FileEncryptionStatusA@8
 FileEncryptionStatusW@8
 FindFirstFreeAce@8
