@@ -51,6 +51,7 @@ base_headers =       &
         errors.h     &
         evcode.h     &
         evntprov.h   &
+        evntrace.h   &
         exdisp.h     &
         exdispid.h   &
         fltdefs.h    &
@@ -270,6 +271,7 @@ base_headers =       &
         winuser.h    &
         winuser.rh   &
         winver.h     &
+        wmistr.h     &
         ws2def.h     &
         ws2ipdef.h   &
         ws2spi.h     &
