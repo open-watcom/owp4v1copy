@@ -57,6 +57,7 @@ template = &
         clib01$(ext)    &
         cmplx01$(ext)   &
         deque01$(ext)   &
+        deque02$(ext)   &
         fun01$(ext)     &
         iter01$(ext)    &
         lim01$(ext)     &
@@ -100,8 +101,9 @@ extra_cflags_mmwindef += -3
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000 $(extra_cflags_$[*) -fo=.obj
 
 # this is my laziness bit...
-$(names) : .symbolic
-    @%make $^&.$(exe)
+$(names) : test.lnk .symbolic
+    @%make $^*.obj
+    $(linker) @test.lnk NAME $^* FILE $^*
     $(run) $^*
     @echo PASS
 
