@@ -287,7 +287,8 @@ ddk_headers =        &
         bugcodes.h   &
         ntdef.h      &
         ntiologc.h   &
-        ntstatus.h
+        ntstatus.h   &
+        wdm.h
 
 directx_headers =    &
         d3d.h        &

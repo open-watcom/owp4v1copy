@@ -11,6 +11,7 @@
 #define _NTDEF_
 
 :include readonly.sp
+#include <_w32ials.h>
 #include <ctype.h>
 #include <basetsd.h>
 #include <guiddef.h>
@@ -173,6 +174,8 @@ typedef wchar_t                 WCHAR;
 typedef WCHAR                   *PWCHAR;
 typedef WCHAR                   *LPWCH;
 typedef WCHAR                   *PWCH;
+typedef CONST WCHAR             *LPCWCH;
+typedef CONST WCHAR             *PCWCH;
 typedef WCHAR                   *NWPSTR;
 typedef WCHAR                   *LPWSTR;
 typedef WCHAR                   *PWSTR;
