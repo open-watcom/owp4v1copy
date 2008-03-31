@@ -24,17 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  FORTRAN 77 run-time mainline for Windows environments
 *
 ****************************************************************************/
 
-
-//
-// FWINMAIN     : FORTRAN 77 run-time mainline for Windows environments
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rtenv.h"
 #include "rundat.h"
 #include "xfflags.h"
@@ -42,10 +37,6 @@
 #include "fthread.h"
 
 #include <stdlib.h>
-
-extern  int             Spawn(void (*)( void ));
-extern  void            RTSysInit( void );        // see comments in RTMAIN.C
-
 
 #ifdef __WINDOWS__
   #include <win386.h>
@@ -57,6 +48,8 @@ extern  void            RTSysInit( void );        // see comments in RTMAIN.C
   #endif
   #include <windows.h>
 #endif
+// Leave this forward declaration to avoid polluting "ftextfun.h"
+// with Windows headers just for one function
 
 extern  intstar4        FWINMAIN(HANDLE,HANDLE,LPSTR,int);
 

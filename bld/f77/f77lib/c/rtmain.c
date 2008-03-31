@@ -28,8 +28,8 @@
 *
 ****************************************************************************/
 
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rtenv.h"
 #include "rundat.h"
 #include "xfflags.h"
@@ -38,15 +38,12 @@
 
 #include <stdlib.h>
 
-extern  int             Spawn(void (*)( void ));
-
 // FORTRAN 77 run-time system must be initialized before we call
 // user's program. Part of the run-time initialization includes
 // floating-point exception handling which must be done before any
 // floating-point code is executed by the user's program.
 // If a FORTRAN 77 subprogram is called by a C or C++ mainline, an
 // explicit call to RTSysInit() must be made by the caller.
-extern  void            RTSysInit(void);
 
 #if defined( __WINDOWS__ )
 

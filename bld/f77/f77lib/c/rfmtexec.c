@@ -28,41 +28,18 @@
 *
 ****************************************************************************/
 
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rundat.h"
 #include "errcod.h"
 #include "fmtdef.h"
 #include "format.h"
 #include "iotype.h"
 
-extern  void            SendStr(char PGM *,uint);
-extern  void            IOErr(int,...);
-extern  void            RTErr(int,...);
-extern  void            R_NewRec(void);
-extern  void            R_FIStr(void);
-extern  void            R_FOStr(void);
-extern  void            R_FILog(void);
-extern  void            R_FOLog(void);
-extern  void            R_FIInt(void);
-extern  void            R_FOInt(void);
-extern  void            R_FIHex(void);
-extern  void            R_FOHex(void);
-extern  void            R_ChkType(PTYPE,PTYPE);
-extern  void            R_ChkFType(void);
-extern  void            R_ChkIType(void);
-extern  void            R_ChkRecLen(void);
-extern  void            R_FOF(void);
-extern  void            R_FOE(int,char);
-extern  void            R_FOG(void);
-extern  void            R_FIFloat(void);
-extern  void            ArrayIOType(void);
-
 /* Forward declarations */
 static  void    FmtPrepOp( void );
 static  void    FmtIOType( void );
 static  void    ExecCode( void );
-
 
 static  void   R_FEH( uint dummy1 , char dummy2 ) {
 //======================

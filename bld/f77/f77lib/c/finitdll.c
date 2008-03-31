@@ -30,14 +30,10 @@
 
 
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "fthread.h"
 #include "rmemmgr.h"
-
-extern  int             __InitFThreadProcessing(void);
-
-extern  void            (*_ExceptionInit)( void );
-extern  void            (*_ExceptionFini)( void );
-
 
 static void NullTrapRtn( void ) {
 //=========================

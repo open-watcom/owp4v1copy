@@ -24,32 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  set "i/o statement" in IOCB
 *
 ****************************************************************************/
 
-
-//
-// SETIOCB      : set "i/o statement" in IOCB
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rundat.h"
 #include "units.h"
 #include "errcod.h"
 #include "rtenv.h"
 #include "xfflags.h"
 
-#include <string.h>
-
-extern  void            RTErr(int,...);
-
-extern  void            IOSysInit(void);
-extern  void            RTSysInit(void);
-
-
-void            SetIOCB(void) {
+void SetIOCB( void ) {
 //=========================
 
     RTSysInit();

@@ -28,9 +28,9 @@
 *
 ****************************************************************************/
 
-
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "rundat.h"
 #include "xfflags.h"
 #include "errcod.h"
@@ -42,11 +42,6 @@
 #include "_defwin.h"    /* for _WindowsStdout() declaration */
 
 #include <stdlib.h>
-
-extern  void            R_TrapInit(void);
-extern  void            R_TrapFini(void);
-
-extern  char            *_LpPgmName;
 
 #if defined( __WINDOWS__ )
   #if defined( __386__ )
@@ -106,7 +101,6 @@ void    RTSysFini( void ) {
     // WATFOR-77 calls __ErrorFini() when it terminates
     __ErrorFini();
 }
-
 
 unsigned        RTSysInit( void ) {
 //===========================

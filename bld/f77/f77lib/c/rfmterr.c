@@ -24,28 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time format error processor
 *
 ****************************************************************************/
 
-
-//
-// RFMTERR      : Run-time format error processor
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "fmterr.h"
-
-extern  void            RTErr(int errcode,...);
-
 
 void    _R_FError( int err_code ) {
 //=================================
 
     RTErr( err_code );
 }
-
 
 void    _R_FExtension( int dummy ) {
 //=======================

@@ -24,39 +24,35 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  READ/WRITE common
 *
 ****************************************************************************/
 
-
-//
-// RDWR         : READ/WRITE common
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "rundat.h"
 #include "errcod.h"
 
 #include <string.h>
 
-extern  void                    IOErr(int,...);
-extern  void                    F_Connect(void);
-extern  void                    ConnectFile(void);
-extern  void                    ChkUnitId(void);
-extern  void                    FindFtnFile(void);
-extern  void                    ChkIOOperation(ftnfile *);
-extern  void                    SysEOF(void);
-extern  void                    SeekFile(ftnfile *);
-extern  void                    ChkIOErr(ftnfile *);
-extern  void                    OpenAction(ftnfile *);
-extern  bool                    IsCarriage(void);
-extern  char                    *RChkAlloc(int);
+void    DoOpen( void ) {
+//================
 
-extern  char                    NormalCtrlSeq[];
+// Do the actual open of a file.
 
-/* Forward declarations */
-void    DoOpen( void );
+    ftnfile     *fcb;
+    byte        action;
+
+    fcb = IOCB->fileinfo;
+    action = fcb->action;
+    OpenAction( fcb );
+    fcb->flags &= ~FTN_FSEXIST;
+    if( fcb->fileptr != NULL ) {
+        fcb->flags |= FTN_FSEXIST;
+    }
+    ChkIOErr( fcb );
+}
 
 void    _AllocBuffer( ftnfile *fcb ) {
 //====================================
@@ -167,25 +163,6 @@ void    IOPrologue( void ) {
     if( ( IOCB->flags & IOF_OUTPT ) && ( fcb->col == 0 ) ) {
         memset( fcb->buffer, ' ', fcb->bufflen );
     }
-}
-
-
-void    DoOpen( void ) {
-//================
-
-// Do the actual open of a file.
-
-    ftnfile     *fcb;
-    byte        action;
-
-    fcb = IOCB->fileinfo;
-    action = fcb->action;
-    OpenAction( fcb );
-    fcb->flags &= ~FTN_FSEXIST;
-    if( fcb->fileptr != NULL ) {
-        fcb->flags |= FTN_FSEXIST;
-    }
-    ChkIOErr( fcb );
 }
 
 

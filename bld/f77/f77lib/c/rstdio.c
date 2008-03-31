@@ -24,37 +24,30 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  initialize standard i/o
 *
 ****************************************************************************/
 
-
-//
-// RSTDIO       : initialize standard i/o
-//
+#include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
+#include "units.h"
+#include "rundat.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "ftnstd.h"
-#include "units.h"
-#include "rundat.h"
-
-extern  void            *LocUnit(int);
-extern  void            GetSysIOInfo(ftnfile *);
-extern  void            *RChkAlloc(uint);
-extern  bool            __DevicesCC( void );
-
-extern  char            SDTermOut[];
-extern  char            SDTermIn[];
-
+/*
+BartoszP
+These declarations conflicts with all other modules
+file_handle is effectively void *
 extern  file_handle     FStdIn;
 extern  file_handle     FStdOut;
+*/
 
 
-ftnfile *_GetFtnFile( int unit, int mode, void *fp, char *fname ) {
+static ftnfile *_GetFtnFile( int unit, int mode, void *fp, char *fname ) {
 //=================================================================
 
     ftnfile     *fcb;
@@ -86,7 +79,7 @@ ftnfile *_GetFtnFile( int unit, int mode, void *fp, char *fname ) {
 }
 
 
-ftnfile *_SetStd( int unit, int mode, char *term_name, file_handle fp ) {
+static ftnfile *_SetStd( int unit, int mode, char *term_name, file_handle fp ) {
 //=======================================================================
 
     return( _GetFtnFile( unit, mode, fp, term_name ) );

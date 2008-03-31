@@ -30,18 +30,15 @@
 
 
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "errcod.h"
 
 #include <signal.h>
 #include <float.h>
 
-extern  void            RTErr(int,...);
-
 #if (defined( __386__ ) && defined( __OS2__ )) || defined( __NT__ )
   extern        byte    __ExceptionHandled;
 #endif
-
-extern int      __EnableF77RTExceptionHandling( void );
 
 #ifndef __NETWARE__
 

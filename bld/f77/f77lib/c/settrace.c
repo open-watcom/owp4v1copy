@@ -24,30 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  set traceback information
 *
 ****************************************************************************/
 
-
-//
-// SETTRACE     : set traceback information
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "rundat.h"
 #include "rtenv.h"
 #include "trcback.h"
 #include "errcod.h"
 
 #include <string.h>
-
-extern  void            StdWriteNL(char *,int);
-extern  void            MsgBuffer(uint,char *,...);
-extern  void            RTSysInit(void);
-
-extern  void            (*TraceRoutine)(char *);
-
 
 static  void    TraceInfo( char *buff ) {
 //=======================================

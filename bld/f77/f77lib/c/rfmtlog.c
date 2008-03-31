@@ -24,21 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  format logical data
 *
 ****************************************************************************/
 
-
-//
-// RFMTLOG      : format logical data
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rundat.h"
-
-extern  void                    F_SendData(char *,uint);
-
 
 void    R_FmtLog( uint width ) {
 //==============================

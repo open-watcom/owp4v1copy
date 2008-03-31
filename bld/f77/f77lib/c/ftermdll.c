@@ -30,11 +30,9 @@
 
 
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "fthread.h"
 #include "rmemmgr.h"
-
-extern  void            __FiniFThreadProcessing(void);
-
 
 void            __FTermDLL( void ) {
 //==================================

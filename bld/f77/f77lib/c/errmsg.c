@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include "ftnstd.h"
 
 static const char __FAR Msg1536[] = {
@@ -472,7 +471,8 @@ static const char __FAR Msg11008[] = {
 };
 
 
-extern const char __FAR * const __FAR GroupTable[] = {
+//extern const char __FAR * const __FAR GroupTable[] = {
+const char __FAR * const __FAR GroupTable[] = {
      NULL
     ,NULL
     ,NULL
@@ -520,7 +520,8 @@ extern const char __FAR * const __FAR GroupTable[] = {
     };
 
 
-extern const char __FAR ErrWord[] = {
+//extern const char __FAR ErrWord[] = {
+const char __FAR ErrWord[] = {
           3,'n','o','t'
 /* count= 24 Group:offset = EX: 0, EX: 1, EX: 2, FM: 2, FM: 7,... */
           ,2,'i','s'

@@ -24,31 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time READ statement processor
 *
 ****************************************************************************/
 
-
-//
-// EXREAD       : Run-time READ statement processor
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "rundat.h"
 #include "rtenv.h"
 #include "units.h"
-
-extern  void            IOPrologue(void);
-extern  void            UnFmtIn(void);
-extern  void            FreeIn(void);
-extern  void            R_FExec(void);
-extern  void            DiscoFile(ftnfile *);
-extern  int             IOMain(void (*)( void ));
-extern  void            SkipLogicalRecord(ftnfile *);
-
-extern  void            (*FmtRoutine)( void );
-
 
 static  void    ExRead( void ) {
 //========================

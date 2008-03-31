@@ -24,20 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  generates a traceback of the program
 *
 ****************************************************************************/
 
-
-//
-// FTRACEBACK      : generates a traceback of the program
-//
-
 #include "ftnstd.h"
+#include "ftextvar.h"
 #include "cioconst.h"
-
-extern  void            (*TraceRoutine)(char *);
 
 void        fortran FTRACEBACK( void ) {
 //======================================

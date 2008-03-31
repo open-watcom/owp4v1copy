@@ -24,16 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  F77 I/O structures & constants definitions
 *
 ****************************************************************************/
 
+#ifndef _F77_FTNIO_H
+#define _F77_FTNIO_H 1
 
 #ifdef __MT__
-    extern      void    (*_AccessFIO)(void);
-    extern      void    (*_ReleaseFIO)(void);
-    extern      void    (*_PartialReleaseFIO)(void);
+    extern      void    (*_AccessFIO)( void );
+    extern      void    (*_ReleaseFIO)( void );
+    extern      void    (*_PartialReleaseFIO)( void );
 #else
     #define     _AccessFIO()
     #define     _ReleaseFIO()
@@ -58,7 +59,7 @@
   #endif
 #endif
 
-extern  void            SetIOCB(void);
+extern  void            SetIOCB( void );
 #define _SetIOCB()    SetIOCB();
 
 // UNCOMMENT_TOKEN
@@ -291,3 +292,5 @@ enum {
     BLOCKSIZE_SPEC,             // BLOCKSIZE=
     SHARE_SPEC                  // SHARE=
 };
+
+#endif

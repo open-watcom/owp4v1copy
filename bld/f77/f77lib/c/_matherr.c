@@ -24,23 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  math error handler
 *
 ****************************************************************************/
 
-
-//
-// _MATHERR     : math error handler
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "fmath.h"
 #include "mathcode.h"
 #include "errcod.h"
-
-extern  void            RTErr(int,...);
-
 
 intstar4 __imath2err( unsigned int err_info, intstar4 *a1, intstar4 *a2 ) {
 //=========================================================================

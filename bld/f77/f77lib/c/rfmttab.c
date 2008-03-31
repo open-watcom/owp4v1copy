@@ -24,25 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time format table
 *
 ****************************************************************************/
 
-
-//
-// RFMTTAB      : Run-time format table
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "fmttab.h"
-
-extern  void            R_FEmCode(int);
-extern  void            R_FEmChar(char PGM *);
-extern  void            R_FEmNum(int);
-extern  void            R_FEmByte(int);
-extern  void            _R_FError(int);
-extern  void            _R_FExtension(int);
 
 const FmtElements       RFmtStruct = {
         &R_FEmCode,

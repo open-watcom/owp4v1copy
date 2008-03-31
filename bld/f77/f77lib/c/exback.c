@@ -24,32 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time BACKSPACE statement processor
 *
 ****************************************************************************/
 
-
-//
-// EXBACK       : Run-time BACKSPACE statement processor
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "errcod.h"
 #include "rundat.h"
 #include "rtenv.h"
-
-extern  void            ChkUnitId(void);
-extern  bool            FindFtnFile(void);
-extern  void            ChkConnected(void);
-extern  void            ChkExist(void);
-extern  void            ChkSequential(int);
-extern  void            ChkRecordStructure(void);
-extern  void            ClrBuff(void);
-extern  void            BackSpacef(ftnfile *);
-extern  void            ChkIOErr(ftnfile *);
-extern  int             IOMain(void (*)( void ));
-
 
 static  void    ExBkSpace( void ) {
 //===========================

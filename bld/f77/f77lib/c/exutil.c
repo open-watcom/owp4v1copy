@@ -24,24 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time statement processor utilities
 *
 ****************************************************************************/
 
-
-//
-// EXUTIL       : Run-time statement processor utilities
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "errcod.h"
 #include "rundat.h"
 
 #include <string.h>
-
-extern  void            IOErr(int,...);
-extern  uint            StrItem(string PGM *,char *,uint);
 
 #define MAX_KW_LEN      15      // longest keyword in following tables
 

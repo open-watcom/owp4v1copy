@@ -24,17 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  subscripting routines
 *
 ****************************************************************************/
 
-
-//
-// RSUBSCR      : subscripting routines
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rtenv.h"
 #include "errcod.h"
 #include "symdefs.h"
@@ -42,8 +37,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
-
-extern  void            RTErr(int,...);
 
 /* Forward declarations */
 static  void    SubscriptError( int dims, va_list args, char *name );

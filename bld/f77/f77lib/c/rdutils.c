@@ -24,36 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time utilities for READ
 *
 ****************************************************************************/
 
-
-//
-// RDUTILS      : Run-time utilities for READ
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rundat.h"
 #include "errcod.h"
 
 #include <string.h>
 
-extern  void            Suicide(void);
-extern  void            IOErr(int,...);
-extern  bool            NoEOF(ftnfile *);
-extern  void            FGetBuff(ftnfile *);
-extern  void            SetEOF(void);
-extern  void            SysEOF(void);
-extern  void            ChkIOErr(ftnfile *);
-extern  void            NextIFBuff(char *,int,unsigned_32,string PGM *);
-extern  void            UpdateRecNum(ftnfile *);
-
-
 void    NextRec( void ) {
-//=================
-
     ftnfile     *fcb;
 
     fcb = IOCB->fileinfo;

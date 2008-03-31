@@ -24,34 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  INQUIRE statement processor
 *
 ****************************************************************************/
 
-
-//
-// RTINQ        : INQUIRE statement processor
-//
-
 #include "ftnstd.h"
-#include "errcod.h"
+#include "ftextfun.h"
 #include "undef.h"
 #include "rundat.h"
 #include "pgmacc.h"
 
 #include <string.h>
-
-extern  void            ConnectFile(void);
-extern  void            DiscoFile(ftnfile *);
-extern  bool            FindFtnFile(void);
-extern  int             InqDir(ftnfile *);
-extern  int             InqSeq(ftnfile *);
-extern  int             InqFmtd(ftnfile *);
-extern  int             InqUnFmtd(ftnfile *);
-extern  bool            SameFile(char *,char *);
-extern  void            RTErr(int,...);
-extern  int             DfltRecType(ftnfile *);
 
 /* Forward declarations */
 static  void    RTFill( void PGM *dest, int size );

@@ -24,30 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time WRITE statement processor
 *
 ****************************************************************************/
 
-
-//
-// EXWRITE      : Run-time WRITE statement processor
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rundat.h"
 #include "rtenv.h"
 #include "units.h"
-
-extern  void            IOPrologue(void);
-extern  void            UnFmtOut(void);
-extern  void            FreeOut(void);
-extern  void            R_FExec(void);
-extern  void            DiscoFile(ftnfile *);
-extern  int             IOMain(void (*)( void ));
-
-extern  void            (*FmtRoutine)( void );
-
 
 static  void    ExWrite( void ) {
 //=========================

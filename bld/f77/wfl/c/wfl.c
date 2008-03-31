@@ -30,6 +30,7 @@
 
 
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "errcod.h"
 #include "optflags.h"
 #include "cioconst.h"
@@ -46,10 +47,6 @@
 #endif
 #include <process.h>
 #include <malloc.h>
-
-extern  void    MsgBuffer(uint,char *,...);
-extern  void    ShowOptions(char *);
-extern  void    __InitResource(void);
 
 /* forward declarations */
 static  void    Usage( void );

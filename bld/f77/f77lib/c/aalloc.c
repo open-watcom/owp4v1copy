@@ -24,17 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  allocation/deallocation of allocatable arrays
 *
 ****************************************************************************/
-
-
-//
-// AALLOC :     allocation/deallocation of allocatable arrays
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rtenv.h"
 #include "errcod.h"
 #include "falloc.h"
@@ -48,8 +42,6 @@
     #include <win386.h>
   #endif
 #endif
-
-extern  void            RTErr(uint,...);
 
 #define STAT_OK                 0
 #define STAT_NO_MEM             1

@@ -24,28 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time CLOSE statement processor
 *
 ****************************************************************************/
 
-
-//
-// EXCLOSE      : Run-time CLOSE statement processor
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "errcod.h"
 #include "rundat.h"
 #include "rtenv.h"
-
-extern  void            IOErr(int,...);
-extern  bool            FindFtnFile(void);
-extern  void            CloseFile(ftnfile *);
-extern  void            CloseDeleteFile(ftnfile *);
-extern  int             FindKWord(char **,int,int,string PGM *);
-extern  void            DiscoFile(ftnfile *);
-extern  int             IOMain(void (*)( void ));
 
 //
 // ClStatTab - close status table

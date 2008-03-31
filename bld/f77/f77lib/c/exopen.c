@@ -24,42 +24,22 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time OPEN statement processor
 *
 ****************************************************************************/
 
-
-//
-// EXOPEN       : Run-time OPEN statement processor
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "errcod.h"
 #include "rundat.h"
 #include "rtenv.h"
-
-extern  bool            FindFtnFile(void);
-extern  void            GetFileInfo(void);
-extern  void            F_Connect(void);
-extern  void            DoOpen(void);
-extern  void            ChkUnitId(void);
-extern  void            DiscoFile(ftnfile *);
-extern  void            IOErr(int,...);
-extern  bool            SameFile(char *,char *);
-extern  bool            Scrtched(ftnfile *);
-extern  void            CloseFile(ftnfile *);
-extern  void            SysCreateFile(ftnfile *);
-extern  int             FindKWord(char **,int,int,string PGM *);
-extern  int             IOMain(void (*)( void ));
-extern  bool            IsDevice(ftnfile *);
-extern  bool            __DevicesCC(void);
 
 //
 // AccModTab - access mode table
 //
 
-char            *AccModTab[] = {
+char *AccModTab[] = {
         "sequential",
         "direct",
         "append",
@@ -69,7 +49,7 @@ char            *AccModTab[] = {
 // FormTab - formatted or unformatted table
 //
 
-char            *FormTab[] = {
+char *FormTab[] = {
         "formatted",
         "unformatted",
         NULL };
@@ -78,7 +58,7 @@ char            *FormTab[] = {
 // OpStatTab - open status table
 //
 
-char            *OpStatTab[] = {
+char *OpStatTab[] = {
         "unknown",
         "old",
         "new",
@@ -89,7 +69,7 @@ char            *OpStatTab[] = {
 // BlnkTab - blank table
 //
 
-char            *BlnkTab[] = {
+char *BlnkTab[] = {
         "null",
         "zero",
         NULL };
@@ -98,7 +78,7 @@ char            *BlnkTab[] = {
 // RecFmTab - record format table
 //
 
-char    *RecFmTab[] = {
+char *RecFmTab[] = {
         "fixed",
         "variable",
         "text",
@@ -108,7 +88,7 @@ char    *RecFmTab[] = {
 // CCtrlTab - carriage control table
 //
 
-char    *CCtrlTab[] = {
+char *CCtrlTab[] = {
         "yes",
         "no",
         NULL };
@@ -117,7 +97,7 @@ char    *CCtrlTab[] = {
 // ActionTab - action table
 //
 
-char    *ActionTab[] = {
+char *ActionTab[] = {
         "read",
         "write",
         "readwrite",
@@ -127,16 +107,13 @@ char    *ActionTab[] = {
 // ShareTab - share table
 //
 
-char    *ShareTab[] = {
+char *ShareTab[] = {
         "compat",
         "denyrw",
         "denywr",
         "denyrd",
         "denynone",
         NULL };
-
-extern  char    *SpecId[];
-
 
 static  void    ExOpen( void ) {
 //========================

@@ -24,25 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  "FILEDEF" utilities
 *
 ****************************************************************************/
 
-
-//
-// FDUTIL    : "FILEDEF" utilities
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "ftnio.h"
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-extern  void                    *RChkAlloc(uint);
-
 
 void    *LocFile( char *name ) {
 //==============================

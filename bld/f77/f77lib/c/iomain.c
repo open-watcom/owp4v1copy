@@ -24,29 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  I/O statement entry point
 *
 ****************************************************************************/
 
-
-//
-// IOMAIN       : I/O statement entry point
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rundat.h"
 #include "xfflags.h"
 #include "iotype.h"
 #include "errcod.h"
-
-extern  void            RTErr(int,...);
-extern  int             Spawn(void (*)( void ));
-extern  void            Suicide(void);
-extern  void            ClearEOF(void);
-extern  void            DiscoFile(ftnfile *);
-extern  void            SkipLogicalRecord(ftnfile *);
-
 
 void            __ReleaseIOSys( void ) {
 //================================

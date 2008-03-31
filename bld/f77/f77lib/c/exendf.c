@@ -24,34 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time ENDFILE statement processor
 *
 ****************************************************************************/
 
-
-//
-// EXENDF       : Run-time ENDFILE statement processor
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "errcod.h"
 #include "rundat.h"
 #include "rtenv.h"
-
-extern  void            ChkUnitId(void);
-extern  bool            FindFtnFile(void);
-extern  void            ChkConnected(void);
-extern  void            ChkIOOperation(ftnfile *);
-extern  void            ChkSequential(int);
-extern  void            ClrBuff(void);
-extern  void            SysCreateFile(ftnfile *);
-extern  bool            NoEOF(ftnfile *);
-extern  void            EndFilef(ftnfile *);
-extern  void            ChkIOErr(ftnfile *);
-extern  void            SetEOF(void);
-extern  int             IOMain(void (*)( void ));
-
 
 static  void    ExEndFile( void ) {
 //===========================

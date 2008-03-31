@@ -30,6 +30,7 @@
 
 
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rundat.h"
 #include "errcod.h"
 #include "fmtdef.h"
@@ -46,31 +47,11 @@
 #include <limits.h>
 #include <string.h>
 
-extern  void            SendEOR(void);
-extern  void            SendStr(char PGM *,uint);
-extern  void            SendChar(char,int);
-extern  void            Drop(char);
-extern  void            NextRec(void);
-extern  void            IOErr(int,...);
-extern  void            R_F2F(extended,char *,int,int,bool,int);
-extern  void            R_F2E(extended,char *,int,int,bool,int,int,char);
-extern  int             FmtS2I(char *,int,bool,intstar4 *,bool,int *);
-extern  int             FmtS2F(char *,int,int,bool,int,int,extended *,bool,int *,bool);
-extern  void            *RChkAlloc(uint);
-extern  void            SetMaxPrec(int);
-extern  void            BToHS(char *,int,char *);
-extern  byte            Hex(byte);
-extern  void            CheckCCtrl(void);
-extern  void            R_FmtLog(uint);
-extern  bool            __AllowCommaSep(void);
-
 /* Forward declarations */
 static  void    HexFlip( char *src, int len );
 static  void    OutInt( uint width, uint min );
 void    ChkBuffLen( uint width );
 void    R_FOHex( void );
-
-
     
 #if defined( _M_IX86 ) || defined( __AXP__ ) || defined( __PPC__ )
 

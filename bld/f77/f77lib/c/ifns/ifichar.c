@@ -24,22 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  convert character to integer
 *
 ****************************************************************************/
 
-
-//
-// IFICHAR      : convert character to integer
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "ifenv.h"
 #include "errcod.h"
-
-extern  void            RTErr(int,...);
-
 
 intstar4        ICHAR( string PGM *arg ) {
 //========================================

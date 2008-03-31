@@ -28,24 +28,11 @@
 *
 ****************************************************************************/
 
-
 #include "ftnstd.h"
-#include "units.h"
+#include "ftextfun.h"
 #include "rundat.h"
-#include "cioconst.h"
-#include "errcod.h"
 #include "xfflags.h"
-#include "iotype.h"
 #include "rmemmgr.h"
-
-#include <string.h>
-
-extern  int             Spawn(void (*)( void ));
-extern  void            DiscoFile(ftnfile *);
-extern  bool            Scrtched(ftnfile *);
-extern  void            CloseFile(ftnfile *);
-extern  void            *RChkAlloc(uint);
-extern  void            InitStd(void);
 
 static  bool    __IsUnit6CC = { FALSE };
 static  bool    __AllowCommaSeparator = { FALSE };
@@ -57,13 +44,11 @@ void    __InitUnit6CC( void ) {
     __IsUnit6CC = TRUE;
 }
 
-
 bool    __DevicesCC( void ) {
 //=====================
 
     return( __IsUnit6CC );
 }
-
 
 void    __InitAllowCommaSeparator( void ) {
 //===================================
@@ -71,13 +56,11 @@ void    __InitAllowCommaSeparator( void ) {
     __AllowCommaSeparator = TRUE;
 }
 
-
 bool    __AllowCommaSep( void ) {
 //=========================
 
     return( __AllowCommaSeparator );
 }
-
 
 int    _InitIO( void ) {
 //================
@@ -95,13 +78,11 @@ int    _InitIO( void ) {
     return 0;
 }
 
-
 static  void    DoCloseFile( void ) {
 //=============================
 
     CloseFile( Files );
 }
-
 
 void    CloseAllFiles( void ) {
 //=======================
@@ -118,7 +99,6 @@ void    CloseAllFiles( void ) {
     }
 }
 
-
 void    _FiniEx( void ) {
 //=================
 
@@ -131,7 +111,6 @@ void    _FiniEx( void ) {
     }
 }
 
-
 bool    RunEntry( void ) {
 //==================
 
@@ -139,7 +118,6 @@ bool    RunEntry( void ) {
     Spawn( (void(*)( void ))_InitIO );
     return( ( __XcptFlags & XF_FATAL_ERROR ) == 0 );
 }
-
 
 void    RunExit( void ) {
 //=================

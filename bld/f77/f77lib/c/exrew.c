@@ -24,30 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time REWIND statement processor
 *
 ****************************************************************************/
 
-
-//
-// EXREW        : Run-time REWIND statement processor
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "errcod.h"
 #include "rundat.h"
 #include "rtenv.h"
-
-extern  void            ChkUnitId(void);
-extern  void            ChkConnected(void);
-extern  bool            FindFtnFile(void);
-extern  void            ChkSequential(int);
-extern  void            Rewindf(ftnfile *);
-extern  void            ChkIOErr(ftnfile *);
-extern  void            ClrBuff(void);
-extern  int             IOMain(void (*)( void ));
-
 
 static  void    RewindFile( ftnfile *fcb ) {
 //==========================================

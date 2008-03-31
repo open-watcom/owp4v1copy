@@ -24,25 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  carriage control processing
 *
 ****************************************************************************/
 
-
-//
-// CCTRL        : carriage control processing
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "rundat.h"
 
 #include <string.h>
-
-extern  bool                    IsCarriage(void);
-
-extern  char                    NormalCtrlSeq[];
-
 
 void            CheckCCtrl( void ) {
 //============================

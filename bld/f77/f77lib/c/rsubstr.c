@@ -24,22 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  character substringing routines
 *
 ****************************************************************************/
 
-
-//
-// RSUBSTR      : character substringing routines
-//
-
 #include "ftnstd.h"
-#include "rtenv.h"
+#include "ftextfun.h"
 #include "errcod.h"
-
-extern  void            RTErr(int,...);
-
+#include "rtenv.h"
 
 void    Substring( string *src, intstar4 start, intstar4 end, string *dst ) {
 //===========================================================================

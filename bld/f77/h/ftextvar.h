@@ -33,14 +33,40 @@
 
 #include "csetinfo.h"
 #include "fio.h"
+#include "fmttab.h"
 
 extern  character_set    CharSetInfo;
 extern  long            FileShift;
+extern  b_file           *FStdErr;
 extern  b_file           *FStdIn;
 extern  b_file           *FStdOut;
-extern  b_file           *FStdErr;
+//conflicting from rstdio.c; file_handle is effectively void
+// above versions pass f77/regress tests
+//extern  file_handle     FStdIn;
+//extern  file_handle     FStdOut;
+extern  char            *_LpPgmName;
+extern  char            DefFName[];
+extern  char            NormalCtrlSeq[];
+extern  char            SDTermOut[];
+extern  char            SDTermIn[];
+extern  char            *SpecId[];
 extern  char            __FAR ErrWord[];
-extern  char            __FAR * __FAR GroupTable[];
 extern  char            __FAR GrpCodes[];
+extern  const byte      __FAR SizeVars[];
+extern  char            __FAR * __FAR GroupTable[];
+
+extern  void            (*FmtRoutine)( void );
+extern  void            (*TraceRoutine)( char * );
+extern  void            (*_ExceptionInit)( void );
+extern  void            (*_ExceptionFini)( void );
+extern  void            (*_AccessFIO)( void );
+extern  void            (*_ReleaseFIO)( void );
+extern  void            (*_PartialReleaseFIO)( void );
+// eliminate const as freeout.c says so
+extern  void            (* /*const*/ __FAR OutRtn[])( void );
+
+extern const            FmtElements RFmtStruct;
+
+
 
 #endif

@@ -30,6 +30,8 @@
 
 
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "rundat.h"
 #include "errcod.h"
 #include "sdfile.h"
@@ -52,40 +54,16 @@
   #endif
 #endif
 
-extern  void            ChkIOErr(ftnfile *);
-extern  bool            GetIOErr(ftnfile *);
-extern  void            SetEOF(void);
-extern  char            *JmpBlanks(char *);
-extern  void            IOErr(int,...);
-extern  file_handle     Openf(char *,int);
-extern  void            Closef(file_handle);
-extern  void            FPutRec(file_handle,char *,int);
-extern  int             FGetRec(file_handle,char *,int);
-extern  void            FSeekRec(file_handle,unsigned_32,int);
-extern  void            Scratchf(char *);
-extern  int             Errorf(file_handle);
-extern  void            FSetErr(int,file_handle);
-extern  void            FSetSysErr(file_handle);
-extern  void            FSetEof(file_handle);
-extern  void            IOOk(file_handle);
-extern  char            *ErrorMsg(file_handle);
-extern  void            FTruncate(file_handle);
-extern  void            FBackspace(file_handle,int);
-extern  void            FRewind(file_handle);
-extern  char            GetStdChar(void);
-extern  void            SetIOBufferSize(uint);
-extern  int             FlushBuffer(file_handle);
-extern  int             FSkipLogical(file_handle);
-extern  int             FCheckLogical(file_handle);
-
 /* Forward declarations */
 static  void    SysIOInfo( ftnfile *fcb );
 static  void    ChkDisk( ftnfile *fcb );
 int     _FileAttrs( ftnfile *fcb );
 
+/*
 extern  file_handle     FStdIn;
 extern  file_handle     FStdOut;
 extern  file_handle     FStdErr;
+*/
 
 #define SYS_DFLT_RECSIZE        1024;
 

@@ -29,6 +29,8 @@
 *
 ****************************************************************************/
 
+#ifndef _F77_SYMDEFS_H
+#define _F77_SYMDEFS_H 1
 
 #define MAX_DIM 7               //  maximum # of dimensions allowed
 #define STD_SYMLEN      6       //  maximum length of a FORTRAN name (standard)
@@ -129,3 +131,5 @@ typedef struct eq_entry {               //  encoding of EQUIVALENCE statement
     byte                substr;         //  indicates whether substrung or not
     byte                subs_no;        //  number of subscripts
 } eq_entry;
+
+#endif

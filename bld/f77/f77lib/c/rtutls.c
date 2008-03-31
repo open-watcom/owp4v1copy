@@ -28,44 +28,22 @@
 *
 ****************************************************************************/
 
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
+#include "units.h"
 #include "rundat.h"
 #include "errcod.h"
-#include "flagdefn.h"
-#include "units.h"
-#include "deffname.h"
 #include "rmemmgr.h"
+#include "deffname.h"
 
 #include <string.h>
-
-extern  int             Spawn(void (*)( void ));
-extern  void            Suicide(void);
-extern  void            RTErr(int,...);
-extern  void            IOErr(int,...);
-extern  bool            Errf(ftnfile *);
-extern  void            GetSysFileInfo(ftnfile *);
-extern  bool            NoEOF(ftnfile *);
-extern  void            SysClearEOF(ftnfile *);
-extern  void            ReportEOF(ftnfile *);
-extern  void            ReportNExist(ftnfile *);
-extern  pointer         LocUnit(int);
-extern  pointer         LocFile(char *);
-extern  void            ExtractInfo(char *,ftnfile *);
-extern  void            TrimStr(string PGM *src,string *res);
-extern  void            GetStr(string *str,char *res);
-extern  ftnfile         *_InitStandardOutput( void );
-extern  ftnfile         *_InitStandardInput( void );
-
-extern  char            DefFName[];
 
 /* Forward declarations */
 void    F_Connect( void );
 void    ChkFileName( void );
 void    GetFileInfo( void );
 void    ChkLogFile( void );
-void    DiscoFile( ftnfile *old );
-
 
 static ftnfile *SearchFtnFile( int unit ) {
 //=========================================
@@ -198,37 +176,11 @@ void    GetFileInfo( void ) {
     ChkFileName();
 }
 
-
 static  void    SysFileInfo( void ) {
 //=============================
 
     GetSysFileInfo( IOCB->fileinfo );
 }
-
-
-void    ChkFileName( void ) {
-//=====================
-
-    ChkLogFile();
-    if( Spawn( &SysFileInfo ) != 0 ) {
-        DiscoFile( IOCB->fileinfo );
-        Suicide();
-    }
-}
-
-
-void    ChkLogFile( void ) {
-//====================
-
-    pointer     handle;
-
-    handle = LocFile( IOCB->fileinfo->filename );
-    if( handle != NULL ) {
-        RMemFree( IOCB->fileinfo->filename );
-        ExtractInfo( handle, IOCB->fileinfo );
-    }
-}
-
 
 void    DiscoFile( ftnfile *old ) {
 //=================================
@@ -256,6 +208,30 @@ void    DiscoFile( ftnfile *old ) {
     }
     RMemFree( old );
 }
+
+void    ChkFileName( void ) {
+//=====================
+
+    ChkLogFile();
+    if( Spawn( &SysFileInfo ) != 0 ) {
+        DiscoFile( IOCB->fileinfo );
+        Suicide();
+    }
+}
+
+
+void    ChkLogFile( void ) {
+//====================
+
+    pointer     handle;
+
+    handle = LocFile( IOCB->fileinfo->filename );
+    if( handle != NULL ) {
+        RMemFree( IOCB->fileinfo->filename );
+        ExtractInfo( handle, IOCB->fileinfo );
+    }
+}
+
 
 
 void    ChkIOOperation( ftnfile *fcb ) {

@@ -24,33 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Free-format output
 *
 ****************************************************************************/
 
-
-//
-// FREEOUT      : Free-format output
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "rundat.h"
 #include "iotype.h"
 #include "undefrtn.h"
 
 #include <string.h>
-
-extern  void            SendEOR(void);
-extern  void            F_SendData(char *,uint);
-extern  void            CheckCCtrl(void);
-extern  void            Drop(char);
-extern  void            OutLogCG(void);
-extern  void            OutIntCG(void);
-extern  void            IOItemResult(char PGM *,PTYPE);
-
-extern  const byte      __FAR SizeVars[];
-
 
 static  void    OutReal( void ) {
 //=========================

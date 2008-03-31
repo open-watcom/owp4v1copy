@@ -41,6 +41,7 @@ asm_src_ppc = ../../asmppc;../../../asmppc
 .c: ../../c;../../../c;../../c/math;../../c/ifns;../../c/ufns
 
 #-------------------------------------------------------------------------------
+#cc = wcl -c -cc++ 
 
 $(libname).lib : $(files)
     @%create $(libname).lbc

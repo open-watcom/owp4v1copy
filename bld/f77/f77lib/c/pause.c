@@ -24,28 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PAUSE statement (for optimizing compiler)
 *
 ****************************************************************************/
 
-
-//
-// PAUSE        : PAUSE statement (for optimizing compiler)
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "rtenv.h"
 #include "ftnio.h"
 
 #include <string.h>
-
-extern  void            StdWrite(char *,int);
-extern  void            FlushStdUnit(void);
-extern  void            WaitForEnter(void);
-extern  void            StdBuffer(void);
-extern  void            StdFlush(void);
-extern  void            RTSysInit(void);
 
 // this is used by the load and go debugger in _SA_LIBRARY
 

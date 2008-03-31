@@ -24,24 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  array i/o support routines
 *
 ****************************************************************************/
 
-
-//
-// ARRAYIO      : array i/o support routines
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "rundat.h"
 #include "iotype.h"
-
-extern  void            IOItemResult(char PGM *,PTYPE);
-
-extern  const byte      __FAR SizeVars[];
-
 
 static  void    NextArrayItem(void) {
 //===============================
@@ -67,7 +58,6 @@ static  void    NextArrayItem(void) {
         IOCB->flags &= ~IOF_ARRAY_IO;
     }
 }
-
 
 void    ArrayIOType(void) {
 //=====================

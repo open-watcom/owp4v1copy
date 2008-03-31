@@ -24,17 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run-time error processor (for optimizing code generator)
 *
 ****************************************************************************/
 
-
-//
-// RTERR        : Run-time error processor (for optimizing code generator)
-//
-
 #include "ftnstd.h"
+#include "ftextfun.h"
+#include "ftextvar.h"
 #include "errcod.h"
 #include "rundat.h"
 #include "cioconst.h"
@@ -44,32 +40,12 @@
 #include <stdarg.h>
 #include <string.h>
 
-extern  void            Suicide(void);
-extern  void            BldErrCode(unsigned int ,char *);
-extern  int             ErrCodOrg(uint);
-extern  void            StdWriteNL(char *,int);
-extern  int             FlushBuffer(file_handle);
-extern  void            StdBuffer(void);
-extern  void            StdFlush(void);
-extern  int             __EnterWVIDEO(char far *);
-extern  void            RTSysInit(void);
-
-extern  void            (* __BldErrMsg)(unsigned int ,char *,va_list args);
-extern  file_handle     FStdOut;
-
-/* Forward declarations */
-void    ErrHandler( int errcode, va_list args );
-void    WriteErr( int errcode, va_list args );
-void    FlushStdUnit( void );
-
-
-void                    (*TraceRoutine)(char *) = { NULL };
-
 #define ERR_PREF_SIZE   5
 #define ERR_CODE_SIZE   6
 
-static  char            ErrorPref[] = { "*ERR*" };
+void    (*TraceRoutine)(char *) = { NULL };
 
+static  char            ErrorPref[] = { "*ERR*" };
 
 static void noHook( int errcod, char *buffer ) {
 //==============================================
@@ -80,35 +56,21 @@ static void noHook( int errcod, char *buffer ) {
     }
 }
 
-void                    (*ERR_HOOK)(int,char *) = noHook;
+void    (*ERR_HOOK)( int , char * ) = noHook;
 
+void    FlushStdUnit( void ) {
+//======================
 
-void    RTErr( int errcode, ... ) {
-//=================================
+    ftnfile     *fcb;
 
-// Print a run-time error message and halt execution.
-
-    va_list     args;
-
-    RTSysInit();
-    va_start( args, errcode );
-    ErrHandler( errcode, args );
-    va_end( args );
-}
-
-
-void    ErrHandler( int errcode, va_list args ) {
-//===============================================
-
-// Print a run-time error message and halt exection.
-
-    WriteErr( errcode, args );
-    __XcptFlags |= XF_FATAL_ERROR;
-    if( !(__XcptFlags & XF_IO_INTERRUPTED) ) {
-        Suicide();
+    fcb = Files;
+    for(;;) {
+        if( fcb == NULL ) return;
+        if( fcb->fileptr == FStdOut ) break;
+        fcb = fcb->link;
     }
+    FlushBuffer( FStdOut );
 }
-
 
 void    WriteErr( int errcode, va_list args ) {
 //=============================================
@@ -135,17 +97,27 @@ void    WriteErr( int errcode, va_list args ) {
     _ReleaseFIO();
 }
 
+void    ErrHandler( int errcode, va_list args ) {
+//===============================================
 
-void    FlushStdUnit( void ) {
-//======================
+// Print a run-time error message and halt exection.
 
-    ftnfile     *fcb;
-
-    fcb = Files;
-    for(;;) {
-        if( fcb == NULL ) return;
-        if( fcb->fileptr == FStdOut ) break;
-        fcb = fcb->link;
+    WriteErr( errcode, args );
+    __XcptFlags |= XF_FATAL_ERROR;
+    if( !(__XcptFlags & XF_IO_INTERRUPTED) ) {
+        Suicide();
     }
-    FlushBuffer( FStdOut );
+}
+
+void    RTErr( int errcode, ... ) {
+//=================================
+
+// Print a run-time error message and halt execution.
+
+    va_list     args;
+
+    RTSysInit();
+    va_start( args, errcode );
+    ErrHandler( errcode, args );
+    va_end( args );
 }

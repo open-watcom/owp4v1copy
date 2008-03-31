@@ -28,8 +28,8 @@
 *
 ****************************************************************************/
 
-
 #include "ftnstd.h"
+#include "ftextfun.h"
 #include "errcod.h"
 #include "xfflags.h"
 #include "rundat.h"
@@ -67,11 +67,7 @@
   #define       _handler
 #endif
 
-extern void             RTErr(int,...);
-extern void             FPTrapInit(void);
-extern void             FPTrapFini(void);
-
-typedef void            (*fsig_func)(intstar4);
+typedef void            (*fsig_func)( intstar4 );
 
 #if defined( __WINDOWS_386__ )
 

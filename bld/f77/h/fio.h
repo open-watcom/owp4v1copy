@@ -48,7 +48,8 @@ typedef struct a_file {                 // file with no buffered i/o
 #endif
 
 typedef struct b_file {                 // file with buffered i/o
-    unsigned_16 attrs;                  // file attributes
+    f_attrs     attrs;                  // file attributes
+    /* unsigned_16 attrs;                  // file attributes */
     int         handle;                 // DOS handle
     int         stat;                   // error status
     long int    phys_offset;            // physical offset in file
