@@ -280,7 +280,8 @@ void procCOMENT( unsigned len )
     comment_class = get_b();
     switch( comment_class ) {
     case CMT_EASY_OMF:
-    case CMT_MS_OMF:
+// MS C 6.0 (16-bit) generates these comments...
+//    case CMT_MS_OMF:
         obj_32 = 1;
         break;
     }
