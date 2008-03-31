@@ -44,8 +44,9 @@ dpmi_ldr.exe : loader16.obj dpmi_ldr.obj int21win.obj
 
 # we don't need to link w386run with wstub.exe
 # this will make it about 14k smaller
+# NB: DOS4GOPTIONS export is disabled due to incompatibility with DOS/4G 2.x
 d4grun.exe : d4grun.obj cmain32.obj int21dos.obj
-   $(linker) system dos4g name w386run file d4grun.obj,cmain32.obj,int21dos.obj option stack=32k,map export DOS4GOPTIONS=_DOS4GOPTIONS
+   $(linker) system dos4g name w386run file d4grun.obj,cmain32.obj,int21dos.obj option stack=32k,map #export DOS4GOPTIONS=_DOS4GOPTIONS
    $(rsi_root)\bin\4gbind $(rsi_root)\bin\dos4g.exe w386run.exe d4grun.exe -V
 
 dbgrun.exe : d4grun.obj cmain32.obj int21dos.obj

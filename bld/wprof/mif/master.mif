@@ -41,7 +41,8 @@ extra_c_flags_os2       = -D__OS2_PM__
 extra_l_flags_nt        = op stack=30k
 extra_l_flags_os2       = op stack=32k
 extra_l_flags_qnx       = op stack=32k, offset=36k, priv=3, res=../h/wprof.u
-extra_l_flags_dos       = op map,stack=20k export DOS4GOPTIONS=_DOS4GOPTIONS
+# NB: DOS4GOPTIONS export is disabled due to incompatibility with DOS/4G 2.x
+extra_l_flags_dos       = op map,stack=20k #export DOS4GOPTIONS=_DOS4GOPTIONS
 
 
 # resources stuff
