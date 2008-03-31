@@ -285,6 +285,7 @@ base_headers =       &
 
 ddk_headers =        &
         bugcodes.h   &
+        mce.h        &
         ntdef.h      &
         ntiologc.h   &
         ntstatus.h   &
