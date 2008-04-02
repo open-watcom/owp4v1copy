@@ -1673,6 +1673,7 @@ typedef struct _EX_RUNDOWN_REF_CACHE_AWARE      *PEX_RUNDOWN_REF_CACHE_AWARE;
 typedef struct _CALLBACK_OBJECT                 *PCALLBACK_OBJECT;
 typedef struct _IO_REMOVE_LOCK_TRACKING_BLOCK   *PIO_REMOVE_LOCK_TRACKING_BLOCK;
 typedef struct _IO_WORKITEM                     *PIO_WORKITEM;
+typedef struct _ADAPTER_OBJECT                  *PADAPTER_OBJECT;
 
 /* Opaque data types related to security */
 typedef PVOID   PACCESS_TOKEN;
@@ -3744,6 +3745,7 @@ typedef enum _KINTERRUPT_POLARITY {
     InterruptActiveHigh         = 1,
     InterruptActiveLow          = 2
 } KINTERRUPT_POLARITY;
+typedef KINTERRUPT_POLARITY *PKINTERRUPT_POLARITY;
 
 /* Kernel wait reasons */
 typedef enum _KWAIT_REASON {

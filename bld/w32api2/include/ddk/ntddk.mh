@@ -1,0 +1,3718 @@
+/*
+ *  ntddk.h     NT Device Driver Kit (DDK) functions
+ *
+:include crwatcnt.sp
+ */
+
+#ifndef _NTDDK_H_INCLUDED
+#define _NTDDK_H_INCLUDED
+
+#ifndef _NTDDK_
+#define _NTDDK_
+
+:include readonly.sp
+#include <wdm.h>
+#include <mce.h>
+
+:include cpluspro.sp
+
+/* Primitive data types */
+typedef GUID    UUID;
+typedef ULONG   NODE_REQUIREMENT;
+typedef USHORT  WHEA_ERROR_RECORD_ID;
+typedef USHORT  *PWHEA_ERROR_RECORD_ID;
+
+/* Kernel stack sizes */
+#ifdef _X86_
+    #define KERNEL_STACK_SIZE           12288
+    #define KERNEL_LARGE_STACK_SIZE     61440
+    #define KERNEL_LARGE_STACK_COMMIT   12288
+#endif
+
+/* Size of the 80387 registers in the x86 context record */
+#ifdef _X86_
+    #define SIZE_OF_80387_REGISTERS 80
+#endif
+
+/* Context flags for the x86 processor */
+#ifdef _X86_
+    #define CONTEXT_i386               0x00010000L
+    #define CONTEXT_i486               0x00010000L
+    #define CONTEXT_CONTROL            (CONTEXT_i386 | 0x00000001L)
+    #define CONTEXT_INTEGER            (CONTEXT_i386 | 0x00000002L)
+    #define CONTEXT_SEGMENTS           (CONTEXT_i386 | 0x00000004L)
+    #define CONTEXT_FLOATING_POINT     (CONTEXT_i386 | 0x00000008L)
+    #define CONTEXT_DEBUG_REGISTERS    (CONTEXT_i386 | 0x00000010L)
+    #define CONTEXT_EXTENDED_REGISTERS (CONTEXT_i386 | 0x00000020L)
+    #define CONTEXT_FULL \
+        (CONTEXT_CONTROL | CONTEXT_INTEGER | CONTEXT_SEGMENTS)
+    #define CONTEXT_ALL  \
+        (CONTEXT_CONTROL | CONTEXT_INTEGER | CONTEXT_SEGMENTS | \
+        CONTEXT_FLOATING_POINT | CONTEXT_DEBUG_REGISTERS | \
+        CONTEXT_EXTENDED_REGISTERS)
+#endif
+
+/* Size of the extended registers in the x86 context record */
+#ifdef _X86_
+    #define MAXIMUM_SUPPORTED_EXTENSION 512
+#endif
+
+/* Unsolicited input privilege */
+#define SE_UNSOLICITED_INPUT_PRIVILEGE  6L
+
+/* Run once initializer */
+#define RTL_RUN_ONCE_INIT   { 0 }
+
+/* Run once flags */
+#define RTL_RUN_ONCE_CHECK_ONLY     0x00000001L
+#define RTL_RUN_ONCE_ASYNC          0x00000002L
+#define RTL_RUN_ONCE_INIT_FAILED    0x00000004L
+
+/* Stack walking mode frames to skip shift */
+#define RTL_STACK_WALKING_MODE_FRAMES_TO_SKIP_SHIFT 8
+
+/* Version comparison operators */
+#define VER_EQUAL           1
+#define VER_GREATER         2
+#define VER_GREATER_EQUAL   3
+#define VER_LESS            4
+#define VER_LESS_EQUAL      5
+#define VER_AND             6
+#define VER_OR              7
+
+/* Version information types */
+#define VER_MINORVERSION        0x00000001L
+#define VER_MAJORVERSION        0x00000002L
+#define VER_BUILDNUMBER         0x00000004L
+#define VER_PLATFORMID          0x00000008L
+#define VER_SERVICEPACKMINOR    0x00000010L
+#define VER_SERVICEPACKMAJOR    0x00000020L
+#define VER_SUITENAME           0x00000040L
+#define VER_PRODUCT_TYPE        0x00000080L
+
+/* Version product types */
+#define VER_NT_WORKSTATION          0x01
+#define VER_NT_DOMAIN_CONTROLLER    0x02
+#define VER_NT_SERVER               0x03
+
+/* Version platform identifiers */
+#define VER_PLATFORM_WIN32s         0L
+#define VER_PLATFORM_WIN32_WINDOWS  1L
+#define VER_PLATFORM_WIN32_NT       2L
+
+/* File device characteristics */
+#define FILE_CHARACTERISTICS_EXPECT_ORDERLY_REMOVAL     0x00000200L
+#define FILE_CHARACTERISTICS_EXPECT_SURPRISE_REMOVAL    0x00000300L
+#define FILE_CHARACTERISTICS_REMOVAL_POLICY_MASK        0x00000300L
+#define FILE_CHARACTERISTICS_PROPAGATED \
+    (FILE_REMOVABLE_MEDIA | FILE_READ_ONLY_DEVICE | FILE_FLOPPY_DISKETTE | \
+    FILE_WRITE_ONCE_MEDIA | FILE_DEVICE_SECURE_OPEN)
+
+/* AVIO device I/O control codes */
+#define IOCTL_AVIO_ALLOCATE_STREAM \
+    CTL_CODE( FILE_DEVICE_AVIO, 1, METHOD_BUFFERED, FILE_SPECIAL_ACCESS )
+#define IOCTL_AVIO_FREE_STREAM \
+    CTL_CODE( FILE_DEVICE_AVIO, 2, METHOD_BUFFERED, FILE_SPECIAL_ACCESS )
+#define IOCTL_AVIO_MODIFY_STREAM \
+    CTL_CODE( FILE_DEVICE_AVIO, 3, METHOD_BUFFERED, FILE_SPECIAL_ACCESS )
+
+/* Registry key flags */
+#define REG_KEY_DONT_JOURNAL        1L
+#define REG_KEY_DONT_VIRTUALIZE     2L
+#define REG_KEY_DONT_SILENT_FAIL    4L
+#define REG_KEY_RECURSE_FLAG        8L
+
+/* Process device map flags */
+#define PROCESS_LUID_DOSDEVICES_ONLY    0x00000001L
+
+/* Maximum number of process handle tracing stacks */
+#define PROCESS_HANDLE_TRACING_MAX_STACKS   16
+
+/* Quota limits flags */
+#define QUOTA_LIMITS_HARDWS_MIN_ENABLE  0x00000001L
+#define QUOTA_LIMITS_HARDWS_MIN_DISABLE 0x00000002L
+#define QUOTA_LIMITS_HARDWS_MAX_ENABLE  0x00000004L
+#define QUOTA_LIMITS_HARDWS_MAX_DISABLE 0x00000008L
+#define QUOTA_LIMITS_USE_DEFAULT_LIMITS 0x00000010L
+
+/* Rate phrase constants */
+#define PS_RATE_PHASE_BITS  4
+#define PS_RATE_PHASE_MASK  ((1UL << PS_RATE_PHASE_BITS) - 1)
+
+/* Process exception port state flags */
+#define PROCESS_EXCEPTION_PORT_ALL_STATE_BITS   3
+#define PROCESS_EXCEPTION_PORT_ALL_STATE_FLAGS \
+    ((ULONG_PTR)((1 << PROCESS_EXCEPTION_PORT_ALL_STATE_BITS) - 1))
+
+/* Processor control region version numbers */
+#ifdef _X86_
+    #define PCR_MINOR_VERSION   1
+    #define PCR_MAJOR_VERSION   1
+#endif
+
+/* Various shifts */
+#ifdef _X86_
+    #define PDI_SHIFT_X86       22
+    #define PDI_SHIFT_X86PAE    21
+    #define PDI_SHIFT           PDI_SHIFT_X86
+    #define PPI_SHIFT           30
+    #define PTI_SHIFT           12
+#endif
+
+/* Guard page size */
+#ifdef _X86_
+    #define GUARD_PAGE_SIZE PAGE_SIZE
+#endif
+
+/* Memory management special addresses */
+#ifdef _X86_
+    #define MM_SYSTEM_SPACE_END         0xFFFFFFFF
+    #define MM_LOWEST_USER_ADDRESS      ((PVOID)0x00010000)
+    #define MM_LOWEST_SYSTEM_ADDRESS    ((PVOID)0xC0C00000)
+#endif
+
+/* Driver verifier flags */
+#define DRIVER_VERIFIER_SPECIAL_POOLING             0x0001
+#define DRIVER_VERIFIER_FORCE_IRQL_CHECKING         0x0002
+#define DRIVER_VERIFIER_INJECT_ALLOCATION_FAILURES  0x0004
+#define DRIVER_VERIFIER_TRACK_POOL_ALLOCATIONS      0x0008
+#define DRIVER_VERIFIER_IO_CHECKING                 0x0010
+
+/* Maximum number of WOW64 shared entries */
+#define MAX_WOW64_SHARED_ENTRIES    16
+
+/* NX support policy values */
+#define NX_SUPPORT_POLICY_ALWAYSOFF 0
+#define NX_SUPPORT_POLICY_ALWAYSON  1
+#define NX_SUPPORT_POLICY_OPTIN     2
+#define NX_SUPPORT_POLICY_OPTOUT    3
+
+/* Shared global flags */
+#define SHARED_GLOBAL_FLAGS_ERROR_PORT_V                0
+#define SHARED_GLOBAL_FLAGS_ERROR_PORT                  0x00000001L
+#define SHARED_GLOBAL_FLAGS_ELEVATION_ENABLED_V         1
+#define SHARED_GLOBAL_FLAGS_ELEVATION_ENABLED           0x00000002L
+#define SHARED_GLOBAL_FLAGS_VIRT_ENABLED_V              2
+#define SHARED_GLOBAL_FLAGS_VIRT_ENABLED                0x00000004L
+#define SHARED_GLOBAL_FLAGS_INSTALLER_DETECT_ENABLED_V  3
+#define SHARED_GLOBAL_FLAGS_INSTALLER_DETECT_ENABLED    0x00000008L
+
+/* Maximum resource type */
+#define CmResourceTypeMaximum   8
+
+/* PC card flags */
+#define PCCARD_MAP_ERROR        0x01
+#define PCCARD_DEVICE_PCI       0x10
+
+/* PC card error codes */
+#define PCCARD_SCAN_DISABLED    0x01
+#define PCCARD_MAP_ZERO         0x02
+#define PCCARD_NO_TIMER         0x03
+#define PCCARD_NO_PIC           0x04
+#define PCCARD_NO_LEGACY_BASE   0x05
+#define PCCARD_DUP_LEGACY_BASE  0x06
+#define PCCARD_NO_CONTROLLERS   0x07
+
+/* Maximum expansion size */
+#define MAXIMUM_EXPANSION_SIZE  (KERNEL_LARGE_STACK_SIZE - (PAGE_SIZE / 2 ))
+
+/* Pool tag high order bit */
+#define PROTECTED_POOL  0x80000000L
+
+/* Node requirement special value */
+#define MM_ANY_NODE_OK  0x80000000L
+
+/* Image addressing modes */
+#define IMAGE_ADDRESSING_MODE_32BIT 3
+
+/* I/O request packet minor function codes for directory control */
+#define IRP_MN_QUERY_DIRECTORY          0x01
+#define IRP_MN_NOTIFY_CHANGE_DIRECTORY  0x02
+
+/* I/O request packet minor function codes for file system control */
+#define IRP_MN_USER_FS_REQUEST  0x00
+#define IRP_MN_MOUNT_VOLUME     0x01
+#define IRP_MN_VERIFY_VOLUME    0x02
+#define IRP_MN_LOAD_FILE_SYSTEM 0x03
+#define IRP_MN_TRACK_LINK       0x04
+#define IRP_MN_KERNEL_CALL      0x04
+
+/* I/O request packet minor function codes for lock control */
+#define IRP_MN_LOCK                 0x01
+#define IRP_MN_UNLOCK_SINGLE        0x02
+#define IRP_MN_UNLOCK_ALL           0x03
+#define IRP_MN_UNLOCK_ALL_BY_KEY    0x04
+
+/* I/O request packet flush minor function code */
+#define IRP_MN_FLUSH_AND_PURGE  0x01
+
+/* I/O request packet minor function codes for read and write */
+#define IRP_MN_NORMAL           0x00
+#define IRP_MN_DPC              0x01
+#define IRP_MN_MDL              0x02
+#define IRP_MN_COMPLETE         0x04
+#define IRP_MN_COMPRESSED       0x08
+#define IRP_MN_MDL_DPC          (IRP_MN_MDL | IRP_MN_DPC)
+#define IRP_MN_COMPLETE_MDL     (IRP_MN_COMPLETE | IRP_MN_MDL)
+#define IRP_MN_COMPLETE_MDL_DPC (IRP_MN_COMPLETE_MDL | IRP_MN_DPC)
+#define IRP_MN_QUERY_LEGACY_BUS_INFORMATION 0x18
+
+/* Device object flags */
+#define DO_DEVICE_HAS_NAME          0x00000040L
+#define DO_SYSTEM_BOOT_PARTITION    0x00000100L
+#define DO_LONG_TERM_REQUESTS       0x00000200L
+#define DO_NEVER_LAST_DEVICE        0x00000400L
+#define DO_LOW_PRIORITY_FILESYSTEM  0x00010000L
+#define DO_SUPPORTS_TRANSACTIONS    0x00040000L
+#define DO_FORCE_NEITHER_IO         0x00080000L
+
+/* Driver object flags */
+#define DRVO_REINIT_REGISTERED      0x00000008L
+#define DRVO_INITIALIZED            0x00000010L
+#define DRVO_BOOTREINIT_REGISTERED  0x00000020L
+#define DRVO_LEGACY_RESOURCES       0x00000040L
+
+/* Arbiter flags */
+#define ARBITER_FLAG_BOOT_CONFIG    0x00000001L
+
+/* Arbiter interface flags */
+#define ARBITER_PARTIAL 0x00000001L
+
+/* Hardware abstraction layer dispatch table version number */
+#define HAL_DISPATCH_VERSION    3
+
+/* Hardware abstraction layer MCE constants */
+#ifdef _X86_
+    #define HAL_MCE_INTERRUPTS_BASED    0xFFFFFFFFL
+    #define HAL_MCE_DISABLED            0x00000000L
+    #define HAL_CMC_INTERRUPTS_BASED    HAL_MCE_INTERRUPTS_BASED
+    #define HAL_CMC_DISABLED            HAL_MCE_DISABLED
+    #define HAL_CPE_INTERRUPTS_BASED    HAL_MCE_INTERRUPTS_BASED
+    #define HAL_CPE_DISABLED            HAL_MCE_DISABLED
+    #define HAL_MCA_INTERRUPTS_BASED    HAL_MCE_INTERRUPTS_BASED
+    #define HAL_MCA_DISABLED            HAL_MCE_DISABLED
+#endif
+
+/* Hardware abstraction layer platform flags */
+#define HAL_PLATFORM_DISABLE_WRITE_COMBINING        0x00000001L
+#define HAL_PLATFORM_DISABLE_PTCG                   0x00000004L
+#define HAL_PLATFORM_DISABLE_UC_MAIN_MEMORY         0x00000008L
+#define HAL_PLATFORM_ENABLE_WRITE_COMBINING_MMIO    0x00000010L
+#define HAL_PLATFORM_ACPI_TABLES_CACHED             0x00000020L
+
+/* PCI AGP rates */
+#define PCI_AGP_RATE_1X 0x00000001L
+#define PCI_AGP_RATE_2X 0x00000002L
+#define PCI_AGP_RATE_4X 0x00000004L
+
+/* PCI bus mode frequencies */
+#define PCIX_MODE_CONVENTIONAL_PCI  0x00000000L
+#define PCIX_MODE1_66MHZ            0x00000001L
+#define PCIX_MODE1_100MHZ           0x00000002L
+#define PCIX_MODE1_133MHZ           0x00000003L
+#define PCIX_MODE2_266_66MHZ        0x00000009L
+#define PCIX_MODE2_266_100MHZ       0x0000000AL
+#define PCIX_MODE2_266_133MHZ       0x0000000BL
+#define PCIX_MODE2_533_66MHZ        0x0000000DL
+#define PCIX_MODE2_533_100MHZ       0x0000000EL
+#define PCIX_MODE2_533_133MHZ       0x0000000FL
+
+/* PCI version numbers */
+#define PCIX_VERSION_MODE1_ONLY     0x00000000L
+#define PCIX_VERSION_MODE2_ECC      0x00000001L
+#define PCIX_VERSION_DUAL_MODE_ECC  0x00000002L
+
+/* OSC flags */
+#define OSC_FIRMWARE_FAILURE        0x02
+#define OSC_UNRECOGNIZED_UUID       0x04
+#define OSC_UNRECOGNIZED_REVISION   0x08
+#define OSC_CAPABILITIES_MASKED     0x10
+
+/* PCI root bus OSC method capability revision */
+#define PCI_ROOT_BUS_OSC_METHOD_CAPABILITY_REVISION 0x01
+
+/* PCI data tag and version number */
+#define PCI_DATA_TAG        ' ICP'
+#define PCI_DATA_VERSION    1
+
+/* PCI bus interface standard version number */
+#define PCI_BUS_INTERFACE_STANDARD_VERSION  1
+
+/* Windows Hardware Error Architecture interrupt types */
+#define WHEA_INTERRUPT_TYPE_FAULT   0x01
+#define WHEA_INTERRUPT_TYPE_TRAP    0x02
+#define WHEA_INTERRUPT_TYPE_ABORT   0x03
+#define WHEA_INTERRUPT_TYPE_NMI     0x04
+#define WHEA_INTERRUPT_TYPE_EXT     0x05
+
+/* Windows Hardware Error Architecture version numbers */
+#define WHEA_ERROR_RECORD_DESCRIPTOR_VERSION    10L
+#define WHEA_ERROR_SOURCE_DESCRIPTOR_VERSION    10L
+#define WHEA_ERROR_STATUS_DESCRIPTOR_VERSION    10L
+
+/* Windows Hardware Error Architecture error source flags */
+#define WHEA_ERROR_SOURCE_FLAG_DEFAULTSOURCE    0x00000001L
+
+/* Error types */
+#define ERRTYP_INTERNAL         0x01
+#define ERRTYP_BUS              0x10
+#define ERRTYP_MEM              0x04
+#define ERRTYP_TLB              0x05
+#define ERRTYP_CACHE            0x06
+#define ERRTYP_FUNCTION         0x07
+#define ERRTYP_SELFTEST         0x08
+#define ERRTYP_FLOW             0x09
+#define ERRTYP_MAP              0x11
+#define ERRTYP_IMPROPER         0x12
+#define ERRTYP_UNIMPL           0x13
+#define ERRTYP_LOSSOFLOCKSTEP   0x14
+#define ERRTYP_RESPONSE         0x15
+#define ERRTYP_PARITY           0x16
+#define ERRTYP_PROTOCOL         0x17
+#define ERRTYP_PATHERROR        0x18
+#define ERRTYP_TIMEOUT          0x19
+#define ERRTYP_POISONED         0x1A
+
+/* Generic processor error codes */
+#define GENPROC_VALID_PROCTYPE              0x0000000000000001LL
+#define GENPROC_VALID_PROCISA               0x0000000000000002LL
+#define GENPROC_VALID_PROCERROR_TYPE        0x0000000000000004LL
+#define GENPROC_VALID_OPERATION             0x0000000000000008LL
+#define GENPROC_VALID_FLAGS                 0x0000000000000010LL
+#define GENPROC_VALID_LEVEL                 0x0000000000000020LL
+#define GENPROC_VALID_CPUVERSION            0x0000000000000040LL
+#define GENPROC_VALID_CPUBRAND              0x0000000000000080LL
+#define GENPROC_VALID_PROCID                0x0000000000000100LL
+#define GENPROC_VALID_TARGETADDRESS         0x0000000000000200LL
+#define GENPROC_VALID_REQUESTORID           0x0000000000000400LL
+#define GENPROC_VALID_RESPONDERID           0x0000000000000800LL
+#define GENPROC_VALID_INSTRUCTIONPOINTER    0x0000000000001000LL
+
+/* Generic processor types */
+#define GENPROC_PROCTYPE_XPF    0
+#define GENPROC_PROCTYPE_IPF    1
+
+/* Generic processor instruction sets */
+#define GENPROC_PROCISA_X86     0
+#define GENPROC_PROCISA_IA64    1
+#define GENPROC_PROCISA_X64     2
+
+/* Generic processor error types */
+#define GENPROC_PROCERRTYPE_UNKNOWN 0
+#define GENPROC_PROCERRTYPE_CACHE   1
+#define GENPROC_PROCERRTYPE_TLB     2
+#define GENPROC_PROCERRTYPE_BUS     3
+#define GENPROC_PROCERRTYPE_MAE     4
+
+/* Generic processor operations */
+#define GENPROC_OP_GENERIC          0
+#define GENPROC_OP_DATAREAD         1
+#define GENPROC_OP_DATAWRITE        2
+#define GENPROC_OP_INSTRUCTIONEXE   3
+
+/* Generic processor flags */
+#define GENPROC_FLAGS_RESTARTABLE   0x01
+#define GENPROC_FLAGS_PRECISEIP     0x02
+#define GENPROC_FLAGS_OVERFLOW      0x04
+#define GENPROC_FLAGS_CORRECTED     0x08
+
+/* XPF cache check flags */
+#define XPF_CACHE_CHECK_VALID_TRANSACTIONTYPE       0x0001
+#define XPF_CACHE_CHECK_VALID_OPERATION             0x0002
+#define XPF_CACHE_CHECK_VALID_LEVEL                 0x0004
+#define XPF_CACHE_CHECK_VALID_PROCESSORCTXCORRUPT   0x0008
+#define XPF_CACHE_CHECK_VALID_UNCORRECTED           0x0010
+#define XPF_CACHE_CHECK_VALID_PRECISEIP             0x0020
+#define XPF_CACHE_CHECK_VALID_RESTARTABLE           0x0040
+#define XPF_CACHE_CHECK_VALID_OVERFLOW              0x0080
+
+/* XPF cache check transaction types */
+#define XPF_CACHE_CHECK_TRANSACTIONTYPE_INSTRUCTION 0
+#define XPF_CACHE_CHECK_TRANSACTIONTYPE_DATAACCESS  1
+#define XPF_CACHE_CHECK_TRANSACTIONTYPE_GENERIC     2
+
+/* XPF cache check operations */
+#define XPF_CACHE_CHECK_OPERATION_GENERROR          0
+#define XPF_CACHE_CHECK_OPERATION_GENREAD           1
+#define XPF_CACHE_CHECK_OPERATION_GENWRITE          2
+#define XPF_CACHE_CHECK_OPERATION_DATAREAD          3
+#define XPF_CACHE_CHECK_OPERATION_DATAWRITE         4
+#define XPF_CACHE_CHECK_OPERATION_INSTRUCTIONFETCH  5
+#define XPF_CACHE_CHECK_OPERATION_PREFETCH          6
+#define XPF_CACHE_CHECK_OPERATION_EVICTION          7
+#define XPF_CACHE_CHECK_OPERATION_SNOOP             8
+
+/* XPF TLB check flags */
+#define XPF_TLB_CHECK_VALID_TRANSACTIONTYPE     0x0001
+#define XPF_TLB_CHECK_VALID_OPERATION           0x0002
+#define XPF_TLB_CHECK_VALID_LEVEL               0x0004
+#define XPF_TLB_CHECK_VALID_PROCESSORCTXCORRUPT 0x0008
+#define XPF_TLB_CHECK_VALID_UNCORRECTED         0x0010
+#define XPF_TLB_CHECK_VALID_PRECISEIP           0x0020
+#define XPF_TLB_CHECK_VALID_RESTARTABLE         0x0040
+#define XPF_TLB_CHECK_VALID_OVERFLOW            0x0080
+
+/* XPF TLB check transaction types */
+#define XPF_TLB_CHECK_TRANSACTIONTYPE_INSTRUCTION   0
+#define XPF_TLB_CHECK_TRANSACTIONTYPE_DATAACCESS    1
+#define XPF_TLB_CHECK_TRANSACTIONTYPE_GENERIC       2
+
+/* XPF TLB check operations */
+#define XPF_TLB_CHECK_OPERATION_GENERROR            0
+#define XPF_TLB_CHECK_OPERATION_GENREAD             1
+#define XPF_TLB_CHECK_OPERATION_GENWRITE            2
+#define XPF_TLB_CHECK_OPERATION_DATAREAD            3
+#define XPF_TLB_CHECK_OPERATION_DATAWRITE           4
+#define XPF_TLB_CHECK_OPERATION_INSTRUCTIONFETCH    5
+#define XPF_TLB_CHECK_OPERATION_PREFETCH            6
+
+/* XPF bus check flags */
+#define XPF_BUS_CHECK_VALID_TRANSACTIONTYPE     0x0001
+#define XPF_BUS_CHECK_VALID_OPERATION           0x0002
+#define XPF_BUS_CHECK_VALID_LEVEL               0x0004
+#define XPF_BUS_CHECK_VALID_PROCESSORCTXCORRUPT 0x0008
+#define XPF_BUS_CHECK_VALID_UNCORRECTED         0x0010
+#define XPF_BUS_CHECK_VALID_PRECISEIP           0x0020
+#define XPF_BUS_CHECK_VALID_RESTARTABLE         0x0040
+#define XPF_BUS_CHECK_VALID_OVERFLOW            0x0080
+#define XPF_BUS_CHECK_VALID_PARTICIPATIONTYPE   0x0100
+#define XPF_BUS_CHECK_VALID_TIMEOUT             0x0200
+#define XPF_BUS_CHECK_VALID_ADDRESSSPACE        0x0400
+
+/* XPF bus check transaction types */
+#define XPF_BUS_CHECK_TRANSACTIONTYPE_INSTRUCTION   0
+#define XPF_BUS_CHECK_TRANSACTIONTYPE_DATAACCESS    1
+#define XPF_BUS_CHECK_TRANSACTIONTYPE_GENERIC       2
+
+/* XPF bus check operations */
+#define XPF_BUS_CHECK_OPERATION_GENERROR            0
+#define XPF_BUS_CHECK_OPERATION_GENREAD             1
+#define XPF_BUS_CHECK_OPERATION_GENWRITE            2
+#define XPF_BUS_CHECK_OPERATION_DATAREAD            3
+#define XPF_BUS_CHECK_OPERATION_DATAWRITE           4
+#define XPF_BUS_CHECK_OPERATION_INSTRUCTIONFETCH    5
+#define XPF_BUS_CHECK_OPERATION_PREFETCH            6
+
+/* XPF bus check participation types */
+#define XPF_BUS_CHECK_PARTICIPATION_PROCORIGINATED  0
+#define XPF_BUS_CHECK_PARTICIPATION_PROCRESPONDED   1
+#define XPF_BUS_CHECK_PARTICIPATION_PROCOBSERVED    2
+#define XPF_BUS_CHECK_PARTICIPATION_GENERIC         3
+
+/* XPF bus check address spaces */
+#define XPF_BUS_CHECK_ADDRESS_MEMORY    0
+#define XPF_BUS_CHECK_ADDRESS_RESERVED  1
+#define XPF_BUS_CHECK_ADDRESS_IO        2
+#define XPF_BUS_CHECK_ADDRESS_OTHER     3
+
+/* XPF micro-architecture specific check flags */
+#define XPF_MS_CHECK_VALID_ERRORTYPE            0x0001
+#define XPF_MS_CHECK_VALID_PROCESSORCTXCORRUPT  0x0002
+#define XPF_MS_CHECK_VALID_UNCORRECTED          0x0004
+#define XPF_MS_CHECK_VALID_PRECISEIP            0x0008
+#define XPF_MS_CHECK_VALID_RESTARTABLE          0x0010
+#define XPF_MS_CHECK_VALID_OVERFLOW             0x0020
+
+/* XPF micro-architecture specific check error types */
+#define XPF_MS_CHECK_ERRORTYPE_NOERROR              0
+#define XPF_MS_CHECK_ERRORTYPE_UNCLASSIFIED         1
+#define XPF_MS_CHECK_ERRORTYPE_MCROMPARITY          2
+#define XPF_MS_CHECK_ERRORTYPE_EXTERNAL             3
+#define XPF_MS_CHECK_ERRORTYPE_FRC                  4
+#define XPF_MS_CHECK_ERRORTYPE_INTERNALUNCLASSIFIED 5
+
+/* XPF processor error flags */
+#define XPF_PROCESSOR_VALID_LOCALAPICID         0x0000000000000001LL
+#define XPF_PROCESSOR_VALID_CPUIDINFO           0x0000000000000002LL
+#define XPF_PROCESSOR_VALID_CHECKSECTIONCOUNT   0x000000000003FFF0LL
+#define XPF_PROCESSOR_VALID_MCGCAPMSR           0x0000000000040000LL
+#define XPF_PROCESSOR_VALID_MCGSTATUSMSR        0x0000000000080000LL
+#define XPF_PROCESSOR_VALID_MCGCTLMSR           0x0000000000100000LL
+#define XPF_PROCESSOR_VALID_MCMSRCOUNT          0x000000001FE00000LL
+
+/* XPF processor information flags */
+#define XPF_PROCINFO_VALID_CHECKINFO            0x0000000000000001LL
+#define XPF_PROCINFO_VALID_TARGETID             0x0000000000000002LL
+#define XPF_PROCINFO_VALID_REQUESTERID          0x0000000000000004LL
+#define XPF_PROCINFO_VALID_RESPONDERID          0x0000000000000008LL
+#define XPF_PROCINFO_VALID_INSTRUCTIONPOINTER   0x0000000000000010LL
+
+/* IA64 processor information flags */
+#define IA64_PROCESSOR_INFO_CHECKINFOVALID          0x0000000000000001LL
+#define IA64_PROCESSOR_INFO_TARGETIDVALID           0x0000000000000002LL
+#define IA64_PROCESSOR_INFO_REQUESTERIDVALID        0x0000000000000004LL
+#define IA64_PROCESSOR_INFO_RESPONDERIDVALID        0x0000000000000008LL
+#define IA64_PROCESSOR_INFO_INSTRUCTIONPOINTERVALID 0x0000000000000010LL
+
+/* XPF context information constants */
+#define XPF_CONTEXT_INFO_UNCLASSIFIEDDATA   0
+#define XPF_CONTEXT_INFO_MSRREGISTERS       1
+#define XPF_CONTEXT_INFO_32BITCONTEXT       2
+#define XPF_CONTEXT_INFO_64BITCONTEXT       3
+#define XPF_CONTEXT_INFO_MMREGISTERS        4
+
+/* Windows Hardware Error Architecture memory error flags */
+#define WHEA_MEMERR_VALID_ERRORSTATUS   0x0000000000000001LL
+#define WHEA_MEMERR_VALID_PHYSADDR      0x0000000000000002LL
+#define WHEA_MEMERR_VALID_PHYSADDRMASK  0x0000000000000004LL
+#define WHEA_MEMERR_VALID_NODE          0x0000000000000008LL
+#define WHEA_MEMERR_VALID_CARD          0x0000000000000010LL
+#define WHEA_MEMERR_VALID_MODULE        0x0000000000000020LL
+#define WHEA_MEMERR_VALID_BANK          0x0000000000000040LL
+#define WHEA_MEMERR_VALID_DEVICE        0x0000000000000080LL
+#define WHEA_MEMERR_VALID_ROW           0x0000000000000100LL
+#define WHEA_MEMERR_VALID_COLUMN        0x0000000000000200LL
+#define WHEA_MEMERR_VALID_BITPOSITION   0x0000000000000400LL
+#define WHEA_MEMERR_VALID_REQUESTORID   0x0000000000000800LL
+#define WHEA_MEMERR_VALID_RESPONDERID   0x0000000000001000LL
+#define WHEA_MEMERR_VALID_TARGET        0x0000000000002000LL
+#define WHEA_MEMERR_VALID_ERRORTYPE     0x0000000000003000LL
+
+/* Windows Hardware Error Architecture memory error types */
+#define WHEA_MEMERRTYPE_UNKNOWN             0x00
+#define WHEA_MEMERRTYPE_NOERROR             0x01
+#define WHEA_MEMERRTYPE_SINGLEBITECC        0x02
+#define WHEA_MEMERRTYPE_MULTIBITECC         0x03
+#define WHEA_MEMERRTYPE_SINGLESYMCHIPKILL   0x04
+#define WHEA_MEMERRTYPE_MULTISYMCHIPKILL    0x05
+#define WHEA_MEMERRTYPE_MASTERABORT         0x06
+#define WHEA_MEMERRTYPE_TARGETABORT         0x07
+#define WHEA_MEMERRTYPE_PARITYERROR         0x08
+#define WHEA_MEMERRTYPE_WATCHDOGTIMEOUT     0x09
+#define WHEA_MEMERRTYPE_INVALIDADDRESS      0x0A
+#define WHEA_MEMERRTYPE_MIRRORBROKEN        0x0B
+#define WHEA_MEMERRTYPE_MEMORYSPARING       0x0C
+
+/* Windows Hardware Error Architecture PCI express error flags */
+#define WHEA_PCIEERR_VALID_PORTTYPE         0x0000000000000001LL
+#define WHEA_PCIEERR_VALID_VERSION          0x0000000000000002LL
+#define WHEA_PCIEERR_VALID_CMDSTATUS        0x0000000000000004LL
+#define WHEA_PCIEERR_VALID_DEVICEID         0x0000000000000008LL
+#define WHEA_PCIEERR_VALID_DEVICESN         0x0000000000000010LL
+#define WHEA_PCIEERR_VALID_BRIDGECTLSTATUS  0x0000000000000020LL
+#define WHEA_PCIEERR_VALID_CAPSTRUCTURE     0x0000000000000040LL
+#define WHEA_PCIEERR_VALID_AERINFO          0x0000000000000080LL
+
+/* PCI bus error types */
+#define PCIX_BUS_ERRTYPE_UNKNOWN            0x0000
+#define PCIX_BUS_ERRTYPE_DATAPARITY         0x0001
+#define PCIX_BUS_ERRTYPE_SYSTEM             0x0002
+#define PCIX_BUS_ERRTYPE_MASTERABORT        0x0003
+#define PCIX_BUS_ERRTYPE_BUSTIMEOUT         0x0004
+#define PCIX_BUS_ERRTYPE_MASTERDATAPARITY   0x0005
+#define PCIX_BUS_ERRTYPE_ADDRESSPARITY      0x0006
+#define PCIX_BUS_ERRTYPE_COMMANDPARITY      0x0007
+
+/* Windows Hardware Error Architecture error packet signature and version number */
+#define WHEA_ERROR_PKT_SIGNATURE    'tPrE'
+#define WHEA_ERROR_PKT_VERSION      2
+
+/* Windows Hardware Error Architecture error packet flags */
+#define WHEA_ERROR_PKT_FLAGS_PREVERROR  0x00000001L
+#define WHEA_ERROR_PKT_FLAGS_CPUVALID   0x00000002L
+
+/* Windows Hardware Error Architecture section descriptor validation flags */
+#define WHEA_SECTION_DESCRIPTOR_VALID_FRUID     0x01
+#define WHEA_SECTION_DESCRIPTOR_VALID_FRUSTRING 0x02
+
+/* Windows Hardware Error Architecture section descriptor flags */
+#define WHEA_SECTION_DESCRIPTOR_FLAGS_PRIMARY           0x00000001L
+#define WHEA_SECTION_DESCRIPTOR_FLAGS_CONTAINMENTWRN    0x00000002L
+#define WHEA_SECTION_DESCRIPTOR_FLAGS_RESET             0x00000004L
+#define WHEA_SECTION_DESCRIPTOR_FLAGS_THRESHOLDEXCEEDED 0x00000008L
+#define WHEA_SECTION_DESCRIPTOR_FLAGS_RESOURCENA        0x00000010L
+#define WHEA_SECTION_DESCRIPTOR_FLAGS_LATENTERROR       0x00000020L
+
+/* Windows Hardware Error Architecture section descriptor revision */
+#define WHEA_SECTION_DESCRIPTOR_REVISION    0x0100
+
+/* Windows Hardware Error Architecture error record flags */
+#define WHEA_ERROR_RECORD_FLAGS_RECOVERED       0x00000001L
+#define WHEA_ERROR_RECORD_FLAGS_PREVIOUSERROR   0x00000002L
+#define WHEA_ERROR_RECORD_FLAGS_SIMULATED       0x00000004L
+
+/* Windows Hardware Error Architecture error record revision */
+#define WHEA_ERROR_RECORD_REVISION  0x0100
+
+/* Windows Hardware Error Architecture error record validation flags */
+#define WHEA_ERROR_RECORD_VALID_PLATFORMID  0x00000001L
+#define WHEA_ERROR_RECORD_VALID_TIMESTAMP   0x00000002L
+#define WHEA_ERROR_RECORD_VALID_PARTITIONID 0x00000004L
+
+/* Windows Hardware Error Architecture hardware description length */
+#define WHEA_HARDWARE_DESCRIPTION_LENGTH    20
+
+/* Windows Hardware Error Architecture error record signature and version number */
+#define WHEA_ERROR_RECORD_SIGNATURE 'REPC'
+#define WHEA_ERROR_RECORD_VERSION   1
+
+/* Windows Hardware Error Architecture error identifier special value */
+#define WHEA_ERROR_SER_ID_UNSPECIFIED   0
+
+/* Opaque data types */
+typedef struct _PEB         *PPEB;
+typedef struct _BUS_HANDLER *PBUS_HANDLER;
+
+/* Floating save area for the x86 context */
+#ifdef _X86_
+typedef struct _FLOATING_SAVE_AREA {
+    ULONG   ControlWord;
+    ULONG   StatusWord;
+    ULONG   TagWord;
+    ULONG   ErrorOffset;
+    ULONG   ErrorSelector;
+    ULONG   DataOffset;
+    ULONG   DataSelector;
+    UCHAR   RegisterArea[SIZE_OF_80387_REGISTERS];
+    ULONG   Cr0NpxState;
+} FLOATING_SAVE_AREA;
+typedef FLOATING_SAVE_AREA  *PFLOATING_SAVE_AREA;
+#endif
+
+/* Context record for the x86 processor */
+#ifdef _X86_
+typedef struct _CONTEXT {
+    ULONG               ContextFlags;
+    ULONG               Dr0;
+    ULONG               Dr1;
+    ULONG               Dr2;
+    ULONG               Dr3;
+    ULONG               Dr6;
+    ULONG               Dr7;
+    FLOATING_SAVE_AREA  FloatSave;
+    ULONG               SegGs;
+    ULONG               SegFs;
+    ULONG               SegEs;
+    ULONG               SegDs;
+    ULONG               Edi;
+    ULONG               Esi;
+    ULONG               Ebx;
+    ULONG               Edx;
+    ULONG               Ecx;
+    ULONG               Eax;
+    ULONG               Ebp;
+    ULONG               Eip;
+    ULONG               SegCs;
+    ULONG               EFlags;
+    ULONG               Esp;
+    ULONG               SegSs;
+    UCHAR               ExtendedRegisters[MAXIMUM_SUPPORTED_EXTENSION];
+} CONTEXT;
+typedef CONTEXT *PCONTEXT;
+#endif
+
+/* Well known SID types */
+typedef enum {
+    WinNullSid                                  = 0,
+    WinWorldSid                                 = 1,
+    WinLocalSid                                 = 2,
+    WinCreatorOwnerSid                          = 3,
+    WinCreatorGroupSid                          = 4,
+    WinCreatorOwnerServerSid                    = 5,
+    WinCreatorGroupServerSid                    = 6,
+    WinNtAuthoritySid                           = 7,
+    WinDialupSid                                = 8,
+    WinNetworkSid                               = 9,
+    WinBatchSid                                 = 10,
+    WinInteractiveSid                           = 11,
+    WinServiceSid                               = 12,
+    WinAnonymousSid                             = 13,
+    WinProxySid                                 = 14,
+    WinEnterpriseControllersSid                 = 15,
+    WinSelfSid                                  = 16,
+    WinAuthenticatedUserSid                     = 17,
+    WinRestrictedCodeSid                        = 18,
+    WinTerminalServerSid                        = 19,
+    WinRemoteLogonIdSid                         = 20,
+    WinLogonIdsSid                              = 21,
+    WinLocalSystemSid                           = 22,
+    WinLocalServiceSid                          = 23,
+    WinNetworkServiceSid                        = 24,
+    WinBuiltinDomainSid                         = 25,
+    WinBuiltinAdministratorsSid                 = 26,
+    WinBuiltinUsersSid                          = 27,
+    WinBuiltinGuestsSid                         = 28,
+    WinBuiltinPowerUsersSid                     = 29,
+    WinBuiltinAccountOperatorsSid               = 30,
+    WinBuiltinSystemOperatorsSid                = 31,
+    WinBuiltinPrintOperatorsSid                 = 32,
+    WinBuiltinBackupOperatorsSid                = 33,
+    WinBuiltinReplicatorSid                     = 34,
+    WinBuiltinPreWindows2000CompatibleAccessSid = 35,
+    WinBuiltinRemoteDesktopUsersSid             = 36,
+    WinBuiltinNetworkConfigurationOperatorsSid  = 37,
+    WinAccountAdministratorSid                  = 38,
+    WinAccountGuestSid                          = 39,
+    WinAccountKrbtgtSid                         = 40,
+    WinAccountDomainAdminsSid                   = 41,
+    WinAccountDomainUsersSid                    = 42,
+    WinAccountDomainGuestsSid                   = 43,
+    WinAccountComputersSid                      = 44,
+    WinAccountControllersSid                    = 45,
+    WinAccountCertAdminsSid                     = 46,
+    WinAccountSchemaAdminsSid                   = 47,
+    WinAccountEnterpriseAdminsSid               = 48,
+    WinAccountPolicyAdminsSid                   = 49,
+    WinAccountRasAndIasServersSid               = 50,
+    WinNTLMAuthenticationSid                    = 51,
+    WinDigestAuthenticationSid                  = 52,
+    WinSChannelAuthenticationSid                = 53,
+    WinThisOrganizationSid                      = 54,
+    WinOtherOrganizationSid                     = 55,
+    WinBuiltinIncomingForestTrustBuildersSid    = 56,
+    WinBuiltinPerfMonitoringUsersSid            = 57,
+    WinBuiltinPerfLoggingUsersSid               = 58,
+    WinBuiltinAuthorizationAccessSid            = 59,
+    WinBuiltinTerminalServerLicenseServersSid   = 60,
+    WinBuiltinDCOMUsersSid                      = 61,
+    WinBuiltinIUsersSid                         = 62,
+    WinIUserSid                                 = 63,
+    WinBuiltinCryptoOperatorsSid                = 64,
+    WinUntrustedLabelSid                        = 65,
+    WinLowLabelSid                              = 66,
+    WinMediumLabelSid                           = 67,
+    WinHighLabelSid                             = 68,
+    WinSystemLabelSid                           = 69,
+    WinWriteRestrictedCodeSid                   = 70,
+    WinCreatorOwnerRightsSid                    = 71,
+    WinCacheablePrincipalsGroupSid              = 72,
+    WinNonCacheablePrincipalsGroupSid           = 73,
+    WinEnterpriseReadonlyControllersSid         = 74,
+    WinAccountReadonlyControllersSid            = 75,
+    WinBuiltinEventLogReadersGroup              = 76
+} WELL_KNOWN_SID_TYPE;
+
+/* Run once */
+typedef union _RTL_RUN_ONCE {
+    PVOID   Ptr;
+} RTL_RUN_ONCE;
+typedef RTL_RUN_ONCE    *PRTL_RUN_ONCE;
+
+/* Run once initialization function */
+typedef ULONG (NTAPI *PRTL_RUN_ONCE_INIT_FN)( PRTL_RUN_ONCE, PVOID, PVOID * );
+
+/* Walk frame chain callback */
+typedef ULONG (NTAPI *PRTL_WALK_FRAME_CHAIN)( PVOID *, ULONG, ULONG );
+
+/* Operating system version information */
+typedef struct _OSVERSIONINFOA {
+    ULONG   dwOSVersionInfoSize;
+    ULONG   dwMajorVersion;
+    ULONG   dwMinorVersion;
+    ULONG   dwBuildNumber;
+    ULONG   dwPlatformId;
+    CHAR    szCSDVersion[128];
+} OSVERSIONINFOA;
+typedef OSVERSIONINFOA      *POSVERSIONINFOA;
+typedef OSVERSIONINFOA      *LPOSVERSIONINFOA;
+typedef struct _OSVERSIONINFOW {
+    ULONG   dwOSVersionInfoSize;
+    ULONG   dwMajorVersion;
+    ULONG   dwMinorVersion;
+    ULONG   dwBuildNumber;
+    ULONG   dwPlatformId;
+    WCHAR   szCSDVersion[128];
+} OSVERSIONINFOW;
+typedef OSVERSIONINFOW      *POSVERSIONINFOW;
+typedef OSVERSIONINFOW      *LPOSVERSIONINFOW;
+typedef OSVERSIONINFOW      RTL_OSVERSIONINFOW;
+typedef OSVERSIONINFOW      *PRTL_OSVERSIONINFOW;
+#ifdef UNICODE
+typedef OSVERSIONINFOW      OSVERSIONINFO;
+typedef POSVERSIONINFOW     POSVERSIONINFO;
+typedef LPOSVERSIONINFOW    LPOSVERSIONINFO;
+#else
+typedef OSVERSIONINFOA      OSVERSIONINFO;
+typedef POSVERSIONINFOA     POSVERSIONINFO;
+typedef LPOSVERSIONINFOA    LPOSVERSIONINFO;
+#endif
+
+/* Operating system version information (extended version) */
+typedef struct _OSVERSIONINFOEXA {
+    ULONG   dwOSVersionInfoSize;
+    ULONG   dwMajorVersion;
+    ULONG   dwMinorVersion;
+    ULONG   dwBuildNumber;
+    ULONG   dwPlatformId;
+    CHAR    szCSDVersion[128];
+    USHORT  wServicePackMajor;
+    USHORT  wServicePackMinor;
+    USHORT  wSuiteMask;
+    UCHAR   wProductType;
+    UCHAR   wReserved;
+} OSVERSIONINFOEXA;
+typedef OSVERSIONINFOEXA    *POSVERSIONINFOEXA;
+typedef OSVERSIONINFOEXA    *LPOSVERSIONINFOEXA;
+typedef struct _OSVERSIONINFOEXW {
+    ULONG   dwOSVersionInfoSize;
+    ULONG   dwMajorVersion;
+    ULONG   dwMinorVersion;
+    ULONG   dwBuildNumber;
+    ULONG   dwPlatformId;
+    WCHAR   szCSDVersion[128];
+    USHORT  wServicePackMajor;
+    USHORT  wServicePackMinor;
+    USHORT  wSuiteMask;
+    UCHAR   wProductType;
+    UCHAR   wReserved;
+} OSVERSIONINFOEXW;
+typedef OSVERSIONINFOEXW    *POSVERSIONINFOEXW;
+typedef OSVERSIONINFOEXW    *LPOSVERSIONINFOEXW;
+typedef OSVERSIONINFOEXW    RTL_OSVERSIONINFOEXW;
+typedef OSVERSIONINFOEXW    *PRTL_OSVERSIONINFOEXW;
+#ifdef UNICODE
+typedef OSVERSIONINFOEXW    OSVERSIONINFOEX;
+typedef POSVERSIONINFOEXW   POSVERSIONINFOEX;
+typedef LPOSVERSIONINFOEXW  LPOSVERSIONINFOEX;
+#else
+typedef OSVERSIONINFOEXA    OSVERSIONINFOEX;
+typedef POSVERSIONINFOEXA   POSVERSIONINFOEX;
+typedef LPOSVERSIONINFOEXA  LPOSVERSIONINFOEX;
+#endif
+
+/* File alignment information */
+typedef struct _FILE_ALIGNMENT_INFORMATION {
+    ULONG   AlignmentRequirement;
+} FILE_ALIGNMENT_INFORMATION;
+typedef FILE_ALIGNMENT_INFORMATION  *PFILE_ALIGNMENT_INFORMATION;
+
+/* File name information */
+typedef struct _FILE_NAME_INFORMATION {
+    ULONG   FileNameLength;
+    WCHAR   FileName[1];
+} FILE_NAME_INFORMATION;
+typedef FILE_NAME_INFORMATION   *PFILE_NAME_INFORMATION;
+
+/* File attribute tag information */
+typedef struct _FILE_ATTRIBUTE_TAG_INFORMATION {
+    ULONG   FileAttributes;
+    ULONG   ReparseTag;
+} FILE_ATTRIBUTE_TAG_INFORMATION;
+typedef FILE_ATTRIBUTE_TAG_INFORMATION  *PFILE_ATTRIBUTE_TAG_INFORMATION;
+
+/* File disposition information */
+typedef struct _FILE_DISPOSITION_INFORMATION {
+    BOOLEAN DeleteFile;
+} FILE_DISPOSITION_INFORMATION;
+typedef FILE_DISPOSITION_INFORMATION    *PFILE_DISPOSITION_INFORMATION;
+
+/* File end of file information */
+typedef struct _FILE_END_OF_FILE_INFORMATION {
+    LARGE_INTEGER   EndOfFile;
+} FILE_END_OF_FILE_INFORMATION;
+typedef FILE_END_OF_FILE_INFORMATION    *PFILE_END_OF_FILE_INFORMATION;
+
+/* File valid data length information */
+typedef struct _FILE_VALID_DATA_LENGTH_INFORMATION {
+    LARGE_INTEGER   ValidDataLength;
+} FILE_VALID_DATA_LENGTH_INFORMATION;
+
+/* File segment element */
+typedef union _FILE_SEGMENT_ELEMENT {
+    PVOID64     Buffer;
+    ULONGLONG   Alignment;
+} FILE_SEGMENT_ELEMENT;
+typedef FILE_SEGMENT_ELEMENT    *PFILE_SEGMENT_ELEMENT;
+
+/* Bus data types */
+typedef enum _BUS_DATA_TYPE {
+    ConfigurationSpaceUndefined = -1,
+    Cmos                        = 0,
+    EisaConfiguration           = 1,
+    Pos                         = 2,
+    CbusConfiguration           = 3,
+    PCIConfiguration            = 4,
+    VMEConfiguration            = 5,
+    NuBusConfiguration          = 6,
+    PCMCIAConfiguration         = 7,
+    MPIConfiguration            = 8,
+    MPSAConfiguration           = 9,
+    PNPISAConfiguration         = 10,
+    SgiInternalConfiguration    = 11,
+    MaximumBusDataType          = 12
+} BUS_DATA_TYPE;
+typedef BUS_DATA_TYPE   *PBUS_DATA_TYPE;
+
+/* Registry key name information */
+typedef struct _KEY_NAME_INFORMATION {
+    ULONG   NameLength;
+    WCHAR   Name[1];
+} KEY_NAME_INFORMATION;
+typedef KEY_NAME_INFORMATION    *PKEY_NAME_INFORMATION;
+
+/* Registry key cached information */
+typedef struct _KEY_CACHED_INFORMATION {
+    LARGE_INTEGER   LastWriteTime;
+    ULONG           TitleIndex;
+    ULONG           SubKeys;
+    ULONG           MaxNameLen;
+    ULONG           Values;
+    ULONG           MaxValueNameLen;
+    ULONG           MaxValueDataLen;
+    ULONG           NameLength;
+} KEY_CACHED_INFORMATION;
+typedef KEY_CACHED_INFORMATION  *PKEY_CACHED_INFORMATION;
+
+/* Registry key flags information */
+typedef struct _KEY_FLAGS_INFORMATION {
+    ULONG   Wow64Flags;
+    ULONG   KeyFlags;
+    ULONG   ControlFlags;
+} KEY_FLAGS_INFORMATION;
+typedef KEY_FLAGS_INFORMATION   *PKEY_FLAGS_INFORMATION;
+
+/* Registry key virtualization information */
+typedef struct _KEY_VIRTUALIZATION_INFORMATION {
+    ULONG   VirtualizationCandidate : 1;
+    ULONG   VirtualizationEnabled   : 1;
+    ULONG   VirtualTarget           : 1;
+    ULONG   VirtualStore            : 1;
+    ULONG   VirtualSource           : 1;
+    ULONG   Reserved                : 27;
+} KEY_VIRTUALIZATION_INFORMATION;
+typedef KEY_VIRTUALIZATION_INFORMATION  *PKEY_VIRTUALIZATION_INFORMATION;
+
+/* NT thread information block */
+typedef struct _NT_TIB {
+    struct _EXCEPTION_REGISTRATION_RECORD   *ExceptionList;
+    PVOID           StackBase;
+    PVOID           StackLimit;
+    PVOID           SubSystemTib;
+    union {
+        PVOID   FiberData;
+        ULONG   Version;
+    };
+    PVOID           ArbitraryUserPointer;
+    struct _NT_TIB  *Self;
+} NT_TIB;
+typedef NT_TIB  *PNT_TIB;
+
+/* NT thread information block (32-bit version) */
+typedef struct _NT_TIB32 {
+    ULONG   ExceptionList;
+    ULONG   StackBase;
+    ULONG   StackLimit;
+    ULONG   SubSystemTib;
+    union {
+        ULONG   FiberData;
+        ULONG   Version;
+    };
+    ULONG   ArbitraryUserPointer;
+    ULONG   Self;
+} NT_TIB32;
+typedef NT_TIB32    *PNT_TIB32;
+
+/* NT thread information block (64-bit version) */
+typedef struct _NT_TIB64 {
+    ULONG64 ExceptionList;
+    ULONG64 StackBase;
+    ULONG64 StackLimit;
+    ULONG64 SubSystemTib;
+    union {
+        ULONG64 FiberData;
+        ULONG   Version;
+    };
+    ULONG64 ArbitraryUserPointer;
+    ULONG64 Self;
+} NT_TIB64;
+typedef NT_TIB64    *PNT_TIB64;
+
+/* Process information classes */
+typedef enum _PROCESSINFOCLASS {
+    ProcessBasicInformation         = 0,
+    ProcessQuotaLimits              = 1,
+    ProcessIoCounters               = 2,
+    ProcessVmCounters               = 3,
+    ProcessTimes                    = 4,
+    ProcessBasePriority             = 5,
+    ProcessRaisePriority            = 6,
+    ProcessDebugPort                = 7,
+    ProcessExceptionPort            = 8,
+    ProcessAccessToken              = 9,
+    ProcessLdtInformation           = 10,
+    ProcessLdtSize                  = 11,
+    ProcessDefaultHardErrorMode     = 12,
+    ProcessIoPortHandlers           = 13,
+    ProcessPooledUsageAndLimits     = 14,
+    ProcessWorkingSetWatch          = 15,
+    ProcessUserModeIOPL             = 16,
+    ProcessEnableAlignmentFaultFixup    = 17,
+    ProcessPriorityClass            = 18,
+    ProcessWx86Information          = 19,
+    ProcessHandleCount              = 20,
+    ProcessAffinityMask             = 21,
+    ProcessPriorityBoost            = 22,
+    ProcessDeviceMap                = 23,
+    ProcessSessionInformation       = 24,
+    ProcessForegroundInformation    = 25,
+    ProcessWow64Information         = 26,
+    ProcessImageFileName            = 27,
+    ProcessLUIDDeviceMapsEnabled    = 28,
+    ProcessBreakOnTermination       = 29,
+    ProcessDebugObjectHandle        = 30,
+    ProcessDebugFlags               = 31,
+    ProcessHandleTracing            = 32,
+    ProcessIoPriority               = 33,
+    ProcessExecuteFlags             = 34,
+    ProcessTlsInformation           = 35,
+    ProcessCookie                   = 36,
+    ProcessImageInformation         = 37,
+    ProcessCycleTime                = 38,
+    ProcessPagePriority             = 39,
+    ProcessInstrumentationCallback  = 40,
+    ProcessThreadStackAllocation    = 41,
+    ProcessWorkingSetWatchEx        = 42,
+    ProcessImageFileNameWin32       = 43,
+    ProcessImageFileMapping         = 44,
+    MaxProcessInfoClass             = 45
+} PROCESSINFOCLASS;
+
+/* Thread information classes */
+typedef enum _THREADINFOCLASS {
+    ThreadBasicInformation          = 0,
+    ThreadTimes                     = 1,
+    ThreadPriority                  = 2,
+    ThreadBasePriority              = 3,
+    ThreadAffinityMask              = 4,
+    ThreadImpersonationToken        = 5,
+    ThreadDescriptorTableEntry      = 6,
+    ThreadEnableAlignmentFaultFixup = 7,
+    ThreadEventPair_Reusable        = 8,
+    ThreadQuerySetWin32StartAddress = 9,
+    ThreadZeroTlsCell               = 10,
+    ThreadPerformanceCount          = 11,
+    ThreadAmILastThread             = 12,
+    ThreadIdealProcessor            = 13,
+    ThreadPriorityBoost             = 14,
+    ThreadSetTlsArrayAddress        = 15,
+    ThreadIsIoPending               = 16,
+    ThreadHideFromDebugger          = 17,
+    ThreadBreakOnTermination        = 18,
+    ThreadSwitchLegacyState         = 19,
+    ThreadIsTerminated              = 20,
+    ThreadLastSystemCall            = 21,
+    ThreadIoPriority                = 22,
+    ThreadCycleTime                 = 23,
+    ThreadPagePriority              = 24,
+    ThreadActualBasePriority        = 25,
+    ThreadTebInformation            = 26,
+    ThreadCSwitchMon                = 27,
+    MaxThreadInfoClass              = 28
+} THREADINFOCLASS;
+
+/* Page priority information */
+typedef struct _PAGE_PRIORITY_INFORMATION {
+    ULONG   PagePriority;
+} PAGE_PRIORITY_INFORMATION;
+typedef PAGE_PRIORITY_INFORMATION   *PPAGE_PRIORITY_INFORMATION;
+
+/* Process working set watch information */
+typedef struct _PROCESS_WS_WATCH_INFORMATION {
+    PVOID   FaultingPc;
+    PVOID   FaultingVa;
+} PROCESS_WS_WATCH_INFORMATION;
+typedef PROCESS_WS_WATCH_INFORMATION    *PPROCESS_WS_WATCH_INFORMATION;
+
+/* Process basic information */
+typedef struct _PROCESS_BASIC_INFORMATION {
+    NTSTATUS    ExitStatus;
+    PPEB        PebBaseAddress;
+    ULONG_PTR   AffinityMask;
+    KPRIORITY   BasePriority;
+    ULONG_PTR   UniqueProcessId;
+    ULONG_PTR   InheritedFromUniqueProcessId;
+} PROCESS_BASIC_INFORMATION;
+typedef PROCESS_BASIC_INFORMATION   *PPROCESS_BASIC_INFORMATION;
+
+/* Process extended basic information */
+typedef struct _PROCESS_EXTENDED_BASIC_INFORMATION {
+    SIZE_T                      Size;
+    PROCESS_BASIC_INFORMATION   BasicInfo;
+    union {
+        ULONG   Flags;
+        struct {
+            ULONG   IsProtectedProcess  : 1;
+            ULONG   IsWow64Process      : 1;
+            ULONG   SpareBits           : 30;
+        };
+    };
+} PROCESS_EXTENDED_BASIC_INFORMATION;
+typedef PROCESS_EXTENDED_BASIC_INFORMATION  *PPROCESS_EXTENDED_BASIC_INFORMATION;
+
+/* Process device map information */
+typedef struct _PROCESS_DEVICEMAP_INFORMATION {
+    union {
+        struct {
+            HANDLE  DirectoryHandle;
+        } Set;
+        struct {
+            ULONG   DriveMap;
+            UCHAR   DriveType[32];
+        } Query;
+    };
+} PROCESS_DEVICEMAP_INFORMATION;
+typedef PROCESS_DEVICEMAP_INFORMATION   *PPROCESS_DEVICEMAP_INFORMATION;
+
+/* Process device map information (extended version) */
+typedef struct _PROCESS_DEVICEMAP_INFORMATION_EX {
+    union {
+        struct {
+            HANDLE  DirectoryHandle;
+        } Set;
+        struct {
+            ULONG   DriveMap;
+            UCHAR   DriveType[32];
+        } Query;
+    };
+    ULONG   Flags;
+} PROCESS_DEVICEMAP_INFORMATION_EX;
+typedef PROCESS_DEVICEMAP_INFORMATION_EX    *PPROCESS_DEVICEMAP_INFORMATION_EX;
+
+/* Process session information */
+typedef struct _PROCESS_SESSION_INFORMATION {
+    ULONG   SessionId;
+} PROCESS_SESSION_INFORMATION;
+typedef PROCESS_SESSION_INFORMATION *PPROCESS_SESSION_INFORMATION;
+
+/* Process handle tracing enable information */
+typedef struct _PROCESS_HANDLE_TRACING_ENABLE {
+    ULONG   Flags;
+} PROCESS_HANDLE_TRACING_ENABLE;
+typedef PROCESS_HANDLE_TRACING_ENABLE   *PPROCESS_HANDLE_TRACING_ENABLE;
+
+/* Process handle tracing enable information (extended version) */
+typedef struct _PROCESS_HANDLE_TRACING_ENABLE_EX {
+    ULONG   Flags;
+    ULONG   TotalSlots;
+} PROCESS_HANDLE_TRACING_ENABLE_EX;
+typedef PROCESS_HANDLE_TRACING_ENABLE_EX    *PPROCESS_HANDLE_TRACING_ENABLE_EX;
+
+/* Process handle tracing entry */
+typedef struct _PROCESS_HANDLE_TRACING_ENTRY {
+    HANDLE      Handle;
+    CLIENT_ID   ClientId;
+    ULONG       Type;
+    PVOID       Stacks[PROCESS_HANDLE_TRACING_MAX_STACKS];
+} PROCESS_HANDLE_TRACING_ENTRY;
+typedef PROCESS_HANDLE_TRACING_ENTRY    *PPROCESS_HANDLE_TRACING_ENTRY;
+
+/* Process handle tracing query */
+typedef struct _PROCESS_HANDLE_TRACING_QUERY {
+    HANDLE                          Handle;
+    ULONG                           TotalTraces;
+    PROCESS_HANDLE_TRACING_ENTRY    HandleTrace[1];
+} PROCESS_HANDLE_TRACING_QUERY;
+typedef PROCESS_HANDLE_TRACING_QUERY    *PPROCESS_HANDLE_TRACING_QUERY;
+
+/* Quota limits */
+typedef struct _QUOTA_LIMITS {
+    SIZE_T          PagedPoolLimit;
+    SIZE_T          NonPagedPoolLimit;
+    SIZE_T          MinimumWorkingSetSize;
+    SIZE_T          MaximumWorkingSetSize;
+    SIZE_T          PagefileLimit;
+    LARGE_INTEGER   TimeLimit;
+} QUOTA_LIMITS;
+typedef QUOTA_LIMITS    *PQUOTA_LIMITS;
+
+/* Rate phases */
+typedef enum _PS_RATE_PHASE {
+    PsRateOneSecond     = 0,
+    PsRateTwoSecond     = 1,
+    PsRateThreeSecond   = 2,
+    PsRateMaxPhase      = 3,
+} PS_RATE_PHASE;
+
+/* Rate quota limit */
+typedef union _RATE_QUOTA_LIMIT {
+    ULONG   RateData;
+    struct {
+        ULONG   RatePhase   : PS_RATE_PHASE_BITS;
+        ULONG   RatePercent : 28;
+    };
+} RATE_QUOTA_LIMIT;
+typedef RATE_QUOTA_LIMIT    *PRATE_QUOTA_LIMIT;
+
+/* Quota limits (extended version) */
+typedef struct _QUOTA_LIMITS_EX {
+    SIZE_T              PagedPoolLimit;
+    SIZE_T              NonPagedPoolLimit;
+    SIZE_T              MinimumWorkingSetSize;
+    SIZE_T              MaximumWorkingSetSize;
+    SIZE_T              PagefileLimit;
+    LARGE_INTEGER       TimeLimit;
+    SIZE_T              WorkingSetLimit;
+    SIZE_T              Reserved2;
+    SIZE_T              Reserved3;
+    SIZE_T              Reserved4;
+    ULONG               Flags;
+    RATE_QUOTA_LIMIT    CpuRateLimit;
+} QUOTA_LIMITS_EX;
+typedef QUOTA_LIMITS_EX *PQUOTA_LIMITS_EX;
+
+/* I/O counters */
+typedef struct _IO_COUNTERS {
+    ULONGLONG   ReadOperationCount;
+    ULONGLONG   WriteOperationCount;
+    ULONGLONG   OtherOperationCount;
+    ULONGLONG   ReadTransferCount;
+    ULONGLONG   WriteTransferCount;
+    ULONGLONG   OtherTransferCount;
+} IO_COUNTERS;
+typedef IO_COUNTERS *PIO_COUNTERS;
+
+/* Virtual memory counters */
+typedef struct _VM_COUNTERS {
+    SIZE_T  PeakVirtualSize;
+    SIZE_T  VirtualSize;
+    ULONG   PageFaultCount;
+    SIZE_T  PeakWorkingSetSize;
+    SIZE_T  WorkingSetSize;
+    SIZE_T  QuotaPeakPagedPoolUsage;
+    SIZE_T  QuotaPagedPoolUsage;
+    SIZE_T  QuotaPeakNonPagedPoolUsage;
+    SIZE_T  QuotaNonPagedPoolUsage;
+    SIZE_T  PagefileUsage;
+    SIZE_T  PeakPagefileUsage;
+} VM_COUNTERS;
+typedef VM_COUNTERS *PVM_COUNTERS;
+
+/* Virtual memory counters (extended version) */
+typedef struct _VM_COUNTERS_EX {
+    SIZE_T  PeakVirtualSize;
+    SIZE_T  VirtualSize;
+    ULONG   PageFaultCount;
+    SIZE_T  PeakWorkingSetSize;
+    SIZE_T  WorkingSetSize;
+    SIZE_T  QuotaPeakPagedPoolUsage;
+    SIZE_T  QuotaPagedPoolUsage;
+    SIZE_T  QuotaPeakNonPagedPoolUsage;
+    SIZE_T  QuotaNonPagedPoolUsage;
+    SIZE_T  PagefileUsage;
+    SIZE_T  PeakPagefileUsage;
+    SIZE_T  PrivateUsage;
+} VM_COUNTERS_EX;
+typedef VM_COUNTERS_EX  *PVM_COUNTERS_EX;
+
+/* Pooled usage and limits */
+typedef struct _POOLED_USAGE_AND_LIMITS {
+    SIZE_T  PeakPagedPoolUsage;
+    SIZE_T  PagedPoolUsage;
+    SIZE_T  PagedPoolLimit;
+    SIZE_T  PeakNonPagedPoolUsage;
+    SIZE_T  NonPagedPoolUsage;
+    SIZE_T  NonPagedPoolLimit;
+    SIZE_T  PeakPagefileUsage;
+    SIZE_T  PagefileUsage;
+    SIZE_T  PagefileLimit;
+} POOLED_USAGE_AND_LIMITS;
+typedef POOLED_USAGE_AND_LIMITS *PPOOLED_USAGE_AND_LIMITS;
+
+/* Process access token */
+typedef struct _PROCESS_ACCESS_TOKEN {
+    HANDLE  Token;
+    HANDLE  Thread;
+} PROCESS_ACCESS_TOKEN;
+typedef PROCESS_ACCESS_TOKEN    *PPROCESS_ACCESS_TOKEN;
+
+/* Process exception port */
+typedef struct _PROCESS_EXCEPTION_PORT {
+    HANDLE  ExceptionPortHandle;
+    ULONG   StateFlags;
+} PROCESS_EXCEPTION_PORT;
+typedef PROCESS_EXCEPTION_PORT  *PPROCESS_EXCEPTION_PORT;
+
+/* Kernel and user times */
+typedef struct _KERNEL_USER_TIMES {
+    LARGE_INTEGER   CreateTime;
+    LARGE_INTEGER   ExitTime;
+    LARGE_INTEGER   KernelTime;
+    LARGE_INTEGER   UserTime;
+} KERNEL_USER_TIMES;
+typedef KERNEL_USER_TIMES   *PKERNEL_USER_TIMES;
+
+/* Kernel processor control region */
+#ifdef _X86_
+typedef struct _KPCR {
+    union {
+        NT_TIB  NtTib;
+        struct {
+            struct _EXCEPTION_REGISTRATION_RECORD   *Used_ExceptionList;
+            PVOID       Used_StackBase;
+            PVOID       Spare2;
+            PVOID       TssCopy;
+            ULONG       ContextSwitches;
+            KAFFINITY   SetMemberCopy;
+            PVOID       Used_Self;
+        };
+    };
+    struct _KPCR        *SelfPcr;
+    struct _KPRCB       *Prcb;
+    KIRQL               Irql;
+    ULONG               IPR;
+    ULONG               IrrActive;
+    ULONG               IDR;
+    PVOID               KdVersionBlock;
+    struct _KIDTENTRY   *IDT;
+    struct _KGDTENTRY   *GDT;
+    struct _KTSS        *TSS;
+    USHORT              MajorVersion;
+    USHORT              MinorVersion;
+    KAFFINITY           SetMember;
+    ULONG               StallScaleFactor;
+    UCHAR               SpareUnused;
+    UCHAR               Number;
+    UCHAR               Spare0;
+    UCHAR               SecondLevelCacheAssociativity;
+    ULONG               VdmAlert;
+    ULONG               KernelReserved[14];
+    ULONG               SeconeLevelCacheSize;
+    ULONG               HalReserved[16];
+} KPCR;
+typedef KPCR    *PKPCR;
+#endif
+
+/* Interlocked results */
+#ifdef _X86_
+typedef enum _INTERLOCKED_RESULT {
+    ResultNegative  = RESULT_NEGATIVE,
+    ResultZero      = RESULT_ZERO,
+    ResultPositive  = RESULT_POSITIVE
+} INTERLOCKED_RESULT;
+#endif
+
+/* System firmware table actions */
+typedef enum _SYSTEM_FIRMWARE_TABLE_ACTION {
+    SystemFirmwareTable_Enumerate   = 0,
+    SystemFirmwareTable_Get         = 1
+} SYSTEM_FIRMWARE_TABLE_ACTION;
+
+/* System firmware table information */
+typedef struct _SYSTEM_FIRMWARE_TABLE_INFORMATION {
+    ULONG                           ProviderSignature;
+    SYSTEM_FIRMWARE_TABLE_ACTION    Action;
+    ULONG                           TableID;
+    ULONG                           TableBufferLength;
+    UCHAR                           TableBuffer[ANYSIZE_ARRAY];
+} SYSTEM_FIRMWARE_TABLE_INFORMATION;
+typedef SYSTEM_FIRMWARE_TABLE_INFORMATION   *PSYSTEM_FIRMWARE_TABLE_INFORMATION;
+
+/* Firmware table handler callback */
+typedef NTSTATUS (__cdecl *PFNFTH)( PSYSTEM_FIRMWARE_TABLE_INFORMATION );
+
+/* System firmware table handler */
+typedef struct _SYSTEM_FIRMWARE_TABLE_HANDLER {
+    ULONG   ProviderSignature;
+    BOOLEAN Register;
+    PFNFTH  FirmwareTableHandler;
+    PVOID   DriverObject;
+} SYSTEM_FIRMWARE_TABLE_HANDLER;
+typedef SYSTEM_FIRMWARE_TABLE_HANDLER   *PSYSTEM_FIRMWARE_TABLE_HANDLER;
+
+/* Timer APC routine */
+typedef VOID (NTAPI *PTIMER_APC_ROUTINE)( PVOID, ULONG, LONG );
+
+/* Driver verifier thunk routine */
+typedef ULONG_PTR (NTAPI *PDRIVER_VERIFIER_THUNK_ROUTINE)( PVOID );
+
+/* Driver verifier thunk pairs */
+typedef struct _DRIVER_VERIFIER_THUNK_PAIRS {
+    PDRIVER_VERIFIER_THUNK_ROUTINE  PristineRoutine;
+    PDRIVER_VERIFIER_THUNK_ROUTINE  NewRoutine;
+} DRIVER_VERIFIER_THUNK_PAIRS;
+typedef DRIVER_VERIFIER_THUNK_PAIRS *PDRIVER_VERIFIER_THUNK_PAIRS;
+
+/* Kernel/user shared data */
+typedef struct _KUSER_SHARED_DATA {
+    ULONG                   TickCountLowDeprecated;
+    ULONG                   TickCountMultiplier;
+    volatile KSYSTEM_TIME   InterruptTime;
+    volatile KSYSTEM_TIME   SystemTime;
+    volatile KSYSTEM_TIME   TimeZoneBias;
+    USHORT                  ImageNumberLow;
+    USHORT                  ImageNumberHigh;
+    WCHAR                   NtSystemRoot[260];
+    ULONG                   MaxStackTraceDepth;
+    ULONG                   CryptoExponent;
+    ULONG                   TimeZoneId;
+    ULONG                   LargePageMinimum;
+    ULONG                   Reserved2[7];
+    NT_PRODUCT_TYPE         NtProductType;
+    BOOLEAN                 ProductTypeIsValid;
+    ULONG                   NtMajorVersion;
+    ULONG                   NtMinorVersion;
+    BOOLEAN                 ProcessorFeatures[PROCESSOR_FEATURE_MAX];
+    ULONG                   Reserved1;
+    ULONG                   Reserved3;
+    volatile ULONG          TimeSlip;
+    ALTERNATIVE_ARCHITECTURE_TYPE   AlternativeArchitecture;
+    LARGE_INTEGER           SystemExpirationDate;
+    ULONG                   SuiteMask;
+    BOOLEAN                 KdDebuggerEnabled;
+    UCHAR                   NXSupportPolicy;
+    volatile ULONG          ActiveConsoleId;
+    volatile ULONG          DismountCount;
+    ULONG                   ComPlusPackage;
+    ULONG                   LastSystemRITEventTickCount;
+    ULONG                   NumberOfPhysicalPages;
+    BOOLEAN                 SafeBootMode;
+    union {
+        ULONG   SharedDataFlags;
+        struct {
+            ULONG   DbgErrorPortPresent         : 1;
+            ULONG   DbgElevationEnabled         : 1;
+            ULONG   DbgVirtEnabled              : 1;
+            ULONG   DbgInstallerDetectEnabled   : 1;
+            ULONG   SystemDllRelocated          : 1;
+            ULONG   SpareBits                   : 27;
+        };
+    };
+    ULONGLONG               TestRetInstruction;
+    ULONG                   SystemCall;
+    ULONG                   SystemCallReturn;
+    ULONGLONG               SystemCallPad[3];
+    union {
+        volatile KSYSTEM_TIME   TickCount;
+        volatile ULONG64        TickCountQuad;
+    };
+    ULONG                   Cookie;
+    LONGLONG                ConsoleSessionForegroundProcessId;
+    ULONG                   Wow64SharedInformation[MAX_WOW64_SHARED_ENTRIES];
+    USHORT                  UserModeGlobalLogger[8];
+    ULONG                   HeapTracingPid[2];
+    ULONG                   CritSecTracingPid[2];
+    ULONG                   ImageFileExecutionOptions;
+    union {
+        ULONGLONG   AffinityPad;
+        KAFFINITY   ActiveProcessorAffinity;
+    };
+    volatile ULONG64        InterruptTimeBias;
+} KUSER_SHARED_DATA;
+typedef KUSER_SHARED_DATA   *PKUSER_SHARED_DATA;
+
+/* PC card device data */
+typedef struct _CM_PCCARD_DEVICE_DATA {
+    UCHAR   Flags;
+    UCHAR   ErrorCode;
+    USHORT  Reserved;
+    ULONG   BusData;
+    ULONG   DeviceId;
+    ULONG   LegacyBaseAddress;
+    UCHAR   IRQMap[16];
+} CM_PCCARD_DEVICE_DATA;
+typedef CM_PCCARD_DEVICE_DATA   *PCM_PCCARD_DEVICE_DATA;
+
+/* Configuration types */
+typedef enum _CONFIGURATION_TYPE {
+    ArcSystem               = 0,
+    CentralProcessor        = 1,
+    FloatingPointProcessor  = 2,
+    PrimaryIcache           = 3,
+    PrimaryDcache           = 4,
+    SecondaryIcache         = 5,
+    SecondaryDcache         = 6,
+    SecondaryCache          = 7,
+    EisaAdapter             = 8,
+    TcAdapter               = 9,
+    ScsiAdapter             = 10,
+    DtiAdapter              = 11,
+    MultiFunctionAdapter    = 12,
+    DiskController          = 13,
+    TapeController          = 14,
+    CdromController         = 15,
+    WormController          = 16,
+    SerialController        = 17,
+    NetworkController       = 18,
+    DisplayController       = 19,
+    ParallelController      = 20,
+    PointerController       = 21,
+    KeyboardController      = 22,
+    AudioController         = 23,
+    OtherController         = 24,
+    DiskPeripheral          = 25,
+    FloppyDiskPeripheral    = 26,
+    TapePeripheral          = 27,
+    ModemPeripheral         = 28,
+    MonitorPeripheral       = 29,
+    PrinterPeripheral       = 30,
+    PointerPeripheral       = 31,
+    KeyboardPeripheral      = 32,
+    TerminalPeripheral      = 33,
+    OtherPeripheral         = 34,
+    LinePeripheral          = 35,
+    NetworkPeripheral       = 36,
+    SystemMemory            = 37,
+    DockingInformation      = 38,
+    RealModeIrqRoutingTable = 39,
+    RealModePCIEnumeration  = 40,
+    MaximumType             = 41
+} CONFIGURATION_TYPE;
+typedef CONFIGURATION_TYPE  *PCONFIGURATION_TYPE;
+
+/* Expand stack callout */
+typedef VOID (NTAPI *PEXPAND_STACK_CALLOUT)( PVOID );
+
+/* Zone segment header */
+typedef struct _ZONE_SEGMENT_HEADER {
+    SINGLE_LIST_ENTRY   SegmentList;
+    PVOID               Reserved;
+} ZONE_SEGMENT_HEADER;
+typedef ZONE_SEGMENT_HEADER *PZONE_SEGMENT_HEADER;
+
+/* Zone header */
+typedef struct _ZONE_HEADER {
+    SINGLE_LIST_ENTRY   FreeList;
+    SINGLE_LIST_ENTRY   SegmentList;
+    ULONG               BlockSize;
+    ULONG               TotalSegmentSize;
+} ZONE_HEADER;
+typedef ZONE_HEADER *PZONE_HEADER;
+
+/* Physical memory range */
+typedef struct _PHYSICAL_MEMORY_RANGE {
+    PHYSICAL_ADDRESS    BaseAddress;
+    LARGE_INTEGER       NumberOfBytes;
+} PHYSICAL_MEMORY_RANGE;
+typedef PHYSICAL_MEMORY_RANGE   *PPHYSICAL_MEMORY_RANGE;
+
+/* Memory management rotate copy callback function */
+typedef NTSTATUS (NTAPI *PMM_ROTATE_COPY_CALLBACK_FUNCTION)( PMDL, PMDL, PVOID );
+
+/* Memory management rotate directions */
+typedef enum _MM_ROTATE_DIRECTION {
+    MmToFrameBuffer             = 0,
+    MmToFrameBufferNoCopy       = 1,
+    MmToRegularMemory           = 2,
+    MmToRegularMemoryNoCopy     = 3,
+    MmMaximumRotateDirection    = 4
+} MM_ROTATE_DIRECTION;
+typedef MM_ROTATE_DIRECTION *PMM_ROTATE_DIRECTION;
+
+/* Image information */
+typedef struct _IMAGE_INFO {
+    union {
+        ULONG   Properties;
+        struct {
+            ULONG   ImageAddressingMode     : 8;
+            ULONG   SystemModeImage         : 1;
+            ULONG   ImageMappedToAllPids    : 1;
+            ULONG   Reserved                : 22;
+        };
+    };
+    PVOID   ImageBase;
+    ULONG   ImageSelector;
+    SIZE_T  ImageSize;
+    ULONG   ImageSectionNumber;
+} IMAGE_INFO;
+typedef IMAGE_INFO  *PIMAGE_INFO;
+
+/* Notification callbacks */
+typedef VOID (NTAPI *PCREATE_PROCESS_NOTIFY_ROUTINE)( HANDLE, HANDLE, BOOLEAN );
+typedef VOID (NTAPI *PCREATE_THREAD_NOTIFY_ROUTINE)( HANDLE, HANDLE, BOOLEAN );
+typedef VOID (NTAPI *PLOAD_IMAGE_NOTIFY_ROUTINE)( PUNICODE_STRING, HANDLE, PIMAGE_INFO );
+
+/* I/O query device callback */
+typedef NTSTATUS (NTAPI *PIO_QUERY_DEVICE_ROUTINE)( PVOID, PUNICODE_STRING, INTERFACE_TYPE, ULONG, PKEY_VALUE_FULL_INFORMATION *, CONFIGURATION_TYPE, ULONG, PKEY_VALUE_FULL_INFORMATION *, CONFIGURATION_TYPE, ULONG, PKEY_VALUE_FULL_INFORMATION * );
+
+/* I/O query device data formats */
+typedef enum _IO_QUERY_DEVICE_DATA_FORMAT {
+    IoQueryDeviceIdentifier             = 0,
+    IoQueryDeviceConfigurationData      = 1,
+    IoQueryDeviceComponentInformation   = 2,
+    IoQueryDeviceMaxData                = 3
+} IO_QUERY_DEVICE_DATA_FORMAT;
+typedef IO_QUERY_DEVICE_DATA_FORMAT *PIO_QUERY_DEVICE_DATA_FORMAT;
+
+/* Driver reinitialization callback */
+typedef VOID NTAPI DRIVER_REINITIALIZE( struct _DRIVER_OBJECT *, PVOID, ULONG );
+typedef DRIVER_REINITIALIZE *PDRIVER_REINITIALIZE;
+
+/* Controller object */
+typedef struct _CONTROLLER_OBJECT {
+    CSHORT          Type;
+    CSHORT          Size;
+    PVOID           ControllerExtension;
+    KDEVICE_QUEUE   DeviceWaitQueue;
+    ULONG           Spare1;
+    LARGE_INTEGER   Spare2;
+} CONTROLLER_OBJECT;
+typedef CONTROLLER_OBJECT   *PCONTROLLER_OBJECT;
+
+/* Configuration information */
+typedef struct _CONFIGURATION_INFORMATION {
+    ULONG   DiskCount;
+    ULONG   FloppyCount;
+    ULONG   CdRomCount;
+    ULONG   TapeCount;
+    ULONG   ScsiPortCount;
+    ULONG   SerialCount;
+    ULONG   ParallelCount;
+    BOOLEAN AtDiskPrimaryAddressClaimed;
+    BOOLEAN AtDiskSecondaryAddressClaimed;
+    ULONG   Version;
+    ULONG   MediumChangerCount;
+} CONFIGURATION_INFORMATION;
+typedef CONFIGURATION_INFORMATION   *PCONFIGURATION_INFORMATION;
+
+/* Disk signature */
+typedef struct _DISK_SIGNATURE {
+    ULONG   PartitionStyle;
+    union {
+        struct {
+            ULONG   Signature;
+            ULONG   CheckSum;
+        } Mbr;
+        struct {
+            GUID    DiskId;
+        } Gpt;
+    };
+} DISK_SIGNATURE;
+typedef DISK_SIGNATURE  *PDISK_SIGNATURE;
+
+/* AGP target bus interface standard */
+typedef struct _AGP_TARGET_BUS_INTERFACE_STANDARD {
+    USHORT                  Size;
+    USHORT                  Version;
+    PVOID                   Context;
+    PINTERFACE_REFERENCE    InterfaceReference;
+    PINTERFACE_DEREFERENCE  InterfaceDereference;
+    PGET_SET_DEVICE_DATA    SetBusData;
+    PGET_SET_DEVICE_DATA    GetBusData;
+    UCHAR                   CapabilityID;
+} AGP_TARGET_BUS_INTERFACE_STANDARD;
+typedef AGP_TARGET_BUS_INTERFACE_STANDARD   *PAGP_TARGET_BUS_INTERFACE_STANDARD;
+
+/* Device location interface callbacks */
+typedef NTSTATUS (NTAPI *PGET_LOCATION_STRING)( PVOID, PWCHAR * );
+
+/* Plug and Play location interface */
+typedef struct _PNP_LOCATION_INTERFACE {
+    USHORT                  Size;
+    USHORT                  Version;
+    PVOID                   Context;
+    PINTERFACE_REFERENCE    InterfaceReference;
+    PINTERFACE_DEREFERENCE  InterfaceDereference;
+    PGET_LOCATION_STRING    GetLocationString;
+} PNP_LOCATION_INTERFACE;
+typedef PNP_LOCATION_INTERFACE  *PPNP_LOCATION_INTERFACE;
+
+/* Arbiter actions */
+typedef enum _ARBITER_ACTION {
+    ArbiterActionTestAllocation             = 0,
+    ArbiterActionRetestAllocation           = 1,
+    ArbiterActionCommitAllocation           = 2,
+    ArbiterActionRollbackAllocation         = 3,
+    ArbiterActionQueryAllocatedResources    = 4,
+    ArbiterActionWriteReservedResources     = 5,
+    ArbiterActionQueryConflict              = 6,
+    ArbiterActionQueryArbitrate             = 7,
+    ArbiterActionAddReserved                = 8,
+    ArbiterActionBootAllocation             = 9
+} ARBITER_ACTION;
+typedef ARBITER_ACTION  *PARBITER_ACTION;
+
+/* Arbiter conflict information */
+typedef struct _ARBITER_CONFLICT_INFO {
+    PDEVICE_OBJECT  OwningObject;
+    ULONGLONG       Start;
+    ULONGLONG       End;
+} ARBITER_CONFLICT_INFO;
+typedef ARBITER_CONFLICT_INFO   *PARBITER_CONFLICT_INFO;
+
+/* Arbiter test allocation parameters */
+typedef struct _ARBITER_TEST_ALLOCATION_PARAMETERS {
+    PLIST_ENTRY                     ArbitrationList;
+    ULONG                           AllocateFromCount;
+    PCM_PARTIAL_RESOURCE_DESCRIPTOR AllocateFrom;
+} ARBITER_TEST_ALLOCATION_PARAMETERS;
+typedef ARBITER_TEST_ALLOCATION_PARAMETERS  *PARBITER_TEST_ALLOCATION_PARAMETERS;
+
+/* Arbiter retest allocation parameters */
+typedef struct _ARBITER_RETEST_ALLOCATION_PARAMETERS {
+    PLIST_ENTRY                     ArbitrationList;
+    ULONG                           AllocateFromCount;
+    PCM_PARTIAL_RESOURCE_DESCRIPTOR AllocateFrom;
+} ARBITER_RETEST_ALLOCATION_PARAMETERS;
+typedef ARBITER_RETEST_ALLOCATION_PARAMETERS    *PARBITER_RETEST_ALLOCATION_PARAMETERS;
+
+/* Arbiter boot allocation parameters */
+typedef struct _ARBITER_BOOT_ALLOCATION_PARAMETERS {
+    PLIST_ENTRY ArbitrationList;
+} ARBITER_BOOT_ALLOCATION_PARAMETERS;
+typedef ARBITER_BOOT_ALLOCATION_PARAMETERS  *PARBITER_BOOT_ALLOCATION_PARAMETERS;
+
+/* Arbiter query allocated resources parameters */
+typedef struct _ARBITER_QUERY_ALLOCATED_RESOURCES_PARAMETERS {
+    PCM_PARTIAL_RESOURCE_LIST   *AllocatedResources;
+} ARBITER_QUERY_ALLOCATED_RESOURCES_PARAMETERS;
+typedef ARBITER_QUERY_ALLOCATED_RESOURCES_PARAMETERS    *PARBITER_QUERY_ALLOCATED_RESOURCES_PARAMETERS;
+
+/* Arbiter query conflict parameters */
+typedef struct _ARBITER_QUERY_CONFLICT_PARAMETERS {
+    PDEVICE_OBJECT          PhysicalDeviceObject;
+    PIO_RESOURCE_DESCRIPTOR ConflictingResource;
+    PULONG                  ConflictCount;
+    PARBITER_CONFLICT_INFO  *Conflicts;
+} ARBITER_QUERY_CONFLICT_PARAMETERS;
+typedef ARBITER_QUERY_CONFLICT_PARAMETERS   *PARBITER_QUERY_CONFLICT_PARAMETERS;
+
+/* Arbiter query arbitrate parameters */
+typedef struct _ARBITER_QUERY_ARBITRATE_PARAMETERS {
+    PLIST_ENTRY ArbitrationList;
+} ARBITER_QUERY_ARBITRATE_PARAMETERS;
+typedef ARBITER_QUERY_ARBITRATE_PARAMETERS  *PARBITER_QUERY_ARBITRATE_PARAMETERS;
+
+/* Arbiter add reserved parameters */
+typedef struct _ARBITER_ADD_RESERVED_PARAMETERS {
+    PDEVICE_OBJECT  ReserveDevice;
+} ARBITER_ADD_RESERVED_PARAMETERS;
+typedef ARBITER_ADD_RESERVED_PARAMETERS *PARBITER_ADD_RESERVED_PARAMETERS;
+
+/* Arbiter parameters */
+typedef struct _ARBITER_PARAMETERS {
+    union {
+        ARBITER_TEST_ALLOCATION_PARAMETERS              TestAllocation;
+        ARBITER_RETEST_ALLOCATION_PARAMETERS            RetestAllocation;
+        ARBITER_BOOT_ALLOCATION_PARAMETERS              BootAllocation;
+        ARBITER_QUERY_ALLOCATED_RESOURCES_PARAMETERS    QueryAllocatedResources;
+        ARBITER_QUERY_CONFLICT_PARAMETERS               QueryConflict;
+        ARBITER_QUERY_ARBITRATE_PARAMETERS              QueryArbitrate;
+        ARBITER_ADD_RESERVED_PARAMETERS                 AddReserved;
+    } Parameters;
+} ARBITER_PARAMETERS;
+typedef ARBITER_PARAMETERS  *PARBITER_PARAMETERS;
+
+/* Arbiter request sources */
+typedef enum _ARBITER_REQUEST_SOURCE {
+    ArbiterRequestUndefined         = -1,
+    ArbiterRequestLegacyReported    = 0,
+    ArbiterRequestHalReported       = 1,
+    ArbiterRequestLegacyAssigned    = 2,
+    ArbiterRequestPnpDetected       = 3,
+    ArbiterRequestPnpEnumerated     = 4
+} ARBITER_REQUEST_SOURCE;
+
+/* Arbiter results */
+typedef enum _ARBITER_RESULT {
+    ArbiterResultUndefined          = -1,
+    ArbiterResultSuccess            = 0,
+    ArbiterResultExternalConflict   = 1,
+    ArbiterResultNullRequest        = 2
+} ARBITER_RESULT;
+
+/* Arbiter list entry */
+typedef struct _ARBITER_LIST_ENTRY {
+    LIST_ENTRY              ListEntry;
+    ULONG                   AlternativeCount;
+    PIO_RESOURCE_DESCRIPTOR Alternatives;
+    PDEVICE_OBJECT          PhysicalDeviceObject;
+    ARBITER_REQUEST_SOURCE  RequestSource;
+    ULONG                   Flags;
+    LONG_PTR                WorkSpace;
+    INTERFACE_TYPE          InterfaceType;
+    ULONG                   SlotNumber;
+    ULONG                   BusNumber;
+    PCM_PARTIAL_RESOURCE_DESCRIPTOR Assignment;
+    PIO_RESOURCE_DESCRIPTOR SelectedAlternative;
+    ARBITER_RESULT          Result;
+} ARBITER_LIST_ENTRY;
+typedef ARBITER_LIST_ENTRY  *PARBITER_LIST_ENTRY;
+
+/* Arbiter handler */
+typedef NTSTATUS (NTAPI *PARBITER_HANDLER)( PVOID, ARBITER_ACTION, PARBITER_PARAMETERS );
+
+/* Arbiter interface */
+typedef struct _ARBITER_INTERFACE {
+    USHORT                  Size;
+    USHORT                  Version;
+    PVOID                   Context;
+    PINTERFACE_REFERENCE    InterfaceReference;
+    PINTERFACE_DEREFERENCE  InterfaceDereference;
+    PARBITER_HANDLER        ArbiterHandler;
+    ULONG                   Flags;
+} ARBITER_INTERFACE;
+typedef ARBITER_INTERFACE   *PARBITER_INTERFACE;
+
+/* Resource translation directions */
+typedef enum _RESOURCE_TRANSLATION_DIRECTION {
+    TranslateChildToParent  = 0,
+    TranslatePartentToChild = 1
+} RESOURCE_TRANSLATION_DIRECTION;
+
+/* Resource translation callbacks */
+typedef NTSTATUS (NTAPI *PTRANSLATE_RESOURCE_HANDLER)( PVOID, PCM_PARTIAL_RESOURCE_DESCRIPTOR, RESOURCE_TRANSLATION_DIRECTION, ULONG, IO_RESOURCE_DESCRIPTOR [], PDEVICE_OBJECT, PCM_PARTIAL_RESOURCE_LIST );
+typedef NTSTATUS (NTAPI *PTRANSLATE_RESOURCE_REQUIREMENTS_HANDLER)( PVOID, PIO_RESOURCE_DESCRIPTOR, PDEVICE_OBJECT, PULONG, PIO_RESOURCE_DESCRIPTOR * );
+
+/* Translator interface */
+typedef struct _TRANSLATOR_INTERFACE {
+    USHORT                                      Size;
+    USHORT                                      Version;
+    PVOID                                       Context;
+    PINTERFACE_REFERENCE                        InterfaceReference;
+    PINTERFACE_DEREFERENCE                      InterfaceDereference;
+    PTRANSLATE_RESOURCE_HANDLER                 TranslateResources;
+    PTRANSLATE_RESOURCE_REQUIREMENTS_HANDLER    TranslateResourceRequirements;
+} TRANSLATOR_INTERFACE;
+typedef TRANSLATOR_INTERFACE    *PTRANSLATOR_INTERFACE;
+
+/* Hardware abstraction layer reset display parameters callback */
+typedef BOOLEAN (NTAPI *PHAL_RESET_DISPLAY_PARAMETERS)( ULONG, ULONG );
+
+/* Hardware abstraction layer query information classes */
+typedef enum _HAL_QUERY_INFORMATION_CLASS {
+    HalInstalledBusInformation          = 0,
+    HalProfileSourceInformation         = 1,
+    HalPowerInformation                 = 3,
+    HalProcessorSpeedInformation        = 4,
+    HalCallbackInformation              = 5,
+    HalMapRegisterInformation           = 6,
+    HalMcaLogInformation                = 7,
+    HalFrameBufferCachingInformation    = 8,
+    HalDisplayBiosInformation           = 9,
+    HalProcessorFeatureInformation      = 10,
+    HalNumaTopologyInterface            = 11,
+    HalErrorInformation                 = 12,
+    HalCmcLogInformation                = 13,
+    HalCpeLogInformation                = 14,
+    HalQueryMcaInformation              = 15,
+    HalQueryAMLIIllegalIOPortAddresses  = 16,
+    HalQueryMaxHotPlugMemoryAddress     = 17,
+    HalPartitionIpiInterface            = 18,
+    HalPlatformInformation              = 19,
+    HalQueryProfileSourceList           = 20,
+    HalInitLogInformation               = 21,
+    HalFrequencyInformation             = 22
+} HAL_QUERY_INFORMATION_CLASS;
+typedef HAL_QUERY_INFORMATION_CLASS *PHAL_QUERY_INFORMATION_CLASS;
+
+/* Hardware abstraction layer set information classes */
+typedef enum _HAL_SET_INFORMATION_CLASS {
+    HalProfileSourceInterval            = 0,
+    HalProfileSourceInterruptHandler    = 1,
+    HalMcaRegisterDriver                = 2,
+    HalKernelErrorHandler               = 3,
+    HalCmcRegisterDriver                = 4,
+    HalCpeRegisterDriver                = 5,
+    HalMcaLog                           = 6,
+    HalCmcLog                           = 7,
+    HalCpeLog                           = 8,
+    HalGenerateCmcInterrupt             = 9,
+    HalProfileSourceTimerHandler        = 10,
+    HalEnlightment                      = 11
+} HAL_SET_INFORMATION_CLASS;
+typedef HAL_SET_INFORMATION_CLASS   *PHAL_SET_INFORMATION_CLASS;
+
+/* Power management dispatch table */
+typedef struct _PM_DISPATCH_TABLE {
+    ULONG   Signature;
+    ULONG   Version;
+    PVOID   Function[1];
+} PM_DISPATCH_TABLE;
+typedef PM_DISPATCH_TABLE   *PPM_DISPATCH_TABLE;
+
+/* Hardware abstraction layer callbacks */
+typedef PBUS_HANDLER (FASTCALL *pHalHandlerForBus)( INTERFACE_TYPE, ULONG );
+typedef VOID (FASTCALL *pHalReferenceBusHandler)( PBUS_HANDLER );
+typedef NTSTATUS (NTAPI *pHalQuerySystemInformation)( HAL_QUERY_INFORMATION_CLASS, ULONG, PVOID, PULONG );
+typedef NTSTATUS (NTAPI *pHalSetSystemInformation)( HAL_SET_INFORMATION_CLASS, ULONG, PVOID );
+typedef VOID (FASTCALL *pHalExamineMBR)( PDEVICE_OBJECT, ULONG, ULONG, PVOID * );
+typedef VOID (FASTCALL *pHalIoAssignDriveLetters)( struct _LOADER_PARAMETER_BLOCK *, PSTRING, PUCHAR, PSTRING );
+typedef NTSTATUS (FASTCALL *pHalIoReadPartitionTable)( PDEVICE_OBJECT, ULONG, BOOLEAN, struct _DRIVE_LAYOUT_INFORMATION ** );
+typedef NTSTATUS (FASTCALL *pHalIoSetPartitionInformation)( PDEVICE_OBJECT, ULONG, ULONG, ULONG );
+typedef NTSTATUS (FASTCALL *pHalIoWritePartitionTable)( PDEVICE_OBJECT, ULONG, ULONG, ULONG, struct _DRIVE_LAYOUT_INFORMATION * );
+typedef NTSTATUS (NTAPI *pHalQueryBusSlots)( PBUS_HANDLER, ULONG, PULONG, PULONG );
+typedef NTSTATUS (NTAPI *pHalInitPnpDriver)( VOID );
+typedef NTSTATUS (NTAPI *pHalInitPowerManagement)( PPM_DISPATCH_TABLE, PPM_DISPATCH_TABLE * );
+typedef struct _DMA_ADAPTER * (NTAPI *pHalGetDmaAdapter)( PVOID, struct _DEVICE_DESCRIPTION *, PULONG );
+typedef NTSTATUS (NTAPI *pHalGetInterruptTranslator)( INTERFACE_TYPE, ULONG, INTERFACE_TYPE, USHORT, USHORT, PTRANSLATOR_INTERFACE, PULONG );
+typedef BOOLEAN (NTAPI *pHalTranslateBusAddress)( INTERFACE_TYPE, ULONG, PHYSICAL_ADDRESS, PULONG, PPHYSICAL_ADDRESS );
+typedef NTSTATUS (NTAPI *pHalAssignSlotResources)( PUNICODE_STRING, PUNICODE_STRING, PDRIVER_OBJECT, PDEVICE_OBJECT, INTERFACE_TYPE, ULONG, ULONG, PCM_RESOURCE_LIST * );
+typedef VOID (NTAPI *pHalHaltSystem)( VOID );
+typedef BOOLEAN (NTAPI *pHalResetDisplay)( VOID );
+typedef UCHAR (NTAPI *pHalVectorToIDTEntry)( ULONG );
+typedef BOOLEAN (NTAPI *pHalFindBusAddressTranslation)( PHYSICAL_ADDRESS, PULONG, PPHYSICAL_ADDRESS, PULONG_PTR, BOOLEAN );
+typedef NTSTATUS (NTAPI *pHalStartMirroring)( VOID );
+typedef NTSTATUS (NTAPI *pHalEndMirroring)( ULONG );
+typedef NTSTATUS (NTAPI *pHalMirrorPhysicalMemory)( PHYSICAL_ADDRESS, LARGE_INTEGER );
+typedef NTSTATUS (NTAPI *pHalMirrorVerify)( PHYSICAL_ADDRESS, LARGE_INTEGER );
+typedef VOID (NTAPI *pHalEndOfBoot)( VOID );
+typedef ULONG (NTAPI *pHalGetInterruptVector)( INTERFACE_TYPE, ULONG, ULONG, ULONG, PKIRQL, PKAFFINITY );
+typedef NTSTATUS (NTAPI *pHalGetVectorInput)( ULONG, KAFFINITY, PULONG, PKINTERRUPT_POLARITY );
+typedef NTSTATUS (NTAPI *pHalLoadMicrocode)( PVOID );
+typedef NTSTATUS (NTAPI *pHalUnloadMicrocode)( VOID );
+typedef NTSTATUS (NTAPI *pHalPostMicrocodeUpdate)( VOID );
+
+/* Map register entry */
+typedef struct _MAP_REGISTER_ENTRY {
+    PVOID   MapRegister;
+    BOOLEAN WriteToDevice;
+} MAP_REGISTER_ENTRY;
+typedef MAP_REGISTER_ENTRY  *PMAP_REGISTER_ENTRY;
+
+/* Debug device address */
+typedef struct {
+    UCHAR   Type;
+    BOOLEAN Valid;
+    UCHAR   Reserved[2];
+    PUCHAR  TranslatedAddress;
+    ULONG   Length;
+} DEBUG_DEVICE_ADDRESS;
+typedef DEBUG_DEVICE_ADDRESS    *PDEBUG_DEVICE_ADDRESS;
+
+/* Debug memory requirements */
+typedef struct {
+    PHYSICAL_ADDRESS    Start;
+    PHYSICAL_ADDRESS    MaxEnd;
+    PVOID               VirtualAddress;
+    ULONG               Length;
+    BOOLEAN             Cached;
+    BOOLEAN             Aligned;
+} DEBUG_MEMORY_REQUIREMENTS;
+typedef DEBUG_MEMORY_REQUIREMENTS   *PDEBUG_MEMORY_REQUIREMENTS;
+
+/* Debug device descriptor */
+typedef struct {
+    ULONG                       Bus;
+    USHORT                      Segment;
+    ULONG                       Slot;
+    USHORT                      VendorID;
+    USHORT                      DeviceID;
+    UCHAR                       BaseClass;
+    UCHAR                       SubClass;
+    UCHAR                       ProgIf;
+    BOOLEAN                     Initialized;
+    BOOLEAN                     Configured;
+    DEBUG_DEVICE_ADDRESS        BaseAddress[6];
+    DEBUG_MEMORY_REQUIREMENTS   Memory;
+} DEBUG_DEVICE_DESCRIPTOR;
+typedef DEBUG_DEVICE_DESCRIPTOR *PDEBUG_DEVICE_DESCRIPTOR;
+
+/* Kernel debugger callbacks */
+typedef NTSTATUS (NTAPI *pKdSetupPciDeviceForDebugging)( PVOID, PDEBUG_DEVICE_DESCRIPTOR );
+typedef NTSTATUS (NTAPI *pKdReleasePciDeviceForDebugging)( PDEBUG_DEVICE_DESCRIPTOR );
+typedef NTSTATUS (NTAPI *pKdGetAcpiTablePhase0)( struct _LOADER_PARAMETER_BLOCK *, ULONG );
+typedef VOID (NTAPI *pKdCheckPowerButton)( VOID );
+typedef PVOID (NTAPI *pKdMapPhysicalMemory64)( PHYSICAL_ADDRESS, ULONG );
+typedef VOID (NTAPI *pKdUnmapVirtualAddress)( PVOID, ULONG );
+typedef ULONG (NTAPI *pKdGetPciDataByOffset)( ULONG, ULONG, PVOID, ULONG, ULONG );
+typedef ULONG (NTAPI *pKdSetPciDataByOffset)( ULONG, ULONG, PVOID, ULONG, ULONG );
+
+/* Hardware abstraction layer dispatch table */
+typedef struct {
+    ULONG                           Version;
+    pHalQuerySystemInformation      HalQuerySystemInformation;
+    pHalSetSystemInformation        HalSetSystemInformation;
+    pHalQueryBusSlots               HalQueryBusSlots;
+    ULONG                           Spare1;
+    pHalExamineMBR                  HalExamineMBR;
+    pHalIoAssignDriveLetters        HalIoAssignDriveLetters;
+    pHalIoReadPartitionTable        HalIoReadPartitionTable;
+    pHalIoSetPartitionInformation   HalIoSetPartitionInformation;
+    pHalIoWritePartitionTable       HalIoWritePartitionTable;
+    pHalHandlerForBus               HalReferenceHandlerForBus;
+    pHalReferenceBusHandler         HalReferenceBusHandler;
+    pHalReferenceBusHandler         HalDereferenceBusHandler;
+    pHalInitPnpDriver               HalInitPnpDriver;
+    pHalInitPowerManagement         HalInitPowerManagement;
+    pHalGetDmaAdapter               HalGetDmaAdapter;
+    pHalGetInterruptTranslator      HalGetInterruptTranslator;
+    pHalStartMirroring              HalStartMirroring;
+    pHalEndMirroring                HalEndMirroring;
+    pHalMirrorPhysicalMemory        HalMirrorPhysicalMemory;
+    pHalEndOfBoot                   HalEndOfBoot;
+    pHalMirrorVerify                HalMirrorVerify;
+} HAL_DISPATCH;
+typedef HAL_DISPATCH    *PHAL_DISPATCH;
+
+/* Hardware abstraction layer bus information */
+typedef struct _HAL_BUS_INFORMATION {
+    INTERFACE_TYPE  BusType;
+    BUS_DATA_TYPE   ConfigurationType;
+    ULONG           BusNumber;
+    ULONG           Reserved;
+} HAL_BUS_INFORMATION;
+typedef HAL_BUS_INFORMATION *PHAL_BUS_INFORMATION;
+
+/* Hardware abstraction layer profile source information */
+typedef struct _HAL_PROFILE_SOURCE_INFORMATION {
+    KPROFILE_SOURCE Source;
+    BOOLEAN         Supported;
+    ULONG           Interval;
+} HAL_PROFILE_SOURCE_INFORMATION;
+typedef HAL_PROFILE_SOURCE_INFORMATION  *PHAL_PROFILE_SOURCE_INFORMATION;
+
+/* Hardware abstraction layer profile source information (extended version) */
+typedef struct _HAL_PROFILE_SOURCE_INFORMATION_EX {
+    KPROFILE_SOURCE Source;
+    BOOLEAN         Supported;
+    ULONG_PTR       Interval;
+    ULONG_PTR       DefInterval;
+    ULONG_PTR       MaxInterval;
+    ULONG_PTR       MinInterval;
+} HAL_PROFILE_SOURCE_INFORMATION_EX;
+typedef HAL_PROFILE_SOURCE_INFORMATION_EX   *PHAL_PROFILE_SOURCE_INFORMATION_EX;
+
+/* Hardware abstraction layer profile source interval */
+typedef struct _HAL_PROFILE_SOURCE_INTERVAL {
+    KPROFILE_SOURCE Source;
+    ULONG_PTR       Interval;
+} HAL_PROFILE_SOURCE_INTERVAL;
+typedef HAL_PROFILE_SOURCE_INTERVAL *PHAL_PROFILE_SOURCE_INTERVAL;
+
+/* Hardware abstraction layer profile source list */
+typedef struct _HAL_PROFILE_SOURCE_LIST {
+    KPROFILE_SOURCE Source;
+    PWSTR           Description;
+} HAL_PROFILE_SOURCE_LIST;
+typedef HAL_PROFILE_SOURCE_LIST *PHAL_PROFILE_SOURCE_LIST;
+
+/* Hardware abstraction layer display BIOS information */
+typedef enum _HAL_DISPLAY_BIOS_INFORMATION {
+    HalDisplayInt10Bios     = 0,
+    HalDisplayEmulatedBios  = 1,
+    HalDispalyNoBios        = 2
+} HAL_DISPLAY_BIOS_INFORMATION;
+typedef HAL_DISPLAY_BIOS_INFORMATION    *PHAL_DISPLAY_BIOS_INFORMATION;
+
+/* Hardware abstraction layer power information */
+typedef struct _HAL_POWER_INFORMATION {
+    ULONG   TBD;
+} HAL_POWER_INFORMATION;
+typedef HAL_POWER_INFORMATION   *PHAL_POWER_INFORMATION;
+
+/* Hardware abstraction layer processor speed information */
+typedef struct _HAL_PROCESSOR_SPEED_INFO {
+    ULONG   ProcessorSpeed;
+} HAL_PROCESSOR_SPEED_INFO;
+typedef HAL_PROCESSOR_SPEED_INFO    *PHAL_PROCESSOR_SPEED_INFO;
+
+/* Hardware abstraction layer callbacks */
+typedef struct _HAL_CALLBACKS {
+    PCALLBACK_OBJECT    SetSystemInformation;
+    PCALLBACK_OBJECT    BusCheck;
+} HAL_CALLBACKS;
+typedef HAL_CALLBACKS   *PHAL_CALLBACKS;
+
+/* Hardware abstraction layer processor feature */
+typedef struct _HAL_PROCESSOR_FEATURE {
+    ULONG   UsableFeatureBits;
+} HAL_PROCESSOR_FEATURE;
+typedef HAL_PROCESSOR_FEATURE   *PHAL_PROCESSOR_FEATURE;
+
+/* Hardware abstraction layer I/O read/write handler */
+typedef NTSTATUS (NTAPI *PHALIOREADWRITEHANDLER)( BOOLEAN, ULONG, ULONG, PULONG );
+
+/* Hardware abstraction layer bad I/O address list */
+typedef struct _HAL_AMLI_BAD_IO_ADDRESS_LIST {
+    ULONG                   BadAddrBegin;
+    ULONG                   BadAddrSize;
+    ULONG                   OSVersionTrigger;
+    PHALIOREADWRITEHANDLER  IOHandler;
+} HAL_AMLI_BAD_IO_ADDRESS_LIST;
+typedef HAL_AMLI_BAD_IO_ADDRESS_LIST    *PHAL_AMLI_BAD_IO_ADDRESS_LIST;
+
+/* Hardware abstraction layer MCA interface callbacks */
+#ifdef _X86_
+typedef VOID (NTAPI *PHALMCAINTERFACELOCK)( VOID );
+typedef VOID (NTAPI *PHALMCAINTERFACEUNLOCK)( VOID );
+typedef NTSTATUS (NTAPI *PHALMCAINTERFACEREADREGISTER)( UCHAR, PVOID );
+#endif
+
+/* Hardware abstraction layer MCA interface */
+#ifdef _X86_
+typedef struct _HAL_MCA_INTERFACE {
+    PHALMCAINTERFACELOCK            Lock;
+    PHALMCAINTERFACEUNLOCK          Unlock;
+    PHALMCAINTERFACEREADREGISTER    ReadRegister;
+} HAL_MCA_INTERFACE;
+#endif
+
+/* Driver exception callback */
+#ifdef _X86_
+typedef VOID (NTAPI *PDRIVER_EXCPTN_CALLBACK)( PVOID, PMCA_EXCEPTION );
+typedef PDRIVER_EXCPTN_CALLBACK PDRIVER_MCA_EXCEPTION_CALLBACK;
+#endif
+
+/* MCA driver information */
+#ifdef _X86_
+typedef struct _MCA_DRIVER_INFO {
+    PDRIVER_MCA_EXCEPTION_CALLBACK  ExceptionCallback;
+    PKDEFERRED_ROUTINE              DpcCallback;
+    PVOID                           DeviceContext;
+} MCA_DRIVER_INFO;
+typedef MCA_DRIVER_INFO *PMCA_DRIVER_INFO;
+#endif
+
+/* Hardware abstraction layer error information */
+#ifdef _X86_
+typedef struct _HAL_ERROR_INFO {
+    ULONG       Version;
+    ULONG       Reserved;
+    ULONG       McaMaxSize;
+    ULONG       McaPreviousEventsCount;
+    ULONG       McaCorrectedEventsCount;
+    ULONG       McaKernelDeliveryFails;
+    ULONG       McaDriverDpcQueueFails;
+    ULONG       McaReserved;
+    ULONG       CmcMaxSize;
+    ULONG       CmcPollingInterval;
+    ULONG       CmcInterruptsCount;
+    ULONG       CmcKernelDeliveryFails;
+    ULONG       CmcDriverDpcQueueFails;
+    ULONG       CmcGetStateFails;
+    ULONG       CmcClearStateFails;
+    ULONG       CmcReserved;
+    ULONGLONG   CmcLogId;
+    ULONG       CpeMaxSize;
+    ULONG       CpePollingInterval;
+    ULONG       CpeInterruptsCount;
+    ULONG       CpeKernelDeliveryFails;
+    ULONG       CpeDriverDpcQueueFails;
+    ULONG       CpeGetStateFails;
+    ULONG       CpeClearStateFails;
+    ULONG       CpeInterruptSources;
+    ULONGLONG   CpeLogId;
+    ULONGLONG   KernelReserved[4];
+} HAL_ERROR_INFO;
+typedef HAL_ERROR_INFO  *PHAL_ERROR_INFO;
+#endif
+
+/* Driver exception callbacks */
+#ifdef _X86_
+typedef VOID (NTAPI *PDRIVER_CMC_EXCEPTION_CALLBACK)( PVOID, PCMC_EXCEPTION );
+typedef VOID (NTAPI *PDRIVER_CPE_EXCEPTION_CALLBACK)( PVOID, PCPE_EXCEPTION );
+#endif
+
+/* CMC driver information */
+#ifdef _X86_
+typedef struct _CMC_DRIVER_INFO {
+    PDRIVER_CMC_EXCEPTION_CALLBACK  ExceptionCallback;
+    PKDEFERRED_ROUTINE              DpcCallback;
+    PVOID                           DeviceContext;
+} CMC_DRIVER_INFO;
+typedef CMC_DRIVER_INFO *PCMC_DRIVER_INFO;
+#endif
+
+/* CPE driver information */
+#ifdef _X86_
+typedef struct _CPE_DRIVER_INFO {
+    PDRIVER_CPE_EXCEPTION_CALLBACK  ExceptionCallback;
+    PKDEFERRED_ROUTINE              DpcCallback;
+    PVOID                           DeviceContext;
+} CPE_DRIVER_INFO;
+typedef CPE_DRIVER_INFO *PCPE_DRIVER_INFO;
+#endif
+
+/* Hardware abstraction layer platform information */
+typedef struct _HAL_PLATFORM_INFORMATION {
+    ULONG   PlatformFlags;
+} HAL_PLATFORM_INFORMATION;
+typedef HAL_PLATFORM_INFORMATION    *PHAL_PLATFORM_INFORMATION;
+
+/* PCI AGP capability */
+typedef struct _PCI_AGP_CAPABILITY {
+    PCI_CAPABILITIES_HEADER Header;
+    USHORT                  Minor   : 4;
+    USHORT                  Major   : 4;
+    USHORT                  Rsvd1   : 8;
+    struct _PCI_AGP_STATUS {
+        ULONG   Rate                        : 3;
+        ULONG   Agp3Mode                    : 1;
+        ULONG   FastWrite                   : 1;
+        ULONG   FourGB                      : 1;
+        ULONG   HostTransDisable            : 1;
+        ULONG   Gart64                      : 1;
+        ULONG   ITA_Coherent                : 1;
+        ULONG   SideBandAddressing          : 1;
+        ULONG   CalibrationCycle            : 3;
+        ULONG   AsyncRequestSize            : 3;
+        ULONG   Rsvd1                       : 1;
+        ULONG   Isoch                       : 1;
+        ULONG   Rsvd2                       : 6;
+        ULONG   RequestQueueDepthMaximum    : 8;
+    } AGPStatus;
+    struct _PCI_AGP_COMMAND {
+        ULONG   Rate                : 3;
+        ULONG   Rsvd1               : 1;
+        ULONG   FastWriteEnable     : 1;
+        ULONG   FourGBEnable        : 1;
+        ULONG   Rsvd2               : 1;
+        ULONG   Gart64              : 1;
+        ULONG   AGPEnable           : 1;
+        ULONG   SBAEnable           : 1;
+        ULONG   CalibrationCycle    : 3;
+        ULONG   AsyncReqSize        : 3;
+        ULONG   Rsvd3               : 8;
+        ULONG   RequestQueueDepth   : 8;
+    } AGPCommand;
+} PCI_AGP_CAPABILITY;
+typedef PCI_AGP_CAPABILITY  *PPCI_AGP_CAPABILITY;
+
+/* Extended AGP registers */
+typedef enum _EXTENDED_AGP_REGISTER {
+    IsochStatus         = 0,
+    AgpControl          = 1,
+    ApertureSize        = 2,
+    AperturePageSize    = 3,
+    GartLow             = 4,
+    GartHigh            = 5,
+    IsochCommand        = 6
+} EXTENDED_AGP_REGISTER;
+typedef EXTENDED_AGP_REGISTER   *PEXTENDED_AGP_REGISTER;
+
+/* PCI AGP ISOCH status */
+typedef struct _PCI_AGP_ISOCH_STATUS {
+    ULONG   ErrorCode   : 2;
+    ULONG   Rsvd1       : 1;
+    ULONG   Isoch_L     : 3;
+    ULONG   Isoch_Y     : 2;
+    ULONG   Isoch_N     : 8;
+    ULONG   Rsvd2       : 16;
+} PCI_AGP_ISOCH_STATUS;
+typedef PCI_AGP_ISOCH_STATUS    *PPCI_AGP_ISOCH_STATUS;
+
+/* PCI AGP control */
+typedef struct _PCI_AGP_CONTROL {
+    ULONG   Rsvd1       : 7;
+    ULONG   GTLB_Enable : 1;
+    ULONG   AP_Enable   : 1;
+    ULONG   CAL_Disable : 1;
+    ULONG   Rsvd2       : 22;
+} PCI_AGP_CONTROL;
+typedef PCI_AGP_CONTROL *PPCI_AGP_CONTROL;
+
+/* PCI AGP aperture page size */
+typedef struct _PCI_AGP_APERTURE_PAGE_SIZE {
+    USHORT  PageSizeMask    : 11;
+    USHORT  Rsvd1           : 1;
+    USHORT  PageSizeSelect  : 4;
+} PCI_AGP_APERTURE_PAGE_SIZE;
+typedef PCI_AGP_APERTURE_PAGE_SIZE  *PPCI_AGP_APERTURE_PAGE_SIZE;
+
+/* PCI AGP ISOCH command */
+typedef struct _PCI_AGP_ISOCH_COMMAND {
+    USHORT  Rsvd1   : 6;
+    USHORT  Isoch_Y : 2;
+    USHORT  Isoch_N : 8;
+} PCI_AGP_ISOCH_COMMAND;
+typedef PCI_AGP_ISOCH_COMMAND   *PPCI_AGP_ISOCH_COMMAND;
+
+/* PCI AGP extended capability */
+typedef struct PCI_AGP_EXTENDED_CAPABILITY {
+    PCI_AGP_ISOCH_STATUS        IsochStatus;
+    PCI_AGP_CONTROL             AgpControl;
+    USHORT                      ApertureSize;
+    PCI_AGP_APERTURE_PAGE_SIZE  AperturePageSize;
+    ULONG                       GartLow;
+    ULONG                       GartHigh;
+    PCI_AGP_ISOCH_COMMAND       IsochCommand;
+} PCI_AGP_EXTENDED_CAPABILITY;
+typedef PCI_AGP_EXTENDED_CAPABILITY *PPCI_AGP_EXTENDED_CAPABILITY;
+
+/* PCI bridge capability */
+typedef struct _PCIX_BRIDGE_CAPABILITY {
+    PCI_CAPABILITIES_HEADER Header;
+    union {
+        struct {
+            USHORT  Bus64Bit                    : 1;
+            USHORT  Bus133MHzCapable            : 1;
+            USHORT  SplitCompletionDiscarded    : 1;
+            USHORT  UnexpectedSplitCompletion   : 1;
+            USHORT  SplitCompletionOverrun      : 1;
+            USHORT  SplitRequestDelayed         : 1;
+            USHORT  BusModeFrequency            : 4;
+            USHORT  Rsvd                        : 2;
+            USHORT  Version                     : 2;
+            USHORT  Bus266MHzCapable            : 1;
+            USHORT  Bus533MHzCapable            : 1;
+        };
+        USHORT  AsUSHORT;
+    } SecondaryStatus;
+    union {
+        struct {
+            ULONG   FunctionNumber              : 3;
+            ULONG   DeviceNumber                : 5;
+            ULONG   BusNumber                   : 8;
+            ULONG   Device64Bit                 : 1;
+            ULONG   Device133MHzCapable         : 1;
+            ULONG   SplitCompletionDiscarded    : 1;
+            ULONG   UnexpectedSplitCompletion   : 1;
+            ULONG   SplitCompletionOverrun      : 1;
+            ULONG   SplitRequestDelayed         : 1;
+            ULONG   Rsvd                        : 7;
+            ULONG   DIMCapable                  : 1;
+            ULONG   Device266MHzCapable         : 1;
+            ULONG   Device533MHzCapable         : 1;
+        };
+        ULONG   AsULONG;
+    } BridgeStatus;
+    USHORT  UpstreamSplitTransactionCapacity;
+    USHORT  UpstreamSplitTransactionLimit;
+    USHORT  DownstreamSplitTransactionCapacity;
+    USHORT  DownstreamSplitTransactionLimit;
+    union {
+        struct {
+            ULONG   SelectSecondaryRegisters        : 1;
+            ULONG   ErrorPresentInOtherBank         : 1;
+            ULONG   AdditionalCorrectableError      : 1;
+            ULONG   AdditionalUncorrectableError    : 1;
+            ULONG   ErrorPhase                      : 3;
+            ULONG   ErrorCorrected                  : 1;
+            ULONG   Syndrome                        : 8;
+            ULONG   ErrorFirstCommand               : 4;
+            ULONG   ErrorSecondCommand              : 4;
+            ULONG   ErrorUpperAttributes            : 4;
+            ULONG   ControlUpdateEnable             : 1;
+            ULONG   Rsvd                            : 1;
+            ULONG   DisableSingleBitCorrection      : 1;
+            ULONG   EccMode                         : 1;
+        };
+        ULONG   AsULONG;
+    } EccControlStatus;
+    ULONG   EccFirstAddress;
+    ULONG   EccSecondAddress;
+    ULONG   EccAttribute;
+} PCIX_BRIDGE_CAPABILITY;
+typedef PCIX_BRIDGE_CAPABILITY  *PPCIX_BRIDGE_CAPABILITY;
+
+/* PCI subsystem identifiers capability */
+typedef struct _PCI_SUBSYSTEM_IDS_CAPABILITY {
+    PCI_CAPABILITIES_HEADER Header;
+    USHORT                  Reserved;
+    USHORT                  SubVendorID;
+    USHORT                  SubSystemID;
+} PCI_SUBSYSTEM_IDS_CAPABILITY;
+typedef PCI_SUBSYSTEM_IDS_CAPABILITY    *PPCI_SUBSYSTEM_IDS_CAPABILITY;
+
+/* PCI root bus OSC support field */
+typedef struct _PCI_ROOT_BUS_OSC_SUPPORT_FIELD {
+    union {
+        struct {
+            ULONG   ExtendedConfigOpRegions     : 1;
+            ULONG   ActiveStatePowerManagement  : 1;
+            ULONG   ClockPowerManagement        : 1;
+            ULONG   SegmentGroups               : 1;
+            ULONG   MessageSignaledInterrupts   : 1;
+            ULONG   Reserved                    : 27;
+        };
+        ULONG   AsULONG;
+    } u;
+} PCI_ROOT_BUS_OSC_SUPPORT_FIELD;
+typedef PCI_ROOT_BUS_OSC_SUPPORT_FIELD  *PPCI_ROOT_BUS_OSC_SUPPORT_FIELD;
+
+/* PCI root bus OSC control field */
+typedef struct _PCI_ROOT_BUS_OSC_CONTROL_FIELD {
+    union {
+        struct {
+            ULONG   ExpressNativeHotPlug            : 1;
+            ULONG   ShpcNativeHotPlug               : 1;
+            ULONG   ExpressNativePME                : 1;
+            ULONG   ExpressAdvancedErrorReporting   : 1;
+            ULONG   ExpressCapabilityStructure      : 1;
+            ULONG   Reserved                        : 27;
+        };
+        ULONG   AsULONG;
+    } u;
+} PCI_ROOT_BUS_OSC_CONTROL_FIELD;
+typedef PCI_ROOT_BUS_OSC_CONTROL_FIELD  *PPCI_ROOT_BUS_OSC_CONTROL_FIELD;
+
+/* PCI hardware interfaces */
+typedef enum _PCI_HARDWARE_INTERFACE {
+    PciConventional = 0,
+    PciXMode1       = 1,
+    PciXMode2       = 2,
+    PciExpress      = 3
+} PCI_HARDWARE_INTERFACE;
+typedef PCI_HARDWARE_INTERFACE  *PPCI_HARDWARE_INTERFACE;
+
+/* PCI bus widths */
+typedef enum {
+    BusWidth32Bits  = 0,
+    BusWidth64Bits  = 1
+} PCI_BUS_WIDTH;
+
+/* PCI root bus hardware capability */
+typedef struct _PCI_ROOT_BUS_HARDWARE_CAPABILITY {
+    PCI_HARDWARE_INTERFACE  SecondaryInterface;
+    struct {
+        BOOLEAN         BusCapabilitiesFound;
+        ULONG           CurrentSpeedAndMode;
+        ULONG           SupportedSpeedsAndModes;
+        BOOLEAN         DeviceIDMessagingCapable;
+        PCI_BUS_WIDTH   SecondaryBusWidth;
+    };
+    PCI_ROOT_BUS_OSC_SUPPORT_FIELD  OscFeatureSupport;
+    PCI_ROOT_BUS_OSC_CONTROL_FIELD  OscControlSupport;
+    PCI_ROOT_BUS_OSC_CONTROL_FIELD  OscControlGranted;
+} PCI_ROOT_BUS_HARDWARE_CAPABILITY;
+typedef PCI_ROOT_BUS_HARDWARE_CAPABILITY    *PPCI_ROOT_BUS_HARDWARE_CAPABILITY;
+
+/* PCI express capabilities register */
+typedef union _PCI_EXPRESS_CAPABILITIES_REGISTER {
+    struct {
+        USHORT  CapabilitiesVersion     : 4;
+        USHORT  DeviceType              : 4;
+        USHORT  SlotImplemented         : 1;
+        USHORT  InterruptMessageNumber  : 5;
+        USHORT  Rsvd                    : 2;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_CAPABILITIES_REGISTER;
+typedef PCI_EXPRESS_CAPABILITIES_REGISTER   *PPCI_EXPRESS_CAPABILITIES_REGISTER;
+
+/* PCI express device capabilities register */
+typedef union _PCI_EXPRESS_DEVICE_CAPABILITIES_REGISTER {
+    struct {
+        ULONG   MaxPayloadSizeSupported     : 3;
+        ULONG   PhantomFunctionsSupported   : 2;
+        ULONG   ExtendedTagSupported        : 1;
+        ULONG   L0sAcceptableLatency        : 3;
+        ULONG   L1AcceptableLatency         : 3;
+        ULONG   AttentionButtonPresent      : 1;
+        ULONG   AttentionIndicatorPresent   : 1;
+        ULONG   PowerIndicatorPresent       : 1;
+        ULONG   RoleBasedErrorReporting     : 1;
+        ULONG   Rsvd1                       : 2;
+        ULONG   CapturedSlotPowerLimit      : 8;
+        ULONG   CapturedSlotPowerLimitScale : 2;
+        ULONG   Rsvd2                       : 4;
+    };
+    ULONG   AsULONG;
+} PCI_EXPRESS_DEVICE_CAPABILITIES_REGISTER;
+typedef PCI_EXPRESS_DEVICE_CAPABILITIES_REGISTER    *PPCI_EXPRESS_DEVICE_CAPABILITIES_REGISTER;
+
+/* PCI express device control register */
+typedef union _PCI_EXPRESS_DEVICE_CONTROL_REGISTER {
+    struct {
+        USHORT  CorrectableErrorEnable          : 1;
+        USHORT  NonFatalErrorEnable             : 1;
+        USHORT  FatalErrorEnable                : 1;
+        USHORT  UnsupportedRequestErrorEnable   : 1;
+        USHORT  EnableRelaxedOrder              : 1;
+        USHORT  MaxPayloadSize                  : 3;
+        USHORT  ExtendedTagEnable               : 1;
+        USHORT  PhantomFunctionsEnable          : 1;
+        USHORT  AuxPowerEnable                  : 1;
+        USHORT  NoSnoopEnable                   : 1;
+        USHORT  MaxReadRequestSize              : 3;
+        USHORT  Rsvd                            : 1;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_DEVICE_CONTROL_REGISTER;
+typedef PCI_EXPRESS_DEVICE_CONTROL_REGISTER *PPCI_EXPRESS_DEVICE_CONTROL_REGISTER;
+
+/* PCI express device status register */
+typedef union _PCI_EXPRESS_DEVICE_STATUS_REGISTER {
+    struct {
+        USHORT  CorrectableErrorDetected    : 1;
+        USHORT  NonFatalErrorDetected       : 1;
+        USHORT  FatalErrorDetected          : 1;
+        USHORT  UnsupportedRequestDetected  : 1;
+        USHORT  AuxPowerDetected            : 1;
+        USHORT  TransactionsPending         : 1;
+        USHORT  Rsvd                        : 10;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_DEVICE_STATUS_REGISTER;
+typedef PCI_EXPRESS_DEVICE_STATUS_REGISTER  *PPCI_EXPRESS_DEVICE_STATUS_REGISTER;
+
+/* PCI express link capabilities register */
+typedef union _PCI_EXPRESS_LINK_CAPABILITIES_REGISTER {
+    struct {
+        ULONG   MaximumLinkSpeed                    : 4;
+        ULONG   MaximumLinkWidth                    : 6;
+        ULONG   ActiveStatePMSupport                : 2;
+        ULONG   L0sExitLatency                      : 3;
+        ULONG   L1ExitLatency                       : 3;
+        ULONG   ClockPowerManagement                : 1;
+        ULONG   SurpriseDownErrorReportingCapable   : 1;
+        ULONG   DataLinkLayerActiveReportingCapable : 1;
+        ULONG   Rsvd                                : 3;
+        ULONG   PortNumber                          : 8;
+    };
+    ULONG   AsULONG;
+} PCI_EXPRESS_LINK_CAPABILITIES_REGISTER;
+typedef PCI_EXPRESS_LINK_CAPABILITIES_REGISTER  *PPCI_EXPRESS_LINK_CAPABILITIES_REGISTER;
+
+/* PCI express link control register */
+typedef union _PCI_EXPRESS_LINK_CONTROL_REGISTER {
+    struct {
+        USHORT  ActiveStatePMControl        : 2;
+        USHORT  Rsvd1                       : 1;
+        USHORT  ReadCompletionBoundary      : 1;
+        USHORT  LinkDisable                 : 1;
+        USHORT  RetrainLink                 : 1;
+        USHORT  CommonClockConfig           : 1;
+        USHORT  ExtendedSynch               : 1;
+        USHORT  EnableClockPowerManagement  : 1;
+        USHORT  Rsvd2                       : 7;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_LINK_CONTROL_REGISTER;
+typedef PCI_EXPRESS_LINK_CONTROL_REGISTER   *PPCI_EXPRESS_LINK_CONTROL_REGISTER;
+
+/* PCI express link status register */
+typedef union _PCI_EXPRESS_LINK_STATUS_REGISTER {
+    struct {
+        USHORT  LinkSpeed           : 4;
+        USHORT  LinkWidth           : 6;
+        USHORT  Undefined           : 1;
+        USHORT  LinkTraining        : 1;
+        USHORT  SlotClockConfig     : 1;
+        USHORT  DataLinkLayerActive : 1;
+        USHORT  Rsvd                : 2;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_LINK_STATUS_REGISTER;
+typedef PCI_EXPRESS_LINK_STATUS_REGISTER    *PPCI_EXPRESS_LINK_STATUS_REGISTER;
+
+/* PCI express slot capabilities register */
+typedef union _PCI_EXPRESS_SLOT_CAPABILITIES_REGISTER {
+    struct {
+        ULONG   AttentionButtonPresent          : 1;
+        ULONG   PowerControllerPresent          : 1;
+        ULONG   MRLSensorPresent                : 1;
+        ULONG   AttentionIndicatorPresent       : 1;
+        ULONG   PowerIndicatorPresent           : 1;
+        ULONG   HotPlugSurprise                 : 1;
+        ULONG   HotPlugCapable                  : 1;
+        ULONG   SlotPowerLimit                  : 8;
+        ULONG   SlotPowerLimitScale             : 2;
+        ULONG   ElectromechanicalLockPresent    : 1;
+        ULONG   NoCommandCompletedSupport       : 1;
+        ULONG   PhysicalSlotNumber              : 13;
+    };
+    ULONG   AsULONG;
+} PCI_EXPRESS_SLOT_CAPABILITIES_REGISTER;
+typedef PCI_EXPRESS_SLOT_CAPABILITIES_REGISTER  *PPCI_EXPRESS_SLOT_CAPABILITIES_REGISTER;
+
+/* PCI express slot control register */
+typedef union _PCI_EXPRESS_SLOT_CONTROL_REGISTER {
+    struct {
+        USHORT  AttentionButtonEnable           : 1;
+        USHORT  PowerFaultDetectEnable          : 1;
+        USHORT  MRLSensorEnable                 : 1;
+        USHORT  PresenceDetectEnable            : 1;
+        USHORT  CommandCompletedEnable          : 1;
+        USHORT  HotPlugInterruptEnable          : 1;
+        USHORT  AttentionIndicatorControl       : 2;
+        USHORT  PowerIndicatorControl           : 2;
+        USHORT  PowerControllerControl          : 1;
+        USHORT  ElectromechanicalLockControl    : 1;
+        USHORT  DataLinkStateChangeEnable       : 1;
+        USHORT  Rsvd                            : 3;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_SLOT_CONTROL_REGISTER;
+typedef PCI_EXPRESS_SLOT_CONTROL_REGISTER   *PPCI_EXPRESS_SLOT_CONTROL_REGISTER;
+
+/* PCI express slot status register */
+typedef union _PCI_EXPRESS_SLOT_STATUS_REGISTER {
+    struct {
+        USHORT  AttentionButtonPressed          : 1;
+        USHORT  PowerFaultDetected              : 1;
+        USHORT  MRLSensorChanged                : 1;
+        USHORT  PresenceDetectChanged           : 1;
+        USHORT  CommandCompleted                : 1;
+        USHORT  MRLSensorState                  : 1;
+        USHORT  PresenceDetectState             : 1;
+        USHORT  ElectromechanicalLockEngaged    : 1;
+        USHORT  DataLinkStateChanged            : 1;
+        USHORT  Rsvd                            : 7;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_SLOT_STATUS_REGISTER;
+typedef PCI_EXPRESS_SLOT_STATUS_REGISTER    *PPCI_EXPRESS_SLOT_STATUS_REGISTER;
+
+/* PCI express root control register */
+typedef union _PCI_EXPRESS_ROOT_CONTROL_REGISTER {
+    struct {
+        USHORT  CorrectableSerrEnable   : 1;
+        USHORT  NonFatalSerrEnable      : 1;
+        USHORT  FatalSerrEnable         : 1;
+        USHORT  PMEInterruptEnable      : 1;
+        USHORT  Rsvd                    : 12;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_ROOT_CONTROL_REGISTER;
+typedef PCI_EXPRESS_ROOT_CONTROL_REGISTER   *PPCI_EXPRESS_ROOT_CONTROL_REGISTER;
+
+/* PCI express root capabilities register */
+typedef union _PCI_EXPRESS_ROOT_CAPABILITIES_REGISTER {
+    struct {
+        USHORT  CRSSoftwareVisibility   : 1;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_ROOT_CAPABILITIES_REGISTER;
+typedef PCI_EXPRESS_ROOT_CAPABILITIES_REGISTER  *PPCI_EXPRESS_ROOT_CAPABILITIES_REGISTER;
+
+/* PCI express root status register */
+typedef union _PCI_EXPRESS_ROOT_STATUS_REGISTER {
+    struct {
+        ULONG   PMERequestorId  : 16;
+        ULONG   PMEStatus       : 1;
+        ULONG   PMEPending      : 1;
+        ULONG   Rsvd            : 14;
+    };
+    ULONG   AsULONG;
+} PCI_EXPRESS_ROOT_STATUS_REGISTER;
+typedef PCI_EXPRESS_ROOT_STATUS_REGISTER    *PPCI_EXPRESS_ROOT_STATUS_REGISTER;
+
+/* PCI express capability */
+typedef struct _PCI_EXPRESS_CAPABILITY {
+    PCI_CAPABILITIES_HEADER                     Header;
+    PCI_EXPRESS_CAPABILITIES_REGISTER           ExpressCapabilities;
+    PCI_EXPRESS_DEVICE_CAPABILITIES_REGISTER    DeviceCapabilities;
+    PCI_EXPRESS_DEVICE_CONTROL_REGISTER         DeviceControl;
+    PCI_EXPRESS_DEVICE_STATUS_REGISTER          DeviceStatus;
+    PCI_EXPRESS_LINK_CAPABILITIES_REGISTER      LinkCapabilities;
+    PCI_EXPRESS_LINK_CONTROL_REGISTER           LinkControl;
+    PCI_EXPRESS_LINK_STATUS_REGISTER            LinkStatus;
+    PCI_EXPRESS_SLOT_CAPABILITIES_REGISTER      SlotCapabilities;
+    PCI_EXPRESS_SLOT_CONTROL_REGISTER           SlotControl;
+    PCI_EXPRESS_SLOT_STATUS_REGISTER            SlotStatus;
+    PCI_EXPRESS_ROOT_CONTROL_REGISTER           RootControl;
+    PCI_EXPRESS_ROOT_CAPABILITIES_REGISTER      RootCapabilities;
+    PCI_EXPRESS_ROOT_STATUS_REGISTER            RootStatus;
+} PCI_EXPRESS_CAPABILITY;
+typedef PCI_EXPRESS_CAPABILITY  *PPCI_EXPRESS_CAPABILITY;
+
+/* PCI express MRL states */
+typedef enum {
+    MRLClosed   = 0,
+    MRLOpen     = 1
+} PCI_EXPRESS_MRL_STATE;
+
+/* PCI express card presence values */
+typedef enum {
+    SlotEmpty   = 0,
+    CardPresent = 1
+} PCI_EXPRESS_CARD_PRESENCE;
+
+/* PCI express indicator states */
+typedef enum {
+    IndicatorOn     = 1,
+    IndicatorBlink  = 2,
+    IndicatorOff    = 3
+} PCI_EXPRESS_INDICATOR_STATE;
+
+/* PCI express power states */
+typedef enum {
+    PowerOn     = 0,
+    PowerOff    = 1
+} PCI_EXPRESS_POWER_STATE;
+
+/* PCI express ASPM support values */
+typedef enum {
+    L0sEntrySupport         = 1,
+    L0sAndL1EntrySupport    = 3
+} PCI_EXPRESS_ASPM_SUPPORT;
+
+/* PCI express ASPM control values */
+typedef enum {
+    L0sAndL1EntryDisabled   = 0,
+    L0sEntryEnabled         = 1,
+    L1EntryEnabled          = 2,
+    L0sAndL1EntryEnabled    = 3
+} PCI_EXPRESS_ASPM_CONTROL;
+
+/* PCI express L0s exit latency values */
+typedef enum {
+    L0s_Below64ns   = 0,
+    L0s_64ns_128ns  = 1,
+    L0s_128ns_256ns = 2,
+    L0s_256ns_512ns = 3,
+    L0s_512ns_1us   = 4,
+    L0s_1us_2us     = 5,
+    L0s_2us_4s      = 6,
+    L0s_Above4us    = 7
+} PCI_EXPRESS_L0s_EXIT_LATENCY;
+
+/* PCI express L1 exit latency values */
+typedef enum {
+    L1_Below1us     = 0,
+    L1_1us_2us      = 1,
+    L1_2us_4us      = 2,
+    L1_4us_8us      = 4,
+    L1_8us_16us     = 8,
+    L1_16us_32us    = 16,
+    L1_32us_64us    = 32,
+    L1_Above64us    = 64
+} PCI_EXPRESS_L1_EXIT_LATENCY;
+
+/* PCI express device types */
+typedef enum {
+    PciExpressEndpoint                      = 0,
+    PciExpressLegacyEndpoint                = 1,
+    PciExpressRootPart                      = 4,
+    PciExpressUpstreamSwitchPort            = 5,
+    PciExpressDownstreamSwitchPort          = 6,
+    PciExpressToPciXBridge                  = 7,
+    PciXToExpressBridge                     = 8,
+    PciExpressRootComplexIntegratedEndpoint = 9,
+    PciExpressRootComplexEventCollector     = 10
+} PCI_EXPRESS_DEVICE_TYPE;
+
+/* PCI express maximum payload sizes */
+typedef enum {
+    MaxPayload128Bytes  = 0,
+    MaxPayload256Bytes  = 1,
+    MaxPayload512Bytes  = 2,
+    MaxPayload1024Bytes = 4,
+    MaxPayload2048Bytes = 8,
+    MaxPayload4096Bytes = 16
+} PCI_EXPRESS_MAX_PAYLOAD_SIZE;
+
+/* PCI express PME requestor identifier */
+typedef union _PCI_EXPRESS_PME_REQUESTOR_ID {
+    struct {
+        USHORT  FunctionNumber  : 3;
+        USHORT  DeviceNumber    : 5;
+        USHORT  BusNumber       : 8;
+    };
+    USHORT  AsUSHORT;
+} PCI_EXPRESS_PME_REQUESTOR_ID;
+typedef PCI_EXPRESS_PME_REQUESTOR_ID    *PPCI_EXPRESS_PME_REQUESTOR_ID;
+
+/* PCI callbacks */
+typedef VOID (NTAPI *PciPin2Line)( struct _BUS_HANDLER *, struct _BUS_HANDLER *, PCI_SLOT_NUMBER, PPCI_COMMON_CONFIG );
+typedef VOID (NTAPI *PciLine2Pin)( struct _BUS_HANDLER *, struct _BUS_HANDLER *, PCI_SLOT_NUMBER, PPCI_COMMON_CONFIG, PPCI_COMMON_CONFIG );
+typedef VOID (NTAPI *PciReadWriteConfig)( struct _BUS_HANDLER *, PCI_SLOT_NUMBER, PVOID, ULONG, ULONG );
+
+/* PCI bus data */
+typedef struct _PCIBUSDATA {
+    ULONG               Tag;
+    ULONG               Version;
+    PciReadWriteConfig  ReadConfig;
+    PciReadWriteConfig  WriteConfig;
+    PciPin2Line         Pin2Line;
+    PciLine2Pin         Line2Pin;
+    PCI_SLOT_NUMBER     ParentSlot;
+    PVOID               Reserved[4];
+} PCIBUSDATA;
+typedef PCIBUSDATA  *PPCIBUSDATA;
+
+/* PCI bus interface callbacks */
+typedef ULONG (NTAPI *PCI_READ_WRITE_CONFIG)( PVOID, ULONG, ULONG, PVOID, ULONG, ULONG );
+typedef VOID (NTAPI *PCI_PIN_TO_LINE)( PVOID, PPCI_COMMON_CONFIG );
+typedef VOID (NTAPI *PCI_LINE_TO_PIN)( PVOID, PPCI_COMMON_CONFIG, PPCI_COMMON_CONFIG );
+typedef VOID (NTAPI *PCI_ROOT_BUS_CAPABILITY)( PVOID, PPCI_ROOT_BUS_HARDWARE_CAPABILITY );
+typedef VOID (NTAPI *PCI_EXPRESS_WAKE_CONTROL)( PVOID, BOOLEAN );
+
+/* PCI bus interface standard */
+typedef struct _PCI_BUS_INTERFACE_STANDARD {
+    USHORT                      Size;
+    USHORT                      Version;
+    PVOID                       Context;
+    PINTERFACE_REFERENCE        InterfaceReference;
+    PINTERFACE_DEREFERENCE      InterfaceDereference;
+    PCI_READ_WRITE_CONFIG       ReadConfig;
+    PCI_READ_WRITE_CONFIG       WriteConfig;
+    PCI_PIN_TO_LINE             PinToLine;
+    PCI_LINE_TO_PIN             LineToPin;
+    PCI_ROOT_BUS_CAPABILITY     RootBusCapability;
+    PCI_EXPRESS_WAKE_CONTROL    ExpressWakeControl;
+} PCI_BUS_INTERFACE_STANDARD;
+typedef PCI_BUS_INTERFACE_STANDARD  *PPCI_BUS_INTERFACE_STANDARD;
+
+/* Windows Hardware Error Architecture error source types */
+typedef enum _WHEA_ERROR_SOURCE_TYPE {
+    WheaErrSrcTypeMCE   = 0x00,
+    WheaErrSrcTypeCMC   = 0x01,
+    WheaErrSrcTypeCPE   = 0x02,
+    WheaErrSrcTypeNMI   = 0x03,
+    WheaErrSrcTypePCIe  = 0x04,
+    WheaErrSrcTypeOther = 0x05,
+    WheaErrSrcTypeMax   = 0x06
+} WHEA_ERROR_SOURCE_TYPE;
+
+/* Windows Hardware Error Architecture error status formats */
+typedef enum _WHEA_ERROR_STATUS_FORMAT {
+    WheaErrorStatusFormatIPFSalRecord   = 0x00,
+    WheaErrorStatusFormatIA32MCA        = 0x01,
+    WheaErrorStatusFormatEM64TMCA       = 0x02,
+    WheaErrorStatusFormatAMD64MCA       = 0x03,
+    WheaErrorStatusFormatPCIExpress     = 0x04,
+    WheaErrorStatusFormatNMIPort        = 0x05,
+    WheaErrorStatusFormatOther          = 0x06,
+    WheaErrorStatusFormatMax            = 0x07
+} WHEA_ERROR_STATUS_FORMAT;
+typedef WHEA_ERROR_STATUS_FORMAT    PWHEA_ERROR_STATUS_FORMAT;
+
+/* Windows Hardware Error Architecture error source notification types */
+typedef enum _WHEA_ERROR_SOURCE_NOTIFY_TYPE {
+    WheaErrSrcNotifyInterrupt       = 0x01,
+    WheaErrSrcNotifyCallback        = 0x02,
+    WheaErrSrcNotifyPolled          = 0x03,
+    WheaErrSrcNotifyMsgInterrupt    = 0x04,
+    WheaErrSrcNotifyLvt             = 0x05,
+    WheaErrSrcNotifyMax             = 0x06
+} WHEA_ERROR_SOURCE_NOTIFY_TYPE;
+
+/* Windows Hardware Error Architecture error source states */
+typedef enum _WHEA_ERROR_SOURCE_STATE {
+    WheaErrSrcStateStopped  = 0x01,
+    WheaErrSrcStateStarted  = 0x02
+} WHEA_ERROR_SOURCE_STATE;
+typedef WHEA_ERROR_SOURCE_STATE *PWHEA_ERROR_SOURCE_STATE;
+
+/* Windows Hardware Error Architecture error status types */
+typedef enum _WHEA_ERROR_STATUS_TYPE {
+    WheaErrorStatusTypeMsr          = 0x01,
+    WheaErrorStatusTypePciConfig    = 0x02,
+    WheaErrorStatusTypeMemory       = 0x03,
+    WheaErrorStatusTypePort         = 0x04,
+    WheaErrorStatusTypeMax          = 0x05
+} WHEA_ERROR_STATUS_TYPE;
+typedef WHEA_ERROR_STATUS_TYPE  *PWHEA_ERROR_STATUS_TYPE;
+
+/* Windows Hardware Error Architecture register clear operations */
+typedef enum _WHEA_REGISTER_CLEAR_OP {
+    WheaReadToClear         = 0x01,
+    WheaWriteZeroToClear    = 0x02,
+    WheaWriteOneToClear     = 0x03
+} WHEA_REGISTER_CLEAR_OP;
+typedef WHEA_REGISTER_CLEAR_OP  *PWHEA_REGISTER_CLEAR_OP;
+
+/* Windows Hardware Error Architecture error status descriptor */
+typedef struct _WHEA_ERROR_STATUS_DESCRIPTOR {
+    ULONG                       Length;
+    ULONG                       Flags;
+    ULONG                       Reserved;
+    ULONG                       Version;
+    WHEA_ERROR_STATUS_TYPE      Type;
+    WHEA_ERROR_STATUS_FORMAT    Format;
+    union {
+        struct {
+            ULONG   Msr;
+            ULONG   Length;
+        } MSR;
+        struct {
+            ULONG           Bus;
+            PCI_SLOT_NUMBER Slot;
+        } PciConfig;
+        struct {
+            PHYSICAL_ADDRESS    Start;
+            ULONG               Length;
+        } Memory;
+        struct {
+            PHYSICAL_ADDRESS    Start;
+            ULONG               Length;
+        } Port;
+    } u;
+    ULONGLONG                   MaskBits;
+    WHEA_REGISTER_CLEAR_OP      ClearOp;
+} WHEA_ERROR_STATUS_DESCRIPTOR;
+typedef WHEA_ERROR_STATUS_DESCRIPTOR    *PWHEA_ERROR_STATUS_DESCRIPTOR;
+
+/* Windows Hardware Error Architecture error status descriptor list */
+typedef struct _WHEA_ERROR_STATUS_DESCRIPTOR_LIST {
+    ULONG                           Count;
+    WHEA_ERROR_STATUS_DESCRIPTOR    Descriptors[1];
+} WHEA_ERROR_STATUS_DESCRIPTOR_LIST;
+typedef WHEA_ERROR_STATUS_DESCRIPTOR_LIST   *PWHEA_ERROR_STATUS_DESCRIPTOR_LIST;
+
+/* Windows Hardware Error Architecture error source descriptor */
+typedef struct _WHEA_ERROR_SOURCE_DESCRIPTOR {
+    ULONG                           Length;
+    ULONG                           Version;
+    WHEA_ERROR_SOURCE_TYPE          Type;
+    WHEA_ERROR_SOURCE_NOTIFY_TYPE   NotifyType;
+    WHEA_ERROR_SOURCE_STATE         State;
+    ULONG                           MaxRawDataLength;
+    ULONG                           NumRecordsToPreallocate;
+    ULONG                           MaxSectionsPerRecord;
+    ULONG                           ErrorSourceId;
+    ULONG                           Flags;
+    union {
+        struct {
+            ULONG       Type;
+            ULONG       Level;
+            ULONG       Vector;
+            KAFFINITY   Affinity;
+        } Interrupt;
+        struct {
+            USHORT      DataPayload;
+            USHORT      MessageCount;
+            ULONG       Vector;
+            ULONG_PTR   MessageTargetAddress;
+        } MessageInterrupt;
+        struct {
+            ULONG               Level;
+            ULONG               Vector;
+            PHYSICAL_ADDRESS    Address;
+            ULONG64             RegisterData;
+            ULONG               RegisterSize;
+        } Lvt;
+        struct {
+            ULONG   PollingInterval;
+        } Polled;
+    } NotifyInfo;
+    ULONG                           StatusDescriptorCount;
+    WHEA_ERROR_STATUS_DESCRIPTOR    StatusDescriptor[1];
+} WHEA_ERROR_SOURCE_DESCRIPTOR;
+typedef WHEA_ERROR_SOURCE_DESCRIPTOR    *PWHEA_ERROR_SOURCE_DESCRIPTOR;
+
+/* Windows Hardware Error Architecture error types */
+typedef enum _WHEA_ERROR_TYPE {
+    WheaErrTypeProcessor    = 0,
+    WheaErrTypeMemory       = 1,
+    WheaErrTypePCIExpress   = 2,
+    WheaErrTypeNMI          = 3,
+    WheaErrTypePCIXBus      = 4,
+    WheaErrTypePCIXDevice   = 5
+} WHEA_ERROR_TYPE;
+
+/* Windows Hardware Error Architecture error severities */
+typedef enum _WHEA_ERROR_SEVERITY {
+    WheaErrSevRecoverable   = 0,
+    WheaErrSevFatal         = 1,
+    WheaErrSevCorrected     = 2,
+    WheaErrSevNone          = 3
+} WHEA_ERROR_SEVERITY;
+
+/* Windows Hardware Error Architecture error status */
+typedef struct _WHEA_ERROR_STATUS {
+    ULONG64 Reserved1   : 8;
+    ULONG64 ErrorType   : 8;
+    ULONG64 Address     : 1;
+    ULONG64 Control     : 1;
+    ULONG64 Data        : 1;
+    ULONG64 Responder   : 1;
+    ULONG64 Requester   : 1;
+    ULONG64 FirstError  : 1;
+    ULONG64 Overflow    : 1;
+    ULONG64 Reserved2   : 9;
+    ULONG64 Reserved3   : 32;
+} WHEA_ERROR_STATUS;
+typedef WHEA_ERROR_STATUS   *PWHEA_ERROR_STATUS;
+
+/* Windows Hardware Error Architecture generic processor error */
+typedef struct _WHEA_GENERIC_PROCESSOR_ERROR {
+    ULONG64 ValidBits;
+    UCHAR   ProcessorType;
+    UCHAR   InstructionSet;
+    UCHAR   ErrorType;
+    UCHAR   Operation;
+    UCHAR   Flags;
+    UCHAR   Level;
+    USHORT  Reserved;
+    ULONG64 CPUVersion;
+    UCHAR   CPUBrandString[128];
+    ULONG64 ProcessorId;
+    ULONG64 TargetAddress;
+    ULONG64 RequestorId;
+    ULONG64 ResponderId;
+    ULONG64 InstructionPointer;
+} WHEA_GENERIC_PROCESSOR_ERROR;
+typedef WHEA_GENERIC_PROCESSOR_ERROR    *PWHEA_GENERIC_PROCESSOR_ERROR;
+
+/* Windows Hardware Error Architecture XPF cache check */
+typedef union _WHEA_XPF_CACHE_CHECK {
+    struct {
+        ULONG64 ValidationBits          : 16;
+        ULONG64 TransactionType         : 2;
+        ULONG64 Operation               : 4;
+        ULONG64 Level                   : 3;
+        ULONG64 ProcessorContextCorrupt : 1;
+        ULONG64 Uncorrected             : 1;
+        ULONG64 PreciseIP               : 1;
+        ULONG64 RestartableIP           : 1;
+        ULONG64 Overflow                : 1;
+        ULONG64 Reserved                : 2;
+        ULONG64 Reserved2               : 32;
+    };
+    ULONG64 XpfCacheCheck;
+} WHEA_XPF_CACHE_CHECK;
+typedef WHEA_XPF_CACHE_CHECK    *PWHEA_XPF_CACHE_CHECK;
+
+/* Windows Hardware Error Architecture XPF TLB check */
+typedef union _WHEA_XPF_TLB_CHECK {
+    struct {
+        ULONG64 ValidationBits          : 16;
+        ULONG64 TransactionType         : 2;
+        ULONG64 Operation               : 4;
+        ULONG64 Level                   : 3;
+        ULONG64 ProcessorContextCorrupt : 1;
+        ULONG64 Uncorrected             : 1;
+        ULONG64 PreciseIP               : 1;
+        ULONG64 RestartableIP           : 1;
+        ULONG64 Overflow                : 1;
+        ULONG64 Reserved                : 2;
+        ULONG64 Reserved2               : 32;
+    };
+    ULONG64 XpfTLBCheck;
+} WHEA_XPF_TLB_CHECK;
+typedef WHEA_XPF_TLB_CHECK  *PWHEA_XPF_TLB_CHECK;
+
+/* Windows Hardware Error Architecture XPF bus check */
+typedef union _WHEA_XPF_BUS_CHECK {
+    struct {
+        ULONG64 ValidationBits          : 16;
+        ULONG64 TransactionType         : 2;
+        ULONG64 Operation               : 4;
+        ULONG64 Level                   : 3;
+        ULONG64 ProcessorContextCorrupt : 1;
+        ULONG64 Uncorrected             : 1;
+        ULONG64 PreciseIP               : 1;
+        ULONG64 RestartableIP           : 1;
+        ULONG64 Overflow                : 1;
+        ULONG64 Participation           : 2;
+        ULONG64 Timeout                 : 1;
+        ULONG64 AddressSpace            : 2;
+        ULONG64 Reserved                : 29;
+    };
+    ULONG64 XpfBusCheck;
+} WHEA_XPF_BUS_CHECK;
+typedef WHEA_XPF_BUS_CHECK  *PWHEA_XPF_BUS_CHECK;
+
+/* Windows Hardware Error Architecture XPF micro-architecture specific check */
+typedef struct _WHEA_XPF_MS_CHECK {
+    struct {
+        ULONG64 ValidationBits          : 16;
+        ULONG64 ErrorType               : 2;
+        ULONG64 ProcessorContextCorrupt : 1;
+        ULONG64 Uncorrected             : 1;
+        ULONG64 PreciseIP               : 1;
+        ULONG64 RestartableIP           : 1;
+        ULONG64 Overflow                : 1;
+        ULONG64 Reserved                : 9;
+        ULONG64 Reserved2               : 32;
+    };
+    ULONG   XpfMsCheck;
+} WHEA_XPF_MS_CHECK;
+typedef WHEA_XPF_MS_CHECK   *PWHEA_XPF_MS_CHECK;
+
+/* Windows Hardware Error Architecture XPF processor error */
+typedef struct _WHEA_XPF_PROCESSOR_ERROR {
+    ULONG64 ValidBits;
+    ULONG64 LocalAPICId;
+    UCHAR   CpuId[48];
+    UCHAR   VariableInfo[1];
+} WHEA_X64_PROCESSOR_ERROR;
+typedef WHEA_X64_PROCESSOR_ERROR    *PWHEA_X64_PROCESSOR_ERROR;
+
+/* Windows Hardware Error Architecture XPF processor information */
+typedef struct _WHEA_XPF_PROCINFO {
+    GUID    CheckInfoId;
+    ULONG64 ValidBits;
+    ULONG64 CheckInfo;
+    ULONG64 TargetId;
+    ULONG64 RequestorId;
+    ULONG64 ResponderId;
+    ULONG64 InstructionPointer;
+} WHEA_XPF_PROCINFO;
+typedef WHEA_XPF_PROCINFO   *PWHEA_XPF_PROCINFO;
+
+/* Windows Hardware Error Architecture IA64 processor information */
+typedef struct _WHEA_IA64_PROCESSOR_INFO {
+    ULONG64 ValidBits;
+    ULONG64 CheckInfo;
+    ULONG64 TargetId;
+    ULONG64 RequesterId;
+    ULONG64 ResponderId;
+    ULONG64 InstructionPointer;
+} WHEA_IA64_PROCESSOR_INFO;
+typedef WHEA_IA64_PROCESSOR_INFO    *PWHEA_IA64_PROCESSOR_INFO;
+
+/* Windows Hardware Error Architecture XPF context information */
+typedef struct _WHEA_XPF_CONTEXT_INFO {
+    USHORT  RegisterContextType;
+    USHORT  RegisterArraySize;
+    ULONG   MSRAddress;
+    ULONG64 MmRegisterAddress;
+    UCHAR   RegisterData[1];
+} WHEA_XPF_CONTEXT_INFO;
+typedef WHEA_XPF_CONTEXT_INFO   *PWHEA_XPF_CONTEXT_INFO;
+
+/* Windows Hardware Error Architecture x86 register state */
+typedef struct _WHEA_X86_REGISTER_STATE {
+    ULONG   Eax;
+    ULONG   Ebx;
+    ULONG   Ecx;
+    ULONG   Edx;
+    ULONG   Esi;
+    ULONG   Edi;
+    ULONG   Ebp;
+    ULONG   Esp;
+    USHORT  Cs;
+    USHORT  Ds;
+    USHORT  Ss;
+    USHORT  Es;
+    USHORT  Fs;
+    USHORT  Gs;
+    ULONG   Eflags;
+    ULONG   Eip;
+    ULONG   Cr0;
+    ULONG   Cr1;
+    ULONG   Cr2;
+    ULONG   Cr3;
+    ULONG   Cr4;
+    ULONG64 Gdtr;
+    ULONG64 Idtr;
+    USHORT  Ldtr;
+    USHORT  tr;
+} WHEA_X86_REGISTER_STATE;
+typedef WHEA_X86_REGISTER_STATE *PWHEA_X86_REGISTER_STATE;
+
+/* Windows Hardware Error Architecture 128-bit number */
+typedef struct _WHEA128A {
+    ULONGLONG   Low;
+    LONGLONG    High;
+} WHEA128A;
+typedef WHEA128A    *PWHEA128A;
+
+/* Windows Hardware Error Architecture X64 register state */
+typedef struct _WHEA_X64_REGISTER_STATE {
+    ULONG64     Rax;
+    ULONG64     Rbx;
+    ULONG64     Rcx;
+    ULONG64     Rdx;
+    ULONG64     Rsi;
+    ULONG64     Rdi;
+    ULONG64     Rbp;
+    ULONG64     Rsp;
+    ULONG64     R8;
+    ULONG64     R9;
+    ULONG64     R10;
+    ULONG64     R11;
+    ULONG64     R12;
+    ULONG64     R13;
+    ULONG64     R14;
+    ULONG64     R15;
+    USHORT      Cs;
+    USHORT      Ds;
+    USHORT      Ss;
+    USHORT      Es;
+    USHORT      Fs;
+    USHORT      Gs;
+    USHORT      Reserved;
+    ULONG64     Rflags;
+    ULONG64     Eip;
+    ULONG64     Cr0;
+    ULONG64     Cr1;
+    ULONG64     Cr2;
+    ULONG64     Cr3;
+    ULONG64     Cr4;
+    ULONG64     Cr8;
+    WHEA128A    Gdtr;
+    WHEA128A    Idtr;
+    USHORT      Ldtr;
+    USHORT      Tr;
+} WHEA_X64_REGISTER_STATE;
+typedef WHEA_X64_REGISTER_STATE *PWHEA_X64_REGISTER_STATE;
+
+/* Windows Hardware Error Architecture memory error */
+typedef struct _WHEA_MEMORY_ERROR {
+    ULONG64             ValidationBits;
+    WHEA_ERROR_STATUS   ErrorStatus;
+    ULONG64             PhysicalAddress;
+    ULONG64             PhysicalAddressMask;
+    USHORT              Node;
+    USHORT              Card;
+    USHORT              Module;
+    USHORT              Bank;
+    USHORT              Device;
+    USHORT              Row;
+    USHORT              Column;
+    USHORT              BitPosition;
+    ULONG64             RequestorId;
+    ULONG64             ResponderId;
+    ULONG64             TargetId;
+    UCHAR               ErrorType;
+} WHEA_MEMORY_ERROR;
+typedef WHEA_MEMORY_ERROR   *PWHEA_MEMORY_ERROR;
+
+/* Windows Hardware Error Architecture NMI error */
+typedef struct _WHEA_NMI_ERROR {
+    UCHAR   Data[8];
+} WHEA_NMI_ERROR;
+typedef WHEA_NMI_ERROR  *PWHEA_NMI_ERROR;
+
+/* PCI express device identifier */
+typedef struct _PCIE_DEVICE_ID {
+    USHORT  VendorID;
+    USHORT  DeviceID;
+    ULONG   ClassCode           : 24;
+    ULONG   FunctionNumber      : 8;
+    ULONG   DeviceNumber        : 8;
+    ULONG   Segment             : 16;
+    ULONG   PrimaryBusNumber    : 8;
+    ULONG   SecondaryBusNumber  : 8;
+    ULONG   Reserved1           : 2;
+    ULONG   SlotNumber          : 14;
+    ULONG   Reserved2           : 8;
+} PCIE_DEVICE_ID;
+typedef PCIE_DEVICE_ID  *PPCIE_DEVICE_ID;
+
+/* Windows Hardware Error Architecture PCI express error */
+typedef struct _WHEA_PCIEXPRESS_ERROR {
+    ULONG64                 ValidationBits;
+    PCI_EXPRESS_DEVICE_TYPE PortType;
+    ULONG                   Version;
+    ULONG                   CommandStatus;
+    ULONG                   Reserved;
+    PCIE_DEVICE_ID          DeviceId;
+    ULONG64                 DeviceSN;
+    ULONG                   BridgeCtrlSts;
+    UCHAR                   ExpressCapability[60];
+    UCHAR                   AerInfo[96];
+} WHEA_PCIEXPRESS_ERROR;
+typedef WHEA_PCIEXPRESS_ERROR   *PWHEA_PCIEXPRESS_ERROR;
+
+/* Windows Hardware Error Architecture PCI bus validation bits */
+typedef struct _WHEA_PCIX_BUS_VALIDATION_BITS {
+    ULONG64 ErrorStatusValid    : 1;
+    ULONG64 ErrorTypeValid      : 1;
+    ULONG64 BusIdValid          : 1;
+    ULONG64 BusAddressValid     : 1;
+    ULONG64 BusDataValid        : 1;
+    ULONG64 CommandValid        : 1;
+    ULONG64 RequestorIdValid    : 1;
+    ULONG64 CompleterIdValid    : 1;
+    ULONG64 TargetIdValid       : 1;
+    ULONG64 Reserved            : 23;
+    ULONG64 Reserved2           : 32;
+} WHEA_PCIX_BUS_VALIDATION_BITS;
+
+/* Windows Hardware Error Architecture PCI bus error */
+typedef struct _WHEA_PCIX_BUS_ERROR {
+    WHEA_PCIX_BUS_VALIDATION_BITS   ValidationBits;
+    WHEA_ERROR_STATUS               ErrorStatus;
+    USHORT                          ErrorType;
+    USHORT                          BusId;
+    ULONG                           Reserved;
+    ULONG64                         BusAddress;
+    ULONG64                         BusData;
+    ULONG64                         BusCommand;
+    ULONG64                         BusRequestorId;
+    ULONG64                         BusCompleterId;
+    ULONG64                         TargetId;
+} WHEA_PCIX_BUS_ERROR;
+typedef WHEA_PCIX_BUS_ERROR *PWHEA_PCIX_BUS_ERROR;
+
+/* Windows Hardware Error Architecture PCI device validation bits */
+typedef struct _WHEA_PCIX_DEV_VALIDATION_BITS {
+    ULONG64 ErrorStatusValid        : 1;
+    ULONG64 IdInfoValid             : 1;
+    ULONG64 MemoryNumberValid       : 1;
+    ULONG64 IoNumberValid           : 1;
+    ULONG64 RegisterDataPairValid   : 1;
+    ULONG64 Reserved                : 27;
+    ULONG64 Reserved2               : 32;
+} WHEA_PCIX_DEV_VALIDATION_BITS;
+
+/* Windows Hardware Error Architecture PCI device error */
+typedef struct _WHEA_PCIX_DEVICE_ERROR {
+    WHEA_PCIX_DEV_VALIDATION_BITS   ValidationBits;
+    WHEA_ERROR_STATUS               ErrorStatus;
+    UCHAR                           IdInfo[16];
+    ULONG                           MemoryNumber;
+    ULONG                           IoNumber;
+    UCHAR                           RegisterDataPairs[64];
+} WHEA_PCIX_DEVICE_ERROR;
+typedef WHEA_PCIX_DEVICE_ERROR  *PWHEA_PCIX_DEVICE_ERROR;
+
+/* Windows Hardware Error Architecture error packet */
+#include <pshpack1.h>
+typedef struct _WHEA_ERROR_PACKET {
+    ULONG                       Signature;
+    ULONG                       Flags;
+    ULONG64                     Size;
+    ULONG64                     RawDataLength;
+    ULONG64                     Context;
+    WHEA_ERROR_TYPE             ErrorType;
+    WHEA_ERROR_SEVERITY         ErrorSeverity;
+    ULONG                       ErrorSourceId;
+    WHEA_ERROR_SOURCE_TYPE      ErrorSourceType;
+    ULONG                       Reserved1;
+    ULONG                       Version;
+    ULONG64                     Cpu;
+    union {
+        WHEA_GENERIC_PROCESSOR_ERROR    ProcessorError;
+        WHEA_MEMORY_ERROR               MemoryError;
+        WHEA_NMI_ERROR                  NmiError;
+        WHEA_PCIEXPRESS_ERROR           PciExpressError;
+        WHEA_PCIX_BUS_ERROR             PciXBusError;
+        WHEA_PCIX_DEVICE_ERROR          PciXDeviceError;
+    } u;
+    WHEA_ERROR_STATUS_FORMAT    RawDataFormat;
+    ULONG                       Reserved2;
+    UCHAR                       RawData[1];
+} WHEA_ERROR_PACKET;
+typedef WHEA_ERROR_PACKET   *PWHEA_ERROR_PACKET;
+#include <poppack.h>
+
+/* Windows Hardware Error Architecture error record section descriptor */
+typedef struct _WHEA_ERROR_RECORD_SECTION_DESCRIPTOR {
+    ULONG               SectionOffset;
+    ULONG               SectionLength;
+    USHORT              Revision;
+    UCHAR               ValidationBits;
+    UCHAR               Reserved;
+    ULONG               Flags;
+    GUID                SectionType;
+    GUID                FRUId;
+    WHEA_ERROR_SEVERITY SectionSeverity;
+    CCHAR               FRUText[20];
+} WHEA_ERROR_RECORD_SECTION_DESCRIPTOR;
+typedef WHEA_ERROR_RECORD_SECTION_DESCRIPTOR    *PWHEA_ERROR_RECORD_SECTION_DESCRIPTOR;
+
+/* Windows Hardware Error Architecture persistence information */
+typedef struct _WHEA_PERSISTENCE_INFO {
+    ULONG64 Identifier  : 16;
+    ULONG64 Length      : 24;
+    ULONG64 Reserved    : 6;
+    ULONG64 Attributes  : 2;
+    ULONG64 Signature   : 16;
+} WHEA_PERSISTENCE_INFO;
+typedef WHEA_PERSISTENCE_INFO   *PWHEA_PERSISTENCE_INFO;
+
+/* Windows Hardware Error Architecture error record header */
+typedef struct _WHEA_ERROR_RECORD_HEADER {
+    ULONG                   Signature;
+    USHORT                  Revision;
+    USHORT                  Reserved1;
+    USHORT                  Reserved2;
+    USHORT                  SectionCount;
+    WHEA_ERROR_SEVERITY     Severity;
+    ULONG                   ValidationBits;
+    ULONG                   Length;
+    LARGE_INTEGER           Timestamp;
+    GUID                    PlatformId;
+    GUID                    PartitionId;
+    GUID                    CreatorId;
+    GUID                    NotifyType;
+    ULONG64                 RecordId;
+    ULONG                   Flags;
+    WHEA_PERSISTENCE_INFO   PersistenceInfo;
+    UCHAR                   Reserved3[12];
+} WHEA_ERROR_RECORD_HEADER;
+typedef WHEA_ERROR_RECORD_HEADER    *PWHEA_ERROR_RECORD_HEADER;
+
+/* Windows Hardware Error Architecture nonstructured error section */
+typedef struct _WHEA_NONSTRUCTURED_ERROR_SECTION {
+    ULONG   Size;
+    PUCHAR  Data[];
+} WHEA_NONSTRUCTURED_ERROR_SECTION;
+typedef WHEA_NONSTRUCTURED_ERROR_SECTION    *PWHEA_NONSTRUCTURED_ERROR_SECTION;
+
+/* Windows Hardware Error Architecture error record */
+typedef struct _WHEA_ERROR_RECORD {
+    WHEA_ERROR_RECORD_HEADER                Header;
+    WHEA_ERROR_RECORD_SECTION_DESCRIPTOR    SectionDescriptor[1];
+} WHEA_ERROR_RECORD;
+typedef WHEA_ERROR_RECORD   *PWHEA_ERROR_RECORD;
+
+/* Windows Hardware Error Architecture initializer callback */
+typedef NTSTATUS (NTAPI *WHEA_ERROR_SOURCE_INITIALIZER)( ULONG, PWHEA_ERROR_SOURCE_DESCRIPTOR );
+
+/* WHEA platform-specific hardware error driver initialization packet */
+typedef struct _WHEA_PSHED_INIT_PACKET {
+    ULONG   Size;
+    ULONG   Version;
+} WHEA_PSHED_INIT_PACKET;
+typedef WHEA_PSHED_INIT_PACKET  *PWHEA_PSHED_INIT_PACKET;
+
+/* Global variables in NTOSKRNL.EXE */
+extern NTKERNELAPI PHAL_DISPATCH    HalDispatchTable;
+extern NTKERNELAPI POBJECT_TYPE     *PsProcessType;
+extern NTKERNELAPI POBJECT_TYPE     *TmEnlistmentObjectType;
+extern NTKERNELAPI POBJECT_TYPE     *TmResourceManagerObjectType;
+extern NTKERNELAPI POBJECT_TYPE     *TmTransactionManagerObjectType;
+extern NTKERNELAPI POBJECT_TYPE     *TmTransactionObjectType;
+#ifdef _X86_
+extern NTKERNELAPI PVOID            MmHighestUserAddress;
+extern NTKERNELAPI PVOID            MmSystemRangeStart;
+extern NTKERNELAPI ULONG            MmUserProbeAddress;
+#endif
+
+/* Functions in NTDLL.DLL and NTOSKRNL.EXE */
+NTSYSAPI ULONG NTAPI        DbgPrompt( PCCH, PCH, ULONG );
+NTSYSAPI NTSTATUS NTAPI     RtlRunOnceBeginInitialize( PRTL_RUN_ONCE, ULONG, PVOID * );
+NTSYSAPI NTSTATUS NTAPI     RtlRunOnceComplete( PRTL_RUN_ONCE, ULONG, PVOID );
+NTSYSAPI NTSTATUS NTAPI     RtlRunOnceExecuteOnce( PRTL_RUN_ONCE, PRTL_RUN_ONCE_INIT_FN, PVOID, PVOID * );
+NTSYSAPI VOID NTAPI         RtlRunOnceInitialize( PRTL_RUN_ONCE );
+NTSYSAPI NTSTATUS NTAPI     ZwAllocateLocallyUniqueId( PLUID );
+NTSYSAPI NTSTATUS NTAPI     ZwOpenProcess( PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, PCLIENT_ID );
+NTSYSAPI NTSTATUS NTAPI     ZwTerminateProcess( HANDLE, NTSTATUS );
+#if (NTDDI_VERSION >= 0x05000000)
+NTSYSAPI NTSTATUS NTAPI     RtlCharToInteger( PCSZ, ULONG, PULONG );
+NTSYSAPI LONG NTAPI         RtlCompareString( const STRING *, const STRING *, BOOLEAN );
+NTSYSAPI VOID NTAPI         RtlCopyString( PSTRING, const STRING * );
+NTSYSAPI BOOLEAN NTAPI      RtlEqualString( const STRING *, const STRING *, BOOLEAN );
+NTSYSAPI VOID NTAPI         RtlGetCallersAddress( PVOID *, PVOID * );
+NTSYSAPI NTSTATUS NTAPI     RtlGetVersion( PRTL_OSVERSIONINFOW );
+NTSYSAPI LARGE_INTEGER NTAPI    RtlLargeIntegerDivide( LARGE_INTEGER, LARGE_INTEGER, PLARGE_INTEGER );
+NTSYSAPI VOID NTAPI         RtlMapGenericMask( PACCESS_MASK, PGENERIC_MAPPING );
+NTSYSAPI BOOLEAN NTAPI      RtlPrefixUnicodeString( PCUNICODE_STRING, PCUNICODE_STRING, BOOLEAN );
+NTSYSAPI NTSTATUS NTAPI     RtlUpcaseUnicodeString( PUNICODE_STRING, PCUNICODE_STRING, BOOLEAN );
+NTSYSAPI CHAR NTAPI         RtlUpperChar( CHAR );
+NTSYSAPI VOID NTAPI         RtlUpperString( PSTRING, const STRING * );
+NTSYSAPI NTSTATUS NTAPI     RtlVerifyVersionInfo( PRTL_OSVERSIONINFOEXW, ULONG, ULONGLONG );
+NTSYSAPI NTSTATUS NTAPI     RtlVolumeDeviceToDosName( PVOID, PUNICODE_STRING );
+NTSYSAPI ULONG NTAPI        RtlWalkFrameChain( PVOID *, ULONG, ULONG );
+NTSYSAPI ULONGLONG NTAPI    VerSetConditionMask( ULONGLONG, ULONG, UCHAR );
+NTSYSAPI NTSTATUS NTAPI     ZwCancelTimer( HANDLE, PBOOLEAN );
+NTSYSAPI NTSTATUS NTAPI     ZwCreateTimer( PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, TIMER_TYPE );
+NTSYSAPI NTSTATUS NTAPI     ZwOpenTimer( PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES );
+NTSYSAPI NTSTATUS NTAPI     ZwSetInformationThread( HANDLE, THREADINFOCLASS, PVOID, ULONG );
+NTSYSAPI NTSTATUS NTAPI     ZwSetTimer( HANDLE, PLARGE_INTEGER, PTIMER_APC_ROUTINE, PVOID, BOOLEAN, LONG, PBOOLEAN );
+#endif
+#if (NTDDI_VERSION >= 0x06000000)
+NTSYSAPI BOOLEAN NTAPI      RtlGetProductInfo( ULONG, ULONG, ULONG, ULONG, PULONG );
+#endif
+
+/* System call functions in NTDLL.DLL and NTOSKRNL.EXE */
+NTSYSCALLAPI NTSTATUS NTAPI NtOpenProcess( PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, PCLIENT_ID );
+NTSYSCALLAPI NTSTATUS NTAPI NtQueryInformationProcess( HANDLE, PROCESSINFOCLASS, PVOID, ULONG, PULONG );
+
+/* Functions in NTOSKRNL.EXE */
+NTKERNELAPI VOID FASTCALL               KeInvalidateRangeAllCaches( PVOID, ULONG );
+NTKERNELAPI NTSTATUS NTAPI              WheaAddErrorSource( PWHEA_ERROR_SOURCE_DESCRIPTOR, PHANDLE );
+NTKERNELAPI NTSTATUS NTAPI              WheaRegisterErrSrcInitializer( WHEA_ERROR_SOURCE_TYPE, WHEA_ERROR_SOURCE_INITIALIZER );
+NTKERNELAPI NTSTATUS NTAPI              WheaRemoveErrorSource( HANDLE );
+NTKERNELAPI NTSTATUS NTAPI              WheaReportHwError( PWHEA_ERROR_PACKET );
+#ifdef _X86_
+NTKERNELAPI INTERLOCKED_RESULT FASTCALL Exfi386InterlockedDecrementLong( LONG volatile * );
+NTKERNELAPI ULONG FASTCALL              Exfi386InterlockedExchangeUlong( ULONG volatile *, ULONG );
+NTKERNELAPI INTERLOCKED_RESULT FASTCALL Exfi386InterlockedIncrementLong( LONG volatile * );
+#endif
+#if (NTDDI_VERSION >= 0x05000000)
+NTKERNELAPI NTSTATUS NTAPI              ExExtendZone( PZONE_HEADER, PVOID, ULONG );
+NTKERNELAPI NTSTATUS NTAPI              ExInitializeZone( PZONE_HEADER, ULONG, PVOID, ULONG );
+NTKERNELAPI NTSTATUS NTAPI              ExInterlockedExtendZone( PZONE_HEADER, PVOID, ULONG, PKSPIN_LOCK );
+NTKERNELAPI DECLSPEC_NORETURN VOID NTAPI    ExRaiseAccessViolation( VOID );
+NTKERNELAPI DECLSPEC_NORETURN VOID NTAPI    ExRaiseDatatypeMisalignment( VOID );
+NTKERNELAPI NTSTATUS NTAPI              ExUuidCreate( UUID * );
+NTKERNELAPI BOOLEAN NTAPI               FsRtlIsTotalDeviceFailure( NTSTATUS );
+NTKERNELAPI NTSTATUS NTAPI              IoAllocateAdapterChannel( PADAPTER_OBJECT, PDEVICE_OBJECT, ULONG, PDRIVER_CONTROL, PVOID );
+NTKERNELAPI VOID NTAPI                  IoAllocateController( PCONTROLLER_OBJECT, PDEVICE_OBJECT, PDRIVER_CONTROL, PVOID );
+NTKERNELAPI NTSTATUS NTAPI              IoAssignResources( PUNICODE_STRING, PUNICODE_STRING, PDRIVER_OBJECT, PDEVICE_OBJECT, PIO_RESOURCE_REQUIREMENTS_LIST, PCM_RESOURCE_LIST * );
+NTKERNELAPI NTSTATUS NTAPI              IoAttachDeviceByPointer( PDEVICE_OBJECT, PDEVICE_OBJECT );
+NTKERNELAPI VOID NTAPI                  IoCancelFileOpen( PDEVICE_OBJECT, PFILE_OBJECT );
+NTKERNELAPI PCONTROLLER_OBJECT NTAPI    IoCreateController( ULONG );
+NTKERNELAPI VOID NTAPI                  IoDeleteController( PCONTROLLER_OBJECT );
+NTKERNELAPI VOID NTAPI                  IoFreeController( PCONTROLLER_OBJECT );
+NTKERNELAPI PCONFIGURATION_INFORMATION NTAPI    IoGetConfigurationInformation( VOID );
+NTKERNELAPI PDEVICE_OBJECT NTAPI        IoGetDeviceToVerify( PETHREAD );
+NTKERNELAPI PGENERIC_MAPPING NTAPI      IoGetFileObjectGenericMapping( VOID );
+NTKERNELAPI PIRP NTAPI                  IoMakeAssociatedIrp( PIRP, CCHAR );
+NTKERNELAPI NTSTATUS NTAPI              IoQueryDeviceDescription( PINTERFACE_TYPE, PULONG, PCONFIGURATION_TYPE, PULONG, PCONFIGURATION_TYPE, PULONG, PIO_QUERY_DEVICE_ROUTINE, PVOID );
+NTKERNELAPI VOID NTAPI                  IoRaiseHardError( PIRP, PVPB, PDEVICE_OBJECT );
+NTKERNELAPI BOOLEAN NTAPI               IoRaiseInformationalHardError( NTSTATUS, PUNICODE_STRING, PKTHREAD );
+NTKERNELAPI VOID NTAPI                  IoRegisterBootDriverReinitialization( PDRIVER_OBJECT, PDRIVER_REINITIALIZE, PVOID );
+NTKERNELAPI VOID NTAPI                  IoRegisterDriverReinitialization( PDRIVER_OBJECT, PDRIVER_REINITIALIZE, PVOID );
+NTKERNELAPI NTSTATUS NTAPI              IoReportDetectedDevice( PDRIVER_OBJECT, INTERFACE_TYPE, ULONG, ULONG, PCM_RESOURCE_LIST, PIO_RESOURCE_REQUIREMENTS_LIST, BOOLEAN, PDEVICE_OBJECT * );
+NTKERNELAPI NTSTATUS NTAPI              IoReportResourceForDetection( PDRIVER_OBJECT, PCM_RESOURCE_LIST, ULONG, PDEVICE_OBJECT, PCM_RESOURCE_LIST, ULONG, PBOOLEAN );
+NTKERNELAPI NTSTATUS NTAPI              IoReportResourceUsage( PUNICODE_STRING, PDRIVER_OBJECT, PCM_RESOURCE_LIST, ULONG, PDEVICE_OBJECT, PCM_RESOURCE_LIST, ULONG, BOOLEAN, PBOOLEAN );
+NTKERNELAPI VOID NTAPI                  IoSetHardErrorOrVerifyDevice( PIRP, PDEVICE_OBJECT );
+NTKERNELAPI BOOLEAN NTAPI               IoSetThreadHardErrorMode( BOOLEAN );
+NTKERNELAPI DECLSPEC_NORETURN VOID NTAPI    KeBugCheck( ULONG );
+NTKERNELAPI LONG NTAPI                  KePulseEvent( PRKEVENT, KPRIORITY, BOOLEAN );
+NTKERNELAPI KAFFINITY NTAPI             KeQueryActiveProcessors( VOID );
+NTKERNELAPI LONG NTAPI                  KeSetBasePriorityThread( PKTHREAD, LONG );
+NTKERNELAPI NTSTATUS NTAPI              MmAddPhysicalMemory( PPHYSICAL_ADDRESS, PLARGE_INTEGER );
+NTKERNELAPI PVOID NTAPI                 MmAllocateContiguousMemory( SIZE_T, PHYSICAL_ADDRESS );
+NTKERNELAPI PVOID NTAPI                 MmAllocateContiguousMemorySpecifyCache( SIZE_T, PHYSICAL_ADDRESS, PHYSICAL_ADDRESS, PHYSICAL_ADDRESS, MEMORY_CACHING_TYPE );
+NTKERNELAPI PVOID NTAPI                 MmAllocateContiguousMemorySpecifyCacheNode( SIZE_T, PHYSICAL_ADDRESS, PHYSICAL_ADDRESS, PHYSICAL_ADDRESS, MEMORY_CACHING_TYPE, NODE_REQUIREMENT );
+NTKERNELAPI PVOID NTAPI                 MmAllocateNonCachedMemory( SIZE_T );
+NTKERNELAPI VOID NTAPI                  MmFreeContiguousMemory( PVOID );
+NTKERNELAPI VOID NTAPI                  MmFreeContiguousMemorySpecifyCache( PVOID, SIZE_T, MEMORY_CACHING_TYPE );
+NTKERNELAPI VOID NTAPI                  MmFreeNonCachedMemory( PVOID, SIZE_T );
+NTKERNELAPI PHYSICAL_ADDRESS NTAPI      MmGetPhysicalAddress( PVOID );
+NTKERNELAPI PPHYSICAL_MEMORY_RANGE NTAPI    MmGetPhysicalMemoryRanges( VOID );
+NTKERNELAPI PVOID NTAPI                 MmGetVirtualForPhysical( PHYSICAL_ADDRESS );
+NTKERNELAPI BOOLEAN NTAPI               MmIsAddressValid( PVOID );
+NTKERNELAPI BOOLEAN NTAPI               MmIsNonPagedSystemAddressValid( PVOID );
+NTKERNELAPI BOOLEAN NTAPI               MmIsThisAnNtSystem( VOID );
+NTKERNELAPI VOID NTAPI                  MmLockPagableSectionByHandle( PVOID );
+NTKERNELAPI NTSTATUS NTAPI              MmMapUserAddressesToPage( PVOID, SIZE_T, PVOID );
+NTKERNELAPI PVOID NTAPI                 MmMapVideoDisplay( PPHYSICAL_ADDRESS, SIZE_T, MEMORY_CACHING_TYPE );
+NTKERNELAPI NTSTATUS NTAPI              MmMapViewInSessionSpace( PVOID, PVOID *, PSIZE_T );
+NTKERNELAPI NTSTATUS NTAPI              MmMapViewInSystemSpace( PVOID, PVOID *, PSIZE_T );
+NTKERNELAPI NTSTATUS NTAPI              MmRemovePhysicalMemory( PPHYSICAL_ADDRESS, PLARGE_INTEGER );
+NTKERNELAPI HANDLE NTAPI                MmSecureVirtualMemory( PVOID, SIZE_T, ULONG );
+NTKERNELAPI VOID NTAPI                  MmUnmapVideoDisplay( PVOID, SIZE_T );
+NTKERNELAPI NTSTATUS NTAPI              MmUnmapViewInSessionSpace( PVOID );
+NTKERNELAPI NTSTATUS NTAPI              MmUnmapViewInSystemSpace( PVOID );
+NTKERNELAPI VOID NTAPI                  MmUnsecureVirtualMemory( HANDLE );
+NTKERNELAPI HANDLE NTAPI                PsGetCurrentProcessId( VOID );
+NTKERNELAPI HANDLE NTAPI                PsGetCurrentThreadId( VOID );
+NTKERNELAPI BOOLEAN NTAPI               PsGetVersion( PULONG, PULONG, PULONG, PUNICODE_STRING );
+NTKERNELAPI NTSTATUS NTAPI              PsSetCreateProcessNotifyRoutine( PCREATE_PROCESS_NOTIFY_ROUTINE, BOOLEAN );
+NTKERNELAPI NTSTATUS NTAPI              PsSetCreateThreadNotifyRoutine( PCREATE_THREAD_NOTIFY_ROUTINE );
+NTKERNELAPI NTSTATUS NTAPI              PsSetLoadImageNotifyRoutine( PLOAD_IMAGE_NOTIFY_ROUTINE );
+NTKERNELAPI BOOLEAN NTAPI               SeSinglePrivilegeCheck( LUID, KPROCESSOR_MODE );
+#endif
+#if (NTDDI_VERSION >= 0x05010000)
+NTKERNELAPI VOID FASTCALL               HalExamineMBR( PDEVICE_OBJECT, ULONG, ULONG, PVOID * );
+NTKERNELAPI NTSTATUS NTAPI              IoCreateDisk( PDEVICE_OBJECT, struct _CREATE_DISK * );
+NTKERNELAPI NTSTATUS NTAPI              IoReadDiskSignature( PDEVICE_OBJECT, ULONG, PDISK_SIGNATURE );
+NTKERNELAPI NTSTATUS FASTCALL           IoReadPartitionTable( PDEVICE_OBJECT, ULONG, BOOLEAN, struct _DRIVE_LAYOUT_INFORMATION ** );
+NTKERNELAPI NTSTATUS NTAPI              IoReadPartitionTableEx( PDEVICE_OBJECT, struct _DRIVE_LAYOUT_INFORMATION_EX ** );
+NTKERNELAPI NTSTATUS FASTCALL           IoSetPartitionInformation( PDEVICE_OBJECT, ULONG, ULONG, ULONG );
+NTKERNELAPI NTSTATUS NTAPI              IoSetPartitionInformationEx( PDEVICE_OBJECT, ULONG, struct _SET_PARTITION_INFORMATION_EX * );
+NTKERNELAPI NTSTATUS NTAPI              IoSetSystemPartition( PUNICODE_STRING );
+NTKERNELAPI NTSTATUS NTAPI              IoVerifyPartitionTable( PDEVICE_OBJECT, BOOLEAN );
+NTKERNELAPI NTSTATUS NTAPI              IoVolumeDeviceToDosName( PVOID, PUNICODE_STRING );
+NTKERNELAPI NTSTATUS FASTCALL           IoWritePartitionTable( PDEVICE_OBJECT, ULONG, ULONG, ULONG, struct _DRIVE_LAYOUT_INFORMATION * );
+NTKERNELAPI NTSTATUS NTAPI              IoWritePartitionTableEx( PDEVICE_OBJECT, struct _DRIVE_LAYOUT_INFORMATION_EX * );
+NTKERNELAPI HANDLE NTAPI                PsGetProcessId( PEPROCESS );
+NTKERNELAPI NTSTATUS NTAPI              PsRemoveCreateThreadNotifyRoutine( PCREATE_THREAD_NOTIFY_ROUTINE );
+NTKERNELAPI NTSTATUS NTAPI              PsRemoveLoadImageNotifyRoutine( PLOAD_IMAGE_NOTIFY_ROUTINE );
+#endif
+#if (NTDDI_VERSION >= 0x05020000)
+NTKERNELAPI IO_PAGING_PRIORITY NTAPI    IoGetPagingIoPriority( PIRP );
+NTKERNELAPI BOOLEAN NTAPI               KeInvalidateAllCaches( VOID );
+NTKERNELAPI NTSTATUS NTAPI              MmCreateMirror( VOID );
+#endif
+#if (NTDDI_VERSION >= 0x05020100)
+NTKERNELAPI BOOLEAN NTAPI               IoTranslateBusAddress( INTERFACE_TYPE, ULONG, PHYSICAL_ADDRESS, PULONG, PPHYSICAL_ADDRESS );
+NTKERNELAPI NTSTATUS NTAPI              KeExpandKernelStackAndCallout( PEXPAND_STACK_CALLOUT, PVOID, SIZE_T );
+#endif
+#if (NTDDI_VERSION >= 0x06000000)
+NTKERNELAPI NTSTATUS NTAPI              IoUpdateDiskGeometry( PDEVICE_OBJECT, struct _DISK_GEOMETRY_EX *, struct _DISK_GEOMETRY_EX * );
+NTKERNELAPI ULONG NTAPI                 KeQueryActiveProcessorCount( PKAFFINITY );
+NTKERNELAPI ULONG NTAPI                 KeQueryMaximumProcessorCount( VOID );
+NTKERNELAPI NTSTATUS NTAPI              MmRotatePhysicalView( PVOID, PSIZE_T, PMDLX, MM_ROTATE_DIRECTION, PMM_ROTATE_COPY_CALLBACK_FUNCTION, PVOID );
+NTKERNELAPI BOOLEAN NTAPI               PsIsCurrentThreadPrefetching( VOID );
+NTKERNELAPI BOOLEAN NTAPI               PsSetCurrentThreadPrefetching( BOOLEAN );
+#endif
+
+/* Functions in HAL.DLL */
+NTHALAPI VOID NTAPI     HalBugCheckSystem( PVOID );
+#if (NTDDI_VERSION >= 0x05000000)
+NTHALAPI VOID NTAPI     HalAcquireDisplayOwnership( PHAL_RESET_DISPLAY_PARAMETERS );
+NTHALAPI NTSTATUS NTAPI HalAllocateAdapterChannel( PADAPTER_OBJECT, PWAIT_CONTEXT_BLOCK, ULONG, PDRIVER_CONTROL );
+NTHALAPI PVOID NTAPI    HalAllocateCommonBuffer( PADAPTER_OBJECT, ULONG, PPHYSICAL_ADDRESS, BOOLEAN );
+NTHALAPI PVOID NTAPI    HalAllocateCrashDumpRegisters( PADAPTER_OBJECT, PULONG );
+NTHALAPI NTSTATUS NTAPI HalAssignSlotResources( PUNICODE_STRING, PUNICODE_STRING, PDRIVER_OBJECT, PDEVICE_OBJECT, INTERFACE_TYPE, ULONG, ULONG, PCM_RESOURCE_LIST * );
+NTHALAPI VOID NTAPI     HalFreeCommonBuffer( PADAPTER_OBJECT, ULONG, PHYSICAL_ADDRESS, PVOID, BOOLEAN );
+NTHALAPI PADAPTER_OBJECT NTAPI  HalGetAdapter( PDEVICE_DESCRIPTION, PULONG );
+NTHALAPI ULONG NTAPI    HalGetBusData( BUS_DATA_TYPE, ULONG, ULONG, PVOID, ULONG );
+NTHALAPI ULONG NTAPI    HalGetBusDataByOffset( BUS_DATA_TYPE, ULONG, ULONG, PVOID, ULONG, ULONG );
+NTHALAPI ULONG NTAPI    HalGetInterruptVector( INTERFACE_TYPE, ULONG, ULONG, ULONG, PKIRQL, PKAFFINITY );
+NTHALAPI BOOLEAN NTAPI  HalMakeBeep( ULONG );
+NTHALAPI ULONG NTAPI    HalReadDmaCounter( PADAPTER_OBJECT );
+NTHALAPI ULONG NTAPI    HalSetBusData( BUS_DATA_TYPE, ULONG, ULONG, PVOID, ULONG );
+NTHALAPI ULONG NTAPI    HalSetBusDataByOffset( BUS_DATA_TYPE, ULONG, ULONG, PVOID, ULONG, ULONG );
+NTHALAPI BOOLEAN NTAPI  HalTranslateBusAddress( INTERFACE_TYPE, ULONG, PHYSICAL_ADDRESS, PULONG, PPHYSICAL_ADDRESS );
+NTHALAPI BOOLEAN NTAPI  IoFlushAdapterBuffers( PADAPTER_OBJECT, PMDL, PVOID, PVOID, ULONG, BOOLEAN );
+NTHALAPI VOID NTAPI     IoFreeAdapterChannel( PADAPTER_OBJECT );
+NTHALAPI VOID NTAPI     IoFreeMapRegisters( PADAPTER_OBJECT, PVOID, ULONG );
+NTHALAPI PHYSICAL_ADDRESS NTAPI IoMapTransfer( PADAPTER_OBJECT, PMDL, PVOID, PVOID, PULONG, BOOLEAN );
+#endif
+
+/* Functions implemented as macros */
+#define ExFreeToZone( x, p ) \
+    (((PSINGLE_LIST_ENTRY)(p))->Next = (x)->FreeList.Next, \
+    (x)->FreeList.Next = ((PSINGLE_LIST_ENTRY)(p)), \
+    ((PSINGLE_LIST_ENTRY)(p))->Next)
+#define ExIsFullZone( x ) \
+    ((x)->FreeList.Next == NULL)
+#define ExInterlockedAllocateFromZone( x, p ) \
+    (PVOID)ExInterlockedPopEntryList( &(x)->FreeList, p )
+#define ExInterlockedFreeToZone( x, p1, p2 ) \
+    ExInterlockedPushEntryList( &(x)->FreeList, (PSINGLE_LIST_ENTRY)(p1), p2 )
+#define ExIsObjectInFirstZoneSegment( x, p ) \
+    ((BOOLEAN)(((PUCHAR)(p) >= (PUCHAR)(x)->SegmentList.Next) && \
+    ((PUCHAR)(p) < (PUCHAR)(x)->SegmentList.Next + (x)->TotalSegmentSize))
+#define IoAssignArcName( p1, p2 )           IoCreateSymbolicLink( p1, p2 )
+#define IoDeassignArcName( x )              IoDeleteSymbolicLink( x )
+#define WheaIsPreviousError( x ) \
+    ((x)->Header.Flags & WHEA_ERROR_RECORD_FLAGS_PREVIOUSERROR)
+#ifdef _X86_
+    #define HalGetDmaAlignmentRequirement() 1L
+#endif
+
+/* Aliases */
+#define ExInitializeResource            ExInitializeResourceLite
+#define ExAcquireResourceShared         ExAcquireResourceSharedLite
+#define ExAcquireResourceExclusive      ExAcquireResourceExclusiveLite
+#define ExReleaseResourceForThread      ExReleaseResourceForThreadLite
+#define ExConvertExclusiveToShared      ExConvertExclusiveToSharedLite
+#define ExDeleteResource                ExDeleteResourceLite
+#define ExIsResourceAcquiredExclusive   ExIsResourceAcquiredExclusiveLite
+#define ExIsResourceAcquiredShared      ExIsResourceAcquiredSharedLite
+#define ExIsResourceAcquired            ExIsResourceAcquiredSharedLite
+
+/* Other macros */
+#define VER_SET_CONDITION( p1, p2, p3 ) \
+    ((p1) = VerSetConditionMask( p1, p2, p3 ))
+#define HALDISPATCH                 HalDispatchTable
+#define HalDispatchTableVersion     HALDISPATCH->Version
+#define HalQuerySystemInformation   HALDISPATCH->HalQuerySystemInformation
+#define HalSetSystemInformation     HALDISPATCH->HalSetSystemInformation
+#define HalQueryBusSlots            HALDISPATCH->HalQueryBusSlots
+#define HalReferenceHandlerForBus   HALDISPATCH->HalReferenceHandlerForBus
+#define HalReferenceBusHandler      HALDISPATCH->HalReferenceBusHandler
+#define HalDereferenceBusHandler    HALDISPATCH->HalDereferenceBusHandler
+#define HalInitPnpDriver            HALDISPATCH->HalInitPnpDriver
+#define HalInitPowerManagement      HALDISPATCH->HalInitPowerManagement
+#define HalGetDmaAdapter            HALDISPATCH->HalGetDmaAdapter
+#define HalGetInterruptTranslator   HALDISPATCH->HalGetInterruptTranslator
+#define HalStartMirroring           HALDISPATCH->HalStartMirroring
+#define HalEndMirroring             HALDISPATCH->HalEndMirroring
+#define HalMirrorPhysicalMemory     HALDISPATCH->HalMirrorPhysicalMemory
+#define HalEndOfBoot                HALDISPATCH->HalEndOfBoot
+#define HalMirrorVerify             HALDISPATCH->HalMirrorVerify
+#ifdef _X86_
+    #define MM_HIGHEST_USER_ADDRESS MmHighestUserAddress
+    #define MM_SYSTEM_RANGE_START   MmSystemRangeStart
+    #define MM_USER_PROBE_ADDRESS   MmUserProbeAddress
+    #define MM_KSEG0_BASE           MM_SYSTEM_RANGE_START
+#endif
+
+__inline LUID RtlConvertLongToLuid( LONG x )
+/******************************************/
+{
+    LARGE_INTEGER   v1;
+    LUID            v2;
+    v1.QuadPart = x;
+    v2.LowPart = v1.LowPart;
+    v2.HighPart = v1.HighPart;
+    return( v2 );
+}
+
+__inline LUID RtlConvertUlongToLuid( ULONG x )
+/********************************************/
+{
+    LUID    v;
+    v.LowPart = x;
+    v.HighPart = 0;
+    return( v );
+}
+
+__inline PVOID ExAllocateFromZone( PZONE_HEADER x )
+/*************************************************/
+{
+    PVOID   v;
+    v = (PVOID)(x->FreeList.Next);
+    if( x->FreeList.Next ) {
+        x->FreeList.Next = x->FreeList.Next->Next;
+    }
+    return( v );
+}
+
+__inline PWHEA_ERROR_PACKET WheaGetErrPacketFromErrRecord( UCHAR p1, 
+                                                           PWHEA_ERROR_RECORD p2 )
+/********************************************************************************/
+{
+    PWHEA_ERROR_PACKET                      v1;
+    PUCHAR                                  v2;
+    PWHEA_ERROR_RECORD_SECTION_DESCRIPTOR   v3;
+    ASSERT( p2->Header.Signature == WHEA_ERROR_RECORD_SIGNATURE );
+    ASSERT( p1 < p2->Header.SectionCount );
+    v2 = (PUCHAR)p2;
+    v3 = &p2->SectionDescriptor[0];
+    v1 = (PWHEA_ERROR_PACKET)(v2 + v3[p1].SectionOffset);
+    ASSERT( v1->Signature == WHEA_ERROR_PKT_SIGNATURE );
+    return( v1 );
+}
+
+:include cplusepi.sp
+
+#endif /* _NTDDK_ */
+#endif /* _NTDDK_H_INCLUDED */
+
