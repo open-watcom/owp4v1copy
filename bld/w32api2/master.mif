@@ -290,6 +290,7 @@ ddk_headers =        &
         ntddk.h      &
         ntdef.h      &
         ntiologc.h   &
+        ntnls.h      &
         ntstatus.h   &
         wdm.h
 
