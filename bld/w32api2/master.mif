@@ -407,6 +407,9 @@ directx_libs =       &
         d3drm.lib    &
         dxguid.lib
 
+ddk_libs =           &
+        rtlver.lib
+
 vfw32_lbcs =         &
         avicap32.lbc &
         avifil32.lbc &
@@ -471,6 +474,11 @@ wbemuuid.lib: wbemuuid.obj
 dxguid.lib: dxguid.obj
     %create $^&.lbc
     @%append $^&.lbc +dxguid.obj
+    $(librarian) $(libflags) $@ @$^&.lbc
+
+rtlver.lib: rtlver.obj
+    %create $^&.lbc
+    @%append $^@.lbc +rtlver.obj
     $(librarian) $(libflags) $@ @$^&.lbc
 
 vfw32.lbc: $(vfw32_lbcs) vfwuuid.obj
