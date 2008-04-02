@@ -194,6 +194,7 @@ base_headers =       &
         schemdef.h   &
         schnlsp.h    &
         sddl.h       &
+        sdkddver.h   &
         secext.h     &
         security.h   &
         servprov.h   &

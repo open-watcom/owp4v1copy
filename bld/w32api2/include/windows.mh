@@ -14,24 +14,12 @@
 #define _INC_WINDOWS
 
 :include readonly.sp
-/* Define default version numbers. */
-#ifndef WINVER
-    #define WINVER          0x0600
-#endif
-#ifndef _WIN32_WINNT
-    #define _WIN32_WINNT    0x0600
-#endif
-#ifndef _WIN32_IE
-    #define _WIN32_IE       0x0700
-#endif
-#ifndef NTDDI_VERSION
-    #define NTDDI_VERSION   0x06000000
-#endif
 
 #ifdef RC_INVOKED
     #include <winresrc.h>
 #else
     #include <_w32ials.h>
+    #include <sdkddkver.h>
     #include <excpt.h>
     #include <stdarg.h>
     #include <windef.h>

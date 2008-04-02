@@ -15,6 +15,7 @@
 #include <ctype.h>
 #include <basetsd.h>
 #include <guiddef.h>
+#include <sdkddkver.h>
 
 :include cpluspro.sp
 
@@ -139,7 +140,7 @@ typedef ULONG               *PLOGICAL;
 typedef LONG                NTSTATUS;
 typedef NTSTATUS            *PNTSTATUS;
 #if (_WIN32_WINNT >= 0x0600)
-typedef CONST NTSTATUS      *PCNTSTATUS
+typedef CONST NTSTATUS      *PCNTSTATUS;
 #endif
 typedef __int64             LONGLONG;
 typedef unsigned __int64    ULONGLONG;

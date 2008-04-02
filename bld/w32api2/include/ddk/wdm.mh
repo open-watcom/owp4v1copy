@@ -1673,7 +1673,11 @@ typedef struct _EX_RUNDOWN_REF_CACHE_AWARE      *PEX_RUNDOWN_REF_CACHE_AWARE;
 typedef struct _CALLBACK_OBJECT                 *PCALLBACK_OBJECT;
 typedef struct _IO_REMOVE_LOCK_TRACKING_BLOCK   *PIO_REMOVE_LOCK_TRACKING_BLOCK;
 typedef struct _IO_WORKITEM                     *PIO_WORKITEM;
+#ifdef _NTDDK_H_INCLUDED
 typedef struct _ADAPTER_OBJECT                  *PADAPTER_OBJECT;
+#else
+typedef struct _DMA_ADAPTER                     *PADAPTER_OBJECT;
+#endif
 
 /* Opaque data types related to security */
 typedef PVOID   PACCESS_TOKEN;
@@ -7988,6 +7992,8 @@ __inline VOID IoSetCompletionRoutine( PIRP x, PIO_COMPLETION_ROUTINE p1, PVOID p
     }
 }
 
+#ifndef _NTDDK_H_INCLUDED
+
 __inline PVOID HalAllocateCommonBuffer( PDMA_ADAPTER p1, ULONG p2, PPHYSICAL_ADDRESS p3,
                                         BOOLEAN p4 )
 /**************************************************************************************/
@@ -8086,6 +8092,7 @@ __inline ULONG HalReadDmaCounter( PDMA_ADAPTER x )
     return( v2 );
 }
 
+#endif /* _NTDDK_H_INCLUDED */
 #endif /* (NTDDI_VERSION >= 0x06000000) */
 
 #if (NTDDI_VERSION >= 0x05020100)
