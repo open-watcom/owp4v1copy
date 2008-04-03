@@ -88,6 +88,20 @@ int matherr( struct _exception *err )
 }
 #endif
 
+int CompDbl( double n1, double n2 )
+{
+    double  num;
+
+    if( MYABS( n1 ) < 0.000001 && MYABS( n2 ) < 0.000001 ) return( TRUE );
+    if( n1 == 0.0 || n2 == 0.0 ) {
+        return( FALSE );
+    } else {
+        num = ( n1 - n2 ) / ( n1 < n2 ? n1 : n2 );
+        if( MYABS( num ) > 0.0001 ) return( FALSE );
+    }
+    return( TRUE );
+}
+
 void test_complex_math( void )
 {
     struct complex c = { 5.0, -12.0 };
@@ -302,21 +316,6 @@ void test_fp_classification( void )
     VERIFY( signbit( -INFINITY ) );
 #endif
 }
-
-int CompDbl( double n1, double n2 )
-{
-    double  num;
-
-    if( MYABS( n1 ) < 0.000001 && MYABS( n2 ) < 0.000001 ) return( TRUE );
-    if( n1 == 0.0 || n2 == 0.0 ) {
-        return( FALSE );
-    } else {
-        num = ( n1 - n2 ) / ( n1 < n2 ? n1 : n2 );
-        if( MYABS( num ) > 0.0001 ) return( FALSE );
-    }
-    return( TRUE );
-}
-
 
 void main( void )
 {
