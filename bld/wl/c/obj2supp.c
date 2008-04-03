@@ -382,21 +382,10 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
         }
     }
     if( !fix.imported ) {
-        if( ( (save->flags & FIX_OFFSET_MASK) > FIX_OFFSET_16 )
-            || ( fix.ffix != FFIX_NOT_A_FLOAT ) ) {
-
-            /***************************************************************/
-            /*  fix bug #630 fixup is applied to non first segment of grp  */
-            /*  recalculate offset from start of group                     */
-            /***************************************************************/
-
-            if( faddr.seg < fix.tgt_addr.seg ) {
-                ConvertToFrame( &fix.tgt_addr, faddr.seg );
-            }
-            fix.tgt_addr.seg = faddr.seg;
-
+        if( fix.ffix == FFIX_NOT_A_FLOAT ) {
+            ConvertToFrame( &fix.tgt_addr, faddr.seg, (save->flags & (FIX_OFFSET_8 | FIX_OFFSET_16)) );
         } else {
-            ConvertToFrame( &fix.tgt_addr, faddr.seg );
+            fix.tgt_addr.seg = faddr.seg;
         }
     }
     if( (save->flags & (FIX_OFFSET_MASK | FIX_HIGH)) == FIX_HIGH_OFFSET_16 ) {
@@ -1257,15 +1246,13 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
         return;
     ftype = fix->type & ( FIX_OFFSET_MASK | FIX_BASE );
     if( (FmtData.type & (MK_PHAR_SIMPLE | MK_PHAR_FLAT))
-        || ((FmtData.type & (MK_NOVELL | MK_ELF))
-            && (LinkState & HAVE_I86_CODE) && (ftype != FIX_OFFSET_32))
-        || ((FmtData.type & MK_ELF) && !(LinkState & HAVE_I86_CODE)
-            && ((ftype & FIX_BASE) || (ftype == FIX_OFFSET_8)
-            || (ftype == FIX_HIGH_OFFSET_8)))
-        || ((FmtData.type & MK_PE) && ((ftype & FIX_BASE)
-            || (ftype == FIX_OFFSET_8) || (ftype == FIX_HIGH_OFFSET_8)))
-        || ((FmtData.type & MK_PHAR_REX) && (ftype != FIX_OFFSET_16)
-            && (ftype != FIX_OFFSET_32)) ) {
+        || (FmtData.type & (MK_NOVELL | MK_ELF))
+            && (LinkState & HAVE_I86_CODE) && (ftype != FIX_OFFSET_32)
+        || (FmtData.type & MK_ELF) && !(LinkState & HAVE_I86_CODE)
+            && (ftype & (FIX_BASE | FIX_OFFSET_8))
+        || (FmtData.type & MK_PE) && (ftype & (FIX_BASE | FIX_OFFSET_8))
+        || (FmtData.type & MK_PHAR_REX) && (ftype != FIX_OFFSET_16)
+            && (ftype != FIX_OFFSET_32) ) {
         LnkMsg( LOC+ERR+MSG_INVALID_FLAT_RELOC, "a", &fix->loc_addr );
         return;
     }

@@ -842,7 +842,7 @@ static void CalcGrpAddr( group_entry *currgrp )
             }
         } else {
             Ring2Lookup( seg, FindEndAddr, &info );
-            if( (FmtData.type & MK_REAL_MODE)
+            if( (FmtData.type & MK_REAL_MODE) && !(seg->info & USE_32) 
                 && (info.end_addr - info.grp_addr > 64 * 1024L) ) {
                 LnkMsg( ERR+MSG_GROUP_TOO_BIG, "sl", currgrp->sym->name,
                         info.end_addr - info.grp_addr - 64 * 1024L );
@@ -912,14 +912,14 @@ offset GetLeaderDelta( seg_leader *leader )
     return( SUB_ADDR( leader->seg_addr, leader->group->grp_addr ) );
 }
 
-void ConvertToFrame( targ_addr *addr, segment frame )
-/**********************************************************/
+void ConvertToFrame( targ_addr *addr, segment frame, bool check_16bit )
+/*********************************************************************/
 {
     unsigned long   off;
 
     if( FmtData.type & MK_REAL_MODE ) {
         off = MK_REAL_ADDR( (int)( addr->seg - frame ), addr->off );
-        if( off > 0x10000 ) {
+        if( check_16bit && ( off >= 0x10000 )) {
             LnkMsg( LOC+ERR+MSG_FRAME_INVALID, "ax", addr, frame );
         }
         addr->off = off;
