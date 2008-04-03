@@ -98,6 +98,7 @@ unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
 /*                  %d  : decimal                                   */
 /*                  %l  : long decimal                              */
 /*                  %a  : address   ( %x:%x or 32 bit, depends on format) */
+/*                  %A  : address   ( %x:%h or 32 bit, depends on format) */
 /*                  %S  : symbol name                               */
 /*                  %f  : an executable format name                 */
 /********************************************************************/
@@ -232,6 +233,7 @@ unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
                 len -= size;
                 break;
             case 'a':
+            case 'A':
                 if( UseArgInfo() ) {
                     addr = MsgArgInfo.arg[MsgArgInfo.index].address;
                     IncremIndex();
@@ -252,7 +254,7 @@ unsigned DoFmtStr( char *buff, unsigned len, char *src, va_list *args )
                     } else {
                         size = FmtStr( dest, len, "DATA:%h", addr->off );
                     }
-                } else if( FmtData.type & MK_386 ) {
+                } else if( (FmtData.type & MK_386) || ch == 'A' ) {
                     size = FmtStr( dest, len, "%x:%h", addr->seg, addr->off );
                 } else {
                     size = FmtStr( dest, len, "%x:%x", addr->seg,

@@ -1173,7 +1173,11 @@ static void WriteSym( symbol * sym, char star )
     if( sym->info & SYM_STATIC ) {
         star = 's';
     }
-    WriteFormat( 0, "%a%c", &sym->addr, star );
+    if( (FmtData.type & MK_286) && ( sym->p.seg != NULL ) && sym->p.seg->is32bit ) {
+        WriteFormat( 0, "%A%c", &sym->addr, star );
+    } else {
+        WriteFormat( 0, "%a%c", &sym->addr, star );
+    }
     WriteFormat( 15, "%S", sym );
 }
 
