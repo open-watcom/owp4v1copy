@@ -7,6 +7,8 @@
 #ifndef __IALIAS_H_INCLUDED
 #define __IALIAS_H_INCLUDED
 
+:include readonly.sp
+
 #pragma include_alias( <algorithm>,     <algorith>   )
 #pragma include_alias( <exception>,     <exceptio>   )
 #pragma include_alias( <exception.h>,   <exceptio.h> )

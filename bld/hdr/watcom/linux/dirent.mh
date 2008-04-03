@@ -4,6 +4,9 @@
 :include crwat.sp
  */
 #ifndef _DIRENT_H_INCLUDED
+#define _DIRENT_H_INCLUDED
+
+:include readonly.sp
 
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
@@ -49,6 +52,5 @@ _WCRTLINK extern int              closedir( DIR *__dirp );
 };
 #endif
 
-#define _DIRENT_H_INCLUDED
 #endif
 
