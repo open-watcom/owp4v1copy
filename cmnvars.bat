@@ -22,7 +22,7 @@ set DISTROOT=%OWROOT%\distrib
 set RELROOT=%OWROOT%\rel2
 set DWATCOM=%WATCOM%
 set DOC_ROOT=%OWROOT%\docs
-set INCLUDE=%WATCOM%\h;%WATCOM%\h\nt;%WATCOM%\h\nt\ddk
+set INCLUDE=%WATCOM%\h;%WATCOM%\h\nt
 set EDPATH=%WATCOM%\eddat
 set PATH=%OWBINDIR%;%OWROOT%\bat;%WATCOM%\binnt;%WATCOM%\binw;%WATCOM%\binp;%DOC_ROOT%\cmds;%DEFPATH%
 
