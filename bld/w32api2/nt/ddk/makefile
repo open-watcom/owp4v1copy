@@ -1,11 +1,10 @@
 #pmake: build os_nt cpu_386
 
-host_OS             = nt
+host_os       = nt
 
-proj_name          = ddk
-include_dir        = ../../include/ddk
-root_dir           = ../..
-lib_dir            = ../../lib/ddk
-what_to_build      = headers
+proj_name     = ddk
+root_dir      = ../..
+include_dir   = $(root_dir)/include/ddk
+what_to_build = headers
 
 !include ../../master.mif

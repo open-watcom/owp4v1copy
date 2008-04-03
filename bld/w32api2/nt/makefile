@@ -1,11 +1,10 @@
 #pmake: build os_nt cpu_386
 
-host_OS             = nt
+host_os       = nt
 
-proj_name           = base
-include_dir         = ../include
-root_include_dir    = ../include
-lib_dir             = ../lib
-what_to_build       = headers
+proj_name     = base
+root_dir      = ..
+include_dir   = $(root_dir)/include
+what_to_build = headers
 
 !include ../master.mif

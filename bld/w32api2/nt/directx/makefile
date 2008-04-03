@@ -1,11 +1,10 @@
 #pmake: build os_nt cpu_386
 
-host_OS             = nt
+host_os       = nt
 
-proj_name          = directx
-include_dir        = ../../include/directx
-root_include_dir   = ../../include
-lib_dir            = ../../lib/directx
-what_to_build      = headers
+proj_name     = directx
+root_dir      = ../..
+include_dir   = $(root_dir)/include/directx
+what_to_build = headers
 
 !include ../../master.mif

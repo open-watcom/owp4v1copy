@@ -1,10 +1,15 @@
 .EXTENSIONS : .rh .mh .lbc .def
 
-use_ddk = 1
-
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
+
+!ifndef root_dir
+!error root_dir is not set!
+!endif
+
+# This should be including w32api2's own DDK headers
+inc_dirs = -I"$(lang_root)/h/nt/ddk"
 
 splice = wsplice -i$(hdr_dir) -i$(root_dir)/include $[@ $^@
 rsplice = wsplice -i$(hdr_dir) -i$(root_dir)/include -kRESOURCE $[@ $^@
