@@ -846,7 +846,6 @@ static void CalcGrpAddr( group_entry *currgrp )
                 && (info.end_addr - info.grp_addr > 64 * 1024L) ) {
                 LnkMsg( ERR+MSG_GROUP_TOO_BIG, "sl", currgrp->sym->name,
                         info.end_addr - info.grp_addr - 64 * 1024L );
-                info.grp_addr = info.end_addr - 64 * 1024L - 1;
             }
             currgrp->totalsize = info.end_addr - info.grp_addr;
         }
