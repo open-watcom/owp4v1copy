@@ -340,7 +340,7 @@ rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu)) $(extra_rc_flag
 
 inc_dirs_sys_os2_386 = -I$(dev_dir)/os2api/incl32
 inc_dirs_sys_os2_i86 = -I$(dev_dir)/os2api/incl16
-inc_dirs_sys_nt    = -I$(dev_dir)/w32api/include
+inc_dirs_sys_nt    = -I$(dev_dir)/w32api/include -I$(dev_dir)/w32api/include/ddk
 inc_dirs_sys_win   = -I$(dev_dir)/w16api/include
 inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
 inc_dirs_sys_dos   =
@@ -365,7 +365,7 @@ inc_dirs_lang   = -I$(hdr_dir)/dos
 
 inc_dirs_sys_os2_386 = -I$(lang_root)/h/os2
 inc_dirs_sys_os2_i86 = -I$(lang_root)/h/os21x
-inc_dirs_sys_nt    = -I$(lang_root)/h/nt
+inc_dirs_sys_nt    = -I$(lang_root)/h/nt -I$(lang_root)/h/nt/ddk
 inc_dirs_sys_win   = -I$(lang_root)/h/win
 inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
 inc_dirs_sys_dos   =
@@ -394,7 +394,7 @@ inc_path        = $(inc_dirs) $(inc_dirs_$(host_os)) $(inc_dirs_sys) -I$(watcom_
 
 inc_dirs_sys_os2_386 = -I$(lang_root)\h\os2
 inc_dirs_sys_os2_i86 = -I$(lang_root)\h\os21x
-inc_dirs_sys_nt    = -I$(lang_root)\h\nt
+inc_dirs_sys_nt    = -I$(lang_root)\h\nt -I$(lang_root)\h\nt\ddk
 inc_dirs_sys_win   = -I$(lang_root)\h\win
 inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
 inc_dirs_sys_dos   =
