@@ -150,7 +150,7 @@ static offset CalcIDataSize( void )
     unsigned_32 size;
 
     iatsize = (NumImports+NumMods) * sizeof( pe_va );
-    if( (0 == iatsize) && ( LinkFlags & STRIP_CODE ) ) {
+    if( 0 == iatsize ) {
         return( 0 );
     }
     IData.ilt_off = (NumMods + 1) * sizeof( pe_import_directory );
