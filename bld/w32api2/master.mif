@@ -1,5 +1,7 @@
 .EXTENSIONS : .rh .mh .lbc .def
 
+use_ddk = 1
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
