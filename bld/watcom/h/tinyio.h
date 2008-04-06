@@ -928,9 +928,9 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ah,0"      \
         "mov al,2"      \
         "int 31h"       \
-        "jnc L1"        \
+        "jnc short finish" \
         "xor ax,ax"     \
-        "L1:"           \
+"finish: "              \
         parm            [bx] \
         value           [ax] \
         modify exact    [ax bx];
@@ -939,9 +939,9 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ah,0"      \
         "mov al,0"      \
         "int 31h"       \
-        "jnc L1"        \
+        "jnc short finish" \
         "xor ax,ax"     \
-        "L1:"           \
+"finish: "              \
         parm            [cx] \
         value           [ax] \
         modify exact    [ax];
@@ -1005,9 +1005,9 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ah,0"      \
         "mov al,10"     \
         "int 31h"       \
-        "jnc L1"        \
+        "jnc short finish" \
         "xor ax,ax"     \
-        "L1:"           \
+"finish: "              \
         parm caller     [bx] \
         value           [ax] \
         modify exact    [ax];
@@ -1028,10 +1028,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "stc"           \
         "int 31h"       \
         "mov cx,si"     \
-        "jnc L1"        \
+        "jnc short finish" \
         "xor cx,cx"     \
         "xor edi,edi"   \
-        "L1:"           \
+"finish: "              \
         value           [cx edi] \
         modify exact    [eax cx si edi];
 
@@ -1040,13 +1040,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov al,6"      \
         "stc"           \
         "int 31h"       \
-        "jnc L1"        \
+        "jnc short L1"  \
         "xor ebx,ebx"   \
-        "jmp short L2"  \
-        "L1:"           \
+        "jmp short finish" \
+"L1:     "              \
         "shl ebx,16"    \
         "mov bx,cx"     \
-        "L2:"           \
+"finish: "              \
         value           [ebx] \
         modify exact    [eax ebx cx si edi];
 
@@ -1056,10 +1056,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "stc"           \
         "int 31h"       \
         "mov cx,si"     \
-        "jnc L1"        \
+        "jnc short finish" \
         "xor cx,cx"     \
         "xor edi,edi"   \
-        "L1:"           \
+"finish: "              \
         value           [cx edi] \
         modify exact    [ax bx cx si edi];
 
@@ -1067,14 +1067,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ah,3"      \
         "mov al,5"      \
         "int 31h"       \
-        "jnc L1"        \
+        "jnc short L1"  \
         "xor cx,cx"     \
         "xor ebx,ebx"   \
-        "jmp short L2"  \
-        "L1:"           \
+        "jmp short finish" \
+"L1:     "              \
         "shl ebx,16"    \
         "mov bx,cx"     \
-        "L2:"           \
+"finish: "              \
         value           [ebx] \
         modify exact    [ax ebx cx si edi];
 
@@ -1082,9 +1082,9 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ah,3"      \
         "mov al,5"      \
         "int 31h"       \
-        "jnc L1"        \
+        "jnc short finish" \
         "xor eax,eax"   \
-        "L1:"           \
+"finish: "              \
         value           [ax] \
         modify exact    [eax bx cx si edi];
 
@@ -1125,10 +1125,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ah,2"      \
         "mov al,4"      \
         "int 31h"       \
-        "jnc L1"        \
+        "jnc short finish" \
         "xor cx,cx"     \
         "xor edx,edx"   \
-        "L1:"           \
+"finish: "              \
         parm caller     [bl] \
         value           [cx edx] \
         modify exact    [ax bx cx edx];
@@ -1146,10 +1146,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ah,2"      \
         "mov al,2"      \
         "int 31h"       \
-        "jnc L1"        \
+        "jnc short finish" \
         "xor cx,cx"     \
         "xor edx,edx"   \
-        "L1:"           \
+"finish: "              \
         parm caller     [bl] \
         value           [cx edx] \
         modify exact    [ax bx cx edx];
@@ -1164,18 +1164,18 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify exact    [eax bx cx edx];
 
 #pragma aux             _TinyDPMIAlloc = \
-        "mov    ah,5",  \
-        "mov    al,1",  \
-        "int    31h",   \
-        "sbb    eax,eax",  /* eax=-1 if alloc failed */ \
-        "inc    eax",      /* eax=0  if alloc failed */ \
-        "je     short L1",\
-        "mov    ax,bx",    /* linear address returned in BX:CX */ \
-        "shl    eax,16",\
-        "mov    ax,cx", \
-        "mov    [eax],di", /* store handle in block */ \
-        "mov    2[eax],si",/* ... */ \
-        "L1:"           \
+        "mov    ah,5"   \
+        "mov    al,1"   \
+        "int    31h"    \
+        "sbb    eax,eax" /* eax=-1 if alloc failed */ \
+        "inc    eax"     /* eax=0  if alloc failed */ \
+        "je short finish" \
+        "mov    ax,bx"   /* linear address returned in BX:CX */ \
+        "shl    eax,16" \
+        "mov    ax,cx" \
+        "mov    [eax],di"  /* store handle in block */ \
+        "mov    2[eax],si" /* ... */ \
+"finish: "              \
         parm caller     [bx] [cx] \
         value           [eax] \
         modify exact    [eax ebx ecx esi edi];
@@ -1183,18 +1183,18 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _TinyDPMIRealloc = \
         "mov    di,[eax]"  /* get memory block handle */\
         "mov    si,2[eax]" /* ... */\
-        "mov    ah,5",  \
-        "mov    al,3",  \
-        "int    31h",   \
-        "sbb    eax,eax",  /* eax=-1 if alloc failed */ \
-        "inc    eax",      /* eax=0  if alloc failed */ \
-        "je     short L1",\
-        "mov    ax,bx",    /* linear address returned in BX:CX */ \
-        "shl    eax,16",\
-        "mov    ax,cx", \
-        "mov    [eax],di", /* store new handle in block */ \
-        "mov    2[eax],si",/* ... */ \
-        "L1:"           \
+        "mov    ah,5"   \
+        "mov    al,3"   \
+        "int    31h"    \
+        "sbb    eax,eax"   /* eax=-1 if alloc failed */ \
+        "inc    eax"       /* eax=0  if alloc failed */ \
+        "je short finish" \
+        "mov    ax,bx"     /* linear address returned in BX:CX */ \
+        "shl    eax,16" \
+        "mov    ax,cx"  \
+        "mov    [eax],di"  /* store new handle in block */ \
+        "mov    2[eax],si" /* ... */ \
+"finish: "              \
         parm caller     [eax] [bx] [cx] \
         value           [eax] \
         modify exact    [eax ebx ecx esi edi];
@@ -1258,19 +1258,20 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _nTinyAccess = \
         _XOR_AX_AX      \
-        _MOV_AH DOS_CHMOD    \
+        _MOV_AH DOS_CHMOD \
         _INT_21         \
-        _JC 0x0f       /* -> L1 */ \
+        "jc short finish" \
         _TEST_BL 0x02  \
-        _JZ 0x0a       /* -> L1 */ \
+        "jz short finish" \
         _TEST_CL 0x01  \
-        _JZ 0x05       /* -> L1 */ \
+        "jz short finish" \
         _MOV_AL 0x00    \
         _MOV_AH EACCES  \
         _STC            \
-        _SBB_CX_CX      /* L1: */ \
-        _USE16 _MOV_CX_AX   /* Even though we are in 32-bit mode, */    \
-        _MOV_AX_CX      /* ^ Use 16-bit registers */ \
+"finish: "              \
+        "sbb ecx,ecx"   \
+        "mov cx,ax"     \
+        "mov eax,ecx"   \
         parm caller     [edx] [bx] \
         value           [eax] \
         modify exact    [eax ecx];
@@ -1297,13 +1298,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "push ecx"      \
         _INT_21         \
         "pop ecx"       \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ax,6C00h"  \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "rcl eax,1"     \
         "ror eax,1"     \
         parm caller     [esi] [ebx] [ecx] [edx]\
@@ -1335,11 +1336,11 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,7160h"  \
         _INT_21         \
         "pop ecx"       \
-        "jc callfunc"   \
+        "jc short func" \
         "cmp ax,7100h"  \
-        "jz callfunc"   \
+        "jz short func" \
         "mov edx,edi"   \
-        "callfunc:"     \
+"func:   "              \
         "mov ah,5Ah"    \
         _INT_21         \
         "rcl eax,1"     \
@@ -1432,13 +1433,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov si,0"      \
         "mov ax,7141h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,41h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "rcl eax,1"     \
         "ror eax,1"     \
         parm caller     [edx] \
@@ -1465,13 +1466,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov es,cx"     \
         "mov ax,7156h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,56h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "rcl eax,1"     \
         "ror eax,1"     \
         "pop es"        \
@@ -1497,13 +1498,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyMakeDir = \
         "mov ax,7139h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,39h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "rcl eax,1"     \
         "ror eax,1"     \
         parm caller     [edx] \
@@ -1522,13 +1523,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyRemoveDir = \
         "mov ax,713Ah"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,3Ah"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "rcl eax,1"     \
         "ror eax,1"     \
         parm caller     [edx] \
@@ -1547,13 +1548,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyChangeDir = \
         "mov ax,713Bh"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,3Bh"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "rcl eax,1"     \
         "ror eax,1"     \
         parm caller     [edx] \
@@ -1572,13 +1573,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyGetCWDir = \
         "mov ax,7147h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,47h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "rcl eax,1"     \
         "ror eax,1"     \
         parm caller     [esi] [dl] \
@@ -1620,11 +1621,11 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _TinyTestAllocBlock = \
         "mov ah,48h"    \
         _INT_21         \
-        "jnc L1"        \
+        "jnc short finish" \
         "mov eax,ebx"   \
         "rcl eax,1"     \
         "ror eax,1"     \
-        "L1:"           \
+"finish: "              \
         parm caller     [ebx]\
         value           [eax];
 
@@ -1846,14 +1847,15 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_DGROUP  \
         _MOV_AX 0x00 DOS_CHMOD \
         _INT_21         \
-        _JC 0x0e        /* -> L1 */ \
+        "jc short finish" \
         _TEST_BL 0x02   \
-        _JZ 0x09        /* -> L1 */ \
+        "jz short finish" \
         _TEST_CL 0x01   \
-        _JZ 0x04        /* -> L1 */ \
+        "jz short finish" \
         _MOV_AX 0x00 EACCES\
         _STC            \
-        _SBB_DX_DX      /* L1: */ \
+"finish: "              \
+        _SBB_DX_DX      \
         _RST_DS_DGROUP  \
         parm caller     [dx] [bx] \
         value           [dx ax] \
@@ -1863,14 +1865,15 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_SREG    \
         _MOV_AX 0x00 DOS_CHMOD \
         _INT_21         \
-        _JC 0x0e        /* -> L1 */ \
+        "jc short finish" \
         _TEST_BL 0x02   \
-        _JZ 0x09        /* -> L1 */ \
+        "jz short finish" \
         _TEST_CL 0x01   \
-        _JZ 0x04        /* -> L1 */ \
+        "jz short finish" \
         _MOV_AX 0x00 EACCES\
         _STC            \
-        _SBB_DX_DX      /* L1: */ \
+"finish: "              \
+        _SBB_DX_DX      \
         _RST_DS_SREG    \
         parm caller     [_SREG dx] [bx] \
         value           [dx ax] \
@@ -1887,7 +1890,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify exact    [ax dx];
 
 #pragma aux             _fTinyOpen = \
-        _SET_DS_SREG_SAFE   \
+        _SET_DS_SREG_SAFE \
         _MOV_AH DOS_OPEN \
         _INT_21         \
         _SBB_DX_DX      \
@@ -1923,13 +1926,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "push cx"       \
         _INT_21         \
         "pop cx"        \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,0x6C"   \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
         parm caller     [si] [bx] [cx] [dx]\
@@ -1942,13 +1945,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "push cx"       \
         _INT_21         \
         "pop cx"        \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,0x6C"   \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
         parm caller     [_SREG si] [bx] [cx] [dx]\
@@ -2006,11 +2009,11 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,7160h"  \
         _INT_21         \
         "pop cx"        \
-        "jc callfunc"   \
+        "jc short func" \
         "cmp ax,7100h"  \
-        "jz callfunc"   \
+        "jz short func" \
         "mov dx,di"     \
-        "callfunc:"     \
+"func:   "              \
         "mov ah,5Ah"    \
         _INT_21         \
         "sbb dx,dx"     \
@@ -2028,11 +2031,11 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,7160h"  \
         _INT_21         \
         "pop cx"        \
-        "jc callfunc"   \
+        "jc short func" \
         "cmp ax,7100h"  \
-        "jz callfunc"   \
+        "jz short func" \
         "mov dx,di"     \
-        "callfunc:"     \
+"func:   "              \
         "mov ah,5Ah"    \
         _INT_21         \
         "sbb dx,dx"     \
@@ -2122,9 +2125,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyAbsRead = \
         _SET_DS_DGROUP_SAFE  \
         _INT 0x25       \
-        _JC 0x03        /* -> L1 */ \
+        "jc short finish" \
         _ADD_SP 0x02    \
-        _SBB_DX_DX      /* L1: */ \
+"finish: "              \
+        _SBB_DX_DX      \
         _RST_DS_DGROUP  \
         parm caller     [al] [dx] [cx] [bx] \
         value           [dx ax] \
@@ -2133,9 +2137,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _fTinyAbsRead = \
         _SET_DS_SREG_SAFE \
         _INT 0x25       \
-        _JC 0x03        /* -> L1 */ \
+        "jc short finish" \
         _ADD_SP 0x02    \
-        _SBB_DX_DX      /* L1: */ \
+"finish: "              \
+        _SBB_DX_DX      \
         _RST_DS_SREG    \
         parm caller     [al] [dx] [cx] [_SREG bx] \
         value           [dx ax] \
@@ -2144,9 +2149,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyAbsWrite = \
         _SET_DS_DGROUP_SAFE \
         _INT 0x26       \
-        _JC 0x03        /* -> L1 */ \
+        "jc short finish" \
         _ADD_SP 0x02    \
-        _SBB_DX_DX      /* L1: */ \
+"finish: "              \
+        _SBB_DX_DX      \
         _RST_DS_DGROUP  \
         parm caller     [al] [dx] [cx] [bx] \
         value           [dx ax] \
@@ -2155,9 +2161,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _fTinyAbsWrite = \
         _SET_DS_SREG_SAFE \
         _INT 0x26       \
-        _JC 0x03        /* -> L1 */ \
+        "jc short finish" \
         _ADD_SP 0x02    \
-        _SBB_DX_DX      /* L1: */ \
+"finish: "              \
+        _SBB_DX_DX      \
         _RST_DS_SREG    \
         parm caller     [al] [dx] [cx] [_SREG bx] \
         value           [dx ax] \
@@ -2189,13 +2196,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,7143h"  \
         "mov bl,0"      \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100"   \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ax,4300h"  \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "mov ax,cx"     \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
@@ -2208,13 +2215,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,7143h"  \
         "mov bl,1"      \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100"   \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ax,4301h"  \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
         parm caller     [dx] [cx] \
@@ -2226,13 +2233,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,7143h"  \
         "mov bl,0"      \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100"   \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ax,4300h"  \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "mov ax,cx"     \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
@@ -2245,13 +2252,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,7143h"  \
         "mov bl,1"      \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100"   \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ax,4301h"  \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
         parm caller     [_SREG dx] [cx] \
@@ -2307,13 +2314,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,7141h"  \
         "mov si,0"      \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,41h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
         parm caller     [dx] \
@@ -2326,13 +2333,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov es,ax"     \
         "mov ax,7156h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,56h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
         parm caller     [dx] [di]\
@@ -2344,13 +2351,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,7141h"  \
         "mov si,0"      \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,41h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
         parm caller     [_SREG dx] \
@@ -2362,13 +2369,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov es,cx"     \
         "mov ax,7156h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,56h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
         parm caller     [_SREG dx] [cx di]\
@@ -2423,13 +2430,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_DGROUP  \
         "mov ax,7139h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,39h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
         parm caller     [dx] \
@@ -2440,13 +2447,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_DGROUP  \
         "mov ax,713Ah"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,3Ah"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
         parm caller     [dx] \
@@ -2457,13 +2464,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_DGROUP  \
         "mov ax,713Bh"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,3Bh"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
         parm caller     [dx] \
@@ -2474,13 +2481,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_DGROUP  \
         "mov ax,7147h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,47h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_DGROUP  \
         parm caller     [si] [dl] \
@@ -2491,13 +2498,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_SREG    \
         "mov ax,7139h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,39h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
         parm caller     [_SREG dx] \
@@ -2508,13 +2515,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_SREG    \
         "mov ax,713Ah"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,3Ah"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
         parm caller     [_SREG dx] \
@@ -2525,13 +2532,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_SREG    \
         "mov ax,713Bh"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,3Bh"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
         parm caller     [_SREG dx] \
@@ -2542,13 +2549,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_SREG    \
         "mov ax,7147h"  \
         _INT_21         \
-        "jc old"        \
+        "jc short old"  \
         "cmp ax,7100h"  \
-        "jnz finish"    \
-        "old:"          \
+        "jnz short finish" \
+"old:    "              \
         "mov ah,47h"    \
         _INT_21         \
-        "finish:"       \
+"finish: "              \
         "sbb dx,dx"     \
         _RST_DS_SREG    \
         parm caller     [_SREG si] [dl] \
@@ -2664,9 +2671,9 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH DOS_ALLOC_SEG    \
         _INT_21         \
         _SBB_DX_DX      \
-        _JNS 0x02       /* -> L1 */ \
+        "jns short finish" \
         _MOV_AX_BX      \
-                        /* L1: */ \
+"finish: "              \
         parm caller     [bx] \
         value           [dx ax] \
         modify exact    [ax bx dx];
@@ -2843,7 +2850,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify exact    [ax dx];
 
 #pragma aux             _TinySetVect = \
-        _SET_DS_SREG_SAFE   \
+        _SET_DS_SREG_SAFE \
         _MOV_AH DOS_SET_INT \
         _INT_21         \
         _RST_DS_SREG    \
@@ -2926,9 +2933,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _DEC_DX         \
         _MOV_AX 0xff 0x38 \
         _TEST_BH_BH     \
-        _JNZ 0x02       /* -> L1 */ \
+        "jnz short finish" \
         _MOV_AL_BL      \
-        _INT_21         /* L1: */ \
+"finish: "              \
+        _INT_21         \
         _SBB_DX_DX      \
         parm caller     [bx] \
         value           [dx ax] \
@@ -3044,13 +3052,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x02    \
         _MOV_AL 0x01    \
         _INT 0x31       \
-        _JNC 0x07       /* -> L1 */ \
+        "jnc short L1"  \
         _MOV_AX 0xff 0xff \
         _MOV_DX_AX      \
-        _JMP_SHORT 0x04 /* -> L2 */ \
-        _XOR_AX_AX      /* L1: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _XOR_AX_AX      \
         _XOR_DX_DX      \
-                        /* L2: */ \
+"finish: "              \
         parm caller     [bl] [cx] [dx] \
         value           [ax dx] \
         modify exact    [ax bx cx dx];
@@ -3059,10 +3068,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x02    \
         _MOV_AL 0x04    \
         _INT 0x31       \
-        _JNC 0x04       /* -> L1 */ \
+        "jnc short finish" \
         _XOR_CX_CX      \
         _XOR_DX_DX      \
-                        /* L1: */ \
+"finish: "              \
         parm caller     [bl] \
         value           [cx dx] \
         modify exact    [ax bx cx dx];
@@ -3071,13 +3080,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x02    \
         _MOV_AL 0x05    \
         _INT 0x31       \
-        _JNC 0x07       /* -> L1 */ \
+        "jnc short L1"  \
         _MOV_AX 0xff 0xff \
         _MOV_DX_AX      \
-        _JMP_SHORT 0x04 /* -> L2 */ \
-        _XOR_AX_AX      /* L1: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _XOR_AX_AX      \
         _XOR_DX_DX      \
-                        /* L2: */ \
+"finish: "              \
         parm caller     [bl] [cx dx] \
         value           [ax dx] \
         modify exact    [ax bx cx dx];
@@ -3086,12 +3096,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x03    \
         _MOV_AL 0x06    \
         _INT 0x31       \
-        _JNC 0x06       /* -> L1 */ \
+        "jnc short L1"  \
         _XOR_CX_CX      \
         _XOR_DI_DI      \
-        _JMP_SHORT 0x02 /* -> L2 */ \
-        _MOV_CX_SI      /* L1: */ \
-                        /* L2: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _MOV_CX_SI      \
+"finish: "              \
         value           [cx di] \
         modify exact    [ax bx cx si di];
 
@@ -3099,10 +3110,11 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x03    \
         _MOV_AL 0x06    \
         _INT 0x31       \
-        _JNC 0x04       /* -> L1 */ \
+        "jnc short finish" \
         _XOR_BX_BX      \
         _XOR_CX_CX      \
-        _XCHG_BX_CX     /* L1: */ \
+        _XCHG_BX_CX     \
+"finish: "              \
         value           [bx cx] \
         modify exact    [ax bx cx si di];
 
@@ -3110,12 +3122,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x03    \
         _MOV_AL 0x05    \
         _INT 0x31       \
-        _JNC 0x06       /* -> L1 */ \
+        "jnc short L1"  \
         _XOR_CX_CX      \
         _XOR_DI_DI      \
-        _JMP_SHORT 0x02 /* -> L2 */ \
-        _MOV_CX_SI      /* L1: */ \
-                        /* L2: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _MOV_CX_SI      \
+"finish: "              \
         value           [cx di] \
         modify exact    [ax bx cx si di];
 
@@ -3123,10 +3136,11 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x03    \
         _MOV_AL 0x05    \
         _INT 0x31       \
-        _JNC 0x04       /* -> L1 */ \
+        "jnc short finish" \
         _XOR_CX_CX      \
         _XOR_BX_BX      \
-        _XCHG_BX_CX     /* L1: */ \
+"finish: "              \
+        _XCHG_BX_CX     \
         value           [bx cx] \
         modify exact    [ax bx cx si di];
 
@@ -3134,9 +3148,9 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x03    \
         _MOV_AL 0x05    \
         _INT 0x31       \
-        _JNC 0x02       /* -> L1 */ \
+        "jnc short finish" \
         _XOR_AX_AX      \
-                        /* L1: */ \
+"finish: "              \
         value           [ax] \
         modify exact    [ax bx cx si di];
 
@@ -3144,9 +3158,9 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x0a    \
         _INT 0x31       \
-        _JNC 0x02       /* -> L1 */ \
+        "jnc short finish" \
         _XOR_AX_AX      \
-                        /* L1: */ \
+"finish: "              \
         parm caller     [bx] \
         value           [ax] \
         modify exact    [ax];
@@ -3155,14 +3169,15 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x01    \
         _INT 0x31       \
-        _JC 0x06        /* -> L1 */ \
+        "jc short L1"   \
         _XOR_AX_AX      \
         _XOR_DX_DX      \
-        _JMP_SHORT 0x05 /* -> L2 */ \
-        _XOR_AX_AX      /* L1: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _XOR_AX_AX      \
         _DEC_AX         \
         _MOV_DX_AX      \
-                        /* L2: */ \
+"finish: "              \
         parm caller     [bx] \
         value           [ax dx] \
         modify exact    [ax];
@@ -3171,11 +3186,11 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x06    \
         _INT 0x31       \
-        _JNC 0x05       /* -> L1 */ \
+        "jnc short finish" \
         _XOR_DX_DX      \
         _DEC_DX         \
         _MOV_CX_DX      \
-                        /* L1: */ \
+"finish: "              \
         parm caller     [bx] \
         value           [cx dx] \
         modify exact    [ax bx cx dx];
@@ -3184,9 +3199,9 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x02    \
         _INT 0x31       \
-        _JNC 0x02       /* -> L1: */ \
+        "jnc short finish" \
         _XOR_AX_AX      \
-                        /* L1: */ \
+"finish: "              \
         parm            [bx] \
         value           [ax] \
         modify exact    [ax bx];
@@ -3195,9 +3210,9 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x00    \
         _INT 0x31       \
-        _JNC 0x02       /* -> L1: */ \
+        "jnc short finish" \
         _XOR_AX_AX      \
-                        /* L1: */ \
+"finish: "              \
         parm            [cx] \
         value           [ax] \
         modify exact    [ax];
@@ -3206,14 +3221,15 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x07    \
         _INT 0x31       \
-        _JC 0x06        /* -> L1 */ \
+        "jc short L1"   \
         _XOR_AX_AX      \
         _XOR_DX_DX      \
-        _JMP_SHORT 0x05 /* -> L2 */ \
-        _XOR_AX_AX      /* L1: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _XOR_AX_AX      \
         _DEC_AX         \
         _MOV_DX_AX      \
-                        /* L2: */ \
+"finish: "              \
         parm            [bx] [cx dx] \
         value           [ax dx] \
         modify exact    [ax dx];
@@ -3222,14 +3238,15 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x08    \
         _INT 0x31       \
-        _JC 0x06        /* -> L1 */ \
+        "jc short L1"   \
         _XOR_AX_AX      \
         _XOR_DX_DX      \
-        _JMP_SHORT 0x05 /* -> L2 */ \
-        _XOR_AX_AX      /* L1: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _XOR_AX_AX      \
         _DEC_AX         \
         _MOV_DX_AX      \
-                        /* L2: */ \
+"finish: "              \
         parm            [bx] [cx dx] \
         value           [ax dx] \
         modify exact    [ax dx];
@@ -3238,14 +3255,15 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x09    \
         _INT 0x31       \
-        _JC 0x06        /* -> L1 */ \
+        "jc short L1"   \
         _XOR_AX_AX      \
         _XOR_DX_DX      \
-        _JMP_SHORT 0x05 /* -> L2 */ \
-        _XOR_AX_AX      /* L1: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _XOR_AX_AX      \
         _DEC_AX         \
         _MOV_DX_AX      \
-                        /* L2: */ \
+"finish: "              \
         parm            [bx] [cx] \
         value           [ax dx] \
         modify exact    [ax dx];
@@ -3256,14 +3274,16 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x0b    \
         _INT 0x31       \
-        _JC 0x06        /* -> L1 */ \
+        "jc short L1"   \
         _XOR_AX_AX      \
         _XOR_DX_DX      \
-        _JMP_SHORT 0x05 /* -> L2 */ \
-        _XOR_AX_AX      /* L1: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _XOR_AX_AX      \
         _DEC_AX         \
         _MOV_DX_AX      \
-        _POP_ES         /* L2: */ \
+"finish: "              \
+        _POP_ES         \
         parm            [bx] [cx di] \
         value           [ax dx] \
         modify exact    [ax dx];
@@ -3274,14 +3294,16 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _MOV_AH 0x00    \
         _MOV_AL 0x0b    \
         _INT 0x31       \
-        _JC 0x06        /* -> L1 */ \
+        "jc short L1"   \
         _XOR_AX_AX      \
         _XOR_DX_DX      \
-        _JMP_SHORT 0x05 /* -> L2 */ \
-        _XOR_AX_AX      /* L1: */ \
+        "jmp short finish" \
+"L1:     "              \
+        _XOR_AX_AX      \
         _DEC_AX         \
         _MOV_DX_AX      \
-        _POP_ES         /* L2: */ \
+"finish: "              \
+        _POP_ES         \
         parm            [bx] [cx di] \
         value           [ax dx] \
         modify exact    [ax dx];
