@@ -687,6 +687,19 @@ static int dup_array( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsigned
 #if defined( _STANDALONE_ )
             was_first = first;
 #endif
+            if( count == 0 ) {
+                int     level;
+                /* zero count is valid, needs special processing */
+                for( level = 0; AsmBuffer[cur_pos] != T_FINAL; cur_pos++ ) {
+                    if( AsmBuffer[cur_pos]->token == T_OP_BRACKET )
+                        level++;
+                    else if( AsmBuffer[cur_pos]->token == T_CL_BRACKET )
+                        level--;
+                    if( level < 0 )
+                        break;
+                }
+                returned_pos = cur_pos;
+            }
             while( count > 0 ) {
                 /* in case there was a "," inside the dup */
 #if defined( _STANDALONE_ )
