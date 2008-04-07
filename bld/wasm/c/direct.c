@@ -246,25 +246,19 @@ static const_info   info_Interface = { TRUE, 0, 0, TRUE, &const_Interface };
 int AddPredefinedConstant( char *name, const_info *info )
 /*******************************************************/
 {
-    struct asm_sym      *sym;
     dir_node            *dir;
 
-    sym = AsmGetSymbol( name );
-    if( sym == NULL ) {
+    dir = (dir_node *)AsmGetSymbol( name );
+    if( dir == NULL ) {
         dir = dir_insert( name, TAB_CONST );
         if( dir == NULL ) {
             return( ERROR );
         }
-    } else {
-        /* check if it can be redefined */
-        dir = (dir_node *)sym;
-        if( sym->state == SYM_UNDEFINED ) {
-            dir_change( dir, TAB_CONST );
-        } else if( sym->state != SYM_CONST ) {
-            /* error */
-            AsmError( LABEL_ALREADY_DEFINED );
-            return( ERROR );
-        }
+    } else if( dir->sym.state == SYM_UNDEFINED ) {
+        dir_change( dir, TAB_CONST );
+    } else if( dir->sym.state != SYM_CONST ) {
+        AsmError( LABEL_ALREADY_DEFINED );
+        return( ERROR );
     }
     if( !dir->e.constinfo->predef ) {
         FreeInfo( dir );
@@ -502,23 +496,19 @@ static void dir_init( dir_node *dir, int tab )
 /********************************************/
 /* Change node and insert it into the table specified by tab */
 {
-    struct asm_sym      *sym;
-
-    sym = &dir->sym;
-
     dir->line_num = LineNumber;
     dir->next = dir->prev = NULL;
 
     switch( tab ) {
     case TAB_SEG:
-        sym->state = SYM_SEG;
+        dir->sym.state = SYM_SEG;
         dir->e.seginfo = AsmAlloc( sizeof( seg_info ) );
         dir->e.seginfo->lname_idx = 0;
         dir->e.seginfo->group = NULL;
         dir->e.seginfo->segrec = NULL;
         break;
     case TAB_GRP:
-        sym->state = SYM_GRP;
+        dir->sym.state = SYM_GRP;
         dir->e.grpinfo = AsmAlloc( sizeof( grp_info ) );
         dir->e.grpinfo->idx = ++grpdefidx;
         dir->e.grpinfo->seglist = NULL;
@@ -526,14 +516,14 @@ static void dir_init( dir_node *dir, int tab )
         dir->e.grpinfo->lname_idx = 0;
         break;
     case TAB_EXT:
-        sym->state = SYM_EXTERNAL;
+        dir->sym.state = SYM_EXTERNAL;
         dir->e.extinfo = AsmAlloc( sizeof( ext_info ) );
         dir->e.extinfo->idx = ++extdefidx;
         dir->e.extinfo->use32 = Use32;
         dir->e.extinfo->comm = 0;
         break;
     case TAB_COMM:
-        sym->state = SYM_EXTERNAL;
+        dir->sym.state = SYM_EXTERNAL;
         dir->e.comminfo = AsmAlloc( sizeof( comm_info ) );
         dir->e.comminfo->idx = ++extdefidx;
         dir->e.comminfo->use32 = Use32;
@@ -541,23 +531,23 @@ static void dir_init( dir_node *dir, int tab )
         tab = TAB_EXT;
         break;
     case TAB_CONST:
-        sym->state = SYM_CONST;
-        sym->segment = NULL;
-        sym->offset = 0;
+        dir->sym.state = SYM_CONST;
+        dir->sym.segment = NULL;
+        dir->sym.offset = 0;
         dir->e.constinfo = AsmAlloc( sizeof( const_info ) );
         dir->e.constinfo->data = NULL;
         dir->e.constinfo->count = 0;
         dir->e.constinfo->predef = FALSE;
         return;
     case TAB_PROC:
-        sym->state = SYM_PROC;
+        dir->sym.state = SYM_PROC;
         dir->e.procinfo = AsmAlloc( sizeof( proc_info ) );
         dir->e.procinfo->regslist = NULL;
         dir->e.procinfo->paralist = NULL;
         dir->e.procinfo->locallist = NULL;
         break;
     case TAB_MACRO:
-        sym->state = SYM_MACRO;
+        dir->sym.state = SYM_MACRO;
         dir->e.macroinfo = AsmAlloc( sizeof( macro_info ) );
         dir->e.macroinfo->parmlist = NULL;
         dir->e.macroinfo->data = NULL;
@@ -565,18 +555,18 @@ static void dir_init( dir_node *dir, int tab )
         break;
     case TAB_CLASS_LNAME:
     case TAB_LNAME:
-        sym->state = ( tab == TAB_LNAME ) ? SYM_LNAME : SYM_CLASS_LNAME;
+        dir->sym.state = ( tab == TAB_LNAME ) ? SYM_LNAME : SYM_CLASS_LNAME;
         dir->e.lnameinfo = AsmAlloc( sizeof( lname_info ) );
         dir->e.lnameinfo->idx = ++LnamesIdx;
         // fixme
         return;
     case TAB_PUB:
-        sym->public = TRUE;
+        dir->sym.public = TRUE;
         return;
     case TAB_GLOBAL:
         return;
     case TAB_STRUCT:
-        sym->state = SYM_STRUCT;
+        dir->sym.state = SYM_STRUCT;
         dir->e.structinfo = AsmAlloc( sizeof( struct_info ) );
         dir->e.structinfo->size = 0;
         dir->e.structinfo->alignment = 0;
@@ -825,19 +815,16 @@ void FreeInfo( dir_node *dir )
 direct_idx GetLnameIdx( char *name )
 /**********************************/
 {
-    struct asm_sym      *sym;
     dir_node            *dir;
 
-    sym = AsmGetSymbol( name );
-    if( sym == NULL )
+    dir = (dir_node *)AsmGetSymbol( name );
+    if( dir == NULL ) {
         return( LNAME_NULL );
-
-    dir = (dir_node *)sym;
-    if( sym->state == SYM_UNDEFINED ) {
+    } else if( dir->sym.state == SYM_UNDEFINED ) {
         return( LNAME_NULL );
-    } else if( sym->state == SYM_GRP ) {
+    } else if( dir->sym.state == SYM_GRP ) {
         return( dir->e.grpinfo->lname_idx );
-    } else if( sym->state == SYM_SEG ) {
+    } else if( dir->sym.state == SYM_SEG ) {
         return( dir->e.seginfo->lname_idx );
     } else {    /* it is an lname record */
         return( dir->e.lnameinfo->idx );
@@ -866,38 +853,28 @@ static direct_idx InsertClassLname( char *name )
 direct_idx LnameInsert( char *name )
 /**********************************/
 {
-    struct asm_sym      *sym;
     dir_node            *dir;
 
-    sym = AsmGetSymbol( name );
-
-    if( sym != NULL ) {
-        dir = (dir_node *)sym;
-        /* The name is already in the table*/
-        if( sym->state == SYM_GRP ) {
-            if( dir->e.grpinfo->lname_idx == 0 ) {
-                dir->e.grpinfo->lname_idx = ++LnamesIdx;
-            }
-        } else if( sym->state == SYM_SEG ) {
-            if( dir->e.seginfo->lname_idx == 0 ) {
-                dir->e.seginfo->lname_idx = ++LnamesIdx;
-            }
-        } else {
-            return( ERROR );
-        }
-    } else {
+    dir = (dir_node *)AsmGetSymbol( name );
+    if( dir == NULL ) {
         if( strlen( name ) > MAX_LNAME ) {
             AsmError( LNAME_TOO_LONG );
             return( ERROR );
         }
-
         dir = dir_insert( name, TAB_LNAME );
+    } else if( dir->sym.state == SYM_GRP ) {
+        if( dir->e.grpinfo->lname_idx == 0 ) {
+            dir->e.grpinfo->lname_idx = ++LnamesIdx;
+        }
+    } else if( dir->sym.state == SYM_SEG ) {
+        if( dir->e.seginfo->lname_idx == 0 ) {
+            dir->e.seginfo->lname_idx = ++LnamesIdx;
+        }
+    } else {
+        return( ERROR );
     }
-
     /* put it into the lname table */
-
     AddLnameData( dir );
-
     return( LnamesIdx );
 }
 
@@ -1051,14 +1028,14 @@ static int GetLangType( int *i )
     return( ModuleInfo.langtype );
 }
 
-int GlobalDef( int i )
-/********************/
+int ExtDef( int i, bool glob_def )
+/********************************/
 {
     char                *token;
     char                *mangle_type = NULL;
     char                *typetoken;
     int                 type;
-    struct asm_sym      *sym;
+    memtype             mem_type;
     dir_node            *dir;
     int                 lang_type;
 
@@ -1082,97 +1059,7 @@ int GlobalDef( int i )
         type = token_cmp( &typetoken, TOK_EXT_NEAR, TOK_EXT_ABS );
 
         if( type == ERROR ) {
-            AsmError( INVALID_QUALIFIED_TYPE );
-            return( ERROR );
-        }
-        for( ; i< Token_Count && AsmBuffer[i]->token != T_COMMA; i++ ) ;
-
-        sym = AsmGetSymbol( token );
-
-        if( ( sym != NULL ) && ( sym->state != SYM_UNDEFINED ) ) {
-            return( PubDef( 0 ) ); // it is defined here, so make a pubdef
-        }
-
-        if( sym == NULL ) {
-            dir = dir_insert( token, TAB_GLOBAL );
-            sym = &dir->sym;
-        } else {
-            dir = (dir_node *)sym;
-        }
-
-        if( dir == NULL )
-            return( ERROR );
-
-        GetSymInfo( sym );
-        sym->offset = 0;
-        sym->state = SYM_UNDEFINED;
-        // FIXME !! symbol can have different type
-        sym->mem_type = TypeInfo[type].value;
-        // FIXME !! symbol can have different language type
-        SetMangler( sym, mangle_type, lang_type );
-
-        /* put the symbol in the globaldef table */
-
-        AddGlobalData( dir );
-    }
-    return( NOT_ERROR );
-}
-
-asm_sym *MakeExtern( char *name, memtype mem_type, bool already_defd )
-/********************************************************************/
-{
-    dir_node        *ext;
-    struct asm_sym  *sym;
-
-    sym = AsmGetSymbol( name );
-    if( ( sym != NULL ) && already_defd ) {
-        ext = (dir_node *)sym;
-        dir_change( ext, TAB_EXT );
-    } else {
-        ext = dir_insert( name, TAB_EXT );
-        if( ext == NULL ) {
-            return( NULL );
-        }
-        sym = &ext->sym;
-    }
-    GetSymInfo( sym );
-    sym->offset = 0;
-    sym->mem_type = mem_type;
-    return( sym );
-}
-
-int ExtDef( int i )
-/*****************/
-{
-    char                *token;
-    char                *mangle_type = NULL;
-    char                *typetoken;
-    int                 type;
-    memtype             mem_type;
-    struct asm_sym      *sym;
-    int                 lang_type;
-
-    mangle_type = Check4Mangler( &i );
-    for( ; i < Token_Count; i++ ) {
-
-        /* get the symbol language type if present */
-        lang_type = GetLangType( &i );
-
-        /* get the symbol name */
-        token = AsmBuffer[i++]->string_ptr;
-
-        /* go past the colon */
-        if( AsmBuffer[i]->token != T_COLON ) {
-            AsmError( COLON_EXPECTED );
-            return( ERROR );
-        }
-        i++;
-
-        typetoken = AsmBuffer[i]->string_ptr;
-        type = token_cmp( &typetoken, TOK_EXT_NEAR, TOK_EXT_ABS );
-
-        if( type == ERROR ) {
-            if( !IsLabelStruct( AsmBuffer[i]->string_ptr ) ) {
+            if( glob_def || !IsLabelStruct( AsmBuffer[i]->string_ptr ) ) {
                 AsmError( INVALID_QUALIFIED_TYPE );
                 return( ERROR );
             }
@@ -1182,24 +1069,35 @@ int ExtDef( int i )
         }
         for( ; i< Token_Count && AsmBuffer[i]->token != T_COMMA; i++ );
 
-        sym = AsmGetSymbol( token );
-
-        if( sym != NULL ) {
-            if( sym->state == SYM_UNDEFINED ) {
-                if( MakeExtern( token, mem_type, TRUE ) == NULL ) {
-                    return( ERROR );
-                }
-            } else if( sym->mem_type != mem_type ) {
+        dir = (dir_node *)AsmGetSymbol( token );
+        if( dir == NULL ) {
+            dir = dir_insert( token, ( glob_def ) ? TAB_GLOBAL : TAB_EXT );
+            if( dir == NULL ) {
+                return( ERROR );
+            }
+        } else if( dir->sym.state == SYM_UNDEFINED ) {
+            if( !glob_def ) {
+                dir_change( dir, TAB_EXT );
+            }
+        } else {
+            if( glob_def ) {
+                return( PubDef( 0 ) ); // it is defined here, so make a pubdef
+            } else {
                 AsmError( EXT_DEF_DIFF );
                 return( ERROR );
             }
-        } else {
-            sym = MakeExtern( token, mem_type, FALSE );
-            if( sym == NULL ) {
-                return( ERROR );
-            }
         }
-        SetMangler( sym, mangle_type, lang_type );
+
+        GetSymInfo( &dir->sym );
+        dir->sym.offset = 0;
+        // FIXME !! symbol can have different type
+        dir->sym.mem_type = mem_type;
+        SetMangler( &dir->sym, mangle_type, lang_type );
+        if( glob_def ) {
+            dir->sym.state = SYM_UNDEFINED;
+            /* put the symbol in the globaldef table */
+            AddGlobalData( dir );
+        }
     }
     return( NOT_ERROR );
 }
@@ -1226,8 +1124,7 @@ int PubDef( int i )
 {
     char                *mangle_type = NULL;
     char                *token;
-    struct asm_sym      *sym;
-    dir_node            *node;
+    dir_node            *dir;
     int                 lang_type;
 
     mangle_type = Check4Mangler( &i );
@@ -1245,27 +1142,23 @@ int PubDef( int i )
             return( ERROR );
         }
 
-        sym = AsmGetSymbol( token );
-        if( sym != NULL ) {
-            node = (dir_node *)sym;
-            if( sym->state == SYM_CONST ) {
-                /* check if the symbol expands to another symbol,
-                 * and if so, expand it */
-                 if( node->e.constinfo->data[0].token == T_ID ) {
-                    ExpandTheWorld( i, FALSE, TRUE );
-                    return( PubDef( i ) );
-                 }
+        dir = (dir_node *)AsmGetSymbol( token );
+        if( dir == NULL ) {
+            dir = dir_insert( token, TAB_PUB );
+            AddPublicData( dir );
+        } else if( dir->sym.state == SYM_CONST ) {
+            /* check if the symbol expands to another symbol,
+             * and if so, expand it */
+            if( dir->e.constinfo->data[0].token == T_ID ) {
+                ExpandTheWorld( i, FALSE, TRUE );
+                return( PubDef( i ) );
             }
-        } else {
-            node = dir_insert( token, TAB_PUB );
-            AddPublicData( node );
-            sym = &node->sym;
         }
-        SetMangler( sym, mangle_type, lang_type );
-        if( !sym->public ) {
+        SetMangler( &dir->sym, mangle_type, lang_type );
+        if( !dir->sym.public ) {
             /* put it into the pub table */
-            sym->public = TRUE;
-            AddPublicData( node );
+            dir->sym.public = TRUE;
+            AddPublicData( dir );
         }
     }
     return( NOT_ERROR );
@@ -1389,16 +1282,16 @@ int  SetCurrSeg( int i )
 /**********************/
 {
     char        *name;
-    struct asm_sym      *sym;
+    dir_node    *seg;
 
     name = AsmBuffer[i]->string_ptr;
 
     switch( AsmBuffer[i+1]->value ) {
     case T_SEGMENT:
         FlushCurrSeg();
-        sym = AsmGetSymbol( name );
-        /**/ myassert( sym != NULL );
-        push_seg( (dir_node *)sym );
+        seg = (dir_node *)AsmGetSymbol( name );
+        /**/ myassert( seg != NULL );
+        push_seg( seg );
         break;
     case T_ENDS:
         FlushCurrSeg();
@@ -1520,7 +1413,7 @@ int SegDef( int i )
 {
     char                defined;
     char                *token;
-    obj_rec             *seg;
+    obj_rec             *seg_rec;
     obj_rec             *oldobj;
     direct_idx          classidx;
     uint                type;           // type of option
@@ -1528,9 +1421,8 @@ int SegDef( int i )
     char                oldreadonly;    // readonly value of a defined segment
     char                oldiscode;      // iscode value of a defined segment
     bool                ignore;
-    dir_node            *dirnode;
+    dir_node            *seg;
     char                *name;
-    struct asm_sym      *sym;
 
     if( i < 0 ) {
         AsmError( SEG_NAME_MISSING );
@@ -1541,66 +1433,63 @@ int SegDef( int i )
 
     switch( AsmBuffer[i+1]->value ) {
     case T_SEGMENT:
-        seg = ObjNewRec( CMD_SEGDEF );
+        seg_rec = ObjNewRec( CMD_SEGDEF );
 
         /* Check to see if the segment is already defined */
-        sym = AsmGetSymbol( name );
-        if( sym != NULL ) {
-            dirnode = (dir_node *)sym;
-            if ( sym->state == SYM_SEG ) {
-                // segment already defined
-                defined = TRUE;
-                oldreadonly = dirnode->e.seginfo->readonly;
-                oldiscode = dirnode->e.seginfo->iscode;
-                ignore = dirnode->e.seginfo->ignore;
-                if( dirnode->e.seginfo->lname_idx == 0 ) {
-                    // segment was mentioned in a group statement, but not really set up
-                    defined = FALSE;
-                    seg->d.segdef.idx = ++segdefidx;
-                }
-            } else {
-                // symbol is different kind, change to segment
-                dir_change( dirnode, TAB_SEG );
-                seg->d.segdef.idx = ++segdefidx;
+        seg = (dir_node *)AsmGetSymbol( name );
+        if( seg == NULL ) {
+            // segment is not defined
+            seg = dir_insert( name, TAB_SEG );
+            seg_rec->d.segdef.idx = ++segdefidx;
+            defined = FALSE;
+            ignore = FALSE;
+        } else if ( seg->sym.state == SYM_SEG ) {
+            // segment already defined
+            defined = TRUE;
+            oldreadonly = seg->e.seginfo->readonly;
+            oldiscode = seg->e.seginfo->iscode;
+            ignore = seg->e.seginfo->ignore;
+            if( seg->e.seginfo->lname_idx == 0 ) {
+                // segment was mentioned in a group statement, but not really set up
                 defined = FALSE;
-                ignore = FALSE;
+                seg_rec->d.segdef.idx = ++segdefidx;
             }
         } else {
-            // segment is not defined
-            dirnode = dir_insert( name, TAB_SEG );
-            seg->d.segdef.idx = ++segdefidx;
+            // symbol is different kind, change to segment
+            dir_change( seg, TAB_SEG );
+            seg_rec->d.segdef.idx = ++segdefidx;
             defined = FALSE;
             ignore = FALSE;
         }
 
         /* Setting up default values */
         if( !defined ) {
-            seg->d.segdef.align = ALIGN_PARA;
-            seg->d.segdef.combine = COMB_INVALID;
-            seg->d.segdef.use_32 = ModuleInfo.defUse32;
-            seg->d.segdef.class_name_idx = 1;
+            seg_rec->d.segdef.align = ALIGN_PARA;
+            seg_rec->d.segdef.combine = COMB_INVALID;
+            seg_rec->d.segdef.use_32 = ModuleInfo.defUse32;
+            seg_rec->d.segdef.class_name_idx = 1;
             /* null class name, in case none is mentioned */
-            dirnode->e.seginfo->readonly = FALSE;
-            dirnode->e.seginfo->iscode = SEGTYPE_UNDEF;
+            seg->e.seginfo->readonly = FALSE;
+            seg->e.seginfo->iscode = SEGTYPE_UNDEF;
         } else {
-            oldobj = dirnode->e.seginfo->segrec;
-            dirnode->e.seginfo->readonly = oldreadonly;
-            dirnode->e.seginfo->iscode = oldiscode;
-            seg->d.segdef.align = oldobj->d.segdef.align;
-            seg->d.segdef.combine = oldobj->d.segdef.combine;
+            oldobj = seg->e.seginfo->segrec;
+            seg->e.seginfo->readonly = oldreadonly;
+            seg->e.seginfo->iscode = oldiscode;
+            seg_rec->d.segdef.align = oldobj->d.segdef.align;
+            seg_rec->d.segdef.combine = oldobj->d.segdef.combine;
             if( !ignore ) {
-                seg->d.segdef.use_32 = oldobj->d.segdef.use_32;
+                seg_rec->d.segdef.use_32 = oldobj->d.segdef.use_32;
             } else {
-                seg->d.segdef.use_32 = ModuleInfo.defUse32;
+                seg_rec->d.segdef.use_32 = ModuleInfo.defUse32;
             }
-            seg->d.segdef.class_name_idx = oldobj->d.segdef.class_name_idx;
+            seg_rec->d.segdef.class_name_idx = oldobj->d.segdef.class_name_idx;
         }
-        dirnode->e.seginfo->ignore = FALSE; // always false unless set explicitly
-        seg->d.segdef.access_valid = FALSE;
-        seg->d.segdef.seg_length = 0;
+        seg->e.seginfo->ignore = FALSE; // always false unless set explicitly
+        seg_rec->d.segdef.access_valid = FALSE;
+        seg_rec->d.segdef.seg_length = 0;
 
         if( lastseg.stack_size > 0 ) {
-            seg->d.segdef.seg_length = lastseg.stack_size;
+            seg_rec->d.segdef.seg_length = lastseg.stack_size;
             lastseg.stack_size = 0;
         }
 
@@ -1619,7 +1508,7 @@ int SegDef( int i )
                         return( ERROR );
                     }
                 }
-                seg->d.segdef.class_name_idx = classidx;
+                seg_rec->d.segdef.class_name_idx = classidx;
                 continue;
             }
 
@@ -1644,36 +1533,36 @@ int SegDef( int i )
             }
             switch( type ) {
             case TOK_READONLY:
-                dirnode->e.seginfo->readonly = TRUE;
+                seg->e.seginfo->readonly = TRUE;
                 break;
             case TOK_BYTE:
             case TOK_WORD:
             case TOK_DWORD:
             case TOK_PARA:
             case TOK_PAGE:
-                seg->d.segdef.align = TypeInfo[type].value;
+                seg_rec->d.segdef.align = TypeInfo[type].value;
                 break;
             case TOK_PRIVATE:
             case TOK_PUBLIC:
             case TOK_STACK:
             case TOK_COMMON:
             case TOK_MEMORY:
-                seg->d.segdef.combine = TypeInfo[type].value;
+                seg_rec->d.segdef.combine = TypeInfo[type].value;
                 break;
             case TOK_USE16:
             case TOK_USE32:
-                seg->d.segdef.use_32 = TypeInfo[type].value;
+                seg_rec->d.segdef.use_32 = TypeInfo[type].value;
                 break;
             case TOK_IGNORE:
-                dirnode->e.seginfo->ignore = TRUE;
+                seg->e.seginfo->ignore = TRUE;
                 break;
             case TOK_AT:
-                seg->d.segdef.align = SEGDEF_ALIGN_ABS;
+                seg_rec->d.segdef.align = SEGDEF_ALIGN_ABS;
                 ExpandTheWorld( i + 1, FALSE, TRUE);
                 if( AsmBuffer[i+1]->token == T_NUM ) {
                     i++;
-                    seg->d.segdef.abs.frame = AsmBuffer[i]->value;
-                    seg->d.segdef.abs.offset = 0;
+                    seg_rec->d.segdef.abs.frame = AsmBuffer[i]->value;
+                    seg_rec->d.segdef.abs.offset = 0;
                 } else {
                     AsmError( UNDEFINED_SEGMENT_OPTION );
                     return( ERROR );
@@ -1684,70 +1573,69 @@ int SegDef( int i )
                 return( ERROR );
             }
         }
-        token = GetLname( seg->d.segdef.class_name_idx );
-        if( dirnode->e.seginfo->iscode != SEGTYPE_ISCODE ) {
+        token = GetLname( seg_rec->d.segdef.class_name_idx );
+        if( seg->e.seginfo->iscode != SEGTYPE_ISCODE ) {
             seg_type res;
 
             res = ClassNameType( token );
             if( res != SEGTYPE_UNDEF ) {
-                dirnode->e.seginfo->iscode = res;
+                seg->e.seginfo->iscode = res;
             } else {
                 res = SegmentNameType( name );
-                dirnode->e.seginfo->iscode = res;
+                seg->e.seginfo->iscode = res;
             }
         }
 
-        if( defined && !ignore && !dirnode->e.seginfo->ignore ) {
+        if( defined && !ignore && !seg->e.seginfo->ignore ) {
             /* Check if new definition is different from previous one */
 
-            oldobj = dirnode->e.seginfo->segrec;
-            if( ( oldreadonly != dirnode->e.seginfo->readonly )
-                || ( oldobj->d.segdef.align != seg->d.segdef.align )
-                || ( oldobj->d.segdef.combine != seg->d.segdef.combine )
-                || ( oldobj->d.segdef.use_32 != seg->d.segdef.use_32 )
-                || ( oldobj->d.segdef.class_name_idx != seg->d.segdef.class_name_idx ) ) {
-                ObjKillRec( seg );
+            oldobj = seg->e.seginfo->segrec;
+            if( ( oldreadonly != seg->e.seginfo->readonly )
+                || ( oldobj->d.segdef.align != seg_rec->d.segdef.align )
+                || ( oldobj->d.segdef.combine != seg_rec->d.segdef.combine )
+                || ( oldobj->d.segdef.use_32 != seg_rec->d.segdef.use_32 )
+                || ( oldobj->d.segdef.class_name_idx != seg_rec->d.segdef.class_name_idx ) ) {
+                ObjKillRec( seg_rec );
                 AsmError( SEGDEF_CHANGED );
                 return( ERROR );
             } else {
                 // definition is the same as before
-                ObjKillRec( seg );
-                if( push_seg( dirnode ) == ERROR ) {
+                ObjKillRec( seg_rec );
+                if( push_seg( seg ) == ERROR ) {
                     return( ERROR );
                 }
             }
         } else if( defined && ignore ) {
             /* reset to the new values */
-            oldobj = dirnode->e.seginfo->segrec;
-            oldobj->d.segdef.align = seg->d.segdef.align;
-            oldobj->d.segdef.combine = seg->d.segdef.combine;
-            oldobj->d.segdef.use_32 = seg->d.segdef.use_32;
-            oldobj->d.segdef.class_name_idx = seg->d.segdef.class_name_idx;
+            oldobj = seg->e.seginfo->segrec;
+            oldobj->d.segdef.align = seg_rec->d.segdef.align;
+            oldobj->d.segdef.combine = seg_rec->d.segdef.combine;
+            oldobj->d.segdef.use_32 = seg_rec->d.segdef.use_32;
+            oldobj->d.segdef.class_name_idx = seg_rec->d.segdef.class_name_idx;
 
-            ObjKillRec( seg );
-            if( push_seg( dirnode ) == ERROR ) {
+            ObjKillRec( seg_rec );
+            if( push_seg( seg ) == ERROR ) {
                 return( ERROR );
             }
-        } else if( defined && dirnode->e.seginfo->ignore ) {
+        } else if( defined && seg->e.seginfo->ignore ) {
             /* keep the old values */
-            dirnode->e.seginfo->readonly = oldreadonly;
-            dirnode->e.seginfo->iscode = oldiscode;
-            dirnode->e.seginfo->ignore = ignore;
-            ObjKillRec( seg );
-            if( push_seg( dirnode ) == ERROR ) {
+            seg->e.seginfo->readonly = oldreadonly;
+            seg->e.seginfo->iscode = oldiscode;
+            seg->e.seginfo->ignore = ignore;
+            ObjKillRec( seg_rec );
+            if( push_seg( seg ) == ERROR ) {
                 return( ERROR );
             }
         } else {
             /* A new definition */
-            dirnode->e.seginfo->segrec = seg;
-            dirnode->e.seginfo->start_loc = 0;
-            dirnode->e.seginfo->current_loc = 0;
-            if( push_seg( dirnode ) == ERROR ) {
+            seg->e.seginfo->segrec = seg_rec;
+            seg->e.seginfo->start_loc = 0;
+            seg->e.seginfo->current_loc = 0;
+            if( push_seg( seg ) == ERROR ) {
                 return( ERROR );
             }
-            sym = &dirnode->sym;
-            GetSymInfo( sym );
-            sym->offset = 0;
+            GetSymInfo( &seg->sym );
+            seg->sym.offset = 0;
             LnameInsert( name );
         }
         if( CurrSeg != NULL ) {
@@ -1766,12 +1654,11 @@ int SegDef( int i )
             return( ERROR );
         }
 
-        sym = AsmGetSymbol( name );
-        if( sym == NULL ) {
+        seg = (dir_node *)AsmGetSymbol( name );
+        if( seg == NULL ) {
             AsmErr( SEG_NOT_DEFINED, name );
             return( ERROR );
-        }
-        if( (struct dir_node *)sym != CurrSeg->seg ) {
+        } else if( seg != CurrSeg->seg ) {
             AsmError( BLOCK_NESTING_ERROR );
             return( ERROR );
         }
@@ -2020,7 +1907,7 @@ int SimSeg( int i )
 
         if( string != NULL ) {
             strcpy( buffer, string );
-            strcat( buffer, SimCodeBegin[bit][seg] + SIM_DATA_OFFSET  );
+            strcat( buffer, SimCodeBegin[bit][seg] + SIM_DATA_OFFSET );
         } else {
             strcpy( buffer, SimCodeBegin[bit][seg] );
         }
@@ -3138,10 +3025,9 @@ parms:
     return( NOT_ERROR );
 }
 
-int ProcDef( int i )
-/******************/
+int ProcDef( int i, bool proc_def )
+/*********************************/
 {
-    struct asm_sym      *sym;
     dir_node            *dir;
     char                *name;
 
@@ -3156,37 +3042,30 @@ int ProcDef( int i )
             return( ERROR );
         }
         name = AsmBuffer[i++]->string_ptr;
-        sym = AsmGetSymbol( name );
-
-        if( sym != NULL ) {
-            if( sym->state != SYM_UNDEFINED ) {
-                AsmErr( SYMBOL_PREVIOUSLY_DEFINED, sym->name );
-                return( ERROR );
-            }
-        }
-
-        if( sym == NULL ) {
+        dir = (dir_node *)AsmGetSymbol( name );
+        if( dir == NULL ) {
             dir = dir_insert( name, TAB_PROC );
-            sym = &dir->sym;
-        } else {
+        } else if( dir->sym.state == SYM_UNDEFINED ) {
             /* alloc the procinfo struct */
-            dir = (dir_node *)sym;
             dir_change( dir, TAB_PROC );
+        } else {
+            AsmErr( SYMBOL_PREVIOUSLY_DEFINED, dir->sym.name );
+            return( ERROR );
         }
-        GetSymInfo( sym );
+        GetSymInfo( &dir->sym );
         if( proc_exam( dir, i ) == ERROR ) {
             return( ERROR );
         }
     } else {
         // fixme -- nested procs can be ok /**/myassert( CurrProc == NULL );
         /**/myassert( i >= 0 );
-        sym = AsmGetSymbol( AsmBuffer[i]->string_ptr );
-        CurrProc = (dir_node *)sym;
-        /**/myassert( CurrProc != NULL );
-        GetSymInfo( sym );
+        dir = (dir_node *)AsmGetSymbol( AsmBuffer[i]->string_ptr );
+        /**/myassert( dir != NULL );
+        CurrProc = dir;
+        GetSymInfo( &dir->sym );
         DefineProc = TRUE;
     }
-    BackPatch( sym );
+    BackPatch( &dir->sym );
     return( NOT_ERROR );
 }
 
@@ -3554,7 +3433,7 @@ extern void GetSymInfo( struct asm_sym *sym )
     sym->offset = GetCurrAddr();
 }
 
-int Comment( int what_to_do, int i  )
+int Comment( int what_to_do, int i )
 /***********************************/
 {
     static int in_comment = FALSE;
@@ -3634,37 +3513,6 @@ int NameDirective( int i )
     return( NOT_ERROR );
 }
 
-static int MakeComm(
-    char *name,
-    memtype mem_type,
-    bool already_defd,
-    int number,
-    memtype distance )
-/********************/
-{
-    dir_node    *dir;
-    struct asm_sym *sym;
-
-    sym = AsmGetSymbol( name );
-    if( ( sym != NULL ) && already_defd ) {
-        dir = (dir_node *)sym;
-        dir_change( dir, TAB_COMM );
-    } else {
-        dir = dir_insert( name, TAB_COMM );
-        if( dir == NULL )
-            return( ERROR );
-        sym = &dir->sym;
-    }
-    dir->e.comminfo->size = number;
-    dir->e.comminfo->distance = distance;
-
-    GetSymInfo( sym );
-    sym->offset = 0;
-    sym->mem_type = mem_type;
-
-    return( NOT_ERROR );
-}
-
 int CommDef( int i )
 /******************/
 {
@@ -3674,7 +3522,7 @@ int CommDef( int i )
     int             type;
     int             distance;
     int             count;
-    struct asm_sym  *sym;
+    dir_node        *dir;
     int             lang_type;
     memtype         mem_type;
 
@@ -3724,25 +3572,24 @@ int CommDef( int i )
             }
         }
         mem_type = TypeInfo[type].value;
-        sym = AsmGetSymbol( token );
-        if( sym != NULL ) {
-            if( sym->state == SYM_UNDEFINED ) {
-                if( MakeComm( token, mem_type, TRUE, count,
-                    TypeInfo[distance].value ) == ERROR ) {
-                    return( ERROR );
-                }
-            } else if( sym->mem_type != mem_type ) {
-                AsmError( EXT_DEF_DIFF );
+        dir = (dir_node *)AsmGetSymbol( token );
+        if( dir == NULL ) {
+            dir = dir_insert( token, TAB_COMM );
+            if( dir == NULL ) {
                 return( ERROR );
             }
-        } else {
-            if( MakeComm( token, mem_type, FALSE, count,
-                    TypeInfo[distance].value ) == ERROR ) {
-                return( ERROR );
-            }
-            sym = AsmGetSymbol( token );
+        } else if( dir->sym.state == SYM_UNDEFINED ) {
+            dir_change( dir, TAB_COMM );
+        } else if( dir->sym.mem_type != mem_type ) {
+            AsmError( EXT_DEF_DIFF );
+            return( ERROR );
         }
-        SetMangler( sym, mangle_type, lang_type );
+        GetSymInfo( &dir->sym );
+        dir->sym.offset = 0;
+        dir->sym.mem_type = mem_type;
+        dir->e.comminfo->size = count;
+        dir->e.comminfo->distance = TypeInfo[distance].value;
+        SetMangler( &dir->sym, mangle_type, lang_type );
     }
     return( NOT_ERROR );
 }

@@ -95,27 +95,27 @@ static char *UScoreMangler( struct asm_sym *sym, char *buffer )
 }
 
 static char *StdUScoreMangler( struct asm_sym *sym, char *buffer )
-/*************************************************************/
+/****************************************************************/
 {
-    char        *name;
-    dir_node    *dir = (dir_node *)sym;
-
     if( !Options.mangle_stdcall )
         return( AsmMangler( sym, buffer ) );
 
     if( Options.use_stdcall_at_number && ( sym->state == SYM_PROC ) ) {
+        int     parasize;
+        char    *name;
+
+        parasize = ((dir_node *)sym)->e.procinfo->parasize;
         if( buffer == NULL ) {
             int         count;
-            dir_node    *dir = (dir_node *)sym;
-            int         parasize = dir->e.procinfo->parasize;
 
             for( count = 2; parasize > 9; count++ )
                 parasize /= 10;
             name = AsmAlloc( strlen( sym->name ) + 2 + count );
+            parasize = ((dir_node *)sym)->e.procinfo->parasize;
         } else {
             name = buffer;
         }
-        sprintf( name, "_%s@%d", sym->name, dir->e.procinfo->parasize );
+        sprintf( name, "_%s@%d", sym->name, parasize );
         return( name );
     } else {
         return( UScoreMangler( sym, buffer ) );
@@ -123,7 +123,7 @@ static char *StdUScoreMangler( struct asm_sym *sym, char *buffer )
 }
 
 static char *WatcomCMangler( struct asm_sym *sym, char *buffer )
-/********************************************************/
+/**************************************************************/
 {
     char                *name;
     char                *ptr = sym->name;

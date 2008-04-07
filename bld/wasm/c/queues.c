@@ -108,8 +108,7 @@ uint GetPublicData(
 {
     static struct queuenode    *start;
     struct queuenode           *curr;
-    struct asm_sym             *sym;
-    dir_node                   *pub;
+    dir_node                   *dir;
     uint                       count;
     uint                       i;
     struct pubdef_data         *d;
@@ -124,12 +123,12 @@ uint GetPublicData(
 
     *need32 = FALSE;
     *cmd = CMD_PUBDEF;
-    sym = (asm_sym *)start->data;
-    if( sym->state == SYM_UNDEFINED ) {
-        AsmErr( SYMBOL_NOT_DEFINED, sym->name );
+    dir = (dir_node *)start->data;
+    if( dir->sym.state == SYM_UNDEFINED ) {
+        AsmErr( SYMBOL_NOT_DEFINED, dir->sym.name );
         return( 0 );
     }
-    curr_seg = sym->segment;
+    curr_seg = dir->sym.segment;
     if( curr_seg == NULL ) {      // absolute symbol ( without segment )
         *seg = 0;
         *grp = 0;
@@ -141,11 +140,11 @@ uint GetPublicData(
     for( count = 0; curr != NULL; curr = curr->next ) {
         if( count == MAX_PUB_SIZE )  // don't let the records get too big
             break;
-        sym = (asm_sym *)curr->data;
-        if( sym->segment != curr_seg )
+        dir = (dir_node *)curr->data;
+        if( dir->sym.segment != curr_seg )
             break;
-        if( sym->state == SYM_PROC ) {
-            if( !sym->public ) {
+        if( dir->sym.state == SYM_PROC ) {
+            if( !dir->sym.public ) {
                 if( *cmd == CMD_PUBDEF ) {
                     if( curr != start )
                         break;
@@ -168,25 +167,24 @@ uint GetPublicData(
     *data = d = AsmAlloc( count * sizeof( struct pubdef_data ) );
 
     for( curr = start, i = 0; i < count; i++, curr = curr->next ) {
-        sym = (asm_sym *)curr->data;
-        if( sym->segment != curr_seg )
+        dir = (dir_node *)curr->data;
+        if( dir->sym.segment != curr_seg )
             break;
-        if( sym->offset > 0xffffUL )
+        if( dir->sym.offset > 0xffffUL )
             *need32 = TRUE;
 
-        (*NameArray)[i] = Mangle( sym, NULL );
+        (*NameArray)[i] = Mangle( &dir->sym, NULL );
 
         d[i].name = i;
         /* No namecheck is needed by name manager */
-        if( sym->state != SYM_CONST ) {
-            d[i].offset = sym->offset;
+        if( dir->sym.state != SYM_CONST ) {
+            d[i].offset = dir->sym.offset;
         } else {
-            pub = (dir_node *)sym;
-            if( pub->e.constinfo->data[0].token != T_NUM  ) {
+            if( dir->e.constinfo->data[0].token != T_NUM  ) {
                 AsmWarn( 2, PUBLIC_CONSTANT_NOT_NUMERIC );
                 d[i].offset = 0;
             } else {
-                d[i].offset = pub->e.constinfo->data[0].value;
+                d[i].offset = dir->e.constinfo->data[0].value;
             }
         }
         d[i].type.idx = 0;

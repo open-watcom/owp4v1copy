@@ -78,9 +78,9 @@ static char *FPPatchAltName[] = {
 int AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *ins, bool secondary )
 /************************************************************************************/
 {
-    fp_patches patch;
-    struct asm_sym *sym;
-    char **patch_name_array;
+    fp_patches      patch;
+    dir_node        *dir;
+    char            **patch_name_array;
 
     patch_name_array = ( secondary ? FPPatchAltName : FPPatchName );
 
@@ -115,13 +115,19 @@ int AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *ins, bool secon
     }
 
     /* put out an extern def for the the patch */
-    if( patch_name_array[patch] == NULL ) return( NOT_ERROR );
-    sym = AsmGetSymbol( patch_name_array[patch] );
-    if( sym == NULL ) {
-        sym = MakeExtern( patch_name_array[patch], MT_FAR, FALSE );
-        SetMangler( sym, "N", LANG_NONE );
+    if( patch_name_array[patch] == NULL )
+        return( NOT_ERROR );
+    dir = (dir_node *)AsmGetSymbol( patch_name_array[patch] );
+    if( dir == NULL ) {
+        dir = dir_insert( patch_name_array[patch], TAB_EXT );
+        if( dir == NULL )
+            return( ERROR );
+        GetSymInfo( &dir->sym );
+        dir->sym.offset = 0;
+        dir->sym.mem_type = MT_FAR;
+        SetMangler( &dir->sym, "N", LANG_NONE );
     }
-    if( MakeFpFixup( sym ) == ERROR ) return( ERROR );
-
+    if( MakeFpFixup( &dir->sym ) == ERROR )
+        return( ERROR );
     return( NOT_ERROR );
 }

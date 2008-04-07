@@ -121,33 +121,26 @@ void prep_line_for_conditional_assembly( char *line )
     return;
 }
 
-static char check_defd( char *string )
+static bool check_defd( char *string )
 /************************************/
 {
     char                *ptr;
     char                *end;
-    struct asm_sym      *sym;
 
     /* isolate 1st word */
     ptr = string + strspn( string, " \t" );
     end = ptr + strcspn( ptr, " \t" );
     *end = '\0';
-
-    sym = AsmGetSymbol( ptr );
-    if( sym != NULL ) {
-        return( TRUE );
-    } else {
-        return( FALSE );
-    }
+    return( AsmGetSymbol( ptr ) != NULL );
 }
 
-static char check_blank( char *string )
-/************************************/
+static bool check_blank( char *string )
+/*************************************/
 {
-    return( strlen( string ) == 0 ? TRUE : FALSE );
+    return( strlen( string ) == 0 );
 }
 
-static char check_dif( bool sensitive, char *string, char *string2 )
+static bool check_dif( bool sensitive, char *string, char *string2 )
 /******************************************************************/
 {
     if( sensitive ) {

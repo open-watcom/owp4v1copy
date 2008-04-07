@@ -339,16 +339,14 @@ extern uint             GetSegIdx( struct asm_sym * );
 extern uint             GetExtIdx( struct asm_sym * );
 /* Get the index of an extrn defn */
 
-extern int              GlobalDef( int );       // define an global symbol
-extern int              ExtDef( int );          // define an external symbol
+extern int              ExtDef( int, bool );    // define an global or external symbol
 extern int              CommDef( int );         // define an communal symbol
-extern struct asm_sym   *MakeExtern( char *name, memtype type, bool already_defd );
 extern int              PubDef( int );          // define a public symbol
 extern int              GrpDef( int );          // define a group
 extern int              SegDef( int );          // open or close a segment
 extern int              SetCurrSeg( int );      // open or close a segment in
                                                 // the second pass
-extern int              ProcDef( int );         // define a procedure
+extern int              ProcDef( int, bool );   // define a procedure
 extern int              LocalDef( int );        // define local variables to procedure
 extern int              ProcEnd( int );         // end a procedure
 extern int              Ret( int, int, int );   // emit return statement from procedure

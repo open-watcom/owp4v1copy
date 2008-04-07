@@ -87,19 +87,18 @@ void AddTokens( asm_tok **buffer, int start, int count )
 int ExpandSymbol( int i, bool early_only )
 /***************************************/
 {
-    struct asm_sym      *sym;
     dir_node            *dir;
     int                 j;
 
     /* expand constant */
-    sym = AsmGetSymbol( AsmBuffer[i]->string_ptr );
-    if( sym == NULL ) return( NOT_ERROR );
-    switch( sym->state ) {
+    dir = (dir_node *)AsmGetSymbol( AsmBuffer[i]->string_ptr );
+    if( dir == NULL )
+        return( NOT_ERROR );
+    switch( dir->sym.state ) {
     case SYM_CONST:
-        dir = (dir_node *)sym;
         if(( dir->e.constinfo->expand_early == FALSE )
             && ( early_only == TRUE )) return( NOT_ERROR );
-        DebugMsg(( "Expand Constant: %s ->", sym->name ));
+        DebugMsg(( "Expand Constant: %s ->", dir->sym.name ));
         /* insert the pre-scanned data for this constant */
         AddTokens( AsmBuffer, i, dir->e.constinfo->count - 1 );
         for( j = 0; j < dir->e.constinfo->count; j++ ) {
@@ -301,35 +300,33 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
 {
     asm_tok             *new;
     dir_node            *dir;
-    struct asm_sym      *sym;
     int                 i;
     int                 count;
     int                 counta;
     bool                can_be_redefine;
+    bool                new_constant;
 
-    sym = AsmGetSymbol( name );
+    new_constant = FALSE;
+    dir = (dir_node *)AsmGetSymbol( name );
 
     /* if we've never seen it before, put it in */
-    if( sym == NULL ) {
+    if( dir == NULL ) {
+        new_constant = TRUE;
         dir = dir_insert( name, TAB_CONST );
         if( dir == NULL ) {
             return( ERROR );
         }
         dir->e.constinfo->redefine = redefine;
         dir->e.constinfo->expand_early = expand_early;
-    } else {
-        /* check if it can be redefined */
-        dir = (dir_node *)sym;
-        if( sym->state == SYM_UNDEFINED ) {
-            dir_change( dir, TAB_CONST );
-            dir->e.constinfo->redefine = redefine;
-            dir->e.constinfo->expand_early = expand_early;
-        } else if(( sym->state != SYM_CONST )
-            || (( dir->e.constinfo->redefine == FALSE ) && ( Parse_Pass == PASS_1 ))) {
-            /* error */
-            AsmError( LABEL_ALREADY_DEFINED );
-            return( ERROR );
-        }
+    } else if( dir->sym.state == SYM_UNDEFINED ) {
+        dir_change( dir, TAB_CONST );
+        dir->e.constinfo->redefine = redefine;
+        dir->e.constinfo->expand_early = expand_early;
+    } else if(( dir->sym.state != SYM_CONST )
+        || (( dir->e.constinfo->redefine == FALSE ) && ( Parse_Pass == PASS_1 ))) {
+        /* error */
+        AsmError( LABEL_ALREADY_DEFINED );
+        return( ERROR );
     }
 
     if( value ) {
@@ -387,9 +384,10 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
                 */
                 sprintf( buff, ".$%x/%lx", GetCurrSeg(), GetCurrAddr() );
                 AsmBuffer[start+i]->string_ptr = buff;
-                sym = AsmGetSymbol( buff );
-                if( sym == NULL )
+                if( AsmGetSymbol( buff ) == NULL ) {
+                    new_constant = TRUE;
                     MakeLabel( buff, T_NEAR );
+                }
                 break;
             }
         default:
@@ -405,7 +403,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
             strcpy( new[i].string_ptr, AsmBuffer[start+i]->string_ptr );
         }
     }
-    if( ( sym == NULL ) && can_be_redefine )
+    if( new_constant && can_be_redefine )
         dir->e.constinfo->redefine = TRUE;
     FreeConstData( dir->e.constinfo );
     dir->e.constinfo->count = count;

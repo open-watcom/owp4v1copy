@@ -125,7 +125,7 @@ int directive( int i, long direct )
     case T_GROUP:
         return( Parse_Pass == PASS_1 ? GrpDef(i-1) : NOT_ERROR );
     case T_PROC:
-        return( ProcDef(i-1) );
+        return( ProcDef( i-1, TRUE ) );
     case T_ENDP:
         return( ProcEnd(i-1) );
     case T_DOT_CODE:
@@ -231,14 +231,14 @@ int directive( int i, long direct )
     switch( direct ) {
     case T_ALIAS:
         return( Parse_Pass == PASS_1 ? AddAlias( i-1 ) : NOT_ERROR );
-    case T_EXTERN:
-    case T_EXTRN:
-        return( Parse_Pass == PASS_1 ? ExtDef(i+1) : NOT_ERROR );
-    case T_COMM:
-        return( Parse_Pass == PASS_1 ? CommDef(i+1) : NOT_ERROR );
     case T_GLOBAL:
     case T_EXTERNDEF:
-        return( Parse_Pass == PASS_1 ? GlobalDef(i+1) : NOT_ERROR );
+        return( Parse_Pass == PASS_1 ? ExtDef( i+1, TRUE ) : NOT_ERROR );
+    case T_EXTERN:
+    case T_EXTRN:
+        return( Parse_Pass == PASS_1 ? ExtDef( i+1, FALSE ) : NOT_ERROR );
+    case T_COMM:
+        return( Parse_Pass == PASS_1 ? CommDef(i+1) : NOT_ERROR );
     case T_DOT_MODEL:
         return( Model(i) );
     case T_INCLUDE:

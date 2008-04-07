@@ -43,9 +43,8 @@ a_definition_struct Definition = { 0, NULL, NULL };
 int StructDef( int i )
 /********************/
 {
-    char *name;
-    struct asm_sym *sym;
-    dir_node *dir;
+    char        *name;
+    dir_node    *dir;
 
     if( i < 0 ) {
         AsmError( SYNTAX_ERROR );
@@ -55,19 +54,16 @@ int StructDef( int i )
     switch( AsmBuffer[i+1]->value ) {
     case T_STRUC:
     case T_STRUCT:
-        sym = AsmGetSymbol( name );
+        dir = (dir_node *)AsmGetSymbol( name );
         if( Parse_Pass == PASS_1 ) {
-            if( sym == NULL ) {
+            if( dir == NULL ) {
                 dir = dir_insert( name, TAB_STRUCT );
-            } else if( sym->state == SYM_UNDEFINED ) {
-                dir = (dir_node *)sym;
+            } else if( dir->sym.state == SYM_UNDEFINED ) {
                 dir_change( dir, TAB_STRUCT );
             } else {
                 AsmError( SYMBOL_ALREADY_DEFINED );
                 return( ERROR );
             }
-        } else {
-            dir = (dir_node *)sym;
         }
         /* even if the current is null */
         push( &( Definition.struct_stack ), Definition.curr_struct );
