@@ -50,6 +50,10 @@ static unsigned         AsmSymCount;    /* Number of symbols in table */
 
 static char             dots[] = " . . . . . . . . . . . . . . . .";
 
+#ifdef DEBUG_OUT
+void    DumpASym( void );   /* Forward declaration */
+#endif
+
 #else
 
 static struct asm_sym   *AsmSymHead;
