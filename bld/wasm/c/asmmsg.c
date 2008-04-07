@@ -36,6 +36,7 @@
 
 #include "directiv.h"
 #include "asminput.h"
+#include "fatal.h"
 
 extern void             MsgPrintf( int resourceid ); // don't use this
 extern int              MsgGet( int resourceid, char *buffer );
@@ -238,6 +239,7 @@ static void PutMsg( FILE *fp, char *prefix, int msgnum, va_list args )
 static void AsmSuicide( void )
 /****************************/
 {
+    AsmShutDown();
     exit( 1 );
 }
 
