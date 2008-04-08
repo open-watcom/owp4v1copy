@@ -1082,7 +1082,7 @@ int ExtDef( int i, bool glob_def )
         } else {
             if( glob_def ) {
                 return( PubDef( 0 ) ); // it is defined here, so make a pubdef
-            } else {
+            } else if( dir->sym.mem_type != mem_type ) {
                 AsmError( EXT_DEF_DIFF );
                 return( ERROR );
             }
