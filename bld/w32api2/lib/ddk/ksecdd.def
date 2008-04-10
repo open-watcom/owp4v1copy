@@ -9,12 +9,14 @@ EnumerateSecurityPackagesW
 ExportSecurityContext
 FreeContextBuffer
 FreeCredentialsHandle
+GetSecurityUserInfo
 ImpersonateSecurityContext
 ImportSecurityContextW
 InitSecurityInterfaceW
 InitializeSecurityContextW
 KSecRegisterSecurityProvider
 MakeSignature
+MapSecurityError
 QueryContextAttributesW
 QueryCredentialsAttributesW
 QuerySecurityContextToken

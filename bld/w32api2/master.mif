@@ -296,6 +296,7 @@ ddk_headers =        &
         mce.h        &
         ntddk.h      &
         ntdef.h      &
+        ntifs.h      &
         ntiologc.h   &
         ntnls.h      &
         ntstatus.h   &

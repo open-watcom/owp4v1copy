@@ -1,7 +1,11 @@
 LIBRARY HAL.DLL
 EXPORTS
 @KeAcquireInStackQueuedSpinLock
+@KeAcquireQueuedSpinLock
+@KeAcquireSpinLockRaiseToSynch
 @KeReleaseInStackQueuedSpinLock
+@KeReleaseQueuedSpinLock
+@KeTryToAcquireQueuedSpinLock
 @KfAcquireSpinLock
 @KfLowerIrql
 @KfRaiseIrql
@@ -30,6 +34,7 @@ KeFlushWriteBuffer
 KeGetCurrentIrql
 KeQueryPerformanceCounter
 KeRaiseIrqlToDpcLevel
+KeRaiseIrqlToSynchLevel
 KeStallExecutionProcessor
 READ_PORT_BUFFER_UCHAR
 READ_PORT_BUFFER_ULONG
