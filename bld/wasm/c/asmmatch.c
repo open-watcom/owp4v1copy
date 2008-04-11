@@ -230,6 +230,10 @@ static int output( int i )
         break;
     }
     if( rCode->prefix.opsiz == TRUE ) {
+        if( ( rCode->info.cpu & P_CPU_MASK ) < P_386 ) {
+            AsmError( CANNOT_USE_386_OPSIZE_MODE_WITH_CURRENT_CPU_SETTING );
+            return( ERROR );
+        }
         /*
             Certain instructions use the ADDRSIZE prefix when they really
             should use OPERSIZE prefix (well, I think so!). Stupid Intel.

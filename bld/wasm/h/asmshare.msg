@@ -301,3 +301,6 @@ pick( MISSING_PTR_OPERATOR,
 pick( REPX_PREFIX_IS_NOT_ALLOWED_ON_THIS_INSTRUCTION,
                                 "REPZ, REPNZ, REPE or REPNE prefix is not allowed on this instruction" ,
                                 "REPZ, REPNZ, REPE or REPNE prefix is not allowed on this instruction" )
+pick( CANNOT_USE_386_OPSIZE_MODE_WITH_CURRENT_CPU_SETTING,
+                                "Cannot use 386 operand size with current CPU setting" ,
+                                "Cannot use 386 operand size with current CPU setting" )

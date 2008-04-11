@@ -25,7 +25,8 @@ diag06.obj &
 diag07.obj &
 error1.obj &
 include.obj &
-irp.obj
+irp.obj &
+cpureq.obj
 
 asm_flags_diag01 = -4s
 asm_flags_diag02 = -3
