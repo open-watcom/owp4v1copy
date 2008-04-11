@@ -44,7 +44,7 @@ extern const dis_ins_descript   DisInstructionTable[];
 extern const unsigned short     DisRefTypeTable[];
 
 typedef union {
-    unsigned_8 full;
+    unsigned_8  full;
     struct {
         unsigned_8  base  : 3;
         unsigned_8  index : 3;
@@ -53,13 +53,13 @@ typedef union {
 } SIB;
 
 typedef union {
-    unsigned_8 full;
+    unsigned_8  full;
     struct{
-        unsigned_8  b     : 1;
-        unsigned_8  x     : 1;
-        unsigned_8  r     : 1;
-        unsigned_8  w     : 1;
-        unsigned_8  pr    : 4;
+        unsigned_8  b  : 1;
+        unsigned_8  x  : 1;
+        unsigned_8  r  : 1;
+        unsigned_8  w  : 1;
+        unsigned_8  pr : 4;
     } split;
 } REX;
 
@@ -156,11 +156,11 @@ typedef enum {
 } WBIT;
 
 typedef enum {
-    RW_64BIT     = 0x0,
-    RW_32BIT     = 0x1,
-    RW_16BIT     = 0x2,
-    RW_8BIT      = 0x3,
-    RW_DEFAULT   = RW_64BIT
+    RW_64BIT   = 0x0,
+    RW_32BIT   = 0x1,
+    RW_16BIT   = 0x2,
+    RW_8BIT    = 0x3,
+    RW_DEFAULT = RW_64BIT
 } REGWIDTH;
 
 typedef enum {
@@ -212,8 +212,8 @@ static unsigned_16 GetUShort( void *d, unsigned off )
  */
 {
     struct {
-        unsigned_8 lo;
-        unsigned_8 hi;
+        unsigned_8  lo;
+        unsigned_8  hi;
     }   data;
 
     //NYI: have to error check return code
@@ -227,10 +227,10 @@ static unsigned_32 GetULong( void *d, unsigned off )
  */
 {
     struct {
-        unsigned_8 lo;
-        unsigned_8 mid_lo;
-        unsigned_8 mid_hi;
-        unsigned_8 hi;
+        unsigned_8  lo;
+        unsigned_8  mid_lo;
+        unsigned_8  mid_hi;
+        unsigned_8  hi;
     }   data;
 
     //NYI: have to error check return code
@@ -274,18 +274,18 @@ dis_handler_return X64PrefixOpnd( dis_handle *h, void *d, dis_dec_ins *ins )
 
     // if REX.W set then ignore 66h prefix
     // if REX.W clear then instruction size is 16-Bit!
-    if( (ins->flags & DIF_X64_REX_W) == 0)
+    if( (ins->flags & DIF_X64_REX_W) == 0 )
         ins->flags |= DIF_X64_OPND_SIZE;
 
     return( DHR_CONTINUE );
 }
 
 dis_handler_return X64PrefixRex( dis_handle *h, void *d, dis_dec_ins *ins )
-/***************************************************************************
+/**************************************************************************
  * Extended Register Override
  */
 {
-    REX rex_pr;
+    REX     rex_pr;
 
     rex_pr.full = GetUByte( d, ins->size );
     ins->size += 1;
@@ -295,21 +295,21 @@ dis_handler_return X64PrefixRex( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->flags &= ~( DIF_X64_REX_B | DIF_X64_REX_X | DIF_X64_REX_R | DIF_X64_REX_W | DIF_X64_PEX_PR );
 
     // REX.B is an extension to the ModRM's SIB base field
-    if(rex_pr.split.b)
+    if( rex_pr.split.b )
         ins->flags |= DIF_X64_REX_B;
 
     // REX.X is an extension to the ModRM's SIB index field
-    if(rex_pr.split.x)
+    if( rex_pr.split.x )
         ins->flags |= DIF_X64_REX_X;
 
     // REX.R is an extension to the ModRM's Register field
-    if(rex_pr.split.r)
+    if( rex_pr.split.r )
         ins->flags |= DIF_X64_REX_R;
 
     // REX.W is an operand size prefix (like 66h)
     //  if 1 then use 64-Bit operand size
     //  if 0 then use default operand size
-    if(rex_pr.split.w)
+    if( rex_pr.split.w )
         ins->flags |= DIF_X64_REX_W;
 
     // Flag REX prefix, sometime useful...
@@ -549,8 +549,7 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 {
     // If a REX prefix is present then AH, BH, CH, CH are not accessible
     // they represent the new SIL/DIL/BPL/SPL registers!
-    if( ins->flags & DIF_X64_PEX_PR )
-    {
+    if( ins->flags & DIF_X64_PEX_PR ) {
         switch( reg ) {
         case REG_RSI: return( DR_X64_sil );
         case REG_RDI: return( DR_X64_dil );
@@ -582,7 +581,7 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 }
 
 //dis_register X64FGetSTReg(WBIT w, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/***********************************************************
  *  Get ST  (Floating Point) Register  w - not used
  */
 /*{
@@ -600,7 +599,7 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 }*/
 
 //dis_register X64GetMMReg(WBIT w, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/**********************************************************
  *  Get MM  (Multimedia) Register  w - not used
  */
 /*{
@@ -618,7 +617,7 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 }*/
 
 //dis_register X64GetXMMReg(WBIT w, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/***********************************************************
  *  Get SSE  (Streaming SIMD Extensions) Register  w - not used
  */
 /*{
@@ -636,7 +635,7 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 }*/
 
 //dis_register X64GetCRegister( WBIT w, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/***************************************************************
  *  Get Control Register
  */
 /*{
@@ -650,7 +649,7 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 }*/
 
 //dis_register X64GetDRegister( WBIT w, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/***************************************************************
  *  Get Debug Register
  */
 /*{
@@ -666,7 +665,7 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 }*/
 
 //dis_register X64GetTRegister( WBIT w, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/***************************************************************
  *  Get Test Register 80486
  */
 /*{
@@ -681,7 +680,7 @@ dis_register X64GetRegister_B( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 }*/
 
 dis_register X64GetSRegister( REGWIDTH rw, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/********************************************************************
  *  Get Segment Register
  */
 {
@@ -692,12 +691,12 @@ dis_register X64GetSRegister( REGWIDTH rw, RM reg, dis_dec_ins *ins )
     case REG_FS: return( DR_X64_fs );
     case REG_GS: return( DR_X64_gs );
     case REG_SS: return( DR_X64_ss );
-    default     : return( DR_NONE );
+    default    : return( DR_NONE );
     }
 }
 
 dis_register X64GetRegister( REGWIDTH rw, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/*******************************************************************
  *  Get Register
  *                 rw   =  0  (default) use 64-Bit operand
  *                      =  1            use 32-Bit operand
@@ -714,35 +713,14 @@ dis_register X64GetRegister( REGWIDTH rw, RM reg, dis_dec_ins *ins )
         return( X64GetRegister_W( rw, reg, ins ) );
     case RW_8BIT:
         return( X64GetRegister_B( rw, reg, ins ) );
-    }
-
-    // default case
-    return( X64GetRegister_Q( rw, reg, ins ) );
-}
-
-
-//dis_register X64GetRegisterAddr( WBIT w, RM reg, dis_dec_ins *ins )
-/**********************************************************************
- *  Get Register
- *                 w   =  1  (default) use full width of operand
- *                     =  0            use byte size operand
- */
-/*{
-    switch(ins->type) {
     default:
-        if( w != W_FULL ) {
-            return( X64GetRegister_B ( w, reg, ins ) );
-        } else if( DIF_X64_ADDR_LONG & ins->flags ) {
-            return( X64GetRegister_D( w, reg, ins ) );
-        } else {
-            return( X64GetRegister_W( w, reg, ins ) );
-        }
+        return( X64GetRegister_Q( rw, reg, ins ) );
     }
-}*/
+}
 
 static void X64GetSIB( REGWIDTH rw, unsigned_8 scale, RM base, RM index,
                        dis_dec_ins *ins, unsigned oper )
-/**********************************************************************
+/***********************************************************************
  * Get SIB
  */
 {
@@ -768,13 +746,13 @@ static void X64GetSIB( REGWIDTH rw, unsigned_8 scale, RM base, RM index,
 /*=====================================================================*/
 /*               Get MOD/RM as Operand                                 */
 /*=====================================================================*/
-static void X64GetModRM( REGWIDTH rw, MOD mod, REGWIDTH rw_rm, RM rm, void * d,
+static void X64GetModRM( REGWIDTH rw, MOD mod, REGWIDTH rw_rm, RM rm, void *d,
                          dis_dec_ins *ins, dis_ref_type ref_type )
-/**********************************************************************
+/*****************************************************************************
  */
 {
-    SIB sib;
-    int oper;
+    SIB     sib;
+    int     oper;
 
     oper = ins->num_ops;
     ++ins->num_ops;
@@ -796,12 +774,8 @@ static void X64GetModRM( REGWIDTH rw, MOD mod, REGWIDTH rw_rm, RM rm, void * d,
             sib.full = GetUByte( d, ins->size );
             ins->size += 1;
             // base and index fixup is in X64GetSIB
-            X64GetSIB( rw,
-                       sib.split.scale,
-                       sib.split.base,
-                       sib.split.index,
-                       ins,
-                       oper );
+            X64GetSIB( rw, sib.split.scale, sib.split.base,
+                       sib.split.index, ins, oper );
             if( mod == MOD_0 ) {
                 // I can use REG_RBP here because base is not fixed up
                 if( sib.split.base == REG_RBP ) {
@@ -814,14 +788,14 @@ static void X64GetModRM( REGWIDTH rw, MOD mod, REGWIDTH rw_rm, RM rm, void * d,
                     ins->op[oper].value = GetULong( d, ins->size );
                     ins->size += 4;
                     ins->op[oper].type = DO_MEMORY_REL;
-                    // following line is no more required because pass1.c and pass2.c are makeing
+                    // following line is no more required because pass1.c and pass2.c are doing
                     // the correct value fixup
                     //ins->op[oper].value += ins->size;
                 }
             }
         }
     } else {
-        ins->op[oper].base = X64GetRegister(rw, rm, ins);
+        ins->op[oper].base = X64GetRegister( rw, rm, ins );
     }
 
     switch( mod ) {
@@ -830,7 +804,6 @@ static void X64GetModRM( REGWIDTH rw, MOD mod, REGWIDTH rw_rm, RM rm, void * d,
         // at the moment it's displaying as ex: adc rax, qword ptr [asdf]
         // sould it be adc rax, qword ptr asdf[rip] ?
         if( rm == REG_RBP || rm == REG_R13 ) {
-
             ins->op[oper].base = DR_NONE;
             ins->op[oper].op_position = ins->size;
             ins->op[oper].value = GetULong( d, ins->size );
@@ -854,23 +827,23 @@ static void X64GetModRM( REGWIDTH rw, MOD mod, REGWIDTH rw_rm, RM rm, void * d,
         break;
     case MOD_3:
         ins->op[oper].type = DO_REG;
-        ins->op[oper].base = X64GetRegister(rw_rm, rm, ins);
+        ins->op[oper].base = X64GetRegister( rw_rm, rm, ins );
         break;
     }
 }
 
 /*static void X64FGetModRM( WBIT w, MOD mod, RM rm, void * d,
-                         dis_dec_ins *ins, dis_ref_type ref_type )*/
-/**********************************************************************
+                          dis_dec_ins *ins, dis_ref_type ref_type )*/
+/******************************************************************
  * Gets the Floating Point MOD/RM
- * NOT the same with X64GetModRM it returns ST instead of a register
+ * NOT the same as X64GetModRM - returns ST instead of a register
  * if MOD = MOD_3
  */
 /*{
     if( DIF_X64_ADDR_LONG & ins->flags ) {
-        X64GetModRM_L( w, mod, rm, d ,ins, ref_type, X64FGetSTReg );
+        X64GetModRM_L( w, mod, rm, d, ins, ref_type, X64FGetSTReg );
     } else {
-        X64GetModRM_S( w, mod, rm, d ,ins, ref_type, X64FGetSTReg );
+        X64GetModRM_S( w, mod, rm, d, ins, ref_type, X64FGetSTReg );
     }
 }
 */
@@ -878,14 +851,14 @@ static void X64GetModRM( REGWIDTH rw, MOD mod, REGWIDTH rw_rm, RM rm, void * d,
                          dis_dec_ins *ins, dis_ref_type ref_type )*/
 /**********************************************************************
  * Gets the Floating Point MOD/RM
- * NOT the same with X64GetModRM it returns MM instead of a register
+ * NOT the same as X64GetModRM - returns MM instead of a register
  * if MOD = MOD_3
  */
 /*{
     if( DIF_X64_ADDR_LONG & ins->flags ) {
-        X64GetModRM_L( w, mod, rm, d ,ins, ref_type, X64GetMMReg );
+        X64GetModRM_L( w, mod, rm, d, ins, ref_type, X64GetMMReg );
     } else {
-        X64GetModRM_S( w, mod, rm, d ,ins, ref_type, X64GetMMReg );
+        X64GetModRM_S( w, mod, rm, d, ins, ref_type, X64GetMMReg );
     }
 }*/
 
@@ -893,14 +866,14 @@ static void X64GetModRM( REGWIDTH rw, MOD mod, REGWIDTH rw_rm, RM rm, void * d,
                          dis_dec_ins *ins, dis_ref_type ref_type )*/
 /**********************************************************************
  * Gets the Floating Point MOD/RM
- * NOT the same with X64GetModRM it returns XMM instead of a register
+ * NOT the same as X64GetModRM - returns XMM instead of a register
  * if MOD = MOD_3
  */
 /*{
     if( DIF_X64_ADDR_LONG & ins->flags ) {
-        X64GetModRM_L( w, mod, rm, d ,ins, ref_type, X64GetXMMReg );
+        X64GetModRM_L( w, mod, rm, d, ins, ref_type, X64GetXMMReg );
     } else {
-        X64GetModRM_S( w, mod, rm, d ,ins, ref_type, X64GetXMMReg );
+        X64GetModRM_S( w, mod, rm, d, ins, ref_type, X64GetXMMReg );
     }
 }*/
 
@@ -938,7 +911,7 @@ static dis_ref_type X64RegRefType( dis_register reg )
 }
 
 //static void X64FGetST( RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/************************************************
  *  Get ST - Floating Point Stack Register
  */
 /*{
@@ -952,7 +925,7 @@ static dis_ref_type X64RegRefType( dis_register reg )
 }*/
 
 //static void X64GetMM( RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/***********************************************
  *  Get MM  Register
  */
 /*{
@@ -966,7 +939,7 @@ static dis_ref_type X64RegRefType( dis_register reg )
 }*/
 
 //static void X64GetXMM( RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/************************************************
  *  Get XMM Register
  */
 /*{
@@ -980,7 +953,7 @@ static dis_ref_type X64RegRefType( dis_register reg )
 }*/
 
 static void X64GetReg( REGWIDTH rw, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/*************************************************************
  *  Get Register
  */
 {
@@ -994,7 +967,7 @@ static void X64GetReg( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 }
 
 //static void X64GetReg32( WBIT w, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+/**********************************************************
  *  Get Register
  */
 /*{
@@ -1007,19 +980,19 @@ static void X64GetReg( REGWIDTH rw, RM reg, dis_dec_ins *ins )
     ++ins->num_ops;
 }*/
 
-//static void X64GetSReg( REGWIDTH rw, RM reg, dis_dec_ins *ins )
-/**********************************************************************
+static void X64GetSReg( REGWIDTH rw, RM reg, dis_dec_ins *ins )
+/**************************************************************
  *  Get S Registers
  */
-/*{
-    int oper;
+{
+    int     oper;
 
     oper = ins->num_ops;
     ins->op[oper].type = DO_REG;
     ins->op[oper].base = X64GetSRegister( rw, reg, ins );
     ins->op[oper].ref_type = DRT_X64_WORD;
     ++ins->num_ops;
-}*/
+}
 
 /*=====================================================================*/
 /*               Get Immediate Value                                   */
@@ -1027,36 +1000,35 @@ static void X64GetReg( REGWIDTH rw, RM reg, dis_dec_ins *ins )
 
 
 static void X64GetImmedVal( SBIT s, WBIT w, void *d, dis_dec_ins *ins )
-/*********************************************************************
+/**********************************************************************
  * Get Immediate Value
  *                   s = 0  (S_FULL / S_DEFAULT)
  *                   s = 1  (S_BYTE)
  */
 {
-    int oper;
+    int     oper;
 
     oper                      = ins->num_ops;
     ins->op[oper].op_position = ins->size;
     ins->op[oper].type        = DO_IMMED;
     ++ins->num_ops;
 
-    if( w == W_FULL && s == S_FULL )
-    {
-        if ( w && (ins->flags & DIF_X64_OPND_SIZE) ) {
-        // w and OpSize prefix: 16-Bit immediate
+    if( w == W_FULL && s == S_FULL ) {
+        if( w && (ins->flags & DIF_X64_OPND_SIZE) ) {
+            // w and OpSize prefix: 16-Bit immediate
             ins->op[oper].value = GetSShort( d, ins->size );
             ins->op[oper].ref_type = DRT_X64_WORD;
-            ins->size   += 2;
-        } else if ( w ) {
-        // w = 1 then 32-Bit immediate
+            ins->size += 2;
+        } else if( w ) {
+            // w = 1 then 32-Bit immediate
             ins->op[oper].value = GetULong( d, ins->size );
             ins->op[oper].ref_type = DRT_X64_DWORD;
-            ins->size   += 4;
+            ins->size += 4;
         } else {
-        // w = 0 then 8-Bit immediate
+            // w = 0 then 8-Bit immediate
             ins->op[oper].value = GetSByte( d, ins->size );
             ins->op[oper].ref_type = DRT_X64_BYTE;
-            ins->size   += 1;
+            ins->size += 1;
         }
     } else {
         ins->op[oper].value = GetSByte( d, ins->size );
@@ -1075,18 +1047,18 @@ static void X64GetImmedVal( SBIT s, WBIT w, void *d, dis_dec_ins *ins )
 /*               Get Absolute Value                                    */
 /*=====================================================================*/
 
-//static void X64GetAbsVal( void *d, dis_dec_ins *ins )
-/*********************************************************************
+static void X64GetAbsVal( void *d, dis_dec_ins *ins )
+/****************************************************
  * Get Absolute Value
  */
-/*{
-    int oper;
+{
+    int     oper;
 
     oper = ins->num_ops;
     ins->op[oper].op_position = ins->size;
     ins->op[oper].type = DO_ABSOLUTE;
     ++ins->num_ops;
-    if( ins->flags & DIF_X64_OPND_LONG ) {
+    if( ins->flags & DIF_X64_OPND_SIZE ) {  // TODO: not right!
         ins->op[oper].value = GetULong( d, ins->size );
         ins->size += 4;
     } else {
@@ -1098,18 +1070,17 @@ static void X64GetImmedVal( SBIT s, WBIT w, void *d, dis_dec_ins *ins )
     ins->op[oper].extra = GetUShort( d, ins->size );
     ins->size += 2;
     ins->op[oper].type |= DO_EXTRA;
-
-}*/
+}
 
 /*=====================================================================*/
 /*               Get Relative Value                                    */
 /*=====================================================================*/
 
-//static void X64GetRelVal_8( void *d, dis_dec_ins *ins )
-/*********************************************************************
+static void X64GetRelVal_8( void *d, dis_dec_ins *ins )
+/******************************************************
  * Get Relative Value   - 1 byte
  */
-/*{
+{
     int oper;
 
     oper = ins->num_ops;
@@ -1120,10 +1091,9 @@ static void X64GetImmedVal( SBIT s, WBIT w, void *d, dis_dec_ins *ins )
     ins->size += 1;
     ins->op[oper].value += ins->size;
 }
-*/
 
 static void X64GetRelVal( void *d, dis_dec_ins *ins )
-/*********************************************************************
+/****************************************************
  * Get Relative Value
  */
 {
@@ -1136,6 +1106,7 @@ static void X64GetRelVal( void *d, dis_dec_ins *ins )
 
 /*    if( ins->flags & DIF_X64_ADDR_SIZE ) {*/
 
+    // TODO: operand sizes!
         ins->op[oper].value = GetULong( d, ins->size );
         ins->size += 4;
 /*
@@ -1152,35 +1123,38 @@ static void X64GetRelVal( void *d, dis_dec_ins *ins )
 /*=====================================================================*/
 
 dis_ref_type  X64GetRefType( REGWIDTH rw, dis_dec_ins *ins )
-/*********************************************************************
+/***********************************************************
  * Get Reference Type
  */
 {
     // Instructions that have default ref type
+    switch( ins->type ) {
+    case DI_X64_lfs:
+    case DI_X64_lgs:
+    case DI_X64_lss:
+    case DI_X64_call4:
+    case DI_X64_jmp4:
+        if( rw == RW_32BIT )
+            return( DRT_X64_FARPTR48 );
+        else
+            return( DRT_X64_FARPTR32 );
+    }
 
     switch( rw ) {
         case RW_64BIT:
-            return DRT_X64_QWORD;
-            break;
-
+            return( DRT_X64_QWORD );
         case RW_32BIT:
-            return DRT_X64_DWORD;
-            break;
-
+            return( DRT_X64_DWORD );
         case RW_16BIT:
-            return DRT_X64_WORD;
-            break;
-
+            return( DRT_X64_WORD );
         case RW_8BIT:
-            return DRT_X64_BYTE;
-            break;
+            return( DRT_X64_BYTE );
     }
-
     return( DRT_X64_BYTE );
 }
 
 //dis_ref_type X64FGetRefType( MF_BITS mf, dis_dec_ins * ins )
-/*********************************************************************
+/***********************************************************
  * Get Reference Type - Floating Point Instructions
  */
 /*{
@@ -1194,7 +1168,7 @@ dis_ref_type  X64GetRefType( REGWIDTH rw, dis_dec_ins *ins )
 }*/
 
 //dis_ref_type X64FGetRefTypeEnv( dis_dec_ins * ins )
-/*********************************************************************
+/**************************************************
  * Get Reference Type - Floating Point Environment Instructions
  */
 /*{
@@ -1245,7 +1219,7 @@ dis_ref_type  X64GetRefType( REGWIDTH rw, dis_dec_ins *ins )
 
 
 static REGWIDTH X64DecodeWDef32Bit( WBIT w, dis_dec_ins *ins )
-/**********************************************************************/
+/************************************************************/
 // Decode w for 32 Bit default size
 //
 {
@@ -1257,7 +1231,7 @@ static REGWIDTH X64DecodeWDef32Bit( WBIT w, dis_dec_ins *ins )
     //  1   1       ignored           =>  RW_64BIT
     //  1   x       present           =>  RW_16BIT
 
-    // reg is 64-bit if w and rex.w present
+    // reg is 64-bit if w and REX.W present
     if( w && ( DIF_X64_REX_W & ins->flags ) )
         rw = RW_64BIT;
 
@@ -1274,14 +1248,14 @@ static REGWIDTH X64DecodeWDef32Bit( WBIT w, dis_dec_ins *ins )
 
 
 static void X64GetRegModRM( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,
-                     void * d, dis_dec_ins *ins )
-/**********************************************************************/
+                            void *d, dis_dec_ins *ins )
+/*******************************************************************/
 //    dir                   1                 0
 //   Destination           Reg              MODRM
 //   Source               MODRM              Reg
 {
-    REGWIDTH rw_mod = RW_64BIT;
-    REGWIDTH rw_reg = X64DecodeWDef32Bit( w, ins );
+    REGWIDTH    rw_mod = RW_64BIT;
+    REGWIDTH    rw_reg = X64DecodeWDef32Bit( w, ins );
 
     // modrm is 32 bit if addr size prefix is present
     if( DIF_X64_ADDR_SIZE & ins->flags )
@@ -1336,7 +1310,7 @@ static void X64GetRegModRM( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,
 }*/
 
 void X64GetRegModRM_B( DBIT dir, MOD mod, RM rm, RM reg, void *d, dis_dec_ins *ins )
-/**********************************************************************/
+/**********************************************************************************/
 //    dir                   1                 0
 //   Destination           Reg              MODRM
 //   Source               MODRM              Reg
@@ -1344,13 +1318,12 @@ void X64GetRegModRM_B( DBIT dir, MOD mod, RM rm, RM reg, void *d, dis_dec_ins *i
     REGWIDTH rw_mod = RW_32BIT;
     REGWIDTH rw_reg = RW_32BIT;
 
-    // modrm is 16 bit if opcode prefix is present
+    // modrm is 16-bit if opcode prefix is present
     if( DIF_X64_OPND_SIZE & ins->flags ) {
-        rw_mod = RW_16BIT;
-        rw_reg = RW_16BIT;
+        rw_mod = rw_reg = RW_16BIT;
     }
 
-    // modrm is 64 bit if rex.w set
+    // modrm is 64-bit if REX.W set
     if( DIF_X64_REX_W & ins->flags ) {
         rw_mod = rw_reg = RW_64BIT;
     }
@@ -1362,9 +1335,9 @@ void X64GetRegModRM_B( DBIT dir, MOD mod, RM rm, RM reg, void *d, dis_dec_ins *i
 
     if( dir ) {
         X64GetReg( rw_reg, reg, ins );
-        X64GetModRM( rw_mod, mod, rw_reg, rm, d, ins, X64GetRefType( rw_reg ,ins ) );
+        X64GetModRM( rw_mod, mod, rw_reg, rm, d, ins, X64GetRefType( rw_reg, ins ) );
     } else {
-        X64GetModRM( rw_mod, mod, rw_reg, rm, d, ins, X64GetRefType( rw_reg ,ins ) );
+        X64GetModRM( rw_mod, mod, rw_reg, rm, d, ins, X64GetRefType( rw_reg, ins ) );
         X64GetReg( rw_reg, reg, ins );
     }
 }
@@ -1402,21 +1375,21 @@ typedef union {
 } code_8;
 
 
-//dis_handler_return X64SReg_8( dis_handle *h, void *d, dis_dec_ins *ins )
-/*********************************************************************
+dis_handler_return X64SReg_8( dis_handle *h, void *d, dis_dec_ins *ins )
+/***********************************************************************
  *  OOO SS OOO
  *     sreg
  */
-/*{
-    code_8 code;
+{
+    code_8      code;
 
-    code.full = ins->opcode;
-    ins->size    += 1;
+    code.full    = ins->opcode;
+    ins->size   += 1;
     ins->num_ops = 0;
 
     switch( ins->type ) {
     case DI_X64_push3:
-        ins->op[ins->num_ops].base = X64GetRegister( W_DEFAULT, REG_SP, ins );
+        ins->op[ins->num_ops].base = X64GetRegister( W_DEFAULT, REG_RSP, ins );
         ins->op[ins->num_ops].type = DO_MEMORY_ABS | DO_HIDDEN;
         ins->op[ins->num_ops].ref_type = X64GetRefType( W_DEFAULT, ins );
         ++ins->num_ops;
@@ -1424,52 +1397,19 @@ typedef union {
     default:
         break;
     }
-    X64GetSReg(W_DEFAULT, code.sreg.sreg, ins);
-    switch( ins->type ) {
-    case DI_X64_pop3d:
-    case DI_X64_pop3e:
-    case DI_X64_pop3s:
-        ins->op[ins->num_ops].base = X64GetRegister( W_DEFAULT, REG_SP, ins );
-        ins->op[ins->num_ops].type = DO_MEMORY_ABS | DO_HIDDEN;
-        ins->op[ins->num_ops].ref_type = X64GetRefType( W_DEFAULT, ins );
-        ++ins->num_ops;
-        break;
-    default:
-        break;
-    }
-#if 0
-    if( DIF_X64_OPND_SIZE & ins->flags ) {
-        if( DIF_X64_OPND_LONG & ins->flags ) {
-            switch( ins->type ) {
-            case DI_X64_push3:
-                ins->type = DI_X64_pushd;
-                break;
-            default:
-                break;
-            }
-        } else {
-            switch( ins->type ) {
-            case DI_X64_push3:
-                ins->type = DI_X64_pushw;
-                break;
-            default:
-                break;
-            }
-        }
-    }
-#endif
+    X64GetSReg( W_DEFAULT, code.sreg.sreg, ins );
     return( DHR_DONE );
-}*/
+}
 
 dis_handler_return X64NoOp_8( dis_handle *h, void *d, dis_dec_ins *ins )
-/*********************************************************************
+/***********************************************************************
  *  OOOO OOOW
  */
 {
-    code_8 code;
+    code_8  code;
 
-    code.full = ins->opcode;
-    ins->size    += 1;
+    code.full    = ins->opcode;
+    ins->size   += 1;
     ins->num_ops = 0;
 
     switch( ins->type ) {
@@ -1494,8 +1434,7 @@ dis_handler_return X64NoOp_8( dis_handle *h, void *d, dis_dec_ins *ins )
         break;
     }
 
-    if( ins->flags & DIF_X64_OPND_SIZE )
-    {
+    if( ins->flags & DIF_X64_OPND_SIZE ) {
         switch( ins->type ) {
         case DI_X64_cwde:
             ins->type = DI_X64_cbw;
@@ -1515,8 +1454,7 @@ dis_handler_return X64NoOp_8( dis_handle *h, void *d, dis_dec_ins *ins )
         }
     }
 
-    if( ins->flags & DIF_X64_REX_W )
-    {
+    if( ins->flags & DIF_X64_REX_W ) {
         switch( ins->type ) {
         case DI_X64_cwde:
             ins->type = DI_X64_cdqe;
@@ -1533,62 +1471,69 @@ dis_handler_return X64NoOp_8( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
-//dis_handler_return X64String_8( dis_handle *h, void *d, dis_dec_ins *ins )
-/**********************************************************************
+dis_handler_return X64String_8( dis_handle *h, void *d, dis_dec_ins *ins )
+/*************************************************************************
  * String Functions
  *  OOOO OOOW
  */
-/*{
-    code_8 code;
+{
+    code_8      code;
+    REGWIDTH    rw_reg;
+    REGWIDTH    rw_mod = RW_DEFAULT;
 
-    code.full = ins->opcode;
-    ins->size += 1;
+    code.full    = ins->opcode;
+    ins->size   += 1;
     ins->num_ops = 2;
+
+    rw_reg = X64DecodeWDef32Bit( code.type1.w, ins );
+    // address reg is 32 bit if addr size prefix is present
+    if( DIF_X64_ADDR_SIZE & ins->flags )
+        rw_mod = RW_32BIT;
 
     switch( ins->type ) {
     case DI_X64_cmps:
-        ins->op[0].base = X64GetRegisterAddr( W_DEFAULT, REG_SI, ins );
+        ins->op[0].base = X64GetRegister( rw_mod, REG_RSI, ins );
         ins->op[0].type = DO_MEMORY_ABS;
-        ins->op[0].ref_type = X64GetRefType( code.type1.w, ins );
-        ins->op[1].base = X64GetRegisterAddr( W_DEFAULT, REG_DI, ins );
+        ins->op[0].ref_type = X64GetRefType( rw_reg, ins );
+        ins->op[1].base = X64GetRegister( RW_DEFAULT, REG_RDI, ins );
         ins->op[1].type = DO_MEMORY_ABS | DO_NO_SEG_OVR;
-        ins->op[1].ref_type = X64GetRefType( code.type1.w, ins );
+        ins->op[1].ref_type = X64GetRefType( rw_reg, ins );
         break;
     case DI_X64_movs:
-        ins->op[0].base = X64GetRegisterAddr( W_DEFAULT, REG_DI, ins );
+        ins->op[0].base = X64GetRegister( rw_mod, REG_RDI, ins );
         ins->op[0].type = DO_MEMORY_ABS | DO_NO_SEG_OVR;
-        ins->op[0].ref_type = X64GetRefType( code.type1.w, ins );
-        ins->op[1].base = X64GetRegisterAddr( W_DEFAULT, REG_SI, ins );
+        ins->op[0].ref_type = X64GetRefType( rw_reg, ins );
+        ins->op[1].base = X64GetRegister( rw_mod, REG_RSI, ins );
         ins->op[1].type = DO_MEMORY_ABS;
-        ins->op[1].ref_type = X64GetRefType( code.type1.w, ins );
+        ins->op[1].ref_type = X64GetRefType( rw_reg, ins );
         break;
     case DI_X64_ins:
-        ins->op[0].base = X64GetRegisterAddr( W_DEFAULT, REG_DI, ins );
+        ins->op[0].base = X64GetRegister( rw_mod, REG_RDI, ins );
         ins->op[0].type = DO_MEMORY_ABS | DO_NO_SEG_OVR;
-        ins->op[0].ref_type = X64GetRefType( code.type1.w, ins );
+        ins->op[0].ref_type = X64GetRefType( rw_reg, ins );
         ins->op[1].base = DR_X64_dx;
         ins->op[1].type = DO_REG;
-        ins->op[1].ref_type = X64GetRefType( code.type1.w, ins );
+        ins->op[1].ref_type = X64GetRefType( rw_reg, ins );
         break;
     case DI_X64_lods:
-        ins->op[0].base = X64GetRegisterAddr( W_DEFAULT, REG_SI, ins );
+        ins->op[0].base = X64GetRegister( rw_mod, REG_RSI, ins );
         ins->op[0].type = DO_MEMORY_ABS;
-        ins->op[0].ref_type = X64GetRefType( code.type1.w, ins );
+        ins->op[0].ref_type = X64GetRefType( rw_reg, ins );
         ins->num_ops = 1;
         break;
     case DI_X64_outs:
         ins->op[0].base = DR_X64_dx;
         ins->op[0].type = DO_REG;
-        ins->op[0].ref_type = X64GetRefType( code.type1.w, ins );
-        ins->op[1].base = X64GetRegisterAddr( W_DEFAULT, REG_SI, ins );
+        ins->op[0].ref_type = X64GetRefType( rw_reg, ins );
+        ins->op[1].base = X64GetRegister( rw_mod, REG_RSI, ins );
         ins->op[1].type = DO_MEMORY_ABS;
-        ins->op[1].ref_type = X64GetRefType( code.type1.w, ins );
+        ins->op[1].ref_type = X64GetRefType( rw_reg, ins );
         break;
     case DI_X64_stos:
     case DI_X64_scas:
-        ins->op[0].base = X64GetRegisterAddr( W_DEFAULT, REG_DI, ins );
+        ins->op[0].base = X64GetRegister( rw_mod, REG_RDI, ins );
         ins->op[0].type = DO_MEMORY_ABS | DO_NO_SEG_OVR;
-        ins->op[0].ref_type = X64GetRefType( code.type1.w, ins );
+        ins->op[0].ref_type = X64GetRefType( rw_reg, ins );
         ins->num_ops = 1;
         break;
     default:
@@ -1596,16 +1541,15 @@ dis_handler_return X64NoOp_8( dis_handle *h, void *d, dis_dec_ins *ins )
     }
     return( DHR_DONE );
 }
-*/
+
 dis_handler_return X64ImmAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
-/**********************************************************************
+/*************************************************************************
  * Immediate to Accumulator EAX, AX, or AL
  * Format:    OOOO OOOW
  */
 {
-    code_8 code;
-    REGWIDTH rw_reg;
-    //REGWIDTH rw_reg = RW_32BIT;
+    code_8      code;
+    REGWIDTH    rw_reg;
 
     code.full    = ins->opcode;
     ins->num_ops = 0;
@@ -1613,67 +1557,76 @@ dis_handler_return X64ImmAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
 
     rw_reg = X64DecodeWDef32Bit( code.type1.w, ins );
 
-/*    if( !code.type1.w ) {
-        rw_reg = RW_8BIT;
-    } else if( code.type1.w && (DIF_X64_OPND_SIZE & ins->flags) ) {
-        rw_reg = RW_16BIT;
-    } else if( code.type1.w && (DIF_X64_REX_W & ins->flags) ) {
-        rw_reg = RW_64BIT;
-    }*/
-
     switch( ins->type ) {
-/*    case DI_X64_in:
-        X64GetReg( code.type1.w, REG_AX, ins );
+    case DI_X64_in:
+        X64GetReg( rw_reg, REG_RAX, ins );
         X64GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
         break;
     case DI_X64_out:
         X64GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
-        X64GetReg(code.type1.w, REG_AX, ins);
-        break;*/
+        X64GetReg( rw_reg, REG_RAX, ins );
+        break;
     default:
-        X64GetReg(rw_reg, REG_RAX, ins);
+        X64GetReg( rw_reg, REG_RAX, ins );
         X64GetImmedVal( S_DEFAULT, code.type1.w, d, ins  );
         break;
     }
     return( DHR_DONE );
 }
 
-/*
-dis_handler_return X64MemAbsAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
-/**********************************************************************
+dis_handler_return X64MemAbsAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
+/****************************************************************************
  * Absolute Memory to Accumulator
  * Format:    OOOO OODW
  */
-/*{
-    code_8 code;
+{
+    code_8      code;
+    REGWIDTH    rw_reg;
 
     code.full    = ins->opcode;
     ins->num_ops = 0;
     ins->size   += 1;
+
+    rw_reg = X64DecodeWDef32Bit( code.type1.w, ins );
+
     if( code.type1.dir ) {
         ins->op[0].type = DO_MEMORY_ABS;
-        ins->op[0].ref_type = X64GetRefType( code.type1.w , ins );
+        ins->op[0].ref_type = X64GetRefType( code.type1.w, ins );
         ins->op[0].op_position = ins->size;
-        if( ins->flags & DIF_X64_ADDR_LONG ) {
+        switch( rw_reg ) {
+        case RW_16BIT:
+            ins->op[0].value = GetUShort( d, ins->size );
+            ins->size += 2;
+            break;
+        case RW_32BIT:
             ins->op[0].value = GetULong( d, ins->size );
             ins->size += 4;
-        } else {
-            ins->op[0].value = GetUShort( d, ins->size );
-            ins->size   += 2;
+            break;
+        case RW_64BIT:
+            ins->op[0].value = GetULong( d, ins->size );    // TODO: long long
+            ins->size += 8;
+            break;
         }
         ++ins->num_ops;
-        X64GetReg(code.type1.w, REG_AX, ins);
+        X64GetReg( code.type1.w, REG_RAX, ins );
     } else {
-        X64GetReg(code.type1.w, REG_AX, ins);
-        ins->op[1].type  = DO_MEMORY_ABS;
-        ins->op[1].ref_type = X64GetRefType( code.type1.w , ins );
+        X64GetReg( code.type1.w, REG_RAX, ins );
+        ins->op[1].type = DO_MEMORY_ABS;
+        ins->op[1].ref_type = X64GetRefType( code.type1.w, ins );
         ins->op[1].op_position = ins->size;
-        if( ins->flags & DIF_X64_ADDR_LONG ) {
-            ins->op[1].value = GetULong( d, ins->size );
-            ins->size += 4;
-        } else {
-            ins->op[1].value = GetUShort( d, ins->size );
+        switch( rw_reg ) {
+        case RW_16BIT:
+            ins->op[0].value = GetUShort( d, ins->size );
             ins->size += 2;
+            break;
+        case RW_32BIT:
+            ins->op[0].value = GetULong( d, ins->size );
+            ins->size += 4;
+            break;
+        case RW_64BIT:
+            ins->op[0].value = GetULong( d, ins->size );    // TODO: long long
+            ins->size += 8;
+            break;
         }
         ++ins->num_ops;
     }
@@ -1681,19 +1634,18 @@ dis_handler_return X64MemAbsAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
 }
 
 
-
-dis_handler_return X64Abs_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
-/**********************************************************************/
-/*{
+dis_handler_return X64Abs_8( dis_handle *h, void *d, dis_dec_ins *ins )
+/*********************************************************************/
+{
     ins->size   += 1;
     ins->num_ops = 0;
     X64GetAbsVal( d, ins );
     return( DHR_DONE );
 }
-*/
+
 
 dis_handler_return X64Rel_8( dis_handle *h, void *d, dis_dec_ins *ins )
-/**********************************************************************/
+/*********************************************************************/
 {
     ins->size   += 1;
     ins->num_ops = 0;
@@ -1701,17 +1653,16 @@ dis_handler_return X64Rel_8( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
-/*
-dis_handler_return X64Imm_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
-/**********************************************************************/
+dis_handler_return X64Imm_8( dis_handle *h, void *d, dis_dec_ins *ins )
+/*********************************************************************/
 //  Byte      OOOO OOSW
-/*{
-    code_8 code;
+{
+    code_8      code;
 
-    code.full = ins->opcode;
-
+    code.full    = ins->opcode;
     ins->size   += 1;
     ins->num_ops = 0;
+
     ins->op[0].type = DO_IMMED;
     switch( ins->type ) {
     case DI_X64_int:
@@ -1724,6 +1675,7 @@ dis_handler_return X64Imm_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
                 ins->op[ MAX_NUM_OPERANDS - 1 ].value = intno;
                 ins->op[ MAX_NUM_OPERANDS - 1 ].type = DO_IMMED;
                 ins->op[ MAX_NUM_OPERANDS - 1 ].ref_type = DRT_X64_BYTE;
+/*
                 if( intno == 0x3C ) {
                     ins->size += 1;
                     ins->flags ^= DIF_X64_FWAIT;
@@ -1731,6 +1683,7 @@ dis_handler_return X64Imm_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
                 } else {
                     ins->flags ^= DIF_X64_FWAIT;
                 }
+*/
                 return( DHR_CONTINUE );
             }
             ins->op[0].value = intno;
@@ -1750,19 +1703,8 @@ dis_handler_return X64Imm_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
         break;
     case DI_X64_push5:
         X64GetImmedVal( code.type3.s, W_DEFAULT, d, ins );
-        if( code.type3.s ) {
-            if( ( DIF_X64_OPND_LONG & ins->flags ) == 0 ) {
-                ins->op[0].value &= 0xffff;
-            }
-        }
         if( DIF_X64_OPND_SIZE & ins->flags ) {
-            if( DIF_X64_OPND_LONG & ins->flags ) {
-                if( ( ins->op[0].value & 0xffff0000 ) == 0 ) {
-                    ins->type = DI_X64_pushd;
-                }
-            } else {
-                ins->type = DI_X64_pushw;
-            }
+            ins->type = DI_X64_pushw;
         }
         break;
     default:
@@ -1773,24 +1715,39 @@ dis_handler_return X64Imm_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
 }
 
 
-dis_handler_return X64ImmReg_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
-/**********************************************************************/
-//  8-bit   OOOO WRRR : Imm
-/*{
-    code_8 code;
+dis_handler_return X64ImmReg_8( dis_handle *h, void *d, dis_dec_ins *ins )
+/************************************************************************/
+//  8-bit   OOOO RRRR : Imm
+{
+    code_8      code;
+    REGWIDTH    rw_reg;
 
-    code.full = ins->opcode;
+    code.full    = ins->opcode;
     ins->num_ops = 0;
     ++ins->size;
-    X64GetReg( code.type2.w, code.type2.reg, ins );
-    X64GetImmedVal( S_DEFAULT, code.type2.w, d, ins );
+
+    rw_reg = X64DecodeWDef32Bit( code.type2.w, ins );
+
+    X64GetReg( rw_reg, code.type2.reg, ins );
+
+    // This is a special instruction form which supports 64-bit immediates
+    if( rw_reg == RW_64BIT ) {
+        ++ins->num_ops;
+        ins->op[1].op_position = ins->size;
+        ins->op[1].type = DO_IMMED;
+        ins->op[1].value = GetULong( d, ins->size ); // TODO: long long
+        ins->op[1].ref_type = DRT_X64_QWORD;
+        ins->size += 8;
+    } else {
+        X64GetImmedVal( S_DEFAULT, code.type2.w, d, ins );
+    }
     return( DHR_DONE );
 }
 
-dis_handler_return X64ImmImm_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
-/**********************************************************************/
+dis_handler_return X64ImmImm_8( dis_handle *h, void *d, dis_dec_ins *ins )
+/************************************************************************/
 //  8-bit   OOOO OOOO : Imm16 Imm8
-/*{
+{
     ins->num_ops = 2;
     ins->size   += 1;
     ins->op[0].value = GetUShort( d, ins->size );
@@ -1803,36 +1760,36 @@ dis_handler_return X64ImmImm_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
     ins->size   += 1;
     return( DHR_DONE );
 }
-*/
+
 dis_handler_return X64Reg_8( dis_handle *h, void *d , dis_dec_ins *ins )
 /**********************************************************************/
 //  Byte       OOOO  ORRR
 {
-    code_8   code;
-    REGWIDTH rw = RW_64BIT;
+    code_8      code;
+    REGWIDTH    rw = RW_64BIT;
 
-    ins->size      += 1;
-    ins->num_ops    = 0;
-    code.full       = ins->opcode;
+    ins->size   += 1;
+    ins->num_ops = 0;
+    code.full    = ins->opcode;
 
     if( ins->flags & DIF_X64_OPND_SIZE ) {
         rw = RW_16BIT;
     }
 
     switch( ins->type ) {
-    /*case DI_X64_xchg2:
-        if( code.type2.reg == REG_AX ) {
-            if( ins->flags & DIF_X64_REPE ) {
-                ins->type = DI_X64_pause;
-                ins->flags &= ~DIF_X64_REPE;
-            } else {
+    case DI_X64_xchg2:
+        if( code.type2.reg == REG_RAX ) {
+//            if( ins->flags & DIF_X64_REPE ) {
+//                ins->type = DI_X64_pause;
+//                ins->flags &= ~DIF_X64_REPE;
+//            } else {
                 ins->type = DI_X64_nop;
-            }
+//            }
         } else {
-            X64GetReg( W_DEFAULT, REG_AX, ins );
+            X64GetReg( W_DEFAULT, REG_RAX, ins );
             X64GetReg( W_DEFAULT, code.type2.reg, ins );
         }
-        return( DHR_DONE );*/
+        return( DHR_DONE );
 
     case DI_X64_push:
         ins->op[ins->num_ops].base = X64GetRegister( RW_DEFAULT, REG_RSP, ins );
@@ -1860,21 +1817,24 @@ dis_handler_return X64Reg_8( dis_handle *h, void *d , dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
-/*
-dis_handler_return X64AccAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
-/**********************************************************************/
+dis_handler_return X64AccAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
+/************************************************************************/
 // Accum to Accumulator EAX, AX, or AL to DX
 // Format:    0000 000 W
 //              op1    w
-/*{
-    code_8 code;
+{
+    code_8      code;
+    REGWIDTH    rw_reg;
 
     code.full    = ins->opcode;
     ins->size   += 1;
     ins->num_ops = 0;
+
+    rw_reg = X64DecodeWDef32Bit( code.type1.w, ins );
+
     switch( ins->type ) {
     case DI_X64_in2:
-        X64GetReg( code.type1.w, REG_AX, ins );
+        X64GetReg( rw_reg, REG_RAX, ins );
         ins->op[1].type = DO_REG;
         ins->op[1].base = DR_X64_dx;
         ++ins->num_ops;
@@ -1883,7 +1843,7 @@ dis_handler_return X64AccAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
         ins->op[0].type = DO_REG;
         ins->op[0].base = DR_X64_dx;
         ++ins->num_ops;
-        X64GetReg( code.type1.w, REG_AX, ins );
+        X64GetReg( rw_reg, REG_RAX, ins );
         break;
     default:
         break;
@@ -1891,23 +1851,29 @@ dis_handler_return X64AccAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
     return( DHR_DONE );
 }
 
-
-dis_handler_return X64JmpCC_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
-/**********************************************************************
+dis_handler_return X64JmpCC_8( dis_handle *h, void *d, dis_dec_ins *ins )
+/************************************************************************
  *  Jump Handler
  */
-/*{
-    code_8 code;
+{
+    code_8      code;
+    REGWIDTH    rw_reg = RW_DEFAULT;
 
-    code.full = ins->opcode;
-    ins->size += 1;
+    code.full    = ins->opcode;
+    ins->size   += 1;
     ins->num_ops = 0;
+
+    if( ins->flags & DIF_X64_ADDR_SIZE ) {
+        rw_reg = RW_32BIT;
+    }
 
     X64GetRelVal_8( d, ins );
     switch( ins->type ) {
     case DI_X64_jcxz:
-        if( ins->flags & DIF_X64_ADDR_LONG ){
+        if( rw_reg == RW_32BIT ) {
             ins->type = DI_X64_jecxz;
+        } else if( rw_reg == RW_64BIT ) {
+            ins->type = DI_X64_jrcxz;
         }
         return( DHR_DONE );
     default:
@@ -1915,7 +1881,7 @@ dis_handler_return X64JmpCC_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
     }
 
     if( ins->flags & DIF_X64_ADDR_SIZE ) {
-        if( ins->flags & DIF_X64_ADDR_LONG ) {
+        if( rw_reg == RW_32BIT ) {
             switch( ins->type ) {
             case DI_X64_loop:
                 ins->type = DI_X64_loopd;
@@ -1929,16 +1895,16 @@ dis_handler_return X64JmpCC_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
             default:
                 break;
             }
-        } else {
+        } else if( rw_reg == RW_64BIT ) {
             switch( ins->type ) {
             case DI_X64_loop:
-                ins->type = DI_X64_loopw;
+                ins->type = DI_X64_loopq;
                 break;
             case DI_X64_loopz:
-                ins->type = DI_X64_loopzw;
+                ins->type = DI_X64_loopzq;
                 break;
             case DI_X64_loopnz:
-                ins->type = DI_X64_loopnzw;
+                ins->type = DI_X64_loopnzq;
                 break;
             default:
                 break;
@@ -1947,7 +1913,6 @@ dis_handler_return X64JmpCC_8( dis_handle *h, void *d, dis_dec_ins *ins )*/
     }
     return( DHR_DONE );
 }
-*/
 
 /*=====================================================================*/
 /*                16-BIT OPCODE FUNCTIONS                              */
@@ -1986,12 +1951,159 @@ typedef union {
     } shift;
 } code_16;
 
+dis_handler_return X64Shift_16( dis_handle *h, void *d, dis_dec_ins *ins )
+/*************************************************************************
+ *  OOOO OO C W : MOD OOO RM
+ *         CL W
+ */
+{
+    code_16     code;
+    REGWIDTH    rw_reg;
+
+    code.full    = ins->opcode;
+    ins->size   += 2;
+    ins->num_ops = 0;
+
+    rw_reg = X64DecodeWDef32Bit( code.shift.w, ins );
+
+    X64GetModRM( rw_reg, code.shift.mod, rw_reg, code.shift.rm,
+                 d, ins, X64GetRefType( rw_reg, ins ) );
+
+    if( code.shift.cl ) {
+        ins->op[ins->num_ops].base = DR_X86_cl;
+        ins->op[ins->num_ops].type = DO_REG;
+        ++ins->num_ops;
+    } else {
+        ins->op[ins->num_ops].value = 1;
+        ins->op[ins->num_ops].type = DO_IMMED;
+        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
+        ++ins->num_ops;
+    }
+    return( DHR_DONE );
+}
+
+dis_handler_return X64SReg_16( dis_handle *h, void *d, dis_dec_ins *ins )
+/************************************************************************
+ *  OOO SS OOO
+ *     sreg
+ */
+{
+    code_16     code;
+
+    code.full    = ins->opcode;
+    ins->size   += 2;
+    ins->num_ops = 0;
+    switch( ins->type ) {
+    case DI_X64_push4f:
+    case DI_X64_push4g:
+        ins->op[ins->num_ops].base = X64GetRegister( W_DEFAULT, REG_RSP, ins );
+        ins->op[ins->num_ops].type = DO_MEMORY_ABS | DO_HIDDEN;
+        ins->op[ins->num_ops].ref_type = X64GetRefType( W_DEFAULT, ins );
+        ++ins->num_ops;
+        break;
+    default:
+        break;
+    }
+
+    switch( code.sreg.sreg ) {
+    case REG_FS:
+    case REG_GS:
+        break;
+    default:
+        return( DHR_INVALID );
+    }
+
+    X64GetSReg( W_DEFAULT, code.sreg.sreg, ins );
+
+    switch( ins->type ) {
+    case DI_X64_pop4f:
+    case DI_X64_pop4g:
+        ins->op[ins->num_ops].base = X64GetRegister( W_DEFAULT, REG_RSP, ins );
+        ins->op[ins->num_ops].type = DO_MEMORY_ABS | DO_HIDDEN;
+        ins->op[ins->num_ops].ref_type = X64GetRefType( W_DEFAULT, ins );
+        ++ins->num_ops;
+        break;
+    default:
+        break;
+    }
+    return( DHR_DONE );
+}
+
+dis_handler_return X64NoOp_16( dis_handle *h, void *d , dis_dec_ins *ins )
+/*************************************************************************
+ *  OOOO OOOO : OOOO OOOO
+ */
+{
+    ins->size   += 2;
+    ins->num_ops = 0;
+    return( DHR_DONE );
+}
+
+dis_handler_return X64ModRM_16( dis_handle *h, void *d, dis_dec_ins *ins )
+/************************************************************************/
+// Format:    OOOO OOO W : MM  OOO RRR
+//              op1    w   mod op2 rm
+{
+    code_16     code;
+    REGWIDTH    rw_reg = RW_DEFAULT;
+    REGWIDTH    rw_mod = RW_DEFAULT;
+
+    code.full    = ins->opcode;
+    ins->num_ops = 0;
+
+    switch( ins->type ) {
+    case DI_X64_call2:
+    case DI_X64_jmp2:
+    case DI_X64_push:
+    case DI_X64_pop:
+        // For some instructions, operand size prefix forces 16 bits, not 32
+        if( DIF_X64_OPND_SIZE & ins->flags ) {
+            rw_reg = RW_16BIT;
+        }
+        break;
+    default:
+        rw_reg = X64DecodeWDef32Bit( code.type1.w, ins );
+    }
+
+    // modrm is 32 bit if addr size prefix is present
+    if( DIF_X64_ADDR_SIZE & ins->flags )
+        rw_mod = RW_32BIT;
+
+    switch( ins->type ) {
+    case DI_X64_push:
+        ins->op[ins->num_ops].base = X64GetRegister( RW_DEFAULT, REG_RSP, ins );
+        ins->op[ins->num_ops].type = DO_MEMORY_ABS | DO_HIDDEN;
+        ins->op[ins->num_ops].ref_type = X64GetRefType( RW_DEFAULT, ins );
+        ++ins->num_ops;
+        break;
+    default:
+        break;
+    }
+
+    ins->size += 2;
+    X64GetModRM( rw_mod, code.type1.mod, rw_reg, code.type1.rm, d, ins,
+                 X64GetRefType( rw_reg, ins ) );
+
+
+    switch( ins->type ) {
+    case DI_X64_pop:
+        ins->op[ins->num_ops].base = X64GetRegister( RW_DEFAULT, REG_RSP, ins );
+        ins->op[ins->num_ops].type = DO_MEMORY_ABS | DO_HIDDEN;
+        ins->op[ins->num_ops].ref_type = X64GetRefType( RW_DEFAULT, ins );
+        ++ins->num_ops;
+        break;
+    default:
+        break;
+    }
+    return( DHR_DONE );
+}
+
 dis_handler_return X64RegModRM_16( dis_handle *h, void *d, dis_dec_ins *ins )
-/**********************************************************************/
+/***************************************************************************/
 // Format:    OOOO OO   D         W MM   REG RRR
 //              op1    direction  w mod reg1 rm/reg2
 {
-    code_16 code;
+    code_16     code;
 
     code.full    = ins->opcode;
     ins->num_ops = 0;
@@ -2003,18 +2115,118 @@ dis_handler_return X64RegModRM_16( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
+dis_handler_return X64RegModRM_test( dis_handle *h, void *d, dis_dec_ins *ins )
+/*****************************************************************************/
+// Format:    OOOO OO0 W : MM   REG RRR
+//              op1    w   mod reg1 rm/reg2
+{
+    code_16     code;
+
+    code.full    = ins->opcode;
+    ins->num_ops = 0;
+    ins->size   += 2;
+
+    X64GetRegModRM( code.type2.dir, code.type2.w, code.type2.mod,
+                    code.type2.rm, code.type2.reg, d, ins );
+
+    return( DHR_DONE );
+}
+
+dis_handler_return X64RegModRM_16B( dis_handle *h, void *d, dis_dec_ins *ins )
+/****************************************************************************/
+// Format:    OOOO OOSO   MM REG RRR
+//              op1      mod reg1 rm/reg2
+{
+    code_16     code;
+
+    code.full    = ins->opcode;
+    ins->num_ops = 0;
+    ins->size   += 2;
+
+    if( code.type1.mod == MOD_3 ) {
+        switch( ins->type ) {
+//        case DI_X64_lds:
+//        case DI_X64_les:
+        case DI_X64_lea:
+        case DI_X64_call4:
+        case DI_X64_jmp4:
+            return( DHR_INVALID );
+        default:
+            break;
+        }
+    }
+
+    X64GetRegModRM_B( D_REG_RM, code.type1.mod, code.type1.rm, code.type1.reg, d, ins );
+
+    switch( ins->type ) {
+    case DI_X64_imul3:
+        if( ins->op[0].type == ins->op[1].type ) {
+            if( ins->op[0].base == ins->op[1].base ) {
+                ins->op[1].type |= DO_HIDDEN;
+            }
+        }
+        X64GetImmedVal( code.type1.s, W_DEFAULT, d, ins );
+        break;
+    case DI_X64_lea:
+        ins->op[1].type = DO_ABSOLUTE;
+        break;
+    default:
+        break;
+    }
+    return( DHR_DONE );
+}
+
+dis_handler_return X64RegModRM_16C( dis_handle *h, void *d, dis_dec_ins *ins )
+/****************************************************************************/
+// Format:    OOOO OOO0 : MM REG RRR
+//               op1     mod reg1 rm/reg2
+// 
+// Used for movsxd - different dest/src operand sizes
+{
+    code_16     code;
+    REGWIDTH    rw_mod = RW_32BIT;
+    REGWIDTH    rw_reg = RW_32BIT;
+    RM          reg;
+
+    code.full    = ins->opcode;
+    ins->size   += 2;
+    ins->num_ops = 0;
+
+    // destination is 16-bit if opcode prefix is present
+    if( DIF_X64_OPND_SIZE & ins->flags ) {
+        rw_reg = RW_16BIT;
+    }
+
+    // destination is 64-bit if REX.W set
+    if( DIF_X64_REX_W & ins->flags ) {
+        rw_reg = RW_64BIT;
+    }
+
+    // REX.R modifies reg to access r8-r15
+    reg = code.type1.reg;
+    if( DIF_X64_REX_R & ins->flags ) {
+        reg += X64_EXTENDED_REG_OFFSET;
+    }
+
+    X64GetReg( rw_reg, reg, ins );
+    X64GetModRM( rw_mod, code.type1.mod, rw_mod, code.type1.rm, d, ins,
+                 X64GetRefType( rw_mod, ins ) );
+
+    return( DHR_DONE );
+}
+
 dis_handler_return X64ModRMImm_16( dis_handle *h, void *d, dis_dec_ins *ins )
-/**********************************************************************/
+/***************************************************************************/
 // Format:    OOOO OOO W MM  OOO RRR
 //              op1    w mod op2 rm
 {
-    code_16 code;
-    REGWIDTH rw_mod = RW_64BIT;
-    REGWIDTH rw_reg;
+    code_16     code;
+    REGWIDTH    rw_mod = RW_DEFAULT;
+    REGWIDTH    rw_reg;
 
-    code.full     = ins->opcode;
-    ins->num_ops  = 0;
-    ins->size    += 2;
+    code.full    = ins->opcode;
+    ins->num_ops = 0;
+    ins->size   += 2;
 
     rw_reg = X64DecodeWDef32Bit( code.type1.w, ins );
 
@@ -2022,22 +2234,23 @@ dis_handler_return X64ModRMImm_16( dis_handle *h, void *d, dis_dec_ins *ins )
     if( DIF_X64_ADDR_SIZE & ins->flags )
         rw_mod = RW_32BIT;
 
-    X64GetModRM( rw_mod, code.type1.mod, rw_reg, code.type1.rm, d, ins, X64GetRefType( rw_reg, ins ) );
+    X64GetModRM( rw_mod, code.type1.mod, rw_reg, code.type1.rm, d, ins, 
+                 X64GetRefType( rw_reg, ins ) );
 
-    switch(ins->type ) {
-/*    case DI_X86_rcl2:
-    case DI_X86_rcr2:
-    case DI_X86_ror2:
-    case DI_X86_rol2:
-    case DI_X86_sar2:
-    case DI_X86_shr2:
-    case DI_X86_shl2:
-        X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
+    switch( ins->type ) {
+    case DI_X64_rcl2:
+    case DI_X64_rcr2:
+    case DI_X64_ror2:
+    case DI_X64_rol2:
+    case DI_X64_sar2:
+    case DI_X64_shr2:
+    case DI_X64_shl2:
+        X64GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
         break;
-    case DI_X86_mov2:
-    case DI_X86_test3:
-        X86GetImmedVal( S_DEFAULT, code.type1.w, d, ins );
-        break;*/
+    case DI_X64_mov2:
+    case DI_X64_test3:
+        X64GetImmedVal( S_DEFAULT, code.type1.w, d, ins );
+        break;
     default:
         X64GetImmedVal( code.type1.s, code.type1.w, d, ins );
         break;
@@ -2046,22 +2259,22 @@ dis_handler_return X64ModRMImm_16( dis_handle *h, void *d, dis_dec_ins *ins )
 }
 
 dis_handler_return X64Reg_16( dis_handle *h, void *d , dis_dec_ins *ins )
-/**********************************************************************/
+/***********************************************************************/
 //  Format:
 //  Byte       OOOO OOOO OOOO ORRR
 //                op1          reg
 {
-    code_16  code;
-    RM       reg;
-    REGWIDTH rw = RW_32BIT;
+    code_16     code;
+    RM          reg;
+    REGWIDTH    rw = RW_32BIT;
 
-    code.full       = ins->opcode;
-    ins->num_ops    = 0;
-    ins->size      += 2;
+    code.full    = ins->opcode;
+    ins->num_ops = 0;
+    ins->size   += 2;
 
     reg = code.type1.rm;
 
-    // if rex.w present then instruction is 64-bit
+    // if REX.W present then instruction is 64-bit
     if( DIF_X64_REX_W & ins->flags ) {
         rw = RW_64BIT;
     }
@@ -2072,7 +2285,50 @@ dis_handler_return X64Reg_16( dis_handle *h, void *d , dis_dec_ins *ins )
     }
 
     X64GetReg( rw, reg, ins );
+    return( DHR_DONE );
+}
 
+dis_handler_return X64JmpCC_16( dis_handle *h, void *d, dis_dec_ins *ins )
+/*************************************************************************
+ *  Jump Handler
+ */
+{
+    code_16     code;
+
+    code.full = ins->opcode;
+    ins->size += 2;
+    ins->num_ops = 0;
+    X64GetRelVal( d, ins );
+    return( DHR_DONE );
+}
+
+dis_handler_return X64SRegModRM_16( dis_handle *h, void * d, dis_dec_ins *ins )
+/*****************************************************************************/
+{
+    code_16     code;
+    REGWIDTH    rw_reg;
+
+    code.full     = ins->opcode;
+    ins->size    += 2;
+    ins->num_ops  = 0;
+
+    rw_reg = X64DecodeWDef32Bit( W_DEFAULT, ins );
+
+    if( code.type2.dir ) {
+        X64GetSReg( RW_DEFAULT, code.type2.reg, ins );
+        if( ins->op[0].base == DR_NONE ) {
+            return ( DHR_INVALID );
+        }
+        X64GetModRM( RW_DEFAULT, code.type2.mod, rw_reg, code.type2.rm, d, ins, 
+                     X64GetRefType( rw_reg, ins ) );
+    } else {
+        X64GetModRM( RW_DEFAULT, code.type2.mod, rw_reg, code.type2.rm, d, ins,
+                     X64GetRefType( rw_reg, ins ) );
+        X64GetSReg( RW_DEFAULT, code.type2.reg, ins );
+        if( ins->op[1].base == DR_NONE ) {
+            return( DHR_INVALID );
+        }
+    }
     return( DHR_DONE );
 }
 
@@ -2104,81 +2360,209 @@ typedef union {
 } code_24;
 
 
-dis_handler_return X64RegModRM_24B( dis_handle *h, void *d, dis_dec_ins *ins )
-/**********************************************************************/
-// Format:    OOOO OOOO OOOO OOOO MM REG RRR
-//                     op1       mod reg1 rm/reg2
+dis_handler_return X64SetCC( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************
+ *  SetCC instruction
+ */
 {
-    code_24 code;
+    code_24     code;
+    REGWIDTH    rw_reg = RW_8BIT;
 
     code.full = ins->opcode;
-    ins->size    += 3;
+    ins->num_ops = 0;
+    ins->size += 3;
+    X64GetModRM( rw_reg, code.type1.mod, rw_reg, code.type1.rm, d, ins, 
+                 X64GetRefType( rw_reg, ins ) );
+    return( DHR_DONE );
+}
+
+dis_handler_return X64MovCC_24( dis_handle *h, void *d, dis_dec_ins *ins )
+/*************************************************************************
+ *  MovCC instruction
+ */
+{
+    code_24     code;
+
+    // TODO: Merge with X64ModRM_24B
+    code.full   = ins->opcode;
+    ins->size   += 3;
     ins->num_ops = 0;
 
-/*    if( code.type1.mod == MOD_3 ) {
+    // The r/rm fields are reversed for CMOVcc instructions
+    X64GetRegModRM_B( D_REG_RM, code.type1.mod, code.type1.rm,
+                       code.type1.reg, d, ins );
+
+    return( DHR_DONE );
+}
+
+dis_handler_return X64ModRM_24( dis_handle *h, void *d, dis_dec_ins *ins )
+/************************************************************************/
+// Format:    OOOO OOOO OOOO OOOO    MM   OOO RRR
+//                      op1         mod  op2 rm/reg2
+{
+
+    code_24     code;
+    REGWIDTH    rw_reg = RW_32BIT;
+
+    code.full    = ins->opcode;
+    ins->num_ops = 0;
+    ins->size   += 3;
+
+    if( code.type1.mod == MOD_3 ) {
         switch( ins->type ) {
-        case DI_X86_lgs:
-        case DI_X86_lss:
-        case DI_X86_lfs:
+//        case DI_X64_lgdt:
+//        case DI_X64_lidt:
+//        case DI_X64_sgdt:
+//        case DI_X64_sidt00:
+//        case DI_X64_sidt01:
+//        case DI_X64_sidt10:
+        case DI_X64_cmpxchg8b:
             return( DHR_INVALID );
         default:
             break;
         }
-    }*/
+    }
 
-    switch(ins->type) {
-/*    case DI_X86_cmpxchg8b:
-        X86GetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins,
-                               X86GetRefType( W_DEFAULT ,ins ) );
+    X64GetModRM( W_DEFAULT, code.type1.mod, rw_reg, code.type1.rm, d, ins,
+                 X64GetRefType( rw_reg, ins ) );
+    return( DHR_DONE );
+}
+
+dis_handler_return X64RegModRM_24( dis_handle *h, void *d, dis_dec_ins *ins )
+/***************************************************************************/
+// Format:    OOOO OOOO OOOO OO   D         W MM   REG RRR
+//                       op1    direction   w mod reg1 rm/reg2
+{
+
+    code_24     code;
+
+    code.full    = ins->opcode;
+    ins->size   += 3;
+    ins->num_ops = 0;
+    X64GetRegModRM( code.type2.dir, code.type2.w, code.type2.mod,
+                    code.type2.rm, code.type2.reg, d, ins );
+    return( DHR_DONE );
+}
+
+dis_handler_return X64RegModRM_24B( dis_handle *h, void *d, dis_dec_ins *ins )
+/****************************************************************************/
+// Format:    OOOO OOOO OOOO OOOO MM REG RRR
+//                     op1       mod reg1 rm/reg2
+{
+    code_24     code;
+
+    code.full    = ins->opcode;
+    ins->size   += 3;
+    ins->num_ops = 0;
+
+    if( code.type1.mod == MOD_3 ) {
+        switch( ins->type ) {
+        case DI_X64_lgs:
+        case DI_X64_lss:
+        case DI_X64_lfs:
+            return( DHR_INVALID );
+        default:
+            break;
+        }
+    }
+
+    switch( ins->type ) {
+    case DI_X64_cmpxchg8b:
+        X64GetRegModRM_B( D_RM_REG, code.type1.mod, code.type1.rm,
+                          code.type1.reg, d, ins );
         break;
-    case DI_X86_shld:
-    case DI_X86_shrd:
-        X86GetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins,
-                               X86GetRefType( W_DEFAULT ,ins ) );
-        X86GetReg( W_DEFAULT, code.type1.reg, ins );
-        ins->op[ins->num_ops].base = DR_X86_cl;
+    case DI_X64_shld:
+    case DI_X64_shrd:
+        X64GetRegModRM_B( D_RM_REG, code.type1.mod, code.type1.rm,
+                          code.type1.reg, d, ins );
+        ins->op[ins->num_ops].base = DR_X64_cl;
         ins->op[ins->num_ops].type = DO_REG;
         ++ins->num_ops;
         break;
-    case DI_X86_shld2:
-    case DI_X86_shrd2:
-        X86GetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins,
-                               X86GetRefType( W_DEFAULT ,ins ) );
-        X86GetReg( W_DEFAULT, code.type1.reg, ins );
+    case DI_X64_shld2:
+    case DI_X64_shrd2:
+        X64GetRegModRM_B( D_RM_REG, code.type1.mod, code.type1.rm,
+                          code.type1.reg, d, ins );
         ins->op[ins->num_ops].value = GetUByte( d, ins->size );
         ins->op[ins->num_ops].type = DO_IMMED;
-        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
+        ins->op[ins->num_ops].ref_type = DRT_X64_BYTE;
         ++ins->size;
         ++ins->num_ops;
-        break;*/
+        break;
     case DI_X64_bt:
     case DI_X64_btc:
     case DI_X64_btr:
     case DI_X64_bts:
         X64GetRegModRM_B( D_RM_REG, code.type1.mod, code.type1.rm,
-                           code.type1.reg, d, ins );
+                          code.type1.reg, d, ins );
         break;
     default:
         X64GetRegModRM_B( D_REG_RM, code.type1.mod, code.type1.rm,
-                           code.type1.reg, d, ins );
+                          code.type1.reg, d, ins );
         break;
     }
     return( DHR_DONE );
 }
 
+dis_handler_return X64RegModRM_24C( dis_handle *h, void *d, dis_dec_ins *ins )
+/****************************************************************************/
+// Format:    OOOO OOOO : OOOO OOOW : MM REG RRR
+//                  op1     op2   w  mod reg1 rm/reg2
+// 
+// Used for movsx/movzx - different dest/src operand sizes
+{
+    code_24     code;
+    REGWIDTH    rw_mod = RW_32BIT;
+    REGWIDTH    rw_reg = RW_32BIT;
+    RM          reg;
+
+    code.full    = ins->opcode;
+    ins->size   += 3;
+    ins->num_ops = 0;
+
+    // destination is 16-bit if opcode prefix is present
+    if( DIF_X64_OPND_SIZE & ins->flags ) {
+        rw_reg = RW_16BIT;
+    }
+
+    // destination is 64-bit if REX.W set
+    if( DIF_X64_REX_W & ins->flags ) {
+        rw_reg = RW_64BIT;
+    }
+
+    // source is 8-bit if W bit not set
+    if( code.type1.w == W_BYTE ) {
+        rw_mod = RW_8BIT;
+    } else {
+        rw_mod = RW_16BIT;
+    }
+
+    // REX.R modifies reg to access r8-r15
+    reg = code.type1.reg;
+    if( DIF_X64_REX_R & ins->flags ) {
+        reg += X64_EXTENDED_REG_OFFSET;
+    }
+
+    X64GetReg( rw_reg, reg, ins );
+    X64GetModRM( rw_mod, code.type1.mod, rw_mod, code.type1.rm, d, ins,
+                 X64GetRefType( rw_mod, ins ) );
+
+    return( DHR_DONE );
+}
+
 dis_handler_return X64ModRMImm_24( dis_handle *h, void *d, dis_dec_ins *ins )
-/**********************************************************************/
+/***************************************************************************/
 // Format:    OOOO OOOO OOOO OO S X   MM  OOO RRR
-//                op1    op2    s X  mod op3 rm
+//                op1    op2    s X   mod op3 rm
 
 {
-    code_24  code;
-    REGWIDTH rw_mod = RW_32BIT;
-    REGWIDTH rw_reg = RW_32BIT;
-    RM       reg;
+    code_24     code;
+    REGWIDTH    rw_mod = RW_32BIT;
+    REGWIDTH    rw_reg = RW_32BIT;
+    RM          reg;
 
-    code.full     = ins->opcode;
-    ins->size    += 3;
+    code.full    = ins->opcode;
+    ins->size   += 3;
     ins->num_ops = 0;
 
     reg = code.type1.rm;
@@ -2189,7 +2573,7 @@ dis_handler_return X64ModRMImm_24( dis_handle *h, void *d, dis_dec_ins *ins )
         rw_reg = RW_16BIT;
     }
 
-    // modrm is 64 bit if rex.w set
+    // modrm is 64 bit if REX.W set
     if( DIF_X64_REX_W & ins->flags ) {
         rw_mod = rw_reg = RW_64BIT;
     }
@@ -2199,12 +2583,12 @@ dis_handler_return X64ModRMImm_24( dis_handle *h, void *d, dis_dec_ins *ins )
         reg += X64_EXTENDED_REG_OFFSET;
     }
 
-    X64GetModRM( rw_mod, code.type1.mod, rw_reg, reg, d, ins, X64GetRefType( rw_reg ,ins ) );
+    X64GetModRM( rw_mod, code.type1.mod, rw_reg, reg, d, ins, 
+                 X64GetRefType( rw_reg, ins ) );
 
     //BUGBUG: Check X64GetImmedVal because the disassembly of bt <reg>, 0x9A is bt <reg>, 0xffffff9a!!
 
     X64GetImmedVal( code.type1.s, W_DEFAULT, d, ins );
-
     return( DHR_DONE );
 }
 
@@ -2310,16 +2694,17 @@ static unsigned UnixMangleName( dis_dec_ins *ins, char *p, unsigned len )
     case DI_X64_wbinvd:
     case DI_X64_wrmsr:
         return( len );
+*/
     case DI_X64_movsx:
     case DI_X64_movzx:
         len = AddRefType( p, len, GetRefType( ins, 0 ) );
         ref_type = GetRefType( ins, 1 );
         break;
-    case DI_X64_call3:
+//    case DI_X64_call3:
     case DI_X64_call4:
         strcpy( p, "lcall" );
         return( 5 );
-    case DI_X64_jmp3:
+//    case DI_X64_jmp3:
     case DI_X64_jmp4:
         strcpy( p, "ljmp" );
         return( 4 );
@@ -2338,7 +2723,7 @@ static unsigned UnixMangleName( dis_dec_ins *ins, char *p, unsigned len )
         return( 4 );
     case DI_X64_cdq:
         strcpy( p, "cltd" );
-        return( 4 );*/
+        return( 4 );
     default:
         for( i = 0; i < ins->num_ops; ++i ) {
             ref_type = GetRefType( ins, i );
@@ -2351,7 +2736,7 @@ static unsigned UnixMangleName( dis_dec_ins *ins, char *p, unsigned len )
 
 static unsigned X64InsHook( dis_handle *h, void *d, dis_dec_ins *ins,
         dis_format_flags flags, char *name )
-/**********************************************************************/
+/*******************************************************************/
 {
     unsigned    len;
     char        *p;
@@ -2439,8 +2824,8 @@ static unsigned X64InsHook( dis_handle *h, void *d, dis_dec_ins *ins,
 }
 
 static unsigned X64FlagHook( dis_handle *h, void *d, dis_dec_ins *ins,
-        dis_format_flags flags, char *name )
-/**********************************************************************/
+                             dis_format_flags flags, char *name )
+/********************************************************************/
 {
     return( 0 );
 }
@@ -2499,7 +2884,7 @@ static char *DisOpUnixFormat( void *d, dis_dec_ins *ins, dis_format_flags flags,
 }
 
 static char *DisOpMasmFormat( void *d, dis_dec_ins *ins, dis_format_flags flags,
-                        unsigned i, char *p )
+                              unsigned i, char *p )
 {
     unsigned    len;
 
@@ -2578,7 +2963,7 @@ static int NeedSizing( dis_dec_ins *ins, dis_format_flags flags, unsigned op_num
 
 static unsigned X64OpHook( dis_handle *h, void *d, dis_dec_ins *ins,
         dis_format_flags flags, unsigned op_num, char *op_buff )
-/**********************************************************************/
+/******************************************************************/
 {
     char        over;
     char        *p;
@@ -2649,22 +3034,24 @@ static unsigned X64OpHook( dis_handle *h, void *d, dis_dec_ins *ins,
     case DO_ABSOLUTE:
     case DO_RELATIVE:
         if( ( flags & DFF_ASM ) && !( flags & DFF_X86_UNIX ) ) {
-/*            switch( ins->type ) {
+            switch( ins->type ) {
             case DI_X64_call:
             case DI_X64_jmp1:
                 #define NEAR_PTR        "near ptr "
                 memcpy( p, NEAR_PTR, sizeof( NEAR_PTR ) - 1 );
                 p += sizeof( NEAR_PTR ) - 1;
                 break;
+#if 0
             case DI_X64_call3:
             case DI_X64_jmp3:
                 #define FAR_PTR "far ptr "
                 memcpy( p, FAR_PTR, sizeof( FAR_PTR ) - 1 );
                 p += sizeof( FAR_PTR ) - 1;
                 break;
+#endif
             default:
                 break;
-            }*/
+            }
         }
         break;
     }
