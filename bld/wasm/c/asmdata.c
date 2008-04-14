@@ -37,16 +37,12 @@
 
 #if defined( _STANDALONE_ )
   #include "directiv.h"
+  #include "asmstruc.h"
 #endif
 
 #ifndef min
 #define min(x,y) (((x) < (y)) ? (x) : (y))
 #endif
-
-/* structure stuff from asmstruct */
-extern int              InitializeStructure( asm_sym *, asm_sym *, int );
-extern int              AddFieldToStruct( int );
-extern int              GetStructSize( asm_sym * );
 
 #if defined( _STANDALONE_ )
 

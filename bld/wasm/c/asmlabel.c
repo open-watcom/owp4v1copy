@@ -37,8 +37,7 @@
 #if defined( _STANDALONE_ )
 
 #include "directiv.h"
-
-extern int                  AddFieldToStruct( int );
+#include "asmstruc.h"
 
 static unsigned             AnonymousCounter = 0;
 

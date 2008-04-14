@@ -36,6 +36,7 @@
 #include "asmalloc.h"
 #include "directiv.h"
 #include "asminput.h"
+#include "asmstruc.h"
 
 a_definition_struct Definition = { 0, NULL, NULL };
 
