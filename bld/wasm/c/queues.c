@@ -35,6 +35,7 @@
 #include "directiv.h"
 #include "queue.h"
 #include "queues.h"
+#include "objrec.h"
 
 #include "myassert.h"
 
@@ -248,81 +249,41 @@ void AddLnameData( dir_node *dir )
     QAddItem( &LnameQueue, dir );
 }
 
-direct_idx FindLnameIdx( char *name )
-/***********************************/
+bool GetLnameData( obj_rec *objr )
+/********************************/
 {
-    queuenode           *node;
-    dir_node            *dir;
-
-    if( LnameQueue == NULL )
-        return( LNAME_NULL);
-
-    for( node = LnameQueue->head; node != NULL; node = node->next ) {
-        dir = (dir_node *)node->data;
-        if( dir->sym.state != SYM_CLASS_LNAME )
-            continue;
-        if( stricmp( dir->sym.name, name ) == 0 ) {
-            return( dir->e.lnameinfo->idx );
-        }
-    }
-    return( LNAME_NULL );
-}
-
-char *GetLname( direct_idx idx )
-/******************************/
-{
-    queuenode           *node;
-    dir_node            *dir;
-
-    if( LnameQueue == NULL )
-        return( NULL);
-
-    for( node = LnameQueue->head; node != NULL; node = node->next ) {
-        dir = (dir_node *)node->data;
-        if( dir->sym.state != SYM_CLASS_LNAME )
-            continue;
-        if( dir->e.lnameinfo->idx == idx ) {
-            return( dir->sym.name );
-        }
-    }
-    return( NULL );
-}
-
-unsigned GetLnameData( char **data )
-/**********************************/
-{
-    char            *lname = NULL;
-    unsigned        total_size = 0;
     queuenode       *curr;
     dir_node        *dir;
-    int             len;
+    unsigned        len;
 
     if( LnameQueue == NULL )
-        return( 0 );
+        return( FALSE );
 
+    len = 0;
     for( curr = LnameQueue->head; curr != NULL ; curr = curr->next ) {
         dir = (dir_node *)(curr->data);
-        myassert( dir != NULL );
-        total_size += 1 + strlen( dir->sym.name );
+        len += strlen( dir->sym.name ) + 1;
     }
-
-    if( total_size > 0 ) {
-        int     i = 0;
-
-        lname = AsmAlloc( total_size * sizeof( char ) + 1 );
-        for( curr = LnameQueue->head; curr != NULL ; curr = curr->next ) {
-            dir = (dir_node *)(curr->data);
-
-            len = strlen( dir->sym.name );
-            lname[i] = (char)len;
-            i++;
-            strcpy( lname+i, dir->sym.name );
-            //For the Q folks... strupr( lname+i );
-            i += len; // overwrite the null char
+    ObjAllocData( objr, len );
+    for( curr = LnameQueue->head; curr != NULL ; curr = curr->next ) {
+        dir = (dir_node *)curr->data;
+        len = strlen( dir->sym.name );
+        ObjPut8( objr, len );
+        ObjPut( objr, dir->sym.name, len );
+        objr->d.lnames.num_names++;
+        switch( dir->sym.state ) {
+        case SYM_GRP:
+            dir->e.grpinfo->idx = objr->d.lnames.num_names;
+            break;
+        case SYM_SEG:
+            dir->e.seginfo->idx = objr->d.lnames.num_names;
+            break;
+        case SYM_CLASS_LNAME:
+            dir->e.lnameinfo->idx = objr->d.lnames.num_names;
+            break;
         }
     }
-    *data = lname;
-    return( total_size );
+    return( TRUE );
 }
 
 static void FreeLnameQueue( void )

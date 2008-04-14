@@ -83,7 +83,6 @@ enum {
     TAB_CONST,
     TAB_PROC,
     TAB_MACRO,
-    TAB_LNAME,
     TAB_CLASS_LNAME,
     TAB_STRUCT,
     TAB_GLOBAL,
@@ -128,31 +127,35 @@ typedef struct seg_list {
 } seg_list;
 
 typedef struct {
-    direct_idx          idx;            // its group index
+    direct_idx          idx;            // group lname/order index
     seg_list            *seglist;       // list of segments in the group
     uint                numseg;         // number of segments in the group
-    direct_idx          lname_idx;
 } grp_info;
 
 typedef struct {
-    obj_rec             *segrec;
+    direct_idx          idx;            // segment lname/order index
     struct asm_sym      *group;         // its group
     uint_32             start_loc;      // starting offset of current ledata or lidata
-    unsigned            readonly:1;     // if the segment is readonly
-    unsigned            ignore:1;       // ignore this if the seg is redefined
+    unsigned            readonly    :1; // if the segment is readonly
+    unsigned            ignore      :1; // ignore this if the seg is redefined
+    unsigned            align       :4;
+    unsigned            combine     :4;
+    unsigned            use_32      :1;
     seg_type            iscode;         // segment is belonging to "CODE" or 'DATA' class
-    direct_idx          lname_idx;
     uint_32             current_loc;    // current offset in current ledata or lidata
+    uint_32             length;
+    uint_16             abs_frame;
+    struct asm_sym      *class_name;
 } seg_info;
 
 typedef struct {
-    uint                idx;            // external definition index
+    direct_idx          idx;            // external definition index
     unsigned            use32:1;
     unsigned            comm:1;
 } ext_info;
 
 typedef struct {
-    uint                idx;            // external definition index
+    direct_idx          idx;            // external definition index
     unsigned            use32:1;
     unsigned            comm:1;
     unsigned long       size;
@@ -278,7 +281,6 @@ typedef struct a_definition_struct {
 } a_definition_struct;
 
 extern a_definition_struct      Definition;
-extern uint                     LnamesIdx;      // Number of LNAMES definition
 
 typedef struct {
     dist_type           distance;        // stack distance;
@@ -289,7 +291,7 @@ typedef struct {
     unsigned            cmdline:1;
     unsigned            defUse32:1;      // default segment size 32-bit
     unsigned            mseg:1;          // mixed segments (16/32-bit)
-    unsigned            flat_idx;        // index of FLAT group
+    dir_node            *flat_grp;       // FLAT group
     char                name[_MAX_FNAME];// name of module
     const FNAME         *srcfile;
 } module_info;                           // Information about the module
@@ -322,9 +324,6 @@ extern void             dir_change( dir_node *, int );
 extern void             IdxInit( void );
 /* Initialize all the index variables */
 
-extern direct_idx       GetLnameIdx( char * );
-
-extern direct_idx       LnameInsert( char * );  // Insert a lname
 extern uint_32          GetCurrAddr( void );    // Get offset from current segment
 
 extern dir_node         *GetCurrSeg( void );

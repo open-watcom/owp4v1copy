@@ -31,6 +31,8 @@
 #ifndef _QUEUES_H_
 #define _QUEUES_H_
 
+#include "objrec.h"
+
 typedef struct line_num_info {
     unsigned_16 number;
     unsigned_32 offset;
@@ -43,10 +45,7 @@ extern void     AddGlobalData( dir_node *data );
 extern void     AddAliasData( char *data );
 extern void     AddLinnumData( struct line_num_info *data );
 
-extern direct_idx FindLnameIdx( char * );
-extern char     *GetLname( direct_idx );
-
-extern unsigned GetLnameData( char ** );
+extern bool     GetLnameData( obj_rec * );
 extern char     *GetAliasData( bool );
 extern uint     GetPublicData( uint *, uint *, char *, char ***, struct pubdef_data **, bool *, bool );
 extern int      GetLinnumData( struct linnum_data **ldata, bool *need32 );

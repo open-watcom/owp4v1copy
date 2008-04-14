@@ -47,7 +47,6 @@ enum sym_state {
         SYM_CONST,          // constant - created with EQU, =, or /D on the cmdline
         SYM_LIB,            // included library
         SYM_EXT,            // extern def.
-        SYM_LNAME,          // lname entry
         SYM_CLASS_LNAME,    // lname entry for segment class ... not in symbol table
         SYM_STRUCT_FIELD,   // field defined in some structure
         SYM_STRUCT          // structure

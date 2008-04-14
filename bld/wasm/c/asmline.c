@@ -662,9 +662,8 @@ void AsmByte( unsigned char byte )
 #if defined( _STANDALONE_ )
     if( CheckHaveSeg() ) {
         (CurrSeg->seg->e.seginfo->current_loc)++;
-        if( CurrSeg->seg->e.seginfo->current_loc >=
-            CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length ) {
-            CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length = CurrSeg->seg->e.seginfo->current_loc;
+        if( CurrSeg->seg->e.seginfo->current_loc >= CurrSeg->seg->e.seginfo->length ) {
+            CurrSeg->seg->e.seginfo->length = CurrSeg->seg->e.seginfo->current_loc;
         }
         if( Parse_Pass != PASS_1 && write_to_file ) {
             AsmCodeBuffer[BufSize] = byte;

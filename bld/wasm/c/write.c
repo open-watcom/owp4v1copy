@@ -90,9 +90,6 @@ unsigned long           PassTotal;      // Total number of ledata bytes generate
 int_8                   PhaseError;
 char                    EndDirectiveFound = FALSE;
 
-extern uint             segdefidx;      // Number of Segment definition
-extern uint             extdefidx;      // Number of Extern definition
-
 static char             **NameArray;
 
 global_vars     Globals = { 0, 0, 0, 0, 0, 0, 0 };
@@ -165,7 +162,7 @@ static void write_init( void )
     write_to_file = TRUE;
 
     IdxInit();
-    LnameInsert( "" );
+    AddLnameData( dir_insert( "", TAB_CLASS_LNAME ) );
 
     ModuleInit();
     FixInit();
@@ -303,46 +300,42 @@ static void write_export( void )
 static void write_grp( void )
 /***************************/
 {
-    dir_node        *curr;
+    dir_node        *grp;
     dir_node        *segminfo;
     seg_list        *seg;
-    obj_rec         *grp;
+    obj_rec         *objr;
     unsigned long   line_num;
-    char            writeseg;
-    unsigned        i = 1;
+    direct_idx      grp_idx;
 
     line_num = LineNumber;
-
-    for( curr = Tables[TAB_GRP].head; curr; curr = curr->next, i++ ) {
-
-        grp = ObjNewRec( CMD_GRPDEF );
-        /**/myassert( grp != NULL );
-
-        grp->d.grpdef.idx = curr->e.grpinfo->idx;
-
+    grp_idx = 0;
+    for( grp = Tables[TAB_GRP].head; grp; grp = grp->next ) {
+        objr = ObjNewRec( CMD_GRPDEF );
+        /**/myassert( objr != NULL );
+        grp_idx++;
+        objr->d.grpdef.idx = grp_idx;
         /* we might need up to 3 bytes for each seg in dgroup and 1 byte for
            the group name index */
-        ObjAllocData( grp, 1 + 3 * curr->e.grpinfo->numseg );
-        ObjPut8( grp, GetLnameIdx( curr->sym.name ) );
-
-        for( seg = curr->e.grpinfo->seglist; seg; seg = seg->next ) {
-            writeseg = TRUE;
-            segminfo = (dir_node *)(seg->seg);
-            if( ( segminfo->sym.state != SYM_SEG ) || ( segminfo->sym.segment == NULL ) ) {
-                LineNumber = curr->line_num;
+        ObjAllocData( objr, 1 + 3 * grp->e.grpinfo->numseg );
+        ObjPut8( objr, grp->e.grpinfo->idx );
+        for( seg = grp->e.grpinfo->seglist; seg != NULL; seg = seg->next ) {
+            segminfo = (dir_node *)seg->seg;
+            if( segminfo->sym.segment == NULL ) {
+                LineNumber = grp->line_num;
                 AsmErr( SEG_NOT_DEFINED, segminfo->sym.name );
                 write_to_file = FALSE;
                 LineNumber = line_num;
             } else {
-                ObjPut8( grp, GRP_SEGIDX );
-                ObjPutIndex( grp, segminfo->e.seginfo->segrec->d.segdef.idx);
+                ObjPut8( objr, GRP_SEGIDX );
+                ObjPutIndex( objr, segminfo->e.seginfo->idx);
             }
         }
+        grp->e.grpinfo->idx = grp_idx;
         if( write_to_file ) {
-            ObjTruncRec( grp );
-            write_record( grp, TRUE );
+            ObjTruncRec( objr );
+            write_record( objr, TRUE );
         } else {
-            ObjKillRec( grp );
+            ObjKillRec( objr );
         }
     }
 }
@@ -350,47 +343,42 @@ static void write_grp( void )
 static void write_seg( void )
 /***************************/
 {
-    dir_node    *curr;
+    dir_node    *dir;
     obj_rec     *objr;
-    uint        seg_index;
-    uint        total_segs = 0;
+    uint        seg_idx;
 
-    for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
-        if( ( curr->sym.segment == NULL )
-          && ( curr->e.seginfo->group == NULL ) )
-            AsmErr( SEG_NOT_DEFINED, curr->sym.name );
-        total_segs++;
-    }
-
-    for( seg_index = 1; seg_index <= total_segs; seg_index++ ) {
-        /* find segment by index */
-        for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
-            if( GetSegIdx( curr->sym.segment ) == seg_index ) {
-                break;
-            }
-        }
-        if( curr == NULL )
-            continue;
-        if( curr->sym.state != SYM_SEG ) {
-            AsmErr( SEG_NOT_DEFINED, curr->sym.name );
+    seg_idx = 0;
+    for( dir = Tables[TAB_SEG].head; dir; dir = dir->next ) {
+        if( dir->sym.segment == NULL ) {
+            AsmErr( SEG_NOT_DEFINED, dir->sym.name );
             continue;
         }
-        objr = curr->e.seginfo->segrec;
+        seg_idx++;
+        objr = ObjNewRec( CMD_SEGDEF );
         objr->is_32 = TRUE;
         objr->d.segdef.ovl_name_idx = 1;
-        objr->d.segdef.seg_name_idx = GetLnameIdx( curr->sym.name );
+        objr->d.segdef.seg_name_idx = dir->e.seginfo->idx;
+        objr->d.segdef.class_name_idx = ((dir_node *)dir->e.seginfo->class_name)->e.lnameinfo->idx;
+        objr->d.segdef.seg_length = dir->e.seginfo->length;
+        objr->d.segdef.align = dir->e.seginfo->align;
+        objr->d.segdef.combine = dir->e.seginfo->combine;
+        objr->d.segdef.use_32 = dir->e.seginfo->use_32;
+        objr->d.segdef.access_valid = FALSE;
+        objr->d.segdef.abs.frame = dir->e.seginfo->abs_frame;
+        objr->d.segdef.abs.offset = 0;
+        objr->d.segdef.idx = seg_idx;
         write_record( objr, FALSE );
-        if( curr->e.seginfo->iscode == SEGTYPE_ISCODE ) {
-            obj_rec     *rec;
 
-            rec = ObjNewRec( CMD_COMENT );
-            rec->d.coment.attr = CMT_TNP;
-            rec->d.coment.class = CMT_LINKER_DIRECTIVE;
-            ObjAllocData( rec, 3  );
-            ObjPut8( rec, LDIR_OPT_FAR_CALLS );
-            ObjPutIndex( rec, seg_index );
-            write_record( rec, TRUE );
+        if( dir->e.seginfo->iscode == SEGTYPE_ISCODE ) {
+            objr = ObjNewRec( CMD_COMENT );
+            objr->d.coment.attr = CMT_TNP;
+            objr->d.coment.class = CMT_LINKER_DIRECTIVE;
+            ObjAllocData( objr, 3  );
+            ObjPut8( objr, LDIR_OPT_FAR_CALLS );
+            ObjPutIndex( objr, seg_idx );
+            write_record( objr, TRUE );
         }
+        dir->e.seginfo->idx = seg_idx;
     }
 }
 
@@ -398,18 +386,15 @@ static void write_lnames( void )
 /******************************/
 {
     obj_rec     *objr;
-    uint        total_size = 0;
-    char        *lname = NULL;
 
     objr = ObjNewRec( CMD_LNAMES );
     objr->d.lnames.first_idx = 1;
-    objr->d.lnames.num_names = LnamesIdx;
-    total_size = GetLnameData( &lname );
-    if( total_size > 0 ) {
-        ObjAttachData( objr, (uint_8 *)lname, total_size );
+    objr->d.lnames.num_names = 0;
+    if( GetLnameData( objr ) ) {
+        write_record( objr, TRUE );
+    } else {
+        ObjKillRec( objr );
     }
-    ObjCanFree( objr );
-    write_record( objr, TRUE );
 }
 
 static void write_global( void )
@@ -728,7 +713,7 @@ static void write_linnum( void )
         objr->d.linnum.num_lines = count;
         objr->d.linnum.lines = ldata;
         objr->d.linnum.d.base.grp_idx = GetGrpIdx( GetGrp( &GetCurrSeg()->sym ) ); // fixme ?
-        objr->d.linnum.d.base.seg_idx = CurrSeg->seg->e.seginfo->segrec->d.segdef.idx;
+        objr->d.linnum.d.base.seg_idx = CurrSeg->seg->e.seginfo->idx;
         objr->d.linnum.d.base.frame = 0; // fixme ?
 
         write_record( objr, TRUE );
@@ -818,11 +803,10 @@ static void write_ledata( void )
     if( BufSize > 0 ) {
         objr = ObjNewRec( CMD_LEDATA );
         ObjAttachData( objr, AsmCodeBuffer, BufSize );
-        objr->d.ledata.idx = CurrSeg->seg->e.seginfo->segrec->d.segdef.idx;
+        objr->d.ledata.idx = CurrSeg->seg->e.seginfo->idx;
         objr->d.ledata.offset = CurrSeg->seg->e.seginfo->start_loc;
         if( objr->d.ledata.offset > 0xffffUL )
             objr->is_32 = TRUE;
-        CurrSeg->seg->e.seginfo->start_loc = CurrSeg->seg->e.seginfo->current_loc;
         write_record( objr, TRUE );
 
         /* Process Fixup, if any */
@@ -854,6 +838,7 @@ static void write_ledata( void )
         if( Options.debug_flag ) {
             write_linnum();
         }
+        CurrSeg->seg->e.seginfo->start_loc = CurrSeg->seg->e.seginfo->current_loc;
     }
 }
 
@@ -1007,8 +992,8 @@ static void reset_seg_len( void )
     for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
         if( ( curr->sym.state != SYM_SEG ) || ( curr->sym.segment == NULL ) )
             continue;
-        if( curr->e.seginfo->segrec->d.segdef.combine != COMB_STACK ) {
-            curr->e.seginfo->segrec->d.segdef.seg_length = 0;
+        if( curr->e.seginfo->combine != COMB_STACK ) {
+            curr->e.seginfo->length = 0;
         }
         curr->e.seginfo->start_loc = 0; // fixme ?
         curr->e.seginfo->current_loc = 0;

@@ -403,7 +403,7 @@ static struct asm_sym **SortAsmSyms( void )
 const char *get_seg_align( seg_info *seg )
 /****************************************/
 {
-    switch( seg->segrec->d.segdef.align ) {
+    switch( seg->align ) {
     case ALIGN_ABS:
     case ALIGN_BYTE:
         return( "Byte " );
@@ -425,7 +425,7 @@ const char *get_seg_align( seg_info *seg )
 static const char *get_seg_combine( seg_info *seg )
 /*************************************************/
 {
-    switch( seg->segrec->d.segdef.combine ) {
+    switch( seg->combine ) {
     case COMB_INVALID:
         return( "Private " );
     case COMB_STACK:
@@ -446,13 +446,13 @@ static void log_segment( struct asm_sym *sym, struct asm_sym *group )
 
         if( seg->group == group ) {
             LstMsg( "%s %s        ", sym->name, dots + strlen( sym->name ) + 1 );
-            if( seg->segrec->d.segdef.use_32 ) {
+            if( seg->use_32 ) {
                 LstMsg( "32 Bit   %08lX ", seg->current_loc );
             } else {
                 LstMsg( "16 Bit   %04lX     ", seg->current_loc );
             }
             LstMsg( "%s   %s", get_seg_align( seg ), get_seg_combine( seg ) );
-            LstMsg( "'%s'\n", GetLname( seg->segrec->d.segdef.class_name_idx ) );
+            LstMsg( "'%s'\n", seg->class_name->name );
         }
     }
 }
@@ -654,17 +654,16 @@ static void DumpSymbol( struct asm_sym *sym )
     switch( sym->state ) {
     case SYM_SEG:
         type = "SEGMENT";
-//        dir->e.seginfo->lname_idx = 0;
+//        dir->e.seginfo->idx = 0;
 //        dir->e.seginfo->grpidx = 0;
 //        dir->e.seginfo->segrec = NULL;
         break;
     case SYM_GRP:
         type = "GROUP";
 //        dir->e.grpinfo = AsmAlloc( sizeof( grp_info ) );
-//        dir->e.grpinfo->idx = grpdefidx;
+//        dir->e.grpinfo->idx = 0;
 //        dir->e.grpinfo->seglist = NULL;
 //        dir->e.grpinfo->numseg = 0;
-//        dir->e.grpinfo->lname_idx = 0;
         break;
     case SYM_EXTERNAL:
         type = "EXTERNAL";
@@ -702,11 +701,8 @@ static void DumpSymbol( struct asm_sym *sym )
         break;
     case SYM_CLASS_LNAME:
         type = "CLASS";
-        break;
-    case SYM_LNAME:
-        type = "LNAME";
 //        dir->e.lnameinfo = AsmAlloc( sizeof( lname_info ) );
-//        dir->e.lnameinfo->idx = ++LnamesIdx;
+//        dir->e.lnameinfo->idx = 0;
         break;
 //    case TAB_PUB:
 //        sym->public = TRUE;

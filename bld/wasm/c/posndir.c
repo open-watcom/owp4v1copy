@@ -71,9 +71,8 @@ int ChangeCurrentLocation( bool relative, int_32 value, bool select_data )
     CurrSeg->seg->e.seginfo->current_loc = value;
     CurrSeg->seg->e.seginfo->start_loc = value;
 
-    if( CurrSeg->seg->e.seginfo->current_loc >=
-        CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length ) {
-        CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length = CurrSeg->seg->e.seginfo->current_loc;
+    if( CurrSeg->seg->e.seginfo->current_loc >= CurrSeg->seg->e.seginfo->length ) {
+        CurrSeg->seg->e.seginfo->length = CurrSeg->seg->e.seginfo->current_loc;
     }
 
     return( NOT_ERROR );
