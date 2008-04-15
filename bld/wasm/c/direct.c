@@ -88,8 +88,8 @@ typedef struct {
 } last_seg_info;        // information about last opened simplified segment
 
 enum {
-#undef fix
-#define fix( tok, str, val, init )              tok
+#undef pick
+#define pick( tok, str, val, init )     tok
 
 #include "directd.h"
 };
@@ -97,8 +97,8 @@ enum {
 
 static typeinfo TypeInfo[] = {
 
-#undef fix
-#define fix( tok, string, value, init_val )     { string, value, init_val }
+#undef pick
+#define pick( tok, string, value, init_val )    { string, value, init_val }
 
 #include "directd.h"
 };

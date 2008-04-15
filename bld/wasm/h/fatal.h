@@ -33,8 +33,8 @@
 #define _FATAL_H_
 
 enum {
-#undef fix
-#define fix( cmd, number, msg, act, ret ) cmd
+#undef pick
+#define pick( cmd, number, msg, act, ret )  cmd
 #include "fatald.h"
 };
 
