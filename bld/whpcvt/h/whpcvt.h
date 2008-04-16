@@ -164,8 +164,8 @@ typedef struct link_def {
 
 /**** a few InfoBench specific chars ****/
 //(defined here 'cause WHPCVT.C needs to know about them )
-#define IB_HLINK_L_CHAR         'à'
-#define IB_HLINK_R_CHAR         'à'
+#define IB_HLINK_L_CHAR         224             // 'à'
+#define IB_HLINK_R_CHAR         224             // 'à'
 #define IB_BRACE_L_CHAR         '<'
 #define IB_BRACE_R_CHAR         '>'
 
