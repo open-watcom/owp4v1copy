@@ -293,6 +293,7 @@ base_headers =       &
 
 ddk_headers =        &
         bugcodes.h   &
+        ddrawint.h   &
         mce.h        &
         ntddk.h      &
         ntdef.h      &
@@ -312,6 +313,7 @@ directx_headers =    &
         d3drmdef.h   &
         d3drmobj.h   &
         d3dtypes.h   &
+        dvp.h        &
         dxtrans.h
 
 gl_headers =         &
