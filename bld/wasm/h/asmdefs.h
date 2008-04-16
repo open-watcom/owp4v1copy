@@ -104,8 +104,7 @@
 /* global variables */
 extern asm_tok          *AsmBuffer[];
 extern struct asm_code  *Code;
-extern int_8            Frame;
-extern uint_8           Frame_Datum;
+extern struct asm_sym   *Frame;
 extern char             Parse_Pass;     // phase of parsing
 extern unsigned char    Opnd_Count;
 extern char             Modend;         // end of module is reached

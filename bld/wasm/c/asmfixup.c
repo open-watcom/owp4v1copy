@@ -35,20 +35,23 @@
 #include "asmalloc.h"
 
 #if defined( _STANDALONE_ )
-  #include "directiv.h"
-  #include "myassert.h"
+
+#include "directiv.h"
+#include "myassert.h"
+#include "asmfixup.h"
+
+struct asmfixup         *FixupListHead; // head of list of fixups
+struct asmfixup         *FixupListTail;
+
+#else
+
+struct asmfixup         *FixupHead;
+
 #endif
 
 struct asmfixup         *InsFixups[3];
 
-#if !defined( _STANDALONE_ )
-
-struct asmfixup         *FixupHead;
-
-#else
-
-struct fixup            *FixupListHead; // head of list of fixups
-struct fixup            *FixupListTail;
+#if defined( _STANDALONE_ )
 
 void add_frame( void )
 /********************/
@@ -61,7 +64,6 @@ void add_frame( void )
         if( fixup == NULL )
             return;
         fixup->frame = Frame;
-        fixup->frame_datum = Frame_Datum;
     }
 }
 
@@ -91,12 +93,16 @@ struct asmfixup *AddFixup( struct asm_sym *sym, enum fixup_types fixup_type, enu
     fixup = AsmAlloc( sizeof( struct asmfixup ) );
     if( fixup != NULL ) {
         fixup->external = 0;
+        fixup->fixup_loc = AsmCodeAddress;
 #if defined( _STANDALONE_ )
         fixup->sym = sym;
         fixup->offset = sym->offset;
-        fixup->def_seg = (CurrSeg != NULL) ? CurrSeg->seg : NULL;
+        if( Modend ) {
+            fixup->fixup_seg = NULL;
+        } else {
+            fixup->fixup_seg = CurrSeg->seg;
+        }
         fixup->frame = Frame;                   // this is just a guess
-        fixup->frame_datum = Frame_Datum;
         fixup->next = sym->fixup;
         sym->fixup = fixup;
 #else
@@ -152,7 +158,7 @@ static int DoPatch( struct asm_sym *sym, struct asmfixup *fixup )
     // all relative fixups should occure only at first pass and they signal forward references
     // they must be removed after patching or skiped ( next processed as normal fixup )
     seg = GetSeg( sym );
-    if( seg == NULL || fixup->def_seg != seg ) {
+    if( seg == NULL || fixup->fixup_seg != seg ) {
         /* can't backpatch if fixup location is in diff seg than symbol */
         SkipFixup();
         return( NOT_ERROR );
@@ -325,220 +331,44 @@ void mark_fixupp( OPNDTYPE determinant, int index )
 
 #if defined( _STANDALONE_ )
 
-struct fixup *CreateFixupRec( int index )
-/***************************************/
-/* Create a fixup record for WOMP;
-   Note that if Modend is TRUE, it means the fixup is the starting address
-   for the module.
-*/
-{
-    struct asmfixup     *fixup;         // fixup structure from WASM
-    struct fixup        *fixnode;       // fixup structure from WOMP
-    struct asm_sym      *sym;
-
-    fixup = InsFixups[index];
-
-    if( fixup == NULL )
-        return( NULL );
-
-    fixnode = FixNew();
-    fixnode->next = NULL;
-    fixnode->self_relative = FALSE;
-    fixnode->lr.target_offset = 0;
-    if( !Modend ) {
-        fixnode->lr.is_secondary = TRUE;
-    } else {
-        fixnode->lr.is_secondary = FALSE;
-        fixnode->lr.target_offset = fixup->offset;
-    }
-
-    if( !Modend ) {
-        switch( fixup->fixup_type ) {
-        case FIX_LOBYTE:
-            fixnode->loc_method = FIX_LO_BYTE;
-            break;
-        case FIX_RELOFF8:
-            fixnode->self_relative = TRUE;
-            fixnode->loc_method = FIX_LO_BYTE;
-            break;
-        case FIX_RELOFF16:
-            fixnode->self_relative = TRUE;
-        case FIX_OFF16:
-            fixnode->loc_method = FIX_OFFSET;
-            break;
-        case FIX_RELOFF32:
-            fixnode->self_relative = TRUE;
-        case FIX_OFF32:
-            fixnode->loc_method = FIX_OFFSET386;
-            break;
-        case FIX_SEG:
-            fixnode->loc_method = FIX_BASE;
-            break;
-        case FIX_PTR16:
-            fixnode->loc_method = FIX_POINTER;
-            break;
-        case FIX_PTR32:
-            fixnode->loc_method = FIX_POINTER386;
-            break;
-        }
-    }
-
-    sym = fixup->sym;
-    if( sym == NULL )
-        return( NULL );
-
-    fixnode->loader_resolved = FALSE;
-
-    fixnode->loc_offset = AsmCodeAddress - GetCurrSegStart();
-
-    /*------------------------------------*/
-    /* Determine the Target and the Frame */
-    /*------------------------------------*/
-
-    if( sym->state == SYM_UNDEFINED ) {
-        AsmErr( SYMBOL_NOT_DEFINED, sym->name );
-        return( NULL );
-    } else if( sym->state == SYM_GRP ) {
-
-        if( Modend ) {
-            AsmError( INVALID_START_ADDRESS );
-            return( NULL );
-        }
-
-        fixnode->lr.target = TARGET_GRP;
-        fixnode->lr.target_datum = GetGrpIdx( sym );
-        if( fixup->frame != EMPTY ) {
-            fixnode->lr.frame = fixup->frame;
-            fixnode->lr.frame_datum = fixup->frame_datum;
-        } else {
-            fixnode->lr.frame = FRAME_GRP;
-            fixnode->lr.frame_datum = fixnode->lr.target_datum;
-        }
-
-    } else if( sym->state == SYM_SEG ) {
-
-        if( Modend ) {
-            AsmError( INVALID_START_ADDRESS );
-            return( NULL );
-        }
-
-        fixnode->lr.target = TARGET_SEG;
-        fixnode->lr.target_datum = GetSegIdx( sym );
-        if( fixup->frame != EMPTY ) {
-            fixnode->lr.frame = fixup->frame;
-            fixnode->lr.frame_datum = fixup->frame_datum;
-        } else {
-            fixnode->lr.frame = FRAME_SEG;
-            fixnode->lr.frame_datum = fixnode->lr.target_datum;
-        }
-
-    } else {
-
-        /* symbol is a label */
-
-        if( sym->state == SYM_EXTERNAL ) {
-            if( Modend ) {
-                if( sym->mem_type == MT_BYTE ||
-                    sym->mem_type == MT_SBYTE ||
-                    sym->mem_type == MT_WORD ||
-                    sym->mem_type == MT_SWORD ||
-                    sym->mem_type == MT_DWORD ||
-                    sym->mem_type == MT_SDWORD ||
-                    sym->mem_type == MT_FWORD ||
-                    sym->mem_type == MT_QWORD ||
-                    sym->mem_type == MT_TBYTE ||
-                    sym->mem_type == MT_OWORD ||
-                    sym->mem_type == MT_ABS ) {
-
-                    AsmError( MUST_BE_ASSOCIATED_WITH_CODE );
-                    return( NULL );
-                }
-                fixnode->lr.target = TARGET_EXT & TARGET_WITH_DISPL;
-            } else {
-                fixnode->lr.target = TARGET_EXT;
-            }
-            fixnode->lr.target_datum = GetExtIdx( sym );
-
-            if( fixup->frame == FRAME_GRP && fixup->frame_datum == 0 ) {
-                /* set the frame to the frame of the corresponding segment */
-                fixup->frame_datum = GetGrpIdx( sym );
-            }
-        } else {
-            /**/myassert( sym->segment != NULL );
-            if( Modend ) {
-                fixnode->lr.target = TARGET_SEG & TARGET_WITH_DISPL;
-                fixup->frame = FRAME_TARG;
-            } else {
-                fixnode->lr.target = TARGET_SEG;
-            }
-            fixnode->lr.target_datum = GetSegIdx( sym->segment );
-        }
-
-        /* HMMM .... what if fixup->frame is say -2 .... ie empty?
-        * what should really be going on here?
-        */
-        // fixnode->lr.frame = (uint_8)fixup->frame;
-        // fixnode->lr.frame_datum = fixup->frame_datum;
-
-        if( fixup->frame != EMPTY ) {
-            fixnode->lr.frame = (uint_8)fixup->frame;
-        } else {
-            fixnode->lr.frame = FRAME_TARG;
-        }
-        fixnode->lr.frame_datum = fixup->frame_datum;
-
-        if( Modend )
-            return( fixnode );
-    }
-
-    /*--------------------*/
-    /* Optimize the fixup */
-    /*--------------------*/
-
-    if( fixnode->lr.frame == ( fixnode->lr.target - TARGET_SEG ) ) {
-        fixnode->lr.frame = FRAME_TARG;
-    }
-
-    return( fixnode );
-}
-
 int store_fixup( int index )
 /**************************/
 /* Store the fixup information in a WOMP fixup record */
 {
-    struct fixup        *fixnode;
+    struct asmfixup     *fixnode;
 
     if( Parse_Pass == PASS_1 )
         return( NOT_ERROR );
     if( InsFixups[index] == NULL )
         return( NOT_ERROR );
-    fixnode = CreateFixupRec( index );
+    fixnode = InsFixups[index];
     if( fixnode == NULL )
         return( ERROR );
 
     if( FixupListHead == NULL ) {
         FixupListTail = FixupListHead = fixnode;
     } else {
-        FixupListTail->next = fixnode;
+        FixupListTail->next_loc = fixnode;
         FixupListTail = fixnode;
     }
+    fixnode->next_loc = NULL;
     return( NOT_ERROR );
 }
 
 int MakeFpFixup( struct asm_sym *sym )
 /*************************************/
 {
-    int old_count;
-    int_8 old_frame;
+    int     old_count;
+    asm_sym *old_frame;
 
     old_count = Opnd_Count;
     old_frame = Frame;
-    Opnd_Count = 2;
-    Frame = FRAME_LOC;
+    Opnd_Count = OPND3;
+    Frame = (asm_sym *)-1;
     AddFixup( sym, FIX_OFF16, OPTJ_NONE );
     Frame = old_frame;
     Opnd_Count = old_count;
-    if( store_fixup( 2 ) == ERROR )
+    if( store_fixup( OPND3 ) == ERROR )
         return( ERROR ); // extra entry in insfixups
     return( NOT_ERROR );
 }

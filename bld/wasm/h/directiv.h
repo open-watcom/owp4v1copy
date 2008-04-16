@@ -138,14 +138,14 @@ typedef struct {
     uint_32             start_loc;      // starting offset of current ledata or lidata
     unsigned            readonly    :1; // if the segment is readonly
     unsigned            ignore      :1; // ignore this if the seg is redefined
-    unsigned            align       :4;
-    unsigned            combine     :4;
-    unsigned            use_32      :1;
+    unsigned            align       :4; // 
+    unsigned            combine     :4; // 
+    unsigned            use_32      :1; // 32-bit segment
     seg_type            iscode;         // segment is belonging to "CODE" or 'DATA' class
     uint_32             current_loc;    // current offset in current ledata or lidata
-    uint_32             length;
-    uint_16             abs_frame;
-    struct asm_sym      *class_name;
+    uint_32             length;         // segment length
+    uint_16             abs_frame;      // frame for absolute segment
+    struct asm_sym      *class_name;    // segment class name (lname)
 } seg_info;
 
 typedef struct {
@@ -291,7 +291,7 @@ typedef struct {
     unsigned            cmdline:1;
     unsigned            defUse32:1;      // default segment size 32-bit
     unsigned            mseg:1;          // mixed segments (16/32-bit)
-    dir_node            *flat_grp;       // FLAT group
+    struct asm_sym      *flat_grp;       // FLAT group symbol
     char                name[_MAX_FNAME];// name of module
     const FNAME         *srcfile;
 } module_info;                           // Information about the module
@@ -321,22 +321,10 @@ extern seg_list         *CurrSeg;       // points to stack of opened segments
 extern dir_node         *dir_insert( const char *, int );
 extern void             dir_change( dir_node *, int );
 
-extern void             IdxInit( void );
-/* Initialize all the index variables */
-
 extern uint_32          GetCurrAddr( void );    // Get offset from current segment
 
 extern dir_node         *GetCurrSeg( void );
 /* Get current segment; NULL means none */
-
-extern uint             GetGrpIdx( struct asm_sym * );
-/* get symbol's group index, from the symbol itself or from the symbol's segment */
-
-extern uint             GetSegIdx( struct asm_sym * );
-/* get symbol's segment index, from the symbol itself */
-
-extern uint             GetExtIdx( struct asm_sym * );
-/* Get the index of an extrn defn */
 
 extern int              ExtDef( int, bool );    // define an global or external symbol
 extern int              CommDef( int );         // define an communal symbol

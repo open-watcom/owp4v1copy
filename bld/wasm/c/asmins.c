@@ -80,8 +80,7 @@ extern int_8            DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
 
 uint_8                  CheckSeg;       // if checking of opened segment is needed
-int_8                   Frame;          // Frame of current fixup
-uint_8                  Frame_Datum;    // Frame datum of current fixup
+struct asm_sym          *Frame;         // Frame of current fixup
 struct asm_sym          *SegOverride;
 
 static int              in_epilogue = 0;
@@ -111,11 +110,9 @@ void find_frame( struct asm_sym *sym )
     if( SegOverride != NULL ) {
         sym = SegOverride;
         if( sym->state == SYM_GRP ) {
-            Frame = FRAME_GRP;
-            Frame_Datum = GetGrpIdx( sym );
+            Frame = sym;
         } else if( sym->segment != NULL ) {
-            Frame = FRAME_SEG;
-            Frame_Datum = GetSegIdx( sym->segment );
+            Frame = sym->segment;
         }
     } else {
         switch( sym->state ) {
@@ -123,21 +120,17 @@ void find_frame( struct asm_sym *sym )
         case SYM_PROC:
             if( sym->segment != NULL ) {
                 if( GetGrp( sym ) != NULL ) {
-                    Frame = FRAME_GRP;
-                    Frame_Datum = GetGrpIdx( GetGrp( sym ) );
+                    Frame = GetGrp( sym );
                 } else {
-                    Frame = FRAME_SEG;
-                    Frame_Datum = GetSegIdx( sym->segment );
+                    Frame = sym->segment;
                 }
             }
             break;
         case SYM_GRP:
-            Frame = FRAME_GRP;
-            Frame_Datum = GetGrpIdx( sym );
+            Frame = sym;
             break;
         case SYM_SEG:
-            Frame = FRAME_SEG;
-            Frame_Datum = GetSegIdx( sym->segment );
+            Frame = sym->segment;
             break;
         default:
             break;
@@ -1847,7 +1840,7 @@ int AsmParse( void )
 
 #if defined( _STANDALONE_ )
     CheckSeg = TRUE;
-    Frame = EMPTY;
+    Frame = NULL;
     SegOverride = NULL;
 #endif
 
@@ -2071,7 +2064,7 @@ int AsmParse( void )
             cur_opnd = OP_NONE;
             curr_ptr_type = EMPTY;
 #if defined( _STANDALONE_ )
-            Frame = EMPTY;
+            Frame = NULL;
             SegOverride = NULL;
 #endif
             if( EvalOperand( &i, Token_Count, &opndx, TRUE ) == ERROR ) {

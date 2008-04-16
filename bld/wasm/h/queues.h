@@ -47,7 +47,7 @@ extern void     AddLinnumData( struct line_num_info *data );
 
 extern bool     GetLnameData( obj_rec * );
 extern char     *GetAliasData( bool );
-extern uint     GetPublicData( uint *, uint *, char *, char ***, struct pubdef_data **, bool *, bool );
+extern bool     GetPublicData( void );
 extern int      GetLinnumData( struct linnum_data **ldata, bool *need32 );
 extern void     GetGlobalData( void );
 

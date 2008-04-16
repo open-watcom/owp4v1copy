@@ -121,9 +121,9 @@ struct asmfixup {
 //        unsigned                line;
 
 #if defined( _STANDALONE_ )
-        int_8                   frame;          // frame of the fixup
-        uint_16                 frame_datum;    // frame_datum of the fixup
-        struct dir_node         *def_seg;       // segment fixup is in
+        struct asmfixup         *next_loc;
+        struct asm_sym          *frame;         // frame of the fixup
+        struct dir_node         *fixup_seg;     // segment of the fixup location
         struct asm_sym          *sym;
 #else
         char                    *name;

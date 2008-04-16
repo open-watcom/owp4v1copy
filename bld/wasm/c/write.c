@@ -37,17 +37,16 @@
 #include "asmalloc.h"
 #include "fatal.h"
 #include "asmeval.h"
-#include "objio.h"
 #include "objprs.h"
 #include "fixup.h"
 #include "autodept.h"
 #include "mangle.h"
-#include "namemgr.h"  // WOMP callback NameGet routine declaration
 #include "directiv.h"
 #include "queues.h"
 #include "womputil.h"
 #include "asmlabel.h"
 #include "asminput.h"
+#include "asmfixup.h"
 
 #include "myassert.h"
 
@@ -61,6 +60,8 @@
 // if you want exactly same behaviour as MASM then undefine following macro
 #define PRIVATE_PROC_INFO
 
+#define MAX_REC_LENGTH 0xFFFEL
+
 extern void             CheckForOpenConditionals( void );
 extern void             set_cpu_parameters( void );
 extern void             set_fpu_parameters( void );
@@ -69,10 +70,7 @@ extern void             CmdlParamsInit( void );
 extern void             PrintStats( void );
 
 extern symbol_queue     Tables[];       // tables of definitions
-extern struct fixup     *FixupListHead; // head of list of fixups ( from WOMP )
-extern struct fixup     *FixupListTail;
 extern uint_32          BufSize;
-extern obj_rec          *ModendRec;     // Record for Modend
 
 extern int              MacroExitState;
 extern int              in_prologue;
@@ -90,7 +88,7 @@ unsigned long           PassTotal;      // Total number of ledata bytes generate
 int_8                   PhaseError;
 char                    EndDirectiveFound = FALSE;
 
-static char             **NameArray;
+struct asmfixup         *ModendFixup = NULL; // start address fixup
 
 global_vars     Globals = { 0, 0, 0, 0, 0, 0, 0 };
 
@@ -155,15 +153,12 @@ static void write_init( void )
     BufSize       = 0;
     FixupListHead = NULL;
     FixupListTail = NULL;
-    ModendRec     = NULL;
     CurrProc      = NULL;
     DefineProc    = FALSE;
     Use32         = FALSE;
     write_to_file = TRUE;
 
-    IdxInit();
     AddLnameData( dir_insert( "", TAB_CLASS_LNAME ) );
-
     ModuleInit();
     FixInit();
 }
@@ -190,7 +185,7 @@ void OutSelect( bool starts )
     } else {
         if( !Options.output_comment_data_in_code_records || !Globals.data_in_code )
             return;
-        Globals.sel_idx = GetSegIdx( &CurrSeg->seg->sym );
+        Globals.sel_idx = CurrSeg->seg->e.seginfo->idx;
         Globals.data_in_code = FALSE;
 
         if( (Parse_Pass > PASS_1) && !PhaseError ) {
@@ -404,52 +399,6 @@ static void write_global( void )
     GetGlobalData();
 }
 
-static dir_node *write_extdef( dir_node *start )
-/**********************************************/
-{
-    obj_rec     *objr;
-    dir_node    *curr;
-    uint        num;
-    uint        total_size;
-    uint        i;
-    char        name[MAX_EXT_LENGTH];
-    char        buffer[MAX_LINE_LEN];
-    uint        len;
-
-    num = 0;
-    total_size = 0;
-    i = 0;
-
-    objr = ObjNewRec( CMD_EXTDEF );
-    objr->d.extdef.first_idx = 0;
-
-    for( curr = start;
-        ( curr != NULL ) && ( curr->e.extinfo->comm == start->e.extinfo->comm );
-        curr = curr->next ) {
-        Mangle( &curr->sym, buffer );
-        len = strlen( buffer );
-
-        if( total_size + len >= MAX_EXT_LENGTH )
-            break;
-        total_size += len + 2;
-        num++;
-
-        name[i] = (char)len;
-        i++;
-        memcpy( name+i, buffer, len );
-        i += len;
-        name[i++] = 0;      // for the type index
-    }
-    ObjAttachData( objr, (uint_8 *)name, total_size );
-    if( num != 0 ) {
-        objr->d.extdef.num_names = num;
-        write_record( objr, TRUE );
-    } else {
-        ObjKillRec( objr );
-    }
-    return( curr );
-}
-
 static int opsize( memtype mem_type )
 /************************************/
 {
@@ -471,8 +420,8 @@ static int opsize( memtype mem_type )
 
 #define THREE_BYTE_MAX ( (1UL << 24) - 1 )
 
-static int get_number_of_bytes_for_size_in_commdef( unsigned long value )
-/****************************************************************/
+static int get_size_in_commdef( unsigned long value )
+/***************************************************/
 {
     /* The spec allows up to 128 in a one byte size field, but lots
        of software has problems with that, so we'll restrict ourselves
@@ -489,123 +438,110 @@ static int get_number_of_bytes_for_size_in_commdef( unsigned long value )
     }
 }
 
-static dir_node *write_comdef( dir_node *start )
-/**********************************************/
-{
-    obj_rec     *objr;
-    dir_node    *curr;
-    uint        num = 0;
-    uint        total_size = 0;
-    uint        varsize = 0;
-    uint        symsize;
-    uint        i = 0;
-    uint        j = 0;
-    char        *name;
-    uint        len;
-    unsigned long value;
-    char        buffer[MAX_LINE_LEN];
-    char        *ptr;
-
-
-    objr = ObjNewRec( CMD_COMDEF );
-    objr->d.comdef.first_idx = 0;
-
-    for( curr = start;
-        ( curr != NULL ) && ( curr->e.extinfo->comm == start->e.extinfo->comm );
-        curr = curr->next ) {
-        ptr = Mangle( &curr->sym, buffer );
-        total_size += 3 + strlen( ptr );
-        /* 3 = 1 for string len + 1 for type index + 1 for data type */
-
-        varsize = opsize( curr->sym.mem_type );
-        if( curr->e.comminfo->distance == T_FAR ) {
-            total_size += get_number_of_bytes_for_size_in_commdef( varsize );
-            total_size += get_number_of_bytes_for_size_in_commdef( curr->e.comminfo->size );
-        } else {
-            total_size += get_number_of_bytes_for_size_in_commdef( curr->e.comminfo->size );
-        }
-        num++;
-    }
-
-    if( total_size > 0 ) {
-        name = AsmAlloc( total_size * sizeof( char ) );
-        for( curr = start;
-            ( curr != NULL ) && ( curr->e.extinfo->comm == start->e.extinfo->comm );
-            curr = curr->next ) {
-            ptr = Mangle( &curr->sym, buffer );
-            len = strlen( ptr );
-            name[i] = (char)len;
-            i++;
-            memcpy( name+i, ptr, len );
-            i += len;
-            name[i++] = 0;      // for the type index
-
-            /* now add the data type & communal length */
-            if( curr->e.comminfo->distance == T_FAR ) {
-                name[i++] = COMDEF_FAR;
-            } else {
-                name[i++] = COMDEF_NEAR;
-            }
-
-            value = curr->e.comminfo->size;
-            varsize = get_number_of_bytes_for_size_in_commdef( value );
-            switch( varsize ) {
-            case 1:
-                break;
-            case 3:
-                name[i++] = COMDEF_LEAF_2;
-                break;
-            case 4:
-                name[i++] = COMDEF_LEAF_3;
-                break;
-            case 5:
-                name[i++] = COMDEF_LEAF_4;
-                break;
-            }
-            if( varsize > 1 )
-                varsize--; /* we already output 1 byte */
-
-            symsize = opsize( curr->sym.mem_type );
-            if( curr->e.comminfo->distance != T_FAR ) {
-                value *= symsize;
-            }
-
-            for( j=0; j < varsize; j++ ) {
-                name[i++] = value % ( UCHAR_MAX + 1 );
-                value >>= 8;
-            }
-
-            if( curr->e.comminfo->distance == T_FAR ) {
-                /* mem type always needs <= 1 byte */
-                myassert( symsize < UCHAR_MAX );
-                name[i++] = symsize;
-            }
-        }
-        ObjAttachData( objr, (uint_8 *)name, total_size );
-    }
-    ObjCanFree( objr );
-    if( num != 0 ) {
-        objr->d.comdef.num_names = num;
-        write_record( objr, TRUE );
-    } else {
-        ObjKillRec( objr );
-    }
-    return( curr );
-}
-
-static void write_ext_comm( void )
+static void write_external( void )
 /********************************/
 {
-    dir_node    *next;
+    obj_rec         *objr;
+    dir_node        *start;
+    dir_node        *curr;
+    dir_node        *last;
+    direct_idx      ext_idx;
+    long            total_size;
+    unsigned        len;
+    char            *name;
+    uint            varsize;
+    uint            symsize;
+    unsigned long   value;
+    int             i;
 
-    for( next = Tables[TAB_EXT].head; next != NULL; ) {
-        if( next->e.extinfo->comm == 0 ) {
-            // extdef
-            next = write_extdef( next );
-        } else {
-            // comdef
-            next = write_comdef( next );
+
+    ext_idx = 0;
+    start = Tables[TAB_EXT].head;
+    while( start != NULL ) {
+        objr = ObjNewRec( ( start->e.extinfo->comm ) ? CMD_COMDEF : CMD_EXTDEF );
+        objr->d.extdef.first_idx = 0;
+        objr->d.extdef.num_names = 0;
+        total_size = 0;
+        for( curr = start;
+          ( curr != NULL ) && ( curr->e.extinfo->comm == start->e.extinfo->comm );
+          curr = curr->next ) {
+            /* + 1 for string len + 1 for type index */
+            name = Mangle( &curr->sym, NULL );
+            len = strlen( name ) + 2;
+            AsmFree( name );
+            if( start->e.extinfo->comm ) {
+                //  + 1 for data type //
+                len += 1;
+                varsize = opsize( curr->sym.mem_type );
+                if( curr->e.comminfo->distance == T_FAR ) {
+                    len += get_size_in_commdef( varsize );
+                    len += get_size_in_commdef( curr->e.comminfo->size );
+                } else {
+                    len += get_size_in_commdef( curr->e.comminfo->size );
+                }
+            }
+            if( total_size + len > MAX_REC_LENGTH )
+                break;
+            total_size += len;
         }
+        last = curr;
+        ObjAllocData( objr, total_size );
+        for( curr = start;
+          ( curr != last ) && ( curr->e.extinfo->comm == start->e.extinfo->comm );
+          curr = curr->next ) {
+            ext_idx++;
+            objr->d.extdef.num_names++;
+            curr->e.extinfo->idx = ext_idx;
+            name = Mangle( &curr->sym, NULL );
+            len = strlen( name );
+            ObjPutName( objr, name, len );
+            AsmFree( name );
+            ObjPut8( objr, 0 );    // for the type index
+            if( start->e.extinfo->comm ) {
+                /* now add the data type & communal length */
+                if( curr->e.comminfo->distance == T_FAR ) {
+                    ObjPut8( objr, COMDEF_FAR );
+                } else {
+                    ObjPut8( objr, COMDEF_NEAR );
+                }
+                value = curr->e.comminfo->size;
+                varsize = get_size_in_commdef( value );
+                switch( varsize ) {
+                case 1:
+                    break;
+                case 3:
+                    ObjPut8( objr, COMDEF_LEAF_2 );
+                    break;
+                case 4:
+                    ObjPut8( objr, COMDEF_LEAF_3 );
+                    break;
+                case 5:
+                    ObjPut8( objr, COMDEF_LEAF_4 );
+                    break;
+                }
+                if( varsize > 1 )
+                    varsize--; /* we already output 1 byte */
+                symsize = opsize( curr->sym.mem_type );
+                if( curr->e.comminfo->distance != T_FAR ) {
+                    value *= symsize;
+                }
+                for( i = 0; i < varsize; i++ ) {
+                    ObjPut8( objr, value % ( UCHAR_MAX + 1 ) );
+                    value >>= 8;
+                }
+                if( curr->e.comminfo->distance == T_FAR ) {
+                    /* mem type always needs <= 1 byte */
+                    myassert( symsize < UCHAR_MAX );
+                    ObjPut8( objr, symsize );
+                }
+            }
+        }
+        if( objr->d.extdef.num_names ) {
+            write_record( objr, TRUE );
+        } else {
+            ObjKillRec( objr );
+        }
+        start = last;
     }
 }
 
@@ -619,19 +555,78 @@ static void write_header( char *name )
     len = strlen( name );
     ObjAllocData( objr, len + 1 );
     ObjPutName( objr, name, len );
-    ObjTruncRec( objr );
     write_record( objr, TRUE );
+}
+
+static struct fixup *CreateFixupRecModend( struct asmfixup *fixup )
+/*****************************************************************/
+/* Create a fixup record for WOMP */
+{
+    struct fixup        *fixnode;       // fixup structure from WOMP
+    struct asm_sym      *sym;
+
+    fixnode = FixNew();
+    fixnode->next = NULL;
+    fixnode->self_relative = FALSE;
+    fixnode->lr.is_secondary = FALSE;
+    fixnode->lr.target_offset = fixup->offset;
+    fixnode->loader_resolved = FALSE;
+    fixnode->loc_offset = 0;
+
+    /*------------------------------------*/
+    /* Determine the Target and the Frame */
+    /*------------------------------------*/
+
+    sym = fixup->sym;
+    switch( sym->state ) {
+    case SYM_UNDEFINED:
+        AsmErr( SYMBOL_NOT_DEFINED, sym->name );
+        return( NULL );
+    case SYM_GRP:
+    case SYM_SEG:
+        AsmError( INVALID_START_ADDRESS );
+        return( NULL );
+    case SYM_EXTERNAL:
+        if( sym->mem_type == MT_NEAR || sym->mem_type == MT_FAR || sym->mem_type == MT_SHORT ) {
+            fixnode->lr.target = TARGET_EXT & TARGET_WITH_DISPL;
+            fixnode->lr.target_datum = ((dir_node *)sym)->e.extinfo->idx;
+            get_frame( fixnode, fixup );
+            return( fixnode );
+        } else {
+            AsmError( MUST_BE_ASSOCIATED_WITH_CODE );
+            return( NULL );
+        }
+    default:
+        /**/myassert( sym->segment != NULL );
+        fixnode->lr.target = TARGET_SEG & TARGET_WITH_DISPL;
+        fixnode->lr.frame = FRAME_TARG;
+        fixnode->lr.frame_datum = 0;
+        return( fixnode );
+    }
 }
 
 static int write_modend( void )
 /*****************************/
 {
-    if( ModendRec == NULL ) {
-        AsmError( UNEXPECTED_END_OF_FILE );
-        return ERROR;
+    obj_rec     *objr;
+    fixup       *fix;
+
+    objr = ObjNewRec( CMD_MODEND );
+    if( ModendFixup == NULL ) {
+        objr->d.modend.start_addrs = FALSE;
+        objr->d.modend.is_logical = FALSE;
+        objr->d.modend.main_module = FALSE;
+    } else {
+        objr->d.modend.start_addrs = TRUE;
+        objr->d.modend.is_logical = TRUE;
+        objr->d.modend.main_module = TRUE;
+        fix = CreateFixupRecModend( ModendFixup );
+        if( fix != NULL ) {
+            objr->d.modend.ref.log = fix->lr;
+        }
     }
-    write_record( ModendRec, TRUE );
-    return NOT_ERROR;
+    write_record( objr, TRUE );
+    return( NOT_ERROR );
 }
 
 static int write_autodep( void )
@@ -712,28 +707,151 @@ static void write_linnum( void )
         objr->is_32 = need_32;
         objr->d.linnum.num_lines = count;
         objr->d.linnum.lines = ldata;
-        objr->d.linnum.d.base.grp_idx = GetGrpIdx( GetGrp( &GetCurrSeg()->sym ) ); // fixme ?
         objr->d.linnum.d.base.seg_idx = CurrSeg->seg->e.seginfo->idx;
+        if( CurrSeg->seg->e.seginfo->group == NULL ) {
+            objr->d.linnum.d.base.grp_idx = 0;
+        } else {
+            objr->d.linnum.d.base.grp_idx = ((dir_node *)CurrSeg->seg->e.seginfo->group)->e.grpinfo->idx;
+        }
         objr->d.linnum.d.base.frame = 0; // fixme ?
 
         write_record( objr, TRUE );
     }
 }
 
+void get_frame( fixup *fixnode, struct asmfixup *fixup )
+/*************************************************************/
+{
+    if( fixup->frame == NULL ) {
+        fixnode->lr.frame = FRAME_TARG;
+        fixnode->lr.frame_datum = fixnode->lr.target_datum;
+    } else if( fixup->frame == (asm_sym *)-1 ) {
+        fixnode->lr.frame = FRAME_LOC;
+        fixnode->lr.frame_datum = 0;
+    } else if( fixup->frame->state == SYM_GRP ) {
+        fixnode->lr.frame = FRAME_GRP;
+        fixnode->lr.frame_datum = ((dir_node *)fixup->frame)->e.grpinfo->idx;
+    } else if( fixup->frame->state == SYM_SEG ) {
+        fixnode->lr.frame = FRAME_SEG;
+        fixnode->lr.frame_datum = ((dir_node *)fixup->frame)->e.seginfo->idx;
+    } else if( fixup->frame->state == SYM_EXTERNAL ) {
+        fixnode->lr.frame = FRAME_EXT;
+        fixnode->lr.frame_datum = ((dir_node *)fixup->frame)->e.extinfo->idx;
+    } else {
+        fixnode->lr.frame = FRAME_TARG;
+        fixnode->lr.frame_datum = 0;
+    }
+}
+
+static struct fixup *CreateFixupRec( unsigned long offset, struct asmfixup *fixup )
+/*********************************************************************************/
+/* Create a fixup record for WOMP */
+{
+    struct fixup        *fixnode;       // fixup structure from WOMP
+    struct asm_sym      *sym;
+
+    fixnode = FixNew();
+    fixnode->next = NULL;
+    fixnode->self_relative = FALSE;
+    fixnode->lr.target_offset = 0;
+    fixnode->lr.is_secondary = TRUE;
+    fixnode->loader_resolved = FALSE;
+    fixnode->loc_offset = fixup->fixup_loc - offset;
+
+    switch( fixup->fixup_type ) {
+    case FIX_RELOFF8:
+        fixnode->self_relative = TRUE;
+    case FIX_LOBYTE:
+        fixnode->loc_method = FIX_LO_BYTE;
+        break;
+    case FIX_RELOFF16:
+        fixnode->self_relative = TRUE;
+    case FIX_OFF16:
+        fixnode->loc_method = FIX_OFFSET;
+        break;
+    case FIX_RELOFF32:
+        fixnode->self_relative = TRUE;
+    case FIX_OFF32:
+        fixnode->loc_method = FIX_OFFSET386;
+        break;
+    case FIX_SEG:
+        fixnode->loc_method = FIX_BASE;
+        break;
+    case FIX_PTR16:
+        fixnode->loc_method = FIX_POINTER;
+        break;
+    case FIX_PTR32:
+        fixnode->loc_method = FIX_POINTER386;
+        break;
+    }
+
+    /*------------------------------------*/
+    /* Determine the Target and the Frame */
+    /*------------------------------------*/
+
+    sym = fixup->sym;
+    switch( sym->state ) {
+    case SYM_UNDEFINED:
+        AsmErr( SYMBOL_NOT_DEFINED, sym->name );
+        return( NULL );
+    case SYM_GRP:
+        fixnode->lr.target = TARGET_GRP;
+        fixnode->lr.target_datum = ((dir_node *)sym)->e.grpinfo->idx;
+        if( fixup->frame == NULL ) {
+            fixnode->lr.frame = FRAME_GRP;
+            fixnode->lr.frame_datum = fixnode->lr.target_datum;
+        } else {
+            get_frame( fixnode, fixup );
+        }
+        break;
+    case SYM_SEG:
+        fixnode->lr.target = TARGET_SEG;
+        fixnode->lr.target_datum = ((dir_node *)sym)->e.seginfo->idx;
+        if( fixup->frame == NULL ) {
+            fixnode->lr.frame = FRAME_SEG;
+            fixnode->lr.frame_datum = fixnode->lr.target_datum;
+        } else {
+            get_frame( fixnode, fixup );
+        }
+        break;
+    case SYM_EXTERNAL:
+        fixnode->lr.target = TARGET_EXT;
+        fixnode->lr.target_datum = ((dir_node *)sym)->e.extinfo->idx;
+        get_frame( fixnode, fixup );
+        break;
+    default:
+        /**/myassert( sym->segment != NULL );
+        fixnode->lr.target = TARGET_SEG;
+        fixnode->lr.target_datum = ((dir_node *)sym->segment)->e.seginfo->idx;
+        get_frame( fixnode, fixup );
+        break;
+    }
+    
+    /*--------------------*/
+    /* Optimize the fixup */
+    /*--------------------*/
+
+    if( fixnode->lr.frame == ( fixnode->lr.target - TARGET_SEG ) ) {
+        fixnode->lr.frame = FRAME_TARG;
+    }
+    return( fixnode );
+}
+
 #ifdef SEPARATE_FIXUPP_16_32
 
-static void divide_fixup_list( struct fixup **fl16, struct fixup **fl32 ) {
-/**********************************************/
+static void get_fixup_list( unsigned long start, struct fixup **fl16, struct fixup **fl32 )
+/*****************************************************************************************/
 /* divide fixup record list to the 16-bit or 32-bit list of a fixup record */
-
-    struct fixup *fix;
-    struct fixup *fix16;
-    struct fixup *fix32;
+{
+    struct asmfixup     *fixi;
+    struct fixup        *fix;
+    struct fixup        *fix16;
+    struct fixup        *fix32;
 
     fix16 = NULL;
     fix32 = NULL;
-    fix = FixupListHead;
-    for( fix = FixupListHead; fix != NULL; fix = fix->next ) {
+    for( fixi = FixupListHead; fixi != NULL; fixi = fixi->next_loc ) {
+        fix = CreateFixupRec( start, fixi );
         switch( fix->loc_method ) {
         case FIX_OFFSET386:
         case FIX_POINTER386:
@@ -763,6 +881,27 @@ static void divide_fixup_list( struct fixup **fl16, struct fixup **fl32 ) {
 }
 
 #else
+
+int get_fixup_list( unsigned long start, struct fixup **fl )
+{
+    struct asmfixup     *fixi;
+    struct fixup        *fix;
+    struct fixup        *fixo;
+
+    fixo = NULL;
+    for( fixi = FixupListHead; fixi != NULL; fixi = fixi->next_loc ) {
+        fix = CreateFixupRec( start, fixi );
+        if( fixo == NULL ) {
+            *fl = fix;
+        } else {
+            fixo->next = fix;
+        }
+        fixo = fix;
+    }
+    if( fixo != NULL ) {
+        fixo->next = NULL;
+    }
+}
 
 static void check_need_32bit( obj_rec *objr ) {
 /**********************************************/
@@ -798,6 +937,8 @@ static void write_ledata( void )
 #ifdef SEPARATE_FIXUPP_16_32
     struct fixup    *fl16 = NULL;
     struct fixup    *fl32 = NULL;
+#else
+    struct fixup    *fl = NULL;
 #endif
 
     if( BufSize > 0 ) {
@@ -812,7 +953,7 @@ static void write_ledata( void )
         /* Process Fixup, if any */
         if( FixupListHead != NULL ) {
 #ifdef SEPARATE_FIXUPP_16_32
-            divide_fixup_list( &fl16, &fl32 );
+            get_fixup_list( CurrSeg->seg->e.seginfo->start_loc, &fl16, &fl32 );
             /* Process Fixup, if any */
             if( fl16 != NULL ) {
                 objr = ObjNewRec( CMD_FIXUP );
@@ -827,6 +968,7 @@ static void write_ledata( void )
                 write_record( objr, TRUE );
             }
 #else
+            get_fixup_list( CurrSeg->seg->e.seginfo->start_loc, &fl );
             objr = ObjNewRec( CMD_FIXUP );
             objr->d.fixup.fixup = FixupListHead;
             check_need_32bit( objr );
@@ -895,49 +1037,9 @@ static int write_pub( void )
 /**************************/
 /* note that procedures with public or export visibility are written out here */
 {
-    obj_rec             *objr;
-    struct pubdef_data  *data;
-    uint                i;
-    uint                count = 0;
-    uint                seg;
-    uint                grp;
-    char                cmd;
-    bool                first = TRUE;
-    bool                need32 = FALSE;
-
-    while( ( count = GetPublicData( &seg, &grp, &cmd, &NameArray, &data, &need32, first) ) > 0 ) {
-
-        /* create a public record for this segment */
-
-        objr = ObjNewRec( cmd );
-        objr->is_32 = need32;
-        objr->d.pubdef.base.grp_idx = grp;
-        objr->d.pubdef.base.seg_idx = seg;
-        objr->d.pubdef.base.frame = 0;
-        objr->d.pubdef.num_pubs = count;
-        objr->d.pubdef.pubs = data;
-        objr->d.pubdef.free_pubs = TRUE;
-        write_record( objr, TRUE );
-
-        /* free the names table */
-        for( i = 0; i < count; i++ ) {
-            if( NameArray[i] != NULL ) {
-                AsmFree( NameArray[i] );
-            }
-        }
-        AsmFree( NameArray );
-        first = FALSE;
-    }
+    GetPublicData();
     return( NOT_ERROR );
 }
-
-const char *NameGet( uint_16 hdl )
-/********************************/
-// WOMP callback routine
-{
-    return( NameArray[hdl] );
-}
-
 
 void FlushCurrSeg( void )
 /***************************/
@@ -956,24 +1058,26 @@ void FlushCurrSeg( void )
      */
 
     if( FixupListTail != NULL ) {
-        switch( FixupListTail->loc_method ) {
-        case FIX_LO_BYTE:
-        case FIX_HI_BYTE:
+        switch( FixupListTail->fixup_type ) {
+        case FIX_LOBYTE:
+        case FIX_RELOFF8:
             i = 1;
             break;
-        case FIX_OFFSET:
-        case FIX_BASE:
+        case FIX_OFF16:
+        case FIX_RELOFF16:
+        case FIX_SEG:
             i = 2;
             break;
-        case FIX_POINTER:
-        case FIX_OFFSET386:
+        case FIX_PTR16:
+        case FIX_OFF32:
+        case FIX_RELOFF32:
             i = 4;
             break;
-        case FIX_POINTER386:
+        case FIX_PTR32:
             i = 6;
             break;
         }
-        if( FixupListTail->loc_offset + i > BufSize ) {
+        if( FixupListTail->fixup_loc + i - CurrSeg->seg->e.seginfo->start_loc > BufSize ) {
             return; // can't output the ledata record as is
         }
     }
@@ -1016,7 +1120,7 @@ static void writepass1stuff( char *name )
     write_seg();
     write_grp();
     write_global();
-    write_ext_comm();
+    write_external();
     write_alias();
     if( write_pub() == ERROR )
         return;

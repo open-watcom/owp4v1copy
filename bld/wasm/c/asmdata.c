@@ -439,7 +439,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
             }
 
 #if defined( _STANDALONE_ )
-            if( store_fixup( 0 ) == ERROR )
+            if( store_fixup( OPND1 ) == ERROR )
                 return( ERROR );
 #endif
             /* now actually output the data */
@@ -562,7 +562,7 @@ static int array_element( asm_sym *sym, asm_sym *struct_sym, int start_pos, unsi
                             data += fixup->offset;
                         }
 #if defined( _STANDALONE_ )
-                        if( store_fixup( 0 ) == ERROR )
+                        if( store_fixup( OPND1 ) == ERROR )
                             return( ERROR );
 #endif
                         break;

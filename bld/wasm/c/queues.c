@@ -33,9 +33,10 @@
 #include "asmalloc.h"
 #include "mangle.h"
 #include "directiv.h"
-#include "queue.h"
 #include "queues.h"
-#include "objrec.h"
+#include "objprs.h"
+#include "namemgr.h"
+#include "womputil.h"
 
 #include "myassert.h"
 
@@ -91,107 +92,109 @@ static long QCount( qdesc *q )
     return( count );
 }
 
+static char **NameArray;
+
+const char *NameGet( uint_16 hdl )
+/********************************/
+// WOMP callback routine
+{
+    return( NameArray[hdl] );
+}
+
 void AddPublicData( dir_node *dir )
 /*********************************/
 {
     QAddItem( &PubQueue, dir );
 }
 
-uint GetPublicData(
-    uint *seg,
-    uint *grp,
-    char *cmd,
-    char ***NameArray,
-    struct pubdef_data **data,
-    bool *need32,
-    bool first )
-/****************************/
+bool GetPublicData( void )
+/************************/
 {
-    static struct queuenode    *start;
-    struct queuenode           *curr;
-    dir_node                   *dir;
-    uint                       count;
-    uint                       i;
-    struct pubdef_data         *d;
-    struct asm_sym             *curr_seg;
+    obj_rec             *objr;
+    struct queuenode    *start;
+    struct queuenode    *curr;
+    struct queuenode    *last;
+    dir_node            *curr_seg;
+    dir_node            *dir;
+    struct pubdef_data  *d;
+    char                cmd;
+    uint                i;
 
     if( PubQueue == NULL )
-        return( 0 );
-    if( first )
-        start = PubQueue->head;
-    if( start == NULL )
-        return( 0 );
+        return( FALSE );
 
-    *need32 = FALSE;
-    *cmd = CMD_PUBDEF;
-    dir = (dir_node *)start->data;
-    if( dir->sym.state == SYM_UNDEFINED ) {
-        AsmErr( SYMBOL_NOT_DEFINED, dir->sym.name );
-        return( 0 );
-    }
-    curr_seg = dir->sym.segment;
-    if( curr_seg == NULL ) {      // absolute symbol ( without segment )
-        *seg = 0;
-        *grp = 0;
-    } else {
-        *seg = GetSegIdx( curr_seg );
-        *grp = GetGrpIdx( GetGrp( curr_seg ) );
-    }
-    curr = start;
-    for( count = 0; curr != NULL; curr = curr->next ) {
-        if( count == MAX_PUB_SIZE )  // don't let the records get too big
-            break;
-        dir = (dir_node *)curr->data;
-        if( dir->sym.segment != curr_seg )
-            break;
-        if( dir->sym.state == SYM_PROC ) {
-            if( !dir->sym.public ) {
-                if( *cmd == CMD_PUBDEF ) {
-                    if( curr != start )
+    for( start = PubQueue->head; start != NULL; start = last ) {
+        dir = (dir_node *)start->data;
+        cmd = ( dir->sym.public ) ? CMD_PUBDEF : CMD_STATIC_PUBDEF;
+        objr = ObjNewRec( cmd );
+        objr->is_32 = FALSE;
+        objr->d.pubdef.free_pubs = TRUE;
+        objr->d.pubdef.num_pubs = 0;
+        objr->d.pubdef.base.frame = 0;
+        objr->d.pubdef.base.grp_idx = 0;
+        objr->d.pubdef.base.seg_idx = 0;
+        curr_seg = (dir_node *)dir->sym.segment;
+        if( curr_seg != NULL ) {
+            objr->d.pubdef.base.seg_idx = curr_seg->e.seginfo->idx;
+            if( curr_seg->e.seginfo->group != NULL ) {
+                objr->d.pubdef.base.grp_idx = ((dir_node *)curr_seg->e.seginfo->group)->e.grpinfo->idx;
+            }
+        }
+        for( curr = start; curr != NULL; curr = curr->next ) {
+            if( objr->d.pubdef.num_pubs > MAX_PUB_SIZE )
+                break;
+            dir = (dir_node *)curr->data;
+            if( (dir_node *)dir->sym.segment != curr_seg )
+                break;
+            if( dir->sym.state == SYM_PROC ) {
+                if( dir->sym.public ) {
+                    if( cmd == CMD_STATIC_PUBDEF ) {
                         break;
-                    *cmd = CMD_STATIC_PUBDEF;
-                } /* else we are just continuing a static def. */
+                    }
+                } else {
+                    if( cmd == CMD_PUBDEF ) {
+                        break;
+                    }
+                }
             } else {
-                if( *cmd == CMD_STATIC_PUBDEF ) {
+                if( cmd == CMD_STATIC_PUBDEF ) {
                     break;
                 }
             }
-        }
-        count++;
-        /* if we don't get to here, this entry is part of the next pubdef */
-    }
-    *NameArray = AsmAlloc( count * sizeof( char * ) );
-    for( i = 0; i < count; i++ ) {
-        (*NameArray)[i] = NULL;
-    }
-
-    *data = d = AsmAlloc( count * sizeof( struct pubdef_data ) );
-
-    for( curr = start, i = 0; i < count; i++, curr = curr->next ) {
-        dir = (dir_node *)curr->data;
-        if( dir->sym.segment != curr_seg )
-            break;
-        if( dir->sym.offset > 0xffffUL )
-            *need32 = TRUE;
-
-        (*NameArray)[i] = Mangle( &dir->sym, NULL );
-
-        d[i].name = i;
-        /* No namecheck is needed by name manager */
-        if( dir->sym.state != SYM_CONST ) {
-            d[i].offset = dir->sym.offset;
-        } else {
-            if( dir->e.constinfo->data[0].token != T_NUM  ) {
-                AsmWarn( 2, PUBLIC_CONSTANT_NOT_NUMERIC );
-                d[i].offset = 0;
-            } else {
-                d[i].offset = dir->e.constinfo->data[0].value;
+            if( dir->sym.offset > 0xffffUL ) {
+                objr->is_32 = TRUE;
             }
+            objr->d.pubdef.num_pubs++;
         }
-        d[i].type.idx = 0;
+        last = curr;
+
+        objr->d.pubdef.pubs = d = AsmAlloc( objr->d.pubdef.num_pubs * sizeof( struct pubdef_data ) );
+        NameArray = AsmAlloc( objr->d.pubdef.num_pubs * sizeof( char * ) );
+        for( i = 0, curr = start; curr != last; curr = curr->next, ++i ) {
+            dir = (dir_node *)curr->data;
+            NameArray[ i ] = Mangle( &dir->sym, NULL );
+            d->name = i;
+            if( dir->sym.state != SYM_CONST ) {
+                d->offset = dir->sym.offset;
+            } else {
+                if( dir->e.constinfo->data[0].token != T_NUM  ) {
+                    AsmWarn( 2, PUBLIC_CONSTANT_NOT_NUMERIC );
+                    d->offset = 0;
+                } else {
+                    d->offset = dir->e.constinfo->data[0].value;
+                }
+            }
+            d->type.idx = 0;
+            ++d;
+        }
+        d = objr->d.pubdef.pubs;
+        write_record( objr, TRUE );
+        for( i = 0; i < objr->d.pubdef.num_pubs; i++ ) {
+            AsmFree( NameArray[ i ] );
+        }
+        AsmFree( NameArray );
     }
-    start = curr;
-    return( count );
+    return( TRUE );
 }
 
 static void FreePubQueue( void )
@@ -268,8 +271,7 @@ bool GetLnameData( obj_rec *objr )
     for( curr = LnameQueue->head; curr != NULL ; curr = curr->next ) {
         dir = (dir_node *)curr->data;
         len = strlen( dir->sym.name );
-        ObjPut8( objr, len );
-        ObjPut( objr, dir->sym.name, len );
+        ObjPutName( objr, dir->sym.name, len );
         objr->d.lnames.num_names++;
         switch( dir->sym.state ) {
         case SYM_GRP:
