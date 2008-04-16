@@ -1257,7 +1257,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify exact    [eax ebx ecx edx];
 
 #pragma aux             _nTinyAccess = \
-        _XOR_AX_AX      \
+        _MOV_AL _GET_   \
         _MOV_AH DOS_CHMOD \
         _INT_21         \
         "jc short finish" \
@@ -1296,10 +1296,12 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyCreateEx = \
         "mov ax,716Ch"  \
         "push ecx"      \
+        "stc"           \
         _INT_21         \
         "pop ecx"       \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
         "mov ax,6C00h"  \
@@ -1334,11 +1336,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov cl,1"      \
         "mov ch,0"      \
         "mov ax,7160h"  \
+        "stc"           \
         _INT_21         \
         "pop ecx"       \
         "jc short func" \
-        "cmp ax,7100h"  \
-        "jz short func" \
         "mov edx,edi"   \
 "func:   "              \
         "mov ah,5Ah"    \
@@ -1432,12 +1433,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyDelete = \
         "mov si,0"      \
         "mov ax,7141h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,41h"    \
+        _MOV_AH DOS_UNLINK \
         _INT_21         \
 "finish: "              \
         "rcl eax,1"     \
@@ -1446,7 +1449,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 #else
 #pragma aux             _nTinyDelete = \
-        "mov ah,41h"    \
+        _MOV_AH DOS_UNLINK \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1465,12 +1468,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "push es"       \
         "mov es,cx"     \
         "mov ax,7156h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,56h"    \
+        _MOV_AH DOS_RENAME \
         _INT_21         \
 "finish: "              \
         "rcl eax,1"     \
@@ -1484,7 +1489,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "push ebx"      \
         "push es"       \
         "mov es,cx"     \
-        "mov ah,56h"    \
+        _MOV_AH DOS_RENAME \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1497,12 +1502,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #ifdef __WATCOM_LFN__
 #pragma aux             _nTinyMakeDir = \
         "mov ax,7139h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,39h"    \
+        _MOV_AH DOS_MKDIR \
         _INT_21         \
 "finish: "              \
         "rcl eax,1"     \
@@ -1511,7 +1518,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 #else
 #pragma aux             _nTinyMakeDir = \
-        "mov ah,39h"    \
+        _MOV_AH DOS_MKDIR \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1522,12 +1529,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #ifdef __WATCOM_LFN__
 #pragma aux             _nTinyRemoveDir = \
         "mov ax,713Ah"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,3Ah"    \
+        _MOV_AH DOS_RMDIR \
         _INT_21         \
 "finish: "              \
         "rcl eax,1"     \
@@ -1536,7 +1545,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 #else
 #pragma aux             _nTinyRemoveDir = \
-        "mov ah,3Ah"    \
+        _MOV_AH DOS_RMDIR \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1547,12 +1556,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #ifdef __WATCOM_LFN__
 #pragma aux             _nTinyChangeDir = \
         "mov ax,713Bh"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,3Bh"    \
+        _MOV_AH DOS_CHDIR \
         _INT_21         \
 "finish: "              \
         "rcl eax,1"     \
@@ -1561,7 +1572,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 #else
 #pragma aux             _nTinyChangeDir = \
-        "mov ah,3Bh"    \
+        _MOV_AH DOS_CHDIR \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1572,12 +1583,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #ifdef __WATCOM_LFN__
 #pragma aux             _nTinyGetCWDir = \
         "mov ax,7147h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,47h"    \
+        _MOV_AH DOS_GETCWD \
         _INT_21         \
 "finish: "              \
         "rcl eax,1"     \
@@ -1586,7 +1599,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 #else
 #pragma aux             _nTinyGetCWDir = \
-        "mov ah,47h"    \
+        _MOV_AH DOS_GETCWD \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1747,7 +1760,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         parm caller     [edx];
 
 #pragma aux             _nTinyFindFirst = \
-        "mov ah,4Eh"    \
+        _MOV_AH DOS_FIND_FIRST \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1755,7 +1768,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 
 #pragma aux             _nTinyFindFirstDTA = \
-        "mov ah,4Eh"    \
+        _MOV_AH DOS_FIND_FIRST \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
@@ -1763,14 +1776,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 
 #pragma aux             _TinyFindNext = \
-        "mov ah,4Fh"    \
+        _MOV_AH DOS_FIND_NEXT \
         _INT_21         \
         "rcl eax,1"     \
         "ror eax,1"     \
         value           [eax];
 
 #pragma aux             _TinyFindNextDTA = \
-        "mov ah,4Fh"    \
+        _MOV_AH DOS_FIND_NEXT \
         "mov al,0"      \
         _INT_21         \
         "rcl eax,1"     \
@@ -1779,7 +1792,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         value           [eax];
 
 #pragma aux             _TinyFindCloseDTA = \
-        "mov ah,4Fh"    \
+        _MOV_AH DOS_FIND_NEXT \
         "mov al,1"      \
         _INT_21         \
         "rcl eax,1"     \
@@ -1845,7 +1858,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _nTinyAccess = \
         _SET_DS_DGROUP  \
-        _MOV_AX 0x00 DOS_CHMOD \
+        _MOV_AX _GET_ DOS_CHMOD \
         _INT_21         \
         "jc short finish" \
         _TEST_BL 0x02   \
@@ -1863,7 +1876,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _fTinyAccess = \
         _SET_DS_SREG    \
-        _MOV_AX 0x00 DOS_CHMOD \
+        _MOV_AX _GET_ DOS_CHMOD \
         _INT_21         \
         "jc short finish" \
         _TEST_BL 0x02   \
@@ -1922,12 +1935,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #ifdef __WATCOM_LFN__
 #pragma aux             _nTinyCreateEx = \
         _SET_DS_DGROUP  \
-        "mov ax, 716Ch" \
+        "mov ax,716Ch"  \
+        "stc"           \
         "push cx"       \
         _INT_21         \
         "pop cx"        \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
         "mov ah,0x6C"   \
@@ -1942,11 +1957,13 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _fTinyCreateEx = \
         _SET_DS_SREG    \
         "mov ax, 716Ch" \
+        "stc"           \
         "push cx"       \
         _INT_21         \
         "pop cx"        \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
         "mov ah,0x6C"   \
@@ -2007,11 +2024,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov cl,1"      \
         "mov ch,0"      \
         "mov ax,7160h"  \
+        "stc"           \
         _INT_21         \
         "pop cx"        \
         "jc short func" \
-        "cmp ax,7100h"  \
-        "jz short func" \
         "mov dx,di"     \
 "func:   "              \
         "mov ah,5Ah"    \
@@ -2029,11 +2045,10 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov cl,1"      \
         "mov ch,0"      \
         "mov ax,7160h"  \
+        "stc"           \
         _INT_21         \
         "pop cx"        \
         "jc short func" \
-        "cmp ax,7100h"  \
-        "jz short func" \
         "mov dx,di"     \
 "func:   "              \
         "mov ah,5Ah"    \
@@ -2195,12 +2210,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_DGROUP  \
         "mov ax,7143h"  \
         "mov bl,0"      \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
-        "cmp ax,7100"   \
+        "jnc short finish" \
+        "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ax,4300h"  \
+        _MOV_AX _GET_ DOS_CHMOD \
         _INT_21         \
 "finish: "              \
         "mov ax,cx"     \
@@ -2214,12 +2231,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_DGROUP  \
         "mov ax,7143h"  \
         "mov bl,1"      \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
-        "cmp ax,7100"   \
+        "jnc short finish" \
+        "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ax,4301h"  \
+        _MOV_AX _SET_ DOS_CHMOD \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2232,9 +2251,11 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_SREG    \
         "mov ax,7143h"  \
         "mov bl,0"      \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
-        "cmp ax,7100"   \
+        "jnc short finish" \
+        "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
         "mov ax,4300h"  \
@@ -2251,9 +2272,11 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_SREG    \
         "mov ax,7143h"  \
         "mov bl,1"      \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
-        "cmp ax,7100"   \
+        "jnc short finish" \
+        "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
         "mov ax,4301h"  \
@@ -2313,12 +2336,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_DGROUP  \
         "mov ax,7141h"  \
         "mov si,0"      \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,41h"    \
+        _MOV_AH DOS_UNLINK \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2332,12 +2357,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         "mov ax,ss"     \
         "mov es,ax"     \
         "mov ax,7156h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,56h"    \
+        _MOV_AH DOS_RENAME \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2350,12 +2377,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_SREG    \
         "mov ax,7141h"  \
         "mov si,0"      \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,41h"    \
+        _MOV_AH DOS_UNLINK \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2368,12 +2397,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_SREG    \
         "mov es,cx"     \
         "mov ax,7156h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,56h"    \
+        _MOV_AH DOS_RENAME \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2384,7 +2415,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #else
 #pragma aux             _nTinyDelete = \
         _SET_DS_DGROUP  \
-        _MOV_AH DOS_UNLINK    \
+        _MOV_AH DOS_UNLINK \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_DGROUP  \
@@ -2395,7 +2426,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         _SET_DS_DGROUP  \
         _MOV_AX_SS      \
         _MOV_ES_AX      \
-        _MOV_AH DOS_RENAME    \
+        _MOV_AH DOS_RENAME \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_DGROUP  \
@@ -2405,7 +2436,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _fTinyDelete = \
         _SET_DS_SREG    \
-        _MOV_AH DOS_UNLINK    \
+        _MOV_AH DOS_UNLINK \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_SREG    \
@@ -2416,7 +2447,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _fTinyRename = \
         _SET_DS_SREG    \
         _MOV_ES_CX      \
-        _MOV_AH DOS_RENAME    \
+        _MOV_AH DOS_RENAME \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_SREG    \
@@ -2429,12 +2460,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyMakeDir = \
         _SET_DS_DGROUP  \
         "mov ax,7139h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,39h"    \
+        _MOV_AH DOS_MKDIR \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2446,12 +2479,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyRemoveDir = \
         _SET_DS_DGROUP  \
         "mov ax,713Ah"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,3Ah"    \
+        _MOV_AH DOS_RMDIR \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2463,12 +2498,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyChangeDir = \
         _SET_DS_DGROUP  \
         "mov ax,713Bh"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,3Bh"    \
+        _MOV_AH DOS_CHDIR \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2480,12 +2517,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _nTinyGetCWDir = \
         _SET_DS_DGROUP  \
         "mov ax,7147h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,47h"    \
+        _MOV_AH DOS_GETCWD \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2497,12 +2536,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _fTinyMakeDir = \
         _SET_DS_SREG    \
         "mov ax,7139h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,39h"    \
+        _MOV_AH DOS_MKDIR \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2514,12 +2555,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _fTinyRemoveDir = \
         _SET_DS_SREG    \
         "mov ax,713Ah"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,3Ah"    \
+        _MOV_AH DOS_RMDIR \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2531,12 +2574,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _fTinyChangeDir = \
         _SET_DS_SREG    \
         "mov ax,713Bh"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,3Bh"    \
+        _MOV_AH DOS_CHDIR \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2548,12 +2593,14 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #pragma aux             _fTinyGetCWDir = \
         _SET_DS_SREG    \
         "mov ax,7147h"  \
+        "stc"           \
         _INT_21         \
-        "jc short old"  \
+        "jnc short finish" \
         "cmp ax,7100h"  \
+        "stc"           \
         "jnz short finish" \
 "old:    "              \
-        "mov ah,47h"    \
+        _MOV_AH DOS_GETCWD \
         _INT_21         \
 "finish: "              \
         "sbb dx,dx"     \
@@ -2564,7 +2611,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 #else
 #pragma aux             _nTinyMakeDir = \
         _SET_DS_DGROUP  \
-        _MOV_AH DOS_MKDIR    \
+        _MOV_AH DOS_MKDIR \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_DGROUP  \
@@ -2574,7 +2621,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _nTinyRemoveDir = \
         _SET_DS_DGROUP  \
-        _MOV_AH DOS_RMDIR    \
+        _MOV_AH DOS_RMDIR \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_DGROUP  \
@@ -2584,7 +2631,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _nTinyChangeDir = \
         _SET_DS_DGROUP  \
-        _MOV_AH DOS_CHDIR    \
+        _MOV_AH DOS_CHDIR \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_DGROUP  \
@@ -2594,7 +2641,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _nTinyGetCWDir = \
         _SET_DS_DGROUP  \
-        _MOV_AH DOS_GETCWD    \
+        _MOV_AH DOS_GETCWD \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_DGROUP  \
@@ -2604,7 +2651,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _fTinyMakeDir = \
         _SET_DS_SREG    \
-        _MOV_AH DOS_MKDIR    \
+        _MOV_AH DOS_MKDIR \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_SREG    \
@@ -2614,7 +2661,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _fTinyRemoveDir = \
         _SET_DS_SREG    \
-        _MOV_AH DOS_RMDIR    \
+        _MOV_AH DOS_RMDIR \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_SREG    \
@@ -2624,7 +2671,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _fTinyChangeDir = \
         _SET_DS_SREG    \
-        _MOV_AH DOS_CHDIR    \
+        _MOV_AH DOS_CHDIR \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_SREG    \
@@ -2634,7 +2681,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _fTinyGetCWDir = \
         _SET_DS_SREG    \
-        _MOV_AH DOS_GETCWD    \
+        _MOV_AH DOS_GETCWD \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_SREG    \
@@ -2787,7 +2834,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
 
 #pragma aux             _nTinyFindFirst = \
         _SET_DS_DGROUP  \
-        _MOV_AH DOS_FIND_FIRST    \
+        _MOV_AH DOS_FIND_FIRST \
         _INT_21         \
         _SBB_DX_DX      \
         _RST_DS_DGROUP  \
@@ -2814,7 +2861,7 @@ uint_32                 _TinyMemAlloc( uint_32 __size );
         modify exact    [ax cx dx _SREG];
 
 #pragma aux             _TinyFindNext = \
-        _MOV_AH DOS_FIND_NEXT    \
+        _MOV_AH DOS_FIND_NEXT \
         _INT_21         \
         _SBB_DX_DX      \
         value           [dx ax] \
