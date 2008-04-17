@@ -599,6 +599,7 @@ static struct fixup *CreateFixupRecModend( struct asmfixup *fixup )
     default:
         /**/myassert( sym->segment != NULL );
         fixnode->lr.target = TARGET_SEG & TARGET_WITH_DISPL;
+        fixnode->lr.target_datum = ((dir_node *)sym->segment)->e.seginfo->idx;
         fixnode->lr.frame = FRAME_TARG;
         fixnode->lr.frame_datum = 0;
         return( fixnode );
