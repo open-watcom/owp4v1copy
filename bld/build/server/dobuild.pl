@@ -86,13 +86,14 @@ sub get_reldir
     }
 }
 
-sub make_build_batch()
+sub make_build_batch
 {
     my($pass1) = ($WATCOM eq $Common::config{"WATCOM"});
 
     open(BATCH, ">$build_batch_name") || die "Unable to open $build_batch_name file.";
     open(INPUT, "$setvars") || die "Unable to open $setvars file.";
     while (<INPUT>) {
+        s/\r?\n/\n/;
         if    (/$setenv OWROOT/i)    { print BATCH "$setenv OWROOT=", $OW, "\n"; }
         elsif (/$setenv WATCOM/i)    { print BATCH "$setenv WATCOM=", $WATCOM, "\n"; }
         elsif (/$setenv DOC_BUILD/i) {
@@ -101,21 +102,36 @@ sub make_build_batch()
         } else                       { print BATCH; }
     }
     close(INPUT);
-
     # Add additional commands to do the build.
     print BATCH "\n";
     print BATCH "$setenv RELROOT=", get_reldir(), "\n";
     print BATCH "rm -rf ", get_reldir(), "\n";
+    print BATCH "\n";
+    # Create fresh builder tools, to prevent lockup build server 
+    # if builder tools from previous build are somehow broken
+    print BATCH "cd $OW\ncd bld\n";
+    if( $^O eq "MSWin32" ) {
+        print BATCH "cd builder\ncd nt386\n";
+    } elsif( $^O eq "linux" ) {
+        print BATCH "cd builder\ncd linux386\n";
+    }
+    print BATCH "wmake clean\n";
+    print BATCH "wmake\n";
+    # Clean previous build.
     print BATCH "cd $OW\ncd bld\n";
     print BATCH "builder clean\n";
+    # Create new builder tools, previous clean removed them.
+    print BATCH "cd $OW\ncd bld\n";
     if( $^O eq "MSWin32" ) {
         print BATCH "cd builder\ncd nt386\n";
     } elsif( $^O eq "linux" ) {
         print BATCH "cd builder\ncd linux386\n";
     }
     print BATCH "wmake\n";
+    # Create Watcom DOS TCP/IP library.
     print BATCH "cd $OW\ncd contrib\ncd wattcp\ncd src\n";
     print BATCH "wmake -ms\n";
+    # Start build process.
     print BATCH "cd $OW\ncd bld\n";
     if ($pass1) {
         print BATCH "builder pass1\n";
@@ -127,11 +143,12 @@ sub make_build_batch()
     chmod 0777, $build_batch_name;
 }
 
-sub make_test_batch()
+sub make_test_batch
 {
     open(BATCH, ">$test_batch_name") || die "Unable to open $test_batch_name file.";
     open(INPUT, "$setvars") || die "Unable to open $setvars file.";
     while (<INPUT>) {
+        s/\r?\n/\n/;
         if    (/$setenv OWROOT/i) { print BATCH "$setenv OWROOT=", $OW, "\n"; }
         elsif (/$setenv WATCOM/i) { print BATCH "$setenv WATCOM=", get_reldir(), "\n"; }
         else                      { print BATCH; }
