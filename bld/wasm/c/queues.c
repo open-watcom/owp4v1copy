@@ -47,19 +47,8 @@ typedef struct queuenode {
 
 static qdesc   *LnameQueue  = NULL;   // queue of LNAME structs
 static qdesc   *PubQueue    = NULL;   // queue of pubdefs
-static qdesc   *GlobalQueue = NULL;   // queue of global / externdefs
 static qdesc   *AliasQueue  = NULL;   // queue of aliases
 static qdesc   *LinnumQueue = NULL;   // queue of linnum_data structs
-
-static void QAddQItem( qdesc **queue, queuenode *node )
-/*****************************************************/
-{
-    if( *queue == NULL ) {
-        *queue = AsmAlloc( sizeof( qdesc ) );
-        QInit( *queue );
-    }
-    QEnqueue( *queue, node );
-}
 
 static void QAddItem( qdesc **queue, void *data )
 /***********************************************/
@@ -102,6 +91,13 @@ const char *NameGet( uint_16 hdl )
 }
 
 void AddPublicData( dir_node *dir )
+/*********************************/
+{
+    dir->sym.public = TRUE;
+    QAddItem( &PubQueue, dir );
+}
+
+void AddPublicProc( dir_node *dir )
 /*********************************/
 {
     QAddItem( &PubQueue, dir );
@@ -307,39 +303,6 @@ static void FreeLnameQueue( void )
         }
         AsmFree( LnameQueue );
     }
-}
-
-void AddGlobalData( dir_node *dir )
-/*********************************/
-{
-    QAddItem( &GlobalQueue, dir );
-}
-
-void GetGlobalData( void )
-/************************/
-/* turn the globals into either externs or publics as appropriate */
-{
-    queuenode           *curr;
-    struct asm_sym      *sym;
-
-    if( GlobalQueue == NULL )
-        return;
-    for( ; ; ) {
-        curr = (queuenode *)QDequeue( GlobalQueue );
-        if( curr == NULL )
-            break;
-        sym = (asm_sym *)curr->data;
-        if( sym->state == SYM_UNDEFINED ) {
-            dir_change( (dir_node *)curr->data, TAB_EXT );
-            AsmFree( curr );
-        } else {
-            /* make this record a pubdef */
-            sym->public = TRUE;
-            QAddQItem( &PubQueue, curr );
-        }
-    }
-    AsmFree( GlobalQueue );
-    GlobalQueue = NULL;
 }
 
 void AddLinnumData( struct line_num_info *data )

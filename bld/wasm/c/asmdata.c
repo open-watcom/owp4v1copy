@@ -38,6 +38,7 @@
 #if defined( _STANDALONE_ )
   #include "directiv.h"
   #include "asmstruc.h"
+  #include "queues.h"
 #endif
 
 #ifndef min
@@ -857,7 +858,13 @@ int data_init( int sym_loc, int initializer_loc )
         }
 
         if( Parse_Pass == PASS_1 ) {
-            if( sym->state != SYM_UNDEFINED ) {
+            if( sym->state == SYM_EXTERNAL && ((dir_node *)sym)->e.extinfo->global ) {
+                dir_to_sym( (dir_node *)sym );
+                AddPublicData( (dir_node *)sym );
+                if( sym->mem_type != mem_type ) {
+                    AsmErr( SYMBOL_TYPE_DIFF, sym->name );
+                }
+            } else if( sym->state != SYM_UNDEFINED ) {
                 // redefine label
                 AsmError( SYMBOL_ALREADY_DEFINED );
                 return( ERROR );

@@ -77,7 +77,6 @@ enum {
     TAB_FIRST = 0,
     TAB_SEG = TAB_FIRST,  // order seg, grp, lname is important
     TAB_GRP,
-    TAB_PUB,
     TAB_LIB,
     TAB_EXT,
     TAB_CONST,
@@ -85,7 +84,6 @@ enum {
     TAB_MACRO,
     TAB_CLASS_LNAME,
     TAB_STRUCT,
-    TAB_GLOBAL,
     TAB_LAST,
     TAB_COMM             // TAB_COMM is not included in tables, it is assigned to TAB_EXT
 };                       // tables for definitions
@@ -138,8 +136,8 @@ typedef struct {
     uint_32             start_loc;      // starting offset of current ledata or lidata
     unsigned            readonly    :1; // if the segment is readonly
     unsigned            ignore      :1; // ignore this if the seg is redefined
-    unsigned            align       :4; // 
-    unsigned            combine     :4; // 
+    unsigned            align       :4; // align field (enum segdef_align_values)
+    unsigned            combine     :4; // combine field (values in pcobj.h)
     unsigned            use_32      :1; // 32-bit segment
     seg_type            iscode;         // segment is belonging to "CODE" or 'DATA' class
     uint_32             current_loc;    // current offset in current ledata or lidata
@@ -150,21 +148,22 @@ typedef struct {
 
 typedef struct {
     direct_idx          idx;            // external definition index
-    unsigned            use32:1;
-    unsigned            comm:1;
+    unsigned            use32       :1;
+    unsigned            comm        :1;
+    unsigned            global      :1;
 } ext_info;
 
 typedef struct {
     direct_idx          idx;            // external definition index
-    unsigned            use32:1;
-    unsigned            comm:1;
+    unsigned            use32       :1;
+    unsigned            comm        :1;
     unsigned long       size;
     uint                distance;
 } comm_info;
 
 typedef struct {
-    unsigned            predef:1;       // whether it is predefined symbol
-    unsigned            redefine:1;     // whether it is redefinable or not
+    unsigned            predef      :1; // whether it is predefined symbol
+    unsigned            redefine    :1; // whether it is redefinable or not
     unsigned            expand_early:1; // if TRUE expand before parsing
     int                 count;          // number of tokens
     asm_tok             *data;          // array of asm_tok's to replace symbol
@@ -182,7 +181,7 @@ typedef struct label_list {
     int                 size;           // size of parameter
     int                 factor;         // for local var only
     union {
-        unsigned        is_vararg:1;    // if it is a vararg
+        unsigned        is_vararg   :1; // if it is a vararg
         int             count;          // number of element in this label
     };
 } label_list;
@@ -194,9 +193,9 @@ typedef struct {
     int                 parasize;       // total no. of bytes used by parameters
     int                 localsize;      // total no. of bytes used by local variables
     memtype             mem_type;       // distance of procedure: near or far
-    unsigned            is_vararg:1;    // if it has a vararg
-    unsigned            pe_type:1;      // prolog/epilog code type 0:8086/186 1:286 and above
-    unsigned            export:1;       // EXPORT procedure
+    unsigned            is_vararg   :1; // if it has a vararg
+    unsigned            pe_type     :1; // prolog/epilog code type 0:8086/186 1:286 and above
+    unsigned            export      :1; // EXPORT procedure
 } proc_info;
 
 typedef struct parm_list {
@@ -287,10 +286,10 @@ typedef struct {
     mod_type            model;           // memory model;
     lang_type           langtype;        // language;
     os_type             ostype;          // operating system;
-    unsigned            use32:1;         // If 32-bit segment is used
-    unsigned            cmdline:1;
-    unsigned            defUse32:1;      // default segment size 32-bit
-    unsigned            mseg:1;          // mixed segments (16/32-bit)
+    unsigned            use32       :1;  // If 32-bit segment is used
+    unsigned            cmdline     :1;
+    unsigned            defUse32    :1;  // default segment size 32-bit
+    unsigned            mseg        :1;  // mixed segments (16/32-bit)
     struct asm_sym      *flat_grp;       // FLAT group symbol
     char                name[_MAX_FNAME];// name of module
     const FNAME         *srcfile;
@@ -319,6 +318,7 @@ extern seg_list         *CurrSeg;       // points to stack of opened segments
 /*---------------------------------------------------------------------------*/
 
 extern dir_node         *dir_insert( const char *, int );
+extern void             dir_to_sym( dir_node * );
 extern void             dir_change( dir_node *, int );
 
 extern uint_32          GetCurrAddr( void );    // Get offset from current segment

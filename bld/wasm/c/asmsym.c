@@ -87,6 +87,7 @@ static char *InitAsmSym( struct asm_sym *sym, const char *name )
         sym->segment = NULL;
         sym->offset = 0;
         sym->public = FALSE;
+        sym->referenced = FALSE;
         sym->langtype = LANG_NONE;
         sym->first_size = 0;
         sym->first_length = 0;
@@ -654,6 +655,7 @@ static void DumpSymbol( struct asm_sym *sym )
     switch( sym->state ) {
     case SYM_SEG:
         type = "SEGMENT";
+//        dir->e.seginfo = AsmAlloc( sizeof( seg_info ) );
 //        dir->e.seginfo->idx = 0;
 //        dir->e.seginfo->grpidx = 0;
 //        dir->e.seginfo->segrec = NULL;
@@ -668,14 +670,15 @@ static void DumpSymbol( struct asm_sym *sym )
     case SYM_EXTERNAL:
         type = "EXTERNAL";
 //        dir->e.extinfo = AsmAlloc( sizeof( ext_info ) );
-//        dir->e.extinfo->idx = ++extdefidx;
+//        dir->e.extinfo->idx = 0;
 //        dir->e.extinfo->use32 = Use32;
 //        dir->e.extinfo->comm = 0;
+//        dir->e.extinfo->global = 0;
         break;
 //    case TAB_COMM:
 //        sym->state = SYM_EXTERNAL;
 //        dir->e.comminfo = AsmAlloc( sizeof( comm_info ) );
-//        dir->e.comminfo->idx = ++extdefidx;
+//        dir->e.comminfo->idx = 0;
 //        dir->e.comminfo->use32 = Use32;
 //        dir->e.comminfo->comm = 1;
 //        break;
@@ -704,11 +707,6 @@ static void DumpSymbol( struct asm_sym *sym )
 //        dir->e.lnameinfo = AsmAlloc( sizeof( lname_info ) );
 //        dir->e.lnameinfo->idx = 0;
         break;
-//    case TAB_PUB:
-//        sym->public = TRUE;
-//        return;
-//    case TAB_GLOBAL:
-//        break;
     case SYM_STRUCT:
         type = "STRUCTURE";
 //        dir->e.structinfo = AsmAlloc( sizeof( struct_info ) );

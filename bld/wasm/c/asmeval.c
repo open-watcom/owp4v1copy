@@ -344,6 +344,7 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
 #endif
         }
         if( new->sym != NULL ) {
+            new->sym->referenced = TRUE;
             if( new->sym->state == SYM_STRUCT ) {
                 new->empty = FALSE;
                 new->value = new->sym->offset;

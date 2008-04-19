@@ -38,6 +38,7 @@
 
 #include "directiv.h"
 #include "asmstruc.h"
+#include "queues.h"
 
 static unsigned             AnonymousCounter = 0;
 
@@ -117,7 +118,14 @@ int MakeLabel( char *symbol_name, memtype mem_type )
     if( sym == NULL )
         return( ERROR );
     if( Parse_Pass == PASS_1 ) {
-        if( sym->state != SYM_UNDEFINED ) {
+        if( sym->state == SYM_EXTERNAL && ((dir_node *)sym)->e.extinfo->global ) {
+            dir_to_sym( (dir_node *)sym );
+            AddPublicData( (dir_node *)sym );
+            if( sym->mem_type != mem_type ) {
+                AsmErr( SYMBOL_TYPE_DIFF, sym->name );
+                return( ERROR );
+            }
+        } else if( sym->state != SYM_UNDEFINED ) {
             AsmErr( SYMBOL_PREVIOUSLY_DEFINED, symbol_name );
             return( ERROR );
         }

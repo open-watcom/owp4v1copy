@@ -24,6 +24,7 @@ diag05.obj &
 diag06.obj &
 diag07.obj &
 error1.obj &
+extern1.obj &
 include.obj &
 irp.obj &
 cpureq.obj

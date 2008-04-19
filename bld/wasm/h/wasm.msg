@@ -328,3 +328,6 @@ pick( DATA_LABEL_IS_EXPECTED,
 pick( INVALID_USE_OF_LENGTH_SIZE_OPERATOR,
                                 "Invalid use of LENGTH/LENGTHOF/SIZE/SIZEOF operator" ,
                                 "Invalid use of LENGTH/LENGTHOF/SIZE/SIZEOF operator" )
+pick( SYMBOL_TYPE_DIFF,
+                                "Symbol '%s' type conflict." ,
+                                "Symbol '%s' type conflict." )

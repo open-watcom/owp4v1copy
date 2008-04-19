@@ -506,9 +506,11 @@ static void dir_init( dir_node *dir, int tab )
         dir->e.extinfo->idx = 0;
         dir->e.extinfo->use32 = Use32;
         dir->e.extinfo->comm = 0;
+        dir->e.extinfo->global = 0;
         break;
     case TAB_COMM:
         dir->sym.state = SYM_EXTERNAL;
+        dir->sym.referenced = TRUE;
         dir->e.comminfo = AsmAlloc( sizeof( comm_info ) );
         dir->e.comminfo->idx = 0;
         dir->e.comminfo->use32 = Use32;
@@ -543,11 +545,6 @@ static void dir_init( dir_node *dir, int tab )
         dir->e.lnameinfo = AsmAlloc( sizeof( lname_info ) );
         dir->e.lnameinfo->idx = 0;
         break;
-    case TAB_PUB:
-        dir->sym.public = TRUE;
-        return;
-    case TAB_GLOBAL:
-        return;
     case TAB_STRUCT:
         dir->sym.state = SYM_STRUCT;
         dir->e.structinfo = AsmAlloc( sizeof( struct_info ) );
@@ -584,19 +581,16 @@ static void dir_to_tail( dir_node *dir, int tab )
     Tables[tab].tail = dir;
     dir->next = NULL;
 }
-static void RemoveFromTable( dir_node *dir )
-/******************************************/
+
+static dir_node *RemoveFromTable( dir_node *dir )
+/***********************************************/
 {
     int tab;
 
-    if( dir->prev != dir->next ) {
+    if( dir->prev != NULL && dir->next != NULL ) {
         dir->next->prev = dir->prev;
         dir->prev->next = dir->next;
     } else {
-        if( dir->prev != NULL ) {
-            dir->next->prev = NULL;
-            dir->prev->next = NULL;
-        }
         switch( dir->sym.state ) {
         case SYM_EXTERNAL:
             tab = TAB_EXT;
@@ -614,10 +608,28 @@ static void RemoveFromTable( dir_node *dir )
             tab = TAB_MACRO;
             break;
         default:
-            return;
+            return( NULL );
         }
-        Tables[tab].head = Tables[tab].tail = dir->prev;
+        if( dir->next != NULL ) {
+            dir->next->prev = NULL;
+            Tables[tab].head = dir->next;
+        } else if( dir->prev != NULL ) {
+            dir->prev->next = NULL;
+            Tables[tab].tail = dir->prev;
+        } else {
+            Tables[tab].head = Tables[tab].tail = NULL;
+        }
     }
+    return( dir->next );
+}
+
+void dir_to_sym( dir_node *dir )
+/******************************/
+/* Remove node type/info to be symbol only again */
+{
+    FreeInfo( dir );
+    RemoveFromTable( dir);
+    dir->sym.state = SYM_UNDEFINED;
 }
 
 void dir_change( dir_node *dir, int tab )
@@ -1013,33 +1025,36 @@ int ExtDef( int i, bool glob_def )
 
         dir = (dir_node *)AsmGetSymbol( token );
         if( dir == NULL ) {
-            dir = dir_insert( token, ( glob_def ) ? TAB_GLOBAL : TAB_EXT );
+            dir = dir_insert( token, TAB_EXT );
             if( dir == NULL ) {
                 return( ERROR );
             }
         } else if( dir->sym.state == SYM_UNDEFINED ) {
-            if( !glob_def ) {
-                dir_change( dir, TAB_EXT );
+            dir_change( dir, TAB_EXT );
+        } else if( dir->sym.mem_type != mem_type ) {
+            AsmError( EXT_DEF_DIFF );
+            return( ERROR );
+        } else if( dir->sym.state != SYM_EXTERNAL ) {
+            SetMangler( &dir->sym, mangle_type, lang_type );
+            if( glob_def && !dir->sym.public ) {
+                AddPublicData( dir );
             }
+            return( NOT_ERROR );
         } else {
-            if( glob_def ) {
-                return( PubDef( 0 ) ); // it is defined here, so make a pubdef
-            } else if( dir->sym.mem_type != mem_type ) {
-                AsmError( EXT_DEF_DIFF );
-                return( ERROR );
-            }
+//            SetMangler( &dir->sym, mangle_type, lang_type );
+            return( NOT_ERROR );
         }
 
+        if( glob_def ) {
+            dir->e.extinfo->global = TRUE;
+        } else {
+            dir->sym.referenced = TRUE;
+        }
         GetSymInfo( &dir->sym );
         dir->sym.offset = 0;
         // FIXME !! symbol can have different type
         dir->sym.mem_type = mem_type;
         SetMangler( &dir->sym, mangle_type, lang_type );
-        if( glob_def ) {
-            dir->sym.state = SYM_UNDEFINED;
-            /* put the symbol in the globaldef table */
-            AddGlobalData( dir );
-        }
     }
     return( NOT_ERROR );
 }
@@ -1086,7 +1101,7 @@ int PubDef( int i )
 
         dir = (dir_node *)AsmGetSymbol( token );
         if( dir == NULL ) {
-            dir = dir_insert( token, TAB_PUB );
+            dir = (dir_node *)AllocDSym( token, TRUE );
             AddPublicData( dir );
         } else if( dir->sym.state == SYM_CONST ) {
             /* check if the symbol expands to another symbol,
@@ -1099,7 +1114,6 @@ int PubDef( int i )
         SetMangler( &dir->sym, mangle_type, lang_type );
         if( !dir->sym.public ) {
             /* put it into the pub table */
-            dir->sym.public = TRUE;
             AddPublicData( dir );
         }
     }
@@ -2745,7 +2759,6 @@ static int proc_exam( dir_node *proc, int i )
             if( !proc->sym.public ) {
                 AddPublicData( proc );
             }
-            proc->sym.public = TRUE;
             // fall through
         case TOK_PROC_PRIVATE:
             minimum = TOK_PROC_USES;
@@ -2909,6 +2922,14 @@ int ProcDef( int i, bool proc_def )
         } else if( dir->sym.state == SYM_UNDEFINED ) {
             /* alloc the procinfo struct */
             dir_change( dir, TAB_PROC );
+        } else if( dir->sym.state == SYM_EXTERNAL ) {
+            if( dir->e.extinfo->global ) {
+                dir_change( dir, TAB_PROC );
+                AddPublicData( dir );
+            } else {
+                AsmErr( SYMBOL_PREVIOUSLY_DEFINED, dir->sym.name );
+                return( ERROR );
+            }
         } else {
             AsmErr( SYMBOL_PREVIOUSLY_DEFINED, dir->sym.name );
             return( ERROR );

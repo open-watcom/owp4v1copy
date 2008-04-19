@@ -17,6 +17,8 @@ dgroup.dis &
 dsxfork.dis &
 dsxhdlr.dis &
 expr01.dis &
+extern1.dis &
+extern2.dis &
 extprocf.dis &
 extprocn.dis &
 indirect.dis &

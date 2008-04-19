@@ -124,6 +124,7 @@ int AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *ins, bool secon
             return( ERROR );
         GetSymInfo( &dir->sym );
         dir->sym.offset = 0;
+        dir->sym.referenced = TRUE;
         dir->sym.mem_type = MT_FAR;
         SetMangler( &dir->sym, "N", LANG_NONE );
     }
