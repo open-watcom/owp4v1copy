@@ -1,5 +1,4 @@
 .func utoa _utoa _utow _utou
-.funcw _utow
 #include <stdlib.h>
 char *utoa( unsigned int value,
             char *buffer,

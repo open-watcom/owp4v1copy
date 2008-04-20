@@ -16,12 +16,12 @@ int _fmemicmp( const void __far *s1,
                size_t length );
 .ixfunc2 '&Compare' &ffunc
 .do end
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. int _umemicmp( const void *s1,
-:cmt.                const void *s2,
-:cmt.                size_t length );
-:cmt. .ixfunc2 '&Compare' &ufunc
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+int _umemicmp( const void *s1,
+               const void *s2,
+               size_t length );
+.ixfunc2 '&Compare' &ufunc
+.do end
 .funcend
 .desc begin
 The &func function compares, with case insensitivity (upper- and
@@ -37,14 +37,14 @@ to the object pointed to by
 The &_func function is identical to &func..
 Use &_func for ANSI/ISO naming conventions.
 .do end
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. .np
-:cmt. The &ufunc Unicode function is identical to &func except that it
-:cmt. operates on 16-bit Unicode character strings.
-:cmt. The argument
-:cmt. .arg length
-:cmt. is interpreted to mean the number of Unicode characters.
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+.np
+The &ufunc Unicode function is identical to &func except that it
+operates on 16-bit Unicode character strings.
+The argument
+.arg length
+is interpreted to mean the number of Unicode characters.
+.do end
 .desc end
 .return begin
 The &func function returns an integer less than, equal to, or greater

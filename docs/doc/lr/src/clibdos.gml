@@ -1,7 +1,7 @@
 .chap DOS Considerations
 .*
 .np
-.ix DOS considerations
+.ix 'DOS considerations'
 For the most part, DOS (Disk Operating System) for your personal
 computer can be ignored, unless an application is highly dependent
 upon the hardware or uses specialized functions from the operating
@@ -13,7 +13,7 @@ documentation for the DOS that you are using should be consulted.
 .section DOS Devices
 .*
 .np
-.ix DOS devices
+.ix 'DOS devices'
 .ix devices
 Most of the hardware devices attached to your computer have names
 which are recognized by DOS.
@@ -57,7 +57,7 @@ the fifth disk drive
 .section DOS Directories
 .*
 .np
-.ix DOS directory
+.ix 'DOS directory'
 .ix directory
 Each disk drive is conceptually divided into directories.
 Each directory is capable of containing files and/or other directories.
@@ -68,7 +68,7 @@ is not named; all other directories are named and can be accessed with a
 specification.
 A path is either absolute or relative to the current working directory.
 .ix path
-.ix DOS path
+.ix 'DOS path'
 Some examples are:
 .begnote
 .note b:&pc.
@@ -230,7 +230,7 @@ A:&pc.DEDUCT&pc.YR1988
 .section DOS Files
 .*
 .np
-.ix DOS file
+.ix 'DOS file'
 DOS files are stored within directories on disk drives.
 Most software, including &company C/C++, treats files in two
 representations:
@@ -257,7 +257,7 @@ function.
 .section DOS Commands
 .*
 .np
-.ix DOS commands
+.ix 'DOS commands'
 DOS commands are documented in the technical documentation for your
 DOS system.
 These may be invoked from a C or C++ program with the

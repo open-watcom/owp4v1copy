@@ -1,5 +1,6 @@
-.func _beginthread
+.func begin _beginthread
 .func2 _beginthreadex
+.func gen
 #include <process.h>
 .if &version ge 107 .do begin
 #if defined(__386__)
@@ -52,7 +53,7 @@ unsigned long _beginthreadex(
 .ixfunc2 '&NTFunc' &func.ex
 .ixfunc2 '&TNTFunc' &func.ex
 .do end
-.funcend
+.func end
 .desc begin
 The &func function is used to start a new thread of execution at the
 function identified by
@@ -141,7 +142,8 @@ argument.
 The thread ends when it exits from its main function or calls
 .kw exit
 .ct,
-.kw _exit,
+.kw _exit
+.ct,
 .kw _endthread
 or
 .kw _endthreadex.

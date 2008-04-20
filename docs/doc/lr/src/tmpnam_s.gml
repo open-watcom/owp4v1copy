@@ -1,7 +1,7 @@
-.functinit
+.func begin
 .funct   tmpnam_s   TR 24371
 .funct_w _wtmpnam_s
-.functgen
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 errno_t tmpnam_s( char * s, rsize_t maxsize );
@@ -12,7 +12,7 @@ errno_t _wtmpnam_s( wchar_t * s, rsize_t maxsize );
 .ixfunc2 '&FileOp' &wfunc
 .ixfunc2 '&Wide' &wfunc
 .do end
-.functend
+.func end
 .*
 .rtconst begin
 .arg s

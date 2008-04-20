@@ -1,10 +1,11 @@
-.func break Functions
+.func begin break... Functions
 .func2 break_off
 .func2 break_on
+.func gen
 #include <stdlib.h>
 void break_off( void );
 void break_on( void );
-.funcend
+.func end
 .desc begin
 The
 .kw break_off

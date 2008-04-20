@@ -21,13 +21,13 @@ errno_t wmemcpy_s( wchar_t * restrict s1,
                    size_t n );
 .ixfunc2 '&Copy' &wfunc
 .do end
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. void *_umemcpy_s( void * restrict s1,
-:cmt.                   rsize_t s1max,
-:cmt.                   const void * restrict s2,
-:cmt.                   size_t n );
-:cmt. .ixfunc2 '&Copy' &ufunc
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+void *_umemcpy_s( void * restrict s1,
+                  rsize_t s1max,
+                  const void * restrict s2,
+                  size_t n );
+.ixfunc2 '&Copy' &ufunc
+.do end
 .funcend
 .*
 .rtconst begin
@@ -86,14 +86,14 @@ and
 .arg n
 are interpreted to mean the number of wide characters.
 .do end
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. .np
-:cmt. The &ufunc Unicode function is identical to &func except that it
-:cmt. operates on 16-bit Unicode character strings.
-:cmt. The argument
-:cmt. .arg n
-:cmt. is interpreted to mean the number of Unicode characters.
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+.np
+The &ufunc Unicode function is identical to &func except that it
+operates on 16-bit Unicode character strings.
+The argument
+.arg n
+is interpreted to mean the number of Unicode characters.
+.do end
 .desc end
 .*
 .return begin

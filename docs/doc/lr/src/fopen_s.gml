@@ -1,7 +1,7 @@
-.functinit
+.func begin
 .funct   fopen_s TR 24371
 .funct_w _wfopen_s
-.functgen
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 errno_t fopen_s( FILE * restrict * restrict streamptr,
@@ -20,7 +20,7 @@ FILE *_ufopen( const wchar_t *filename,
                const wchar_t *mode );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.functend
+.func end
 .*
 .rtconst begin
 None of

@@ -1,6 +1,9 @@
-.func _heapset Functions
+.func begin _heapset Functions
+.func2 _heapset
+.func2 _bheapset
 .func2 _fheapset
 .func2 _nheapset
+.func gen
 .ixfunc2 '&Heap' _heapset
 .ixfunc2 '&Heap' _bheapset
 .ixfunc2 '&Heap' _fheapset
@@ -14,8 +17,7 @@ int  _heapset( unsigned char fill_char );
 int _bheapset( __segment seg, unsigned char fill_char );
 int _fheapset( unsigned char fill_char );
 int _nheapset( unsigned char fill_char );
-.func2 _bheapset
-.funcend
+.func end
 .desc begin
 The &func functions along with
 .kw _heapchk

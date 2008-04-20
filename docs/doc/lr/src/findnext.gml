@@ -2,23 +2,23 @@
 #include <&iohdr>
 int _findnext( long handle,
                struct _finddata_t *fileinfo );
-.ixfunc2 '&DosFunc' _findnext
+.ixfunc2 '&DosFunc' &_func
 int _findnexti64( long handle,
                   struct _finddatai64_t *fileinfo );
-.ixfunc2 '&DosFunc' _findnexti64
+.ixfunc2 '&DosFunc' &_func64
 .if &'length(&wfunc.) ne 0 .do begin
 int _wfindnext( long handle,
                 struct _wfinddata_t *fileinfo );
-.ixfunc2 '&DosFunc' _wfindnext
-.ixfunc2 '&Wide' _wfindnext
+.ixfunc2 '&DosFunc' &wfunc
+.ixfunc2 '&Wide' &wfunc
 int _wfindnexti64( long handle,
                    struct _wfinddatai64_t *fileinfo );
-.ixfunc2 '&DosFunc' _wfindnexti64
-.ixfunc2 '&Wide' _wfindnexti64
+.ixfunc2 '&DosFunc' &wfunc64
+.ixfunc2 '&Wide' &wfunc64
 .do end
 .funcend
 .desc begin
-The &func function returns information on the next file whose name
+The &_func function returns information on the next file whose name
 matches the
 .arg filespec
 argument that was specified in a call to the
@@ -44,13 +44,13 @@ struct _finddata_t {
 };
 .millust end
 .np
-The &func.i64 function returns information on the next file whose name
+The &_func64 function returns information on the next file whose name
 matches the
 .arg filespec
 argument that was specified in a call to the
 .kw _findfirsti64
 function.
-It differs from the &func function in that it returns a 64-bit file
+It differs from the &_func function in that it returns a 64-bit file
 size.
 The
 .arg handle
@@ -73,7 +73,7 @@ struct _finddatai64_t {
 .millust end
 .if &'length(&wfunc.) ne 0 .do begin
 .np
-The wide-character &wfunc function is similar to the &func function
+The wide-character &wfunc function is similar to the &_func function
 but operates on wide-character strings.
 .millust begin
 struct _wfinddata_t {
@@ -86,7 +86,7 @@ struct _wfinddata_t {
 };
 .millust end
 .np
-The wide-character &wfunc.i64 function is similar to the &func.i64
+The wide-character &wfunc64 function is similar to the &_func64
 function but operates on wide-character strings.
 It differs from the &wfunc function in that it returns a 64-bit file
 size.
@@ -103,7 +103,7 @@ struct _wfinddatai64_t {
 .do end
 .desc end
 .return begin
-If successful, &func returns 0; otherwise, &func and returns &minus.1
+If successful, &_func returns 0; otherwise, &_func and returns &minus.1
 and sets
 .kw errno
 to one of the following values:
@@ -115,7 +115,7 @@ No matching files
 .endterm
 .return end
 .see begin
-.seelist &function. _dos_find Functions
+.seelist &function. _dos_find...
 .seelist &function. _findclose _findfirst _findnext closedir opendir readdir
 .see end
 .exmp begin

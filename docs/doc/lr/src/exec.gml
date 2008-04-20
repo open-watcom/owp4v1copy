@@ -1,4 +1,4 @@
-.func exec Functions
+.func begin exec... Functions
 .func2 execl
 .func2 execle
 .func2 execlp
@@ -7,7 +7,7 @@
 .func2 execve
 .func2 execvp
 .func2 execvpe
-.funcw _wexec
+.func2 _wexecl
 .func2 _wexecle
 .func2 _wexeclp
 .func2 _wexeclpe
@@ -15,6 +15,8 @@
 .func2 _wexecve
 .func2 _wexecvp
 .func2 _wexecvpe
+.funcw _wexec...
+.func gen
 #include <process.h>
 int execl(   path, arg0, arg1..., argn, NULL );
 int execle(  path, arg0, arg1..., argn, NULL, envp );
@@ -68,8 +70,8 @@ int _wexecvpe( file, argv, envp );
 .ixfunc2 '&Wide' _wexecvp
 .ixfunc2 '&Wide' _wexecvpe
 .do end
-.funcend
-.funcbold exec
+.func end
+.funcbold exec...
 .desc begin
 The &func functions load and execute a new child process, named by
 .arg path
@@ -250,10 +252,10 @@ Not enough memory is available to execute the child process.
 .error end
 .*==========================================
 .see begin
-.seelist exec abort atexit exit _exit
-.seelist exec getcmd getenv main putenv qnx_spawn qnx_spawn_options
-.seelist exec spawn Functions
-.seelist exec system
+.seelist exec... abort atexit exit _exit
+.seelist exec... getcmd getenv main putenv qnx_spawn qnx_spawn_options
+.seelist exec... spawn...
+.seelist exec... system
 .see end
 .exmp begin
 #include <stddef.h>
@@ -358,8 +360,5 @@ The program will be found if one of
 is found in the current working directory.
 .blktext end
 .exmp end
-.* The following two lines force entries out for these function groups
-.sr function='exec...'
-.sr wfunc='x _wexec...'
 .class POSIX 1003.1 with extensions
 .system

@@ -1,7 +1,9 @@
-.func _heapmin Functions
+.func begin _heapmin Functions
+.func2 _heapmin
 .func2 _bheapmin
 .func2 _fheapmin
 .func2 _nheapmin
+.func gen
 .ixfunc2 '&Heap' _heapmin
 .ixfunc2 '&Heap' _bheapmin
 .ixfunc2 '&Heap' _fheapmin
@@ -15,7 +17,7 @@ int  _heapmin( void );
 int _bheapmin( __segment seg );
 int _fheapmin( void );
 int _nheapmin( void );
-.funcend
+.func end
 .desc begin
 The &func functions attempt to shrink the specified heap to its
 smallest possible size by returning all free entries at the end of the

@@ -66,7 +66,7 @@ effect.
 The &func function does not return a value.
 .return end
 .see begin
-.seelist tzset ctime localtime mktime strftime
+.seelist tzset ctime Functions localtime mktime strftime
 .see end
 .cp 12
 .exmp begin

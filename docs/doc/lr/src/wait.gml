@@ -33,7 +33,7 @@ The child process terminated abnormally.
 .endterm
 .return end
 .see begin
-.seelist wait cwait exit _exit spawn Functions
+.seelist wait cwait exit _exit spawn...
 .see end
 .exmp begin
 #include <stdlib.h>

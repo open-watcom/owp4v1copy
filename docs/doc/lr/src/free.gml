@@ -58,10 +58,12 @@ void main()
 .do end
 .************************
 .el .do begin
-.func free Functions
+.func begin free Functions
+.func2 free
 .func2 _bfree
 .func2 _ffree
 .func2 _nfree
+.func gen
 #include <stdlib.h>  For ANSI compatibility (free only)
 #include <malloc.h>  Required for other function prototypes
 void free( void *ptr );
@@ -72,7 +74,7 @@ void _nfree( void __near *ptr );
 .ixfunc2 '&Memory' _bfree
 .ixfunc2 '&Memory' _ffree
 .ixfunc2 '&Memory' _nfree
-.funcend
+.func end
 .desc begin
 When the value of the argument
 .arg ptr

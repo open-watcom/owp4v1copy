@@ -1,7 +1,9 @@
-.func _heapwalk Functions
+.func begin _heapwalk Functions
+.func2 _heapwalk
 .func2 _bheapwalk
 .func2 _fheapwalk
 .func2 _nheapwalk
+.func gen
 .ixfunc2 '&Heap' _heapwalk
 .ixfunc2 '&Heap' _bheapwalk
 .ixfunc2 '&Heap' _fheapwalk
@@ -23,7 +25,7 @@ struct _heapinfo {
 };
 #define _USEDENTRY      0
 #define _FREEENTRY      1
-.funcend
+.func end
 .desc begin
 The &func functions along with
 .kw _heapchk

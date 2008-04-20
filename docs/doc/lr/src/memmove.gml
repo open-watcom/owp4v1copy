@@ -17,12 +17,12 @@ wchar_t *wmemmove( wchar_t *dst,
                    size_t length );
 .ixfunc2 '&Copy' &wfunc
 .do end
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. void *_umemmove( void *dst,
-:cmt.                  const void *src,
-:cmt.                  size_t length );
-:cmt. .ixfunc2 '&Copy' &ufunc
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+void *_umemmove( void *dst,
+                 const void *src,
+                 size_t length );
+.ixfunc2 '&Copy' &ufunc
+.do end
 .funcend
 .*
 .safealt
@@ -49,14 +49,14 @@ The argument
 .arg length
 is interpreted to mean the number of wide characters.
 .do end
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. .np
-:cmt. The &ufunc Unicode function is identical to &func except that it
-:cmt. operates on 16-bit Unicode character strings.
-:cmt. The argument
-:cmt. .arg length
-:cmt. is interpreted to mean the number of Unicode characters.
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+.np
+The &ufunc Unicode function is identical to &func except that it
+operates on 16-bit Unicode character strings.
+The argument
+.arg length
+is interpreted to mean the number of Unicode characters.
+.do end
 .desc end
 .*
 .return begin

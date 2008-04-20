@@ -1,5 +1,6 @@
-.func snprintf_s snwprintf_s
+.func begin snprintf_s snwprintf_s
 .funcw snwprintf_s
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 int snprintf_s( char * restrict s, rsize_t n
@@ -17,7 +18,7 @@ int _usnprintf_s( char * restrict s, rsize_t n,
          const wchar_t * restrict format, ... );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.funcend
+.func end
 .*
 .rtconst begin
 Neither

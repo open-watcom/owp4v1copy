@@ -1,6 +1,8 @@
-.func _heapgrow Functions
+.func begin _heapgrow Functions
+.func2 _heapgrow
 .func2 _fheapgrow
 .func2 _nheapgrow
+.func gen
 .ixfunc2 '&Heap' _heapgrow
 .ixfunc2 '&Heap' _fheapgrow
 .ixfunc2 '&Heap' _nheapgrow
@@ -11,7 +13,7 @@
 void  _heapgrow( void );
 void _nheapgrow( void );
 void _fheapgrow( void );
-.funcend
+.func end
 .desc begin
 The
 .kw _nheapgrow

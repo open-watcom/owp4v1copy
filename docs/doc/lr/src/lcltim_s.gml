@@ -3,7 +3,7 @@
 #include <time.h>
 struct tm * localtime_s( const time_t * restrict timer,
                          struct tm * restrict result);
-.*  ixfunc2 '&TimeFunc' localtime_s
+.ixfunc2 '&TimeFunc' localtime_s
 .im structtm
 .funcend
 .*

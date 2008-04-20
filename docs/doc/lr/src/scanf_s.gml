@@ -1,5 +1,6 @@
-.func scanf_s wscanf_s _uscanf_s
+.func begin scanf_s wscanf_s _uscanf_s
 .funcw wscanf_s
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 int scanf_s( const char * restrict format, ... );
@@ -14,7 +15,7 @@ int wscanf_s( const wchar_t * restrict format, ... );
 int _uscanf_s( const wchar_t * restrict format, ... );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.funcend
+.func end
 .*
 .rtconst begin
 The

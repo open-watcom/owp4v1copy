@@ -38,8 +38,8 @@ If there is a runtime-constraint violation, then if
 is not a null pointer and
 .arg s1max
 is greater than zero and not greater than
-.kw RSIZE_MAX,
-then
+.kw RSIZE_MAX
+, then
 .kw strcpy_s
 sets
 .arg s1[0]

@@ -1,7 +1,7 @@
-.functinit
+.func begin
 .funct_m  mbsrtowcs_s   TR 24731
 .funct_fm _fmbsrtowcs_s
-.functgen
+.func gen
 #define __STDC_WANT_LIB_EXT1__  1
 #include <wchar.h>
 errno_t mbsrtowcs_s( size_t * restrict retval,
@@ -16,7 +16,7 @@ errno_t _fmbsrtowcs_s( size_t __far * restrict retval,
                        mbstate_t __far * restrict ps);
 .ixfunc2 '&Multibyte' &fmfunc
 .do end
-.functend
+.func end
 .*
 .rtconst begin
 None of

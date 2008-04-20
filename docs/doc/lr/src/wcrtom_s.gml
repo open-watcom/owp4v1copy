@@ -1,7 +1,7 @@
-.functinit
+.func begin
 .funct_w   wcrtomb_s TR24731
 .funct_fw  _fwcrtomb_s
-.functgen
+.func gen
 #define __STDC_WANT_LIB_EXT1__  1
 #include <wchar.h>
 errno_t wcrtomb_s( size_t * restrict retval,
@@ -17,7 +17,7 @@ errno_t _wcrtomb_s( size_t __far * restrict retval,
 .ixfunc2 '&Wide' &fwfunc
 .ixfunc2 '&Multibyte' &fwfunc
 .do end
-.functend
+.func end
 .*
 .rtconst begin
 Neither

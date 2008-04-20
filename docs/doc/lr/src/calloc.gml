@@ -3,7 +3,7 @@
 #include <stdlib.h>
 void *calloc( size_t n, size_t size );
 .ixfunc2 '&Memory' &func
-.funcend
+.func end
 .desc begin
 The &func function allocates space for an array of
 .arg n
@@ -44,10 +44,12 @@ void main()
 .do end
 .************************
 .el .do begin
-.func calloc Functions
+.func begin calloc Functions
+.func2 calloc
 .func2 _bcalloc
 .func2 _fcalloc
 .func2 _ncalloc
+.func gen
 #include <stdlib.h>  For ANSI compatibility (calloc only)
 #include <malloc.h>  Required for other function prototypes
 void *calloc( size_t n, size_t size );
@@ -60,7 +62,7 @@ void __near *_ncalloc( size_t n, size_t size );
 .ixfunc2 '&Memory' _bcalloc
 .ixfunc2 '&Memory' _fcalloc
 .ixfunc2 '&Memory' _ncalloc
-.funcend
+.func end
 .funcbold calloc
 .desc begin
 The &func functions allocate space for an array of

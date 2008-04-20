@@ -1,7 +1,9 @@
-.func _msize Functions
+.func begin _msize Functions
+.func2 _msize
 .func2 _bmsize
 .func2 _fmsize
 .func2 _nmsize
+.func gen
 .ixfunc2 '&Memory' _msize
 .ixfunc2 '&Memory' _bmsize
 .ixfunc2 '&Memory' _fmsize
@@ -11,7 +13,7 @@ size_t _msize( void *buffer );
 size_t _bmsize( __segment seg, void __based(void) *buffer );
 size_t _fmsize( void __far *buffer );
 size_t _nmsize( void __near *buffer );
-.funcend
+.func end
 .desc begin
 The &func functions return the size of the memory block pointed to by
 .arg buffer

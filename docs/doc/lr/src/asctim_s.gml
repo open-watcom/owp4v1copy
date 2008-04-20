@@ -1,16 +1,16 @@
-.func asctime_s wasctime_s
+.func asctime_s _wasctime_s
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <time.h>
 errno_t asctime_s( char * s,
                    rsize_t maxsize,
                    const struct tm * timeptr);
-.*  .ixfunc2 '&TimeFunc' asctime_s
+.ixfunc2 '&TimeFunc' &func
 .if &'length(&wfunc.) ne 0 .do begin
 errno_t _wasctime_s( wchar_t * s,
                      rsize_t maxsize,
                      const struct tm * timeptr);
-.* .ixfunc2 '&TimeFunc' _wasctime_s
-.* .ixfunc2 '&Wide' _wasctime_s
+.ixfunc2 '&TimeFunc' &wfunc
+.ixfunc2 '&Wide' &wfunc
 .do end
 .im structtm
 .funcend
@@ -112,7 +112,5 @@ void main()
 .exmp output
 Date and time is: Mon Jan 30 11:32:45 2006
 .exmp end
-.* The following line forces an entry out for the function
-.*  ??? .sr mfunc='x __wasctime'
 .class TR 24731
 .system

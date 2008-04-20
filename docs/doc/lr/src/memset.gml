@@ -13,12 +13,12 @@ wchar_t *wmemset( wchar_t *dst,
                   size_t length );
 .ixfunc2 '&String' &wfunc
 .do end
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. void *_umemset( void *dst,
-:cmt.                 int c,
-:cmt.                 size_t length );
-:cmt. .ixfunc2 '&String' &ufunc
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+void *_umemset( void *dst,
+                int c,
+                size_t length );
+.ixfunc2 '&String' &ufunc
+.do end
 .funcend
 .desc begin
 The &func function fills the first
@@ -38,14 +38,14 @@ The argument
 .arg length
 is interpreted to mean the number of wide characters.
 .do end
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. .np
-:cmt. The &ufunc Unicode function is identical to &func except that it
-:cmt. operates with 16-bit Unicode characters.
-:cmt. The argument
-:cmt. .arg length
-:cmt. is interpreted to mean the number of Unicode characters.
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+.np
+The &ufunc Unicode function is identical to &func except that it
+operates with 16-bit Unicode characters.
+The argument
+.arg length
+is interpreted to mean the number of Unicode characters.
+.do end
 .desc end
 .return begin
 The &func function returns the pointer

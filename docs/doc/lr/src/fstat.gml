@@ -8,13 +8,13 @@ int _fstat( int &fd, struct stat *buf );
 .ixfunc2 '&OsIo' &_func
 .do end
 int _fstati64( int handle, struct _stati64 *buf );
-.ixfunc2 '&OsIo' _&func.i64
+.ixfunc2 '&OsIo' &_func64
 int _wfstat( int handle, struct _stat *buf );
-.ixfunc2 '&OsIo' _w&func
-.ixfunc2 '&Wide' _w&func
+.ixfunc2 '&OsIo' &wfunc
+.ixfunc2 '&Wide' &wfunc
 int _wfstati64( int handle, struct _stati64 *buf );
-.ixfunc2 '&OsIo' _w&func.i64
-.ixfunc2 '&Wide' _w&func.i64
+.ixfunc2 '&OsIo' &wfunc64
+.ixfunc2 '&Wide' &wfunc64
 .funcend
 .desc begin
 The &func functions obtain information about an open file whose file

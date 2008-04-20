@@ -1,5 +1,6 @@
-.func vsscanf_s vswscanf_s _uvsscanf_s
+.func begin vsscanf_s vswscanf_s _uvsscanf_s
 .funcw vswscanf_s
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
@@ -22,7 +23,7 @@ int _uvsscanf_s( const wchar_t * restrict s,
 		 va_list arg );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.funcend
+.func end
 .*
 .rtconst begin
 Neither

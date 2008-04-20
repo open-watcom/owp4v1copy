@@ -1,5 +1,4 @@
 .func ulltoa _ulltoa _ulltow _ulltou
-.funcw _ulltow
 #include <stdlib.h>
 char *ulltoa( unsigned long long int value,
               char *buffer,

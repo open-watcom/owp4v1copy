@@ -1,9 +1,11 @@
-.func asctime Functions
+.func begin asctime Functions
+.func2 asctime
 .func2 _asctime
 .func2 _wasctime
 .func2 __wasctime
 .func2 _uasctime
 .func2 _u_asctime
+.func gen
 #include <time.h>
 char * asctime( const struct tm *timeptr );
 char *_asctime( const struct tm *timeptr, char *buf );
@@ -25,7 +27,7 @@ wchar_t *_u_asctime( const struct tm *timeptr,
 .ixfunc2 '&TimeFunc' _u_asctime
 .do end
 .im structtm
-.funcend
+.func end
 .funcbold asctime
 .*
 .safealt

@@ -1,4 +1,11 @@
-.func bessel Functions
+.func begin bessel Functions
+.func2 j0
+.func2 j1
+.func2 jn
+.func2 y0
+.func2 y1
+.func2 yn
+.func gen
 #include <math.h>
 double j0( double x );
 double j1( double x );
@@ -6,19 +13,13 @@ double jn( int n, double x );
 double y0( double x );
 double y1( double x );
 double yn( int n, double x );
-.func2 j0
-.func2 j1
-.func2 jn
-.func2 y0
-.func2 y1
-.func2 yn
 .ixfunc2 '&Math' j0
 .ixfunc2 '&Math' j1
 .ixfunc2 '&Math' jn
 .ixfunc2 '&Math' y0
 .ixfunc2 '&Math' y1
 .ixfunc2 '&Math' yn
-.funcend
+.func end
 .desc begin
 .ix '&Math' 'bessel Functions'
 Functions

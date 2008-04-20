@@ -1,5 +1,6 @@
-.func vsnprintf_s vsnwprintf_s
+.func begin vsnprintf_s vsnwprintf_s
 .funcw vsnwprintf_s
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
@@ -19,7 +20,7 @@ int _usprintf_s( char * restrict s, rsize_t n,
         const wchar_t * restrict format, va_list arg );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.funcend
+.func end
 .*
 .rtconst begin
 Neither

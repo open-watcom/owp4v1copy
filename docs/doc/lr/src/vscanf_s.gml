@@ -1,5 +1,6 @@
-.func vscanf_s vwscanf_s _uvscanf_s
+.func begin vscanf_s vwscanf_s _uvscanf_s
 .funcw vwscanf_s
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
@@ -16,7 +17,7 @@ int vwscanf_s( const wchar_t * restrict format, va_list arg );
 int _uvscanf_s( const wchar_t * restrict format, va_list arg );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.funcend
+.func end
 .*
 .rtconst begin
 The argument

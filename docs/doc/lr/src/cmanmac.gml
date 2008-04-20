@@ -1,15 +1,32 @@
 :set symbol="sysrb" value="~b".
 :set symbol="XMPset" value="of".
 .*
-.* Define these here otherwise &_func. expands to &_func. and not ''
-.*
+.dm funcinit begin
+.sr func=&*
+.sr funcn=''
 .sr _func=''
 .sr __func=''
 .sr ffunc=''
 .sr wfunc=''
+.sr fwfunc=''
 .sr mfunc=''
 .sr fmfunc=''
 .sr ufunc=''
+.sr _func64=''
+.sr wfunc64=''
+.sr mathfunc=''
+.sr fmathfunc=''
+.sr lmathfunc=''
+.*
+.sr fncttl=''
+.sr __fnx=0
+.sr __cltxt=''
+.sr funcgrp=''
+.dm funcinit end
+.*
+.* Define these here otherwise &_func. expands to &_func. and not ''
+.*
+.funcinit ''
 .*
 .dm prelim begin
 .dm prelim end
@@ -37,29 +54,46 @@
 .if |&fncttl.| eq || .do begin
 .   .sr fncttl=&*
 .do end
-.el .do begin
+.el .if '&funcgrp.' eq '' .do begin
 .   .sr fncttl=&fncttl., &*
 .do end
+.if '&funcn' eq '' .sr funcn=&'strip(&*,'L','_')
 .se __fnx=&__fnx.+1
 .se $$fnc(&__fnx.)=&*
 .* try to classify type of function
-.if '&*' eq '_&$$fnc(1)' .do begin
-.   .sr _func=&*
+.if &'pos('_&funcn',&*) eq 1 .do begin
+.   .if "&'right(&*,3)" eq "i64" .do begin
+.   .   .sr _func64=&*
+.   .do end
+.   .el .do begin
+.   .   .sr _func=&*
+.   .do end
 .do end
-.el .if '&*' eq '__&$$fnc(1)' .do begin
+.el .if '&*' eq '__&funcn' .do begin
 .   .sr __func=&*
 .do end
-.el .if '&*' eq '_f&$$fnc(1)' .do begin
+.el .if '&*' eq '_f&funcn' .do begin
 .   .sr ffunc=&*
 .do end
 .el .if &'pos('_w',&*) eq 1 .do begin
-.   .if '&*' ne '_wrapon' .do begin
-.   .   .sr wfunc=&*
+.   .if &'pos('_wrapon',&*) ne 1 .do begin
+.   .   .if "&'right(&*,3)" eq "i64" .do begin
+.   .   .   .sr wfunc64=&*
+.   .   .do end
+.   .   .el .do begin
+.   .   .   .sr wfunc=&*
+.   .   .do end
 .   .do end
 .do end
 .el .if &'pos('_u',&*) eq 1 .do begin
-.   .if '&*' ne '_utime' .do begin
-.   .   .sr ufunc=&*
+.   .if '&*' eq '_utow' .do begin
+.   .   .sr wfunc=&*
+.   .do end
+.   .el .if '&*' ne '_ultow' .do begin
+.   .   .sr wfunc=&*
+.   .do end
+.   .el .if '&*' ne '_ulltow' .do begin
+.   .   .sr wfunc=&*
 .   .do end
 .do end
 .el .if &'pos('wc',&*) eq 1 .do begin
@@ -79,117 +113,50 @@
 .do end
 .dm funkw end
 .*
-.dm funix begin
-.ixm &*
-.if &e'&dohelp eq 1 .do begin
-.   .sr *iw="&'strip('&*','L','_') "
-.   .if '&*iw.' ne '&*' .do begin
-.   .   .ixm &*iw.
-.   .do end
-.do end
-.dm funix end
-.*
-.*  .func norm Functions
-.*  .func norm
-.*  .func norm _norm __norm _wnorm _unorm _fnorm _mbsnorm
 .*
 .dm func begin
-.sr func=&'strip(&*1,'T',',')
-.sr _func=''
-.sr __func=''
-.sr ffunc=''
-.sr wfunc=''
-.sr mfunc=''
-.sr fmfunc=''
-.sr ufunc=''
-.if '&*2' eq 'Functions' .do begin
-.   .sr fncttl=&*1 &*2
-.   .se __fnx=1
-.   .se $$fnc(1)=&*1
+.if |&*1| ne |end| AND |&*1| ne |gen| .do begin
+.   .sr *cnt=&*0
+.   .sr *i=1
+.   .if |&*1| eq |begin| .do begin
+.   .   .sr *i=2
+.   .   .sr *cnt=&*cnt.-1
+.   .do end
+.   .if &'&*cnt eq 0 .do begin
+.   .   .funcinit ''
+.   .do end
+.   .el .do begin
+.   .   .sr *j=&*i.+1
+.   .   .sr *first=&*&*i.
+.   .   .sr *second=&*&*j.
+.   .   .funcinit &'strip(&*first.,'T',',')
+.   .   .if '&*second' eq 'Functions' .do begin
+.   .   .   .sr fncttl=&*first. &*second.
+.   .   .   .sr funcgrp=&'strip(&*first.,'T',',')
+.   .   .do end
+.   .   .el .do begin
+.   .   .   .pe &*cnt
+.   .   .   .   .funkw &*&*i.;.sr *i=&*i.+1
+.   .   .do end
+.   .do end
 .do end
-.el .do begin
-.   .sr fncttl=''
-.   .se __fnx=0
-.   .se *i=1
-.   .pe &*0.
-.   .   .funkw &*&*i.;.se *i=&*i.+1
+.if |&*1| ne |begin| AND |&*1| ne |end| .do begin
+.*  generate title and start of code (declaration)
+.   .topsect &fncttl.
+.   .if '&funcgrp.' ne '' .do begin
+.   .   .ixm &funcgrp.
+.   .do end
+.   .sr *i=1
+.   .pe &__fnx.
+.   .   .ixm &$$fnc(&*i.);.sr *i=&*i.+1
+.   .cp 5
+.   .newcode Synopsis:
 .do end
-.topsect &fncttl.
-.se *i=1
-.pe &__fnx.
-.   .funix &$$fnc(&*i.);.se *i=&*i.+1
-.cp 5
-.newcode Synopsis:
+.if |&*1| eq |end| .do begin
+.   .funcend
+.do end
 .dm func end
 .*
-:CMT. .dm func begin
-:CMT. .sr funcs=&*
-:CMT. .sr func=&'strip(&*1,'T',',')
-:CMT. .sr _func=''
-:CMT. .sr ffunc=''
-:CMT. .sr ufunc=''
-:CMT. .if &'wordpos('_',&*,2) ne 0 .do begin
-:CMT. .   .sr funcs=&*1
-:CMT. .   .sysstr _&func
-:CMT. .   .if '&$$str' ne '' .do begin
-:CMT. .   .   .sr _func=_&func.
-:CMT. .   .do end
-:CMT. .do end
-:CMT. .if &'wordpos('f',&*,2) ne 0 .do begin
-:CMT. .   .sr funcs=&*1
-:CMT. .   .if &farfnc eq 1 .do begin
-:CMT. .   .   .sysstr _f&func
-:CMT. .   .   .if '&$$str' ne '' .do begin
-:CMT. .   .   .   .sr ffunc=_f&func.
-:CMT. .   .   .do end
-:CMT. .   .do end
-:CMT. .do end
-:CMT. .if &'wordpos('u',&*,2) ne 0 .do begin
-:CMT. .   .sr funcs=&*1
-:CMT. .   .if &unifnc eq 1 .do begin
-:CMT. .   .   .sysstr _u&func
-:CMT. .   .   .if '&$$str' ne '' .do begin
-:CMT. .   .   .   .sr ufunc=_u&func.
-:CMT. .   .   .do end
-:CMT. .   .do end
-:CMT. .do end
-:CMT. .if '&*2' eq 'Functions' .do begin
-:CMT. .   .sr funcs=&*1 &*2
-:CMT. .do end
-:CMT. .el .do begin
-:CMT. .   .sr funcs=&func.
-:CMT. .   .if '&_func' ne '' .do begin
-:CMT. .   .   .sr funcs=&funcs., _&func.
-:CMT. .   .do end
-:CMT. .   .if '&ffunc' ne '' .do begin
-:CMT. .   .   .sr funcs=&funcs., _f&func.
-:CMT. .   .do end
-:CMT. .   .if '&ufunc' ne '' .do begin
-:CMT. .   .   .sr funcs=&funcs., _u&func.
-:CMT. .   .do end
-:CMT. .do end
-:CMT. .topsect &funcs.
-:CMT. .ixm &func.
-:CMT. .se __fnx=1
-:CMT. .se $$fnc(1)=&func.
-:CMT. .if '&_func' ne '' .do begin
-:CMT. .   .se __fnx=&__fnx.+1
-:CMT. .   .se $$fnc(&__fnx.)=_&func.
-:CMT. .   .ixm _&func.
-:CMT. .do end
-:CMT. .if '&ffunc' ne '' .do begin
-:CMT. .   .se __fnx=&__fnx.+1
-:CMT. .   .se $$fnc(&__fnx.)=_f&func.
-:CMT. .   .ixm _f&func.
-:CMT. .do end
-:CMT. .if '&ufunc' ne '' .do begin
-:CMT. .   .se __fnx=&__fnx.+1
-:CMT. .   .se $$fnc(&__fnx.)=_u&func.
-:CMT. .   .ixm _u&func.
-:CMT. .do end
-:CMT. .cp 5
-:CMT. .newcode Synopsis:
-:CMT. .dm func end
 .*
 .* func2 create an index entry for &* also
 .*
@@ -207,6 +174,10 @@
 .do end
 .dm funcw end
 .*
+.dm func_ begin
+.  .sr _func=&*
+.dm func_ end
+.*
 .dm ixfunc begin
 .if &'vecpos(&*1,fnclst) ne 0 .do begin
 .ix '&*1'
@@ -221,10 +192,15 @@
 .do end
 .dm ixfunc2 end
 .*
+.*  final processing for functions
+.*
 .dm funcend begin
 .endcode
 .if &'length(&_func.) ne 0 .do begin
 .   :set symbol="_func" value=";.sf4 &_func.;.esf ".
+.do end
+.if &'length(&_func64.) ne 0 .do begin
+.   :set symbol="_func64" value=";.sf4 &_func64.;.esf ".
 .do end
 .if &'length(&__func.) ne 0 .do begin
 .   :set symbol="__func" value=";.sf4 &__func.;.esf ".
@@ -235,6 +211,12 @@
 .if &'length(&wfunc.) ne 0 .do begin
 .   :set symbol="wfunc" value=";.sf4 &wfunc.;.esf ".
 .do end
+.if &'length(&wfunc64.) ne 0 .do begin
+.   :set symbol="wfunc64" value=";.sf4 &wfunc64.;.esf ".
+.do end
+.if &'length(&fwfunc.) ne 0 .do begin
+.   :set symbol="fwfunc" value=";.sf4 &fwfunc.;.esf ".
+.do end
 .if &'length(&mfunc.) ne 0 .do begin
 .   :set symbol="mfunc" value=";.sf4 &mfunc.;.esf ".
 .do end
@@ -244,8 +226,17 @@
 .if &'length(&ufunc.) ne 0 .do begin
 .   :set symbol="ufunc" value=";.sf4 &ufunc.;.esf ".
 .do end
+.if &'length(&mathfunc.) ne 0 .do begin
+.   :set symbol="mathfunc" value=";.sf4 &mathfunc.;.esf ".
+.do end
+.if &'length(&fmathfunc.) ne 0 .do begin
+.   :set symbol="fmathfunc" value=";.sf4 &fmathfunc.;.esf ".
+.do end
+.if &'length(&lmathfunc.) ne 0 .do begin
+.   :set symbol="lmathfunc" value=";.sf4 &lmathfunc.;.esf ".
+.do end
 .sr function=&func.
-:set symbol="func" value=";.sf4 &function.;.esf ".
+:set symbol="func" value=";.sf4 &func.;.esf ".
 .dm funcend end
 .*
 .dm funcbold begin
@@ -390,8 +381,7 @@ Prototype in
 .dm id end
 .*
 .dm kw begin
-.ix '&*'
-.ct
+.ix &*
 :SF font=4.&*:eSF.
 .dm kw end
 .*
@@ -400,13 +390,15 @@ Prototype in
 .dm arg end
 .*
 .dm clitm begin
-.if &clitmc eq 0 .do begin
-.ct &*
-.sr clitmc=1
-.do end
-.el .do begin
-.br .ct &*
-:cmt. .ct , &*
+.if |&*| ne || .do begin
+.   .if &clitmc eq 0 .do begin
+.   .   .ct &*
+.   .   .sr clitmc=1
+.   .do end
+.   .el .do begin
+.   .   .br .ct &*
+:cmt. .   .   .ct , &*
+.   .do end
 .do end
 .dm clitm end
 .*
@@ -422,40 +414,54 @@ Prototype in
 .if |&*1| eq |begin| .sr __class=&*2
 .el .sr __class=&*1
 .listnew Classification:
+.if &'length(&func.) ne 0 .do begin
+.   :set symbol="func" value="&'translate("&func.",' ',';')".
+.   :set symbol="func" value="&'word("&func.",2)".
+.do end
 .if &'length(&_func.) ne 0 .do begin
-.'  :set symbol="_func" value="&'translate("&_func.",' ',';')".
-.'  :set symbol="_func" value="&'word("&_func.",2)".
-.'  :set symbol="*extr" value=1.
+.   :set symbol="_func" value="&'translate("&_func.",' ',';')".
+.   :set symbol="_func" value="&'word("&_func.",2)".
+.   .if '&_func.' ne '&func.' :set symbol="*extr" value=1.
+.do end
+.if &'length(&_func64.) ne 0 .do begin
+.   :set symbol="_func64" value="&'translate("&_func64.",' ',';')".
+.   :set symbol="_func64" value="&'word("&_func64.",2)".
+.   .if '&_func64.' ne '&func.' :set symbol="*extr" value=1.
 .do end
 .if &'length(&__func.) ne 0 .do begin
-.'  :set symbol="__func" value="&'translate("&__func.",' ',';')".
-.'  :set symbol="__func" value="&'word("&__func.",2)".
-.'  :set symbol="*extr" value=1.
+.   :set symbol="__func" value="&'translate("&__func.",' ',';')".
+.   :set symbol="__func" value="&'word("&__func.",2)".
+.   .if '&__func.' ne '&func.' :set symbol="*extr" value=1.
 .do end
 .if &'length(&ffunc.) ne 0 .do begin
-.'  :set symbol="ffunc" value="&'translate("&ffunc.",' ',';')".
-.'  :set symbol="ffunc" value="&'word("&ffunc.",2)".
-.'  :set symbol="*extr" value=1.
+.   :set symbol="ffunc" value="&'translate("&ffunc.",' ',';')".
+.   :set symbol="ffunc" value="&'word("&ffunc.",2)".
+.   .if '&ffunc.' ne '&func.' :set symbol="*extr" value=1.
 .do end
 .if &'length(&wfunc.) ne 0 .do begin
-.'  :set symbol="wfunc" value="&'translate("&wfunc.",' ',';')".
-.'  :set symbol="wfunc" value="&'word("&wfunc.",2)".
-.'  :set symbol="*extr" value=1.
+.   :set symbol="wfunc" value="&'translate("&wfunc.",' ',';')".
+.   :set symbol="wfunc" value="&'word("&wfunc.",2)".
+.   .if '&wfunc.' ne '&func.' :set symbol="*extr" value=1.
+.do end
+.if &'length(&wfunc64.) ne 0 .do begin
+.   :set symbol="wfunc64" value="&'translate("&wfunc64.",' ',';')".
+.   :set symbol="wfunc64" value="&'word("&wfunc64.",2)".
+.   .if '&wfunc64.' ne '&func.' :set symbol="*extr" value=1.
 .do end
 .if &'length(&mfunc.) ne 0 .do begin
-.'  :set symbol="mfunc" value="&'translate("&mfunc.",' ',';')".
-.'  :set symbol="mfunc" value="&'word("&mfunc.",2)".
-.'  :set symbol="*extr" value=1.
+.   :set symbol="mfunc" value="&'translate("&mfunc.",' ',';')".
+.   :set symbol="mfunc" value="&'word("&mfunc.",2)".
+.   .if '&mfunc.' ne '&func.' :set symbol="*extr" value=1.
 .do end
 .if &'length(&fmfunc.) ne 0 .do begin
-.'  :set symbol="fmfunc" value="&'translate("&fmfunc.",' ',';')".
-.'  :set symbol="fmfunc" value="&'word("&fmfunc.",2)".
-.'  :set symbol="*extr" value=1.
+.   :set symbol="fmfunc" value="&'translate("&fmfunc.",' ',';')".
+.   :set symbol="fmfunc" value="&'word("&fmfunc.",2)".
+.   .if '&fmfunc.' ne '&func.' :set symbol="*extr" value=1.
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
-.'  :set symbol="ufunc" value="&'translate("&ufunc.",' ',';')".
-.'  :set symbol="ufunc" value="&'word("&ufunc.",2)".
-.'  :set symbol="*extr" value=1.
+.   :set symbol="ufunc" value="&'translate("&ufunc.",' ',';')".
+.   :set symbol="ufunc" value="&'word("&ufunc.",2)".
+.   .if '&ufunc.' ne '&func.' :set symbol="*extr" value=1.
 .do end
 .if |&*1| eq |begin| .sr *all=&'strip(&'substr(&*,6),'L',' ')
 .el .sr *all=&*
@@ -489,6 +495,9 @@ Prototype in
 .   .if &'length(&_func.) ne 0 .do begin
 .   .   .clitm &_func. is not &*cls
 .   .do end
+.   .if &'length(&_func64.) ne 0 .do begin
+.   .   .clitm &_func64. is not &*cls
+.   .do end
 .   .if &'length(&__func.) ne 0 .do begin
 .   .   .clitm &__func. is not &*cls
 .   .do end
@@ -500,12 +509,15 @@ Prototype in
 .   .   .   .clitm &wfunc. is not &*cls
 .   .   .do end
 .   .   .el .do begin
-.   .   .   .if '&wfunc.' ne '&funcn.' .do begin
+.   .   .   .if '&wfunc.' ne '&func.' .do begin
 .   .   .   .   .if '&wfunc.' ne '&function.' .do begin
 .   .   .   .   .   .clitm &wfunc. is &*wcls
 .   .   .   .   .do end
 .   .   .   .do end
 .   .   .do end
+.   .do end
+.   .if &'length(&wfunc64.) ne 0 .do begin
+.   .   .clitm &wfunc64. is not &*cls
 .   .do end
 .   .if &'length(&mfunc.) ne 0 .do begin
 .   .   .clitm &mfunc. is not &*cls
@@ -693,7 +705,7 @@ command
 .*       describe functions for c library  2006-03-16
 .*  new version with explicit type and classification
 .*  if omitted, default classification is WATCOM
-.*   .functinit
+.*   .func begin
 .*   .funct     norm              classification
 .*   .funct_    _norm                  "
 .*   .funct_f   farnorm                "
@@ -706,40 +718,23 @@ command
 .*   .functm    doublemathfunc         "
 .*   .functm_f  floatmathfunc          "
 .*   .functm_l  longdoublemathfunc     "
+.*   .func gen
 .*
-.*   .functgen
+.*    description
 .*
-.*   .functend
+.*   .func end
 .*   .classt
 .*
-.*  .functinit
-.*      init set symbols must be first call of functxxx macros
 .*
-.dm functinit begin
-.sr function=''
-.sr func=''
-.sr _func=''
-.sr __func=''
-.sr ffunc=''
-.sr fwfunc=''
-.sr wfunc=''
-.sr mfunc=''
-.sr fmfunc=''
-.sr ufunc=''
-.*
-.sr mathfunc=''
-.sr fmathfunc=''
-.sr lmathfunc=''
-.*
-.sr fncttl=''
-.se __fnx=0
-.se __cltxt=''
-.dm functinit end
-.*
+.*  .func norm Functions
+.*  .func norm
+.*  .func norm _norm __norm _wnorm _unorm _fnorm _mbsnorm
 .*
 .*  functii internal macro for funct_xxx
 .*
 .dm functii begin
+.if '&func' eq '' .sr func=&*1.
+.if '&funcn' eq '' .sr funcn=&'strip(&*1,'L','_')
 .se *fnd=&'vecpos(&*1,fnclst)
 .if &*fnd. eq 0 .me
 .if &__sysl(&*fnd.) eq 0 .ty ***WARNING*** &* not in library
@@ -751,7 +746,7 @@ command
 .do end
 .se __fnx=&__fnx.+1
 .se $$fnc(&__fnx.)=&*1
-.if /&*2./ eq // .se __cl=WATCOM
+.if |&*2| eq || .se __cl=WATCOM
 .el .se __cl=&*2. &*3.
 .se __cltxt(&__fnx.)=&*1 is &__cl.
 .dm functii end
@@ -760,129 +755,63 @@ command
 .*
 .dm funct  begin
 .sr func=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct  end
 .*
 .dm funct_  begin
 .sr _func=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct_  end
 .*
 .dm funct__  begin
 .sr __func=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct__  end
 .*
 .dm funct_f begin
 .sr ffunc=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct_f end
 .*
 .dm funct_m begin
 .sr mfunc=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct_m end
 .*
 .dm funct_w begin
 .sr wfunc=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct_w end
 .*
 .dm funct_fm begin
 .sr fmfunc=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct_fm end
 .*
 .dm funct_fw begin
 .sr fwfunc=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct_fw end
 .*
 .dm funct_u begin
 .sr ufunc=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm funct_u end
 .*
 .dm functm begin
 .sr mathfunc=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm functm end
 .*
 .dm functm_f begin
 .sr fmathfunc=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm functm_f end
 .*
 .dm functm_l begin
 .sr lmathfunc=&*1
-.if '&function' eq '' .sr function=&*1.
 .functii &*
 .dm functm_l end
-.*
-.*  .functgen
-.*     generate title and start of code (declaration)
-.*
-.dm functgen begin
-.sr funcn=&function.
-.topsect &fncttl.
-.cp 5
-.newcode Synopsis:
-.dm functgen end
-.*
-.*
-.*  final processing for functions
-.*
-.dm functend begin
-.endcode
-.se *i=1
-.pe &__fnx.
-.   .funix &$$fnc(&*i.);.se *i=&*i.+1
-.if &'length(&_func.) ne 0 .do begin
-.   :set symbol="_func" value=";.sf4 &_func.;.esf ".
-.do end
-.if &'length(&__func.) ne 0 .do begin
-.   :set symbol="__func" value=";.sf4 &__func.;.esf ".
-.do end
-.if &'length(&ffunc.) ne 0 .do begin
-.   :set symbol="ffunc" value=";.sf4 &ffunc.;.esf ".
-.do end
-.if &'length(&wfunc.) ne 0 .do begin
-.   :set symbol="wfunc" value=";.sf4 &wfunc.;.esf ".
-.do end
-.if &'length(&fwfunc.) ne 0 .do begin
-.   :set symbol="fwfunc" value=";.sf4 &fwfunc.;.esf ".
-.do end
-.if &'length(&mfunc.) ne 0 .do begin
-.   :set symbol="mfunc" value=";.sf4 &mfunc.;.esf ".
-.do end
-.if &'length(&fmfunc.) ne 0 .do begin
-.   :set symbol="fmfunc" value=";.sf4 &fmfunc.;.esf ".
-.do end
-.if &'length(&ufunc.) ne 0 .do begin
-.   :set symbol="ufunc" value=";.sf4 &ufunc.;.esf ".
-.do end
-.if &'length(&mathfunc.) ne 0 .do begin
-.   :set symbol="mathfunc" value=";.sf4 &mathfunc.;.esf ".
-.do end
-.if &'length(&fmathfunc.) ne 0 .do begin
-.   :set symbol="fmathfunc" value=";.sf4 &fmathfunc.;.esf ".
-.do end
-.if &'length(&lmathfunc.) ne 0 .do begin
-.   :set symbol="lmathfunc" value=";.sf4 &lmathfunc.;.esf ".
-.do end
-:set symbol="func" value=";.sf4 &function.;.esf ".
-.dm functend end
 .*
 .*  classt
 .*    output classifications for the defined functions

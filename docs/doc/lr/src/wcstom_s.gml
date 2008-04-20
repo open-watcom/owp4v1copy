@@ -1,7 +1,7 @@
-.functinit
+.func begin
 .funct_w  wcstombs_s    TR 24731
 .funct_fw _fwcstombs_s
-.functgen
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
 errno_t wcstombs_s( size_t * restrict retval,
@@ -21,7 +21,7 @@ errno_t _fwcstombs_s( size_t __far * restrict retval,
 .ixfunc2 '&Wide' &fwfunc
 .ixfunc2 '&Multibyte' &fwfunc
 .do end
-.functend
+.func end
 .*
 .rtconst begin
 Neither

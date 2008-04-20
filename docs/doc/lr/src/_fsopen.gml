@@ -180,8 +180,10 @@ However, writing may not be followed by reading without an
 intervening call to the
 .kw fflush
 function or to a file positioning function (
-.ct .kw fseek,
-.kw fsetpos,
+.ct .kw fseek
+,
+.kw fsetpos
+,
 .kw rewind
 .ct ).
 Similarly, reading may not be followed by writing without an

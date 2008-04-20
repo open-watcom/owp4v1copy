@@ -9,11 +9,11 @@ void __far *_fmemccpy( void __far *dest,
                        int c, size_t cnt );
 .ixfunc2 '&String' &ffunc
 .do end
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. void *_umemccpy( void *dest, const void *src,
-:cmt.                  int c, size_t cnt );
-:cmt. .ixfunc2 '&String' &ufunc
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+void *_umemccpy( void *dest, const void *src,
+                 int c, size_t cnt );
+.ixfunc2 '&String' &ufunc
+.do end
 .funcend
 .desc begin
 The &func function copies bytes from
@@ -26,14 +26,14 @@ or until
 .arg cnt
 bytes have been copied, whichever comes first.
 .im farfunc
-:cmt. .if &'length(&ufunc.) ne 0 .do begin
-:cmt. .np
-:cmt. The &ufunc Unicode function is identical to &func except that it
-:cmt. operates on 16-bit Unicode characters.
-:cmt. The argument
-:cmt. .arg cnt
-:cmt. is interpreted to mean the number of Unicode characters.
-:cmt. .do end
+.if &'length(&ufunc.) ne 0 .do begin
+.np
+The &ufunc Unicode function is identical to &func except that it
+operates on 16-bit Unicode characters.
+The argument
+.arg cnt
+is interpreted to mean the number of Unicode characters.
+.do end
 .desc end
 .return begin
 The &func function returns a pointer to the byte in

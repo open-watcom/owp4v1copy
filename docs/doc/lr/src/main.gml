@@ -1,4 +1,4 @@
-.func main wmain WinMain wWinMain _getargv _wgetargv
+.func main wmain WinMain wWinMain
 .funcw wmain
 int main( void );
 int main( int argc, const char *argv[] );
@@ -19,10 +19,6 @@ int PASCAL wWinMain( HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      wcharT *lpszCmdLine,
                      int nCmdShow );
-void *_getargv( int historical, char *exe, char *cmd,
-                  int *pargc, char ***pargv );
-void *_wgetargv( int historical, wchar_t *exe, wchar_t *cmd,
-                   int *pargc, wchar_t ***pargv );
 .do end
 .funcend
 .desc begin
@@ -188,28 +184,6 @@ function's
 parameter.
 .do end
 .********************************
-.np
-The
-.kw _getargv
-function analyses a "command line" into a sequence of tokens
-separated by blanks and passed to the caller as an array of pointers
-to character strings.
-.kw _wgetargv
-is the wide character version of
-.kw _getargv.
-Each has the following parameters:
-.arg historical
-selects between historical and modern methods of handling double quote
-characters in command lines and should be passed with a value of zero;
-.arg exe
-is the name of the "executable";
-.arg cmd
-is the "command line" to be analysed after removal of the name of the "executable";
-.arg pargc
-is set on output to the number of arguments found;
-.arg pargv
-is set on output to point at an array of arguments.
-.********************************
 .desc end
 .return begin
 The
@@ -234,15 +208,6 @@ message and return the exit value contained in that message's
 parameter.
 .do end
 .np
-The
-.kw _getargv
-and
-.kw _wgetargv
-functions return a pointer to memory allocated by those functions or
-.kw NULL
-on an allocation failure. That memory may be passed to
-.kw free
-when access to the output argument array is no longer needed.
 .return end
 .see begin
 .im seeproc main
@@ -317,68 +282,10 @@ int PASCAL WinMain( HANDLE this_inst, HANDLE prev_inst,
 }
 .blkcode end
 .do end
-.blktext begin
-A sample usage of _getargv follows:
-.blktext end
-.blkcode begin
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-void *_getargv( int historical, char *exe, char *cmd,
-                  int *pargc, char ***pargv );
-
-void extraparams( const char *envname )
-{
-    char const * const evaluero = getenv( envname );
-    if( evaluero ) {
-        char * const cmd = strdup( evaluero );
-        char exe[] = "dummy";
-        int c;
-        char **v;
-        void * const opaque = _getargv( 0, exe, cmd,
-                                          &c, &v );
-        if( opaque ) {
-            int i;
-            for( i = 0; i < c; ++i ) {
-                printf( "argv[%d] = %s\n", i, v[i] );
-            }
-            free( opaque );
-        }
-    }
-}
-
-void main( int argc, char **argv )
-{
-    if( argc >= 2 ) {
-        extraparams( argv[1] );
-    }
-}
-.exmp output
-argv[0] = dummy
-argv[1] = a
-argv[2] = b
-.blkcode end
-.blktext begin
-when
-.mono mypgm
-is executed with the command
-.blktext end
-.blkcode begin
-mypgm name
-.blkcode end
-.blktext begin
-is run while the environment variable
-.arg name
-has the value
-.arg a b
-.blktext end
 .exmp end
-.sr wfunc=''
-.sr ffunc='x wmain'
-.sr mfunc='x WinMain'
-.sr fmfunc='x wWinMain'
-.sr ffunc='x _getargv'
-.sr ffunc='x _wgetargv'
+.sr wfunc=
+.sr _func=x wmain
+.sr __func=x WinMain
+.sr ffunc=x wWinMain
 .class ANSI
 .system

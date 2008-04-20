@@ -1,6 +1,9 @@
-.func _heapchk Functions
+.func begin _heapchk Functions
+.func2 _heapchk
+.func2 _bheapchk
 .func2 _fheapchk
 .func2 _nheapchk
+.func gen
 .ixfunc2 '&Heap' _heapchk
 .ixfunc2 '&Heap' _bheapchk
 .ixfunc2 '&Heap' _fheapchk
@@ -14,8 +17,7 @@ int  _heapchk( void );
 int _bheapchk( __segment seg );
 int _fheapchk( void );
 int _nheapchk( void );
-.func2 _bheapchk
-.funcend
+.func end
 .desc begin
 The &func functions along with
 .kw _heapset

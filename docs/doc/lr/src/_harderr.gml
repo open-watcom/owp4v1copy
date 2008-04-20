@@ -1,6 +1,4 @@
 .func _harderr _hardresume _hardretn
-.func2 _hardresume
-.func2 _hardretn
 #include <dos.h>
 void _harderr( int (__far *handler)() );
 void _hardresume( int action );

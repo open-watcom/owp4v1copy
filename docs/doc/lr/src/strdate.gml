@@ -28,7 +28,7 @@ The &func function returns a pointer to the resulting text string
 .arg datestr.
 .return end
 .see begin
-.seelist &function. asctime ctime gmtime localtime mktime
+.seelist &function. asctime Functions ctime Functions gmtime localtime mktime
 .seelist &function. _strdate _strtime time tzset
 .see end
 .exmp begin

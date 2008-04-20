@@ -3,7 +3,7 @@
 #include <stdlib.h>
 void * realloc( void *old_blk, size_t size );
 .ixfunc2 '&Memory' &func
-.funcend
+.func end
 .desc begin
 When the value of the
 .arg old_blk
@@ -108,10 +108,12 @@ void main()
 .do end
 .************************
 .el .do begin
-.func realloc Functions
+.func begin realloc Functions
+.func2 realloc
 .func2 _brealloc
 .func2 _frealloc
 .func2 _nrealloc
+.func gen
 #include <stdlib.h>  For ANSI compatibility (realloc only)
 #include <malloc.h>  Required for other function prototypes
 void * realloc( void *old_blk, size_t size );
@@ -126,7 +128,7 @@ void __near *_nrealloc( void __near *old_blk,
 .ixfunc2 '&Memory' _brealloc
 .ixfunc2 '&Memory' _frealloc
 .ixfunc2 '&Memory' _nrealloc
-.funcend
+.func end
 .desc begin
 When the value of the
 .arg old_blk

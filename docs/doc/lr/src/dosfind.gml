@@ -1,11 +1,12 @@
-.func _dos_find Functions
+.func begin _dos_find... Functions
 .func2 _dos_findclose
 .func2 _dos_findfirst
 .func2 _dos_findnext
-.funcw _wdos_find
 .func2 _wdos_findclose
 .func2 _wdos_findfirst
 .func2 _wdos_findnext
+.funcw _wdos_find...
+.func gen
 #include <&doshdr>
 unsigned _dos_findfirst( const char *path,
                          unsigned attributes,
@@ -55,7 +56,7 @@ struct _wfind_t {
 #endif
 };
 .do end
-.funcend
+.func end
 .desc begin
 The
 .kw _dos_findfirst
@@ -155,7 +156,7 @@ wide-character strings.
 .desc end
 .return begin
 The
-.kw _dos_find
+.kw _dos_find...
 functions return zero if successful.
 Otherwise, the
 .kw _dos_findfirst
@@ -189,6 +190,8 @@ void main()
     #endif
 }
 .exmp end
+.* next two lines remove function group names from classification
 .funcw
+.func_
 .class DOS
 .system

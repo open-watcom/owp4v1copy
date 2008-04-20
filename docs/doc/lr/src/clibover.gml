@@ -901,30 +901,11 @@ and wide character strings.
 .fdend
 .np
 See also
-.kw tolower
-.ct,
-.kw towlower
-.ct,
-.kw _mbctolower
-.ct,
-.kw toupper
-.ct,
-.kw towupper
-.ct,
-.kw _mbctoupper
-.ct,
-.kw strlwr
-.ct,
-.kw _wcslwr
-.ct,
-.kw _mbslwr
-.ct,
-.kw strupr
-.ct,
-.kw _wcsupr
-and
-.kw _mbsupr
+:cmt. .see begin
+.seelist tolower towlower _mbctolower toupper towupper _mbctoupper strlwr
+.seelist _wcslwr _mbslwr strupr _wcsupr _mbsupr
 which convert the cases of characters and strings.
+:cmt. .see end
 .*======================================================================
 .section Memory Allocation Functions
 .*

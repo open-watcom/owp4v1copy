@@ -1,17 +1,17 @@
-.func ctime_s wctime_s
+.func ctime_s _wctime_s
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <time.h>
 errno_t ctime_s( char * s,
                  rsize_t maxsize,
                  const time_t * timer);
-.*   ixfunc2 '&TimeFunc' &func
+.ixfunc2 '&TimeFunc' &func
 .if &'length(&wfunc.) ne 0 .do begin
 #include <wchar.h>
 errno_t _wctime_s( wchar_t * s,
                    rsize_t maxsize,
                    const time_t * timer);
-.*   ixfunc2 '&TimeFunc' &wfunc
-.*   ixfunc2 '&Wide' &wfunc
+.ixfunc2 '&TimeFunc' &wfunc
+.ixfunc2 '&Wide' &wfunc
 .do end
 .funcend
 .*
@@ -78,7 +78,5 @@ void main()
 .exmp output
 It is now: Mon Jan 30 14:29:55 2006
 .exmp end
-.* The following line forces an entry out for the function
-.*       sr mfunc='x __wctime'
 .class TR 24731
 .system

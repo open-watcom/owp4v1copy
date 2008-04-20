@@ -1,5 +1,6 @@
-.func vfscanf_s vfwscanf_s _uvfscanf_s
+.func begin vfscanf_s vfwscanf_s _uvfscanf_s
 .funcw vfwscanf_s
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
@@ -20,7 +21,7 @@ int _uvfscanf_s( FILE * restrict stream,
         const wchar_t * restrict format, va_list arg );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.funcend
+.func end
 .*
 .rtconst begin
 Neither

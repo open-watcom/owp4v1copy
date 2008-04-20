@@ -1,4 +1,4 @@
-.func spawn Functions
+.func begin spawn... Functions
 .func2 spawnl
 .func2 spawnle
 .func2 spawnlp
@@ -7,7 +7,6 @@
 .func2 spawnve
 .func2 spawnvp
 .func2 spawnvpe
-.funcw _wspawn
 .func2 _wspawnl
 .func2 _wspawnle
 .func2 _wspawnlp
@@ -16,6 +15,8 @@
 .func2 _wspawnve
 .func2 _wspawnvp
 .func2 _wspawnvpe
+.funcw _wspawn...
+.func gen
 #include <process.h>
 int spawnl(   mode, path, arg0, arg1..., argn, NULL );
 int spawnle(  mode, path, arg0, arg1..., argn, NULL, envp);
@@ -71,8 +72,8 @@ int _wspawnvpe( mode, file, argv, envp );
 .ixfunc2 '&Wide' _wspawnvp
 .ixfunc2 '&Wide' _wspawnvpe
 .do end
-.funcend
-.funcbold spawn
+.func end
+.funcbold spawn...
 .desc begin
 The &func functions create and execute a new child process, named by
 .arg pgm.
@@ -120,7 +121,7 @@ This option is supported under DOS (16-bit only), OS/2, Win32, and
 QNX.
 .do end
 This is equivalent to calling the appropriate
-.kw exec
+.kw exec...
 function.
 .endterm
 .*==========================================
@@ -236,12 +237,18 @@ function.
 .*==========================================
 .if &'length(&wfunc.) ne 0 .do begin
 The wide-character
-.kw _wspawnl,
-.kw _wspawnle,
-.kw _wspawnlp,
-.kw _wspawnlpe,
-.kw _wspawnv,
-.kw _wspawnve,
+.kw _wspawnl
+.ct,
+.kw _wspawnle
+.ct,
+.kw _wspawnlp
+.ct,
+.kw _wspawnlpe
+.ct,
+.kw _wspawnv
+.ct,
+.kw _wspawnve
+.ct,
 .kw _wspawnvp
 and
 .kw _wspawnvpe
@@ -365,9 +372,9 @@ Not enough memory is available to execute the child process.
 .error end
 .*==========================================
 .see begin
-.seelist spawn abort atexit cwait exec Functions exit _exit
-.seelist spawn getcmd getenv main putenv qnx_spawn qnx_spawn_options
-.seelist spawn system wait
+.seelist spawn... abort atexit cwait exec... exit _exit
+.seelist spawn... getcmd getenv main putenv qnx_spawn qnx_spawn_options
+.seelist spawn... system wait
 .see end
 .cp 8
 .exmp begin

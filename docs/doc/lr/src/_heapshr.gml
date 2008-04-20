@@ -1,7 +1,9 @@
-.func _heapshrink Functions
+.func begin _heapshrink Functions
+.func2 _heapshrink
 .func2 _bheapshrink
 .func2 _fheapshrink
 .func2 _nheapshrink
+.func gen
 .ixfunc2 '&Heap' _heapshrink
 .ixfunc2 '&Heap' _bheapshrink
 .ixfunc2 '&Heap' _fheapshrink
@@ -15,7 +17,7 @@ int  _heapshrink( void );
 int _bheapshrink( __segment seg );
 int _fheapshrink( void );
 int _nheapshrink( void );
-.funcend
+.func end
 .desc begin
 The &func functions attempt to shrink the heap to its smallest
 possible size by returning all free entries at the end of the heap

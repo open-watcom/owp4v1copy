@@ -27,7 +27,7 @@ No matching files
 .endterm
 .return end
 .see begin
-.seelist &function. _dos_find Functions
+.seelist &function. _dos_find...
 .seelist &function. _findclose _findfirst _findnext closedir opendir readdir
 .see end
 .exmp begin

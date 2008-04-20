@@ -1,7 +1,7 @@
-.functinit
+.func begin
 .funct_m  mbstowcs_s TR 24731
 .funct_fm _fmbstowcs_s
-.functgen
+.func gen
 #define __STDC_WANT_LIB_EXT1__  1
 #include <stdlib.h>
 errno_t mbstowcs_s( size_t * restrict retval,
@@ -16,7 +16,7 @@ errno_t _fmbstowcs_s( size_t __far * restrict retval,
                     rsize_t dstmax,
                     const char __far * restrict src, rsize_t len);
 .do end
-.functend
+.func end
 .*
 .rtconst begin
 Neither

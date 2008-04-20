@@ -1,5 +1,6 @@
-.func vfprintf_s vfwprintf_s
+.func begin vfprintf_s vfwprintf_s
 .funcw vfwprintf_s
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdarg.h>
 #include <stdio.h>
@@ -19,7 +20,7 @@ int _uvprintf_s( FILE * restrict stream,
         const wchar_t * restrict format, va_list prg );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.funcend
+.func end
 .*
 .rtconst begin
 Neither

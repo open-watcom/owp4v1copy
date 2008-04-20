@@ -1,12 +1,13 @@
-.func _endthread
+.func begin _endthread
 .func2 _endthreadex
+.func gen
 #include <process.h>
 void _endthread(void);
 .ixfunc2 '&OS2Func' &func
 .ixfunc2 '&NTFunc' &func
 void _endthreadex( unsigned retval );
 .ixfunc2 '&NTFunc' &func.ex
-.funcend
+.func end
 .desc begin
 The &func function is used to terminate a thread created by
 .kw _beginthread.

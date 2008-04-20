@@ -40,11 +40,11 @@ struct _finddata_t {
 };
 .millust end
 .np
-The &func.i64 function returns information on the first file whose
+The &_func64 function returns information on the first file whose
 name matches the
 .arg filespec
 argument.
-It differs from the &func function in that it returns a 64-bit file
+It differs from the &_func function in that it returns a 64-bit file
 size.
 The
 .arg filespec
@@ -65,7 +65,7 @@ struct _finddatai64_t {
 .millust end
 .if &'length(&wfunc.) ne 0 .do begin
 .np
-The wide-character &wfunc function is similar to the &func function
+The wide-character &wfunc function is similar to the &_func function
 but operates on wide-character strings.
 .millust begin
 struct _wfinddata_t {
@@ -78,7 +78,7 @@ struct _wfinddata_t {
 };
 .millust end
 .np
-The wide-character &wfunc.i64 function is similar to the &func.i64
+The wide-character &wfunc64 function is similar to the &_func64
 function but operates on wide-character strings.
 It differs from the &wfunc function in that it returns a 64-bit file
 size.
@@ -95,14 +95,14 @@ struct _wfinddatai64_t {
 .do end
 .desc end
 .return begin
-If successful, &func returns a unique search handle identifying the
+If successful, &_func returns a unique search handle identifying the
 file or group of files matching the
 .arg filespec
 specification, which can be used in a subsequent call to
 .kw _findnext
 or to
 .kw _findclose.
-Otherwise, &func and returns &minus.1 and sets
+Otherwise, &_func and returns &minus.1 and sets
 .kw errno
 to one of the following values:
 .begterm
@@ -115,7 +115,7 @@ Invalid filename specification
 .endterm
 .return end
 .see begin
-.seelist &function. _dos_find Functions
+.seelist &function. _dos_find...
 .seelist &function. _findclose _findfirst _findnext closedir opendir readdir
 .see end
 .exmp begin

@@ -257,7 +257,7 @@ Otherwise, the previous value of
 for the indicated condition is returned.
 .return end
 .see begin
-.seelist signal break Functions raise sigprocmask
+.seelist signal break... raise sigprocmask
 .see end
 .exmp begin
 #include <stdio.h>

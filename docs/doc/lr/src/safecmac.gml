@@ -4,11 +4,10 @@
 .* NB: The setsfunc macro and resulting func_s symbol are only meaningful
 .* in the documentation of the 'unsafe' function.
 .dm setsfunc begin
-.   .sr function_s="&function._s"
 .   :set symbol=function_s value="&function._s".
-.   .sr func_s="&function._s"
-.   :set symbol="func_s" value=";.sf4 &func_s.;.esf ".
+.   :set symbol="func_s" value=";.sf4 &function_s.;.esf ".
 .dm setsfunc end
+.*
 .dm rtconst begin
 .if '&*' eq 'begin' .do begin
 .newtext Constraints:

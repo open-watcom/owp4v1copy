@@ -1,5 +1,7 @@
-.func gmtime Functions
+.func begin gmtime Functions
+.func2 gmtime
 .func2 _gmtime
+.func gen
 #include <time.h>
 struct tm * gmtime( const time_t *timer );
 struct tm *_gmtime( const time_t *timer,
@@ -7,7 +9,7 @@ struct tm *_gmtime( const time_t *timer,
 .ixfunc2 '&TimeFunc' gmtime
 .ixfunc2 '&TimeFunc' _gmtime
 .im structtm
-.funcend
+.func end
 .*
 .safealt
 .*

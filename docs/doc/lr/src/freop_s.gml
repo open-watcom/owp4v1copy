@@ -1,7 +1,7 @@
-.functinit
+.func begin
 .funct   freopen_s   TR 24371
 .funct_w _wfreopen_s
-.functgen
+.func gen
 #include <stdio.h>
 #define __STDC_WANT_LIB_EXT1__ 1
 FILE *freopen( const char *filename,
@@ -21,7 +21,7 @@ FILE *_ufreopen( const wchar_t *filename,
                  FILE *fp );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.functend
+.func end
 .*
 .rtconst begin
 None of

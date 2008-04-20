@@ -1,7 +1,7 @@
-.functinit
+.func begin
 .funct_w  wctomb_s   TR 24731
 .funct_fw _fwctomb_s
-.functgen
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdlib.h>
 errno_t wctomb_s( int * restrict status,
@@ -18,7 +18,7 @@ errno_t _fwctomb_s( int __far * restrict status,
 .ixfunc2 '&Wide' &fwfunc
 .ixfunc2 '&Multibyte' &fwfunc
 .do end
-.functend
+.func end
 .*
 .rtconst begin
 Let

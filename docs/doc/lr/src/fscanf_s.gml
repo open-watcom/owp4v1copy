@@ -1,5 +1,6 @@
-.func fscanf_s fwscanf_s _ufscanf_s
+.func begin fscanf_s fwscanf_s _ufscanf_s
 .funcw fwscanf_s
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 int fscanf_s( FILE * restrict stream,
@@ -18,7 +19,7 @@ int _ufscanf_s( FILE * restrict stream,
        const wchar_t * restrict format, ... );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.funcend
+.func end
 .*
 .rtconst begin
 Neither

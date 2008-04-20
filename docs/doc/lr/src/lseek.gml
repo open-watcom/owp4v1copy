@@ -12,7 +12,7 @@
 &off_t _lseek( int &fd, &off_t offset, int origin );
 .ixfunc2 '&OsIo' &_func
 __int64 _lseeki64( int &fd, __int64 offset, int origin );
-.ixfunc2 '&OsIo' _lseeki64
+.ixfunc2 '&OsIo' &_func64
 .do end
 .funcend
 .*
@@ -107,7 +107,7 @@ The &_func function is identical to &func..
 Use &_func for ANSI/ISO naming conventions.
 .do end
 .np
-The _lseeki64 function is identical to &func except that it accepts a
+The &_func64 function is identical to &func except that it accepts a
 64-bit value for the
 .arg offset
 argument.
@@ -154,7 +154,7 @@ A value of 0 indicates the start of the file.
 .np
 If an error occurs in &func, (&minus.1L) is returned.
 .np
-If an error occurs in _&func.i64, (&minus.1I64) is returned.
+If an error occurs in &_func64, (&minus.1I64) is returned.
 .np
 .im errnoref
 .return end

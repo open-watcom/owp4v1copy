@@ -1,4 +1,4 @@
-.func ecvt _ecvt _uecvt
+.func ecvt _ecvt _wecvt
 #include <stdlib.h>
 char *ecvt( double value,
             int ndigits,

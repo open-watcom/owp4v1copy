@@ -1,9 +1,11 @@
-.func ctime Functions
+.func begin ctime Functions
+.func2 ctime
 .func2 _ctime
 .func2 _wctime
 .func2 __wctime
 .func2 _uctime
 .func2 _u_ctime
+.func gen
 #include <time.h>
 char * ctime( const time_t *timer );
 char *_ctime( const time_t *timer, char *buf );
@@ -23,7 +25,7 @@ wchar_t *_u_ctime( const time_t *timer, wchar_t *buf );
 .ixfunc2 '&TimeFunc' _uctime
 .ixfunc2 '&TimeFunc' _u_ctime
 .do end
-.funcend
+.func end
 .*
 .safealt
 .*

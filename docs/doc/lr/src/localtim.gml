@@ -1,5 +1,7 @@
-.func localtime Functions
+.func begin localtime Functions
+.func2 localtime
 .func2 _localtime
+.func gen
 #include <time.h>
 struct tm * localtime( const time_t *timer );
 struct tm *_localtime( const time_t *timer,
@@ -7,7 +9,7 @@ struct tm *_localtime( const time_t *timer,
 .ixfunc2 '&TimeFunc' localtime
 .ixfunc2 '&TimeFunc' _localtime
 .im structtm
-.funcend
+.func end
 .*
 .safealt
 .*

@@ -44,7 +44,7 @@
 .fnu _uasctime                  asctime.gml     DOS       WIN32
 .fnu _u_asctime                 asctime.gml     DOS       WIN32
 .fnc asctime_s                  asctim_s.gml    DOS       WIN32
-.fnc wasctime_s                 asctim_s.gml    DOS       WIN32
+.fnc _wasctime_s                asctim_s.gml    DOS       WIN32
 .fnc asin                       asin.gml        DOS QNX W WIN32
 .fnc asinh                      asinh.gml       DOS QNX W WIN32
 .fnc assert                     assert.gml      DOS QNX W WIN32
@@ -90,7 +90,7 @@
 .fnc _bprintf                   _bprintf.gml    DOS QNX W WIN32
 .fnw _bwprintf                  _bprintf.gml    DOS QNX W WIN32
 .fnu _u_bprintf                 _bprintf.gml    DOS
-.fnc break                      breakoff.gml    DOS
+.fnc break...                   breakoff.gml    DOS
 .fnc break_off                  breakoff.gml    DOS
 .fnc break_on                   breakoff.gml    DOS
 .fnc bsearch                    bsearch.gml     DOS QNX W WIN32
@@ -115,7 +115,7 @@
 .fnc _chdir                     chdir.gml       DOS QNX W WIN32
 .fnw _wchdir                    chdir.gml       DOS       WIN32
 .fnu _uchdir                    chdir.gml       DOS       WIN32
-.fnc _chdrive                   chdrive.gml     DOS     W WIN32
+.fnc _chdrive                   chdrive.gml     DOS       WIN32
 .fnc chkctype                   chkctype.gml    NEC
 .fnc chmod                      chmod.gml       DOS QXO   WIN32
 .fnc _chmod                     chmod.gml       DOS       WIN32
@@ -173,7 +173,7 @@
 .fnu _uctime                    ctime.gml       DOS       WIN32
 .fnu _u_ctime                   ctime.gml       DOS       WIN32
 .fnc ctime_s                    ctime_s.gml     DOS       WIN32
-.fnw wctime_s                   ctime_s.gml     DOS       WIN32
+.fnw _wctime_s                  ctime_s.gml     DOS       WIN32
 .fnc cuserid                    cuserid.gml         QXO
 .fnc cwait                      cwait.gml       DOS       WIN32
 .fnc delay                      delay.gml       DOS QNX W WIN32
@@ -200,7 +200,7 @@
 .fnc _dos_creat                 d_creat.gml     DOS       WIN32
 .fnc _dos_creatnew              creatnew.gml    DOS       WIN32
 .fnc dosexterr                  dosexter.gml    DOS
-.fnc _dos_find                  dosfind.gml     DOS       WIN32
+.fnc _dos_find...               dosfind.gml     DOS       WIN32
 .fnc _dos_findclose             dosfind.gml     DOS       WIN32
 .fnc _dos_findfirst             dosfind.gml     DOS       WIN32
 .fnc _dos_findnext              dosfind.gml     DOS       WIN32
@@ -248,7 +248,7 @@
 .fnc eof                        eof.gml         DOS QNX W WIN32
 .fnc _eof                       eof.gml         DOS       WIN32
 .fnc errno                      errno.gml           QXO
-.fnc exec                       exec.gml        DOS QNX W WIN32
+.fnc exec...                    exec.gml        DOS QNX W WIN32
 .fnc execl                      exec.gml        DOS QNX W WIN32
 .fnc execle                     exec.gml        DOS QNX W WIN32
 .fnc execlp                     exec.gml        DOS QNX W WIN32
@@ -1251,7 +1251,7 @@
 .fnw _wsopen                    sopen.gml       DOS       WIN32
 .fnu _usopen                    sopen.gml       DOS       WIN32
 .fnc sound                      sound.gml       DOS QNX W
-.fnc spawn                      spawn.gml       DOS QNX W WIN32
+.fnc spawn...                   spawn.gml       DOS QNX W WIN32
 .fnc spawnl                     spawn.gml       DOS QNX W WIN32
 .fnc spawnle                    spawn.gml       DOS QNX W WIN32
 .fnc spawnlp                    spawn.gml       DOS QNX W WIN32

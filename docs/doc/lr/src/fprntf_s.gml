@@ -1,5 +1,6 @@
-.func fprintf_s fwprintf_s
+.func begin fprintf_s fwprintf_s
 .funcw fwprintf_s
+.func gen
 #define __STDC_WANT_LIB_EXT1__ 1
 #include <stdio.h>
 int fprintf_s( FILE * restrict stream,
@@ -17,7 +18,7 @@ int _uprintf_s( FILE * restrict stream,
      const wchar_t * restrict format, ... );
 .ixfunc2 '&StrIo' &ufunc
 .do end
-.funcend
+.func end
 .*
 .rtconst begin
 Neither

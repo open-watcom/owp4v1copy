@@ -3,7 +3,7 @@
 #include <stdlib.h>
 void *malloc( size_t size );
 .ixfunc2 '&Memory' &func
-.funcend
+.func end
 .desc begin
 The &func function allocates space
 .if '&machsys' eq 'PP' .do begin
@@ -46,10 +46,12 @@ void main()
 .do end
 .************************
 .el .do begin
-.func malloc Functions
+.func begin malloc Functions
+.func2 malloc
 .func2 _bmalloc
 .func2 _fmalloc
 .func2 _nmalloc
+.func gen
 #include <stdlib.h>  For ANSI compatibility (malloc only)
 #include <malloc.h>  Required for other function prototypes
 void *malloc( size_t size );
@@ -60,7 +62,7 @@ void __near *_nmalloc( size_t size );
 .ixfunc2 '&Memory' _bmalloc
 .ixfunc2 '&Memory' _fmalloc
 .ixfunc2 '&Memory' _nmalloc
-.funcend
+.func end
 .desc begin
 The &func functions allocate space for an object of
 .arg size
